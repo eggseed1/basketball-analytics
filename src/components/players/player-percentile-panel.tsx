@@ -1140,7 +1140,6 @@ export function PlayerPercentilePanel({
   const [viewSeason, setViewSeason] = useState(season);
   const [viewMetrics, setViewMetrics] = useState(metrics);
   const [viewTeamKey, setViewTeamKey] = useState(teamKey);
-  const [viewProfileComps, setViewProfileComps] = useState(profileComps);
   const [busy, setBusy] = useState(false);
   const [loadFailed, setLoadFailed] = useState(false);
 
@@ -1150,7 +1149,6 @@ export function PlayerPercentilePanel({
       setViewSeason(nextSeason);
       setViewMetrics(next.metrics);
       setViewTeamKey(next.teamKey);
-      setViewProfileComps(next.profileComps ?? []);
     },
     [playerId]
   );
@@ -1163,19 +1161,16 @@ export function PlayerPercentilePanel({
       if (cached && cached.metrics.length > 0) {
         setViewMetrics(cached.metrics);
         setViewTeamKey(cached.teamKey);
-        setViewProfileComps(cached.profileComps ?? []);
         setBusy(false);
         return;
       }
       // Drop the previous season's numbers so they never sit under the new heading.
       setViewMetrics([]);
-      setViewProfileComps([]);
       setBusy(true);
       const gen = ++fetchGen.current;
       const current = () => gen === fetchGen.current && desiredSeason.current === next;
       const clear = (failed: boolean) => {
         setViewMetrics([]);
-        setViewProfileComps([]);
         setLoadFailed(failed);
         setBusy(false);
       };
@@ -1205,7 +1200,6 @@ export function PlayerPercentilePanel({
     }
     if (season !== desiredSeason.current) return;
     setViewSeason(season);
-    setViewProfileComps(profileComps);
     if (metrics.length > 0) {
       setViewMetrics(metrics);
       setViewTeamKey(teamKey);
@@ -1459,32 +1453,8 @@ export function PlayerPercentilePanel({
           <span className="hidden sm:inline">Expand</span>
         </button>
       </div>
-      {viewProfileComps.length ? (
-        <div className="mt-3 flex flex-col gap-1">
-          <p className={cn(type.caption, "font-semibold text-muted-foreground")}>
-            Closest profiles
-          </p>
-          <p className={cn(type.caption, "text-muted-foreground")}>
-            {viewProfileComps
-              .slice(0, 3)
-              .map((comp) => comp.playerName)
-              .join(" · ")}
-            {viewProfileComps.length > 3 ? "…" : ""}
-          </p>
-          <a
-            href="#similar-players"
-            className={cn(
-              type.caption,
-              "font-semibold text-foreground underline-offset-2 hover:underline"
-            )}
-          >
-            See Similar players →
-          </a>
-        </div>
-      ) : null}
-
       {timeline.length > 0 ? (
-        <div className={cn(busy && "opacity-80")}>
+        <div className={cn("mt-3", busy && "opacity-80")}>
           <SeasonBarSlider
             seasons={timeline}
             value={viewSeason}
