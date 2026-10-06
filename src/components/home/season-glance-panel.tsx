@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import leagueAverages from "@/data/runtime/league-season-averages.json";
 import {
   getBundledBrefUsageRows,
@@ -10,7 +12,7 @@ import {
 } from "@/data/runtime/play-type-snapshot";
 import { getRuntimeStandings, runtimeStandingsMeta } from "@/data/runtime/standings-snapshot";
 import { TeamLogo } from "@/components/brand/team-logo";
-import { type } from "@/lib/design-system";
+import { sectionLinkClassName, type } from "@/lib/design-system";
 import {
   SHOT_ZONE_GROUPS,
   USAGE_MIN_MINUTES,
@@ -50,16 +52,26 @@ function Tile({
   note,
   children,
   footer,
+  href,
 }: {
   title: string;
   note: string;
   children: React.ReactNode;
   footer?: string;
+  href?: string;
 }) {
   return (
     <figure className="flex min-w-0 flex-col gap-3">
       <figcaption>
-        <h3 className="text-[14px] font-bold tracking-tight">{title}</h3>
+        <h3 className="text-[14px] font-bold tracking-tight">
+          {href ? (
+            <Link href={href} className="hover:underline">
+              {title} →
+            </Link>
+          ) : (
+            title
+          )}
+        </h3>
         <p className="text-[12px] text-muted-foreground">{note}</p>
       </figcaption>
       {children}
@@ -151,6 +163,7 @@ function UsageChart({
   return (
     <Tile
       title={`Usage and efficiency, ${season}`}
+      href={`/explore/players/visualizations?view=usage&season=${season}`}
       note={`Each dot is a player with ${USAGE_MIN_MINUTES.toLocaleString()}+ minutes. Further right carries more of the offense; higher scores more efficiently.`}
     >
       <svg
@@ -347,11 +360,16 @@ export function SeasonGlancePanel() {
 
   return (
     <section className="sports-card flex flex-col gap-5 px-4 py-4 sm:px-5 sm:py-5">
-      <div className="flex flex-col gap-0.5">
-        <h2 className={type.heading}>{anchor} at a glance</h2>
-        <p className={cn(type.caption, "text-muted-foreground")}>
-          League-wide views of one season. Each moves to the new season once there are enough games to read.
-        </p>
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <div className="flex flex-col gap-0.5">
+          <h2 className={type.heading}>{anchor} at a glance</h2>
+          <p className={cn(type.caption, "text-muted-foreground")}>
+            League-wide views of one season. Each moves to the new season once there are enough games to read.
+          </p>
+        </div>
+        <Link href="/explore/players/visualizations" className={cn(type.bodySm, sectionLinkClassName)}>
+          All visualizations →
+        </Link>
       </div>
       <div className="grid gap-x-6 gap-y-6 sm:grid-cols-2">
         {map ? <TeamMapChart map={map} /> : null}
