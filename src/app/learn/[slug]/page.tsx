@@ -1,10 +1,13 @@
 import { notFound } from "next/navigation";
 
+import { CareerBandsExplorer } from "@/components/learn/career-bands-explorer";
 import { LearnPageFooter, learnEyebrow } from "@/components/learn/learn-page-footer";
 import { LearnTopicView } from "@/components/learn/learn-topic-view";
 import { StatGuideView } from "@/components/learn/stat-guide-view";
 import { AppLink } from "@/components/ui/app-link";
 import { listAllLearnSlugs, resolveLearnPage } from "@/content/learn/resolve";
+
+const CAREER_BAND_TOPICS = new Set(["peak_prime_longevity", "career_resume", "career_self_comparison"]);
 
 export function generateStaticParams() {
   return listAllLearnSlugs().map((slug) => ({ slug }));
@@ -52,7 +55,11 @@ export default async function LearnStatPage({
         {page.kind === "guide" ? (
           <StatGuideView guide={page.guide} eyebrow={eyebrow} />
         ) : (
-          <LearnTopicView topic={page.topic} eyebrow={eyebrow} />
+          <LearnTopicView
+            topic={page.topic}
+            eyebrow={eyebrow}
+            visual={CAREER_BAND_TOPICS.has(page.topic.id) ? <CareerBandsExplorer /> : undefined}
+          />
         )}
 
         {page.kind === "guide" ? (

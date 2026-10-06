@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 
 import {
   LearnBullets,
@@ -13,9 +13,12 @@ import type { LearnTopic } from "@/content/learn/topics";
 export function LearnTopicView({
   topic,
   eyebrow,
+  visual,
 }: {
   topic: LearnTopic;
   eyebrow: string;
+  /** Interactive explainer shown between the lead and the bullets. */
+  visual?: ReactNode;
 }) {
   const [depth, setDepth] = useState<"plain" | "deep">("plain");
   const sources = topic.sources ?? [];
@@ -34,6 +37,8 @@ export function LearnTopicView({
         depth={hasDeep ? depth : null}
         onDepth={setDepth}
       />
+
+      {visual}
 
       <LearnCard>
         <LearnBullets title="Why it matters" items={topic.whyItMatters} />

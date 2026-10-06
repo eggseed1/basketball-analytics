@@ -1,3 +1,4 @@
+import { ContractValueChart } from "@/components/players/contract-value-chart";
 import { MoreInfo } from "@/components/ui/more-info";
 import { TextLink } from "@/components/ui/text-link";
 import type {
@@ -187,6 +188,27 @@ export function PlayerContractTransactions({
           </div>
         ) : value?.kind === "missing" ? (
           <MissingNote reason={value.reason} model={model} />
+        ) : null}
+
+        {estimate ? (
+          <ContractValueChart
+            years={contract.years.flatMap((year) => {
+              const v = bySeason.get(year.season);
+              return v
+                ? [
+                    {
+                      season: year.season,
+                      salary: year.salary,
+                      worthLow: v.worthLow,
+                      worth: v.worth,
+                      worthHigh: v.worthHigh,
+                      surplus: v.surplus,
+                      note: yearNote(year, v.worthAboveMax),
+                    },
+                  ]
+                : [];
+            })}
+          />
         ) : null}
 
         <div className="overflow-x-auto">

@@ -12,6 +12,7 @@ import {
   acquisitionHref,
   formatPlainDate,
 } from "@/components/acquisitions/acquisition-story";
+import { AcquisitionTree } from "@/components/acquisitions/acquisition-tree";
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { TeamLogo } from "@/components/brand/team-logo";
 import {
@@ -250,20 +251,28 @@ export default async function AcquisitionsPage({ searchParams }: PageProps) {
             </Section>
           ) : null}
 
-          <Section title="Where it led">
-            <WhereItLed story={story} names={names} />
+          <Section title={story.origins.length ? "The trail, both ways" : "Where it led"}>
+            <AcquisitionTree story={story} names={names} />
+            <p className={cn(type.caption, "text-muted-foreground")}>
+              {story.origins.length
+                ? "Left of the move: what the team gave up and how it got those pieces. Right: where he went next and what came back. Scroll sideways on long trails."
+                : "Each card is what he or a returning piece turned into. Scroll sideways on long trails."}
+            </p>
           </Section>
 
-          {story.origins.length ? (
-            <details className="group rounded-md border border-border/60 px-3 py-2">
-              <summary className={cn(type.bodySm, "cursor-pointer font-semibold")}>
-                Where the outgoing pieces came from
-              </summary>
-              <div className="pt-3">
-                <OutgoingOrigins story={story} names={names} />
-              </div>
-            </details>
-          ) : null}
+          <details className="group rounded-md border border-border/60 px-3 py-2">
+            <summary className={cn(type.bodySm, "cursor-pointer font-semibold")}>Read it as text</summary>
+            <div className="flex flex-col gap-4 pt-3">
+              <Section title="Where it led">
+                <WhereItLed story={story} names={names} />
+              </Section>
+              {story.origins.length ? (
+                <Section title="Where the outgoing pieces came from">
+                  <OutgoingOrigins story={story} names={names} />
+                </Section>
+              ) : null}
+            </div>
+          </details>
 
           {story.truncated ? (
             <p className={cn(type.caption, "text-muted-foreground")}>

@@ -141,8 +141,6 @@ export const LEARN_TOPICS: LearnTopic[] = [
       "Qualifying-season table bands should be read as overlapping labels.",
       "All three bands are measured with CPI.",
     ],
-    formula:
-      "100% ─ PEAK\n │\n │  PRIME  (≥90%)\n │\n │  Longevity-only  (70–89%)\n │\n70% ─ LONGEVITY FLOOR\n │\n │  Below longevity threshold",
     calculation: [
       "CPI = PPG + 1.5×APG + 1.2×RPG + 2.0×SPG + 2.0×BPG − TOV (per game).",
       "Peak = max CPI among qualifying seasons.",
