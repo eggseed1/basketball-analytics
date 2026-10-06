@@ -34,7 +34,7 @@ const VERIFY_PBP_GAME_ID = loadVerifyGameId();
 const BASE =
   process.argv[2] ||
   process.env.CF_BASE_URL ||
-  "https://basketball-analytics.drbl-analytics.workers.dev";
+  "https://drbl.io";
 
 async function fetchText(path) {
   const url = `${BASE}${path}`;

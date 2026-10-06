@@ -1,6 +1,6 @@
-const DEFAULT_SITE_URL = "https://basketball-analytics.drbl-analytics.workers.dev";
+const DEFAULT_SITE_URL = "https://drbl.io";
 
-/** Public origin for absolute URLs (sitemap, robots, social cards). Set NEXT_PUBLIC_SITE_URL when a custom domain is live. */
+/** Public origin for absolute URLs (sitemap, robots, social cards). NEXT_PUBLIC_SITE_URL overrides it. */
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || DEFAULT_SITE_URL).replace(/\/+$/, "");
 
 export const SITE_NAME = "Basketball Analytics";

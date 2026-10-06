@@ -9,6 +9,9 @@
 		"nodejs_compat",
 		"global_fetch_strictly_public"
 	],
+	// drbl.io and www.drbl.io are Workers Custom Domains attached once through the API,
+	// not listed under "routes", so CI deploys never need DNS rights on the zone.
+	// worker.ts redirects www to the apex.
 	"workers_dev": true,
 	"preview_urls": false,
 	// Only console.* output (errors/warnings) is kept, 7 days. Per-request invocation

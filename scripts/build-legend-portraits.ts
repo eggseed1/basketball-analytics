@@ -26,7 +26,7 @@ const CACHE_DIR = path.join(ROOT, "data/cache/player-photos");
 const VERDICTS = path.join(CACHE_DIR, "verdicts.json");
 const COMMONS_CACHE = path.join(CACHE_DIR, "legend-commons.json");
 const UA =
-  "basketball-analytics/1.0 (https://basketball-analytics.drbl-analytics.workers.dev; educational)";
+  "basketball-analytics/1.0 (https://drbl.io; educational)";
 const BREF_UA = "Mozilla/5.0 (compatible; BasketballAnalytics/portrait-rebuild; educational)";
 const BREF_DELAY_MS = Number(process.env.BREF_DELAY_MS || 1500);
 const FREE_LICENSE = /^(cc by(-sa)?( \d(\.\d)?)?|cc0|public domain|pd)/i;

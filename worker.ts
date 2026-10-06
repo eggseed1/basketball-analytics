@@ -139,9 +139,16 @@ function tooManyRequests(): Response {
   });
 }
 
+const CANONICAL_HOST = "drbl.io";
+
 const worker = {
   async fetch(request: Request, env: WorkerEnv, ctx: WorkerContext): Promise<Response> {
-    const { pathname } = new URL(request.url);
+    const url = new URL(request.url);
+    if (url.hostname === `www.${CANONICAL_HOST}`) {
+      url.hostname = CANONICAL_HOST;
+      return Response.redirect(url.toString(), 301);
+    }
+    const { pathname } = url;
     // Internal subrequests (service binding, cache revalidation) carry no client IP.
     const ip = request.headers.get("cf-connecting-ip");
     if (pathname.startsWith("/api/") && ip && env.API_RATE_LIMITER) {

@@ -31,7 +31,7 @@ const CACHE_DIR = path.join(ROOT, "data/cache/player-photos");
 const CACHE_FILE = path.join(CACHE_DIR, "verdicts.json");
 /** Wikimedia asks for an identifying agent; the NBA CDN resets non-Mozilla agents. */
 const UA =
-  "basketball-analytics/1.0 (https://basketball-analytics.drbl-analytics.workers.dev; educational)";
+  "basketball-analytics/1.0 (https://drbl.io; educational)";
 const CDN_UA = "Mozilla/5.0 (compatible; BasketballAnalytics/portrait-rebuild; educational)";
 const agentFor = (url: string) =>
   /wikimedia\.org|wikidata\.org|wikipedia\.org/.test(url) ? UA : CDN_UA;
