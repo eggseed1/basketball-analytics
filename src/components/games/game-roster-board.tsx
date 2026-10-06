@@ -32,17 +32,21 @@ function notInYet(g: PlayerGame, live: boolean): boolean {
   return reason === "" || /coach|did not play|^dnp$/i.test(reason);
 }
 
+const COLUMNS = ["MIN", "PTS", "REB", "AST", "STL", "BLK", "TOV", "FG", "3P", "FT", "+/-", "TS%"];
+
 function RosterTable({
   label,
   players,
   live,
+  emptyText,
 }: {
   label: string;
   players: PlayerGame[];
   live: boolean;
+  emptyText?: string;
 }) {
   const rows = sortRoster(players);
-  if (!rows.length) {
+  if (!rows.length && !emptyText) {
     return (
       <p className={cn(type.bodySm, "text-muted-foreground")}>
         No {label} roster lines for this game.
@@ -63,21 +67,27 @@ function RosterTable({
             <th className="sticky left-0 z-10 bg-background/85 py-2 pr-3 font-semibold backdrop-blur-sm">
               {label}
             </th>
-            <th className="px-2 py-2 text-right font-semibold">MIN</th>
-            <th className="px-2 py-2 text-right font-semibold">PTS</th>
-            <th className="px-2 py-2 text-right font-semibold">REB</th>
-            <th className="px-2 py-2 text-right font-semibold">AST</th>
-            <th className="px-2 py-2 text-right font-semibold">STL</th>
-            <th className="px-2 py-2 text-right font-semibold">BLK</th>
-            <th className="px-2 py-2 text-right font-semibold">TOV</th>
-            <th className="px-2 py-2 text-right font-semibold">FG</th>
-            <th className="px-2 py-2 text-right font-semibold">3P</th>
-            <th className="px-2 py-2 text-right font-semibold">FT</th>
-            <th className="px-2 py-2 text-right font-semibold">+/-</th>
-            <th className="px-2 py-2 text-right font-semibold">TS%</th>
+            {COLUMNS.map((col) => (
+              <th key={col} className="px-2 py-2 text-right font-semibold">
+                {col}
+              </th>
+            ))}
           </tr>
         </thead>
         <tbody>
+          {!rows.length ? (
+            <tr className="border-b border-border/40">
+              <td
+                colSpan={COLUMNS.length + 1}
+                className={cn(
+                  type.caption,
+                  "py-4 pr-3 text-muted-foreground"
+                )}
+              >
+                {emptyText}
+              </td>
+            </tr>
+          ) : null}
           {rows.map((g) => {
             const pending = notInYet(g, live);
             const out = Boolean(g.didNotPlay);
@@ -205,17 +215,20 @@ export function GameRosterBoard({
   awayPlayers,
   homePlayers,
   live = false,
+  emptyText,
 }: {
   awayLabel: string;
   homeLabel: string;
   awayPlayers: PlayerGame[];
   homePlayers: PlayerGame[];
   live?: boolean;
+  /** Keeps the table frame with this note when a side has no lines yet. */
+  emptyText?: string;
 }) {
   return (
     <div className="flex flex-col gap-5">
-      <RosterTable label={awayLabel} players={awayPlayers} live={live} />
-      <RosterTable label={homeLabel} players={homePlayers} live={live} />
+      <RosterTable label={awayLabel} players={awayPlayers} live={live} emptyText={emptyText} />
+      <RosterTable label={homeLabel} players={homePlayers} live={live} emptyText={emptyText} />
     </div>
   );
 }

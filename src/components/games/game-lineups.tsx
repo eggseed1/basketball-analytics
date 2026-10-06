@@ -23,22 +23,24 @@ const PREGAME_WINDOW_MS = 2 * 60 * 60 * 1000;
 
 type Mode = "live" | "break" | "pregame" | null;
 
-function lineupMode(game: GameSummary, now: number): Mode {
+function lineupMode(game: GameSummary): Mode {
   if (game.status === "halftime" || game.status === "period_break") return "break";
   if (isLiveLikeStatus(game.status)) return "live";
-  if (isPreTipStatus(game.status)) {
-    const tip = parseTipOffMs(game.tipOffAt);
-    if (tip != null && tip - now <= PREGAME_WINDOW_MS) return "pregame";
-  }
+  if (isPreTipStatus(game.status)) return "pregame";
   return null;
 }
 
-function useGameLineups(gameId: string, mode: Mode) {
+function inPregameWindow(game: GameSummary, now: number): boolean {
+  const tip = parseTipOffMs(game.tipOffAt);
+  return tip != null && tip - now <= PREGAME_WINDOW_MS;
+}
+
+function useGameLineups(gameId: string, mode: Mode, poll: boolean) {
   const [data, setData] = useState<GameLineups | null>(null);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    if (!mode) return;
+    if (!mode || !poll) return;
     let stopped = false;
     const load = async () => {
       if (document.visibilityState === "hidden") return;
@@ -61,9 +63,24 @@ function useGameLineups(gameId: string, mode: Mode) {
       stopped = true;
       window.clearInterval(id);
     };
-  }, [gameId, mode]);
+  }, [gameId, mode, poll]);
 
   return { data, loaded };
+}
+
+const LINEUP_SIZE = 5;
+
+function EmptySlots() {
+  return (
+    <ul aria-hidden className="flex gap-1">
+      {Array.from({ length: LINEUP_SIZE }, (_, i) => (
+        <li key={i} className="flex w-[3.75rem] min-w-0 shrink flex-col items-center gap-0.5">
+          <span className="h-7 w-7 rounded-full border border-dashed border-border sm:h-8 sm:w-8" />
+          <span className="text-[11px] leading-tight text-muted-foreground/60">—</span>
+        </li>
+      ))}
+    </ul>
+  );
 }
 
 const POSITION_ORDER: Record<string, number> = {
@@ -189,9 +206,13 @@ export function GameLineupsPanel({
     const id = window.setInterval(() => setNow(Date.now()), 60_000);
     return () => window.clearInterval(id);
   }, []);
-  const mode = lineupMode(game, now);
-  const { data, loaded } = useGameLineups(game.id, mode);
-  if (!mode || !loaded) return null;
+  const mode = lineupMode(game);
+  const { data, loaded } = useGameLineups(
+    game.id,
+    mode,
+    mode !== "pregame" || inPregameWindow(game, now)
+  );
+  if (!mode || (!loaded && mode !== "pregame")) return null;
 
   const pick = (side: "away" | "home") => {
     const lineup = data?.[side];
@@ -209,11 +230,19 @@ export function GameLineupsPanel({
 
   if (mode === "pregame" && !away && !home) {
     return (
-      <section aria-label={heading} className="flex flex-col gap-1 border-t border-border/50 pt-4">
+      <section aria-label={heading} className="flex flex-col gap-2 border-t border-border/50 pt-3">
         <h2 className={cn(type.micro, "font-bold uppercase tracking-[0.1em] text-muted-foreground")}>
           {heading}
         </h2>
-        <p className={cn(type.bodySm, "text-muted-foreground")}>{missing}</p>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-8">
+          {[awayLabel, homeLabel].map((label) => (
+            <div key={label} className="flex min-w-0 flex-col gap-1.5">
+              <p className={cn(type.micro, "font-semibold text-muted-foreground")}>{label}</p>
+              <EmptySlots />
+            </div>
+          ))}
+        </div>
+        <p className={cn(type.caption, "text-muted-foreground")}>{missing}</p>
       </section>
     );
   }

@@ -49,6 +49,12 @@ import {
 } from "@/data/transformers/espn";
 import { CACHE_TTL_MS } from "@/data/providers/nba/cache-policy";
 import { preferBundledProductDataOnEdge } from "@/data/providers/nba/runtime-policy";
+import { parseTipOffMs } from "@/lib/game-countdown";
+import {
+  compareGameProgress,
+  isFinalStatus,
+  isPreTipStatus,
+} from "@/lib/game-status";
 
 /** ESPN event ids are typically 9 digits starting with 40… */
 export function looksLikeEspnEventId(gameId: string): boolean {
@@ -954,6 +960,46 @@ export async function getUpcomingGameSummaries(
   };
 }
 
+const SINGLE_GAME_LIVE_MAX_IDS = 2;
+const LIVE_SUMMARY_TTL_MS = 5_000;
+
+/**
+ * ESPN's day scoreboard can trail its per-game summary by minutes (and the
+ * other way round), so a game page asks both and keeps the further snapshot.
+ */
+async function preferFresherSummary(game: GameSummary): Promise<GameSummary> {
+  if (!looksLikeEspnEventId(game.id) || isFinalStatus(game.status)) return game;
+  if (isPreTipStatus(game.status)) {
+    const tip = parseTipOffMs(game.tipOffAt);
+    if (tip == null || tip > Date.now()) return game;
+  }
+  try {
+    const summary = await espnFetchJson<EspnSummaryResponse>(
+      `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=${encodeURIComponent(game.id)}`,
+      { ttlMs: LIVE_SUMMARY_TTL_MS, retries: 0, timeoutMs: 2_000 }
+    );
+    const fresh = transformEspnBoxScore(summary, game.season)?.game;
+    if (!fresh || compareGameProgress(fresh, game) <= 0) return game;
+    return {
+      ...game,
+      status: fresh.status,
+      period: fresh.period ?? game.period,
+      displayClock: fresh.displayClock ?? game.displayClock,
+      statusDetail: fresh.statusDetail ?? game.statusDetail,
+      homeScore: fresh.homeScore,
+      awayScore: fresh.awayScore,
+      totalPoints: fresh.homeScore + fresh.awayScore,
+      margin: fresh.homeScore - fresh.awayScore,
+      absMargin: Math.abs(fresh.homeScore - fresh.awayScore),
+      homePeriodScores: fresh.homePeriodScores ?? game.homePeriodScores,
+      awayPeriodScores: fresh.awayPeriodScores ?? game.awayPeriodScores,
+      retrievedAt: new Date().toISOString(),
+    };
+  } catch {
+    return game;
+  }
+}
+
 /**
  * Batched live scoreboard snapshot for today (ET).
  * Soft-fails with stale cache labeling — never throws for provider outage.
@@ -1000,10 +1046,14 @@ export async function getLiveScoreboardSummaries(options: {
   const pastGames = (pastDays as GameSummary[][])
     .flat()
     .filter((g) => !seen.has(g.id) && (!want || want.has(g.id)));
+  let games = [...feed.data.games, ...pastGames];
+  if (want && want.size <= SINGLE_GAME_LIVE_MAX_IDS) {
+    games = await Promise.all(games.map(preferFresherSummary));
+  }
   return {
     season: feed.data.season,
     retrievedAt: feed.data.retrievedAt ?? new Date().toISOString(),
-    games: [...feed.data.games, ...pastGames],
+    games,
     source: feed.source,
     warnings: feed.warnings,
     isStale: feed.isStale,

@@ -227,7 +227,7 @@ function LineScore({
   ];
   const cell = "px-2 py-1 text-center tabular-nums sm:px-3";
   return (
-    <div className="board-scroll-host mx-auto w-full max-w-lg overflow-x-auto">
+    <div className="board-scroll-host w-full max-w-lg overflow-x-auto">
       <table className={cn(type.bodySm, "w-full")}>
         <caption className="sr-only">Points by period</caption>
         <thead>
@@ -278,22 +278,26 @@ function LineScore({
   );
 }
 
-const LIVE_BOX_SCORE_REFRESH_MS = 30_000;
+const LIVE_BOX_SCORE_REFRESH_MS = 20_000;
 
 /**
  * The header polls scores on its own; box score and team tables are server
- * rendered, so re-render the route while the game is live and once at final.
+ * rendered, so re-render the route while the game is live, at tip and at final.
  */
 function useLiveBoxScoreRefresh(status: GameSummary["status"]) {
   const router = useRouter();
   const liveNow = isLiveLikeStatus(status);
   const final = isFinalStatus(status);
   const wasLive = useRef(liveNow);
+  const wasPreTip = useRef(isPreTipStatus(status));
 
   useEffect(() => {
-    if (wasLive.current && final) router.refresh();
+    if ((wasLive.current && final) || (wasPreTip.current && (liveNow || final))) {
+      router.refresh();
+    }
     wasLive.current = liveNow;
-  }, [liveNow, final, router]);
+    wasPreTip.current = isPreTipStatus(status);
+  }, [liveNow, final, status, router]);
 
   useEffect(() => {
     if (!liveNow) return;

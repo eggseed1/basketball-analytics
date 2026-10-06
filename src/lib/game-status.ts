@@ -176,6 +176,42 @@ export function isTerminalNonFinalStatus(
   );
 }
 
+function progressStage(status: GameStatusKind | undefined): number {
+  if (status === "final" || isTerminalNonFinalStatus(status)) return 2;
+  if (isLiveLikeStatus(status)) return 1;
+  return 0;
+}
+
+function clockSeconds(clock: string | null | undefined): number | null {
+  const text = clock?.trim() ?? "";
+  const mmss = /^(\d{1,2}):(\d{2})(?:\.\d+)?$/.exec(text);
+  if (mmss) return Number(mmss[1]) * 60 + Number(mmss[2]);
+  const secs = /^(\d{1,2}(?:\.\d+)?)$/.exec(text);
+  return secs ? Number(secs[1]) : null;
+}
+
+/**
+ * Orders two snapshots of one game by how far along they are: status stage,
+ * then period, then game clock. Positive means `a` is further along. Upstream
+ * feeds lag each other by minutes, so callers keep the further snapshot
+ * instead of letting a slower feed rewind the score.
+ */
+export function compareGameProgress(
+  a: { status?: GameStatusKind; period?: number | null; displayClock?: string | null },
+  b: { status?: GameStatusKind; period?: number | null; displayClock?: string | null }
+): number {
+  const stage = progressStage(a.status) - progressStage(b.status);
+  if (stage !== 0 || progressStage(a.status) !== 1) return stage;
+  const period = (a.period ?? 0) - (b.period ?? 0);
+  if (period !== 0) return period;
+  if (a.status === "in_progress" && b.status !== "in_progress") return -1;
+  if (b.status === "in_progress" && a.status !== "in_progress") return 1;
+  const ca = clockSeconds(a.displayClock);
+  const cb = clockSeconds(b.displayClock);
+  if (ca == null || cb == null) return 0;
+  return cb - ca;
+}
+
 /** Whether scoreboard UI should show numeric scores. */
 export function shouldDisplayScores(options: {
   status?: GameStatusKind;

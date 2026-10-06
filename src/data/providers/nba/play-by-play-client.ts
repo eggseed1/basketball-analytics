@@ -302,7 +302,7 @@ async function fetchRawPlayByPlayUncached(
       memoryCache.set(routeId, {
         value: live.raw,
         source: "espn",
-        freshUntil: now + 20_000,
+        freshUntil: now + 8_000,
       });
       return live;
     }

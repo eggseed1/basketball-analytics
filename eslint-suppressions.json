@@ -270,9 +270,6 @@
   "src/components/sports/use-live-scoreboard-refresh.ts": {
     "react-hooks/refs": {
       "count": 4
-    },
-    "react-hooks/set-state-in-effect": {
-      "count": 1
     }
   },
   "src/components/standings/standings-tracker-island.tsx": {

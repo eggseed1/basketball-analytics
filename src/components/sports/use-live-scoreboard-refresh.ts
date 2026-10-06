@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { GameSummary } from "@/data/types";
 import { parseTipOffMs } from "@/lib/game-countdown";
 import {
+  compareGameProgress,
   isLiveLikeStatus,
   isPreTipStatus,
   type GameStatusKind,
@@ -32,7 +33,7 @@ function mergeById(
   const map = new Map(updates.map((g) => [g.id, g]));
   return prev.map((g) => {
     const next = map.get(g.id);
-    if (!next) return g;
+    if (!next || compareGameProgress(next, g) < 0) return g;
     return {
       ...g,
       status: next.status ?? g.status,
@@ -57,7 +58,12 @@ function mergeById(
  */
 export function useLiveScoreboardRefresh(
   initialGames: GameSummary[],
-  options?: { season?: string; enabled?: boolean }
+  options?: {
+    season?: string;
+    enabled?: boolean;
+    /** Faster cadence while a game is in play, for single-game views. */
+    liveIntervalMs?: number;
+  }
 ): {
   games: GameSummary[];
   lastRetrievedAt: string | null;
@@ -73,14 +79,21 @@ export function useLiveScoreboardRefresh(
   gamesRef.current = games;
   failureRef.current = failureStreak;
 
-  const initialKey = initialGames.map((g) => g.id).join(",");
+  const initialIds = initialGames.map((g) => g.id).join(",");
+  const initialKey = initialGames
+    .map((g) => `${g.id}:${g.status}:${g.period}:${g.displayClock}:${g.awayScore}-${g.homeScore}`)
+    .join(",");
+  const idsRef = useRef(initialIds);
   useEffect(() => {
-    setGames(initialGames);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- key encodes identity
+    const sameGames = idsRef.current === initialIds;
+    idsRef.current = initialIds;
+    setGames((prev) => (sameGames ? mergeById(prev, initialGames) : initialGames));
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- key encodes identity and progress
   }, [initialKey]);
 
   const enabled = options?.enabled !== false;
   const season = options?.season;
+  const liveIntervalMs = options?.liveIntervalMs;
 
   const poll = useCallback(async (force: boolean) => {
     const current = gamesRef.current;
@@ -144,10 +157,18 @@ export function useLiveScoreboardRefresh(
         typeof document !== "undefined"
           ? document.visibilityState === "hidden"
           : false;
-      const interval = resolveRefreshIntervalMs(statuses, {
+      const base = resolveRefreshIntervalMs(statuses, {
         documentHidden: hidden,
         failureStreak: failureRef.current,
       });
+      const interval =
+        base != null &&
+        liveIntervalMs != null &&
+        !hidden &&
+        failureRef.current === 0 &&
+        statuses.includes("in_progress")
+          ? Math.min(base, liveIntervalMs)
+          : base;
       diagnostics.current.lastIntervalMs = interval;
       if (interval == null) return;
 
@@ -183,7 +204,7 @@ export function useLiveScoreboardRefresh(
       if (timer) clearTimeout(timer);
       document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, [enabled, poll]);
+  }, [enabled, poll, liveIntervalMs]);
 
   return {
     games,
@@ -192,6 +213,8 @@ export function useLiveScoreboardRefresh(
     diagnostics: diagnostics.current,
   };
 }
+
+const LIVE_GAME_INTERVAL_MS = 10_000;
 
 export function useLiveGameRefresh(
   initial: GameSummary | null,
@@ -204,6 +227,7 @@ export function useLiveGameRefresh(
   const { games, failureStreak } = useLiveScoreboardRefresh(list, {
     season: options?.season ?? initial?.season,
     enabled: options?.enabled !== false && Boolean(initial),
+    liveIntervalMs: LIVE_GAME_INTERVAL_MS,
   });
   return { game: games[0] ?? initial, failureStreak };
 }

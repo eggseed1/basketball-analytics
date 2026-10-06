@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { GameLabView } from "@/components/games/game-lab-view";
 import { GameIdentityShell } from "@/components/games/game-identity-shell";
+import { GamePreTipBoard } from "@/components/games/game-pre-tip-board";
 import { PossessionExplorerIsland } from "@/components/games/possession-explorer-island";
 import { RuntimeGameFallback } from "@/components/games/runtime-game-fallback";
 import { HistoricalGameExperience } from "@/components/history/historical-game-experience";
@@ -64,7 +65,7 @@ export default async function GamePage({ params, searchParams }: GamePageProps) 
   const heroHasLineScore = Math.min(shell.game.homePeriodScores?.length ?? 0, shell.game.awayPeriodScores?.length ?? 0) > 0;
   const body = <main className="site-shell flex flex-1 flex-col gap-5 py-5 sm:gap-6 sm:py-7">
     <GameIdentityShell game={shell.game} brandPresentation={brandPresentation} arrivalLabel={arrival?.label} />
-    {presentation.canRenderDeepFeatures && preTip ? <p className="rounded-md border border-dashed border-border px-4 py-6 text-center text-[14px] text-muted-foreground">Box score, game flow and play-by-play show up here once the game tips off.</p> : presentation.canRenderDeepFeatures ? <Suspense fallback={<DestinationSectionSkeleton label="Loading Game Flow & shots…" />}><HistoricalDeepBody gameId={gameId} seasonHint={seasonHint} homeLabel={shell.game.homeTeamAbbr ?? "Home"} awayLabel={shell.game.awayTeamAbbr ?? "Away"} /></Suspense> : null}
+    {presentation.canRenderDeepFeatures && preTip ? <GamePreTipBoard game={shell.game} /> : presentation.canRenderDeepFeatures ? <Suspense fallback={<DestinationSectionSkeleton label="Loading Game Flow & shots…" />}><HistoricalDeepBody gameId={gameId} seasonHint={seasonHint} homeLabel={shell.game.homeTeamAbbr ?? "Home"} awayLabel={shell.game.awayTeamAbbr ?? "Away"} /></Suspense> : null}
     {!presentation.canRenderDeepFeatures ? <GameUnavailablePanel gameId={gameId} backHref={backHref} /> : preTip ? null : <Suspense fallback={<DestinationSectionSkeleton label="Loading Game Lab analysis…" />}><GameLabDeepBody gameId={gameId} arrival={arrival} hidePeriodTable={heroHasLineScore} /></Suspense>}
     {presentation.canRenderDeepFeatures && !preTip ? (
       <details className="group sports-card overflow-hidden">

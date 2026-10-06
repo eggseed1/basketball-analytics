@@ -51,6 +51,8 @@ function PlayDescription({ event }: { event: PlayByPlayEvent }) {
   );
 }
 
+const LIVE_PLAYS_POLL_MS = 10_000;
+
 function useLivePlays(
   gameId: string | undefined,
   initial: PlayByPlayEvent[],
@@ -62,8 +64,10 @@ function useLivePlays(
   eventsRef.current = events;
 
   useEffect(() => {
-    setEvents(initial);
-  }, [initial]);
+    setEvents((prev) =>
+      live && prev.length > initial.length ? prev : initial
+    );
+  }, [initial, live]);
 
   useEffect(() => {
     if (!live || !gameId) return;
@@ -93,10 +97,9 @@ function useLivePlays(
       const hidden =
         typeof document !== "undefined" &&
         document.visibilityState === "hidden";
-      const interval =
-        resolveRefreshIntervalMs(["in_progress"], {
-          documentHidden: hidden,
-        }) ?? 20_000;
+      const interval = hidden
+        ? resolveRefreshIntervalMs(["in_progress"], { documentHidden: true }) ?? 60_000
+        : LIVE_PLAYS_POLL_MS;
       timer = setTimeout(async () => {
         await poll();
         schedule();
@@ -123,6 +126,7 @@ export function GamePlayByPlayPanel({
   homeTricode,
   gameId,
   status,
+  emptyText = "No play-by-play available for this game.",
 }: {
   events: PlayByPlayEvent[];
   awayTricode: string;
@@ -130,6 +134,7 @@ export function GamePlayByPlayPanel({
   source?: string;
   gameId?: string;
   status?: GameStatusKind | string;
+  emptyText?: string;
 }) {
   const live = isLiveLikeStatus(status as GameStatusKind | undefined);
   const polled = useLivePlays(gameId, initialEvents, live);
@@ -151,7 +156,7 @@ export function GamePlayByPlayPanel({
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-semibold">Play-by-play</h2>
         <p className="rounded-xl border border-border px-4 py-6 text-sm text-muted-foreground">
-          No play-by-play available for this game.
+          {emptyText}
         </p>
       </section>
     );
