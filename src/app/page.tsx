@@ -238,11 +238,11 @@ export default async function HomePage() {
     <main className="site-shell flex flex-col gap-5 py-5 sm:py-7" data-season-phase={moment.phase}>
       {layout.top.map(render)}
 
-      <div className="grid min-w-0 grid-cols-1 items-start gap-5 lg:grid-cols-12">
-        <div className="contents lg:col-span-7 lg:flex lg:min-w-0 lg:flex-col lg:gap-4">
+      <div className="grid min-w-0 grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_21.25rem] xl:grid-cols-[minmax(0,1fr)_23rem]">
+        <div className="contents lg:flex lg:min-w-0 lg:flex-col lg:gap-4">
           {layout.main.map(renderGridModule)}
         </div>
-        <div className="contents lg:col-span-5 lg:flex lg:min-w-0 lg:flex-col lg:gap-4">
+        <div className="contents lg:flex lg:min-w-0 lg:flex-col lg:gap-4">
           {layout.side.map(renderGridModule)}
         </div>
       </div>
