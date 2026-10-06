@@ -1032,7 +1032,7 @@ html:not([data-surface="glass"]) .color-scheme-switch {
     color-mix(in oklab, var(--orb-a) 18%, transparent) 52%,
     transparent 72%
   );
-  animation: atmosphere-drift-a 42s ease-in-out infinite alternate;
+  animation: atmosphere-drift-a 18s ease-in-out infinite alternate;
 }
 
 .page-atmosphere::after {
@@ -1045,7 +1045,7 @@ html:not([data-surface="glass"]) .color-scheme-switch {
     color-mix(in oklab, var(--orb-b) 18%, transparent) 52%,
     transparent 72%
   );
-  animation: atmosphere-drift-b 54s ease-in-out infinite alternate;
+  animation: atmosphere-drift-b 23s ease-in-out infinite alternate;
 }
 
 /* Dark: deep, low-chroma tones so large fields stay quiet. */
@@ -1066,11 +1066,17 @@ html:not([data-surface="glass"]) .color-scheme-switch {
   0% {
     transform: translate3d(0, 0, 0) scale(1);
   }
+  25% {
+    transform: translate3d(24vw, 14vh, 0) scale(1.14);
+  }
   50% {
-    transform: translate3d(7vw, 5vh, 0) scale(1.06);
+    transform: translate3d(38vw, 34vh, 0) scale(0.92);
+  }
+  75% {
+    transform: translate3d(12vw, 42vh, 0) scale(1.08);
   }
   100% {
-    transform: translate3d(2vw, 10vh, 0) scale(0.97);
+    transform: translate3d(-4vw, 22vh, 0) scale(1.18);
   }
 }
 
@@ -1078,11 +1084,17 @@ html:not([data-surface="glass"]) .color-scheme-switch {
   0% {
     transform: translate3d(0, 0, 0) scale(1);
   }
+  25% {
+    transform: translate3d(-18vw, 26vh, 0) scale(0.9);
+  }
   50% {
-    transform: translate3d(-6vw, 7vh, 0) scale(1.05);
+    transform: translate3d(-36vw, 12vh, 0) scale(1.16);
+  }
+  75% {
+    transform: translate3d(-26vw, 40vh, 0) scale(1.04);
   }
   100% {
-    transform: translate3d(-2vw, 2vh, 0) scale(1.08);
+    transform: translate3d(-6vw, 30vh, 0) scale(0.94);
   }
 }
 
