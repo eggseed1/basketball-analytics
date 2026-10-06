@@ -52,6 +52,7 @@ async function main() {
     [
       "wrangler", "r2", "bulk", "put", BUCKET,
       "--remote",
+      "--force",
       "--filename", listFile,
       "--content-type", "application/json",
       "--concurrency", CONCURRENCY,
