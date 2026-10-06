@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { CSSProperties } from "react";
 
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { getPlayerPortraitUrl } from "@/data/media/get-player-media";
@@ -83,17 +84,28 @@ export function CompareEmptyState() {
           </p>
         </div>
         <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {FEATURED.map((m) => (
+          {FEATURED.map((m) => {
+            const theme = buildGameMatchupTheme(m.a.teamKey, m.b.teamKey);
+            return (
             <li key={`${m.a.id}-${m.b.id}`}>
               <Link
                 href={matchupHref(m)}
-                style={buildGameMatchupTheme(m.a.teamKey, m.b.teamKey).cssVars}
                 className={cn(
-                  "score-card-wash group flex items-center gap-3 rounded-xl border border-white/50 px-4 py-3 shadow-[inset_0_1px_0_rgb(255_255_255/0.5),0_1px_2px_rgb(0_0_0/0.05),0_8px_24px_rgb(0_0_0/0.06)] dark:border-white/10 dark:shadow-[inset_0_1px_0_rgb(255_255_255/0.08),0_8px_24px_rgb(0_0_0/0.3)]",
+                  "group relative isolate flex items-center gap-3 overflow-hidden rounded-[var(--card-radius)] bg-card px-4 py-3 ring-1 ring-inset ring-foreground/[0.06] shadow-[0_1px_2px_rgb(0_0_0/0.03),0_6px_20px_rgb(0_0_0/0.04)] dark:shadow-[0_8px_24px_rgb(0_0_0/0.3)]",
                   "transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-lg",
                   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
                 )}
               >
+                <span
+                  aria-hidden
+                  className="strip-orb -z-10"
+                  style={{ left: -56, top: -10, "--orb-color": theme.awayWash } as CSSProperties}
+                />
+                <span
+                  aria-hidden
+                  className="strip-orb strip-orb--b -z-10"
+                  style={{ right: -56, bottom: -24, "--orb-color": theme.homeWash } as CSSProperties}
+                />
                 <PlayerHeadshot
                   playerId={m.a.id}
                   portraitUrl={getPlayerPortraitUrl(m.a.id)}
@@ -137,7 +149,8 @@ export function CompareEmptyState() {
                 />
               </Link>
             </li>
-          ))}
+            );
+          })}
         </ul>
       </section>
     </div>
