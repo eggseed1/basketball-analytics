@@ -132,9 +132,9 @@ export function WatchlistPanel() {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="flex flex-col items-center justify-center gap-2 rounded-md border border-dashed border-black/10 px-4 py-6 text-center transition-colors hover:bg-secondary/40"
+          className="flex flex-col items-center justify-center gap-2 rounded-xl px-4 py-4 text-center transition-colors hover:bg-secondary/50"
         >
-          <span className="flex size-10 items-center justify-center rounded-md bg-secondary text-foreground">
+          <span className="flex size-10 items-center justify-center rounded-full bg-secondary text-foreground">
             <Plus className="size-5" aria-hidden />
           </span>
           <div className="flex flex-col items-center gap-1 text-center">

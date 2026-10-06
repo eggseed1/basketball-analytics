@@ -1,9 +1,10 @@
 import { TeamLogo } from "@/components/brand/team-logo";
 import { TransactionDescription } from "@/components/offseason/transaction-description";
 import { TeamIdentity } from "@/components/teams/team-identity";
-import { TextLink } from "@/components/ui/text-link";
+import { AppLink } from "@/components/ui/app-link";
 import { listTransactionEvents } from "@/data/queries/offseason-tracker";
 import { resolvePlayersForTransactionEvents } from "@/data/queries/transaction-player-resolve";
+import { sectionLinkClassName } from "@/lib/design-system";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 
 /**
@@ -23,9 +24,9 @@ export async function OffseasonPulsePanel({ limit = 5 }: { limit?: number } = {}
     <section className="sports-card flex flex-col gap-3 px-4 py-4 sm:px-[20px] sm:py-[16px]">
       <div className="flex items-center justify-between gap-2">
         <h2 className="type-heading">Recent NBA Transactions</h2>
-        <TextLink href="/offseason" className="type-body-sm text-muted-foreground">
+        <AppLink href="/offseason" className={`type-body-sm ${sectionLinkClassName}`}>
           See all transactions →
-        </TextLink>
+        </AppLink>
       </div>
       <ul className="flex flex-col gap-4">
         {events.map((event) => {
@@ -53,7 +54,7 @@ export async function OffseasonPulsePanel({ limit = 5 }: { limit?: number } = {}
                   className="type-body-sm min-w-0 flex-1 truncate text-foreground"
                 />
               </div>
-              <time className="type-caption shrink-0 tabular-nums text-[#505050]">
+              <time className="type-caption shrink-0 tabular-nums text-muted-foreground">
                 {event.date}
               </time>
             </li>

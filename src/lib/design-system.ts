@@ -38,6 +38,10 @@ export const boardType = {
 export const textLinkClassName =
   "font-semibold underline decoration-foreground/40 underline-offset-2 hover:decoration-foreground";
 
+/** "See all →" style link in a section header; underlines on hover only. */
+export const sectionLinkClassName =
+  "font-semibold text-muted-foreground underline-offset-4 hover:text-foreground hover:underline";
+
 /** Hover-only (not a link) - never-played player mentions. */
 export const textHintClassName =
   "cursor-help font-semibold underline decoration-dotted decoration-foreground/40 underline-offset-2";

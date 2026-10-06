@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 
 import type { AnalyticsArticle } from "@/data/providers/insights/analytics-news";
 import { AppLink } from "@/components/ui/app-link";
+import { cn } from "@/lib/utils";
 
 type NewsApiResponse = {
   retrievedAt?: string;
@@ -124,12 +125,16 @@ export function AnalyticsDesk({
   const list =
     !hasLoaded || (articles.length === 0 && isPending) ? (
       <div
-        className="flex flex-col gap-px overflow-hidden rounded-[9px] border border-black/5 bg-black/5"
+        className={
+          embedded
+            ? "-mx-4 flex flex-col divide-y divide-border/70 sm:-mx-5"
+            : "flex flex-col gap-px overflow-hidden rounded-[9px] border border-black/5 bg-black/5"
+        }
         aria-busy="true"
         aria-label="Loading recent news"
       >
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="bg-card px-4 py-3.5">
+          <div key={i} className={embedded ? "px-4 py-3.5 sm:px-5" : "bg-card px-4 py-3.5"}>
                     <div className="mb-2 h-4 w-[80%] animate-pulse rounded bg-secondary" />
             <div className="h-3 w-[40%] animate-pulse rounded bg-secondary" />
           </div>
@@ -155,7 +160,7 @@ export function AnalyticsDesk({
       <ul
         className={
           embedded
-            ? `flex flex-col gap-px overflow-hidden rounded-[9px] border border-black/5 bg-black/5 ${
+            ? `-mx-4 -mb-4 flex flex-col divide-y divide-border/70 sm:-mx-5 sm:-mb-5 ${
                 isPending ? "opacity-70" : ""
               }`
             : `grid gap-px overflow-hidden rounded-md border border-black/5 bg-black/5 sm:grid-cols-2 lg:grid-cols-3 ${
@@ -165,10 +170,13 @@ export function AnalyticsDesk({
         aria-busy={isPending}
       >
         {articles.map((a) => (
-          <li key={a.id} className="bg-card">
+          <li key={a.id} className={embedded ? undefined : "bg-card"}>
             <AppLink
               href={a.url}
-              className="flex h-full flex-col gap-2 px-4 py-3.5 transition-colors hover:bg-secondary/40"
+              className={cn(
+                "flex h-full flex-col gap-2 px-4 py-3.5 transition-colors hover:bg-secondary/40",
+                embedded && "sm:px-5"
+              )}
             >
               {embedded ? (
                 <>
@@ -222,7 +230,7 @@ export function AnalyticsDesk({
 
   if (embedded) {
     return (
-      <section className="sports-card flex flex-col gap-3 p-4 sm:p-5">
+      <section className="sports-card flex flex-col gap-3 overflow-hidden p-4 sm:p-5">
         {body}
       </section>
     );

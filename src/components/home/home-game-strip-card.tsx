@@ -6,7 +6,7 @@ import { GlassSurface } from "@/components/brand/glass-surface";
 import { HistoricalTeamMark } from "@/components/brand/historical-team-mark";
 import { TeamIdentity } from "@/components/teams/team-identity";
 import type { GameSummary } from "@/data/types";
-import { textLinkClassName, type } from "@/lib/design-system";
+import { type } from "@/lib/design-system";
 import { buildGameMatchupTheme } from "@/lib/game-matchup-theme";
 import { cn } from "@/lib/utils";
 import {
@@ -83,7 +83,7 @@ function TeamRow({
 }) {
   const teamKey = brand.canonicalTeamId || brand.abbreviation;
   return (
-    <div className={cn("flex w-full items-center justify-between gap-2", lost && "opacity-60")}>
+    <div className="flex w-full items-center justify-between gap-4">
       <TeamIdentity
         teamKey={teamKey}
         label={brand.abbreviation}
@@ -91,12 +91,23 @@ function TeamRow({
         nameClassName="flex min-w-0 items-center gap-2 no-underline hover:no-underline"
       >
         <HistoricalTeamMark brand={brand} size="sm" />
-        <span className={cn(type.body, textLinkClassName, "tracking-tight")}>
+        <span
+          className={cn(
+            type.body,
+            "font-semibold tracking-tight",
+            lost && "text-muted-foreground"
+          )}
+        >
           {brand.abbreviation}
         </span>
       </TeamIdentity>
       {score != null ? (
-        <span className={cn(type.body, "font-semibold tabular-nums tracking-tight")}>
+        <span
+          className={cn(
+            "text-[24px] leading-none font-bold tabular-nums tracking-tight",
+            lost && "font-semibold text-muted-foreground"
+          )}
+        >
           {score}
         </span>
       ) : null}
@@ -142,7 +153,7 @@ export function HomeGameStripCard({ game }: { game: GameSummary }) {
       as="article"
       accentColor={matchup.awayWash}
       accentColorB={matchup.homeWash}
-      className="relative flex w-max min-w-[162px] shrink-0 flex-col gap-2.5 px-4 py-3"
+      className="relative flex w-max min-w-[168px] shrink-0 flex-col gap-2.5 rounded-[var(--card-radius)] px-4 py-3.5"
       style={
         winnerColor
           ? {
@@ -154,13 +165,13 @@ export function HomeGameStripCard({ game }: { game: GameSummary }) {
     >
       <TransitionLink
         href={`/games/${game.id}`}
-        className="absolute inset-0 z-0 rounded-md"
+        className="absolute inset-0 z-0 rounded-[inherit]"
         aria-label={`${awayBrand.abbreviation} at ${homeBrand.abbreviation}`}
       />
       <div className="relative z-[1] flex flex-col gap-2.5 pointer-events-none">
         {live ? (
           <div className="flex items-center gap-2">
-            <span className="rounded-lg bg-[#22703d] px-1.5 py-1 text-[12px] font-medium leading-none text-white">
+            <span className="rounded-full bg-[#22703d] px-2 py-1 text-[12px] font-semibold leading-none text-white">
               Live
             </span>
             {clock ? (

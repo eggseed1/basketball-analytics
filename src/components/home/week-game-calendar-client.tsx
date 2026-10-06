@@ -2,7 +2,8 @@
 
 import { useLayoutEffect, useRef } from "react";
 import { HomeGameStripCard } from "@/components/home/home-game-strip-card";
-import { TextLink } from "@/components/ui/text-link";
+import { AppLink } from "@/components/ui/app-link";
+import { sectionLinkClassName } from "@/lib/design-system";
 import { LiveScoreboardScope } from "@/components/sports/live-scoreboard-scope";
 import type { GameSummary } from "@/data/types";
 import { parseTipOffMs } from "@/lib/game-countdown";
@@ -50,7 +51,7 @@ function StripScroller({ games }: { games: GameSummary[] }) {
   }, [anchor]);
 
   return (
-    <div ref={scrollerRef} className="-mx-1 flex gap-4 touch-scroll-x px-1 pb-1">
+    <div ref={scrollerRef} className="-mx-1 -my-3 flex gap-4 touch-scroll-x px-1 py-3">
       {ordered.map((game) => (
         <HomeGameStripCard key={game.id} game={game} />
       ))}
@@ -69,18 +70,18 @@ export function WeekGameCalendarClient({
   games: StripGame[];
 }) {
   return (
-    <section className="sports-card flex flex-col gap-3 p-4 sm:p-[21px]">
+    <section className="flex min-w-0 flex-col gap-3">
       <div className="flex min-w-0 items-center justify-between gap-2">
         <h2 className="type-heading min-w-0">
           {mode === "week" ? "This week's games" : "Upcoming games"}
         </h2>
-        <TextLink
+        <AppLink
           href="/scores?view=week"
-          className="type-body-sm shrink-0 text-muted-foreground"
+          className={`type-body-sm shrink-0 ${sectionLinkClassName}`}
         >
           <span className="sm:hidden">Schedule →</span>
           <span className="hidden sm:inline">See all schedule →</span>
-        </TextLink>
+        </AppLink>
       </div>
 
       {initialGames.length === 0 ? (

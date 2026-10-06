@@ -49,7 +49,7 @@ export function FindingsSection({
   const asOf = todayIsoDate();
 
   return (
-    <section className="sports-card flex flex-col gap-3 p-4 sm:p-[21px]">
+    <section className="flex min-w-0 flex-col gap-3">
       <div>
         <h2 className="type-heading">Recent Insights</h2>
         <p className="type-body-sm text-muted-foreground">

@@ -4,7 +4,7 @@ import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { LaneOriginTag } from "@/components/sentiment/sentiment-source";
 import { getSentimentMoversBoard } from "@/data/queries/home-sentiment";
-import { textLinkClassName, type } from "@/lib/design-system";
+import { sectionLinkClassName, type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 
 function scorePct(score: number) {
@@ -52,15 +52,12 @@ function MoverList({
       <h3 className={cn(type.caption, "font-semibold uppercase tracking-wide text-muted-foreground")}>
         {title}
       </h3>
-      <ul className="flex flex-col gap-2">
+      <ul className="-mx-2 flex flex-col">
         {rows.map((row) => (
           <li key={row.playerId}>
             <Link
               href={`/players/${encodeURIComponent(row.playerId)}`}
-              className={cn(
-                "flex items-center gap-2 rounded-md border border-border/60 frost-surface-soft px-2 py-1.5 frost-surface-hover",
-                textLinkClassName
-              )}
+              className="flex items-center gap-2.5 rounded-xl px-2 py-1.5 transition-colors hover:bg-secondary/70"
             >
               <PlayerHeadshot
                 playerId={row.playerId}
@@ -81,8 +78,8 @@ function MoverList({
               </div>
               <span
                 className={cn(
-                  type.caption,
-                  "shrink-0 font-semibold tabular-nums",
+                  type.bodySm,
+                  "shrink-0 font-bold tabular-nums",
                   toneClass
                 )}
               >
@@ -118,7 +115,7 @@ export async function SentimentMoversPanel() {
         </div>
         <Link
           href="/sentiment"
-          className={cn(type.bodySm, textLinkClassName, "text-muted-foreground")}
+          className={cn(type.bodySm, sectionLinkClassName)}
         >
           League board →
         </Link>

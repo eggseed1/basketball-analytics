@@ -6,7 +6,7 @@ import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { MetricHelp } from "@/components/learn/metric-help";
 import { PlayerIdentity } from "@/components/players/player-identity";
-import { TextLink } from "@/components/ui/text-link";
+import { AppLink } from "@/components/ui/app-link";
 import type {
   HomeDarkoLeader,
   HomeDrblLeader,
@@ -20,7 +20,7 @@ import { BoardPlayerName } from "@/lib/board-compact-name";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { normalizePlayerName } from "@/lib/player-name";
 import { formatImpact, formatPct } from "@/lib/stat-explainers";
-import { textLinkClassName, type } from "@/lib/design-system";
+import { sectionLinkClassName, type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 
 type SortKey = "war1" | "drbl" | "darko" | "raptor" | "ts" | "usage";
@@ -468,13 +468,13 @@ export function TopPerformersPanel({
           <h2 className="type-heading min-w-0 wrap-break-word">
             {season ? `${season} top performers` : "Top performers"}
           </h2>
-          <TextLink
+          <AppLink
             href={leaderboardHref}
-            className="type-body-sm shrink-0 pt-0.5 text-muted-foreground"
+            className={cn(type.bodySm, "shrink-0 pt-0.5", sectionLinkClassName)}
           >
             <span className="sm:hidden">Leaderboard →</span>
             <span className="hidden sm:inline">See full leaderboard →</span>
-          </TextLink>
+          </AppLink>
         </div>
         <div className="-mx-1 flex flex-nowrap gap-1 touch-scroll-x px-1 pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {sortChips.map(([key, label]) => (
@@ -565,8 +565,7 @@ export function TopPerformersPanel({
                     <span
                       className={cn(
                         type.body,
-                        textLinkClassName,
-                        "min-w-0 flex-1 truncate"
+                        "min-w-0 flex-1 truncate font-semibold underline-offset-2 hover:underline"
                       )}
                     >
                       <BoardPlayerName name={row.name} />

@@ -372,8 +372,18 @@
     drop-shadow(0 0 2px rgb(255 255 255 / 10%));
 }
 
+:root {
+  --card-radius: 18px;
+}
+
+/* Era themes keep their own squarer corners. */
+.tm-scope {
+  --card-radius: var(--radius-md);
+}
+
 .sports-card {
-  @apply rounded-md border min-w-0 max-w-full;
+  @apply border min-w-0 max-w-full;
+  border-radius: var(--card-radius);
   background: var(--material-standard-bg);
   border-color: var(--material-standard-border);
   box-shadow: var(--material-standard-shadow);
