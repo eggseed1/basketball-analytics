@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { GameLabView } from "@/components/games/game-lab-view";
 import { GameIdentityShell } from "@/components/games/game-identity-shell";
 import { GamePreTipBoard } from "@/components/games/game-pre-tip-board";
+import { GamePreviewSection, GameTabs, type GameTab } from "@/components/games/game-preview-section";
 import { PossessionExplorerIsland } from "@/components/games/possession-explorer-island";
 import { RuntimeGameFallback } from "@/components/games/runtime-game-fallback";
 import { HistoricalGameExperience } from "@/components/history/historical-game-experience";
@@ -63,11 +64,20 @@ export default async function GamePage({ params, searchParams }: GamePageProps) 
   const status = shell.game.status;
   const preTip = status === "scheduled" || status === "pregame" || status === "delayed";
   const heroHasLineScore = Math.min(shell.game.homePeriodScores?.length ?? 0, shell.game.awayPeriodScores?.length ?? 0) > 0;
+  const defaultTab: GameTab = preTip ? "preview" : "game";
+  const tabParam = first(sp.tab);
+  const tab: GameTab = tabParam === "preview" || tabParam === "game" ? tabParam : defaultTab;
+  const tabOptions: Array<{ id: GameTab; label: string }> = preTip
+    ? [{ id: "preview", label: "Preview" }, { id: "game", label: "Box score & plays" }]
+    : [{ id: "game", label: "Game" }, { id: "preview", label: "Preview" }];
+  const showGame = presentation.canRenderDeepFeatures && tab === "game";
   const body = <main className="site-shell flex flex-1 flex-col gap-5 py-5 sm:gap-6 sm:py-7">
     <GameIdentityShell game={shell.game} brandPresentation={brandPresentation} arrivalLabel={arrival?.label} />
-    {presentation.canRenderDeepFeatures && preTip ? <GamePreTipBoard game={shell.game} /> : presentation.canRenderDeepFeatures ? <Suspense fallback={<DestinationSectionSkeleton label="Loading Game Flow & shots…" />}><HistoricalDeepBody gameId={gameId} seasonHint={seasonHint} homeLabel={shell.game.homeTeamAbbr ?? "Home"} awayLabel={shell.game.awayTeamAbbr ?? "Away"} /></Suspense> : null}
-    {!presentation.canRenderDeepFeatures ? <GameUnavailablePanel gameId={gameId} backHref={backHref} /> : preTip ? null : <Suspense fallback={<DestinationSectionSkeleton label="Loading Game Lab analysis…" />}><GameLabDeepBody gameId={gameId} arrival={arrival} hidePeriodTable={heroHasLineScore} /></Suspense>}
-    {presentation.canRenderDeepFeatures && !preTip ? (
+    {presentation.canRenderDeepFeatures ? <GameTabs gameId={gameId} active={tab} options={tabOptions} defaultTab={defaultTab} query={sp} /> : null}
+    {presentation.canRenderDeepFeatures && tab === "preview" ? <Suspense fallback={<DestinationSectionSkeleton label="Loading game preview…" />}><GamePreviewSection game={shell.game} /></Suspense> : null}
+    {showGame && preTip ? <GamePreTipBoard game={shell.game} /> : showGame ? <Suspense fallback={<DestinationSectionSkeleton label="Loading Game Flow & shots…" />}><HistoricalDeepBody gameId={gameId} seasonHint={seasonHint} homeLabel={shell.game.homeTeamAbbr ?? "Home"} awayLabel={shell.game.awayTeamAbbr ?? "Away"} /></Suspense> : null}
+    {!presentation.canRenderDeepFeatures ? <GameUnavailablePanel gameId={gameId} backHref={backHref} /> : !showGame || preTip ? null : <Suspense fallback={<DestinationSectionSkeleton label="Loading Game Lab analysis…" />}><GameLabDeepBody gameId={gameId} arrival={arrival} hidePeriodTable={heroHasLineScore} /></Suspense>}
+    {showGame && !preTip ? (
       <details className="group sports-card overflow-hidden">
         <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3.5 sm:px-5 [&::-webkit-details-marker]:hidden">
           <span className="flex flex-col">
