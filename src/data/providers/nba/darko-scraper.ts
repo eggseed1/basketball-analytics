@@ -99,10 +99,19 @@ function darkoDataUrl(canonicalSeason: string): string {
   return `${base}&season=${year}`;
 }
 
-function parseDarkoPlayers(decoded: unknown): DarkoPlayerRow[] {
+/** The player table is either an array of rows or `{ keys, values }` columns. */
+function darkoPlayerRows(players: unknown): unknown[] {
+  if (Array.isArray(players)) return players;
+  const { keys, values } = (players ?? {}) as { keys?: unknown; values?: unknown };
+  if (!Array.isArray(keys) || !Array.isArray(values) || !Array.isArray(values[0])) return [];
+  return (values[0] as unknown[]).map((_, i) =>
+    Object.fromEntries(keys.map((k, j) => [String(k), (values[j] as unknown[] | undefined)?.[i]]))
+  );
+}
+
+export function parseDarkoPlayers(decoded: unknown): DarkoPlayerRow[] {
   if (!decoded || typeof decoded !== "object") return [];
-  const players = (decoded as { players?: unknown }).players;
-  if (!Array.isArray(players)) return [];
+  const players = darkoPlayerRows((decoded as { players?: unknown }).players);
 
   const rows: DarkoPlayerRow[] = [];
   for (const raw of players) {

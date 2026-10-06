@@ -94,10 +94,18 @@ function num(value) {
   return 0;
 }
 
+/** The player table is either an array of rows or `{ keys, values }` columns. */
+function darkoPlayerRows(players) {
+  if (Array.isArray(players)) return players;
+  const keys = players?.keys;
+  const values = players?.values;
+  if (!Array.isArray(keys) || !Array.isArray(values) || !Array.isArray(values[0])) return [];
+  return values[0].map((_, i) => Object.fromEntries(keys.map((k, j) => [k, values[j]?.[i]])));
+}
+
 function parseDarkoPlayers(decoded) {
   if (!decoded || typeof decoded !== "object") return [];
-  const players = decoded.players;
-  if (!Array.isArray(players)) return [];
+  const players = darkoPlayerRows(decoded.players);
   const rows = [];
   for (const raw of players) {
     if (!raw || typeof raw !== "object") continue;

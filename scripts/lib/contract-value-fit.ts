@@ -81,17 +81,27 @@ export function loadInputs(): ContractValueInputs {
     bySeasonEndYear: Record<string, { salaryCapM: number; minSalaryM: number }>;
   }>("data/cba/salary-cap-by-year.json").bySeasonEndYear;
 
-  // Salary CSV: the Season column is the year the season ends (2025 = 2024-25).
+  // Salary CSVs: the Season column is the year the season ends (2025 = 2024-25).
+  // The supplement only fills players and seasons the main file lacks.
   const salaryBySeason = new Map<string, Map<string, number>>();
-  for (const line of readFileSync(path.join(root, "data/salaries/player-salaries-2000-2025.csv"), "utf8")
-    .split("\n")
-    .slice(1)) {
-    const m = line.match(/^(.*),(\d+),(\d{4})\s*$/);
-    if (!m) continue;
-    const season = seasonLabel(Number(m[3]) - 1);
+  const readSalaries = (rel: string) => {
+    const out = new Map<string, Map<string, number>>();
+    for (const line of readFileSync(path.join(root, rel), "utf8").split("\n").slice(1)) {
+      const m = line.match(/^(.*),(\d+),(\d{4})\s*$/);
+      if (!m) continue;
+      const season = seasonLabel(Number(m[3]) - 1);
+      const bucket = out.get(season) ?? new Map<string, number>();
+      const key = looseName(m[1].replace(/^"|"$/g, ""));
+      bucket.set(key, (bucket.get(key) ?? 0) + Number(m[2]));
+      out.set(season, bucket);
+    }
+    return out;
+  };
+  for (const [season, bucket] of readSalaries("data/salaries/player-salaries-2000-2025.csv"))
+    salaryBySeason.set(season, bucket);
+  for (const [season, extra] of readSalaries("data/salaries/player-salaries-supplement.csv")) {
     const bucket = salaryBySeason.get(season) ?? new Map<string, number>();
-    const key = looseName(m[1].replace(/^"|"$/g, ""));
-    bucket.set(key, (bucket.get(key) ?? 0) + Number(m[2]));
+    for (const [key, salary] of extra) if (!bucket.has(key)) bucket.set(key, salary);
     salaryBySeason.set(season, bucket);
   }
 

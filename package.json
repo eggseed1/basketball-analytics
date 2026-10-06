@@ -15,6 +15,7 @@
     "test:arcade": "tsx scripts/test-arcade.ts",
     "arcade:build": "node scripts/build-arcade-data.mjs",
     "test:contract-value": "tsx scripts/test-contract-value.ts",
+    "test:darko-parse": "tsx scripts/test-darko-parse.ts",
     "bake:contract-value": "tsx scripts/build-contract-value.ts",
     "eval:contract-value": "tsx scripts/eval-contract-value.ts",
     "predeploy": "npm run typecheck && npm test",

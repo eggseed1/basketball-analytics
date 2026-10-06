@@ -65,6 +65,10 @@ function MissingNote({ reason, model }: { reason: ContractValueGap; model: Contr
   return <p className={cn(type.bodySm, "text-muted-foreground")}>{GAP_TEXT[reason](model)}</p>;
 }
 
+const NUMBER_WORDS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
+const numberWord = (n: number) => NUMBER_WORDS[n] ?? String(n);
+const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
 function listJoin(items: string[]): string {
   if (items.length <= 1) return items.join("");
   return `${items.slice(0, -1).join(", ")} and ${items[items.length - 1]}`;
@@ -72,6 +76,11 @@ function listJoin(items: string[]): string {
 
 function MethodNotes({ model }: { model: ContractValueModel }) {
   const nextSeason = model.outOfSample.byHorizon.find((row) => row.horizon === 1);
+  const farthest = model.outOfSample.byHorizon.reduce<(typeof model.outOfSample.byHorizon)[number] | null>(
+    (best, row) => (row.horizon > 1 && (!best || row.horizon > best.horizon) ? row : best),
+    null
+  );
+  const refits = model.outOfSample.fitThrough;
   const capSeasonPrice = formatUsdCompact(model.pricePerWinShare * model.capSeasonCap);
   const priceFrom = model.priceSeasons[0];
   const priceTo = model.priceSeasons[model.priceSeasons.length - 1];
@@ -98,13 +107,19 @@ function MethodNotes({ model }: { model: ContractValueModel }) {
       </p>
       {nextSeason ? (
         <p>
-          To test it, we refit the model using only seasons through{" "}
-          {listJoin(model.outOfSample.fitThrough)}, valued what players were actually paid the
-          next season, and compared with what they did. The typical miss was{" "}
-          {nextSeason.rmseWins.toFixed(2)} wins, against {nextSeason.repeatRmseWins.toFixed(2)} for
-          assuming a player repeats his last season. {Math.round(nextSeason.aboveHigh * 100)}% of
-          players beat the top of the range. Fewer than {Math.max(1, Math.ceil(nextSeason.belowLow * 100))}%
-          fell below the bottom, since worth can&apos;t drop under the minimum salary.
+          To test it, we refit the model{" "}
+          {refits.length > 1
+            ? `${numberWord(refits.length)} times, each with only the seasons through ${refits.slice(0, -1).join(", ")} or ${refits[refits.length - 1]}`
+            : `with only the seasons through ${refits[0]}`}
+          , valued what players were actually paid afterward, and compared with what they did. The
+          typical miss the next season was {nextSeason.rmseWins.toFixed(2)} wins, against{" "}
+          {nextSeason.repeatRmseWins.toFixed(2)} for assuming a player repeats his last season.
+          {farthest
+            ? ` ${capitalize(numberWord(farthest.horizon))} seasons out it was ${farthest.rmseWins.toFixed(2)} wins, against ${farthest.repeatRmseWins.toFixed(2)}.`
+            : null}{" "}
+          {Math.round(nextSeason.aboveHigh * 100)}% of players beat the top of the range. Fewer
+          than {Math.max(1, Math.ceil(nextSeason.belowLow * 100))}% fell below the bottom, since
+          worth can&apos;t drop under the minimum salary.
         </p>
       ) : null}
       <p>

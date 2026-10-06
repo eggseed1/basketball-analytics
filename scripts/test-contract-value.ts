@@ -164,7 +164,10 @@ function testSnapshot() {
   assert.ok(snap.model.backtest.every((b) => b.coverage80 > 0.7 && b.coverage80 < 0.9));
   const next = snap.model.outOfSample.byHorizon.find((b) => b.horizon === 1);
   assert.ok(next, "out-of-sample check ran");
-  assert.ok(next.rmseWins < next.repeatRmseWins, "beats repeating last season out of sample");
+  assert.ok(
+    snap.model.outOfSample.byHorizon.every((b) => b.rmseWins < b.repeatRmseWins),
+    "beats repeating last season out of sample at every horizon"
+  );
   assert.ok(next.aboveHigh > 0.05 && next.aboveHigh < 0.2, "top of the range is roughly a 90th percentile");
   const valued = Object.values(snap.players).filter((p) => "surplus" in p);
   assert.equal(valued.length, snap.model.contracts);

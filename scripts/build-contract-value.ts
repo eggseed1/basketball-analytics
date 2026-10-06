@@ -207,7 +207,7 @@ const oos = outOfSample(inputs, capFor2(capStartYear));
 const testedOutOfSample = {
   fitThrough: oos.anchors.map(seasonLabel),
   checkedThrough: seasonLabel(oos.lastSalaried),
-  byHorizon: [1, 2]
+  byHorizon: [1, 2, 3]
     .map((horizon) => {
       const rows = oos.years.filter((r) => r.horizon === horizon);
       if (!rows.length) return null;
