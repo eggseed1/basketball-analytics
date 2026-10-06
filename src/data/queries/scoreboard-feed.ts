@@ -282,7 +282,7 @@ export async function getHomeWeekStripFeed(
   const season =
     options.season ?? canonicalSeasonFromStartYear(currentNbaStartYear());
   const limit = options.limit ?? 10;
-  const key = `${season}:${limit}`;
+  const key = `full-week:${season}:${limit}`;
   return softLoad({
     key,
     cache: homeStripCache,

@@ -296,8 +296,8 @@ export async function fetchRecentScoreboardGames(options: {
 }
 
 /**
- * Games in the current local week (Sun–Sat). When the week is empty
- * (offseason / break), returns upcoming scheduled tip-offs as a preview.
+ * Every game in the current local week (Sun–Sat). When the week is empty
+ * (offseason / break), returns up to `limit` upcoming tip-offs as a preview.
  *
  * Prefer the bundled runtime snapshot first — `site.api.espn.com` is often 403
  * from Cloudflare Workers and burning month fetches emptied the home strip.
@@ -351,7 +351,7 @@ export async function fetchHomeWeekStrip(options: {
     );
 
   if (weekGames.length) {
-    return { mode: "week", games: weekGames.slice(0, limit) };
+    return { mode: "week", games: weekGames };
   }
 
   const upcomingSeason = upcomingScheduleSeason(now);
@@ -424,7 +424,7 @@ function homeStripFromRuntimeSnapshot(options: {
         : a.gameDate.localeCompare(b.gameDate)
     );
   if (weekGames.length) {
-    return { mode: "week", games: weekGames.slice(0, limit) };
+    return { mode: "week", games: weekGames };
   }
 
   const upcoming = pool
