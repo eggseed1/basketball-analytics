@@ -977,6 +977,15 @@ html:not([data-surface="glass"]) .color-scheme-switch {
   --orb-b: color-mix(in oklab, var(--atmosphere-b, transparent) 11%, transparent);
 }
 
+/* Light: rebuild each hue as a clean pastel instead of fading a dark brand
+   color over gray, which reads as dusty lavender and pink. */
+@supports (color: oklch(from red l c h)) {
+  .page-atmosphere {
+    --orb-a: oklch(from var(--atmosphere-a) 0.87 0.075 h / 0.75);
+    --orb-b: oklch(from var(--atmosphere-b) 0.9 0.06 calc(h + 18) / 0.6);
+  }
+}
+
 .page-atmosphere::before,
 .page-atmosphere::after {
   content: "";
@@ -1014,8 +1023,15 @@ html:not([data-surface="glass"]) .color-scheme-switch {
 /* Dark: lower chroma so large fields don't vibrate; the eased mid stop above
    keeps the falloff from banding at low lightness. */
 .dark .page-atmosphere {
-  --orb-a: color-mix(in oklab, var(--atmosphere-a, transparent) 20%, transparent);
-  --orb-b: color-mix(in oklab, var(--atmosphere-b, transparent) 13%, transparent);
+  --orb-a: color-mix(in oklab, var(--atmosphere-a, transparent) 12%, transparent);
+  --orb-b: color-mix(in oklab, var(--atmosphere-b, transparent) 8%, transparent);
+}
+
+@supports (color: oklch(from red l c h)) {
+  .dark .page-atmosphere {
+    --orb-a: oklch(from var(--atmosphere-a) 0.3 0.09 h / 0.4);
+    --orb-b: oklch(from var(--atmosphere-b) 0.27 0.08 h / 0.28);
+  }
 }
 
 @keyframes atmosphere-drift-a {
