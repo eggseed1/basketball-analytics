@@ -5,10 +5,10 @@
     "season": "2026-27",
     "snapshotDate": "2026-10-06",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-10-06T18:22:06.019Z",
+    "builtAt": "2026-10-06T20:04:48.614Z",
     "rosterPlayerCount": 492,
-    "headlinesScanned": 1513,
-    "latestHeadlineAt": "2026-10-06T18:21:23.000Z",
+    "headlinesScanned": 1543,
+    "latestHeadlineAt": "2026-10-06T19:52:13.000Z",
     "latestTransactionDate": "2026-10-05",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -679,15 +679,16 @@
     {
       "id": "mv-trade-6589-20261005",
       "headline": "Draymond Green, Mark Williams and others: trade talk",
-      "primaryClaimId": "mv-d2a9f6adeed1b232",
+      "primaryClaimId": "mv-9a555206cc4a7ca7",
       "claimIds": [
         "mv-ac71e037974744a0",
-        "mv-d2a9f6adeed1b232"
+        "mv-d2a9f6adeed1b232",
+        "mv-9a555206cc4a7ca7"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-05T07:47:20.000Z",
-      "lastMeaningfulAt": "2026-10-05T11:48:56.000Z",
+      "lastMeaningfulAt": "2026-10-06T19:09:44.000Z",
       "linkedPlayerIds": [
         "6589",
         "4701232",
@@ -741,21 +742,24 @@
     },
     {
       "id": "mv-contract-4683692-20261006",
-      "headline": "Cason Wallace: extension talks with the Thunder",
-      "primaryClaimId": "mv-d46db2f4a349df07",
+      "headline": "Cason Wallace and Karl-Anthony Towns: extension talks",
+      "primaryClaimId": "mv-ed026c229b224a4c",
       "claimIds": [
         "mv-d46db2f4a349df07",
-        "mv-11ebf253ed00ee6f"
+        "mv-11ebf253ed00ee6f",
+        "mv-ed026c229b224a4c"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-06T17:10:57.000Z",
-      "lastMeaningfulAt": "2026-10-06T17:21:45.000Z",
+      "lastMeaningfulAt": "2026-10-06T18:57:35.000Z",
       "linkedPlayerIds": [
-        "4683692"
+        "4683692",
+        "3136195"
       ],
       "linkedTeamIds": [
-        "25"
+        "25",
+        "18"
       ]
     },
     {
@@ -3838,6 +3842,46 @@
       ],
       "isOriginal": false,
       "negotiationSpecificity": "active_talks"
+    },
+    {
+      "id": "mv-ed026c229b224a4c",
+      "clusterId": "mv-contract-4683692-20261006",
+      "summary": "Extension Notes: Miller, Wallace, Towns, Davis",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-06T18:57:35.000Z",
+      "sourceId": "reporter:brett-siegel",
+      "sourceLabel": "Hoops Rumors, citing Brett Siegel (ClutchPoints)",
+      "reporterLabel": "Brett Siegel",
+      "sourceUrl": "https://www.hoopsrumors.com/2026/10/extension-notes-miller-wallace-towns-davis.html",
+      "playerIds": [
+        "3136195",
+        "4683692"
+      ],
+      "teamIds": [],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-9a555206cc4a7ca7",
+      "clusterId": "mv-trade-6589-20261005",
+      "summary": "Dalton Knecht Dealt ‘Painful’ Trade, Roster Cut News After Lakers Preseason Game",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-06T19:09:44.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/los-angeles-lakers/dalton-knecht-painful-trade-roster-cut-news-preseason-game/",
+      "playerIds": [
+        "4897943"
+      ],
+      "teamIds": [
+        "13"
+      ],
+      "isOriginal": true
     },
     {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",
