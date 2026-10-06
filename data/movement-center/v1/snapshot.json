@@ -3,13 +3,13 @@
     "methodologyVersion": "movement-m1-0.2+movement-rules-v2",
     "status": "NEWS_INGEST_M1",
     "season": "2026-27",
-    "snapshotDate": "2026-10-04",
+    "snapshotDate": "2026-10-06",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-10-04T16:28:41.535Z",
-    "rosterPlayerCount": 475,
-    "headlinesScanned": 804,
-    "latestHeadlineAt": "2026-10-04T16:27:45.000Z",
-    "latestTransactionDate": "2026-10-02",
+    "builtAt": "2026-10-06T16:48:55.757Z",
+    "rosterPlayerCount": 492,
+    "headlinesScanned": 1097,
+    "latestHeadlineAt": "2026-10-06T16:39:30.000Z",
+    "latestTransactionDate": "2026-10-05",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
       "Basketball News",
@@ -30,7 +30,7 @@
   "sources": {
     "outlet:cbs-sports": {
       "label": "CBS Sports",
-      "credibility": 12
+      "credibility": 16
     },
     "reporter:sam-amick": {
       "label": "Sam Amick (The Athletic)",
@@ -78,11 +78,11 @@
     },
     "outlet:talkbasket": {
       "label": "TalkBasket",
-      "credibility": 12
+      "credibility": 16
     },
     "outlet:clutchpoints": {
       "label": "ClutchPoints",
-      "credibility": 12
+      "credibility": 16
     },
     "reporter:anthony-slater": {
       "label": "Anthony Slater (ESPN)",
@@ -95,6 +95,14 @@
     "reporter:michael-scotto": {
       "label": "Michael Scotto (HoopsHype)",
       "credibility": 30
+    },
+    "reporter:malika-andrews": {
+      "label": "Malika Andrews (ESPN)",
+      "credibility": 18
+    },
+    "reporter:josh-robbins": {
+      "label": "Josh Robbins (The Athletic)",
+      "credibility": 22
     },
     "ledger:nba-player-movement": {
       "label": "Player movement log",
@@ -168,8 +176,8 @@
     },
     {
       "id": "mv-contract-4433621-20260911",
-      "headline": "Jalen Duren: extension talks with the Pistons",
-      "primaryClaimId": "mv-53bd501523aa2ead",
+      "headline": "Jalen Duren: free agency",
+      "primaryClaimId": "mv-8ffe37ccf68a5ff9",
       "claimIds": [
         "mv-bd4b79713a4e86bb",
         "mv-978793257df60f15",
@@ -185,6 +193,7 @@
         "mv-2bd7d9d17845669d",
         "mv-4de1ae6dca2bb178",
         "mv-53bd501523aa2ead",
+        "mv-8ffe37ccf68a5ff9",
         "mv-espn-tx-48599cfb4807969c"
       ],
       "evidenceClass": "reported",
@@ -219,7 +228,7 @@
     },
     {
       "id": "mv-trade-2990984-20260922",
-      "headline": "Buddy Hield and Rob Dillingham: trade talk",
+      "headline": "Buddy Hield: trade talk",
       "primaryClaimId": "mv-03093be1e3ec34b6",
       "claimIds": [
         "mv-dbf792d3021f6e7f",
@@ -233,8 +242,7 @@
       "firstSeenAt": "2026-09-22T20:27:56.000Z",
       "lastMeaningfulAt": "2026-09-22T12:00:00.000Z",
       "linkedPlayerIds": [
-        "2990984",
-        "4684275"
+        "2990984"
       ],
       "linkedTeamIds": [
         "1",
@@ -299,12 +307,13 @@
     },
     {
       "id": "mv-contract-3975-20260923",
-      "headline": "Stephen Curry: reported extension with the Warriors",
+      "headline": "Stephen Curry: extension talks with the Warriors",
       "primaryClaimId": "mv-bfd38ba855ed91e6",
       "claimIds": [
         "mv-bfd38ba855ed91e6",
         "mv-63fb5a213b3b2e78",
         "mv-575ee62b7a318d43",
+        "mv-5b49f40d06ebadd6",
         "mv-nba-tx-2e37f9a26a48f33b"
       ],
       "evidenceClass": "reported",
@@ -363,15 +372,17 @@
     },
     {
       "id": "mv-contract-6583-20260929",
-      "headline": "Anthony Davis: contract future with the Wizards",
+      "headline": "Anthony Davis: contract talks with the Wizards",
       "primaryClaimId": "mv-fe22382571817f01",
       "claimIds": [
-        "mv-fe22382571817f01"
+        "mv-fe22382571817f01",
+        "mv-e60edd87d81db95b",
+        "mv-500720ece277bd6d"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-09-29T16:09:17.000Z",
-      "lastMeaningfulAt": "2026-09-29T16:09:17.000Z",
+      "lastMeaningfulAt": "2026-10-06T15:07:16.000Z",
       "linkedPlayerIds": [
         "6583"
       ],
@@ -395,8 +406,7 @@
         "4433629"
       ],
       "linkedTeamIds": [
-        "7",
-        "30"
+        "7"
       ]
     },
     {
@@ -439,15 +449,17 @@
     {
       "id": "mv-trade-6583-20261001",
       "headline": "Anthony Davis and Jalen Duren: trade talk",
-      "primaryClaimId": "mv-56a01e0c9bda9ca3",
+      "primaryClaimId": "mv-e2a0cf1a5c6391a7",
       "claimIds": [
         "mv-56a01e0c9bda9ca3",
-        "mv-2520e9473d34035f"
+        "mv-2520e9473d34035f",
+        "mv-e2a0cf1a5c6391a7",
+        "mv-fc43e842c7eee4c2"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-01T07:22:01.000Z",
-      "lastMeaningfulAt": "2026-10-01T17:07:52.000Z",
+      "lastMeaningfulAt": "2026-10-06T13:32:26.000Z",
       "linkedPlayerIds": [
         "6583",
         "4433621"
@@ -535,18 +547,99 @@
     },
     {
       "id": "mv-contract-4431823-20261002",
-      "headline": "Miles McBride and Karl-Anthony Towns: contract future with the Knicks",
-      "primaryClaimId": "mv-3c89b8ac3f9ac8e7",
+      "headline": "Miles McBride and Karl-Anthony Towns: extension talks with the Knicks",
+      "primaryClaimId": "mv-849384fc38565347",
       "claimIds": [
         "mv-c48edb09abf0e0a6",
-        "mv-3c89b8ac3f9ac8e7"
+        "mv-3c89b8ac3f9ac8e7",
+        "mv-654ee87ed2c75e15",
+        "mv-1cc8587f7a4d28d7",
+        "mv-849384fc38565347",
+        "mv-3074c1bbcb692f92"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-02T15:41:33.000Z",
-      "lastMeaningfulAt": "2026-10-04T06:05:47.000Z",
+      "lastMeaningfulAt": "2026-10-05T19:13:37.000Z",
       "linkedPlayerIds": [
         "4431823",
+        "3136195"
+      ],
+      "linkedTeamIds": [
+        "18"
+      ]
+    },
+    {
+      "id": "mv-trade-6589-20261005",
+      "headline": "Draymond Green, Mark Williams and others: trade talk",
+      "primaryClaimId": "mv-ac71e037974744a0",
+      "claimIds": [
+        "mv-ac71e037974744a0"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-10-05T07:47:20.000Z",
+      "lastMeaningfulAt": "2026-10-05T07:47:20.000Z",
+      "linkedPlayerIds": [
+        "6589",
+        "4701232",
+        "4897943"
+      ],
+      "linkedTeamIds": [
+        "9",
+        "21",
+        "13"
+      ]
+    },
+    {
+      "id": "mv-trade-4278078-20261005",
+      "headline": "P.J. Washington: trade talk",
+      "primaryClaimId": "mv-4da6b613ea64f575",
+      "claimIds": [
+        "mv-4da6b613ea64f575"
+      ],
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "firstSeenAt": "2026-10-05T14:38:03.000Z",
+      "lastMeaningfulAt": "2026-10-05T14:38:03.000Z",
+      "linkedPlayerIds": [
+        "4278078"
+      ],
+      "linkedTeamIds": [
+        "6"
+      ]
+    },
+    {
+      "id": "mv-trade-3155942-20261005",
+      "headline": "Domantas Sabonis: trade talk",
+      "primaryClaimId": "mv-bf030a939aada1a7",
+      "claimIds": [
+        "mv-bf030a939aada1a7"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-10-05T18:51:31.000Z",
+      "lastMeaningfulAt": "2026-10-05T18:51:31.000Z",
+      "linkedPlayerIds": [
+        "3155942"
+      ],
+      "linkedTeamIds": [
+        "23"
+      ]
+    },
+    {
+      "id": "mv-trade-3062679-20261006",
+      "headline": "Josh Hart and Karl-Anthony Towns: trade talk",
+      "primaryClaimId": "mv-16c64cf12c0ffcaa",
+      "claimIds": [
+        "mv-16c64cf12c0ffcaa"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-10-06T13:48:55.000Z",
+      "lastMeaningfulAt": "2026-10-06T13:48:55.000Z",
+      "linkedPlayerIds": [
+        "3062679",
         "3136195"
       ],
       "linkedTeamIds": [
@@ -650,6 +743,58 @@
       "linkedTeamIds": [
         "22",
         "29"
+      ]
+    },
+    {
+      "deal": {
+        "date": "2026-06-30",
+        "sides": [
+          {
+            "teamId": "1",
+            "teamName": "Hawks",
+            "receives": [
+              {
+                "label": "Devin Carter",
+                "playerId": "4433188",
+                "fromTeamId": "23"
+              },
+              {
+                "label": "draft consideration",
+                "nonPlayer": true,
+                "fromTeamId": "23"
+              }
+            ]
+          },
+          {
+            "teamId": "23",
+            "teamName": "Kings",
+            "receives": [
+              {
+                "label": "draft consideration",
+                "nonPlayer": true,
+                "fromTeamId": "1"
+              }
+            ]
+          }
+        ]
+      },
+      "id": "mv-tx-espn-tx-396f46272dfc3ae4",
+      "headline": "Hawks–Kings trade: Devin Carter",
+      "primaryClaimId": "mv-espn-tx-396f46272dfc3ae4",
+      "claimIds": [
+        "mv-espn-tx-396f46272dfc3ae4",
+        "mv-espn-tx-f4e2d0d9fd525a34"
+      ],
+      "evidenceClass": "reported",
+      "state": "completed",
+      "firstSeenAt": "2026-06-30T12:00:00.000Z",
+      "lastMeaningfulAt": "2026-06-30T12:00:00.000Z",
+      "linkedPlayerIds": [
+        "4433188"
+      ],
+      "linkedTeamIds": [
+        "1",
+        "23"
       ]
     },
     {
@@ -1001,7 +1146,6 @@
               },
               {
                 "label": "D'Angelo Russell",
-                "playerId": "3136776",
                 "fromTeamId": "27"
               },
               {
@@ -1092,7 +1236,7 @@
         ]
       },
       "id": "mv-tx-espn-tx-69b6aae7bc346076",
-      "headline": "Grizzlies–Mavericks–Pistons–Wizards–Clippers–Bucks trade: D'Angelo Russell, Isaiah Stewart and 6 more",
+      "headline": "Grizzlies–Mavericks–Pistons–Wizards–Clippers–Bucks trade: Isaiah Stewart, AJ Johnson and 5 more",
       "primaryClaimId": "mv-espn-tx-69b6aae7bc346076",
       "claimIds": [
         "mv-espn-tx-69b6aae7bc346076",
@@ -1106,7 +1250,6 @@
       "firstSeenAt": "2026-07-08T12:00:00.000Z",
       "lastMeaningfulAt": "2026-07-08T12:00:00.000Z",
       "linkedPlayerIds": [
-        "3136776",
         "4432810",
         "5170947",
         "2990962",
@@ -1711,7 +1854,6 @@
             "receives": [
               {
                 "label": "John Konchar",
-                "playerId": "3134932",
                 "fromTeamId": "26"
               },
               {
@@ -1724,7 +1866,7 @@
         ]
       },
       "id": "mv-tx-espn-tx-7c6c677685090c8a",
-      "headline": "Jazz–Timberwolves trade: John Konchar, Josh Green and 1 more",
+      "headline": "Jazz–Timberwolves trade: Josh Green and Cody Williams",
       "primaryClaimId": "mv-espn-tx-7c6c677685090c8a",
       "claimIds": [
         "mv-espn-tx-7c6c677685090c8a",
@@ -1735,7 +1877,6 @@
       "firstSeenAt": "2026-08-29T12:00:00.000Z",
       "lastMeaningfulAt": "2026-08-29T12:00:00.000Z",
       "linkedPlayerIds": [
-        "3134932",
         "4432811",
         "4895758"
       ],
@@ -1817,7 +1958,6 @@
             "receives": [
               {
                 "label": "Rob Dillingham",
-                "playerId": "4684275",
                 "fromTeamId": "4"
               }
             ]
@@ -1836,7 +1976,7 @@
         ]
       },
       "id": "mv-tx-espn-tx-94bd99e618dd12d5",
-      "headline": "Hornets–Bulls trade: Buddy Hield and Rob Dillingham",
+      "headline": "Hornets–Bulls trade: Buddy Hield",
       "primaryClaimId": "mv-espn-tx-94bd99e618dd12d5",
       "claimIds": [
         "mv-espn-tx-94bd99e618dd12d5",
@@ -1847,8 +1987,7 @@
       "firstSeenAt": "2026-09-27T12:00:00.000Z",
       "lastMeaningfulAt": "2026-09-27T12:00:00.000Z",
       "linkedPlayerIds": [
-        "2990984",
-        "4684275"
+        "2990984"
       ],
       "linkedTeamIds": [
         "30",
@@ -2224,8 +2363,7 @@
       "sourceLabel": "The Athletic",
       "sourceUrl": "https://www.nytimes.com/athletic/7633448/2026/09/26/bulls-hornets-trade-buddy-hield/",
       "playerIds": [
-        "2990984",
-        "4684275"
+        "2990984"
       ],
       "teamIds": [
         "4",
@@ -2852,6 +2990,289 @@
       "isOriginal": false
     },
     {
+      "id": "mv-e2a0cf1a5c6391a7",
+      "clusterId": "mv-trade-6583-20261001",
+      "summary": "Jalen Duren says he wants 'to be a Piston for life' despite contentious free agency, trade rumors",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-04T20:21:30.000Z",
+      "sourceId": "outlet:cbs-sports",
+      "sourceLabel": "CBS Sports",
+      "sourceUrl": "https://www.cbssports.com/nba/news/jalen-duren-piston-for-life-free-agency/",
+      "playerIds": [
+        "4433621"
+      ],
+      "teamIds": [],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-8ffe37ccf68a5ff9",
+      "clusterId": "mv-contract-4433621-20260911",
+      "summary": "Jalen Duren Wants To Be 'Piston For Life' After Lengthy Restricted Free Agency",
+      "claimType": "free_agent_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-05T01:55:19.000Z",
+      "sourceId": "outlet:realgm",
+      "sourceLabel": "RealGM",
+      "sourceUrl": "https://basketball.realgm.com/wiretap/287515/Jalen-Duren-Wants-To-Be-Piston-For-Life-After-Lengthy-Restricted-Free-Agency",
+      "playerIds": [
+        "4433621"
+      ],
+      "teamIds": [],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-ac71e037974744a0",
+      "clusterId": "mv-trade-6589-20261005",
+      "summary": "Draymond Green: ‘The Mark Williams trade ultimately ruined’ Dalton Knecht",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-05T07:47:20.000Z",
+      "sourceId": "outlet:talkbasket",
+      "sourceLabel": "TalkBasket",
+      "sourceUrl": "https://www.talkbasket.net/224339-draymond-green-the-mark-williams-trade-ultimately-ruined-dalton-knecht",
+      "playerIds": [
+        "6589",
+        "4701232",
+        "4897943"
+      ],
+      "teamIds": [],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-4da6b613ea64f575",
+      "clusterId": "mv-trade-4278078-20261005",
+      "summary": "Mavericks rumors: Masai Ujiri loves P.J. Washington, but trade buzz still persists",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-05T14:38:03.000Z",
+      "sourceId": "outlet:clutchpoints",
+      "sourceLabel": "ClutchPoints",
+      "sourceUrl": "https://clutchpoints.com/nba/dallas-mavericks/mavericks-rumors-masai-ujiri-loves-p-j-washington-but-trade-buzz-still-persists",
+      "playerIds": [
+        "4278078"
+      ],
+      "teamIds": [
+        "6"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-654ee87ed2c75e15",
+      "clusterId": "mv-contract-4431823-20261002",
+      "summary": "Karl-Anthony Towns says extension negotiations with Knicks 'don't look good' as two sides remain apart on deal",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-05T17:08:35.000Z",
+      "sourceId": "outlet:cbs-sports",
+      "sourceLabel": "CBS Sports",
+      "sourceUrl": "https://www.cbssports.com/nba/news/karl-anthony-towns-knicks-extension-negotiations/",
+      "playerIds": [
+        "3136195"
+      ],
+      "teamIds": [
+        "18"
+      ],
+      "isOriginal": true,
+      "negotiationSpecificity": "active_talks"
+    },
+    {
+      "id": "mv-1cc8587f7a4d28d7",
+      "clusterId": "mv-contract-4431823-20261002",
+      "summary": "Karl-Anthony Towns Doesn't Expect To Sign Extension Before Regular Season",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-05T17:43:12.000Z",
+      "sourceId": "outlet:realgm",
+      "sourceLabel": "RealGM",
+      "sourceUrl": "https://basketball.realgm.com/wiretap/287525/Karl-Anthony-Towns-Doesnt-Expect-To-Sign-Extension-Before-Regular-Season",
+      "playerIds": [
+        "3136195"
+      ],
+      "teamIds": [],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-849384fc38565347",
+      "clusterId": "mv-contract-4431823-20261002",
+      "summary": "Karl-Anthony Towns says Knicks extension talks ‘don’t look good’",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-05T18:06:39.000Z",
+      "sourceId": "outlet:talkbasket",
+      "sourceLabel": "TalkBasket",
+      "sourceUrl": "https://www.talkbasket.net/224357-karl-anthony-towns-says-knicks-extension-talks-dont-look-good",
+      "playerIds": [
+        "3136195"
+      ],
+      "teamIds": [
+        "18"
+      ],
+      "isOriginal": true,
+      "negotiationSpecificity": "active_talks"
+    },
+    {
+      "id": "mv-bf030a939aada1a7",
+      "clusterId": "mv-trade-3155942-20261005",
+      "summary": "Kings’ Domantas Sabonis shuts down ‘made up’ trade rumors",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-05T18:51:31.000Z",
+      "sourceId": "outlet:clutchpoints",
+      "sourceLabel": "ClutchPoints",
+      "sourceUrl": "https://clutchpoints.com/nba/sacramento-kings/kings-news-domantas-sabonis-shuts-down-trade-rumors",
+      "playerIds": [
+        "3155942"
+      ],
+      "teamIds": [
+        "23"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-3074c1bbcb692f92",
+      "clusterId": "mv-contract-4431823-20261002",
+      "summary": "Karl-Anthony Towns Breaks Silence as Knicks Reportedly Make Extension Offer",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-05T19:13:37.000Z",
+      "sourceId": "reporter:malika-andrews",
+      "sourceLabel": "Basketball News, citing Malika Andrews (ESPN)",
+      "reporterLabel": "Malika Andrews",
+      "sourceUrl": "https://www.basketballnews.com/news/basketballnews-nba-active-news-karl-anthony-towns-breaks-silence-as-new-york-knicks-reportedly-make-extension-offer/",
+      "playerIds": [
+        "3136195"
+      ],
+      "teamIds": [
+        "18"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "offer"
+    },
+    {
+      "id": "mv-fc43e842c7eee4c2",
+      "clusterId": "mv-trade-6583-20261001",
+      "summary": "Wizards insiders know Anthony Davis trade rumors won’t die as Rich Paul plays ‘game’",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-06T13:32:26.000Z",
+      "sourceId": "outlet:clutchpoints",
+      "sourceLabel": "ClutchPoints",
+      "sourceUrl": "https://clutchpoints.com/nba/washington-wizards/wizards-news-washington-anthony-davis-trade-rumors-rich-paul-game",
+      "playerIds": [
+        "6583"
+      ],
+      "teamIds": [
+        "27"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-16c64cf12c0ffcaa",
+      "clusterId": "mv-trade-3062679-20261006",
+      "summary": "Knicks rumors: Shams’ warning of ‘growing cloud’ around Karl-Anthony Towns, Josh Hart comes with trade deadline tease",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-06T13:48:55.000Z",
+      "sourceId": "outlet:clutchpoints",
+      "sourceLabel": "ClutchPoints",
+      "sourceUrl": "https://clutchpoints.com/nba/new-york-knicks/knicks-rumors-shams-warning-of-growing-cloud-around-karl-anthony-towns-josh-hart-comes-with-trade-deadline-tease",
+      "playerIds": [
+        "3062679",
+        "3136195"
+      ],
+      "teamIds": [
+        "18"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-e60edd87d81db95b",
+      "clusterId": "mv-contract-6583-20260929",
+      "summary": "Wizards unlikely to offer Anthony Davis a max extension",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-06T14:51:25.000Z",
+      "sourceId": "reporter:josh-robbins",
+      "sourceLabel": "TalkBasket, citing Josh Robbins (The Athletic)",
+      "reporterLabel": "Josh Robbins",
+      "sourceUrl": "https://www.talkbasket.net/224408-wizards-unlikely-to-offer-anthony-davis-a-max-extension",
+      "playerIds": [
+        "6583"
+      ],
+      "teamIds": [
+        "27"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "offer"
+    },
+    {
+      "id": "mv-5b49f40d06ebadd6",
+      "clusterId": "mv-contract-3975-20260923",
+      "summary": "“I Don’t Wanna Go”: Steve Kerr Reveals Key Conversation With Stephen Curry Before Warriors Extension",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-06T14:56:57.000Z",
+      "sourceId": "reporter:anthony-slater",
+      "sourceLabel": "Basketball News, citing Anthony Slater (ESPN)",
+      "reporterLabel": "Anthony Slater",
+      "sourceUrl": "https://www.basketballnews.com/news/basketballnews-nba-active-news-i-dont-wanna-go-steve-kerr-reveals-key-conversation-with-stephen-curry-before-golden-state-warriors-extension/",
+      "playerIds": [
+        "3975"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-500720ece277bd6d",
+      "clusterId": "mv-contract-6583-20260929",
+      "summary": "Anthony Davis Seeks Max-Level Deal, Wizards Unlikely To Offer It",
+      "claimType": "contract_movement",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-06T15:07:16.000Z",
+      "sourceId": "outlet:realgm",
+      "sourceLabel": "RealGM",
+      "sourceUrl": "https://basketball.realgm.com/wiretap/287539/Anthony-Davis-Seeks-Max-Level-Deal-Wizards-Unlikely-To-Offer-It",
+      "playerIds": [
+        "6583"
+      ],
+      "teamIds": [
+        "27"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "offer"
+    },
+    {
       "id": "mv-nba-tx-4fbd3cd7ed6bc29b",
       "clusterId": "mv-trade-6450-20260911",
       "summary": "Acquired forward Kawhi Leonard from LA Clippers in exchange for guard Gradey Dick, forward Brandon Ingram and draft consideration.",
@@ -3080,6 +3501,46 @@
       ],
       "teamIds": [
         "29"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-espn-tx-396f46272dfc3ae4",
+      "clusterId": "mv-tx-espn-tx-396f46272dfc3ae4",
+      "summary": "Acquired G Devin Carter and draft consideration from Sacramento.",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "completed",
+      "provenanceKind": "completed_transaction",
+      "publishedAt": "2026-06-30T12:00:00.000Z",
+      "sourceId": "ledger:espn-transactions",
+      "sourceLabel": "Transaction log",
+      "sourceUrl": "/offseason",
+      "playerIds": [
+        "4433188"
+      ],
+      "teamIds": [
+        "1"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-espn-tx-f4e2d0d9fd525a34",
+      "clusterId": "mv-tx-espn-tx-396f46272dfc3ae4",
+      "summary": "Acquired draft consideration from Atlanta Hawks for G Devin Carter.",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "completed",
+      "provenanceKind": "completed_transaction",
+      "publishedAt": "2026-06-30T12:00:00.000Z",
+      "sourceId": "ledger:espn-transactions",
+      "sourceLabel": "Transaction log",
+      "sourceUrl": "/offseason",
+      "playerIds": [
+        "4433188"
+      ],
+      "teamIds": [
+        "23"
       ],
       "isOriginal": true
     },
@@ -3326,7 +3787,6 @@
       "sourceLabel": "Transaction log",
       "sourceUrl": "/offseason",
       "playerIds": [
-        "3136776",
         "4432810",
         "5170947"
       ],
@@ -3761,7 +4221,6 @@
       "sourceLabel": "Transaction log",
       "sourceUrl": "/offseason",
       "playerIds": [
-        "3134932",
         "4432811",
         "4895758"
       ],
@@ -3783,7 +4242,6 @@
       "sourceLabel": "Transaction log",
       "sourceUrl": "/offseason",
       "playerIds": [
-        "3134932",
         "4432811",
         "4895758"
       ],
@@ -3849,8 +4307,7 @@
       "sourceLabel": "Transaction log",
       "sourceUrl": "/offseason",
       "playerIds": [
-        "2990984",
-        "4684275"
+        "2990984"
       ],
       "teamIds": [
         "30"
@@ -3870,8 +4327,7 @@
       "sourceLabel": "Transaction log",
       "sourceUrl": "/offseason",
       "playerIds": [
-        "2990984",
-        "4684275"
+        "2990984"
       ],
       "teamIds": [
         "4"
@@ -3903,8 +4359,7 @@
     {
       "clusterId": "mv-trade-2990984-20260922",
       "playerIds": [
-        "2990984",
-        "4684275"
+        "2990984"
       ],
       "outcome": "materialized",
       "resolvedAt": "2026-09-22T12:00:00.000Z",
@@ -3961,6 +4416,16 @@
       "outcome": "materialized",
       "resolvedAt": "2026-06-29T12:00:00.000Z",
       "transactionRef": "nba-tx-8a0ba5fe8b9775ad",
+      "suppressTradeSpeculation": true
+    },
+    {
+      "clusterId": "mv-tx-espn-tx-396f46272dfc3ae4",
+      "playerIds": [
+        "4433188"
+      ],
+      "outcome": "materialized",
+      "resolvedAt": "2026-06-30T12:00:00.000Z",
+      "transactionRef": "espn-tx-396f46272dfc3ae4",
       "suppressTradeSpeculation": true
     },
     {
@@ -4033,7 +4498,6 @@
     {
       "clusterId": "mv-tx-espn-tx-69b6aae7bc346076",
       "playerIds": [
-        "3136776",
         "4432810",
         "5170947",
         "2990962",
@@ -4166,7 +4630,6 @@
     {
       "clusterId": "mv-tx-espn-tx-7c6c677685090c8a",
       "playerIds": [
-        "3134932",
         "4432811",
         "4895758"
       ],
@@ -4190,8 +4653,7 @@
     {
       "clusterId": "mv-tx-espn-tx-94bd99e618dd12d5",
       "playerIds": [
-        "2990984",
-        "4684275"
+        "2990984"
       ],
       "outcome": "materialized",
       "resolvedAt": "2026-09-27T12:00:00.000Z",

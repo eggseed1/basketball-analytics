@@ -1,14 +1,14 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-04",
-    "retrievedAt": "2026-10-04T16:32:59.049Z",
+    "snapshotDate": "2026-10-06",
+    "retrievedAt": "2026-10-06T16:57:22.256Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "e6fd819efcd86be015777cf03ea16143442c26f730be7e6629dd409f6a98145a",
+    "sourceHash": "a475c595dd48ad29c16fe56d343a9e506d4989f6b8c3797eacce5650f6cc0dd0",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -418,6 +418,29 @@
           "href": "/players/4683933"
         },
         {
+          "playerId": "4395997",
+          "playerName": "Terrell Brown Jr.",
+          "age": null,
+          "contractId": "cy-4395997-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-4395997-2026",
+              "playerId": "4395997",
+              "franchiseId": "26",
+              "season": "2026-27",
+              "salary": null,
+              "capHit": null,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "espn-roster-no-salary"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/4395997"
+        },
+        {
           "playerId": "1642396",
           "playerName": "Blake Hinson",
           "age": null,
@@ -496,7 +519,7 @@
       ],
       "playerSalaryCommitments": 126803316,
       "playersWithSalary": 12,
-      "playersWithoutSalary": 7
+      "playersWithoutSalary": 8
     },
     "draftAssets": {
       "franchiseId": "26",

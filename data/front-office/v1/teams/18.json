@@ -1,14 +1,14 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-04",
-    "retrievedAt": "2026-10-04T16:32:59.049Z",
+    "snapshotDate": "2026-10-06",
+    "retrievedAt": "2026-10-06T16:57:22.256Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "e6fd819efcd86be015777cf03ea16143442c26f730be7e6629dd409f6a98145a",
+    "sourceHash": "a475c595dd48ad29c16fe56d343a9e506d4989f6b8c3797eacce5650f6cc0dd0",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -418,6 +418,52 @@
           "href": "/players/1629013"
         },
         {
+          "playerId": "1628396",
+          "playerName": "Tony Bradley",
+          "age": null,
+          "contractId": "cy-1628396-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1628396-2026",
+              "playerId": "1628396",
+              "franchiseId": "18",
+              "season": "2026-27",
+              "salary": 600545,
+              "capHit": 600545,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "salary-csv-carry-forward"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1628396"
+        },
+        {
+          "playerId": "4683730",
+          "playerName": "Jaden Akins",
+          "age": null,
+          "contractId": "cy-4683730-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-4683730-2026",
+              "playerId": "4683730",
+              "franchiseId": "18",
+              "season": "2026-27",
+              "salary": null,
+              "capHit": null,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "espn-roster-no-salary"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/4683730"
+        },
+        {
           "playerId": "1642885",
           "playerName": "Mohamed Diawara",
           "age": null,
@@ -490,13 +536,13 @@
       "futureCommitments": [
         {
           "season": "2026-27",
-          "totalSalaryDollars": 217826312,
-          "playersUnderContract": 16
+          "totalSalaryDollars": 218426857,
+          "playersUnderContract": 17
         }
       ],
-      "playerSalaryCommitments": 217826312,
-      "playersWithSalary": 16,
-      "playersWithoutSalary": 3
+      "playerSalaryCommitments": 218426857,
+      "playersWithSalary": 17,
+      "playersWithoutSalary": 4
     },
     "draftAssets": {
       "franchiseId": "18",
