@@ -223,14 +223,28 @@ export default async function HomePage() {
   const moment = await getHomeSeasonMoment();
   const layout = homeLayoutForPhase(moment.phase);
   const render = (id: HomeModuleId) => renderModule(id, moment, season);
+  // Below lg the columns use `display: contents`, so the watchlist can sit
+  // right under the week strip on phones and tablets.
+  const renderGridModule = (id: HomeModuleId) =>
+    id === "watchlist" ? (
+      <div key={id} className="order-first min-w-0 lg:order-none">
+        {render(id)}
+      </div>
+    ) : (
+      render(id)
+    );
 
   return (
     <main className="site-shell flex flex-col gap-5 py-5 sm:py-7" data-season-phase={moment.phase}>
       {layout.top.map(render)}
 
-      <div className="grid min-w-0 items-start gap-5 lg:grid-cols-12">
-        <div className="flex min-w-0 flex-col gap-4 lg:col-span-7">{layout.main.map(render)}</div>
-        <div className="flex min-w-0 flex-col gap-4 lg:col-span-5">{layout.side.map(render)}</div>
+      <div className="grid min-w-0 grid-cols-1 items-start gap-5 lg:grid-cols-12">
+        <div className="contents lg:col-span-7 lg:flex lg:min-w-0 lg:flex-col lg:gap-4">
+          {layout.main.map(renderGridModule)}
+        </div>
+        <div className="contents lg:col-span-5 lg:flex lg:min-w-0 lg:flex-col lg:gap-4">
+          {layout.side.map(renderGridModule)}
+        </div>
       </div>
 
       {layout.bottom.map(render)}
