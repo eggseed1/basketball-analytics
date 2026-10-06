@@ -229,6 +229,7 @@ export type HomeModuleId =
   | "standings"
   | "standings-race"
   | "findings"
+  | "above-norm"
   | "top-performers"
   | "hot-cold"
   | "transactions"
@@ -261,37 +262,37 @@ const LAYOUTS: Record<HomeSeasonPhase, HomeLayout> = {
   preseason: {
     top: ["moment", "calendar"],
     main: ["findings", "transactions", "news", "sentiment"],
-    side: ["watchlist", "top-performers", "standings"],
+    side: ["watchlist", "top-performers", "standings", "above-norm"],
     bottom: [],
   },
   "opening-weeks": {
     top: ["phase-bar", "calendar"],
     main: ["findings", "watchlist", "sentiment", "news"],
-    side: ["standings", "top-performers", "transactions"],
+    side: ["standings", "above-norm", "top-performers", "transactions"],
     bottom: ["hot-cold"],
   },
   "regular-season": {
     top: ["phase-bar", "calendar"],
     main: ["findings", "watchlist", "sentiment", "news"],
-    side: ["standings", "top-performers", "transactions"],
+    side: ["standings", "above-norm", "top-performers", "transactions"],
     bottom: ["hot-cold"],
   },
   "stretch-run": {
     top: ["phase-bar", "calendar"],
     main: ["standings-race", "findings", "watchlist", "news"],
-    side: ["top-performers", "sentiment", "transactions"],
+    side: ["above-norm", "top-performers", "sentiment", "transactions"],
     bottom: ["hot-cold"],
   },
   "play-in": {
     top: ["phase-bar", "calendar", "bracket"],
     main: ["findings", "watchlist", "news", "sentiment"],
-    side: ["standings", "top-performers", "transactions"],
+    side: ["standings", "above-norm", "top-performers", "transactions"],
     bottom: [],
   },
   playoffs: {
     top: ["phase-bar", "calendar", "bracket"],
     main: ["findings", "watchlist", "news", "sentiment"],
-    side: ["top-performers", "transactions"],
+    side: ["above-norm", "top-performers", "transactions"],
     bottom: [],
   },
 };

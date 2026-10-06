@@ -11,7 +11,7 @@ const ROOT = process.cwd();
 const require = createRequire(import.meta.url);
 
 async function main() {
-  const { buildRecentInsights } = await import(
+  const { buildAboveNormNights, buildRecentInsights } = await import(
     pathToFileURL(path.join(ROOT, "src/lib/recent-insights.ts")).href
   );
 
@@ -119,7 +119,7 @@ async function main() {
     dateCount += 1;
     built = buildForDates(dates.slice(0, dateCount));
   }
-  const { insights, selectedDates, slateInputs, lines } = built;
+  const { insights, aboveNorm, selectedDates, slateInputs, lines } = built;
   console.log(
     `[recent-insights] slate dates ${selectedDates.join(", ")} (${slateInputs.length} games)`
   );
@@ -132,6 +132,7 @@ async function main() {
     gameCount: slateInputs.length,
     lineCount: lines.length,
     insights,
+    aboveNorm,
   };
 
   const dest = path.join(
@@ -260,7 +261,12 @@ async function main() {
     limit: LIMIT,
   });
 
-  return { insights, selectedDates, slateInputs, lines };
+  const aboveNorm = buildAboveNormNights(
+    { games: slateInputs, lines: lines.filter((l) => gameById.has(l.gameId)) },
+    5
+  );
+
+  return { insights, aboveNorm, selectedDates, slateInputs, lines };
   }
 }
 

@@ -8,6 +8,7 @@ type SnapshotFile = {
   season?: string;
   slateDates?: string[];
   insights?: RecentInsight[];
+  aboveNorm?: RecentInsight[];
 };
 
 const data = snapshot as SnapshotFile;
@@ -25,4 +26,10 @@ export function recentInsightsSnapshotMeta() {
 /** Baked homepage Recent Insights cards (completed games). */
 export function getBundledRecentInsights(): RecentInsight[] {
   return Array.isArray(data.insights) ? data.insights : [];
+}
+
+/** Baked sidebar "above their norm" nights; older snapshots kept them among the cards. */
+export function getBundledAboveNorm(): RecentInsight[] {
+  if (Array.isArray(data.aboveNorm)) return data.aboveNorm;
+  return getBundledRecentInsights().filter((x) => x.focus === "surprise");
 }

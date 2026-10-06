@@ -6,18 +6,28 @@ import {
   currentNbaStartYear,
 } from "@/data/providers/historical/season-range";
 import { fetchRecentScoreboardGames } from "@/data/providers/nba/scoreboard-client";
-import { getGameBoxScore } from "@/data/queries/games";
+import { withBudget } from "@/data/queries/budget";
+import { getGameBoxScore, getGamePlayByPlay } from "@/data/queries/games";
 import type { Game, GameBoxScore } from "@/data/types";
+import {
+  alignGameWithPbpHomeAway,
+  resolveGameFlowTimeline,
+} from "@/lib/game-flow/resolve-score-timeline";
 import { priorSeasonForStats } from "@/lib/player-board-season";
 import {
+  buildAboveNormNights,
   buildRecentInsights,
   type PlayerBaseline,
   type RecentInsight,
+  type SlateGameFlow,
   type SlateGameInput,
   type SlatePlayerLine,
 } from "@/lib/recent-insights";
+import { slateFlowFromTimeline } from "@/lib/recent-insights-flow";
 
 const CARD_LIMIT = 6;
+const ABOVE_NORM_LIMIT = 5;
+const PLAY_LOG_BUDGET_MS = 4000;
 /** Box score fetches per refresh; a busy regular-season night is about 15 games. */
 const MAX_GAMES = 16;
 const MAX_DATES = 4;
@@ -26,13 +36,16 @@ const CACHE_STALE_MS = 1000 * 60 * 60 * 6;
 
 export type LiveRecentInsights = {
   insights: RecentInsight[];
+  /** Nights far above a player's own norm, for the sidebar. */
+  aboveNorm: RecentInsight[];
   season: string;
   preseason: boolean;
   slateDates: string[];
 };
 
-function slateInput(g: Game): SlateGameInput {
+function slateInput(g: Game, flow?: SlateGameFlow | null): SlateGameInput {
   return {
+    ...(flow ? { flow } : {}),
     id: g.id,
     season: g.season,
     gameDate: g.gameDate,
@@ -46,6 +59,26 @@ function slateInput(g: Game): SlateGameInput {
     awayPeriodScores: g.awayPeriodScores,
     gameType: g.gameType,
   };
+}
+
+/** Scoring plays for a final, or null when the play log doesn't add up to the final. */
+async function loadFlow(g: Game): Promise<SlateGameFlow | null> {
+  const { value: pbp } = await withBudget(
+    getGamePlayByPlay(g.id).catch(() => null),
+    PLAY_LOG_BUDGET_MS,
+    null
+  );
+  if (!pbp) return null;
+  const aligned = alignGameWithPbpHomeAway(g, pbp);
+  const resolved = resolveGameFlowTimeline({ game: aligned, playByPlay: pbp });
+  if (!resolved.flowStats || resolved.timelineGaps?.length) return null;
+  return slateFlowFromTimeline(resolved.timeline, {
+    homeTeamId: g.homeTeamId,
+    flipped: aligned.homeTeamId !== g.homeTeamId,
+    periods: g.homePeriodScores?.length ?? 4,
+    finalHome: g.homeScore ?? 0,
+    finalAway: g.awayScore ?? 0,
+  });
 }
 
 type BaselineLookup = (playerId: string) => PlayerBaseline | null;
@@ -140,33 +173,38 @@ async function buildLive(season: string): Promise<LiveRecentInsights | null> {
 
   const baselineFor = await loadBaselines(season).catch((): BaselineLookup => () => null);
   const boxes = new Map<string, SlatePlayerLine[]>();
+  const flows = new Map<string, SlateGameFlow | null>();
   const loadLines = async (games: Game[]) => {
     await Promise.all(
       games
         .filter((g) => !boxes.has(g.id))
         .map(async (g) => {
-          const box = await getGameBoxScore(g.id).catch(() => null);
+          const [box, flow] = await Promise.all([
+            getGameBoxScore(g.id).catch(() => null),
+            loadFlow(g).catch(() => null),
+          ]);
           boxes.set(g.id, box ? linesFromBox(g, box, baselineFor) : []);
+          flows.set(g.id, flow);
         })
     );
   };
 
   let insights: RecentInsight[] = [];
+  let aboveNorm: RecentInsight[] = [];
   let slateDates: string[] = [];
   for (let n = 1; n <= Math.min(MAX_DATES, dates.length); n++) {
     const window = dates.slice(0, n);
     const games = pool.filter((g) => window.includes(g.gameDate)).slice(0, MAX_GAMES);
     await loadLines(games);
-    insights = buildRecentInsights({
-      games: games.map(slateInput),
-      lines: games.flatMap((g) => boxes.get(g.id) ?? []),
-      limit: CARD_LIMIT,
-    });
+    const slate = games.map((g) => slateInput(g, flows.get(g.id)));
+    const lines = games.flatMap((g) => boxes.get(g.id) ?? []);
+    insights = buildRecentInsights({ games: slate, lines, limit: CARD_LIMIT });
+    aboveNorm = buildAboveNormNights({ games: slate, lines }, ABOVE_NORM_LIMIT);
     slateDates = window;
     if (insights.length >= CARD_LIMIT || games.length >= MAX_GAMES) break;
   }
   if (!insights.length) return null;
-  return { insights, season, preseason, slateDates };
+  return { insights, aboveNorm, season, preseason, slateDates };
 }
 
 /**
@@ -179,7 +217,7 @@ export async function getLiveRecentInsights(): Promise<LiveRecentInsights | null
   const season = canonicalSeasonFromStartYear(currentNbaStartYear());
   try {
     return await sharedGetOrSet(
-      `recent-insights-live:v2:${season}`,
+      `recent-insights-live:v4:${season}`,
       { ttlMs: CACHE_TTL_MS, staleMs: CACHE_STALE_MS, tags: ["recent-insights-live"] },
       () => buildLive(season)
     );

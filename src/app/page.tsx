@@ -11,6 +11,7 @@ import { Suspense } from "react";
 import { AnalyticsDesk } from "@/components/home/analytics-desk";
 import { AppLink } from "@/components/ui/app-link";
 import { HotColdColumns } from "@/components/explore/hot-cold-board";
+import { AboveNormPanel } from "@/components/home/above-norm-panel";
 import { FindingsSection } from "@/components/home/findings-section";
 import { HomeStandingsPanel } from "@/components/home/home-standings-panel";
 import { SentimentMoversPanel } from "@/components/home/sentiment-movers-panel";
@@ -136,6 +137,17 @@ async function HomeFindings() {
   );
 }
 
+async function HomeAboveNorm() {
+  const { getLiveRecentInsights } = await import("@/data/queries/recent-insights-live");
+  const live = await Promise.race([
+    getLiveRecentInsights(),
+    new Promise<null>((resolve) => setTimeout(() => resolve(null), LIVE_INSIGHTS_BUDGET_MS)),
+  ]);
+  if (live) return <AboveNormPanel nights={live.aboveNorm} />;
+  const { getBundledAboveNorm } = await import("@/data/runtime/recent-insights-snapshot");
+  return <AboveNormPanel nights={getBundledAboveNorm()} />;
+}
+
 const BRACKET_BUDGET_MS = 2_500;
 
 async function HomeBracket({ season }: { season: string }) {
@@ -185,6 +197,12 @@ function renderModule(id: HomeModuleId, moment: HomeSeasonMoment, season: string
       return (
         <Suspense key={id} fallback={<BlockSkeleton className="h-40" />}>
           <HomeFindings />
+        </Suspense>
+      );
+    case "above-norm":
+      return (
+        <Suspense key={id} fallback={<BlockSkeleton className="h-48" />}>
+          <HomeAboveNorm />
         </Suspense>
       );
     case "top-performers":

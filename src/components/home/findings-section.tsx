@@ -3,8 +3,11 @@ import Link from "next/link";
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { TeamLogo } from "@/components/brand/team-logo";
 import {
+  InsightContributorBars,
   InsightEventPips,
+  InsightFlowChart,
   InsightLeadWorm,
+  InsightPeriodBars,
   InsightPointsMix,
   InsightQuarterStack,
   InsightShootingSplits,
@@ -46,6 +49,7 @@ export function FindingsSection({
   empty?: boolean;
 }) {
   const asOf = todayIsoDate();
+  const cards = insights.filter((x) => x.focus !== "surprise");
 
   return (
     <section className="sports-card flex flex-col gap-3 p-4 sm:p-[21px]">
@@ -55,18 +59,18 @@ export function FindingsSection({
           {empty
             ? "No games in the latest window. Insights will update as new games are completed."
             : seasonLabel
-              ? `Notable performances from the latest ${seasonLabel} games.`
-              : "Notable performances, trends, and statistical outliers from the latest games."}
+              ? `What stood out in the latest ${seasonLabel} games.`
+              : "What stood out in the latest games."}
         </p>
       </div>
-      {insights.length ? (
+      {cards.length ? (
         <div className="grid min-w-0 gap-3 sm:grid-cols-2">
-          {insights.map((insight, i) => (
+          {cards.map((insight, i) => (
             <InsightCard
               key={insight.id}
               insight={insight}
               asOf={asOf}
-              wide={insights.length % 2 === 1 && i === insights.length - 1}
+              wide={cards.length % 2 === 1 && i === cards.length - 1}
             />
           ))}
         </div>
@@ -95,6 +99,7 @@ function q3Deficit(game: RecentInsightGame): number | null {
 }
 
 function heroFor(insight: RecentInsight): Hero | null {
+  if (insight.hero) return insight.hero;
   const { line, game, focus, trend } = insight;
   if (line) {
     switch (focus) {
@@ -223,8 +228,23 @@ function InsightCard({
           return <InsightTripleDoubleRings line={line} color={accent} />;
         case "trend":
           return trend?.length ? <InsightTrendBars points={trend} color={accent} /> : null;
+        case "takeover":
+          return insight.periodPoints ? (
+            <InsightPeriodBars
+              periodPoints={insight.periodPoints}
+              focusPeriod={insight.focusPeriod}
+              color={accent}
+            />
+          ) : null;
       }
     }
+    if (focus === "threes" && insight.contributors?.length) {
+      return <InsightContributorBars items={insight.contributors} color={accent} />;
+    }
+    if (game && focus === "quarter") {
+      return <InsightQuarterStack game={game} focusPeriod={insight.focusPeriod} />;
+    }
+    if (game?.flow) return <InsightFlowChart game={game} />;
     if (game?.home.periods) {
       if (focus === "combined") return <InsightQuarterStack game={game} />;
       return <InsightLeadWorm game={game} focus={focus} />;

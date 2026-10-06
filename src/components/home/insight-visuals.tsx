@@ -252,18 +252,27 @@ export function InsightLeadWorm({
 }
 
 /** Each quarter's points stacked by team, so the big quarter and who drove it both show. */
-export function InsightQuarterStack({ game }: { game: RecentInsightGame }) {
+export function InsightQuarterStack({
+  game,
+  focusPeriod,
+}: {
+  game: RecentInsightGame;
+  /** Highlight this 0-based period instead of the highest-scoring one. */
+  focusPeriod?: number;
+}) {
   const periods = consistentPeriods(game);
   if (!periods) return null;
   const colors = gameColors(game);
   const totals = periods.home.map((h, i) => h + periods.away[i]!);
   const max = Math.max(...totals, 1);
-  const best = totals.indexOf(max);
+  const best = focusPeriod ?? totals.indexOf(max);
   return (
     <figure className="flex flex-col gap-2">
-      <figcaption className="text-[13px] font-semibold leading-snug">
-        {periodLabel(best)} had {max} points, the most of any quarter.
-      </figcaption>
+      {focusPeriod == null ? (
+        <figcaption className="text-[13px] font-semibold leading-snug">
+          {periodLabel(best)} had {max} points, the most of any quarter.
+        </figcaption>
+      ) : null}
       <div className="flex items-end gap-3">
         {totals.map((total, i) => (
           <div
@@ -276,7 +285,10 @@ export function InsightQuarterStack({ game }: { game: RecentInsightGame }) {
             </span>
             <div
               className="flex w-full shrink-0 flex-col gap-px overflow-hidden rounded-[4px]"
-              style={{ height: Math.max(4, Math.round((total / max) * 84)) }}
+              style={{
+                height: Math.max(4, Math.round((total / max) * 84)),
+                opacity: focusPeriod == null || i === best ? 1 : 0.35,
+              }}
             >
               <div style={{ flex: periods.home[i], background: colors.home }} />
               <div style={{ flex: periods.away[i], background: colors.away }} />
@@ -725,5 +737,207 @@ export function InsightFinalScore({ game }: { game: RecentInsightGame }) {
       {side(game.away, !homeWon)}
       {side(game.home, homeWon)}
     </p>
+  );
+}
+
+function flowSeconds(periods: number): number {
+  return 4 * 720 + Math.max(0, periods - 4) * 300;
+}
+
+function flowPeriodStart(period: number): number {
+  return period <= 4 ? (period - 1) * 720 : 2880 + (period - 5) * 300;
+}
+
+/**
+ * Score margin after every scoring play, shaded in the leading team's color,
+ * with the moment the card is about marked on it.
+ */
+export function InsightFlowChart({ game }: { game: RecentInsightGame }) {
+  const flow = game.flow;
+  if (!flow || flow.path.length < 2) return null;
+  const colors = gameColors(game);
+  const total = flowSeconds(flow.periods);
+  const margins = flow.path.map(([, m]) => m);
+  const reach = Math.max(8, ...margins.map((m) => Math.abs(m)));
+  const hi = Math.max(...margins, 0) > 0 ? reach : 4;
+  const lo = Math.min(...margins, 0) < 0 ? -reach : -4;
+
+  const W = 340;
+  const H = 132;
+  const padX = 34;
+  const padRight = 26;
+  const top = 18;
+  const bottom = H - 22;
+  const x = (t: number) => padX + (Math.min(t, total) / total) * (W - padX - padRight);
+  const y = (m: number) => top + ((hi - m) / (hi - lo || 1)) * (bottom - top);
+  const mid = y(0);
+  let line = `M${x(0).toFixed(1)},${mid.toFixed(1)}`;
+  for (const [t, m] of flow.path.slice(1)) line += ` H${x(t).toFixed(1)} V${y(m).toFixed(1)}`;
+  line += ` H${x(total).toFixed(1)}`;
+  const area = `${line} V${mid.toFixed(1)} H${x(0).toFixed(1)} Z`;
+  const clipId = `flow-${game.away.abbr}-${game.home.abbr}-${game.away.score}-${game.home.score}`;
+  const final = margins.at(-1) ?? 0;
+  const finalColor = final > 0 ? colors.home : final < 0 ? colors.away : "var(--muted-foreground)";
+  const mark = flow.mark;
+  const markColor = (m: number) => (m > 0 ? colors.home : m < 0 ? colors.away : "var(--foreground)");
+  const periods = Array.from({ length: flow.periods }, (_, i) => i + 1);
+
+  return (
+    <svg
+      viewBox={`0 0 ${W} ${H}`}
+      className="h-[124px] w-full overflow-visible"
+      role="img"
+      aria-label={`Score margin through the game. Final: ${game.away.abbr} ${game.away.score}, ${game.home.abbr} ${game.home.score}.${mark ? ` Marked: ${mark.label}.` : ""}`}
+    >
+      <defs>
+        <clipPath id={`${clipId}-top`}>
+          <rect x={0} y={0} width={W} height={mid} />
+        </clipPath>
+        <clipPath id={`${clipId}-bottom`}>
+          <rect x={0} y={mid} width={W} height={H - mid} />
+        </clipPath>
+      </defs>
+      <text x={0} y={mid - 5} className="text-[11px] font-bold" fill={colors.home}>
+        {game.home.abbr}
+      </text>
+      <text x={0} y={mid + 14} className="text-[11px] font-bold" fill={colors.away}>
+        {game.away.abbr}
+      </text>
+      {mark?.kind === "span" ? (
+        <g>
+          <rect
+            x={x(mark.t0) - 2}
+            y={top - 4}
+            width={Math.max(4, x(mark.t1) - x(mark.t0) + 4)}
+            height={bottom - top + 8}
+            rx={3}
+            fill="var(--foreground)"
+            opacity={0.08}
+          />
+          <text
+            x={Math.min(W - padRight, Math.max(padX, (x(mark.t0) + x(mark.t1)) / 2))}
+            y={top - 7}
+            textAnchor="middle"
+            className="text-[11px] font-bold"
+            fill="var(--foreground)"
+          >
+            {mark.label}
+          </text>
+        </g>
+      ) : null}
+      <line x1={padX} x2={W - padRight} y1={mid} y2={mid} stroke="var(--border)" strokeWidth={1} />
+      {periods.slice(1).map((p) => (
+        <line
+          key={p}
+          x1={x(flowPeriodStart(p))}
+          x2={x(flowPeriodStart(p))}
+          y1={top}
+          y2={bottom}
+          stroke="var(--border)"
+          strokeDasharray="2 3"
+          strokeWidth={1}
+          opacity={0.6}
+        />
+      ))}
+      <path d={area} fill={colors.home} opacity={0.2} clipPath={`url(#${clipId}-top)`} />
+      <path d={area} fill={colors.away} opacity={0.2} clipPath={`url(#${clipId}-bottom)`} />
+      <path d={line} fill="none" stroke={colors.home} strokeWidth={1.75} strokeLinejoin="round" clipPath={`url(#${clipId}-top)`} />
+      <path d={line} fill="none" stroke={colors.away} strokeWidth={1.75} strokeLinejoin="round" clipPath={`url(#${clipId}-bottom)`} />
+      {mark?.kind === "goahead" ? (
+        <line
+          x1={x(mark.t)}
+          x2={x(mark.t)}
+          y1={top - 2}
+          y2={bottom}
+          stroke="var(--foreground)"
+          strokeWidth={1}
+          strokeDasharray="3 2"
+        />
+      ) : null}
+      {mark && mark.kind !== "span" ? (
+        <g>
+          <circle cx={x(mark.t)} cy={y(mark.margin)} r={4.5} fill="var(--card)" stroke={markColor(mark.margin)} strokeWidth={2.5} />
+          <text
+            x={Math.min(W - padRight - 4, Math.max(padX + 4, x(mark.t)))}
+            y={mark.margin >= 0 ? y(mark.margin) - 9 : y(mark.margin) + 17}
+            textAnchor="middle"
+            className="text-[11px] font-bold"
+            fill="var(--foreground)"
+          >
+            {mark.label}
+          </text>
+        </g>
+      ) : null}
+      <text x={x(total) + 4} y={y(final) + 4} className="text-[11px] font-bold tabular-nums" fill={finalColor}>
+        {final === 0 ? "0" : `+${Math.abs(final)}`}
+      </text>
+      {periods.map((p) => {
+        const start = flowPeriodStart(p);
+        const end = p < flow.periods ? flowPeriodStart(p + 1) : total;
+        return (
+          <text key={p} x={(x(start) + x(end)) / 2} y={H - 4} textAnchor="middle" className="fill-muted-foreground text-[11px]">
+            {periodLabel(p - 1)}
+          </text>
+        );
+      })}
+    </svg>
+  );
+}
+
+/** A player's points in each period, the takeover period in full color. */
+export function InsightPeriodBars({
+  periodPoints,
+  focusPeriod,
+  color,
+}: {
+  periodPoints: number[];
+  focusPeriod?: number;
+  color: string;
+}) {
+  const max = Math.max(...periodPoints, 1);
+  return (
+    <div className="flex h-[92px] items-end gap-3">
+      {periodPoints.map((pts, i) => (
+        <div key={i} className="flex h-full flex-1 flex-col items-center justify-end gap-1">
+          <span className={cn("text-[13px] tabular-nums", i === focusPeriod ? "font-black" : "font-semibold text-muted-foreground")}>
+            {pts}
+          </span>
+          <div
+            className="w-full rounded-[4px]"
+            style={{
+              height: `${Math.max(3, (pts / max) * 62)}px`,
+              background: color,
+              opacity: i === focusPeriod ? 1 : 0.3,
+            }}
+          />
+          <span className="text-[11px] text-muted-foreground">{periodLabel(i)}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/** Who made a team's threes, most first. */
+export function InsightContributorBars({
+  items,
+  color,
+}: {
+  items: { name: string; value: number }[];
+  color: string;
+}) {
+  if (!items.length) return null;
+  const max = Math.max(...items.map((i) => i.value), 1);
+  return (
+    <div className="flex flex-col gap-1.5">
+      {items.map((item) => (
+        <div key={item.name} className="grid grid-cols-[7.5rem_1fr_1.5rem] items-center gap-2 text-[11px]">
+          <span className="truncate font-semibold text-muted-foreground">{item.name}</span>
+          <span className="h-2.5 rounded-full bg-secondary">
+            <span className="block h-full rounded-full" style={{ width: `${(item.value / max) * 100}%`, background: color }} />
+          </span>
+          <span className="text-right font-bold tabular-nums">{item.value}</span>
+        </div>
+      ))}
+    </div>
   );
 }
