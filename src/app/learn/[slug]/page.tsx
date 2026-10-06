@@ -60,7 +60,7 @@ export default async function LearnStatPage({
             eyebrow={eyebrow}
             visual={
               page.guide.slug === "drbl-100" ? (
-                <Suspense fallback={<div className="h-[42rem] animate-pulse rounded-md bg-foreground/[0.05]" />}>
+                <Suspense key="drbl-shrinkage" fallback={<div className="h-[42rem] animate-pulse rounded-md bg-foreground/[0.05]" />}>
                   <DrblShrinkage />
                 </Suspense>
               ) : undefined
