@@ -18,9 +18,10 @@ import { withBudget } from "@/data/queries/budget";
 import { validateGamePresentation } from "@/lib/game-presentation";
 import { longUpstreamBudgetsEnabled } from "@/data/providers/nba/runtime-policy";
 import { parseThemeMode, resolveActiveEraTheme } from "@/themes/era-theme";
+import { yieldForStreaming } from "@/lib/stream-yield";
 
 interface GamePageProps { params: Promise<{ gameId: string }>; searchParams: Promise<Record<string, string | string[] | undefined>>; }
-export async function generateMetadata({ params }: GamePageProps) { const { gameId } = await params; const shell = await getGameShellCached(gameId); if (!shell) return { title: "Game" }; const away = shell.game.awayTeamAbbr ?? shell.game.awayTeamId; const home = shell.game.homeTeamAbbr ?? shell.game.homeTeamId; return { title: `${away} @ ${home}` }; }
+export async function generateMetadata({ params }: GamePageProps) { await yieldForStreaming(); const { gameId } = await params; const shell = await getGameShellCached(gameId); if (!shell) return { title: "Game" }; const away = shell.game.awayTeamAbbr ?? shell.game.awayTeamId; const home = shell.game.homeTeamAbbr ?? shell.game.homeTeamId; return { title: `${away} @ ${home}` }; }
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 
 async function GameLabDeepBody({ gameId, hidePeriodTable }: { gameId: string; arrival: ReturnType<typeof parseSeasonEvidenceArrival>; hidePeriodTable: boolean }) {
@@ -44,6 +45,7 @@ async function HistoricalDeepBody({ gameId, seasonHint, homeLabel, awayLabel }: 
 }
 
 export default async function GamePage({ params, searchParams }: GamePageProps) {
+  await yieldForStreaming();
   const { gameId } = await params;
   const sp = await searchParams;
   const arrival = parseSeasonEvidenceArrival(sp);

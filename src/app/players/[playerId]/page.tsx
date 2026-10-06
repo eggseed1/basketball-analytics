@@ -101,6 +101,7 @@ import {
   PlayerContractSectionIsland,
 } from "@/components/players/player-contract-transactions-island";
 import { PlayerUpcomingGamesFromSnapshot } from "@/components/players/player-upcoming-games-island";
+import { yieldForStreaming } from "@/lib/stream-yield";
 
 /** Team color stays a hint on player cards, close to the neutral home page cards. */
 const PLAYER_CARD_TINT_SCALE = 0.3;
@@ -203,6 +204,7 @@ function uniqueEspnIdForBrefName(
 }
 
 export async function generateMetadata({ params }: PlayerPageProps) {
+  await yieldForStreaming();
   const { playerId: rawId } = await params;
   const playerId = resolvePublicPlayerId(rawId);
   const [player, identity] = await Promise.all([
@@ -234,6 +236,7 @@ export default async function PlayerPage({
   params,
   searchParams,
 }: PlayerPageProps) {
+  await yieldForStreaming();
   const { playerId: rawId } = await params;
   const sp = await searchParams;
   // Resolve legacy bref: peer-board ids to ESPN athlete ids (no redirect required).

@@ -3,12 +3,13 @@
  * so hard refresh and streaming islands do not teleport the page.
  */
 
+import { LoadingStatus } from "@/components/continuity/destination-loading-frame";
 import { cn } from "@/lib/utils";
 
 function Pulse({ className }: { className?: string }) {
   return (
     <div
-      className={cn("animate-pulse rounded-xl bg-black/[0.06]", className)}
+      className={cn("loading-shimmer rounded-xl", className)}
       aria-hidden
     />
   );
@@ -22,7 +23,8 @@ export function PlayerPageLoadingFrame() {
       aria-busy="true"
       aria-live="polite"
     >
-      <div className="query-updating-bar rounded-full" />
+      <div className="query-updating-bar h-[3px] rounded-full" />
+      <LoadingStatus>Loading player</LoadingStatus>
       <div className="grid items-start gap-4 min-[800px]:grid-cols-[minmax(16rem,20rem)_minmax(0,1fr)]">
         <div className="flex flex-col gap-3">
           <Pulse className="h-[7.5rem] rounded-md" />

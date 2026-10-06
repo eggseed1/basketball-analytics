@@ -76,6 +76,7 @@ import {
 import {
   parseDestinationHistoryArrival,
 } from "@/themes/history-url";
+import { yieldForStreaming } from "@/lib/stream-yield";
 
 interface TeamPageProps {
   params: Promise<{ teamId: string }>;
@@ -83,6 +84,7 @@ interface TeamPageProps {
 }
 
 export async function generateMetadata({ params, searchParams }: TeamPageProps) {
+  await yieldForStreaming();
   const { teamId } = await params;
   const sp = await searchParams;
   const seasonParam = Array.isArray(sp.season) ? sp.season[0] : sp.season;
@@ -117,6 +119,7 @@ export default async function TeamProfilePage({
   params,
   searchParams,
 }: TeamPageProps) {
+  await yieldForStreaming();
   const { teamId } = await params;
   const sp = await searchParams;
   const seasonParam = Array.isArray(sp.season) ? sp.season[0] : sp.season;

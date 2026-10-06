@@ -12,6 +12,7 @@ import {
 } from "@/data/providers/historical/season-range";
 import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
+import { yieldForStreaming } from "@/lib/stream-yield";
 
 export const metadata = {
   title: "Standings",
@@ -80,6 +81,7 @@ async function StandingsBody({ season }: { season: string }) {
 }
 
 export default async function StandingsPage({ searchParams }: PageProps) {
+  await yieldForStreaming();
   const sp = await searchParams;
   const seasonParam = one(sp, "season");
 

@@ -3,7 +3,25 @@
  * Used by route-level loading.tsx files (not a full-page spinner).
  */
 
+import { Loader2 } from "lucide-react";
+import type { ReactNode } from "react";
+
 import { cn } from "@/lib/utils";
+
+/** Theme-aware skeleton block with a sweeping highlight. */
+export function SkeletonBlock({ className }: { className?: string }) {
+  return <span aria-hidden className={cn("loading-shimmer block rounded-xl", className)} />;
+}
+
+/** Spinner plus label, so a skeleton reads as loading rather than empty. */
+export function LoadingStatus({ children }: { children: ReactNode }) {
+  return (
+    <p className="inline-flex items-center gap-2 text-[14px] font-semibold text-muted-foreground">
+      <Loader2 aria-hidden className="size-4 animate-spin motion-reduce:animate-none" />
+      {children}
+    </p>
+  );
+}
 
 export function DestinationLoadingFrame({
   title,
@@ -23,11 +41,9 @@ export function DestinationLoadingFrame({
       aria-busy="true"
       aria-live="polite"
     >
-      <div className="query-updating-bar rounded-full" />
+      <div className="query-updating-bar h-[3px] rounded-full" />
       <div className="flex flex-col gap-2">
-        <p className="text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
-          Loading
-        </p>
+        <LoadingStatus>Loading</LoadingStatus>
         <h1 className="text-[24px] font-bold tracking-tight sm:text-[24px]">
           {title}
         </h1>
@@ -36,9 +52,9 @@ export function DestinationLoadingFrame({
         ) : null}
       </div>
       <div className="grid gap-3">
-        <div className="h-24 animate-pulse rounded-xl bg-black/[0.06]" />
-        <div className="h-40 animate-pulse rounded-xl bg-black/[0.05]" />
-        <div className="h-32 animate-pulse rounded-xl bg-black/[0.04]" />
+        <SkeletonBlock className="h-24" />
+        <SkeletonBlock className="h-40" />
+        <SkeletonBlock className="h-32" />
       </div>
       <p className="sr-only">Loading {title}…</p>
     </main>
@@ -53,13 +69,10 @@ export function DestinationSectionSkeleton({
 }) {
   return (
     <div className="flex flex-col gap-3" aria-busy="true" aria-live="polite">
-      <div className="query-updating-bar rounded-full" />
-      <p className="text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
-        {label}
-      </p>
-      <div className="h-36 animate-pulse rounded-xl bg-black/[0.06]" />
-      <div className="h-48 animate-pulse rounded-xl bg-black/[0.05]" />
-      <p className="sr-only">{label}</p>
+      <div className="query-updating-bar h-[3px] rounded-full" />
+      <LoadingStatus>{label}</LoadingStatus>
+      <SkeletonBlock className="h-36" />
+      <SkeletonBlock className="h-48" />
     </div>
   );
 }

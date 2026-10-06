@@ -27,6 +27,7 @@ import {
   type HomeModuleId,
   type HomeSeasonMoment,
 } from "@/lib/home-season-moment";
+import { yieldForStreaming } from "@/lib/stream-yield";
 
 export const metadata = {
   title: "Home",
@@ -272,6 +273,7 @@ function renderModule(id: HomeModuleId, moment: HomeSeasonMoment, season: string
 }
 
 export default async function HomePage() {
+  await yieldForStreaming();
   const season = canonicalSeasonFromStartYear(currentNbaStartYear());
   const moment = await getHomeSeasonMoment();
   const layout = homeLayoutForPhase(moment.phase);

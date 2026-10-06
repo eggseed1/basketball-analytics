@@ -1,10 +1,5 @@
-import { DestinationLoadingFrame } from "@/components/continuity/destination-loading-frame";
+import { TeamPageLoadingFrame } from "@/components/teams/team-page-skeletons";
 
 export default function Loading() {
-  return (
-    <DestinationLoadingFrame
-      title="Team Intelligence"
-      subtitle="Team identity and season analytics load first."
-    />
-  );
+  return <TeamPageLoadingFrame />;
 }
