@@ -5,9 +5,9 @@
     "season": "2026-27",
     "disclaimer": "Fan lanes come from team fan blogs, social posts and video comments, and media lanes from publisher headlines. Neither is a census of all fans or media.",
     "snapshotDate": "2026-10-06",
-    "builtAt": "2026-10-06T21:31:43.723Z",
+    "builtAt": "2026-10-06T22:49:10.823Z",
     "rosterPlayerCount": 607,
-    "pilotProfileCount": 265,
+    "pilotProfileCount": 268,
     "observationBatchCount": 15,
     "observationBatchIds": [
       "obs-ant-overrated-2026-08-25",
@@ -123,30 +123,20 @@
           "playerId": "3134907",
           "displayName": "Kyle Kuzma",
           "teamKey": "15",
-          "fanScore": 0.01,
+          "fanScore": -0.09,
           "mediaScore": -0.89,
-          "gap": 0.9,
-          "absGap": 0.9,
+          "gap": 0.8,
+          "absGap": 0.8,
           "origin": "measured"
         },
         {
           "playerId": "4871141",
           "displayName": "Ariel Hukporti",
           "teamKey": "20",
-          "fanScore": -0.02,
-          "mediaScore": -0.82,
+          "fanScore": -0.03,
+          "mediaScore": -0.83,
           "gap": 0.8,
           "absGap": 0.8,
-          "origin": "measured"
-        },
-        {
-          "playerId": "4897943",
-          "displayName": "Dalton Knecht",
-          "teamKey": "13",
-          "fanScore": 0.22,
-          "mediaScore": -0.57,
-          "gap": 0.79,
-          "absGap": 0.79,
           "origin": "measured"
         },
         {
@@ -160,13 +150,23 @@
           "origin": "measured"
         },
         {
+          "playerId": "4897943",
+          "displayName": "Dalton Knecht",
+          "teamKey": "13",
+          "fanScore": 0.19,
+          "mediaScore": -0.57,
+          "gap": 0.76,
+          "absGap": 0.76,
+          "origin": "measured"
+        },
+        {
           "playerId": "5037871",
           "displayName": "Dylan Harper",
           "teamKey": "24",
-          "fanScore": 0.1,
+          "fanScore": 0.08,
           "mediaScore": -0.67,
-          "gap": 0.77,
-          "absGap": 0.77,
+          "gap": 0.75,
+          "absGap": 0.75,
           "origin": "measured"
         },
         {
@@ -204,19 +204,19 @@
     "topicHeat": [
       {
         "topic": "training_camp",
-        "weight": 0.254,
+        "weight": 0.253,
         "playerCount": 123,
-        "mentionVolume": 356
+        "mentionVolume": 357
       },
       {
         "topic": "contract",
         "weight": 0.194,
-        "playerCount": 95,
-        "mentionVolume": 272
+        "playerCount": 96,
+        "mentionVolume": 274
       },
       {
         "topic": "role_debate",
-        "weight": 0.104,
+        "weight": 0.103,
         "playerCount": 87,
         "mentionVolume": 146
       },
@@ -224,13 +224,19 @@
         "topic": "trade_rumors",
         "weight": 0.092,
         "playerCount": 83,
-        "mentionVolume": 129
+        "mentionVolume": 130
       },
       {
         "topic": "availability",
-        "weight": 0.082,
+        "weight": 0.083,
         "playerCount": 50,
-        "mentionVolume": 115
+        "mentionVolume": 117
+      },
+      {
+        "topic": "scoring",
+        "weight": 0.052,
+        "playerCount": 57,
+        "mentionVolume": 74
       },
       {
         "topic": "extension",
@@ -239,22 +245,16 @@
         "mentionVolume": 73
       },
       {
-        "topic": "scoring",
-        "weight": 0.051,
-        "playerCount": 55,
-        "mentionVolume": 72
-      },
-      {
         "topic": "defense",
         "weight": 0.05,
-        "playerCount": 51,
-        "mentionVolume": 70
+        "playerCount": 52,
+        "mentionVolume": 71
       },
       {
         "topic": "title_odds",
-        "weight": 0.046,
-        "playerCount": 37,
-        "mentionVolume": 64
+        "weight": 0.047,
+        "playerCount": 38,
+        "mentionVolume": 66
       },
       {
         "topic": "injury_return",
@@ -264,7 +264,7 @@
       },
       {
         "topic": "mvp_case",
-        "weight": 0.024,
+        "weight": 0.023,
         "playerCount": 27,
         "mentionVolume": 33
       },
@@ -284,8 +284,8 @@
       "headlines": {
         "asOf": "2026-10-06",
         "firstDate": "2026-07-24",
-        "itemCount": 1562,
-        "windowItemCount": 1167,
+        "itemCount": 1569,
+        "windowItemCount": 1168,
         "outlets": [
           "Basketball News",
           "CBS Sports",
@@ -327,18 +327,18 @@
       "fans": {
         "asOf": "2026-10-06",
         "firstDate": "2026-06-25",
-        "itemCount": 31444,
-        "windowItemCount": 28343,
+        "itemCount": 31926,
+        "windowItemCount": 28606,
         "platforms": {
-          "fan_blog": 1333,
-          "bluesky": 1954,
-          "youtube": 28157
+          "fan_blog": 1339,
+          "bluesky": 1986,
+          "youtube": 28601
         },
         "blogCount": 30,
         "floor": 5,
-        "laneCount": 255,
+        "laneCount": 258,
         "toneModel": "fan-llama33-70b-v1",
-        "ratedShare": 0.19
+        "ratedShare": 0.21
       }
     }
   },
@@ -351,14 +351,14 @@
       "window": "7d",
       "fan": {
         "polarity": "mixed",
-        "score": 0.09,
+        "score": 0.1,
         "direction": "falling",
-        "mentionVolume": 126,
-        "coverageConfidence": 0.57,
+        "mentionVolume": 131,
+        "coverageConfidence": 0.58,
         "platformBreakdown": {
-          "fan_blog": 0.032,
-          "bluesky": 0.048,
-          "youtube": 0.921
+          "fan_blog": 0.031,
+          "bluesky": 0.053,
+          "youtube": 0.916
         },
         "topicBreakdown": {
           "contract": 0.073,
@@ -376,7 +376,7 @@
         "asOf": "2026-10-06",
         "windowStart": "2026-09-29",
         "modelVersion": "fan-llama33-70b-v1+fan-lexicon-v1.2",
-        "priorScore": 0.43
+        "priorScore": 0.38
       },
       "media": {
         "polarity": "mixed",
@@ -464,8 +464,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.22,
-            "count": 17
+            "score": 0.23,
+            "count": 23
           }
         ],
         "media": [
@@ -685,31 +685,31 @@
         "polarity": "mixed",
         "score": 0.1,
         "direction": "falling",
-        "mentionVolume": 526,
+        "mentionVolume": 562,
         "coverageConfidence": 0.64,
         "platformBreakdown": {
-          "fan_blog": 0.006,
-          "bluesky": 0.068,
-          "youtube": 0.926
+          "fan_blog": 0.005,
+          "bluesky": 0.064,
+          "youtube": 0.931
         },
         "topicBreakdown": {
-          "training_camp": 0.055,
-          "injury_return": 0.043,
-          "scoring": 0.184,
-          "title_odds": 0.035,
+          "training_camp": 0.065,
+          "injury_return": 0.042,
+          "scoring": 0.18,
+          "title_odds": 0.034,
           "defense": 0.169,
-          "contract": 0.035,
-          "role_debate": 0.263,
-          "availability": 0.055,
-          "trade_rumors": 0.071,
-          "mvp_case": 0.082,
+          "contract": 0.034,
+          "role_debate": 0.257,
+          "availability": 0.054,
+          "trade_rumors": 0.073,
+          "mvp_case": 0.084,
           "extension": 0.008
         },
         "origin": "fans",
         "asOf": "2026-10-06",
         "windowStart": "2026-09-29",
         "modelVersion": "fan-llama33-70b-v1+fan-lexicon-v1.2",
-        "priorScore": 0.33
+        "priorScore": 0.28
       },
       "media": {
         "polarity": "mixed",
@@ -786,8 +786,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.1,
-            "count": 250
+            "score": 0.09,
+            "count": 288
           }
         ],
         "media": [
@@ -1071,32 +1071,32 @@
       "window": "7d",
       "fan": {
         "polarity": "positive",
-        "score": 0.21,
-        "direction": "stable",
-        "mentionVolume": 140,
+        "score": 0.22,
+        "direction": "rising",
+        "mentionVolume": 137,
         "coverageConfidence": 0.58,
         "platformBreakdown": {
-          "fan_blog": 0.064,
-          "bluesky": 0.086,
-          "youtube": 0.85
+          "fan_blog": 0.066,
+          "bluesky": 0.088,
+          "youtube": 0.847
         },
         "topicBreakdown": {
-          "training_camp": 0.105,
-          "trade_rumors": 0.14,
-          "injury_return": 0.07,
-          "role_debate": 0.105,
-          "scoring": 0.14,
-          "defense": 0.07,
-          "availability": 0.105,
-          "title_odds": 0.088,
-          "mvp_case": 0.105,
-          "contract": 0.07
+          "training_camp": 0.107,
+          "trade_rumors": 0.143,
+          "injury_return": 0.071,
+          "role_debate": 0.107,
+          "scoring": 0.143,
+          "defense": 0.054,
+          "availability": 0.107,
+          "title_odds": 0.089,
+          "mvp_case": 0.107,
+          "contract": 0.071
         },
         "origin": "fans",
         "asOf": "2026-10-06",
         "windowStart": "2026-09-29",
         "modelVersion": "fan-llama33-70b-v1+fan-lexicon-v1.2",
-        "priorScore": 0.16
+        "priorScore": 0.04
       },
       "media": {
         "polarity": "positive",
@@ -1416,22 +1416,22 @@
         "polarity": "mixed",
         "score": 0.08,
         "direction": "stable",
-        "mentionVolume": 856,
+        "mentionVolume": 858,
         "coverageConfidence": 0.65,
         "platformBreakdown": {
           "fan_blog": 0.02,
-          "bluesky": 0.157,
+          "bluesky": 0.156,
           "youtube": 0.824
         },
         "topicBreakdown": {
-          "training_camp": 0.147,
-          "role_debate": 0.139,
-          "trade_rumors": 0.062,
+          "training_camp": 0.146,
+          "role_debate": 0.138,
+          "trade_rumors": 0.065,
           "title_odds": 0.05,
           "injury_return": 0.069,
-          "contract": 0.039,
-          "scoring": 0.247,
-          "defense": 0.139,
+          "contract": 0.038,
+          "scoring": 0.249,
+          "defense": 0.138,
           "mvp_case": 0.054,
           "availability": 0.05,
           "extension": 0.004
@@ -1440,7 +1440,7 @@
         "asOf": "2026-10-06",
         "windowStart": "2026-09-29",
         "modelVersion": "fan-llama33-70b-v1+fan-lexicon-v1.2",
-        "priorScore": 0.13
+        "priorScore": 0.14
       },
       "media": {
         "polarity": "positive",
@@ -1603,8 +1603,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.02,
-            "count": 105
+            "score": -0.01,
+            "count": 108
           }
         ],
         "media": [
@@ -1909,40 +1909,40 @@
       "window": "7d",
       "fan": {
         "polarity": "neutral",
-        "score": 0.07,
+        "score": 0.06,
         "direction": "stable",
-        "mentionVolume": 1228,
+        "mentionVolume": 1257,
         "coverageConfidence": 0.67,
         "platformBreakdown": {
-          "fan_blog": 0.007,
-          "bluesky": 0.155,
-          "youtube": 0.839
+          "fan_blog": 0.006,
+          "bluesky": 0.156,
+          "youtube": 0.838
         },
         "topicBreakdown": {
-          "contract": 0.095,
-          "title_odds": 0.144,
-          "training_camp": 0.074,
-          "scoring": 0.179,
-          "mvp_case": 0.077,
-          "role_debate": 0.13,
-          "trade_rumors": 0.046,
-          "injury_return": 0.053,
-          "conduct": 0.011,
+          "contract": 0.097,
+          "title_odds": 0.142,
+          "training_camp": 0.073,
+          "scoring": 0.176,
+          "mvp_case": 0.076,
+          "role_debate": 0.131,
+          "trade_rumors": 0.045,
+          "injury_return": 0.052,
+          "conduct": 0.01,
           "availability": 0.042,
-          "defense": 0.144,
+          "defense": 0.149,
           "extension": 0.007
         },
         "origin": "fans",
         "asOf": "2026-10-06",
         "windowStart": "2026-09-29",
         "modelVersion": "fan-llama33-70b-v1+fan-lexicon-v1.2",
-        "priorScore": 0.12
+        "priorScore": 0.09
       },
       "media": {
         "polarity": "neutral",
         "score": 0.04,
         "direction": "stable",
-        "mentionVolume": 100,
+        "mentionVolume": 101,
         "coverageConfidence": 0.59,
         "platformBreakdown": {
           "news": 1
@@ -2040,8 +2040,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": -0.02,
-            "count": 373
+            "score": -0.04,
+            "count": 406
           }
         ],
         "media": [
@@ -2163,7 +2163,7 @@
           {
             "date": "2026-10-06",
             "score": -0.08,
-            "count": 25
+            "count": 26
           }
         ]
       },
@@ -2171,6 +2171,14 @@
       "teamKey": "20",
       "provenance": "observation",
       "headlines": [
+        {
+          "title": "Without LeBron James, Bronny has chance to prove he really belongs",
+          "url": "https://nypost.com/2026/10/06/sports/nows-bronny-james-chance-to-prove-he-really-belongs/",
+          "outlet": "New York Post",
+          "publishedAt": "2026-10-06T22:10:19.000Z",
+          "score": 0.91,
+          "rating": 0
+        },
         {
           "title": "Ariel Hukporti injury update is bad news for LeBron James and Sixers",
           "url": "https://sports.yahoo.com/articles/ariel-hukporti-injury-bad-news-211535001.html",
@@ -2193,14 +2201,6 @@
           "outlet": "Heavy",
           "publishedAt": "2026-10-06T18:24:46.000Z",
           "score": -0.94
-        },
-        {
-          "title": "Five scenes from LeBron's first Sixers training camp: meetings, group chats and 'the vision'",
-          "url": "https://www.espn.com/nba/story/_/id/50104877/lebron-james-philadelphia-76ers-training-camp",
-          "outlet": "ESPN",
-          "publishedAt": "2026-10-06T17:53:47.000Z",
-          "score": 0.24,
-          "rating": 1
         }
       ],
       "words": {
@@ -2271,6 +2271,10 @@
               5
             ],
             [
+              "bronny",
+              4
+            ],
+            [
               "injury",
               4
             ],
@@ -2297,13 +2301,9 @@
             [
               "scrimmage",
               4
-            ],
-            [
-              "victor",
-              4
             ]
           ],
-          "headlines": 100
+          "headlines": 101
         },
         "fan": {
           "words": [
@@ -2423,25 +2423,25 @@
       "window": "7d",
       "fan": {
         "polarity": "positive",
-        "score": 0.29,
+        "score": 0.28,
         "direction": "falling",
-        "mentionVolume": 765,
+        "mentionVolume": 770,
         "coverageConfidence": 0.62,
         "platformBreakdown": {
           "fan_blog": 0.005,
-          "bluesky": 0.088,
-          "youtube": 0.907
+          "bluesky": 0.087,
+          "youtube": 0.908
         },
         "topicBreakdown": {
           "availability": 0.014,
-          "injury_return": 0.056,
-          "scoring": 0.174,
-          "training_camp": 0.132,
-          "role_debate": 0.104,
-          "title_odds": 0.083,
-          "defense": 0.181,
-          "contract": 0.118,
-          "mvp_case": 0.118,
+          "injury_return": 0.054,
+          "scoring": 0.182,
+          "training_camp": 0.128,
+          "role_debate": 0.101,
+          "title_odds": 0.088,
+          "defense": 0.182,
+          "contract": 0.115,
+          "mvp_case": 0.115,
           "extension": 0.007,
           "trade_rumors": 0.014
         },
@@ -2580,7 +2580,7 @@
           {
             "date": "2026-10-03",
             "score": 0.18,
-            "count": 111
+            "count": 112
           },
           {
             "date": "2026-10-04",
@@ -2594,8 +2594,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.4,
-            "count": 90
+            "score": 0.39,
+            "count": 94
           }
         ],
         "media": [
@@ -2890,14 +2890,14 @@
       "window": "7d",
       "fan": {
         "polarity": "mixed",
-        "score": 0.11,
+        "score": 0.1,
         "direction": "falling",
-        "mentionVolume": 318,
+        "mentionVolume": 320,
         "coverageConfidence": 0.62,
         "platformBreakdown": {
           "fan_blog": 0.009,
-          "bluesky": 0.248,
-          "youtube": 0.742
+          "bluesky": 0.247,
+          "youtube": 0.744
         },
         "topicBreakdown": {
           "training_camp": 0.099,
@@ -2916,27 +2916,27 @@
         "asOf": "2026-10-06",
         "windowStart": "2026-09-29",
         "modelVersion": "fan-llama33-70b-v1+fan-lexicon-v1.2",
-        "priorScore": 0.23
+        "priorScore": 0.22
       },
       "media": {
         "polarity": "neutral",
-        "score": 0.02,
+        "score": 0,
         "direction": "falling",
-        "mentionVolume": 28,
+        "mentionVolume": 29,
         "coverageConfidence": 0.53,
         "platformBreakdown": {
           "news": 1
         },
         "topicBreakdown": {
-          "scoring": 0.119,
-          "defense": 0.048,
-          "contract": 0.119,
-          "trade_rumors": 0.048,
-          "training_camp": 0.31,
-          "role_debate": 0.119,
-          "injury_return": 0.071,
-          "availability": 0.143,
-          "mvp_case": 0.024
+          "scoring": 0.114,
+          "defense": 0.045,
+          "contract": 0.114,
+          "trade_rumors": 0.045,
+          "training_camp": 0.318,
+          "role_debate": 0.114,
+          "injury_return": 0.068,
+          "availability": 0.159,
+          "mvp_case": 0.023
         },
         "origin": "headlines",
         "asOf": "2026-10-06",
@@ -2993,8 +2993,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.08,
-            "count": 37
+            "score": 0.06,
+            "count": 40
           }
         ],
         "media": [
@@ -3035,8 +3035,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": -0.26,
-            "count": 11
+            "score": -0.29,
+            "count": 12
           }
         ]
       },
@@ -3059,19 +3059,18 @@
           "rating": 0
         },
         {
+          "title": "How the Sixers can add another backup center after Ariel Hukporti’s Achilles injury",
+          "url": "https://sports.yahoo.com/articles/sixers-add-another-backup-center-201500755.html",
+          "outlet": "Yahoo Sports",
+          "publishedAt": "2026-10-06T20:15:00.000Z",
+          "score": -0.55
+        },
+        {
           "title": "Mike Brown Reveals Biggest Flaw In Knicks Preseason Loss",
           "url": "https://heavy.com/sports/nba/new-york-knicks/mike-brown-reveals-biggest-flaw-in-knicks-preseason-loss/",
           "outlet": "Heavy",
           "publishedAt": "2026-10-06T18:24:46.000Z",
           "score": -0.94
-        },
-        {
-          "title": "Rumor of Joel Embiid Trying to ‘Earn LeBron’s Approval’ in 76ers Camp Roasted By NBA Insider",
-          "url": "https://sportsnaut.com/nba/joel-embiid-earning-lebron-james-approval-rumor-roasted",
-          "outlet": "Sportsnaut",
-          "publishedAt": "2026-10-06T15:57:23.000Z",
-          "score": 0.76,
-          "rating": -1
         }
       ],
       "words": {
@@ -3095,10 +3094,18 @@
             ],
             [
               "hukporti",
-              3
+              4
             ],
             [
               "injury",
+              4
+            ],
+            [
+              "ariel",
+              3
+            ],
+            [
+              "backup",
               3
             ],
             [
@@ -3130,15 +3137,15 @@
               3
             ],
             [
-              "ariel",
+              "center",
+              2
+            ],
+            [
+              "achilles",
               2
             ],
             [
               "mike",
-              2
-            ],
-            [
-              "backup",
               2
             ],
             [
@@ -3164,17 +3171,9 @@
             [
               "eye-opening",
               2
-            ],
-            [
-              "scrimmage",
-              2
-            ],
-            [
-              "olympics",
-              2
             ]
           ],
-          "headlines": 28
+          "headlines": 29
         },
         "fan": {
           "words": [
@@ -3280,25 +3279,25 @@
         "polarity": "positive",
         "score": 0.2,
         "direction": "stable",
-        "mentionVolume": 279,
+        "mentionVolume": 285,
         "coverageConfidence": 0.61,
         "platformBreakdown": {
           "fan_blog": 0.011,
           "bluesky": 0.032,
-          "youtube": 0.957
+          "youtube": 0.958
         },
         "topicBreakdown": {
-          "training_camp": 0.07,
-          "title_odds": 0.1,
+          "training_camp": 0.075,
+          "title_odds": 0.094,
           "role_debate": 0.16,
-          "scoring": 0.2,
-          "injury_return": 0.06,
-          "trade_rumors": 0.07,
-          "contract": 0.11,
-          "defense": 0.09,
-          "availability": 0.06,
-          "mvp_case": 0.05,
-          "extension": 0.03
+          "scoring": 0.217,
+          "injury_return": 0.057,
+          "trade_rumors": 0.066,
+          "contract": 0.104,
+          "defense": 0.094,
+          "availability": 0.057,
+          "mvp_case": 0.047,
+          "extension": 0.028
         },
         "origin": "fans",
         "asOf": "2026-10-06",
@@ -3387,8 +3386,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.25,
-            "count": 35
+            "score": 0.27,
+            "count": 41
           }
         ],
         "media": [
@@ -4001,13 +4000,13 @@
       "window": "7d",
       "fan": {
         "polarity": "positive",
-        "score": 0.25,
+        "score": 0.26,
         "direction": "stable",
-        "mentionVolume": 44,
+        "mentionVolume": 45,
         "coverageConfidence": 0.54,
         "platformBreakdown": {
-          "bluesky": 0.477,
-          "youtube": 0.523
+          "bluesky": 0.467,
+          "youtube": 0.533
         },
         "topicBreakdown": {
           "mvp_case": 0.125,
@@ -4081,8 +4080,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.09,
-            "count": 28
+            "score": 0.11,
+            "count": 29
           }
         ],
         "media": [
@@ -4272,8 +4271,8 @@
       "fan": {
         "polarity": "mixed",
         "score": 0.15,
-        "direction": "falling",
-        "mentionVolume": 730,
+        "direction": "stable",
+        "mentionVolume": 732,
         "coverageConfidence": 0.62,
         "platformBreakdown": {
           "fan_blog": 0.001,
@@ -4282,13 +4281,13 @@
         },
         "topicBreakdown": {
           "contract": 0.115,
-          "scoring": 0.208,
-          "defense": 0.154,
+          "scoring": 0.206,
+          "defense": 0.153,
           "trade_rumors": 0.023,
-          "mvp_case": 0.123,
+          "mvp_case": 0.122,
           "injury_return": 0.069,
-          "role_debate": 0.123,
-          "title_odds": 0.108,
+          "role_debate": 0.13,
+          "title_odds": 0.107,
           "availability": 0.046,
           "training_camp": 0.031
         },
@@ -4296,7 +4295,7 @@
         "asOf": "2026-10-06",
         "windowStart": "2026-09-29",
         "modelVersion": "fan-llama33-70b-v1+fan-lexicon-v1.2",
-        "priorScore": 0.26
+        "priorScore": 0.19
       },
       "media": {
         "polarity": "neutral",
@@ -4381,8 +4380,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.15,
-            "count": 32
+            "score": 0.19,
+            "count": 36
           }
         ],
         "media": [
@@ -4599,32 +4598,32 @@
       "window": "7d",
       "fan": {
         "polarity": "positive",
-        "score": 0.21,
+        "score": 0.22,
         "direction": "stable",
-        "mentionVolume": 356,
+        "mentionVolume": 360,
         "coverageConfidence": 0.62,
         "platformBreakdown": {
           "fan_blog": 0.028,
-          "bluesky": 0.309,
-          "youtube": 0.663
+          "bluesky": 0.308,
+          "youtube": 0.664
         },
         "topicBreakdown": {
-          "trade_rumors": 0.132,
-          "training_camp": 0.194,
-          "availability": 0.063,
-          "role_debate": 0.111,
-          "scoring": 0.222,
+          "trade_rumors": 0.134,
+          "training_camp": 0.197,
+          "availability": 0.056,
+          "role_debate": 0.113,
+          "scoring": 0.218,
           "defense": 0.063,
           "contract": 0.049,
           "injury_return": 0.014,
-          "mvp_case": 0.076,
-          "title_odds": 0.076
+          "mvp_case": 0.077,
+          "title_odds": 0.077
         },
         "origin": "fans",
         "asOf": "2026-10-06",
-        "windowStart": "2026-09-29",
+        "windowStart": "2026-09-30",
         "modelVersion": "fan-llama33-70b-v1+fan-lexicon-v1.2",
-        "priorScore": 0.27
+        "priorScore": 0.26
       },
       "media": {
         "polarity": "positive",
@@ -4655,11 +4654,6 @@
       },
       "series": {
         "fan": [
-          {
-            "date": "2026-09-06",
-            "score": -0.46,
-            "count": 1
-          },
           {
             "date": "2026-09-27",
             "score": 0.64,
@@ -4707,8 +4701,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.21,
-            "count": 142
+            "score": 0.22,
+            "count": 148
           }
         ],
         "media": [
@@ -5532,12 +5526,12 @@
         "polarity": "positive",
         "score": 0.3,
         "direction": "rising",
-        "mentionVolume": 83,
+        "mentionVolume": 82,
         "coverageConfidence": 0.55,
         "platformBreakdown": {
-          "fan_blog": 0.036,
-          "bluesky": 0.229,
-          "youtube": 0.735
+          "fan_blog": 0.037,
+          "bluesky": 0.232,
+          "youtube": 0.732
         },
         "topicBreakdown": {
           "scoring": 0.28,
@@ -5551,9 +5545,9 @@
         },
         "origin": "fans",
         "asOf": "2026-10-06",
-        "windowStart": "2026-09-29",
+        "windowStart": "2026-09-30",
         "modelVersion": "fan-llama33-70b-v1+fan-lexicon-v1.2",
-        "priorScore": 0.05
+        "priorScore": 0.04
       },
       "media": {
         "polarity": "mixed",
@@ -5885,7 +5879,7 @@
         "polarity": "mixed",
         "score": 0.1,
         "direction": "stable",
-        "mentionVolume": 481,
+        "mentionVolume": 482,
         "coverageConfidence": 0.57,
         "platformBreakdown": {
           "fan_blog": 0.002,
@@ -5982,7 +5976,7 @@
           {
             "date": "2026-10-06",
             "score": 0.09,
-            "count": 52
+            "count": 53
           }
         ],
         "media": [
@@ -6171,13 +6165,13 @@
       "window": "7d",
       "fan": {
         "polarity": "mixed",
-        "score": -0.13,
+        "score": -0.18,
         "direction": "stable",
-        "mentionVolume": 26,
+        "mentionVolume": 27,
         "coverageConfidence": 0.51,
         "platformBreakdown": {
-          "bluesky": 0.154,
-          "youtube": 0.846
+          "bluesky": 0.148,
+          "youtube": 0.852
         },
         "topicBreakdown": {
           "contract": 0.143,
@@ -6256,8 +6250,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": -0.43,
-            "count": 6
+            "score": -0.53,
+            "count": 7
           }
         ],
         "media": [
@@ -6732,14 +6726,14 @@
       "window": "7d",
       "fan": {
         "polarity": "mixed",
-        "score": 0.11,
+        "score": 0.1,
         "direction": "stable",
-        "mentionVolume": 160,
+        "mentionVolume": 159,
         "coverageConfidence": 0.55,
         "platformBreakdown": {
           "fan_blog": 0.013,
           "bluesky": 0.094,
-          "youtube": 0.894
+          "youtube": 0.893
         },
         "topicBreakdown": {
           "mvp_case": 0.095,
@@ -6754,7 +6748,7 @@
         },
         "origin": "fans",
         "asOf": "2026-10-06",
-        "windowStart": "2026-09-29",
+        "windowStart": "2026-09-30",
         "modelVersion": "fan-llama33-70b-v1+fan-lexicon-v1.2",
         "priorScore": null
       },
@@ -7178,11 +7172,11 @@
         "polarity": "neutral",
         "score": 0.02,
         "direction": "stable",
-        "mentionVolume": 9,
+        "mentionVolume": 10,
         "coverageConfidence": 0.47,
         "platformBreakdown": {
-          "bluesky": 0.556,
-          "youtube": 0.444
+          "bluesky": 0.6,
+          "youtube": 0.4
         },
         "topicBreakdown": {
           "training_camp": 0.5,
@@ -7278,7 +7272,7 @@
           {
             "date": "2026-10-06",
             "score": 0,
-            "count": 2
+            "count": 3
           }
         ],
         "media": [
@@ -7359,23 +7353,23 @@
         "polarity": "neutral",
         "score": 0.06,
         "direction": "stable",
-        "mentionVolume": 452,
+        "mentionVolume": 461,
         "coverageConfidence": 0.61,
         "platformBreakdown": {
           "fan_blog": 0.009,
-          "bluesky": 0.051,
-          "youtube": 0.94
+          "bluesky": 0.05,
+          "youtube": 0.941
         },
         "topicBreakdown": {
-          "trade_rumors": 0.117,
-          "title_odds": 0.172,
-          "defense": 0.11,
-          "availability": 0.037,
-          "role_debate": 0.11,
-          "contract": 0.178,
-          "scoring": 0.123,
-          "mvp_case": 0.061,
-          "extension": 0.055,
+          "trade_rumors": 0.119,
+          "title_odds": 0.173,
+          "defense": 0.107,
+          "availability": 0.036,
+          "role_debate": 0.107,
+          "contract": 0.19,
+          "scoring": 0.119,
+          "mvp_case": 0.06,
+          "extension": 0.054,
           "injury_return": 0.018,
           "training_camp": 0.018
         },
@@ -7471,8 +7465,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": -0.03,
-            "count": 136
+            "score": -0.01,
+            "count": 145
           }
         ],
         "media": [
@@ -7795,12 +7789,12 @@
         "polarity": "positive",
         "score": 0.28,
         "direction": "rising",
-        "mentionVolume": 117,
+        "mentionVolume": 119,
         "coverageConfidence": 0.57,
         "platformBreakdown": {
           "fan_blog": 0.034,
-          "bluesky": 0.009,
-          "youtube": 0.957
+          "bluesky": 0.008,
+          "youtube": 0.958
         },
         "topicBreakdown": {
           "trade_rumors": 0.268,
@@ -7889,8 +7883,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.37,
-            "count": 21
+            "score": 0.38,
+            "count": 23
           }
         ],
         "media": [
@@ -8162,32 +8156,32 @@
         "polarity": "neutral",
         "score": 0.01,
         "direction": "stable",
-        "mentionVolume": 278,
+        "mentionVolume": 275,
         "coverageConfidence": 0.61,
         "platformBreakdown": {
           "fan_blog": 0.011,
-          "bluesky": 0.273,
-          "youtube": 0.716
+          "bluesky": 0.276,
+          "youtube": 0.713
         },
         "topicBreakdown": {
-          "trade_rumors": 0.103,
-          "title_odds": 0.126,
-          "injury_return": 0.092,
-          "mvp_case": 0.046,
-          "training_camp": 0.149,
-          "scoring": 0.069,
+          "trade_rumors": 0.105,
+          "title_odds": 0.128,
+          "injury_return": 0.081,
+          "mvp_case": 0.047,
+          "training_camp": 0.151,
+          "scoring": 0.07,
           "extension": 0.023,
-          "contract": 0.126,
-          "role_debate": 0.103,
+          "contract": 0.128,
+          "role_debate": 0.105,
           "conduct": 0.023,
-          "defense": 0.08,
-          "availability": 0.057
+          "defense": 0.081,
+          "availability": 0.058
         },
         "origin": "fans",
         "asOf": "2026-10-06",
-        "windowStart": "2026-09-29",
+        "windowStart": "2026-09-30",
         "modelVersion": "fan-llama33-70b-v1+fan-lexicon-v1.2",
-        "priorScore": -0.01
+        "priorScore": 0.02
       },
       "media": {
         "polarity": "mixed",
@@ -8576,25 +8570,25 @@
         "polarity": "mixed",
         "score": 0.09,
         "direction": "stable",
-        "mentionVolume": 64,
+        "mentionVolume": 65,
         "coverageConfidence": 0.56,
         "platformBreakdown": {
-          "fan_blog": 0.016,
-          "bluesky": 0.25,
-          "youtube": 0.734
+          "fan_blog": 0.015,
+          "bluesky": 0.246,
+          "youtube": 0.738
         },
         "topicBreakdown": {
-          "title_odds": 0.133,
-          "injury_return": 0.067,
-          "defense": 0.167,
-          "contract": 0.133,
-          "mvp_case": 0.1,
-          "scoring": 0.1,
-          "training_camp": 0.033,
-          "trade_rumors": 0.067,
-          "availability": 0.1,
-          "extension": 0.033,
-          "role_debate": 0.067
+          "title_odds": 0.129,
+          "injury_return": 0.065,
+          "defense": 0.161,
+          "contract": 0.129,
+          "mvp_case": 0.097,
+          "scoring": 0.097,
+          "training_camp": 0.032,
+          "trade_rumors": 0.097,
+          "availability": 0.097,
+          "extension": 0.032,
+          "role_debate": 0.065
         },
         "origin": "fans",
         "asOf": "2026-10-06",
@@ -8667,8 +8661,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": -0.11,
-            "count": 6
+            "score": -0.1,
+            "count": 7
           }
         ],
         "media": [
@@ -9379,21 +9373,21 @@
         "polarity": "mixed",
         "score": 0.16,
         "direction": "rising",
-        "mentionVolume": 250,
+        "mentionVolume": 255,
         "coverageConfidence": 0.61,
         "platformBreakdown": {
-          "bluesky": 0.144,
-          "youtube": 0.856
+          "bluesky": 0.149,
+          "youtube": 0.851
         },
         "topicBreakdown": {
-          "contract": 0.132,
-          "role_debate": 0.132,
-          "training_camp": 0.079,
-          "mvp_case": 0.092,
-          "scoring": 0.158,
-          "defense": 0.158,
-          "trade_rumors": 0.079,
-          "title_odds": 0.105,
+          "contract": 0.13,
+          "role_debate": 0.13,
+          "training_camp": 0.078,
+          "mvp_case": 0.091,
+          "scoring": 0.156,
+          "defense": 0.169,
+          "trade_rumors": 0.078,
+          "title_odds": 0.104,
           "extension": 0.039,
           "injury_return": 0.026
         },
@@ -9475,8 +9469,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.21,
-            "count": 51
+            "score": 0.22,
+            "count": 56
           }
         ],
         "media": [
@@ -9695,7 +9689,7 @@
         "polarity": "neutral",
         "score": 0.01,
         "direction": "stable",
-        "mentionVolume": 359,
+        "mentionVolume": 360,
         "coverageConfidence": 0.57,
         "platformBreakdown": {
           "bluesky": 0.014,
@@ -9715,7 +9709,7 @@
         },
         "origin": "fans",
         "asOf": "2026-10-06",
-        "windowStart": "2026-09-29",
+        "windowStart": "2026-09-30",
         "modelVersion": "fan-llama33-70b-v1+fan-lexicon-v1.2",
         "priorScore": null
       },
@@ -9782,8 +9776,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": -0.22,
-            "count": 17
+            "score": -0.17,
+            "count": 19
           }
         ],
         "media": [
@@ -9947,26 +9941,25 @@
       "window": "7d",
       "fan": {
         "polarity": "positive",
-        "score": 0.25,
+        "score": 0.21,
         "direction": "rising",
-        "mentionVolume": 12,
+        "mentionVolume": 11,
         "coverageConfidence": 0.48,
         "platformBreakdown": {
-          "bluesky": 0.083,
-          "youtube": 0.917
+          "bluesky": 0.091,
+          "youtube": 0.909
         },
         "topicBreakdown": {
-          "availability": 0.182,
-          "training_camp": 0.091,
-          "injury_return": 0.364,
-          "contract": 0.091,
-          "trade_rumors": 0.273
+          "availability": 0.222,
+          "training_camp": 0.111,
+          "injury_return": 0.333,
+          "trade_rumors": 0.333
         },
         "origin": "fans",
         "asOf": "2026-10-06",
-        "windowStart": "2026-09-29",
+        "windowStart": "2026-09-30",
         "modelVersion": "fan-llama33-70b-v1+fan-lexicon-v1.2",
-        "priorScore": -0.04
+        "priorScore": 0.06
       },
       "media": {
         "polarity": "mixed",
@@ -10779,24 +10772,24 @@
         "polarity": "mixed",
         "score": 0.16,
         "direction": "stable",
-        "mentionVolume": 236,
+        "mentionVolume": 247,
         "coverageConfidence": 0.56,
         "platformBreakdown": {
           "fan_blog": 0.004,
-          "bluesky": 0.047,
-          "youtube": 0.949
+          "bluesky": 0.045,
+          "youtube": 0.951
         },
         "topicBreakdown": {
-          "availability": 0.091,
-          "trade_rumors": 0.091,
-          "defense": 0.045,
-          "role_debate": 0.091,
-          "scoring": 0.25,
-          "training_camp": 0.159,
-          "injury_return": 0.159,
-          "mvp_case": 0.045,
-          "contract": 0.023,
-          "title_odds": 0.045
+          "availability": 0.089,
+          "trade_rumors": 0.089,
+          "defense": 0.044,
+          "role_debate": 0.089,
+          "scoring": 0.244,
+          "training_camp": 0.156,
+          "injury_return": 0.156,
+          "mvp_case": 0.044,
+          "contract": 0.022,
+          "title_odds": 0.067
         },
         "origin": "fans",
         "asOf": "2026-10-06",
@@ -10864,8 +10857,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.17,
-            "count": 205
+            "score": 0.18,
+            "count": 216
           }
         ],
         "media": [
@@ -11533,14 +11526,14 @@
       "window": "7d",
       "fan": {
         "polarity": "positive",
-        "score": 0.23,
+        "score": 0.26,
         "direction": "stable",
-        "mentionVolume": 8,
-        "coverageConfidence": 0.46,
+        "mentionVolume": 7,
+        "coverageConfidence": 0.45,
         "platformBreakdown": {
-          "fan_blog": 0.125,
-          "bluesky": 0.25,
-          "youtube": 0.625
+          "fan_blog": 0.143,
+          "bluesky": 0.286,
+          "youtube": 0.571
         },
         "topicBreakdown": {
           "defense": 0.333,
@@ -11549,7 +11542,7 @@
         },
         "origin": "fans",
         "asOf": "2026-10-05",
-        "windowStart": "2026-09-29",
+        "windowStart": "2026-10-02",
         "modelVersion": "fan-llama33-70b-v1+fan-lexicon-v1.2",
         "priorScore": null
       },
@@ -11727,9 +11720,9 @@
       "window": "7d",
       "fan": {
         "polarity": "mixed",
-        "score": 0.16,
+        "score": 0.18,
         "direction": "falling",
-        "mentionVolume": 350,
+        "mentionVolume": 349,
         "coverageConfidence": 0.54,
         "platformBreakdown": {
           "fan_blog": 0.003,
@@ -11749,9 +11742,9 @@
         },
         "origin": "fans",
         "asOf": "2026-10-06",
-        "windowStart": "2026-09-29",
+        "windowStart": "2026-09-30",
         "modelVersion": "fan-llama33-70b-v1+fan-lexicon-v1.2",
-        "priorScore": 0.67
+        "priorScore": 0.51
       },
       "media": {
         "polarity": "positive",
@@ -12058,23 +12051,23 @@
         "polarity": "positive",
         "score": 0.21,
         "direction": "rising",
-        "mentionVolume": 197,
+        "mentionVolume": 201,
         "coverageConfidence": 0.58,
         "platformBreakdown": {
-          "bluesky": 0.051,
-          "youtube": 0.949
+          "bluesky": 0.05,
+          "youtube": 0.95
         },
         "topicBreakdown": {
-          "role_debate": 0.07,
-          "scoring": 0.221,
-          "training_camp": 0.035,
-          "defense": 0.14,
-          "contract": 0.186,
-          "trade_rumors": 0.198,
-          "title_odds": 0.058,
-          "availability": 0.023,
-          "mvp_case": 0.058,
-          "injury_return": 0.012
+          "role_debate": 0.079,
+          "scoring": 0.225,
+          "training_camp": 0.034,
+          "defense": 0.146,
+          "contract": 0.18,
+          "trade_rumors": 0.191,
+          "title_odds": 0.056,
+          "availability": 0.022,
+          "mvp_case": 0.056,
+          "injury_return": 0.011
         },
         "origin": "fans",
         "asOf": "2026-10-06",
@@ -12150,8 +12143,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.28,
-            "count": 21
+            "score": 0.27,
+            "count": 25
           }
         ],
         "media": [
@@ -13359,8 +13352,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.01,
-            "count": 65
+            "score": 0.04,
+            "count": 68
           }
         ],
         "media": [
@@ -13396,27 +13389,27 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.67,
-            "count": 3
+            "score": 0.58,
+            "count": 5
           }
         ]
       },
       "media": {
         "polarity": "positive",
-        "score": 0.31,
+        "score": 0.32,
         "direction": "stable",
-        "mentionVolume": 17,
-        "coverageConfidence": 0.5,
+        "mentionVolume": 19,
+        "coverageConfidence": 0.51,
         "platformBreakdown": {
           "news": 1
         },
         "topicBreakdown": {
-          "role_debate": 0.174,
-          "defense": 0.13,
-          "training_camp": 0.261,
-          "trade_rumors": 0.304,
-          "contract": 0.087,
-          "injury_return": 0.043
+          "role_debate": 0.16,
+          "defense": 0.12,
+          "training_camp": 0.28,
+          "trade_rumors": 0.32,
+          "contract": 0.08,
+          "injury_return": 0.04
         },
         "origin": "headlines",
         "asOf": "2026-10-06",
@@ -13425,6 +13418,21 @@
         "priorScore": 0.33
       },
       "headlines": [
+        {
+          "title": "Without LeBron James, Bronny has chance to prove he really belongs",
+          "url": "https://nypost.com/2026/10/06/sports/nows-bronny-james-chance-to-prove-he-really-belongs/",
+          "outlet": "New York Post",
+          "publishedAt": "2026-10-06T22:10:19.000Z",
+          "score": 0.91
+        },
+        {
+          "title": "Bronny James Gets Unexpected Lakers Trade News After Preseason Game",
+          "url": "https://heavy.com/sports/nba/los-angeles-lakers/bronny-james-unexpected-trade-news-preseason-game/",
+          "outlet": "Heavy",
+          "publishedAt": "2026-10-06T22:10:04.000Z",
+          "score": -0.12,
+          "rating": 0
+        },
         {
           "title": "Bronny James Gets Lakers Trade Update As 4 Potential Spots Emerge",
           "url": "https://heavy.com/sports/nba/los-angeles-lakers/bronny-james-lakers-trade-update/",
@@ -13440,22 +13448,6 @@
           "publishedAt": "2026-10-06T11:56:13.000Z",
           "score": 0.55,
           "rating": 1
-        },
-        {
-          "title": "“Earn Your Minutes”: Bronny James’ Defensive Masterclass vs. Kings Impresses NBA Champion on Live TV",
-          "url": "https://www.essentiallysports.com/nba-active-basketball-news-earn-your-minutes-bronny-james-defensive-masterclass-vs-kings-impresses-nba-champion-on-live-tv-danny-green/",
-          "outlet": "EssentiallySports",
-          "publishedAt": "2026-10-06T04:12:30.000Z",
-          "score": 0.91,
-          "rating": 1
-        },
-        {
-          "title": "Bronny James Eyes Larger Lakers Role Amid New $19M Star’s Health Concerns",
-          "url": "https://heavy.com/sports/nba/los-angeles-lakers/bronny-james-lakers-role-health/",
-          "outlet": "Heavy",
-          "publishedAt": "2026-10-05T23:06:31.000Z",
-          "score": 0.12,
-          "rating": 1
         }
       ],
       "words": {
@@ -13463,7 +13455,7 @@
           "words": [
             [
               "trade",
-              5
+              6
             ],
             [
               "role",
@@ -13472,6 +13464,14 @@
             [
               "skills",
               3
+            ],
+            [
+              "lebron",
+              2
+            ],
+            [
+              "news",
+              2
             ],
             [
               "update",
@@ -13496,6 +13496,30 @@
             [
               "refine",
               2
+            ],
+            [
+              "chance",
+              1
+            ],
+            [
+              "prove",
+              1
+            ],
+            [
+              "belongs",
+              1
+            ],
+            [
+              "unexpected",
+              1
+            ],
+            [
+              "preseason",
+              1
+            ],
+            [
+              "game",
+              1
             ],
             [
               "potential",
@@ -13524,41 +13548,9 @@
             [
               "versus",
               1
-            ],
-            [
-              "earn",
-              1
-            ],
-            [
-              "minutes",
-              1
-            ],
-            [
-              "defensive",
-              1
-            ],
-            [
-              "masterclass",
-              1
-            ],
-            [
-              "impresses",
-              1
-            ],
-            [
-              "champion",
-              1
-            ],
-            [
-              "live",
-              1
-            ],
-            [
-              "eyes",
-              1
             ]
           ],
-          "headlines": 17
+          "headlines": 19
         },
         "fan": {
           "words": [
@@ -13589,8 +13581,8 @@
       "fan": {
         "polarity": "neutral",
         "score": 0.07,
-        "direction": "stable",
-        "mentionVolume": 298,
+        "direction": "falling",
+        "mentionVolume": 293,
         "coverageConfidence": 0.55,
         "platformBreakdown": {
           "fan_blog": 0.003,
@@ -13598,19 +13590,18 @@
           "youtube": 0.99
         },
         "topicBreakdown": {
-          "contract": 0.182,
-          "injury_return": 0.023,
-          "role_debate": 0.295,
-          "mvp_case": 0.091,
-          "scoring": 0.182,
-          "defense": 0.159,
-          "training_camp": 0.068
+          "contract": 0.19,
+          "mvp_case": 0.095,
+          "role_debate": 0.286,
+          "scoring": 0.19,
+          "defense": 0.167,
+          "training_camp": 0.071
         },
         "origin": "fans",
         "asOf": "2026-10-06",
         "windowStart": "2026-09-29",
         "modelVersion": "fan-llama33-70b-v1+fan-lexicon-v1.2",
-        "priorScore": null
+        "priorScore": 0.2
       },
       "performance": {
         "season": "2025-26",
@@ -13666,7 +13657,7 @@
           {
             "date": "2026-10-06",
             "score": 0.12,
-            "count": 53
+            "count": 54
           }
         ],
         "media": [
@@ -13945,12 +13936,12 @@
         "polarity": "positive",
         "score": 0.33,
         "direction": "stable",
-        "mentionVolume": 77,
+        "mentionVolume": 78,
         "coverageConfidence": 0.53,
         "platformBreakdown": {
-          "fan_blog": 0.052,
+          "fan_blog": 0.051,
           "bluesky": 0.026,
-          "youtube": 0.922
+          "youtube": 0.923
         },
         "topicBreakdown": {
           "scoring": 0.231,
@@ -14569,28 +14560,28 @@
       },
       "fan": {
         "polarity": "mixed",
-        "score": 0.14,
+        "score": 0.16,
         "direction": "stable",
-        "mentionVolume": 55,
+        "mentionVolume": 54,
         "coverageConfidence": 0.55,
         "platformBreakdown": {
-          "fan_blog": 0.055,
-          "bluesky": 0.145,
-          "youtube": 0.8
+          "fan_blog": 0.056,
+          "bluesky": 0.148,
+          "youtube": 0.796
         },
         "topicBreakdown": {
-          "training_camp": 0.114,
-          "contract": 0.159,
-          "scoring": 0.159,
-          "defense": 0.159,
-          "trade_rumors": 0.068,
-          "availability": 0.068,
-          "role_debate": 0.25,
+          "training_camp": 0.116,
+          "contract": 0.163,
+          "scoring": 0.163,
+          "defense": 0.14,
+          "trade_rumors": 0.07,
+          "availability": 0.07,
+          "role_debate": 0.256,
           "extension": 0.023
         },
         "origin": "fans",
         "asOf": "2026-10-06",
-        "windowStart": "2026-09-29",
+        "windowStart": "2026-09-30",
         "modelVersion": "fan-llama33-70b-v1+fan-lexicon-v1.2",
         "priorScore": null
       },
@@ -14981,8 +14972,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": -1,
-            "count": 1
+            "score": -0.25,
+            "count": 4
           }
         ],
         "media": [
@@ -15207,13 +15198,13 @@
       },
       "fan": {
         "polarity": "mixed",
-        "score": 0.1,
+        "score": 0.08,
         "direction": "stable",
-        "mentionVolume": 23,
-        "coverageConfidence": 0.5,
+        "mentionVolume": 26,
+        "coverageConfidence": 0.51,
         "platformBreakdown": {
-          "fan_blog": 0.13,
-          "youtube": 0.87
+          "fan_blog": 0.115,
+          "youtube": 0.885
         },
         "topicBreakdown": {
           "role_debate": 0.5,
@@ -15350,8 +15341,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": -0.15,
-            "count": 42
+            "score": -0.09,
+            "count": 43
           }
         ],
         "media": [
@@ -15714,9 +15705,9 @@
       },
       "fan": {
         "polarity": "mixed",
-        "score": 0.1,
+        "score": 0.11,
         "direction": "rising",
-        "mentionVolume": 884,
+        "mentionVolume": 883,
         "coverageConfidence": 0.63,
         "platformBreakdown": {
           "fan_blog": 0.009,
@@ -15724,9 +15715,9 @@
           "youtube": 0.951
         },
         "topicBreakdown": {
-          "contract": 0.478,
+          "contract": 0.479,
           "mvp_case": 0.034,
-          "trade_rumors": 0.179,
+          "trade_rumors": 0.177,
           "training_camp": 0.042,
           "extension": 0.026,
           "injury_return": 0.01,
@@ -15740,7 +15731,7 @@
         "asOf": "2026-10-06",
         "windowStart": "2026-09-29",
         "modelVersion": "fan-llama33-70b-v1+fan-lexicon-v1.2",
-        "priorScore": -0.28
+        "priorScore": -0.29
       },
       "performance": {
         "season": "2025-26",
@@ -16374,8 +16365,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": -0.35,
-            "count": 4
+            "score": -0.26,
+            "count": 5
           }
         ],
         "media": [
@@ -16553,20 +16544,21 @@
         "polarity": "mixed",
         "score": 0.09,
         "direction": "stable",
-        "mentionVolume": 32,
+        "mentionVolume": 33,
         "coverageConfidence": 0.51,
         "platformBreakdown": {
-          "fan_blog": 0.031,
-          "youtube": 0.969
+          "fan_blog": 0.03,
+          "youtube": 0.97
         },
         "topicBreakdown": {
-          "scoring": 0.174,
-          "role_debate": 0.13,
-          "title_odds": 0.087,
-          "trade_rumors": 0.391,
-          "contract": 0.13,
-          "defense": 0.043,
-          "training_camp": 0.043
+          "scoring": 0.167,
+          "role_debate": 0.125,
+          "title_odds": 0.083,
+          "trade_rumors": 0.375,
+          "contract": 0.125,
+          "defense": 0.042,
+          "training_camp": 0.042,
+          "mvp_case": 0.042
         },
         "origin": "fans",
         "asOf": "2026-10-06",
@@ -16657,8 +16649,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": -0.11,
-            "count": 94
+            "score": -0.13,
+            "count": 100
           }
         ],
         "media": [
@@ -16845,25 +16837,25 @@
       },
       "fan": {
         "polarity": "neutral",
-        "score": 0.05,
+        "score": 0.03,
         "direction": "falling",
-        "mentionVolume": 118,
+        "mentionVolume": 124,
         "coverageConfidence": 0.55,
         "platformBreakdown": {
-          "bluesky": 0.059,
-          "youtube": 0.941
+          "bluesky": 0.056,
+          "youtube": 0.944
         },
         "topicBreakdown": {
-          "scoring": 0.17,
-          "trade_rumors": 0.277,
-          "availability": 0.043,
-          "injury_return": 0.043,
-          "role_debate": 0.191,
-          "extension": 0.064,
+          "scoring": 0.188,
+          "trade_rumors": 0.271,
+          "availability": 0.042,
+          "injury_return": 0.042,
+          "role_debate": 0.188,
+          "extension": 0.063,
           "title_odds": 0.021,
-          "contract": 0.043,
+          "contract": 0.042,
           "training_camp": 0.021,
-          "defense": 0.085,
+          "defense": 0.083,
           "mvp_case": 0.021,
           "conduct": 0.021
         },
@@ -17484,25 +17476,24 @@
         "polarity": "neutral",
         "score": 0.05,
         "direction": "stable",
-        "mentionVolume": 510,
-        "coverageConfidence": 0.59,
+        "mentionVolume": 431,
+        "coverageConfidence": 0.58,
         "platformBreakdown": {
-          "fan_blog": 0.006,
-          "bluesky": 0.01,
-          "youtube": 0.984
+          "fan_blog": 0.007,
+          "bluesky": 0.012,
+          "youtube": 0.981
         },
         "topicBreakdown": {
-          "contract": 0.192,
-          "role_debate": 0.033,
-          "injury_return": 0.117,
-          "availability": 0.092,
-          "training_camp": 0.033,
-          "scoring": 0.342,
-          "defense": 0.133,
-          "trade_rumors": 0.017,
-          "title_odds": 0.017,
-          "mvp_case": 0.017,
-          "extension": 0.008
+          "contract": 0.189,
+          "role_debate": 0.038,
+          "injury_return": 0.132,
+          "availability": 0.104,
+          "training_camp": 0.038,
+          "scoring": 0.33,
+          "defense": 0.132,
+          "trade_rumors": 0.019,
+          "title_odds": 0.009,
+          "mvp_case": 0.009
         },
         "origin": "fans",
         "asOf": "2026-10-06",
@@ -17869,8 +17860,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.16,
-            "count": 15
+            "score": 0.2,
+            "count": 18
           }
         ],
         "media": [
@@ -18028,22 +18019,22 @@
       },
       "fan": {
         "polarity": "mixed",
-        "score": 0.12,
+        "score": 0.15,
         "direction": "stable",
-        "mentionVolume": 31,
+        "mentionVolume": 34,
         "coverageConfidence": 0.52,
         "platformBreakdown": {
-          "bluesky": 0.161,
-          "youtube": 0.839
+          "bluesky": 0.147,
+          "youtube": 0.853
         },
         "topicBreakdown": {
-          "training_camp": 0.188,
-          "defense": 0.125,
-          "role_debate": 0.25,
-          "contract": 0.125,
-          "trade_rumors": 0.125,
-          "scoring": 0.125,
-          "title_odds": 0.063
+          "training_camp": 0.176,
+          "defense": 0.118,
+          "role_debate": 0.235,
+          "contract": 0.118,
+          "trade_rumors": 0.118,
+          "scoring": 0.176,
+          "title_odds": 0.059
         },
         "origin": "fans",
         "asOf": "2026-10-06",
@@ -18119,8 +18110,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.16,
-            "count": 26
+            "score": 0.28,
+            "count": 29
           }
         ],
         "media": [
@@ -18385,26 +18376,27 @@
         }
       },
       "fan": {
-        "polarity": "mixed",
-        "score": 0.19,
+        "polarity": "positive",
+        "score": 0.22,
         "direction": "rising",
-        "mentionVolume": 211,
+        "mentionVolume": 214,
         "coverageConfidence": 0.58,
         "platformBreakdown": {
           "fan_blog": 0.019,
-          "bluesky": 0.147,
-          "youtube": 0.834
+          "bluesky": 0.159,
+          "youtube": 0.822
         },
         "topicBreakdown": {
           "mvp_case": 0.014,
-          "training_camp": 0.07,
-          "scoring": 0.451,
-          "role_debate": 0.169,
-          "defense": 0.07,
-          "trade_rumors": 0.028,
-          "injury_return": 0.042,
-          "contract": 0.07,
-          "availability": 0.085
+          "training_camp": 0.068,
+          "scoring": 0.438,
+          "role_debate": 0.164,
+          "defense": 0.082,
+          "trade_rumors": 0.027,
+          "injury_return": 0.041,
+          "contract": 0.068,
+          "availability": 0.082,
+          "title_odds": 0.014
         },
         "origin": "fans",
         "asOf": "2026-10-06",
@@ -18461,7 +18453,7 @@
           {
             "date": "2026-10-06",
             "score": -0.08,
-            "count": 84
+            "count": 87
           }
         ],
         "media": [
@@ -18662,20 +18654,20 @@
         "polarity": "neutral",
         "score": -0.06,
         "direction": "stable",
-        "mentionVolume": 104,
+        "mentionVolume": 107,
         "coverageConfidence": 0.52,
         "platformBreakdown": {
           "fan_blog": 0.019,
-          "bluesky": 0.038,
-          "youtube": 0.942
+          "bluesky": 0.037,
+          "youtube": 0.944
         },
         "topicBreakdown": {
-          "trade_rumors": 0.063,
-          "defense": 0.125,
-          "training_camp": 0.5,
-          "role_debate": 0.125,
-          "availability": 0.125,
-          "conduct": 0.063
+          "trade_rumors": 0.059,
+          "defense": 0.118,
+          "training_camp": 0.529,
+          "role_debate": 0.118,
+          "availability": 0.118,
+          "conduct": 0.059
         },
         "origin": "fans",
         "asOf": "2026-10-06",
@@ -20203,11 +20195,6 @@
       "provenance": "ingest",
       "series": {
         "fan": [
-          {
-            "date": "2026-09-06",
-            "score": -0.46,
-            "count": 1
-          },
           {
             "date": "2026-09-27",
             "score": 0.76,
@@ -22341,10 +22328,10 @@
       },
       "fan": {
         "polarity": "neutral",
-        "score": 0.05,
+        "score": 0.03,
         "direction": "stable",
-        "mentionVolume": 50,
-        "coverageConfidence": 0.53,
+        "mentionVolume": 49,
+        "coverageConfidence": 0.52,
         "platformBreakdown": {
           "fan_blog": 0.02,
           "youtube": 0.98
@@ -22359,7 +22346,7 @@
         },
         "origin": "fans",
         "asOf": "2026-10-06",
-        "windowStart": "2026-09-29",
+        "windowStart": "2026-09-30",
         "modelVersion": "fan-llama33-70b-v1+fan-lexicon-v1.2",
         "priorScore": null
       },
@@ -22406,8 +22393,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.76,
-            "count": 1
+            "score": 0.38,
+            "count": 2
           }
         ],
         "media": [
@@ -22593,22 +22580,22 @@
       },
       "fan": {
         "polarity": "positive",
-        "score": 0.45,
+        "score": 0.38,
         "direction": "stable",
-        "mentionVolume": 6,
-        "coverageConfidence": 0.45,
+        "mentionVolume": 7,
+        "coverageConfidence": 0.46,
         "platformBreakdown": {
           "youtube": 1
         },
         "topicBreakdown": {
-          "mvp_case": 0.333,
-          "role_debate": 0.333,
-          "injury_return": 0.333
+          "mvp_case": 0.25,
+          "role_debate": 0.25,
+          "injury_return": 0.5
         },
         "origin": "fans",
         "asOf": "2026-10-06",
         "windowStart": "2026-10-01",
-        "modelVersion": "fan-lexicon-v1.2",
+        "modelVersion": "fan-llama33-70b-v1+fan-lexicon-v1.2",
         "priorScore": null
       },
       "performance": {
@@ -22670,7 +22657,7 @@
           {
             "date": "2026-10-06",
             "score": 0,
-            "count": 1
+            "count": 2
           }
         ],
         "media": [
@@ -22961,23 +22948,23 @@
       },
       "fan": {
         "polarity": "positive",
-        "score": 0.31,
+        "score": 0.29,
         "direction": "stable",
-        "mentionVolume": 19,
+        "mentionVolume": 20,
         "coverageConfidence": 0.5,
         "platformBreakdown": {
-          "fan_blog": 0.158,
-          "bluesky": 0.053,
-          "youtube": 0.789
+          "fan_blog": 0.15,
+          "bluesky": 0.05,
+          "youtube": 0.8
         },
         "topicBreakdown": {
-          "role_debate": 0.111,
-          "training_camp": 0.111,
-          "title_odds": 0.222,
-          "extension": 0.111,
-          "trade_rumors": 0.111,
-          "scoring": 0.111,
-          "defense": 0.222
+          "role_debate": 0.2,
+          "training_camp": 0.1,
+          "title_odds": 0.2,
+          "extension": 0.1,
+          "trade_rumors": 0.1,
+          "scoring": 0.1,
+          "defense": 0.2
         },
         "origin": "fans",
         "asOf": "2026-10-06",
@@ -23165,8 +23152,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.25,
-            "count": 19
+            "score": 0.21,
+            "count": 22
           }
         ],
         "media": [
@@ -23374,24 +23361,25 @@
       },
       "fan": {
         "polarity": "mixed",
-        "score": 0.13,
+        "score": 0.12,
         "direction": "stable",
-        "mentionVolume": 33,
+        "mentionVolume": 36,
         "coverageConfidence": 0.53,
         "platformBreakdown": {
-          "fan_blog": 0.091,
-          "bluesky": 0.212,
-          "youtube": 0.697
+          "fan_blog": 0.083,
+          "bluesky": 0.222,
+          "youtube": 0.694
         },
         "topicBreakdown": {
-          "scoring": 0.154,
-          "defense": 0.077,
-          "training_camp": 0.231,
-          "availability": 0.231,
-          "injury_return": 0.077,
-          "title_odds": 0.077,
-          "contract": 0.077,
-          "role_debate": 0.077
+          "scoring": 0.143,
+          "defense": 0.071,
+          "training_camp": 0.214,
+          "availability": 0.214,
+          "injury_return": 0.071,
+          "title_odds": 0.071,
+          "contract": 0.071,
+          "role_debate": 0.071,
+          "mvp_case": 0.071
         },
         "origin": "fans",
         "asOf": "2026-10-06",
@@ -23447,8 +23435,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.55,
-            "count": 15
+            "score": 0.6,
+            "count": 17
           }
         ],
         "media": [
@@ -23729,14 +23717,14 @@
       },
       "fan": {
         "polarity": "positive",
-        "score": 0.2,
+        "score": 0.25,
         "direction": "stable",
-        "mentionVolume": 54,
-        "coverageConfidence": 0.55,
+        "mentionVolume": 55,
+        "coverageConfidence": 0.56,
         "platformBreakdown": {
-          "fan_blog": 0.074,
-          "bluesky": 0.685,
-          "youtube": 0.241
+          "fan_blog": 0.073,
+          "bluesky": 0.691,
+          "youtube": 0.236
         },
         "topicBreakdown": {
           "training_camp": 0.154,
@@ -23751,7 +23739,7 @@
         },
         "origin": "fans",
         "asOf": "2026-10-06",
-        "windowStart": "2026-09-29",
+        "windowStart": "2026-09-30",
         "modelVersion": "fan-llama33-70b-v1+fan-lexicon-v1.2",
         "priorScore": null
       },
@@ -24387,8 +24375,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": -0.09,
-            "count": 189
+            "score": -0.1,
+            "count": 195
           }
         ],
         "media": [
@@ -24547,9 +24535,9 @@
       },
       "fan": {
         "polarity": "neutral",
-        "score": -0.06,
+        "score": -0.07,
         "direction": "stable",
-        "mentionVolume": 286,
+        "mentionVolume": 292,
         "coverageConfidence": 0.53,
         "platformBreakdown": {
           "fan_blog": 0.007,
@@ -24557,13 +24545,13 @@
           "youtube": 0.99
         },
         "topicBreakdown": {
-          "training_camp": 0.016,
-          "contract": 0.109,
-          "availability": 0.094,
-          "trade_rumors": 0.078,
-          "scoring": 0.172,
-          "role_debate": 0.344,
-          "injury_return": 0.125,
+          "training_camp": 0.015,
+          "contract": 0.108,
+          "availability": 0.092,
+          "trade_rumors": 0.077,
+          "scoring": 0.169,
+          "role_debate": 0.354,
+          "injury_return": 0.123,
           "defense": 0.031,
           "conduct": 0.031
         },
@@ -25830,12 +25818,12 @@
         "polarity": "positive",
         "score": 0.36,
         "direction": "rising",
-        "mentionVolume": 24,
+        "mentionVolume": 23,
         "coverageConfidence": 0.49,
         "platformBreakdown": {
-          "fan_blog": 0.083,
-          "bluesky": 0.042,
-          "youtube": 0.875
+          "fan_blog": 0.087,
+          "bluesky": 0.043,
+          "youtube": 0.87
         },
         "topicBreakdown": {
           "trade_rumors": 0.4,
@@ -25845,9 +25833,9 @@
         },
         "origin": "fans",
         "asOf": "2026-10-06",
-        "windowStart": "2026-09-29",
+        "windowStart": "2026-09-30",
         "modelVersion": "fan-llama33-70b-v1+fan-lexicon-v1.2",
-        "priorScore": 0.14
+        "priorScore": 0.13
       },
       "performance": {
         "season": "2025-26",
@@ -25907,6 +25895,11 @@
           },
           {
             "date": "2026-10-05",
+            "score": 0,
+            "count": 1
+          },
+          {
+            "date": "2026-10-06",
             "score": 0,
             "count": 1
           }
@@ -26089,21 +26082,21 @@
       },
       "fan": {
         "polarity": "positive",
-        "score": 0.73,
-        "direction": "stable",
-        "mentionVolume": 5,
-        "coverageConfidence": 0.44,
+        "score": 0.61,
+        "direction": "falling",
+        "mentionVolume": 6,
+        "coverageConfidence": 0.45,
         "platformBreakdown": {
-          "fan_blog": 0.4,
-          "bluesky": 0.4,
-          "youtube": 0.2
+          "fan_blog": 0.333,
+          "bluesky": 0.5,
+          "youtube": 0.167
         },
         "topicBreakdown": {
           "injury_return": 0.667,
           "role_debate": 0.333
         },
         "origin": "fans",
-        "asOf": "2026-10-05",
+        "asOf": "2026-10-06",
         "windowStart": "2026-10-01",
         "modelVersion": "fan-llama33-70b-v1+fan-lexicon-v1.2",
         "priorScore": 0.8
@@ -26996,13 +26989,13 @@
       },
       "fan": {
         "polarity": "mixed",
-        "score": 0.16,
+        "score": 0.17,
         "direction": "stable",
-        "mentionVolume": 13,
-        "coverageConfidence": 0.49,
+        "mentionVolume": 12,
+        "coverageConfidence": 0.48,
         "platformBreakdown": {
-          "bluesky": 0.462,
-          "youtube": 0.538
+          "bluesky": 0.5,
+          "youtube": 0.5
         },
         "topicBreakdown": {
           "training_camp": 0.222,
@@ -27013,7 +27006,7 @@
         },
         "origin": "fans",
         "asOf": "2026-10-06",
-        "windowStart": "2026-09-29",
+        "windowStart": "2026-10-01",
         "modelVersion": "fan-llama33-70b-v1+fan-lexicon-v1.2",
         "priorScore": null
       },
@@ -27075,8 +27068,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": -0.01,
-            "count": 12
+            "score": -0.16,
+            "count": 30
           }
         ],
         "media": [
@@ -27245,30 +27238,31 @@
         }
       },
       "fan": {
-        "polarity": "neutral",
-        "score": 0.01,
+        "polarity": "mixed",
+        "score": -0.09,
         "direction": "stable",
-        "mentionVolume": 24,
-        "coverageConfidence": 0.51,
+        "mentionVolume": 41,
+        "coverageConfidence": 0.52,
         "platformBreakdown": {
-          "bluesky": 0.167,
-          "youtube": 0.833
+          "bluesky": 0.098,
+          "youtube": 0.902
         },
         "topicBreakdown": {
-          "defense": 0.05,
-          "contract": 0.1,
-          "trade_rumors": 0.3,
-          "extension": 0.05,
-          "title_odds": 0.05,
-          "role_debate": 0.3,
-          "scoring": 0.1,
-          "injury_return": 0.05
+          "defense": 0.045,
+          "contract": 0.091,
+          "trade_rumors": 0.273,
+          "extension": 0.045,
+          "title_odds": 0.091,
+          "role_debate": 0.273,
+          "scoring": 0.091,
+          "injury_return": 0.045,
+          "training_camp": 0.045
         },
         "origin": "fans",
         "asOf": "2026-10-06",
-        "windowStart": "2026-09-29",
+        "windowStart": "2026-09-30",
         "modelVersion": "fan-llama33-70b-v1+fan-lexicon-v1.2",
-        "priorScore": null
+        "priorScore": -0.17
       },
       "performance": {
         "season": "2025-26",
@@ -27843,8 +27837,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": -0.19,
-            "count": 43
+            "score": -0.22,
+            "count": 44
           }
         ],
         "media": [
@@ -27860,29 +27854,29 @@
           },
           {
             "date": "2026-10-06",
-            "score": -0.87,
-            "count": 25
+            "score": -0.88,
+            "count": 27
           }
         ]
       },
       "media": {
         "polarity": "negative",
-        "score": -0.82,
+        "score": -0.83,
         "direction": "stable",
-        "mentionVolume": 28,
+        "mentionVolume": 30,
         "coverageConfidence": 0.53,
         "platformBreakdown": {
           "news": 1
         },
         "topicBreakdown": {
-          "availability": 0.441,
-          "training_camp": 0.271,
-          "scoring": 0.034,
-          "role_debate": 0.136,
-          "title_odds": 0.017,
-          "injury_return": 0.017,
-          "contract": 0.068,
-          "trade_rumors": 0.017
+          "availability": 0.438,
+          "training_camp": 0.266,
+          "scoring": 0.031,
+          "role_debate": 0.125,
+          "title_odds": 0.031,
+          "injury_return": 0.016,
+          "contract": 0.078,
+          "trade_rumors": 0.016
         },
         "origin": "headlines",
         "asOf": "2026-10-06",
@@ -27891,6 +27885,14 @@
         "priorScore": null
       },
       "headlines": [
+        {
+          "title": "Ex-Knick Ariel Hukporti out for season after tearing Achilles",
+          "url": "https://nypost.com/2026/10/06/sports/76ers-ariel-hukporti-out-for-season-after-tearing-achilles/",
+          "outlet": "New York Post",
+          "publishedAt": "2026-10-06T22:33:33.000Z",
+          "score": 0.12,
+          "rating": -1
+        },
         {
           "title": "Ariel Hukporti injury update is bad news for LeBron James and Sixers",
           "url": "https://sports.yahoo.com/articles/ariel-hukporti-injury-bad-news-211535001.html",
@@ -27908,19 +27910,12 @@
           "rating": -1
         },
         {
-          "title": "Ariel Hukporti Suffers Torn Achilles Tendon",
-          "url": "https://basketball.realgm.com/wiretap/287542/Ariel-Hukporti-Suffers-Torn-Achilles-Tendon",
-          "outlet": "RealGM",
-          "publishedAt": "2026-10-06T19:35:13.000Z",
-          "score": -0.98,
+          "title": "How the Sixers can add another backup center after Ariel Hukporti’s Achilles injury",
+          "url": "https://sports.yahoo.com/articles/sixers-add-another-backup-center-201500755.html",
+          "outlet": "Yahoo Sports",
+          "publishedAt": "2026-10-06T20:15:00.000Z",
+          "score": -0.55,
           "rating": -1
-        },
-        {
-          "title": "Ex-Knicks Center Gets Devastating News With Injury Diagnosis",
-          "url": "https://heavy.com/sports/nba/new-york-knicks/ariel-hukporti-devastating-news-injury-diagnosis/",
-          "outlet": "Heavy",
-          "publishedAt": "2026-10-06T19:19:59.000Z",
-          "score": -0.93
         }
       ],
       "words": {
@@ -27928,15 +27923,19 @@
           "words": [
             [
               "injury",
-              14
+              15
             ],
             [
               "achilles",
-              10
+              12
             ],
             [
               "preseason",
               8
+            ],
+            [
+              "center",
+              6
             ],
             [
               "suffers",
@@ -27959,19 +27958,23 @@
               6
             ],
             [
-              "center",
-              5
-            ],
-            [
               "non-contact",
               5
             ],
             [
-              "embiid",
+              "season",
+              4
+            ],
+            [
+              "ex-knick",
               3
             ],
             [
-              "season",
+              "tearing",
+              3
+            ],
+            [
+              "embiid",
               3
             ],
             [
@@ -28003,27 +28006,19 @@
               2
             ],
             [
+              "backup",
+              2
+            ],
+            [
               "tendon",
               2
             ],
             [
               "tear",
               2
-            ],
-            [
-              "miss",
-              2
-            ],
-            [
-              "undergoing",
-              2
-            ],
-            [
-              "imaging",
-              2
             ]
           ],
-          "headlines": 28
+          "headlines": 30
         },
         "fan": {
           "words": [
@@ -28129,22 +28124,22 @@
       },
       "fan": {
         "polarity": "neutral",
-        "score": -0.02,
+        "score": -0.03,
         "direction": "stable",
-        "mentionVolume": 68,
+        "mentionVolume": 69,
         "coverageConfidence": 0.56,
         "platformBreakdown": {
-          "fan_blog": 0.074,
-          "bluesky": 0.588,
-          "youtube": 0.338
+          "fan_blog": 0.072,
+          "bluesky": 0.594,
+          "youtube": 0.333
         },
         "topicBreakdown": {
-          "availability": 0.356,
-          "role_debate": 0.203,
-          "scoring": 0.153,
-          "training_camp": 0.169,
-          "defense": 0.051,
-          "contract": 0.051,
+          "availability": 0.35,
+          "role_debate": 0.2,
+          "scoring": 0.15,
+          "training_camp": 0.167,
+          "defense": 0.05,
+          "contract": 0.067,
           "injury_return": 0.017
         },
         "origin": "fans",
@@ -29066,8 +29061,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.15,
-            "count": 12
+            "score": 0.08,
+            "count": 13
           }
         ],
         "media": [
@@ -29242,15 +29237,15 @@
         }
       },
       "fan": {
-        "polarity": "positive",
-        "score": 0.22,
+        "polarity": "mixed",
+        "score": 0.19,
         "direction": "stable",
-        "mentionVolume": 48,
+        "mentionVolume": 49,
         "coverageConfidence": 0.52,
         "platformBreakdown": {
-          "fan_blog": 0.042,
-          "bluesky": 0.125,
-          "youtube": 0.833
+          "fan_blog": 0.041,
+          "bluesky": 0.122,
+          "youtube": 0.837
         },
         "topicBreakdown": {
           "trade_rumors": 0.378,
@@ -31641,8 +31636,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": -0.33,
-            "count": 3
+            "score": -0.25,
+            "count": 4
           }
         ],
         "media": [
@@ -31913,18 +31908,18 @@
               1
             ]
           ],
-          "headlines": 7
+          "headlines": 6
         }
       },
       "fan": {
         "polarity": "neutral",
-        "score": 0.05,
-        "direction": "rising",
+        "score": 0,
+        "direction": "stable",
         "mentionVolume": 18,
         "coverageConfidence": 0.5,
         "platformBreakdown": {
-          "fan_blog": 0.389,
-          "bluesky": 0.167,
+          "fan_blog": 0.333,
+          "bluesky": 0.222,
           "youtube": 0.444
         },
         "topicBreakdown": {
@@ -31936,9 +31931,9 @@
         },
         "origin": "fans",
         "asOf": "2026-10-06",
-        "windowStart": "2026-09-29",
+        "windowStart": "2026-09-30",
         "modelVersion": "fan-llama33-70b-v1+fan-lexicon-v1.2",
-        "priorScore": -0.2
+        "priorScore": 0
       },
       "performance": {
         "season": "2025-26",
@@ -32261,8 +32256,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.17,
-            "count": 7
+            "score": 0.29,
+            "count": 8
           }
         ],
         "media": [
@@ -32369,6 +32364,22 @@
         "fan": {
           "words": [
             [
+              "connection",
+              1
+            ],
+            [
+              "darius",
+              1
+            ],
+            [
+              "acuff",
+              1
+            ],
+            [
+              "legit",
+              1
+            ],
+            [
               "scoffs",
               1
             ],
@@ -32401,19 +32412,19 @@
               1
             ]
           ],
-          "headlines": 2
+          "headlines": 3
         }
       },
       "fan": {
         "polarity": "mixed",
-        "score": 0.1,
+        "score": 0.14,
         "direction": "stable",
-        "mentionVolume": 24,
+        "mentionVolume": 25,
         "coverageConfidence": 0.51,
         "platformBreakdown": {
-          "fan_blog": 0.083,
-          "bluesky": 0.125,
-          "youtube": 0.792
+          "fan_blog": 0.12,
+          "bluesky": 0.12,
+          "youtube": 0.76
         },
         "topicBreakdown": {
           "trade_rumors": 0.462,
@@ -32452,21 +32463,24 @@
         "media": [
           {
             "date": "2026-10-06",
-            "score": 0.67,
-            "count": 3
+            "score": 0.5,
+            "count": 4
           }
         ]
       },
       "media": {
         "polarity": "positive",
-        "score": 0.67,
+        "score": 0.5,
         "direction": "stable",
-        "mentionVolume": 3,
-        "coverageConfidence": 0.42,
+        "mentionVolume": 4,
+        "coverageConfidence": 0.43,
         "platformBreakdown": {
           "news": 1
         },
-        "topicBreakdown": {},
+        "topicBreakdown": {
+          "scoring": 0.5,
+          "defense": 0.5
+        },
         "origin": "headlines",
         "asOf": "2026-10-06",
         "windowStart": "2026-10-06",
@@ -32474,6 +32488,14 @@
         "priorScore": null
       },
       "headlines": [
+        {
+          "title": "Eastern Notes: Hawks Opener, Flemings, Sweeney, Walker, Murray-Boyles",
+          "url": "https://www.hoopsrumors.com/2026/10/eastern-notes-hawks-opener-flemings-sweeney-walker-murray-boyles.html",
+          "outlet": "Hoops Rumors",
+          "publishedAt": "2026-10-06T22:37:47.000Z",
+          "score": -0.36,
+          "rating": 0
+        },
         {
           "title": "Collin Murray-Boyles: 2026 playoffs were an early indicator that I’m a difference-maker",
           "url": "https://www.talkbasket.net/224417-collin-murray-boyles-2026-playoffs-were-an-early-indicator-that-im-a-difference-maker",
@@ -32502,6 +32524,34 @@
       "words": {
         "media": {
           "words": [
+            [
+              "notes",
+              2
+            ],
+            [
+              "eastern",
+              1
+            ],
+            [
+              "hawks",
+              1
+            ],
+            [
+              "opener",
+              1
+            ],
+            [
+              "flemings",
+              1
+            ],
+            [
+              "sweeney",
+              1
+            ],
+            [
+              "walker",
+              1
+            ],
             [
               "playoffs",
               1
@@ -32543,10 +32593,6 @@
               1
             ],
             [
-              "notes",
-              1
-            ],
-            [
               "leonard",
               1
             ],
@@ -32559,7 +32605,7 @@
               1
             ]
           ],
-          "headlines": 3
+          "headlines": 4
         }
       },
       "performance": {
@@ -33710,14 +33756,14 @@
           {
             "date": "2026-10-06",
             "score": 1,
-            "count": 1
+            "count": 2
           }
         ],
         "media": []
       },
       "fan": {
         "polarity": "positive",
-        "score": 0.34,
+        "score": 0.41,
         "direction": "stable",
         "mentionVolume": 15,
         "coverageConfidence": 0.49,
@@ -33727,19 +33773,19 @@
           "youtube": 0.6
         },
         "topicBreakdown": {
-          "availability": 0.308,
-          "training_camp": 0.154,
-          "trade_rumors": 0.077,
-          "scoring": 0.077,
-          "defense": 0.154,
-          "contract": 0.154,
-          "role_debate": 0.077
+          "availability": 0.286,
+          "training_camp": 0.143,
+          "trade_rumors": 0.071,
+          "scoring": 0.071,
+          "defense": 0.214,
+          "contract": 0.143,
+          "role_debate": 0.071
         },
         "origin": "fans",
         "asOf": "2026-10-06",
-        "windowStart": "2026-09-29",
+        "windowStart": "2026-10-02",
         "modelVersion": "fan-llama33-70b-v1+fan-lexicon-v1.2",
-        "priorScore": null
+        "priorScore": 0.45
       },
       "words": {
         "fan": {
@@ -35046,31 +35092,31 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.38,
-            "count": 24
+            "score": 0.41,
+            "count": 29
           }
         ],
         "media": []
       },
       "fan": {
         "polarity": "positive",
-        "score": 0.35,
+        "score": 0.36,
         "direction": "falling",
-        "mentionVolume": 63,
+        "mentionVolume": 68,
         "coverageConfidence": 0.55,
         "platformBreakdown": {
-          "fan_blog": 0.016,
-          "bluesky": 0.079,
-          "youtube": 0.905
+          "fan_blog": 0.015,
+          "bluesky": 0.074,
+          "youtube": 0.912
         },
         "topicBreakdown": {
-          "injury_return": 0.061,
-          "role_debate": 0.182,
-          "title_odds": 0.061,
-          "scoring": 0.273,
-          "contract": 0.212,
-          "defense": 0.152,
-          "training_camp": 0.061
+          "injury_return": 0.079,
+          "role_debate": 0.211,
+          "title_odds": 0.079,
+          "scoring": 0.237,
+          "contract": 0.184,
+          "defense": 0.132,
+          "training_camp": 0.079
         },
         "origin": "fans",
         "asOf": "2026-10-06",
@@ -35303,28 +35349,29 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.33,
-            "count": 3
+            "score": 0.29,
+            "count": 4
           }
         ],
         "media": []
       },
       "fan": {
         "polarity": "positive",
-        "score": 0.27,
+        "score": 0.26,
         "direction": "stable",
-        "mentionVolume": 15,
+        "mentionVolume": 16,
         "coverageConfidence": 0.49,
         "platformBreakdown": {
-          "bluesky": 0.2,
-          "youtube": 0.8
+          "bluesky": 0.188,
+          "youtube": 0.813
         },
         "topicBreakdown": {
-          "scoring": 0.182,
-          "role_debate": 0.455,
-          "defense": 0.182,
-          "availability": 0.091,
-          "mvp_case": 0.091
+          "scoring": 0.154,
+          "role_debate": 0.462,
+          "defense": 0.154,
+          "availability": 0.077,
+          "mvp_case": 0.077,
+          "trade_rumors": 0.077
         },
         "origin": "fans",
         "asOf": "2026-10-06",
@@ -35420,22 +35467,22 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.15,
-            "count": 8
+            "score": 0.13,
+            "count": 9
           }
         ],
         "media": []
       },
       "fan": {
         "polarity": "positive",
-        "score": 0.23,
+        "score": 0.22,
         "direction": "falling",
-        "mentionVolume": 21,
-        "coverageConfidence": 0.5,
+        "mentionVolume": 22,
+        "coverageConfidence": 0.51,
         "platformBreakdown": {
-          "fan_blog": 0.048,
-          "bluesky": 0.095,
-          "youtube": 0.857
+          "fan_blog": 0.091,
+          "bluesky": 0.091,
+          "youtube": 0.818
         },
         "topicBreakdown": {
           "trade_rumors": 0.308,
@@ -35454,6 +35501,26 @@
       "words": {
         "fan": {
           "words": [
+            [
+              "path",
+              1
+            ],
+            [
+              "staying",
+              1
+            ],
+            [
+              "enhancing",
+              1
+            ],
+            [
+              "caleb",
+              1
+            ],
+            [
+              "wilson",
+              1
+            ],
             [
               "trade",
               1
@@ -35475,7 +35542,7 @@
               1
             ]
           ],
-          "headlines": 1
+          "headlines": 2
         }
       },
       "performance": {
@@ -35618,30 +35685,30 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.61,
-            "count": 5
+            "score": 0.79,
+            "count": 8
           }
         ],
         "media": []
       },
       "fan": {
         "polarity": "positive",
-        "score": 0.27,
+        "score": 0.44,
         "direction": "stable",
-        "mentionVolume": 10,
-        "coverageConfidence": 0.47,
+        "mentionVolume": 13,
+        "coverageConfidence": 0.48,
         "platformBreakdown": {
-          "bluesky": 0.3,
-          "youtube": 0.7
+          "bluesky": 0.231,
+          "youtube": 0.769
         },
         "topicBreakdown": {
-          "mvp_case": 0.154,
-          "scoring": 0.154,
-          "role_debate": 0.154,
-          "training_camp": 0.154,
-          "contract": 0.077,
-          "trade_rumors": 0.077,
-          "defense": 0.231
+          "mvp_case": 0.143,
+          "scoring": 0.143,
+          "role_debate": 0.143,
+          "training_camp": 0.143,
+          "contract": 0.071,
+          "trade_rumors": 0.071,
+          "defense": 0.286
         },
         "origin": "fans",
         "asOf": "2026-10-06",
@@ -35944,11 +36011,6 @@
       "provenance": "ingest",
       "series": {
         "fan": [
-          {
-            "date": "2026-09-06",
-            "score": -0.46,
-            "count": 1
-          },
           {
             "date": "2026-09-16",
             "score": 0,
@@ -36510,28 +36572,28 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.13,
-            "count": 10
+            "score": 0.05,
+            "count": 11
           }
         ],
         "media": []
       },
       "fan": {
         "polarity": "positive",
-        "score": 0.25,
+        "score": 0.21,
         "direction": "stable",
-        "mentionVolume": 19,
+        "mentionVolume": 20,
         "coverageConfidence": 0.5,
         "platformBreakdown": {
-          "fan_blog": 0.053,
-          "bluesky": 0.105,
-          "youtube": 0.842
+          "fan_blog": 0.05,
+          "bluesky": 0.1,
+          "youtube": 0.85
         },
         "topicBreakdown": {
-          "trade_rumors": 0.2,
-          "scoring": 0.267,
-          "role_debate": 0.467,
-          "injury_return": 0.067
+          "trade_rumors": 0.25,
+          "scoring": 0.25,
+          "role_debate": 0.438,
+          "injury_return": 0.063
         },
         "origin": "fans",
         "asOf": "2026-10-06",
@@ -36624,14 +36686,14 @@
       },
       "fan": {
         "polarity": "positive",
-        "score": 0.45,
+        "score": 0.55,
         "direction": "rising",
-        "mentionVolume": 10,
+        "mentionVolume": 9,
         "coverageConfidence": 0.47,
         "platformBreakdown": {
-          "fan_blog": 0.1,
-          "bluesky": 0.2,
-          "youtube": 0.7
+          "fan_blog": 0.111,
+          "bluesky": 0.222,
+          "youtube": 0.667
         },
         "topicBreakdown": {
           "scoring": 0.25,
@@ -36642,9 +36704,9 @@
         },
         "origin": "fans",
         "asOf": "2026-10-06",
-        "windowStart": "2026-09-29",
+        "windowStart": "2026-09-30",
         "modelVersion": "fan-llama33-70b-v1+fan-lexicon-v1.2",
-        "priorScore": 0.23
+        "priorScore": 0.13
       },
       "words": {
         "fan": {
@@ -36783,6 +36845,71 @@
         "season": "2025-26",
         "drbl100": -0.48,
         "possessions": 3028
+      }
+    },
+    {
+      "playerIds": [
+        "3102529"
+      ],
+      "displayName": "Clint Capela",
+      "teamKey": "10",
+      "window": "7d",
+      "provenance": "ingest",
+      "series": {
+        "fan": [
+          {
+            "date": "2026-09-28",
+            "score": 0,
+            "count": 1
+          },
+          {
+            "date": "2026-10-01",
+            "score": 0,
+            "count": 1
+          },
+          {
+            "date": "2026-10-03",
+            "score": -0.64,
+            "count": 1
+          },
+          {
+            "date": "2026-10-05",
+            "score": 0.76,
+            "count": 1
+          },
+          {
+            "date": "2026-10-06",
+            "score": -0.27,
+            "count": 2
+          }
+        ],
+        "media": []
+      },
+      "fan": {
+        "polarity": "mixed",
+        "score": -0.08,
+        "direction": "stable",
+        "mentionVolume": 5,
+        "coverageConfidence": 0.44,
+        "platformBreakdown": {
+          "youtube": 1
+        },
+        "topicBreakdown": {
+          "contract": 0.2,
+          "trade_rumors": 0.4,
+          "scoring": 0.2,
+          "defense": 0.2
+        },
+        "origin": "fans",
+        "asOf": "2026-10-06",
+        "windowStart": "2026-10-01",
+        "modelVersion": "fan-llama33-70b-v1+fan-lexicon-v1.2",
+        "priorScore": null
+      },
+      "performance": {
+        "season": "2025-26",
+        "drbl100": 0.04,
+        "possessions": 3644
       }
     },
     {
@@ -36998,7 +37125,7 @@
           {
             "date": "2026-10-06",
             "score": -0.05,
-            "count": 35
+            "count": 36
           }
         ],
         "media": []
@@ -37007,7 +37134,7 @@
         "polarity": "neutral",
         "score": 0.04,
         "direction": "stable",
-        "mentionVolume": 111,
+        "mentionVolume": 112,
         "coverageConfidence": 0.52,
         "platformBreakdown": {
           "bluesky": 0.009,
@@ -37230,19 +37357,24 @@
             "date": "2026-10-02",
             "score": -0.14,
             "count": 3
+          },
+          {
+            "date": "2026-10-06",
+            "score": 0,
+            "count": 1
           }
         ],
         "media": []
       },
       "fan": {
         "polarity": "mixed",
-        "score": -0.11,
-        "direction": "rising",
-        "mentionVolume": 8,
+        "score": -0.1,
+        "direction": "stable",
+        "mentionVolume": 9,
         "coverageConfidence": 0.46,
         "platformBreakdown": {
-          "fan_blog": 0.25,
-          "youtube": 0.75
+          "fan_blog": 0.222,
+          "youtube": 0.778
         },
         "topicBreakdown": {
           "availability": 0.375,
@@ -37252,10 +37384,10 @@
           "title_odds": 0.125
         },
         "origin": "fans",
-        "asOf": "2026-10-02",
+        "asOf": "2026-10-06",
         "windowStart": "2026-09-30",
         "modelVersion": "fan-llama33-70b-v1+fan-lexicon-v1.2",
-        "priorScore": -0.51
+        "priorScore": null
       },
       "words": {
         "fan": {
@@ -37359,31 +37491,37 @@
             "date": "2026-10-04",
             "score": 0.19,
             "count": 7
+          },
+          {
+            "date": "2026-10-06",
+            "score": 1,
+            "count": 1
           }
         ],
         "media": []
       },
       "fan": {
         "polarity": "positive",
-        "score": 0.3,
+        "score": 0.38,
         "direction": "stable",
-        "mentionVolume": 10,
-        "coverageConfidence": 0.46,
+        "mentionVolume": 11,
+        "coverageConfidence": 0.47,
         "platformBreakdown": {
-          "fan_blog": 0.1,
-          "bluesky": 0.4,
-          "youtube": 0.5
+          "fan_blog": 0.091,
+          "bluesky": 0.364,
+          "youtube": 0.545
         },
         "topicBreakdown": {
-          "training_camp": 0.167,
-          "scoring": 0.167,
-          "availability": 0.167,
-          "extension": 0.167,
-          "role_debate": 0.167,
-          "defense": 0.167
+          "training_camp": 0.143,
+          "scoring": 0.143,
+          "availability": 0.143,
+          "extension": 0.143,
+          "role_debate": 0.143,
+          "defense": 0.143,
+          "trade_rumors": 0.143
         },
         "origin": "fans",
-        "asOf": "2026-10-04",
+        "asOf": "2026-10-06",
         "windowStart": "2026-10-02",
         "modelVersion": "fan-llama33-70b-v1+fan-lexicon-v1.2",
         "priorScore": null
@@ -37483,29 +37621,29 @@
           },
           {
             "date": "2026-10-06",
-            "score": -0.61,
-            "count": 4
+            "score": -0.65,
+            "count": 5
           }
         ],
         "media": []
       },
       "fan": {
         "polarity": "neutral",
-        "score": 0.01,
+        "score": -0.02,
         "direction": "stable",
-        "mentionVolume": 14,
+        "mentionVolume": 15,
         "coverageConfidence": 0.49,
         "platformBreakdown": {
-          "bluesky": 0.143,
-          "youtube": 0.857
+          "bluesky": 0.133,
+          "youtube": 0.867
         },
         "topicBreakdown": {
-          "trade_rumors": 0.125,
-          "scoring": 0.375,
-          "contract": 0.125,
-          "role_debate": 0.125,
-          "training_camp": 0.125,
-          "defense": 0.125
+          "trade_rumors": 0.111,
+          "scoring": 0.333,
+          "contract": 0.111,
+          "role_debate": 0.111,
+          "training_camp": 0.111,
+          "defense": 0.222
         },
         "origin": "fans",
         "asOf": "2026-10-06",
@@ -38242,12 +38380,12 @@
         "polarity": "mixed",
         "score": 0.09,
         "direction": "stable",
-        "mentionVolume": 31,
+        "mentionVolume": 28,
         "coverageConfidence": 0.47,
         "platformBreakdown": {
-          "fan_blog": 0.032,
-          "bluesky": 0.065,
-          "youtube": 0.903
+          "fan_blog": 0.036,
+          "bluesky": 0.071,
+          "youtube": 0.893
         },
         "topicBreakdown": {
           "role_debate": 0.5,
@@ -38255,9 +38393,9 @@
         },
         "origin": "fans",
         "asOf": "2026-10-06",
-        "windowStart": "2026-09-29",
+        "windowStart": "2026-09-30",
         "modelVersion": "fan-lexicon-v1.2",
-        "priorScore": 0.15
+        "priorScore": 0.13
       },
       "words": {
         "fan": {
@@ -38524,21 +38662,21 @@
           {
             "date": "2026-10-06",
             "score": 0,
-            "count": 1
+            "count": 2
           }
         ],
         "media": []
       },
       "fan": {
         "polarity": "neutral",
-        "score": 0.05,
+        "score": 0.04,
         "direction": "stable",
-        "mentionVolume": 5,
-        "coverageConfidence": 0.44,
+        "mentionVolume": 6,
+        "coverageConfidence": 0.45,
         "platformBreakdown": {
-          "fan_blog": 0.2,
-          "bluesky": 0.4,
-          "youtube": 0.4
+          "fan_blog": 0.167,
+          "bluesky": 0.5,
+          "youtube": 0.333
         },
         "topicBreakdown": {
           "trade_rumors": 0.667,
@@ -38619,22 +38757,22 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.1,
-            "count": 3
+            "score": 0.07,
+            "count": 4
           }
         ],
         "media": []
       },
       "fan": {
         "polarity": "neutral",
-        "score": 0.05,
+        "score": 0.04,
         "direction": "stable",
-        "mentionVolume": 8,
-        "coverageConfidence": 0.46,
+        "mentionVolume": 9,
+        "coverageConfidence": 0.47,
         "platformBreakdown": {
-          "fan_blog": 0.125,
-          "bluesky": 0.375,
-          "youtube": 0.5
+          "fan_blog": 0.111,
+          "bluesky": 0.444,
+          "youtube": 0.444
         },
         "topicBreakdown": {
           "training_camp": 0.5,
@@ -38693,6 +38831,93 @@
     },
     {
       "playerIds": [
+        "5159925"
+      ],
+      "displayName": "Nikola Topic",
+      "teamKey": "25",
+      "window": "7d",
+      "provenance": "ingest",
+      "series": {
+        "fan": [
+          {
+            "date": "2026-09-15",
+            "score": 0,
+            "count": 1
+          },
+          {
+            "date": "2026-10-01",
+            "score": -0.95,
+            "count": 2
+          },
+          {
+            "date": "2026-10-05",
+            "score": 0,
+            "count": 1
+          },
+          {
+            "date": "2026-10-06",
+            "score": 0,
+            "count": 2
+          }
+        ],
+        "media": []
+      },
+      "fan": {
+        "polarity": "negative",
+        "score": -0.38,
+        "direction": "stable",
+        "mentionVolume": 5,
+        "coverageConfidence": 0.44,
+        "platformBreakdown": {
+          "fan_blog": 0.2,
+          "bluesky": 0.6,
+          "youtube": 0.2
+        },
+        "topicBreakdown": {
+          "availability": 0.333,
+          "training_camp": 0.333,
+          "contract": 0.333
+        },
+        "origin": "fans",
+        "asOf": "2026-10-06",
+        "windowStart": "2026-10-01",
+        "modelVersion": "fan-llama33-70b-v1+fan-lexicon-v1.2",
+        "priorScore": null
+      },
+      "words": {
+        "fan": {
+          "words": [
+            [
+              "latest",
+              1
+            ],
+            [
+              "setback",
+              1
+            ],
+            [
+              "stop",
+              1
+            ],
+            [
+              "opening",
+              1
+            ],
+            [
+              "much-needed",
+              1
+            ],
+            [
+              "door",
+              1
+            ]
+          ],
+          "headlines": 1
+        }
+      }
+    },
+    {
+      "playerIds": [
         "4066336"
       ],
       "displayName": "Lauri Markkanen",
@@ -38746,25 +38971,25 @@
       },
       "fan": {
         "polarity": "mixed",
-        "score": 0.11,
+        "score": 0.15,
         "direction": "stable",
-        "mentionVolume": 19,
+        "mentionVolume": 18,
         "coverageConfidence": 0.5,
         "platformBreakdown": {
-          "bluesky": 0.316,
-          "youtube": 0.684
+          "bluesky": 0.333,
+          "youtube": 0.667
         },
         "topicBreakdown": {
-          "role_debate": 0.286,
-          "training_camp": 0.071,
-          "scoring": 0.214,
-          "defense": 0.214,
-          "trade_rumors": 0.143,
-          "contract": 0.071
+          "role_debate": 0.308,
+          "training_camp": 0.077,
+          "scoring": 0.231,
+          "defense": 0.231,
+          "contract": 0.077,
+          "trade_rumors": 0.077
         },
         "origin": "fans",
         "asOf": "2026-10-06",
-        "windowStart": "2026-09-29",
+        "windowStart": "2026-10-01",
         "modelVersion": "fan-llama33-70b-v1+fan-lexicon-v1.2",
         "priorScore": null
       },
@@ -38860,17 +39085,17 @@
           },
           {
             "date": "2026-10-06",
-            "score": -0.48,
-            "count": 3
+            "score": -0.56,
+            "count": 4
           }
         ],
         "media": []
       },
       "fan": {
         "polarity": "neutral",
-        "score": 0.04,
+        "score": -0.03,
         "direction": "stable",
-        "mentionVolume": 6,
+        "mentionVolume": 7,
         "coverageConfidence": 0.44,
         "platformBreakdown": {
           "youtube": 1
@@ -39507,33 +39732,33 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.41,
-            "count": 39
+            "score": 0.44,
+            "count": 41
           }
         ],
         "media": []
       },
       "fan": {
         "polarity": "positive",
-        "score": 0.34,
+        "score": 0.35,
         "direction": "stable",
-        "mentionVolume": 77,
+        "mentionVolume": 79,
         "coverageConfidence": 0.56,
         "platformBreakdown": {
-          "fan_blog": 0.039,
-          "bluesky": 0.169,
-          "youtube": 0.792
+          "fan_blog": 0.038,
+          "bluesky": 0.165,
+          "youtube": 0.797
         },
         "topicBreakdown": {
-          "contract": 0.041,
-          "role_debate": 0.446,
-          "scoring": 0.108,
-          "training_camp": 0.054,
-          "defense": 0.257,
-          "availability": 0.014,
+          "contract": 0.04,
+          "role_debate": 0.44,
+          "scoring": 0.12,
+          "training_camp": 0.053,
+          "defense": 0.253,
+          "availability": 0.013,
           "injury_return": 0.027,
-          "trade_rumors": 0.041,
-          "title_odds": 0.014
+          "trade_rumors": 0.04,
+          "title_odds": 0.013
         },
         "origin": "fans",
         "asOf": "2026-10-06",
@@ -40416,28 +40641,33 @@
             "date": "2026-10-04",
             "score": 0.5,
             "count": 2
+          },
+          {
+            "date": "2026-10-06",
+            "score": 1,
+            "count": 1
           }
         ],
         "media": []
       },
       "fan": {
         "polarity": "positive",
-        "score": 0.23,
+        "score": 0.32,
         "direction": "stable",
-        "mentionVolume": 7,
+        "mentionVolume": 8,
         "coverageConfidence": 0.46,
         "platformBreakdown": {
-          "fan_blog": 0.143,
-          "bluesky": 0.143,
-          "youtube": 0.714
+          "fan_blog": 0.125,
+          "bluesky": 0.125,
+          "youtube": 0.75
         },
         "topicBreakdown": {
-          "role_debate": 0.4,
-          "defense": 0.4,
-          "injury_return": 0.2
+          "role_debate": 0.5,
+          "defense": 0.333,
+          "injury_return": 0.167
         },
         "origin": "fans",
-        "asOf": "2026-10-04",
+        "asOf": "2026-10-06",
         "windowStart": "2026-09-30",
         "modelVersion": "fan-llama33-70b-v1+fan-lexicon-v1.2",
         "priorScore": null
@@ -40486,28 +40716,29 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.41,
-            "count": 7
+            "score": 0.36,
+            "count": 8
           }
         ],
         "media": []
       },
       "fan": {
         "polarity": "positive",
-        "score": 0.43,
+        "score": 0.39,
         "direction": "stable",
-        "mentionVolume": 11,
-        "coverageConfidence": 0.47,
+        "mentionVolume": 12,
+        "coverageConfidence": 0.48,
         "platformBreakdown": {
-          "fan_blog": 0.091,
-          "bluesky": 0.182,
-          "youtube": 0.727
+          "fan_blog": 0.083,
+          "bluesky": 0.167,
+          "youtube": 0.75
         },
         "topicBreakdown": {
-          "contract": 0.4,
-          "role_debate": 0.2,
-          "training_camp": 0.2,
-          "scoring": 0.2
+          "contract": 0.333,
+          "role_debate": 0.167,
+          "training_camp": 0.167,
+          "scoring": 0.167,
+          "defense": 0.167
         },
         "origin": "fans",
         "asOf": "2026-10-06",
@@ -41034,22 +41265,22 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0,
-            "count": 7
+            "score": 0.14,
+            "count": 8
           }
         ],
         "media": []
       },
       "fan": {
         "polarity": "mixed",
-        "score": 0.08,
+        "score": 0.13,
         "direction": "stable",
-        "mentionVolume": 18,
+        "mentionVolume": 19,
         "coverageConfidence": 0.5,
         "platformBreakdown": {
-          "fan_blog": 0.056,
-          "bluesky": 0.056,
-          "youtube": 0.889
+          "fan_blog": 0.053,
+          "bluesky": 0.053,
+          "youtube": 0.895
         },
         "topicBreakdown": {
           "trade_rumors": 0.333,
@@ -41772,27 +42003,27 @@
           },
           {
             "date": "2026-10-06",
-            "score": -0.25,
-            "count": 3
+            "score": 0.21,
+            "count": 4
           }
         ],
         "media": []
       },
       "fan": {
-        "polarity": "mixed",
-        "score": 0.19,
+        "polarity": "positive",
+        "score": 0.28,
         "direction": "stable",
-        "mentionVolume": 9,
-        "coverageConfidence": 0.46,
+        "mentionVolume": 10,
+        "coverageConfidence": 0.47,
         "platformBreakdown": {
-          "bluesky": 0.111,
-          "youtube": 0.889
+          "bluesky": 0.1,
+          "youtube": 0.9
         },
         "topicBreakdown": {
-          "contract": 0.4,
-          "trade_rumors": 0.2,
-          "scoring": 0.2,
-          "defense": 0.2
+          "contract": 0.333,
+          "trade_rumors": 0.167,
+          "scoring": 0.167,
+          "defense": 0.333
         },
         "origin": "fans",
         "asOf": "2026-10-06",
@@ -42135,6 +42366,64 @@
     },
     {
       "playerIds": [
+        "6578"
+      ],
+      "displayName": "Harrison Barnes",
+      "teamKey": "24",
+      "window": "7d",
+      "provenance": "ingest",
+      "series": {
+        "fan": [
+          {
+            "date": "2026-09-30",
+            "score": 0.24,
+            "count": 1
+          },
+          {
+            "date": "2026-10-02",
+            "score": 0.64,
+            "count": 1
+          },
+          {
+            "date": "2026-10-04",
+            "score": 0,
+            "count": 1
+          },
+          {
+            "date": "2026-10-06",
+            "score": -0.5,
+            "count": 2
+          }
+        ],
+        "media": []
+      },
+      "fan": {
+        "polarity": "neutral",
+        "score": -0.02,
+        "direction": "stable",
+        "mentionVolume": 5,
+        "coverageConfidence": 0.44,
+        "platformBreakdown": {
+          "bluesky": 0.4,
+          "youtube": 0.6
+        },
+        "topicBreakdown": {
+          "role_debate": 1
+        },
+        "origin": "fans",
+        "asOf": "2026-10-06",
+        "windowStart": "2026-09-30",
+        "modelVersion": "fan-llama33-70b-v1+fan-lexicon-v1.2",
+        "priorScore": null
+      },
+      "performance": {
+        "season": "2025-26",
+        "drbl100": 0.28,
+        "possessions": 8147
+      }
+    },
+    {
+      "playerIds": [
         "3064560"
       ],
       "displayName": "Luke Kornet",
@@ -42414,21 +42703,21 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.93,
-            "count": 2
+            "score": 0.62,
+            "count": 3
           }
         ],
         "media": []
       },
       "fan": {
         "polarity": "mixed",
-        "score": 0.19,
+        "score": 0.18,
         "direction": "stable",
-        "mentionVolume": 17,
+        "mentionVolume": 18,
         "coverageConfidence": 0.5,
         "platformBreakdown": {
-          "bluesky": 0.647,
-          "youtube": 0.353
+          "bluesky": 0.611,
+          "youtube": 0.389
         },
         "topicBreakdown": {
           "training_camp": 0.5,
@@ -42612,21 +42901,21 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.52,
-            "count": 6
+            "score": 0.35,
+            "count": 7
           }
         ],
         "media": []
       },
       "fan": {
         "polarity": "positive",
-        "score": 0.31,
+        "score": 0.29,
         "direction": "stable",
-        "mentionVolume": 30,
+        "mentionVolume": 31,
         "coverageConfidence": 0.51,
         "platformBreakdown": {
-          "bluesky": 0.067,
-          "youtube": 0.933
+          "bluesky": 0.065,
+          "youtube": 0.935
         },
         "topicBreakdown": {
           "injury_return": 0.167,
@@ -43057,19 +43346,24 @@
             "date": "2026-10-05",
             "score": 0,
             "count": 1
+          },
+          {
+            "date": "2026-10-06",
+            "score": 0,
+            "count": 1
           }
         ],
         "media": []
       },
       "fan": {
         "polarity": "mixed",
-        "score": 0.18,
+        "score": 0.15,
         "direction": "stable",
-        "mentionVolume": 6,
-        "coverageConfidence": 0.45,
+        "mentionVolume": 7,
+        "coverageConfidence": 0.46,
         "platformBreakdown": {
-          "bluesky": 0.167,
-          "youtube": 0.833
+          "bluesky": 0.143,
+          "youtube": 0.857
         },
         "topicBreakdown": {
           "defense": 0.4,
@@ -43077,7 +43371,7 @@
           "role_debate": 0.4
         },
         "origin": "fans",
-        "asOf": "2026-10-05",
+        "asOf": "2026-10-06",
         "windowStart": "2026-10-01",
         "modelVersion": "fan-llama33-70b-v1+fan-lexicon-v1.2",
         "priorScore": null
@@ -43262,27 +43556,27 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.49,
-            "count": 5
+            "score": 0.53,
+            "count": 6
           }
         ],
         "media": []
       },
       "fan": {
         "polarity": "positive",
-        "score": 0.22,
+        "score": 0.25,
         "direction": "stable",
-        "mentionVolume": 10,
+        "mentionVolume": 11,
         "coverageConfidence": 0.47,
         "platformBreakdown": {
-          "bluesky": 0.3,
-          "youtube": 0.7
+          "bluesky": 0.273,
+          "youtube": 0.727
         },
         "topicBreakdown": {
-          "role_debate": 0.5,
-          "training_camp": 0.25,
-          "trade_rumors": 0.125,
-          "contract": 0.125
+          "role_debate": 0.444,
+          "training_camp": 0.333,
+          "trade_rumors": 0.111,
+          "contract": 0.111
         },
         "origin": "fans",
         "asOf": "2026-10-06",
@@ -43294,6 +43588,61 @@
         "season": "2025-26",
         "drbl100": 1.05,
         "possessions": 3883
+      }
+    },
+    {
+      "playerIds": [
+        "4700852"
+      ],
+      "displayName": "Chaz Lanier",
+      "teamKey": "8",
+      "window": "7d",
+      "provenance": "ingest",
+      "series": {
+        "fan": [
+          {
+            "date": "2026-10-01",
+            "score": 0.94,
+            "count": 1
+          },
+          {
+            "date": "2026-10-02",
+            "score": 0,
+            "count": 1
+          },
+          {
+            "date": "2026-10-06",
+            "score": 0.33,
+            "count": 3
+          }
+        ],
+        "media": []
+      },
+      "fan": {
+        "polarity": "positive",
+        "score": 0.39,
+        "direction": "stable",
+        "mentionVolume": 5,
+        "coverageConfidence": 0.44,
+        "platformBreakdown": {
+          "bluesky": 0.4,
+          "youtube": 0.6
+        },
+        "topicBreakdown": {
+          "role_debate": 0.333,
+          "defense": 0.333,
+          "contract": 0.333
+        },
+        "origin": "fans",
+        "asOf": "2026-10-06",
+        "windowStart": "2026-10-01",
+        "modelVersion": "fan-llama33-70b-v1+fan-lexicon-v1.2",
+        "priorScore": null
+      },
+      "performance": {
+        "season": "2025-26",
+        "drbl100": -0.71,
+        "possessions": 1041
       }
     },
     {
@@ -43435,32 +43784,32 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.37,
-            "count": 63
+            "score": 0.4,
+            "count": 67
           }
         ],
         "media": []
       },
       "fan": {
         "polarity": "positive",
-        "score": 0.34,
+        "score": 0.38,
         "direction": "stable",
-        "mentionVolume": 65,
-        "coverageConfidence": 0.52,
+        "mentionVolume": 69,
+        "coverageConfidence": 0.53,
         "platformBreakdown": {
-          "bluesky": 0.015,
-          "youtube": 0.985
+          "bluesky": 0.014,
+          "youtube": 0.986
         },
         "topicBreakdown": {
-          "training_camp": 0.071,
-          "extension": 0.071,
-          "availability": 0.107,
-          "role_debate": 0.214,
-          "scoring": 0.107,
-          "defense": 0.071,
-          "injury_return": 0.107,
-          "contract": 0.214,
-          "trade_rumors": 0.036
+          "training_camp": 0.067,
+          "extension": 0.067,
+          "availability": 0.1,
+          "role_debate": 0.2,
+          "scoring": 0.133,
+          "defense": 0.067,
+          "injury_return": 0.1,
+          "contract": 0.233,
+          "trade_rumors": 0.033
         },
         "origin": "fans",
         "asOf": "2026-10-06",
@@ -43637,21 +43986,21 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.52,
-            "count": 17
+            "score": 0.55,
+            "count": 18
           }
         ],
         "media": []
       },
       "fan": {
         "polarity": "positive",
-        "score": 0.24,
+        "score": 0.27,
         "direction": "stable",
-        "mentionVolume": 43,
+        "mentionVolume": 44,
         "coverageConfidence": 0.52,
         "platformBreakdown": {
-          "bluesky": 0.07,
-          "youtube": 0.93
+          "bluesky": 0.068,
+          "youtube": 0.932
         },
         "topicBreakdown": {
           "training_camp": 0.1,
@@ -43716,31 +44065,31 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.08,
-            "count": 10
+            "score": 0,
+            "count": 11
           }
         ],
         "media": []
       },
       "fan": {
         "polarity": "neutral",
-        "score": -0.02,
+        "score": -0.06,
         "direction": "stable",
-        "mentionVolume": 19,
+        "mentionVolume": 20,
         "coverageConfidence": 0.49,
         "platformBreakdown": {
-          "bluesky": 0.158,
-          "youtube": 0.842
+          "bluesky": 0.15,
+          "youtube": 0.85
         },
         "topicBreakdown": {
-          "scoring": 0.2,
-          "mvp_case": 0.067,
-          "defense": 0.067,
-          "contract": 0.133,
-          "extension": 0.067,
-          "trade_rumors": 0.267,
-          "role_debate": 0.133,
-          "training_camp": 0.067
+          "scoring": 0.176,
+          "mvp_case": 0.059,
+          "defense": 0.118,
+          "contract": 0.118,
+          "extension": 0.059,
+          "trade_rumors": 0.235,
+          "role_debate": 0.176,
+          "training_camp": 0.059
         },
         "origin": "fans",
         "asOf": "2026-10-06",
@@ -43786,27 +44135,27 @@
           },
           {
             "date": "2026-10-06",
-            "score": -0.55,
-            "count": 4
+            "score": -0.64,
+            "count": 5
           }
         ],
         "media": []
       },
       "fan": {
         "polarity": "mixed",
-        "score": -0.1,
+        "score": -0.17,
         "direction": "stable",
-        "mentionVolume": 16,
-        "coverageConfidence": 0.48,
+        "mentionVolume": 17,
+        "coverageConfidence": 0.49,
         "platformBreakdown": {
-          "bluesky": 0.125,
-          "youtube": 0.875
+          "bluesky": 0.118,
+          "youtube": 0.882
         },
         "topicBreakdown": {
-          "injury_return": 0.125,
-          "role_debate": 0.625,
-          "contract": 0.125,
-          "defense": 0.125
+          "injury_return": 0.111,
+          "role_debate": 0.667,
+          "contract": 0.111,
+          "defense": 0.111
         },
         "origin": "fans",
         "asOf": "2026-10-06",
@@ -43872,27 +44221,27 @@
         "polarity": "positive",
         "score": 0.23,
         "direction": "rising",
-        "mentionVolume": 86,
+        "mentionVolume": 79,
         "coverageConfidence": 0.54,
         "platformBreakdown": {
-          "bluesky": 0.012,
-          "youtube": 0.988
+          "bluesky": 0.013,
+          "youtube": 0.987
         },
         "topicBreakdown": {
           "defense": 0.25,
-          "title_odds": 0.111,
-          "role_debate": 0.222,
-          "scoring": 0.111,
-          "contract": 0.083,
-          "trade_rumors": 0.083,
-          "injury_return": 0.111,
-          "training_camp": 0.028
+          "title_odds": 0.125,
+          "contract": 0.094,
+          "trade_rumors": 0.094,
+          "role_debate": 0.188,
+          "injury_return": 0.125,
+          "scoring": 0.094,
+          "training_camp": 0.031
         },
         "origin": "fans",
         "asOf": "2026-10-06",
         "windowStart": "2026-09-29",
         "modelVersion": "fan-llama33-70b-v1+fan-lexicon-v1.2",
-        "priorScore": -0.05
+        "priorScore": 0.11
       },
       "performance": {
         "season": "2025-26",
@@ -44367,6 +44716,75 @@
     },
     {
       "playerIds": [
+        "4895758"
+      ],
+      "displayName": "Cody Williams",
+      "teamKey": "16",
+      "window": "7d",
+      "provenance": "ingest",
+      "series": {
+        "fan": [
+          {
+            "date": "2026-10-01",
+            "score": 0,
+            "count": 2
+          },
+          {
+            "date": "2026-10-03",
+            "score": 0.94,
+            "count": 1
+          },
+          {
+            "date": "2026-10-04",
+            "score": 0,
+            "count": 2
+          },
+          {
+            "date": "2026-10-05",
+            "score": -1,
+            "count": 1
+          },
+          {
+            "date": "2026-10-06",
+            "score": 0.63,
+            "count": 4
+          }
+        ],
+        "media": []
+      },
+      "fan": {
+        "polarity": "positive",
+        "score": 0.21,
+        "direction": "stable",
+        "mentionVolume": 10,
+        "coverageConfidence": 0.47,
+        "platformBreakdown": {
+          "bluesky": 0.1,
+          "youtube": 0.9
+        },
+        "topicBreakdown": {
+          "scoring": 0.5,
+          "trade_rumors": 0.5
+        },
+        "origin": "fans",
+        "asOf": "2026-10-06",
+        "windowStart": "2026-10-01",
+        "modelVersion": "fan-llama33-70b-v1+fan-lexicon-v1.2",
+        "priorScore": null
+      },
+      "performance": {
+        "season": "2025-26",
+        "drbl100": -1.14,
+        "possessions": 6949
+      },
+      "association": {
+        "explanation": "Sentiment shifts are associated with the completed movement story: “Jazz–Timberwolves trade: Josh Green and Cody Williams”.",
+        "eventKind": "movement_story",
+        "eventRef": "mv-tx-espn-tx-7c6c677685090c8a"
+      }
+    },
+    {
+      "playerIds": [
         "5211175"
       ],
       "displayName": "Zaccharie Risacher",
@@ -44546,10 +44964,10 @@
       },
       "fan": {
         "polarity": "positive",
-        "score": 0.35,
+        "score": 0.47,
         "direction": "stable",
-        "mentionVolume": 6,
-        "coverageConfidence": 0.43,
+        "mentionVolume": 5,
+        "coverageConfidence": 0.42,
         "platformBreakdown": {
           "youtube": 1
         },
@@ -44558,7 +44976,7 @@
         },
         "origin": "fans",
         "asOf": "2026-10-06",
-        "windowStart": "2026-09-29",
+        "windowStart": "2026-10-01",
         "modelVersion": "fan-lexicon-v1.2",
         "priorScore": null
       },
@@ -44688,65 +45106,6 @@
         "season": "2025-26",
         "drbl100": -1.6,
         "possessions": 4538
-      }
-    },
-    {
-      "playerIds": [
-        "5238230"
-      ],
-      "displayName": "Tre Johnson",
-      "teamKey": "27",
-      "window": "7d",
-      "provenance": "ingest",
-      "series": {
-        "fan": [
-          {
-            "date": "2026-09-29",
-            "score": 0.43,
-            "count": 2
-          },
-          {
-            "date": "2026-10-03",
-            "score": 0.46,
-            "count": 1
-          },
-          {
-            "date": "2026-10-04",
-            "score": 0,
-            "count": 1
-          },
-          {
-            "date": "2026-10-05",
-            "score": -0.47,
-            "count": 2
-          }
-        ],
-        "media": []
-      },
-      "fan": {
-        "polarity": "mixed",
-        "score": 0.13,
-        "direction": "stable",
-        "mentionVolume": 5,
-        "coverageConfidence": 0.43,
-        "platformBreakdown": {
-          "youtube": 1
-        },
-        "topicBreakdown": {
-          "role_debate": 0.5,
-          "scoring": 0.25,
-          "availability": 0.25
-        },
-        "origin": "fans",
-        "asOf": "2026-10-05",
-        "windowStart": "2026-09-29",
-        "modelVersion": "fan-llama33-70b-v1+fan-lexicon-v1.2",
-        "priorScore": null
-      },
-      "performance": {
-        "season": "2025-26",
-        "drbl100": -0.89,
-        "possessions": 6116
       }
     },
     {
@@ -44911,18 +45270,18 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0,
-            "count": 1
+            "score": 0.5,
+            "count": 2
           }
         ],
         "media": []
       },
       "fan": {
         "polarity": "positive",
-        "score": 0.29,
+        "score": 0.4,
         "direction": "stable",
-        "mentionVolume": 5,
-        "coverageConfidence": 0.44,
+        "mentionVolume": 6,
+        "coverageConfidence": 0.45,
         "platformBreakdown": {
           "youtube": 1
         },
@@ -44933,7 +45292,7 @@
         "origin": "fans",
         "asOf": "2026-10-06",
         "windowStart": "2026-10-01",
-        "modelVersion": "fan-lexicon-v1.2",
+        "modelVersion": "fan-llama33-70b-v1+fan-lexicon-v1.2",
         "priorScore": null
       },
       "performance": {
@@ -45073,73 +45432,6 @@
     },
     {
       "playerIds": [
-        "4895758"
-      ],
-      "displayName": "Cody Williams",
-      "teamKey": "16",
-      "window": "7d",
-      "provenance": "ingest",
-      "series": {
-        "fan": [
-          {
-            "date": "2026-10-01",
-            "score": 0,
-            "count": 2
-          },
-          {
-            "date": "2026-10-03",
-            "score": 0.94,
-            "count": 1
-          },
-          {
-            "date": "2026-10-04",
-            "score": 0,
-            "count": 2
-          },
-          {
-            "date": "2026-10-05",
-            "score": -1,
-            "count": 1
-          },
-          {
-            "date": "2026-10-06",
-            "score": 0.48,
-            "count": 3
-          }
-        ],
-        "media": []
-      },
-      "fan": {
-        "polarity": "mixed",
-        "score": 0.1,
-        "direction": "stable",
-        "mentionVolume": 9,
-        "coverageConfidence": 0.46,
-        "platformBreakdown": {
-          "youtube": 1
-        },
-        "topicBreakdown": {
-          "trade_rumors": 1
-        },
-        "origin": "fans",
-        "asOf": "2026-10-06",
-        "windowStart": "2026-10-01",
-        "modelVersion": "fan-llama33-70b-v1+fan-lexicon-v1.2",
-        "priorScore": null
-      },
-      "performance": {
-        "season": "2025-26",
-        "drbl100": -1.14,
-        "possessions": 6949
-      },
-      "association": {
-        "explanation": "Sentiment shifts are associated with the completed movement story: “Jazz–Timberwolves trade: Josh Green and Cody Williams”.",
-        "eventKind": "movement_story",
-        "eventRef": "mv-tx-espn-tx-7c6c677685090c8a"
-      }
-    },
-    {
-      "playerIds": [
         "4873138"
       ],
       "displayName": "Ace Bailey",
@@ -45170,17 +45462,17 @@
           },
           {
             "date": "2026-10-06",
-            "score": -0.07,
-            "count": 9
+            "score": 0.02,
+            "count": 10
           }
         ],
         "media": []
       },
       "fan": {
         "polarity": "positive",
-        "score": 0.21,
+        "score": 0.22,
         "direction": "stable",
-        "mentionVolume": 56,
+        "mentionVolume": 57,
         "coverageConfidence": 0.5,
         "platformBreakdown": {
           "youtube": 1
@@ -45350,7 +45642,7 @@
           {
             "date": "2026-10-06",
             "score": 0.07,
-            "count": 55
+            "count": 60
           }
         ],
         "media": [
@@ -45386,26 +45678,28 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.53,
-            "count": 4
+            "score": 0.35,
+            "count": 5
           }
         ]
       },
       "media": {
         "polarity": "positive",
-        "score": 0.37,
+        "score": 0.28,
         "direction": "stable",
-        "mentionVolume": 7,
+        "mentionVolume": 8,
         "coverageConfidence": 0.46,
         "platformBreakdown": {
           "news": 1
         },
         "topicBreakdown": {
-          "injury_return": 0.25,
-          "training_camp": 0.375,
-          "mvp_case": 0.125,
-          "trade_rumors": 0.125,
-          "title_odds": 0.125
+          "injury_return": 0.2,
+          "training_camp": 0.3,
+          "mvp_case": 0.1,
+          "trade_rumors": 0.1,
+          "title_odds": 0.1,
+          "scoring": 0.1,
+          "defense": 0.1
         },
         "origin": "headlines",
         "asOf": "2026-10-06",
@@ -45414,6 +45708,13 @@
         "priorScore": null
       },
       "headlines": [
+        {
+          "title": "Eastern Notes: Hawks Opener, Flemings, Sweeney, Walker, Murray-Boyles",
+          "url": "https://www.hoopsrumors.com/2026/10/eastern-notes-hawks-opener-flemings-sweeney-walker-murray-boyles.html",
+          "outlet": "Hoops Rumors",
+          "publishedAt": "2026-10-06T22:37:47.000Z",
+          "score": -0.36
+        },
         {
           "title": "Lu Dort wants Canadian gold medal over Hawks championship",
           "url": "https://clutchpoints.com/nba/atlanta-hawks/hawks-news-lu-dort-canadian-gold-medal-nba-championship",
@@ -45434,25 +45735,18 @@
           "outlet": "TalkBasket",
           "publishedAt": "2026-10-06T06:59:39.000Z",
           "score": 0.7
-        },
-        {
-          "title": "Hawks have strong second half, but lose 132-123 to Grizzlies in first preseason game",
-          "url": "https://sports.yahoo.com/articles/hawks-strong-second-half-lose-013527569.html",
-          "outlet": "Yahoo Sports",
-          "publishedAt": "2026-10-06T01:35:27.000Z",
-          "score": 0.24
         }
       ],
       "fan": {
         "polarity": "mixed",
         "score": 0.11,
         "direction": "falling",
-        "mentionVolume": 302,
+        "mentionVolume": 307,
         "coverageConfidence": 0.59,
         "platformBreakdown": {
-          "fan_blog": 0.017,
-          "bluesky": 0.07,
-          "youtube": 0.914
+          "fan_blog": 0.016,
+          "bluesky": 0.068,
+          "youtube": 0.915
         },
         "topicBreakdown": {
           "contract": 0.256,
@@ -45531,8 +45825,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.15,
-            "count": 24
+            "score": 0.14,
+            "count": 26
           }
         ],
         "media": [
@@ -45637,22 +45931,22 @@
         "mentionVolume": 109,
         "coverageConfidence": 0.57,
         "platformBreakdown": {
-          "fan_blog": 0.11,
-          "bluesky": 0.018,
-          "youtube": 0.872
+          "fan_blog": 0.119,
+          "bluesky": 0.028,
+          "youtube": 0.853
         },
         "topicBreakdown": {
-          "training_camp": 0.119,
-          "role_debate": 0.186,
-          "availability": 0.068,
-          "scoring": 0.119,
-          "trade_rumors": 0.085,
-          "extension": 0.068,
-          "contract": 0.186,
-          "defense": 0.034,
-          "injury_return": 0.034,
-          "title_odds": 0.068,
-          "mvp_case": 0.034
+          "training_camp": 0.133,
+          "role_debate": 0.183,
+          "availability": 0.067,
+          "scoring": 0.117,
+          "trade_rumors": 0.083,
+          "extension": 0.067,
+          "contract": 0.183,
+          "defense": 0.033,
+          "injury_return": 0.033,
+          "title_odds": 0.067,
+          "mvp_case": 0.033
         },
         "origin": "fans",
         "asOf": "2026-10-06",
@@ -45673,25 +45967,25 @@
         "polarity": "mixed",
         "score": 0.14,
         "direction": "stable",
-        "mentionVolume": 491,
+        "mentionVolume": 488,
         "coverageConfidence": 0.63,
         "platformBreakdown": {
           "fan_blog": 0.043,
           "bluesky": 0.143,
-          "youtube": 0.815
+          "youtube": 0.814
         },
         "topicBreakdown": {
-          "training_camp": 0.127,
-          "trade_rumors": 0.171,
+          "training_camp": 0.126,
+          "trade_rumors": 0.17,
           "injury_return": 0.044,
-          "role_debate": 0.184,
+          "role_debate": 0.182,
           "extension": 0.038,
-          "contract": 0.101,
-          "scoring": 0.114,
-          "defense": 0.019,
+          "contract": 0.107,
+          "scoring": 0.113,
+          "defense": 0.013,
           "availability": 0.063,
-          "title_odds": 0.108,
-          "mvp_case": 0.032
+          "title_odds": 0.113,
+          "mvp_case": 0.031
         },
         "origin": "fans",
         "asOf": "2026-10-06",
@@ -45724,11 +46018,6 @@
       },
       "series": {
         "fan": [
-          {
-            "date": "2026-09-06",
-            "score": -0.46,
-            "count": 1
-          },
           {
             "date": "2026-09-08",
             "score": -0.64,
@@ -45787,7 +46076,7 @@
           {
             "date": "2026-10-06",
             "score": 0.16,
-            "count": 88
+            "count": 91
           }
         ],
         "media": [
@@ -45988,8 +46277,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.15,
-            "count": 50
+            "score": 0.12,
+            "count": 60
           }
         ],
         "media": [
@@ -46079,27 +46368,27 @@
       ],
       "fan": {
         "polarity": "mixed",
-        "score": 0.16,
+        "score": 0.15,
         "direction": "stable",
-        "mentionVolume": 190,
+        "mentionVolume": 200,
         "coverageConfidence": 0.58,
         "platformBreakdown": {
-          "fan_blog": 0.021,
-          "bluesky": 0.032,
-          "youtube": 0.947
+          "fan_blog": 0.025,
+          "bluesky": 0.035,
+          "youtube": 0.94
         },
         "topicBreakdown": {
-          "training_camp": 0.188,
-          "injury_return": 0.1,
-          "role_debate": 0.15,
-          "scoring": 0.063,
-          "availability": 0.088,
-          "extension": 0.013,
-          "contract": 0.063,
-          "trade_rumors": 0.225,
-          "mvp_case": 0.013,
-          "title_odds": 0.063,
-          "defense": 0.038
+          "training_camp": 0.2,
+          "injury_return": 0.106,
+          "role_debate": 0.141,
+          "scoring": 0.059,
+          "availability": 0.094,
+          "extension": 0.012,
+          "contract": 0.059,
+          "trade_rumors": 0.224,
+          "mvp_case": 0.012,
+          "title_odds": 0.059,
+          "defense": 0.035
         },
         "origin": "fans",
         "asOf": "2026-10-06",
@@ -46122,7 +46411,7 @@
           {
             "date": "2026-09-06",
             "score": -0.46,
-            "count": 2
+            "count": 1
           },
           {
             "date": "2026-09-07",
@@ -46266,8 +46555,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.19,
-            "count": 80
+            "score": 0.15,
+            "count": 94
           }
         ],
         "media": [
@@ -46327,8 +46616,8 @@
         "polarity": "neutral",
         "score": -0.01,
         "direction": "falling",
-        "mentionVolume": 19,
-        "coverageConfidence": 0.51,
+        "mentionVolume": 18,
+        "coverageConfidence": 0.5,
         "platformBreakdown": {
           "news": 1
         },
@@ -46342,9 +46631,9 @@
         },
         "origin": "headlines",
         "asOf": "2026-10-06",
-        "windowStart": "2026-09-29",
+        "windowStart": "2026-10-01",
         "modelVersion": "headline-lexicon-v1.2",
-        "priorScore": 0.33
+        "priorScore": 0.25
       },
       "headlines": [
         {
@@ -46377,27 +46666,27 @@
         }
       ],
       "fan": {
-        "polarity": "positive",
-        "score": 0.2,
+        "polarity": "mixed",
+        "score": 0.19,
         "direction": "stable",
-        "mentionVolume": 505,
+        "mentionVolume": 517,
         "coverageConfidence": 0.61,
         "platformBreakdown": {
-          "fan_blog": 0.04,
-          "bluesky": 0.034,
-          "youtube": 0.927
+          "fan_blog": 0.039,
+          "bluesky": 0.033,
+          "youtube": 0.928
         },
         "topicBreakdown": {
           "injury_return": 0.08,
-          "contract": 0.097,
-          "training_camp": 0.097,
-          "scoring": 0.097,
-          "trade_rumors": 0.168,
-          "availability": 0.053,
-          "title_odds": 0.115,
-          "role_debate": 0.106,
-          "defense": 0.15,
-          "mvp_case": 0.035
+          "contract": 0.107,
+          "training_camp": 0.098,
+          "scoring": 0.098,
+          "trade_rumors": 0.152,
+          "availability": 0.054,
+          "title_odds": 0.116,
+          "role_debate": 0.107,
+          "defense": 0.152,
+          "mvp_case": 0.036
         },
         "origin": "fans",
         "asOf": "2026-10-06",
@@ -46498,9 +46787,9 @@
       },
       "media": {
         "polarity": "positive",
-        "score": 0.25,
+        "score": 0.27,
         "direction": "rising",
-        "mentionVolume": 12,
+        "mentionVolume": 11,
         "coverageConfidence": 0.48,
         "platformBreakdown": {
           "news": 1
@@ -46514,9 +46803,9 @@
         },
         "origin": "headlines",
         "asOf": "2026-10-06",
-        "windowStart": "2026-09-29",
+        "windowStart": "2026-09-30",
         "modelVersion": "headline-lexicon-v1.2",
-        "priorScore": -0.37
+        "priorScore": -0.28
       },
       "headlines": [
         {
@@ -46643,7 +46932,7 @@
           {
             "date": "2026-10-06",
             "score": 0.15,
-            "count": 89
+            "count": 93
           }
         ],
         "media": [
@@ -46760,7 +47049,7 @@
         "polarity": "mixed",
         "score": 0.18,
         "direction": "stable",
-        "mentionVolume": 543,
+        "mentionVolume": 544,
         "coverageConfidence": 0.62,
         "platformBreakdown": {
           "fan_blog": 0.035,
@@ -46769,21 +47058,21 @@
         },
         "topicBreakdown": {
           "trade_rumors": 0.127,
-          "role_debate": 0.175,
-          "contract": 0.199,
-          "title_odds": 0.06,
-          "defense": 0.084,
-          "scoring": 0.157,
+          "role_debate": 0.176,
+          "contract": 0.2,
+          "title_odds": 0.055,
+          "defense": 0.085,
+          "scoring": 0.158,
           "training_camp": 0.024,
-          "availability": 0.06,
-          "injury_return": 0.09,
+          "availability": 0.061,
+          "injury_return": 0.091,
           "mvp_case": 0.024
         },
         "origin": "fans",
         "asOf": "2026-10-06",
         "windowStart": "2026-09-29",
         "modelVersion": "fan-lexicon-v1.2",
-        "priorScore": 0.11
+        "priorScore": 0.12
       }
     },
     {
@@ -46940,7 +47229,7 @@
           {
             "date": "2026-10-06",
             "score": 0.23,
-            "count": 84
+            "count": 93
           }
         ],
         "media": [
@@ -47061,30 +47350,30 @@
         "polarity": "mixed",
         "score": 0.16,
         "direction": "stable",
-        "mentionVolume": 693,
+        "mentionVolume": 698,
         "coverageConfidence": 0.63,
         "platformBreakdown": {
-          "fan_blog": 0.038,
-          "bluesky": 0.068,
-          "youtube": 0.895
+          "fan_blog": 0.039,
+          "bluesky": 0.067,
+          "youtube": 0.894
         },
         "topicBreakdown": {
-          "defense": 0.18,
-          "availability": 0.072,
-          "training_camp": 0.119,
-          "role_debate": 0.201,
-          "contract": 0.108,
-          "title_odds": 0.082,
-          "trade_rumors": 0.046,
-          "injury_return": 0.046,
-          "scoring": 0.108,
-          "mvp_case": 0.036
+          "defense": 0.186,
+          "availability": 0.07,
+          "training_camp": 0.116,
+          "role_debate": 0.196,
+          "contract": 0.111,
+          "title_odds": 0.08,
+          "trade_rumors": 0.045,
+          "injury_return": 0.045,
+          "scoring": 0.111,
+          "mvp_case": 0.04
         },
         "origin": "fans",
         "asOf": "2026-10-06",
         "windowStart": "2026-09-29",
         "modelVersion": "fan-lexicon-v1.2",
-        "priorScore": 0.18
+        "priorScore": 0.16
       }
     },
     {
@@ -47195,8 +47484,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.14,
-            "count": 328
+            "score": 0.15,
+            "count": 338
           }
         ],
         "media": [
@@ -47296,7 +47585,7 @@
         "polarity": "mixed",
         "score": 0.14,
         "direction": "rising",
-        "mentionVolume": 45,
+        "mentionVolume": 44,
         "coverageConfidence": 0.55,
         "platformBreakdown": {
           "news": 1
@@ -47315,9 +47604,9 @@
         },
         "origin": "headlines",
         "asOf": "2026-10-06",
-        "windowStart": "2026-09-29",
+        "windowStart": "2026-09-30",
         "modelVersion": "headline-lexicon-v1.2",
-        "priorScore": -0.09
+        "priorScore": -0.08
       },
       "headlines": [
         {
@@ -47351,9 +47640,9 @@
       ],
       "fan": {
         "polarity": "mixed",
-        "score": 0.13,
+        "score": 0.14,
         "direction": "rising",
-        "mentionVolume": 1604,
+        "mentionVolume": 1614,
         "coverageConfidence": 0.66,
         "platformBreakdown": {
           "fan_blog": 0.004,
@@ -47361,16 +47650,16 @@
           "youtube": 0.92
         },
         "topicBreakdown": {
-          "contract": 0.328,
+          "contract": 0.326,
           "mvp_case": 0.044,
-          "role_debate": 0.075,
-          "scoring": 0.116,
-          "training_camp": 0.073,
-          "trade_rumors": 0.184,
+          "role_debate": 0.076,
+          "scoring": 0.117,
+          "training_camp": 0.074,
+          "trade_rumors": 0.182,
           "extension": 0.019,
           "injury_return": 0.014,
           "title_odds": 0.034,
-          "defense": 0.092,
+          "defense": 0.093,
           "availability": 0.02,
           "conduct": 0.002
         },
@@ -47444,8 +47733,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.15,
-            "count": 146
+            "score": 0.12,
+            "count": 149
           }
         ],
         "media": [
@@ -47603,24 +47892,24 @@
         "polarity": "mixed",
         "score": 0.14,
         "direction": "stable",
-        "mentionVolume": 1187,
+        "mentionVolume": 1188,
         "coverageConfidence": 0.64,
         "platformBreakdown": {
-          "fan_blog": 0.013,
+          "fan_blog": 0.014,
           "bluesky": 0.036,
-          "youtube": 0.95
+          "youtube": 0.949
         },
         "topicBreakdown": {
-          "training_camp": 0.092,
+          "training_camp": 0.096,
           "scoring": 0.225,
-          "contract": 0.111,
+          "contract": 0.108,
           "trade_rumors": 0.065,
-          "defense": 0.098,
-          "title_odds": 0.089,
-          "role_debate": 0.178,
+          "defense": 0.099,
+          "title_odds": 0.09,
+          "role_debate": 0.179,
           "extension": 0.012,
-          "injury_return": 0.055,
-          "availability": 0.058,
+          "injury_return": 0.052,
+          "availability": 0.059,
           "mvp_case": 0.012,
           "conduct": 0.003
         },
@@ -47699,8 +47988,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.17,
-            "count": 76
+            "score": 0.15,
+            "count": 80
           }
         ],
         "media": [
@@ -47780,23 +48069,23 @@
         "polarity": "mixed",
         "score": 0.17,
         "direction": "falling",
-        "mentionVolume": 205,
+        "mentionVolume": 209,
         "coverageConfidence": 0.56,
         "platformBreakdown": {
-          "fan_blog": 0.044,
-          "bluesky": 0.034,
-          "youtube": 0.922
+          "fan_blog": 0.043,
+          "bluesky": 0.033,
+          "youtube": 0.923
         },
         "topicBreakdown": {
-          "role_debate": 0.125,
-          "contract": 0.134,
-          "injury_return": 0.045,
-          "defense": 0.143,
-          "trade_rumors": 0.232,
+          "role_debate": 0.124,
+          "contract": 0.133,
+          "injury_return": 0.044,
+          "defense": 0.142,
+          "trade_rumors": 0.239,
           "training_camp": 0.009,
-          "availability": 0.125,
-          "scoring": 0.125,
-          "title_odds": 0.063
+          "availability": 0.124,
+          "scoring": 0.124,
+          "title_odds": 0.062
         },
         "origin": "fans",
         "asOf": "2026-10-06",
@@ -47958,8 +48247,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.17,
-            "count": 32
+            "score": 0.14,
+            "count": 37
           }
         ],
         "media": [
@@ -47992,10 +48281,10 @@
       },
       "media": {
         "polarity": "neutral",
-        "score": -0.03,
-        "direction": "rising",
-        "mentionVolume": 4,
-        "coverageConfidence": 0.43,
+        "score": -0.04,
+        "direction": "stable",
+        "mentionVolume": 3,
+        "coverageConfidence": 0.42,
         "platformBreakdown": {
           "news": 1
         },
@@ -48004,9 +48293,9 @@
         },
         "origin": "headlines",
         "asOf": "2026-10-03",
-        "windowStart": "2026-09-29",
+        "windowStart": "2026-09-30",
         "modelVersion": "headline-lexicon-v1.2",
-        "priorScore": -0.15
+        "priorScore": -0.11
       },
       "headlines": [
         {
@@ -48042,12 +48331,12 @@
         "polarity": "positive",
         "score": 0.21,
         "direction": "stable",
-        "mentionVolume": 373,
+        "mentionVolume": 377,
         "coverageConfidence": 0.61,
         "platformBreakdown": {
-          "fan_blog": 0.035,
-          "bluesky": 0.054,
-          "youtube": 0.912
+          "fan_blog": 0.034,
+          "bluesky": 0.056,
+          "youtube": 0.91
         },
         "topicBreakdown": {
           "injury_return": 0.147,
@@ -48063,9 +48352,9 @@
         },
         "origin": "fans",
         "asOf": "2026-10-06",
-        "windowStart": "2026-09-29",
+        "windowStart": "2026-09-30",
         "modelVersion": "fan-lexicon-v1.2",
-        "priorScore": 0.25
+        "priorScore": 0.19
       }
     },
     {
@@ -48226,8 +48515,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": -0.01,
-            "count": 24
+            "score": 0.03,
+            "count": 33
           }
         ],
         "media": [
@@ -48349,7 +48638,7 @@
       ],
       "fan": {
         "polarity": "neutral",
-        "score": 0.05,
+        "score": 0.06,
         "direction": "stable",
         "mentionVolume": 326,
         "coverageConfidence": 0.61,
@@ -48359,12 +48648,12 @@
           "youtube": 0.773
         },
         "topicBreakdown": {
-          "contract": 0.106,
-          "availability": 0.169,
-          "trade_rumors": 0.12,
-          "training_camp": 0.204,
-          "role_debate": 0.141,
-          "scoring": 0.092,
+          "contract": 0.105,
+          "availability": 0.154,
+          "trade_rumors": 0.119,
+          "training_camp": 0.203,
+          "role_debate": 0.14,
+          "scoring": 0.112,
           "conduct": 0.014,
           "injury_return": 0.077,
           "defense": 0.028,
@@ -48375,7 +48664,7 @@
         "asOf": "2026-10-06",
         "windowStart": "2026-09-29",
         "modelVersion": "fan-lexicon-v1.2",
-        "priorScore": 0.03
+        "priorScore": 0.06
       }
     },
     {
@@ -48390,24 +48679,24 @@
         "polarity": "mixed",
         "score": 0.17,
         "direction": "stable",
-        "mentionVolume": 2261,
-        "coverageConfidence": 0.68,
+        "mentionVolume": 2356,
+        "coverageConfidence": 0.69,
         "platformBreakdown": {
           "fan_blog": 0.011,
-          "bluesky": 0.072,
-          "youtube": 0.917
+          "bluesky": 0.069,
+          "youtube": 0.92
         },
         "topicBreakdown": {
-          "training_camp": 0.113,
-          "contract": 0.086,
-          "trade_rumors": 0.102,
-          "title_odds": 0.042,
-          "scoring": 0.156,
-          "defense": 0.205,
+          "training_camp": 0.117,
+          "contract": 0.084,
+          "trade_rumors": 0.101,
+          "title_odds": 0.04,
+          "scoring": 0.157,
+          "defense": 0.203,
           "availability": 0.043,
-          "role_debate": 0.201,
+          "role_debate": 0.202,
           "injury_return": 0.043,
-          "mvp_case": 0.009
+          "mvp_case": 0.01
         },
         "origin": "fans",
         "asOf": "2026-10-06",
@@ -48419,22 +48708,22 @@
         "polarity": "mixed",
         "score": 0.19,
         "direction": "falling",
-        "mentionVolume": 140,
+        "mentionVolume": 141,
         "coverageConfidence": 0.61,
         "platformBreakdown": {
           "news": 1
         },
         "topicBreakdown": {
           "title_odds": 0.037,
-          "defense": 0.107,
-          "role_debate": 0.15,
-          "training_camp": 0.305,
+          "defense": 0.106,
+          "role_debate": 0.148,
+          "training_camp": 0.307,
           "scoring": 0.053,
-          "contract": 0.128,
-          "trade_rumors": 0.134,
+          "contract": 0.127,
+          "trade_rumors": 0.138,
           "injury_return": 0.032,
           "extension": 0.005,
-          "availability": 0.043,
+          "availability": 0.042,
           "mvp_case": 0.005
         },
         "origin": "headlines",
@@ -48497,8 +48786,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.17,
-            "count": 751
+            "score": 0.18,
+            "count": 855
           }
         ],
         "media": [
@@ -48584,13 +48873,20 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.24,
-            "count": 48
+            "score": 0.23,
+            "count": 49
           }
         ]
       },
       "provenance": "observation",
       "headlines": [
+        {
+          "title": "Bronny James Gets Unexpected Lakers Trade News After Preseason Game",
+          "url": "https://heavy.com/sports/nba/los-angeles-lakers/bronny-james-unexpected-trade-news-preseason-game/",
+          "outlet": "Heavy",
+          "publishedAt": "2026-10-06T22:10:04.000Z",
+          "score": -0.12
+        },
         {
           "title": "Lakers Urged To Sign 6’8″ Grizzlies Wing As Roster Cut Looms",
           "url": "https://heavy.com/sports/nba/los-angeles-lakers/urged-sign-kris-murray-roster-cut-looms/",
@@ -48611,13 +48907,6 @@
           "outlet": "Heavy",
           "publishedAt": "2026-10-06T18:21:23.000Z",
           "score": 0
-        },
-        {
-          "title": "JJ Redick was pleased with the Lakers’ defense against the Kings",
-          "url": "https://sports.yahoo.com/articles/jj-redick-pleased-lakers-defense-174732477.html",
-          "outlet": "Yahoo Sports",
-          "publishedAt": "2026-10-06T17:47:32.000Z",
-          "score": 0.55
         }
       ]
     },
@@ -48705,7 +48994,7 @@
           {
             "date": "2026-10-06",
             "score": 0.14,
-            "count": 86
+            "count": 87
           }
         ],
         "media": [
@@ -48786,12 +49075,12 @@
         "polarity": "mixed",
         "score": 0.16,
         "direction": "falling",
-        "mentionVolume": 167,
+        "mentionVolume": 166,
         "coverageConfidence": 0.59,
         "platformBreakdown": {
           "fan_blog": 0.024,
-          "bluesky": 0.269,
-          "youtube": 0.707
+          "bluesky": 0.271,
+          "youtube": 0.705
         },
         "topicBreakdown": {
           "availability": 0.079,
@@ -48808,9 +49097,9 @@
         },
         "origin": "fans",
         "asOf": "2026-10-06",
-        "windowStart": "2026-09-29",
+        "windowStart": "2026-09-30",
         "modelVersion": "fan-lexicon-v1.2",
-        "priorScore": 0.32
+        "priorScore": 0.3
       }
     },
     {
@@ -48972,7 +49261,7 @@
           {
             "date": "2026-10-06",
             "score": 0.13,
-            "count": 160
+            "count": 168
           }
         ],
         "media": [
@@ -49080,12 +49369,12 @@
         "polarity": "mixed",
         "score": 0.13,
         "direction": "stable",
-        "mentionVolume": 932,
+        "mentionVolume": 940,
         "coverageConfidence": 0.64,
         "platformBreakdown": {
           "fan_blog": 0.028,
-          "bluesky": 0.08,
-          "youtube": 0.892
+          "bluesky": 0.081,
+          "youtube": 0.891
         },
         "topicBreakdown": {
           "training_camp": 0.167,
@@ -49190,8 +49479,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.12,
-            "count": 114
+            "score": 0.1,
+            "count": 125
           }
         ],
         "media": [
@@ -49239,10 +49528,10 @@
       },
       "media": {
         "polarity": "neutral",
-        "score": 0.04,
+        "score": 0.05,
         "direction": "falling",
-        "mentionVolume": 23,
-        "coverageConfidence": 0.52,
+        "mentionVolume": 22,
+        "coverageConfidence": 0.51,
         "platformBreakdown": {
           "news": 1
         },
@@ -49257,9 +49546,9 @@
         },
         "origin": "headlines",
         "asOf": "2026-10-06",
-        "windowStart": "2026-09-29",
+        "windowStart": "2026-09-30",
         "modelVersion": "headline-lexicon-v1.2",
-        "priorScore": 0.24
+        "priorScore": 0.18
       },
       "headlines": [
         {
@@ -49293,33 +49582,33 @@
       ],
       "fan": {
         "polarity": "mixed",
-        "score": 0.17,
+        "score": 0.16,
         "direction": "stable",
-        "mentionVolume": 337,
+        "mentionVolume": 344,
         "coverageConfidence": 0.61,
         "platformBreakdown": {
-          "fan_blog": 0.05,
-          "bluesky": 0.062,
-          "youtube": 0.887
+          "fan_blog": 0.049,
+          "bluesky": 0.061,
+          "youtube": 0.89
         },
         "topicBreakdown": {
-          "training_camp": 0.09,
-          "role_debate": 0.338,
-          "trade_rumors": 0.173,
-          "scoring": 0.113,
-          "availability": 0.038,
-          "injury_return": 0.06,
-          "contract": 0.068,
-          "title_odds": 0.045,
+          "training_camp": 0.089,
+          "role_debate": 0.341,
+          "trade_rumors": 0.178,
+          "scoring": 0.111,
+          "availability": 0.037,
+          "injury_return": 0.052,
+          "contract": 0.067,
+          "title_odds": 0.044,
           "extension": 0.03,
-          "mvp_case": 0.008,
-          "defense": 0.038
+          "mvp_case": 0.007,
+          "defense": 0.044
         },
         "origin": "fans",
         "asOf": "2026-10-06",
         "windowStart": "2026-09-29",
         "modelVersion": "fan-lexicon-v1.2",
-        "priorScore": 0.21
+        "priorScore": 0.22
       }
     },
     {
@@ -49390,8 +49679,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.15,
-            "count": 393
+            "score": 0.14,
+            "count": 431
           }
         ],
         "media": [
@@ -49509,33 +49798,33 @@
       ],
       "fan": {
         "polarity": "mixed",
-        "score": 0.15,
+        "score": 0.14,
         "direction": "falling",
-        "mentionVolume": 1337,
+        "mentionVolume": 1374,
         "coverageConfidence": 0.65,
         "platformBreakdown": {
           "fan_blog": 0.011,
-          "bluesky": 0.038,
-          "youtube": 0.951
+          "bluesky": 0.037,
+          "youtube": 0.952
         },
         "topicBreakdown": {
-          "trade_rumors": 0.067,
+          "trade_rumors": 0.068,
           "injury_return": 0.099,
-          "title_odds": 0.121,
-          "role_debate": 0.16,
-          "availability": 0.032,
-          "training_camp": 0.124,
-          "mvp_case": 0.032,
-          "scoring": 0.17,
-          "contract": 0.103,
-          "defense": 0.089,
-          "extension": 0.004
+          "title_odds": 0.123,
+          "role_debate": 0.161,
+          "availability": 0.031,
+          "training_camp": 0.12,
+          "mvp_case": 0.031,
+          "scoring": 0.171,
+          "contract": 0.099,
+          "defense": 0.092,
+          "extension": 0.003
         },
         "origin": "fans",
         "asOf": "2026-10-06",
         "windowStart": "2026-09-29",
         "modelVersion": "fan-lexicon-v1.2",
-        "priorScore": 0.38
+        "priorScore": 0.39
       }
     },
     {
@@ -49696,8 +49985,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.12,
-            "count": 18
+            "score": 0.13,
+            "count": 19
           }
         ],
         "media": [
@@ -49774,12 +50063,12 @@
         "polarity": "positive",
         "score": 0.22,
         "direction": "rising",
-        "mentionVolume": 167,
+        "mentionVolume": 168,
         "coverageConfidence": 0.58,
         "platformBreakdown": {
           "fan_blog": 0.054,
-          "bluesky": 0.078,
-          "youtube": 0.868
+          "bluesky": 0.077,
+          "youtube": 0.869
         },
         "topicBreakdown": {
           "contract": 0.1,
@@ -49813,7 +50102,7 @@
         "polarity": "mixed",
         "score": 0.15,
         "direction": "stable",
-        "mentionVolume": 2043,
+        "mentionVolume": 2048,
         "coverageConfidence": 0.67,
         "platformBreakdown": {
           "fan_blog": 0.012,
@@ -49821,45 +50110,45 @@
           "youtube": 0.938
         },
         "topicBreakdown": {
-          "title_odds": 0.189,
-          "training_camp": 0.11,
-          "contract": 0.121,
-          "availability": 0.06,
-          "mvp_case": 0.029,
-          "defense": 0.114,
-          "role_debate": 0.141,
-          "scoring": 0.101,
-          "trade_rumors": 0.062,
-          "injury_return": 0.046,
+          "title_odds": 0.187,
+          "training_camp": 0.111,
+          "contract": 0.124,
+          "availability": 0.058,
+          "mvp_case": 0.031,
+          "defense": 0.111,
+          "role_debate": 0.14,
+          "scoring": 0.102,
+          "trade_rumors": 0.06,
+          "injury_return": 0.049,
           "extension": 0.027
         },
         "origin": "fans",
         "asOf": "2026-10-06",
         "windowStart": "2026-09-29",
         "modelVersion": "fan-lexicon-v1.2",
-        "priorScore": 0.12
+        "priorScore": 0.14
       },
       "media": {
         "polarity": "mixed",
-        "score": 0.12,
+        "score": 0.13,
         "direction": "stable",
-        "mentionVolume": 111,
+        "mentionVolume": 112,
         "coverageConfidence": 0.6,
         "platformBreakdown": {
           "news": 1
         },
         "topicBreakdown": {
-          "contract": 0.196,
-          "title_odds": 0.137,
-          "training_camp": 0.196,
-          "extension": 0.113,
+          "contract": 0.2,
+          "title_odds": 0.141,
+          "training_camp": 0.194,
+          "extension": 0.112,
           "trade_rumors": 0.071,
-          "availability": 0.089,
-          "defense": 0.054,
+          "availability": 0.088,
+          "defense": 0.053,
           "injury_return": 0.024,
           "mvp_case": 0.018,
-          "role_debate": 0.054,
-          "scoring": 0.048
+          "role_debate": 0.053,
+          "scoring": 0.047
         },
         "origin": "headlines",
         "asOf": "2026-10-06",
@@ -49942,7 +50231,7 @@
           {
             "date": "2026-10-06",
             "score": 0.17,
-            "count": 491
+            "count": 517
           }
         ],
         "media": [
@@ -50018,13 +50307,20 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.03,
-            "count": 33
+            "score": 0.04,
+            "count": 34
           }
         ]
       },
       "provenance": "observation",
       "headlines": [
+        {
+          "title": "Bruce Brown ‘very surprised’ to be fighting different kind of second-apron battle for Knicks chance",
+          "url": "https://nypost.com/2026/10/06/sports/bruce-brown-fighting-different-kind-of-second-apron-battle-for-knicks-chance/",
+          "outlet": "New York Post",
+          "publishedAt": "2026-10-06T22:10:50.000Z",
+          "score": 0.55
+        },
         {
           "title": "Ex-Knicks Center Gets Devastating News With Injury Diagnosis",
           "url": "https://heavy.com/sports/nba/new-york-knicks/ariel-hukporti-devastating-news-injury-diagnosis/",
@@ -50045,13 +50341,6 @@
           "outlet": "ESPN",
           "publishedAt": "2026-10-06T17:54:05.000Z",
           "score": 0
-        },
-        {
-          "title": "Karl-Anthony Towns & Josh Hart’s Future in Jeopardy as Knicks Face Tough Decision",
-          "url": "https://www.basketballnews.com/news/basketballnews-nba-active-news-karl-anthony-towns-josh-harts-future-in-jeopardy-as-new-york-knicks-face-tough-decision/",
-          "outlet": "Basketball News",
-          "publishedAt": "2026-10-06T17:51:56.000Z",
-          "score": 0
         }
       ]
     },
@@ -50067,12 +50356,12 @@
         "polarity": "positive",
         "score": 0.2,
         "direction": "stable",
-        "mentionVolume": 301,
+        "mentionVolume": 295,
         "coverageConfidence": 0.6,
         "platformBreakdown": {
-          "fan_blog": 0.09,
-          "bluesky": 0.017,
-          "youtube": 0.894
+          "fan_blog": 0.092,
+          "bluesky": 0.02,
+          "youtube": 0.888
         },
         "topicBreakdown": {
           "role_debate": 0.211,
@@ -50091,7 +50380,7 @@
         "asOf": "2026-10-06",
         "windowStart": "2026-09-29",
         "modelVersion": "fan-lexicon-v1.2",
-        "priorScore": 0.17
+        "priorScore": 0.14
       },
       "media": {
         "polarity": "neutral",
@@ -50248,7 +50537,7 @@
           {
             "date": "2026-10-06",
             "score": 0.16,
-            "count": 31
+            "count": 39
           }
         ],
         "media": [
@@ -50479,8 +50768,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.21,
-            "count": 35
+            "score": 0.22,
+            "count": 39
           }
         ],
         "media": [
@@ -50559,9 +50848,9 @@
       ],
       "fan": {
         "polarity": "positive",
-        "score": 0.2,
+        "score": 0.21,
         "direction": "stable",
-        "mentionVolume": 248,
+        "mentionVolume": 250,
         "coverageConfidence": 0.59,
         "platformBreakdown": {
           "fan_blog": 0.044,
@@ -50569,15 +50858,15 @@
           "youtube": 0.94
         },
         "topicBreakdown": {
-          "role_debate": 0.103,
-          "training_camp": 0.09,
-          "defense": 0.192,
-          "availability": 0.141,
-          "injury_return": 0.141,
+          "role_debate": 0.114,
+          "training_camp": 0.089,
+          "defense": 0.19,
+          "availability": 0.127,
+          "injury_return": 0.139,
           "trade_rumors": 0.038,
-          "scoring": 0.103,
-          "title_odds": 0.103,
-          "contract": 0.077,
+          "scoring": 0.114,
+          "title_odds": 0.101,
+          "contract": 0.076,
           "mvp_case": 0.013
         },
         "origin": "fans",
@@ -50650,8 +50939,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.11,
-            "count": 817
+            "score": 0.12,
+            "count": 855
           }
         ],
         "media": [
@@ -50762,14 +51051,14 @@
           },
           {
             "date": "2026-10-06",
-            "score": -0.1,
-            "count": 43
+            "score": -0.11,
+            "count": 44
           }
         ]
       },
       "media": {
         "polarity": "mixed",
-        "score": 0.09,
+        "score": 0.08,
         "direction": "falling",
         "mentionVolume": 100,
         "coverageConfidence": 0.59,
@@ -50780,19 +51069,19 @@
           "title_odds": 0.066,
           "contract": 0.088,
           "mvp_case": 0.007,
-          "training_camp": 0.346,
-          "scoring": 0.074,
-          "defense": 0.037,
-          "role_debate": 0.14,
+          "training_camp": 0.343,
+          "scoring": 0.073,
+          "defense": 0.036,
+          "role_debate": 0.139,
           "injury_return": 0.022,
-          "availability": 0.199,
+          "availability": 0.204,
           "trade_rumors": 0.022
         },
         "origin": "headlines",
         "asOf": "2026-10-06",
-        "windowStart": "2026-09-29",
+        "windowStart": "2026-09-30",
         "modelVersion": "headline-lexicon-v1.2",
-        "priorScore": 0.24
+        "priorScore": 0.27
       },
       "headlines": [
         {
@@ -50810,25 +51099,25 @@
           "score": -0.7
         },
         {
+          "title": "How the Sixers can add another backup center after Ariel Hukporti’s Achilles injury",
+          "url": "https://sports.yahoo.com/articles/sixers-add-another-backup-center-201500755.html",
+          "outlet": "Yahoo Sports",
+          "publishedAt": "2026-10-06T20:15:00.000Z",
+          "score": -0.55
+        },
+        {
           "title": "76ers Get More Bad News After Big Man’s Season-Ending Injury",
           "url": "https://heavy.com/sports/nba/philadelphia-76ers/76ers-brutal-injury-news-knicks-preseason/",
           "outlet": "Heavy",
           "publishedAt": "2026-10-06T19:25:19.000Z",
           "score": -0.99
-        },
-        {
-          "title": "Sources: 76ers’ Ariel Hukporti will miss 2026-27 season with torn Achilles",
-          "url": "https://clutchpoints.com/nba/philadelphia-76ers/sources-ariel-hukporti-76ers-torn-achilles-miss-2026-27-season",
-          "outlet": "ClutchPoints",
-          "publishedAt": "2026-10-06T19:11:10.000Z",
-          "score": -0.88
         }
       ],
       "fan": {
         "polarity": "mixed",
         "score": 0.13,
         "direction": "stable",
-        "mentionVolume": 1891,
+        "mentionVolume": 1924,
         "coverageConfidence": 0.68,
         "platformBreakdown": {
           "fan_blog": 0.014,
@@ -50836,16 +51125,16 @@
           "youtube": 0.878
         },
         "topicBreakdown": {
-          "mvp_case": 0.035,
-          "title_odds": 0.113,
-          "trade_rumors": 0.052,
-          "contract": 0.098,
-          "role_debate": 0.19,
-          "availability": 0.1,
-          "training_camp": 0.148,
-          "defense": 0.086,
+          "mvp_case": 0.034,
+          "title_odds": 0.111,
+          "trade_rumors": 0.051,
+          "contract": 0.102,
+          "role_debate": 0.188,
+          "availability": 0.098,
+          "training_camp": 0.147,
+          "defense": 0.092,
           "scoring": 0.107,
-          "injury_return": 0.061,
+          "injury_return": 0.06,
           "extension": 0.008,
           "conduct": 0.002
         },
@@ -50853,7 +51142,7 @@
         "asOf": "2026-10-06",
         "windowStart": "2026-09-29",
         "modelVersion": "fan-lexicon-v1.2",
-        "priorScore": 0.12
+        "priorScore": 0.13
       }
     },
     {
@@ -50915,7 +51204,7 @@
           {
             "date": "2026-10-06",
             "score": 0.18,
-            "count": 93
+            "count": 95
           }
         ],
         "media": [
@@ -51008,32 +51297,32 @@
       "fan": {
         "polarity": "mixed",
         "score": 0.17,
-        "direction": "stable",
-        "mentionVolume": 324,
+        "direction": "rising",
+        "mentionVolume": 322,
         "coverageConfidence": 0.61,
         "platformBreakdown": {
-          "fan_blog": 0.077,
+          "fan_blog": 0.078,
           "bluesky": 0.043,
-          "youtube": 0.88
+          "youtube": 0.879
         },
         "topicBreakdown": {
-          "training_camp": 0.169,
-          "role_debate": 0.212,
-          "contract": 0.042,
-          "availability": 0.034,
-          "extension": 0.025,
-          "scoring": 0.161,
-          "injury_return": 0.068,
-          "defense": 0.093,
-          "trade_rumors": 0.102,
-          "mvp_case": 0.025,
-          "title_odds": 0.068
+          "training_camp": 0.174,
+          "role_debate": 0.217,
+          "contract": 0.035,
+          "availability": 0.035,
+          "extension": 0.017,
+          "scoring": 0.157,
+          "injury_return": 0.07,
+          "defense": 0.096,
+          "trade_rumors": 0.104,
+          "mvp_case": 0.026,
+          "title_odds": 0.07
         },
         "origin": "fans",
         "asOf": "2026-10-06",
-        "windowStart": "2026-09-29",
+        "windowStart": "2026-09-30",
         "modelVersion": "fan-lexicon-v1.2",
-        "priorScore": 0.08
+        "priorScore": 0.05
       }
     },
     {
@@ -51094,8 +51383,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.09,
-            "count": 65
+            "score": 0.1,
+            "count": 72
           }
         ],
         "media": [
@@ -51198,22 +51487,22 @@
         "polarity": "mixed",
         "score": 0.14,
         "direction": "stable",
-        "mentionVolume": 571,
+        "mentionVolume": 576,
         "coverageConfidence": 0.62,
         "platformBreakdown": {
           "fan_blog": 0.035,
-          "bluesky": 0.1,
-          "youtube": 0.865
+          "bluesky": 0.102,
+          "youtube": 0.863
         },
         "topicBreakdown": {
-          "contract": 0.116,
-          "training_camp": 0.164,
-          "scoring": 0.096,
-          "injury_return": 0.075,
+          "contract": 0.117,
+          "training_camp": 0.166,
+          "scoring": 0.09,
+          "injury_return": 0.076,
           "mvp_case": 0.062,
-          "defense": 0.089,
-          "availability": 0.068,
-          "role_debate": 0.205,
+          "defense": 0.09,
+          "availability": 0.069,
+          "role_debate": 0.207,
           "conduct": 0.014,
           "title_odds": 0.048,
           "trade_rumors": 0.048,
@@ -51223,7 +51512,7 @@
         "asOf": "2026-10-06",
         "windowStart": "2026-09-29",
         "modelVersion": "fan-lexicon-v1.2",
-        "priorScore": 0.05
+        "priorScore": 0.07
       }
     },
     {
@@ -51385,7 +51674,7 @@
           {
             "date": "2026-10-06",
             "score": 0.16,
-            "count": 99
+            "count": 104
           }
         ],
         "media": [
@@ -51502,31 +51791,31 @@
       "fan": {
         "polarity": "mixed",
         "score": 0.14,
-        "direction": "rising",
-        "mentionVolume": 411,
+        "direction": "stable",
+        "mentionVolume": 415,
         "coverageConfidence": 0.6,
         "platformBreakdown": {
-          "fan_blog": 0.058,
-          "bluesky": 0.068,
-          "youtube": 0.873
+          "fan_blog": 0.06,
+          "bluesky": 0.067,
+          "youtube": 0.872
         },
         "topicBreakdown": {
-          "trade_rumors": 0.078,
-          "contract": 0.186,
-          "training_camp": 0.216,
-          "role_debate": 0.118,
+          "trade_rumors": 0.081,
+          "contract": 0.182,
+          "training_camp": 0.222,
+          "role_debate": 0.121,
           "extension": 0.02,
-          "scoring": 0.137,
-          "injury_return": 0.059,
-          "availability": 0.049,
-          "defense": 0.108,
-          "title_odds": 0.029
+          "scoring": 0.141,
+          "injury_return": 0.051,
+          "availability": 0.051,
+          "defense": 0.111,
+          "title_odds": 0.02
         },
         "origin": "fans",
         "asOf": "2026-10-06",
         "windowStart": "2026-09-29",
         "modelVersion": "fan-lexicon-v1.2",
-        "priorScore": 0.04
+        "priorScore": 0.06
       }
     },
     {
@@ -51602,8 +51891,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.17,
-            "count": 118
+            "score": 0.16,
+            "count": 135
           }
         ],
         "media": [
@@ -51712,24 +52001,24 @@
         "polarity": "mixed",
         "score": 0.17,
         "direction": "falling",
-        "mentionVolume": 836,
-        "coverageConfidence": 0.63,
+        "mentionVolume": 853,
+        "coverageConfidence": 0.64,
         "platformBreakdown": {
-          "fan_blog": 0.017,
+          "fan_blog": 0.016,
           "bluesky": 0.014,
-          "youtube": 0.969
+          "youtube": 0.97
         },
         "topicBreakdown": {
-          "role_debate": 0.204,
+          "role_debate": 0.207,
           "training_camp": 0.049,
-          "trade_rumors": 0.086,
-          "title_odds": 0.068,
-          "contract": 0.222,
-          "injury_return": 0.056,
-          "availability": 0.074,
-          "defense": 0.117,
-          "scoring": 0.086,
-          "mvp_case": 0.025,
+          "trade_rumors": 0.085,
+          "title_odds": 0.067,
+          "contract": 0.22,
+          "injury_return": 0.055,
+          "availability": 0.079,
+          "defense": 0.116,
+          "scoring": 0.085,
+          "mvp_case": 0.024,
           "extension": 0.012
         },
         "origin": "fans",
@@ -51832,8 +52121,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.37,
-            "count": 16
+            "score": 0.23,
+            "count": 24
           }
         ],
         "media": [
@@ -51955,32 +52244,32 @@
         "polarity": "mixed",
         "score": 0.15,
         "direction": "falling",
-        "mentionVolume": 417,
+        "mentionVolume": 418,
         "coverageConfidence": 0.63,
         "platformBreakdown": {
           "fan_blog": 0.024,
-          "bluesky": 0.269,
-          "youtube": 0.707
+          "bluesky": 0.268,
+          "youtube": 0.708
         },
         "topicBreakdown": {
           "trade_rumors": 0.057,
-          "contract": 0.113,
-          "training_camp": 0.211,
-          "title_odds": 0.077,
-          "role_debate": 0.16,
-          "scoring": 0.098,
-          "injury_return": 0.046,
+          "contract": 0.115,
+          "training_camp": 0.214,
+          "title_odds": 0.073,
+          "role_debate": 0.156,
+          "scoring": 0.099,
+          "injury_return": 0.047,
           "mvp_case": 0.01,
-          "extension": 0.062,
-          "availability": 0.067,
-          "defense": 0.093,
+          "extension": 0.063,
+          "availability": 0.063,
+          "defense": 0.099,
           "conduct": 0.005
         },
         "origin": "fans",
         "asOf": "2026-10-06",
         "windowStart": "2026-09-29",
         "modelVersion": "fan-lexicon-v1.2",
-        "priorScore": 0.3
+        "priorScore": 0.32
       }
     },
     {
@@ -52056,8 +52345,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.23,
-            "count": 78
+            "score": 0.22,
+            "count": 83
           }
         ],
         "media": [
@@ -52144,12 +52433,12 @@
         "polarity": "positive",
         "score": 0.24,
         "direction": "stable",
-        "mentionVolume": 336,
+        "mentionVolume": 341,
         "coverageConfidence": 0.61,
         "platformBreakdown": {
-          "fan_blog": 0.042,
-          "bluesky": 0.06,
-          "youtube": 0.899
+          "fan_blog": 0.041,
+          "bluesky": 0.059,
+          "youtube": 0.9
         },
         "topicBreakdown": {
           "role_debate": 0.26,
@@ -52218,8 +52507,8 @@
           },
           {
             "date": "2026-10-06",
-            "score": 0.13,
-            "count": 109
+            "score": 0.11,
+            "count": 119
           }
         ],
         "media": [
@@ -52336,31 +52625,31 @@
         "polarity": "mixed",
         "score": 0.09,
         "direction": "falling",
-        "mentionVolume": 889,
+        "mentionVolume": 891,
         "coverageConfidence": 0.62,
         "platformBreakdown": {
           "fan_blog": 0.015,
-          "bluesky": 0.007,
-          "youtube": 0.979
+          "bluesky": 0.008,
+          "youtube": 0.978
         },
         "topicBreakdown": {
-          "injury_return": 0.08,
-          "role_debate": 0.17,
-          "availability": 0.085,
+          "injury_return": 0.079,
+          "role_debate": 0.174,
+          "availability": 0.084,
           "training_camp": 0.051,
-          "contract": 0.063,
-          "trade_rumors": 0.068,
-          "scoring": 0.244,
-          "defense": 0.148,
-          "title_odds": 0.051,
-          "mvp_case": 0.023,
+          "contract": 0.062,
+          "trade_rumors": 0.067,
+          "scoring": 0.247,
+          "defense": 0.152,
+          "title_odds": 0.045,
+          "mvp_case": 0.022,
           "conduct": 0.017
         },
         "origin": "fans",
         "asOf": "2026-10-06",
         "windowStart": "2026-09-29",
         "modelVersion": "fan-lexicon-v1.2",
-        "priorScore": 0.43
+        "priorScore": 0.34
       }
     }
   ],
@@ -52811,24 +53100,24 @@
         "polarity": "mixed",
         "score": 0.11,
         "direction": "stable",
-        "mentionVolume": 1167,
+        "mentionVolume": 1168,
         "coverageConfidence": 0.72,
         "platformBreakdown": {
           "news": 1
         },
         "topicBreakdown": {
-          "title_odds": 0.046,
+          "title_odds": 0.047,
           "defense": 0.05,
           "contract": 0.194,
-          "availability": 0.082,
+          "availability": 0.083,
           "conduct": 0.009,
           "trade_rumors": 0.092,
-          "role_debate": 0.104,
-          "training_camp": 0.254,
-          "scoring": 0.051,
+          "role_debate": 0.103,
+          "training_camp": 0.253,
+          "scoring": 0.052,
           "extension": 0.052,
           "injury_return": 0.042,
-          "mvp_case": 0.024
+          "mvp_case": 0.023
         },
         "origin": "headlines",
         "asOf": "2026-10-06",
@@ -52975,7 +53264,7 @@
         {
           "date": "2026-10-06",
           "score": 0.02,
-          "count": 335
+          "count": 342
         }
       ]
     },
@@ -52984,22 +53273,22 @@
         "polarity": "mixed",
         "score": 0.14,
         "direction": "stable",
-        "mentionVolume": 28343,
+        "mentionVolume": 28606,
         "coverageConfidence": 0.81,
         "platformBreakdown": {
           "fan_blog": 0.015,
           "bluesky": 0.069,
-          "youtube": 0.916
+          "youtube": 0.915
         },
         "topicBreakdown": {
-          "training_camp": 0.092,
+          "training_camp": 0.093,
           "trade_rumors": 0.089,
-          "injury_return": 0.058,
+          "injury_return": 0.057,
           "contract": 0.128,
           "scoring": 0.152,
-          "role_debate": 0.161,
-          "defense": 0.12,
-          "availability": 0.063,
+          "role_debate": 0.162,
+          "defense": 0.121,
+          "availability": 0.062,
           "title_odds": 0.081,
           "mvp_case": 0.038,
           "extension": 0.013,
@@ -53015,7 +53304,7 @@
         {
           "date": "2026-09-06",
           "score": -0.46,
-          "count": 2
+          "count": 1
         },
         {
           "date": "2026-09-07",
@@ -53150,7 +53439,7 @@
         {
           "date": "2026-10-03",
           "score": 0.14,
-          "count": 4008
+          "count": 4009
         },
         {
           "date": "2026-10-04",
@@ -53165,11 +53454,115 @@
         {
           "date": "2026-10-06",
           "score": 0.13,
-          "count": 5926
+          "count": 6407
         }
       ]
     },
     "latestHeadlines": [
+      {
+        "title": "Eastern Notes: Hawks Opener, Flemings, Sweeney, Walker, Murray-Boyles",
+        "url": "https://www.hoopsrumors.com/2026/10/eastern-notes-hawks-opener-flemings-sweeney-walker-murray-boyles.html",
+        "outlet": "Hoops Rumors",
+        "publishedAt": "2026-10-06T22:37:47.000Z",
+        "score": -0.36,
+        "rating": 0,
+        "players": [
+          {
+            "id": "5093267",
+            "name": "Collin Murray-Boyles"
+          }
+        ],
+        "teamIds": [
+          "1"
+        ],
+        "topics": [
+          "scoring",
+          "defense"
+        ]
+      },
+      {
+        "title": "Ex-Knick Ariel Hukporti out for season after tearing Achilles",
+        "url": "https://nypost.com/2026/10/06/sports/76ers-ariel-hukporti-out-for-season-after-tearing-achilles/",
+        "outlet": "New York Post",
+        "publishedAt": "2026-10-06T22:33:33.000Z",
+        "score": 0.12,
+        "rating": -1,
+        "players": [
+          {
+            "id": "4871141",
+            "name": "Ariel Hukporti"
+          }
+        ],
+        "teamIds": [],
+        "topics": [
+          "availability",
+          "contract",
+          "title_odds"
+        ]
+      },
+      {
+        "title": "Bruce Brown ‘very surprised’ to be fighting different kind of second-apron battle for Knicks chance",
+        "url": "https://nypost.com/2026/10/06/sports/bruce-brown-fighting-different-kind-of-second-apron-battle-for-knicks-chance/",
+        "outlet": "New York Post",
+        "publishedAt": "2026-10-06T22:10:50.000Z",
+        "score": 0.55,
+        "rating": 0,
+        "players": [
+          {
+            "id": "4065670",
+            "name": "Bruce Brown"
+          }
+        ],
+        "teamIds": [
+          "18"
+        ],
+        "topics": [
+          "contract",
+          "title_odds"
+        ]
+      },
+      {
+        "title": "Without LeBron James, Bronny has chance to prove he really belongs",
+        "url": "https://nypost.com/2026/10/06/sports/nows-bronny-james-chance-to-prove-he-really-belongs/",
+        "outlet": "New York Post",
+        "publishedAt": "2026-10-06T22:10:19.000Z",
+        "score": 0.91,
+        "players": [
+          {
+            "id": "1966",
+            "name": "LeBron James"
+          },
+          {
+            "id": "4683774",
+            "name": "Bronny James"
+          }
+        ],
+        "teamIds": [],
+        "topics": [
+          "general"
+        ]
+      },
+      {
+        "title": "Bronny James Gets Unexpected Lakers Trade News After Preseason Game",
+        "url": "https://heavy.com/sports/nba/los-angeles-lakers/bronny-james-unexpected-trade-news-preseason-game/",
+        "outlet": "Heavy",
+        "publishedAt": "2026-10-06T22:10:04.000Z",
+        "score": -0.12,
+        "rating": 0,
+        "players": [
+          {
+            "id": "4683774",
+            "name": "Bronny James"
+          }
+        ],
+        "teamIds": [
+          "13"
+        ],
+        "topics": [
+          "trade_rumors",
+          "training_camp"
+        ]
+      },
       {
         "title": "Celtics’ Jayson Tatum Makes Feelings on Mitchell Robinson Clear",
         "url": "https://heavy.com/sports/nba/boston-celtics/celtics-jayson-tatum-makes-feelings-on-mitchell-robinson-clear/",
@@ -53419,109 +53812,6 @@
         ],
         "topics": [
           "contract"
-        ]
-      },
-      {
-        "title": "Spurs Might Regret Not Trading $221 Million Guard During 2026 Offseason",
-        "url": "https://heavy.com/sports/nba/san-antonio-spurs/spurs-regret-not-trading-guard-offseason/",
-        "outlet": "Heavy",
-        "publishedAt": "2026-10-06T20:11:07.000Z",
-        "score": 0,
-        "players": [
-          {
-            "id": "5104157",
-            "name": "Victor Wembanyama"
-          }
-        ],
-        "teamIds": [
-          "24"
-        ],
-        "topics": [
-          "general"
-        ]
-      },
-      {
-        "title": "Spurs’ Victor Wembanyama Put on Notice by ESPN Insiders",
-        "url": "https://heavy.com/sports/nba/san-antonio-spurs/spurs-victor-wembanyama-called-out-brian-windhorst/",
-        "outlet": "Heavy",
-        "publishedAt": "2026-10-06T19:52:13.000Z",
-        "score": 0.64,
-        "rating": -1,
-        "players": [
-          {
-            "id": "5104157",
-            "name": "Victor Wembanyama"
-          }
-        ],
-        "teamIds": [
-          "24"
-        ],
-        "topics": [
-          "general"
-        ]
-      },
-      {
-        "title": "Ty Jerome on Cameron Boozer: It’s like having another point guard next to me",
-        "url": "https://www.talkbasket.net/224422-ty-jerome-on-cameron-boozer-its-like-having-another-point-guard-next-to-me",
-        "outlet": "TalkBasket",
-        "publishedAt": "2026-10-06T19:40:07.000Z",
-        "score": 0.55,
-        "rating": 1,
-        "players": [
-          {
-            "id": "4065733",
-            "name": "Ty Jerome"
-          }
-        ],
-        "teamIds": [],
-        "topics": [
-          "role_debate",
-          "scoring",
-          "defense",
-          "training_camp"
-        ]
-      },
-      {
-        "title": "Ariel Hukporti Suffers Torn Achilles Tendon",
-        "url": "https://basketball.realgm.com/wiretap/287542/Ariel-Hukporti-Suffers-Torn-Achilles-Tendon",
-        "outlet": "RealGM",
-        "publishedAt": "2026-10-06T19:35:13.000Z",
-        "score": -0.98,
-        "rating": -1,
-        "players": [
-          {
-            "id": "4871141",
-            "name": "Ariel Hukporti"
-          }
-        ],
-        "teamIds": [],
-        "topics": [
-          "availability",
-          "contract",
-          "training_camp"
-        ]
-      },
-      {
-        "title": "Will Luka Doncic & Austin Reaves Play Tonight? New Info Before Warriors Game",
-        "url": "https://heavy.com/sports/nba/los-angeles-lakers/luka-reaves-warriors-game-status/",
-        "outlet": "Heavy",
-        "publishedAt": "2026-10-06T19:30:37.000Z",
-        "score": 0.76,
-        "players": [
-          {
-            "id": "3945274",
-            "name": "Luka Doncic"
-          },
-          {
-            "id": "4066457",
-            "name": "Austin Reaves"
-          }
-        ],
-        "teamIds": [
-          "9"
-        ],
-        "topics": [
-          "training_camp"
         ]
       }
     ]
