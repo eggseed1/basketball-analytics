@@ -964,52 +964,89 @@ html:not([data-surface="glass"]) .color-scheme-switch {
   -webkit-backdrop-filter: none;
 }
 
-/* Page wash - glass samples this color (Apple materials). */
+/* Page wash - glass samples this color (Apple materials). Two soft orbs sit
+   in opposite corners so the colors never meet and muddy, and drift slowly.
+   Only transform animates, so the layers stay on the compositor. */
 .page-atmosphere {
   pointer-events: none;
   position: fixed;
   inset: 0;
   z-index: 0;
-  background:
-    radial-gradient(
-      ellipse 110% 70% at 0% -6%,
-      color-mix(in oklab, var(--atmosphere-a, transparent) 22%, transparent),
-      transparent 72%
-    ),
-    radial-gradient(
-      ellipse 100% 65% at 100% 4%,
-      color-mix(in oklab, var(--atmosphere-b, transparent) 19%, transparent),
-      transparent 70%
-    ),
-    radial-gradient(
-      ellipse 80% 50% at 50% 108%,
-      color-mix(in oklab, var(--atmosphere-a, transparent) 12%, transparent),
-      transparent 74%
-    );
+  overflow: hidden;
+  --orb-a: color-mix(in oklab, var(--atmosphere-a, transparent) 15%, transparent);
+  --orb-b: color-mix(in oklab, var(--atmosphere-b, transparent) 11%, transparent);
 }
 
-/* Dark: lower chroma than light (big saturated fields vibrate on dark) and an
-   eased mid stop, since two-stop radials band visibly at low lightness. */
+.page-atmosphere::before,
+.page-atmosphere::after {
+  content: "";
+  position: absolute;
+  width: 78vmax;
+  height: 78vmax;
+  border-radius: 9999px;
+  will-change: transform;
+}
+
+.page-atmosphere::before {
+  left: -34vmax;
+  top: -40vmax;
+  background: radial-gradient(
+    circle at center,
+    var(--orb-a) 0%,
+    color-mix(in oklab, var(--orb-a) 45%, transparent) 38%,
+    transparent 70%
+  );
+  animation: atmosphere-drift-a 42s ease-in-out infinite alternate;
+}
+
+.page-atmosphere::after {
+  right: -36vmax;
+  top: -34vmax;
+  background: radial-gradient(
+    circle at center,
+    var(--orb-b) 0%,
+    color-mix(in oklab, var(--orb-b) 45%, transparent) 38%,
+    transparent 70%
+  );
+  animation: atmosphere-drift-b 54s ease-in-out infinite alternate;
+}
+
+/* Dark: lower chroma so large fields don't vibrate; the eased mid stop above
+   keeps the falloff from banding at low lightness. */
 .dark .page-atmosphere {
-  background:
-    radial-gradient(
-      ellipse 110% 70% at 0% -6%,
-      color-mix(in oklab, var(--atmosphere-a, transparent) 22%, transparent),
-      color-mix(in oklab, var(--atmosphere-a, transparent) 9%, transparent) 36%,
-      transparent 74%
-    ),
-    radial-gradient(
-      ellipse 100% 65% at 100% 4%,
-      color-mix(in oklab, var(--atmosphere-b, transparent) 18%, transparent),
-      color-mix(in oklab, var(--atmosphere-b, transparent) 7%, transparent) 36%,
-      transparent 72%
-    ),
-    radial-gradient(
-      ellipse 80% 50% at 50% 108%,
-      color-mix(in oklab, var(--atmosphere-a, transparent) 12%, transparent),
-      color-mix(in oklab, var(--atmosphere-a, transparent) 5%, transparent) 40%,
-      transparent 76%
-    );
+  --orb-a: color-mix(in oklab, var(--atmosphere-a, transparent) 20%, transparent);
+  --orb-b: color-mix(in oklab, var(--atmosphere-b, transparent) 13%, transparent);
+}
+
+@keyframes atmosphere-drift-a {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(7vw, 5vh, 0) scale(1.06);
+  }
+  100% {
+    transform: translate3d(2vw, 10vh, 0) scale(0.97);
+  }
+}
+
+@keyframes atmosphere-drift-b {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-6vw, 7vh, 0) scale(1.05);
+  }
+  100% {
+    transform: translate3d(-2vw, 2vh, 0) scale(1.08);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-atmosphere::before,
+  .page-atmosphere::after {
+    animation: none;
+  }
 }
 
 /* Typography roles - even px only; use instead of one-off text-[NNpx]. */
