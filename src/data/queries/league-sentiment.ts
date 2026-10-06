@@ -52,6 +52,7 @@ async function listRosterSentimentRows(): Promise<TrackedPlayerSentimentRow[]> {
         fan: curated?.fan,
         media: curated?.media,
         series: curated?.series,
+        words: curated?.words,
         headlineCount:
           curated?.media?.origin === "headlines" ? curated.media.mentionVolume : undefined,
         performance: curated?.performance,

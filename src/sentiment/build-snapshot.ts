@@ -35,6 +35,7 @@ import type {
 } from "@/sentiment/curated-types";
 import { FAN_LEXICON_VERSION, HEADLINE_LEXICON_VERSION } from "@/sentiment/headline-lexicon";
 import { FAN_MODEL_VERSION, HEADLINE_MODEL_VERSION } from "@/sentiment/headline-model";
+import { headlineWordCloud, ownWords } from "@/sentiment/headline-words";
 import type { SentimentHistoryFile } from "@/sentiment/game-reaction";
 import {
   buildIngestLane,
@@ -745,6 +746,33 @@ export async function buildSentimentSnapshot(
 
   const newsByPlayer = groupByEntity(newsScored, "playerIds");
   const fanByPlayer = groupByEntity(fanScored, "playerIds");
+  const wordSince = now.getTime() - ingestConfig.windowDays * 86_400_000;
+  const titlesByPlayer = (rows: NewsIngestItem[]) => {
+    const out = new Map<string, { title: string; date: string }[]>();
+    for (const row of rows) {
+      if (Date.parse(row.publishedAt) <= wordSince) continue;
+      for (const id of row.playerIds) {
+        const list = out.get(id) ?? [];
+        list.push({ title: row.title, date: row.publishedAt });
+        out.set(id, list);
+      }
+    }
+    return out;
+  };
+  const newsTitles = titlesByPlayer(newsRows);
+  const fanBlogTitles = titlesByPlayer(fanBlogRows);
+  const withWords = (
+    profile: PlayerSentimentProfile,
+    side: "media" | "fan",
+    titles: { title: string; date: string }[] | undefined,
+    playerId: string
+  ): PlayerSentimentProfile => {
+    const cloud = headlineWordCloud(
+      titles ?? [],
+      ownWords(profile.displayName ?? ingestRoster.get(playerId)?.name, profile.teamKey)
+    );
+    return cloud ? { ...profile, words: { ...profile.words, [side]: cloud } } : profile;
+  };
   let headlineLaneCount = 0;
   for (const [playerId, items] of newsByPlayer) {
     const built = buildIngestLane(items, {
@@ -760,17 +788,24 @@ export async function buildSentimentSnapshot(
     });
     if (!built) continue;
     headlineLaneCount += 1;
-    upsertPlayer(playerId, (profile) => ({
-      ...profile,
-      media: built.lane,
-      series: { fan: profile.series?.fan ?? [], media: built.series },
-      headlines: headlineExemplars(
-        items.map((item) => item.id),
-        newsById,
-        ingestConfig.profileHeadlineLimit,
-        (rowId) => headlineTones.get(`news:${rowId}`)?.[playerId]
-      ),
-    }));
+    upsertPlayer(playerId, (profile) =>
+      withWords(
+        {
+          ...profile,
+          media: built.lane,
+          series: { fan: profile.series?.fan ?? [], media: built.series },
+          headlines: headlineExemplars(
+            items.map((item) => item.id),
+            newsById,
+            ingestConfig.profileHeadlineLimit,
+            (rowId) => headlineTones.get(`news:${rowId}`)?.[playerId]
+          ),
+        },
+        "media",
+        newsTitles.get(playerId),
+        playerId
+      )
+    );
   }
   let fanLaneCount = 0;
   for (const [playerId, items] of fanByPlayer) {
@@ -787,11 +822,18 @@ export async function buildSentimentSnapshot(
     });
     if (!built) continue;
     fanLaneCount += 1;
-    upsertPlayer(playerId, (profile) => ({
-      ...profile,
-      fan: built.lane,
-      series: { fan: built.series, media: profile.series?.media ?? [] },
-    }));
+    upsertPlayer(playerId, (profile) =>
+      withWords(
+        {
+          ...profile,
+          fan: built.lane,
+          series: { fan: built.series, media: profile.series?.media ?? [] },
+        },
+        "fan",
+        fanBlogTitles.get(playerId),
+        playerId
+      )
+    );
   }
 
   const uniqueProfiles = new Map<string, PlayerSentimentProfile>();

@@ -116,6 +116,7 @@ export function listTrackedPlayerSentiment(): TrackedPlayerSentimentRow[] {
       fan: row.fan,
       media: row.media,
       series: row.series,
+      words: row.words,
       headlineCount: row.media?.origin === "headlines" ? row.media.mentionVolume : undefined,
       performance: row.performance,
       hasProfile: true,

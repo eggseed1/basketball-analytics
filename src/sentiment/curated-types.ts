@@ -68,6 +68,14 @@ export type SentimentHeadlineExemplar = {
   rating?: -1 | 0 | 1;
 };
 
+/** Content words from the window's headlines, each counted once per headline. */
+export type SentimentWordCloud = {
+  /** [word, headlines using it], most used first. */
+  words: [string, number][];
+  /** Headlines the words came from. */
+  headlines: number;
+};
+
 export type SentimentProfileProvenance =
   | "hand_crafted"
   | "generated"
@@ -84,6 +92,8 @@ export type PlayerSentimentProfile = {
   fan?: CuratedSentimentLane;
   media?: CuratedSentimentLane;
   headlines?: SentimentHeadlineExemplar[];
+  /** Media words from national headlines; fan words from fan blog headlines only. */
+  words?: { media?: SentimentWordCloud; fan?: SentimentWordCloud };
   /** Last completed season's DRBL/100, joined by name at build time. */
   performance?: { season: string; drbl100: number; possessions: number };
   association?: {
@@ -279,6 +289,7 @@ export type TrackedPlayerSentimentRow = {
   fan?: CuratedSentimentLane;
   media?: CuratedSentimentLane;
   series?: PlayerSentimentProfile["series"];
+  words?: PlayerSentimentProfile["words"];
   headlineCount?: number;
   performance?: PlayerSentimentProfile["performance"];
   hasProfile?: boolean;

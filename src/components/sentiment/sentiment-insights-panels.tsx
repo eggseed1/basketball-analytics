@@ -10,6 +10,7 @@ import type {
   SentimentDivergenceRow,
   SentimentLaneOrigin,
   SentimentTopicHeatRow,
+  SentimentWordCloud,
   TrackedPlayerSentimentRow,
 } from "@/sentiment/curated-types";
 import { type } from "@/lib/design-system";
@@ -133,39 +134,59 @@ function laneSpan(lane: CuratedSentimentLane, unit: [string, string]): string {
   return from === to ? `${what} on ${shortDate(to)}` : `${what}, ${shortDate(from)} to ${shortDate(to)}`;
 }
 
-/** Topic tags sized by their share of the lane. Tags only; no post text is kept. */
+/**
+ * Headline words sized by how many headlines use them. Falls back to topic
+ * tags when the side has no stored headlines (social posts keep no text).
+ */
 function TopicCloud({
   title,
   lane,
+  cloud,
+  cloudSource,
   color,
   unit,
 }: {
   title: string;
   lane: CuratedSentimentLane | undefined;
+  cloud: SentimentWordCloud | undefined;
+  cloudSource: string;
   color: string;
   unit: [string, string];
 }) {
-  const topics = Object.entries(lane?.topicBreakdown ?? {})
-    .filter(([, share]) => share > 0)
-    .sort((a, b) => b[1] - a[1]);
-  const top = topics[0]?.[1] ?? 1;
+  const entries: { key: string; label: string; weight: number; hint: string }[] = cloud
+    ? cloud.words.map(([word, n]) => ({
+        key: word,
+        label: word,
+        weight: n,
+        hint: `In ${n} of ${cloud.headlines} ${cloudSource}`,
+      }))
+    : Object.entries(lane?.topicBreakdown ?? {})
+        .filter(([, share]) => share > 0)
+        .sort((a, b) => b[1] - a[1])
+        .map(([topic, share]) => ({
+          key: topic,
+          label: topic.replace(/_/g, " "),
+          weight: share,
+          hint: `${Math.round(share * 100)}% of tagged ${unit[1]}`,
+        }));
+  const top = entries[0]?.weight ?? 1;
   return (
     <div className="flex min-w-0 flex-col gap-2">
       <p className={cn(type.caption, "font-semibold uppercase tracking-wide")} style={{ color }}>
         {title}
       </p>
-      {topics.length ? (
+      {entries.length ? (
         <ul className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-          {topics.map(([topic, share]) => {
-            const t = share / top;
+          {entries.map((entry) => {
+            const t = entry.weight / top;
             return (
               <li
-                key={topic}
+                key={entry.key}
                 className="font-semibold leading-tight tracking-tight"
                 style={{ fontSize: `${12 + t * 14}px`, color, opacity: 0.45 + t * 0.55 }}
-                title={`${Math.round(share * 100)}% of tagged ${unit[1]}`}
+                title={entry.hint}
               >
-                {topic.replace(/_/g, " ")}
+                {entry.label}
               </li>
             );
           })}
@@ -174,7 +195,14 @@ function TopicCloud({
         <p className={cn(type.caption, "text-muted-foreground")}>No topic tags in this window.</p>
       )}
       {lane ? (
-        <p className={cn(type.micro, "text-muted-foreground")}>{laneSpan(lane, unit)}</p>
+        <p className={cn(type.micro, "text-muted-foreground")}>
+          {laneSpan(lane, unit)}
+          {cloud
+            ? `. Words from ${cloud.headlines} ${cloudSource}.`
+            : entries.length
+              ? ". Topic tags, since none were headlines."
+              : null}
+        </p>
       ) : null}
     </div>
   );
@@ -300,20 +328,24 @@ export function SentimentDivergenceBoard({
                     <TopicCloud
                       title="Fans talk about"
                       lane={player?.fan}
+                      cloud={player?.words?.fan}
+                      cloudSource="fan blog headlines"
                       color={FAN_COLOR}
                       unit={["fan post", "fan posts"]}
                     />
                     <TopicCloud
                       title="Media writes about"
                       lane={player?.media}
+                      cloud={player?.words?.media}
+                      cloudSource="headlines"
                       color={MEDIA_COLOR}
                       unit={["headline", "headlines"]}
                     />
                   </div>
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <p className={cn(type.micro, "text-muted-foreground")}>
-                      Bigger words are a bigger share of that side&apos;s tagged mentions. Topics come
-                      from keyword tags, not quotes.
+                      Bigger words show up in more headlines. Fan words come from fan blog headlines
+                      only, because social posts are scored but their text is not kept.
                     </p>
                     <Link
                       href={`/players/${encodeURIComponent(row.playerId)}?view=sentiment`}
