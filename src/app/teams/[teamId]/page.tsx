@@ -36,7 +36,6 @@ import { TeamRosterBuiltIsland } from "@/components/teams/team-roster-built-isla
 import { TeamScheduleIsland } from "@/components/teams/team-schedule-island";
 import { TeamTransactionsIsland } from "@/components/teams/team-transactions-island";
 import { EraThemeScope } from "@/components/time-machine/era-theme-scope";
-import { getCurrentFrontOfficeSeason } from "@/data/front-office/load-team-front-office";
 import {
   canonicalSeasonFromStartYear,
   currentNbaStartYear,
@@ -555,37 +554,12 @@ export default async function TeamProfilePage({
 
         {tab === "organization" ? (
           <div className="flex flex-col gap-4">
-            <TeamOrganizationHub
-              season={season}
-              frontOfficeSeason={getCurrentFrontOfficeSeason()}
-            />
-            <Suspense
-              fallback={
-                <DestinationSectionSkeleton label="Loading front office…" />
-              }
-            >
-              <TeamFrontOfficeIsland
-                teamId={resolvedTeamId}
-                season={season}
-              />
-            </Suspense>
+            <TeamOrganizationHub />
             <Suspense fallback={null}>
               <TeamMovementIsland teamId={resolvedTeamId} />
             </Suspense>
             <Suspense fallback={null}>
               <TeamSentimentIsland teamId={resolvedTeamId} />
-            </Suspense>
-            <Suspense
-              fallback={
-                <DestinationSectionSkeleton label="Loading Cap & assets…" />
-              }
-            >
-              <TeamAssetsIsland
-                teamId={askTeamId}
-                abbreviation={identityTeam.abbreviation}
-                season={season}
-                teamKey={identityTeam.abbreviation}
-              />
             </Suspense>
             <Suspense
               fallback={
@@ -616,6 +590,28 @@ export default async function TeamProfilePage({
                 />
               </div>
             </section>
+          </div>
+        ) : null}
+
+        {tab === "payroll" ? (
+          <div className="flex flex-col gap-6">
+            <Suspense
+              fallback={<DestinationSectionSkeleton label="Loading payroll…" />}
+            >
+              <TeamFrontOfficeIsland teamId={resolvedTeamId} season={season} />
+            </Suspense>
+            <Suspense
+              fallback={
+                <DestinationSectionSkeleton label="Loading Cap & assets…" />
+              }
+            >
+              <TeamAssetsIsland
+                teamId={askTeamId}
+                abbreviation={identityTeam.abbreviation}
+                season={season}
+                teamKey={identityTeam.abbreviation}
+              />
+            </Suspense>
           </div>
         ) : null}
 

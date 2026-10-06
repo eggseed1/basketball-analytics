@@ -56,6 +56,8 @@ function main() {
   assert.equal(parseTeamPageTab(undefined), "overview");
   assert.equal(parseTeamPageTab("games"), "games");
   assert.equal(parseTeamPageTab("stats"), "stats");
+  assert.equal(parseTeamPageTab("payroll"), "payroll");
+  assert.equal(parseTeamPageTab("contracts"), "payroll");
   assert.equal(parseTeamSeasonKind("playoffs"), "playoffs");
   assert.equal(parseTeamRateMode("per100"), "per100");
 
@@ -129,6 +131,7 @@ function main() {
   assert.ok(page.includes("TeamOpeningNight"));
   assert.ok(page.includes("TeamSeasonRecapIsland"));
   assert.ok(page.includes('tab === "stats"'));
+  assert.ok(page.includes('tab === "payroll"'));
 
   console.log("test-team-page-tabs: ok");
 }

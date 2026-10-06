@@ -764,9 +764,13 @@ const teamTabChecks = [
   },
   {
     tab: "organization",
-    name: "organization front office",
-    ok: (t) =>
-      /Front office|Sentiment|Transactions|Cap|Organization|Ask DRBL/i.test(t),
+    name: "organization hub",
+    ok: (t) => /Sentiment|Transactions|Organization|Ask DRBL/i.test(t),
+  },
+  {
+    tab: "payroll",
+    name: "payroll and contracts",
+    ok: (t) => /Payroll|Cap &amp; assets|Contracts/i.test(t),
   },
   {
     tab: "stats",

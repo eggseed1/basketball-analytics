@@ -2,35 +2,24 @@ import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 
 const JUMPS = [
-  { href: "#front-office", label: "Front office" },
   { href: "#movement", label: "Movement" },
   { href: "#sentiment", label: "Sentiment" },
-  { href: "#assets", label: "Cap & assets" },
   { href: "#transactions", label: "Transactions" },
   { href: "#ask", label: "Ask DRBL" },
 ] as const;
 
 /**
- * Organization tab hub — one job: orient into FO / assets / movement sections.
+ * Organization tab hub — one job: orient into movement / sentiment / transactions.
+ * Payroll and contracts live on their own tab.
  */
-export function TeamOrganizationHub({
-  season,
-  frontOfficeSeason,
-}: {
-  season: string;
-  frontOfficeSeason: string;
-}) {
-  const payrollNote =
-    season !== frontOfficeSeason
-      ? `Payroll and draft capital stay on the current ${frontOfficeSeason} ledger while you browse ${season} stats.`
-      : `Payroll, draft capital, and movement for ${frontOfficeSeason}.`;
-
+export function TeamOrganizationHub() {
   return (
     <header className="flex flex-col gap-3">
       <div>
         <h2 className="text-[20px] font-bold tracking-tight">Organization</h2>
         <p className={cn(type.bodySm, "text-muted-foreground")}>
-          {payrollNote} Missing ledger rows stay blank instead of showing zero.
+          Roster movement, fan sentiment and transactions. Payroll and contracts
+          have their own tab.
         </p>
       </div>
       <nav

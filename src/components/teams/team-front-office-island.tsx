@@ -26,13 +26,10 @@ export async function TeamFrontOfficeIsland({
   const slice = await resolveTeamFrontOfficeSlice(franchiseId, frontOfficeSeason);
   if (!slice) {
     return (
-      <section
-        id="front-office"
-        className="space-y-2 border-t border-border/70 pt-8"
-      >
-        <h2 className="text-lg font-semibold">Front Office</h2>
-        <p className="text-sm text-muted-foreground">
-          Front-office snapshot unavailable for {frontOfficeSeason}.
+      <section id="front-office" className="space-y-2">
+        <h2 className="text-[20px] font-bold tracking-tight">Payroll &amp; Contracts</h2>
+        <p className="text-[14px] text-muted-foreground">
+          Payroll snapshot unavailable for {frontOfficeSeason}.
         </p>
       </section>
     );
@@ -67,13 +64,13 @@ export async function TeamFrontOfficeIsland({
   };
 
   return (
-    <div className="flex flex-col gap-3 border-t border-border/70 pt-8">
+    <div className="flex flex-col gap-3">
       {viewingHistoricalStats ? (
         <p className="text-sm text-muted-foreground">
           Current {frontOfficeSeason} payroll and draft capital while browsing{" "}
           {season} team stats.{" "}
           <Link
-            href={`/teams/${franchiseId}?season=${encodeURIComponent(frontOfficeSeason)}&tab=organization`}
+            href={`/teams/${franchiseId}?season=${encodeURIComponent(frontOfficeSeason)}&tab=payroll`}
             className="font-semibold underline"
           >
             Switch to {frontOfficeSeason}

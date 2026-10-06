@@ -25,18 +25,18 @@ export function TeamFrontOfficeSummaryCard({
     <section
       id="front-office"
       aria-labelledby="front-office-heading"
-      className="space-y-4 border-t border-border/70 pt-8"
+      className="space-y-4"
     >
       <div>
         <h2
           id="front-office-heading"
-          className="text-lg font-semibold tracking-tight"
+          className="text-[20px] font-bold tracking-tight"
         >
-          Front Office
+          Payroll &amp; Contracts
         </h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Current-season salary commitments and draft capital status for this
-          franchise.
+        <p className="text-[14px] text-muted-foreground">
+          Current-season salary commitments and draft picks for this franchise.
+          Missing salaries stay blank instead of showing zero.
         </p>
       </div>
 
@@ -98,7 +98,7 @@ export function TeamFrontOfficeSummaryCard({
           href={summary.payrollHref}
           className="inline-flex items-center rounded-md bg-foreground px-3 py-2 text-sm font-semibold text-background"
         >
-          Payroll &amp; Contracts
+          Full payroll page
         </Link>
         <Link
           href={summary.draftAssetsHref}
