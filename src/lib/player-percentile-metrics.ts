@@ -123,7 +123,6 @@ export const ADVANCED_PERCENTILE_METRIC_IDS = new Set([
   "bpm",
   "obpm",
   "dbpm",
-  "vorp",
   "pie",
 ]);
 
@@ -1561,7 +1560,7 @@ function buildMaskedPercentileMetrics(
     if (vorpPool.length) {
       push({
         id: "vorp",
-        category: "advanced",
+        category: "impact",
         label: "VORP",
         value: seasonStats.vorp,
         values: vorpPool,

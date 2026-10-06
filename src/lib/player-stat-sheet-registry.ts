@@ -210,7 +210,6 @@ export const SHEET_STAT_DEFS: SheetStatDef[] = [
   { id: "ws48", label: "WS/48", category: "advanced", kind: "rate", digits: 3 },
   { id: "obpm", label: "OBPM", category: "advanced", kind: "rate" },
   { id: "bpm", label: "BPM", category: "advanced", kind: "rate" },
-  { id: "vorp", label: "VORP", category: "advanced", kind: "rate" },
   // Impact
   { id: "darko", label: "DARKO", category: "impact", kind: "rate", digits: 2 },
   {
@@ -250,6 +249,7 @@ export const SHEET_STAT_DEFS: SheetStatDef[] = [
     digits: 2,
   },
   { id: "war1", label: "WAR1", category: "impact", kind: "rate" },
+  { id: "vorp", label: "VORP", category: "impact", kind: "rate" },
   { id: "drbl100", label: "DRBL/100", category: "impact", kind: "rate" },
   { id: "drblO", label: "DRBL-O", category: "impact", kind: "rate" },
   { id: "drblD", label: "DRBL-D", category: "impact", kind: "rate" },
