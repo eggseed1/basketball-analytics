@@ -118,6 +118,30 @@ function filterSeasons(query: string, seasons: string[]): string[] {
   });
 }
 
+function eraYears(era: EraTheme): string {
+  const short = (y: number) => String(y).slice(2);
+  if (era.endYear >= 2100) return `${era.startYear}–`;
+  return `${era.startYear}–${short(era.endYear)}`;
+}
+
+function SectionTitle({ title, note }: { title: string; note?: string }) {
+  return (
+    <div className="text-center">
+      <h2
+        className={cn(
+          type.caption,
+          "font-bold uppercase tracking-[0.12em] text-muted-foreground"
+        )}
+      >
+        {title}
+      </h2>
+      {note ? (
+        <p className={cn(type.caption, "mt-1 text-muted-foreground")}>{note}</p>
+      ) : null}
+    </div>
+  );
+}
+
 export function TimeMachineLanding({
   seasons,
   landmarkGames = [],
@@ -203,22 +227,14 @@ export function TimeMachineLanding({
     [seasons]
   );
 
-  const landmarksByEra = useMemo(() => {
-    const groups: Array<{ era: EraTheme; items: typeof landmarks }> = [];
-    for (const era of ERA_THEMES) {
-      const items = landmarks.filter(
-        (l) => resolveEraThemeForSeason(l.season).id === era.id
-      );
-      if (items.length) groups.push({ era, items });
-    }
-    return groups;
-  }, [landmarks]);
-
   const archiveSeason =
     landmarks.find((l) => seasons.includes(l.season))?.season ??
     seasons.find((s) => s.startsWith("2015")) ??
     seasons[0] ??
     initial;
+
+  const pickedSeason = resolveSeasonInput(query, seasons);
+  const pickedEra = pickedSeason ? resolveEraThemeForSeason(pickedSeason).id : null;
 
   return (
     <main className="site-shell flex flex-1 flex-col gap-10 py-10 sm:py-14">
@@ -231,10 +247,8 @@ export function TimeMachineLanding({
         >
           Time Machine
         </p>
-        <h1 className={cn(type.title1, "mt-3")}>
-          Enter the NBA
-          <br />
-          Time Machine
+        <h1 className={cn(type.title1, "mt-3 text-balance")}>
+          Enter the NBA Time Machine
         </h1>
         <p
           className={cn(
@@ -246,251 +260,229 @@ export function TimeMachineLanding({
         </p>
       </header>
 
-      <form
-        onSubmit={onSubmit}
-        className="mx-auto flex w-full max-w-md flex-col gap-3 px-0"
-      >
-        <label
-          htmlFor={inputId}
-          className="text-[12px] font-bold uppercase tracking-[0.12em] text-muted-foreground"
+      <div className="mx-auto w-full max-w-2xl">
+        <form
+          onSubmit={onSubmit}
+          className="sports-card flex w-full flex-col gap-4 p-4 sm:p-5"
         >
-          Select a season
-        </label>
-        {erasWithSeasons.length ? (
-          <div
-            className="flex flex-wrap justify-center gap-1.5"
-            role="group"
-            aria-label="Jump to era"
+          <label
+            htmlFor={inputId}
+            className="text-[12px] font-bold uppercase tracking-[0.12em] text-muted-foreground"
           >
-            {erasWithSeasons.map(({ era, season }) => (
-              <button
-                key={era.id}
-                type="button"
-                onClick={() => {
-                  setQuery(season);
+            Select a season
+          </label>
+          {erasWithSeasons.length ? (
+            <div
+              className="grid grid-cols-3 gap-1.5 sm:grid-cols-6"
+              role="group"
+              aria-label="Jump to era"
+            >
+              {erasWithSeasons.map(({ era, season }) => {
+                const active = era.id === pickedEra;
+                return (
+                  <button
+                    key={era.id}
+                    type="button"
+                    onClick={() => {
+                      setQuery(season);
+                      setError(null);
+                      enterSeason(season);
+                    }}
+                    aria-pressed={active}
+                    className={cn(
+                      "flex flex-col items-start gap-0.5 rounded-[10px] px-3 py-2 text-left ring-1 ring-inset transition-colors",
+                      active
+                        ? "bg-foreground text-background ring-foreground"
+                        : "bg-foreground/[0.03] ring-foreground/[0.08] hover:bg-foreground/[0.07]"
+                    )}
+                    title={`${era.name}: ${era.description}`}
+                  >
+                    <span className="text-[14px] font-bold leading-tight tracking-tight">
+                      {era.shortLabel}
+                    </span>
+                    <span
+                      className={cn(
+                        "text-[11px] tabular-nums",
+                        active ? "text-background/70" : "text-muted-foreground"
+                      )}
+                    >
+                      {eraYears(era)}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          ) : null}
+          <div ref={rootRef} className="relative flex w-full items-stretch gap-2">
+            <div className="relative min-w-0 flex-1">
+              <input
+                id={inputId}
+                role="combobox"
+                aria-expanded={showList}
+                aria-controls={listId}
+                aria-autocomplete="list"
+                aria-activedescendant={
+                  showList && suggestions[activeIndex]
+                    ? `${listId}-opt-${suggestions[activeIndex]}`
+                    : undefined
+                }
+                value={query}
+                placeholder="Type a year (e.g. 2016 or 2015-16)"
+                autoComplete="off"
+                spellCheck={false}
+                inputMode="numeric"
+                onChange={(e) => {
+                  setQuery(e.target.value);
                   setError(null);
-                  enterSeason(season);
+                  setOpen(true);
                 }}
-                className={cn(
-                  type.caption,
-                  "rounded-md border border-border bg-card px-2.5 py-1 font-semibold text-muted-foreground transition-colors hover:bg-secondary/60 hover:text-foreground"
-                )}
-                title={`${era.name}: ${era.description}`}
-              >
-                {era.shortLabel}
-              </button>
-            ))}
-          </div>
-        ) : null}
-        <div ref={rootRef} className="relative flex w-full items-stretch gap-2">
-          <GlassSurface
-            effect="liquid"
-            backdropBlur={18}
-            overflowVisible
-            className="relative min-w-0 flex-1"
-          >
-            <input
-              id={inputId}
-              role="combobox"
-              aria-expanded={showList}
-              aria-controls={listId}
-              aria-autocomplete="list"
-              aria-activedescendant={
-                showList && suggestions[activeIndex]
-                  ? `${listId}-opt-${suggestions[activeIndex]}`
-                  : undefined
-              }
-              value={query}
-              placeholder="Type a year (e.g. 2016 or 2015-16)"
-              autoComplete="off"
-              spellCheck={false}
-              inputMode="numeric"
-              onChange={(e) => {
-                setQuery(e.target.value);
-                setError(null);
-                setOpen(true);
-              }}
-              onFocus={() => setOpen(true)}
-              onKeyDown={(e) => {
-                if (e.key === "Escape") {
-                  setOpen(false);
-                  return;
-                }
-                if (!showList) return;
-                if (e.key === "ArrowDown") {
-                  e.preventDefault();
-                  setActiveIndex((i) =>
-                    Math.min(i + 1, Math.max(suggestions.length - 1, 0))
-                  );
-                } else if (e.key === "ArrowUp") {
-                  e.preventDefault();
-                  setActiveIndex((i) => Math.max(i - 1, 0));
-                } else if (e.key === "Enter" && suggestions[activeIndex]) {
-                  const pick = suggestions[activeIndex];
-                  if (
-                    resolveSeasonInput(query, seasons) == null ||
-                    query.trim() !== pick
-                  ) {
-                    e.preventDefault();
-                    setQuery(pick);
+                onFocus={() => setOpen(true)}
+                onKeyDown={(e) => {
+                  if (e.key === "Escape") {
                     setOpen(false);
+                    return;
                   }
-                }
-              }}
-              className="h-12 w-full bg-transparent px-4 text-[16px] font-semibold text-foreground outline-none placeholder:text-muted-foreground/70"
-            />
-            {showList ? (
-              <GlassSurface
-                effect="css"
-                backdropBlur={20}
-                overflowVisible
-                className="absolute inset-x-0 top-[calc(100%+6px)] z-20 shadow-[var(--shadow-overlay)]"
-              >
-                <div
-                  ref={listRef}
-                  className="max-h-64 overflow-y-auto overscroll-contain py-1 [-webkit-overflow-scrolling:touch]"
+                  if (!showList) return;
+                  if (e.key === "ArrowDown") {
+                    e.preventDefault();
+                    setActiveIndex((i) =>
+                      Math.min(i + 1, Math.max(suggestions.length - 1, 0))
+                    );
+                  } else if (e.key === "ArrowUp") {
+                    e.preventDefault();
+                    setActiveIndex((i) => Math.max(i - 1, 0));
+                  } else if (e.key === "Enter" && suggestions[activeIndex]) {
+                    const pick = suggestions[activeIndex];
+                    if (
+                      resolveSeasonInput(query, seasons) == null ||
+                      query.trim() !== pick
+                    ) {
+                      e.preventDefault();
+                      setQuery(pick);
+                      setOpen(false);
+                    }
+                  }
+                }}
+                className="h-12 w-full rounded-[10px] bg-foreground/[0.03] px-4 text-[16px] font-semibold tabular-nums text-foreground outline-none ring-1 ring-inset ring-foreground/[0.08] transition-shadow placeholder:font-medium placeholder:text-muted-foreground/70 focus:ring-2 focus:ring-foreground/25"
+              />
+              {showList ? (
+                <GlassSurface
+                  effect="css"
+                  backdropBlur={20}
+                  overflowVisible
+                  className="absolute inset-x-0 top-[calc(100%+6px)] z-20 shadow-[var(--shadow-overlay)]"
                 >
-                  <ul id={listId} role="listbox" className="flex flex-col">
-                    {suggestions.map((s, index) => (
-                      <li key={s} role="presentation">
-                        <button
-                          type="button"
-                          id={`${listId}-opt-${s}`}
-                          data-season-opt={s}
-                          role="option"
-                          aria-selected={index === activeIndex}
-                          className={cn(
-                            "flex w-full px-4 py-2.5 text-left text-[15px] font-semibold transition-colors",
-                            index === activeIndex
-                              ? "bg-foreground/10 text-foreground"
-                              : "text-foreground/90 hover:bg-foreground/6"
-                          )}
-                          onMouseEnter={() => setActiveIndex(index)}
-                          onMouseDown={(e) => e.preventDefault()}
-                          onClick={() => enterSeason(s)}
-                        >
-                          {s}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </GlassSurface>
-            ) : null}
-          </GlassSurface>
+                  <div
+                    ref={listRef}
+                    className="max-h-64 overflow-y-auto overscroll-contain py-1 [-webkit-overflow-scrolling:touch]"
+                  >
+                    <ul id={listId} role="listbox" className="flex flex-col">
+                      {suggestions.map((s, index) => (
+                        <li key={s} role="presentation">
+                          <button
+                            type="button"
+                            id={`${listId}-opt-${s}`}
+                            data-season-opt={s}
+                            role="option"
+                            aria-selected={index === activeIndex}
+                            className={cn(
+                              "flex w-full px-4 py-2.5 text-left text-[15px] font-semibold tabular-nums transition-colors",
+                              index === activeIndex
+                                ? "bg-foreground/10 text-foreground"
+                                : "text-foreground/90 hover:bg-foreground/6"
+                            )}
+                            onMouseEnter={() => setActiveIndex(index)}
+                            onMouseDown={(e) => e.preventDefault()}
+                            onClick={() => enterSeason(s)}
+                          >
+                            {s}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </GlassSurface>
+              ) : null}
+            </div>
 
-          <button
-            type="submit"
-            disabled={pending}
-            className="shrink-0 disabled:opacity-60"
-          >
-            <GlassSurface
-              effect="liquid"
-              backdropBlur={18}
-              className="inline-flex h-12 items-center justify-center px-5 text-[15px] font-semibold text-foreground"
+            <button
+              type="submit"
+              disabled={pending}
+              className="inline-flex h-12 shrink-0 items-center justify-center rounded-[10px] bg-foreground px-6 text-[15px] font-semibold text-background transition-opacity hover:opacity-90 disabled:opacity-60"
             >
               {pending ? "Entering…" : "Enter"}
-            </GlassSurface>
-          </button>
-        </div>
-        {error ? (
-          <p className="text-[13px] font-medium text-destructive" role="alert">
-            {error}
-          </p>
-        ) : null}
-      </form>
-
-      {landmarksByEra.length ? (
-        <section className="mx-auto w-full max-w-3xl">
-          <h2
-            className={cn(
-              type.caption,
-              "text-center font-bold uppercase tracking-[0.12em] text-muted-foreground"
-            )}
-          >
-            Landmark seasons
-          </h2>
-          <div className="mt-5 flex flex-col gap-6">
-            {landmarksByEra.map(({ era, items }) => (
-              <div key={era.id}>
-                <p
-                  className={cn(
-                    type.micro,
-                    "mb-2 font-bold uppercase tracking-[0.12em] text-muted-foreground"
-                  )}
-                >
-                  {era.name}
-                </p>
-                <ul className="grid gap-3 sm:grid-cols-2">
-                  {items.map((l) => (
-                    <li
-                      key={l.id}
-                      className="sports-card flex flex-col gap-2 p-4 text-left"
-                    >
-                      <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-                        {l.season}
-                      </p>
-                      <Link
-                        href={l.historyHref}
-                        className="text-[15px] font-bold tracking-tight underline-offset-2 hover:underline"
-                      >
-                        {l.title}
-                      </Link>
-                      <p className="text-[13px] leading-relaxed text-muted-foreground">
-                        {l.blurb}
-                      </p>
-                      {l.boardHref && l.boardLabel ? (
-                        <Link
-                          href={l.boardHref}
-                          className="text-[12px] font-semibold text-muted-foreground underline-offset-2 hover:underline"
-                        >
-                          {l.boardLabel} →
-                        </Link>
-                      ) : null}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+            </button>
           </div>
+          {error ? (
+            <p className="text-[13px] font-medium text-destructive" role="alert">
+              {error}
+            </p>
+          ) : null}
+        </form>
+      </div>
+
+      {landmarks.length ? (
+        <section className="mx-auto w-full max-w-4xl">
+          <SectionTitle title="Landmark seasons" />
+          <ul className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {landmarks.map((l) => (
+              <li
+                key={l.id}
+                className="sports-card relative flex flex-col gap-1.5 p-4 text-left transition-transform hover:-translate-y-0.5"
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-[22px] font-black leading-none tabular-nums tracking-tight">
+                    {l.season}
+                  </span>
+                  <span className="rounded-full bg-foreground/[0.06] px-2 py-0.5 text-[11px] font-semibold text-muted-foreground">
+                    {resolveEraThemeForSeason(l.season).name}
+                  </span>
+                </div>
+                <Link
+                  href={l.historyHref}
+                  className="mt-1 text-[15px] font-bold tracking-tight after:absolute after:inset-0 after:rounded-[inherit]"
+                >
+                  {l.title}
+                </Link>
+                <p className="text-[13px] leading-relaxed text-muted-foreground">
+                  {l.blurb}
+                </p>
+                {l.boardHref && l.boardLabel ? (
+                  <Link
+                    href={l.boardHref}
+                    className="relative z-[1] mt-auto pt-1 text-[12px] font-semibold text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
+                  >
+                    {l.boardLabel} →
+                  </Link>
+                ) : null}
+              </li>
+            ))}
+          </ul>
         </section>
       ) : null}
 
       {landmarkGames.length ? (
-        <section className="mx-auto w-full max-w-3xl">
-          <h2
-            className={cn(
-              type.caption,
-              "text-center font-bold uppercase tracking-[0.12em] text-muted-foreground"
-            )}
-          >
-            Landmark games
-          </h2>
-          <p
-            className={cn(
-              type.caption,
-              "mt-1 text-center text-muted-foreground"
-            )}
-          >
-            Finals closes that match the schedule archive. Missing scores stay
-            off this list.
-          </p>
-          <ul className="mt-4 grid gap-3 sm:grid-cols-2">
+        <section className="mx-auto w-full max-w-4xl">
+          <SectionTitle
+            title="Landmark games"
+            note="Finals closes that match the schedule archive. Missing scores stay off this list."
+          />
+          <ul className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {landmarkGames.map((game) => (
               <li
                 key={game.id}
-                className="sports-card flex flex-col gap-2 p-4 text-left"
+                className="sports-card relative flex flex-col gap-1.5 p-4 text-left transition-transform hover:-translate-y-0.5"
               >
                 <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
                   {game.date}
                 </p>
                 <Link
                   href={game.gameHref}
-                  className="text-[15px] font-bold tracking-tight underline-offset-2 hover:underline"
+                  className="text-[15px] font-bold tracking-tight after:absolute after:inset-0 after:rounded-[inherit]"
                 >
                   {game.title}
                 </Link>
-                <p className="text-[13px] font-semibold tabular-nums">
+                <p className="text-[18px] font-black tabular-nums tracking-tight">
                   {game.scoreLine}
                 </p>
                 <p className="text-[13px] leading-relaxed text-muted-foreground">
@@ -498,7 +490,7 @@ export function TimeMachineLanding({
                 </p>
                 <Link
                   href={game.historyHref}
-                  className="text-[12px] font-semibold text-muted-foreground underline-offset-2 hover:underline"
+                  className="relative z-[1] mt-auto pt-1 text-[12px] font-semibold text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
                 >
                   Open that date →
                 </Link>
@@ -508,54 +500,28 @@ export function TimeMachineLanding({
         </section>
       ) : null}
 
-      <section className="sports-card mx-auto w-full max-w-md p-5 text-left">
-        <h2 className="text-[15px] font-semibold tracking-tight">
-          Keep exploring
-        </h2>
-        <p className="mt-2 text-[13px] leading-relaxed text-muted-foreground">
-          From {archiveSeason} into boards, franchises, and the trophy case.
-        </p>
-        <ul className="mt-3 flex flex-col gap-2 text-[14px] font-semibold">
-          <li>
-            <Link
-              href={`/history/${encodeURIComponent(archiveSeason)}`}
-              className="underline-offset-4 hover:underline"
-            >
-              Season games · {archiveSeason} →
-            </Link>
-          </li>
-          <li>
-            <Link
-              href={`/explore/players?season=${encodeURIComponent(archiveSeason)}`}
-              className="underline-offset-4 hover:underline"
-            >
-              Players board · {archiveSeason} →
-            </Link>
-          </li>
-          <li>
-            <Link
-              href={`/explore/teams?season=${encodeURIComponent(archiveSeason)}`}
-              className="underline-offset-4 hover:underline"
-            >
-              Teams · {archiveSeason} →
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/awards"
-              className="underline-offset-4 hover:underline"
-            >
-              Trophy case →
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/franchises"
-              className="underline-offset-4 hover:underline"
-            >
-              Franchises →
-            </Link>
-          </li>
+      <section className="mx-auto w-full max-w-4xl">
+        <SectionTitle
+          title="Keep exploring"
+          note={`From ${archiveSeason} into boards, franchises and the trophy case.`}
+        />
+        <ul className="mt-4 flex flex-wrap justify-center gap-2">
+          {[
+            { href: `/history/${encodeURIComponent(archiveSeason)}`, label: `Season games · ${archiveSeason}` },
+            { href: `/explore/players?season=${encodeURIComponent(archiveSeason)}`, label: `Players board · ${archiveSeason}` },
+            { href: `/explore/teams?season=${encodeURIComponent(archiveSeason)}`, label: `Teams · ${archiveSeason}` },
+            { href: "/awards", label: "Trophy case" },
+            { href: "/franchises", label: "Franchises" },
+          ].map((link) => (
+            <li key={link.href}>
+              <Link
+                href={link.href}
+                className="inline-flex items-center gap-1 rounded-full bg-card px-3.5 py-2 text-[13px] font-semibold ring-1 ring-inset ring-foreground/[0.08] transition-colors hover:bg-foreground/[0.05]"
+              >
+                {link.label} <span aria-hidden>→</span>
+              </Link>
+            </li>
+          ))}
         </ul>
       </section>
 
