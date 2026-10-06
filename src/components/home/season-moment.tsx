@@ -166,12 +166,6 @@ export function SeasonMomentCard({ moment }: { moment: HomeSeasonMoment }) {
         <span className={cn(type.caption, "text-muted-foreground")}>
           Preseason games don&apos;t count toward records or stats.
         </span>
-        <AppLink
-          href="/scores"
-          className={cn(type.bodySm, "font-semibold underline-offset-4 hover:underline sm:ml-auto")}
-        >
-          Preseason scores →
-        </AppLink>
       </section>
     );
   }
