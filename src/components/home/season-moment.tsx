@@ -149,27 +149,28 @@ export function SeasonMomentCard({ moment }: { moment: HomeSeasonMoment }) {
 
   if (phase === "preseason") {
     return (
-      <section aria-label="Preseason" className="sports-card flex flex-col gap-3 p-4 sm:p-5">
-        <Eyebrow>{season} preseason</Eyebrow>
-        {marks.opener && daysToOpener != null ? (
-          <>
-            <h2 className={cn(type.title2, "font-bold tracking-tight")}>
-              Opening night is {inDays(daysToOpener)}
-            </h2>
-            <p className={cn(type.bodySm, "text-muted-foreground")}>
-              {longDate(marks.opener)}. Preseason games don&apos;t count toward records or season stats.
-            </p>
-            <OpenerGames games={marks.openerGames} />
-          </>
-        ) : (
-          <h2 className={cn(type.title2, "font-bold tracking-tight")}>Preseason is underway</h2>
+      <section
+        aria-label="Preseason"
+        className={cn(
+          type.caption,
+          "sports-card flex flex-wrap items-baseline gap-x-3 gap-y-0.5 px-4 py-2.5"
         )}
-        <MomentLinks
-          links={[
-            ["/scores", "Preseason scores"],
-            ["/scores?view=week", "Schedule"],
-          ]}
-        />
+      >
+        <span className="font-bold uppercase tracking-[0.1em]">{season} preseason</span>
+        <span>
+          {marks.opener && daysToOpener != null
+            ? `Opening night ${inDays(daysToOpener)} (${longDate(marks.opener)})`
+            : "Preseason is underway"}
+        </span>
+        <span className="text-muted-foreground">
+          Doesn&apos;t count toward records or stats.
+        </span>
+        <AppLink
+          href="/scores"
+          className="font-semibold underline-offset-4 hover:underline sm:ml-auto"
+        >
+          Preseason scores →
+        </AppLink>
       </section>
     );
   }
