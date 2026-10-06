@@ -24,6 +24,7 @@ import {
 import {
   eligibleRows,
   projectedRecord,
+  rosterOffers,
   spinTeamSeason,
   zero82TeamSeasons,
   ZERO_82_SLOTS,
@@ -87,6 +88,16 @@ function testZero82() {
     used.add(pick.pid);
     open.splice(open.indexOf(pick.pos as (typeof open)[number]), 1);
   }
+  const lakers = teamSeasons.find((ts) => ts.key === "1999-00|LAL")!;
+  const shaqRow = lakers.rows.find((r) => r.pid === pidOf("Shaquille O'Neal"))!;
+  const offers = rosterOffers(lakers, ["PG", "SG", "SF", "PF"], new Set([shaqRow.pid]));
+  assert.equal(offers.length, lakers.rows.length, "the whole rotation shows");
+  assert.equal(offers.find((o) => o.row.pid === shaqRow.pid)?.blocked, "on-team");
+  for (const o of offers) {
+    if (o.row.pid !== shaqRow.pid) assert.equal(o.blocked, o.row.pos === "C" ? "slot-filled" : null);
+  }
+  const slotOrder = offers.map((o) => ZERO_82_SLOTS.indexOf(o.row.pos as (typeof ZERO_82_SLOTS)[number]));
+  assert.deepEqual(slotOrder, [...slotOrder].sort((a, b) => a - b));
   // Average starters with a replacement bench land below .500; stars reach 82.
   assert.equal(projectedRecord([0, 0, 0, 0, 0]).wins, 34);
   assert.equal(projectedRecord([10, 10, 10, 10, 10]).wins, 82);

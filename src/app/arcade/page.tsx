@@ -1,3 +1,11 @@
+import type { CSSProperties, ReactNode } from "react";
+
+import {
+  GmLabArt,
+  HigherLowerArt,
+  TeammateChainArt,
+  Zero82Art,
+} from "@/components/arcade/arcade-card-art";
 import { TransitionLink } from "@/components/continuity/query-nav";
 import { PageHeader } from "@/components/layout/page-header";
 import { type } from "@/lib/design-system";
@@ -14,18 +22,24 @@ const GAMES = [
     title: "Higher or Lower",
     blurb: "Spin for a stat, then guess whether the next player's season beats the last one. Build a streak.",
     meta: "VORP · DARKO · points · rebounds · assists",
+    art: <HigherLowerArt />,
+    tints: ["#ff9f0a", "#0a84ff"],
   },
   {
     href: "/arcade/zero-82",
     title: "0–82",
     blurb: "Spin a team, take one of its players, fill all five positions. Build the worst team you can, or flip it and chase 82–0.",
     meta: "Projected record from Box Plus/Minus",
+    art: <Zero82Art />,
+    tints: ["#d9a066", "#ff375f"],
   },
   {
     href: "/arcade/teammate-chain",
     title: "Teammate Chain",
     blurb: "Connect two stars through the fewest shared teammates.",
     meta: "Every roster from 1996-97 on",
+    art: <TeammateChainArt />,
+    tints: ["#0a84ff", "#bf5af2"],
   },
 ];
 
@@ -63,6 +77,8 @@ export default function ArcadePage() {
               title="Franchise Lab"
               blurb="Set the roster, make trades, manage the cap and play out the schedule."
               meta="Unfinished"
+              art={<GmLabArt />}
+              tints={["#30d158", "#64d2ff"]}
             />
           </li>
         </ul>
@@ -71,24 +87,54 @@ export default function ArcadePage() {
   );
 }
 
-function ArcadeCard({ href, title, blurb, meta }: { href: string; title: string; blurb: string; meta: string }) {
+function ArcadeCard({
+  href,
+  title,
+  blurb,
+  meta,
+  art,
+  tints,
+}: {
+  href: string;
+  title: string;
+  blurb: string;
+  meta: string;
+  art: ReactNode;
+  tints: string[];
+}) {
   return (
     <TransitionLink
       href={href}
       className={cn(
-        "sports-card flex h-full flex-col gap-2 px-4 py-3.5",
-        "hover:bg-secondary/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        "group sports-card flex h-full flex-col overflow-hidden",
+        "transition-[transform,box-shadow] hover:-translate-y-0.5 hover:shadow-[0_14px_30px_-18px_rgb(0_0_0/0.45)]",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       )}
     >
-      <span className={cn(type.body, "font-semibold")}>{title}</span>
-      <span className={cn(type.caption, "text-muted-foreground")}>{blurb}</span>
-      <span
-        className={cn(
-          type.micro,
-          "mt-auto border-t border-border/70 pt-2.5 font-bold uppercase tracking-[0.1em] text-muted-foreground"
-        )}
-      >
-        {meta}
+      <span className="relative isolate flex h-36 items-center justify-center overflow-hidden border-b border-border/60 bg-foreground/[0.02]">
+        <span
+          aria-hidden
+          className="strip-orb -z-10"
+          style={{ left: "8%", top: -20, "--orb-color": tints[0], "--orb-strength": 1.6 } as CSSProperties}
+        />
+        <span
+          aria-hidden
+          className="strip-orb strip-orb--b -z-10"
+          style={{ right: "8%", bottom: -30, "--orb-color": tints[1], "--orb-strength": 1.6 } as CSSProperties}
+        />
+        <span className="transition-transform duration-300 group-hover:scale-105">{art}</span>
+      </span>
+      <span className="flex flex-1 flex-col gap-2 px-4 py-3.5">
+        <span className={cn(type.body, "font-semibold")}>{title}</span>
+        <span className={cn(type.caption, "text-muted-foreground")}>{blurb}</span>
+        <span
+          className={cn(
+            type.micro,
+            "mt-auto border-t border-border/70 pt-2.5 font-bold uppercase tracking-[0.1em] text-muted-foreground"
+          )}
+        >
+          {meta}
+        </span>
       </span>
     </TransitionLink>
   );

@@ -1,0 +1,3 @@
+/** Tank-top outline in a 100x112 box. */
+export const JERSEY_PATH =
+  "M31 4C35 17 65 17 69 4L84 8C84 26 89 34 98 38V104Q98 110 92 110H8Q2 110 2 104V38C11 34 16 26 16 8Z";

@@ -49,6 +49,27 @@ export function eligibleRows(
   );
 }
 
+export type RosterOffer = { row: ArcadeRow; blocked: "on-team" | "slot-filled" | null };
+
+/** Every rotation player on the team, in slot order, with why he can't be picked. */
+export function rosterOffers(
+  teamSeason: TeamSeason,
+  openSlots: readonly Zero82Slot[],
+  usedPids: ReadonlySet<number>
+): RosterOffer[] {
+  const order = (row: ArcadeRow) => ZERO_82_SLOTS.indexOf(row.pos as Zero82Slot);
+  return [...teamSeason.rows]
+    .sort((a, b) => order(a) - order(b) || b.mp - a.mp)
+    .map((row) => ({
+      row,
+      blocked: usedPids.has(row.pid)
+        ? "on-team"
+        : openSlots.includes(row.pos as Zero82Slot)
+          ? null
+          : "slot-filled",
+    }));
+}
+
 /** A random team-season with at least one player who fits an open slot. */
 export function spinTeamSeason(
   teamSeasons: TeamSeason[],
