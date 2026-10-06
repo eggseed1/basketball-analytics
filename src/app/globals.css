@@ -964,9 +964,10 @@ html:not([data-surface="glass"]) .color-scheme-switch {
   -webkit-backdrop-filter: none;
 }
 
-/* Page wash - glass samples this color (Apple materials). Two soft orbs sit
-   in opposite corners so the colors never meet and muddy, and drift slowly.
-   Only transform animates, so the layers stay on the compositor. */
+/* Page wash - glass samples this color (Apple materials). A soft mesh: one
+   pastel per team color in the top corners and a blended hue between them,
+   all fading out before mid-page. Only transform animates, so the layers stay
+   on the compositor. */
 .page-atmosphere {
   pointer-events: none;
   position: fixed;
@@ -975,14 +976,23 @@ html:not([data-surface="glass"]) .color-scheme-switch {
   overflow: hidden;
   --orb-a: color-mix(in oklab, var(--atmosphere-a, transparent) 15%, transparent);
   --orb-b: color-mix(in oklab, var(--atmosphere-b, transparent) 11%, transparent);
+  --orb-c: transparent;
+  background: radial-gradient(
+    ellipse 70% 46% at 52% -8%,
+    var(--orb-c) 0%,
+    color-mix(in oklab, var(--orb-c) 40%, transparent) 45%,
+    transparent 78%
+  );
 }
 
-/* Light: rebuild each hue as a clean pastel instead of fading a dark brand
-   color over gray, which reads as dusty lavender and pink. */
+/* Rebuild each hue at a fixed lightness with capped chroma instead of fading
+   a dark brand color over gray, which reads as dusty lavender and pink.
+   min(c, ...) keeps black or silver palettes neutral rather than tinting them. */
 @supports (color: oklch(from red l c h)) {
   .page-atmosphere {
-    --orb-a: oklch(from var(--atmosphere-a) 0.87 0.075 h / 0.75);
-    --orb-b: oklch(from var(--atmosphere-b) 0.9 0.06 calc(h + 18) / 0.6);
+    --orb-a: oklch(from var(--atmosphere-a) 0.86 min(c, 0.085) calc(h - 18) / 0.72);
+    --orb-b: oklch(from var(--atmosphere-b) 0.9 min(c, 0.07) calc(h + 22) / 0.62);
+    --orb-c: oklch(from var(--atmosphere-a) 0.9 min(c, 0.055) calc(h + 40) / 0.55);
   }
 }
 
@@ -990,38 +1000,39 @@ html:not([data-surface="glass"]) .color-scheme-switch {
 .page-atmosphere::after {
   content: "";
   position: absolute;
-  width: 78vmax;
-  height: 78vmax;
+  width: 72vmax;
+  height: 72vmax;
   border-radius: 9999px;
   will-change: transform;
 }
 
 .page-atmosphere::before {
-  left: -34vmax;
-  top: -40vmax;
+  left: -30vmax;
+  top: -38vmax;
   background: radial-gradient(
     circle at center,
     var(--orb-a) 0%,
-    color-mix(in oklab, var(--orb-a) 45%, transparent) 38%,
-    transparent 70%
+    color-mix(in oklab, var(--orb-a) 55%, transparent) 30%,
+    color-mix(in oklab, var(--orb-a) 18%, transparent) 52%,
+    transparent 72%
   );
   animation: atmosphere-drift-a 42s ease-in-out infinite alternate;
 }
 
 .page-atmosphere::after {
-  right: -36vmax;
+  right: -32vmax;
   top: -34vmax;
   background: radial-gradient(
     circle at center,
     var(--orb-b) 0%,
-    color-mix(in oklab, var(--orb-b) 45%, transparent) 38%,
-    transparent 70%
+    color-mix(in oklab, var(--orb-b) 55%, transparent) 30%,
+    color-mix(in oklab, var(--orb-b) 18%, transparent) 52%,
+    transparent 72%
   );
   animation: atmosphere-drift-b 54s ease-in-out infinite alternate;
 }
 
-/* Dark: lower chroma so large fields don't vibrate; the eased mid stop above
-   keeps the falloff from banding at low lightness. */
+/* Dark: deep, low-chroma tones so large fields stay quiet. */
 .dark .page-atmosphere {
   --orb-a: color-mix(in oklab, var(--atmosphere-a, transparent) 12%, transparent);
   --orb-b: color-mix(in oklab, var(--atmosphere-b, transparent) 8%, transparent);
@@ -1029,8 +1040,9 @@ html:not([data-surface="glass"]) .color-scheme-switch {
 
 @supports (color: oklch(from red l c h)) {
   .dark .page-atmosphere {
-    --orb-a: oklch(from var(--atmosphere-a) 0.3 0.09 h / 0.4);
-    --orb-b: oklch(from var(--atmosphere-b) 0.27 0.08 h / 0.28);
+    --orb-a: oklch(from var(--atmosphere-a) 0.3 min(c, 0.09) calc(h - 18) / 0.42);
+    --orb-b: oklch(from var(--atmosphere-b) 0.27 min(c, 0.08) calc(h + 22) / 0.3);
+    --orb-c: oklch(from var(--atmosphere-a) 0.26 min(c, 0.06) calc(h + 40) / 0.3);
   }
 }
 
@@ -1553,7 +1565,8 @@ html:not([data-surface="glass"]) .color-scheme-switch {
   height: 120px;
   border-radius: 9999px;
   pointer-events: none;
-  filter: blur(44px);
+  filter: blur(40px);
+  background: var(--orb-color);
   opacity: calc(var(--orb-strength, 1) * 0.07);
   will-change: transform;
   animation: strip-orb-drift 18s ease-in-out infinite alternate;
@@ -1561,6 +1574,19 @@ html:not([data-surface="glass"]) .color-scheme-switch {
 
 .dark .strip-orb {
   opacity: calc(var(--orb-strength, 1) * 0.2);
+}
+
+/* Same pastel rebuild as the page wash, so navy or maroon tints read clean. */
+@supports (color: oklch(from red l c h)) {
+  .strip-orb {
+    background: oklch(from var(--orb-color) 0.78 min(c, 0.13) h);
+    opacity: calc(var(--orb-strength, 1) * 0.32);
+  }
+
+  .dark .strip-orb {
+    background: oklch(from var(--orb-color) 0.48 min(c, 0.12) h);
+    opacity: calc(var(--orb-strength, 1) * 0.3);
+  }
 }
 
 .strip-orb--b {
