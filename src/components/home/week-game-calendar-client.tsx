@@ -1,36 +1,61 @@
 "use client";
 
+import { useLayoutEffect, useRef } from "react";
 import { HomeGameStripCard } from "@/components/home/home-game-strip-card";
 import { TextLink } from "@/components/ui/text-link";
 import { LiveScoreboardScope } from "@/components/sports/live-scoreboard-scope";
 import type { GameSummary } from "@/data/types";
 import { parseTipOffMs } from "@/lib/game-countdown";
-import { isLiveLikeStatus, type GameStatusKind } from "@/lib/game-status";
+import type { GameStatusKind } from "@/lib/game-status";
 
 type StripGame = GameSummary & {
   awayStarters: Array<{ id: string; name: string }>;
   homeStarters: Array<{ id: string; name: string }>;
 };
 
-function stripRank(status: GameStatusKind | undefined): number {
-  if (isLiveLikeStatus(status)) return 0;
-  if (status === "final") return 2;
-  if (status === "postponed" || status === "cancelled") return 3;
-  return 1;
-}
-
-/** Live first, then upcoming by tip-off, then finals with the latest first. */
+/** Chronological by tip-off, so finals sit to the left of live and upcoming games. */
 function orderStrip(games: GameSummary[]): GameSummary[] {
   const tip = (g: GameSummary) => parseTipOffMs(g.tipOffAt) ?? Date.parse(g.gameDate);
   return games
-    .map((game, index) => ({ game, index, rank: stripRank(game.status) }))
-    .sort((a, b) => {
-      if (a.rank !== b.rank) return a.rank - b.rank;
-      const diff = tip(a.game) - tip(b.game);
-      if (diff) return a.rank === 2 ? -diff : diff;
-      return a.index - b.index;
-    })
+    .map((game, index) => ({ game, index }))
+    .sort((a, b) => tip(a.game) - tip(b.game) || a.index - b.index)
     .map((entry) => entry.game);
+}
+
+/** First live or upcoming game; the last game when every one is settled. */
+function anchorIndex(games: GameSummary[]): number {
+  const index = games.findIndex((g) => !isSettledStatus(g.status));
+  return index === -1 ? games.length - 1 : index;
+}
+
+function isSettledStatus(status: GameStatusKind | undefined): boolean {
+  return status === "final" || status === "postponed" || status === "cancelled";
+}
+
+function StripScroller({ games }: { games: GameSummary[] }) {
+  const ordered = orderStrip(games);
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  const anchoredRef = useRef(false);
+  const anchor = anchorIndex(ordered);
+
+  useLayoutEffect(() => {
+    const scroller = scrollerRef.current;
+    if (anchoredRef.current || !scroller || anchor <= 0) return;
+    const card = scroller.children[anchor] as HTMLElement | undefined;
+    if (!card) return;
+    anchoredRef.current = true;
+    const padding = parseFloat(getComputedStyle(scroller).paddingLeft) || 0;
+    scroller.scrollLeft +=
+      card.getBoundingClientRect().left - scroller.getBoundingClientRect().left - padding;
+  }, [anchor]);
+
+  return (
+    <div ref={scrollerRef} className="-mx-1 flex gap-4 touch-scroll-x px-1 pb-1">
+      {ordered.map((game) => (
+        <HomeGameStripCard key={game.id} game={game} />
+      ))}
+    </div>
+  );
 }
 
 /** Client strip - reuses the shared live scoreboard poller (no separate architecture). */
@@ -64,13 +89,7 @@ export function WeekGameCalendarClient({
         </div>
       ) : (
         <LiveScoreboardScope games={initialGames} season={season}>
-          {(games) => (
-            <div className="-mx-1 flex gap-4 touch-scroll-x px-1 pb-1">
-              {orderStrip(games).map((game) => (
-                <HomeGameStripCard key={game.id} game={game} />
-              ))}
-            </div>
-          )}
+          {(games) => <StripScroller games={games} />}
         </LiveScoreboardScope>
       )}
     </section>
