@@ -5,10 +5,10 @@
     "season": "2026-27",
     "snapshotDate": "2026-10-06",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-10-06T16:48:55.757Z",
+    "builtAt": "2026-10-06T17:25:06.798Z",
     "rosterPlayerCount": 492,
-    "headlinesScanned": 1097,
-    "latestHeadlineAt": "2026-10-06T16:39:30.000Z",
+    "headlinesScanned": 1499,
+    "latestHeadlineAt": "2026-10-06T17:22:09.000Z",
     "latestTransactionDate": "2026-10-05",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -16,11 +16,21 @@
       "CBS Sports",
       "ClutchPoints",
       "ESPN",
+      "EssentiallySports",
+      "Fadeaway World",
+      "Heavy",
       "Hoops Rumors",
       "Larry Brown Sports",
+      "Los Angeles Times",
+      "Marca",
+      "NBC Sports Bay Area",
+      "NBC Sports Boston",
+      "NBC Sports Philadelphia",
       "New York Post",
       "RealGM",
+      "SB Nation",
       "Sporting News",
+      "Sportsnaut",
       "TalkBasket",
       "The Athletic",
       "The Guardian",
@@ -28,13 +38,13 @@
     ]
   },
   "sources": {
-    "outlet:cbs-sports": {
-      "label": "CBS Sports",
-      "credibility": 16
-    },
     "reporter:sam-amick": {
       "label": "Sam Amick (The Athletic)",
       "credibility": 30
+    },
+    "outlet:cbs-sports": {
+      "label": "CBS Sports",
+      "credibility": 16
     },
     "outlet:larry-brown-sports": {
       "label": "Larry Brown Sports",
@@ -48,6 +58,10 @@
       "label": "Shams Charania (ESPN)",
       "credibility": 30
     },
+    "reporter:anthony-slater": {
+      "label": "Anthony Slater (ESPN)",
+      "credibility": 22
+    },
     "reporter:ian-begley": {
       "label": "Ian Begley (SNY)",
       "credibility": 22
@@ -56,9 +70,17 @@
       "label": "The Athletic",
       "credibility": 12
     },
+    "outlet:sportsnaut": {
+      "label": "Sportsnaut",
+      "credibility": 12
+    },
     "outlet:realgm": {
       "label": "RealGM",
       "credibility": 8
+    },
+    "outlet:nbc-sports-bay-area": {
+      "label": "NBC Sports Bay Area",
+      "credibility": 16
     },
     "outlet:yahoo-sports": {
       "label": "Yahoo Sports",
@@ -82,11 +104,7 @@
     },
     "outlet:clutchpoints": {
       "label": "ClutchPoints",
-      "credibility": 16
-    },
-    "reporter:anthony-slater": {
-      "label": "Anthony Slater (ESPN)",
-      "credibility": 22
+      "credibility": 12
     },
     "reporter:fred-katz": {
       "label": "Fred Katz (The Athletic)",
@@ -96,12 +114,24 @@
       "label": "Michael Scotto (HoopsHype)",
       "credibility": 30
     },
+    "outlet:heavy": {
+      "label": "Heavy",
+      "credibility": 16
+    },
     "reporter:malika-andrews": {
       "label": "Malika Andrews (ESPN)",
       "credibility": 18
     },
     "reporter:josh-robbins": {
       "label": "Josh Robbins (The Athletic)",
+      "credibility": 22
+    },
+    "reporter:first-take": {
+      "label": "First Take (ESPN)",
+      "credibility": 18
+    },
+    "reporter:brett-siegel": {
+      "label": "Brett Siegel (ClutchPoints)",
       "credibility": 22
     },
     "ledger:nba-player-movement": {
@@ -114,6 +144,26 @@
     }
   },
   "clusters": [
+    {
+      "id": "mv-contract-3907387-20260904",
+      "headline": "Ben Simmons: contract future",
+      "primaryClaimId": "mv-20b1c2a214961fb0",
+      "claimIds": [
+        "mv-20b1c2a214961fb0",
+        "mv-nba-tx-4e7ca40ab1c09a09"
+      ],
+      "evidenceClass": "reported",
+      "state": "completed",
+      "firstSeenAt": "2026-09-04T14:25:21.000Z",
+      "lastMeaningfulAt": "2026-09-07T12:00:00.000Z",
+      "linkedPlayerIds": [
+        "3907387"
+      ],
+      "linkedTeamIds": [
+        "9",
+        "23"
+      ]
+    },
     {
       "id": "mv-trade-6450-20260911",
       "headline": "Kawhi Leonard: reported trade agreement",
@@ -185,6 +235,7 @@
         "mv-aa736ba0d74bbfa4",
         "mv-878ee82b2913a3a1",
         "mv-00e7e70ae5975158",
+        "mv-5d352359e6d436d1",
         "mv-aee12174cc36bcac",
         "mv-fdd1a0413a00cec6",
         "mv-a00b4bce77b6fbcd",
@@ -308,17 +359,21 @@
     {
       "id": "mv-contract-3975-20260923",
       "headline": "Stephen Curry: extension talks with the Warriors",
-      "primaryClaimId": "mv-bfd38ba855ed91e6",
+      "primaryClaimId": "mv-c1b7540c362b6c23",
       "claimIds": [
+        "mv-21affc4183724adf",
         "mv-bfd38ba855ed91e6",
+        "mv-745049b956d1b0b0",
         "mv-63fb5a213b3b2e78",
         "mv-575ee62b7a318d43",
+        "mv-4b5de7c27b87bc60",
+        "mv-c1b7540c362b6c23",
         "mv-5b49f40d06ebadd6",
         "mv-nba-tx-2e37f9a26a48f33b"
       ],
       "evidenceClass": "reported",
       "state": "completed",
-      "firstSeenAt": "2026-09-23T17:41:45.000Z",
+      "firstSeenAt": "2026-09-23T14:55:55.000Z",
       "lastMeaningfulAt": "2026-09-25T12:00:00.000Z",
       "linkedPlayerIds": [
         "3975"
@@ -348,6 +403,56 @@
       ],
       "linkedTeamIds": [
         "18"
+      ]
+    },
+    {
+      "id": "mv-trade-3062679-20260926",
+      "headline": "Josh Hart and Karl-Anthony Towns: trade talk",
+      "primaryClaimId": "mv-16c64cf12c0ffcaa",
+      "claimIds": [
+        "mv-ab48d038f12b4a20",
+        "mv-268aa6f823567f77",
+        "mv-16c64cf12c0ffcaa",
+        "mv-47978b5263ca5efd"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-09-26T13:03:20.000Z",
+      "lastMeaningfulAt": "2026-10-06T15:29:23.000Z",
+      "linkedPlayerIds": [
+        "3062679",
+        "3136195"
+      ],
+      "linkedTeamIds": [
+        "18",
+        "9",
+        "13"
+      ]
+    },
+    {
+      "id": "mv-trade-4433621-20260928",
+      "headline": "Jalen Duren and Anthony Davis: trade talk",
+      "primaryClaimId": "mv-e2a0cf1a5c6391a7",
+      "claimIds": [
+        "mv-110cfda64b485cd7",
+        "mv-56a01e0c9bda9ca3",
+        "mv-2520e9473d34035f",
+        "mv-e2a0cf1a5c6391a7",
+        "mv-fc43e842c7eee4c2"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-09-28T13:36:03.000Z",
+      "lastMeaningfulAt": "2026-10-06T13:32:26.000Z",
+      "linkedPlayerIds": [
+        "4433621",
+        "6583"
+      ],
+      "linkedTeamIds": [
+        "8",
+        "27",
+        "15",
+        "23"
       ]
     },
     {
@@ -447,31 +552,6 @@
       ]
     },
     {
-      "id": "mv-trade-6583-20261001",
-      "headline": "Anthony Davis and Jalen Duren: trade talk",
-      "primaryClaimId": "mv-e2a0cf1a5c6391a7",
-      "claimIds": [
-        "mv-56a01e0c9bda9ca3",
-        "mv-2520e9473d34035f",
-        "mv-e2a0cf1a5c6391a7",
-        "mv-fc43e842c7eee4c2"
-      ],
-      "evidenceClass": "reported",
-      "state": "unresolved",
-      "firstSeenAt": "2026-10-01T07:22:01.000Z",
-      "lastMeaningfulAt": "2026-10-06T13:32:26.000Z",
-      "linkedPlayerIds": [
-        "6583",
-        "4433621"
-      ],
-      "linkedTeamIds": [
-        "27",
-        "15",
-        "23",
-        "8"
-      ]
-    },
-    {
       "id": "mv-contract-4432241-20261001",
       "headline": "Jamal Shead: contract future with the Raptors",
       "primaryClaimId": "mv-555b5f9b22339795",
@@ -530,14 +610,16 @@
     {
       "id": "mv-contract-4709138-20261002",
       "headline": "Brandin Podziemski: contract future with the Warriors",
-      "primaryClaimId": "mv-12b9f7a9d7c69451",
+      "primaryClaimId": "mv-ed74883e53566860",
       "claimIds": [
-        "mv-12b9f7a9d7c69451"
+        "mv-12b9f7a9d7c69451",
+        "mv-321957fd1dc9ab59",
+        "mv-ed74883e53566860"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-02T08:48:49.000Z",
-      "lastMeaningfulAt": "2026-10-02T08:48:49.000Z",
+      "lastMeaningfulAt": "2026-10-06T17:13:15.000Z",
       "linkedPlayerIds": [
         "4709138"
       ],
@@ -547,20 +629,22 @@
     },
     {
       "id": "mv-contract-4431823-20261002",
-      "headline": "Miles McBride and Karl-Anthony Towns: extension talks with the Knicks",
-      "primaryClaimId": "mv-849384fc38565347",
+      "headline": "Miles McBride and Karl-Anthony Towns: contract talks",
+      "primaryClaimId": "mv-c4670eeefdfa777f",
       "claimIds": [
         "mv-c48edb09abf0e0a6",
         "mv-3c89b8ac3f9ac8e7",
         "mv-654ee87ed2c75e15",
         "mv-1cc8587f7a4d28d7",
         "mv-849384fc38565347",
-        "mv-3074c1bbcb692f92"
+        "mv-3074c1bbcb692f92",
+        "mv-c4670eeefdfa777f",
+        "mv-ecd9d7ad249d8662"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-02T15:41:33.000Z",
-      "lastMeaningfulAt": "2026-10-05T19:13:37.000Z",
+      "lastMeaningfulAt": "2026-10-06T16:45:42.000Z",
       "linkedPlayerIds": [
         "4431823",
         "3136195"
@@ -570,38 +654,63 @@
       ]
     },
     {
+      "id": "mv-trade-3155942-20261005",
+      "headline": "Domantas Sabonis and Bronny James: trade talk",
+      "primaryClaimId": "mv-bf030a939aada1a7",
+      "claimIds": [
+        "mv-981e58a85cc89efe",
+        "mv-bf030a939aada1a7",
+        "mv-35ecc0124773d6d8"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-10-05T00:00:00.000Z",
+      "lastMeaningfulAt": "2026-10-05T19:32:11.000Z",
+      "linkedPlayerIds": [
+        "3155942",
+        "4683774"
+      ],
+      "linkedTeamIds": [
+        "9",
+        "13",
+        "23"
+      ]
+    },
+    {
       "id": "mv-trade-6589-20261005",
       "headline": "Draymond Green, Mark Williams and others: trade talk",
-      "primaryClaimId": "mv-ac71e037974744a0",
+      "primaryClaimId": "mv-d2a9f6adeed1b232",
       "claimIds": [
-        "mv-ac71e037974744a0"
+        "mv-ac71e037974744a0",
+        "mv-d2a9f6adeed1b232"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-05T07:47:20.000Z",
-      "lastMeaningfulAt": "2026-10-05T07:47:20.000Z",
+      "lastMeaningfulAt": "2026-10-05T11:48:56.000Z",
       "linkedPlayerIds": [
         "6589",
         "4701232",
         "4897943"
       ],
       "linkedTeamIds": [
+        "13",
         "9",
-        "21",
-        "13"
+        "21"
       ]
     },
     {
       "id": "mv-trade-4278078-20261005",
       "headline": "P.J. Washington: trade talk",
-      "primaryClaimId": "mv-4da6b613ea64f575",
+      "primaryClaimId": "mv-2b483867b36887de",
       "claimIds": [
-        "mv-4da6b613ea64f575"
+        "mv-4da6b613ea64f575",
+        "mv-2b483867b36887de"
       ],
-      "evidenceClass": "rumored",
+      "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-05T14:38:03.000Z",
-      "lastMeaningfulAt": "2026-10-05T14:38:03.000Z",
+      "lastMeaningfulAt": "2026-10-05T19:13:42.000Z",
       "linkedPlayerIds": [
         "4278078"
       ],
@@ -610,40 +719,43 @@
       ]
     },
     {
-      "id": "mv-trade-3155942-20261005",
-      "headline": "Domantas Sabonis: trade talk",
-      "primaryClaimId": "mv-bf030a939aada1a7",
+      "id": "mv-trade-3133628-20261005",
+      "headline": "Myles Turner: trade talk",
+      "primaryClaimId": "mv-1075a6f7192260ec",
       "claimIds": [
-        "mv-bf030a939aada1a7"
+        "mv-5a1cb98dae861c8d",
+        "mv-1075a6f7192260ec"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
-      "firstSeenAt": "2026-10-05T18:51:31.000Z",
-      "lastMeaningfulAt": "2026-10-05T18:51:31.000Z",
+      "firstSeenAt": "2026-10-05T23:59:00.000Z",
+      "lastMeaningfulAt": "2026-10-06T14:04:51.000Z",
       "linkedPlayerIds": [
-        "3155942"
+        "3133628"
       ],
       "linkedTeamIds": [
-        "23"
+        "18",
+        "28",
+        "15"
       ]
     },
     {
-      "id": "mv-trade-3062679-20261006",
-      "headline": "Josh Hart and Karl-Anthony Towns: trade talk",
-      "primaryClaimId": "mv-16c64cf12c0ffcaa",
+      "id": "mv-contract-4683692-20261006",
+      "headline": "Cason Wallace: extension talks with the Thunder",
+      "primaryClaimId": "mv-d46db2f4a349df07",
       "claimIds": [
-        "mv-16c64cf12c0ffcaa"
+        "mv-d46db2f4a349df07",
+        "mv-11ebf253ed00ee6f"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
-      "firstSeenAt": "2026-10-06T13:48:55.000Z",
-      "lastMeaningfulAt": "2026-10-06T13:48:55.000Z",
+      "firstSeenAt": "2026-10-06T17:10:57.000Z",
+      "lastMeaningfulAt": "2026-10-06T17:21:45.000Z",
       "linkedPlayerIds": [
-        "3062679",
-        "3136195"
+        "4683692"
       ],
       "linkedTeamIds": [
-        "18"
+        "25"
       ]
     },
     {
@@ -1997,6 +2109,28 @@
   ],
   "claims": [
     {
+      "id": "mv-20b1c2a214961fb0",
+      "clusterId": "mv-contract-3907387-20260904",
+      "summary": "Warriors reportedly were ‘in the mix' for Ben Simmons before Kings contract",
+      "claimType": "contract_movement",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-09-04T14:25:21.000Z",
+      "sourceId": "reporter:sam-amick",
+      "sourceLabel": "NBC Sports Bay Area, citing Sam Amick (The Athletic)",
+      "reporterLabel": "Sam Amick",
+      "sourceUrl": "https://www.nbcsportsbayarea.com/nba/golden-state-warriors/reportedly-were-in-the-mix-ben-simmons/1960816/",
+      "playerIds": [
+        "3907387"
+      ],
+      "teamIds": [
+        "9",
+        "23"
+      ],
+      "isOriginal": false
+    },
+    {
       "id": "mv-185526df333e959b",
       "clusterId": "mv-trade-6450-20260911",
       "summary": "Why is the Kawhi Leonard trade still on hold? Uncertain Clippers leadership reportedly among reasons",
@@ -2206,6 +2340,27 @@
       "isOriginal": false
     },
     {
+      "id": "mv-21affc4183724adf",
+      "clusterId": "mv-contract-3975-20260923",
+      "summary": "Steph Curry wants ‘no drama' in Warriors training camp as extension looms large",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-09-23T14:55:55.000Z",
+      "sourceId": "reporter:anthony-slater",
+      "sourceLabel": "NBC Sports Bay Area, citing Anthony Slater (ESPN)",
+      "reporterLabel": "Anthony Slater",
+      "sourceUrl": "https://www.nbcsportsbayarea.com/nba/golden-state-warriors/steph-curry-contract-extension-training-camp/1965480/",
+      "playerIds": [
+        "3975"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false
+    },
+    {
       "id": "mv-bfd38ba855ed91e6",
       "clusterId": "mv-contract-3975-20260923",
       "summary": "Stephen Curry explains why he hasn't signed a contract extension with the Warriors yet",
@@ -2290,6 +2445,27 @@
       "negotiationSpecificity": "offer"
     },
     {
+      "id": "mv-745049b956d1b0b0",
+      "clusterId": "mv-contract-3975-20260923",
+      "summary": "Warriors sign star Steph Curry to reported two-year, $116M contract extension",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-09-25T23:27:46.000Z",
+      "sourceId": "reporter:shams-charania",
+      "sourceLabel": "NBC Sports Bay Area, citing Shams Charania (ESPN)",
+      "reporterLabel": "Shams Charania",
+      "sourceUrl": "https://www.nbcsportsbayarea.com/nba/golden-state-warriors/steph-curry-contract-extension-rumors/1957949/",
+      "playerIds": [
+        "3975"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false
+    },
+    {
       "id": "mv-63fb5a213b3b2e78",
       "clusterId": "mv-contract-3975-20260923",
       "summary": "Steph Curry agrees to 2-year, $116 million contract extension with Warriors: Sources",
@@ -2330,6 +2506,27 @@
       ],
       "isOriginal": false,
       "negotiationSpecificity": "offer"
+    },
+    {
+      "id": "mv-ab48d038f12b4a20",
+      "clusterId": "mv-trade-3062679-20260926",
+      "summary": "NY Knicks Rumor Claims Karl-Anthony Towns Contract Leaks Part of Plan to Villainize Him Before Josh Hart Trade?",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-09-26T13:03:20.000Z",
+      "sourceId": "outlet:sportsnaut",
+      "sourceLabel": "Sportsnaut",
+      "sourceUrl": "https://sportsnaut.com/nba/ny-knicks-karl-anthony-towns-contract-leaks-rumor",
+      "playerIds": [
+        "3062679",
+        "3136195"
+      ],
+      "teamIds": [
+        "18"
+      ],
+      "isOriginal": false
     },
     {
       "id": "mv-b5ac3668a4a62214",
@@ -2413,6 +2610,26 @@
       "negotiationSpecificity": "active_talks"
     },
     {
+      "id": "mv-110cfda64b485cd7",
+      "clusterId": "mv-trade-4433621-20260928",
+      "summary": "New Rumors Make Detroit Pistons Trading Jalen Duren This Week a Move That’s Best For Business",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-09-28T13:36:03.000Z",
+      "sourceId": "outlet:sportsnaut",
+      "sourceLabel": "Sportsnaut",
+      "sourceUrl": "https://sportsnaut.com/nba/detroit-pistons-jalen-duren-trade-is-best-for-business",
+      "playerIds": [
+        "4433621"
+      ],
+      "teamIds": [
+        "8"
+      ],
+      "isOriginal": false
+    },
+    {
       "id": "mv-93f1c209f853bc38",
       "clusterId": "mv-contract-3112335-20260928",
       "summary": "Nikola Jokić jokes he'll sign Nuggets contract extension next summer 'if they want me'",
@@ -2453,6 +2670,26 @@
       "isOriginal": true
     },
     {
+      "id": "mv-4b5de7c27b87bc60",
+      "clusterId": "mv-contract-3975-20260923",
+      "summary": "Steph Curry details ‘thoughtful journey' that led to Warriors contract extension",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-09-28T18:56:34.000Z",
+      "sourceId": "outlet:nbc-sports-bay-area",
+      "sourceLabel": "NBC Sports Bay Area",
+      "sourceUrl": "https://www.nbcsportsbayarea.com/nba/golden-state-warriors/steph-curry-contract-extension-jimmy-butler/1967083/",
+      "playerIds": [
+        "3975"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": true
+    },
+    {
       "id": "mv-941d78a0033dbed0",
       "clusterId": "mv-contract-3112335-20260928",
       "summary": "Nikola Jokic Intends To Sign Long-Term Contract With Nuggets In 2027 Offseason",
@@ -2471,6 +2708,26 @@
         "7"
       ],
       "isOriginal": false
+    },
+    {
+      "id": "mv-c1b7540c362b6c23",
+      "clusterId": "mv-contract-3975-20260923",
+      "summary": "Mike Dunleavy lauds ‘incredibly generous' Steph Curry for new Warriors contract",
+      "claimType": "contract_movement",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-09-28T20:54:14.000Z",
+      "sourceId": "outlet:nbc-sports-bay-area",
+      "sourceLabel": "NBC Sports Bay Area",
+      "sourceUrl": "https://www.nbcsportsbayarea.com/nba/golden-state-warriors/mike-dunleavy-steph-curry-contract-extension/1967163/",
+      "playerIds": [
+        "3975"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": true
     },
     {
       "id": "mv-fe22382571817f01",
@@ -2571,6 +2828,26 @@
       ],
       "teamIds": [
         "28"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-5d352359e6d436d1",
+      "clusterId": "mv-contract-4433621-20260911",
+      "summary": "Rumor Reveals REAL Reason Detroit Pistons Won’t Give Jalen Duren a Max Contract & It Will Surprise",
+      "claimType": "contract_movement",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-09-30T14:55:00.000Z",
+      "sourceId": "outlet:sportsnaut",
+      "sourceLabel": "Sportsnaut",
+      "sourceUrl": "https://sportsnaut.com/nba/real-reason-detroit-pistons-wont-give-jalen-duren-max-contract",
+      "playerIds": [
+        "4433621"
+      ],
+      "teamIds": [
+        "8"
       ],
       "isOriginal": false
     },
@@ -2700,7 +2977,7 @@
     },
     {
       "id": "mv-56a01e0c9bda9ca3",
-      "clusterId": "mv-trade-6583-20261001",
+      "clusterId": "mv-trade-4433621-20260928",
       "summary": "Wizards show interest in Anthony Davis-for-Jalen Duren swap",
       "claimType": "trade_interest",
       "evidenceClass": "reported",
@@ -2743,7 +3020,7 @@
     },
     {
       "id": "mv-2520e9473d34035f",
-      "clusterId": "mv-trade-6583-20261001",
+      "clusterId": "mv-trade-4433621-20260928",
       "summary": "Kings and Bucks show interest in Jalen Duren",
       "claimType": "trade_interest",
       "evidenceClass": "rumored",
@@ -2991,7 +3268,7 @@
     },
     {
       "id": "mv-e2a0cf1a5c6391a7",
-      "clusterId": "mv-trade-6583-20261001",
+      "clusterId": "mv-trade-4433621-20260928",
       "summary": "Jalen Duren says he wants 'to be a Piston for life' despite contentious free agency, trade rumors",
       "claimType": "trade_interest",
       "evidenceClass": "reported",
@@ -3006,6 +3283,28 @@
       ],
       "teamIds": [],
       "isOriginal": true
+    },
+    {
+      "id": "mv-981e58a85cc89efe",
+      "clusterId": "mv-trade-3155942-20261005",
+      "summary": "NBA Trade Rumors: Lakers’ Bronny James, Domantas Sabonis, Warriors & More",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-05T00:00:00.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/los-angeles-lakers/nba-trade-rumors-lakers-bronny-james-domantas-sabonis-warriors-more/",
+      "playerIds": [
+        "3155942",
+        "4683774"
+      ],
+      "teamIds": [
+        "9",
+        "13"
+      ],
+      "isOriginal": false
     },
     {
       "id": "mv-8ffe37ccf68a5ff9",
@@ -3043,6 +3342,26 @@
         "4897943"
       ],
       "teamIds": [],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-d2a9f6adeed1b232",
+      "clusterId": "mv-trade-6589-20261005",
+      "summary": "Lakers Proposed to Trade Dalton Knecht for ‘True Pro’ NBA Champion",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-05T11:48:56.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/los-angeles-lakers/lakers-trade-dalton-knecht-pat/",
+      "playerIds": [
+        "4897943"
+      ],
+      "teamIds": [
+        "13"
+      ],
       "isOriginal": true
     },
     {
@@ -3168,8 +3487,114 @@
       "negotiationSpecificity": "offer"
     },
     {
+      "id": "mv-2b483867b36887de",
+      "clusterId": "mv-trade-4278078-20261005",
+      "summary": "5 P.J. Washington Trade Offers That Make Sense For The Mavericks",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-05T19:13:42.000Z",
+      "sourceId": "reporter:marc-stein",
+      "sourceLabel": "Fadeaway World, citing Marc Stein (The Stein Line)",
+      "reporterLabel": "Marc Stein",
+      "sourceUrl": "https://fadeawayworld.net/nba-trade-rumors/dallas-mavericks/5-p-j-washington-trade-offers-that-make-sense-for-the-mavericks",
+      "playerIds": [
+        "4278078"
+      ],
+      "teamIds": [
+        "6"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "offer"
+    },
+    {
+      "id": "mv-35ecc0124773d6d8",
+      "clusterId": "mv-trade-3155942-20261005",
+      "summary": "Lakers Bronny James Trade Interest Gets Reality Check",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-05T19:32:11.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/los-angeles-lakers/bronny-james-trade-interest-reality-check/",
+      "playerIds": [
+        "4683774"
+      ],
+      "teamIds": [
+        "13"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "contact"
+    },
+    {
+      "id": "mv-5a1cb98dae861c8d",
+      "clusterId": "mv-trade-3133628-20261005",
+      "summary": "NBA Rumors: Knicks Top Target, Myles Turner & Surprise West Team",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-05T23:59:00.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/new-york-knicks/nba-rumors-knicks-top-target/",
+      "playerIds": [
+        "3133628"
+      ],
+      "teamIds": [
+        "18"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-321957fd1dc9ab59",
+      "clusterId": "mv-contract-4709138-20261002",
+      "summary": "Golden State Warriors Timeline for Brandin Podziemski Contract Extension Revealed",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-06T03:20:47.000Z",
+      "sourceId": "reporter:marc-stein",
+      "sourceLabel": "Heavy, citing Marc Stein (The Stein Line)",
+      "reporterLabel": "Marc Stein",
+      "sourceUrl": "https://heavy.com/sports/nba/golden-state-warriors/timeline-brandin-podziemski-contract-extension-revealed/",
+      "playerIds": [
+        "4709138"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-268aa6f823567f77",
+      "clusterId": "mv-trade-3062679-20260926",
+      "summary": "NBA Trade Rumors: KAT vs. Knicks, Lakers Decision & Warriors Trade Option",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-06T13:00:07.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/los-angeles-lakers/nba-trade-rumors-knicks-lakers-warriors/",
+      "playerIds": [
+        "3136195"
+      ],
+      "teamIds": [
+        "9",
+        "13",
+        "18"
+      ],
+      "isOriginal": false
+    },
+    {
       "id": "mv-fc43e842c7eee4c2",
-      "clusterId": "mv-trade-6583-20261001",
+      "clusterId": "mv-trade-4433621-20260928",
       "summary": "Wizards insiders know Anthony Davis trade rumors won’t die as Rich Paul plays ‘game’",
       "claimType": "trade_interest",
       "evidenceClass": "rumored",
@@ -3189,7 +3614,7 @@
     },
     {
       "id": "mv-16c64cf12c0ffcaa",
-      "clusterId": "mv-trade-3062679-20261006",
+      "clusterId": "mv-trade-3062679-20260926",
       "summary": "Knicks rumors: Shams’ warning of ‘growing cloud’ around Karl-Anthony Towns, Josh Hart comes with trade deadline tease",
       "claimType": "trade_interest",
       "evidenceClass": "reported",
@@ -3207,6 +3632,26 @@
         "18"
       ],
       "isOriginal": true
+    },
+    {
+      "id": "mv-1075a6f7192260ec",
+      "clusterId": "mv-trade-3133628-20261005",
+      "summary": "Toronto Raptors Trade For Myles Turner Seems Like an Eventuality After a Pair of NEW Reports",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-06T14:04:51.000Z",
+      "sourceId": "outlet:sportsnaut",
+      "sourceLabel": "Sportsnaut",
+      "sourceUrl": "https://sportsnaut.com/nba/toronto-raptors-myles-turner-trade-speculation",
+      "playerIds": [
+        "3133628"
+      ],
+      "teamIds": [
+        "28"
+      ],
+      "isOriginal": false
     },
     {
       "id": "mv-e60edd87d81db95b",
@@ -3271,6 +3716,148 @@
       ],
       "isOriginal": false,
       "negotiationSpecificity": "offer"
+    },
+    {
+      "id": "mv-47978b5263ca5efd",
+      "clusterId": "mv-trade-3062679-20260926",
+      "summary": "Knicks Could Trade Karl-Anthony Towns In Blockbuster Development: Report",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-06T15:29:23.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/new-york-knicks/trade-karl-anthony-towns-trade-blockbuster-development/",
+      "playerIds": [
+        "3136195"
+      ],
+      "teamIds": [
+        "18"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-c4670eeefdfa777f",
+      "clusterId": "mv-contract-4431823-20261002",
+      "summary": "Knicks’ James Dolan Accused of “Getting in the Way” of Karl-Anthony Towns Extension",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-06T16:10:04.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/new-york-knicks/knicks-james-dolan-karl-anthony-towns-extension/",
+      "playerIds": [
+        "3136195"
+      ],
+      "teamIds": [
+        "18"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-ecd9d7ad249d8662",
+      "clusterId": "mv-contract-4431823-20261002",
+      "summary": "Stephen A. Smith blasts that ‘damn James Dolan’ amid Karl-Anthony Towns contract squabble",
+      "claimType": "contract_movement",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-06T16:45:42.000Z",
+      "sourceId": "reporter:first-take",
+      "sourceLabel": "ClutchPoints, citing First Take (ESPN)",
+      "reporterLabel": "First Take",
+      "sourceUrl": "https://clutchpoints.com/nba/new-york-knicks/knicks-news-stephen-a-smith-blasts-that-damn-james-dolan-amid-karl-anthony-towns-contract-squabble",
+      "playerIds": [
+        "3136195"
+      ],
+      "teamIds": [],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-d46db2f4a349df07",
+      "clusterId": "mv-contract-4683692-20261006",
+      "summary": "OKC Thunder Gets Bad News About Cason Wallace Free Agency",
+      "claimType": "free_agent_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-06T17:10:57.000Z",
+      "sourceId": "reporter:brett-siegel",
+      "sourceLabel": "Heavy, citing Brett Siegel (ClutchPoints)",
+      "reporterLabel": "Brett Siegel",
+      "sourceUrl": "https://heavy.com/sports/nba/oklahoma-city-thunder/bad-news-about-cason-wallace-free-agency/",
+      "playerIds": [
+        "4683692"
+      ],
+      "teamIds": [
+        "25"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-ed74883e53566860",
+      "clusterId": "mv-contract-4709138-20261002",
+      "summary": "Warriors rumors: ClutchPoints insider predicts Brandin Podziemski to receive $70 million contract",
+      "claimType": "contract_movement",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "original_report",
+      "publishedAt": "2026-10-06T17:13:15.000Z",
+      "sourceId": "reporter:brett-siegel",
+      "sourceLabel": "Brett Siegel (ClutchPoints)",
+      "reporterLabel": "Brett Siegel",
+      "sourceUrl": "https://clutchpoints.com/nba/golden-state-warriors/warriors-rumors-clutchpoints-insider-predicts-brandin-podziemski-to-receive-70-million-contract",
+      "playerIds": [
+        "4709138"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-11ebf253ed00ee6f",
+      "clusterId": "mv-contract-4683692-20261006",
+      "summary": "NBA rumors: Thunder hit with $30 million Cason Wallace warning amid contract talks",
+      "claimType": "extension_talks",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-06T17:21:45.000Z",
+      "sourceId": "outlet:clutchpoints",
+      "sourceLabel": "ClutchPoints",
+      "sourceUrl": "https://clutchpoints.com/nba/oklahoma-city-thunder/nba-rumors-thunder-hit-30-million-cason-wallace-warning-contract-talks",
+      "playerIds": [
+        "4683692"
+      ],
+      "teamIds": [
+        "25"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "active_talks"
+    },
+    {
+      "id": "mv-nba-tx-4e7ca40ab1c09a09",
+      "clusterId": "mv-contract-3907387-20260904",
+      "summary": "Signed guard Ben Simmons to a Contract.",
+      "claimType": "contract_movement",
+      "evidenceClass": "reported",
+      "state": "completed",
+      "provenanceKind": "completed_transaction",
+      "publishedAt": "2026-09-07T12:00:00.000Z",
+      "sourceId": "ledger:nba-player-movement",
+      "sourceLabel": "Player movement log",
+      "sourceUrl": "/offseason",
+      "playerIds": [
+        "3907387"
+      ],
+      "teamIds": [
+        "23"
+      ],
+      "isOriginal": true
     },
     {
       "id": "mv-nba-tx-4fbd3cd7ed6bc29b",
@@ -4336,6 +4923,16 @@
     }
   ],
   "resolutions": [
+    {
+      "clusterId": "mv-contract-3907387-20260904",
+      "playerIds": [
+        "3907387"
+      ],
+      "outcome": "materialized",
+      "resolvedAt": "2026-09-07T12:00:00.000Z",
+      "transactionRef": "nba-tx-4e7ca40ab1c09a09",
+      "suppressTradeSpeculation": false
+    },
     {
       "clusterId": "mv-trade-6450-20260911",
       "playerIds": [
