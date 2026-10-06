@@ -4,11 +4,14 @@ import type { CSSProperties, ReactNode } from "react";
 import { GlassSurface } from "@/components/brand/glass-surface";
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { TeamLogo } from "@/components/brand/team-logo";
+import { surplusTone } from "@/components/players/player-contract-transactions";
 import { BrefPayrollTable, PayrollColorKey } from "@/components/teams/bref-payroll-table";
+import { TeamContractValueChart, teamSurplusHint } from "@/components/teams/team-contract-value";
 import type { TeamContractsView } from "@/data/queries/team-contracts";
+import { getTeamContractValue, type TeamContractValue } from "@/data/runtime/contract-value";
 import type { TeamPayrollPresentation } from "@/data/types/front-office";
 import { type } from "@/lib/design-system";
-import { formatUsdCompact } from "@/lib/format-money";
+import { formatUsdCompact, formatUsdSignedCompact } from "@/lib/format-money";
 import { brandAtmosphereColors } from "@/lib/game-matchup-theme";
 import { resolveTeamBrand, teamChartColor } from "@/lib/nba-brand";
 import { cn } from "@/lib/utils";
@@ -49,12 +52,14 @@ function PayrollHeader({
   franchiseId,
   contracts,
   capContext,
+  contractValue,
 }: {
   teamName: string;
   teamKey: string;
   franchiseId: string;
   contracts: TeamContractsView;
   capContext?: CapContext | null;
+  contractValue: TeamContractValue | null;
 }) {
   const brand = resolveTeamBrand(teamKey);
   const wash = brandAtmosphereColors(brand?.primary, brand?.secondary);
@@ -115,11 +120,17 @@ function PayrollHeader({
         </div>
       </div>
 
-      <dl className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
+      <dl className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
         <SummaryTile
           label={`${contracts.capSeason ?? ""} payroll`.trim()}
           value={payroll != null ? formatUsdCompact(payroll) : "—"}
           hint={`${signed} ${signed === 1 ? "player" : "players"} signed`}
+        />
+        <SummaryTile
+          label="Contract surplus"
+          value={contractValue ? formatUsdSignedCompact(contractValue.surplus) : "—"}
+          hint={contractValue ? teamSurplusHint(contractValue) : "No contracts valued"}
+          tone={contractValue ? surplusTone(contractValue.surplus) : undefined}
         />
         <SummaryTile
           label="Salary cap"
@@ -143,7 +154,7 @@ function PayrollHeader({
           }
           tone={apron?.room.over ? OVER_TONE : apron ? "text-positive" : undefined}
         />
-        <div className="glass-pill col-span-2 grid min-w-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 rounded-md px-3 py-2.5 lg:col-span-1">
+        <div className="glass-pill grid min-w-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 rounded-md px-3 py-2.5">
           {largest ? (
             <dd className="col-start-1 row-span-3 row-start-1">
               <PlayerHeadshot playerId={playerIdFromHref(largestHref)} name={largest.name} teamKey={teamKey} size="sm" />
@@ -347,6 +358,7 @@ export function TeamContractsPageView({
   const payroll = contracts.totals?.years[0] ?? null;
   const cap = contracts.salaryCap ?? capContext?.salaryCap ?? null;
   const hasNotes = contracts.rows.some((r) => contracts.notes[r.brefId]);
+  const contractValue = getTeamContractValue(franchiseId);
 
   return (
     <div
@@ -364,6 +376,7 @@ export function TeamContractsPageView({
         franchiseId={franchiseId}
         contracts={contracts}
         capContext={capContext}
+        contractValue={contractValue}
       />
 
       {payroll != null ? (
@@ -378,6 +391,20 @@ export function TeamContractsPageView({
           A blank cell means no contract that season. Totals count every listed salary, guaranteed or not.
         </p>
       </Panel>
+
+      {contractValue ? (
+        <Panel
+          title="Contract value"
+          id="value-heading"
+          aside={
+            <span className={cn(type.bodySm, "font-semibold tabular-nums", surplusTone(contractValue.surplus))}>
+              {formatUsdSignedCompact(contractValue.surplus)} combined
+            </span>
+          }
+        >
+          <TeamContractValueChart value={contractValue} contracts={contracts} />
+        </Panel>
+      ) : null}
 
       <div className={cn("grid gap-6", hasNotes && "lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]")}>
         <Panel title="Salary on the books" id="books-heading">

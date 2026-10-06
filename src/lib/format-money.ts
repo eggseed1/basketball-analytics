@@ -27,6 +27,13 @@ export function formatUsdCompact(dollars: number | null | undefined): string {
   return `${sign}${formatUsdDollars(abs)}`;
 }
 
+/** Compact with an explicit sign, for gaps such as contract surplus. Under $50K reads as $0.0M. */
+export function formatUsdSignedCompact(dollars: number): string {
+  if (Math.abs(dollars) < 50_000) return "$0.0M";
+  const text = formatUsdCompact(Math.abs(dollars));
+  return dollars > 0 ? `+${text}` : `-${text}`;
+}
+
 export function millionsToIntegerDollars(millions: number): number {
   return Math.round(millions * 1_000_000);
 }

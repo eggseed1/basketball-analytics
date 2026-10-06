@@ -89,6 +89,71 @@ export function contractValueModel(): ContractValueModel {
   return data.model;
 }
 
+export type TeamContractValuePlayer = {
+  brefId: string;
+  surplus: number;
+  surplusLow: number;
+  surplusHigh: number;
+  totalSalary: number;
+  totalWorth: number;
+};
+
+export type TeamContractValue = {
+  /** Sum of each valued contract's middle estimate. */
+  surplus: number;
+  totalSalary: number;
+  totalWorth: number;
+  /** 1 is the most surplus in the league. */
+  rank: number;
+  teams: number;
+  players: TeamContractValuePlayer[];
+  /** Contracts left out of the sum, by reason. They are not counted as zero. */
+  missing: Array<{ brefId: string; reason: ContractValueGap }>;
+};
+
+let teamValues: Map<string, TeamContractValue> | null = null;
+
+function buildTeamValues(): Map<string, TeamContractValue> {
+  const byTeam = new Map<string, TeamContractValue>();
+  for (const [key, row] of Object.entries(data.players)) {
+    const brefId = key.slice(key.indexOf(":") + 1);
+    let team = byTeam.get(row.team);
+    if (!team) {
+      team = { surplus: 0, totalSalary: 0, totalWorth: 0, rank: 0, teams: 0, players: [], missing: [] };
+      byTeam.set(row.team, team);
+    }
+    if ("reason" in row) {
+      team.missing.push({ brefId, reason: row.reason });
+      continue;
+    }
+    team.surplus += row.surplus;
+    team.totalSalary += row.salary;
+    team.totalWorth += row.worth;
+    team.players.push({
+      brefId,
+      surplus: row.surplus,
+      surplusLow: row.low,
+      surplusHigh: row.high,
+      totalSalary: row.salary,
+      totalWorth: row.worth,
+    });
+  }
+  const ranked = [...byTeam.values()].filter((t) => t.players.length).sort((a, b) => b.surplus - a.surplus);
+  ranked.forEach((team, i) => {
+    team.rank = i + 1;
+    team.teams = ranked.length;
+    team.players.sort((a, b) => b.surplus - a.surplus);
+  });
+  return byTeam;
+}
+
+/** Every contract on one team's books, summed. Null when none could be valued. */
+export function getTeamContractValue(teamId: string): TeamContractValue | null {
+  teamValues ??= buildTeamValues();
+  const team = teamValues.get(teamId);
+  return team?.players.length ? team : null;
+}
+
 export function getContractValue(teamId: string, brefId: string): ContractValueView | null {
   const row = data.players[`${teamId}:${brefId}`];
   if (!row) return null;

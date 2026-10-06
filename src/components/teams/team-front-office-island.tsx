@@ -8,6 +8,7 @@ import {
   resolveTeamFrontOfficeSlice,
 } from "@/data/front-office/load-team-front-office";
 import { getTeamContracts, getTeamFuturePicks } from "@/data/queries/team-contracts";
+import { getTeamContractValue } from "@/data/runtime/contract-value";
 
 export async function TeamFrontOfficeIsland({
   teamId,
@@ -79,7 +80,11 @@ export async function TeamFrontOfficeIsland({
           </Link>
         </p>
       ) : null}
-      <TeamFrontOfficeSummaryCard summary={summary} labels={labels} />
+      <TeamFrontOfficeSummaryCard
+        summary={summary}
+        labels={labels}
+        contractValue={getTeamContractValue(franchiseId)}
+      />
     </div>
   );
 }

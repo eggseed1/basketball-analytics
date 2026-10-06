@@ -1,14 +1,20 @@
 import Link from "next/link";
 
+import { surplusTone } from "@/components/players/player-contract-transactions";
+import { teamSurplusHint } from "@/components/teams/team-contract-value";
+import type { TeamContractValue } from "@/data/runtime/contract-value";
 import type { TeamFrontOfficeSummary } from "@/data/types/front-office";
-import { formatUsdCompact } from "@/lib/format-money";
+import { formatUsdCompact, formatUsdSignedCompact } from "@/lib/format-money";
+import { cn } from "@/lib/utils";
 
 export function TeamFrontOfficeSummaryCard({
   summary,
   labels,
+  contractValue,
 }: {
   summary: TeamFrontOfficeSummary;
   labels?: { salary?: string; firsts?: string; seconds?: string };
+  contractValue?: TeamContractValue | null;
 }) {
   return (
     <section
@@ -29,7 +35,7 @@ export function TeamFrontOfficeSummaryCard({
         </p>
       </div>
 
-      <dl className="grid gap-4 sm:grid-cols-3">
+      <dl className={cn("grid gap-4", contractValue ? "grid-cols-2 lg:grid-cols-4" : "sm:grid-cols-3")}>
         <div>
           <dt className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
             {labels?.salary ?? "Player salary commitments"}
@@ -60,6 +66,17 @@ export function TeamFrontOfficeSummaryCard({
               : summary.futureSecondsControlled}
           </dd>
         </div>
+        {contractValue ? (
+          <div>
+            <dt className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+              Contract surplus
+            </dt>
+            <dd className={cn("mt-1 text-2xl font-semibold tabular-nums", surplusTone(contractValue.surplus))}>
+              {formatUsdSignedCompact(contractValue.surplus)}
+            </dd>
+            <dd className="mt-0.5 text-xs text-muted-foreground">{teamSurplusHint(contractValue)}</dd>
+          </div>
+        ) : null}
       </dl>
 
       <div className="flex flex-wrap gap-3">

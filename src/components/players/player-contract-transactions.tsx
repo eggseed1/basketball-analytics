@@ -12,7 +12,7 @@ import type {
 } from "@/data/queries/player-front-office";
 import { type } from "@/lib/design-system";
 import { formatOrdinal } from "@/lib/format";
-import { formatUsdCompact } from "@/lib/format-money";
+import { formatUsdCompact, formatUsdSignedCompact } from "@/lib/format-money";
 import { cn } from "@/lib/utils";
 
 function yearNote(year: PlayerContractYearView, aboveMax: boolean): string | null {
@@ -24,13 +24,9 @@ function yearNote(year: PlayerContractYearView, aboveMax: boolean): string | nul
   return parts.length ? parts.join(" · ") : null;
 }
 
-function signedUsd(dollars: number): string {
-  const text = formatUsdCompact(Math.abs(dollars));
-  if (Math.abs(dollars) < 50_000) return "$0.0M";
-  return dollars > 0 ? `+${text}` : `-${text}`;
-}
+const signedUsd = formatUsdSignedCompact;
 
-function surplusTone(dollars: number): string {
+export function surplusTone(dollars: number): string {
   if (Math.abs(dollars) < 50_000) return "text-muted-foreground";
   return dollars > 0 ? "text-[var(--chart-3)]" : "text-destructive";
 }
