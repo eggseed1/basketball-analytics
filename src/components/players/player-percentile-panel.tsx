@@ -30,6 +30,7 @@ import {
 } from "@/components/brand/glass-surface";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { useQueryNavOptional } from "@/components/continuity/query-nav";
+import { PercentileShareControls } from "@/components/players/percentile-share-controls";
 import { SeasonBarSlider } from "@/components/players/season-bar-slider";
 import { PlayerIdentity } from "@/components/players/player-identity";
 import { useSetPlayerViewSeason } from "@/components/players/player-view-season";
@@ -1465,24 +1466,34 @@ export function PlayerPercentilePanel({
     >
       <div className="flex items-start justify-between gap-2">
         <h2 className={type.heading}>{viewSeason} percentile ranking</h2>
-        <button
-          type="button"
-          onClick={() => setExpanded(true)}
-          disabled={!listed.length}
-          className={cn(
-            "inline-flex shrink-0 items-center gap-1.5 rounded-md border border-border/70 px-2 py-1",
-            type.caption,
-            "font-semibold text-muted-foreground transition-colors",
-            "hover:border-foreground/30 hover:bg-foreground/5 hover:text-foreground",
-            "disabled:pointer-events-none disabled:opacity-40"
-          )}
-          aria-haspopup="dialog"
-          aria-expanded={expanded}
-          aria-label="Expand full percentile rankings"
-        >
-          <Maximize2 className="size-3.5" aria-hidden />
-          <span className="hidden sm:inline">Expand</span>
-        </button>
+        <div className="flex shrink-0 items-center gap-1.5">
+          <PercentileShareControls
+            playerId={playerId}
+            playerName={playerName}
+            season={viewSeason}
+            teamKey={viewTeamKey}
+            sections={grouped}
+            activeCategory={openSection?.id ?? openCategory}
+          />
+          <button
+            type="button"
+            onClick={() => setExpanded(true)}
+            disabled={!listed.length}
+            className={cn(
+              "inline-flex shrink-0 items-center gap-1.5 rounded-md border border-border/70 px-2 py-1",
+              type.caption,
+              "font-semibold text-muted-foreground transition-colors",
+              "hover:border-foreground/30 hover:bg-foreground/5 hover:text-foreground",
+              "disabled:pointer-events-none disabled:opacity-40"
+            )}
+            aria-haspopup="dialog"
+            aria-expanded={expanded}
+            aria-label="Expand full percentile rankings"
+          >
+            <Maximize2 className="size-3.5" aria-hidden />
+            <span className="hidden sm:inline">Expand</span>
+          </button>
+        </div>
       </div>
       {timeline.length > 0 ? (
         <div className={cn("mt-3", busy && "opacity-80")}>
