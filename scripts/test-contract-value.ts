@@ -10,6 +10,7 @@ import path from "node:path";
 import {
   agingDelta,
   normalQuantile,
+  priorRate,
   projectSeasons,
   valueContract,
   weightedLeastSquares,
@@ -130,15 +131,41 @@ function testProjection() {
   assert.ok(agingDelta(params.aging, 40) >= params.aging.min);
 }
 
+function testSalaryPrior() {
+  const withPrior: ProjectionParams = {
+    ...params,
+    priorByShare: { intercept: 0, slope: 0.002, maxShare: 0.35 },
+  };
+  assert.equal(priorRate(params, 0.3), params.leagueRate, "no prior falls back to league average");
+  assert.equal(priorRate(withPrior, null), params.leagueRate, "unknown salary falls back to league average");
+  assert.ok(Math.abs(priorRate(withPrior, 0.5) - 0.002 * 0.35) < 1e-12, "salary is capped at the max share");
+  const thin = [{ season: "2025-26", possessions: 1000, war1: 0, age: 27 }];
+  const rich = projectSeasons(thin, 2025, 27, [2026], new Map([[2026, 0.3]]), withPrior)![0];
+  const cheap = projectSeasons(thin, 2025, 27, [2026], new Map([[2026, 0.02]]), withPrior)![0];
+  assert.ok(
+    rich.wins / rich.possessions > cheap.wins / cheap.possessions,
+    "a thin history leans on what his salary says"
+  );
+}
+
 function testSnapshot() {
   const file = path.join(process.cwd(), "src/data/runtime/contract-value-snapshot.json");
   type SnapEntry = { reason?: string; surplus?: number; low: number; high: number; pct: number; years: unknown[] };
   const snap = JSON.parse(readFileSync(file, "utf8")) as {
-    model: { pricePerWinShare: number; contracts: number; backtest: Array<{ coverage80: number }> };
+    model: {
+      pricePerWinShare: number;
+      contracts: number;
+      backtest: Array<{ coverage80: number }>;
+      outOfSample: { byHorizon: Array<{ horizon: number; rmseWins: number; repeatRmseWins: number; aboveHigh: number }> };
+    };
     players: Record<string, SnapEntry>;
   };
   assert.ok(snap.model.pricePerWinShare > 0 && snap.model.pricePerWinShare < 0.5);
   assert.ok(snap.model.backtest.every((b) => b.coverage80 > 0.7 && b.coverage80 < 0.9));
+  const next = snap.model.outOfSample.byHorizon.find((b) => b.horizon === 1);
+  assert.ok(next, "out-of-sample check ran");
+  assert.ok(next.rmseWins < next.repeatRmseWins, "beats repeating last season out of sample");
+  assert.ok(next.aboveHigh > 0.05 && next.aboveHigh < 0.2, "top of the range is roughly a 90th percentile");
   const valued = Object.values(snap.players).filter((p) => "surplus" in p);
   assert.equal(valued.length, snap.model.contracts);
   for (const p of valued) {
@@ -160,5 +187,6 @@ testRangeOrder();
 testAboveMax();
 testWeightedLeastSquares();
 testProjection();
+testSalaryPrior();
 testSnapshot();
 console.log("contract-value: ok");

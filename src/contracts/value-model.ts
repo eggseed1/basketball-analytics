@@ -90,6 +90,12 @@ export type ProjectionParams = {
   regressionPossessions: number;
   /** League WAR1 per possession, the regression target. */
   leagueRate: number;
+  /**
+   * Regression target by salary instead of the league mean: what players paid
+   * this share of the cap produce per possession. Teams know things the box
+   * score doesn't, so pay is a fair prior.
+   */
+  priorByShare?: { intercept: number; slope: number; maxShare: number };
   /** WAR1 per possession of minimum-salary players. */
   replacementRate: number;
   aging: AgingCurve;
@@ -145,10 +151,17 @@ export function horizonError(
  * Regressed WAR1 rate from the seasons before `targetStartYear`, newest first.
  * Returns null when there is no history in the weighting window.
  */
+export function priorRate(params: ProjectionParams, salaryShare: number | null | undefined): number {
+  const prior = params.priorByShare;
+  if (!prior || salaryShare == null) return params.leagueRate;
+  return prior.intercept + prior.slope * Math.min(salaryShare, prior.maxShare);
+}
+
 export function baseRate(
   history: SeasonLine[],
   lastObservedStartYear: number,
-  params: ProjectionParams
+  params: ProjectionParams,
+  salaryShare?: number | null
 ): { rate: number; recentPossessions: number } | null {
   const byYear = new Map(history.map((line) => [seasonStartYear(line.season), line]));
   let num = 0;
@@ -163,7 +176,7 @@ export function baseRate(
   });
   if (den <= 0) return null;
   const K = params.regressionPossessions;
-  return { rate: (num + K * params.leagueRate) / (den + K), recentPossessions: recent };
+  return { rate: (num + K * priorRate(params, salaryShare)) / (den + K), recentPossessions: recent };
 }
 
 /**
@@ -179,19 +192,20 @@ export function projectSeasons(
   salaryShareByYear: Map<number, number>,
   params: ProjectionParams
 ): Projection[] | null {
-  const base = baseRate(history, lastObservedStartYear, params);
+  const firstTarget = Math.min(...targetStartYears);
+  const base = baseRate(history, lastObservedStartYear, params, salaryShareByYear.get(firstTarget));
   if (!base) return null;
   const byYear = new Map(history.map((line) => [seasonStartYear(line.season), line]));
   let last = byYear.get(lastObservedStartYear)?.possessions ?? 0;
   let prior = byYear.get(lastObservedStartYear - 1)?.possessions ?? last;
-  let rate = base.rate;
+  let aging = 0;
   let year = lastObservedStartYear;
   const out: Projection[] = [];
   let share = 0;
   for (const target of [...targetStartYears].sort((a, b) => a - b)) {
     while (year < target) {
       const age = ageAtLastObserved + (year - lastObservedStartYear);
-      rate += agingDelta(params.aging, age);
+      aging += agingDelta(params.aging, age);
       share = salaryShareByYear.get(year + 1) ?? share;
       const projected = predictPossessions(params.possessions, last, prior, age + 1, share);
       prior = last;
@@ -202,7 +216,7 @@ export function projectSeasons(
     out.push({
       season: seasonLabel(target),
       possessions: last,
-      wins: (rate - params.replacementRate) * last,
+      wins: (base.rate + aging - params.replacementRate) * last,
       sd: horizonError(params, horizon, last),
     });
   }

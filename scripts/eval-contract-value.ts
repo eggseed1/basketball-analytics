@@ -14,15 +14,21 @@
 import { writeFileSync } from "node:fs";
 
 import { getCanonicalTeamFromProvider } from "../src/data/identity/team-map";
-import {
-  baseRate,
-  projectSeasons,
-  seasonLabel,
-  seasonStartYear,
-  valueContract,
-  type ContractYearInput,
-} from "../src/contracts/value-model";
+import { baseRate, projectSeasons, seasonLabel, seasonStartYear } from "../src/contracts/value-model";
 import { fitModel, loadInputs, type FittedModel } from "./lib/contract-value-fit";
+import {
+  corr,
+  M,
+  mean,
+  evaluateAnchor,
+  outOfSample,
+  r3,
+  rmse,
+  spearman,
+  summarize as summarizeAt,
+  type ContractRow,
+  type YearRow,
+} from "./lib/contract-value-eval";
 
 const outArg = process.argv.indexOf("--out");
 const outPath = outArg > 0 ? process.argv[outArg + 1] : "/tmp/contract-value-eval.json";
@@ -36,171 +42,14 @@ const firstStart = starts[0];
 const lastStart = starts[starts.length - 1];
 /** Report dollars at the 2026-27 cap so seasons compare. */
 const TODAY_CAP = 164_961_000;
-const MAX_HORIZON = 3;
-const MIN_RECENT_POSSESSIONS = 500;
-const MAX_SHARE = 0.35;
 
-type YearRow = {
-  anchor: number;
-  horizon: number;
-  id: string;
-  name: string;
-  age: number;
-  share: number;
-  predWorth: number;
-  worthLow: number;
-  worthHigh: number;
-  predSurplus: number;
-  realWorth: number;
-  realSurplus: number;
-  carryWorth: number;
-  predWins: number;
-  realWins: number;
-  played: boolean;
-};
-type ContractRow = {
-  anchor: number;
-  id: string;
-  name: string;
-  age: number;
-  years: number;
-  salary: number;
-  predSurplus: number;
-  low: number;
-  high: number;
-  realSurplus: number;
-};
+const summarize = (rows: YearRow[]) => summarizeAt(rows, TODAY_CAP);
 
 const ageAt = (id: string, year: number): number | null => {
   const lines = histories.get(id)?.lines ?? [];
   const known = [...lines].reverse().find((l) => l.age != null && seasonStartYear(l.season) <= year);
   return known?.age != null ? known.age + (year - seasonStartYear(known.season)) : null;
 };
-
-function evaluateAnchor(anchor: number, fit: FittedModel, realFit: FittedModel) {
-  const years: YearRow[] = [];
-  const contracts: ContractRow[] = [];
-  const anchorCap = capFor(anchor)!;
-  const market = {
-    pricePerWinShare: fit.pricePerWinShare,
-    minimumShare: anchorCap.minimum / anchorCap.cap,
-    maxShare: MAX_SHARE,
-  };
-  for (const [id, h] of histories) {
-    const known = h.lines.filter((l) => seasonStartYear(l.season) <= anchor);
-    const base = baseRate(known, anchor, fit.params);
-    const age = ageAt(id, anchor);
-    if (!base || base.recentPossessions < MIN_RECENT_POSSESSIONS || age == null) continue;
-    const targets: number[] = [];
-    for (let y = anchor + 1; y <= Math.min(anchor + MAX_HORIZON, lastSalaried); y++) {
-      if (shareFor(id, y) == null) break;
-      targets.push(y);
-    }
-    if (!targets.length) continue;
-    const shares = new Map(targets.map((y) => [y, shareFor(id, y)!]));
-    const proj = projectSeasons(known, anchor, age, targets, shares, fit.params);
-    if (!proj) continue;
-    const input: ContractYearInput[] = targets.map((y) => ({
-      season: seasonLabel(y),
-      salary: shares.get(y)! * TODAY_CAP,
-      cap: TODAY_CAP,
-      option: null,
-      notGuaranteed: false,
-    }));
-    const value = valueContract(input, proj, market);
-    const anchorLine = lineAt(id, anchor);
-    const carryWins = anchorLine
-      ? Math.max(0, anchorLine.war1 - fit.replacementRate * anchorLine.possessions)
-      : 0;
-    let realTotal = 0;
-    value.years.forEach((v, i) => {
-      const y = targets[i];
-      const line = lineAt(id, y);
-      const wins = line ? Math.max(0, line.war1 - realFit.replacementRate * line.possessions) : 0;
-      const minimum = market.minimumShare * TODAY_CAP;
-      const realWorth = minimum + wins * market.pricePerWinShare * TODAY_CAP;
-      realTotal += realWorth - v.salary;
-      years.push({
-        anchor,
-        horizon: y - anchor,
-        id,
-        name: h.name,
-        age: age + (y - anchor),
-        share: shares.get(y)!,
-        predWorth: v.worth,
-        worthLow: v.worthLow,
-        worthHigh: v.worthHigh,
-        predSurplus: v.surplus,
-        realWorth,
-        realSurplus: realWorth - v.salary,
-        carryWorth: minimum + carryWins * market.pricePerWinShare * TODAY_CAP,
-        predWins: v.wins,
-        realWins: wins,
-        played: line != null,
-      });
-    });
-    contracts.push({
-      anchor,
-      id,
-      name: h.name,
-      age,
-      years: targets.length,
-      salary: value.totalSalary,
-      predSurplus: value.surplus,
-      low: value.surplusLow,
-      high: value.surplusHigh,
-      realSurplus: realTotal,
-    });
-  }
-  return { years, contracts };
-}
-
-// ---- Stats helpers
-const mean = (xs: number[]) => xs.reduce((a, b) => a + b, 0) / Math.max(1, xs.length);
-function corr(xs: number[], ys: number[]): number {
-  const mx = mean(xs);
-  const my = mean(ys);
-  let sxy = 0;
-  let sxx = 0;
-  let syy = 0;
-  xs.forEach((x, i) => {
-    sxy += (x - mx) * (ys[i] - my);
-    sxx += (x - mx) ** 2;
-    syy += (ys[i] - my) ** 2;
-  });
-  return sxy / Math.sqrt(sxx * syy);
-}
-const ranks = (xs: number[]) => {
-  const order = xs.map((x, i) => [x, i] as const).sort((a, b) => a[0] - b[0]);
-  const r = new Array<number>(xs.length);
-  order.forEach(([, i], k) => (r[i] = k));
-  return r;
-};
-const spearman = (xs: number[], ys: number[]) => corr(ranks(xs), ranks(ys));
-const rmse = (xs: number[], ys: number[]) => Math.sqrt(mean(xs.map((x, i) => (x - ys[i]) ** 2)));
-const M = (n: number) => Number((n / 1e6).toFixed(2));
-const r3 = (n: number) => Number(n.toFixed(3));
-
-function summarize(rows: YearRow[]) {
-  const pred = rows.map((r) => r.predSurplus);
-  const real = rows.map((r) => r.realSurplus);
-  const carry = rows.map((r) => r.carryWorth - r.share * TODAY_CAP);
-  return {
-    n: rows.length,
-    meanPred: M(mean(pred)),
-    meanReal: M(mean(real)),
-    rmseModel: M(rmse(pred, real)),
-    rmseCarry: M(rmse(carry, real)),
-    rmseMarket: M(rmse(pred.map(() => 0), real)),
-    corrModel: r3(corr(pred, real)),
-    corrCarry: r3(corr(carry, real)),
-    spearmanModel: r3(spearman(pred, real)),
-    spearmanCarry: r3(spearman(carry, real)),
-    coverage80: r3(mean(rows.map((r) => (r.realWorth >= r.worthLow - 1 && r.realWorth <= r.worthHigh + 1 ? 1 : 0)))),
-    belowLow: r3(mean(rows.map((r) => (r.realWorth < r.worthLow - 1 ? 1 : 0)))),
-    aboveHigh: r3(mean(rows.map((r) => (r.realWorth > r.worthHigh + 1 ? 1 : 0)))),
-  };
-}
 
 function tailHits(rows: YearRow[], key: "predSurplus" | "carry") {
   const val = (r: YearRow) => (key === "carry" ? r.carryWorth - r.share * TODAY_CAP : r.predSurplus);
@@ -306,7 +155,7 @@ function teamCheck(standings: TeamSeason[], fits: Map<number, FittedModel>) {
   }> = [];
   for (let t = firstStart + 2; t <= lastStart; t++) {
     const fit = fits.get(t - 1)!;
-    const possessionsOk = Object.values(fit.possessions).every(Number.isFinite);
+    const possessionsOk = Object.values(fit.possessions).every((v) => typeof v !== "number" || Number.isFinite(v));
     const season = seasonLabel(t);
     const teams = teamBySeason.get(season)!;
     const byTeam = new Map<string, { actual: number; projActualPoss: number; proj: number; projOk: boolean; payroll: number; payrollOk: boolean }>();
@@ -314,7 +163,7 @@ function teamCheck(standings: TeamSeason[], fits: Map<number, FittedModel>) {
       const line = lineAt(id, t)!;
       const h = histories.get(id)!;
       const known = h.lines.filter((l) => seasonStartYear(l.season) <= t - 1);
-      const base = baseRate(known, t - 1, fit.params);
+      const base = baseRate(known, t - 1, fit.params, shareFor(id, t));
       const age = ageAt(id, t - 1);
       const rate = base
         ? base.rate + (age != null ? Math.min(fit.aging.max, Math.max(fit.aging.min, fit.aging.intercept + fit.aging.slope * age)) : 0)
@@ -392,15 +241,9 @@ async function main() {
   const fits = new Map<number, FittedModel>();
   for (let a = firstStart + 1; a <= lastStart; a++) fits.set(a, fitModel(inputs, a));
   const finalFit = fits.get(lastStart)!;
-  // Two seasons are too few to fit playing time (no season-before-last), so those fits are unusable.
-  const possessionsFit = (f: FittedModel) => Object.values(f.possessions).every(Number.isFinite);
-  const anchors = [...fits.keys()].filter((a) => a < lastSalaried && possessionsFit(fits.get(a)!));
-
-  const outOfSample = anchors.map((a) => evaluateAnchor(a, fits.get(a)!, fits.get(a)!));
-  const inSample = anchors.map((a) => evaluateAnchor(a, finalFit, finalFit));
-  const years = outOfSample.flatMap((r) => r.years);
-  const contracts = outOfSample.flatMap((r) => r.contracts);
-  const yearsIn = inSample.flatMap((r) => r.years);
+  const oos = outOfSample(inputs, TODAY_CAP);
+  const { anchors, years, contracts } = oos;
+  const yearsIn = anchors.flatMap((a) => evaluateAnchor(inputs, a, finalFit, TODAY_CAP).years);
 
   const byHorizon = [1, 2, 3]
     .map((h) => ({ horizon: h, ...summarize(years.filter((r) => r.horizon === h)) }))
@@ -483,20 +326,44 @@ async function main() {
     contracts: contractSummary,
     bySalary: bucket(years, (r) => band(salaryBands, false)(r.share), salaryBands.map((b) => b[0])),
     byAge: bucket(years, (r) => band(ageBands, true)(r.age), ageBands.map((b) => b[0])),
+    coverageByHistory: (
+      [
+        ["Under 4,000 recent possessions", 0, 4000],
+        ["4,000-10,000", 4000, 10000],
+        ["10,000 and up", 10000, 1e9],
+      ] as Array<[string, number, number]>
+    ).map(([label, lo, hi]) => ({
+      group: label,
+      ...summarize(years.filter((r) => r.recentPossessions >= lo && r.recentPossessions < hi)),
+    })),
     picks: anchors.map((a) => pick(a, 10)),
     team,
   };
   writeFileSync(outPath, JSON.stringify(result, null, 1));
+  if (process.argv.includes("--rows")) writeFileSync(outPath.replace(/\.json$/, "-rows.json"), JSON.stringify(years));
 
   console.log(`contract-value eval: anchors ${result.anchors.join(", ")}, targets through ${result.targetsThrough}`);
   console.log("fits", result.fits);
-  console.table(byHorizon);
-  console.table(result.inSampleByHorizon);
-  console.table(byAnchor);
+  const brief = (r: ReturnType<typeof summarize>) =>
+    `n=${r.n} wins rmse ${r.rmseWins} (repeat ${r.rmseWinsCarry}) bias ${r.biasWins} crps ${r.crps} ` +
+    `corr ${r.corrModel} above/below ${r.aboveHigh}/${r.belowLow} $rmse ${r.rmseModel}M`;
+  for (const r of byHorizon) console.log(`h${r.horizon}`, brief(r));
+  for (const r of byAnchor) console.log(r.anchor, brief(r));
   console.log("tails", result.tails, "contracts", contractSummary);
   console.table(result.deciles);
   console.table(result.bySalary);
   console.table(result.byAge);
+  console.table(
+    result.coverageByHistory.map((g) => ({
+      group: g.group,
+      n: g.n,
+      rmseWins: g.rmseWins,
+      biasWins: g.biasWins,
+      crps: g.crps,
+      aboveHigh: g.aboveHigh,
+      belowLow: g.belowLow,
+    }))
+  );
   if ("error" in team) console.log("team check skipped:", team.error);
   else {
     const { rows, ...fitsOnly } = team;

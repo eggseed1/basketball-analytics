@@ -18,6 +18,7 @@ import {
   valueContract,
   type ContractYearInput,
 } from "../src/contracts/value-model";
+import { outOfSample, summarize } from "./lib/contract-value-eval";
 import { fitModel, loadInputs, looseName, readJson, REPLACEMENT_MAX_SHARE } from "./lib/contract-value-fit";
 
 const root = process.cwd();
@@ -201,6 +202,29 @@ const capStartYear = Math.min(
   ...Object.values(contractTeams).map((t) => seasonStartYear(t.seasons[0]))
 );
 
+// ---- Out-of-sample check: refit as of past seasons, score the salaries paid afterward
+const oos = outOfSample(inputs, capFor2(capStartYear));
+const testedOutOfSample = {
+  fitThrough: oos.anchors.map(seasonLabel),
+  checkedThrough: seasonLabel(oos.lastSalaried),
+  byHorizon: [1, 2]
+    .map((horizon) => {
+      const rows = oos.years.filter((r) => r.horizon === horizon);
+      if (!rows.length) return null;
+      const s = summarize(rows, capFor2(capStartYear));
+      return {
+        horizon,
+        n: s.n,
+        rmseWins: s.rmseWins,
+        repeatRmseWins: s.rmseWinsCarry,
+        aboveHigh: s.aboveHigh,
+        belowLow: s.belowLow,
+        corr: s.corrModel,
+      };
+    })
+    .filter((r) => r != null),
+};
+
 const out = {
   version: 1,
   generatedAt: new Date().toISOString(),
@@ -224,6 +248,7 @@ const out = {
     possessions,
     errorByHorizon: params.errorByHorizon,
     backtest: checks,
+    outOfSample: testedOutOfSample,
     contracts: valued.length,
   },
   players,

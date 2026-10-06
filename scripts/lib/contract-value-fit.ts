@@ -51,10 +51,29 @@ export type ContractValueInputs = {
   shareFor: (id: string, startYear: number) => number | null;
 };
 
+/** Games per team in seasons shorter than 82. */
+const SEASON_GAMES: Record<string, number> = { "2020-21": 72 };
+
 export function loadInputs(): ContractValueInputs {
-  const overlay = readJson<{ seasons: Record<string, OverlayRow[]> }>(
-    "src/data/runtime/drbl-overlay-snapshot.json"
-  ).seasons;
+  // Possessions and wins are put on an 82-game basis so a short season doesn't
+  // read as lost playing time or cheap wins.
+  const overlay = Object.fromEntries(
+    Object.entries(
+      readJson<{ seasons: Record<string, OverlayRow[]> }>("src/data/runtime/drbl-overlay-snapshot.json").seasons
+    ).map(([season, rows]) => {
+      const scale = 82 / (SEASON_GAMES[season] ?? 82);
+      if (scale === 1) return [season, rows];
+      return [
+        season,
+        rows.map((row) => {
+          const out = [...row] as OverlayRow;
+          out[5] = Math.round(Number(row[5]) * scale);
+          if (row[12] != null) out[12] = Number(row[12]) * scale;
+          return out;
+        }),
+      ];
+    })
+  ) as Record<string, OverlayRow[]>;
   const bref = readJson<{ seasons: Record<string, { perGame?: Array<{ n: string; age?: number }> }> }>(
     "src/data/runtime/bref-advanced-snapshot.json"
   ).seasons;
@@ -197,6 +216,16 @@ export function fitModel(inputs: ContractValueInputs, throughStartYear: number):
   }
   const leagueRate = leagueWins / leaguePoss;
 
+  // ---- Regression target by salary: WAR1 per possession against salary share, same season
+  const PRIOR_MAX_SHARE = 0.35;
+  const priorRows = salaried.filter((r) => r.possessions > 0);
+  const [priorIntercept, priorSlope] = weightedLeastSquares(
+    priorRows.map((r) => [1, Math.min(r.share, PRIOR_MAX_SHARE)]),
+    priorRows.map((r) => r.war1 / r.possessions),
+    priorRows.map((r) => r.possessions)
+  );
+  const priorByShare = { intercept: priorIntercept, slope: priorSlope, maxShare: PRIOR_MAX_SHARE };
+
   // ---- Aging: year-over-year change in WAR1 rate by age (delta method)
   const agingRows: number[][] = [];
   const agingY: number[] = [];
@@ -253,7 +282,7 @@ export function fitModel(inputs: ContractValueInputs, throughStartYear: number):
 
   // ---- Regression strength and season weights: grid search on next-season rate
   function rateError(weights: number[], K: number): number {
-    const p = { weights, regressionPossessions: K, leagueRate } as ProjectionParams;
+    const p = { weights, regressionPossessions: K, leagueRate, priorByShare } as ProjectionParams;
     let se = 0;
     let n = 0;
     for (let i = 1; i < seasons.length; i++) {
@@ -261,7 +290,7 @@ export function fitModel(inputs: ContractValueInputs, throughStartYear: number):
       for (const [id, h] of histories) {
         const actual = lineAt(id, t);
         if (!actual || actual.possessions < 1000) continue;
-        const base = baseRate(h.lines.filter((l) => seasonStartYear(l.season) < t), t - 1, p);
+        const base = baseRate(h.lines.filter((l) => seasonStartYear(l.season) < t), t - 1, p, shareFor(id, t));
         if (!base) continue;
         se += ((base.rate - actual.war1 / actual.possessions) * actual.possessions) ** 2;
         n += 1;
@@ -280,6 +309,7 @@ export function fitModel(inputs: ContractValueInputs, throughStartYear: number):
     weights: best.weights,
     regressionPossessions: best.K,
     leagueRate,
+    priorByShare,
     replacementRate,
     aging,
     possessions,

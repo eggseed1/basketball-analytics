@@ -32,7 +32,22 @@ export type ContractValueModel = {
   capGrowth: number;
   capKnownThrough: string;
   contracts: number;
+  weights: number[];
   backtest: Array<{ horizon: number; n: number; rmse: number; naiveRmse: number; coverage80: number }>;
+  /** Refit as of past seasons and scored on the salaries paid afterward. */
+  outOfSample: {
+    fitThrough: string[];
+    checkedThrough: string;
+    byHorizon: Array<{
+      horizon: number;
+      n: number;
+      rmseWins: number;
+      repeatRmseWins: number;
+      aboveHigh: number;
+      belowLow: number;
+      corr: number;
+    }>;
+  };
 };
 
 type SnapshotFile = {

@@ -65,23 +65,30 @@ function MissingNote({ reason, model }: { reason: ContractValueGap; model: Contr
   return <p className={cn(type.bodySm, "text-muted-foreground")}>{GAP_TEXT[reason](model)}</p>;
 }
 
+function listJoin(items: string[]): string {
+  if (items.length <= 1) return items.join("");
+  return `${items.slice(0, -1).join(", ")} and ${items[items.length - 1]}`;
+}
+
 function MethodNotes({ model }: { model: ContractValueModel }) {
-  const first = model.backtest[0];
+  const nextSeason = model.outOfSample.byHorizon.find((row) => row.horizon === 1);
   const capSeasonPrice = formatUsdCompact(model.pricePerWinShare * model.capSeasonCap);
   const priceFrom = model.priceSeasons[0];
   const priceTo = model.priceSeasons[model.priceSeasons.length - 1];
+  const weights = model.weights.map((w) => String(w));
   return (
     <MoreInfo>
       <p>
         Worth is what his projected DRBL wins would cost on the open market. We count wins above
-        a minimum-salary player in the same minutes and price them at what teams paid per win from{" "}
-        {priceFrom} to {priceTo}: {(model.pricePerWinShare * 100).toFixed(1)}% of the cap, about{" "}
-        {capSeasonPrice} in {model.capSeason}.
+        a minimum-salary player in the same minutes and price them at what teams paid per DRBL win
+        from {priceFrom} to {priceTo}: {(model.pricePerWinShare * 100).toFixed(1)}% of the cap,
+        about {capSeasonPrice} in {model.capSeason}.
       </p>
       <p>
-        Projections weight his last three seasons 3, 2 and 1, pull toward league average, then
-        adjust for age. Playing time comes from recent minutes, age and salary, since teams play
-        the players they pay. A season lost to injury still pulls the playing time down.
+        Projections weight his last {weights.length} seasons {listJoin(weights)}, newest first, and
+        pull toward what players at his salary usually produce, then adjust for age. Playing time
+        comes from recent minutes, age and salary, since teams play the players they pay. A season
+        lost to injury still pulls the playing time down.
       </p>
       <p>
         Surplus is worth minus salary. A team can always bench a player, so worth never drops
@@ -89,12 +96,15 @@ function MethodNotes({ model }: { model: ContractValueModel }) {
         walks when he could earn more. A team option or a non-guaranteed year leaves only the
         upside.
       </p>
-      {first ? (
+      {nextSeason ? (
         <p>
-          The range covers 8 of every 10 outcomes when we test the model on past seasons
-          ({Math.round(first.coverage80 * 100)}% one year out). One-year projections were off by
-          about {first.rmse.toFixed(1)} wins in a typical season, against{" "}
-          {first.naiveRmse.toFixed(1)} for a league-average guess.
+          To test it, we refit the model using only seasons through{" "}
+          {listJoin(model.outOfSample.fitThrough)}, valued what players were actually paid the
+          next season, and compared with what they did. The typical miss was{" "}
+          {nextSeason.rmseWins.toFixed(2)} wins, against {nextSeason.repeatRmseWins.toFixed(2)} for
+          assuming a player repeats his last season. {Math.round(nextSeason.aboveHigh * 100)}% of
+          players beat the top of the range. Fewer than {Math.max(1, Math.ceil(nextSeason.belowLow * 100))}%
+          fell below the bottom, since worth can&apos;t drop under the minimum salary.
         </p>
       ) : null}
       <p>
