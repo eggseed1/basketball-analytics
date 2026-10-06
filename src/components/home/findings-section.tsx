@@ -243,7 +243,7 @@ function InsightCard({ insight, asOf }: { insight: RecentInsight; asOf: string }
   return (
     <article className="relative flex min-w-0 flex-col overflow-hidden rounded-[11px] bg-foreground/[0.035] ring-1 ring-inset ring-foreground/[0.06]">
       <span aria-hidden className="h-[3px] w-full" style={{ background: accent }} />
-      <div className="flex flex-1 flex-col gap-2 px-3.5 py-3">
+      <div className="flex flex-1 flex-col gap-2 px-3.5 pb-3 pt-2.5">
         <div className="flex items-center justify-between gap-2 text-[11px]">
           <span className="font-bold uppercase tracking-[0.1em]" style={{ color: accent }}>
             {categoryLabel(insight)}
@@ -280,7 +280,7 @@ function InsightCard({ insight, asOf }: { insight: RecentInsight; asOf: string }
                 <div className="min-w-0 flex-1">
                   <h3 className="sr-only">{insight.headline}</h3>
                   <p
-                    className="text-[32px] font-black leading-none tabular-nums tracking-tight"
+                    className="text-[30px] font-black leading-none tabular-nums tracking-tight"
                     style={{ color: accent }}
                   >
                     {hero.value}
@@ -288,18 +288,20 @@ function InsightCard({ insight, asOf }: { insight: RecentInsight; asOf: string }
                   <p className="mt-1 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
                     {hero.label}
                   </p>
-                  <p className="mt-1 text-[12px] text-muted-foreground">
-                    <ScoreLink href={gameHref} label={gameScoreLabel(game)} />
-                  </p>
                 </div>
               ) : (
                 <h3 className="min-w-[8rem] flex-1 text-[16px] font-bold leading-snug tracking-tight">
                   {insight.headline}
                 </h3>
               )}
-              <div className="flex shrink-0 -space-x-2">
-                <TeamLogo teamKey={game.away.teamId} size="sm" />
-                <TeamLogo teamKey={game.home.teamId} size="sm" />
+              <div className="ml-auto flex shrink-0 flex-col items-end gap-1">
+                <div className="flex -space-x-2">
+                  <TeamLogo teamKey={game.away.teamId} size="sm" />
+                  <TeamLogo teamKey={game.home.teamId} size="sm" />
+                </div>
+                <p className="text-[12px] text-muted-foreground">
+                  <ScoreLink href={gameHref} label={gameScoreLabel(game)} />
+                </p>
               </div>
             </>
           ) : (

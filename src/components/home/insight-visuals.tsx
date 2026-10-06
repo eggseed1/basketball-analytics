@@ -156,11 +156,11 @@ export function InsightLeadWorm({
   }
 
   const W = 340;
-  const H = 104;
+  const H = 86;
   const padX = 34;
   const padRight = 22;
-  const top = 20;
-  const bottom = H - 36;
+  const top = 18;
+  const bottom = H - 30;
   const x = (i: number) => padX + (i * (W - padX - padRight)) / (series.length - 1);
   const y = (m: number) => top + ((hi - m) / (hi - lo || 1)) * (bottom - top);
   const mid = y(0);
@@ -286,7 +286,7 @@ export function InsightQuarterStack({
             <div
               className="flex w-full shrink-0 flex-col gap-px overflow-hidden rounded-[4px]"
               style={{
-                height: Math.max(4, Math.round((total / max) * 52)),
+                height: Math.max(4, Math.round((total / max) * 36)),
                 opacity: focusPeriod == null || i === best ? 1 : 0.35,
               }}
             >
@@ -763,10 +763,10 @@ export function InsightFlowChart({ game }: { game: RecentInsightGame }) {
   const lo = Math.min(...margins, 0) < 0 ? -reach : -4;
 
   const W = 340;
-  const H = 104;
+  const H = 86;
   const padX = 34;
   const padRight = 26;
-  const top = 18;
+  const top = 16;
   const bottom = H - 22;
   const x = (t: number) => padX + (Math.min(t, total) / total) * (W - padX - padRight);
   const y = (m: number) => top + ((hi - m) / (hi - lo || 1)) * (bottom - top);
@@ -903,7 +903,7 @@ export function InsightPeriodBars({
 }) {
   const max = Math.max(...periodPoints, 1);
   return (
-    <div className="flex h-[64px] items-end gap-3">
+    <div className="flex items-end gap-3">
       {periodPoints.map((pts, i) => (
         <div key={i} className="flex h-full flex-1 flex-col items-center justify-end gap-1">
           <span className={cn("text-[13px] tabular-nums", i === focusPeriod ? "font-black" : "font-semibold text-muted-foreground")}>
@@ -912,7 +912,7 @@ export function InsightPeriodBars({
           <div
             className="w-full rounded-[4px]"
             style={{
-              height: `${Math.max(3, (pts / max) * 62)}px`,
+              height: `${Math.max(3, (pts / max) * 26)}px`,
               background: color,
               opacity: i === focusPeriod ? 1 : 0.3,
             }}
