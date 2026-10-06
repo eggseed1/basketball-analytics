@@ -69,8 +69,8 @@ export function GlassSurface({
         ? `linear-gradient(135deg, ${stop(a, edge)} 0%, ${stop(a, inner)} 38%, ${veil} 100%)`
         : veil;
   const insetShadow = resolvedDark
-    ? "inset 0 1px 0 rgba(255,255,255,0.06), 0 1px 2px rgb(0 0 0 / 28%), 0 10px 28px rgb(0 0 0 / 24%)"
-    : "inset 0 1px 0 rgba(255,255,255,0.48), 0 1px 2px rgb(0 0 0 / 2.5%), 0 6px 20px rgb(0 0 0 / 4%)";
+    ? "inset 0 1px 0 rgba(255,255,255,0.035), 0 1px 2px rgb(0 0 0 / 24%), 0 10px 28px rgb(0 0 0 / 20%)"
+    : "inset 0 1px 0 rgba(255,255,255,0.28), 0 1px 2px rgb(0 0 0 / 2%), 0 6px 20px rgb(0 0 0 / 3%)";
 
   if (effect === "css") {
     const solid = surface === "solid";
@@ -95,8 +95,8 @@ export function GlassSurface({
           border: solid
             ? undefined
             : resolvedDark
-              ? "1px solid rgba(255,255,255,0.075)"
-              : "1px solid rgba(255,255,255,0.4)",
+              ? "1px solid rgba(255,255,255,0.045)"
+              : "1px solid rgba(255,255,255,0.2)",
           boxShadow: solid ? undefined : insetShadow,
           ...style,
         },

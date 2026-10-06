@@ -171,8 +171,8 @@ export function HomeGameStripCard({ game }: { game: GameSummary }) {
         className="strip-orb"
         style={
           {
-            left: -40,
-            top: 14,
+            left: -60,
+            top: 2,
             background: matchup.awayWash,
             "--orb-strength": orbStrength("away"),
           } as CSSProperties
@@ -183,8 +183,8 @@ export function HomeGameStripCard({ game }: { game: GameSummary }) {
         className="strip-orb strip-orb--b"
         style={
           {
-            right: -40,
-            bottom: -6,
+            right: -60,
+            bottom: -16,
             background: matchup.homeWash,
             "--orb-strength": orbStrength("home"),
           } as CSSProperties

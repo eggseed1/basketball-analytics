@@ -255,7 +255,7 @@ function InsightCard({
   return (
     <article
       className={cn(
-        "relative flex min-w-0 flex-col overflow-hidden rounded-[14px] bg-foreground/[0.035] ring-1 ring-inset ring-foreground/[0.06]",
+        "relative flex min-w-0 flex-col overflow-hidden rounded-[11px] bg-foreground/[0.035] ring-1 ring-inset ring-foreground/[0.06]",
         wide && "sm:col-span-2"
       )}
     >

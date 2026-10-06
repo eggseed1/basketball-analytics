@@ -99,10 +99,10 @@
 
   /* ── Material 2 — standard glass (sports-card) ── */
   --material-standard-bg: rgb(255 255 255 / 64%);
-  --material-standard-border: rgb(255 255 255 / 34%);
+  --material-standard-border: rgb(255 255 255 / 20%);
   --material-standard-blur: var(--blur-glass-lg);
   --material-standard-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 34%),
+    inset 0 1px 0 rgb(255 255 255 / 22%),
     0 1px 2px rgb(0 0 0 / 2.5%),
     0 6px 20px rgb(0 0 0 / 3.5%);
 
@@ -179,9 +179,9 @@
     0 1px 2px rgb(0 0 0 / 22%);
 
   --material-standard-bg: rgb(var(--glass-rgb) / 80%);
-  --material-standard-border: rgb(255 255 255 / 7%);
+  --material-standard-border: rgb(255 255 255 / 4.5%);
   --material-standard-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 5%),
+    inset 0 1px 0 rgb(255 255 255 / 3.5%),
     0 1px 2px rgb(0 0 0 / 28%),
     0 10px 28px rgb(0 0 0 / 24%);
 

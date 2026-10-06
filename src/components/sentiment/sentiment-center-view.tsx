@@ -44,7 +44,7 @@ function NarrativeCollectionCard({
     <article
       id={`narrative-${narrative.slug}`}
       className={cn(
-        "flex min-w-0 flex-col gap-3 rounded-[14px] bg-foreground/[0.035] p-4 ring-1 ring-inset ring-foreground/[0.06]",
+        "flex min-w-0 flex-col gap-3 rounded-[11px] bg-foreground/[0.035] p-4 ring-1 ring-inset ring-foreground/[0.06]",
         highlighted && "ring-2 ring-primary/35"
       )}
     >
