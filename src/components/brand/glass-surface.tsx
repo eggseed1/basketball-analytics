@@ -67,26 +67,30 @@ export function GlassSurface({
   honor?: GlassSurfaceHonor;
   style?: CSSProperties;
 } & Omit<HTMLAttributes<HTMLElement>, "children" | "className" | "style">) {
-  const { resolvedDark, surface } = useOwnerTheme();
+  // Light/dark values come from CSS vars (globals.css) so server HTML and the
+  // first client render produce the same inline style in either theme.
+  const { surface } = useOwnerTheme();
   const tintScale = useContext(GlassTintScale);
   // Same fill as `.sports-card`, so opaque washes mixed from --card sit flush.
   const veil = "var(--material-standard-bg)";
   const a = accentColor?.trim() || null;
   const b = accentColorB?.trim() || null;
-  const stop = (color: string, amount: number) =>
-    `color-mix(in oklab, ${color} ${amount}%, ${veil})`;
   // Whisper of team color only - frost stays dominant (not the opaque matchup wash).
-  const edge = Number(((resolvedDark ? 9 : 7) * tintScale).toFixed(2));
-  const inner = Number(((resolvedDark ? 4 : 3) * tintScale).toFixed(2));
-  const tintColor =
-    a && b
-      ? `linear-gradient(90deg, ${stop(a, edge)} 0%, ${stop(a, inner)} 46%, ${stop(b, inner)} 54%, ${stop(b, edge)} 100%)`
-      : a
-        ? `linear-gradient(135deg, ${stop(a, edge)} 0%, ${stop(a, inner)} 38%, ${veil} 100%)`
-        : veil;
-  const insetShadow = resolvedDark
-    ? "inset 0 1px 0 rgba(255,255,255,0.035), 0 1px 2px rgb(0 0 0 / 24%), 0 10px 28px rgb(0 0 0 / 20%)"
-    : "inset 0 1px 0 rgba(255,255,255,0.28), 0 1px 2px rgb(0 0 0 / 2%), 0 6px 20px rgb(0 0 0 / 3%)";
+  const amount = (token: string) =>
+    tintScale === 1 ? `var(${token})` : `calc(var(${token}) * ${tintScale})`;
+  const edge = amount("--glass-tint-edge");
+  const inner = amount("--glass-tint-inner");
+  const gradient = (base: string) => {
+    const stop = (color: string, pct: string) =>
+      `color-mix(in oklab, ${color} ${pct}, ${base})`;
+    if (a && b) {
+      return `linear-gradient(90deg, ${stop(a, edge)} 0%, ${stop(a, inner)} 46%, ${stop(b, inner)} 54%, ${stop(b, edge)} 100%)`;
+    }
+    if (a) {
+      return `linear-gradient(135deg, ${stop(a, edge)} 0%, ${stop(a, inner)} 38%, ${base} 100%)`;
+    }
+    return base;
+  };
 
   if (effect === "css") {
     const solid = surface === "solid";
@@ -101,19 +105,15 @@ export function GlassSurface({
         ),
         style: {
           overflow: overflowVisible ? "visible" : "hidden",
-          background: solid ? "var(--card)" : tintColor,
+          background: solid ? "var(--card)" : gradient(veil),
           backdropFilter: solid
             ? undefined
             : `saturate(150%) blur(${backdropBlur}px)`,
           WebkitBackdropFilter: solid
             ? undefined
             : `saturate(150%) blur(${backdropBlur}px)`,
-          border: solid
-            ? undefined
-            : resolvedDark
-              ? "1px solid rgba(255,255,255,0.045)"
-              : "1px solid rgba(255,255,255,0.2)",
-          boxShadow: solid ? undefined : insetShadow,
+          border: solid ? undefined : "var(--glass-edge-border)",
+          boxShadow: solid ? undefined : "var(--glass-edge-shadow)",
           ...style,
         },
       },
@@ -122,20 +122,8 @@ export function GlassSurface({
   }
 
   // Liquid heroes keep a thinner veil so SVG displacement reads clearly.
-  const liquidVeil = resolvedDark
-    ? "rgb(var(--glass-rgb) / 40%)"
-    : "rgba(255, 255, 255, 0.22)";
-  const liquidStop = (color: string, amount: number) =>
-    `color-mix(in oklab, ${color} ${amount}%, ${liquidVeil})`;
-  const liquidTint =
-    a && b
-      ? `linear-gradient(90deg, ${liquidStop(a, edge)} 0%, ${liquidStop(a, inner)} 46%, ${liquidStop(b, inner)} 54%, ${liquidStop(b, edge)} 100%)`
-      : a
-        ? `linear-gradient(135deg, ${liquidStop(a, edge)} 0%, ${liquidStop(a, inner)} 38%, ${liquidVeil} 100%)`
-        : liquidVeil;
-  const liquidInset = resolvedDark
-    ? "inset 0 1px 0 rgba(255,255,255,0.07)"
-    : "inset 0 1px 0 rgba(255,255,255,0.32)";
+  const liquidTint = gradient("var(--glass-liquid-veil)");
+  const liquidInset = "var(--glass-liquid-inset)";
 
   return (
     <LiquidGlass
