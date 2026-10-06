@@ -13,6 +13,8 @@ import { AppLink } from "@/components/ui/app-link";
 import { HotColdColumns } from "@/components/explore/hot-cold-board";
 import { AboveNormPanel } from "@/components/home/above-norm-panel";
 import { FindingsSection } from "@/components/home/findings-section";
+import { InjuryReportPanel } from "@/components/home/injury-report-panel";
+import { LeagueMovesPanel } from "@/components/home/league-moves-panel";
 import { HomeStandingsPanel } from "@/components/home/home-standings-panel";
 import { SentimentMoversPanel } from "@/components/home/sentiment-movers-panel";
 import { TopPerformersPanel } from "@/components/home/top-performers-panel";
@@ -148,6 +150,24 @@ async function HomeAboveNorm() {
   return <AboveNormPanel nights={getBundledAboveNorm()} />;
 }
 
+const SIDEBAR_FEED_BUDGET_MS = 4_500;
+
+async function HomeInjuries() {
+  const { getInjuryReport } = await import("@/data/queries/injury-report");
+  const { withBudget } = await import("@/data/queries/budget");
+  const { value } = await withBudget(getInjuryReport(), SIDEBAR_FEED_BUDGET_MS, null);
+  if (!value) return null;
+  const today = new Intl.DateTimeFormat("en-CA", { timeZone: "America/New_York" }).format(new Date());
+  return <InjuryReportPanel entries={value.entries} today={today} />;
+}
+
+async function HomeLeagueMoves() {
+  const { getLeagueMoves } = await import("@/data/queries/league-moves");
+  const { withBudget } = await import("@/data/queries/budget");
+  const { value } = await withBudget(getLeagueMoves(), SIDEBAR_FEED_BUDGET_MS, []);
+  return <LeagueMovesPanel moves={value} />;
+}
+
 const BRACKET_BUDGET_MS = 2_500;
 
 async function HomeBracket({ season }: { season: string }) {
@@ -203,6 +223,18 @@ function renderModule(id: HomeModuleId, moment: HomeSeasonMoment, season: string
       return (
         <Suspense key={id} fallback={<BlockSkeleton className="h-48" />}>
           <HomeAboveNorm />
+        </Suspense>
+      );
+    case "injuries":
+      return (
+        <Suspense key={id} fallback={<BlockSkeleton className="h-64" />}>
+          <HomeInjuries />
+        </Suspense>
+      );
+    case "league-moves":
+      return (
+        <Suspense key={id} fallback={<BlockSkeleton className="h-56" />}>
+          <HomeLeagueMoves />
         </Suspense>
       );
     case "top-performers":

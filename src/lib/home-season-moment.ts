@@ -230,6 +230,8 @@ export type HomeModuleId =
   | "standings-race"
   | "findings"
   | "above-norm"
+  | "injuries"
+  | "league-moves"
   | "top-performers"
   | "hot-cold"
   | "transactions"
@@ -250,49 +252,49 @@ const LAYOUTS: Record<HomeSeasonPhase, HomeLayout> = {
   "draft-free-agency": {
     top: ["moment"],
     main: ["transactions", "news", "sentiment"],
-    side: ["watchlist", "top-performers", "standings"],
+    side: ["watchlist", "league-moves", "injuries", "top-performers", "standings"],
     bottom: [],
   },
   offseason: {
     top: ["moment"],
     main: ["transactions", "news", "sentiment"],
-    side: ["watchlist", "top-performers", "standings"],
+    side: ["watchlist", "league-moves", "injuries", "top-performers", "standings"],
     bottom: [],
   },
   preseason: {
     top: ["moment", "calendar"],
     main: ["findings", "transactions", "news", "sentiment"],
-    side: ["watchlist", "top-performers", "standings", "above-norm"],
+    side: ["watchlist", "top-performers", "standings", "above-norm", "injuries", "league-moves"],
     bottom: [],
   },
   "opening-weeks": {
     top: ["phase-bar", "calendar"],
     main: ["findings", "watchlist", "sentiment", "news"],
-    side: ["standings", "above-norm", "top-performers", "transactions"],
+    side: ["standings", "above-norm", "injuries", "league-moves", "top-performers", "transactions"],
     bottom: ["hot-cold"],
   },
   "regular-season": {
     top: ["phase-bar", "calendar"],
     main: ["findings", "watchlist", "sentiment", "news"],
-    side: ["standings", "above-norm", "top-performers", "transactions"],
+    side: ["standings", "above-norm", "injuries", "league-moves", "top-performers", "transactions"],
     bottom: ["hot-cold"],
   },
   "stretch-run": {
     top: ["phase-bar", "calendar"],
     main: ["standings-race", "findings", "watchlist", "news"],
-    side: ["above-norm", "top-performers", "sentiment", "transactions"],
+    side: ["above-norm", "injuries", "league-moves", "top-performers", "sentiment", "transactions"],
     bottom: ["hot-cold"],
   },
   "play-in": {
     top: ["phase-bar", "calendar", "bracket"],
     main: ["findings", "watchlist", "news", "sentiment"],
-    side: ["standings", "above-norm", "top-performers", "transactions"],
+    side: ["standings", "above-norm", "injuries", "league-moves", "top-performers", "transactions"],
     bottom: [],
   },
   playoffs: {
     top: ["phase-bar", "calendar", "bracket"],
     main: ["findings", "watchlist", "news", "sentiment"],
-    side: ["above-norm", "top-performers", "transactions"],
+    side: ["above-norm", "injuries", "league-moves", "top-performers", "transactions"],
     bottom: [],
   },
 };
