@@ -222,7 +222,10 @@ async function main() {
     const index = await buildTransactionEventIndex({ force: true });
     if (index.events.length) {
       const sample = index.events[0]!;
-      assert.ok(sample.source.includes("espn"));
+      // The archive merges ESPN with NBA.com movement and curated gap fills; the newest
+      // event can come from any of them, but each must keep its source.
+      assert.ok(sample.source);
+      assert.ok(index.events.some((e) => e.source?.includes("espn")));
       assert.ok(sample.description);
       assert.ok(sample.teamId);
       // Never invent player ids on events
