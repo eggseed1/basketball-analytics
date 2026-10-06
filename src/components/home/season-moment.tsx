@@ -150,24 +150,25 @@ export function SeasonMomentCard({ moment }: { moment: HomeSeasonMoment }) {
   if (phase === "preseason") {
     return (
       <section
-        aria-label="Preseason"
-        className={cn(
-          type.caption,
-          "sports-card flex flex-wrap items-baseline gap-x-3 gap-y-0.5 px-4 py-2.5"
-        )}
+        aria-label={`${season} preseason`}
+        className="flex flex-wrap items-baseline gap-x-3 gap-y-1 border-l-[3px] border-[var(--ring)] py-1 pl-3.5"
       >
-        <span className="font-bold uppercase tracking-[0.1em]">{season} preseason</span>
-        <span>
+        <span className={cn(type.title, "font-bold tracking-tight")}>
           {marks.opener && daysToOpener != null
-            ? `Opening night ${inDays(daysToOpener)} (${longDate(marks.opener)})`
+            ? `Season starts ${inDays(daysToOpener)}`
             : "Preseason is underway"}
         </span>
-        <span className="text-muted-foreground">
-          Doesn&apos;t count toward records or stats.
+        {marks.opener && daysToOpener != null ? (
+          <span className={cn(type.bodySm, "text-muted-foreground")}>
+            {longDate(marks.opener)}
+          </span>
+        ) : null}
+        <span className={cn(type.caption, "text-muted-foreground")}>
+          Preseason games don&apos;t count toward records or stats.
         </span>
         <AppLink
           href="/scores"
-          className="font-semibold underline-offset-4 hover:underline sm:ml-auto"
+          className={cn(type.bodySm, "font-semibold underline-offset-4 hover:underline sm:ml-auto")}
         >
           Preseason scores →
         </AppLink>
