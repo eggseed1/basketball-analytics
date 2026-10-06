@@ -51,7 +51,18 @@ function playByPlayLagNote(
     }
   }
   if (live - elapsedGameSeconds(last.period, last.clockSeconds) < PBP_LAG_NOTE_SECONDS) return null;
-  return `Play-by-play for this game stops at ${periodLabel(last.period)} ${last.clock} while the game is at ${periodLabel(analysis.period!)} ${analysis.displayClock}. Leads, runs, possessions, game flow and shots below only cover plays up to that point.`;
+  const period = analysis.period!;
+  const atBreak =
+    analysis.status === "halftime" ||
+    analysis.status === "period_break" ||
+    elapsedFromDisplayClock(period, analysis.displayClock) === elapsedGameSeconds(period, 0);
+  // The summary clock trails the scoreboard in the header, so name the quarter only.
+  const gameAt = !atBreak
+    ? `in ${periodLabel(period)}`
+    : period === 2
+      ? "at halftime"
+      : `at the end of ${periodLabel(period)}`;
+  return `Play-by-play for this game stops at ${periodLabel(last.period)} ${last.clock} while the game is ${gameAt}. Leads, runs, possessions, game flow and shots below only cover plays up to that point.`;
 }
 
 const STATS_PENDING_NOTE =

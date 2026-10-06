@@ -21,8 +21,35 @@ import {
   type SideTally,
   type StatTick,
 } from "@/lib/games/court-events";
-import { isLiveLikeStatus, type GameStatusKind } from "@/lib/game-status";
+import { elapsedGameSeconds, isLiveLikeStatus, type GameStatusKind } from "@/lib/game-status";
 import { cn } from "@/lib/utils";
+
+function latestPlay(events: PlayByPlayEvent[]): PlayByPlayEvent | null {
+  let last: PlayByPlayEvent | null = null;
+  let lastT = -1;
+  for (const e of events) {
+    const t = elapsedGameSeconds(e.period, e.clockSeconds);
+    if (t >= lastT) {
+      last = e;
+      lastT = t;
+    }
+  }
+  return last;
+}
+
+/** The set that reaches later in the game; the polled set on a tie, since it can carry corrections. */
+function fresherEvents(
+  fromPage: PlayByPlayEvent[],
+  polled: PlayByPlayEvent[] | null
+): PlayByPlayEvent[] {
+  if (!polled?.length) return fromPage;
+  const a = latestPlay(fromPage);
+  const b = latestPlay(polled);
+  if (!a || !b) return a ? fromPage : polled;
+  const ta = elapsedGameSeconds(a.period, a.clockSeconds);
+  const tb = elapsedGameSeconds(b.period, b.clockSeconds);
+  return ta > tb ? fromPage : polled;
+}
 
 type Mode = "shots" | "game";
 export type ShotChartPlayer = { playerId: string; name: string | null; side: Side };
@@ -237,7 +264,11 @@ export function GameShotChart({
   players?: ShotChartPlayer[];
 }) {
   const live = isLiveLikeStatus(status as GameStatusKind);
-  const [events, setEvents] = useState(initialEvents);
+  // The route re-renders with fresh plays while live, and this chart also polls;
+  // show whichever set reaches later so the two never fall out of step.
+  const [polled, setPolled] = useState<PlayByPlayEvent[] | null>(null);
+  const events = useMemo(() => fresherEvents(initialEvents, polled), [initialEvents, polled]);
+  const lastPlay = useMemo(() => latestPlay(events), [events]);
   const { court, ticks, marks, fga } = useMemo(
     () => buildCourtEvents(events, homeLabel, awayLabel),
     [events, homeLabel, awayLabel]
@@ -326,9 +357,7 @@ export function GameShotChart({
         if (!res.ok) return;
         const body = (await res.json()) as { data?: { events?: PlayByPlayEvent[] } };
         const next = body.data?.events;
-        if (!stopped && next?.length) {
-          setEvents((prev) => (next.length >= prev.length ? next : prev));
-        }
+        if (!stopped && next?.length) setPolled(next);
       } catch {
         // Keep the last good set; the next poll retries.
       }
@@ -733,7 +762,9 @@ export function GameShotChart({
           <span className={cn(type.caption, "block text-muted-foreground")}>
             {cutoff == null && !playing
               ? live
-                ? "Live"
+                ? lastPlay
+                  ? `Plays through ${periodName(lastPlay.period)} ${lastPlay.clock}`
+                  : "Live"
                 : "Final"
               : mark
                 ? `${periodName(mark.period)} ${mark.clock}`
@@ -941,7 +972,7 @@ export function GameShotChart({
           {nowT < endT ? (
             <span
               aria-hidden
-              title="Not played yet"
+              title="No plays logged past this point yet"
               className="pointer-events-none absolute top-1/2 right-0 h-1.5 -translate-y-1/2 rounded-r-full bg-[repeating-linear-gradient(135deg,var(--border)_0_3px,transparent_3px_6px)]"
               style={{ left: `${(nowT / endT) * 100}%` }}
             />
