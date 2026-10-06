@@ -8,8 +8,10 @@ import {
 import { fetchRecentScoreboardGames } from "@/data/providers/nba/scoreboard-client";
 import { getGameBoxScore } from "@/data/queries/games";
 import type { Game, GameBoxScore } from "@/data/types";
+import { priorSeasonForStats } from "@/lib/player-board-season";
 import {
   buildRecentInsights,
+  type PlayerBaseline,
   type RecentInsight,
   type SlateGameInput,
   type SlatePlayerLine,
@@ -46,7 +48,46 @@ function slateInput(g: Game): SlateGameInput {
   };
 }
 
-function linesFromBox(g: Game, box: GameBoxScore): SlatePlayerLine[] {
+type BaselineLookup = (playerId: string) => PlayerBaseline | null;
+
+/**
+ * Per-game averages keyed by ESPN athlete id. A player's current season wins
+ * once it has enough games; otherwise the prior full season stands in.
+ */
+async function loadBaselines(season: string): Promise<BaselineLookup> {
+  const { getBundledBrefPeerBoard } = await import("@/data/runtime/bref-advanced-snapshot");
+  const prior = priorSeasonForStats(season);
+  const index = (s: string) => {
+    const map = new Map<string, PlayerBaseline>();
+    for (const row of getBundledBrefPeerBoard(s)) {
+      const gp = row.gamesPlayed;
+      if (!/^\d+$/.test(row.playerId) || !(gp > 0)) continue;
+      map.set(row.playerId, {
+        season: s,
+        games: gp,
+        minutes: row.minutes / gp,
+        points: row.points / gp,
+        rebounds: row.rebounds / gp,
+        assists: row.assists / gp,
+        threePm: row.threePointersMade / gp,
+      });
+    }
+    return map;
+  };
+  const current = index(season);
+  const previous = prior !== season ? index(prior) : new Map<string, PlayerBaseline>();
+  return (id) => {
+    const now = current.get(id);
+    if (now && now.games >= 20) return now;
+    return previous.get(id) ?? null;
+  };
+}
+
+function linesFromBox(
+  g: Game,
+  box: GameBoxScore,
+  baselineFor: BaselineLookup
+): SlatePlayerLine[] {
   const homeAbbr = g.homeTeamAbbr ?? "HOME";
   const awayAbbr = g.awayTeamAbbr ?? "AWAY";
   const homeWon = (g.homeScore ?? 0) > (g.awayScore ?? 0);
@@ -79,6 +120,7 @@ function linesFromBox(g: Game, box: GameBoxScore): SlatePlayerLine[] {
       ftm: p.freeThrowsMade ?? 0,
       fta: p.freeThrowsAttempted ?? 0,
       seasonPpg: null,
+      baseline: baselineFor(String(p.playerId)),
     });
   }
   return out;
@@ -96,6 +138,7 @@ async function buildLive(season: string): Promise<LiveRecentInsights | null> {
   const pool = preseason ? finals : official;
   const dates = [...new Set(pool.map((g) => g.gameDate))].sort((a, b) => b.localeCompare(a));
 
+  const baselineFor = await loadBaselines(season).catch((): BaselineLookup => () => null);
   const boxes = new Map<string, SlatePlayerLine[]>();
   const loadLines = async (games: Game[]) => {
     await Promise.all(
@@ -103,7 +146,7 @@ async function buildLive(season: string): Promise<LiveRecentInsights | null> {
         .filter((g) => !boxes.has(g.id))
         .map(async (g) => {
           const box = await getGameBoxScore(g.id).catch(() => null);
-          boxes.set(g.id, box ? linesFromBox(g, box) : []);
+          boxes.set(g.id, box ? linesFromBox(g, box, baselineFor) : []);
         })
     );
   };
@@ -136,7 +179,7 @@ export async function getLiveRecentInsights(): Promise<LiveRecentInsights | null
   const season = canonicalSeasonFromStartYear(currentNbaStartYear());
   try {
     return await sharedGetOrSet(
-      `recent-insights-live:${season}`,
+      `recent-insights-live:v2:${season}`,
       { ttlMs: CACHE_TTL_MS, staleMs: CACHE_STALE_MS, tags: ["recent-insights-live"] },
       () => buildLive(season)
     );

@@ -4,6 +4,8 @@
  */
 
 export type RecentInsightCategory =
+  | "PLAYER · ABOVE HIS NORM"
+  | "PLAYER · BIG NIGHT"
   | "PLAYER · SCORING"
   | "PLAYER · PLAYMAKING"
   | "PLAYER · REBOUNDING"
@@ -20,6 +22,7 @@ export type RecentInsightCategory =
 
 /** Which number the card is about; drives what the visual emphasizes. */
 export type RecentInsightFocus =
+  | "surprise"
   | "points"
   | "efficiency"
   | "rebounds"
@@ -52,7 +55,23 @@ export type RecentInsightStatLine = {
   ftm: number;
   fta: number;
   seasonPpg?: number | null;
+  baseline?: PlayerBaseline | null;
+  /** The stat a surprise card is about. */
+  surpriseStat?: SurpriseStat;
 };
+
+/** Per-game averages from one full season, used to judge a single game. */
+export type PlayerBaseline = {
+  season: string;
+  games: number;
+  minutes: number;
+  points: number;
+  rebounds: number;
+  assists: number;
+  threePm: number;
+};
+
+export type SurpriseStat = "points" | "rebounds" | "assists" | "threePm";
 
 export type RecentInsightGameSide = {
   teamId: string;
@@ -93,6 +112,7 @@ export type RecentInsight = {
   priority: number;
   /** Soft diversity bucket for selection. */
   bucket:
+    | "surprise"
     | "player"
     | "team"
     | "game"
@@ -143,6 +163,8 @@ export type SlatePlayerLine = {
   fta: number;
   /** Season PPG when known (for context). */
   seasonPpg?: number | null;
+  /** Full-season per-game averages; absent for rookies and thin samples. */
+  baseline?: PlayerBaseline | null;
 };
 
 export type RecentInsightsBuildOptions = {
@@ -218,7 +240,48 @@ function statLineOf(line: SlatePlayerLine): RecentInsightStatLine {
     ftm: line.ftm,
     fta: line.fta,
     seasonPpg: line.seasonPpg ?? null,
+    baseline: line.baseline ?? null,
   };
+}
+
+/** A baseline needs this many games before one night is judged against it. */
+const MIN_BASELINE_GAMES = 20;
+
+const SURPRISE_RULES: Array<{
+  stat: SurpriseStat;
+  label: string;
+  word: string;
+  /** Low averages are floored so a 1-to-4 jump doesn't read as 300%. */
+  floor: number;
+  minDiff: number;
+  minValue: number;
+}> = [
+  { stat: "points", label: "PTS", word: "points", floor: 6, minDiff: 10, minValue: 18 },
+  { stat: "rebounds", label: "REB", word: "rebounds", floor: 3, minDiff: 7, minValue: 11 },
+  { stat: "assists", label: "AST", word: "assists", floor: 2, minDiff: 6, minValue: 9 },
+  { stat: "threePm", label: "3PM", word: "threes", floor: 1, minDiff: 4, minValue: 5 },
+];
+
+export function surpriseRule(stat: SurpriseStat) {
+  return SURPRISE_RULES.find((r) => r.stat === stat)!;
+}
+
+/** The stat furthest above the player's own norm, scaled by that norm. */
+function biggestSurprise(line: SlatePlayerLine) {
+  const base = line.baseline;
+  if (!base || base.games < MIN_BASELINE_GAMES) return null;
+  let best: { rule: (typeof SURPRISE_RULES)[number]; value: number; avg: number; score: number } | null =
+    null;
+  for (const rule of SURPRISE_RULES) {
+    const value = line[rule.stat];
+    const avg = base[rule.stat];
+    if (!Number.isFinite(value) || !Number.isFinite(avg)) continue;
+    const diff = value - avg;
+    if (diff < rule.minDiff || value < rule.minValue) continue;
+    const score = diff / Math.max(avg, rule.floor);
+    if (!best || score > best.score) best = { rule, value, avg, score };
+  }
+  return best;
 }
 
 function periodsOf(raw?: number[]): number[] | undefined {
@@ -327,87 +390,56 @@ export function buildRecentInsights(
   };
 
   // —— Player performances ——
-  const byPts = [...lines].sort((a, b) => b.points - a.points);
-  const topScorer = byPts[0];
-  if (topScorer && topScorer.points >= 18 && topScorer.points < 25) {
-    const g = gameById.get(topScorer.gameId)!;
-    const ts = tsPct(topScorer.points, topScorer.fga, topScorer.fta);
+  // Nights far above the player's own norm, the least predictable stories on a slate.
+  for (const line of lines) {
+    const hit = biggestSurprise(line);
+    if (!hit) continue;
+    const g = gameById.get(line.gameId)!;
+    const base = line.baseline!;
+    const diff = hit.value - hit.avg;
+    const minutesJump = line.minutesNum - base.minutes >= 10;
     push({
-      id: `pts-lead-${topScorer.gameId}-${topScorer.profileId}`,
-      category: "PLAYER · SCORING",
-      headline: `${topScorer.playerName} · ${topScorer.points} PTS`,
-      description: [
-        `Led the ${formatShortDate(g.gameDate)} slate with ${topScorer.points} points`,
-        ts != null && topScorer.fga >= 8 ? `on ${formatPct(ts)} TS` : null,
-      ]
-        .filter(Boolean)
-        .join(" ") + ".",
+      id: `surprise-${line.gameId}-${line.profileId}`,
+      category: "PLAYER · ABOVE HIS NORM",
+      headline: `${line.playerName} · ${hit.value} ${hit.rule.label}`,
+      description:
+        `${hit.value} ${hit.rule.word}, ${formatNum(diff, 0)} more than his ${formatNum(hit.avg, 1)} a game in ${base.season}.` +
+        (minutesJump
+          ? ` Played ${Math.round(line.minutesNum)} minutes after averaging ${formatNum(base.minutes, 0)}.`
+          : ""),
       context: contextFor(g),
       gameId: g.id,
-      playerId: topScorer.profileId,
-      teamId: topScorer.teamId,
+      playerId: line.profileId,
+      teamId: line.teamId,
       gameDate: g.gameDate,
-      priority: 30 + (topScorer.points - 18),
-      bucket: "player",
-      focus: "points",
-      line: statLineOf(topScorer),
-      game: gameOf(g),
-    });
-  }
-  if (topScorer && topScorer.points >= 25) {
-    const g = gameById.get(topScorer.gameId)!;
-    const ts = tsPct(topScorer.points, topScorer.fga, topScorer.fta);
-    const vsAvg =
-      topScorer.seasonPpg != null && topScorer.seasonPpg > 0
-        ? topScorer.points - topScorer.seasonPpg
-        : null;
-    const bits: string[] = [
-      `${topScorer.points} points`,
-      ts != null && topScorer.fga >= 10 ? `on ${formatPct(ts)} TS` : null,
-      `highest-scoring line from ${formatShortDate(g.gameDate)}'s slate`,
-      vsAvg != null && vsAvg >= 5
-        ? `${formatNum(vsAvg, 0)} above his season average`
-        : null,
-    ].filter(Boolean) as string[];
-    push({
-      id: `pts-lead-${topScorer.gameId}-${topScorer.profileId}`,
-      category: "PLAYER · SCORING",
-      headline: `${topScorer.playerName} · ${topScorer.points} PTS`,
-      description: bits.join(", ") + ".",
-      context: contextFor(g),
-      gameId: g.id,
-      playerId: topScorer.profileId,
-      teamId: topScorer.teamId,
-      gameDate: g.gameDate,
-      priority:
-        40 +
-        Math.min(30, topScorer.points - 25) +
-        (topScorer.points >= 50 ? 25 : topScorer.points >= 40 ? 15 : 0),
-      bucket: "player",
-      focus: "points",
-      line: statLineOf(topScorer),
+      priority: 70 + Math.min(25, hit.score * 8),
+      bucket: "surprise",
+      focus: "surprise",
+      line: { ...statLineOf(line), surpriseStat: hit.rule.stat },
       game: gameOf(g),
     });
   }
 
   for (const line of lines) {
     if (line.points < 40) continue;
-    if (topScorer && line.profileId === topScorer.profileId) continue;
     const g = gameById.get(line.gameId)!;
     const ts = tsPct(line.points, line.fga, line.fta);
     push({
       id: `pts40-${line.gameId}-${line.profileId}`,
-      category: "PLAYER · SCORING",
+      category: "PLAYER · BIG NIGHT",
       headline: `${line.playerName} · ${line.points} PTS`,
-      description: [
-        line.points >= 50 ? "50-point night" : "40-point night",
-        ts != null ? `at ${formatPct(ts)} TS` : null,
-        line.seasonPpg != null && line.seasonPpg > 0
-          ? `${formatNum(line.points - line.seasonPpg, 0)} vs season avg`
-          : null,
-      ]
-        .filter(Boolean)
-        .join(" · ") + ".",
+      description: (() => {
+        const avg =
+          line.baseline && line.baseline.games >= MIN_BASELINE_GAMES
+            ? { ppg: line.baseline.points, season: line.baseline.season }
+            : null;
+        return (
+          `${line.points} points${ts != null ? ` at ${formatPct(ts)} true shooting` : ""}` +
+          (avg && line.points > avg.ppg
+            ? `, ${formatNum(line.points - avg.ppg, 0)} more than his ${formatNum(avg.ppg, 1)} a game in ${avg.season}.`
+            : ".")
+        );
+      })(),
       context: contextFor(g),
       gameId: g.id,
       playerId: line.profileId,
@@ -542,31 +574,6 @@ export function buildRecentInsights(
     });
   }
 
-  const byStocks = [...lines]
-    .map((l) => ({ line: l, stocks: l.steals + l.blocks }))
-    .filter((x) => x.stocks >= 5)
-    .sort((a, b) => b.stocks - a.stocks);
-  if (byStocks[0]) {
-    const { line, stocks } = byStocks[0];
-    const g = gameById.get(line.gameId)!;
-    push({
-      id: `stocks-${line.gameId}-${line.profileId}`,
-      category: "PLAYER · DEFENSE",
-      headline: `${line.playerName} · ${stocks} stocks`,
-      description: `${line.steals} STL and ${line.blocks} BLK, the top defensive event total on the slate.`,
-      context: contextFor(g),
-      gameId: g.id,
-      playerId: line.profileId,
-      teamId: line.teamId,
-      gameDate: g.gameDate,
-      priority: 52 + Math.min(12, stocks - 5),
-      bucket: "support",
-      focus: "stocks",
-      line: statLineOf(line),
-      game: gameOf(g),
-    });
-  }
-
   // —— Team / game ——
   const byMargin = [...games].sort(
     (a, b) =>
@@ -617,30 +624,6 @@ export function buildRecentInsights(
         priority: 72 - margin * 4 + (isOt(g) ? 12 : 0),
         bucket: "game",
         focus: "clutch",
-        game: gameOf(g),
-      });
-    }
-  }
-
-  const byTotal = [...games].sort(
-    (a, b) =>
-      b.homeScore + b.awayScore - (a.homeScore + a.awayScore)
-  );
-  if (byTotal[0]) {
-    const g = byTotal[0];
-    const total = g.homeScore + g.awayScore;
-    if (total >= 230) {
-      push({
-        id: `combined-${g.id}`,
-        category: "GAME · SCORING",
-        headline: `${g.awayTeamAbbr} vs ${g.homeTeamAbbr} · ${total} combined`,
-        description: `Highest-scoring game from the ${formatShortDate(g.gameDate)} slate.`,
-        context: contextFor(g),
-        gameId: g.id,
-        gameDate: g.gameDate,
-        priority: 44 + Math.min(20, total - 230),
-        bucket: "game",
-        focus: "combined",
         game: gameOf(g),
       });
     }

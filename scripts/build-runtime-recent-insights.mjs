@@ -62,7 +62,21 @@ async function main() {
       .replace(/\s+/g, " ")
       .trim();
     const prev = ppgByName.get(key);
-    if (!prev || gp > prev.gp) ppgByName.set(key, { ppg, gp });
+    if (!prev || gp > prev.gp) {
+      ppgByName.set(key, {
+        ppg,
+        gp,
+        baseline: {
+          season,
+          games: gp,
+          minutes: Number(row.mp ?? 0),
+          points: ppg,
+          rebounds: Number(row.trb ?? 0),
+          assists: Number(row.ast ?? 0),
+          threePm: Number(row.fg3m ?? 0),
+        },
+      });
+    }
   }
 
   const finals = (gameSnap.games ?? []).filter(
@@ -155,6 +169,7 @@ async function main() {
       .replace(/\s+/g, " ")
       .trim();
     const seasonPpg = ppgByName.get(nameKey)?.ppg ?? null;
+    const baseline = ppgByName.get(nameKey)?.baseline ?? null;
 
     const chrono = [];
     for (const g of games) {
@@ -184,6 +199,7 @@ async function main() {
         ftm: Number(g.ftm ?? 0),
         fta: Number(g.fta ?? 0),
         seasonPpg,
+        baseline,
       };
       chrono.push(line);
       if (dateSet.has(line.gameDate) && line.minutesNum >= 1) {

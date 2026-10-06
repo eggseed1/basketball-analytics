@@ -4,7 +4,6 @@ import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { TeamLogo } from "@/components/brand/team-logo";
 import {
   InsightEventPips,
-  InsightFinalScore,
   InsightLeadWorm,
   InsightPointsMix,
   InsightQuarterStack,
@@ -13,13 +12,13 @@ import {
   InsightStatLine,
   InsightTrendBars,
   InsightTripleDoubleRings,
+  InsightVsNorm,
   pointsAddUp,
   teamColor,
 } from "@/components/home/insight-visuals";
 import { AppLink } from "@/components/ui/app-link";
 import type { RecentInsight, RecentInsightGame } from "@/lib/recent-insights";
-import { recentInsightDateLabel } from "@/lib/recent-insights";
-import { teamProfileHref } from "@/lib/team-identity";
+import { recentInsightDateLabel, surpriseRule } from "@/lib/recent-insights";
 import { cn } from "@/lib/utils";
 
 export { AnalyticsDesk } from "@/components/home/analytics-desk";
@@ -62,8 +61,13 @@ export function FindingsSection({
       </div>
       {insights.length ? (
         <div className="grid min-w-0 gap-3 sm:grid-cols-2">
-          {insights.map((insight) => (
-            <InsightCard key={insight.id} insight={insight} asOf={asOf} />
+          {insights.map((insight, i) => (
+            <InsightCard
+              key={insight.id}
+              insight={insight}
+              asOf={asOf}
+              wide={insights.length % 2 === 1 && i === insights.length - 1}
+            />
           ))}
         </div>
       ) : null}
@@ -94,6 +98,15 @@ function heroFor(insight: RecentInsight): Hero | null {
   const { line, game, focus, trend } = insight;
   if (line) {
     switch (focus) {
+      case "surprise": {
+        const stat = line.surpriseStat;
+        if (!stat || !line.baseline) return null;
+        const rule = surpriseRule(stat);
+        return {
+          value: `+${Math.round(line[stat] - line.baseline[stat])}`,
+          label: `${rule.label} over avg`,
+        };
+      }
       case "points":
         return { value: String(line.points), label: "PTS" };
       case "efficiency": {
@@ -135,6 +148,33 @@ function heroFor(insight: RecentInsight): Hero | null {
   return null;
 }
 
+/** "DET 109, PHX 107 · W", the player's team first. */
+function playerScoreLabel(insight: RecentInsight): string {
+  const { line, game } = insight;
+  if (!line) return insight.context;
+  if (!game) return `${line.teamAbbr} vs ${line.opponentAbbr}${line.result ? ` · ${line.result}` : ""}`;
+  const mine = game.home.teamId === insight.teamId ? game.home : game.away;
+  const theirs = mine === game.home ? game.away : game.home;
+  return `${mine.abbr} ${mine.score}, ${theirs.abbr} ${theirs.score}${line.result ? ` · ${line.result}` : ""}`;
+}
+
+function gameScoreLabel(game: RecentInsightGame): string {
+  return `Final: ${game.away.abbr} ${game.away.score}, ${game.home.abbr} ${game.home.score}`;
+}
+
+function ScoreLink({ href, label }: { href: string | null; label: string }) {
+  if (!href) return <span>{label}</span>;
+  return (
+    <AppLink
+      href={href}
+      className="tabular-nums underline-offset-4 hover:text-foreground hover:underline"
+      title="Open box score"
+    >
+      {label}
+    </AppLink>
+  );
+}
+
 function categoryLabel(insight: RecentInsight): string {
   const tail = insight.category.split("·")[1]?.trim() ?? insight.category;
   return tail.charAt(0) + tail.slice(1).toLowerCase();
@@ -143,9 +183,12 @@ function categoryLabel(insight: RecentInsight): string {
 function InsightCard({
   insight,
   asOf,
+  wide = false,
 }: {
   insight: RecentInsight;
   asOf: string;
+  /** Odd card out spans both columns instead of leaving a hole. */
+  wide?: boolean;
 }) {
   const nightLabel = recentInsightDateLabel(insight.gameDate, asOf);
   const dateLabel = nightLabel
@@ -154,7 +197,6 @@ function InsightCard({
 
   const gameHref = insight.gameId ? `/games/${encodeURIComponent(insight.gameId)}` : null;
   const playerHref = insight.playerId ? `/players/${encodeURIComponent(insight.playerId)}` : null;
-  const teamHref = insight.teamId ? teamProfileHref(insight.teamId) : null;
 
   const { line, game, focus, trend } = insight;
   const hero = heroFor(insight);
@@ -163,6 +205,8 @@ function InsightCard({
   const visual = (() => {
     if (line) {
       switch (focus) {
+        case "surprise":
+          return <InsightVsNorm line={line} color={accent} />;
         case "points":
           return pointsAddUp(line) ? (
             <InsightPointsMix line={line} color={accent} />
@@ -189,7 +233,12 @@ function InsightCard({
   })();
 
   return (
-    <article className="relative flex min-w-0 flex-col overflow-hidden rounded-[14px] bg-foreground/[0.035] ring-1 ring-inset ring-foreground/[0.06]">
+    <article
+      className={cn(
+        "relative flex min-w-0 flex-col overflow-hidden rounded-[14px] bg-foreground/[0.035] ring-1 ring-inset ring-foreground/[0.06]",
+        wide && "sm:col-span-2"
+      )}
+    >
       <span aria-hidden className="h-1 w-full" style={{ background: accent }} />
       <div className="flex flex-1 flex-col gap-3 p-4">
         <div className="flex items-center justify-between gap-2 text-[11px]">
@@ -218,10 +267,7 @@ function InsightCard({
                 </Link>
                 <p className="mt-0.5 flex items-center gap-1.5 text-[12px] text-muted-foreground">
                   {insight.teamId ? <TeamLogo teamKey={insight.teamId} size="2xs" /> : null}
-                  <span>
-                    {line.teamAbbr} vs {line.opponentAbbr}
-                    {line.result ? ` · ${line.result}` : ""}
-                  </span>
+                  <ScoreLink href={gameHref} label={playerScoreLabel(insight)} />
                 </p>
               </div>
             </>
@@ -238,6 +284,9 @@ function InsightCard({
                   </p>
                   <p className="mt-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
                     {hero.label}
+                  </p>
+                  <p className="mt-1.5 text-[12px] text-muted-foreground">
+                    <ScoreLink href={gameHref} label={gameScoreLabel(game)} />
                   </p>
                 </div>
               ) : (
@@ -260,7 +309,11 @@ function InsightCard({
               <p
                 className={cn(
                   "font-black leading-none tabular-nums tracking-tight",
-                  hero.value.length > 6 ? "text-[24px]" : "text-[40px]"
+                  hero.value.length > 6
+                    ? "text-[24px]"
+                    : focus === "surprise"
+                      ? "text-[32px]"
+                      : "text-[40px]"
                 )}
                 style={{ color: accent }}
               >
@@ -277,36 +330,7 @@ function InsightCard({
 
         {visual ? <div className="min-w-0">{visual}</div> : null}
 
-        {line ? <InsightStatLine line={line} focus={focus} /> : null}
-
-        <div className="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-border/60 pt-2.5">
-          {game ? (
-            <span className="flex items-center gap-2.5">
-              <InsightFinalScore game={game} />
-              <span className="text-[11px] uppercase tracking-wide text-muted-foreground">Final</span>
-            </span>
-          ) : (
-            <p className="text-[12px] text-muted-foreground">{insight.context}</p>
-          )}
-          <div className="ml-auto flex shrink-0 items-center gap-3 text-[12px]">
-            {gameHref ? (
-              <AppLink
-                href={gameHref}
-                className="font-semibold text-foreground underline-offset-4 hover:underline"
-              >
-                Box score →
-              </AppLink>
-            ) : null}
-            {teamHref && !isPlayer ? (
-              <Link
-                href={teamHref}
-                className="text-muted-foreground underline-offset-4 hover:underline"
-              >
-                Team →
-              </Link>
-            ) : null}
-          </div>
-        </div>
+        {line && focus !== "surprise" ? <InsightStatLine line={line} focus={focus} /> : null}
       </div>
     </article>
   );

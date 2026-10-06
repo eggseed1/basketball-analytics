@@ -3,6 +3,7 @@ import type {
   RecentInsightGame,
   RecentInsightStatLine,
   RecentInsightTrendPoint,
+  SurpriseStat,
 } from "@/lib/recent-insights";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { cn } from "@/lib/utils";
@@ -626,6 +627,62 @@ export function InsightTrendBars({
   );
 }
 
+/**
+ * This game against the player's per-game averages. Each row has its own
+ * scale, so bar length compares a stat with his own norm, not with other stats.
+ */
+export function InsightVsNorm({
+  line,
+  color,
+}: {
+  line: RecentInsightStatLine;
+  color: string;
+}) {
+  const base = line.baseline;
+  if (!base) return null;
+  const rows: Array<{ stat: SurpriseStat; label: string; v: number; avg: number }> = [
+    { stat: "points", label: "PTS", v: line.points, avg: base.points },
+    { stat: "rebounds", label: "REB", v: line.rebounds, avg: base.rebounds },
+    { stat: "assists", label: "AST", v: line.assists, avg: base.assists },
+    { stat: "threePm", label: "3PM", v: line.threePm, avg: base.threePm },
+  ];
+  return (
+    <figure className="flex flex-col gap-2">
+      <div className="flex flex-col gap-1.5">
+        {rows.map((row) => {
+          const on = row.stat === line.surpriseStat;
+          const scale = Math.max(row.v, row.avg, 1) * 1.08;
+          return (
+            <div key={row.stat} className="grid grid-cols-[2.25rem_1fr_4.5rem] items-center gap-2">
+              <span className={cn("text-[11px] font-semibold", on ? "text-foreground" : "text-muted-foreground")}>
+                {row.label}
+              </span>
+              <span className="relative h-3.5 rounded-[4px] bg-secondary">
+                <span
+                  className="absolute inset-y-0 left-0 rounded-[4px]"
+                  style={{ width: `${(row.v / scale) * 100}%`, background: color, opacity: on ? 1 : 0.3 }}
+                />
+                <span
+                  aria-hidden
+                  className="absolute -inset-y-1 w-0.5 rounded-full bg-foreground/75"
+                  style={{ left: `${(row.avg / scale) * 100}%` }}
+                />
+              </span>
+              <span className="text-right text-[11px] tabular-nums text-muted-foreground">
+                <span className={cn("font-bold", on ? "text-foreground" : "")}>{row.v}</span> vs{" "}
+                {row.avg.toFixed(1)}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+      <figcaption className="text-[10px] text-muted-foreground">
+        Bars are this game. Ticks are his {base.season} per-game averages over {base.games} games.
+      </figcaption>
+    </figure>
+  );
+}
+
 /** One-line box score; the stat the card is about stays bold. */
 export function InsightStatLine({
   line,
@@ -635,9 +692,9 @@ export function InsightStatLine({
   focus?: RecentInsightFocus;
 }) {
   const cells: Array<{ label: string; v: number; on: boolean }> = [
-    { label: "PTS", v: line.points, on: focus === "points" || focus === "efficiency" || focus === "trend" || focus === "triple_double" },
-    { label: "REB", v: line.rebounds, on: focus === "rebounds" || focus === "triple_double" },
-    { label: "AST", v: line.assists, on: focus === "assists" || focus === "triple_double" },
+    { label: "PTS", v: line.points, on: focus === "points" || focus === "efficiency" || focus === "trend" || focus === "triple_double" || line.surpriseStat === "points" },
+    { label: "REB", v: line.rebounds, on: focus === "rebounds" || focus === "triple_double" || line.surpriseStat === "rebounds" },
+    { label: "AST", v: line.assists, on: focus === "assists" || focus === "triple_double" || line.surpriseStat === "assists" },
     { label: "STL", v: line.steals, on: focus === "stocks" },
     { label: "BLK", v: line.blocks, on: focus === "stocks" },
     { label: "MIN", v: line.minutes, on: false },
