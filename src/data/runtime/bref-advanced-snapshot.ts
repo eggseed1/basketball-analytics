@@ -225,6 +225,20 @@ export function getBundledBrefAdvancedSeason(
   return rows;
 }
 
+/** Slim usage and shooting rows for league-wide charts (memoized source). */
+export function getBundledBrefUsageRows(
+  canonicalSeason: string
+): Array<{ n: string; t: string; e?: string; mp: number; ts: number; usg: number }> {
+  return advancedForSeason(canonicalSeason).map((r) => ({
+    n: r.n,
+    t: r.t,
+    e: r.e,
+    mp: r.mp,
+    ts: r.ts,
+    usg: r.usg,
+  }));
+}
+
 /** Find one player in a season without materializing the full peer board. */
 export function findBundledBrefPlayer(
   canonicalSeason: string,

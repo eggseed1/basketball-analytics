@@ -145,6 +145,14 @@ export function getPlayerPlayTypes(
   return rows.length ? { season, totalPoss: denominator, rows } : null;
 }
 
+/** Raw player rows for one season, with the play-type order they follow. */
+export function getPlayTypeSeasonRows(
+  season: string
+): { playTypes: string[]; rows: Array<Array<string | number>> } | null {
+  const rows = data.seasons?.[season];
+  return rows?.length ? { playTypes, rows } : null;
+}
+
 export function getLeagueShotZones(season: string): LeagueShotZones | null {
   const zones = data.leagueShotZones?.[season];
   return zones && Object.keys(zones).length ? zones : null;
