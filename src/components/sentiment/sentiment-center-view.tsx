@@ -1,3 +1,4 @@
+import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 
 import { TeamLogo } from "@/components/brand/team-logo";
@@ -43,7 +44,7 @@ function NarrativeCollectionCard({
     <article
       id={`narrative-${narrative.slug}`}
       className={cn(
-        "sports-card flex flex-col gap-3 p-4",
+        "flex min-w-0 flex-col gap-3 rounded-[14px] bg-foreground/[0.035] p-4 ring-1 ring-inset ring-foreground/[0.06]",
         highlighted && "ring-2 ring-primary/35"
       )}
     >
@@ -73,7 +74,7 @@ function NarrativeCollectionCard({
         {narrative.players.map((player) => (
           <li
             key={player.playerId}
-            className="flex flex-col gap-2 rounded-md border border-border/60 frost-surface px-3 py-2"
+            className="flex flex-col gap-2 rounded-lg bg-background/60 px-3 py-2"
           >
             <div className="flex items-center gap-2">
               <PlayerHeadshot
@@ -85,7 +86,7 @@ function NarrativeCollectionCard({
               <div className="min-w-0 flex-1">
                 <Link
                   href={`/players/${encodeURIComponent(player.playerId)}`}
-                  className={cn(type.bodySm, "font-semibold", textLinkClassName)}
+                  className={cn(type.bodySm, "font-semibold hover:underline")}
                 >
                   {player.displayName}
                 </Link>
@@ -122,44 +123,45 @@ function HeadlineToneLeaders({ players }: { players: TrackedPlayerSentimentRow[]
   const cool = sorted.slice(-5).reverse();
   const asOf = measured.map((row) => row.media!.asOf).filter(Boolean).sort().pop();
   const column = (title: string, rows: TrackedPlayerSentimentRow[]) => (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-1.5">
       <h3 className={cn(type.caption, "font-semibold uppercase tracking-wide text-muted-foreground")}>
         {title}
       </h3>
-      <ul className="flex flex-col gap-1.5">
+      <ul className="-mx-2 flex flex-col">
         {rows.map((row) => (
-          <li key={row.playerId} className="flex items-center justify-between gap-2">
+          <li key={row.playerId}>
             <Link
               href={`/players/${encodeURIComponent(row.playerId)}?view=sentiment`}
-              className={cn(type.bodySm, "inline-flex min-w-0 items-center gap-1.5 font-semibold", textLinkClassName)}
+              className="flex items-center justify-between gap-2 rounded-lg px-2 py-1 transition-colors hover:bg-foreground/[0.04]"
             >
-              {row.teamKey ? <TeamLogo teamKey={row.teamKey} size="xs" /> : null}
-              <span className="truncate">{row.displayName}</span>
+              <span className={cn(type.bodySm, "inline-flex min-w-0 items-center gap-1.5 font-semibold")}>
+                {row.teamKey ? <TeamLogo teamKey={row.teamKey} size="xs" /> : null}
+                <span className="truncate">{row.displayName}</span>
+              </span>
+              <span className={cn(type.caption, "shrink-0 tabular-nums text-muted-foreground")}>
+                <span className="font-semibold text-foreground">{sentimentPct(row.media!.score)}</span> ·{" "}
+                {row.media!.mentionVolume}
+              </span>
             </Link>
-            <span className={cn(type.caption, "shrink-0 tabular-nums text-muted-foreground")}>
-              {sentimentPct(row.media!.score)} · {row.media!.mentionVolume} headlines
-            </span>
           </li>
         ))}
       </ul>
     </div>
   );
   return (
-    <section className="flex flex-col gap-3">
-      <div className="flex flex-col gap-0.5">
-        <div className="flex items-center gap-2">
-          <h2 className={cn(type.bodySm, "font-bold")}>Warmest and coolest in the headlines</h2>
+    <section className="sports-card flex flex-col gap-3 p-4 sm:p-5">
+      <div className="flex flex-col gap-1">
+        <div className="flex flex-wrap items-center gap-2">
+          <h2 className={type.heading}>Headline tone</h2>
           <LaneOriginTag lane={{ origin: "headlines", asOf, mentionVolume: 0 }} />
         </div>
-        <p className={cn(type.caption, "text-muted-foreground")}>
-          Players with 3+ headlines in the last 7 days. One story can swing a score, so open a
-          player to see the headlines behind it.
+        <p className={cn(type.bodySm, "text-muted-foreground")}>
+          Warmest and coolest coverage in the last 7 days, among players with 3+ headlines.
+          Score · headline count.
         </p>
       </div>
-      <div className="sports-card grid gap-6 p-4 sm:grid-cols-2">
-        {column("Warmest", warm)}
-        {column("Coolest", cool)}
-      </div>
+      {column("Warmest", warm)}
+      {column("Coolest", cool)}
     </section>
   );
 }
@@ -231,48 +233,60 @@ export function SentimentCenterView({
             }
           />
 
-          <HeadlineToneLeaders players={players} />
-
-          <div className="grid gap-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(16rem,22rem)]">
-            <SentimentDivergenceBoard rows={feed.divergences} />
-            <SentimentTopicHeat
-              rows={feed.topicHeat}
-              highlightTopic={highlightTopic}
-              origin={feed.topicHeatOrigin}
+          <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(17rem,21rem)]">
+            <SentimentDivergenceBoard
+              rows={feed.divergences}
+              players={players}
+              snapshotDate={feed.snapshotDate}
             />
+            <div className="flex min-w-0 flex-col gap-5">
+              <HeadlineToneLeaders players={players} />
+              <SentimentTopicHeat
+                rows={feed.topicHeat}
+                highlightTopic={highlightTopic}
+                origin={feed.topicHeatOrigin}
+              />
+            </div>
           </div>
 
-          {overrated ? (
-            <section className="flex flex-col gap-3">
-              <div className="flex flex-wrap items-baseline justify-between gap-2">
-                <h2 className={cn(type.bodySm, "font-bold")}>Overrated player watch</h2>
-                <p className={cn(type.caption, "text-muted-foreground")}>
-                  Fan and media mentions calling stars over-ranked
-                </p>
+          {league.narratives.length ? (
+            <details
+              className="group sports-card overflow-hidden"
+              open={Boolean(highlightNarrative) || undefined}
+            >
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3.5 sm:px-5 [&::-webkit-details-marker]:hidden">
+                <span className="flex flex-col gap-0.5">
+                  <span className="flex items-center gap-2">
+                    <span className={type.heading}>Narratives</span>
+                    <LaneOriginTag
+                      lane={{ origin: "curated", asOf: curatedAsOf ?? undefined, mentionVolume: 0 }}
+                    />
+                  </span>
+                  <span className={cn(type.bodySm, "text-muted-foreground")}>
+                    {league.narratives.length} hand-picked storylines
+                    {overrated ? ", including who fans call overrated" : ""}. Not measured
+                    from this week&apos;s posts.
+                  </span>
+                </span>
+                <ChevronDown
+                  aria-hidden
+                  className="size-5 shrink-0 text-muted-foreground transition-transform group-open:rotate-180"
+                />
+              </summary>
+              <div className="grid gap-3 border-t border-border/60 p-3 sm:p-4 lg:grid-cols-2">
+                {[...(overrated ? [overrated] : []), ...league.narratives.filter((n) => n !== overrated)].map(
+                  (narrative) => (
+                    <NarrativeCollectionCard
+                      key={narrative.id}
+                      narrative={narrative}
+                      highlighted={highlightNarrative === narrative.slug}
+                      asOf={curatedAsOf}
+                    />
+                  )
+                )}
               </div>
-              <NarrativeCollectionCard
-                narrative={overrated}
-                highlighted={highlightNarrative === "overrated"}
-                asOf={curatedAsOf}
-              />
-            </section>
+            </details>
           ) : null}
-
-          <section className="flex flex-col gap-3">
-            <h2 className={cn(type.bodySm, "font-bold")}>Narrative collections</h2>
-            <div className="grid gap-4 lg:grid-cols-2">
-              {league.narratives
-                .filter((n) => n.slug !== "overrated")
-                .map((narrative) => (
-                  <NarrativeCollectionCard
-                    key={narrative.id}
-                    narrative={narrative}
-                    highlighted={highlightNarrative === narrative.slug}
-                    asOf={curatedAsOf}
-                  />
-                ))}
-            </div>
-          </section>
 
           <p className={cn(type.caption, "text-muted-foreground")}>
             More detail:{" "}
