@@ -15,12 +15,16 @@ import { formatOrdinal } from "@/lib/format";
 import { formatUsdCompact, formatUsdSignedCompact } from "@/lib/format-money";
 import { cn } from "@/lib/utils";
 
-function yearNote(year: PlayerContractYearView, aboveMax: boolean): string | null {
+function yearTerms(year: PlayerContractYearView): string | null {
   const parts = [
     year.option === "player" ? "Player option" : year.option === "team" ? "Team option" : null,
     year.notGuaranteed ? "Not guaranteed" : null,
-    aboveMax ? "Worth more than the max" : null,
   ].filter(Boolean);
+  return parts.length ? parts.join(" · ") : null;
+}
+
+function yearNote(year: PlayerContractYearView, aboveMax: boolean): string | null {
+  const parts = [yearTerms(year), aboveMax ? "Worth more than the max" : null].filter(Boolean);
   return parts.length ? parts.join(" · ") : null;
 }
 
@@ -200,6 +204,7 @@ export function PlayerContractTransactions({
                       worthHigh: v.worthHigh,
                       surplus: v.surplus,
                       note: yearNote(year, v.worthAboveMax),
+                      terms: yearTerms(year),
                     },
                   ]
                 : [];
