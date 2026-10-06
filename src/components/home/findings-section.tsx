@@ -169,7 +169,7 @@ function ScoreLink({ href, label }: { href: string | null; label: string }) {
   return (
     <AppLink
       href={href}
-      className="tabular-nums underline-offset-4 hover:text-foreground hover:underline"
+      className="relative z-[2] tabular-nums underline-offset-4 hover:text-foreground hover:underline"
       title="Open box score"
     >
       {label}
@@ -195,6 +195,7 @@ function InsightCard({ insight, asOf }: { insight: RecentInsight; asOf: string }
   const hero = heroFor(insight);
   const accent = teamColor(insight.teamId ?? game?.home.teamId);
   const isPlayer = Boolean(line && insight.playerId);
+  const cardHref = isPlayer ? playerHref : (gameHref ?? playerHref);
   const visual = (() => {
     if (line) {
       switch (focus) {
@@ -241,7 +242,25 @@ function InsightCard({ insight, asOf }: { insight: RecentInsight; asOf: string }
   })();
 
   return (
-    <article className="relative flex min-w-0 flex-col overflow-hidden rounded-[11px] bg-foreground/[0.035] ring-1 ring-inset ring-foreground/[0.06]">
+    <article
+      className={cn(
+        "relative flex min-w-0 flex-col overflow-hidden rounded-[11px] bg-foreground/[0.035] ring-1 ring-inset ring-foreground/[0.06]",
+        cardHref &&
+          "transition-[background-color,box-shadow] hover:bg-foreground/[0.06] hover:ring-foreground/[0.14] has-[a[data-card-link]:focus-visible]:ring-2 has-[a[data-card-link]:focus-visible]:ring-ring"
+      )}
+    >
+      {cardHref ? (
+        <Link
+          href={cardHref}
+          data-card-link
+          aria-label={
+            isPlayer && line
+              ? `${line.playerName}: ${insight.headline}`
+              : `${insight.headline}. Open the game`
+          }
+          className="absolute inset-0 z-[1] rounded-[11px] outline-none"
+        />
+      ) : null}
       <span aria-hidden className="h-[3px] w-full" style={{ background: accent }} />
       <div className="flex flex-1 flex-col gap-2 px-3.5 pb-3 pt-2.5">
         <div className="flex items-center justify-between gap-2 text-[11px]">
@@ -264,7 +283,7 @@ function InsightCard({ insight, asOf }: { insight: RecentInsight; asOf: string }
               <div className="min-w-[8rem] flex-1">
                 <Link
                   href={playerHref!}
-                  className="block truncate text-[15px] font-bold leading-tight tracking-tight hover:underline"
+                  className="relative z-[2] block truncate text-[15px] font-bold leading-tight tracking-tight hover:underline"
                 >
                   {line.playerName}
                 </Link>
