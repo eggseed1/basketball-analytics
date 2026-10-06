@@ -66,6 +66,10 @@ function toSnapshot(
  * traded player still finds his deal; fall back to a name match when exactly
  * one player on any payroll has that name.
  */
+function withoutNameSuffix(name: string): string {
+  return name.trim().replace(/[\s,]+(jr|sr|ii|iii|iv|v)\.?$/i, "");
+}
+
 export const getPlayerContractSnapshot = cache(
   async (
     playerId: string,
@@ -100,14 +104,21 @@ export const getPlayerContractSnapshot = cache(
       if (team && row) return toSnapshot(teamId, team, row);
     }
 
-    const name = normalizePlayerName(playerName ?? identity?.displayName ?? "");
-    if (!name) return null;
-    const named = ordered.flatMap((teamId) => {
-      const team = bundledTeamContracts(teamId);
-      return (team?.rows ?? [])
-        .filter((row) => normalizePlayerName(row.name) === name)
-        .map((row) => ({ teamId, team: team!, row }));
-    });
+    const rawName = playerName ?? identity?.displayName ?? "";
+    if (!normalizePlayerName(rawName)) return null;
+    const findNamed = (key: (name: string) => string) => {
+      const want = key(rawName);
+      return ordered.flatMap((teamId) => {
+        const team = bundledTeamContracts(teamId);
+        return (team?.rows ?? [])
+          .filter((row) => key(row.name) === want)
+          .map((row) => ({ teamId, team: team!, row }));
+      });
+    };
+    // Payrolls and ESPN disagree on suffixes ("Robert Williams" vs "Robert
+    // Williams III"), so retry without them before giving up.
+    let named = findNamed(normalizePlayerName);
+    if (!named.length) named = findNamed((n) => normalizePlayerName(withoutNameSuffix(n)));
     // Only when one player in the league has the name; he may appear on two
     // payrolls after a waiver, and the home team (listed first) wins.
     if (!named.length || new Set(named.map((hit) => hit.row.brefId)).size !== 1) return null;
