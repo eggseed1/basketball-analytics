@@ -6,10 +6,10 @@ import {
   InsightEventPips,
   InsightLeadByPeriod,
   InsightPeriodScoring,
-  InsightScoreboard,
+  InsightFinalScore,
   InsightShootingSplits,
   InsightShotDots,
-  InsightStatStrip,
+  InsightStatLine,
   InsightTrendBars,
   InsightTripleDoubleBars,
   InsightVsSeason,
@@ -159,17 +159,14 @@ function InsightCard({
   const hero = heroFor(insight);
   const accent = teamColor(insight.teamId ?? game?.home.teamId);
   const isPlayer = Boolean(line && insight.playerId);
-  const hasVisual = Boolean(line || game?.home.periods);
-
   const visual = (() => {
     if (line) {
       switch (focus) {
         case "points":
-          return (
-            <div className="flex flex-col gap-3">
-              <InsightVsSeason line={line} color={accent} />
-              <InsightShootingSplits line={line} color={accent} />
-            </div>
+          return line.seasonPpg != null && line.seasonPpg > 0 ? (
+            <InsightVsSeason line={line} color={accent} />
+          ) : (
+            <InsightShootingSplits line={line} color={accent} />
           );
         case "efficiency":
           return <InsightShotDots line={line} color={accent} />;
@@ -200,7 +197,7 @@ function InsightCard({
       <span aria-hidden className="h-1 w-full" style={{ background: accent }} />
       <div className="flex flex-1 flex-col gap-3 p-4">
         <div className="flex items-center justify-between gap-2 text-[11px]">
-          <span className="rounded-full bg-secondary px-2 py-0.5 font-semibold text-foreground">
+          <span className="font-bold uppercase tracking-[0.1em]" style={{ color: accent }}>
             {categoryLabel(insight)}
           </span>
           <span className="text-muted-foreground">{dateLabel}</span>
@@ -234,17 +231,27 @@ function InsightCard({
             </>
           ) : game ? (
             <>
+              {hero ? (
+                <div className="min-w-0 flex-1">
+                  <h3 className="sr-only">{insight.headline}</h3>
+                  <p
+                    className="text-[44px] font-black leading-none tabular-nums tracking-tight"
+                    style={{ color: accent }}
+                  >
+                    {hero.value}
+                  </p>
+                  <p className="mt-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                    {hero.label}
+                  </p>
+                </div>
+              ) : (
+                <h3 className="min-w-[8rem] flex-1 text-[16px] font-bold leading-snug tracking-tight">
+                  {insight.headline}
+                </h3>
+              )}
               <div className="flex shrink-0 -space-x-2">
                 <TeamLogo teamKey={game.away.teamId} size="md" />
                 <TeamLogo teamKey={game.home.teamId} size="md" />
-              </div>
-              <div className="min-w-[8rem] flex-1">
-                <h3 className="text-[15px] font-bold leading-tight tracking-tight">
-                  {insight.headline}
-                </h3>
-                <p className="mt-0.5 text-[12px] text-muted-foreground">
-                  {game.away.abbr} at {game.home.abbr}
-                </p>
               </div>
             </>
           ) : (
@@ -252,12 +259,12 @@ function InsightCard({
               {insight.headline}
             </h3>
           )}
-          {hero ? (
+          {hero && (isPlayer || !game) ? (
             <div className="ml-auto shrink-0 text-right">
               <p
                 className={cn(
                   "font-black leading-none tabular-nums tracking-tight",
-                  hero.value.length > 6 ? "text-[20px]" : "text-[30px]"
+                  hero.value.length > 6 ? "text-[24px]" : "text-[40px]"
                 )}
                 style={{ color: accent }}
               >
@@ -270,28 +277,22 @@ function InsightCard({
           ) : null}
         </div>
 
+        <p className="text-[13px] font-medium leading-snug">{insight.description}</p>
+
         {visual ? <div className="min-w-0">{visual}</div> : null}
 
-        {line && focus !== "points" ? <InsightStatStrip line={line} focus={focus} /> : null}
+        {line ? <InsightStatLine line={line} focus={focus} /> : null}
 
-        <p className={cn("text-[12px] leading-snug text-muted-foreground", hasVisual && "line-clamp-2")}>
-          {insight.description}
-        </p>
-
-        <div className="mt-auto flex flex-wrap items-end justify-between gap-3 border-t border-border/60 pt-2.5">
+        <div className="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-border/60 pt-2.5">
           {game ? (
-            <div
-              className={cn(
-                "flex-1",
-                isPlayer ? "min-w-[7rem] max-w-[9rem]" : "min-w-[11.5rem] max-w-[16rem]"
-              )}
-            >
-              <InsightScoreboard game={game} compact={isPlayer} />
-            </div>
+            <span className="flex items-center gap-2.5">
+              <InsightFinalScore game={game} />
+              <span className="text-[11px] uppercase tracking-wide text-muted-foreground">Final</span>
+            </span>
           ) : (
             <p className="text-[12px] text-muted-foreground">{insight.context}</p>
           )}
-          <div className="ml-auto flex shrink-0 flex-col items-end gap-0.5 text-[12px]">
+          <div className="ml-auto flex shrink-0 items-center gap-3 text-[12px]">
             {gameHref ? (
               <AppLink
                 href={gameHref}

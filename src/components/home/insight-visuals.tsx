@@ -77,62 +77,6 @@ function periodLabel(index: number): string {
   return index < 4 ? `Q${index + 1}` : index === 4 ? "OT" : `OT${index - 3}`;
 }
 
-/** Box score by period with the winner's final in bold. */
-export function InsightScoreboard({
-  game,
-  compact = false,
-}: {
-  game: RecentInsightGame;
-  compact?: boolean;
-}) {
-  const periods = game.home.periods?.length ?? 0;
-  const homeWon = game.home.score > game.away.score;
-  const rows = [
-    { side: game.away, won: !homeWon },
-    { side: game.home, won: homeWon },
-  ];
-  return (
-    <table className={cn("w-full tabular-nums", compact ? "text-[11px]" : "text-[12px]")}>
-      {!compact && periods ? (
-        <thead>
-          <tr className="text-[10px] uppercase tracking-wide text-muted-foreground">
-            <th className="text-left font-medium" />
-            {Array.from({ length: periods }, (_, i) => (
-              <th key={i} className="w-7 text-right font-medium">
-                {periodLabel(i)}
-              </th>
-            ))}
-            <th className="w-9 text-right font-medium">F</th>
-          </tr>
-        </thead>
-      ) : null}
-      <tbody>
-        {rows.map(({ side, won }) => (
-          <tr key={side.teamId} className={won ? "text-foreground" : "text-muted-foreground"}>
-            <td className="py-0.5 text-left">
-              <span className="inline-flex items-center gap-1.5 font-semibold">
-                <span
-                  aria-hidden
-                  className="inline-block h-2 w-2 rounded-full"
-                  style={{ background: teamColor(side.teamId) }}
-                />
-                {side.abbr}
-              </span>
-            </td>
-            {!compact &&
-              side.periods?.map((pts, i) => (
-                <td key={i} className="text-right">
-                  {pts}
-                </td>
-              ))}
-            <td className={cn("text-right", won ? "font-bold" : "font-medium")}>{side.score}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  );
-}
-
 /**
  * Lead at the end of each period. Bars point toward whichever team led, so a
  * comeback reads as bars flipping sides.
@@ -154,9 +98,9 @@ export function InsightLeadByPeriod({
   const maxAbs = Math.max(5, ...margins.map((m) => Math.abs(m)));
 
   const W = 340;
-  const H = 104;
-  const axisBand = 12;
-  const labelPad = 13;
+  const H = 140;
+  const axisBand = 22;
+  const labelPad = 16;
   const plotTop = labelPad;
   const plotBottom = H - axisBand - labelPad;
   const oneSided = margins.every((m) => m >= 0) || margins.every((m) => m <= 0);
@@ -164,26 +108,16 @@ export function InsightLeadByPeriod({
   const mid = oneSided ? (homeOnly ? plotBottom : plotTop) : (plotTop + plotBottom) / 2;
   const half = oneSided ? plotBottom - plotTop : (plotBottom - plotTop) / 2;
   const slot = W / margins.length;
-  const barW = Math.min(34, slot * 0.55);
+  const barW = Math.min(44, slot * 0.6);
 
   return (
     <figure className="flex flex-col gap-1">
-      <figcaption className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-[10px] uppercase tracking-wide text-muted-foreground">
-        <span className="whitespace-nowrap">Lead after each period</span>
-        <span className="flex items-center gap-2 whitespace-nowrap normal-case tracking-normal">
-          <span className="inline-flex items-center gap-1">
-            <span className="h-2 w-2 rounded-sm" style={{ background: colors.home }} />
-            {game.home.abbr} ahead
-          </span>
-          <span className="inline-flex items-center gap-1">
-            <span className="h-2 w-2 rounded-sm" style={{ background: colors.away }} />
-            {game.away.abbr} ahead
-          </span>
-        </span>
+      <figcaption className="text-[11px] font-semibold text-muted-foreground">
+        Who led after each quarter
       </figcaption>
       <svg
         viewBox={`0 0 ${W} ${H}`}
-        className="h-[104px] w-full"
+        className="h-[140px] w-full"
         role="img"
         aria-label={margins
           .map((m, i) =>
@@ -198,27 +132,28 @@ export function InsightLeadByPeriod({
           const y = m >= 0 ? mid - h : mid;
           const color = m >= 0 ? colors.home : colors.away;
           const dim = highlightPeriod != null && highlightPeriod !== i;
-          const labelY = m >= 0 ? mid - h - 3 : mid + h + 10;
+          const labelY = m >= 0 ? mid - h - 4 : mid + h + 13;
+          const leader = m > 0 ? game.home.abbr : game.away.abbr;
           return (
-            <g key={i} opacity={dim ? 0.45 : 1}>
+            <g key={i} opacity={dim ? 0.4 : 1}>
               {m !== 0 ? (
-                <rect x={cx - barW / 2} y={y} width={barW} height={Math.max(h, 1.5)} rx={2} fill={color} />
+                <rect x={cx - barW / 2} y={y} width={barW} height={Math.max(h, 2)} rx={3} fill={color} />
               ) : (
-                <circle cx={cx} cy={mid} r={2.5} fill="var(--muted-foreground)" />
+                <circle cx={cx} cy={mid} r={3} fill="var(--muted-foreground)" />
               )}
               <text
                 x={cx}
-                y={m === 0 ? mid - 6 : labelY}
+                y={m === 0 ? mid - 7 : labelY}
                 textAnchor="middle"
-                className="fill-foreground text-[10px] font-semibold tabular-nums"
+                className="fill-foreground text-[12px] font-bold tabular-nums"
               >
-                {m === 0 ? "Tie" : `+${Math.abs(m)}`}
+                {m === 0 ? "Tied" : `${leader} +${Math.abs(m)}`}
               </text>
               <text
                 x={cx}
                 y={H - 1}
                 textAnchor="middle"
-                className="fill-muted-foreground text-[9px]"
+                className="fill-muted-foreground text-[11px]"
               >
                 {periodLabel(i)}
               </text>
@@ -235,37 +170,36 @@ export function InsightPeriodScoring({ game }: { game: RecentInsightGame }) {
   const home = game.home.periods;
   const away = game.away.periods;
   if (!home || !away) return null;
-  const colors = gameColors(game);
-  const max = Math.max(...home, ...away, 1);
+  const totals = home.map((h, i) => h + (away[i] ?? 0));
+  const max = Math.max(...totals, 1);
+  const best = totals.indexOf(max);
+  const color = teamColor(game.home.teamId);
   return (
     <figure className="flex flex-col gap-1.5">
-      <figcaption className="text-[10px] uppercase tracking-wide text-muted-foreground">
-        Points per period
+      <figcaption className="text-[11px] font-semibold text-muted-foreground">
+        Points per quarter, both teams
       </figcaption>
-      <div className="flex items-end gap-2" style={{ height: 72 }}>
-        {home.map((h, i) => {
-          const a = away[i] ?? 0;
-          return (
-            <div key={i} className="flex flex-1 flex-col items-center gap-1">
-              <div className="flex h-[56px] w-full items-end justify-center gap-0.5">
-                {[
-                  { v: a, c: colors.away, t: game.away.abbr },
-                  { v: h, c: colors.home, t: game.home.abbr },
-                ].map((bar) => (
-                  <div
-                    key={bar.t}
-                    title={`${bar.t} ${bar.v}`}
-                    className="w-2.5 rounded-t-sm"
-                    style={{ height: `${(bar.v / max) * 100}%`, background: bar.c }}
-                  />
-                ))}
-              </div>
-              <span className="text-[9px] text-muted-foreground">
-                {a}-{h}
-              </span>
+      <div className="flex items-end gap-3">
+        {totals.map((total, i) => (
+          <div
+            key={i}
+            className="flex flex-1 flex-col items-center gap-1"
+            title={`${game.away.abbr} ${away[i] ?? 0}, ${game.home.abbr} ${home[i]}`}
+          >
+            <span className="text-[13px] font-bold tabular-nums">{total}</span>
+            <div className="flex h-[84px] w-full items-end">
+              <div
+                className="w-full rounded-t-[3px]"
+                style={{
+                  height: `${(total / max) * 100}%`,
+                  background: color,
+                  opacity: i === best ? 1 : 0.45,
+                }}
+              />
             </div>
-          );
-        })}
+            <span className="text-[11px] text-muted-foreground">{periodLabel(i)}</span>
+          </div>
+        ))}
       </div>
     </figure>
   );
@@ -334,14 +268,14 @@ export function InsightShotDots({
   return (
     <div className="flex flex-col gap-1.5">
       {rows.map((row) => (
-        <div key={row.label} className="grid grid-cols-[2rem_1fr_2.75rem] items-center gap-2 text-[11px]">
+        <div key={row.label} className="grid grid-cols-[2rem_1fr_2.75rem] items-center gap-2 text-[12px]">
           <span className="font-semibold text-muted-foreground">{row.label}</span>
           <div className="flex flex-wrap gap-1">
             {row.att > 0 ? (
               Array.from({ length: row.att }, (_, i) => (
                 <span
                   key={i}
-                  className="h-2.5 w-2.5 rounded-full border-[1.5px]"
+                  className="h-3.5 w-3.5 rounded-full border-[1.5px]"
                   style={
                     i < row.made
                       ? { background: color, borderColor: color }
@@ -376,16 +310,16 @@ export function InsightVsSeason({
   const diff = line.points - avg;
   return (
     <div className="flex flex-col gap-1.5">
-      <div className="grid grid-cols-[4.5rem_1fr_2.5rem] items-center gap-2 text-[11px]">
+      <div className="grid grid-cols-[4.5rem_1fr_2.5rem] items-center gap-2 text-[12px]">
         <span className="font-semibold">This game</span>
-        <div className="h-3 overflow-hidden rounded-sm bg-secondary">
+        <div className="h-5 overflow-hidden rounded-sm bg-secondary">
           <div className="h-full rounded-sm" style={{ width: `${(line.points / max) * 100}%`, background: color }} />
         </div>
         <span className="text-right font-bold tabular-nums">{line.points}</span>
       </div>
-      <div className="grid grid-cols-[4.5rem_1fr_2.5rem] items-center gap-2 text-[11px] text-muted-foreground">
+      <div className="grid grid-cols-[4.5rem_1fr_2.5rem] items-center gap-2 text-[12px] text-muted-foreground">
         <span>Season avg</span>
-        <div className="h-3 overflow-hidden rounded-sm bg-secondary">
+        <div className="h-5 overflow-hidden rounded-sm bg-secondary">
           <div
             className="h-full rounded-sm bg-muted-foreground/40"
             style={{ width: `${(avg / max) * 100}%` }}
@@ -410,11 +344,11 @@ export function InsightVsSeason({
 function Pips({ count, color, label }: { count: number; color: string; label: string }) {
   const shown = Math.min(count, 24);
   return (
-    <div className="flex items-center gap-2 text-[11px]">
+    <div className="flex items-center gap-2 text-[12px]">
       <span className="w-8 shrink-0 font-semibold text-muted-foreground">{label}</span>
       <div className="flex flex-wrap gap-1">
         {Array.from({ length: shown }, (_, i) => (
-          <span key={i} className="h-3 w-3 rounded-[3px]" style={{ background: color }} />
+          <span key={i} className="h-4 w-4 rounded-[3px]" style={{ background: color }} />
         ))}
         {count > shown ? <span className="text-muted-foreground">+{count - shown}</span> : null}
         {count === 0 ? <span className="text-muted-foreground">0</span> : null}
@@ -463,9 +397,9 @@ export function InsightTripleDoubleBars({
   return (
     <div className="relative flex flex-col gap-1.5">
       {stats.map((s) => (
-        <div key={s.label} className="grid grid-cols-[2rem_1fr_2rem] items-center gap-2 text-[11px]">
+        <div key={s.label} className="grid grid-cols-[2rem_1fr_2rem] items-center gap-2 text-[12px]">
           <span className="font-semibold text-muted-foreground">{s.label}</span>
-          <div className="relative h-3 rounded-sm bg-secondary">
+          <div className="relative h-4 rounded-sm bg-secondary">
             <div
               className="h-full rounded-sm"
               style={{ width: `${(s.v / max) * 100}%`, background: s.v >= 10 ? color : "var(--muted-foreground)" }}
@@ -522,8 +456,8 @@ export function InsightTrendBars({
   );
 }
 
-/** Compact box-score strip; the stat the card is about is emphasized. */
-export function InsightStatStrip({
+/** One-line box score; the stat the card is about stays bold. */
+export function InsightStatLine({
   line,
   focus,
 }: {
@@ -531,28 +465,37 @@ export function InsightStatStrip({
   focus?: RecentInsightFocus;
 }) {
   const cells: Array<{ label: string; v: number; on: boolean }> = [
-    { label: "PTS", v: line.points, on: focus === "points" || focus === "efficiency" || focus === "trend" },
-    { label: "REB", v: line.rebounds, on: focus === "rebounds" },
-    { label: "AST", v: line.assists, on: focus === "assists" },
+    { label: "PTS", v: line.points, on: focus === "points" || focus === "efficiency" || focus === "trend" || focus === "triple_double" },
+    { label: "REB", v: line.rebounds, on: focus === "rebounds" || focus === "triple_double" },
+    { label: "AST", v: line.assists, on: focus === "assists" || focus === "triple_double" },
     { label: "STL", v: line.steals, on: focus === "stocks" },
     { label: "BLK", v: line.blocks, on: focus === "stocks" },
     { label: "MIN", v: line.minutes, on: false },
   ];
-  if (focus === "triple_double") {
-    cells[0]!.on = true;
-    cells[1]!.on = true;
-    cells[2]!.on = true;
-  }
   return (
-    <dl className="grid grid-cols-6 overflow-hidden rounded-md border border-border/70 text-center">
+    <p className="flex flex-wrap gap-x-3 gap-y-0.5 text-[12px] tabular-nums text-muted-foreground">
       {cells.map((c) => (
-        <div key={c.label} className={cn("px-1 py-1", c.on && "bg-secondary")}>
-          <dt className="text-[9px] font-semibold uppercase tracking-wide text-muted-foreground">{c.label}</dt>
-          <dd className={cn("text-[13px] tabular-nums", c.on ? "font-bold" : "font-medium")}>
-            {Math.round(c.v)}
-          </dd>
-        </div>
+        <span key={c.label} className={cn(c.on && "font-bold text-foreground")}>
+          {Math.round(c.v)} {c.label}
+        </span>
       ))}
-    </dl>
+    </p>
+  );
+}
+
+/** Final score on one line, winner in bold. */
+export function InsightFinalScore({ game }: { game: RecentInsightGame }) {
+  const homeWon = game.home.score > game.away.score;
+  const side = (s: RecentInsightGame["home"], won: boolean) => (
+    <span className={cn("inline-flex items-center gap-1.5", won ? "font-bold text-foreground" : "text-muted-foreground")}>
+      <span aria-hidden className="h-2 w-2 rounded-full" style={{ background: teamColor(s.teamId) }} />
+      {s.abbr} <span className="tabular-nums">{s.score}</span>
+    </span>
+  );
+  return (
+    <p className="flex items-center gap-2.5 text-[13px]">
+      {side(game.away, !homeWon)}
+      {side(game.home, homeWon)}
+    </p>
   );
 }
