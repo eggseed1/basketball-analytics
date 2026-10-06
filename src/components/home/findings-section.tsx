@@ -49,7 +49,9 @@ export function FindingsSection({
   empty?: boolean;
 }) {
   const asOf = todayIsoDate();
-  const cards = insights.filter((x) => x.focus !== "surprise");
+  const stories = insights.filter((x) => x.focus !== "surprise");
+  // Two columns, so an odd last card would leave a hole; drop it instead.
+  const cards = stories.length > 1 && stories.length % 2 ? stories.slice(0, -1) : stories;
 
   return (
     <section className="sports-card flex flex-col gap-3 p-4 sm:p-[21px]">
@@ -65,13 +67,8 @@ export function FindingsSection({
       </div>
       {cards.length ? (
         <div className="grid min-w-0 gap-3 sm:grid-cols-2">
-          {cards.map((insight, i) => (
-            <InsightCard
-              key={insight.id}
-              insight={insight}
-              asOf={asOf}
-              wide={cards.length % 2 === 1 && i === cards.length - 1}
-            />
+          {cards.map((insight) => (
+            <InsightCard key={insight.id} insight={insight} asOf={asOf} />
           ))}
         </div>
       ) : null}
@@ -185,16 +182,7 @@ function categoryLabel(insight: RecentInsight): string {
   return tail.charAt(0) + tail.slice(1).toLowerCase();
 }
 
-function InsightCard({
-  insight,
-  asOf,
-  wide = false,
-}: {
-  insight: RecentInsight;
-  asOf: string;
-  /** Odd card out spans both columns instead of leaving a hole. */
-  wide?: boolean;
-}) {
+function InsightCard({ insight, asOf }: { insight: RecentInsight; asOf: string }) {
   const nightLabel = recentInsightDateLabel(insight.gameDate, asOf);
   const dateLabel = nightLabel
     ? nightLabel.charAt(0) + nightLabel.slice(1).toLowerCase()
@@ -239,7 +227,7 @@ function InsightCard({
       }
     }
     if (focus === "threes" && insight.contributors?.length) {
-      return <InsightContributorBars items={insight.contributors} color={accent} />;
+      return <InsightContributorBars items={insight.contributors.slice(0, 4)} color={accent} />;
     }
     if (game && focus === "quarter") {
       return <InsightQuarterStack game={game} focusPeriod={insight.focusPeriod} />;
@@ -253,14 +241,9 @@ function InsightCard({
   })();
 
   return (
-    <article
-      className={cn(
-        "relative flex min-w-0 flex-col overflow-hidden rounded-[11px] bg-foreground/[0.035] ring-1 ring-inset ring-foreground/[0.06]",
-        wide && "sm:col-span-2"
-      )}
-    >
-      <span aria-hidden className="h-1 w-full" style={{ background: accent }} />
-      <div className="flex flex-1 flex-col gap-3 p-4">
+    <article className="relative flex min-w-0 flex-col overflow-hidden rounded-[11px] bg-foreground/[0.035] ring-1 ring-inset ring-foreground/[0.06]">
+      <span aria-hidden className="h-[3px] w-full" style={{ background: accent }} />
+      <div className="flex flex-1 flex-col gap-2 px-3.5 py-3">
         <div className="flex items-center justify-between gap-2 text-[11px]">
           <span className="font-bold uppercase tracking-[0.1em]" style={{ color: accent }}>
             {categoryLabel(insight)}
@@ -268,20 +251,20 @@ function InsightCard({
           <span className="text-muted-foreground">{dateLabel}</span>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2.5">
           {isPlayer && line ? (
             <>
               <PlayerHeadshot
                 playerId={insight.playerId}
                 name={line.playerName}
                 teamKey={insight.teamId}
-                size="md"
+                size="sm"
                 className="shrink-0"
               />
               <div className="min-w-[8rem] flex-1">
                 <Link
                   href={playerHref!}
-                  className="block truncate text-[16px] font-bold leading-tight tracking-tight hover:underline"
+                  className="block truncate text-[15px] font-bold leading-tight tracking-tight hover:underline"
                 >
                   {line.playerName}
                 </Link>
@@ -297,15 +280,15 @@ function InsightCard({
                 <div className="min-w-0 flex-1">
                   <h3 className="sr-only">{insight.headline}</h3>
                   <p
-                    className="text-[44px] font-black leading-none tabular-nums tracking-tight"
+                    className="text-[32px] font-black leading-none tabular-nums tracking-tight"
                     style={{ color: accent }}
                   >
                     {hero.value}
                   </p>
-                  <p className="mt-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                  <p className="mt-1 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
                     {hero.label}
                   </p>
-                  <p className="mt-1.5 text-[12px] text-muted-foreground">
+                  <p className="mt-1 text-[12px] text-muted-foreground">
                     <ScoreLink href={gameHref} label={gameScoreLabel(game)} />
                   </p>
                 </div>
@@ -315,8 +298,8 @@ function InsightCard({
                 </h3>
               )}
               <div className="flex shrink-0 -space-x-2">
-                <TeamLogo teamKey={game.away.teamId} size="md" />
-                <TeamLogo teamKey={game.home.teamId} size="md" />
+                <TeamLogo teamKey={game.away.teamId} size="sm" />
+                <TeamLogo teamKey={game.home.teamId} size="sm" />
               </div>
             </>
           ) : (
@@ -329,11 +312,7 @@ function InsightCard({
               <p
                 className={cn(
                   "font-black leading-none tabular-nums tracking-tight",
-                  hero.value.length > 6
-                    ? "text-[24px]"
-                    : focus === "surprise"
-                      ? "text-[32px]"
-                      : "text-[40px]"
+                  hero.value.length > 6 ? "text-[22px]" : "text-[30px]"
                 )}
                 style={{ color: accent }}
               >
@@ -346,7 +325,9 @@ function InsightCard({
           ) : null}
         </div>
 
-        <p className="text-[12px] leading-snug text-muted-foreground">{insight.description}</p>
+        <p className="line-clamp-2 text-[12px] leading-snug text-muted-foreground" title={insight.description}>
+          {insight.description}
+        </p>
 
         {visual ? <div className="min-w-0">{visual}</div> : null}
 

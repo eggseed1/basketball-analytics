@@ -217,7 +217,7 @@ export async function getLiveRecentInsights(): Promise<LiveRecentInsights | null
   const season = canonicalSeasonFromStartYear(currentNbaStartYear());
   try {
     return await sharedGetOrSet(
-      `recent-insights-live:v4:${season}`,
+      `recent-insights-live:v5:${season}`,
       { ttlMs: CACHE_TTL_MS, staleMs: CACHE_STALE_MS, tags: ["recent-insights-live"] },
       () => buildLive(season)
     );

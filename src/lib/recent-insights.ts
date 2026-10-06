@@ -21,6 +21,7 @@ export type RecentInsightCategory =
   | "GAME · RUN"
   | "GAME · SEESAW"
   | "GAME · LATE WINNER"
+  | "GAME · BIGGEST LEAD"
   | "PLAYER · TAKEOVER"
   | "TEAM · BIG QUARTER"
   | "TEAM · SHOOTING"
@@ -48,7 +49,8 @@ export type RecentInsightFocus =
   | "late_winner"
   | "takeover"
   | "quarter"
-  | "threes";
+  | "threes"
+  | "lead";
 
 /** Box-score line behind a player card. Counts only; nothing derived is stored. */
 export type RecentInsightStatLine = {
@@ -491,6 +493,10 @@ export function buildRecentInsights(
     for (const story of flowStories(g, lines)) push(story);
   }
   for (const g of games) {
+    const fill = fillStory(g);
+    if (fill) push(fill);
+  }
+  for (const g of games) {
     const quarter = bigQuarter(g);
     if (quarter) push(quarter);
     const threes = hotThrees(g, lines);
@@ -849,6 +855,69 @@ function teamIdOf(g: SlateGameInput, side: "home" | "away"): string {
 
 function otTail(g: SlateGameInput): string {
   return isOt(g) ? " in overtime" : "";
+}
+
+/**
+ * Lower-priority game card so the section can fill its grid: the winner's
+ * biggest lead from the play log, or the final margin from the line score
+ * when there is no complete play log.
+ */
+function fillStory(g: SlateGameInput): RecentInsight | null {
+  const winner = winnerSide(g);
+  if (!winner) return null;
+  const W = abbrOf(g, winner);
+  const margin = Math.abs(g.homeScore - g.awayScore);
+  const base = {
+    context: contextFor(g),
+    gameId: g.id,
+    gameDate: g.gameDate,
+    teamId: teamIdOf(g, winner),
+    bucket: "game" as const,
+  };
+  const flow = g.flow;
+  if (flow?.plays.length) {
+    const sign = winner === "home" ? 1 : -1;
+    let peak = 0;
+    let at = -1;
+    flow.plays.forEach((p, i) => {
+      const m = sign * (p.home - p.away);
+      if (m > peak) {
+        peak = m;
+        at = i;
+      }
+    });
+    if (at < 0) return null;
+    const p = flow.plays[at]!;
+    const when =
+      p.clockKnown === false
+        ? `in the ${periodName(p.period, flow.periods)}`
+        : `with ${p.clock} left in the ${periodName(p.period, flow.periods)}`;
+    return {
+      ...base,
+      id: `lead-${g.id}`,
+      category: "GAME · BIGGEST LEAD",
+      headline: `${W} · led by ${peak}`,
+      description:
+        at === flow.plays.length - 1
+          ? `${W} won by ${margin}${otTail(g)}, its biggest lead of the game.`
+          : `${W} led by as many as ${peak} ${when} and won by ${margin}${otTail(g)}.`,
+      priority: 20 + Math.min(15, peak / 2),
+      focus: "lead",
+      hero: { value: `+${peak}`, label: "Biggest lead" },
+      game: gameOf(g, { kind: "point", t: p.t, margin: p.home - p.away, label: `${W} up ${peak}` }),
+    };
+  }
+  if (!g.homePeriodScores?.length || !g.awayPeriodScores?.length) return null;
+  return {
+    ...base,
+    id: `final-margin-${g.id}`,
+    category: "TEAM · MARGIN",
+    headline: `${W} · +${margin}`,
+    description: `${W} won by ${margin}${otTail(g)}.`,
+    priority: 10 + Math.min(10, margin / 2),
+    focus: "margin",
+    game: gameOf(g),
+  };
 }
 
 /**

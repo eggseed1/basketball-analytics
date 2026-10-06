@@ -256,4 +256,25 @@ function trade(n: number, from: number, to: number, a: Step[2], b: Step[2], pa: 
   assert.deepEqual(threes?.contributors?.map((c) => c.value), [7, 6, 5, 3]);
 }
 
+// A quiet slate still fills six cards from real results, with stories ahead of fill.
+{
+  const quiet: SlateGameInput[] = Array.from({ length: 6 }, (_, i) => ({
+    ...game,
+    id: `q${i}`,
+    homeScore: 110 + i,
+    awayScore: 100,
+    homePeriodScores: [28, 27, 28, 27 + i],
+    awayPeriodScores: [25, 25, 25, 25],
+  }));
+  const out = buildRecentInsights({ games: quiet, lines: [] });
+  assert.equal(out.length, 6);
+  assert.match(out[0]!.description, /^Largest margin of victory/);
+  assert.ok(out.slice(1).every((c) => /^HOM won by \d+\.$/.test(c.description)));
+  const flowGame = gameWith(flowOf([...trade(14, 0, 2000, "home", "away", 3, 2), ...trade(6, 2000, 2870, "away", "home", 3, 2)]), "fl");
+  const lead = buildRecentInsights({ games: [flowGame], lines: [] }).find((c) => c.focus === "lead");
+  assert.ok(lead, "expected a biggest-lead card from the play log");
+  assert.equal(lead.hero?.label, "Biggest lead");
+  assert.match(lead.description, /^HOM led by as many as \d+ with \d+:\d\d left in the (third|fourth) quarter and won by \d+\.$/);
+}
+
 console.log("test-recent-insights: PASS");

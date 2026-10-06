@@ -156,7 +156,7 @@ export function InsightLeadWorm({
   }
 
   const W = 340;
-  const H = 132;
+  const H = 104;
   const padX = 34;
   const padRight = 22;
   const top = 20;
@@ -181,7 +181,7 @@ export function InsightLeadWorm({
       </figcaption>
       <svg
         viewBox={`0 0 ${W} ${H}`}
-        className="h-[124px] w-full overflow-visible"
+        className="h-auto w-full overflow-visible"
         role="img"
         aria-label={margins
           .map((m, i) =>
@@ -286,7 +286,7 @@ export function InsightQuarterStack({
             <div
               className="flex w-full shrink-0 flex-col gap-px overflow-hidden rounded-[4px]"
               style={{
-                height: Math.max(4, Math.round((total / max) * 84)),
+                height: Math.max(4, Math.round((total / max) * 52)),
                 opacity: focusPeriod == null || i === best ? 1 : 0.35,
               }}
             >
@@ -562,7 +562,7 @@ export function InsightTripleDoubleRings({
   const closed = stats.filter((s) => s.v >= 10).length;
   return (
     <figure className="flex items-center gap-4">
-      <svg viewBox="0 0 100 100" className="h-[104px] w-[104px] shrink-0 -rotate-90" role="img" aria-label={stats.map((s) => `${s.v} ${s.label}`).join(", ")}>
+      <svg viewBox="0 0 100 100" className="h-[80px] w-[80px] shrink-0 -rotate-90" role="img" aria-label={stats.map((s) => `${s.v} ${s.label}`).join(", ")}>
         {stats.map((s) => {
           const c = 2 * Math.PI * s.r;
           const frac = Math.min(s.v / 10, 1);
@@ -614,7 +614,7 @@ export function InsightTrendBars({
   const avg = points.reduce((s, p) => s + p.points, 0) / points.length;
   return (
     <div className="flex flex-col gap-1">
-      <div className="relative flex h-[76px] items-end gap-2">
+      <div className="relative flex h-[60px] items-end gap-2">
         <span
           aria-hidden
           className="absolute inset-x-0 border-t border-dashed border-foreground/40"
@@ -763,7 +763,7 @@ export function InsightFlowChart({ game }: { game: RecentInsightGame }) {
   const lo = Math.min(...margins, 0) < 0 ? -reach : -4;
 
   const W = 340;
-  const H = 132;
+  const H = 104;
   const padX = 34;
   const padRight = 26;
   const top = 18;
@@ -785,7 +785,7 @@ export function InsightFlowChart({ game }: { game: RecentInsightGame }) {
   return (
     <svg
       viewBox={`0 0 ${W} ${H}`}
-      className="h-[124px] w-full overflow-visible"
+      className="h-auto w-full overflow-visible"
       role="img"
       aria-label={`Score margin through the game. Final: ${game.away.abbr} ${game.away.score}, ${game.home.abbr} ${game.home.score}.${mark ? ` Marked: ${mark.label}.` : ""}`}
     >
@@ -857,10 +857,17 @@ export function InsightFlowChart({ game }: { game: RecentInsightGame }) {
       {mark && mark.kind !== "span" ? (
         <g>
           <circle cx={x(mark.t)} cy={y(mark.margin)} r={4.5} fill="var(--card)" stroke={markColor(mark.margin)} strokeWidth={2.5} />
+          {/* Below-zero labels sit beside the point so they clear the quarter labels. */}
           <text
-            x={Math.min(W - padRight - 4, Math.max(padX + 4, x(mark.t)))}
-            y={mark.margin >= 0 ? y(mark.margin) - 9 : y(mark.margin) + 17}
-            textAnchor="middle"
+            x={
+              mark.margin >= 0
+                ? Math.min(W - padRight - 4, Math.max(padX + 4, x(mark.t)))
+                : x(mark.t) > W / 2
+                  ? x(mark.t) - 9
+                  : x(mark.t) + 9
+            }
+            y={mark.margin >= 0 ? y(mark.margin) - 9 : y(mark.margin) + 4}
+            textAnchor={mark.margin >= 0 ? "middle" : x(mark.t) > W / 2 ? "end" : "start"}
             className="text-[11px] font-bold"
             fill="var(--foreground)"
           >
@@ -896,7 +903,7 @@ export function InsightPeriodBars({
 }) {
   const max = Math.max(...periodPoints, 1);
   return (
-    <div className="flex h-[92px] items-end gap-3">
+    <div className="flex h-[64px] items-end gap-3">
       {periodPoints.map((pts, i) => (
         <div key={i} className="flex h-full flex-1 flex-col items-center justify-end gap-1">
           <span className={cn("text-[13px] tabular-nums", i === focusPeriod ? "font-black" : "font-semibold text-muted-foreground")}>
