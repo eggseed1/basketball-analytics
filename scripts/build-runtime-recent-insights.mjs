@@ -35,6 +35,13 @@ async function main() {
   );
 
   const season = "2025-26";
+  const logRoot = path.join(ROOT, "public/runtime/player-game-logs", season);
+  if (!fs.existsSync(logRoot)) {
+    // CI checkouts don't carry the per-player logs; the live homepage path
+    // covers current games, so keep the bundled snapshot as it is.
+    console.log(`[recent-insights] no game logs at ${logRoot}; keeping existing snapshot`);
+    return;
+  }
   const nbaToEspn = new Map();
   const nbaToName = new Map();
   for (const a of aliases.aliases ?? []) {
