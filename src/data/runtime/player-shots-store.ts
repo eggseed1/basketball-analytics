@@ -13,19 +13,26 @@ type AssetsFetcher = {
   fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>;
 };
 
-function cloudflareAssets(): AssetsFetcher | null {
+type ShotBucket = {
+  get: (key: string) => Promise<{ json<T>(): Promise<T> } | null>;
+};
+
+type ShotEnv = { ASSETS?: AssetsFetcher; PLAYER_SHOTS?: ShotBucket };
+
+function cloudflareEnv(): ShotEnv | null {
   try {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { getCloudflareContext } = require("@opennextjs/cloudflare") as {
-      getCloudflareContext: (opts?: { async?: boolean }) => {
-        env?: { ASSETS?: AssetsFetcher };
-      };
+      getCloudflareContext: (opts?: { async?: boolean }) => { env?: ShotEnv };
     };
-    const ctx = getCloudflareContext();
-    return ctx?.env?.ASSETS ?? null;
+    return getCloudflareContext()?.env ?? null;
   } catch {
     return null;
   }
+}
+
+function cloudflareAssets(): AssetsFetcher | null {
+  return cloudflareEnv()?.ASSETS ?? null;
 }
 
 function uniqueIds(ids: Array<string | null | undefined>): string[] {
@@ -87,9 +94,29 @@ async function fetchShotAsset(
   }
 }
 
+/** CI deploys can't bake shots (stats.nba.com blocks runners), so the bake lives in R2. */
+async function fetchShotObject(
+  season: string,
+  playerId: string
+): Promise<PlayerSeasonShotIndex | null> {
+  try {
+    const bucket = cloudflareEnv()?.PLAYER_SHOTS;
+    if (!bucket) return null;
+    const object = await bucket.get(`${season}/${playerId}.json`);
+    if (!object) return null;
+    const json = await object.json<PlayerSeasonShotIndex>();
+    if (!json || !Array.isArray(json.shots) || json.shots.length === 0) {
+      return null;
+    }
+    return json;
+  } catch {
+    return null;
+  }
+}
+
 /**
  * Resolve a player-season shot index for CF + local.
- * Order: history disk → public/ bake (local) → Workers ASSETS.
+ * Order: history disk → public/ bake (local) → Workers ASSETS → R2 bucket.
  */
 export async function resolvePlayerSeasonShotIndex(options: {
   season: string;
@@ -116,6 +143,11 @@ export async function resolvePlayerSeasonShotIndex(options: {
   for (const id of ids) {
     const asset = await fetchShotAsset(options.season, id);
     if (asset && asset.coordinateShots > 0) return asset;
+  }
+
+  for (const id of ids) {
+    const object = await fetchShotObject(options.season, id);
+    if (object && object.coordinateShots > 0) return object;
   }
 
   return null;
