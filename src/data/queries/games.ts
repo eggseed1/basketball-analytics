@@ -767,16 +767,18 @@ async function refreshStripStatuses(games: GameSummary[]): Promise<GameSummary[]
 
   const { getScoreboardDateFeed } = await import("./scoreboard-feed");
   const { withBudget } = await import("./budget");
-  const { value: days } = await withBudget(
-    Promise.all(
-      dates.map((date) =>
-        getScoreboardDateFeed({ date })
-          .then((feed) => (feed.isStale ? [] : feed.data))
-          .catch(() => [] as GameSummary[])
-      )
-    ),
-    STRIP_REFRESH_BUDGET_MS,
-    [] as GameSummary[][]
+  const days = await Promise.all(
+    dates.map((date) =>
+      withBudget(
+        getScoreboardDateFeed({ date }).then((feed) =>
+          feed.isStale
+            ? feed.data.filter((g) => SETTLED_STATUSES.has(g.status ?? ""))
+            : feed.data
+        ),
+        STRIP_REFRESH_BUDGET_MS,
+        [] as GameSummary[]
+      ).then((r) => r.value)
+    )
   );
   const fresh = new Map(days.flat().map((g) => [g.id, g]));
   if (!fresh.size) return games;
@@ -960,6 +962,8 @@ export async function getLiveScoreboardSummaries(options: {
   season?: string;
   force?: boolean;
   gameIds?: string[];
+  /** Earlier ET days (`YYYY-MM-DD`) whose games a stale page still shows as unsettled. */
+  pastDates?: string[];
   signal?: AbortSignal;
 } = {}): Promise<{
   season: string;
@@ -969,12 +973,37 @@ export async function getLiveScoreboardSummaries(options: {
   warnings?: string[];
   isStale?: boolean;
 }> {
-  const { getLiveScoreboardFeed } = await import("./scoreboard-feed");
-  const feed = await getLiveScoreboardFeed(options);
+  const { getLiveScoreboardFeed, getScoreboardDateFeed } = await import(
+    "./scoreboard-feed"
+  );
+  const { espnLiveScoreboardDateKeys } = await import(
+    "@/data/providers/nba/scoreboard-client"
+  );
+  const liveKeys = espnLiveScoreboardDateKeys();
+  const firstLiveKey = liveKeys[0]!;
+  const pastDates = [...new Set(options.pastDates ?? [])]
+    .filter(
+      (d) =>
+        /^\d{4}-\d{2}-\d{2}$/.test(d) && d.replace(/-/g, "") < firstLiveKey
+    )
+    .slice(0, 7);
+  const want = options.gameIds?.length ? new Set(options.gameIds) : null;
+  const [feed, ...pastDays] = await Promise.all([
+    getLiveScoreboardFeed(options),
+    ...pastDates.map((date) =>
+      getScoreboardDateFeed({ date })
+        .then((day) => day.data)
+        .catch(() => [] as GameSummary[])
+    ),
+  ]);
+  const seen = new Set(feed.data.games.map((g) => g.id));
+  const pastGames = (pastDays as GameSummary[][])
+    .flat()
+    .filter((g) => !seen.has(g.id) && (!want || want.has(g.id)));
   return {
     season: feed.data.season,
     retrievedAt: feed.data.retrievedAt ?? new Date().toISOString(),
-    games: feed.data.games,
+    games: [...feed.data.games, ...pastGames],
     source: feed.source,
     warnings: feed.warnings,
     isStale: feed.isStale,

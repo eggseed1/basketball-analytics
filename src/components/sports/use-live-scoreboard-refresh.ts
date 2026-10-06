@@ -16,6 +16,7 @@ import {
   resolveRefreshIntervalMs,
   type LiveRefreshDiagnostics,
 } from "@/lib/live-refresh-policy";
+import { nbaTodayIso } from "@/lib/nba-calendar-date";
 
 type LiveApiResponse = {
   retrievedAt?: string;
@@ -83,10 +84,17 @@ export function useLiveScoreboardRefresh(
 
   const poll = useCallback(async (force: boolean) => {
     const current = gamesRef.current;
-    const ids = current
-      .filter((g) => needsLivePolling(g.status as GameStatusKind))
-      .map((g) => g.id);
-    if (!ids.length) return;
+    const pending = current.filter((g) =>
+      needsLivePolling(g.status as GameStatusKind)
+    );
+    if (!pending.length) return;
+    const ids = pending.map((g) => g.id);
+    const today = nbaTodayIso();
+    const pastDates = [
+      ...new Set(
+        pending.map((g) => g.gameDate).filter((d) => d && d < today)
+      ),
+    ];
 
     diagnostics.current.polls += 1;
     diagnostics.current.activeGameCount = ids.length;
@@ -95,6 +103,7 @@ export function useLiveScoreboardRefresh(
     if (season) params.set("season", season);
     if (force) params.set("force", "1");
     params.set("ids", ids.join(","));
+    if (pastDates.length) params.set("dates", pastDates.join(","));
 
     try {
       const res = await fetch(`/api/scores/live?${params.toString()}`, {
