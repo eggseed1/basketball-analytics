@@ -149,9 +149,7 @@ export function HomeGameStripCard({ game }: { game: GameSummary }) {
   const finalAt = game.status === "final" ? formatStripWhen(game.tipOffAt, false) : null;
   const when = preTip
     ? formatStripWhen(game.tipOffAt, true) ?? statusHeadline(game.status)
-    : finalAt
-      ? `${statusHeadline(game.status)} · ${finalAt}`
-      : statusHeadline(game.status);
+    : statusHeadline(game.status);
   const winner =
     game.status === "final" && game.homeScore !== game.awayScore
       ? game.homeScore > game.awayScore
@@ -209,6 +207,22 @@ export function HomeGameStripCard({ game }: { game: GameSummary }) {
                 )}
               >
                 {clock}
+              </span>
+            ) : null}
+          </div>
+        ) : game.status === "final" ? (
+          <div className="flex items-center gap-2">
+            <span className="rounded-full bg-foreground/[0.08] px-2 py-1 text-[12px] font-semibold leading-none text-foreground/80">
+              {statusHeadline(game.status)}
+            </span>
+            {finalAt ? (
+              <span
+                className={cn(
+                  type.caption,
+                  "whitespace-nowrap font-medium tracking-tight text-muted-foreground"
+                )}
+              >
+                {finalAt}
               </span>
             ) : null}
           </div>
