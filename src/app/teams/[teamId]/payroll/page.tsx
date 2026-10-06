@@ -57,18 +57,16 @@ export default async function TeamPayrollPage({
   if (contracts) {
     const presentation = slice ? buildTeamPayrollPresentation(slice) : null;
     const teamName = presentation?.team.displayName ?? contracts.code;
+    const teamKey = (resolveTeamBrand(franchiseId) ?? resolveTeamBrand(contracts.code))?.abbr ?? contracts.code;
     return (
-      <main className="mx-auto max-w-6xl px-4 py-8">
-        <p className="mb-4 text-sm">
-          <Link href={`/teams/${franchiseId}`} className="underline">
-            ← {teamName}
-          </Link>
-          {" · "}
-          <Link href={`/teams/${franchiseId}/draft-assets`} className="underline">
-            Draft picks &amp; rights
-          </Link>
-        </p>
-        <TeamContractsPageView teamName={teamName} contracts={contracts} capContext={presentation?.capContext} />
+      <main className="site-shell py-5 sm:py-7">
+        <TeamContractsPageView
+          teamName={teamName}
+          teamKey={teamKey}
+          franchiseId={franchiseId}
+          contracts={contracts}
+          capContext={presentation?.capContext}
+        />
       </main>
     );
   }
@@ -89,7 +87,7 @@ export default async function TeamPayrollPage({
   const data = buildTeamPayrollPresentation(slice);
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-8">
+    <main className="site-shell py-5 sm:py-7">
       <p className="mb-4 text-sm">
         <Link href={`/teams/${franchiseId}`} className="underline">
           ← {data.team.displayName}
