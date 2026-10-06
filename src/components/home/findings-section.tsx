@@ -49,7 +49,7 @@ export function FindingsSection({
   const asOf = todayIsoDate();
 
   return (
-    <section className="flex min-w-0 flex-col gap-3">
+    <section className="sports-card flex flex-col gap-3 p-4 sm:p-[21px]">
       <div>
         <h2 className="type-heading">Recent Insights</h2>
         <p className="type-body-sm text-muted-foreground">
@@ -61,7 +61,7 @@ export function FindingsSection({
         </p>
       </div>
       {insights.length ? (
-        <div className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="grid min-w-0 gap-3 sm:grid-cols-2">
           {insights.map((insight) => (
             <InsightCard key={insight.id} insight={insight} asOf={asOf} />
           ))}
@@ -189,7 +189,7 @@ function InsightCard({
   })();
 
   return (
-    <article className="sports-card relative flex min-w-0 flex-col overflow-hidden">
+    <article className="relative flex min-w-0 flex-col overflow-hidden rounded-[14px] bg-foreground/[0.035] ring-1 ring-inset ring-foreground/[0.06]">
       <span aria-hidden className="h-1 w-full" style={{ background: accent }} />
       <div className="flex flex-1 flex-col gap-3 p-4">
         <div className="flex items-center justify-between gap-2 text-[11px]">
