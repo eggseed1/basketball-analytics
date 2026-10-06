@@ -515,6 +515,7 @@ function CompComparePanel({
   inline = false,
   chartHeight: chartHeightProp,
   visibleCompRows,
+  compsPending = false,
 }: {
   metric: PercentileMetric | undefined;
   playerId: string;
@@ -528,6 +529,8 @@ function CompComparePanel({
   inline?: boolean;
   chartHeight?: number;
   visibleCompRows?: number;
+  /** Comps arrive with the full payload; until then don't claim there are none. */
+  compsPending?: boolean;
 }) {
   const chartTheme = useChartTheme();
   const [mode, setMode] = useState<"league" | "history">("league");
@@ -664,8 +667,9 @@ function CompComparePanel({
               minHeight: `calc(${compRowCount} * 3.5rem + ${compRowCount - 1} * 0.25rem)`,
             }}
           >
-            No close comps found for this stat
-            {mode === "history" ? " across other seasons" : " in the league"}.
+            {compsPending
+              ? "Finding similar players…"
+              : `No close comps found for this stat${mode === "history" ? " across other seasons" : " in the league"}.`}
           </p>
         ) : (
           <ul
@@ -781,6 +785,7 @@ function PercentileExpandDialog({
   viewTeamKey,
   stints,
   hustleEmptyCopy,
+  compsPending,
 }: {
   open: boolean;
   onClose: () => void;
@@ -804,6 +809,7 @@ function PercentileExpandDialog({
   active: PercentileMetric | undefined;
   activeId: string;
   onSelectMetric: (id: string) => void;
+  compsPending: boolean;
   playerId: string;
   viewTeamKey?: string;
   stints?: PlayerCardStint[];
@@ -983,6 +989,7 @@ function PercentileExpandDialog({
                   onSeasonSelect={onCommitSeason}
                   chartHeight={220}
                   visibleCompRows={6}
+                  compsPending={compsPending}
                 />
               </div>
             </aside>
@@ -990,6 +997,12 @@ function PercentileExpandDialog({
         )}
       </div>
     </dialog>
+  );
+}
+
+function hasComps(metrics: PercentileMetric[]): boolean {
+  return metrics.some(
+    (m) => m.leagueComps.length > 0 || m.historicalComps.length > 0
   );
 }
 
@@ -1142,6 +1155,10 @@ export function PlayerPercentilePanel({
   const [viewTeamKey, setViewTeamKey] = useState(teamKey);
   const [busy, setBusy] = useState(false);
   const [loadFailed, setLoadFailed] = useState(false);
+  const ssrHasComps = hasComps(metrics);
+  const [fullPending, setFullPending] = useState(
+    metrics.length > 0 && !ssrHasComps
+  );
 
   const applyCached = useCallback(
     (nextSeason: string, next: SeasonMetricsCache) => {
@@ -1153,6 +1170,23 @@ export function PlayerPercentilePanel({
     [playerId]
   );
 
+  /** Fast payloads skip comps; fetch the full one for whatever season is on screen. */
+  const upgradeToFull = useCallback(
+    (target: string) => {
+      setFullPending(true);
+      void fetchPercentiles(playerId, target, "full")
+        .then((full) => {
+          if (desiredSeason.current !== target) return;
+          if (full?.metrics.length) applyCached(target, full);
+        })
+        .catch(() => undefined)
+        .finally(() => {
+          if (desiredSeason.current === target) setFullPending(false);
+        });
+    },
+    [applyCached, playerId]
+  );
+
   /** Show `next` from cache or the API. Never leaves another season's metrics on screen. */
   const loadSeason = useCallback(
     (next: string) => {
@@ -1162,6 +1196,8 @@ export function PlayerPercentilePanel({
         setViewMetrics(cached.metrics);
         setViewTeamKey(cached.teamKey);
         setBusy(false);
+        if (hasComps(cached.metrics)) setFullPending(false);
+        else upgradeToFull(next);
         return;
       }
       // Drop the previous season's numbers so they never sit under the new heading.
@@ -1173,6 +1209,7 @@ export function PlayerPercentilePanel({
         setViewMetrics([]);
         setLoadFailed(failed);
         setBusy(false);
+        setFullPending(false);
       };
       void fetchPercentiles(playerId, next, "fast")
         .then((json) => {
@@ -1181,17 +1218,15 @@ export function PlayerPercentilePanel({
           if (json.metrics.length === 0) return clear(false);
           applyCached(next, json);
           setBusy(false);
-          // Upgrade sparklines / YoY peers after paint.
-          void fetchPercentiles(playerId, next, "full").then((full) => {
-            if (!full?.metrics.length || !current()) return;
-            applyCached(next, full);
-          });
+          // Upgrade sparklines, YoY peers and comps after paint.
+          if (hasComps(json.metrics)) setFullPending(false);
+          else upgradeToFull(next);
         })
         .catch(() => {
           if (current()) clear(true);
         });
     },
-    [applyCached, playerId]
+    [applyCached, playerId, upgradeToFull]
   );
 
   useEffect(() => {
@@ -1207,19 +1242,15 @@ export function PlayerPercentilePanel({
     setBusy(false);
   }, [metrics, playerId, profileComps, season, teamKey]);
 
-  // SSR ships fast metrics; upgrade sparklines + YoY peers when idle.
-  const hydratedFull = useRef(false);
+  // SSR ships fast metrics; upgrade sparklines, YoY peers and comps when idle.
+  // No run-once ref: Strict Mode's cleanup would cancel the only scheduled call.
   useEffect(() => {
-    if (hydratedFull.current) return;
-    hydratedFull.current = true;
+    if (ssrHasComps) return;
     let cancelled = false;
     const targetSeason = season;
     const hydrate = () => {
-      void fetchPercentiles(playerId, targetSeason, "full").then((json) => {
-        if (cancelled || !json?.metrics.length) return;
-        if (desiredSeason.current !== targetSeason) return;
-        applyCached(targetSeason, json);
-      });
+      if (cancelled || desiredSeason.current !== targetSeason) return;
+      upgradeToFull(targetSeason);
     };
     if (typeof requestIdleCallback === "function") {
       const idleId = requestIdleCallback(hydrate);
@@ -1233,7 +1264,7 @@ export function PlayerPercentilePanel({
       cancelled = true;
       window.clearTimeout(timeoutId);
     };
-  }, [applyCached, playerId, season]);
+  }, [season, ssrHasComps, upgradeToFull]);
 
   const urlSeason = queryNav?.searchParams.get("season");
   useEffect(() => {
@@ -1613,6 +1644,7 @@ export function PlayerPercentilePanel({
                     viewSeason={viewSeason}
                     seasons={timeline}
                     onSeasonSelect={commitSeason}
+                    compsPending={fullPending}
                   />
                 </div>
               </aside>
@@ -1648,6 +1680,7 @@ export function PlayerPercentilePanel({
         viewTeamKey={viewTeamKey}
         stints={stintsBySeason?.[viewSeason]}
         hustleEmptyCopy={hustleEmptyCopy}
+        compsPending={fullPending}
       />
     </GlassSurface>
   );
