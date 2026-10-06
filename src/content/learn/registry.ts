@@ -1317,7 +1317,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Headline tone",
     category: "sentiment",
     tooltip:
-      "A score for one headline and the first lines of its summary, from a word list tuned for basketball (\"waived\" reads negative, \"extension\" positive). It hasn't been checked against hand labels yet, so single scores can be wrong.",
+      "A language model's rating of one headline as positive, neutral or negative toward each player it names. Players named only in the summary get a word list score tuned for basketball (\"waived\" reads negative, \"extension\" positive). Against hand labels the model matched about 7 times in 10 and the word list about half, so single ratings can be wrong.",
     showTooltip: true,
     learnSlug: null,
     relatedIds: ["sentiment_media_lane"],

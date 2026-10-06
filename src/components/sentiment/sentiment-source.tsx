@@ -5,6 +5,7 @@ import type {
 } from "@/sentiment/curated-types";
 import Link from "next/link";
 
+import { ToneAgreementChart } from "@/components/sentiment/tone-agreement-chart";
 import { MoreInfo } from "@/components/ui/more-info";
 import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
@@ -236,6 +237,7 @@ export function SentimentSourcesStrip({
           </span>
         </li>
       </ul>
+      <ToneAgreementChart />
       <p>
         Fan and media tone are kept separate from performance metrics and Movement Center
         evidence. The{" "}

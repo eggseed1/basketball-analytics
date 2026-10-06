@@ -78,6 +78,7 @@
     "test:historical-team-brand": "tsx scripts/test-historical-team-brand.ts",
     "test:historical-team-fail-fast": "tsx --require ./scripts/lib/stub-server-only.cjs scripts/test-historical-team-fail-fast.ts",
     "test:time-machine": "tsx scripts/test-time-machine.ts",
+    "test:tone-eval": "tsx scripts/test-tone-eval.ts",
     "test:drbl-release": "tsx scripts/test-drbl-release.ts",
     "test:drbl-release:fixture": "tsx scripts/test-drbl-release.ts fixture",
     "test:drbl-release:live-espn": "tsx scripts/test-drbl-release.ts live-espn",

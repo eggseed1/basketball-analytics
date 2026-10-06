@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 
 import { CareerBandsExplorer } from "@/components/learn/career-bands-explorer";
+import { DrblShrinkage } from "@/components/learn/drbl-shrinkage";
 import { LearnPageFooter, learnEyebrow } from "@/components/learn/learn-page-footer";
 import { LearnTopicView } from "@/components/learn/learn-topic-view";
 import { StatGuideView } from "@/components/learn/stat-guide-view";
@@ -53,7 +55,17 @@ export default async function LearnStatPage({
         </AppLink>
 
         {page.kind === "guide" ? (
-          <StatGuideView guide={page.guide} eyebrow={eyebrow} />
+          <StatGuideView
+            guide={page.guide}
+            eyebrow={eyebrow}
+            visual={
+              page.guide.slug === "drbl-100" ? (
+                <Suspense fallback={<div className="h-[42rem] animate-pulse rounded-md bg-foreground/[0.05]" />}>
+                  <DrblShrinkage />
+                </Suspense>
+              ) : undefined
+            }
+          />
         ) : (
           <LearnTopicView
             topic={page.topic}

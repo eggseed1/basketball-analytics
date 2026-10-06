@@ -315,44 +315,64 @@ function Teammates({
   }
   const me = shortName(playerName);
   return (
-    <div className="touch-scroll-x overflow-x-auto">
-      <table className="w-full min-w-[34rem] text-[13px]">
-        <thead>
-          <tr className="border-b border-border">
-            <th className={cn(th, "text-left")}>Teammate</th>
-            <th className={th}>Both on</th>
-            <th className={th}>{me} only</th>
-            <th className={th}>Teammate only</th>
-            <th className={th}>Both off</th>
-          </tr>
-        </thead>
-        <tbody>
-          {d.teammates.map((t) => {
-            const cell = (r: typeof t.states.both) => (
-              <td className={cn(td, toneClass(r.net))} title={`${fmtCount(r.poss)} poss`}>
-                {r.poss > 0 ? fmtSigned(r.net) : "—"}
-                <span className="ml-1 text-[11px] text-muted-foreground">{fmtCount(r.poss)}</span>
-              </td>
-            );
-            return (
-              <tr key={t.id} className="border-b border-border/60 last:border-0">
-                <td className={cn(td, "max-w-[12rem] text-left")}>
-                  <TransitionLink
-                    href={playerHref({ playerId: t.id, season, view: "onoff" })}
-                    className="block truncate font-medium"
-                  >
-                    {t.name}
-                  </TransitionLink>
-                </td>
-                {cell(t.states.both)}
-                {cell(t.states.aOnly)}
-                {cell(t.states.bOnly)}
-                {cell(t.states.neither)}
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+    <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      {d.teammates.map((t) => {
+        const mate = shortName(t.name);
+        return (
+          <li key={t.id} className="flex min-w-0 flex-col gap-2 rounded-md border border-border/70 p-3">
+            <TransitionLink
+              href={playerHref({ playerId: t.id, season, view: "onoff" })}
+              className="truncate text-[14px] font-semibold"
+            >
+              {t.name}
+            </TransitionLink>
+            <div className="grid grid-cols-[auto_minmax(0,1fr)_minmax(0,1fr)] gap-1">
+              <span />
+              <span className={cn(type.micro, "truncate text-center font-semibold text-muted-foreground")}>
+                {mate} on
+              </span>
+              <span className={cn(type.micro, "truncate text-center font-semibold text-muted-foreground")}>
+                {mate} off
+              </span>
+              <span className={cn(type.micro, "self-center pr-1 text-right font-semibold text-muted-foreground")}>
+                {me} on
+              </span>
+              <PairCell state={t.states.both} label={`${me} and ${mate} together`} />
+              <PairCell state={t.states.aOnly} label={`${me} without ${mate}`} />
+              <span className={cn(type.micro, "self-center pr-1 text-right font-semibold text-muted-foreground")}>
+                {me} off
+              </span>
+              <PairCell state={t.states.bOnly} label={`${mate} without ${me}`} />
+              <PairCell state={t.states.neither} label="Neither on the floor" />
+            </div>
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
+const THIN_PAIR_POSS = 100;
+
+function PairCell({ state, label }: { state: { net: number | null; poss: number }; label: string }) {
+  const has = state.poss > 0 && state.net != null && Number.isFinite(state.net);
+  const thin = state.poss < THIN_PAIR_POSS;
+  const strength = has ? Math.min(1, Math.abs(state.net!) / 15) * (thin ? 14 : 30) + 4 : 0;
+  const color = has && state.net! < 0 ? "var(--data-negative)" : "var(--data-positive)";
+  return (
+    <div
+      title={`${label}: ${has ? fmtSigned(state.net) : "no possessions"} net, ${fmtCount(state.poss)} poss${thin ? " (small sample)" : ""}`}
+      className={cn(
+        "flex h-14 flex-col items-center justify-center rounded-[5px]",
+        has ? "" : "bg-foreground/[0.04]",
+        thin && has ? "border border-dashed border-foreground/20" : ""
+      )}
+      style={has ? { background: `color-mix(in oklab, ${color} ${strength}%, transparent)` } : undefined}
+    >
+      <span className={cn("text-[15px] font-bold tabular-nums", has ? toneClass(state.net) : "text-muted-foreground")}>
+        {has ? fmtSigned(state.net) : "—"}
+      </span>
+      <span className={cn(type.micro, "tabular-nums text-muted-foreground")}>{fmtCount(state.poss)} poss</span>
     </div>
   );
 }
@@ -366,45 +386,58 @@ function Replacements({ d, playerName, season }: { d: PlayerOnOffDetail; playerN
     );
   }
   const me = shortName(playerName);
+  const pos = (share: number) => `${Math.min(1, Math.max(0, share)) * 100}%`;
   return (
-    <div className="touch-scroll-x overflow-x-auto">
-      <table className="w-full min-w-[30rem] text-[13px]">
-        <thead>
-          <tr className="border-b border-border">
-            <th className={cn(th, "text-left")}>Teammate</th>
-            <th className={th} title={`Share of team possessions he played while ${me} was on`}>
-              With {me}
-            </th>
-            <th className={th} title={`Share of team possessions he played while ${me} sat`}>
-              Without
-            </th>
-            <th className={th} title="Change in his share, in percentage points">
-              Change
-            </th>
-            <th className={th} title={`Possessions he played while ${me} sat`}>
-              Poss
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {d.replacements.map((r) => (
-            <tr key={r.id} className="border-b border-border/60 last:border-0">
-              <td className={cn(td, "max-w-[12rem] text-left")}>
-                <TransitionLink
-                  href={playerHref({ playerId: r.id, season, view: "onoff" })}
-                  className="block truncate font-medium"
-                >
-                  {r.name}
-                </TransitionLink>
-              </td>
-              <td className={td}>{fmtPct(r.shareWith, 0)}</td>
-              <td className={cn(td, "font-semibold")}>{fmtPct(r.shareWithout, 0)}</td>
-              <td className={td}>{fmtSignedPts(r.shareWithout - r.shareWith, 0)}</td>
-              <td className={cn(td, "text-muted-foreground")}>{fmtCount(r.possWithout)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="flex flex-col gap-3">
+      <div className={cn(type.caption, "flex flex-wrap items-center gap-4 text-muted-foreground")}>
+        <span className="inline-flex items-center gap-1.5">
+          <span className="size-2.5 rounded-full border-2 border-muted-foreground/60" aria-hidden /> With {me}
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <span className="size-2.5 rounded-full bg-foreground" aria-hidden /> While {me} sits
+        </span>
+      </div>
+      <ul className="flex flex-col gap-2.5">
+        {d.replacements.map((r) => (
+          <li
+            key={r.id}
+            className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 sm:grid-cols-[minmax(0,10rem)_minmax(0,1fr)_9rem]"
+          >
+            <TransitionLink
+              href={playerHref({ playerId: r.id, season, view: "onoff" })}
+              className="truncate text-[13px] font-semibold"
+            >
+              {r.name}
+            </TransitionLink>
+            <div
+              className="relative order-3 col-span-2 h-5 sm:order-none sm:col-span-1"
+              aria-label={`Plays ${fmtPct(r.shareWith, 0)} of possessions with ${me} on, ${fmtPct(r.shareWithout, 0)} while he sits`}
+            >
+              <div className="absolute inset-x-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-foreground/[0.07]" />
+              <div
+                className="absolute top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-foreground/25"
+                style={{ left: pos(r.shareWith), width: `calc(${pos(r.shareWithout)} - ${pos(r.shareWith)})` }}
+              />
+              <span
+                className="absolute top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-muted-foreground/60 bg-background"
+                style={{ left: pos(r.shareWith) }}
+              />
+              <span
+                className="absolute top-1/2 size-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-foreground ring-2 ring-background"
+                style={{ left: pos(r.shareWithout) }}
+              />
+            </div>
+            <p className="text-right text-[13px] tabular-nums">
+              <span className="text-muted-foreground">{fmtPct(r.shareWith, 0)} → </span>
+              <span className="font-semibold">{fmtPct(r.shareWithout, 0)}</span>
+              <span className={cn(type.caption, "ml-1.5 text-muted-foreground")}>{fmtCount(r.possWithout)} poss</span>
+            </p>
+          </li>
+        ))}
+      </ul>
+      <p className={cn(type.caption, "text-muted-foreground")}>
+        Share of team possessions each one plays. The bar runs from 0 to 100%.
+      </p>
     </div>
   );
 }
@@ -570,8 +603,9 @@ export function PlayerOnOffPanel({
       <div className="flex flex-col gap-3">
         <h3 className={type.heading}>With and without teammates</h3>
         <p className={cn(type.bodySm, "max-w-prose text-muted-foreground")}>
-          Team net rating in each combination, with possessions beside it. The teammates he shared
-          the most time with come first.
+          Team net rating in each combination of the two on or off the floor. Green is better, red is
+          worse, and a dashed cell has under {THIN_PAIR_POSS} possessions. The teammates he shared the most
+          time with come first.
         </p>
         <Teammates d={d} playerName={playerName} season={season} pairMin={PAIR_MIN_POSS[activePhase]} />
       </div>

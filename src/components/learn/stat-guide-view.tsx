@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 
 import { GuideFormulaEquations } from "@/components/learn/drbl-math-formulas";
 import {
@@ -14,9 +14,11 @@ import type { StatGuide } from "@/content/stats/guides";
 export function StatGuideView({
   guide,
   eyebrow,
+  visual,
 }: {
   guide: StatGuide;
   eyebrow: string;
+  visual?: ReactNode;
 }) {
   const [depth, setDepth] = useState<"plain" | "deep">("plain");
   const body = depth === "plain" ? guide.plain : guide.deep;
@@ -42,6 +44,8 @@ export function StatGuideView({
           </aside>
         ) : null}
       </LearnHeader>
+
+      {visual}
 
       {depth === "deep" ? (
         <LearnCard title="Definition and formula">
