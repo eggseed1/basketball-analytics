@@ -70,17 +70,32 @@ export type AdvancedRowLite = {
   mp: number;
   ts: number;
   usg: number;
+  gp?: number;
+  bpm?: number;
+  astPct?: number;
+  tovPct?: number;
+  tm?: string[];
 };
 
 export type UsagePoint = {
   name: string;
   team: string;
+  /** Stint teams on combined (2TM) rows, in order played. */
+  stints: string[] | null;
   playerId: string | null;
   usg: number;
   ts: number;
   minutes: number;
+  games: number | null;
+  bpm: number | null;
+  astPct: number | null;
+  tovPct: number | null;
   labeled: boolean;
 };
+
+function finiteOrNull(v: number | undefined): number | null {
+  return typeof v === "number" && Number.isFinite(v) ? v : null;
+}
 
 export const USAGE_MIN_MINUTES = 1500;
 
@@ -111,10 +126,15 @@ export function buildUsageEfficiency(
   return qualified.map((r) => ({
     name: r.n,
     team: r.t,
+    stints: r.tm?.length ? r.tm : null,
     playerId: r.e ?? null,
     usg: r.usg,
     ts: r.ts,
     minutes: r.mp,
+    games: finiteOrNull(r.gp),
+    bpm: finiteOrNull(r.bpm),
+    astPct: finiteOrNull(r.astPct),
+    tovPct: finiteOrNull(r.tovPct),
     labeled: labels.has(r.e ?? r.n),
   }));
 }

@@ -228,14 +228,31 @@ export function getBundledBrefAdvancedSeason(
 /** Slim usage and shooting rows for league-wide charts (memoized source). */
 export function getBundledBrefUsageRows(
   canonicalSeason: string
-): Array<{ n: string; t: string; e?: string; mp: number; ts: number; usg: number }> {
+): Array<{
+  n: string;
+  t: string;
+  e?: string;
+  gp: number;
+  mp: number;
+  ts: number;
+  usg: number;
+  bpm: number;
+  astPct?: number;
+  tovPct?: number;
+  tm?: string[];
+}> {
   return advancedForSeason(canonicalSeason).map((r) => ({
     n: r.n,
     t: r.t,
     e: r.e,
+    gp: r.gp,
     mp: r.mp,
     ts: r.ts,
     usg: r.usg,
+    bpm: r.bpm,
+    astPct: r.astPct,
+    tovPct: r.tovPct,
+    tm: r.tm,
   }));
 }
 

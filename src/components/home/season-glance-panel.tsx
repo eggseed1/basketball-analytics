@@ -12,6 +12,7 @@ import {
 } from "@/data/runtime/play-type-snapshot";
 import { getRuntimeStandings, runtimeStandingsMeta } from "@/data/runtime/standings-snapshot";
 import { TeamLogo } from "@/components/brand/team-logo";
+import { UsageEfficiencyChart } from "@/components/home/usage-efficiency-chart";
 import { sectionLinkClassName, type } from "@/lib/design-system";
 import {
   SHOT_ZONE_GROUPS,
@@ -40,11 +41,6 @@ const ZONE_COLORS: Record<ShotZoneGroup, string> = {
 
 function pct(v: number, digits = 0): string {
   return `${(v * 100).toFixed(digits)}%`;
-}
-
-function lastName(name: string): string {
-  const parts = name.trim().split(/\s+/);
-  return parts.length > 1 ? parts.slice(1).join(" ") : name;
 }
 
 function Tile({
@@ -129,101 +125,13 @@ function UsageChart({
   points: UsagePoint[];
   leagueTs: number | null;
 }) {
-  const W = 360;
-  const H = 270;
-  const L = 34;
-  const R = 10;
-  const T = 10;
-  const B = H - 24;
-  const usg = points.map((p) => p.usg);
-  const ts = points.map((p) => p.ts);
-  const xLo = Math.floor(Math.min(...usg)) - 1;
-  const xHi = Math.ceil(Math.max(...usg)) + 1;
-  const yLo = Math.min(...ts) - 0.01;
-  const yHi = Math.max(...ts) + 0.01;
-  const x = (v: number) => L + ((v - xLo) / (xHi - xLo)) * (W - L - R);
-  const y = (v: number) => T + ((yHi - v) / (yHi - yLo)) * (B - T);
-  const labeled = points.filter((p) => p.labeled);
-  // Overlapping labels step down one line; widths are estimated at 6.5px a character.
-  const placed: { x0: number; x1: number; y: number }[] = [];
-  const labelPos = new Map<string, { x: number; y: number; end: boolean }>();
-  for (const p of [...labeled].sort((a, b) => y(a.ts) - y(b.ts))) {
-    const end = x(p.usg) > W - 80;
-    const lx = end ? x(p.usg) - 8 : x(p.usg) + 8;
-    const width = lastName(p.name).length * 6.5;
-    const x0 = end ? lx - width : lx;
-    const x1 = end ? lx : lx + width;
-    let ly = y(p.ts) + 4;
-    for (const q of placed) {
-      if (x0 < q.x1 && x1 > q.x0 && Math.abs(q.y - ly) < 12) ly = q.y + 12;
-    }
-    placed.push({ x0, x1, y: ly });
-    labelPos.set(p.name, { x: lx, y: ly, end });
-  }
   return (
     <Tile
       title={`Usage and efficiency, ${season}`}
       href={`/explore/players/visualizations?view=usage&season=${season}`}
-      note={`Each dot is a player with ${USAGE_MIN_MINUTES.toLocaleString()}+ minutes. Further right carries more of the offense; higher scores more efficiently.`}
+      note={`Each dot is a player with ${USAGE_MIN_MINUTES.toLocaleString()}+ minutes, sized by minutes. Blue beats league true shooting. Hover a dot for the details.`}
     >
-      <svg
-        viewBox={`0 0 ${W} ${H}`}
-        className="h-auto w-full overflow-visible"
-        role="img"
-        aria-label={`Usage rate against true shooting for ${points.length} players. Labeled: ${labeled
-          .map((p) => `${p.name} ${p.usg.toFixed(1)}% usage, ${pct(p.ts, 1)} TS`)
-          .join("; ")}.`}
-      >
-        <line x1={L} x2={W - R} y1={B} y2={B} stroke="var(--border)" />
-        <line x1={L} x2={L} y1={T} y2={B} stroke="var(--border)" />
-        {leagueTs != null && leagueTs > yLo && leagueTs < yHi ? (
-          <g>
-            <line x1={L} x2={W - R} y1={y(leagueTs)} y2={y(leagueTs)} stroke="var(--foreground)" strokeOpacity={0.25} strokeDasharray="3 3" />
-            <text x={W - R} y={y(leagueTs) - 4} textAnchor="end" className="fill-muted-foreground text-[10px]">
-              League avg {pct(leagueTs, 1)}
-            </text>
-          </g>
-        ) : null}
-        {points
-          .filter((p) => !p.labeled)
-          .map((p) => (
-            <circle key={`${p.name}-${p.team}`} cx={x(p.usg)} cy={y(p.ts)} r={3} className="fill-foreground" fillOpacity={0.18}>
-              <title>{`${p.name} (${p.team}): ${p.usg.toFixed(1)}% usage, ${pct(p.ts, 1)} TS`}</title>
-            </circle>
-          ))}
-        {labeled.map((p) => {
-          const pos = labelPos.get(p.name)!;
-          const dot = (
-            <g>
-              <circle cx={x(p.usg)} cy={y(p.ts)} r={4.5} fill="var(--card)" stroke="#2f64d6" strokeWidth={2.25} />
-              <text
-                x={pos.x}
-                y={pos.y}
-                textAnchor={pos.end ? "end" : "start"}
-                className="fill-foreground text-[11px] font-semibold"
-              >
-                {lastName(p.name)}
-              </text>
-              <title>{`${p.name} (${p.team}): ${p.usg.toFixed(1)}% usage, ${pct(p.ts, 1)} TS`}</title>
-            </g>
-          );
-          return p.playerId ? (
-            <a key={p.name} href={`/players/${encodeURIComponent(p.playerId)}`}>
-              {dot}
-            </a>
-          ) : (
-            <g key={p.name}>{dot}</g>
-          );
-        })}
-        <text x={L} y={H - 6} className="fill-muted-foreground text-[10px] tabular-nums">{xLo}%</text>
-        <text x={(L + W - R) / 2} y={H - 6} textAnchor="middle" className="fill-muted-foreground text-[10px]">
-          Usage rate
-        </text>
-        <text x={W - R} y={H - 6} textAnchor="end" className="fill-muted-foreground text-[10px] tabular-nums">{xHi}%</text>
-        <text x={L - 4} y={T + 8} textAnchor="end" className="fill-muted-foreground text-[10px] tabular-nums">{pct(yHi)}</text>
-        <text x={L - 4} y={B} textAnchor="end" className="fill-muted-foreground text-[10px] tabular-nums">{pct(yLo)}</text>
-        <text x={L - 4} y={(T + B) / 2} textAnchor="end" className="fill-muted-foreground text-[10px]">TS</text>
-      </svg>
+      <UsageEfficiencyChart points={points} leagueTs={leagueTs} />
     </Tile>
   );
 }
