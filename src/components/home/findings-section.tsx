@@ -4,15 +4,16 @@ import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { TeamLogo } from "@/components/brand/team-logo";
 import {
   InsightEventPips,
-  InsightLeadByPeriod,
-  InsightPeriodScoring,
   InsightFinalScore,
+  InsightLeadWorm,
+  InsightPointsMix,
+  InsightQuarterStack,
   InsightShootingSplits,
   InsightShotDots,
   InsightStatLine,
   InsightTrendBars,
-  InsightTripleDoubleBars,
-  InsightVsSeason,
+  InsightTripleDoubleRings,
+  pointsAddUp,
   teamColor,
 } from "@/components/home/insight-visuals";
 import { AppLink } from "@/components/ui/app-link";
@@ -163,8 +164,8 @@ function InsightCard({
     if (line) {
       switch (focus) {
         case "points":
-          return line.seasonPpg != null && line.seasonPpg > 0 ? (
-            <InsightVsSeason line={line} color={accent} />
+          return pointsAddUp(line) ? (
+            <InsightPointsMix line={line} color={accent} />
           ) : (
             <InsightShootingSplits line={line} color={accent} />
           );
@@ -175,19 +176,14 @@ function InsightCard({
         case "stocks":
           return <InsightEventPips line={line} focus={focus} color={accent} />;
         case "triple_double":
-          return <InsightTripleDoubleBars line={line} color={accent} />;
+          return <InsightTripleDoubleRings line={line} color={accent} />;
         case "trend":
           return trend?.length ? <InsightTrendBars points={trend} color={accent} /> : null;
       }
     }
     if (game?.home.periods) {
-      if (focus === "combined") return <InsightPeriodScoring game={game} />;
-      return (
-        <InsightLeadByPeriod
-          game={game}
-          highlightPeriod={focus === "comeback" ? 2 : undefined}
-        />
-      );
+      if (focus === "combined") return <InsightQuarterStack game={game} />;
+      return <InsightLeadWorm game={game} focus={focus} />;
     }
     return null;
   })();
@@ -277,7 +273,7 @@ function InsightCard({
           ) : null}
         </div>
 
-        <p className="text-[13px] font-medium leading-snug">{insight.description}</p>
+        <p className="text-[12px] leading-snug text-muted-foreground">{insight.description}</p>
 
         {visual ? <div className="min-w-0">{visual}</div> : null}
 

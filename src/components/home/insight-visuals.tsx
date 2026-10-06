@@ -77,47 +77,110 @@ function periodLabel(index: number): string {
   return index < 4 ? `Q${index + 1}` : index === 4 ? "OT" : `OT${index - 3}`;
 }
 
-/**
- * Lead at the end of each period. Bars point toward whichever team led, so a
- * comeback reads as bars flipping sides.
- */
-export function InsightLeadByPeriod({
-  game,
-  highlightPeriod,
-}: {
-  game: RecentInsightGame;
-  /** 0-based period to emphasize (e.g. the Q3 deficit on a comeback card). */
-  highlightPeriod?: number;
-}) {
+/** "after Q1", "at halftime", ... for the end of a 0-based period. */
+function periodEnd(index: number): string {
+  if (index === 1) return "at halftime";
+  if (index === 3) return "after regulation";
+  return `after ${periodLabel(index)}`;
+}
+
+function sum(values: number[]): number {
+  return values.reduce((s, v) => s + v, 0);
+}
+
+/** Period scores that add up to the final on both sides, or null. */
+function consistentPeriods(game: RecentInsightGame): { home: number[]; away: number[] } | null {
   const home = game.home.periods;
   const away = game.away.periods;
-  if (!home || !away) return null;
-  const colors = gameColors(game);
+  if (!home?.length || !away?.length || home.length !== away.length) return null;
+  if (sum(home) !== game.home.score || sum(away) !== game.away.score) return null;
+  return { home, away };
+}
 
-  const margins = runningMargins(home, away);
-  const maxAbs = Math.max(5, ...margins.map((m) => Math.abs(m)));
+/** One-sentence takeaway for the lead chart, built only from quarter-end margins. */
+function leadStory(game: RecentInsightGame, margins: number[], focus?: RecentInsightFocus): string {
+  const homeWon = game.home.score > game.away.score;
+  const winner = homeWon ? game.home.abbr : game.away.abbr;
+  const loser = homeWon ? game.away.abbr : game.home.abbr;
+  const final = Math.abs(game.home.score - game.away.score);
+  const forWinner = margins.map((m) => (homeWon ? m : -m));
+
+  if (focus === "overtime" && margins.length > 4 && margins[3] === 0) {
+    const reg = (side: number[] | undefined) => sum((side ?? []).slice(0, 4));
+    return `Tied ${reg(game.away.periods)}-${reg(game.home.periods)} after regulation. ${winner} won by ${final} in overtime.`;
+  }
+  if (focus === "comeback" && forWinner.length >= 3 && forWinner[2]! < 0) {
+    return `${winner} trailed by ${-forWinner[2]!} after three quarters and won by ${final}.`;
+  }
+  const loserBest = Math.min(...forWinner);
+  if (loserBest < 0 && focus !== "margin") {
+    const at = forWinner.indexOf(loserBest);
+    return `${loser} led by ${-loserBest} ${periodEnd(at)}. ${winner} won by ${final}.`;
+  }
+  if (forWinner.slice(0, -1).every((m) => m > 0)) {
+    return `${winner} led after every quarter and won by ${final}.`;
+  }
+  const biggest = Math.max(...forWinner);
+  const at = forWinner.indexOf(biggest);
+  return `${winner}'s biggest lead at a quarter break was ${biggest}, ${periodEnd(at)}.`;
+}
+
+/**
+ * Lead at each quarter break as a line around zero, shaded in the leading
+ * team's color. Only quarter-end margins are plotted, so the dots are the data.
+ */
+export function InsightLeadWorm({
+  game,
+  focus,
+}: {
+  game: RecentInsightGame;
+  focus?: RecentInsightFocus;
+}) {
+  const periods = consistentPeriods(game);
+  if (!periods) return null;
+  const colors = gameColors(game);
+  const margins = runningMargins(periods.home, periods.away);
+  const series = [0, ...margins];
+  // Fit the scale to the margins actually reached, at least 8 points tall.
+  let hi = Math.max(...series);
+  let lo = Math.min(...series);
+  if (hi - lo < 8) {
+    if (lo === 0) hi = 8;
+    else if (hi === 0) lo = -8;
+    else {
+      const pad = (8 - (hi - lo)) / 2;
+      hi += pad;
+      lo -= pad;
+    }
+  }
 
   const W = 340;
-  const H = 140;
-  const axisBand = 22;
-  const labelPad = 16;
-  const plotTop = labelPad;
-  const plotBottom = H - axisBand - labelPad;
-  const oneSided = margins.every((m) => m >= 0) || margins.every((m) => m <= 0);
-  const homeOnly = margins.every((m) => m >= 0);
-  const mid = oneSided ? (homeOnly ? plotBottom : plotTop) : (plotTop + plotBottom) / 2;
-  const half = oneSided ? plotBottom - plotTop : (plotBottom - plotTop) / 2;
-  const slot = W / margins.length;
-  const barW = Math.min(44, slot * 0.6);
+  const H = 132;
+  const padX = 34;
+  const padRight = 22;
+  const top = 20;
+  const bottom = H - 36;
+  const x = (i: number) => padX + (i * (W - padX - padRight)) / (series.length - 1);
+  const y = (m: number) => top + ((hi - m) / (hi - lo || 1)) * (bottom - top);
+  const mid = y(0);
+  const line = series.map((m, i) => `${i ? "L" : "M"}${x(i).toFixed(1)},${y(m).toFixed(1)}`).join(" ");
+  const area = `${line} L${x(series.length - 1).toFixed(1)},${mid} L${x(0).toFixed(1)},${mid} Z`;
+  const clipId = `lead-${game.away.abbr}-${game.home.abbr}-${game.home.score}-${game.away.score}`;
+
+  const homeMax = Math.max(...margins);
+  const awayMax = Math.min(...margins);
+  const labelAt = new Set<number>([margins.length - 1]);
+  if (homeMax > 0) labelAt.add(margins.indexOf(homeMax));
+  if (awayMax < 0) labelAt.add(margins.indexOf(awayMax));
 
   return (
-    <figure className="flex flex-col gap-1">
-      <figcaption className="text-[11px] font-semibold text-muted-foreground">
-        Who led after each quarter
+    <figure className="flex flex-col gap-1.5">
+      <figcaption className="text-[13px] font-semibold leading-snug">
+        {leadStory(game, margins, focus)}
       </figcaption>
       <svg
         viewBox={`0 0 ${W} ${H}`}
-        className="h-[140px] w-full"
+        className="h-[124px] w-full overflow-visible"
         role="img"
         aria-label={margins
           .map((m, i) =>
@@ -125,36 +188,58 @@ export function InsightLeadByPeriod({
           )
           .join(", ")}
       >
-        <line x1={0} x2={W} y1={mid} y2={mid} stroke="var(--border)" strokeWidth={1} />
+        <defs>
+          <clipPath id={`${clipId}-top`}>
+            <rect x={0} y={0} width={W} height={mid} />
+          </clipPath>
+          <clipPath id={`${clipId}-bottom`}>
+            <rect x={0} y={mid} width={W} height={H - mid} />
+          </clipPath>
+        </defs>
+        <text x={0} y={mid - 5} className="text-[11px] font-bold" fill={colors.home}>
+          {game.home.abbr}
+        </text>
+        <text x={0} y={mid + 14} className="text-[11px] font-bold" fill={colors.away}>
+          {game.away.abbr}
+        </text>
+        <line x1={padX} x2={W - padRight} y1={mid} y2={mid} stroke="var(--border)" strokeWidth={1} />
+        {margins.map((_, i) => (
+          <line
+            key={i}
+            x1={x(i + 1)}
+            x2={x(i + 1)}
+            y1={top}
+            y2={bottom}
+            stroke="var(--border)"
+            strokeDasharray="2 3"
+            strokeWidth={1}
+            opacity={0.6}
+          />
+        ))}
+        <path d={area} fill={colors.home} opacity={0.2} clipPath={`url(#${clipId}-top)`} />
+        <path d={area} fill={colors.away} opacity={0.2} clipPath={`url(#${clipId}-bottom)`} />
+        <path d={line} fill="none" stroke={colors.home} strokeWidth={2.5} strokeLinejoin="round" clipPath={`url(#${clipId}-top)`} />
+        <path d={line} fill="none" stroke={colors.away} strokeWidth={2.5} strokeLinejoin="round" clipPath={`url(#${clipId}-bottom)`} />
         {margins.map((m, i) => {
-          const cx = slot * i + slot / 2;
-          const h = (Math.abs(m) / maxAbs) * half;
-          const y = m >= 0 ? mid - h : mid;
-          const color = m >= 0 ? colors.home : colors.away;
-          const dim = highlightPeriod != null && highlightPeriod !== i;
-          const labelY = m >= 0 ? mid - h - 4 : mid + h + 13;
-          const leader = m > 0 ? game.home.abbr : game.away.abbr;
+          const cx = x(i + 1);
+          const cy = y(m);
+          const fill = m > 0 ? colors.home : m < 0 ? colors.away : "var(--muted-foreground)";
+          const show = labelAt.has(i);
           return (
-            <g key={i} opacity={dim ? 0.4 : 1}>
-              {m !== 0 ? (
-                <rect x={cx - barW / 2} y={y} width={barW} height={Math.max(h, 2)} rx={3} fill={color} />
-              ) : (
-                <circle cx={cx} cy={mid} r={3} fill="var(--muted-foreground)" />
-              )}
-              <text
-                x={cx}
-                y={m === 0 ? mid - 7 : labelY}
-                textAnchor="middle"
-                className="fill-foreground text-[12px] font-bold tabular-nums"
-              >
-                {m === 0 ? "Tied" : `${leader} +${Math.abs(m)}`}
-              </text>
-              <text
-                x={cx}
-                y={H - 1}
-                textAnchor="middle"
-                className="fill-muted-foreground text-[11px]"
-              >
+            <g key={i}>
+              <circle cx={cx} cy={cy} r={show ? 4.5 : 3.5} fill="var(--card)" stroke={fill} strokeWidth={2.5} />
+              {show ? (
+                <text
+                  x={cx}
+                  y={m >= 0 ? cy - 9 : cy + 17}
+                  textAnchor="middle"
+                  className="text-[12px] font-bold tabular-nums"
+                  fill={m === 0 ? "var(--muted-foreground)" : fill}
+                >
+                  {m === 0 ? "Tied" : `+${Math.abs(m)}`}
+                </text>
+              ) : null}
+              <text x={cx} y={H - 2} textAnchor="middle" className="fill-muted-foreground text-[11px]">
                 {periodLabel(i)}
               </text>
             </g>
@@ -165,42 +250,50 @@ export function InsightLeadByPeriod({
   );
 }
 
-/** Points scored by each team per period, side by side. */
-export function InsightPeriodScoring({ game }: { game: RecentInsightGame }) {
-  const home = game.home.periods;
-  const away = game.away.periods;
-  if (!home || !away) return null;
-  const totals = home.map((h, i) => h + (away[i] ?? 0));
+/** Each quarter's points stacked by team, so the big quarter and who drove it both show. */
+export function InsightQuarterStack({ game }: { game: RecentInsightGame }) {
+  const periods = consistentPeriods(game);
+  if (!periods) return null;
+  const colors = gameColors(game);
+  const totals = periods.home.map((h, i) => h + periods.away[i]!);
   const max = Math.max(...totals, 1);
   const best = totals.indexOf(max);
-  const color = teamColor(game.home.teamId);
   return (
-    <figure className="flex flex-col gap-1.5">
-      <figcaption className="text-[11px] font-semibold text-muted-foreground">
-        Points per quarter, both teams
+    <figure className="flex flex-col gap-2">
+      <figcaption className="text-[13px] font-semibold leading-snug">
+        {periodLabel(best)} had {max} points, the most of any quarter.
       </figcaption>
       <div className="flex items-end gap-3">
         {totals.map((total, i) => (
           <div
             key={i}
-            className="flex flex-1 flex-col items-center gap-1"
-            title={`${game.away.abbr} ${away[i] ?? 0}, ${game.home.abbr} ${home[i]}`}
+            className="flex flex-1 flex-col items-center justify-end gap-1"
+            title={`${periodLabel(i)}: ${game.away.abbr} ${periods.away[i]}, ${game.home.abbr} ${periods.home[i]}`}
           >
-            <span className="text-[13px] font-bold tabular-nums">{total}</span>
-            <div className="flex h-[84px] w-full items-end">
-              <div
-                className="w-full rounded-t-[3px]"
-                style={{
-                  height: `${(total / max) * 100}%`,
-                  background: color,
-                  opacity: i === best ? 1 : 0.45,
-                }}
-              />
+            <span className={cn("text-[13px] tabular-nums", i === best ? "font-black" : "font-semibold text-muted-foreground")}>
+              {total}
+            </span>
+            <div
+              className="flex w-full shrink-0 flex-col gap-px overflow-hidden rounded-[4px]"
+              style={{ height: Math.max(4, Math.round((total / max) * 84)) }}
+            >
+              <div style={{ flex: periods.home[i], background: colors.home }} />
+              <div style={{ flex: periods.away[i], background: colors.away }} />
             </div>
             <span className="text-[11px] text-muted-foreground">{periodLabel(i)}</span>
           </div>
         ))}
       </div>
+      <p className="flex gap-3 text-[11px] text-muted-foreground">
+        <span className="inline-flex items-center gap-1.5">
+          <span aria-hidden className="h-2 w-2 rounded-full" style={{ background: colors.home }} />
+          {game.home.abbr} on top
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <span aria-hidden className="h-2 w-2 rounded-full" style={{ background: colors.away }} />
+          {game.away.abbr} below
+        </span>
+      </p>
     </figure>
   );
 }
@@ -296,65 +389,114 @@ export function InsightShotDots({
   );
 }
 
-/** Tonight against the season scoring average. Omitted when no average exists. */
-export function InsightVsSeason({
+function pointsParts(line: RecentInsightStatLine) {
+  const parts = [
+    { label: "2PT", pts: (line.fgm - line.threePm) * 2, opacity: 1 },
+    { label: "3PT", pts: line.threePm * 3, opacity: 0.68 },
+    { label: "FT", pts: line.ftm, opacity: 0.4 },
+  ];
+  return line.points > 0 && sum(parts.map((p) => p.pts)) === line.points ? parts : null;
+}
+
+/** True when 2s, 3s and free throws add up to the points total. */
+export function pointsAddUp(line: RecentInsightStatLine): boolean {
+  return pointsParts(line) != null;
+}
+
+/**
+ * Where the points came from (2s, 3s, free throws) on one bar, with a tick at
+ * the season average when one exists. Null when the splits don't add up.
+ */
+export function InsightPointsMix({
   line,
   color,
 }: {
   line: RecentInsightStatLine;
   color: string;
 }) {
-  const avg = line.seasonPpg;
-  if (avg == null || !(avg > 0)) return null;
-  const max = Math.max(line.points, avg);
-  const diff = line.points - avg;
+  const parts = pointsParts(line);
+  if (!parts) return null;
+  const ink = color.startsWith("var(") ? "var(--background)" : "#fff";
+  const avg = line.seasonPpg != null && line.seasonPpg > 0 ? line.seasonPpg : null;
+  const scale = avg != null ? Math.max(line.points, avg) * 1.06 : line.points;
+  const diff = avg != null ? line.points - avg : null;
   return (
-    <div className="flex flex-col gap-1.5">
-      <div className="grid grid-cols-[4.5rem_1fr_2.5rem] items-center gap-2 text-[12px]">
-        <span className="font-semibold">This game</span>
-        <div className="h-5 overflow-hidden rounded-sm bg-secondary">
-          <div className="h-full rounded-sm" style={{ width: `${(line.points / max) * 100}%`, background: color }} />
-        </div>
-        <span className="text-right font-bold tabular-nums">{line.points}</span>
-      </div>
-      <div className="grid grid-cols-[4.5rem_1fr_2.5rem] items-center gap-2 text-[12px] text-muted-foreground">
-        <span>Season avg</span>
-        <div className="h-5 overflow-hidden rounded-sm bg-secondary">
+    <figure className="flex flex-col gap-2">
+      <figcaption className="text-[13px] font-semibold leading-snug">
+        {diff != null && Math.abs(diff) >= 1 ? (
+          <>
+            <span className={diff > 0 ? "text-delta-up" : "text-delta-down"}>
+              {diff > 0 ? "+" : "−"}
+              {Math.abs(diff).toFixed(0)}
+            </span>{" "}
+            vs his season average of {avg!.toFixed(1)}
+          </>
+        ) : (
+          `How the ${line.points} points came`
+        )}
+      </figcaption>
+      <div className="relative pt-5">
+        {avg != null ? (
           <div
-            className="h-full rounded-sm bg-muted-foreground/40"
-            style={{ width: `${(avg / max) * 100}%` }}
-          />
+            aria-hidden
+            className="absolute inset-y-0 flex flex-col items-center"
+            style={{ left: `${(avg / scale) * 100}%`, transform: "translateX(-50%)" }}
+          >
+            <span className="text-[10px] font-semibold whitespace-nowrap text-muted-foreground">
+              Season {avg.toFixed(1)}
+            </span>
+            <span className="w-0.5 flex-1 rounded-full bg-foreground/70" />
+          </div>
+        ) : null}
+        <div className="flex h-7 overflow-hidden rounded-[6px] bg-secondary">
+          {parts.map((p) =>
+            p.pts > 0 ? (
+              <div
+                key={p.label}
+                className="flex items-center justify-center text-[12px] font-bold tabular-nums"
+                style={{ width: `${(p.pts / scale) * 100}%`, background: color, opacity: p.opacity, color: ink }}
+              >
+                {p.opacity > 0.6 && p.pts / scale > 0.1 ? p.pts : ""}
+              </div>
+            ) : null
+          )}
         </div>
-        <span className="text-right tabular-nums">{avg.toFixed(1)}</span>
       </div>
-      {Math.abs(diff) >= 1 ? (
-        <p className="text-[11px] text-muted-foreground">
-          <span className={cn("font-semibold", diff > 0 ? "text-delta-up" : "text-delta-down")}>
-            {diff > 0 ? "+" : "−"}
-            {Math.abs(diff).toFixed(0)}
-          </span>{" "}
-          vs his season average
-        </p>
-      ) : null}
-    </div>
+      <p className="flex flex-wrap gap-x-3 gap-y-0.5 text-[11px] text-muted-foreground tabular-nums">
+        {parts.map((p) => (
+          <span key={p.label} className="inline-flex items-center gap-1.5">
+            <span aria-hidden className="h-2 w-2 rounded-[2px]" style={{ background: color, opacity: p.opacity }} />
+            {p.pts} from {p.label === "FT" ? "free throws" : p.label === "3PT" ? "3s" : "2s"}
+          </span>
+        ))}
+      </p>
+    </figure>
   );
 }
 
-/** One pip per event, capped so a 20-rebound night still fits. */
-function Pips({ count, color, label }: { count: number; color: string; label: string }) {
-  const shown = Math.min(count, 24);
+/** Blocks grouped in fives so a count reads without adding up squares. */
+function CountBlocks({
+  count,
+  color,
+  opacity = 1,
+}: {
+  count: number;
+  color: string;
+  opacity?: number;
+}) {
+  const shown = Math.min(count, 25);
+  const groups = Math.ceil(shown / 5);
   return (
-    <div className="flex items-center gap-2 text-[12px]">
-      <span className="w-8 shrink-0 font-semibold text-muted-foreground">{label}</span>
-      <div className="flex flex-wrap gap-1">
-        {Array.from({ length: shown }, (_, i) => (
-          <span key={i} className="h-4 w-4 rounded-[3px]" style={{ background: color }} />
-        ))}
-        {count > shown ? <span className="text-muted-foreground">+{count - shown}</span> : null}
-        {count === 0 ? <span className="text-muted-foreground">0</span> : null}
-      </div>
-      <span className="ml-auto pl-2 font-bold tabular-nums">{count}</span>
-    </div>
+    <span className="flex flex-wrap items-center gap-2">
+      {Array.from({ length: groups }, (_, g) => (
+        <span key={g} className="flex gap-[3px]">
+          {Array.from({ length: Math.min(5, shown - g * 5) }, (_, i) => (
+            <span key={i} className="h-5 w-3 rounded-[3px]" style={{ background: color, opacity }} />
+          ))}
+        </span>
+      ))}
+      {count > shown ? <span className="text-[12px] text-muted-foreground">+{count - shown}</span> : null}
+    </span>
   );
 }
 
@@ -367,20 +509,32 @@ export function InsightEventPips({
   focus: RecentInsightFocus;
   color: string;
 }) {
-  if (focus === "stocks") {
-    return (
-      <div className="flex flex-col gap-1.5">
-        <Pips count={line.blocks} color={color} label="BLK" />
-        <Pips count={line.steals} color={color} label="STL" />
-      </div>
-    );
-  }
-  if (focus === "rebounds") return <Pips count={line.rebounds} color={color} label="REB" />;
-  return <Pips count={line.assists} color={color} label="AST" />;
+  const rows =
+    focus === "stocks"
+      ? [
+          { label: "Steals", count: line.steals, opacity: 1 },
+          { label: "Blocks", count: line.blocks, opacity: 0.55 },
+        ]
+      : [{ label: focus === "rebounds" ? "Rebounds" : "Assists", count: focus === "rebounds" ? line.rebounds : line.assists, opacity: 1 }];
+  return (
+    <div className="flex flex-col gap-2">
+      {rows.map((row) => (
+        <div key={row.label} className="grid grid-cols-[4.25rem_1fr_auto] items-center gap-2">
+          <span className="text-[12px] font-semibold text-muted-foreground">{row.label}</span>
+          {row.count > 0 ? (
+            <CountBlocks count={row.count} color={color} opacity={row.opacity} />
+          ) : (
+            <span className="text-[12px] text-muted-foreground">None</span>
+          )}
+          <span className="text-[15px] font-black tabular-nums">{row.count}</span>
+        </div>
+      ))}
+    </div>
+  );
 }
 
-/** PTS / REB / AST against the double-digit line. */
-export function InsightTripleDoubleBars({
+/** Activity-style rings for PTS, REB and AST. Each ring closes at 10. */
+export function InsightTripleDoubleRings({
   line,
   color,
 }: {
@@ -388,33 +542,49 @@ export function InsightTripleDoubleBars({
   color: string;
 }) {
   const stats = [
-    { label: "PTS", v: line.points },
-    { label: "REB", v: line.rebounds },
-    { label: "AST", v: line.assists },
+    { label: "PTS", v: line.points, r: 42, opacity: 1 },
+    { label: "REB", v: line.rebounds, r: 31, opacity: 0.72 },
+    { label: "AST", v: line.assists, r: 20, opacity: 0.48 },
   ];
-  const max = Math.max(20, ...stats.map((s) => s.v));
-  const tenPct = (10 / max) * 100;
+  const closed = stats.filter((s) => s.v >= 10).length;
   return (
-    <div className="relative flex flex-col gap-1.5">
-      {stats.map((s) => (
-        <div key={s.label} className="grid grid-cols-[2rem_1fr_2rem] items-center gap-2 text-[12px]">
-          <span className="font-semibold text-muted-foreground">{s.label}</span>
-          <div className="relative h-4 rounded-sm bg-secondary">
-            <div
-              className="h-full rounded-sm"
-              style={{ width: `${(s.v / max) * 100}%`, background: s.v >= 10 ? color : "var(--muted-foreground)" }}
-            />
-            <span
-              aria-hidden
-              className="absolute inset-y-[-3px] w-px bg-foreground/60"
-              style={{ left: `${tenPct}%` }}
-            />
-          </div>
-          <span className="text-right font-bold tabular-nums">{s.v}</span>
-        </div>
-      ))}
-      <p className="text-[10px] text-muted-foreground">Line marks 10</p>
-    </div>
+    <figure className="flex items-center gap-4">
+      <svg viewBox="0 0 100 100" className="h-[104px] w-[104px] shrink-0 -rotate-90" role="img" aria-label={stats.map((s) => `${s.v} ${s.label}`).join(", ")}>
+        {stats.map((s) => {
+          const c = 2 * Math.PI * s.r;
+          const frac = Math.min(s.v / 10, 1);
+          return (
+            <g key={s.label}>
+              <circle cx={50} cy={50} r={s.r} fill="none" stroke="var(--secondary)" strokeWidth={9} />
+              <circle
+                cx={50}
+                cy={50}
+                r={s.r}
+                fill="none"
+                stroke={color}
+                strokeOpacity={s.opacity}
+                strokeWidth={9}
+                strokeLinecap="round"
+                strokeDasharray={`${frac * c} ${c}`}
+              />
+            </g>
+          );
+        })}
+      </svg>
+      <figcaption className="flex min-w-0 flex-col gap-1.5">
+        <span className="text-[13px] font-semibold leading-snug">
+          {closed === 3 ? "All three rings closed" : `${closed} of 3 rings closed`}
+        </span>
+        {stats.map((s) => (
+          <span key={s.label} className="flex items-center gap-2 text-[12px]">
+            <span aria-hidden className="h-2.5 w-2.5 rounded-full" style={{ background: color, opacity: s.opacity }} />
+            <span className="w-8 font-semibold text-muted-foreground">{s.label}</span>
+            <span className="font-black tabular-nums">{s.v}</span>
+          </span>
+        ))}
+        <span className="text-[10px] text-muted-foreground">A ring closes at 10</span>
+      </figcaption>
+    </figure>
   );
 }
 
@@ -486,9 +656,10 @@ export function InsightStatLine({
 /** Final score on one line, winner in bold. */
 export function InsightFinalScore({ game }: { game: RecentInsightGame }) {
   const homeWon = game.home.score > game.away.score;
+  const colors = gameColors(game);
   const side = (s: RecentInsightGame["home"], won: boolean) => (
     <span className={cn("inline-flex items-center gap-1.5", won ? "font-bold text-foreground" : "text-muted-foreground")}>
-      <span aria-hidden className="h-2 w-2 rounded-full" style={{ background: teamColor(s.teamId) }} />
+      <span aria-hidden className="h-2 w-2 rounded-full" style={{ background: s === game.home ? colors.home : colors.away }} />
       {s.abbr} <span className="tabular-nums">{s.score}</span>
     </span>
   );
