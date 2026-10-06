@@ -3,13 +3,16 @@
 import Link from "next/link";
 import { useEffect } from "react";
 
+import { hardReload, useStaleClientRecovery } from "@/lib/stale-client-error";
+
 export default function AppRouteError({
   error,
-  reset,
+  retry,
 }: {
   error: Error & { digest?: string };
-  reset: () => void;
+  retry: () => void;
 }) {
+  const stale = useStaleClientRecovery(error);
   useEffect(() => {
     console.error("[app-route] render failed", error);
   }, [error]);
@@ -35,7 +38,7 @@ export default function AppRouteError({
         <div className="mt-5 flex flex-wrap gap-3">
           <button
             type="button"
-            onClick={reset}
+            onClick={stale ? hardReload : retry}
             className="rounded-md border border-foreground bg-foreground px-4 py-2 text-[13px] font-semibold text-background"
           >
             Retry page

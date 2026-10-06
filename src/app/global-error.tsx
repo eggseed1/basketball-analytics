@@ -2,13 +2,16 @@
 
 import { useEffect } from "react";
 
+import { hardReload, useStaleClientRecovery } from "@/lib/stale-client-error";
+
 export default function GlobalError({
   error,
-  reset,
+  retry,
 }: {
   error: Error & { digest?: string };
-  reset: () => void;
+  retry: () => void;
 }) {
+  const stale = useStaleClientRecovery(error);
   useEffect(() => {
     console.error("[global-route] render failed", error);
   }, [error]);
@@ -46,7 +49,7 @@ export default function GlobalError({
             <div style={{ marginTop: 20, display: "flex", gap: 12, flexWrap: "wrap" }}>
               <button
                 type="button"
-                onClick={reset}
+                onClick={stale ? hardReload : retry}
                 style={{
                   border: "1px solid #171717",
                   borderRadius: 6,
