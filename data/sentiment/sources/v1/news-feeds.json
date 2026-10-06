@@ -65,6 +65,64 @@
       "id": "guardian",
       "outlet": "The Guardian",
       "url": "https://www.theguardian.com/sport/nba/rss"
+    },
+    {
+      "id": "sbnation",
+      "outlet": "SB Nation",
+      "url": "https://www.sbnation.com/rss/nba/index.xml"
+    },
+    {
+      "id": "heavy",
+      "outlet": "Heavy",
+      "url": "https://heavy.com/sports/nba/feed/",
+      "pages": 5
+    },
+    {
+      "id": "sportsnaut",
+      "outlet": "Sportsnaut",
+      "url": "https://sportsnaut.com/nba/feed/"
+    },
+    {
+      "id": "essentiallysports",
+      "outlet": "EssentiallySports",
+      "url": "https://www.essentiallysports.com/category/nba/feed/"
+    },
+    {
+      "id": "fadeaway",
+      "outlet": "Fadeaway World",
+      "url": "https://fadeawayworld.net/feed",
+      "pages": 6
+    },
+    {
+      "id": "marca",
+      "outlet": "Marca",
+      "url": "https://www.marca.com/en/rss/basketball/nba.xml",
+      "skipTitle": "^Get your tickets"
+    },
+    {
+      "id": "latimes-lakers",
+      "outlet": "Los Angeles Times",
+      "url": "https://www.latimes.com/sports/lakers/rss2.0.xml"
+    },
+    {
+      "id": "nbcs-warriors",
+      "outlet": "NBC Sports Bay Area",
+      "url": "https://www.nbcsportsbayarea.com/nba/golden-state-warriors/feed/"
+    },
+    {
+      "id": "nbcs-kings",
+      "outlet": "NBC Sports Bay Area",
+      "url": "https://www.nbcsportsbayarea.com/nba/sacramento-kings/feed/"
+    },
+    {
+      "id": "nbcs-celtics",
+      "outlet": "NBC Sports Boston",
+      "url": "https://www.nbcsportsboston.com/nba/boston-celtics/feed/"
+    },
+    {
+      "id": "nbcs-sixers",
+      "outlet": "NBC Sports Philadelphia",
+      "url": "https://www.nbcsportsphiladelphia.com/nba/philadelphia-76ers/feed/"
     }
   ]
 }

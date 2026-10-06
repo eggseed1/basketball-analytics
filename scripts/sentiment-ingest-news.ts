@@ -29,7 +29,21 @@ import {
 } from "@/sentiment/ingest-store";
 import { parseRss } from "@/sentiment/rss";
 
-type FeedConfig = { feeds: { id: string; outlet: string; url: string; teamId?: string }[] };
+type FeedConfig = {
+  feeds: {
+    id: string;
+    outlet: string;
+    url: string;
+    teamId?: string;
+    /** Regex for non-editorial items in the feed (ticket promos and the like). */
+    skipTitle?: string;
+    /** WordPress `?paged=N` depth for feeds that only hold a few hours of posts. */
+    pages?: number;
+  }[];
+};
+
+/** Slow team feeds reach back months; older items fall outside every window. */
+const MAX_AGE_DAYS = 35;
 
 function argValue(name: string, fallback: string): string {
   const index = process.argv.indexOf(`--${name}`);
@@ -60,6 +74,25 @@ async function fetchFeed(url: string): Promise<string> {
   return response.text();
 }
 
+async function fetchFeedItems(url: string, pages: number) {
+  const items = parseRss(await fetchFeed(url));
+  const seen = new Set(items.map((item) => item.link));
+  for (let page = 2; page <= pages; page++) {
+    const next = new URL(url);
+    next.searchParams.set("paged", String(page));
+    let fresh;
+    try {
+      fresh = parseRss(await fetchFeed(next.toString())).filter((item) => !seen.has(item.link));
+    } catch {
+      break;
+    }
+    if (!fresh.length) break;
+    for (const item of fresh) seen.add(item.link);
+    items.push(...fresh);
+  }
+  return items;
+}
+
 async function main() {
   const feedsName = argValue("feeds", "news-feeds");
   const store = argValue("store", "news") as IngestSource;
@@ -74,11 +107,17 @@ async function main() {
   const nameById = new Map(roster.map((p) => [p.playerId, p.name]));
   const resolve = createHeadlineEntityResolver(roster);
   const fetchedAt = new Date().toISOString();
+  const oldest = Date.now() - MAX_AGE_DAYS * 86_400_000;
   const rows: NewsIngestItem[] = [];
 
   for (const feed of config.feeds) {
     try {
-      const items = parseRss(await fetchFeed(feed.url));
+      const skip = feed.skipTitle ? new RegExp(feed.skipTitle, "i") : null;
+      const items = (await fetchFeedItems(feed.url, feed.pages ?? 1)).filter(
+        (item) =>
+          !skip?.test(item.title) &&
+          (item.publishedAt == null || Date.parse(item.publishedAt) >= oldest)
+      );
       for (const item of items) {
         const url = canonicalLink(item.link);
         const lede = item.description.slice(0, 280);
