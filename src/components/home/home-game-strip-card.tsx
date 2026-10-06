@@ -56,17 +56,25 @@ function resolveSideBrand(
   };
 }
 
-function formatStripWhen(tipOffAt?: string | null): string | null {
+/** League time (US Eastern), so the server and browser render the same label. */
+function formatStripWhen(tipOffAt: string | null | undefined, withDate: boolean): string | null {
   const ms = parseTipOffMs(tipOffAt);
   if (ms == null) return null;
   try {
-    return new Intl.DateTimeFormat(undefined, {
+    const at = new Date(ms);
+    const timeZone = "America/New_York";
+    const day = new Intl.DateTimeFormat("en-US", {
+      timeZone,
       weekday: "short",
-      month: "short",
-      day: "numeric",
+      ...(withDate ? { month: "short", day: "numeric" } : {}),
+    }).format(at);
+    const time = new Intl.DateTimeFormat("en-US", {
+      timeZone,
+      timeZoneName: "short",
       hour: "numeric",
       minute: "2-digit",
-    }).format(new Date(ms));
+    }).format(at);
+    return withDate ? `${day}, ${time}` : `${day} ${time}`;
   } catch {
     return null;
   }
@@ -136,9 +144,12 @@ export function HomeGameStripCard({ game }: { game: GameSummary }) {
     displayClock: game.displayClock,
     statusDetail: game.statusDetail,
   });
+  const finalAt = game.status === "final" ? formatStripWhen(game.tipOffAt, false) : null;
   const when = preTip
-    ? formatStripWhen(game.tipOffAt) ?? statusHeadline(game.status)
-    : statusHeadline(game.status);
+    ? formatStripWhen(game.tipOffAt, true) ?? statusHeadline(game.status)
+    : finalAt
+      ? `${statusHeadline(game.status)} · ${finalAt}`
+      : statusHeadline(game.status);
   const winner =
     game.status === "final" && game.homeScore !== game.awayScore
       ? game.homeScore > game.awayScore
