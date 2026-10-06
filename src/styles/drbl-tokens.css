@@ -90,28 +90,28 @@
   --surface-scrim: rgb(0 0 0 / 40%);
 
   /* ── Material 1 — subtle glass ── */
-  --material-subtle-bg: rgb(255 255 255 / 30%);
-  --material-subtle-border: rgb(255 255 255 / 40%);
+  --material-subtle-bg: rgb(255 255 255 / 45%);
+  --material-subtle-border: rgb(255 255 255 / 45%);
   --material-subtle-blur: var(--blur-glass-sm);
   --material-subtle-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 45%),
+    inset 0 1px 0 rgb(255 255 255 / 35%),
     0 1px 2px rgb(0 0 0 / 3%);
 
   /* ── Material 2 — standard glass (sports-card) ── */
-  --material-standard-bg: rgb(255 255 255 / 42%);
-  --material-standard-border: rgb(255 255 255 / 58%);
+  --material-standard-bg: rgb(255 255 255 / 64%);
+  --material-standard-border: rgb(255 255 255 / 50%);
   --material-standard-blur: var(--blur-glass-lg);
   --material-standard-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 70%),
+    inset 0 1px 0 rgb(255 255 255 / 50%),
     0 1px 2px rgb(0 0 0 / 4%),
-    0 8px 24px rgb(0 0 0 / 6%);
+    0 8px 24px rgb(0 0 0 / 5%);
 
   /* ── Material 3 — elevated glass (menus / popovers) ── */
-  --material-elevated-bg: rgb(255 255 255 / 72%);
+  --material-elevated-bg: rgb(255 255 255 / 82%);
   --material-elevated-border: rgb(255 255 255 / 55%);
   --material-elevated-blur: var(--blur-glass-md);
   --material-elevated-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 80%),
+    inset 0 1px 0 rgb(255 255 255 / 60%),
     0 1px 2px rgb(0 0 0 / 4%),
     0 12px 32px rgb(0 0 0 / 10%);
 
@@ -178,10 +178,10 @@
     inset 0 1px 0 rgb(255 255 255 / 8%),
     0 1px 2px rgb(0 0 0 / 30%);
 
-  --material-standard-bg: rgb(var(--glass-rgb) / 72%);
-  --material-standard-border: rgb(255 255 255 / 11%);
+  --material-standard-bg: rgb(var(--glass-rgb) / 80%);
+  --material-standard-border: rgb(255 255 255 / 10%);
   --material-standard-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 9%),
+    inset 0 1px 0 rgb(255 255 255 / 7%),
     0 1px 2px rgb(0 0 0 / 40%),
     0 12px 32px rgb(0 0 0 / 36%);
 
@@ -248,24 +248,24 @@
   background: var(--material-subtle-bg);
   border: 1px solid var(--material-subtle-border);
   box-shadow: var(--material-subtle-shadow);
-  backdrop-filter: saturate(180%) blur(var(--material-subtle-blur));
-  -webkit-backdrop-filter: saturate(180%) blur(var(--material-subtle-blur));
+  backdrop-filter: saturate(140%) blur(var(--material-subtle-blur));
+  -webkit-backdrop-filter: saturate(140%) blur(var(--material-subtle-blur));
 }
 
 .material-standard {
   background: var(--material-standard-bg);
   border: 1px solid var(--material-standard-border);
   box-shadow: var(--material-standard-shadow);
-  backdrop-filter: saturate(190%) blur(var(--material-standard-blur));
-  -webkit-backdrop-filter: saturate(190%) blur(var(--material-standard-blur));
+  backdrop-filter: saturate(150%) blur(var(--material-standard-blur));
+  -webkit-backdrop-filter: saturate(150%) blur(var(--material-standard-blur));
 }
 
 .material-elevated {
   background: var(--material-elevated-bg);
   border: 1px solid var(--material-elevated-border);
   box-shadow: var(--material-elevated-shadow);
-  backdrop-filter: saturate(180%) blur(var(--material-elevated-blur));
-  -webkit-backdrop-filter: saturate(180%) blur(var(--material-elevated-blur));
+  backdrop-filter: saturate(140%) blur(var(--material-elevated-blur));
+  -webkit-backdrop-filter: saturate(140%) blur(var(--material-elevated-blur));
 }
 
 html:not([data-surface="glass"]) .material-subtle,

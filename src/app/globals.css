@@ -165,9 +165,9 @@
   --sidebar-border: rgb(255 255 255 / 9%);
   --sidebar-ring: #3d94ff;
   /* Glass fill channels, solved so the veil over its backdrop lands on the
-     next opaque step: 72% --glass-rgb over canvas = card; 88% raised over
+     next opaque step: 80% --glass-rgb over canvas = card; 88% raised over
      card = raised. Opaque washes mixed from --card then sit flush in glass. */
-  --glass-rgb: 27 30 34;
+  --glass-rgb: 26 28 32;
   --glass-raised-rgb: 33 35 40;
   --active-fill: #2f3137;
 }
@@ -377,8 +377,8 @@
   background: var(--material-standard-bg);
   border-color: var(--material-standard-border);
   box-shadow: var(--material-standard-shadow);
-  backdrop-filter: saturate(190%) blur(var(--material-standard-blur));
-  -webkit-backdrop-filter: saturate(190%) blur(var(--material-standard-blur));
+  backdrop-filter: saturate(150%) blur(var(--material-standard-blur));
+  -webkit-backdrop-filter: saturate(150%) blur(var(--material-standard-blur));
 }
 
 html:not([data-surface="glass"]) .sports-card {
@@ -436,13 +436,13 @@ html.dark:not([data-surface="glass"]) .sports-card {
 }
 
 html[data-surface="glass"] .bg-card {
-  background-color: rgb(255 255 255 / 42%);
-  backdrop-filter: saturate(190%) blur(24px);
-  -webkit-backdrop-filter: saturate(190%) blur(24px);
+  background-color: rgb(255 255 255 / 64%);
+  backdrop-filter: saturate(150%) blur(24px);
+  -webkit-backdrop-filter: saturate(150%) blur(24px);
 }
 
 html.dark[data-surface="glass"] .bg-card {
-  background-color: rgb(var(--glass-rgb) / 72%);
+  background-color: rgb(var(--glass-rgb) / 80%);
 }
 
 .sports-pill {
@@ -455,15 +455,15 @@ html.dark[data-surface="glass"] .bg-card {
   border: 1px solid var(--material-elevated-border);
   border-radius: var(--radius-md);
   box-shadow: var(--material-elevated-shadow);
-  backdrop-filter: saturate(180%) blur(var(--material-elevated-blur));
-  -webkit-backdrop-filter: saturate(180%) blur(var(--material-elevated-blur));
+  backdrop-filter: saturate(140%) blur(var(--material-elevated-blur));
+  -webkit-backdrop-filter: saturate(140%) blur(var(--material-elevated-blur));
 }
 
 .glass-pill {
   background: var(--material-subtle-bg);
   border: 1px solid var(--material-subtle-border);
-  backdrop-filter: saturate(180%) blur(var(--material-subtle-blur));
-  -webkit-backdrop-filter: saturate(180%) blur(var(--material-subtle-blur));
+  backdrop-filter: saturate(140%) blur(var(--material-subtle-blur));
+  -webkit-backdrop-filter: saturate(140%) blur(var(--material-subtle-blur));
 }
 
 .glass-pill-active {
@@ -495,8 +495,8 @@ html.dark[data-surface="glass"] .bg-card {
     inset 0 -1px 0 color-mix(in oklab, #8a8d8f 18%, transparent),
     0 0 0 1px color-mix(in oklab, #d4af37 12%, transparent),
     0 4px 14px color-mix(in oklab, #b8860b 10%, transparent);
-  backdrop-filter: saturate(190%) blur(14px);
-  -webkit-backdrop-filter: saturate(190%) blur(14px);
+  backdrop-filter: saturate(150%) blur(14px);
+  -webkit-backdrop-filter: saturate(150%) blur(14px);
   color: color-mix(in oklab, var(--foreground) 92%, #5c4a12);
 }
 
@@ -530,8 +530,8 @@ html.dark[data-surface="glass"] .bg-card {
   /* filter/transform on this node (even identity) cancel backdrop-filter. */
   filter: none;
   transform: none;
-  backdrop-filter: saturate(190%) blur(24px);
-  -webkit-backdrop-filter: saturate(190%) blur(24px);
+  backdrop-filter: saturate(150%) blur(24px);
+  -webkit-backdrop-filter: saturate(150%) blur(24px);
 }
 
 .dark .select-popup,
@@ -767,8 +767,8 @@ html:not([data-surface="glass"]) .sports-card.board-scroll-host {
     14px 0 28px -12px rgb(0 0 0 / 18%);
   filter: none;
   transform: none;
-  backdrop-filter: saturate(190%) blur(16px);
-  -webkit-backdrop-filter: saturate(190%) blur(16px);
+  backdrop-filter: saturate(150%) blur(16px);
+  -webkit-backdrop-filter: saturate(150%) blur(16px);
 }
 
 .dark .board-sticky-frost,
@@ -877,8 +877,8 @@ html:not([data-surface="glass"])
   background: rgb(255 255 255 / 36%);
   border-bottom: 1px solid rgb(255 255 255 / 45%);
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 70%);
-  backdrop-filter: saturate(180%) blur(48px);
-  -webkit-backdrop-filter: saturate(180%) blur(48px);
+  backdrop-filter: saturate(140%) blur(48px);
+  -webkit-backdrop-filter: saturate(140%) blur(48px);
 }
 
 .dark .board-scroll-host thead th {
@@ -904,8 +904,8 @@ html:not([data-surface="glass"]) .board-scroll-host thead th {
   box-shadow:
     inset 0 1px 0 rgb(255 255 255 / 70%),
     14px 0 28px -12px rgb(0 0 0 / 18%);
-  backdrop-filter: saturate(190%) blur(16px);
-  -webkit-backdrop-filter: saturate(190%) blur(16px);
+  backdrop-filter: saturate(150%) blur(16px);
+  -webkit-backdrop-filter: saturate(150%) blur(16px);
 }
 
 .dark .board-scroll-host thead th.board-sticky-frost,
@@ -936,8 +936,8 @@ html:not([data-surface="glass"])
 .color-scheme-switch {
   background: rgb(255 255 255 / 50%);
   border: 1px solid rgb(255 255 255 / 45%);
-  backdrop-filter: saturate(180%) blur(16px);
-  -webkit-backdrop-filter: saturate(180%) blur(16px);
+  backdrop-filter: saturate(140%) blur(16px);
+  -webkit-backdrop-filter: saturate(140%) blur(16px);
 }
 
 html.dark .site-search-field,
@@ -963,17 +963,17 @@ html:not([data-surface="glass"]) .color-scheme-switch {
   background:
     radial-gradient(
       ellipse 110% 70% at 0% -6%,
-      color-mix(in oklab, var(--atmosphere-a, transparent) 36%, transparent),
+      color-mix(in oklab, var(--atmosphere-a, transparent) 22%, transparent),
       transparent 72%
     ),
     radial-gradient(
       ellipse 100% 65% at 100% 4%,
-      color-mix(in oklab, var(--atmosphere-b, transparent) 32%, transparent),
+      color-mix(in oklab, var(--atmosphere-b, transparent) 19%, transparent),
       transparent 70%
     ),
     radial-gradient(
       ellipse 80% 50% at 50% 108%,
-      color-mix(in oklab, var(--atmosphere-a, transparent) 22%, transparent),
+      color-mix(in oklab, var(--atmosphere-a, transparent) 12%, transparent),
       transparent 74%
     );
 }
@@ -984,20 +984,20 @@ html:not([data-surface="glass"]) .color-scheme-switch {
   background:
     radial-gradient(
       ellipse 110% 70% at 0% -6%,
-      color-mix(in oklab, var(--atmosphere-a, transparent) 34%, transparent),
-      color-mix(in oklab, var(--atmosphere-a, transparent) 14%, transparent) 36%,
+      color-mix(in oklab, var(--atmosphere-a, transparent) 22%, transparent),
+      color-mix(in oklab, var(--atmosphere-a, transparent) 9%, transparent) 36%,
       transparent 74%
     ),
     radial-gradient(
       ellipse 100% 65% at 100% 4%,
-      color-mix(in oklab, var(--atmosphere-b, transparent) 28%, transparent),
-      color-mix(in oklab, var(--atmosphere-b, transparent) 11%, transparent) 36%,
+      color-mix(in oklab, var(--atmosphere-b, transparent) 18%, transparent),
+      color-mix(in oklab, var(--atmosphere-b, transparent) 7%, transparent) 36%,
       transparent 72%
     ),
     radial-gradient(
       ellipse 80% 50% at 50% 108%,
-      color-mix(in oklab, var(--atmosphere-a, transparent) 20%, transparent),
-      color-mix(in oklab, var(--atmosphere-a, transparent) 8%, transparent) 40%,
+      color-mix(in oklab, var(--atmosphere-a, transparent) 12%, transparent),
+      color-mix(in oklab, var(--atmosphere-a, transparent) 5%, transparent) 40%,
       transparent 76%
     );
 }

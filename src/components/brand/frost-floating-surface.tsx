@@ -32,8 +32,8 @@ export function FrostFloatingSurface({
   next.filter = "none";
   next.willChange = "auto";
   next.overflow = "visible";
-  next.backdropFilter = "saturate(190%) blur(24px)";
-  next.WebkitBackdropFilter = "saturate(190%) blur(24px)";
+  next.backdropFilter = "saturate(150%) blur(24px)";
+  next.WebkitBackdropFilter = "saturate(150%) blur(24px)";
   return (
     <GlassSurface
       {...rest}

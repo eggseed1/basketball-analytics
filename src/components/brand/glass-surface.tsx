@@ -88,10 +88,10 @@ export function GlassSurface({
           background: solid ? "var(--card)" : tintColor,
           backdropFilter: solid
             ? undefined
-            : `saturate(190%) blur(${backdropBlur}px)`,
+            : `saturate(150%) blur(${backdropBlur}px)`,
           WebkitBackdropFilter: solid
             ? undefined
-            : `saturate(190%) blur(${backdropBlur}px)`,
+            : `saturate(150%) blur(${backdropBlur}px)`,
           border: solid
             ? undefined
             : resolvedDark
