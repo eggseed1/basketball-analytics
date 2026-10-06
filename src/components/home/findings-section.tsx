@@ -331,9 +331,12 @@ function InsightCard({ insight, asOf }: { insight: RecentInsight; asOf: string }
           {insight.description}
         </p>
 
-        {visual ? <div className="min-w-0">{visual}</div> : null}
-
-        {line && focus !== "surprise" ? <InsightStatLine line={line} focus={focus} /> : null}
+        {visual || (line && focus !== "surprise") ? (
+          <div className="mt-auto flex min-w-0 flex-col gap-2">
+            {visual}
+            {line && focus !== "surprise" ? <InsightStatLine line={line} focus={focus} /> : null}
+          </div>
+        ) : null}
       </div>
     </article>
   );

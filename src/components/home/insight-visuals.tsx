@@ -857,22 +857,24 @@ export function InsightFlowChart({ game }: { game: RecentInsightGame }) {
       {mark && mark.kind !== "span" ? (
         <g>
           <circle cx={x(mark.t)} cy={y(mark.margin)} r={4.5} fill="var(--card)" stroke={markColor(mark.margin)} strokeWidth={2.5} />
-          {/* Below-zero labels sit beside the point so they clear the quarter labels. */}
-          <text
-            x={
-              mark.margin >= 0
-                ? Math.min(W - padRight - 4, Math.max(padX + 4, x(mark.t)))
-                : x(mark.t) > W / 2
-                  ? x(mark.t) - 9
-                  : x(mark.t) + 9
-            }
-            y={mark.margin >= 0 ? y(mark.margin) - 9 : y(mark.margin) + 4}
-            textAnchor={mark.margin >= 0 ? "middle" : x(mark.t) > W / 2 ? "end" : "start"}
-            className="text-[11px] font-bold"
-            fill="var(--foreground)"
-          >
-            {mark.label}
-          </text>
+          {/* Point marks repeat the card's hero number, so the circle alone marks the moment. */}
+          {mark.kind === "goahead" ? (
+            <text
+              x={
+                mark.margin >= 0
+                  ? Math.min(W - padRight - 4, Math.max(padX + 4, x(mark.t)))
+                  : x(mark.t) > W / 2
+                    ? x(mark.t) - 9
+                    : x(mark.t) + 9
+              }
+              y={mark.margin >= 0 ? y(mark.margin) - 9 : y(mark.margin) + 4}
+              textAnchor={mark.margin >= 0 ? "middle" : x(mark.t) > W / 2 ? "end" : "start"}
+              className="text-[11px] font-bold"
+              fill="var(--foreground)"
+            >
+              {mark.label}
+            </text>
+          ) : null}
         </g>
       ) : null}
       <text x={x(total) + 4} y={y(final) + 4} className="text-[11px] font-bold tabular-nums" fill={finalColor}>
