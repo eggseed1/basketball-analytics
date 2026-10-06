@@ -738,6 +738,54 @@ export async function getRecentGameSummaries(
 }
 
 /** Home week strip: this week's slate, or upcoming previews when quiet. */
+const STRIP_REFRESH_BUDGET_MS = 1_500;
+const SETTLED_STATUSES = new Set(["final", "postponed", "cancelled"]);
+
+/**
+ * The home strip comes from the daily snapshot, so a game that has tipped or
+ * finished since the sync still reads as scheduled. Re-read those days from
+ * the scoreboard before render; on a slow provider keep the snapshot and let
+ * the client poller catch up.
+ */
+async function refreshStripStatuses(games: GameSummary[]): Promise<GameSummary[]> {
+  const { espnScoreboardDateKey } = await import(
+    "@/data/providers/nba/scoreboard-client"
+  );
+  const todayKey = espnScoreboardDateKey();
+  const dates = [
+    ...new Set(
+      games
+        .filter(
+          (g) =>
+            !SETTLED_STATUSES.has(g.status ?? "") &&
+            g.gameDate.replace(/-/g, "") <= todayKey
+        )
+        .map((g) => g.gameDate)
+    ),
+  ];
+  if (!dates.length) return games;
+
+  const { getScoreboardDateFeed } = await import("./scoreboard-feed");
+  const { withBudget } = await import("./budget");
+  const { value: days } = await withBudget(
+    Promise.all(
+      dates.map((date) =>
+        getScoreboardDateFeed({ date })
+          .then((feed) => (feed.isStale ? [] : feed.data))
+          .catch(() => [] as GameSummary[])
+      )
+    ),
+    STRIP_REFRESH_BUDGET_MS,
+    [] as GameSummary[][]
+  );
+  const fresh = new Map(days.flat().map((g) => [g.id, g]));
+  if (!fresh.size) return games;
+  return games.map((g) => {
+    const next = fresh.get(g.id);
+    return next ? { ...g, ...next } : g;
+  });
+}
+
 export async function getHomeWeekStripSummaries(
   options: { season?: string; limit?: number } = {}
 ): Promise<{
@@ -755,12 +803,13 @@ export async function getHomeWeekStripSummaries(
   const { getHomeWeekStripFeed } = await import("./scoreboard-feed");
   const feed = await getHomeWeekStripFeed(options);
   const strip = feed.data;
+  const games = await refreshStripStatuses(strip.games.map(toGameSummary));
   // Skip ESPN depth-chart starter fan-out on the homepage — site.api is 403
   // from Cloudflare and was timing out the whole home route.
   return {
     mode: strip.mode,
-    games: strip.games.map((g) => ({
-      ...toGameSummary(g),
+    games: games.map((g) => ({
+      ...g,
       awayStarters: [],
       homeStarters: [],
     })),

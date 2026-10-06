@@ -4,11 +4,34 @@ import { HomeGameStripCard } from "@/components/home/home-game-strip-card";
 import { TextLink } from "@/components/ui/text-link";
 import { LiveScoreboardScope } from "@/components/sports/live-scoreboard-scope";
 import type { GameSummary } from "@/data/types";
+import { parseTipOffMs } from "@/lib/game-countdown";
+import { isLiveLikeStatus, type GameStatusKind } from "@/lib/game-status";
 
 type StripGame = GameSummary & {
   awayStarters: Array<{ id: string; name: string }>;
   homeStarters: Array<{ id: string; name: string }>;
 };
+
+function stripRank(status: GameStatusKind | undefined): number {
+  if (isLiveLikeStatus(status)) return 0;
+  if (status === "final") return 2;
+  if (status === "postponed" || status === "cancelled") return 3;
+  return 1;
+}
+
+/** Live first, then upcoming by tip-off, then finals with the latest first. */
+function orderStrip(games: GameSummary[]): GameSummary[] {
+  const tip = (g: GameSummary) => parseTipOffMs(g.tipOffAt) ?? Date.parse(g.gameDate);
+  return games
+    .map((game, index) => ({ game, index, rank: stripRank(game.status) }))
+    .sort((a, b) => {
+      if (a.rank !== b.rank) return a.rank - b.rank;
+      const diff = tip(a.game) - tip(b.game);
+      if (diff) return a.rank === 2 ? -diff : diff;
+      return a.index - b.index;
+    })
+    .map((entry) => entry.game);
+}
 
 /** Client strip - reuses the shared live scoreboard poller (no separate architecture). */
 export function WeekGameCalendarClient({
@@ -43,7 +66,7 @@ export function WeekGameCalendarClient({
         <LiveScoreboardScope games={initialGames} season={season}>
           {(games) => (
             <div className="-mx-1 flex gap-4 touch-scroll-x px-1 pb-1">
-              {games.map((game) => (
+              {orderStrip(games).map((game) => (
                 <HomeGameStripCard key={game.id} game={game} />
               ))}
             </div>

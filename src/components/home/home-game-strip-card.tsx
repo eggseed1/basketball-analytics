@@ -75,13 +75,15 @@ function formatStripWhen(tipOffAt?: string | null): string | null {
 function TeamRow({
   brand,
   score,
+  lost = false,
 }: {
   brand: ReturnType<typeof resolveSideBrand>;
   score?: number | null;
+  lost?: boolean;
 }) {
   const teamKey = brand.canonicalTeamId || brand.abbreviation;
   return (
-    <div className="flex w-full items-center justify-between gap-2">
+    <div className={cn("flex w-full items-center justify-between gap-2", lost && "opacity-60")}>
       <TeamIdentity
         teamKey={teamKey}
         label={brand.abbreviation}
@@ -126,6 +128,14 @@ export function HomeGameStripCard({ game }: { game: GameSummary }) {
   const when = preTip
     ? formatStripWhen(game.tipOffAt) ?? statusHeadline(game.status)
     : statusHeadline(game.status);
+  const winner =
+    game.status === "final" && game.homeScore !== game.awayScore
+      ? game.homeScore > game.awayScore
+        ? "home"
+        : "away"
+      : null;
+  const winnerColor =
+    winner === "home" ? matchup.homeWash : winner === "away" ? matchup.awayWash : null;
 
   return (
     <GlassSurface
@@ -133,6 +143,14 @@ export function HomeGameStripCard({ game }: { game: GameSummary }) {
       accentColor={matchup.awayWash}
       accentColorB={matchup.homeWash}
       className="relative flex w-max min-w-[162px] shrink-0 flex-col gap-2.5 px-4 py-3"
+      style={
+        winnerColor
+          ? {
+              background: `linear-gradient(135deg, color-mix(in oklab, ${winnerColor} 30%, var(--material-standard-bg)) 0%, color-mix(in oklab, ${winnerColor} 16%, var(--material-standard-bg)) 100%)`,
+              border: `1px solid color-mix(in oklab, ${winnerColor} 35%, transparent)`,
+            }
+          : undefined
+      }
     >
       <TransitionLink
         href={`/games/${game.id}`}
@@ -170,10 +188,12 @@ export function HomeGameStripCard({ game }: { game: GameSummary }) {
           <TeamRow
             brand={awayBrand}
             score={showScores ? game.awayScore : undefined}
+            lost={winner === "home"}
           />
           <TeamRow
             brand={homeBrand}
             score={showScores ? game.homeScore : undefined}
+            lost={winner === "away"}
           />
         </div>
       </div>

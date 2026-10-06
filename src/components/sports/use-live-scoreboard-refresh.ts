@@ -3,7 +3,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import type { GameSummary } from "@/data/types";
-import type { GameStatusKind } from "@/lib/game-status";
+import { parseTipOffMs } from "@/lib/game-countdown";
+import {
+  isLiveLikeStatus,
+  isPreTipStatus,
+  type GameStatusKind,
+} from "@/lib/game-status";
 import {
   createLiveRefreshDiagnostics,
   logLiveRefreshDiagnostics,
@@ -143,9 +148,18 @@ export function useLiveScoreboardRefresh(
       }, interval);
     };
 
+    const now = Date.now();
+    const overdue = gamesRef.current.some((g) => {
+      const status = g.status as GameStatusKind | undefined;
+      if (isLiveLikeStatus(status)) return true;
+      if (!isPreTipStatus(status)) return false;
+      const tip = parseTipOffMs(g.tipOffAt);
+      return tip != null && tip <= now;
+    });
+    // Server HTML can be minutes old, so a live or past-tip card polls at once.
     const boot = setTimeout(() => {
       void poll(false).then(scheduleNext);
-    }, 2_000);
+    }, overdue ? 0 : 2_000);
 
     const onVisibility = () => {
       if (document.visibilityState !== "visible") return;
