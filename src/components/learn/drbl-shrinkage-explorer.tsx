@@ -175,6 +175,19 @@ export function DrblShrinkageExplorer({
     setRaw(p[3]);
   };
 
+  const zero = useMemo(() => {
+    const share = (rows: ShrinkagePlayer[]) =>
+      rows.length ? rows.filter((p) => p[4] < 0).length / rows.length : null;
+    const sorted = players.map((p) => p[4]).sort((a, b) => a - b);
+    const regulars = players.filter((p) => p[2] >= 4000);
+    return {
+      below: share(players),
+      median: sorted.length ? sorted[Math.floor(sorted.length / 2)]! : null,
+      regulars: regulars.length,
+      regularsBelow: share(regulars),
+    };
+  }, [players]);
+
   const subject = selected ? selected[1] : "This made-up player";
   const sentence =
     `${subject} has a raw ${signed(raw, 1)} over ${n.toLocaleString()} possessions. ` +
@@ -187,11 +200,31 @@ export function DrblShrinkageExplorer({
         <h2 id="shrinkage-heading" className="text-[18px] font-bold">
           Why small samples get pulled toward zero
         </h2>
-        <p className={cn(type.bodySm, "text-muted-foreground")}>
-          Each dot is a {season} player. Across is his raw rate, up is his published DRBL/100. With no
-          shrinkage every dot would sit on the dashed diagonal. Tap a dot or move the sliders.
+      </div>
+
+      <div className={cn(type.body, "flex max-w-3xl flex-col gap-3")}>
+        <p>
+          A player&apos;s raw rate swings a lot when he hasn&apos;t played much. A few good weeks can put
+          a bench player far above everyone else per 100 possessions, and a few bad ones can sink him just
+          as far. Most of that swing is luck, so DRBL doesn&apos;t use the raw rate as his rating.
+        </p>
+        <p>
+          DRBL/100 starts every player at 0 and moves toward his raw rate as he plays. Possessions count
+          on both offense and defense. The starting guess is worth {K.toLocaleString()} possessions, so a
+          player&apos;s own numbers count for {pct(rho(400))} at 400 possessions, half at{" "}
+          {K.toLocaleString()}, and {pct(rho(6400))} at 6,400.
+        </p>
+        <p>
+          A hot or cold start barely moves DRBL/100. Only players who keep it up over thousands of
+          possessions reach the top or bottom of the board. On the chart, the amber dots (small samples)
+          sit close to the flat zero line, and the green dots (big samples) sit near the diagonal.
         </p>
       </div>
+
+      <p className={cn(type.bodySm, "text-muted-foreground")}>
+        Each dot is a {season} player. Across is his raw rate, up is his published DRBL/100. With no
+        shrinkage every dot would sit on the dashed diagonal. Tap a dot or move the sliders.
+      </p>
 
       <div className="flex flex-wrap gap-1.5" role="group" aria-label="Example players">
         {presets.map(({ label, player }) => (
@@ -398,6 +431,29 @@ export function DrblShrinkageExplorer({
           </div>
         </div>
         <NumberLine raw={raw} shrunk={shrunk} min={xMin} max={xMax} />
+      </div>
+
+      <div className="flex max-w-3xl flex-col gap-1.5 rounded-md border border-border/60 p-3 sm:p-4">
+        <h3 className="text-[15px] font-bold">What a DRBL/100 of 0 means</h3>
+        <p className={type.bodySm}>
+          Zero is average. It means the player produced what DRBL expects from someone in his role, and a
+          negative number means he fell short of that expectation. Since zero is the middle, roughly half
+          the league lands on each side.
+          {zero.below != null && zero.median != null ? (
+            <>
+              {" "}
+              In {season}, {pct(zero.below)} of these players are below zero and the median is{" "}
+              {signed(zero.median, 2)}.
+            </>
+          ) : null}
+          {zero.regularsBelow != null && zero.regulars >= 20 ? (
+            <>
+              {" "}
+              Among the {zero.regulars} players with 4,000 or more possessions, {pct(zero.regularsBelow)} are
+              below zero. That fits teams giving the most minutes to players who help them.
+            </>
+          ) : null}
+        </p>
       </div>
 
       <p className={cn(type.caption, "text-muted-foreground")}>
