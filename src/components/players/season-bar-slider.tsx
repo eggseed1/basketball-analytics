@@ -3,7 +3,7 @@
 import { useCallback, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
-import { FrostFloatingSurface } from "@/components/brand/frost-floating-surface";
+import { ChartTooltipSurface } from "@/components/charts/chart-tooltip";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { useChartTheme } from "@/lib/chart-theme";
 import { type } from "@/lib/design-system";
@@ -89,9 +89,8 @@ function TickHoverTip({
     >
       {open && pos
         ? createPortal(
-            <FrostFloatingSurface
-              role="tooltip"
-              className="pointer-events-none z-[80] w-max max-w-[14rem] px-2 py-1.5"
+            <ChartTooltipSurface
+              className="pointer-events-none z-[80]"
               style={{ position: "fixed", top: pos.top, left: pos.left }}
             >
               <span className="flex items-center gap-1.5">
@@ -102,14 +101,12 @@ function TickHoverTip({
                     ))}
                   </span>
                 ) : null}
-                <span className={cn(type.caption, "font-semibold tabular-nums")}>
-                  {season}
-                </span>
-                <span className={cn(type.caption, "text-muted-foreground")}>
+                <span className="tabular-nums">{season}</span>
+                <span className="font-normal text-muted-foreground">
                   {teamSeasonLabel(teamKeys)}
                 </span>
               </span>
-            </FrostFloatingSurface>,
+            </ChartTooltipSurface>,
             document.body
           )
         : null}

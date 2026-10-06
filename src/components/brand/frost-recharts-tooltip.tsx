@@ -8,7 +8,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 
-import { FrostFloatingSurface } from "@/components/brand/frost-floating-surface";
+import { ChartTooltipSurface } from "@/components/charts/chart-tooltip";
 import { cn } from "@/lib/utils";
 
 /** Hide Recharts' transformed wrapper; we portal frost to `document.body`. */
@@ -24,7 +24,7 @@ export const rechartsFrostWrapperStyle = {
 
 /**
  * Recharts positions tooltips with CSS transform, which cancels
- * backdrop-filter. Portal a frost card to the same viewport point.
+ * backdrop-filter. Portal the shared chart tooltip to the same viewport point.
  */
 export function FrostRechartsTooltip({
   active,
@@ -71,12 +71,8 @@ export function FrostRechartsTooltip({
       <span ref={ghostRef} className="sr-only" />
       {pos
         ? createPortal(
-            <FrostFloatingSurface
-              role="tooltip"
-              className={cn(
-                "pointer-events-none z-[80] px-2.5 py-1.5",
-                className
-              )}
+            <ChartTooltipSurface
+              className={cn("pointer-events-none z-[80]", className)}
               style={{
                 position: "fixed",
                 left: pos.left,
@@ -84,7 +80,7 @@ export function FrostRechartsTooltip({
               }}
             >
               {children}
-            </FrostFloatingSurface>,
+            </ChartTooltipSurface>,
             document.body
           )
         : null}

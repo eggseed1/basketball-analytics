@@ -6,6 +6,7 @@ import { useMemo, useRef, useState, type PointerEvent } from "react";
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { TeamLogo } from "@/components/brand/team-logo";
 import type { UsagePoint } from "@/lib/season-glance";
+import { ChartTooltipSurface } from "@/components/charts/chart-tooltip";
 import { cn } from "@/lib/utils";
 
 const W = 360;
@@ -19,7 +20,7 @@ const BELOW = "#e4553f";
 const HIT_RADIUS = 18;
 /** Usage averages 20% by construction: five players share 100% of a team's plays. */
 const AVERAGE_USAGE = 20;
-const CARD_W = 236;
+const CARD_W = 208;
 
 function pct(v: number, digits = 0): string {
   return `${(v * 100).toFixed(digits)}%`;
@@ -318,77 +319,66 @@ export function UsageEfficiencyChart({
       </svg>
 
       {active && hover ? (
-        <div
-          role="status"
-          className="pointer-events-none absolute z-10 rounded-[12px] bg-popover p-3 text-popover-foreground shadow-[var(--shadow-overlay)] ring-1 ring-foreground/[0.08]"
+        <ChartTooltipSurface
+          className="pointer-events-none absolute z-10"
           style={{
             width: cardW,
             left: cardLeft,
             ...(cardBelow ? { top: hover.py + 16 } : { bottom: hover.h - hover.py + 16 }),
           }}
         >
-          <div className="flex items-center gap-2.5">
+          <div className="flex min-w-0 items-center gap-1.5">
             <PlayerHeadshot
               playerId={active.playerId}
               espnId={active.playerId}
               name={active.name}
               teamKey={logoTeam}
-              size="sm"
+              size="xs"
             />
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-[14px] font-bold leading-tight tracking-tight">{active.name}</p>
-              <p className="mt-0.5 flex items-center gap-1 text-[11px] text-muted-foreground">
-                {logoTeam ? <TeamLogo teamKey={logoTeam} size="xs" className="!h-3.5 !w-3.5" /> : null}
-                {combined && active.stints?.length ? active.stints.join(" → ") : active.team}
-                {active.games != null ? ` · ${active.games} games` : null}
-              </p>
-            </div>
+            <span className="truncate">{active.name}</span>
           </div>
-          <dl className="mt-2.5 grid grid-cols-2 gap-1.5">
-            <div className="rounded-[8px] bg-foreground/[0.04] px-2 py-1.5">
-              <dt className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">Usage</dt>
-              <dd className="text-[16px] font-black tabular-nums leading-tight">{active.usg.toFixed(1)}%</dd>
-              {activeRank ? (
-                <dd className="text-[10px] text-muted-foreground">{ordinal(activeRank.usg)} of {points.length}</dd>
-              ) : null}
-            </div>
-            <div className="rounded-[8px] bg-foreground/[0.04] px-2 py-1.5">
-              <dt className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">True shooting</dt>
-              <dd className="text-[16px] font-black tabular-nums leading-tight">{pct(active.ts, 1)}</dd>
-              {tsDiff != null ? (
-                <dd
-                  className={cn(
-                    "text-[10px] font-semibold tabular-nums",
-                    tsDiff >= 0 ? "text-[#2f64d6] dark:text-[#7ea2ff]" : "text-[#c2410c] dark:text-[#fb923c]"
-                  )}
-                >
-                  {tsDiff >= 0 ? "+" : "−"}
-                  {Math.abs(tsDiff).toFixed(1)} vs league
-                </dd>
-              ) : activeRank ? (
-                <dd className="text-[10px] text-muted-foreground">{ordinal(activeRank.ts)} of {points.length}</dd>
-              ) : null}
-            </div>
-          </dl>
-          <dl className="mt-2 grid grid-cols-4 gap-1 text-center">
-            {[
-              { label: "MIN", value: active.minutes.toLocaleString() },
-              { label: "BPM", value: active.bpm == null ? "—" : `${active.bpm > 0 ? "+" : active.bpm < 0 ? "−" : ""}${Math.abs(active.bpm).toFixed(1)}` },
-              { label: "AST%", value: active.astPct == null ? "—" : active.astPct.toFixed(1) },
-              { label: "TOV%", value: active.tovPct == null ? "—" : active.tovPct.toFixed(1) },
-            ].map((s) => (
-              <div key={s.label}>
-                <dt className="text-[9px] font-semibold tracking-wide text-muted-foreground">{s.label}</dt>
-                <dd className="text-[12px] font-bold tabular-nums">{s.value}</dd>
-              </div>
-            ))}
-          </dl>
+          <p className="flex items-center gap-1 text-muted-foreground">
+            {logoTeam ? <TeamLogo teamKey={logoTeam} size="xs" className="!h-3.5 !w-3.5" /> : null}
+            {combined && active.stints?.length ? active.stints.join(" → ") : active.team}
+            {active.games != null ? ` · ${active.games} games` : null}
+          </p>
+          <p className="tabular-nums">
+            Usage {active.usg.toFixed(1)}%
+            {activeRank ? (
+              <span className="text-muted-foreground"> · {ordinal(activeRank.usg)} of {points.length}</span>
+            ) : null}
+          </p>
+          <p className="tabular-nums">
+            TS {pct(active.ts, 1)}
+            {tsDiff != null ? (
+              <span
+                className={cn(
+                  "font-semibold",
+                  tsDiff >= 0 ? "text-[#2f64d6] dark:text-[#7ea2ff]" : "text-[#c2410c] dark:text-[#fb923c]"
+                )}
+              >
+                {" · "}
+                {tsDiff >= 0 ? "+" : "−"}
+                {Math.abs(tsDiff).toFixed(1)} vs league
+              </span>
+            ) : activeRank ? (
+              <span className="text-muted-foreground"> · {ordinal(activeRank.ts)} of {points.length}</span>
+            ) : null}
+          </p>
+          <p className="tabular-nums text-muted-foreground">
+            {active.minutes.toLocaleString()} min · BPM{" "}
+            {active.bpm == null
+              ? "—"
+              : `${active.bpm > 0 ? "+" : active.bpm < 0 ? "−" : ""}${Math.abs(active.bpm).toFixed(1)}`}
+            {" · "}AST% {active.astPct == null ? "—" : active.astPct.toFixed(1)}
+            {" · "}TOV% {active.tovPct == null ? "—" : active.tovPct.toFixed(1)}
+          </p>
           {active.playerId ? (
-            <p className="mt-2 border-t border-foreground/[0.06] pt-1.5 text-[10px] font-semibold text-muted-foreground">
+            <p className="text-muted-foreground">
               {hover.touch ? "Tap again for the player page →" : "Open the player page →"}
             </p>
           ) : null}
-        </div>
+        </ChartTooltipSurface>
       ) : null}
     </div>
   );

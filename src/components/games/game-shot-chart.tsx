@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode, type SVGProps } from "react";
 
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
+import { ChartTooltipSurface } from "@/components/charts/chart-tooltip";
 import { TransitionLink } from "@/components/continuity/query-nav";
 import type { PlayByPlayEvent } from "@/data/types";
 import { type } from "@/lib/design-system";
@@ -673,39 +674,40 @@ export function GameShotChart({
     return (
       <div
         key={focus.id}
-        className={cn(
-          "absolute z-10 flex items-center gap-2 whitespace-nowrap rounded-lg border border-border/60 bg-background/95 py-1.5 pl-1.5 pr-3 shadow-lg backdrop-blur-sm",
-          isPinned ? "pointer-events-auto" : "pointer-events-none"
-        )}
+        className={cn("absolute z-10", isPinned ? "pointer-events-auto" : "pointer-events-none")}
         style={{ left: `${left}%`, top: `${top}%`, transform: `translate(${shiftX}, ${shiftY})` }}
       >
-        <PlayerHeadshot playerId={card.id} name={name} teamKey={teamKeyOf(card.side)} size="sm" />
-        <span className="flex flex-col">
-          {name ? (
-            isPinned ? (
-              <TransitionLink
-                href={`/players/${encodeURIComponent(card.id)}`}
-                className={cn(type.caption, "font-bold text-foreground underline-offset-2 hover:underline")}
-              >
-                {name}
-              </TransitionLink>
-            ) : (
-              <span className={cn(type.caption, "font-bold text-foreground")}>{name}</span>
-            )
-          ) : null}
-          <span className={cn(type.micro, "tabular-nums text-muted-foreground")}>
-            {periodName(focus.period)} {focus.clock} · {card.label}
-          </span>
-          {isPinned && name ? (
-            <button
-              type="button"
-              onClick={() => choosePlayer(onlyThem ? null : card.id)}
-              className={cn(type.micro, "mt-0.5 self-start font-semibold text-foreground underline underline-offset-2")}
-            >
-              {onlyThem ? "Show everyone" : `Show only ${name.split(" ")[0]}`}
-            </button>
-          ) : null}
-        </span>
+        <ChartTooltipSurface>
+          <div className="flex items-center gap-2">
+            <PlayerHeadshot playerId={card.id} name={name} teamKey={teamKeyOf(card.side)} size="xs" />
+            <span className="flex flex-col">
+              {name ? (
+                isPinned ? (
+                  <TransitionLink
+                    href={`/players/${encodeURIComponent(card.id)}`}
+                    className="font-semibold text-foreground underline-offset-2 hover:underline"
+                  >
+                    {name}
+                  </TransitionLink>
+                ) : (
+                  <span className="font-semibold text-foreground">{name}</span>
+                )
+              ) : null}
+              <span className="font-normal tabular-nums text-muted-foreground">
+                {periodName(focus.period)} {focus.clock} · {card.label}
+              </span>
+              {isPinned && name ? (
+                <button
+                  type="button"
+                  onClick={() => choosePlayer(onlyThem ? null : card.id)}
+                  className="self-start font-semibold text-foreground underline underline-offset-2"
+                >
+                  {onlyThem ? "Show everyone" : `Show only ${name.split(" ")[0]}`}
+                </button>
+              ) : null}
+            </span>
+          </div>
+        </ChartTooltipSurface>
       </div>
     );
   };

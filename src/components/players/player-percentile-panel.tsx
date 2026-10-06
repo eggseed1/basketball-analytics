@@ -23,7 +23,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
-import { FrostFloatingSurface } from "@/components/brand/frost-floating-surface";
+import { ChartTooltipSurface } from "@/components/charts/chart-tooltip";
 import {
   GlassSurface,
   type GlassSurfaceHonor,
@@ -353,21 +353,18 @@ function CompMarkTip({
       </button>
       {mounted && open && coords
         ? createPortal(
-            <FrostFloatingSurface
+            <ChartTooltipSurface
               id={tipId}
-              role="tooltip"
-              className="pointer-events-none z-[80] w-[180px] px-2.5 py-1.5"
+              className="pointer-events-none z-[80]"
               style={{
                 position: "fixed",
                 top: coords.top,
                 left: coords.left,
               }}
             >
-              <p className={cn(type.caption, "font-semibold")}>{label}</p>
-              <p className={cn(type.caption, "text-muted-foreground")}>
-                {value}
-              </p>
-            </FrostFloatingSurface>,
+              <p>{label}</p>
+              <p className="text-muted-foreground">{value}</p>
+            </ChartTooltipSurface>,
             document.body
           )
         : null}
