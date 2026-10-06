@@ -43,10 +43,38 @@ async function main() {
     process.exit(1);
   }
 
-  const listFile = path.join(os.tmpdir(), `drbl-shots-r2-${Date.now()}.json`);
-  await fs.writeFile(listFile, JSON.stringify(entries));
   console.log(`Uploading ${entries.length} files from ${seasons.length} seasons to r2://${BUCKET}`);
 
+  for (let start = 0; start < entries.length; start += BATCH) {
+    const batch = entries.slice(start, start + BATCH);
+    let ok = false;
+    for (let attempt = 1; attempt <= 3 && !ok; attempt++) {
+      if (start > 0 || attempt > 1) {
+        console.log(`Waiting out the API rate window (${WINDOW_MS / 1000}s)…`);
+        await sleep(WINDOW_MS);
+      }
+      console.log(`Batch ${start + 1}-${start + batch.length}, attempt ${attempt}`);
+      ok = await uploadBatch(batch);
+    }
+    if (!ok) {
+      console.error(`Batch starting at ${batch[0].key} failed three times.`);
+      process.exit(1);
+    }
+  }
+  console.log("Done.");
+}
+
+/** Cloudflare allows 1,200 API calls per 5 minutes across the whole account. */
+const BATCH = 1000;
+const WINDOW_MS = 5 * 60 * 1000 + 15_000;
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function uploadBatch(batch) {
+  const listFile = path.join(os.tmpdir(), `drbl-shots-r2-${Date.now()}.json`);
+  await fs.writeFile(listFile, JSON.stringify(batch));
   const result = spawnSync(
     "npx",
     [
@@ -60,7 +88,7 @@ async function main() {
     { stdio: "inherit" }
   );
   await fs.rm(listFile, { force: true });
-  process.exit(result.status ?? 1);
+  return result.status === 0;
 }
 
 main().catch((error) => {
