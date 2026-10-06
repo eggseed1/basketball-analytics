@@ -84,6 +84,7 @@ export async function TeamFrontOfficeIsland({
         summary={summary}
         labels={labels}
         contractValue={getTeamContractValue(franchiseId)}
+        contracts={contracts}
       />
     </div>
   );

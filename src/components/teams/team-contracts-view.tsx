@@ -32,14 +32,42 @@ function signedRoom(payroll: number, line: number): { text: string; over: boolea
   return { text: `${formatUsdCompact(Math.abs(diff))} ${diff > 0 ? "over" : "under"}`, over: diff > 0 };
 }
 
-function SummaryTile({ label, value, hint, tone }: { label: string; value: string; hint?: string; tone?: string }) {
+function SummaryTile({
+  label,
+  value,
+  hint,
+  tone,
+  href,
+  linkText,
+}: {
+  label: string;
+  value: string;
+  hint?: string;
+  tone?: string;
+  /** In-page link to the breakdown behind the value. */
+  href?: string;
+  linkText?: string;
+}) {
   return (
     <div className="glass-pill min-w-0 rounded-md px-3 py-2.5">
       <dt className={cn(type.caption, "truncate font-semibold uppercase tracking-wide text-muted-foreground")}>
         {label}
       </dt>
-      <dd className={cn(type.title, "mt-0.5 truncate tabular-nums tracking-tight", tone)}>{value}</dd>
+      <dd className={cn(type.title, "mt-0.5 truncate tabular-nums tracking-tight", tone)}>
+        {href ? (
+          <a href={href} className="underline-offset-4 hover:underline">
+            {value}
+          </a>
+        ) : (
+          value
+        )}
+      </dd>
       {hint ? <p className={cn(type.caption, "mt-0.5 truncate text-muted-foreground")}>{hint}</p> : null}
+      {href && linkText ? (
+        <a href={href} className={cn(type.caption, "mt-0.5 block truncate font-semibold text-foreground underline-offset-2 hover:underline")}>
+          {linkText}
+        </a>
+      ) : null}
     </div>
   );
 }
@@ -131,6 +159,8 @@ function PayrollHeader({
           value={contractValue ? formatUsdSignedCompact(contractValue.surplus) : "—"}
           hint={contractValue ? teamSurplusHint(contractValue) : "No contracts valued"}
           tone={contractValue ? surplusTone(contractValue.surplus) : undefined}
+          href={contractValue ? "#value-heading" : undefined}
+          linkText="See each contract ↓"
         />
         <SummaryTile
           label="Salary cap"
@@ -330,7 +360,7 @@ function Panel({ title, id, aside, children, className }: { title: string; id: s
       aria-labelledby={id}
     >
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 id={id} className={type.heading}>
+        <h2 id={id} className={cn(type.heading, "scroll-mt-52")}>
           {title}
         </h2>
         {aside}

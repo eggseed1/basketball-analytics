@@ -1,7 +1,9 @@
 import Link from "next/link";
 
 import { surplusTone } from "@/components/players/player-contract-transactions";
-import { teamSurplusHint } from "@/components/teams/team-contract-value";
+import { TeamContractValueChart, teamSurplusHint } from "@/components/teams/team-contract-value";
+import { MoreInfo } from "@/components/ui/more-info";
+import type { TeamContractsView } from "@/data/queries/team-contracts";
 import type { TeamContractValue } from "@/data/runtime/contract-value";
 import type { TeamFrontOfficeSummary } from "@/data/types/front-office";
 import { formatUsdCompact, formatUsdSignedCompact } from "@/lib/format-money";
@@ -11,10 +13,13 @@ export function TeamFrontOfficeSummaryCard({
   summary,
   labels,
   contractValue,
+  contracts,
 }: {
   summary: TeamFrontOfficeSummary;
   labels?: { salary?: string; firsts?: string; seconds?: string };
   contractValue?: TeamContractValue | null;
+  /** Names and player links for the surplus breakdown. */
+  contracts?: TeamContractsView | null;
 }) {
   return (
     <section
@@ -78,6 +83,15 @@ export function TeamFrontOfficeSummaryCard({
           </div>
         ) : null}
       </dl>
+
+      {contractValue && contracts ? (
+        <MoreInfo
+          summary={`How the ${formatUsdSignedCompact(contractValue.surplus)} contract surplus adds up`}
+          bodyClassName="mt-3"
+        >
+          <TeamContractValueChart value={contractValue} contracts={contracts} />
+        </MoreInfo>
+      ) : null}
 
       <div className="flex flex-wrap gap-3">
         <Link
