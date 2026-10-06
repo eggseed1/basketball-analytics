@@ -168,8 +168,7 @@ export function HomeGameStripCard({ game }: { game: GameSummary }) {
       style={
         winnerColor
           ? {
-              background: `linear-gradient(135deg, color-mix(in oklab, ${winnerColor} 30%, var(--material-standard-bg)) 0%, color-mix(in oklab, ${winnerColor} 16%, var(--material-standard-bg)) 100%)`,
-              border: `1px solid color-mix(in oklab, ${winnerColor} 20%, transparent)`,
+              background: `radial-gradient(130% 120% at 0% ${winner === "away" ? "0%" : "100%"}, color-mix(in oklab, ${winnerColor} 26%, transparent) 0%, color-mix(in oklab, ${winnerColor} 9%, transparent) 50%, transparent 80%), var(--material-standard-bg)`,
             }
           : undefined
       }
