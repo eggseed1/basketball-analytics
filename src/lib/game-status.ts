@@ -190,6 +190,22 @@ function clockSeconds(clock: string | null | undefined): number | null {
   return secs ? Number(secs[1]) : null;
 }
 
+/** Game seconds played at `period` with `remaining` seconds left (12-min quarters, 5-min OT). */
+export function elapsedGameSeconds(period: number, remaining: number): number {
+  if (period <= 4) return (period - 1) * 720 + (720 - remaining);
+  return 2880 + (period - 5) * 300 + (300 - remaining);
+}
+
+/** Same as {@link elapsedGameSeconds}, from a display clock such as "6:26". */
+export function elapsedFromDisplayClock(
+  period: number | null | undefined,
+  clock: string | null | undefined
+): number | null {
+  const remaining = clockSeconds(clock);
+  if (!period || remaining == null) return null;
+  return elapsedGameSeconds(period, remaining);
+}
+
 /**
  * Orders two snapshots of one game by how far along they are: status stage,
  * then period, then game clock. Positive means `a` is further along. Upstream

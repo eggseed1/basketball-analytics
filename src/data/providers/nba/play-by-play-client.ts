@@ -164,8 +164,20 @@ export function normalizeEspnSummary(raw: unknown): unknown {
         };
       }>;
     }>;
+    header?: {
+      competitions?: Array<{
+        competitors?: Array<{ team?: { id?: string | number; abbreviation?: string } }>;
+      }>;
+    };
   };
   const plays = Array.isArray(root.plays) ? root.plays : [];
+  // ESPN plays usually carry only `team.id`; the header names both sides.
+  const tricodeById = new Map<string, string>();
+  for (const c of root.header?.competitions?.[0]?.competitors ?? []) {
+    if (c.team?.id != null && c.team.abbreviation) {
+      tricodeById.set(String(c.team.id), c.team.abbreviation);
+    }
+  }
   const actions = plays.map((play, index) => {
     const text = String(play.text ?? "");
     const attempted = Number(play.pointsAttempted ?? 0);
@@ -207,7 +219,9 @@ export function normalizeEspnSummary(raw: unknown): unknown {
       subType: "",
       description: text,
       teamId: String(play.team?.id ?? ""),
-      teamTricode: String(play.team?.abbreviation ?? ""),
+      teamTricode: String(
+        play.team?.abbreviation ?? tricodeById.get(String(play.team?.id ?? "")) ?? ""
+      ),
       personId: Number(participant?.id ?? 0) || 0,
       playerName: participant?.displayName ?? participant?.shortName ?? "",
       secondPersonId: Number(second?.id ?? 0) || 0,

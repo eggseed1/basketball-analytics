@@ -14,6 +14,15 @@ const recent = new Map<
   { expiresAt: number; value: EspnSummaryResponse }
 >();
 const RECENT_TTL_MS = 30_000;
+/** Live games refresh every 20s on the client, so a 30s memo would skip polls. */
+const RECENT_LIVE_TTL_MS = 8_000;
+
+function isLiveSummary(summary: EspnSummaryResponse): boolean {
+  const state = (
+    summary as { header?: { competitions?: Array<{ status?: { type?: { state?: string } } }> } }
+  ).header?.competitions?.[0]?.status?.type?.state;
+  return state === "in";
+}
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -171,7 +180,8 @@ export async function fetchEspnCdnGameSummary(
   const request = fetchEspnCdnGameSummaryUncached(id, options)
     .then((value) => {
       if (value && playCount(value) > 0) {
-        recent.set(id, { value, expiresAt: Date.now() + RECENT_TTL_MS });
+        const ttl = isLiveSummary(value) ? RECENT_LIVE_TTL_MS : RECENT_TTL_MS;
+        recent.set(id, { value, expiresAt: Date.now() + ttl });
       }
       return value;
     })

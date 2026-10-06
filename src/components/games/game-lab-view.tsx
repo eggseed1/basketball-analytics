@@ -18,11 +18,44 @@ import type { PlayByPlayEvent, PlayerGame } from "@/data/types";
 import { type } from "@/lib/design-system";
 import type { OfficialTeamStats } from "@/lib/games/official-team-stats";
 import { useChartTheme } from "@/lib/chart-theme";
+import {
+  elapsedFromDisplayClock,
+  elapsedGameSeconds,
+  isLiveLikeStatus,
+  type GameStatusKind,
+} from "@/lib/game-status";
 import { buildGameMatchupTheme } from "@/lib/game-matchup-theme";
 import { distinctTeamColors } from "@/lib/nba-brand";
 import { cn } from "@/lib/utils";
 
 type FlowTab = "margin" | "winprob";
+
+/** Live play-by-play this far behind the game clock gets called out. */
+const PBP_LAG_NOTE_SECONDS = 180;
+
+function periodLabel(period: number): string {
+  return period <= 4 ? `Q${period}` : `OT${period - 4}`;
+}
+
+function playByPlayLagNote(
+  analysis: GameAnalysisSummary,
+  events: PlayByPlayEvent[]
+): string | null {
+  if (!events.length || !isLiveLikeStatus(analysis.status as GameStatusKind)) return null;
+  const live = elapsedFromDisplayClock(analysis.period, analysis.displayClock);
+  if (live == null) return null;
+  let last = events[0]!;
+  for (const e of events) {
+    if (elapsedGameSeconds(e.period, e.clockSeconds) > elapsedGameSeconds(last.period, last.clockSeconds)) {
+      last = e;
+    }
+  }
+  if (live - elapsedGameSeconds(last.period, last.clockSeconds) < PBP_LAG_NOTE_SECONDS) return null;
+  return `Play-by-play for this game stops at ${periodLabel(last.period)} ${last.clock} while the game is at ${periodLabel(analysis.period!)} ${analysis.displayClock}. Leads, runs, possessions, game flow and shots below only cover plays up to that point.`;
+}
+
+const STATS_PENDING_NOTE =
+  "Player stats for this game aren't in the live feed yet. This section updates on its own once they arrive.";
 
 function FlowTabChip({
   active,
@@ -96,6 +129,21 @@ export function GameLabView({
 
   const colors = { away: awayColor, home: homeColor };
   const rosterHome = homeOnly.length ? homeOnly : homePlayers;
+  // The live feed sometimes lists players with minutes but no counting stats
+  // while the score keeps moving. Those zeros are missing data, not real lines.
+  const statsPending =
+    !final &&
+    outcome.homeScore + outcome.awayScore > 0 &&
+    players.length > 0 &&
+    players.every(
+      (p) =>
+        !p.points &&
+        !p.fieldGoalsAttempted &&
+        !p.freeThrowsAttempted &&
+        !p.rebounds &&
+        !p.assists
+    );
+  const pbpLagNote = playByPlayLagNote(analysis, events);
   const shotChartPlayers: ShotChartPlayer[] = [
     ...awayPlayers.map((p) => ({ playerId: p.playerId, name: p.playerName ?? null, side: "away" as const })),
     ...rosterHome.map((p) => ({ playerId: p.playerId, name: p.playerName ?? null, side: "home" as const })),
@@ -103,25 +151,45 @@ export function GameLabView({
 
   return (
     <div className="flex flex-col gap-5">
+      {pbpLagNote ? (
+        <p
+          role="status"
+          className={cn(type.bodySm, "sports-card px-4 py-3 text-muted-foreground")}
+        >
+          {pbpLagNote}
+        </p>
+      ) : null}
       <GameStoryStrip analysis={analysis} colors={colors} />
-      <div className="grid gap-5 lg:grid-cols-5">
-        <div className={players.length ? "lg:col-span-3" : "lg:col-span-5"}>
-          <GameTeamComparison analysis={analysis} colors={colors} />
-        </div>
-        {players.length ? (
-          <div className="lg:col-span-2">
-            <GameTopPerformers
-              awayLabel={outcome.awayLabel}
-              homeLabel={outcome.homeLabel}
-              awayTeamKey={awayKey}
-              homeTeamKey={homeKey}
-              awayPlayers={awayPlayers}
-              homePlayers={rosterHome}
-              colors={colors}
-            />
+      {statsPending ? (
+        <MatchupWashCard
+          awayTeamKey={awayKey}
+          homeTeamKey={homeKey}
+          intensity="subtle"
+          className="flex flex-col gap-1 p-4 sm:p-5"
+        >
+          <h2 className={type.heading}>Team comparison and top performers</h2>
+          <p className={cn(type.bodySm, "text-muted-foreground")}>{STATS_PENDING_NOTE}</p>
+        </MatchupWashCard>
+      ) : (
+        <div className="grid gap-5 lg:grid-cols-5">
+          <div className={players.length ? "lg:col-span-3" : "lg:col-span-5"}>
+            <GameTeamComparison analysis={analysis} colors={colors} />
           </div>
-        ) : null}
-      </div>
+          {players.length ? (
+            <div className="lg:col-span-2">
+              <GameTopPerformers
+                awayLabel={outcome.awayLabel}
+                homeLabel={outcome.homeLabel}
+                awayTeamKey={awayKey}
+                homeTeamKey={homeKey}
+                awayPlayers={awayPlayers}
+                homePlayers={rosterHome}
+                colors={colors}
+              />
+            </div>
+          ) : null}
+        </div>
+      )}
       <GameLiveInsights
         events={events}
         players={players}
@@ -305,9 +373,10 @@ export function GameLabView({
           <GameRosterBoard
             awayLabel={outcome.awayLabel}
             homeLabel={outcome.homeLabel}
-            awayPlayers={awayPlayers}
-            homePlayers={rosterHome}
+            awayPlayers={statsPending ? [] : awayPlayers}
+            homePlayers={statsPending ? [] : rosterHome}
             live={!final}
+            emptyText={statsPending ? STATS_PENDING_NOTE : undefined}
           />
         )}
       </MatchupWashCard>
