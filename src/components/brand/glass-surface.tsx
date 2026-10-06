@@ -1,7 +1,9 @@
 "use client";
 
 import {
+  createContext,
   createElement,
+  useContext,
   type CSSProperties,
   type ElementType,
   type HTMLAttributes,
@@ -18,6 +20,19 @@ const LiquidGlass = dynamic(
   () =>
     import("react-liquid-glass-svg").then((m) => ({ default: m.LiquidGlass }))
 );
+
+const GlassTintScale = createContext(1);
+
+/** Scales the team-color tint of every GlassSurface below it (1 = default). */
+export function GlassTintScaleProvider({
+  scale,
+  children,
+}: {
+  scale: number;
+  children: ReactNode;
+}) {
+  return <GlassTintScale.Provider value={scale}>{children}</GlassTintScale.Provider>;
+}
 
 export type GlassSurfaceEffect = "liquid" | "css";
 export type GlassSurfaceHonor = "hof";
@@ -53,6 +68,7 @@ export function GlassSurface({
   style?: CSSProperties;
 } & Omit<HTMLAttributes<HTMLElement>, "children" | "className" | "style">) {
   const { resolvedDark, surface } = useOwnerTheme();
+  const tintScale = useContext(GlassTintScale);
   // Same fill as `.sports-card`, so opaque washes mixed from --card sit flush.
   const veil = "var(--material-standard-bg)";
   const a = accentColor?.trim() || null;
@@ -60,8 +76,8 @@ export function GlassSurface({
   const stop = (color: string, amount: number) =>
     `color-mix(in oklab, ${color} ${amount}%, ${veil})`;
   // Whisper of team color only - frost stays dominant (not the opaque matchup wash).
-  const edge = resolvedDark ? 9 : 7;
-  const inner = resolvedDark ? 4 : 3;
+  const edge = Number(((resolvedDark ? 9 : 7) * tintScale).toFixed(2));
+  const inner = Number(((resolvedDark ? 4 : 3) * tintScale).toFixed(2));
   const tintColor =
     a && b
       ? `linear-gradient(90deg, ${stop(a, edge)} 0%, ${stop(a, inner)} 46%, ${stop(b, inner)} 54%, ${stop(b, edge)} 100%)`

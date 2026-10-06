@@ -5,7 +5,7 @@ import { PageAtmosphere } from "@/components/brand/page-atmosphere";
 import { PriorSeasonStatsNotice } from "@/components/explore/season-not-started-notice";
 import { PlayerOnOffIsland } from "@/components/players/player-on-off-island";
 import { getOnOffSeasons } from "@/data/queries/on-off";
-import { GlassSurface } from "@/components/brand/glass-surface";
+import { GlassSurface, GlassTintScaleProvider } from "@/components/brand/glass-surface";
 import { DestinationClientShell } from "@/components/continuity/destination-client-shell";
 import { HistoricalCareerSurface } from "@/components/players/historical-career-surface";
 import { PlayerAskLinks } from "@/components/players/player-ask-links";
@@ -101,6 +101,9 @@ import {
   PlayerContractSectionIsland,
 } from "@/components/players/player-contract-transactions-island";
 import { PlayerUpcomingGamesFromSnapshot } from "@/components/players/player-upcoming-games-island";
+
+/** Team color stays a hint on player cards, close to the neutral home page cards. */
+const PLAYER_CARD_TINT_SCALE = 0.3;
 
 interface PlayerPageProps {
   params: Promise<{ playerId: string }>;
@@ -867,15 +870,17 @@ export default async function PlayerPage({
         colorB={atmosphere?.colorB}
       />
       <main className="relative z-[1] flex flex-1 flex-col gap-4 sm:gap-5">
-        {honor === "hof" ? (
-          <div className={HOF_PAGE_FRAME_CLASS}>
-            <div className="hof-page-frame__inner flex flex-col gap-4 p-3 sm:gap-5 sm:p-4">
-              {mainContent}
+        <GlassTintScaleProvider scale={PLAYER_CARD_TINT_SCALE}>
+          {honor === "hof" ? (
+            <div className={HOF_PAGE_FRAME_CLASS}>
+              <div className="hof-page-frame__inner flex flex-col gap-4 p-3 sm:gap-5 sm:p-4">
+                {mainContent}
+              </div>
             </div>
-          </div>
-        ) : (
-          mainContent
-        )}
+          ) : (
+            mainContent
+          )}
+        </GlassTintScaleProvider>
       </main>
     </DestinationClientShell>
   );
