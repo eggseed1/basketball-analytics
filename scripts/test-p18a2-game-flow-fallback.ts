@@ -85,6 +85,55 @@ function pbp(events: PlayByPlayEvent[]): GamePlayByPlay {
   assert.equal(flow.periods.length, 4);
 }
 
+// 1b. valid linescore + PBP short one basket in Q3: rebase per period, flag the gap
+{
+  const g = game({
+    homeScore: 103,
+    awayScore: 127,
+    homePeriodScores: [28, 19, 30, 26],
+    awayPeriodScores: [36, 37, 26, 28],
+  });
+  const quarterEnds: Array<[number, number, number]> = [
+    [1, 28, 36],
+    [2, 47, 73],
+    [3, 74, 99],
+    [4, 100, 127],
+  ];
+  const flow = buildGameFlow(
+    g,
+    pbp(
+      quarterEnds.map(([period, h, a], i) =>
+        ev({ actionNumber: i + 1, period, scoreHome: h, scoreAway: a, points: 2 })
+      )
+    )
+  );
+  assert.deepEqual(
+    flow.timeline.map((p) => [p.period, p.homeScore, p.awayScore]),
+    [
+      [1, 28, 36],
+      [2, 47, 73],
+      [3, 74, 99],
+      [4, 103, 127],
+    ]
+  );
+  assert.deepEqual(flow.timelineGaps, [{ periodLabel: "Q3", home: 3, away: 0 }]);
+  assert.equal(flow.story, null);
+}
+
+// 1c. valid linescore + PBP that stops in Q1: no rebase, no timeline
+{
+  const g = game({
+    homePeriodScores: [30, 28, 27, 25],
+    awayPeriodScores: [22, 24, 26, 26],
+  });
+  const flow = buildGameFlow(
+    g,
+    pbp([ev({ actionNumber: 1, period: 1, scoreHome: 30, scoreAway: 22, points: 2 })])
+  );
+  assert.equal(flow.timeline.length, 0);
+  assert.equal(flow.timelineGaps, undefined);
+}
+
 // 2. missing linescore + conserving PBP
 {
   const events: PlayByPlayEvent[] = [];

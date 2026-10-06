@@ -227,7 +227,7 @@ function LineScore({
   ];
   const cell = "px-2 py-1 text-center tabular-nums sm:px-3";
   return (
-    <div className="board-scroll-host w-full max-w-lg overflow-x-auto">
+    <div className="board-scroll-host w-full overflow-x-auto">
       <table className={cn(type.bodySm, "w-full")}>
         <caption className="sr-only">Points by period</caption>
         <thead>

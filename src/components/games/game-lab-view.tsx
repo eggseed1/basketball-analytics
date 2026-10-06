@@ -65,6 +65,19 @@ function playByPlayLagNote(
   return `Play-by-play for this game stops at ${periodLabel(last.period)} ${last.clock} while the game is ${gameAt}. Leads, runs, possessions, game flow and shots below only cover plays up to that point.`;
 }
 
+function timelineGapNote(
+  gaps: NonNullable<GameAnalysisSummary["flow"]["timelineGaps"]>,
+  labels: { homeLabel: string; awayLabel: string }
+): string {
+  const parts = gaps.flatMap((gap) => {
+    const sides: string[] = [];
+    if (gap.away) sides.push(`${gap.away} ${labels.awayLabel}`);
+    if (gap.home) sides.push(`${gap.home} ${labels.homeLabel}`);
+    return sides.length ? [`${sides.join(" and ")} points in ${gap.periodLabel}`] : [];
+  });
+  return `The play log is missing ${parts.join(", ")}, so the line skips them and leads inside that quarter may be off by that much. Every other quarter matches the official line score.`;
+}
+
 const STATS_PENDING_NOTE =
   "Player stats for this game aren't in the live feed yet. This section updates on its own once they arrive.";
 
@@ -274,6 +287,12 @@ export function GameLabView({
                 final={final}
               />
             )}
+
+            {flow.timelineGaps?.length ? (
+              <p className={cn(type.caption, "text-muted-foreground")}>
+                {timelineGapNote(flow.timelineGaps, outcome)}
+              </p>
+            ) : null}
 
             {flow.periods.length > 0 && !hidePeriodTable ? (
               <div className="board-scroll-host overflow-x-auto rounded-md">

@@ -29,6 +29,7 @@ import {
   resolveGameFlowTimeline,
   type ScoreTimelineSource,
   type QuarterScoreSource,
+  type TimelinePeriodGap,
 } from "@/lib/game-flow/resolve-score-timeline";
 import type { ScoreTimelinePoint } from "@/lib/history/score-flow";
 import { buildGamePbpCapability, mapPlayByPlaySource } from "@/pbp/capability";
@@ -183,6 +184,8 @@ export type GameFlowSummary = {
     delta: number;
     summary: string;
   };
+  /** Periods where the play log is short of the official line score. */
+  timelineGaps?: TimelinePeriodGap[];
   notes: string[];
   /** Internal diagnostic only. */
   internalReason?: string;
@@ -628,6 +631,7 @@ export function buildGameFlow(
     story,
     largestEndOfPeriodLead: largest,
     biggestPeriodSwing: biggestSwing,
+    timelineGaps: resolved.timelineGaps,
     notes: resolved.notes,
     internalReason: resolved.internalReason,
   };

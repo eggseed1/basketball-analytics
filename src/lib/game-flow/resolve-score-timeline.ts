@@ -41,8 +41,16 @@ export type ResolvedPeriodScore = {
   margin: number;
 };
 
+/** Points the official line score has that the play log never recorded. */
+export type TimelinePeriodGap = {
+  periodLabel: string;
+  home: number;
+  away: number;
+};
+
 export type ResolvedGameFlowTimeline = {
   available: boolean;
+  timelineGaps?: TimelinePeriodGap[];
   scoreTimelineSource: ScoreTimelineSource;
   quarterScoreSource: QuarterScoreSource;
   periods: ResolvedPeriodScore[];
@@ -173,6 +181,61 @@ export function timelineFromPlayByPlayEvents(
   }
 
   return points;
+}
+
+const MAX_REBASED_MISSING_POINTS = 10;
+
+/**
+ * Start each period's logged plays from the official line-score total at that
+ * point. Periods whose logged points match the line score stay exact; a period
+ * the log is short on is reported as a gap, never filled with guessed plays.
+ * Returns null when a period is missing entirely, the log has more points than
+ * the line score, or too many points are missing to trust the shape.
+ */
+export function rebaseTimelineOnLinescores(
+  timeline: ScoreTimelinePoint[],
+  periods: ResolvedPeriodScore[]
+): { timeline: ScoreTimelinePoint[]; gaps: TimelinePeriodGap[] } | null {
+  if (!timeline.length || !periods.length) return null;
+  if (timeline.some((p) => p.period > periods.length)) return null;
+
+  const out: ScoreTimelinePoint[] = [];
+  const gaps: TimelinePeriodGap[] = [];
+  let rawPrevH = 0;
+  let rawPrevA = 0;
+  let missingTotal = 0;
+
+  for (const period of periods) {
+    const n = period.periodIndex + 1;
+    const startH = period.homeCumulative - period.homePoints;
+    const startA = period.awayCumulative - period.awayPoints;
+    const inPeriod = timeline.filter((p) => p.period === n);
+    if (!inPeriod.length && period.homePoints + period.awayPoints > 0) return null;
+
+    for (const p of inPeriod) {
+      const homeScore = startH + (p.homeScore - rawPrevH);
+      const awayScore = startA + (p.awayScore - rawPrevA);
+      out.push({ ...p, homeScore, awayScore, margin: homeScore - awayScore });
+    }
+
+    const end = inPeriod[inPeriod.length - 1];
+    const loggedH = end ? end.homeScore - rawPrevH : 0;
+    const loggedA = end ? end.awayScore - rawPrevA : 0;
+    const missingH = period.homePoints - loggedH;
+    const missingA = period.awayPoints - loggedA;
+    if (missingH < 0 || missingA < 0) return null;
+    if (missingH || missingA) {
+      gaps.push({ periodLabel: period.label, home: missingH, away: missingA });
+      missingTotal += missingH + missingA;
+    }
+    if (end) {
+      rawPrevH = end.homeScore;
+      rawPrevA = end.awayScore;
+    }
+  }
+
+  if (missingTotal > MAX_REBASED_MISSING_POINTS) return null;
+  return { timeline: out, gaps };
 }
 
 /** Flip home/away on a timeline so it matches a game object with inverted sides. */
@@ -322,6 +385,7 @@ export function resolveGameFlowTimeline(options: {
     // Provider path — period table only; margin timeline still prefers PBP when present.
     let timeline: ScoreTimelinePoint[] = [];
     let flowStats: GameFlowStats | null = null;
+    let timelineGaps: TimelinePeriodGap[] | undefined;
     if (playByPlay?.events?.length) {
       timeline = timelineFromPlayByPlayEvents(playByPlay.events, {
         homeTeamId: game.homeTeamId,
@@ -341,7 +405,10 @@ export function resolveGameFlowTimeline(options: {
           winnerTeamId,
         });
       } else {
-        timeline = [];
+        // Lead and run stats stay off: inside a short period they could be wrong.
+        const rebased = rebaseTimelineOnLinescores(timeline, linescorePeriods);
+        timeline = rebased?.timeline ?? [];
+        timelineGaps = rebased?.gaps.length ? rebased.gaps : undefined;
       }
     }
 
@@ -352,9 +419,12 @@ export function resolveGameFlowTimeline(options: {
       periods: linescorePeriods,
       timeline,
       flowStats,
-      notes: timeline.length
-        ? ["Period scores from provider linescores; margin path from PBP."]
-        : ["Period scores from provider linescores."],
+      timelineGaps,
+      notes: timelineGaps
+        ? ["Period scores from provider linescores; margin path from PBP rebased per period."]
+        : timeline.length
+          ? ["Period scores from provider linescores; margin path from PBP."]
+          : ["Period scores from provider linescores."],
     };
   }
 
