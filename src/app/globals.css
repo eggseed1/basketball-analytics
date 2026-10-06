@@ -392,7 +392,7 @@
 }
 
 html:not([data-surface="glass"]) .sports-card {
-  @apply border-black/5 bg-card shadow-[0_1px_2px_rgb(0_0_0_/_4%),0_8px_24px_rgb(0_0_0_/_4%)];
+  @apply border-black/[0.035] bg-card shadow-[0_1px_2px_rgb(0_0_0_/_3%),0_6px_20px_rgb(0_0_0_/_3%)];
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
 }
@@ -400,13 +400,13 @@ html:not([data-surface="glass"]) .sports-card {
 html:not([data-surface="glass"]).dark .sports-card,
 html.dark:not([data-surface="glass"]) .sports-card {
   background: var(--card);
-  border-color: rgb(255 255 255 / 8%);
+  border-color: rgb(255 255 255 / 6%);
 }
 
 html:not([data-surface="glass"]).dark .sports-card,
 html.dark:not([data-surface="glass"]) .sports-card {
   background: var(--card);
-  border-color: rgb(255 255 255 / 8%);
+  border-color: rgb(255 255 255 / 6%);
 }
 
 /* Hall of Fame — golden outline for identity + stat surfaces */
@@ -598,7 +598,7 @@ html.dark:not([data-surface="glass"]) .select-popup:not(.hover-frost) {
 }
 
 html:not([data-surface="glass"]) .board-scroll-frame {
-  @apply border-black/5 bg-card shadow-[0_1px_2px_rgb(0_0_0_/_4%),0_8px_24px_rgb(0_0_0_/_4%)];
+  @apply border-black/[0.035] bg-card shadow-[0_1px_2px_rgb(0_0_0_/_3%),0_6px_20px_rgb(0_0_0_/_3%)];
 }
 
 .board-scroll-frame > .board-frozen-col {

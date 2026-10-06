@@ -91,29 +91,29 @@
 
   /* ── Material 1 — subtle glass ── */
   --material-subtle-bg: rgb(255 255 255 / 45%);
-  --material-subtle-border: rgb(255 255 255 / 45%);
+  --material-subtle-border: rgb(255 255 255 / 32%);
   --material-subtle-blur: var(--blur-glass-sm);
   --material-subtle-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 35%),
-    0 1px 2px rgb(0 0 0 / 3%);
+    inset 0 1px 0 rgb(255 255 255 / 24%),
+    0 1px 2px rgb(0 0 0 / 2%);
 
   /* ── Material 2 — standard glass (sports-card) ── */
   --material-standard-bg: rgb(255 255 255 / 64%);
-  --material-standard-border: rgb(255 255 255 / 50%);
+  --material-standard-border: rgb(255 255 255 / 34%);
   --material-standard-blur: var(--blur-glass-lg);
   --material-standard-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 50%),
-    0 1px 2px rgb(0 0 0 / 4%),
-    0 8px 24px rgb(0 0 0 / 5%);
+    inset 0 1px 0 rgb(255 255 255 / 34%),
+    0 1px 2px rgb(0 0 0 / 2.5%),
+    0 6px 20px rgb(0 0 0 / 3.5%);
 
   /* ── Material 3 — elevated glass (menus / popovers) ── */
   --material-elevated-bg: rgb(255 255 255 / 82%);
-  --material-elevated-border: rgb(255 255 255 / 55%);
+  --material-elevated-border: rgb(255 255 255 / 40%);
   --material-elevated-blur: var(--blur-glass-md);
   --material-elevated-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 60%),
-    0 1px 2px rgb(0 0 0 / 4%),
-    0 12px 32px rgb(0 0 0 / 10%);
+    inset 0 1px 0 rgb(255 255 255 / 44%),
+    0 1px 2px rgb(0 0 0 / 3%),
+    0 10px 28px rgb(0 0 0 / 7%);
 
   /* ── Elevation shadows (non-glass) ── */
   --shadow-xs: 0 1px 1px rgb(0 0 0 / 4%);
@@ -173,24 +173,24 @@
 
   /* Nested glass: opaque-enough secondary fills (mirror light white frosts). */
   --material-subtle-bg: rgb(var(--glass-raised-rgb) / 78%);
-  --material-subtle-border: rgb(255 255 255 / 10%);
+  --material-subtle-border: rgb(255 255 255 / 7%);
   --material-subtle-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 8%),
-    0 1px 2px rgb(0 0 0 / 30%);
+    inset 0 1px 0 rgb(255 255 255 / 5%),
+    0 1px 2px rgb(0 0 0 / 22%);
 
   --material-standard-bg: rgb(var(--glass-rgb) / 80%);
-  --material-standard-border: rgb(255 255 255 / 10%);
+  --material-standard-border: rgb(255 255 255 / 7%);
   --material-standard-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 7%),
-    0 1px 2px rgb(0 0 0 / 40%),
-    0 12px 32px rgb(0 0 0 / 36%);
+    inset 0 1px 0 rgb(255 255 255 / 5%),
+    0 1px 2px rgb(0 0 0 / 28%),
+    0 10px 28px rgb(0 0 0 / 24%);
 
   --material-elevated-bg: rgb(var(--glass-raised-rgb) / 88%);
-  --material-elevated-border: rgb(255 255 255 / 12%);
+  --material-elevated-border: rgb(255 255 255 / 9%);
   --material-elevated-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 12%),
-    0 1px 2px rgb(0 0 0 / 45%),
-    0 16px 40px rgb(0 0 0 / 42%);
+    inset 0 1px 0 rgb(255 255 255 / 9%),
+    0 1px 2px rgb(0 0 0 / 34%),
+    0 14px 36px rgb(0 0 0 / 32%);
 
   --shadow-xs: 0 1px 1px rgb(0 0 0 / 40%);
   --shadow-sm: 0 1px 2px rgb(0 0 0 / 40%), 0 4px 12px rgb(0 0 0 / 30%);

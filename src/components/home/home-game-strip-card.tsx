@@ -169,7 +169,7 @@ export function HomeGameStripCard({ game }: { game: GameSummary }) {
         winnerColor
           ? {
               background: `linear-gradient(135deg, color-mix(in oklab, ${winnerColor} 30%, var(--material-standard-bg)) 0%, color-mix(in oklab, ${winnerColor} 16%, var(--material-standard-bg)) 100%)`,
-              border: `1px solid color-mix(in oklab, ${winnerColor} 35%, transparent)`,
+              border: `1px solid color-mix(in oklab, ${winnerColor} 20%, transparent)`,
             }
           : undefined
       }
