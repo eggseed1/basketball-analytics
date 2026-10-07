@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import type { GameSummary } from "@/data/types";
@@ -70,6 +70,33 @@ function useGameLineups(gameId: string, mode: Mode, poll: boolean) {
 
 const LINEUP_SIZE = 5;
 
+/** Away | line score | home on desktop; the line score drops below both lineups on smaller screens. */
+const GRID = "grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-8";
+const GRID_WITH_CENTER = "lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]";
+const CENTER = "order-last min-w-0 self-center sm:col-span-2 lg:order-none lg:col-span-1";
+
+function sideClass(side: "away" | "home") {
+  return cn("flex min-w-0 flex-col gap-1.5", side === "home" && "sm:items-end sm:text-right");
+}
+
+function LineupGrid({
+  away,
+  home,
+  center,
+}: {
+  away: ReactNode;
+  home: ReactNode;
+  center?: ReactNode;
+}) {
+  return (
+    <div className={cn(GRID, center && GRID_WITH_CENTER)}>
+      <div className={sideClass("away")}>{away}</div>
+      {center ? <div className={CENTER}>{center}</div> : null}
+      <div className={sideClass("home")}>{home}</div>
+    </div>
+  );
+}
+
 function EmptySlots() {
   return (
     <ul aria-hidden className="flex gap-1">
@@ -87,36 +114,37 @@ function LineupSkeleton({
   heading,
   awayLabel,
   homeLabel,
+  center,
 }: {
   heading: string;
   awayLabel: string;
   homeLabel: string;
+  center?: ReactNode;
 }) {
+  const side = (label: string) => (
+    <div aria-hidden className="contents">
+      <p className={cn(type.micro, "font-semibold text-muted-foreground")}>{label}</p>
+      <ul className="flex gap-1">
+        {Array.from({ length: LINEUP_SIZE }, (_, i) => (
+          <li key={i} className="flex w-[3.75rem] min-w-0 shrink flex-col items-center gap-0.5">
+            <span className="loading-shimmer h-7 w-7 rounded-full sm:h-8 sm:w-8" />
+            <span className="loading-shimmer mt-px h-[11px] w-10 rounded-full" />
+            <span className="loading-shimmer mt-px h-[9px] w-12 rounded-full" />
+          </li>
+        ))}
+      </ul>
+      <span className="flex h-4 items-center">
+        <span className="loading-shimmer h-3 w-44 max-w-full rounded-full" />
+      </span>
+    </div>
+  );
   return (
     <section aria-label={heading} aria-busy className="flex flex-col gap-2 border-t border-border/50 pt-3">
       <h2 className={cn(type.micro, "font-bold uppercase tracking-[0.1em] text-muted-foreground")}>
         {heading}
       </h2>
       <span className="sr-only">Loading lineups</span>
-      <div aria-hidden className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-8">
-        {[awayLabel, homeLabel].map((label) => (
-          <div key={label} className="flex min-w-0 flex-col gap-1.5">
-            <p className={cn(type.micro, "font-semibold text-muted-foreground")}>{label}</p>
-            <ul className="flex gap-1">
-              {Array.from({ length: LINEUP_SIZE }, (_, i) => (
-                <li key={i} className="flex w-[3.75rem] min-w-0 shrink flex-col items-center gap-0.5">
-                  <span className="loading-shimmer h-7 w-7 rounded-full sm:h-8 sm:w-8" />
-                  <span className="loading-shimmer mt-px h-[11px] w-10 rounded-full" />
-                  <span className="loading-shimmer mt-px h-[9px] w-12 rounded-full" />
-                </li>
-              ))}
-            </ul>
-            <span className="flex h-4 items-center">
-              <span className="loading-shimmer h-3 w-44 max-w-full rounded-full" />
-            </span>
-          </div>
-        ))}
-      </div>
+      <LineupGrid away={side(awayLabel)} home={side(homeLabel)} center={center} />
     </section>
   );
 }
@@ -209,7 +237,15 @@ function PlayerRow({
   );
 }
 
-function FloorState({ state, showFouls }: { state: TeamFloorState; showFouls: boolean }) {
+function FloorState({
+  state,
+  showFouls,
+  end,
+}: {
+  state: TeamFloorState;
+  showFouls: boolean;
+  end?: boolean;
+}) {
   const parts: string[] = [];
   if (showFouls && state.teamFouls != null) {
     parts.push(`${state.teamFouls} team foul${state.teamFouls === 1 ? "" : "s"} this quarter`);
@@ -219,7 +255,13 @@ function FloorState({ state, showFouls }: { state: TeamFloorState; showFouls: bo
   }
   if (!parts.length && !(showFouls && state.inBonus)) return null;
   return (
-    <p className={cn(type.micro, "flex flex-wrap items-center gap-x-2 gap-y-1 text-muted-foreground")}>
+    <p
+      className={cn(
+        type.micro,
+        "flex flex-wrap items-center gap-x-2 gap-y-1 text-muted-foreground",
+        end && "sm:justify-end"
+      )}
+    >
       <span className="tabular-nums">{parts.join(" · ")}</span>
       {showFouls && state.inBonus ? (
         <span className="rounded-md bg-foreground/[0.07] px-1.5 py-0.5 font-semibold text-foreground">
@@ -236,12 +278,15 @@ export function GameLineupsPanel({
   homeLabel,
   awayTeamKey,
   homeTeamKey,
+  center,
 }: {
   game: GameSummary;
   awayLabel: string;
   homeLabel: string;
   awayTeamKey: string | null;
   homeTeamKey: string | null;
+  /** Rendered between the lineups on desktop (the line score), or alone when there are no lineups. */
+  center?: ReactNode;
 }) {
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
@@ -254,12 +299,14 @@ export function GameLineupsPanel({
     mode,
     mode !== "pregame" || inPregameWindow(game, now)
   );
-  if (!mode) return null;
+  if (!mode) return center ?? null;
 
   const heading =
     mode === "pregame" ? "Starting lineups" : mode === "break" ? "Last on the floor" : "On the floor";
   if (!loaded && mode !== "pregame") {
-    return <LineupSkeleton heading={heading} awayLabel={awayLabel} homeLabel={homeLabel} />;
+    return (
+      <LineupSkeleton heading={heading} awayLabel={awayLabel} homeLabel={homeLabel} center={center} />
+    );
   }
 
   const pick = (side: "away" | "home") => {
@@ -280,50 +327,61 @@ export function GameLineupsPanel({
         <h2 className={cn(type.micro, "font-bold uppercase tracking-[0.1em] text-muted-foreground")}>
           {heading}
         </h2>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-8">
-          {[awayLabel, homeLabel].map((label) => (
-            <div key={label} className="flex min-w-0 flex-col gap-1.5">
-              <p className={cn(type.micro, "font-semibold text-muted-foreground")}>{label}</p>
+        <LineupGrid
+          away={
+            <>
+              <p className={cn(type.micro, "font-semibold text-muted-foreground")}>{awayLabel}</p>
               <EmptySlots />
-            </div>
-          ))}
-        </div>
+            </>
+          }
+          home={
+            <>
+              <p className={cn(type.micro, "font-semibold text-muted-foreground")}>{homeLabel}</p>
+              <EmptySlots />
+            </>
+          }
+          center={center}
+        />
         <p className={cn(type.caption, "text-muted-foreground")}>{missing}</p>
       </section>
     );
   }
+
+  const renderSide = (
+    side: "away" | "home",
+    label: string,
+    players: LineupPlayer[] | null,
+    teamKey: string | null
+  ) => (
+    <>
+      <p className={cn(type.micro, "font-semibold text-muted-foreground")}>{label}</p>
+      {players ? (
+        <PlayerRow
+          players={players}
+          teamKey={teamKey}
+          troubleAt={mode === "pregame" ? null : foulTroubleThreshold(game.period ?? 1)}
+        />
+      ) : (
+        <p className={cn(type.caption, "text-muted-foreground")}>{missing}</p>
+      )}
+      {mode !== "pregame" && data?.state ? (
+        <div className="animate-in fade-in fill-mode-both delay-200 duration-500 motion-reduce:animate-none">
+          <FloorState state={data.state[side]} showFouls={mode === "live"} end={side === "home"} />
+        </div>
+      ) : null}
+    </>
+  );
 
   return (
     <section aria-label={heading} className="flex flex-col gap-2 border-t border-border/50 pt-3">
       <h2 className={cn(type.micro, "font-bold uppercase tracking-[0.1em] text-muted-foreground")}>
         {heading}
       </h2>
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-8">
-        {(
-          [
-            ["away", awayLabel, away, awayTeamKey],
-            ["home", homeLabel, home, homeTeamKey],
-          ] as const
-        ).map(([side, label, players, teamKey]) => (
-          <div key={side} className="flex min-w-0 flex-col gap-1.5">
-            <p className={cn(type.micro, "font-semibold text-muted-foreground")}>{label}</p>
-            {players ? (
-              <PlayerRow
-                players={players}
-                teamKey={teamKey}
-                troubleAt={mode === "pregame" ? null : foulTroubleThreshold(game.period ?? 1)}
-              />
-            ) : (
-              <p className={cn(type.caption, "text-muted-foreground")}>{missing}</p>
-            )}
-            {mode !== "pregame" && data?.state ? (
-              <div className="animate-in fade-in fill-mode-both delay-200 duration-500 motion-reduce:animate-none">
-                <FloorState state={data.state[side]} showFouls={mode === "live"} />
-              </div>
-            ) : null}
-          </div>
-        ))}
-      </div>
+      <LineupGrid
+        away={renderSide("away", awayLabel, away, awayTeamKey)}
+        home={renderSide("home", homeLabel, home, homeTeamKey)}
+        center={center}
+      />
     </section>
   );
 }

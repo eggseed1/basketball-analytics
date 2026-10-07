@@ -439,9 +439,8 @@ export function GameIdentityShell({
         homeLabel={sideShortName(resolveSideBrand(shown, "home", brandPresentation))}
         awayTeamKey={gameSideBrandKey(shown, "away") ?? null}
         homeTeamKey={gameSideBrandKey(shown, "home") ?? null}
+        center={showScores ? <LineScore game={shown} brandPresentation={brandPresentation} /> : null}
       />
-
-      {showScores ? <LineScore game={shown} brandPresentation={brandPresentation} /> : null}
     </MatchupWashCard>
   );
 }
