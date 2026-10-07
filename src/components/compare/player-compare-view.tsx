@@ -39,6 +39,7 @@ import {
 } from "@/lib/nba-brand";
 import { normalizeTeamParam } from "@/lib/team-identity";
 import { cn } from "@/lib/utils";
+import { MatchupOrbs } from "@/components/brand/matchup-orbs";
 
 type ValueMode = "raw" | "percentile";
 type Edge = "a" | "b" | "even";
@@ -48,10 +49,6 @@ const MATCHUP_ROW_GRID =
   "grid grid-cols-[minmax(0,1fr)_4.75rem_minmax(0,1fr)] items-center gap-x-2 sm:gap-x-3";
 
 const KEY_NUMBER_IDS = ["pts", "trb", "ast", "ts", "drbl100"] as const;
-
-/** Header wash holds full strength behind the faces, then eases into the body. */
-const WASH_FADE =
-  "linear-gradient(to bottom, #000 0%, #000 58%, rgb(0 0 0 / 0.55) 80%, transparent 100%)";
 
 /** Percentile points inside which two players read as even. */
 const EVEN_PCT_POINTS = 3;
@@ -1101,25 +1098,9 @@ export function PlayerCompareView({
         <CompareShareControls result={result} />
       </div>
 
-      <GlassSurface
-        as="article"
-        accentColor={aFill}
-        accentColorB={bFill}
-        className="compare-snapshot rounded-xl text-card-foreground"
-      >
+      <GlassSurface as="article" className="compare-snapshot text-card-foreground">
         <div className="relative isolate">
-        <div
-          aria-hidden
-          className="matchup-wash--subtle pointer-events-none absolute inset-0 -z-10"
-          style={
-            {
-              "--away-color": aFill,
-              "--home-color": bFill,
-              maskImage: WASH_FADE,
-              WebkitMaskImage: WASH_FADE,
-            } as CSSProperties
-          }
-        />
+        <MatchupOrbs away={aFill} home={bFill} />
         <div className="flex items-center justify-between gap-3 px-4 py-3 sm:px-5">
           <div className="min-w-0">
             <p

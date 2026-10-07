@@ -14,6 +14,10 @@ Canonical classes:
 - `.matchup-wash` / `.matchup-wash--subtle`
 - `.dark .matchup-wash` / `.dark .matchup-wash--subtle`
 
+## Current use
+
+On 2026-10-06 the user approved moving every surface that used these classes (GM shell header, compare snapshot, historical game card) to the home page look: `MatchupOrbs` in `src/components/brand/matchup-orbs.tsx` (`.strip-orb`). No component uses the wash classes now. The CSS block stays frozen so a future reuse gets the strong plateau version, not a faint one. New game or matchup cards should use `MatchupOrbs`.
+
 ## Locked contract
 
 1. **Direction:** `90deg` left → right (away → home / primary → secondary).

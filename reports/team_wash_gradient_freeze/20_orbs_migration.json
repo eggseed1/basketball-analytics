@@ -1,0 +1,12 @@
+{
+  "change": "SURFACES_MOVED_TO_MATCHUP_ORBS",
+  "approvedBy": "explicit user request (2026-10-06)",
+  "cssBlockChanged": false,
+  "blockSha256": "424bfd94a5b37fc7254f9d38b82f71a11685d066c8a0819d601571d2a7e9d175",
+  "surfaces": {
+    "src/gm/ui/gm-shell.tsx": "score-card-wash -> MatchupOrbs (team primary/secondary)",
+    "src/components/compare/player-compare-view.tsx": "matchup-wash--subtle overlay -> MatchupOrbs (player team colors)",
+    "src/components/history/historical-game-surface.tsx": "matchup-wash -> MatchupOrbs (franchise wash colors, winner brighter)"
+  },
+  "remainingUsers": []
+}

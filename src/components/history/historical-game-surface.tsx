@@ -9,6 +9,8 @@ import type {
 } from "@/data/history/types";
 import { pickTopPerformers } from "@/lib/history/performers";
 import { cn } from "@/lib/utils";
+import { MatchupOrbs, finalWinner } from "@/components/brand/matchup-orbs";
+import { buildGameMatchupTheme } from "@/lib/game-matchup-theme";
 
 export type RunWindow = {
   teamId: string;
@@ -627,6 +629,7 @@ export function HistoricalGameSurface({
 }) {
   const { home, away } = pickTopPerformers(artifact.playerGames);
   const s = artifact.summary;
+  const matchup = buildGameMatchupTheme(s.awayTeamId, s.homeTeamId);
   const dateLabel = s.date
     ? new Date(s.date + "T12:00:00").toLocaleDateString("en-US", {
         month: "long",
@@ -650,7 +653,8 @@ export function HistoricalGameSurface({
         </Link>
       </p>
 
-      <section className="sports-card matchup-wash p-5 sm:p-6">
+      <section className="sports-card relative isolate p-5 sm:p-6">
+        <MatchupOrbs away={matchup.awayWash} home={matchup.homeWash} winner={finalWinner({ status: "final", awayScore: s.awayScore, homeScore: s.homeScore })} />
         <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
           Final
         </p>

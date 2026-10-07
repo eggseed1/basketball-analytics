@@ -15,6 +15,7 @@ import {
   currentNbaStartYear,
 } from "@/data/providers/historical/season-range";
 import { ESPN_PLAYER_SEASON_HORIZON_START } from "@/gm/myleague/constants";
+import { MatchupOrbs } from "@/components/brand/matchup-orbs";
 
 export function GmShell({ children }: { children: ReactNode }) {
   const league = useGmStore((s) => s.league);
@@ -178,14 +179,9 @@ export function GmShell({ children }: { children: ReactNode }) {
         MyLeague product.
       </p>
       <header
-        className="sports-card score-card-wash overflow-hidden px-4 py-4"
-        style={
-          {
-            "--away-color": brand?.primary ?? "#0071e3",
-            "--home-color": brand?.secondary ?? "#af52de",
-          } as CSSProperties
-        }
+        className="sports-card relative isolate overflow-hidden px-4 py-4"
       >
+        <MatchupOrbs away={brand?.primary ?? "#8e8e93"} home={brand?.secondary ?? "#aeaeb2"} />
         <div className="flex items-center gap-3">
           <TeamLogo teamKey={team.id} size="xl" priority />
           <div className="min-w-0">
