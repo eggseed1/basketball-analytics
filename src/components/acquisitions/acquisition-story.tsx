@@ -514,7 +514,7 @@ export function PlayerArrivalLine({
         href={acquisitionHref(teamId, player, arrival.date)}
         className="font-semibold text-foreground/90 underline-offset-2 hover:underline"
       >
-        How they got him →
+        How they got him <span data-motion-arrow aria-hidden>→</span>
       </Link>
     </p>
   );

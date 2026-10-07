@@ -52,7 +52,7 @@ export function PlayerUpcomingGames({
           Upcoming games
         </p>
         <TextLink href="/scores" className={type.caption}>
-          Scores →
+          Scores <span data-motion-arrow aria-hidden>→</span>
         </TextLink>
       </div>
       <p className={cn(type.caption, "text-muted-foreground")}>

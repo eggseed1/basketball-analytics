@@ -401,7 +401,7 @@ async function CareerView({
               prefetch={false}
               className="font-semibold underline-offset-2 hover:underline"
             >
-              Open {season} game log →
+              Open {season} game log <span data-motion-arrow aria-hidden>→</span>
             </TransitionLink>
           </p>
         </>
@@ -950,7 +950,7 @@ async function ShootingView({
                 prefetch={false}
                 className="font-semibold underline-offset-2 hover:underline"
               >
-                Game log → open a game for flow / PBP →
+                Game log → open a game for flow / PBP <span data-motion-arrow aria-hidden>→</span>
               </TransitionLink>
             </p>
           ) : null}
@@ -1194,7 +1194,7 @@ async function AdvancedView({
           prefetch={false}
           className="font-semibold underline-offset-2 hover:underline"
         >
-          Learn DRBL / WAR1 semantics →
+          Learn DRBL / WAR1 semantics <span data-motion-arrow aria-hidden>→</span>
         </TransitionLink>
       </p>
     </section>
@@ -1274,7 +1274,7 @@ async function HighsView({
                         prefetch={false}
                         className="font-semibold underline-offset-2 hover:underline"
                       >
-                        Game →
+                        Game <span data-motion-arrow aria-hidden>→</span>
                       </TransitionLink>
                     </td>
                   </tr>
@@ -1305,7 +1305,7 @@ async function HighsView({
                   prefetch={false}
                   className="text-[12px] font-semibold underline-offset-2 hover:underline"
                 >
-                  Open game →
+                  Open game <span data-motion-arrow aria-hidden>→</span>
                 </TransitionLink>
                 {h.tied > 0 ? (
                   <details className="text-[12px]">
@@ -1391,7 +1391,7 @@ async function OverviewDepthLinks({
                 prefetch={false}
                 className="underline-offset-2 hover:underline"
               >
-                {label} →
+                {label} <span data-motion-arrow aria-hidden>→</span>
               </TransitionLink>
             );
           })}

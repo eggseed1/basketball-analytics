@@ -184,7 +184,7 @@ function AmbiguityPicker({
                 })}
                 className="shrink-0 text-[12px] font-semibold text-muted-foreground underline-offset-2 hover:underline"
               >
-                Continue →
+                Continue <span data-motion-arrow aria-hidden>→</span>
               </AppLink>
             </li>
           ))

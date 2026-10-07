@@ -311,19 +311,19 @@ export async function TeamLineupsIsland({
             href={playersHref}
             className={cn(type.caption, "font-semibold underline")}
           >
-            Full roster →
+            Full roster <span data-motion-arrow aria-hidden>→</span>
           </TransitionLink>
           <TransitionLink
             href={onOffHref}
             className={cn(type.caption, "font-semibold underline")}
           >
-            On/off →
+            On/off <span data-motion-arrow aria-hidden>→</span>
           </TransitionLink>
           <TransitionLink
             href={defenseHref}
             className={cn(type.caption, "font-semibold underline")}
           >
-            Hustle / defense →
+            Hustle / defense <span data-motion-arrow aria-hidden>→</span>
           </TransitionLink>
         </div>
       </div>

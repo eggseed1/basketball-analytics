@@ -271,7 +271,7 @@ export function CareerBandsExplorer() {
           <p className={cn(type.caption, "text-muted-foreground")}>
             A season counts with 20 games at 15 minutes a game, or 15 games at 18 minutes.{" "}
             <AppLink href={`/players/${loaded.playerId}`} className="font-semibold text-foreground underline-offset-2 hover:underline">
-              Open {loaded.playerName}&apos;s page →
+              Open {loaded.playerName}&apos;s page <span data-motion-arrow aria-hidden>→</span>
             </AppLink>
           </p>
         </>

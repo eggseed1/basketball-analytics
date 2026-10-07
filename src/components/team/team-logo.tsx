@@ -31,6 +31,7 @@ export function TeamLogo({
   if (!src || failed) {
     return (
       <span
+        data-logo={size}
         className={cn(
           "inline-flex shrink-0 items-center justify-center rounded-full bg-muted font-mono text-xs font-medium uppercase text-muted-foreground",
           className
@@ -49,6 +50,7 @@ export function TeamLogo({
       alt=""
       width={px}
       height={px}
+      data-logo={size}
       className={cn("team-logo-img shrink-0 object-contain", className)}
       onError={() => setFailed(true)}
       unoptimized

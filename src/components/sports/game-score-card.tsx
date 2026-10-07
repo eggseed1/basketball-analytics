@@ -370,6 +370,7 @@ export function GameMatchupBoard({
       effect="css"
       accentColor={matchup.awayWash}
       accentColorB={matchup.homeWash}
+      data-motion={href === false ? undefined : "card"}
       className={cn("score-row relative px-3 py-3", className)}
     >
       <MatchupBoard
@@ -476,6 +477,7 @@ export const GameScoreCard = memo(function GameScoreCard({
       effect="css"
       accentColor={matchup.awayWash}
       accentColorB={matchup.homeWash}
+      data-motion="card"
       className={cn(
         "score-row relative flex flex-col gap-2.5 px-3 py-3",
         className

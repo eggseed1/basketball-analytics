@@ -364,7 +364,7 @@ export function MovementClusterCard({
               <>
                 {" "}
                 <Link href={tradeTrailHref} className="font-semibold underline-offset-2 hover:underline">
-                  See where this trade led →
+                  See where this trade led <span data-motion-arrow aria-hidden>→</span>
                 </Link>
               </>
             ) : null}

@@ -102,7 +102,7 @@ export async function TeamPlayoffsIsland({
           href={gamesHref}
           className={cn(type.caption, "font-semibold underline")}
         >
-          Regular-season games →
+          Regular-season games <span data-motion-arrow aria-hidden>→</span>
         </TransitionLink>
       </div>
 
@@ -184,7 +184,7 @@ export async function TeamPlayoffsIsland({
             href={`/explore/bracket?season=${encodeURIComponent(season)}`}
             className={cn(type.caption, "font-semibold underline")}
           >
-            League bracket →
+            League bracket <span data-motion-arrow aria-hidden>→</span>
           </TransitionLink>
         </div>
         {compact.length === 0 ? (

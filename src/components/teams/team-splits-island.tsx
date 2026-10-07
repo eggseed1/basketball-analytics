@@ -141,7 +141,7 @@ export async function TeamSplitsIsland({
           href={gamesHref}
           className={cn(type.caption, "font-semibold underline")}
         >
-          Game log →
+          Game log <span data-motion-arrow aria-hidden>→</span>
         </TransitionLink>
       </div>
 

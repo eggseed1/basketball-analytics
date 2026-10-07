@@ -40,7 +40,7 @@ export function PlayerTransactionHistory({
           href={`/offseason?q=${encodeURIComponent(playerName)}`}
           className={type.caption}
         >
-          All →
+          All <span data-motion-arrow aria-hidden>→</span>
         </TextLink>
       </div>
       <ul className="flex flex-col gap-2">

@@ -351,7 +351,7 @@ export function SentimentDivergenceBoard({
                       href={`/players/${encodeURIComponent(row.playerId)}?view=sentiment`}
                       className={cn(type.caption, "font-semibold underline-offset-4 hover:underline")}
                     >
-                      Player sentiment →
+                      Player sentiment <span data-motion-arrow aria-hidden>→</span>
                     </Link>
                   </div>
                 </div>

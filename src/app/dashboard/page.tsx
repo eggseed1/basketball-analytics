@@ -69,7 +69,7 @@ export default async function DashboardPage({
             href={`/explore/players?season=${season}`}
             className="text-sm text-muted-foreground underline-offset-4 hover:underline"
           >
-            Open explore table →
+            Open explore table <span data-motion-arrow aria-hidden>→</span>
           </Link>
         </div>
       </header>

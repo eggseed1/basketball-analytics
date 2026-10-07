@@ -579,7 +579,7 @@ function BiggestGaps({
           >
             <span className="truncate text-right">← {aName}</span>
             <span />
-            <span className="truncate">{bName} →</span>
+            <span className="truncate">{bName} <span data-motion-arrow aria-hidden>→</span></span>
           </div>
           <ul className="mt-1 flex flex-col gap-2">
             {gaps.map(({ d, gap }) => {

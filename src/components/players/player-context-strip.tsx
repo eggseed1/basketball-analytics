@@ -165,7 +165,7 @@ export function PlayerContextStrip({
           href={compareHref}
           className="font-semibold underline-offset-2 hover:underline"
         >
-          Open full player compare →
+          Open full player compare <span data-motion-arrow aria-hidden>→</span>
         </Link>
       </p>
     </div>

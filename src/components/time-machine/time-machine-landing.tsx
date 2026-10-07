@@ -603,7 +603,7 @@ export function TimeMachineLanding({
               className="inline-flex h-12 shrink-0 items-center justify-center gap-1.5 rounded-[10px] bg-[#ffc53d] px-5 text-[15px] font-bold text-[#1a1407] shadow-[0_0_24px_-4px_rgb(255_197_61/0.7)] transition hover:brightness-105 active:translate-y-px disabled:opacity-60 sm:px-6"
             >
               {pending ? "Traveling…" : "Travel"}
-              {pending ? null : <span aria-hidden>→</span>}
+              {pending ? null : <span data-motion-arrow aria-hidden>→</span>}
             </button>
           </div>
           {error ? (
@@ -654,7 +654,7 @@ export function TimeMachineLanding({
                         href={l.boardHref}
                         className="relative z-[1] mt-auto pt-1 text-[12px] font-semibold text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
                       >
-                        {l.boardLabel} →
+                        {l.boardLabel} <span data-motion-arrow aria-hidden>→</span>
                       </Link>
                     ) : null}
                   </div>
@@ -699,7 +699,7 @@ export function TimeMachineLanding({
                   href={game.historyHref}
                   className="relative z-[1] mt-auto pt-1 text-[12px] font-semibold text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
                 >
-                  Open that date →
+                  Open that date <span data-motion-arrow aria-hidden>→</span>
                 </Link>
               </li>
             ))}
@@ -725,7 +725,7 @@ export function TimeMachineLanding({
                 href={link.href}
                 className="inline-flex items-center gap-1 rounded-full bg-card px-3.5 py-2 text-[13px] font-semibold ring-1 ring-inset ring-foreground/[0.08] transition hover:-translate-y-0.5 hover:bg-foreground/[0.05]"
               >
-                {link.label} <span aria-hidden>→</span>
+                {link.label} <span data-motion-arrow aria-hidden>→</span>
               </Link>
             </li>
           ))}

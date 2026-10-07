@@ -302,7 +302,7 @@ export function PlayerGameLogTable({
               prefetch={false}
               className="font-semibold underline-offset-2 hover:underline"
             >
-              Next →
+              Next <span data-motion-arrow aria-hidden>→</span>
             </TransitionLink>
           ) : null}
         </nav>

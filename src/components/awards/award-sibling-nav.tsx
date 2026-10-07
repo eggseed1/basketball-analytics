@@ -36,7 +36,7 @@ export function AwardSiblingNav({ currentSlug }: { currentSlug: string }) {
             "min-w-0 text-right font-semibold text-muted-foreground underline-offset-4 hover:underline"
           )}
         >
-          {next.shortLabel} →
+          {next.shortLabel} <span data-motion-arrow aria-hidden>→</span>
         </TransitionLink>
       ) : (
         <span />

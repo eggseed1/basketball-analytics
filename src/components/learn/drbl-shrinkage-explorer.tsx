@@ -340,7 +340,7 @@ export function DrblShrinkageExplorer({
           ))}
         </div>
         <p className={cn(type.micro, "absolute bottom-0 right-0 font-semibold text-muted-foreground")}>
-          Raw rate per 100 possessions →
+          Raw rate per 100 possessions <span data-motion-arrow aria-hidden>→</span>
         </p>
       </div>
 
@@ -466,7 +466,7 @@ export function DrblShrinkageExplorer({
               href={`/players/${selected[0]}`}
               className="font-semibold text-foreground underline-offset-2 hover:underline"
             >
-              Open {selected[1]}&apos;s page →
+              Open {selected[1]}&apos;s page <span data-motion-arrow aria-hidden>→</span>
             </AppLink>
           </>
         ) : null}

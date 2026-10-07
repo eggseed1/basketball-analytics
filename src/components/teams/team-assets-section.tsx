@@ -49,7 +49,7 @@ function BrefPayrollSummary({ contracts, payrollHref }: { contracts: TeamContrac
         <PayrollColorKey />
         {payrollHref ? (
           <Link href={payrollHref} className={cn(type.caption, "font-semibold underline-offset-2 hover:underline")}>
-            Full payroll and notes →
+            Full payroll and notes <span data-motion-arrow aria-hidden>→</span>
           </Link>
         ) : null}
       </div>
@@ -150,7 +150,7 @@ export function TeamAssetsSection({
                 href={payrollHref}
                 className={cn(type.caption, "font-semibold underline-offset-2 hover:underline")}
               >
-                Full payroll →
+                Full payroll <span data-motion-arrow aria-hidden>→</span>
               </Link>
             ) : null}
           </div>
@@ -180,7 +180,7 @@ export function TeamAssetsSection({
                 href={draftAssetsHref}
                 className={cn(type.caption, "font-semibold underline-offset-2 hover:underline")}
               >
-                Picks and draft rights →
+                Picks and draft rights <span data-motion-arrow aria-hidden>→</span>
               </Link>
             ) : null}
           </div>
@@ -195,7 +195,7 @@ export function TeamAssetsSection({
                 href={draftAssetsHref}
                 className={cn(type.caption, "font-semibold underline-offset-2 hover:underline")}
               >
-                Full draft board →
+                Full draft board <span data-motion-arrow aria-hidden>→</span>
               </Link>
             ) : null}
           </div>

@@ -231,7 +231,7 @@ export function TeamDestinationIdentity({
                     href={`/standings/tracker?season=${encodeURIComponent(season)}`}
                     className="font-semibold underline-offset-2 hover:underline"
                   >
-                    Tracker →
+                    Tracker <span data-motion-arrow aria-hidden>→</span>
                   </TransitionLink>
                 </p>
               ) : standingsContext.seasonAwaitingGames ? (
@@ -252,7 +252,7 @@ export function TeamDestinationIdentity({
                     href={`/standings/tracker?season=${encodeURIComponent(season)}`}
                     className="font-semibold underline-offset-2 hover:underline"
                   >
-                    Tracker →
+                    Tracker <span data-motion-arrow aria-hidden>→</span>
                   </TransitionLink>
                 </p>
               ) : (

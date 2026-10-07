@@ -68,7 +68,7 @@ export function LeaderboardContextBody({
           href={context.playerHref}
           className="text-[12px] font-semibold underline-offset-2 hover:underline"
         >
-          View player →
+          View player <span data-motion-arrow aria-hidden>→</span>
         </Link>
         {context.primary.learnHref ? (
           <Link

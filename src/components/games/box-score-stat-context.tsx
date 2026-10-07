@@ -97,7 +97,7 @@ export function BoxScoreContextBody({
           href={context.playerHref}
           className="text-[12px] font-semibold underline-offset-2 hover:underline"
         >
-          View player →
+          View player <span data-motion-arrow aria-hidden>→</span>
         </Link>
         <span className="text-[11px] text-muted-foreground">
           Game percentile = among players who played · Season avg = board

@@ -114,7 +114,6 @@ export function AnalyticsDesk({
         aria-label="Refresh recent news"
       >
         <RefreshCw
-          data-motion-icon="spin"
           className={`size-3.5 ${isPending ? "animate-spin" : ""}`}
           aria-hidden
         />

@@ -89,7 +89,7 @@ export function TeamGamesLog({
                     </span>
                   </span>
                   <span className="tabular-nums text-muted-foreground">
-                    {score} · Game →
+                    {score} · Game <span data-motion-arrow aria-hidden>→</span>
                   </span>
                 </Link>
               </li>
@@ -119,10 +119,10 @@ export function TeamGamesLog({
               prefetch={false}
               className="font-semibold underline-offset-2 hover:underline"
             >
-              Next →
+              Next <span data-motion-arrow aria-hidden>→</span>
             </Link>
           ) : (
-            <span className="text-muted-foreground">Next →</span>
+            <span className="text-muted-foreground">Next <span data-motion-arrow aria-hidden>→</span></span>
           )}
         </nav>
       ) : null}

@@ -195,6 +195,7 @@ export const ScoreTile = memo(function ScoreTile({
       effect="css"
       accentColor={matchup.awayWash}
       accentColorB={matchup.homeWash}
+      data-motion="card"
       className={cn(
         "group relative flex flex-col gap-3 p-3.5 transition-[transform,filter] duration-150 hover:-translate-y-px hover:brightness-[0.99] dark:hover:brightness-110",
         live && "ring-1 ring-red-600/30",

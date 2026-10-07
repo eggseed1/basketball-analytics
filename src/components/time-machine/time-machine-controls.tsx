@@ -84,7 +84,7 @@ export function SeasonExplorer({
             className="sports-pill shrink-0 text-[14px]"
             prefetch={false}
           >
-            {nextSeason} →
+            {nextSeason} <span data-motion-arrow aria-hidden>→</span>
           </TransitionLink>
         ) : (
           <span className="sports-pill shrink-0 text-[14px] opacity-40">→</span>
@@ -158,10 +158,10 @@ export function DateExplorer({
           className="sports-pill text-[14px]"
           prefetch={false}
         >
-          Next day →
+          Next day <span data-motion-arrow aria-hidden>→</span>
         </TransitionLink>
       ) : (
-        <span className="sports-pill text-[14px] opacity-40">Next day →</span>
+        <span className="sports-pill text-[14px] opacity-40">Next day <span data-motion-arrow aria-hidden>→</span></span>
       )}
     </nav>
   );

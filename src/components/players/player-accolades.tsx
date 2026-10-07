@@ -216,7 +216,7 @@ function AccoladeTag({ badge }: { badge: PlayerAccoladeBadge }) {
                     "mt-2 font-semibold uppercase tracking-[0.1em] text-muted-foreground"
                   )}
                 >
-                  View full history →
+                  View full history <span data-motion-arrow aria-hidden>→</span>
                 </p>
               </FrostFloatingSurface>
             </div>,

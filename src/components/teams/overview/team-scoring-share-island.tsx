@@ -67,7 +67,7 @@ export async function TeamScoringShareIsland({
           href={teamPageHref(teamId, { season, tab: "players" })}
           className={cn(type.caption, "font-semibold underline")}
         >
-          Full roster →
+          Full roster <span data-motion-arrow aria-hidden>→</span>
         </TransitionLink>
       </div>
 

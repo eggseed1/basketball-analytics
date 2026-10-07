@@ -449,7 +449,7 @@ export async function PlayerCoreIsland({
                   href="/learn/drbl"
                   className="text-[11px] font-semibold text-muted-foreground underline-offset-2 hover:underline"
                 >
-                  Learn →
+                  Learn <span data-motion-arrow aria-hidden>→</span>
                 </Link>
               </div>
               {hasDrbl && seasonStats ? (
@@ -541,7 +541,7 @@ export async function PlayerCoreIsland({
                           href="/learn/how-drbl-works"
                           className="font-semibold text-foreground underline-offset-2 hover:underline"
                         >
-                          Why does DRBL rate him this way? →
+                          Why does DRBL rate him this way? <span data-motion-arrow aria-hidden>→</span>
                         </Link>
                       </p>
                     </>
@@ -558,7 +558,7 @@ export async function PlayerCoreIsland({
                     href="/learn/drbl-historical-data"
                     className="font-semibold underline-offset-2 hover:underline"
                   >
-                    Why? →
+                    Why? <span data-motion-arrow aria-hidden>→</span>
                   </Link>
                 </p>
               )}
@@ -688,7 +688,7 @@ export async function PlayerCoreIsland({
                   href="#seasons"
                   className="text-[11px] font-semibold text-muted-foreground underline-offset-2 hover:underline"
                 >
-                  Full explorer →
+                  Full explorer <span data-motion-arrow aria-hidden>→</span>
                 </a>
               </div>
               {recentSeasons.length === 0 ? (
@@ -845,7 +845,7 @@ export async function PlayerCoreIsland({
 
         <details className="group">
           <summary className="cursor-pointer list-none text-[13px] font-semibold text-muted-foreground underline-offset-2 hover:underline [&::-webkit-details-marker]:hidden">
-            <span className="group-open:hidden">Show full season table →</span>
+            <span className="group-open:hidden">Show full season table <span data-motion-arrow aria-hidden>→</span></span>
             <span className="hidden group-open:inline">
               Hide full season table
             </span>
@@ -989,7 +989,7 @@ export async function PlayerCoreIsland({
                 href={`/compare?a=${playerId}&season=${season}`}
                 className="font-semibold underline-offset-2 hover:underline"
               >
-                Compare this player →
+                Compare this player <span data-motion-arrow aria-hidden>→</span>
               </TransitionLink>
             </p>
           )}

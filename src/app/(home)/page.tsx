@@ -293,7 +293,6 @@ export default async function HomePage() {
     <main
       className="site-shell flex flex-col gap-5 py-5 sm:py-7"
       data-season-phase={moment.phase}
-      data-home-motion
     >
       {layout.top.map(render)}
 

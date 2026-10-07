@@ -108,10 +108,10 @@ export function TeamOpeningNight({
             <p className={cn(type.micro, "font-semibold uppercase tracking-wide text-muted-foreground")}>First games</p>
             <div className="flex gap-3">
               <TransitionLink href={rosterHref} className={cn(type.caption, "font-semibold underline")}>
-                Roster →
+                Roster <span data-motion-arrow aria-hidden>→</span>
               </TransitionLink>
               <TransitionLink href={scheduleHref} className={cn(type.caption, "font-semibold underline")}>
-                Full schedule →
+                Full schedule <span data-motion-arrow aria-hidden>→</span>
               </TransitionLink>
             </div>
           </div>
@@ -123,6 +123,7 @@ export function TeamOpeningNight({
               <li key={g.id} className={cn(i === 0 && facts.next.length % 2 === 1 && "col-span-2 sm:col-span-1")}>
                 <TransitionLink
                   href={`/games/${g.id}`}
+                  data-motion="chip"
                   className="flex items-center gap-3 rounded-lg border border-border/70 bg-background/40 px-3 py-2.5 transition hover:bg-muted/60"
                 >
                   <TeamLogo teamKey={g.opponentAbbr || g.opponentId} size="sm" />

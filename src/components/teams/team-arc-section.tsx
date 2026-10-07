@@ -64,7 +64,7 @@ export function TeamArcSection({
             href={rankHref}
             className="underline-offset-2 hover:underline"
           >
-            Rank this team&apos;s seasons →
+            Rank this team&apos;s seasons <span data-motion-arrow aria-hidden>→</span>
           </Link>
         </div>
       </div>

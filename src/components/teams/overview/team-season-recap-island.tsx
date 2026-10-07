@@ -38,7 +38,7 @@ export async function TeamSeasonRecapIsland({
           href={teamPageHref(routeTeamId, { season })}
           className={cn(type.caption, "font-semibold underline")}
         >
-          Open the {season} page →
+          Open the {season} page <span data-motion-arrow aria-hidden>→</span>
         </TransitionLink>
       </div>
       <TeamOverviewVisuals

@@ -94,7 +94,7 @@ function SnapshotTeamGamesBody({
               href={splitsHref}
               className={cn(type.caption, "font-semibold underline")}
             >
-              Full splits →
+              Full splits <span data-motion-arrow aria-hidden>→</span>
             </TransitionLink>
           </div>
           <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">

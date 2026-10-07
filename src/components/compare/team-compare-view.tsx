@@ -448,12 +448,12 @@ export function TeamCompareView({
         <TextLink
           href={`/teams/${encodeURIComponent(result.sideA.abbreviation.toLowerCase())}?season=${encodeURIComponent(result.sideA.season)}`}
         >
-          Explore {labelA} →
+          Explore {labelA} <span data-motion-arrow aria-hidden>→</span>
         </TextLink>
         <TextLink
           href={`/teams/${encodeURIComponent(result.sideB.abbreviation.toLowerCase())}?season=${encodeURIComponent(result.sideB.season)}`}
         >
-          Explore {labelB} →
+          Explore {labelB} <span data-motion-arrow aria-hidden>→</span>
         </TextLink>
       </p>
 

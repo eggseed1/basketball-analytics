@@ -38,7 +38,7 @@ export function PlayerEvolutionPanel({
             href={compareHref}
             className="text-[14px] font-semibold underline-offset-4 hover:underline"
           >
-            Compare seasons →
+            Compare seasons <span data-motion-arrow aria-hidden>→</span>
           </Link>
         ) : null}
       </div>

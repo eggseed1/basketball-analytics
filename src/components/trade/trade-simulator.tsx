@@ -900,7 +900,7 @@ export function TradeSimulator({
             <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-start gap-2 sm:gap-3">
               <div className="flex min-w-0 flex-col gap-1.5">
                 <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
-                  {teamA.abbr} sends →
+                  {teamA.abbr} sends <span data-motion-arrow aria-hidden>→</span>
                 </p>
                 {playersA.length ? (
                   playersA.map((player) => (

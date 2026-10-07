@@ -75,6 +75,7 @@ export function TeamLogo({
     if (historicalPalette) {
       return (
         <span
+          data-logo={size}
           className={cn(
             "historical-team-mark inline-flex shrink-0 items-center justify-center rounded-md font-bold tracking-wide",
             className
@@ -99,6 +100,7 @@ export function TeamLogo({
 
     return (
       <span
+        data-logo={size}
         className={cn(
           "historical-team-mark inline-flex shrink-0 items-center justify-center rounded-md border border-border/70 bg-secondary font-bold tracking-wide text-secondary-foreground",
           className
@@ -130,6 +132,7 @@ export function TeamLogo({
       width={px}
       height={px}
       priority={priority}
+      data-logo={size}
       className={cn("team-logo-img shrink-0 object-contain", className)}
       onError={() => setFailed(true)}
       unoptimized

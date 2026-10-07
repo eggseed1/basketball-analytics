@@ -65,6 +65,7 @@ export function TeamSeasonEvidenceSection({
             <li key={card.gameId}>
               <Link
                 href={card.href}
+                data-motion="card"
                 className="flex h-full flex-col gap-2 rounded-xl border border-border bg-background/60 px-3 py-3 transition-colors hover:bg-secondary/50"
               >
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
@@ -102,7 +103,7 @@ export function TeamSeasonEvidenceSection({
                   </ul>
                 </div>
                 <p className="mt-auto pt-1 text-[12px] font-semibold">
-                  Open Game Lab →
+                  Open Game Lab <span data-motion-arrow aria-hidden>→</span>
                 </p>
               </Link>
             </li>

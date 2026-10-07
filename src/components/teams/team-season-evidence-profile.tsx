@@ -67,7 +67,7 @@ export function TeamSeasonEvidenceProfileSection({
         {hasGames ? (
           <details className="group">
             <summary className="cursor-pointer list-none text-[14px] font-semibold underline-offset-2 hover:underline [&::-webkit-details-marker]:hidden">
-              See games →
+              See games <span data-motion-arrow aria-hidden>→</span>
             </summary>
             <div id="evidence-games" className="mt-3 scroll-mt-16">
               <TeamSeasonEvidenceSection

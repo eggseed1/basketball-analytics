@@ -117,7 +117,7 @@ export function TeamTransactionsSection({
         <TextLink
           href={`/offseason?team=${encodeURIComponent(teamFilterId)}&year=${offseasonYear}`}
         >
-          View all transactions →
+          View all transactions <span data-motion-arrow aria-hidden>→</span>
         </TextLink>
       </p>
     </div>

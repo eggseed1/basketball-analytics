@@ -17,7 +17,7 @@ export async function TeamRosterBuiltIsland({ espnTeamId }: { espnTeamId: string
           href={`/acquisitions?team=${encodeURIComponent(espnTeamId)}`}
           className={cn(type.caption, "font-semibold underline-offset-2 hover:underline")}
         >
-          Every arrival since 2000 →
+          Every arrival since 2000 <span data-motion-arrow aria-hidden>→</span>
         </Link>
       </div>
       <RosterArrivals teamId={espnTeamId} onRoster={roster.onRoster} notLogged={roster.notLogged} />

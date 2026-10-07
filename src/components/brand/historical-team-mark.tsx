@@ -89,6 +89,7 @@ export function HistoricalTeamMark({
       brand.source === "historical_text" && brand.palette != null;
     return (
       <span
+        data-logo={size}
         className={cn(
           "historical-team-mark inline-flex shrink-0 items-center justify-center rounded-md font-bold tracking-wide shadow-none",
           usesHistoricalPalette
@@ -115,6 +116,7 @@ export function HistoricalTeamMark({
       alt=""
       width={px}
       height={px}
+      data-logo={size}
       className={cn("shrink-0 object-contain", className)}
       loading={priority ? "eager" : "lazy"}
       decoding="async"

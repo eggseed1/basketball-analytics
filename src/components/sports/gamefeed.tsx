@@ -132,6 +132,7 @@ function MatchupChip({
       effect="css"
       accentColor={matchup.awayWash}
       accentColorB={matchup.homeWash}
+      data-motion="card"
       className={cn(
         "relative transition-[filter] hover:brightness-[0.98] dark:hover:brightness-110",
         className

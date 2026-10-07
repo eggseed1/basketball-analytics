@@ -244,7 +244,7 @@ export function RelatedEventClusterCard({
                   <TextLink
                     href={`/offseason?event=${encodeURIComponent(events[0]!.id)}`}
                   >
-                    Open cluster detail →
+                    Open cluster detail <span data-motion-arrow aria-hidden>→</span>
                   </TextLink>
                 </p>
               </div>

@@ -32,7 +32,7 @@ export async function TeamMovementIsland({
           href={`/movement`}
           className={cn(type.caption, "font-semibold underline")}
         >
-          Full board →
+          Full board <span data-motion-arrow aria-hidden>→</span>
         </Link>
       </div>
       <ul className="flex flex-col gap-2">

@@ -121,7 +121,7 @@ export function WatchlistPanel() {
           onClick={() => setOpen(true)}
           className="inline-flex items-center gap-1 rounded-md bg-secondary px-3 py-1.5 text-[12px] font-semibold"
         >
-          <Plus data-motion-icon="plus" className="size-3.5" aria-hidden />
+          <Plus className="size-3.5" aria-hidden />
           Add
         </button>
       </div>
@@ -135,7 +135,7 @@ export function WatchlistPanel() {
           className="flex flex-col items-center justify-center gap-2 rounded-xl px-4 py-4 text-center transition-colors hover:bg-secondary/50"
         >
           <span data-motion-pop className="flex size-10 items-center justify-center rounded-full bg-secondary text-foreground">
-            <Plus data-motion-icon="plus" className="size-5" aria-hidden />
+            <Plus className="size-5" aria-hidden />
           </span>
           <div className="flex flex-col items-center gap-1 text-center">
             <p className="text-[14px] font-semibold">
@@ -151,6 +151,7 @@ export function WatchlistPanel() {
           {items.map((item) => (
             <li
               key={itemKey(item)}
+              data-motion="chip"
               className="flex items-center gap-2 rounded-md bg-secondary/50 px-3 py-2"
             >
               {item.kind === "player" ? (
@@ -208,7 +209,7 @@ export function WatchlistPanel() {
               onClick={() => setOpen(true)}
               className="flex w-full items-center justify-center gap-1.5 rounded-md border border-dashed border-border px-3 py-2 text-[12px] font-semibold text-muted-foreground hover:bg-secondary/40 hover:text-foreground"
             >
-              <Plus data-motion-icon="plus" className="size-3.5" aria-hidden />
+              <Plus className="size-3.5" aria-hidden />
               Add more
             </button>
           </li>

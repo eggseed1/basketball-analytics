@@ -54,6 +54,7 @@ function OpenerGames({ games }: { games: OpenerGame[] }) {
         <li key={g.id}>
           <AppLink
             href={`/games/${g.id}`}
+            data-motion="chip"
             className="flex items-center gap-1.5 rounded-lg border border-border/70 bg-background/40 px-2.5 py-1.5 transition hover:bg-muted/60"
           >
             <TeamLogo teamKey={g.awayAbbr} size="xs" />

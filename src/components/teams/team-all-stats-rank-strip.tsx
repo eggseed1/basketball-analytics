@@ -63,13 +63,13 @@ export function TeamAllStatsRankStrip({
             href={offenseHref}
             className={cn(type.caption, "font-semibold underline")}
           >
-            Offense →
+            Offense <span data-motion-arrow aria-hidden>→</span>
           </TransitionLink>
           <TransitionLink
             href={defenseHref}
             className={cn(type.caption, "font-semibold underline")}
           >
-            Defense →
+            Defense <span data-motion-arrow aria-hidden>→</span>
           </TransitionLink>
         </div>
       </div>

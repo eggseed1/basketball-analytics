@@ -92,7 +92,7 @@ export function TeamGamesSection({
           href="/scores"
           className="font-semibold underline-offset-2 hover:underline"
         >
-          Open scores →
+          Open scores <span data-motion-arrow aria-hidden>→</span>
         </TransitionLink>
         <span className="mx-2">·</span>
         Team page links to Game Lab instead of copying it.

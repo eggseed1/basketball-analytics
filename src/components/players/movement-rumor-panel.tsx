@@ -58,7 +58,7 @@ export function MovementRumorPanel({
             href={`/movement?player=${encodeURIComponent(playerId)}`}
             className={type.caption}
           >
-            Full movement monitor →
+            Full movement monitor <span data-motion-arrow aria-hidden>→</span>
           </TextLink>
         </>
       ) : (

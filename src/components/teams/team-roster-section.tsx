@@ -185,7 +185,7 @@ export function TeamRosterSection({
             href={`/explore/players?team=${encodeURIComponent(teamId)}&season=${encodeURIComponent(season)}`}
             className="font-semibold underline-offset-2 hover:underline"
           >
-            Full roster board →
+            Full roster board <span data-motion-arrow aria-hidden>→</span>
           </Link>
           <span className="mx-2">·</span>
           Lineup plus-minus and possession evidence are not available yet. Use

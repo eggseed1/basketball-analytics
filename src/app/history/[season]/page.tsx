@@ -406,7 +406,7 @@ export default async function HistorySeasonPage({
                   href={`/explore/players?season=${encodeURIComponent(season)}`}
                   className="underline-offset-4 hover:underline"
                 >
-                  Open full Players directory →
+                  Open full Players directory <span data-motion-arrow aria-hidden>→</span>
                 </Link>
               </p>
             </section>

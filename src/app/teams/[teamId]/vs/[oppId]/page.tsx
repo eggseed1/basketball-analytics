@@ -233,7 +233,7 @@ export default async function TeamMatchupPage({
                 prefetch={false}
                 className="font-semibold underline-offset-2 hover:underline"
               >
-                Next →
+                Next <span data-motion-arrow aria-hidden>→</span>
               </Link>
             ) : null}
           </nav>

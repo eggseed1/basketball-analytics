@@ -162,7 +162,7 @@ export function PlayerContractTransactions({
           </p>
         </div>
         <TextLink href={`/teams/${contract.franchiseId}/payroll`} className={type.caption}>
-          {contract.teamAbbr} payroll →
+          {contract.teamAbbr} payroll <span data-motion-arrow aria-hidden>→</span>
         </TextLink>
       </div>
 

@@ -54,7 +54,7 @@ export function FranchiseTimeline({
                 prefetch={false}
                 className="text-[12px] font-semibold underline-offset-2 hover:underline"
               >
-                Open {id.seasonFrom} →
+                Open {id.seasonFrom} <span data-motion-arrow aria-hidden>→</span>
               </Link>
             </li>
           ))}
@@ -86,7 +86,7 @@ export function FranchiseTimeline({
             prefetch={false}
             className="font-semibold underline-offset-2 hover:underline"
           >
-            All franchises →
+            All franchises <span data-motion-arrow aria-hidden>→</span>
           </Link>
         </p>
       </div>

@@ -26,7 +26,7 @@ export function SentimentAssociationNote({
         <>
           {" "}
           <Link href={movementHref} className="font-semibold underline">
-            View movement story →
+            View movement story <span data-motion-arrow aria-hidden>→</span>
           </Link>
         </>
       ) : null}

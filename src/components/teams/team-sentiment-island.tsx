@@ -59,7 +59,7 @@ export async function TeamSentimentIsland({ teamId }: { teamId: string }) {
           </p>
         </div>
         <Link href="/sentiment?view=teams" className={cn(type.caption, "font-semibold underline")}>
-          All teams →
+          All teams <span data-motion-arrow aria-hidden>→</span>
         </Link>
       </div>
 

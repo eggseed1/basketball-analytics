@@ -188,7 +188,7 @@ export function MetricHelp({
                   className="mt-2 inline-block text-[12px] font-semibold underline-offset-2 hover:underline"
                   onClick={close}
                 >
-                  Learn more →
+                  Learn more <span data-motion-arrow aria-hidden>→</span>
                 </Link>
               ) : null}
             </FrostFloatingSurface>,

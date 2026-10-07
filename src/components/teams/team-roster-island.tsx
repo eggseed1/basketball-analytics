@@ -97,13 +97,13 @@ export async function TeamRosterIsland({
               href={rotationHref}
               className={cn(type.caption, "font-semibold underline")}
             >
-              Rotation →
+              Rotation <span data-motion-arrow aria-hidden>→</span>
             </TransitionLink>
             <TransitionLink
               href={offenseHref}
               className={cn(type.caption, "font-semibold underline")}
             >
-              Offense →
+              Offense <span data-motion-arrow aria-hidden>→</span>
             </TransitionLink>
           </div>
         </div>

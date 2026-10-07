@@ -317,7 +317,7 @@ export function SeasonFlowChart({
             ) : null}
             {pinned != null ? (
               <TransitionLink href={`/games/${activeGame.id}`} className={cn(type.caption, "mt-2 inline-block font-semibold underline")}>
-                Open game →
+                Open game <span data-motion-arrow aria-hidden>→</span>
               </TransitionLink>
             ) : null}
           </div>

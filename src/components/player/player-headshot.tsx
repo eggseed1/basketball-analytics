@@ -37,6 +37,7 @@ export function PlayerHeadshot({
   if (!src || failed) {
     return (
       <span
+        data-avatar={size}
         className={cn(
           "inline-flex shrink-0 items-center justify-center rounded-full bg-muted font-medium text-muted-foreground",
           className
@@ -55,6 +56,7 @@ export function PlayerHeadshot({
       alt=""
       width={px}
       height={px}
+      data-avatar={size}
       className={cn(
         "shrink-0 rounded-full bg-muted object-cover object-top",
         className
