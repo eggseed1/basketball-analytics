@@ -2007,7 +2007,7 @@ svg [data-motion-dot] {
   }
 
   [data-motion-page] > :not(.hof-page-frame, [data-motion-stack], :has(.sports-card)),
-  [data-motion-page] :is(.hof-page-frame__inner, [data-motion-stack]) > :not(:has(.sports-card)),
+  [data-motion-page] :is(.hof-page-frame__inner, [data-motion-stack]) > :not([data-motion-stack], :has(.sports-card)),
   [data-motion-page] .sports-card:not(a, .sports-card *) {
     transition:
       opacity 420ms ease,
@@ -2124,7 +2124,7 @@ svg [data-motion-dot] {
 
   @starting-style {
     [data-motion-page] > :not(.hof-page-frame, [data-motion-stack], :has(.sports-card)),
-    [data-motion-page] :is(.hof-page-frame__inner, [data-motion-stack]) > :not(:has(.sports-card)),
+    [data-motion-page] :is(.hof-page-frame__inner, [data-motion-stack]) > :not([data-motion-stack], :has(.sports-card)),
     [data-motion-page] .sports-card:not(a, .sports-card *) {
       opacity: 0;
       translate: 0 14px;

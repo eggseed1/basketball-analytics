@@ -6,7 +6,7 @@ type Pose = (el: Element, style: CSSStyleDeclaration) => Keyframe;
 
 const SECTION = [
   "[data-motion-page] > :not(.hof-page-frame, [data-motion-stack], :has(.sports-card))",
-  ":is(.hof-page-frame__inner, [data-motion-stack]) > :not(:has(.sports-card))",
+  ":is(.hof-page-frame__inner, [data-motion-stack]) > :not([data-motion-stack], :has(.sports-card))",
   ".sports-card:not(a, .sports-card *)",
 ].join(", ");
 const LIST = "[data-motion-list] > *, [data-motion-item], :is(ul, ol):not(nav *, [role]) > li";

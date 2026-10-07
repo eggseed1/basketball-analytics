@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { TeamContractsPageView } from "@/components/teams/team-contracts-view";
 import { TeamPayrollView } from "@/components/teams/team-payroll-view";
 import { getTeamContracts } from "@/data/queries/team-contracts";
@@ -59,7 +60,8 @@ export default async function TeamPayrollPage({
     const teamName = presentation?.team.displayName ?? contracts.code;
     const teamKey = (resolveTeamBrand(franchiseId) ?? resolveTeamBrand(contracts.code))?.abbr ?? contracts.code;
     return (
-      <main className="site-shell py-5 sm:py-7">
+      <main data-motion-page className="site-shell py-5 sm:py-7">
+        <MotionReveal />
         <TeamContractsPageView
           teamName={teamName}
           teamKey={teamKey}
@@ -87,7 +89,8 @@ export default async function TeamPayrollPage({
   const data = buildTeamPayrollPresentation(slice);
 
   return (
-    <main className="site-shell py-5 sm:py-7">
+    <main data-motion-page className="site-shell py-5 sm:py-7">
+      <MotionReveal />
       <p className="mb-4 text-sm">
         <Link href={`/teams/${franchiseId}`} className="underline">
           ← {data.team.displayName}

@@ -5,6 +5,7 @@ import {
   getFranchiseMatchupPage,
   matchupHref,
 } from "@/data/history/team-matchup-index";
+import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { getCanonicalTeamById } from "@/data/identity/team-map";
 import { resolveHistoricalTeamBrand } from "@/lib/historical-team-brand";
 
@@ -95,7 +96,8 @@ export default async function TeamMatchupPage({
     });
 
   return (
-    <main className="site-shell flex flex-1 flex-col gap-5 py-6 sm:py-8">
+    <main data-motion-page className="site-shell flex flex-1 flex-col gap-5 py-6 sm:py-8">
+      <MotionReveal />
       <p>
         <Link
           href={`/teams/${encodeURIComponent(summary.franchiseA)}`}

@@ -243,11 +243,15 @@ function CapLadder({
     <div className="flex flex-col gap-4">
       <div className="relative pb-6 pt-6" aria-hidden>
         <div className="relative h-4 w-full overflow-hidden rounded-full bg-foreground/[0.07]">
-          <div className="h-full rounded-full" style={{ width: pos(payroll), background: accent }} />
+          <div data-motion-bar="x" className="h-full rounded-full" style={{ width: pos(payroll), background: accent }} />
         </div>
         {lines.map((line, i) => (
           <div key={line.label} className="absolute inset-y-0" style={{ left: pos(line.value) }}>
-            <div className="absolute top-5 h-6 w-px -translate-x-1/2 bg-foreground/50" />
+            <div
+              data-motion-bar="y"
+              className="absolute top-5 h-6 w-px -translate-x-1/2 bg-foreground/50"
+              style={{ "--i": 6 + i * 2 } as CSSProperties}
+            />
             <span
               className={cn(
                 type.micro,
@@ -303,18 +307,28 @@ function CommitmentColumns({ data, accent }: { data: TeamContractsView; accent: 
   if (!bars.length) return null;
   const max = Math.max(...bars.map((b) => b.total), 1);
   return (
-    <ul className="flex h-56 items-end gap-2 sm:gap-3" aria-label="Salary on the books by season">
+    <ul data-hover-group className="flex h-56 items-end gap-2 sm:gap-3" aria-label="Salary on the books by season">
       {bars.map((bar, i) => (
-        <li key={bar.season} className="flex h-full min-w-0 flex-1 flex-col items-center justify-end gap-1.5">
+        <li
+          key={bar.season}
+          data-hover-item
+          data-tip={bar.season}
+          data-tip-sub={`${formatUsdCompact(bar.total)} · ${bar.players} ${bar.players === 1 ? "player" : "players"}`}
+          className="flex h-full min-w-0 flex-1 flex-col items-center justify-end gap-1.5"
+        >
           <span className={cn(type.caption, "font-semibold tabular-nums")}>{formatUsdCompact(bar.total)}</span>
           <div
+            data-motion-bar="y"
+            data-tip-anchor
             className="w-full max-w-16 rounded-t-md"
-            style={{
-              height: `${Math.max(3, (bar.total / max) * 70)}%`,
-              background: accent,
-              opacity: i === 0 ? 1 : Math.max(0.45, 0.85 - i * 0.1),
-            }}
-            title={`${bar.season}: ${formatUsdCompact(bar.total)}`}
+            style={
+              {
+                height: `${Math.max(3, (bar.total / max) * 70)}%`,
+                background: accent,
+                opacity: i === 0 ? 1 : Math.max(0.45, 0.85 - i * 0.1),
+                "--i": i * 2,
+              } as CSSProperties
+            }
           />
           <span className={cn(type.caption, "font-semibold tabular-nums")}>{bar.season}</span>
           <span className={cn(type.micro, "text-muted-foreground")}>
@@ -392,6 +406,7 @@ export function TeamContractsPageView({
 
   return (
     <div
+      data-motion-stack
       className="flex flex-col gap-6"
       style={
         {
@@ -436,7 +451,7 @@ export function TeamContractsPageView({
         </Panel>
       ) : null}
 
-      <div className={cn("grid gap-6", hasNotes && "lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]")}>
+      <div data-motion-stack className={cn("grid gap-6", hasNotes && "lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]")}>
         <Panel title="Salary on the books" id="books-heading">
           <CommitmentColumns data={contracts} accent={accent} />
           <p className={cn(type.caption, "text-muted-foreground")}>

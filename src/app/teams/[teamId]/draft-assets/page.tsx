@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { TeamDraftAssetsView } from "@/components/teams/team-draft-assets-view";
 import { TeamDraftRightsTable } from "@/components/teams/team-draft-rights-table";
 import { FuturePicksSourceNote, TeamFuturePicksTable } from "@/components/teams/team-future-picks";
@@ -59,7 +60,8 @@ export default async function TeamDraftAssetsPage({
   if (futurePicks || contracts) {
     const teamName = slice?.team.displayName ?? futurePicks?.teamAbbr ?? contracts?.code ?? franchiseId;
     return (
-      <main className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-8">
+      <main data-motion-page className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-8">
+        <MotionReveal />
         <p className="text-sm">
           <Link href={`/teams/${franchiseId}`} className="underline">
             ← {teamName}
@@ -111,7 +113,8 @@ export default async function TeamDraftAssetsPage({
   const data = buildTeamDraftAssetsPresentation(slice);
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-8">
+    <main data-motion-page className="mx-auto max-w-6xl px-4 py-8">
+      <MotionReveal />
       <p className="mb-4 text-sm">
         <Link href={`/teams/${franchiseId}`} className="underline">
           ← {data.franchise.displayName}
