@@ -34,9 +34,9 @@ export function pickNotableGames(
     (a, b) =>
       b.points + b.rebounds + b.assists - (a.points + a.rebounds + a.assists)
   )[0]!;
-  const byPlusMinus = [...withMinutes].sort(
-    (a, b) => b.plusMinus - a.plusMinus
-  )[0]!;
+  const byPlusMinus = withMinutes
+    .filter((g) => Number.isFinite(g.plusMinus))
+    .sort((a, b) => b.plusMinus - a.plusMinus)[0];
 
   const out: NotableGame[] = [
     {
@@ -51,7 +51,9 @@ export function pickNotableGames(
       detail: `${byAllAround.points}+${byAllAround.rebounds}+${byAllAround.assists}`,
       game: byAllAround,
     },
-    {
+  ];
+  if (byPlusMinus) {
+    out.push({
       kind: "plus_minus",
       label: "Largest +/-",
       detail:
@@ -59,8 +61,8 @@ export function pickNotableGames(
           ? `+${byPlusMinus.plusMinus}`
           : `${byPlusMinus.plusMinus}`,
       game: byPlusMinus,
-    },
-  ];
+    });
+  }
 
   if (seasonAvgPoints != null && Number.isFinite(seasonAvgPoints)) {
     const unusual = [...withMinutes]

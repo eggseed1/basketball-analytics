@@ -216,8 +216,10 @@ function compactFromEspn(entry, meta, names, season, teamId) {
     drb: names.includes("defensiveRebounds") || names.includes("DREB")
       ? num(stats, names, "defensiveRebounds") || num(stats, names, "DREB")
       : null,
-    pf: num(stats, names, "fouls") || num(stats, names, "PF") || null,
-    plusMinus: num(stats, names, "plusMinus"),
+    pf: names.includes("fouls") || names.includes("PF")
+      ? num(stats, names, "fouls") || num(stats, names, "PF")
+      : null,
+    plusMinus: names.includes("plusMinus") ? num(stats, names, "plusMinus") : null,
     seasonType: "regular",
   };
 }

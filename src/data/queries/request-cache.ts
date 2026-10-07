@@ -120,6 +120,9 @@ export const getPlayerGameLogCached = cache(
         playerId,
       });
       if (baked.length > 0) {
+        // Logs baked before the bake kept nulls wrote 0 for every missing +/-.
+        const plusMinusMissing =
+          baked.length >= 5 && baked.every((row) => row.plusMinus === 0);
         return baked.map(
           (row): PlayerGame => ({
             id: `${row.gameId}:${playerId}`,
@@ -145,10 +148,13 @@ export const getPlayerGameLogCached = cache(
             threePointersAttempted: row.threePa,
             freeThrowsMade: row.ftm,
             freeThrowsAttempted: row.fta,
-            offensiveRebounds: row.orb ?? 0,
-            defensiveRebounds: row.drb ?? 0,
-            personalFouls: row.pf ?? 0,
-            plusMinus: row.plusMinus ?? 0,
+            offensiveRebounds: row.orb ?? undefined,
+            defensiveRebounds: row.drb ?? undefined,
+            personalFouls: row.pf ?? undefined,
+            plusMinus:
+              plusMinusMissing || row.plusMinus == null
+                ? Number.NaN
+                : row.plusMinus,
             startPosition: row.starter ? "Y" : "",
           })
         );
