@@ -5,10 +5,10 @@
     "season": "2026-27",
     "snapshotDate": "2026-10-07",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-10-07T12:37:07.916Z",
+    "builtAt": "2026-10-07T13:20:14.423Z",
     "rosterPlayerCount": 492,
-    "headlinesScanned": 1719,
-    "latestHeadlineAt": "2026-10-07T12:20:31.000Z",
+    "headlinesScanned": 1733,
+    "latestHeadlineAt": "2026-10-07T13:15:47.000Z",
     "latestTransactionDate": "2026-10-06",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -116,7 +116,7 @@
     },
     "outlet:heavy": {
       "label": "Heavy",
-      "credibility": 16
+      "credibility": 12
     },
     "reporter:malika-andrews": {
       "label": "Malika Andrews (ESPN)",
@@ -777,6 +777,28 @@
         "4683678"
       ],
       "linkedTeamIds": [
+        "22"
+      ]
+    },
+    {
+      "id": "mv-trade-3202-20261007",
+      "headline": "Kevin Durant, Rudy Gobert and others: trade talk",
+      "primaryClaimId": "mv-f6a93efa0cda8c42",
+      "claimIds": [
+        "mv-f6a93efa0cda8c42"
+      ],
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "firstSeenAt": "2026-10-07T12:59:38.000Z",
+      "lastMeaningfulAt": "2026-10-07T12:59:38.000Z",
+      "linkedPlayerIds": [
+        "3202",
+        "3032976",
+        "4279888"
+      ],
+      "linkedTeamIds": [
+        "10",
+        "16",
         "22"
       ]
     },
@@ -3920,6 +3942,26 @@
       "teamIds": [
         "22"
       ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-f6a93efa0cda8c42",
+      "clusterId": "mv-trade-3202-20261007",
+      "summary": "NBA Trade Rumors: Ja Morant, Kevin Durant, Rudy Gobert & More",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-07T12:59:38.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/golden-state-warriors/nba-trade-rumors-ja-morant-kevin-durant/",
+      "playerIds": [
+        "3202",
+        "3032976",
+        "4279888"
+      ],
+      "teamIds": [],
       "isOriginal": false
     },
     {
