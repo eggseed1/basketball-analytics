@@ -1780,7 +1780,7 @@ html:not([data-surface="glass"]) .color-scheme-switch {
     animation-delay: calc(var(--i, 0) * 60ms);
   }
 
-  [data-motion="card"]:hover [data-motion-bar="x"] {
+  :is([data-motion="card"], [data-motion="replay"]):hover [data-motion-bar="x"] {
     transform-origin: left;
     animation: motion-grow-x 560ms var(--motion-ease) backwards;
     animation-delay: calc(var(--i, 0) * 60ms);
@@ -1791,11 +1791,28 @@ html:not([data-surface="glass"]) .color-scheme-switch {
     animation: motion-draw 900ms cubic-bezier(0.3, 0.7, 0.2, 1) backwards;
   }
 
+  [data-motion="replay"]:hover [data-motion-pip] {
+    animation: motion-pop 280ms cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+    animation-delay: calc(var(--i, 0) * 28ms);
+  }
+
   /* Lines drawn with non-scaling strokes cannot use pathLength dashes, so
      they wipe in from the left instead. */
   [data-motion="replay"]:hover [data-motion-reveal] {
     animation: motion-reveal 900ms cubic-bezier(0.3, 0.7, 0.2, 1) backwards;
   }
+}
+
+/* Pointing at a legend entry fades the other highlighted lines. */
+[data-pulse-chart] [data-line] {
+  transition: opacity 160ms ease;
+}
+
+[data-pulse-chart]:has([data-focus="0"]:is(:hover, :focus-visible)) [data-line]:not([data-line="0"]),
+[data-pulse-chart]:has([data-focus="1"]:is(:hover, :focus-visible)) [data-line]:not([data-line="1"]),
+[data-pulse-chart]:has([data-focus="2"]:is(:hover, :focus-visible)) [data-line]:not([data-line="2"]),
+[data-pulse-chart]:has([data-focus="3"]:is(:hover, :focus-visible)) [data-line]:not([data-line="3"]) {
+  opacity: 0.12;
 }
 
 @keyframes motion-pop {
