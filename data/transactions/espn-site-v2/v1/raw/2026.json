@@ -2,9 +2,53 @@
   "source": "espn-site-v2-transactions",
   "datasetVersion": "1.0",
   "espnCalendarYear": 2026,
-  "fetchedAt": "2026-10-06T22:43:17.380Z",
-  "apiCount": 363,
+  "fetchedAt": "2026-10-07T00:12:48.995Z",
+  "apiCount": 367,
   "rows": [
+    {
+      "date": "2026-10-06T07:00Z",
+      "description": "Waived G Terrell Brown Jr.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2026-10-06T07:00Z",
+      "description": "Waived G Robert McCray V.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2026-10-06T07:00Z",
+      "description": "Waived G Johnell Davis.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2026-10-06T07:00Z",
+      "description": "Waived G Fletcher Loyer.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
     {
       "date": "2026-10-05T07:00Z",
       "description": "Waived G Andre Jackson Jr.",
@@ -1059,50 +1103,6 @@
         "displayName": "Brooklyn Nets",
         "location": "Brooklyn",
         "name": "Nets"
-      }
-    },
-    {
-      "date": "2026-07-31T07:00Z",
-      "description": "Re-signed G De'Anthony Melton to a contract.",
-      "team": {
-        "id": "9",
-        "abbreviation": "GS",
-        "displayName": "Golden State Warriors",
-        "location": "Golden State",
-        "name": "Warriors"
-      }
-    },
-    {
-      "date": "2026-07-31T07:00Z",
-      "description": "Signed F Spencer Jones to a contract.",
-      "team": {
-        "id": "7",
-        "abbreviation": "DEN",
-        "displayName": "Denver Nuggets",
-        "location": "Denver",
-        "name": "Nuggets"
-      }
-    },
-    {
-      "date": "2026-07-31T07:00Z",
-      "description": "Signed F Mario Hezonja to a contract.",
-      "team": {
-        "id": "5",
-        "abbreviation": "CLE",
-        "displayName": "Cleveland Cavaliers",
-        "location": "Cleveland",
-        "name": "Cavaliers"
-      }
-    },
-    {
-      "date": "2026-07-30T07:00Z",
-      "description": "Waived F Mouhamadou Gueye.",
-      "team": {
-        "id": "30",
-        "abbreviation": "CHA",
-        "displayName": "Charlotte Hornets",
-        "location": "Charlotte",
-        "name": "Hornets"
       }
     },
     {
