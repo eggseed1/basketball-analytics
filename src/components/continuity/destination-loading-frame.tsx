@@ -6,6 +6,7 @@
 import { Loader2 } from "lucide-react";
 import type { ReactNode } from "react";
 
+import { PageHeader } from "@/components/layout/page-header";
 import { cn } from "@/lib/utils";
 
 /** Theme-aware skeleton block with a sweeping highlight. */
@@ -23,11 +24,28 @@ export function LoadingStatus({ children }: { children: ReactNode }) {
   );
 }
 
+/**
+ * Progress line pinned to the top edge of a loading frame (the frame must be
+ * `relative`). Overlaid, so it doesn't push the skeleton below where the real
+ * content lands.
+ */
+export function LoadingTopBar() {
+  return (
+    <div
+      aria-hidden
+      className="query-updating-bar pointer-events-none absolute inset-x-0 top-0 rounded-full"
+    />
+  );
+}
+
 export function DestinationLoadingFrame({
+  eyebrow,
   title,
   subtitle,
   className,
 }: {
+  /** Match the real page header's eyebrow so the title lands in the same place. */
+  eyebrow?: string;
   title: string;
   subtitle?: string;
   className?: string;
@@ -35,22 +53,19 @@ export function DestinationLoadingFrame({
   return (
     <main
       className={cn(
-        "site-shell flex flex-1 flex-col gap-6 py-6 sm:py-8",
+        "site-shell relative flex flex-1 flex-col gap-5 py-6 sm:py-8",
         className
       )}
       aria-busy="true"
       aria-live="polite"
     >
-      <div className="query-updating-bar h-[3px] rounded-full" />
-      <div className="flex flex-col gap-2">
-        <LoadingStatus>Loading</LoadingStatus>
-        <h1 className="text-[24px] font-bold tracking-tight sm:text-[24px]">
-          {title}
-        </h1>
-        {subtitle ? (
-          <p className="text-[14px] text-muted-foreground">{subtitle}</p>
-        ) : null}
-      </div>
+      <LoadingTopBar />
+      <PageHeader
+        eyebrow={eyebrow}
+        title={title}
+        subtitle={subtitle}
+        actions={<LoadingStatus>Loading</LoadingStatus>}
+      />
       <div className="grid gap-3">
         <SkeletonBlock className="h-24" />
         <SkeletonBlock className="h-40" />

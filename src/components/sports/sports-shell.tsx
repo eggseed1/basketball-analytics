@@ -76,7 +76,28 @@ function subnavActive(
 function DomainSubnav({ item }: { item: PrimaryNavItem }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const search = searchParams?.toString() ?? "";
+  return (
+    <DomainSubnavLinks
+      item={item}
+      pathname={pathname}
+      search={searchParams?.toString() ?? ""}
+    />
+  );
+}
+
+/**
+ * Also the Suspense fallback while search params resolve, so the subnav band
+ * keeps its height instead of collapsing and pushing the page down on arrival.
+ */
+function DomainSubnavLinks({
+  item,
+  pathname,
+  search,
+}: {
+  item: PrimaryNavItem;
+  pathname: string;
+  search: string;
+}) {
   if (!item.subnav?.length) return null;
 
   return (
@@ -241,7 +262,15 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
           {active?.subnav?.length ? (
             <div className="site-subnav-band border-t border-border/55 bg-secondary/45 dark:bg-secondary/70">
               <div className="site-shell py-2">
-                <Suspense fallback={null}>
+                <Suspense
+                  fallback={
+                    <DomainSubnavLinks
+                      item={active}
+                      pathname={pathname}
+                      search=""
+                    />
+                  }
+                >
                   <DomainSubnav item={active} />
                 </Suspense>
               </div>

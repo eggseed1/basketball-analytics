@@ -3,7 +3,7 @@
  * so hard refresh and streaming islands do not teleport the page.
  */
 
-import { LoadingStatus } from "@/components/continuity/destination-loading-frame";
+import { LoadingTopBar } from "@/components/continuity/destination-loading-frame";
 import { cn } from "@/lib/utils";
 
 function Pulse({ className }: { className?: string }) {
@@ -19,19 +19,20 @@ function Pulse({ className }: { className?: string }) {
 export function PlayerPageLoadingFrame() {
   return (
     <div
-      className="site-shell flex flex-1 flex-col gap-4 py-5 sm:gap-5 sm:py-7"
+      className="site-shell relative flex flex-1 flex-col gap-4 py-5 sm:gap-5 sm:py-7"
       aria-busy="true"
       aria-live="polite"
     >
-      <div className="query-updating-bar h-[3px] rounded-full" />
-      <LoadingStatus>Loading player</LoadingStatus>
+      <LoadingTopBar />
+      {/* The page's notice slot: empty most of the time, but its gap still offsets the grid. */}
+      <div aria-hidden className="min-w-0" />
       <div className="grid items-start gap-4 min-[800px]:grid-cols-[minmax(16rem,20rem)_minmax(0,1fr)]">
         <div className="flex flex-col gap-3">
-          <Pulse className="h-[7.5rem] rounded-md" />
-          <Pulse className="h-12 rounded-md" />
-          <Pulse className="h-36 rounded-md" />
+          <Pulse className="h-[235px] rounded-md" />
+          <Pulse className="h-[230px] rounded-md" />
+          <Pulse className="h-[298px] rounded-md" />
         </div>
-        <Pulse className="min-h-[28rem] rounded-md" />
+        <PlayerPercentileSkeleton label="Loading player…" showBar={false} />
       </div>
       <Pulse className="min-h-[22rem] rounded-md" />
       <p className="sr-only">Loading player…</p>
@@ -42,8 +43,11 @@ export function PlayerPageLoadingFrame() {
 /** Percentile hero — tall enough to match the ranking panel. */
 export function PlayerPercentileSkeleton({
   label = "Loading percentile ranking…",
+  showBar = true,
 }: {
   label?: string;
+  /** Off inside a full-page frame, which already shows a progress line. */
+  showBar?: boolean;
 }) {
   return (
     <div
@@ -51,7 +55,7 @@ export function PlayerPercentileSkeleton({
       aria-busy="true"
       aria-live="polite"
     >
-      <div className="query-updating-bar rounded-full" />
+      {showBar ? <div className="query-updating-bar rounded-full" /> : null}
       <p className="text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
         {label}
       </p>

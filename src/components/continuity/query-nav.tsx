@@ -62,9 +62,15 @@ export function QueryNavProvider({
   const [pending, startTransition] = useTransition();
   const routeTransition = useRouteTransitionOptional();
 
+  // In-place updates (same path, new params) run on this provider's own
+  // transition so the results cue sits over these results; leaving the page
+  // runs on the route transition and only the viewport-top bar shows.
   const run = useCallback(
-    (fn: () => void) => {
-      if (routeTransition) routeTransition.startRouteTransition(fn);
+    (fn: () => void, href?: string) => {
+      const samePath =
+        href == null ||
+        new URL(href, window.location.href).pathname === window.location.pathname;
+      if (routeTransition && !samePath) routeTransition.startRouteTransition(fn);
       else startTransition(fn);
     },
     [routeTransition]
@@ -89,7 +95,7 @@ export function QueryNavProvider({
     (href: string, options?: { scroll?: boolean }) => {
       run(() => {
         router.push(href, { scroll: options?.scroll ?? true });
-      });
+      }, href);
     },
     [router, run]
   );
@@ -98,7 +104,7 @@ export function QueryNavProvider({
     (href: string, options?: { scroll?: boolean }) => {
       run(() => {
         router.replace(href, { scroll: options?.scroll ?? true });
-      });
+      }, href);
     },
     [router, run]
   );
@@ -129,7 +135,7 @@ export function QueryNavProvider({
         className={cn("relative flex flex-col gap-5", className)}
         data-updating={value.pending ? "true" : "false"}
       >
-        <QueryUpdatingChrome pending={value.pending} />
+        <QueryUpdatingChrome pending={pending} />
         {children}
       </div>
     </QueryNavContext.Provider>

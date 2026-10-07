@@ -1,3 +1,4 @@
+import { LoadingTopBar } from "@/components/continuity/destination-loading-frame";
 import { cn } from "@/lib/utils";
 
 function Bar({ className }: { className?: string }) {
@@ -20,8 +21,8 @@ function CardHeader({ wide = "w-40" }: { wide?: string }) {
 /** Home skeleton in the shape of the real page, so nothing jumps when it lands. */
 export default function Loading() {
   return (
-    <main className="site-shell flex flex-col gap-5 py-5 sm:py-7" aria-busy="true" aria-live="polite">
-      <div className="query-updating-bar rounded-full" />
+    <main className="site-shell relative flex flex-col gap-5 py-5 sm:py-7" aria-busy="true" aria-live="polite">
+      <LoadingTopBar />
 
       <Card className="flex-row items-center gap-4">
         <span className="size-10 shrink-0 animate-pulse rounded-full bg-foreground/[0.08]" />

@@ -3,8 +3,9 @@ import { DestinationLoadingFrame } from "@/components/continuity/destination-loa
 export default function Loading() {
   return (
     <DestinationLoadingFrame
-      title="Awards"
-      subtitle="Trophy case and award history."
+      eyebrow="Awards"
+      title="Trophy case"
+      subtitle="Award winners and history."
     />
   );
 }
