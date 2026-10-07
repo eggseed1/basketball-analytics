@@ -5,10 +5,10 @@
     "season": "2026-27",
     "snapshotDate": "2026-10-07",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-10-07T04:12:16.128Z",
+    "builtAt": "2026-10-07T12:37:07.916Z",
     "rosterPlayerCount": 492,
-    "headlinesScanned": 1631,
-    "latestHeadlineAt": "2026-10-07T03:55:54.000Z",
+    "headlinesScanned": 1719,
+    "latestHeadlineAt": "2026-10-07T12:20:31.000Z",
     "latestTransactionDate": "2026-10-06",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -760,6 +760,24 @@
       "linkedTeamIds": [
         "25",
         "18"
+      ]
+    },
+    {
+      "id": "mv-contract-4683678-20261007",
+      "headline": "Scoot Henderson: contract future with the Trail Blazers",
+      "primaryClaimId": "mv-0fd0b91ce0ceac90",
+      "claimIds": [
+        "mv-0fd0b91ce0ceac90"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-10-07T08:05:33.000Z",
+      "lastMeaningfulAt": "2026-10-07T08:05:33.000Z",
+      "linkedPlayerIds": [
+        "4683678"
+      ],
+      "linkedTeamIds": [
+        "22"
       ]
     },
     {
@@ -3882,6 +3900,27 @@
         "13"
       ],
       "isOriginal": true
+    },
+    {
+      "id": "mv-0fd0b91ce0ceac90",
+      "clusterId": "mv-contract-4683678-20261007",
+      "summary": "Scoot Henderson unlikely to receive extension from Blazers",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-07T08:05:33.000Z",
+      "sourceId": "reporter:brett-siegel",
+      "sourceLabel": "TalkBasket, citing Brett Siegel (ClutchPoints)",
+      "reporterLabel": "Brett Siegel",
+      "sourceUrl": "https://www.talkbasket.net/224459-scoot-henderson-unlikely-to-receive-extension-from-blazers",
+      "playerIds": [
+        "4683678"
+      ],
+      "teamIds": [
+        "22"
+      ],
+      "isOriginal": false
     },
     {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",
