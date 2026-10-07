@@ -1,3 +1,5 @@
+import type { CSSProperties } from "react";
+
 import type {
   RecentInsightFocus,
   RecentInsightGame,
@@ -219,8 +221,8 @@ export function InsightLeadWorm({
         ))}
         <path d={area} fill={colors.home} opacity={0.2} clipPath={`url(#${clipId}-top)`} />
         <path d={area} fill={colors.away} opacity={0.2} clipPath={`url(#${clipId}-bottom)`} />
-        <path d={line} fill="none" stroke={colors.home} strokeWidth={2.5} strokeLinejoin="round" clipPath={`url(#${clipId}-top)`} />
-        <path d={line} fill="none" stroke={colors.away} strokeWidth={2.5} strokeLinejoin="round" clipPath={`url(#${clipId}-bottom)`} />
+        <path d={line} fill="none" stroke={colors.home} strokeWidth={2.5} strokeLinejoin="round" pathLength={1} data-motion-line clipPath={`url(#${clipId}-top)`} />
+        <path d={line} fill="none" stroke={colors.away} strokeWidth={2.5} strokeLinejoin="round" pathLength={1} data-motion-line clipPath={`url(#${clipId}-bottom)`} />
         {margins.map((m, i) => {
           const cx = x(i + 1);
           const cy = y(m);
@@ -284,11 +286,13 @@ export function InsightQuarterStack({
               {total}
             </span>
             <div
+              data-motion-bar="y"
               className="flex w-full shrink-0 flex-col gap-px overflow-hidden rounded-[4px]"
               style={{
+                "--i": i,
                 height: Math.max(4, Math.round((total / max) * 36)),
                 opacity: focusPeriod == null || i === best ? 1 : 0.35,
-              }}
+              } as CSSProperties}
             >
               <div style={{ flex: periods.home[i], background: colors.home }} />
               <div style={{ flex: periods.away[i], background: colors.away }} />
@@ -329,7 +333,7 @@ function SplitBar({
       <span className="font-semibold text-muted-foreground">{label}</span>
       <div className="h-2 overflow-hidden rounded-full bg-secondary">
         {pct != null ? (
-          <div className="h-full rounded-full" style={{ width: `${pct * 100}%`, background: color }} />
+          <div data-motion-bar="x" className="h-full rounded-full" style={{ width: `${pct * 100}%`, background: color }} />
         ) : null}
       </div>
       <span className="text-right tabular-nums">
@@ -620,10 +624,14 @@ export function InsightTrendBars({
           className="absolute inset-x-0 border-t border-dashed border-foreground/40"
           style={{ bottom: `${(avg / max) * 100}%` }}
         />
-        {points.map((p) => (
+        {points.map((p, i) => (
           <div key={p.gameDate} className="flex flex-1 flex-col items-center justify-end" style={{ height: "100%" }}>
             <span className="text-[10px] font-semibold tabular-nums">{p.points}</span>
-            <div className="w-full rounded-t-sm" style={{ height: `${(p.points / max) * 80}%`, background: color }} />
+            <div
+              data-motion-bar="y"
+              className="w-full rounded-t-sm"
+              style={{ "--i": i, height: `${(p.points / max) * 80}%`, background: color } as CSSProperties}
+            />
           </div>
         ))}
       </div>
@@ -841,8 +849,8 @@ export function InsightFlowChart({ game }: { game: RecentInsightGame }) {
       ))}
       <path d={area} fill={colors.home} opacity={0.2} clipPath={`url(#${clipId}-top)`} />
       <path d={area} fill={colors.away} opacity={0.2} clipPath={`url(#${clipId}-bottom)`} />
-      <path d={line} fill="none" stroke={colors.home} strokeWidth={1.75} strokeLinejoin="round" clipPath={`url(#${clipId}-top)`} />
-      <path d={line} fill="none" stroke={colors.away} strokeWidth={1.75} strokeLinejoin="round" clipPath={`url(#${clipId}-bottom)`} />
+      <path d={line} fill="none" stroke={colors.home} strokeWidth={1.75} strokeLinejoin="round" pathLength={1} data-motion-line clipPath={`url(#${clipId}-top)`} />
+      <path d={line} fill="none" stroke={colors.away} strokeWidth={1.75} strokeLinejoin="round" pathLength={1} data-motion-line clipPath={`url(#${clipId}-bottom)`} />
       {mark?.kind === "goahead" ? (
         <line
           x1={x(mark.t)}
@@ -912,12 +920,14 @@ export function InsightPeriodBars({
             {pts}
           </span>
           <div
+            data-motion-bar="y"
             className="w-full rounded-[4px]"
             style={{
+              "--i": i,
               height: `${Math.max(3, (pts / max) * 26)}px`,
               background: color,
               opacity: i === focusPeriod ? 1 : 0.3,
-            }}
+            } as CSSProperties}
           />
           <span className="text-[11px] text-muted-foreground">{periodLabel(i)}</span>
         </div>
@@ -938,11 +948,15 @@ export function InsightContributorBars({
   const max = Math.max(...items.map((i) => i.value), 1);
   return (
     <div className="flex flex-col gap-1.5">
-      {items.map((item) => (
+      {items.map((item, i) => (
         <div key={item.name} className="grid grid-cols-[7.5rem_1fr_1.5rem] items-center gap-2 text-[11px]">
           <span className="truncate font-semibold text-muted-foreground">{item.name}</span>
           <span className="h-2.5 rounded-full bg-secondary">
-            <span className="block h-full rounded-full" style={{ width: `${(item.value / max) * 100}%`, background: color }} />
+            <span
+              data-motion-bar="x"
+              className="block h-full rounded-full"
+              style={{ "--i": i, width: `${(item.value / max) * 100}%`, background: color } as CSSProperties}
+            />
           </span>
           <span className="text-right font-bold tabular-nums">{item.value}</span>
         </div>

@@ -57,6 +57,7 @@ function MoverList({
           <li key={row.playerId}>
             <Link
               href={`/players/${encodeURIComponent(row.playerId)}`}
+              data-motion="row"
               className="flex items-center gap-2.5 rounded-xl px-2 py-1.5 transition-colors hover:bg-secondary/70"
             >
               <PlayerHeadshot
@@ -117,7 +118,7 @@ export async function SentimentMoversPanel() {
           href="/sentiment"
           className={cn(type.bodySm, sectionLinkClassName)}
         >
-          League board →
+          League board <span data-motion-arrow aria-hidden>→</span>
         </Link>
       </div>
 

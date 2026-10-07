@@ -31,7 +31,7 @@ export function LeagueMovesPanel({ moves }: { moves: LeagueMove[] }) {
         {moves.map((m) => {
           const kind = KIND[m.kind];
           return (
-            <li key={m.id} className="flex gap-3 py-2.5">
+            <li key={m.id} data-motion="row" className="flex gap-3 py-2.5">
               <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center">
                 {m.teamAbbr ? (
                   <TeamLogo teamKey={m.teamAbbr} size="xs" />

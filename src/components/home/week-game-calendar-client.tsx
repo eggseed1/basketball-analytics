@@ -79,8 +79,8 @@ export function WeekGameCalendarClient({
           href="/scores?view=week"
           className={`type-body-sm shrink-0 ${sectionLinkClassName}`}
         >
-          <span className="sm:hidden">Schedule →</span>
-          <span className="hidden sm:inline">See all schedule →</span>
+          <span className="sm:hidden">Schedule <span data-motion-arrow aria-hidden>→</span></span>
+          <span className="hidden sm:inline">See all schedule <span data-motion-arrow aria-hidden>→</span></span>
         </AppLink>
       </div>
 

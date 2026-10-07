@@ -18,7 +18,7 @@ function Row({ insight }: { insight: RecentInsight }) {
   const scale = Math.max(value, avg, 1) * 1.08;
   const color = teamColor(insight.teamId);
   return (
-    <li className="flex items-center gap-3 py-2.5">
+    <li data-motion="row" className="flex items-center gap-3 py-2.5">
       <PlayerHeadshot
         playerId={insight.playerId}
         name={line.playerName}

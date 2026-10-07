@@ -472,8 +472,8 @@ export function TopPerformersPanel({
             href={leaderboardHref}
             className={cn(type.bodySm, "shrink-0 pt-0.5", sectionLinkClassName)}
           >
-            <span className="sm:hidden">Leaderboard →</span>
-            <span className="hidden sm:inline">See full leaderboard →</span>
+            <span className="sm:hidden">Leaderboard <span data-motion-arrow aria-hidden>→</span></span>
+            <span className="hidden sm:inline">See full leaderboard <span data-motion-arrow aria-hidden>→</span></span>
           </AppLink>
         </div>
         <div className="-mx-1 flex flex-nowrap gap-1 touch-scroll-x px-1 pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
@@ -538,7 +538,7 @@ export function TopPerformersPanel({
                           : "-";
             return (
               <li key={row.key}>
-                <div className="flex items-center gap-2 px-3 py-2.5">
+                <div data-motion="row" className="flex items-center gap-2 px-3 py-2.5">
                   <span className="w-4 shrink-0 text-[12px] font-bold tabular-nums text-muted-foreground">
                     {row.rank}
                   </span>

@@ -114,6 +114,7 @@ export function AnalyticsDesk({
         aria-label="Refresh recent news"
       >
         <RefreshCw
+          data-motion-icon="spin"
           className={`size-3.5 ${isPending ? "animate-spin" : ""}`}
           aria-hidden
         />
@@ -173,6 +174,7 @@ export function AnalyticsDesk({
           <li key={a.id} className={embedded ? undefined : "bg-card"}>
             <AppLink
               href={a.url}
+              data-motion="row"
               className={cn(
                 "flex h-full flex-col gap-2 px-4 py-3.5 transition-colors hover:bg-secondary/40",
                 embedded && "sm:px-5"

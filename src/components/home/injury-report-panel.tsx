@@ -43,7 +43,7 @@ function Row({ entry, today }: { entry: InjuryEntry; today: string }) {
   const team = teamOf(entry);
   const back = entry.returnDate && entry.returnDate >= today ? shortDate(entry.returnDate) : null;
   return (
-    <li className="flex items-center gap-3 py-2.5">
+    <li data-motion="row" className="flex items-center gap-3 py-2.5">
       <PlayerHeadshot
         playerId={entry.athleteId}
         name={entry.name}

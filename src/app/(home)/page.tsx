@@ -97,7 +97,7 @@ async function HomeHotCold() {
           href="/explore/players/hot-cold"
           className="text-[13px] font-semibold underline-offset-4 hover:underline"
         >
-          Open Hot & Cold →
+          Open Hot & Cold <span data-motion-arrow aria-hidden>→</span>
         </AppLink>
       </div>
       <HotColdColumns risers={window.risers} fallers={window.fallers} limit={4} />
@@ -290,7 +290,11 @@ export default async function HomePage() {
     );
 
   return (
-    <main className="site-shell flex flex-col gap-5 py-5 sm:py-7" data-season-phase={moment.phase}>
+    <main
+      className="site-shell flex flex-col gap-5 py-5 sm:py-7"
+      data-season-phase={moment.phase}
+      data-home-motion
+    >
       {layout.top.map(render)}
 
       <div className="grid min-w-0 grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_21.25rem] xl:grid-cols-[minmax(0,1fr)_23rem]">

@@ -92,6 +92,7 @@ export function StandingsConferenceTable({
               return (
                 <tr
                   key={row.teamId}
+                  data-motion="row"
                   className={cn(
                     "border-b border-border last:border-0 hover:bg-secondary/40",
                     seedLines &&

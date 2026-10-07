@@ -25,7 +25,7 @@ export async function OffseasonPulsePanel({ limit = 5 }: { limit?: number } = {}
       <div className="flex items-center justify-between gap-2">
         <h2 className="type-heading">Recent NBA Transactions</h2>
         <AppLink href="/offseason" className={`type-body-sm ${sectionLinkClassName}`}>
-          See all transactions →
+          See all transactions <span data-motion-arrow aria-hidden>→</span>
         </AppLink>
       </div>
       <ul className="flex flex-col gap-4">
@@ -37,6 +37,7 @@ export async function OffseasonPulsePanel({ limit = 5 }: { limit?: number } = {}
           return (
             <li
               key={event.id}
+              data-motion="row"
               className="flex items-center justify-between gap-3"
             >
               <div className="flex min-w-0 items-center gap-2">

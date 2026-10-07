@@ -243,6 +243,7 @@ function InsightCard({ insight, asOf }: { insight: RecentInsight; asOf: string }
 
   return (
     <article
+      data-motion={cardHref ? "card" : undefined}
       className={cn(
         "relative flex min-w-0 flex-col overflow-hidden rounded-[11px] bg-foreground/[0.035] ring-1 ring-inset ring-foreground/[0.06]",
         cardHref &&

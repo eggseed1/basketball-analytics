@@ -91,6 +91,7 @@ export function PlayerHeadshot({
           SIZE_CLASS[size],
           className
         )}
+        data-avatar
         style={{
           fontSize: Math.max(10, px * 0.32),
           background: `linear-gradient(145deg, ${brand?.primary ?? "#0b1f3a"}, ${brand?.secondary ?? "#e85d04"})`,
@@ -116,6 +117,7 @@ export function PlayerHeadshot({
         SIZE_CLASS[size],
         className
       )}
+      data-avatar
       style={{
         boxShadow: brand ? `0 0 0 2px ${brand.primary}` : undefined,
       }}

@@ -1564,6 +1564,201 @@ html:not([data-surface="glass"]) .color-scheme-switch {
   animation: query-updating-slide 1.1s linear infinite;
 }
 
+/* Homepage hover motion. Each kind of element answers in its own way:
+   clickable cards lift and replay their chart, rows tint and pop their
+   avatar, arrows nudge toward where the link goes, and bar rows spotlight
+   the one under the pointer. Uses the individual translate,
+   scale and rotate properties so existing transforms and animations keep
+   working. Animations use backwards fill so hover scale applies after them. */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  [data-home-motion] {
+    --motion-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+    --motion-lift-shadow: 0 14px 30px -16px rgb(15 23 42 / 0.38),
+      0 3px 8px -4px rgb(15 23 42 / 0.14);
+    --motion-row-tint: color-mix(in oklab, var(--foreground) 5%, transparent);
+  }
+
+  .dark [data-home-motion] {
+    --motion-lift-shadow: 0 16px 34px -14px rgb(0 0 0 / 0.7),
+      0 3px 10px -4px rgb(0 0 0 / 0.4);
+    --motion-row-tint: color-mix(in oklab, var(--foreground) 7%, transparent);
+  }
+
+  [data-home-motion] [data-motion="card"] {
+    transition:
+      translate 240ms var(--motion-ease),
+      box-shadow 240ms ease,
+      background-color 180ms ease;
+  }
+
+  [data-home-motion] [data-motion="card"]:hover {
+    translate: 0 -3px;
+    box-shadow:
+      var(--tw-inset-shadow, 0 0 #0000),
+      var(--tw-inset-ring-shadow, 0 0 #0000),
+      var(--tw-ring-offset-shadow, 0 0 #0000),
+      var(--tw-ring-shadow, 0 0 #0000),
+      var(--motion-lift-shadow);
+  }
+
+  [data-home-motion] [data-motion="card"] .team-logo-img,
+  [data-home-motion] [data-motion="card"] [data-avatar],
+  [data-home-motion] [data-motion="card"] .strip-orb {
+    transition:
+      scale 320ms var(--motion-ease),
+      rotate 320ms var(--motion-ease);
+  }
+
+  [data-home-motion] [data-motion="card"]:hover .team-logo-img {
+    scale: 1.12;
+    rotate: -6deg;
+  }
+
+  [data-home-motion] [data-motion="card"]:hover [data-avatar] {
+    scale: 1.08;
+  }
+
+  [data-home-motion] [data-motion="card"]:hover .strip-orb {
+    scale: 1.35;
+  }
+
+  [data-home-motion] [data-motion="card"]:hover [data-motion-bar="y"] {
+    transform-origin: bottom;
+    animation: motion-grow-y 560ms var(--motion-ease) backwards;
+    animation-delay: calc(var(--i, 0) * 60ms);
+  }
+
+  [data-home-motion] [data-motion="card"]:hover [data-motion-bar="x"] {
+    transform-origin: left;
+    animation: motion-grow-x 560ms var(--motion-ease) backwards;
+    animation-delay: calc(var(--i, 0) * 60ms);
+  }
+
+  [data-home-motion] [data-motion="card"]:hover [data-motion-line] {
+    stroke-dasharray: 1 1;
+    animation: motion-draw 900ms cubic-bezier(0.3, 0.7, 0.2, 1) backwards;
+  }
+
+  [data-home-motion] [data-motion="row"] {
+    transition:
+      background-color 180ms ease,
+      box-shadow 180ms ease,
+      color 180ms ease;
+  }
+
+  [data-home-motion] [data-motion="row"]:hover {
+    background-color: var(--motion-row-tint);
+  }
+
+  /* Bare list rows have no padding, so the tint bleeds out with a spread. */
+  [data-home-motion] li[data-motion="row"] {
+    border-radius: 10px;
+  }
+
+  [data-home-motion] li[data-motion="row"]:hover {
+    box-shadow: 0 0 0 6px var(--motion-row-tint);
+  }
+
+  [data-home-motion] [data-motion="row"] [data-avatar],
+  [data-home-motion] [data-motion="row"] .team-logo-img {
+    transition: scale 260ms var(--motion-ease);
+  }
+
+  [data-home-motion] [data-motion="row"]:hover [data-avatar],
+  [data-home-motion] [data-motion="row"]:hover .team-logo-img {
+    scale: 1.12;
+  }
+
+  [data-home-motion] [data-motion="bar-row"] {
+    transition: opacity 200ms ease;
+  }
+
+  [data-home-motion] :has(> [data-motion="bar-row"]:hover) > [data-motion="bar-row"]:not(:hover) {
+    opacity: 0.45;
+  }
+
+  [data-home-motion] [data-motion="bar-row"] [data-motion-bar="x"] {
+    transform-origin: left;
+    transition: scale 260ms var(--motion-ease);
+  }
+
+  [data-home-motion] [data-motion="bar-row"]:hover [data-motion-bar="x"] {
+    scale: 1.03 1.5;
+  }
+
+  [data-home-motion] [data-motion-arrow] {
+    display: inline-block;
+    transition: translate 220ms var(--motion-ease);
+  }
+
+  [data-home-motion] a:hover [data-motion-arrow] {
+    translate: 4px 0;
+  }
+
+  [data-home-motion] [data-motion-icon],
+  [data-home-motion] [data-motion-pop] {
+    transition:
+      rotate 360ms var(--motion-ease),
+      scale 260ms var(--motion-ease),
+      background-color 180ms ease;
+  }
+
+  [data-home-motion] button:hover [data-motion-icon="plus"] {
+    rotate: 90deg;
+  }
+
+  [data-home-motion] button:hover [data-motion-icon="spin"] {
+    rotate: 180deg;
+  }
+
+  [data-home-motion] button:hover [data-motion-pop] {
+    scale: 1.1;
+  }
+
+  [data-home-motion] .glass-pill,
+  [data-home-motion] .sports-pill,
+  [data-home-motion] button:has(> [data-motion-icon]) {
+    transition:
+      translate 200ms var(--motion-ease),
+      scale 140ms ease,
+      color 160ms ease,
+      background-color 160ms ease;
+  }
+
+  [data-home-motion] .glass-pill:not(.glass-pill-active):hover,
+  [data-home-motion] .sports-pill:hover,
+  [data-home-motion] button:has(> [data-motion-icon]):hover {
+    translate: 0 -1px;
+  }
+
+  [data-home-motion] .glass-pill:active,
+  [data-home-motion] .sports-pill:active,
+  [data-home-motion] button:has(> [data-motion-icon]):active {
+    scale: 0.95;
+  }
+}
+
+@keyframes motion-grow-y {
+  from {
+    scale: 1 0.15;
+  }
+}
+
+@keyframes motion-grow-x {
+  from {
+    scale: 0.1 1;
+  }
+}
+
+@keyframes motion-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
 /* Skeleton block: theme-aware fill with a sweeping highlight so it reads as
    loading in both light and dark, not as an empty card. */
 .loading-shimmer {

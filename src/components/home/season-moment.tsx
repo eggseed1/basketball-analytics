@@ -38,7 +38,7 @@ function MomentLinks({ links }: { links: Array<[string, string]> }) {
           href={href}
           className={cn(type.caption, "font-semibold underline-offset-4 hover:underline")}
         >
-          {label} →
+          {label} <span data-motion-arrow aria-hidden>→</span>
         </AppLink>
       ))}
     </div>

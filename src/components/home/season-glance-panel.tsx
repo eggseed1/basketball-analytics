@@ -62,7 +62,7 @@ function Tile({
         <h3 className="text-[14px] font-bold tracking-tight">
           {href ? (
             <Link href={href} className="hover:underline">
-              {title} →
+              {title} <span data-motion-arrow aria-hidden>→</span>
             </Link>
           ) : (
             title
@@ -152,10 +152,11 @@ function PlayTypes({ season, rows }: { season: string; rows: PlayTypeMixRow[] })
         {rows.map((r) => {
           const above = r.ppp >= avgPpp;
           return (
-            <li key={r.key} className="grid grid-cols-[7.5rem_1fr_2.5rem_2.25rem] items-center gap-2 text-[12px]">
+            <li key={r.key} data-motion="bar-row" className="grid grid-cols-[7.5rem_1fr_2.5rem_2.25rem] items-center gap-2 text-[12px]">
               <span className="truncate">{PLAY_TYPE_LABELS[r.key] ?? r.key}</span>
               <span className="h-2 rounded-full bg-foreground/[0.06]">
                 <span
+                  data-motion-bar="x"
                   className="block h-full rounded-full"
                   style={{ width: `${(r.share / maxShare) * 100}%`, background: above ? "#2f64d6" : "#9aa3b2" }}
                 />
@@ -276,7 +277,7 @@ export function SeasonGlancePanel() {
           </p>
         </div>
         <Link href="/explore/players/visualizations" className={cn(type.bodySm, sectionLinkClassName)}>
-          All visualizations →
+          All visualizations <span data-motion-arrow aria-hidden>→</span>
         </Link>
       </div>
       <div className="grid gap-x-6 gap-y-6 sm:grid-cols-2">
