@@ -10,15 +10,15 @@ import { getRuntimeSnapshotGames } from "@/data/runtime/game-snapshot";
 import { sectionLinkClassName, type } from "@/lib/design-system";
 import { priorSeason } from "@/lib/season-glance";
 import {
-  CHART_MIN_GAMES,
   CLOSE_MARGIN,
   REGULAR_SEASON_GAMES,
   buildSeasonPulse,
   finishedRegularGames,
   pickPulseSeason,
+  WEEK_MOVE_MIN,
   winPct,
-  type Highlight,
-  type HighlightRole,
+  type LadderRow,
+  type LadderTeam,
   type PulsePhase,
   type SeasonPulse,
   type Story,
@@ -29,20 +29,14 @@ import {
 import { teamPageHref } from "@/lib/team-destination";
 import { cn } from "@/lib/utils";
 
-const ROLE: Record<HighlightRole, { label: string; text: string; bg: string }> = {
-  best: { label: "Best record", text: "text-[#2f64d6] dark:text-[#8fb0ff]", bg: "bg-[#2f64d6] dark:bg-[#8fb0ff]" },
-  worst: { label: "Worst record", text: "text-[#b45309] dark:text-[#fbbf24]", bg: "bg-[#b45309] dark:bg-[#fbbf24]" },
-  hot: { label: "Hottest lately", text: "text-[#dc2626] dark:text-[#f87171]", bg: "bg-[#dc2626] dark:bg-[#f87171]" },
-  cold: { label: "Coldest lately", text: "text-[#0e7490] dark:text-[#67e8f9]", bg: "bg-[#0e7490] dark:bg-[#67e8f9]" },
-  riser: { label: "Most improved", text: "text-[#15803d] dark:text-[#4ade80]", bg: "bg-[#15803d] dark:bg-[#4ade80]" },
-  faller: { label: "Biggest drop", text: "text-[#7e22ce] dark:text-[#c084fc]", bg: "bg-[#7e22ce] dark:bg-[#c084fc]" },
-};
+const UP_BG = "bg-[#15803d] dark:bg-[#4ade80]";
+const DOWN_BG = "bg-[#7e22ce] dark:bg-[#c084fc]";
 
-const CHART_TITLE: Record<PulsePhase, string> = {
-  early: "Fast starts and slow starts",
-  middle: "Who's moving",
-  stretch: "Who's moving down the stretch",
-  complete: "How the season unfolded",
+const LADDER_TITLE: Record<PulsePhase, string> = {
+  early: "Where every team stands",
+  middle: "Where every team stands",
+  stretch: "Where every team stands",
+  complete: "Where every team finished",
 };
 
 const STORY_COLUMNS: Record<number, string> = { 1: "", 2: "sm:grid-cols-2", 3: "sm:grid-cols-3" };
@@ -51,118 +45,108 @@ const rec = (r: WinLoss) => `${r.wins}-${r.losses}`;
 const pct = (v: number) => `${Math.round(v * 100)}%`;
 const shortSeason = (s: string) => s.slice(2);
 
-function highlightDetail(h: Highlight, priorLabel: string | null): string {
-  switch (h.role) {
-    case "best":
-    case "worst":
-      return rec(h.team);
-    case "hot":
-    case "cold":
-      return `${rec(h.form)} in last 10`;
-    case "riser":
-    case "faller":
-      return h.prior && priorLabel ? `${rec(h.team)}, was ${rec(h.prior)} in ${shortSeason(priorLabel)}` : rec(h.team);
-  }
+const signed = (n: number) => (n > 0 ? `+${n}` : n < 0 ? `\u2212${-n}` : "Even");
+
+function rowLabel(row: LadderRow): string {
+  if (row.lo === row.hi) return signed(row.lo);
+  const [a, b] = row.lo > 0 ? [row.lo, row.hi] : [row.hi, row.lo];
+  return `${signed(a)} to ${signed(b)}`;
 }
 
-function RaceChart({ pulse }: { pulse: SeasonPulse }) {
-  const n = pulse.maxTeamGames;
-  const values = pulse.teams.flatMap((t) => t.path);
-  const hi = Math.max(2, ...values) + 1;
-  const lo = Math.min(-2, ...values) - 1;
-  const x = (i: number) => (i / n) * 100;
-  const y = (v: number) => ((hi - v) / (hi - lo)) * 100;
-  const d = (path: number[]) =>
-    path.map((v, i) => `${i ? "L" : "M"}${x(i).toFixed(2)},${y(v).toFixed(2)}`).join("");
-  const focus = new Set(pulse.highlights.map((h) => h.team.teamId));
-  const top = Math.max(...values);
-  const bottom = Math.min(...values);
-
+function LadderChip({ entry, season, showWeek }: { entry: LadderTeam; season: string; showWeek: boolean }) {
+  const { team, week } = entry;
+  const played = team.wins + team.losses > 0;
+  const weekNet = week.wins - week.losses;
+  const move = showWeek && Math.abs(weekNet) >= WEEK_MOVE_MIN ? (weekNet > 0 ? "up" : "down") : null;
+  const label = [
+    team.name,
+    played ? rec(team) : "no games yet",
+    showWeek && week.wins + week.losses > 0 ? `${rec(week)} in the last 7 days` : null,
+  ]
+    .filter(Boolean)
+    .join(", ");
   return (
-    <div className="grid grid-cols-[2.25rem_minmax(0,1fr)] gap-x-1.5 gap-y-1">
-      <div className="relative text-[10px] tabular-nums text-muted-foreground" aria-hidden>
-        <span className="absolute right-0 -translate-y-1/2" style={{ top: `${y(top)}%` }}>+{top}</span>
-        <span className="absolute right-0 -translate-y-1/2 font-semibold" style={{ top: `${y(0)}%` }}>.500</span>
-        <span className="absolute right-0 -translate-y-1/2" style={{ top: `${y(bottom)}%` }}>{bottom}</span>
-      </div>
-      <div className="relative h-48 sm:h-56">
-        <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden className="absolute inset-0 h-full w-full overflow-visible">
-          <line x1={0} x2={100} y1={y(0)} y2={y(0)} className="text-muted-foreground/60" stroke="currentColor" strokeWidth={1} strokeDasharray="3 3" vectorEffect="non-scaling-stroke" />
-          {pulse.teams
-            .filter((t) => !focus.has(t.teamId) && t.path.length > 1)
-            .map((t) => (
-              <path key={t.teamId} d={d(t.path)} fill="none" className="text-foreground/[0.13]" stroke="currentColor" strokeWidth={1} strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
-            ))}
-        </svg>
-        <div data-motion-reveal className="absolute inset-0">
-          <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden className="absolute inset-0 h-full w-full overflow-visible">
-            {pulse.highlights.map((h, i) => {
-              // Form roles are about the last 10 games, so the rest of the season steps back.
-              const recent = h.role === "hot" || h.role === "cold";
-              const start = Math.max(0, h.team.path.length - 11);
-              return (
-                <g key={h.team.teamId} data-line={i} className={ROLE[h.role].text}>
-                  <path d={d(h.team.path)} fill="none" stroke="currentColor" strokeOpacity={recent ? 0.4 : 1} strokeWidth={recent ? 1.75 : 2.5} strokeLinejoin="round" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
-                  {recent ? (
-                    <path
-                      d={h.team.path.slice(start).map((v, j) => `${j ? "L" : "M"}${x(start + j).toFixed(2)},${y(v).toFixed(2)}`).join("")}
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth={3}
-                      strokeLinejoin="round"
-                      strokeLinecap="round"
-                      vectorEffect="non-scaling-stroke"
-                    />
-                  ) : null}
-                </g>
-              );
-            })}
-          </svg>
-          {pulse.highlights.map((h, i) => (
-            <span
-              key={h.team.teamId}
-              data-line={i}
-              aria-hidden
-              className={cn("absolute size-2 -translate-x-1/2 -translate-y-1/2 rounded-full ring-2 ring-background", ROLE[h.role].bg)}
-              style={{ left: `${x(h.team.path.length - 1)}%`, top: `${y(h.team.path.at(-1)!)}%` }}
-            />
-          ))}
-        </div>
-      </div>
-      <div className="col-start-2 flex justify-between text-[10px] tabular-nums text-muted-foreground" aria-hidden>
-        <span>Game 1</span>
-        <span>Game {n}</span>
-      </div>
-    </div>
+    <li>
+      <Link
+        href={teamPageHref(team.teamId, { season })}
+        data-motion="chip"
+        title={label}
+        aria-label={label}
+        className={cn(
+          "relative flex w-11 flex-col items-center gap-0.5 rounded-[10px] py-1 hover:bg-foreground/[0.05]",
+          !played && "opacity-50"
+        )}
+      >
+        <TeamLogo teamKey={team.abbr} size="sm" />
+        <span className="text-[10px] font-semibold tabular-nums text-muted-foreground">{rec(team)}</span>
+        {move ? (
+          <span
+            aria-hidden
+            className={cn(
+              "absolute top-0 right-0.5 flex size-3.5 items-center justify-center rounded-full text-[8px] leading-none text-white ring-2 ring-card",
+              move === "up" ? UP_BG : DOWN_BG
+            )}
+          >
+            {move === "up" ? "\u25B2" : "\u25BC"}
+          </span>
+        ) : null}
+      </Link>
+    </li>
   );
 }
 
-function ChartLegend({ pulse }: { pulse: SeasonPulse }) {
+const CONFERENCES = ["East", "West"] as const;
+
+function LadderView({ pulse }: { pulse: SeasonPulse }) {
+  const { ladder } = pulse;
+  const showWeek = pulse.phase !== "complete";
+  const grid = "grid grid-cols-[3.75rem_minmax(0,1fr)_minmax(0,1fr)] gap-x-2 sm:grid-cols-[4.5rem_minmax(0,1fr)_minmax(0,1fr)]";
   return (
-    <ul className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-      {pulse.highlights.map((h, i) => (
-        <li key={h.team.teamId} className="min-w-0">
-          <Link
-            href={teamPageHref(h.team.teamId, { season: pulse.season })}
-            data-focus={i}
-            data-motion="chip"
-            className="flex min-w-0 flex-col gap-1 rounded-[10px] px-2 py-1.5 hover:bg-foreground/[0.04]"
-          >
-            <span className="flex items-center gap-1.5 text-[11px] font-semibold text-muted-foreground">
-              <span aria-hidden className={cn("h-[3px] w-3 rounded-full", ROLE[h.role].bg)} />
-              {ROLE[h.role].label}
-            </span>
-            <span className="flex min-w-0 items-center gap-1.5">
-              <TeamLogo teamKey={h.team.abbr} size="xs" />
-              <span className="truncate text-[13px] font-semibold">{h.team.name}</span>
-            </span>
-            <span className="text-[12px] tabular-nums text-muted-foreground">
-              {highlightDetail(h, pulse.priorSeason)}
-            </span>
-          </Link>
-        </li>
-      ))}
-    </ul>
+    <div className="flex flex-col gap-1">
+      <div className={cn(grid, "px-2 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground")} aria-hidden>
+        <span />
+        {CONFERENCES.map((c) => (
+          <span key={c}>{c}</span>
+        ))}
+      </div>
+      <ol className="flex flex-col gap-1">
+        {ladder.rows.map((row) => {
+          const even = row.lo === 0 && row.hi === 0;
+          return (
+            <li
+              key={row.lo}
+              className={cn(
+                grid,
+                "items-center rounded-[10px] px-2",
+                row.teams.length ? "py-1" : "py-0.5",
+                even
+                  ? "bg-foreground/[0.04]"
+                  : row.lo > 0
+                    ? "bg-[#2f64d6]/[0.04] dark:bg-[#8fb0ff]/[0.05]"
+                    : "bg-[#b45309]/[0.035] dark:bg-[#fbbf24]/[0.04]"
+              )}
+            >
+              <span className={cn("text-[11px] font-semibold tabular-nums", even ? "text-foreground" : "text-muted-foreground")}>
+                {rowLabel(row)}
+              </span>
+              {row.teams.length ? (
+                CONFERENCES.map((c) => (
+                  <ul key={c} aria-label={c} className="flex min-w-0 flex-wrap gap-0.5">
+                    {row.teams
+                      .filter((e) => e.team.conference === c)
+                      .map((entry) => (
+                        <LadderChip key={entry.team.teamId} entry={entry} season={pulse.season} showWeek={showWeek} />
+                      ))}
+                  </ul>
+                ))
+              ) : (
+                <span aria-hidden className="col-span-2 h-px bg-foreground/10" />
+              )}
+            </li>
+          );
+        })}
+      </ol>
+    </div>
   );
 }
 
@@ -206,11 +190,11 @@ function Dumbbell({ from, to }: { from: number; to: number }) {
       <span className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-foreground/[0.12]" />
       <span
         data-motion-bar="x"
-        className={cn("absolute top-1/2 h-[3px] -translate-y-1/2 rounded-full", up ? ROLE.riser.bg : ROLE.faller.bg)}
+        className={cn("absolute top-1/2 h-[3px] -translate-y-1/2 rounded-full", up ? UP_BG : DOWN_BG)}
         style={{ left: `${lo * 100}%`, width: `${(hi - lo) * 100}%`, transformOrigin: up ? "left" : "right" }}
       />
       <span className="absolute top-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-background ring-[1.5px] ring-foreground/40" style={{ left: `${from * 100}%` }} />
-      <span className={cn("absolute top-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full", up ? ROLE.riser.bg : ROLE.faller.bg)} style={{ left: `${to * 100}%` }} />
+      <span className={cn("absolute top-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full", up ? UP_BG : DOWN_BG)} style={{ left: `${to * 100}%` }} />
     </span>
   );
 }
@@ -395,7 +379,6 @@ export function SeasonPulsePanel() {
   const reviewing = season !== current;
   const complete = pulse.phase === "complete";
   const share = pulse.gamesPlayed / REGULAR_SEASON_GAMES;
-  const showChart = pulse.maxTeamGames >= CHART_MIN_GAMES && pulse.highlights.length > 0;
 
   return (
     <section className="sports-card flex flex-col gap-5 px-4 py-4 sm:px-5 sm:py-5">
@@ -404,7 +387,7 @@ export function SeasonPulsePanel() {
           <h2 className={type.heading}>{complete ? `${season} in review` : `${season} so far`}</h2>
           <p className={cn(type.caption, "text-muted-foreground")}>
             {reviewing
-              ? `How ${season} played out. This switches to ${current} after its first few nights of games.`
+              ? `How ${season} played out. This switches to ${current} once most teams have played.`
               : "The storylines change as the season goes. Updated daily from every finished game."}
           </p>
         </div>
@@ -432,21 +415,18 @@ export function SeasonPulsePanel() {
         </div>
       </div>
 
-      {showChart ? (
-        <div data-motion="replay" data-pulse-chart className="flex flex-col gap-3">
-          <div className="flex flex-col gap-0.5">
-            <h3 className="text-[15px] font-bold tracking-tight">{CHART_TITLE[pulse.phase]}</h3>
-            <p className={cn(type.caption, "text-muted-foreground")}>
-              Wins minus losses after every game. Gray lines are the rest of the league.
-              {pulse.highlights.some((h) => h.role === "hot" || h.role === "cold")
-                ? " Bold ends on the hot and cold lines are their last 10 games."
-                : null}
-            </p>
-          </div>
-          <RaceChart pulse={pulse} />
-          <ChartLegend pulse={pulse} />
+      <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-0.5">
+          <h3 className="text-[15px] font-bold tracking-tight">{LADDER_TITLE[pulse.phase]}</h3>
+          <p className={cn(type.caption, "text-muted-foreground")}>
+            Each row is games above .500 (wins minus losses), best at the top.
+            {pulse.phase === "complete"
+              ? null
+              : ` Arrows mark teams at least ${WEEK_MOVE_MIN} games over or under .500 in the last 7 days.`}
+          </p>
         </div>
-      ) : null}
+        <LadderView pulse={pulse} />
+      </div>
 
       {pulse.stories.length ? (
         <div className={cn("grid gap-3", STORY_COLUMNS[pulse.stories.length])}>

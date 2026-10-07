@@ -1803,18 +1803,6 @@ html:not([data-surface="glass"]) .color-scheme-switch {
   }
 }
 
-/* Pointing at a legend entry fades the other highlighted lines. */
-[data-pulse-chart] [data-line] {
-  transition: opacity 160ms ease;
-}
-
-[data-pulse-chart]:has([data-focus="0"]:is(:hover, :focus-visible)) [data-line]:not([data-line="0"]),
-[data-pulse-chart]:has([data-focus="1"]:is(:hover, :focus-visible)) [data-line]:not([data-line="1"]),
-[data-pulse-chart]:has([data-focus="2"]:is(:hover, :focus-visible)) [data-line]:not([data-line="2"]),
-[data-pulse-chart]:has([data-focus="3"]:is(:hover, :focus-visible)) [data-line]:not([data-line="3"]) {
-  opacity: 0.12;
-}
-
 @keyframes motion-pop {
   from {
     scale: 0;

@@ -7,14 +7,11 @@ import {
 
 /** 30 teams × 82 games / 2. */
 export const REGULAR_SEASON_GAMES = 1230;
-/** A few nights of games. Before that the panel reviews last season. */
-export const PULSE_MIN_GAMES = 30;
+/** About one full slate, so most teams have played. Before that the panel reviews last season. */
+export const PULSE_MIN_GAMES = 12;
 export const CLOSE_MARGIN = 5;
-/** The chart needs a few games per team before lines say anything. */
-export const CHART_MIN_GAMES = 5;
 
 const FORM_GAMES = 10;
-const MAX_HIGHLIGHTS = 4;
 const MAX_STORIES = 3;
 const STREAK_MIN = 3;
 const CLOSE_MIN_GAMES = 4;
@@ -56,15 +53,6 @@ export type PulseTotals = {
   homeWinShare: number;
 };
 
-export type HighlightRole = "best" | "worst" | "hot" | "cold" | "riser" | "faller";
-
-export type Highlight = {
-  role: HighlightRole;
-  team: TeamSeason;
-  form: WinLoss;
-  prior: WinLoss | null;
-};
-
 export type StreakRow = { team: TeamSeason; length: number };
 export type MoverRow = { team: TeamSeason; prior: WinLoss; change: number };
 export type SplitRow = { team: TeamSeason; record: WinLoss };
@@ -87,7 +75,7 @@ export type SeasonPulse = {
   /** Most games any team has played. */
   maxTeamGames: number;
   teams: TeamSeason[];
-  highlights: Highlight[];
+  ladder: Ladder;
   stories: Story[];
   totals: PulseTotals;
 };
@@ -258,55 +246,67 @@ function priorChange(team: TeamSeason, prior: Map<string, TeamSeason>): number |
   return now == null || then == null ? null : now - then;
 }
 
-const HIGHLIGHT_ROLES: Record<PulsePhase, HighlightRole[]> = {
-  early: ["best", "worst", "riser", "faller"],
-  middle: ["best", "hot", "cold", "riser"],
-  stretch: ["best", "hot", "cold", "riser"],
-  complete: ["best", "worst", "riser", "faller"],
+const MAX_LADDER_ROWS = 10;
+const BIN_WIDTHS = [1, 2, 3, 4, 5, 6, 8, 10, 12, 15];
+/** A week counts as a run when a team finished it this far over or under .500. */
+export const WEEK_MOVE_MIN = 3;
+
+export type LadderTeam = {
+  team: TeamSeason;
+  /** Wins minus losses. */
+  net: number;
+  /** Record over the last seven days of the season so far. */
+  week: WinLoss;
 };
 
-export function pickHighlights(
-  teams: TeamSeason[],
-  prior: TeamSeason[],
-  phase: PulsePhase
-): Highlight[] {
-  const priorById = new Map(prior.map((t) => [t.teamId, t]));
-  const played = teams.filter((t) => t.results.length > 0);
-  const formOf = (t: TeamSeason) => lastGames(t);
-  const formRank = (a: TeamSeason, b: TeamSeason) => {
-    const fa = formOf(a);
-    const fb = formOf(b);
-    return fb.wins - fa.wins || fb.margin - fa.margin;
-  };
-  const withChange = played
-    .map((t) => ({ t, change: priorChange(t, priorById) }))
-    .filter((x): x is { t: TeamSeason; change: number } => x.change != null);
+export type LadderRow = { lo: number; hi: number; teams: LadderTeam[] };
 
-  const candidates: Record<HighlightRole, TeamSeason[]> = {
-    best: [...played].sort(compareRecord),
-    worst: [...played].sort(compareRecord).reverse(),
-    hot: [...played].filter((t) => t.results.length >= FORM_GAMES).sort(formRank),
-    cold: [...played].filter((t) => t.results.length >= FORM_GAMES).sort(formRank).reverse(),
-    riser: withChange.filter((x) => x.change > 0).sort((a, b) => b.change - a.change).map((x) => x.t),
-    faller: withChange.filter((x) => x.change < 0).sort((a, b) => a.change - b.change).map((x) => x.t),
-  };
+export type Ladder = { width: number; rows: LadderRow[] };
 
-  const used = new Set<string>();
-  const out: Highlight[] = [];
-  for (const role of HIGHLIGHT_ROLES[phase]) {
-    const team = candidates[role].find((t) => !used.has(t.teamId));
-    if (!team) continue;
-    used.add(team.teamId);
-    const was = priorById.get(team.teamId);
-    out.push({
-      role,
-      team,
-      form: tally(team.results.slice(-FORM_GAMES)),
-      prior: was ? { wins: was.wins, losses: was.losses } : null,
-    });
-    if (out.length >= MAX_HIGHLIGHTS) break;
+const DAY_MS = 86_400_000;
+const dayOf = (date: string) => Math.floor(Date.parse(`${date.slice(0, 10)}T00:00:00Z`) / DAY_MS);
+
+/** Row index for a net record: .500 is its own row, ranges sit above and below. */
+function ladderBin(net: number, width: number): number {
+  return net === 0 ? 0 : Math.sign(net) * Math.ceil(Math.abs(net) / width);
+}
+
+/**
+ * Every team in rows by games above .500, best row first. Rows are one
+ * game wide early on and widen as records spread, so the ladder never
+ * grows past MAX_LADDER_ROWS. Empty rows in between stay so gaps show.
+ */
+export function buildLadder(teams: TeamSeason[]): Ladder {
+  if (!teams.length) return { width: 1, rows: [] };
+  const latest = Math.max(
+    ...teams.flatMap((t) => t.results.map((r) => dayOf(r.date))),
+    Number.NEGATIVE_INFINITY
+  );
+  const entries: LadderTeam[] = teams.map((team) => ({
+    team,
+    net: team.wins - team.losses,
+    week: tally(team.results.filter((r) => latest - dayOf(r.date) < 7)),
+  }));
+  const nets = entries.map((e) => e.net);
+  const max = Math.max(...nets);
+  const min = Math.min(...nets);
+  const top = (w: number) => Math.max(0, ladderBin(max, w));
+  const bottom = (w: number) => Math.min(0, ladderBin(min, w));
+  const width =
+    BIN_WIDTHS.find((w) => top(w) - bottom(w) + 1 <= MAX_LADDER_ROWS) ?? BIN_WIDTHS.at(-1)!;
+  const rows: LadderRow[] = [];
+  for (let k = top(width); k >= bottom(width); k -= 1) {
+    if (k > 0) rows.push({ lo: (k - 1) * width + 1, hi: k * width, teams: [] });
+    else if (k < 0) rows.push({ lo: k * width, hi: (k + 1) * width - 1, teams: [] });
+    else rows.push({ lo: 0, hi: 0, teams: [] });
   }
-  return out;
+  for (const e of entries) {
+    rows[top(width) - ladderBin(e.net, width)]!.teams.push(e);
+  }
+  for (const row of rows) {
+    row.teams.sort((a, b) => b.net - a.net || compareRecord(a.team, b.team));
+  }
+  return { width, rows };
 }
 
 function unbeatenStory(teams: TeamSeason[]): Story | null {
@@ -457,13 +457,13 @@ export function buildSeasonPulse({
     gamesPlayed: Math.min(finished.length, REGULAR_SEASON_GAMES),
     maxTeamGames: Math.max(0, ...teams.map((t) => t.results.length)),
     teams,
-    highlights: pickHighlights(teams, prior, phase),
+    ladder: buildLadder(teams),
     stories: pickStories(teams, prior, phase),
     totals,
   };
 }
 
-/** The season to show: this one once a few nights are in, else the one before. */
+/** The season to show: this one once most teams have played, else the one before. */
 export function pickPulseSeason(
   current: string,
   previous: string | null,

@@ -13,7 +13,7 @@ import {
   finishedRegularGames,
   lastGames,
   longestStreaks,
-  pickHighlights,
+  buildLadder,
   pickPulseSeason,
   pickStories,
   pulsePhase,
@@ -108,16 +108,31 @@ const priorLeague = [
 const now = buildTeamSeasons(league);
 const before = buildTeamSeasons(priorLeague);
 
-const early = pickHighlights(now, before, "early");
-assert.deepEqual(
-  early.map((h) => [h.role, h.team.teamId]),
-  [["best", "3"], ["worst", "4"], ["riser", "6"], ["faller", "5"]]
-);
-assert.deepEqual(early[3]!.prior, { wins: 10, losses: 0 });
-const middle = pickHighlights(now, before, "middle");
-assert.deepEqual(middle.slice(0, 3).map((h) => h.role), ["best", "hot", "cold"]);
-assert.equal(middle[2]!.team.teamId, "4");
-assert.equal(new Set(middle.map((h) => h.team.teamId)).size, middle.length);
+// Ladder: one-game rows while records are tight, every team placed once.
+const ladder = buildLadder(now);
+assert.equal(ladder.width, 3);
+assert.deepEqual(ladder.rows.map((r) => [r.lo, r.hi, r.teams.map((e) => e.team.teamId).sort()]), [
+  [10, 12, ["3"]],
+  [7, 9, []],
+  [4, 6, []],
+  [1, 3, []],
+  [0, 0, ["5", "6"]],
+  [-3, -1, []],
+  [-6, -4, []],
+  [-9, -7, []],
+  [-12, -10, ["4"]],
+]);
+assert.deepEqual(ladder.rows[0]!.teams[0]!.week, { wins: 7, losses: 0 });
+
+// Opening night: winners, teams yet to play and losers.
+const opener = buildTeamSeasons([
+  game("2026-10-20", "1", "2", 110, 100),
+  game("2026-10-22", "7", "8", 0, 0, { status: "scheduled" }),
+]);
+const openLadder = buildLadder(opener);
+assert.equal(openLadder.width, 1);
+assert.deepEqual(openLadder.rows.map((r) => [r.lo, r.teams.length]), [[1, 1], [0, 2], [-1, 1]]);
+assert.deepEqual(buildLadder([]), { width: 1, rows: [] });
 
 const earlyStories = pickStories(now, before, "early");
 assert.deepEqual(earlyStories.map((s) => s.kind), ["unbeaten", "vs-last", "streaks"]);
