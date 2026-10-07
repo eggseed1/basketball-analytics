@@ -1,6 +1,8 @@
 /**
  * Cloudflare-safe player game logs (splits / highs / games tabs).
- * Baked at deploy into public/runtime/player-game-logs/{season}/{id}.json
+ * Baked into public/runtime/player-game-logs/{season}/{id}.json. CI only rebakes
+ * the current season, so past seasons are served from the PLAYER_GAME_LOGS R2
+ * bucket (scripts/upload-player-game-logs-r2.mjs) with the same keys.
  */
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
@@ -10,6 +12,12 @@ import type { CompactPlayerGameLogRow } from "@/data/history/player-game-log";
 type AssetsFetcher = {
   fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>;
 };
+
+type GameLogBucket = {
+  get: (key: string) => Promise<{ json<T>(): Promise<T> } | null>;
+};
+
+type GameLogEnv = { ASSETS?: AssetsFetcher; PLAYER_GAME_LOGS?: GameLogBucket };
 
 type GameLogAssetFile = {
   playerId?: string;
@@ -55,16 +63,28 @@ function seasonsFromManifest(
   return [];
 }
 
-function cloudflareAssets(): AssetsFetcher | null {
+function cloudflareEnv(): GameLogEnv | null {
   try {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { getCloudflareContext } = require("@opennextjs/cloudflare") as {
-      getCloudflareContext: (opts?: { async?: boolean }) => {
-        env?: { ASSETS?: AssetsFetcher };
-      };
+      getCloudflareContext: (opts?: { async?: boolean }) => { env?: GameLogEnv };
     };
-    const ctx = getCloudflareContext();
-    return ctx?.env?.ASSETS ?? null;
+    return getCloudflareContext()?.env ?? null;
+  } catch {
+    return null;
+  }
+}
+
+function cloudflareAssets(): AssetsFetcher | null {
+  return cloudflareEnv()?.ASSETS ?? null;
+}
+
+async function bucketJson<T>(key: string): Promise<T | null> {
+  try {
+    const bucket = cloudflareEnv()?.PLAYER_GAME_LOGS;
+    if (!bucket) return null;
+    const object = await bucket.get(key);
+    return object ? await object.json<T>() : null;
   } catch {
     return null;
   }
@@ -167,21 +187,47 @@ function seasonsFromPublicDir(options?: { minFiles?: number }): string[] {
   }
 }
 
-async function seasonsFromAssets(options?: {
-  minFiles?: number;
-}): Promise<string[]> {
+async function assetManifest(): Promise<GameLogManifest | null> {
   try {
     const assets = cloudflareAssets();
-    if (!assets) return [];
+    if (!assets) return null;
     const response = await assets.fetch(
       "https://assets.local/runtime/player-game-logs/manifest.json"
     );
-    if (!response.ok) return [];
-    const json = (await response.json()) as GameLogManifest;
-    return seasonsFromManifest(json, options);
+    if (response.status === 404) return {};
+    if (!response.ok) return null;
+    return (await response.json()) as GameLogManifest;
   } catch {
-    return [];
+    return null;
   }
+}
+
+/** Deployed assets are immutable per Worker version, so one read per isolate. */
+let assetSeasonsCache: Set<string> | undefined;
+
+/** Null when unknown (no ASSETS binding or a failed read): callers try assets anyway. */
+async function assetSeasons(): Promise<Set<string> | null> {
+  if (assetSeasonsCache) return assetSeasonsCache;
+  const json = await assetManifest();
+  if (!json) return null;
+  assetSeasonsCache = new Set(seasonsFromManifest(json));
+  return assetSeasonsCache;
+}
+
+/** Deployed assets hold the current season; R2 holds the rest. */
+async function seasonsFromCloudflare(options?: {
+  minFiles?: number;
+}): Promise<string[]> {
+  const manifests = await Promise.all([
+    assetManifest(),
+    bucketJson<GameLogManifest>("manifest.json"),
+  ]);
+  const seasons = new Set<string>();
+  for (const json of manifests) {
+    if (!json) continue;
+    for (const season of seasonsFromManifest(json, options)) seasons.add(season);
+  }
+  return [...seasons];
 }
 
 /** Seasons with baked player game-log assets (CF-safe). */
@@ -192,8 +238,8 @@ export async function resolvePlayerGameLogSeasons(options?: {
   if (fromFs.length) {
     return [...fromFs].sort((a, b) => b.localeCompare(a));
   }
-  const fromAssets = await seasonsFromAssets(options);
-  return [...fromAssets].sort((a, b) => b.localeCompare(a));
+  const fromCloudflare = await seasonsFromCloudflare(options);
+  return fromCloudflare.sort((a, b) => b.localeCompare(a));
 }
 
 /** Resolve baked game log for CF / local public assets. */
@@ -214,9 +260,18 @@ export async function resolvePlayerSeasonGameLog(options: {
     if (pub.length) return pub;
   }
 
+  const deployed = await assetSeasons();
+  if (!deployed || deployed.has(options.season)) {
+    for (const id of ids) {
+      const asset = await fetchGameLogAsset(options.season, id);
+      if (asset.length) return asset;
+    }
+  }
+
   for (const id of ids) {
-    const asset = await fetchGameLogAsset(options.season, id);
-    if (asset.length) return asset;
+    const json = await bucketJson<GameLogAssetFile>(`${options.season}/${id}.json`);
+    const games = normalizeGames(json?.games);
+    if (games.length) return games;
   }
 
   return [];
