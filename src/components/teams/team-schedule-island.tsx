@@ -4,6 +4,7 @@ import { teamPageHref } from "@/lib/team-destination";
 import { buildTeamSchedule, regularSeasonGapNote } from "@/lib/team-schedule";
 import { TransitionLink } from "@/components/continuity/query-nav";
 import { cn } from "@/lib/utils";
+import { ScheduleCalendar } from "@/components/teams/viz/schedule-calendar";
 
 const TILE =
   "frost-surface rounded-lg px-3 py-2.5 shadow-[inset_0_1px_0_rgb(255_255_255/0.55)] dark:shadow-[inset_0_1px_0_rgb(255_255_255/0.07)]";
@@ -40,9 +41,11 @@ function SummaryTile({
 export function TeamScheduleIsland({
   teamId,
   season,
+  teamKey,
 }: {
   teamId: string;
   season: string;
+  teamKey?: string;
 }) {
   const { rows, summary } = buildTeamSchedule(teamId, season);
 
@@ -82,6 +85,7 @@ export function TeamScheduleIsland({
           final. Tip times are Eastern.
         </p>
       </div>
+      <ScheduleCalendar rows={rows} season={season} teamKey={teamKey ?? teamId} />
       <div className="sports-card flex flex-col gap-5 p-4 sm:p-5">
         <div className="grid grid-cols-2 gap-2 lg:grid-cols-4">
           <SummaryTile

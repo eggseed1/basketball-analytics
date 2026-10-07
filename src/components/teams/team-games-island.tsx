@@ -25,6 +25,84 @@ import { teamPageHref } from "@/lib/team-destination";
 import { TransitionLink } from "@/components/continuity/query-nav";
 import { nbaTodayIso } from "@/lib/nba-calendar-date";
 import { cn } from "@/lib/utils";
+import { buildTeamSchedule } from "@/lib/team-schedule";
+import type { CompactTeamGameRow } from "@/data/history/team-matchup-index";
+import { GamesScoreScatter, type ScoreGame } from "@/components/teams/viz/games-score-scatter";
+
+function gameHref(id: string, season: string): string {
+  return `/games/${encodeURIComponent(id)}?season=${encodeURIComponent(season)}`;
+}
+
+function scheduleScoreGames(teamId: string, season: string): ScoreGame[] {
+  return buildTeamSchedule(teamId, season)
+    .rows.filter(
+      (r) =>
+        r.phase !== "preseason" &&
+        r.result != null &&
+        r.teamScore != null &&
+        r.oppScore != null
+    )
+    .map((r) => ({
+      id: r.id,
+      href: gameHref(r.id, r.season),
+      dateLabel: r.dateLabel,
+      home: r.home,
+      oppAbbr: r.oppAbbr,
+      teamScore: r.teamScore as number,
+      oppScore: r.oppScore as number,
+      overtime: r.overtime,
+      postseason: r.phase === "postseason",
+    }));
+}
+
+function summaryScoreGames(games: GameSummary[], team: TeamSeasonStats): ScoreGame[] {
+  const abbr = team.abbreviation.toUpperCase();
+  const out: ScoreGame[] = [];
+  for (const g of games) {
+    if (g.status !== "final" || g.gameType === "preseason") continue;
+    if (!(g.homeScore > 0 && g.awayScore > 0)) continue;
+    const home = g.homeTeamId === team.teamId || g.homeTeamAbbr?.toUpperCase() === abbr;
+    const away = g.awayTeamId === team.teamId || g.awayTeamAbbr?.toUpperCase() === abbr;
+    if (home === away) continue;
+    const date = new Date(`${g.gameDate.slice(0, 10)}T12:00:00Z`);
+    out.push({
+      id: g.id,
+      href: gameHref(g.id, g.season),
+      dateLabel: Number.isNaN(date.getTime())
+        ? g.gameDate
+        : date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" }),
+      home,
+      oppAbbr: (home ? g.awayTeamAbbr : g.homeTeamAbbr) ?? "OPP",
+      teamScore: home ? g.homeScore : g.awayScore,
+      oppScore: home ? g.awayScore : g.homeScore,
+      overtime: (g.homePeriodScores?.length ?? 0) > 4,
+      postseason: g.gameType === "playoff" || g.gameType === "play-in",
+    });
+  }
+  return out;
+}
+
+function compactScoreGames(rows: CompactTeamGameRow[]): ScoreGame[] {
+  return rows
+    .filter((r) => r.result != null && r.homeScore > 0 && r.awayScore > 0)
+    .map((r) => {
+      const home = r.homeAway === "home";
+      const date = new Date(`${r.date.slice(0, 10)}T12:00:00Z`);
+      return {
+        id: r.gameId,
+        href: gameHref(r.gameId, r.season),
+        dateLabel: Number.isNaN(date.getTime())
+          ? r.date
+          : date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" }),
+        home,
+        oppAbbr: home ? r.awayTricode : r.homeTricode,
+        teamScore: home ? r.homeScore : r.awayScore,
+        oppScore: home ? r.awayScore : r.homeScore,
+        overtime: r.ot,
+        postseason: /playoff/i.test(r.seasonType),
+      };
+    });
+}
 
 function snapshotPoolsForSeason(season: string): {
   recentPool: GameSummary[];
@@ -196,6 +274,11 @@ export async function TeamGamesIsland({
             game opens in Game Lab. The full calendar is on the Schedule tab.
           </p>
         </div>
+        <GamesScoreScatter
+          games={scheduleScoreGames(team.teamId, season)}
+          season={season}
+          teamKey={team.abbreviation}
+        />
         <SnapshotTeamGamesBody
           team={team}
           brand={brand}
@@ -236,6 +319,13 @@ export async function TeamGamesIsland({
               : `From local historical game index · opens Game Lab · bounded page (${page.pageSize} max)`}
           </p>
         </div>
+        {!snapshot ? (
+          <GamesScoreScatter
+            games={compactScoreGames(all)}
+            season={season}
+            teamKey={team.abbreviation}
+          />
+        ) : null}
         <div className="sports-card flex flex-col gap-5 p-4 sm:p-5">
           {page.total === 0 && !snapshot ? (
             <p className="text-[13px] text-muted-foreground">
@@ -332,6 +422,11 @@ export async function TeamGamesIsland({
             : "Recent / upcoming from schedule · opens Game Lab"}
         </p>
       </div>
+      <GamesScoreScatter
+        games={summaryScoreGames(teamGames.games, team)}
+        season={season}
+        teamKey={team.abbreviation}
+      />
       <div className="sports-card p-4 sm:p-5">
         {teamGames.games.length === 0 ? (
           <p className="text-[13px] text-muted-foreground">

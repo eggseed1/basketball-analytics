@@ -11,6 +11,8 @@ import { type, sectionLinkClassName } from "@/lib/design-system";
 import { formatNumber, formatPct } from "@/lib/format";
 import { teamPageHref } from "@/lib/team-destination";
 import { cn } from "@/lib/utils";
+import { buildTeamSchedule } from "@/lib/team-schedule";
+import { HomeAwayMirror, SplitsMonthWaffle } from "@/components/teams/viz/splits-charts";
 
 function fmtRecord(wins: number, losses: number, games: number): string {
   if (!games) return "—";
@@ -121,9 +123,11 @@ function SplitsTable({
 export async function TeamSplitsIsland({
   teamId,
   season,
+  teamKey,
 }: {
   teamId: string;
   season: string;
+  teamKey?: string;
 }) {
   const gamesHref = teamPageHref(teamId, { season, tab: "games" });
 
@@ -216,6 +220,19 @@ export async function TeamSplitsIsland({
           </p>
         )}
       </div>
+
+      <SplitsMonthWaffle
+        rows={buildTeamSchedule(teamId, season).rows}
+        months={months}
+        season={season}
+        teamKey={teamKey ?? teamId}
+      />
+
+      <HomeAwayMirror
+        home={splits.find((row) => row.id === "home")}
+        away={splits.find((row) => row.id === "away")}
+        teamKey={teamKey ?? teamId}
+      />
 
       <SplitsTable
         rows={splits}

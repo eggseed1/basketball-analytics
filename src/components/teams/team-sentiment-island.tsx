@@ -12,6 +12,7 @@ import { getTeamSentimentBoard } from "@/data/queries/team-sentiment";
 import type { CuratedSentimentLane } from "@/sentiment/curated-types";
 import { textLinkClassName, type, sectionLinkClassName } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
+import { SentimentToneMap } from "@/components/teams/viz/sentiment-tone-map";
 
 function LaneStat({ label, lane }: { label: string; lane?: CuratedSentimentLane }) {
   return (
@@ -62,6 +63,8 @@ export async function TeamSentimentIsland({ teamId }: { teamId: string }) {
           All teams <span data-motion-arrow aria-hidden>→</span>
         </Link>
       </div>
+
+      <SentimentToneMap teamId={board.teamId} teamProfile={team} players={board.players} />
 
       <div className="sports-card flex flex-col gap-3 p-4 sm:p-5">
         {team ? (

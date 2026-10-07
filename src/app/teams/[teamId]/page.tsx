@@ -30,7 +30,7 @@ import { TeamSentimentIsland } from "@/components/teams/team-sentiment-island";
 import { TeamOpeningNight } from "@/components/teams/overview/team-opening-night";
 import { TeamOverviewVisuals } from "@/components/teams/overview/team-overview-visuals";
 import { TeamSeasonRecapIsland } from "@/components/teams/overview/team-season-recap-island";
-import { TeamAllStatsRankStrip } from "@/components/teams/team-all-stats-rank-strip";
+import { StatsRankGrid } from "@/components/teams/viz/stats-rank-grid";
 import { TeamOrganizationHub } from "@/components/teams/team-organization-hub";
 import { TeamPrimaryNav } from "@/components/teams/team-primary-nav";
 import { TeamRosterIsland } from "@/components/teams/team-roster-island";
@@ -58,7 +58,7 @@ import {
   resolveTeamIdentityFallback,
   type TeamPageHrefOpts,
 } from "@/lib/team-destination";
-import { buildTeamRankedMetrics, formatMetricDelta } from "@/lib/team-page-metrics";
+import { buildTeamRankedMetrics, formatMetricDelta, leagueRankOf } from "@/lib/team-page-metrics";
 import { nbaTodayIso } from "@/lib/nba-calendar-date";
 import { buildScheduleFacts } from "@/lib/team-overview-data";
 import {
@@ -279,6 +279,7 @@ export default async function TeamProfilePage({
   const offenseMetrics = ranked.filter((m) => m.group === "offense");
   const defenseMetrics = ranked.filter((m) => m.group === "defense");
   const factorMetrics = ranked.filter((m) => m.group === "factors");
+  const boardMetrics = [...scorecard, ...offenseMetrics, ...defenseMetrics, ...factorMetrics];
   const hrefOpts: TeamPageHrefOpts = {
     season,
     tab,
@@ -457,6 +458,7 @@ export default async function TeamProfilePage({
                 teamKey={identityTeam.abbreviation}
                 team={boardTeam!}
                 offenseMetrics={offenseMetrics}
+                leagueTs={scorecard.find((m) => m.key === "ts")?.leagueAverage ?? null}
               />
             </Suspense>
           ) : (
@@ -523,14 +525,14 @@ export default async function TeamProfilePage({
         ) : null}
 
         {tab === "schedule" ? (
-          <TeamScheduleIsland teamId={resolvedTeamId} season={season} />
+          <TeamScheduleIsland teamId={resolvedTeamId} season={season} teamKey={identityTeam.abbreviation} />
         ) : null}
 
         {tab === "splits" ? (
           <Suspense
             fallback={<DestinationSectionSkeleton label="Loading splits…" />}
           >
-            <TeamSplitsIsland teamId={resolvedTeamId} season={season} />
+            <TeamSplitsIsland teamId={resolvedTeamId} season={season} teamKey={identityTeam.abbreviation} />
           </Suspense>
         ) : null}
 
@@ -538,7 +540,7 @@ export default async function TeamProfilePage({
           <Suspense
             fallback={<DestinationSectionSkeleton label="Loading playoffs…" />}
           >
-            <TeamPlayoffsIsland teamId={resolvedTeamId} season={season} />
+            <TeamPlayoffsIsland teamId={resolvedTeamId} season={season} teamKey={identityTeam.abbreviation} />
           </Suspense>
         ) : null}
 
@@ -652,14 +654,28 @@ export default async function TeamProfilePage({
                     endpoint is selected.
                   </p>
                 </div>
-                <TeamAllStatsRankStrip
-                  teamId={resolvedTeamId}
+                <StatsRankGrid
                   season={season}
-                  metrics={[
-                    ...scorecard,
-                    ...offenseMetrics,
-                    ...defenseMetrics,
-                    ...factorMetrics,
+                  teamKey={identityTeam.abbreviation}
+                  rows={boardMetrics
+                    .filter(
+                      (m, i) =>
+                        !m.missingReason &&
+                        boardMetrics.findIndex((x) => x.key === m.key) === i
+                    )
+                    .map((metric) => ({
+                      metric,
+                      prior:
+                        metric.key === "record"
+                          ? null
+                          : leagueRankOf(metric.key, prior, priorLeague),
+                    }))}
+                  missingLabels={[
+                    ...new Set(
+                      boardMetrics
+                        .filter((m) => m.missingReason && m.key !== "record")
+                        .map((m) => m.label)
+                    ),
                   ]}
                 />
                 <TraitGroup title="Overall" traits={grouped.overall} />

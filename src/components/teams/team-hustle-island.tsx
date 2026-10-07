@@ -9,10 +9,12 @@ import {
 } from "@/data/transformers/hustle-stats";
 import type { PlayerSeason, TeamSeasonStats } from "@/data/types";
 import { type, sectionLinkClassName } from "@/lib/design-system";
-import { formatCountingRate, formatNumber } from "@/lib/format";
+import { formatCountingRate, formatNumber, formatOrdinal } from "@/lib/format";
 import type { RankedMetric } from "@/lib/team-page-metrics";
 import { teamPageHref } from "@/lib/team-destination";
 import { TeamMetricTile } from "@/components/teams/team-metric-tile";
+import { DefenseStocksButterfly } from "@/components/teams/viz/defense-stocks-butterfly";
+import { vizAccentStyle } from "@/components/teams/viz/viz-kit";
 import { cn } from "@/lib/utils";
 
 function fmtPerGame(value: number | null | undefined): string {
@@ -95,6 +97,15 @@ export async function TeamHustleIsland({
     .sort((a, b) => stocksPerGame(b) - stocksPerGame(a))
     .slice(0, 12);
 
+  const columnScale = Object.fromEntries(
+    PLAYER_COLUMNS.map((col) => {
+      const rates = hustleRows
+        .map((p) => hustlePerGame(p, col.key))
+        .filter((v): v is number => v != null && Number.isFinite(v))
+        .sort((a, b) => b - a);
+      return [col.key, { max: rates[0] ?? 0, sorted: rates }];
+    })
+  ) as Record<(typeof PLAYER_COLUMNS)[number]["key"], { max: number; sorted: number[] }>;
   const hasDefenseBoard = defenseMetrics.some((m) => !m.missingReason);
   const playersHref = teamPageHref(teamId, { season, tab: "players" });
   const rotationHref = teamPageHref(teamId, { season, tab: "lineups" });
@@ -194,79 +205,15 @@ export async function TeamHustleIsland({
         </div>
       )}
 
-      <div className="sports-card overflow-x-auto p-4 sm:p-5">
-        <h3 className={cn(type.bodySm, "mb-1 font-semibold")}>
-          Roster stocks
-        </h3>
-        <p className={cn(type.caption, "mb-3 text-muted-foreground")}>
-          Steals + blocks from the box score. These are available even when
-          hustle tracking is not.
-        </p>
-        {stockRows.length === 0 ? (
+      {stockRows.length >= 3 ? (
+        <DefenseStocksButterfly players={board} season={season} teamKey={teamKey} />
+      ) : (
+        <div className="sports-card p-4 sm:p-5">
           <p className={cn(type.bodySm, "text-muted-foreground")}>
-            {roster.warning ?? "No roster rows for this team-season."}
+            {roster.warning ?? "Not enough steals and blocks on the roster yet."}
           </p>
-        ) : (
-          <table className="w-full min-w-[520px] text-left text-[13px]">
-            <thead>
-              <tr className="border-b border-border/60 text-muted-foreground">
-                <th className="pb-2 pr-3 font-medium">Player</th>
-                <th className="pb-2 px-2 text-right font-medium">GP</th>
-                <th className="pb-2 px-2 text-right font-medium">MPG</th>
-                <th className="pb-2 px-2 text-right font-medium">STL</th>
-                <th className="pb-2 px-2 text-right font-medium">BLK</th>
-                <th className="pb-2 pl-2 text-right font-medium">Stocks</th>
-              </tr>
-            </thead>
-            <tbody>
-              {stockRows.map((player) => (
-                <tr
-                  key={player.playerId}
-                  className="border-b border-border/40 last:border-0"
-                >
-                  <td className="py-2 pr-3">
-                    <PlayerIdentity
-                      playerId={player.playerId}
-                      name={player.playerName}
-                      teamKey={teamKey}
-                      teamLabel={teamKey}
-                      position={player.position}
-                      season={season}
-                      variant="compact"
-                      className="min-w-0"
-                      nameClassName="gap-2 no-underline hover:underline"
-                    />
-                  </td>
-                  <td className="py-2 px-2 text-right tabular-nums text-muted-foreground">
-                    {player.gamesPlayed}
-                  </td>
-                  <td className="py-2 px-2 text-right tabular-nums text-muted-foreground">
-                    {formatNumber(
-                      player.minutes / Math.max(1, player.gamesPlayed),
-                      1
-                    )}
-                  </td>
-                  <td className="py-2 px-2 text-right tabular-nums">
-                    {formatNumber(
-                      player.steals / Math.max(1, player.gamesPlayed),
-                      1
-                    )}
-                  </td>
-                  <td className="py-2 px-2 text-right tabular-nums">
-                    {formatNumber(
-                      player.blocks / Math.max(1, player.gamesPlayed),
-                      1
-                    )}
-                  </td>
-                  <td className="py-2 pl-2 text-right tabular-nums font-medium">
-                    {formatNumber(stocksPerGame(player), 1)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
+        </div>
+      )}
 
       {aggregate && hustleRows.length ? (
         <>
@@ -317,10 +264,13 @@ export async function TeamHustleIsland({
             </dl>
           </div>
 
-          <div className="sports-card overflow-x-auto p-4 sm:p-5">
-            <h3 className={cn(type.bodySm, "mb-3 font-semibold")}>
+          <div data-viz style={vizAccentStyle(teamKey)} className="sports-card overflow-x-auto p-4 sm:p-5">
+            <h3 className={cn(type.bodySm, "mb-1 font-semibold")}>
               Roster hustle (per game)
             </h3>
+            <p className={cn(type.caption, "mb-3 text-muted-foreground")}>
+              Darker cells lead the roster in that column.
+            </p>
             <table className="w-full min-w-[640px] text-left text-[13px]">
               <thead>
                 <tr className="border-b border-border/60 text-muted-foreground">
@@ -354,14 +304,37 @@ export async function TeamHustleIsland({
                         nameClassName="gap-2 no-underline hover:underline"
                       />
                     </td>
-                    {PLAYER_COLUMNS.map((col) => (
-                      <td
-                        key={col.key}
-                        className="py-2 px-2 text-right tabular-nums text-muted-foreground"
-                      >
-                        {fmtPerGame(hustlePerGame(player, col.key))}
-                      </td>
-                    ))}
+                    {PLAYER_COLUMNS.map((col) => {
+                      const rate = hustlePerGame(player, col.key);
+                      const scale = columnScale[col.key];
+                      const share =
+                        rate != null && Number.isFinite(rate) && scale.max > 0
+                          ? rate / scale.max
+                          : 0;
+                      const rank =
+                        rate != null && Number.isFinite(rate)
+                          ? scale.sorted.indexOf(rate) + 1
+                          : null;
+                      return (
+                        <td key={col.key} className="px-1 py-1 text-right">
+                          <span
+                            data-viz-bar
+                            data-tip={
+                              rate != null && Number.isFinite(rate)
+                                ? `${player.playerName}: ${fmtPerGame(rate)} ${col.label.toLowerCase()} per game`
+                                : undefined
+                            }
+                            data-tip-sub={rank ? `${formatOrdinal(rank)} on the roster` : undefined}
+                            className="block rounded-sm px-1.5 py-1 tabular-nums"
+                            style={{
+                              background: `color-mix(in oklab, var(--viz-accent) ${Math.round(share * 48)}%, transparent)`,
+                            }}
+                          >
+                            {fmtPerGame(rate)}
+                          </span>
+                        </td>
+                      );
+                    })}
                   </tr>
                 ))}
               </tbody>

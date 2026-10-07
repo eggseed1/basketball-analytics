@@ -1,5 +1,6 @@
 import { FranchiseHistoryBook } from "@/components/franchises/franchise-history-book";
 import { getFranchiseHistory } from "@/data/queries/franchises";
+import { FranchiseRafters } from "@/components/teams/viz/franchise-rafters";
 
 /**
  * Resolve curated franchise scrapbook for a live team page History tab.
@@ -7,8 +8,10 @@ import { getFranchiseHistory } from "@/data/queries/franchises";
 export function TeamFranchiseHistoryIsland({
   abbreviation,
   franchiseToken,
+  teamKey,
 }: {
   abbreviation: string;
+  teamKey?: string;
   /** Optional slug / registry token (e.g. okc) when abbr alone is ambiguous. */
   franchiseToken?: string | null;
 }) {
@@ -27,5 +30,10 @@ export function TeamFranchiseHistoryIsland({
     );
   }
 
-  return <FranchiseHistoryBook franchise={franchise} />;
+  return (
+    <>
+      <FranchiseRafters franchise={franchise} teamKey={teamKey ?? abbreviation} />
+      <FranchiseHistoryBook franchise={franchise} />
+    </>
+  );
 }

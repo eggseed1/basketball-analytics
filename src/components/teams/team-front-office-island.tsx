@@ -9,6 +9,8 @@ import {
 } from "@/data/front-office/load-team-front-office";
 import { getTeamContracts, getTeamFuturePicks } from "@/data/queries/team-contracts";
 import { getTeamContractValue } from "@/data/runtime/contract-value";
+import { PayrollSalaryStack } from "@/components/teams/viz/payroll-salary-stack";
+import { VizCard } from "@/components/teams/viz/viz-kit";
 
 export async function TeamFrontOfficeIsland({
   teamId,
@@ -83,6 +85,33 @@ export async function TeamFrontOfficeIsland({
         contractValue={getTeamContractValue(franchiseId)}
         contracts={contracts}
       />
+      {contracts && contracts.rows.length && contracts.seasons.length ? (
+        <VizCard
+          title="Who the money is tied up in"
+          accentKey={contracts.code ?? franchiseId}
+          subtitle="Listed salary by season, one block per contract, biggest deals at the bottom. Hover a player to trace his deal across the years."
+          footnote={
+            contracts.salaryCap
+              ? `The dashed line is the ${contracts.capSeason ?? frontOfficeSeason} salary cap. Later caps aren't set yet, so they aren't drawn.`
+              : undefined
+          }
+        >
+          <PayrollSalaryStack
+            seasons={contracts.seasons}
+            salaryCap={contracts.salaryCap ?? null}
+            capSeason={contracts.capSeason ?? null}
+            rows={[...contracts.rows]
+              .sort((a, b) => (b.years[0]?.amount ?? 0) - (a.years[0]?.amount ?? 0))
+              .map((r) => ({
+                id: r.brefId,
+                name: r.name,
+                cells: r.years.map((c) =>
+                  c ? { amount: c.amount, option: c.option, notGuaranteed: c.notGuaranteed ?? false } : null
+                ),
+              }))}
+          />
+        </VizCard>
+      ) : null}
     </div>
   );
 }

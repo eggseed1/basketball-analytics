@@ -7,6 +7,7 @@ import { formatNumber, formatPct } from "@/lib/format";
 import type { RankedMetric } from "@/lib/team-page-metrics";
 import { teamPageHref } from "@/lib/team-destination";
 import { TeamMetricTile } from "@/components/teams/team-metric-tile";
+import { OffenseUsageMap } from "@/components/teams/viz/offense-usage-map";
 import { cn } from "@/lib/utils";
 
 
@@ -81,12 +82,14 @@ export async function TeamOffenseIsland({
   teamKey,
   team,
   offenseMetrics,
+  leagueTs = null,
 }: {
   teamId: string;
   season: string;
   teamKey: string;
   team: TeamSeasonStats;
   offenseMetrics: RankedMetric[];
+  leagueTs?: number | null;
 }) {
   const { getTeamRosterCached } = await import("@/data/queries/request-cache");
   // minGames 0 — early season still shows who has scored.
@@ -208,6 +211,14 @@ export async function TeamOffenseIsland({
           </p>
         </div>
       )}
+
+      <OffenseUsageMap
+        players={board}
+        season={season}
+        teamKey={teamKey}
+        teamTs={team.trueShootingPct ?? null}
+        leagueTs={leagueTs}
+      />
 
       <LinkedHover className="flex flex-col gap-4">
         <div className="sports-card overflow-x-auto p-4 sm:p-5">

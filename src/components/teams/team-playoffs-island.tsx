@@ -11,6 +11,7 @@ import { type, sectionLinkClassName } from "@/lib/design-system";
 import { formatNumber, formatPct } from "@/lib/format";
 import { teamPageHref } from "@/lib/team-destination";
 import { cn } from "@/lib/utils";
+import { PlayoffsSeriesPath } from "@/components/teams/viz/playoffs-series-path";
 
 function findStandingSeed(
   teamId: string,
@@ -68,9 +69,11 @@ function postseasonTotals(teamId: string, season: string) {
 export async function TeamPlayoffsIsland({
   teamId,
   season,
+  teamKey,
 }: {
   teamId: string;
   season: string;
+  teamKey?: string;
 }) {
   const { model, standings } = await getPlayoffBracketModel(season);
   const seed = findStandingSeed(teamId, standings);
@@ -176,6 +179,13 @@ export async function TeamPlayoffsIsland({
           </div>
         ) : null}
       </div>
+
+      <PlayoffsSeriesPath
+        games={totals.games}
+        teamId={teamId}
+        season={season}
+        teamKey={teamKey ?? teamId}
+      />
 
       <PlayoffBracket model={model} />
 

@@ -90,6 +90,40 @@ export function ftRate(row: TeamSeasonStats): number | null {
   return row.freeThrowsAttempted / row.fieldGoalsAttempted;
 }
 
+/** One team's value for a board metric key, as pooled for league ranks. */
+export function leaguePoolValue(id: string, row: TeamSeasonStats): number | undefined {
+  if (id === "diff") return row.avgDiff;
+  if (id === "ts") return row.trueShootingPct;
+  if (id === "efg") return row.effectiveFieldGoalPct;
+  if (id === "fg3") return row.threePointPct;
+  if (id === "3par")
+    return row.fieldGoalsAttempted > 0
+      ? row.threePointersAttempted / row.fieldGoalsAttempted
+      : undefined;
+  if (id === "orb") return row.offensiveReboundPct;
+  if (id === "asttov") return row.assistToTurnover;
+  if (id === "tov") return row.topg;
+  if (id === "opp") return row.oppPpg;
+  if (id === "stl") return row.spg;
+  if (id === "blk") return row.bpg;
+  if (id === "ftr") return ftRate(row) ?? undefined;
+  return undefined;
+}
+
+/** League rank of `row` for a board metric in `league`, or null when either side is missing. */
+export function leagueRankOf(
+  id: string,
+  row: TeamSeasonStats | null,
+  league: TeamSeasonStats[]
+): { rank: number; of: number } | null {
+  if (!row) return null;
+  const value = leaguePoolValue(id, row);
+  if (!finite(value)) return null;
+  const pool = league.map((r) => leaguePoolValue(id, r)).filter((v): v is number => finite(v));
+  if (pool.length < 2) return null;
+  return { rank: rankPool(value, pool, id === "tov" || id === "opp").rank, of: pool.length };
+}
+
 export function buildTeamRankedMetrics(options: {
   team: TeamSeasonStats;
   league: TeamSeasonStats[];
@@ -110,23 +144,7 @@ export function buildTeamRankedMetrics(options: {
     }
     const invert = id === "tov" || id === "opp";
     const pool = league
-      .map((row) => {
-        if (id === "diff") return row.avgDiff;
-        if (id === "ts") return row.trueShootingPct;
-        if (id === "efg") return row.effectiveFieldGoalPct;
-        if (id === "fg3") return row.threePointPct;
-        if (id === "3par")
-          return row.fieldGoalsAttempted > 0
-            ? row.threePointersAttempted / row.fieldGoalsAttempted
-            : undefined;
-        if (id === "orb") return row.offensiveReboundPct;
-        if (id === "asttov") return row.assistToTurnover;
-        if (id === "tov") return row.topg;
-        if (id === "opp") return row.oppPpg;
-        if (id === "stl") return row.spg;
-        if (id === "blk") return row.bpg;
-        return undefined;
-      })
+      .map((row) => leaguePoolValue(id, row))
       .filter((v): v is number => finite(v));
     const ranked = rankPool(trait.context.value, pool, invert);
     const previousFormatted =

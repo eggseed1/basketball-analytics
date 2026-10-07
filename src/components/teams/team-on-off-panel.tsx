@@ -25,6 +25,7 @@ import type { OnOffPhase } from "@/lib/on-off/types";
 import { type } from "@/lib/design-system";
 import { playerHref } from "@/lib/player-page-contract";
 import { cn } from "@/lib/utils";
+import { LineupQuadrant, OnOffSwingChart } from "@/components/teams/viz/on-off-charts";
 
 export type TeamOnOffViewData = {
   rows: OnOffPlayerRow[];
@@ -370,7 +371,7 @@ export function TeamOnOffPanel({
   }, [pairPlayerIds, views.all.rows]);
 
   return (
-    <section id="onoff" className="scroll-mt-16 flex flex-col gap-8" aria-label="On/off">
+    <section id="onoff" data-viz className="scroll-mt-16 flex flex-col gap-8" aria-label="On/off">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div className="min-w-0">
           <h2 className="text-[20px] font-bold tracking-tight">
@@ -389,6 +390,12 @@ export function TeamOnOffPanel({
 
       <div className="flex flex-col gap-3">
         <h3 className={type.heading}>Players</h3>
+        <div className="sports-card p-4 sm:p-5">
+          <h4 className={cn(type.bodySm, "mb-3 font-semibold")}>
+            How the team played with each regular on and off the floor
+          </h4>
+          <OnOffSwingChart key={`${activePhase}-${view}`} rows={data.rows} season={season} />
+        </div>
         <PlayerTable rows={data.rows} season={season} teamAbbr={teamAbbr} />
         <p className={cn(type.caption, "text-muted-foreground")}>
           Swing is on net minus off net. The ± figure is the 95% range from sampling noise, so a
@@ -409,6 +416,9 @@ export function TeamOnOffPanel({
 
       <div className="flex flex-col gap-3">
         <h3 className={type.heading}>Five-man lineups</h3>
+        <div className="sports-card p-4 sm:p-5">
+          <LineupQuadrant key={`${activePhase}-${view}`} lineups={data.lineups} />
+        </div>
         <LineupTable lineups={data.lineups} view={view} />
         <p className={cn(type.caption, "text-muted-foreground")}>
           {view === "clutch"

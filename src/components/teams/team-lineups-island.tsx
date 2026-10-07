@@ -18,6 +18,7 @@ import { type, sectionLinkClassName } from "@/lib/design-system";
 import { formatNumber, formatPct } from "@/lib/format";
 import { teamPageHref } from "@/lib/team-destination";
 import { cn } from "@/lib/utils";
+import { RotationMinutesTreemap } from "@/components/teams/viz/rotation-minutes-treemap";
 
 function valueCell(player: PlayerSeason): string {
   if (hasValidDrblEstimate(player)) {
@@ -350,6 +351,12 @@ export async function TeamLineupsIsland({
         </div>
       ) : (
         <LinkedHover className="flex flex-col gap-4">
+          <RotationMinutesTreemap
+            players={roster.players}
+            ladder={ladder}
+            season={season}
+            teamKey={teamKey}
+          />
           <PositionShapeCard shape={shape} />
 
           <div className="sports-card overflow-x-auto p-4 sm:p-5">
