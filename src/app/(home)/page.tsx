@@ -6,7 +6,7 @@ import {
   canonicalSeasonFromStartYear,
   currentNbaStartYear,
 } from "@/data/providers/historical/season-range";
-import { Suspense } from "react";
+import { Suspense, type ReactNode } from "react";
 
 import { AnalyticsDesk } from "@/components/home/analytics-desk";
 import { MotionReveal } from "@/components/continuity/motion-reveal";
@@ -18,6 +18,7 @@ import { InjuryReportPanel } from "@/components/home/injury-report-panel";
 import { LeagueMovesPanel } from "@/components/home/league-moves-panel";
 import { SeasonPulsePanel } from "@/components/home/season-pulse-panel";
 import { HomeStandingsPanel } from "@/components/home/home-standings-panel";
+import { HomeModuleSkeleton } from "@/components/home/home-module-skeleton";
 import { SentimentMoversPanel } from "@/components/home/sentiment-movers-panel";
 import { TopPerformersPanel } from "@/components/home/top-performers-panel";
 import { SeasonMomentCard, SeasonPhaseBar } from "@/components/home/season-moment";
@@ -38,14 +39,6 @@ export const metadata = {
 // Cache the assembled homepage briefly at the route level. Provider-specific
 // live-score fetches still keep their own shorter refresh policy.
 export const revalidate = 60;
-
-function BlockSkeleton({ className }: { className?: string }) {
-  return (
-    <div
-      className={`animate-pulse rounded-[var(--radius-md)] bg-[color-mix(in_oklab,var(--foreground)_8%,transparent)] ${className ?? "h-56"}`}
-    />
-  );
-}
 
 async function HomeCalendar({ season }: { season: string }) {
   return <WeekGameCalendar season={season} />;
@@ -185,6 +178,18 @@ async function HomeBracket({ season }: { season: string }) {
   return <PlayoffBracket model={value.model} />;
 }
 
+/**
+ * Streamed module. Its placeholder already holds the card frame, so
+ * `data-motion-static` skips the card fade and only the contents animate in.
+ */
+function Streamed({ id, children }: { id: HomeModuleId; children: ReactNode }) {
+  return (
+    <div data-motion-static className="contents">
+      <Suspense fallback={<HomeModuleSkeleton id={id} />}>{children}</Suspense>
+    </div>
+  );
+}
+
 function renderModule(id: HomeModuleId, moment: HomeSeasonMoment, season: string) {
   const offseason = moment.phase === "draft-free-agency" || moment.phase === "offseason";
   switch (id) {
@@ -194,77 +199,77 @@ function renderModule(id: HomeModuleId, moment: HomeSeasonMoment, season: string
       return <SeasonPhaseBar key={id} moment={moment} />;
     case "calendar":
       return (
-        <Suspense key={id} fallback={<BlockSkeleton className="h-52" />}>
+        <Streamed key={id} id={id}>
           <HomeCalendar season={season} />
-        </Suspense>
+        </Streamed>
       );
     case "bracket":
       return (
-        <Suspense key={id} fallback={<BlockSkeleton className="h-72" />}>
+        <Streamed key={id} id={id}>
           <HomeBracket season={moment.season} />
-        </Suspense>
+        </Streamed>
       );
     case "standings":
       return (
-        <Suspense key={id} fallback={<BlockSkeleton className="h-72" />}>
+        <Streamed key={id} id={id}>
           <HomeStandings season={season} />
-        </Suspense>
+        </Streamed>
       );
     case "standings-race":
       return (
-        <Suspense key={id} fallback={<BlockSkeleton className="h-80" />}>
+        <Streamed key={id} id={id}>
           <HomeStandingsPanel season={season} race />
-        </Suspense>
+        </Streamed>
       );
     case "findings":
       return (
-        <Suspense key={id} fallback={<BlockSkeleton className="h-40" />}>
+        <Streamed key={id} id={id}>
           <HomeFindings />
-        </Suspense>
+        </Streamed>
       );
     case "above-norm":
       return (
-        <Suspense key={id} fallback={<BlockSkeleton className="h-48" />}>
+        <Streamed key={id} id={id}>
           <HomeAboveNorm />
-        </Suspense>
+        </Streamed>
       );
     case "injuries":
       return (
-        <Suspense key={id} fallback={<BlockSkeleton className="h-64" />}>
+        <Streamed key={id} id={id}>
           <HomeInjuries />
-        </Suspense>
+        </Streamed>
       );
     case "league-moves":
       return (
-        <Suspense key={id} fallback={<BlockSkeleton className="h-56" />}>
+        <Streamed key={id} id={id}>
           <HomeLeagueMoves />
-        </Suspense>
+        </Streamed>
       );
     case "top-performers":
       return (
-        <Suspense key={id} fallback={<BlockSkeleton className="h-80" />}>
+        <Streamed key={id} id={id}>
           <HomeTopPerformers />
-        </Suspense>
+        </Streamed>
       );
     case "hot-cold":
       return (
-        <Suspense key={id} fallback={<BlockSkeleton className="h-40" />}>
+        <Streamed key={id} id={id}>
           <HomeHotCold />
-        </Suspense>
+        </Streamed>
       );
     case "transactions":
       return (
-        <Suspense key={id} fallback={<BlockSkeleton className="h-36" />}>
+        <Streamed key={id} id={id}>
           <OffseasonPulsePanel limit={offseason ? 8 : 5} />
-        </Suspense>
+        </Streamed>
       );
     case "watchlist":
       return <WatchlistPanel key={id} />;
     case "sentiment":
       return (
-        <Suspense key={id} fallback={<BlockSkeleton className="h-48" />}>
+        <Streamed key={id} id={id}>
           <SentimentMoversPanel />
-        </Suspense>
+        </Streamed>
       );
     case "season-glance":
       return <SeasonPulsePanel key={id} />;

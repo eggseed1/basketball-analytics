@@ -1,10 +1,11 @@
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
 
-import { StandingsDiffBarsLazy } from "@/components/charts/recharts-lazy";
+import { StandingsDiffBoard } from "@/components/charts/standings-diff-board";
 import { PageHeader } from "@/components/layout/page-header";
 import { StandingsConferenceTable } from "@/components/standings/standings-conference-table";
-import { EmptyState, Skeleton } from "@/components/ui/empty-state";
+import { EmptyState } from "@/components/ui/empty-state";
+import { StandingsBodySkeleton } from "@/components/standings/standings-body-skeleton";
 import { getLeagueStandings } from "@/data/queries";
 import {
   canonicalSeasonFromStartYear,
@@ -71,7 +72,7 @@ async function StandingsBody({ season }: { season: string }) {
           has not started.
         </p>
       ) : null}
-      <StandingsDiffBarsLazy season={data.season} east={east} west={west} />
+      <StandingsDiffBoard season={data.season} east={east} west={west} />
       <div className="grid gap-4 lg:grid-cols-2">
         <StandingsConferenceTable title="Eastern Conference" rows={east} />
         <StandingsConferenceTable title="Western Conference" rows={west} />
@@ -108,12 +109,7 @@ export default async function StandingsPage({ searchParams }: PageProps) {
       />
 
       <Suspense
-        fallback={
-          <div className="grid gap-4 lg:grid-cols-2">
-            <Skeleton className="h-80 w-full" />
-            <Skeleton className="h-80 w-full" />
-          </div>
-        }
+        fallback={<StandingsBodySkeleton />}
       >
         <StandingsBody season={season} />
       </Suspense>

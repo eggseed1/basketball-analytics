@@ -7,6 +7,7 @@ import assert from "node:assert/strict";
 import { getRuntimeSnapshotGames } from "../src/data/runtime/game-snapshot";
 import type { Game } from "../src/data/types";
 import {
+  guessHomeSeasonPhase,
   homeLayoutForPhase,
   resolveHomeSeasonMoment,
   scheduleMarks,
@@ -150,6 +151,16 @@ assert.equal(homeLayoutForPhase("preseason").top[0], "moment");
 assert.equal(homeLayoutForPhase("stretch-run").main[0], "standings-race");
 assert.ok(homeLayoutForPhase("playoffs").top.includes("bracket"));
 assert.ok(!homeLayoutForPhase("playoffs").side.includes("standings"));
+
+// The loading skeleton's calendar guess lands on the phase the real dates give.
+assert.equal(guessHomeSeasonPhase("2026-10-07"), "preseason");
+assert.equal(guessHomeSeasonPhase("2026-10-28"), "opening-weeks");
+assert.equal(guessHomeSeasonPhase("2027-01-15"), "regular-season");
+assert.equal(guessHomeSeasonPhase("2027-03-30"), "stretch-run");
+assert.equal(guessHomeSeasonPhase("2027-04-15"), "play-in");
+assert.equal(guessHomeSeasonPhase("2027-05-10"), "playoffs");
+assert.equal(guessHomeSeasonPhase("2027-07-04"), "draft-free-agency");
+assert.equal(guessHomeSeasonPhase("2027-08-20"), "offseason");
 
 // Bundled data: 2025-26 has a decided Finals and 2026-27 has its real dates.
 const real = scheduleMarks("2025-26", getRuntimeSnapshotGames("2025-26"));

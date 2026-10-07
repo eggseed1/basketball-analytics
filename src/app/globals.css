@@ -2286,9 +2286,9 @@ html[data-scrolling] body {
       opacity 200ms ease;
   }
 
-  [data-motion-page] > :not(.hof-page-frame, [data-motion-stack], :has(.sports-card, .glass-surface, .glass-card, .frost-surface, .frost-surface-soft, .frost-surface-muted)),
+  [data-motion-page] > :not(.hof-page-frame, [data-motion-stack], [data-skeleton], [data-motion-static], :has(.sports-card, .glass-surface, .glass-card, .frost-surface, .frost-surface-soft, .frost-surface-muted)),
   [data-motion-page] :is(.hof-page-frame__inner, [data-motion-stack]) > :not([data-motion-stack], :has(.sports-card, .glass-surface, .glass-card, .frost-surface, .frost-surface-soft, .frost-surface-muted)),
-  [data-motion-page] :is(.sports-card, .glass-surface, .glass-card):not(a, :is(.sports-card, .glass-surface, .glass-card) *) {
+  [data-motion-page] :is(.sports-card, .glass-surface, .glass-card):not(a, [data-skeleton], [data-motion-static] *, :is(.sports-card, .glass-surface, .glass-card) *) {
     transition:
       opacity 420ms ease,
       translate 560ms var(--motion-ease);
@@ -2398,9 +2398,9 @@ html[data-scrolling] body {
   }
 
   @starting-style {
-    [data-motion-page] > :not(.hof-page-frame, [data-motion-stack], :has(.sports-card, .glass-surface, .glass-card, .frost-surface, .frost-surface-soft, .frost-surface-muted)),
+    [data-motion-page] > :not(.hof-page-frame, [data-motion-stack], [data-skeleton], [data-motion-static], :has(.sports-card, .glass-surface, .glass-card, .frost-surface, .frost-surface-soft, .frost-surface-muted)),
     [data-motion-page] :is(.hof-page-frame__inner, [data-motion-stack]) > :not([data-motion-stack], :has(.sports-card, .glass-surface, .glass-card, .frost-surface, .frost-surface-soft, .frost-surface-muted)),
-    [data-motion-page] :is(.sports-card, .glass-surface, .glass-card):not(a, :is(.sports-card, .glass-surface, .glass-card) *) {
+    [data-motion-page] :is(.sports-card, .glass-surface, .glass-card):not(a, [data-skeleton], [data-motion-static] *, :is(.sports-card, .glass-surface, .glass-card) *) {
       opacity: 0;
       translate: 0 14px;
     }

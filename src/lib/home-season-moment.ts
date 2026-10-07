@@ -303,3 +303,21 @@ const LAYOUTS: Record<HomeSeasonPhase, HomeLayout> = {
 export function homeLayoutForPhase(phase: HomeSeasonPhase): HomeLayout {
   return LAYOUTS[phase];
 }
+
+/**
+ * Phase from the calendar alone, for the loading skeleton that paints before
+ * the schedule is read. Dates are typical league marks; the page itself
+ * always uses resolveHomeSeasonMoment.
+ */
+export function guessHomeSeasonPhase(today: string): HomeSeasonPhase {
+  const md = today.slice(5, 10);
+  if (md >= "11-10") return "regular-season";
+  if (md >= "10-20") return "opening-weeks";
+  if (md >= "10-01") return "preseason";
+  if (md >= "08-01") return "offseason";
+  if (md >= "06-22") return "draft-free-agency";
+  if (md >= "04-18") return "playoffs";
+  if (md >= "04-13") return "play-in";
+  if (md >= "03-15") return "stretch-run";
+  return "regular-season";
+}

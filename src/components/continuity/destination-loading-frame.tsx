@@ -43,12 +43,15 @@ export function DestinationLoadingFrame({
   title,
   subtitle,
   className,
+  children,
 }: {
   /** Match the real page header's eyebrow so the title lands in the same place. */
   eyebrow?: string;
   title: string;
   subtitle?: string;
   className?: string;
+  /** Body placeholder shaped like the page; defaults to three generic blocks. */
+  children?: ReactNode;
 }) {
   return (
     <main
@@ -66,11 +69,13 @@ export function DestinationLoadingFrame({
         subtitle={subtitle}
         actions={<LoadingStatus>Loading</LoadingStatus>}
       />
-      <div className="grid gap-3">
-        <SkeletonBlock className="h-24" />
-        <SkeletonBlock className="h-40" />
-        <SkeletonBlock className="h-32" />
-      </div>
+      {children ?? (
+        <div className="grid gap-3">
+          <SkeletonBlock className="h-24" />
+          <SkeletonBlock className="h-40" />
+          <SkeletonBlock className="h-32" />
+        </div>
+      )}
       <p className="sr-only">Loading {title}…</p>
     </main>
   );

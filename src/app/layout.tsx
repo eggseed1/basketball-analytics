@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
-import Script from "next/script";
 import { Geist, Geist_Mono } from "next/font/google";
 
 import { OwnerThemeProvider } from "@/components/design-system/theme-provider";
@@ -66,9 +65,10 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable}`}
     >
       <body className="min-h-dvh min-w-0 overflow-x-clip bg-background font-sans text-base text-foreground">
-        <Script
+        {/* Plain <script> so it runs before first paint; next/script's
+            beforeInteractive holds inline code until the runtime loads. */}
+        <script
           id="owner-theme-boot"
-          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{ __html: OWNER_THEME_BOOT_SCRIPT }}
         />
         <OwnerThemeProvider>

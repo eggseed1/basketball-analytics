@@ -127,7 +127,7 @@ export function WatchlistPanel() {
       </div>
 
       {!ready ? (
-        <div className="type-body-sm py-2 text-muted-foreground">Loading…</div>
+        <div className="type-body-sm flex min-h-[132px] items-center justify-center text-muted-foreground">Loading…</div>
       ) : items.length === 0 ? (
         <button
           type="button"

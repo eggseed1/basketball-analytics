@@ -105,13 +105,29 @@ export const CategoryBarBoardLazy = dynamic(
   { ssr: false, loading: () => pulse }
 );
 
-export const SentimentTrendChartLazy = dynamic(
+const SentimentTrendChartDynamic = dynamic(
   () =>
     import("@/components/players/sentiment-trend-chart").then((m) => ({
       default: m.SentimentTrendChart,
     })),
-  { ssr: false, loading: () => pulse }
+  { ssr: false, loading: () => <div className="flex-1 animate-pulse rounded-lg bg-muted/40" /> }
 );
+
+/** Caption row (16px line plus the 6px gap) above the plot when showLabel is on. */
+const TREND_LABEL_PX = 22;
+
+/** Reserves the chart's final height before it loads, so the panel doesn't grow. */
+export function SentimentTrendChartLazy(props: ComponentProps<typeof SentimentTrendChartDynamic>) {
+  const { points, height = 160, showLabel = true } = props;
+  return (
+    <div
+      className="flex flex-col"
+      style={{ minHeight: points.length ? height + (showLabel ? TREND_LABEL_PX : 0) : undefined }}
+    >
+      <SentimentTrendChartDynamic {...props} />
+    </div>
+  );
+}
 
 export const SentimentGameChartLazy = dynamic(
   () =>
@@ -187,7 +203,7 @@ export const StandingsDiffBarsLazy = dynamic(
     import("@/components/charts/standings-diff-bars").then((m) => ({
       default: m.StandingsDiffBars,
     })),
-  { ssr: false, loading: () => pulse }
+  { ssr: false, loading: () => <div className="h-full animate-pulse rounded-lg bg-muted/40" /> }
 );
 
 export const TradeImpactBarsLazy = dynamic(

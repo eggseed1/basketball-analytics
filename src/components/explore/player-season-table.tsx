@@ -300,7 +300,10 @@ export function PlayerSeasonTable({
           <div ref={frozenColRef} className="flex h-full min-h-0 flex-col">
             <div
               data-frozen-head
-              className="flex shrink-0 flex-col justify-end border-b border-white/45 px-1.5 dark:border-white/12 sm:px-2"
+              className={cn(
+                "flex shrink-0 flex-col justify-end border-b border-white/45 px-1.5 dark:border-white/12 sm:px-2",
+                grouped && "h-[55px] sm:h-[73px]"
+              )}
             >
               <button
                 type="button"
@@ -470,7 +473,7 @@ export function PlayerSeasonTable({
                 return (
                   <TableRow
                     key={rowKey(player)}
-                    className="hover:bg-transparent"
+                    className="h-7 hover:bg-transparent sm:h-[52px]"
                   >
                     <TableCell
                       aria-hidden

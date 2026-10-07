@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  useEffect,
-  useRef,
-  type CSSProperties,
-  type ReactNode,
-} from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 
 import { useOwnerTheme } from "@/components/design-system/theme-provider";
 import { cn } from "@/lib/utils";
@@ -69,8 +64,10 @@ export function BoardScrollFrame({
   return (
     <div
       ref={frameRef}
-      className={cn("board-scroll-frame", className)}
-      style={{ "--board-frozen-w": "9rem" } as CSSProperties}
+      className={cn(
+        "board-scroll-frame [--board-frozen-w:170px] sm:[--board-frozen-w:253px]",
+        className
+      )}
     >
       <div className="board-scroll-host">{children}</div>
       <div

@@ -13,6 +13,8 @@ type NewsApiResponse = {
   error?: string;
 };
 
+const NEWS_LIMIT = 6;
+
 /** NBA / analytics news desk - credited outlet + byline, with manual refresh. */
 export function AnalyticsDesk({
   articles: initialArticles,
@@ -41,8 +43,8 @@ export function AnalyticsDesk({
     setIsPending(true);
     try {
       const qs = fresh
-        ? "/api/news/analytics?limit=6&fresh=1"
-        : "/api/news/analytics?limit=6";
+        ? `/api/news/analytics?limit=${NEWS_LIMIT}&fresh=1`
+        : `/api/news/analytics?limit=${NEWS_LIMIT}`;
       const res = await fetch(qs, { cache: fresh ? "no-store" : "default" });
       const json = (await res.json()) as NewsApiResponse;
       if (!res.ok) {
@@ -127,15 +129,18 @@ export function AnalyticsDesk({
       <div
         className={
           embedded
-            ? "-mx-4 flex flex-col divide-y divide-border/70 sm:-mx-5"
+            ? "-mx-4 -mb-4 flex flex-col divide-y divide-border/70 sm:-mx-5 sm:-mb-5"
             : "flex flex-col gap-px overflow-hidden rounded-[9px] border border-black/5 bg-black/5"
         }
         aria-busy="true"
         aria-label="Loading recent news"
       >
-        {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className={embedded ? "px-4 py-3.5 sm:px-5" : "bg-card px-4 py-3.5"}>
-                    <div className="mb-2 h-4 w-[80%] animate-pulse rounded bg-secondary" />
+        {Array.from({ length: embedded ? NEWS_LIMIT : 4 }).map((_, i) => (
+          <div
+            key={i}
+            className={embedded ? "flex h-[103px] flex-col justify-center px-4 sm:px-5 lg:h-[86px]" : "bg-card px-4 py-3.5"}
+          >
+            <div className="mb-2 h-4 w-[80%] animate-pulse rounded bg-secondary" />
             <div className="h-3 w-[40%] animate-pulse rounded bg-secondary" />
           </div>
         ))}
