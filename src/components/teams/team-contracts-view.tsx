@@ -370,7 +370,7 @@ function PayrollNotesList({ data, teamKey }: { data: TeamContractsView; teamKey:
 function Panel({ title, id, aside, children, className }: { title: string; id: string; aside?: ReactNode; children: ReactNode; className?: string }) {
   return (
     <section
-      className={cn("flex min-w-0 flex-col gap-3 rounded-lg border border-border/70 bg-card/60 p-4 sm:p-5", className)}
+      className={cn("sports-card flex min-w-0 flex-col gap-3 p-4 sm:p-5", className)}
       aria-labelledby={id}
     >
       <div className="flex flex-wrap items-baseline justify-between gap-2">

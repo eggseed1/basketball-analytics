@@ -112,7 +112,7 @@ export function FranchiseHistoryTable({
         ))}
       </div>
 
-      <div className="overflow-x-auto rounded-md border border-border bg-card">
+      <div className="sports-card overflow-x-auto">
         <Table container={false} className="min-w-[900px] text-[12px]">
           <TableHeader className="sticky top-0 z-20 border-b border-border bg-card">
             <TableRow className="hover:bg-transparent">

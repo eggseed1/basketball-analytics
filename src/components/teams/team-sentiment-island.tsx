@@ -10,7 +10,7 @@ import {
 } from "@/components/sentiment/sentiment-source";
 import { getTeamSentimentBoard } from "@/data/queries/team-sentiment";
 import type { CuratedSentimentLane } from "@/sentiment/curated-types";
-import { textLinkClassName, type } from "@/lib/design-system";
+import { textLinkClassName, type, sectionLinkClassName } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 
 function LaneStat({ label, lane }: { label: string; lane?: CuratedSentimentLane }) {
@@ -58,7 +58,7 @@ export async function TeamSentimentIsland({ teamId }: { teamId: string }) {
             {formatSentimentDate(board.snapshotDate, true)}.
           </p>
         </div>
-        <Link href="/sentiment?view=teams" className={cn(type.caption, "font-semibold underline")}>
+        <Link href="/sentiment?view=teams" className={cn(type.caption, sectionLinkClassName)}>
           All teams <span data-motion-arrow aria-hidden>→</span>
         </Link>
       </div>

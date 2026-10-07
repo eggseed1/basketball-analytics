@@ -13,7 +13,7 @@ import {
   rotationMinutesPct,
   rotationStartRate,
 } from "@/lib/team-explorer";
-import { type } from "@/lib/design-system";
+import { type, sectionLinkClassName } from "@/lib/design-system";
 import { formatNumber, formatPct } from "@/lib/format";
 import { teamPageHref } from "@/lib/team-destination";
 import { cn } from "@/lib/utils";
@@ -315,19 +315,19 @@ export async function TeamLineupsIsland({
         <div className="flex flex-wrap gap-3">
           <TransitionLink
             href={playersHref}
-            className={cn(type.caption, "font-semibold underline")}
+            className={cn(type.caption, sectionLinkClassName)}
           >
             Full roster <span data-motion-arrow aria-hidden>→</span>
           </TransitionLink>
           <TransitionLink
             href={onOffHref}
-            className={cn(type.caption, "font-semibold underline")}
+            className={cn(type.caption, sectionLinkClassName)}
           >
             On/off <span data-motion-arrow aria-hidden>→</span>
           </TransitionLink>
           <TransitionLink
             href={defenseHref}
-            className={cn(type.caption, "font-semibold underline")}
+            className={cn(type.caption, sectionLinkClassName)}
           >
             Hustle / defense <span data-motion-arrow aria-hidden>→</span>
           </TransitionLink>

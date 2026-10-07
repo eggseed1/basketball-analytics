@@ -274,13 +274,13 @@ export function MovementClusterCard({
   return (
     <article
       className={cn(
-        "flex flex-col gap-2 rounded-md border frost-surface-soft",
-        compact ? "px-2.5 py-2" : "px-3 py-3",
-        fellThrough
-          ? "border-border/70 bg-muted/20"
-          : resolved
-            ? "border-sky-500/35 bg-sky-500/[0.06]"
-            : "border-border/70"
+        "flex flex-col gap-2",
+        compact
+          ? cn(
+              "rounded-md border frost-surface-soft px-2.5 py-2",
+              fellThrough ? "border-border/70 bg-muted/20" : resolved ? "border-sky-500/35 bg-sky-500/[0.06]" : "border-border/70"
+            )
+          : cn("sports-card px-4 py-3.5", resolved && !fellThrough && "ring-1 ring-inset ring-sky-500/30")
       )}
     >
       <div className="flex flex-wrap items-center gap-2">

@@ -3,7 +3,7 @@ import { TransitionLink } from "@/components/continuity/query-nav";
 import { withBudget } from "@/data/queries/budget";
 import { getTeamRosterCached } from "@/data/queries/request-cache";
 import type { PlayerSeason } from "@/data/types";
-import { type } from "@/lib/design-system";
+import { type, sectionLinkClassName } from "@/lib/design-system";
 import { formatNumber, formatPct } from "@/lib/format";
 import { MID_SEASON_MOVES_NOTE } from "@/lib/team-explorer";
 import { teamPageHref } from "@/lib/team-destination";
@@ -65,7 +65,7 @@ export async function TeamScoringShareIsland({
         </div>
         <TransitionLink
           href={teamPageHref(teamId, { season, tab: "players" })}
-          className={cn(type.caption, "font-semibold underline")}
+          className={cn(type.caption, sectionLinkClassName)}
         >
           Full roster <span data-motion-arrow aria-hidden>→</span>
         </TransitionLink>

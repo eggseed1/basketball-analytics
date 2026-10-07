@@ -24,8 +24,8 @@ export function AnalysisBoard({
   return (
     <section
       className={cn(
-        "flex flex-col border bg-card",
-        active ? "border-foreground/60" : "border-border",
+        "sports-card flex flex-col overflow-hidden",
+        active && "ring-1 ring-inset ring-foreground/40",
         className
       )}
     >

@@ -2,7 +2,7 @@ import type { CSSProperties } from "react";
 
 import { TeamLogo } from "@/components/brand/team-logo";
 import { TransitionLink } from "@/components/continuity/query-nav";
-import { type } from "@/lib/design-system";
+import { type, sectionLinkClassName } from "@/lib/design-system";
 import { teamPageHref } from "@/lib/team-destination";
 import type { ScheduleFacts } from "@/lib/team-overview-data";
 import { cn } from "@/lib/utils";
@@ -107,10 +107,10 @@ export function TeamOpeningNight({
           <div className="mb-2 flex items-baseline justify-between gap-2">
             <p className={cn(type.micro, "font-semibold uppercase tracking-wide text-muted-foreground")}>First games</p>
             <div className="flex gap-3">
-              <TransitionLink href={rosterHref} className={cn(type.caption, "font-semibold underline")}>
+              <TransitionLink href={rosterHref} className={cn(type.caption, sectionLinkClassName)}>
                 Roster <span data-motion-arrow aria-hidden>→</span>
               </TransitionLink>
-              <TransitionLink href={scheduleHref} className={cn(type.caption, "font-semibold underline")}>
+              <TransitionLink href={scheduleHref} className={cn(type.caption, sectionLinkClassName)}>
                 Full schedule <span data-motion-arrow aria-hidden>→</span>
               </TransitionLink>
             </div>

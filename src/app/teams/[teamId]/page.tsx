@@ -7,6 +7,7 @@ import { PageAtmosphere } from "@/components/brand/page-atmosphere";
 import { DestinationClientShell } from "@/components/continuity/destination-client-shell";
 import { DestinationSectionSkeleton } from "@/components/continuity/destination-loading-frame";
 import { MotionReveal } from "@/components/continuity/motion-reveal";
+import { GlassTintScaleProvider } from "@/components/brand/glass-surface";
 import { TeamArcIsland } from "@/components/teams/team-arc-island";
 import { TeamAskLinks } from "@/components/teams/team-ask-links";
 import { TeamAssetsIsland } from "@/components/teams/team-assets-island";
@@ -78,6 +79,9 @@ import {
   parseDestinationHistoryArrival,
 } from "@/themes/history-url";
 import { yieldForStreaming } from "@/lib/stream-yield";
+
+/** Team color stays a hint on cards, close to the neutral home page cards. */
+const TEAM_CARD_TINT_SCALE = 0.3;
 
 interface TeamPageProps {
   params: Promise<{ teamId: string }>;
@@ -345,6 +349,7 @@ export default async function TeamProfilePage({
         colorA={atmosphere?.colorA}
         colorB={atmosphere?.colorB}
       />
+      <GlassTintScaleProvider scale={TEAM_CARD_TINT_SCALE}>
       <main data-motion-page className="site-shell relative z-[1] flex flex-col gap-4 py-5 sm:gap-5 sm:py-7">
         <MotionReveal />
         <TeamDestinationIdentity
@@ -672,6 +677,7 @@ export default async function TeamProfilePage({
           </div>
         ) : null}
       </main>
+      </GlassTintScaleProvider>
     </DestinationClientShell>
   );
 

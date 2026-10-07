@@ -54,7 +54,7 @@ export function AwardDynastyBars({
       aria-labelledby={`${chartId}-title`}
       aria-describedby={`${chartId}-desc`}
       className={cn(
-        "flex flex-col gap-2 rounded-lg border border-border/70 p-3 sm:p-4",
+        "sports-card flex flex-col gap-2 p-3 sm:p-4",
         className
       )}
     >

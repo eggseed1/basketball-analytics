@@ -2,6 +2,7 @@ import { memo, type ReactNode } from "react";
 import { TransitionLink } from "@/components/continuity/query-nav";
 
 import { GlassSurface } from "@/components/brand/glass-surface";
+import { finalWinner, MatchupOrbs } from "@/components/brand/matchup-orbs";
 import { HistoricalTeamMark } from "@/components/brand/historical-team-mark";
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { PlayerIdentity } from "@/components/players/player-identity";
@@ -319,7 +320,7 @@ function MatchupBoard({
       {gameHref ? (
         <TransitionLink
           href={gameHref}
-          className="absolute inset-0 z-0 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="absolute inset-0 z-0 rounded-[inherit] outline-none focus-visible:ring-2 focus-visible:ring-ring"
           aria-label={`${ariaAway} at ${ariaHome}`}
         />
       ) : null}
@@ -368,11 +369,11 @@ export function GameMatchupBoard({
     <GlassSurface
       as="div"
       effect="css"
-      accentColor={matchup.awayWash}
-      accentColorB={matchup.homeWash}
       data-motion={href === false ? undefined : "card"}
-      className={cn("score-row relative px-3 py-3", className)}
+      style={{ background: "var(--strip-card-bg)" }}
+      className={cn("score-row relative isolate px-3 py-3", className)}
     >
+      <MatchupOrbs away={matchup.awayWash} home={matchup.homeWash} winner={finalWinner(game)} />
       <MatchupBoard
         game={game}
         brandPresentation={brandPresentation}
@@ -475,14 +476,14 @@ export const GameScoreCard = memo(function GameScoreCard({
     <GlassSurface
       as="article"
       effect="css"
-      accentColor={matchup.awayWash}
-      accentColorB={matchup.homeWash}
       data-motion="card"
+      style={{ background: "var(--strip-card-bg)" }}
       className={cn(
-        "score-row relative flex flex-col gap-2.5 px-3 py-3",
+        "score-row relative isolate flex flex-col gap-2.5 px-3 py-3",
         className
       )}
     >
+      <MatchupOrbs away={matchup.awayWash} home={matchup.homeWash} winner={finalWinner(game)} />
       <div className="relative">
         <MatchupBoard
           game={game}

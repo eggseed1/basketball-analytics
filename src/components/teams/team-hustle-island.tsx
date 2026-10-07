@@ -8,7 +8,7 @@ import {
   teamHustlePerGame,
 } from "@/data/transformers/hustle-stats";
 import type { PlayerSeason, TeamSeasonStats } from "@/data/types";
-import { type } from "@/lib/design-system";
+import { type, sectionLinkClassName } from "@/lib/design-system";
 import { formatCountingRate, formatNumber } from "@/lib/format";
 import {
   formatRankLine,
@@ -142,13 +142,13 @@ export async function TeamHustleIsland({
         <div className="flex flex-wrap gap-3">
           <TransitionLink
             href={playersHref}
-            className={cn(type.caption, "font-semibold underline")}
+            className={cn(type.caption, sectionLinkClassName)}
           >
             Full roster <span data-motion-arrow aria-hidden>→</span>
           </TransitionLink>
           <TransitionLink
             href={rotationHref}
-            className={cn(type.caption, "font-semibold underline")}
+            className={cn(type.caption, sectionLinkClassName)}
           >
             Rotation <span data-motion-arrow aria-hidden>→</span>
           </TransitionLink>

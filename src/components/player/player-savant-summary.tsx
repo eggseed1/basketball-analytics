@@ -260,7 +260,7 @@ export function PlayerSavantSummary({
   return (
     <section
       aria-labelledby="savant-summary-heading"
-      className="rounded-xl border border-border bg-card p-4"
+      className="sports-card p-4"
     >
       <div className="mb-4 flex flex-col gap-3">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">

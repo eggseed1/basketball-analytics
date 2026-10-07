@@ -8,6 +8,9 @@ import {
 import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { getCanonicalTeamById } from "@/data/identity/team-map";
 import { resolveHistoricalTeamBrand } from "@/lib/historical-team-brand";
+import { TeamAtmosphere } from "@/components/brand/team-atmosphere";
+import { brandWashColor } from "@/lib/game-matchup-theme";
+import { resolveTeamBrand } from "@/lib/nba-brand";
 
 export const dynamic = "force-dynamic";
 
@@ -67,6 +70,8 @@ export default async function TeamMatchupPage({
     seasonType,
   });
   if (!result) notFound();
+  const teamWash = brandWashColor(resolveTeamBrand(teamId));
+  const oppWash = brandWashColor(resolveTeamBrand(oppId));
 
   const { summary, rows, pageCount, total } = result;
   const nameA = labelFor(summary.franchiseA, summary.seasonTo);
@@ -96,177 +101,179 @@ export default async function TeamMatchupPage({
     });
 
   return (
-    <main data-motion-page className="site-shell flex flex-1 flex-col gap-5 py-6 sm:py-8">
-      <MotionReveal />
-      <p>
-        <Link
-          href={`/teams/${encodeURIComponent(summary.franchiseA)}`}
-          className="text-[13px] font-semibold text-muted-foreground"
-          prefetch={false}
-        >
-          ← {teamA?.abbr ?? "Team"}
-        </Link>
-        <span className="mx-2 text-muted-foreground">·</span>
-        <Link
-          href={`/teams/${encodeURIComponent(summary.franchiseB)}`}
-          className="text-[13px] font-semibold text-muted-foreground"
-          prefetch={false}
-        >
-          {teamB?.abbr ?? "Opponent"}
-        </Link>
-      </p>
-
-      <header className="flex flex-col gap-2">
-        <p className="text-[12px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
-          Franchise matchup · {summary.scope}
-        </p>
-        <h1 className="text-[28px] font-bold tracking-tight sm:text-[32px]">
-          {nameA} vs {nameB}
-        </h1>
-        <p className="max-w-2xl text-[15px] text-muted-foreground">
-          Game archive coverage starts in{" "}
-          {summary.scope.replace(/^Since /, "")}. Games are grouped by
-          franchise lineage, and each one shows the team names used at that
-          tip-off rather than today&apos;s successor brands.
-        </p>
-      </header>
-
-      <section
-        className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4"
-        aria-label="Matchup summary"
-      >
-        <Stat label="Games" value={String(summary.games)} />
-        <Stat
-          label={`${teamA?.abbr ?? "A"} wins`}
-          value={String(summary.winsA)}
-        />
-        <Stat
-          label={`${teamB?.abbr ?? "B"} wins`}
-          value={String(summary.winsB)}
-        />
-        <Stat
-          label="Playoffs / OT"
-          value={`${summary.playoffGames} / ${summary.otGames}`}
-        />
-      </section>
-
-      <nav className="flex flex-wrap gap-2 text-[13px]" aria-label="Season type">
-        {(
-          [
-            ["ALL", "All"],
-            ["Regular Season", "Regular season"],
-            ["Playoffs", "Playoffs"],
-          ] as const
-        ).map(([st, label]) => (
+    <TeamAtmosphere colorA={teamWash} colorB={oppWash}>
+      <main data-motion-page className="relative z-[1] site-shell flex flex-1 flex-col gap-5 py-6 sm:py-8">
+        <MotionReveal />
+        <p>
           <Link
-            key={st}
-            href={filterHref(st)}
+            href={`/teams/${encodeURIComponent(summary.franchiseA)}`}
+            className="text-[13px] font-semibold text-muted-foreground"
             prefetch={false}
-            className={
-              seasonType === st
-                ? "rounded-md bg-foreground px-3 py-1.5 font-semibold text-background"
-                : "rounded-md border border-border px-3 py-1.5 font-semibold"
-            }
           >
-            {label}
+            ← {teamA?.abbr ?? "Team"}
           </Link>
-        ))}
-      </nav>
+          <span className="mx-2 text-muted-foreground">·</span>
+          <Link
+            href={`/teams/${encodeURIComponent(summary.franchiseB)}`}
+            className="text-[13px] font-semibold text-muted-foreground"
+            prefetch={false}
+          >
+            {teamB?.abbr ?? "Opponent"}
+          </Link>
+        </p>
 
-      <section className="sports-card flex flex-col gap-3 p-4 sm:p-5">
-        <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <h2 className="text-[17px] font-bold tracking-tight">Games</h2>
-          <p className="text-[12px] text-muted-foreground">
-            {total.toLocaleString()} · page {result.page}/{pageCount} · ≤
-            {result.pageSize} rows
+        <header className="flex flex-col gap-2">
+          <p className="text-[12px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+            Franchise matchup · {summary.scope}
           </p>
-        </div>
-        {rows.length === 0 ? (
-          <p className="text-[13px] text-muted-foreground">
-            No games in this filter.
+          <h1 className="text-[28px] font-bold tracking-tight sm:text-[32px]">
+            {nameA} vs {nameB}
+          </h1>
+          <p className="max-w-2xl text-[15px] text-muted-foreground">
+            Game archive coverage starts in{" "}
+            {summary.scope.replace(/^Since /, "")}. Games are grouped by
+            franchise lineage, and each one shows the team names used at that
+            tip-off rather than today&apos;s successor brands.
           </p>
-        ) : (
-          <ul className="divide-y divide-border">
-            {rows.map((g) => (
-              <li key={g.gameId}>
-                <Link
-                  href={`/games/${encodeURIComponent(g.gameId)}?season=${encodeURIComponent(g.season)}`}
-                  prefetch={false}
-                  className="flex flex-wrap items-baseline justify-between gap-2 py-2.5 text-[13px] hover:bg-secondary/40"
-                >
-                  <span className="font-semibold">
-                    {g.date}
-                    <span className="ml-2 font-normal text-muted-foreground">
-                      {g.awayTricode} @ {g.homeTricode}
-                      {g.ot ? " · OT" : ""}
-                      {g.seasonType.toLowerCase().includes("playoff")
-                        ? " · Playoffs"
-                        : ""}
+        </header>
+
+        <section
+          className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4"
+          aria-label="Matchup summary"
+        >
+          <Stat label="Games" value={String(summary.games)} />
+          <Stat
+            label={`${teamA?.abbr ?? "A"} wins`}
+            value={String(summary.winsA)}
+          />
+          <Stat
+            label={`${teamB?.abbr ?? "B"} wins`}
+            value={String(summary.winsB)}
+          />
+          <Stat
+            label="Playoffs / OT"
+            value={`${summary.playoffGames} / ${summary.otGames}`}
+          />
+        </section>
+
+        <nav className="flex flex-wrap gap-2 text-[13px]" aria-label="Season type">
+          {(
+            [
+              ["ALL", "All"],
+              ["Regular Season", "Regular season"],
+              ["Playoffs", "Playoffs"],
+            ] as const
+          ).map(([st, label]) => (
+            <Link
+              key={st}
+              href={filterHref(st)}
+              prefetch={false}
+              className={
+                seasonType === st
+                  ? "rounded-md bg-foreground px-3 py-1.5 font-semibold text-background"
+                  : "rounded-md border border-border px-3 py-1.5 font-semibold"
+              }
+            >
+              {label}
+            </Link>
+          ))}
+        </nav>
+
+        <section className="sports-card flex flex-col gap-3 p-4 sm:p-5">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <h2 className="text-[17px] font-bold tracking-tight">Games</h2>
+            <p className="text-[12px] text-muted-foreground">
+              {total.toLocaleString()} · page {result.page}/{pageCount} · ≤
+              {result.pageSize} rows
+            </p>
+          </div>
+          {rows.length === 0 ? (
+            <p className="text-[13px] text-muted-foreground">
+              No games in this filter.
+            </p>
+          ) : (
+            <ul className="divide-y divide-border">
+              {rows.map((g) => (
+                <li key={g.gameId}>
+                  <Link
+                    href={`/games/${encodeURIComponent(g.gameId)}?season=${encodeURIComponent(g.season)}`}
+                    prefetch={false}
+                    className="flex flex-wrap items-baseline justify-between gap-2 py-2.5 text-[13px] hover:bg-secondary/40"
+                  >
+                    <span className="font-semibold">
+                      {g.date}
+                      <span className="ml-2 font-normal text-muted-foreground">
+                        {g.awayTricode} @ {g.homeTricode}
+                        {g.ot ? " · OT" : ""}
+                        {g.seasonType.toLowerCase().includes("playoff")
+                          ? " · Playoffs"
+                          : ""}
+                      </span>
                     </span>
-                  </span>
-                  <span className="tabular-nums text-muted-foreground">
-                    {g.awayScore}–{g.homeScore} · {g.season}
-                  </span>
+                    <span className="tabular-nums text-muted-foreground">
+                      {g.awayScore}–{g.homeScore} · {g.season}
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+          {pageCount > 1 ? (
+            <nav className="flex gap-3 text-[13px]" aria-label="Matchup pages">
+              {result.page > 1 ? (
+                <Link
+                  href={matchupHref(summary.franchiseA, summary.franchiseB, {
+                    page: result.page - 1,
+                    seasonType,
+                  })}
+                  prefetch={false}
+                  className="font-semibold underline-offset-2 hover:underline"
+                >
+                  ← Prev
                 </Link>
-              </li>
-            ))}
-          </ul>
-        )}
-        {pageCount > 1 ? (
-          <nav className="flex gap-3 text-[13px]" aria-label="Matchup pages">
-            {result.page > 1 ? (
-              <Link
-                href={matchupHref(summary.franchiseA, summary.franchiseB, {
-                  page: result.page - 1,
-                  seasonType,
-                })}
-                prefetch={false}
-                className="font-semibold underline-offset-2 hover:underline"
-              >
-                ← Prev
-              </Link>
-            ) : null}
-            {result.page < pageCount ? (
-              <Link
-                href={matchupHref(summary.franchiseA, summary.franchiseB, {
-                  page: result.page + 1,
-                  seasonType,
-                })}
-                prefetch={false}
-                className="font-semibold underline-offset-2 hover:underline"
-              >
-                Next <span data-motion-arrow aria-hidden>→</span>
-              </Link>
-            ) : null}
-          </nav>
-        ) : null}
-      </section>
+              ) : null}
+              {result.page < pageCount ? (
+                <Link
+                  href={matchupHref(summary.franchiseA, summary.franchiseB, {
+                    page: result.page + 1,
+                    seasonType,
+                  })}
+                  prefetch={false}
+                  className="font-semibold underline-offset-2 hover:underline"
+                >
+                  Next <span data-motion-arrow aria-hidden>→</span>
+                </Link>
+              ) : null}
+            </nav>
+          ) : null}
+        </section>
 
-      {closest.length > 0 ? (
-        <HighlightList
-          title="Closest on this page"
-          rows={closest}
-          detail={(g) =>
-            `${Math.abs(g.homeScore - g.awayScore)} pt · ${g.awayTricode} ${g.awayScore}–${g.homeScore} ${g.homeTricode}`
-          }
-        />
-      ) : null}
-      {largest.length > 0 ? (
-        <HighlightList
-          title="Largest margins on this page"
-          rows={largest}
-          detail={(g) =>
-            `${Math.abs(g.homeScore - g.awayScore)} pt · ${g.awayTricode} ${g.awayScore}–${g.homeScore} ${g.homeTricode}`
-          }
-        />
-      ) : null}
-    </main>
+        {closest.length > 0 ? (
+          <HighlightList
+            title="Closest on this page"
+            rows={closest}
+            detail={(g) =>
+              `${Math.abs(g.homeScore - g.awayScore)} pt · ${g.awayTricode} ${g.awayScore}–${g.homeScore} ${g.homeTricode}`
+            }
+          />
+        ) : null}
+        {largest.length > 0 ? (
+          <HighlightList
+            title="Largest margins on this page"
+            rows={largest}
+            detail={(g) =>
+              `${Math.abs(g.homeScore - g.awayScore)} pt · ${g.awayTricode} ${g.awayScore}–${g.homeScore} ${g.homeTricode}`
+            }
+          />
+        ) : null}
+      </main>
+    </TeamAtmosphere>
   );
 }
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-md border border-border bg-card px-4 py-3">
+    <div className="sports-card px-4 py-3">
       <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
         {label}
       </p>

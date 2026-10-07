@@ -99,7 +99,7 @@ export function GlassSurface({
       {
         ...rest,
         className: cn(
-          "rounded-md",
+          "glass-surface rounded-[var(--card-radius)]",
           honor === "hof" && HOF_OUTLINE_CLASS,
           className
         ),
@@ -135,7 +135,7 @@ export function GlassSurface({
       turbulenceSeed={1}
       tintColor={liquidTint}
       className={cn(
-        "rounded-md",
+        "glass-surface rounded-[var(--card-radius)]",
         honor === "hof" && HOF_OUTLINE_CLASS,
         className
       )}

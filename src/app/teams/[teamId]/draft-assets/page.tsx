@@ -13,6 +13,8 @@ import {
   resolveTeamFrontOfficeSlice,
 } from "@/data/front-office/load-team-front-office";
 import { resolveTeamBrand } from "@/lib/nba-brand";
+import { TeamAtmosphere } from "@/components/brand/team-atmosphere";
+import { brandAtmosphereColors } from "@/lib/game-matchup-theme";
 
 interface PageProps {
   params: Promise<{ teamId: string }>;
@@ -35,6 +37,8 @@ export default async function TeamDraftAssetsPage({
   const seasonParam = Array.isArray(sp.season) ? sp.season[0] : sp.season;
   const franchiseId = resolveFrontOfficeFranchiseId(teamId);
   if (!franchiseId) notFound();
+  const teamBrand = resolveTeamBrand(franchiseId);
+  const atmosphere = brandAtmosphereColors(teamBrand?.primary, teamBrand?.secondary);
 
   if (seasonParam && !isCurrentFrontOfficeSeason(seasonParam)) {
     return (
@@ -60,43 +64,45 @@ export default async function TeamDraftAssetsPage({
   if (futurePicks || contracts) {
     const teamName = slice?.team.displayName ?? futurePicks?.teamAbbr ?? contracts?.code ?? franchiseId;
     return (
-      <main data-motion-page className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-8">
-        <MotionReveal />
-        <p className="text-sm">
-          <Link href={`/teams/${franchiseId}`} className="underline">
-            ← {teamName}
-          </Link>
-          {" · "}
-          <Link href={`/teams/${franchiseId}/payroll`} className="underline">
-            Payroll &amp; Contracts
-          </Link>
-        </p>
-        <header className="flex flex-col gap-2">
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Draft picks &amp; rights</p>
-          <h1 className="text-3xl font-semibold tracking-tight">{teamName}</h1>
-        </header>
-        {futurePicks ? (
-          <section className="flex flex-col gap-3" aria-labelledby="picks-heading">
-            <h2 id="picks-heading" className="text-lg font-semibold">
-              Future draft picks
-            </h2>
-            <TeamFuturePicksTable data={futurePicks} />
-            <FuturePicksSourceNote data={futurePicks} />
-          </section>
-        ) : null}
-        {contracts ? (
-          <section className="flex flex-col gap-3" aria-labelledby="rights-heading">
-            <h2 id="rights-heading" className="text-lg font-semibold">
-              Draft rights
-            </h2>
-            <p className="text-sm text-muted-foreground">
-              Players the team drafted or traded for who haven&apos;t signed an NBA contract. The team keeps their rights
-              if they come over.
-            </p>
-            <TeamDraftRightsTable data={contracts} />
-          </section>
-        ) : null}
-      </main>
+      <TeamAtmosphere colorA={atmosphere?.colorA} colorB={atmosphere?.colorB}>
+        <main data-motion-page className="relative z-[1] mx-auto flex max-w-6xl flex-col gap-8 px-4 py-8">
+          <MotionReveal />
+          <p className="text-sm">
+            <Link href={`/teams/${franchiseId}`} className="underline">
+              ← {teamName}
+            </Link>
+            {" · "}
+            <Link href={`/teams/${franchiseId}/payroll`} className="underline">
+              Payroll &amp; Contracts
+            </Link>
+          </p>
+          <header className="flex flex-col gap-2">
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Draft picks &amp; rights</p>
+            <h1 className="text-3xl font-semibold tracking-tight">{teamName}</h1>
+          </header>
+          {futurePicks ? (
+            <section className="sports-card flex flex-col gap-3 p-4 sm:p-5" aria-labelledby="picks-heading">
+              <h2 id="picks-heading" className="text-lg font-semibold">
+                Future draft picks
+              </h2>
+              <TeamFuturePicksTable data={futurePicks} />
+              <FuturePicksSourceNote data={futurePicks} />
+            </section>
+          ) : null}
+          {contracts ? (
+            <section className="sports-card flex flex-col gap-3 p-4 sm:p-5" aria-labelledby="rights-heading">
+              <h2 id="rights-heading" className="text-lg font-semibold">
+                Draft rights
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                Players the team drafted or traded for who haven&apos;t signed an NBA contract. The team keeps their rights
+                if they come over.
+              </p>
+              <TeamDraftRightsTable data={contracts} />
+            </section>
+          ) : null}
+        </main>
+      </TeamAtmosphere>
     );
   }
   if (!slice) {
@@ -113,18 +119,20 @@ export default async function TeamDraftAssetsPage({
   const data = buildTeamDraftAssetsPresentation(slice);
 
   return (
-    <main data-motion-page className="mx-auto max-w-6xl px-4 py-8">
-      <MotionReveal />
-      <p className="mb-4 text-sm">
-        <Link href={`/teams/${franchiseId}`} className="underline">
-          ← {data.franchise.displayName}
-        </Link>
-        {" · "}
-        <Link href={`/teams/${franchiseId}/payroll`} className="underline">
-          Payroll &amp; Contracts
-        </Link>
-      </p>
-      <TeamDraftAssetsView data={data} />
-    </main>
+    <TeamAtmosphere colorA={atmosphere?.colorA} colorB={atmosphere?.colorB}>
+      <main data-motion-page className="relative z-[1] mx-auto max-w-6xl px-4 py-8">
+        <MotionReveal />
+        <p className="mb-4 text-sm">
+          <Link href={`/teams/${franchiseId}`} className="underline">
+            ← {data.franchise.displayName}
+          </Link>
+          {" · "}
+          <Link href={`/teams/${franchiseId}/payroll`} className="underline">
+            Payroll &amp; Contracts
+          </Link>
+        </p>
+        <TeamDraftAssetsView data={data} />
+      </main>
+    </TeamAtmosphere>
   );
 }

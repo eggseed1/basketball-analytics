@@ -471,6 +471,23 @@ html.dark[data-surface="glass"] .bg-card {
   background-color: rgb(var(--glass-rgb) / 80%);
 }
 
+/* Boxes inside a card read as home page tiles: rounder, a hairline edge and a
+   faint fill instead of a second frosted card. */
+:where(.sports-card, .glass-surface, .glass-card)
+  :is(div, li, section, article, figure, aside, dl, a, form).border:is(.rounded, .rounded-sm, .rounded-md, .rounded-lg, .rounded-xl):not(.sports-card, .glass-surface, .glass-card) {
+  border-radius: 11px;
+  border-color: color-mix(in oklab, var(--foreground) 7%, transparent);
+}
+
+:where(.sports-card, .glass-surface, .glass-card)
+  :is(div, li, section, article, figure, aside, dl, a, form):is(.frost-surface, .frost-surface-soft, .frost-surface-muted):not(.sports-card, .glass-surface, .glass-card) {
+  background-color: color-mix(in oklab, var(--foreground) 3.5%, transparent);
+}
+
+:where(.sports-card, .glass-surface, .glass-card) .frost-surface-hover:hover:not(.sports-card, .glass-surface, .glass-card) {
+  background-color: color-mix(in oklab, var(--foreground) 6.5%, transparent);
+}
+
 .sports-pill {
   @apply inline-flex items-center gap-1.5 rounded-md bg-secondary px-3 py-1.5 text-sm font-medium text-foreground transition hover:bg-muted;
 }
@@ -479,7 +496,7 @@ html.dark[data-surface="glass"] .bg-card {
 .glass-card {
   background: var(--material-elevated-bg);
   border: 1px solid var(--material-elevated-border);
-  border-radius: var(--radius-md);
+  border-radius: var(--card-radius);
   box-shadow: var(--material-elevated-shadow);
   backdrop-filter: saturate(140%) blur(var(--material-elevated-blur));
   -webkit-backdrop-filter: saturate(140%) blur(var(--material-elevated-blur));

@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { MovementClusterCard } from "@/components/movement/movement-cluster-card";
 import { getTeamMovementFeed } from "@/data/queries/movement-center.server";
-import { type } from "@/lib/design-system";
+import { type, sectionLinkClassName } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 
 export async function TeamMovementIsland({
@@ -30,7 +30,7 @@ export async function TeamMovementIsland({
         </div>
         <Link
           href={`/movement`}
-          className={cn(type.caption, "font-semibold underline")}
+          className={cn(type.caption, sectionLinkClassName)}
         >
           Full board <span data-motion-arrow aria-hidden>→</span>
         </Link>

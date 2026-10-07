@@ -12,6 +12,8 @@ import {
   resolveTeamFrontOfficeSlice,
 } from "@/data/front-office/load-team-front-office";
 import { resolveTeamBrand } from "@/lib/nba-brand";
+import { TeamAtmosphere } from "@/components/brand/team-atmosphere";
+import { brandAtmosphereColors } from "@/lib/game-matchup-theme";
 
 interface PageProps {
   params: Promise<{ teamId: string }>;
@@ -34,6 +36,8 @@ export default async function TeamPayrollPage({
   const seasonParam = Array.isArray(sp.season) ? sp.season[0] : sp.season;
   const franchiseId = resolveFrontOfficeFranchiseId(teamId);
   if (!franchiseId) notFound();
+  const teamBrand = resolveTeamBrand(franchiseId);
+  const atmosphere = brandAtmosphereColors(teamBrand?.primary, teamBrand?.secondary);
 
   if (seasonParam && !isCurrentFrontOfficeSeason(seasonParam)) {
     return (
@@ -60,16 +64,18 @@ export default async function TeamPayrollPage({
     const teamName = presentation?.team.displayName ?? contracts.code;
     const teamKey = (resolveTeamBrand(franchiseId) ?? resolveTeamBrand(contracts.code))?.abbr ?? contracts.code;
     return (
-      <main data-motion-page className="site-shell py-5 sm:py-7">
-        <MotionReveal />
-        <TeamContractsPageView
-          teamName={teamName}
-          teamKey={teamKey}
-          franchiseId={franchiseId}
-          contracts={contracts}
-          capContext={presentation?.capContext}
-        />
-      </main>
+      <TeamAtmosphere colorA={atmosphere?.colorA} colorB={atmosphere?.colorB}>
+        <main data-motion-page className="relative z-[1] site-shell py-5 sm:py-7">
+          <MotionReveal />
+          <TeamContractsPageView
+            teamName={teamName}
+            teamKey={teamKey}
+            franchiseId={franchiseId}
+            contracts={contracts}
+            capContext={presentation?.capContext}
+          />
+        </main>
+      </TeamAtmosphere>
     );
   }
   if (!slice) {
@@ -89,18 +95,20 @@ export default async function TeamPayrollPage({
   const data = buildTeamPayrollPresentation(slice);
 
   return (
-    <main data-motion-page className="site-shell py-5 sm:py-7">
-      <MotionReveal />
-      <p className="mb-4 text-sm">
-        <Link href={`/teams/${franchiseId}`} className="underline">
-          ← {data.team.displayName}
-        </Link>
-        {" · "}
-        <Link href={`/teams/${franchiseId}/draft-assets`} className="underline">
-          Draft Assets
-        </Link>
-      </p>
-      <TeamPayrollView data={data} />
-    </main>
+    <TeamAtmosphere colorA={atmosphere?.colorA} colorB={atmosphere?.colorB}>
+      <main data-motion-page className="relative z-[1] site-shell py-5 sm:py-7">
+        <MotionReveal />
+        <p className="mb-4 text-sm">
+          <Link href={`/teams/${franchiseId}`} className="underline">
+            ← {data.team.displayName}
+          </Link>
+          {" · "}
+          <Link href={`/teams/${franchiseId}/draft-assets`} className="underline">
+            Draft Assets
+          </Link>
+        </p>
+        <TeamPayrollView data={data} />
+      </main>
+    </TeamAtmosphere>
   );
 }

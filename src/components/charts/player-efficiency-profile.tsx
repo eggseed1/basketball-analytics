@@ -34,7 +34,7 @@ export function PlayerEfficiencyProfile({
     <figure
       aria-labelledby={`${chartId}-title`}
       aria-describedby={`${chartId}-desc`}
-      className="flex flex-col gap-4 rounded-xl border border-border bg-card p-4"
+      className="flex flex-col gap-4 sports-card p-4"
     >
       <div>
         <h2 id={`${chartId}-title`} className="text-lg font-semibold">

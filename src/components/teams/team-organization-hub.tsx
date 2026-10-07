@@ -1,4 +1,4 @@
-import { type } from "@/lib/design-system";
+import { type, sectionLinkClassName } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 
 const JUMPS = [
@@ -30,7 +30,7 @@ export function TeamOrganizationHub() {
           <a
             key={item.href}
             href={item.href}
-            className={cn(type.caption, "font-semibold underline")}
+            className={cn(type.caption, sectionLinkClassName)}
           >
             {item.label}
           </a>

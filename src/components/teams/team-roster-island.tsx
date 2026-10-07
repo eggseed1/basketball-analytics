@@ -4,7 +4,7 @@ import { TeamRosterSection } from "@/components/teams/team-roster-section";
 import { currentRosterPlayersMissing } from "@/data/queries/current-team-scope";
 import { getExplorePlayersBoardView } from "@/data/queries/explore-players-board";
 import { getTeamRosterCached } from "@/data/queries/request-cache";
-import { type } from "@/lib/design-system";
+import { type, sectionLinkClassName } from "@/lib/design-system";
 import { formatNumber } from "@/lib/format";
 import {
   buildRosterBuckets,
@@ -95,13 +95,13 @@ export async function TeamRosterIsland({
           <div className="flex flex-wrap gap-3">
             <TransitionLink
               href={rotationHref}
-              className={cn(type.caption, "font-semibold underline")}
+              className={cn(type.caption, sectionLinkClassName)}
             >
               Rotation <span data-motion-arrow aria-hidden>→</span>
             </TransitionLink>
             <TransitionLink
               href={offenseHref}
-              className={cn(type.caption, "font-semibold underline")}
+              className={cn(type.caption, sectionLinkClassName)}
             >
               Offense <span data-motion-arrow aria-hidden>→</span>
             </TransitionLink>

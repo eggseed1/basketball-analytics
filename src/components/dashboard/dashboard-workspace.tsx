@@ -92,7 +92,7 @@ export function DashboardWorkspace({
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex flex-wrap items-center justify-between gap-2 border border-border bg-muted/20 px-3 py-2">
+      <div className="flex flex-wrap items-center justify-between gap-2 rounded-[11px] bg-foreground/[0.035] px-3 py-2 ring-1 ring-inset ring-foreground/[0.06]">
         <p className="text-xs text-muted-foreground">
           {season} · {filtered.length} / {base.length} players (≥{MIN_MINUTES}{" "}
           min) · chart selections cross-filter all boards

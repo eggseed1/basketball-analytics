@@ -1,7 +1,7 @@
 import { TransitionLink } from "@/components/continuity/query-nav";
 import { PlayerIdentity } from "@/components/players/player-identity";
 import type { PlayerSeason, TeamSeasonStats } from "@/data/types";
-import { type } from "@/lib/design-system";
+import { type, sectionLinkClassName } from "@/lib/design-system";
 import { formatNumber, formatPct } from "@/lib/format";
 import {
   formatRankLine,
@@ -175,13 +175,13 @@ export async function TeamOffenseIsland({
         <div className="flex flex-wrap gap-3">
           <TransitionLink
             href={playersHref}
-            className={cn(type.caption, "font-semibold underline")}
+            className={cn(type.caption, sectionLinkClassName)}
           >
             Full roster <span data-motion-arrow aria-hidden>→</span>
           </TransitionLink>
           <TransitionLink
             href={rotationHref}
-            className={cn(type.caption, "font-semibold underline")}
+            className={cn(type.caption, sectionLinkClassName)}
           >
             Rotation <span data-motion-arrow aria-hidden>→</span>
           </TransitionLink>

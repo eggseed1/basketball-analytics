@@ -7,7 +7,7 @@ import {
   paginateSnapshotTeamGames,
   teamSnapshotGames,
 } from "@/lib/team-snapshot-games";
-import { type } from "@/lib/design-system";
+import { type, sectionLinkClassName } from "@/lib/design-system";
 import { formatNumber, formatPct } from "@/lib/format";
 import { teamPageHref } from "@/lib/team-destination";
 import { cn } from "@/lib/utils";
@@ -100,7 +100,7 @@ export async function TeamPlayoffsIsland({
         </div>
         <TransitionLink
           href={gamesHref}
-          className={cn(type.caption, "font-semibold underline")}
+          className={cn(type.caption, sectionLinkClassName)}
         >
           Regular-season games <span data-motion-arrow aria-hidden>→</span>
         </TransitionLink>
@@ -182,7 +182,7 @@ export async function TeamPlayoffsIsland({
           </h3>
           <TransitionLink
             href={`/explore/bracket?season=${encodeURIComponent(season)}`}
-            className={cn(type.caption, "font-semibold underline")}
+            className={cn(type.caption, sectionLinkClassName)}
           >
             League bracket <span data-motion-arrow aria-hidden>→</span>
           </TransitionLink>

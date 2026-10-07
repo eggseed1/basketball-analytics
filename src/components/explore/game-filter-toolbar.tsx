@@ -62,7 +62,7 @@ export function GameFilterToolbar({
 
   return (
     <form
-      className="grid gap-4 rounded-xl border border-border bg-card p-4 sm:grid-cols-2 lg:grid-cols-4"
+      className="grid gap-4 sports-card p-4 sm:grid-cols-2 lg:grid-cols-4"
       aria-label="Game filters"
       onSubmit={(event) => {
         event.preventDefault();

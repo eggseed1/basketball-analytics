@@ -1,5 +1,5 @@
 import { TransitionLink } from "@/components/continuity/query-nav";
-import { type } from "@/lib/design-system";
+import { type, sectionLinkClassName } from "@/lib/design-system";
 import { formatNumber } from "@/lib/format";
 import {
   formatRankLine,
@@ -61,13 +61,13 @@ export function TeamAllStatsRankStrip({
         <div className="flex flex-wrap gap-3">
           <TransitionLink
             href={offenseHref}
-            className={cn(type.caption, "font-semibold underline")}
+            className={cn(type.caption, sectionLinkClassName)}
           >
             Offense <span data-motion-arrow aria-hidden>→</span>
           </TransitionLink>
           <TransitionLink
             href={defenseHref}
-            className={cn(type.caption, "font-semibold underline")}
+            className={cn(type.caption, sectionLinkClassName)}
           >
             Defense <span data-motion-arrow aria-hidden>→</span>
           </TransitionLink>

@@ -71,7 +71,7 @@ export function TeamFilterToolbar({
 
   return (
     <form
-      className="grid gap-4 rounded-xl border border-border bg-card p-4 sm:grid-cols-2 lg:grid-cols-4"
+      className="grid gap-4 sports-card p-4 sm:grid-cols-2 lg:grid-cols-4"
       aria-label="Team filters"
       data-pending={isPending ? "true" : "false"}
       onSubmit={(e) => e.preventDefault()}

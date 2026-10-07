@@ -1,10 +1,9 @@
 "use client";
 
-import type { CSSProperties } from "react";
-
 import { TransitionLink } from "@/components/continuity/query-nav";
 
 import { GlassSurface } from "@/components/brand/glass-surface";
+import { MatchupOrbs } from "@/components/brand/matchup-orbs";
 import { HistoricalTeamMark } from "@/components/brand/historical-team-mark";
 import { TeamIdentity } from "@/components/teams/team-identity";
 import type { GameSummary } from "@/data/types";
@@ -156,40 +155,15 @@ export function HomeGameStripCard({ game }: { game: GameSummary }) {
         ? "home"
         : "away"
       : null;
-  const orbStrength = (side: "home" | "away") =>
-    winner == null ? 0.8 : winner === side ? 1 : 0.45;
 
   return (
     <GlassSurface
       as="article"
       data-motion="card"
-      className="relative flex w-max min-w-[168px] shrink-0 flex-col gap-2.5 rounded-[var(--card-radius)] px-4 py-3.5"
+      className="relative isolate flex w-max min-w-[168px] shrink-0 flex-col gap-2.5 px-4 py-3.5"
       style={{ background: "var(--strip-card-bg)" }}
     >
-      <span
-        aria-hidden
-        className="strip-orb"
-        style={
-          {
-            left: -60,
-            top: 2,
-            "--orb-color": matchup.awayWash,
-            "--orb-strength": orbStrength("away"),
-          } as CSSProperties
-        }
-      />
-      <span
-        aria-hidden
-        className="strip-orb strip-orb--b"
-        style={
-          {
-            right: -60,
-            bottom: -16,
-            "--orb-color": matchup.homeWash,
-            "--orb-strength": orbStrength("home"),
-          } as CSSProperties
-        }
-      />
+      <MatchupOrbs away={matchup.awayWash} home={matchup.homeWash} winner={winner} />
       <TransitionLink
         href={`/games/${game.id}`}
         className="absolute inset-0 z-0 rounded-[inherit]"

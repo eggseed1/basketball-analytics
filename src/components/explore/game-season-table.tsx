@@ -117,7 +117,7 @@ export function GameSeasonTable({ games }: GameSeasonTableProps) {
         </div>
       </div>
 
-      <div className="overflow-x-auto rounded-md border border-border bg-card">
+      <div className="sports-card overflow-x-auto">
         <Table container={false}>
           <TableHeader className="sticky top-0 z-20 bg-card">
             <TableRow className="hover:bg-transparent">

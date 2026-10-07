@@ -3,6 +3,7 @@
 import { memo, useState, type ReactNode } from "react";
 
 import { GlassSurface } from "@/components/brand/glass-surface";
+import { finalWinner, MatchupOrbs } from "@/components/brand/matchup-orbs";
 import { HistoricalTeamMark } from "@/components/brand/historical-team-mark";
 import { TransitionLink } from "@/components/continuity/query-nav";
 import { GameCountdown } from "@/components/sports/game-countdown";
@@ -193,18 +194,18 @@ export const ScoreTile = memo(function ScoreTile({
     <GlassSurface
       as="article"
       effect="css"
-      accentColor={matchup.awayWash}
-      accentColorB={matchup.homeWash}
       data-motion="card"
+      style={{ background: "var(--strip-card-bg)" }}
       className={cn(
-        "group relative flex flex-col gap-3 p-3.5 transition-[transform,filter] duration-150 hover:-translate-y-px hover:brightness-[0.99] dark:hover:brightness-110",
+        "group relative isolate flex flex-col gap-3 p-3.5 transition-[transform,filter] duration-150 hover:-translate-y-px hover:brightness-[0.99] dark:hover:brightness-110",
         live && "ring-1 ring-red-600/30",
         className
       )}
     >
+      <MatchupOrbs away={matchup.awayWash} home={matchup.homeWash} winner={finalWinner(game)} />
       <TransitionLink
         href={`/games/${game.id}`}
-        className="absolute inset-0 z-0 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="absolute inset-0 z-0 rounded-[inherit] outline-none focus-visible:ring-2 focus-visible:ring-ring"
         aria-label={`${awayBrand.abbreviation} at ${homeBrand.abbreviation}`}
       />
       <div className="pointer-events-none relative z-[1] flex flex-col gap-3">

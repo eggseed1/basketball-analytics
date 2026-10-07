@@ -42,6 +42,9 @@ export const textLinkClassName =
 export const sectionLinkClassName =
   "font-semibold text-muted-foreground underline-offset-4 hover:text-foreground hover:underline";
 
+/** Box inside a card, the home page tile: soft fill and a hairline ring, no border. */
+export const surfaceTileClassName = "rounded-[11px] bg-foreground/[0.035] ring-1 ring-inset ring-foreground/[0.06]";
+
 /** Hover-only (not a link) - never-played player mentions. */
 export const textHintClassName =
   "cursor-help font-semibold underline decoration-dotted decoration-foreground/40 underline-offset-2";

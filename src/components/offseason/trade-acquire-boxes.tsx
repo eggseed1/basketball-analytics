@@ -15,6 +15,7 @@ import type { ParsedTradeAsset } from "@/lib/trade-tree-parse";
 import { canLinkTransactionPlayer } from "@/lib/transaction-player-link";
 import type { TransactionPlayerResolution } from "@/lib/transaction-player-resolution";
 import { cn } from "@/lib/utils";
+import { MatchupOrbs } from "@/components/brand/matchup-orbs";
 
 function resolutionForAsset(
   asset: ParsedTradeAsset,
@@ -106,15 +107,8 @@ function AcquireBox({
   const primary = brand?.primary ?? wash;
 
   return (
-    <div
-      className={cn(
-        "overflow-hidden rounded-md border border-border/70 bg-background shadow-sm",
-        compact ? "min-w-0" : "min-w-0"
-      )}
-      style={{
-        backgroundImage: `linear-gradient(90deg, color-mix(in srgb, ${wash} 14%, transparent), transparent 72%)`,
-      }}
-    >
+    <div className="sports-card relative isolate min-w-0 overflow-hidden">
+      <MatchupOrbs away={wash} home={wash} />
       <div
         className="flex items-center gap-2 px-2.5 py-1.5 text-white"
         style={{ backgroundColor: primary }}

@@ -19,7 +19,7 @@ import {
   computeTeamSplits,
 } from "@/lib/team-snapshot-games";
 import { withBudget } from "@/data/queries/budget";
-import { type } from "@/lib/design-system";
+import { type, sectionLinkClassName } from "@/lib/design-system";
 import { formatNumber, formatPct } from "@/lib/format";
 import { teamPageHref } from "@/lib/team-destination";
 import { TransitionLink } from "@/components/continuity/query-nav";
@@ -92,7 +92,7 @@ function SnapshotTeamGamesBody({
             <h3 className={cn(type.bodySm, "font-semibold")}>Season slate</h3>
             <TransitionLink
               href={splitsHref}
-              className={cn(type.caption, "font-semibold underline")}
+              className={cn(type.caption, sectionLinkClassName)}
             >
               Full splits <span data-motion-arrow aria-hidden>→</span>
             </TransitionLink>

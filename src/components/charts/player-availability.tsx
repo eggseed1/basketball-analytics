@@ -60,7 +60,7 @@ export function PlayerAvailabilityChart({
     <figure
       aria-labelledby={`${chartId}-title`}
       aria-describedby={`${chartId}-desc`}
-      className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4"
+      className="flex flex-col gap-3 sports-card p-4"
     >
       <div className="flex min-w-0 flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">

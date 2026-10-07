@@ -3,7 +3,7 @@ import { TransitionLink } from "@/components/continuity/query-nav";
 import { TeamOverviewVisuals } from "@/components/teams/overview/team-overview-visuals";
 import { withBudget } from "@/data/queries/budget";
 import { getTeamSeasonBoardCached } from "@/data/queries/request-cache";
-import { type } from "@/lib/design-system";
+import { type, sectionLinkClassName } from "@/lib/design-system";
 import { teamPageHref } from "@/lib/team-destination";
 import { resolveTeamFromBoard } from "@/lib/team-explorer";
 import { buildTeamRankedMetrics } from "@/lib/team-page-metrics";
@@ -36,7 +36,7 @@ export async function TeamSeasonRecapIsland({
         </div>
         <TransitionLink
           href={teamPageHref(routeTeamId, { season })}
-          className={cn(type.caption, "font-semibold underline")}
+          className={cn(type.caption, sectionLinkClassName)}
         >
           Open the {season} page <span data-motion-arrow aria-hidden>→</span>
         </TransitionLink>

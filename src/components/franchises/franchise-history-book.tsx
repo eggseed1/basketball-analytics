@@ -19,7 +19,7 @@ function StatTile({
   hint?: string;
 }) {
   return (
-    <div className="rounded-md border border-border bg-card px-4 py-3">
+    <div className="sports-card px-4 py-3">
       <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
         {label}
       </p>
@@ -179,7 +179,7 @@ export function FranchiseHistoryBook({
               season={f.worstSeason}
               tone="bad"
             />
-            <div className="rounded-md border border-border bg-card px-4 py-3">
+            <div className="sports-card px-4 py-3">
               <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
                 Longest win streak
               </p>
@@ -190,7 +190,7 @@ export function FranchiseHistoryBook({
                 {f.longestWinStreak.note} · curated
               </p>
             </div>
-            <div className="rounded-md border border-border bg-card px-4 py-3">
+            <div className="sports-card px-4 py-3">
               <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
                 Longest losing streak
               </p>
@@ -224,7 +224,7 @@ export function FranchiseHistoryBook({
           </div>
         </div>
 
-        <div className="rounded-md border border-border bg-card px-4 py-3">
+        <div className="sports-card px-4 py-3">
           <h3 className="text-[15px] font-bold tracking-tight">
             Franchise leaders
           </h3>
@@ -246,7 +246,7 @@ export function FranchiseHistoryBook({
         </div>
       </div>
 
-      <div className="rounded-md border border-border bg-card px-4 py-4 sm:px-5">
+      <div className="sports-card px-4 py-4 sm:px-5">
         <h3 className="text-[15px] font-bold tracking-tight">Fan lore</h3>
         <p className="mt-0.5 text-[13px] text-muted-foreground">
           The weird, wonderful, and argument-starting stuff.

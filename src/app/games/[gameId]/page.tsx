@@ -9,6 +9,11 @@ import { HistoricalGameExperience } from "@/components/history/historical-game-e
 import { GameUnavailablePanel } from "@/components/games/game-unavailable";
 import { DestinationSectionSkeleton } from "@/components/continuity/destination-loading-frame";
 import { EraThemeScope } from "@/components/time-machine/era-theme-scope";
+import { GlassTintScaleProvider } from "@/components/brand/glass-surface";
+import { DESTINATION_CARD_TINT_SCALE } from "@/components/brand/team-atmosphere";
+import { PageAtmosphere } from "@/components/brand/page-atmosphere";
+import { buildGameMatchupTheme } from "@/lib/game-matchup-theme";
+import { gameSideBrandKey } from "@/lib/game-team-identity";
 import { parseSeasonEvidenceArrival } from "@/analytics/game-season-context";
 import { getGameAnalysis } from "@/data/queries";
 import { getHistoricalProductGame } from "@/data/history/product";
@@ -22,6 +27,7 @@ import { yieldForStreaming } from "@/lib/stream-yield";
 
 interface GamePageProps { params: Promise<{ gameId: string }>; searchParams: Promise<Record<string, string | string[] | undefined>>; }
 export async function generateMetadata({ params }: GamePageProps) { await yieldForStreaming(); const { gameId } = await params; const shell = await getGameShellCached(gameId); if (!shell) return { title: "Game" }; const away = shell.game.awayTeamAbbr ?? shell.game.awayTeamId; const home = shell.game.homeTeamAbbr ?? shell.game.homeTeamId; return { title: `${away} @ ${home}` }; }
+/** Team color stays a hint on cards, close to the neutral home page cards. */
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 
 async function GameLabDeepBody({ gameId, hidePeriodTable }: { gameId: string; arrival: ReturnType<typeof parseSeasonEvidenceArrival>; hidePeriodTable: boolean }) {
@@ -94,5 +100,12 @@ export default async function GamePage({ params, searchParams }: GamePageProps) 
       </details>
     ) : null}
   </main>;
-  return eraTheme ? <EraThemeScope theme={eraTheme}>{body}</EraThemeScope> : body;
+  if (eraTheme) return <EraThemeScope theme={eraTheme}>{body}</EraThemeScope>;
+  const matchup = buildGameMatchupTheme(gameSideBrandKey(shell.game, "away"), gameSideBrandKey(shell.game, "home"));
+  return (
+    <>
+      <PageAtmosphere colorA={matchup.awayWash} colorB={matchup.homeWash} />
+      <GlassTintScaleProvider scale={DESTINATION_CARD_TINT_SCALE}>{body}</GlassTintScaleProvider>
+    </>
+  );
 }
