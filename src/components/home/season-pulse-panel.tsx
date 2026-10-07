@@ -51,13 +51,13 @@ function TrendLine({ values, reference }: { values: number[]; reference: number 
   const last = values[values.length - 1]!;
   return (
     <div className="relative h-10 w-full">
-      <svg
-        viewBox="0 0 100 40"
-        preserveAspectRatio="none"
-        aria-hidden
-        className="absolute inset-0 h-full w-full overflow-visible"
-      >
-        {reference != null ? (
+      {reference != null ? (
+        <svg
+          viewBox="0 0 100 40"
+          preserveAspectRatio="none"
+          aria-hidden
+          className="absolute inset-0 h-full w-full overflow-visible"
+        >
           <line
             x1={0}
             x2={100}
@@ -69,25 +69,32 @@ function TrendLine({ values, reference }: { values: number[]; reference: number 
             strokeDasharray="3 3"
             vectorEffect="non-scaling-stroke"
           />
-        ) : null}
-        <path
-          d={d}
-          fill="none"
-          className="text-[#2f64d6] dark:text-[#8fb0ff]"
-          stroke="currentColor"
-          strokeWidth={2}
-          strokeLinejoin="round"
-          strokeLinecap="round"
-          vectorEffect="non-scaling-stroke"
-          pathLength={1}
-          data-motion-line
+        </svg>
+      ) : null}
+      <div data-motion-reveal className="absolute inset-0">
+        <svg
+          viewBox="0 0 100 40"
+          preserveAspectRatio="none"
+          aria-hidden
+          className="absolute inset-0 h-full w-full overflow-visible"
+        >
+          <path
+            d={d}
+            fill="none"
+            className="text-[#2f64d6] dark:text-[#8fb0ff]"
+            stroke="currentColor"
+            strokeWidth={2}
+            strokeLinejoin="round"
+            strokeLinecap="round"
+            vectorEffect="non-scaling-stroke"
+          />
+        </svg>
+        <span
+          aria-hidden
+          className="absolute size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#2f64d6] ring-2 ring-background dark:bg-[#8fb0ff]"
+          style={{ left: "100%", top: `${(y(last) / 40) * 100}%` }}
         />
-      </svg>
-      <span
-        aria-hidden
-        className="absolute size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#2f64d6] ring-2 ring-background dark:bg-[#8fb0ff]"
-        style={{ left: "100%", top: `${(y(last) / 40) * 100}%` }}
-      />
+      </div>
     </div>
   );
 }

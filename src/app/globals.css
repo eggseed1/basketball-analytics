@@ -1634,10 +1634,15 @@ html:not([data-surface="glass"]) .color-scheme-switch {
     animation-delay: calc(var(--i, 0) * 60ms);
   }
 
-  [data-home-motion] [data-motion="card"]:hover [data-motion-line],
-  [data-home-motion] [data-motion="replay"]:hover [data-motion-line] {
+  [data-home-motion] [data-motion="card"]:hover [data-motion-line] {
     stroke-dasharray: 1 1;
     animation: motion-draw 900ms cubic-bezier(0.3, 0.7, 0.2, 1) backwards;
+  }
+
+  /* Lines drawn with non-scaling strokes cannot use pathLength dashes, so
+     they wipe in from the left instead. */
+  [data-home-motion] [data-motion="replay"]:hover [data-motion-reveal] {
+    animation: motion-reveal 900ms cubic-bezier(0.3, 0.7, 0.2, 1) backwards;
   }
 
   [data-home-motion] [data-motion="row"] {
@@ -1748,6 +1753,15 @@ html:not([data-surface="glass"]) .color-scheme-switch {
 @keyframes motion-grow-x {
   from {
     scale: 0.1 1;
+  }
+}
+
+@keyframes motion-reveal {
+  from {
+    clip-path: inset(-8px 100% -8px -8px);
+  }
+  to {
+    clip-path: inset(-8px -8px -8px -8px);
   }
 }
 
