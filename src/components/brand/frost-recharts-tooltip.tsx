@@ -13,9 +13,8 @@ import { cn } from "@/lib/utils";
 
 /**
  * Hide Recharts' transformed wrapper; we portal frost to `document.body`.
- * The wrapper must snap (no transform transition): the portal copies its
- * position every frame and eases on its own, and two easings stacked leave the
- * tooltip trailing the cursor line by ~400ms.
+ * The wrapper must snap (no transform transition): the portal follows it with
+ * its own easing, and two easings stacked leave the tip trailing the cursor.
  */
 export const rechartsFrostWrapperStyle = {
   transition: "none",
@@ -28,11 +27,17 @@ export const rechartsFrostWrapperStyle = {
   filter: "none",
 } as const;
 
+/** Follow time constant: ~95% of the way to the cursor in 3τ. */
+const FOLLOW_TAU_MS = 45;
+
 /**
  * Recharts positions tooltips with CSS transform, which cancels
  * backdrop-filter. Portal the shared chart tooltip to the same viewport point.
  * An invisible copy stays in Recharts' wrapper: Recharts only moves the wrapper
  * to the cursor (and flips it at the edges) once it measures a non-zero box.
+ * Until then the wrapper sits at the chart's top-left, so the portal waits for
+ * a real translate before it appears, then eases toward each new position on
+ * the compositor (transform only, no per-frame React renders).
  */
 export function FrostRechartsTooltip({
   active,
@@ -44,31 +49,50 @@ export function FrostRechartsTooltip({
   className?: string;
 }) {
   const ghostRef = useRef<HTMLDivElement>(null);
-  const [pos, setPos] = useState<{ left: number; top: number } | null>(null);
+  const floatRef = useRef<HTMLDivElement>(null);
+  const [start, setStart] = useState<{ x: number; y: number } | null>(null);
 
   useLayoutEffect(() => {
     if (!active) {
-      setPos(null);
+      setStart(null);
       return;
     }
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+    let cur: { x: number; y: number } | null = null;
+    let last = performance.now();
     let raf = 0;
-    const tick = () => {
+
+    const tick = (now: number) => {
+      const dt = Math.min(64, now - last);
+      last = now;
       const wrap = ghostRef.current?.closest(
         ".recharts-tooltip-wrapper"
       ) as HTMLElement | null;
-      if (wrap) {
+      if (wrap && wrap.style.transform.includes("translate")) {
         const rect = wrap.getBoundingClientRect();
-        const left = Math.round(rect.left);
-        const top = Math.round(rect.top);
-        setPos((prev) =>
-          prev && prev.left === left && prev.top === top
-            ? prev
-            : { left, top }
-        );
+        const target = { x: rect.left, y: rect.top };
+        if (!cur) {
+          cur = target;
+          setStart(target);
+        } else {
+          const k = reduceMotion ? 1 : 1 - Math.exp(-dt / FOLLOW_TAU_MS);
+          cur = {
+            x: cur.x + (target.x - cur.x) * k,
+            y: cur.y + (target.y - cur.y) * k,
+          };
+          if (Math.abs(target.x - cur.x) < 0.3) cur.x = target.x;
+          if (Math.abs(target.y - cur.y) < 0.3) cur.y = target.y;
+          const el = floatRef.current;
+          if (el) {
+            el.style.transform = `translate3d(${cur.x}px, ${cur.y}px, 0)`;
+          }
+        }
       }
       raf = requestAnimationFrame(tick);
     };
-    tick();
+    raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
   }, [active]);
 
@@ -84,14 +108,19 @@ export function FrostRechartsTooltip({
       >
         {children}
       </ChartTooltipSurface>
-      {pos
+      {start
         ? createPortal(
             <ChartTooltipSurface
-              className={cn("chart-tip-float pointer-events-none z-[80]", className)}
+              ref={floatRef}
+              className={cn(
+                "chart-tip-follow pointer-events-none z-[80]",
+                className
+              )}
               style={{
                 position: "fixed",
-                left: pos.left,
-                top: pos.top,
+                left: 0,
+                top: 0,
+                transform: `translate3d(${start.x}px, ${start.y}px, 0)`,
               }}
             >
               {children}

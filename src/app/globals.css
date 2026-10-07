@@ -1941,6 +1941,22 @@ svg [data-motion-dot] {
       scale: 0.94;
     }
   }
+
+  /* Position is eased per frame in JS on transform; only the entry animates here. */
+  .chart-tip-follow {
+    will-change: transform;
+    transform-origin: top left;
+    transition:
+      opacity 140ms ease,
+      scale 180ms var(--motion-ease);
+  }
+
+  @starting-style {
+    .chart-tip-follow {
+      opacity: 0;
+      scale: 0.94;
+    }
+  }
 }
 
 /* Set by ScrollHoverGuard during page scroll. The root keeps hit testing, so
