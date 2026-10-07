@@ -25,6 +25,8 @@ export const rechartsFrostWrapperStyle = {
 /**
  * Recharts positions tooltips with CSS transform, which cancels
  * backdrop-filter. Portal the shared chart tooltip to the same viewport point.
+ * An invisible copy stays in Recharts' wrapper: Recharts only moves the wrapper
+ * to the cursor (and flips it at the edges) once it measures a non-zero box.
  */
 export function FrostRechartsTooltip({
   active,
@@ -35,7 +37,7 @@ export function FrostRechartsTooltip({
   children: ReactNode;
   className?: string;
 }) {
-  const ghostRef = useRef<HTMLSpanElement>(null);
+  const ghostRef = useRef<HTMLDivElement>(null);
   const [pos, setPos] = useState<{ left: number; top: number } | null>(null);
 
   useLayoutEffect(() => {
@@ -68,7 +70,14 @@ export function FrostRechartsTooltip({
 
   return (
     <>
-      <span ref={ghostRef} className="sr-only" />
+      <ChartTooltipSurface
+        ref={ghostRef}
+        role="presentation"
+        aria-hidden
+        className={cn("invisible", className)}
+      >
+        {children}
+      </ChartTooltipSurface>
       {pos
         ? createPortal(
             <ChartTooltipSurface

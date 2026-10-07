@@ -1,6 +1,13 @@
 "use client";
 
-import { useDeferredValue, useId, useMemo } from "react";
+import {
+  useDeferredValue,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+  type PointerEvent as ReactPointerEvent,
+} from "react";
 import { useRouter } from "next/navigation";
 import {
   CartesianGrid,
@@ -8,16 +15,12 @@ import {
   ResponsiveContainer,
   Scatter,
   ScatterChart,
-  Tooltip,
   XAxis,
   YAxis,
   ZAxis,
 } from "recharts";
 
-import {
-  FrostRechartsTooltip,
-  rechartsFrostWrapperStyle,
-} from "@/components/brand/frost-recharts-tooltip";
+import { ChartTooltipSurface } from "@/components/charts/chart-tooltip";
 import { useQueryNavOptional } from "@/components/continuity/query-nav";
 import { useChartTheme } from "@/lib/chart-theme";
 import { type } from "@/lib/design-system";
@@ -36,6 +39,18 @@ type ChartPoint = UsageEfficiencyPoint & {
   fill: string;
 };
 
+/** Pointer distance (px) that still snaps to the nearest dot. */
+const SNAP_PX = 36;
+
+function dotKey(p: Pick<ChartPoint, "isSelf" | "playerId">) {
+  return `${p.isSelf ? "pin" : "peer"}-${p.playerId}`;
+}
+
+function signedPts(value: number) {
+  const rounded = Math.round(value * 10) / 10;
+  return `${rounded > 0 ? "+" : ""}${rounded.toFixed(1)}`;
+}
+
 type ScatterShapeProps = {
   cx?: number;
   cy?: number;
@@ -46,6 +61,7 @@ type ScatterShapeProps = {
 function PeerDot({ cx = 0, cy = 0, payload }: ScatterShapeProps) {
   return (
     <circle
+      data-dot-key={payload ? dotKey(payload) : undefined}
       cx={cx}
       cy={cy}
       r={3.4}
@@ -67,7 +83,15 @@ function makePinDot(labelSide: (p: ChartPoint) => "left" | "right", showLabel: b
       <g>
         <circle cx={cx} cy={cy} r={16} fill={fill} fillOpacity={0.14} />
         <circle cx={cx} cy={cy} r={11} fill="none" stroke={fill} strokeOpacity={0.45} strokeWidth={1.5} />
-        <circle cx={cx} cy={cy} r={6.5} fill={fill} stroke="var(--background)" strokeWidth={2.5} />
+        <circle
+          data-dot-key={payload ? dotKey(payload) : undefined}
+          cx={cx}
+          cy={cy}
+          r={6.5}
+          fill={fill}
+          stroke="var(--background)"
+          strokeWidth={2.5}
+        />
         {showLabel && name ? (
           <g pointerEvents="none">
             <rect x={x} y={cy - 11} width={width} height={22} rx={11} fill={fill} />
@@ -147,6 +171,44 @@ export function PlayerUsageEfficiencyChart({
       }),
     [chartTheme, deferredPoints, focalColor]
   );
+  const byKey = useMemo(() => new Map(data.map((p) => [dotKey(p), p])), [data]);
+  const plotRef = useRef<HTMLDivElement>(null);
+  const [near, setNear] = useState<{ key: string; x: number; y: number; width: number } | null>(null);
+  const nearPoint = near ? byKey.get(near.key) : undefined;
+
+  /** Snap to the closest rendered dot so the label follows the pointer, not just exact hits. */
+  const trackPointer = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const box = plotRef.current;
+    const svg = box?.querySelector<SVGSVGElement>("svg.recharts-surface");
+    if (!box || !svg) return;
+    const boxRect = box.getBoundingClientRect();
+    const svgRect = svg.getBoundingClientRect();
+    const mx = event.clientX - svgRect.left;
+    const my = event.clientY - svgRect.top;
+    let best: { key: string; x: number; y: number } | null = null;
+    let bestDistance = SNAP_PX * SNAP_PX;
+    for (const dot of svg.querySelectorAll<SVGCircleElement>("circle[data-dot-key]")) {
+      const x = dot.cx.baseVal.value;
+      const y = dot.cy.baseVal.value;
+      const distance = (x - mx) ** 2 + (y - my) ** 2;
+      if (distance < bestDistance) {
+        bestDistance = distance;
+        best = { key: dot.dataset.dotKey ?? "", x, y };
+      }
+    }
+    if (!best) {
+      if (near) setNear(null);
+      return;
+    }
+    if (near?.key === best.key) return;
+    setNear({
+      key: best.key,
+      x: best.x + svgRect.left - boxRect.left,
+      y: best.y + svgRect.top - boxRect.top,
+      width: boxRect.width,
+    });
+  };
+
   const peers = useMemo(() => data.filter((p) => !p.isSelf), [data]);
   const pinned = useMemo(() => data.filter((p) => p.isSelf), [data]);
   const self = pinned[0];
@@ -270,7 +332,15 @@ export function PlayerUsageEfficiencyChart({
           Not enough qualified peers with usage and true shooting for {season}.
         </p>
       ) : (
-        <div className="relative h-[320px] w-full sm:h-[380px]">
+        <div
+          ref={plotRef}
+          className={cn("relative h-[320px] w-full sm:h-[380px]", nearPoint && "cursor-pointer")}
+          onPointerMove={trackPointer}
+          onPointerLeave={() => setNear(null)}
+          onClick={() => {
+            if (nearPoint?.playerId) router.push(`/players/${nearPoint.playerId}`);
+          }}
+        >
           <QuadrantLabels />
           <ResponsiveContainer width="100%" height="100%">
             <ScatterChart margin={{ top: 18, right: 28, bottom: 28, left: 12 }}>
@@ -352,55 +422,62 @@ export function PlayerUsageEfficiencyChart({
                   ifOverflow="hidden"
                 />
               ) : null}
-              <Tooltip
-                cursor={false}
-                isAnimationActive={false}
-                animationDuration={0}
-                wrapperStyle={rechartsFrostWrapperStyle}
-                content={({ active, payload }) => {
-                  if (!active || !payload?.length) return null;
-                  const p = payload[0]?.payload as ChartPoint;
-                  return (
-                    <FrostRechartsTooltip active={active}>
-                      <p className="font-semibold">
-                        {p.playerName}
-                        {p.isSelf ? ` · ${highlightLabel}` : ""}
-                      </p>
-                      {p.teamAbbr ? (
-                        <p className="text-muted-foreground">{p.teamAbbr}</p>
-                      ) : null}
-                      <p>USG {formatPct(p.usagePct)}</p>
-                      <p>TS {formatPct(p.trueShootingPct)}</p>
-                    </FrostRechartsTooltip>
-                  );
-                }}
-              />
               <Scatter
                 data={peers}
                 name="Peers"
-                cursor="pointer"
                 isAnimationActive={false}
                 shape={PeerDot}
-                onClick={(point) => {
-                  const p = point as unknown as ChartPoint;
-                  if (p?.playerId) router.push(`/players/${p.playerId}`);
-                }}
               />
               {pinned.length ? (
                 <Scatter
                   data={pinned}
                   name={focalName || "Pinned"}
-                  cursor="pointer"
                   isAnimationActive={false}
                   shape={pinShape}
-                  onClick={(point) => {
-                    const p = point as unknown as ChartPoint;
-                    if (p?.playerId) router.push(`/players/${p.playerId}`);
-                  }}
                 />
               ) : null}
             </ScatterChart>
           </ResponsiveContainer>
+          {near && nearPoint ? (
+            <>
+              <span
+                aria-hidden
+                className="pointer-events-none absolute z-[2] size-4 rounded-full border-2 transition-[left,top] duration-150 ease-out motion-reduce:transition-none"
+                style={{
+                  left: near.x,
+                  top: near.y,
+                  translate: "-50% -50%",
+                  borderColor: nearPoint.fill,
+                  boxShadow: `0 0 0 3px color-mix(in oklab, ${nearPoint.fill} 24%, transparent)`,
+                }}
+              />
+              <ChartTooltipSurface
+                className="chart-tip-float pointer-events-none absolute z-[3]"
+                style={{
+                  left: near.x,
+                  top: near.y,
+                  translate: `${
+                    near.x < 110 ? "12px" : near.x > near.width - 110 ? "calc(-100% - 12px)" : "-50%"
+                  } ${near.y < 96 ? "14px" : "calc(-100% - 14px)"}`,
+                }}
+              >
+                <p>
+                  {nearPoint.playerName}
+                  {nearPoint.isSelf ? ` · ${highlightLabel}` : ""}
+                  {nearPoint.teamAbbr ? ` · ${nearPoint.teamAbbr}` : ""}
+                </p>
+                <p className="tabular-nums">
+                  USG {formatPct(nearPoint.usagePct)} · TS {formatPct(nearPoint.trueShootingPct)}
+                </p>
+                {medians.usage != null && medians.ts != null ? (
+                  <p className="tabular-nums text-muted-foreground">
+                    vs median: {signedPts((nearPoint.usagePct - medians.usage) * 100)} USG ·{" "}
+                    {signedPts((nearPoint.trueShootingPct - medians.ts) * 100)} TS
+                  </p>
+                ) : null}
+              </ChartTooltipSurface>
+            </>
+          ) : null}
         </div>
       )}
 

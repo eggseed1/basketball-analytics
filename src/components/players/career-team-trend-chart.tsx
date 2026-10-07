@@ -557,7 +557,7 @@ export function CareerTeamTrendChart({
                 />
               )}
               dot={renderDot}
-              activeDot={onSeasonSelect ? renderActiveDot : renderDot}
+              activeDot={renderActiveDot}
               isAnimationActive={false}
             />
           </LineChart>
