@@ -1285,12 +1285,6 @@ html:not([data-surface="glass"]) .color-scheme-switch {
     0 1px 2px rgb(0 0 0 / 6%);
 }
 
-html:not(.dark) .drbl-logo--image .drbl-logo__mark,
-html:not(.dark) .drbl-logo--image .drbl-logo__wordmark,
-html.dark .drbl-logo__image {
-  display: none;
-}
-
 .drbl-logo--md .drbl-logo__mark {
   width: 2.25rem;
   height: 2.25rem;

@@ -1,5 +1,3 @@
-import Image from "next/image";
-
 import { cn } from "@/lib/utils";
 
 type DrblLogoProps = {
@@ -12,9 +10,7 @@ type DrblLogoProps = {
 
 /**
  * Site lockup — frost tile + court-arc mark (range / impact) with NBA
- * atmosphere accents. Adapts to light/dark via theme tokens. With the
- * wordmark, light mode shows the ribbon wordmark image instead; its letters
- * are near-black, so dark mode keeps the tile lockup.
+ * atmosphere accents. Adapts to light/dark via theme tokens.
  */
 export function DrblLogo({
   className,
@@ -26,21 +22,9 @@ export function DrblLogo({
       className={cn(
         "drbl-logo inline-flex min-w-0 items-center gap-2.5 text-foreground",
         size === "md" && "drbl-logo--md",
-        withWordmark && "drbl-logo--image",
         className
       )}
     >
-      {withWordmark ? (
-        <Image
-          src="/brand/drbl-wordmark-light.png"
-          alt="DRBL"
-          width={663}
-          height={136}
-          priority
-          unoptimized
-          className="drbl-logo__image h-6 w-auto sm:h-7"
-        />
-      ) : null}
       <span className="drbl-logo__mark" aria-hidden>
         <svg
           viewBox="0 0 32 32"
