@@ -31,6 +31,8 @@ export function PageAtmosphere({
           "--atmosphere-b": b ?? a,
         } as CSSProperties
       }
-    />
+    >
+      <span className="page-atmosphere__orb" />
+    </div>
   );
 }

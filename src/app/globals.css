@@ -1039,20 +1039,22 @@ html:not([data-surface="glass"]) .color-scheme-switch {
 }
 
 /* Page wash - glass samples this color (Apple materials). A soft mesh: one
-   pastel per team color in the top corners and a blended hue between them,
-   all fading out before mid-page. Only transform animates, so the layers stay
-   on the compositor. */
+   orb per team color plus a third that blends the two, each with an
+   off-center core so rotation reads as a slow swirl. Each gradient radius
+   stays inside its circle, or the rounded edge clips it into a visible arc.
+   Only transform animates, so the layers stay on the compositor. */
 .page-atmosphere {
   pointer-events: none;
   position: fixed;
   inset: 0;
   z-index: 0;
   overflow: hidden;
-  --orb-a: color-mix(in oklab, var(--atmosphere-a, transparent) 15%, transparent);
-  --orb-b: color-mix(in oklab, var(--atmosphere-b, transparent) 11%, transparent);
+  --orb-a: color-mix(in oklab, var(--atmosphere-a, transparent) 22%, transparent);
+  --orb-b: color-mix(in oklab, var(--atmosphere-b, transparent) 18%, transparent);
   --orb-c: transparent;
+  --orb-d: color-mix(in oklab, var(--orb-a) 50%, var(--orb-b));
   background: radial-gradient(
-    ellipse 70% 46% at 52% -8%,
+    ellipse 80% 50% at 52% -10%,
     var(--orb-c) 0%,
     color-mix(in oklab, var(--orb-c) 40%, transparent) 45%,
     transparent 78%
@@ -1061,104 +1063,141 @@ html:not([data-surface="glass"]) .color-scheme-switch {
 
 /* Rebuild each hue at a fixed lightness with capped chroma instead of fading
    a dark brand color over gray, which reads as dusty lavender and pink.
-   min(c, ...) keeps black or silver palettes neutral rather than tinting them. */
+   min(c, ...) keeps black or silver palettes neutral rather than tinting them.
+   Keep hue shifts small: red pushed toward higher hues turns peach. */
 @supports (color: oklch(from red l c h)) {
   .page-atmosphere {
-    --orb-a: oklch(from var(--atmosphere-a) 0.86 min(c, 0.085) calc(h - 18) / 0.72);
-    --orb-b: oklch(from var(--atmosphere-b) 0.9 min(c, 0.07) calc(h + 22) / 0.62);
-    --orb-c: oklch(from var(--atmosphere-a) 0.9 min(c, 0.055) calc(h + 40) / 0.55);
+    --orb-a: oklch(from var(--atmosphere-a) 0.8 min(c, 0.13) calc(h - 6) / 0.66);
+    --orb-b: oklch(from var(--atmosphere-b) 0.74 min(c, 0.17) calc(h - 6) / 0.5);
+    --orb-c: oklch(from var(--atmosphere-a) 0.9 min(c, 0.06) calc(h + 30) / 0.5);
+    --orb-d: color-mix(in oklch, var(--orb-a), var(--orb-b));
   }
 }
 
 .page-atmosphere::before,
-.page-atmosphere::after {
+.page-atmosphere::after,
+.page-atmosphere__orb {
   content: "";
   position: absolute;
-  width: 72vmax;
-  height: 72vmax;
   border-radius: 9999px;
   will-change: transform;
 }
 
 .page-atmosphere::before {
-  left: -30vmax;
-  top: -38vmax;
+  width: 120vmax;
+  height: 120vmax;
+  left: -54vmax;
+  top: -60vmax;
   background: radial-gradient(
-    circle at center,
+    circle 50vmax at 42% 46%,
     var(--orb-a) 0%,
-    color-mix(in oklab, var(--orb-a) 55%, transparent) 30%,
-    color-mix(in oklab, var(--orb-a) 18%, transparent) 52%,
-    transparent 72%
+    color-mix(in oklab, var(--orb-a) 62%, transparent) 36%,
+    color-mix(in oklab, var(--orb-a) 22%, transparent) 70%,
+    transparent 100%
   );
-  animation: atmosphere-drift-a 18s ease-in-out infinite alternate;
+  animation: atmosphere-drift-a 19s ease-in-out infinite alternate;
 }
 
 .page-atmosphere::after {
-  right: -32vmax;
-  top: -34vmax;
+  width: 110vmax;
+  height: 110vmax;
+  right: -50vmax;
+  top: -54vmax;
   background: radial-gradient(
-    circle at center,
+    circle 45vmax at 58% 44%,
     var(--orb-b) 0%,
-    color-mix(in oklab, var(--orb-b) 55%, transparent) 30%,
-    color-mix(in oklab, var(--orb-b) 18%, transparent) 52%,
-    transparent 72%
+    color-mix(in oklab, var(--orb-b) 62%, transparent) 36%,
+    color-mix(in oklab, var(--orb-b) 22%, transparent) 70%,
+    transparent 100%
   );
-  animation: atmosphere-drift-b 23s ease-in-out infinite alternate;
+  animation: atmosphere-drift-b 24s ease-in-out infinite alternate;
 }
 
-/* Dark: deep, low-chroma tones so large fields stay quiet. */
+.page-atmosphere__orb {
+  width: 90vmax;
+  height: 90vmax;
+  left: 4vw;
+  bottom: -62vmax;
+  background: radial-gradient(
+    circle 35vmax at 50% 40%,
+    var(--orb-d) 0%,
+    color-mix(in oklab, var(--orb-d) 50%, transparent) 44%,
+    transparent 100%
+  );
+  opacity: 0.8;
+  animation: atmosphere-drift-c 29s ease-in-out infinite alternate;
+}
+
+/* Dark: deep tones so large fields stay quiet, but saturated enough that red
+   stays crimson instead of browning out. */
 .dark .page-atmosphere {
-  --orb-a: color-mix(in oklab, var(--atmosphere-a, transparent) 12%, transparent);
-  --orb-b: color-mix(in oklab, var(--atmosphere-b, transparent) 8%, transparent);
+  --orb-a: color-mix(in oklab, var(--atmosphere-a, transparent) 18%, transparent);
+  --orb-b: color-mix(in oklab, var(--atmosphere-b, transparent) 14%, transparent);
 }
 
 @supports (color: oklch(from red l c h)) {
   .dark .page-atmosphere {
-    --orb-a: oklch(from var(--atmosphere-a) 0.3 min(c, 0.09) calc(h - 18) / 0.42);
-    --orb-b: oklch(from var(--atmosphere-b) 0.27 min(c, 0.08) calc(h + 22) / 0.3);
-    --orb-c: oklch(from var(--atmosphere-a) 0.26 min(c, 0.06) calc(h + 40) / 0.3);
+    --orb-a: oklch(from var(--atmosphere-a) 0.36 min(c, 0.13) calc(h - 6) / 0.5);
+    --orb-b: oklch(from var(--atmosphere-b) 0.36 min(c, 0.15) calc(h - 6) / 0.4);
+    --orb-c: oklch(from var(--atmosphere-a) 0.28 min(c, 0.07) calc(h + 30) / 0.32);
   }
 }
 
 @keyframes atmosphere-drift-a {
   0% {
-    transform: translate3d(0, 0, 0) scale(1);
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1, 1);
   }
   25% {
-    transform: translate3d(24vw, 14vh, 0) scale(1.14);
+    transform: translate3d(22vw, 16vh, 0) rotate(70deg) scale(1.16, 0.9);
   }
   50% {
-    transform: translate3d(38vw, 34vh, 0) scale(0.92);
+    transform: translate3d(36vw, 34vh, 0) rotate(150deg) scale(0.94, 1.1);
   }
   75% {
-    transform: translate3d(12vw, 42vh, 0) scale(1.08);
+    transform: translate3d(12vw, 44vh, 0) rotate(220deg) scale(1.1, 0.92);
   }
   100% {
-    transform: translate3d(-4vw, 22vh, 0) scale(1.18);
+    transform: translate3d(-4vw, 22vh, 0) rotate(300deg) scale(1.2, 1.04);
   }
 }
 
 @keyframes atmosphere-drift-b {
   0% {
-    transform: translate3d(0, 0, 0) scale(1);
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1, 1);
   }
   25% {
-    transform: translate3d(-18vw, 26vh, 0) scale(0.9);
+    transform: translate3d(-18vw, 26vh, 0) rotate(-60deg) scale(0.92, 1.12);
   }
   50% {
-    transform: translate3d(-36vw, 12vh, 0) scale(1.16);
+    transform: translate3d(-36vw, 12vh, 0) rotate(-140deg) scale(1.18, 0.94);
   }
   75% {
-    transform: translate3d(-26vw, 40vh, 0) scale(1.04);
+    transform: translate3d(-26vw, 40vh, 0) rotate(-210deg) scale(1.04, 1.1);
   }
   100% {
-    transform: translate3d(-6vw, 30vh, 0) scale(0.94);
+    transform: translate3d(-8vw, 30vh, 0) rotate(-280deg) scale(0.96, 0.9);
+  }
+}
+
+@keyframes atmosphere-drift-c {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1, 1);
+  }
+  33% {
+    transform: translate3d(30vw, -18vh, 0) rotate(90deg) scale(1.15, 0.9);
+  }
+  66% {
+    transform: translate3d(52vw, -6vh, 0) rotate(180deg) scale(0.9, 1.12);
+  }
+  100% {
+    transform: translate3d(18vw, -26vh, 0) rotate(260deg) scale(1.08, 1);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .page-atmosphere::before,
-  .page-atmosphere::after {
+  .page-atmosphere::after,
+  .page-atmosphere__orb {
     animation: none;
   }
 }
@@ -1244,6 +1283,12 @@ html:not([data-surface="glass"]) .color-scheme-switch {
   box-shadow:
     inset 0 1px 0 rgb(255 255 255 / 55%),
     0 1px 2px rgb(0 0 0 / 6%);
+}
+
+html:not(.dark) .drbl-logo--image .drbl-logo__mark,
+html:not(.dark) .drbl-logo--image .drbl-logo__wordmark,
+html.dark .drbl-logo__image {
+  display: none;
 }
 
 .drbl-logo--md .drbl-logo__mark {
