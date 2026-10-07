@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 
 import { useChartTheme } from "@/lib/chart-theme";
 import { type } from "@/lib/design-system";
@@ -42,7 +42,7 @@ export function TeamDnaRadar({ axes, teamKey, season }: { axes: DnaAxis[]; teamK
       </div>
 
       <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-center">
-        <svg viewBox={`0 0 ${W} ${H}`} className="w-full max-w-[420px] shrink-0 sm:w-[54%]" role="img" aria-label="Team percentile radar">
+        <svg viewBox={`0 0 ${W} ${H}`} className="w-full max-w-[420px] shrink-0 sm:w-[54%]" data-hover-svg role="img" aria-label="Team percentile radar">
           {[25, 50, 75, 100].map((ring) => (
             <polygon
               key={ring}
@@ -58,13 +58,25 @@ export function TeamDnaRadar({ axes, teamKey, season }: { axes: DnaAxis[]; teamK
             const [x, y] = point(i, n, 100);
             return <line key={a.key} x1={CX} y1={CY} x2={x} y2={y} stroke="currentColor" strokeOpacity={0.08} />;
           })}
-          <polygon points={shape} fill={accent} fillOpacity={0.22} stroke={accent} strokeWidth={2.5} strokeLinejoin="round" />
+          <polygon
+            points={shape}
+            data-motion-shape
+            style={{ transformOrigin: `${CX}px ${CY}px` }}
+            fill={accent} fillOpacity={0.22} stroke={accent} strokeWidth={2.5} strokeLinejoin="round" />
           {axes.map((a, i) => {
             const [x, y] = point(i, n, Math.max(4, a.percentile));
             const on = focus.key === a.key;
             return (
               <circle
                 key={a.key}
+                data-motion-dot
+                data-hover-point
+                data-tip={a.label}
+                data-tip-sub={`${a.display} · ${formatOrdinal(Math.round(a.percentile))} percentile`}
+                className="cursor-pointer"
+                style={{ "--i": 30 + i * 3 } as CSSProperties}
+                onPointerEnter={() => setActive(a.key)}
+                onClick={() => setActive(a.key)}
                 cx={x}
                 cy={y}
                 r={on ? 6.5 : 4.5}
@@ -120,6 +132,7 @@ export function TeamDnaRadar({ axes, teamKey, season }: { axes: DnaAxis[]; teamK
             </p>
             <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-foreground/[0.08]">
               <div
+                data-motion-bar="x"
                 className="h-full rounded-full"
                 style={{ width: `${Math.max(3, focus.percentile)}%`, background: percentileSavantColor(focus.percentile, "auto") }}
               />

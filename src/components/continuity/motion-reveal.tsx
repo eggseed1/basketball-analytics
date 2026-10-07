@@ -4,19 +4,25 @@ import { useEffect } from "react";
 
 type Pose = (el: Element, style: CSSStyleDeclaration) => Keyframe;
 
-const SECTION = ":scope > :not(.hof-page-frame), .hof-page-frame__inner > *";
+const SECTION = [
+  "[data-motion-page] > :not(.hof-page-frame, [data-motion-stack], :has(.sports-card))",
+  ":is(.hof-page-frame__inner, [data-motion-stack]) > :not(:has(.sports-card))",
+  ".sports-card:not(a, .sports-card *)",
+].join(", ");
+const LIST = "[data-motion-list] > *, [data-motion-item], :is(ul, ol):not(nav *, [role]) > li";
 
 /** Start poses, matched in order. They mirror the @starting-style rules in globals.css. */
 const POSES: Array<[selector: string, pose: Pose]> = [
   [SECTION, () => ({ opacity: 0, translate: "0 14px" })],
-  ["[data-motion-list] > *, [data-motion-item]", () => ({ opacity: 0, translate: "0 8px" })],
+  [LIST, () => ({ opacity: 0, translate: "0 8px" })],
   ["tbody > tr", () => ({ opacity: 0 })],
   ['[data-motion-bar="x"]', () => ({ scale: "0 1" })],
   ['[data-motion-bar="y"], .recharts-bar-rectangle', () => ({ scale: "1 0" })],
   ["[data-motion-mark]", (_, s) => ({ left: s.getPropertyValue("--mark-from").trim() || "0%" })],
   ["[data-motion-dot], .recharts-line-dots > *, .recharts-scatter-symbol", () => ({ scale: 0 })],
   ["[data-motion-line]", () => ({ strokeDashoffset: 1 })],
-  [".recharts-line, .recharts-area", () => ({ clipPath: "inset(-50% 150% -50% -50%)" })],
+  [".recharts-line, .recharts-area, [data-motion-wipe]", () => ({ clipPath: "inset(-50% 150% -50% -50%)" })],
+  ["[data-motion-shape]", () => ({ opacity: 0, scale: 0.4, rotate: "-30deg" })],
 ];
 
 const TARGETS = POSES.map(([selector]) => selector).join(", ");
@@ -43,15 +49,15 @@ function timing(style: CSSStyleDeclaration): KeyframeAnimationOptions {
 }
 
 /**
- * Entry motion on the player page runs on @starting-style, which fires the
+ * Entry motion on a [data-motion-page] runs on @starting-style, which fires the
  * moment an element mounts, often below the fold where nobody sees it. This
  * holds those elements in their start pose with a paused animation and plays
  * it once they scroll into view. Nothing is written to the DOM, so streamed
  * Suspense boundaries still hydrate cleanly.
  */
-export function PlayerMotionReveal() {
+export function MotionReveal() {
   useEffect(() => {
-    const root = document.querySelector<HTMLElement>("[data-player-page]");
+    const root = document.querySelector<HTMLElement>("[data-motion-page]");
     if (!root || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const seen = new WeakSet<Element>();
@@ -70,14 +76,12 @@ export function PlayerMotionReveal() {
     const proxyFor = (el: Element) =>
       el instanceof SVGElement && !(el instanceof SVGSVGElement)
         ? (el.closest("svg") ?? el)
-        : el.matches("[data-motion-bar], [data-motion-dot], [data-motion-mark]")
+        : el.matches("[data-motion-bar], [data-motion-dot], [data-motion-mark], [data-motion-shape]")
           ? (el.parentElement ?? el)
           : el;
 
     const hold = (el: Element) => {
-      const entry = POSES.find(([selector]) =>
-        selector === SECTION ? el.parentElement === root || el.parentElement?.matches(".hof-page-frame__inner") : el.matches(selector)
-      );
+      const entry = POSES.find(([selector]) => el.matches(selector));
       if (!entry) return;
       const style = getComputedStyle(el);
       const animation = el.animate([{ ...entry[1](el, style), offset: 0 }], timing(style));
@@ -98,7 +102,8 @@ export function PlayerMotionReveal() {
       for (const el of root.querySelectorAll(TARGETS)) {
         if (seen.has(el)) continue;
         seen.add(el);
-        if (el.getBoundingClientRect().top > fold) hold(el);
+        // Hidden elements get their @starting-style entry when they are shown.
+        if (el.checkVisibility() && el.getBoundingClientRect().top > fold) hold(el);
       }
     };
     const schedule = () => {

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { CSSProperties } from "react";
 
 import { surplusTone } from "@/components/players/player-contract-transactions";
 import type { TeamContractsView } from "@/data/queries/team-contracts";
@@ -81,14 +82,14 @@ export function TeamContractValueChart({
         <span className="text-right">Salary</span>
         <span className="text-right">Surplus</span>
       </div>
-      <ul className="flex flex-col gap-1.5" aria-label="Projected surplus by contract">
-        {value.players.map((p) => {
+      <ul data-hover-group className="flex flex-col gap-1.5" aria-label="Projected surplus by contract">
+        {value.players.map((p, i) => {
           const name = nameOf.get(p.brefId) ?? p.brefId;
           const href = contracts.hrefs[p.brefId];
           const positive = p.surplus > 0;
           const note = optionNote(p, contracts);
           return (
-            <li key={p.brefId} className={ROW}>
+            <li key={p.brefId} data-hover-item className={ROW}>
               <div className="min-w-0">
                 {href ? (
                   <Link
@@ -107,13 +108,17 @@ export function TeamContractValueChart({
               </div>
               <div
                 className="relative h-4"
-                title={`${name}: ${formatUsdSignedCompact(p.surplus)} (80% range ${formatUsdSignedCompact(p.surplusLow)} to ${formatUsdSignedCompact(p.surplusHigh)})`}
+                data-tip={`${name}: ${formatUsdSignedCompact(p.surplus)}`}
+                data-tip-sub={`80% range ${formatUsdSignedCompact(p.surplusLow)} to ${formatUsdSignedCompact(p.surplusHigh)}`}
               >
                 <div aria-hidden className="absolute inset-y-[-2px] left-1/2 w-px bg-foreground/30" />
                 <div
                   aria-hidden
+                  data-motion-bar="x"
                   className="absolute inset-y-0 rounded-sm"
                   style={{
+                    ...({ "--i": Math.min(i, 16) } as CSSProperties),
+                    transformOrigin: positive ? "left" : "right",
                     width: width(p.surplus),
                     ...(positive ? { left: "50%" } : { right: "50%" }),
                     background: positive ? "var(--chart-3)" : "var(--destructive)",

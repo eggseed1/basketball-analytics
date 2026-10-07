@@ -12,7 +12,7 @@ import { PlayerAskLinks } from "@/components/players/player-ask-links";
 import { PlayerCareerDataGuardBanner } from "@/components/players/player-career-data-guard-banner";
 import { PlayerCareerIsland } from "@/components/players/player-career-island";
 import { PlayerDestinationIdentity } from "@/components/players/player-destination-identity";
-import { PlayerMotionReveal } from "@/components/players/player-motion-reveal";
+import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { PlayerPercentileIsland } from "@/components/players/player-percentile-island";
 import { PlayerNotYetPlayed } from "@/components/players/player-not-yet-played";
 import { unplayedDrafteeFor } from "@/data/runtime/draftee-search";
@@ -873,8 +873,8 @@ export default async function PlayerPage({
         colorA={atmosphere?.colorA}
         colorB={atmosphere?.colorB}
       />
-      <main data-player-page className="relative z-[1] flex flex-1 flex-col gap-4 sm:gap-5">
-        <PlayerMotionReveal />
+      <main data-motion-page className="relative z-[1] flex flex-1 flex-col gap-4 sm:gap-5">
+        <MotionReveal />
         <GlassTintScaleProvider scale={PLAYER_CARD_TINT_SCALE}>
           {honor === "hof" ? (
             <div className={HOF_PAGE_FRAME_CLASS}>

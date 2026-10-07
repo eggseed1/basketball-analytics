@@ -23,6 +23,7 @@ export function TeamPrimaryNav({
     <div
       role="tablist"
       aria-label="Team page"
+      data-motion-tabs
       className="flex flex-nowrap items-center gap-x-2 gap-y-2 overflow-x-auto border-b-2 border-foreground/70 px-1 py-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
     >
       {TEAM_PAGE_TABS.map((item) => {

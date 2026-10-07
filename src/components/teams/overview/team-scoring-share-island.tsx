@@ -42,8 +42,8 @@ export async function TeamScoringShareIsland({
 
   let offset = 0;
   const arcs = [
-    ...top.map((p, i) => ({ id: p.playerId, share: p.points / total, color, opacity: opacities[i] ?? 0.25 })),
-    ...(rest > 0 ? [{ id: "rest", share: rest / total, color: "currentColor", opacity: 0.12 }] : []),
+    ...top.map((p, i) => ({ id: p.playerId, label: p.playerName, share: p.points / total, color, opacity: opacities[i] ?? 0.25 })),
+    ...(rest > 0 ? [{ id: "rest", label: "Rest of the roster", share: rest / total, color: "currentColor", opacity: 0.12 }] : []),
   ].map((a) => {
     const len = a.share * CIRC;
     const arc = { ...a, dash: `${Math.max(0, len - 2)} ${CIRC}`, offset: -offset };
@@ -73,22 +73,27 @@ export async function TeamScoringShareIsland({
 
       <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-center">
         <div className="relative shrink-0">
-          <svg viewBox="0 0 180 180" className="size-44" role="img" aria-label="Scoring share donut">
-            <g transform="rotate(-90 90 90)">
-              {arcs.map((a) => (
-                <circle
-                  key={a.id}
-                  cx={90}
-                  cy={90}
-                  r={R}
-                  fill="none"
-                  stroke={a.color}
-                  strokeOpacity={a.opacity}
-                  strokeWidth={STROKE}
-                  strokeDasharray={a.dash}
-                  strokeDashoffset={a.offset}
-                />
-              ))}
+          <svg viewBox="0 0 180 180" className="size-44" data-hover-svg role="img" aria-label="Scoring share donut">
+            <g data-motion-shape style={{ transformOrigin: "90px 90px" }}>
+              <g transform="rotate(-90 90 90)">
+                {arcs.map((a) => (
+                  <circle
+                    key={a.id}
+                    cx={90}
+                    cy={90}
+                    r={R}
+                    fill="none"
+                    stroke={a.color}
+                    strokeOpacity={a.opacity}
+                    strokeWidth={STROKE}
+                    strokeDasharray={a.dash}
+                    strokeDashoffset={a.offset}
+                    data-hover-point
+                    data-tip={a.label}
+                    data-tip-sub={`${formatPct(a.share, 0)} of points`}
+                  />
+                ))}
+              </g>
             </g>
           </svg>
           <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center">

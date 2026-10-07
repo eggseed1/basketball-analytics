@@ -1,3 +1,5 @@
+import type { CSSProperties } from "react";
+
 import { TransitionLink } from "@/components/continuity/query-nav";
 import { PlayerIdentity } from "@/components/players/player-identity";
 import { getTeamRosterCached } from "@/data/queries/request-cache";
@@ -200,22 +202,26 @@ function PositionShapeCard({
         </p>
       </div>
       <div
+        data-hover-group
         className="flex h-3 w-full overflow-hidden rounded-sm bg-muted"
         role="img"
         aria-label="Minutes share by position shell"
       >
-        {shape.bands.map((band) =>
+        {shape.bands.map((band, i) =>
           band.share > 0 ? (
             <span
               key={band.shell}
+              data-hover-item
+              data-motion-bar="x"
+              data-tip={band.label}
+              data-tip-sub={`${formatPct(band.share, 0)} of minutes`}
               className={cn(
                 "h-full",
                 band.shell === "guard" && "bg-foreground/80",
                 band.shell === "wing" && "bg-foreground/50",
                 band.shell === "big" && "bg-foreground/25"
               )}
-              style={{ width: `${band.share * 100}%` }}
-              title={`${band.label}: ${formatPct(band.share, 0)}`}
+              style={{ width: `${band.share * 100}%`, "--i": i * 3 } as CSSProperties}
             />
           ) : null
         )}

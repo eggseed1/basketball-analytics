@@ -244,7 +244,7 @@ function WowyExplorer({
       {a === b ? (
         <p className={cn(type.bodySm, "text-muted-foreground")}>Pick two different players.</p>
       ) : states ? (
-        <div className="grid grid-cols-2 gap-2 lg:grid-cols-4">
+        <div key={`${a}|${b}`} data-motion-list className="grid grid-cols-2 gap-2 lg:grid-cols-4">
           <StateCell label="Both on" r={states.both} />
           <StateCell label={`${shortName(nameA)} without ${shortName(nameB)}`} r={states.aOnly} />
           <StateCell label={`${shortName(nameB)} without ${shortName(nameA)}`} r={states.bOnly} />

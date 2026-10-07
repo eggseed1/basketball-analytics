@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 
 import { TransitionLink } from "@/components/continuity/query-nav";
 import { SegmentedControl } from "@/components/ui/segmented-control";
@@ -71,6 +71,7 @@ export function SeasonFlowChart({
   const innerH = HEIGHT - PAD.top - PAD.bottom;
   const step = games.length ? innerW / games.length : innerW;
   const barW = Math.max(1.5, Math.min(14, step * 0.68));
+  const sweep = (i: number) => Math.round((i / Math.max(1, games.length - 1)) * 16);
   const xAt = (i: number) => PAD.left + step * i + step / 2;
 
   const marginMax = niceCeil(Math.min(45, Math.max(10, ...games.map((g) => Math.abs(g.margin)))), 10);
@@ -240,6 +241,8 @@ export function SeasonFlowChart({
                 return (
                   <rect
                     key={g.id}
+                    data-motion-bar="y"
+                    style={{ transformOrigin: `0 ${y0}px`, "--i": sweep(i) } as CSSProperties}
                     x={xAt(i) - barW / 2}
                     y={Math.min(y0, y1)}
                     width={barW}
@@ -249,9 +252,12 @@ export function SeasonFlowChart({
                   />
                 );
               })}
-              <path d={rollingPath} fill="none" stroke="var(--card)" strokeWidth={5} strokeLinejoin="round" strokeLinecap="round" />
+              <path d={rollingPath} pathLength={1} data-motion-line data-motion-late fill="none" stroke="var(--card)" strokeWidth={5} strokeLinejoin="round" strokeLinecap="round" />
               <path
                 d={rollingPath}
+                pathLength={1}
+                data-motion-line
+                data-motion-late
                 fill="none"
                 stroke="var(--foreground)"
                 strokeWidth={2}
@@ -261,11 +267,13 @@ export function SeasonFlowChart({
             </>
           ) : (
             <>
-              <path d={ouArea} fill={accent} opacity={0.14} />
-              <path d={ouLine} fill="none" stroke={accent} strokeWidth={2.5} strokeLinejoin="round" />
+              <path d={ouArea} data-motion-wipe fill={accent} opacity={0.14} />
+              <path d={ouLine} pathLength={1} data-motion-line fill="none" stroke={accent} strokeWidth={2.5} strokeLinejoin="round" />
               {games.map((g, i) => (
                 <circle
                   key={g.id}
+                  data-motion-dot
+                  style={{ "--i": sweep(i) } as CSSProperties}
                   cx={xAt(i)}
                   cy={yAt(g.overUnder)}
                   r={active === i ? 4.5 : Math.min(2.2, barW / 2)}
@@ -292,7 +300,7 @@ export function SeasonFlowChart({
         {activeGame && active != null ? (
           <div
             className={cn(
-              "absolute top-2 z-10 w-56 rounded-lg border border-border bg-background/95 p-3 shadow-lg backdrop-blur",
+              "chart-tip-float absolute top-2 z-10 w-56 rounded-lg border border-border bg-background/95 p-3 shadow-lg backdrop-blur",
               pinned != null ? "pointer-events-auto" : "pointer-events-none"
             )}
             style={{

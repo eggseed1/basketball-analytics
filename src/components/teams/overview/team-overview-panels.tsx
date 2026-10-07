@@ -1,3 +1,5 @@
+import type { CSSProperties } from "react";
+
 import type { AnalyticalFinding } from "@/analytics";
 import { type } from "@/lib/design-system";
 import { formatNumber, formatOrdinal, formatPct } from "@/lib/format";
@@ -38,7 +40,7 @@ export function QuarterProfile({ rows, games, season }: { rows: QuarterRow[]; ga
         ) : null}
         .
       </p>
-      <ul className="flex flex-col gap-2.5">
+      <ul data-hover-group className="flex flex-col gap-2.5">
         <li
           className={cn(
             type.micro,
@@ -52,17 +54,20 @@ export function QuarterProfile({ rows, games, season }: { rows: QuarterRow[]; ga
           <span>Allowed</span>
           <span className="text-right">Net</span>
         </li>
-        {rows.map((r) => {
+        {rows.map((r, i) => {
           const w = (Math.abs(r.net) / max) * 50;
           return (
-            <li key={r.quarter} className="grid grid-cols-[2rem_2.75rem_minmax(0,1fr)_2.75rem_3.25rem] items-center gap-3">
+            <li key={r.quarter} data-hover-item className="grid grid-cols-[2rem_2.75rem_minmax(0,1fr)_2.75rem_3.25rem] items-center gap-3">
               <span className={cn(type.bodySm, "font-bold")}>{r.quarter}</span>
               <span className={cn(type.caption, "text-right tabular-nums text-muted-foreground")}>{formatNumber(r.pf, 1)}</span>
               <span className="relative h-7 rounded-md bg-foreground/[0.04]">
                 <span className="absolute inset-y-0 left-1/2 w-px bg-foreground/25" aria-hidden />
                 <span
+                  data-motion-bar="x"
                   className="absolute inset-y-1 rounded-[4px]"
                   style={{
+                    ...({ "--i": i * 2 } as CSSProperties),
+                    transformOrigin: r.net >= 0 ? "left" : "right",
                     background: r.net >= 0 ? WIN : LOSS,
                     width: `${Math.max(0.8, w)}%`,
                     ...(r.net >= 0 ? { left: "50%" } : { right: "50%" }),
@@ -84,7 +89,7 @@ export function QuarterProfile({ rows, games, season }: { rows: QuarterRow[]; ga
 
 function RecordBar({ row, label }: { row: TeamSplitBucket; label: string }) {
   return (
-    <li className="flex flex-col gap-1">
+    <li data-hover-item className="flex flex-col gap-1">
       <div className="flex items-baseline justify-between gap-2">
         <span className={cn(type.caption, "font-semibold")}>{label}</span>
         <span className={cn(type.caption, "tabular-nums text-muted-foreground")}>
@@ -95,8 +100,16 @@ function RecordBar({ row, label }: { row: TeamSplitBucket; label: string }) {
         </span>
       </div>
       <div className="flex h-2.5 w-full gap-0.5">
-        {row.wins ? <span className="rounded-full" style={{ flex: row.wins, background: WIN }} /> : null}
-        {row.losses ? <span className="rounded-full" style={{ flex: row.losses, background: LOSS }} /> : null}
+        {row.wins ? (
+          <span data-motion-bar="x" className="rounded-full" style={{ flex: row.wins, background: WIN }} />
+        ) : null}
+        {row.losses ? (
+          <span
+            data-motion-bar="x"
+            className="rounded-full"
+            style={{ flex: row.losses, background: LOSS, transformOrigin: "right" }}
+          />
+        ) : null}
       </div>
     </li>
   );
@@ -120,7 +133,7 @@ export function SplitsPanel({ splits, season }: { splits: SplitsBundle; season: 
         </p>
       </div>
       {present.length ? (
-        <ul className="flex flex-col gap-3">
+        <ul data-hover-group className="flex flex-col gap-3">
           {present.map(([label, row]) => (
             <RecordBar key={label} label={label} row={row} />
           ))}
@@ -129,17 +142,25 @@ export function SplitsPanel({ splits, season }: { splits: SplitsBundle; season: 
       {splits.months.length ? (
         <div>
           <p className={cn(type.micro, "mb-2 font-semibold uppercase tracking-wide text-muted-foreground")}>Win % by month</p>
-          <div className="flex gap-1.5">
-            {splits.months.map((m) => {
+          <div data-hover-group className="flex gap-1.5">
+            {splits.months.map((m, i) => {
               const total = m.wins + m.losses;
               const pct = total ? m.wins / total : 0;
               return (
-                <div key={m.id} className="flex min-w-0 flex-1 flex-col items-center gap-1" title={`${m.label}: ${m.wins}-${m.losses}`}>
+                <div
+                  key={m.id}
+                  data-hover-item
+                  data-tip={m.label}
+                  data-tip-sub={`${m.wins}-${m.losses} · ${total ? formatPct(pct, 0) : "no games"}`}
+                  className="flex min-w-0 flex-1 flex-col items-center gap-1"
+                >
                   <span className="text-[10px] font-semibold tabular-nums">{formatPct(pct, 0)}</span>
                   <span className="relative flex h-24 w-full items-end overflow-hidden rounded-md bg-foreground/[0.05]">
                     <span
+                      data-motion-bar="y"
+                      data-tip-anchor
                       className="w-full rounded-md"
-                      style={{ height: `${Math.max(3, pct * 100)}%`, background: pct >= 0.5 ? WIN : LOSS }}
+                      style={{ height: `${Math.max(3, pct * 100)}%`, background: pct >= 0.5 ? WIN : LOSS, "--i": i * 2 } as CSSProperties}
                     />
                     <span className="absolute inset-x-0 top-1/2 border-t border-dashed border-foreground/30" aria-hidden />
                   </span>
@@ -159,7 +180,7 @@ export function SplitsPanel({ splits, season }: { splits: SplitsBundle; season: 
 
 function TraitRow({ t }: { t: TraitBar }) {
   return (
-    <li className="flex flex-col gap-1">
+    <li data-hover-item className="flex flex-col gap-1">
       <div className="flex items-baseline justify-between gap-2">
         <span className={cn(type.bodySm, "font-semibold")}>{t.label}</span>
         <span className={cn(type.caption, "tabular-nums text-muted-foreground")}>
@@ -168,6 +189,7 @@ function TraitRow({ t }: { t: TraitBar }) {
       </div>
       <div className="h-2 w-full overflow-hidden rounded-full bg-foreground/[0.07]">
         <div
+          data-motion-bar="x"
           className="h-full rounded-full"
           style={{ width: `${Math.max(3, t.percentile)}%`, background: percentileSavantColor(t.percentile, "auto") }}
         />
@@ -200,7 +222,7 @@ export function StrengthsPanel({
             Strengths
           </p>
           {strengths.length ? (
-            <ul className="flex flex-col gap-3">
+            <ul data-hover-group className="flex flex-col gap-3">
               {strengths.map((t) => (
                 <TraitRow key={t.id} t={t} />
               ))}
@@ -214,7 +236,7 @@ export function StrengthsPanel({
             Weaknesses
           </p>
           {weaknesses.length ? (
-            <ul className="flex flex-col gap-3">
+            <ul data-hover-group className="flex flex-col gap-3">
               {weaknesses.map((t) => (
                 <TraitRow key={t.id} t={t} />
               ))}

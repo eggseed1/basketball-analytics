@@ -6,6 +6,7 @@ import { StatDisclosure } from "@/components/analytics/stat-disclosure";
 import { PageAtmosphere } from "@/components/brand/page-atmosphere";
 import { DestinationClientShell } from "@/components/continuity/destination-client-shell";
 import { DestinationSectionSkeleton } from "@/components/continuity/destination-loading-frame";
+import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { TeamArcIsland } from "@/components/teams/team-arc-island";
 import { TeamAskLinks } from "@/components/teams/team-ask-links";
 import { TeamAssetsIsland } from "@/components/teams/team-assets-island";
@@ -344,7 +345,8 @@ export default async function TeamProfilePage({
         colorA={atmosphere?.colorA}
         colorB={atmosphere?.colorB}
       />
-      <main className="site-shell relative z-[1] flex flex-col gap-4 py-5 sm:gap-5 sm:py-7">
+      <main data-motion-page className="site-shell relative z-[1] flex flex-col gap-4 py-5 sm:gap-5 sm:py-7">
+        <MotionReveal />
         <TeamDestinationIdentity
           teamId={teamId}
           team={identityTeam}
@@ -370,7 +372,7 @@ export default async function TeamProfilePage({
 
         {tab === "overview" ? (
           seasonAwaitingGames ? (
-            <div className="flex flex-col gap-4">
+            <div data-motion-stack className="flex flex-col gap-4">
               <TeamOpeningNight
                 facts={buildScheduleFacts(resolvedTeamId, season, nbaTodayIso())}
                 season={season}
@@ -527,7 +529,7 @@ export default async function TeamProfilePage({
         ) : null}
 
         {tab === "history" ? (
-          <div className="flex flex-col gap-4">
+          <div data-motion-stack className="flex flex-col gap-4">
             <TeamFranchiseHistoryIsland
               abbreviation={identityTeam.abbreviation}
               franchiseToken={modernBrand?.id}
@@ -556,7 +558,7 @@ export default async function TeamProfilePage({
         ) : null}
 
         {tab === "organization" ? (
-          <div className="flex flex-col gap-4">
+          <div data-motion-stack className="flex flex-col gap-4">
             <TeamOrganizationHub />
             <Suspense fallback={null}>
               <TeamMovementIsland teamId={resolvedTeamId} />
@@ -597,7 +599,7 @@ export default async function TeamProfilePage({
         ) : null}
 
         {tab === "payroll" ? (
-          <div className="flex flex-col gap-6">
+          <div data-motion-stack className="flex flex-col gap-6">
             <Suspense
               fallback={<DestinationSectionSkeleton label="Loading payroll…" />}
             >

@@ -1,3 +1,5 @@
+import type { CSSProperties } from "react";
+
 import {
   TONE_EVAL_SETS,
   toneEvalTotal,
@@ -25,17 +27,21 @@ function Bar({ rater, counts, unit }: { rater: ToneEvalRater; counts: ToneEvalCo
     <div className="grid grid-cols-[6.5rem_minmax(0,1fr)_7.5rem] sm:grid-cols-[7rem_minmax(0,1fr)_9.5rem] items-center gap-2">
       <span className={cn(rater === "model" ? "font-semibold text-foreground" : "")}>{RATER_LABEL[rater]}</span>
       <div
+        data-hover-group
         className="flex h-3 overflow-hidden rounded-full bg-foreground/[0.06]"
         role="img"
         aria-label={`${RATER_LABEL[rater]}: ${counts.match} of ${total} ${unit} matched the label, ${counts.offByOne} were one step off and ${counts.opposite} were on the opposite side.`}
       >
-        {SEGMENTS.map((s) =>
+        {SEGMENTS.map((s, i) =>
           counts[s.key] ? (
             <span
               key={s.key}
+              data-motion-bar="x"
+              data-hover-item
+              data-tip={s.label}
+              data-tip-sub={`${counts[s.key]} of ${total} ${unit}`}
               className="h-full"
-              style={{ width: `${pct(counts[s.key])}%`, background: s.color }}
-              title={`${s.label}: ${counts[s.key]} of ${total}`}
+              style={{ width: `${pct(counts[s.key])}%`, background: s.color, "--i": i * 3 } as CSSProperties}
             />
           ) : null
         )}

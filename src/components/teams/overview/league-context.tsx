@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { useChartTheme } from "@/lib/chart-theme";
@@ -73,8 +73,8 @@ export function NetLadder({
         </p>
       ) : null}
 
-      <div className="flex h-44 items-stretch gap-[3px]" onPointerLeave={() => setHover(null)}>
-        {shown.map((r) => {
+      <div data-hover-group className="flex h-44 items-stretch gap-[3px]" onPointerLeave={() => setHover(null)}>
+        {shown.map((r, i) => {
           const own = r.teamId === teamId;
           const h = (Math.abs(r.net) / max) * 50;
           const on = hover === r.teamId;
@@ -83,6 +83,10 @@ export function NetLadder({
               key={r.teamId}
               type="button"
               className="relative flex min-w-0 flex-1 flex-col"
+              data-hover-item
+              data-tip={r.abbr}
+              data-tip-sub={`${r.net > 0 ? "+" : ""}${formatNumber(r.net, 1)} per game`}
+              style={{ "--i": Math.round((i / Math.max(1, shown.length - 1)) * 16) } as CSSProperties}
               onPointerEnter={() => setHover(r.teamId)}
               onFocus={() => setHover(r.teamId)}
               onClick={() => setHover(r.teamId)}
@@ -91,8 +95,11 @@ export function NetLadder({
               <span className="relative block flex-1">
                 <span className="absolute inset-x-0 top-1/2 h-px bg-foreground/25" aria-hidden />
                 <span
-                  className="absolute inset-x-[12%] rounded-[3px] transition-opacity"
+                  data-motion-bar="y"
+                  data-tip-anchor
+                  className="absolute inset-x-[12%] rounded-[3px]"
                   style={{
+                    transformOrigin: r.net >= 0 ? "bottom" : "top",
                     background: own ? accent : on ? (r.net >= 0 ? WIN : LOSS) : r.net >= 0 ? WIN_SOFT : LOSS_SOFT,
                     height: `${Math.max(1.5, h)}%`,
                     ...(r.net >= 0 ? { bottom: "50%" } : { top: "50%" }),
@@ -127,7 +134,6 @@ export function LeagueStrips({
 }) {
   const chartTheme = useChartTheme();
   const accent = chartTheme.teamColor(teamKey).color;
-  const [hover, setHover] = useState<{ strip: string; teamId: string } | null>(null);
   if (!strips.length) return null;
 
   return (
@@ -149,7 +155,6 @@ export function LeagueStrips({
             const t = (v - lo) / span;
             return `${(s.lowerIsBetter ? 1 - t : t) * 100}%`;
           };
-          const hovered = hover?.strip === s.key ? s.points.find((p) => p.teamId === hover.teamId) : null;
           return (
             <li
               key={s.key}
@@ -157,8 +162,8 @@ export function LeagueStrips({
             >
               <span className={cn(type.caption, "col-start-1 row-start-1 font-semibold")}>{s.label}</span>
               <span
+                data-hover-svg
                 className="relative col-span-2 row-start-2 h-7 sm:col-span-1 sm:col-start-2 sm:row-start-1"
-                onPointerLeave={() => setHover(null)}
               >
                 <span className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-foreground/15" aria-hidden />
                 <span
@@ -167,28 +172,25 @@ export function LeagueStrips({
                   title={`League average ${formatStripValue(s.format, s.average)}`}
                   aria-hidden
                 />
-                {s.points.map((p) => (
+                {s.points.map((p, i) => (
                   <span
                     key={p.teamId}
-                    className="absolute top-1/2 size-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-foreground/25 transition hover:scale-150 hover:bg-foreground/60"
-                    style={{ left: pos(p.value) }}
-                    onPointerEnter={() => setHover({ strip: s.key, teamId: p.teamId })}
-                    aria-hidden
+                    data-motion-dot
+                    data-hover-point
+                    data-tip={p.abbr}
+                    data-tip-sub={formatStripValue(s.format, p.value)}
+                    className="absolute top-1/2 size-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-foreground/25 hover:bg-foreground/60"
+                    style={{ left: pos(p.value), "--i": i } as CSSProperties}
                   />
                 ))}
                 <span
+                  data-motion-mark
+                  data-hover-point
+                  data-tip={s.team.abbr}
+                  data-tip-sub={`${formatStripValue(s.format, s.team.value)} · league avg ${formatStripValue(s.format, s.average)}`}
                   className="absolute top-1/2 size-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-background"
-                  style={{ left: pos(s.team.value), background: accent }}
-                  aria-hidden
+                  style={{ left: pos(s.team.value), background: accent, "--mark-from": pos(s.average) } as CSSProperties}
                 />
-                {hovered ? (
-                  <span
-                    className="pointer-events-none absolute -top-5 -translate-x-1/2 whitespace-nowrap rounded bg-foreground px-1.5 py-0.5 text-[10px] font-semibold text-background tabular-nums"
-                    style={{ left: pos(hovered.value) }}
-                  >
-                    {hovered.abbr} {formatStripValue(s.format, hovered.value)}
-                  </span>
-                ) : null}
               </span>
               <span className="col-start-2 row-start-1 text-right sm:col-start-3">
                 <span className={cn(type.bodySm, "font-bold tabular-nums sm:block")}>{formatStripValue(s.format, s.team.value)}</span>

@@ -1802,7 +1802,7 @@ html:not([data-surface="glass"]) .color-scheme-switch {
     animation: motion-reveal 900ms cubic-bezier(0.3, 0.7, 0.2, 1) backwards;
   }
 
-  [data-player-page] tbody > tr:hover > td {
+  [data-motion-page] tbody > tr:hover > td {
     box-shadow: inset 0 0 0 100vmax var(--motion-row-tint);
   }
 
@@ -1957,7 +1957,7 @@ svg [data-motion-dot] {
   }
 }
 
-/* Player page entry. Built on @starting-style transitions so hover replays
+/* Motion page entry (player and team pages). Built on @starting-style transitions so hover replays
    (keyframes) can restart freely, and tab panels that leave display:none
    play their entry again. Each property carries its own delay so hover
    feedback never waits behind the stagger. */
@@ -1982,22 +1982,22 @@ svg [data-motion-dot] {
   scale: 1;
 }
 
-[data-player-page] :is([data-motion-list] > *, tbody > tr) {
+[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li, tbody > tr) {
   --n: 12;
 }
 
-[data-player-page] :is([data-motion-list] > *, tbody > tr):nth-child(1) { --n: 0; }
-[data-player-page] :is([data-motion-list] > *, tbody > tr):nth-child(2) { --n: 1; }
-[data-player-page] :is([data-motion-list] > *, tbody > tr):nth-child(3) { --n: 2; }
-[data-player-page] :is([data-motion-list] > *, tbody > tr):nth-child(4) { --n: 3; }
-[data-player-page] :is([data-motion-list] > *, tbody > tr):nth-child(5) { --n: 4; }
-[data-player-page] :is([data-motion-list] > *, tbody > tr):nth-child(6) { --n: 5; }
-[data-player-page] :is([data-motion-list] > *, tbody > tr):nth-child(7) { --n: 6; }
-[data-player-page] :is([data-motion-list] > *, tbody > tr):nth-child(8) { --n: 7; }
-[data-player-page] :is([data-motion-list] > *, tbody > tr):nth-child(9) { --n: 8; }
-[data-player-page] :is([data-motion-list] > *, tbody > tr):nth-child(10) { --n: 9; }
-[data-player-page] :is([data-motion-list] > *, tbody > tr):nth-child(11) { --n: 10; }
-[data-player-page] :is([data-motion-list] > *, tbody > tr):nth-child(12) { --n: 11; }
+[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li, tbody > tr):nth-child(1) { --n: 0; }
+[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li, tbody > tr):nth-child(2) { --n: 1; }
+[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li, tbody > tr):nth-child(3) { --n: 2; }
+[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li, tbody > tr):nth-child(4) { --n: 3; }
+[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li, tbody > tr):nth-child(5) { --n: 4; }
+[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li, tbody > tr):nth-child(6) { --n: 5; }
+[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li, tbody > tr):nth-child(7) { --n: 6; }
+[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li, tbody > tr):nth-child(8) { --n: 7; }
+[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li, tbody > tr):nth-child(9) { --n: 8; }
+[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li, tbody > tr):nth-child(10) { --n: 9; }
+[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li, tbody > tr):nth-child(11) { --n: 10; }
+[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li, tbody > tr):nth-child(12) { --n: 11; }
 
 @media (prefers-reduced-motion: no-preference) {
   [data-motion-tabs] [role="tab"]::after {
@@ -2006,30 +2006,33 @@ svg [data-motion-dot] {
       opacity 200ms ease;
   }
 
-  [data-player-page] > :not(.hof-page-frame),
-  [data-player-page] .hof-page-frame__inner > * {
+  [data-motion-page] > :not(.hof-page-frame, [data-motion-stack], :has(.sports-card)),
+  [data-motion-page] :is(.hof-page-frame__inner, [data-motion-stack]) > :not(:has(.sports-card)),
+  [data-motion-page] .sports-card:not(a, .sports-card *) {
     transition:
       opacity 420ms ease,
       translate 560ms var(--motion-ease);
   }
 
-  [data-player-page] > :nth-child(2),
-  [data-player-page] .hof-page-frame__inner > :nth-child(2) {
+  [data-motion-page] > :nth-child(2),
+  [data-motion-page] :is(.hof-page-frame__inner, [data-motion-stack]) > :nth-child(2),
+  [data-motion-page] .sports-card:nth-child(2) {
     transition-delay: 70ms;
   }
 
-  [data-player-page] > :nth-child(n + 3),
-  [data-player-page] .hof-page-frame__inner > :nth-child(n + 3) {
+  [data-motion-page] > :nth-child(n + 3),
+  [data-motion-page] :is(.hof-page-frame__inner, [data-motion-stack]) > :nth-child(n + 3),
+  [data-motion-page] .sports-card:nth-child(n + 3) {
     transition-delay: 140ms;
   }
 
-  [data-player-page] [data-avatar="md"] {
+  [data-motion-page] [data-avatar="md"] {
     transition:
       scale 620ms cubic-bezier(0.34, 1.4, 0.64, 1) 80ms,
       opacity 360ms ease 80ms;
   }
 
-  [data-player-page] :is([data-motion-list] > *, [data-motion-item]) {
+  [data-motion-page] :is([data-motion-list] > *, [data-motion-item], :is(ul, ol):not(nav *, [role]) > li) {
     --d: calc(var(--n, var(--i, 0)) * 45ms + 80ms);
     transition:
       opacity 380ms ease var(--d),
@@ -2041,16 +2044,16 @@ svg [data-motion-dot] {
       box-shadow 200ms ease;
   }
 
-  [data-player-page] [data-motion-item] {
+  [data-motion-page] [data-motion-item] {
     --n: min(var(--i, 0), 12);
   }
 
   /* Opacity only: moving a row would drag its sticky cells along. */
-  [data-player-page] tbody > tr {
+  [data-motion-page] tbody > tr {
     transition: opacity 360ms ease calc(var(--n) * 28ms + 60ms);
   }
 
-  [data-player-page] [data-motion-bar] {
+  [data-motion-page] [data-motion-bar] {
     --d: calc(min(var(--i, 0), 16) * 40ms + 120ms);
     transition:
       scale 720ms var(--motion-ease) var(--d),
@@ -2061,22 +2064,22 @@ svg [data-motion-dot] {
       opacity 300ms ease;
   }
 
-  [data-player-page] [data-motion-bar="x"] {
+  [data-motion-page] [data-motion-bar="x"] {
     transform-origin: left;
   }
 
-  [data-player-page] [data-motion-bar="y"] {
+  [data-motion-page] [data-motion-bar="y"] {
     transform-origin: bottom;
   }
 
   /* Same clock as the bars so a marker rides the tip of its bar. */
-  [data-player-page] [data-motion-mark] {
+  [data-motion-page] [data-motion-mark] {
     transition:
       left 720ms var(--motion-ease) calc(min(var(--i, 0), 16) * 40ms + 120ms),
       transform 220ms cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
-  [data-player-page] [data-motion-dot] {
+  [data-motion-page] [data-motion-dot] {
     transform-box: fill-box;
     transform-origin: center;
     transition:
@@ -2086,78 +2089,96 @@ svg [data-motion-dot] {
       filter 180ms ease;
   }
 
-  [data-player-page] [data-motion-line] {
+  [data-motion-page] [data-motion-line] {
     stroke-dasharray: 1 1;
     transition: stroke-dashoffset 1000ms cubic-bezier(0.3, 0.7, 0.2, 1) 100ms;
   }
 
-  [data-player-page] :is(.recharts-line, .recharts-area) {
+  [data-motion-page] [data-motion-line][data-motion-late] {
+    transition-delay: 700ms;
+  }
+
+  [data-motion-page] [data-motion-shape] {
+    transition:
+      opacity 420ms ease 120ms,
+      scale 820ms cubic-bezier(0.34, 1.3, 0.64, 1) 120ms,
+      rotate 820ms var(--motion-ease) 120ms;
+  }
+
+  [data-motion-page] :is(.recharts-line, .recharts-area, [data-motion-wipe]) {
     clip-path: inset(-50% -50% -50% -50%);
     transition: clip-path 1100ms cubic-bezier(0.3, 0.7, 0.2, 1) 100ms;
   }
 
-  [data-player-page] .recharts-bar-rectangle {
+  [data-motion-page] .recharts-bar-rectangle {
     transform-box: fill-box;
     transform-origin: bottom;
     transition: scale 640ms var(--motion-ease) 120ms;
   }
 
-  [data-player-page] :is(.recharts-line-dots > *, .recharts-scatter-symbol) {
+  [data-motion-page] :is(.recharts-line-dots > *, .recharts-scatter-symbol) {
     transform-box: fill-box;
     transform-origin: center;
     transition: scale 380ms cubic-bezier(0.34, 1.56, 0.64, 1) 500ms;
   }
 
   @starting-style {
-    [data-player-page] > :not(.hof-page-frame),
-    [data-player-page] .hof-page-frame__inner > * {
+    [data-motion-page] > :not(.hof-page-frame, [data-motion-stack], :has(.sports-card)),
+    [data-motion-page] :is(.hof-page-frame__inner, [data-motion-stack]) > :not(:has(.sports-card)),
+    [data-motion-page] .sports-card:not(a, .sports-card *) {
       opacity: 0;
       translate: 0 14px;
     }
 
-    [data-player-page] [data-avatar="md"] {
+    [data-motion-page] [data-avatar="md"] {
       opacity: 0;
       scale: 0.82;
     }
 
-    [data-player-page] :is([data-motion-list] > *, [data-motion-item]) {
+    [data-motion-page] :is([data-motion-list] > *, [data-motion-item], :is(ul, ol):not(nav *, [role]) > li) {
       opacity: 0;
       translate: 0 8px;
     }
 
-    [data-player-page] tbody > tr {
+    [data-motion-page] tbody > tr {
       opacity: 0;
     }
 
-    [data-player-page] [data-motion-bar="x"] {
+    [data-motion-page] [data-motion-bar="x"] {
       scale: 0 1;
     }
 
-    [data-player-page] [data-motion-bar="y"] {
+    [data-motion-page] [data-motion-bar="y"] {
       scale: 1 0;
     }
 
-    [data-player-page] [data-motion-mark] {
+    [data-motion-page] [data-motion-mark] {
       left: var(--mark-from, 0%);
     }
 
-    [data-player-page] [data-motion-dot] {
+    [data-motion-page] [data-motion-dot] {
       scale: 0;
     }
 
-    [data-player-page] [data-motion-line] {
+    [data-motion-page] [data-motion-line] {
       stroke-dashoffset: 1;
     }
 
-    [data-player-page] :is(.recharts-line, .recharts-area) {
+    [data-motion-page] :is(.recharts-line, .recharts-area, [data-motion-wipe]) {
       clip-path: inset(-50% 150% -50% -50%);
     }
 
-    [data-player-page] .recharts-bar-rectangle {
+    [data-motion-page] [data-motion-shape] {
+      opacity: 0;
+      scale: 0.4;
+      rotate: -30deg;
+    }
+
+    [data-motion-page] .recharts-bar-rectangle {
       scale: 1 0;
     }
 
-    [data-player-page] :is(.recharts-line-dots > *, .recharts-scatter-symbol) {
+    [data-motion-page] :is(.recharts-line-dots > *, .recharts-scatter-symbol) {
       scale: 0;
     }
   }

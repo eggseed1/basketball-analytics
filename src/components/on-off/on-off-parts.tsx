@@ -1,3 +1,5 @@
+import type { CSSProperties } from "react";
+
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import type { OnOffView } from "@/lib/on-off/metrics";
 import { Z95 } from "@/lib/on-off/derive";
@@ -112,16 +114,22 @@ export function Dumbbell({
     <div className="relative h-5" aria-hidden>
       <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-foreground/10" />
       <div
+        data-motion-bar="x"
         className="absolute top-1/2 h-1 -translate-y-1/2 rounded-full bg-foreground/20"
-        style={{ left: pos(left), width: `calc(${pos(right)} - ${pos(left)})` }}
+        style={{
+          left: pos(left),
+          width: `calc(${pos(right)} - ${pos(left)})`,
+          transformOrigin: on >= off ? "left" : "right",
+        }}
       />
       <span
         className="absolute top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-muted-foreground/60 bg-background"
         style={{ left: pos(off) }}
       />
       <span
+        data-motion-mark
         className="absolute top-1/2 size-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full ring-2 ring-background"
-        style={{ left: pos(on), background: color }}
+        style={{ left: pos(on), background: color, "--mark-from": pos(off) } as CSSProperties}
       />
     </div>
   );
