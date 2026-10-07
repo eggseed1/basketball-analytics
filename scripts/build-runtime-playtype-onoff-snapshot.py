@@ -7,7 +7,9 @@ TLS fingerprint. Run from the repo root:
     python3 -m venv /tmp/nbavenv && /tmp/nbavenv/bin/pip install curl_cffi
     /tmp/nbavenv/bin/python scripts/build-runtime-playtype-onoff-snapshot.py [season ...]
 
-Seasons that fail to load keep their previous rows in the snapshot.
+Seasons that fail to load keep their previous rows in the snapshot. If one
+quick probe gets no answer (stats.nba.com blocks GitHub runners), nothing is
+fetched or written, instead of spending ~10 minutes on timeouts and retries.
 """
 
 import gzip
@@ -52,24 +54,37 @@ HEADERS = {
 }
 
 
-def fetch(endpoint, params):
+PROBE_TIMEOUT = float(os.environ.get("NBA_STATS_PROBE_TIMEOUT", "15"))
+
+
+def fetch(endpoint, params, attempts=4, timeout=45):
     last = None
-    for attempt in range(4):
+    for attempt in range(attempts):
         try:
             res = requests.get(
                 f"https://stats.nba.com/stats/{endpoint}",
                 params=params,
                 headers=HEADERS,
                 impersonate="chrome",
-                timeout=45,
+                timeout=timeout,
             )
             if res.status_code != 200:
                 raise RuntimeError(f"HTTP {res.status_code}")
             return res.json()
         except Exception as error:  # noqa: BLE001 - retry any transport error
             last = error
-            time.sleep(1.5 * (attempt + 1))
+            if attempt + 1 < attempts:
+                time.sleep(1.5 * (attempt + 1))
     raise last
+
+
+def stats_reachable():
+    try:
+        fetch("commonplayerinfo", {"LeagueID": "00", "PlayerID": "2544"}, attempts=1, timeout=PROBE_TIMEOUT)
+        return True
+    except Exception as error:  # noqa: BLE001
+        print(f"[nba-stats] unreachable, keeping committed snapshots: {error}")
+        return False
 
 
 def result_set(payload, name=None):
@@ -266,6 +281,9 @@ def main():
     play_seasons = dict(play.get("seasons") or {})
     onoff_seasons = dict(onoff.get("seasons") or {})
     league_zones = dict(play.get("leagueShotZones") or {})
+
+    if not stats_reachable():
+        return
 
     zones_only = os.environ.get("ZONES_ONLY") == "1"
     for season in seasons:
