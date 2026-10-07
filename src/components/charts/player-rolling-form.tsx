@@ -26,6 +26,7 @@ import {
 } from "@/lib/rolling-efficiency";
 import { useChartTheme } from "@/lib/chart-theme";
 import { cn } from "@/lib/utils";
+import { statTipProps } from "@/lib/stat-glossary";
 
 export type RollingFormGame = {
   gameId: string;
@@ -109,7 +110,7 @@ export function PlayerRollingFormChart({
       </div>
 
       {last ? (
-        <dl className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+        <dl data-hover-group className="grid grid-cols-2 gap-2 sm:grid-cols-4">
           {(
             [
               ["Rolling PTS", formatNumber(last.rollingPoints, 1)],
@@ -120,6 +121,10 @@ export function PlayerRollingFormChart({
           ).map(([label, value]) => (
             <div
               key={label}
+              data-stat-tile
+              data-hover-item
+              data-tip={label.startsWith("Rolling") ? `Average over the last ${windowSize} games` : "His most recent game"}
+              data-tip-sub={statTipProps(label.endsWith("TS%") ? "TS%" : "PTS")["data-tip-sub"]}
               className="rounded-md border border-border/70 px-3 py-2"
             >
               <dt

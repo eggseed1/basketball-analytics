@@ -23,6 +23,22 @@ const CATEGORIES = PERCENTILE_CATEGORY_CHIPS.filter(
   (chip) => chip.id !== "hustle"
 );
 
+const COUNT_LABEL = {
+  minutes: "MP",
+  points: "PTS",
+  assists: "AST",
+  rebounds: "REB",
+  steals: "STL",
+  blocks: "BLK",
+  turnovers: "TOV",
+  offensiveRebounds: "ORB",
+  defensiveRebounds: "DRB",
+  personalFouls: "PF",
+  plusMinus: "+/-",
+} as const satisfies Partial<Record<keyof PlayerGame, string>>;
+
+type CountKey = keyof typeof COUNT_LABEL;
+
 function shortSeason(season: string) {
   const m = /^(\d{4})-(\d{2})$/.exec(season);
   if (!m) return season;
@@ -157,6 +173,30 @@ export function PlayerGameLogBoard({
       return true;
     });
   }, [games, place, role]);
+
+  const averages = useMemo(() => {
+    const out: Partial<Record<CountKey, number>> = {};
+    for (const key of Object.keys(COUNT_LABEL) as CountKey[]) {
+      const values = filtered
+        .map((g) => g[key])
+        .filter((v): v is number => typeof v === "number" && Number.isFinite(v));
+      if (values.length) out[key] = values.reduce((sum, v) => sum + v, 0) / values.length;
+    }
+    return out;
+  }, [filtered]);
+
+  /** Hover label for a counting stat: this game against his average over the games shown. */
+  const vsAverage = (key: CountKey, value: number | null | undefined) => {
+    const avg = averages[key];
+    if (value == null || avg == null || filtered.length < 2) return {};
+    const delta = value - avg;
+    const sign = delta > 0 ? "+" : delta < 0 ? "−" : "±";
+    const digits = key === "minutes" ? 1 : 0;
+    return {
+      "data-tip": `${formatNumber(value, digits)} ${COUNT_LABEL[key]}`,
+      "data-tip-sub": `${sign}${formatNumber(Math.abs(delta), 1)} vs his ${formatNumber(avg, 1)} average over these ${filtered.length} games`,
+    };
+  };
 
   function setSeason(next: string) {
     queryNav?.replaceParams({ season: next });
@@ -335,7 +375,7 @@ export function PlayerGameLogBoard({
                 const ts = tsFromLine(g);
                 const efg = efgFromLine(g);
                 return (
-                  <tr key={g.id} className="hover:bg-secondary/40">
+                  <tr key={g.id}>
                     <td className="px-3 py-2">
                       <TextLink
                         href={`/games/${g.gameId}`}
@@ -351,51 +391,51 @@ export function PlayerGameLogBoard({
                     category === "profile" ||
                     category === "defense" ||
                     category === "advanced" ? (
-                      <td className="px-2 py-2 text-right tabular-nums">
+                      <td {...vsAverage("minutes", g.minutes)} className="px-2 py-2 text-right tabular-nums">
                         {formatNumber(g.minutes, 1)}
                       </td>
                     ) : null}
                     {category === "impact" || category === "profile" ? (
                       <>
-                        <td className="px-2 py-2 text-right tabular-nums">
+                        <td {...vsAverage("points", g.points)} className="px-2 py-2 text-right tabular-nums">
                           {g.points}
                         </td>
-                        <td className="px-2 py-2 text-right tabular-nums">
+                        <td {...vsAverage("assists", g.assists)} className="px-2 py-2 text-right tabular-nums">
                           {g.assists}
                         </td>
-                        <td className="px-2 py-2 text-right tabular-nums">
+                        <td {...vsAverage("rebounds", g.rebounds)} className="px-2 py-2 text-right tabular-nums">
                           {g.rebounds}
                         </td>
                       </>
                     ) : null}
                     {category === "profile" ? (
                       <>
-                        <td className="px-2 py-2 text-right tabular-nums">
+                        <td {...vsAverage("offensiveRebounds", g.offensiveRebounds)} className="px-2 py-2 text-right tabular-nums">
                           {g.offensiveRebounds ?? "-"}
                         </td>
-                        <td className="px-2 py-2 text-right tabular-nums">
+                        <td {...vsAverage("defensiveRebounds", g.defensiveRebounds)} className="px-2 py-2 text-right tabular-nums">
                           {g.defensiveRebounds ?? "-"}
                         </td>
-                        <td className="px-2 py-2 text-right tabular-nums">
+                        <td {...vsAverage("turnovers", g.turnovers)} className="px-2 py-2 text-right tabular-nums">
                           {g.turnovers}
                         </td>
-                        <td className="px-2 py-2 text-right tabular-nums">
+                        <td {...vsAverage("personalFouls", g.personalFouls)} className="px-2 py-2 text-right tabular-nums">
                           {g.personalFouls ?? "-"}
                         </td>
-                        <td className="px-2 py-2 text-right tabular-nums">
-                          {g.plusMinus}
+                        <td {...vsAverage("plusMinus", g.plusMinus)} className="px-2 py-2 text-right tabular-nums">
+                          {Number.isFinite(g.plusMinus) ? g.plusMinus : "—"}
                         </td>
                       </>
                     ) : null}
                     {category === "defense" ? (
                       <>
-                        <td className="px-2 py-2 text-right tabular-nums">
+                        <td {...vsAverage("steals", g.steals)} className="px-2 py-2 text-right tabular-nums">
                           {g.steals}
                         </td>
-                        <td className="px-2 py-2 text-right tabular-nums">
+                        <td {...vsAverage("blocks", g.blocks)} className="px-2 py-2 text-right tabular-nums">
                           {g.blocks}
                         </td>
-                        <td className="px-2 py-2 text-right tabular-nums">
+                        <td {...vsAverage("defensiveRebounds", g.defensiveRebounds)} className="px-2 py-2 text-right tabular-nums">
                           {g.defensiveRebounds ?? "-"}
                         </td>
                         <td className="px-2 py-2 text-right tabular-nums">
@@ -407,10 +447,10 @@ export function PlayerGameLogBoard({
                     ) : null}
                     {category === "impact" ? (
                       <>
-                        <td className="px-2 py-2 text-right tabular-nums">
+                        <td {...vsAverage("steals", g.steals)} className="px-2 py-2 text-right tabular-nums">
                           {g.steals}
                         </td>
-                        <td className="px-2 py-2 text-right tabular-nums">
+                        <td {...vsAverage("blocks", g.blocks)} className="px-2 py-2 text-right tabular-nums">
                           {g.blocks}
                         </td>
                         <td className="px-2 py-2 text-right tabular-nums">
@@ -419,8 +459,8 @@ export function PlayerGameLogBoard({
                         <td className="px-2 py-2 text-right tabular-nums">
                           {g.threePointersMade}-{g.threePointersAttempted}
                         </td>
-                        <td className="px-2 py-2 text-right tabular-nums">
-                          {g.plusMinus}
+                        <td {...vsAverage("plusMinus", g.plusMinus)} className="px-2 py-2 text-right tabular-nums">
+                          {Number.isFinite(g.plusMinus) ? g.plusMinus : "—"}
                         </td>
                         <td className="px-3 py-2 text-right tabular-nums">
                           {ts != null ? formatPct(ts) : "-"}

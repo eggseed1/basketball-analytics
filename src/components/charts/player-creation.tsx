@@ -6,6 +6,7 @@ import { type } from "@/lib/design-system";
 import { formatNumber, formatPct } from "@/lib/format";
 import type { CreationProfile } from "@/lib/player-availability";
 import { cn } from "@/lib/utils";
+import { statTipProps } from "@/lib/stat-glossary";
 
 export function PlayerCreationPanel({
   profile,
@@ -68,7 +69,7 @@ export function PlayerCreationPanel({
         </p>
       </div>
 
-      <dl className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+      <dl data-hover-group className="grid grid-cols-2 gap-2 sm:grid-cols-4">
         {(
           [
             ["APG", formatNumber(profile.apg, 1)],
@@ -84,6 +85,9 @@ export function PlayerCreationPanel({
         ).map(([label, value]) => (
           <div
             key={label}
+            data-stat-tile
+            data-hover-item
+            {...statTipProps(label === "APG" ? "AST" : label)}
             className="rounded-md border border-border/70 px-3 py-2"
           >
             <dt

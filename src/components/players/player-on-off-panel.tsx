@@ -317,11 +317,11 @@ function Teammates({
   }
   const me = shortName(playerName);
   return (
-    <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+    <ul data-hover-group className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
       {d.teammates.map((t) => {
         const mate = shortName(t.name);
         return (
-          <li key={t.id} className="flex min-w-0 flex-col gap-2 rounded-md border border-border/70 p-3">
+          <li key={t.id} data-hover-item className="flex min-w-0 flex-col gap-2 rounded-md border border-border/70 p-3">
             <TransitionLink
               href={playerHref({ playerId: t.id, season, view: "onoff" })}
               className="truncate text-[14px] font-semibold"
@@ -363,9 +363,11 @@ function PairCell({ state, label }: { state: { net: number | null; poss: number 
   const color = has && state.net! < 0 ? "var(--data-negative)" : "var(--data-positive)";
   return (
     <div
-      title={`${label}: ${has ? fmtSigned(state.net) : "no possessions"} net, ${fmtCount(state.poss)} poss${thin ? " (small sample)" : ""}`}
+      data-tip={label}
+      data-tip-sub={`${has ? `${fmtSigned(state.net)} net` : "No possessions"} · ${fmtCount(state.poss)} poss${thin ? " · small sample" : ""}`}
+      data-motion-pop
       className={cn(
-        "flex h-14 flex-col items-center justify-center rounded-[5px]",
+        "flex h-14 flex-col items-center justify-center rounded-[5px] hover:scale-[1.06] hover:shadow-[var(--motion-chip-shadow)]",
         has ? "" : "bg-foreground/[0.04]",
         thin && has ? "border border-dashed border-foreground/20" : ""
       )}

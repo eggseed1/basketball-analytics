@@ -42,6 +42,13 @@ function CoverageLine({ entry }: { entry: SeasonRankEntry }) {
 }
 
 /** Row season’s result when compared against the column season. */
+const MATRIX_PHRASE: Record<string, string> = {
+  win: "beats",
+  loss: "loses to",
+  even: "is even with",
+  unavailable: "can't be compared with",
+};
+
 function MatrixCellLabel(result: string): string {
   switch (result) {
     case "win":
@@ -120,7 +127,8 @@ export function SeasonRankPicker({
           type="button"
           onClick={go}
           disabled={pending || picked.length < PLAYER_SEASON_RANK_MIN}
-          className="rounded-md bg-foreground px-4 py-2 text-[14px] font-bold text-background disabled:opacity-50"
+          data-motion="chip"
+          className="rounded-md bg-foreground px-4 py-2 text-[14px] font-bold text-background transition-colors hover:bg-foreground/85 disabled:opacity-50"
         >
           {pending ? "Ranking…" : "Rank seasons"}
         </button>
@@ -133,11 +141,13 @@ export function SeasonRankPicker({
               key={season}
               type="button"
               onClick={() => toggle(season)}
+              aria-pressed={on}
+              data-motion="chip"
               className={cn(
-                "rounded-md border px-2.5 py-1.5 text-[12px] font-semibold tabular-nums",
+                "rounded-md border px-2.5 py-1.5 text-[12px] font-semibold tabular-nums transition-colors",
                 on
-                  ? "border-foreground bg-foreground text-background"
-                  : "border-border bg-background text-muted-foreground hover:text-foreground"
+                  ? "border-foreground bg-foreground text-background hover:bg-foreground/85"
+                  : "border-border bg-background text-muted-foreground hover:border-foreground/50 hover:text-foreground"
               )}
             >
               {season}
@@ -155,6 +165,7 @@ export function PlayerSeasonRankView({
   result: PlayerSeasonRanking;
 }) {
   const [showMethod, setShowMethod] = useState(false);
+  const [focusSeason, setFocusSeason] = useState<string | null>(null);
   const seasons = result.seasons;
   const topSeason =
     result.ranking.find((e) => e.eligible && e.rank === 1)?.season ??
@@ -216,10 +227,12 @@ export function PlayerSeasonRankView({
           head-to-head season comparisons (win = 1,{" "}
           <MetricHelp conceptId="essentially_even">even</MetricHelp> = 0.5).
         </p>
-        <ol className="mt-3 flex flex-col gap-3">
+        <ol className="mt-3 flex flex-col gap-3" onMouseLeave={() => setFocusSeason(null)}>
           {result.ranking.map((entry) => (
             <li
               key={entry.season}
+              data-motion="row"
+              onMouseEnter={() => setFocusSeason(entry.season)}
               className="flex flex-col gap-1 border-b border-border/70 pb-3 last:border-0 last:pb-0"
             >
               <div className="flex flex-wrap items-baseline justify-between gap-2">
@@ -325,7 +338,10 @@ export function PlayerSeasonRankView({
                 {seasons.map((s) => (
                   <th
                     key={s}
-                    className="px-2 py-2 text-center font-semibold tabular-nums"
+                    className={cn(
+                      "px-2 py-2 text-center font-semibold tabular-nums transition-colors",
+                      s === focusSeason && "bg-foreground/[0.06]"
+                    )}
                     scope="col"
                   >
                     <span className="block text-[10px] font-medium text-muted-foreground">
@@ -340,7 +356,10 @@ export function PlayerSeasonRankView({
               {result.matrix.map((row) => (
                 <tr key={row[0]?.rowSeason} className="border-t border-border/70">
                   <th
-                    className="px-2 py-2 text-left font-semibold tabular-nums"
+                    className={cn(
+                      "px-2 py-2 text-left font-semibold tabular-nums transition-colors",
+                      row[0]?.rowSeason === focusSeason && "bg-foreground/[0.06]"
+                    )}
                     scope="row"
                   >
                     {row[0]?.rowSeason}
@@ -348,12 +367,18 @@ export function PlayerSeasonRankView({
                   {row.map((cell) => (
                     <td
                       key={`${cell.rowSeason}-${cell.colSeason}`}
-                      className="px-2 py-2 text-center"
-                      title={
+                      className={cn(
+                        "px-2 py-2 text-center transition-colors",
+                        focusSeason != null &&
+                          (cell.rowSeason === focusSeason || cell.colSeason === focusSeason) &&
+                          "bg-foreground/[0.06]"
+                      )}
+                      data-tip={
                         cell.result === "self"
                           ? "Same season"
-                          : `${cell.rowSeason} vs ${cell.colSeason}: ${MatrixCellLabel(cell.result)}`
+                          : `${cell.rowSeason} ${MATRIX_PHRASE[cell.result] ?? "vs"} ${cell.colSeason}`
                       }
+                      data-tip-sub={cell.href ? "Open the two-season breakdown" : undefined}
                     >
                       {cell.href ? (
                         <Link
@@ -391,7 +416,7 @@ export function PlayerSeasonRankView({
         </p>
         <ul className="mt-2 flex flex-col gap-1.5 text-[14px]">
           {result.pairwise.map((p) => (
-            <li key={`${p.seasonA}-${p.seasonB}`}>
+            <li key={`${p.seasonA}-${p.seasonB}`} data-motion="row">
               <Link
                 href={p.href}
                 className="font-semibold underline-offset-2 hover:underline"

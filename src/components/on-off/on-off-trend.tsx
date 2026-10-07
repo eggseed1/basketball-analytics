@@ -115,28 +115,32 @@ export function OnOffTrendChart({ points, color }: { points: TrendPoint[]; color
                 width={Math.max(1.5, step * 0.6)}
                 height={5}
                 rx={1}
-                className="fill-foreground/25"
+                className={cn("transition-[fill] duration-150", i === active ? "fill-foreground" : "fill-foreground/25")}
               />
             ) : null
           )}
           <path d={path} fill="none" stroke={color} strokeWidth={2.25} strokeLinejoin="round" />
-          {activePoint && activePoint.swing != null && active != null ? (
+          {activePoint && active != null ? (
             <>
               <line
-                x1={xAt(active)}
-                x2={xAt(active)}
+                x1={0}
+                x2={0}
                 y1={PAD.top}
                 y2={HEIGHT - PAD.bottom}
                 className="stroke-foreground/20"
+                style={{ transform: `translateX(${xAt(active)}px)` }}
+                data-glide
               />
-              <circle
-                cx={xAt(active)}
-                cy={yAt(activePoint.swing)}
-                r={4}
-                fill={color}
-                className="stroke-background"
-                strokeWidth={2}
-              />
+              {activePoint.swing != null ? (
+                <circle
+                  r={4}
+                  fill={color}
+                  className="stroke-background"
+                  strokeWidth={2}
+                  style={{ transform: `translate(${xAt(active)}px, ${yAt(activePoint.swing)}px)` }}
+                  data-glide
+                />
+              ) : null}
             </>
           ) : null}
         </svg>

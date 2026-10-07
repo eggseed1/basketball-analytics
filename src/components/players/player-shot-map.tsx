@@ -406,7 +406,7 @@ export function PlayerShotMapView({
                 key={row.zone}
                 data-hover-item
                 onMouseEnter={() => setFocusZone(row.zone)}
-                className="flex flex-col gap-1.5"
+                className="group flex flex-col gap-1.5"
               >
                 <div className="flex items-baseline justify-between gap-2">
                   <span className={cn(type.bodySm, "font-semibold")}>{row.zone}</span>
@@ -428,7 +428,7 @@ export function PlayerShotMapView({
                   <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-foreground/[0.07]">
                     <div
                       data-motion-bar="x"
-                      className="h-full rounded-full bg-foreground/55"
+                      className="h-full rounded-full bg-foreground/55 transition-colors group-hover:bg-foreground/85"
                       style={{ width: `${Math.max(2, row.frequency * 100)}%` }}
                     />
                   </div>

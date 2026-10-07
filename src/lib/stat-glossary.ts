@@ -421,3 +421,11 @@ export function getStatGlossaryEntry(
 export function hasStatGlossary(keyOrLabel: string | null | undefined): boolean {
   return getStatGlossaryEntry(keyOrLabel) != null;
 }
+
+/** ChartHoverTip attributes from the glossary entry; none when the stat has no entry. */
+export function statTipProps(
+  keyOrLabel: string | null | undefined
+): { "data-tip"?: string; "data-tip-sub"?: string } {
+  const entry = getStatGlossaryEntry(keyOrLabel);
+  return entry ? { "data-tip": entry.title, "data-tip-sub": entry.body } : {};
+}

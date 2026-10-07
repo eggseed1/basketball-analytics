@@ -39,6 +39,31 @@ function formatPerGame(total: number, games: number) {
   return formatNumber(total / games, 1);
 }
 
+function perGame(total: number, games: number): number | null {
+  return Number.isFinite(total) && games > 0 ? total / games : null;
+}
+
+/** Hover label for one per-game cell: the value, then the change from the next older season shown. */
+function seasonDeltaTip(
+  label: string,
+  season: string,
+  value: number | null,
+  prior: { season: string; value: number | null } | null,
+  percent = false
+) {
+  if (value == null) return {};
+  const shown = percent ? formatPct(value) : formatNumber(value, 1);
+  let sub = "Oldest season shown";
+  if (prior?.value != null) {
+    const delta = percent ? (value - prior.value) * 100 : value - prior.value;
+    const sign = delta > 0 ? "+" : delta < 0 ? "−" : "±";
+    sub = `${sign}${formatNumber(Math.abs(delta), 1)}${percent ? " pts" : ""} vs ${prior.season}`;
+  } else if (prior) {
+    sub = `No ${label} for ${prior.season}`;
+  }
+  return { "data-tip": `${shown} ${label} in ${season}`, "data-tip-sub": sub };
+}
+
 export type PlayerDestinationIdentityProps = {
   playerId: string;
   espnId?: string | null;
@@ -316,7 +341,23 @@ export function PlayerDestinationIdentity({
                       </tr>
                     </thead>
                     <tbody>
-                      {recentSeasons.map((row) => (
+                      {recentSeasons.map((row, index) => {
+                        const older = recentSeasons[index + 1] ?? null;
+                        const ts = (r: PlayerSeason) =>
+                          r.trueShootingPct != null && r.trueShootingPct > 0 ? r.trueShootingPct : null;
+                        const cell = (
+                          label: string,
+                          pick: (r: PlayerSeason) => number | null,
+                          percent = false
+                        ) =>
+                          seasonDeltaTip(
+                            label,
+                            row.season,
+                            pick(row),
+                            older ? { season: older.season, value: pick(older) } : null,
+                            percent
+                          );
+                        return (
                         <tr key={`${row.season}-${row.teamId}`}>
                           <td className="py-1 pr-2">
                             <TextLink
@@ -332,22 +373,35 @@ export function PlayerDestinationIdentity({
                               {row.season}
                             </TextLink>
                           </td>
-                          <td className={cn(type.caption, "px-1.5 py-1 text-right tabular-nums")}>
+                          <td
+                            {...cell("PPG", (r) => perGame(r.points, r.gamesPlayed))}
+                            className={cn(type.caption, "px-1.5 py-1 text-right tabular-nums")}
+                          >
                             {formatPerGame(row.points, row.gamesPlayed)}
                           </td>
-                          <td className={cn(type.caption, "px-1.5 py-1 text-right tabular-nums")}>
+                          <td
+                            {...cell("APG", (r) => perGame(r.assists, r.gamesPlayed))}
+                            className={cn(type.caption, "px-1.5 py-1 text-right tabular-nums")}
+                          >
                             {formatPerGame(row.assists, row.gamesPlayed)}
                           </td>
-                          <td className={cn(type.caption, "px-1.5 py-1 text-right tabular-nums")}>
+                          <td
+                            {...cell("RPG", (r) => perGame(r.rebounds, r.gamesPlayed))}
+                            className={cn(type.caption, "px-1.5 py-1 text-right tabular-nums")}
+                          >
                             {formatPerGame(row.rebounds, row.gamesPlayed)}
                           </td>
-                          <td className={cn(type.caption, "py-1 pl-1.5 text-right tabular-nums")}>
+                          <td
+                            {...cell("TS%", ts, true)}
+                            className={cn(type.caption, "py-1 pl-1.5 text-right tabular-nums")}
+                          >
                             {row.trueShootingPct != null && row.trueShootingPct > 0
                               ? formatPct(row.trueShootingPct)
                               : "-"}
                           </td>
                         </tr>
-                      ))}
+                        );
+                      })}
                     </tbody>
                   </table>
                   {upcomingNode ? (

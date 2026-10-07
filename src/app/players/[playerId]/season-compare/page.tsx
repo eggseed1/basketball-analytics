@@ -8,6 +8,7 @@ import {
 import { getPlayerSeasonComparison } from "@/data/queries/player-season-compare";
 import { getPlayerCareerSeasonsCached } from "@/data/queries/request-cache";
 import { dedupeCareerSeasons } from "@/analytics/career-resume";
+import { MotionReveal } from "@/components/continuity/motion-reveal";
 
 export const metadata = {
   title: "Season compare",
@@ -59,7 +60,8 @@ export default async function PlayerSeasonComparePage({
   }
 
   return (
-    <main className="site-shell flex flex-col gap-5 py-5 sm:py-7">
+    <main data-motion-page className="site-shell flex flex-col gap-5 py-5 sm:py-7">
+      <MotionReveal />
       <p>
         <Link
           href={`/players/${playerId}`}

@@ -72,8 +72,20 @@ function headline(years: ContractValueChartYear[]): string {
 }
 
 /** Paid vs worth, one row per contract season, with the gap between them filled in. */
+type Series = "salary" | "worth" | "range" | "gap";
+
+const FADED = 0.15;
+
 export function ContractValueChart({ years }: { years: ContractValueChartYear[] }) {
   const [selected, setSelected] = useState(years[0]?.season ?? null);
+  const [series, setSeries] = useState<Series | null>(null);
+  const faded = (key: Series) => series != null && series !== key;
+  const legendClass = (key: Series) =>
+    cn(
+      "inline-flex cursor-default items-center gap-1.5 transition-[color,opacity] duration-150",
+      series === key && "text-foreground",
+      faded(key) && "opacity-50"
+    );
   if (!years.length) return null;
 
   const top = Math.max(...years.map((y) => Math.max(y.worthHigh, y.salary)));
@@ -135,7 +147,12 @@ export function ContractValueChart({ years }: { years: ContractValueChartYear[] 
                 <span
                   data-motion-bar="x"
                   className="absolute top-1/2 h-2.5 -translate-y-1/2 rounded-full bg-[var(--chart-3)]/15"
-                  style={{ left: `${pct(y.worthLow)}%`, width: `${pct(y.worthHigh) - pct(y.worthLow)}%` }}
+                  style={{
+                    left: `${pct(y.worthLow)}%`,
+                    width: `${pct(y.worthHigh) - pct(y.worthLow)}%`,
+                    opacity: faded("range") ? FADED : undefined,
+                    background: series === "range" ? "color-mix(in oklab, var(--chart-3) 32%, transparent)" : undefined,
+                  }}
                 />
                 <span
                   data-motion-bar="x"
@@ -145,18 +162,24 @@ export function ContractValueChart({ years }: { years: ContractValueChartYear[] 
                     left: `${pct(lo)}%`,
                     width: `${pct(hi) - pct(lo)}%`,
                     background: gapColor,
-                    opacity: agrees ? 0.85 : 0.4,
+                    opacity: faded("gap") ? FADED : agrees ? 0.85 : 0.4,
                   }}
                 />
                 <span
                   data-motion-dot
                   className="absolute top-1/2 h-5 w-[3px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-foreground"
-                  style={{ left: `${pct(y.salary)}%` }}
+                  style={{ left: `${pct(y.salary)}%`, opacity: faded("salary") ? FADED : undefined }}
                 />
                 <span
                   data-motion-mark
                   className="absolute top-1/2 size-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-[var(--card)] bg-[var(--chart-3)]"
-                  style={{ left: `${pct(y.worth)}%`, "--mark-from": `${pct(y.salary)}%` } as CSSProperties}
+                  style={
+                    {
+                      left: `${pct(y.worth)}%`,
+                      "--mark-from": `${pct(y.salary)}%`,
+                      opacity: faded("worth") ? FADED : undefined,
+                    } as CSSProperties
+                  }
                 />
               </span>
               <span
@@ -208,20 +231,23 @@ export function ContractValueChart({ years }: { years: ContractValueChartYear[] 
         ) : null}
       </div>
 
-      <ul className={cn(type.caption, "flex flex-wrap gap-x-4 gap-y-1 text-muted-foreground")}>
-        <li className="inline-flex items-center gap-1.5">
+      <ul
+        className={cn(type.caption, "flex flex-wrap gap-x-4 gap-y-1 text-muted-foreground")}
+        onMouseLeave={() => setSeries(null)}
+      >
+        <li className={legendClass("salary")} onMouseEnter={() => setSeries("salary")}>
           <span aria-hidden className="h-3.5 w-[3px] rounded-full bg-foreground" />
           Salary
         </li>
-        <li className="inline-flex items-center gap-1.5">
+        <li className={legendClass("worth")} onMouseEnter={() => setSeries("worth")}>
           <span aria-hidden className="size-2.5 rounded-full bg-[var(--chart-3)]" />
           Estimated worth
         </li>
-        <li className="inline-flex items-center gap-1.5">
+        <li className={legendClass("range")} onMouseEnter={() => setSeries("range")}>
           <span aria-hidden className="h-2 w-4 rounded-full bg-[var(--chart-3)]/15" />
           Likely range (80%)
         </li>
-        <li className="inline-flex items-center gap-1.5">
+        <li className={legendClass("gap")} onMouseEnter={() => setSeries("gap")}>
           <span aria-hidden className="h-1.5 w-4 rounded-full bg-[var(--chart-3)]" />
           <span aria-hidden className="-ml-1 h-1.5 w-4 rounded-full bg-[var(--destructive)]" />
           Gain or loss

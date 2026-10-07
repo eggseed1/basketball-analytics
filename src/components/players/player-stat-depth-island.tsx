@@ -64,6 +64,7 @@ import {
 } from "@/lib/player-page-contract";
 import { mergePlayerSeasonStats } from "@/lib/player-destination";
 import { slimEdgeProductEnabled } from "@/data/providers/nba/runtime-policy";
+import { statTipProps } from "@/lib/stat-glossary";
 
 function pct(n: number | null): string {
   if (n == null) return "—";
@@ -464,7 +465,7 @@ async function GamesView({
         </p>
       ) : (
         <>
-          <dl data-motion-list className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          <dl data-motion-list data-hover-group className="grid grid-cols-2 gap-2 sm:grid-cols-4">
             {(
               [
                 ["Last 5 PTS", recent.last5.points, recent.delta.points],
@@ -479,6 +480,10 @@ async function GamesView({
             ).map(([label, value, delta]) => (
               <div
                 key={label}
+                data-stat-tile
+                data-hover-item
+                data-tip="Average over his last 5 games"
+                data-tip-sub={statTipProps(label.replace("Last 5 ", ""))["data-tip-sub"]}
                 className="rounded-md border border-border px-3 py-2"
               >
                 <dt className="text-[10px] font-semibold uppercase text-muted-foreground">
@@ -808,7 +813,7 @@ async function ShootingView({
         </p>
       ) : (
         <>
-          <dl data-motion-list className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
+          <dl data-motion-list data-hover-group className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
             <Mini label="FG" value={`${display.fgm}-${display.fga}`} />
             <Mini label="FG%" value={pct(display.fgPct ?? fgPct(display.fgm, display.fga))} />
             <Mini label="2P" value={`${display.twoPm}-${display.twoPa}`} />
@@ -1167,7 +1172,7 @@ async function AdvancedView({
           Box defensive events do not represent total defensive value.
         </p>
         {merged ? (
-          <dl data-motion-list className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          <dl data-motion-list data-hover-group className="grid grid-cols-2 gap-2 sm:grid-cols-4">
             <Mini label="STL" value={formatNumber(merged.steals / Math.max(1, merged.gamesPlayed), 1)} />
             <Mini label="BLK" value={formatNumber(merged.blocks / Math.max(1, merged.gamesPlayed), 1)} />
             <Mini label="DRB" value={merged.defensiveRebounds != null ? formatNumber(merged.defensiveRebounds / Math.max(1, merged.gamesPlayed), 1) : "—"} />
@@ -1499,7 +1504,7 @@ function Mini({
   help?: string;
 }) {
   return (
-    <div className="rounded-md border border-border px-3 py-2">
+    <div data-stat-tile data-hover-item {...(help ? {} : statTipProps(label))} className="rounded-md border border-border px-3 py-2">
       <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
         {help ? (
           <MetricHelp conceptId={help as "efg"}>{label}</MetricHelp>

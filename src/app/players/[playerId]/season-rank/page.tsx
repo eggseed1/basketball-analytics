@@ -16,6 +16,7 @@ import {
   canonicalSeasonFromStartYear,
   currentNbaStartYear,
 } from "@/data/providers/historical/season-range";
+import { MotionReveal } from "@/components/continuity/motion-reveal";
 
 export const metadata = {
   title: "Rank my seasons",
@@ -75,7 +76,8 @@ export default async function PlayerSeasonRankPage({
   }
 
   return (
-    <main className="site-shell flex flex-col gap-5 py-5 sm:py-7">
+    <main data-motion-page className="site-shell flex flex-col gap-5 py-5 sm:py-7">
+      <MotionReveal />
       <p>
         <Link
           href={`/players/${playerId}`}

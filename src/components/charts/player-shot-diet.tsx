@@ -1,6 +1,6 @@
 "use client";
 
-import { useId } from "react";
+import { useId, useState } from "react";
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 
 import type { ShotDietSlice } from "@/lib/player-stat-views";
@@ -40,6 +40,8 @@ export function PlayerShotDiet({
   const colors = teamPalette(teamKey, slices.length);
   const data = slices.map((s, i) => ({ ...s, value: s.attempts, fill: colors[i]! }));
   const total = slices.reduce((a, s) => a + s.attempts, 0);
+  const [focus, setFocus] = useState<string | null>(null);
+  const focused = data.find((slice) => slice.key === focus) ?? null;
 
   return (
     <figure
@@ -78,9 +80,15 @@ export function PlayerShotDiet({
                   startAngle={90}
                   endAngle={-270}
                   isAnimationActive={false}
+                  onMouseEnter={(_, index) => setFocus(data[index]?.key ?? null)}
+                  onMouseLeave={() => setFocus(null)}
                 >
                   {data.map((slice) => (
-                    <Cell key={slice.key} fill={slice.fill} />
+                    <Cell
+                      key={slice.key}
+                      fill={slice.fill}
+                      style={{ opacity: focus && focus !== slice.key ? 0.3 : 1, transition: "opacity 180ms ease" }}
+                    />
                   ))}
                 </Pie>
                 <Tooltip
@@ -100,16 +108,26 @@ export function PlayerShotDiet({
               </PieChart>
             </ResponsiveContainer>
             <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-2xl font-bold tabular-nums">{formatNumber(total, 0)}</span>
-              <span className={cn(type.caption, "text-muted-foreground")}>attempts</span>
+              <span className="text-2xl font-bold tabular-nums">
+                {focused ? formatPct(focused.share) : formatNumber(total, 0)}
+              </span>
+              <span className={cn(type.caption, "text-muted-foreground")}>
+                {focused ? (SLICE_LABEL[focused.key] ?? focused.label).toLowerCase() : "attempts"}
+              </span>
             </div>
           </div>
 
-          <ul className="flex flex-col gap-3.5">
+          <ul data-hover-group className="flex flex-col gap-3.5" onMouseLeave={() => setFocus(null)}>
             {data.map((slice) => {
               const league = leagueShares?.[slice.key];
               return (
-                <li key={slice.key} className="flex flex-col gap-1.5">
+                <li
+                  key={slice.key}
+                  data-hover-item
+                  data-focus-off={focus && focus !== slice.key ? "" : undefined}
+                  className="flex flex-col gap-1.5"
+                  onMouseEnter={() => setFocus(slice.key)}
+                >
                   <div className="flex items-baseline justify-between gap-3">
                     <span className={cn(type.bodySm, "inline-flex items-center gap-2 font-semibold")}>
                       <span aria-hidden className="size-2.5 rounded-full" style={{ background: slice.fill }} />
@@ -122,6 +140,7 @@ export function PlayerShotDiet({
                   </div>
                   <div className="relative h-2 rounded-full bg-foreground/[0.07]">
                     <div
+                      data-motion-bar="x"
                       className="h-full rounded-full"
                       style={{ width: `${slice.share * 100}%`, background: slice.fill }}
                     />
