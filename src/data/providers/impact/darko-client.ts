@@ -54,8 +54,105 @@ export async function fetchDarkoRatings(
   return ratings;
 }
 
+/** Slice a balanced `[...]` literal starting at `start`, skipping string contents. */
+function bracketLiteral(text: string, start: number): string | null {
+  let depth = 0;
+  let inString = false;
+  for (let i = start; i < text.length; i++) {
+    const c = text[i];
+    if (inString) {
+      if (c === "\\") i++;
+      else if (c === '"') inString = false;
+      continue;
+    }
+    if (c === '"') inString = true;
+    else if (c === "[") depth++;
+    else if (c === "]" && --depth === 0) return text.slice(start, i + 1);
+  }
+  return null;
+}
+
+/** JS array literal → JSON: devalue writes `.5` / `-.5` without the leading zero. */
+function parseJsArray(literal: string): unknown {
+  return JSON.parse(literal.replace(/(?<=[[,])(-?)\.(\d)/g, "$10.$2"));
+}
+
+/** Current markup: `players:{keys:[...],values:[[col0...],[col1...]]}` (column-major). */
+function parseDarkoColumns(html: string, updatedAt: string): DarkoRating[] {
+  const at = html.indexOf("players:{keys:");
+  if (at < 0) return [];
+  const keysStart = html.indexOf("[", at);
+  const keysLiteral = bracketLiteral(html, keysStart);
+  if (!keysLiteral) return [];
+  const valuesAt = html.indexOf("values:", keysStart + keysLiteral.length);
+  if (valuesAt < 0) return [];
+  const valuesLiteral = bracketLiteral(html, html.indexOf("[", valuesAt));
+  if (!valuesLiteral) return [];
+
+  let keys: unknown;
+  let values: unknown;
+  try {
+    keys = parseJsArray(keysLiteral);
+    values = parseJsArray(valuesLiteral);
+  } catch {
+    return [];
+  }
+  if (!Array.isArray(keys) || !Array.isArray(values)) return [];
+  const col = (name: string): unknown[] => {
+    const i = keys.indexOf(name);
+    return i >= 0 && Array.isArray(values[i]) ? (values[i] as unknown[]) : [];
+  };
+  const ids = col("nba_id");
+  const names = col("player_name");
+  const teams = col("team_name");
+  const teamIds = col("tm_id");
+  const positions = col("position");
+  const seasons = col("season");
+  const dpm = col("dpm");
+  const oDpm = col("o_dpm");
+  const dDpm = col("d_dpm");
+  const boxDpm = col("box_dpm");
+  const onOffDpm = col("on_off_dpm");
+  const minutes = col("x_minutes");
+  const finite = (v: unknown) =>
+    typeof v === "number" && Number.isFinite(v) ? v : null;
+
+  const byId = new Map<string, DarkoRating>();
+  ids.forEach((rawId, i) => {
+    const impact = finite(dpm[i]);
+    const seasonYear = finite(seasons[i]);
+    const name = names[i];
+    if (rawId == null || impact == null || seasonYear == null || typeof name !== "string") {
+      return;
+    }
+    const nbaId = String(rawId);
+    byId.set(nbaId, {
+      playerId: nbaId,
+      nbaPlayerId: nbaId,
+      playerName: name,
+      teamName: typeof teams[i] === "string" && teams[i] ? (teams[i] as string) : undefined,
+      teamId: teamIds[i] != null ? String(teamIds[i]) : undefined,
+      position:
+        typeof positions[i] === "string" && positions[i] ? (positions[i] as string) : undefined,
+      season: canonicalSeasonFromStartYear(seasonYear - 1),
+      source: "darko",
+      impact,
+      offensive: finite(oDpm[i]) ?? undefined,
+      defensive: finite(dDpm[i]) ?? undefined,
+      boxImpact: finite(boxDpm[i]) ?? undefined,
+      onOffImpact: finite(onOffDpm[i]) ?? undefined,
+      projectedMinutes: finite(minutes[i]) ?? undefined,
+      updatedAt,
+    });
+  });
+  return [...byId.values()].sort((a, b) => b.impact - a.impact);
+}
+
 export function parseDarkoHtml(html: string): DarkoRating[] {
   const updatedAt = new Date().toISOString();
+  const columnar = parseDarkoColumns(html, updatedAt);
+  if (columnar.length > 0) return columnar;
+
   const re =
     /\{nba_id:(\d+),player_name:"([^"]+)",team_name:"([^"]*)",tm_id:(\d+),position:"([^"]*)",season:(\d+),career_game_num:(\d+),dpm:(-?[\d.]+),o_dpm:(-?[\d.]+),d_dpm:(-?[\d.]+),box_dpm:(-?[\d.]+),on_off_dpm:(-?[\d.]+),x_minutes:(-?[\d.]+)/g;
 

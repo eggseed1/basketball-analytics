@@ -110,7 +110,9 @@ export function TopPerformersPanel({
   drblOverlayOk?: boolean;
   drblFallbackNote?: string | null;
 }) {
-  const [sort, setSort] = useState<SortKey>(drblOverlayOk ? "war1" : "darko");
+  const [sort, setSort] = useState<SortKey>(
+    drblOverlayOk ? "war1" : darkoLeaders.length ? "darko" : "ts"
+  );
 
   const seasonByName = useMemo(() => {
     const map = new Map<
@@ -396,7 +398,7 @@ export function TopPerformersPanel({
             ["drbl", "DRBL"],
           ] as const)
         : []),
-      ["darko", "DARKO"],
+      ...(darkoLeaders.length ? ([["darko", "DARKO"]] as const) : []),
       ...(raptorLeaders.length ? ([["raptor", "RAPTOR"]] as const) : []),
       ["ts", "TS%"],
       ["usage", "USG"],
