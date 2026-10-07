@@ -3,7 +3,7 @@
 import { TransitionLink } from "@/components/continuity/query-nav";
 
 import { GlassSurface } from "@/components/brand/glass-surface";
-import { MatchupOrbs } from "@/components/brand/matchup-orbs";
+import { MatchupOrbs, STRIP_CARD_STYLE } from "@/components/brand/matchup-orbs";
 import { HistoricalTeamMark } from "@/components/brand/historical-team-mark";
 import { TeamIdentity } from "@/components/teams/team-identity";
 import type { GameSummary } from "@/data/types";
@@ -161,7 +161,7 @@ export function HomeGameStripCard({ game }: { game: GameSummary }) {
       as="article"
       data-motion="card"
       className="relative isolate flex w-max min-w-[168px] shrink-0 flex-col gap-2.5 px-4 py-3.5"
-      style={{ background: "var(--strip-card-bg)" }}
+      style={STRIP_CARD_STYLE}
     >
       <MatchupOrbs away={matchup.awayWash} home={matchup.homeWash} winner={winner} />
       <TransitionLink

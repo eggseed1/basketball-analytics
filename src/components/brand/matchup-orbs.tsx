@@ -29,6 +29,14 @@ export function MatchupOrbs({
   );
 }
 
+/** Near-opaque fill for orb cards. They skip the backdrop blur: it barely shows
+    through this fill and costs a full repaint per frame inside scroll strips. */
+export const STRIP_CARD_STYLE: CSSProperties = {
+  background: "var(--strip-card-bg)",
+  backdropFilter: "none",
+  WebkitBackdropFilter: "none",
+};
+
 /** Winner side of a final with a margin, for MatchupOrbs. */
 export function finalWinner(game: {
   status?: string;

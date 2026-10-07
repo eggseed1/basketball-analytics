@@ -1943,6 +1943,12 @@ svg [data-motion-dot] {
   }
 }
 
+/* Set by ScrollHoverGuard during page scroll. The root keeps hit testing, so
+   the wheel still scrolls the page. */
+html[data-scrolling] body {
+  pointer-events: none;
+}
+
 @media (hover: hover) {
   [data-hover-group]:has([data-hover-item]:hover) [data-hover-item]:not(:hover) {
     filter: saturate(0.35) opacity(0.42);
@@ -1999,22 +2005,22 @@ svg [data-motion-dot] {
   scale: 1;
 }
 
-[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li, tbody > tr) {
+[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li) {
   --n: 12;
 }
 
-[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li, tbody > tr):nth-child(1) { --n: 0; }
-[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li, tbody > tr):nth-child(2) { --n: 1; }
-[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li, tbody > tr):nth-child(3) { --n: 2; }
-[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li, tbody > tr):nth-child(4) { --n: 3; }
-[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li, tbody > tr):nth-child(5) { --n: 4; }
-[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li, tbody > tr):nth-child(6) { --n: 5; }
-[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li, tbody > tr):nth-child(7) { --n: 6; }
-[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li, tbody > tr):nth-child(8) { --n: 7; }
-[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li, tbody > tr):nth-child(9) { --n: 8; }
-[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li, tbody > tr):nth-child(10) { --n: 9; }
-[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li, tbody > tr):nth-child(11) { --n: 10; }
-[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li, tbody > tr):nth-child(12) { --n: 11; }
+[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li):nth-child(1) { --n: 0; }
+[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li):nth-child(2) { --n: 1; }
+[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li):nth-child(3) { --n: 2; }
+[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li):nth-child(4) { --n: 3; }
+[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li):nth-child(5) { --n: 4; }
+[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li):nth-child(6) { --n: 5; }
+[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li):nth-child(7) { --n: 6; }
+[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li):nth-child(8) { --n: 7; }
+[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li):nth-child(9) { --n: 8; }
+[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li):nth-child(10) { --n: 9; }
+[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li):nth-child(11) { --n: 10; }
+[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li):nth-child(12) { --n: 11; }
 
 @media (prefers-reduced-motion: no-preference) {
   [data-motion-tabs] [role="tab"]::after {
@@ -2023,9 +2029,9 @@ svg [data-motion-dot] {
       opacity 200ms ease;
   }
 
-  [data-motion-page] > :not(.hof-page-frame, [data-motion-stack], :has(.sports-card)),
-  [data-motion-page] :is(.hof-page-frame__inner, [data-motion-stack]) > :not([data-motion-stack], :has(.sports-card)),
-  [data-motion-page] .sports-card:not(a, .sports-card *) {
+  [data-motion-page] > :not(.hof-page-frame, [data-motion-stack], :has(.sports-card, .glass-surface, .glass-card, .frost-surface, .frost-surface-soft, .frost-surface-muted)),
+  [data-motion-page] :is(.hof-page-frame__inner, [data-motion-stack]) > :not([data-motion-stack], :has(.sports-card, .glass-surface, .glass-card, .frost-surface, .frost-surface-soft, .frost-surface-muted)),
+  [data-motion-page] :is(.sports-card, .glass-surface, .glass-card):not(a, :is(.sports-card, .glass-surface, .glass-card) *) {
     transition:
       opacity 420ms ease,
       translate 560ms var(--motion-ease);
@@ -2033,13 +2039,13 @@ svg [data-motion-dot] {
 
   [data-motion-page] > :nth-child(2),
   [data-motion-page] :is(.hof-page-frame__inner, [data-motion-stack]) > :nth-child(2),
-  [data-motion-page] .sports-card:nth-child(2) {
+  [data-motion-page] :is(.sports-card, .glass-surface, .glass-card):nth-child(2) {
     transition-delay: 70ms;
   }
 
   [data-motion-page] > :nth-child(n + 3),
   [data-motion-page] :is(.hof-page-frame__inner, [data-motion-stack]) > :nth-child(n + 3),
-  [data-motion-page] .sports-card:nth-child(n + 3) {
+  [data-motion-page] :is(.sports-card, .glass-surface, .glass-card):nth-child(n + 3) {
     transition-delay: 140ms;
   }
 
@@ -2063,11 +2069,6 @@ svg [data-motion-dot] {
 
   [data-motion-page] [data-motion-item] {
     --n: min(var(--i, 0), 12);
-  }
-
-  /* Opacity only: moving a row would drag its sticky cells along. */
-  [data-motion-page] tbody > tr {
-    transition: opacity 360ms ease calc(var(--n) * 28ms + 60ms);
   }
 
   [data-motion-page] [data-motion-bar] {
@@ -2140,9 +2141,9 @@ svg [data-motion-dot] {
   }
 
   @starting-style {
-    [data-motion-page] > :not(.hof-page-frame, [data-motion-stack], :has(.sports-card)),
-    [data-motion-page] :is(.hof-page-frame__inner, [data-motion-stack]) > :not([data-motion-stack], :has(.sports-card)),
-    [data-motion-page] .sports-card:not(a, .sports-card *) {
+    [data-motion-page] > :not(.hof-page-frame, [data-motion-stack], :has(.sports-card, .glass-surface, .glass-card, .frost-surface, .frost-surface-soft, .frost-surface-muted)),
+    [data-motion-page] :is(.hof-page-frame__inner, [data-motion-stack]) > :not([data-motion-stack], :has(.sports-card, .glass-surface, .glass-card, .frost-surface, .frost-surface-soft, .frost-surface-muted)),
+    [data-motion-page] :is(.sports-card, .glass-surface, .glass-card):not(a, :is(.sports-card, .glass-surface, .glass-card) *) {
       opacity: 0;
       translate: 0 14px;
     }
@@ -2152,13 +2153,10 @@ svg [data-motion-dot] {
       scale: 0.82;
     }
 
-    [data-motion-page] :is([data-motion-list] > *, [data-motion-item], :is(ul, ol):not(nav *, [role]) > li) {
+    [data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li):not(:has(.sports-card, .glass-surface, .glass-card, .frost-surface, .frost-surface-soft, .frost-surface-muted)),
+    [data-motion-page] [data-motion-item] {
       opacity: 0;
       translate: 0 8px;
-    }
-
-    [data-motion-page] tbody > tr {
-      opacity: 0;
     }
 
     [data-motion-page] [data-motion-bar="x"] {
@@ -2390,17 +2388,24 @@ svg [data-motion-dot] {
   --strip-card-bg: var(--material-standard-bg);
 }
 
+/* A 120px disc under a 40px blur, drawn as its falloff instead. A blur filter
+   on a moving layer repaints on every frame of a horizontal scroll. */
 .strip-orb {
+  --orb-fill: var(--orb-color);
   position: absolute;
   z-index: 0;
-  width: 120px;
-  height: 120px;
-  border-radius: 9999px;
+  width: 280px;
+  height: 280px;
+  margin: -80px;
   pointer-events: none;
-  filter: blur(40px);
-  background: var(--orb-color);
+  background: radial-gradient(
+    circle closest-side,
+    color-mix(in oklab, var(--orb-fill) 67%, transparent) 0%,
+    color-mix(in oklab, var(--orb-fill) 40%, transparent) 43%,
+    color-mix(in oklab, var(--orb-fill) 12%, transparent) 71%,
+    transparent 100%
+  );
   opacity: calc(var(--orb-strength, 1) * 0.07);
-  will-change: transform;
   animation: strip-orb-drift 18s ease-in-out infinite alternate;
 }
 
@@ -2411,12 +2416,12 @@ svg [data-motion-dot] {
 /* Same pastel rebuild as the page wash, so navy or maroon tints read clean. */
 @supports (color: oklch(from red l c h)) {
   .strip-orb {
-    background: oklch(from var(--orb-color) 0.78 min(c, 0.13) h);
+    --orb-fill: oklch(from var(--orb-color) 0.78 min(c, 0.13) h);
     opacity: calc(var(--orb-strength, 1) * 0.32);
   }
 
   .dark .strip-orb {
-    background: oklch(from var(--orb-color) 0.48 min(c, 0.12) h);
+    --orb-fill: oklch(from var(--orb-color) 0.48 min(c, 0.12) h);
     opacity: calc(var(--orb-strength, 1) * 0.3);
   }
 }

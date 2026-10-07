@@ -3,7 +3,7 @@
 import { memo, useState, type ReactNode } from "react";
 
 import { GlassSurface } from "@/components/brand/glass-surface";
-import { finalWinner, MatchupOrbs } from "@/components/brand/matchup-orbs";
+import { finalWinner, MatchupOrbs, STRIP_CARD_STYLE } from "@/components/brand/matchup-orbs";
 import { HistoricalTeamMark } from "@/components/brand/historical-team-mark";
 import { TransitionLink } from "@/components/continuity/query-nav";
 import { GameCountdown } from "@/components/sports/game-countdown";
@@ -195,7 +195,7 @@ export const ScoreTile = memo(function ScoreTile({
       as="article"
       effect="css"
       data-motion="card"
-      style={{ background: "var(--strip-card-bg)" }}
+      style={STRIP_CARD_STYLE}
       className={cn(
         "group relative isolate flex flex-col gap-3 p-3.5 transition-[transform,filter] duration-150 hover:-translate-y-px hover:brightness-[0.99] dark:hover:brightness-110",
         live && "ring-1 ring-red-600/30",

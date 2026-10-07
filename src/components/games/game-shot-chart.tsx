@@ -1006,7 +1006,10 @@ export function GameShotChart({
 
       {mode === "shots" ? (
         <div className="board-scroll-host overflow-x-auto rounded-md">
-          <table className="w-full min-w-[20rem] text-right">
+          <table className="w-full min-w-[20rem] table-fixed text-right">
+            <colgroup>
+              <col className="w-[34%]" />
+            </colgroup>
             <thead className={cn(type.caption, "uppercase tracking-wide text-muted-foreground")}>
               <tr className="border-b border-border/60">
                 <th className="py-1.5 pr-2 text-left font-semibold">Zone</th>
@@ -1056,7 +1059,10 @@ export function GameShotChart({
         </div>
       ) : (
         <div className="board-scroll-host overflow-x-auto rounded-md">
-          <table className="w-full min-w-[34rem] text-right">
+          <table className="w-full min-w-[34rem] table-fixed text-right">
+            <colgroup>
+              <col className="w-[16%]" />
+            </colgroup>
             <thead className={cn(type.caption, "uppercase tracking-wide text-muted-foreground")}>
               <tr className="border-b border-border/60">
                 <th className="py-1.5 pr-2 text-left font-semibold">{player ? "Line" : "Team"}</th>

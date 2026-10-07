@@ -4,18 +4,21 @@ import { useEffect } from "react";
 
 type Pose = (el: Element, style: CSSStyleDeclaration) => Keyframe;
 
+/* A fading ancestor cuts a frosted surface off from the page behind it, so the
+   blur flashes clear until the fade ends. Frosted surfaces fade themselves. */
+const FROST = ".sports-card, .glass-surface, .glass-card, .frost-surface, .frost-surface-soft, .frost-surface-muted";
+const CARD = ".sports-card, .glass-surface, .glass-card";
 const SECTION = [
-  "[data-motion-page] > :not(.hof-page-frame, [data-motion-stack], :has(.sports-card))",
-  ":is(.hof-page-frame__inner, [data-motion-stack]) > :not([data-motion-stack], :has(.sports-card))",
-  ".sports-card:not(a, .sports-card *)",
+  `[data-motion-page] > :not(.hof-page-frame, [data-motion-stack], :has(${FROST}))`,
+  `:is(.hof-page-frame__inner, [data-motion-stack]) > :not([data-motion-stack], :has(${FROST}))`,
+  `:is(${CARD}):not(a, :is(${CARD}) *)`,
 ].join(", ");
-const LIST = "[data-motion-list] > *, [data-motion-item], :is(ul, ol):not(nav *, [role]) > li";
+const LIST = `:is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li):not(:has(${FROST})), [data-motion-item]`;
 
 /** Start poses, matched in order. They mirror the @starting-style rules in globals.css. */
 const POSES: Array<[selector: string, pose: Pose]> = [
   [SECTION, () => ({ opacity: 0, translate: "0 14px" })],
   [LIST, () => ({ opacity: 0, translate: "0 8px" })],
-  ["tbody > tr", () => ({ opacity: 0 })],
   ['[data-motion-bar="x"]', () => ({ scale: "0 1" })],
   ['[data-motion-bar="y"], .recharts-bar-rectangle', () => ({ scale: "1 0" })],
   ["[data-motion-mark]", (_, s) => ({ left: s.getPropertyValue("--mark-from").trim() || "0%" })],
@@ -95,15 +98,33 @@ export function MotionReveal() {
       }
     };
 
+    // Inside a box that scrolls on its own, an element can sit in the viewport
+    // while clipped, so it would pop in one at a time as that box scrolls.
+    const scrolls = (el: Element, cache: Map<Element, boolean>) => {
+      for (let node = el.parentElement; node && node !== root; node = node.parentElement) {
+        let clips = cache.get(node);
+        if (clips === undefined) {
+          const style = getComputedStyle(node);
+          clips =
+            (style.overflowX !== "visible" && node.scrollWidth > node.clientWidth + 1) ||
+            (style.overflowY !== "visible" && node.scrollHeight > node.clientHeight + 1);
+          cache.set(node, clips);
+        }
+        if (clips) return true;
+      }
+      return false;
+    };
+
     let frame = 0;
     const scan = () => {
       frame = 0;
       const fold = window.innerHeight;
+      const cache = new Map<Element, boolean>();
       for (const el of root.querySelectorAll(TARGETS)) {
         if (seen.has(el)) continue;
         seen.add(el);
         // Hidden elements get their @starting-style entry when they are shown.
-        if (el.checkVisibility() && el.getBoundingClientRect().top > fold) hold(el);
+        if (el.checkVisibility() && el.getBoundingClientRect().top > fold && !scrolls(el, cache)) hold(el);
       }
     };
     const schedule = () => {

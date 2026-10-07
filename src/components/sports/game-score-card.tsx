@@ -2,7 +2,7 @@ import { memo, type ReactNode } from "react";
 import { TransitionLink } from "@/components/continuity/query-nav";
 
 import { GlassSurface } from "@/components/brand/glass-surface";
-import { finalWinner, MatchupOrbs } from "@/components/brand/matchup-orbs";
+import { finalWinner, MatchupOrbs, STRIP_CARD_STYLE } from "@/components/brand/matchup-orbs";
 import { HistoricalTeamMark } from "@/components/brand/historical-team-mark";
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { PlayerIdentity } from "@/components/players/player-identity";
@@ -370,7 +370,7 @@ export function GameMatchupBoard({
       as="div"
       effect="css"
       data-motion={href === false ? undefined : "card"}
-      style={{ background: "var(--strip-card-bg)" }}
+      style={STRIP_CARD_STYLE}
       className={cn("score-row relative isolate px-3 py-3", className)}
     >
       <MatchupOrbs away={matchup.awayWash} home={matchup.homeWash} winner={finalWinner(game)} />
@@ -477,7 +477,7 @@ export const GameScoreCard = memo(function GameScoreCard({
       as="article"
       effect="css"
       data-motion="card"
-      style={{ background: "var(--strip-card-bg)" }}
+      style={STRIP_CARD_STYLE}
       className={cn(
         "score-row relative isolate flex flex-col gap-2.5 px-3 py-3",
         className
