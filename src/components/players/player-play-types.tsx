@@ -61,12 +61,13 @@ export function PlayerPlayTypesCard({
         <span className="text-right">Percentile</span>
       </div>
 
-      <ul className="flex flex-col gap-3 sm:gap-2.5">
+      <ul data-hover-group className="flex flex-col gap-3 sm:gap-2.5">
         {data.rows.map((row, i) => {
           const pill = row.percentile == null ? null : percentileSavantColor(row.percentile, "auto");
           return (
             <li
               key={row.key}
+              data-hover-item
               style={{ "--i": i } as CSSProperties}
               className="grid grid-cols-[minmax(0,1fr)_3.5rem_4.5rem] items-center gap-x-3 gap-y-1 sm:grid-cols-[9.5rem_minmax(0,1fr)_3.5rem_4.5rem]"
             >

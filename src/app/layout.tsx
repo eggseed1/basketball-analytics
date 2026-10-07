@@ -6,6 +6,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { OwnerThemeProvider } from "@/components/design-system/theme-provider";
 import { SportsShell } from "@/components/sports/sports-shell";
 import { SmoothScroll } from "@/components/smooth-scroll";
+import { ChartHoverTip } from "@/components/charts/chart-hover-tip";
 import { OWNER_THEME_BOOT_SCRIPT } from "@/lib/owner-theme";
 import { SITE_NAME, SITE_URL } from "@/lib/site-url";
 
@@ -71,6 +72,7 @@ export default function RootLayout({
         />
         <OwnerThemeProvider>
           <SmoothScroll />
+          <ChartHoverTip />
           <a
             href="#main-content"
             className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-foreground focus:px-3 focus:py-2 focus:text-background"

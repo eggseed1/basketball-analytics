@@ -129,6 +129,7 @@ export function PlayerShotMapView({
   const [showMakes, setShowMakes] = useState(true);
   const [showMisses, setShowMisses] = useState(true);
   const [mode, setMode] = useState<MapMode>("shots");
+  const [focusZone, setFocusZone] = useState<string | null>(null);
 
   const makeColor = percentileSavantColor(90, surface);
   const missColor = percentileSavantColor(10, surface);
@@ -308,6 +309,7 @@ export function PlayerShotMapView({
             className="h-auto w-full rounded-xl bg-foreground/[0.035] text-foreground ring-1 ring-border/50"
             role="img"
             aria-label={`Shot map, ${makes} makes of ${byKind.length} attempts`}
+            data-hover-svg
           >
             <NbaHalfCourtLines />
             {mode === "shots"
@@ -317,6 +319,10 @@ export function PlayerShotMapView({
                     <circle
                       key={`${shot.x}-${shot.y}-${i}`}
                       data-motion-dot
+                      data-hover-point
+                      data-tip={`${shot.made ? "Make" : "Miss"} · ${shot.dist.toFixed(0)} ft`}
+                      data-tip-sub={`${shot.kind} · ${shot.zone}`}
+                      data-zone-off={focusZone && shot.zone !== focusZone ? "" : undefined}
                       style={{ "--i": i % 48 } as CSSProperties}
                       cx={courtX(shot.x)}
                       cy={courtY(shot.y)}
@@ -326,11 +332,7 @@ export function PlayerShotMapView({
                       stroke={shot.made ? "var(--background)" : missColor}
                       strokeWidth={shot.made ? 0.8 : 1.5}
                       strokeOpacity={shot.made ? 0.7 : 0.75}
-                    >
-                      <title>
-                        {`${shot.made ? "Make" : "Miss"} · ${shot.kind} · ${shot.dist.toFixed(0)} ft · ${shot.zone}`}
-                      </title>
-                    </circle>
+                    />
                   ))
               : bins.map((bin, i) => {
                   const r = 4 + 13 * Math.sqrt(bin.fga / bin.max);
@@ -341,6 +343,10 @@ export function PlayerShotMapView({
                     <circle
                       key={`${bin.x}-${bin.y}`}
                       data-motion-dot
+                      data-hover-point
+                      data-tip={`${bin.fgm} of ${bin.fga} · ${formatPct(pct)}`}
+                      data-tip-sub={`${league != null ? `League ${formatPct(league)} in ${bin.zone}` : bin.zone}${small ? " · small sample" : ""}`}
+                      data-zone-off={focusZone && bin.zone !== focusZone ? "" : undefined}
                       style={{ "--i": i % 30 } as CSSProperties}
                       cx={courtX(bin.x)}
                       cy={courtY(bin.y)}
@@ -349,13 +355,7 @@ export function PlayerShotMapView({
                       fillOpacity={small ? 0.07 : 0.88}
                       stroke="var(--background)"
                       strokeWidth={small ? 0 : 0.8}
-                    >
-                      <title>
-                        {`${bin.fgm} of ${bin.fga} · ${formatPct(pct)}${
-                          league != null ? ` · league ${formatPct(league)} in ${bin.zone}` : ""
-                        }${small ? " · small sample" : ""}`}
-                      </title>
-                    </circle>
+                    />
                   );
                 })}
           </svg>
@@ -391,7 +391,7 @@ export function PlayerShotMapView({
             {hasLeague ? " FG% is colored against the league average in that zone." : ""}
           </p>
         </div>
-        <ul className="flex flex-col gap-3">
+        <ul data-hover-group className="flex flex-col gap-3" onMouseLeave={() => setFocusZone(null)}>
           {zoneRows.map((row) => {
             const league = leagueFor(row.zone);
             const pill =
@@ -402,7 +402,12 @@ export function PlayerShotMapView({
                     surface
                   );
             return (
-              <li key={row.zone} className="flex flex-col gap-1.5">
+              <li
+                key={row.zone}
+                data-hover-item
+                onMouseEnter={() => setFocusZone(row.zone)}
+                className="flex flex-col gap-1.5"
+              >
                 <div className="flex items-baseline justify-between gap-2">
                   <span className={cn(type.bodySm, "font-semibold")}>{row.zone}</span>
                   <span className={cn(type.caption, "flex items-center gap-2 tabular-nums text-muted-foreground")}>

@@ -195,6 +195,7 @@ function MetricRow({
       type="button"
       onClick={onSelect}
       aria-pressed={selected}
+      data-hover-item
       aria-label={
         metric.showPercentile
           ? `${metric.label}, ${Math.round(metric.percentile)}th percentile, ${metric.display}`
@@ -676,13 +677,14 @@ function CompComparePanel({
           </p>
         ) : (
           <ul
+            data-hover-group
             className="flex min-h-0 flex-col gap-1 overflow-y-auto overscroll-contain pr-1"
             style={{
               height: `calc(${compRowCount} * 3.5rem + ${compRowCount - 1} * 0.25rem)`,
             }}
           >
             {rows.map((row) => (
-              <li key={`${row.playerId}-${row.season}-${row.isSelf}`}>
+              <li key={`${row.playerId}-${row.season}-${row.isSelf}`} data-hover-item>
                 <CompRow
                   row={row}
                   focalName={playerName}
@@ -729,6 +731,7 @@ function PercentileHeatTile({
       type="button"
       onClick={onSelect}
       aria-pressed={selected}
+      data-hover-item
       style={{ "--i": index } as CSSProperties}
       className={cn(
         "flex flex-col gap-1.5 rounded-md border px-2.5 py-2 text-left transition-colors",

@@ -175,12 +175,13 @@ function RatingRows({ d, color }: { d: PlayerOnOffDetail; color: string }) {
           <span className="size-2.5 rounded-full border-2 border-muted-foreground/60" aria-hidden /> Off
         </span>
       </div>
-      <ul className="flex flex-col gap-3">
+      <ul data-hover-group className="flex flex-col gap-3">
         {rows.map((r, i) => {
           const diff = r.on != null && r.off != null ? r.on - r.off : null;
           return (
             <li
               key={r.label}
+              data-hover-item
               style={{ "--i": i } as CSSProperties}
               className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1.5 sm:grid-cols-[minmax(0,9rem)_minmax(0,1fr)_13rem]"
             >
@@ -398,10 +399,11 @@ function Replacements({ d, playerName, season }: { d: PlayerOnOffDetail; playerN
           <span className="size-2.5 rounded-full bg-foreground" aria-hidden /> While {me} sits
         </span>
       </div>
-      <ul className="flex flex-col gap-2.5">
+      <ul data-hover-group className="flex flex-col gap-2.5">
         {d.replacements.map((r, i) => (
           <li
             key={r.id}
+            data-hover-item
             style={{ "--i": i } as CSSProperties}
             className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 sm:grid-cols-[minmax(0,10rem)_minmax(0,1fr)_9rem]"
           >

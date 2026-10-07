@@ -1122,6 +1122,8 @@ async function AdvancedView({
             valueLabel={drblOk ? formatNumber(merged!.drbl100, 1) : "unavailable"}
             percentile={byKey.get("drbl100")?.percentile ?? null}
             bins={drblBins}
+            range={drblValues.length ? { min: drblValues[0]!, max: drblValues[drblValues.length - 1]! } : undefined}
+            value={drblOk ? merged!.drbl100 : null}
           />
         ) : (
           <div className="rounded-md border border-border px-3 py-2 text-[13px] text-muted-foreground">
@@ -1138,6 +1140,8 @@ async function AdvancedView({
             }
             percentile={byKey.get("r1WinEquivalents")?.percentile ?? null}
             bins={warBins}
+            range={warValues.length ? { min: warValues[0]!, max: warValues[warValues.length - 1]! } : undefined}
+            value={drblOk ? merged?.r1WinEquivalents : null}
           />
         ) : (
           <div className="rounded-md border border-border px-3 py-2 text-[13px] text-muted-foreground">

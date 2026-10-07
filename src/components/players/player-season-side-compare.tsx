@@ -232,7 +232,7 @@ function DivergingBar({
     Math.abs(a - b) > 1e-6;
 
   return (
-    <div className="grid grid-cols-[minmax(3.5rem,1fr)_minmax(0,2.75fr)_minmax(3.5rem,1fr)] items-center gap-x-2 gap-y-1 py-1.5">
+    <div data-hover-item className="grid grid-cols-[minmax(3.5rem,1fr)_minmax(0,2.75fr)_minmax(3.5rem,1fr)] items-center gap-x-2 gap-y-1 py-1.5">
       <p
         className={cn(
           type.bodySm,
@@ -391,7 +391,7 @@ export function PlayerSeasonSideCompare({
         </div>
       )}
 
-      <div className="flex flex-col divide-y divide-border/50">
+      <div data-hover-group className="flex flex-col divide-y divide-border/50">
         {METRICS.map((def) => {
           const a = rowA ? def.get(rowA) : null;
           const b = rowB ? def.get(rowB) : null;

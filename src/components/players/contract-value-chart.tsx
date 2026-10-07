@@ -88,7 +88,7 @@ export function ContractValueChart({ years }: { years: ContractValueChartYear[] 
     <div className="flex flex-col gap-3">
       <p className={cn(type.body, "font-semibold leading-snug")}>{headline(years)}</p>
 
-      <div className="flex flex-col">
+      <div data-hover-group className="flex flex-col">
         {years.map((y, i) => {
           const isActive = y.season === active.season;
           const lo = Math.min(y.salary, y.worth);
@@ -104,6 +104,7 @@ export function ContractValueChart({ years }: { years: ContractValueChartYear[] 
             <button
               key={y.season}
               type="button"
+              data-hover-item
               style={{ "--i": i } as CSSProperties}
               onClick={() => setSelected(y.season)}
               onMouseEnter={() => setSelected(y.season)}

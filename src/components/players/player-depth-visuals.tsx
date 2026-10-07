@@ -12,6 +12,46 @@ function fmt(n: number, digits = 1): string {
   return Number.isFinite(n) ? n.toFixed(digits) : "—";
 }
 
+function signed(n: number, digits = 1): string {
+  return `${n > 0 ? "+" : n < 0 ? "−" : ""}${Math.abs(n).toFixed(digits)}`;
+}
+
+/** Full-height hover column for one point of a line chart: hit area, guide, dot. */
+function HoverPoint({
+  cx,
+  cy,
+  r,
+  column,
+  height,
+  index,
+  opacity,
+}: {
+  cx: number;
+  cy: number;
+  r: number;
+  column: number;
+  height: number;
+  index: number;
+  opacity?: number;
+}) {
+  return (
+    <>
+      <rect x={cx - column / 2} y={0} width={column} height={height} fill="transparent" />
+      <line data-hover-guide x1={cx} x2={cx} y1={4} y2={height - 4} stroke="currentColor" strokeDasharray="3 3" />
+      <circle
+        data-motion-dot
+        data-tip-anchor
+        style={{ "--i": Math.min(index, 24) } as CSSProperties}
+        cx={cx}
+        cy={cy}
+        r={r}
+        fill="currentColor"
+        opacity={opacity}
+      />
+    </>
+  );
+}
+
 export function PlayerSparkTrend({
   title,
   question,
@@ -29,7 +69,7 @@ export function PlayerSparkTrend({
 }) {
   if (!points.length) {
     return (
-      <figure data-motion="replay" className="rounded-md border border-border p-3">
+      <figure className="rounded-md border border-border p-3">
         <figcaption className="text-[13px] font-semibold">{title}</figcaption>
         <p className="mt-1 text-[12px] text-muted-foreground">{question}</p>
         <p className="mt-3 text-[12px] text-muted-foreground">No data.</p>
@@ -51,6 +91,7 @@ export function PlayerSparkTrend({
   const path = coords
     .map((c, i) => `${i === 0 ? "M" : "L"}${c.cx.toFixed(1)},${c.cy.toFixed(1)}`)
     .join(" ");
+  const column = (w - pad * 2) / Math.max(1, points.length - 1);
   const avgY =
     seasonAvg != null
       ? h - pad - ((seasonAvg - min) / span) * (h - pad * 2)
@@ -58,7 +99,7 @@ export function PlayerSparkTrend({
 
   return (
     <figure
-      data-motion="replay"
+     
       className="rounded-md border border-border p-3"
       aria-label={title}
     >
@@ -69,6 +110,7 @@ export function PlayerSparkTrend({
         className="mt-3 h-[140px] w-full"
         role="img"
         aria-label={`${title} trend chart`}
+        data-hover-svg
       >
         {avgY != null ? (
           <line
@@ -92,23 +134,28 @@ export function PlayerSparkTrend({
         />
         {coords.map((c, i) => {
           const href = c.href ?? hrefForPoint?.(c) ?? null;
-          const circle = (
-            <circle
-              key={c.x + String(c.cx)}
-              data-motion-dot
-              style={{ "--i": Math.min(i, 24) } as CSSProperties}
-              cx={c.cx}
-              cy={c.cy}
-              r={3}
-              fill="currentColor"
-            />
+          const label = c.label ?? c.x;
+          const detail = `${fmt(c.y, valueDigits)}${
+            seasonAvg != null ? ` · ${signed(c.y - seasonAvg, valueDigits)} vs season avg` : ""
+          }`;
+          const point = (
+            <HoverPoint cx={c.cx} cy={c.cy} r={3} column={column} height={h} index={i} />
           );
           return href ? (
-            <a key={c.x + c.cx} href={href} aria-label={c.label ?? c.x}>
-              {circle}
+            <a
+              key={c.x + c.cx}
+              href={href}
+              aria-label={`${label}: ${detail}`}
+              data-hover-point
+              data-tip={label}
+              data-tip-sub={detail}
+            >
+              {point}
             </a>
           ) : (
-            circle
+            <g key={c.x + c.cx} data-hover-point data-tip={label} data-tip-sub={detail}>
+              {point}
+            </g>
           );
         })}
       </svg>
@@ -144,22 +191,25 @@ export function PlayerBarDistribution({
 }) {
   const peak = Math.max(1, ...bins.map((b) => b.count));
   return (
-    <figure data-motion="replay" className="rounded-md border border-border p-3">
+    <figure className="rounded-md border border-border p-3">
       <figcaption className="text-[13px] font-semibold">{title}</figcaption>
       <p className="mt-0.5 text-[12px] text-muted-foreground">{question}</p>
-      <ul className="mt-3 flex h-[120px] items-end gap-1" role="img" aria-label={title}>
+      <ul data-hover-group className="mt-3 flex h-[120px] items-end gap-1" role="img" aria-label={title}>
         {bins.map((b, i) => (
           <li
             key={b.label}
             style={{ "--i": i } as CSSProperties}
-            className="flex flex-1 flex-col items-center justify-end gap-1"
-            title={`${b.label}: ${b.count}`}
+            className="flex h-full flex-1 flex-col items-center justify-end gap-1"
+            data-hover-item
+            data-tip={b.label}
+            data-tip-sub={`${b.count} ${b.count === 1 ? "game" : "games"}`}
           >
             <span className="text-[9px] tabular-nums text-muted-foreground">
               {b.count || ""}
             </span>
             <div
               data-motion-bar="y"
+              data-tip-anchor
               className="w-full rounded-t-sm bg-foreground/80"
               style={{ height: `${(b.count / peak) * 100}%`, minHeight: b.count ? 2 : 0 }}
             />
@@ -201,17 +251,23 @@ export function PlayerPercentileStrip({
   }>;
 }) {
   return (
-    <figure data-motion="replay" className="rounded-md border border-border p-3">
+    <figure className="rounded-md border border-border p-3">
       <figcaption className="text-[13px] font-semibold">{title}</figcaption>
       <p className="mt-0.5 text-[12px] text-muted-foreground">
         Marker = league percentile in the same season (qualified peers).
       </p>
-      <ul className="mt-3 flex flex-col gap-3">
+      <ul data-hover-group className="mt-3 flex flex-col gap-3">
         {rows.map((r) => {
           const p = r.percentile;
           const left = p == null ? null : Math.max(2, Math.min(98, p));
           return (
-            <li key={r.label} className="grid grid-cols-[5.5rem_1fr_4.5rem] items-center gap-2">
+            <li
+              key={r.label}
+              data-hover-item
+              data-tip={r.label}
+              data-tip-sub={p == null ? `${r.valueLabel}, no percentile` : `${r.valueLabel} · ${p}th percentile`}
+              className="grid grid-cols-[5.5rem_1fr_4.5rem] items-center gap-2"
+            >
               <span className="text-[12px] font-medium">{r.label}</span>
               <div
                 className="relative h-2 rounded-full bg-muted"
@@ -225,6 +281,7 @@ export function PlayerPercentileStrip({
                 {left != null ? (
                   <span
                     data-motion-mark
+                    data-tip-anchor
                     className="absolute top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-foreground"
                     style={{ left: `${left}%`, "--mark-from": "2%" } as CSSProperties}
                   />
@@ -265,7 +322,7 @@ export function PlayerSplitDeltaMatrix({
   metrics: string[];
 }) {
   return (
-    <figure data-motion="replay" className="rounded-md border border-border p-3">
+    <figure className="rounded-md border border-border p-3">
       <figcaption className="text-[13px] font-semibold">{title}</figcaption>
       <p className="mt-0.5 text-[12px] text-muted-foreground">
         Difference vs season baseline (per game / rate). Sample size shown.
@@ -334,18 +391,19 @@ export function PlayerOpponentDeltaBars({
 }) {
   const maxAbs = Math.max(0.01, ...rows.map((r) => Math.abs(r.delta)));
   return (
-    <figure data-motion="replay" className="rounded-md border border-border p-3">
+    <figure className="rounded-md border border-border p-3">
       <figcaption className="text-[13px] font-semibold">{title}</figcaption>
       <p className="mt-0.5 text-[12px] text-muted-foreground">
         {metricLabel} vs season average · sorted best → worst · G shown
       </p>
-      <ul className="mt-3 flex max-h-80 flex-col gap-1.5 overflow-y-auto">
+      <ul data-hover-group className="mt-3 flex max-h-80 flex-col gap-1.5 overflow-y-auto">
         {rows.map((r) => {
           const width = (Math.abs(r.delta) / maxAbs) * 50;
           const positive = r.delta >= 0;
           return (
             <li
               key={r.label}
+              data-hover-item
               className="grid grid-cols-[3rem_1fr_3.5rem] items-center gap-2 text-[12px]"
             >
               <span className="font-semibold">
@@ -391,21 +449,33 @@ export function PlayerShotProfileBars({
   }>;
 }) {
   return (
-    <figure data-motion="replay" className="rounded-md border border-border p-3">
+    <figure className="rounded-md border border-border p-3">
       <figcaption className="text-[13px] font-semibold">{title}</figcaption>
       <p className="mt-0.5 text-[12px] text-muted-foreground">
         How often (bar) and how well (dot), with a league baseline marker when available.
       </p>
-      <ul className="mt-3 flex flex-col gap-3">
+      <ul data-hover-group className="mt-3 flex flex-col gap-3">
         {slices.map((s) => (
-          <li key={s.label} className="grid grid-cols-[5.5rem_1fr_4rem] items-center gap-2">
+          <li
+            key={s.label}
+            data-hover-item
+            data-tip={`${s.label} · ${(s.share * 100).toFixed(1)}% of shots`}
+            data-tip-sub={
+              s.accuracy == null
+                ? `${s.attempts} attempts`
+                : `${(s.accuracy * 100).toFixed(1)}% FG${
+                    s.leagueAccuracy != null ? ` · league ${(s.leagueAccuracy * 100).toFixed(1)}%` : ""
+                  }`
+            }
+            className="grid grid-cols-[5.5rem_1fr_4rem] items-center gap-2"
+          >
             <span className="text-[12px] font-medium">
               {s.label}
               <span className="block text-[10px] font-normal text-muted-foreground">
                 {s.attempts} att
               </span>
             </span>
-            <div className="relative h-3 rounded-sm bg-muted">
+            <div data-tip-anchor className="relative h-3 rounded-sm bg-muted">
               <div
                 data-motion-bar="x"
                 className="absolute inset-y-0 left-0 rounded-sm bg-foreground/70"
@@ -416,7 +486,6 @@ export function PlayerShotProfileBars({
                   data-motion-mark
                   className="absolute top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full border border-background bg-foreground"
                   style={{ left: `${Math.max(2, Math.min(98, s.accuracy * 100))}%`, "--mark-from": "2%" } as CSSProperties}
-                  title={`FG% ${(s.accuracy * 100).toFixed(1)}`}
                 />
               ) : null}
               {s.leagueAccuracy != null ? (
@@ -446,16 +515,33 @@ export function PlayerImpactMarker({
   valueLabel,
   percentile,
   bins,
+  range,
+  value,
 }: {
   title: string;
   valueLabel: string;
   percentile: number | null;
   bins: number[];
+  /** Value span the bins cover, for hover labels and marker placement. */
+  range?: { min: number; max: number; digits?: number };
+  /** Player value; with `range` the marker sits on the bins' value axis. */
+  value?: number | null;
 }) {
+  const binLabel = (i: number) => {
+    if (!range) return null;
+    const step = (range.max - range.min) / bins.length;
+    const digits = range.digits ?? 1;
+    return `${fmt(range.min + step * i, digits)} to ${fmt(range.min + step * (i + 1), digits)}`;
+  };
   const max = Math.max(1, ...bins);
-  const marker = percentile == null ? null : Math.max(0, Math.min(100, percentile));
+  const marker =
+    range && value != null && range.max > range.min
+      ? Math.max(0, Math.min(100, ((value - range.min) / (range.max - range.min)) * 100))
+      : percentile == null
+        ? null
+        : Math.max(0, Math.min(100, percentile));
   return (
-    <figure data-motion="replay" className="rounded-md border border-border p-3">
+    <figure className="rounded-md border border-border p-3">
       <figcaption className="text-[13px] font-semibold">{title}</figcaption>
       <p className="mt-0.5 text-[12px] text-muted-foreground">
         League distribution with player marker (same-season qualified peers).
@@ -465,20 +551,28 @@ export function PlayerImpactMarker({
         <p className="text-[12px] text-muted-foreground">{percentile}th percentile</p>
       ) : null}
       <div className="relative mt-3 h-[72px]">
-        <ul className="flex h-full items-end gap-0.5" role="img" aria-label={title}>
+        <ul data-hover-group className="flex h-full items-end gap-0.5" role="img" aria-label={title}>
           {bins.map((c, i) => (
             <li
               key={i}
-              data-motion-bar="y"
-              className="flex-1 rounded-t-sm bg-muted-foreground/40"
-              style={{ height: `${(c / max) * 100}%`, "--i": Math.min(i, 30) } as CSSProperties}
-            />
+              data-hover-item
+              data-tip={binLabel(i) ?? undefined}
+              data-tip-sub={binLabel(i) ? `${c} ${c === 1 ? "player" : "players"}` : undefined}
+              className="flex h-full flex-1 items-end"
+            >
+              <span
+                data-motion-bar="y"
+                data-tip-anchor
+                className="block w-full rounded-t-sm bg-muted-foreground/40"
+                style={{ height: `${(c / max) * 100}%`, "--i": Math.min(i, 30) } as CSSProperties}
+              />
+            </li>
           ))}
         </ul>
         {marker != null ? (
           <div
             data-motion-mark
-            className="absolute bottom-0 top-0 w-0.5 bg-foreground"
+            className="pointer-events-none absolute bottom-0 top-0 w-0.5 bg-foreground"
             style={{ left: `${marker}%`, "--mark-from": "0%" } as CSSProperties}
             aria-hidden
           />
@@ -503,7 +597,7 @@ export function PlayerContextScatter({
 }) {
   if (points.length < 2) {
     return (
-      <figure data-motion="replay" className="rounded-md border border-border p-3">
+      <figure className="rounded-md border border-border p-3">
         <figcaption className="text-[13px] font-semibold">{title}</figcaption>
         <p className="mt-1 text-[12px] text-muted-foreground">
           Insufficient league context for scatter.
@@ -521,7 +615,7 @@ export function PlayerContextScatter({
   const h = 220;
   const pad = 28;
   return (
-    <figure data-motion="replay" className="rounded-md border border-border p-3">
+    <figure className="rounded-md border border-border p-3">
       <figcaption className="text-[13px] font-semibold">{title}</figcaption>
       <p className="mt-0.5 text-[12px] text-muted-foreground">{question}</p>
       <svg
@@ -529,6 +623,7 @@ export function PlayerContextScatter({
         className="mt-3 h-[200px] w-full"
         role="img"
         aria-label={title}
+        data-hover-svg
       >
         <text x={w / 2} y={h - 4} textAnchor="middle" fontSize={10} fill="currentColor" opacity={0.6}>
           {xLabel}
@@ -556,14 +651,17 @@ export function PlayerContextScatter({
             <circle
               key={i}
               data-motion-dot={p.highlight ? "focus" : "field"}
+              data-hover-point
+              data-tip={p.label}
+              data-tip-sub={`${fmt(p.x)} ${xLabel} · ${fmt(p.y <= 1 ? p.y * 100 : p.y)} ${yLabel}`}
               cx={cx}
               cy={cy}
               r={p.highlight ? 5 : 2.5}
               fill="currentColor"
-              opacity={p.highlight ? 1 : 0.35}
-            >
-              {p.label ? <title>{p.label}</title> : null}
-            </circle>
+              fillOpacity={p.highlight ? 1 : 0.35}
+              stroke="transparent"
+              strokeWidth={8}
+            />
           );
         })}
       </svg>
@@ -595,7 +693,7 @@ export function PlayerCareerArcChart({
   }>;
   if (!usable.length) {
     return (
-      <figure data-motion="replay" className="rounded-md border border-border p-3">
+      <figure className="rounded-md border border-border p-3">
         <figcaption className="text-[13px] font-semibold">{title}</figcaption>
         <p className="mt-1 text-[12px] text-muted-foreground">No arc data.</p>
       </figure>
@@ -616,32 +714,41 @@ export function PlayerCareerArcChart({
   const path = coords
     .map((c, i) => `${i === 0 ? "M" : "L"}${c.cx.toFixed(1)},${c.cy.toFixed(1)}`)
     .join(" ");
+  const column = (w - pad * 2) / Math.max(1, usable.length - 1);
 
   return (
-    <figure data-motion="replay" className="rounded-md border border-border p-3">
+    <figure className="rounded-md border border-border p-3">
       <figcaption className="text-[13px] font-semibold">{title}</figcaption>
       <p className="mt-0.5 text-[12px] text-muted-foreground">
         How did this player evolve? Team labels mark franchise changes.
       </p>
-      <svg viewBox={`0 0 ${w} ${h}`} className="mt-3 h-[160px] w-full" role="img" aria-label={title}>
+      <svg viewBox={`0 0 ${w} ${h}`} className="mt-3 h-[160px] w-full" role="img" aria-label={title} data-hover-svg>
         <path d={path} pathLength={1} data-motion-line fill="none" stroke="currentColor" strokeWidth={2} opacity={0.85} />
-        {coords.map((c, i) => (
-          <a key={c.season} href={c.href}>
-            <circle
-              data-motion-dot
-              style={{ "--i": i } as CSSProperties}
-              cx={c.cx}
-              cy={c.cy}
-              r={c.season === selectedSeason || c.season === peakSeason ? 5 : 3}
-              fill="currentColor"
-              opacity={c.season === selectedSeason ? 1 : 0.75}
+        {coords.map((c, i) => {
+          const detail = `${fmt(c.value)}${c.season === peakSeason ? " · peak" : ""}${
+            c.season === selectedSeason ? " · this season" : ""
+          }`;
+          return (
+            <a
+              key={c.season}
+              href={c.href}
+              aria-label={`${c.season} ${c.teamAbbr}: ${detail}`}
+              data-hover-point
+              data-tip={`${c.season} · ${c.teamAbbr}`}
+              data-tip-sub={detail}
             >
-              <title>
-                {c.season} {c.teamAbbr}: {fmt(c.value)}
-              </title>
-            </circle>
-          </a>
-        ))}
+              <HoverPoint
+                cx={c.cx}
+                cy={c.cy}
+                r={c.season === selectedSeason || c.season === peakSeason ? 5 : 3}
+                column={column}
+                height={h}
+                index={i}
+                opacity={c.season === selectedSeason ? 1 : 0.75}
+              />
+            </a>
+          );
+        })}
       </svg>
       <ul className="mt-2 flex flex-wrap gap-2 text-[11px] text-muted-foreground">
         {coords.map((c) => (
@@ -669,14 +776,14 @@ export function PlayerGameHighTimeline({
   }>;
 }) {
   return (
-    <figure data-motion="replay" className="rounded-md border border-border p-3">
+    <figure className="rounded-md border border-border p-3">
       <figcaption className="text-[13px] font-semibold">{title}</figcaption>
       <p className="mt-0.5 text-[12px] text-muted-foreground">
         Biggest nights by category. Open the game for flow, shots, and PBP.
       </p>
-      <ol className="relative mt-4 space-y-3 border-l border-border pl-4">
+      <ol data-hover-group className="relative mt-4 space-y-3 border-l border-border pl-4">
         {events.map((e, i) => (
-          <li key={e.label + e.date} data-motion-item style={{ "--i": i } as CSSProperties} className="relative">
+          <li key={e.label + e.date} data-motion-item data-hover-item style={{ "--i": i } as CSSProperties} className="relative">
             <span data-motion-dot className="absolute -left-[1.15rem] top-1.5 h-2.5 w-2.5 rounded-full bg-foreground" />
             <Link
               href={e.href}

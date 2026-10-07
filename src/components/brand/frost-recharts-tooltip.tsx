@@ -72,7 +72,7 @@ export function FrostRechartsTooltip({
       {pos
         ? createPortal(
             <ChartTooltipSurface
-              className={cn("pointer-events-none z-[80]", className)}
+              className={cn("chart-tip-float pointer-events-none z-[80]", className)}
               style={{
                 position: "fixed",
                 left: pos.left,

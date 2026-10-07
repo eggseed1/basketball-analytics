@@ -120,7 +120,7 @@ export function PlayerOnOffCard({
         ) : null}
       </div>
 
-      <ul className="flex flex-col gap-4">
+      <ul data-hover-group className="flex flex-col gap-4">
         {METRICS.map((metric) => {
           const on = main.on[metric.key];
           const off = main.off[metric.key];
@@ -130,7 +130,7 @@ export function PlayerOnOffCard({
           const hi = Math.max(on, off);
           const pad = Math.max(3, (hi - lo) * 0.6);
           return (
-            <li key={metric.key} className="flex flex-col gap-1.5">
+            <li key={metric.key} data-hover-item className="flex flex-col gap-1.5">
               <div className="flex items-baseline justify-between gap-2">
                 <span className={cn(type.bodySm, "font-semibold")}>
                   {metric.label}

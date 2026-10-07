@@ -142,9 +142,9 @@ function SentimentLaneChart({
       </p>
 
       {topTopics.length > 0 ? (
-        <ul className="flex flex-col gap-1">
+        <ul data-hover-group className="flex flex-col gap-1">
           {topTopics.map(([topic, share]) => (
-            <li key={topic}>
+            <li key={topic} data-hover-item>
               <div className="flex items-baseline justify-between gap-2">
                 <span className={cn(type.caption, "truncate text-muted-foreground")}>
                   {topic.replace(/_/g, " ")}
