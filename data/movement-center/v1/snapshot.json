@@ -5,10 +5,10 @@
     "season": "2026-27",
     "snapshotDate": "2026-10-07",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-10-07T13:20:14.423Z",
+    "builtAt": "2026-10-07T13:54:30.838Z",
     "rosterPlayerCount": 492,
-    "headlinesScanned": 1733,
-    "latestHeadlineAt": "2026-10-07T13:15:47.000Z",
+    "headlinesScanned": 1742,
+    "latestHeadlineAt": "2026-10-07T13:49:33.000Z",
     "latestTransactionDate": "2026-10-06",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -133,6 +133,10 @@
     "reporter:brett-siegel": {
       "label": "Brett Siegel (ClutchPoints)",
       "credibility": 22
+    },
+    "outlet:new-york-post": {
+      "label": "New York Post",
+      "credibility": 16
     },
     "ledger:nba-player-movement": {
       "label": "Player movement log",
@@ -800,6 +804,24 @@
         "10",
         "16",
         "22"
+      ]
+    },
+    {
+      "id": "mv-contract-1966-20261007",
+      "headline": "LeBron James: contract future with the 76ers",
+      "primaryClaimId": "mv-a36f084b9186ad77",
+      "claimIds": [
+        "mv-a36f084b9186ad77"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-10-07T13:34:49.000Z",
+      "lastMeaningfulAt": "2026-10-07T13:34:49.000Z",
+      "linkedPlayerIds": [
+        "1966"
+      ],
+      "linkedTeamIds": [
+        "20"
       ]
     },
     {
@@ -3963,6 +3985,26 @@
       ],
       "teamIds": [],
       "isOriginal": false
+    },
+    {
+      "id": "mv-a36f084b9186ad77",
+      "clusterId": "mv-contract-1966-20261007",
+      "summary": "Dave Portnoy calls LeBron James contract with 76ers ‘illegal’ over ‘side deal’",
+      "claimType": "contract_movement",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-07T13:34:49.000Z",
+      "sourceId": "outlet:new-york-post",
+      "sourceLabel": "New York Post",
+      "sourceUrl": "https://nypost.com/2026/10/07/sports/dave-portnoy-calls-lebrons-deal-with-76ers-illegal/",
+      "playerIds": [
+        "1966"
+      ],
+      "teamIds": [
+        "20"
+      ],
+      "isOriginal": true
     },
     {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",
