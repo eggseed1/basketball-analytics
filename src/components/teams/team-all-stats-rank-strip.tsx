@@ -1,33 +1,11 @@
 import { TransitionLink } from "@/components/continuity/query-nav";
 import { type, sectionLinkClassName } from "@/lib/design-system";
 import { formatNumber } from "@/lib/format";
-import {
-  formatRankLine,
-  type RankedMetric,
-} from "@/lib/team-page-metrics";
+import type { RankedMetric } from "@/lib/team-page-metrics";
 import { teamPageHref } from "@/lib/team-destination";
+import { TeamMetricTile } from "@/components/teams/team-metric-tile";
 import { cn } from "@/lib/utils";
 
-function MetricTile({ metric }: { metric: RankedMetric }) {
-  return (
-    <div className="rounded-md border border-border/60 frost-surface-soft px-3 py-3">
-      <p
-        className={cn(
-          type.caption,
-          "font-semibold uppercase text-muted-foreground"
-        )}
-      >
-        {metric.label}
-      </p>
-      <p className="mt-1 text-xl font-semibold tabular-nums">
-        {metric.formattedValue}
-      </p>
-      <p className={cn(type.caption, "mt-1 text-muted-foreground")}>
-        {formatRankLine(metric)}
-      </p>
-    </div>
-  );
-}
 
 /**
  * All Stats rank strip — season board ranks before the trait ledger.
@@ -73,9 +51,9 @@ export function TeamAllStatsRankStrip({
           </TransitionLink>
         </div>
       </div>
-      <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <dl data-hover-group className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {present.map((metric) => (
-          <MetricTile key={`${metric.group}-${metric.key}`} metric={metric} />
+          <TeamMetricTile key={`${metric.group}-${metric.key}`} metric={metric} />
         ))}
       </dl>
       <p className={cn(type.caption, "text-muted-foreground")}>

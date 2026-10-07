@@ -145,7 +145,7 @@ export function LeagueStrips({
           average.
         </p>
       </div>
-      <ul className="flex flex-col gap-3">
+      <ul data-hover-group className="flex flex-col gap-3">
         {strips.map((s) => {
           const values = s.points.map((p) => p.value);
           const lo = Math.min(...values);
@@ -158,7 +158,8 @@ export function LeagueStrips({
           return (
             <li
               key={s.key}
-              className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-0.5 sm:grid-cols-[minmax(6.5rem,8.5rem)_minmax(0,1fr)_4.5rem]"
+              data-hover-item
+              className="group/strip grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-0.5 sm:grid-cols-[minmax(6.5rem,8.5rem)_minmax(0,1fr)_4.5rem]"
             >
               <span className={cn(type.caption, "col-start-1 row-start-1 font-semibold")}>{s.label}</span>
               <span
@@ -167,7 +168,7 @@ export function LeagueStrips({
               >
                 <span className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-foreground/15" aria-hidden />
                 <span
-                  className="absolute top-1 bottom-1 w-px bg-foreground/45"
+                  className="absolute top-1 bottom-1 w-px bg-foreground/45 transition-colors group-hover/strip:bg-foreground/80"
                   style={{ left: pos(s.average) }}
                   title={`League average ${formatStripValue(s.format, s.average)}`}
                   aria-hidden

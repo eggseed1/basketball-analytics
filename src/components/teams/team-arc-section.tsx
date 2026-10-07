@@ -9,6 +9,7 @@ import {
 } from "@/lib/team-arc";
 import { teamComparePath } from "@/analytics/compare-team-seasons";
 import { teamSeasonRankPath } from "@/analytics/rank-team-seasons";
+import { LinkedHover } from "@/components/continuity/linked-hover";
 import { askDrblTeamHref } from "@/components/teams/team-ask-links";
 import { cn } from "@/lib/utils";
 
@@ -72,167 +73,171 @@ export function TeamArcSection({
       <p className="text-[12px] text-muted-foreground">{arc.coverageNote}</p>
       <p className="text-[12px] text-muted-foreground">{arc.continuityNote}</p>
 
-      {arc.transitions.length ? (
-        <div>
-          <h3 className="text-[14px] font-bold tracking-tight">
-            Biggest team changes
-          </h3>
-          <p className="mb-2 text-[12px] text-muted-foreground">
-            Same noise floors and trend method as analyzeTeamProfile.
+      <LinkedHover className="flex flex-col gap-4">
+        {arc.transitions.length ? (
+          <div>
+            <h3 className="text-[14px] font-bold tracking-tight">
+              Biggest team changes
+            </h3>
+            <p className="mb-2 text-[12px] text-muted-foreground">
+              Same noise floors and trend method as analyzeTeamProfile.
+            </p>
+            <ul className="flex flex-col gap-2">
+              {arc.transitions.map((t) => (
+                <li
+                  key={`${t.fromSeason}-${t.toSeason}`}
+                  data-link-key={`arc-${t.fromSeason} arc-${t.toSeason}`}
+                  className="rounded-xl border border-border frost-surface px-3 py-2.5"
+                >
+                  <p className="text-[14px] font-semibold">
+                    {t.fromSeason} → {t.toSeason}
+                  </p>
+                  <ul className="mt-1 flex flex-col gap-0.5">
+                    {t.changes.map((c) => (
+                      <li
+                        key={c.id}
+                        className="-mx-1 flex justify-between gap-2 rounded px-1 text-[12px] transition-colors hover:bg-foreground/[0.05]"
+                      >
+                        <span className="text-muted-foreground">{c.label}</span>
+                        <span className="font-bold tabular-nums">
+                          {c.deltaDisplay}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : (
+          <p className="text-[14px] text-muted-foreground">
+            No multi-season deltas cleared the documented noise filter in this
+            window.
           </p>
-          <ul className="flex flex-col gap-2">
-            {arc.transitions.map((t) => (
-              <li
-                key={`${t.fromSeason}-${t.toSeason}`}
-                className="rounded-xl border border-border frost-surface px-3 py-2.5"
-              >
-                <p className="text-[14px] font-semibold">
-                  {t.fromSeason} → {t.toSeason}
-                </p>
-                <ul className="mt-1 flex flex-col gap-0.5">
-                  {t.changes.map((c) => (
-                    <li
-                      key={c.id}
-                      className="flex justify-between gap-2 text-[12px]"
+        )}
+
+        {arc.rows.length === 0 ? (
+          <p className="text-[14px] text-muted-foreground">
+            No team-season rows available for this arc window.
+          </p>
+        ) : (
+          <div className="overflow-x-auto rounded-xl border border-border frost-surface">
+            <table className="w-full min-w-[640px] text-left text-[14px]">
+              <thead className="border-b border-border frost-surface text-[12px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+                <tr>
+                  <th className="px-3 py-2">Season</th>
+                  <th className="px-2 py-2 text-right">Diff</th>
+                  <th className="px-2 py-2 text-right">TS%</th>
+                  <th className="px-2 py-2 text-right">eFG%</th>
+                  <th className="px-2 py-2 text-right">Off</th>
+                  <th className="px-2 py-2 text-right">Def</th>
+                  <th className="px-3 py-2 text-right">Explore</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {arc.rows.map((row) => {
+                  const viewing = row.season === viewingSeason;
+                  return (
+                    <tr
+                      key={row.season}
+                      data-link-key={`arc-${row.season}`}
+                      className={cn(
+                        "frost-surface-hover",
+                        viewing && "bg-secondary/40"
+                      )}
                     >
-                      <span className="text-muted-foreground">{c.label}</span>
-                      <span className="font-bold tabular-nums">
-                        {c.deltaDisplay}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ) : (
-        <p className="text-[14px] text-muted-foreground">
-          No multi-season deltas cleared the documented noise filter in this
-          window.
-        </p>
-      )}
+                      <td className="px-3 py-2 font-semibold">
+                        <Link
+                          href={teamArcSeasonHref(teamRouteKey, row.season)}
+                          scroll={false}
+                          className="underline-offset-2 hover:underline"
+                        >
+                          {row.season}
+                        </Link>
+                        {row.thin ? (
+                          <span className="ml-2 text-[10px] font-semibold uppercase text-muted-foreground">
+                            Thin
+                          </span>
+                        ) : null}
+                        {viewing ? (
+                          <span className="ml-2 text-[10px] font-semibold uppercase text-muted-foreground">
+                            Viewing
+                          </span>
+                        ) : null}
+                      </td>
+                      <td className="px-2 py-2 text-right tabular-nums">
+                        {row.avgDiffDisplay}
+                      </td>
+                      <td className="px-2 py-2 text-right tabular-nums">
+                        {row.tsDisplay}
+                      </td>
+                      <td className="px-2 py-2 text-right tabular-nums">
+                        {row.efgDisplay}
+                      </td>
+                      <td className="px-2 py-2 text-right tabular-nums">
+                        {row.ppgDisplay}
+                      </td>
+                      <td className="px-2 py-2 text-right tabular-nums">
+                        {row.oppPpgDisplay}
+                      </td>
+                      <td className="px-3 py-2 text-right text-[12px] font-semibold">
+                        <Link
+                          href={teamArcSeasonHref(teamRouteKey, row.season)}
+                          scroll={false}
+                          className="underline-offset-2 hover:underline"
+                        >
+                          Season
+                        </Link>
+                        {row.season !== viewingSeason ? (
+                          <>
+                            <span className="mx-1 text-muted-foreground">·</span>
+                            <Link
+                              href={teamComparePath({
+                                teamA: teamEspnId,
+                                teamB: teamEspnId,
+                                seasonA: viewingSeason,
+                                seasonB: row.season,
+                              })}
+                              className="underline-offset-2 hover:underline"
+                            >
+                              Compare
+                            </Link>
+                          </>
+                        ) : null}
+                        <span className="mx-1 text-muted-foreground">·</span>
+                        <Link
+                          href={teamArcEvidenceHref(teamRouteKey, row.season)}
+                          className="underline-offset-2 hover:underline"
+                        >
+                          Evidence
+                        </Link>
+                        <span className="mx-1 text-muted-foreground">·</span>
+                        <Link
+                          href={teamArcGamesHref(teamId, row.season)}
+                          className="underline-offset-2 hover:underline"
+                        >
+                          Games
+                        </Link>
+                        <span className="mx-1 text-muted-foreground">·</span>
+                        <Link
+                          href={askDrblTeamHref(
+                            `${teamName} true shooting ${row.season}`,
+                            teamEspnId
+                          )}
+                          className="underline-offset-2 hover:underline"
+                        >
+                          Ask
+                        </Link>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
 
-      {arc.rows.length === 0 ? (
-        <p className="text-[14px] text-muted-foreground">
-          No team-season rows available for this arc window.
-        </p>
-      ) : (
-        <div className="overflow-x-auto rounded-xl border border-border frost-surface">
-          <table className="w-full min-w-[640px] text-left text-[14px]">
-            <thead className="border-b border-border frost-surface text-[12px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-              <tr>
-                <th className="px-3 py-2">Season</th>
-                <th className="px-2 py-2 text-right">Diff</th>
-                <th className="px-2 py-2 text-right">TS%</th>
-                <th className="px-2 py-2 text-right">eFG%</th>
-                <th className="px-2 py-2 text-right">Off</th>
-                <th className="px-2 py-2 text-right">Def</th>
-                <th className="px-3 py-2 text-right">Explore</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {arc.rows.map((row) => {
-                const viewing = row.season === viewingSeason;
-                return (
-                  <tr
-                    key={row.season}
-                    className={cn(
-                      "frost-surface-hover",
-                      viewing && "bg-secondary/40"
-                    )}
-                  >
-                    <td className="px-3 py-2 font-semibold">
-                      <Link
-                        href={teamArcSeasonHref(teamRouteKey, row.season)}
-                        scroll={false}
-                        className="underline-offset-2 hover:underline"
-                      >
-                        {row.season}
-                      </Link>
-                      {row.thin ? (
-                        <span className="ml-2 text-[10px] font-semibold uppercase text-muted-foreground">
-                          Thin
-                        </span>
-                      ) : null}
-                      {viewing ? (
-                        <span className="ml-2 text-[10px] font-semibold uppercase text-muted-foreground">
-                          Viewing
-                        </span>
-                      ) : null}
-                    </td>
-                    <td className="px-2 py-2 text-right tabular-nums">
-                      {row.avgDiffDisplay}
-                    </td>
-                    <td className="px-2 py-2 text-right tabular-nums">
-                      {row.tsDisplay}
-                    </td>
-                    <td className="px-2 py-2 text-right tabular-nums">
-                      {row.efgDisplay}
-                    </td>
-                    <td className="px-2 py-2 text-right tabular-nums">
-                      {row.ppgDisplay}
-                    </td>
-                    <td className="px-2 py-2 text-right tabular-nums">
-                      {row.oppPpgDisplay}
-                    </td>
-                    <td className="px-3 py-2 text-right text-[12px] font-semibold">
-                      <Link
-                        href={teamArcSeasonHref(teamRouteKey, row.season)}
-                        scroll={false}
-                        className="underline-offset-2 hover:underline"
-                      >
-                        Season
-                      </Link>
-                      {row.season !== viewingSeason ? (
-                        <>
-                          <span className="mx-1 text-muted-foreground">·</span>
-                          <Link
-                            href={teamComparePath({
-                              teamA: teamEspnId,
-                              teamB: teamEspnId,
-                              seasonA: viewingSeason,
-                              seasonB: row.season,
-                            })}
-                            className="underline-offset-2 hover:underline"
-                          >
-                            Compare
-                          </Link>
-                        </>
-                      ) : null}
-                      <span className="mx-1 text-muted-foreground">·</span>
-                      <Link
-                        href={teamArcEvidenceHref(teamRouteKey, row.season)}
-                        className="underline-offset-2 hover:underline"
-                      >
-                        Evidence
-                      </Link>
-                      <span className="mx-1 text-muted-foreground">·</span>
-                      <Link
-                        href={teamArcGamesHref(teamId, row.season)}
-                        className="underline-offset-2 hover:underline"
-                      >
-                        Games
-                      </Link>
-                      <span className="mx-1 text-muted-foreground">·</span>
-                      <Link
-                        href={askDrblTeamHref(
-                          `${teamName} true shooting ${row.season}`,
-                          teamEspnId
-                        )}
-                        className="underline-offset-2 hover:underline"
-                      >
-                        Ask
-                      </Link>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      )}
-
+      </LinkedHover>
       <p className="text-[12px] text-muted-foreground">
         Off = team PPG · Def = opponent PPG. Missing cells are unavailable, not
         zero. Roster for a year lives under Who drives it after you select the

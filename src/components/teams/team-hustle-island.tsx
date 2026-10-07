@@ -10,11 +10,9 @@ import {
 import type { PlayerSeason, TeamSeasonStats } from "@/data/types";
 import { type, sectionLinkClassName } from "@/lib/design-system";
 import { formatCountingRate, formatNumber } from "@/lib/format";
-import {
-  formatRankLine,
-  type RankedMetric,
-} from "@/lib/team-page-metrics";
+import type { RankedMetric } from "@/lib/team-page-metrics";
 import { teamPageHref } from "@/lib/team-destination";
+import { TeamMetricTile } from "@/components/teams/team-metric-tile";
 import { cn } from "@/lib/utils";
 
 function fmtPerGame(value: number | null | undefined): string {
@@ -22,26 +20,6 @@ function fmtPerGame(value: number | null | undefined): string {
   return formatCountingRate(value);
 }
 
-function MetricTile({ metric }: { metric: RankedMetric }) {
-  return (
-    <div className="rounded-md border border-border/60 frost-surface-soft px-3 py-3">
-      <p
-        className={cn(
-          type.caption,
-          "font-semibold uppercase text-muted-foreground"
-        )}
-      >
-        {metric.label}
-      </p>
-      <p className="mt-1 text-xl font-semibold tabular-nums">
-        {metric.formattedValue}
-      </p>
-      <p className={cn(type.caption, "mt-1 text-muted-foreground")}>
-        {formatRankLine(metric)}
-      </p>
-    </div>
-  );
-}
 
 const TEAM_METRICS = [
   { key: "contestedShots" as const, label: "Contested shots" },
@@ -69,6 +47,20 @@ function rosterHustleRows(players: PlayerSeason[]): PlayerSeason[] {
         (hustlePerGame(b, "hustleDeflections") ?? 0) -
         (hustlePerGame(a, "hustleDeflections") ?? 0)
     );
+}
+
+/** Roster leader per game for a hustle column, from the same rows as the table. */
+function hustleLeader(
+  rows: PlayerSeason[],
+  key: (typeof PLAYER_COLUMNS)[number]["key"]
+): { name: string; rate: number } | null {
+  let best: { name: string; rate: number } | null = null;
+  for (const p of rows) {
+    const rate = hustlePerGame(p, key);
+    if (rate == null || !Number.isFinite(rate)) continue;
+    if (!best || rate > best.rate) best = { name: p.playerName, rate };
+  }
+  return best;
 }
 
 function stocksPerGame(p: PlayerSeason): number {
@@ -160,9 +152,9 @@ export async function TeamHustleIsland({
           <h3 className={cn(type.bodySm, "mb-3 font-semibold")}>
             Team defense ranks
           </h3>
-          <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <dl data-hover-group className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {defenseMetrics.map((metric) => (
-              <MetricTile key={metric.key} metric={metric} />
+              <TeamMetricTile key={metric.key} metric={metric} />
             ))}
           </dl>
           {team ? (
@@ -290,28 +282,38 @@ export async function TeamHustleIsland({
                 ? " Totals leave out players who changed teams during the season."
                 : null}
             </p>
-            <dl className="grid gap-3 sm:grid-cols-3 lg:grid-cols-6">
-              {TEAM_METRICS.map((metric) => (
-                <div key={metric.key}>
-                  <dt className={cn(type.caption, "text-muted-foreground")}>
-                    {metric.label}
-                  </dt>
-                  <dd className="text-lg font-semibold tabular-nums">
-                    {fmtPerGame(teamHustlePerGame(aggregate, metric.key))}
-                    <span className="ml-1 text-[12px] font-normal text-muted-foreground">
-                      /g
-                    </span>
-                  </dd>
-                  <dd
-                    className={cn(
-                      type.caption,
-                      "tabular-nums text-muted-foreground"
-                    )}
+            <dl data-hover-group className="grid gap-3 sm:grid-cols-3 lg:grid-cols-6">
+              {TEAM_METRICS.map((metric, i) => {
+                const leader = hustleLeader(hustleRows, PLAYER_COLUMNS[i]!.key);
+                return (
+                  <div
+                    key={metric.key}
+                    data-stat-tile
+                    data-hover-item
+                    data-tip={leader ? `Leader: ${leader.name}` : undefined}
+                    data-tip-sub={leader ? `${fmtPerGame(leader.rate)} per game` : undefined}
+                    className="-mx-2 rounded-md px-2 py-1.5"
                   >
-                    {formatNumber(aggregate[metric.key], 0)} total
-                  </dd>
-                </div>
-              ))}
+                    <dt className={cn(type.caption, "text-muted-foreground")}>
+                      {metric.label}
+                    </dt>
+                    <dd className="text-lg font-semibold tabular-nums">
+                      {fmtPerGame(teamHustlePerGame(aggregate, metric.key))}
+                      <span className="ml-1 text-[12px] font-normal text-muted-foreground">
+                        /g
+                      </span>
+                    </dd>
+                    <dd
+                      className={cn(
+                        type.caption,
+                        "tabular-nums text-muted-foreground"
+                      )}
+                    >
+                      {formatNumber(aggregate[metric.key], 0)} total
+                    </dd>
+                  </div>
+                );
+              })}
             </dl>
           </div>
 

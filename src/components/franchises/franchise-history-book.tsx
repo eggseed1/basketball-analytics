@@ -13,17 +13,19 @@ function StatTile({
   label,
   value,
   hint,
+  tip,
 }: {
   label: string;
   value: string;
   hint?: string;
+  tip?: string;
 }) {
   return (
-    <div className="sports-card px-4 py-3">
+    <div data-stat-tile data-hover-item data-tip={tip} className="sports-card px-4 py-3">
       <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
         {label}
       </p>
-      <p className="mt-1 text-[22px] font-bold tabular-nums tracking-tight">
+      <p data-stat-value className="mt-1 text-[22px] font-bold tabular-nums tracking-tight">
         {value}
       </p>
       {hint ? (
@@ -41,7 +43,12 @@ function LeaderRow({
   leader: FranchiseLeader;
 }) {
   return (
-    <div className="flex items-baseline justify-between gap-3 border-b border-border/60 py-2.5 last:border-0">
+    <div
+      data-stat-tile
+      data-hover-item
+      data-value-end
+      className="-mx-2 flex items-baseline justify-between gap-3 rounded-md border-b border-border/60 px-2 py-2.5 last:border-0"
+    >
       <div className="min-w-0">
         <p className="text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
           {label}
@@ -69,6 +76,8 @@ function SeasonLine({
 }) {
   return (
     <div
+      data-stat-tile
+      data-hover-item
       className={cn(
         "rounded-md border px-4 py-3",
         tone === "good"
@@ -79,7 +88,7 @@ function SeasonLine({
       <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
         {label}
       </p>
-      <p className="mt-1 text-[20px] font-bold tabular-nums">
+      <p data-stat-value className="mt-1 text-[20px] font-bold tabular-nums">
         {season.wins}-{season.losses}
       </p>
       <p className="text-[13px] text-muted-foreground">
@@ -103,6 +112,7 @@ export function FranchiseHistoryBook({
   const rsPct = franchiseWinPct(f);
   const poPct = franchisePlayoffWinPct(f);
   const asOf = franchiseHistoryAsOf();
+  const lastTitle = f.championships.length ? Math.max(...f.championships) : null;
   const titleYears =
     f.championships.length > 0
       ? f.championships.join(" · ")
@@ -136,11 +146,12 @@ export function FranchiseHistoryBook({
         ) : null}
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div data-hover-group className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <StatTile
           label="Championships"
           value={String(titles)}
           hint={titleYears}
+          tip={lastTitle ? `Most recent title: ${lastTitle}` : undefined}
         />
         <StatTile
           label="Finals appearances"
@@ -151,6 +162,7 @@ export function FranchiseHistoryBook({
           <StatTile
             label="Playoff record"
             value={`${formatNumber(f.playoffWins)}-${formatNumber(f.playoffLosses)}`}
+            tip={`${formatNumber(f.playoffWins + f.playoffLosses)} playoff games`}
             hint={`${poPct != null ? formatPct(poPct) : "—"} · ${f.playoffAppearances} appearances`}
           />
         ) : (
@@ -163,6 +175,7 @@ export function FranchiseHistoryBook({
         <StatTile
           label="Regular season"
           value={`${formatNumber(f.regularSeasonWins)}-${formatNumber(f.regularSeasonLosses)}`}
+          tip={`${formatNumber(f.regularSeasonWins + f.regularSeasonLosses)} regular-season games`}
           hint={`${formatPct(rsPct)} all-time`}
         />
       </div>
@@ -172,29 +185,29 @@ export function FranchiseHistoryBook({
           <h3 className="text-[15px] font-bold tracking-tight">
             Peaks & valleys
           </h3>
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div data-hover-group className="grid gap-3 sm:grid-cols-2">
             <SeasonLine label="Best season" season={f.bestSeason} tone="good" />
             <SeasonLine
               label="Worst season"
               season={f.worstSeason}
               tone="bad"
             />
-            <div className="sports-card px-4 py-3">
+            <div data-stat-tile data-hover-item className="sports-card px-4 py-3">
               <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
                 Longest win streak
               </p>
-              <p className="mt-1 text-[20px] font-bold tabular-nums">
+              <p data-stat-value className="mt-1 text-[20px] font-bold tabular-nums">
                 {f.longestWinStreak.games}
               </p>
               <p className="text-[13px] text-muted-foreground">
                 {f.longestWinStreak.note} · curated
               </p>
             </div>
-            <div className="sports-card px-4 py-3">
+            <div data-stat-tile data-hover-item className="sports-card px-4 py-3">
               <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
                 Longest losing streak
               </p>
-              <p className="mt-1 text-[20px] font-bold tabular-nums">
+              <p data-stat-value className="mt-1 text-[20px] font-bold tabular-nums">
                 {f.longestLosingStreak.games}
               </p>
               <p className="text-[13px] text-muted-foreground">
@@ -203,7 +216,7 @@ export function FranchiseHistoryBook({
             </div>
           </div>
 
-          <div className="mt-1 grid gap-3 sm:grid-cols-3">
+          <div data-hover-group className="mt-1 grid gap-3 sm:grid-cols-3">
             <StatTile
               label="Division titles"
               value={String(f.divisionTitles)}
@@ -224,7 +237,7 @@ export function FranchiseHistoryBook({
           </div>
         </div>
 
-        <div className="sports-card px-4 py-3">
+        <div data-hover-group className="sports-card px-4 py-3">
           <h3 className="text-[15px] font-bold tracking-tight">
             Franchise leaders
           </h3>

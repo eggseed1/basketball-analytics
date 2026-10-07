@@ -58,7 +58,7 @@ import {
   resolveTeamIdentityFallback,
   type TeamPageHrefOpts,
 } from "@/lib/team-destination";
-import { buildTeamRankedMetrics } from "@/lib/team-page-metrics";
+import { buildTeamRankedMetrics, formatMetricDelta } from "@/lib/team-page-metrics";
 import { nbaTodayIso } from "@/lib/nba-calendar-date";
 import { buildScheduleFacts } from "@/lib/team-overview-data";
 import {
@@ -323,6 +323,15 @@ export default async function TeamProfilePage({
           label: m.label,
           value: formatOrdinal(m.rank!),
           hint: m.formattedValue,
+          tip: `${formatOrdinal(m.rank!)} of ${m.rankDenominator} in ${m.label.toLowerCase()}`,
+          tipSub: [
+            m.differenceFromAverage != null && Number.isFinite(m.differenceFromAverage)
+              ? `${formatMetricDelta(m.key, m.differenceFromAverage)} vs league average`
+              : null,
+            m.previousFormatted,
+          ]
+            .filter(Boolean)
+            .join(" · ") || undefined,
         }));
 
   const displayName =
@@ -698,9 +707,9 @@ function TraitGroup({
       <h3 className="text-[14px] font-bold uppercase tracking-wide text-muted-foreground">
         {title}
       </h3>
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <div data-hover-group className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {traits.map((trait) => (
-          <div key={trait.id} className="sports-card px-4 py-4">
+          <div key={trait.id} data-stat-tile data-hover-item className="sports-card px-4 py-4">
             <StatDisclosure
               label={trait.label}
               context={trait.context}

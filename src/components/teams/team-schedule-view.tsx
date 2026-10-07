@@ -131,6 +131,32 @@ export function TeamScheduleView({ rows }: { rows: TeamScheduleRow[] }) {
   }, [rows]);
   const [phase, setPhase] = useState<PhaseFilter>("all");
   const [side, setSide] = useState<SideFilter>("all");
+  const [focusOpp, setFocusOpp] = useState<string | null>(null);
+
+  const series = useMemo(() => {
+    const out = new Map<string, { wins: number; losses: number; games: number }>();
+    for (const row of rows) {
+      if (row.phase === "preseason") continue;
+      const entry = out.get(row.oppAbbr) ?? { wins: 0, losses: 0, games: 0 };
+      entry.games += 1;
+      if (row.result === "W") entry.wins += 1;
+      if (row.result === "L") entry.losses += 1;
+      out.set(row.oppAbbr, entry);
+    }
+    return out;
+  }, [rows]);
+
+  const seriesTip = (row: TeamScheduleRow) => {
+    const entry = series.get(row.oppAbbr);
+    if (!entry || row.phase === "preseason") return {};
+    const played = entry.wins + entry.losses;
+    return {
+      "data-tip": `Season series vs ${row.oppAbbr}`,
+      "data-tip-sub": played
+        ? `${entry.wins}-${entry.losses} in ${played} played · ${entry.games} on the schedule`
+        : `${entry.games} on the schedule, none played yet`,
+    };
+  };
 
   const months = useMemo(() => {
     const filtered = rows.filter(
@@ -182,7 +208,7 @@ export function TeamScheduleView({ rows }: { rows: TeamScheduleRow[] }) {
         </p>
       ) : (
         months.map((month) => (
-          <section key={month.key} aria-label={month.label}>
+          <section key={month.key} aria-label={month.label} onMouseLeave={() => setFocusOpp(null)}>
             <div className="flex items-baseline justify-between gap-2 border-b border-border/60 pb-1.5">
               <h3 className={cn(type.bodySm, "font-bold tracking-tight")}>
                 {month.label}
@@ -196,9 +222,13 @@ export function TeamScheduleView({ rows }: { rows: TeamScheduleRow[] }) {
                 <li key={row.id}>
                   <TransitionLink
                     href={gameHref(row)}
+                    data-motion="row"
+                    onMouseEnter={() => setFocusOpp(row.oppAbbr)}
+                    onFocus={() => setFocusOpp(row.oppAbbr)}
                     className={cn(
-                      "grid grid-cols-[5.75rem_minmax(0,1fr)_auto] items-center gap-3 rounded-md px-1.5 py-2.5 hover:bg-secondary/40 sm:grid-cols-[7rem_minmax(0,1fr)_auto]",
-                      row.isNext && "bg-foreground/[0.04]"
+                      "group/game grid grid-cols-[5.75rem_minmax(0,1fr)_auto] items-center gap-3 rounded-md px-1.5 py-2.5 transition-colors hover:bg-secondary/40 sm:grid-cols-[7rem_minmax(0,1fr)_auto]",
+                      row.isNext && "bg-foreground/[0.04]",
+                      focusOpp === row.oppAbbr && "bg-foreground/[0.05] shadow-[inset_2px_0_0_var(--foreground)]"
                     )}
                   >
                     <span className="flex flex-col">
@@ -210,7 +240,7 @@ export function TeamScheduleView({ rows }: { rows: TeamScheduleRow[] }) {
                         {row.backToBack ? <Tag>B2B</Tag> : null}
                       </span>
                     </span>
-                    <span className="flex min-w-0 items-center gap-2">
+                    <span className="flex min-w-0 items-center gap-2" {...seriesTip(row)}>
                       <span
                         className={cn(
                           type.caption,
@@ -219,7 +249,9 @@ export function TeamScheduleView({ rows }: { rows: TeamScheduleRow[] }) {
                       >
                         {row.home ? "vs" : "@"}
                       </span>
-                      <TeamLogo teamKey={row.oppAbbr} size="xs" />
+                      <span className="inline-flex shrink-0 transition-[scale] duration-200 group-hover/game:scale-110">
+                        <TeamLogo teamKey={row.oppAbbr} size="xs" />
+                      </span>
                       <span className="flex min-w-0 flex-col">
                         <span
                           className={cn(type.bodySm, "truncate font-semibold")}

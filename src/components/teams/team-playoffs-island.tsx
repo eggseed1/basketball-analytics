@@ -107,14 +107,14 @@ export async function TeamPlayoffsIsland({
       </div>
 
       <div className="sports-card flex flex-col gap-4 p-4 sm:p-5">
-        <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
-          <div>
+        <dl data-hover-group className="grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
+          <div data-stat-tile data-hover-item className="-mx-2 rounded-md px-2 py-1">
             <dt className={cn(type.caption, "text-muted-foreground")}>Seed</dt>
             <dd className="text-xl font-semibold tabular-nums">
               {seed != null ? seed : "—"}
             </dd>
           </div>
-          <div>
+          <div data-stat-tile data-hover-item className="-mx-2 rounded-md px-2 py-1">
             <dt className={cn(type.caption, "text-muted-foreground")}>
               Postseason
             </dt>
@@ -122,25 +122,25 @@ export async function TeamPlayoffsIsland({
               {totals.gp > 0 ? `${totals.wins}-${totals.losses}` : "—"}
             </dd>
           </div>
-          <div>
+          <div data-stat-tile data-hover-item className="-mx-2 rounded-md px-2 py-1">
             <dt className={cn(type.caption, "text-muted-foreground")}>Win%</dt>
             <dd className="text-xl font-semibold tabular-nums">
               {winPct != null ? formatPct(winPct, 0) : "—"}
             </dd>
           </div>
-          <div>
+          <div data-stat-tile data-hover-item className="-mx-2 rounded-md px-2 py-1">
             <dt className={cn(type.caption, "text-muted-foreground")}>PPG</dt>
             <dd className="text-xl font-semibold tabular-nums">
               {totals.ppg != null ? formatNumber(totals.ppg, 1) : "—"}
             </dd>
           </div>
-          <div>
+          <div data-stat-tile data-hover-item className="-mx-2 rounded-md px-2 py-1">
             <dt className={cn(type.caption, "text-muted-foreground")}>Opp</dt>
             <dd className="text-xl font-semibold tabular-nums">
               {totals.oppPpg != null ? formatNumber(totals.oppPpg, 1) : "—"}
             </dd>
           </div>
-          <div>
+          <div data-stat-tile data-hover-item className="-mx-2 rounded-md px-2 py-1">
             <dt className={cn(type.caption, "text-muted-foreground")}>Diff</dt>
             <dd className="text-xl font-semibold tabular-nums">
               {totals.diff != null
@@ -154,12 +154,16 @@ export async function TeamPlayoffsIsland({
             <p className={cn(type.caption, "mb-2 text-muted-foreground")}>
               Recent postseason results (newest first)
             </p>
-            <ol className="flex flex-wrap gap-1.5" aria-label="Postseason form">
+            <ol data-hover-group className="flex flex-wrap gap-1.5" aria-label="Postseason form">
               {totals.recent.map((r, i) => (
                 <li
                   key={`${r}-${i}`}
+                  data-hover-item
+                  data-motion-pop
+                  data-tip={r === "W" ? "Win" : "Loss"}
+                  data-tip-sub={i === 0 ? "Most recent postseason game" : `${i + 1} postseason games ago`}
                   className={cn(
-                    "flex h-8 w-8 items-center justify-center rounded-sm text-[12px] font-bold",
+                    "flex h-8 w-8 items-center justify-center rounded-sm text-[12px] font-bold hover:scale-110",
                     r === "W"
                       ? "bg-foreground text-background"
                       : "bg-muted text-muted-foreground"

@@ -70,7 +70,7 @@ export function TeamOpeningNight({
 
         {facts.regularGames ? (
           <div className="flex shrink-0 flex-col gap-2">
-          <dl className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-2">
+          <dl data-hover-group className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-2">
             {(
               [
                 [
@@ -78,13 +78,30 @@ export function TeamOpeningNight({
                   facts.regularGames < REGULAR_SEASON_GAMES
                     ? `${facts.regularGames} of ${REGULAR_SEASON_GAMES}`
                     : String(facts.regularGames),
+                  facts.regularGames < REGULAR_SEASON_GAMES
+                    ? `${REGULAR_SEASON_GAMES - facts.regularGames} still to be announced`
+                    : "Full regular season",
                 ],
-                ["Home games", String(facts.homeGames)],
-                ["Back-to-backs", String(facts.backToBacks)],
-                ["Longest road trip", `${facts.longestRoadTrip} games`],
+                [
+                  "Home games",
+                  String(facts.homeGames),
+                  `${facts.homeGames} home, ${facts.regularGames - facts.homeGames} away`,
+                ],
+                ["Back-to-backs", String(facts.backToBacks), "Games on consecutive nights"],
+                [
+                  "Longest road trip",
+                  `${facts.longestRoadTrip} games`,
+                  `${facts.longestRoadTrip} away games in a row`,
+                ],
               ] as const
-            ).map(([label, value]) => (
-              <div key={label} className="rounded-lg border border-border/70 bg-background/40 px-3 py-2">
+            ).map(([label, value, tip]) => (
+              <div
+                key={label}
+                data-stat-tile
+                data-hover-item
+                data-tip={tip}
+                className="rounded-lg border border-border/70 bg-background/40 px-3 py-2"
+              >
                 <dt className={cn(type.micro, "font-semibold uppercase tracking-wide text-muted-foreground")}>{label}</dt>
                 <dd className={cn(type.title3, "font-bold tabular-nums")}>{value}</dd>
               </div>

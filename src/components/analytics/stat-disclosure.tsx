@@ -41,7 +41,7 @@ export function StatDisclosure({
           )}
         </p>
       ) : null}
-      <p className="text-[28px] font-bold tracking-tight tabular-nums leading-none">
+      <p data-stat-value className="text-[28px] font-bold tracking-tight tabular-nums leading-none">
         {context.display}
       </p>
       {context.percentile != null ? (

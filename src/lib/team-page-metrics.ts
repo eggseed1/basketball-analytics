@@ -252,3 +252,18 @@ export function formatRankLine(metric: RankedMetric): string {
   const scope = metric.rankScope ? ` ${metric.rankScope}` : "";
   return `${formatOrdinal(metric.rank)} of ${metric.rankDenominator}${scope}${pct}`;
 }
+
+/** Hover copy for a ranked tile: distance from the league average, then the year-over-year move. */
+export function metricTipProps(metric: RankedMetric): Record<string, string> {
+  if (metric.missingReason) return {};
+  const vsAverage =
+    metric.differenceFromAverage != null && Number.isFinite(metric.differenceFromAverage)
+      ? `${formatMetricDelta(metric.key, metric.differenceFromAverage)} vs league average`
+      : null;
+  const sub = [metric.previousFormatted, metric.direction === "lower" ? "Lower is better" : null]
+    .filter(Boolean)
+    .join(" · ");
+  const tip = vsAverage ?? (sub || null);
+  if (!tip) return {};
+  return vsAverage && sub ? { "data-tip": tip, "data-tip-sub": sub } : { "data-tip": tip };
+}

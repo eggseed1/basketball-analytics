@@ -2,6 +2,7 @@
 
 import type { CSSProperties, ReactNode } from "react";
 
+import { LinkedHover } from "@/components/continuity/linked-hover";
 import { FitWidth } from "@/components/explore/fit-width";
 import { MatchupWashCard } from "@/components/brand/team-wash-card";
 import { TeamLogo } from "@/components/brand/team-logo";
@@ -76,6 +77,7 @@ function TeamLine({ slot }: { slot: BracketSlot }) {
 
   return (
     <div
+      data-link-key={`team-${slot.team.teamId}`}
       className={cn(
         "flex h-7 items-center gap-1.5 rounded-sm px-1.5 text-[12px] leading-none backdrop-blur-[2px]",
         slot.winner
@@ -437,11 +439,11 @@ export function PlayoffBracket({ model }: { model: PlayoffBracketModel }) {
 
       <div className="w-full overflow-hidden">
         <FitWidth>
-          <div className="flex w-max items-start gap-0">
+          <LinkedHover className="flex w-max items-start gap-0">
             <ConferenceSide bracket={model.west} side="west" />
             <FinalsBlock matchup={model.finals} />
             <ConferenceSide bracket={model.east} side="east" />
-          </div>
+          </LinkedHover>
         </FitWidth>
       </div>
     </section>

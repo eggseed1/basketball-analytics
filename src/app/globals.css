@@ -2114,16 +2114,44 @@ html[data-scrolling] body {
   }
 
   /* Stat tiles: the tile lifts its value and the tiles around it step back. */
-  [data-stat-tile]:hover {
-    background-color: var(--motion-row-tint);
+  /* Inset tint rather than background so glass tiles keep their material. */
+  [data-stat-tile]:not(.sports-card):hover {
+    box-shadow: inset 0 0 0 100vmax var(--motion-row-tint);
   }
 
-  [data-stat-tile]:hover > :last-child {
+  [data-stat-tile]:hover > :last-child,
+  [data-stat-tile]:has(> dd ~ *):hover > dd:first-of-type,
+  [data-stat-tile]:hover [data-stat-value] {
     scale: 1.06;
+  }
+
+  :is([data-stat-tile]:has(> dd ~ *), [data-stat-tile]:has([data-stat-value])):hover
+    > :last-child:not([data-stat-value], dd:first-of-type) {
+    scale: none;
+  }
+
+  [data-stat-tile][data-value-end] > :last-child {
+    transform-origin: right center;
   }
 
   [data-stat-tile][data-tip] {
     cursor: help;
+  }
+
+  /* LinkedHover: the same key lights up everywhere in its scope. */
+  [data-linked]:not(tr),
+  tr[data-linked] > td {
+    box-shadow: inset 0 0 0 100vmax var(--motion-row-tint);
+  }
+
+  [data-linking] :is(li, span, div)[data-link-key]:not([data-linked]) {
+    opacity: 0.5;
+  }
+
+  /* Divs often carry inline shadows (bracket brand edges), so they ring instead. */
+  div[data-linked] {
+    outline: 1.5px solid color-mix(in oklab, var(--foreground) 45%, transparent);
+    outline-offset: -1px;
   }
 }
 
@@ -2133,10 +2161,15 @@ html[data-scrolling] body {
   }
 
   [data-stat-tile] {
-    transition: background-color 160ms ease, filter 200ms ease;
+    transition: box-shadow 160ms ease, filter 200ms ease;
   }
 
-  [data-stat-tile] > :last-child {
+  :is(li, div)[data-link-key] {
+    transition: opacity 160ms ease, box-shadow 160ms ease, outline-color 160ms ease;
+  }
+
+  [data-stat-tile] > :is(:last-child, dd),
+  [data-stat-tile] [data-stat-value] {
     transform-origin: left center;
     transition: scale 220ms var(--motion-ease);
   }

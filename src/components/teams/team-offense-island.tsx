@@ -1,35 +1,14 @@
 import { TransitionLink } from "@/components/continuity/query-nav";
+import { LinkedHover } from "@/components/continuity/linked-hover";
 import { PlayerIdentity } from "@/components/players/player-identity";
 import type { PlayerSeason, TeamSeasonStats } from "@/data/types";
 import { type, sectionLinkClassName } from "@/lib/design-system";
 import { formatNumber, formatPct } from "@/lib/format";
-import {
-  formatRankLine,
-  type RankedMetric,
-} from "@/lib/team-page-metrics";
+import type { RankedMetric } from "@/lib/team-page-metrics";
 import { teamPageHref } from "@/lib/team-destination";
+import { TeamMetricTile } from "@/components/teams/team-metric-tile";
 import { cn } from "@/lib/utils";
 
-function MetricTile({ metric }: { metric: RankedMetric }) {
-  return (
-    <div className="rounded-md border border-border/60 frost-surface-soft px-3 py-3">
-      <p
-        className={cn(
-          type.caption,
-          "font-semibold uppercase text-muted-foreground"
-        )}
-      >
-        {metric.label}
-      </p>
-      <p className="mt-1 text-xl font-semibold tabular-nums">
-        {metric.formattedValue}
-      </p>
-      <p className={cn(type.caption, "mt-1 text-muted-foreground")}>
-        {formatRankLine(metric)}
-      </p>
-    </div>
-  );
-}
 
 function perGame(total: number, gp: number): number {
   return gp > 0 ? total / gp : 0;
@@ -66,7 +45,8 @@ function SideList({
         {rows.map((p) => (
           <li
             key={p.playerId}
-            className="flex items-center gap-3 border-b border-border/50 py-2 last:border-0"
+            data-link-key={p.playerId}
+            className="-mx-2 flex items-center gap-3 rounded-md border-b border-border/50 px-2 py-2 last:border-0"
           >
             <PlayerIdentity
               playerId={p.playerId}
@@ -193,9 +173,9 @@ export async function TeamOffenseIsland({
           <h3 className={cn(type.bodySm, "mb-3 font-semibold")}>
             Team offense ranks
           </h3>
-          <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <dl data-hover-group className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {offenseMetrics.map((metric) => (
-              <MetricTile key={metric.key} metric={metric} />
+              <TeamMetricTile key={metric.key} metric={metric} />
             ))}
           </dl>
           <dl className="mt-4 grid gap-3 border-t border-border/60 pt-4 sm:grid-cols-3">
@@ -229,112 +209,115 @@ export async function TeamOffenseIsland({
         </div>
       )}
 
-      <div className="sports-card overflow-x-auto p-4 sm:p-5">
-        <h3 className={cn(type.bodySm, "mb-1 font-semibold")}>
-          Roster scoring board
-        </h3>
-        <p className={cn(type.caption, "mb-3 text-muted-foreground")}>
-          Per-game counting plus usage and true shooting. Missing rates show as
-          — (not 0).
-        </p>
-        {scorers.length === 0 ? (
-          <p className={cn(type.bodySm, "text-muted-foreground")}>
-            {roster.warning ?? "No roster rows for this team-season."}
+      <LinkedHover className="flex flex-col gap-4">
+        <div className="sports-card overflow-x-auto p-4 sm:p-5">
+          <h3 className={cn(type.bodySm, "mb-1 font-semibold")}>
+            Roster scoring board
+          </h3>
+          <p className={cn(type.caption, "mb-3 text-muted-foreground")}>
+            Per-game counting plus usage and true shooting. Missing rates show as
+            — (not 0).
           </p>
-        ) : (
-          <table className="w-full min-w-[720px] text-left text-[13px]">
-            <thead>
-              <tr className="border-b border-border/60 text-muted-foreground">
-                <th className="pb-2 pr-3 font-medium">Player</th>
-                <th className="pb-2 px-2 text-right font-medium">GP</th>
-                <th className="pb-2 px-2 text-right font-medium">MPG</th>
-                <th className="pb-2 px-2 text-right font-medium">PTS</th>
-                <th className="pb-2 px-2 text-right font-medium">AST</th>
-                <th className="pb-2 px-2 text-right font-medium">USG%</th>
-                <th className="pb-2 px-2 text-right font-medium">eFG%</th>
-                <th className="pb-2 pl-2 text-right font-medium">TS%</th>
-              </tr>
-            </thead>
-            <tbody>
-              {scorers.map((player) => (
-                <tr
-                  key={player.playerId}
-                  className="border-b border-border/40 last:border-0"
-                >
-                  <td className="py-2 pr-3">
-                    <PlayerIdentity
-                      playerId={player.playerId}
-                      name={player.playerName}
-                      teamKey={teamKey}
-                      teamLabel={teamKey}
-                      position={player.position}
-                      season={season}
-                      variant="compact"
-                      className="min-w-0"
-                      nameClassName="gap-2 no-underline hover:underline"
-                    />
-                  </td>
-                  <td className="py-2 px-2 text-right tabular-nums text-muted-foreground">
-                    {player.gamesPlayed}
-                  </td>
-                  <td className="py-2 px-2 text-right tabular-nums text-muted-foreground">
-                    {formatNumber(perGame(player.minutes, player.gamesPlayed), 1)}
-                  </td>
-                  <td className="py-2 px-2 text-right tabular-nums">
-                    {formatNumber(perGame(player.points, player.gamesPlayed), 1)}
-                  </td>
-                  <td className="py-2 px-2 text-right tabular-nums text-muted-foreground">
-                    {formatNumber(
-                      perGame(player.assists, player.gamesPlayed),
-                      1
-                    )}
-                  </td>
-                  <td className="py-2 px-2 text-right tabular-nums text-muted-foreground">
-                    {pctOrDash(player.usagePct)}
-                  </td>
-                  <td className="py-2 px-2 text-right tabular-nums text-muted-foreground">
-                    {pctOrDash(player.effectiveFieldGoalPct)}
-                  </td>
-                  <td className="py-2 pl-2 text-right tabular-nums text-muted-foreground">
-                    {pctOrDash(player.trueShootingPct)}
-                  </td>
+          {scorers.length === 0 ? (
+            <p className={cn(type.bodySm, "text-muted-foreground")}>
+              {roster.warning ?? "No roster rows for this team-season."}
+            </p>
+          ) : (
+            <table className="w-full min-w-[720px] text-left text-[13px]">
+              <thead>
+                <tr className="border-b border-border/60 text-muted-foreground">
+                  <th className="pb-2 pr-3 font-medium">Player</th>
+                  <th className="pb-2 px-2 text-right font-medium">GP</th>
+                  <th className="pb-2 px-2 text-right font-medium">MPG</th>
+                  <th className="pb-2 px-2 text-right font-medium">PTS</th>
+                  <th className="pb-2 px-2 text-right font-medium">AST</th>
+                  <th className="pb-2 px-2 text-right font-medium">USG%</th>
+                  <th className="pb-2 px-2 text-right font-medium">eFG%</th>
+                  <th className="pb-2 pl-2 text-right font-medium">TS%</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
-
-      {board.length ? (
-        <div className="grid gap-4 lg:grid-cols-3">
-          <SideList
-            title="Creation load"
-            hint="Highest usage among 100+ minute rows"
-            rows={creators}
-            season={season}
-            teamKey={teamKey}
-            detail={(p) => pctOrDash(p.usagePct)}
-          />
-          <SideList
-            title="Efficiency"
-            hint="Best TS% among 100+ minute rows"
-            rows={efficiency}
-            season={season}
-            teamKey={teamKey}
-            detail={(p) => pctOrDash(p.trueShootingPct)}
-          />
-          <SideList
-            title="Playmaking"
-            hint="AST/TO among 100+ minute rows"
-            rows={playmakers}
-            season={season}
-            teamKey={teamKey}
-            detail={(p) =>
-              `${formatNumber(p.assists / Math.max(1, p.turnovers), 2)} AST/TO`
-            }
-          />
+              </thead>
+              <tbody>
+                {scorers.map((player) => (
+                  <tr
+                    key={player.playerId}
+                    data-link-key={player.playerId}
+                    className="border-b border-border/40 last:border-0"
+                  >
+                    <td className="py-2 pr-3">
+                      <PlayerIdentity
+                        playerId={player.playerId}
+                        name={player.playerName}
+                        teamKey={teamKey}
+                        teamLabel={teamKey}
+                        position={player.position}
+                        season={season}
+                        variant="compact"
+                        className="min-w-0"
+                        nameClassName="gap-2 no-underline hover:underline"
+                      />
+                    </td>
+                    <td className="py-2 px-2 text-right tabular-nums text-muted-foreground">
+                      {player.gamesPlayed}
+                    </td>
+                    <td className="py-2 px-2 text-right tabular-nums text-muted-foreground">
+                      {formatNumber(perGame(player.minutes, player.gamesPlayed), 1)}
+                    </td>
+                    <td className="py-2 px-2 text-right tabular-nums">
+                      {formatNumber(perGame(player.points, player.gamesPlayed), 1)}
+                    </td>
+                    <td className="py-2 px-2 text-right tabular-nums text-muted-foreground">
+                      {formatNumber(
+                        perGame(player.assists, player.gamesPlayed),
+                        1
+                      )}
+                    </td>
+                    <td className="py-2 px-2 text-right tabular-nums text-muted-foreground">
+                      {pctOrDash(player.usagePct)}
+                    </td>
+                    <td className="py-2 px-2 text-right tabular-nums text-muted-foreground">
+                      {pctOrDash(player.effectiveFieldGoalPct)}
+                    </td>
+                    <td className="py-2 pl-2 text-right tabular-nums text-muted-foreground">
+                      {pctOrDash(player.trueShootingPct)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
-      ) : null}
+
+        {board.length ? (
+          <div className="grid gap-4 lg:grid-cols-3">
+            <SideList
+              title="Creation load"
+              hint="Highest usage among 100+ minute rows"
+              rows={creators}
+              season={season}
+              teamKey={teamKey}
+              detail={(p) => pctOrDash(p.usagePct)}
+            />
+            <SideList
+              title="Efficiency"
+              hint="Best TS% among 100+ minute rows"
+              rows={efficiency}
+              season={season}
+              teamKey={teamKey}
+              detail={(p) => pctOrDash(p.trueShootingPct)}
+            />
+            <SideList
+              title="Playmaking"
+              hint="AST/TO among 100+ minute rows"
+              rows={playmakers}
+              season={season}
+              teamKey={teamKey}
+              detail={(p) =>
+                `${formatNumber(p.assists / Math.max(1, p.turnovers), 2)} AST/TO`
+              }
+            />
+          </div>
+        ) : null}
+      </LinkedHover>
     </section>
   );
 }

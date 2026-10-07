@@ -12,12 +12,13 @@ import type { TeamPayrollPresentation } from "@/data/types/front-office";
 import type { TeamAssetLedger } from "@/data/types/team-assets";
 import { AppLink } from "@/components/ui/app-link";
 import { type } from "@/lib/design-system";
+import { formatPct } from "@/lib/format";
 import { formatUsdCompact } from "@/lib/format-money";
 import { cn } from "@/lib/utils";
 
-function CapTile({ label, value, tone }: { label: string; value: string; tone?: string }) {
+function CapTile({ label, value, tone, tip }: { label: string; value: string; tone?: string; tip?: string }) {
   return (
-    <div className="rounded-md border border-border/70 bg-muted/20 px-3 py-2">
+    <div data-stat-tile data-hover-item data-tip={tip} className="rounded-md border border-border/70 bg-muted/20 px-3 py-2">
       <p className={cn(type.caption, "text-muted-foreground")}>{label}</p>
       <p className={cn(type.bodySm, "font-bold tabular-nums", tone)}>{value}</p>
     </div>
@@ -28,12 +29,18 @@ function BrefPayrollSummary({ contracts, payrollHref }: { contracts: TeamContrac
   const cap = contracts.salaryCap ?? null;
   const payroll = contracts.totals?.years[0] ?? null;
   const space = cap != null && payroll != null ? cap - payroll : null;
+  const capShare = cap != null && cap > 0 && payroll != null ? payroll / cap : null;
   return (
     <section className="flex flex-col gap-3">
-      <div className="grid gap-2 sm:grid-cols-3">
+      <div data-hover-group className="grid gap-2 sm:grid-cols-3">
         <CapTile label={`${contracts.capSeason ?? ""} salary cap`.trim()} value={cap != null ? formatUsdCompact(cap) : "—"} />
-        <CapTile label="Payroll" value={payroll != null ? formatUsdCompact(payroll) : "—"} />
         <CapTile
+          label="Payroll"
+          value={payroll != null ? formatUsdCompact(payroll) : "—"}
+          tip={capShare != null ? `${formatPct(capShare, 0)} of the salary cap` : undefined}
+        />
+        <CapTile
+          tip={space != null ? "Salary cap minus player salary commitments" : undefined}
           label={space != null && space < 0 ? "Over the cap by" : "Cap space"}
           value={space != null ? formatUsdCompact(Math.abs(space)) : "—"}
           tone={

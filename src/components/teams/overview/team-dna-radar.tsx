@@ -56,7 +56,18 @@ export function TeamDnaRadar({ axes, teamKey, season }: { axes: DnaAxis[]; teamK
           ))}
           {axes.map((a, i) => {
             const [x, y] = point(i, n, 100);
-            return <line key={a.key} x1={CX} y1={CY} x2={x} y2={y} stroke="currentColor" strokeOpacity={0.08} />;
+            return (
+              <line
+                key={a.key}
+                x1={CX}
+                y1={CY}
+                x2={x}
+                y2={y}
+                stroke="currentColor"
+                strokeOpacity={focus.key === a.key ? 0.4 : 0.08}
+                className="transition-[stroke-opacity] duration-200"
+              />
+            );
           })}
           <polygon
             points={shape}

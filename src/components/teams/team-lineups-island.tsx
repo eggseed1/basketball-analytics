@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 
 import { TransitionLink } from "@/components/continuity/query-nav";
+import { LinkedHover } from "@/components/continuity/linked-hover";
 import { PlayerIdentity } from "@/components/players/player-identity";
 import { getTeamRosterCached } from "@/data/queries/request-cache";
 import { hasValidDrblEstimate } from "@/data/queries/percentiles";
@@ -83,6 +84,7 @@ function RotationTable({
           return (
             <tr
               key={p.playerId}
+              data-link-key={p.playerId}
               className="border-b border-border/60 last:border-0"
             >
               <td className="py-2 pr-3 tabular-nums text-muted-foreground">
@@ -154,7 +156,8 @@ function SideList({
         {rows.map((p) => (
           <li
             key={p.playerId}
-            className="flex items-center gap-3 border-b border-border/50 py-2 last:border-0"
+            data-link-key={p.playerId}
+            className="-mx-2 flex items-center gap-3 rounded-md border-b border-border/50 px-2 py-2 last:border-0"
           >
             <PlayerIdentity
               playerId={p.playerId}
@@ -212,6 +215,7 @@ function PositionShapeCard({
             <span
               key={band.shell}
               data-hover-item
+              data-link-key={`shell-${band.shell}`}
               data-motion-bar="x"
               data-tip={band.label}
               data-tip-sub={`${formatPct(band.share, 0)} of minutes`}
@@ -228,7 +232,11 @@ function PositionShapeCard({
       </div>
       <ul className="grid gap-2 sm:grid-cols-3">
         {shape.bands.map((band) => (
-          <li key={band.shell} className="flex flex-col gap-0.5">
+          <li
+            key={band.shell}
+            data-link-key={`shell-${band.shell}`}
+            className="-mx-1 flex flex-col gap-0.5 rounded-md px-1 py-1"
+          >
             <span className={cn(type.bodySm, "font-semibold")}>
               {band.label}
             </span>
@@ -341,7 +349,7 @@ export async function TeamLineupsIsland({
           </p>
         </div>
       ) : (
-        <>
+        <LinkedHover className="flex flex-col gap-4">
           <PositionShapeCard shape={shape} />
 
           <div className="sports-card overflow-x-auto p-4 sm:p-5">
@@ -443,7 +451,7 @@ export async function TeamLineupsIsland({
               detail={valueCell}
             />
           </div>
-        </>
+        </LinkedHover>
       )}
     </section>
   );

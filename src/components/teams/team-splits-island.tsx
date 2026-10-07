@@ -23,14 +23,40 @@ function winPct(wins: number, losses: number): number | null {
   return wins / gp;
 }
 
+function signed(value: number, digits = 1): string {
+  return `${value > 0 ? "+" : value < 0 ? "−" : "±"}${formatNumber(Math.abs(value), digits)}`;
+}
+
 function SplitsTable({
   rows,
   caption,
+  overall,
 }: {
   rows: TeamSplitBucket[];
   caption?: string;
+  overall?: TeamSplitBucket;
 }) {
   if (!rows.length) return null;
+  const overallPct = overall ? winPct(overall.wins, overall.losses) : null;
+  const vsOverall = (row: TeamSplitBucket, pct: number | null) => {
+    if (!overall || row.id === overall.id || !row.games) return { pct: {}, diff: {} };
+    return {
+      pct:
+        pct != null && overallPct != null
+          ? {
+              "data-tip": `${row.label}: ${formatPct(pct, 0)} wins`,
+              "data-tip-sub": `${signed((pct - overallPct) * 100, 0)} pts vs ${formatPct(overallPct, 0)} overall`,
+            }
+          : {},
+      diff:
+        row.diff != null && overall.diff != null
+          ? {
+              "data-tip": `${row.label}: ${signed(row.diff)} per game`,
+              "data-tip-sub": `${signed(row.diff - overall.diff)} vs ${signed(overall.diff)} overall`,
+            }
+          : {},
+    };
+  };
   return (
     <div className="sports-card overflow-x-auto p-4 sm:p-5">
       {caption ? (
@@ -53,6 +79,7 @@ function SplitsTable({
         <tbody>
           {rows.map((row) => {
             const pct = winPct(row.wins, row.losses);
+            const tips = vsOverall(row, pct);
             return (
               <tr
                 key={row.id}
@@ -62,7 +89,7 @@ function SplitsTable({
                 <td className="py-2.5 px-2 text-right tabular-nums">
                   {fmtRecord(row.wins, row.losses, row.games)}
                 </td>
-                <td className="py-2.5 px-2 text-right tabular-nums text-muted-foreground">
+                <td {...tips.pct} className="py-2.5 px-2 text-right tabular-nums text-muted-foreground">
                   {pct != null ? formatPct(pct, 0) : "—"}
                 </td>
                 <td className="py-2.5 px-2 text-right tabular-nums text-muted-foreground">
@@ -74,7 +101,7 @@ function SplitsTable({
                 <td className="py-2.5 px-2 text-right tabular-nums text-muted-foreground">
                   {row.oppPpg != null ? formatNumber(row.oppPpg, 1) : "—"}
                 </td>
-                <td className="py-2.5 pl-2 text-right tabular-nums">
+                <td {...tips.diff} className="py-2.5 pl-2 text-right tabular-nums">
                   {row.diff != null
                     ? `${row.diff >= 0 ? "+" : ""}${formatNumber(row.diff, 1)}`
                     : "—"}
@@ -122,6 +149,7 @@ export async function TeamSplitsIsland({
   const margins = computeTeamMarginSplits(teamId, season);
   const months = computeTeamMonthSplits(teamId, season);
   const form = computeTeamFormSummary(teamId, season);
+  const overall = splits.find((row) => row.id === "overall");
 
   return (
     <section
@@ -160,19 +188,23 @@ export async function TeamSplitsIsland({
         </div>
         {form.recentResults.length ? (
           <ol
+            data-hover-group
             className="flex flex-wrap gap-1.5"
             aria-label="Recent results newest first"
           >
             {form.recentResults.map((r, i) => (
               <li
                 key={`${r}-${i}`}
+                data-hover-item
+                data-motion-pop
+                data-tip={r === "W" ? "Win" : "Loss"}
+                data-tip-sub={i === 0 ? "Most recent game" : `${i + 1} games ago`}
                 className={cn(
-                  "flex h-8 w-8 items-center justify-center rounded-sm text-[12px] font-bold tabular-nums",
+                  "flex h-8 w-8 items-center justify-center rounded-sm text-[12px] font-bold tabular-nums transition-[scale] hover:scale-110",
                   r === "W"
                     ? "bg-foreground text-background"
                     : "bg-muted text-muted-foreground"
                 )}
-                title={i === 0 ? `Most recent: ${r}` : r}
               >
                 {r}
               </li>
@@ -187,6 +219,7 @@ export async function TeamSplitsIsland({
 
       <SplitsTable
         rows={splits}
+        overall={overall}
         caption="Context splits: overall, home/road, and rolling windows."
       />
 
@@ -196,6 +229,7 @@ export async function TeamSplitsIsland({
         </h3>
         <SplitsTable
           rows={margins}
+          overall={overall}
           caption="Close ≤5 · medium 6–14 · blowout ≥15. From final scores only."
         />
       </div>
@@ -205,6 +239,7 @@ export async function TeamSplitsIsland({
           <h3 className={cn(type.bodySm, "mb-2 font-semibold")}>By month</h3>
           <SplitsTable
             rows={months}
+            overall={overall}
             caption="Calendar months with at least one final in the snapshot."
           />
         </div>

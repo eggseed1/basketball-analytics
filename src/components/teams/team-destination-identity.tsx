@@ -19,6 +19,8 @@ export type TeamSnapshotStat = {
   /** Primary display — often an ordinal rank. */
   value: string;
   hint?: string;
+  tip?: string;
+  tipSub?: string;
 };
 
 function buildSnapshotCells(input: {
@@ -54,6 +56,14 @@ function buildSnapshotCells(input: {
           standing.winPct != null
             ? formatPct(standing.winPct, 0)
             : undefined,
+        tip: `${formatOrdinal(standing.rank)} in the ${standing.conference}`,
+        tipSub:
+          [
+            standing.streak ? `Streak ${standing.streak}` : null,
+            standing.lastTen ? `L10 ${standing.lastTen}` : null,
+          ]
+            .filter(Boolean)
+            .join(" · ") || undefined,
       }
     : seasonAwaitingGames && priorSeasonStanding
       ? {
@@ -78,6 +88,7 @@ function buildSnapshotCells(input: {
         label: "Division rank",
         value: formatOrdinal(divisionStanding.rank),
         hint: `${divisionStanding.division} · ${divisionStanding.of} teams`,
+        tip: `${formatOrdinal(divisionStanding.rank)} of ${divisionStanding.of} in the ${divisionStanding.division}`,
       }
     : seasonAwaitingGames && divisionMeta
       ? {
@@ -271,10 +282,14 @@ export function TeamDestinationIdentity({
           />
         </div>
 
-        <dl className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
+        <dl data-hover-group className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
           {cells.map((cell) => (
             <div
               key={`${cell.label}-${cell.value}`}
+              data-stat-tile
+              data-hover-item
+              data-tip={cell.tip ?? cell.hint}
+              data-tip-sub={cell.tip ? cell.tipSub : undefined}
               className="glass-pill min-w-0 rounded-md px-3 py-2.5"
             >
               <dt

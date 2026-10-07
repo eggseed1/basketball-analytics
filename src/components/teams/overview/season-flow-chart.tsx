@@ -120,6 +120,10 @@ export function SeasonFlowChart({
   const regular = games.filter((g) => g.phase === "regular");
   const final = regular.at(-1);
   const last10 = regular.slice(-10);
+  const peak = regular.length
+    ? regular.reduce((best, g) => (g.overUnder > best.overUnder ? g : best))
+    : null;
+  const preview = (g: TrajectoryGame | null | undefined) => () => setHover(g ? games.indexOf(g) : null);
 
   return (
     <section className="sports-card flex flex-col gap-4 p-4 sm:p-5" aria-label="Season flow">
@@ -146,20 +150,29 @@ export function SeasonFlowChart({
       </div>
 
       {final ? (
-        <dl className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-          <Kpi label="Regular season" value={final.record} />
+        <dl data-hover-group className="grid grid-cols-2 gap-2 sm:grid-cols-4" onMouseLeave={() => setHover(null)}>
+          <Kpi label="Regular season" value={final.record} onPreview={preview(final)} tip={`Record after game ${regular.length}`} />
           <Kpi
             label="Avg margin"
+            onPreview={preview(null)}
+            tip={`Average final margin over ${regular.length} regular-season games`}
             value={`${regular.reduce((a, g) => a + g.margin, 0) / regular.length > 0 ? "+" : ""}${formatNumber(
               regular.reduce((a, g) => a + g.margin, 0) / regular.length,
               1
             )}`}
           />
-          <Kpi label="Peak vs .500" value={`${Math.max(...regular.map((g) => g.overUnder)) > 0 ? "+" : ""}${Math.max(...regular.map((g) => g.overUnder))}`} />
+          <Kpi
+            label="Peak vs .500"
+            value={`${Math.max(...regular.map((g) => g.overUnder)) > 0 ? "+" : ""}${Math.max(...regular.map((g) => g.overUnder))}`}
+            onPreview={preview(peak)}
+            tip={peak ? `Reached ${peak.record} on ${shortDate(peak.date)}` : undefined}
+          />
           <Kpi
             label="Last 10"
             value={`${last10.filter((g) => g.win).length}-${last10.filter((g) => !g.win).length}`}
             pills={last10.map((g) => g.win)}
+            onPreview={preview(final)}
+            onPill={(i) => setHover(games.indexOf(last10[i]!))}
           />
         </dl>
       ) : null}
@@ -349,6 +362,10 @@ export function SeasonFlowChart({
                   <button
                     type="button"
                     onClick={() => setPinned((p) => (p === idx ? null : idx))}
+                    onMouseEnter={() => setHover(idx)}
+                    onMouseLeave={() => setHover(null)}
+                    onFocus={() => setHover(idx)}
+                    onBlur={() => setHover(null)}
                     className={cn(
                       "flex h-full w-full flex-col items-start gap-0.5 rounded-lg border px-3 py-2 text-left transition",
                       pinned === idx ? "border-foreground/40 bg-muted" : "border-border/70 hover:bg-muted/60"
@@ -358,7 +375,7 @@ export function SeasonFlowChart({
                     {content}
                   </button>
                 ) : (
-                  <div className="flex h-full flex-col items-start gap-0.5 rounded-lg border border-border/70 px-3 py-2">{content}</div>
+                  <div data-stat-tile className="flex h-full flex-col items-start gap-0.5 rounded-lg border border-border/70 px-3 py-2">{content}</div>
                 )}
               </li>
             );
@@ -369,16 +386,41 @@ export function SeasonFlowChart({
   );
 }
 
-function Kpi({ label, value, pills }: { label: string; value: string; pills?: boolean[] }) {
+function Kpi({
+  label,
+  value,
+  pills,
+  tip,
+  onPreview,
+  onPill,
+}: {
+  label: string;
+  value: string;
+  pills?: boolean[];
+  tip?: string;
+  onPreview?: () => void;
+  onPill?: (index: number) => void;
+}) {
   return (
-    <div className="rounded-lg border border-border/70 px-3 py-2">
+    <div
+      data-stat-tile
+      data-hover-item
+      data-tip={tip}
+      onMouseEnter={onPreview}
+      className="rounded-lg border border-border/70 px-3 py-2"
+    >
       <dt className={cn(type.micro, "font-semibold uppercase tracking-wide text-muted-foreground")}>{label}</dt>
       <dd className="mt-0.5 flex items-center gap-2">
         <span className={cn(type.title3, "font-bold tabular-nums")}>{value}</span>
         {pills?.length ? (
-          <span className="flex gap-[3px]" aria-hidden>
+          <span className="flex" aria-hidden onMouseLeave={onPreview}>
             {pills.map((w, i) => (
-              <span key={i} className="h-3 w-1.5 rounded-full" style={{ background: w ? WIN : LOSS }} />
+              <span key={i} className="group/pill px-[1.5px] py-1" onMouseEnter={() => onPill?.(i)}>
+                <span
+                  className="block h-3 w-1.5 rounded-full transition-transform group-hover/pill:scale-y-[1.35]"
+                  style={{ background: w ? WIN : LOSS }}
+                />
+              </span>
             ))}
           </span>
         ) : null}
