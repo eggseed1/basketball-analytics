@@ -9,6 +9,7 @@ import {
 import { Suspense } from "react";
 
 import { AnalyticsDesk } from "@/components/home/analytics-desk";
+import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { AppLink } from "@/components/ui/app-link";
 import { HotColdColumns } from "@/components/explore/hot-cold-board";
 import { AboveNormPanel } from "@/components/home/above-norm-panel";
@@ -291,9 +292,11 @@ export default async function HomePage() {
 
   return (
     <main
+      data-motion-page
       className="site-shell flex flex-col gap-5 py-5 sm:py-7"
       data-season-phase={moment.phase}
     >
+      <MotionReveal />
       {layout.top.map(render)}
 
       <div className="grid min-w-0 grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_21.25rem] xl:grid-cols-[minmax(0,1fr)_23rem]">
