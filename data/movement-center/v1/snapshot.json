@@ -5,10 +5,10 @@
     "season": "2026-27",
     "snapshotDate": "2026-10-07",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-10-07T17:14:35.807Z",
+    "builtAt": "2026-10-07T18:36:11.850Z",
     "rosterPlayerCount": 492,
-    "headlinesScanned": 1812,
-    "latestHeadlineAt": "2026-10-07T17:11:30.000Z",
+    "headlinesScanned": 1828,
+    "latestHeadlineAt": "2026-10-07T18:20:53.000Z",
     "latestTransactionDate": "2026-10-06",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -84,7 +84,7 @@
     },
     "outlet:yahoo-sports": {
       "label": "Yahoo Sports",
-      "credibility": 12
+      "credibility": 16
     },
     "outlet:espn": {
       "label": "ESPN",
@@ -839,7 +839,8 @@
       "headline": "LeBron James: contract future with the 76ers",
       "primaryClaimId": "mv-a36f084b9186ad77",
       "claimIds": [
-        "mv-a36f084b9186ad77"
+        "mv-a36f084b9186ad77",
+        "mv-b445abf46f915252"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
@@ -4044,6 +4045,26 @@
       "sourceId": "outlet:new-york-post",
       "sourceLabel": "New York Post",
       "sourceUrl": "https://nypost.com/2026/10/07/sports/dave-portnoy-calls-lebrons-deal-with-76ers-illegal/",
+      "playerIds": [
+        "1966"
+      ],
+      "teamIds": [
+        "20"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-b445abf46f915252",
+      "clusterId": "mv-contract-1966-20261007",
+      "summary": "Dave Portnoy calls LeBron James’ 76ers contract ‘illegal’ over Fanatics ‘side deal’",
+      "claimType": "contract_movement",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-07T13:34:49.000Z",
+      "sourceId": "outlet:yahoo-sports",
+      "sourceLabel": "Yahoo Sports",
+      "sourceUrl": "https://sports.yahoo.com/articles/dave-portnoy-calls-lebron-james-133449901.html",
       "playerIds": [
         "1966"
       ],
