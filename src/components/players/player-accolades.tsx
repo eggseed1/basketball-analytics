@@ -245,6 +245,7 @@ export function PlayerAccolades({
 
   return (
     <ul
+      data-motion-list
       className={cn(
         "mx-auto flex max-w-full flex-wrap content-start justify-center gap-1.5",
         className

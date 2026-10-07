@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 
 import { TransitionLink } from "@/components/continuity/query-nav";
 import {
@@ -176,11 +176,12 @@ function RatingRows({ d, color }: { d: PlayerOnOffDetail; color: string }) {
         </span>
       </div>
       <ul className="flex flex-col gap-3">
-        {rows.map((r) => {
+        {rows.map((r, i) => {
           const diff = r.on != null && r.off != null ? r.on - r.off : null;
           return (
             <li
               key={r.label}
+              style={{ "--i": i } as CSSProperties}
               className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1.5 sm:grid-cols-[minmax(0,9rem)_minmax(0,1fr)_13rem]"
             >
               <div className="min-w-0">
@@ -398,9 +399,10 @@ function Replacements({ d, playerName, season }: { d: PlayerOnOffDetail; playerN
         </span>
       </div>
       <ul className="flex flex-col gap-2.5">
-        {d.replacements.map((r) => (
+        {d.replacements.map((r, i) => (
           <li
             key={r.id}
+            style={{ "--i": i } as CSSProperties}
             className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 sm:grid-cols-[minmax(0,10rem)_minmax(0,1fr)_9rem]"
           >
             <TransitionLink
@@ -415,16 +417,19 @@ function Replacements({ d, playerName, season }: { d: PlayerOnOffDetail; playerN
             >
               <div className="absolute inset-x-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-foreground/[0.07]" />
               <div
+                data-motion-bar="x"
                 className="absolute top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-foreground/25"
                 style={{ left: pos(r.shareWith), width: `calc(${pos(r.shareWithout)} - ${pos(r.shareWith)})` }}
               />
               <span
+                data-motion-dot
                 className="absolute top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-muted-foreground/60 bg-background"
                 style={{ left: pos(r.shareWith) }}
               />
               <span
+                data-motion-mark
                 className="absolute top-1/2 size-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-foreground ring-2 ring-background"
-                style={{ left: pos(r.shareWithout) }}
+                style={{ left: pos(r.shareWithout), "--mark-from": pos(r.shareWith) } as CSSProperties}
               />
             </div>
             <p className="text-right text-[13px] tabular-nums">

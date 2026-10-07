@@ -108,7 +108,7 @@ export function PlayerAskLinks({
   });
 
   return (
-    <ul className="flex flex-col gap-2">
+    <ul data-motion-list className="flex flex-col gap-2">
       {links.map((link) => (
         <li key={link.href}>
           <TransitionLink

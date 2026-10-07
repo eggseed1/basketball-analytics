@@ -246,8 +246,10 @@ function DivergingBar({
         <div className="grid h-3 w-full grid-cols-2 gap-px overflow-hidden rounded-sm bg-foreground/5">
           <div className="relative flex justify-end">
             <div
+              data-motion-bar="x"
               className="h-full rounded-l-sm transition-[width] duration-300"
               style={{
+                transformOrigin: "right",
                 width: `${aPct}%`,
                 backgroundColor: aColor,
                 opacity: a == null ? 0 : aWins ? 1 : 0.55,
@@ -256,6 +258,7 @@ function DivergingBar({
           </div>
           <div className="relative flex justify-start">
             <div
+              data-motion-bar="x"
               className="h-full rounded-r-sm transition-[width] duration-300"
               style={{
                 width: `${bPct}%`,

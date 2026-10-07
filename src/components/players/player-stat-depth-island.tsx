@@ -464,7 +464,7 @@ async function GamesView({
         </p>
       ) : (
         <>
-          <dl className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          <dl data-motion-list className="grid grid-cols-2 gap-2 sm:grid-cols-4">
             {(
               [
                 ["Last 5 PTS", recent.last5.points, recent.delta.points],
@@ -509,7 +509,7 @@ async function GamesView({
             seasonAvg={trend[0]?.seasonAvg}
           />
 
-          <div className="grid gap-3 lg:grid-cols-3">
+          <div data-motion-list className="grid gap-3 lg:grid-cols-3">
             <PlayerSparkTrend
               title="Rolling 5 · PTS"
               question="5-game form"
@@ -808,7 +808,7 @@ async function ShootingView({
         </p>
       ) : (
         <>
-          <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
+          <dl data-motion-list className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
             <Mini label="FG" value={`${display.fgm}-${display.fga}`} />
             <Mini label="FG%" value={pct(display.fgPct ?? fgPct(display.fgm, display.fga))} />
             <Mini label="2P" value={`${display.twoPm}-${display.twoPa}`} />
@@ -919,7 +919,7 @@ async function ShootingView({
           ) : null}
 
           {evolution.length > 1 ? (
-            <div className="grid gap-3 lg:grid-cols-2">
+            <div data-motion-list className="grid gap-3 lg:grid-cols-2">
               <PlayerSparkTrend
                 title="3PA rate evolution"
                 question="How did shot diet change across recent seasons?"
@@ -1115,7 +1115,7 @@ async function AdvancedView({
         </p>
       </div>
 
-      <div className="grid gap-3 lg:grid-cols-2">
+      <div data-motion-list className="grid gap-3 lg:grid-cols-2">
         {caps.advancedDrbl ? (
           <PlayerImpactMarker
             title="DRBL/100: how good?"
@@ -1163,7 +1163,7 @@ async function AdvancedView({
           Box defensive events do not represent total defensive value.
         </p>
         {merged ? (
-          <dl className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          <dl data-motion-list className="grid grid-cols-2 gap-2 sm:grid-cols-4">
             <Mini label="STL" value={formatNumber(merged.steals / Math.max(1, merged.gamesPlayed), 1)} />
             <Mini label="BLK" value={formatNumber(merged.blocks / Math.max(1, merged.gamesPlayed), 1)} />
             <Mini label="DRB" value={merged.defensiveRebounds != null ? formatNumber(merged.defensiveRebounds / Math.max(1, merged.gamesPlayed), 1) : "—"} />
@@ -1282,7 +1282,7 @@ async function HighsView({
               </tbody>
             </table>
           </div>
-          <ul className="divide-y divide-border rounded-md border border-border">
+          <ul data-motion-list className="divide-y divide-border rounded-md border border-border">
             {highs.map((h) => (
               <li key={h.key} className="flex flex-col gap-1 px-3 py-2.5 text-[13px]">
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
@@ -1402,7 +1402,7 @@ async function OverviewDepthLinks({
           <h3 className="text-[14px] font-bold tracking-tight">
             Game highs preview
           </h3>
-          <ul className="mt-2 flex flex-wrap gap-2 text-[12px]">
+          <ul data-motion-list className="mt-2 flex flex-wrap gap-2 text-[12px]">
             {highs.slice(0, 6).map((h) => (
               <li
                 key={h.key}
@@ -1423,7 +1423,7 @@ async function OverviewDepthLinks({
           <h3 className="text-[14px] font-bold tracking-tight">
             Last {recent.rows.length} games
           </h3>
-          <ul className="mt-2 divide-y divide-border rounded-md border border-border">
+          <ul data-motion-list className="mt-2 divide-y divide-border rounded-md border border-border">
             {recent.rows.map((g) => (
               <li key={g.gameId}>
                 <TransitionLink

@@ -52,7 +52,7 @@ export function PlayerEvolutionPanel({
       ) : null}
 
       {rows.length ? (
-        <ul className="flex flex-col gap-2">
+        <ul data-motion-list className="flex flex-col gap-2">
           {rows.map((change) => (
             <li
               key={change.id}

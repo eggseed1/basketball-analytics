@@ -8,6 +8,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type CSSProperties,
   type ReactNode,
 } from "react";
 import { createPortal } from "react-dom";
@@ -230,6 +231,7 @@ function MetricRow({
               style={{ left: TRACK_INSET_PX, right: TRACK_INSET_PX }}
             />
             <span
+              data-motion-bar="x"
               className="absolute inset-y-[8px] rounded-full"
               aria-hidden
               style={{
@@ -243,7 +245,8 @@ function MetricRow({
                 type.caption,
                 "absolute top-1/2 z-[1] flex size-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-background font-bold tabular-nums text-foreground"
               )}
-              style={{ left: savantMarkLeft(pct) }}
+              data-motion-mark
+              style={{ left: savantMarkLeft(pct), "--mark-from": savantMarkLeft(0) } as CSSProperties}
               aria-hidden
             >
               {Math.round(metric.percentile)}
@@ -461,6 +464,7 @@ function CompRow({
         />
         {!row.isSelf && gapWidth > 0.5 ? (
           <div
+            data-motion-bar="x"
             className="absolute top-1/2 h-1.5 -translate-y-1/2 rounded-full"
             style={{
               left: markLeft(lo),
@@ -491,6 +495,7 @@ function CompRow({
           className="z-[2]"
         >
           <span
+            data-motion-dot
             className="block size-3 rounded-full border-2 border-background shadow-sm"
             style={{ backgroundColor: color }}
             aria-hidden
@@ -704,10 +709,12 @@ type SeasonMetricsCache = {
 const percentileCache = new Map<string, SeasonMetricsCache>();
 
 function PercentileHeatTile({
+  index,
   metric,
   selected,
   onSelect,
 }: {
+  index: number;
   metric: PercentileMetric;
   selected: boolean;
   onSelect: () => void;
@@ -722,6 +729,7 @@ function PercentileHeatTile({
       type="button"
       onClick={onSelect}
       aria-pressed={selected}
+      style={{ "--i": index } as CSSProperties}
       className={cn(
         "flex flex-col gap-1.5 rounded-md border px-2.5 py-2 text-left transition-colors",
         selected
@@ -739,6 +747,7 @@ function PercentileHeatTile({
       </span>
       <span className="relative h-2 w-full overflow-hidden rounded-full bg-foreground/10">
         <span
+          data-motion-bar="x"
           className="absolute inset-y-0 left-0 rounded-full"
           style={{
             width: metric.showPercentile ? `${pct}%` : "100%",
@@ -895,9 +904,10 @@ function PercentileExpandDialog({
               <section aria-label="Percentile overview">
                 <h3 className={cn(type.bodySm, "mb-2 font-bold")}>Overview</h3>
                 <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
-                  {listed.map((metric) => (
+                  {listed.map((metric, i) => (
                     <PercentileHeatTile
                       key={metric.id}
+                      index={i}
                       metric={metric}
                       selected={activeId === metric.id}
                       onSelect={() => onSelectMetric(metric.id)}
@@ -939,6 +949,7 @@ function PercentileExpandDialog({
                         return (
                           <li
                             key={m.id}
+                            style={{ "--i": i } as CSSProperties}
                             className={cn(
                               !isActive &&
                                 i < section.metrics.length - 1 &&
@@ -1598,12 +1609,13 @@ export function PlayerPercentilePanel({
                           : "No rankings in this category for this season."}
                       </p>
                     ) : (
-                        <ul>
+                        <ul key={viewSeason}>
                           {section.metrics.map((m, i) => {
                             const isActive = selected && active?.id === m.id;
                             return (
                               <li
                                 key={m.id}
+                                style={{ "--i": i } as CSSProperties}
                                 className={cn(
                                   !isActive &&
                                     i < section.metrics.length - 1 &&

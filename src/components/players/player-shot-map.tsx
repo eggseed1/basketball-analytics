@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type CSSProperties } from "react";
 
 import { NbaHalfCourtLines } from "@/components/charts/nba-half-court-lines";
 import { GlassSurface } from "@/components/brand/glass-surface";
@@ -316,6 +316,8 @@ export function PlayerShotMapView({
                   .map((shot, i) => (
                     <circle
                       key={`${shot.x}-${shot.y}-${i}`}
+                      data-motion-dot
+                      style={{ "--i": i % 48 } as CSSProperties}
                       cx={courtX(shot.x)}
                       cy={courtY(shot.y)}
                       r={shot.made ? 4.2 : 3.6}
@@ -330,7 +332,7 @@ export function PlayerShotMapView({
                       </title>
                     </circle>
                   ))
-              : bins.map((bin) => {
+              : bins.map((bin, i) => {
                   const r = 4 + 13 * Math.sqrt(bin.fga / bin.max);
                   const small = bin.fga < MIN_BIN_FGA;
                   const pct = bin.fgm / bin.fga;
@@ -338,6 +340,8 @@ export function PlayerShotMapView({
                   return (
                     <circle
                       key={`${bin.x}-${bin.y}`}
+                      data-motion-dot
+                      style={{ "--i": i % 30 } as CSSProperties}
                       cx={courtX(bin.x)}
                       cy={courtY(bin.y)}
                       r={r}
@@ -418,6 +422,7 @@ export function PlayerShotMapView({
                 <div className="flex items-center gap-2">
                   <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-foreground/[0.07]">
                     <div
+                      data-motion-bar="x"
                       className="h-full rounded-full bg-foreground/55"
                       style={{ width: `${Math.max(2, row.frequency * 100)}%` }}
                     />

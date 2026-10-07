@@ -380,7 +380,7 @@ function ForwardItem({ node, names, root = false }: { node: ForwardNode; names: 
 
 export function WhereItLed({ story, names }: { story: AcquisitionStory; names: Names }) {
   return (
-    <ol className="flex flex-col gap-2">
+    <ol data-motion-list className="flex flex-col gap-2">
       <ForwardItem node={story.afterwards} names={names} root />
     </ol>
   );
@@ -462,7 +462,7 @@ function OriginItem({ node, names }: { node: OriginNode; names: Names }) {
 export function OutgoingOrigins({ story, names }: { story: AcquisitionStory; names: Names }) {
   if (!story.origins.length) return null;
   return (
-    <ul className="flex flex-col gap-2">
+    <ul data-motion-list className="flex flex-col gap-2">
       {story.origins.map((node) => (
         <OriginItem key={node.asset.key} node={node} names={names} />
       ))}

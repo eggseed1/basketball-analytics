@@ -4,6 +4,7 @@
  */
 
 import Link from "next/link";
+import type { CSSProperties } from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -28,7 +29,7 @@ export function PlayerSparkTrend({
 }) {
   if (!points.length) {
     return (
-      <figure className="rounded-md border border-border p-3">
+      <figure data-motion="replay" className="rounded-md border border-border p-3">
         <figcaption className="text-[13px] font-semibold">{title}</figcaption>
         <p className="mt-1 text-[12px] text-muted-foreground">{question}</p>
         <p className="mt-3 text-[12px] text-muted-foreground">No data.</p>
@@ -57,6 +58,7 @@ export function PlayerSparkTrend({
 
   return (
     <figure
+      data-motion="replay"
       className="rounded-md border border-border p-3"
       aria-label={title}
     >
@@ -81,16 +83,20 @@ export function PlayerSparkTrend({
         ) : null}
         <path
           d={path}
+          pathLength={1}
+          data-motion-line
           fill="none"
           stroke="currentColor"
           strokeWidth={2}
           opacity={0.85}
         />
-        {coords.map((c) => {
+        {coords.map((c, i) => {
           const href = c.href ?? hrefForPoint?.(c) ?? null;
           const circle = (
             <circle
               key={c.x + String(c.cx)}
+              data-motion-dot
+              style={{ "--i": Math.min(i, 24) } as CSSProperties}
               cx={c.cx}
               cy={c.cy}
               r={3}
@@ -138,13 +144,14 @@ export function PlayerBarDistribution({
 }) {
   const peak = Math.max(1, ...bins.map((b) => b.count));
   return (
-    <figure className="rounded-md border border-border p-3">
+    <figure data-motion="replay" className="rounded-md border border-border p-3">
       <figcaption className="text-[13px] font-semibold">{title}</figcaption>
       <p className="mt-0.5 text-[12px] text-muted-foreground">{question}</p>
       <ul className="mt-3 flex h-[120px] items-end gap-1" role="img" aria-label={title}>
-        {bins.map((b) => (
+        {bins.map((b, i) => (
           <li
             key={b.label}
+            style={{ "--i": i } as CSSProperties}
             className="flex flex-1 flex-col items-center justify-end gap-1"
             title={`${b.label}: ${b.count}`}
           >
@@ -152,6 +159,7 @@ export function PlayerBarDistribution({
               {b.count || ""}
             </span>
             <div
+              data-motion-bar="y"
               className="w-full rounded-t-sm bg-foreground/80"
               style={{ height: `${(b.count / peak) * 100}%`, minHeight: b.count ? 2 : 0 }}
             />
@@ -193,7 +201,7 @@ export function PlayerPercentileStrip({
   }>;
 }) {
   return (
-    <figure className="rounded-md border border-border p-3">
+    <figure data-motion="replay" className="rounded-md border border-border p-3">
       <figcaption className="text-[13px] font-semibold">{title}</figcaption>
       <p className="mt-0.5 text-[12px] text-muted-foreground">
         Marker = league percentile in the same season (qualified peers).
@@ -216,8 +224,9 @@ export function PlayerPercentileStrip({
               >
                 {left != null ? (
                   <span
+                    data-motion-mark
                     className="absolute top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-foreground"
-                    style={{ left: `${left}%` }}
+                    style={{ left: `${left}%`, "--mark-from": "2%" } as CSSProperties}
                   />
                 ) : (
                   <span className="absolute inset-0 flex items-center justify-center text-[9px] text-muted-foreground">
@@ -256,7 +265,7 @@ export function PlayerSplitDeltaMatrix({
   metrics: string[];
 }) {
   return (
-    <figure className="rounded-md border border-border p-3">
+    <figure data-motion="replay" className="rounded-md border border-border p-3">
       <figcaption className="text-[13px] font-semibold">{title}</figcaption>
       <p className="mt-0.5 text-[12px] text-muted-foreground">
         Difference vs season baseline (per game / rate). Sample size shown.
@@ -325,7 +334,7 @@ export function PlayerOpponentDeltaBars({
 }) {
   const maxAbs = Math.max(0.01, ...rows.map((r) => Math.abs(r.delta)));
   return (
-    <figure className="rounded-md border border-border p-3">
+    <figure data-motion="replay" className="rounded-md border border-border p-3">
       <figcaption className="text-[13px] font-semibold">{title}</figcaption>
       <p className="mt-0.5 text-[12px] text-muted-foreground">
         {metricLabel} vs season average · sorted best → worst · G shown
@@ -348,11 +357,12 @@ export function PlayerOpponentDeltaBars({
               <div className="relative h-3 rounded-sm bg-muted">
                 <div className="absolute inset-y-0 left-1/2 w-px bg-border" />
                 <div
+                  data-motion-bar="x"
                   className={cn(
                     "absolute inset-y-0 rounded-sm",
                     positive ? "left-1/2 bg-foreground/70" : "right-1/2 bg-foreground/40"
                   )}
-                  style={{ width: `${width}%` }}
+                  style={{ width: `${width}%`, transformOrigin: positive ? "left" : "right" }}
                 />
               </div>
               <span className="text-right tabular-nums">
@@ -381,7 +391,7 @@ export function PlayerShotProfileBars({
   }>;
 }) {
   return (
-    <figure className="rounded-md border border-border p-3">
+    <figure data-motion="replay" className="rounded-md border border-border p-3">
       <figcaption className="text-[13px] font-semibold">{title}</figcaption>
       <p className="mt-0.5 text-[12px] text-muted-foreground">
         How often (bar) and how well (dot), with a league baseline marker when available.
@@ -397,13 +407,15 @@ export function PlayerShotProfileBars({
             </span>
             <div className="relative h-3 rounded-sm bg-muted">
               <div
+                data-motion-bar="x"
                 className="absolute inset-y-0 left-0 rounded-sm bg-foreground/70"
                 style={{ width: `${Math.max(2, s.share * 100)}%` }}
               />
               {s.accuracy != null ? (
                 <span
+                  data-motion-mark
                   className="absolute top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full border border-background bg-foreground"
-                  style={{ left: `${Math.max(2, Math.min(98, s.accuracy * 100))}%` }}
+                  style={{ left: `${Math.max(2, Math.min(98, s.accuracy * 100))}%`, "--mark-from": "2%" } as CSSProperties}
                   title={`FG% ${(s.accuracy * 100).toFixed(1)}`}
                 />
               ) : null}
@@ -443,7 +455,7 @@ export function PlayerImpactMarker({
   const max = Math.max(1, ...bins);
   const marker = percentile == null ? null : Math.max(0, Math.min(100, percentile));
   return (
-    <figure className="rounded-md border border-border p-3">
+    <figure data-motion="replay" className="rounded-md border border-border p-3">
       <figcaption className="text-[13px] font-semibold">{title}</figcaption>
       <p className="mt-0.5 text-[12px] text-muted-foreground">
         League distribution with player marker (same-season qualified peers).
@@ -457,15 +469,17 @@ export function PlayerImpactMarker({
           {bins.map((c, i) => (
             <li
               key={i}
+              data-motion-bar="y"
               className="flex-1 rounded-t-sm bg-muted-foreground/40"
-              style={{ height: `${(c / max) * 100}%` }}
+              style={{ height: `${(c / max) * 100}%`, "--i": Math.min(i, 30) } as CSSProperties}
             />
           ))}
         </ul>
         {marker != null ? (
           <div
+            data-motion-mark
             className="absolute bottom-0 top-0 w-0.5 bg-foreground"
-            style={{ left: `${marker}%` }}
+            style={{ left: `${marker}%`, "--mark-from": "0%" } as CSSProperties}
             aria-hidden
           />
         ) : null}
@@ -489,7 +503,7 @@ export function PlayerContextScatter({
 }) {
   if (points.length < 2) {
     return (
-      <figure className="rounded-md border border-border p-3">
+      <figure data-motion="replay" className="rounded-md border border-border p-3">
         <figcaption className="text-[13px] font-semibold">{title}</figcaption>
         <p className="mt-1 text-[12px] text-muted-foreground">
           Insufficient league context for scatter.
@@ -507,7 +521,7 @@ export function PlayerContextScatter({
   const h = 220;
   const pad = 28;
   return (
-    <figure className="rounded-md border border-border p-3">
+    <figure data-motion="replay" className="rounded-md border border-border p-3">
       <figcaption className="text-[13px] font-semibold">{title}</figcaption>
       <p className="mt-0.5 text-[12px] text-muted-foreground">{question}</p>
       <svg
@@ -541,6 +555,7 @@ export function PlayerContextScatter({
           return (
             <circle
               key={i}
+              data-motion-dot={p.highlight ? "focus" : "field"}
               cx={cx}
               cy={cy}
               r={p.highlight ? 5 : 2.5}
@@ -580,7 +595,7 @@ export function PlayerCareerArcChart({
   }>;
   if (!usable.length) {
     return (
-      <figure className="rounded-md border border-border p-3">
+      <figure data-motion="replay" className="rounded-md border border-border p-3">
         <figcaption className="text-[13px] font-semibold">{title}</figcaption>
         <p className="mt-1 text-[12px] text-muted-foreground">No arc data.</p>
       </figure>
@@ -603,16 +618,18 @@ export function PlayerCareerArcChart({
     .join(" ");
 
   return (
-    <figure className="rounded-md border border-border p-3">
+    <figure data-motion="replay" className="rounded-md border border-border p-3">
       <figcaption className="text-[13px] font-semibold">{title}</figcaption>
       <p className="mt-0.5 text-[12px] text-muted-foreground">
         How did this player evolve? Team labels mark franchise changes.
       </p>
       <svg viewBox={`0 0 ${w} ${h}`} className="mt-3 h-[160px] w-full" role="img" aria-label={title}>
-        <path d={path} fill="none" stroke="currentColor" strokeWidth={2} opacity={0.85} />
-        {coords.map((c) => (
+        <path d={path} pathLength={1} data-motion-line fill="none" stroke="currentColor" strokeWidth={2} opacity={0.85} />
+        {coords.map((c, i) => (
           <a key={c.season} href={c.href}>
             <circle
+              data-motion-dot
+              style={{ "--i": i } as CSSProperties}
               cx={c.cx}
               cy={c.cy}
               r={c.season === selectedSeason || c.season === peakSeason ? 5 : 3}
@@ -652,15 +669,15 @@ export function PlayerGameHighTimeline({
   }>;
 }) {
   return (
-    <figure className="rounded-md border border-border p-3">
+    <figure data-motion="replay" className="rounded-md border border-border p-3">
       <figcaption className="text-[13px] font-semibold">{title}</figcaption>
       <p className="mt-0.5 text-[12px] text-muted-foreground">
         Biggest nights by category. Open the game for flow, shots, and PBP.
       </p>
       <ol className="relative mt-4 space-y-3 border-l border-border pl-4">
-        {events.map((e) => (
-          <li key={e.label + e.date} className="relative">
-            <span className="absolute -left-[1.15rem] top-1.5 h-2.5 w-2.5 rounded-full bg-foreground" />
+        {events.map((e, i) => (
+          <li key={e.label + e.date} data-motion-item style={{ "--i": i } as CSSProperties} className="relative">
+            <span data-motion-dot className="absolute -left-[1.15rem] top-1.5 h-2.5 w-2.5 rounded-full bg-foreground" />
             <Link
               href={e.href}
               prefetch={false}

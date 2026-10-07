@@ -63,7 +63,7 @@ export function PlayerUpcomingGames({
           No upcoming tip-offs scheduled in the near window.
         </p>
       ) : (
-        <ul className="flex flex-col gap-1.5">
+        <ul data-motion-list className="flex flex-col gap-1.5">
           {upcoming.map((game) => {
             const line = formatTeamGameScoreLine(game, team, brand);
             return (

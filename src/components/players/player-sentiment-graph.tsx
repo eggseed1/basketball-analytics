@@ -155,6 +155,7 @@ function SentimentLaneChart({
               </div>
               <div className="mt-0.5 h-1 rounded-full bg-foreground/[0.08]">
                 <div
+                  data-motion-bar="x"
                   className="h-full rounded-full"
                   style={{
                     width: `${Math.round(share * 100)}%`,

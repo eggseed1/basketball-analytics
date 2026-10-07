@@ -1801,6 +1801,240 @@ html:not([data-surface="glass"]) .color-scheme-switch {
   [data-motion="replay"]:hover [data-motion-reveal] {
     animation: motion-reveal 900ms cubic-bezier(0.3, 0.7, 0.2, 1) backwards;
   }
+
+  [data-motion="replay"]:hover [data-motion-bar="y"] {
+    transform-origin: bottom;
+    animation: motion-grow-y 560ms var(--motion-ease) backwards;
+    animation-delay: calc(min(var(--i, 0), 16) * 40ms);
+  }
+
+  [data-motion="replay"]:hover [data-motion-line] {
+    stroke-dasharray: 1 1;
+    animation: motion-draw 900ms cubic-bezier(0.3, 0.7, 0.2, 1) backwards;
+  }
+
+  [data-motion="replay"]:hover [data-motion-dot] {
+    animation: motion-pop 300ms cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+    animation-delay: calc(min(var(--i, 0), 24) * 28ms);
+  }
+
+  [data-motion="replay"]:hover [data-motion-mark] {
+    animation: motion-mark 700ms var(--motion-ease) backwards;
+  }
+
+  [data-player-page] tbody > tr:hover > td {
+    box-shadow: inset 0 0 0 100vmax var(--motion-row-tint);
+  }
+
+  [data-motion-tabs] [role="tab"][aria-selected="false"]:hover::after {
+    opacity: 0.35;
+    scale: 0.4 1;
+  }
+}
+
+/* Player page entry. Built on @starting-style transitions so hover replays
+   (keyframes) can restart freely, and tab panels that leave display:none
+   play their entry again. Each property carries its own delay so hover
+   feedback never waits behind the stagger. */
+[data-motion-tabs] [role="tab"] {
+  position: relative;
+}
+
+[data-motion-tabs] [role="tab"]::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0.5rem;
+  bottom: -1px;
+  height: 2px;
+  border-radius: 999px;
+  background: currentColor;
+  opacity: 0;
+  scale: 0 1;
+}
+
+[data-motion-tabs] [role="tab"][aria-selected="true"]::after {
+  opacity: 1;
+  scale: 1;
+}
+
+[data-player-page] :is([data-motion-list] > *, tbody > tr) {
+  --n: 12;
+}
+
+[data-player-page] :is([data-motion-list] > *, tbody > tr):nth-child(1) { --n: 0; }
+[data-player-page] :is([data-motion-list] > *, tbody > tr):nth-child(2) { --n: 1; }
+[data-player-page] :is([data-motion-list] > *, tbody > tr):nth-child(3) { --n: 2; }
+[data-player-page] :is([data-motion-list] > *, tbody > tr):nth-child(4) { --n: 3; }
+[data-player-page] :is([data-motion-list] > *, tbody > tr):nth-child(5) { --n: 4; }
+[data-player-page] :is([data-motion-list] > *, tbody > tr):nth-child(6) { --n: 5; }
+[data-player-page] :is([data-motion-list] > *, tbody > tr):nth-child(7) { --n: 6; }
+[data-player-page] :is([data-motion-list] > *, tbody > tr):nth-child(8) { --n: 7; }
+[data-player-page] :is([data-motion-list] > *, tbody > tr):nth-child(9) { --n: 8; }
+[data-player-page] :is([data-motion-list] > *, tbody > tr):nth-child(10) { --n: 9; }
+[data-player-page] :is([data-motion-list] > *, tbody > tr):nth-child(11) { --n: 10; }
+[data-player-page] :is([data-motion-list] > *, tbody > tr):nth-child(12) { --n: 11; }
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-motion-tabs] [role="tab"]::after {
+    transition:
+      scale 320ms var(--motion-ease),
+      opacity 200ms ease;
+  }
+
+  [data-player-page] > :not(.hof-page-frame),
+  [data-player-page] .hof-page-frame__inner > * {
+    transition:
+      opacity 420ms ease,
+      translate 560ms var(--motion-ease);
+  }
+
+  [data-player-page] > :nth-child(2),
+  [data-player-page] .hof-page-frame__inner > :nth-child(2) {
+    transition-delay: 70ms;
+  }
+
+  [data-player-page] > :nth-child(n + 3),
+  [data-player-page] .hof-page-frame__inner > :nth-child(n + 3) {
+    transition-delay: 140ms;
+  }
+
+  [data-player-page] [data-avatar="md"] {
+    transition:
+      scale 620ms cubic-bezier(0.34, 1.4, 0.64, 1) 80ms,
+      opacity 360ms ease 80ms;
+  }
+
+  [data-player-page] :is([data-motion-list] > *, [data-motion-item]) {
+    --d: calc(var(--n, var(--i, 0)) * 45ms + 80ms);
+    transition:
+      opacity 380ms ease var(--d),
+      translate 480ms var(--motion-ease) var(--d),
+      color 150ms ease,
+      background-color 150ms ease,
+      border-color 150ms ease,
+      box-shadow 200ms ease;
+  }
+
+  [data-player-page] [data-motion-item] {
+    --n: min(var(--i, 0), 12);
+  }
+
+  /* Opacity only: moving a row would drag its sticky cells along. */
+  [data-player-page] tbody > tr {
+    transition: opacity 360ms ease calc(var(--n) * 28ms + 60ms);
+  }
+
+  [data-player-page] [data-motion-bar] {
+    --d: calc(min(var(--i, 0), 16) * 40ms + 120ms);
+    transition:
+      scale 720ms var(--motion-ease) var(--d),
+      width 300ms ease,
+      height 300ms ease,
+      opacity 300ms ease;
+  }
+
+  [data-player-page] [data-motion-bar="x"] {
+    transform-origin: left;
+  }
+
+  [data-player-page] [data-motion-bar="y"] {
+    transform-origin: bottom;
+  }
+
+  /* Same clock as the bars so a marker rides the tip of its bar. */
+  [data-player-page] [data-motion-mark] {
+    transition: left 720ms var(--motion-ease)
+      calc(min(var(--i, 0), 16) * 40ms + 120ms);
+  }
+
+  [data-player-page] [data-motion-dot] {
+    transform-box: fill-box;
+    transform-origin: center;
+    transition: scale 420ms cubic-bezier(0.34, 1.56, 0.64, 1)
+      calc(min(var(--i, 0), 48) * 18ms + 240ms);
+  }
+
+  [data-player-page] [data-motion-line] {
+    stroke-dasharray: 1 1;
+    transition: stroke-dashoffset 1000ms cubic-bezier(0.3, 0.7, 0.2, 1) 100ms;
+  }
+
+  [data-player-page] :is(.recharts-line, .recharts-area) {
+    clip-path: inset(-50% -50% -50% -50%);
+    transition: clip-path 1100ms cubic-bezier(0.3, 0.7, 0.2, 1) 100ms;
+  }
+
+  [data-player-page] .recharts-bar-rectangle {
+    transform-box: fill-box;
+    transform-origin: bottom;
+    transition: scale 640ms var(--motion-ease) 120ms;
+  }
+
+  [data-player-page] :is(.recharts-line-dots > *, .recharts-scatter-symbol) {
+    transform-box: fill-box;
+    transform-origin: center;
+    transition: scale 380ms cubic-bezier(0.34, 1.56, 0.64, 1) 500ms;
+  }
+
+  @starting-style {
+    [data-player-page] > :not(.hof-page-frame),
+    [data-player-page] .hof-page-frame__inner > * {
+      opacity: 0;
+      translate: 0 14px;
+    }
+
+    [data-player-page] [data-avatar="md"] {
+      opacity: 0;
+      scale: 0.82;
+    }
+
+    [data-player-page] :is([data-motion-list] > *, [data-motion-item]) {
+      opacity: 0;
+      translate: 0 8px;
+    }
+
+    [data-player-page] tbody > tr {
+      opacity: 0;
+    }
+
+    [data-player-page] [data-motion-bar="x"] {
+      scale: 0 1;
+    }
+
+    [data-player-page] [data-motion-bar="y"] {
+      scale: 1 0;
+    }
+
+    [data-player-page] [data-motion-mark] {
+      left: var(--mark-from, 0%);
+    }
+
+    [data-player-page] [data-motion-dot] {
+      scale: 0;
+    }
+
+    [data-player-page] [data-motion-line] {
+      stroke-dashoffset: 1;
+    }
+
+    [data-player-page] :is(.recharts-line, .recharts-area) {
+      clip-path: inset(-50% 150% -50% -50%);
+    }
+
+    [data-player-page] .recharts-bar-rectangle {
+      scale: 1 0;
+    }
+
+    [data-player-page] :is(.recharts-line-dots > *, .recharts-scatter-symbol) {
+      scale: 0;
+    }
+  }
+}
+
+@keyframes motion-mark {
+  from {
+    left: var(--mark-from, 0%);
+  }
 }
 
 @keyframes motion-pop {

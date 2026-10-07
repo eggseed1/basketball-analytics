@@ -43,7 +43,7 @@ export function PlayerTransactionHistory({
           All <span data-motion-arrow aria-hidden>→</span>
         </TextLink>
       </div>
-      <ul className="flex flex-col gap-2">
+      <ul data-motion-list className="flex flex-col gap-2">
         {events.map((event) => {
           const tradeAcquire =
             isTradeRelatedSourceCategory(event.sourceTextCategory)

@@ -190,7 +190,7 @@ function CompList({
       <p className="mb-2 text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
         {title}
       </p>
-      <ul className="flex flex-col gap-2">
+      <ul data-motion-list className="flex flex-col gap-2">
         {comps.map((c) => {
           const href = compareHrefFor(focalPlayerId, c, season);
           return (

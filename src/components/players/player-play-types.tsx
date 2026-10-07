@@ -1,3 +1,5 @@
+import type { CSSProperties } from "react";
+
 import { GlassSurface } from "@/components/brand/glass-surface";
 import {
   PLAY_TYPE_MIN_POSS,
@@ -60,11 +62,12 @@ export function PlayerPlayTypesCard({
       </div>
 
       <ul className="flex flex-col gap-3 sm:gap-2.5">
-        {data.rows.map((row) => {
+        {data.rows.map((row, i) => {
           const pill = row.percentile == null ? null : percentileSavantColor(row.percentile, "auto");
           return (
             <li
               key={row.key}
+              style={{ "--i": i } as CSSProperties}
               className="grid grid-cols-[minmax(0,1fr)_3.5rem_4.5rem] items-center gap-x-3 gap-y-1 sm:grid-cols-[9.5rem_minmax(0,1fr)_3.5rem_4.5rem]"
             >
               <span className={cn(type.bodySm, "col-span-3 font-semibold sm:col-span-1")}>
@@ -73,6 +76,7 @@ export function PlayerPlayTypesCard({
               <div className="flex min-w-0 items-center gap-2">
                 <div className="h-2 flex-1 overflow-hidden rounded-full bg-foreground/[0.07]">
                   <div
+                    data-motion-bar="x"
                     className="h-full rounded-full"
                     style={{
                       width: `${Math.max(2, (row.frequency / maxFreq) * 100)}%`,
@@ -104,6 +108,7 @@ export function PlayerPlayTypesCard({
                   </span>
                 ) : (
                   <span
+                    data-motion-dot
                     className={cn(type.caption, "min-w-[3.25rem] rounded-md px-1.5 py-0.5 text-center font-bold tabular-nums")}
                     style={{
                       background: pill ?? undefined,

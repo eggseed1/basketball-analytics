@@ -40,6 +40,7 @@ export function PlayerDepthNav({
     <div
       role="tablist"
       aria-label="Player statistics views"
+      data-motion-tabs
       className="flex flex-wrap items-center gap-x-2 gap-y-2 border-b-2 border-foreground/70 px-1 py-2"
     >
       {tabs.map((tab) => {

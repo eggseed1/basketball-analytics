@@ -132,7 +132,7 @@ export function PlayerSentimentView({
               {sentimentProfile.headlines?.length ? (
                 <div className="flex flex-col gap-2">
                   <h3 className={cn(type.bodySm, "font-bold")}>Headlines behind the media score</h3>
-                  <ul className="flex flex-col gap-1.5">
+                  <ul data-motion-list className="flex flex-col gap-1.5">
                     {sentimentProfile.headlines.map((headline) => (
                       <li key={headline.url} className="flex items-start gap-2">
                         <span

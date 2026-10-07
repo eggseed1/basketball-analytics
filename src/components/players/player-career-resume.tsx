@@ -261,7 +261,7 @@ export function PlayerCareerResume({
       ) : null}
 
       {peak ? (
-        <div className="grid gap-3 sm:grid-cols-3">
+        <div data-motion-list className="grid gap-3 sm:grid-cols-3">
           <ResumeStat
             label={
               <MetricHelp

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 
 import { type } from "@/lib/design-system";
 import { formatUsdCompact } from "@/lib/format-money";
@@ -89,7 +89,7 @@ export function ContractValueChart({ years }: { years: ContractValueChartYear[] 
       <p className={cn(type.body, "font-semibold leading-snug")}>{headline(years)}</p>
 
       <div className="flex flex-col">
-        {years.map((y) => {
+        {years.map((y, i) => {
           const isActive = y.season === active.season;
           const lo = Math.min(y.salary, y.worth);
           const hi = Math.max(y.salary, y.worth);
@@ -104,6 +104,7 @@ export function ContractValueChart({ years }: { years: ContractValueChartYear[] 
             <button
               key={y.season}
               type="button"
+              style={{ "--i": i } as CSSProperties}
               onClick={() => setSelected(y.season)}
               onMouseEnter={() => setSelected(y.season)}
               onFocus={() => setSelected(y.season)}
@@ -131,12 +132,15 @@ export function ContractValueChart({ years }: { years: ContractValueChartYear[] 
               <span aria-hidden className="relative h-7">
                 <span className="absolute inset-x-0 top-1/2 h-px bg-border/70" />
                 <span
+                  data-motion-bar="x"
                   className="absolute top-1/2 h-2.5 -translate-y-1/2 rounded-full bg-[var(--chart-3)]/15"
                   style={{ left: `${pct(y.worthLow)}%`, width: `${pct(y.worthHigh) - pct(y.worthLow)}%` }}
                 />
                 <span
+                  data-motion-bar="x"
                   className="absolute top-1/2 h-1.5 -translate-y-1/2 rounded-full"
                   style={{
+                    transformOrigin: y.worth >= y.salary ? "left" : "right",
                     left: `${pct(lo)}%`,
                     width: `${pct(hi) - pct(lo)}%`,
                     background: gapColor,
@@ -144,12 +148,14 @@ export function ContractValueChart({ years }: { years: ContractValueChartYear[] 
                   }}
                 />
                 <span
+                  data-motion-dot
                   className="absolute top-1/2 h-5 w-[3px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-foreground"
                   style={{ left: `${pct(y.salary)}%` }}
                 />
                 <span
+                  data-motion-mark
                   className="absolute top-1/2 size-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-[var(--card)] bg-[var(--chart-3)]"
-                  style={{ left: `${pct(y.worth)}%` }}
+                  style={{ left: `${pct(y.worth)}%`, "--mark-from": `${pct(y.salary)}%` } as CSSProperties}
                 />
               </span>
               <span

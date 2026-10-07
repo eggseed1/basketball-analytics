@@ -41,7 +41,7 @@ export function MovementRumorPanel({
       {monitor && bundle ? (
         <>
           <MonitorSummary monitor={monitor} />
-          <ul className="flex flex-col gap-2">
+          <ul data-motion-list className="flex flex-col gap-2">
             {displayClusters.map((cluster) => (
               <li key={cluster.id}>
                 <MovementClusterCard
