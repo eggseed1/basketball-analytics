@@ -242,12 +242,24 @@ export function PlayerSeasonTable({
     const bodyRows = table.tBodies[0]?.rows;
     const frozenRows = frozen.querySelectorAll<HTMLElement>("[data-frozen-row]");
     if (!bodyRows) return;
+    // The headshot can make a frozen row taller than its table row (phones), so
+    // both sides take the larger natural height. Clear, read all, then write all.
+    const pairs: Array<[HTMLTableRowElement, HTMLElement]> = [];
     for (let i = 0; i < frozenRows.length; i++) {
       const tr = bodyRows.item(i);
       const fr = frozenRows[i];
       if (!tr || !fr) continue;
-      fr.style.height = `${tr.getBoundingClientRect().height}px`;
+      tr.style.height = "";
+      fr.style.height = "";
+      pairs.push([tr, fr]);
     }
+    const heights = pairs.map(([tr, fr]) =>
+      Math.max(tr.getBoundingClientRect().height, fr.getBoundingClientRect().height)
+    );
+    pairs.forEach(([tr, fr], i) => {
+      tr.style.height = `${heights[i]}px`;
+      fr.style.height = `${heights[i]}px`;
+    });
   }, []);
 
   useLayoutEffect(() => {
