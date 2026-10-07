@@ -22,8 +22,6 @@ const WIN = "var(--data-positive)";
 const WIN_TEXT = "var(--accent-positive)";
 const LOSS = "var(--data-negative)";
 const LOSS_TEXT = "var(--accent-negative)";
-const WIN_SOFT = "var(--accent-positive-soft)";
-const LOSS_SOFT = "var(--accent-negative-soft)";
 
 function useElementWidth<T extends HTMLElement>(fallback: number) {
   const ref = useRef<T>(null);
@@ -183,7 +181,7 @@ export function SeasonFlowChart({
           height={HEIGHT}
           role="img"
           aria-label={`${season} game-by-game ${mode === "margin" ? "margins" : "games over .500"}`}
-          className="block touch-pan-y"
+          className={cn("block touch-pan-y", active != null && "cursor-pointer")}
           onPointerMove={(e) => setHover(indexFromEvent(e.clientX, e.currentTarget.getBoundingClientRect()))}
           onPointerLeave={() => setHover(null)}
           onClick={(e) => {
@@ -214,6 +212,19 @@ export function SeasonFlowChart({
                 {postLabel}
               </text>
             </g>
+          ) : null}
+
+          {activeGame && active != null ? (
+            <rect
+              x={PAD.left + step * active}
+              y={PAD.top}
+              width={step}
+              height={innerH}
+              rx={Math.min(4, step / 2)}
+              fill="currentColor"
+              opacity={0.07}
+              pointerEvents="none"
+            />
           ) : null}
 
           {ticks.map((t) => (
@@ -250,7 +261,7 @@ export function SeasonFlowChart({
               {games.map((g, i) => {
                 const y0 = yAt(0);
                 const y1 = yAt(Math.max(-yMax, Math.min(yMax, g.margin)));
-                const dim = active != null && active !== i;
+                const on = active === i;
                 return (
                   <rect
                     key={g.id}
@@ -261,7 +272,9 @@ export function SeasonFlowChart({
                     width={barW}
                     height={Math.max(1.5, Math.abs(y1 - y0))}
                     rx={Math.min(3, barW / 2)}
-                    fill={dim ? (g.win ? WIN_SOFT : LOSS_SOFT) : g.win ? WIN : LOSS}
+                    fill={g.win ? WIN : LOSS}
+                    stroke={on ? "var(--foreground)" : undefined}
+                    strokeWidth={on ? 1.5 : undefined}
                   />
                 );
               })}
@@ -290,7 +303,9 @@ export function SeasonFlowChart({
                   cx={xAt(i)}
                   cy={yAt(g.overUnder)}
                   r={active === i ? 4.5 : Math.min(2.2, barW / 2)}
-                  fill={active != null && active !== i ? (g.win ? WIN_SOFT : LOSS_SOFT) : g.win ? WIN : LOSS}
+                  fill={g.win ? WIN : LOSS}
+                  stroke={active === i ? "var(--card)" : undefined}
+                  strokeWidth={active === i ? 2 : undefined}
                 />
               ))}
             </>
@@ -308,6 +323,17 @@ export function SeasonFlowChart({
               pointerEvents="none"
             />
           ) : null}
+          {activeGame && active != null && mode === "margin" ? (
+            <circle
+              cx={xAt(active)}
+              cy={yAt(activeGame.rolling)}
+              r={4}
+              fill="var(--foreground)"
+              stroke="var(--card)"
+              strokeWidth={2}
+              pointerEvents="none"
+            />
+          ) : null}
         </svg>
 
         {activeGame && active != null ? (
@@ -317,7 +343,10 @@ export function SeasonFlowChart({
               pinned != null ? "pointer-events-auto" : "pointer-events-none"
             )}
             style={{
-              left: Math.min(Math.max(4, xAt(active) - 112), width - 228),
+              left:
+                xAt(active) + 14 + 224 <= width
+                  ? xAt(active) + 14
+                  : Math.max(4, xAt(active) - 14 - 224),
             }}
           >
             <p className={cn(type.micro, "font-semibold uppercase tracking-wide text-muted-foreground")}>
