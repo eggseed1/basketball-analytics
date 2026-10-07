@@ -2,7 +2,7 @@
   "source": "espn-site-v2-transactions",
   "datasetVersion": "1.0",
   "espnCalendarYear": 2026,
-  "fetchedAt": "2026-10-07T00:12:48.995Z",
+  "fetchedAt": "2026-10-07T03:31:30.958Z",
   "apiCount": 367,
   "rows": [
     {
@@ -1103,6 +1103,50 @@
         "displayName": "Brooklyn Nets",
         "location": "Brooklyn",
         "name": "Nets"
+      }
+    },
+    {
+      "date": "2026-07-31T07:00Z",
+      "description": "Re-signed G De'Anthony Melton to a contract.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2026-07-31T07:00Z",
+      "description": "Signed F Spencer Jones to a contract.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2026-07-31T07:00Z",
+      "description": "Signed F Mario Hezonja to a contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2026-07-30T07:00Z",
+      "description": "Waived F Mouhamadou Gueye.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
       }
     },
     {
