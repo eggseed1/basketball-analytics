@@ -20,6 +20,7 @@
     "test:league-moves": "tsx scripts/test-league-moves.ts",
     "test:injury-report": "tsx scripts/test-injury-report.ts",
     "test:season-glance": "tsx scripts/test-season-glance.ts",
+    "test:season-pulse": "tsx scripts/test-season-pulse.ts",
     "test:darko-parse": "tsx scripts/test-darko-parse.ts",
     "bake:contract-value": "tsx scripts/build-contract-value.ts",
     "eval:contract-value": "tsx scripts/eval-contract-value.ts",

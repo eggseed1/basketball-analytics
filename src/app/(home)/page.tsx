@@ -15,7 +15,7 @@ import { AboveNormPanel } from "@/components/home/above-norm-panel";
 import { FindingsSection } from "@/components/home/findings-section";
 import { InjuryReportPanel } from "@/components/home/injury-report-panel";
 import { LeagueMovesPanel } from "@/components/home/league-moves-panel";
-import { SeasonGlancePanel } from "@/components/home/season-glance-panel";
+import { SeasonPulsePanel } from "@/components/home/season-pulse-panel";
 import { HomeStandingsPanel } from "@/components/home/home-standings-panel";
 import { SentimentMoversPanel } from "@/components/home/sentiment-movers-panel";
 import { TopPerformersPanel } from "@/components/home/top-performers-panel";
@@ -266,7 +266,7 @@ function renderModule(id: HomeModuleId, moment: HomeSeasonMoment, season: string
         </Suspense>
       );
     case "season-glance":
-      return <SeasonGlancePanel key={id} />;
+      return <SeasonPulsePanel key={id} />;
     case "news":
       return <HomeNews key={id} />;
   }
