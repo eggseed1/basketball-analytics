@@ -11,8 +11,14 @@ import { createPortal } from "react-dom";
 import { ChartTooltipSurface } from "@/components/charts/chart-tooltip";
 import { cn } from "@/lib/utils";
 
-/** Hide Recharts' transformed wrapper; we portal frost to `document.body`. */
+/**
+ * Hide Recharts' transformed wrapper; we portal frost to `document.body`.
+ * The wrapper must snap (no transform transition): the portal copies its
+ * position every frame and eases on its own, and two easings stacked leave the
+ * tooltip trailing the cursor line by ~400ms.
+ */
 export const rechartsFrostWrapperStyle = {
+  transition: "none",
   outline: "none",
   pointerEvents: "none",
   padding: 0,
