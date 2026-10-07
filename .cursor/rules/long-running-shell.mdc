@@ -1,0 +1,24 @@
+---
+description: Run deploy watches, R2 uploads and other multi-minute commands in the background instead of blocking the chat
+alwaysApply: true
+---
+
+# Long-running shell commands
+
+A blocking Shell call shows "waiting for shell" in the chat for its whole duration. Deploy runs take about 20 minutes and R2 uploads about 40, so never block on them.
+
+- Keep `block_until_ms` at 120000 or less. If a command can run longer, start it with `block_until_ms: 0` and redirect output to a log in `/tmp/tm/`.
+- Check progress with short reads of that log or the terminal file, or an AwaitShell of at most 120000 ms. Between checks, do other work or end the turn and tell the user what is still running.
+- Deploy: trigger with `gh workflow run daily-runtime-refresh.yml -f force=false -f deploy=true`, then run `gh run watch <id> --interval 30 --exit-status > /tmp/tm/watch.log 2>&1` in the background. For a one-off status check, `gh run view <id> --json status,conclusion` is instant.
+- R2 uploads (`scripts/upload-player-*-r2.mjs`): always run in the background. They sleep about 5 minutes between batches of 1,000 files.
+- Reuse the dev server on :3000 when it responds (`curl -s -o /dev/null -w "%{http_code}" localhost:3000`). Don't start a second one.
+- Close Playwright browsers in `finally` so headless Chromium doesn't pile up between checks.
+
+```js
+// ❌ blocks the chat for ~20 minutes
+// Shell: gh run watch 123 --exit-status        block_until_ms: 1800000
+
+// ✅ returns immediately; poll the log later
+// Shell: gh run watch 123 --interval 30 --exit-status > /tmp/tm/watch.log 2>&1   block_until_ms: 0
+// Shell: gh run view 123 --json status,conclusion                               block_until_ms: 30000
+```
