@@ -4,13 +4,14 @@ import { useEffect, useRef } from "react";
 
 import { FRAME_LABEL, fmtHeight, fmtLength, fmtWeight, heightEstimate, heightPercentile, parentTarget } from "@/one-shot/body";
 import { calendar, levelOf, MONTHS, nodeLabel, ROLE_LABEL, STAGE_LABEL, stageOf } from "@/one-shot/career";
-import { MEANS_LABEL } from "@/one-shot/engine";
+import { projectedRange } from "@/one-shot/draft";
+import { canDeclareNow, canRetireNow, MEANS_LABEL } from "@/one-shot/engine";
 import { archetype, athleticismBar, position, POSITION_LABEL, READINESS_LABEL, readiness, skillBar } from "@/one-shot/skills";
 import type { LifeState } from "@/one-shot/types";
 import { country, countryFlag } from "@/one-shot/world";
 
 import { drawPortrait } from "./pixel";
-import { ageLabel, Bar, Chip, Kv, money, ordinal, OS, Panel } from "./ui";
+import { ageLabel, Bar, Btn, Chip, Kv, money, ordinal, OS, Panel } from "./ui";
 
 type Units = "metric" | "imperial";
 
@@ -80,9 +81,13 @@ function IdCell({ k, v, title }: { k: string; v: string; title?: string }) {
   );
 }
 
-export function StatusPanel({ life }: { life: LifeState }) {
+export function StatusPanel({ life, onDeclare, onRetire }: { life: LifeState; onDeclare?: () => void; onRetire?: () => void }) {
   const age = life.ageMonths / 12;
   const band = readiness(life);
+  const declare = onDeclare && canDeclareNow(life);
+  const retire = onRetire && canRetireNow(life);
+  const { year } = calendar(life);
+  const mid = declare ? projectedRange(life, year).mid : null;
   return (
     <Panel id="os-status" title="Status" action={life.after ? <Chip tone="dim">Retired player</Chip> : <Chip tone={band === "nba-ready" || band === "draft-range" ? "green" : band === "radar" ? "teal" : "dim"}>{READINESS_LABEL[band]}</Chip>}>
       <div className="flex flex-col gap-2">
@@ -98,6 +103,23 @@ export function StatusPanel({ life }: { life: LifeState }) {
           {life.condition.injury.label}. About {life.condition.injury.monthsLeft} month
           {life.condition.injury.monthsLeft === 1 ? "" : "s"} to heal.
         </p>
+      ) : null}
+      {declare || retire ? (
+        <div className="mt-3 flex flex-col gap-2 border-t border-[var(--os-border)]/60 pt-3">
+          {declare ? (
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+              <Btn variant={mid !== null && mid <= 60 ? "primary" : "ghost"} onClick={onDeclare}>
+                Declare for the {year} draft
+              </Btn>
+              <span className="text-[12px] text-[var(--os-dim)]">{mid !== null && mid <= 60 ? `Teams project you around pick ${mid}.` : "Teams project you outside the top 60."} Open until the end of April.</span>
+            </div>
+          ) : null}
+          {retire ? (
+            <Btn variant="quiet" className="self-start px-0" onClick={onRetire}>
+              Retire from playing…
+            </Btn>
+          ) : null}
+        </div>
       ) : null}
     </Panel>
   );

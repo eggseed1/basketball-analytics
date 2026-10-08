@@ -224,12 +224,12 @@ export function drawPortrait(ctx: CanvasRenderingContext2D, s: Pick<LifeState, "
 
 /* ------------------------------------------------------------ scene kinds */
 
-type SceneKind = "nursery" | "yard" | "street" | "dusk" | "gym" | "club" | "college" | "hall" | "pro" | "gleague" | "nba" | "draft" | "coach" | "studio" | "scout" | "trainer";
+type SceneKind = "nursery" | "yard" | "street" | "dusk" | "gym" | "club" | "college" | "hall" | "pro" | "gleague" | "nba" | "draft" | "coach" | "studio" | "podcast" | "scout" | "trainer";
 
 export function sceneKind(s: LifeState): SceneKind {
   const age = s.ageMonths / 12;
   if (age < 3) return "nursery";
-  if (s.after) return ({ coach: "coach", media: "studio", scout: "scout", trainer: "trainer" } as const)[s.after.track];
+  if (s.after) return ({ coach: "coach", media: "studio", podcast: "podcast", scout: "scout", trainer: "trainer" } as const)[s.after.track];
   const d = s.achievements.drafted;
   if (d && s.ageMonths - d.month <= 1) return "draft";
   switch (s.placement.node) {
@@ -313,6 +313,8 @@ export function drawScene(ctx: CanvasRenderingContext2D, s: LifeState, frame: nu
       return drawCoach(px, s, env, frame, hero, heightPx);
     case "studio":
       return drawStudio(px, s, env, frame, hero);
+    case "podcast":
+      return drawPodcast(px, s, env, frame, hero);
     case "scout":
       return drawScout(px, s, env, frame, hero);
     case "trainer":
@@ -953,6 +955,31 @@ function drawStudio(px: Px, s: LifeState, env: Env, frame: number, hero: Hero) {
   px(70, 72, 2, 6, "#2B2F36");
   px(68, 70, 6, 2, "#2B2F36");
   void s;
+}
+
+function drawPodcast(px: Px, s: LifeState, env: Env, frame: number, hero: Hero) {
+  px(0, 0, W, H, "#221C24");
+  for (let y = 6; y < 66; y += 10) for (let x = 6 + ((y / 10) % 2) * 5; x < W - 6; x += 10) px(x, y, 8, 8, (x + y) % 20 ? "#2E2632" : "#352B3A");
+  const lit = Math.floor(frame / 18) % 2 === 0;
+  px(80, 8, 32, 10, "#05070F");
+  px(81, 9, 30, 8, lit ? "#D6245F" : "#5A1A2E");
+  px(85, 12, 22, 2, lit ? "#FFD6E0" : "#8A4A5E");
+  px(150, 22, 22, 28, "#3A2E40");
+  px(152, 24, 18, 24, env.kit.primary);
+  px(156, 30, 10, 12, env.kit.secondary);
+  const guest = { ...env.kit, uniform: false, primary: "#4A5260", secondary: "#F4F4F4", number: null };
+  drawPlayer(px, { x: 62, footY: 98, h: 40, ...hero, age: 40, kit: { ...env.kit, uniform: false, number: null }, facing: 1, pose: "suit", frame });
+  drawPlayer(px, { x: 132, footY: 98, h: 42, skin: SKIN[hashString(`${s.seed}:guest:${s.ageMonths >> 3}`) % 6]!, hair: HAIR[0]!, style: 2, age: 30, kit: guest, facing: -1, pose: "suit", frame });
+  px(24, 80, 144, 22, "#6B4A32");
+  px(24, 80, 144, 2, "#8A6A44");
+  for (const [bx, dir] of [[78, 1], [116, -1]] as const) {
+    px(bx, 66, 2, 14, "#1A1A1E");
+    px(bx + dir * 2 - (dir < 0 ? 4 : 0), 64, 6, 2, "#1A1A1E");
+    px(bx + dir * 6 - (dir < 0 ? 4 : 0), 62, 4, 6, "#6A6A76");
+    px(bx + dir * 6 - (dir < 0 ? 4 : 0) + 1, 63, 2, 1, "#9AA0A6");
+  }
+  px(90, 74, 12, 6, "#2B2F36");
+  px(92, 75, 8, 4, "#7FD4FF");
 }
 
 function drawScout(px: Px, s: LifeState, env: Env, frame: number, hero: Hero) {

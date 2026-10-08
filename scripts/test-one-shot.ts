@@ -14,10 +14,10 @@ import { FAMILY_BIAS, generateParents, heightPercentile, parentTarget, shareAtLe
 import { ASSETS, invested, mix, netWorth, PRESETS, rebalance, rebalanceCost, taxRate } from "../src/one-shot/finance";
 import { fieldOf, tournamentsFor } from "../src/one-shot/international";
 import { advanced, sumBoxes } from "../src/one-shot/stats";
-import { levelOf, performanceLevel, simulateGame } from "../src/one-shot/career";
+import { calendar, levelOf, performanceLevel, simulateGame } from "../src/one-shot/career";
 import { MAX_BATCH, tick } from "../src/one-shot/clock";
 import { autoEligible, canDeclare, draftOrder, INTERVIEW_QUESTIONS, interviewDelta } from "../src/one-shot/draft";
-import { advance, advanceToDecision, autoChoice, createLife, manageMoney, resolveDecision, setPlan, stepMonth } from "../src/one-shot/engine";
+import { advance, advanceToDecision, autoChoice, canDeclareNow, canRetireNow, createLife, declareNow, manageMoney, resolveDecision, retireNow, setPlan, stepMonth } from "../src/one-shot/engine";
 import { EVENT_BY_ID, EVENTS } from "../src/one-shot/events";
 import { dailyDate, dailySeed, parseSave, serialize } from "../src/one-shot/persistence";
 import { outcomeTier, shareText } from "../src/one-shot/report";
@@ -345,7 +345,7 @@ ok("moving abroad as a youth always follows an invitation", () => {
 });
 
 ok("an undrafted player can still make an NBA debut", () => {
-  const s = autoLife(314, 31 * 12);
+  const s = drive(createLife(base(314)), 31 * 12, (x) => (x.pendingDecision!.templateId === "draft-declare" ? "wait" : null));
   assert.ok(s.achievements.nbaDebut !== null, "seed 314 should debut");
   assert.equal(s.achievements.drafted, null);
   assert.equal(outcomeTier(s), "nba-debut");
@@ -651,6 +651,45 @@ ok("a player who misses the NBA can coach, earn a salary and live to 65", () => 
   assert.ok(end.after!.salary > 0 && end.finance.years.at(-1)!.gross >= end.after!.salary * 0.9, "second career pays");
   assert.ok(netWorth(end.finance) >= 0);
   assert.ok(shareText(end).includes("After playing:"));
+});
+
+ok("a G League call-up puts him on the NBA roster, and NBA seasons follow", () => {
+  const keep = (x: LifeState) => (x.pendingDecision!.templateId === "chapter" ? "keep" : null);
+  let found = 0;
+  for (let seed = 1; seed <= 80 && found < 2; seed++) {
+    const s = drive(createLife(base(seed)), 30 * 12, keep);
+    const call = s.history.find((h) => h.text.includes("for the rest of the season"));
+    if (!call) continue;
+    found++;
+    const after = s.seasons.filter((x) => x.node === "nba" && x.gp > 0 && x.ageYears >= Math.floor(call.month / 12));
+    assert.ok(after.length > 0, `seed ${seed}: no NBA games after the call-up`);
+  }
+  assert.ok(found >= 1, "some life gets called up");
+});
+
+ok("anyone eligible can declare in January to April, and auto keeps a manual declare", () => {
+  let s = drive(createLife(base(1)), 19 * 12);
+  for (let i = 0; i < 48 && !canDeclareNow(s); i++) s = s.pendingDecision ? resolveDecision(s, autoChoice(s)) : advance(s, 1);
+  assert.ok(canDeclareNow(s), "an eligible month comes up");
+  const asked = declareNow(s);
+  assert.equal(asked.pendingDecision?.templateId, "draft-declare");
+  assert.equal(autoChoice(asked), "declare");
+  const done = resolveDecision(asked, "declare");
+  assert.equal(done.draft.declaredYear, calendar(done).year);
+  assert.equal(canDeclareNow(done), false);
+});
+
+ok("retiring by choice opens second careers, including a podcast", () => {
+  let s = drive(createLife(base(5)), 24 * 12);
+  assert.ok(canRetireNow(s));
+  s = retireNow(s);
+  assert.equal(s.pendingDecision?.title, "Retire from playing?");
+  assert.ok(s.pendingDecision!.choices.some((c) => c.id === "keep"), "can change his mind");
+  assert.equal(resolveDecision(s, "keep").after, null);
+  s = drive(resolveDecision(s, "track:podcast"), 6 * 12);
+  assert.equal(s.after?.track, "podcast");
+  assert.equal(s.placement.node, "unattached");
+  assert.ok(s.after!.years.length >= 5, "yearly podcast record");
 });
 
 ok("looking for a club abroad brings foreign offers", () => {

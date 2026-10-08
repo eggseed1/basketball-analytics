@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "
 
 import { cn } from "@/lib/utils";
 import { tick, TICK_MS } from "@/one-shot/clock";
-import { advance, advanceToDecision, createLife, manageMoney, rename, resolveDecision, setPlan } from "@/one-shot/engine";
+import { advance, advanceToDecision, createLife, declareNow, manageMoney, rename, resolveDecision, retireNow, setPlan } from "@/one-shot/engine";
 import type { MoneyAction } from "@/one-shot/finance";
 import {
   addCareer,
@@ -335,6 +335,16 @@ function Game({ expanded, onExpand }: { expanded: boolean; onExpand: () => void 
     [commit],
   );
 
+  const onDeclare = useCallback(() => {
+    const s = lifeRef.current;
+    if (s) commit(declareNow(s));
+  }, [commit]);
+
+  const onRetire = useCallback(() => {
+    const s = lifeRef.current;
+    if (s) commit(retireNow(s));
+  }, [commit]);
+
   const setClock = useCallback(
     (patch: Partial<LifeState["clock"]>) => {
       const s = lifeRef.current;
@@ -523,7 +533,7 @@ function Game({ expanded, onExpand }: { expanded: boolean; onExpand: () => void 
                   <IdentityCard life={life} />
                 </div>
                 <div className="order-5 md:order-none">
-                  <StatusPanel life={life} />
+                  <StatusPanel life={life} onDeclare={onDeclare} onRetire={onRetire} />
                 </div>
                 <div className="order-11 md:order-none">
                   <PhysiquePanel life={life} units={units} onUnits={(u) => setPrefs({ ...prefs, units: u })} />

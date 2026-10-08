@@ -54,6 +54,12 @@ export const LADDER: Record<Track, Rung[]> = {
     { title: () => "National TV analyst", employer: (_, h) => (h === "US" ? "a national sports network" : `${country(h).name} national TV`), pay: 260_000, bar: 55, odds: 0.2 },
     { title: () => "Lead NBA studio analyst", employer: () => "a national sports network", pay: 3_000_000, us: true, bar: 78, odds: 0.05 },
   ],
+  podcast: [
+    { title: () => "Podcast host", employer: (s) => `The ${s.identity.familyName} Show (self-produced)`, pay: 0, bar: 0, odds: 1, business: 24_000 },
+    { title: () => "Network podcast host", employer: () => "a sports podcast network", pay: 120_000, bar: 30, odds: 0.45 },
+    { title: () => "Podcast company founder", employer: (s) => `${s.identity.familyName} Media`, pay: 0, bar: 50, odds: 0.35, startCost: 75_000, business: 450_000 },
+    { title: () => "Host, exclusive streaming deal", employer: () => "a streaming platform", pay: 4_000_000, us: true, bar: 76, odds: 0.05 },
+  ],
   trainer: [
     { title: () => "Skills trainer", employer: () => "Self-employed", pay: 35_000, bar: 0, odds: 1 },
     { title: () => "Basketball academy owner", employer: (s) => `${s.identity.familyName} Basketball Academy`, pay: 0, bar: 20, odds: 0.7, startCost: 40_000, business: 70_000 },
@@ -62,7 +68,7 @@ export const LADDER: Record<Track, Rung[]> = {
   ],
 };
 
-export const TRACK_LABEL: Record<Track, string> = { coach: "Coaching", scout: "Scouting", media: "Broadcasting", trainer: "Player development" };
+export const TRACK_LABEL: Record<Track, string> = { coach: "Coaching", scout: "Scouting", media: "Broadcasting", podcast: "Podcasting", trainer: "Player development" };
 
 const INCOME_SCALE: Record<string, number> = { HIC: 1, UMC: 0.4, LMC: 0.22, LIC: 0.12, INX: 0.5 };
 const scale = (home: string) => INCOME_SCALE[country(home).income.level] ?? 0.4;
@@ -95,13 +101,14 @@ export function startingRep(s: LifeState, track: Track): number {
     coach: (k.iq - 50) * 0.25 + (t.coachability - 50) * 0.1 + (t.composure - 50) * 0.1,
     scout: (k.iq - 50) * 0.3 + (k.decisions - 50) * 0.1,
     media: (t.confidence - 50) * 0.2 + s.exposure * 0.15,
+    podcast: (t.confidence - 50) * 0.2 + s.exposure * 0.12 + (k.iq - 50) * 0.05,
     trainer: (k.shooting + k.handle + k.finishing - 150) * 0.08 + (t.discipline - 50) * 0.12,
   }[track];
   return Math.round(clamp(base + adj - 8, 5, 75));
 }
 
 export function startStep(s: LifeState, track: Track, rep: number): number {
-  const cap = { coach: s.nbaGames > 0 ? 2 : 1, scout: 1, media: s.nbaGames >= 150 ? 2 : 1, trainer: 0 }[track];
+  const cap = { coach: s.nbaGames > 0 ? 2 : 1, scout: 1, media: s.nbaGames >= 150 ? 2 : 1, podcast: s.nbaGames >= 150 ? 1 : 0, trainer: 0 }[track];
   const ladder = LADDER[track];
   let step = 0;
   for (let i = 1; i <= cap; i++) if (ladder[i]!.bar <= rep - 8 && !ladder[i]!.startCost) step = i;
@@ -120,7 +127,7 @@ export interface TrackOption {
 
 export function trackOptions(s: LifeState, exclude?: Track): TrackOption[] {
   const home = homeBase(s);
-  return (["coach", "scout", "media", "trainer"] as Track[])
+  return (["coach", "scout", "media", "podcast", "trainer"] as Track[])
     .filter((t) => t !== exclude)
     .map((track) => {
       const rep = s.after ? Math.round(s.after.rep * 0.5 + startingRep(s, track) * 0.5) : startingRep(s, track);
@@ -130,7 +137,8 @@ export function trackOptions(s: LifeState, exclude?: Track): TrackOption[] {
       let blocked: string | null = null;
       if (track === "media" && s.exposure < 20 && s.nbaGames === 0) blocked = "Broadcasters want a name people know (exposure 20+ or NBA games).";
       if (track === "scout" && s.skills.iq < 30) blocked = "Scouting needs a sharp basketball mind (IQ 30+).";
-      return { track, step, rep, title: r.title(s, where), employer: r.employer(s, where, step), pay: rungPay(r, where), blocked };
+      const pay = r.business ? rungPay({ ...r, pay: r.business * 0.5 }, where) : rungPay(r, where);
+      return { track, step, rep, title: r.title(s, where), employer: r.employer(s, where, step), pay, blocked };
     });
 }
 
@@ -223,6 +231,19 @@ export function yearInJob(s: LifeState): YearResult {
       rep -= 4;
       fired = a.step >= 1 && n3 < 0.3;
     } else note = "Steady ratings";
+  } else if (a.track === "podcast") {
+    rep = n1 * 2;
+    if (n2 > 0.88) {
+      note = "A guest episode went viral";
+      rep += 3;
+    } else if (n2 < 0.08) {
+      note = "A hot take backfired";
+      rep -= 3;
+    } else note = "Downloads held steady";
+    if (rung.business) {
+      profit = Math.round(rungPay({ ...rung, pay: rung.business }, a.countryId) * (0.3 + a.rep / 70) * (1 + n1 * 0.4));
+      note += Math.abs(profit) < 1000 ? ", about break-even" : profit > 0 ? `, about $${Math.round(profit / 1000)}K profit` : `, about $${Math.round(-profit / 1000)}K lost`;
+    }
   } else {
     rep = n1 * 2;
     if (rung.business) {
@@ -251,6 +272,7 @@ export function ceiling(s: LifeState, track: Track): number {
     coach: 0.55 * k.iq + 0.2 * k.decisions + 0.2 * t.composure + nba * 0.5 - 12,
     scout: 0.65 * k.iq + 0.25 * k.decisions + nba * 0.3 - 10,
     media: 0.45 * t.confidence + 0.35 * s.exposure + nba - 8,
+    podcast: 0.4 * t.confidence + 0.3 * s.exposure + 0.1 * k.iq + nba - 8,
     trainer: 0.15 * (k.shooting + k.handle + k.finishing) + 0.3 * t.discipline + nba * 0.5 - 12,
   }[track];
   return clamp(v, 5, 95);

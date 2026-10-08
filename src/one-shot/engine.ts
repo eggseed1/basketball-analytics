@@ -508,24 +508,17 @@ function calendarStep(s: LifeState) {
   const age = s.ageMonths / 12;
   if (age < 18) return;
   if (month === 2 && s.placement.node === "nba" && s.placement.contract) tradeDeadline(s);
-  if (month === 4 && s.draft.declaredYear !== year && !s.draft.withdrewYears.includes(year)) {
+  // April, or May when another decision held April up.
+  if ((month === 4 || month === 5) && s.flags.declareAsked !== year && s.draft.declaredYear !== year && !s.draft.withdrewYears.includes(year)) {
+    s.flags.declareAsked = year;
     if (autoEligible(s, year)) {
       openDraftCycle(s, year);
       log(s, "draft", `Automatically in the ${year} NBA Draft pool (game rule: age 22).`);
     } else if (canDeclare(s, year)) {
       const band = readiness(s);
-      const worth = band === "draft-range" || band === "nba-ready" || band === "radar" || (age >= 20 && band === "pro-prospect");
+      const worth = band === "draft-range" || band === "nba-ready" || band === "radar" || (age >= 20 && band === "pro-prospect") || gapToSixty(s, year) <= 3;
       if (worth) {
-        decide(s, {
-          templateId: "draft-declare",
-          title: `Declare for the ${year} NBA Draft?`,
-          body: `Scouts put you at "${READINESS_LABEL[band]}". ${s.placement.node === "university" ? "College players can withdraw by late May and keep their eligibility (game rule)." : "Declaring is free; going undrafted makes you a free agent."}`,
-          choices: [
-            { id: "declare", label: "Declare", preview: "Enter the draft pool. Workouts and interviews follow." },
-            { id: "wait", label: s.placement.node === "university" ? "Return to school" : "Wait a year", preview: "Develop another season first." },
-          ],
-          required: true,
-        });
+        askDeclare(s, year);
         return;
       }
     }
@@ -622,19 +615,25 @@ function campStep(s: LifeState, year: number) {
   }
 }
 
+/** A call-up that sticks: the parent club signs him for the rest of the season, and the NBA sim takes over from there. */
 function gLeagueStep(s: LifeState) {
-  if (s.placement.node === "g-league" && nbaSeasonMonth(s) && s.achievements.nbaDebut === null) {
-    const rng = rngOf(s.rng, "draft");
-    const roll = rng.next();
-    const play = rng.next();
-    if (roll < callUpChance(s)) {
-      const team = s.placement.teamName?.replace(/ G League affiliate.*$/, "").replace(/^G League affiliate \((.*)\)$/, "$1") ?? "an NBA team";
-      log(s, "milestone", `Called up by ${team.startsWith("an ") ? team : `the ${team}`} on a 10-day contract.`, null, "good");
-      if (play < 0.8) {
-        s.nbaGames += 1;
-        recordDebut(s, `Called up from the G League, ${2 + Math.floor(play * 10)} minutes.`);
-      }
-    }
+  if (s.placement.node !== "g-league" || !nbaSeasonMonth(s)) return;
+  const rng = rngOf(s.rng, "draft");
+  const roll = rng.next();
+  const play = rng.next();
+  if (roll >= callUpChance(s)) return;
+  const parent = s.placement.teamName?.replace(/ G League affiliate.*$/, "").replace(/^G League affiliate \((.*)\)$/, "$1") ?? "";
+  const team = (NBA_TEAMS as readonly string[]).includes(parent) ? parent : teamFor(s, calendar(s).year);
+  const twoWay = s.placement.contract?.twoWay === true;
+  if (s.season && s.season.gp + s.season.wins + s.season.losses > 0) s.seasons.push(s.season);
+  s.season = null;
+  s.achievements.rosterSpot ??= s.ageMonths;
+  s.placement = { node: "nba", countryId: "US", leagueId: "nba", teamName: team, role: "deep-bench", coaching: 90, since: s.ageMonths, contract: { salary: nbaSalary("deep-bench"), yearsLeft: 1, guaranteed: false }, costPerYear: 0 };
+  s.residence = { countryId: "US", locality: team.split(" ").slice(0, -1).join(" "), localityKind: "city" };
+  log(s, "milestone", twoWay ? `The ${team} convert your two-way deal into a standard contract for the rest of the season.` : `Called up by the ${team} on a 10-day contract. They sign you for the rest of the season.`, null, "good");
+  if (s.achievements.nbaDebut === null && play < 0.8) {
+    s.nbaGames += 1;
+    recordDebut(s, `Called up from the G League, ${2 + Math.floor(play * 10)} minutes.`);
   }
 }
 
@@ -661,6 +660,50 @@ function tradeDeadline(s: LifeState) {
   s.placement = { ...s.placement, teamName: team, since: s.ageMonths };
   s.residence = { countryId: "US", locality: team.split(" ").slice(0, -1).join(" "), localityKind: "city" };
   log(s, "move", `Traded from the ${old} to the ${team} at the deadline.${req ? " You got your wish." : ""}`, null, req ? "good" : "neutral");
+}
+
+function askDeclare(s: LifeState, year: number, manual = false) {
+  const band = readiness(s);
+  const { mid } = projectedRange(s, year);
+  decide(s, {
+    templateId: "draft-declare",
+    title: `Declare for the ${year} NBA Draft?`,
+    body: `Scouts put you at "${READINESS_LABEL[band]}" and teams project you ${mid <= 60 ? `around pick ${mid}` : "outside the top 60"}. ${s.placement.node === "university" ? "College players can withdraw by late May and keep their eligibility (game rule)." : "Declaring is free; going undrafted makes you a free agent."}`,
+    choices: [
+      { id: "declare", label: "Declare", preview: "Enter the draft pool. Workouts and interviews follow." },
+      { id: "wait", label: s.placement.node === "university" ? "Return to school" : "Wait a year", preview: "Develop another season first." },
+    ],
+    context: manual ? { manual: true } : undefined,
+    required: true,
+  });
+}
+
+/** Early entry is open January through April for anyone eligible, whatever the scouts think. */
+export function canDeclareNow(s: LifeState): boolean {
+  if (s.after || s.ended || s.pendingDecision) return false;
+  const { year, month } = calendar(s);
+  return month >= 1 && month <= 4 && s.draft.declaredYear !== year && canDeclare(s, year) && !autoEligible(s, year);
+}
+
+export function declareNow(state: LifeState): LifeState {
+  const s = clone(state);
+  if (!canDeclareNow(s)) return s;
+  const { year } = calendar(s);
+  s.flags.declareAsked = year;
+  s.draft.withdrewYears = s.draft.withdrewYears.filter((y) => y !== year);
+  askDeclare(s, year, true);
+  return s;
+}
+
+/** He can walk away from playing at any point once he is an adult. */
+export function canRetireNow(s: LifeState): boolean {
+  return !s.after && !s.ended && !s.pendingDecision && s.ageMonths >= 18 * 12;
+}
+
+export function retireNow(state: LifeState): LifeState {
+  const s = clone(state);
+  if (canRetireNow(s)) crossroads(s, "choice");
+  return s;
 }
 
 function openDraftCycle(s: LifeState, year: number) {
@@ -1106,7 +1149,9 @@ function resolveInPlace(s: LifeState, choiceId: string) {
     }
     case "crossroads": {
       const why = String(d.context?.why ?? "retire");
-      if (choiceId === "keep") {
+      if (choiceId === "keep" && why === "choice") {
+        log(s, "decision", "Not yet. You keep playing.");
+      } else if (choiceId === "keep") {
         s.keepPlaying = true;
         if (s.placement.node === "unattached") s.flags.reviewSoon = true;
         log(s, "decision", why === "retire" ? "One more season. You can't walk away yet." : "You keep playing. The NBA is a long shot now, but basketball still pays.");
@@ -1250,7 +1295,7 @@ function acceptOffer(s: LifeState, o: Offer) {
 
 /* --------------------------------------------------------------- after playing */
 
-const TRACK_START: Record<Track, string> = { coach: "Start coaching", scout: "Become a scout", media: "Go into broadcasting", trainer: "Train players" };
+const TRACK_START: Record<Track, string> = { coach: "Start coaching", scout: "Become a scout", media: "Go into broadcasting", podcast: "Start a podcast", trainer: "Train players" };
 
 function article(title: string) {
   const acronym = /^[A-Z](?:[A-Z]| )/.test(title);
@@ -1265,18 +1310,20 @@ function startOverseasHunt(s: LifeState) {
   log(s, "decision", s.finance.agent ? `${s.finance.agent.name} starts calling clubs abroad.` : "You email your highlight tape to clubs abroad.");
 }
 
-function crossroads(s: LifeState, why: "aged-out" | "retire" | "stalled") {
+function crossroads(s: LifeState, why: "aged-out" | "retire" | "stalled" | "choice") {
   const age = Math.floor(s.ageMonths / 12);
   const onTeam = isProNode(s.placement.node) || s.placement.node === "local-senior";
   const choices: DecisionChoice[] = [];
-  if (why !== "retire" || (onTeam && age < 39)) {
+  if (why === "choice") {
+    choices.push({ id: "keep", label: "Not yet", preview: onTeam ? `Stay with ${s.placement.teamName ?? "your club"}.` : "Keep playing." });
+  } else if (why !== "retire" || (onTeam && age < 39)) {
     choices.push({
       id: "keep",
       label: why === "retire" ? "Play one more season" : onTeam ? "Keep playing" : "Keep looking for a team",
       preview: why === "retire" ? "Ask again next year." : onTeam ? `Stay with ${s.placement.teamName ?? "your club"}. Retire when you choose.` : "Train and wait for a call. Offers come with the next window.",
     });
   }
-  if (why !== "retire" && s.placement.node !== "foreign-pro") {
+  if ((why === "aged-out" || why === "stalled") && s.placement.node !== "foreign-pro") {
     choices.push({ id: "overseas", label: "Play overseas", preview: "Clubs in Europe, Asia and Latin America sign veterans. Offers come next month.", disabled: overseasPossible(s) ? undefined : "No league abroad would sign you at your level." });
   }
   for (const o of trackOptions(s)) {
@@ -1287,6 +1334,7 @@ function crossroads(s: LifeState, why: "aged-out" | "retire" | "stalled") {
     "aged-out": { title: "Thirty-one", body: "Players who haven't reached the NBA by 31 almost never do. Basketball can still be a living, on the court or off it." },
     retire: { title: "Time to stop?", body: `Age ${age}. Your body has been telling you for a while.` },
     stalled: { title: "A year without a team", body: "No club has called in twelve months. What now?" },
+    choice: { title: "Retire from playing?", body: `Age ${age}. Your name and what you know about the game can carry into a second career.` },
   }[why];
   decide(s, { templateId: "crossroads", title: text.title, body: text.body, choices, context: { why }, required: true });
 }
@@ -1381,14 +1429,14 @@ export function manageMoney(state: LifeState, action: MoneyAction): LifeState {
 export const AUTO_STRATEGY = [
   "Life events: the option with the lowest injury and setback risk; ties go to the one that builds more, then to the first listed.",
   "Team offers: the highest level you can afford where the coach expects at least bench minutes. A move sideways needs clearly more scouting exposure. Otherwise, stay.",
-  "Draft: declare when scouts rate you in draft range or NBA-ready, or on the NBA radar from age 21.",
+  "Draft: declare when scouts rate you in draft range or NBA-ready, or on the NBA radar from age 21. If you pressed Declare yourself, it declares.",
   "Draft interviews: the answer that fits his personality best. Workouts: only teams in range when projected in the top 45, otherwise a dozen teams.",
   "After the draft: a two-way deal first, then a camp deal, then stay.",
   "Contracts: re-sign when no offer ranks higher. NBA free agency only from a strong level. Sign contracts as written.",
   "National team: always report to camp.",
   "Agents: the widest-reaching agent who will sign you; never the family friend.",
   "After an NBA debut: finish the chapter.",
-  "At 31 without an NBA debut, after a year without a team, or at retirement: keep playing while on a pro team and under 34, otherwise start coaching.",
+  "At 31 without an NBA debut, after a year without a team, or at retirement: keep playing while on a pro team and under 34, otherwise start coaching. If you pressed Retire yourself, it starts coaching.",
   "Jobs after playing: take every promotion, otherwise stay. Never asks for a raise or switches careers.",
   "Money: never touches the portfolio controls. Only life-event choices change it.",
 ];
@@ -1432,6 +1480,7 @@ export function autoChoice(s: LifeState): string {
     case "agent-pick":
       return open.find((c) => c.id === "a0")?.id ?? open.find((c) => c.id === "a1")?.id ?? "none";
     case "draft-declare": {
+      if (d.context?.manual) return "declare";
       const band = readiness(s);
       const age = s.ageMonths / 12;
       return band === "draft-range" || band === "nba-ready" || (age >= 21 && band === "radar") ? "declare" : "wait";
@@ -1450,6 +1499,7 @@ export function autoChoice(s: LifeState): string {
       return "finish";
     case "crossroads": {
       const onTeam = isProNode(s.placement.node) || s.placement.node === "local-senior";
+      if (d.context?.why === "choice") return open.find((c) => c.id === "track:coach")?.id ?? open.find((c) => c.id.startsWith("track:"))?.id ?? "finish";
       if (open.some((c) => c.id === "keep") && onTeam && s.ageMonths < 34 * 12) return "keep";
       return open.find((c) => c.id === "track:coach")?.id ?? open.find((c) => c.id.startsWith("track:"))?.id ?? "finish";
     }

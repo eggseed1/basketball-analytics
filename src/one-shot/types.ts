@@ -347,7 +347,7 @@ export interface Finance {
   market: { ytd: Record<Asset, number>; recent: number[]; years: { year: number; r: Record<Asset, number> }[] };
 }
 
-export type Track = "coach" | "scout" | "media" | "trainer";
+export type Track = "coach" | "scout" | "media" | "podcast" | "trainer";
 
 export interface AfterYear {
   year: number;

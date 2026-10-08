@@ -187,9 +187,14 @@ export function SourcesDrawer({ life, onClose }: { life: LifeState | null; onClo
             fee to sell.
           </p>
           <p className="mt-1 text-[12px] text-[var(--os-dim)]">
-            After playing: coaching, scouting, media and training are ladders of jobs. Reputation starts from his playing career and moves with each year&apos;s results, and the next job opens once
-            reputation clears its bar. Pay outside the US is scaled down by the country&apos;s income group. Records and promotions are simulated. Players who stall or reach 31 without the NBA can
-            ask for a club abroad, which brings offers from foreign leagues he could make, or move on to a second career.
+            After playing: coaching, scouting, broadcasting, podcasting and training are ladders of jobs. He can retire from playing at any point as an adult. Reputation starts from his playing
+            career and moves with each year&apos;s results, and the next job opens once reputation clears its bar. Pay outside the US is scaled down by the country&apos;s income group, and his own
+            podcast or academy pays from profit. Records and promotions are simulated. Players who stall or reach 31 without the NBA can ask for a club abroad, which brings offers from foreign
+            leagues he could make, or move on to a second career.
+          </p>
+          <p className="mt-1 text-[12px] text-[var(--os-dim)]">
+            Call-ups: a G League call-up comes with a 10-day contract, and in this game the parent club then keeps him for the rest of the season. Early entry for the draft is open from January
+            through April to anyone eligible, whatever the scouts think (game rule).
           </p>
           <p className="mt-1 text-[12px] text-[var(--os-dim)]">
             Agents and clubs named in the game are fictional. Season honors come from fixed thresholds on his stats and level, not from votes. Trades happen at the February deadline, with odds that go
