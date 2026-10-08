@@ -14,6 +14,7 @@ import {
 } from "react";
 
 import { GlassSurface } from "@/components/brand/glass-surface";
+import { MotionReveal } from "@/components/continuity/motion-reveal";
 import type { LandmarkGameCard } from "@/content/history/landmark-games";
 import { HISTORY_LANDMARKS } from "@/content/history/landmarks";
 import {
@@ -347,7 +348,8 @@ export function TimeMachineLanding({
   );
 
   return (
-    <main className="site-shell flex flex-1 flex-col gap-12 py-8 sm:py-12">
+    <main data-motion-page className="site-shell flex flex-1 flex-col gap-12 py-8 sm:py-12">
+      <MotionReveal />
       <section className="tm-console dark relative z-[2] mx-auto w-full max-w-4xl rounded-[22px] p-5 text-white sm:p-8">
         <div className="grid gap-7 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:items-end">
           <header>

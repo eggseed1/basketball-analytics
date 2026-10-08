@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 
+import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { LeaguePlayerScatterIsland } from "@/components/explore/league-player-scatter-island";
 import { LeagueUsageEfficiencyIsland } from "@/components/explore/league-usage-efficiency-island";
 import { PlayerRaceTrackerIsland } from "@/components/explore/player-race-tracker-island";
@@ -143,7 +144,8 @@ export default async function PlayerVisualizationsPage({
         : `${season} player race · ${fieldBlurb} by ${metricLabel}${minutesBlurb}. Rate stats show season levels; counting and season totals accumulate over time. Pick a team to highlight the roster, or search to pin anyone.`;
 
   return (
-    <main className="site-shell flex flex-1 flex-col gap-5 py-6 sm:py-8">
+    <main data-motion-page className="site-shell flex flex-1 flex-col gap-5 py-6 sm:py-8">
+      <MotionReveal />
       <PageHeader
         eyebrow="Players"
         title="Visualizations"

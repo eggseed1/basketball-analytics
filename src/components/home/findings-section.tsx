@@ -66,7 +66,7 @@ export function FindingsSection({
         </p>
       </div>
       {cards.length ? (
-        <div className="grid min-w-0 gap-3 sm:grid-cols-2">
+        <div data-motion-list className="grid min-w-0 gap-3 sm:grid-cols-2">
           {cards.map((insight) => (
             <InsightCard key={insight.id} insight={insight} asOf={asOf} />
           ))}

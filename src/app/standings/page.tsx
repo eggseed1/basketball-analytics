@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
 
+import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { StandingsDiffBoard } from "@/components/charts/standings-diff-board";
 import { PageHeader } from "@/components/layout/page-header";
 import { StandingsConferenceTable } from "@/components/standings/standings-conference-table";
@@ -101,7 +102,8 @@ export default async function StandingsPage({ searchParams }: PageProps) {
       : currentSeason;
 
   return (
-    <main className="site-shell flex flex-1 flex-col gap-5 py-6 sm:py-8">
+    <main data-motion-page className="site-shell flex flex-1 flex-col gap-5 py-6 sm:py-8">
+      <MotionReveal />
       <PageHeader
         eyebrow="Standings"
         title="Standings"

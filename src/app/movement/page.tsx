@@ -1,3 +1,4 @@
+import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { MovementCenterView } from "@/components/movement/movement-center-view";
 import { MovementClusterCard } from "@/components/movement/movement-cluster-card";
 import {
@@ -45,7 +46,8 @@ export default async function MovementCenterPage({ searchParams }: PageProps) {
     const item = await getMovementCluster(clusterId);
     if (!item) notFound();
     return (
-      <main className="site-shell flex flex-col gap-4 py-6 sm:py-8">
+      <main data-motion-page className="site-shell flex flex-col gap-4 py-6 sm:py-8">
+        <MotionReveal />
         <p className={type.caption}>
           <Link href="/movement" className="font-semibold underline">
             ← Movement Center
@@ -67,7 +69,8 @@ export default async function MovementCenterPage({ searchParams }: PageProps) {
     : feed.items;
 
   return (
-    <main className="site-shell py-6 sm:py-8">
+    <main data-motion-page className="site-shell py-6 sm:py-8">
+      <MotionReveal />
       <MovementCenterView
         feed={items}
         meta={feed.meta}

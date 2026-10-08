@@ -19,6 +19,7 @@ import { resolveHistoricalTeamBrand } from "@/lib/historical-team-brand";
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { HISTORY_VERSION } from "@/lib/history/capabilities";
+import { MotionReveal } from "@/components/continuity/motion-reveal";
 
 export const dynamic = "force-dynamic";
 
@@ -205,7 +206,8 @@ export default async function HistorySeasonPage({
   };
 
   return (
-    <main className="site-shell flex flex-1 flex-col gap-8 py-6 sm:py-8">
+    <main data-motion-page className="site-shell flex flex-1 flex-col gap-8 py-6 sm:py-8">
+      <MotionReveal />
       <div>
         <p className="text-[12px] text-muted-foreground">
           <Link href="/history" className="hover:underline">

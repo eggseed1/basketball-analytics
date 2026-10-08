@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 
+import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { PlayoffBracket } from "@/components/explore/playoff-bracket";
 import { TeamSeasonToolbar } from "@/components/explore/team-season-toolbar";
 import { PageHeader } from "@/components/layout/page-header";
@@ -72,7 +73,8 @@ export default async function ExploreBracketPage({ searchParams }: PageProps) {
   const season = resolveBracketSeason(seasons, params.season);
 
   return (
-    <main className="site-shell flex flex-1 flex-col gap-5 py-6 sm:py-8">
+    <main data-motion-page className="site-shell flex flex-1 flex-col gap-5 py-6 sm:py-8">
+      <MotionReveal />
       <PageHeader
         eyebrow="Standings"
         title="Playoff bracket"

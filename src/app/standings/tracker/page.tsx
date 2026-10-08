@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 
+import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { PageHeader } from "@/components/layout/page-header";
 import { StandingsTrackerIsland } from "@/components/standings/standings-tracker-island";
 import {
@@ -41,7 +42,8 @@ export default async function StandingsTrackerPage({ searchParams }: PageProps) 
       : defaultSeason;
 
   return (
-    <main className="site-shell flex flex-1 flex-col gap-5 py-6 sm:py-8">
+    <main data-motion-page className="site-shell flex flex-1 flex-col gap-5 py-6 sm:py-8">
+      <MotionReveal />
       <PageHeader
         eyebrow="Standings"
         title="Standings tracker"

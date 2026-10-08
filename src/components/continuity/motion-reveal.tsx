@@ -2,6 +2,8 @@
 
 import { useEffect } from "react";
 
+import { watchTableCrosshair } from "@/components/continuity/table-crosshair";
+
 type Pose = (el: Element, style: CSSStyleDeclaration) => Keyframe;
 
 /* A fading ancestor cuts a frosted surface off from the page behind it, so the
@@ -14,11 +16,15 @@ const SECTION = [
   `:is(${CARD}):not(a, [data-skeleton], [data-motion-tile], [data-motion-static] *, :is(${CARD}) *)`,
 ].join(", ");
 const LIST = `:is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li):not(:has(${FROST})), [data-motion-item]`;
+const FROST_ROW = "tbody > tr:has(> .board-sticky-frost)";
 
 /** Start poses, matched in order. They mirror the @starting-style rules in globals.css. */
 const POSES: Array<[selector: string, pose: Pose]> = [
   ["[data-motion-tile]", () => ({ opacity: 0, transform: "translateY(14px) scale(0.98)" })],
   [SECTION, () => ({ opacity: 0, translate: "0 14px" })],
+  [`tbody > tr:not(:has(> .board-sticky-frost)), [data-frozen-row]`, () => ({ opacity: 0, translate: "0 8px" })],
+  [FROST_ROW, () => ({ translate: "0 8px" })],
+  [`${FROST_ROW} > td`, () => ({ opacity: 0 })],
   [LIST, () => ({ opacity: 0, translate: "0 8px" })],
   ['[data-motion-bar="x"]', () => ({ scale: "0 1" })],
   ['[data-motion-bar="y"], .recharts-bar-rectangle', () => ({ scale: "1 0" })],
@@ -66,6 +72,11 @@ function timing(style: CSSStyleDeclaration): KeyframeAnimationOptions {
  */
 export function MotionReveal() {
   useEffect(() => {
+    const root = document.querySelector("[data-motion-page]");
+    return root ? watchTableCrosshair(root) : undefined;
+  }, []);
+
+  useEffect(() => {
     const root = document.querySelector<HTMLElement>("[data-motion-page]");
     if (!root || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
@@ -74,24 +85,32 @@ export function MotionReveal() {
     // The CSS stagger counts from the top of a list, so row 40 would wait most
     // of a second after scrolling in. Here the stagger restarts with each batch
     // that enters together, and the CSS delay only keeps its first beat. Marks
-    // inside one chart share a target and keep their own CSS sequence.
+    // inside one chart share a target and keep their own CSS sequence. Targets
+    // on one visual line (a frozen name and its stats row) share a beat.
     const io = new IntersectionObserver(
       (entries) => {
         const entering = entries
           .filter((entry) => entry.isIntersecting)
           .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top || a.boundingClientRect.left - b.boundingClientRect.left);
-        entering.forEach((entry, k) => {
+        let k = -1;
+        let lineTop = Number.NEGATIVE_INFINITY;
+        for (const entry of entering) {
+          if (entry.boundingClientRect.top - lineTop > 4) {
+            k += 1;
+            lineTop = entry.boundingClientRect.top;
+          }
           const animations = waiting.get(entry.target) ?? [];
           const batchDelay = Math.min(k, BATCH_MAX_STEPS) * BATCH_STEP_MS;
+          const chart = animations.length > 1 && !(entry.target instanceof HTMLTableRowElement);
           for (const animation of animations) {
             const delay = Number(animation.effect?.getTiming().delay ?? 0);
-            const own = animations.length > 1 ? delay : Math.min(delay, MAX_DELAY_MS);
+            const own = chart ? delay : Math.min(delay, MAX_DELAY_MS);
             animation.effect?.updateTiming({ delay: own + batchDelay });
             animation.play();
           }
           waiting.delete(entry.target);
           io.unobserve(entry.target);
-        });
+        }
       },
       { rootMargin: "0px 0px 64px 0px" },
     );
@@ -101,7 +120,7 @@ export function MotionReveal() {
     const proxyFor = (el: Element) =>
       el instanceof SVGElement && !(el instanceof SVGSVGElement)
         ? (el.closest("svg") ?? el)
-        : el.matches("[data-motion-bar], [data-motion-dot], [data-motion-mark], [data-motion-shape]")
+        : el.matches(`[data-motion-bar], [data-motion-dot], [data-motion-mark], [data-motion-shape], ${FROST_ROW} > td`)
           ? (el.parentElement ?? el)
           : el;
 
@@ -117,19 +136,25 @@ export function MotionReveal() {
       }
     };
 
-    // Inside a box that scrolls on its own, an element can sit in the viewport
-    // while clipped, so it would pop in one at a time as that box scrolls.
-    const scrolls = (el: Element, cache: Map<Element, boolean>) => {
+    // Inside a box that scrolls on its own, an element clipped out of that box
+    // would pop in one at a time as the box scrolls, so it is left alone. A
+    // table row in a sideways scroller still shows its start, so it is held.
+    type Clip = { x: boolean; y: boolean; box: DOMRect };
+    const clippedOut = (el: Element, cache: Map<Element, Clip | null>) => {
+      let rect: DOMRect | undefined;
       for (let node = el.parentElement; node && node !== root; node = node.parentElement) {
-        let clips = cache.get(node);
-        if (clips === undefined) {
+        let clip = cache.get(node);
+        if (clip === undefined) {
           const style = getComputedStyle(node);
-          clips =
-            (style.overflowX !== "visible" && node.scrollWidth > node.clientWidth + 1) ||
-            (style.overflowY !== "visible" && node.scrollHeight > node.clientHeight + 1);
-          cache.set(node, clips);
+          const x = style.overflowX !== "visible" && node.scrollWidth > node.clientWidth + 1;
+          const y = style.overflowY !== "visible" && node.scrollHeight > node.clientHeight + 1;
+          clip = x || y ? { x, y, box: node.getBoundingClientRect() } : null;
+          cache.set(node, clip);
         }
-        if (clips) return true;
+        if (!clip) continue;
+        rect ??= el.getBoundingClientRect();
+        if (clip.x && (rect.right <= clip.box.left || rect.left >= clip.box.right)) return true;
+        if (clip.y && (rect.bottom <= clip.box.top || rect.top >= clip.box.bottom)) return true;
       }
       return false;
     };
@@ -145,36 +170,63 @@ export function MotionReveal() {
       }
       return out;
     };
+    // Element.getAnimations() walks every animation in the document, so one
+    // document-wide pass per scan is indexed by target instead.
+    const transitionsByTarget = () => {
+      const out = new Map<Element, Animation[]>();
+      for (const a of document.getAnimations()) {
+        if (!(a instanceof CSSTransition)) continue;
+        const target = (a.effect as KeyframeEffect | null)?.target;
+        if (!target) continue;
+        const list = out.get(target);
+        if (list) list.push(a);
+        else out.set(target, [a]);
+      }
+      return out;
+    };
     // All reads first, then all writes: each animate() dirties style, and a
     // read after it would force a fresh style and layout pass per element.
-    const scan = (from: Element[]) => {
+    // On first paint the CSS stagger already runs in order above the fold.
+    // Later content (streamed, appended, filtered) is held even in view, so a
+    // batch of new rows staggers from its own top, not from row 40's slot. A
+    // node React only moved (a sort) gets @starting-style again, so its entry
+    // is finished at once.
+    const scan = (from: Element[], initial: boolean) => {
       const fold = window.innerHeight;
-      const cache = new Map<Element, boolean>();
+      const cache = new Map<Element, Clip | null>();
       const plan: Array<[Element, Keyframe, KeyframeAnimationOptions]> = [];
+      const settle: Animation[] = [];
+      let transitions: Map<Element, Animation[]> | undefined;
+      const entryTransitions = (el: Element) => (transitions ??= transitionsByTarget()).get(el) ?? [];
       for (const el of candidates(from)) {
-        if (seen.has(el)) continue;
+        if (seen.has(el)) {
+          if (!initial) settle.push(...entryTransitions(el));
+          continue;
+        }
         seen.add(el);
         // Hidden elements get their @starting-style entry when they are shown.
-        if (!el.checkVisibility() || el.getBoundingClientRect().top <= fold || scrolls(el, cache)) continue;
+        if (!el.checkVisibility() || (initial && el.getBoundingClientRect().top <= fold) || clippedOut(el, cache)) continue;
         const entry = POSES.find(([selector]) => el.matches(selector));
         if (!entry) continue;
         const style = getComputedStyle(el);
         plan.push([el, entry[1](el, style), timing(style)]);
+        settle.push(...entryTransitions(el));
       }
+      for (const transition of settle) transition.finish();
       for (const [el, pose, options] of plan) hold(el, pose, options);
     };
     const flush = () => {
       frame = 0;
       const batch = added;
       added = [];
-      scan(batch);
+      scan(batch, false);
     };
     const mo = new MutationObserver((records) => {
       for (const record of records) for (const node of record.addedNodes) if (node instanceof Element) added.push(node);
       if (added.length && !frame) frame = requestAnimationFrame(flush);
     });
 
-    scan([root]);
+    scan([root], true);
     mo.observe(root, { childList: true, subtree: true });
 
     return () => {

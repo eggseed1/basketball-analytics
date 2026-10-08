@@ -7,6 +7,7 @@ import { teamComparePath } from "@/analytics/compare-team-seasons";
 import type { TeamSeasonComparison } from "@/analytics/compare-team-seasons";
 import { teamSeasonRankPath } from "@/analytics/rank-team-seasons";
 import type { TeamSeasonRanking } from "@/analytics/rank-team-seasons";
+import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { CompareEmptyState } from "@/components/compare/compare-empty-state";
 import { ComparePicker } from "@/components/compare/compare-picker";
 import { PlayerCompareView } from "@/components/compare/player-compare-view";
@@ -384,7 +385,8 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
         : "/compare?mode=teams";
 
       return (
-        <main className="site-shell flex flex-col gap-5 py-5 sm:py-7">
+        <main data-motion-page className="site-shell flex flex-col gap-5 py-5 sm:py-7">
+          <MotionReveal />
           <PageHeader
             title="Compare"
             subtitle="Rank a franchise’s seasons head to head, with no opaque team score."
@@ -492,7 +494,8 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
       : "/compare?mode=teams&view=rank";
 
     return (
-      <main className="site-shell flex flex-col gap-5 py-5 sm:py-7">
+      <main data-motion-page className="site-shell flex flex-col gap-5 py-5 sm:py-7">
+        <MotionReveal />
         <PageHeader
           title="Compare"
           subtitle="Compare team seasons or two teams on transparent board metrics."
@@ -722,7 +725,8 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
   const bPortraitUrl = bId ? getPlayerPortraitUrl(bId) : null;
 
   return (
-    <main className="site-shell flex flex-col gap-5 py-5 sm:py-7">
+    <main data-motion-page className="site-shell flex flex-col gap-5 py-5 sm:py-7">
+      <MotionReveal />
       <PageHeader
         title="Compare"
         subtitle="Search any player (active or retired). Default is career average. Switch either side to a single season for year-true percentiles."

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { MotionReveal } from "@/components/continuity/motion-reveal";
 import {
   AcquisitionEntryList,
   AnswerNote,
@@ -142,7 +143,8 @@ export default async function AcquisitionsPage({ searchParams }: PageProps) {
   const datalist = [...new Set(catalog.map((e) => e.label))].sort();
 
   return (
-    <main className="site-shell flex flex-col gap-6 py-6 sm:py-8">
+    <main data-motion-page className="site-shell flex flex-col gap-6 py-6 sm:py-8">
+      <MotionReveal />
       <header className="flex flex-col gap-3">
         <p className={cn(type.caption, "font-semibold uppercase tracking-wide text-muted-foreground")}>
           Transactions · How they got him

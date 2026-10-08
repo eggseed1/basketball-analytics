@@ -1,3 +1,4 @@
+import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { HotColdColumns } from "@/components/explore/hot-cold-board";
 import { PageHeader } from "@/components/layout/page-header";
 import { SegmentedLinks } from "@/components/ui/segmented-links";
@@ -55,7 +56,8 @@ export default async function HotColdPage({
     `${BASE_PATH}?window=${window}&metric=${nextMetric}`;
 
   return (
-    <main className="site-shell flex flex-col gap-6 py-6 sm:py-8">
+    <main data-motion-page className="site-shell flex flex-col gap-6 py-6 sm:py-8">
+      <MotionReveal />
       <PageHeader
         eyebrow={season ? `Players · ${season}` : "Players"}
         title="Hot & Cold"

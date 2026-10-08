@@ -1,4 +1,5 @@
 
+import { MotionReveal } from "@/components/continuity/motion-reveal";
 import {
   OffseasonFilters,
   TimelineFeedByMonth,
@@ -189,7 +190,8 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
     resolveTeamBrand(id) ?? resolveTeamBrand(abbr);
 
   return (
-    <main className="site-shell flex flex-col gap-5 py-5 sm:py-7">
+    <main data-motion-page className="site-shell flex flex-col gap-5 py-5 sm:py-7">
+      <MotionReveal />
       <header className="flex flex-col gap-2">
         <p className="text-[12px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
           Transactions
@@ -294,7 +296,7 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
 
           <section className="flex flex-col gap-2">
             <h2 className="text-[16px] font-bold tracking-tight">Latest</h2>
-            <div className="sports-card px-4 py-2 sm:px-5">
+            <div data-motion-list className="sports-card px-4 py-2 sm:px-5">
               {latestFeed.length ? (
                 latestFeed.map((item) =>
                   item.kind === "related_event_cluster" ? (

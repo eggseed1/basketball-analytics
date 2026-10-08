@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 
+import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { SeasonNotStartedNotice } from "@/components/explore/season-not-started-notice";
 import { ExplorePlayersClientShell } from "@/components/explore/explore-players-client-shell";
 import { PlayerBoardHealthBanner } from "@/components/explore/player-board-health-banner";
@@ -123,7 +124,8 @@ export default async function ExplorePlayersPage({
   const { teams, source, warnings } = teamCatalog;
 
   return (
-    <main className="site-shell flex min-w-0 max-w-full flex-1 flex-col gap-5 overflow-x-clip py-6 sm:py-8">
+    <main data-motion-page className="site-shell flex min-w-0 max-w-full flex-1 flex-col gap-5 overflow-x-clip py-6 sm:py-8">
+      <MotionReveal />
       <PageHeader
         title="Players"
         subtitle={

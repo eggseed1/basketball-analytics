@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 
+import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { TeamSeasonTable } from "@/components/explore/team-season-table";
 import { TeamSeasonToolbar } from "@/components/explore/team-season-toolbar";
 import { PageHeader } from "@/components/layout/page-header";
@@ -74,7 +75,8 @@ export default async function ExploreTeamsPage({
   const season = resolveExploreTeamsSeason(seasons, params.season);
 
   return (
-    <main className="site-shell flex flex-1 flex-col gap-5 py-6 sm:py-8">
+    <main data-motion-page className="site-shell flex flex-1 flex-col gap-5 py-6 sm:py-8">
+      <MotionReveal />
       <PageHeader
         title="Teams"
         subtitle={`Efficiency board for ${season}. Click a team to open its profile.`}

@@ -1,3 +1,4 @@
+import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { TransitionLink } from "@/components/continuity/query-nav";
 
 import { FranchiseHistoryTable } from "@/components/franchises/franchise-history-table";
@@ -17,7 +18,8 @@ export default function FranchisesPage() {
   const asOf = franchiseHistoryAsOf();
 
   return (
-    <main className="site-shell flex flex-1 flex-col gap-5 py-6 sm:py-8">
+    <main data-motion-page className="site-shell flex flex-1 flex-col gap-5 py-6 sm:py-8">
+      <MotionReveal />
       <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div className="max-w-2xl">
           <p className="text-[12px] font-bold uppercase tracking-[0.12em] text-muted-foreground">

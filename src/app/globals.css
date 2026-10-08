@@ -2137,123 +2137,19 @@ svg [data-motion-dot] {
   }
 }
 
-/* Table crosshair: the hovered cell's column tints to meet the row tint, its
-   header steps up to full ink, and the cell itself carries both tints. */
+/* Table crosshair: the hovered cell’s column tints to meet the row tint, its
+   header steps up to full ink, and the cell itself carries both tints.
+   watchTableCrosshair marks the column. A table:has(td:hover) rule would
+   restyle every cell each time the pointer crosses a row, which stalls
+   scrolling on long tables. */
 @media (hover: hover) {
-  [data-motion-page] table:has(tbody td:nth-child(2):hover) tbody > tr > td:nth-child(2),
-  [data-motion-page] table:not(:has(thead [colspan])):has(tbody td:nth-child(2):hover) thead > tr:last-child > :nth-child(2) {
+  [data-motion-page] [data-col-hover="on"] {
     box-shadow: inset 0 0 0 100vmax var(--motion-row-tint);
     color: var(--foreground);
   }
-  [data-motion-page] table:has(tbody td:nth-child(3):hover) tbody > tr > td:nth-child(3),
-  [data-motion-page] table:not(:has(thead [colspan])):has(tbody td:nth-child(3):hover) thead > tr:last-child > :nth-child(3) {
-    box-shadow: inset 0 0 0 100vmax var(--motion-row-tint);
-    color: var(--foreground);
-  }
-  [data-motion-page] table:has(tbody td:nth-child(4):hover) tbody > tr > td:nth-child(4),
-  [data-motion-page] table:not(:has(thead [colspan])):has(tbody td:nth-child(4):hover) thead > tr:last-child > :nth-child(4) {
-    box-shadow: inset 0 0 0 100vmax var(--motion-row-tint);
-    color: var(--foreground);
-  }
-  [data-motion-page] table:has(tbody td:nth-child(5):hover) tbody > tr > td:nth-child(5),
-  [data-motion-page] table:not(:has(thead [colspan])):has(tbody td:nth-child(5):hover) thead > tr:last-child > :nth-child(5) {
-    box-shadow: inset 0 0 0 100vmax var(--motion-row-tint);
-    color: var(--foreground);
-  }
-  [data-motion-page] table:has(tbody td:nth-child(6):hover) tbody > tr > td:nth-child(6),
-  [data-motion-page] table:not(:has(thead [colspan])):has(tbody td:nth-child(6):hover) thead > tr:last-child > :nth-child(6) {
-    box-shadow: inset 0 0 0 100vmax var(--motion-row-tint);
-    color: var(--foreground);
-  }
-  [data-motion-page] table:has(tbody td:nth-child(7):hover) tbody > tr > td:nth-child(7),
-  [data-motion-page] table:not(:has(thead [colspan])):has(tbody td:nth-child(7):hover) thead > tr:last-child > :nth-child(7) {
-    box-shadow: inset 0 0 0 100vmax var(--motion-row-tint);
-    color: var(--foreground);
-  }
-  [data-motion-page] table:has(tbody td:nth-child(8):hover) tbody > tr > td:nth-child(8),
-  [data-motion-page] table:not(:has(thead [colspan])):has(tbody td:nth-child(8):hover) thead > tr:last-child > :nth-child(8) {
-    box-shadow: inset 0 0 0 100vmax var(--motion-row-tint);
-    color: var(--foreground);
-  }
-  [data-motion-page] table:has(tbody td:nth-child(9):hover) tbody > tr > td:nth-child(9),
-  [data-motion-page] table:not(:has(thead [colspan])):has(tbody td:nth-child(9):hover) thead > tr:last-child > :nth-child(9) {
-    box-shadow: inset 0 0 0 100vmax var(--motion-row-tint);
-    color: var(--foreground);
-  }
-  [data-motion-page] table:has(tbody td:nth-child(10):hover) tbody > tr > td:nth-child(10),
-  [data-motion-page] table:not(:has(thead [colspan])):has(tbody td:nth-child(10):hover) thead > tr:last-child > :nth-child(10) {
-    box-shadow: inset 0 0 0 100vmax var(--motion-row-tint);
-    color: var(--foreground);
-  }
-  [data-motion-page] table:has(tbody td:nth-child(11):hover) tbody > tr > td:nth-child(11),
-  [data-motion-page] table:not(:has(thead [colspan])):has(tbody td:nth-child(11):hover) thead > tr:last-child > :nth-child(11) {
-    box-shadow: inset 0 0 0 100vmax var(--motion-row-tint);
-    color: var(--foreground);
-  }
-  [data-motion-page] table:has(tbody td:nth-child(12):hover) tbody > tr > td:nth-child(12),
-  [data-motion-page] table:not(:has(thead [colspan])):has(tbody td:nth-child(12):hover) thead > tr:last-child > :nth-child(12) {
-    box-shadow: inset 0 0 0 100vmax var(--motion-row-tint);
-    color: var(--foreground);
-  }
-  [data-motion-page] table:has(tbody td:nth-child(13):hover) tbody > tr > td:nth-child(13),
-  [data-motion-page] table:not(:has(thead [colspan])):has(tbody td:nth-child(13):hover) thead > tr:last-child > :nth-child(13) {
-    box-shadow: inset 0 0 0 100vmax var(--motion-row-tint);
-    color: var(--foreground);
-  }
-  [data-motion-page] table:has(tbody td:nth-child(14):hover) tbody > tr > td:nth-child(14),
-  [data-motion-page] table:not(:has(thead [colspan])):has(tbody td:nth-child(14):hover) thead > tr:last-child > :nth-child(14) {
-    box-shadow: inset 0 0 0 100vmax var(--motion-row-tint);
-    color: var(--foreground);
-  }
-  [data-motion-page] table:has(tbody td:nth-child(15):hover) tbody > tr > td:nth-child(15),
-  [data-motion-page] table:not(:has(thead [colspan])):has(tbody td:nth-child(15):hover) thead > tr:last-child > :nth-child(15) {
-    box-shadow: inset 0 0 0 100vmax var(--motion-row-tint);
-    color: var(--foreground);
-  }
-  [data-motion-page] table:has(tbody td:nth-child(16):hover) tbody > tr > td:nth-child(16),
-  [data-motion-page] table:not(:has(thead [colspan])):has(tbody td:nth-child(16):hover) thead > tr:last-child > :nth-child(16) {
-    box-shadow: inset 0 0 0 100vmax var(--motion-row-tint);
-    color: var(--foreground);
-  }
-  [data-motion-page] table:has(tbody td:nth-child(17):hover) tbody > tr > td:nth-child(17),
-  [data-motion-page] table:not(:has(thead [colspan])):has(tbody td:nth-child(17):hover) thead > tr:last-child > :nth-child(17) {
-    box-shadow: inset 0 0 0 100vmax var(--motion-row-tint);
-    color: var(--foreground);
-  }
-  [data-motion-page] table:has(tbody td:nth-child(18):hover) tbody > tr > td:nth-child(18),
-  [data-motion-page] table:not(:has(thead [colspan])):has(tbody td:nth-child(18):hover) thead > tr:last-child > :nth-child(18) {
-    box-shadow: inset 0 0 0 100vmax var(--motion-row-tint);
-    color: var(--foreground);
-  }
-  [data-motion-page] table:has(tbody td:nth-child(19):hover) tbody > tr > td:nth-child(19),
-  [data-motion-page] table:not(:has(thead [colspan])):has(tbody td:nth-child(19):hover) thead > tr:last-child > :nth-child(19) {
-    box-shadow: inset 0 0 0 100vmax var(--motion-row-tint);
-    color: var(--foreground);
-  }
-  [data-motion-page] table:has(tbody td:nth-child(20):hover) tbody > tr > td:nth-child(20),
-  [data-motion-page] table:not(:has(thead [colspan])):has(tbody td:nth-child(20):hover) thead > tr:last-child > :nth-child(20) {
-    box-shadow: inset 0 0 0 100vmax var(--motion-row-tint);
-    color: var(--foreground);
-  }
-  [data-motion-page] table:has(tbody td:nth-child(21):hover) tbody > tr > td:nth-child(21),
-  [data-motion-page] table:not(:has(thead [colspan])):has(tbody td:nth-child(21):hover) thead > tr:last-child > :nth-child(21) {
-    box-shadow: inset 0 0 0 100vmax var(--motion-row-tint);
-    color: var(--foreground);
-  }
-  [data-motion-page] table:has(tbody td:nth-child(22):hover) tbody > tr > td:nth-child(22),
-  [data-motion-page] table:not(:has(thead [colspan])):has(tbody td:nth-child(22):hover) thead > tr:last-child > :nth-child(22) {
-    box-shadow: inset 0 0 0 100vmax var(--motion-row-tint);
-    color: var(--foreground);
-  }
-  [data-motion-page] table:has(tbody td:nth-child(23):hover) tbody > tr > td:nth-child(23),
-  [data-motion-page] table:not(:has(thead [colspan])):has(tbody td:nth-child(23):hover) thead > tr:last-child > :nth-child(23) {
-    box-shadow: inset 0 0 0 100vmax var(--motion-row-tint);
-    color: var(--foreground);
-  }
-  [data-motion-page] table:has(tbody td:nth-child(24):hover) tbody > tr > td:nth-child(24),
-  [data-motion-page] table:not(:has(thead [colspan])):has(tbody td:nth-child(24):hover) thead > tr:last-child > :nth-child(24) {
-    box-shadow: inset 0 0 0 100vmax var(--motion-row-tint);
-    color: var(--foreground);
+
+  [data-motion-page] [data-col-hover] {
+    transition-property: background-color;
   }
 
   [data-motion-page] table:not(:has(thead [colspan])) thead > tr:last-child > :is(th, td) {
@@ -2270,15 +2166,20 @@ svg [data-motion-dot] {
     box-shadow: inset 0 0 0 100vmax var(--motion-row-tint);
   }
 
-  [data-stat-tile]:hover > :last-child,
-  [data-stat-tile]:has(> dd ~ *):hover > dd:first-of-type,
+  [data-stat-tile]:hover > :last-child {
+    scale: var(--stat-tile-lift, 1.06);
+  }
+
+  [data-stat-tile]:hover > dd:first-of-type:not(:last-child),
   [data-stat-tile]:hover [data-stat-value] {
     scale: 1.06;
   }
 
-  :is([data-stat-tile]:has(> dd ~ *), [data-stat-tile]:has([data-stat-value])):hover
+  /* Kept apart from :hover: a :has() beside :hover restyles the whole subtree
+     under the pointer every time it moves. */
+  :is([data-stat-tile]:has(> dd ~ *), [data-stat-tile]:has([data-stat-value]))
     > :last-child:not([data-stat-value], dd:first-of-type) {
-    scale: none;
+    --stat-tile-lift: none;
   }
 
   [data-stat-tile][data-value-end] > :last-child {
@@ -2356,22 +2257,22 @@ svg [data-motion-dot] {
   scale: 1;
 }
 
-[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li) {
+[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li, tbody > tr, [data-frozen-row]) {
   --n: 12;
 }
 
-[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li):nth-child(1) { --n: 0; }
-[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li):nth-child(2) { --n: 1; }
-[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li):nth-child(3) { --n: 2; }
-[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li):nth-child(4) { --n: 3; }
-[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li):nth-child(5) { --n: 4; }
-[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li):nth-child(6) { --n: 5; }
-[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li):nth-child(7) { --n: 6; }
-[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li):nth-child(8) { --n: 7; }
-[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li):nth-child(9) { --n: 8; }
-[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li):nth-child(10) { --n: 9; }
-[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li):nth-child(11) { --n: 10; }
-[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li):nth-child(12) { --n: 11; }
+[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li, tbody > tr, [data-frozen-row]):nth-child(1) { --n: 0; }
+[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li, tbody > tr, [data-frozen-row]):nth-child(2) { --n: 1; }
+[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li, tbody > tr, [data-frozen-row]):nth-child(3) { --n: 2; }
+[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li, tbody > tr, [data-frozen-row]):nth-child(4) { --n: 3; }
+[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li, tbody > tr, [data-frozen-row]):nth-child(5) { --n: 4; }
+[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li, tbody > tr, [data-frozen-row]):nth-child(6) { --n: 5; }
+[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li, tbody > tr, [data-frozen-row]):nth-child(7) { --n: 6; }
+[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li, tbody > tr, [data-frozen-row]):nth-child(8) { --n: 7; }
+[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li, tbody > tr, [data-frozen-row]):nth-child(9) { --n: 8; }
+[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li, tbody > tr, [data-frozen-row]):nth-child(10) { --n: 9; }
+[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li, tbody > tr, [data-frozen-row]):nth-child(11) { --n: 10; }
+[data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li, tbody > tr, [data-frozen-row]):nth-child(12) { --n: 11; }
 
 @media (prefers-reduced-motion: no-preference) {
   [data-motion-tabs] [role="tab"]::after {
@@ -2420,6 +2321,35 @@ svg [data-motion-dot] {
 
   [data-motion-page] [data-motion-item] {
     --n: min(var(--i, 0), 12);
+  }
+
+  /* Table rows and the player board's frozen name rows keep the list beat, so a
+     frozen name and its stats row arrive together. A frosted sticky cell can't
+     sit under a fading row (its blur would flash clear), so those rows slide
+     and their cells fade on their own. */
+  [data-motion-page] :is(tbody > tr, [data-frozen-row]) {
+    --d: calc(var(--n, 0) * 45ms + 80ms);
+    transition:
+      opacity 380ms ease var(--d),
+      translate 480ms var(--motion-ease) var(--d),
+      background-color 180ms ease,
+      box-shadow 180ms ease,
+      color 180ms ease;
+  }
+
+  [data-motion-page] tbody > tr:has(> .board-sticky-frost) {
+    transition:
+      translate 480ms var(--motion-ease) var(--d),
+      background-color 180ms ease,
+      box-shadow 180ms ease,
+      color 180ms ease;
+  }
+
+  [data-motion-page] tbody > tr:has(> .board-sticky-frost) > td {
+    transition:
+      opacity 380ms ease var(--d),
+      box-shadow 160ms ease,
+      background-color 160ms ease;
   }
 
   [data-motion-page] [data-motion-bar] {
@@ -2508,6 +2438,19 @@ svg [data-motion-dot] {
     [data-motion-page] [data-motion-item] {
       opacity: 0;
       translate: 0 8px;
+    }
+
+    [data-motion-page] :is(tbody > tr:not(:has(> .board-sticky-frost)), [data-frozen-row]) {
+      opacity: 0;
+      translate: 0 8px;
+    }
+
+    [data-motion-page] tbody > tr:has(> .board-sticky-frost) {
+      translate: 0 8px;
+    }
+
+    [data-motion-page] tbody > tr:has(> .board-sticky-frost) > td {
+      opacity: 0;
     }
 
     [data-motion-page] [data-motion-bar="x"] {

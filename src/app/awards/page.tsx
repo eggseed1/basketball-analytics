@@ -1,3 +1,4 @@
+import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { AwardTrophyIcon } from "@/components/awards/award-trophy-icon";
 import { TransitionLink } from "@/components/continuity/query-nav";
 import { PageHeader } from "@/components/layout/page-header";
@@ -43,7 +44,8 @@ export default function AwardsIndexPage() {
   const bySlug = new Map(AWARD_DEFINITIONS.map((a) => [a.slug, a]));
 
   return (
-    <main className="site-shell flex flex-col gap-8 py-6 sm:py-8">
+    <main data-motion-page className="site-shell flex flex-col gap-8 py-6 sm:py-8">
+      <MotionReveal />
       <PageHeader
         eyebrow="Awards"
         title="Trophy case"

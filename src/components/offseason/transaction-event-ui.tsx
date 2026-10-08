@@ -206,7 +206,7 @@ export function RelatedEventClusterCard({
                 : "Show source events"}
           </button>
           {open ? (
-            <div className="mt-3 rounded-md border border-border/80 bg-secondary/20 px-3">
+            <div data-motion-list className="mt-3 rounded-md border border-border/80 bg-secondary/20 px-3">
               {events.map((e) => (
                 <TransactionEventRow
                   key={e.id}
@@ -428,7 +428,7 @@ export function TimelineByMonth({
           <h3 className="text-[12px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
             {monthLabel(monthKey)}
           </h3>
-          <div className="mt-2">
+          <div data-motion-list className="mt-2">
             {events.map((e) => (
               <TransactionEventRow
                 key={e.id}
@@ -464,7 +464,7 @@ export function TimelineFeedByMonth({
           <h3 className="text-[12px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
             {monthLabel(monthKey)}
           </h3>
-          <div className="mt-2">
+          <div data-motion-list className="mt-2">
             {items.map((item) => (
               <OffseasonFeedItemRow
                 key={

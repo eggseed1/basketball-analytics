@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 
+import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { AwardHistoryBoard } from "@/components/awards/award-history-board";
 import { AwardSiblingNav } from "@/components/awards/award-sibling-nav";
 import { AwardTrophyIcon } from "@/components/awards/award-trophy-icon";
@@ -60,7 +61,8 @@ export default async function AwardHistoryPage({
       : "Winner";
 
   return (
-    <main className="site-shell flex flex-col gap-6 py-6 sm:py-8">
+    <main data-motion-page className="site-shell flex flex-col gap-6 py-6 sm:py-8">
+      <MotionReveal />
       <TransitionLink
         href="/awards"
         className={cn(

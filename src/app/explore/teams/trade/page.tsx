@@ -1,3 +1,4 @@
+import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { TradeSimulator } from "@/components/trade/trade-simulator";
 import { PageHeader } from "@/components/layout/page-header";
 import { loadTradeSimulatorBoard } from "@/data/queries/trade-simulator";
@@ -26,7 +27,8 @@ export default async function TradeSimulatorPage({
       .filter(Boolean);
 
   return (
-    <main className="site-shell flex flex-col gap-6 py-6 sm:py-8">
+    <main data-motion-page className="site-shell flex flex-col gap-6 py-6 sm:py-8">
+      <MotionReveal />
       <PageHeader
         eyebrow="Teams"
         title="Trade simulator"
