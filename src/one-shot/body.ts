@@ -76,6 +76,13 @@ export function heightPercentile(cm: number, sex: "male" | "female", countryId: 
   return Math.round(clamp(normalCdf((cm - mean) / HEIGHT_SD[sex]) * 100, 1, 99));
 }
 
+/** Share of adults of that sex in a country at or above a height, from the national mean and SD (no family boost). */
+export function shareAtLeast(cm: number, sex: "male" | "female", countryId: string): number {
+  const nat = adultHeights(countryId);
+  const mean = sex === "male" ? nat.maleCm : nat.femaleCm;
+  return 1 - normalCdf((cm - mean) / HEIGHT_SD[sex]);
+}
+
 /** Mid-parent target and the range that holds about 95% of sons in this model. */
 export function parentTarget(father: number, mother: number): { mid: number; low: number; high: number } {
   const mid = (father + mother + 13) / 2;

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-import { fmtHeight, heightPercentile, parentTarget } from "@/one-shot/body";
+import { FAMILY_BIAS, fmtHeight, fmtLength, heightPercentile, parentTarget, shareAtLeast } from "@/one-shot/body";
 import { MONTHS } from "@/one-shot/career";
 import { MEANS_LABEL } from "@/one-shot/engine";
 import type { LifeState } from "@/one-shot/types";
@@ -41,6 +41,8 @@ export function BirthReveal({
   const target = parentTarget(f.fatherHeightCm, f.motherHeightCm);
   const nat = c.height;
   const top = domesticProLeagues(c.id)[0];
+  const tallCm = units === "metric" ? 180 : 182.88;
+  const tallShare = shareAtLeast(tallCm, "male", c.id);
   return (
     <div className="mx-auto w-full max-w-[720px]">
       <Panel className="p-5 sm:p-7">
@@ -127,11 +129,12 @@ export function BirthReveal({
           <Kv k="Mother" v={`${fmtHeight(f.motherHeightCm, units)} · ${ordinal(heightPercentile(f.motherHeightCm, "female", c.id))} pct`} mono />
           <Kv k="Expected adult height" v={`${fmtHeight(target.low, units)} to ${fmtHeight(target.high, units)}`} mono />
           <Kv k="Most likely" v={fmtHeight(target.mid, units)} mono />
+          <Kv k={`Men ${fmtHeight(tallCm, units)} or taller in ${c.name}`} v={tallShare >= 0.1 ? `${Math.round(tallShare * 100)}%` : `about 1 in ${oneIn(tallShare)}`} mono />
         </dl>
         <p className="mt-2 text-[11.5px] text-[var(--os-dim)]">
           Percentiles compare each parent with adults in {c.name}
           {nat ? `, where men average ${fmtHeight(nat.maleCm, units)} and women ${fmtHeight(nat.femaleCm, units)}` : ""}
-          {nat?.basis === "proxy" ? ` (no measured data here, so the game borrows ${COUNTRIES.find((x) => x.iso3 === nat.proxyIso3)?.name ?? nat.proxyIso3}'s averages)` : ""}. The expected height uses
+          {nat?.basis === "proxy" ? ` (no measured data here, so the game borrows ${COUNTRIES.find((x) => x.iso3 === nat.proxyIso3)?.name ?? nat.proxyIso3}'s averages)` : ""}. Basketball families run tall, so the game draws fathers {fmtLength(FAMILY_BIAS.male, units)} and mothers {fmtLength(FAMILY_BIAS.female, units)} above those averages. The expected height uses
           the mid-parent method. In this model, 95% of sons land in that range.
         </p>
         <dl className="mt-4 grid gap-x-6 sm:grid-cols-2">

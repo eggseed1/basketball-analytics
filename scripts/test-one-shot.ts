@@ -10,7 +10,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 
 import { advise } from "../src/one-shot/advisor";
-import { FAMILY_BIAS, generateParents, heightPercentile, parentTarget } from "../src/one-shot/body";
+import { FAMILY_BIAS, generateParents, heightPercentile, parentTarget, shareAtLeast } from "../src/one-shot/body";
 import { ASSETS, invested, mix, netWorth, PRESETS, rebalance, rebalanceCost, taxRate } from "../src/one-shot/finance";
 import { fieldOf, tournamentsFor } from "../src/one-shot/international";
 import { advanced, sumBoxes } from "../src/one-shot/stats";
@@ -431,6 +431,9 @@ ok("birth odds sum to 1 and parents follow their country's heights", () => {
     const total = PLAYABLE_COUNTRIES.reduce((a, c) => a + birthShare(c.id, draw), 0);
     assert.ok(Math.abs(total - 1) < 1e-9, `${draw} shares sum to ${total}`);
   }
+  const usSix = shareAtLeast(182.88, "male", "US");
+  assert.ok(usSix > 0.12 && usSix < 0.3, `US men 6 ft+ ${usSix}`);
+  assert.ok(shareAtLeast(182.88, "male", "IN") < 0.02);
   for (const c of PLAYABLE_COUNTRIES) assert.ok(c.height && c.height.maleCm > 150 && c.height.maleCm < 190, `${c.id} height`);
   const avg = (id: string) => {
     const r = rngOf(createStreams(99), "generation");
