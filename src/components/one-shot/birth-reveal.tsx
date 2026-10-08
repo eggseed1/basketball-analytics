@@ -1,5 +1,6 @@
 "use client";
 
+import { Dices } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import { FAMILY_BIAS, fmtHeight, fmtLength, heightPercentile, parentTarget, shareAtLeast } from "@/one-shot/body";
@@ -8,6 +9,7 @@ import { MEANS_LABEL } from "@/one-shot/engine";
 import type { LifeState } from "@/one-shot/types";
 import { birthShare, COUNTRIES, country, countryFlag, domesticProLeagues, PLAYABLE_COUNTRIES } from "@/one-shot/world";
 
+import { BirthSpin } from "./birth-spin";
 import { Portrait } from "./panels-left";
 import { Btn, Chip, Kv, ordinal, Panel, sharePct } from "./ui";
 
@@ -19,22 +21,65 @@ function oneIn(p: number) {
 export function BirthReveal({
   life,
   units,
+  reducedMotion,
   onRename,
   onStart,
+  onReroll,
   onBack,
 }: {
   life: LifeState;
   units: "metric" | "imperial";
+  reducedMotion: boolean;
   onRename: (given: string, family: string) => void;
   onStart: () => void;
+  /** Absent for the daily life, which everyone shares. */
+  onReroll?: () => void;
   onBack: () => void;
 }) {
   const c = country(life.birthplace.countryId);
+  const [spun, setSpun] = useState(reducedMotion);
   const [editing, setEditing] = useState(false);
   const [given, setGiven] = useState(life.identity.givenName);
   const [family, setFamily] = useState(life.identity.familyName);
   const heading = useRef<HTMLHeadingElement>(null);
-  useEffect(() => heading.current?.focus(), []);
+  useEffect(() => {
+    if (spun) heading.current?.focus();
+  }, [spun]);
+  useEffect(() => {
+    if (!onReroll) return;
+    const onKey = (e: KeyboardEvent) => {
+      const t = e.target as HTMLElement | null;
+      if (e.metaKey || e.ctrlKey || e.altKey || t?.closest("input, textarea, select")) return;
+      if (e.key === "r" || e.key === "R") {
+        e.preventDefault();
+        onReroll();
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [onReroll]);
+  const seedRow = (
+    <div className="flex items-center justify-between gap-3">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--os-dim)]">{life.mode === "daily" ? `Daily life · ${life.dailyDate}` : `Seed ${life.seed}`}</p>
+      {onReroll ? (
+        <Btn className="min-h-8 gap-1.5 px-2.5 text-[12px]" onClick={onReroll} title="Draw a new birth with a new seed (R)">
+          <Dices aria-hidden className="size-3.5" /> Reroll
+        </Btn>
+      ) : null}
+    </div>
+  );
+  if (!spun) {
+    return (
+      <div className="mx-auto w-full max-w-[720px]">
+        <Panel className="p-5 sm:p-7">
+          {seedRow}
+          <div className="mt-4">
+            <BirthSpin life={life} onDone={() => setSpun(true)} />
+          </div>
+        </Panel>
+      </div>
+    );
+  }
   const f = life.family;
   const tone = c.research.status === "verified" ? "green" : c.research.status === "partial" ? "amber" : "dim";
   const share = birthShare(c.id, life.draw);
@@ -44,9 +89,9 @@ export function BirthReveal({
   const tallCm = units === "metric" ? 180 : 182.88;
   const tallShare = shareAtLeast(tallCm, "male", c.id);
   return (
-    <div className="mx-auto w-full max-w-[720px]">
+    <div className={`mx-auto w-full max-w-[720px] ${reducedMotion ? "" : "animate-in fade-in slide-in-from-bottom-2 duration-500"}`}>
       <Panel className="p-5 sm:p-7">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--os-dim)]">{life.mode === "daily" ? `Daily life · ${life.dailyDate}` : `Seed ${life.seed}`}</p>
+        {seedRow}
         <div className="mt-4 flex flex-col items-start gap-5 sm:flex-row">
           <Portrait life={life} size={112} className="rounded-[11px] border border-[var(--os-border)]" />
           <div className="min-w-0 flex-1">

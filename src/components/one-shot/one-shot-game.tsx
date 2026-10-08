@@ -470,10 +470,13 @@ function Game({ expanded, onExpand }: { expanded: boolean; onExpand: () => void 
       {screen === "birth" && life ? (
         <div className="my-auto">
           <BirthReveal
+            key={life.runId}
             life={life}
             units={units}
+            reducedMotion={reducedMotion}
             onRename={(g, f) => commit(rename(life, g, f))}
             onStart={startLife}
+            onReroll={life.mode === "daily" ? undefined : () => beBorn()}
             onBack={() => setScreen("start")}
           />
         </div>
