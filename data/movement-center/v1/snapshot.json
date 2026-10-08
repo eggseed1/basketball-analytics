@@ -5,10 +5,10 @@
     "season": "2026-27",
     "snapshotDate": "2026-10-08",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-10-08T05:41:17.128Z",
+    "builtAt": "2026-10-08T13:44:39.765Z",
     "rosterPlayerCount": 492,
-    "headlinesScanned": 1977,
-    "latestHeadlineAt": "2026-10-08T05:40:27.000Z",
+    "headlinesScanned": 2068,
+    "latestHeadlineAt": "2026-10-08T13:36:31.000Z",
     "latestTransactionDate": "2026-10-07",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -116,7 +116,7 @@
     },
     "outlet:heavy": {
       "label": "Heavy",
-      "credibility": 16
+      "credibility": 12
     },
     "reporter:malika-andrews": {
       "label": "Malika Andrews (ESPN)",
@@ -549,21 +549,25 @@
     },
     {
       "id": "mv-trade-6442-20261001",
-      "headline": "Kyrie Irving: trade talk",
+      "headline": "Kyrie Irving and Anthony Davis: trade talk",
       "primaryClaimId": "mv-62fc808e224a7baa",
       "claimIds": [
         "mv-d510f782fadebd47",
-        "mv-62fc808e224a7baa"
+        "mv-62fc808e224a7baa",
+        "mv-a98f425d77b5fe76"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-01T01:04:56.000Z",
-      "lastMeaningfulAt": "2026-10-07T19:11:02.000Z",
+      "lastMeaningfulAt": "2026-10-08T12:59:14.000Z",
       "linkedPlayerIds": [
-        "6442"
+        "6442",
+        "6583"
       ],
       "linkedTeamIds": [
-        "6"
+        "6",
+        "18",
+        "27"
       ]
     },
     {
@@ -4181,6 +4185,27 @@
       ],
       "teamIds": [
         "13"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-a98f425d77b5fe76",
+      "clusterId": "mv-trade-6442-20261001",
+      "summary": "NBA Trade Rumors: Kyrie Irving, Anthony Davis & Knicks Stars’ Plan Bs",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-08T12:59:14.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/new-york-knicks/nba-trade-rumors-kyrie-irving-anthony-davis-knicks/",
+      "playerIds": [
+        "6442",
+        "6583"
+      ],
+      "teamIds": [
+        "18"
       ],
       "isOriginal": false
     },
