@@ -63,7 +63,7 @@ export function TeamLeadershipSection({
   currentSeason: string;
 }) {
   const org = getTeamLeadership(teamId);
-  const retrievedAt = teamLeadershipRetrievedAt();
+  const retrievedAt = org?.checkedAt ?? teamLeadershipRetrievedAt();
 
   return (
     <section id="leadership" className="scroll-mt-16 flex flex-col gap-3" aria-label="Leadership">

@@ -1,6 +1,6 @@
 /**
  * Deploy-baked owners, executives, head coach, arena and G League affiliate.
- * Written by scripts/build-team-leadership.ts from team Wikipedia infoboxes.
+ * Written nightly by scripts/build-team-leadership.ts from team Wikipedia infoboxes.
  */
 import snapshot from "./team-leadership.json";
 
@@ -10,6 +10,8 @@ export type TeamLeadership = {
   teamId: string;
   abbr: string;
   displayName: string;
+  /** Last date this team's infobox was read successfully. */
+  checkedAt?: string;
   owners: LeadershipPerson[];
   ceo: LeadershipPerson[];
   president: LeadershipPerson[];

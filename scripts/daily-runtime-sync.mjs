@@ -14,7 +14,8 @@
  *
  * Every run also refreshes transactions, news and fan sentiment (Reddit, fan
  * blogs, Bluesky, YouTube), the
- * Movement Center, BRef payrolls, front-office slices and the asset ledger.
+ * Movement Center, BRef payrolls, front-office slices, the asset ledger and
+ * team leadership (owners, executives, coaches).
  * Offseason (before ~Oct 15 / after Finals): only those unless FORCE_DAILY=1.
  *
  *   node scripts/daily-runtime-sync.mjs
@@ -127,6 +128,8 @@ const ORG_STEPS = [
   { label: "front-office-snapshot", cmd: "node", args: ["scripts/build-runtime-front-office-snapshot.mjs"] },
   { label: "asset-ledger", cmd: "node", args: ["scripts/sync-asset-ledger.mjs"] },
   { label: "asset-ledger-snapshot", cmd: "node", args: ["scripts/build-runtime-asset-ledger.mjs"] },
+  // A team that fails to fetch keeps yesterday's entry; a mass change aborts without writing.
+  { label: "team-leadership", cmd: "npx", args: ["tsx", "scripts/build-team-leadership.ts"] },
 ];
 
 async function runOrgSteps() {

@@ -2,6 +2,10 @@
  * Builds src/data/runtime/team-leadership.json: owners, executives, head coach,
  * G League affiliate and arena for all 30 teams.
  *
+ * Runs nightly from scripts/daily-runtime-sync.mjs so front office, coaching
+ * and ownership changes reach the Organization tab on the next deploy. A team
+ * whose fetch fails, or whose fields look broken, keeps its previous entry.
+ *
  * Everything comes from each team's Wikipedia infobox, which cites team and
  * NBA sources. ESPN's roster feed fills in a missing head coach and adds his
  * years of experience when both sources name the same coach. ESPN's venue and
@@ -10,7 +14,7 @@
  *
  *   npx tsx scripts/build-team-leadership.ts
  */
-import { writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
 import type { LeadershipPerson, TeamLeadership } from "../src/data/runtime/team-leadership";
@@ -117,74 +121,172 @@ function sameName(a: string, b: string): boolean {
 }
 
 type EspnTeam = { id: string; abbreviation: string; displayName: string };
+type LeadershipFile = { retrievedAt?: string; teams?: TeamLeadership[] };
 
-async function main() {
-  const listing = await json<{ sports: Array<{ leagues: Array<{ teams: Array<{ team: EspnTeam }> }> }> }>(
-    `${ESPN}/teams`
+/** Fewer fields than this means a failed parse or a blanked page, not a real infobox. */
+const MIN_INFOBOX_FIELDS = 10;
+/** A normal night changes a handful of teams at most; more means the parser or the page format broke. */
+const MAX_TEAMS_CHANGED = 8;
+
+function readPrevious(): LeadershipFile {
+  if (!existsSync(OUT)) return {};
+  try {
+    return JSON.parse(readFileSync(OUT, "utf8")) as LeadershipFile;
+  } catch {
+    return {};
+  }
+}
+
+/** Rejects leftovers of markup, links and vandalism-length strings. */
+function plausible(name: string | undefined | null): boolean {
+  if (!name) return false;
+  return name.length <= 90 && !/[{}[\]|<>]|https?:|www\./i.test(name);
+}
+
+function keepIfBroken<T>(next: T, prev: T | undefined, names: (v: T) => string[], keepWhenEmpty: boolean): T {
+  if (prev === undefined) return next;
+  const list = names(next);
+  if (!list.length) return keepWhenEmpty && names(prev).length ? prev : next;
+  return list.every(plausible) ? next : prev;
+}
+
+const personNames = (ps: LeadershipPerson[]) => ps.map((p) => p.name);
+const one = <T extends { name: string } | null>(v: T) => (v ? [v.name] : []);
+
+/** Role-level differences, for the run log and the mass-change guard. */
+function changes(prev: TeamLeadership | undefined, next: TeamLeadership): string[] {
+  if (!prev) return [`${next.abbr}: new entry`];
+  const roles: Array<[string, (t: TeamLeadership) => string]> = [
+    ["owners", (t) => personNames(t.owners).join("; ")],
+    ["CEO", (t) => personNames(t.ceo).join("; ")],
+    ["president", (t) => personNames(t.president).join("; ")],
+    ["GM", (t) => personNames(t.generalManager).join("; ")],
+    ["head coach", (t) => t.headCoach?.name ?? ""],
+    ["arena", (t) => t.arena?.name ?? ""],
+    ["affiliate", (t) => t.affiliate?.name ?? ""],
+  ];
+  return roles.flatMap(([label, get]) =>
+    get(prev) === get(next) ? [] : [`${next.abbr} ${label}: ${get(prev) || "—"} → ${get(next) || "—"}`]
   );
-  const teams = listing.sports[0]!.leagues[0]!.teams.map((t) => t.team);
-  const out: TeamLeadership[] = [];
+}
 
-  for (const team of teams) {
-    const [roster] = await Promise.all([
-      json<{ coach?: Array<{ firstName: string; lastName: string; experience?: number }> }>(
-        `${ESPN}/teams/${team.id}/roster`
-      ),
-    ]);
+async function buildTeam(team: EspnTeam, today: string): Promise<TeamLeadership | null> {
+  const roster = await json<{ coach?: Array<{ firstName: string; lastName: string; experience?: number }> }>(
+    `${ESPN}/teams/${team.id}/roster`
+  ).catch(() => null);
 
-    const title = WIKI_TITLE_OVERRIDES[team.displayName] ?? team.displayName;
-    const wiki = await json<{ parse?: { title: string; wikitext: string } }>(
-      `${WIKI_API}?action=parse&page=${encodeURIComponent(title)}&prop=wikitext&section=0&redirects=1&format=json&formatversion=2`
-    );
-    await sleep(WIKI_DELAY_MS);
-    const fields = infobox(wiki.parse?.wikitext ?? "");
-
-    const espnCoach = roster.coach?.[0];
-    const espnCoachName = espnCoach ? `${espnCoach.firstName} ${espnCoach.lastName}`.trim() : null;
-    const wikiCoach = people(fields, "coach", "head_coach")[0];
-    const coachName = wikiCoach?.name ?? espnCoachName;
-    const sameCoach = espnCoachName != null && coachName != null && sameName(espnCoachName, coachName);
-    const arena = people(fields, "arena")[0];
-    const location = people(fields, "location")[0];
-    const affiliate = people(fields, "affiliation")[0] ?? null;
-
-    out.push({
-      teamId: team.id,
-      abbr: team.abbreviation,
-      displayName: team.displayName,
-      owners: people(fields, "owner", "owners", "ownership"),
-      ceo: people(fields, "ceo"),
-      president: people(fields, "president", "presidents"),
-      generalManager: people(fields, "gm", "general_manager"),
-      headCoach: coachName
-        ? {
-            name: coachName,
-            espnExperienceYears: sameCoach ? (espnCoach?.experience ?? null) : null,
-            ...(wikiCoach?.wiki ? { wiki: wikiCoach.wiki } : {}),
-          }
-        : null,
-      affiliate,
-      arena: arena
-        ? {
-            name: arena.note ? `${arena.name} (${arena.note})` : arena.name,
-            location: location ? [location.name, location.note].filter(Boolean).join(", ") : null,
-            ...(arena.wiki ? { wiki: arena.wiki } : {}),
-          }
-        : null,
-      sources: {
-        wikipedia: wiki.parse ? `https://en.wikipedia.org/wiki/${encodeURIComponent(wiki.parse.title.replace(/ /g, "_"))}` : null,
-        espn: `https://www.espn.com/nba/team/_/name/${team.abbreviation.toLowerCase()}`,
-      },
-    });
-    console.log(`${team.abbreviation}: coach ${coachName ?? "—"}, ${fields.size} infobox fields`);
+  const title = WIKI_TITLE_OVERRIDES[team.displayName] ?? team.displayName;
+  const wiki = await json<{ parse?: { title: string; wikitext: string } }>(
+    `${WIKI_API}?action=parse&page=${encodeURIComponent(title)}&prop=wikitext&section=0&redirects=1&format=json&formatversion=2`
+  );
+  await sleep(WIKI_DELAY_MS);
+  const fields = infobox(wiki.parse?.wikitext ?? "");
+  if (fields.size < MIN_INFOBOX_FIELDS) {
+    console.warn(`${team.abbreviation}: only ${fields.size} infobox fields, keeping the previous entry`);
+    return null;
   }
 
+  const espnCoach = roster?.coach?.[0];
+  const espnCoachName = espnCoach ? `${espnCoach.firstName} ${espnCoach.lastName}`.trim() : null;
+  const wikiCoach = people(fields, "coach", "head_coach")[0];
+  const coachName = wikiCoach?.name ?? espnCoachName;
+  const sameCoach = espnCoachName != null && coachName != null && sameName(espnCoachName, coachName);
+  if (espnCoachName && wikiCoach && !sameCoach) {
+    console.warn(`${team.abbreviation}: ESPN lists ${espnCoachName} as coach, Wikipedia ${wikiCoach.name}; using Wikipedia`);
+  }
+  const arena = people(fields, "arena")[0];
+  const location = people(fields, "location")[0];
+
+  return {
+    teamId: team.id,
+    abbr: team.abbreviation,
+    displayName: team.displayName,
+    checkedAt: today,
+    owners: people(fields, "owner", "owners", "ownership"),
+    ceo: people(fields, "ceo"),
+    president: people(fields, "president", "presidents"),
+    generalManager: people(fields, "gm", "general_manager"),
+    headCoach: coachName
+      ? {
+          name: coachName,
+          espnExperienceYears: sameCoach ? (espnCoach?.experience ?? null) : null,
+          ...(wikiCoach?.wiki ? { wiki: wikiCoach.wiki } : {}),
+        }
+      : null,
+    affiliate: people(fields, "affiliation")[0] ?? null,
+    arena: arena
+      ? {
+          name: arena.note ? `${arena.name} (${arena.note})` : arena.name,
+          location: location ? [location.name, location.note].filter(Boolean).join(", ") : null,
+          ...(arena.wiki ? { wiki: arena.wiki } : {}),
+        }
+      : null,
+    sources: {
+      wikipedia: wiki.parse ? `https://en.wikipedia.org/wiki/${encodeURIComponent(wiki.parse.title.replace(/ /g, "_"))}` : null,
+      espn: `https://www.espn.com/nba/team/_/name/${team.abbreviation.toLowerCase()}`,
+    },
+  };
+}
+
+async function main() {
+  const today = new Date().toISOString().slice(0, 10);
+  const previous = readPrevious();
+  const prevById = new Map((previous.teams ?? []).map((t) => [t.teamId, t]));
+
+  const listing = await json<{ sports: Array<{ leagues: Array<{ teams: Array<{ team: EspnTeam }> }> }> }>(
+    `${ESPN}/teams`
+  ).catch(() => null);
+  const teams: EspnTeam[] =
+    listing?.sports[0]?.leagues[0]?.teams.map((t) => t.team) ??
+    (previous.teams ?? []).map((t) => ({ id: t.teamId, abbreviation: t.abbr, displayName: t.displayName }));
+  if (!teams.length) throw new Error("No team list from ESPN and no previous file to fall back on");
+
+  const out: TeamLeadership[] = [];
+  const changed: string[] = [];
+  let kept = 0;
+
+  for (const team of teams) {
+    const prev = prevById.get(team.id);
+    const fresh = await buildTeam(team, today).catch((error) => {
+      console.warn(`${team.abbreviation}: ${error instanceof Error ? error.message : String(error)}`);
+      return null;
+    });
+    if (!fresh) {
+      if (prev) {
+        out.push(prev);
+        kept++;
+      }
+      continue;
+    }
+    const next: TeamLeadership = {
+      ...fresh,
+      owners: keepIfBroken(fresh.owners, prev?.owners, personNames, true),
+      ceo: keepIfBroken(fresh.ceo, prev?.ceo, personNames, false),
+      president: keepIfBroken(fresh.president, prev?.president, personNames, false),
+      generalManager: keepIfBroken(fresh.generalManager, prev?.generalManager, personNames, false),
+      headCoach: keepIfBroken(fresh.headCoach, prev?.headCoach ?? undefined, one, true),
+      affiliate: keepIfBroken(fresh.affiliate, prev?.affiliate ?? undefined, one, false),
+      arena: keepIfBroken(fresh.arena, prev?.arena ?? undefined, one, true),
+    };
+    const diff = changes(prev, next);
+    if (diff.length) changed.push(...diff);
+    out.push(next);
+  }
+
+  const teamsChanged = new Set(changed.map((line) => line.split(" ")[0])).size;
+  for (const line of changed) console.log(`changed ${line}`);
+  if (prevById.size && teamsChanged > MAX_TEAMS_CHANGED) {
+    throw new Error(
+      `${teamsChanged} teams changed in one run (limit ${MAX_TEAMS_CHANGED}); not writing. Check the parser against a few infoboxes.`
+    );
+  }
+  if (!out.length) throw new Error("No teams built; not writing");
+
   out.sort((a, b) => a.abbr.localeCompare(b.abbr));
-  writeFileSync(
-    OUT,
-    `${JSON.stringify({ retrievedAt: new Date().toISOString().slice(0, 10), teams: out }, null, 2)}\n`
+  writeFileSync(OUT, `${JSON.stringify({ retrievedAt: today, teams: out }, null, 2)}\n`);
+  console.log(
+    `Wrote ${out.length} teams to ${path.relative(process.cwd(), OUT)}: ${teamsChanged} changed, ${kept} kept from the previous run`
   );
-  console.log(`Wrote ${out.length} teams to ${path.relative(process.cwd(), OUT)}`);
 }
 
 main().catch((error) => {

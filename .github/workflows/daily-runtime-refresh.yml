@@ -186,6 +186,7 @@ jobs:
             src/data/runtime/front-office-snapshot.json \
             data/asset-ledger/v1 \
             src/data/runtime/asset-ledger-snapshot.json \
+            src/data/runtime/team-leadership.json \
             src/data/runtime/play-type-snapshot.json \
             src/data/runtime/on-off-snapshot.json \
             public/runtime/on-off
