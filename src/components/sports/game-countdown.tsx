@@ -7,6 +7,7 @@ import {
   type CountdownResult,
 } from "@/lib/game-countdown";
 import { cn } from "@/lib/utils";
+import { useViewerTimeZone } from "@/components/sports/local-tip-time";
 
 const HOUR_MS = 60 * 60 * 1000;
 
@@ -28,7 +29,8 @@ export function GameCountdown({
   const rootRef = useRef<HTMLSpanElement>(null);
   const [now, setNow] = useState(() => Date.now());
   const [visible, setVisible] = useState(true);
-  const result: CountdownResult = formatGameCountdown(tipOffAt, now);
+  const timeZone = useViewerTimeZone();
+  const result: CountdownResult = formatGameCountdown(tipOffAt, now, timeZone);
   const needsTick =
     Boolean(tipOffAt) &&
     result.phase !== "invalid" &&

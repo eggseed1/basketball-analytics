@@ -23,6 +23,8 @@ import { gameSideBrandKey } from "@/lib/game-team-identity";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { nbaTodayIso } from "@/lib/nba-calendar-date";
 import { cn } from "@/lib/utils";
+import { formatTipTime } from "@/lib/tip-time";
+import { useViewerTimeZone } from "@/components/sports/local-tip-time";
 
 export type GamefeedView = "day" | "week" | "month" | "list";
 
@@ -177,7 +179,8 @@ function WeekMatchupChip({ game }: { game: GameSummary }) {
     game.awayScore != null &&
     game.homeScore != null &&
     game.homeScore < game.awayScore;
-  const tip = splitTipLabel(tipLabel(game));
+  const timeZone = useViewerTimeZone();
+  const tip = splitTipLabel(tipLabel(game, timeZone));
 
   const side = (key: string, label: string, end: boolean) => (
     <div
@@ -214,7 +217,7 @@ function WeekMatchupChip({ game }: { game: GameSummary }) {
             )}
           </span>
           <span className="text-[10px] leading-tight text-muted-foreground">
-            {showScores ? tipLabel(game) : (tip.secondary ?? "")}
+            {showScores ? tipLabel(game, timeZone) : (tip.secondary ?? "")}
           </span>
         </div>
         {side(gameSideBrandKey(game, "home"), home, true)}
@@ -223,7 +226,7 @@ function WeekMatchupChip({ game }: { game: GameSummary }) {
   );
 }
 
-function tipLabel(game: GameSummary): string {
+function tipLabel(game: GameSummary, timeZone: string): string {
   if (isFinalStatus(game.status)) return "Final";
   if (isLiveLikeStatus(game.status)) return statusHeadline(game.status);
   if (
@@ -234,21 +237,13 @@ function tipLabel(game: GameSummary): string {
   ) {
     return statusHeadline(game.status);
   }
+  const tbd = /\bTBD\b/i.test(game.statusDetail ?? "");
+  const local = tbd ? null : formatTipTime(game.tipOffAt, "clockZone", timeZone);
+  if (local) return local;
   if (game.statusDetail) {
     const tip = game.statusDetail.split(" - ").slice(1).join(" - ").trim();
     if (tip) return tip;
     return game.statusDetail;
-  }
-  if (game.tipOffAt) {
-    try {
-      return new Date(game.tipOffAt).toLocaleTimeString("en-US", {
-        hour: "numeric",
-        minute: "2-digit",
-        timeZoneName: "short",
-      });
-    } catch {
-      // fall through
-    }
   }
   return "TBD";
 }

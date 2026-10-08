@@ -9,11 +9,11 @@ import { TransitionLink } from "@/components/continuity/query-nav";
 import { GameCountdown } from "@/components/sports/game-countdown";
 import {
   broadcastHint,
-  formatTipClock,
   resolveSideBrand,
   sideShortName,
 } from "@/components/sports/game-score-card";
 import { LiveIndicator } from "@/components/sports/live-indicator";
+import { LocalTipTime } from "@/components/sports/local-tip-time";
 import type { GameSummary } from "@/data/types";
 import { type } from "@/lib/design-system";
 import { parseTipOffMs } from "@/lib/game-countdown";
@@ -72,19 +72,19 @@ function StatusLine({ game }: { game: GameSummary }) {
     return <span className="font-semibold">{finalLabel(game)}</span>;
   }
   if (isPreTipStatus(game.status) && game.status !== "delayed") {
-    return <PreTipStatus tipOffAt={game.tipOffAt} />;
+    return <PreTipStatus tipOffAt={game.tipOffAt} nbaDate={game.gameDate} />;
   }
   return <span className="font-semibold">{statusHeadline(game.status)}</span>;
 }
 
-function PreTipStatus({ tipOffAt }: { tipOffAt?: string | null }) {
+function PreTipStatus({ tipOffAt, nbaDate }: { tipOffAt?: string | null; nbaDate?: string | null }) {
   const [now] = useState(() => Date.now());
   const tipMs = parseTipOffMs(tipOffAt);
   const soon = tipMs != null && tipMs > now && tipMs - now <= DAY_MS;
   return (
     <span className="inline-flex items-baseline gap-2">
       <span className="font-semibold tabular-nums">
-        {formatTipClock(tipOffAt) ?? "Time TBD"}
+        <LocalTipTime tipOffAt={tipOffAt} style="clock" fallback="Time TBD" nbaDate={nbaDate} />
       </span>
       {soon ? (
         <GameCountdown

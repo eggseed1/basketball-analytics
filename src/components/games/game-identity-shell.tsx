@@ -9,11 +9,11 @@ import { MatchupWashCard } from "@/components/brand/team-wash-card";
 import { GameCountdown } from "@/components/sports/game-countdown";
 import {
   broadcastHint,
-  formatTipClock,
   resolveSideBrand,
   sideShortName,
 } from "@/components/sports/game-score-card";
 import { LiveIndicator } from "@/components/sports/live-indicator";
+import { LocalTipTime } from "@/components/sports/local-tip-time";
 import { finalLabel, gameTypeBadge } from "@/components/sports/score-tile";
 import { useLiveGameRefresh } from "@/components/sports/use-live-scoreboard-refresh";
 import { TeamIdentity } from "@/components/teams/team-identity";
@@ -168,7 +168,7 @@ function PreTipCenter({ game }: { game: GameSummary }) {
   return (
     <div className="flex flex-col items-center gap-1 text-center">
       <span className="text-[24px] font-bold leading-none tabular-nums sm:text-[32px]">
-        {formatTipClock(game.tipOffAt) ?? "Time TBD"}
+        <LocalTipTime tipOffAt={game.tipOffAt} style="clock" fallback="Time TBD" nbaDate={game.gameDate} />
       </span>
       {soon ? (
         <GameCountdown

@@ -15,8 +15,10 @@ export type TeamScheduleRow = {
   dateLabel: string;
   monthKey: string;
   monthLabel: string;
-  /** "7:30 PM ET", "Time TBD", or null once the game has a result. */
+  /** League-time label: "7:30 PM ET", "Time TBD", or null once the game has a result. */
   timeLabel: string | null;
+  /** Tip-off instant while a time is set, so views can show the viewer's zone. */
+  tipOffAt: string | null;
   phase: TeamSchedulePhase;
   /** "Play-In" or "NBA Cup final"; these sit outside the 82-game record. */
   note: string | null;
@@ -157,6 +159,7 @@ export function buildTeamSchedule(
       monthKey: date.slice(0, 7),
       monthLabel: utcDateLabel(date, { month: "long", year: "numeric" }),
       timeLabel: timeLabel(game),
+      tipOffAt: timeLabel(game) && timeLabel(game) !== "Time TBD" ? (game.tipOffAt ?? null) : null,
       phase: phaseOf(game),
       note:
         game.gameType === "play-in"

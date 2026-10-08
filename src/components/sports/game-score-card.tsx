@@ -9,6 +9,7 @@ import { PlayerIdentity } from "@/components/players/player-identity";
 import { TeamIdentity } from "@/components/teams/team-identity";
 import { GameCountdown } from "@/components/sports/game-countdown";
 import { LiveIndicator } from "@/components/sports/live-indicator";
+import { LocalTipTime } from "@/components/sports/local-tip-time";
 import type { GameSummary } from "@/data/types";
 import { textLinkClassName, type } from "@/lib/design-system";
 import { parseTipOffMs } from "@/lib/game-countdown";
@@ -113,33 +114,6 @@ export function sideShortName(
   const parts = display.split(/\s+/).filter(Boolean);
   if (parts.length >= 2) return parts[parts.length - 1]!;
   return display || brand.abbreviation;
-}
-
-export function formatTipClock(tipOffAt?: string | null): string | null {
-  const ms = parseTipOffMs(tipOffAt);
-  if (ms == null) return null;
-  try {
-    return new Intl.DateTimeFormat(undefined, {
-      hour: "numeric",
-      minute: "2-digit",
-    }).format(new Date(ms));
-  } catch {
-    return null;
-  }
-}
-
-function formatTipDate(tipOffAt?: string | null): string | null {
-  const ms = parseTipOffMs(tipOffAt);
-  if (ms == null) return null;
-  try {
-    return new Intl.DateTimeFormat(undefined, {
-      weekday: "short",
-      month: "short",
-      day: "numeric",
-    }).format(new Date(ms));
-  } catch {
-    return null;
-  }
 }
 
 function MatchupSide({
@@ -260,7 +234,7 @@ function MatchupCenter({
     primary = <LiveIndicator />;
     secondary = clock;
   } else if (preTip) {
-    primary = formatTipClock(game.tipOffAt) ?? "TBD";
+    primary = <LocalTipTime tipOffAt={game.tipOffAt} style="clock" fallback="TBD" nbaDate={game.gameDate} />;
     if (watch) {
       secondary = watch;
     } else {
@@ -272,7 +246,7 @@ function MatchupCenter({
       secondary = soon ? (
         <GameCountdown tipOffAt={game.tipOffAt} variant="line" />
       ) : (
-        formatTipDate(game.tipOffAt)
+        <LocalTipTime tipOffAt={game.tipOffAt} style="date" />
       );
     }
   } else {

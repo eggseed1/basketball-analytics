@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+
 import { TeamScheduleView } from "@/components/teams/team-schedule-view";
 import { type } from "@/lib/design-system";
 import { teamPageHref } from "@/lib/team-destination";
@@ -5,6 +7,7 @@ import { buildTeamSchedule, regularSeasonGapNote } from "@/lib/team-schedule";
 import { TransitionLink } from "@/components/continuity/query-nav";
 import { cn } from "@/lib/utils";
 import { ScheduleCalendar } from "@/components/teams/viz/schedule-calendar";
+import { LocalTipTime } from "@/components/sports/local-tip-time";
 
 const TILE =
   "frost-surface rounded-lg px-3 py-2.5 shadow-[inset_0_1px_0_rgb(255_255_255/0.55)] dark:shadow-[inset_0_1px_0_rgb(255_255_255/0.07)]";
@@ -16,7 +19,7 @@ function SummaryTile({
 }: {
   label: string;
   value: string;
-  hint?: string;
+  hint?: ReactNode;
 }) {
   return (
     <div className={TILE}>
@@ -122,7 +125,13 @@ export function TeamScheduleIsland({
             }
             hint={
               next
-                ? [next.dateLabel, next.timeLabel].filter(Boolean).join(" · ")
+                ? (
+                    <>
+                      <LocalTipTime tipOffAt={next.tipOffAt} style="date" fallback={next.dateLabel} />
+                      {next.tipOffAt || next.timeLabel ? " · " : null}
+                      <LocalTipTime tipOffAt={next.tipOffAt} style="clockZone" fallback={next.timeLabel} />
+                    </>
+                  )
                 : "No upcoming games on file"
             }
           />

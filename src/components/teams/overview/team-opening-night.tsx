@@ -2,6 +2,7 @@ import type { CSSProperties } from "react";
 
 import { TeamLogo } from "@/components/brand/team-logo";
 import { TransitionLink } from "@/components/continuity/query-nav";
+import { LocalTipTime } from "@/components/sports/local-tip-time";
 import { type, sectionLinkClassName } from "@/lib/design-system";
 import { teamPageHref } from "@/lib/team-destination";
 import type { ScheduleFacts } from "@/lib/team-overview-data";
@@ -17,13 +18,6 @@ function dateLabel(iso: string) {
     day: "numeric",
     timeZone: "UTC",
   });
-}
-
-function tipLabel(tipOffAt: string | null) {
-  if (!tipOffAt) return null;
-  const d = new Date(tipOffAt);
-  if (Number.isNaN(d.getTime())) return null;
-  return `${d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", timeZone: "America/New_York" })} ET`;
 }
 
 export function TeamOpeningNight({
@@ -56,8 +50,14 @@ export function TeamOpeningNight({
                     : "Season underway"}
               </h2>
               <p className={cn(type.body, "mt-1 text-muted-foreground")}>
-                {opener.home ? "Home vs" : "At"} the {opener.opponentName} · {dateLabel(opener.date)}
-                {tipLabel(opener.tipOffAt) ? ` · ${tipLabel(opener.tipOffAt)}` : ""}
+                {opener.home ? "Home vs" : "At"} the {opener.opponentName} ·{" "}
+                <LocalTipTime tipOffAt={opener.tipOffAt} style="date" fallback={dateLabel(opener.date)} />
+                {opener.tipOffAt ? (
+                  <>
+                    {" · "}
+                    <LocalTipTime tipOffAt={opener.tipOffAt} style="clockZone" />
+                  </>
+                ) : null}
               </p>
             </>
           ) : (

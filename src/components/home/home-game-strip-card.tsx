@@ -14,7 +14,8 @@ import {
   gameSideBrandKey,
   gameSideCanonicalTeamId,
 } from "@/lib/game-team-identity";
-import { parseTipOffMs } from "@/lib/game-countdown";
+import { formatTipTime } from "@/lib/tip-time";
+import { useViewerTimeZone } from "@/components/sports/local-tip-time";
 import {
   isLiveLikeStatus,
   isPreTipStatus,
@@ -57,28 +58,13 @@ function resolveSideBrand(
   };
 }
 
-/** League time (US Eastern), so the server and browser render the same label. */
-function formatStripWhen(tipOffAt: string | null | undefined, withDate: boolean): string | null {
-  const ms = parseTipOffMs(tipOffAt);
-  if (ms == null) return null;
-  try {
-    const at = new Date(ms);
-    const timeZone = "America/New_York";
-    const day = new Intl.DateTimeFormat("en-US", {
-      timeZone,
-      weekday: "short",
-      ...(withDate ? { month: "short", day: "numeric" } : {}),
-    }).format(at);
-    const time = new Intl.DateTimeFormat("en-US", {
-      timeZone,
-      timeZoneName: "short",
-      hour: "numeric",
-      minute: "2-digit",
-    }).format(at);
-    return withDate ? `${day}, ${time}` : `${day} ${time}`;
-  } catch {
-    return null;
-  }
+/** "Wed, Oct 8, 7:30 PM PDT" before tip, "Wed 7:30 PM PDT" once final, in the viewer's zone. */
+function formatStripWhen(
+  tipOffAt: string | null | undefined,
+  withDate: boolean,
+  timeZone: string
+): string | null {
+  return formatTipTime(tipOffAt, withDate ? "dateClockZone" : "dayClockZone", timeZone);
 }
 
 function TeamRow({
@@ -132,6 +118,7 @@ export function HomeGameStripCard({ game }: { game: GameSummary }) {
     gameSideBrandKey(game, "away"),
     gameSideBrandKey(game, "home")
   );
+  const timeZone = useViewerTimeZone();
   const live = isLiveLikeStatus(game.status);
   const preTip = isPreTipStatus(game.status);
   const showScores = shouldDisplayScores({
@@ -145,9 +132,9 @@ export function HomeGameStripCard({ game }: { game: GameSummary }) {
     displayClock: game.displayClock,
     statusDetail: game.statusDetail,
   });
-  const finalAt = game.status === "final" ? formatStripWhen(game.tipOffAt, false) : null;
+  const finalAt = game.status === "final" ? formatStripWhen(game.tipOffAt, false, timeZone) : null;
   const when = preTip
-    ? formatStripWhen(game.tipOffAt, true) ?? statusHeadline(game.status)
+    ? formatStripWhen(game.tipOffAt, true, timeZone) ?? statusHeadline(game.status)
     : statusHeadline(game.status);
   const winner =
     game.status === "final" && game.homeScore !== game.awayScore

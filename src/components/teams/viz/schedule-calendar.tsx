@@ -1,9 +1,13 @@
+"use client";
+
 import type { CSSProperties } from "react";
 
 import { TeamLogo } from "@/components/brand/team-logo";
 import { TransitionLink } from "@/components/continuity/query-nav";
 import { type } from "@/lib/design-system";
 import type { TeamScheduleRow } from "@/lib/team-schedule";
+import { scheduleTimeLabel } from "@/lib/tip-time";
+import { useViewerTimeZone } from "@/components/sports/local-tip-time";
 import { cn } from "@/lib/utils";
 
 import { LegendSwatch, LOSS, signed, VizCard, WIN } from "./viz-kit";
@@ -26,7 +30,7 @@ function cellStyle(row: TeamScheduleRow): CSSProperties {
   return { boxShadow: "inset 0 0 0 1.5px var(--viz-accent)", background: "color-mix(in oklab, var(--viz-accent) 8%, transparent)" };
 }
 
-function tipFor(row: TeamScheduleRow): { tip: string; sub: string } {
+function tipFor(row: TeamScheduleRow, timeZone: string): { tip: string; sub: string } {
   const side = row.home ? "vs" : "at";
   const tip =
     row.result && row.teamScore != null && row.oppScore != null
@@ -35,7 +39,7 @@ function tipFor(row: TeamScheduleRow): { tip: string; sub: string } {
   const extra = [
     row.result && row.teamScore != null && row.oppScore != null
       ? `margin ${signed(row.teamScore - row.oppScore, 0)}`
-      : row.timeLabel,
+      : scheduleTimeLabel(row, timeZone),
     row.backToBack ? "second night of a back-to-back" : null,
     row.note ?? (row.phase !== "regular" ? row.phase : null),
   ].filter(Boolean);
@@ -57,6 +61,7 @@ export function ScheduleCalendar({
   season: string;
   teamKey: string;
 }) {
+  const timeZone = useViewerTimeZone();
   if (!rows.length) return null;
   const byDay = new Map<string, TeamScheduleRow[]>();
   for (const row of rows) {
@@ -138,7 +143,7 @@ export function ScheduleCalendar({
                       </span>
                     );
                   }
-                  const { tip, sub } = tipFor(row);
+                  const { tip, sub } = tipFor(row, timeZone);
                   return (
                     <TransitionLink
                       key={key}

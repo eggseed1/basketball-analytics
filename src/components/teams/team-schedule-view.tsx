@@ -5,10 +5,9 @@ import { useMemo, useState } from "react";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { TransitionLink } from "@/components/continuity/query-nav";
 import { type } from "@/lib/design-system";
-import type {
-  TeamSchedulePhase,
-  TeamScheduleRow,
-} from "@/lib/team-schedule";
+import type { TeamSchedulePhase, TeamScheduleRow } from "@/lib/team-schedule";
+import { scheduleTimeLabel } from "@/lib/tip-time";
+import { useViewerTimeZone } from "@/components/sports/local-tip-time";
 import { cn } from "@/lib/utils";
 
 type PhaseFilter = "all" | TeamSchedulePhase;
@@ -83,6 +82,7 @@ function Tag({
 }
 
 function RowOutcome({ row }: { row: TeamScheduleRow }) {
+  const timeZone = useViewerTimeZone();
   const statusLabel = STATUS_LABEL[row.status];
   if (row.result && row.teamScore != null && row.oppScore != null) {
     return (
@@ -117,7 +117,7 @@ function RowOutcome({ row }: { row: TeamScheduleRow }) {
   }
   return (
     <span className="tabular-nums text-muted-foreground">
-      {row.timeLabel ?? "—"}
+      {scheduleTimeLabel(row, timeZone) ?? "—"}
     </span>
   );
 }
