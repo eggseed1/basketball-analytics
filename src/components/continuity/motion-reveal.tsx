@@ -31,6 +31,9 @@ const POSES: Array<[selector: string, pose: Pose]> = [
 
 const TARGETS = POSES.map(([selector]) => selector).join(", ");
 
+const MAX_DELAY_MS = 120;
+const BATCH_STEP_MS = 30;
+
 function seconds(value: string) {
   return value.endsWith("ms") ? parseFloat(value) : parseFloat(value) * 1000;
 }
@@ -66,14 +69,26 @@ export function MotionReveal() {
 
     const seen = new WeakSet<Element>();
     const waiting = new Map<Element, Animation[]>();
-    const io = new IntersectionObserver((entries) => {
-      for (const entry of entries) {
-        if (!entry.isIntersecting) continue;
-        for (const animation of waiting.get(entry.target) ?? []) animation.play();
-        waiting.delete(entry.target);
-        io.unobserve(entry.target);
-      }
-    });
+    // The CSS stagger counts from the top of a list, so row 40 would wait most
+    // of a second after scrolling in. Here the stagger restarts with each batch
+    // that enters together, and the CSS delay only keeps its first beat.
+    const io = new IntersectionObserver(
+      (entries) => {
+        const entering = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top || a.boundingClientRect.left - b.boundingClientRect.left);
+        entering.forEach((entry, k) => {
+          for (const animation of waiting.get(entry.target) ?? []) {
+            const delay = Number(animation.effect?.getTiming().delay ?? 0);
+            animation.effect?.updateTiming({ delay: Math.min(delay, MAX_DELAY_MS) + Math.min(k, 10) * BATCH_STEP_MS });
+            animation.play();
+          }
+          waiting.delete(entry.target);
+          io.unobserve(entry.target);
+        });
+      },
+      { rootMargin: "0px 0px 64px 0px" },
+    );
 
     // Start poses that collapse to zero size or full clip never intersect,
     // so those elements watch the svg or track that holds them.
@@ -84,11 +99,8 @@ export function MotionReveal() {
           ? (el.parentElement ?? el)
           : el;
 
-    const hold = (el: Element) => {
-      const entry = POSES.find(([selector]) => el.matches(selector));
-      if (!entry) return;
-      const style = getComputedStyle(el);
-      const animation = el.animate([{ ...entry[1](el, style), offset: 0 }], timing(style));
+    const hold = (el: Element, pose: Keyframe, options: KeyframeAnimationOptions) => {
+      const animation = el.animate([{ ...pose, offset: 0 }], options);
       animation.pause();
       const proxy = proxyFor(el);
       const list = waiting.get(proxy);
@@ -117,23 +129,46 @@ export function MotionReveal() {
     };
 
     let frame = 0;
-    const scan = () => {
-      frame = 0;
+    let added: Element[] = [];
+    const candidates = (from: Element[]) => {
+      const out: Element[] = [];
+      for (const node of from) {
+        if (!node.isConnected) continue;
+        if (node.matches(TARGETS)) out.push(node);
+        out.push(...node.querySelectorAll(TARGETS));
+      }
+      return out;
+    };
+    // All reads first, then all writes: each animate() dirties style, and a
+    // read after it would force a fresh style and layout pass per element.
+    const scan = (from: Element[]) => {
       const fold = window.innerHeight;
       const cache = new Map<Element, boolean>();
-      for (const el of root.querySelectorAll(TARGETS)) {
+      const plan: Array<[Element, Keyframe, KeyframeAnimationOptions]> = [];
+      for (const el of candidates(from)) {
         if (seen.has(el)) continue;
         seen.add(el);
         // Hidden elements get their @starting-style entry when they are shown.
-        if (el.checkVisibility() && el.getBoundingClientRect().top > fold && !scrolls(el, cache)) hold(el);
+        if (!el.checkVisibility() || el.getBoundingClientRect().top <= fold || scrolls(el, cache)) continue;
+        const entry = POSES.find(([selector]) => el.matches(selector));
+        if (!entry) continue;
+        const style = getComputedStyle(el);
+        plan.push([el, entry[1](el, style), timing(style)]);
       }
+      for (const [el, pose, options] of plan) hold(el, pose, options);
     };
-    const schedule = () => {
-      if (!frame) frame = requestAnimationFrame(scan);
+    const flush = () => {
+      frame = 0;
+      const batch = added;
+      added = [];
+      scan(batch);
     };
+    const mo = new MutationObserver((records) => {
+      for (const record of records) for (const node of record.addedNodes) if (node instanceof Element) added.push(node);
+      if (added.length && !frame) frame = requestAnimationFrame(flush);
+    });
 
-    scan();
-    const mo = new MutationObserver(schedule);
+    scan([root]);
     mo.observe(root, { childList: true, subtree: true });
 
     return () => {

@@ -1980,10 +1980,17 @@ svg [data-motion-dot] {
   }
 }
 
-/* Set by ScrollHoverGuard during page scroll. The root keeps hit testing, so
-   the wheel still scrolls the page. */
-html[data-scrolling] body {
+/* ScrollHoverGuard's shield. It is not scrollable, so the wheel still scrolls
+   the page underneath it. */
+[data-scroll-shield] {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647;
   pointer-events: none;
+}
+
+[data-scroll-shield][data-active] {
+  pointer-events: auto;
 }
 
 @media (hover: hover) {

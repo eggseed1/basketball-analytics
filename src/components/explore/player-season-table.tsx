@@ -1,9 +1,12 @@
 "use client";
 
 import {
+  memo,
+  startTransition,
   useCallback,
   useEffect,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -186,13 +189,17 @@ export function PlayerSeasonTable({
       if (requestId !== requestIdRef.current) return;
       const seen = new Set(rows.map(rowKey));
       const extra = next.rows.filter((row) => !seen.has(rowKey(row)));
-      if (!extra.length) {
-        setHasMore(false);
-      } else {
-        setRows((prev) => [...prev, ...extra]);
-        setHasMore(next.page < next.pageCount);
-      }
-      setLoadedPage(next.page);
+      // A page is 100 rows with two preview cards each. As a transition React
+      // renders them in slices between frames instead of stalling the scroll.
+      startTransition(() => {
+        if (!extra.length) {
+          setHasMore(false);
+        } else {
+          setRows((prev) => [...prev, ...extra]);
+          setHasMore(next.page < next.pageCount);
+        }
+        setLoadedPage(next.page);
+      });
     } catch (err) {
       if (requestId !== requestIdRef.current) return;
       setLoadError(
@@ -219,10 +226,19 @@ export function PlayerSeasonTable({
     return () => io.disconnect();
   }, [hasMore, loadMore]);
 
-  const views = parsePlayerBoardViews(searchParams.get("view"));
+  const viewParam = searchParams.get("view");
   const rate = parsePlayerBoardRate(searchParams.get("rate"));
-  const flags = { hasDarko, hasRaptor, hasDrbl, hasHustle };
-  const groups = buildPlayerBoardGroups(views, flags);
+  // Rows are memoized, so groups must keep its identity while more rows load.
+  const groups = useMemo(
+    () =>
+      buildPlayerBoardGroups(parsePlayerBoardViews(viewParam), {
+        hasDarko,
+        hasRaptor,
+        hasDrbl,
+        hasHustle,
+      }),
+    [viewParam, hasDarko, hasRaptor, hasDrbl, hasHustle]
+  );
   // Always show category band headers — including a single category and the
   // partitioned "all stats" layout.
   const grouped = groups.length > 0;
@@ -230,7 +246,7 @@ export function PlayerSeasonTable({
   // Stats pane: spacer + Tm + Pos + stats (Player lives on the glass overlay).
   const colCount = 3 + statCount;
 
-  const syncFrozenRowHeights = useCallback(() => {
+  const syncFrozenRowHeights = useCallback((from = 0) => {
     const table = statsTableRef.current;
     const frozen = frozenColRef.current;
     if (!table || !frozen) return;
@@ -245,7 +261,7 @@ export function PlayerSeasonTable({
     // The headshot can make a frozen row taller than its table row (phones), so
     // both sides take the larger natural height. Clear, read all, then write all.
     const pairs: Array<[HTMLTableRowElement, HTMLElement]> = [];
-    for (let i = 0; i < frozenRows.length; i++) {
+    for (let i = from; i < frozenRows.length; i++) {
       const tr = bodyRows.item(i);
       const fr = frozenRows[i];
       if (!tr || !fr) continue;
@@ -262,14 +278,36 @@ export function PlayerSeasonTable({
     });
   }, []);
 
+  // Loading more appends rows without touching the ones above, so only the new
+  // rows need measuring. A new first row or column set means a fresh list.
+  const syncedRef = useRef<{
+    first?: ExplorePlayerBoardRow;
+    groups?: BoardGroup[];
+    count: number;
+  }>({ count: 0 });
   useLayoutEffect(() => {
-    syncFrozenRowHeights();
+    const prev = syncedRef.current;
+    const appended =
+      prev.first === rows[0] &&
+      prev.groups === groups &&
+      rows.length >= prev.count;
+    syncFrozenRowHeights(appended ? prev.count : 0);
+    syncedRef.current = { first: rows[0], groups, count: rows.length };
+  }, [syncFrozenRowHeights, rows, groups]);
+
+  useLayoutEffect(() => {
     const table = statsTableRef.current;
     if (!table || typeof ResizeObserver === "undefined") return;
-    const ro = new ResizeObserver(() => syncFrozenRowHeights());
+    let width = -1;
+    const ro = new ResizeObserver(([entry]) => {
+      const next = entry?.contentRect.width ?? 0;
+      if (next === width) return;
+      width = next;
+      syncFrozenRowHeights();
+    });
     ro.observe(table);
     return () => ro.disconnect();
-  }, [syncFrozenRowHeights, rows, grouped, groups]);
+  }, [syncFrozenRowHeights]);
 
   function toggleSort(key: SortKey) {
     if (sortKey === key) {
@@ -332,48 +370,9 @@ export function PlayerSeasonTable({
               </button>
             </div>
             <div className="flex min-h-0 flex-col">
-              {rows.map((player) => {
-                const { isMultiTeam, label: teamLabel, teamKey } =
-                  boardTeamPresentation(player);
-                return (
-                  <div
-                    key={rowKey(player)}
-                    data-frozen-row
-                    className="flex items-center whitespace-nowrap px-1 py-1 sm:px-2 sm:py-2"
-                  >
-                    <PlayerIdentity
-                      playerId={player.playerId}
-                      name={player.playerName}
-                      teamKey={isMultiTeam ? undefined : teamKey}
-                      teamLabel={teamLabel}
-                      position={player.position}
-                      season={player.season}
-                      variant="compact"
-                      className="w-max max-w-none"
-                      nameClassName="w-max max-w-none gap-1.5 sm:gap-2"
-                    >
-                      <PlayerHeadshot
-                        playerId={player.playerId}
-                        name={player.playerName}
-                        teamKey={isMultiTeam ? undefined : teamKey}
-                        size="sm"
-                        className="h-6 w-6 sm:h-9 sm:w-9"
-                        portraitUrl={player.portraitUrl}
-                        registryOnly={Boolean(player.portraitUrl)}
-                      />
-                      <span
-                        className={cn(
-                          "board-name whitespace-nowrap",
-                          boardType.name,
-                          textLinkClassName
-                        )}
-                      >
-                        {player.playerName}
-                      </span>
-                    </PlayerIdentity>
-                  </div>
-                );
-              })}
+              {rows.map((player) => (
+                <FrozenRow key={rowKey(player)} player={player} />
+              ))}
             </div>
           </div>
         }
@@ -467,69 +466,16 @@ export function PlayerSeasonTable({
                 </TableCell>
               </TableRow>
             ) : (
-              rows.map((player) => {
-                const { isMultiTeam, label: teamLabel, teamKey } =
-                  boardTeamPresentation(player);
-                return (
-                  <TableRow
-                    key={rowKey(player)}
-                    className="h-7 hover:bg-transparent sm:h-[52px]"
-                  >
-                    <TableCell
-                      aria-hidden
-                      className="board-frozen-spacer sticky left-0 z-10"
-                    >
-                      <span className="board-frozen-spacer-slot" />
-                    </TableCell>
-                    <TableCell>
-                      {isMultiTeam ? (
-                        <span
-                          className={cn(
-                            "board-tm font-semibold uppercase tracking-wide tabular-nums",
-                            boardType.cell
-                          )}
-                          title="Multiple teams this season"
-                        >
-                          {teamLabel}
-                        </span>
-                      ) : (
-                        <TeamIdentity
-                          teamKey={teamKey}
-                          label={teamLabel}
-                          season={player.season}
-                          className="inline-flex min-w-0"
-                          nameClassName={cn(
-                            "board-tm inline-flex items-center font-semibold uppercase tracking-wide",
-                            boardType.cell
-                          )}
-                        >
-                          <TeamLogo
-                            teamKey={teamKey}
-                            size="xs"
-                            textAbbr={teamLabel}
-                          />
-                          <span className="sr-only">{teamLabel}</span>
-                        </TeamIdentity>
-                      )}
-                    </TableCell>
-                    <TableCell className={boardType.cell}>
-                      {player.position ?? "-"}
-                    </TableCell>
-                    {groups.flatMap((group, gi) =>
-                      group.keys.map((col, ki) => (
-                        <StatCell
-                          key={`${group.id}-${col}`}
-                          col={col}
-                          player={player}
-                          rate={rate}
-                          groupedStart={grouped && ki === 0}
-                          seasonAwaitingGames={seasonAwaitingGames}
-                        />
-                      ))
-                    )}
-                  </TableRow>
-                );
-              })
+              rows.map((player) => (
+                <StatRow
+                  key={rowKey(player)}
+                  player={player}
+                  groups={groups}
+                  grouped={grouped}
+                  rate={rate}
+                  seasonAwaitingGames={seasonAwaitingGames}
+                />
+              ))
             )}
           </TableBody>
         </Table>
@@ -563,6 +509,121 @@ export function PlayerSeasonTable({
     </section>
   );
 }
+
+const FrozenRow = memo(function FrozenRow({
+  player,
+}: {
+  player: ExplorePlayerBoardRow;
+}) {
+  const { isMultiTeam, label: teamLabel, teamKey } =
+    boardTeamPresentation(player);
+  return (
+    <div
+      data-frozen-row
+      className="flex items-center whitespace-nowrap px-1 py-1 sm:px-2 sm:py-2"
+    >
+      <PlayerIdentity
+        playerId={player.playerId}
+        name={player.playerName}
+        teamKey={isMultiTeam ? undefined : teamKey}
+        teamLabel={teamLabel}
+        position={player.position}
+        season={player.season}
+        variant="compact"
+        className="w-max max-w-none"
+        nameClassName="w-max max-w-none gap-1.5 sm:gap-2"
+      >
+        <PlayerHeadshot
+          playerId={player.playerId}
+          name={player.playerName}
+          teamKey={isMultiTeam ? undefined : teamKey}
+          size="sm"
+          className="h-6 w-6 sm:h-9 sm:w-9"
+          portraitUrl={player.portraitUrl}
+          registryOnly={Boolean(player.portraitUrl)}
+        />
+        <span
+          className={cn(
+            "board-name whitespace-nowrap",
+            boardType.name,
+            textLinkClassName
+          )}
+        >
+          {player.playerName}
+        </span>
+      </PlayerIdentity>
+    </div>
+  );
+});
+
+const StatRow = memo(function StatRow({
+  player,
+  groups,
+  grouped,
+  rate,
+  seasonAwaitingGames,
+}: {
+  player: ExplorePlayerBoardRow;
+  groups: BoardGroup[];
+  grouped: boolean;
+  rate: PlayerBoardRate;
+  seasonAwaitingGames: boolean;
+}) {
+  const { isMultiTeam, label: teamLabel, teamKey } =
+    boardTeamPresentation(player);
+  return (
+    <TableRow className="h-7 hover:bg-transparent sm:h-[52px]">
+      <TableCell
+        aria-hidden
+        className="board-frozen-spacer sticky left-0 z-10"
+      >
+        <span className="board-frozen-spacer-slot" />
+      </TableCell>
+      <TableCell>
+        {isMultiTeam ? (
+          <span
+            className={cn(
+              "board-tm font-semibold uppercase tracking-wide tabular-nums",
+              boardType.cell
+            )}
+            title="Multiple teams this season"
+          >
+            {teamLabel}
+          </span>
+        ) : (
+          <TeamIdentity
+            teamKey={teamKey}
+            label={teamLabel}
+            season={player.season}
+            className="inline-flex min-w-0"
+            nameClassName={cn(
+              "board-tm inline-flex items-center font-semibold uppercase tracking-wide",
+              boardType.cell
+            )}
+          >
+            <TeamLogo teamKey={teamKey} size="xs" textAbbr={teamLabel} />
+            <span className="sr-only">{teamLabel}</span>
+          </TeamIdentity>
+        )}
+      </TableCell>
+      <TableCell className={boardType.cell}>
+        {player.position ?? "-"}
+      </TableCell>
+      {groups.flatMap((group) =>
+        group.keys.map((col, ki) => (
+          <StatCell
+            key={`${group.id}-${col}`}
+            col={col}
+            player={player}
+            rate={rate}
+            groupedStart={grouped && ki === 0}
+            seasonAwaitingGames={seasonAwaitingGames}
+          />
+        ))
+      )}
+    </TableRow>
+  );
+});
 
 type TableCol = PlayerSeasonSortKey;
 
