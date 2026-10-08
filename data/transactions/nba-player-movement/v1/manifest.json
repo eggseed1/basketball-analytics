@@ -2,7 +2,7 @@
   "source": "nba-player-movement",
   "datasetVersion": "1.0",
   "sourceUrl": "https://www.nba.com/players/transactions",
-  "builtAt": "2026-10-08T04:32:36.926Z",
+  "builtAt": "2026-10-08T05:39:50.366Z",
   "sourceRowCount": 9943,
   "eventCount": 9145,
   "alreadyCoveredCount": 4589,
