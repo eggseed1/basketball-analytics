@@ -32,7 +32,9 @@ const POSES: Array<[selector: string, pose: Pose]> = [
 const TARGETS = POSES.map(([selector]) => selector).join(", ");
 
 const MAX_DELAY_MS = 120;
-const BATCH_STEP_MS = 30;
+/** Same beat and cap as the CSS list stagger (`--n * 45ms`, `--n` ≤ 12). */
+const BATCH_STEP_MS = 45;
+const BATCH_MAX_STEPS = 12;
 
 function seconds(value: string) {
   return value.endsWith("ms") ? parseFloat(value) : parseFloat(value) * 1000;
@@ -71,16 +73,20 @@ export function MotionReveal() {
     const waiting = new Map<Element, Animation[]>();
     // The CSS stagger counts from the top of a list, so row 40 would wait most
     // of a second after scrolling in. Here the stagger restarts with each batch
-    // that enters together, and the CSS delay only keeps its first beat.
+    // that enters together, and the CSS delay only keeps its first beat. Marks
+    // inside one chart share a target and keep their own CSS sequence.
     const io = new IntersectionObserver(
       (entries) => {
         const entering = entries
           .filter((entry) => entry.isIntersecting)
           .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top || a.boundingClientRect.left - b.boundingClientRect.left);
         entering.forEach((entry, k) => {
-          for (const animation of waiting.get(entry.target) ?? []) {
+          const animations = waiting.get(entry.target) ?? [];
+          const batchDelay = Math.min(k, BATCH_MAX_STEPS) * BATCH_STEP_MS;
+          for (const animation of animations) {
             const delay = Number(animation.effect?.getTiming().delay ?? 0);
-            animation.effect?.updateTiming({ delay: Math.min(delay, MAX_DELAY_MS) + Math.min(k, 10) * BATCH_STEP_MS });
+            const own = animations.length > 1 ? delay : Math.min(delay, MAX_DELAY_MS);
+            animation.effect?.updateTiming({ delay: own + batchDelay });
             animation.play();
           }
           waiting.delete(entry.target);
