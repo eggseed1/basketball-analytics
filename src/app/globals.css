@@ -392,6 +392,27 @@
   --glass-liquid-inset: inset 0 1px 0 rgba(255, 255, 255, 0.07);
 }
 
+/* ONE SHOT game tokens, mapped onto the site palette. Accents are text-safe on cards in both themes. */
+.os-scope {
+  --os-page: color-mix(in oklab, var(--foreground) 4%, var(--card));
+  --os-panel: var(--card);
+  --os-panel2: var(--secondary);
+  --os-border: var(--border);
+  --os-text: var(--foreground);
+  --os-dim: var(--muted-foreground);
+  --os-teal: #0071e3;
+  --os-green: #1f8a3b;
+  --os-amber: #b45d00;
+  --os-rose: #d6245f;
+}
+
+.dark .os-scope {
+  --os-teal: #3d94ff;
+  --os-green: #3fd26a;
+  --os-amber: #ffa726;
+  --os-rose: #ff6482;
+}
+
 /* Era themes keep their own squarer corners. */
 .tm-scope {
   --card-radius: var(--radius-md);

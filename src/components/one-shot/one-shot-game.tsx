@@ -26,6 +26,8 @@ import { BirthReveal } from "./birth-reveal";
 import { EndReport } from "./end-report";
 import { DecisionPanel, DecisionWaiting, FocusPanel, LifeRecord, LifeScene } from "./panels-center";
 import { FamilyAndResources, IdentityCard, PhysiquePanel, StatusPanel } from "./panels-left";
+import { DraftPanel, draftPanelVisible } from "./draft-panel";
+import { JerseyWall } from "./jersey-wall";
 import { CareerMap, ScoutingReportPanel, SameGeneration, YourRoute } from "./panels-right";
 import { AfterPanel } from "./after-panel";
 import { MoneyPanel } from "./money-panel";
@@ -33,7 +35,7 @@ import { StatsPanel } from "./stats-panel";
 import { SourcesDrawer } from "./sources-drawer";
 import { StartScreen, type StartOptions } from "./start-screen";
 import { TimeBar, type UiPause } from "./time-bar";
-import { ageLabel, ExpandButton, OS_VARS } from "./ui";
+import { ageLabel, EYEBROW, ExpandButton } from "./ui";
 
 const subscribeNoop = () => () => {};
 
@@ -105,23 +107,18 @@ export function OneShotGame() {
   return (
     <div
       ref={wrapRef}
-      style={OS_VARS}
-      className={
-        expanded
-          ? "fixed inset-0 z-[80] overflow-y-auto overscroll-contain bg-[var(--os-page)] [color-scheme:dark]"
-          : "mx-auto w-full max-w-[1700px] sm:px-5"
-      }
+      className={cn("os-scope", expanded ? "fixed inset-0 z-[80] overflow-y-auto overscroll-contain bg-background" : "mx-auto w-full max-w-[1700px] sm:px-5")}
     >
       <div
         data-os-frame
         className={cn(
-          "flex flex-col bg-[var(--os-page)] text-[var(--os-text)] [color-scheme:dark]",
+          "flex flex-col text-[var(--os-text)]",
           expanded
             ? "mx-auto min-h-full w-full max-w-[1700px] pb-[max(0.75rem,env(safe-area-inset-bottom))] pl-[max(0.75rem,env(safe-area-inset-left))] pr-[max(0.75rem,env(safe-area-inset-right))] pt-[max(0.75rem,env(safe-area-inset-top))] sm:px-5 sm:pb-5 sm:pt-4 md:has-[[data-os-play]]:h-full"
-            : "min-h-[calc(100dvh-var(--os-chrome,0px)-1.5rem)] scroll-mt-[calc(var(--os-chrome,0px)+0.75rem)] p-3 sm:rounded-[8px] sm:p-5 md:has-[[data-os-play]]:h-[calc(100dvh-var(--os-chrome,0px)-1.5rem)] md:has-[[data-os-play]]:min-h-[540px]",
+            : "min-h-[calc(100dvh-var(--os-chrome,0px)-1.5rem)] scroll-mt-[calc(var(--os-chrome,0px)+0.75rem)] px-3 pb-3 sm:px-0 sm:pb-5 md:has-[[data-os-play]]:h-[calc(100dvh-var(--os-chrome,0px)-1.5rem)] md:has-[[data-os-play]]:min-h-[540px]",
         )}
       >
-        {mounted ? <Game expanded={expanded} onExpand={toggleExpanded} /> : <p className="p-6 font-mono text-[12px] text-[var(--os-dim)]">Loading ONE SHOT…</p>}
+        {mounted ? <Game expanded={expanded} onExpand={toggleExpanded} /> : <p className="p-6 text-[13px] text-[var(--os-dim)]">Loading ONE SHOT…</p>}
       </div>
     </div>
   );
@@ -414,7 +411,7 @@ function Game({ expanded, onExpand }: { expanded: boolean; onExpand: () => void 
     <div ref={rootRef} className="flex min-h-0 flex-1 flex-col">
       {screen !== "play" ? (
         <div className="mb-3 flex items-center gap-3 sm:mb-4">
-          {expanded ? <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--os-dim)]">ONE SHOT</p> : null}
+          {expanded ? <p className={EYEBROW}>ONE SHOT</p> : null}
           <ExpandButton expanded={expanded} onClick={onExpand} showLabel className="ml-auto" />
         </div>
       ) : null}
@@ -489,6 +486,11 @@ function Game({ expanded, onExpand }: { expanded: boolean; onExpand: () => void 
                   )}
                 </div>
               ) : null}
+              {draftPanelVisible(life) ? (
+                <div className="order-4 md:order-none">
+                  <DraftPanel life={life} units={units} />
+                </div>
+              ) : null}
               <div className="order-4 md:order-none">
                 {life.after ? <AfterPanel life={life} /> : <FocusPanel life={life} onPlan={plan} />}
               </div>
@@ -523,6 +525,9 @@ function Game({ expanded, onExpand }: { expanded: boolean; onExpand: () => void 
                 </div>
                 <div className="order-10 md:order-none">
                   <CareerMap life={life} />
+                </div>
+                <div className="order-10 md:order-none">
+                  <JerseyWall life={life} />
                 </div>
                 <div className="order-8 md:order-none">
                   <YourRoute life={life} onSources={openSources} />

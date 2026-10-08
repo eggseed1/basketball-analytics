@@ -178,7 +178,7 @@ function SeasonSelect({ life, keys, value, onChange }: { life: LifeState; keys: 
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="min-h-8 min-w-0 flex-1 rounded-[4px] border border-[var(--os-border)] bg-[var(--os-page)] px-2 text-[12.5px] text-[var(--os-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--os-teal)]"
+        className="min-h-8 min-w-0 flex-1 rounded-lg border border-[var(--os-border)] bg-[var(--os-page)] px-2 text-[12.5px] text-[var(--os-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--os-teal)]"
       >
         {keys.map((k) => (
           <option key={k} value={k}>
@@ -365,7 +365,7 @@ function National({ life }: { life: LifeState }) {
       )}
       {next.length ? (
         <div>
-          <h3 className="mb-1 font-mono text-[11px] uppercase tracking-[0.14em] text-[var(--os-dim)]">Coming up</h3>
+          <h3 className="mb-1 text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--os-dim)]">Coming up</h3>
           <ul className="flex flex-col gap-1">
             {next.map(({ t, qualified, bar }) => (
               <li key={t.id} className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5 border-b border-[var(--os-border)]/50 pb-1">

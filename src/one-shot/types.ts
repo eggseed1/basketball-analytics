@@ -1,6 +1,6 @@
 import type { Streams } from "./rng";
 
-export const SCHEMA_VERSION = 3;
+export const SCHEMA_VERSION = 4;
 export const ENGINE_VERSION = "1.2.0";
 
 export type Mode = "random" | "daily";
@@ -263,11 +263,50 @@ export interface Place {
   localityKind: "capital" | "city" | "town" | "rural";
 }
 
+export interface Combine {
+  year: number;
+  invited: boolean;
+  heightCm: number;
+  wingspanCm: number;
+  reachCm: number;
+  weightKg: number;
+  laneAgilitySec: number;
+  sprintSec: number;
+  /** Stock change from testing, in draft-value points. */
+  delta: number;
+}
+
+export interface DraftInterview {
+  team: string;
+  question: string;
+  answer: string;
+  delta: number;
+}
+
+export interface DraftPick {
+  pick: number;
+  team: string;
+  name: string;
+  countryId: string;
+  isPlayer?: boolean;
+}
+
+export type Workouts = "wide" | "targeted" | "skip";
+
 export interface DraftState {
   declaredYear: number | null;
   classSeed: number | null;
   result: { year: number; pick: number | null; team: string | null } | null;
   withdrewYears: number[];
+  /** Draft-value points gained or lost this cycle from the combine, interviews and workouts. */
+  stock: number;
+  combine: Combine | null;
+  interviews: DraftInterview[];
+  workouts: Workouts | null;
+  /** A team that promised to take him at its pick if he is still there. */
+  promise: { team: string; pick: number } | null;
+  /** The last draft he was in, first 60 picks. */
+  board: DraftPick[] | null;
 }
 
 export interface Education {

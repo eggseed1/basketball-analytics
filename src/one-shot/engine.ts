@@ -16,7 +16,24 @@ import {
   STAGE_LABEL,
   type Level,
 } from "./career";
-import { autoEligible, callUpChance, canDeclare, draftClass, draftValue, nbaSeasonMonth, rookieSalary, runDraft } from "./draft";
+import {
+  autoEligible,
+  callUpChance,
+  canDeclare,
+  draftOrder,
+  draftValue,
+  gapToSixty,
+  INTERVIEW_QUESTIONS,
+  interviewDelta,
+  interviewPlan,
+  nbaSeasonMonth,
+  projectedRange,
+  projectedRank,
+  rookieSalary,
+  runCombine,
+  runDraft,
+  teamAtPick,
+} from "./draft";
 import { EVENT_BY_ID, eligibleEvents, eventRate, type EventTemplate } from "./events";
 import { canOpen, LADDER, rungCost, rungCountry, rungPay, takeJob, trackOptions, TRACK_LABEL, yearInJob } from "./after";
 import { applyMoney, charge, makeAgent, newFinance, stepFinance, type MoneyAction } from "./finance";
@@ -25,7 +42,7 @@ import { drawName, formatName, poolFor, townName } from "./names";
 import { createPeers, stepPeersYear } from "./peers";
 import { clamp, createStreams, hashString, rngOf } from "./rng";
 import { NBA_TEAMS, nbaTeam, offerBlocked, offseasonOffers, overseasPossible, salaryFor } from "./routes";
-import { currentLevel, generatePotentials, generateTraits, readiness, READINESS_LABEL, startingSkills } from "./skills";
+import { currentLevel, generatePotentials, generateTraits, readiness, READINESS_LABEL, SKILLS, startingSkills } from "./skills";
 import { FOCUS_BY_ID, focusAvailable, stepTraining } from "./training";
 import {
   ENGINE_VERSION,
@@ -39,6 +56,7 @@ import {
   type PendingDecision,
   type Track,
   type Workload,
+  type Workouts,
 } from "./types";
 import { country, maybeLeague, PLAYABLE_COUNTRIES, WORLD_VERSION } from "./world";
 
@@ -138,7 +156,7 @@ export function createLife(opts: NewLifeOptions): LifeState {
     nbaGames: 0,
     peers: createPeers(streams),
     achievements: { nbaCaliber: null, campInvite: null, drafted: null, rosterSpot: null, nbaDebut: null },
-    draft: { declaredYear: null, classSeed: null, result: null, withdrewYears: [] },
+    draft: { declaredYear: null, classSeed: null, result: null, withdrewYears: [], stock: 0, combine: null, interviews: [], workouts: null, promise: null, board: null },
     rng: streams,
     counters: { entry: 0, decision: 0, offer: 0 },
     ended: null,
@@ -492,7 +510,7 @@ function calendarStep(s: LifeState) {
   if (month === 2 && s.placement.node === "nba" && s.placement.contract) tradeDeadline(s);
   if (month === 4 && s.draft.declaredYear !== year && !s.draft.withdrewYears.includes(year)) {
     if (autoEligible(s, year)) {
-      s.draft.declaredYear = year;
+      openDraftCycle(s, year);
       log(s, "draft", `Automatically in the ${year} NBA Draft pool (game rule: age 22).`);
     } else if (canDeclare(s, year)) {
       const band = readiness(s);
@@ -512,74 +530,99 @@ function calendarStep(s: LifeState) {
       }
     }
   }
-  if (month === 5 && s.draft.declaredYear === year && s.placement.node === "university") {
-    const rank = projectedRank(s, year);
-    if (rank > 60) {
+  const draftSeason = s.draft.declaredYear === year && month >= 5 && month <= 9;
+  if (draftSeason && s.draft.combine?.year !== year) {
+    combineStep(s, year);
+    if (month === 5 && s.placement.node === "university" && projectedRank(s, year) > 60) {
       s.draft.declaredYear = null;
       s.draft.withdrewYears.push(year);
       log(s, "draft", "You withdraw before the NCAA deadline and return to school. Teams projected you outside the top 60.");
+      return;
     }
+    if (s.draft.combine!.invited || gapToSixty(s, year) <= 4) {
+      const plan = interviewPlan(s, year);
+      askInterview(s, year, plan.questions.map((q) => q.id).join(","), plan.teams.join("|"), 0);
+      return;
+    }
+    log(s, "draft", "No NBA team asks for an interview or a workout.");
+    if (month === 5) return;
   }
-  if (month === 6 && s.draft.declaredYear === year) {
-    const res = runDraft(s, year);
-    s.draft.result = { year, pick: res.pick, team: res.team };
-    s.draft.declaredYear = null;
-    if (res.pick && res.pick <= 30) {
-      s.achievements.drafted = { month: s.ageMonths, round: 1, pick: res.pick };
-      s.achievements.rosterSpot = s.ageMonths;
-      s.education.amateur = false;
-      if (s.season) finalizeSeason(s, levelOf(s));
-      s.placement = { node: "nba", countryId: "US", leagueId: "nba", teamName: res.team, role: "deep-bench", coaching: 92, since: s.ageMonths, contract: { salary: rookieSalary(res.pick), yearsLeft: 3, guaranteed: true }, costPerYear: 0 };
-      s.residence = { countryId: "US", locality: res.team!.split(" ").slice(0, -1).join(" "), localityKind: "city" };
-      log(s, "draft", `Drafted ${ordinal(res.pick)} overall by the ${res.team}. Guaranteed rookie contract.`, null, "good");
-    } else if (res.pick) {
-      s.achievements.drafted = { month: s.ageMonths, round: 2, pick: res.pick };
-      log(s, "draft", `Drafted ${ordinal(res.pick)} overall (second round) by the ${res.team}.`, null, "good");
-      decide(s, {
-        templateId: "draft-after",
-        title: `${res.team} hold your rights`,
-        body: "Second-round picks rarely get guaranteed deals. Pick your path.",
-        choices: [
-          { id: "two-way", label: "Two-way contract", preview: "Play in the G League with NBA call-ups. Ends NCAA eligibility." },
-          { id: "camp", label: "Training camp deal", preview: "Fight for a roster spot in October. Waived players go to the G League." },
-          { id: "stay", label: "Stay where you are", preview: "They keep your rights. Develop another year." },
-        ],
-        context: { team: res.team, pick: res.pick },
-        required: true,
-      });
-    } else {
-      log(s, "draft", `Undrafted in ${year}.`, null, "bad");
-      const v = draftValue(s);
-      const choices: DecisionChoice[] = [];
-      if (v >= 55) choices.push({ id: "camp", label: "Training camp deal", preview: "An NBA team brings you to camp. Waived players go to its G League team." });
-      if (performanceLevel(s) >= 50) choices.push({ id: "g-league", label: "G League contract", preview: "Play for call-ups. About $40,500 a season (model)." });
-      if (overseasPossible(s)) choices.push({ id: "overseas", label: "Play overseas", preview: "Clubs abroad pay real salaries and scouts still watch. Offers come next month." });
-      choices.push({ id: "stay", label: "Keep your current path", preview: "Stay where you are. Offers come at the next window." });
-      decide(s, { templateId: "undrafted", title: "Undrafted", body: "Plenty of NBA players went undrafted. These are your options.", choices, context: { team: teamFor(s, year) }, required: true });
-    }
+  if (draftSeason && month >= 6) {
+    holdDraft(s, year);
     return;
   }
   if (month === 10 && (s.flags.campOffer || s.flags.campDeal || s.flags.buyout) && s.placement.node !== "nba") {
-    const team = typeof s.flags.campTeam === "string" ? s.flags.campTeam : teamFor(s, year);
-    delete s.flags.campOffer;
-    delete s.flags.campDeal;
-    delete s.flags.buyout;
-    const rng = rngOf(s.rng, "draft");
-    const camp = performanceLevel(s) + rng.normal(0, 2);
-    s.education.amateur = false;
-    if (s.season) finalizeSeason(s, levelOf(s));
-    if (camp >= 69) {
-      s.achievements.rosterSpot = s.ageMonths;
-      s.placement = { node: "nba", countryId: "US", leagueId: "nba", teamName: team, role: "deep-bench", coaching: 90, since: s.ageMonths, contract: { salary: 1_270_000, yearsLeft: 1, guaranteed: false }, costPerYear: 0 };
-      s.residence = { countryId: "US", locality: team.split(" ").slice(0, -1).join(" "), localityKind: "city" };
-      log(s, "milestone", `You make the ${team} opening-night roster out of training camp.`, null, "good");
-    } else {
-      s.placement = { node: "g-league", countryId: "US", leagueId: "g-league", teamName: `${team} G League affiliate`, role: "rotation", coaching: 80, since: s.ageMonths, contract: { salary: 40_500, yearsLeft: 1, guaranteed: false }, costPerYear: 0 };
-      s.residence = { countryId: "US", locality: "a G League city", localityKind: "city" };
-      log(s, "info", `Waived after camp. You join the ${team} G League affiliate.`, null, "bad");
-    }
+    campStep(s, year);
     return;
   }
+  gLeagueStep(s);
+}
+
+/** Draft night. Runs in June, or the first free month after it when another decision held up the calendar. */
+function holdDraft(s: LifeState, year: number) {
+  const res = runDraft(s, year);
+  s.draft.result = { year, pick: res.pick, team: res.team };
+  s.draft.board = res.board;
+  s.draft.declaredYear = null;
+  if (res.promiseKept) log(s, "draft", `The ${res.team} keep their promise and take you at ${res.pick}.`, null, "good");
+  else if (s.draft.promise && res.pick && res.pick < s.draft.promise.pick) log(s, "draft", `Gone before the ${s.draft.promise.team} pick. Their promise never came into play.`);
+  if (res.pick && res.pick <= 30) {
+    s.achievements.drafted = { month: s.ageMonths, round: 1, pick: res.pick };
+    s.achievements.rosterSpot = s.ageMonths;
+    s.education.amateur = false;
+    if (s.season) finalizeSeason(s, levelOf(s));
+    s.placement = { node: "nba", countryId: "US", leagueId: "nba", teamName: res.team, role: "deep-bench", coaching: 92, since: s.ageMonths, contract: { salary: rookieSalary(res.pick), yearsLeft: 3, guaranteed: true }, costPerYear: 0 };
+    s.residence = { countryId: "US", locality: res.team!.split(" ").slice(0, -1).join(" "), localityKind: "city" };
+    log(s, "draft", `Drafted ${ordinal(res.pick)} overall by the ${res.team}. Guaranteed rookie contract.`, null, "good");
+  } else if (res.pick) {
+    s.achievements.drafted = { month: s.ageMonths, round: 2, pick: res.pick };
+    log(s, "draft", `Drafted ${ordinal(res.pick)} overall (second round) by the ${res.team}.`, null, "good");
+    decide(s, {
+      templateId: "draft-after",
+      title: `${res.team} hold your rights`,
+      body: "Second-round picks rarely get guaranteed deals. Pick your path.",
+      choices: [
+        { id: "two-way", label: "Two-way contract", preview: "Play in the G League with NBA call-ups. Ends NCAA eligibility." },
+        { id: "camp", label: "Training camp deal", preview: "Fight for a roster spot in October. Waived players go to the G League." },
+        { id: "stay", label: "Stay where you are", preview: "They keep your rights. Develop another year." },
+      ],
+      context: { team: res.team, pick: res.pick },
+      required: true,
+    });
+  } else {
+    log(s, "draft", `Undrafted in ${year}.`, null, "bad");
+    const v = draftValue(s);
+    const choices: DecisionChoice[] = [];
+    if (v >= 55) choices.push({ id: "camp", label: "Training camp deal", preview: "An NBA team brings you to camp. Waived players go to its G League team." });
+    if (performanceLevel(s) >= 50) choices.push({ id: "g-league", label: "G League contract", preview: "Play for call-ups. About $40,500 a season (model)." });
+    if (overseasPossible(s)) choices.push({ id: "overseas", label: "Play overseas", preview: "Clubs abroad pay real salaries and scouts still watch. Offers come next month." });
+    choices.push({ id: "stay", label: "Keep your current path", preview: "Stay where you are. Offers come at the next window." });
+    decide(s, { templateId: "undrafted", title: "Undrafted", body: "Plenty of NBA players went undrafted. These are your options.", choices, context: { team: teamFor(s, year) }, required: true });
+  }
+}
+
+function campStep(s: LifeState, year: number) {
+  const team = typeof s.flags.campTeam === "string" ? s.flags.campTeam : teamFor(s, year);
+  delete s.flags.campOffer;
+  delete s.flags.campDeal;
+  delete s.flags.buyout;
+  const rng = rngOf(s.rng, "draft");
+  const camp = performanceLevel(s) + rng.normal(0, 2);
+  s.education.amateur = false;
+  if (s.season) finalizeSeason(s, levelOf(s));
+  if (camp >= 69) {
+    s.achievements.rosterSpot = s.ageMonths;
+    s.placement = { node: "nba", countryId: "US", leagueId: "nba", teamName: team, role: "deep-bench", coaching: 90, since: s.ageMonths, contract: { salary: 1_270_000, yearsLeft: 1, guaranteed: false }, costPerYear: 0 };
+    s.residence = { countryId: "US", locality: team.split(" ").slice(0, -1).join(" "), localityKind: "city" };
+    log(s, "milestone", `You make the ${team} opening-night roster out of training camp.`, null, "good");
+  } else {
+    s.placement = { node: "g-league", countryId: "US", leagueId: "g-league", teamName: `${team} G League affiliate`, role: "rotation", coaching: 80, since: s.ageMonths, contract: { salary: 40_500, yearsLeft: 1, guaranteed: false }, costPerYear: 0 };
+    s.residence = { countryId: "US", locality: "a G League city", localityKind: "city" };
+    log(s, "info", `Waived after camp. You join the ${team} G League affiliate.`, null, "bad");
+  }
+}
+
+function gLeagueStep(s: LifeState) {
   if (s.placement.node === "g-league" && nbaSeasonMonth(s) && s.achievements.nbaDebut === null) {
     const rng = rngOf(s.rng, "draft");
     const roll = rng.next();
@@ -620,9 +663,53 @@ function tradeDeadline(s: LifeState) {
   log(s, "move", `Traded from the ${old} to the ${team} at the deadline.${req ? " You got your wish." : ""}`, null, req ? "good" : "neutral");
 }
 
-function projectedRank(s: LifeState, year: number) {
-  const v = draftValue(s);
-  return draftClass(s.seed, year).filter((p) => p.value > v).length + 1;
+function openDraftCycle(s: LifeState, year: number) {
+  s.draft = { ...s.draft, declaredYear: year, stock: 0, combine: null, interviews: [], workouts: null, promise: null };
+}
+
+function combineStep(s: LifeState, year: number) {
+  const c = runCombine(s, year, rngOf(s.rng, "draft"));
+  s.draft.combine = c;
+  s.draft.stock = Math.round((s.draft.stock + c.delta) * 10) / 10;
+  if (!c.invited) {
+    log(s, "draft", "No combine invite. Teams will judge you on film and private workouts.");
+    return;
+  }
+  const verdict = c.delta >= 1 ? "Your testing turns heads." : c.delta <= -1 ? "Your testing numbers worry some teams." : "Your testing lands about where teams expected.";
+  log(s, "draft", `NBA Draft Combine. ${verdict}`, null, c.delta >= 1 ? "good" : c.delta <= -1 ? "bad" : "neutral");
+}
+
+function weakestSkill(s: LifeState): string {
+  const w = [...SKILLS].sort((a, b) => s.skills[a.key] - s.skills[b.key])[0]!;
+  return w.label.toLowerCase();
+}
+
+function askInterview(s: LifeState, year: number, qs: string, teams: string, n: number) {
+  const q = INTERVIEW_QUESTIONS.find((x) => x.id === qs.split(",")[n])!;
+  const team = teams.split("|")[n]!;
+  decide(s, {
+    templateId: "draft-interview",
+    title: `Interview with the ${team}`,
+    body: `${q.text} (Interview ${n + 1} of 3 before the ${year} draft.)`,
+    choices: q.answers.map((a, i) => ({ id: `a${i}`, label: a.label.replace("{weak}", weakestSkill(s)), preview: a.hint })),
+    context: { qs, teams, n, team },
+    required: true,
+  });
+}
+
+function askWorkouts(s: LifeState) {
+  const { mid } = projectedRange(s, calendar(s).year);
+  decide(s, {
+    templateId: "draft-workouts",
+    title: "Pre-draft workouts",
+    body: `Teams want to see you in their gyms. Right now they project you ${mid <= 60 ? `around pick ${mid}` : "outside the top 60"}.`,
+    choices: [
+      { id: "wide", label: "Work out for a dozen teams", preview: "More teams see you. Bigger swings either way, and tiring." },
+      { id: "targeted", label: "Only teams picking in your range", preview: "Smaller swings. A team might promise to take you." },
+      { id: "skip", label: "Skip workouts", preview: mid <= 8 ? "Top prospects do this to protect their stock." : "Teams will wonder what you are hiding." },
+    ],
+    required: true,
+  });
 }
 
 function recordDebut(s: LifeState, detail: string) {
@@ -873,9 +960,9 @@ function resolveInPlace(s: LifeState, choiceId: string) {
   if (d.templateId.startsWith("event:")) {
     const t = EVENT_BY_ID[d.templateId.slice(6)]!;
     const c = t.choices!.find((x) => x.id === choiceId)!;
+    s.counters.entry = Number(decisionEntry.slice(1));
     const out = c.apply({ s, rolls: d.rolls, entryId: decisionEntry });
     s.history.push({ id: decisionEntry, month: s.ageMonths, kind: "decision", text: `${t.title}: ${c.label}. ${out}`, causeId: (d.context?.causeId as string) ?? null, tone: t.tone ?? "neutral" });
-    s.counters.entry = Math.max(s.counters.entry, Number(decisionEntry.slice(1)));
     if (c.follow) s.scheduled.push({ templateId: c.follow.id, month: s.ageMonths + c.follow.delay, causeId: decisionEntry });
     return;
   }
@@ -937,12 +1024,56 @@ function resolveInPlace(s: LifeState, choiceId: string) {
     case "draft-declare": {
       const { year } = calendar(s);
       if (choiceId === "declare") {
-        s.draft.declaredYear = year;
+        openDraftCycle(s, year);
         log(s, "draft", `Declared for the ${year} NBA Draft.`);
       } else {
         s.draft.withdrewYears.push(year);
         log(s, "decision", `Not declaring for the ${year} draft.`);
       }
+      return;
+    }
+    case "draft-interview": {
+      const n = Number(d.context?.n ?? 0);
+      const qs = String(d.context?.qs ?? "");
+      const q = INTERVIEW_QUESTIONS.find((x) => x.id === qs.split(",")[n])!;
+      const i = Number(choiceId.slice(1));
+      const delta = interviewDelta(s, q.answers[i]!, d.rolls[0]!);
+      const team = String(d.context?.team ?? "");
+      s.draft.stock = Math.round((s.draft.stock + delta) * 10) / 10;
+      s.draft.interviews.push({ team, question: q.text, answer: choice.label, delta });
+      const read = delta >= 0.5 ? "They liked that answer." : delta <= -0.5 ? "The room goes quiet." : "Hard to read the room.";
+      log(s, "draft", `Interview with the ${team}: "${choice.label}." ${read}`, null, delta >= 0.5 ? "good" : delta <= -0.5 ? "bad" : "neutral");
+      if (n < 2) askInterview(s, calendar(s).year, qs, String(d.context?.teams ?? ""), n + 1);
+      else askWorkouts(s);
+      return;
+    }
+    case "draft-workouts": {
+      const { year } = calendar(s);
+      const { mid } = projectedRange(s, year);
+      const [r0, r1, r2, r3] = d.rolls as [number, number, number, number];
+      const bell = (r0 + r1 + r2 - 1.5) * 2;
+      s.draft.workouts = choiceId as Workouts;
+      let delta = 0;
+      if (choiceId === "wide") {
+        delta = clamp(bell, -2, 2);
+        s.condition.energy = clamp(s.condition.energy - 10, 0, 100);
+        s.exposure = clamp(s.exposure + 3, 0, 100);
+      } else if (choiceId === "targeted") {
+        delta = clamp(0.1 + bell * 0.5, -1, 1.2);
+        if (mid <= 35 && r3 < 0.25 + (s.traits.composure - 50) / 250) {
+          const pick = Math.min(60, mid + 2);
+          s.draft.promise = { team: teamAtPick(draftOrder(s.seed, year), pick), pick };
+        }
+      } else {
+        delta = mid <= 8 ? 0 : -(0.5 + r3 * 0.5);
+      }
+      delta = Math.round(delta * 10) / 10;
+      s.draft.stock = Math.round((s.draft.stock + delta) * 10) / 10;
+      const what = choiceId === "wide" ? "Workouts for a dozen teams." : choiceId === "targeted" ? "Workouts for the teams in your range." : "You skip workouts.";
+      const read = delta >= 0.5 ? " Your stock rises." : delta <= -0.5 ? " Your stock slips." : "";
+      log(s, "draft", `${what}${read}`, null, delta >= 0.5 ? "good" : delta <= -0.5 ? "bad" : "neutral");
+      if (s.draft.promise) log(s, "draft", `The ${s.draft.promise.team} promise to take you at ${s.draft.promise.pick} if you are still there.`, null, "good");
+      if (calendar(s).month >= 6 && s.draft.declaredYear === year) holdDraft(s, year);
       return;
     }
     case "draft-after":
@@ -1251,6 +1382,7 @@ export const AUTO_STRATEGY = [
   "Life events: the option with the lowest injury and setback risk; ties go to the one that builds more, then to the first listed.",
   "Team offers: the highest level you can afford where the coach expects at least bench minutes. A move sideways needs clearly more scouting exposure. Otherwise, stay.",
   "Draft: declare when scouts rate you in draft range or NBA-ready, or on the NBA radar from age 21.",
+  "Draft interviews: the answer that fits his personality best. Workouts: only teams in range when projected in the top 45, otherwise a dozen teams.",
   "After the draft: a two-way deal first, then a camp deal, then stay.",
   "Contracts: re-sign when no offer ranks higher. NBA free agency only from a strong level. Sign contracts as written.",
   "National team: always report to camp.",
@@ -1304,6 +1436,13 @@ export function autoChoice(s: LifeState): string {
       const age = s.ageMonths / 12;
       return band === "draft-range" || band === "nba-ready" || (age >= 21 && band === "radar") ? "declare" : "wait";
     }
+    case "draft-interview": {
+      const q = INTERVIEW_QUESTIONS.find((x) => x.id === String(d.context?.qs ?? "").split(",")[Number(d.context?.n ?? 0)])!;
+      const best = q.answers.map((a, i) => ({ i, v: interviewDelta(s, a, 0.5) })).sort((a, b) => b.v - a.v || a.i - b.i)[0]!;
+      return `a${best.i}`;
+    }
+    case "draft-workouts":
+      return projectedRange(s, calendar(s).year).mid <= 45 ? "targeted" : "wide";
     case "draft-after":
     case "undrafted":
       return open.find((c) => c.id === "two-way")?.id ?? open.find((c) => c.id === "camp")?.id ?? open.find((c) => c.id === "g-league")?.id ?? "stay";

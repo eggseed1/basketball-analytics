@@ -63,9 +63,9 @@ export function EndReport({ life, units, onNew, onHome }: { life: LifeState; uni
   return (
     <div className="mx-auto grid w-full max-w-[1100px] gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
       <Panel className="p-5 sm:p-6">
-        <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--os-dim)]">End report</p>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--os-dim)]">End report</p>
         <div className="mt-3 flex items-start gap-4">
-          <Portrait life={life} size={96} className="shrink-0 rounded-[6px] border border-[var(--os-border)]" />
+          <Portrait life={life} size={96} className="shrink-0 rounded-[11px] border border-[var(--os-border)]" />
           <div className="min-w-0">
             <h2 ref={heading} tabIndex={-1} className="text-[24px] font-semibold leading-tight focus:outline-none">
               {life.identity.displayName}

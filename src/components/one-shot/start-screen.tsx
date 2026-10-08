@@ -46,7 +46,7 @@ export function StartScreen({
   return (
     <div className="mx-auto grid w-full max-w-[1100px] gap-5 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
       <Panel className="p-5 sm:p-7">
-        <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--os-dim)]">DRBL Arcade · life sim</p>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--os-dim)]">DRBL Arcade · life sim</p>
         <h2 className="mt-2 font-mono text-[44px] font-bold leading-none tracking-[0.04em] sm:text-[56px]">ONE SHOT</h2>
         <p className="mt-3 text-[16px] text-[var(--os-text)]/90">One life. A world of paths. Make the league.</p>
         <p className="mt-3 max-w-[56ch] text-[13px] text-[var(--os-dim)]">
@@ -55,7 +55,7 @@ export function StartScreen({
         </p>
 
         {recovery ? (
-          <div role="alert" className="mt-5 rounded-[5px] border border-[var(--os-rose)]/60 p-3 text-[13px]">
+          <div role="alert" className="mt-5 rounded-lg border border-[var(--os-rose)]/60 p-3 text-[13px]">
             <p className="font-medium text-[var(--os-rose)]">Your saved life could not be loaded.</p>
             <p className="mt-1 text-[var(--os-dim)]">{recovery}</p>
             <div className="mt-2 flex flex-wrap gap-2">

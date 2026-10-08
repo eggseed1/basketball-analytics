@@ -46,9 +46,9 @@ export function BirthReveal({
   return (
     <div className="mx-auto w-full max-w-[720px]">
       <Panel className="p-5 sm:p-7">
-        <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--os-dim)]">{life.mode === "daily" ? `Daily life · ${life.dailyDate}` : `Seed ${life.seed}`}</p>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--os-dim)]">{life.mode === "daily" ? `Daily life · ${life.dailyDate}` : `Seed ${life.seed}`}</p>
         <div className="mt-4 flex flex-col items-start gap-5 sm:flex-row">
-          <Portrait life={life} size={112} className="rounded-[6px] border border-[var(--os-border)]" />
+          <Portrait life={life} size={112} className="rounded-[11px] border border-[var(--os-border)]" />
           <div className="min-w-0 flex-1">
             <p className="text-[13px] text-[var(--os-dim)]">
               Born {MONTHS[life.identity.birthMonthOfYear - 1]} {life.identity.birthYear}
@@ -71,7 +71,7 @@ export function BirthReveal({
                     value={given}
                     maxLength={24}
                     onChange={(e) => setGiven(e.target.value)}
-                    className="mt-0.5 min-h-9 w-40 rounded-[4px] border border-[var(--os-border)] bg-[var(--os-page)] px-2 text-[14px] text-[var(--os-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--os-teal)]"
+                    className="mt-0.5 min-h-9 w-40 rounded-lg border border-[var(--os-border)] bg-[var(--os-page)] px-2 text-[14px] text-[var(--os-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--os-teal)]"
                   />
                 </label>
                 <label className="flex flex-col text-[11.5px] text-[var(--os-dim)]">
@@ -80,7 +80,7 @@ export function BirthReveal({
                     value={family}
                     maxLength={24}
                     onChange={(e) => setFamily(e.target.value)}
-                    className="mt-0.5 min-h-9 w-40 rounded-[4px] border border-[var(--os-border)] bg-[var(--os-page)] px-2 text-[14px] text-[var(--os-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--os-teal)]"
+                    className="mt-0.5 min-h-9 w-40 rounded-lg border border-[var(--os-border)] bg-[var(--os-page)] px-2 text-[14px] text-[var(--os-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--os-teal)]"
                   />
                 </label>
                 <Btn type="submit">Save</Btn>
@@ -99,8 +99,8 @@ export function BirthReveal({
             </p>
           </div>
         </div>
-        <div className="mt-5 rounded-[5px] border border-[var(--os-border)] bg-[var(--os-page)] px-3 py-2.5">
-          <p className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-[var(--os-dim)]">Odds of this birthplace</p>
+        <div className="mt-5 rounded-lg border border-[var(--os-border)] bg-[var(--os-page)] px-3 py-2.5">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--os-dim)]">Odds of this birthplace</p>
           <p className="mt-0.5 text-[20px] font-semibold tabular-nums">
             {sharePct(share)} <span className="text-[13px] font-normal text-[var(--os-dim)]">about 1 in {oneIn(share)}</span>
           </p>

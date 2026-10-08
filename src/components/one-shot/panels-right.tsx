@@ -20,7 +20,7 @@ export function SameGeneration({ life, units }: { life: LifeState; units: Units 
           const c = country(p.countryId);
           const last = p.log[p.log.length - 1];
           return (
-            <li key={p.id} className="rounded-[5px] border border-[var(--os-border)] bg-[var(--os-page)] px-2.5 py-2">
+            <li key={p.id} className="rounded-lg border border-[var(--os-border)] bg-[var(--os-page)] px-2.5 py-2">
               <p className="truncate text-[13px] font-medium">
                 {countryFlag(c.id)} {p.name}
               </p>
@@ -71,7 +71,7 @@ export function CareerMap({ life }: { life: LifeState }) {
     <Panel id="os-map" title="Career map">
       <ol className="grid grid-cols-8 gap-1 sm:grid-cols-[repeat(16,minmax(0,1fr))] lg:grid-cols-8">
         {tiles.map((t) => {
-          const color = t.top ? jerseyColor(t.top.node) : null;
+          const color = t.top ? jerseyColor(t.top.node, life.seed, t.top.teamName) : null;
           const label = `Age ${t.y}: ${t.future ? "not lived yet" : t.top ? `${t.top.levelLabel}${t.top.teamName ? `, ${t.top.teamName}` : ""}` : "no organized season"}${t.injury ? ", injury" : ""}${t.moved ? ", moved country" : ""}${t.drafted ? ", drafted" : ""}${t.debut ? ", NBA debut" : ""}`;
           return (
             <li

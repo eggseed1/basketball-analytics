@@ -1,34 +1,25 @@
 "use client";
 
-import type { ButtonHTMLAttributes, CSSProperties, ReactNode, Ref } from "react";
+import type { ButtonHTMLAttributes, ReactNode, Ref } from "react";
 
 import { cn } from "@/lib/utils";
 
+/** Game colors as CSS variables; values live in `.os-scope` in globals.css so both site themes apply. */
 export const OS = {
-  page: "#0E1519",
-  panel: "#161F23",
-  panel2: "#1B262B",
-  border: "#2A3B41",
-  text: "#DFEBEB",
-  dim: "#8A9B9B",
-  rose: "#DF668C",
-  teal: "#48B9AB",
-  green: "#5CBF90",
-  amber: "#D6AD51",
+  page: "var(--os-page)",
+  panel: "var(--os-panel)",
+  panel2: "var(--os-panel2)",
+  border: "var(--os-border)",
+  text: "var(--os-text)",
+  dim: "var(--os-dim)",
+  rose: "var(--os-rose)",
+  teal: "var(--os-teal)",
+  green: "var(--os-green)",
+  amber: "var(--os-amber)",
 } as const;
 
-export const OS_VARS = {
-  "--os-page": OS.page,
-  "--os-panel": OS.panel,
-  "--os-panel2": OS.panel2,
-  "--os-border": OS.border,
-  "--os-text": OS.text,
-  "--os-dim": OS.dim,
-  "--os-rose": OS.rose,
-  "--os-teal": OS.teal,
-  "--os-green": OS.green,
-  "--os-amber": OS.amber,
-} as CSSProperties;
+/** Small uppercase label, the site's eyebrow style. */
+export const EYEBROW = "text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--os-dim)]";
 
 export function Panel({
   title,
@@ -50,11 +41,11 @@ export function Panel({
     <section
       id={id}
       aria-labelledby={title ? headingId : undefined}
-      className={cn("min-w-0 rounded-[6px] border border-[var(--os-border)] bg-[var(--os-panel)] p-3.5", className)}
+      className={cn("sports-card p-4", className)}
     >
       {title ? (
         <div className="mb-3 flex items-center justify-between gap-2">
-          <h2 id={headingId} className="font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--os-dim)]">
+          <h2 id={headingId} className={EYEBROW}>
             {title}
           </h2>
           {action}
@@ -73,7 +64,7 @@ export function Bar({ label, value, color, hint }: { label: string; value: numbe
         {label}
       </span>
       <span
-        className="h-2 overflow-hidden rounded-[2px] bg-[var(--os-page)]"
+        className="h-1.5 overflow-hidden rounded-full bg-[var(--os-panel2)]"
         role="meter"
         aria-label={label}
         aria-valuemin={0}
@@ -81,7 +72,7 @@ export function Bar({ label, value, color, hint }: { label: string; value: numbe
         aria-valuenow={v === null ? undefined : Math.round(v)}
         aria-valuetext={v === null ? "not rated yet" : `${Math.round(v)} of 100`}
       >
-        {v !== null ? <span className="block h-full rounded-[2px]" style={{ width: `${v}%`, background: color }} /> : null}
+        {v !== null ? <span className="block h-full rounded-full" style={{ width: `${v}%`, background: color }} /> : null}
       </span>
       <span className="text-right font-mono tabular-nums">{v === null ? "—" : Math.round(v)}</span>
     </div>
@@ -101,8 +92,8 @@ export function Chip({ children, tone = "dim" }: { children: ReactNode; tone?: "
   const c = { dim: OS.dim, teal: OS.teal, green: OS.green, amber: OS.amber, rose: OS.rose }[tone];
   return (
     <span
-      className="inline-flex items-center rounded-[4px] border px-1.5 py-0.5 font-mono text-[10.5px] uppercase tracking-[0.08em]"
-      style={{ color: c, borderColor: `${c}66` }}
+      className="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold"
+      style={{ color: c, background: `color-mix(in oklab, ${c} 12%, transparent)` }}
     >
       {children}
     </span>
@@ -137,11 +128,11 @@ export function Btn({
       disabled={disabled}
       title={title}
       className={cn(
-        "inline-flex min-h-9 items-center justify-center gap-1.5 rounded-[5px] px-3 text-[13px] font-medium transition-colors",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--os-teal)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--os-page)]",
+        "inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg px-3 text-[13px] font-medium transition-colors",
+        "focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
         "disabled:cursor-not-allowed disabled:opacity-45",
-        variant === "primary" && "bg-[var(--os-teal)] text-[#0B1215] hover:bg-[#5BC8BA]",
-        variant === "ghost" && "border border-[var(--os-border)] bg-[var(--os-panel)] text-[var(--os-text)] hover:border-[var(--os-teal)]",
+        variant === "primary" && "bg-primary text-primary-foreground hover:bg-primary/85",
+        variant === "ghost" && "bg-secondary text-[var(--os-text)] hover:bg-[color-mix(in_oklch,var(--secondary),var(--foreground)_6%)]",
         variant === "quiet" && "text-[var(--os-dim)] hover:text-[var(--os-text)]",
         className,
       )}
@@ -178,7 +169,7 @@ export function Segmented<T extends string | number>({
   className?: string;
 }) {
   return (
-    <div role="radiogroup" aria-label={label} className={cn("inline-flex rounded-[5px] border border-[var(--os-border)] bg-[var(--os-page)] p-0.5", className)}>
+    <div role="radiogroup" aria-label={label} className={cn("inline-flex rounded-[var(--radius-lg)] bg-secondary p-0.5", className)}>
       {options.map((o) => {
         const on = o.value === value;
         return (
@@ -191,9 +182,9 @@ export function Segmented<T extends string | number>({
             title={o.hint}
             onClick={() => onChange(o.value)}
             className={cn(
-              "min-h-8 flex-1 rounded-[4px] px-2.5 font-mono text-[12px] tabular-nums transition-colors",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--os-teal)]",
-              on ? "bg-[var(--os-panel2)] text-[var(--os-text)] shadow-[inset_0_0_0_1px_var(--os-border)]" : "text-[var(--os-dim)] hover:text-[var(--os-text)]",
+              "min-h-8 flex-1 rounded-[var(--radius-md)] px-2.5 text-[12px] font-semibold tabular-nums transition-colors",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
+              on ? "bg-card text-[var(--os-text)] shadow-sm" : "text-[var(--os-dim)] hover:text-[var(--os-text)]",
               o.disabled && "cursor-not-allowed opacity-40",
             )}
           >

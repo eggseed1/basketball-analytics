@@ -10,7 +10,7 @@ import type { FocusId, HistoryEntry, LifeState, Offer, Workload } from "@/one-sh
 import { country, countryFlag } from "@/one-shot/world";
 
 import { drawScene, SCENE_H, SCENE_W } from "./pixel";
-import { Btn, Chip, money, OS, Panel, Segmented } from "./ui";
+import { Btn, Chip, money, ordinal, OS, Panel, Segmented } from "./ui";
 
 /* ------------------------------------------------------------ scene */
 
@@ -43,6 +43,7 @@ export function LifeScene({ life, animate }: { life: LifeState; animate: boolean
   const lvl = levelOf(life);
   const season = life.season;
   const g = life.lastGame;
+  const drafted = life.achievements.drafted;
   const { month, year } = calendar(life);
   return (
     <Panel id="os-scene" className="p-0">
@@ -52,12 +53,12 @@ export function LifeScene({ life, animate }: { life: LifeState; animate: boolean
         height={SCENE_H}
         role="img"
         aria-label={`${STAGE_LABEL[stageOf(life.ageMonths)]} scene: ${lvl?.label ?? "at home"}`}
-        className="block aspect-[16/9] w-full rounded-t-[6px]"
+        className="block aspect-[16/9] w-full rounded-t-[var(--card-radius)]"
         style={{ imageRendering: "pixelated" }}
       />
       <div className="flex flex-col gap-1 border-t border-[var(--os-border)] px-3.5 py-2.5 text-[12.5px]">
         <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-          <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--os-dim)]">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--os-dim)]">
             {STAGE_LABEL[stageOf(life.ageMonths)]} · {MONTHS[month - 1]} {year}
           </span>
           {season && season.gp > 0 ? (
@@ -74,7 +75,7 @@ export function LifeScene({ life, animate }: { life: LifeState; animate: boolean
             </span>
           </p>
         ) : (
-          <p className="text-[var(--os-dim)]">{life.after ? `${life.after.title}, ${life.after.employer}.` : lvl ? `${lvl.label}. Season not running.` : life.ageMonths < 36 ? "Growing up." : "No team yet."}</p>
+          <p className="text-[var(--os-dim)]">{life.after ? `${life.after.title}, ${life.after.employer}.` : drafted && life.ageMonths - drafted.month <= 1 && life.draft.result?.team ? `Drafted ${ordinal(drafted.pick)} overall by the ${life.draft.result.team}.` : lvl ? `${lvl.label}. Season not running.` : life.ageMonths < 36 ? "Growing up." : "No team yet."}</p>
         )}
       </div>
     </Panel>
@@ -110,7 +111,7 @@ export function FocusPanel({ life, onPlan }: { life: LifeState; onPlan: (p: { pr
                     disabled={!ok}
                     onClick={() => onPlan({ primary: f.id })}
                     title={ok ? f.blurb : f.minAge > age ? `Opens at ${f.minAge}` : `Closed after ${f.maxAge}`}
-                    className={`min-h-9 rounded-[4px] border px-2 py-1 text-left text-[12px] leading-tight transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--os-teal)] ${
+                    className={`min-h-9 rounded-lg border px-2 py-1 text-left text-[12px] leading-tight transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--os-teal)] ${
                       on
                         ? "border-[var(--os-teal)] bg-[var(--os-teal)]/12 text-[var(--os-text)]"
                         : ok
@@ -136,7 +137,7 @@ export function FocusPanel({ life, onPlan }: { life: LifeState; onPlan: (p: { pr
                     secondary: (e.target.value || null) as FocusId | null,
                   })
                 }
-                className="min-h-9 rounded-[4px] border border-[var(--os-border)] bg-[var(--os-page)] px-2 text-[13px] text-[var(--os-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--os-teal)]"
+                className="min-h-9 rounded-lg border border-[var(--os-border)] bg-[var(--os-page)] px-2 text-[13px] text-[var(--os-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--os-teal)]"
               >
                 <option value="">None</option>
                 {FOCUSES.filter((f) => focusAvailable(f, age) && f.id !== life.plan.primary).map((f) => (
@@ -179,7 +180,7 @@ export function FocusPanel({ life, onPlan }: { life: LifeState; onPlan: (p: { pr
 function NextMove({ advice, onPlan }: { advice: Advice[]; onPlan: (p: Advice["action"] & object) => void }) {
   return (
     <div className="mt-4 border-t border-[var(--os-border)] pt-3">
-      <h3 className="mb-2 font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--os-dim)]">Next move</h3>
+      <h3 className="mb-2 text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--os-dim)]">Next move</h3>
       <ul className="flex flex-col gap-2">
         {advice.map((a) => (
           <li key={a.id} className="flex items-start justify-between gap-3 text-[12.5px]">
@@ -216,10 +217,10 @@ export function DecisionPanel({
   const offers = d.offers ?? [];
   const offerById = new Map(offers.map((o) => [o.id, o]));
   return (
-    <section id="os-decision" aria-labelledby="os-decision-title" className="rounded-[6px] border border-[var(--os-amber)]/70 bg-[var(--os-panel)] p-3.5">
+    <section id="os-decision" aria-labelledby="os-decision-title" className="rounded-[11px] border border-[var(--os-amber)]/70 bg-[var(--os-panel)] p-3.5">
       <div className="mb-2 flex items-start justify-between gap-3">
         <div>
-          <p className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-[var(--os-amber)]">Decision · time is paused</p>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--os-amber)]">Decision · time is paused</p>
           <h2 id="os-decision-title" ref={headingRef} tabIndex={-1} className="mt-0.5 text-[16px] font-semibold focus:outline-none">
             {d.title}
           </h2>
@@ -238,7 +239,7 @@ export function DecisionPanel({
                 type="button"
                 disabled={Boolean(c.disabled)}
                 onClick={() => onChoose(c.id)}
-                className="group flex w-full flex-col gap-1 rounded-[5px] border border-[var(--os-border)] bg-[var(--os-page)] px-3 py-2.5 text-left transition-colors hover:border-[var(--os-teal)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--os-teal)] disabled:cursor-not-allowed disabled:opacity-55"
+                className="group flex w-full flex-col gap-1 rounded-lg border border-[var(--os-border)] bg-[var(--os-page)] px-3 py-2.5 text-left transition-colors hover:border-[var(--os-teal)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--os-teal)] disabled:cursor-not-allowed disabled:opacity-55"
               >
                 <span className="flex items-baseline justify-between gap-3">
                   <span className="text-[13.5px] font-medium">
@@ -320,7 +321,7 @@ export function LifeRecord({ life }: { life: LifeState }) {
             type="button"
             aria-pressed={filter === f}
             onClick={() => setFilter(f)}
-            className={`rounded-[4px] border px-2 py-0.5 font-mono text-[11px] capitalize focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--os-teal)] ${
+            className={`rounded-lg border px-2 py-0.5 font-mono text-[11px] capitalize focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--os-teal)] ${
               filter === f ? "border-[var(--os-teal)] text-[var(--os-text)]" : "border-[var(--os-border)] text-[var(--os-dim)]"
             }`}
           >
@@ -376,10 +377,10 @@ export function DecisionWaiting({ life, onOpen }: { life: LifeState; onOpen: () 
     <button
       type="button"
       onClick={onOpen}
-      className="flex w-full items-center justify-between gap-3 rounded-[6px] border border-[var(--os-amber)]/70 bg-[var(--os-panel)] px-3.5 py-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--os-amber)]"
+      className="flex w-full items-center justify-between gap-3 rounded-[11px] border border-[var(--os-amber)]/70 bg-[var(--os-panel)] px-3.5 py-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--os-amber)]"
     >
       <span>
-        <span className="block font-mono text-[10.5px] uppercase tracking-[0.14em] text-[var(--os-amber)]">Decision waiting</span>
+        <span className="block text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--os-amber)]">Decision waiting</span>
         <span className="text-[13.5px]">{life.pendingDecision?.title}</span>
       </span>
       <Chip tone="amber">Open</Chip>

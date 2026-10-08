@@ -66,7 +66,7 @@ export function SourcesDrawer({ life, onClose }: { life: LifeState | null; onClo
             Close
           </Btn>
         </div>
-        <p className="rounded-[5px] border border-[var(--os-border)] bg-[var(--os-panel)] p-3 text-[12.5px]">{WORLD_META.disclaimer}</p>
+        <p className="rounded-lg border border-[var(--os-border)] bg-[var(--os-panel)] p-3 text-[12.5px]">{WORLD_META.disclaimer}</p>
         <p className="mt-2 font-mono text-[11px] text-[var(--os-dim)]">Snapshot {WORLD_META.worldSnapshotVersion}</p>
 
         {ids.map((id) => {
@@ -111,7 +111,7 @@ export function SourcesDrawer({ life, onClose }: { life: LifeState | null; onClo
                   const l = maybeLeague(lid);
                   if (!l) return null;
                   return (
-                    <li key={lid} className="rounded-[4px] border border-[var(--os-border)] bg-[var(--os-panel)] px-2.5 py-1.5 text-[12px]">
+                    <li key={lid} className="rounded-lg border border-[var(--os-border)] bg-[var(--os-panel)] px-2.5 py-1.5 text-[12px]">
                       <span className="flex items-center justify-between gap-2">
                         <span className="font-medium">{l.name}</span>
                         <Chip tone={STATUS_TONE[l.research.status]}>{l.research.status}</Chip>
@@ -160,6 +160,11 @@ export function SourcesDrawer({ life, onClose }: { life: LifeState | null; onClo
         <section className="mt-6">
           <h3 className="text-[14px] font-semibold">Rules the game uses</h3>
           <p className="mt-1 text-[12px] text-[var(--os-dim)]">{WORLD_META.draftRule}</p>
+          <p className="mt-1 text-[12px] text-[var(--os-dim)]">
+            Draft cycle: about 75 prospects get a combine invite. Measurements come from his body, and the testing times are a model built on his speed and lateral quickness. Three teams interview
+            him, and how an answer lands depends on his personality plus some luck. Workouts can move his stock, and a targeted workout sometimes earns a promise: that team takes him at its pick if he
+            is still there. The order is reshuffled each year with no lottery odds, both rounds use the same order, and every other prospect is fictional.
+          </p>
           <p className="mt-1 text-[12px] text-[var(--os-dim)]">
             League strength, coaching, salaries and exposure are game settings, not measured facts. Box scores, offers and contracts are simulated.
           </p>

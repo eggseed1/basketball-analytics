@@ -46,7 +46,7 @@ export function MoneyPanel({ life, onMoney }: { life: LifeState; onMoney: (a: Mo
         {life.earnings > 0 ? <Kv k="Career earnings, pre-tax" v={money(life.earnings)} mono /> : null}
       </dl>
 
-      <h3 className="mb-1 mt-3 border-t border-[var(--os-border)] pt-2 font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--os-dim)]">Investments · {money(total)}</h3>
+      <h3 className="mb-1 mt-3 border-t border-[var(--os-border)] pt-2 text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--os-dim)]">Investments · {money(total)}</h3>
       <div className="overflow-x-auto">
         <table className="w-full min-w-[280px] border-collapse whitespace-nowrap text-[12px] tabular-nums">
           <thead className="text-[var(--os-dim)]">
@@ -72,11 +72,11 @@ export function MoneyPanel({ life, onMoney }: { life: LifeState; onMoney: (a: Mo
                   <td className="font-mono text-[var(--os-dim)]">{total > 0 ? `${Math.round((f.holdings[k] / total) * 100)}%` : "—"}</td>
                   <td>
                     <span className="inline-flex items-center gap-0.5">
-                      <button type="button" aria-label={`Less ${info.short}`} onClick={() => step(k, -5)} className="h-6 w-5 rounded-[4px] border border-[var(--os-border)] font-mono text-[12px] text-[var(--os-dim)] hover:text-[var(--os-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--os-teal)]">
+                      <button type="button" aria-label={`Less ${info.short}`} onClick={() => step(k, -5)} className="h-6 w-5 rounded-lg border border-[var(--os-border)] font-mono text-[12px] text-[var(--os-dim)] hover:text-[var(--os-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--os-teal)]">
                         −
                       </button>
                       <span className="w-8 text-center font-mono">{target[k]}%</span>
-                      <button type="button" aria-label={`More ${info.short}`} onClick={() => step(k, 5)} className="h-6 w-5 rounded-[4px] border border-[var(--os-border)] font-mono text-[12px] text-[var(--os-dim)] hover:text-[var(--os-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--os-teal)]">
+                      <button type="button" aria-label={`More ${info.short}`} onClick={() => step(k, 5)} className="h-6 w-5 rounded-lg border border-[var(--os-border)] font-mono text-[12px] text-[var(--os-dim)] hover:text-[var(--os-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--os-teal)]">
                         +
                       </button>
                     </span>
@@ -95,7 +95,7 @@ export function MoneyPanel({ life, onMoney }: { life: LifeState; onMoney: (a: Mo
             key={p.id}
             type="button"
             onClick={() => setDraft({ ...p.target })}
-            className="rounded-[4px] border border-[var(--os-border)] px-2 py-0.5 font-mono text-[11px] text-[var(--os-dim)] hover:text-[var(--os-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--os-teal)]"
+            className="rounded-lg border border-[var(--os-border)] px-2 py-0.5 font-mono text-[11px] text-[var(--os-dim)] hover:text-[var(--os-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--os-teal)]"
           >
             {p.label}
           </button>

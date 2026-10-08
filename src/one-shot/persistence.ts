@@ -73,6 +73,26 @@ const MIGRATIONS: Record<number, Migration> = {
       finance: { ...fresh, ...rest, holdings, target, autoInvest: advisor !== null, market: fresh.market },
     };
   },
+  3: (d) => {
+    const counters = { ...((d.counters as { entry: number; decision: number; offer: number }) ?? { entry: 0, decision: 0, offer: 0 }) };
+    const seen = new Set<string>();
+    const history = ((d.history as { id: string }[]) ?? []).map((h) => {
+      if (!seen.has(h.id)) {
+        seen.add(h.id);
+        return h;
+      }
+      const id = `h${++counters.entry}`;
+      seen.add(id);
+      return { ...h, id };
+    });
+    return {
+      ...d,
+      schemaVersion: 4,
+      counters,
+      history,
+      draft: { stock: 0, combine: null, interviews: [], workouts: null, promise: null, board: null, ...((d.draft as Record<string, unknown>) ?? {}) },
+    };
+  },
 };
 
 export type LoadResult = { ok: true; state: LifeState } | { ok: false; reason: string; raw: string | null };

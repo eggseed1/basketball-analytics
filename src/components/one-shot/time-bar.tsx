@@ -68,7 +68,7 @@ export function TimeBar({
     <div
       ref={barRef}
       className={cn(
-        "sticky top-0 z-30 -mx-3 border-b border-[var(--os-border)] bg-[var(--os-page)]/95 px-3 py-2 backdrop-blur sm:mx-0 sm:rounded-[6px] sm:border sm:bg-[var(--os-panel)] sm:px-3.5",
+        "sticky top-0 z-30 -mx-3 border-b border-[var(--os-border)] bg-[var(--os-page)]/95 px-3 py-2 backdrop-blur sm:mx-0 sm:rounded-[11px] sm:border sm:bg-[var(--os-panel)] sm:px-3.5",
         expanded ? "sm:shadow-[0_10px_24px_-14px_rgb(0_0_0/0.9)]" : "sm:static",
       )}
     >
@@ -99,7 +99,7 @@ export function TimeBar({
         <button
           type="button"
           onClick={() => onSpeed(SPEEDS[(SPEEDS.indexOf(life.clock.speed) + 1) % SPEEDS.length]!)}
-          className="min-h-9 rounded-[5px] border border-[var(--os-border)] px-2 font-mono text-[12px] tabular-nums md:hidden"
+          className="min-h-9 rounded-lg border border-[var(--os-border)] px-2 font-mono text-[12px] tabular-nums md:hidden"
           aria-label={`Speed ${life.clock.speed}x. Tap to change.`}
         >
           {life.clock.speed}x
@@ -127,7 +127,7 @@ export function TimeBar({
         <span className="sr-only" role="status" aria-live="polite">
           {status}
         </span>
-        <span className="ml-auto hidden font-mono text-[11px] uppercase tracking-[0.1em] text-[var(--os-dim)] xl:block">{status}</span>
+        <span className="ml-auto hidden text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--os-dim)] xl:block">{status}</span>
         <UtilityMenu
           life={life}
           onAuto={onAuto}
@@ -184,14 +184,14 @@ function UtilityMenu({
       document.removeEventListener("keydown", onKey);
     };
   }, [open]);
-  const item = "flex w-full items-center justify-between gap-3 rounded-[4px] px-2.5 py-2 text-left text-[13px] hover:bg-[var(--os-panel2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--os-teal)]";
+  const item = "flex w-full items-center justify-between gap-3 rounded-lg px-2.5 py-2 text-left text-[13px] hover:bg-[var(--os-panel2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--os-teal)]";
   return (
     <div ref={wrap} className="relative">
       <Btn ref={button} aria-haspopup="menu" aria-expanded={open} onClick={() => setOpen((v) => !v)} aria-label="More options" className="px-2.5">
         <span aria-hidden className="text-[16px] leading-none">⋯</span>
       </Btn>
       {open ? (
-        <div role="menu" className="absolute right-0 top-full z-40 mt-1.5 w-64 rounded-[6px] border border-[var(--os-border)] bg-[var(--os-panel)] p-1.5 shadow-[0_12px_30px_-12px_rgb(0_0_0/0.7)]">
+        <div role="menu" className="absolute right-0 top-full z-40 mt-1.5 w-64 rounded-[11px] border border-[var(--os-border)] bg-[var(--os-panel)] p-1.5 shadow-[0_12px_30px_-12px_rgb(0_0_0/0.7)]">
           <button role="menuitemcheckbox" aria-checked={life.clock.autoDecisions} className={item} onClick={() => onAuto(!life.clock.autoDecisions)}>
             Auto decisions <span className="font-mono text-[11px] text-[var(--os-dim)]">{life.clock.autoDecisions ? "On" : "Off"}</span>
           </button>

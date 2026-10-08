@@ -1,8 +1,8 @@
 /**
  * ONE SHOT: world registry, FIBA crosswalk, sparse countries, determinism
  * across speeds and "Next decision", save/resume, focus proration, money,
- * body plausibility, injuries, box scores, draft eligibility, undrafted
- * debuts, peer isolation, the clock and QA careers by country.
+ * body plausibility, injuries, box scores, draft eligibility, the draft
+ * cycle and order, undrafted debuts, peer isolation, the clock and QA careers by country.
  * Run: npx tsx scripts/test-one-shot.ts
  */
 import assert from "node:assert/strict";
@@ -16,16 +16,16 @@ import { fieldOf, tournamentsFor } from "../src/one-shot/international";
 import { advanced, sumBoxes } from "../src/one-shot/stats";
 import { levelOf, performanceLevel, simulateGame } from "../src/one-shot/career";
 import { MAX_BATCH, tick } from "../src/one-shot/clock";
-import { autoEligible, canDeclare } from "../src/one-shot/draft";
+import { autoEligible, canDeclare, draftOrder, INTERVIEW_QUESTIONS, interviewDelta } from "../src/one-shot/draft";
 import { advance, advanceToDecision, autoChoice, createLife, manageMoney, resolveDecision, setPlan, stepMonth } from "../src/one-shot/engine";
 import { EVENT_BY_ID, EVENTS } from "../src/one-shot/events";
 import { dailyDate, dailySeed, parseSave, serialize } from "../src/one-shot/persistence";
 import { outcomeTier, shareText } from "../src/one-shot/report";
 import { createStreams, rngOf } from "../src/one-shot/rng";
-import { offerBlocked, offseasonOffers } from "../src/one-shot/routes";
+import { NBA_TEAMS, offerBlocked, offseasonOffers } from "../src/one-shot/routes";
 import { projectedCeiling } from "../src/one-shot/skills";
 import { canAfford, chargeFamily, effectivePractice, monthlyDevelopment, stepInjury } from "../src/one-shot/training";
-import type { LifeState, NewLifeOptions } from "../src/one-shot/types";
+import { SCHEMA_VERSION, type LifeState, type NewLifeOptions } from "../src/one-shot/types";
 import { birthShare, COUNTRIES, country, domesticProLeagues, LEAGUES, maybeLeague, PLAYABLE_COUNTRIES, teamStrength } from "../src/one-shot/world";
 
 const root = path.resolve(import.meta.dirname, "..");
@@ -525,13 +525,71 @@ ok("version 1 saves migrate with new streams, money and an agent", () => {
   const res = parseSave(JSON.stringify(old));
   assert.ok(res.ok, res.ok ? "" : res.reason);
   if (!res.ok) return;
-  assert.equal(res.state.schemaVersion, 3);
+  assert.equal(res.state.schemaVersion, SCHEMA_VERSION);
   assert.equal(typeof res.state.rng.finance, "number");
   assert.equal(typeof res.state.rng.intl, "number");
   assert.equal(res.state.finance.agent?.reach, "regional");
   assert.equal("agent" in res.state.flags, false);
   const next = advance(res.state, 24, { auto: true });
   assert.ok(next.ageMonths > res.state.ageMonths);
+});
+
+ok("version 3 saves migrate with empty draft-cycle fields", () => {
+  const s = autoLife(4242, 20 * 12);
+  const old = JSON.parse(serialize(s)) as Record<string, unknown>;
+  old.schemaVersion = 3;
+  old.draft = { declaredYear: 2040, classSeed: null, result: null, withdrewYears: [2039] };
+  const hist = old.history as { id: string }[];
+  hist.push({ ...hist[hist.length - 1]!, id: hist[0]!.id });
+  const res = parseSave(JSON.stringify(old));
+  assert.ok(res.ok, res.ok ? "" : res.reason);
+  if (!res.ok) return;
+  assert.equal(new Set(res.state.history.map((h) => h.id)).size, res.state.history.length, "history ids are unique after migration");
+  assert.equal(res.state.history[res.state.history.length - 1]!.id, `h${res.state.counters.entry}`);
+  assert.deepEqual(res.state.draft, { declaredYear: 2040, classSeed: null, result: null, withdrewYears: [2039], stock: 0, combine: null, interviews: [], workouts: null, promise: null, board: null });
+});
+
+ok("history entry ids are unique", () => {
+  for (let seed = 1; seed <= 40; seed++) {
+    const life = autoLife(seed, 30 * 12);
+    assert.equal(new Set(life.history.map((h) => h.id)).size, life.history.length, `seed ${seed}`);
+  }
+});
+
+ok("draft: unique teams per round, bounded interviews, and a full cycle for prospects", () => {
+  for (const year of [2040, 2041, 2055]) {
+    const order = draftOrder(77, year);
+    assert.equal(new Set(order).size, 30);
+    assert.deepEqual([...order].sort(), [...NBA_TEAMS].sort());
+  }
+  const s = createLife(base(9));
+  for (const q of INTERVIEW_QUESTIONS) {
+    assert.equal(q.answers.length, 3, q.id);
+    for (const a of q.answers) {
+      for (const t of [0, 100]) {
+        const probe = { ...s, traits: { coachability: t, confidence: t, composure: t, discipline: t, motivation: t } };
+        for (const roll of [0, 0.5, 0.999]) {
+          const d = interviewDelta(probe, a, roll);
+          assert.ok(d >= -1.5 && d <= 1.5, `${q.id}: ${d}`);
+        }
+      }
+    }
+  }
+  let cycles = 0;
+  for (let seed = 1; seed <= 400 && cycles < 4; seed++) {
+    const life = autoLife(seed, 31 * 12);
+    const d = life.draft;
+    if (!d.combine?.invited || !d.board) continue;
+    cycles++;
+    assert.equal(d.interviews.length, 3, `seed ${seed}: interviews`);
+    assert.ok(d.workouts !== null, `seed ${seed}: workouts`);
+    assert.equal(d.board.length, 60);
+    for (const round of [d.board.slice(0, 30), d.board.slice(30)]) assert.equal(new Set(round.map((p) => p.team)).size, 30, `seed ${seed}: repeated team`);
+    const me = d.board.find((p) => p.isPlayer);
+    if (d.result?.pick) assert.equal(me?.pick, d.result.pick);
+    else assert.equal(me, undefined);
+  }
+  assert.ok(cycles >= 2, `only ${cycles} full draft cycles in 400 lives`);
 });
 
 /** Drive a life with auto choices, except where `pick` returns a choice id. */
@@ -625,7 +683,7 @@ ok("version 2 saves move invested money into holdings", () => {
   const res = parseSave(JSON.stringify(old));
   assert.ok(res.ok, res.ok ? "" : res.reason);
   if (!res.ok) return;
-  assert.equal(res.state.schemaVersion, 3);
+  assert.equal(res.state.schemaVersion, SCHEMA_VERSION);
   assert.equal(res.state.after, null);
   assert.equal(typeof res.state.rng.after, "number");
   assert.ok(Math.abs(invested(res.state.finance) - 50_000) < 1);

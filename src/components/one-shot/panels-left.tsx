@@ -14,16 +14,16 @@ import { ageLabel, Bar, Chip, Kv, money, ordinal, OS, Panel } from "./ui";
 
 type Units = "metric" | "imperial";
 
-export function Portrait({ life, size = 64, className }: { life: Pick<LifeState, "identity" | "ageMonths" | "placement">; size?: number; className?: string }) {
+export function Portrait({ life, size = 64, className }: { life: Pick<LifeState, "identity" | "ageMonths" | "placement" | "seed">; size?: number; className?: string }) {
   const ref = useRef<HTMLCanvasElement>(null);
   const stage = life.ageMonths < 36 ? 0 : life.ageMonths < 144 ? 1 : life.ageMonths < 192 ? 2 : 3;
-  const { identity, placement } = life;
+  const { identity, placement, seed } = life;
   useEffect(() => {
     const ctx = ref.current?.getContext("2d");
     if (!ctx) return;
     ctx.imageSmoothingEnabled = false;
-    drawPortrait(ctx, { identity, ageMonths: [0, 60, 168, 240][stage]!, placement }, 64);
-  }, [identity, placement, stage]);
+    drawPortrait(ctx, { identity, ageMonths: [0, 60, 168, 240][stage]!, placement, seed }, 64);
+  }, [identity, placement, stage, seed]);
   return (
     <canvas
       ref={ref}
@@ -47,7 +47,7 @@ export function IdentityCard({ life, compact }: { life: LifeState; compact?: boo
   return (
     <Panel id="os-identity" className={compact ? "p-3" : undefined}>
       <div className="flex items-start gap-3">
-        <Portrait life={life} size={compact ? 52 : 64} className="shrink-0 rounded-[4px] border border-[var(--os-border)]" />
+        <Portrait life={life} size={compact ? 52 : 64} className="shrink-0 rounded-lg border border-[var(--os-border)]" />
         <div className="min-w-0 flex-1">
           <p className="truncate text-[16px] font-semibold leading-tight">{life.identity.displayName}</p>
           <p className="mt-0.5 truncate text-[12.5px] text-[var(--os-dim)]">
@@ -59,7 +59,7 @@ export function IdentityCard({ life, compact }: { life: LifeState; compact?: boo
           </p>
         </div>
       </div>
-      <dl className="mt-3 grid grid-cols-3 gap-px overflow-hidden rounded-[4px] border border-[var(--os-border)] bg-[var(--os-border)] font-mono text-[11px] uppercase tabular-nums">
+      <dl className="mt-3 grid grid-cols-3 gap-px overflow-hidden rounded-lg border border-[var(--os-border)] bg-[var(--os-border)] font-mono text-[11px] uppercase tabular-nums">
         <IdCell k="Age" v={ageLabel(life.ageMonths)} />
         <IdCell k="Date" v={`${MONTHS[month - 1]} ${year}`} />
         <IdCell k="Role" v={life.after ? "Retired" : life.placement.role === "none" ? "—" : ROLE_LABEL[life.placement.role]} />
@@ -94,7 +94,7 @@ export function StatusPanel({ life }: { life: LifeState }) {
         <Bar label="Exposure" value={age >= 6 ? life.exposure : null} color={OS.green} hint="How much scouts have seen you" />
       </div>
       {life.condition.injury ? (
-        <p className="mt-3 rounded-[4px] border border-[var(--os-rose)]/50 px-2 py-1.5 text-[12px] text-[var(--os-rose)]">
+        <p className="mt-3 rounded-lg border border-[var(--os-rose)]/50 px-2 py-1.5 text-[12px] text-[var(--os-rose)]">
           {life.condition.injury.label}. About {life.condition.injury.monthsLeft} month
           {life.condition.injury.monthsLeft === 1 ? "" : "s"} to heal.
         </p>
@@ -117,7 +117,7 @@ export function PhysiquePanel({ life, units, onUnits }: { life: LifeState; units
         <button
           type="button"
           onClick={() => onUnits(units === "metric" ? "imperial" : "metric")}
-          className="rounded-[4px] border border-[var(--os-border)] px-1.5 py-0.5 font-mono text-[10.5px] uppercase text-[var(--os-dim)] hover:text-[var(--os-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--os-teal)]"
+          className="rounded-lg border border-[var(--os-border)] px-1.5 py-0.5 font-mono text-[10.5px] uppercase text-[var(--os-dim)] hover:text-[var(--os-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--os-teal)]"
           aria-label={`Switch to ${units === "metric" ? "imperial" : "metric"} units`}
         >
           {units === "metric" ? "cm/kg" : "ft/lb"}
