@@ -8,6 +8,8 @@ import {
   ADVANCED_PERCENTILE_METRIC_IDS,
   buildPlayerPercentileMetrics,
   isQualifiedPeer,
+  percentileCutoffs,
+  percentileFromCutoffs,
 } from "../src/lib/player-percentile-metrics";
 import {
   SHEET_STAT_BY_ID,
@@ -333,6 +335,36 @@ function main() {
   assert.ok((hustleById.hustleDefl?.percentile ?? 0) > 50);
   assert.equal(hustleById.hustleContest?.category, "hustle");
   assert.equal(hustleById.hustleBoxOut?.category, "hustle");
+
+  // Baked cutoffs read like the exact rank, ties and float noise included.
+  const tiedPool = Array.from({ length: 400 }, (_, i) => Math.floor(i / 40) / 10);
+  const cutoffs = percentileCutoffs(tiedPool);
+  assert.equal(cutoffs.length, 101);
+  for (const v of [0, 0.1, 0.45, 0.9, 1]) {
+    const exact = (tiedPool.filter((x) => x < v).length / tiedPool.length) * 100;
+    assert.ok(Math.abs(percentileFromCutoffs(v, cutoffs) - exact) <= 1.5, `cutoff rank for ${v}`);
+  }
+  assert.equal(percentileFromCutoffs(0.1 + 0.2, cutoffs), percentileFromCutoffs(0.3, cutoffs));
+
+  // Fast payload: view season ranks live, other seasons from baked cutoffs, never invented.
+  const board = Array.from({ length: 20 }, (_, i) =>
+    row({ playerId: `p${i}`, playerName: `Peer ${i}`, points: (5 + i) * 70 })
+  );
+  const now = row({ playerId: "focal", playerName: "Focal", points: 20 * 70 });
+  const then = row({ playerId: "focal", playerName: "Focal", season: "2018-19", points: 12 * 70 });
+  const older = row({ playerId: "focal", playerName: "Focal", season: "2017-18", points: 10 * 70 });
+  const ptsSeries = (opts?: Parameters<typeof buildPlayerPercentileMetrics>[6]) =>
+    buildPlayerPercentileMetrics(now, [older, then, now], board, [], "focal", undefined, opts).find(
+      (m) => m.id === "pts"
+    )?.series;
+  const fastSeries = ptsSeries({
+    light: true,
+    seasonCutoffs: (season, id) =>
+      season === "2018-19" && id === "pts" ? percentileCutoffs([4, 8, 12, 16, 20]) : undefined,
+  });
+  assert.ok(fastSeries?.find((p) => p.fullSeason === "2024-25")?.percentile != null);
+  assert.ok(Math.abs((fastSeries?.find((p) => p.fullSeason === "2018-19")?.percentile ?? -1) - 40) <= 3);
+  assert.equal(fastSeries?.find((p) => p.fullSeason === "2017-18")?.percentile, undefined);
 
   console.log("test-player-percentile-metrics: ok");
 }

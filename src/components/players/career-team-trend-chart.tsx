@@ -390,8 +390,9 @@ export function CareerTeamTrendChart({
       (teamId && palette.get(teamId)) || chartTheme.teamColor(teamId).color,
     [palette, chartTheme]
   );
-  const hasPercentileColors =
-    savantScale && points.some((p) => p.percentile != null);
+  // Percentile mode never falls back to team colors: a season not ranked yet
+  // (fast payload, missing peer board) stays neutral until its percentile lands.
+  const hasPercentileColors = savantScale;
 
   const plotPoints = useMemo((): CareerSeriesPoint[] => {
     if (!hasPercentileColors) return points;
@@ -408,10 +409,10 @@ export function CareerTeamTrendChart({
         color:
           pct != null
             ? percentileSavantColor(pct, chartTheme.surface)
-            : teamColor(p.teamId),
+            : "var(--muted-foreground)",
       };
     });
-  }, [points, hasPercentileColors, chartTheme.surface, teamColor]);
+  }, [points, hasPercentileColors, chartTheme.surface]);
 
   const themedPlotPoints = useMemo((): CareerSeriesPoint[] => {
     if (hasPercentileColors) return plotPoints;

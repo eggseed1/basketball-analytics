@@ -188,7 +188,7 @@ const TRANSACTION_STEPS = [
     args: ["scripts/build-runtime-transactions-snapshot.mjs"],
   },
 ];
-const SOFT_FAIL = new Set(["drbl-recompute", "on-off-pbp", "on-off-playoffs", ...TRANSACTION_STEPS.map((s) => s.label)]);
+const SOFT_FAIL = new Set(["drbl-recompute", "on-off-pbp", "on-off-playoffs", "percentile-pools", ...TRANSACTION_STEPS.map((s) => s.label)]);
 
 async function runTransactionSteps() {
   const failed = [];
@@ -291,6 +291,12 @@ async function main() {
       label: "impact-overlay",
       cmd: "node",
       args: ["scripts/build-runtime-impact-snapshot.mjs"],
+    },
+    {
+      // After the BRef + overlay bakes: pools rank against those boards.
+      label: "percentile-pools",
+      cmd: "npx",
+      args: ["tsx", "--conditions=react-server", "scripts/build-runtime-percentile-pools.ts"],
     },
     {
       label: "current-roster",

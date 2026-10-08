@@ -172,6 +172,34 @@ function pickSpreadSeasons(
   return out;
 }
 
+/**
+ * Fast / CF peer board: bundled BRef + DARKO + DRBL/WAR1 + hustle overlay.
+ * Archive boards skip hustle (coverage is recent-only) to save CPU.
+ * Null when the season isn't bundled.
+ */
+export async function loadBundledPeerBoard(
+  peerSeason: string,
+  opts?: { archive?: boolean }
+): Promise<PlayerSeason[] | null> {
+  const { getBundledBrefPeerBoard } = await import(
+    "@/data/runtime/bref-advanced-snapshot"
+  );
+  const {
+    overlayImpactRatingsForPeers,
+    overlayDrblRatingsForPeers,
+    overlayHustleRatingsForPeers,
+  } = await import("@/data/queries/players");
+  const bundled = getBundledBrefPeerBoard(peerSeason);
+  if (bundled.length < 100) return null;
+  const withImpact = await overlayImpactRatingsForPeers(bundled, peerSeason);
+  const withDrbl = await overlayDrblRatingsForPeers(withImpact, peerSeason);
+  if (opts?.archive) {
+    return withDrbl.filter((row) => row.gamesPlayed >= 15);
+  }
+  const withHustle = await overlayHustleRatingsForPeers(withDrbl, peerSeason);
+  return withHustle.filter((row) => row.gamesPlayed >= 15);
+}
+
 export async function loadPlayerPercentileMetrics(
   playerId: string,
   season: string,
@@ -245,41 +273,14 @@ export async function loadPlayerPercentileMetrics(
       ? enrichCareerForFastHero(playerId, career).catch(() => career)
       : enrichPlayerCareerAdvancedCached(playerId, career).catch(() => career);
 
-  // Fast / CF: BRef peer board + DARKO + DRBL/WAR1 + hustle overlay.
-  // Historical archive boards skip hustle (coverage is recent-only) to save CPU.
   const loadPeers = async (
     peerSeason: string,
     opts?: { archive?: boolean }
   ): Promise<PlayerSeason[]> => {
     if (mode === "fast" || preferBundled) {
       try {
-        const { getBundledBrefPeerBoard } = await import(
-          "@/data/runtime/bref-advanced-snapshot"
-        );
-        const {
-          overlayImpactRatingsForPeers,
-          overlayDrblRatingsForPeers,
-          overlayHustleRatingsForPeers,
-        } = await import("@/data/queries/players");
-        const bundled = getBundledBrefPeerBoard(peerSeason);
-        if (bundled.length >= 100) {
-          const withImpact = await overlayImpactRatingsForPeers(
-            bundled,
-            peerSeason
-          );
-          const withDrbl = await overlayDrblRatingsForPeers(
-            withImpact,
-            peerSeason
-          );
-          if (opts?.archive) {
-            return withDrbl.filter((row) => row.gamesPlayed >= 15);
-          }
-          const withHustle = await overlayHustleRatingsForPeers(
-            withDrbl,
-            peerSeason
-          );
-          return withHustle.filter((row) => row.gamesPlayed >= 15);
-        }
+        const bundled = await loadBundledPeerBoard(peerSeason, opts);
+        if (bundled) return bundled;
       } catch {
         /* fall through */
       }
@@ -288,6 +289,10 @@ export async function loadPlayerPercentileMetrics(
       () => [] as PlayerSeason[]
     );
   };
+
+  const seasonCutoffs = await import("@/data/runtime/percentile-pools-snapshot")
+    .then((m) => m.bundledSeasonCutoffs)
+    .catch(() => undefined);
 
   const [
     seasonRaw,
@@ -368,7 +373,7 @@ export async function loadPlayerPercentileMetrics(
     priorBoard,
     playerId,
     peersBySeason,
-    { light: mode === "fast" }
+    { light: mode === "fast", seasonCutoffs }
   );
 
   const profileComps = seasonStats

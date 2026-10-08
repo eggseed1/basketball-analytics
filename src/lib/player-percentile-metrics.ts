@@ -181,11 +181,57 @@ type CareerPoint = {
   /** Canonical season id, e.g. "2016-17". */
   fullSeason: string;
   value: number;
-  percentile: number;
+  percentile: number | undefined;
   teamId: string;
   teamAbbr: string;
   color: string;
 };
+
+export type PercentileMetricsOptions = {
+  /**
+   * Skip nearest-comp scans + sparkline peer ranks for seasons other than
+   * the view season.
+   * Used for slider / LCP; full mode fills comps on idle upgrade.
+   */
+  light?: boolean;
+  /**
+   * Baked quantile cutoffs of a season's peer pool. Ranks career series
+   * seasons whose peer board was not loaded for this request.
+   */
+  seasonCutoffs?: (season: string, metricId: string) => readonly number[] | undefined;
+  /** Receives each metric's view-season peer pool (percentile pool bake). */
+  onPool?: (metricId: string, values: readonly number[]) => void;
+};
+
+/** Cutoffs and looked-up values share this rounding so float noise can't split ties. */
+const roundCutoff = (v: number) => Number(v.toPrecision(6));
+
+/** Quantile cutoffs (0th..100th) of a peer pool, for `percentileFromCutoffs`. */
+export function percentileCutoffs(values: readonly number[]): number[] {
+  const sorted = values.filter((v) => Number.isFinite(v)).sort((a, b) => a - b);
+  if (sorted.length < 2) return [];
+  const last = sorted.length - 1;
+  return Array.from({ length: 101 }, (_, k) => roundCutoff(sorted[Math.round((k * last) / 100)]!));
+}
+
+/** Share of the pool strictly below `value`, read off baked cutoffs (≈ percentileOf). */
+export function percentileFromCutoffs(raw: number, cutoffs: readonly number[]): number {
+  const last = cutoffs.length - 1;
+  if (last < 1 || !Number.isFinite(raw)) return 50;
+  const value = roundCutoff(raw);
+  if (value <= cutoffs[0]!) return 0;
+  if (value > cutoffs[last]!) return 100;
+  let lo = 0;
+  let hi = last;
+  while (hi - lo > 1) {
+    const mid = (lo + hi) >> 1;
+    if (cutoffs[mid]! < value) lo = mid;
+    else hi = mid;
+  }
+  const span = cutoffs[hi]! - cutoffs[lo]!;
+  const frac = span > 0 ? (value - cutoffs[lo]!) / span : 0;
+  return ((lo + frac) / last) * 100;
+}
 
 /**
  * Build season percentile metrics for the player page.
@@ -202,13 +248,7 @@ export function buildPlayerPercentileMetrics(
   historicalPeers: PlayerSeason[],
   focalPlayerId: string,
   peersBySeason?: Map<string, PlayerSeason[]>,
-  options?: {
-    /**
-     * Skip nearest-comp scans + per-season sparkline peer ranks.
-     * Used for slider / LCP; full mode fills comps on idle upgrade.
-     */
-    light?: boolean;
-  }
+  options?: PercentileMetricsOptions
 ): PercentileMetric[] {
   // Old-era boards send 0 for stats nobody recorded yet; rank those as blank.
   const mask = (rows: PlayerSeason[]) => rows.map(maskUnrecordedEraStats);
@@ -232,10 +272,11 @@ function buildMaskedPercentileMetrics(
   historicalPeers: PlayerSeason[],
   focalPlayerId: string,
   peersBySeason?: Map<string, PlayerSeason[]>,
-  options?: { light?: boolean }
+  options?: PercentileMetricsOptions
 ): PercentileMetric[] {
   if (!seasonStats) return [];
   const light = Boolean(options?.light);
+  const seasonCutoffs = options?.seasonCutoffs;
 
   const qualified = peers.filter(isQualifiedPeer);
   const pool = qualified.length ? qualified : peers;
@@ -262,7 +303,7 @@ function buildMaskedPercentileMetrics(
     season: string,
     pick: (row: PlayerSeason) => number | null | undefined
   ): number[] => {
-    if (light) return [];
+    if (light && season !== seasonStats.season) return [];
     const seasonPeers = peersBySeason?.get(season);
     if (!seasonPeers?.length) {
       if (season !== seasonStats.season) return [];
@@ -352,8 +393,18 @@ function buildMaskedPercentileMetrics(
       (interpretation === "higher_is_better" ||
         interpretation === "lower_is_better");
 
+    options?.onPool?.(opts.id, opts.values);
     const raw = percentileOf(opts.value, opts.values);
     const percentile = opts.invert ? 100 - raw : raw;
+    const series = seasonCutoffs
+      ? opts.series.map((point) => {
+          if (point.percentile != null) return point;
+          const cutoffs = seasonCutoffs(point.fullSeason, opts.id);
+          if (!cutoffs?.length) return point;
+          const rank = percentileFromCutoffs(point.value, cutoffs);
+          return { ...point, percentile: opts.invert ? 100 - rank : rank };
+        })
+      : opts.series;
     const comps = light
       ? { leagueComps: [], historicalComps: [] }
       : findSimilarForMetric({
@@ -373,7 +424,7 @@ function buildMaskedPercentileMetrics(
       percentile,
       display: opts.display,
       value: opts.value,
-      series: opts.series,
+      series,
       leagueComps: comps.leagueComps,
       historicalComps: comps.historicalComps,
       interpretation,
