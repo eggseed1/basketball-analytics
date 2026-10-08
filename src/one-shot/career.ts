@@ -187,7 +187,7 @@ function binomial(rng: Rng, n: number, p: number): number {
 const OPPONENTS = ["Eastside", "Riverside", "Central", "Northgate", "Harbor", "Hillcrest", "Lakeview", "Westfield", "Southport", "Old Town", "Parkside", "Union"];
 
 /** One game. Box score always reconciles: pts = 2(FGM - 3PM) + 3(3PM) + FTM. */
-export function simulateGame(state: LifeState, level: Level, rng: Rng, minutesOverride?: number, roleOverride?: Role): BoxScore {
+export function simulateGame(state: LifeState, level: Level, rng: Rng, minutesOverride?: number, roleOverride?: Role, teamEdge = 0): BoxScore {
   const lvl = performanceLevel(state);
   const role = roleOverride ?? (state.placement.role === "none" ? roleFor(lvl, level.need) : state.placement.role);
   const s = state.skills;
@@ -217,7 +217,9 @@ export function simulateGame(state: LifeState, level: Level, rng: Rng, minutesOv
   const fgm = twoM + tpm;
   const pts = 2 * twoM + 3 * tpm + ftm;
   const pace = level.youth ? clamp(25 + state.ageMonths / 12 * 3.2, 30, 75) : 82;
-  const teamQuality = clamp(0.5 + (role === "star" ? 0.08 : role === "starter" ? 0.04 : 0) + diff / 200, 0.2, 0.8);
+  // An NBA reserve doesn't drag the roster down; the other fourteen players set the record.
+  const own = level.leagueId === "nba" ? Math.max(0, diff) : diff;
+  const teamQuality = clamp(0.5 + (role === "star" ? 0.08 : role === "starter" ? 0.04 : 0) + own / 200 + teamEdge, 0.2, 0.8);
   const teamOther = Math.round(rng.normal(pace, pace * 0.1));
   const teamScore = Math.max(pts + 2, teamOther + Math.round(pts * 0.5));
   const oppScore = Math.max(10, Math.round(teamScore + rng.normal((0.5 - teamQuality) * 30, pace * 0.12)));

@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 
 import coverage from "@/one-shot/data/research-coverage.json";
 import { AUTO_STRATEGY } from "@/one-shot/engine";
+import { CALIBRATION, LEAGUE_FIRST_SEASON, LEAGUE_SEASON, POOL_GAMES, REAL } from "@/one-shot/league";
 import type { LifeState } from "@/one-shot/types";
 import { birthShare, COUNTRIES, country, countryFlag, maybeLeague, WORLD_META, type LeagueProfile } from "@/one-shot/world";
 
@@ -195,6 +196,14 @@ export function SourcesDrawer({ life, onClose }: { life: LifeState | null; onClo
           <p className="mt-1 text-[12px] text-[var(--os-dim)]">
             Call-ups: a G League call-up comes with a 10-day contract, and in this game the parent club then keeps him for the rest of the season. Early entry for the draft is open from January
             through April to anyone eligible, whatever the scouts think (game rule).
+          </p>
+          <p className="mt-1 text-[12px] text-[var(--os-dim)]">
+            In the NBA: his per-game numbers are ranked against the {REAL.filter((r) => r.gp >= POOL_GAMES).length} real players with {POOL_GAMES}+ games in {LEAGUE_SEASON}, from Basketball
+            Reference. Honors are game rules built on those players, not a vote. All-NBA goes to the top 15 by Game Score and MVP to the top player on a winning team. All-Star picks take about
+            the top 26 at midseason. Award honors need 65 games, as under the 2023 CBA, and stat titles need 58. From {LEAGUE_FIRST_SEASON} to {LEAGUE_SEASON}, those Game Score cutoffs held{" "}
+            {Math.round((CALIBRATION.allNba[0] / CALIBRATION.allNba[1]) * 100)}% of real All-NBA picks, and the top rookie won Rookie of the Year {CALIBRATION.royTopRookie[0]} times in{" "}
+            {CALIBRATION.royTopRookie[1]}. Box scores miss most defense, so the defensive rule picked the real winner {CALIBRATION.dpoyFirst[0]} times in {CALIBRATION.dpoyFirst[1]}. Minutes
+            follow his level and the coach&apos;s trust, which good and bad months move. Team strength, playoff seeding, opponents and series are simulated from his team&apos;s record.
           </p>
           <p className="mt-1 text-[12px] text-[var(--os-dim)]">
             Agents and clubs named in the game are fictional. Season honors come from fixed thresholds on his stats and level, not from votes. Trades happen at the February deadline, with odds that go

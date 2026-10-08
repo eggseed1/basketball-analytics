@@ -4,12 +4,12 @@
  * saved life and survives JSON round trips.
  */
 
-export type StreamName = "generation" | "growth" | "training" | "injury" | "events" | "games" | "scouting" | "draft" | "finance" | "intl" | "after";
+export type StreamName = "generation" | "growth" | "training" | "injury" | "events" | "games" | "scouting" | "draft" | "finance" | "intl" | "after" | "nba";
 
 export type Streams = Record<StreamName, number> & { peers: number[] };
 
 /** Append new names at the end: a stream's seed depends on its position. */
-export const STREAM_NAMES: StreamName[] = ["generation", "growth", "training", "injury", "events", "games", "scouting", "draft", "finance", "intl", "after"];
+export const STREAM_NAMES: StreamName[] = ["generation", "growth", "training", "injury", "events", "games", "scouting", "draft", "finance", "intl", "after", "nba"];
 
 /** Seed for one named stream, used when an older save lacks it. */
 export function streamSeed(seed: number, name: StreamName): number {

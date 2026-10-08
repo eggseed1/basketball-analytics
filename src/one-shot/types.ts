@@ -1,7 +1,7 @@
 import type { Streams } from "./rng";
 
-export const SCHEMA_VERSION = 4;
-export const ENGINE_VERSION = "1.2.0";
+export const SCHEMA_VERSION = 5;
+export const ENGINE_VERSION = "1.3.0";
 
 export type Mode = "random" | "daily";
 export type DrawMode = "weighted" | "equal";
@@ -143,6 +143,39 @@ export interface SeasonLine {
   losses: number;
   strength: number;
   awards?: string[];
+  /** NBA only: the year the season tipped off, shared by lines split by a trade or call-up. */
+  nbaYear?: number;
+  /** NBA only: how much better or worse than average the rest of the roster is (model). */
+  teamEdge?: number;
+  /** NBA only: Player or Rookie of the Month honors. */
+  monthly?: string[];
+  playoffs?: PlayoffRun;
+}
+
+export interface PlayoffRun {
+  seed: number;
+  conference: "Eastern" | "Western";
+  gp: number;
+  min: number;
+  pts: number;
+  reb: number;
+  ast: number;
+  stl: number;
+  blk: number;
+  tov: number;
+  fgm: number;
+  fga: number;
+  tpm: number;
+  tpa: number;
+  ftm: number;
+  fta: number;
+  wins: number;
+  losses: number;
+  /** Series won. */
+  rounds: number;
+  series: string[];
+  result: string;
+  champion: boolean;
 }
 
 export interface BoxScore {

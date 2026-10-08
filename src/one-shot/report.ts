@@ -54,6 +54,17 @@ export function medalCount(s: LifeState) {
 
 export const awardCount = (s: LifeState) => s.seasons.reduce((a, x) => a + (x.awards?.length ?? 0), 0);
 
+/** NBA honors with counts, most frequent first: "2× NBA champion, NBA All-Star". Null when there are none. */
+export function nbaHonorList(s: LifeState): string | null {
+  const counts = new Map<string, number>();
+  for (const x of s.seasons) if (x.node === "nba") for (const a of x.awards ?? []) counts.set(a, (counts.get(a) ?? 0) + 1);
+  if (!counts.size) return null;
+  return [...counts.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .map(([k, n]) => (n > 1 ? `${n}× ${k}` : k))
+    .join(", ");
+}
+
 /** Short honors line: national team medals and caps, then season honors. Null when there are none. */
 export function honorsLine(s: LifeState): string | null {
   const m = medalCount(s);
@@ -61,8 +72,15 @@ export function honorsLine(s: LifeState): string | null {
   const medals = (["gold", "silver", "bronze"] as const).filter((k) => m[k]).map((k) => `${m[k]} ${k}`);
   if (medals.length) parts.push(`${medals.join(", ")} with ${country(s.international.tournaments.at(-1)!.countryId).name}`);
   if (s.international.caps) parts.push(`${s.international.caps} caps`);
-  const a = awardCount(s);
-  if (a) parts.push(`${a} season honor${a === 1 ? "" : "s"}`);
+  const all = s.seasons.flatMap((x) => x.awards ?? []);
+  const named = (name: string, label: string, plural = `${label}s`) => {
+    const n = all.filter((x) => x === name).length;
+    if (n) parts.push(n === 1 ? `${label}` : `${n}× ${plural}`);
+    return n;
+  };
+  const shown = named("NBA champion", "NBA title", "NBA titles") + named("NBA Most Valuable Player", "MVP", "MVPs") + named("NBA All-Star", "All-Star", "All-Star");
+  const a = awardCount(s) - shown;
+  if (a) parts.push(`${a} ${shown ? "other " : ""}season honor${a === 1 ? "" : "s"}`);
   return parts.length ? parts.join(" · ") : null;
 }
 

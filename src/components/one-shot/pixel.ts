@@ -327,6 +327,25 @@ export function drawScene(ctx: CanvasRenderingContext2D, s: LifeState, frame: nu
     drawPlayer(px, { x: 100, footY: FEET - 2, h: Math.round(heightPx * (0.94 + (hashString(`${s.seed}:${s.lastGame?.opponent ?? ""}`) % 10) / 100)), skin: SKIN[hashString(`${s.lastGame?.opponent ?? "x"}:skin`) % 6]!, hair: HAIR[0]!, style: 2, age: 25, kit: opp, facing: 1, pose: "defend", frame });
   }
   drawPlayer(px, { x: 128, footY: FEET, h: heightPx, ...hero, kit: env.kit, facing: -1, pose: "dribble", frame });
+  if (kind === "nba" && typeof s.flags.champAt === "number" && s.ageMonths - s.flags.champAt <= 1) drawTitle(px, env, frame);
+}
+
+/** Title month: confetti and the trophy, a gold ball over a net on a tapered stand. */
+function drawTitle(px: Px, env: Env, frame: number) {
+  const r = rand(`${env.seed}:confetti`);
+  const colors = [env.kit.primary, env.kit.secondary, "#F2C14E", "#FFFFFF"];
+  for (let i = 0; i < 70; i++) {
+    const x = Math.floor(r() * W);
+    const y = Math.floor((r() * FEET + frame * (0.5 + r() * 0.7)) % FEET);
+    px(x, y, 1 + (i % 2), 1, colors[i % colors.length]!);
+  }
+  const tx = 156;
+  px(tx - 6, FEET - 4, 12, 4, "#3A2A1A");
+  px(tx - 3, FEET - 9, 6, 5, "#C99A2E");
+  px(tx - 2, FEET - 18, 4, 9, "#E0B341");
+  px(tx - 1, FEET - 23, 2, 5, "#E0B341");
+  px(tx - 4, FEET - 29, 8, 6, "#F2C14E");
+  px(tx - 3, FEET - 28, 2, 2, "#FFF1B8");
 }
 
 /* ------------------------------------------------------------ outdoor */

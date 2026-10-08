@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, type ReactNode } from "react";
+import { Fragment, useMemo, useState, type ReactNode } from "react";
 
 import { calendar, MONTHS, perGame, performanceLevel, ROLE_LABEL } from "@/one-shot/career";
 import { KIND_LABEL, nationalTeam, upcoming } from "@/one-shot/international";
@@ -87,31 +87,70 @@ export function SeasonTable({ life }: { life: LifeState }) {
     <Table
       head={["Age", "Level", "Role", "GP", "MIN", "PTS", "REB", "AST", "STL", "BLK", "FG%", "3P%", "FT%", "W-L"]}
       minW={680}
-      note="A blank percentage means no attempts, not 0%. ★ marks season honors (model thresholds)."
+      note="A blank percentage means no attempts, not 0%. ★ marks season honors (model thresholds; NBA honors place him among the real league). Playoff rows sit above their season."
     >
-      {rows.map((r, i) => (
-        <tr key={`${r.key}-${i}`} className={rowCls}>
-          <td className="text-left">{r.ageYears}</td>
-          <td className="max-w-[200px] truncate text-left font-sans" title={`${r.levelLabel}${r.teamName ? ` · ${r.teamName}` : ""}${r.awards?.length ? ` · ${r.awards.join(", ")}` : ""}`}>
-            {r.awards?.length ? <span style={{ color: OS.amber }}>{"★".repeat(Math.min(3, r.awards.length))} </span> : null}
-            {r.levelLabel}
-          </td>
-          <td className="text-left font-sans text-[var(--os-dim)]">{ROLE_LABEL[r.role]}</td>
-          <td>{r.gp}</td>
-          <td>{perGame(r, "min").toFixed(1)}</td>
-          <td>{perGame(r, "pts").toFixed(1)}</td>
-          <td>{perGame(r, "reb").toFixed(1)}</td>
-          <td>{perGame(r, "ast").toFixed(1)}</td>
-          <td>{perGame(r, "stl").toFixed(1)}</td>
-          <td>{perGame(r, "blk").toFixed(1)}</td>
-          <td>{shot(r.fgm, r.fga)}</td>
-          <td>{shot(r.tpm, r.tpa)}</td>
-          <td>{shot(r.ftm, r.fta)}</td>
-          <td>
-            {r.wins}-{r.losses}
-          </td>
-        </tr>
-      ))}
+      {rows.map((r, i) => {
+        const po = r.playoffs;
+        const g = po ? Math.max(1, po.gp) : 1;
+        return (
+          <Fragment key={`${r.key}-${i}`}>
+            {po ? (
+              <tr className={rowCls}>
+                <td className="text-left">{r.ageYears}</td>
+                <td className="max-w-[200px] truncate text-left font-sans" title={po.series.join(" ") || po.result}>
+                  {po.champion ? <span style={{ color: OS.amber }}>★ </span> : null}
+                  NBA playoffs
+                </td>
+                <td className="max-w-[120px] truncate text-left font-sans text-[var(--os-dim)]" title={po.result}>
+                  {po.result || "In progress"}
+                </td>
+                <td>{po.gp}</td>
+                {po.gp ? (
+                  <>
+                    <td>{(po.min / g).toFixed(1)}</td>
+                    <td>{(po.pts / g).toFixed(1)}</td>
+                    <td>{(po.reb / g).toFixed(1)}</td>
+                    <td>{(po.ast / g).toFixed(1)}</td>
+                    <td>{(po.stl / g).toFixed(1)}</td>
+                    <td>{(po.blk / g).toFixed(1)}</td>
+                    <td>{shot(po.fgm, po.fga)}</td>
+                    <td>{shot(po.tpm, po.tpa)}</td>
+                    <td>{shot(po.ftm, po.fta)}</td>
+                  </>
+                ) : (
+                  <td colSpan={9} className="text-center font-sans text-[var(--os-dim)]">
+                    Didn&apos;t play
+                  </td>
+                )}
+                <td>
+                  {po.wins}-{po.losses}
+                </td>
+              </tr>
+            ) : null}
+            <tr className={rowCls}>
+              <td className="text-left">{r.ageYears}</td>
+              <td className="max-w-[200px] truncate text-left font-sans" title={`${r.levelLabel}${r.teamName ? ` · ${r.teamName}` : ""}${r.awards?.length ? ` · ${r.awards.join(", ")}` : ""}`}>
+                {r.awards?.length ? <span style={{ color: OS.amber }}>{"★".repeat(Math.min(3, r.awards.length))} </span> : null}
+                {r.levelLabel}
+              </td>
+              <td className="text-left font-sans text-[var(--os-dim)]">{ROLE_LABEL[r.role]}</td>
+              <td>{r.gp}</td>
+              <td>{perGame(r, "min").toFixed(1)}</td>
+              <td>{perGame(r, "pts").toFixed(1)}</td>
+              <td>{perGame(r, "reb").toFixed(1)}</td>
+              <td>{perGame(r, "ast").toFixed(1)}</td>
+              <td>{perGame(r, "stl").toFixed(1)}</td>
+              <td>{perGame(r, "blk").toFixed(1)}</td>
+              <td>{shot(r.fgm, r.fga)}</td>
+              <td>{shot(r.tpm, r.tpa)}</td>
+              <td>{shot(r.ftm, r.fta)}</td>
+              <td>
+                {r.wins}-{r.losses}
+              </td>
+            </tr>
+          </Fragment>
+        );
+      })}
     </Table>
   );
 }
@@ -157,7 +196,10 @@ function AdvancedTable({ life }: { life: LifeState }) {
 
 function seasonLabels(life: LifeState) {
   const m = new Map<string, string>();
-  for (const s of allSeasons(life)) m.set(s.key, `${s.levelLabel}, ${s.calendarYear}`);
+  for (const s of allSeasons(life)) {
+    m.set(s.key, `${s.levelLabel}, ${s.calendarYear}`);
+    if (s.playoffs) m.set(`${s.key}:po`, `NBA playoffs, ${(s.nbaYear ?? s.calendarYear) + 1}`);
+  }
   if (life.season) m.set(life.season.key, `${life.season.levelLabel}, ${life.season.calendarYear}`);
   for (const t of life.international.tournaments) m.set(`intl:${t.id}`, t.name);
   return m;

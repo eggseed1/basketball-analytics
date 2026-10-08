@@ -2,7 +2,8 @@
  * ONE SHOT: world registry, FIBA crosswalk, sparse countries, determinism
  * across speeds and "Next decision", save/resume, focus proration, money,
  * body plausibility, injuries, box scores, draft eligibility, the draft
- * cycle and order, undrafted debuts, peer isolation, the clock and QA careers by country.
+ * cycle and order, undrafted debuts, peer isolation, the clock, QA careers by country,
+ * and NBA seasons measured against the real league.
  * Run: npx tsx scripts/test-one-shot.ts
  */
 import assert from "node:assert/strict";
@@ -13,6 +14,7 @@ import { advise } from "../src/one-shot/advisor";
 import { FAMILY_BIAS, generateParents, heightPercentile, parentTarget, shareAtLeast } from "../src/one-shot/body";
 import { ASSETS, invested, mix, netWorth, PRESETS, rebalance, rebalanceCost, taxRate } from "../src/one-shot/finance";
 import { fieldOf, tournamentsFor } from "../src/one-shot/international";
+import { allStarPick, CALIBRATION, closest, LEAGUE_SEASON, nbaHonors, races, REAL, REAL_AWARDS, standings } from "../src/one-shot/league";
 import { advanced, sumBoxes } from "../src/one-shot/stats";
 import { calendar, levelOf, performanceLevel, simulateGame } from "../src/one-shot/career";
 import { MAX_BATCH, tick } from "../src/one-shot/clock";
@@ -25,7 +27,7 @@ import { createStreams, rngOf } from "../src/one-shot/rng";
 import { NBA_TEAMS, offerBlocked, offseasonOffers } from "../src/one-shot/routes";
 import { projectedCeiling } from "../src/one-shot/skills";
 import { canAfford, chargeFamily, effectivePractice, monthlyDevelopment, stepInjury } from "../src/one-shot/training";
-import { SCHEMA_VERSION, type LifeState, type NewLifeOptions } from "../src/one-shot/types";
+import { SCHEMA_VERSION, type LifeState, type NewLifeOptions, type SeasonLine } from "../src/one-shot/types";
 import { birthShare, COUNTRIES, country, domesticProLeagues, LEAGUES, maybeLeague, PLAYABLE_COUNTRIES, teamStrength } from "../src/one-shot/world";
 
 const root = path.resolve(import.meta.dirname, "..");
@@ -729,6 +731,106 @@ ok("version 2 saves move invested money into holdings", () => {
   assert.equal(res.state.finance.holdings.bonds, 20_000);
   assert.equal(res.state.finance.autoInvest, true);
   advance(res.state, 24, { auto: true });
+});
+
+/* ------------------------------------------------------------ NBA */
+
+const nbaLine = (per: Partial<Record<"min" | "pts" | "reb" | "ast" | "stl" | "blk" | "tov" | "fgm" | "fga" | "tpm" | "tpa" | "ftm" | "fta", number>>, gp: number, role: SeasonLine["role"] = "star"): SeasonLine => {
+  const t = (k: keyof typeof per) => Math.round((per[k] ?? 0) * gp);
+  return { key: "t", ageYears: 26, calendarYear: 2030, node: "nba", leagueId: "nba", levelLabel: "NBA", teamName: "Boston Celtics", countryId: "US", role, gp, min: t("min"), pts: t("pts"), reb: t("reb"), ast: t("ast"), stl: t("stl"), blk: t("blk"), tov: t("tov"), fgm: t("fgm"), fga: t("fga"), tpm: t("tpm"), tpa: t("tpa"), ftm: t("ftm"), fta: t("fta"), wins: 50, losses: 32, strength: 1 };
+};
+
+ok("the real NBA table is complete and its awards and calibration are stated", () => {
+  assert.ok(REAL.length > 400, `${REAL.length} rows`);
+  assert.equal(new Set(REAL.map((r) => r.name)).size, REAL.length, "one row per player");
+  for (const r of REAL) {
+    assert.ok(r.gp > 0 && r.gp <= 82 && r.gs <= r.gp, `${r.name} games`);
+    assert.ok(r.min >= 0 && r.min <= 48 && r.fgm <= r.fga + 1e-9 && r.tpm <= r.tpa + 1e-9 && r.ftm <= r.fta + 1e-9, `${r.name} shooting`);
+  }
+  assert.ok(REAL.some((r) => r.year === 1) && REAL.some((r) => r.year === 2), "rookies and second-year players are marked");
+  assert.ok(REAL_AWARDS.mvp && REAL.some((r) => r.name === REAL_AWARDS.mvp), "real MVP is in the table");
+  for (const k of ["allNba", "mvpTop3", "dpoyFirst", "allDefTop10", "royTopRookie"] as const) assert.ok(CALIBRATION[k][0] <= CALIBRATION[k][1] && CALIBRATION[k][1] > 0, k);
+  assert.match(LEAGUE_SEASON, /^\d{4}-\d{2}$/);
+});
+
+ok("NBA honors place his line among the real league", () => {
+  const star = nbaLine({ min: 36, pts: 36, reb: 9, ast: 9, stl: 2, blk: 1, tov: 3, fgm: 12, fga: 22, tpm: 4, tpa: 9, ftm: 8, fta: 9 }, 76);
+  const won = nbaHonors(star, { role: "star", rookie: false, winPct: 0.68 });
+  for (const h of ["NBA Most Valuable Player", "All-NBA First Team", "Scoring title"]) assert.ok(won.includes(h), `star misses ${h}: ${won.join(", ")}`);
+  assert.ok(!nbaHonors(star, { role: "star", rookie: false, winPct: 0.4 }).includes("NBA Most Valuable Player"), "no MVP on a losing team");
+  assert.deepEqual(nbaHonors({ ...star, gp: 60 }, { role: "star", rookie: false, winPct: 0.68 }).filter((h) => !h.endsWith("title")), [], "60 games can't win 65-game awards");
+  const bench = nbaLine({ min: 8, pts: 3, reb: 1.5, ast: 0.6, stl: 0.2, blk: 0.1, tov: 0.4, fgm: 1.2, fga: 2.8, tpm: 0.3, tpa: 1, ftm: 0.3, fta: 0.4 }, 70, "bench");
+  assert.deepEqual(nbaHonors(bench, { role: "bench", rookie: true, winPct: 0.7 }), []);
+  assert.equal(allStarPick(star), "starter");
+  assert.equal(allStarPick(bench), null);
+  const st = standings(star);
+  assert.equal(st.find((x) => x.metric.key === "pts")!.rank, 1);
+  const low = standings(bench).find((x) => x.metric.key === "pts")!;
+  assert.ok(low.rank! > low.of / 2, "bench scorer ranks in the bottom half");
+  assert.equal(closest(bench).length, 3);
+  assert.ok(races(star, { role: "star", rookie: false, winPct: 0.68, gamesLeft: 0 }).every((r) => r.status === "in" || r.id === "all-def"), "star leads every scoring race");
+});
+
+const NBA_SEEDS = [6, 35, 106];
+const keepChapter = (x: LifeState) => (x.pendingDecision!.templateId === "chapter" ? "keep" : null);
+
+ok("NBA seasons reconcile: records, playoffs, titles and honors", () => {
+  let runs = 0;
+  for (const seed of NBA_SEEDS) {
+    const s = drive(createLife(base(seed)), 36 * 12, keepChapter);
+    const nba = s.seasons.filter((x) => x.node === "nba" && x.gp > 0);
+    assert.ok(nba.length >= 3, `seed ${seed}: ${nba.length} NBA seasons`);
+    const years = new Map<number, number>();
+    for (const x of nba) years.set(x.nbaYear!, (years.get(x.nbaYear!) ?? 0) + x.wins + x.losses);
+    for (const [y, g] of years) assert.ok(g <= 82, `seed ${seed} ${y}: ${g} games`);
+    for (const x of nba) {
+      assert.ok(Math.abs(x.teamEdge ?? 0) <= 0.25, "team edge stays in range");
+      const aw = x.awards ?? [];
+      assert.equal(new Set(aw).size, aw.length, `seed ${seed}: repeated award ${aw.join(", ")}`);
+      if (aw.includes("NBA Most Valuable Player") || aw.some((a) => a.startsWith("All-NBA"))) assert.ok(x.gp >= 65);
+      const po = x.playoffs;
+      if (!po) {
+        assert.ok(!aw.includes("NBA champion"), "no title without playoffs");
+        continue;
+      }
+      runs++;
+      assert.ok(po.seed >= 1 && po.seed <= 8);
+      assert.ok(po.result, `seed ${seed}: playoffs never finished`);
+      if (po.result === "Left the team before the playoffs") continue;
+      assert.equal(po.champion, po.rounds === 4);
+      assert.equal(po.series.length, po.rounds + (po.champion ? 0 : 1));
+      assert.ok(po.wins >= 4 * po.rounds && po.wins <= 4 * po.rounds + 3, `wins ${po.wins} rounds ${po.rounds}`);
+      assert.ok(po.losses <= 3 * po.rounds + 4);
+      assert.ok(po.gp <= po.wins + po.losses);
+      assert.equal(aw.includes("NBA champion"), po.champion);
+      if (aw.includes("Finals MVP")) assert.ok(po.champion);
+    }
+  }
+  assert.ok(runs >= 5, `only ${runs} playoff runs`);
+});
+
+ok("an NBA life is the same month by month as with Next decision", () => {
+  const seed = NBA_SEEDS[0]!;
+  const months = 30 * 12;
+  let a = createLife(base(seed));
+  while (a.ageMonths < months && !a.ended) a = a.pendingDecision ? resolveDecision(a, keepChapter(a) ?? autoChoice(a)) : advance(a, 1);
+  while (a.pendingDecision) a = resolveDecision(a, keepChapter(a) ?? autoChoice(a));
+  const b = drive(createLife(base(seed)), months, keepChapter);
+  assert.ok(a.seasons.some((x) => x.node === "nba"), "reaches the NBA");
+  assert.equal(strip(b), strip(a));
+});
+
+ok("version 4 saves gain the NBA random stream", () => {
+  const s = drive(createLife(base(NBA_SEEDS[0]!)), 26 * 12, keepChapter);
+  const old = JSON.parse(serialize(s)) as Record<string, unknown>;
+  old.schemaVersion = 4;
+  delete (old.rng as Record<string, unknown>).nba;
+  const res = parseSave(JSON.stringify(old));
+  assert.ok(res.ok, res.ok ? "" : res.reason);
+  if (!res.ok) return;
+  assert.equal(res.state.schemaVersion, SCHEMA_VERSION);
+  assert.equal(typeof res.state.rng.nba, "number");
+  drive(res.state, 24, keepChapter);
 });
 
 console.log(`\n${checks} ONE SHOT checks passed`);

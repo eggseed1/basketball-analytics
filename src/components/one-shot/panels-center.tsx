@@ -75,7 +75,7 @@ export function LifeScene({ life, animate }: { life: LifeState; animate: boolean
             </span>
           </p>
         ) : (
-          <p className="text-[var(--os-dim)]">{life.after ? `${life.after.title}, ${life.after.employer}.` : drafted && life.ageMonths - drafted.month <= 1 && life.draft.result?.team ? `Drafted ${ordinal(drafted.pick)} overall by the ${life.draft.result.team}.` : lvl ? `${lvl.label}. Season not running.` : life.ageMonths < 36 ? "Growing up." : "No team yet."}</p>
+          <p className="text-[var(--os-dim)]">{life.after ? `${life.after.title}, ${life.after.employer}.` : drafted && life.ageMonths - drafted.month <= 1 && life.draft.result?.team ? `Drafted ${ordinal(drafted.pick)} overall by the ${life.draft.result.team}.` : typeof life.flags.champAt === "number" && life.ageMonths - life.flags.champAt <= 1 ? `NBA champions with the ${life.placement.teamName}.` : lvl ? `${lvl.label}. Season not running.` : life.ageMonths < 36 ? "Growing up." : "No team yet."}</p>
         )}
       </div>
     </Panel>

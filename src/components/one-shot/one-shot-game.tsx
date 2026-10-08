@@ -31,6 +31,7 @@ import { JerseyWall } from "./jersey-wall";
 import { CareerMap, ScoutingReportPanel, SameGeneration, YourRoute } from "./panels-right";
 import { AfterPanel } from "./after-panel";
 import { MoneyPanel } from "./money-panel";
+import { hasNbaSeason, NbaPanel } from "./nba-panel";
 import { StatsPanel } from "./stats-panel";
 import { SourcesDrawer } from "./sources-drawer";
 import { StartScreen, type StartOptions } from "./start-screen";
@@ -520,6 +521,11 @@ function Game({ expanded, onExpand }: { expanded: boolean; onExpand: () => void 
               <div className="order-4 md:order-none">
                 {life.after ? <AfterPanel life={life} /> : <FocusPanel life={life} onPlan={plan} />}
               </div>
+              {hasNbaSeason(life) ? (
+                <div className="order-6 md:order-none">
+                  <NbaPanel life={life} />
+                </div>
+              ) : null}
               <div className="order-6 md:order-none">
                 <StatsPanel life={life} />
               </div>

@@ -93,6 +93,12 @@ const MIGRATIONS: Record<number, Migration> = {
       draft: { stock: 0, combine: null, interviews: [], workouts: null, promise: null, board: null, ...((d.draft as Record<string, unknown>) ?? {}) },
     };
   },
+  4: (d) => {
+    const seed = typeof d.seed === "number" ? d.seed : 0;
+    const rng = { ...(d.rng as Record<string, unknown>) };
+    rng.nba ??= streamSeed(seed, "nba");
+    return { ...d, schemaVersion: 5, rng };
+  },
 };
 
 export type LoadResult = { ok: true; state: LifeState } | { ok: false; reason: string; raw: string | null };

@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { fmtHeight } from "@/one-shot/body";
 import { perGame } from "@/one-shot/career";
 import { invested, netWorth } from "@/one-shot/finance";
-import { awardCount, honorsLine, medalCount, outcomeTier, shareText, TIER_LABEL } from "@/one-shot/report";
+import { awardCount, honorsLine, medalCount, nbaHonorList, outcomeTier, shareText, TIER_LABEL } from "@/one-shot/report";
 import type { LifeState } from "@/one-shot/types";
 import { country, countryFlag } from "@/one-shot/world";
 
@@ -31,6 +31,7 @@ export function EndReport({ life, units, onNew, onHome }: { life: LifeState; uni
     .map((k) => `${medals[k]} ${k}`)
     .join(", ");
   const awards = awardCount(life);
+  const nbaHonors = nbaHonorList(life);
   const coachW = life.after?.years.reduce((a, y) => a + (y.wins ?? 0), 0) ?? 0;
   const coachL = life.after?.years.reduce((a, y) => a + (y.losses ?? 0), 0) ?? 0;
   const honors = honorsLine(life);
@@ -86,6 +87,7 @@ export function EndReport({ life, units, onNew, onHome }: { life: LifeState; uni
           <Kv k="Seasons played" v={life.seasons.length} mono />
           {best ? <Kv k="Best season" v={`${best.levelLabel}, age ${best.ageYears}: ${perGame(best, "pts").toFixed(1)} pts`} /> : null}
           {life.international.caps > 0 ? <Kv k="National team" v={`${life.international.caps} caps${medalLabel ? ` · ${medalLabel}` : ""}`} mono /> : null}
+          {nbaHonors ? <Kv k="NBA honors" v={nbaHonors} /> : null}
           {awards ? <Kv k="Season honors" v={awards} mono /> : null}
           <Kv k="Career earnings, pre-tax" v={life.earnings > 0 ? money(life.earnings) : "None"} mono />
           {life.after ? <Kv k="After playing" v={`${life.after.title}, ${life.after.employer}`} /> : null}
