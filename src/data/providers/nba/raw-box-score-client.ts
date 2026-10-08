@@ -60,13 +60,18 @@ async function fetchJson(
   let lastError: unknown;
   for (let attempt = 0; attempt < retries; attempt++) {
     try {
-      const response = await fetch(url, { headers });
+      // stats.nba.com stalls requests from cloud IPs instead of refusing them.
+      const response = await fetch(url, {
+        headers,
+        signal: AbortSignal.timeout(5_000),
+      });
       if (!response.ok) {
         throw new Error(`HTTP ${response.status} for ${url}`);
       }
       return await response.json();
     } catch (error) {
       lastError = error;
+      if (error instanceof Error && error.name === "TimeoutError") break;
       await delay(350 * (attempt + 1));
     }
   }

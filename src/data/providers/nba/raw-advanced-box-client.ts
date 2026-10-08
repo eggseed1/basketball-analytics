@@ -78,6 +78,8 @@ function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+const STATS_TIMEOUT_MS = 4_000;
+
 function statsAdvancedUrl(gameId: string): string {
   return (
     `https://stats.nba.com/stats/boxscoreadvancedv3?GameID=${gameId}` +
@@ -108,7 +110,11 @@ async function fetchJson(
   let lastDetail = "unknown";
   for (let attempt = 0; attempt < retries; attempt++) {
     try {
-      const response = await fetch(url, { headers: HEADERS });
+      // stats.nba.com stalls requests from cloud IPs instead of refusing them.
+      const response = await fetch(url, {
+        headers: HEADERS,
+        signal: AbortSignal.timeout(STATS_TIMEOUT_MS),
+      });
       if (!response.ok) {
         lastDetail = `HTTP ${response.status}`;
         if (response.status === 404 || response.status === 400) {
@@ -122,6 +128,7 @@ async function fetchJson(
     } catch (error) {
       lastDetail =
         error instanceof Error ? error.message : "network_error";
+      if (error instanceof Error && error.name === "TimeoutError") break;
       await delay(350 * (attempt + 1));
     }
   }
