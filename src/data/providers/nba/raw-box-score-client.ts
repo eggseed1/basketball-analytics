@@ -4,12 +4,11 @@
  * Accepts ESPN event ids (resolved via schedule crosswalk) or NBA GameIDs.
  */
 
-import { readFile } from "node:fs/promises";
-import path from "node:path";
 
 import { statsBoxScoreV3ToCdnShape } from "../../../../drbl/download/stats-boxscore-adapt";
 import { looksLikeEspnEventId } from "@/data/identity/game-id";
 import { resolveNbaGameId } from "@/data/identity/resolve-nba-game-id";
+import { readRawGameFile } from "@/data/runtime/game-archive-store";
 
 import { CACHE_TTL_MS } from "./cache-policy";
 import { statsNbaNetworkEnabled } from "./runtime-policy";
@@ -93,22 +92,9 @@ function toCdnShape(raw: unknown, source: "cdn" | "stats" | "disk"): unknown {
   return raw;
 }
 
-async function readDiskCache(gameId: string): Promise<unknown | null> {
-  const file = path.join(
-    process.cwd(),
-    "data",
-    "drbl",
-    "raw",
-    "games",
-    gameId,
-    "boxscore.json"
-  );
-  try {
-    const raw = await readFile(file, "utf8");
-    return JSON.parse(raw) as unknown;
-  } catch {
-    return null;
-  }
+/** Archived finished games: local disk, or the R2 archive on Workers. */
+function readDiskCache(gameId: string): Promise<unknown | null> {
+  return readRawGameFile(gameId, "boxscore.json");
 }
 
 export interface RawBoxScorePayload {
@@ -120,6 +106,11 @@ export interface RawBoxScorePayload {
 async function fetchRawBoxScoreForNbaId(
   nbaGameId: string
 ): Promise<RawBoxScorePayload | null> {
+  const disk = await readDiskCache(nbaGameId);
+  if (disk && hasGame(disk)) {
+    return { raw: toCdnShape(disk, "disk"), source: "disk", nbaGameId };
+  }
+
   try {
     const raw = await fetchJson(cdnUrl(nbaGameId), HEADERS);
     if (hasGame(raw)) {
@@ -142,12 +133,6 @@ async function fetchRawBoxScoreForNbaId(
     } catch {
       // fall through
     }
-  }
-
-  const disk = await readDiskCache(nbaGameId);
-  if (disk && hasGame(disk)) {
-    const shaped = toCdnShape(disk, "disk");
-    return { raw: shaped, source: "disk", nbaGameId };
   }
 
   return null;

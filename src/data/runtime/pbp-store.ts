@@ -1,11 +1,14 @@
 /**
  * Cloudflare-safe baked play-by-play (Game Lab + Possession Explorer).
- * Per-game payloads live in public/runtime/play-by-play/{gameId}.json
+ * Per-game payloads live in public/runtime/play-by-play/{gameId}.json. That
+ * folder is gitignored and CI doesn't rebake it, so Workers fall back to the
+ * GAME_ARCHIVE R2 bucket (play-by-play/{gameId}.json).
  */
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 
 import type { RawPlayByPlayPayload } from "@/data/providers/nba/play-by-play-client";
+import { readArchivedPlayByPlay } from "@/data/runtime/game-archive-store";
 
 import index from "./pbp-index.json";
 
@@ -133,5 +136,9 @@ export async function loadBakedPlayByPlay(
   const local = loadFromPublicDir(routeId);
   if (local) return local;
 
-  return fetchPbpAsset(routeId);
+  const asset = await fetchPbpAsset(routeId);
+  if (asset) return asset;
+
+  const archived = await readArchivedPlayByPlay<BakedPbpFile>(routeId);
+  return archived ? toPayload(archived) : null;
 }

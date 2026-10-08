@@ -56,6 +56,14 @@
 		{
 			"binding": "PLAYER_GAME_LOGS",
 			"bucket_name": "drbl-player-game-logs"
+		},
+		// Archived games: raw NBA box scores and play-by-play at
+		// games/{nbaGameId}/{boxscore,playbyplay}.json, plus the ESPN play-by-play
+		// bake at play-by-play/{espnGameId}.json. Both are gitignored local trees,
+		// uploaded by scripts/upload-game-archive-r2.mjs.
+		{
+			"binding": "GAME_ARCHIVE",
+			"bucket_name": "drbl-game-archive"
 		}
 	],
 	// Cache keys include the version id so a deploy never serves HTML that

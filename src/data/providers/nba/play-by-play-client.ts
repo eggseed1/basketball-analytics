@@ -5,8 +5,6 @@
  * - NBA GameIDs use CDN, then stats.nba (when enabled), then disk cache.
  */
 
-import { readFile } from "node:fs/promises";
-import path from "node:path";
 
 import { looksLikeEspnEventId } from "@/data/identity/game-id";
 import { resolveNbaGameId } from "@/data/identity/resolve-nba-game-id";
@@ -14,6 +12,7 @@ import { CACHE_TTL_MS } from "./cache-policy";
 import {
   statsNbaNetworkEnabled,
 } from "./runtime-policy";
+import { readRawGameFile } from "@/data/runtime/game-archive-store";
 import { loadBakedPlayByPlay } from "@/data/runtime/pbp-store";
 import { ESPN_FETCH_USER_AGENT } from "./espn-client";
 import { fetchEspnCdnGameSummary } from "./espn-cdn-summary";
@@ -237,27 +236,19 @@ export function normalizeEspnSummary(raw: unknown): unknown {
   return { game: { actions } };
 }
 
-async function readDiskCache(gameId: string): Promise<unknown | null> {
-  const file = path.join(
-    process.cwd(),
-    "data",
-    "drbl",
-    "raw",
-    "games",
-    gameId,
-    "playbyplay.json"
-  );
-  try {
-    const raw = await readFile(file, "utf8");
-    return JSON.parse(raw) as unknown;
-  } catch {
-    return null;
-  }
+/** Archived finished games: local disk, or the R2 archive on Workers. */
+function readDiskCache(gameId: string): Promise<unknown | null> {
+  return readRawGameFile(gameId, "playbyplay.json");
 }
 
 async function fetchNbaIdPlayByPlay(
   nbaGameId: string
 ): Promise<RawPlayByPlayPayload | null> {
+  const disk = await readDiskCache(nbaGameId);
+  if (disk && hasActions(disk)) {
+    return { raw: disk, source: "disk", nbaGameId };
+  }
+
   try {
     const raw = await fetchJson(cdnUrl(nbaGameId), HEADERS, 2);
     if (hasActions(raw)) {
@@ -278,10 +269,6 @@ async function fetchNbaIdPlayByPlay(
     }
   }
 
-  const disk = await readDiskCache(nbaGameId);
-  if (disk && hasActions(disk)) {
-    return { raw: disk, source: "disk", nbaGameId };
-  }
   return null;
 }
 

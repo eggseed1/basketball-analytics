@@ -6,16 +6,10 @@ import path from "node:path";
 
 import type { Game, GameBoxScore, PlayerGame } from "@/data/types";
 import { getCanonicalTeamFromProvider } from "@/data/identity/team-map";
+import { readRawGameFile, rawGamesRoot } from "@/data/runtime/game-archive-store";
 import { finalizeBoxScorePlayers } from "@/data/providers/nba/enrich-box-score";
 import { seasonFromNbaGameId } from "@/lib/game-presentation";
 import { parseBasketballMinutes } from "@/lib/parse-basketball-minutes";
-
-function rawGamesRoot(): string {
-  return (
-    process.env.DRBL_DATA_ROOT?.trim() ||
-    path.join(process.cwd(), "data", "drbl", "raw")
-  );
-}
 
 function parseMinutes(raw: unknown): number {
   if (raw == null) return 0;
@@ -53,17 +47,7 @@ function optionalNumField(
   return null;
 }
 
-/**
- * Read `data/drbl/raw/games/{gameId}/boxscore.json` when present.
- * Returns null if missing or incomplete (never invents empty FINAL shells).
- */
-export function loadRawArchiveBoxScore(gameId: string): GameBoxScore | null {
-  const id = String(gameId ?? "").trim();
-  if (!id) return null;
-  const boxPath = path.join(rawGamesRoot(), "games", id, "boxscore.json");
-  if (!existsSync(boxPath)) return null;
-
-  let raw: {
+type RawArchiveBox = {
     game?: {
       gameId?: string;
       gameEt?: string;
@@ -85,12 +69,32 @@ export function loadRawArchiveBoxScore(gameId: string): GameBoxScore | null {
       };
     };
   };
+
+/**
+ * Read `data/drbl/raw/games/{gameId}/boxscore.json` from local disk.
+ * Returns null if missing or incomplete (never invents empty FINAL shells).
+ */
+export function loadRawArchiveBoxScore(gameId: string): GameBoxScore | null {
+  const id = String(gameId ?? "").trim();
+  if (!id) return null;
+  const boxPath = path.join(rawGamesRoot(), "games", id, "boxscore.json");
+  if (!existsSync(boxPath)) return null;
   try {
-    raw = JSON.parse(readFileSync(boxPath, "utf8"));
+    return boxScoreFromRaw(id, JSON.parse(readFileSync(boxPath, "utf8")) as RawArchiveBox);
   } catch {
     return null;
   }
+}
 
+/** Same as `loadRawArchiveBoxScore`, falling back to the R2 archive on Workers. */
+export async function loadRawArchiveBoxScoreAsync(gameId: string): Promise<GameBoxScore | null> {
+  const id = String(gameId ?? "").trim();
+  if (!id) return null;
+  const raw = await readRawGameFile<RawArchiveBox>(id, "boxscore.json");
+  return raw ? boxScoreFromRaw(id, raw) : null;
+}
+
+function boxScoreFromRaw(id: string, raw: RawArchiveBox): GameBoxScore | null {
   const home = raw.game?.homeTeam;
   const away = raw.game?.awayTeam;
   if (!home?.teamId || !away?.teamId) return null;

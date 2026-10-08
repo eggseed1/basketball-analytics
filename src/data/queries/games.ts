@@ -14,7 +14,7 @@ import {
   isMalformedEmptyFinalShell,
   validateGamePresentation,
 } from "@/lib/game-presentation";
-import { loadRawArchiveBoxScore } from "@/data/history/raw-archive-box";
+import { loadRawArchiveBoxScoreAsync } from "@/data/history/raw-archive-box";
 import {
   addDaysIso,
   fetchRecentScoreboardGames,
@@ -313,7 +313,7 @@ export async function getGameShell(gameId: string): Promise<GameShell | null> {
 
   // Local raw archive first for NBA GameIDs — complete teams/scores without inventing shells.
   if (looksLikeNbaStatsGameId(id)) {
-    const archived = loadRawArchiveBoxScore(id);
+    const archived = await loadRawArchiveBoxScoreAsync(id);
     if (archived?.game) {
       const shell = acceptShell(shellFromBox(archived));
       if (shell) return shell;

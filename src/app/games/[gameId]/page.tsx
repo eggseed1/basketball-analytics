@@ -17,7 +17,7 @@ import { gameSideBrandKey } from "@/lib/game-team-identity";
 import { parseSeasonEvidenceArrival } from "@/analytics/game-season-context";
 import { getGameAnalysis } from "@/data/queries";
 import { getHistoricalProductGame } from "@/data/history/product";
-import { loadRawArchiveShotEvents } from "@/data/history/raw-archive-shots";
+import { loadRawArchiveShotEventsAsync } from "@/data/history/raw-archive-shots";
 import { getGameShellCached } from "@/data/queries/request-cache";
 import { withBudget } from "@/data/queries/budget";
 import { validateGamePresentation } from "@/lib/game-presentation";
@@ -44,7 +44,7 @@ async function GameLabDeepBody({ gameId, hidePeriodTable }: { gameId: string; ar
 
 async function HistoricalDeepBody({ gameId, seasonHint, homeLabel, awayLabel }: { gameId: string; seasonHint?: string; homeLabel: string; awayLabel: string }) {
   const historyArtifact = getHistoricalProductGame(gameId, seasonHint);
-  const shots = loadRawArchiveShotEvents(gameId);
+  const shots = await loadRawArchiveShotEventsAsync(gameId);
   if (historyArtifact) return <HistoricalGameExperience artifact={{ ...historyArtifact, teamGames: [] as Record<string, unknown>[] }} shots={shots} homeLabel={homeLabel} awayLabel={awayLabel} />;
   if (shots.length > 0) return <p className="text-[13px] text-muted-foreground">Historical summary not precomputed for this game; box / Game Lab below still load when available.</p>;
   return null;
