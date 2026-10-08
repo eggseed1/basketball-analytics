@@ -10,6 +10,7 @@ import type { Game } from "@/data/types";
 import type { PlayerSeason } from "@/data/types/player-season";
 import type { TeamSeasonStats } from "@/data/types/team-season";
 import type { StandingRow } from "@/data/types/standings";
+import { hasValidDrblEstimate } from "@/data/queries/percentiles";
 import { getFilteredPlayerSeasonsCached } from "@/data/queries/request-cache";
 import { getTeamSeasonBoard } from "@/data/queries/team-seasons";
 import { canonicalSeasonFromStartYear } from "@/data/providers/historical/season-range";
@@ -75,10 +76,11 @@ export type PreviewPlayerStatId =
   | "apg"
   | "spg"
   | "bpg"
-  | "tov"
+  | "asttov"
   | "ts"
   | "fg3"
   | "usg"
+  | "drbl100"
   | "bpm"
   | "darko";
 
@@ -117,7 +119,11 @@ const STAT_DEFS: Array<{
   { id: "apg", higherIsBetter: true, read: (p) => perGame(p, p.assists) },
   { id: "spg", higherIsBetter: true, read: (p) => perGame(p, p.steals) },
   { id: "bpg", higherIsBetter: true, read: (p) => perGame(p, p.blocks) },
-  { id: "tov", higherIsBetter: false, read: (p) => perGame(p, p.turnovers) },
+  {
+    id: "asttov",
+    higherIsBetter: true,
+    read: (p) => (p.turnovers > 0 && Number.isFinite(p.assists) ? p.assists / p.turnovers : null),
+  },
   { id: "ts", higherIsBetter: true, read: (p) => finite(p.trueShootingPct) },
   {
     id: "fg3",
@@ -125,6 +131,7 @@ const STAT_DEFS: Array<{
     read: (p) => (p.threePointersAttempted > 0 ? finite(p.threePointPct) : null),
   },
   { id: "usg", higherIsBetter: true, read: (p) => finite(p.usagePct) },
+  { id: "drbl100", higherIsBetter: true, read: (p) => (hasValidDrblEstimate(p) ? finite(p.drbl100) : null) },
   { id: "bpm", higherIsBetter: true, read: (p) => finite(p.bpm) },
   {
     id: "darko",

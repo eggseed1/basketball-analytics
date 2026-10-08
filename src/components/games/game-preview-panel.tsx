@@ -31,10 +31,11 @@ const PLAYER_ROWS: Array<{
   { id: "apg", label: "Assists", format: (v) => v.toFixed(1) },
   { id: "spg", label: "Steals", format: (v) => v.toFixed(1) },
   { id: "bpg", label: "Blocks", format: (v) => v.toFixed(1) },
-  { id: "tov", label: "Turnovers", format: (v) => v.toFixed(1) },
+  { id: "asttov", label: "AST/TO", format: (v) => v.toFixed(2) },
   { id: "ts", label: "True shooting", format: pct1 },
   { id: "fg3", label: "3-point %", format: pct1 },
   { id: "usg", label: "Usage", format: pct1 },
+  { id: "drbl100", label: "DRBL/100", format: signed1 },
   { id: "bpm", label: "BPM", format: signed1 },
   { id: "darko", label: "DARKO", format: signed1 },
 ];
@@ -151,7 +152,8 @@ export function GamePreviewPanel({ data }: { data: GamePreviewData }) {
           <p className={cn(type.bodySm, "text-muted-foreground")}>
             Pick a player from each side. Bubbles are league percentiles among{" "}
             {data.peerCount} players with 20+ games and 15+ minutes a game in{" "}
-            {data.statsSeason}. Higher is better, so fewer turnovers rank higher.
+            {data.statsSeason}. Higher is better on every row. AST/TO counts turnovers against
+            assists, so a playmaker isn&apos;t punished for handling the ball more.
           </p>
         </div>
         <div className="grid grid-cols-2 gap-3 sm:gap-6">
