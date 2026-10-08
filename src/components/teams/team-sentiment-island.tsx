@@ -36,7 +36,7 @@ function LaneStat({ label, lane }: { label: string; lane?: CuratedSentimentLane 
 }
 
 /**
- * Team Organization tab: franchise lanes plus roster players in the sentiment snapshot.
+ * Team Sentiment tab: franchise lanes plus roster players in the sentiment snapshot.
  */
 export async function TeamSentimentIsland({ teamId }: { teamId: string }) {
   const board = getTeamSentimentBoard(teamId);
@@ -48,12 +48,12 @@ export async function TeamSentimentIsland({ teamId }: { teamId: string }) {
   return (
     <section
       id="sentiment"
-      className="scroll-mt-16 flex flex-col gap-3 border-t border-border/70 pt-8"
+      className="scroll-mt-16 flex flex-col gap-3"
       aria-label="Sentiment"
     >
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <div>
-          <h2 className="text-[17px] font-bold tracking-tight">Sentiment</h2>
+          <h2 className="text-[20px] font-bold tracking-tight">Sentiment</h2>
           <p className={cn(type.bodySm, "text-muted-foreground")}>
             Fan and media tone for the franchise and its tracked players, as of{" "}
             {formatSentimentDate(board.snapshotDate, true)}.

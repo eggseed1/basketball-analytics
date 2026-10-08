@@ -1,0 +1,1357 @@
+{
+  "retrievedAt": "2026-10-08",
+  "teams": [
+    {
+      "teamId": "1",
+      "abbr": "ATL",
+      "displayName": "Atlanta Hawks",
+      "owners": [
+        {
+          "name": "Tony Ressler",
+          "wiki": "https://en.wikipedia.org/wiki/Tony_Ressler"
+        }
+      ],
+      "ceo": [
+        {
+          "name": "Steve Koonin",
+          "wiki": "https://en.wikipedia.org/wiki/Steve_Koonin"
+        }
+      ],
+      "president": [],
+      "generalManager": [
+        {
+          "name": "Onsi Saleh",
+          "wiki": "https://en.wikipedia.org/wiki/Onsi_Saleh"
+        }
+      ],
+      "headCoach": {
+        "name": "Quin Snyder",
+        "espnExperienceYears": 10,
+        "wiki": "https://en.wikipedia.org/wiki/Quin_Snyder"
+      },
+      "affiliate": {
+        "name": "College Park Skyhawks",
+        "wiki": "https://en.wikipedia.org/wiki/College_Park_Skyhawks"
+      },
+      "arena": {
+        "name": "State Farm Arena",
+        "location": "Atlanta, Georgia",
+        "wiki": "https://en.wikipedia.org/wiki/State_Farm_Arena"
+      },
+      "sources": {
+        "wikipedia": "https://en.wikipedia.org/wiki/Atlanta_Hawks",
+        "espn": "https://www.espn.com/nba/team/_/name/atl"
+      }
+    },
+    {
+      "teamId": "17",
+      "abbr": "BKN",
+      "displayName": "Brooklyn Nets",
+      "owners": [
+        {
+          "name": "Joseph Tsai",
+          "wiki": "https://en.wikipedia.org/wiki/Joseph_Tsai"
+        }
+      ],
+      "ceo": [
+        {
+          "name": "Sam Zussman"
+        }
+      ],
+      "president": [],
+      "generalManager": [
+        {
+          "name": "Sean Marks",
+          "wiki": "https://en.wikipedia.org/wiki/Sean_Marks"
+        }
+      ],
+      "headCoach": {
+        "name": "Jordi Fernández",
+        "espnExperienceYears": null,
+        "wiki": "https://en.wikipedia.org/wiki/Jordi_Fern%C3%A1ndez"
+      },
+      "affiliate": {
+        "name": "Long Island Nets",
+        "wiki": "https://en.wikipedia.org/wiki/Long_Island_Nets"
+      },
+      "arena": {
+        "name": "Barclays Center",
+        "location": "Brooklyn, New York",
+        "wiki": "https://en.wikipedia.org/wiki/Barclays_Center"
+      },
+      "sources": {
+        "wikipedia": "https://en.wikipedia.org/wiki/Brooklyn_Nets",
+        "espn": "https://www.espn.com/nba/team/_/name/bkn"
+      }
+    },
+    {
+      "teamId": "2",
+      "abbr": "BOS",
+      "displayName": "Boston Celtics",
+      "owners": [
+        {
+          "name": "William Chisholm",
+          "wiki": "https://en.wikipedia.org/wiki/Bill_Chisholm_(businessman)"
+        },
+        {
+          "name": "Aditya Mittal",
+          "wiki": "https://en.wikipedia.org/wiki/Aditya_Mittal"
+        }
+      ],
+      "ceo": [
+        {
+          "name": "Wyc Grousbeck",
+          "wiki": "https://en.wikipedia.org/wiki/Wyc_Grousbeck"
+        }
+      ],
+      "president": [
+        {
+          "name": "Rich Gotham",
+          "wiki": "https://en.wikipedia.org/wiki/Rich_Gotham"
+        }
+      ],
+      "generalManager": [
+        {
+          "name": "Brad Stevens",
+          "wiki": "https://en.wikipedia.org/wiki/Brad_Stevens"
+        }
+      ],
+      "headCoach": {
+        "name": "Joe Mazzulla",
+        "espnExperienceYears": 4,
+        "wiki": "https://en.wikipedia.org/wiki/Joe_Mazzulla"
+      },
+      "affiliate": {
+        "name": "Maine Celtics",
+        "wiki": "https://en.wikipedia.org/wiki/Maine_Celtics"
+      },
+      "arena": {
+        "name": "TD Garden",
+        "location": "Boston, Massachusetts",
+        "wiki": "https://en.wikipedia.org/wiki/TD_Garden"
+      },
+      "sources": {
+        "wikipedia": "https://en.wikipedia.org/wiki/Boston_Celtics",
+        "espn": "https://www.espn.com/nba/team/_/name/bos"
+      }
+    },
+    {
+      "teamId": "30",
+      "abbr": "CHA",
+      "displayName": "Charlotte Hornets",
+      "owners": [
+        {
+          "name": "Gabe Plotkin & Rick Schnall",
+          "note": "majority",
+          "wiki": "https://en.wikipedia.org/wiki/Gabe_Plotkin"
+        },
+        {
+          "name": "Eric Church, J. Cole, and Michael Jordan",
+          "note": "minority",
+          "wiki": "https://en.wikipedia.org/wiki/Eric_Church"
+        }
+      ],
+      "ceo": [],
+      "president": [
+        {
+          "name": "Shelly Cayette-Weston"
+        }
+      ],
+      "generalManager": [
+        {
+          "name": "Jeff Peterson"
+        }
+      ],
+      "headCoach": {
+        "name": "Charles Lee",
+        "espnExperienceYears": null,
+        "wiki": "https://en.wikipedia.org/wiki/Charles_Lee_(basketball)"
+      },
+      "affiliate": {
+        "name": "Greensboro Swarm",
+        "wiki": "https://en.wikipedia.org/wiki/Greensboro_Swarm"
+      },
+      "arena": {
+        "name": "Spectrum Center",
+        "location": "Charlotte, North Carolina",
+        "wiki": "https://en.wikipedia.org/wiki/Spectrum_Center"
+      },
+      "sources": {
+        "wikipedia": "https://en.wikipedia.org/wiki/Charlotte_Hornets",
+        "espn": "https://www.espn.com/nba/team/_/name/cha"
+      }
+    },
+    {
+      "teamId": "4",
+      "abbr": "CHI",
+      "displayName": "Chicago Bulls",
+      "owners": [
+        {
+          "name": "Jerry Reinsdorf",
+          "wiki": "https://en.wikipedia.org/wiki/Jerry_Reinsdorf"
+        }
+      ],
+      "ceo": [
+        {
+          "name": "Michael Reinsdorf"
+        }
+      ],
+      "president": [
+        {
+          "name": "Bryson Graham"
+        }
+      ],
+      "generalManager": [
+        {
+          "name": "Stephen Mervis"
+        }
+      ],
+      "headCoach": {
+        "name": "Tiago Splitter",
+        "espnExperienceYears": 1,
+        "wiki": "https://en.wikipedia.org/wiki/Tiago_Splitter"
+      },
+      "affiliate": {
+        "name": "Windy City Bulls",
+        "wiki": "https://en.wikipedia.org/wiki/Windy_City_Bulls"
+      },
+      "arena": {
+        "name": "United Center",
+        "location": "Chicago, Illinois",
+        "wiki": "https://en.wikipedia.org/wiki/United_Center"
+      },
+      "sources": {
+        "wikipedia": "https://en.wikipedia.org/wiki/Chicago_Bulls",
+        "espn": "https://www.espn.com/nba/team/_/name/chi"
+      }
+    },
+    {
+      "teamId": "5",
+      "abbr": "CLE",
+      "displayName": "Cleveland Cavaliers",
+      "owners": [
+        {
+          "name": "Dan Gilbert",
+          "note": "majority",
+          "wiki": "https://en.wikipedia.org/wiki/Dan_Gilbert"
+        },
+        {
+          "name": "Gary Gilbert",
+          "note": "minority",
+          "wiki": "https://en.wikipedia.org/wiki/Gary_Gilbert"
+        },
+        {
+          "name": "Usher Raymond",
+          "note": "minority",
+          "wiki": "https://en.wikipedia.org/wiki/Usher_(musician)"
+        },
+        {
+          "name": "Myles Garrett",
+          "note": "minority",
+          "wiki": "https://en.wikipedia.org/wiki/Myles_Garrett"
+        }
+      ],
+      "ceo": [
+        {
+          "name": "Nic Barlage"
+        }
+      ],
+      "president": [
+        {
+          "name": "Koby Altman",
+          "wiki": "https://en.wikipedia.org/wiki/Koby_Altman"
+        }
+      ],
+      "generalManager": [
+        {
+          "name": "Brandon Weems"
+        }
+      ],
+      "headCoach": {
+        "name": "Kenny Atkinson",
+        "espnExperienceYears": 4,
+        "wiki": "https://en.wikipedia.org/wiki/Kenny_Atkinson"
+      },
+      "affiliate": {
+        "name": "Cleveland Charge",
+        "wiki": "https://en.wikipedia.org/wiki/Cleveland_Charge"
+      },
+      "arena": {
+        "name": "Rocket Arena",
+        "location": "Cleveland, Ohio",
+        "wiki": "https://en.wikipedia.org/wiki/Rocket_Arena"
+      },
+      "sources": {
+        "wikipedia": "https://en.wikipedia.org/wiki/Cleveland_Cavaliers",
+        "espn": "https://www.espn.com/nba/team/_/name/cle"
+      }
+    },
+    {
+      "teamId": "6",
+      "abbr": "DAL",
+      "displayName": "Dallas Mavericks",
+      "owners": [
+        {
+          "name": "Miriam Adelson and Patrick Dumont",
+          "note": "69%",
+          "wiki": "https://en.wikipedia.org/wiki/Miriam_Adelson"
+        },
+        {
+          "name": "Mark Cuban",
+          "note": "27%",
+          "wiki": "https://en.wikipedia.org/wiki/Mark_Cuban"
+        },
+        {
+          "name": "Mary Stanton",
+          "note": "4%"
+        }
+      ],
+      "ceo": [
+        {
+          "name": "Rick Welts",
+          "wiki": "https://en.wikipedia.org/wiki/Rick_Welts"
+        }
+      ],
+      "president": [
+        {
+          "name": "Masai Ujiri",
+          "wiki": "https://en.wikipedia.org/wiki/Masai_Ujiri"
+        }
+      ],
+      "generalManager": [
+        {
+          "name": "Mike Schmitz"
+        }
+      ],
+      "headCoach": {
+        "name": "Dusty May",
+        "espnExperienceYears": 0,
+        "wiki": "https://en.wikipedia.org/wiki/Dusty_May"
+      },
+      "affiliate": {
+        "name": "Texas Legends",
+        "wiki": "https://en.wikipedia.org/wiki/Texas_Legends"
+      },
+      "arena": {
+        "name": "American Airlines Center",
+        "location": "Dallas, Texas",
+        "wiki": "https://en.wikipedia.org/wiki/American_Airlines_Center"
+      },
+      "sources": {
+        "wikipedia": "https://en.wikipedia.org/wiki/Dallas_Mavericks",
+        "espn": "https://www.espn.com/nba/team/_/name/dal"
+      }
+    },
+    {
+      "teamId": "7",
+      "abbr": "DEN",
+      "displayName": "Denver Nuggets",
+      "owners": [
+        {
+          "name": "Kroenke Sports & Entertainment",
+          "note": "Stan Kroenke, Owner/Governor",
+          "wiki": "https://en.wikipedia.org/wiki/Kroenke_Sports_%26_Entertainment"
+        }
+      ],
+      "ceo": [
+        {
+          "name": "Josh Kroenke",
+          "wiki": "https://en.wikipedia.org/wiki/Josh_Kroenke"
+        }
+      ],
+      "president": [
+        {
+          "name": "Josh Kroenke"
+        }
+      ],
+      "generalManager": [
+        {
+          "name": "Ben Tenzer"
+        }
+      ],
+      "headCoach": {
+        "name": "David Adelman",
+        "espnExperienceYears": null,
+        "wiki": "https://en.wikipedia.org/wiki/David_Adelman_(basketball)"
+      },
+      "affiliate": {
+        "name": "Grand Rapids Gold",
+        "wiki": "https://en.wikipedia.org/wiki/Grand_Rapids_Gold"
+      },
+      "arena": {
+        "name": "Ball Arena",
+        "location": "Denver, Colorado",
+        "wiki": "https://en.wikipedia.org/wiki/Ball_Arena"
+      },
+      "sources": {
+        "wikipedia": "https://en.wikipedia.org/wiki/Denver_Nuggets",
+        "espn": "https://www.espn.com/nba/team/_/name/den"
+      }
+    },
+    {
+      "teamId": "8",
+      "abbr": "DET",
+      "displayName": "Detroit Pistons",
+      "owners": [
+        {
+          "name": "Tom Gores",
+          "wiki": "https://en.wikipedia.org/wiki/Tom_Gores"
+        }
+      ],
+      "ceo": [],
+      "president": [
+        {
+          "name": "Trajan Langdon",
+          "wiki": "https://en.wikipedia.org/wiki/Trajan_Langdon"
+        }
+      ],
+      "generalManager": [
+        {
+          "name": "Vacant"
+        }
+      ],
+      "headCoach": {
+        "name": "J. B. Bickerstaff",
+        "espnExperienceYears": 8,
+        "wiki": "https://en.wikipedia.org/wiki/J._B._Bickerstaff"
+      },
+      "affiliate": {
+        "name": "Motor City Cruise",
+        "wiki": "https://en.wikipedia.org/wiki/Motor_City_Cruise"
+      },
+      "arena": {
+        "name": "Little Caesars Arena",
+        "location": "Detroit, Michigan",
+        "wiki": "https://en.wikipedia.org/wiki/Little_Caesars_Arena"
+      },
+      "sources": {
+        "wikipedia": "https://en.wikipedia.org/wiki/Detroit_Pistons",
+        "espn": "https://www.espn.com/nba/team/_/name/det"
+      }
+    },
+    {
+      "teamId": "9",
+      "abbr": "GS",
+      "displayName": "Golden State Warriors",
+      "owners": [
+        {
+          "name": "Joe Lacob",
+          "note": "majority",
+          "wiki": "https://en.wikipedia.org/wiki/Joe_Lacob"
+        },
+        {
+          "name": "Peter Guber",
+          "wiki": "https://en.wikipedia.org/wiki/Peter_Guber"
+        }
+      ],
+      "ceo": [],
+      "president": [
+        {
+          "name": "Brandon Schneider",
+          "wiki": "https://en.wikipedia.org/wiki/Brandon_Schneider_(executive)"
+        }
+      ],
+      "generalManager": [
+        {
+          "name": "Mike Dunleavy Jr.",
+          "wiki": "https://en.wikipedia.org/wiki/Mike_Dunleavy_Jr."
+        }
+      ],
+      "headCoach": {
+        "name": "Steve Kerr",
+        "espnExperienceYears": 10,
+        "wiki": "https://en.wikipedia.org/wiki/Steve_Kerr"
+      },
+      "affiliate": {
+        "name": "Santa Cruz Warriors",
+        "wiki": "https://en.wikipedia.org/wiki/Santa_Cruz_Warriors"
+      },
+      "arena": {
+        "name": "Chase Center",
+        "location": "San Francisco, California",
+        "wiki": "https://en.wikipedia.org/wiki/Chase_Center"
+      },
+      "sources": {
+        "wikipedia": "https://en.wikipedia.org/wiki/Golden_State_Warriors",
+        "espn": "https://www.espn.com/nba/team/_/name/gs"
+      }
+    },
+    {
+      "teamId": "10",
+      "abbr": "HOU",
+      "displayName": "Houston Rockets",
+      "owners": [
+        {
+          "name": "Tilman Fertitta",
+          "wiki": "https://en.wikipedia.org/wiki/Tilman_Fertitta"
+        }
+      ],
+      "ceo": [],
+      "president": [
+        {
+          "name": "Gretchen Sheirr"
+        }
+      ],
+      "generalManager": [
+        {
+          "name": "Rafael Stone",
+          "wiki": "https://en.wikipedia.org/wiki/Rafael_Stone"
+        }
+      ],
+      "headCoach": {
+        "name": "Ime Udoka",
+        "espnExperienceYears": 2,
+        "wiki": "https://en.wikipedia.org/wiki/Ime_Udoka"
+      },
+      "affiliate": {
+        "name": "Rio Grande Valley Vipers",
+        "wiki": "https://en.wikipedia.org/wiki/Rio_Grande_Valley_Vipers"
+      },
+      "arena": {
+        "name": "Toyota Center",
+        "location": "Houston, Texas",
+        "wiki": "https://en.wikipedia.org/wiki/Toyota_Center"
+      },
+      "sources": {
+        "wikipedia": "https://en.wikipedia.org/wiki/Houston_Rockets",
+        "espn": "https://www.espn.com/nba/team/_/name/hou"
+      }
+    },
+    {
+      "teamId": "11",
+      "abbr": "IND",
+      "displayName": "Indiana Pacers",
+      "owners": [
+        {
+          "name": "Herb Simon",
+          "wiki": "https://en.wikipedia.org/wiki/Herb_Simon_(businessman)"
+        }
+      ],
+      "ceo": [],
+      "president": [
+        {
+          "name": "Kevin Pritchard",
+          "wiki": "https://en.wikipedia.org/wiki/Kevin_Pritchard"
+        }
+      ],
+      "generalManager": [
+        {
+          "name": "Chad Buchanan",
+          "wiki": "https://en.wikipedia.org/wiki/Chad_Buchanan_(basketball)"
+        }
+      ],
+      "headCoach": {
+        "name": "Rick Carlisle",
+        "espnExperienceYears": 22,
+        "wiki": "https://en.wikipedia.org/wiki/Rick_Carlisle"
+      },
+      "affiliate": {
+        "name": "Noblesville Boom",
+        "wiki": "https://en.wikipedia.org/wiki/Noblesville_Boom"
+      },
+      "arena": {
+        "name": "Gainbridge Fieldhouse",
+        "location": "Indianapolis, Indiana",
+        "wiki": "https://en.wikipedia.org/wiki/Gainbridge_Fieldhouse"
+      },
+      "sources": {
+        "wikipedia": "https://en.wikipedia.org/wiki/Indiana_Pacers",
+        "espn": "https://www.espn.com/nba/team/_/name/ind"
+      }
+    },
+    {
+      "teamId": "12",
+      "abbr": "LAC",
+      "displayName": "LA Clippers",
+      "owners": [
+        {
+          "name": "Steve Ballmer",
+          "note": "suspended",
+          "wiki": "https://en.wikipedia.org/wiki/Steve_Ballmer"
+        }
+      ],
+      "ceo": [
+        {
+          "name": "John Gibson",
+          "note": "interim"
+        }
+      ],
+      "president": [
+        {
+          "name": "Trent Redden",
+          "note": "interim",
+          "wiki": "https://en.wikipedia.org/wiki/Trent_Redden"
+        }
+      ],
+      "generalManager": [
+        {
+          "name": "Mark Hughes",
+          "note": "interim",
+          "wiki": "https://en.wikipedia.org/wiki/Mark_Hughes_(basketball)"
+        }
+      ],
+      "headCoach": {
+        "name": "Tyronn Lue",
+        "espnExperienceYears": 8,
+        "wiki": "https://en.wikipedia.org/wiki/Tyronn_Lue"
+      },
+      "affiliate": {
+        "name": "San Diego Clippers",
+        "wiki": "https://en.wikipedia.org/wiki/San_Diego_Clippers_(NBA_G_League)"
+      },
+      "arena": {
+        "name": "Intuit Dome",
+        "location": "Inglewood, California",
+        "wiki": "https://en.wikipedia.org/wiki/Intuit_Dome"
+      },
+      "sources": {
+        "wikipedia": "https://en.wikipedia.org/wiki/Los_Angeles_Clippers",
+        "espn": "https://www.espn.com/nba/team/_/name/lac"
+      }
+    },
+    {
+      "teamId": "13",
+      "abbr": "LAL",
+      "displayName": "Los Angeles Lakers",
+      "owners": [
+        {
+          "name": "Mark Walter",
+          "note": "majority",
+          "wiki": "https://en.wikipedia.org/wiki/Mark_Walter"
+        }
+      ],
+      "ceo": [],
+      "president": [
+        {
+          "name": "Rob Pelinka",
+          "wiki": "https://en.wikipedia.org/wiki/Rob_Pelinka"
+        }
+      ],
+      "generalManager": [
+        {
+          "name": "Rob Pelinka",
+          "wiki": "https://en.wikipedia.org/wiki/Rob_Pelinka"
+        }
+      ],
+      "headCoach": {
+        "name": "JJ Redick",
+        "espnExperienceYears": 1,
+        "wiki": "https://en.wikipedia.org/wiki/JJ_Redick"
+      },
+      "affiliate": {
+        "name": "Coachella Valley Lakers",
+        "wiki": "https://en.wikipedia.org/wiki/Coachella_Valley_Lakers"
+      },
+      "arena": {
+        "name": "Crypto.com Arena",
+        "location": "Los Angeles, California",
+        "wiki": "https://en.wikipedia.org/wiki/Crypto.com_Arena"
+      },
+      "sources": {
+        "wikipedia": "https://en.wikipedia.org/wiki/Los_Angeles_Lakers",
+        "espn": "https://www.espn.com/nba/team/_/name/lal"
+      }
+    },
+    {
+      "teamId": "29",
+      "abbr": "MEM",
+      "displayName": "Memphis Grizzlies",
+      "owners": [
+        {
+          "name": "Memphis Basketball, LLC",
+          "note": "Robert Pera, Chairman and Controlling Owner",
+          "wiki": "https://en.wikipedia.org/wiki/Robert_Pera"
+        }
+      ],
+      "ceo": [],
+      "president": [
+        {
+          "name": "Jason Wexler",
+          "wiki": "https://en.wikipedia.org/wiki/Jason_Wexler"
+        }
+      ],
+      "generalManager": [
+        {
+          "name": "Zachary Kleiman",
+          "wiki": "https://en.wikipedia.org/wiki/Zachary_Kleiman"
+        }
+      ],
+      "headCoach": {
+        "name": "Tuomas Iisalo",
+        "espnExperienceYears": null,
+        "wiki": "https://en.wikipedia.org/wiki/Tuomas_Iisalo"
+      },
+      "affiliate": {
+        "name": "Memphis Hustle",
+        "wiki": "https://en.wikipedia.org/wiki/Memphis_Hustle"
+      },
+      "arena": {
+        "name": "FedExForum",
+        "location": "Memphis, Tennessee",
+        "wiki": "https://en.wikipedia.org/wiki/FedExForum"
+      },
+      "sources": {
+        "wikipedia": "https://en.wikipedia.org/wiki/Memphis_Grizzlies",
+        "espn": "https://www.espn.com/nba/team/_/name/mem"
+      }
+    },
+    {
+      "teamId": "14",
+      "abbr": "MIA",
+      "displayName": "Miami Heat",
+      "owners": [
+        {
+          "name": "Micky Arison",
+          "wiki": "https://en.wikipedia.org/wiki/Micky_Arison"
+        }
+      ],
+      "ceo": [
+        {
+          "name": "Nick Arison",
+          "wiki": "https://en.wikipedia.org/wiki/Nick_Arison"
+        }
+      ],
+      "president": [
+        {
+          "name": "Pat Riley",
+          "wiki": "https://en.wikipedia.org/wiki/Pat_Riley"
+        }
+      ],
+      "generalManager": [
+        {
+          "name": "Andy Elisburg",
+          "wiki": "https://en.wikipedia.org/wiki/Andy_Elisburg"
+        }
+      ],
+      "headCoach": {
+        "name": "Erik Spoelstra",
+        "espnExperienceYears": 16,
+        "wiki": "https://en.wikipedia.org/wiki/Erik_Spoelstra"
+      },
+      "affiliate": {
+        "name": "Sioux Falls Skyforce",
+        "wiki": "https://en.wikipedia.org/wiki/Sioux_Falls_Skyforce"
+      },
+      "arena": {
+        "name": "Kaseya Center",
+        "location": "Miami, Florida",
+        "wiki": "https://en.wikipedia.org/wiki/Kaseya_Center"
+      },
+      "sources": {
+        "wikipedia": "https://en.wikipedia.org/wiki/Miami_Heat",
+        "espn": "https://www.espn.com/nba/team/_/name/mia"
+      }
+    },
+    {
+      "teamId": "15",
+      "abbr": "MIL",
+      "displayName": "Milwaukee Bucks",
+      "owners": [
+        {
+          "name": "Wes Edens, Jimmy Haslam, Jamie Dinan, Mike Fascitelli",
+          "wiki": "https://en.wikipedia.org/wiki/Wes_Edens"
+        }
+      ],
+      "ceo": [],
+      "president": [
+        {
+          "name": "Josh Glessing"
+        }
+      ],
+      "generalManager": [
+        {
+          "name": "Jon Horst",
+          "wiki": "https://en.wikipedia.org/wiki/Jon_Horst"
+        }
+      ],
+      "headCoach": {
+        "name": "Taylor Jenkins",
+        "espnExperienceYears": 6,
+        "wiki": "https://en.wikipedia.org/wiki/Taylor_Jenkins"
+      },
+      "affiliate": {
+        "name": "Wisconsin Herd",
+        "wiki": "https://en.wikipedia.org/wiki/Wisconsin_Herd"
+      },
+      "arena": {
+        "name": "Fiserv Forum",
+        "location": "Milwaukee, Wisconsin",
+        "wiki": "https://en.wikipedia.org/wiki/Fiserv_Forum"
+      },
+      "sources": {
+        "wikipedia": "https://en.wikipedia.org/wiki/Milwaukee_Bucks",
+        "espn": "https://www.espn.com/nba/team/_/name/mil"
+      }
+    },
+    {
+      "teamId": "16",
+      "abbr": "MIN",
+      "displayName": "Minnesota Timberwolves",
+      "owners": [
+        {
+          "name": "Alex Rodriguez, Marc Lore",
+          "wiki": "https://en.wikipedia.org/wiki/Alex_Rodriguez"
+        }
+      ],
+      "ceo": [
+        {
+          "name": "Matthew Caldwell"
+        }
+      ],
+      "president": [
+        {
+          "name": "Tim Connelly",
+          "wiki": "https://en.wikipedia.org/wiki/Tim_Connelly"
+        }
+      ],
+      "generalManager": [
+        {
+          "name": "Matt Lloyd"
+        }
+      ],
+      "headCoach": {
+        "name": "Chris Finch",
+        "espnExperienceYears": 4,
+        "wiki": "https://en.wikipedia.org/wiki/Chris_Finch_(basketball)"
+      },
+      "affiliate": {
+        "name": "Iowa Wolves",
+        "wiki": "https://en.wikipedia.org/wiki/Iowa_Wolves"
+      },
+      "arena": {
+        "name": "Target Center",
+        "location": "Minneapolis, Minnesota",
+        "wiki": "https://en.wikipedia.org/wiki/Target_Center"
+      },
+      "sources": {
+        "wikipedia": "https://en.wikipedia.org/wiki/Minnesota_Timberwolves",
+        "espn": "https://www.espn.com/nba/team/_/name/min"
+      }
+    },
+    {
+      "teamId": "3",
+      "abbr": "NO",
+      "displayName": "New Orleans Pelicans",
+      "owners": [
+        {
+          "name": "Gayle Benson",
+          "wiki": "https://en.wikipedia.org/wiki/Gayle_Benson"
+        }
+      ],
+      "ceo": [],
+      "president": [
+        {
+          "name": "Dennis Lauscha",
+          "wiki": "https://en.wikipedia.org/wiki/Dennis_Lauscha"
+        }
+      ],
+      "generalManager": [],
+      "headCoach": {
+        "name": "Jamahl Mosley",
+        "espnExperienceYears": 3,
+        "wiki": "https://en.wikipedia.org/wiki/Jamahl_Mosley"
+      },
+      "affiliate": {
+        "name": "Laketown Squadron",
+        "wiki": "https://en.wikipedia.org/wiki/Laketown_Squadron"
+      },
+      "arena": {
+        "name": "Smoothie King Center",
+        "location": "New Orleans, Louisiana",
+        "wiki": "https://en.wikipedia.org/wiki/Smoothie_King_Center"
+      },
+      "sources": {
+        "wikipedia": "https://en.wikipedia.org/wiki/New_Orleans_Pelicans",
+        "espn": "https://www.espn.com/nba/team/_/name/no"
+      }
+    },
+    {
+      "teamId": "18",
+      "abbr": "NY",
+      "displayName": "New York Knicks",
+      "owners": [
+        {
+          "name": "Madison Square Garden Sports",
+          "note": "James L. Dolan, Executive Chairman",
+          "wiki": "https://en.wikipedia.org/wiki/Madison_Square_Garden_Sports"
+        }
+      ],
+      "ceo": [],
+      "president": [
+        {
+          "name": "Leon Rose",
+          "wiki": "https://en.wikipedia.org/wiki/Leon_Rose"
+        }
+      ],
+      "generalManager": [
+        {
+          "name": "Gersson Rosas",
+          "wiki": "https://en.wikipedia.org/wiki/Gersson_Rosas"
+        }
+      ],
+      "headCoach": {
+        "name": "Mike Brown",
+        "espnExperienceYears": null,
+        "wiki": "https://en.wikipedia.org/wiki/Mike_Brown_(basketball%2C_born_1970)"
+      },
+      "affiliate": {
+        "name": "Westchester Knicks",
+        "wiki": "https://en.wikipedia.org/wiki/Westchester_Knicks"
+      },
+      "arena": {
+        "name": "Madison Square Garden",
+        "location": "New York City, New York",
+        "wiki": "https://en.wikipedia.org/wiki/Madison_Square_Garden"
+      },
+      "sources": {
+        "wikipedia": "https://en.wikipedia.org/wiki/New_York_Knicks",
+        "espn": "https://www.espn.com/nba/team/_/name/ny"
+      }
+    },
+    {
+      "teamId": "25",
+      "abbr": "OKC",
+      "displayName": "Oklahoma City Thunder",
+      "owners": [
+        {
+          "name": "Professional Basketball Club LLC",
+          "note": "Clay Bennett, Chairman",
+          "wiki": "https://en.wikipedia.org/wiki/Professional_Basketball_Club_LLC"
+        }
+      ],
+      "ceo": [],
+      "president": [],
+      "generalManager": [
+        {
+          "name": "Sam Presti",
+          "wiki": "https://en.wikipedia.org/wiki/Sam_Presti"
+        }
+      ],
+      "headCoach": {
+        "name": "Mark Daigneault",
+        "espnExperienceYears": 4,
+        "wiki": "https://en.wikipedia.org/wiki/Mark_Daigneault"
+      },
+      "affiliate": {
+        "name": "Oklahoma City Blue",
+        "wiki": "https://en.wikipedia.org/wiki/Oklahoma_City_Blue"
+      },
+      "arena": {
+        "name": "Paycom Center",
+        "location": "Oklahoma City, Oklahoma",
+        "wiki": "https://en.wikipedia.org/wiki/Paycom_Center"
+      },
+      "sources": {
+        "wikipedia": "https://en.wikipedia.org/wiki/Oklahoma_City_Thunder",
+        "espn": "https://www.espn.com/nba/team/_/name/okc"
+      }
+    },
+    {
+      "teamId": "19",
+      "abbr": "ORL",
+      "displayName": "Orlando Magic",
+      "owners": [
+        {
+          "name": "RDV Sports, Inc.",
+          "wiki": "https://en.wikipedia.org/wiki/RDV_Sports%2C_Inc.",
+          "note": "Dan DeVos, chairman"
+        }
+      ],
+      "ceo": [
+        {
+          "name": "Alex Martins",
+          "wiki": "https://en.wikipedia.org/wiki/Alex_Martins_(basketball)"
+        }
+      ],
+      "president": [
+        {
+          "name": "Jeff Weltman",
+          "wiki": "https://en.wikipedia.org/wiki/Jeff_Weltman"
+        }
+      ],
+      "generalManager": [
+        {
+          "name": "Anthony Parker",
+          "wiki": "https://en.wikipedia.org/wiki/Anthony_Parker"
+        }
+      ],
+      "headCoach": {
+        "name": "Sean Sweeney",
+        "espnExperienceYears": null,
+        "wiki": "https://en.wikipedia.org/wiki/Sean_Sweeney_(basketball)"
+      },
+      "affiliate": {
+        "name": "Osceola Magic",
+        "wiki": "https://en.wikipedia.org/wiki/Osceola_Magic"
+      },
+      "arena": {
+        "name": "Kia Center",
+        "location": "Orlando, Florida",
+        "wiki": "https://en.wikipedia.org/wiki/Kia_Center"
+      },
+      "sources": {
+        "wikipedia": "https://en.wikipedia.org/wiki/Orlando_Magic",
+        "espn": "https://www.espn.com/nba/team/_/name/orl"
+      }
+    },
+    {
+      "teamId": "20",
+      "abbr": "PHI",
+      "displayName": "Philadelphia 76ers",
+      "owners": [
+        {
+          "name": "Harris Blitzer Sports & Entertainment",
+          "wiki": "https://en.wikipedia.org/wiki/Harris_Blitzer_Sports_%26_Entertainment",
+          "note": "Josh Harris and David Blitzer"
+        }
+      ],
+      "ceo": [
+        {
+          "name": "Tad Brown",
+          "wiki": "https://en.wikipedia.org/wiki/Tad_Brown"
+        }
+      ],
+      "president": [
+        {
+          "name": "Mike Gansey",
+          "wiki": "https://en.wikipedia.org/wiki/Mike_Gansey"
+        }
+      ],
+      "generalManager": [
+        {
+          "name": "Vacant"
+        }
+      ],
+      "headCoach": {
+        "name": "Nick Nurse",
+        "espnExperienceYears": 6,
+        "wiki": "https://en.wikipedia.org/wiki/Nick_Nurse"
+      },
+      "affiliate": {
+        "name": "Delaware Blue Coats",
+        "wiki": "https://en.wikipedia.org/wiki/Delaware_Blue_Coats"
+      },
+      "arena": {
+        "name": "Xfinity Mobile Arena",
+        "location": "Philadelphia, Pennsylvania",
+        "wiki": "https://en.wikipedia.org/wiki/Xfinity_Mobile_Arena"
+      },
+      "sources": {
+        "wikipedia": "https://en.wikipedia.org/wiki/Philadelphia_76ers",
+        "espn": "https://www.espn.com/nba/team/_/name/phi"
+      }
+    },
+    {
+      "teamId": "21",
+      "abbr": "PHX",
+      "displayName": "Phoenix Suns",
+      "owners": [
+        {
+          "name": "Mat and Justin Ishbia",
+          "wiki": "https://en.wikipedia.org/wiki/Mat_Ishbia"
+        }
+      ],
+      "ceo": [
+        {
+          "name": "Josh Bartelstein",
+          "wiki": "https://en.wikipedia.org/wiki/Josh_Bartelstein"
+        }
+      ],
+      "president": [
+        {
+          "name": "Vacant"
+        }
+      ],
+      "generalManager": [
+        {
+          "name": "Brian Gregory",
+          "wiki": "https://en.wikipedia.org/wiki/Brian_Gregory"
+        }
+      ],
+      "headCoach": {
+        "name": "Jordan Ott",
+        "espnExperienceYears": null,
+        "wiki": "https://en.wikipedia.org/wiki/Jordan_Ott"
+      },
+      "affiliate": {
+        "name": "Valley Suns",
+        "wiki": "https://en.wikipedia.org/wiki/Valley_Suns"
+      },
+      "arena": {
+        "name": "Mortgage Matchup Center",
+        "location": "Phoenix, Arizona",
+        "wiki": "https://en.wikipedia.org/wiki/Mortgage_Matchup_Center"
+      },
+      "sources": {
+        "wikipedia": "https://en.wikipedia.org/wiki/Phoenix_Suns",
+        "espn": "https://www.espn.com/nba/team/_/name/phx"
+      }
+    },
+    {
+      "teamId": "22",
+      "abbr": "POR",
+      "displayName": "Portland Trail Blazers",
+      "owners": [
+        {
+          "name": "Tom Dundon",
+          "wiki": "https://en.wikipedia.org/wiki/Thomas_Dundon"
+        }
+      ],
+      "ceo": [],
+      "president": [
+        {
+          "name": "Dewayne Hankins"
+        }
+      ],
+      "generalManager": [
+        {
+          "name": "Joe Cronin",
+          "wiki": "https://en.wikipedia.org/wiki/Joe_Cronin_(basketball)"
+        }
+      ],
+      "headCoach": {
+        "name": "Micah Nori",
+        "espnExperienceYears": null,
+        "wiki": "https://en.wikipedia.org/wiki/Micah_Nori"
+      },
+      "affiliate": {
+        "name": "Rip City Remix",
+        "wiki": "https://en.wikipedia.org/wiki/Rip_City_Remix"
+      },
+      "arena": {
+        "name": "Moda Center",
+        "location": "Portland, Oregon",
+        "wiki": "https://en.wikipedia.org/wiki/Moda_Center"
+      },
+      "sources": {
+        "wikipedia": "https://en.wikipedia.org/wiki/Portland_Trail_Blazers",
+        "espn": "https://www.espn.com/nba/team/_/name/por"
+      }
+    },
+    {
+      "teamId": "24",
+      "abbr": "SA",
+      "displayName": "San Antonio Spurs",
+      "owners": [
+        {
+          "name": "Spurs Sports & Entertainment",
+          "note": "Peter John Holt, Chairman and CEO",
+          "wiki": "https://en.wikipedia.org/wiki/Spurs_Sports_%26_Entertainment"
+        }
+      ],
+      "ceo": [
+        {
+          "name": "R. C. Buford",
+          "wiki": "https://en.wikipedia.org/wiki/R._C._Buford"
+        }
+      ],
+      "president": [
+        {
+          "name": "Gregg Popovich",
+          "wiki": "https://en.wikipedia.org/wiki/Gregg_Popovich"
+        }
+      ],
+      "generalManager": [
+        {
+          "name": "Brian Wright",
+          "wiki": "https://en.wikipedia.org/wiki/Brian_Wright_(basketball)"
+        }
+      ],
+      "headCoach": {
+        "name": "Mitch Johnson",
+        "espnExperienceYears": 1,
+        "wiki": "https://en.wikipedia.org/wiki/Mitch_Johnson"
+      },
+      "affiliate": {
+        "name": "Austin Spurs",
+        "wiki": "https://en.wikipedia.org/wiki/Austin_Spurs"
+      },
+      "arena": {
+        "name": "Frost Bank Center",
+        "location": "San Antonio, Texas",
+        "wiki": "https://en.wikipedia.org/wiki/Frost_Bank_Center"
+      },
+      "sources": {
+        "wikipedia": "https://en.wikipedia.org/wiki/San_Antonio_Spurs",
+        "espn": "https://www.espn.com/nba/team/_/name/sa"
+      }
+    },
+    {
+      "teamId": "23",
+      "abbr": "SAC",
+      "displayName": "Sacramento Kings",
+      "owners": [
+        {
+          "name": "Vivek Ranadivé",
+          "wiki": "https://en.wikipedia.org/wiki/Vivek_Ranadiv%C3%A9"
+        }
+      ],
+      "ceo": [],
+      "president": [
+        {
+          "name": "John Rinehart"
+        }
+      ],
+      "generalManager": [
+        {
+          "name": "Scott Perry",
+          "wiki": "https://en.wikipedia.org/wiki/Scott_Perry_(basketball)"
+        }
+      ],
+      "headCoach": {
+        "name": "Doug Christie",
+        "espnExperienceYears": null,
+        "wiki": "https://en.wikipedia.org/wiki/Doug_Christie"
+      },
+      "affiliate": {
+        "name": "Stockton Kings",
+        "wiki": "https://en.wikipedia.org/wiki/Stockton_Kings"
+      },
+      "arena": {
+        "name": "Golden 1 Center",
+        "location": "Sacramento, California",
+        "wiki": "https://en.wikipedia.org/wiki/Golden_1_Center"
+      },
+      "sources": {
+        "wikipedia": "https://en.wikipedia.org/wiki/Sacramento_Kings",
+        "espn": "https://www.espn.com/nba/team/_/name/sac"
+      }
+    },
+    {
+      "teamId": "28",
+      "abbr": "TOR",
+      "displayName": "Toronto Raptors",
+      "owners": [
+        {
+          "name": "Maple Leaf Sports & Entertainment",
+          "wiki": "https://en.wikipedia.org/wiki/Maple_Leaf_Sports_%26_Entertainment"
+        }
+      ],
+      "ceo": [],
+      "president": [
+        {
+          "name": "Vacant"
+        }
+      ],
+      "generalManager": [
+        {
+          "name": "Bobby Webster",
+          "wiki": "https://en.wikipedia.org/wiki/Bobby_Webster"
+        }
+      ],
+      "headCoach": {
+        "name": "Darko Rajaković",
+        "espnExperienceYears": 0,
+        "wiki": "https://en.wikipedia.org/wiki/Darko_Rajakovi%C4%87"
+      },
+      "affiliate": {
+        "name": "Raptors 905",
+        "wiki": "https://en.wikipedia.org/wiki/Raptors_905"
+      },
+      "arena": {
+        "name": "Scotiabank Arena",
+        "location": "Toronto, Ontario",
+        "wiki": "https://en.wikipedia.org/wiki/Scotiabank_Arena"
+      },
+      "sources": {
+        "wikipedia": "https://en.wikipedia.org/wiki/Toronto_Raptors",
+        "espn": "https://www.espn.com/nba/team/_/name/tor"
+      }
+    },
+    {
+      "teamId": "26",
+      "abbr": "UTAH",
+      "displayName": "Utah Jazz",
+      "owners": [
+        {
+          "name": "Ryan Smith",
+          "wiki": "https://en.wikipedia.org/wiki/Ryan_Smith_(businessman)"
+        },
+        {
+          "name": "Dwyane Wade",
+          "note": "co-owner",
+          "wiki": "https://en.wikipedia.org/wiki/Dwyane_Wade"
+        }
+      ],
+      "ceo": [
+        {
+          "name": "Danny Ainge",
+          "wiki": "https://en.wikipedia.org/wiki/Danny_Ainge"
+        }
+      ],
+      "president": [
+        {
+          "name": "Austin Ainge",
+          "wiki": "https://en.wikipedia.org/wiki/Austin_Ainge"
+        }
+      ],
+      "generalManager": [
+        {
+          "name": "Justin Zanik",
+          "wiki": "https://en.wikipedia.org/wiki/Justin_Zanik"
+        }
+      ],
+      "headCoach": {
+        "name": "Will Hardy",
+        "espnExperienceYears": 2,
+        "wiki": "https://en.wikipedia.org/wiki/Will_Hardy"
+      },
+      "affiliate": {
+        "name": "Salt Lake City Stars",
+        "wiki": "https://en.wikipedia.org/wiki/Salt_Lake_City_Stars"
+      },
+      "arena": {
+        "name": "Delta Center",
+        "location": "Salt Lake City, Utah",
+        "wiki": "https://en.wikipedia.org/wiki/Delta_Center"
+      },
+      "sources": {
+        "wikipedia": "https://en.wikipedia.org/wiki/Utah_Jazz",
+        "espn": "https://www.espn.com/nba/team/_/name/utah"
+      }
+    },
+    {
+      "teamId": "27",
+      "abbr": "WSH",
+      "displayName": "Washington Wizards",
+      "owners": [
+        {
+          "name": "Monumental Sports & Entertainment",
+          "note": "Ted Leonsis",
+          "wiki": "https://en.wikipedia.org/wiki/Monumental_Sports_%26_Entertainment"
+        }
+      ],
+      "ceo": [],
+      "president": [
+        {
+          "name": "Michael Winger",
+          "wiki": "https://en.wikipedia.org/wiki/Michael_Winger"
+        }
+      ],
+      "generalManager": [
+        {
+          "name": "Will Dawkins",
+          "wiki": "https://en.wikipedia.org/wiki/Will_Dawkins"
+        }
+      ],
+      "headCoach": {
+        "name": "Brian Keefe",
+        "espnExperienceYears": 0,
+        "wiki": "https://en.wikipedia.org/wiki/Brian_Keefe"
+      },
+      "affiliate": {
+        "name": "Capital City Go-Go",
+        "wiki": "https://en.wikipedia.org/wiki/Capital_City_Go-Go"
+      },
+      "arena": {
+        "name": "Capital One Arena",
+        "location": "Washington, D.C.",
+        "wiki": "https://en.wikipedia.org/wiki/Capital_One_Arena"
+      },
+      "sources": {
+        "wikipedia": "https://en.wikipedia.org/wiki/Washington_Wizards",
+        "espn": "https://www.espn.com/nba/team/_/name/wsh"
+      }
+    }
+  ]
+}

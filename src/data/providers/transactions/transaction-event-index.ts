@@ -164,6 +164,9 @@ export function filterTransactionEvents(
   if (filters.category) {
     rows = rows.filter((e) => e.sourceTextCategory === filters.category);
   }
+  if (filters.excludeCategory) {
+    rows = rows.filter((e) => e.sourceTextCategory !== filters.excludeCategory);
+  }
   if (filters.q?.trim()) {
     const q = filters.q.trim().toLowerCase();
     rows = rows.filter(

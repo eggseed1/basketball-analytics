@@ -72,6 +72,7 @@ export type TeamPageTab =
   | "playoffs"
   | "history"
   | "organization"
+  | "sentiment"
   | "payroll"
   | "stats";
 
@@ -102,14 +103,16 @@ export const TEAM_PAGE_TABS: Array<{ id: TeamPageTab; label: string }> = [
   { id: "playoffs", label: "Playoffs" },
   { id: "history", label: "History" },
   { id: "organization", label: "Organization" },
-  { id: "payroll", label: "Payroll & Contracts" },
+  { id: "sentiment", label: "Sentiment" },
+  { id: "payroll", label: "Salary & Assets" },
   { id: "stats", label: "All Stats" },
 ];
 
 export function parseTeamPageTab(raw?: string | null): TeamPageTab {
   if (raw === "rotation") return "lineups";
   if (raw === "on-off") return "onoff";
-  if (raw === "contracts" || raw === "cap") return "payroll";
+  if (raw === "contracts" || raw === "cap" || raw === "salary" || raw === "assets") return "payroll";
+  if (raw === "movement" || raw === "media") return "sentiment";
   const hit = TEAM_PAGE_TABS.find((t) => t.id === raw);
   return hit?.id ?? "overview";
 }
@@ -159,6 +162,7 @@ export function teamContextBarVisibility(tab: TeamPageTab): {
     case "playoffs":
     case "history":
     case "organization":
+    case "sentiment":
     case "payroll":
     default:
       return { seasonType: false, rate: false };

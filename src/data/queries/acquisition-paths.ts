@@ -129,6 +129,19 @@ function loadDraftData(): DraftData {
   return draftData;
 }
 
+export type TeamDraftPick = DraftCandidate & { year: number; round: number };
+
+/** Every pick a franchise made, newest class first, under any of its old abbreviations. */
+export function teamDraftPicks(teamId: string): TeamDraftPick[] {
+  const out: TeamDraftPick[] = [];
+  for (const [key, list] of loadDraftData().byTeam) {
+    const [id, year, round] = key.split("|");
+    if (id !== teamId) continue;
+    for (const c of list) out.push({ ...c, year: Number(year), round: Number(round) });
+  }
+  return out.sort((a, b) => b.year - a.year || a.pick - b.pick);
+}
+
 function draftOf(playerId: string): DraftRecord | null {
   return loadDraftData().byPlayer.get(playerId) ?? parseDraftLine(getBundledPlayerBio(playerId)?.draftInfo);
 }

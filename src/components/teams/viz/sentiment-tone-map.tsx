@@ -30,7 +30,7 @@ function pct(score: number): number {
 }
 
 /**
- * Organization tab hero: the franchise and its tracked players placed by
+ * Sentiment tab hero: the franchise and its tracked players placed by
  * media tone (across) and fan tone (up). Above the diagonal, fans are warmer
  * than the coverage; below it, the coverage is warmer than the fans.
  */

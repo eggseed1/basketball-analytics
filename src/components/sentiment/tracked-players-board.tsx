@@ -262,7 +262,7 @@ export function TrackedPlayersBoard({
                     <td className="px-3 py-2">
                       {row.teamKey ? (
                         <Link
-                          href={`/teams/${encodeURIComponent(row.teamKey)}?tab=organization`}
+                          href={`/teams/${encodeURIComponent(row.teamKey)}?tab=sentiment`}
                           className="inline-flex items-center gap-1.5 text-muted-foreground hover:text-foreground"
                         >
                           <TeamLogo teamKey={row.teamKey} size="xs" />

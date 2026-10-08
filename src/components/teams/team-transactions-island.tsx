@@ -12,7 +12,7 @@ export async function TeamTransactionsIsland({
 }) {
   const offseasonYear = currentOffseasonLabelYear();
   const txPage = await listTransactionEvents(
-    { teamId: teamFilterId, transactionYear: offseasonYear },
+    { teamId: teamFilterId, transactionYear: offseasonYear, excludeCategory: "draft" },
     { page: 1, pageSize: 6 }
   ).catch(() => ({
     events: [],
@@ -51,7 +51,8 @@ export async function TeamTransactionsIsland({
           {offseasonYear}-{String((offseasonYear + 1) % 100).padStart(2, "0")} transactions
         </h2>
         <p className="text-[14px] text-muted-foreground">
-          Latest moves involving this team since June 1, {offseasonYear}.
+          Trades, signings and waivers since June 1, {offseasonYear}. Draft picks are under Salary &amp;
+          Assets.
         </p>
       </div>
       <div className="sports-card p-4 sm:p-5">

@@ -161,7 +161,7 @@ export default function InternalSentimentPage() {
           </li>
           <li>
             Team{" "}
-            <code className="text-[12px]">?tab=organization</code> — roster
+            <code className="text-[12px]">?tab=sentiment</code> — roster
             sentiment slice
           </li>
         </ul>

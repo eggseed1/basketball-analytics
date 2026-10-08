@@ -58,6 +58,9 @@ function main() {
   assert.equal(parseTeamPageTab("stats"), "stats");
   assert.equal(parseTeamPageTab("payroll"), "payroll");
   assert.equal(parseTeamPageTab("contracts"), "payroll");
+  assert.equal(parseTeamPageTab("assets"), "payroll");
+  assert.equal(parseTeamPageTab("sentiment"), "sentiment");
+  assert.equal(parseTeamPageTab("movement"), "sentiment");
   assert.equal(parseTeamSeasonKind("playoffs"), "playoffs");
   assert.equal(parseTeamRateMode("per100"), "per100");
 
@@ -132,6 +135,9 @@ function main() {
   assert.ok(page.includes("TeamSeasonRecapIsland"));
   assert.ok(page.includes('tab === "stats"'));
   assert.ok(page.includes('tab === "payroll"'));
+  assert.ok(page.includes('tab === "sentiment"'));
+  assert.ok(page.includes("TeamLeadershipSection"));
+  assert.ok(page.includes("TeamDraftHistorySection"));
 
   console.log("test-team-page-tabs: ok");
 }

@@ -82,7 +82,7 @@ export function SentimentHeadlinesList({
                   {row.teamIds.map((teamId) => (
                     <Link
                       key={teamId}
-                      href={`/teams/${encodeURIComponent(teamId)}?tab=organization`}
+                      href={`/teams/${encodeURIComponent(teamId)}?tab=sentiment`}
                       className="inline-flex items-center gap-1 hover:text-foreground"
                     >
                       <TeamLogo teamKey={teamId} size="xs" />

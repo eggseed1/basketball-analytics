@@ -9,14 +9,15 @@ import { DestinationSectionSkeleton } from "@/components/continuity/destination-
 import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { GlassTintScaleProvider } from "@/components/brand/glass-surface";
 import { TeamArcIsland } from "@/components/teams/team-arc-island";
-import { TeamAskLinks } from "@/components/teams/team-ask-links";
 import { TeamAssetsIsland } from "@/components/teams/team-assets-island";
 import { TeamContextBar } from "@/components/teams/team-context-bar";
+import { TeamDraftHistorySection } from "@/components/teams/team-draft-history-section";
 import { TeamDestinationIdentity } from "@/components/teams/team-destination-identity";
 import { TeamEvidenceIsland } from "@/components/teams/team-evidence-island";
 import { TeamFrontOfficeIsland } from "@/components/teams/team-front-office-island";
 import { TeamGamesIsland } from "@/components/teams/team-games-island";
 import { TeamHustleIsland } from "@/components/teams/team-hustle-island";
+import { TeamLeadershipSection } from "@/components/teams/team-leadership-section";
 import { TeamLineupsIsland } from "@/components/teams/team-lineups-island";
 import { TeamOnOffIsland } from "@/components/teams/team-on-off-island";
 import { TeamOffenseIsland } from "@/components/teams/team-offense-island";
@@ -25,16 +26,15 @@ import { TeamSplitsIsland } from "@/components/teams/team-splits-island";
 import { FranchiseTimeline } from "@/components/teams/franchise-timeline";
 import { TeamFranchiseHistoryIsland } from "@/components/teams/team-franchise-history-island";
 import { TeamMatchupPreview } from "@/components/teams/team-matchup-preview";
-import { TeamMovementIsland } from "@/components/teams/team-movement-island";
-import { TeamSentimentIsland } from "@/components/teams/team-sentiment-island";
 import { TeamOpeningNight } from "@/components/teams/overview/team-opening-night";
 import { TeamOverviewVisuals } from "@/components/teams/overview/team-overview-visuals";
 import { TeamSeasonRecapIsland } from "@/components/teams/overview/team-season-recap-island";
 import { StatsRankGrid } from "@/components/teams/viz/stats-rank-grid";
-import { TeamOrganizationHub } from "@/components/teams/team-organization-hub";
 import { TeamPrimaryNav } from "@/components/teams/team-primary-nav";
 import { TeamRosterIsland } from "@/components/teams/team-roster-island";
 import { TeamRosterBuiltIsland } from "@/components/teams/team-roster-built-island";
+import { TeamSentimentTab } from "@/components/teams/team-sentiment-tab";
+import { TeamRosterSourcesSection } from "@/components/teams/team-roster-sources-section";
 import { TeamScheduleIsland } from "@/components/teams/team-schedule-island";
 import { TeamTransactionsIsland } from "@/components/teams/team-transactions-island";
 import { EraThemeScope } from "@/components/time-machine/era-theme-scope";
@@ -574,14 +574,18 @@ export default async function TeamProfilePage({
         ) : null}
 
         {tab === "organization" ? (
-          <div data-motion-stack className="flex flex-col gap-4">
-            <TeamOrganizationHub />
-            <Suspense fallback={null}>
-              <TeamMovementIsland teamId={resolvedTeamId} />
-            </Suspense>
-            <Suspense fallback={null}>
-              <TeamSentimentIsland teamId={resolvedTeamId} />
-            </Suspense>
+          <div data-motion-stack className="flex flex-col gap-8">
+            <TeamLeadershipSection
+              teamId={askTeamId}
+              teamName={displayName}
+              season={season}
+              currentSeason={currentSeason}
+            />
+            {season === currentSeason ? (
+              <Suspense fallback={<DestinationSectionSkeleton label="Loading roster moves…" />}>
+                <TeamRosterSourcesSection teamId={askTeamId} teamKey={identityTeam.abbreviation} />
+              </Suspense>
+            ) : null}
             <Suspense
               fallback={
                 <DestinationSectionSkeleton label="Loading transactions…" />
@@ -589,35 +593,19 @@ export default async function TeamProfilePage({
             >
               <TeamTransactionsIsland teamFilterId={txTeamId} />
             </Suspense>
-            <section
-              id="ask"
-              className="scroll-mt-16 flex flex-col gap-3"
-              aria-label="Ask DRBL"
-            >
-              <div>
-                <h2 className="text-[20px] font-bold tracking-tight">
-                  Ask DRBL about this team
-                </h2>
-                <p className="text-[14px] text-muted-foreground">
-                  Prefills supported team-board and offseason queries only.
-                </p>
-              </div>
-              <div className="sports-card p-4 sm:p-5">
-                <TeamAskLinks
-                  teamName={displayName}
-                  season={season}
-                  teamId={askTeamId}
-                  priorSeason={priorSeason}
-                />
-              </div>
-            </section>
           </div>
+        ) : null}
+
+        {tab === "sentiment" ? (
+          <Suspense fallback={<DestinationSectionSkeleton label="Loading sentiment…" />}>
+            <TeamSentimentTab teamId={resolvedTeamId} />
+          </Suspense>
         ) : null}
 
         {tab === "payroll" ? (
           <div data-motion-stack className="flex flex-col gap-6">
             <Suspense
-              fallback={<DestinationSectionSkeleton label="Loading payroll…" />}
+              fallback={<DestinationSectionSkeleton label="Loading salary…" />}
             >
               <TeamFrontOfficeIsland teamId={resolvedTeamId} season={season} />
             </Suspense>
@@ -633,6 +621,7 @@ export default async function TeamProfilePage({
                 teamKey={identityTeam.abbreviation}
               />
             </Suspense>
+            <TeamDraftHistorySection teamId={askTeamId} />
           </div>
         ) : null}
 

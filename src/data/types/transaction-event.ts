@@ -104,6 +104,7 @@ export type TransactionEventFilters = {
   q?: string;
   /** Source-text category filter. */
   category?: TransactionType;
+  excludeCategory?: TransactionType;
 };
 
 export type TransactionEventPage = {

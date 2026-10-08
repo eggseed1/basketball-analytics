@@ -29,7 +29,7 @@ export async function TeamFrontOfficeIsland({
   if (!slice) {
     return (
       <section id="front-office" className="space-y-2">
-        <h2 className="text-[20px] font-bold tracking-tight">Payroll &amp; Contracts</h2>
+        <h2 className="text-[20px] font-bold tracking-tight">Salary &amp; Assets</h2>
         <p className="text-[14px] text-muted-foreground">
           Payroll snapshot unavailable for {frontOfficeSeason}.
         </p>

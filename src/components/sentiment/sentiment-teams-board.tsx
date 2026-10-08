@@ -116,7 +116,7 @@ export function SentimentTeamsBoard({ teams }: { teams: TeamSentimentProfile[] }
                 >
                   <td className="px-3 py-2">
                     <Link
-                      href={`/teams/${encodeURIComponent(espnId)}?tab=organization`}
+                      href={`/teams/${encodeURIComponent(espnId)}?tab=sentiment`}
                       className={cn("inline-flex items-center gap-2 font-semibold", textLinkClassName)}
                     >
                       <TeamLogo teamKey={espnId} size="xs" />

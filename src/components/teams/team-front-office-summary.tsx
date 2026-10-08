@@ -32,11 +32,11 @@ export function TeamFrontOfficeSummaryCard({
           id="front-office-heading"
           className="text-[20px] font-bold tracking-tight"
         >
-          Payroll &amp; Contracts
+          Salary &amp; Assets
         </h2>
         <p className="text-[14px] text-muted-foreground">
-          Current-season salary commitments and draft picks for this franchise.
-          Missing salaries stay blank instead of showing zero.
+          Current-season salary commitments, draft picks and draft history for
+          this franchise. Missing salaries stay blank instead of showing zero.
         </p>
       </div>
 
