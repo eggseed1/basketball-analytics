@@ -1,8 +1,9 @@
 "use client";
 
-import { useLayoutEffect, useRef } from "react";
+import { useId, useLayoutEffect, useRef } from "react";
 import { HomeGameStripCard } from "@/components/home/home-game-strip-card";
 import { AppLink } from "@/components/ui/app-link";
+import { InlineScript } from "@/components/ui/inline-script";
 import { sectionLinkClassName } from "@/lib/design-system";
 import { LiveScoreboardScope } from "@/components/sports/live-scoreboard-scope";
 import type { GameSummary } from "@/data/types";
@@ -36,6 +37,7 @@ function isSettledStatus(status: GameStatusKind | undefined): boolean {
 function StripScroller({ games }: { games: GameSummary[] }) {
   const ordered = orderStrip(games);
   const scrollerRef = useRef<HTMLDivElement>(null);
+  const scrollerId = useId();
   const anchoredRef = useRef(false);
   const anchor = anchorIndex(ordered);
 
@@ -51,11 +53,19 @@ function StripScroller({ games }: { games: GameSummary[] }) {
   }, [anchor]);
 
   return (
-    <div ref={scrollerRef} className="-mx-1 -my-3 flex gap-4 touch-scroll-x px-1 py-3">
-      {ordered.map((game) => (
-        <HomeGameStripCard key={game.id} game={game} />
-      ))}
-    </div>
+    <>
+      <div ref={scrollerRef} id={scrollerId} className="-mx-1 -my-3 flex gap-4 touch-scroll-x px-1 py-3">
+        {ordered.map((game) => (
+          <HomeGameStripCard key={game.id} game={game} />
+        ))}
+      </div>
+      {/* Streamed under Suspense, the strip parses inside a hidden container, so wait for layout. */}
+      {anchor > 0 ? (
+        <InlineScript
+          html={`(function f(n){var s=document.getElementById(${JSON.stringify(scrollerId)}),c=s&&s.children[${anchor}];if(!c)return;if(!s.clientWidth){if(n<600)requestAnimationFrame(function(){f(n+1)});return}s.scrollLeft+=c.getBoundingClientRect().left-s.getBoundingClientRect().left-(parseFloat(getComputedStyle(s).paddingLeft)||0)})(0)`}
+        />
+      ) : null}
+    </>
   );
 }
 
