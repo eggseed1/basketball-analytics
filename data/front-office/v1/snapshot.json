@@ -2,13 +2,13 @@
   "meta": {
     "methodologyVersion": "p18c2-1.0",
     "snapshotDate": "2026-10-08",
-    "retrievedAt": "2026-10-08T00:20:13.315Z",
+    "retrievedAt": "2026-10-08T03:24:11.717Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "a475c595dd48ad29c16fe56d343a9e506d4989f6b8c3797eacce5650f6cc0dd0",
+    "sourceHash": "5595ca960f513cbd24d13c3d494e04f70e9f8bd610b994b962bca761ef710ea0",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -2046,6 +2046,29 @@
             "href": "/players/4898010"
           },
           {
+            "playerId": "1641815",
+            "playerName": "Isaiah Stevens",
+            "age": null,
+            "contractId": "cy-1641815-2026",
+            "contractType": "UNKNOWN",
+            "years": [
+              {
+                "contractId": "cy-1641815-2026",
+                "playerId": "1641815",
+                "franchiseId": "4",
+                "season": "2026-27",
+                "salary": null,
+                "capHit": null,
+                "guaranteedAmount": null,
+                "guaranteeStatus": "UNKNOWN",
+                "optionType": "UNKNOWN",
+                "source": "espn-roster-no-salary"
+              }
+            ],
+            "guaranteedTotal": null,
+            "href": "/players/1641815"
+          },
+          {
             "playerId": "4848625",
             "playerName": "Dailyn Swain",
             "age": null,
@@ -2101,7 +2124,7 @@
         ],
         "playerSalaryCommitments": 140434281,
         "playersWithSalary": 14,
-        "playersWithoutSalary": 7
+        "playersWithoutSalary": 8
       },
       "draftAssets": {
         "franchiseId": "4",
@@ -11141,6 +11164,29 @@
             "href": "/players/4703889"
           },
           {
+            "playerId": "1641798",
+            "playerName": "Jaylen Martin",
+            "age": null,
+            "contractId": "cy-1641798-2026",
+            "contractType": "UNKNOWN",
+            "years": [
+              {
+                "contractId": "cy-1641798-2026",
+                "playerId": "1641798",
+                "franchiseId": "22",
+                "season": "2026-27",
+                "salary": null,
+                "capHit": null,
+                "guaranteedAmount": null,
+                "guaranteeStatus": "UNKNOWN",
+                "optionType": "UNKNOWN",
+                "source": "espn-roster-no-salary"
+              }
+            ],
+            "guaranteedTotal": null,
+            "href": "/players/1641798"
+          },
+          {
             "playerId": "1630695",
             "playerName": "Micah Potter",
             "age": null,
@@ -11219,7 +11265,7 @@
         ],
         "playerSalaryCommitments": 179289516,
         "playersWithSalary": 13,
-        "playersWithoutSalary": 5
+        "playersWithoutSalary": 6
       },
       "draftAssets": {
         "franchiseId": "22",
