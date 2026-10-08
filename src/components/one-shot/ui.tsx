@@ -152,6 +152,18 @@ export function Btn({
   );
 }
 
+export function ExpandButton({ expanded, onClick, showLabel = false, className }: { expanded: boolean; onClick: () => void; showLabel?: boolean; className?: string }) {
+  const label = expanded ? "Exit full screen" : "Full screen";
+  return (
+    <Btn onClick={onClick} aria-label={label} title={`${label} (F)`} aria-keyshortcuts="F" className={cn("px-2.5", className)}>
+      <svg aria-hidden viewBox="0 0 16 16" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+        {expanded ? <path d="M6 2v4H2M10 2v4h4M6 14v-4H2M10 14v-4h4" /> : <path d="M2 6V2h4M14 6V2h-4M2 10v4h4M14 10v4h-4" />}
+      </svg>
+      {showLabel ? <span className="hidden sm:inline">{label}</span> : null}
+    </Btn>
+  );
+}
+
 export function Segmented<T extends string | number>({
   label,
   value,

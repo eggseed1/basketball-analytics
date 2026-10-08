@@ -2,10 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 
+import { cn } from "@/lib/utils";
 import { calendar, MONTHS } from "@/one-shot/career";
 import type { LifeState, Speed } from "@/one-shot/types";
 
-import { ageLabel, Btn, Segmented } from "./ui";
+import { ageLabel, Btn, ExpandButton, Segmented } from "./ui";
 
 export type UiPause = "user" | "decision" | "hidden" | null;
 
@@ -24,9 +25,13 @@ export function TimeBar({
   onReducedMotion,
   onSources,
   onQuit,
+  expanded,
+  onExpand,
 }: {
   life: LifeState;
   pause: UiPause;
+  expanded: boolean;
+  onExpand: () => void;
   onToggle: () => void;
   onSpeed: (s: Speed) => void;
   onNext: () => void;
@@ -41,9 +46,14 @@ export function TimeBar({
   const running = pause === null;
   const barRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    const header = document.querySelector<HTMLElement>("header.site-chrome");
     const bar = barRef.current;
-    if (!header || !bar) return;
+    if (!bar) return;
+    if (expanded) {
+      bar.style.top = "env(safe-area-inset-top, 0px)";
+      return;
+    }
+    const header = document.querySelector<HTMLElement>("header.site-chrome");
+    if (!header) return;
     const sync = () => {
       bar.style.top = `${Math.round(header.getBoundingClientRect().height)}px`;
     };
@@ -51,12 +61,18 @@ export function TimeBar({
     const ro = new ResizeObserver(sync);
     ro.observe(header);
     return () => ro.disconnect();
-  }, []);
+  }, [expanded]);
   const { month, year } = calendar(life);
   const status = pause === "decision" ? "Paused for a decision" : pause === "hidden" ? "Paused while the tab was hidden" : pause === "user" ? "Paused" : "Running";
   return (
-    <div ref={barRef} className="sticky top-0 z-30 -mx-3 border-b border-[var(--os-border)] bg-[var(--os-page)]/95 px-3 py-2 backdrop-blur sm:static sm:mx-0 sm:rounded-[6px] sm:border sm:bg-[var(--os-panel)] sm:px-3.5">
-      <div className="flex items-center gap-2 sm:gap-3">
+    <div
+      ref={barRef}
+      className={cn(
+        "sticky top-0 z-30 -mx-3 border-b border-[var(--os-border)] bg-[var(--os-page)]/95 px-3 py-2 backdrop-blur sm:mx-0 sm:rounded-[6px] sm:border sm:bg-[var(--os-panel)] sm:px-3.5",
+        expanded ? "sm:shadow-[0_10px_24px_-14px_rgb(0_0_0/0.9)]" : "sm:static",
+      )}
+    >
+      <div className="flex items-center gap-1.5 sm:gap-3">
         <div className="min-w-0 shrink-0 font-mono tabular-nums">
           <p className="text-[15px] font-semibold leading-tight">{ageLabel(life.ageMonths)}</p>
           <p className="text-[10.5px] uppercase tracking-[0.1em] text-[var(--os-dim)]">
@@ -69,7 +85,7 @@ export function TimeBar({
           disabled={pause === "decision"}
           aria-label={running ? "Pause time" : "Resume time"}
           aria-keyshortcuts="Space"
-          className="w-[84px]"
+          className="w-[60px] sm:w-[84px]"
         >
           {running ? "Pause" : "Play"}
         </Btn>
@@ -88,8 +104,16 @@ export function TimeBar({
         >
           {life.clock.speed}x
         </button>
-        <Btn onClick={onNext} disabled={pause === "decision" || Boolean(life.ended)} aria-keyshortcuts="N" className="ml-auto sm:ml-0">
-          Next decision
+        <Btn
+          onClick={onNext}
+          disabled={pause === "decision" || Boolean(life.ended)}
+          aria-label="Next decision"
+          aria-keyshortcuts="N"
+          className="ml-auto whitespace-nowrap px-2.5 sm:ml-0 sm:px-3"
+        >
+          <span>
+            Next<span className="hidden min-[400px]:inline"> decision</span>
+          </span>
         </Btn>
         <label className="hidden items-center gap-2 text-[12.5px] text-[var(--os-dim)] lg:flex">
           <input
@@ -114,6 +138,7 @@ export function TimeBar({
           onSources={onSources}
           onQuit={onQuit}
         />
+        <ExpandButton expanded={expanded} onClick={onExpand} />
       </div>
     </div>
   );

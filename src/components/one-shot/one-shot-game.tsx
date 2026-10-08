@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 
+import { cn } from "@/lib/utils";
 import { tick, TICK_MS } from "@/one-shot/clock";
 import { advance, advanceToDecision, createLife, rename, resolveDecision, setPlan } from "@/one-shot/engine";
 import {
@@ -28,16 +29,95 @@ import { CareerMap, ScoutingReportPanel, SameGeneration, YourRoute } from "./pan
 import { SourcesDrawer } from "./sources-drawer";
 import { StartScreen, type StartOptions } from "./start-screen";
 import { TimeBar, type UiPause } from "./time-bar";
-import { ageLabel, OS_VARS } from "./ui";
+import { ageLabel, ExpandButton, OS_VARS } from "./ui";
 
 const subscribeNoop = () => () => {};
 
 export function OneShotGame() {
   const mounted = useSyncExternalStore(subscribeNoop, () => true, () => false);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [expanded, setExpanded] = useState(false);
+
+  useEffect(() => {
+    const header = document.querySelector<HTMLElement>("header.site-chrome");
+    const wrap = wrapRef.current;
+    if (!header || !wrap) return;
+    const sync = () => wrap.style.setProperty("--os-chrome", `${Math.round(header.getBoundingClientRect().height)}px`);
+    sync();
+    const ro = new ResizeObserver(sync);
+    ro.observe(header);
+    return () => ro.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!expanded) return;
+    const html = document.documentElement;
+    const prevOverflow = html.style.overflow;
+    html.style.overflow = "hidden";
+    const onFullscreen = () => {
+      if (!document.fullscreenElement) setExpanded(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Escape" || document.fullscreenElement) return;
+      if (wrapRef.current?.querySelector('[role="dialog"], [role="menu"]')) return;
+      setExpanded(false);
+    };
+    document.addEventListener("fullscreenchange", onFullscreen);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      html.style.overflow = prevOverflow;
+      document.removeEventListener("fullscreenchange", onFullscreen);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [expanded]);
+
+  const toggleExpanded = useCallback(() => {
+    if (document.fullscreenElement) {
+      document.exitFullscreen().catch(() => setExpanded(false));
+      return;
+    }
+    if (expanded) {
+      setExpanded(false);
+      return;
+    }
+    setExpanded(true);
+    const el = wrapRef.current;
+    if (el && document.fullscreenEnabled) el.requestFullscreen({ navigationUI: "hide" }).catch(() => {});
+  }, [expanded]);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.key !== "f" && e.key !== "F") || e.metaKey || e.ctrlKey || e.altKey) return;
+      const t = e.target as HTMLElement | null;
+      if (t && (t.tagName === "INPUT" || t.tagName === "SELECT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
+      if (wrapRef.current?.querySelector('[role="dialog"]')) return;
+      e.preventDefault();
+      toggleExpanded();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [toggleExpanded]);
+
   return (
-    <div style={OS_VARS} className="mx-auto w-full max-w-[1700px] px-2 sm:px-5">
-      <div className="min-h-[560px] rounded-[8px] bg-[var(--os-page)] p-3 text-[var(--os-text)] [color-scheme:dark] sm:p-5">
-        {mounted ? <Game /> : <p className="p-6 font-mono text-[12px] text-[var(--os-dim)]">Loading ONE SHOT…</p>}
+    <div
+      ref={wrapRef}
+      style={OS_VARS}
+      className={
+        expanded
+          ? "fixed inset-0 z-[80] overflow-y-auto overscroll-contain bg-[var(--os-page)] [color-scheme:dark]"
+          : "mx-auto w-full max-w-[1700px] sm:px-5"
+      }
+    >
+      <div
+        data-os-frame
+        className={cn(
+          "flex flex-col bg-[var(--os-page)] text-[var(--os-text)] [color-scheme:dark]",
+          expanded
+            ? "mx-auto min-h-full w-full max-w-[1700px] pb-[max(0.75rem,env(safe-area-inset-bottom))] pl-[max(0.75rem,env(safe-area-inset-left))] pr-[max(0.75rem,env(safe-area-inset-right))] pt-[max(0.75rem,env(safe-area-inset-top))] sm:px-5 sm:pb-5 sm:pt-4 md:has-[[data-os-play]]:h-full"
+            : "min-h-[calc(100dvh-var(--os-chrome,0px)-1.5rem)] scroll-mt-[calc(var(--os-chrome,0px)+0.75rem)] p-3 sm:rounded-[8px] sm:p-5 md:has-[[data-os-play]]:h-[calc(100dvh-var(--os-chrome,0px)-1.5rem)] md:has-[[data-os-play]]:min-h-[540px]",
+        )}
+      >
+        {mounted ? <Game expanded={expanded} onExpand={toggleExpanded} /> : <p className="p-6 font-mono text-[12px] text-[var(--os-dim)]">Loading ONE SHOT…</p>}
       </div>
     </div>
   );
@@ -80,7 +160,7 @@ function boot(): Boot {
   };
 }
 
-function Game() {
+function Game({ expanded, onExpand }: { expanded: boolean; onExpand: () => void }) {
   const [init] = useState(boot);
   const [screen, setScreen] = useState<Screen>("start");
   const [opts, setOpts] = useState<StartOptions>(init.opts);
@@ -146,8 +226,18 @@ function Game() {
       const h = decisionHeading.current;
       if (!h) return;
       h.focus({ preventScroll: true });
+      const section = h.closest("section");
+      if (!section) return;
+      const behavior = reducedMotion ? "auto" : "smooth";
+      const col = section.closest<HTMLElement>("[data-os-col]");
+      if (col && getComputedStyle(col).overflowY === "auto") {
+        const c = col.getBoundingClientRect();
+        const r = section.getBoundingClientRect();
+        if (r.top < c.top || r.bottom > c.bottom) section.scrollIntoView({ block: "nearest", behavior });
+        return;
+      }
       const r = h.getBoundingClientRect();
-      if (r.top < 120 || r.bottom > window.innerHeight - 40) h.closest("section")?.scrollIntoView({ block: "center", behavior: reducedMotion ? "auto" : "smooth" });
+      if (r.top < 120 || r.bottom > window.innerHeight - 40) section.scrollIntoView({ block: "center", behavior });
     });
     return () => cancelAnimationFrame(raf);
   }, [pendingId, auto, reducedMotion]);
@@ -177,6 +267,15 @@ function Game() {
       document.removeEventListener("visibilitychange", onVis);
       window.removeEventListener("pagehide", onHide);
     };
+  }, [screen]);
+
+  const firstScreen = useRef(true);
+  useEffect(() => {
+    if (firstScreen.current) {
+      firstScreen.current = false;
+      return;
+    }
+    rootRef.current?.closest("[data-os-frame]")?.scrollIntoView({ block: "start" });
   }, [screen]);
 
   const toggle = useCallback(() => setPause((p) => (p === null ? "user" : null)), []);
@@ -300,43 +399,54 @@ function Game() {
   }, [recovery]);
 
   return (
-    <div ref={rootRef}>
+    <div ref={rootRef} className="flex min-h-0 flex-1 flex-col">
+      {screen !== "play" ? (
+        <div className="mb-3 flex items-center gap-3 sm:mb-4">
+          {expanded ? <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--os-dim)]">ONE SHOT</p> : null}
+          <ExpandButton expanded={expanded} onClick={onExpand} showLabel className="ml-auto" />
+        </div>
+      ) : null}
+
       {screen === "start" ? (
-        <StartScreen
-          opts={opts}
-          onOpts={setOpts}
-          onBorn={() => beBorn()}
-          canContinue={Boolean(saved)}
-          continueLabel={saved ? `${saved.identity.displayName}, ${ageLabel(saved.ageMonths)}` : null}
-          onContinue={continueLife}
-          careers={careers}
-          replaySeed={replaySeed}
-          onClearReplay={() => setReplaySeed(null)}
-          recovery={recovery?.reason ?? null}
-          onDownloadBad={downloadBad}
-          onDiscardBad={() => {
-            clearSave();
-            setRecovery(null);
-          }}
-          daily={today}
-          onSources={openSources}
-        />
+        <div className="my-auto">
+          <StartScreen
+            opts={opts}
+            onOpts={setOpts}
+            onBorn={() => beBorn()}
+            canContinue={Boolean(saved)}
+            continueLabel={saved ? `${saved.identity.displayName}, ${ageLabel(saved.ageMonths)}` : null}
+            onContinue={continueLife}
+            careers={careers}
+            replaySeed={replaySeed}
+            onClearReplay={() => setReplaySeed(null)}
+            recovery={recovery?.reason ?? null}
+            onDownloadBad={downloadBad}
+            onDiscardBad={() => {
+              clearSave();
+              setRecovery(null);
+            }}
+            daily={today}
+            onSources={openSources}
+          />
+        </div>
       ) : null}
 
       {screen === "birth" && life ? (
-        <BirthReveal
-          life={life}
-          units={units}
-          onRename={(g, f) => commit(rename(life, g, f))}
-          onStart={startLife}
-          onBack={() => setScreen("start")}
-        />
+        <div className="my-auto">
+          <BirthReveal
+            life={life}
+            units={units}
+            onRename={(g, f) => commit(rename(life, g, f))}
+            onStart={startLife}
+            onBack={() => setScreen("start")}
+          />
+        </div>
       ) : null}
 
       {screen === "report" && life ? <EndReport life={life} units={units} onNew={() => beBorn()} onHome={() => setScreen("start")} /> : null}
 
       {screen === "play" && life ? (
-        <div className="flex flex-col gap-3 sm:gap-4">
+        <div data-os-play className="flex flex-col gap-3 sm:gap-4 md:min-h-0 md:flex-1">
           <TimeBar
             life={life}
             pause={effectivePause}
@@ -350,23 +460,11 @@ function Game() {
             onReducedMotion={(v) => setPrefs({ ...prefs, reducedMotion: v })}
             onSources={openSources}
             onQuit={quit}
+            expanded={expanded}
+            onExpand={onExpand}
           />
-          <div className="flex flex-col gap-3 sm:gap-4 md:grid md:grid-cols-2 md:grid-rows-[auto_1fr] md:items-start xl:grid-cols-[26fr_47fr_27fr] xl:grid-rows-1 xl:gap-5 2xl:gap-6">
-            <div className="contents md:col-start-2 md:row-start-1 md:flex md:flex-col md:gap-4 xl:col-start-1 xl:gap-5">
-              <div className="order-1 md:order-none">
-                <IdentityCard life={life} />
-              </div>
-              <div className="order-5 md:order-none">
-                <StatusPanel life={life} />
-              </div>
-              <div className="order-10 md:order-none">
-                <PhysiquePanel life={life} units={units} onUnits={(u) => setPrefs({ ...prefs, units: u })} />
-              </div>
-              <div className="order-11 md:order-none">
-                <FamilyAndResources life={life} units={units} />
-              </div>
-            </div>
-            <div className="contents md:col-start-1 md:row-span-2 md:row-start-1 md:flex md:flex-col md:gap-4 xl:col-start-2 xl:row-span-1 xl:gap-5">
+          <div className="flex flex-col gap-3 sm:gap-4 md:grid md:min-h-0 md:flex-1 md:grid-cols-2 md:grid-rows-1 xl:grid-cols-[26fr_47fr_27fr] xl:gap-5 2xl:gap-6">
+            <div data-os-col className="contents md:col-start-1 md:row-start-1 md:flex md:min-h-0 md:flex-col md:gap-4 md:overflow-y-auto md:overscroll-contain md:[scrollbar-color:var(--os-border)_transparent] md:[scrollbar-width:thin] xl:col-start-2 xl:gap-5">
               <div className="order-2 md:order-none">
                 <LifeScene life={life} animate={running && !reducedMotion} />
               </div>
@@ -386,18 +484,34 @@ function Game() {
                 <LifeRecord life={life} />
               </div>
             </div>
-            <div className="contents md:col-start-2 md:row-start-2 md:flex md:flex-col md:gap-4 xl:col-start-3 xl:row-start-1 xl:gap-5">
-              <div className="order-8 md:order-none">
-                <SameGeneration life={life} units={units} />
+            <div className="contents md:col-start-2 md:row-start-1 md:flex md:min-h-0 md:flex-col md:gap-4 md:overflow-y-auto md:overscroll-contain md:[scrollbar-color:var(--os-border)_transparent] md:[scrollbar-width:thin] xl:contents">
+              <div className="contents md:flex md:flex-col md:gap-4 xl:col-start-1 xl:row-start-1 xl:min-h-0 xl:gap-5 xl:overflow-y-auto xl:overscroll-contain xl:[scrollbar-color:var(--os-border)_transparent] xl:[scrollbar-width:thin]">
+                <div className="order-1 md:order-none">
+                  <IdentityCard life={life} />
+                </div>
+                <div className="order-5 md:order-none">
+                  <StatusPanel life={life} />
+                </div>
+                <div className="order-10 md:order-none">
+                  <PhysiquePanel life={life} units={units} onUnits={(u) => setPrefs({ ...prefs, units: u })} />
+                </div>
+                <div className="order-11 md:order-none">
+                  <FamilyAndResources life={life} units={units} />
+                </div>
               </div>
-              <div className="order-9 md:order-none">
-                <CareerMap life={life} />
-              </div>
-              <div className="order-7 md:order-none">
-                <YourRoute life={life} onSources={openSources} />
-              </div>
-              <div className="order-12 md:order-none">
-                <ScoutingReportPanel life={life} />
+              <div className="contents md:flex md:flex-col md:gap-4 xl:col-start-3 xl:row-start-1 xl:min-h-0 xl:gap-5 xl:overflow-y-auto xl:overscroll-contain xl:[scrollbar-color:var(--os-border)_transparent] xl:[scrollbar-width:thin]">
+                <div className="order-8 md:order-none">
+                  <SameGeneration life={life} units={units} />
+                </div>
+                <div className="order-9 md:order-none">
+                  <CareerMap life={life} />
+                </div>
+                <div className="order-7 md:order-none">
+                  <YourRoute life={life} onSources={openSources} />
+                </div>
+                <div className="order-12 md:order-none">
+                  <ScoutingReportPanel life={life} />
+                </div>
               </div>
             </div>
           </div>
