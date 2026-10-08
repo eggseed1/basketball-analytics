@@ -19,7 +19,7 @@ import { advanced, sumBoxes } from "../src/one-shot/stats";
 import { calendar, levelOf, performanceLevel, simulateGame } from "../src/one-shot/career";
 import { MAX_BATCH, tick } from "../src/one-shot/clock";
 import { autoEligible, canDeclare, draftOrder, INTERVIEW_QUESTIONS, interviewDelta } from "../src/one-shot/draft";
-import { advance, advanceToDecision, autoChoice, canDeclareNow, canRetireNow, createLife, declareNow, manageMoney, resolveDecision, retireNow, setPlan, stepMonth } from "../src/one-shot/engine";
+import { advance, advanceToDecision, autoChoice, canDeclareNow, canRetireNow, createLife, declareNow, isUnicornSeed, manageMoney, resolveDecision, retireNow, setPlan, stepMonth, UNICORN_ODDS } from "../src/one-shot/engine";
 import { EVENT_BY_ID, EVENTS } from "../src/one-shot/events";
 import { dailyDate, dailySeed, parseSave, serialize } from "../src/one-shot/persistence";
 import { outcomeTier, shareText } from "../src/one-shot/report";
@@ -854,6 +854,24 @@ ok("trained athleticism stays above the untrained curve", () => {
     assert.ok(s.body[k] >= untrained.body[k] + 6, `${k}: trained ${s.body[k]} vs ${untrained.body[k]}`);
     assert.ok(s.body[k] > s.growth.athleticCeiling[k] + 4, `${k}: ${s.body[k]} vs natural ${s.growth.athleticCeiling[k]}`);
   }
+});
+
+ok("about 1 seed in 200 is a unicorn with top talent, body and family", () => {
+  let n = 0;
+  for (let seed = 1; seed <= 100_000; seed++) if (isUnicornSeed(seed)) n++;
+  assert.ok(Math.abs(n / 100_000 - UNICORN_ODDS) < 0.001, `${n} unicorns`);
+  const seeds = Array.from({ length: 4000 }, (_, i) => i + 1).filter(isUnicornSeed).slice(0, 8);
+  for (const seed of seeds) {
+    const s = createLife(base(seed));
+    assert.equal(s.unicorn, true);
+    assert.equal(strip(createLife(base(seed))), strip(s), "unicorns are deterministic");
+    assert.ok(Object.values(s.potentials).every((p) => p >= 82), `seed ${seed} potentials`);
+    assert.ok(Object.values(s.growth.athleticCeiling).every((p) => p >= 72), `seed ${seed} athletic ceilings`);
+    assert.ok(s.family.means >= 4 && s.family.support === "high" && s.family.courtAccess === "excellent", `seed ${seed} family`);
+    assert.ok(heightPercentile(s.family.fatherHeightCm, "male", s.birthplace.countryId) >= 85, `seed ${seed} father`);
+  }
+  const plain = createLife(base(seeds[0]! + 1));
+  assert.equal("unicorn" in plain, false);
 });
 
 ok("version 4 saves gain the NBA random stream", () => {

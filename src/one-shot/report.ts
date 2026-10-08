@@ -44,6 +44,7 @@ export interface CareerSummary {
   honors?: string | null;
   netWorth?: number;
   after?: string | null;
+  unicorn?: boolean;
 }
 
 export function medalCount(s: LifeState) {
@@ -103,13 +104,14 @@ export function summarize(s: LifeState, finishedAt: string): CareerSummary {
     honors: honorsLine(s),
     netWorth: Math.round(netWorth(s.finance)),
     after: s.after ? `${s.after.title}, ${s.after.employer}` : null,
+    ...(s.unicorn ? { unicorn: true } : {}),
   };
 }
 
 export function shareText(s: LifeState, origin = "https://drbl.io"): string {
   const tier = outcomeTier(s);
   const born = country(s.birthplace.countryId).name;
-  const lines = [`ONE SHOT · ${s.identity.displayName}`, `Born in ${born}. ${TIER_LABEL[tier]}.`];
+  const lines = [`ONE SHOT · ${s.identity.displayName}${s.unicorn ? " · 🦄 unicorn seed" : ""}`, `Born in ${born}. ${TIER_LABEL[tier]}.`];
   if (s.achievements.nbaDebut !== null) lines.push(`NBA debut at ${Math.floor(s.achievements.nbaDebut / 12)}.`);
   if (s.achievements.drafted) lines.push(`Drafted: round ${s.achievements.drafted.round}, pick ${s.achievements.drafted.pick}.`);
   const honors = honorsLine(s);

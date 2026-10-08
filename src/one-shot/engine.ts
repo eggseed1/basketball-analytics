@@ -1,4 +1,4 @@
-import { bodyAt, generateGrowth, generateParents } from "./body";
+import { bodyAt, FAMILY_BIAS, generateGrowth, generateParents, HEIGHT_SD } from "./body";
 import {
   addBox,
   calendar,
@@ -64,7 +64,7 @@ import {
   type Workload,
   type Workouts,
 } from "./types";
-import { country, maybeLeague, PLAYABLE_COUNTRIES, WORLD_VERSION } from "./world";
+import { adultHeights, country, maybeLeague, PLAYABLE_COUNTRIES, WORLD_VERSION } from "./world";
 
 export const SNAPSHOT_YEAR = 2026;
 
@@ -101,18 +101,34 @@ export function createLife(opts: NewLifeOptions): LifeState {
   const town = townName(gen, pool);
   const locality = localityKind === "capital" ? (birth.capital ?? "the capital") : localityKind === "rural" ? (town ? `a village near ${town}` : "a rural village") : (town ?? (localityKind === "city" ? "a mid-size city" : "a small town"));
   const mw = MEANS_WEIGHTS[income]!;
-  const means = gen.weighted([1, 2, 3, 4, 5] as const, (m) => mw[m - 1]!);
-  const support = gen.weighted(["low", "medium", "high"] as const, (s) => ({ low: 20, medium: 50, high: 30 })[s]);
+  let means = gen.weighted([1, 2, 3, 4, 5] as const, (m) => mw[m - 1]!);
+  let support = gen.weighted(["low", "medium", "high"] as const, (s) => ({ low: 20, medium: 50, high: 30 })[s]);
   const courtScore = means + { capital: 2, city: 1.5, town: 1, rural: 0 }[localityKind] + gen.next() * 3;
-  const courtAccess = courtScore >= 7 ? "excellent" : courtScore >= 5 ? "good" : courtScore >= 3 ? "fair" : "poor";
+  let courtAccess: LifeState["family"]["courtAccess"] = courtScore >= 7 ? "excellent" : courtScore >= 5 ? "good" : courtScore >= 3 ? "fair" : "poor";
   const parents = generateParents(gen, birth.id);
-  const growth = generateGrowth(growthRng, parents.fatherHeightCm, parents.motherHeightCm);
+  let growth = generateGrowth(growthRng, parents.fatherHeightCm, parents.motherHeightCm);
   const potentials = generatePotentials(gen);
   const traits = generateTraits(gen);
   const name = drawName(gen, pool);
   const birthMonthOfYear = gen.int(1, 12);
   const hand = gen.chance(0.1) ? "left" : "right";
   const look = { skin: gen.int(0, 5), hair: gen.int(0, 4), hairColor: gen.int(0, 3), eyes: gen.int(0, 2) };
+  const unicorn = isUnicornSeed(opts.seed);
+  if (unicorn) {
+    // Its own throwaway stream, so every other life draws exactly as before.
+    const u = rngOf(createStreams(hashString(`unicorn:${opts.seed >>> 0}`)), "generation");
+    const nat = adultHeights(birth.id);
+    means = Math.max(means, u.chance(0.5) ? 5 : 4) as typeof means;
+    support = "high";
+    courtAccess = "excellent";
+    parents.fatherHeightCm = Math.max(parents.fatherHeightCm, Math.round(Math.min(215, nat.maleCm + FAMILY_BIAS.male + HEIGHT_SD.male * (1.6 + u.next() * 1.2))));
+    parents.motherHeightCm = Math.max(parents.motherHeightCm, Math.round(Math.min(200, nat.femaleCm + FAMILY_BIAS.female + HEIGHT_SD.female * (1.2 + u.next() * 1.2))));
+    growth = generateGrowth(u, parents.fatherHeightCm, parents.motherHeightCm);
+    growth.wingspanRatio = Math.max(growth.wingspanRatio, 1.05 + u.next() * 0.04);
+    for (const k of Object.keys(growth.athleticCeiling) as (keyof typeof growth.athleticCeiling)[]) growth.athleticCeiling[k] = Math.max(growth.athleticCeiling[k], Math.round(clamp(u.normal(84, 5), 72, 99)));
+    for (const k of Object.keys(potentials) as (keyof typeof potentials)[]) potentials[k] = Math.max(potentials[k], Math.round(clamp(u.normal(91, 4), 82, 99)));
+    for (const k of ["motivation", "discipline", "coachability", "composure", "confidence"] as const) traits[k] = Math.max(traits[k], Math.round(clamp(u.normal(74, 7), 62, 95)));
+  }
   const frame = (growth.frameMassFactor < 0.92 ? 1 : growth.frameMassFactor < 0.97 ? 2 : growth.frameMassFactor < 1.04 ? 3 : growth.frameMassFactor < 1.1 ? 4 : 5) as 1 | 2 | 3 | 4 | 5;
   const budget = Math.round(MONTHLY_BUDGET[means - 1]! * birth.model.costIndex);
   const academics = Math.round(clamp(gen.normal(55, 12), 15, 90));
@@ -123,6 +139,7 @@ export function createLife(opts: NewLifeOptions): LifeState {
     worldSnapshotVersion: WORLD_VERSION,
     runId: opts.runId ?? `r${opts.seed.toString(36)}`,
     seed: opts.seed,
+    ...(unicorn ? { unicorn: true as const } : {}),
     mode: opts.mode,
     draw: opts.draw,
     pacing: opts.pacing,
@@ -170,7 +187,15 @@ export function createLife(opts: NewLifeOptions): LifeState {
     after: null,
   };
   log(state, "birth", `Born in ${locality}, ${birth.name}.`, null, "neutral");
+  if (unicorn) log(state, "milestone", "A unicorn: rare talent, a gifted frame and a family that can back him.", null, "good");
   return state;
+}
+
+/** About 1 life in 200 draws its talent, body and family from the top of the range (game rule). */
+export const UNICORN_ODDS = 1 / 200;
+
+export function isUnicornSeed(seed: number): boolean {
+  return hashString(`unicorn:${seed >>> 0}`) / 4294967296 < UNICORN_ODDS;
 }
 
 /* --------------------------------------------------------------- helpers */

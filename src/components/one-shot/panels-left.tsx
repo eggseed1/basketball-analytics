@@ -50,7 +50,14 @@ export function IdentityCard({ life, compact }: { life: LifeState; compact?: boo
       <div className="flex items-start gap-3">
         <Portrait life={life} size={compact ? 52 : 64} className="shrink-0 rounded-lg border border-[var(--os-border)]" />
         <div className="min-w-0 flex-1">
-          <p className="truncate text-[16px] font-semibold leading-tight">{life.identity.displayName}</p>
+          <p className="truncate text-[16px] font-semibold leading-tight">
+            {life.identity.displayName}
+            {life.unicorn ? (
+              <span className="ml-1.5 align-middle text-[14px]" title="Unicorn seed: rare talent, a gifted frame and a family that can back him" aria-label="Unicorn seed">
+                🦄
+              </span>
+            ) : null}
+          </p>
           <p className="mt-0.5 truncate text-[12.5px] text-[var(--os-dim)]">
             {age >= 10 ? `${POSITION_LABEL[position(life.body.heightCm, life.skills)]} · ${archetype(life)}` : STAGE_LABEL[stageOf(life.ageMonths)]}
           </p>

@@ -447,6 +447,8 @@ export interface LifeState {
   worldSnapshotVersion: string;
   runId: string;
   seed: number;
+  /** Rare seed with talent, body and family from the top of the range. */
+  unicorn?: true;
   mode: Mode;
   draw: DrawMode;
   pacing: Pacing;

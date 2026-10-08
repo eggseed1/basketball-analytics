@@ -5,13 +5,13 @@ import { useEffect, useRef, useState } from "react";
 
 import { FAMILY_BIAS, fmtHeight, fmtLength, heightPercentile, parentTarget, shareAtLeast } from "@/one-shot/body";
 import { MONTHS } from "@/one-shot/career";
-import { MEANS_LABEL } from "@/one-shot/engine";
+import { MEANS_LABEL, UNICORN_ODDS } from "@/one-shot/engine";
 import type { LifeState } from "@/one-shot/types";
 import { birthShare, COUNTRIES, country, countryFlag, domesticProLeagues, PLAYABLE_COUNTRIES } from "@/one-shot/world";
 
 import { BirthSpin } from "./birth-spin";
 import { Portrait } from "./panels-left";
-import { Btn, Chip, Kv, ordinal, Panel, sharePct } from "./ui";
+import { Btn, Chip, Kv, OS, ordinal, Panel, sharePct } from "./ui";
 
 function oneIn(p: number) {
   const n = 1 / p;
@@ -144,6 +144,20 @@ export function BirthReveal({
             </p>
           </div>
         </div>
+        {life.unicorn ? (
+          <div
+            className="mt-5 rounded-lg border px-3 py-2.5"
+            style={{ borderColor: OS.rose, background: `linear-gradient(135deg, color-mix(in srgb, ${OS.amber} 12%, var(--os-panel)), color-mix(in srgb, ${OS.rose} 10%, var(--os-panel)))` }}
+          >
+            <p className="text-[11px] font-semibold uppercase tracking-[0.06em]" style={{ color: OS.rose }}>
+              🦄 Unicorn seed · about 1 in {Math.round(1 / UNICORN_ODDS)} lives
+            </p>
+            <p className="mt-1 text-[13px]">
+              His talent, body and family came from the top of the range: high hidden ceilings, tall parents, a quick and springy frame, real drive, and a family that can pay for the road.
+            </p>
+            <p className="mt-1 text-[11.5px] text-[var(--os-dim)]">Where he was born still followed the normal odds. Injuries and choices can still sink him.</p>
+          </div>
+        ) : null}
         <div className="mt-5 rounded-lg border border-[var(--os-border)] bg-[var(--os-page)] px-3 py-2.5">
           <p className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--os-dim)]">Odds of this birthplace</p>
           <p className="mt-0.5 text-[20px] font-semibold tabular-nums">
@@ -189,7 +203,7 @@ export function BirthReveal({
           <Kv k="Coaching access" v={`${Math.round(c.model.coachingAccess)}/100 (model)`} mono />
         </dl>
         <p className="mt-4 text-[12px] text-[var(--os-dim)]">
-          Nobody can scout a newborn. His talent will show in how he grows and plays. Where he was born decides which roads are open to him, and his parents decide how tall he is likely to be. It has
+          {life.unicorn ? "" : "Nobody can scout a newborn. His talent will show in how he grows and plays. "}Where he was born decides which roads are open to him, and his parents decide how tall he is likely to be. It has
           no effect on skill talent.
         </p>
         <div className="mt-5 flex flex-wrap gap-2">

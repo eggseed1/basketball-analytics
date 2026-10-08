@@ -153,6 +153,7 @@ export function StartScreen({
                   <p className="flex items-baseline justify-between gap-2">
                     <span className="truncate font-medium">
                       {countryFlag(ct.id)} {c.name}
+                      {c.unicorn ? <span title="Unicorn seed"> 🦄</span> : null}
                     </span>
                     <span className="shrink-0 font-mono text-[11px] text-[var(--os-dim)]">{c.mode === "daily" ? `Daily ${c.dailyDate}` : `Seed ${c.seed}`}</span>
                   </p>
