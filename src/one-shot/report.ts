@@ -1,4 +1,5 @@
 import { perGame } from "./career";
+import { netWorth } from "./finance";
 import type { LifeState } from "./types";
 import { country, maybeLeague } from "./world";
 
@@ -40,6 +41,28 @@ export interface CareerSummary {
   peak: string | null;
   endedAge: number;
   finishedAt: string;
+  honors?: string | null;
+  netWorth?: number;
+}
+
+export function medalCount(s: LifeState) {
+  const m = { gold: 0, silver: 0, bronze: 0 };
+  for (const t of s.international.tournaments) if (t.medal) m[t.medal]++;
+  return m;
+}
+
+export const awardCount = (s: LifeState) => s.seasons.reduce((a, x) => a + (x.awards?.length ?? 0), 0);
+
+/** Short honors line: national team medals and caps, then season honors. Null when there are none. */
+export function honorsLine(s: LifeState): string | null {
+  const m = medalCount(s);
+  const parts: string[] = [];
+  const medals = (["gold", "silver", "bronze"] as const).filter((k) => m[k]).map((k) => `${m[k]} ${k}`);
+  if (medals.length) parts.push(`${medals.join(", ")} with ${country(s.international.tournaments.at(-1)!.countryId).name}`);
+  if (s.international.caps) parts.push(`${s.international.caps} caps`);
+  const a = awardCount(s);
+  if (a) parts.push(`${a} season honor${a === 1 ? "" : "s"}`);
+  return parts.length ? parts.join(" · ") : null;
 }
 
 export function summarize(s: LifeState, finishedAt: string): CareerSummary {
@@ -58,18 +81,19 @@ export function summarize(s: LifeState, finishedAt: string): CareerSummary {
     peak: best ? `${perGame(best, "pts").toFixed(1)} pts in ${best.levelLabel} at ${best.ageYears}` : null,
     endedAge: Math.floor(s.ageMonths / 12),
     finishedAt,
+    honors: honorsLine(s),
+    netWorth: Math.round(netWorth(s.finance)),
   };
 }
 
 export function shareText(s: LifeState, origin = "https://drbl.io"): string {
   const tier = outcomeTier(s);
   const born = country(s.birthplace.countryId).name;
-  const lines = [
-    `ONE SHOT · ${s.identity.displayName}`,
-    `Born in ${born}. ${TIER_LABEL[tier]}.`,
-  ];
+  const lines = [`ONE SHOT · ${s.identity.displayName}`, `Born in ${born}. ${TIER_LABEL[tier]}.`];
   if (s.achievements.nbaDebut !== null) lines.push(`NBA debut at ${Math.floor(s.achievements.nbaDebut / 12)}.`);
   if (s.achievements.drafted) lines.push(`Drafted: round ${s.achievements.drafted.round}, pick ${s.achievements.drafted.pick}.`);
+  const honors = honorsLine(s);
+  if (honors) lines.push(`${honors}.`);
   const route = [...new Set(s.seasons.filter((x) => x.ageYears >= 12).map((x) => x.levelLabel))].slice(-4).join(" → ");
   if (route) lines.push(route);
   lines.push(`${origin}/arcade/one-shot${s.mode === "daily" ? "?daily=1" : `?seed=${s.seed}&draw=${s.draw}`}`);

@@ -1,7 +1,7 @@
 import type { Streams } from "./rng";
 
-export const SCHEMA_VERSION = 1;
-export const ENGINE_VERSION = "1.0.0";
+export const SCHEMA_VERSION = 2;
+export const ENGINE_VERSION = "1.1.0";
 
 export type Mode = "random" | "daily";
 export type DrawMode = "weighted" | "equal";
@@ -142,11 +142,13 @@ export interface SeasonLine {
   wins: number;
   losses: number;
   strength: number;
+  awards?: string[];
 }
 
 export interface BoxScore {
   month: number;
   opponent: string;
+  seasonKey?: string;
   min: number;
   pts: number;
   reb: number;
@@ -277,6 +279,66 @@ export interface Education {
   universityYears: number;
 }
 
+export type Lifestyle = "frugal" | "standard" | "lavish";
+export type AdvisorStyle = "index" | "balanced" | "aggressive";
+
+export interface Agent {
+  name: string;
+  firm: string;
+  fee: number;
+  reach: "global" | "regional" | "local";
+  since: number;
+}
+
+export interface Finance {
+  cash: number;
+  invested: number;
+  advisor: AdvisorStyle | null;
+  agent: Agent | null;
+  lifestyle: Lifestyle;
+  endorsements: { brand: string; perYear: number; yearsLeft: number }[];
+  sendHomeShare: number;
+  ytd: { year: number; gross: number; tax: number; fees: number; spend: number; returns: number };
+  years: { year: number; gross: number; tax: number; fees: number; spend: number; returns: number; netWorth: number }[];
+}
+
+export type IntlKind = "olympics" | "world-cup" | "continental" | "u16" | "u17" | "u18" | "u19";
+
+export interface IntlResult {
+  id: string;
+  name: string;
+  kind: IntlKind;
+  year: number;
+  age: number;
+  countryId: string;
+  finish: string;
+  medal: "gold" | "silver" | "bronze" | null;
+  role: Role;
+  gp: number;
+  min: number;
+  pts: number;
+  reb: number;
+  ast: number;
+  stl: number;
+  blk: number;
+  tov: number;
+  fgm: number;
+  fga: number;
+  tpm: number;
+  tpa: number;
+  ftm: number;
+  fta: number;
+  wins: number;
+  losses: number;
+}
+
+export interface International {
+  countryId: string | null;
+  caps: number;
+  tournaments: IntlResult[];
+  declined: number;
+}
+
 export interface LifeState {
   schemaVersion: number;
   engineVersion: string;
@@ -307,6 +369,9 @@ export interface LifeState {
   seasons: SeasonLine[];
   lastGame: BoxScore | null;
   bestGame: (BoxScore & { label: string }) | null;
+  gameLog: BoxScore[];
+  finance: Finance;
+  international: International;
   exposure: number;
   evidence: ScoutEvidence[];
   offers: Offer[];

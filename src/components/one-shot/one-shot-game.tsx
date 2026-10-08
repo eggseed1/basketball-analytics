@@ -26,6 +26,7 @@ import { EndReport } from "./end-report";
 import { DecisionPanel, DecisionWaiting, FocusPanel, LifeRecord, LifeScene } from "./panels-center";
 import { FamilyAndResources, IdentityCard, PhysiquePanel, StatusPanel } from "./panels-left";
 import { CareerMap, ScoutingReportPanel, SameGeneration, YourRoute } from "./panels-right";
+import { StatsPanel } from "./stats-panel";
 import { SourcesDrawer } from "./sources-drawer";
 import { StartScreen, type StartOptions } from "./start-screen";
 import { TimeBar, type UiPause } from "./time-bar";
@@ -481,6 +482,9 @@ function Game({ expanded, onExpand }: { expanded: boolean; onExpand: () => void 
                 <FocusPanel life={life} onPlan={plan} />
               </div>
               <div className="order-6 md:order-none">
+                <StatsPanel life={life} />
+              </div>
+              <div className="order-7 md:order-none">
                 <LifeRecord life={life} />
               </div>
             </div>
@@ -492,24 +496,24 @@ function Game({ expanded, onExpand }: { expanded: boolean; onExpand: () => void 
                 <div className="order-5 md:order-none">
                   <StatusPanel life={life} />
                 </div>
-                <div className="order-10 md:order-none">
+                <div className="order-11 md:order-none">
                   <PhysiquePanel life={life} units={units} onUnits={(u) => setPrefs({ ...prefs, units: u })} />
                 </div>
-                <div className="order-11 md:order-none">
+                <div className="order-12 md:order-none">
                   <FamilyAndResources life={life} units={units} />
                 </div>
               </div>
               <div className="contents md:flex md:flex-col md:gap-4 xl:col-start-3 xl:row-start-1 xl:min-h-0 xl:gap-5 xl:overflow-y-auto xl:overscroll-contain xl:[scrollbar-color:var(--os-border)_transparent] xl:[scrollbar-width:thin]">
-                <div className="order-8 md:order-none">
+                <div className="order-9 md:order-none">
                   <SameGeneration life={life} units={units} />
                 </div>
-                <div className="order-9 md:order-none">
+                <div className="order-10 md:order-none">
                   <CareerMap life={life} />
                 </div>
-                <div className="order-7 md:order-none">
+                <div className="order-8 md:order-none">
                   <YourRoute life={life} onSources={openSources} />
                 </div>
-                <div className="order-12 md:order-none">
+                <div className="order-13 md:order-none">
                   <ScoutingReportPanel life={life} />
                 </div>
               </div>

@@ -4,11 +4,17 @@
  * saved life and survives JSON round trips.
  */
 
-export type StreamName = "generation" | "growth" | "training" | "injury" | "events" | "games" | "scouting" | "draft";
+export type StreamName = "generation" | "growth" | "training" | "injury" | "events" | "games" | "scouting" | "draft" | "finance" | "intl";
 
 export type Streams = Record<StreamName, number> & { peers: number[] };
 
-export const STREAM_NAMES: StreamName[] = ["generation", "growth", "training", "injury", "events", "games", "scouting", "draft"];
+/** Append new names at the end: a stream's seed depends on its position. */
+export const STREAM_NAMES: StreamName[] = ["generation", "growth", "training", "injury", "events", "games", "scouting", "draft", "finance", "intl"];
+
+/** Seed for one named stream, used when an older save lacks it. */
+export function streamSeed(seed: number, name: StreamName): number {
+  return mix((seed >>> 0) + Math.imul(STREAM_NAMES.indexOf(name) + 1, 0x9e3779b9));
+}
 
 export function hashString(text: string): number {
   let h = 2166136261 >>> 0;
@@ -28,9 +34,7 @@ function mix(x: number): number {
 export function createStreams(seed: number, peerCount = 4): Streams {
   const base = seed >>> 0;
   const s = {} as Streams;
-  STREAM_NAMES.forEach((name, i) => {
-    s[name] = mix(base + Math.imul(i + 1, 0x9e3779b9));
-  });
+  for (const name of STREAM_NAMES) s[name] = streamSeed(base, name);
   s.peers = Array.from({ length: peerCount }, (_, i) => mix(base ^ Math.imul(i + 101, 0x85ebca6b)));
   return s;
 }

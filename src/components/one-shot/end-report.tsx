@@ -4,12 +4,13 @@ import { useEffect, useRef, useState } from "react";
 
 import { fmtHeight } from "@/one-shot/body";
 import { perGame } from "@/one-shot/career";
-import { outcomeTier, shareText, TIER_LABEL } from "@/one-shot/report";
+import { netWorth } from "@/one-shot/finance";
+import { awardCount, honorsLine, medalCount, outcomeTier, shareText, TIER_LABEL } from "@/one-shot/report";
 import type { LifeState } from "@/one-shot/types";
 import { country, countryFlag } from "@/one-shot/world";
 
 import { Portrait } from "./panels-left";
-import { SeasonTable } from "./panels-center";
+import { SeasonTable } from "./stats-panel";
 import { shareCardPng } from "./pixel";
 import { Btn, Chip, Kv, money, Panel } from "./ui";
 
@@ -24,6 +25,13 @@ export function EndReport({ life, units, onNew, onHome }: { life: LifeState; uni
   const link = text.split("\n").at(-1)!;
   const route = [...new Set(life.seasons.filter((s) => s.ageYears >= 12).map((s) => s.levelLabel))];
   const best = [...life.seasons].filter((s) => s.gp >= 5).sort((a, b) => b.strength - a.strength || perGame(b, "pts") - perGame(a, "pts"))[0];
+  const medals = medalCount(life);
+  const medalLabel = (["gold", "silver", "bronze"] as const)
+    .filter((k) => medals[k])
+    .map((k) => `${medals[k]} ${k}`)
+    .join(", ");
+  const awards = awardCount(life);
+  const honors = honorsLine(life);
   const moments = life.history.filter((h) => h.kind === "milestone" || h.kind === "draft" || h.kind === "move" || (h.kind === "injury" && h.tone === "bad")).slice(-10);
   const copy = async (value: string, done: string) => {
     try {
@@ -38,6 +46,7 @@ export function EndReport({ life, units, onNew, onHome }: { life: LifeState; uni
       life.achievements.nbaDebut !== null ? `NBA debut at ${Math.floor(life.achievements.nbaDebut / 12)}` : `Ended at ${Math.floor(life.ageMonths / 12)}`,
       life.achievements.drafted ? `Drafted: round ${life.achievements.drafted.round}, pick ${life.achievements.drafted.pick}` : "Undrafted",
       `${fmtHeight(life.body.heightCm, units)} · ${life.seasons.length} seasons`,
+      ...(honors ? [honors] : []),
     ];
     const blob = await shareCardPng(life, { tier: TIER_LABEL[tier], born: `Born in ${born.name}`, route: route.slice(-4).join(" > "), facts, link });
     if (!blob) return setNote("Could not draw the card in this browser.");
@@ -74,8 +83,20 @@ export function EndReport({ life, units, onNew, onHome }: { life: LifeState; uni
           <Kv k="Height" v={fmtHeight(life.body.heightCm, units)} mono />
           <Kv k="Seasons played" v={life.seasons.length} mono />
           {best ? <Kv k="Best season" v={`${best.levelLabel}, age ${best.ageYears}: ${perGame(best, "pts").toFixed(1)} pts`} /> : null}
-          <Kv k="Career earnings" v={life.earnings > 0 ? money(life.earnings) : "None"} mono />
-          <Kv k="Life ended" v={life.ended?.reason === "chapter" ? "Chapter finished" : life.ended?.reason === "retired" ? `Retired at ${Math.floor(life.ageMonths / 12)}` : `Out of basketball at ${Math.floor(life.ageMonths / 12)}`} />
+          {life.international.caps > 0 ? <Kv k="National team" v={`${life.international.caps} caps${medalLabel ? ` · ${medalLabel}` : ""}`} mono /> : null}
+          {awards ? <Kv k="Season honors" v={awards} mono /> : null}
+          <Kv k="Career earnings, pre-tax" v={life.earnings > 0 ? money(life.earnings) : "None"} mono />
+          {life.earnings > 0 || life.finance.invested > 0 ? <Kv k="Net worth at the end" v={money(netWorth(life.finance))} mono /> : null}
+          <Kv
+            k="Life ended"
+            v={
+              life.ended?.reason === "chapter"
+                ? "Chapter finished"
+                : life.ended?.reason === "retired"
+                  ? `Retired at ${Math.floor(life.ageMonths / 12)}`
+                  : `Out of basketball at ${Math.floor(life.ageMonths / 12)}`
+            }
+          />
         </dl>
         {route.length ? <p className="mt-3 text-[12.5px] text-[var(--os-dim)]">Route: {route.join(" → ")}</p> : null}
         <div className="mt-5 flex flex-wrap gap-2">

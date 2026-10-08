@@ -63,7 +63,7 @@ export function levelOf(state: LifeState, p: Placement = state.placement, ageYea
     const start = top?.model?.season.startMonth ?? (SOUTHERN.has(c.id) ? 3 : 10);
     const games = p.node === "playground" ? 8 : p.node === "us-high-school" ? 26 : Math.round(clamp(ageYears * 1.6, 8, 30));
     return {
-      label: nodeLabel(p.node, p.countryId, p.leagueId),
+      label: p.node === "school-team" ? schoolLabel(p.countryId, ageYears) : nodeLabel(p.node, p.countryId, p.leagueId),
       need: cohortLevel(ageYears) * tier,
       model: { strength: 0, exposure: p.node === "elite-youth" ? 22 : p.node === "us-high-school" ? 30 : 8, coaching: p.coaching, salaryUsd: [0, 0], games, minutesCap: ageYears < 12 ? 24 : 32, season: { startMonth: start, months: 6 }, minAge: 6 },
       leagueId: null,
@@ -87,6 +87,16 @@ const NO_CLUB_ACADEMY = new Set(["US", "CA", "AU", "NZ", "PH", "PR"]);
 export function eliteYouthLabel(countryId: string, leagueId: string | null): string {
   const l = maybeLeague(leagueId);
   return l && !NO_CLUB_ACADEMY.has(countryId) ? `${l.name} club youth team` : `Elite youth program, ${country(countryId).name}`;
+}
+
+const GRADE_SCHOOLS = new Set(["US", "CA", "PH", "PR", "GU", "VI", "AS", "MP"]);
+
+/** School teams by age: mini-basketball, then middle school (or under-14), then high school (or under-18). */
+export function schoolLabel(countryId: string, ageYears: number): string {
+  const graded = GRADE_SCHOOLS.has(countryId);
+  if (ageYears < 11) return "School mini-basketball";
+  if (ageYears < 14) return graded ? "Middle school team" : "School team, under-14";
+  return graded ? "High school team" : "School team, under-18";
 }
 
 export function hasClubAcademies(countryId: string): boolean {
@@ -177,9 +187,9 @@ function binomial(rng: Rng, n: number, p: number): number {
 const OPPONENTS = ["Eastside", "Riverside", "Central", "Northgate", "Harbor", "Hillcrest", "Lakeview", "Westfield", "Southport", "Old Town", "Parkside", "Union"];
 
 /** One game. Box score always reconciles: pts = 2(FGM - 3PM) + 3(3PM) + FTM. */
-export function simulateGame(state: LifeState, level: Level, rng: Rng, minutesOverride?: number): BoxScore {
+export function simulateGame(state: LifeState, level: Level, rng: Rng, minutesOverride?: number, roleOverride?: Role): BoxScore {
   const lvl = performanceLevel(state);
-  const role = state.placement.role === "none" ? roleFor(lvl, level.need) : state.placement.role;
+  const role = roleOverride ?? (state.placement.role === "none" ? roleFor(lvl, level.need) : state.placement.role);
   const s = state.skills;
   const fatigue = clamp(state.condition.energy / 100, 0.5, 1);
   const baseMin = minutesOverride ?? (ROLE_MINUTES[role] * level.model.minutesCap) / 36;
@@ -234,8 +244,10 @@ export function simulateGame(state: LifeState, level: Level, rng: Rng, minutesOv
 
 export function newSeason(state: LifeState, level: Level): SeasonLine {
   const { year } = calendar(state);
+  const base = `${year}-${state.placement.node}-${state.placement.teamName ?? "none"}`;
+  const taken = state.seasons.filter((x) => x.key === base || x.key.startsWith(`${base}#`)).length;
   return {
-    key: `${year}-${state.placement.node}-${state.placement.teamName ?? "none"}`,
+    key: taken ? `${base}#${taken + 1}` : base,
     ageYears: Math.floor(state.ageMonths / 12),
     calendarYear: year,
     node: state.placement.node,

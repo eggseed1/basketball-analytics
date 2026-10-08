@@ -211,6 +211,17 @@ export const money = (n: number) => {
   return n < 0 ? `-${s}` : s;
 };
 
+export function sharePct(p: number) {
+  const v = p * 100;
+  return `${v >= 1 ? v.toFixed(1) : v >= 0.1 ? v.toFixed(2) : v >= 0.001 ? v.toFixed(3) : v.toPrecision(2)}%`;
+}
+
+export function ordinal(n: number) {
+  const s = ["th", "st", "nd", "rd"];
+  const v = n % 100;
+  return n + (s[(v - 20) % 10] ?? s[v] ?? s[0]!);
+}
+
 export function ageLabel(months: number) {
   const y = Math.floor(months / 12);
   const m = months % 12;

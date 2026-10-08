@@ -2,15 +2,16 @@
 
 import { useEffect, useRef } from "react";
 
-import { FRAME_LABEL, fmtHeight, fmtLength, fmtWeight, heightEstimate } from "@/one-shot/body";
+import { FRAME_LABEL, fmtHeight, fmtLength, fmtWeight, heightEstimate, heightPercentile, parentTarget } from "@/one-shot/body";
 import { calendar, levelOf, MONTHS, nodeLabel, ROLE_LABEL, STAGE_LABEL, stageOf } from "@/one-shot/career";
 import { MEANS_LABEL } from "@/one-shot/engine";
+import { ADVISOR, LIFESTYLE, monthlySpend, netWorth, taxRate } from "@/one-shot/finance";
 import { archetype, athleticismBar, position, POSITION_LABEL, READINESS_LABEL, readiness, skillBar } from "@/one-shot/skills";
 import type { LifeState } from "@/one-shot/types";
 import { country, countryFlag } from "@/one-shot/world";
 
 import { drawPortrait } from "./pixel";
-import { ageLabel, Bar, Chip, Kv, money, OS, Panel } from "./ui";
+import { ageLabel, Bar, Chip, Kv, money, ordinal, OS, Panel } from "./ui";
 
 type Units = "metric" | "imperial";
 
@@ -95,7 +96,8 @@ export function StatusPanel({ life }: { life: LifeState }) {
       </div>
       {life.condition.injury ? (
         <p className="mt-3 rounded-[4px] border border-[var(--os-rose)]/50 px-2 py-1.5 text-[12px] text-[var(--os-rose)]">
-          {life.condition.injury.label}. About {life.condition.injury.monthsLeft} month{life.condition.injury.monthsLeft === 1 ? "" : "s"} to heal.
+          {life.condition.injury.label}. About {life.condition.injury.monthsLeft} month
+          {life.condition.injury.monthsLeft === 1 ? "" : "s"} to heal.
         </p>
       ) : null}
     </Panel>
@@ -106,6 +108,8 @@ export function PhysiquePanel({ life, units, onUnits }: { life: LifeState; units
   const b = life.body;
   const age = life.ageMonths / 12;
   const est = heightEstimate(life);
+  const target = parentTarget(life.family.fatherHeightCm, life.family.motherHeightCm);
+  const born = country(life.birthplace.countryId);
   return (
     <Panel
       id="os-physique"
@@ -129,15 +133,11 @@ export function PhysiquePanel({ life, units, onUnits }: { life: LifeState; units
         <Kv k="Vertical" v={age >= 10 ? fmtLength(b.verticalCm, units) : "—"} mono />
         <Kv k="Frame" v={FRAME_LABEL[b.frame]} />
         <Kv k="Shoots" v={age >= 4 ? (life.identity.hand === "left" ? "Left" : "Right") : "—"} />
-        <Kv
-          k="Adult height estimate"
-          v={est ? `${fmtHeight(est.low, units)} to ${fmtHeight(est.high, units)}` : age >= 21 ? "Grown" : "Too early"}
-          mono
-        />
+        <Kv k="Adult height estimate" v={est ? `${fmtHeight(est.low, units)} to ${fmtHeight(est.high, units)}` : age >= 21 ? "Grown" : "Too early"} mono />
+        {age < 21 ? <Kv k="Parents' target" v={`${fmtHeight(target.low, units)} to ${fmtHeight(target.high, units)}`} mono /> : null}
+        {age >= 18 ? <Kv k={`Among men in ${born.name}`} v={`${ordinal(heightPercentile(b.heightCm, "male", born.id))} percentile`} mono /> : null}
       </dl>
-      {age < 18 ? (
-        <p className="mt-2 text-[11.5px] text-[var(--os-dim)]">The range narrows as he grows. No comparisons with adults until he is one.</p>
-      ) : null}
+      {age < 18 ? <p className="mt-2 text-[11.5px] text-[var(--os-dim)]">The range narrows as he grows. No comparisons with adults until he is one.</p> : null}
     </Panel>
   );
 }
@@ -146,6 +146,10 @@ export function FamilyAndResources({ life, units }: { life: LifeState; units: Un
   const f = life.family;
   const res = country(life.residence.countryId);
   const contract = life.placement.contract;
+  const fin = life.finance;
+  const gross = (contract?.salary ?? 0) + fin.endorsements.reduce((a, e) => a + e.perYear, 0);
+  const showMoney = gross > 0 || fin.cash > 0 || fin.invested > 0 || fin.agent !== null || life.earnings > 0;
+  const last = fin.years.at(-1);
   return (
     <Panel id="os-family" title="Family and resources">
       <dl>
@@ -158,11 +162,33 @@ export function FamilyAndResources({ life, units }: { life: LifeState; units: Un
         <Kv k="Family savings" v={money(f.savings)} mono />
         <Kv k="Basketball budget" v={`${money(f.monthlyBudget)}/mo`} mono />
         {life.placement.costPerYear > 0 ? <Kv k="Current costs" v={`${money(life.placement.costPerYear)}/yr`} mono /> : null}
-        {contract ? <Kv k="Contract" v={`${money(contract.salary)}/yr · ${contract.yearsLeft} yr${contract.yearsLeft === 1 ? "" : "s"}${contract.guaranteed ? "" : " · non-guaranteed"}`} mono /> : null}
-        {life.earnings > 0 ? <Kv k="Career earnings" v={money(life.earnings)} mono /> : null}
         <Kv k="School" v={life.ageMonths >= 72 ? `${cap(life.education.level)} · grades ${Math.round(life.education.academics)}` : "—"} />
         {life.ageMonths >= 168 ? <Kv k="NCAA eligibility" v={life.education.amateur && life.education.ncaaEligible ? "Amateur" : "Lost"} /> : null}
       </dl>
+      {showMoney ? (
+        <div className="mt-3 border-t border-[var(--os-border)] pt-2">
+          <h3 className="mb-1 font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--os-dim)]">Your money</h3>
+          <dl>
+            {contract ? (
+              <Kv k="Contract" v={`${money(contract.salary)}/yr · ${contract.yearsLeft} yr${contract.yearsLeft === 1 ? "" : "s"}${contract.guaranteed ? "" : " · non-guaranteed"}`} mono />
+            ) : null}
+            <Kv k="Agent" v={fin.agent ? `${fin.agent.name} · ${Math.round(fin.agent.fee * 100)}%` : "None"} />
+            {fin.endorsements.length ? <Kv k="Endorsements" v={`${money(fin.endorsements.reduce((a, e) => a + e.perYear, 0))}/yr`} mono /> : null}
+            {gross > 0 ? <Kv k="Tax (model)" v={`about ${Math.round(taxRate(life.placement.countryId, gross) * 100)}%`} mono /> : null}
+            <Kv k="Lifestyle" v={`${LIFESTYLE[fin.lifestyle].label} · ${money(monthlySpend(life, 0))}+/mo`} />
+            <Kv k="Sends home" v={`${Math.round(fin.sendHomeShare * 100)}% of take-home`} mono />
+            <Kv k="Cash" v={money(fin.cash)} mono />
+            <Kv k={fin.advisor ? `Invested · ${ADVISOR[fin.advisor].label}` : "Invested"} v={fin.advisor ? money(fin.invested) : "Not invested"} mono />
+            <Kv k="Net worth" v={money(netWorth(fin))} mono />
+            {life.earnings > 0 ? <Kv k="Career earnings, pre-tax" v={money(life.earnings)} mono /> : null}
+          </dl>
+          {last ? (
+            <p className="mt-1.5 font-mono text-[11px] tabular-nums text-[var(--os-dim)]">
+              {last.year}: earned {money(last.gross)}, tax {money(last.tax)}, fees {money(last.fees)}, spent {money(last.spend)}, returns {money(last.returns)}
+            </p>
+          ) : null}
+        </div>
+      ) : null}
     </Panel>
   );
 }

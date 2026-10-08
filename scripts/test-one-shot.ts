@@ -10,6 +10,10 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 
 import { advise } from "../src/one-shot/advisor";
+import { FAMILY_BIAS, generateParents, heightPercentile, parentTarget } from "../src/one-shot/body";
+import { taxRate } from "../src/one-shot/finance";
+import { fieldOf, tournamentsFor } from "../src/one-shot/international";
+import { advanced, sumBoxes } from "../src/one-shot/stats";
 import { levelOf, performanceLevel, simulateGame } from "../src/one-shot/career";
 import { MAX_BATCH, tick } from "../src/one-shot/clock";
 import { autoEligible, canDeclare } from "../src/one-shot/draft";
@@ -17,12 +21,12 @@ import { advance, advanceToDecision, autoChoice, createLife, resolveDecision, se
 import { EVENT_BY_ID, EVENTS } from "../src/one-shot/events";
 import { dailyDate, dailySeed, parseSave, serialize } from "../src/one-shot/persistence";
 import { outcomeTier, shareText } from "../src/one-shot/report";
-import { rngOf } from "../src/one-shot/rng";
+import { createStreams, rngOf } from "../src/one-shot/rng";
 import { offerBlocked, offseasonOffers } from "../src/one-shot/routes";
 import { projectedCeiling } from "../src/one-shot/skills";
 import { canAfford, chargeFamily, effectivePractice, monthlyDevelopment, stepInjury } from "../src/one-shot/training";
 import type { LifeState, NewLifeOptions } from "../src/one-shot/types";
-import { COUNTRIES, country, domesticProLeagues, LEAGUES, maybeLeague, PLAYABLE_COUNTRIES } from "../src/one-shot/world";
+import { birthShare, COUNTRIES, country, domesticProLeagues, LEAGUES, maybeLeague, PLAYABLE_COUNTRIES, teamStrength } from "../src/one-shot/world";
 
 const root = path.resolve(import.meta.dirname, "..");
 const readJson = <T>(rel: string) => JSON.parse(readFileSync(path.join(root, rel), "utf8")) as T;
@@ -341,8 +345,8 @@ ok("moving abroad as a youth always follows an invitation", () => {
 });
 
 ok("an undrafted player can still make an NBA debut", () => {
-  const s = autoLife(5319, 31 * 12);
-  assert.ok(s.achievements.nbaDebut !== null, "seed 5319 should debut");
+  const s = autoLife(314, 31 * 12);
+  assert.ok(s.achievements.nbaDebut !== null, "seed 314 should debut");
   assert.equal(s.achievements.drafted, null);
   assert.equal(outcomeTier(s), "nba-debut");
 });
@@ -418,6 +422,110 @@ ok("QA careers follow country-aware routes", () => {
     }
     assert.ok(hits >= 2, `${id}: expected route in at least 2 of 6 lives, got ${hits}`);
   }
+});
+
+/* ------------------------------------------------------------ birth odds and parents */
+
+ok("birth odds sum to 1 and parents follow their country's heights", () => {
+  for (const draw of ["weighted", "equal"] as const) {
+    const total = PLAYABLE_COUNTRIES.reduce((a, c) => a + birthShare(c.id, draw), 0);
+    assert.ok(Math.abs(total - 1) < 1e-9, `${draw} shares sum to ${total}`);
+  }
+  for (const c of PLAYABLE_COUNTRIES) assert.ok(c.height && c.height.maleCm > 150 && c.height.maleCm < 190, `${c.id} height`);
+  const avg = (id: string) => {
+    const r = rngOf(createStreams(99), "generation");
+    let f = 0;
+    for (let i = 0; i < 4000; i++) f += generateParents(r, id).fatherHeightCm;
+    return f / 4000;
+  };
+  const nl = avg("NL");
+  const tl = avg("TL");
+  assert.ok(Math.abs(nl - (country("NL").height!.maleCm + FAMILY_BIAS.male)) < 0.6, `NL fathers ${nl}`);
+  assert.ok(nl - tl > 15, `NL ${nl} vs TL ${tl}`);
+  assert.equal(heightPercentile(country("US").height!.maleCm, "male", "US"), 50);
+  const t = parentTarget(180, 166);
+  assert.equal(t.mid, 180);
+  assert.ok(t.low < t.mid && t.high > t.mid);
+});
+
+/* ------------------------------------------------------------ national teams */
+
+ok("national team calendar, fields and results stay consistent", () => {
+  const og = tournamentsFor("US", 2028).find((t) => t.kind === "olympics")!;
+  assert.equal(og.month, 7);
+  assert.match(og.name, /Los Angeles/);
+  assert.ok(fieldOf(og).includes("US"), "host qualifies");
+  assert.equal(fieldOf(og).length, 12);
+  const wc = tournamentsFor("ES", 2027).find((t) => t.kind === "world-cup")!;
+  assert.equal(fieldOf(wc).length, 32);
+  assert.ok(fieldOf(wc).includes("QA"), "World Cup host qualifies");
+  assert.equal(tournamentsFor("FR", 2029).find((t) => t.kind === "continental")!.name, "EuroBasket 2029");
+  assert.equal(tournamentsFor("NZ", 2029).find((t) => t.kind === "continental")!.name, "FIBA Asia Cup 2029");
+  assert.ok(teamStrength("US") > teamStrength("DE") && teamStrength("DE") > teamStrength("IN") && teamStrength("IN") > 0);
+  let played = 0;
+  for (let seed = 1; seed < 400 && played < 4; seed++) {
+    const s = autoLife(seed * 104729, 28 * 12, { draw: "equal" });
+    for (const r of s.international.tournaments) {
+      played++;
+      assert.ok(r.age >= 14, `${r.name} age ${r.age}`);
+      assert.equal(r.medal !== null, ["Gold", "Silver", "Bronze"].includes(r.finish), r.finish);
+      assert.equal(r.pts, 2 * (r.fgm - r.tpm) + 3 * r.tpm + r.ftm, r.name);
+      const boxes = s.gameLog.filter((b) => b.seasonKey === `intl:${r.id}`);
+      if (boxes.length) assert.equal(sumBoxes(boxes).wins, r.wins, `${r.name} wins`);
+    }
+  }
+  assert.ok(played > 0, "some life plays for its country");
+});
+
+/* ------------------------------------------------------------ money */
+
+ok("finance ledger: taxes and fees never exceed income and net worth is never negative", () => {
+  let pros = 0;
+  for (let seed = 1; seed < 160; seed++) {
+    const s = autoLife(seed * 7919 + 13, 30 * 12);
+    const f = s.finance;
+    assert.ok(f.cash >= 0 && f.invested >= 0, `seed ${seed} negative money`);
+    for (const y of f.years) assert.ok(y.tax + y.fees <= y.gross + 1, `seed ${seed} ${y.year}`);
+    if (f.years.some((y) => y.gross > 0)) pros++;
+    for (const e of f.endorsements) assert.ok(e.yearsLeft > 0 && e.perYear > 0);
+    if (f.agent) assert.ok(f.agent.fee > 0 && f.agent.fee <= 0.1);
+  }
+  assert.ok(pros > 10, `only ${pros} lives earned money`);
+  assert.ok(taxRate("US", 1_000_000) > taxRate("US", 40_000));
+  assert.ok(taxRate("US", 1_000_000) <= 0.42);
+});
+
+ok("advanced stats use the standard formulas and blanks for empty denominators", () => {
+  const l = { gp: 2, min: 60, pts: 40, reb: 10, ast: 8, stl: 2, blk: 1, tov: 4, fgm: 15, fga: 30, tpm: 4, tpa: 10, ftm: 6, fta: 8 };
+  const a = advanced(l);
+  assert.ok(Math.abs(a.ts! - 40 / (2 * (30 + 0.44 * 8))) < 1e-9);
+  assert.ok(Math.abs(a.efg! - (15 + 2) / 30) < 1e-9);
+  assert.equal(a.astTov, 2);
+  assert.equal(a.pts36, 24);
+  assert.equal(advanced({ ...l, fga: 0, fgm: 0, tpm: 0, tpa: 0, fta: 0, ftm: 0 }).ts, null);
+});
+
+ok("version 1 saves migrate with new streams, money and an agent", () => {
+  const s = autoLife(4242, 20 * 12);
+  const old = JSON.parse(serialize(s)) as Record<string, unknown>;
+  old.schemaVersion = 1;
+  delete old.finance;
+  delete old.international;
+  delete old.gameLog;
+  const rng = old.rng as Record<string, unknown>;
+  delete rng.finance;
+  delete rng.intl;
+  (old.flags as Record<string, unknown>).agent = true;
+  const res = parseSave(JSON.stringify(old));
+  assert.ok(res.ok, res.ok ? "" : res.reason);
+  if (!res.ok) return;
+  assert.equal(res.state.schemaVersion, 2);
+  assert.equal(typeof res.state.rng.finance, "number");
+  assert.equal(typeof res.state.rng.intl, "number");
+  assert.equal(res.state.finance.agent?.reach, "regional");
+  assert.equal("agent" in res.state.flags, false);
+  const next = advance(res.state, 24, { auto: true });
+  assert.ok(next.ageMonths > res.state.ageMonths);
 });
 
 console.log(`\n${checks} ONE SHOT checks passed`);

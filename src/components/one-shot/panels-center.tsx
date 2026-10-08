@@ -83,13 +83,7 @@ export function LifeScene({ life, animate }: { life: LifeState; animate: boolean
 
 /* ------------------------------------------------------------ focus */
 
-export function FocusPanel({
-  life,
-  onPlan,
-}: {
-  life: LifeState;
-  onPlan: (p: { primary?: FocusId; secondary?: FocusId | null; workload?: Workload }) => void;
-}) {
+export function FocusPanel({ life, onPlan }: { life: LifeState; onPlan: (p: { primary?: FocusId; secondary?: FocusId | null; workload?: Workload }) => void }) {
   const age = life.ageMonths / 12;
   const advice = useMemo(() => advise(life), [life]);
   const hours = weeklyHours(age, life.plan.workload);
@@ -137,7 +131,11 @@ export function FocusPanel({
               Secondary focus
               <select
                 value={life.plan.secondary ?? ""}
-                onChange={(e) => onPlan({ secondary: (e.target.value || null) as FocusId | null })}
+                onChange={(e) =>
+                  onPlan({
+                    secondary: (e.target.value || null) as FocusId | null,
+                  })
+                }
                 className="min-h-9 rounded-[4px] border border-[var(--os-border)] bg-[var(--os-page)] px-2 text-[13px] text-[var(--os-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--os-teal)]"
               >
                 <option value="">None</option>
@@ -155,9 +153,17 @@ export function FocusPanel({
                 value={life.plan.workload}
                 onChange={(w) => onPlan({ workload: w })}
                 options={[
-                  { value: "low", label: "Low", hint: "Recover. Fewer gains, fewer injuries." },
+                  {
+                    value: "low",
+                    label: "Low",
+                    hint: "Recover. Fewer gains, fewer injuries.",
+                  },
                   { value: "balanced", label: "Balanced" },
-                  { value: "high", label: "High", hint: "More gains with diminishing returns. Tiring, and injuries get likelier." },
+                  {
+                    value: "high",
+                    label: "High",
+                    hint: "More gains with diminishing returns. Tiring, and injuries get likelier.",
+                  },
                 ]}
               />
             </div>
@@ -210,11 +216,7 @@ export function DecisionPanel({
   const offers = d.offers ?? [];
   const offerById = new Map(offers.map((o) => [o.id, o]));
   return (
-    <section
-      id="os-decision"
-      aria-labelledby="os-decision-title"
-      className="rounded-[6px] border border-[var(--os-amber)]/70 bg-[var(--os-panel)] p-3.5"
-    >
+    <section id="os-decision" aria-labelledby="os-decision-title" className="rounded-[6px] border border-[var(--os-amber)]/70 bg-[var(--os-panel)] p-3.5">
       <div className="mb-2 flex items-start justify-between gap-3">
         <div>
           <p className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-[var(--os-amber)]">Decision · time is paused</p>
@@ -257,7 +259,12 @@ export function DecisionPanel({
 }
 
 function OfferMoney({ o }: { o: Offer }) {
-  if (o.salary > 0) return <span className="shrink-0 font-mono text-[12px] tabular-nums text-[var(--os-green)]">{money(o.salary)}/yr · {o.years}y</span>;
+  if (o.salary > 0)
+    return (
+      <span className="shrink-0 font-mono text-[12px] tabular-nums text-[var(--os-green)]">
+        {money(o.salary)}/yr · {o.years}y
+      </span>
+    );
   if (o.costPerYear > 0) return <span className="shrink-0 font-mono text-[12px] tabular-nums text-[var(--os-amber)]">costs {money(o.costPerYear)}/yr</span>;
   return <span className="shrink-0 font-mono text-[12px] text-[var(--os-dim)]">free</span>;
 }
@@ -270,7 +277,9 @@ function OfferDetail({ o }: { o: Offer }) {
         <span>
           {countryFlag(c.id)} {c.name}
         </span>
-        <span>{ROLE_LABEL[o.role]} · {o.minutesBand}</span>
+        <span>
+          {ROLE_LABEL[o.role]} · {o.minutesBand}
+        </span>
         <span>Coaching {Math.round(o.coaching)}</span>
         <span title="How hard minutes will be to earn, out of 100">Difficulty {Math.round(o.difficulty)}</span>
         <span>Exposure {Math.round(o.exposure)}</span>
@@ -292,7 +301,6 @@ function OfferDetail({ o }: { o: Offer }) {
 type RecordFilter = "all" | "choices" | "seasons" | "health";
 
 export function LifeRecord({ life }: { life: LifeState }) {
-  const [tab, setTab] = useState<"story" | "seasons">("story");
   const [filter, setFilter] = useState<RecordFilter>("all");
   const byId = useMemo(() => new Map(life.history.map((h) => [h.id, h])), [life.history]);
   const entries = useMemo(() => {
@@ -304,116 +312,62 @@ export function LifeRecord({ life }: { life: LifeState }) {
     return life.history.filter(keep).slice(-80).reverse();
   }, [life.history, filter]);
   return (
-    <Panel
-      id="os-record"
-      title="Life record"
-      action={
-        <Segmented<"story" | "seasons">
-          label="Record view"
-          value={tab}
-          onChange={setTab}
-          options={[
-            { value: "story", label: "Story" },
-            { value: "seasons", label: "Seasons" },
-          ]}
-        />
-      }
-    >
-      {tab === "story" ? (
-        <>
-          <div className="mb-2 flex flex-wrap gap-1.5" role="group" aria-label="Filter life record">
-            {(["all", "choices", "seasons", "health"] as RecordFilter[]).map((f) => (
-              <button
-                key={f}
-                type="button"
-                aria-pressed={filter === f}
-                onClick={() => setFilter(f)}
-                className={`rounded-[4px] border px-2 py-0.5 font-mono text-[11px] capitalize focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--os-teal)] ${
-                  filter === f ? "border-[var(--os-teal)] text-[var(--os-text)]" : "border-[var(--os-border)] text-[var(--os-dim)]"
-                }`}
-              >
-                {f}
-              </button>
-            ))}
-          </div>
-          <ol className="max-h-[340px] overflow-y-auto pr-1" aria-live="off">
-            {entries.map((h) => {
-              const cause = h.causeId ? byId.get(h.causeId) : null;
-              return (
-                <li key={h.id} id={`os-${h.id}`} tabIndex={-1} className="grid grid-cols-[44px_1fr] gap-2 border-b border-[var(--os-border)]/50 py-1.5 text-[12.5px] last:border-b-0 focus:outline-none focus-visible:bg-[var(--os-panel2)]">
-                  <span className="font-mono text-[11px] tabular-nums text-[var(--os-dim)]">{Math.floor(h.month / 12)}y{h.month % 12 ? ` ${h.month % 12}m` : ""}</span>
-                  <span>
-                    <span style={{ color: h.tone === "good" ? OS.green : h.tone === "bad" ? OS.rose : undefined }}>{h.text}</span>
-                    {cause ? (
-                      <button
-                        type="button"
-                        className="mt-0.5 block text-left text-[11.5px] text-[var(--os-dim)] underline decoration-dotted underline-offset-2 hover:text-[var(--os-text)]"
-                        onClick={() => {
-                          setFilter("all");
-                          requestAnimationFrame(() => document.getElementById(`os-${cause.id}`)?.focus());
-                        }}
-                      >
-                        Because: {cause.text.length > 80 ? `${cause.text.slice(0, 78)}…` : cause.text}
-                      </button>
-                    ) : null}
-                  </span>
-                </li>
-              );
-            })}
-            {entries.length === 0 ? <li className="py-2 text-[12.5px] text-[var(--os-dim)]">Nothing here yet.</li> : null}
-          </ol>
-        </>
-      ) : (
-        <SeasonTable life={life} />
-      )}
+    <Panel id="os-record" title="Life record">
+      <div className="mb-2 flex flex-wrap gap-1.5" role="group" aria-label="Filter life record">
+        {(["all", "choices", "seasons", "health"] as RecordFilter[]).map((f) => (
+          <button
+            key={f}
+            type="button"
+            aria-pressed={filter === f}
+            onClick={() => setFilter(f)}
+            className={`rounded-[4px] border px-2 py-0.5 font-mono text-[11px] capitalize focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--os-teal)] ${
+              filter === f ? "border-[var(--os-teal)] text-[var(--os-text)]" : "border-[var(--os-border)] text-[var(--os-dim)]"
+            }`}
+          >
+            {f}
+          </button>
+        ))}
+      </div>
+      <ol className="max-h-[340px] overflow-y-auto pr-1" aria-live="off">
+        {entries.map((h) => {
+          const cause = h.causeId ? byId.get(h.causeId) : null;
+          return (
+            <li
+              key={h.id}
+              id={`os-${h.id}`}
+              tabIndex={-1}
+              className="grid grid-cols-[44px_1fr] gap-2 border-b border-[var(--os-border)]/50 py-1.5 text-[12.5px] last:border-b-0 focus:outline-none focus-visible:bg-[var(--os-panel2)]"
+            >
+              <span className="font-mono text-[11px] tabular-nums text-[var(--os-dim)]">
+                {Math.floor(h.month / 12)}y{h.month % 12 ? ` ${h.month % 12}m` : ""}
+              </span>
+              <span>
+                <span
+                  style={{
+                    color: h.tone === "good" ? OS.green : h.tone === "bad" ? OS.rose : undefined,
+                  }}
+                >
+                  {h.text}
+                </span>
+                {cause ? (
+                  <button
+                    type="button"
+                    className="mt-0.5 block text-left text-[11.5px] text-[var(--os-dim)] underline decoration-dotted underline-offset-2 hover:text-[var(--os-text)]"
+                    onClick={() => {
+                      setFilter("all");
+                      requestAnimationFrame(() => document.getElementById(`os-${cause.id}`)?.focus());
+                    }}
+                  >
+                    Because: {cause.text.length > 80 ? `${cause.text.slice(0, 78)}…` : cause.text}
+                  </button>
+                ) : null}
+              </span>
+            </li>
+          );
+        })}
+        {entries.length === 0 ? <li className="py-2 text-[12.5px] text-[var(--os-dim)]">Nothing here yet.</li> : null}
+      </ol>
     </Panel>
-  );
-}
-
-export function SeasonTable({ life }: { life: LifeState }) {
-  const rows = [...life.seasons, ...(life.season && life.season.gp > 0 ? [life.season] : [])].slice().reverse();
-  if (!rows.length) return <p className="text-[12.5px] text-[var(--os-dim)]">No organized seasons yet.</p>;
-  const pct = (m: number, a: number) => (a ? `${((m / a) * 100).toFixed(0)}` : "—");
-  return (
-    <div className="max-h-[340px] overflow-auto">
-      <table className="w-full min-w-[560px] border-collapse font-mono text-[11.5px] tabular-nums">
-        <thead className="sticky top-0 bg-[var(--os-panel)] text-[var(--os-dim)]">
-          <tr className="text-right [&>th]:px-1.5 [&>th]:py-1 [&>th]:font-normal">
-            <th className="text-left">Age</th>
-            <th className="text-left">Level</th>
-            <th className="text-left">Role</th>
-            <th>GP</th>
-            <th>MIN</th>
-            <th>PTS</th>
-            <th>REB</th>
-            <th>AST</th>
-            <th>FG%</th>
-            <th>3P%</th>
-            <th>FT%</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((r) => (
-            <tr key={r.key} className="border-t border-[var(--os-border)]/50 text-right [&>td]:px-1.5 [&>td]:py-1">
-              <td className="text-left">{r.ageYears}</td>
-              <td className="max-w-[180px] truncate text-left font-sans" title={`${r.levelLabel}${r.teamName ? ` · ${r.teamName}` : ""}`}>
-                {r.levelLabel}
-              </td>
-              <td className="text-left font-sans text-[var(--os-dim)]">{ROLE_LABEL[r.role]}</td>
-              <td>{r.gp}</td>
-              <td>{perGame(r, "min").toFixed(1)}</td>
-              <td>{perGame(r, "pts").toFixed(1)}</td>
-              <td>{perGame(r, "reb").toFixed(1)}</td>
-              <td>{perGame(r, "ast").toFixed(1)}</td>
-              <td>{pct(r.fgm, r.fga)}</td>
-              <td>{pct(r.tpm, r.tpa)}</td>
-              <td>{pct(r.ftm, r.fta)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <p className="mt-2 font-sans text-[11px] text-[var(--os-dim)]">A blank percentage means no attempts, not 0%.</p>
-    </div>
   );
 }
 

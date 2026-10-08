@@ -1,4 +1,5 @@
-import { hashString } from "./rng";
+import { makeAgent, newFinance } from "./finance";
+import { hashString, streamSeed } from "./rng";
 import type { CareerSummary } from "./report";
 import { SCHEMA_VERSION, type LifeState } from "./types";
 import { WORLD_VERSION } from "./world";
@@ -30,7 +31,28 @@ export function randomSeed(): number {
 type Migration = (raw: Record<string, unknown>) => Record<string, unknown>;
 
 /** schemaVersion N -> N+1. Add an entry when the state shape changes. */
-const MIGRATIONS: Record<number, Migration> = {};
+const MIGRATIONS: Record<number, Migration> = {
+  1: (d) => {
+    const seed = typeof d.seed === "number" ? d.seed : 0;
+    const rng = { ...(d.rng as Record<string, unknown>) };
+    rng.finance ??= streamSeed(seed, "finance");
+    rng.intl ??= streamSeed(seed, "intl");
+    const flags = { ...((d.flags as Record<string, unknown>) ?? {}) };
+    const family = (d.family as { means?: number }) ?? {};
+    const finance = newFinance(family.means ?? 3);
+    if (flags.agent) finance.agent = makeAgent("Your agent", "a regional agency", 0.05, "regional", typeof d.ageMonths === "number" ? d.ageMonths : 0);
+    delete flags.agent;
+    return {
+      ...d,
+      schemaVersion: 2,
+      rng,
+      flags,
+      gameLog: d.lastGame ? [d.lastGame] : [],
+      finance,
+      international: { countryId: null, caps: 0, tournaments: [], declined: 0 },
+    };
+  },
+};
 
 export type LoadResult = { ok: true; state: LifeState } | { ok: false; reason: string; raw: string | null };
 
@@ -56,7 +78,7 @@ export function parseSave(raw: string | null): LoadResult {
 }
 
 function validate(d: Record<string, unknown>): string | null {
-  const need = ["seed", "ageMonths", "identity", "birthplace", "residence", "family", "body", "growth", "skills", "potentials", "traits", "condition", "plan", "placement", "rng", "peers", "history", "achievements", "draft", "counters", "clock", "education"];
+  const need = ["seed", "ageMonths", "identity", "birthplace", "residence", "family", "body", "growth", "skills", "potentials", "traits", "condition", "plan", "placement", "rng", "peers", "history", "achievements", "draft", "counters", "clock", "education", "finance", "international", "gameLog"];
   for (const k of need) if (!(k in d)) return `The save is missing "${k}".`;
   if (typeof d.ageMonths !== "number" || d.ageMonths < 0 || d.ageMonths > 600) return "The save has an impossible age.";
   const rng = d.rng as Record<string, unknown>;

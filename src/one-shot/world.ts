@@ -45,6 +45,8 @@ export interface CountryBasketballProfile {
   competitions: { domestic: string[]; crossBorder: string[]; selective: string[] };
   routeNotes: { system: string; text: string; basis: "confirmed" | "model"; sources: string[] }[];
   model: { costIndex: number; coachingAccess: number; exposureBase: number; verifiedPro: boolean };
+  height: { maleCm: number; femaleCm: number; cohort: number; basis: "measured" | "proxy"; proxyIso3: string | null } | null;
+  fibaRank: { rank: number; points: number } | null;
   research: { status: ResearchStatus; reason: string; checkedAt: string };
 }
 
@@ -120,6 +122,39 @@ export function foreignProLeagues(excludeCountry: string): LeagueProfile[] {
       !l.countries.includes(excludeCountry) &&
       l.model.strength >= 50,
   );
+}
+
+const TOTAL_WEIGHT = PLAYABLE_COUNTRIES.reduce((a, c) => a + c.draw.weight, 0);
+
+/** Chance of being born in this country under the chosen draw. */
+export function birthShare(countryId: string, draw: "weighted" | "equal"): number {
+  const c = countryById.get(countryId);
+  if (!c || c.draw.weight <= 0) return 0;
+  return draw === "equal" ? 1 / PLAYABLE_COUNTRIES.length : c.draw.weight / TOTAL_WEIGHT;
+}
+
+/** National adult height means; falls back to the global average of the dataset. */
+const H = PLAYABLE_COUNTRIES.filter((c) => c.height);
+const GLOBAL_HEIGHT = {
+  maleCm: H.reduce((a, c) => a + c.height!.maleCm * c.draw.weight, 0) / H.reduce((a, c) => a + c.draw.weight, 0),
+  femaleCm: H.reduce((a, c) => a + c.height!.femaleCm * c.draw.weight, 0) / H.reduce((a, c) => a + c.draw.weight, 0),
+};
+export function adultHeights(countryId: string): { maleCm: number; femaleCm: number } {
+  return countryById.get(countryId)?.height ?? GLOBAL_HEIGHT;
+}
+
+const TOP_POINTS = Math.max(...COUNTRIES.map((c) => c.fibaRank?.points ?? 0));
+
+/**
+ * National team strength, 0-100 (model), scaled from FIBA world ranking points
+ * on the snapshot date. Federations outside the ranking sit at 10; countries
+ * without a federation can't field a team.
+ */
+export function teamStrength(countryId: string): number {
+  const c = countryById.get(countryId);
+  if (!c?.federation) return 0;
+  if (!c.fibaRank) return 10;
+  return Math.round((15 + 84 * Math.sqrt(c.fibaRank.points / TOP_POINTS)) * 10) / 10;
 }
 
 export function localSeniorModel(): LeagueModel {

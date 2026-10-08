@@ -1,0 +1,808 @@
+{
+"source": "NCD Risk Factor Collaboration (NCD-RisC), 'A century of trends in adult human height', eLife 2016",
+"url": "https://www.ncdrisc.org/downloads/height/NCD_RisC_eLife_2016_height_age18_countries.csv",
+"cohort": 1996,
+"note": "Mean height at age 18 for people born in 1996, by country and sex.",
+"byIso3": {
+"AFG": {
+"male": 165.3,
+"female": 155.1
+},
+"AGO": {
+"male": 167.3,
+"female": 157.3
+},
+"ALB": {
+"male": 173.4,
+"female": 161.8
+},
+"AND": {
+"male": 176.1,
+"female": 162.9
+},
+"ARE": {
+"male": 170.5,
+"female": 158.7
+},
+"ARG": {
+"male": 174.6,
+"female": 159.2
+},
+"ARM": {
+"male": 172.0,
+"female": 158.1
+},
+"ASM": {
+"male": 176.0,
+"female": 164.5
+},
+"ATG": {
+"male": 172.7,
+"female": 160.7
+},
+"AUS": {
+"male": 179.2,
+"female": 165.9
+},
+"AUT": {
+"male": 177.4,
+"female": 164.6
+},
+"AZE": {
+"male": 169.7,
+"female": 158.3
+},
+"BDI": {
+"male": 166.6,
+"female": 154.0
+},
+"BEL": {
+"male": 181.7,
+"female": 165.5
+},
+"BEN": {
+"male": 167.1,
+"female": 156.2
+},
+"BFA": {
+"male": 169.3,
+"female": 160.2
+},
+"BGD": {
+"male": 163.8,
+"female": 150.8
+},
+"BGR": {
+"male": 178.2,
+"female": 164.8
+},
+"BHR": {
+"male": 167.7,
+"female": 156.7
+},
+"BHS": {
+"male": 172.7,
+"female": 160.7
+},
+"BIH": {
+"male": 180.9,
+"female": 165.8
+},
+"BLR": {
+"male": 178.4,
+"female": 166.3
+},
+"BLZ": {
+"male": 168.7,
+"female": 156.9
+},
+"BMU": {
+"male": 172.7,
+"female": 160.7
+},
+"BOL": {
+"male": 166.8,
+"female": 153.9
+},
+"BRA": {
+"male": 173.6,
+"female": 160.9
+},
+"BRB": {
+"male": 175.9,
+"female": 165.3
+},
+"BRN": {
+"male": 165.0,
+"female": 154.0
+},
+"BTN": {
+"male": 165.3,
+"female": 153.6
+},
+"BWA": {
+"male": 171.6,
+"female": 161.4
+},
+"CAF": {
+"male": 166.7,
+"female": 158.0
+},
+"CAN": {
+"male": 178.1,
+"female": 163.9
+},
+"CHE": {
+"male": 178.4,
+"female": 163.5
+},
+"CHL": {
+"male": 171.8,
+"female": 159.4
+},
+"CHN": {
+"male": 171.8,
+"female": 159.7
+},
+"CIV": {
+"male": 166.5,
+"female": 158.1
+},
+"CMR": {
+"male": 167.8,
+"female": 158.8
+},
+"COD": {
+"male": 166.8,
+"female": 155.2
+},
+"COG": {
+"male": 167.4,
+"female": 157.6
+},
+"COK": {
+"male": 174.8,
+"female": 163.2
+},
+"COL": {
+"male": 169.5,
+"female": 156.9
+},
+"COM": {
+"male": 166.2,
+"female": 155.6
+},
+"CPV": {
+"male": 173.2,
+"female": 161.6
+},
+"CRI": {
+"male": 168.9,
+"female": 156.4
+},
+"CUB": {
+"male": 172.0,
+"female": 158.0
+},
+"CYP": {
+"male": 175.0,
+"female": 162.3
+},
+"CZE": {
+"male": 180.1,
+"female": 168.5
+},
+"DEU": {
+"male": 179.9,
+"female": 165.9
+},
+"DJI": {
+"male": 166.6,
+"female": 156.1
+},
+"DMA": {
+"male": 176.3,
+"female": 164.3
+},
+"DNK": {
+"male": 181.4,
+"female": 167.2
+},
+"DOM": {
+"male": 172.7,
+"female": 159.0
+},
+"DZA": {
+"male": 170.1,
+"female": 159.1
+},
+"ECU": {
+"male": 167.1,
+"female": 154.2
+},
+"EGY": {
+"male": 166.7,
+"female": 157.3
+},
+"ERI": {
+"male": 168.4,
+"female": 156.4
+},
+"ESP": {
+"male": 176.6,
+"female": 163.4
+},
+"EST": {
+"male": 181.6,
+"female": 168.7
+},
+"ETH": {
+"male": 166.2,
+"female": 155.7
+},
+"FIN": {
+"male": 179.6,
+"female": 165.9
+},
+"FJI": {
+"male": 173.9,
+"female": 161.7
+},
+"FRA": {
+"male": 179.7,
+"female": 164.9
+},
+"FSM": {
+"male": 168.5,
+"female": 156.1
+},
+"GAB": {
+"male": 167.9,
+"female": 158.8
+},
+"GBR": {
+"male": 177.5,
+"female": 164.4
+},
+"GEO": {
+"male": 174.3,
+"female": 163.0
+},
+"GHA": {
+"male": 168.8,
+"female": 157.9
+},
+"GIN": {
+"male": 167.5,
+"female": 157.8
+},
+"GMB": {
+"male": 165.4,
+"female": 160.9
+},
+"GNB": {
+"male": 167.9,
+"female": 158.2
+},
+"GNQ": {
+"male": 167.4,
+"female": 157.3
+},
+"GRC": {
+"male": 177.3,
+"female": 164.9
+},
+"GRD": {
+"male": 177.0,
+"female": 164.5
+},
+"GRL": {
+"male": 174.9,
+"female": 161.5
+},
+"GTM": {
+"male": 163.4,
+"female": 149.4
+},
+"GUY": {
+"male": 170.2,
+"female": 157.9
+},
+"HKG": {
+"male": 173.6,
+"female": 159.0
+},
+"HND": {
+"male": 166.4,
+"female": 153.8
+},
+"HRV": {
+"male": 180.8,
+"female": 165.6
+},
+"HTI": {
+"male": 172.6,
+"female": 158.7
+},
+"HUN": {
+"male": 177.3,
+"female": 163.7
+},
+"IDN": {
+"male": 163.6,
+"female": 152.8
+},
+"IND": {
+"male": 164.9,
+"female": 152.6
+},
+"IRL": {
+"male": 178.9,
+"female": 165.1
+},
+"IRN": {
+"male": 173.6,
+"female": 159.7
+},
+"IRQ": {
+"male": 170.4,
+"female": 158.7
+},
+"ISL": {
+"male": 180.5,
+"female": 165.9
+},
+"ISR": {
+"male": 176.9,
+"female": 161.8
+},
+"ITA": {
+"male": 177.8,
+"female": 164.6
+},
+"JAM": {
+"male": 174.5,
+"female": 163.1
+},
+"JOR": {
+"male": 171.0,
+"female": 158.8
+},
+"JPN": {
+"male": 170.8,
+"female": 158.3
+},
+"KAZ": {
+"male": 171.1,
+"female": 159.6
+},
+"KEN": {
+"male": 169.6,
+"female": 158.2
+},
+"KGZ": {
+"male": 171.2,
+"female": 159.4
+},
+"KHM": {
+"male": 163.3,
+"female": 152.9
+},
+"KIR": {
+"male": 169.2,
+"female": 157.0
+},
+"KNA": {
+"male": 169.6,
+"female": 159.2
+},
+"KOR": {
+"male": 174.9,
+"female": 162.3
+},
+"KWT": {
+"male": 172.1,
+"female": 159.4
+},
+"LAO": {
+"male": 160.5,
+"female": 151.3
+},
+"LBN": {
+"male": 174.4,
+"female": 162.4
+},
+"LBR": {
+"male": 163.7,
+"female": 155.7
+},
+"LBY": {
+"male": 173.5,
+"female": 162.1
+},
+"LCA": {
+"male": 171.9,
+"female": 162.3
+},
+"LKA": {
+"male": 165.7,
+"female": 154.6
+},
+"LSO": {
+"male": 165.6,
+"female": 155.7
+},
+"LTU": {
+"male": 179.0,
+"female": 166.6
+},
+"LUX": {
+"male": 177.9,
+"female": 164.4
+},
+"LVA": {
+"male": 181.4,
+"female": 169.8
+},
+"MAR": {
+"male": 170.4,
+"female": 157.8
+},
+"MDA": {
+"male": 175.5,
+"female": 163.2
+},
+"MDG": {
+"male": 161.5,
+"female": 151.2
+},
+"MDV": {
+"male": 167.7,
+"female": 155.0
+},
+"MEX": {
+"male": 169.0,
+"female": 156.8
+},
+"MHL": {
+"male": 162.8,
+"female": 151.3
+},
+"MKD": {
+"male": 178.3,
+"female": 159.8
+},
+"MLI": {
+"male": 171.1,
+"female": 160.5
+},
+"MLT": {
+"male": 173.3,
+"female": 160.9
+},
+"MMR": {
+"male": 164.7,
+"female": 154.4
+},
+"MNE": {
+"male": 178.3,
+"female": 164.9
+},
+"MNG": {
+"male": 169.1,
+"female": 158.2
+},
+"MOZ": {
+"male": 164.8,
+"female": 154.0
+},
+"MRT": {
+"male": 163.3,
+"female": 157.7
+},
+"MUS": {
+"male": 170.5,
+"female": 157.2
+},
+"MWI": {
+"male": 162.2,
+"female": 154.4
+},
+"MYS": {
+"male": 167.9,
+"female": 156.3
+},
+"NAM": {
+"male": 167.0,
+"female": 158.8
+},
+"NER": {
+"male": 167.7,
+"female": 158.3
+},
+"NGA": {
+"male": 165.9,
+"female": 156.3
+},
+"NIC": {
+"male": 166.7,
+"female": 154.4
+},
+"NIU": {
+"male": 175.8,
+"female": 164.8
+},
+"NLD": {
+"male": 182.5,
+"female": 168.7
+},
+"NOR": {
+"male": 179.7,
+"female": 165.6
+},
+"NPL": {
+"male": 162.3,
+"female": 150.9
+},
+"NRU": {
+"male": 167.8,
+"female": 154.0
+},
+"NZL": {
+"male": 177.7,
+"female": 164.9
+},
+"OMN": {
+"male": 169.2,
+"female": 157.2
+},
+"PAK": {
+"male": 166.9,
+"female": 153.8
+},
+"PAN": {
+"male": 168.5,
+"female": 155.5
+},
+"PER": {
+"male": 165.2,
+"female": 152.9
+},
+"PHL": {
+"male": 163.2,
+"female": 149.6
+},
+"PLW": {
+"male": 167.7,
+"female": 156.2
+},
+"PNG": {
+"male": 163.6,
+"female": 154.9
+},
+"POL": {
+"male": 177.3,
+"female": 164.6
+},
+"PRI": {
+"male": 172.1,
+"female": 159.2
+},
+"PRK": {
+"male": 172.0,
+"female": 159.0
+},
+"PRT": {
+"male": 172.9,
+"female": 163.0
+},
+"PRY": {
+"male": 172.8,
+"female": 159.9
+},
+"PSE": {
+"male": 172.1,
+"female": 158.8
+},
+"PYF": {
+"male": 177.4,
+"female": 164.5
+},
+"QAT": {
+"male": 170.5,
+"female": 159.4
+},
+"ROU": {
+"male": 174.7,
+"female": 162.7
+},
+"RUS": {
+"male": 176.5,
+"female": 165.3
+},
+"RWA": {
+"male": 162.7,
+"female": 154.8
+},
+"SAU": {
+"male": 167.7,
+"female": 155.9
+},
+"SDN": {
+"male": 166.6,
+"female": 156.0
+},
+"SEN": {
+"male": 173.1,
+"female": 162.5
+},
+"SGP": {
+"male": 172.6,
+"female": 160.3
+},
+"SLB": {
+"male": 164.1,
+"female": 154.4
+},
+"SLE": {
+"male": 164.4,
+"female": 156.6
+},
+"SLV": {
+"male": 169.8,
+"female": 154.5
+},
+"SOM": {
+"male": 166.6,
+"female": 156.1
+},
+"SRB": {
+"male": 180.6,
+"female": 167.7
+},
+"STP": {
+"male": 167.4,
+"female": 158.9
+},
+"SUR": {
+"male": 172.7,
+"female": 160.7
+},
+"SVK": {
+"male": 179.5,
+"female": 167.5
+},
+"SVN": {
+"male": 179.8,
+"female": 166.1
+},
+"SWE": {
+"male": 179.7,
+"female": 165.7
+},
+"SWZ": {
+"male": 168.1,
+"female": 158.6
+},
+"SYC": {
+"male": 174.2,
+"female": 162.1
+},
+"SYR": {
+"male": 170.4,
+"female": 158.6
+},
+"TCD": {
+"male": 170.4,
+"female": 160.2
+},
+"TGO": {
+"male": 168.3,
+"female": 158.3
+},
+"THA": {
+"male": 169.2,
+"female": 157.9
+},
+"TJK": {
+"male": 171.3,
+"female": 157.3
+},
+"TKL": {
+"male": 175.3,
+"female": 162.5
+},
+"TKM": {
+"male": 172.0,
+"female": 161.7
+},
+"TLS": {
+"male": 159.8,
+"female": 151.2
+},
+"TON": {
+"male": 176.8,
+"female": 165.5
+},
+"TTO": {
+"male": 173.7,
+"female": 160.6
+},
+"TUN": {
+"male": 174.0,
+"female": 160.4
+},
+"TUR": {
+"male": 174.2,
+"female": 160.5
+},
+"TUV": {
+"male": 169.6,
+"female": 158.1
+},
+"TWN": {
+"male": 174.5,
+"female": 161.5
+},
+"TZA": {
+"male": 164.8,
+"female": 155.9
+},
+"UGA": {
+"male": 165.6,
+"female": 156.7
+},
+"UKR": {
+"male": 178.5,
+"female": 166.3
+},
+"URY": {
+"male": 173.4,
+"female": 162.1
+},
+"USA": {
+"male": 177.1,
+"female": 163.5
+},
+"UZB": {
+"male": 169.4,
+"female": 157.8
+},
+"VCT": {
+"male": 172.8,
+"female": 160.7
+},
+"VEN": {
+"male": 171.6,
+"female": 157.4
+},
+"VNM": {
+"male": 164.4,
+"female": 153.6
+},
+"VUT": {
+"male": 168.1,
+"female": 158.2
+},
+"WSM": {
+"male": 174.4,
+"female": 162.0
+},
+"YEM": {
+"male": 159.9,
+"female": 154.0
+},
+"ZAF": {
+"male": 166.7,
+"female": 158.0
+},
+"ZMB": {
+"male": 166.5,
+"female": 155.8
+},
+"ZWE": {
+"male": 168.6,
+"female": 158.2
+}
+}
+}

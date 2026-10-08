@@ -5,9 +5,9 @@ import { useEffect, useRef } from "react";
 import coverage from "@/one-shot/data/research-coverage.json";
 import { AUTO_STRATEGY } from "@/one-shot/engine";
 import type { LifeState } from "@/one-shot/types";
-import { country, countryFlag, maybeLeague, WORLD_META, type LeagueProfile } from "@/one-shot/world";
+import { birthShare, COUNTRIES, country, countryFlag, maybeLeague, WORLD_META, type LeagueProfile } from "@/one-shot/world";
 
-import { Btn, Chip } from "./ui";
+import { Btn, Chip, sharePct } from "./ui";
 
 function evidenceText(l: LeagueProfile) {
   const r = l.research;
@@ -91,8 +91,21 @@ export function SourcesDrawer({ life, onClose }: { life: LifeState | null; onClo
                 <p className="mt-1 text-[12px] text-[var(--os-dim)]">No FIBA member federation listed for this place.</p>
               )}
               <p className="mt-1 text-[12px] text-[var(--os-dim)]">
-                Birth weight: {ct.draw.births !== null ? `${ct.draw.births.toLocaleString("en-US")} births (${ct.draw.year})` : "estimated floor"}. {ct.draw.method}
+                Birth weight: {ct.draw.births !== null ? `${ct.draw.births.toLocaleString("en-US")} births (${ct.draw.year})` : "estimated floor"}. {ct.draw.method} Chance of being born here:{" "}
+                {sharePct(birthShare(ct.id, "weighted"))} in a weighted draw, {sharePct(birthShare(ct.id, "equal"))} in an equal draw.
               </p>
+              <p className="mt-1 text-[12px] text-[var(--os-dim)]">
+                {ct.height
+                  ? ct.height.basis === "measured"
+                    ? `Average adult height (born ${ct.height.cohort}): men ${ct.height.maleCm.toFixed(1)} cm, women ${ct.height.femaleCm.toFixed(1)} cm. Measured by NCD-RisC.`
+                    : `No NCD-RisC estimate here, so parents use ${COUNTRIES.find((x) => x.iso3 === ct.height!.proxyIso3)?.name ?? ct.height.proxyIso3}'s averages: men ${ct.height.maleCm.toFixed(1)} cm, women ${ct.height.femaleCm.toFixed(1)} cm.`
+                  : "No height data, so parents use the birth-weighted world average."}
+              </p>
+              {ct.federation ? (
+                <p className="mt-1 text-[12px] text-[var(--os-dim)]">
+                  {ct.fibaRank ? `FIBA men's world ranking: #${ct.fibaRank.rank}, ${ct.fibaRank.points.toFixed(1)} points.` : "Not in the FIBA men's world ranking."}
+                </p>
+              ) : null}
               <ul className="mt-2 flex flex-col gap-1.5">
                 {[...ct.competitions.domestic, ...ct.competitions.crossBorder, ...ct.competitions.selective].map((lid) => {
                   const l = maybeLeague(lid);
@@ -127,13 +140,20 @@ export function SourcesDrawer({ life, onClose }: { life: LifeState | null; onClo
         <section className="mt-6">
           <h3 className="text-[14px] font-semibold">Coverage in this snapshot</h3>
           <p className="mt-1 font-mono text-[12px] tabular-nums text-[var(--os-dim)]">
-            Places: {Object.entries(c.countryCounts).map(([k, v]) => `${k} ${v}`).join(" · ")}
+            Places:{" "}
+            {Object.entries(c.countryCounts)
+              .map(([k, v]) => `${k} ${v}`)
+              .join(" · ")}
           </p>
           <p className="mt-1 font-mono text-[12px] tabular-nums text-[var(--os-dim)]">
-            Competitions: {Object.entries(c.leagueCounts).map(([k, v]) => `${k} ${v}`).join(" · ")}
+            Competitions:{" "}
+            {Object.entries(c.leagueCounts)
+              .map(([k, v]) => `${k} ${v}`)
+              .join(" · ")}
           </p>
           <p className="mt-2 text-[12px] text-[var(--os-dim)]">
-            Unknown means we could not confirm a competition from a primary source, so the game uses a generic senior club tier there and never invents a league. Your birthplace changes routes, costs, coaching and exposure. It never changes talent.
+            Unknown means we could not confirm a competition from a primary source, so the game uses a generic senior club tier there and never invents a league. Your birthplace changes routes, costs,
+            coaching, exposure and the national team. It also sets his parents&apos; likely heights, and through them his own. It never changes skill talent.
           </p>
         </section>
 
@@ -142,6 +162,23 @@ export function SourcesDrawer({ life, onClose }: { life: LifeState | null; onClo
           <p className="mt-1 text-[12px] text-[var(--os-dim)]">{WORLD_META.draftRule}</p>
           <p className="mt-1 text-[12px] text-[var(--os-dim)]">
             League strength, coaching, salaries and exposure are game settings, not measured facts. Box scores, offers and contracts are simulated.
+          </p>
+          <p className="mt-1 text-[12px] text-[var(--os-dim)]">
+            Parents: each parent&apos;s height is drawn around the national average for their sex (spread 7 cm for men, 6.5 cm for women), nudged up a few cm because basketball families skew tall. His
+            adult target is the mid-parent height with a 6 cm spread. {WORLD_META.sources.height}
+          </p>
+          <p className="mt-1 text-[12px] text-[var(--os-dim)]">
+            National teams: who qualifies comes from FIBA ranking points plus some noise, and the host always qualifies. Selection compares his level with a bar that rises with team strength. Senior
+            events follow the announced cycle (World Cup 2027, Olympics 2028 and 2032, continental cups in between). The youth schedule is simplified to one world and one continental event a year.
+            Results are simulated. {WORLD_META.sources.fibaRanking}
+          </p>
+          <p className="mt-1 text-[12px] text-[var(--os-dim)]">
+            Money: tax uses a rough top rate by income group, scaled down for smaller salaries. It ignores real brackets, treaties and team-paid tax. Agent fees, lifestyle costs, endorsement values
+            and investment returns are game settings. Investment returns are random, and a bad year can lose money.
+          </p>
+          <p className="mt-1 text-[12px] text-[var(--os-dim)]">
+            Agents and clubs named in the game are fictional. Season honors come from fixed thresholds on his stats and level, not from votes. Trades happen at the February deadline, with odds that go
+            up if he asks for one.
           </p>
         </section>
 

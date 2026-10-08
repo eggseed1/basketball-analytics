@@ -1,6 +1,6 @@
 import { cohortLevel, eliteYouthLabel, hasClubAcademies, levelOf, minutesBand, nodeLabel, performanceLevel, roleFor } from "./career";
 import { poolFor, townName } from "./names";
-import { clamp, rngOf, type Rng } from "./rng";
+import { clamp, createStreams, hashString, rngOf, type Rng } from "./rng";
 import { canAfford } from "./training";
 import type { LifeState, NodeKind, Offer, Role } from "./types";
 import { country, domesticProLeagues, foreignProLeagues, league, maybeLeague, type LeagueProfile } from "./world";
@@ -50,9 +50,20 @@ function clubName(rng: Rng, countryId: string, kind: "club" | "school" | "univer
 
 const SALARY_SHARE: Record<Role, number> = { none: 0, "deep-bench": 0.02, bench: 0.12, rotation: 0.3, starter: 0.55, star: 0.85 };
 
-function salaryFor(l: LeagueProfile, role: Role): number {
+export function salaryFor(l: LeagueProfile, role: Role): number {
   const [lo, hi] = l.model!.salaryUsd;
   return Math.round((lo + (hi - lo) * SALARY_SHARE[role] ** 1.6) / 500) * 500;
+}
+
+/** A club name that doesn't consume any game stream. */
+export function clubNameFor(state: LifeState, countryId: string): string {
+  return clubName(rngOf(createStreams(hashString(`${state.seed}:club:${state.ageMonths}:${countryId}`)), "generation"), countryId, "club");
+}
+
+/** How much an agent widens the market: lower exposure needed for offers abroad. */
+export function agentBoost(state: LifeState): number {
+  const reach = state.finance.agent?.reach;
+  return reach ? { global: 9, regional: 6, local: 2 }[reach] : 0;
 }
 
 function coachingWord(c: number) {
@@ -219,7 +230,7 @@ export function offseasonOffers(state: LifeState): Offer[] {
     if (!pros.length && node !== "local-senior" && age >= 17) {
       offers.push(build(state, { kind: "join", node: "local-senior", countryId: res.id, leagueId: null, teamName: clubName(nameRng, res.id, "club"), need: 24, coaching: clubCoaching * 0.7, exposure: 8, costPerYear: 0, salary: 0, reason: `A senior club in ${res.name} wants you. The snapshot has no verified professional league here.`, extra: ["Competition details for this country are unverified in the 2026-10-08 snapshot."] }));
     }
-    if (E >= 22 + r[3]! * 15) {
+    if (E + agentBoost(state) >= 22 + r[3]! * 15) {
       const options = foreignProLeagues(res.id)
         .filter((l) => lvl >= l.model!.strength * 0.8 - 7 && l.model!.minAge <= age)
         .sort((a, b) => b.model!.strength - a.model!.strength);
@@ -228,12 +239,12 @@ export function offseasonOffers(state: LifeState): Offer[] {
       for (const l of [pickA, pickB]) {
         if (!l || offers.some((o) => o.leagueId === l.id)) continue;
         const host = l.countries[0]!;
-        offers.push(build(state, { kind: "contract", node: "foreign-pro", countryId: host, leagueId: l.id, teamName: clubName(nameRng, host, "club"), need: l.model!.strength * 0.8, coaching: l.model!.coaching, exposure: l.model!.exposure, costPerYear: 0, reason: `An agent passed your film to a ${l.name} club. They want you.` }));
+        offers.push(build(state, { kind: "contract", node: "foreign-pro", countryId: host, leagueId: l.id, teamName: clubName(nameRng, host, "club"), need: l.model!.strength * 0.8, coaching: l.model!.coaching, exposure: l.model!.exposure, costPerYear: 0, reason: state.finance.agent ? `${state.finance.agent.name} sent your film to a ${l.name} club. They want you.` : `A ${l.name} club saw your film. They want you.` }));
       }
     }
     const gl = league("g-league");
     const abroad = res.id !== "US";
-    if (age >= 18 && node !== "g-league" && node !== "nba" && lvl >= (abroad ? 56 : 52) && E >= (abroad ? 52 : 40) + r[6]! * 15) {
+    if (age >= 18 && node !== "g-league" && node !== "nba" && lvl >= (abroad ? 56 : 52) && E + agentBoost(state) * 0.6 >= (abroad ? 52 : 40) + r[6]! * 15) {
       offers.push(build(state, { kind: "contract", node: "g-league", countryId: "US", leagueId: "g-league", teamName: `G League affiliate (${nbaTeam(r[7]!)})`, need: gl.model!.strength * 0.8, coaching: gl.model!.coaching, exposure: gl.model!.exposure, costPerYear: 0, salary: 40500, years: 1, reason: abroad ? "A G League team saw your film and invites you to training camp. You make the roster." : "A G League team invites you to its local tryout and keeps you.", extra: ["G League players can be called up on 10-day or two-way deals."] }));
     }
   }

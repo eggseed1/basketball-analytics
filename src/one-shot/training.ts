@@ -1,4 +1,5 @@
 import { stepBody } from "./body";
+import { charge, wallet } from "./finance";
 import { clamp, rngOf } from "./rng";
 import type { AthleticKey, FocusId, LifeState, SkillKey, TraitKey, Workload } from "./types";
 
@@ -223,12 +224,12 @@ export function inflictInjury(state: LifeState, id: string, label: string, month
   state.history.push(entry);
 }
 
-/** Family pays first; a pro salary covers costs once the player earns. */
+/** The family pays for children; adults with their own money pay first. */
 export function chargeFamily(state: LifeState, amount: number) {
-  state.family.savings = Math.max(0, state.family.savings - amount);
+  charge(state, amount);
 }
 
 export function canAfford(state: LifeState, perYear: number): boolean {
   const income = state.family.monthlyBudget * 12 + (state.placement.contract?.salary ?? 0) * 0.3;
-  return perYear <= income + state.family.savings * 0.5;
+  return perYear <= income + wallet(state) * 0.5;
 }

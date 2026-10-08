@@ -18,10 +18,12 @@ import {
 } from "./career";
 import { autoEligible, callUpChance, canDeclare, draftClass, draftValue, nbaSeasonMonth, rookieSalary, runDraft } from "./draft";
 import { EVENT_BY_ID, eligibleEvents, eventRate, type EventTemplate } from "./events";
+import { makeAgent, newFinance, stepFinance } from "./finance";
+import { evaluate, KIND_EXPOSURE, nationalTeam, playTournament, tournamentsFor, type Selection } from "./international";
 import { drawName, formatName, poolFor, townName } from "./names";
 import { createPeers, stepPeersYear } from "./peers";
 import { clamp, createStreams, hashString, rngOf } from "./rng";
-import { nbaTeam, offerBlocked, offseasonOffers } from "./routes";
+import { NBA_TEAMS, nbaTeam, offerBlocked, offseasonOffers, salaryFor } from "./routes";
 import { currentLevel, generatePotentials, generateTraits, readiness, READINESS_LABEL, startingSkills } from "./skills";
 import { FOCUS_BY_ID, focusAvailable, stepTraining } from "./training";
 import {
@@ -36,7 +38,7 @@ import {
   type PendingDecision,
   type Workload,
 } from "./types";
-import { country, PLAYABLE_COUNTRIES, WORLD_VERSION } from "./world";
+import { country, maybeLeague, PLAYABLE_COUNTRIES, WORLD_VERSION } from "./world";
 
 export const SNAPSHOT_YEAR = 2026;
 
@@ -77,7 +79,7 @@ export function createLife(opts: NewLifeOptions): LifeState {
   const support = gen.weighted(["low", "medium", "high"] as const, (s) => ({ low: 20, medium: 50, high: 30 })[s]);
   const courtScore = means + { capital: 2, city: 1.5, town: 1, rural: 0 }[localityKind] + gen.next() * 3;
   const courtAccess = courtScore >= 7 ? "excellent" : courtScore >= 5 ? "good" : courtScore >= 3 ? "fair" : "poor";
-  const parents = generateParents(gen);
+  const parents = generateParents(gen, birth.id);
   const growth = generateGrowth(growthRng, parents.fatherHeightCm, parents.motherHeightCm);
   const potentials = generatePotentials(gen);
   const traits = generateTraits(gen);
@@ -119,6 +121,9 @@ export function createLife(opts: NewLifeOptions): LifeState {
     seasons: [],
     lastGame: null,
     bestGame: null,
+    gameLog: [],
+    finance: newFinance(means),
+    international: { countryId: null, caps: 0, tournaments: [], declined: 0 },
     exposure: 0,
     evidence: [],
     offers: [],
@@ -216,8 +221,10 @@ export function stepMonth(s: LifeState) {
     log(s, "milestone", "Scouts would call this an NBA-level player now.", null, "good");
   }
   seasonStep(s);
+  intlStep(s);
   if (!s.pendingDecision) calendarStep(s);
   if (!s.pendingDecision) scheduledStep(s);
+  if (!s.pendingDecision) agentStep(s);
   if (!s.pendingDecision) randomEvent(s);
   endChecks(s);
 }
@@ -255,12 +262,7 @@ function birthday(s: LifeState) {
 function money(s: LifeState) {
   s.family.savings += s.family.monthlyBudget;
   if (s.placement.costPerYear > 0) s.family.savings = Math.max(0, s.family.savings - s.placement.costPerYear / 12);
-  const salary = s.placement.contract?.salary ?? 0;
-  if (salary > 0) {
-    const net = (salary / 12) * (s.flags.agent ? 0.95 : 1);
-    s.earnings += net;
-    s.family.savings += net * 0.35;
-  }
+  stepFinance(s);
 }
 
 /* --------------------------------------------------------------- seasons */
@@ -296,8 +298,10 @@ function seasonStep(s: LifeState) {
   let minutes = 0;
   for (let g = 0; g < n; g++) {
     const box = simulateGame(s, level, rng, s.condition.injury ? 0 : undefined);
+    box.seasonKey = s.season.key;
     addBox(s.season, box);
     s.lastGame = box;
+    pushGame(s, box);
     minutes += box.min;
     const score = box.pts + box.reb * 1.2 + box.ast * 1.5;
     const best = s.bestGame ? s.bestGame.pts + s.bestGame.reb * 1.2 + s.bestGame.ast * 1.5 : -1;
@@ -320,6 +324,12 @@ function finalizeSeason(s: LifeState, level: Level | null) {
   const season = s.season;
   if (!season) return;
   s.season = null;
+  const awards = seasonAwards(s, season, level);
+  if (awards.length) {
+    season.awards = awards;
+    log(s, "milestone", `${season.levelLabel} honors: ${awards.join(", ")}.`, null, "good");
+    s.evidence.push({ month: s.ageMonths, text: `${awards[0]} (${season.levelLabel}, age ${season.ageYears})`, weight: ((level?.model.exposure ?? 10) / 10) * 1.2 });
+  }
   if (season.gp > 0 || season.wins + season.losses > 0) s.seasons.push(season);
   if (season.gp >= 5 && s.ageMonths >= 120) {
     const ppg = perGame(season, "pts");
@@ -334,18 +344,42 @@ function finalizeSeason(s: LifeState, level: Level | null) {
   const c = s.placement.contract;
   if (c) {
     c.yearsLeft -= 1;
-    if (c.yearsLeft <= 0 && s.placement.node === "nba") {
-      if (performanceLevel(s) >= 68) {
-        s.placement.contract = { salary: Math.max(1_270_000, c.salary), yearsLeft: 2, guaranteed: true };
-        log(s, "info", `${s.placement.teamName} re-sign you for two more seasons.`, null, "good");
-      } else {
-        s.placement = { ...s.placement, node: "unattached", leagueId: null, teamName: null, role: "none", contract: null };
+    if (c.yearsLeft <= 0) {
+      const perf = performanceLevel(s);
+      const bet = s.flags.betOnSelf === true;
+      delete s.flags.betOnSelf;
+      delete s.flags.renewSalary;
+      delete s.flags.renewTeam;
+      if (s.placement.node === "nba") {
+        const role = roleFor(perf, level?.need ?? 60);
+        if (perf >= 66) {
+          s.flags.renewSalary = Math.round(nbaSalary(role) * (bet && ["starter", "star"].includes(role) ? 1.25 : 1));
+          s.flags.renewTeam = s.placement.teamName ?? "";
+          log(s, "info", `Your NBA contract is up. The ${s.placement.teamName} want you back.`);
+        } else {
+          log(s, "info", "Your NBA contract is up. The team doesn't plan to bring you back.", null, "bad");
+        }
+        s.flags.nbaFreeAgent = true;
         s.flags.reviewSoon = true;
-        log(s, "info", "Your NBA contract is up and no team re-signs you.", null, "bad");
+        s.placement.contract = null;
+      } else {
+        const l = maybeLeague(s.placement.leagueId);
+        s.placement.contract = null;
+        if (isProNode(s.placement.node)) s.flags.reviewSoon = true;
+        if (s.placement.node === "g-league" && perf >= 50) {
+          s.flags.renewSalary = c.twoWay ? c.salary : 40_500;
+          s.flags.renewTeam = s.placement.teamName ?? "";
+          log(s, "info", `Your G League deal is up. ${s.placement.teamName} want you back.`);
+        } else if (l?.model && ["domestic-pro", "foreign-pro"].includes(s.placement.node) && perf >= l.model.strength * 0.8 - 9) {
+          const role = roleFor(perf, l.model.strength * 0.8);
+          const mult = bet ? (["starter", "star"].includes(role) ? 1.35 : 0.85) : 1;
+          s.flags.renewSalary = Math.round((salaryFor(l, role) * mult) / 500) * 500;
+          s.flags.renewTeam = s.placement.teamName ?? "";
+          log(s, "info", `Your contract is up. ${s.placement.teamName} offer a new deal.`);
+        } else {
+          log(s, "info", "Your contract is up.");
+        }
       }
-    } else if (c.yearsLeft <= 0) {
-      s.placement.contract = null;
-      log(s, "info", "Your contract is up.");
     }
   }
   if (s.placement.node === "university") {
@@ -360,13 +394,71 @@ function finalizeSeason(s: LifeState, level: Level | null) {
 
 function offseasonReview(s: LifeState) {
   if (s.ended) return;
+  delete s.flags.reviewSoon;
   const offers = offseasonOffers(s);
-  if (!offers.length) return;
+  const renew = typeof s.flags.renewSalary === "number" && s.flags.renewTeam === s.placement.teamName ? s.flags.renewSalary : null;
+  const nbaFA = s.flags.nbaFreeAgent === true && s.placement.node === "nba";
+  const expired = isProNode(s.placement.node) && !s.placement.contract;
+  if (!offers.length && renew === null && !nbaFA && !expired) return;
   s.offers = offers;
   const choices: DecisionChoice[] = offers.map((o) => ({ id: o.id, label: offerTitle(o), preview: `${ROLE_LABEL[o.role]}, ${o.minutesBand}. ${o.reason}`, disabled: offerBlocked(s, o) ?? undefined }));
-  const stayLabel = s.placement.teamName ? `Stay with ${s.placement.teamName}` : s.placement.node === "playground" ? "Keep playing on the neighborhood courts" : "Keep training on your own";
-  choices.push({ id: "stay", label: stayLabel, preview: "Nothing changes." });
-  decide(s, { templateId: "offers", title: s.ageMonths < 18 * 12 ? "Next season" : "Offseason options", body: `Age ${Math.floor(s.ageMonths / 12)}. ${offers.length === 1 ? "One option is" : `${offers.length} options are`} on the table.`, choices, offers, required: true });
+  if (renew !== null) choices.unshift({ id: "renew", label: `Re-sign with ${s.placement.teamName}`, preview: `${usd(renew)} a year for two years, guaranteed.` });
+  if (nbaFA) choices.push({ id: "fa", label: "Test NBA free agency", preview: "Other teams may pay more. You could also end up without a deal." });
+  const stayLabel = expired ? "Turn everything down and wait" : s.placement.teamName ? `Stay with ${s.placement.teamName}` : s.placement.node === "playground" ? "Keep playing on the neighborhood courts" : "Keep training on your own";
+  choices.push({ id: "stay", label: stayLabel, preview: expired ? "No contract. More offers may come next month." : "Nothing changes." });
+  const n = choices.length - 1;
+  decide(s, { templateId: "offers", title: s.ageMonths < 18 * 12 ? "Next season" : nbaFA ? "NBA free agency" : "Offseason options", body: `Age ${Math.floor(s.ageMonths / 12)}. ${n === 1 ? "One option is" : `${n} options are`} on the table.`, choices, offers, required: true });
+}
+
+const isProNode = (n: string) => n === "domestic-pro" || n === "foreign-pro" || n === "g-league" || n === "nba";
+
+const NBA_SALARY: Record<string, number> = { none: 1_300_000, "deep-bench": 1_300_000, bench: 2_800_000, rotation: 7_500_000, starter: 17_000_000, star: 34_000_000 };
+/** NBA salary by role (model; the real scale depends on cap rules and experience). */
+export function nbaSalary(role: string): number {
+  return NBA_SALARY[role] ?? 1_300_000;
+}
+
+function usd(n: number) {
+  return `$${Math.round(n).toLocaleString("en-US")}`;
+}
+
+function pushGame(s: LifeState, box: LifeState["gameLog"][number]) {
+  s.gameLog.push(box);
+  if (s.gameLog.length > 160) s.gameLog.splice(0, s.gameLog.length - 160);
+}
+
+/** Season honors from stat thresholds (model, no randomness). */
+function seasonAwards(s: LifeState, season: LifeState["seasons"][number], level: Level | null): string[] {
+  if (season.gp < 8 || !level) return [];
+  const g = season.gp;
+  const ppg = season.pts / g;
+  const rpg = season.reb / g;
+  const apg = season.ast / g;
+  const stocks = (season.stl + season.blk) / g;
+  const nba = season.node === "nba";
+  const out: string[] = [];
+  const prevSame = [...s.seasons].reverse().find((x) => x.node === season.node && x.gp >= 8);
+  const firstPro = isProNode(season.node) && !s.seasons.some((x) => x.node === season.node && x.gp > 0);
+  if (nba) {
+    if (season.role === "star" && ppg >= 26) out.push("All-NBA");
+    if (season.role === "star" && ppg >= 21) out.push("NBA All-Star");
+    if (firstPro && ppg >= 14) out.push("Rookie of the Year");
+    if (stocks >= 3) out.push("All-Defensive Team");
+  } else {
+    if (season.ageYears < 10) return [];
+    const starter = ["starter", "star"].includes(season.role);
+    const margin = performanceLevel(s) - level.need;
+    if (season.role === "star" && ppg >= (level.youth ? 21 : 19)) out.push("All-League First Team");
+    else if (starter && ppg >= (level.youth ? 17 : 15)) out.push("All-League Second Team");
+    if (season.role === "star" && ppg >= (level.youth ? 24 : 22) && margin >= 14) out.push("League MVP");
+    if (starter && rpg >= 11) out.push("Rebounding leader");
+    if (starter && apg >= 7.5) out.push("Assists leader");
+    if (starter && stocks >= 3.5) out.push("All-Defensive Team");
+    if (firstPro && ppg >= 12) out.push("Rookie of the Year");
+  }
+  if (prevSame && prevSame.gp >= 8 && ppg - prevSame.pts / prevSame.gp >= 7) out.push("Most Improved Player");
+  if (season.wins + season.losses >= 16 && season.wins / (season.wins + season.losses) >= 0.85) out.push("Best record in the league");
+  return out.slice(0, 3);
 }
 
 export function offerTitle(o: Offer): string {
@@ -379,6 +471,7 @@ function calendarStep(s: LifeState) {
   const { month, year } = calendar(s);
   const age = s.ageMonths / 12;
   if (age < 18) return;
+  if (month === 2 && s.placement.node === "nba" && s.placement.contract) tradeDeadline(s);
   if (month === 4 && s.draft.declaredYear !== year && !s.draft.withdrewYears.includes(year)) {
     if (autoEligible(s, year)) {
       s.draft.declaredYear = year;
@@ -483,6 +576,31 @@ function calendarStep(s: LifeState) {
   }
 }
 
+/** February deadline: trade odds are a model, higher after a trade request. */
+function tradeDeadline(s: LifeState) {
+  const recent = (k: string) => typeof s.flags[k] === "number" && s.ageMonths - (s.flags[k] as number) <= 3;
+  const req = recent("tradeRequest");
+  const shield = recent("tradeShield");
+  delete s.flags.tradeRequest;
+  delete s.flags.tradeShield;
+  const rng = rngOf(s.rng, "scouting");
+  const p = 0.06 + (req ? 0.45 : 0) - (shield ? 0.04 : 0) + (s.placement.role === "deep-bench" ? 0.04 : 0);
+  const roll = rng.next();
+  const pickU = rng.next();
+  const old = s.placement.teamName;
+  if (roll >= p) {
+    if (req) log(s, "info", `The deadline passes. You're still with the ${old}.`, null, "bad");
+    return;
+  }
+  const others = NBA_TEAMS.filter((t) => t !== old);
+  const team = others[Math.floor(pickU * others.length)]!;
+  if (s.season && s.season.gp + s.season.wins + s.season.losses > 0) s.seasons.push(s.season);
+  s.season = null;
+  s.placement = { ...s.placement, teamName: team, since: s.ageMonths };
+  s.residence = { countryId: "US", locality: team.split(" ").slice(0, -1).join(" "), localityKind: "city" };
+  log(s, "move", `Traded from the ${old} to the ${team} at the deadline.${req ? " You got your wish." : ""}`, null, req ? "good" : "neutral");
+}
+
 function projectedRank(s: LifeState, year: number) {
   const v = draftValue(s);
   return draftClass(s.seed, year).filter((p) => p.value > v).length + 1;
@@ -519,14 +637,137 @@ function scheduledStep(s: LifeState) {
   }
 }
 
+/* --------------------------------------------------------------- national team */
+
+function intlStep(s: LifeState) {
+  const nat = nationalTeam(s);
+  if (!nat || s.ageMonths < 13 * 12) return;
+  const { year, month } = calendar(s);
+  const ts = [...tournamentsFor(nat, year), ...tournamentsFor(nat, year + 1)];
+  const go = typeof s.flags.intlGo === "string" ? s.flags.intlGo : null;
+  for (const t of ts) {
+    if (t.year !== year || t.month !== month) continue;
+    if (go === t.id) {
+      delete s.flags.intlGo;
+      if (s.condition.injury) {
+        log(s, "info", `Injured. You miss the ${t.name}.`, null, "bad");
+        continue;
+      }
+      const sel = evaluate(s, t);
+      if (sel) runTournament(s, { ...sel, picked: true });
+    } else if (t.maxAge === null && s.ageMonths >= 17 * 12) {
+      const sel = evaluate(s, t);
+      if (sel?.qualified) {
+        const run = playTournament(s, sel, false);
+        log(s, "info", run.summary, null, run.result.medal ? "good" : "neutral");
+      }
+    }
+  }
+  if (s.pendingDecision) return;
+  const seen = String(s.flags.intlSeen ?? "").split(",");
+  for (const t of ts) {
+    const monthsAway = (t.year - year) * 12 + t.month - month;
+    if (monthsAway < 1 || monthsAway > 2 || seen.includes(t.id)) continue;
+    s.flags.intlSeen = [...seen, t.id].slice(-8).join(",");
+    const sel = evaluate(s, t);
+    if (!sel) continue;
+    if (!sel.qualified) {
+      if (t.maxAge === null && sel.level >= sel.bar - 6) log(s, "info", `${country(nat).name} did not qualify for the ${t.name}.`);
+      continue;
+    }
+    if (!sel.picked) {
+      if (sel.level >= sel.bar - 5) log(s, "info", `Left off the ${country(nat).name} roster for the ${t.name}. The coaches went with others.`);
+      continue;
+    }
+    callUp(s, sel);
+    return;
+  }
+}
+
+function callUp(s: LifeState, sel: Selection) {
+  const { t, nat } = sel;
+  const fed = country(nat).federation!.name;
+  const role = roleFor(performanceLevel(s), sel.bar + 2);
+  const nbaSummer = s.placement.node === "nba" && t.maxAge === null;
+  decide(s, {
+    templateId: "intl-callup",
+    title: `${t.kind === "olympics" ? "Olympic" : "National team"} call-up`,
+    body: `${fed} names you to the ${country(nat).name} roster for the ${t.name}. Coaches see you as ${ROLE_LABEL[role].toLowerCase()}.${nbaSummer ? " Your NBA team would rather you rest." : ""}`,
+    choices: [
+      { id: "play", label: "Report to camp", preview: `Caps, exposure and a shot at a medal. Tiring summer.${s.condition.injury ? " You're injured; you'd need to heal by then." : ""}` },
+      { id: "withdraw", label: "Withdraw", preview: "Rest and recover. The federation may hold it against you." },
+    ],
+    context: { tid: t.id },
+    required: true,
+  });
+}
+
+function runTournament(s: LifeState, sel: Selection) {
+  const run = playTournament(s, sel, true);
+  for (const b of run.boxes) pushGame(s, b);
+  const r = run.result;
+  s.international.countryId ??= sel.nat;
+  s.international.caps += r.gp;
+  s.international.tournaments.push(r);
+  const perf = r.gp ? clamp(0.6 + r.pts / r.gp / 20, 0.5, 1.6) : 0.5;
+  s.exposure = clamp(s.exposure + KIND_EXPOSURE[r.kind] * perf + (r.medal ? 4 : 0), 0, 100);
+  s.condition.energy = clamp(s.condition.energy - 12, 5, 100);
+  s.evidence.push({ month: s.ageMonths, text: `${r.finish} at the ${sel.t.short} with ${country(sel.nat).name}${r.gp ? `: ${(r.pts / r.gp).toFixed(1)} ppg` : ""}`, weight: KIND_EXPOSURE[r.kind] * 0.9 * perf });
+  s.evidence = [...s.evidence].sort((a, b) => b.weight - a.weight).slice(0, 24);
+  log(s, "milestone", run.summary, null, r.medal ? "good" : "neutral");
+}
+
+/* --------------------------------------------------------------- agent */
+
+function agentStep(s: LifeState) {
+  if (s.finance.agent || s.ageMonths < 210) return;
+  if (s.placement.node === "university" && s.draft.declaredYear === null) return;
+  const last = typeof s.flags.agentAsked === "number" ? s.flags.agentAsked : -999;
+  if (s.ageMonths - last < 18) return;
+  const ready = s.exposure >= 22 || s.draft.declaredYear !== null || isProNode(s.placement.node);
+  if (!ready) return;
+  s.flags.agentAsked = s.ageMonths;
+  const pool = agentPool(s);
+  decide(s, {
+    templateId: "agent-pick",
+    title: "Picking an agent",
+    body: `Agents have started calling. ${s.education.amateur && s.placement.node !== "university" ? "Signing with one ends amateur status for college (game rule)." : "An agent negotiates contracts and finds teams."}`,
+    choices: [
+      ...pool.map((a, i) => ({
+        id: `a${i}`,
+        label: `${a.name}, ${a.firm}`,
+        preview: `${a.reach === "global" ? "NBA and EuroLeague contacts" : a.reach === "regional" ? "Clubs across the region" : "Knows local clubs"}. Takes ${Math.round(a.fee * 100)}% of salary.`,
+        disabled: a.reach === "global" && s.exposure < 45 ? "They only sign prospects with more buzz (exposure 45+)." : a.reach === "regional" && s.exposure < 18 && !isProNode(s.placement.node) ? "They want to see more of you first." : undefined,
+      })),
+      { id: "none", label: "No agent for now", preview: "Keep every dollar. Fewer doors open." },
+    ],
+    required: true,
+  });
+}
+
+/** Three fictional agents, drawn without touching any game stream. */
+function agentPool(s: LifeState) {
+  const r = rngOf(createStreams(hashString(`${s.seed}:agents:${s.ageMonths}`)), "generation");
+  const res = country(s.residence.countryId);
+  const local = drawName(r, poolFor(res.id)).displayName;
+  const regional = drawName(r, poolFor(res.id)).displayName;
+  const global = drawName(r, r.pick(["us", "anglo", "es", "balkan", "fr"])).displayName;
+  return [
+    makeAgent(global, r.pick(["Meridian Athlete Group", "Northline Sports", "Crestview Management", "Baseline Global"]), 0.04, "global", s.ageMonths),
+    makeAgent(regional, `${res.capital ?? res.name} Sports Management`, 0.08, "regional", s.ageMonths),
+    makeAgent(local, "a family friend", 0.03, "local", s.ageMonths),
+  ];
+}
+
 function randomEvent(s: LifeState) {
   const rng = rngOf(s.rng, "events");
   const roll = rng.next();
   const pickU = rng.next();
-  if (roll >= eventRate(s)) return;
   const pool = eligibleEvents(s);
   if (!pool.length) return;
   const total = pool.reduce((a, e) => a + e.weight(s), 0);
+  // A thin pool fires less often so the same few events don't repeat.
+  if (roll >= eventRate(s) * clamp(total / 8, 0.3, 1)) return;
   let r = pickU * total;
   let chosen = pool[0]!;
   for (const e of pool) {
@@ -610,13 +851,55 @@ function resolveInPlace(s: LifeState, choiceId: string) {
   }
   switch (d.templateId) {
     case "offers": {
-      if (choiceId === "stay") {
-        log(s, "decision", `${choice.label}.`);
+      const renew = typeof s.flags.renewSalary === "number" ? s.flags.renewSalary : 0;
+      clearRenewal(s);
+      if (choiceId === "renew") {
+        s.placement.contract = { salary: renew, yearsLeft: 2, guaranteed: true, twoWay: s.placement.teamName?.includes("two-way") || undefined };
+        log(s, "decision", `Re-signed with ${s.placement.teamName}: ${usd(renew)} a year for two years.`, null, "good");
+      } else if (choiceId === "fa") {
+        nbaFreeAgency(s);
+      } else if (choiceId === "stay") {
+        if (isProNode(s.placement.node) && !s.placement.contract) {
+          s.placement = { ...s.placement, node: "unattached", leagueId: null, teamName: null, role: "none", contract: null, costPerYear: 0 };
+          s.flags.reviewSoon = true;
+          log(s, "decision", "You turn the offers down and wait for something better.");
+        } else {
+          log(s, "decision", `${choice.label}.`);
+        }
       } else {
         const offer = d.offers!.find((o) => o.id === choiceId)!;
         acceptOffer(s, offer);
       }
       s.offers = [];
+      return;
+    }
+    case "intl-callup": {
+      const tid = String(d.context?.tid ?? "");
+      if (choiceId === "play") {
+        s.flags.intlGo = tid;
+        log(s, "decision", `You accept the call-up. Camp opens next month.`, null, "good");
+      } else {
+        s.international.declined += 1;
+        s.flags.intlSnub = s.ageMonths;
+        s.condition.energy = clamp(s.condition.energy + 8, 5, 100);
+        log(s, "decision", "You withdraw from the national team this summer.");
+      }
+      return;
+    }
+    case "agent-pick": {
+      if (choiceId === "none") {
+        log(s, "decision", "No agent for now. You answer your own phone.");
+        return;
+      }
+      const a = agentPool(s)[Number(choiceId.slice(1))]!;
+      s.finance.agent = a;
+      s.exposure = clamp(s.exposure + (a.reach === "global" ? 6 : a.reach === "regional" ? 4 : 1), 0, 100);
+      if (s.education.amateur && s.placement.node !== "university") {
+        s.education.amateur = false;
+        s.education.ncaaEligible = false;
+      }
+      s.scheduled.push({ templateId: "agent-call", month: s.ageMonths + 4, causeId: decisionEntry });
+      log(s, "decision", `Signed with ${a.name} (${a.firm}). ${Math.round(a.fee * 100)}% of salary.`, null, "good");
       return;
     }
     case "draft-declare": {
@@ -670,8 +953,41 @@ function resolveInPlace(s: LifeState, choiceId: string) {
   }
 }
 
+function clearRenewal(s: LifeState) {
+  delete s.flags.renewSalary;
+  delete s.flags.renewTeam;
+  delete s.flags.nbaFreeAgent;
+}
+
+/** Testing the market: odds and money are a model built on current level. */
+function nbaFreeAgency(s: LifeState) {
+  const rng = rngOf(s.rng, "scouting");
+  const perf = performanceLevel(s);
+  const roll = rng.next();
+  const pickU = rng.next();
+  const old = s.placement.teamName;
+  const team = NBA_TEAMS.filter((t) => t !== old)[Math.floor(pickU * (NBA_TEAMS.length - 1))]!;
+  const role = roleFor(perf, 60);
+  if (roll < clamp((perf - 62) / 15, 0.1, 0.85)) {
+    const salary = Math.round(nbaSalary(role) * 1.2);
+    s.placement = { ...s.placement, teamName: team, role, since: s.ageMonths, contract: { salary, yearsLeft: 3, guaranteed: true } };
+    s.residence = { countryId: "US", locality: team.split(" ").slice(0, -1).join(" "), localityKind: "city" };
+    log(s, "move", `Signed with the ${team} in free agency: ${usd(salary)} a year for three years.`, null, "good");
+  } else if (perf >= 64) {
+    s.placement = { ...s.placement, teamName: team, role: "deep-bench", since: s.ageMonths, contract: { salary: nbaSalary("deep-bench"), yearsLeft: 1, guaranteed: false } };
+    s.residence = { countryId: "US", locality: team.split(" ").slice(0, -1).join(" "), localityKind: "city" };
+    log(s, "move", `The market is quiet. You take a one-year minimum deal with the ${team}.`);
+  } else {
+    s.placement = { ...s.placement, node: "unattached", leagueId: null, teamName: null, role: "none", contract: null, costPerYear: 0 };
+    s.flags.reviewSoon = true;
+    log(s, "move", "No NBA team calls. You're a free agent.", null, "bad");
+  }
+}
+
 function acceptOffer(s: LifeState, o: Offer) {
   if (s.season) finalizeSeason(s, levelOf(s));
+  clearRenewal(s);
+  if (o.salary > 0 && o.node !== "university" && o.node !== "nba") s.scheduled.push({ templateId: "contract-terms", month: s.ageMonths, causeId: null });
   const moving = o.countryId !== s.residence.countryId;
   s.placement = {
     node: o.node,
@@ -704,6 +1020,9 @@ export const AUTO_STRATEGY = [
   "Team offers: the highest level you can afford where the coach expects at least bench minutes. A move sideways needs clearly more scouting exposure. Otherwise, stay.",
   "Draft: declare when scouts rate you in draft range or NBA-ready, or on the NBA radar from age 21.",
   "After the draft: a two-way deal first, then a camp deal, then stay.",
+  "Contracts: re-sign when no offer ranks higher. NBA free agency only from a strong level. Sign contracts as written.",
+  "National team: always report to camp.",
+  "Agents: the widest-reaching agent who will sign you; never the family friend.",
   "After an NBA debut: finish the chapter.",
 ];
 
@@ -724,18 +1043,27 @@ export function autoChoice(s: LifeState): string {
   }
   switch (d.templateId) {
     case "offers": {
+      const has = (id: string) => open.some((c) => c.id === id);
+      const fallback = has("renew") ? "renew" : has("fa") ? "fa" : "stay";
       const offers = (d.offers ?? []).filter((o) => !d.choices.find((c) => c.id === o.id)?.disabled && o.role !== "deep-bench");
       const curRank = NODE_RANK[s.placement.node] ?? 0;
       const best = offers
         .map((o) => ({ o, score: (NODE_RANK[o.node] ?? 0) * 10 + (levelOfOffer(o) ?? 0) / 10 + o.exposure / 50 }))
         .sort((a, b) => b.score - a.score)[0];
-      if (!best) return "stay";
+      if (has("fa") && performanceLevel(s) >= 72) return "fa";
+      const anyOffer = open.find((c) => d.offers?.some((o) => o.id === c.id))?.id;
+      if (!best) return fallback === "stay" && isProNode(s.placement.node) && !s.placement.contract && anyOffer ? anyOffer : fallback;
       const bestRank = NODE_RANK[best.o.node] ?? 0;
       if (bestRank > curRank) return best.o.id;
       const curExposure = levelOf(s)?.model.exposure ?? 0;
       if (bestRank === curRank && best.o.exposure >= curExposure + 10) return best.o.id;
-      return "stay";
+      if (fallback === "stay" && isProNode(s.placement.node) && !s.placement.contract) return best.o.id;
+      return fallback;
     }
+    case "intl-callup":
+      return "play";
+    case "agent-pick":
+      return open.find((c) => c.id === "a0")?.id ?? open.find((c) => c.id === "a1")?.id ?? "none";
     case "draft-declare": {
       const band = readiness(s);
       const age = s.ageMonths / 12;

@@ -8,6 +8,8 @@
  *   fiba-federations.json     FIBA national federation directory
  *   league-candidates.json    candidate competitions with official URLs
  *   league-source-checks.json HTTP status and page titles for those URLs
+ *   ncdrisc-height-1996.json  NCD-RisC mean adult height by country, 1996 cohort
+ *   fiba-ranking-men.json     FIBA men's world ranking on the snapshot date
  *
  * Outputs:
  *   src/one-shot/data/world.json            registry, profiles, leagues
@@ -31,6 +33,29 @@ const wb = read("worldbank-2023.json");
 const fiba = read("fiba-federations.json");
 const candidates = read("league-candidates.json");
 const checks = Object.fromEntries(read("league-source-checks.json").results.map((r) => [r.id, r]));
+const ncd = read("ncdrisc-height-1996.json");
+const fibaRanking = read("fiba-ranking-men.json");
+const rankById = Object.fromEntries(fibaRanking.teams.map((t) => [t.id, { rank: t.rank, points: t.points }]));
+
+// NCD-RisC has no estimate for these places. Each borrows a neighbour or the
+// administering country, and the UI labels the figure as a proxy.
+const HEIGHT_PROXY = {
+  AX: "FIN", AI: "KNA", AW: "VEN", VG: "KNA", BQ: "VEN", KY: "JAM", CX: "AUS", CC: "MYS", CW: "VEN", FK: "GBR",
+  FO: "DNK", GF: "SUR", GI: "GBR", GP: "LCA", GU: "FSM", GG: "GBR", IM: "GBR", JE: "GBR", XK: "MKD", LI: "CHE",
+  MO: "HKG", MC: "FRA", MS: "KNA", NC: "FJI", NF: "AUS", MP: "FSM", PN: "NZL", RE: "MUS", SM: "ITA", SX: "KNA",
+  SS: "SDN", BL: "FRA", SH: "GBR", MF: "KNA", PM: "FRA", SJ: "NOR", TC: "BHS", VI: "PRI", VA: "ITA", WF: "TON",
+  EH: "MAR", MQ: "LCA", YT: "COM",
+};
+
+function heightFor(alpha2, alpha3, inhabited) {
+  if (!inhabited) return null;
+  const own = ncd.byIso3[alpha3];
+  if (own) return { maleCm: own.male, femaleCm: own.female, cohort: ncd.cohort, basis: "measured", proxyIso3: null };
+  const proxy = HEIGHT_PROXY[alpha2];
+  const p = proxy && ncd.byIso3[proxy];
+  if (!p) throw new Error(`No height data or proxy for ${alpha2}`);
+  return { maleCm: p.male, femaleCm: p.female, cohort: ncd.cohort, basis: "proxy", proxyIso3: proxy };
+}
 
 /* ---------------------------------------------------------------- crosswalk */
 
@@ -459,6 +484,8 @@ for (const e of entries) {
       exposureBase: verifiedDomestic.length ? Math.max(...verifiedDomestic.map((l) => l.model.exposure)) : 8,
       verifiedPro: verifiedDomestic.length > 0,
     },
+    height: heightFor(a2, e.alpha3, kind !== "uninhabited"),
+    fibaRank: rankById[a2] ?? null,
     research: { status, reason: statusReason, checkedAt: SNAPSHOT },
   });
 }
@@ -475,6 +502,8 @@ const meta = {
     worldBank: wb.source,
     fiba: fiba.source ?? "https://about.fiba.basketball/en/national-federations",
     leagues: "Official league, federation and program sites checked on the snapshot date; see each league's research record.",
+    height: `${ncd.source}. ${ncd.note} ${ncd.url}`,
+    fibaRanking: `${fibaRanking.source}, retrieved ${fibaRanking.retrieved}. ${fibaRanking.url}`,
   },
   draftRule: "Game rule simplified from the NBA collective bargaining agreement: a player must be 19 during the draft year and one season past high school; players outside the US system are automatically eligible at 22. Not re-verified in this snapshot.",
   modelNote: "Fields under `model` are game design parameters, not measured facts.",

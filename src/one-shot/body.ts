@@ -1,16 +1,22 @@
 import { clamp, round1, type Rng } from "./rng";
 import type { AthleticKey, Body, Growth, LifeState } from "./types";
+import { adultHeights } from "./world";
 
 /**
  * Body model. Height follows a hidden adult target and a puberty timing
  * offset; the UI only ever sees the current measurement and a projected range
- * that narrows with age. Parents are drawn from one global distribution:
- * birthplace never changes body or talent.
+ * that narrows with age.
  *
- * Model parameters: parent heights N(180, 8) cm and N(167, 7.5) cm (a slightly
- * tall pool, since every life here is a basketball life), mid-parent target
- * with N(0, 6) cm individual variation.
+ * Parents are drawn around their country's measured adult mean (NCD-RisC,
+ * 1996 cohort) with within-country SDs of 7 cm (men) and 6.5 cm (women), plus a
+ * family bias of +5 cm and +4 cm because every life here is a basketball life.
+ * The son's adult target is the mid-parent height with N(0, 6) cm individual
+ * variation. Birthplace shifts the expected height through the parents only;
+ * it never touches skill talent.
  */
+export const HEIGHT_SD = { male: 7, female: 6.5 } as const;
+export const FAMILY_BIAS = { male: 5, female: 4 } as const;
+export const TARGET_SD = 6;
 
 // Median male height fraction of adult height by age in years (from the shape
 // of standard growth charts; model approximation).
@@ -48,16 +54,37 @@ export function maturation(ageMonths: number, offsetMonths: number): number {
 
 const ATHLETIC: AthleticKey[] = ["strength", "acceleration", "lateral", "vertical", "stamina", "coordination", "durability"];
 
-export function generateParents(rng: Rng) {
+export function generateParents(rng: Rng, countryId: string) {
+  const nat = adultHeights(countryId);
   return {
-    fatherHeightCm: Math.round(clamp(rng.normal(180, 8), 155, 215)),
-    motherHeightCm: Math.round(clamp(rng.normal(167, 7.5), 145, 200)),
+    fatherHeightCm: Math.round(clamp(rng.normal(nat.maleCm + FAMILY_BIAS.male, HEIGHT_SD.male), 150, 215)),
+    motherHeightCm: Math.round(clamp(rng.normal(nat.femaleCm + FAMILY_BIAS.female, HEIGHT_SD.female), 140, 200)),
   };
+}
+
+function normalCdf(z: number): number {
+  const t = 1 / (1 + 0.2316419 * Math.abs(z));
+  const d = 0.3989423 * Math.exp((-z * z) / 2);
+  const p = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274))));
+  return z > 0 ? 1 - p : p;
+}
+
+/** Percentile (1-99) of an adult height among adults of that sex in a country. */
+export function heightPercentile(cm: number, sex: "male" | "female", countryId: string): number {
+  const nat = adultHeights(countryId);
+  const mean = sex === "male" ? nat.maleCm : nat.femaleCm;
+  return Math.round(clamp(normalCdf((cm - mean) / HEIGHT_SD[sex]) * 100, 1, 99));
+}
+
+/** Mid-parent target and the range that holds about 95% of sons in this model. */
+export function parentTarget(father: number, mother: number): { mid: number; low: number; high: number } {
+  const mid = (father + mother + 13) / 2;
+  return { mid: Math.round(mid), low: Math.round(mid - 1.96 * TARGET_SD), high: Math.round(mid + 1.96 * TARGET_SD) };
 }
 
 export function generateGrowth(rng: Rng, father: number, mother: number): Growth {
   const mid = (father + mother + 13) / 2;
-  const adultHeightCm = round1(clamp(mid + rng.normal(0, 6), 158, 228));
+  const adultHeightCm = round1(clamp(mid + rng.normal(0, TARGET_SD), 158, 228));
   const pubertyOffsetMonths = Math.round(clamp(rng.normal(0, 13), -30, 30));
   const wingspanRatio = clamp(rng.normal(1.035, 0.025), 0.97, 1.11);
   const frameMassFactor = clamp(rng.normal(1, 0.07), 0.84, 1.18);
