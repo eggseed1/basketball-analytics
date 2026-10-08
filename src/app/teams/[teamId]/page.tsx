@@ -577,6 +577,7 @@ export default async function TeamProfilePage({
           <div data-motion-stack className="flex flex-col gap-8">
             <TeamLeadershipSection
               teamId={askTeamId}
+              teamKey={identityTeam.abbreviation}
               teamName={displayName}
               season={season}
               currentSeason={currentSeason}

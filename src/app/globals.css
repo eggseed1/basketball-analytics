@@ -2008,6 +2008,50 @@ html[data-scrolling] body {
   --viz-accent: var(--viz-accent-dark, var(--foreground));
 }
 
+/* Organization leadership tiles: team-tinted fill, an accent rail that grows in
+   on reveal, and a lift with an accent ring on hover. */
+[data-org-tile] {
+  background-color: color-mix(in oklab, var(--viz-accent) 6%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--viz-accent) 14%, transparent);
+}
+
+[data-org-rail] {
+  background-color: var(--viz-accent);
+}
+
+[data-org-label] {
+  color: color-mix(in oklab, var(--viz-accent) 62%, var(--muted-foreground));
+  font-weight: 600;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-org-tile] {
+    transition:
+      translate 220ms var(--motion-ease),
+      box-shadow 200ms ease,
+      background-color 200ms ease;
+  }
+}
+
+@media (hover: hover) {
+  [data-org-tile]:hover {
+    translate: 0 -2px;
+    background-color: color-mix(in oklab, var(--viz-accent) 11%, transparent);
+    box-shadow:
+      inset 0 0 0 1.5px color-mix(in oklab, var(--viz-accent) 48%, transparent),
+      0 6px 16px -10px color-mix(in oklab, var(--viz-accent) 70%, transparent);
+  }
+
+  [data-org-tile]:hover [data-org-rail] {
+    width: 5px;
+    filter: brightness(1.1) saturate(1.2);
+  }
+
+  [data-org-tile]:hover a {
+    text-decoration-color: var(--viz-accent);
+  }
+}
+
 [data-viz-mark],
 [data-viz-bar],
 [data-viz-row] {

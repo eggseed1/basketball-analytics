@@ -1,11 +1,12 @@
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 
 import {
   getTeamLeadership,
   teamLeadershipRetrievedAt,
   type LeadershipPerson,
 } from "@/data/runtime/team-leadership";
-import { surfaceTileClassName, textLinkClassName, type } from "@/lib/design-system";
+import { vizAccentStyle } from "@/components/teams/viz/viz-kit";
+import { textLinkClassName, type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 
 function PersonName({ person }: { person: { name: string; wiki?: string } }) {
@@ -17,14 +18,36 @@ function PersonName({ person }: { person: { name: string; wiki?: string } }) {
   );
 }
 
-function Role({ label, wide, children }: { label: string; wide?: boolean; children: ReactNode }) {
+function Role({
+  label,
+  index,
+  wide,
+  children,
+}: {
+  label: string;
+  index: number;
+  wide?: boolean;
+  children: ReactNode;
+}) {
   return (
     <div
       data-motion-item
-      className={cn(surfaceTileClassName, "flex min-w-0 flex-col gap-1 px-3 py-2.5", wide && "col-span-2 lg:col-span-1")}
+      style={{ "--i": index } as CSSProperties}
+      className={cn("min-w-0", wide && "col-span-2 lg:col-span-1")}
     >
-      <dt className={cn(type.caption, "text-muted-foreground")}>{label}</dt>
-      <dd className={cn(type.bodySm, "flex flex-col gap-1")}>{children}</dd>
+      <div data-org-tile className="relative flex h-full flex-col gap-1 overflow-hidden rounded-[11px] py-2.5 pl-4 pr-3">
+        <span
+          aria-hidden
+          data-org-rail
+          data-motion-bar="y"
+          className="absolute inset-y-0 left-0 w-[3px]"
+          style={{ "--i": index } as CSSProperties}
+        />
+        <dt data-org-label className={type.caption}>
+          {label}
+        </dt>
+        <dd className={cn(type.bodySm, "flex flex-col gap-1")}>{children}</dd>
+      </div>
     </div>
   );
 }
@@ -53,11 +76,13 @@ function formatRetrieved(iso: string): string {
 /** Owners, executives, head coach, arena and G League affiliate for the franchise today. */
 export function TeamLeadershipSection({
   teamId,
+  teamKey,
   teamName,
   season,
   currentSeason,
 }: {
   teamId: string;
+  teamKey: string;
   teamName: string;
   season: string;
   currentSeason: string;
@@ -75,23 +100,23 @@ export function TeamLeadershipSection({
         </p>
       </div>
       {org ? (
-        <div className="sports-card flex flex-col gap-4 p-4 sm:p-5">
+        <div data-viz style={vizAccentStyle(teamKey)} className="sports-card flex flex-col gap-4 p-4 sm:p-5">
           <dl data-motion-stack className="grid grid-cols-2 gap-2 lg:grid-cols-3">
-            <Role label={org.owners.length > 1 ? "Owners" : "Owner"} wide>
+            <Role index={0} label={org.owners.length > 1 ? "Owners" : "Owner"} wide>
               <People people={org.owners} />
             </Role>
             {org.ceo.length ? (
-              <Role label="CEO">
+              <Role index={1} label="CEO">
                 <People people={org.ceo} />
               </Role>
             ) : null}
-            <Role label="President">
+            <Role index={2} label="President">
               <People people={org.president} />
             </Role>
-            <Role label="General manager">
+            <Role index={3} label="General manager">
               <People people={org.generalManager} />
             </Role>
-            <Role label="Head coach">
+            <Role index={4} label="Head coach">
               {org.headCoach ? (
                 <span className="font-semibold">
                   <PersonName person={org.headCoach} />
@@ -100,7 +125,7 @@ export function TeamLeadershipSection({
                 <span className="text-muted-foreground">Not listed</span>
               )}
             </Role>
-            <Role label="Arena">
+            <Role index={5} label="Arena">
               {org.arena ? (
                 <>
                   <span className="font-semibold">
@@ -114,7 +139,7 @@ export function TeamLeadershipSection({
                 <span className="text-muted-foreground">Not listed</span>
               )}
             </Role>
-            <Role label="G League affiliate">
+            <Role index={6} label="G League affiliate">
               {org.affiliate ? (
                 <span className="font-semibold">
                   <PersonName person={org.affiliate} />
