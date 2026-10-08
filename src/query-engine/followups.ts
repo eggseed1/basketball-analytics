@@ -279,7 +279,7 @@ export function buildFollowUpLinks(
       break;
     }
     case "offseason_summary":
-      add("Open Offseason Tracker →", "/offseason");
+      add("Open the transaction log →", "/offseason");
       if (team?.id) {
         // Prefer filter link when team-specific; pathname differs from bare /offseason
         add(

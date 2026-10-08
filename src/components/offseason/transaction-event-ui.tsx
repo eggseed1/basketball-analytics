@@ -322,7 +322,7 @@ export function OffseasonFilters({
     <div className="sports-card flex flex-col gap-3 px-4 py-4 sm:px-5">
       <div className="flex flex-wrap items-end gap-3">
         <label className="flex flex-col gap-1 text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
-          Offseason
+          Year
           <select
             className="rounded-md border border-border bg-background px-3 py-2 text-[14px] font-semibold text-foreground"
             value={year}
@@ -330,7 +330,7 @@ export function OffseasonFilters({
           >
             {years.map((y) => (
               <option key={y} value={y}>
-                {y} Offseason
+                {y}-{String((y + 1) % 100).padStart(2, "0")} · June {y} to May {y + 1}
               </option>
             ))}
           </select>

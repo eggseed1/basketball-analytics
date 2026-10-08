@@ -1,6 +1,7 @@
 /**
- * Offseason calendar helpers.
- * "2026 NBA Offseason" = summer window of calendar year 2026 (into 2026-27).
+ * Transaction calendar helpers.
+ * Transaction year 2026 = June 1, 2026 through May 31, 2027: the draft and
+ * free agency, then the 2026-27 season. The offseason window is its summer part.
  */
 
 import { canonicalSeasonFromStartYear } from "@/data/providers/historical/season-range";
@@ -16,8 +17,18 @@ export function offseasonWindowForYear(labelYear: number): OffseasonWindow {
   };
 }
 
+/** Inclusive year-round window: June 1 of `labelYear` through May 31 of the next year. */
+export function transactionYearWindow(labelYear: number): OffseasonWindow {
+  return {
+    labelYear,
+    startDate: `${labelYear}-06-01`,
+    endDate: `${labelYear + 1}-05-31`,
+    upcomingSeason: canonicalSeasonFromStartYear(labelYear),
+  };
+}
+
 /**
- * Default offseason label year for "what's happening now?"
+ * Label year for "what's happening now?", shared by both windows.
  * June–December → this calendar year; January–May → previous summer.
  */
 export function currentOffseasonLabelYear(now = new Date()): number {
@@ -28,6 +39,10 @@ export function currentOffseasonLabelYear(now = new Date()): number {
 
 export function currentOffseasonWindow(now = new Date()): OffseasonWindow {
   return offseasonWindowForYear(currentOffseasonLabelYear(now));
+}
+
+export function currentTransactionYearWindow(now = new Date()): OffseasonWindow {
+  return transactionYearWindow(currentOffseasonLabelYear(now));
 }
 
 /** Monday 00:00 UTC of the week containing `now`, through today (ISO dates). */

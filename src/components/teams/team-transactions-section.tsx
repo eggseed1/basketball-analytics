@@ -36,8 +36,7 @@ export function TeamTransactionsSection({
       </p>
       {events.length === 0 ? (
         <p className="type-body-sm text-muted-foreground">
-          No transaction events in the {offseasonYear} offseason window for this
-          team filter.
+          No transaction events for this team since June 1, {offseasonYear}.
         </p>
       ) : (
         <ul className="flex flex-col gap-2">

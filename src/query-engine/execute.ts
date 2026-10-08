@@ -1262,7 +1262,7 @@ async function execOffseason(ast: BasketballQueryAst): Promise<AskDrblResult> {
         "Transaction notes = source events. Related-event clusters group reciprocal blurbs by date + team mentions.",
         "Structured transactions / ownership edges remain unavailable.",
       ],
-      source: "Offseason transaction event archive",
+      source: "Transaction event archive",
       queryPlan: buildQueryPlan(ast),
       limitations: [
         "Do not treat one-sided wording as a complete trade package.",
@@ -1270,7 +1270,7 @@ async function execOffseason(ast: BasketballQueryAst): Promise<AskDrblResult> {
       ],
       links: [
         {
-          label: "Open related Offseason events →",
+          label: "Open related transactions →",
           href: related
             ? `/offseason?event=${encodeURIComponent(related.event.id)}&year=${year}`
             : team?.id
@@ -1307,14 +1307,14 @@ async function execOffseason(ast: BasketballQueryAst): Promise<AskDrblResult> {
       methodology: [
         "Counts free-text transaction events only, not structured trades or contracts.",
       ],
-      source: "Offseason transaction event archive",
+      source: "Transaction event archive",
       queryPlan: buildQueryPlan(ast),
       limitations: [
         "Do not infer asset lineage or contract value from these blurbs.",
       ],
       links: [
         {
-          label: "Open Offseason Tracker →",
+          label: "Open the transaction log →",
           href: `/offseason?team=${encodeURIComponent(team.id)}&year=${year}`,
         },
       ],
@@ -1336,9 +1336,9 @@ async function execOffseason(ast: BasketballQueryAst): Promise<AskDrblResult> {
         : "No team activity summary.",
       pulse.latestEvent?.description ?? "",
     ].filter(Boolean),
-    source: "Offseason transaction event archive",
+    source: "Transaction event archive",
     queryPlan: buildQueryPlan(ast),
     limitations: ["Factual event archive only. Genealogy UI is blocked."],
-    links: [{ label: "Open Offseason Tracker →", href: "/offseason" }],
+    links: [{ label: "Open the transaction log →", href: "/offseason" }],
   };
 }

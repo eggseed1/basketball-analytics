@@ -25,6 +25,7 @@ import type { TransactionType } from "@/offseason";
 import {
   currentOffseasonWindow,
   offseasonWindowForYear,
+  transactionYearWindow,
   weekDateRange,
 } from "@/data/providers/transactions/offseason-window";
 
@@ -141,6 +142,10 @@ export function filterTransactionEvents(
 
   if (filters.offseasonYear != null) {
     const w = offseasonWindowForYear(filters.offseasonYear);
+    rows = rows.filter((e) => e.date >= w.startDate && e.date <= w.endDate);
+  }
+  if (filters.transactionYear != null) {
+    const w = transactionYearWindow(filters.transactionYear);
     rows = rows.filter((e) => e.date >= w.startDate && e.date <= w.endDate);
   }
   if (filters.season) {
@@ -314,16 +319,19 @@ export function aggregateTeamActivity(
 
 export function buildOffseasonPulse(
   index: TransactionEventIndex,
-  options: { now?: Date; offseasonYear?: number } = {}
+  options: { now?: Date; offseasonYear?: number; transactionYear?: number } = {}
 ): OffseasonPulse {
   const now = options.now ?? new Date();
-  const window =
-    options.offseasonYear != null
+  const yearRound = options.transactionYear != null;
+  const window = yearRound
+    ? transactionYearWindow(options.transactionYear!)
+    : options.offseasonYear != null
       ? offseasonWindowForYear(options.offseasonYear)
       : currentOffseasonWindow(now);
-  const offseasonEvents = filterTransactionEvents(index, {
-    offseasonYear: window.labelYear,
-  });
+  const offseasonEvents = filterTransactionEvents(
+    index,
+    yearRound ? { transactionYear: window.labelYear } : { offseasonYear: window.labelYear }
+  );
   const week = weekDateRange(now);
   const weekEvents = offseasonEvents.filter(
     (e) => e.date >= week.from && e.date <= week.to
@@ -401,16 +409,16 @@ export function groupEventsByMonth(
     .map(([monthKey, evs]) => ({ monthKey, events: evs }));
 }
 
-/** Available offseason label years that have at least one archive event in-window. */
+/** Transaction years (June through May) that have at least one archive event in-window. */
 export function listOffseasonYearsWithEvents(
   index: TransactionEventIndex
 ): number[] {
   if (!index.earliestDate || !index.latestDate) return [];
-  const startY = Number(index.earliestDate.slice(0, 4));
+  const startY = Number(index.earliestDate.slice(0, 4)) - 1;
   const endY = Number(index.latestDate.slice(0, 4));
   const years: number[] = [];
   for (let y = endY; y >= startY; y--) {
-    const w = offseasonWindowForYear(y);
+    const w = transactionYearWindow(y);
     const has = index.events.some(
       (e) => e.date >= w.startDate && e.date <= w.endDate
     );

@@ -162,7 +162,7 @@ function assertJsonSafe(value: unknown) {
   const ast = interpretAskQuery("What happened to Boston this offseason?");
   assert.equal(ast.operation, "offseason_summary");
   const links = buildFollowUpLinks(ast);
-  assert.ok(links.some((l) => /offseason/i.test(l.label)));
+  assert.ok(links.some((l) => /transaction log/i.test(l.label) && l.href === "/offseason"));
 }
 
 // --- Unsupported PBP (no silent partial) ---

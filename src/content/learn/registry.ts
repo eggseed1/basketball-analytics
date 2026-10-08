@@ -1203,7 +1203,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     showTooltip: true,
     learnSlug: "transaction-layers",
     relatedIds: ["related_event_cluster", "structured_transaction"],
-    seeInAction: [{ label: "Offseason Tracker", href: "/offseason" }],
+    seeInAction: [{ label: "Transaction log", href: "/offseason" }],
   },
   {
     id: "related_event_cluster",

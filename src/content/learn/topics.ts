@@ -928,7 +928,7 @@ export const LEARN_TOPICS: LearnTopic[] = [
       "Structured transaction = verified assets (currently 0 in production).",
     ],
     howDrblUses: [
-      "Offseason Tracker.",
+      "Transaction log.",
       "Genealogy UI stays blocked until a licensed structured source exists.",
     ],
     caveats: [
@@ -942,7 +942,7 @@ export const LEARN_TOPICS: LearnTopic[] = [
       "trade_exception",
       "draft_capital",
     ],
-    seeInAction: [{ label: "Offseason Tracker", href: "/offseason" }],
+    seeInAction: [{ label: "Transaction log", href: "/offseason" }],
     sources: [
       "docs/offseason-tracker.md",
       "docs/structured-transaction-source-audit.md",

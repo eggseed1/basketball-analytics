@@ -263,7 +263,7 @@ export function TeamAssetsSection({
           href="/offseason"
           className="font-semibold underline-offset-2 hover:underline"
         >
-          Offseason Tracker
+          Transaction log
         </AppLink>{" "}
         ·{" "}
         <Link

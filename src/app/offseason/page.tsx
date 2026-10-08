@@ -19,7 +19,7 @@ import { buildOffseasonFeedItems } from "@/data/providers/transactions/transacti
 import { buildTransactionEventIndex } from "@/data/providers/transactions/transaction-event-index";
 import {
   currentOffseasonLabelYear,
-  offseasonWindowForYear,
+  transactionYearWindow,
 } from "@/data/providers/transactions/offseason-window";
 import { ESPN_TEAM_META } from "@/data/providers/nba/team-meta";
 import { resolvePlayersForTransactionEvents } from "@/data/queries/transaction-player-resolve";
@@ -53,6 +53,15 @@ function one(
 ): string | undefined {
   const v = sp[key];
   return Array.isArray(v) ? v[0] : v;
+}
+
+function longDate(iso: string): string {
+  return new Date(`${iso}T12:00:00Z`).toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  });
 }
 
 function resolveTeamFilter(raw?: string): string | undefined {
@@ -116,9 +125,10 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
     }
   }
 
-  const window = offseasonWindowForYear(offseasonYear);
+  const window = transactionYearWindow(offseasonYear);
+  const ongoing = new Date().toISOString().slice(0, 10) <= window.endDate;
   const filters = {
-    offseasonYear: season ? undefined : offseasonYear,
+    transactionYear: season ? undefined : offseasonYear,
     season,
     teamId,
     dateFrom: dateFrom || undefined,
@@ -129,7 +139,7 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
   // One index build (or cache hit); derive coverage/pulse/timeline from shared TTL.
   const [pulse, timeline, coverage, detailBundle, index] =
     await Promise.all([
-      getOffseasonPulse({ offseasonYear }),
+      getOffseasonPulse({ transactionYear: offseasonYear }),
       getOffseasonTimeline(filters, { page, pageSize: 50 }),
       getTransactionEventCoverage(),
       eventId
@@ -185,19 +195,20 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
           Transactions
         </p>
         <h1 className="text-[28px] font-bold tracking-tight sm:text-[32px]">
-          {offseasonYear} NBA Offseason
+          {window.upcomingSeason} NBA transactions
         </h1>
         <p className="max-w-2xl text-[16px] text-muted-foreground">
-          What was recorded from {window.startDate} to {window.endDate} (into{" "}
-          {window.upcomingSeason}). These are source events as reported. They are not a
-          structured trade ledger.
+          Every move recorded from {longDate(window.startDate)}{" "}
+          {ongoing ? "through today" : `to ${longDate(window.endDate)}`}: the draft and free
+          agency, then trades, signings and waivers through the {window.upcomingSeason} season.
+          These are source events as reported, not a structured trade ledger.
         </p>
       </header>
 
       <section className="sports-card grid gap-3 px-4 py-4 sm:grid-cols-3 sm:px-5">
         <div>
           <p className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
-            This offseason
+            {window.upcomingSeason} {ongoing ? "so far" : "total"}
           </p>
           <p className="mt-1 text-[24px] font-bold tabular-nums tracking-tight">
             {pulse.eventCount}
@@ -315,7 +326,7 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
           <section className="flex flex-col gap-3">
             <div className="flex flex-wrap items-end justify-between gap-2">
               <h2 className="text-[16px] font-bold tracking-tight">
-                Offseason timeline
+                Timeline
               </h2>
               <p className="text-[12px] text-muted-foreground">
                 {timeline.page.total} source events · {timeline.feedTotal} feed

@@ -62,6 +62,7 @@ export async function getTransactionEventCoverage(options?: {
 
 export async function getOffseasonPulse(options?: {
   offseasonYear?: number;
+  transactionYear?: number;
   now?: Date;
   force?: boolean;
 }): Promise<OffseasonPulse> {
@@ -70,6 +71,7 @@ export async function getOffseasonPulse(options?: {
   });
   return buildOffseasonPulse(index, {
     offseasonYear: options?.offseasonYear,
+    transactionYear: options?.transactionYear,
     now: options?.now,
   });
 }

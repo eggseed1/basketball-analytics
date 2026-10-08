@@ -91,6 +91,8 @@ export type OffseasonWindow = {
 export type TransactionEventFilters = {
   /** Offseason summer year (e.g. 2026). Mutually contextual with date range. */
   offseasonYear?: number;
+  /** Year-round window: June 1 of this year through May 31 of the next. */
+  transactionYear?: number;
   /** Canonical season YYYY-YY — filters by derived season field. */
   season?: string;
   teamId?: string;

@@ -157,7 +157,7 @@ export const PRIMARY_NAV: PrimaryNavItem[] = [
     subnav: [
       {
         href: "/offseason",
-        label: "Current Offseason",
+        label: "Transaction log",
         match: (p) => p.startsWith("/offseason"),
       },
       {

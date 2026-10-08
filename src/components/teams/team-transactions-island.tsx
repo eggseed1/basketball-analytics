@@ -12,7 +12,7 @@ export async function TeamTransactionsIsland({
 }) {
   const offseasonYear = currentOffseasonLabelYear();
   const txPage = await listTransactionEvents(
-    { teamId: teamFilterId, offseasonYear },
+    { teamId: teamFilterId, transactionYear: offseasonYear },
     { page: 1, pageSize: 6 }
   ).catch(() => ({
     events: [],
@@ -48,10 +48,10 @@ export async function TeamTransactionsIsland({
     >
       <div>
         <h2 className="text-[20px] font-bold tracking-tight">
-          {offseasonYear} Offseason
+          {offseasonYear}-{String((offseasonYear + 1) % 100).padStart(2, "0")} transactions
         </h2>
         <p className="text-[14px] text-muted-foreground">
-          Latest transactions involving this team.
+          Latest moves involving this team since June 1, {offseasonYear}.
         </p>
       </div>
       <div className="sports-card p-4 sm:p-5">

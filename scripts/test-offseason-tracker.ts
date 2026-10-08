@@ -19,6 +19,7 @@ import {
 import {
   currentOffseasonLabelYear,
   offseasonWindowForYear,
+  transactionYearWindow,
 } from "../src/data/providers/transactions/offseason-window";
 import { writeTransactionArchive } from "../src/data/providers/transactions/transaction-archive-store";
 import {
@@ -90,6 +91,10 @@ async function main() {
     assert.equal(w.startDate, "2026-06-01");
     assert.equal(w.endDate, "2026-10-15");
     assert.equal(w.upcomingSeason, "2026-27");
+    const year = transactionYearWindow(2026);
+    assert.equal(year.startDate, "2026-06-01");
+    assert.equal(year.endDate, "2027-05-31");
+    assert.equal(year.upcomingSeason, "2026-27");
     assert.equal(
       currentOffseasonLabelYear(new Date("2026-08-14T12:00:00Z")),
       2026
@@ -159,6 +164,18 @@ async function main() {
     const off26 = filterTransactionEvents(index, { offseasonYear: 2026 });
     assert.equal(off26.length, 4);
     assert.ok(off26.every((e) => e.date >= "2026-06-01" && e.date <= "2026-10-15"));
+
+    // Transaction year runs June through May, so in-season moves stay in.
+    const deadline = { ...index.events[0]!, id: "deadline", date: "2027-02-05" };
+    const nextDraft = { ...index.events[0]!, id: "next-draft", date: "2027-06-25" };
+    const yearRound = { ...index, events: [nextDraft, deadline, ...index.events] };
+    assert.deepEqual(
+      filterTransactionEvents(yearRound, { transactionYear: 2026 }).map((e) => e.id).sort(),
+      ["deadline", "e1", "e2", "e3", "e4"]
+    );
+    assert.ok(
+      !filterTransactionEvents(yearRound, { offseasonYear: 2026 }).some((e) => e.id === "deadline")
+    );
 
     // Season filter
     const s = filterTransactionEvents(index, { season: "2026-27" });
