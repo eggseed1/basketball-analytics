@@ -96,6 +96,8 @@ type MetricDef = {
 };
 
 const METRICS: MetricDef[] = [
+  { id: "darko", label: "DARKO", category: "impact", digits: 2, primary: true },
+  { id: "war1", label: "WAR1", category: "impact", digits: 1, primary: true },
   { id: "ppg", label: "PTS", category: "profile", primary: true },
   { id: "apg", label: "AST", category: "profile", primary: true },
   { id: "rpg", label: "TRB", category: "profile", primary: true },
@@ -124,14 +126,12 @@ const METRICS: MetricDef[] = [
   { id: "vorp", label: "VORP", category: "advanced", digits: 1 },
   { id: "ws", label: "WS", category: "advanced", digits: 1 },
   { id: "cpi", label: "CPI", category: "impact", digits: 1 },
-  { id: "darko", label: "DARKO", category: "impact", digits: 2 },
   { id: "darkoOff", label: "DARKO-O", category: "impact", digits: 2 },
   { id: "darkoDef", label: "DARKO-D", category: "impact", digits: 2 },
   { id: "raptor", label: "RAPTOR", category: "impact", digits: 2 },
   { id: "oRaptor", label: "O-RAPTOR", category: "impact", digits: 2 },
   { id: "dRaptor", label: "D-RAPTOR", category: "impact", digits: 2 },
   { id: "winsAdded", label: "WAR", category: "impact", digits: 2 },
-  { id: "war1", label: "WAR1", category: "impact", digits: 1 },
   { id: "drbl100", label: "DRBL", category: "impact", digits: 1 },
   { id: "drblO", label: "DRBL-O", category: "impact", digits: 1 },
   { id: "drblD", label: "DRBL-D", category: "impact", digits: 1 },
@@ -159,6 +159,16 @@ function metricValue(row: CareerBoardRow, id: MetricId): number | null {
   const raw = row[id];
   if (typeof raw !== "number" || !Number.isFinite(raw)) return null;
   return raw;
+}
+
+/** The chart tracks overall level across a career, so lead with impact. DARKO spans 1996-97+, WAR1 2020-21+. */
+const DEFAULT_METRIC_ORDER: MetricId[] = ["darko", "war1", "ppg"];
+
+function defaultCareerMetric(rows: CareerBoardRow[]): MetricId {
+  return (
+    DEFAULT_METRIC_ORDER.find((id) => rows.some((row) => metricValue(row, id) != null)) ??
+    "ppg"
+  );
 }
 
 function seriesFor(
@@ -248,7 +258,14 @@ export function PlayerCareerBoard({
   fromHistory?: boolean;
   themeMode?: ThemeMode;
 }) {
-  const [metric, setMetric] = useState<MetricId>("ppg");
+  const [metric, setMetric] = useState<MetricId>(() => defaultCareerMetric(rows));
+  const primary = useMemo(
+    () =>
+      PRIMARY.filter(
+        (m) => m.category !== "impact" || rows.some((row) => metricValue(row, m.id) != null)
+      ),
+    [rows]
+  );
   const [tableCat, setTableCat] = useState<TableCategory | "all">("profile");
   const wash = brandAtmosphereColors(
     resolveTeamBrand(teamKey)?.primary,
@@ -301,7 +318,7 @@ export function PlayerCareerBoard({
         ) : (
           <>
             <div className="flex flex-wrap items-center gap-1.5">
-              {PRIMARY.map((item) => (
+              {primary.map((item) => (
                 <GlassChip
                   key={item.id}
                   active={item.id === metric}
