@@ -135,8 +135,8 @@ function Section({
 function TileGrid({ games }: { games: GameSummary[] }) {
   return (
     <div className="grid gap-2.5 sm:grid-cols-2 xl:grid-cols-3">
-      {games.map((game) => (
-        <ScoreTile key={game.id} game={game} />
+      {games.map((game, i) => (
+        <ScoreTile key={game.id} game={game} motionIndex={i} />
       ))}
     </div>
   );

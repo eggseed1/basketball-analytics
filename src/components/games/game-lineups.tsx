@@ -193,7 +193,7 @@ function PlayerRow({
   troubleAt: number | null;
 }) {
   return (
-    <ul className="flex gap-1">
+    <ul role="list" className="flex gap-1">
       {byPosition(players).map((p, i) => {
         const meta = [p.position, p.jersey ? `#${p.jersey}` : null].filter(Boolean).join(" · ");
         const trouble = troubleAt != null && p.fouls != null && p.fouls >= troubleAt;

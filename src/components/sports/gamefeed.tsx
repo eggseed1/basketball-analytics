@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 
 import { GlassSurface } from "@/components/brand/glass-surface";
 import { TeamLogo } from "@/components/brand/team-logo";
@@ -355,6 +355,8 @@ function MonthGrid({
           return (
             <div
               key={cell.iso}
+              data-motion-tile
+              style={{ "--i": idx } as CSSProperties}
               className={cn(
                 "sports-card flex min-h-[72px] flex-col gap-1 p-1 sm:min-h-[110px] sm:p-1.5",
                 isToday && "border-foreground/40 ring-1 ring-foreground/20"
@@ -441,7 +443,7 @@ function WeekBoard({
 
   return (
     <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-7">
-      {days.map((iso) => {
+      {days.map((iso, i) => {
         const dayGames = byDate.get(iso) ?? [];
         const isToday = iso === todayIso;
         const label = new Date(`${iso}T12:00:00Z`).toLocaleDateString("en-US", {
@@ -453,6 +455,8 @@ function WeekBoard({
         return (
           <div
             key={iso}
+            data-motion-tile
+            style={{ "--i": i * 2 } as CSSProperties}
             className={cn(
               "sports-card flex min-h-[140px] flex-col gap-2 p-2.5",
               isToday && "border-foreground/40 ring-1 ring-foreground/20"

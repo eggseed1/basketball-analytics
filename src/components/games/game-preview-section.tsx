@@ -65,7 +65,7 @@ export function GameTabs({
               "shrink-0 rounded-[var(--radius-md)] px-3.5 py-1.5 type-body-sm font-semibold transition-colors duration-[var(--duration-fast)] ease-[var(--ease-standard)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
               isActive
                 ? "bg-card text-foreground shadow-sm"
-                : "text-muted-foreground hover:text-foreground"
+                : "text-muted-foreground hover:bg-card/60 hover:text-foreground"
             )}
           >
             {opt.label}

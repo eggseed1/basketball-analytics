@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useState, type ReactNode } from "react";
+import { memo, useState, type CSSProperties, type ReactNode } from "react";
 
 import { GlassSurface } from "@/components/brand/glass-surface";
 import { finalWinner, MatchupOrbs, STRIP_CARD_STYLE } from "@/components/brand/matchup-orbs";
@@ -136,6 +136,8 @@ function TeamRow({
       <span className="flex items-center justify-end gap-1.5">
         {score != null ? (
           <span
+            key={score}
+            data-score-tick
             className={cn(
               "text-[22px] leading-none tabular-nums tracking-tight",
               emphasis === "strong" ? "font-bold" : "font-semibold",
@@ -165,10 +167,13 @@ export const ScoreTile = memo(function ScoreTile({
   game,
   className,
   footer,
+  motionIndex,
 }: {
   game: GameSummary;
   className?: string;
   footer?: ReactNode;
+  /** Position in a grid; staggers the reveal on motion pages. */
+  motionIndex?: number;
 }) {
   const matchup = buildGameMatchupTheme(
     gameSideBrandKey(game, "away"),
@@ -195,9 +200,11 @@ export const ScoreTile = memo(function ScoreTile({
       as="article"
       effect="css"
       data-motion="card"
-      style={STRIP_CARD_STYLE}
+      data-motion-tile={motionIndex != null ? "" : undefined}
+      data-live={live ? "" : undefined}
+      style={motionIndex != null ? ({ ...STRIP_CARD_STYLE, "--i": motionIndex } as CSSProperties) : STRIP_CARD_STYLE}
       className={cn(
-        "group relative isolate flex flex-col gap-3 p-3.5 transition-[transform,filter] duration-150 hover:-translate-y-px hover:brightness-[0.99] dark:hover:brightness-110",
+        "group relative isolate flex flex-col gap-3 p-3.5 hover:brightness-[0.99] dark:hover:brightness-110",
         live && "ring-1 ring-red-600/30",
         className
       )}

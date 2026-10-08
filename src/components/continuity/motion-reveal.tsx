@@ -11,12 +11,13 @@ const CARD = ".sports-card, .glass-surface, .glass-card";
 const SECTION = [
   `[data-motion-page] > :not(.hof-page-frame, [data-motion-stack], [data-skeleton], [data-motion-static], :has(${FROST}))`,
   `:is(.hof-page-frame__inner, [data-motion-stack]) > :not([data-motion-stack], :has(${FROST}))`,
-  `:is(${CARD}):not(a, [data-skeleton], [data-motion-static] *, :is(${CARD}) *)`,
+  `:is(${CARD}):not(a, [data-skeleton], [data-motion-tile], [data-motion-static] *, :is(${CARD}) *)`,
 ].join(", ");
 const LIST = `:is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li):not(:has(${FROST})), [data-motion-item]`;
 
 /** Start poses, matched in order. They mirror the @starting-style rules in globals.css. */
 const POSES: Array<[selector: string, pose: Pose]> = [
+  ["[data-motion-tile]", () => ({ opacity: 0, transform: "translateY(14px) scale(0.98)" })],
   [SECTION, () => ({ opacity: 0, translate: "0 14px" })],
   [LIST, () => ({ opacity: 0, translate: "0 8px" })],
   ['[data-motion-bar="x"]', () => ({ scale: "0 1" })],

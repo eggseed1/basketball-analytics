@@ -8,6 +8,7 @@ import { RuntimeGameFallback } from "@/components/games/runtime-game-fallback";
 import { HistoricalGameExperience } from "@/components/history/historical-game-experience";
 import { GameUnavailablePanel } from "@/components/games/game-unavailable";
 import { DestinationSectionSkeleton } from "@/components/continuity/destination-loading-frame";
+import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { EraThemeScope } from "@/components/time-machine/era-theme-scope";
 import { GlassTintScaleProvider } from "@/components/brand/glass-surface";
 import { DESTINATION_CARD_TINT_SCALE } from "@/components/brand/team-atmosphere";
@@ -79,7 +80,8 @@ export default async function GamePage({ params, searchParams }: GamePageProps) 
     ? [{ id: "preview", label: "Preview" }, { id: "game", label: "Box score & plays" }]
     : [{ id: "game", label: "Game" }, { id: "preview", label: "Preview" }];
   const showGame = presentation.canRenderDeepFeatures && tab === "game";
-  const body = <main className="site-shell flex flex-1 flex-col gap-5 py-5 sm:gap-6 sm:py-7">
+  const body = <main data-motion-page className="site-shell flex flex-1 flex-col gap-5 py-5 sm:gap-6 sm:py-7">
+    <MotionReveal />
     <GameIdentityShell game={shell.game} brandPresentation={brandPresentation} arrivalLabel={arrival?.label} />
     {presentation.canRenderDeepFeatures ? <GameTabs gameId={gameId} active={tab} options={tabOptions} defaultTab={defaultTab} query={sp} /> : null}
     {presentation.canRenderDeepFeatures && tab === "preview" ? <Suspense fallback={<DestinationSectionSkeleton label="Loading game preview…" />}><GamePreviewSection game={shell.game} /></Suspense> : null}

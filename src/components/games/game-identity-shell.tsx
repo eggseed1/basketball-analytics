@@ -90,6 +90,7 @@ function HeroTeam({
   const city = brand.city?.trim() || null;
   return (
     <div
+      data-hero-side={side}
       className={cn(
         "flex min-w-0 flex-col items-center gap-2 text-center sm:flex-row sm:gap-3.5",
         end ? "sm:flex-row-reverse sm:text-right" : "sm:text-left"
@@ -145,7 +146,9 @@ function BigScore({ value, muted, winner, side }: { value: number; muted: boolea
         muted && "text-muted-foreground/70"
       )}
     >
-      {value}
+      <span key={value} data-score-tick>
+        {value}
+      </span>
       {winner ? (
         <span
           aria-hidden
@@ -227,7 +230,10 @@ function LineScore({
   ];
   const cell = "px-2 py-1 text-center tabular-nums sm:px-3";
   return (
-    <div className="board-scroll-host w-full overflow-x-auto">
+    <div
+      data-live={isLiveLikeStatus(game.status) ? "" : undefined}
+      className="board-scroll-host w-full overflow-x-auto"
+    >
       <table className={cn(type.bodySm, "w-full")}>
         <caption className="sr-only">Points by period</caption>
         <thead>
@@ -265,10 +271,16 @@ function LineScore({
                       pts > (other[i] ?? 0) ? "font-semibold" : "text-muted-foreground"
                     )}
                   >
-                    {pts}
+                    <span key={pts} data-score-tick>
+                      {pts}
+                    </span>
                   </td>
                 ))}
-                <td className={cn(cell, "font-bold")}>{row.total}</td>
+                <td className={cn(cell, "font-bold")}>
+                  <span key={row.total} data-score-tick>
+                    {row.total}
+                  </span>
+                </td>
               </tr>
             );
           })}
@@ -413,7 +425,7 @@ export function GameIdentityShell({
           muted={final && homeAhead}
         />
         {showScores ? (
-          <div className="grid grid-cols-2 items-center justify-items-center gap-x-6 gap-y-1.5 sm:grid-cols-[auto_auto_auto] sm:gap-x-8">
+          <div data-hero-center data-live={isLiveLikeStatus(shown.status) ? "" : undefined} className="grid grid-cols-2 items-center justify-items-center gap-x-6 gap-y-1.5 sm:grid-cols-[auto_auto_auto] sm:gap-x-8">
             <BigScore value={shown.awayScore} side="away" muted={final && homeAhead} winner={final && awayAhead} />
             <div className="order-last col-span-2 sm:order-none sm:col-span-1">
               <StatusCenter game={shown} />
@@ -421,9 +433,13 @@ export function GameIdentityShell({
             <BigScore value={shown.homeScore} side="home" muted={final && awayAhead} winner={final && homeAhead} />
           </div>
         ) : isPreTipStatus(shown.status) && shown.status !== "delayed" ? (
-          <PreTipCenter game={shown} />
+          <div data-hero-center>
+            <PreTipCenter game={shown} />
+          </div>
         ) : (
-          <StatusCenter game={shown} />
+          <div data-hero-center>
+            <StatusCenter game={shown} />
+          </div>
         )}
         <HeroTeam
           game={shown}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState, type CSSProperties } from "react";
 
 import { TeamLogo } from "@/components/brand/team-logo";
 import type { PlayByPlayEvent } from "@/data/types";
@@ -193,6 +193,8 @@ export function GameMarginFlowChart({
     return (
       <circle
         pointerEvents="none"
+        data-motion-dot
+        style={{ "--i": 48 } as CSSProperties}
         cx={xOf(p.elapsedGameTime)}
         cy={yOf(p.margin)}
         r={4}
@@ -300,8 +302,10 @@ export function GameMarginFlowChart({
             );
           })}
 
-          <path d={area} fill={homeColor} fillOpacity={fillOpacity} clipPath={`url(#${clipId}-up)`} />
-          <path d={area} fill={awayColor} fillOpacity={fillOpacity} clipPath={`url(#${clipId}-down)`} />
+          <g data-motion-wipe>
+            <path d={area} fill={homeColor} fillOpacity={fillOpacity} clipPath={`url(#${clipId}-up)`} />
+            <path d={area} fill={awayColor} fillOpacity={fillOpacity} clipPath={`url(#${clipId}-down)`} />
+          </g>
           <line
             x1={pad.left}
             x2={w - pad.right}
@@ -310,8 +314,8 @@ export function GameMarginFlowChart({
             stroke="currentColor"
             strokeOpacity={chartTheme.referenceOpacity()}
           />
-          <path d={line} fill="none" stroke={homeColor} strokeWidth={2} strokeLinejoin="round" clipPath={`url(#${clipId}-up)`} />
-          <path d={line} fill="none" stroke={awayColor} strokeWidth={2} strokeLinejoin="round" clipPath={`url(#${clipId}-down)`} />
+          <path d={line} fill="none" stroke={homeColor} strokeWidth={2} strokeLinejoin="round" pathLength={1} data-motion-line clipPath={`url(#${clipId}-up)`} />
+          <path d={line} fill="none" stroke={awayColor} strokeWidth={2} strokeLinejoin="round" pathLength={1} data-motion-line clipPath={`url(#${clipId}-down)`} />
 
           <g pointerEvents="none" fontSize={11} fontWeight={700}>
             <text x={pad.left + 6} y={pad.top + 11} fill={homeColor}>
@@ -527,8 +531,10 @@ export function GameWinProbabilityChart({
               </g>
             );
           })}
-          <path d={areaHome} fill={homeColor} fillOpacity={0.85} />
-          <path d={areaAway} fill={awayColor} fillOpacity={0.85} />
+          <g data-motion-wipe>
+            <path d={areaHome} fill={homeColor} fillOpacity={0.85} />
+            <path d={areaAway} fill={awayColor} fillOpacity={0.85} />
+          </g>
           {series.map((p, i) => {
             if (i === 0 && p.eventIndex < 0) return null;
             const x = (p.elapsedGameTime / maxT) * w;

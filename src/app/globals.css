@@ -2354,7 +2354,7 @@ html[data-scrolling] body {
 
   [data-motion-page] > :not(.hof-page-frame, [data-motion-stack], [data-skeleton], [data-motion-static], :has(.sports-card, .glass-surface, .glass-card, .frost-surface, .frost-surface-soft, .frost-surface-muted)),
   [data-motion-page] :is(.hof-page-frame__inner, [data-motion-stack]) > :not([data-motion-stack], :has(.sports-card, .glass-surface, .glass-card, .frost-surface, .frost-surface-soft, .frost-surface-muted)),
-  [data-motion-page] :is(.sports-card, .glass-surface, .glass-card):not(a, [data-skeleton], [data-motion-static] *, :is(.sports-card, .glass-surface, .glass-card) *) {
+  [data-motion-page] :is(.sports-card, .glass-surface, .glass-card):not(a, [data-skeleton], [data-motion-tile], [data-motion-static] *, :is(.sports-card, .glass-surface, .glass-card) *) {
     transition:
       opacity 420ms ease,
       translate 560ms var(--motion-ease);
@@ -2362,13 +2362,13 @@ html[data-scrolling] body {
 
   [data-motion-page] > :nth-child(2),
   [data-motion-page] :is(.hof-page-frame__inner, [data-motion-stack]) > :nth-child(2),
-  [data-motion-page] :is(.sports-card, .glass-surface, .glass-card):nth-child(2) {
+  [data-motion-page] :is(.sports-card, .glass-surface, .glass-card):not([data-motion-tile]):nth-child(2) {
     transition-delay: 70ms;
   }
 
   [data-motion-page] > :nth-child(n + 3),
   [data-motion-page] :is(.hof-page-frame__inner, [data-motion-stack]) > :nth-child(n + 3),
-  [data-motion-page] :is(.sports-card, .glass-surface, .glass-card):nth-child(n + 3) {
+  [data-motion-page] :is(.sports-card, .glass-surface, .glass-card):not([data-motion-tile]):nth-child(n + 3) {
     transition-delay: 140ms;
   }
 
@@ -2466,7 +2466,7 @@ html[data-scrolling] body {
   @starting-style {
     [data-motion-page] > :not(.hof-page-frame, [data-motion-stack], [data-skeleton], [data-motion-static], :has(.sports-card, .glass-surface, .glass-card, .frost-surface, .frost-surface-soft, .frost-surface-muted)),
     [data-motion-page] :is(.hof-page-frame__inner, [data-motion-stack]) > :not([data-motion-stack], :has(.sports-card, .glass-surface, .glass-card, .frost-surface, .frost-surface-soft, .frost-surface-muted)),
-    [data-motion-page] :is(.sports-card, .glass-surface, .glass-card):not(a, [data-skeleton], [data-motion-static] *, :is(.sports-card, .glass-surface, .glass-card) *) {
+    [data-motion-page] :is(.sports-card, .glass-surface, .glass-card):not(a, [data-skeleton], [data-motion-tile], [data-motion-static] *, :is(.sports-card, .glass-surface, .glass-card) *) {
       opacity: 0;
       translate: 0 14px;
     }
@@ -2519,6 +2519,110 @@ html[data-scrolling] body {
     [data-motion-page] :is(.recharts-line-dots > *, .recharts-scatter-symbol) {
       scale: 0;
     }
+  }
+}
+
+/* Game pages. Score tiles reveal on transform so the hover lift, which uses
+   translate, never waits behind the stagger. The hero's teams slide in from
+   their own side, and live scores tick when they change. */
+@media (prefers-reduced-motion: no-preference) {
+  [data-motion-page] [data-motion-tile] {
+    --d: calc(min(var(--i, 0), 24) * 35ms + 60ms);
+    transition:
+      opacity 420ms ease var(--d),
+      transform 560ms var(--motion-ease) var(--d),
+      translate 240ms var(--motion-ease),
+      box-shadow 240ms ease,
+      background-color 180ms ease,
+      filter 180ms ease;
+  }
+
+  [data-motion-page] [data-hero-side] {
+    transition:
+      opacity 480ms ease 60ms,
+      translate 640ms var(--motion-ease) 60ms;
+  }
+
+  [data-motion-page] [data-hero-center] {
+    transition:
+      opacity 420ms ease 160ms,
+      scale 620ms cubic-bezier(0.34, 1.4, 0.64, 1) 160ms;
+  }
+
+  @starting-style {
+    [data-motion-page] [data-motion-tile] {
+      opacity: 0;
+      transform: translateY(14px) scale(0.98);
+    }
+
+    [data-motion-page] [data-hero-side="away"] {
+      opacity: 0;
+      translate: -18px 0;
+    }
+
+    [data-motion-page] [data-hero-side="home"] {
+      opacity: 0;
+      translate: 18px 0;
+    }
+
+    [data-motion-page] [data-hero-center] {
+      opacity: 0;
+      scale: 0.86;
+    }
+  }
+
+  [data-live] [data-score-tick] {
+    display: inline-block;
+    animation: score-tick 900ms var(--motion-ease) backwards;
+  }
+
+  [data-fresh] > * {
+    animation: play-fresh 2.4s ease-out backwards;
+  }
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  [data-hero-side] a:hover [data-logo] {
+    scale: 1.07;
+    rotate: -5deg;
+  }
+
+  /* Bars clipped by a rounded track thicken through the track. */
+  [data-hover-item]:hover [data-motion-track] {
+    transform: scaleY(1.5);
+  }
+
+  [data-stat-tile]:hover {
+    translate: 0 -2px;
+    box-shadow: var(--motion-chip-shadow);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-motion-track] {
+    transition: transform 220ms var(--motion-ease);
+  }
+
+  [data-stat-tile] {
+    transition:
+      translate 220ms var(--motion-ease),
+      box-shadow 220ms ease;
+  }
+}
+
+@keyframes score-tick {
+  0% {
+    scale: 1.22;
+    color: var(--destructive);
+  }
+  60% {
+    color: currentColor;
+  }
+}
+
+@keyframes play-fresh {
+  from {
+    background-color: color-mix(in oklab, var(--destructive) 14%, transparent);
   }
 }
 

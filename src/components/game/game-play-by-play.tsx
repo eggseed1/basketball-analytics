@@ -139,6 +139,7 @@ export function GamePlayByPlayPanel({
   const live = isLiveLikeStatus(status as GameStatusKind | undefined);
   const polled = useLivePlays(gameId, initialEvents, live);
   const events = polled.events;
+  const [firstIds] = useState(() => new Set(initialEvents.map((e) => e.id)));
   const periods = useMemo(() => {
     const set = new Set(events.map((e) => e.period));
     return [...set].sort((a, b) => a - b);
@@ -214,6 +215,7 @@ export function GamePlayByPlayPanel({
             {visible.map((event) => (
               <tr
                 key={event.id}
+                data-fresh={live && !firstIds.has(event.id) ? "" : undefined}
                 className={cn(
                   "border-b border-border/70 last:border-0",
                   event.points > 0 && "bg-muted/40"

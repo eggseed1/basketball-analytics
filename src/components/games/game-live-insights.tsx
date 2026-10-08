@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, type ReactNode } from "react";
+import { useMemo, type CSSProperties, type ReactNode } from "react";
 
 import { MatchupWashCard } from "@/components/brand/team-wash-card";
 import { HalfBar, SideValue, TeamDot } from "@/components/games/game-story";
@@ -215,7 +215,7 @@ function PossessionBattleCard({
       </div>
 
       <ul className="flex flex-col gap-3">
-        {rows.map((row) => {
+        {rows.map((row, i) => {
           const better: Side | null =
             row.away === row.home
               ? null
@@ -227,6 +227,9 @@ function PossessionBattleCard({
           return (
             <li
               key={row.id}
+              data-hover-item
+              data-motion="row"
+              style={{ "--i": i } as CSSProperties}
               className="grid grid-cols-[3.5rem_minmax(0,1fr)_3.5rem] items-center gap-x-2"
               aria-label={`${row.label}: ${labels.away} ${row.away}, ${labels.home} ${row.home}`}
             >

@@ -89,8 +89,8 @@ function ListBoard({
             Live now
           </h2>
           <div className="flex flex-col gap-1">
-            {live.map((game) => (
-              <GameMatchupRow key={game.id} game={game} />
+            {live.map((game, i) => (
+              <GameMatchupRow key={game.id} game={game} motionIndex={i} />
             ))}
           </div>
         </div>
@@ -106,8 +106,8 @@ function ListBoard({
               {dayHeading(iso)}
             </h3>
             <div className="flex flex-col gap-1">
-              {(byDate.get(iso) ?? []).map((game) => (
-                <GameMatchupRow key={game.id} game={game} />
+              {(byDate.get(iso) ?? []).map((game, i) => (
+                <GameMatchupRow key={game.id} game={game} motionIndex={i} />
               ))}
             </div>
           </div>

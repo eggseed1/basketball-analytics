@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState, type CSSProperties } from "react";
 
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { TeamLogo } from "@/components/brand/team-logo";
@@ -131,8 +131,8 @@ export function GamePreviewPanel({ data }: { data: GamePreviewData }) {
         <TeamHeader data={data} />
         {data.teamRows.length ? (
           <div className="flex flex-col gap-1.5">
-            {data.teamRows.map((row) => (
-              <TeamRow key={row.id} row={row} colors={colors} />
+            {data.teamRows.map((row, i) => (
+              <TeamRow key={row.id} row={row} colors={colors} index={i} />
             ))}
           </div>
         ) : (
@@ -168,9 +168,10 @@ export function GamePreviewPanel({ data }: { data: GamePreviewData }) {
         </div>
         {picked.away || picked.home ? (
           <div className="flex flex-col gap-1">
-            {PLAYER_ROWS.map((row) => (
+            {PLAYER_ROWS.map((row, i) => (
               <PlayerRow
                 key={row.id}
+                index={i}
                 label={row.label}
                 format={row.format}
                 away={picked.away?.stats[row.id] ?? null}
@@ -215,7 +216,7 @@ export function GamePreviewPanel({ data }: { data: GamePreviewData }) {
             {data.meetings.map((m) => {
               const awayWon = m.awayScore > m.homeScore;
               return (
-                <li key={m.id}>
+                <li key={m.id} data-motion="row">
                   <Link
                     href={`/games/${m.id}`}
                     className="flex items-center justify-between gap-3 py-2.5 text-[14px] transition-colors hover:text-foreground"
@@ -305,9 +306,11 @@ function RankChip({ rank, className }: { rank: number | null; className?: string
 function TeamRow({
   row,
   colors,
+  index,
 }: {
   row: PreviewTeamRow;
   colors: Record<PreviewSide, string>;
+  index: number;
 }) {
   const edge = edgeOf(row, row.away, row.home);
   const width = (rank: number | null) =>
@@ -330,17 +333,20 @@ function TeamRow({
           <RankChip rank={rank} className="sm:hidden" />
         </span>
         <div
+          data-motion-track
           className={cn(
             "flex h-2 flex-1 overflow-hidden rounded-full bg-secondary",
             side === "away" && "justify-end"
           )}
         >
           <div
+            data-motion-bar="x"
             className="h-full rounded-full transition-[width] duration-500"
             style={{
               width: width(rank),
               backgroundColor: colors[side],
               opacity: leads || edge == null ? 1 : 0.4,
+              transformOrigin: side === "away" ? "right" : "left",
             }}
           />
         </div>
@@ -349,7 +355,12 @@ function TeamRow({
     );
   };
   return (
-    <div className="grid grid-cols-[1fr_5.5rem_1fr] items-center gap-2 sm:grid-cols-[1fr_8rem_1fr] sm:gap-3">
+    <div
+      data-hover-item
+      data-motion="row"
+      style={{ "--i": index } as CSSProperties}
+      className="-mx-1.5 grid grid-cols-[1fr_5.5rem_1fr] items-center gap-2 rounded-md px-1.5 py-0.5 sm:grid-cols-[1fr_8rem_1fr] sm:gap-3"
+    >
       {cell("away")}
       <span className="text-center text-[11.5px] font-semibold leading-tight text-muted-foreground sm:text-[12.5px]">
         {row.label}
@@ -469,21 +480,28 @@ function PercentileTrack({
         {pct != null ? (
           <>
             <div
+              data-motion-bar="x"
               className="absolute top-1/2 h-1.5 -translate-y-1/2 rounded-full opacity-45 transition-[width] duration-500"
               style={{
                 width: `${pct}%`,
                 backgroundColor: color,
                 [side === "away" ? "right" : "left"]: 0,
+                transformOrigin: side === "away" ? "right" : "left",
               }}
             />
             <span
-              className="absolute top-1/2 grid h-6 w-6 -translate-y-1/2 place-items-center rounded-full text-[10.5px] font-bold text-white shadow-sm ring-2 ring-card transition-[left,right] duration-500 tabular-nums"
+              className="absolute top-1/2 h-6 w-6 -translate-y-1/2 transition-[left,right] duration-500"
               style={{
-                backgroundColor: color,
                 [side === "away" ? "right" : "left"]: `calc(${pct}% - ${(pct * 0.24).toFixed(2)}px)`,
               }}
             >
-              {pct}
+              <span
+                data-motion-dot
+                className="grid size-full place-items-center rounded-full text-[10.5px] font-bold text-white shadow-sm ring-2 ring-card tabular-nums"
+                style={{ backgroundColor: color }}
+              >
+                {pct}
+              </span>
             </span>
           </>
         ) : null}
@@ -497,14 +515,21 @@ function PlayerRow({
   format,
   away,
   home,
+  index,
 }: {
+  index: number;
   label: string;
   format: (v: number) => string;
   away: { value: number | null; pct: number | null } | null;
   home: { value: number | null; pct: number | null } | null;
 }) {
   return (
-    <div className="grid grid-cols-[1fr_4.75rem_1fr] items-center gap-2 sm:grid-cols-[1fr_7rem_1fr] sm:gap-3">
+    <div
+      data-hover-item
+      data-motion="row"
+      style={{ "--i": index } as CSSProperties}
+      className="-mx-1.5 grid grid-cols-[1fr_4.75rem_1fr] items-center gap-2 rounded-md px-1.5 sm:grid-cols-[1fr_7rem_1fr] sm:gap-3"
+    >
       <PercentileTrack side="away" stat={away} format={format} />
       <span className="text-center text-[11.5px] font-semibold leading-tight text-muted-foreground sm:text-[12.5px]">
         {label}

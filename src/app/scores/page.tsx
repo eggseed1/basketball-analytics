@@ -1,3 +1,4 @@
+import { MotionReveal } from "@/components/continuity/motion-reveal";
 import {
   Gamefeed,
   type GamefeedView,
@@ -121,7 +122,8 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
   const daySeason = day ? seasonForDate(day.date) : scheduleSeason;
 
   return (
-    <main className="site-shell flex flex-col gap-5 py-5 sm:gap-6 sm:py-7">
+    <main data-motion-page className="site-shell flex flex-col gap-5 py-5 sm:gap-6 sm:py-7">
+      <MotionReveal />
       <Gamefeed
         view={view}
         season={view === "day" ? daySeason : scheduleSeason}

@@ -4,6 +4,7 @@ import { GameScoringScatterLazy as GameScoringScatter } from "@/components/chart
 import { ExploreGamesClientShell } from "@/components/explore/explore-games-client-shell";
 import { GameSeasonTable } from "@/components/explore/game-season-table";
 import { TeamCatalogFallbackNotice } from "@/components/explore/team-catalog-fallback-notice";
+import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { PageHeader } from "@/components/layout/page-header";
 import { DecadeChips } from "@/components/sports/decade-chips";
 import { GameScoreCard } from "@/components/sports/game-score-card";
@@ -66,7 +67,8 @@ export default async function ExploreGamesPage({
   const truncated = games.length > TABLE_CAP;
 
   return (
-    <main className="site-shell flex flex-1 flex-col gap-5 py-6 sm:py-8">
+    <main data-motion-page className="site-shell flex flex-1 flex-col gap-5 py-6 sm:py-8">
+      <MotionReveal />
       <PageHeader eyebrow="Games" title="Explore" />
 
       <TeamCatalogFallbackNotice source={source} warnings={warnings} />
@@ -96,7 +98,7 @@ export default async function ExploreGamesPage({
                 No games for this season filter.
               </div>
             ) : (
-              cards.map((game) => <GameScoreCard key={game.id} game={game} />)
+              cards.map((game, i) => <GameScoreCard key={game.id} game={game} motionIndex={i} />)
             )}
           </section>
 

@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 
 import type {
   GameAnalysisSummary,
@@ -33,15 +33,20 @@ function StoryTile({
   value,
   sub,
   color,
+  index,
 }: {
   label: string;
   value: ReactNode;
   sub?: ReactNode;
   color?: string;
+  index: number;
 }) {
   return (
     <GlassSurface
       effect="css"
+      data-motion-tile=""
+      data-stat-tile=""
+      style={{ "--i": index } as CSSProperties}
       className="flex min-w-0 flex-col gap-1 px-3.5 py-3"
     >
       <span
@@ -96,6 +101,7 @@ export function GameStoryStrip({
       const otherLead = other === "home" ? homeLead : awayLead;
       tiles.push(
         <StoryTile
+          index={tiles.length}
           key="lead"
           label="Biggest lead"
           value={`+${Math.max(homeLead, awayLead)}`}
@@ -106,6 +112,7 @@ export function GameStoryStrip({
     }
     tiles.push(
       <StoryTile
+        index={tiles.length}
         key="changes"
         label="Lead changes"
         value={story.leadChanges}
@@ -120,6 +127,7 @@ export function GameStoryStrip({
       if (run != null && run > 0) {
         tiles.push(
           <StoryTile
+            index={tiles.length}
             key="run"
             label="Longest run"
             value={`${run}-0`}
@@ -137,6 +145,7 @@ export function GameStoryStrip({
       const side: Side = winner;
       tiles.push(
         <StoryTile
+          index={tiles.length}
           key="comeback"
           label="Comeback"
           value={`${story.largestDeficitOvercomeByWinner} pts`}
@@ -153,6 +162,7 @@ export function GameStoryStrip({
     const lo = swing.edge === "home" ? swing.awayPoints : swing.homePoints;
     tiles.push(
       <StoryTile
+        index={tiles.length}
         key="swing"
         label="Best quarter"
         value={`${hi}-${lo}`}
@@ -293,12 +303,14 @@ export function HalfBar({
   const width = max > 0 ? Math.max(4, (value / max) * 100) : 0;
   return (
     <div
+      data-motion-track
       className={cn(
         "flex h-2 flex-1 overflow-hidden bg-foreground/[0.06]",
         side === "away" ? "justify-end rounded-l-full" : "rounded-r-full"
       )}
     >
       <div
+        data-motion-bar="x"
         className={cn(
           "h-full transition-[width] duration-500",
           side === "away" ? "rounded-l-full" : "rounded-r-full"
@@ -307,6 +319,7 @@ export function HalfBar({
           width: `${width}%`,
           background: color,
           opacity: emphasis === "edge" ? 1 : emphasis === "trail" ? 0.28 : 0.5,
+          transformOrigin: side === "away" ? "right" : "left",
         }}
       />
     </div>
@@ -400,7 +413,7 @@ export function GameTeamComparison({
             </span>
           </div>
           <ul className="flex flex-col gap-3">
-            {rows.map((row) => {
+            {rows.map((row, i) => {
               const factor = row.factorIds
                 .map((id) => factors.get(id))
                 .find(Boolean);
@@ -411,6 +424,9 @@ export function GameTeamComparison({
               return (
                 <li
                   key={row.id}
+                  data-hover-item
+                  data-motion="row"
+                  style={{ "--i": i } as CSSProperties}
                   className="grid grid-cols-[5rem_minmax(0,1fr)_5rem] items-center gap-x-2"
                   aria-label={`${row.label}: ${outcome.awayLabel} ${row.awayDisplay}, ${outcome.homeLabel} ${row.homeDisplay}${edge ? `, clear edge ${edge === "home" ? outcome.homeLabel : outcome.awayLabel}` : ""}`}
                 >

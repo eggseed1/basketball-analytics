@@ -1,4 +1,4 @@
-import { memo, type ReactNode } from "react";
+import { memo, type CSSProperties, type ReactNode } from "react";
 import { TransitionLink } from "@/components/continuity/query-nav";
 
 import { GlassSurface } from "@/components/brand/glass-surface";
@@ -328,11 +328,14 @@ export function GameMatchupBoard({
   brandPresentation = "era",
   href,
   className,
+  motionIndex,
 }: {
   game: GameSummary;
   brandPresentation?: HistoricalBrandPresentation;
   href?: string | false;
   className?: string;
+  /** Position in a list; staggers the reveal on motion pages. */
+  motionIndex?: number;
 }) {
   const matchup = buildGameMatchupTheme(
     gameSideBrandKey(game, "away"),
@@ -344,7 +347,8 @@ export function GameMatchupBoard({
       as="div"
       effect="css"
       data-motion={href === false ? undefined : "card"}
-      style={STRIP_CARD_STYLE}
+      data-motion-tile={motionIndex != null ? "" : undefined}
+      style={motionIndex != null ? ({ ...STRIP_CARD_STYLE, "--i": motionIndex } as CSSProperties) : STRIP_CARD_STYLE}
       className={cn("score-row relative isolate px-3 py-3", className)}
     >
       <MatchupOrbs away={matchup.awayWash} home={matchup.homeWash} winner={finalWinner(game)} />
@@ -408,16 +412,19 @@ export const GameMatchupRow = memo(function GameMatchupRow({
   game,
   className,
   brandPresentation = "era",
+  motionIndex,
 }: {
   game: GameSummary;
   className?: string;
   brandPresentation?: HistoricalBrandPresentation;
+  motionIndex?: number;
 }) {
   return (
     <GameMatchupBoard
       game={game}
       brandPresentation={brandPresentation}
       className={className}
+      motionIndex={motionIndex}
     />
   );
 });
@@ -430,8 +437,10 @@ export const GameScoreCard = memo(function GameScoreCard({
   className,
   href,
   brandPresentation = "era",
+  motionIndex,
 }: {
   game: GameSummary;
+  motionIndex?: number;
   awayStarters?: GameCardStarter[];
   homeStarters?: GameCardStarter[];
   className?: string;
@@ -451,7 +460,8 @@ export const GameScoreCard = memo(function GameScoreCard({
       as="article"
       effect="css"
       data-motion="card"
-      style={STRIP_CARD_STYLE}
+      data-motion-tile={motionIndex != null ? "" : undefined}
+      style={motionIndex != null ? ({ ...STRIP_CARD_STYLE, "--i": motionIndex } as CSSProperties) : STRIP_CARD_STYLE}
       className={cn(
         "score-row relative isolate flex flex-col gap-2.5 px-3 py-3",
         className
