@@ -243,11 +243,27 @@ function Game({ expanded, onExpand }: { expanded: boolean; onExpand: () => void 
     return () => cancelAnimationFrame(raf);
   }, [pendingId, auto, reducedMotion]);
 
+  const lastWrite = useRef(0);
+  const screenRef = useRef(screen);
   useEffect(() => {
+    screenRef.current = screen;
     if (screen !== "play" || !life || life.ended) return;
-    const t = window.setTimeout(() => writeSave(life), 800);
+    // Throttle, not debounce: at high speed the life changes every tick and a debounce would never fire.
+    const wait = Math.max(0, 1500 - (Date.now() - lastWrite.current));
+    const t = window.setTimeout(() => {
+      writeSave(life);
+      lastWrite.current = Date.now();
+    }, wait);
     return () => window.clearTimeout(t);
   }, [life, screen]);
+
+  useEffect(
+    () => () => {
+      const s = lifeRef.current;
+      if (screenRef.current === "play" && s && !s.ended) writeSave(s);
+    },
+    [],
+  );
 
   useEffect(() => {
     if (screen !== "play") return;
