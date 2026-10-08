@@ -48,16 +48,20 @@ export function SentimentHeadlinesList({
       {headlines.length ? (
         <ul className="sports-card divide-y divide-border/60">
           {headlines.map((row) => (
-            <li key={row.url} className="flex flex-col gap-1.5 px-4 py-3 sm:flex-row sm:items-start sm:gap-3">
+            <li
+              key={row.url}
+              className="group flex flex-col gap-1.5 px-4 py-3 hover:bg-foreground/[0.035] sm:flex-row sm:items-start sm:gap-3"
+            >
               <span
                 className={cn(
-                  "inline-flex w-16 shrink-0 justify-center rounded-full border px-1.5 py-0.5 text-[11px] font-semibold tabular-nums",
+                  "inline-flex w-16 shrink-0 cursor-help justify-center rounded-full border px-1.5 py-0.5 text-[11px] font-semibold tabular-nums transition-[scale,box-shadow] duration-200 group-hover:scale-105 group-hover:shadow-sm",
                   toneClass(row.rating ?? row.score)
                 )}
-                title={
+                data-tip={row.rating !== undefined ? "Language model rating" : "Word-list tone"}
+                data-tip-sub={
                   row.rating !== undefined
-                    ? `Language model rating of this headline toward ${row.players[0]?.name ?? "the player"}`
-                    : "Word-list tone of the headline and summary, 50% is neutral"
+                    ? `This headline's tone toward ${row.players[0]?.name ?? "the player"}`
+                    : "Headline and summary, 50% is neutral"
                 }
               >
                 {row.rating !== undefined ? ratingLabel(row.rating) : sentimentPct(row.score)}

@@ -1,6 +1,8 @@
 import Link from "next/link";
+import type { CSSProperties } from "react";
 
 import { TeamLogo } from "@/components/brand/team-logo";
+import { FAN_COLOR, MEDIA_COLOR } from "@/components/sentiment/sentiment-insights-panels";
 import {
   formatSentimentDate,
   LaneOriginTag,
@@ -12,11 +14,33 @@ import { ALL_TEAM_ABBRS, resolveTeamBrand } from "@/lib/nba-brand";
 import { type, textLinkClassName } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 
-function LaneCell({ lane }: { lane?: CuratedSentimentLane }) {
+function LaneCell({
+  lane,
+  color,
+  index,
+}: {
+  lane?: CuratedSentimentLane;
+  color: string;
+  index: number;
+}) {
   if (!lane) return <span className="text-muted-foreground">—</span>;
   return (
     <span className="inline-flex flex-col items-end gap-0.5">
       <span className="font-semibold tabular-nums">{sentimentPct(lane.score)}</span>
+      <span aria-hidden className="relative block h-1 w-12 rounded-full bg-foreground/10">
+        <span
+          data-motion-bar="x"
+          className="absolute inset-y-0 left-0 rounded-full"
+          style={
+            {
+              width: `${((lane.score + 1) / 2) * 100}%`,
+              backgroundColor: color,
+              "--i": index,
+            } as CSSProperties
+          }
+        />
+        <span className="absolute -inset-y-0.5 left-1/2 w-px bg-foreground/40" />
+      </span>
       <LaneOriginTag lane={{ origin: lane.origin, mentionVolume: lane.mentionVolume }} />
     </span>
   );
@@ -78,12 +102,18 @@ export function SentimentTeamsBoard({ teams }: { teams: TeamSentimentProfile[] }
             </tr>
           </thead>
           <tbody>
-            {rows.map(({ abbr, espnId, profile }) => {
+            {rows.map(({ abbr, espnId, profile }, index) => {
               const latest = profile?.headlines?.[0];
               const headlineCount =
                 profile?.media?.origin === "headlines" ? profile.media.mentionVolume : null;
               return (
-                <tr key={abbr} className="border-b border-border/60 last:border-0 align-top">
+                <tr
+                  key={abbr}
+                  data-motion-item
+                  data-hover-item
+                  style={{ "--i": index } as CSSProperties}
+                  className="border-b border-border/60 last:border-0 align-top"
+                >
                   <td className="px-3 py-2">
                     <Link
                       href={`/teams/${encodeURIComponent(espnId)}?tab=organization`}
@@ -94,10 +124,10 @@ export function SentimentTeamsBoard({ teams }: { teams: TeamSentimentProfile[] }
                     </Link>
                   </td>
                   <td className="px-3 py-2 text-right">
-                    <LaneCell lane={profile?.fan} />
+                    <LaneCell lane={profile?.fan} color={FAN_COLOR} index={index} />
                   </td>
                   <td className="px-3 py-2 text-right">
-                    <LaneCell lane={profile?.media} />
+                    <LaneCell lane={profile?.media} color={MEDIA_COLOR} index={index} />
                   </td>
                   <td className="px-3 py-2 text-right tabular-nums text-muted-foreground">
                     {headlineCount ?? "—"}

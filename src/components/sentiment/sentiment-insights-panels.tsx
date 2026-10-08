@@ -1,5 +1,6 @@
 import { ChevronDown } from "lucide-react";
 import Link from "next/link";
+import type { CSSProperties } from "react";
 
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { TeamLogo } from "@/components/brand/team-logo";
@@ -51,13 +52,13 @@ export function SentimentTopicHeat({
         </p>
       </div>
       <ul className="flex flex-col gap-2">
-        {shown.map((row) => {
+        {shown.map((row, index) => {
           const isActive =
             active != null &&
             active.length > 0 &&
             row.topic.toLowerCase().includes(active);
           return (
-          <li key={row.topic} className="flex flex-col gap-1">
+          <li key={row.topic} data-hover-item className="flex flex-col gap-1">
             <div className="flex items-baseline justify-between gap-2">
               <Link
                 href={`/sentiment?view=players&topic=${encodeURIComponent(row.topic)}`}
@@ -74,13 +75,14 @@ export function SentimentTopicHeat({
                 players
               </span>
             </div>
-            <div className="h-1.5 overflow-hidden rounded-full bg-secondary/80">
+            <div className="h-1.5 rounded-full bg-secondary/80">
               <div
+                data-motion-bar="x"
                 className={cn(
                   "h-full rounded-full",
                   isActive ? "bg-primary/80" : "bg-amber-500/80"
                 )}
-                style={{ width: `${Math.max(8, (row.weight / max) * 100)}%` }}
+                style={{ width: `${Math.max(8, (row.weight / max) * 100)}%`, "--i": index } as CSSProperties}
               />
             </div>
           </li>
@@ -178,7 +180,8 @@ function TopicCloud({
                 key={entry.key}
                 className="font-semibold leading-tight tracking-tight"
                 style={{ fontSize: `${12 + t * 14}px`, color, opacity: 0.45 + t * 0.55 }}
-                title={entry.hint}
+                data-tip={entry.label}
+                data-tip-sub={entry.hint}
               >
                 {entry.label}
               </li>
@@ -203,24 +206,33 @@ function TopicCloud({
 }
 
 /** Fan and media score on one 0-100% track, with the gap between them filled in. */
-function GapTrack({ fan, media }: { fan: number; media: number }) {
+function GapTrack({ fan, media, index }: { fan: number; media: number; index: number }) {
   const f = ((fan + 1) / 2) * 100;
   const m = ((media + 1) / 2) * 100;
+  const motion = { "--i": index, "--mark-from": "50%" } as CSSProperties;
   return (
-    <span aria-hidden className="relative block h-4 w-full max-sm:hidden">
+    <span
+      aria-hidden
+      data-tip={`Fans ${scorePct(fan)} · Media ${scorePct(media)}`}
+      data-tip-sub="50% is neutral"
+      className="relative block h-4 w-full max-sm:hidden"
+    >
       <span className="absolute inset-x-0 top-1/2 h-px bg-border" />
       <span className="absolute top-1/2 h-px w-px -translate-y-1/2 bg-muted-foreground/50" style={{ left: "50%", height: 8 }} />
       <span
+        data-motion-bar="x"
         className="absolute top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-foreground/15"
-        style={{ left: `${Math.min(f, m)}%`, width: `${Math.abs(f - m)}%` }}
+        style={{ ...motion, left: `${Math.min(f, m)}%`, width: `${Math.abs(f - m)}%` }}
       />
       <span
+        data-motion-mark
         className="absolute top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-[var(--card)]"
-        style={{ left: `${m}%`, background: MEDIA_COLOR }}
+        style={{ ...motion, left: `${m}%`, background: MEDIA_COLOR }}
       />
       <span
+        data-motion-mark
         className="absolute top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-[var(--card)]"
-        style={{ left: `${f}%`, background: FAN_COLOR }}
+        style={{ ...motion, left: `${f}%`, background: FAN_COLOR }}
       />
     </span>
   );
@@ -275,12 +287,14 @@ export function SentimentDivergenceBoard({
       </div>
 
       <ul className="-mx-2 flex flex-col">
-        {measured.map((row) => {
+        {measured.map((row, index) => {
           const player = byId.get(row.playerId);
           return (
             <li key={row.playerId}>
               <details className="group rounded-xl open:bg-foreground/[0.03]">
-                <summary className="grid cursor-pointer list-none grid-cols-[minmax(0,1fr)_auto] sm:grid-cols-[minmax(0,11rem)_1fr_auto] items-center gap-3 rounded-xl px-2 py-2 transition-colors hover:bg-foreground/[0.04] [&::-webkit-details-marker]:hidden">
+                <summary
+                  data-hover-item
+                  className="grid cursor-pointer list-none grid-cols-[minmax(0,1fr)_auto] sm:grid-cols-[minmax(0,11rem)_1fr_auto] items-center gap-3 rounded-xl px-2 py-2 transition-colors hover:bg-foreground/[0.04] [&::-webkit-details-marker]:hidden">
                   <span className="flex min-w-0 items-center gap-2">
                     <PlayerHeadshot
                       playerId={row.playerId}
@@ -300,7 +314,7 @@ export function SentimentDivergenceBoard({
                       </span>
                     </span>
                   </span>
-                  <GapTrack fan={row.fanScore} media={row.mediaScore} />
+                  <GapTrack fan={row.fanScore} media={row.mediaScore} index={index} />
                   <span className="flex items-center gap-1.5">
                     <span
                       className={cn(

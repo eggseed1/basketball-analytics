@@ -49,11 +49,13 @@ function MoodPanel({
   color,
   lane,
   points,
+  windowId,
 }: {
   title: string;
   color: string;
   lane?: CuratedSentimentLane;
   points: SentimentMoodSeries["fan"];
+  windowId: SentimentWindowId;
 }) {
   const total = points.reduce((sum, p) => sum + (p.count ?? 0), 0);
   return (
@@ -70,6 +72,7 @@ function MoodPanel({
       </div>
       {lane && points.length ? (
         <SentimentTrendChart
+          key={windowId}
           label={title}
           color={color}
           points={points}
@@ -119,12 +122,19 @@ export function LeagueMoodCharts({
         </div>
       </div>
       <div className="grid gap-4 lg:grid-cols-2">
-        <MoodPanel title="Fan mood" color="rgb(59 130 246)" lane={moodLanes.fan} points={series.fan} />
+        <MoodPanel
+          title="Fan mood"
+          color="rgb(59 130 246)"
+          lane={moodLanes.fan}
+          points={series.fan}
+          windowId={window}
+        />
         <MoodPanel
           title="Media mood"
           color="rgb(168 85 247)"
           lane={moodLanes.media}
           points={series.media}
+          windowId={window}
         />
       </div>
     </section>

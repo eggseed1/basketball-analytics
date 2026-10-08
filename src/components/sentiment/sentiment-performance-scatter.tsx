@@ -140,7 +140,7 @@ export function SentimentPerformanceScatter({ rows }: { rows: TrackedPlayerSenti
             Too few players have both a {lane} lane and last season&apos;s DRBL/100 to plot.
           </p>
         ) : (
-          <div style={{ height: 300 }}>
+          <div key={lane} data-sentiment-scatter style={{ height: 300 }}>
             <ResponsiveContainer width="100%" height="100%">
               <ScatterChart margin={{ top: 8, right: 16, left: 0, bottom: 8 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" strokeOpacity={0.45} />

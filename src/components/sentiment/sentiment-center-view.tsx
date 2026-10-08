@@ -94,7 +94,7 @@ export function SentimentCenterView({
   const { league } = feed;
 
   return (
-    <div className="flex flex-col gap-8">
+    <div key={view} data-motion-stack className="flex flex-col gap-8">
       <header className="flex flex-col gap-3">
         <p
           className={cn(

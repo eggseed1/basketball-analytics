@@ -1,3 +1,4 @@
+import { MotionReveal } from "@/components/continuity/motion-reveal";
 import {
   SentimentCenterView,
   type SentimentView,
@@ -52,7 +53,8 @@ export default async function SentimentPage({ searchParams }: PageProps) {
   }
 
   return (
-    <main className="site-shell py-6 sm:py-8">
+    <main data-motion-page className="site-shell py-6 sm:py-8">
+      <MotionReveal />
       <SentimentCenterView
         feed={feed}
         players={players}

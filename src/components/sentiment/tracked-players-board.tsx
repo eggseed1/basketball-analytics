@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo, useState, type CSSProperties } from "react";
 
 import { TeamLogo } from "@/components/brand/team-logo";
 import { LaneOriginTag, sentimentPct } from "@/components/sentiment/sentiment-source";
@@ -67,8 +67,15 @@ function Sparkline({ points, color }: { points: SentimentSeriesPoint[]; color: s
   return (
     <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} aria-hidden className="overflow-visible">
       <line x1={0} x2={w} y1={y(0)} y2={y(0)} stroke="currentColor" strokeOpacity={0.25} strokeDasharray="2 2" />
-      <path d={d} fill="none" stroke={color} strokeWidth={1.5} />
-      <circle cx={x(points.length - 1)} cy={y(scores[scores.length - 1]!)} r={2} fill={color} />
+      <path data-motion-line pathLength={1} d={d} fill="none" stroke={color} strokeWidth={1.5} />
+      <circle
+        data-motion-dot
+        cx={x(points.length - 1)}
+        cy={y(scores[scores.length - 1]!)}
+        r={2}
+        fill={color}
+        style={{ "--i": 40 } as CSSProperties}
+      />
     </svg>
   );
 }
@@ -234,11 +241,16 @@ export function TrackedPlayersBoard({
                 </td>
               </tr>
             ) : (
-              filtered.map((row) => {
+              filtered.map((row, index) => {
                 const delta = trendDelta(row.media);
                 const abbr = resolveTeamBrand(row.teamKey)?.abbr;
                 return (
-                  <tr key={row.playerId} className="border-b border-border/60 last:border-0">
+                  <tr
+                    key={row.playerId}
+                    data-motion-item={index < 24 ? "" : undefined}
+                    style={index < 24 ? ({ "--i": index } as CSSProperties) : undefined}
+                    className="border-b border-border/60 last:border-0"
+                  >
                     <td className="px-3 py-2">
                       <Link
                         href={`/players/${encodeURIComponent(row.playerId)}?view=sentiment`}

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { CSSProperties } from "react";
 
 import { TeamLogo } from "@/components/brand/team-logo";
 import { FAN_COLOR, MEDIA_COLOR } from "@/components/sentiment/sentiment-insights-panels";
@@ -21,23 +22,27 @@ function ordinal(n: number): string {
 }
 
 /** Tone percentile and production percentile on one 0–100 track. */
-function GapTrack({ row, toneColor }: { row: ToneGapRow; toneColor: string }) {
+function GapTrack({ row, toneColor, index }: { row: ToneGapRow; toneColor: string; index: number }) {
   const lo = Math.min(row.tonePct, row.productionPct);
   const hi = Math.max(row.tonePct, row.productionPct);
+  const motion = { "--i": index, "--mark-from": "50%" } as CSSProperties;
   return (
     <div className="relative h-3" aria-hidden>
       <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-border" />
       <div
+        data-motion-bar="x"
         className="absolute top-1/2 h-[3px] -translate-y-1/2 rounded-full bg-foreground/25"
-        style={{ left: `${lo}%`, width: `${hi - lo}%` }}
+        style={{ ...motion, left: `${lo}%`, width: `${hi - lo}%` }}
       />
       <span
+        data-motion-mark
         className="absolute top-1/2 size-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full ring-2 ring-background"
-        style={{ left: `${row.productionPct}%`, backgroundColor: PRODUCTION_COLOR }}
+        style={{ ...motion, left: `${row.productionPct}%`, backgroundColor: PRODUCTION_COLOR }}
       />
       <span
+        data-motion-mark
         className="absolute top-1/2 size-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full ring-2 ring-background"
-        style={{ left: `${row.tonePct}%`, backgroundColor: toneColor }}
+        style={{ ...motion, left: `${row.tonePct}%`, backgroundColor: toneColor }}
       />
     </div>
   );
@@ -63,12 +68,14 @@ function GapList({
       </h4>
       {rows.length ? (
         <ul className="-mx-2 flex flex-col">
-          {rows.map((row) => (
+          {rows.map((row, index) => (
             <li key={row.playerId}>
               <Link
                 href={`/players/${encodeURIComponent(row.playerId)}?view=sentiment`}
+                data-hover-item
                 className="flex flex-col gap-1 rounded-lg px-2 py-1.5 transition-colors hover:bg-foreground/[0.04]"
-                title={`Tone ${sentimentPct(row.score)} from ${row.mentionVolume} ${unit}, ${ordinal(row.tonePct)} percentile. DRBL/100 ${row.drbl100.toFixed(2)}, ${ordinal(row.productionPct)} percentile.`}
+                data-tip={`Tone ${sentimentPct(row.score)} from ${row.mentionVolume} ${unit}, ${ordinal(row.tonePct)} percentile`}
+                data-tip-sub={`DRBL/100 ${row.drbl100.toFixed(2)}, ${ordinal(row.productionPct)} percentile`}
               >
                 <span className="flex min-w-0 items-baseline justify-between gap-2">
                   <span className={cn(type.bodySm, "inline-flex min-w-0 items-center gap-1.5 font-semibold")}>
@@ -79,7 +86,7 @@ function GapList({
                     Tone {ordinal(row.tonePct)} · DRBL {ordinal(row.productionPct)}
                   </span>
                 </span>
-                <GapTrack row={row} toneColor={toneColor} />
+                <GapTrack row={row} toneColor={toneColor} index={index} />
               </Link>
             </li>
           ))}
@@ -96,14 +103,20 @@ function GapSideCard({
   side,
   toneColor,
   unit,
+  index,
 }: {
   label: string;
   side: ToneGapSide | null;
   toneColor: string;
   unit: string;
+  index: number;
 }) {
   return (
-    <article className="flex min-w-0 flex-col gap-3 rounded-[11px] bg-foreground/[0.035] p-4 ring-1 ring-inset ring-foreground/[0.06]">
+    <article
+      data-motion-item
+      style={{ "--i": index } as CSSProperties}
+      className="flex min-w-0 flex-col gap-3 rounded-[11px] bg-foreground/[0.035] p-4 ring-1 ring-inset ring-foreground/[0.06]"
+    >
       <header className="flex flex-col gap-0.5">
         <h3 className={cn(type.bodySm, "font-bold")}>{label}</h3>
         <p className={cn(type.caption, "text-muted-foreground")}>
@@ -138,13 +151,19 @@ function RatingColumn({
   title,
   side,
   windowDays,
+  index,
 }: {
   title: string;
   side: SentimentRatingTalk["overrated"];
   windowDays: number;
+  index: number;
 }) {
   return (
-    <article className="flex min-w-0 flex-col gap-2 rounded-[11px] bg-foreground/[0.035] p-4 ring-1 ring-inset ring-foreground/[0.06]">
+    <article
+      data-motion-item
+      style={{ "--i": index } as CSSProperties}
+      className="flex min-w-0 flex-col gap-2 rounded-[11px] bg-foreground/[0.035] p-4 ring-1 ring-inset ring-foreground/[0.06]"
+    >
       <header className="flex flex-col gap-0.5">
         <h3 className={cn(type.bodySm, "font-bold")}>{title}</h3>
         <p className={cn(type.caption, "tabular-nums text-muted-foreground")}>
@@ -209,8 +228,8 @@ export function SentimentOverratedView({
           </p>
         </div>
         <div className="grid gap-3 lg:grid-cols-2">
-          <GapSideCard label="Fans" side={fan} toneColor={FAN_COLOR} unit="fan posts" />
-          <GapSideCard label="Media" side={media} toneColor={MEDIA_COLOR} unit="headlines" />
+          <GapSideCard label="Fans" side={fan} toneColor={FAN_COLOR} unit="fan posts" index={0} />
+          <GapSideCard label="Media" side={media} toneColor={MEDIA_COLOR} unit="headlines" index={1} />
         </div>
       </section>
 
@@ -227,11 +246,17 @@ export function SentimentOverratedView({
             </p>
           </div>
           <div className="grid gap-3 lg:grid-cols-2">
-            <RatingColumn title="Called overrated" side={ratingTalk.overrated} windowDays={ratingTalk.windowDays} />
+            <RatingColumn
+              title="Called overrated"
+              side={ratingTalk.overrated}
+              windowDays={ratingTalk.windowDays}
+              index={0}
+            />
             <RatingColumn
               title="Called underrated"
               side={ratingTalk.underrated}
               windowDays={ratingTalk.windowDays}
+              index={1}
             />
           </div>
         </section>

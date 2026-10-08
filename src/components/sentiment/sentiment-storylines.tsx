@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { CSSProperties } from "react";
 
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { TeamLogo } from "@/components/brand/team-logo";
@@ -43,24 +44,35 @@ function DailyShareStrip({ topic, daily }: { topic: string; daily: SentimentStor
         role="img"
         aria-label={`Daily share of fan posts and headlines about ${topicLabel(topic).toLowerCase()}`}
       >
-        {daily.map((day) => (
+        {daily.map((day, index) => (
           <div
             key={day.date}
-            className="flex min-w-0 flex-1 flex-col"
-            title={`${formatSentimentDate(day.date)}: ${
-              day.fan == null ? "too few fan posts" : `${pct(day.fan)} of fan posts`
-            }, ${day.media == null ? "too few headlines" : `${pct(day.media)} of headlines`}`}
+            data-hover-item
+            className="flex min-w-0 flex-1 flex-col rounded-[3px] transition-colors hover:bg-foreground/[0.06]"
+            data-tip={formatSentimentDate(day.date)}
+            data-tip-sub={`${
+              day.fan == null ? "Too few fan posts" : `${pct(day.fan)} of fan posts`
+            } · ${day.media == null ? "too few headlines" : `${pct(day.media)} of headlines`}`}
           >
             <div className="flex flex-1 items-end border-b border-border/70">
               <div
+                data-motion-bar="y"
                 className="w-full rounded-t-[2px]"
-                style={{ height: `${height(day.fan)}%`, backgroundColor: FAN_COLOR }}
+                style={{ height: `${height(day.fan)}%`, backgroundColor: FAN_COLOR, "--i": index } as CSSProperties}
               />
             </div>
             <div className="flex flex-1 items-start">
               <div
+                data-motion-bar="y"
                 className="w-full rounded-b-[2px]"
-                style={{ height: `${height(day.media)}%`, backgroundColor: MEDIA_COLOR }}
+                style={
+                  {
+                    height: `${height(day.media)}%`,
+                    backgroundColor: MEDIA_COLOR,
+                    transformOrigin: "top",
+                    "--i": index,
+                  } as CSSProperties
+                }
               />
             </div>
           </div>
@@ -114,7 +126,7 @@ export function StorylinePlayerRow({
     .filter(Boolean)
     .join(" · ");
   return (
-    <li className="flex min-w-0 gap-2.5 py-2">
+    <li data-motion="row" className="flex min-w-0 gap-2.5 py-2">
       <PlayerHeadshot
         playerId={player.playerId}
         name={player.displayName}
@@ -166,9 +178,13 @@ export function StorylinePlayerRow({
   );
 }
 
-function StorylineCard({ storyline }: { storyline: SentimentStoryline }) {
+function StorylineCard({ storyline, index }: { storyline: SentimentStoryline; index: number }) {
   return (
-    <article className="flex min-w-0 flex-col gap-3 rounded-[11px] bg-foreground/[0.035] p-4 ring-1 ring-inset ring-foreground/[0.06]">
+    <article
+      data-motion-item
+      style={{ "--i": index } as CSSProperties}
+      className="flex min-w-0 flex-col gap-3 rounded-[11px] bg-foreground/[0.035] p-4 ring-1 ring-inset ring-foreground/[0.06]"
+    >
       <header className="flex flex-col gap-0.5">
         <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
           <h3 className={cn(type.bodySm, "font-bold")}>
@@ -227,8 +243,8 @@ export function SentimentStorylines({
         </p>
       </div>
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-        {storylines.map((storyline) => (
-          <StorylineCard key={storyline.topic} storyline={storyline} />
+        {storylines.map((storyline, index) => (
+          <StorylineCard key={storyline.topic} storyline={storyline} index={index} />
         ))}
       </div>
     </section>
