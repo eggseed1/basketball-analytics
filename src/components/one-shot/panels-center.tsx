@@ -74,7 +74,7 @@ export function LifeScene({ life, animate }: { life: LifeState; animate: boolean
             </span>
           </p>
         ) : (
-          <p className="text-[var(--os-dim)]">{lvl ? `${lvl.label}. Season not running.` : life.ageMonths < 36 ? "Growing up." : "No team yet."}</p>
+          <p className="text-[var(--os-dim)]">{life.after ? `${life.after.title}, ${life.after.employer}.` : lvl ? `${lvl.label}. Season not running.` : life.ageMonths < 36 ? "Growing up." : "No team yet."}</p>
         )}
       </div>
     </Panel>

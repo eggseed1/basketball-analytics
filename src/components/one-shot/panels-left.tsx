@@ -5,7 +5,6 @@ import { useEffect, useRef } from "react";
 import { FRAME_LABEL, fmtHeight, fmtLength, fmtWeight, heightEstimate, heightPercentile, parentTarget } from "@/one-shot/body";
 import { calendar, levelOf, MONTHS, nodeLabel, ROLE_LABEL, STAGE_LABEL, stageOf } from "@/one-shot/career";
 import { MEANS_LABEL } from "@/one-shot/engine";
-import { ADVISOR, LIFESTYLE, monthlySpend, netWorth, taxRate } from "@/one-shot/finance";
 import { archetype, athleticismBar, position, POSITION_LABEL, READINESS_LABEL, readiness, skillBar } from "@/one-shot/skills";
 import type { LifeState } from "@/one-shot/types";
 import { country, countryFlag } from "@/one-shot/world";
@@ -55,15 +54,15 @@ export function IdentityCard({ life, compact }: { life: LifeState; compact?: boo
             {age >= 10 ? `${POSITION_LABEL[position(life.body.heightCm, life.skills)]} · ${archetype(life)}` : STAGE_LABEL[stageOf(life.ageMonths)]}
           </p>
           <p className="mt-0.5 truncate text-[12.5px]">
-            {lvl ? lvl.label : nodeLabel(life.placement.node, life.placement.countryId, life.placement.leagueId)}
-            {team && life.placement.node !== "home" ? <span className="text-[var(--os-dim)]"> · {team}</span> : null}
+            {life.after ? life.after.title : lvl ? lvl.label : nodeLabel(life.placement.node, life.placement.countryId, life.placement.leagueId)}
+            {life.after ? <span className="text-[var(--os-dim)]"> · {life.after.employer}</span> : team && life.placement.node !== "home" ? <span className="text-[var(--os-dim)]"> · {team}</span> : null}
           </p>
         </div>
       </div>
       <dl className="mt-3 grid grid-cols-3 gap-px overflow-hidden rounded-[4px] border border-[var(--os-border)] bg-[var(--os-border)] font-mono text-[11px] uppercase tabular-nums">
         <IdCell k="Age" v={ageLabel(life.ageMonths)} />
         <IdCell k="Date" v={`${MONTHS[month - 1]} ${year}`} />
-        <IdCell k="Role" v={life.placement.role === "none" ? "—" : ROLE_LABEL[life.placement.role]} />
+        <IdCell k="Role" v={life.after ? "Retired" : life.placement.role === "none" ? "—" : ROLE_LABEL[life.placement.role]} />
         <IdCell k="Born" v={`${countryFlag(born.id)} ${born.id}`} title={born.name} />
         <IdCell k="Lives" v={`${countryFlag(res.id)} ${res.id}`} title={`${life.residence.locality}, ${res.name}`} />
         <IdCell k="Citizen" v={life.citizenships.join(" ")} />
@@ -85,7 +84,7 @@ export function StatusPanel({ life }: { life: LifeState }) {
   const age = life.ageMonths / 12;
   const band = readiness(life);
   return (
-    <Panel id="os-status" title="Status" action={<Chip tone={band === "nba-ready" || band === "draft-range" ? "green" : band === "radar" ? "teal" : "dim"}>{READINESS_LABEL[band]}</Chip>}>
+    <Panel id="os-status" title="Status" action={life.after ? <Chip tone="dim">Retired player</Chip> : <Chip tone={band === "nba-ready" || band === "draft-range" ? "green" : band === "radar" ? "teal" : "dim"}>{READINESS_LABEL[band]}</Chip>}>
       <div className="flex flex-col gap-2">
         <Bar label="Health" value={life.condition.health} color={life.condition.injury ? OS.rose : OS.green} />
         <Bar label="Energy" value={life.condition.energy} color={OS.amber} />
@@ -145,11 +144,6 @@ export function PhysiquePanel({ life, units, onUnits }: { life: LifeState; units
 export function FamilyAndResources({ life, units }: { life: LifeState; units: Units }) {
   const f = life.family;
   const res = country(life.residence.countryId);
-  const contract = life.placement.contract;
-  const fin = life.finance;
-  const gross = (contract?.salary ?? 0) + fin.endorsements.reduce((a, e) => a + e.perYear, 0);
-  const showMoney = gross > 0 || fin.cash > 0 || fin.invested > 0 || fin.agent !== null || life.earnings > 0;
-  const last = fin.years.at(-1);
   return (
     <Panel id="os-family" title="Family and resources">
       <dl>
@@ -165,30 +159,6 @@ export function FamilyAndResources({ life, units }: { life: LifeState; units: Un
         <Kv k="School" v={life.ageMonths >= 72 ? `${cap(life.education.level)} · grades ${Math.round(life.education.academics)}` : "—"} />
         {life.ageMonths >= 168 ? <Kv k="NCAA eligibility" v={life.education.amateur && life.education.ncaaEligible ? "Amateur" : "Lost"} /> : null}
       </dl>
-      {showMoney ? (
-        <div className="mt-3 border-t border-[var(--os-border)] pt-2">
-          <h3 className="mb-1 font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--os-dim)]">Your money</h3>
-          <dl>
-            {contract ? (
-              <Kv k="Contract" v={`${money(contract.salary)}/yr · ${contract.yearsLeft} yr${contract.yearsLeft === 1 ? "" : "s"}${contract.guaranteed ? "" : " · non-guaranteed"}`} mono />
-            ) : null}
-            <Kv k="Agent" v={fin.agent ? `${fin.agent.name} · ${Math.round(fin.agent.fee * 100)}%` : "None"} />
-            {fin.endorsements.length ? <Kv k="Endorsements" v={`${money(fin.endorsements.reduce((a, e) => a + e.perYear, 0))}/yr`} mono /> : null}
-            {gross > 0 ? <Kv k="Tax (model)" v={`about ${Math.round(taxRate(life.placement.countryId, gross) * 100)}%`} mono /> : null}
-            <Kv k="Lifestyle" v={`${LIFESTYLE[fin.lifestyle].label} · ${money(monthlySpend(life, 0))}+/mo`} />
-            <Kv k="Sends home" v={`${Math.round(fin.sendHomeShare * 100)}% of take-home`} mono />
-            <Kv k="Cash" v={money(fin.cash)} mono />
-            <Kv k={fin.advisor ? `Invested · ${ADVISOR[fin.advisor].label}` : "Invested"} v={fin.advisor ? money(fin.invested) : "Not invested"} mono />
-            <Kv k="Net worth" v={money(netWorth(fin))} mono />
-            {life.earnings > 0 ? <Kv k="Career earnings, pre-tax" v={money(life.earnings)} mono /> : null}
-          </dl>
-          {last ? (
-            <p className="mt-1.5 font-mono text-[11px] tabular-nums text-[var(--os-dim)]">
-              {last.year}: earned {money(last.gross)}, tax {money(last.tax)}, fees {money(last.fees)}, spent {money(last.spend)}, returns {money(last.returns)}
-            </p>
-          ) : null}
-        </div>
-      ) : null}
     </Panel>
   );
 }

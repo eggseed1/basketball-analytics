@@ -94,6 +94,7 @@ type SceneKind = "nursery" | "outdoor" | "gym" | "arena" | "nba" | "dusk";
 export function sceneKind(s: LifeState): SceneKind {
   const age = s.ageMonths / 12;
   if (age < 3) return "nursery";
+  if (s.after) return s.after.track === "coach" || s.after.track === "trainer" ? "gym" : "arena";
   switch (s.placement.node) {
     case "home":
     case "playground":

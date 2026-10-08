@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { fmtHeight } from "@/one-shot/body";
 import { perGame } from "@/one-shot/career";
-import { netWorth } from "@/one-shot/finance";
+import { invested, netWorth } from "@/one-shot/finance";
 import { awardCount, honorsLine, medalCount, outcomeTier, shareText, TIER_LABEL } from "@/one-shot/report";
 import type { LifeState } from "@/one-shot/types";
 import { country, countryFlag } from "@/one-shot/world";
@@ -31,6 +31,8 @@ export function EndReport({ life, units, onNew, onHome }: { life: LifeState; uni
     .map((k) => `${medals[k]} ${k}`)
     .join(", ");
   const awards = awardCount(life);
+  const coachW = life.after?.years.reduce((a, y) => a + (y.wins ?? 0), 0) ?? 0;
+  const coachL = life.after?.years.reduce((a, y) => a + (y.losses ?? 0), 0) ?? 0;
   const honors = honorsLine(life);
   const moments = life.history.filter((h) => h.kind === "milestone" || h.kind === "draft" || h.kind === "move" || (h.kind === "injury" && h.tone === "bad")).slice(-10);
   const copy = async (value: string, done: string) => {
@@ -86,7 +88,9 @@ export function EndReport({ life, units, onNew, onHome }: { life: LifeState; uni
           {life.international.caps > 0 ? <Kv k="National team" v={`${life.international.caps} caps${medalLabel ? ` · ${medalLabel}` : ""}`} mono /> : null}
           {awards ? <Kv k="Season honors" v={awards} mono /> : null}
           <Kv k="Career earnings, pre-tax" v={life.earnings > 0 ? money(life.earnings) : "None"} mono />
-          {life.earnings > 0 || life.finance.invested > 0 ? <Kv k="Net worth at the end" v={money(netWorth(life.finance))} mono /> : null}
+          {life.after ? <Kv k="After playing" v={`${life.after.title}, ${life.after.employer}`} /> : null}
+          {coachW + coachL > 0 ? <Kv k="Coaching record" v={`${coachW}-${coachL}`} mono /> : null}
+          {life.earnings > 0 || invested(life.finance) > 0 ? <Kv k="Net worth at the end" v={money(netWorth(life.finance))} mono /> : null}
           <Kv
             k="Life ended"
             v={

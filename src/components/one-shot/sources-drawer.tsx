@@ -174,7 +174,17 @@ export function SourcesDrawer({ life, onClose }: { life: LifeState | null; onClo
           </p>
           <p className="mt-1 text-[12px] text-[var(--os-dim)]">
             Money: tax uses a rough top rate by income group, scaled down for smaller salaries. It ignores real brackets, treaties and team-paid tax. Agent fees, lifestyle costs, endorsement values
-            and investment returns are game settings. Investment returns are random, and a bad year can lose money.
+            and investment returns are game settings.
+          </p>
+          <p className="mt-1 text-[12px] text-[var(--os-dim)]">
+            Markets: savings, bonds, an index fund, single stocks, property and crypto each get a random monthly return around a fixed yearly average and spread (index about 8.5% a year with a 16%
+            spread, crypto about 30% with a 70% spread), plus a rare shared crash. These are not forecasts or advice, and the market moves the same way whatever he owns. Property and crypto cost a
+            fee to sell.
+          </p>
+          <p className="mt-1 text-[12px] text-[var(--os-dim)]">
+            After playing: coaching, scouting, media and training are ladders of jobs. Reputation starts from his playing career and moves with each year&apos;s results, and the next job opens once
+            reputation clears its bar. Pay outside the US is scaled down by the country&apos;s income group. Records and promotions are simulated. Players who stall or reach 31 without the NBA can
+            ask for a club abroad, which brings offers from foreign leagues he could make, or move on to a second career.
           </p>
           <p className="mt-1 text-[12px] text-[var(--os-dim)]">
             Agents and clubs named in the game are fictional. Season honors come from fixed thresholds on his stats and level, not from votes. Trades happen at the February deadline, with odds that go

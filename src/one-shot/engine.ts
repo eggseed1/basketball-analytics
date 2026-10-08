@@ -18,12 +18,13 @@ import {
 } from "./career";
 import { autoEligible, callUpChance, canDeclare, draftClass, draftValue, nbaSeasonMonth, rookieSalary, runDraft } from "./draft";
 import { EVENT_BY_ID, eligibleEvents, eventRate, type EventTemplate } from "./events";
-import { makeAgent, newFinance, stepFinance } from "./finance";
+import { canOpen, LADDER, rungCost, rungCountry, rungPay, takeJob, trackOptions, TRACK_LABEL, yearInJob } from "./after";
+import { applyMoney, charge, makeAgent, newFinance, stepFinance, type MoneyAction } from "./finance";
 import { evaluate, KIND_EXPOSURE, nationalTeam, playTournament, tournamentsFor, type Selection } from "./international";
 import { drawName, formatName, poolFor, townName } from "./names";
 import { createPeers, stepPeersYear } from "./peers";
 import { clamp, createStreams, hashString, rngOf } from "./rng";
-import { NBA_TEAMS, nbaTeam, offerBlocked, offseasonOffers, salaryFor } from "./routes";
+import { NBA_TEAMS, nbaTeam, offerBlocked, offseasonOffers, overseasPossible, salaryFor } from "./routes";
 import { currentLevel, generatePotentials, generateTraits, readiness, READINESS_LABEL, startingSkills } from "./skills";
 import { FOCUS_BY_ID, focusAvailable, stepTraining } from "./training";
 import {
@@ -36,6 +37,7 @@ import {
   type NewLifeOptions,
   type Offer,
   type PendingDecision,
+  type Track,
   type Workload,
 } from "./types";
 import { country, maybeLeague, PLAYABLE_COUNTRIES, WORLD_VERSION } from "./world";
@@ -141,6 +143,7 @@ export function createLife(opts: NewLifeOptions): LifeState {
     counters: { entry: 0, decision: 0, offer: 0 },
     ended: null,
     keepPlaying: false,
+    after: null,
   };
   log(state, "birth", `Born in ${locality}, ${birth.name}.`, null, "neutral");
   return state;
@@ -213,6 +216,11 @@ export function stepMonth(s: LifeState) {
     }
     delete s.flags.restoreAt;
     delete s.flags.restoreWorkload;
+  }
+  if (s.after) {
+    afterMonth(s);
+    endChecks(s);
+    return;
   }
   stepTraining(s);
   money(s);
@@ -399,11 +407,21 @@ function offseasonReview(s: LifeState) {
   const renew = typeof s.flags.renewSalary === "number" && s.flags.renewTeam === s.placement.teamName ? s.flags.renewSalary : null;
   const nbaFA = s.flags.nbaFreeAgent === true && s.placement.node === "nba";
   const expired = isProNode(s.placement.node) && !s.placement.contract;
-  if (!offers.length && renew === null && !nbaFA && !expired) return;
+  const hunted = typeof s.flags.overseasHunt === "number";
+  if (hunted) {
+    delete s.flags.overseasHunt;
+    s.flags.overseasAsked = s.ageMonths;
+    if (!offers.some((o) => o.node === "foreign-pro")) log(s, "info", "No club abroad bites this time.", null, "bad");
+  }
+  const free = !s.placement.contract || s.placement.contract.yearsLeft <= 0 || ["deep-bench", "bench", "none"].includes(s.placement.role);
+  const asked = typeof s.flags.overseasAsked === "number" && s.ageMonths - s.flags.overseasAsked < 10;
+  const abroadOk = !hunted && !asked && free && s.ageMonths >= 19 * 12 && s.placement.node !== "nba" && s.placement.node !== "university" && !offers.some((o) => o.node === "foreign-pro") && overseasPossible(s);
+  if (!offers.length && renew === null && !nbaFA && !expired && !abroadOk) return;
   s.offers = offers;
   const choices: DecisionChoice[] = offers.map((o) => ({ id: o.id, label: offerTitle(o), preview: `${ROLE_LABEL[o.role]}, ${o.minutesBand}. ${o.reason}`, disabled: offerBlocked(s, o) ?? undefined }));
   if (renew !== null) choices.unshift({ id: "renew", label: `Re-sign with ${s.placement.teamName}`, preview: `${usd(renew)} a year for two years, guaranteed.` });
   if (nbaFA) choices.push({ id: "fa", label: "Test NBA free agency", preview: "Other teams may pay more. You could also end up without a deal." });
+  if (abroadOk) choices.push({ id: "overseas", label: "Look for a job overseas", preview: s.finance.agent ? `${s.finance.agent.name} shops your film to clubs abroad. Answers come next month.` : "You send your film to clubs abroad yourself. Answers come next month. An agent would reach more teams." });
   const stayLabel = expired ? "Turn everything down and wait" : s.placement.teamName ? `Stay with ${s.placement.teamName}` : s.placement.node === "playground" ? "Keep playing on the neighborhood courts" : "Keep training on your own";
   choices.push({ id: "stay", label: stayLabel, preview: expired ? "No contract. More offers may come next month." : "Nothing changes." });
   const n = choices.length - 1;
@@ -535,6 +553,7 @@ function calendarStep(s: LifeState) {
       const choices: DecisionChoice[] = [];
       if (v >= 55) choices.push({ id: "camp", label: "Training camp deal", preview: "An NBA team brings you to camp. Waived players go to its G League team." });
       if (performanceLevel(s) >= 50) choices.push({ id: "g-league", label: "G League contract", preview: "Play for call-ups. About $40,500 a season (model)." });
+      if (overseasPossible(s)) choices.push({ id: "overseas", label: "Play overseas", preview: "Clubs abroad pay real salaries and scouts still watch. Offers come next month." });
       choices.push({ id: "stay", label: "Keep your current path", preview: "Stay where you are. Offers come at the next window." });
       decide(s, { templateId: "undrafted", title: "Undrafted", body: "Plenty of NBA players went undrafted. These are your options.", choices, context: { team: teamFor(s, year) }, required: true });
     }
@@ -810,12 +829,23 @@ function endChecks(s: LifeState) {
     s.clock.pauseReason = "ended";
     return;
   }
-  if (s.achievements.nbaDebut === null && age >= 31) {
-    s.ended = { month: s.ageMonths, reason: "aged-out" };
-    log(s, "milestone", "At 31, the NBA window has closed. This life's basketball story ends here.");
-  } else if (s.keepPlaying && age >= 36) {
-    s.ended = { month: s.ageMonths, reason: "retired" };
-    log(s, "milestone", "You retire at 36.");
+  if (!s.pendingDecision) {
+    const retireAt = typeof s.flags.retireAt === "number" ? s.flags.retireAt : 36 * 12;
+    if (s.after) {
+      if (age >= 65) {
+        s.ended = { month: s.ageMonths, reason: "retired" };
+        log(s, "milestone", `You retire at 65 as ${article(s.after.title)}.`);
+      }
+    } else if (s.achievements.nbaDebut === null && age >= 31 && !s.flags.crossroads31) {
+      s.flags.crossroads31 = true;
+      crossroads(s, "aged-out");
+    } else if (s.keepPlaying && s.ageMonths >= retireAt) {
+      s.flags.retireAt = s.ageMonths + 12;
+      crossroads(s, "retire");
+    } else if (age >= 26 && s.placement.node === "unattached" && s.ageMonths - s.placement.since >= 12 && (typeof s.flags.stalledAt !== "number" || s.ageMonths - s.flags.stalledAt >= 24)) {
+      s.flags.stalledAt = s.ageMonths;
+      crossroads(s, "stalled");
+    }
   }
   if (s.ended) {
     s.pendingDecision = null;
@@ -858,6 +888,8 @@ function resolveInPlace(s: LifeState, choiceId: string) {
         log(s, "decision", `Re-signed with ${s.placement.teamName}: ${usd(renew)} a year for two years.`, null, "good");
       } else if (choiceId === "fa") {
         nbaFreeAgency(s);
+      } else if (choiceId === "overseas") {
+        startOverseasHunt(s);
       } else if (choiceId === "stay") {
         if (isProNode(s.placement.node) && !s.placement.contract) {
           s.placement = { ...s.placement, node: "unattached", leagueId: null, teamName: null, role: "none", contract: null, costPerYear: 0 };
@@ -933,10 +965,82 @@ function resolveInPlace(s: LifeState, choiceId: string) {
         s.placement = { node: "g-league", countryId: "US", leagueId: "g-league", teamName: `G League affiliate (${team})`, role: "rotation", coaching: 80, since: s.ageMonths, contract: { salary: 40_500, yearsLeft: 1, guaranteed: false }, costPerYear: 0 };
         s.residence = { countryId: "US", locality: "a G League city", localityKind: "city" };
         log(s, "decision", "Signed with a G League team.");
+      } else if (choiceId === "overseas") {
+        startOverseasHunt(s);
       } else {
         log(s, "decision", "You stay on your current path.");
         if (s.placement.node === "unattached") s.flags.reviewSoon = true;
       }
+      return;
+    }
+    case "crossroads": {
+      const why = String(d.context?.why ?? "retire");
+      if (choiceId === "keep") {
+        s.keepPlaying = true;
+        if (s.placement.node === "unattached") s.flags.reviewSoon = true;
+        log(s, "decision", why === "retire" ? "One more season. You can't walk away yet." : "You keep playing. The NBA is a long shot now, but basketball still pays.");
+      } else if (choiceId === "overseas") {
+        s.keepPlaying = true;
+        startOverseasHunt(s);
+      } else if (choiceId.startsWith("track:")) {
+        const opt = trackOptions(s).find((o) => o.track === choiceId.slice(6))!;
+        retireFromPlaying(s);
+        takeJob(s, opt.track, opt.step, opt.rep);
+        log(s, "move", `${TRACK_LABEL[opt.track]}: you start as ${article(s.after!.title)} with ${s.after!.employer}. ${usd(s.after!.salary)} a year.`, null, "good");
+      } else {
+        s.ended = { month: s.ageMonths, reason: why === "aged-out" ? "aged-out" : "retired" };
+        log(s, "milestone", why === "aged-out" ? "You stop chasing it. This life's basketball story ends here." : `You retire at ${Math.floor(s.ageMonths / 12)}.`);
+        s.clock.paused = true;
+        s.clock.pauseReason = "ended";
+      }
+      return;
+    }
+    case "after-review": {
+      const a = s.after!;
+      if (choiceId === "offer" || choiceId === "down") {
+        const step = Number(d.context?.step);
+        const r = LADDER[a.track][step]!;
+        const cost = rungCost(r, String(d.context?.where ?? a.countryId));
+        if (cost > 0) charge(s, cost);
+        const from = `${a.title}, ${a.employer}`;
+        takeJob(s, a.track, step, choiceId === "down" ? clamp(a.rep - 5, 0, 100) : a.rep);
+        log(s, "move", `${choiceId === "down" ? "A step down" : "Promoted"}: from ${from} to ${s.after!.title} with ${s.after!.employer}.${cost ? ` You put ${usd(cost)} into it.` : ""}`, null, choiceId === "down" ? "neutral" : "good");
+      } else if (choiceId === "raise") {
+        const bar = LADDER[a.track][a.step]!.bar;
+        if (rngOf(s.rng, "after").next() < clamp(0.35 + (a.rep - bar) / 40, 0.1, 0.8)) {
+          a.salary = Math.round((a.salary * 1.12) / 500) * 500;
+          log(s, "decision", `They give you a raise: ${usd(a.salary)} a year.`, null, "good");
+        } else {
+          a.rep = clamp(a.rep - 2, 0, 100);
+          log(s, "decision", "They say no, and remember that you asked.", null, "bad");
+        }
+      } else if (choiceId === "switch") {
+        switchCareer(s, Boolean(d.context?.fired));
+      } else if (choiceId === "retire") {
+        s.ended = { month: s.ageMonths, reason: "retired" };
+        log(s, "milestone", `You retire for good at ${Math.floor(s.ageMonths / 12)}.`);
+        s.clock.paused = true;
+        s.clock.pauseReason = "ended";
+      } else {
+        log(s, "decision", `You stay with ${a.employer}.`);
+      }
+      return;
+    }
+    case "after-switch": {
+      if (choiceId === "back") {
+        log(s, "decision", `You stay with ${s.after!.employer}.`);
+        return;
+      }
+      if (choiceId === "retire") {
+        s.ended = { month: s.ageMonths, reason: "retired" };
+        log(s, "milestone", `You retire for good at ${Math.floor(s.ageMonths / 12)}.`);
+        s.clock.paused = true;
+        s.clock.pauseReason = "ended";
+        return;
+      }
+      const opt = trackOptions(s, s.after!.track).find((o) => o.track === choiceId.slice(6))!;
+      takeJob(s, opt.track, opt.step, opt.rep);
+      log(s, "move", `A new career in ${TRACK_LABEL[opt.track].toLowerCase()}: ${s.after!.title} with ${s.after!.employer}.`, null, "good");
       return;
     }
     case "chapter": {
@@ -1013,6 +1117,134 @@ function acceptOffer(s: LifeState, o: Offer) {
   log(s, "move", `${moving ? "Moved to " + country(o.countryId).name + ". " : ""}Joined ${o.teamName} (${nodeLabel(o.node, o.countryId, o.leagueId)}).${o.salary > 0 ? ` $${o.salary.toLocaleString("en-US")} a year.` : ""}`, null, "good");
 }
 
+/* --------------------------------------------------------------- after playing */
+
+const TRACK_START: Record<Track, string> = { coach: "Start coaching", scout: "Become a scout", media: "Go into broadcasting", trainer: "Train players" };
+
+function article(title: string) {
+  const acronym = /^[A-Z](?:[A-Z]| )/.test(title);
+  const t = acronym ? title : title.charAt(0).toLowerCase() + title.slice(1);
+  const an = acronym ? /^[AEFHILMNORSX]/.test(title) : /^[aeiou]/.test(t);
+  return `${an ? "an" : "a"} ${t}`;
+}
+
+function startOverseasHunt(s: LifeState) {
+  s.flags.overseasHunt = s.ageMonths;
+  s.flags.reviewSoon = true;
+  log(s, "decision", s.finance.agent ? `${s.finance.agent.name} starts calling clubs abroad.` : "You email your highlight tape to clubs abroad.");
+}
+
+function crossroads(s: LifeState, why: "aged-out" | "retire" | "stalled") {
+  const age = Math.floor(s.ageMonths / 12);
+  const onTeam = isProNode(s.placement.node) || s.placement.node === "local-senior";
+  const choices: DecisionChoice[] = [];
+  if (why !== "retire" || (onTeam && age < 39)) {
+    choices.push({
+      id: "keep",
+      label: why === "retire" ? "Play one more season" : onTeam ? "Keep playing" : "Keep looking for a team",
+      preview: why === "retire" ? "Ask again next year." : onTeam ? `Stay with ${s.placement.teamName ?? "your club"}. Retire when you choose.` : "Train and wait for a call. Offers come with the next window.",
+    });
+  }
+  if (why !== "retire" && s.placement.node !== "foreign-pro") {
+    choices.push({ id: "overseas", label: "Play overseas", preview: "Clubs in Europe, Asia and Latin America sign veterans. Offers come next month.", disabled: overseasPossible(s) ? undefined : "No league abroad would sign you at your level." });
+  }
+  for (const o of trackOptions(s)) {
+    choices.push({ id: `track:${o.track}`, label: TRACK_START[o.track], preview: `${o.title}, ${o.employer}. About ${usd(o.pay)} a year (model).`, disabled: o.blocked ?? undefined });
+  }
+  choices.push({ id: "finish", label: "Finish this life", preview: "See your end report." });
+  const text = {
+    "aged-out": { title: "Thirty-one", body: "Players who haven't reached the NBA by 31 almost never do. Basketball can still be a living, on the court or off it." },
+    retire: { title: "Time to stop?", body: `Age ${age}. Your body has been telling you for a while.` },
+    stalled: { title: "A year without a team", body: "No club has called in twelve months. What now?" },
+  }[why];
+  decide(s, { templateId: "crossroads", title: text.title, body: text.body, choices, context: { why }, required: true });
+}
+
+function retireFromPlaying(s: LifeState) {
+  if (s.season) finalizeSeason(s, levelOf(s));
+  clearRenewal(s);
+  s.placement = { ...s.placement, node: "unattached", leagueId: null, teamName: null, role: "none", contract: null, costPerYear: 0, since: s.ageMonths };
+  s.condition.injury = null;
+  s.keepPlaying = false;
+  log(s, "milestone", `You retire from playing at ${Math.floor(s.ageMonths / 12)}.`);
+}
+
+function afterMonth(s: LifeState) {
+  s.condition.energy = clamp(s.condition.energy + 8, 5, 100);
+  s.condition.health = clamp(s.condition.health + 0.5, 0, 100);
+  money(s);
+  const { month } = calendar(s);
+  if (month === 7 && s.ageMonths - s.after!.since >= 6) afterReview(s);
+  if (!s.pendingDecision) scheduledStep(s);
+  if (!s.pendingDecision) randomEvent(s);
+}
+
+function afterReview(s: LifeState) {
+  const a = s.after!;
+  const res = yearInJob(s);
+  a.rep = clamp(a.rep + res.repDelta, 0, 100);
+  a.years.push(res.line);
+  if (a.years.length > 40) a.years.shift();
+  if (res.profit !== null) {
+    a.salary = Math.max(0, res.profit);
+    if (res.profit < 0) charge(s, -res.profit);
+  }
+  const rec = res.line.wins !== null ? ` ${res.line.wins}-${res.line.losses}.` : "";
+  const good = res.repDelta >= 3;
+  log(s, "season", `${a.title}, ${a.employer}:${rec} ${res.line.note}.`, null, res.fired ? "bad" : good ? "good" : "neutral");
+  const tenure = Math.floor((s.ageMonths - a.since) / 12);
+  if (!res.fired && !res.offer && tenure % 3 !== 0) return;
+  const choices: DecisionChoice[] = [];
+  const context: Record<string, string | number | boolean | null> = { fired: res.fired };
+  if (res.fired) {
+    log(s, "move", `${a.employer} let you go.`, null, "bad");
+    const r = LADDER[a.track][a.step - 1]!;
+    const where = rungCountry(r, typeof s.flags.afterHome === "string" ? s.flags.afterHome : a.countryId);
+    choices.push({ id: "down", label: `Take a smaller job: ${r.title(s, where)}`, preview: `${r.employer(s, where, a.step - 1)}. About ${usd(rungPay(r, where))} a year.` });
+    context.step = a.step - 1;
+    context.where = where;
+  } else {
+    if (res.offer) {
+      const o = res.offer;
+      choices.push({
+        id: "offer",
+        label: `Take the job: ${o.title}`,
+        preview: `${o.employer}. ${o.pay ? `${usd(o.pay)} a year` : "Your own business: pay depends on how it does"}.${o.cost ? ` Costs ${usd(o.cost)} to open.` : ""}${o.where !== a.countryId ? ` Moves you to ${country(o.where).name}.` : ""}`,
+        disabled: canOpen(s, o.cost) ? undefined : "Not enough money to open it.",
+      });
+      context.step = o.step;
+      context.where = o.where;
+    }
+    choices.push({ id: "stay", label: "Stay in your job", preview: res.offer ? "Turn the offer down." : "Nothing changes." });
+    if (!LADDER[a.track][a.step]!.business) choices.push({ id: "raise", label: "Ask for a raise", preview: "Maybe 12% more. A no could cost you some standing." });
+  }
+  choices.push({ id: "switch", label: "Try a different career", preview: "You start lower, with some of your reputation." });
+  choices.push({ id: "retire", label: "Retire for good", preview: "Ends this life. See your end report." });
+  const age = Math.floor(s.ageMonths / 12);
+  decide(s, {
+    templateId: "after-review",
+    title: res.fired ? "Let go" : res.offer ? "A job offer" : `Year in review, age ${age}`,
+    body: `${res.line.note}.${rec} Reputation ${Math.round(a.rep)} of 100 (${res.repDelta >= 0 ? "+" : ""}${Math.round(res.repDelta)}).${res.offer ? ` ${res.offer.employer} want you as ${article(res.offer.title)}.` : ""}`,
+    choices,
+    context,
+    required: true,
+  });
+}
+
+function switchCareer(s: LifeState, fired: boolean) {
+  const choices: DecisionChoice[] = trackOptions(s, s.after!.track).map((o) => ({ id: `track:${o.track}`, label: TRACK_START[o.track], preview: `${o.title}, ${o.employer}. About ${usd(o.pay)} a year (model).`, disabled: o.blocked ?? undefined }));
+  choices.push(fired ? { id: "retire", label: "Retire for good", preview: "Ends this life." } : { id: "back", label: "Never mind", preview: `Stay with ${s.after!.employer}.` });
+  decide(s, { templateId: "after-switch", title: "A different career", body: "Your name opens some doors. You start near the bottom of a new ladder.", choices, required: true });
+}
+
+/** Portfolio controls from the money panel. No randomness. */
+export function manageMoney(state: LifeState, action: MoneyAction): LifeState {
+  const s = clone(state);
+  const note = applyMoney(s, action);
+  if (note) log(s, "decision", note);
+  return s;
+}
+
 /* --------------------------------------------------------------- auto */
 
 export const AUTO_STRATEGY = [
@@ -1024,6 +1256,9 @@ export const AUTO_STRATEGY = [
   "National team: always report to camp.",
   "Agents: the widest-reaching agent who will sign you; never the family friend.",
   "After an NBA debut: finish the chapter.",
+  "At 31 without an NBA debut, after a year without a team, or at retirement: keep playing while on a pro team and under 34, otherwise start coaching.",
+  "Jobs after playing: take every promotion, otherwise stay. Never asks for a raise or switches careers.",
+  "Money: never touches the portfolio controls. Only life-event choices change it.",
 ];
 
 const NODE_RANK: Record<string, number> = { nba: 12, "g-league": 10, "foreign-pro": 8, "domestic-pro": 8, university: 9, "us-high-school": 6, "elite-youth": 6, "local-senior": 4, "local-club": 3, "school-team": 2, playground: 1 };
@@ -1074,6 +1309,15 @@ export function autoChoice(s: LifeState): string {
       return open.find((c) => c.id === "two-way")?.id ?? open.find((c) => c.id === "camp")?.id ?? open.find((c) => c.id === "g-league")?.id ?? "stay";
     case "chapter":
       return "finish";
+    case "crossroads": {
+      const onTeam = isProNode(s.placement.node) || s.placement.node === "local-senior";
+      if (open.some((c) => c.id === "keep") && onTeam && s.ageMonths < 34 * 12) return "keep";
+      return open.find((c) => c.id === "track:coach")?.id ?? open.find((c) => c.id.startsWith("track:"))?.id ?? "finish";
+    }
+    case "after-review":
+      return open.find((c) => c.id === "offer")?.id ?? open.find((c) => c.id === "stay")?.id ?? open.find((c) => c.id === "down")?.id ?? "retire";
+    case "after-switch":
+      return open[0]!.id;
   }
   return open[0]!.id;
 }

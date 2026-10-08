@@ -162,6 +162,7 @@ export function StartScreen({
                     {c.draft ? ` · ${c.draft}` : ""}
                   </p>
                   {c.peak ? <p className="text-[11.5px] text-[var(--os-dim)]">Best season: {c.peak}</p> : null}
+                  {c.after ? <p className="text-[11.5px] text-[var(--os-dim)]">After playing: {c.after}</p> : null}
                 </li>
               );
             })}

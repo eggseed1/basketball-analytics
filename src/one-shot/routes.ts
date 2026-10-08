@@ -60,6 +60,11 @@ export function clubNameFor(state: LifeState, countryId: string): string {
   return clubName(rngOf(createStreams(hashString(`${state.seed}:club:${state.ageMonths}:${countryId}`)), "generation"), countryId, "club");
 }
 
+/** A stable fictional club, school or university name for any key. */
+export function namedPlace(state: LifeState, countryId: string, kind: "club" | "school" | "university", key: string): string {
+  return clubName(rngOf(createStreams(hashString(`${state.seed}:${key}:${countryId}`)), "generation"), countryId, kind);
+}
+
 /** How much an agent widens the market: lower exposure needed for offers abroad. */
 export function agentBoost(state: LifeState): number {
   const reach = state.finance.agent?.reach;
@@ -230,7 +235,23 @@ export function offseasonOffers(state: LifeState): Offer[] {
     if (!pros.length && node !== "local-senior" && age >= 17) {
       offers.push(build(state, { kind: "join", node: "local-senior", countryId: res.id, leagueId: null, teamName: clubName(nameRng, res.id, "club"), need: 24, coaching: clubCoaching * 0.7, exposure: 8, costPerYear: 0, salary: 0, reason: `A senior club in ${res.name} wants you. The snapshot has no verified professional league here.`, extra: ["Competition details for this country are unverified in the 2026-10-08 snapshot."] }));
     }
-    if (E + agentBoost(state) >= 22 + r[3]! * 15) {
+    const hunting = typeof state.flags.overseasHunt === "number";
+    if (hunting) {
+      const slack = state.finance.agent ? 10 : 8;
+      const options = foreignProLeagues(res.id)
+        .filter((l) => lvl >= l.model!.strength * 0.8 - slack && l.model!.minAge <= age)
+        .sort((a, b) => b.model!.strength - a.model!.strength);
+      const richest = [...options].sort((a, b) => b.model!.salaryUsd[1] - a.model!.salaryUsd[1])[0];
+      const picks = [options[0], options[Math.floor(options.length / 2)], richest, options[options.length - 1]];
+      const found: Offer[] = [];
+      for (const l of picks) {
+        if (!l || found.some((o) => o.leagueId === l.id) || found.length >= (state.finance.agent ? 3 : 2)) continue;
+        const host = l.countries[0]!;
+        found.push(build(state, { kind: "contract", node: "foreign-pro", countryId: host, leagueId: l.id, teamName: clubName(nameRng, host, "club"), need: l.model!.strength * 0.8, coaching: l.model!.coaching, exposure: l.model!.exposure, costPerYear: 0, reason: l === richest && l !== options[0] ? `${l.name} clubs pay well for imports. One wants you.` : `A ${l.name} club answered your film.` }));
+      }
+      offers.unshift(...found);
+    }
+    if (!hunting && E + agentBoost(state) >= 22 + r[3]! * 15) {
       const options = foreignProLeagues(res.id)
         .filter((l) => lvl >= l.model!.strength * 0.8 - 7 && l.model!.minAge <= age)
         .sort((a, b) => b.model!.strength - a.model!.strength);
@@ -249,6 +270,14 @@ export function offseasonOffers(state: LifeState): Offer[] {
     }
   }
   return offers.slice(0, 4);
+}
+
+/** Whether any league abroad would sign him at his current level. */
+export function overseasPossible(state: LifeState): boolean {
+  const age = state.ageMonths / 12;
+  const lvl = performanceLevel(state);
+  const slack = state.finance.agent ? 10 : 8;
+  return foreignProLeagues(state.residence.countryId).some((l) => lvl >= l.model!.strength * 0.8 - slack && l.model!.minAge <= age);
 }
 
 export const NBA_TEAMS = [
@@ -278,6 +307,12 @@ export function routeView(state: LifeState): RouteStep[] {
     if (seen.has(key)) continue;
     seen.add(key);
     steps.push({ label: s.levelLabel, status: "done", detail: `${s.calendarYear} · age ${s.ageYears}` });
+  }
+  if (state.after) {
+    const retiredAt = state.history.findLast((h) => h.text.startsWith("You retire from playing"));
+    steps.push({ label: "Retired from playing", status: "done", detail: retiredAt ? `age ${Math.floor(retiredAt.month / 12)}` : "" });
+    steps.push({ label: state.after.title, status: "current", detail: state.after.employer });
+    return steps;
   }
   const cur = levelOf(state);
   const curLabel = cur?.label ?? nodeLabel(state.placement.node, state.placement.countryId, state.placement.leagueId);

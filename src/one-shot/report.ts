@@ -43,6 +43,7 @@ export interface CareerSummary {
   finishedAt: string;
   honors?: string | null;
   netWorth?: number;
+  after?: string | null;
 }
 
 export function medalCount(s: LifeState) {
@@ -83,6 +84,7 @@ export function summarize(s: LifeState, finishedAt: string): CareerSummary {
     finishedAt,
     honors: honorsLine(s),
     netWorth: Math.round(netWorth(s.finance)),
+    after: s.after ? `${s.after.title}, ${s.after.employer}` : null,
   };
 }
 
@@ -94,6 +96,7 @@ export function shareText(s: LifeState, origin = "https://drbl.io"): string {
   if (s.achievements.drafted) lines.push(`Drafted: round ${s.achievements.drafted.round}, pick ${s.achievements.drafted.pick}.`);
   const honors = honorsLine(s);
   if (honors) lines.push(`${honors}.`);
+  if (s.after) lines.push(`After playing: ${s.after.title}.`);
   const route = [...new Set(s.seasons.filter((x) => x.ageYears >= 12).map((x) => x.levelLabel))].slice(-4).join(" → ");
   if (route) lines.push(route);
   lines.push(`${origin}/arcade/one-shot${s.mode === "daily" ? "?daily=1" : `?seed=${s.seed}&draw=${s.draw}`}`);

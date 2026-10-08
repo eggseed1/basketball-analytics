@@ -1,7 +1,7 @@
 import type { Streams } from "./rng";
 
-export const SCHEMA_VERSION = 2;
-export const ENGINE_VERSION = "1.1.0";
+export const SCHEMA_VERSION = 3;
+export const ENGINE_VERSION = "1.2.0";
 
 export type Mode = "random" | "daily";
 export type DrawMode = "weighted" | "equal";
@@ -290,9 +290,14 @@ export interface Agent {
   since: number;
 }
 
+export type Asset = "savings" | "bonds" | "index" | "stocks" | "property" | "crypto";
+
 export interface Finance {
   cash: number;
-  invested: number;
+  holdings: Record<Asset, number>;
+  /** Target mix in percent; sums to 100. */
+  target: Record<Asset, number>;
+  autoInvest: boolean;
   advisor: AdvisorStyle | null;
   agent: Agent | null;
   lifestyle: Lifestyle;
@@ -300,6 +305,31 @@ export interface Finance {
   sendHomeShare: number;
   ytd: { year: number; gross: number; tax: number; fees: number; spend: number; returns: number };
   years: { year: number; gross: number; tax: number; fees: number; spend: number; returns: number; netWorth: number }[];
+  market: { ytd: Record<Asset, number>; recent: number[]; years: { year: number; r: Record<Asset, number> }[] };
+}
+
+export type Track = "coach" | "scout" | "media" | "trainer";
+
+export interface AfterYear {
+  year: number;
+  age: number;
+  title: string;
+  employer: string;
+  wins: number | null;
+  losses: number | null;
+  note: string;
+}
+
+export interface AfterCareer {
+  track: Track;
+  step: number;
+  title: string;
+  employer: string;
+  countryId: string;
+  salary: number;
+  since: number;
+  rep: number;
+  years: AfterYear[];
 }
 
 export type IntlKind = "olympics" | "world-cup" | "continental" | "u16" | "u17" | "u18" | "u19";
@@ -389,6 +419,7 @@ export interface LifeState {
   counters: { entry: number; decision: number; offer: number };
   ended: null | { month: number; reason: "retired" | "aged-out" | "chapter" };
   keepPlaying: boolean;
+  after: AfterCareer | null;
 }
 
 export interface NewLifeOptions {

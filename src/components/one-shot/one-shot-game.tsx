@@ -4,7 +4,8 @@ import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "
 
 import { cn } from "@/lib/utils";
 import { tick, TICK_MS } from "@/one-shot/clock";
-import { advance, advanceToDecision, createLife, rename, resolveDecision, setPlan } from "@/one-shot/engine";
+import { advance, advanceToDecision, createLife, manageMoney, rename, resolveDecision, setPlan } from "@/one-shot/engine";
+import type { MoneyAction } from "@/one-shot/finance";
 import {
   addCareer,
   clearSave,
@@ -26,6 +27,8 @@ import { EndReport } from "./end-report";
 import { DecisionPanel, DecisionWaiting, FocusPanel, LifeRecord, LifeScene } from "./panels-center";
 import { FamilyAndResources, IdentityCard, PhysiquePanel, StatusPanel } from "./panels-left";
 import { CareerMap, ScoutingReportPanel, SameGeneration, YourRoute } from "./panels-right";
+import { AfterPanel } from "./after-panel";
+import { MoneyPanel } from "./money-panel";
 import { StatsPanel } from "./stats-panel";
 import { SourcesDrawer } from "./sources-drawer";
 import { StartScreen, type StartOptions } from "./start-screen";
@@ -311,6 +314,14 @@ function Game({ expanded, onExpand }: { expanded: boolean; onExpand: () => void 
     [commit],
   );
 
+  const onMoney = useCallback(
+    (a: MoneyAction) => {
+      const s = lifeRef.current;
+      if (s) commit(manageMoney(s, a));
+    },
+    [commit],
+  );
+
   const setClock = useCallback(
     (patch: Partial<LifeState["clock"]>) => {
       const s = lifeRef.current;
@@ -479,7 +490,7 @@ function Game({ expanded, onExpand }: { expanded: boolean; onExpand: () => void 
                 </div>
               ) : null}
               <div className="order-4 md:order-none">
-                <FocusPanel life={life} onPlan={plan} />
+                {life.after ? <AfterPanel life={life} /> : <FocusPanel life={life} onPlan={plan} />}
               </div>
               <div className="order-6 md:order-none">
                 <StatsPanel life={life} />
@@ -502,6 +513,9 @@ function Game({ expanded, onExpand }: { expanded: boolean; onExpand: () => void 
                 <div className="order-12 md:order-none">
                   <FamilyAndResources life={life} units={units} />
                 </div>
+                <div className="order-13 empty:hidden md:order-none">
+                  <MoneyPanel life={life} onMoney={onMoney} />
+                </div>
               </div>
               <div className="contents md:flex md:flex-col md:gap-4 xl:col-start-3 xl:row-start-1 xl:min-h-0 xl:gap-5 xl:overflow-y-auto xl:overscroll-contain xl:[scrollbar-color:var(--os-border)_transparent] xl:[scrollbar-width:thin]">
                 <div className="order-9 md:order-none">
@@ -513,7 +527,7 @@ function Game({ expanded, onExpand }: { expanded: boolean; onExpand: () => void 
                 <div className="order-8 md:order-none">
                   <YourRoute life={life} onSources={openSources} />
                 </div>
-                <div className="order-13 md:order-none">
+                <div className="order-14 md:order-none">
                   <ScoutingReportPanel life={life} />
                 </div>
               </div>

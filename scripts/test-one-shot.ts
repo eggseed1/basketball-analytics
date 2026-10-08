@@ -11,13 +11,13 @@ import path from "node:path";
 
 import { advise } from "../src/one-shot/advisor";
 import { FAMILY_BIAS, generateParents, heightPercentile, parentTarget } from "../src/one-shot/body";
-import { taxRate } from "../src/one-shot/finance";
+import { ASSETS, invested, mix, netWorth, PRESETS, rebalance, rebalanceCost, taxRate } from "../src/one-shot/finance";
 import { fieldOf, tournamentsFor } from "../src/one-shot/international";
 import { advanced, sumBoxes } from "../src/one-shot/stats";
 import { levelOf, performanceLevel, simulateGame } from "../src/one-shot/career";
 import { MAX_BATCH, tick } from "../src/one-shot/clock";
 import { autoEligible, canDeclare } from "../src/one-shot/draft";
-import { advance, advanceToDecision, autoChoice, createLife, resolveDecision, setPlan, stepMonth } from "../src/one-shot/engine";
+import { advance, advanceToDecision, autoChoice, createLife, manageMoney, resolveDecision, setPlan, stepMonth } from "../src/one-shot/engine";
 import { EVENT_BY_ID, EVENTS } from "../src/one-shot/events";
 import { dailyDate, dailySeed, parseSave, serialize } from "../src/one-shot/persistence";
 import { outcomeTier, shareText } from "../src/one-shot/report";
@@ -479,13 +479,16 @@ ok("national team calendar, fields and results stay consistent", () => {
 
 /* ------------------------------------------------------------ money */
 
-ok("finance ledger: taxes and fees never exceed income and net worth is never negative", () => {
+ok("finance ledger: tax never exceeds income, fees stay bounded and money is never negative", () => {
   let pros = 0;
   for (let seed = 1; seed < 160; seed++) {
     const s = autoLife(seed * 7919 + 13, 30 * 12);
     const f = s.finance;
-    assert.ok(f.cash >= 0 && f.invested >= 0, `seed ${seed} negative money`);
-    for (const y of f.years) assert.ok(y.tax + y.fees <= y.gross + 1, `seed ${seed} ${y.year}`);
+    assert.ok(f.cash >= 0 && ASSETS.every((k) => f.holdings[k] >= 0), `seed ${seed} negative money`);
+    f.years.forEach((y, i) => {
+      assert.ok(y.tax <= y.gross + 1, `seed ${seed} ${y.year} tax`);
+      assert.ok(y.fees <= y.gross * 0.2 + (f.years[i - 1]?.netWorth ?? 0) * 0.05 + 1, `seed ${seed} ${y.year} fees`);
+    });
     if (f.years.some((y) => y.gross > 0)) pros++;
     for (const e of f.endorsements) assert.ok(e.yearsLeft > 0 && e.perYear > 0);
     if (f.agent) assert.ok(f.agent.fee > 0 && f.agent.fee <= 0.1);
@@ -519,13 +522,113 @@ ok("version 1 saves migrate with new streams, money and an agent", () => {
   const res = parseSave(JSON.stringify(old));
   assert.ok(res.ok, res.ok ? "" : res.reason);
   if (!res.ok) return;
-  assert.equal(res.state.schemaVersion, 2);
+  assert.equal(res.state.schemaVersion, 3);
   assert.equal(typeof res.state.rng.finance, "number");
   assert.equal(typeof res.state.rng.intl, "number");
   assert.equal(res.state.finance.agent?.reach, "regional");
   assert.equal("agent" in res.state.flags, false);
   const next = advance(res.state, 24, { auto: true });
   assert.ok(next.ageMonths > res.state.ageMonths);
+});
+
+/** Drive a life with auto choices, except where `pick` returns a choice id. */
+function drive(state: LifeState, months: number, pick: (s: LifeState) => string | null = () => null) {
+  let s = state;
+  const stop = s.ageMonths + months;
+  while (!s.ended && s.ageMonths < stop) {
+    s = advanceToDecision(s, stop - s.ageMonths);
+    if (s.pendingDecision) s = resolveDecision(s, pick(s) ?? autoChoice(s));
+  }
+  return s;
+}
+
+ok("market returns ignore what he owns and the index averages about 8% a year", () => {
+  const start = autoLife(31337, 18 * 12);
+  const rich = manageMoney({ ...start, finance: { ...start.finance, cash: 500_000 } }, { type: "target", target: PRESETS.find((p) => p.id === "risky")!.target });
+  const a = drive(manageMoney(rich, { type: "invest" }), 10 * 12);
+  const b = drive(start, 10 * 12);
+  assert.ok(invested(a.finance) > 0, "risky portfolio was invested");
+  assert.deepEqual(
+    a.finance.market.years.map((y) => y.r),
+    b.finance.market.years.map((y) => y.r),
+  );
+  const idx: number[] = [];
+  for (let seed = 1; seed <= 30; seed++) for (const y of autoLife(seed * 6151, 40 * 12).finance.market.years) idx.push(y.r.index);
+  const mean = idx.reduce((x, y) => x + y, 0) / idx.length;
+  const sd = Math.sqrt(idx.reduce((x, y) => x + (y - mean) ** 2, 0) / idx.length);
+  assert.ok(mean > 0.04 && mean < 0.13, `index mean ${mean}`);
+  assert.ok(sd > 0.1 && sd < 0.26, `index spread ${sd}`);
+});
+
+ok("rebalancing keeps value apart from its stated cost and hits the target", () => {
+  const s = autoLife(777, 20 * 12);
+  const f = structuredClone(s.finance);
+  f.holdings = mix({ crypto: 60_000, property: 40_000, savings: 10_000 });
+  f.target = mix({ index: 70, bonds: 30 });
+  const before = invested(f);
+  const cost = rebalanceCost(f);
+  const paid = rebalance(f);
+  assert.ok(Math.abs(paid - cost) < 1, `${paid} vs ${cost}`);
+  assert.ok(Math.abs(invested(f) - (before - paid)) < 1);
+  assert.ok(Math.abs(f.holdings.index / invested(f) - 0.7) < 0.001);
+  const bad = manageMoney(s, { type: "target", target: mix({ index: 50 }) });
+  assert.deepEqual(bad.finance.target, s.finance.target, "a mix that is not 100% is ignored");
+});
+
+ok("a player who misses the NBA can coach, earn a salary and live to 65", () => {
+  let found: LifeState | null = null;
+  for (let seed = 1; seed < 200 && !found; seed++) {
+    const s = drive(createLife(base(seed * 2713, { draw: "equal" })), 33 * 12, (x) => (x.pendingDecision!.templateId === "crossroads" ? (x.pendingDecision!.choices.find((c) => c.id === "track:coach" && !c.disabled)?.id ?? null) : null));
+    if (s.after?.track === "coach") found = s;
+  }
+  assert.ok(found, "some life reaches the coaching track");
+  const end = drive(found!, 40 * 12);
+  assert.ok(end.ended, "life ends");
+  assert.ok(end.ageMonths <= 65 * 12 + 1, `ends at ${end.ageMonths / 12}`);
+  assert.ok(end.after!.years.length > 0, "yearly job record");
+  assert.ok(end.after!.years.some((y) => y.wins !== null), "coaching record");
+  assert.ok(end.after!.salary > 0 && end.finance.years.at(-1)!.gross >= end.after!.salary * 0.9, "second career pays");
+  assert.ok(netWorth(end.finance) >= 0);
+  assert.ok(shareText(end).includes("After playing:"));
+});
+
+ok("looking for a club abroad brings foreign offers", () => {
+  let got = 0;
+  for (let seed = 1; seed < 300 && got < 3; seed++) {
+    let s = createLife(base(seed * 4099, { draw: "equal" }));
+    s = drive(s, 22 * 12, (x) => (x.pendingDecision!.choices.some((c) => c.id === "overseas" && !c.disabled) ? "overseas" : null));
+    if (s.history.some((h) => h.text.includes("clubs abroad"))) {
+      got++;
+      const signed = s.seasons.some((x) => x.node === "foreign-pro") || s.placement.node === "foreign-pro" || s.history.some((h) => h.text === "No club abroad bites this time.");
+      assert.ok(signed, `seed ${seed}: search ended with neither a club nor a no`);
+    }
+  }
+  assert.ok(got >= 1, "some life asks for a club abroad");
+});
+
+ok("version 2 saves move invested money into holdings", () => {
+  const s = autoLife(9090, 24 * 12);
+  const old = JSON.parse(serialize(s)) as Record<string, unknown>;
+  old.schemaVersion = 2;
+  delete old.after;
+  delete (old.rng as Record<string, unknown>).after;
+  const f = old.finance as Record<string, unknown>;
+  delete f.holdings;
+  delete f.target;
+  delete f.autoInvest;
+  delete f.market;
+  f.invested = 50_000;
+  f.advisor = "balanced";
+  const res = parseSave(JSON.stringify(old));
+  assert.ok(res.ok, res.ok ? "" : res.reason);
+  if (!res.ok) return;
+  assert.equal(res.state.schemaVersion, 3);
+  assert.equal(res.state.after, null);
+  assert.equal(typeof res.state.rng.after, "number");
+  assert.ok(Math.abs(invested(res.state.finance) - 50_000) < 1);
+  assert.equal(res.state.finance.holdings.bonds, 20_000);
+  assert.equal(res.state.finance.autoInvest, true);
+  advance(res.state, 24, { auto: true });
 });
 
 console.log(`\n${checks} ONE SHOT checks passed`);
