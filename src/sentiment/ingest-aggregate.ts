@@ -49,7 +49,7 @@ function round2(value: number): number {
  * A conversation with n items weighs sqrt(n) in total, so 100 comments under
  * one video count about like 10, while 100 separate posts count as 100.
  */
-function conversationWeighted(items: ScoredIngestItem[]): { mean: number; weight: number } {
+export function conversationWeighted(items: ScoredIngestItem[]): { mean: number; weight: number } {
   const sizes = new Map<string, number>();
   for (const item of items) {
     if (item.conversation) sizes.set(item.conversation, (sizes.get(item.conversation) ?? 0) + 1);

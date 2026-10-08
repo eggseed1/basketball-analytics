@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 export const metadata = {
   title: "Sentiment",
   description:
-    "Fan and media tone for NBA players and teams, from publisher headlines and curated prototype lanes, with the headlines behind each score.",
+    "Fan and media tone for NBA players and teams, measured from publisher headlines and fan posts, with the storylines and headlines behind each score.",
 };
 
 interface PageProps {
@@ -26,14 +26,19 @@ function one(
 }
 
 function parseView(value: string | undefined): SentimentView {
-  return value === "players" || value === "teams" || value === "headlines" ? value : "league";
+  return value === "players" || value === "teams" || value === "headlines" || value === "overrated"
+    ? value
+    : "league";
 }
 
 export default async function SentimentPage({ searchParams }: PageProps) {
   const sp = await searchParams;
-  const narrative = one(sp, "narrative");
   const topic = one(sp, "topic");
-  const view = topic ? "players" : parseView(one(sp, "view"));
+  const view = topic
+    ? "players"
+    : one(sp, "narrative") === "overrated"
+      ? "overrated"
+      : parseView(one(sp, "view"));
   const { feed, players } = await getLeagueSentimentBoard();
 
   if (!feed) {
@@ -53,7 +58,6 @@ export default async function SentimentPage({ searchParams }: PageProps) {
         players={players}
         teams={listTeamSentimentProfiles()}
         view={view}
-        highlightNarrative={narrative}
         highlightTopic={topic}
       />
     </main>

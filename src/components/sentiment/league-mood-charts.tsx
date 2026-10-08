@@ -4,7 +4,6 @@ import { useState } from "react";
 
 import { SentimentTrendChartLazy as SentimentTrendChart } from "@/components/charts/recharts-lazy";
 import {
-  formatSentimentDate,
   LaneOriginTag,
   laneUnit,
   sentimentPct,
@@ -53,10 +52,9 @@ function MoodPanel({
 }: {
   title: string;
   color: string;
-  lane: CuratedSentimentLane;
+  lane?: CuratedSentimentLane;
   points: SentimentMoodSeries["fan"];
 }) {
-  const measured = lane.origin && lane.origin !== "curated";
   const total = points.reduce((sum, p) => sum + (p.count ?? 0), 0);
   return (
     <div className="sports-card flex flex-col gap-2 p-4">
@@ -66,23 +64,23 @@ function MoodPanel({
           <LaneOriginTag lane={lane} />
         </div>
         <span className={cn(type.caption, "tabular-nums text-muted-foreground")}>
-          {sentimentPct(lane.score)}
-          {measured && total ? ` · ${total.toLocaleString()} ${laneUnit(lane.origin)}` : ""}
+          {lane ? sentimentPct(lane.score) : "—"}
+          {lane && total ? ` · ${total.toLocaleString()} ${laneUnit(lane.origin)}` : ""}
         </span>
       </div>
-      <SentimentTrendChart
-        label={title}
-        color={color}
-        points={points}
-        countLabel={laneUnit(lane.origin)}
-        showLabel={false}
-      />
-      {!measured ? (
+      {lane && points.length ? (
+        <SentimentTrendChart
+          label={title}
+          color={color}
+          points={points}
+          countLabel={laneUnit(lane.origin)}
+          showLabel={false}
+        />
+      ) : (
         <p className={cn(type.caption, "text-muted-foreground")}>
-          Curated values from {formatSentimentDate(points[0]?.date)} to{" "}
-          {formatSentimentDate(lane.asOf)}. Only those days exist, so longer windows show the same points.
+          No measured data in this window yet, so this side is left blank.
         </p>
-      ) : null}
+      )}
     </div>
   );
 }
@@ -93,7 +91,7 @@ export function LeagueMoodCharts({
   defaultWindow = "7d",
 }: {
   moodSeriesByWindow: Record<SentimentWindowId, SentimentMoodSeries>;
-  moodLanes: { fan: CuratedSentimentLane; media: CuratedSentimentLane };
+  moodLanes: { fan?: CuratedSentimentLane; media?: CuratedSentimentLane };
   defaultWindow?: SentimentWindowId;
 }) {
   const [window, setWindow] = useState<SentimentWindowId>(defaultWindow);

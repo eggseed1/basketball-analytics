@@ -1,6 +1,6 @@
 {
   "methodologyVersion": "sentiment-s1-0.2",
-  "status": "CURATED_PLUS_HEADLINES",
+  "status": "MEASURED",
   "disclaimer": "Fan lanes come from team fan blogs, social posts and video comments, and media lanes from publisher headlines. Neither is a census of all fans or media.",
   "pilotWindow": "7d",
   "moverLimit": 4,

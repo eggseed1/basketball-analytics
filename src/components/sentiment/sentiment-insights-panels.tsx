@@ -28,7 +28,7 @@ function gapLabel(gap: number) {
 export function SentimentTopicHeat({
   rows,
   highlightTopic,
-  origin = "curated",
+  origin = "headlines",
 }: {
   rows: SentimentTopicHeatRow[];
   highlightTopic?: string;
@@ -38,7 +38,6 @@ export function SentimentTopicHeat({
   const shown = rows.slice(0, 8);
   const max = shown[0]?.weight ?? 1;
   const active = highlightTopic?.trim().toLowerCase();
-  const fromHeadlines = origin === "headlines";
 
   return (
     <section className="sports-card flex flex-col gap-3 p-4 sm:p-5">
@@ -48,10 +47,7 @@ export function SentimentTopicHeat({
           <LaneOriginTag lane={{ origin, mentionVolume: 0 }} />
         </div>
         <p className={cn(type.caption, "text-muted-foreground")}>
-          {fromHeadlines
-            ? "What outlets wrote about in the last 7 days."
-            : "Curated fan and media topics, not a census of all discussion."}{" "}
-          Pick a topic to filter players.
+          What outlets wrote about in the last 7 days. Pick a topic to filter players.
         </p>
       </div>
       <ul className="flex flex-col gap-2">
@@ -74,8 +70,8 @@ export function SentimentTopicHeat({
                 {row.topic.replace(/_/g, " ")}
               </Link>
               <span className={cn(type.caption, "tabular-nums text-muted-foreground")}>
-                {Math.round(row.weight * 100)}%
-                {fromHeadlines ? ` · ${row.mentionVolume} headlines` : ""} · {row.playerCount} players
+                {Math.round(row.weight * 100)}% · {row.mentionVolume} headlines · {row.playerCount}{" "}
+                players
               </span>
             </div>
             <div className="h-1.5 overflow-hidden rounded-full bg-secondary/80">
@@ -99,11 +95,9 @@ export function SentimentTopicHeat({
           Clear topic filter
         </Link>
       ) : null}
-      {fromHeadlines ? (
-        <MoreInfo>
-          <p>Share of keyword topic tags across NBA headlines from the last 7 days, not all discussion.</p>
-        </MoreInfo>
-      ) : null}
+      <MoreInfo>
+        <p>Share of keyword topic tags across NBA headlines from the last 7 days, not all discussion.</p>
+      </MoreInfo>
     </section>
   );
 }

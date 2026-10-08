@@ -61,15 +61,12 @@ function windowSlice(points: SentimentSeriesPoint[], days: number): SentimentSer
   return points.filter((point) => Date.parse(`${point.date}T12:00:00Z`) >= startMs);
 }
 
-/** Automated series replace the curated seed lane when present. */
+/** Measured daily tone only; a side with no data stays empty. */
 export function resolveLeagueMoodSeriesByWindow(
   league: NonNullable<SentimentCuratedSnapshot["league"]>
 ): Record<SentimentWindowId, SentimentMoodSeries> {
-  const automatedFan = league.fanMood ?? league.redditMood;
-  const fan = automatedFan?.series.length ? automatedFan.series : (league.moodSeries?.fan ?? []);
-  const media = league.headlineMood?.series.length
-    ? league.headlineMood.series
-    : (league.moodSeries?.media ?? []);
+  const fan = (league.fanMood ?? league.redditMood)?.series ?? [];
+  const media = league.headlineMood?.series ?? [];
   const slice = (days: number) => ({ fan: windowSlice(fan, days), media: windowSlice(media, days) });
   return { "7d": slice(7), "30d": slice(30), "90d": slice(90) };
 }
@@ -78,8 +75,8 @@ export function resolveLeagueMoodLanes(
   league: NonNullable<SentimentCuratedSnapshot["league"]>
 ): LeagueSentimentFeed["moodLanes"] {
   return {
-    fan: league.fanMood?.lane ?? league.redditMood?.lane ?? league.mood.fan,
-    media: league.headlineMood?.lane ?? league.mood.media,
+    fan: league.fanMood?.lane ?? league.redditMood?.lane,
+    media: league.headlineMood?.lane,
   };
 }
 
@@ -97,7 +94,7 @@ export const getLeagueSentimentFeed = cache((): LeagueSentimentFeed | null => {
     moodLanes: resolveLeagueMoodLanes(snapshot.league),
     divergences: snapshot.meta.divergences?.rows ?? [],
     topicHeat: snapshot.meta.topicHeat ?? [],
-    topicHeatOrigin: snapshot.meta.topicHeatOrigin ?? "curated",
+    topicHeatOrigin: snapshot.meta.topicHeatOrigin ?? "headlines",
   };
 });
 
@@ -126,7 +123,7 @@ export function listTrackedPlayerSentiment(): TrackedPlayerSentimentRow[] {
   return rows;
 }
 
-/** Players in the curated snapshot linked to a franchise (ESPN team id). */
+/** Players in the sentiment snapshot linked to a franchise (ESPN team id). */
 export function listTeamSentimentPlayers(
   teamId: string
 ): TrackedPlayerSentimentRow[] {

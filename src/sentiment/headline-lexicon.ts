@@ -327,6 +327,17 @@ export function scoreFanText(text: string, maskNames: string[] = []): HeadlineTo
   return scoreHeadline(text, "", maskNames, FAN_OVERRIDES);
 }
 
+const RATING_TOPIC_RULES: { topic: string; pattern: RegExp }[] = [
+  {
+    topic: "overrated",
+    pattern: /\b(over-?rated|over-?hyped|over-?paid)\b/i,
+  },
+  {
+    topic: "underrated",
+    pattern: /\b(under-?rated|under-?paid|under-?appreciated|overlooked|slept on|unsung)\b/i,
+  },
+];
+
 const TOPIC_RULES: { topic: string; pattern: RegExp }[] = [
   {
     topic: "availability",
@@ -348,7 +359,16 @@ const TOPIC_RULES: { topic: string; pattern: RegExp }[] = [
   { topic: "defense", pattern: /\b(defen\w*|dpoy|rim protect\w*)\b/i },
   { topic: "training_camp", pattern: /\b(camp|preseason|media day)\b/i },
   { topic: "conduct", pattern: /\b(suspend\w*|fined|arrest\w*|ejected|lawsuit|investigation)\b/i },
+  ...RATING_TOPIC_RULES,
 ];
+
+/**
+ * Whether an item argues a player is rated too high or too low. Tagged on
+ * stored headline titles at build time, so older headlines count too.
+ */
+export function tagRatingTopics(text: string): string[] {
+  return RATING_TOPIC_RULES.filter((rule) => rule.pattern.test(text)).map((rule) => rule.topic);
+}
 
 const OTHER_SPORTS =
   /\b(NFL|MLB|NHL|WNBA|NCAA|college|quarterback|QB|touchdown|Yankees|Giants|Bears|Hawkeyes|Ole Miss|golf|soccer)\b/i;

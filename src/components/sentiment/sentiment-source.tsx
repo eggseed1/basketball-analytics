@@ -115,7 +115,6 @@ export function SentimentSourcesStrip({
   const headlines = sources?.headlines;
   const reddit = sources?.reddit;
   const fans = sources?.fans;
-  const curated = sources?.curated;
   const fanCount = fans?.itemCount ?? reddit?.itemCount ?? 0;
   return (
     <div className={cn(type.caption, "flex flex-col gap-1.5 text-muted-foreground")}>
@@ -133,10 +132,6 @@ export function SentimentSourcesStrip({
             inactive={!fanCount}
           />
           {fanCount ? `${fanCount.toLocaleString()} fan posts` : "none yet"}
-        </span>
-        <span className="inline-flex items-center gap-1.5">
-          <LaneOriginTag lane={{ origin: "curated", asOf: curated?.asOf ?? undefined, mentionVolume: 0 }} />
-          prototype values, not measured
         </span>
       </p>
       <p>
@@ -209,7 +204,7 @@ export function SentimentSourcesStrip({
                   )}
                 </span>
               ) : (
-                <span>No fan posts collected yet. Fan lanes below use curated values until they are.</span>
+                <span>No fan posts collected yet, so fan lanes are blank.</span>
               )}
             </>
           ) : (
@@ -224,17 +219,10 @@ export function SentimentSourcesStrip({
                   player needs {reddit.floor} posts in the last 7 days to get a score.
                 </span>
               ) : (
-                <span>Not connected yet. Fan lanes below use curated values until it is.</span>
+                <span>Not connected yet, so fan lanes are blank.</span>
               )}
             </>
           )}
-        </li>
-        <li className="flex flex-wrap items-baseline gap-1.5">
-          <LaneOriginTag lane={{ origin: "curated", asOf: curated?.asOf ?? undefined, mentionVolume: 0 }} />
-          <span>
-            Hand-written prototype values dated {formatSentimentDate(curated?.asOf, true)}. They show
-            how the board works and are not measurements.
-          </span>
         </li>
       </ul>
       <ToneAgreementChart />

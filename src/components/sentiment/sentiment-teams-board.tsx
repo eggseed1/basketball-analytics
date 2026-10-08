@@ -61,7 +61,7 @@ export function SentimentTeamsBoard({ teams }: { teams: TeamSentimentProfile[] }
         <MoreInfo>
           <p>
             A team&apos;s media lane comes from headlines that name the team, and it needs 3 in the
-            last 7 days. Curated fan lanes are rolled up from tracked players.
+            last 7 days. The fan lane comes from fan posts tagged to the team.
           </p>
         </MoreInfo>
       </div>

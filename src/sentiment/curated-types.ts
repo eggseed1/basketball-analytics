@@ -168,7 +168,8 @@ export type SentimentSnapshotMeta = {
 };
 
 export type SentimentSourceSummary = {
-  curated: { asOf: string | null; laneCount: number };
+  /** Only in snapshots built before curated lanes were dropped. */
+  curated?: { asOf: string | null; laneCount: number };
   headlines: {
     asOf: string | null;
     firstDate: string | null;
@@ -259,15 +260,68 @@ export type SentimentNarrativeCollection = {
   series?: SentimentSeriesPoint[];
 };
 
+/** One player's part in a measured storyline. */
+export type SentimentStorylinePlayer = {
+  playerId: string;
+  displayName: string;
+  teamKey?: string;
+  /** Items in the window that carry the topic tag and name the player. */
+  fanCount: number;
+  mediaCount: number;
+  /** Tone toward the player in those items. Absent under the tone floor (blank, not neutral). */
+  fanScore?: number;
+  mediaScore?: number;
+  /** Latest headline behind the player's part, when one names them. */
+  headline?: SentimentHeadlineExemplar;
+};
+
+/** A topic tag followed across headlines and fan posts over the window. */
+export type SentimentStoryline = {
+  topic: string;
+  fanCount: number;
+  mediaCount: number;
+  playerCount: number;
+  /** Share of the window's headlines tagged with the topic. */
+  mediaShare: number;
+  /**
+   * The same share over the previous window, or null when too few headlines
+   * were collected then. Fan sources came online at different times, so they
+   * get no comparison.
+   */
+  priorMediaShare: number | null;
+  fanScore?: number;
+  mediaScore?: number;
+  /**
+   * Share of each day's fan posts and headlines tagged with the topic. Null
+   * on days with too few items on that side (blank, not 0).
+   */
+  daily: { date: string; fan: number | null; media: number | null }[];
+  players: SentimentStorylinePlayer[];
+};
+
+/** Items that call a player overrated or underrated. */
+export type SentimentRatingTalk = {
+  windowDays: number;
+  /** Headlines are checked back to their first date; fan posts are tagged from this date on. */
+  fanTaggedSince: string;
+  overrated: { fanCount: number; mediaCount: number; players: SentimentStorylinePlayer[] };
+  underrated: { fanCount: number; mediaCount: number; players: SentimentStorylinePlayer[] };
+};
+
 export type LeagueSentimentSnapshot = {
   window: string;
-  mood: {
+  /** Older snapshots only; current builds read fanMood and headlineMood. */
+  mood?: {
     fan: CuratedSentimentLane;
     media: CuratedSentimentLane;
   };
   moodSeries?: SentimentMoodSeries;
   moodSeriesByWindow?: Partial<Record<SentimentWindowId, SentimentMoodSeries>>;
+  /** Hand-written storylines in older snapshots; empty in current builds. */
   narratives: SentimentNarrativeCollection[];
+  storylines?: SentimentStoryline[];
+  storylineWindowDays?: number;
+  ratingTalk?: SentimentRatingTalk;
   /** Daily tone across all NBA headlines (automated). */
   headlineMood?: { lane: CuratedSentimentLane; series: SentimentSeriesPoint[] };
   /** Daily tone across approved subreddits (automated, needs Reddit credentials). */
@@ -304,8 +358,8 @@ export type LeagueSentimentFeed = {
   sources: SentimentSourceSummary | null;
   league: LeagueSentimentSnapshot;
   moodSeriesByWindow: Record<SentimentWindowId, SentimentMoodSeries>;
-  /** Lane behind each mood chart (origin + asOf drive the labels). */
-  moodLanes: { fan: CuratedSentimentLane; media: CuratedSentimentLane };
+  /** Measured lane behind each mood chart; absent until that side has data. */
+  moodLanes: { fan?: CuratedSentimentLane; media?: CuratedSentimentLane };
   divergences: SentimentDivergenceRow[];
   topicHeat: SentimentTopicHeatRow[];
   topicHeatOrigin: SentimentLaneOrigin;

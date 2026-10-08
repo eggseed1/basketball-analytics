@@ -41,7 +41,7 @@ function FilterChip({
   );
 }
 
-type RosterFilter = "all" | "measured" | "curated";
+type RosterFilter = "all" | "measured" | "both";
 type SortKey = "name" | "team" | "fan" | "media" | "trend" | "headlines" | "drbl";
 
 const isMeasured = (lane?: CuratedSentimentLane) => Boolean(lane?.origin && lane.origin !== "curated");
@@ -104,7 +104,7 @@ export function TrackedPlayersBoard({
       if (topicFilter && !playerMatchesSentimentTopic(row, topicFilter)) return false;
       const measured = isMeasured(row.fan) || isMeasured(row.media);
       if (filter === "measured" && !measured) return false;
-      if (filter === "curated" && measured) return false;
+      if (filter === "both" && !(isMeasured(row.fan) && isMeasured(row.media))) return false;
       if (!q) return true;
       return (
         row.displayName.toLowerCase().includes(q) ||
@@ -205,10 +205,10 @@ export function TrackedPlayersBoard({
             All
           </FilterChip>
           <FilterChip active={filter === "measured"} onClick={() => setFilter("measured")}>
-            Measured
+            With data
           </FilterChip>
-          <FilterChip active={filter === "curated"} onClick={() => setFilter("curated")}>
-            Curated only
+          <FilterChip active={filter === "both"} onClick={() => setFilter("both")}>
+            Fans and media
           </FilterChip>
         </div>
       </div>

@@ -146,7 +146,7 @@ export const PRIMARY_NAV: PrimaryNavItem[] = [
       { href: "/sentiment?view=players", label: "Players" },
       { href: "/sentiment?view=teams", label: "Teams" },
       { href: "/sentiment?view=headlines", label: "Headlines" },
-      { href: "/sentiment?narrative=overrated", label: "Overrated watch" },
+      { href: "/sentiment?view=overrated", label: "Overrated watch" },
     ],
   },
   {

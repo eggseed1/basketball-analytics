@@ -29,11 +29,16 @@ import type {
   PlayerSentimentProfile,
   SentimentCuratedSnapshot,
   SentimentProfileProvenance,
+  SentimentSeriesPoint,
   SentimentSourceSummary,
   SentimentTopicHeatRow,
   TeamSentimentProfile,
 } from "@/sentiment/curated-types";
-import { FAN_LEXICON_VERSION, HEADLINE_LEXICON_VERSION } from "@/sentiment/headline-lexicon";
+import {
+  FAN_LEXICON_VERSION,
+  HEADLINE_LEXICON_VERSION,
+  tagRatingTopics,
+} from "@/sentiment/headline-lexicon";
 import { FAN_MODEL_VERSION, HEADLINE_MODEL_VERSION } from "@/sentiment/headline-model";
 import { headlineWordCloud, ownWords } from "@/sentiment/headline-words";
 import type { SentimentHistoryFile } from "@/sentiment/game-reaction";
@@ -59,13 +64,10 @@ import {
   profileKey,
   type PilotRosterSeed,
 } from "@/sentiment/generate-pilot-profile";
-import {
-  computeSentimentDivergences,
-  computeSentimentTopicHeat,
-} from "@/sentiment/insights";
-import { hydrateLeagueNarrativeHygiene } from "@/sentiment/narrative-hygiene";
+import { computeSentimentDivergences } from "@/sentiment/insights";
 import { enrichProfilesWithMovementAssociations } from "@/sentiment/movement-associations";
 import { computeSentimentMovers } from "@/sentiment/movers";
+import { buildRatingTalk, buildStorylines, type StorylineInput } from "@/sentiment/storylines";
 import {
   computeRosterTeamProfiles,
   mergeTeamProfiles,
@@ -131,6 +133,12 @@ const RUNTIME_SNAPSHOT_PATH = path.join(
 const HISTORY_DIR = path.join(process.cwd(), "public", "runtime", "sentiment-history");
 /** Covers a full season plus the prior playoffs. */
 const HISTORY_DAYS = 400;
+
+const STORYLINE_SERIES_DAYS = 14;
+/** Fewer items than this toward a player or topic leaves its tone blank. */
+const STORYLINE_TONE_FLOOR = 3;
+/** Rating talk is rare, so it looks back further than the 7-day lanes. */
+const RATING_TALK_DAYS = 30;
 
 function buildPlayerHistoryFiles(
   profiles: PlayerSentimentProfile[],
@@ -256,19 +264,30 @@ function curatedLanePasses(
 }
 
 /**
- * Automated lanes are floored when built. Curated lanes use the manifest
- * floor. A lane below its floor is removed (blank, not neutral).
+ * Only measured lanes ship. Automated lanes are floored when built; seeded
+ * and observation lanes are dropped with their series, so a subject with no
+ * measured side is left out (blank, not neutral).
  */
-function applyLaneFloors<T extends { fan?: CuratedSentimentLane; media?: CuratedSentimentLane }>(
-  profile: T,
-  floor: SentimentSeedManifest["coverageFloor"]
-): T | null {
+function keepMeasuredLanes<
+  T extends {
+    fan?: CuratedSentimentLane;
+    media?: CuratedSentimentLane;
+    series?: { fan: SentimentSeriesPoint[]; media: SentimentSeriesPoint[] };
+  },
+>(profile: T): T | null {
   const keep = (lane?: CuratedSentimentLane) =>
-    lane && (lane.origin !== "curated" || curatedLanePasses(lane, floor)) ? lane : undefined;
+    lane?.origin && lane.origin !== "curated" ? lane : undefined;
   const fan = keep(profile.fan);
   const media = keep(profile.media);
   if (!fan && !media) return null;
-  return { ...profile, fan, media };
+  return {
+    ...profile,
+    fan,
+    media,
+    ...(profile.series
+      ? { series: { fan: fan ? profile.series.fan : [], media: media ? profile.series.media : [] } }
+      : {}),
+  };
 }
 
 function lastSeriesDate(points?: { date: string }[]): string | undefined {
@@ -345,7 +364,7 @@ function newsToScored(
       id: row.id,
       date: row.publishedAt,
       score: row.score,
-      topics: row.topics,
+      topics: [...new Set([...row.topics, ...tagRatingTopics(row.title)])],
       playerIds: row.playerIds,
       teamIds: row.teamIds,
       ...(platform ? { platform } : {}),
@@ -627,7 +646,11 @@ export async function buildSentimentSnapshot(
   const leagueSeed = readJson<LeagueSentimentSnapshot>(
     path.join(SEEDS_DIR, "league.json")
   );
-  const league = await hydrateLeagueNarrativeHygiene(leagueSeed);
+  // The seed's hand-written mood, mood series and narratives are not shipped.
+  const { mood: _seedMood, moodSeries: _seedSeries, ...leagueBase } = leagueSeed;
+  void _seedMood;
+  void _seedSeries;
+  const league: LeagueSentimentSnapshot = { ...leagueBase, narratives: [] };
 
   const season = canonicalSeasonFromStartYear(currentNbaStartYear(now));
   const snapshotDate = now.toISOString().slice(0, 10);
@@ -854,7 +877,7 @@ export async function buildSentimentSnapshot(
   }
   const beforeFloor = uniqueProfiles.size;
   profiles = [...uniqueProfiles.values()]
-    .map((profile) => applyLaneFloors(profile, manifest.coverageFloor))
+    .map((profile) => keepMeasuredLanes(profile))
     .filter((profile): profile is PlayerSentimentProfile => profile != null);
   const droppedBelowFloor = beforeFloor - profiles.length;
 
@@ -877,10 +900,8 @@ export async function buildSentimentSnapshot(
     (item) => Date.parse(item.date) > now.getTime() - ingestConfig.windowDays * 86_400_000
   ).length;
   const topicHeat =
-    headlineWindowCount >= 20
-      ? headlineTopicHeat(newsScored, now, ingestConfig.windowDays, 12)
-      : computeSentimentTopicHeat(profiles, { limit: 12 });
-  const topicHeatOrigin = headlineWindowCount >= 20 ? "headlines" : "curated";
+    headlineWindowCount >= 20 ? headlineTopicHeat(newsScored, now, ingestConfig.windowDays, 12) : [];
+  const topicHeatOrigin = "headlines";
 
   const teamObservationProfiles = aggregateTeamObservationBatches(
     observationBatches,
@@ -934,7 +955,7 @@ export async function buildSentimentSnapshot(
     }));
   }
   const teams = [...teamByKey.values()]
-    .map((team) => applyLaneFloors(team, manifest.coverageFloor))
+    .map((team) => keepMeasuredLanes(team))
     .filter((team): team is TeamSentimentProfile => team != null)
     .sort((a, b) => (a.displayName ?? "").localeCompare(b.displayName ?? ""));
 
@@ -944,36 +965,58 @@ export async function buildSentimentSnapshot(
       if (profile.displayName) canonicalName.set(id, { name: profile.displayName, teamKey: profile.teamKey });
     }
   }
-  const byFoldedName = new Map(
-    profiles
-      .filter((profile) => profile.displayName)
-      .map((profile) => [normalizePlayerName(profile.displayName!), profile])
-  );
-  league.narratives = league.narratives.map((narrative) => ({
-    ...narrative,
-    players: narrative.players.map((player) => {
-      const hit =
-        canonicalName.get(player.playerId) ??
-        (() => {
-          const profile = byFoldedName.get(normalizePlayerName(player.displayName));
-          return profile ? { name: profile.displayName!, teamKey: profile.teamKey } : undefined;
-        })();
-      return hit
-        ? { ...player, displayName: hit.name, teamKey: hit.teamKey ?? player.teamKey }
-        : player;
-    }),
-  }));
+  const storylineName = (id: string): { name: string; teamKey?: string } | undefined => {
+    const hit = canonicalName.get(id);
+    if (hit) return hit;
+    const rosterRow = rosterIndex.byId.get(id);
+    if (rosterRow) return { name: rosterRow.playerName, teamKey: rosterRow.teamId };
+    const ingestRow = ingestRoster.get(id);
+    return ingestRow ? { name: ingestRow.name, teamKey: ingestRow.teamId } : undefined;
+  };
+  const storylineInput = (windowDays: number): StorylineInput => ({
+    media: newsScored,
+    fanPlayers: fanScored,
+    fanAll: fanScoredLeague,
+    now,
+    windowDays,
+    seriesDays: STORYLINE_SERIES_DAYS,
+    name: storylineName,
+    headline: (itemId, playerId) => {
+      const row = newsById.get(itemId);
+      const who = storylineName(playerId);
+      const surname = who ? normalizePlayerName(who.name).trim().split(/\s+/).at(-1) : undefined;
+      const title = ` ${normalizePlayerName(row?.title ?? "").trim()} `;
+      if (!row || !surname || !title.includes(` ${surname} `)) return undefined;
+      const rating = headlineTones.get(`news:${row.id}`)?.[playerId];
+      return {
+        title: row.title,
+        url: row.url,
+        outlet: row.outlet,
+        publishedAt: row.publishedAt,
+        score: row.score,
+        ...(rating !== undefined ? { rating } : {}),
+      };
+    },
+  });
+  league.storylines = buildStorylines(storylineInput(ingestConfig.windowDays), {
+    limit: 6,
+    playerLimit: 5,
+    minItems: 10,
+    toneFloor: STORYLINE_TONE_FLOOR,
+    dailyFloor: { fan: 50, media: 10 },
+    priorMediaFloor: 200,
+  });
+  league.storylineWindowDays = ingestConfig.windowDays;
+  league.ratingTalk = buildRatingTalk(storylineInput(RATING_TALK_DAYS), {
+    playerLimit: 8,
+    toneFloor: STORYLINE_TONE_FLOOR,
+  });
 
   const leagueHeadlineLane = buildIngestLane(newsScored, { ...headlineOpts, floor: 1 });
   const leagueFanLane = buildIngestLane(fanScoredLeague, { ...fanOpts, floor: 1 });
   league.headlineMood = leagueHeadlineLane ?? undefined;
   league.fanMood = leagueFanLane ?? undefined;
   delete league.redditMood;
-  league.mood = {
-    fan: tagCuratedLanes({ fan: league.mood.fan }, lastSeriesDate(league.moodSeries?.fan)).fan!,
-    media: tagCuratedLanes({ media: league.mood.media }, lastSeriesDate(league.moodSeries?.media))
-      .media!,
-  };
   league.latestHeadlines = latestExemplars(
     newsRows.map((row) => ({
       title: row.title,
@@ -1003,12 +1046,7 @@ export async function buildSentimentSnapshot(
   for (const item of fanScoredLeague) {
     if (item.platform) fanPlatformCounts[item.platform] = (fanPlatformCounts[item.platform] ?? 0) + 1;
   }
-  const curatedLaneCount = profiles.reduce(
-    (sum, p) => sum + (p.fan?.origin === "curated" ? 1 : 0) + (p.media?.origin === "curated" ? 1 : 0),
-    0
-  );
   const sources: SentimentSourceSummary = {
-    curated: { asOf: curatedAsOf ?? null, laneCount: curatedLaneCount },
     headlines: {
       asOf: newsDates[newsDates.length - 1] ?? null,
       firstDate: newsDates[0] ?? null,

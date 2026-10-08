@@ -106,6 +106,7 @@
     "sentiment:ingest:fans": "npm run -s sentiment:ingest:reddit; npm run -s sentiment:ingest:fan-blogs; npm run -s sentiment:ingest:bluesky; npm run -s sentiment:ingest:youtube",
     "sentiment:refresh": "npm run -s sentiment:ingest:news && npm run -s sentiment:ingest:fans; npm run -s sentiment:build",
     "test:sentiment-ingest": "tsx scripts/test-sentiment-ingest.ts",
+    "test:sentiment-storylines": "tsx scripts/test-sentiment-storylines.ts",
     "test:analytics-news": "tsx scripts/test-analytics-news.ts",
     "sentiment:sync": "node scripts/build-runtime-sentiment-snapshot.mjs",
     "movement:build": "tsx scripts/movement-build-snapshot.ts",

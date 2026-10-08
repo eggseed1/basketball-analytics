@@ -1,14 +1,10 @@
-import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 
 import { TeamLogo } from "@/components/brand/team-logo";
-import { PlayerHeadshot } from "@/components/brand/player-headshot";
-import {
-  SentimentPerformanceScatterLazy as SentimentPerformanceScatter,
-  SentimentTrendChartLazy as SentimentTrendChart,
-} from "@/components/charts/recharts-lazy";
+import { SentimentPerformanceScatterLazy as SentimentPerformanceScatter } from "@/components/charts/recharts-lazy";
 import { LeagueMoodCharts } from "@/components/sentiment/league-mood-charts";
 import { SentimentHeadlinesList } from "@/components/sentiment/sentiment-headlines-list";
+import { SentimentOverratedView } from "@/components/sentiment/sentiment-overrated-view";
 import {
   SentimentDivergenceBoard,
   SentimentTopicHeat,
@@ -18,102 +14,18 @@ import {
   sentimentPct,
   SentimentSourcesStrip,
 } from "@/components/sentiment/sentiment-source";
+import { SentimentStorylines } from "@/components/sentiment/sentiment-storylines";
 import { SentimentTeamsBoard } from "@/components/sentiment/sentiment-teams-board";
 import { TrackedPlayersBoard } from "@/components/sentiment/tracked-players-board";
 import type {
   LeagueSentimentFeed,
-  SentimentNarrativeCollection,
   TeamSentimentProfile,
   TrackedPlayerSentimentRow,
 } from "@/sentiment/curated-types";
 import { type, textLinkClassName } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 
-export type SentimentView = "league" | "players" | "teams" | "headlines";
-
-function NarrativeCollectionCard({
-  narrative,
-  highlighted,
-  asOf,
-}: {
-  narrative: SentimentNarrativeCollection;
-  highlighted?: boolean;
-  asOf?: string | null;
-}) {
-  return (
-    <article
-      id={`narrative-${narrative.slug}`}
-      className={cn(
-        "flex min-w-0 flex-col gap-3 rounded-[11px] bg-foreground/[0.035] p-4 ring-1 ring-inset ring-foreground/[0.06]",
-        highlighted && "ring-2 ring-primary/35"
-      )}
-    >
-      <header className="flex flex-col gap-1">
-        <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <h3 className={cn(type.bodySm, "font-bold")}>{narrative.label}</h3>
-            <LaneOriginTag lane={{ origin: "curated", asOf: asOf ?? undefined, mentionVolume: 0 }} />
-          </div>
-          <span className={cn(type.caption, "capitalize text-muted-foreground")}>
-            {narrative.direction} · {narrative.mentionVolume.toLocaleString()} mentions
-          </span>
-        </div>
-        <p className={cn(type.caption, "text-muted-foreground")}>{narrative.description}</p>
-      </header>
-
-      {narrative.series?.length ? (
-        <SentimentTrendChart
-          label="Narrative volume (indexed)"
-          color="rgb(245 158 11)"
-          points={narrative.series}
-          height={120}
-        />
-      ) : null}
-
-      <ul className="flex flex-col gap-2">
-        {narrative.players.map((player) => (
-          <li
-            key={player.playerId}
-            className="flex flex-col gap-2 rounded-lg bg-background/60 px-3 py-2"
-          >
-            <div className="flex items-center gap-2">
-              <PlayerHeadshot
-                playerId={player.playerId}
-                name={player.displayName}
-                teamKey={player.teamKey}
-                size="sm"
-              />
-              <div className="min-w-0 flex-1">
-                <Link
-                  href={`/players/${encodeURIComponent(player.playerId)}`}
-                  className={cn(type.bodySm, "font-semibold hover:underline")}
-                >
-                  {player.displayName}
-                </Link>
-                {player.teamKey ? (
-                  <div className="mt-0.5 flex items-center gap-1">
-                    <TeamLogo teamKey={player.teamKey} size="xs" />
-                    <span className={cn(type.caption, "text-muted-foreground")}>
-                      {Math.round(player.narrativeShare * 100)}% of narrative
-                    </span>
-                  </div>
-                ) : null}
-              </div>
-              <div
-                className={cn(type.caption, "shrink-0 text-right tabular-nums")}
-                title="The player's curated fan and media tone across all topics, not just this narrative"
-              >
-                <p>Fan {sentimentPct(player.fanScore)}</p>
-                <p className="text-muted-foreground">Media {sentimentPct(player.mediaScore)}</p>
-              </div>
-            </div>
-            <p className={cn(type.caption, "text-muted-foreground")}>{player.note}</p>
-          </li>
-        ))}
-      </ul>
-    </article>
-  );
-}
+export type SentimentView = "league" | "overrated" | "players" | "teams" | "headlines";
 
 function HeadlineToneLeaders({ players }: { players: TrackedPlayerSentimentRow[] }) {
   const measured = players.filter((row) => row.media?.origin === "headlines");
@@ -171,19 +83,15 @@ export function SentimentCenterView({
   players,
   teams,
   view,
-  highlightNarrative,
   highlightTopic,
 }: {
   feed: LeagueSentimentFeed;
   players: TrackedPlayerSentimentRow[];
   teams: TeamSentimentProfile[];
   view: SentimentView;
-  highlightNarrative?: string;
   highlightTopic?: string;
 }) {
   const { league } = feed;
-  const overrated = league.narratives.find((n) => n.slug === "overrated") ?? null;
-  const curatedAsOf = feed.sources?.curated.asOf ?? null;
 
   return (
     <div className="flex flex-col gap-8">
@@ -203,11 +111,14 @@ export function SentimentCenterView({
               ? "Team sentiment"
               : view === "headlines"
                 ? "Headlines"
-                : "League sentiment board"}
+                : view === "overrated"
+                  ? "Overrated watch"
+                  : "League sentiment board"}
         </h1>
         <p className={cn(type.bodySm, "max-w-2xl text-muted-foreground")}>
-          How fans and media talk about players and teams. The two are shown side by side, never
-          merged into one number.
+          {view === "overrated"
+            ? "Who the talk runs ahead of or behind, measured against last season's production, and who gets called overrated or underrated by name."
+            : "How fans and media talk about players and teams. The two are shown side by side, never merged into one number."}
         </p>
         <SentimentSourcesStrip sources={feed.sources} snapshotDate={feed.snapshotDate} />
       </header>
@@ -221,6 +132,8 @@ export function SentimentCenterView({
         <SentimentTeamsBoard teams={teams} />
       ) : view === "headlines" ? (
         <SentimentHeadlinesList headlines={league.latestHeadlines ?? []} sources={feed.sources} />
+      ) : view === "overrated" ? (
+        <SentimentOverratedView players={players} ratingTalk={league.ratingTalk} />
       ) : (
         <>
           <LeagueMoodCharts
@@ -249,47 +162,17 @@ export function SentimentCenterView({
             </div>
           </div>
 
-          {league.narratives.length ? (
-            <details
-              className="group sports-card overflow-hidden"
-              open={Boolean(highlightNarrative) || undefined}
-            >
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3.5 sm:px-5 [&::-webkit-details-marker]:hidden">
-                <span className="flex flex-col gap-0.5">
-                  <span className="flex items-center gap-2">
-                    <span className={type.heading}>Narratives</span>
-                    <LaneOriginTag
-                      lane={{ origin: "curated", asOf: curatedAsOf ?? undefined, mentionVolume: 0 }}
-                    />
-                  </span>
-                  <span className={cn(type.bodySm, "text-muted-foreground")}>
-                    {league.narratives.length} hand-picked storylines
-                    {overrated ? ", including who fans call overrated" : ""}. Not measured
-                    from this week&apos;s posts.
-                  </span>
-                </span>
-                <ChevronDown
-                  aria-hidden
-                  className="size-5 shrink-0 text-muted-foreground transition-transform group-open:rotate-180"
-                />
-              </summary>
-              <div className="grid gap-3 border-t border-border/60 p-3 sm:p-4 lg:grid-cols-2">
-                {[...(overrated ? [overrated] : []), ...league.narratives.filter((n) => n !== overrated)].map(
-                  (narrative) => (
-                    <NarrativeCollectionCard
-                      key={narrative.id}
-                      narrative={narrative}
-                      highlighted={highlightNarrative === narrative.slug}
-                      asOf={curatedAsOf}
-                    />
-                  )
-                )}
-              </div>
-            </details>
-          ) : null}
+          <SentimentStorylines
+            storylines={league.storylines ?? []}
+            windowDays={league.storylineWindowDays ?? 7}
+          />
 
           <p className={cn(type.caption, "text-muted-foreground")}>
             More detail:{" "}
+            <Link href="/sentiment?view=overrated" className={textLinkClassName}>
+              who the talk runs ahead of
+            </Link>
+            ,{" "}
             <Link href="/sentiment?view=players" className={textLinkClassName}>
               every player
             </Link>
