@@ -600,7 +600,7 @@ function nbaMonth(s: LifeState, level: Level, boxes: BoxScore[], last: boolean) 
   if (!line || line.nbaYear === undefined) return;
   const { month } = calendar(s);
   const year = line.nbaYear;
-  const honor = monthHonor(boxes, isNbaRookie(s, year));
+  const honor = monthHonor(boxes, isNbaRookie(s, year), rngOf(s.rng, "nba").next());
   if (honor) {
     const text = `${conference(s.placement.teamName)} Conference ${honor === "player" ? "Player" : "Rookie"} of the Month, ${MONTH_NAMES[month - 1]}`;
     (line.monthly ??= []).push(text);

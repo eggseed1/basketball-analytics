@@ -226,13 +226,17 @@ export function threePointInvite(line: SeasonLine): boolean {
   return rankIn(POOL, (x) => x.tpm, line.tpm / line.gp).rank <= 12;
 }
 
-/** Player or Rookie of the Month from one month of games (8+ played). */
-export function monthHonor(boxes: BoxScore[], rookie: boolean): "player" | "rookie" | null {
+/**
+ * Player or Rookie of the Month from one month of games (8+ played). One player
+ * per conference wins, so a top-3 month wins only on `roll`.
+ */
+export function monthHonor(boxes: BoxScore[], rookie: boolean, roll: number): "player" | "rookie" | null {
   const played = boxes.filter((b) => b.min > 0);
   if (played.length < 8) return null;
   const sum = played.reduce<StatLine>((a, b) => ({ gp: a.gp + 1, min: a.min + b.min, pts: a.pts + b.pts, reb: a.reb + b.reb, ast: a.ast + b.ast, stl: a.stl + b.stl, blk: a.blk + b.blk, tov: a.tov + b.tov, fgm: a.fgm + b.fgm, fga: a.fga + b.fga, tpm: a.tpm + b.tpm, tpa: a.tpa + b.tpa, ftm: a.ftm + b.ftm, fta: a.fta + b.fta }), { gp: 0, min: 0, pts: 0, reb: 0, ast: 0, stl: 0, blk: 0, tov: 0, fgm: 0, fga: 0, tpm: 0, tpa: 0, ftm: 0, fta: 0 });
   const gs = gameScore(perGameOf(sum));
-  if (scoreRank(AWARD_POOL, gs) <= 3) return "player";
+  const r = scoreRank(AWARD_POOL, gs);
+  if (r <= 3 && roll < [0.45, 0.25, 0.12][r - 1]!) return "player";
   if (rookie && scoreRank(REAL.filter((x) => x.year === 1 && x.gp >= 40), gs) === 1) return "rookie";
   return null;
 }

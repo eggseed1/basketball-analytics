@@ -69,6 +69,8 @@ export function headroom(cur: number, pot: number): number {
 }
 
 const BASE_GAIN = 3.6;
+/** Share of the full learning rate a focused skill keeps once it passes its ceiling (model). */
+const PAST_CEILING = 0.25;
 
 export interface MonthlyDevelopment {
   skillGains: Partial<Record<SkillKey, number>>;
@@ -93,7 +95,7 @@ export function monthlyDevelopment(state: LifeState): MonthlyDevelopment {
   out.hours = ownHours + teamHours;
   const coaching = 0.45 + clamp(state.placement.coaching, 0, 100) / 100;
   const motivation = clamp(state.traits.motivation / 70, 0.55, 1.3);
-  const recovery = clamp(0.35 + 0.65 * (state.condition.energy / 100) * (state.condition.health / 100), 0.3, 1);
+  const recovery = clamp(0.4 + (0.6 * Math.min(state.condition.energy, state.condition.health)) / 45, 0.4, 1);
   const alf = ageLearningFactor(age);
   const ownEff = effectivePractice(ownHours);
   const teamEff = effectivePractice(teamHours) * 0.8;
@@ -106,7 +108,9 @@ export function monthlyDevelopment(state: LifeState): MonthlyDevelopment {
   };
   for (const k of Object.keys(state.skills) as SkillKey[]) {
     const room = headroom(state.skills[k], state.potentials[k]);
-    const gain = BASE_GAIN * alf * coaching * motivation * recovery * room * (ownEff * share(k) + teamEff * 0.55);
+    // Focused work keeps paying past the hidden ceiling, slowly.
+    const past = PAST_CEILING * Math.max(0, 99 - state.skills[k]) / 99;
+    const gain = BASE_GAIN * alf * coaching * motivation * recovery * (Math.max(room, past) * ownEff * share(k) + room * teamEff * 0.55);
     if (gain > 0) out.skillGains[k] = gain;
   }
   const athShare = (k: AthleticKey) => {
@@ -123,6 +127,9 @@ export function monthlyDevelopment(state: LifeState): MonthlyDevelopment {
   }
   return out;
 }
+
+/** Energy a full load costs at each workload (model). Learning runs at full speed above 45 energy. */
+const ENERGY_COST: Record<Workload, number> = { low: 8, balanced: 24, high: 38 };
 
 /** Apply one month of training, energy, injuries and focus side effects. */
 export function stepTraining(state: LifeState) {
@@ -145,11 +152,10 @@ export function stepTraining(state: LifeState) {
     const attending = state.plan.primary === "school" || state.plan.secondary === "school";
     if (!attending) state.education.academics = clamp(state.education.academics - 0.15, 0, 100);
   }
-  // Energy: recovery minus load.
+  // Energy settles toward what the workload and hours allow; events knock it off for a few months.
   const load = dev.hours;
-  const recover = state.plan.workload === "low" ? 14 : state.plan.workload === "balanced" ? 10 : 7;
-  const drain = load * 0.55 + (state.season ? 3 : 0);
-  state.condition.energy = clamp(state.condition.energy + recover - drain, 5, 100);
+  const target = 100 - ENERGY_COST[state.plan.workload] * clamp(load / 30, 0.3, 1.3) - (state.season ? 6 : 0);
+  state.condition.energy = clamp(state.condition.energy + (target - state.condition.energy) * 0.4, 5, 100);
   state.condition.health = clamp(state.condition.health + (state.condition.injury ? 2 : 1.2), 0, 100);
   if (dev.cost > 0) chargeFamily(state, dev.cost);
   stepInjury(state, load);

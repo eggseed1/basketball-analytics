@@ -194,6 +194,11 @@ export function SourcesDrawer({ life, onClose }: { life: LifeState | null; onClo
             leagues he could make, or move on to a second career.
           </p>
           <p className="mt-1 text-[12px] text-[var(--os-dim)]">
+            Training: each skill grows toward a hidden ceiling set at birth, fastest in the teens. A skill he keeps as his focus still gains past that ceiling, slowly. Energy settles at a level
+            set by his workload and hours. Below 45 he learns less, and tired players get hurt more. Speed and strength work can lift athleticism up to 18 points above his natural curve, and the
+            extra fades slowly, faster after 28. These are game parameters, not measured rates.
+          </p>
+          <p className="mt-1 text-[12px] text-[var(--os-dim)]">
             Call-ups: a G League call-up comes with a 10-day contract, and in this game the parent club then keeps him for the rest of the season. Early entry for the draft is open from January
             through April to anyone eligible, whatever the scouts think (game rule).
           </p>

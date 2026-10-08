@@ -154,13 +154,15 @@ export function stepBody(state: LifeState, gains: Partial<Record<AthleticKey, nu
   const m = maturation(state.ageMonths, growth.pubertyOffsetMonths);
   const prev = state.body;
   const next = bodyAt(state.ageMonths, growth, prev, prev.frame);
+  const fade = state.ageMonths >= 28 * 12 ? 0.05 : 0.015;
   for (const k of ATHLETIC) {
     const natural = growth.athleticCeiling[k] * m;
     const cur = prev[k as keyof Body] as number;
-    // Natural maturation closes a share of the gap each month; training can
-    // push up to 12 points above the untrained curve.
-    let v = cur + (natural - cur) * 0.08 + (gains[k] ?? 0);
-    v = Math.min(v, natural + 12, 99);
+    // Maturation closes a share of the gap below the untrained curve each
+    // month. Trained gains above it fade slowly, faster after 28, and can
+    // reach 18 points above it.
+    let v = cur + (natural - cur) * (cur < natural ? 0.08 : fade) + (gains[k] ?? 0);
+    v = Math.min(v, natural + 18, 99);
     (next as unknown as Record<string, number>)[k] = round1(Math.max(1, v));
   }
   next.verticalCm = round1(8 + 0.62 * next.vertical * m);

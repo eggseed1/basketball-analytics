@@ -347,8 +347,8 @@ ok("moving abroad as a youth always follows an invitation", () => {
 });
 
 ok("an undrafted player can still make an NBA debut", () => {
-  const s = drive(createLife(base(314)), 31 * 12, (x) => (x.pendingDecision!.templateId === "draft-declare" ? "wait" : null));
-  assert.ok(s.achievements.nbaDebut !== null, "seed 314 should debut");
+  const s = drive(createLife(base(7)), 31 * 12, (x) => (x.pendingDecision!.templateId === "draft-declare" ? "wait" : null));
+  assert.ok(s.achievements.nbaDebut !== null, "seed 7 should debut");
   assert.equal(s.achievements.drafted, null);
   assert.equal(outcomeTier(s), "nba-debut");
 });
@@ -476,7 +476,8 @@ ok("national team calendar, fields and results stay consistent", () => {
       assert.equal(r.medal !== null, ["Gold", "Silver", "Bronze"].includes(r.finish), r.finish);
       assert.equal(r.pts, 2 * (r.fgm - r.tpm) + 3 * r.tpm + r.ftm, r.name);
       const boxes = s.gameLog.filter((b) => b.seasonKey === `intl:${r.id}`);
-      if (boxes.length) assert.equal(sumBoxes(boxes).wins, r.wins, `${r.name} wins`);
+      // The game log keeps the last 160 games, so an older tournament can be cut short.
+      if (boxes.length === r.wins + r.losses) assert.equal(sumBoxes(boxes).wins, r.wins, `${r.name} wins`);
     }
   }
   assert.ok(played > 0, "some life plays for its country");
@@ -818,6 +819,41 @@ ok("an NBA life is the same month by month as with Next decision", () => {
   const b = drive(createLife(base(seed)), months, keepChapter);
   assert.ok(a.seasons.some((x) => x.node === "nba"), "reaches the NBA");
   assert.equal(strip(b), strip(a));
+});
+
+ok("energy settles by workload instead of draining to the floor, in the NBA too", () => {
+  const pro = drive(createLife(base(NBA_SEEDS[0]!)), 26 * 12, keepChapter);
+  assert.equal(pro.placement.node, "nba");
+  const settle = (w: "low" | "balanced" | "high") => {
+    let s = setPlan(pro, { workload: w });
+    const seen: number[] = [];
+    for (let m = 0; m < 12; m++) {
+      s = advance(s, 1);
+      while (s.pendingDecision) s = resolveDecision(s, keepChapter(s) ?? autoChoice(s));
+      s = setPlan(s, { workload: w });
+      seen.push(s.condition.energy);
+    }
+    return seen.slice(4).reduce((a, x) => a + x, 0) / 8;
+  };
+  const [low, bal, high] = [settle("low"), settle("balanced"), settle("high")];
+  assert.ok(low > bal && bal > high, `${low} ${bal} ${high}`);
+  assert.ok(bal >= 55, `balanced settles at ${bal}`);
+  assert.ok(high >= 30, `high settles at ${high}`);
+});
+
+ok("trained athleticism stays above the untrained curve", () => {
+  const start = drive(createLife(base(NBA_SEEDS[1]!)), 18 * 12, keepChapter);
+  let s = setPlan(start, { primary: "athleticism", secondary: "strength" });
+  for (let m = 0; m < 48; m++) {
+    s = advance(s, 1);
+    while (s.pendingDecision) s = resolveDecision(s, keepChapter(s) ?? autoChoice(s));
+    s = setPlan(s, { primary: "athleticism", secondary: "strength" });
+  }
+  const untrained = drive(start, 48, keepChapter);
+  for (const k of ["acceleration", "vertical", "strength"] as const) {
+    assert.ok(s.body[k] >= untrained.body[k] + 6, `${k}: trained ${s.body[k]} vs ${untrained.body[k]}`);
+    assert.ok(s.body[k] > s.growth.athleticCeiling[k] + 4, `${k}: ${s.body[k]} vs natural ${s.growth.athleticCeiling[k]}`);
+  }
 });
 
 ok("version 4 saves gain the NBA random stream", () => {

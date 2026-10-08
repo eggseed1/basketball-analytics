@@ -477,7 +477,7 @@ export const EVENTS: EventTemplate[] = [
     ],
   },
   {
-    id: "burnout", ages: [13, 30], cooldown: 36, weight: (s) => (s.condition.energy < 25 ? 1.5 : 0), title: "Burned out",
+    id: "burnout", ages: [13, 30], cooldown: 36, weight: (s) => (s.condition.energy < 25 ? 1.5 : s.condition.energy < 50 && s.plan.workload === "high" ? 0.6 : 0), title: "Burned out",
     body: "You dread practice. Everything feels heavy.",
     choices: [
       { id: "rest", label: "Take a month off", preview: "Energy and motivation recover. Skills pause.", growth: 0, risk: 0, apply: ({ s }) => (energy(s, 35), tr(s, "motivation", 4), restLow(s, 2), "You sleep and see friends. Workload set to low for two months.") },
