@@ -1,9 +1,9 @@
 {
   "methodologyVersion": "1.0",
   "datasetVersion": "1.0",
-  "builtAt": "2026-10-07T18:39:49.105Z",
+  "builtAt": "2026-10-08T00:20:17.830Z",
   "season": "2025-26",
-  "sourceHash": "62ee7202996a1bf3a60541f443d0526b34952dae85b2218f65431f82f4fce95d",
+  "sourceHash": "05172afb576580c4081d2cfcae950906a089232503053e06208057a5158b48b5",
   "structuredTransactionCount": 3,
   "ownershipEdgeCount": 15,
   "contractCount": 565,

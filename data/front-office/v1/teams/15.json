@@ -1,14 +1,14 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-07",
-    "retrievedAt": "2026-10-07T18:39:47.168Z",
+    "snapshotDate": "2026-10-08",
+    "retrievedAt": "2026-10-08T00:20:13.315Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "61baf41ddf877719b5d170b36377747bf2a8ab87c209378ed86a15277bccf767",
+    "sourceHash": "a475c595dd48ad29c16fe56d343a9e506d4989f6b8c3797eacce5650f6cc0dd0",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -349,6 +349,29 @@
           "href": "/players/5164559"
         },
         {
+          "playerId": "1641780",
+          "playerName": "Johni Broome",
+          "age": null,
+          "contractId": "cy-1641780-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1641780-2026",
+              "playerId": "1641780",
+              "franchiseId": "15",
+              "season": "2026-27",
+              "salary": null,
+              "capHit": null,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "espn-roster-no-salary"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1641780"
+        },
+        {
           "playerId": "5082206",
           "playerName": "Brayden Burries",
           "age": null,
@@ -370,29 +393,6 @@
           ],
           "guaranteedTotal": null,
           "href": "/players/5082206"
-        },
-        {
-          "playerId": "4432588",
-          "playerName": "John Butler Jr.",
-          "age": null,
-          "contractId": "cy-4432588-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-4432588-2026",
-              "playerId": "4432588",
-              "franchiseId": "15",
-              "season": "2026-27",
-              "salary": null,
-              "capHit": null,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "espn-roster-no-salary"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/4432588"
         },
         {
           "playerId": "1642857",

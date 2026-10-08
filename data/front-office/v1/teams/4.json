@@ -1,14 +1,14 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-07",
-    "retrievedAt": "2026-10-07T18:39:47.168Z",
+    "snapshotDate": "2026-10-08",
+    "retrievedAt": "2026-10-08T00:20:13.315Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "61baf41ddf877719b5d170b36377747bf2a8ab87c209378ed86a15277bccf767",
+    "sourceHash": "a475c595dd48ad29c16fe56d343a9e506d4989f6b8c3797eacce5650f6cc0dd0",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -280,6 +280,29 @@
           "href": "/players/1641824"
         },
         {
+          "playerId": "1641722",
+          "playerName": "Jordan Hawkins",
+          "age": null,
+          "contractId": "cy-1641722-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1641722-2026",
+              "playerId": "1641722",
+              "franchiseId": "4",
+              "season": "2026-27",
+              "salary": 4525680,
+              "capHit": 4525680,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "salary-csv-carry-forward"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1641722"
+        },
+        {
           "playerId": "1631159",
           "playerName": "Leonard Miller",
           "age": null,
@@ -370,6 +393,29 @@
           ],
           "guaranteedTotal": null,
           "href": "/players/5105555"
+        },
+        {
+          "playerId": "1641779",
+          "playerName": "Jalen Bridges",
+          "age": null,
+          "contractId": "cy-1641779-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1641779-2026",
+              "playerId": "1641779",
+              "franchiseId": "4",
+              "season": "2026-27",
+              "salary": null,
+              "capHit": null,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "espn-roster-no-salary"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1641779"
         },
         {
           "playerId": "5242496",
@@ -490,13 +536,13 @@
       "futureCommitments": [
         {
           "season": "2026-27",
-          "totalSalaryDollars": 135908601,
-          "playersUnderContract": 13
+          "totalSalaryDollars": 140434281,
+          "playersUnderContract": 14
         }
       ],
-      "playerSalaryCommitments": 135908601,
-      "playersWithSalary": 13,
-      "playersWithoutSalary": 6
+      "playerSalaryCommitments": 140434281,
+      "playersWithSalary": 14,
+      "playersWithoutSalary": 7
     },
     "draftAssets": {
       "franchiseId": "4",
