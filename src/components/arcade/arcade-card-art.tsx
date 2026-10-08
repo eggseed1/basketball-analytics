@@ -83,6 +83,31 @@ export function TeammateChainArt() {
   );
 }
 
+/** Pixel kid and hoop on the dark ONE SHOT palette. */
+export function OneShotArt() {
+  const px = [
+    // hoop
+    [14, 6, 14, 2, "#e8e8e8"], [26, 12, 10, 1, "#e0632e"], [27, 13, 1, 4, "#f2f2f2"], [30, 13, 1, 4, "#f2f2f2"], [33, 13, 1, 4, "#f2f2f2"], [12, 6, 2, 40, "#5a6266"],
+    // floor
+    [0, 46, 90, 10, "#b9874f"], [0, 48, 90, 1, "#f2e6c9"],
+    // player
+    [58, 22, 6, 6, "#a86e46"], [58, 22, 6, 1, "#1b1412"], [56, 28, 10, 10, "#48b9ab"], [55, 29, 1, 7, "#a86e46"], [66, 29, 1, 7, "#a86e46"],
+    [57, 38, 3, 8, "#1b262b"], [62, 38, 3, 8, "#1b262b"], [56, 45, 10, 1, "#f2f2f2"],
+    // ball
+    [68, 36, 4, 4, "#e07a3e"], [68, 38, 4, 1, "#3a2018"],
+  ] as const;
+  return (
+    <div className="overflow-hidden rounded-xl bg-[#0E1519] shadow-[0_8px_18px_-10px_rgb(0_0_0/0.45)] ring-1 ring-[#2A3B41]" aria-hidden>
+      <svg viewBox="0 0 90 56" className="block h-[84px] w-[135px]" shapeRendering="crispEdges">
+        <rect width="90" height="46" fill="#1a2226" />
+        {px.map(([x, y, w, h, c], i) => (
+          <rect key={i} x={x} y={y} width={w} height={h} fill={c} />
+        ))}
+      </svg>
+    </div>
+  );
+}
+
 export function GmLabArt() {
   const bars = [46, 70, 38, 84, 58];
   return (

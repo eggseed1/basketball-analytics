@@ -221,6 +221,7 @@ export const PRIMARY_NAV: PrimaryNavItem[] = [
         label: "Teammate Chain",
         match: (p) => p.startsWith("/arcade/teammate-chain"),
       },
+      { href: "/arcade/one-shot", label: "ONE SHOT", match: (p) => p.startsWith("/arcade/one-shot") },
       { href: "/gm", label: "GM Lab", match: (p) => p === "/gm" || p.startsWith("/gm/") },
     ],
   },

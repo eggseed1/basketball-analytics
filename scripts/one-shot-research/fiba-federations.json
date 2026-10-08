@@ -1,0 +1,2126 @@
+{
+ "source": "https://about.fiba.basketball/en/national-federations",
+ "checkedAt": "2026-10-08",
+ "members": [
+  {
+   "fibaFederationId": 8,
+   "slug": "afghanistan",
+   "fibaName": "Afghanistan",
+   "fibaCode": "AFG",
+   "federationName": "Afghanistan National Basketball Federation (ANBF)",
+   "fibaRegion": "asia",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/8-afghanistan"
+  },
+  {
+   "fibaFederationId": 9,
+   "slug": "albania",
+   "fibaName": "Albania",
+   "fibaCode": "ALB",
+   "federationName": "Albanian Basketball Federation",
+   "fibaRegion": "europe",
+   "officialWebsite": "https://www.fshb.basketball",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/9-albania"
+  },
+  {
+   "fibaFederationId": 10,
+   "slug": "algeria",
+   "fibaName": "Algeria",
+   "fibaCode": "ALG",
+   "federationName": "Fédération Algérienne de Basket-Ball",
+   "fibaRegion": "africa",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/10-algeria"
+  },
+  {
+   "fibaFederationId": 273,
+   "slug": "andorra",
+   "fibaName": "Andorra",
+   "fibaCode": "AND",
+   "federationName": "Federació Andorrana de Basquetbol",
+   "fibaRegion": "europe",
+   "officialWebsite": "http://www.fab.ad",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/273-andorra"
+  },
+  {
+   "fibaFederationId": 12,
+   "slug": "angola",
+   "fibaName": "Angola",
+   "fibaCode": "ANG",
+   "federationName": "Federaçao Angolana de Basquetebol",
+   "fibaRegion": "africa",
+   "officialWebsite": "http://www.fab.ao",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/12-angola"
+  },
+  {
+   "fibaFederationId": 13,
+   "slug": "antigua-barbuda",
+   "fibaName": "Antigua & Barbuda",
+   "fibaCode": "ANT",
+   "federationName": "Antigua & Barbuda Basketball Association",
+   "fibaRegion": "americas",
+   "officialWebsite": "https://www.antiguabasketball.com",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/13-antigua-barbuda"
+  },
+  {
+   "fibaFederationId": 14,
+   "slug": "argentina",
+   "fibaName": "Argentina",
+   "fibaCode": "ARG",
+   "federationName": "Confederación Argentina de Basquetbol",
+   "fibaRegion": "americas",
+   "officialWebsite": "https://www.argentina.basketball",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/14-argentina"
+  },
+  {
+   "fibaFederationId": 645,
+   "slug": "armenia",
+   "fibaName": "Armenia",
+   "fibaCode": "ARM",
+   "federationName": "Basketball Federation of Armenia",
+   "fibaRegion": "europe",
+   "officialWebsite": "https://bfa.am/ ",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/645-armenia"
+  },
+  {
+   "fibaFederationId": 15,
+   "slug": "aruba",
+   "fibaName": "Aruba",
+   "fibaCode": "ARU",
+   "federationName": "Aruba Basketball Bond",
+   "fibaRegion": "americas",
+   "officialWebsite": "https://www.facebook.com/ArubaBasketballBond ",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/15-aruba"
+  },
+  {
+   "fibaFederationId": 11,
+   "slug": "american-samoa",
+   "fibaName": "American Samoa",
+   "fibaCode": "ASA",
+   "federationName": "American Samoa Basketball Association",
+   "fibaRegion": "oceania",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/11-american-samoa"
+  },
+  {
+   "fibaFederationId": 16,
+   "slug": "australia",
+   "fibaName": "Australia",
+   "fibaCode": "AUS",
+   "federationName": "Basketball Australia",
+   "fibaRegion": "oceania",
+   "officialWebsite": "http://www.australia.basketball",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/16-australia"
+  },
+  {
+   "fibaFederationId": 17,
+   "slug": "austria",
+   "fibaName": "Austria",
+   "fibaCode": "AUT",
+   "federationName": "Austrian Basketball Federation",
+   "fibaRegion": "europe",
+   "officialWebsite": "http://www.basketballaustria.at",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/17-austria"
+  },
+  {
+   "fibaFederationId": 875,
+   "slug": "azerbaijan",
+   "fibaName": "Azerbaijan",
+   "fibaCode": "AZE",
+   "federationName": "Azerbaijan Basketball Federation",
+   "fibaRegion": "europe",
+   "officialWebsite": "https://aze.basketball/",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/875-azerbaijan"
+  },
+  {
+   "fibaFederationId": 18,
+   "slug": "bahamas",
+   "fibaName": "Bahamas",
+   "fibaCode": "BAH",
+   "federationName": "Bahamas Basketball Federation",
+   "fibaRegion": "americas",
+   "officialWebsite": "https://www.bbfbasketball.com",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/18-bahamas"
+  },
+  {
+   "fibaFederationId": 20,
+   "slug": "bangladesh",
+   "fibaName": "Bangladesh",
+   "fibaCode": "BAN",
+   "federationName": "Bangladesh Basketball Federation",
+   "fibaRegion": "asia",
+   "officialWebsite": "https://www.basketballbd.org",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/20-bangladesh"
+  },
+  {
+   "fibaFederationId": 21,
+   "slug": "barbados",
+   "fibaName": "Barbados",
+   "fibaCode": "BAR",
+   "federationName": "Barbados Amateur Basketball Association",
+   "fibaRegion": "americas",
+   "officialWebsite": "http://www.bajanbasketball.leaguerepublic.com/",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/21-barbados"
+  },
+  {
+   "fibaFederationId": 973,
+   "slug": "burundi",
+   "fibaName": "Burundi",
+   "fibaCode": "BDI",
+   "federationName": "Fédération de Basketball du Burundi",
+   "fibaRegion": "africa",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/973-burundi"
+  },
+  {
+   "fibaFederationId": 22,
+   "slug": "belgium",
+   "fibaName": "Belgium",
+   "fibaCode": "BEL",
+   "federationName": "Basketball Belgium",
+   "fibaRegion": "europe",
+   "officialWebsite": "http://www.basketballbelgium.be/",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/22-belgium"
+  },
+  {
+   "fibaFederationId": 24,
+   "slug": "benin",
+   "fibaName": "Benin",
+   "fibaCode": "BEN",
+   "federationName": "Fédération Béninoise de Basketball",
+   "fibaRegion": "africa",
+   "officialWebsite": "http://www.federationbeninbasket.com",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/24-benin"
+  },
+  {
+   "fibaFederationId": 2133,
+   "slug": "bermuda",
+   "fibaName": "Bermuda",
+   "fibaCode": "BER",
+   "federationName": "Bermuda Basketball Association",
+   "fibaRegion": "americas",
+   "officialWebsite": "https://www.bermudabasketball.net",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/2133-bermuda"
+  },
+  {
+   "fibaFederationId": 25,
+   "slug": "bhutan",
+   "fibaName": "Bhutan",
+   "fibaCode": "BHU",
+   "federationName": "Bhutan Basketball Federation",
+   "fibaRegion": "asia",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/25-bhutan"
+  },
+  {
+   "fibaFederationId": 876,
+   "slug": "bosnia-and-herzegovina",
+   "fibaName": "Bosnia and Herzegovina",
+   "fibaCode": "BIH",
+   "federationName": "Basketball Federation Bosnia and Herzegovina",
+   "fibaRegion": "europe",
+   "officialWebsite": "http://www.basket.ba",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/876-bosnia-and-herzegovina"
+  },
+  {
+   "fibaFederationId": 23,
+   "slug": "belize",
+   "fibaName": "Belize",
+   "fibaCode": "BIZ",
+   "federationName": "Belize National Basketball Association",
+   "fibaRegion": "americas",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/23-belize"
+  },
+  {
+   "fibaFederationId": 631,
+   "slug": "belarus",
+   "fibaName": "Belarus",
+   "fibaCode": "BLR",
+   "federationName": "Belarusian Basketball Federation",
+   "fibaRegion": "europe",
+   "officialWebsite": "http://www.bbf.by",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/631-belarus"
+  },
+  {
+   "fibaFederationId": 26,
+   "slug": "bolivia",
+   "fibaName": "Bolivia",
+   "fibaCode": "BOL",
+   "federationName": "Federación Boliviana de Básquetbol",
+   "fibaRegion": "americas",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/26-bolivia"
+  },
+  {
+   "fibaFederationId": 1897,
+   "slug": "botswana",
+   "fibaName": "Botswana",
+   "fibaCode": "BOT",
+   "federationName": "Botswana Basketball Association",
+   "fibaRegion": "africa",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/1897-botswana"
+  },
+  {
+   "fibaFederationId": 27,
+   "slug": "brazil",
+   "fibaName": "Brazil",
+   "fibaCode": "BRA",
+   "federationName": "Confederaçao Brasileira de Basketball",
+   "fibaRegion": "americas",
+   "officialWebsite": "http://www.cbb.com.br",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/27-brazil"
+  },
+  {
+   "fibaFederationId": 19,
+   "slug": "bahrain",
+   "fibaName": "Bahrain",
+   "fibaCode": "BRN",
+   "federationName": "Bahrain Basketball Association",
+   "fibaRegion": "asia",
+   "officialWebsite": "https://www.basketball.bh",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/19-bahrain"
+  },
+  {
+   "fibaFederationId": 29,
+   "slug": "brunei-darussalam",
+   "fibaName": "Brunei Darussalam",
+   "fibaCode": "BRU",
+   "federationName": "Brunei Basketball Association",
+   "fibaRegion": "asia",
+   "officialWebsite": "https://www.facebook.com/brubballassociation/",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/29-brunei-darussalam"
+  },
+  {
+   "fibaFederationId": 30,
+   "slug": "bulgaria",
+   "fibaName": "Bulgaria",
+   "fibaCode": "BUL",
+   "federationName": "Bulgarian Basketball Federation",
+   "fibaRegion": "europe",
+   "officialWebsite": "http://www.basketball.bg",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/30-bulgaria"
+  },
+  {
+   "fibaFederationId": 31,
+   "slug": "burkina-faso",
+   "fibaName": "Burkina Faso",
+   "fibaCode": "BUR",
+   "federationName": "Fédération Burkinabe de Basketball",
+   "fibaRegion": "africa",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/31-burkina-faso"
+  },
+  {
+   "fibaFederationId": 36,
+   "slug": "central-african-rep",
+   "fibaName": "Central African Rep.",
+   "fibaCode": "CAF",
+   "federationName": "Fédération Centrafricaine de Basketball",
+   "fibaRegion": "africa",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/36-central-african-rep"
+  },
+  {
+   "fibaFederationId": 112,
+   "slug": "new-caledonia",
+   "fibaName": "New Caledonia",
+   "fibaCode": "CAL",
+   "federationName": "Région Fédérale de Nouvelle Calédonie de Basketball",
+   "fibaRegion": "oceania",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/112-new-caledonia"
+  },
+  {
+   "fibaFederationId": 87,
+   "slug": "cambodia",
+   "fibaName": "Cambodia",
+   "fibaCode": "CAM",
+   "federationName": "Cambodia Basketball Federation",
+   "fibaRegion": "asia",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/87-cambodia"
+  },
+  {
+   "fibaFederationId": 34,
+   "slug": "canada",
+   "fibaName": "Canada",
+   "fibaCode": "CAN",
+   "federationName": "Canada Basketball",
+   "fibaRegion": "americas",
+   "officialWebsite": "https://www.basketball.ca",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/34-canada"
+  },
+  {
+   "fibaFederationId": 35,
+   "slug": "cayman-islands",
+   "fibaName": "Cayman Islands",
+   "fibaCode": "CAY",
+   "federationName": "Cayman Islands Basketball Association",
+   "fibaRegion": "americas",
+   "officialWebsite": "http://www.caymanbasketball.com",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/35-cayman-islands"
+  },
+  {
+   "fibaFederationId": 41,
+   "slug": "congo",
+   "fibaName": "Congo",
+   "fibaCode": "CGO",
+   "federationName": "Fédération Congolaise de Basketball",
+   "fibaRegion": "africa",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/41-congo"
+  },
+  {
+   "fibaFederationId": 37,
+   "slug": "chad",
+   "fibaName": "Chad",
+   "fibaCode": "CHA",
+   "federationName": "Fédération Tchadienne de Basketball",
+   "fibaRegion": "africa",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/37-chad"
+  },
+  {
+   "fibaFederationId": 38,
+   "slug": "chile",
+   "fibaName": "Chile",
+   "fibaCode": "CHI",
+   "federationName": "Federación de Basquetbol de Chile",
+   "fibaRegion": "americas",
+   "officialWebsite": "http://www.febachile.cl",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/38-chile"
+  },
+  {
+   "fibaFederationId": 39,
+   "slug": "china",
+   "fibaName": "China",
+   "fibaCode": "CHN",
+   "federationName": "Basketball Association of the People's Republic of China",
+   "fibaRegion": "asia",
+   "officialWebsite": "http://www.cba.net.cn",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/39-china"
+  },
+  {
+   "fibaFederationId": 44,
+   "slug": "cote-divoire",
+   "fibaName": "Côte d'Ivoire",
+   "fibaCode": "CIV",
+   "federationName": "Fédération Ivoirienne de Basket-Ball",
+   "fibaRegion": "africa",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/44-cote-divoire"
+  },
+  {
+   "fibaFederationId": 33,
+   "slug": "cameroon",
+   "fibaName": "Cameroon",
+   "fibaCode": "CMR",
+   "federationName": "Fédération Camerounaise de Basketball",
+   "fibaRegion": "africa",
+   "officialWebsite": "http://www.fecabasket.com",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/33-cameroon"
+  },
+  {
+   "fibaFederationId": 165,
+   "slug": "congo-dr",
+   "fibaName": "Congo DR",
+   "fibaCode": "COD",
+   "federationName": "Basketball Federation of Democratic Republic of Congo",
+   "fibaRegion": "africa",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/165-congo-dr"
+  },
+  {
+   "fibaFederationId": 42,
+   "slug": "cook-islands",
+   "fibaName": "Cook Islands",
+   "fibaCode": "COK",
+   "federationName": "Cook Islands Basketball Association",
+   "fibaRegion": "oceania",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/42-cook-islands"
+  },
+  {
+   "fibaFederationId": 40,
+   "slug": "colombia",
+   "fibaName": "Colombia",
+   "fibaCode": "COL",
+   "federationName": "Federación Colombiana de Baloncesto",
+   "fibaRegion": "americas",
+   "officialWebsite": "https://www.fecolcesto.org/",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/40-colombia"
+  },
+  {
+   "fibaFederationId": 1087,
+   "slug": "comoros",
+   "fibaName": "Comoros",
+   "fibaCode": "COM",
+   "federationName": "Fédération Comorienne de Basketball",
+   "fibaRegion": "africa",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/1087-comoros"
+  },
+  {
+   "fibaFederationId": 877,
+   "slug": "cape-verde",
+   "fibaName": "Cape Verde",
+   "fibaCode": "CPV",
+   "federationName": "Federaçao Caboverdiana de Basquetbol",
+   "fibaRegion": "africa",
+   "officialWebsite": "http://fcbb.web.geniussports.com",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/877-cape-verde"
+  },
+  {
+   "fibaFederationId": 43,
+   "slug": "costa-rica",
+   "fibaName": "Costa Rica",
+   "fibaCode": "CRC",
+   "federationName": "Federación Costarricense de Baloncesto Aficionado",
+   "fibaRegion": "americas",
+   "officialWebsite": "http://www.fecobacr.com",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/43-costa-rica"
+  },
+  {
+   "fibaFederationId": 622,
+   "slug": "croatia",
+   "fibaName": "Croatia",
+   "fibaCode": "CRO",
+   "federationName": "Croatian Basketball Federation",
+   "fibaRegion": "europe",
+   "officialWebsite": "http://www.hks-cbf.hr",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/622-croatia"
+  },
+  {
+   "fibaFederationId": 45,
+   "slug": "cuba",
+   "fibaName": "Cuba",
+   "fibaCode": "CUB",
+   "federationName": "Federación Cubana de Baloncesto",
+   "fibaRegion": "americas",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/45-cuba"
+  },
+  {
+   "fibaFederationId": 46,
+   "slug": "cyprus",
+   "fibaName": "Cyprus",
+   "fibaCode": "CYP",
+   "federationName": "Cyprus Basketball Federation",
+   "fibaRegion": "europe",
+   "officialWebsite": "https://www.cbf.basketball",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/46-cyprus"
+  },
+  {
+   "fibaFederationId": 886,
+   "slug": "czechia",
+   "fibaName": "Czechia",
+   "fibaCode": "CZE",
+   "federationName": "Czech Basketball Federation",
+   "fibaRegion": "europe",
+   "officialWebsite": "http://www.cbf.cz",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/886-czechia"
+  },
+  {
+   "fibaFederationId": 48,
+   "slug": "denmark",
+   "fibaName": "Denmark",
+   "fibaCode": "DEN",
+   "federationName": "Danmarks Basketball-Forbund",
+   "fibaRegion": "europe",
+   "officialWebsite": "http://www.basket.dk",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/48-denmark"
+  },
+  {
+   "fibaFederationId": 49,
+   "slug": "djibouti",
+   "fibaName": "Djibouti",
+   "fibaCode": "DJI",
+   "federationName": "Fédération Djiboutienne de Basket Ball",
+   "fibaRegion": "africa",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/49-djibouti"
+  },
+  {
+   "fibaFederationId": 50,
+   "slug": "dominica",
+   "fibaName": "Dominica",
+   "fibaCode": "DMA",
+   "federationName": "Dominica Amateur Basketball Association",
+   "fibaRegion": "americas",
+   "officialWebsite": "http://www.dominicabasketball.com",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/50-dominica"
+  },
+  {
+   "fibaFederationId": 51,
+   "slug": "dominican-republic",
+   "fibaName": "Dominican Republic",
+   "fibaCode": "DOM",
+   "federationName": "Federación Dominicana de Baloncesto",
+   "fibaRegion": "americas",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/51-dominican-republic"
+  },
+  {
+   "fibaFederationId": 52,
+   "slug": "ecuador",
+   "fibaName": "Ecuador",
+   "fibaCode": "ECU",
+   "federationName": "Federación Ecuatoriana de Basquetbol",
+   "fibaRegion": "americas",
+   "officialWebsite": "https://www.feb.ec",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/52-ecuador"
+  },
+  {
+   "fibaFederationId": 53,
+   "slug": "egypt",
+   "fibaName": "Egypt",
+   "fibaCode": "EGY",
+   "federationName": "Egyptian Basketball Federation",
+   "fibaRegion": "africa",
+   "officialWebsite": "https://www.egypt.basketball ",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/53-egypt"
+  },
+  {
+   "fibaFederationId": 2070,
+   "slug": "eritrea",
+   "fibaName": "Eritrea",
+   "fibaCode": "ERI",
+   "federationName": "Eritrean National Basketball Federation",
+   "fibaRegion": "africa",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/2070-eritrea"
+  },
+  {
+   "fibaFederationId": 54,
+   "slug": "el-salvador",
+   "fibaName": "El Salvador",
+   "fibaCode": "ESA",
+   "federationName": "Federación Salvadoreña de Baloncesto",
+   "fibaRegion": "americas",
+   "officialWebsite": "http://www.fesabal.com",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/54-el-salvador"
+  },
+  {
+   "fibaFederationId": 138,
+   "slug": "spain",
+   "fibaName": "Spain",
+   "fibaCode": "ESP",
+   "federationName": "Federación Española de Baloncesto",
+   "fibaRegion": "europe",
+   "officialWebsite": "http://www.feb.es",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/138-spain"
+  },
+  {
+   "fibaFederationId": 609,
+   "slug": "estonia",
+   "fibaName": "Estonia",
+   "fibaCode": "EST",
+   "federationName": "Estonian Basketball Association",
+   "fibaRegion": "europe",
+   "officialWebsite": "http://www.basket.ee",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/609-estonia"
+  },
+  {
+   "fibaFederationId": 56,
+   "slug": "ethiopia",
+   "fibaName": "Ethiopia",
+   "fibaCode": "ETH",
+   "federationName": "Ethiopian Basketball Federation",
+   "fibaRegion": "africa",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/56-ethiopia"
+  },
+  {
+   "fibaFederationId": 57,
+   "slug": "fiji",
+   "fibaName": "Fiji",
+   "fibaCode": "FIJ",
+   "federationName": "Fiji Amateur Basketball Federation",
+   "fibaRegion": "oceania",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/57-fiji"
+  },
+  {
+   "fibaFederationId": 58,
+   "slug": "finland",
+   "fibaName": "Finland",
+   "fibaCode": "FIN",
+   "federationName": "Basketball Finland",
+   "fibaRegion": "europe",
+   "officialWebsite": "http://www.basket.fi",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/58-finland"
+  },
+  {
+   "fibaFederationId": 59,
+   "slug": "france",
+   "fibaName": "France",
+   "fibaCode": "FRA",
+   "federationName": "Fédération Française de Basketball",
+   "fibaRegion": "europe",
+   "officialWebsite": "https://www.ffbb.com",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/59-france"
+  },
+  {
+   "fibaFederationId": 105,
+   "slug": "micronesia",
+   "fibaName": "Micronesia",
+   "fibaCode": "FSM",
+   "federationName": "Federated States of Micronesia Basketball Association",
+   "fibaRegion": "oceania",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/105-micronesia"
+  },
+  {
+   "fibaFederationId": 61,
+   "slug": "gabon",
+   "fibaName": "Gabon",
+   "fibaCode": "GAB",
+   "federationName": "Fédération Gabonaise de Basket-Ball",
+   "fibaRegion": "africa",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/61-gabon"
+  },
+  {
+   "fibaFederationId": 62,
+   "slug": "gambia",
+   "fibaName": "Gambia",
+   "fibaCode": "GAM",
+   "federationName": "Gambia Basketball Federation",
+   "fibaRegion": "africa",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/62-gambia"
+  },
+  {
+   "fibaFederationId": 976,
+   "slug": "great-britain",
+   "fibaName": "Great Britain",
+   "fibaCode": "GBR",
+   "federationName": "British Basketball",
+   "fibaRegion": "europe",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/976-great-britain"
+  },
+  {
+   "fibaFederationId": 866,
+   "slug": "guinea-bissau",
+   "fibaName": "Guinea-Bissau",
+   "fibaCode": "GBS",
+   "federationName": "Federação de Basquetebol da Guiné-Bissau",
+   "fibaRegion": "africa",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/866-guinea-bissau"
+  },
+  {
+   "fibaFederationId": 632,
+   "slug": "georgia",
+   "fibaName": "Georgia",
+   "fibaCode": "GEO",
+   "federationName": "Georgian Basketball National Federation",
+   "fibaRegion": "europe",
+   "officialWebsite": "http://www.gbf.ge",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/632-georgia"
+  },
+  {
+   "fibaFederationId": 990,
+   "slug": "equatorial-guinea",
+   "fibaName": "Equatorial Guinea",
+   "fibaCode": "GEQ",
+   "federationName": "Feguibasket",
+   "fibaRegion": "africa",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/990-equatorial-guinea"
+  },
+  {
+   "fibaFederationId": 64,
+   "slug": "germany",
+   "fibaName": "Germany",
+   "fibaCode": "GER",
+   "federationName": "Deutscher Basketball Bund e.V.",
+   "fibaRegion": "europe",
+   "officialWebsite": "http://www.basketball-bund.de",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/64-germany"
+  },
+  {
+   "fibaFederationId": 65,
+   "slug": "ghana",
+   "fibaName": "Ghana",
+   "fibaCode": "GHA",
+   "federationName": "Ghana Basketball Federation",
+   "fibaRegion": "africa",
+   "officialWebsite": "https://www.gbba.org.gh ",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/65-ghana"
+  },
+  {
+   "fibaFederationId": 66,
+   "slug": "gibraltar",
+   "fibaName": "Gibraltar",
+   "fibaCode": "GIB",
+   "federationName": "Gibraltar Amateur Basketball Association",
+   "fibaRegion": "europe",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/66-gibraltar"
+  },
+  {
+   "fibaFederationId": 67,
+   "slug": "greece",
+   "fibaName": "Greece",
+   "fibaCode": "GRE",
+   "federationName": "Hellenic Basketball Federation",
+   "fibaRegion": "europe",
+   "officialWebsite": "http://www.basket.gr",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/67-greece"
+  },
+  {
+   "fibaFederationId": 68,
+   "slug": "grenada",
+   "fibaName": "Grenada",
+   "fibaCode": "GRN",
+   "federationName": "Grenada National Basketball Association",
+   "fibaRegion": "americas",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/68-grenada"
+  },
+  {
+   "fibaFederationId": 70,
+   "slug": "guatemala",
+   "fibaName": "Guatemala",
+   "fibaCode": "GUA",
+   "federationName": "Federación de Baloncesto de Guatemala",
+   "fibaRegion": "americas",
+   "officialWebsite": "http://fnbg.com.gt/",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/70-guatemala"
+  },
+  {
+   "fibaFederationId": 195,
+   "slug": "guinea",
+   "fibaName": "Guinea",
+   "fibaCode": "GUI",
+   "federationName": "Fédération Guinéenne de Basket-Ball",
+   "fibaRegion": "africa",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/195-guinea"
+  },
+  {
+   "fibaFederationId": 69,
+   "slug": "guam",
+   "fibaName": "Guam",
+   "fibaCode": "GUM",
+   "federationName": "Guam Basketball Confederation",
+   "fibaRegion": "oceania",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/69-guam"
+  },
+  {
+   "fibaFederationId": 71,
+   "slug": "guyana",
+   "fibaName": "Guyana",
+   "fibaCode": "GUY",
+   "federationName": "Guyana Amateur Basketball Federation",
+   "fibaRegion": "americas",
+   "officialWebsite": "https://www.guyana.basketball",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/71-guyana"
+  },
+  {
+   "fibaFederationId": 72,
+   "slug": "haiti",
+   "fibaName": "Haiti",
+   "fibaCode": "HAI",
+   "federationName": "Fédération Haïtienne de Basketball Genesis",
+   "fibaRegion": "americas",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/72-haiti"
+  },
+  {
+   "fibaFederationId": 74,
+   "slug": "hong-kong-china",
+   "fibaName": "Hong Kong, China",
+   "fibaCode": "HKG",
+   "federationName": "Basketball Association of Hong Kong, China Limited",
+   "fibaRegion": "asia",
+   "officialWebsite": "http://www.basketball.org.hk/",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/74-hong-kong-china"
+  },
+  {
+   "fibaFederationId": 73,
+   "slug": "honduras",
+   "fibaName": "Honduras",
+   "fibaCode": "HON",
+   "federationName": "Federación Nacional de Baloncesto de Honduras",
+   "fibaRegion": "americas",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/73-honduras"
+  },
+  {
+   "fibaFederationId": 75,
+   "slug": "hungary",
+   "fibaName": "Hungary",
+   "fibaCode": "HUN",
+   "federationName": "Hungarian Basketball Federation",
+   "fibaRegion": "europe",
+   "officialWebsite": "http://www.hunbasket.hu",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/75-hungary"
+  },
+  {
+   "fibaFederationId": 78,
+   "slug": "indonesia",
+   "fibaName": "Indonesia",
+   "fibaCode": "INA",
+   "federationName": "Indonesian Basketball Association",
+   "fibaRegion": "asia",
+   "officialWebsite": "http://www.indonesiabasketball.or.id ",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/78-indonesia"
+  },
+  {
+   "fibaFederationId": 77,
+   "slug": "india",
+   "fibaName": "India",
+   "fibaCode": "IND",
+   "federationName": "Basketball Federation of India",
+   "fibaRegion": "asia",
+   "officialWebsite": "https://www.basketballfederationindia.org",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/77-india"
+  },
+  {
+   "fibaFederationId": 879,
+   "slug": "iran",
+   "fibaName": "Iran",
+   "fibaCode": "IRI",
+   "federationName": "Basketball Federation Islamic Republic of Iran",
+   "fibaRegion": "asia",
+   "officialWebsite": "http://iribf.ir/",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/879-iran"
+  },
+  {
+   "fibaFederationId": 81,
+   "slug": "ireland",
+   "fibaName": "Ireland",
+   "fibaCode": "IRL",
+   "federationName": "Basketball Ireland",
+   "fibaRegion": "europe",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/81-ireland"
+  },
+  {
+   "fibaFederationId": 80,
+   "slug": "iraq",
+   "fibaName": "Iraq",
+   "fibaCode": "IRQ",
+   "federationName": "Iraqi Basketball Federation",
+   "fibaRegion": "asia",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/80-iraq"
+  },
+  {
+   "fibaFederationId": 76,
+   "slug": "iceland",
+   "fibaName": "Iceland",
+   "fibaCode": "ISL",
+   "federationName": "Icelandic Basketball Association (KKI)",
+   "fibaRegion": "europe",
+   "officialWebsite": "http://www.kki.is",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/76-iceland"
+  },
+  {
+   "fibaFederationId": 82,
+   "slug": "israel",
+   "fibaName": "Israel",
+   "fibaCode": "ISR",
+   "federationName": "Israeli Basketball Association",
+   "fibaRegion": "europe",
+   "officialWebsite": "http://www.ibasketball.org.il",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/82-israel"
+  },
+  {
+   "fibaFederationId": 160,
+   "slug": "virgin-islands",
+   "fibaName": "Virgin Islands",
+   "fibaCode": "ISV",
+   "federationName": "Virgin Islands Basketball Federation",
+   "fibaRegion": "americas",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/160-virgin-islands"
+  },
+  {
+   "fibaFederationId": 83,
+   "slug": "italy",
+   "fibaName": "Italy",
+   "fibaCode": "ITA",
+   "federationName": "Federazione Italiana Pallacanestro",
+   "fibaRegion": "europe",
+   "officialWebsite": "http://www.fip.it",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/83-italy"
+  },
+  {
+   "fibaFederationId": 28,
+   "slug": "british-virgin-islands",
+   "fibaName": "British Virgin Islands",
+   "fibaCode": "IVB",
+   "federationName": "British Virgin Islands Amateur Basketball Federation",
+   "fibaRegion": "americas",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/28-british-virgin-islands"
+  },
+  {
+   "fibaFederationId": 84,
+   "slug": "jamaica",
+   "fibaName": "Jamaica",
+   "fibaCode": "JAM",
+   "federationName": "Jamaica Basketball Association",
+   "fibaRegion": "americas",
+   "officialWebsite": "https://www.basketballjamaica.com",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/84-jamaica"
+  },
+  {
+   "fibaFederationId": 86,
+   "slug": "jordan",
+   "fibaName": "Jordan",
+   "fibaCode": "JOR",
+   "federationName": "Jordan Basketball Federation",
+   "fibaRegion": "asia",
+   "officialWebsite": "http://www.jbf.jo",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/86-jordan"
+  },
+  {
+   "fibaFederationId": 85,
+   "slug": "japan",
+   "fibaName": "Japan",
+   "fibaCode": "JPN",
+   "federationName": "Japan Basketball Association",
+   "fibaRegion": "asia",
+   "officialWebsite": "http://www.japanbasketball.jp",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/85-japan"
+  },
+  {
+   "fibaFederationId": 739,
+   "slug": "kazakhstan",
+   "fibaName": "Kazakhstan",
+   "fibaCode": "KAZ",
+   "federationName": "Kazakhstan Basketball Federation",
+   "fibaRegion": "asia",
+   "officialWebsite": "https://www.nbf.kz",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/739-kazakhstan"
+  },
+  {
+   "fibaFederationId": 88,
+   "slug": "kenya",
+   "fibaName": "Kenya",
+   "fibaCode": "KEN",
+   "federationName": "Kenya Basketball Association",
+   "fibaRegion": "africa",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/88-kenya"
+  },
+  {
+   "fibaFederationId": 737,
+   "slug": "kyrgyzstan",
+   "fibaName": "Kyrgyzstan",
+   "fibaCode": "KGZ",
+   "federationName": "Kyrgyz Basketball Federation",
+   "fibaRegion": "asia",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/737-kyrgyzstan"
+  },
+  {
+   "fibaFederationId": 264,
+   "slug": "kiribati",
+   "fibaName": "Kiribati",
+   "fibaCode": "KIR",
+   "federationName": "Kiribati Basketball Association",
+   "fibaRegion": "oceania",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/264-kiribati"
+  },
+  {
+   "fibaFederationId": 89,
+   "slug": "korea",
+   "fibaName": "Korea",
+   "fibaCode": "KOR",
+   "federationName": "Korea Basketball Association",
+   "fibaRegion": "asia",
+   "officialWebsite": "http://www.koreabasketball.or.kr",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/89-korea"
+  },
+  {
+   "fibaFederationId": 9795,
+   "slug": "kosovo",
+   "fibaName": "Kosovo",
+   "fibaCode": "KOS",
+   "federationName": "Kosovo Basketball Federation",
+   "fibaRegion": "europe",
+   "officialWebsite": "http://www.basketbolli.com",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/9795-kosovo"
+  },
+  {
+   "fibaFederationId": 132,
+   "slug": "saudi-arabia",
+   "fibaName": "Saudi Arabia",
+   "fibaCode": "KSA",
+   "federationName": "Saudi Arabia Basketball Federation",
+   "fibaRegion": "asia",
+   "officialWebsite": "https://www.sbl.sa",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/132-saudi-arabia"
+  },
+  {
+   "fibaFederationId": 91,
+   "slug": "kuwait",
+   "fibaName": "Kuwait",
+   "fibaCode": "KUW",
+   "federationName": "Kuwait Basketball Association",
+   "fibaRegion": "asia",
+   "officialWebsite": "http://www.kbaq8.com/",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/91-kuwait"
+  },
+  {
+   "fibaFederationId": 92,
+   "slug": "laos",
+   "fibaName": "Laos",
+   "fibaCode": "LAO",
+   "federationName": "Fédération de Basketball du Laos",
+   "fibaRegion": "asia",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/92-laos"
+  },
+  {
+   "fibaFederationId": 610,
+   "slug": "latvia",
+   "fibaName": "Latvia",
+   "fibaCode": "LAT",
+   "federationName": "Latvian Basketball Association",
+   "fibaRegion": "europe",
+   "officialWebsite": "http://www.basket.lv",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/610-latvia"
+  },
+  {
+   "fibaFederationId": 95,
+   "slug": "libya",
+   "fibaName": "Libya",
+   "fibaCode": "LBA",
+   "federationName": "Libyan Arab Basketball Federation",
+   "fibaRegion": "africa",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/95-libya"
+  },
+  {
+   "fibaFederationId": 93,
+   "slug": "lebanon",
+   "fibaName": "Lebanon",
+   "fibaCode": "LBN",
+   "federationName": "Fédération Libanaise de Basketball",
+   "fibaRegion": "asia",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/93-lebanon"
+  },
+  {
+   "fibaFederationId": 94,
+   "slug": "liberia",
+   "fibaName": "Liberia",
+   "fibaCode": "LBR",
+   "federationName": "Liberia Basketball Federation",
+   "fibaRegion": "africa",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/94-liberia"
+  },
+  {
+   "fibaFederationId": 1861,
+   "slug": "st-lucia",
+   "fibaName": "St. Lucia",
+   "fibaCode": "LCA",
+   "federationName": "St. Lucia Basketball Federation",
+   "fibaRegion": "americas",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/1861-st-lucia"
+  },
+  {
+   "fibaFederationId": 1896,
+   "slug": "lesotho",
+   "fibaName": "Lesotho",
+   "fibaCode": "LES",
+   "federationName": "Lesotho Basketball Association",
+   "fibaRegion": "africa",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/1896-lesotho"
+  },
+  {
+   "fibaFederationId": 611,
+   "slug": "lithuania",
+   "fibaName": "Lithuania",
+   "fibaCode": "LTU",
+   "federationName": "Lietuva Basketball",
+   "fibaRegion": "europe",
+   "officialWebsite": "https://www.ltu.basketball",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/611-lithuania"
+  },
+  {
+   "fibaFederationId": 96,
+   "slug": "luxembourg",
+   "fibaName": "Luxembourg",
+   "fibaCode": "LUX",
+   "federationName": "Fédération Luxembourgeoise de Basketball (FLBB)",
+   "fibaRegion": "europe",
+   "officialWebsite": "https://www.luxembourg.basketball/",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/96-luxembourg"
+  },
+  {
+   "fibaFederationId": 97,
+   "slug": "macau",
+   "fibaName": "Macau",
+   "fibaCode": "MAC",
+   "federationName": "Macau - China Basketball Association",
+   "fibaRegion": "asia",
+   "officialWebsite": "http://www.basketball.org.mo/",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/97-macau"
+  },
+  {
+   "fibaFederationId": 98,
+   "slug": "madagascar",
+   "fibaName": "Madagascar",
+   "fibaCode": "MAD",
+   "federationName": "Fédération Malagasy de Basket-Ball",
+   "fibaRegion": "africa",
+   "officialWebsite": "http://www.federationmalagasydubasketball.com",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/98-madagascar"
+  },
+  {
+   "fibaFederationId": 107,
+   "slug": "morocco",
+   "fibaName": "Morocco",
+   "fibaCode": "MAR",
+   "federationName": "Fédération Royale Marocaine de Basket-Ball",
+   "fibaRegion": "africa",
+   "officialWebsite": "http://www.frmbb.ma",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/107-morocco"
+  },
+  {
+   "fibaFederationId": 881,
+   "slug": "malaysia",
+   "fibaName": "Malaysia",
+   "fibaCode": "MAS",
+   "federationName": "Malaysia Basketball Association",
+   "fibaRegion": "asia",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/881-malaysia"
+  },
+  {
+   "fibaFederationId": 106,
+   "slug": "montserrat",
+   "fibaName": "Montserrat",
+   "fibaCode": "MAT",
+   "federationName": "Montserrat Amateur Basketball Association",
+   "fibaRegion": "americas",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/106-montserrat"
+  },
+  {
+   "fibaFederationId": 271,
+   "slug": "malawi",
+   "fibaName": "Malawi",
+   "fibaCode": "MAW",
+   "federationName": "Basketball Association of Malawi",
+   "fibaRegion": "africa",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/271-malawi"
+  },
+  {
+   "fibaFederationId": 882,
+   "slug": "moldova",
+   "fibaName": "Moldova",
+   "fibaCode": "MDA",
+   "federationName": "Basketball Federation of Moldova",
+   "fibaRegion": "europe",
+   "officialWebsite": "http://moldova.basketball/",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/882-moldova"
+  },
+  {
+   "fibaFederationId": 1742,
+   "slug": "maldives",
+   "fibaName": "Maldives",
+   "fibaCode": "MDV",
+   "federationName": "Maldives Basketball Association",
+   "fibaRegion": "asia",
+   "officialWebsite": "http://www.mba.org.mv",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/1742-maldives"
+  },
+  {
+   "fibaFederationId": 104,
+   "slug": "mexico",
+   "fibaName": "Mexico",
+   "fibaCode": "MEX",
+   "federationName": "Asociación Deportiva Mexicana de Basquetbol A.C.",
+   "fibaRegion": "americas",
+   "officialWebsite": "https://www.ademeba.com.mx",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/104-mexico"
+  },
+  {
+   "fibaFederationId": 2792,
+   "slug": "mongolia",
+   "fibaName": "Mongolia",
+   "fibaCode": "MGL",
+   "federationName": "Mongolian Basketball Association",
+   "fibaRegion": "asia",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/2792-mongolia"
+  },
+  {
+   "fibaFederationId": 266,
+   "slug": "marshall-islands",
+   "fibaName": "Marshall Islands",
+   "fibaCode": "MHL",
+   "federationName": "Rep. of the Marshall Islands Basketball Federation Inc.",
+   "fibaRegion": "oceania",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/266-marshall-islands"
+  },
+  {
+   "fibaFederationId": 878,
+   "slug": "north-macedonia",
+   "fibaName": "North Macedonia",
+   "fibaCode": "MKD",
+   "federationName": "Basketball Federation of North Macedonia",
+   "fibaRegion": "europe",
+   "officialWebsite": "https://www.mkd.basketball ",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/878-north-macedonia"
+  },
+  {
+   "fibaFederationId": 100,
+   "slug": "mali",
+   "fibaName": "Mali",
+   "fibaCode": "MLI",
+   "federationName": "Fédération Malienne de Basketball",
+   "fibaRegion": "africa",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/100-mali"
+  },
+  {
+   "fibaFederationId": 101,
+   "slug": "malta",
+   "fibaName": "Malta",
+   "fibaCode": "MLT",
+   "federationName": "Malta Basketball Association",
+   "fibaRegion": "europe",
+   "officialWebsite": "http://maltabasketball.web.geniussports.com/ ",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/101-malta"
+  },
+  {
+   "fibaFederationId": 8310,
+   "slug": "montenegro",
+   "fibaName": "Montenegro",
+   "fibaCode": "MNE",
+   "federationName": "Basketball Federation of Montenegro",
+   "fibaRegion": "europe",
+   "officialWebsite": "http://www.kscg.me",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/8310-montenegro"
+  },
+  {
+   "fibaFederationId": 222,
+   "slug": "monaco",
+   "fibaName": "Monaco",
+   "fibaCode": "MON",
+   "federationName": "Fédération Monégasque de Basketball",
+   "fibaRegion": "europe",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/222-monaco"
+  },
+  {
+   "fibaFederationId": 108,
+   "slug": "mozambique",
+   "fibaName": "Mozambique",
+   "fibaCode": "MOZ",
+   "federationName": "Federação Moçambicana de Basquetebol",
+   "fibaRegion": "africa",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/108-mozambique"
+  },
+  {
+   "fibaFederationId": 103,
+   "slug": "mauritius",
+   "fibaName": "Mauritius",
+   "fibaCode": "MRI",
+   "federationName": "Mauritius Basketball Federation",
+   "fibaRegion": "africa",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/103-mauritius"
+  },
+  {
+   "fibaFederationId": 102,
+   "slug": "mauritania",
+   "fibaName": "Mauritania",
+   "fibaCode": "MTN",
+   "federationName": "Fédération Mauritanienne de Basket-Ball  (F.B.B.R.I.M)",
+   "fibaRegion": "africa",
+   "officialWebsite": "https://www.fbbrim.com",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/102-mauritania"
+  },
+  {
+   "fibaFederationId": 32,
+   "slug": "myanmar",
+   "fibaName": "Myanmar",
+   "fibaCode": "MYA",
+   "federationName": "Myanmar Basketball Federation",
+   "fibaRegion": "asia",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/32-myanmar"
+  },
+  {
+   "fibaFederationId": 1054,
+   "slug": "namibia",
+   "fibaName": "Namibia",
+   "fibaCode": "NAM",
+   "federationName": "Namibian Basketball Federation",
+   "fibaRegion": "africa",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/1054-namibia"
+  },
+  {
+   "fibaFederationId": 114,
+   "slug": "nicaragua",
+   "fibaName": "Nicaragua",
+   "fibaCode": "NCA",
+   "federationName": "Federación Nicaraguense de Baloncesto",
+   "fibaRegion": "americas",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/114-nicaragua"
+  },
+  {
+   "fibaFederationId": 110,
+   "slug": "netherlands",
+   "fibaName": "Netherlands",
+   "fibaCode": "NED",
+   "federationName": "Netherlands Basketball Federation",
+   "fibaRegion": "europe",
+   "officialWebsite": "http://www.basketball.nl",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/110-netherlands"
+  },
+  {
+   "fibaFederationId": 2781,
+   "slug": "nepal",
+   "fibaName": "Nepal",
+   "fibaCode": "NEP",
+   "federationName": "Nepal Basketball Association",
+   "fibaRegion": "asia",
+   "officialWebsite": "http://www.basketball.com.np",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/2781-nepal"
+  },
+  {
+   "fibaFederationId": 116,
+   "slug": "nigeria",
+   "fibaName": "Nigeria",
+   "fibaCode": "NGR",
+   "federationName": "Nigeria Basketball Federation",
+   "fibaRegion": "africa",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/116-nigeria"
+  },
+  {
+   "fibaFederationId": 115,
+   "slug": "niger",
+   "fibaName": "Niger",
+   "fibaCode": "NIG",
+   "federationName": "Fédération Nigérienne de Basket-Ball",
+   "fibaRegion": "africa",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/115-niger"
+  },
+  {
+   "fibaFederationId": 274,
+   "slug": "norfolk-island",
+   "fibaName": "Norfolk Island",
+   "fibaCode": "NIS",
+   "federationName": "Norfolk Island Basketball Association",
+   "fibaRegion": "oceania",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/274-norfolk-island"
+  },
+  {
+   "fibaFederationId": 2,
+   "slug": "northern-mariana-islands",
+   "fibaName": "Northern Mariana Islands",
+   "fibaCode": "NMI",
+   "federationName": "Basketball Association of the Northern Mariana Islands",
+   "fibaRegion": "oceania",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/2-northern-mariana-islands"
+  },
+  {
+   "fibaFederationId": 117,
+   "slug": "norway",
+   "fibaName": "Norway",
+   "fibaCode": "NOR",
+   "federationName": "Norwegian Basketball Federation",
+   "fibaRegion": "europe",
+   "officialWebsite": "http://www.basket.no",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/117-norway"
+  },
+  {
+   "fibaFederationId": 109,
+   "slug": "nauru",
+   "fibaName": "Nauru",
+   "fibaCode": "NRU",
+   "federationName": "Nauru Basketball Association",
+   "fibaRegion": "oceania",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/109-nauru"
+  },
+  {
+   "fibaFederationId": 113,
+   "slug": "new-zealand",
+   "fibaName": "New Zealand",
+   "fibaCode": "NZL",
+   "federationName": "Basketball New Zealand",
+   "fibaRegion": "oceania",
+   "officialWebsite": "http://nz.basketball/",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/113-new-zealand"
+  },
+  {
+   "fibaFederationId": 1,
+   "slug": "oman",
+   "fibaName": "Oman",
+   "fibaCode": "OMA",
+   "federationName": "Oman Basketball Association",
+   "fibaRegion": "asia",
+   "officialWebsite": "https://www.oman.basketball",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/1-oman"
+  },
+  {
+   "fibaFederationId": 118,
+   "slug": "pakistan",
+   "fibaName": "Pakistan",
+   "fibaCode": "PAK",
+   "federationName": "Pakistan Basketball Federation",
+   "fibaRegion": "asia",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/118-pakistan"
+  },
+  {
+   "fibaFederationId": 3,
+   "slug": "panama",
+   "fibaName": "Panama",
+   "fibaCode": "PAN",
+   "federationName": "Basketball Federation of Panama",
+   "fibaRegion": "americas",
+   "officialWebsite": "https://www.fepaba.com.pa",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/3-panama"
+  },
+  {
+   "fibaFederationId": 120,
+   "slug": "paraguay",
+   "fibaName": "Paraguay",
+   "fibaCode": "PAR",
+   "federationName": "Confederación Paraguaya de Basquetbol",
+   "fibaRegion": "americas",
+   "officialWebsite": "http://www.cpb.com.py",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/120-paraguay"
+  },
+  {
+   "fibaFederationId": 122,
+   "slug": "philippines",
+   "fibaName": "Philippines",
+   "fibaCode": "PHI",
+   "federationName": "Samahang Basketbol ng Pilipinas, Inc",
+   "fibaRegion": "asia",
+   "officialWebsite": "https://www.sbp.ph",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/122-philippines"
+  },
+  {
+   "fibaFederationId": 63,
+   "slug": "palestine",
+   "fibaName": "Palestine",
+   "fibaCode": "PLE",
+   "federationName": "Palestinian Basketball Federation",
+   "fibaRegion": "asia",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/63-palestine"
+  },
+  {
+   "fibaFederationId": 272,
+   "slug": "palau",
+   "fibaName": "Palau",
+   "fibaCode": "PLW",
+   "federationName": "Palau Amateur Basketball Association",
+   "fibaRegion": "oceania",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/272-palau"
+  },
+  {
+   "fibaFederationId": 883,
+   "slug": "papua-new-guinea",
+   "fibaName": "Papua New Guinea",
+   "fibaCode": "PNG",
+   "federationName": "Basketball Federation of Papua New Guinea",
+   "fibaRegion": "oceania",
+   "officialWebsite": "https://www.bfpng.sportingpulse.net",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/883-papua-new-guinea"
+  },
+  {
+   "fibaFederationId": 123,
+   "slug": "poland",
+   "fibaName": "Poland",
+   "fibaCode": "POL",
+   "federationName": "Polski Zwiazek Koszykówki",
+   "fibaRegion": "europe",
+   "officialWebsite": "http://www.pzkosz.pl",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/123-poland"
+  },
+  {
+   "fibaFederationId": 124,
+   "slug": "portugal",
+   "fibaName": "Portugal",
+   "fibaCode": "POR",
+   "federationName": "Federação Portuguesa de Basquetebol",
+   "fibaRegion": "europe",
+   "officialWebsite": "http://www.fpb.pt",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/124-portugal"
+  },
+  {
+   "fibaFederationId": 90,
+   "slug": "korea-dpr",
+   "fibaName": "Korea DPR",
+   "fibaCode": "PRK",
+   "federationName": "Amateur Basketball Association of DPR of Korea",
+   "fibaRegion": "asia",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/90-korea-dpr"
+  },
+  {
+   "fibaFederationId": 125,
+   "slug": "puerto-rico",
+   "fibaName": "Puerto Rico",
+   "fibaCode": "PUR",
+   "federationName": "Federación de Baloncesto de Puerto Rico",
+   "fibaRegion": "americas",
+   "officialWebsite": "http://www.puertorico.basketball",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/125-puerto-rico"
+  },
+  {
+   "fibaFederationId": 126,
+   "slug": "qatar",
+   "fibaName": "Qatar",
+   "fibaCode": "QAT",
+   "federationName": "Qatar Basketball Federation",
+   "fibaRegion": "asia",
+   "officialWebsite": "http://www.qatarbasketball.qa",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/126-qatar"
+  },
+  {
+   "fibaFederationId": 127,
+   "slug": "romania",
+   "fibaName": "Romania",
+   "fibaCode": "ROU",
+   "federationName": "Federatia Romana de Baschet",
+   "fibaRegion": "europe",
+   "officialWebsite": "http://www.frbaschet.ro",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/127-romania"
+  },
+  {
+   "fibaFederationId": 884,
+   "slug": "south-africa",
+   "fibaName": "South Africa",
+   "fibaCode": "RSA",
+   "federationName": "Basketball South Africa",
+   "fibaRegion": "africa",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/884-south-africa"
+  },
+  {
+   "fibaFederationId": 156,
+   "slug": "russia",
+   "fibaName": "Russia",
+   "fibaCode": "RUS",
+   "federationName": "Russian Basketball Federation",
+   "fibaRegion": "europe",
+   "officialWebsite": "http://www.russiabasket.ru",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/156-russia"
+  },
+  {
+   "fibaFederationId": 128,
+   "slug": "rwanda",
+   "fibaName": "Rwanda",
+   "fibaCode": "RWA",
+   "federationName": "Fédération Rwandaise de Basketball Amateur FERWABA",
+   "fibaRegion": "africa",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/128-rwanda"
+  },
+  {
+   "fibaFederationId": 162,
+   "slug": "samoa",
+   "fibaName": "Samoa",
+   "fibaCode": "SAM",
+   "federationName": "Samoa Basketball Association",
+   "fibaRegion": "oceania",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/162-samoa"
+  },
+  {
+   "fibaFederationId": 134,
+   "slug": "senegal",
+   "fibaName": "Senegal",
+   "fibaCode": "SEN",
+   "federationName": "Fédération Sénégalaise de Basket-Ball",
+   "fibaRegion": "africa",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/134-senegal"
+  },
+  {
+   "fibaFederationId": 135,
+   "slug": "seychelles",
+   "fibaName": "Seychelles",
+   "fibaCode": "SEY",
+   "federationName": "Seychelles Basketball Federation",
+   "fibaRegion": "africa",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/135-seychelles"
+  },
+  {
+   "fibaFederationId": 136,
+   "slug": "singapore",
+   "fibaName": "Singapore",
+   "fibaCode": "SGP",
+   "federationName": "Basketball Association of Singapore",
+   "fibaRegion": "asia",
+   "officialWebsite": "http://www.bas.org.sg",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/136-singapore"
+  },
+  {
+   "fibaFederationId": 880,
+   "slug": "st-kitts",
+   "fibaName": "St. Kitts",
+   "fibaCode": "SKN",
+   "federationName": "St. Kitts Amateur Basketball Association",
+   "fibaRegion": "americas",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/880-st-kitts"
+  },
+  {
+   "fibaFederationId": 621,
+   "slug": "sierra-leone",
+   "fibaName": "Sierra Leone",
+   "fibaCode": "SLE",
+   "federationName": "Sierra Leone Amateur Basketball Association",
+   "fibaRegion": "africa",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/621-sierra-leone"
+  },
+  {
+   "fibaFederationId": 618,
+   "slug": "slovenia",
+   "fibaName": "Slovenia",
+   "fibaCode": "SLO",
+   "federationName": "Basketball Federation of Slovenia",
+   "fibaRegion": "europe",
+   "officialWebsite": "http://www.kzs.si",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/618-slovenia"
+  },
+  {
+   "fibaFederationId": 130,
+   "slug": "san-marino",
+   "fibaName": "San Marino",
+   "fibaCode": "SMR",
+   "federationName": "San Marino Basketball Federation",
+   "fibaRegion": "europe",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/130-san-marino"
+  },
+  {
+   "fibaFederationId": 196,
+   "slug": "solomon-islands",
+   "fibaName": "Solomon Islands",
+   "fibaCode": "SOL",
+   "federationName": "Solomon Islands Amateur Basketball Federation",
+   "fibaRegion": "oceania",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/196-solomon-islands"
+  },
+  {
+   "fibaFederationId": 137,
+   "slug": "somalia",
+   "fibaName": "Somalia",
+   "fibaCode": "SOM",
+   "federationName": "Somali Basketball Federation",
+   "fibaRegion": "africa",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/137-somalia"
+  },
+  {
+   "fibaFederationId": 8323,
+   "slug": "serbia",
+   "fibaName": "Serbia",
+   "fibaCode": "SRB",
+   "federationName": "Kosarkaski Savez Srbije",
+   "fibaRegion": "europe",
+   "officialWebsite": "http://www.kss.rs",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/8323-serbia"
+  },
+  {
+   "fibaFederationId": 139,
+   "slug": "sri-lanka",
+   "fibaName": "Sri Lanka",
+   "fibaCode": "SRI",
+   "federationName": "Sri Lanka Basketball Federation",
+   "fibaRegion": "asia",
+   "officialWebsite": "https://www.slbasketball.com",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/139-sri-lanka"
+  },
+  {
+   "fibaFederationId": 9716,
+   "slug": "south-sudan",
+   "fibaName": "South Sudan",
+   "fibaCode": "SSD",
+   "federationName": "South Sudan Basketball Federation - SSBF",
+   "fibaRegion": "africa",
+   "officialWebsite": "https://www.ssbfed.com",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/9716-south-sudan"
+  },
+  {
+   "fibaFederationId": 889,
+   "slug": "sao-tome-and-principe",
+   "fibaName": "São Tomé and Príncipe",
+   "fibaCode": "STP",
+   "federationName": "Federação Santomense de Basquetebol",
+   "fibaRegion": "africa",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/889-sao-tome-and-principe"
+  },
+  {
+   "fibaFederationId": 141,
+   "slug": "sudan",
+   "fibaName": "Sudan",
+   "fibaCode": "SUD",
+   "federationName": "Sudan Basketball Association",
+   "fibaRegion": "africa",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/141-sudan"
+  },
+  {
+   "fibaFederationId": 144,
+   "slug": "switzerland",
+   "fibaName": "Switzerland",
+   "fibaCode": "SUI",
+   "federationName": "Swiss Basketball",
+   "fibaRegion": "europe",
+   "officialWebsite": "https://www.swiss.basketball",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/144-switzerland"
+  },
+  {
+   "fibaFederationId": 142,
+   "slug": "suriname",
+   "fibaName": "Suriname",
+   "fibaCode": "SUR",
+   "federationName": "Suriname Basketball Bond",
+   "fibaRegion": "americas",
+   "officialWebsite": "http://www.sba.sr",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/142-suriname"
+  },
+  {
+   "fibaFederationId": 885,
+   "slug": "slovakia",
+   "fibaName": "Slovakia",
+   "fibaCode": "SVK",
+   "federationName": "Slovak Basketball Association",
+   "fibaRegion": "europe",
+   "officialWebsite": "http://www.slovakbasket.sk",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/885-slovakia"
+  },
+  {
+   "fibaFederationId": 143,
+   "slug": "sweden",
+   "fibaName": "Sweden",
+   "fibaCode": "SWE",
+   "federationName": "Swedish Basketball Federation",
+   "fibaRegion": "europe",
+   "officialWebsite": "http://www.basket.se",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/143-sweden"
+  },
+  {
+   "fibaFederationId": 2782,
+   "slug": "eswatini",
+   "fibaName": "Eswatini",
+   "fibaCode": "SWZ",
+   "federationName": "Basketball Association of Eswatini",
+   "fibaRegion": "africa",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/2782-eswatini"
+  },
+  {
+   "fibaFederationId": 145,
+   "slug": "syria",
+   "fibaName": "Syria",
+   "fibaCode": "SYR",
+   "federationName": "Syrian Basketball Federation",
+   "fibaRegion": "asia",
+   "officialWebsite": "http://www.syrbf.org",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/145-syria"
+  },
+  {
+   "fibaFederationId": 60,
+   "slug": "tahiti",
+   "fibaName": "Tahiti",
+   "fibaCode": "TAH",
+   "federationName": "Fédération Tahitienne de Basketball",
+   "fibaRegion": "oceania",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/60-tahiti"
+  },
+  {
+   "fibaFederationId": 147,
+   "slug": "tanzania",
+   "fibaName": "Tanzania",
+   "fibaCode": "TAN",
+   "federationName": "Basketball Association of Tanzania",
+   "fibaRegion": "africa",
+   "officialWebsite": "http://www.tbf.or.tz",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/147-tanzania"
+  },
+  {
+   "fibaFederationId": 3875,
+   "slug": "turks-and-caicos",
+   "fibaName": "Turks and Caicos",
+   "fibaCode": "TCI",
+   "federationName": "Turks and Caicos Islands National Basketball",
+   "fibaRegion": "americas",
+   "officialWebsite": "https://www.tcibasketballfederation.com",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/3875-turks-and-caicos"
+  },
+  {
+   "fibaFederationId": 887,
+   "slug": "tonga",
+   "fibaName": "Tonga",
+   "fibaCode": "TGA",
+   "federationName": "Tonga Basketball Federation",
+   "fibaRegion": "oceania",
+   "officialWebsite": "https://www.basketballtonga.com/",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/887-tonga"
+  },
+  {
+   "fibaFederationId": 148,
+   "slug": "thailand",
+   "fibaName": "Thailand",
+   "fibaCode": "THA",
+   "federationName": "Basketball Sport Association of Thailand",
+   "fibaRegion": "asia",
+   "officialWebsite": "http://www.bsatthai.org",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/148-thailand"
+  },
+  {
+   "fibaFederationId": 972,
+   "slug": "tajikistan",
+   "fibaName": "Tajikistan",
+   "fibaCode": "TJK",
+   "federationName": "Basketball Federation of Republic Tajikistan",
+   "fibaRegion": "asia",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/972-tajikistan"
+  },
+  {
+   "fibaFederationId": 751,
+   "slug": "turkmenistan",
+   "fibaName": "Turkmenistan",
+   "fibaCode": "TKM",
+   "federationName": "Basketball Federation of Turkmenistan",
+   "fibaRegion": "asia",
+   "officialWebsite": "https://tkm.basketball",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/751-turkmenistan"
+  },
+  {
+   "fibaFederationId": 9714,
+   "slug": "timor-leste",
+   "fibaName": "Timor-Leste",
+   "fibaCode": "TLS",
+   "federationName": "National Basketball Federation of East Timor – FNBTL",
+   "fibaRegion": "oceania",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/9714-timor-leste"
+  },
+  {
+   "fibaFederationId": 149,
+   "slug": "togo",
+   "fibaName": "Togo",
+   "fibaCode": "TOG",
+   "federationName": "Fédération Togolaise de Basket-Ball",
+   "fibaRegion": "africa",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/149-togo"
+  },
+  {
+   "fibaFederationId": 146,
+   "slug": "chinese-taipei",
+   "fibaName": "Chinese Taipei",
+   "fibaCode": "TPE",
+   "federationName": "Chinese Taipei Basketball Association",
+   "fibaRegion": "asia",
+   "officialWebsite": "http://www.basketball-tpe.org",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/146-chinese-taipei"
+  },
+  {
+   "fibaFederationId": 150,
+   "slug": "trinidad-and-tobago",
+   "fibaName": "Trinidad and Tobago",
+   "fibaCode": "TTO",
+   "federationName": "National Basketball Federation of Trinidad and Tobago",
+   "fibaRegion": "americas",
+   "officialWebsite": "http://www.nbftt.org",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/150-trinidad-and-tobago"
+  },
+  {
+   "fibaFederationId": 151,
+   "slug": "tunisia",
+   "fibaName": "Tunisia",
+   "fibaCode": "TUN",
+   "federationName": "Fédération Tunisienne de Basket-Ball",
+   "fibaRegion": "africa",
+   "officialWebsite": "http://www.ftbb.org.tn",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/151-tunisia"
+  },
+  {
+   "fibaFederationId": 152,
+   "slug": "turkiye",
+   "fibaName": "Türkiye",
+   "fibaCode": "TUR",
+   "federationName": "Türkiye Basketbol Federasyonu",
+   "fibaRegion": "europe",
+   "officialWebsite": "http://www.tbf.org.tr",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/152-turkiye"
+  },
+  {
+   "fibaFederationId": 221,
+   "slug": "tuvalu",
+   "fibaName": "Tuvalu",
+   "fibaCode": "TUV",
+   "federationName": "Tuvalu Basketball Association",
+   "fibaRegion": "oceania",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/221-tuvalu"
+  },
+  {
+   "fibaFederationId": 153,
+   "slug": "uae",
+   "fibaName": "UAE",
+   "fibaCode": "UAE",
+   "federationName": "United Arab Emirates Basketball Association",
+   "fibaRegion": "asia",
+   "officialWebsite": "http://www.basketballuae.com",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/153-uae"
+  },
+  {
+   "fibaFederationId": 337,
+   "slug": "uganda",
+   "fibaName": "Uganda",
+   "fibaCode": "UGA",
+   "federationName": "Federation of Uganda Basketball Association",
+   "fibaRegion": "africa",
+   "officialWebsite": "http://www.fuba.or.ug",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/337-uganda"
+  },
+  {
+   "fibaFederationId": 628,
+   "slug": "ukraine",
+   "fibaName": "Ukraine",
+   "fibaCode": "UKR",
+   "federationName": "Basketball Federation of Ukraine",
+   "fibaRegion": "europe",
+   "officialWebsite": "http://www.fbu.ua",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/628-ukraine"
+  },
+  {
+   "fibaFederationId": 155,
+   "slug": "uruguay",
+   "fibaName": "Uruguay",
+   "fibaCode": "URU",
+   "federationName": "Federación Uruguaya de Básquetbol - FUBB",
+   "fibaRegion": "americas",
+   "officialWebsite": "http://www.fubb.org.uy",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/155-uruguay"
+  },
+  {
+   "fibaFederationId": 154,
+   "slug": "usa",
+   "fibaName": "USA",
+   "fibaCode": "USA",
+   "federationName": "USA Basketball",
+   "fibaRegion": "americas",
+   "officialWebsite": "http://www.usabasketball.com",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/154-usa"
+  },
+  {
+   "fibaFederationId": 736,
+   "slug": "uzbekistan",
+   "fibaName": "Uzbekistan",
+   "fibaCode": "UZB",
+   "federationName": "Basketball Federation of Uzbekistan",
+   "fibaRegion": "asia",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/736-uzbekistan"
+  },
+  {
+   "fibaFederationId": 157,
+   "slug": "vanuatu",
+   "fibaName": "Vanuatu",
+   "fibaCode": "VAN",
+   "federationName": "Vanuatu Amateur Basketball Federation",
+   "fibaRegion": "oceania",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/157-vanuatu"
+  },
+  {
+   "fibaFederationId": 158,
+   "slug": "venezuela",
+   "fibaName": "Venezuela",
+   "fibaCode": "VEN",
+   "federationName": "Federación Venezolana de Baloncesto",
+   "fibaRegion": "americas",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/158-venezuela"
+  },
+  {
+   "fibaFederationId": 159,
+   "slug": "vietnam",
+   "fibaName": "Vietnam",
+   "fibaCode": "VIE",
+   "federationName": "Vietnam Basketball Federation",
+   "fibaRegion": "asia",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/159-vietnam"
+  },
+  {
+   "fibaFederationId": 129,
+   "slug": "stvincent-and-the-grenadines",
+   "fibaName": "St.Vincent and the Grenadines",
+   "fibaCode": "VIN",
+   "federationName": "St. Vincent and the Grenadines Basketball Association",
+   "fibaRegion": "americas",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/129-stvincent-and-the-grenadines"
+  },
+  {
+   "fibaFederationId": 888,
+   "slug": "yemen",
+   "fibaName": "Yemen",
+   "fibaCode": "YEM",
+   "federationName": "Yemen Republic Basketball Association",
+   "fibaRegion": "asia",
+   "officialWebsite": "http://www.yemenbasketball.com.ye",
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/888-yemen"
+  },
+  {
+   "fibaFederationId": 166,
+   "slug": "zambia",
+   "fibaName": "Zambia",
+   "fibaCode": "ZAM",
+   "federationName": "Zambia Basketball Federation",
+   "fibaRegion": "africa",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/166-zambia"
+  },
+  {
+   "fibaFederationId": 167,
+   "slug": "zimbabwe",
+   "fibaName": "Zimbabwe",
+   "fibaCode": "ZIM",
+   "federationName": "Basketball Union of Zimbabwe",
+   "fibaRegion": "africa",
+   "officialWebsite": null,
+   "sourceUrl": "https://about.fiba.basketball/en/national-federations/167-zimbabwe"
+  }
+ ]
+}

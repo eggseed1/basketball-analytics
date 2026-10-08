@@ -44,6 +44,11 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
+        source: "/games/one-shot",
+        destination: "/arcade/one-shot",
+        permanent: true,
+      },
+      {
         source: "/explore/players/windows",
         destination: "/explore/players/hot-cold",
         permanent: true,

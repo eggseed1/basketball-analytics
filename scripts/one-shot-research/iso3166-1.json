@@ -1,0 +1,1997 @@
+{
+"source": "ISO 3166-1 via Debian iso-codes (pycountry 24.6.1)",
+"entries": [
+{
+"alpha2": "AW",
+"alpha3": "ABW",
+"numeric": "533",
+"name": "Aruba",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "AF",
+"alpha3": "AFG",
+"numeric": "004",
+"name": "Afghanistan",
+"commonName": null,
+"officialName": "Islamic Republic of Afghanistan"
+},
+{
+"alpha2": "AO",
+"alpha3": "AGO",
+"numeric": "024",
+"name": "Angola",
+"commonName": null,
+"officialName": "Republic of Angola"
+},
+{
+"alpha2": "AI",
+"alpha3": "AIA",
+"numeric": "660",
+"name": "Anguilla",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "AX",
+"alpha3": "ALA",
+"numeric": "248",
+"name": "Åland Islands",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "AL",
+"alpha3": "ALB",
+"numeric": "008",
+"name": "Albania",
+"commonName": null,
+"officialName": "Republic of Albania"
+},
+{
+"alpha2": "AD",
+"alpha3": "AND",
+"numeric": "020",
+"name": "Andorra",
+"commonName": null,
+"officialName": "Principality of Andorra"
+},
+{
+"alpha2": "AE",
+"alpha3": "ARE",
+"numeric": "784",
+"name": "United Arab Emirates",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "AR",
+"alpha3": "ARG",
+"numeric": "032",
+"name": "Argentina",
+"commonName": null,
+"officialName": "Argentine Republic"
+},
+{
+"alpha2": "AM",
+"alpha3": "ARM",
+"numeric": "051",
+"name": "Armenia",
+"commonName": null,
+"officialName": "Republic of Armenia"
+},
+{
+"alpha2": "AS",
+"alpha3": "ASM",
+"numeric": "016",
+"name": "American Samoa",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "AQ",
+"alpha3": "ATA",
+"numeric": "010",
+"name": "Antarctica",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "TF",
+"alpha3": "ATF",
+"numeric": "260",
+"name": "French Southern Territories",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "AG",
+"alpha3": "ATG",
+"numeric": "028",
+"name": "Antigua and Barbuda",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "AU",
+"alpha3": "AUS",
+"numeric": "036",
+"name": "Australia",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "AT",
+"alpha3": "AUT",
+"numeric": "040",
+"name": "Austria",
+"commonName": null,
+"officialName": "Republic of Austria"
+},
+{
+"alpha2": "AZ",
+"alpha3": "AZE",
+"numeric": "031",
+"name": "Azerbaijan",
+"commonName": null,
+"officialName": "Republic of Azerbaijan"
+},
+{
+"alpha2": "BI",
+"alpha3": "BDI",
+"numeric": "108",
+"name": "Burundi",
+"commonName": null,
+"officialName": "Republic of Burundi"
+},
+{
+"alpha2": "BE",
+"alpha3": "BEL",
+"numeric": "056",
+"name": "Belgium",
+"commonName": null,
+"officialName": "Kingdom of Belgium"
+},
+{
+"alpha2": "BJ",
+"alpha3": "BEN",
+"numeric": "204",
+"name": "Benin",
+"commonName": null,
+"officialName": "Republic of Benin"
+},
+{
+"alpha2": "BQ",
+"alpha3": "BES",
+"numeric": "535",
+"name": "Bonaire, Sint Eustatius and Saba",
+"commonName": null,
+"officialName": "Bonaire, Sint Eustatius and Saba"
+},
+{
+"alpha2": "BF",
+"alpha3": "BFA",
+"numeric": "854",
+"name": "Burkina Faso",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "BD",
+"alpha3": "BGD",
+"numeric": "050",
+"name": "Bangladesh",
+"commonName": null,
+"officialName": "People's Republic of Bangladesh"
+},
+{
+"alpha2": "BG",
+"alpha3": "BGR",
+"numeric": "100",
+"name": "Bulgaria",
+"commonName": null,
+"officialName": "Republic of Bulgaria"
+},
+{
+"alpha2": "BH",
+"alpha3": "BHR",
+"numeric": "048",
+"name": "Bahrain",
+"commonName": null,
+"officialName": "Kingdom of Bahrain"
+},
+{
+"alpha2": "BS",
+"alpha3": "BHS",
+"numeric": "044",
+"name": "Bahamas",
+"commonName": null,
+"officialName": "Commonwealth of the Bahamas"
+},
+{
+"alpha2": "BA",
+"alpha3": "BIH",
+"numeric": "070",
+"name": "Bosnia and Herzegovina",
+"commonName": null,
+"officialName": "Republic of Bosnia and Herzegovina"
+},
+{
+"alpha2": "BL",
+"alpha3": "BLM",
+"numeric": "652",
+"name": "Saint Barthélemy",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "BY",
+"alpha3": "BLR",
+"numeric": "112",
+"name": "Belarus",
+"commonName": null,
+"officialName": "Republic of Belarus"
+},
+{
+"alpha2": "BZ",
+"alpha3": "BLZ",
+"numeric": "084",
+"name": "Belize",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "BM",
+"alpha3": "BMU",
+"numeric": "060",
+"name": "Bermuda",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "BO",
+"alpha3": "BOL",
+"numeric": "068",
+"name": "Bolivia, Plurinational State of",
+"commonName": "Bolivia",
+"officialName": "Plurinational State of Bolivia"
+},
+{
+"alpha2": "BR",
+"alpha3": "BRA",
+"numeric": "076",
+"name": "Brazil",
+"commonName": null,
+"officialName": "Federative Republic of Brazil"
+},
+{
+"alpha2": "BB",
+"alpha3": "BRB",
+"numeric": "052",
+"name": "Barbados",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "BN",
+"alpha3": "BRN",
+"numeric": "096",
+"name": "Brunei Darussalam",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "BT",
+"alpha3": "BTN",
+"numeric": "064",
+"name": "Bhutan",
+"commonName": null,
+"officialName": "Kingdom of Bhutan"
+},
+{
+"alpha2": "BV",
+"alpha3": "BVT",
+"numeric": "074",
+"name": "Bouvet Island",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "BW",
+"alpha3": "BWA",
+"numeric": "072",
+"name": "Botswana",
+"commonName": null,
+"officialName": "Republic of Botswana"
+},
+{
+"alpha2": "CF",
+"alpha3": "CAF",
+"numeric": "140",
+"name": "Central African Republic",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "CA",
+"alpha3": "CAN",
+"numeric": "124",
+"name": "Canada",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "CC",
+"alpha3": "CCK",
+"numeric": "166",
+"name": "Cocos (Keeling) Islands",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "CH",
+"alpha3": "CHE",
+"numeric": "756",
+"name": "Switzerland",
+"commonName": null,
+"officialName": "Swiss Confederation"
+},
+{
+"alpha2": "CL",
+"alpha3": "CHL",
+"numeric": "152",
+"name": "Chile",
+"commonName": null,
+"officialName": "Republic of Chile"
+},
+{
+"alpha2": "CN",
+"alpha3": "CHN",
+"numeric": "156",
+"name": "China",
+"commonName": null,
+"officialName": "People's Republic of China"
+},
+{
+"alpha2": "CI",
+"alpha3": "CIV",
+"numeric": "384",
+"name": "Côte d'Ivoire",
+"commonName": null,
+"officialName": "Republic of Côte d'Ivoire"
+},
+{
+"alpha2": "CM",
+"alpha3": "CMR",
+"numeric": "120",
+"name": "Cameroon",
+"commonName": null,
+"officialName": "Republic of Cameroon"
+},
+{
+"alpha2": "CD",
+"alpha3": "COD",
+"numeric": "180",
+"name": "Congo, The Democratic Republic of the",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "CG",
+"alpha3": "COG",
+"numeric": "178",
+"name": "Congo",
+"commonName": null,
+"officialName": "Republic of the Congo"
+},
+{
+"alpha2": "CK",
+"alpha3": "COK",
+"numeric": "184",
+"name": "Cook Islands",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "CO",
+"alpha3": "COL",
+"numeric": "170",
+"name": "Colombia",
+"commonName": null,
+"officialName": "Republic of Colombia"
+},
+{
+"alpha2": "KM",
+"alpha3": "COM",
+"numeric": "174",
+"name": "Comoros",
+"commonName": null,
+"officialName": "Union of the Comoros"
+},
+{
+"alpha2": "CV",
+"alpha3": "CPV",
+"numeric": "132",
+"name": "Cabo Verde",
+"commonName": null,
+"officialName": "Republic of Cabo Verde"
+},
+{
+"alpha2": "CR",
+"alpha3": "CRI",
+"numeric": "188",
+"name": "Costa Rica",
+"commonName": null,
+"officialName": "Republic of Costa Rica"
+},
+{
+"alpha2": "CU",
+"alpha3": "CUB",
+"numeric": "192",
+"name": "Cuba",
+"commonName": null,
+"officialName": "Republic of Cuba"
+},
+{
+"alpha2": "CW",
+"alpha3": "CUW",
+"numeric": "531",
+"name": "Curaçao",
+"commonName": null,
+"officialName": "Curaçao"
+},
+{
+"alpha2": "CX",
+"alpha3": "CXR",
+"numeric": "162",
+"name": "Christmas Island",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "KY",
+"alpha3": "CYM",
+"numeric": "136",
+"name": "Cayman Islands",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "CY",
+"alpha3": "CYP",
+"numeric": "196",
+"name": "Cyprus",
+"commonName": null,
+"officialName": "Republic of Cyprus"
+},
+{
+"alpha2": "CZ",
+"alpha3": "CZE",
+"numeric": "203",
+"name": "Czechia",
+"commonName": null,
+"officialName": "Czech Republic"
+},
+{
+"alpha2": "DE",
+"alpha3": "DEU",
+"numeric": "276",
+"name": "Germany",
+"commonName": null,
+"officialName": "Federal Republic of Germany"
+},
+{
+"alpha2": "DJ",
+"alpha3": "DJI",
+"numeric": "262",
+"name": "Djibouti",
+"commonName": null,
+"officialName": "Republic of Djibouti"
+},
+{
+"alpha2": "DM",
+"alpha3": "DMA",
+"numeric": "212",
+"name": "Dominica",
+"commonName": null,
+"officialName": "Commonwealth of Dominica"
+},
+{
+"alpha2": "DK",
+"alpha3": "DNK",
+"numeric": "208",
+"name": "Denmark",
+"commonName": null,
+"officialName": "Kingdom of Denmark"
+},
+{
+"alpha2": "DO",
+"alpha3": "DOM",
+"numeric": "214",
+"name": "Dominican Republic",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "DZ",
+"alpha3": "DZA",
+"numeric": "012",
+"name": "Algeria",
+"commonName": null,
+"officialName": "People's Democratic Republic of Algeria"
+},
+{
+"alpha2": "EC",
+"alpha3": "ECU",
+"numeric": "218",
+"name": "Ecuador",
+"commonName": null,
+"officialName": "Republic of Ecuador"
+},
+{
+"alpha2": "EG",
+"alpha3": "EGY",
+"numeric": "818",
+"name": "Egypt",
+"commonName": null,
+"officialName": "Arab Republic of Egypt"
+},
+{
+"alpha2": "ER",
+"alpha3": "ERI",
+"numeric": "232",
+"name": "Eritrea",
+"commonName": null,
+"officialName": "the State of Eritrea"
+},
+{
+"alpha2": "EH",
+"alpha3": "ESH",
+"numeric": "732",
+"name": "Western Sahara",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "ES",
+"alpha3": "ESP",
+"numeric": "724",
+"name": "Spain",
+"commonName": null,
+"officialName": "Kingdom of Spain"
+},
+{
+"alpha2": "EE",
+"alpha3": "EST",
+"numeric": "233",
+"name": "Estonia",
+"commonName": null,
+"officialName": "Republic of Estonia"
+},
+{
+"alpha2": "ET",
+"alpha3": "ETH",
+"numeric": "231",
+"name": "Ethiopia",
+"commonName": null,
+"officialName": "Federal Democratic Republic of Ethiopia"
+},
+{
+"alpha2": "FI",
+"alpha3": "FIN",
+"numeric": "246",
+"name": "Finland",
+"commonName": null,
+"officialName": "Republic of Finland"
+},
+{
+"alpha2": "FJ",
+"alpha3": "FJI",
+"numeric": "242",
+"name": "Fiji",
+"commonName": null,
+"officialName": "Republic of Fiji"
+},
+{
+"alpha2": "FK",
+"alpha3": "FLK",
+"numeric": "238",
+"name": "Falkland Islands (Malvinas)",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "FR",
+"alpha3": "FRA",
+"numeric": "250",
+"name": "France",
+"commonName": null,
+"officialName": "French Republic"
+},
+{
+"alpha2": "FO",
+"alpha3": "FRO",
+"numeric": "234",
+"name": "Faroe Islands",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "FM",
+"alpha3": "FSM",
+"numeric": "583",
+"name": "Micronesia, Federated States of",
+"commonName": null,
+"officialName": "Federated States of Micronesia"
+},
+{
+"alpha2": "GA",
+"alpha3": "GAB",
+"numeric": "266",
+"name": "Gabon",
+"commonName": null,
+"officialName": "Gabonese Republic"
+},
+{
+"alpha2": "GB",
+"alpha3": "GBR",
+"numeric": "826",
+"name": "United Kingdom",
+"commonName": null,
+"officialName": "United Kingdom of Great Britain and Northern Ireland"
+},
+{
+"alpha2": "GE",
+"alpha3": "GEO",
+"numeric": "268",
+"name": "Georgia",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "GG",
+"alpha3": "GGY",
+"numeric": "831",
+"name": "Guernsey",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "GH",
+"alpha3": "GHA",
+"numeric": "288",
+"name": "Ghana",
+"commonName": null,
+"officialName": "Republic of Ghana"
+},
+{
+"alpha2": "GI",
+"alpha3": "GIB",
+"numeric": "292",
+"name": "Gibraltar",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "GN",
+"alpha3": "GIN",
+"numeric": "324",
+"name": "Guinea",
+"commonName": null,
+"officialName": "Republic of Guinea"
+},
+{
+"alpha2": "GP",
+"alpha3": "GLP",
+"numeric": "312",
+"name": "Guadeloupe",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "GM",
+"alpha3": "GMB",
+"numeric": "270",
+"name": "Gambia",
+"commonName": null,
+"officialName": "Republic of the Gambia"
+},
+{
+"alpha2": "GW",
+"alpha3": "GNB",
+"numeric": "624",
+"name": "Guinea-Bissau",
+"commonName": null,
+"officialName": "Republic of Guinea-Bissau"
+},
+{
+"alpha2": "GQ",
+"alpha3": "GNQ",
+"numeric": "226",
+"name": "Equatorial Guinea",
+"commonName": null,
+"officialName": "Republic of Equatorial Guinea"
+},
+{
+"alpha2": "GR",
+"alpha3": "GRC",
+"numeric": "300",
+"name": "Greece",
+"commonName": null,
+"officialName": "Hellenic Republic"
+},
+{
+"alpha2": "GD",
+"alpha3": "GRD",
+"numeric": "308",
+"name": "Grenada",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "GL",
+"alpha3": "GRL",
+"numeric": "304",
+"name": "Greenland",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "GT",
+"alpha3": "GTM",
+"numeric": "320",
+"name": "Guatemala",
+"commonName": null,
+"officialName": "Republic of Guatemala"
+},
+{
+"alpha2": "GF",
+"alpha3": "GUF",
+"numeric": "254",
+"name": "French Guiana",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "GU",
+"alpha3": "GUM",
+"numeric": "316",
+"name": "Guam",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "GY",
+"alpha3": "GUY",
+"numeric": "328",
+"name": "Guyana",
+"commonName": null,
+"officialName": "Republic of Guyana"
+},
+{
+"alpha2": "HK",
+"alpha3": "HKG",
+"numeric": "344",
+"name": "Hong Kong",
+"commonName": null,
+"officialName": "Hong Kong Special Administrative Region of China"
+},
+{
+"alpha2": "HM",
+"alpha3": "HMD",
+"numeric": "334",
+"name": "Heard Island and McDonald Islands",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "HN",
+"alpha3": "HND",
+"numeric": "340",
+"name": "Honduras",
+"commonName": null,
+"officialName": "Republic of Honduras"
+},
+{
+"alpha2": "HR",
+"alpha3": "HRV",
+"numeric": "191",
+"name": "Croatia",
+"commonName": null,
+"officialName": "Republic of Croatia"
+},
+{
+"alpha2": "HT",
+"alpha3": "HTI",
+"numeric": "332",
+"name": "Haiti",
+"commonName": null,
+"officialName": "Republic of Haiti"
+},
+{
+"alpha2": "HU",
+"alpha3": "HUN",
+"numeric": "348",
+"name": "Hungary",
+"commonName": null,
+"officialName": "Hungary"
+},
+{
+"alpha2": "ID",
+"alpha3": "IDN",
+"numeric": "360",
+"name": "Indonesia",
+"commonName": null,
+"officialName": "Republic of Indonesia"
+},
+{
+"alpha2": "IM",
+"alpha3": "IMN",
+"numeric": "833",
+"name": "Isle of Man",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "IN",
+"alpha3": "IND",
+"numeric": "356",
+"name": "India",
+"commonName": null,
+"officialName": "Republic of India"
+},
+{
+"alpha2": "IO",
+"alpha3": "IOT",
+"numeric": "086",
+"name": "British Indian Ocean Territory",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "IE",
+"alpha3": "IRL",
+"numeric": "372",
+"name": "Ireland",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "IR",
+"alpha3": "IRN",
+"numeric": "364",
+"name": "Iran, Islamic Republic of",
+"commonName": "Iran",
+"officialName": "Islamic Republic of Iran"
+},
+{
+"alpha2": "IQ",
+"alpha3": "IRQ",
+"numeric": "368",
+"name": "Iraq",
+"commonName": null,
+"officialName": "Republic of Iraq"
+},
+{
+"alpha2": "IS",
+"alpha3": "ISL",
+"numeric": "352",
+"name": "Iceland",
+"commonName": null,
+"officialName": "Republic of Iceland"
+},
+{
+"alpha2": "IL",
+"alpha3": "ISR",
+"numeric": "376",
+"name": "Israel",
+"commonName": null,
+"officialName": "State of Israel"
+},
+{
+"alpha2": "IT",
+"alpha3": "ITA",
+"numeric": "380",
+"name": "Italy",
+"commonName": null,
+"officialName": "Italian Republic"
+},
+{
+"alpha2": "JM",
+"alpha3": "JAM",
+"numeric": "388",
+"name": "Jamaica",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "JE",
+"alpha3": "JEY",
+"numeric": "832",
+"name": "Jersey",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "JO",
+"alpha3": "JOR",
+"numeric": "400",
+"name": "Jordan",
+"commonName": null,
+"officialName": "Hashemite Kingdom of Jordan"
+},
+{
+"alpha2": "JP",
+"alpha3": "JPN",
+"numeric": "392",
+"name": "Japan",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "KZ",
+"alpha3": "KAZ",
+"numeric": "398",
+"name": "Kazakhstan",
+"commonName": null,
+"officialName": "Republic of Kazakhstan"
+},
+{
+"alpha2": "KE",
+"alpha3": "KEN",
+"numeric": "404",
+"name": "Kenya",
+"commonName": null,
+"officialName": "Republic of Kenya"
+},
+{
+"alpha2": "KG",
+"alpha3": "KGZ",
+"numeric": "417",
+"name": "Kyrgyzstan",
+"commonName": null,
+"officialName": "Kyrgyz Republic"
+},
+{
+"alpha2": "KH",
+"alpha3": "KHM",
+"numeric": "116",
+"name": "Cambodia",
+"commonName": null,
+"officialName": "Kingdom of Cambodia"
+},
+{
+"alpha2": "KI",
+"alpha3": "KIR",
+"numeric": "296",
+"name": "Kiribati",
+"commonName": null,
+"officialName": "Republic of Kiribati"
+},
+{
+"alpha2": "KN",
+"alpha3": "KNA",
+"numeric": "659",
+"name": "Saint Kitts and Nevis",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "KR",
+"alpha3": "KOR",
+"numeric": "410",
+"name": "Korea, Republic of",
+"commonName": "South Korea",
+"officialName": null
+},
+{
+"alpha2": "KW",
+"alpha3": "KWT",
+"numeric": "414",
+"name": "Kuwait",
+"commonName": null,
+"officialName": "State of Kuwait"
+},
+{
+"alpha2": "LA",
+"alpha3": "LAO",
+"numeric": "418",
+"name": "Lao People's Democratic Republic",
+"commonName": "Laos",
+"officialName": null
+},
+{
+"alpha2": "LB",
+"alpha3": "LBN",
+"numeric": "422",
+"name": "Lebanon",
+"commonName": null,
+"officialName": "Lebanese Republic"
+},
+{
+"alpha2": "LR",
+"alpha3": "LBR",
+"numeric": "430",
+"name": "Liberia",
+"commonName": null,
+"officialName": "Republic of Liberia"
+},
+{
+"alpha2": "LY",
+"alpha3": "LBY",
+"numeric": "434",
+"name": "Libya",
+"commonName": null,
+"officialName": "Libya"
+},
+{
+"alpha2": "LC",
+"alpha3": "LCA",
+"numeric": "662",
+"name": "Saint Lucia",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "LI",
+"alpha3": "LIE",
+"numeric": "438",
+"name": "Liechtenstein",
+"commonName": null,
+"officialName": "Principality of Liechtenstein"
+},
+{
+"alpha2": "LK",
+"alpha3": "LKA",
+"numeric": "144",
+"name": "Sri Lanka",
+"commonName": null,
+"officialName": "Democratic Socialist Republic of Sri Lanka"
+},
+{
+"alpha2": "LS",
+"alpha3": "LSO",
+"numeric": "426",
+"name": "Lesotho",
+"commonName": null,
+"officialName": "Kingdom of Lesotho"
+},
+{
+"alpha2": "LT",
+"alpha3": "LTU",
+"numeric": "440",
+"name": "Lithuania",
+"commonName": null,
+"officialName": "Republic of Lithuania"
+},
+{
+"alpha2": "LU",
+"alpha3": "LUX",
+"numeric": "442",
+"name": "Luxembourg",
+"commonName": null,
+"officialName": "Grand Duchy of Luxembourg"
+},
+{
+"alpha2": "LV",
+"alpha3": "LVA",
+"numeric": "428",
+"name": "Latvia",
+"commonName": null,
+"officialName": "Republic of Latvia"
+},
+{
+"alpha2": "MO",
+"alpha3": "MAC",
+"numeric": "446",
+"name": "Macao",
+"commonName": null,
+"officialName": "Macao Special Administrative Region of China"
+},
+{
+"alpha2": "MF",
+"alpha3": "MAF",
+"numeric": "663",
+"name": "Saint Martin (French part)",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "MA",
+"alpha3": "MAR",
+"numeric": "504",
+"name": "Morocco",
+"commonName": null,
+"officialName": "Kingdom of Morocco"
+},
+{
+"alpha2": "MC",
+"alpha3": "MCO",
+"numeric": "492",
+"name": "Monaco",
+"commonName": null,
+"officialName": "Principality of Monaco"
+},
+{
+"alpha2": "MD",
+"alpha3": "MDA",
+"numeric": "498",
+"name": "Moldova, Republic of",
+"commonName": "Moldova",
+"officialName": "Republic of Moldova"
+},
+{
+"alpha2": "MG",
+"alpha3": "MDG",
+"numeric": "450",
+"name": "Madagascar",
+"commonName": null,
+"officialName": "Republic of Madagascar"
+},
+{
+"alpha2": "MV",
+"alpha3": "MDV",
+"numeric": "462",
+"name": "Maldives",
+"commonName": null,
+"officialName": "Republic of Maldives"
+},
+{
+"alpha2": "MX",
+"alpha3": "MEX",
+"numeric": "484",
+"name": "Mexico",
+"commonName": null,
+"officialName": "United Mexican States"
+},
+{
+"alpha2": "MH",
+"alpha3": "MHL",
+"numeric": "584",
+"name": "Marshall Islands",
+"commonName": null,
+"officialName": "Republic of the Marshall Islands"
+},
+{
+"alpha2": "MK",
+"alpha3": "MKD",
+"numeric": "807",
+"name": "North Macedonia",
+"commonName": null,
+"officialName": "Republic of North Macedonia"
+},
+{
+"alpha2": "ML",
+"alpha3": "MLI",
+"numeric": "466",
+"name": "Mali",
+"commonName": null,
+"officialName": "Republic of Mali"
+},
+{
+"alpha2": "MT",
+"alpha3": "MLT",
+"numeric": "470",
+"name": "Malta",
+"commonName": null,
+"officialName": "Republic of Malta"
+},
+{
+"alpha2": "MM",
+"alpha3": "MMR",
+"numeric": "104",
+"name": "Myanmar",
+"commonName": null,
+"officialName": "Republic of Myanmar"
+},
+{
+"alpha2": "ME",
+"alpha3": "MNE",
+"numeric": "499",
+"name": "Montenegro",
+"commonName": null,
+"officialName": "Montenegro"
+},
+{
+"alpha2": "MN",
+"alpha3": "MNG",
+"numeric": "496",
+"name": "Mongolia",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "MP",
+"alpha3": "MNP",
+"numeric": "580",
+"name": "Northern Mariana Islands",
+"commonName": null,
+"officialName": "Commonwealth of the Northern Mariana Islands"
+},
+{
+"alpha2": "MZ",
+"alpha3": "MOZ",
+"numeric": "508",
+"name": "Mozambique",
+"commonName": null,
+"officialName": "Republic of Mozambique"
+},
+{
+"alpha2": "MR",
+"alpha3": "MRT",
+"numeric": "478",
+"name": "Mauritania",
+"commonName": null,
+"officialName": "Islamic Republic of Mauritania"
+},
+{
+"alpha2": "MS",
+"alpha3": "MSR",
+"numeric": "500",
+"name": "Montserrat",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "MQ",
+"alpha3": "MTQ",
+"numeric": "474",
+"name": "Martinique",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "MU",
+"alpha3": "MUS",
+"numeric": "480",
+"name": "Mauritius",
+"commonName": null,
+"officialName": "Republic of Mauritius"
+},
+{
+"alpha2": "MW",
+"alpha3": "MWI",
+"numeric": "454",
+"name": "Malawi",
+"commonName": null,
+"officialName": "Republic of Malawi"
+},
+{
+"alpha2": "MY",
+"alpha3": "MYS",
+"numeric": "458",
+"name": "Malaysia",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "YT",
+"alpha3": "MYT",
+"numeric": "175",
+"name": "Mayotte",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "NA",
+"alpha3": "NAM",
+"numeric": "516",
+"name": "Namibia",
+"commonName": null,
+"officialName": "Republic of Namibia"
+},
+{
+"alpha2": "NC",
+"alpha3": "NCL",
+"numeric": "540",
+"name": "New Caledonia",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "NE",
+"alpha3": "NER",
+"numeric": "562",
+"name": "Niger",
+"commonName": null,
+"officialName": "Republic of the Niger"
+},
+{
+"alpha2": "NF",
+"alpha3": "NFK",
+"numeric": "574",
+"name": "Norfolk Island",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "NG",
+"alpha3": "NGA",
+"numeric": "566",
+"name": "Nigeria",
+"commonName": null,
+"officialName": "Federal Republic of Nigeria"
+},
+{
+"alpha2": "NI",
+"alpha3": "NIC",
+"numeric": "558",
+"name": "Nicaragua",
+"commonName": null,
+"officialName": "Republic of Nicaragua"
+},
+{
+"alpha2": "NU",
+"alpha3": "NIU",
+"numeric": "570",
+"name": "Niue",
+"commonName": null,
+"officialName": "Niue"
+},
+{
+"alpha2": "NL",
+"alpha3": "NLD",
+"numeric": "528",
+"name": "Netherlands",
+"commonName": null,
+"officialName": "Kingdom of the Netherlands"
+},
+{
+"alpha2": "NO",
+"alpha3": "NOR",
+"numeric": "578",
+"name": "Norway",
+"commonName": null,
+"officialName": "Kingdom of Norway"
+},
+{
+"alpha2": "NP",
+"alpha3": "NPL",
+"numeric": "524",
+"name": "Nepal",
+"commonName": null,
+"officialName": "Federal Democratic Republic of Nepal"
+},
+{
+"alpha2": "NR",
+"alpha3": "NRU",
+"numeric": "520",
+"name": "Nauru",
+"commonName": null,
+"officialName": "Republic of Nauru"
+},
+{
+"alpha2": "NZ",
+"alpha3": "NZL",
+"numeric": "554",
+"name": "New Zealand",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "OM",
+"alpha3": "OMN",
+"numeric": "512",
+"name": "Oman",
+"commonName": null,
+"officialName": "Sultanate of Oman"
+},
+{
+"alpha2": "PK",
+"alpha3": "PAK",
+"numeric": "586",
+"name": "Pakistan",
+"commonName": null,
+"officialName": "Islamic Republic of Pakistan"
+},
+{
+"alpha2": "PA",
+"alpha3": "PAN",
+"numeric": "591",
+"name": "Panama",
+"commonName": null,
+"officialName": "Republic of Panama"
+},
+{
+"alpha2": "PN",
+"alpha3": "PCN",
+"numeric": "612",
+"name": "Pitcairn",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "PE",
+"alpha3": "PER",
+"numeric": "604",
+"name": "Peru",
+"commonName": null,
+"officialName": "Republic of Peru"
+},
+{
+"alpha2": "PH",
+"alpha3": "PHL",
+"numeric": "608",
+"name": "Philippines",
+"commonName": null,
+"officialName": "Republic of the Philippines"
+},
+{
+"alpha2": "PW",
+"alpha3": "PLW",
+"numeric": "585",
+"name": "Palau",
+"commonName": null,
+"officialName": "Republic of Palau"
+},
+{
+"alpha2": "PG",
+"alpha3": "PNG",
+"numeric": "598",
+"name": "Papua New Guinea",
+"commonName": null,
+"officialName": "Independent State of Papua New Guinea"
+},
+{
+"alpha2": "PL",
+"alpha3": "POL",
+"numeric": "616",
+"name": "Poland",
+"commonName": null,
+"officialName": "Republic of Poland"
+},
+{
+"alpha2": "PR",
+"alpha3": "PRI",
+"numeric": "630",
+"name": "Puerto Rico",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "KP",
+"alpha3": "PRK",
+"numeric": "408",
+"name": "Korea, Democratic People's Republic of",
+"commonName": "North Korea",
+"officialName": "Democratic People's Republic of Korea"
+},
+{
+"alpha2": "PT",
+"alpha3": "PRT",
+"numeric": "620",
+"name": "Portugal",
+"commonName": null,
+"officialName": "Portuguese Republic"
+},
+{
+"alpha2": "PY",
+"alpha3": "PRY",
+"numeric": "600",
+"name": "Paraguay",
+"commonName": null,
+"officialName": "Republic of Paraguay"
+},
+{
+"alpha2": "PS",
+"alpha3": "PSE",
+"numeric": "275",
+"name": "Palestine, State of",
+"commonName": null,
+"officialName": "the State of Palestine"
+},
+{
+"alpha2": "PF",
+"alpha3": "PYF",
+"numeric": "258",
+"name": "French Polynesia",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "QA",
+"alpha3": "QAT",
+"numeric": "634",
+"name": "Qatar",
+"commonName": null,
+"officialName": "State of Qatar"
+},
+{
+"alpha2": "RE",
+"alpha3": "REU",
+"numeric": "638",
+"name": "Réunion",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "RO",
+"alpha3": "ROU",
+"numeric": "642",
+"name": "Romania",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "RU",
+"alpha3": "RUS",
+"numeric": "643",
+"name": "Russian Federation",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "RW",
+"alpha3": "RWA",
+"numeric": "646",
+"name": "Rwanda",
+"commonName": null,
+"officialName": "Rwandese Republic"
+},
+{
+"alpha2": "SA",
+"alpha3": "SAU",
+"numeric": "682",
+"name": "Saudi Arabia",
+"commonName": null,
+"officialName": "Kingdom of Saudi Arabia"
+},
+{
+"alpha2": "SD",
+"alpha3": "SDN",
+"numeric": "729",
+"name": "Sudan",
+"commonName": null,
+"officialName": "Republic of the Sudan"
+},
+{
+"alpha2": "SN",
+"alpha3": "SEN",
+"numeric": "686",
+"name": "Senegal",
+"commonName": null,
+"officialName": "Republic of Senegal"
+},
+{
+"alpha2": "SG",
+"alpha3": "SGP",
+"numeric": "702",
+"name": "Singapore",
+"commonName": null,
+"officialName": "Republic of Singapore"
+},
+{
+"alpha2": "GS",
+"alpha3": "SGS",
+"numeric": "239",
+"name": "South Georgia and the South Sandwich Islands",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "SH",
+"alpha3": "SHN",
+"numeric": "654",
+"name": "Saint Helena, Ascension and Tristan da Cunha",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "SJ",
+"alpha3": "SJM",
+"numeric": "744",
+"name": "Svalbard and Jan Mayen",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "SB",
+"alpha3": "SLB",
+"numeric": "090",
+"name": "Solomon Islands",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "SL",
+"alpha3": "SLE",
+"numeric": "694",
+"name": "Sierra Leone",
+"commonName": null,
+"officialName": "Republic of Sierra Leone"
+},
+{
+"alpha2": "SV",
+"alpha3": "SLV",
+"numeric": "222",
+"name": "El Salvador",
+"commonName": null,
+"officialName": "Republic of El Salvador"
+},
+{
+"alpha2": "SM",
+"alpha3": "SMR",
+"numeric": "674",
+"name": "San Marino",
+"commonName": null,
+"officialName": "Republic of San Marino"
+},
+{
+"alpha2": "SO",
+"alpha3": "SOM",
+"numeric": "706",
+"name": "Somalia",
+"commonName": null,
+"officialName": "Federal Republic of Somalia"
+},
+{
+"alpha2": "PM",
+"alpha3": "SPM",
+"numeric": "666",
+"name": "Saint Pierre and Miquelon",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "RS",
+"alpha3": "SRB",
+"numeric": "688",
+"name": "Serbia",
+"commonName": null,
+"officialName": "Republic of Serbia"
+},
+{
+"alpha2": "SS",
+"alpha3": "SSD",
+"numeric": "728",
+"name": "South Sudan",
+"commonName": null,
+"officialName": "Republic of South Sudan"
+},
+{
+"alpha2": "ST",
+"alpha3": "STP",
+"numeric": "678",
+"name": "Sao Tome and Principe",
+"commonName": null,
+"officialName": "Democratic Republic of Sao Tome and Principe"
+},
+{
+"alpha2": "SR",
+"alpha3": "SUR",
+"numeric": "740",
+"name": "Suriname",
+"commonName": null,
+"officialName": "Republic of Suriname"
+},
+{
+"alpha2": "SK",
+"alpha3": "SVK",
+"numeric": "703",
+"name": "Slovakia",
+"commonName": null,
+"officialName": "Slovak Republic"
+},
+{
+"alpha2": "SI",
+"alpha3": "SVN",
+"numeric": "705",
+"name": "Slovenia",
+"commonName": null,
+"officialName": "Republic of Slovenia"
+},
+{
+"alpha2": "SE",
+"alpha3": "SWE",
+"numeric": "752",
+"name": "Sweden",
+"commonName": null,
+"officialName": "Kingdom of Sweden"
+},
+{
+"alpha2": "SZ",
+"alpha3": "SWZ",
+"numeric": "748",
+"name": "Eswatini",
+"commonName": null,
+"officialName": "Kingdom of Eswatini"
+},
+{
+"alpha2": "SX",
+"alpha3": "SXM",
+"numeric": "534",
+"name": "Sint Maarten (Dutch part)",
+"commonName": null,
+"officialName": "Sint Maarten (Dutch part)"
+},
+{
+"alpha2": "SC",
+"alpha3": "SYC",
+"numeric": "690",
+"name": "Seychelles",
+"commonName": null,
+"officialName": "Republic of Seychelles"
+},
+{
+"alpha2": "SY",
+"alpha3": "SYR",
+"numeric": "760",
+"name": "Syrian Arab Republic",
+"commonName": "Syria",
+"officialName": null
+},
+{
+"alpha2": "TC",
+"alpha3": "TCA",
+"numeric": "796",
+"name": "Turks and Caicos Islands",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "TD",
+"alpha3": "TCD",
+"numeric": "148",
+"name": "Chad",
+"commonName": null,
+"officialName": "Republic of Chad"
+},
+{
+"alpha2": "TG",
+"alpha3": "TGO",
+"numeric": "768",
+"name": "Togo",
+"commonName": null,
+"officialName": "Togolese Republic"
+},
+{
+"alpha2": "TH",
+"alpha3": "THA",
+"numeric": "764",
+"name": "Thailand",
+"commonName": null,
+"officialName": "Kingdom of Thailand"
+},
+{
+"alpha2": "TJ",
+"alpha3": "TJK",
+"numeric": "762",
+"name": "Tajikistan",
+"commonName": null,
+"officialName": "Republic of Tajikistan"
+},
+{
+"alpha2": "TK",
+"alpha3": "TKL",
+"numeric": "772",
+"name": "Tokelau",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "TM",
+"alpha3": "TKM",
+"numeric": "795",
+"name": "Turkmenistan",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "TL",
+"alpha3": "TLS",
+"numeric": "626",
+"name": "Timor-Leste",
+"commonName": null,
+"officialName": "Democratic Republic of Timor-Leste"
+},
+{
+"alpha2": "TO",
+"alpha3": "TON",
+"numeric": "776",
+"name": "Tonga",
+"commonName": null,
+"officialName": "Kingdom of Tonga"
+},
+{
+"alpha2": "TT",
+"alpha3": "TTO",
+"numeric": "780",
+"name": "Trinidad and Tobago",
+"commonName": null,
+"officialName": "Republic of Trinidad and Tobago"
+},
+{
+"alpha2": "TN",
+"alpha3": "TUN",
+"numeric": "788",
+"name": "Tunisia",
+"commonName": null,
+"officialName": "Republic of Tunisia"
+},
+{
+"alpha2": "TR",
+"alpha3": "TUR",
+"numeric": "792",
+"name": "Türkiye",
+"commonName": null,
+"officialName": "Republic of Türkiye"
+},
+{
+"alpha2": "TV",
+"alpha3": "TUV",
+"numeric": "798",
+"name": "Tuvalu",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "TW",
+"alpha3": "TWN",
+"numeric": "158",
+"name": "Taiwan, Province of China",
+"commonName": "Taiwan",
+"officialName": "Taiwan, Province of China"
+},
+{
+"alpha2": "TZ",
+"alpha3": "TZA",
+"numeric": "834",
+"name": "Tanzania, United Republic of",
+"commonName": "Tanzania",
+"officialName": "United Republic of Tanzania"
+},
+{
+"alpha2": "UG",
+"alpha3": "UGA",
+"numeric": "800",
+"name": "Uganda",
+"commonName": null,
+"officialName": "Republic of Uganda"
+},
+{
+"alpha2": "UA",
+"alpha3": "UKR",
+"numeric": "804",
+"name": "Ukraine",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "UM",
+"alpha3": "UMI",
+"numeric": "581",
+"name": "United States Minor Outlying Islands",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "UY",
+"alpha3": "URY",
+"numeric": "858",
+"name": "Uruguay",
+"commonName": null,
+"officialName": "Eastern Republic of Uruguay"
+},
+{
+"alpha2": "US",
+"alpha3": "USA",
+"numeric": "840",
+"name": "United States",
+"commonName": null,
+"officialName": "United States of America"
+},
+{
+"alpha2": "UZ",
+"alpha3": "UZB",
+"numeric": "860",
+"name": "Uzbekistan",
+"commonName": null,
+"officialName": "Republic of Uzbekistan"
+},
+{
+"alpha2": "VA",
+"alpha3": "VAT",
+"numeric": "336",
+"name": "Holy See (Vatican City State)",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "VC",
+"alpha3": "VCT",
+"numeric": "670",
+"name": "Saint Vincent and the Grenadines",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "VE",
+"alpha3": "VEN",
+"numeric": "862",
+"name": "Venezuela, Bolivarian Republic of",
+"commonName": "Venezuela",
+"officialName": "Bolivarian Republic of Venezuela"
+},
+{
+"alpha2": "VG",
+"alpha3": "VGB",
+"numeric": "092",
+"name": "Virgin Islands, British",
+"commonName": null,
+"officialName": "British Virgin Islands"
+},
+{
+"alpha2": "VI",
+"alpha3": "VIR",
+"numeric": "850",
+"name": "Virgin Islands, U.S.",
+"commonName": null,
+"officialName": "Virgin Islands of the United States"
+},
+{
+"alpha2": "VN",
+"alpha3": "VNM",
+"numeric": "704",
+"name": "Viet Nam",
+"commonName": "Vietnam",
+"officialName": "Socialist Republic of Viet Nam"
+},
+{
+"alpha2": "VU",
+"alpha3": "VUT",
+"numeric": "548",
+"name": "Vanuatu",
+"commonName": null,
+"officialName": "Republic of Vanuatu"
+},
+{
+"alpha2": "WF",
+"alpha3": "WLF",
+"numeric": "876",
+"name": "Wallis and Futuna",
+"commonName": null,
+"officialName": null
+},
+{
+"alpha2": "WS",
+"alpha3": "WSM",
+"numeric": "882",
+"name": "Samoa",
+"commonName": null,
+"officialName": "Independent State of Samoa"
+},
+{
+"alpha2": "YE",
+"alpha3": "YEM",
+"numeric": "887",
+"name": "Yemen",
+"commonName": null,
+"officialName": "Republic of Yemen"
+},
+{
+"alpha2": "ZA",
+"alpha3": "ZAF",
+"numeric": "710",
+"name": "South Africa",
+"commonName": null,
+"officialName": "Republic of South Africa"
+},
+{
+"alpha2": "ZM",
+"alpha3": "ZMB",
+"numeric": "894",
+"name": "Zambia",
+"commonName": null,
+"officialName": "Republic of Zambia"
+},
+{
+"alpha2": "ZW",
+"alpha3": "ZWE",
+"numeric": "716",
+"name": "Zimbabwe",
+"commonName": null,
+"officialName": "Republic of Zimbabwe"
+}
+]
+}

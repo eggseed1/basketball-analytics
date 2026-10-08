@@ -1,0 +1,2315 @@
+{
+ "worldSnapshotVersion": "2026-10-08",
+ "countryCounts": {
+  "partial": 172,
+  "unknown": 31,
+  "inactive": 7,
+  "verified": 40
+ },
+ "leagueCounts": {
+  "verified": 47,
+  "unknown": 18,
+  "partial": 12,
+  "inactive": 1
+ },
+ "countries": [
+  {
+   "id": "AF",
+   "name": "Afghanistan",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "AX",
+   "name": "Åland Islands",
+   "kind": "territory",
+   "status": "unknown",
+   "reason": "No FIBA member federation found in the directory on the snapshot date."
+  },
+  {
+   "id": "AL",
+   "name": "Albania",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "DZ",
+   "name": "Algeria",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "AS",
+   "name": "American Samoa",
+   "kind": "territory",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "AD",
+   "name": "Andorra",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "AO",
+   "name": "Angola",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; Campeonato Nacional de Basquetebol (Angola) (unknown) not confirmed."
+  },
+  {
+   "id": "AI",
+   "name": "Anguilla",
+   "kind": "territory",
+   "status": "unknown",
+   "reason": "No FIBA member federation found in the directory on the snapshot date."
+  },
+  {
+   "id": "AQ",
+   "name": "Antarctica",
+   "kind": "uninhabited",
+   "status": "inactive",
+   "reason": "No permanent population; not a place of birth in the game."
+  },
+  {
+   "id": "AG",
+   "name": "Antigua & Barbuda",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "AR",
+   "name": "Argentina",
+   "kind": "sovereign",
+   "status": "verified",
+   "reason": "FIBA federation and Liga Nacional de Básquet, Liga de Desarrollo / Liga Próximo confirmed on official sources."
+  },
+  {
+   "id": "AM",
+   "name": "Armenia",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "AW",
+   "name": "Aruba",
+   "kind": "territory",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "AU",
+   "name": "Australia",
+   "kind": "sovereign",
+   "status": "verified",
+   "reason": "FIBA federation and National Basketball League (NBL), NBL1 confirmed on official sources."
+  },
+  {
+   "id": "AT",
+   "name": "Austria",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "AZ",
+   "name": "Azerbaijan",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "BS",
+   "name": "Bahamas",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "BH",
+   "name": "Bahrain",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "BD",
+   "name": "Bangladesh",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "BB",
+   "name": "Barbados",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "BY",
+   "name": "Belarus",
+   "kind": "sovereign",
+   "status": "verified",
+   "reason": "FIBA federation and VTB United League confirmed on official sources."
+  },
+  {
+   "id": "BE",
+   "name": "Belgium",
+   "kind": "sovereign",
+   "status": "verified",
+   "reason": "FIBA federation and BNXT League confirmed on official sources."
+  },
+  {
+   "id": "BZ",
+   "name": "Belize",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "BJ",
+   "name": "Benin",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "BM",
+   "name": "Bermuda",
+   "kind": "territory",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "BT",
+   "name": "Bhutan",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "BO",
+   "name": "Bolivia",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "BA",
+   "name": "Bosnia & Herzegovina",
+   "kind": "sovereign",
+   "status": "verified",
+   "reason": "FIBA federation and ABA League confirmed on official sources."
+  },
+  {
+   "id": "BW",
+   "name": "Botswana",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "BV",
+   "name": "Bouvet Island",
+   "kind": "uninhabited",
+   "status": "inactive",
+   "reason": "No permanent population; not a place of birth in the game."
+  },
+  {
+   "id": "BR",
+   "name": "Brazil",
+   "kind": "sovereign",
+   "status": "verified",
+   "reason": "FIBA federation and Novo Basquete Brasil (NBB) confirmed on official sources."
+  },
+  {
+   "id": "IO",
+   "name": "British Indian Ocean Territory",
+   "kind": "uninhabited",
+   "status": "inactive",
+   "reason": "No permanent population; not a place of birth in the game."
+  },
+  {
+   "id": "VG",
+   "name": "British Virgin Islands",
+   "kind": "territory",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "BN",
+   "name": "Brunei",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "BG",
+   "name": "Bulgaria",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "BF",
+   "name": "Burkina Faso",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "BI",
+   "name": "Burundi",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "KH",
+   "name": "Cambodia",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "CM",
+   "name": "Cameroon",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "CA",
+   "name": "Canada",
+   "kind": "sovereign",
+   "status": "verified",
+   "reason": "FIBA federation and NBA, NBA G League, Canadian Elite Basketball League confirmed on official sources."
+  },
+  {
+   "id": "CV",
+   "name": "Cape Verde",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "BQ",
+   "name": "Caribbean Netherlands",
+   "kind": "territory",
+   "status": "unknown",
+   "reason": "No FIBA member federation found in the directory on the snapshot date."
+  },
+  {
+   "id": "KY",
+   "name": "Cayman Islands",
+   "kind": "territory",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "CF",
+   "name": "Central African Republic",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "TD",
+   "name": "Chad",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "CL",
+   "name": "Chile",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; Liga Nacional de Básquetbol de Chile (unknown) not confirmed."
+  },
+  {
+   "id": "CN",
+   "name": "China",
+   "kind": "sovereign",
+   "status": "verified",
+   "reason": "FIBA federation and Chinese Basketball Association (CBA) confirmed on official sources."
+  },
+  {
+   "id": "CX",
+   "name": "Christmas Island",
+   "kind": "territory",
+   "status": "unknown",
+   "reason": "No FIBA member federation found in the directory on the snapshot date."
+  },
+  {
+   "id": "CC",
+   "name": "Cocos (Keeling) Islands",
+   "kind": "territory",
+   "status": "unknown",
+   "reason": "No FIBA member federation found in the directory on the snapshot date."
+  },
+  {
+   "id": "CO",
+   "name": "Colombia",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "KM",
+   "name": "Comoros",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "CG",
+   "name": "Congo - Brazzaville",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "CD",
+   "name": "Congo - Kinshasa",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "CK",
+   "name": "Cook Islands",
+   "kind": "territory",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "CR",
+   "name": "Costa Rica",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "CI",
+   "name": "Côte d’Ivoire",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "HR",
+   "name": "Croatia",
+   "kind": "sovereign",
+   "status": "verified",
+   "reason": "FIBA federation and ABA League confirmed on official sources."
+  },
+  {
+   "id": "CU",
+   "name": "Cuba",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "CW",
+   "name": "Curaçao",
+   "kind": "territory",
+   "status": "unknown",
+   "reason": "No FIBA member federation found in the directory on the snapshot date."
+  },
+  {
+   "id": "CY",
+   "name": "Cyprus",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "CZ",
+   "name": "Czechia",
+   "kind": "sovereign",
+   "status": "verified",
+   "reason": "FIBA federation and Kooperativa NBL confirmed on official sources."
+  },
+  {
+   "id": "DK",
+   "name": "Denmark",
+   "kind": "sovereign",
+   "status": "verified",
+   "reason": "FIBA federation and Basketligaen confirmed on official sources."
+  },
+  {
+   "id": "DJ",
+   "name": "Djibouti",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "DM",
+   "name": "Dominica",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "DO",
+   "name": "Dominican Republic",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; Liga Nacional de Baloncesto (Dominican Republic) (unknown) not confirmed."
+  },
+  {
+   "id": "EC",
+   "name": "Ecuador",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "EG",
+   "name": "Egypt",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; Egyptian Basketball Super League (unknown) not confirmed."
+  },
+  {
+   "id": "SV",
+   "name": "El Salvador",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "GQ",
+   "name": "Equatorial Guinea",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "ER",
+   "name": "Eritrea",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "EE",
+   "name": "Estonia",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; Latvian-Estonian Basketball League (unknown) not confirmed."
+  },
+  {
+   "id": "SZ",
+   "name": "Eswatini",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "ET",
+   "name": "Ethiopia",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "FK",
+   "name": "Falkland Islands",
+   "kind": "territory",
+   "status": "unknown",
+   "reason": "No FIBA member federation found in the directory on the snapshot date."
+  },
+  {
+   "id": "FO",
+   "name": "Faroe Islands",
+   "kind": "territory",
+   "status": "unknown",
+   "reason": "No FIBA member federation found in the directory on the snapshot date."
+  },
+  {
+   "id": "FJ",
+   "name": "Fiji",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "FI",
+   "name": "Finland",
+   "kind": "sovereign",
+   "status": "verified",
+   "reason": "FIBA federation and Korisliiga confirmed on official sources."
+  },
+  {
+   "id": "FR",
+   "name": "France",
+   "kind": "sovereign",
+   "status": "verified",
+   "reason": "FIBA federation and Betclic ELITE, ELITE 2 confirmed on official sources."
+  },
+  {
+   "id": "GF",
+   "name": "French Guiana",
+   "kind": "territory",
+   "status": "unknown",
+   "reason": "No FIBA member federation found in the directory on the snapshot date."
+  },
+  {
+   "id": "PF",
+   "name": "French Polynesia",
+   "kind": "territory",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "TF",
+   "name": "French Southern Territories",
+   "kind": "uninhabited",
+   "status": "inactive",
+   "reason": "No permanent population; not a place of birth in the game."
+  },
+  {
+   "id": "GA",
+   "name": "Gabon",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "GM",
+   "name": "Gambia",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "GE",
+   "name": "Georgia",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; Georgian Superleague (unknown) not confirmed."
+  },
+  {
+   "id": "DE",
+   "name": "Germany",
+   "kind": "sovereign",
+   "status": "verified",
+   "reason": "FIBA federation and Basketball Bundesliga (BBL), BARMER 2. Basketball Bundesliga (ProA) confirmed on official sources."
+  },
+  {
+   "id": "GH",
+   "name": "Ghana",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "GI",
+   "name": "Gibraltar",
+   "kind": "territory",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "GR",
+   "name": "Greece",
+   "kind": "sovereign",
+   "status": "verified",
+   "reason": "FIBA federation and Greek Basketball League (GBL) confirmed on official sources."
+  },
+  {
+   "id": "GL",
+   "name": "Greenland",
+   "kind": "territory",
+   "status": "unknown",
+   "reason": "No FIBA member federation found in the directory on the snapshot date."
+  },
+  {
+   "id": "GD",
+   "name": "Grenada",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "GP",
+   "name": "Guadeloupe",
+   "kind": "territory",
+   "status": "unknown",
+   "reason": "No FIBA member federation found in the directory on the snapshot date."
+  },
+  {
+   "id": "GU",
+   "name": "Guam",
+   "kind": "territory",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "GT",
+   "name": "Guatemala",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "GG",
+   "name": "Guernsey",
+   "kind": "territory",
+   "status": "unknown",
+   "reason": "No FIBA member federation found in the directory on the snapshot date."
+  },
+  {
+   "id": "GN",
+   "name": "Guinea",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "GW",
+   "name": "Guinea-Bissau",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "GY",
+   "name": "Guyana",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "HT",
+   "name": "Haiti",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "HM",
+   "name": "Heard & McDonald Islands",
+   "kind": "uninhabited",
+   "status": "inactive",
+   "reason": "No permanent population; not a place of birth in the game."
+  },
+  {
+   "id": "HN",
+   "name": "Honduras",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "HK",
+   "name": "Hong Kong SAR China",
+   "kind": "territory",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "HU",
+   "name": "Hungary",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "IS",
+   "name": "Iceland",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "IN",
+   "name": "India",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; Basketball Federation of India competitions (partial) not confirmed."
+  },
+  {
+   "id": "ID",
+   "name": "Indonesia",
+   "kind": "sovereign",
+   "status": "verified",
+   "reason": "FIBA federation and Indonesian Basketball League (IBL) confirmed on official sources."
+  },
+  {
+   "id": "IR",
+   "name": "Iran",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "IQ",
+   "name": "Iraq",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "IE",
+   "name": "Ireland",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "IM",
+   "name": "Isle of Man",
+   "kind": "territory",
+   "status": "unknown",
+   "reason": "No FIBA member federation found in the directory on the snapshot date."
+  },
+  {
+   "id": "IL",
+   "name": "Israel",
+   "kind": "sovereign",
+   "status": "verified",
+   "reason": "FIBA federation and Israeli Basketball Premier League confirmed on official sources."
+  },
+  {
+   "id": "IT",
+   "name": "Italy",
+   "kind": "sovereign",
+   "status": "verified",
+   "reason": "FIBA federation and LBA Serie A confirmed on official sources."
+  },
+  {
+   "id": "JM",
+   "name": "Jamaica",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "JP",
+   "name": "Japan",
+   "kind": "sovereign",
+   "status": "verified",
+   "reason": "FIBA federation and B.LEAGUE confirmed on official sources."
+  },
+  {
+   "id": "JE",
+   "name": "Jersey",
+   "kind": "territory",
+   "status": "unknown",
+   "reason": "No FIBA member federation found in the directory on the snapshot date."
+  },
+  {
+   "id": "JO",
+   "name": "Jordan",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "KZ",
+   "name": "Kazakhstan",
+   "kind": "sovereign",
+   "status": "verified",
+   "reason": "FIBA federation and VTB United League confirmed on official sources."
+  },
+  {
+   "id": "KE",
+   "name": "Kenya",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; KBF Premier League (unknown) not confirmed."
+  },
+  {
+   "id": "KI",
+   "name": "Kiribati",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "XK",
+   "name": "Kosovo",
+   "kind": "special",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "KW",
+   "name": "Kuwait",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "KG",
+   "name": "Kyrgyzstan",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "LA",
+   "name": "Laos",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "LV",
+   "name": "Latvia",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; Latvian-Estonian Basketball League (unknown) not confirmed."
+  },
+  {
+   "id": "LB",
+   "name": "Lebanon",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "LS",
+   "name": "Lesotho",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "LR",
+   "name": "Liberia",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "LY",
+   "name": "Libya",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "LI",
+   "name": "Liechtenstein",
+   "kind": "sovereign",
+   "status": "unknown",
+   "reason": "No FIBA member federation found in the directory on the snapshot date."
+  },
+  {
+   "id": "LT",
+   "name": "Lithuania",
+   "kind": "sovereign",
+   "status": "verified",
+   "reason": "FIBA federation and Lietuvos krepšinio lyga (LKL), Nacionalinė krepšinio lyga (NKL) confirmed on official sources."
+  },
+  {
+   "id": "LU",
+   "name": "Luxembourg",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "MO",
+   "name": "Macao SAR China",
+   "kind": "territory",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "MG",
+   "name": "Madagascar",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "MW",
+   "name": "Malawi",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "MY",
+   "name": "Malaysia",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "MV",
+   "name": "Maldives",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "ML",
+   "name": "Mali",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "MT",
+   "name": "Malta",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "MH",
+   "name": "Marshall Islands",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "MQ",
+   "name": "Martinique",
+   "kind": "territory",
+   "status": "unknown",
+   "reason": "No FIBA member federation found in the directory on the snapshot date."
+  },
+  {
+   "id": "MR",
+   "name": "Mauritania",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "MU",
+   "name": "Mauritius",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "YT",
+   "name": "Mayotte",
+   "kind": "territory",
+   "status": "unknown",
+   "reason": "No FIBA member federation found in the directory on the snapshot date."
+  },
+  {
+   "id": "MX",
+   "name": "Mexico",
+   "kind": "sovereign",
+   "status": "verified",
+   "reason": "FIBA federation and NBA G League, Liga Nacional de Baloncesto Profesional (LNBP) confirmed on official sources."
+  },
+  {
+   "id": "FM",
+   "name": "Micronesia",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "MD",
+   "name": "Moldova",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "MC",
+   "name": "Monaco",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "MN",
+   "name": "Mongolia",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "ME",
+   "name": "Montenegro",
+   "kind": "sovereign",
+   "status": "verified",
+   "reason": "FIBA federation and ABA League confirmed on official sources."
+  },
+  {
+   "id": "MS",
+   "name": "Montserrat",
+   "kind": "territory",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "MA",
+   "name": "Morocco",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; Division Excellence (Morocco) (partial) not confirmed."
+  },
+  {
+   "id": "MZ",
+   "name": "Mozambique",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "MM",
+   "name": "Myanmar (Burma)",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "NA",
+   "name": "Namibia",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "NR",
+   "name": "Nauru",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "NP",
+   "name": "Nepal",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "NL",
+   "name": "Netherlands",
+   "kind": "sovereign",
+   "status": "verified",
+   "reason": "FIBA federation and BNXT League confirmed on official sources."
+  },
+  {
+   "id": "NC",
+   "name": "New Caledonia",
+   "kind": "territory",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "NZ",
+   "name": "New Zealand",
+   "kind": "sovereign",
+   "status": "verified",
+   "reason": "FIBA federation and National Basketball League (NBL), Sal's NBL (New Zealand) confirmed on official sources."
+  },
+  {
+   "id": "NI",
+   "name": "Nicaragua",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "NE",
+   "name": "Niger",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "NG",
+   "name": "Nigeria",
+   "kind": "sovereign",
+   "status": "verified",
+   "reason": "FIBA federation and Nigeria Premier Basketball League confirmed on official sources."
+  },
+  {
+   "id": "NU",
+   "name": "Niue",
+   "kind": "territory",
+   "status": "unknown",
+   "reason": "No FIBA member federation found in the directory on the snapshot date."
+  },
+  {
+   "id": "NF",
+   "name": "Norfolk Island",
+   "kind": "territory",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "KP",
+   "name": "North Korea",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "MK",
+   "name": "North Macedonia",
+   "kind": "sovereign",
+   "status": "verified",
+   "reason": "FIBA federation and ABA League confirmed on official sources."
+  },
+  {
+   "id": "MP",
+   "name": "Northern Mariana Islands",
+   "kind": "territory",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "NO",
+   "name": "Norway",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "OM",
+   "name": "Oman",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "PK",
+   "name": "Pakistan",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "PW",
+   "name": "Palau",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "PS",
+   "name": "Palestinian Territories",
+   "kind": "special",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "PA",
+   "name": "Panama",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "PG",
+   "name": "Papua New Guinea",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "PY",
+   "name": "Paraguay",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "PE",
+   "name": "Peru",
+   "kind": "sovereign",
+   "status": "unknown",
+   "reason": "No FIBA member federation found in the directory on the snapshot date."
+  },
+  {
+   "id": "PH",
+   "name": "Philippines",
+   "kind": "sovereign",
+   "status": "verified",
+   "reason": "FIBA federation and Philippine Basketball Association (PBA) confirmed on official sources."
+  },
+  {
+   "id": "PN",
+   "name": "Pitcairn Islands",
+   "kind": "territory",
+   "status": "unknown",
+   "reason": "No FIBA member federation found in the directory on the snapshot date."
+  },
+  {
+   "id": "PL",
+   "name": "Poland",
+   "kind": "sovereign",
+   "status": "verified",
+   "reason": "FIBA federation and ORLEN Basket Liga confirmed on official sources."
+  },
+  {
+   "id": "PT",
+   "name": "Portugal",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; Liga Portuguesa de Basquetebol (partial) not confirmed."
+  },
+  {
+   "id": "PR",
+   "name": "Puerto Rico",
+   "kind": "territory",
+   "status": "verified",
+   "reason": "FIBA federation and Baloncesto Superior Nacional (BSN) confirmed on official sources."
+  },
+  {
+   "id": "QA",
+   "name": "Qatar",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "RE",
+   "name": "Réunion",
+   "kind": "territory",
+   "status": "unknown",
+   "reason": "No FIBA member federation found in the directory on the snapshot date."
+  },
+  {
+   "id": "RO",
+   "name": "Romania",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "RU",
+   "name": "Russia",
+   "kind": "sovereign",
+   "status": "verified",
+   "reason": "FIBA federation and VTB United League confirmed on official sources."
+  },
+  {
+   "id": "RW",
+   "name": "Rwanda",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; Rwanda Basketball League (unknown) not confirmed."
+  },
+  {
+   "id": "WS",
+   "name": "Samoa",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "SM",
+   "name": "San Marino",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "ST",
+   "name": "São Tomé & Príncipe",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "SA",
+   "name": "Saudi Arabia",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "SN",
+   "name": "Senegal",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; Fédération Sénégalaise de Basketball competitions (unknown), NBA Academy Africa (unknown) not confirmed."
+  },
+  {
+   "id": "RS",
+   "name": "Serbia",
+   "kind": "sovereign",
+   "status": "verified",
+   "reason": "FIBA federation and Košarkaška liga Srbije (KLS), ABA League confirmed on official sources."
+  },
+  {
+   "id": "SC",
+   "name": "Seychelles",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "SL",
+   "name": "Sierra Leone",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "SG",
+   "name": "Singapore",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "SX",
+   "name": "Sint Maarten",
+   "kind": "territory",
+   "status": "unknown",
+   "reason": "No FIBA member federation found in the directory on the snapshot date."
+  },
+  {
+   "id": "SK",
+   "name": "Slovakia",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "SI",
+   "name": "Slovenia",
+   "kind": "sovereign",
+   "status": "verified",
+   "reason": "FIBA federation and ABA League confirmed on official sources."
+  },
+  {
+   "id": "SB",
+   "name": "Solomon Islands",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "SO",
+   "name": "Somalia",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "ZA",
+   "name": "South Africa",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; Basketball National League (South Africa) (unknown) not confirmed."
+  },
+  {
+   "id": "GS",
+   "name": "South Georgia & South Sandwich Islands",
+   "kind": "uninhabited",
+   "status": "inactive",
+   "reason": "No permanent population; not a place of birth in the game."
+  },
+  {
+   "id": "KR",
+   "name": "South Korea",
+   "kind": "sovereign",
+   "status": "verified",
+   "reason": "FIBA federation and Korean Basketball League (KBL) confirmed on official sources."
+  },
+  {
+   "id": "SS",
+   "name": "South Sudan",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "ES",
+   "name": "Spain",
+   "kind": "sovereign",
+   "status": "verified",
+   "reason": "FIBA federation and Liga Endesa (ACB) confirmed on official sources."
+  },
+  {
+   "id": "LK",
+   "name": "Sri Lanka",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "BL",
+   "name": "St. Barthélemy",
+   "kind": "territory",
+   "status": "unknown",
+   "reason": "No FIBA member federation found in the directory on the snapshot date."
+  },
+  {
+   "id": "SH",
+   "name": "St. Helena",
+   "kind": "territory",
+   "status": "unknown",
+   "reason": "No FIBA member federation found in the directory on the snapshot date."
+  },
+  {
+   "id": "KN",
+   "name": "St. Kitts & Nevis",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "LC",
+   "name": "St. Lucia",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "MF",
+   "name": "St. Martin",
+   "kind": "territory",
+   "status": "unknown",
+   "reason": "No FIBA member federation found in the directory on the snapshot date."
+  },
+  {
+   "id": "PM",
+   "name": "St. Pierre & Miquelon",
+   "kind": "territory",
+   "status": "unknown",
+   "reason": "No FIBA member federation found in the directory on the snapshot date."
+  },
+  {
+   "id": "VC",
+   "name": "St. Vincent & Grenadines",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "SD",
+   "name": "Sudan",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "SR",
+   "name": "Suriname",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "SJ",
+   "name": "Svalbard & Jan Mayen",
+   "kind": "territory",
+   "status": "unknown",
+   "reason": "No FIBA member federation found in the directory on the snapshot date."
+  },
+  {
+   "id": "SE",
+   "name": "Sweden",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; Basketligan (unknown) not confirmed."
+  },
+  {
+   "id": "CH",
+   "name": "Switzerland",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "SY",
+   "name": "Syria",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "TW",
+   "name": "Taiwan",
+   "kind": "special",
+   "status": "verified",
+   "reason": "FIBA federation and Taiwan Professional Basketball League (TPBL), P. LEAGUE+ confirmed on official sources."
+  },
+  {
+   "id": "TJ",
+   "name": "Tajikistan",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "TZ",
+   "name": "Tanzania",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "TH",
+   "name": "Thailand",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; Thailand Basketball League (unknown) not confirmed."
+  },
+  {
+   "id": "TL",
+   "name": "Timor-Leste",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "TG",
+   "name": "Togo",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "TK",
+   "name": "Tokelau",
+   "kind": "territory",
+   "status": "unknown",
+   "reason": "No FIBA member federation found in the directory on the snapshot date."
+  },
+  {
+   "id": "TO",
+   "name": "Tonga",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "TT",
+   "name": "Trinidad & Tobago",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "TN",
+   "name": "Tunisia",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; Championnat de Tunisie (Pro A) (partial) not confirmed."
+  },
+  {
+   "id": "TR",
+   "name": "Türkiye",
+   "kind": "sovereign",
+   "status": "verified",
+   "reason": "FIBA federation and Basketbol Süper Ligi confirmed on official sources."
+  },
+  {
+   "id": "TM",
+   "name": "Turkmenistan",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "TC",
+   "name": "Turks & Caicos Islands",
+   "kind": "territory",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "TV",
+   "name": "Tuvalu",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "UM",
+   "name": "U.S. Outlying Islands",
+   "kind": "uninhabited",
+   "status": "inactive",
+   "reason": "No permanent population; not a place of birth in the game."
+  },
+  {
+   "id": "VI",
+   "name": "U.S. Virgin Islands",
+   "kind": "territory",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "UG",
+   "name": "Uganda",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "UA",
+   "name": "Ukraine",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "AE",
+   "name": "United Arab Emirates",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "GB",
+   "name": "United Kingdom",
+   "kind": "sovereign",
+   "status": "verified",
+   "reason": "FIBA federation and Super League Basketball confirmed on official sources."
+  },
+  {
+   "id": "US",
+   "name": "United States",
+   "kind": "sovereign",
+   "status": "verified",
+   "reason": "FIBA federation and NBA, NBA G League, NCAA basketball, US high school basketball (NFHS member associations) confirmed on official sources."
+  },
+  {
+   "id": "UY",
+   "name": "Uruguay",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; Liga Uruguaya de Básquetbol (partial) not confirmed."
+  },
+  {
+   "id": "UZ",
+   "name": "Uzbekistan",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "VU",
+   "name": "Vanuatu",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "VA",
+   "name": "Vatican City",
+   "kind": "special",
+   "status": "unknown",
+   "reason": "No FIBA member federation found in the directory on the snapshot date."
+  },
+  {
+   "id": "VE",
+   "name": "Venezuela",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; Superliga Profesional de Baloncesto (unknown) not confirmed."
+  },
+  {
+   "id": "VN",
+   "name": "Vietnam",
+   "kind": "sovereign",
+   "status": "verified",
+   "reason": "FIBA federation and Vietnam Basketball Association (VBA) confirmed on official sources."
+  },
+  {
+   "id": "WF",
+   "name": "Wallis & Futuna",
+   "kind": "territory",
+   "status": "unknown",
+   "reason": "No FIBA member federation found in the directory on the snapshot date."
+  },
+  {
+   "id": "EH",
+   "name": "Western Sahara",
+   "kind": "special",
+   "status": "unknown",
+   "reason": "No FIBA member federation found in the directory on the snapshot date."
+  },
+  {
+   "id": "YE",
+   "name": "Yemen",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "ZM",
+   "name": "Zambia",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  },
+  {
+   "id": "ZW",
+   "name": "Zimbabwe",
+   "kind": "sovereign",
+   "status": "partial",
+   "reason": "FIBA federation confirmed; domestic competition structure not researched in this snapshot."
+  }
+ ],
+ "leagues": [
+  {
+   "id": "nba",
+   "name": "NBA",
+   "status": "verified",
+   "evidence": "nba.com reachable via fetch tool; 2026 early-entry release (April 27, 2026) lists a two-round draft on June 23-24, 2026.",
+   "source": "https://www.nba.com/news/2026-nba-draft-early-entry-candidates"
+  },
+  {
+   "id": "g-league",
+   "name": "NBA G League",
+   "status": "verified",
+   "evidence": "Official site responded; title: \"The official site of the NBA G League | The official site of the NBA G League | The NBA G League\".",
+   "source": "https://gleague.nba.com/"
+  },
+  {
+   "id": "ncaa",
+   "name": "NCAA basketball",
+   "status": "verified",
+   "evidence": "Official site responded; title: \"Home - NCAA.org - The Official Website of the NCAA | Home - NCAA.org | NCAA.org\".",
+   "source": "https://www.ncaa.org/"
+  },
+  {
+   "id": "nfhs",
+   "name": "US high school basketball (NFHS member associations)",
+   "status": "verified",
+   "evidence": "Official site responded; title: \"NFHS | NFHS\".",
+   "source": "https://www.nfhs.org/"
+  },
+  {
+   "id": "cebl",
+   "name": "Canadian Elite Basketball League",
+   "status": "verified",
+   "evidence": "Official site responded; title: \"CEBL - Canadian Elite Basketball League - Official Site | CEBL - Canadian Elite Basketball League - Official Site\".",
+   "source": "https://www.cebl.ca/"
+  },
+  {
+   "id": "usports",
+   "name": "U SPORTS basketball",
+   "status": "unknown",
+   "evidence": "Candidate URL returned 404 / 405 during the snapshot.",
+   "source": "https://usports.ca/en"
+  },
+  {
+   "id": "acb",
+   "name": "Liga Endesa (ACB)",
+   "status": "verified",
+   "evidence": "Official site responded; title: \"Liga Endesa | acb.com | Liga Endesa | acb.com\".",
+   "source": "https://acb.com/es/liga"
+  },
+  {
+   "id": "feb-primera",
+   "name": "Primera FEB",
+   "status": "partial",
+   "evidence": "FEB federation site reachable; Primera FEB not named on the fetched page.",
+   "source": "https://www.feb.es/"
+  },
+  {
+   "id": "lnb-elite",
+   "name": "Betclic ELITE",
+   "status": "verified",
+   "evidence": "Official site responded; title: \"LNB – Betclic Élite, Élite 2, résultats et actualités | LNB – Betclic Élite, Élite 2, résultats et actualités\".",
+   "source": "https://lnb.fr/fr"
+  },
+  {
+   "id": "lnb-elite2",
+   "name": "ELITE 2",
+   "status": "verified",
+   "evidence": "lnb.fr home page title names both Betclic ÉLITE and ÉLITE 2; the /elite-2 path itself returned Page Not Found.",
+   "source": "https://lnb.fr/fr"
+  },
+  {
+   "id": "bbl",
+   "name": "Basketball Bundesliga (BBL)",
+   "status": "verified",
+   "evidence": "Official site responded; title: \"easyCredit BBL - Die offizielle Seite\".",
+   "source": "https://www.easycredit-bbl.de/"
+  },
+  {
+   "id": "proa",
+   "name": "BARMER 2. Basketball Bundesliga (ProA)",
+   "status": "verified",
+   "evidence": "Official site responded; title: \"BARMER 2. Basketball Bundesliga &#8211; Liga der Spielklassen ProA und ProB\".",
+   "source": "https://www.2basketballbundesliga.de/"
+  },
+  {
+   "id": "lba",
+   "name": "LBA Serie A",
+   "status": "verified",
+   "evidence": "Official site responded; title: \"Lega Basket Serie A: Campionato nazionale pallacanestro | LBA | Lega Basket Serie A: Campionato nazionale pallacanestro \".",
+   "source": "https://www.legabasket.it/"
+  },
+  {
+   "id": "lnp-a2",
+   "name": "Serie A2 (LNP)",
+   "status": "partial",
+   "evidence": "LNP site reachable; Serie A2 not named in the page title.",
+   "source": "https://www.legapallacanestro.com/"
+  },
+  {
+   "id": "gbl",
+   "name": "Greek Basketball League (GBL)",
+   "status": "verified",
+   "evidence": "esake.gr/en lists Greek Basketball League fixtures for 10-11 October 2026 and current leaders.",
+   "source": "https://www.esake.gr/en"
+  },
+  {
+   "id": "bsl",
+   "name": "Basketbol Süper Ligi",
+   "status": "verified",
+   "evidence": "tbf.org.tr lists Türkiye Sigorta Basketbol Süper Ligi, Türkiye Basketbol Ligi (TBL) and Türkiye Basketbol 2. Ligi fixtures for October 2026.",
+   "source": "https://www.tbf.org.tr/"
+  },
+  {
+   "id": "kls",
+   "name": "Košarkaška liga Srbije (KLS)",
+   "status": "verified",
+   "evidence": "Official site responded; title: \"KLS - Meridianbet KLS | KLS - Meridianbet KLS | Meridianbet KLS\".",
+   "source": "https://kls.rs/"
+  },
+  {
+   "id": "aba",
+   "name": "ABA League",
+   "status": "verified",
+   "evidence": "Official site responded; title: \"Home : ABA League | Home : ABA League | ABA Liga\".",
+   "source": "https://www.aba-liga.com/"
+  },
+  {
+   "id": "lkl",
+   "name": "Lietuvos krepšinio lyga (LKL)",
+   "status": "verified",
+   "evidence": "Official site responded; title: \"LKL - LKL.LT\".",
+   "source": "https://lkl.lt/"
+  },
+  {
+   "id": "nkl",
+   "name": "Nacionalinė krepšinio lyga (NKL)",
+   "status": "verified",
+   "evidence": "Official site responded; title: \"Titulinis - nkl | Titulinis - nkl | nkl\".",
+   "source": "https://nkl.lt/"
+  },
+  {
+   "id": "nbl-au",
+   "name": "National Basketball League (NBL)",
+   "status": "verified",
+   "evidence": "league.nbl.com.au responded 200; page title is generic ('Home').",
+   "source": "https://league.nbl.com.au/"
+  },
+  {
+   "id": "nbl-next-stars",
+   "name": "NBL Next Stars",
+   "status": "verified",
+   "evidence": "Official site responded; title: \"The Draft pathway that stacks up with the best\".",
+   "source": "https://www.nbl.com.au/news/the-draft-pathway-that-stacks-up-with-the-best"
+  },
+  {
+   "id": "nbl1",
+   "name": "NBL1",
+   "status": "verified",
+   "evidence": "Official site responded; title: \"Home | NBL1 Australia\".",
+   "source": "https://www.nbl1.com.au/"
+  },
+  {
+   "id": "nz-nbl",
+   "name": "Sal's NBL (New Zealand)",
+   "status": "verified",
+   "evidence": "Official site responded; title: \"NZNBL: New Zealand National Basketball League | Sal’s NBL: New Zealand National Basketball League | Sal’s NBL: New Zeala\".",
+   "source": "https://nznbl.basketball/"
+  },
+  {
+   "id": "cba",
+   "name": "Chinese Basketball Association (CBA)",
+   "status": "verified",
+   "evidence": "Official site responded; title: \"CBA官方网站\".",
+   "source": "https://www.cbaleague.com/"
+  },
+  {
+   "id": "bleague",
+   "name": "B.LEAGUE",
+   "status": "verified",
+   "evidence": "Official site responded; title: \"B.LEAGUE Official Website | B.LEAGUE Official Website | B.LEAGUE Official Website\".",
+   "source": "https://www.bleague.jp/en/"
+  },
+  {
+   "id": "kbl",
+   "name": "Korean Basketball League (KBL)",
+   "status": "verified",
+   "evidence": "Official site responded; title: \"KBL 공식 홈페이지\".",
+   "source": "https://kbl.or.kr/"
+  },
+  {
+   "id": "pba",
+   "name": "Philippine Basketball Association (PBA)",
+   "status": "verified",
+   "evidence": "pba.ph shows games on October 7 and 9-10, 2026 and current group standings.",
+   "source": "https://www.pba.ph/"
+  },
+  {
+   "id": "uaap",
+   "name": "UAAP basketball",
+   "status": "unknown",
+   "evidence": "Candidate URL did not respond during the snapshot.",
+   "source": "https://uaap.live/"
+  },
+  {
+   "id": "nbb",
+   "name": "Novo Basquete Brasil (NBB)",
+   "status": "verified",
+   "evidence": "Official site responded; title: \"Liga Nacional de Basquete | Liga Nacional de Basquete\".",
+   "source": "https://lnb.com.br/"
+  },
+  {
+   "id": "liga-nacional-ar",
+   "name": "Liga Nacional de Básquet",
+   "status": "verified",
+   "evidence": "Official site responded; title: \"La Liga Nacional de B&#xE1;squetbol | La Liga Nacional de B&#xE1;squetbol | La Liga Nacional de Básquetbol\".",
+   "source": "https://www.laliganacional.com.ar/laliga/"
+  },
+  {
+   "id": "liga-proximo-ar",
+   "name": "Liga de Desarrollo / Liga Próximo",
+   "status": "verified",
+   "evidence": "Official site responded; title: \"Liga Desarrollo de B&#xE1;squetbol | Liga Desarrollo de B&#xE1;squetbol | La Liga Nacional de Básquetbol\".",
+   "source": "https://www.laliganacional.com.ar/ligaproximo"
+  },
+  {
+   "id": "lnbp",
+   "name": "Liga Nacional de Baloncesto Profesional (LNBP)",
+   "status": "verified",
+   "evidence": "lnbp.mx page title: 'Sitio Oficial de la LNBP'.",
+   "source": "https://www.lnbp.mx/"
+  },
+  {
+   "id": "npbl-ng",
+   "name": "Nigeria Premier Basketball League",
+   "status": "verified",
+   "evidence": "Official site responded; title: \"Rivers Hoopers clinch the 2026 Nigeria Premier Basketball League title, return to the BAL | FIBA Basketball | Rivers Hoo\".",
+   "source": "https://www.fiba.basketball/en/news/rivers-hoopers-clinch-the-2026-nigeria-premier-basketball-league-title-return-to-the-bal"
+  },
+  {
+   "id": "bfi",
+   "name": "Basketball Federation of India competitions",
+   "status": "partial",
+   "evidence": "Federation site reachable; no professional league identified in the snapshot.",
+   "source": "https://www.basketballfederationindia.org/"
+  },
+  {
+   "id": "bal",
+   "name": "Basketball Africa League (BAL)",
+   "status": "verified",
+   "evidence": "Official site responded; title: \"TheBAL.com | The Offic… - Basketball Africa League - The BAL | TheBAL.com | The Official Site of the Basketball Africa L\".",
+   "source": "https://bal.nba.com/"
+  },
+  {
+   "id": "road-to-bal",
+   "name": "FIBA Africa Champions Clubs: Road to BAL",
+   "status": "verified",
+   "evidence": "Official site responded; title: \"FIBA Africa Champions Clubs ROAD TO B.A.L 2026 Official Website | FIBA Basketball | FIBA Africa Champions Clubs ROAD TO \".",
+   "source": "https://www.fiba.basketball/en/events/fiba-africa-champions-clubs-road-to-bal-2026"
+  },
+  {
+   "id": "bwb",
+   "name": "Basketball Without Borders",
+   "status": "verified",
+   "evidence": "bwb.nba.com: invite-only camps; players selected by the NBA, FIBA and national federations on performance and leadership; regional camps in Africa, Europe, the Americas and Asia-Pacific, usually May-September; BWB Global at All-Star.",
+   "source": "https://bwb.nba.com/"
+  },
+  {
+   "id": "euroleague",
+   "name": "EuroLeague",
+   "status": "partial",
+   "evidence": "Official site blocked automated access (HTTP 429, browser check) on the snapshot date.",
+   "source": "https://www.euroleaguebasketball.net/euroleague/"
+  },
+  {
+   "id": "eurocup",
+   "name": "EuroCup",
+   "status": "partial",
+   "evidence": "Official site blocked automated access (HTTP 429) on the snapshot date.",
+   "source": "https://www.euroleaguebasketball.net/eurocup/"
+  },
+  {
+   "id": "bcl",
+   "name": "Basketball Champions League",
+   "status": "verified",
+   "evidence": "Official site responded; title: \"Basketball Champions League Powered by Ameresco SUNEL Official Website | FIBA Basketball | Basketball Champions League P\".",
+   "source": "https://www.championsleague.basketball/en"
+  },
+  {
+   "id": "bcl-americas",
+   "name": "Basketball Champions League Americas",
+   "status": "unknown",
+   "evidence": "Candidate event page returned Page Not Found.",
+   "source": "https://www.fiba.basketball/en/events/basketball-champions-league-americas-2026"
+  },
+  {
+   "id": "bnxt",
+   "name": "BNXT League",
+   "status": "verified",
+   "evidence": "Official site responded; title: \"BNXT League\".",
+   "source": "https://bnxtleague.com/"
+  },
+  {
+   "id": "sl-gb",
+   "name": "Super League Basketball",
+   "status": "verified",
+   "evidence": "Official site responded; title: \"Super League Basketball &#8211; Super league basketball\".",
+   "source": "https://www.superleaguebasketballm.co.uk/"
+  },
+  {
+   "id": "bsn-pr",
+   "name": "Baloncesto Superior Nacional (BSN)",
+   "status": "verified",
+   "evidence": "Official site responded; title: \"BSN – Baloncesto Superior Nacional | Juegos, Resultados y Stats | BSN – Baloncesto Superior Nacional | Juegos, Resultado\".",
+   "source": "https://www.bsnpr.com/"
+  },
+  {
+   "id": "lnb-do",
+   "name": "Liga Nacional de Baloncesto (Dominican Republic)",
+   "status": "unknown",
+   "evidence": "Candidate URL timed out.",
+   "source": "https://lnb.com.do/"
+  },
+  {
+   "id": "spb-ve",
+   "name": "Superliga Profesional de Baloncesto",
+   "status": "unknown",
+   "evidence": "Candidate URL did not respond.",
+   "source": "https://www.superligadebaloncesto.com/"
+  },
+  {
+   "id": "lub-uy",
+   "name": "Liga Uruguaya de Básquetbol",
+   "status": "partial",
+   "evidence": "FUBB federation site reachable; league not named in the page title.",
+   "source": "https://www.fubb.org.uy/"
+  },
+  {
+   "id": "lnb-cl",
+   "name": "Liga Nacional de Básquetbol de Chile",
+   "status": "unknown",
+   "evidence": "Candidate URL did not respond.",
+   "source": "https://www.lnbchile.cl/"
+  },
+  {
+   "id": "ibl-id",
+   "name": "Indonesian Basketball League (IBL)",
+   "status": "verified",
+   "evidence": "Official site responded; title: \"IBL - Liga Kita | IBL - Liga Kita\".",
+   "source": "https://iblindonesia.com/"
+  },
+  {
+   "id": "vba-vn",
+   "name": "Vietnam Basketball Association (VBA)",
+   "status": "verified",
+   "evidence": "Official site responded; title: \"VBA - Giải Bóng Rổ Chuyên Nghiệp Việt Nam | Trang chủ | VBA - Giải Bóng Rổ Chuyên Nghiệp Việt Nam | VBA - Giải Bóng Rổ C\".",
+   "source": "https://vba.vn/"
+  },
+  {
+   "id": "tbl-th",
+   "name": "Thailand Basketball League",
+   "status": "unknown",
+   "evidence": "Candidate URL did not respond.",
+   "source": "https://www.thailandbasketball.or.th/"
+  },
+  {
+   "id": "tpbl-tw",
+   "name": "Taiwan Professional Basketball League (TPBL)",
+   "status": "verified",
+   "evidence": "Official site responded; title: \"TPBL | 台灣職業籃球大聯盟\".",
+   "source": "https://tpbl.basketball/"
+  },
+  {
+   "id": "pleague-tw",
+   "name": "P. LEAGUE+",
+   "status": "verified",
+   "evidence": "Official site responded; title: \"P. LEAGUE+ | P. LEAGUE+ | P. LEAGUE+\". Site reachable; current-season status not checked.",
+   "source": "https://pleagueofficial.com/"
+  },
+  {
+   "id": "kzs-si",
+   "name": "Liga Nova KBM (1. SKL)",
+   "status": "partial",
+   "evidence": "KZS federation site reachable; league not named in the page title.",
+   "source": "https://www.kzs.si/"
+  },
+  {
+   "id": "hks-hr",
+   "name": "HT Premijer liga",
+   "status": "partial",
+   "evidence": "HKS federation site reachable; league not named in the page title.",
+   "source": "https://hks-cbf.hr/"
+  },
+  {
+   "id": "ksm-me",
+   "name": "Prva A liga (Montenegro)",
+   "status": "partial",
+   "evidence": "KSCG federation site reachable; league not named in the page title.",
+   "source": "https://kscg.me/"
+  },
+  {
+   "id": "ksbih-ba",
+   "name": "Košarkaški savez BiH competitions",
+   "status": "unknown",
+   "evidence": "Candidate URL did not respond.",
+   "source": "https://kosarkabih.ba/"
+  },
+  {
+   "id": "lebl",
+   "name": "Latvian-Estonian Basketball League",
+   "status": "unknown",
+   "evidence": "Candidate URL did not respond.",
+   "source": "https://basket.lv/"
+  },
+  {
+   "id": "korisliiga-fi",
+   "name": "Korisliiga",
+   "status": "verified",
+   "evidence": "Official site responded; title: \"Korisliiga - Basket.fi | Korisliiga - Basket.fi | Basket.fi\".",
+   "source": "https://basket.fi/sarjat/sarjat/korisliiga/"
+  },
+  {
+   "id": "plk-pl",
+   "name": "ORLEN Basket Liga",
+   "status": "verified",
+   "evidence": "Official site responded; title: \"Polska Liga Koszykówki | Polska Liga Koszykówki\".",
+   "source": "https://plk.pl/"
+  },
+  {
+   "id": "gbf-ge",
+   "name": "Georgian Superleague",
+   "status": "unknown",
+   "evidence": "Candidate URL did not respond.",
+   "source": "https://gbf.ge/"
+  },
+  {
+   "id": "winner-il",
+   "name": "Israeli Basketball Premier League",
+   "status": "verified",
+   "evidence": "Official site responded; title: \"מנהלת ליגת העל בכדורסל\".",
+   "source": "https://basket.co.il/"
+  },
+  {
+   "id": "nbl-cz",
+   "name": "Kooperativa NBL",
+   "status": "verified",
+   "evidence": "Official site responded; title: \"NBL.BASKETBALL | NBL.BASKETBALL\".",
+   "source": "http://nbl.basketball/"
+  },
+  {
+   "id": "vtb",
+   "name": "VTB United League",
+   "status": "verified",
+   "evidence": "Official site responded; title: \"Единая Лига ВТБ | VTB United League - Официальный сайт | Единая Лига ВТБ | VTB United League - Официальный сайт\". Site reachable. FIBA status of Russian and Belarusian clubs was not checked in this snapshot.",
+   "source": "https://vtb-league.com/"
+  },
+  {
+   "id": "fpb-pt",
+   "name": "Liga Portuguesa de Basquetebol",
+   "status": "partial",
+   "evidence": "FPB federation site reachable; league not named in the page title.",
+   "source": "https://www.fpb.pt/"
+  },
+  {
+   "id": "basketligan-se",
+   "name": "Basketligan",
+   "status": "unknown",
+   "evidence": "Candidate URL did not respond.",
+   "source": "https://www.basketligan.se/"
+  },
+  {
+   "id": "basketligaen-dk",
+   "name": "Basketligaen",
+   "status": "verified",
+   "evidence": "Official site responded; title: \"Basketligaen Danmark\".",
+   "source": "https://www.basketligaen.dk/"
+  },
+  {
+   "id": "fsbb-sn",
+   "name": "Fédération Sénégalaise de Basketball competitions",
+   "status": "unknown",
+   "evidence": "Candidate URL did not respond (500 via fetch tool).",
+   "source": "https://www.fsbb.sn/"
+  },
+  {
+   "id": "nba-academy-africa",
+   "name": "NBA Academy Africa",
+   "status": "unknown",
+   "evidence": "Candidate URL returned 404; not offered as a route in this snapshot.",
+   "source": "https://www.nba.com/africa/nba-academy-africa"
+  },
+  {
+   "id": "ferwaba-rw",
+   "name": "Rwanda Basketball League",
+   "status": "unknown",
+   "evidence": "Candidate URL did not respond (500 via fetch tool).",
+   "source": "https://ferwaba.rw/"
+  },
+  {
+   "id": "fab-ao",
+   "name": "Campeonato Nacional de Basquetebol (Angola)",
+   "status": "unknown",
+   "evidence": "Candidate URL did not respond.",
+   "source": "https://www.fabasquetebol.ao/"
+  },
+  {
+   "id": "ebf-eg",
+   "name": "Egyptian Basketball Super League",
+   "status": "unknown",
+   "evidence": "Candidate URL did not respond.",
+   "source": "https://www.egyptianbasketball.net/"
+  },
+  {
+   "id": "ftbb-tn",
+   "name": "Championnat de Tunisie (Pro A)",
+   "status": "partial",
+   "evidence": "FTBB federation site reachable; league not named in the page title.",
+   "source": "https://www.ftbb.org.tn/"
+  },
+  {
+   "id": "frmbb-ma",
+   "name": "Division Excellence (Morocco)",
+   "status": "partial",
+   "evidence": "FRMBB federation site reachable; league not named in the page title.",
+   "source": "https://frmbb.ma/"
+  },
+  {
+   "id": "bsa-za",
+   "name": "Basketball National League (South Africa)",
+   "status": "unknown",
+   "evidence": "Candidate URL did not respond (500 via fetch tool).",
+   "source": "https://www.basketballsa.co.za/"
+  },
+  {
+   "id": "kbf-ke",
+   "name": "KBF Premier League",
+   "status": "unknown",
+   "evidence": "Candidate URL did not respond.",
+   "source": "https://kenyabasketball.org/"
+  },
+  {
+   "id": "g-league-ignite",
+   "name": "NBA G League Ignite",
+   "status": "inactive",
+   "evidence": "Program ended after the 2023-24 season (G League release, March 21, 2024).",
+   "source": "https://gleague.nba.com/news/nba-g-league-ignite-to-conclude-its-final-season"
+  }
+ ]
+}

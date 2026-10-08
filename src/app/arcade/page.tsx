@@ -3,6 +3,7 @@ import type { CSSProperties, ReactNode } from "react";
 import {
   GmLabArt,
   HigherLowerArt,
+  OneShotArt,
   TeammateChainArt,
   Zero82Art,
 } from "@/components/arcade/arcade-card-art";
@@ -13,7 +14,7 @@ import { cn } from "@/lib/utils";
 
 export const metadata = {
   title: "Arcade",
-  description: "Basketball games: Higher or Lower, 0–82, Teammate Chain and the GM Lab.",
+  description: "Basketball games: Higher or Lower, 0–82, Teammate Chain, ONE SHOT and the GM Lab.",
 };
 
 const GAMES = [
@@ -41,6 +42,14 @@ const GAMES = [
     art: <TeammateChainArt />,
     tints: ["#0a84ff", "#bf5af2"],
   },
+  {
+    href: "/arcade/one-shot",
+    title: "ONE SHOT",
+    blurb: "Be born anywhere in the world and try to reach the NBA. Grow up, pick your focus, take or turn down offers, make one regular-season game.",
+    meta: "Life sim · every country · fictional players",
+    art: <OneShotArt />,
+    tints: ["#48b9ab", "#df668c"],
+  },
 ];
 
 export default function ArcadePage() {
@@ -49,7 +58,7 @@ export default function ArcadePage() {
       <PageHeader
         eyebrow="Arcade"
         title="Games"
-        subtitle="Quick basketball games built on 30 seasons of real player stats."
+        subtitle="Basketball games, most of them built on 30 seasons of real player stats."
       />
 
       <section className="flex flex-col gap-3">

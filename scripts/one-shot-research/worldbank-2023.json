@@ -1,0 +1,3826 @@
+{
+"source": "World Bank API v2: SP.DYN.CBRT.IN (crude birth rate) and SP.POP.TOTL (population), latest of 2022-2023; country metadata from /v2/country",
+"fetchedAt": "2026-10-08",
+"countries": [
+{
+"iso3": "ABW",
+"iso2": "AW",
+"name": "Aruba",
+"region": "Latin America & Caribbean",
+"incomeLevel": "HIC",
+"capital": "Oranjestad"
+},
+{
+"iso3": "AFG",
+"iso2": "AF",
+"name": "Afghanistan",
+"region": "Middle East, North Africa, Afghanistan & Pakistan",
+"incomeLevel": "LIC",
+"capital": "Kabul"
+},
+{
+"iso3": "AGO",
+"iso2": "AO",
+"name": "Angola",
+"region": "Sub-Saharan Africa",
+"incomeLevel": "LMC",
+"capital": "Luanda"
+},
+{
+"iso3": "ALB",
+"iso2": "AL",
+"name": "Albania",
+"region": "Europe & Central Asia",
+"incomeLevel": "UMC",
+"capital": "Tirane"
+},
+{
+"iso3": "AND",
+"iso2": "AD",
+"name": "Andorra",
+"region": "Europe & Central Asia",
+"incomeLevel": "HIC",
+"capital": "Andorra la Vella"
+},
+{
+"iso3": "ARE",
+"iso2": "AE",
+"name": "United Arab Emirates",
+"region": "Middle East, North Africa, Afghanistan & Pakistan",
+"incomeLevel": "HIC",
+"capital": "Abu Dhabi"
+},
+{
+"iso3": "ARG",
+"iso2": "AR",
+"name": "Argentina",
+"region": "Latin America & Caribbean",
+"incomeLevel": "UMC",
+"capital": "Buenos Aires"
+},
+{
+"iso3": "ARM",
+"iso2": "AM",
+"name": "Armenia",
+"region": "Europe & Central Asia",
+"incomeLevel": "UMC",
+"capital": "Yerevan"
+},
+{
+"iso3": "ASM",
+"iso2": "AS",
+"name": "American Samoa",
+"region": "East Asia & Pacific",
+"incomeLevel": "HIC",
+"capital": "Pago Pago"
+},
+{
+"iso3": "ATG",
+"iso2": "AG",
+"name": "Antigua and Barbuda",
+"region": "Latin America & Caribbean",
+"incomeLevel": "HIC",
+"capital": "Saint John's"
+},
+{
+"iso3": "AUS",
+"iso2": "AU",
+"name": "Australia",
+"region": "East Asia & Pacific",
+"incomeLevel": "HIC",
+"capital": "Canberra"
+},
+{
+"iso3": "AUT",
+"iso2": "AT",
+"name": "Austria",
+"region": "Europe & Central Asia",
+"incomeLevel": "HIC",
+"capital": "Vienna"
+},
+{
+"iso3": "AZE",
+"iso2": "AZ",
+"name": "Azerbaijan",
+"region": "Europe & Central Asia",
+"incomeLevel": "UMC",
+"capital": "Baku"
+},
+{
+"iso3": "BDI",
+"iso2": "BI",
+"name": "Burundi",
+"region": "Sub-Saharan Africa",
+"incomeLevel": "LIC",
+"capital": "Bujumbura"
+},
+{
+"iso3": "BEL",
+"iso2": "BE",
+"name": "Belgium",
+"region": "Europe & Central Asia",
+"incomeLevel": "HIC",
+"capital": "Brussels"
+},
+{
+"iso3": "BEN",
+"iso2": "BJ",
+"name": "Benin",
+"region": "Sub-Saharan Africa",
+"incomeLevel": "LMC",
+"capital": "Porto-Novo"
+},
+{
+"iso3": "BFA",
+"iso2": "BF",
+"name": "Burkina Faso",
+"region": "Sub-Saharan Africa",
+"incomeLevel": "LIC",
+"capital": "Ouagadougou"
+},
+{
+"iso3": "BGD",
+"iso2": "BD",
+"name": "Bangladesh",
+"region": "South Asia",
+"incomeLevel": "LMC",
+"capital": "Dhaka"
+},
+{
+"iso3": "BGR",
+"iso2": "BG",
+"name": "Bulgaria",
+"region": "Europe & Central Asia",
+"incomeLevel": "HIC",
+"capital": "Sofia"
+},
+{
+"iso3": "BHR",
+"iso2": "BH",
+"name": "Bahrain",
+"region": "Middle East, North Africa, Afghanistan & Pakistan",
+"incomeLevel": "HIC",
+"capital": "Manama"
+},
+{
+"iso3": "BHS",
+"iso2": "BS",
+"name": "Bahamas, The",
+"region": "Latin America & Caribbean",
+"incomeLevel": "HIC",
+"capital": "Nassau"
+},
+{
+"iso3": "BIH",
+"iso2": "BA",
+"name": "Bosnia and Herzegovina",
+"region": "Europe & Central Asia",
+"incomeLevel": "UMC",
+"capital": "Sarajevo"
+},
+{
+"iso3": "BLR",
+"iso2": "BY",
+"name": "Belarus",
+"region": "Europe & Central Asia",
+"incomeLevel": "UMC",
+"capital": "Minsk"
+},
+{
+"iso3": "BLZ",
+"iso2": "BZ",
+"name": "Belize",
+"region": "Latin America & Caribbean",
+"incomeLevel": "UMC",
+"capital": "Belmopan"
+},
+{
+"iso3": "BMU",
+"iso2": "BM",
+"name": "Bermuda",
+"region": "North America",
+"incomeLevel": "HIC",
+"capital": "Hamilton"
+},
+{
+"iso3": "BOL",
+"iso2": "BO",
+"name": "Bolivia",
+"region": "Latin America & Caribbean",
+"incomeLevel": "LMC",
+"capital": "La Paz"
+},
+{
+"iso3": "BRA",
+"iso2": "BR",
+"name": "Brazil",
+"region": "Latin America & Caribbean",
+"incomeLevel": "UMC",
+"capital": "Brasilia"
+},
+{
+"iso3": "BRB",
+"iso2": "BB",
+"name": "Barbados",
+"region": "Latin America & Caribbean",
+"incomeLevel": "HIC",
+"capital": "Bridgetown"
+},
+{
+"iso3": "BRN",
+"iso2": "BN",
+"name": "Brunei Darussalam",
+"region": "East Asia & Pacific",
+"incomeLevel": "HIC",
+"capital": "Bandar Seri Begawan"
+},
+{
+"iso3": "BTN",
+"iso2": "BT",
+"name": "Bhutan",
+"region": "South Asia",
+"incomeLevel": "LMC",
+"capital": "Thimphu"
+},
+{
+"iso3": "BWA",
+"iso2": "BW",
+"name": "Botswana",
+"region": "Sub-Saharan Africa",
+"incomeLevel": "UMC",
+"capital": "Gaborone"
+},
+{
+"iso3": "CAF",
+"iso2": "CF",
+"name": "Central African Republic",
+"region": "Sub-Saharan Africa",
+"incomeLevel": "LIC",
+"capital": "Bangui"
+},
+{
+"iso3": "CAN",
+"iso2": "CA",
+"name": "Canada",
+"region": "North America",
+"incomeLevel": "HIC",
+"capital": "Ottawa"
+},
+{
+"iso3": "CHE",
+"iso2": "CH",
+"name": "Switzerland",
+"region": "Europe & Central Asia",
+"incomeLevel": "HIC",
+"capital": "Bern"
+},
+{
+"iso3": "CHI",
+"iso2": "JG",
+"name": "Channel Islands",
+"region": "Europe & Central Asia",
+"incomeLevel": "HIC",
+"capital": ""
+},
+{
+"iso3": "CHL",
+"iso2": "CL",
+"name": "Chile",
+"region": "Latin America & Caribbean",
+"incomeLevel": "HIC",
+"capital": "Santiago"
+},
+{
+"iso3": "CHN",
+"iso2": "CN",
+"name": "China",
+"region": "East Asia & Pacific",
+"incomeLevel": "UMC",
+"capital": "Beijing"
+},
+{
+"iso3": "CIV",
+"iso2": "CI",
+"name": "Cote d'Ivoire",
+"region": "Sub-Saharan Africa",
+"incomeLevel": "LMC",
+"capital": "Yamoussoukro"
+},
+{
+"iso3": "CMR",
+"iso2": "CM",
+"name": "Cameroon",
+"region": "Sub-Saharan Africa",
+"incomeLevel": "LMC",
+"capital": "Yaounde"
+},
+{
+"iso3": "COD",
+"iso2": "CD",
+"name": "Congo, Dem. Rep.",
+"region": "Sub-Saharan Africa",
+"incomeLevel": "LIC",
+"capital": "Kinshasa"
+},
+{
+"iso3": "COG",
+"iso2": "CG",
+"name": "Congo, Rep.",
+"region": "Sub-Saharan Africa",
+"incomeLevel": "LMC",
+"capital": "Brazzaville"
+},
+{
+"iso3": "COL",
+"iso2": "CO",
+"name": "Colombia",
+"region": "Latin America & Caribbean",
+"incomeLevel": "UMC",
+"capital": "Bogota"
+},
+{
+"iso3": "COM",
+"iso2": "KM",
+"name": "Comoros",
+"region": "Sub-Saharan Africa",
+"incomeLevel": "LMC",
+"capital": "Moroni"
+},
+{
+"iso3": "CPV",
+"iso2": "CV",
+"name": "Cabo Verde",
+"region": "Sub-Saharan Africa",
+"incomeLevel": "UMC",
+"capital": "Praia"
+},
+{
+"iso3": "CRI",
+"iso2": "CR",
+"name": "Costa Rica",
+"region": "Latin America & Caribbean",
+"incomeLevel": "HIC",
+"capital": "San Jose"
+},
+{
+"iso3": "CUB",
+"iso2": "CU",
+"name": "Cuba",
+"region": "Latin America & Caribbean",
+"incomeLevel": "UMC",
+"capital": "Havana"
+},
+{
+"iso3": "CUW",
+"iso2": "CW",
+"name": "Curacao",
+"region": "Latin America & Caribbean",
+"incomeLevel": "HIC",
+"capital": "Willemstad"
+},
+{
+"iso3": "CYM",
+"iso2": "KY",
+"name": "Cayman Islands",
+"region": "Latin America & Caribbean",
+"incomeLevel": "HIC",
+"capital": "George Town"
+},
+{
+"iso3": "CYP",
+"iso2": "CY",
+"name": "Cyprus",
+"region": "Europe & Central Asia",
+"incomeLevel": "HIC",
+"capital": "Nicosia"
+},
+{
+"iso3": "CZE",
+"iso2": "CZ",
+"name": "Czechia",
+"region": "Europe & Central Asia",
+"incomeLevel": "HIC",
+"capital": "Prague"
+},
+{
+"iso3": "DEU",
+"iso2": "DE",
+"name": "Germany",
+"region": "Europe & Central Asia",
+"incomeLevel": "HIC",
+"capital": "Berlin"
+},
+{
+"iso3": "DJI",
+"iso2": "DJ",
+"name": "Djibouti",
+"region": "Middle East, North Africa, Afghanistan & Pakistan",
+"incomeLevel": "LMC",
+"capital": "Djibouti"
+},
+{
+"iso3": "DMA",
+"iso2": "DM",
+"name": "Dominica",
+"region": "Latin America & Caribbean",
+"incomeLevel": "UMC",
+"capital": "Roseau"
+},
+{
+"iso3": "DNK",
+"iso2": "DK",
+"name": "Denmark",
+"region": "Europe & Central Asia",
+"incomeLevel": "HIC",
+"capital": "Copenhagen"
+},
+{
+"iso3": "DOM",
+"iso2": "DO",
+"name": "Dominican Republic",
+"region": "Latin America & Caribbean",
+"incomeLevel": "UMC",
+"capital": "Santo Domingo"
+},
+{
+"iso3": "DZA",
+"iso2": "DZ",
+"name": "Algeria",
+"region": "Middle East, North Africa, Afghanistan & Pakistan",
+"incomeLevel": "UMC",
+"capital": "Algiers"
+},
+{
+"iso3": "ECU",
+"iso2": "EC",
+"name": "Ecuador",
+"region": "Latin America & Caribbean",
+"incomeLevel": "UMC",
+"capital": "Quito"
+},
+{
+"iso3": "EGY",
+"iso2": "EG",
+"name": "Egypt, Arab Rep.",
+"region": "Middle East, North Africa, Afghanistan & Pakistan",
+"incomeLevel": "LMC",
+"capital": "Cairo"
+},
+{
+"iso3": "ERI",
+"iso2": "ER",
+"name": "Eritrea",
+"region": "Sub-Saharan Africa",
+"incomeLevel": "LIC",
+"capital": "Asmara"
+},
+{
+"iso3": "ESP",
+"iso2": "ES",
+"name": "Spain",
+"region": "Europe & Central Asia",
+"incomeLevel": "HIC",
+"capital": "Madrid"
+},
+{
+"iso3": "EST",
+"iso2": "EE",
+"name": "Estonia",
+"region": "Europe & Central Asia",
+"incomeLevel": "HIC",
+"capital": "Tallinn"
+},
+{
+"iso3": "ETH",
+"iso2": "ET",
+"name": "Ethiopia",
+"region": "Sub-Saharan Africa",
+"incomeLevel": "LIC",
+"capital": "Addis Ababa"
+},
+{
+"iso3": "FIN",
+"iso2": "FI",
+"name": "Finland",
+"region": "Europe & Central Asia",
+"incomeLevel": "HIC",
+"capital": "Helsinki"
+},
+{
+"iso3": "FJI",
+"iso2": "FJ",
+"name": "Fiji",
+"region": "East Asia & Pacific",
+"incomeLevel": "UMC",
+"capital": "Suva"
+},
+{
+"iso3": "FRA",
+"iso2": "FR",
+"name": "France",
+"region": "Europe & Central Asia",
+"incomeLevel": "HIC",
+"capital": "Paris"
+},
+{
+"iso3": "FRO",
+"iso2": "FO",
+"name": "Faroe Islands",
+"region": "Europe & Central Asia",
+"incomeLevel": "HIC",
+"capital": "Torshavn"
+},
+{
+"iso3": "FSM",
+"iso2": "FM",
+"name": "Micronesia, Fed. Sts.",
+"region": "East Asia & Pacific",
+"incomeLevel": "UMC",
+"capital": "Palikir"
+},
+{
+"iso3": "GAB",
+"iso2": "GA",
+"name": "Gabon",
+"region": "Sub-Saharan Africa",
+"incomeLevel": "UMC",
+"capital": "Libreville"
+},
+{
+"iso3": "GBR",
+"iso2": "GB",
+"name": "United Kingdom",
+"region": "Europe & Central Asia",
+"incomeLevel": "HIC",
+"capital": "London"
+},
+{
+"iso3": "GEO",
+"iso2": "GE",
+"name": "Georgia",
+"region": "Europe & Central Asia",
+"incomeLevel": "UMC",
+"capital": "Tbilisi"
+},
+{
+"iso3": "GHA",
+"iso2": "GH",
+"name": "Ghana",
+"region": "Sub-Saharan Africa",
+"incomeLevel": "LMC",
+"capital": "Accra"
+},
+{
+"iso3": "GIB",
+"iso2": "GI",
+"name": "Gibraltar",
+"region": "Europe & Central Asia",
+"incomeLevel": "HIC",
+"capital": ""
+},
+{
+"iso3": "GIN",
+"iso2": "GN",
+"name": "Guinea",
+"region": "Sub-Saharan Africa",
+"incomeLevel": "LMC",
+"capital": "Conakry"
+},
+{
+"iso3": "GMB",
+"iso2": "GM",
+"name": "Gambia, The",
+"region": "Sub-Saharan Africa",
+"incomeLevel": "LIC",
+"capital": "Banjul"
+},
+{
+"iso3": "GNB",
+"iso2": "GW",
+"name": "Guinea-Bissau",
+"region": "Sub-Saharan Africa",
+"incomeLevel": "LIC",
+"capital": "Bissau"
+},
+{
+"iso3": "GNQ",
+"iso2": "GQ",
+"name": "Equatorial Guinea",
+"region": "Sub-Saharan Africa",
+"incomeLevel": "UMC",
+"capital": "Malabo"
+},
+{
+"iso3": "GRC",
+"iso2": "GR",
+"name": "Greece",
+"region": "Europe & Central Asia",
+"incomeLevel": "HIC",
+"capital": "Athens"
+},
+{
+"iso3": "GRD",
+"iso2": "GD",
+"name": "Grenada",
+"region": "Latin America & Caribbean",
+"incomeLevel": "UMC",
+"capital": "Saint George's"
+},
+{
+"iso3": "GRL",
+"iso2": "GL",
+"name": "Greenland",
+"region": "Europe & Central Asia",
+"incomeLevel": "HIC",
+"capital": "Nuuk"
+},
+{
+"iso3": "GTM",
+"iso2": "GT",
+"name": "Guatemala",
+"region": "Latin America & Caribbean",
+"incomeLevel": "UMC",
+"capital": "Guatemala City"
+},
+{
+"iso3": "GUM",
+"iso2": "GU",
+"name": "Guam",
+"region": "East Asia & Pacific",
+"incomeLevel": "HIC",
+"capital": "Agana"
+},
+{
+"iso3": "GUY",
+"iso2": "GY",
+"name": "Guyana",
+"region": "Latin America & Caribbean",
+"incomeLevel": "HIC",
+"capital": "Georgetown"
+},
+{
+"iso3": "HKG",
+"iso2": "HK",
+"name": "Hong Kong SAR, China",
+"region": "East Asia & Pacific",
+"incomeLevel": "HIC",
+"capital": ""
+},
+{
+"iso3": "HND",
+"iso2": "HN",
+"name": "Honduras",
+"region": "Latin America & Caribbean",
+"incomeLevel": "LMC",
+"capital": "Tegucigalpa"
+},
+{
+"iso3": "HRV",
+"iso2": "HR",
+"name": "Croatia",
+"region": "Europe & Central Asia",
+"incomeLevel": "HIC",
+"capital": "Zagreb"
+},
+{
+"iso3": "HTI",
+"iso2": "HT",
+"name": "Haiti",
+"region": "Latin America & Caribbean",
+"incomeLevel": "LMC",
+"capital": "Port-au-Prince"
+},
+{
+"iso3": "HUN",
+"iso2": "HU",
+"name": "Hungary",
+"region": "Europe & Central Asia",
+"incomeLevel": "HIC",
+"capital": "Budapest"
+},
+{
+"iso3": "IDN",
+"iso2": "ID",
+"name": "Indonesia",
+"region": "East Asia & Pacific",
+"incomeLevel": "UMC",
+"capital": "Jakarta"
+},
+{
+"iso3": "IMN",
+"iso2": "IM",
+"name": "Isle of Man",
+"region": "Europe & Central Asia",
+"incomeLevel": "HIC",
+"capital": "Douglas"
+},
+{
+"iso3": "IND",
+"iso2": "IN",
+"name": "India",
+"region": "South Asia",
+"incomeLevel": "LMC",
+"capital": "New Delhi"
+},
+{
+"iso3": "IRL",
+"iso2": "IE",
+"name": "Ireland",
+"region": "Europe & Central Asia",
+"incomeLevel": "HIC",
+"capital": "Dublin"
+},
+{
+"iso3": "IRN",
+"iso2": "IR",
+"name": "Iran, Islamic Rep.",
+"region": "Middle East, North Africa, Afghanistan & Pakistan",
+"incomeLevel": "UMC",
+"capital": "Tehran"
+},
+{
+"iso3": "IRQ",
+"iso2": "IQ",
+"name": "Iraq",
+"region": "Middle East, North Africa, Afghanistan & Pakistan",
+"incomeLevel": "UMC",
+"capital": "Baghdad"
+},
+{
+"iso3": "ISL",
+"iso2": "IS",
+"name": "Iceland",
+"region": "Europe & Central Asia",
+"incomeLevel": "HIC",
+"capital": "Reykjavik"
+},
+{
+"iso3": "ISR",
+"iso2": "IL",
+"name": "Israel",
+"region": "Middle East, North Africa, Afghanistan & Pakistan",
+"incomeLevel": "HIC",
+"capital": ""
+},
+{
+"iso3": "ITA",
+"iso2": "IT",
+"name": "Italy",
+"region": "Europe & Central Asia",
+"incomeLevel": "HIC",
+"capital": "Rome"
+},
+{
+"iso3": "JAM",
+"iso2": "JM",
+"name": "Jamaica",
+"region": "Latin America & Caribbean",
+"incomeLevel": "UMC",
+"capital": "Kingston"
+},
+{
+"iso3": "JOR",
+"iso2": "JO",
+"name": "Jordan",
+"region": "Middle East, North Africa, Afghanistan & Pakistan",
+"incomeLevel": "UMC",
+"capital": "Amman"
+},
+{
+"iso3": "JPN",
+"iso2": "JP",
+"name": "Japan",
+"region": "East Asia & Pacific",
+"incomeLevel": "HIC",
+"capital": "Tokyo"
+},
+{
+"iso3": "KAZ",
+"iso2": "KZ",
+"name": "Kazakhstan",
+"region": "Europe & Central Asia",
+"incomeLevel": "UMC",
+"capital": "Astana"
+},
+{
+"iso3": "KEN",
+"iso2": "KE",
+"name": "Kenya",
+"region": "Sub-Saharan Africa",
+"incomeLevel": "LMC",
+"capital": "Nairobi"
+},
+{
+"iso3": "KGZ",
+"iso2": "KG",
+"name": "Kyrgyz Republic",
+"region": "Europe & Central Asia",
+"incomeLevel": "LMC",
+"capital": "Bishkek"
+},
+{
+"iso3": "KHM",
+"iso2": "KH",
+"name": "Cambodia",
+"region": "East Asia & Pacific",
+"incomeLevel": "LMC",
+"capital": "Phnom Penh"
+},
+{
+"iso3": "KIR",
+"iso2": "KI",
+"name": "Kiribati",
+"region": "East Asia & Pacific",
+"incomeLevel": "LMC",
+"capital": "Tarawa"
+},
+{
+"iso3": "KNA",
+"iso2": "KN",
+"name": "St. Kitts and Nevis",
+"region": "Latin America & Caribbean",
+"incomeLevel": "HIC",
+"capital": "Basseterre"
+},
+{
+"iso3": "KOR",
+"iso2": "KR",
+"name": "Korea, Rep.",
+"region": "East Asia & Pacific",
+"incomeLevel": "HIC",
+"capital": "Seoul"
+},
+{
+"iso3": "KWT",
+"iso2": "KW",
+"name": "Kuwait",
+"region": "Middle East, North Africa, Afghanistan & Pakistan",
+"incomeLevel": "HIC",
+"capital": "Kuwait City"
+},
+{
+"iso3": "LAO",
+"iso2": "LA",
+"name": "Lao PDR",
+"region": "East Asia & Pacific",
+"incomeLevel": "LMC",
+"capital": "Vientiane"
+},
+{
+"iso3": "LBN",
+"iso2": "LB",
+"name": "Lebanon",
+"region": "Middle East, North Africa, Afghanistan & Pakistan",
+"incomeLevel": "LMC",
+"capital": "Beirut"
+},
+{
+"iso3": "LBR",
+"iso2": "LR",
+"name": "Liberia",
+"region": "Sub-Saharan Africa",
+"incomeLevel": "LIC",
+"capital": "Monrovia"
+},
+{
+"iso3": "LBY",
+"iso2": "LY",
+"name": "Libya",
+"region": "Middle East, North Africa, Afghanistan & Pakistan",
+"incomeLevel": "UMC",
+"capital": "Tripoli"
+},
+{
+"iso3": "LCA",
+"iso2": "LC",
+"name": "St. Lucia",
+"region": "Latin America & Caribbean",
+"incomeLevel": "UMC",
+"capital": "Castries"
+},
+{
+"iso3": "LIE",
+"iso2": "LI",
+"name": "Liechtenstein",
+"region": "Europe & Central Asia",
+"incomeLevel": "HIC",
+"capital": "Vaduz"
+},
+{
+"iso3": "LKA",
+"iso2": "LK",
+"name": "Sri Lanka",
+"region": "South Asia",
+"incomeLevel": "UMC",
+"capital": "Colombo"
+},
+{
+"iso3": "LSO",
+"iso2": "LS",
+"name": "Lesotho",
+"region": "Sub-Saharan Africa",
+"incomeLevel": "LMC",
+"capital": "Maseru"
+},
+{
+"iso3": "LTU",
+"iso2": "LT",
+"name": "Lithuania",
+"region": "Europe & Central Asia",
+"incomeLevel": "HIC",
+"capital": "Vilnius"
+},
+{
+"iso3": "LUX",
+"iso2": "LU",
+"name": "Luxembourg",
+"region": "Europe & Central Asia",
+"incomeLevel": "HIC",
+"capital": "Luxembourg"
+},
+{
+"iso3": "LVA",
+"iso2": "LV",
+"name": "Latvia",
+"region": "Europe & Central Asia",
+"incomeLevel": "HIC",
+"capital": "Riga"
+},
+{
+"iso3": "MAC",
+"iso2": "MO",
+"name": "Macao SAR, China",
+"region": "East Asia & Pacific",
+"incomeLevel": "HIC",
+"capital": ""
+},
+{
+"iso3": "MAF",
+"iso2": "MF",
+"name": "St. Martin (French part)",
+"region": "Latin America & Caribbean",
+"incomeLevel": "HIC",
+"capital": "Marigot"
+},
+{
+"iso3": "MAR",
+"iso2": "MA",
+"name": "Morocco",
+"region": "Middle East, North Africa, Afghanistan & Pakistan",
+"incomeLevel": "LMC",
+"capital": "Rabat"
+},
+{
+"iso3": "MCO",
+"iso2": "MC",
+"name": "Monaco",
+"region": "Europe & Central Asia",
+"incomeLevel": "HIC",
+"capital": "Monaco"
+},
+{
+"iso3": "MDA",
+"iso2": "MD",
+"name": "Moldova",
+"region": "Europe & Central Asia",
+"incomeLevel": "UMC",
+"capital": "Chisinau"
+},
+{
+"iso3": "MDG",
+"iso2": "MG",
+"name": "Madagascar",
+"region": "Sub-Saharan Africa",
+"incomeLevel": "LIC",
+"capital": "Antananarivo"
+},
+{
+"iso3": "MDV",
+"iso2": "MV",
+"name": "Maldives",
+"region": "South Asia",
+"incomeLevel": "UMC",
+"capital": "Male"
+},
+{
+"iso3": "MEX",
+"iso2": "MX",
+"name": "Mexico",
+"region": "Latin America & Caribbean",
+"incomeLevel": "UMC",
+"capital": "Mexico City"
+},
+{
+"iso3": "MHL",
+"iso2": "MH",
+"name": "Marshall Islands",
+"region": "East Asia & Pacific",
+"incomeLevel": "UMC",
+"capital": "Majuro"
+},
+{
+"iso3": "MKD",
+"iso2": "MK",
+"name": "North Macedonia",
+"region": "Europe & Central Asia",
+"incomeLevel": "UMC",
+"capital": "Skopje"
+},
+{
+"iso3": "MLI",
+"iso2": "ML",
+"name": "Mali",
+"region": "Sub-Saharan Africa",
+"incomeLevel": "LIC",
+"capital": "Bamako"
+},
+{
+"iso3": "MLT",
+"iso2": "MT",
+"name": "Malta",
+"region": "Middle East, North Africa, Afghanistan & Pakistan",
+"incomeLevel": "HIC",
+"capital": "Valletta"
+},
+{
+"iso3": "MMR",
+"iso2": "MM",
+"name": "Myanmar",
+"region": "East Asia & Pacific",
+"incomeLevel": "LMC",
+"capital": "Naypyidaw"
+},
+{
+"iso3": "MNE",
+"iso2": "ME",
+"name": "Montenegro",
+"region": "Europe & Central Asia",
+"incomeLevel": "UMC",
+"capital": "Podgorica"
+},
+{
+"iso3": "MNG",
+"iso2": "MN",
+"name": "Mongolia",
+"region": "East Asia & Pacific",
+"incomeLevel": "UMC",
+"capital": "Ulaanbaatar"
+},
+{
+"iso3": "MNP",
+"iso2": "MP",
+"name": "Northern Mariana Islands",
+"region": "East Asia & Pacific",
+"incomeLevel": "HIC",
+"capital": "Saipan"
+},
+{
+"iso3": "MOZ",
+"iso2": "MZ",
+"name": "Mozambique",
+"region": "Sub-Saharan Africa",
+"incomeLevel": "LIC",
+"capital": "Maputo"
+},
+{
+"iso3": "MRT",
+"iso2": "MR",
+"name": "Mauritania",
+"region": "Sub-Saharan Africa",
+"incomeLevel": "LMC",
+"capital": "Nouakchott"
+},
+{
+"iso3": "MUS",
+"iso2": "MU",
+"name": "Mauritius",
+"region": "Sub-Saharan Africa",
+"incomeLevel": "UMC",
+"capital": "Port Louis"
+},
+{
+"iso3": "MWI",
+"iso2": "MW",
+"name": "Malawi",
+"region": "Sub-Saharan Africa",
+"incomeLevel": "LIC",
+"capital": "Lilongwe"
+},
+{
+"iso3": "MYS",
+"iso2": "MY",
+"name": "Malaysia",
+"region": "East Asia & Pacific",
+"incomeLevel": "UMC",
+"capital": "Kuala Lumpur"
+},
+{
+"iso3": "NAM",
+"iso2": "NA",
+"name": "Namibia",
+"region": "Sub-Saharan Africa",
+"incomeLevel": "LMC",
+"capital": "Windhoek"
+},
+{
+"iso3": "NCL",
+"iso2": "NC",
+"name": "New Caledonia",
+"region": "East Asia & Pacific",
+"incomeLevel": "HIC",
+"capital": "Noum'ea"
+},
+{
+"iso3": "NER",
+"iso2": "NE",
+"name": "Niger",
+"region": "Sub-Saharan Africa",
+"incomeLevel": "LIC",
+"capital": "Niamey"
+},
+{
+"iso3": "NGA",
+"iso2": "NG",
+"name": "Nigeria",
+"region": "Sub-Saharan Africa",
+"incomeLevel": "LMC",
+"capital": "Abuja"
+},
+{
+"iso3": "NIC",
+"iso2": "NI",
+"name": "Nicaragua",
+"region": "Latin America & Caribbean",
+"incomeLevel": "LMC",
+"capital": "Managua"
+},
+{
+"iso3": "NLD",
+"iso2": "NL",
+"name": "Netherlands",
+"region": "Europe & Central Asia",
+"incomeLevel": "HIC",
+"capital": "Amsterdam"
+},
+{
+"iso3": "NOR",
+"iso2": "NO",
+"name": "Norway",
+"region": "Europe & Central Asia",
+"incomeLevel": "HIC",
+"capital": "Oslo"
+},
+{
+"iso3": "NPL",
+"iso2": "NP",
+"name": "Nepal",
+"region": "South Asia",
+"incomeLevel": "LMC",
+"capital": "Kathmandu"
+},
+{
+"iso3": "NRU",
+"iso2": "NR",
+"name": "Naoero",
+"region": "East Asia & Pacific",
+"incomeLevel": "HIC",
+"capital": "Yaren District"
+},
+{
+"iso3": "NZL",
+"iso2": "NZ",
+"name": "New Zealand",
+"region": "East Asia & Pacific",
+"incomeLevel": "HIC",
+"capital": "Wellington"
+},
+{
+"iso3": "OMN",
+"iso2": "OM",
+"name": "Oman",
+"region": "Middle East, North Africa, Afghanistan & Pakistan",
+"incomeLevel": "HIC",
+"capital": "Muscat"
+},
+{
+"iso3": "PAK",
+"iso2": "PK",
+"name": "Pakistan",
+"region": "Middle East, North Africa, Afghanistan & Pakistan",
+"incomeLevel": "LMC",
+"capital": "Islamabad"
+},
+{
+"iso3": "PAN",
+"iso2": "PA",
+"name": "Panama",
+"region": "Latin America & Caribbean",
+"incomeLevel": "HIC",
+"capital": "Panama City"
+},
+{
+"iso3": "PER",
+"iso2": "PE",
+"name": "Peru",
+"region": "Latin America & Caribbean",
+"incomeLevel": "UMC",
+"capital": "Lima"
+},
+{
+"iso3": "PHL",
+"iso2": "PH",
+"name": "Philippines",
+"region": "East Asia & Pacific",
+"incomeLevel": "UMC",
+"capital": "Manila"
+},
+{
+"iso3": "PLW",
+"iso2": "PW",
+"name": "Palau",
+"region": "East Asia & Pacific",
+"incomeLevel": "HIC",
+"capital": "Koror"
+},
+{
+"iso3": "PNG",
+"iso2": "PG",
+"name": "Papua New Guinea",
+"region": "East Asia & Pacific",
+"incomeLevel": "LMC",
+"capital": "Port Moresby"
+},
+{
+"iso3": "POL",
+"iso2": "PL",
+"name": "Poland",
+"region": "Europe & Central Asia",
+"incomeLevel": "HIC",
+"capital": "Warsaw"
+},
+{
+"iso3": "PRI",
+"iso2": "PR",
+"name": "Puerto Rico (US)",
+"region": "Latin America & Caribbean",
+"incomeLevel": "HIC",
+"capital": "San Juan"
+},
+{
+"iso3": "PRK",
+"iso2": "KP",
+"name": "Korea, Dem. People's Rep.",
+"region": "East Asia & Pacific",
+"incomeLevel": "LIC",
+"capital": "Pyongyang"
+},
+{
+"iso3": "PRT",
+"iso2": "PT",
+"name": "Portugal",
+"region": "Europe & Central Asia",
+"incomeLevel": "HIC",
+"capital": "Lisbon"
+},
+{
+"iso3": "PRY",
+"iso2": "PY",
+"name": "Paraguay",
+"region": "Latin America & Caribbean",
+"incomeLevel": "UMC",
+"capital": "Asuncion"
+},
+{
+"iso3": "PSE",
+"iso2": "PS",
+"name": "West Bank and Gaza",
+"region": "Middle East, North Africa, Afghanistan & Pakistan",
+"incomeLevel": "LMC",
+"capital": ""
+},
+{
+"iso3": "PYF",
+"iso2": "PF",
+"name": "French Polynesia",
+"region": "East Asia & Pacific",
+"incomeLevel": "HIC",
+"capital": "Papeete"
+},
+{
+"iso3": "QAT",
+"iso2": "QA",
+"name": "Qatar",
+"region": "Middle East, North Africa, Afghanistan & Pakistan",
+"incomeLevel": "HIC",
+"capital": "Doha"
+},
+{
+"iso3": "ROU",
+"iso2": "RO",
+"name": "Romania",
+"region": "Europe & Central Asia",
+"incomeLevel": "HIC",
+"capital": "Bucharest"
+},
+{
+"iso3": "RUS",
+"iso2": "RU",
+"name": "Russian Federation",
+"region": "Europe & Central Asia",
+"incomeLevel": "HIC",
+"capital": "Moscow"
+},
+{
+"iso3": "RWA",
+"iso2": "RW",
+"name": "Rwanda",
+"region": "Sub-Saharan Africa",
+"incomeLevel": "LIC",
+"capital": "Kigali"
+},
+{
+"iso3": "SAU",
+"iso2": "SA",
+"name": "Saudi Arabia",
+"region": "Middle East, North Africa, Afghanistan & Pakistan",
+"incomeLevel": "HIC",
+"capital": "Riyadh"
+},
+{
+"iso3": "SDN",
+"iso2": "SD",
+"name": "Sudan",
+"region": "Sub-Saharan Africa",
+"incomeLevel": "LIC",
+"capital": "Khartoum"
+},
+{
+"iso3": "SEN",
+"iso2": "SN",
+"name": "Senegal",
+"region": "Sub-Saharan Africa",
+"incomeLevel": "LMC",
+"capital": "Dakar"
+},
+{
+"iso3": "SGP",
+"iso2": "SG",
+"name": "Singapore",
+"region": "East Asia & Pacific",
+"incomeLevel": "HIC",
+"capital": "Singapore"
+},
+{
+"iso3": "SLB",
+"iso2": "SB",
+"name": "Solomon Islands",
+"region": "East Asia & Pacific",
+"incomeLevel": "LMC",
+"capital": "Honiara"
+},
+{
+"iso3": "SLE",
+"iso2": "SL",
+"name": "Sierra Leone",
+"region": "Sub-Saharan Africa",
+"incomeLevel": "LIC",
+"capital": "Freetown"
+},
+{
+"iso3": "SLV",
+"iso2": "SV",
+"name": "El Salvador",
+"region": "Latin America & Caribbean",
+"incomeLevel": "UMC",
+"capital": "San Salvador"
+},
+{
+"iso3": "SMR",
+"iso2": "SM",
+"name": "San Marino",
+"region": "Europe & Central Asia",
+"incomeLevel": "HIC",
+"capital": "San Marino"
+},
+{
+"iso3": "SOM",
+"iso2": "SO",
+"name": "Somalia, Fed. Rep.",
+"region": "Sub-Saharan Africa",
+"incomeLevel": "LIC",
+"capital": "Mogadishu"
+},
+{
+"iso3": "SRB",
+"iso2": "RS",
+"name": "Serbia",
+"region": "Europe & Central Asia",
+"incomeLevel": "UMC",
+"capital": "Belgrade"
+},
+{
+"iso3": "SSD",
+"iso2": "SS",
+"name": "South Sudan",
+"region": "Sub-Saharan Africa",
+"incomeLevel": "LIC",
+"capital": "Juba"
+},
+{
+"iso3": "STP",
+"iso2": "ST",
+"name": "Sao Tome and Principe",
+"region": "Sub-Saharan Africa",
+"incomeLevel": "LMC",
+"capital": "Sao Tome"
+},
+{
+"iso3": "SUR",
+"iso2": "SR",
+"name": "Suriname",
+"region": "Latin America & Caribbean",
+"incomeLevel": "UMC",
+"capital": "Paramaribo"
+},
+{
+"iso3": "SVK",
+"iso2": "SK",
+"name": "Slovak Republic",
+"region": "Europe & Central Asia",
+"incomeLevel": "HIC",
+"capital": "Bratislava"
+},
+{
+"iso3": "SVN",
+"iso2": "SI",
+"name": "Slovenia",
+"region": "Europe & Central Asia",
+"incomeLevel": "HIC",
+"capital": "Ljubljana"
+},
+{
+"iso3": "SWE",
+"iso2": "SE",
+"name": "Sweden",
+"region": "Europe & Central Asia",
+"incomeLevel": "HIC",
+"capital": "Stockholm"
+},
+{
+"iso3": "SWZ",
+"iso2": "SZ",
+"name": "Eswatini",
+"region": "Sub-Saharan Africa",
+"incomeLevel": "LMC",
+"capital": "Mbabane"
+},
+{
+"iso3": "SXM",
+"iso2": "SX",
+"name": "Sint Maarten (Dutch part)",
+"region": "Latin America & Caribbean",
+"incomeLevel": "HIC",
+"capital": "Philipsburg"
+},
+{
+"iso3": "SYC",
+"iso2": "SC",
+"name": "Seychelles",
+"region": "Sub-Saharan Africa",
+"incomeLevel": "HIC",
+"capital": "Victoria"
+},
+{
+"iso3": "SYR",
+"iso2": "SY",
+"name": "Syrian Arab Republic",
+"region": "Middle East, North Africa, Afghanistan & Pakistan",
+"incomeLevel": "LIC",
+"capital": "Damascus"
+},
+{
+"iso3": "TCA",
+"iso2": "TC",
+"name": "Turks and Caicos Islands",
+"region": "Latin America & Caribbean",
+"incomeLevel": "HIC",
+"capital": "Grand Turk"
+},
+{
+"iso3": "TCD",
+"iso2": "TD",
+"name": "Chad",
+"region": "Sub-Saharan Africa",
+"incomeLevel": "LIC",
+"capital": "N'Djamena"
+},
+{
+"iso3": "TGO",
+"iso2": "TG",
+"name": "Togo",
+"region": "Sub-Saharan Africa",
+"incomeLevel": "LMC",
+"capital": "Lome"
+},
+{
+"iso3": "THA",
+"iso2": "TH",
+"name": "Thailand",
+"region": "East Asia & Pacific",
+"incomeLevel": "UMC",
+"capital": "Bangkok"
+},
+{
+"iso3": "TJK",
+"iso2": "TJ",
+"name": "Tajikistan",
+"region": "Europe & Central Asia",
+"incomeLevel": "LMC",
+"capital": "Dushanbe"
+},
+{
+"iso3": "TKM",
+"iso2": "TM",
+"name": "Turkmenistan",
+"region": "Europe & Central Asia",
+"incomeLevel": "UMC",
+"capital": "Ashgabat"
+},
+{
+"iso3": "TLS",
+"iso2": "TL",
+"name": "Timor-Leste",
+"region": "East Asia & Pacific",
+"incomeLevel": "LMC",
+"capital": "Dili"
+},
+{
+"iso3": "TON",
+"iso2": "TO",
+"name": "Tonga",
+"region": "East Asia & Pacific",
+"incomeLevel": "UMC",
+"capital": "Nuku'alofa"
+},
+{
+"iso3": "TTO",
+"iso2": "TT",
+"name": "Trinidad and Tobago",
+"region": "Latin America & Caribbean",
+"incomeLevel": "HIC",
+"capital": "Port-of-Spain"
+},
+{
+"iso3": "TUN",
+"iso2": "TN",
+"name": "Tunisia",
+"region": "Middle East, North Africa, Afghanistan & Pakistan",
+"incomeLevel": "LMC",
+"capital": "Tunis"
+},
+{
+"iso3": "TUR",
+"iso2": "TR",
+"name": "Turkiye",
+"region": "Europe & Central Asia",
+"incomeLevel": "UMC",
+"capital": "Ankara"
+},
+{
+"iso3": "TUV",
+"iso2": "TV",
+"name": "Tuvalu",
+"region": "East Asia & Pacific",
+"incomeLevel": "UMC",
+"capital": "Funafuti"
+},
+{
+"iso3": "TZA",
+"iso2": "TZ",
+"name": "Tanzania",
+"region": "Sub-Saharan Africa",
+"incomeLevel": "LMC",
+"capital": "Dodoma"
+},
+{
+"iso3": "UGA",
+"iso2": "UG",
+"name": "Uganda",
+"region": "Sub-Saharan Africa",
+"incomeLevel": "LIC",
+"capital": "Kampala"
+},
+{
+"iso3": "UKR",
+"iso2": "UA",
+"name": "Ukraine",
+"region": "Europe & Central Asia",
+"incomeLevel": "UMC",
+"capital": "Kiev"
+},
+{
+"iso3": "URY",
+"iso2": "UY",
+"name": "Uruguay",
+"region": "Latin America & Caribbean",
+"incomeLevel": "HIC",
+"capital": "Montevideo"
+},
+{
+"iso3": "USA",
+"iso2": "US",
+"name": "United States",
+"region": "North America",
+"incomeLevel": "HIC",
+"capital": "Washington D.C."
+},
+{
+"iso3": "UZB",
+"iso2": "UZ",
+"name": "Uzbekistan",
+"region": "Europe & Central Asia",
+"incomeLevel": "LMC",
+"capital": "Tashkent"
+},
+{
+"iso3": "VCT",
+"iso2": "VC",
+"name": "St. Vincent and the Grenadines",
+"region": "Latin America & Caribbean",
+"incomeLevel": "UMC",
+"capital": "Kingstown"
+},
+{
+"iso3": "VEN",
+"iso2": "VE",
+"name": "Venezuela, RB",
+"region": "Latin America & Caribbean",
+"incomeLevel": "LMC",
+"capital": "Caracas"
+},
+{
+"iso3": "VGB",
+"iso2": "VG",
+"name": "British Virgin Islands",
+"region": "Latin America & Caribbean",
+"incomeLevel": "HIC",
+"capital": "Road Town"
+},
+{
+"iso3": "VIR",
+"iso2": "VI",
+"name": "Virgin Islands (U.S.)",
+"region": "Latin America & Caribbean",
+"incomeLevel": "HIC",
+"capital": "Charlotte Amalie"
+},
+{
+"iso3": "VNM",
+"iso2": "VN",
+"name": "Viet Nam",
+"region": "East Asia & Pacific",
+"incomeLevel": "UMC",
+"capital": "Hanoi"
+},
+{
+"iso3": "VUT",
+"iso2": "VU",
+"name": "Vanuatu",
+"region": "East Asia & Pacific",
+"incomeLevel": "LMC",
+"capital": "Port-Vila"
+},
+{
+"iso3": "WSM",
+"iso2": "WS",
+"name": "Samoa",
+"region": "East Asia & Pacific",
+"incomeLevel": "UMC",
+"capital": "Apia"
+},
+{
+"iso3": "XKX",
+"iso2": "XK",
+"name": "Kosovo",
+"region": "Europe & Central Asia",
+"incomeLevel": "UMC",
+"capital": "Pristina"
+},
+{
+"iso3": "YEM",
+"iso2": "YE",
+"name": "Yemen, Rep.",
+"region": "Middle East, North Africa, Afghanistan & Pakistan",
+"incomeLevel": "LIC",
+"capital": "Sana'a"
+},
+{
+"iso3": "ZAF",
+"iso2": "ZA",
+"name": "South Africa",
+"region": "Sub-Saharan Africa",
+"incomeLevel": "UMC",
+"capital": "Pretoria"
+},
+{
+"iso3": "ZMB",
+"iso2": "ZM",
+"name": "Zambia",
+"region": "Sub-Saharan Africa",
+"incomeLevel": "LMC",
+"capital": "Lusaka"
+},
+{
+"iso3": "ZWE",
+"iso2": "ZW",
+"name": "Zimbabwe",
+"region": "Sub-Saharan Africa",
+"incomeLevel": "LMC",
+"capital": "Harare"
+}
+],
+"crudeBirthRate": {
+"AFE": {
+"value": 32.9554537670713,
+"date": "2023"
+},
+"AFW": {
+"value": 33.4843812679821,
+"date": "2023"
+},
+"ARB": {
+"value": 23.4374020249449,
+"date": "2023"
+},
+"CSS": {
+"value": 14.2038290968127,
+"date": "2023"
+},
+"CEB": {
+"value": 8.10014837642212,
+"date": "2023"
+},
+"EAR": {
+"value": 18.5611832812997,
+"date": "2023"
+},
+"EAS": {
+"value": 9.0152776975284,
+"date": "2023"
+},
+"EAP": {
+"value": 9.32715749382873,
+"date": "2023"
+},
+"TEA": {
+"value": 9.28196397960318,
+"date": "2023"
+},
+"EMU": {
+"value": 8.13853665086886,
+"date": "2023"
+},
+"ECS": {
+"value": 10.0177545680216,
+"date": "2023"
+},
+"ECA": {
+"value": 14.2198346501852,
+"date": "2023"
+},
+"TEC": {
+"value": 11.5452661618249,
+"date": "2023"
+},
+"EUU": {
+"value": 8.16879541349241,
+"date": "2023"
+},
+"HPC": {
+"value": 34.2198886672015,
+"date": "2023"
+},
+"IBD": {
+"value": 12.7697490866997,
+"date": "2023"
+},
+"IBT": {
+"value": 17.5839668118104,
+"date": "2023"
+},
+"IDB": {
+"value": 29.8590294408864,
+"date": "2023"
+},
+"IDX": {
+"value": 30.2250841255365,
+"date": "2023"
+},
+"IDA": {
+"value": 30.0974326726566,
+"date": "2023"
+},
+"LTE": {
+"value": 8.44577445881628,
+"date": "2023"
+},
+"LCN": {
+"value": 14.1979093463648,
+"date": "2023"
+},
+"LAC": {
+"value": 14.4596050399518,
+"date": "2023"
+},
+"TLA": {
+"value": 14.3402558062441,
+"date": "2023"
+},
+"LDC": {
+"value": 31.3824034008105,
+"date": "2023"
+},
+"LMY": {
+"value": 17.8862997626653,
+"date": "2023"
+},
+"MEA": {
+"value": 22.9926185900298,
+"date": "2023"
+},
+"MNA": {
+"value": 23.7548730827916,
+"date": "2023"
+},
+"TMN": {
+"value": 23.7312736931717,
+"date": "2023"
+},
+"MIC": {
+"value": 15.8635685801427,
+"date": "2023"
+},
+"NAC": {
+"value": 10.4976352300797,
+"date": "2023"
+},
+"OED": {
+"value": 9.8077048638139,
+"date": "2023"
+},
+"OSS": {
+"value": 15.543984492207,
+"date": "2023"
+},
+"PSS": {
+"value": 23.2645971514459,
+"date": "2023"
+},
+"PST": {
+"value": 8.62786344260778,
+"date": "2023"
+},
+"PRE": {
+"value": 34.368085689683,
+"date": "2023"
+},
+"SST": {
+"value": 16.2780911663479,
+"date": "2023"
+},
+"SAS": {
+"value": 16.5680998096111,
+"date": "2023"
+},
+"TSA": {
+"value": 16.5680998096111,
+"date": "2023"
+},
+"SSF": {
+"value": 33.1690392455245,
+"date": "2023"
+},
+"SSA": {
+"value": 33.1709584686178,
+"date": "2023"
+},
+"TSS": {
+"value": 33.1690392455245,
+"date": "2023"
+},
+"WLD": {
+"value": 16.333620344969,
+"date": "2023"
+},
+"AFG": {
+"value": 35.437,
+"date": "2023"
+},
+"ALB": {
+"value": 10.244,
+"date": "2023"
+},
+"DZA": {
+"value": 19.625,
+"date": "2023"
+},
+"ASM": {
+"value": 15.388,
+"date": "2023"
+},
+"AND": {
+"value": 6.859,
+"date": "2023"
+},
+"AGO": {
+"value": 37.588,
+"date": "2023"
+},
+"ATG": {
+"value": 11.848,
+"date": "2023"
+},
+"ARG": {
+"value": 11.064,
+"date": "2023"
+},
+"ARM": {
+"value": 12.3,
+"date": "2023"
+},
+"ABW": {
+"value": 7.973,
+"date": "2023"
+},
+"AUS": {
+"value": 10.8,
+"date": "2023"
+},
+"AUT": {
+"value": 8.5,
+"date": "2023"
+},
+"AZE": {
+"value": 11.1,
+"date": "2023"
+},
+"BHS": {
+"value": 10.852,
+"date": "2023"
+},
+"BHR": {
+"value": 12.46,
+"date": "2023"
+},
+"BGD": {
+"value": 20.353,
+"date": "2023"
+},
+"BRB": {
+"value": 11.173,
+"date": "2023"
+},
+"BLR": {
+"value": 7.136,
+"date": "2023"
+},
+"BEL": {
+"value": 9.4,
+"date": "2023"
+},
+"BLZ": {
+"value": 18.025,
+"date": "2023"
+},
+"BEN": {
+"value": 33.879,
+"date": "2023"
+},
+"BMU": {
+"value": 8.046,
+"date": "2023"
+},
+"BTN": {
+"value": 12.663,
+"date": "2023"
+},
+"BOL": {
+"value": 21.247,
+"date": "2023"
+},
+"BIH": {
+"value": 7.714,
+"date": "2023"
+},
+"BWA": {
+"value": 24.713,
+"date": "2023"
+},
+"BRA": {
+"value": 12.322,
+"date": "2023"
+},
+"VGB": {
+"value": 8.332,
+"date": "2023"
+},
+"BRN": {
+"value": 13.59,
+"date": "2023"
+},
+"BGR": {
+"value": 8.9,
+"date": "2023"
+},
+"BFA": {
+"value": 31.643,
+"date": "2023"
+},
+"BDI": {
+"value": 33.667,
+"date": "2023"
+},
+"CPV": {
+"value": 12.33,
+"date": "2023"
+},
+"KHM": {
+"value": 20.752,
+"date": "2023"
+},
+"CMR": {
+"value": 33.743,
+"date": "2023"
+},
+"CAN": {
+"value": 8.8,
+"date": "2023"
+},
+"CYM": {
+"value": 11.838,
+"date": "2023"
+},
+"CAF": {
+"value": 46.358,
+"date": "2023"
+},
+"TCD": {
+"value": 42.396,
+"date": "2023"
+},
+"CHI": {
+"value": 8.2,
+"date": "2023"
+},
+"CHL": {
+"value": 8.963,
+"date": "2023"
+},
+"CHN": {
+"value": 6.39,
+"date": "2023"
+},
+"COL": {
+"value": 13.475,
+"date": "2023"
+},
+"COM": {
+"value": 28.653,
+"date": "2023"
+},
+"COD": {
+"value": 41.305,
+"date": "2023"
+},
+"COG": {
+"value": 30.627,
+"date": "2023"
+},
+"CRI": {
+"value": 10.179,
+"date": "2023"
+},
+"CIV": {
+"value": 31.99,
+"date": "2023"
+},
+"HRV": {
+"value": 8.3,
+"date": "2023"
+},
+"CUB": {
+"value": 8.706,
+"date": "2023"
+},
+"CUW": {
+"value": 7.6,
+"date": "2023"
+},
+"CYP": {
+"value": 10.799,
+"date": "2023"
+},
+"CZE": {
+"value": 8.4,
+"date": "2023"
+},
+"DNK": {
+"value": 9.7,
+"date": "2023"
+},
+"DJI": {
+"value": 20.769,
+"date": "2023"
+},
+"DMA": {
+"value": 11.09,
+"date": "2023"
+},
+"DOM": {
+"value": 17.931,
+"date": "2023"
+},
+"ECU": {
+"value": 15.033,
+"date": "2023"
+},
+"EGY": {
+"value": 21.004,
+"date": "2023"
+},
+"SLV": {
+"value": 15.758,
+"date": "2023"
+},
+"GNQ": {
+"value": 29.604,
+"date": "2023"
+},
+"ERI": {
+"value": 28.544,
+"date": "2023"
+},
+"EST": {
+"value": 8,
+"date": "2023"
+},
+"SWZ": {
+"value": 24.073,
+"date": "2023"
+},
+"ETH": {
+"value": 31.903,
+"date": "2023"
+},
+"FRO": {
+"value": 10.6,
+"date": "2023"
+},
+"FJI": {
+"value": 17.996,
+"date": "2023"
+},
+"FIN": {
+"value": 7.8,
+"date": "2023"
+},
+"FRA": {
+"value": 9.9,
+"date": "2023"
+},
+"PYF": {
+"value": 10.907,
+"date": "2023"
+},
+"GAB": {
+"value": 27.666,
+"date": "2023"
+},
+"GMB": {
+"value": 30.429,
+"date": "2023"
+},
+"GEO": {
+"value": 11.494,
+"date": "2023"
+},
+"DEU": {
+"value": 8.3,
+"date": "2023"
+},
+"GHA": {
+"value": 26.31,
+"date": "2023"
+},
+"GIB": {
+"value": 12.07,
+"date": "2023"
+},
+"GRC": {
+"value": 6.8,
+"date": "2023"
+},
+"GRL": {
+"value": 12.6,
+"date": "2023"
+},
+"GRD": {
+"value": 11.711,
+"date": "2023"
+},
+"GUM": {
+"value": 17.662,
+"date": "2023"
+},
+"GTM": {
+"value": 20.809,
+"date": "2023"
+},
+"GIN": {
+"value": 33.848,
+"date": "2023"
+},
+"GNB": {
+"value": 30.037,
+"date": "2023"
+},
+"GUY": {
+"value": 20.287,
+"date": "2023"
+},
+"HTI": {
+"value": 22.2,
+"date": "2023"
+},
+"HND": {
+"value": 21.963,
+"date": "2023"
+},
+"HKG": {
+"value": 4.4,
+"date": "2023"
+},
+"HUN": {
+"value": 9.1,
+"date": "2023"
+},
+"ISL": {
+"value": 11.2,
+"date": "2023"
+},
+"IND": {
+"value": 16.146,
+"date": "2023"
+},
+"IDN": {
+"value": 15.941,
+"date": "2023"
+},
+"IRN": {
+"value": 12.951,
+"date": "2023"
+},
+"IRQ": {
+"value": 25.728,
+"date": "2023"
+},
+"IRL": {
+"value": 10.3,
+"date": "2023"
+},
+"IMN": {
+"value": 8.34,
+"date": "2023"
+},
+"ISR": {
+"value": 18.6,
+"date": "2023"
+},
+"ITA": {
+"value": 6.4,
+"date": "2023"
+},
+"JAM": {
+"value": 11.623,
+"date": "2023"
+},
+"JPN": {
+"value": 6,
+"date": "2023"
+},
+"JOR": {
+"value": 20.611,
+"date": "2023"
+},
+"KAZ": {
+"value": 20.138,
+"date": "2023"
+},
+"KEN": {
+"value": 27.106,
+"date": "2023"
+},
+"KIR": {
+"value": 25.813,
+"date": "2023"
+},
+"PRK": {
+"value": 12.947,
+"date": "2023"
+},
+"KOR": {
+"value": 4.5,
+"date": "2023"
+},
+"XKX": {
+"value": 12.067,
+"date": "2023"
+},
+"KWT": {
+"value": 10.3028486127809,
+"date": "2023"
+},
+"KGZ": {
+"value": 20.6,
+"date": "2023"
+},
+"LAO": {
+"value": 21.271,
+"date": "2023"
+},
+"LVA": {
+"value": 7.7,
+"date": "2023"
+},
+"LBN": {
+"value": 16.144,
+"date": "2023"
+},
+"LSO": {
+"value": 24.109,
+"date": "2023"
+},
+"LBR": {
+"value": 30.96,
+"date": "2023"
+},
+"LBY": {
+"value": 17.024,
+"date": "2023"
+},
+"LIE": {
+"value": 9.1,
+"date": "2023"
+},
+"LTU": {
+"value": 7.2,
+"date": "2023"
+},
+"LUX": {
+"value": 9.5,
+"date": "2023"
+},
+"MAC": {
+"value": 5.5,
+"date": "2023"
+},
+"MDG": {
+"value": 32.095,
+"date": "2023"
+},
+"MWI": {
+"value": 31.381,
+"date": "2023"
+},
+"MYS": {
+"value": 12.412,
+"date": "2023"
+},
+"MDV": {
+"value": 11.018,
+"date": "2023"
+},
+"MLI": {
+"value": 40.029,
+"date": "2023"
+},
+"MLT": {
+"value": 8.1,
+"date": "2023"
+},
+"MHL": {
+"value": 21.137,
+"date": "2023"
+},
+"MRT": {
+"value": 34.423,
+"date": "2023"
+},
+"MUS": {
+"value": 10.3,
+"date": "2023"
+},
+"MEX": {
+"value": 15.706,
+"date": "2023"
+},
+"FSM": {
+"value": 22.299,
+"date": "2023"
+},
+"MDA": {
+"value": 10.755,
+"date": "2023"
+},
+"MCO": {
+"value": 9.441,
+"date": "2023"
+},
+"MNG": {
+"value": 19,
+"date": "2023"
+},
+"MNE": {
+"value": 11.2,
+"date": "2023"
+},
+"MAR": {
+"value": 16.701,
+"date": "2023"
+},
+"MOZ": {
+"value": 37.486,
+"date": "2023"
+},
+"MMR": {
+"value": 16.696,
+"date": "2023"
+},
+"NAM": {
+"value": 25.89,
+"date": "2023"
+},
+"NRU": {
+"value": 25.505,
+"date": "2023"
+},
+"NPL": {
+"value": 19.34,
+"date": "2023"
+},
+"NLD": {
+"value": 9.2,
+"date": "2023"
+},
+"NCL": {
+"value": 14.262,
+"date": "2023"
+},
+"NZL": {
+"value": 10.95,
+"date": "2023"
+},
+"NIC": {
+"value": 19.376,
+"date": "2023"
+},
+"NER": {
+"value": 41.892,
+"date": "2023"
+},
+"NGA": {
+"value": 32.954,
+"date": "2023"
+},
+"MKD": {
+"value": 9.2,
+"date": "2023"
+},
+"MNP": {
+"value": 12.918,
+"date": "2023"
+},
+"NOR": {
+"value": 9.4,
+"date": "2023"
+},
+"OMN": {
+"value": 16.847,
+"date": "2023"
+},
+"PAK": {
+"value": 27.806,
+"date": "2023"
+},
+"PLW": {
+"value": 10.897,
+"date": "2023"
+},
+"PAN": {
+"value": 16.029,
+"date": "2023"
+},
+"PNG": {
+"value": 24.576,
+"date": "2023"
+},
+"PRY": {
+"value": 19.985,
+"date": "2023"
+},
+"PER": {
+"value": 15.944,
+"date": "2023"
+},
+"PHL": {
+"value": 16.019,
+"date": "2023"
+},
+"POL": {
+"value": 7.4,
+"date": "2023"
+},
+"PRT": {
+"value": 8.1,
+"date": "2023"
+},
+"PRI": {
+"value": 5.8,
+"date": "2023"
+},
+"QAT": {
+"value": 9.908,
+"date": "2023"
+},
+"ROU": {
+"value": 8.4,
+"date": "2023"
+},
+"RUS": {
+"value": 8.6,
+"date": "2023"
+},
+"RWA": {
+"value": 28.348,
+"date": "2023"
+},
+"WSM": {
+"value": 25.401,
+"date": "2023"
+},
+"SMR": {
+"value": 5.6,
+"date": "2023"
+},
+"STP": {
+"value": 28.185,
+"date": "2023"
+},
+"SAU": {
+"value": 16.415,
+"date": "2023"
+},
+"SEN": {
+"value": 29.423,
+"date": "2023"
+},
+"SRB": {
+"value": 9.2,
+"date": "2023"
+},
+"SYC": {
+"value": 13,
+"date": "2023"
+},
+"SLE": {
+"value": 30.601,
+"date": "2023"
+},
+"SGP": {
+"value": 7.4,
+"date": "2023"
+},
+"SXM": {
+"value": 9.126,
+"date": "2023"
+},
+"SVK": {
+"value": 9,
+"date": "2023"
+},
+"SVN": {
+"value": 8,
+"date": "2023"
+},
+"SLB": {
+"value": 26.935,
+"date": "2023"
+},
+"SOM": {
+"value": 42.964,
+"date": "2023"
+},
+"ZAF": {
+"value": 18.775,
+"date": "2023"
+},
+"SSD": {
+"value": 28.59,
+"date": "2023"
+},
+"ESP": {
+"value": 6.6,
+"date": "2023"
+},
+"LKA": {
+"value": 11.2,
+"date": "2023"
+},
+"KNA": {
+"value": 11.745,
+"date": "2023"
+},
+"LCA": {
+"value": 11.262,
+"date": "2023"
+},
+"MAF": {
+"value": 17.069,
+"date": "2023"
+},
+"VCT": {
+"value": 12.158,
+"date": "2023"
+},
+"SDN": {
+"value": 33.612,
+"date": "2023"
+},
+"SUR": {
+"value": 17.298,
+"date": "2023"
+},
+"SWE": {
+"value": 9.5,
+"date": "2023"
+},
+"CHE": {
+"value": 9,
+"date": "2023"
+},
+"SYR": {
+"value": 22.107,
+"date": "2023"
+},
+"TJK": {
+"value": 26.124,
+"date": "2023"
+},
+"TZA": {
+"value": 35.222,
+"date": "2023"
+},
+"THA": {
+"value": 8.245,
+"date": "2023"
+},
+"TLS": {
+"value": 22.077,
+"date": "2023"
+},
+"TGO": {
+"value": 32.643,
+"date": "2023"
+},
+"TON": {
+"value": 23.117,
+"date": "2023"
+},
+"TTO": {
+"value": 10.708,
+"date": "2023"
+},
+"TUN": {
+"value": 13.748,
+"date": "2023"
+},
+"TUR": {
+"value": 11.2,
+"date": "2023"
+},
+"TKM": {
+"value": 21.74,
+"date": "2023"
+},
+"TCA": {
+"value": 10.738,
+"date": "2023"
+},
+"TUV": {
+"value": 23.075,
+"date": "2023"
+},
+"UGA": {
+"value": 35.201,
+"date": "2023"
+},
+"UKR": {
+"value": 5.625,
+"date": "2023"
+},
+"ARE": {
+"value": 9.774,
+"date": "2023"
+},
+"GBR": {
+"value": 10.023,
+"date": "2023"
+},
+"USA": {
+"value": 10.7,
+"date": "2023"
+},
+"URY": {
+"value": 9.871,
+"date": "2023"
+},
+"UZB": {
+"value": 26.465,
+"date": "2023"
+},
+"VUT": {
+"value": 28.05,
+"date": "2023"
+},
+"VEN": {
+"value": 15.087,
+"date": "2023"
+},
+"VNM": {
+"value": 13.831,
+"date": "2023"
+},
+"VIR": {
+"value": 11.4,
+"date": "2023"
+},
+"PSE": {
+"value": 27.062,
+"date": "2023"
+},
+"YEM": {
+"value": 35.209,
+"date": "2023"
+},
+"ZMB": {
+"value": 33.081,
+"date": "2023"
+},
+"ZWE": {
+"value": 30.41,
+"date": "2023"
+}
+},
+"population": {
+"AFE": {
+"value": 750491370,
+"date": "2023"
+},
+"AFW": {
+"value": 508318102,
+"date": "2023"
+},
+"ARB": {
+"value": 482105978,
+"date": "2023"
+},
+"CSS": {
+"value": 4519904,
+"date": "2023"
+},
+"CEB": {
+"value": 100183707,
+"date": "2023"
+},
+"EAR": {
+"value": 3511607650,
+"date": "2023"
+},
+"EAS": {
+"value": 2384441485,
+"date": "2023"
+},
+"EAP": {
+"value": 2137527754,
+"date": "2023"
+},
+"TEA": {
+"value": 2111139152,
+"date": "2023"
+},
+"EMU": {
+"value": 356209318,
+"date": "2023"
+},
+"ECS": {
+"value": 924805070,
+"date": "2023"
+},
+"ECA": {
+"value": 248718948,
+"date": "2023"
+},
+"TEC": {
+"value": 458599775,
+"date": "2023"
+},
+"EUU": {
+"value": 448897545,
+"date": "2023"
+},
+"HPC": {
+"value": 916223767,
+"date": "2023"
+},
+"IBD": {
+"value": 4952209753,
+"date": "2023"
+},
+"IBT": {
+"value": 6857438587,
+"date": "2023"
+},
+"IDB": {
+"value": 664395892,
+"date": "2023"
+},
+"IDX": {
+"value": 1240832942,
+"date": "2023"
+},
+"IDA": {
+"value": 1905228834,
+"date": "2023"
+},
+"LTE": {
+"value": 2326294294,
+"date": "2023"
+},
+"LCN": {
+"value": 657616519,
+"date": "2023"
+},
+"LAC": {
+"value": 618190397,
+"date": "2023"
+},
+"TLA": {
+"value": 642397939,
+"date": "2023"
+},
+"LDC": {
+"value": 1159744187,
+"date": "2023"
+},
+"LMY": {
+"value": 6654784822,
+"date": "2023"
+},
+"MEA": {
+"value": 797801454,
+"date": "2023"
+},
+"MNA": {
+"value": 729077445,
+"date": "2023"
+},
+"TMN": {
+"value": 723911670,
+"date": "2023"
+},
+"MIC": {
+"value": 5927622764,
+"date": "2023"
+},
+"NAC": {
+"value": 376868838,
+"date": "2023"
+},
+"OED": {
+"value": 1387846131,
+"date": "2023"
+},
+"OSS": {
+"value": 12822134,
+"date": "2023"
+},
+"PSS": {
+"value": 2689224,
+"date": "2023"
+},
+"PST": {
+"value": 1121263972,
+"date": "2023"
+},
+"PRE": {
+"value": 1077143557,
+"date": "2023"
+},
+"SST": {
+"value": 20031262,
+"date": "2023"
+},
+"SAS": {
+"value": 1662580579,
+"date": "2023"
+},
+"TSA": {
+"value": 1662580579,
+"date": "2023"
+},
+"SSF": {
+"value": 1258809472,
+"date": "2023"
+},
+"SSA": {
+"value": 1258689699,
+"date": "2023"
+},
+"TSS": {
+"value": 1258809472,
+"date": "2023"
+},
+"WLD": {
+"value": 8062923417,
+"date": "2023"
+},
+"AFG": {
+"value": 41454761,
+"date": "2023"
+},
+"ALB": {
+"value": 2411658,
+"date": "2023"
+},
+"DZA": {
+"value": 46164219,
+"date": "2023"
+},
+"ASM": {
+"value": 47521,
+"date": "2023"
+},
+"AND": {
+"value": 80856,
+"date": "2023"
+},
+"AGO": {
+"value": 36749906,
+"date": "2023"
+},
+"ATG": {
+"value": 93316,
+"date": "2023"
+},
+"ARG": {
+"value": 45538401,
+"date": "2023"
+},
+"ARM": {
+"value": 2964300,
+"date": "2023"
+},
+"ABW": {
+"value": 107359,
+"date": "2023"
+},
+"AUS": {
+"value": 26659922,
+"date": "2023"
+},
+"AUT": {
+"value": 9131761,
+"date": "2023"
+},
+"AZE": {
+"value": 10153958,
+"date": "2023"
+},
+"BHS": {
+"value": 399440,
+"date": "2023"
+},
+"BHR": {
+"value": 1577059,
+"date": "2023"
+},
+"BGD": {
+"value": 171466990,
+"date": "2023"
+},
+"BRB": {
+"value": 282336,
+"date": "2023"
+},
+"BLR": {
+"value": 9178298,
+"date": "2023"
+},
+"BEL": {
+"value": 11779946,
+"date": "2023"
+},
+"BLZ": {
+"value": 411106,
+"date": "2023"
+},
+"BEN": {
+"value": 14111034,
+"date": "2023"
+},
+"BMU": {
+"value": 64698,
+"date": "2023"
+},
+"BTN": {
+"value": 786385,
+"date": "2023"
+},
+"BOL": {
+"value": 12244159,
+"date": "2023"
+},
+"BIH": {
+"value": 3185073,
+"date": "2023"
+},
+"BWA": {
+"value": 2480244,
+"date": "2023"
+},
+"BRA": {
+"value": 211140729,
+"date": "2023"
+},
+"VGB": {
+"value": 38985,
+"date": "2023"
+},
+"BRN": {
+"value": 458949,
+"date": "2023"
+},
+"BGR": {
+"value": 6446596,
+"date": "2023"
+},
+"BFA": {
+"value": 23025776,
+"date": "2023"
+},
+"BDI": {
+"value": 13689450,
+"date": "2023"
+},
+"CPV": {
+"value": 522331,
+"date": "2023"
+},
+"KHM": {
+"value": 17423880,
+"date": "2023"
+},
+"CMR": {
+"value": 28372687,
+"date": "2023"
+},
+"CAN": {
+"value": 40049088,
+"date": "2023"
+},
+"CYM": {
+"value": 73038,
+"date": "2023"
+},
+"CAF": {
+"value": 5152421,
+"date": "2023"
+},
+"TCD": {
+"value": 19319064,
+"date": "2023"
+},
+"CHI": {
+"value": 167691,
+"date": "2023"
+},
+"CHL": {
+"value": 19658835,
+"date": "2023"
+},
+"CHN": {
+"value": 1410710000,
+"date": "2023"
+},
+"COL": {
+"value": 52321152,
+"date": "2023"
+},
+"COM": {
+"value": 850387,
+"date": "2023"
+},
+"COD": {
+"value": 105789731,
+"date": "2023"
+},
+"COG": {
+"value": 6182885,
+"date": "2023"
+},
+"CRI": {
+"value": 5105525,
+"date": "2023"
+},
+"CIV": {
+"value": 31165654,
+"date": "2023"
+},
+"HRV": {
+"value": 3859686,
+"date": "2023"
+},
+"CUB": {
+"value": 11019931,
+"date": "2023"
+},
+"CUW": {
+"value": 154654,
+"date": "2023"
+},
+"CYP": {
+"value": 1344976,
+"date": "2023"
+},
+"CZE": {
+"value": 10864042,
+"date": "2023"
+},
+"DNK": {
+"value": 5946952,
+"date": "2023"
+},
+"DJI": {
+"value": 1152944,
+"date": "2023"
+},
+"DMA": {
+"value": 66510,
+"date": "2023"
+},
+"DOM": {
+"value": 11331265,
+"date": "2023"
+},
+"ECU": {
+"value": 17980083,
+"date": "2023"
+},
+"EGY": {
+"value": 114535772,
+"date": "2023"
+},
+"SLV": {
+"value": 6309624,
+"date": "2023"
+},
+"GNQ": {
+"value": 1847549,
+"date": "2023"
+},
+"ERI": {
+"value": 3470390,
+"date": "2023"
+},
+"EST": {
+"value": 1370286,
+"date": "2023"
+},
+"SWZ": {
+"value": 1230506,
+"date": "2023"
+},
+"ETH": {
+"value": 128691692,
+"date": "2023"
+},
+"FRO": {
+"value": 54398,
+"date": "2023"
+},
+"FJI": {
+"value": 924145,
+"date": "2023"
+},
+"FIN": {
+"value": 5583911,
+"date": "2023"
+},
+"FRA": {
+"value": 68372286,
+"date": "2023"
+},
+"PYF": {
+"value": 281118,
+"date": "2023"
+},
+"GAB": {
+"value": 2484789,
+"date": "2023"
+},
+"GMB": {
+"value": 2697845,
+"date": "2023"
+},
+"GEO": {
+"value": 3715483,
+"date": "2023"
+},
+"DEU": {
+"value": 83287273,
+"date": "2023"
+},
+"GHA": {
+"value": 33787914,
+"date": "2023"
+},
+"GIB": {
+"value": 38471,
+"date": "2023"
+},
+"GRC": {
+"value": 10407351,
+"date": "2023"
+},
+"GRL": {
+"value": 56865,
+"date": "2023"
+},
+"GRD": {
+"value": 117081,
+"date": "2023"
+},
+"GUM": {
+"value": 166506,
+"date": "2023"
+},
+"GTM": {
+"value": 18124838,
+"date": "2023"
+},
+"GIN": {
+"value": 14405468,
+"date": "2023"
+},
+"GNB": {
+"value": 2153339,
+"date": "2023"
+},
+"GUY": {
+"value": 826353,
+"date": "2023"
+},
+"HTI": {
+"value": 11637398,
+"date": "2023"
+},
+"HND": {
+"value": 10644851,
+"date": "2023"
+},
+"HKG": {
+"value": 7536100,
+"date": "2023"
+},
+"HUN": {
+"value": 9592186,
+"date": "2023"
+},
+"ISL": {
+"value": 385663,
+"date": "2023"
+},
+"IND": {
+"value": 1438069596,
+"date": "2023"
+},
+"IDN": {
+"value": 281190067,
+"date": "2023"
+},
+"IRN": {
+"value": 90608707,
+"date": "2023"
+},
+"IRQ": {
+"value": 45074049,
+"date": "2023"
+},
+"IRL": {
+"value": 5311538,
+"date": "2023"
+},
+"IMN": {
+"value": 84165,
+"date": "2023"
+},
+"ISR": {
+"value": 9849000,
+"date": "2023"
+},
+"ITA": {
+"value": 58984216,
+"date": "2023"
+},
+"JAM": {
+"value": 2839786,
+"date": "2023"
+},
+"JPN": {
+"value": 124516650,
+"date": "2023"
+},
+"JOR": {
+"value": 11439213,
+"date": "2023"
+},
+"KAZ": {
+"value": 20330104,
+"date": "2023"
+},
+"KEN": {
+"value": 55339003,
+"date": "2023"
+},
+"KIR": {
+"value": 132530,
+"date": "2023"
+},
+"PRK": {
+"value": 26418204,
+"date": "2023"
+},
+"KOR": {
+"value": 51712619,
+"date": "2023"
+},
+"XKX": {
+"value": 1682668,
+"date": "2023"
+},
+"KWT": {
+"value": 4853420,
+"date": "2023"
+},
+"KGZ": {
+"value": 7099750,
+"date": "2023"
+},
+"LAO": {
+"value": 7664993,
+"date": "2023"
+},
+"LVA": {
+"value": 1883710,
+"date": "2023"
+},
+"LBN": {
+"value": 5773493,
+"date": "2023"
+},
+"LSO": {
+"value": 2311472,
+"date": "2023"
+},
+"LBR": {
+"value": 5493031,
+"date": "2023"
+},
+"LBY": {
+"value": 7305659,
+"date": "2023"
+},
+"LIE": {
+"value": 39846,
+"date": "2023"
+},
+"LTU": {
+"value": 2871585,
+"date": "2023"
+},
+"LUX": {
+"value": 666430,
+"date": "2023"
+},
+"MAC": {
+"value": 678800,
+"date": "2023"
+},
+"MDG": {
+"value": 31195932,
+"date": "2023"
+},
+"MWI": {
+"value": 21104482,
+"date": "2023"
+},
+"MYS": {
+"value": 35126298,
+"date": "2023"
+},
+"MDV": {
+"value": 525994,
+"date": "2023"
+},
+"MLI": {
+"value": 23769127,
+"date": "2023"
+},
+"MLT": {
+"value": 552747,
+"date": "2023"
+},
+"MHL": {
+"value": 38827,
+"date": "2023"
+},
+"MRT": {
+"value": 5022441,
+"date": "2023"
+},
+"MUS": {
+"value": 1248647,
+"date": "2023"
+},
+"MEX": {
+"value": 129739759,
+"date": "2023"
+},
+"FSM": {
+"value": 112630,
+"date": "2023"
+},
+"MDA": {
+"value": 2457783,
+"date": "2023"
+},
+"MCO": {
+"value": 38956,
+"date": "2023"
+},
+"MNG": {
+"value": 3481145,
+"date": "2023"
+},
+"MNE": {
+"value": 623529,
+"date": "2023"
+},
+"MAR": {
+"value": 37712505,
+"date": "2023"
+},
+"MOZ": {
+"value": 33635160,
+"date": "2023"
+},
+"MMR": {
+"value": 54133798,
+"date": "2023"
+},
+"NAM": {
+"value": 2963095,
+"date": "2023"
+},
+"NRU": {
+"value": 11875,
+"date": "2023"
+},
+"NPL": {
+"value": 29694614,
+"date": "2023"
+},
+"NLD": {
+"value": 17877117,
+"date": "2023"
+},
+"NCL": {
+"value": 289870,
+"date": "2023"
+},
+"NZL": {
+"value": 5200000,
+"date": "2023"
+},
+"NIC": {
+"value": 6823613,
+"date": "2023"
+},
+"NER": {
+"value": 26159867,
+"date": "2023"
+},
+"NGA": {
+"value": 227882945,
+"date": "2023"
+},
+"MKD": {
+"value": 1827816,
+"date": "2023"
+},
+"MNP": {
+"value": 45143,
+"date": "2023"
+},
+"NOR": {
+"value": 5519601,
+"date": "2023"
+},
+"OMN": {
+"value": 5049269,
+"date": "2023"
+},
+"PAK": {
+"value": 247504495,
+"date": "2023"
+},
+"PLW": {
+"value": 17727,
+"date": "2023"
+},
+"PAN": {
+"value": 4458759,
+"date": "2023"
+},
+"PNG": {
+"value": 10389635,
+"date": "2023"
+},
+"PRY": {
+"value": 6844146,
+"date": "2023"
+},
+"PER": {
+"value": 33845617,
+"date": "2023"
+},
+"PHL": {
+"value": 114891199,
+"date": "2023"
+},
+"POL": {
+"value": 36687353,
+"date": "2023"
+},
+"PRT": {
+"value": 10578174,
+"date": "2023"
+},
+"PRI": {
+"value": 3203794,
+"date": "2023"
+},
+"QAT": {
+"value": 2656032,
+"date": "2023"
+},
+"ROU": {
+"value": 19061062,
+"date": "2023"
+},
+"RUS": {
+"value": 143826130,
+"date": "2023"
+},
+"RWA": {
+"value": 13954471,
+"date": "2023"
+},
+"WSM": {
+"value": 216663,
+"date": "2023"
+},
+"SMR": {
+"value": 33860,
+"date": "2023"
+},
+"STP": {
+"value": 230871,
+"date": "2023"
+},
+"SAU": {
+"value": 33702731,
+"date": "2023"
+},
+"SEN": {
+"value": 18077573,
+"date": "2023"
+},
+"SRB": {
+"value": 6623183,
+"date": "2023"
+},
+"SYC": {
+"value": 119773,
+"date": "2023"
+},
+"SLE": {
+"value": 8460512,
+"date": "2023"
+},
+"SGP": {
+"value": 5917648,
+"date": "2023"
+},
+"SXM": {
+"value": 42749,
+"date": "2023"
+},
+"SVK": {
+"value": 5426740,
+"date": "2023"
+},
+"SVN": {
+"value": 2120461,
+"date": "2023"
+},
+"SLB": {
+"value": 800005,
+"date": "2023"
+},
+"SOM": {
+"value": 18358615,
+"date": "2023"
+},
+"ZAF": {
+"value": 63212384,
+"date": "2023"
+},
+"SSD": {
+"value": 11483374,
+"date": "2023"
+},
+"ESP": {
+"value": 48352528,
+"date": "2023"
+},
+"LKA": {
+"value": 22037000,
+"date": "2023"
+},
+"KNA": {
+"value": 46758,
+"date": "2023"
+},
+"LCA": {
+"value": 179285,
+"date": "2023"
+},
+"MAF": {
+"value": 27515,
+"date": "2023"
+},
+"VCT": {
+"value": 101323,
+"date": "2023"
+},
+"SDN": {
+"value": 50042791,
+"date": "2023"
+},
+"SUR": {
+"value": 628886,
+"date": "2023"
+},
+"SWE": {
+"value": 10536632,
+"date": "2023"
+},
+"CHE": {
+"value": 8888822,
+"date": "2023"
+},
+"SYR": {
+"value": 23594623,
+"date": "2023"
+},
+"TJK": {
+"value": 10389799,
+"date": "2023"
+},
+"TZA": {
+"value": 66617606,
+"date": "2023"
+},
+"THA": {
+"value": 71702435,
+"date": "2023"
+},
+"TLS": {
+"value": 1384286,
+"date": "2023"
+},
+"TGO": {
+"value": 8223850,
+"date": "2023"
+},
+"TON": {
+"value": 104597,
+"date": "2023"
+},
+"TTO": {
+"value": 1367510,
+"date": "2023"
+},
+"TUN": {
+"value": 12200431,
+"date": "2023"
+},
+"TUR": {
+"value": 85325965,
+"date": "2023"
+},
+"TKM": {
+"value": 7364438,
+"date": "2023"
+},
+"TCA": {
+"value": 46198,
+"date": "2023"
+},
+"TUV": {
+"value": 9816,
+"date": "2023"
+},
+"UGA": {
+"value": 48656601,
+"date": "2023"
+},
+"UKR": {
+"value": 37732836,
+"date": "2023"
+},
+"ARE": {
+"value": 10483751,
+"date": "2023"
+},
+"GBR": {
+"value": 68526000,
+"date": "2023"
+},
+"USA": {
+"value": 336755052,
+"date": "2023"
+},
+"URY": {
+"value": 3388081,
+"date": "2023"
+},
+"UZB": {
+"value": 35652307,
+"date": "2023"
+},
+"VUT": {
+"value": 320409,
+"date": "2023"
+},
+"VEN": {
+"value": 28300854,
+"date": "2023"
+},
+"VNM": {
+"value": 100352192,
+"date": "2023"
+},
+"VIR": {
+"value": 104917,
+"date": "2023"
+},
+"PSE": {
+"value": 5165775,
+"date": "2023"
+},
+"YEM": {
+"value": 39390799,
+"date": "2023"
+},
+"ZMB": {
+"value": 20723965,
+"date": "2023"
+},
+"ZWE": {
+"value": 16340822,
+"date": "2023"
+}
+}
+}

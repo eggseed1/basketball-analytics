@@ -1,0 +1,950 @@
+{
+ "checkedAt": "2026-10-08",
+ "results": [
+  {
+   "id": "aba",
+   "url": "https://www.aba-liga.com/",
+   "finalUrl": "https://www.aba-liga.com/",
+   "status": 200,
+   "title": "Home : ABA League",
+   "ogSiteName": "ABA Liga",
+   "ogTitle": "Home : ABA League",
+   "seasonStrings": [
+    "2026-09"
+   ]
+  },
+  {
+   "id": "acb",
+   "url": "https://www.acb.com/es/liga",
+   "finalUrl": "https://acb.com/es/liga",
+   "status": 200,
+   "title": "Liga Endesa | acb.com",
+   "ogSiteName": "acb.com",
+   "ogTitle": "Liga Endesa",
+   "seasonStrings": [
+    "2026-27"
+   ]
+  },
+  {
+   "id": "bal",
+   "url": "https://thebal.com/",
+   "finalUrl": "https://bal.nba.com/",
+   "status": 200,
+   "title": "TheBAL.com | The Offic… - Basketball Africa League - The BAL",
+   "ogSiteName": "The BAL",
+   "ogTitle": "TheBAL.com | The Official Site of the Basketball Africa League",
+   "seasonStrings": [
+    "2026/05",
+    "2022/02",
+    "2026/09",
+    "2026/04",
+    "2026/06",
+    "2021-2026"
+   ]
+  },
+  {
+   "id": "basketligaen-dk",
+   "url": "https://basketligaen.dk/",
+   "finalUrl": "https://www.basketligaen.dk/",
+   "status": 200,
+   "title": "Basketligaen Danmark",
+   "ogSiteName": null,
+   "ogTitle": null,
+   "seasonStrings": [
+    "2026-08",
+    "2026-07",
+    "2026-06",
+    "2026-09",
+    "2021-02",
+    "2023-02"
+   ]
+  },
+  {
+   "id": "basketligan-se",
+   "url": "https://www.basketligan.se/",
+   "status": 0,
+   "error": "TypeError: fetch failed"
+  },
+  {
+   "id": "bbl",
+   "url": "https://www.easycredit-bbl.de/",
+   "finalUrl": "https://www.easycredit-bbl.de/",
+   "status": 200,
+   "title": "easyCredit BBL - Die offizielle Seite",
+   "ogSiteName": null,
+   "ogTitle": null,
+   "seasonStrings": [
+    "2021/07",
+    "2023/07",
+    "2021/08",
+    "2026/09",
+    "2023/12",
+    "2026/07"
+   ]
+  },
+  {
+   "id": "bcl",
+   "url": "https://www.championsleague.basketball/",
+   "finalUrl": "https://www.championsleague.basketball/en",
+   "status": 200,
+   "title": "Basketball Champions League Powered by Ameresco SUNEL Official Website | FIBA Basketball",
+   "ogSiteName": null,
+   "ogTitle": "Basketball Champions League Powered by Ameresco SUNEL Official Website | FIBA Basketball",
+   "seasonStrings": [
+    "2020-06",
+    "2026-10",
+    "2026-12",
+    "2027-05"
+   ]
+  },
+  {
+   "id": "bcl-americas",
+   "url": "https://www.fiba.basketball/en/events/basketball-champions-league-americas-2026",
+   "finalUrl": "https://www.fiba.basketball/en/events/basketball-champions-league-americas-2026",
+   "status": 200,
+   "title": "Page Not Found | FIBA Basketball",
+   "ogSiteName": null,
+   "ogTitle": null,
+   "seasonStrings": [
+    "2020-06",
+    "2026-10",
+    "2024-09",
+    "2026-04",
+    "2024-12",
+    "2024-05"
+   ]
+  },
+  {
+   "id": "bfi",
+   "url": "https://www.basketballfederationindia.org/",
+   "finalUrl": "https://www.basketballfederationindia.org/",
+   "status": 200,
+   "title": "BFI - Basketball Federation of India",
+   "ogSiteName": "Basketball Federation of India",
+   "ogTitle": "Home - Basketball Federation of India",
+   "seasonStrings": [
+    "2023-11",
+    "2023/12",
+    "2024/09",
+    "2026/09",
+    "2025/10",
+    "2025/06"
+   ]
+  },
+  {
+   "id": "bleague",
+   "url": "https://www.bleague.jp/en/",
+   "finalUrl": "https://www.bleague.jp/en/",
+   "status": 200,
+   "title": "B.LEAGUE Official Website",
+   "ogSiteName": "B.LEAGUE Official Website",
+   "ogTitle": "B.LEAGUE Official Website",
+   "seasonStrings": [
+    "2026-27",
+    "2026/10"
+   ]
+  },
+  {
+   "id": "bnxt",
+   "url": "https://bnxtleague.com/",
+   "finalUrl": "https://bnxtleague.com/",
+   "status": 200,
+   "title": "BNXT League",
+   "ogSiteName": null,
+   "ogTitle": null,
+   "seasonStrings": []
+  },
+  {
+   "id": "bsa-za",
+   "url": "https://www.basketballsa.co.za/",
+   "status": 0,
+   "error": "TypeError: fetch failed"
+  },
+  {
+   "id": "bsl",
+   "url": "https://www.tbf.org.tr/",
+   "finalUrl": "https://www.tbf.org.tr/",
+   "status": 403,
+   "title": null,
+   "ogSiteName": null,
+   "ogTitle": null,
+   "seasonStrings": []
+  },
+  {
+   "id": "bsn-pr",
+   "url": "https://www.bsnpr.com/",
+   "finalUrl": "https://www.bsnpr.com/",
+   "status": 200,
+   "title": "BSN – Baloncesto Superior Nacional | Juegos, Resultados y Stats",
+   "ogSiteName": "BSN – Baloncesto Superior Nacional",
+   "ogTitle": "BSN – Baloncesto Superior Nacional | Juegos, Resultados y Stats",
+   "seasonStrings": [
+    "2026/09",
+    "2026/04",
+    "2026/08",
+    "2026/10",
+    "2026-08"
+   ]
+  },
+  {
+   "id": "bwb",
+   "url": "https://bwb.nba.com/",
+   "finalUrl": "https://bwb.nba.com/",
+   "status": 200,
+   "title": null,
+   "ogSiteName": null,
+   "ogTitle": "Homepage -",
+   "seasonStrings": [
+    "2024/07",
+    "2023/02",
+    "2022/11",
+    "2022/12",
+    "2025-26",
+    "2023/10"
+   ]
+  },
+  {
+   "id": "cba",
+   "url": "https://www.cbaleague.com/",
+   "finalUrl": "https://www.cbaleague.com/",
+   "status": 200,
+   "title": "CBA官方网站",
+   "ogSiteName": null,
+   "ogTitle": null,
+   "seasonStrings": []
+  },
+  {
+   "id": "cebl",
+   "url": "https://www.cebl.ca/",
+   "finalUrl": "https://www.cebl.ca/",
+   "status": 200,
+   "title": "CEBL - Canadian Elite Basketball League - Official Site",
+   "ogSiteName": null,
+   "ogTitle": "CEBL - Canadian Elite Basketball League - Official Site",
+   "seasonStrings": [
+    "2026-10"
+   ]
+  },
+  {
+   "id": "ebf-eg",
+   "url": "https://www.egyptianbasketball.net/",
+   "status": 0,
+   "error": "TypeError: fetch failed"
+  },
+  {
+   "id": "eurocup",
+   "url": "https://www.euroleaguebasketball.net/eurocup/",
+   "finalUrl": "https://www.euroleaguebasketball.net/eurocup/",
+   "status": 429,
+   "title": null,
+   "ogSiteName": null,
+   "ogTitle": null,
+   "seasonStrings": []
+  },
+  {
+   "id": "euroleague",
+   "url": "https://www.euroleaguebasketball.net/euroleague/",
+   "finalUrl": "https://www.euroleaguebasketball.net/euroleague/",
+   "status": 429,
+   "title": null,
+   "ogSiteName": null,
+   "ogTitle": null,
+   "seasonStrings": []
+  },
+  {
+   "id": "fab-ao",
+   "url": "https://www.fabasquetebol.ao/",
+   "status": 0,
+   "error": "TypeError: fetch failed"
+  },
+  {
+   "id": "feb-primera",
+   "url": "https://www.feb.es/",
+   "finalUrl": "https://www.feb.es/inicio.aspx",
+   "status": 200,
+   "title": "Federaci&oacute;n Española de Baloncesto",
+   "ogSiteName": "FEB",
+   "ogTitle": null,
+   "seasonStrings": [
+    "2026/10",
+    "2026/27"
+   ]
+  },
+  {
+   "id": "ferwaba-rw",
+   "url": "https://ferwaba.rw/",
+   "status": 0,
+   "error": "TypeError: fetch failed"
+  },
+  {
+   "id": "fpb-pt",
+   "url": "https://www.fpb.pt/",
+   "finalUrl": "https://www.fpb.pt/",
+   "status": 200,
+   "title": "Federação Portuguesa de Basquetebol",
+   "ogSiteName": "FPB",
+   "ogTitle": "Toda a informação sobre o Basquetebol em Portugal",
+   "seasonStrings": [
+    "2024-05",
+    "2020/07",
+    "2019-02",
+    "2020/04",
+    "2021/09",
+    "2026/10"
+   ]
+  },
+  {
+   "id": "frmbb-ma",
+   "url": "https://frmbb.ma/",
+   "finalUrl": "https://frmbb.ma/",
+   "status": 200,
+   "title": "Fédération Royale Marocaine de BasketBall - FRMBB.MA",
+   "ogSiteName": null,
+   "ogTitle": null,
+   "seasonStrings": [
+    "2018/09",
+    "2026-2027",
+    "2025-2026",
+    "2024-2025",
+    "2023-2024",
+    "2022-2023"
+   ]
+  },
+  {
+   "id": "fsbb-sn",
+   "url": "https://www.fsbb.sn/",
+   "status": 0,
+   "error": "TypeError: fetch failed"
+  },
+  {
+   "id": "ftbb-tn",
+   "url": "https://www.ftbb.org.tn/",
+   "finalUrl": "https://www.ftbb.org.tn/",
+   "status": 200,
+   "title": "FTBB &#8211; FÉDÉRATION TUNISIENNE DE BASKET BALL",
+   "ogSiteName": null,
+   "ogTitle": null,
+   "seasonStrings": [
+    "2025/10",
+    "2025-2026",
+    "2026-2027",
+    "2026/10",
+    "2026/08",
+    "2026/09"
+   ]
+  },
+  {
+   "id": "g-league",
+   "url": "https://gleague.nba.com/",
+   "finalUrl": "https://gleague.nba.com/",
+   "status": 200,
+   "title": "The official site of the NBA G League",
+   "ogSiteName": "The NBA G League",
+   "ogTitle": "The official site of the NBA G League",
+   "seasonStrings": [
+    "2026-09",
+    "2026/04",
+    "2025/12",
+    "2026/05",
+    "2026/03",
+    "2024/06"
+   ]
+  },
+  {
+   "id": "gbf-ge",
+   "url": "https://gbf.ge/",
+   "status": 0,
+   "error": "TypeError: fetch failed"
+  },
+  {
+   "id": "gbl",
+   "url": "https://www.esake.gr/en",
+   "finalUrl": "https://www.esake.gr/en",
+   "status": 200,
+   "title": "",
+   "ogSiteName": null,
+   "ogTitle": null,
+   "seasonStrings": [
+    "2025-26",
+    "2026-2027"
+   ]
+  },
+  {
+   "id": "hks-hr",
+   "url": "https://hks-cbf.hr/",
+   "finalUrl": "https://www.hks-cbf.hr/",
+   "status": 200,
+   "title": "Početna - Hrvatski košarkaški savez",
+   "ogSiteName": "Hrvatski košarkaški savez",
+   "ogTitle": "Početna - Hrvatski košarkaški savez",
+   "seasonStrings": [
+    "2023/08",
+    "2019/07",
+    "2026-09",
+    "2024/05",
+    "2026/09",
+    "2026-10"
+   ]
+  },
+  {
+   "id": "ibl-id",
+   "url": "https://iblindonesia.com/",
+   "finalUrl": "https://iblindonesia.com/",
+   "status": 200,
+   "title": "IBL - Liga Kita",
+   "ogSiteName": null,
+   "ogTitle": "IBL - Liga Kita",
+   "seasonStrings": [
+    "2022-2026"
+   ]
+  },
+  {
+   "id": "kbf-ke",
+   "url": "https://kenyabasketball.org/",
+   "status": 0,
+   "error": "TypeError: fetch failed"
+  },
+  {
+   "id": "kbl",
+   "url": "https://kbl.or.kr/",
+   "finalUrl": "https://kbl.or.kr/",
+   "status": 200,
+   "title": "KBL 공식 홈페이지",
+   "ogSiteName": null,
+   "ogTitle": null,
+   "seasonStrings": []
+  },
+  {
+   "id": "kls",
+   "url": "https://kls.rs/",
+   "finalUrl": "https://kls.rs/",
+   "status": 200,
+   "title": "KLS - Meridianbet KLS",
+   "ogSiteName": "Meridianbet KLS",
+   "ogTitle": "KLS - Meridianbet KLS",
+   "seasonStrings": [
+    "2026-10",
+    "2025/08",
+    "2024-05",
+    "2021/09",
+    "2026-27",
+    "2026/05"
+   ]
+  },
+  {
+   "id": "korisliiga-fi",
+   "url": "https://www.korisliiga.fi/",
+   "finalUrl": "https://basket.fi/sarjat/sarjat/korisliiga/",
+   "status": 200,
+   "title": "Korisliiga - Basket.fi",
+   "ogSiteName": "Basket.fi",
+   "ogTitle": "Korisliiga - Basket.fi",
+   "seasonStrings": [
+    "2026-10",
+    "2026/06",
+    "2026-01",
+    "2026–2027",
+    "2026/01",
+    "2026/10"
+   ]
+  },
+  {
+   "id": "ksbih-ba",
+   "url": "https://kosarkabih.ba/",
+   "status": 0,
+   "error": "TypeError: fetch failed"
+  },
+  {
+   "id": "ksm-me",
+   "url": "https://kscg.me/",
+   "finalUrl": "https://kscg.me/",
+   "status": 200,
+   "title": "KSCG - Basketball Federation of Montenegro",
+   "ogSiteName": null,
+   "ogTitle": null,
+   "seasonStrings": []
+  },
+  {
+   "id": "kzs-si",
+   "url": "https://www.kzs.si/",
+   "finalUrl": "https://www.kzs.si/",
+   "status": 200,
+   "title": "Košarkarska zveza Slovenije",
+   "ogSiteName": "KZS",
+   "ogTitle": "Košarkarska zveza Slovenije",
+   "seasonStrings": []
+  },
+  {
+   "id": "lba",
+   "url": "https://www.legabasket.it/",
+   "finalUrl": "https://www.legabasket.it/",
+   "status": 200,
+   "title": "Lega Basket Serie A: Campionato nazionale pallacanestro | LBA",
+   "ogSiteName": null,
+   "ogTitle": "Lega Basket Serie A: Campionato nazionale pallacanestro | LBA",
+   "seasonStrings": [
+    "2026/27",
+    "2026-05",
+    "2021-09",
+    "2023-10",
+    "2026-10",
+    "2026-09"
+   ]
+  },
+  {
+   "id": "lebl",
+   "url": "https://basket.lv/",
+   "status": 0,
+   "error": "TypeError: fetch failed"
+  },
+  {
+   "id": "liga-nacional-ar",
+   "url": "https://www.laliganacional.com.ar/laliga/",
+   "finalUrl": "https://www.laliganacional.com.ar/laliga/",
+   "status": 200,
+   "title": "La Liga Nacional de B&#xE1;squetbol",
+   "ogSiteName": "La Liga Nacional de Básquetbol",
+   "ogTitle": "La Liga Nacional de B&#xE1;squetbol",
+   "seasonStrings": [
+    "2003/2016"
+   ]
+  },
+  {
+   "id": "liga-proximo-ar",
+   "url": "https://www.laliganacional.com.ar/ligaproximo",
+   "finalUrl": "https://www.laliganacional.com.ar/ligaproximo",
+   "status": 200,
+   "title": "Liga Desarrollo de B&#xE1;squetbol",
+   "ogSiteName": "La Liga Nacional de Básquetbol",
+   "ogTitle": "Liga Desarrollo de B&#xE1;squetbol",
+   "seasonStrings": [
+    "2003/2016"
+   ]
+  },
+  {
+   "id": "lkl",
+   "url": "https://lkl.lt/",
+   "finalUrl": "https://lkl.lt/",
+   "status": 200,
+   "title": "LKL - LKL.LT",
+   "ogSiteName": null,
+   "ogTitle": null,
+   "seasonStrings": [
+    "2026-10"
+   ]
+  },
+  {
+   "id": "lnb-cl",
+   "url": "https://www.lnbchile.cl/",
+   "status": 0,
+   "error": "TypeError: fetch failed"
+  },
+  {
+   "id": "lnb-do",
+   "url": "https://lnb.com.do/",
+   "status": 0,
+   "error": "AbortError: This operation was aborted"
+  },
+  {
+   "id": "lnb-elite",
+   "url": "https://lnb.fr/fr",
+   "finalUrl": "https://lnb.fr/fr",
+   "status": 200,
+   "title": "LNB – Betclic Élite, Élite 2, résultats et actualités",
+   "ogSiteName": null,
+   "ogTitle": "LNB – Betclic Élite, Élite 2, résultats et actualités",
+   "seasonStrings": [
+    "2026/2027",
+    "2026-05",
+    "2026-01",
+    "2027-06",
+    "2026-07",
+    "2026-10"
+   ]
+  },
+  {
+   "id": "lnb-elite2",
+   "url": "https://lnb.fr/fr/elite-2",
+   "finalUrl": "https://lnb.fr/fr/elite-2",
+   "status": 200,
+   "title": "Page Not Found",
+   "ogSiteName": null,
+   "ogTitle": null,
+   "seasonStrings": []
+  },
+  {
+   "id": "lnbp",
+   "url": "https://www.lnbp.mx/",
+   "finalUrl": "https://www.lnbp.mx/",
+   "status": 403,
+   "title": null,
+   "ogSiteName": null,
+   "ogTitle": null,
+   "seasonStrings": []
+  },
+  {
+   "id": "lnp-a2",
+   "url": "https://www.legapallacanestro.com/",
+   "finalUrl": "https://www.legapallacanestro.com/",
+   "status": 200,
+   "title": "Lega Nazionale Pallacanestro",
+   "ogSiteName": "Lega Nazionale Pallacanestro",
+   "ogTitle": "Lega Nazionale Pallacanestro",
+   "seasonStrings": [
+    "2026-2027",
+    "2026/27",
+    "2026-27",
+    "2023-11",
+    "2026/2027",
+    "2026-10"
+   ]
+  },
+  {
+   "id": "lub-uy",
+   "url": "https://www.fubb.org.uy/",
+   "finalUrl": "https://www.fubb.org.uy/",
+   "status": 200,
+   "title": "Federación Uruguaya de Basketball",
+   "ogSiteName": "Federación Uruguaya de Basketball",
+   "ogTitle": "Federación Uruguaya de Basketball",
+   "seasonStrings": [
+    "2025/2026"
+   ]
+  },
+  {
+   "id": "nba",
+   "url": "https://www.nba.com/",
+   "finalUrl": "https://www.nba.com/",
+   "status": 403,
+   "title": null,
+   "ogSiteName": null,
+   "ogTitle": null,
+   "seasonStrings": []
+  },
+  {
+   "id": "nba-academy-africa",
+   "url": "https://www.nba.com/africa/nba-academy-africa",
+   "finalUrl": "https://www.nba.com/africa/nba-academy-africa",
+   "status": 404,
+   "title": null,
+   "ogSiteName": null,
+   "ogTitle": null,
+   "seasonStrings": []
+  },
+  {
+   "id": "nbb",
+   "url": "https://lnb.com.br/",
+   "finalUrl": "https://lnb.com.br/",
+   "status": 200,
+   "title": "Liga Nacional de Basquete",
+   "ogSiteName": null,
+   "ogTitle": "Liga Nacional de Basquete",
+   "seasonStrings": [
+    "2021-2022",
+    "2022-2023",
+    "2020/03",
+    "2025/01",
+    "2015/08",
+    "2016/10"
+   ]
+  },
+  {
+   "id": "nbl-au",
+   "url": "https://league.nbl.com.au/",
+   "finalUrl": "https://league.nbl.com.au/",
+   "status": 200,
+   "title": "Home",
+   "ogSiteName": null,
+   "ogTitle": null,
+   "seasonStrings": []
+  },
+  {
+   "id": "nbl-cz",
+   "url": "https://www.nbl.cz/",
+   "finalUrl": "http://nbl.basketball/",
+   "status": 200,
+   "title": "NBL.BASKETBALL",
+   "ogSiteName": null,
+   "ogTitle": "NBL.BASKETBALL",
+   "seasonStrings": []
+  },
+  {
+   "id": "nbl-next-stars",
+   "url": "https://nbl.com.au/news/the-draft-pathway-that-stacks-up-with-the-best",
+   "finalUrl": "https://www.nbl.com.au/news/the-draft-pathway-that-stacks-up-with-the-best",
+   "status": 200,
+   "title": "The Draft pathway that stacks up with the best",
+   "ogSiteName": null,
+   "ogTitle": null,
+   "seasonStrings": []
+  },
+  {
+   "id": "nbl1",
+   "url": "https://nbl1.com.au/",
+   "finalUrl": "https://www.nbl1.com.au/",
+   "status": 200,
+   "title": "Home | NBL1 Australia",
+   "ogSiteName": null,
+   "ogTitle": null,
+   "seasonStrings": []
+  },
+  {
+   "id": "ncaa",
+   "url": "https://www.ncaa.org/",
+   "finalUrl": "https://www.ncaa.org/",
+   "status": 200,
+   "title": "Home - NCAA.org - The Official Website of the NCAA",
+   "ogSiteName": "NCAA.org",
+   "ogTitle": "Home - NCAA.org",
+   "seasonStrings": [
+    "2026/09",
+    "2026-09",
+    "2026/02",
+    "2026-03",
+    "2026/03"
+   ]
+  },
+  {
+   "id": "nfhs",
+   "url": "https://www.nfhs.org/",
+   "finalUrl": "https://www.nfhs.org/",
+   "status": 200,
+   "title": "NFHS",
+   "ogSiteName": null,
+   "ogTitle": "NFHS",
+   "seasonStrings": []
+  },
+  {
+   "id": "nkl",
+   "url": "https://nkl.lt/",
+   "finalUrl": "https://nkl.lt/",
+   "status": 200,
+   "title": "Titulinis - nkl",
+   "ogSiteName": "nkl",
+   "ogTitle": "Titulinis - nkl",
+   "seasonStrings": [
+    "2026-10",
+    "2026/09",
+    "2026-07",
+    "2026/07",
+    "2026/10",
+    "2024-01"
+   ]
+  },
+  {
+   "id": "npbl-ng",
+   "url": "https://www.fiba.basketball/en/news/rivers-hoopers-clinch-the-2026-nigeria-premier-basketball-league-title-return-to-the-bal",
+   "finalUrl": "https://www.fiba.basketball/en/news/rivers-hoopers-clinch-the-2026-nigeria-premier-basketball-league-title-return-to-the-bal",
+   "status": 200,
+   "title": "Rivers Hoopers clinch the 2026 Nigeria Premier Basketball League title, return to the BAL | FIBA Basketball",
+   "ogSiteName": null,
+   "ogTitle": "Rivers Hoopers clinch the 2026 Nigeria Premier Basketball League title, return to the BAL",
+   "seasonStrings": [
+    "2020-06",
+    "2026-10",
+    "2026-09",
+    "2024-09",
+    "2026-04",
+    "2024-12"
+   ]
+  },
+  {
+   "id": "nz-nbl",
+   "url": "https://nznbl.basketball/",
+   "finalUrl": "https://nznbl.basketball/",
+   "status": 200,
+   "title": "NZNBL: New Zealand National Basketball League",
+   "ogSiteName": "Sal’s NBL: New Zealand National Basketball League",
+   "ogTitle": "Sal’s NBL: New Zealand National Basketball League",
+   "seasonStrings": [
+    "2018/04",
+    "2025/11",
+    "2026/05",
+    "2018/02",
+    "2026/08",
+    "2019/03"
+   ]
+  },
+  {
+   "id": "pba",
+   "url": "https://www.pba.ph/",
+   "finalUrl": "https://www.pba.ph/",
+   "status": 403,
+   "title": null,
+   "ogSiteName": null,
+   "ogTitle": null,
+   "seasonStrings": []
+  },
+  {
+   "id": "pleague-tw",
+   "url": "https://pleagueofficial.com/",
+   "finalUrl": "https://pleagueofficial.com/",
+   "status": 200,
+   "title": "P. LEAGUE+",
+   "ogSiteName": "P. LEAGUE+",
+   "ogTitle": "P. LEAGUE+",
+   "seasonStrings": [
+    "2020-10",
+    "2021-22",
+    "2023/11",
+    "2025-26",
+    "2024-25",
+    "2023-24"
+   ]
+  },
+  {
+   "id": "plk-pl",
+   "url": "https://plk.pl/",
+   "finalUrl": "https://plk.pl/",
+   "status": 200,
+   "title": "Polska Liga Koszykówki",
+   "ogSiteName": null,
+   "ogTitle": "Polska Liga Koszykówki",
+   "seasonStrings": [
+    "2026/27"
+   ]
+  },
+  {
+   "id": "proa",
+   "url": "https://www.2basketballbundesliga.de/",
+   "finalUrl": "https://www.2basketballbundesliga.de/",
+   "status": 200,
+   "title": "BARMER 2. Basketball Bundesliga &#8211; Liga der Spielklassen ProA und ProB",
+   "ogSiteName": null,
+   "ogTitle": null,
+   "seasonStrings": [
+    "2026/27",
+    "2026/2027",
+    "2026/09",
+    "2020/09",
+    "2026/10",
+    "2026-10"
+   ]
+  },
+  {
+   "id": "road-to-bal",
+   "url": "https://www.fiba.basketball/en/events/fiba-africa-champions-clubs-road-to-bal-2026",
+   "finalUrl": "https://www.fiba.basketball/en/events/fiba-africa-champions-clubs-road-to-bal-2026",
+   "status": 200,
+   "title": "FIBA Africa Champions Clubs ROAD TO B.A.L 2026 Official Website | FIBA Basketball",
+   "ogSiteName": null,
+   "ogTitle": "FIBA Africa Champions Clubs ROAD TO B.A.L 2026 Official Website | FIBA Basketball",
+   "seasonStrings": [
+    "2020-06",
+    "2026-10",
+    "2025-12",
+    "2025-10",
+    "2024-09"
+   ]
+  },
+  {
+   "id": "sl-gb",
+   "url": "https://www.superleaguebasketballm.co.uk/",
+   "finalUrl": "https://www.superleaguebasketballm.co.uk/",
+   "status": 200,
+   "title": "Super League Basketball &#8211; Super league basketball",
+   "ogSiteName": null,
+   "ogTitle": null,
+   "seasonStrings": [
+    "2015-08",
+    "2024/09",
+    "2026/10",
+    "2026-10",
+    "2026/09",
+    "2026/27"
+   ]
+  },
+  {
+   "id": "spb-ve",
+   "url": "https://www.superligadebaloncesto.com/",
+   "status": 0,
+   "error": "TypeError: fetch failed"
+  },
+  {
+   "id": "tbl-th",
+   "url": "https://www.thailandbasketball.or.th/",
+   "status": 0,
+   "error": "TypeError: fetch failed"
+  },
+  {
+   "id": "tpbl-tw",
+   "url": "https://tpbl.basketball/",
+   "finalUrl": "https://tpbl.basketball/",
+   "status": 200,
+   "title": "TPBL | 台灣職業籃球大聯盟",
+   "ogSiteName": null,
+   "ogTitle": null,
+   "seasonStrings": [
+    "2026/10",
+    "2026-27"
+   ]
+  },
+  {
+   "id": "uaap",
+   "url": "https://uaap.live/",
+   "status": 0,
+   "error": "TypeError: fetch failed"
+  },
+  {
+   "id": "usports",
+   "url": "https://usports.ca/en",
+   "finalUrl": "https://usports.ca/en",
+   "status": 404,
+   "title": null,
+   "ogSiteName": null,
+   "ogTitle": null,
+   "seasonStrings": []
+  },
+  {
+   "id": "vba-vn",
+   "url": "https://vba.vn/",
+   "finalUrl": "https://vba.vn/",
+   "status": 200,
+   "title": "VBA - Giải Bóng Rổ Chuyên Nghiệp Việt Nam | Trang chủ",
+   "ogSiteName": "VBA - Giải Bóng Rổ Chuyên Nghiệp Việt Nam",
+   "ogTitle": "VBA - Giải Bóng Rổ Chuyên Nghiệp Việt Nam",
+   "seasonStrings": [
+    "2026-07",
+    "2026-04",
+    "2026-05",
+    "2015-2016",
+    "2026-09",
+    "2023-06"
+   ]
+  },
+  {
+   "id": "vtb",
+   "url": "https://www.vtb-league.com/",
+   "finalUrl": "https://vtb-league.com/",
+   "status": 200,
+   "title": "Единая Лига ВТБ | VTB United League - Официальный сайт",
+   "ogSiteName": null,
+   "ogTitle": "Единая Лига ВТБ | VTB United League - Официальный сайт",
+   "seasonStrings": [
+    "2026/10",
+    "2026/09",
+    "2026/07",
+    "2026/08",
+    "2023-2024",
+    "2011–2026"
+   ]
+  },
+  {
+   "id": "winner-il",
+   "url": "https://basket.co.il/",
+   "finalUrl": "https://basket.co.il/",
+   "status": 200,
+   "title": "מנהלת ליגת העל בכדורסל",
+   "ogSiteName": null,
+   "ogTitle": null,
+   "seasonStrings": [
+    "2026-2027",
+    "2016/2025",
+    "2024-2025",
+    "2025-2026",
+    "2019/2020",
+    "2026/27"
+   ]
+  }
+ ]
+}
