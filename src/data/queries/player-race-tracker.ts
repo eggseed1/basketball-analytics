@@ -231,19 +231,24 @@ function finalizeCandidates(
   return capped;
 }
 
-/** BRef season minutes + GP keyed by nba id, espn id, and normalized name. */
+type BoardActivity = { minutes: number; gamesPlayed: number; teamAbbr: string };
+
+/**
+ * BRef season minutes, GP and team keyed by nba id, espn id, and normalized
+ * name. Traded players keep the team they logged the most minutes for.
+ */
 function boardActivityIndex(season: string): {
-  byNba: Map<string, { minutes: number; gamesPlayed: number }>;
-  byEspn: Map<string, { minutes: number; gamesPlayed: number }>;
-  byName: Map<string, { minutes: number; gamesPlayed: number }>;
+  byNba: Map<string, BoardActivity>;
+  byEspn: Map<string, BoardActivity>;
+  byName: Map<string, BoardActivity>;
 } {
-  const byNba = new Map<string, { minutes: number; gamesPlayed: number }>();
-  const byEspn = new Map<string, { minutes: number; gamesPlayed: number }>();
-  const byName = new Map<string, { minutes: number; gamesPlayed: number }>();
+  const byNba = new Map<string, BoardActivity>();
+  const byEspn = new Map<string, BoardActivity>();
+  const byName = new Map<string, BoardActivity>();
   const prefer = (
-    map: Map<string, { minutes: number; gamesPlayed: number }>,
+    map: Map<string, BoardActivity>,
     key: string,
-    next: { minutes: number; gamesPlayed: number }
+    next: BoardActivity
   ) => {
     const prev = map.get(key);
     if (!prev || next.minutes >= prev.minutes) map.set(key, next);
@@ -257,7 +262,7 @@ function boardActivityIndex(season: string): {
     const minutes = Number(row.minutes ?? 0);
     if (!Number.isFinite(minutes) || minutes <= 0) continue;
     const gamesPlayed = Math.max(0, Number(row.gamesPlayed ?? 0));
-    const activity = { minutes, gamesPlayed };
+    const activity = { minutes, gamesPlayed, teamAbbr };
     const espnId =
       row.playerId && !row.playerId.startsWith("bref:")
         ? String(row.playerId)
@@ -275,7 +280,7 @@ function boardActivityIndex(season: string): {
   return { byNba, byEspn, byName };
 }
 
-function attachBoardMinutes(
+function attachBoardActivity(
   season: string,
   candidates: RaceCandidate[]
 ): RaceCandidate[] {
@@ -284,7 +289,8 @@ function attachBoardMinutes(
       row.minutes == null ||
       !Number.isFinite(row.minutes) ||
       row.gamesPlayed == null ||
-      row.gamesPlayed <= 0
+      row.gamesPlayed <= 0 ||
+      !row.teamAbbr
   );
   if (!needsLookup) return candidates;
   const index = boardActivityIndex(season);
@@ -294,8 +300,11 @@ function attachBoardMinutes(
     const fromName = index.byName.get(normalizePlayerName(row.displayName));
     const hit = fromNba ?? fromEspn ?? fromName;
     if (!hit) return row;
+    const team =
+      !row.teamAbbr && hit.teamAbbr ? teamFromLooseId(hit.teamAbbr) : null;
     return {
       ...row,
+      ...(team?.teamAbbr ? team : {}),
       minutes:
         row.minutes != null && Number.isFinite(row.minutes) && row.minutes > 0
           ? row.minutes
@@ -403,7 +412,7 @@ export function rankPlayerRaceCandidates(
         false
       );
     }
-    return attachBoardMinutes(
+    return attachBoardActivity(
       season,
       finalizeCandidates(byKey, metric, limit)
     );
@@ -436,7 +445,7 @@ export function rankPlayerRaceCandidates(
         false
       );
     }
-    return attachBoardMinutes(
+    return attachBoardActivity(
       season,
       finalizeCandidates(byKey, metric, limit)
     );
