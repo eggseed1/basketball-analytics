@@ -4,6 +4,7 @@ import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { LeaguePlayerScatterIsland } from "@/components/explore/league-player-scatter-island";
 import { LeagueUsageEfficiencyIsland } from "@/components/explore/league-usage-efficiency-island";
 import { PlayerRaceTrackerIsland } from "@/components/explore/player-race-tracker-island";
+import { PlayerPayoffBoard } from "@/components/explore/player-payoff-board";
 import { PlayerSurplusBoard } from "@/components/explore/player-surplus-board";
 import {
   PlayerVisualizationsHubChrome,
@@ -11,6 +12,7 @@ import {
 } from "@/components/explore/player-visualizations-hub";
 import { PageHeader } from "@/components/layout/page-header";
 import { getPlayerSurplusRows } from "@/data/queries/contract-surplus";
+import { getPayoffSeason, payoffPinIds, payoffSeasons } from "@/data/runtime/salary-payoff";
 import { getPlayerRaceTrackerSeasonOptions } from "@/data/queries/player-race-tracker";
 import {
   canonicalSeasonFromStartYear,
@@ -33,7 +35,7 @@ import { parseVizRankEnd } from "@/lib/viz-field-filter";
 export const metadata = {
   title: "Player visualizations",
   description:
-    "NBA player race charts, league scatters for usage, impact, shot diet, creation, FT pressure, glass, and scoring volume, and contract surplus rankings.",
+    "NBA player race charts, league scatters for usage, impact, shot diet, creation, FT pressure, glass, and scoring volume, and contract surplus rankings, and how much of each salary players have paid off.",
 };
 
 interface PageProps {
@@ -59,7 +61,8 @@ function parseView(raw: string | undefined): VizView {
     raw === "glass" ||
     raw === "defense" ||
     raw === "bpm" ||
-    raw === "surplus"
+    raw === "surplus" ||
+    raw === "payoff"
   ) {
     return raw;
   }
@@ -71,7 +74,7 @@ function parseVizFieldSize(
   view: VizView
 ): PlayerRaceFieldSize {
   if (raw == null || raw === "") {
-    return view === "race" || view === "surplus"
+    return view === "race" || view === "surplus" || view === "payoff"
       ? PLAYER_RACE_DEFAULT_FIELD_SIZE
       : VIZ_SCATTER_DEFAULT_FIELD_SIZE;
   }
@@ -112,6 +115,8 @@ export default async function PlayerVisualizationsPage({
     : parseVizRankEnd(one(sp, "end"), "high");
   const usageRankEnd = parseVizRankEnd(one(sp, "end"), "high");
   const surplusRankEnd = parseVizRankEnd(one(sp, "end"), "both");
+  const payoffRankEnd = parseVizRankEnd(one(sp, "end"), "high");
+  const payoff = view === "payoff" ? getPayoffSeason(seasonParam) : null;
   const raceMinMinutes = parsePlayerRaceMinMinutes(one(sp, "minmp"));
   const scatterMinMinutes = parseVizScatterMinMinutes(one(sp, "minmp"));
   const pin = one(sp, "pin") ?? "";
@@ -143,6 +148,8 @@ export default async function PlayerVisualizationsPage({
   const subtitle =
     view === "surplus"
       ? "Every current contract we can estimate, ranked by projected surplus. Pick how many to show, highlight a team, or pin a player."
+      : view === "payoff"
+      ? `${payoff?.meta.season ?? season} · how much of each player's salary his play has covered, starting from 0 on opening night. Pick how many to show, highlight a team, or pin a player.`
       : view === "usage"
       ? `${season} · ${fieldBlurb}${minutesBlurb} · usage rate × true shooting. Use the side leaders list, team highlight, or pin search, and click a point to open their page.`
       : scatterMeta
@@ -161,8 +168,14 @@ export default async function PlayerVisualizationsPage({
       <Suspense fallback={null}>
         <PlayerVisualizationsHubChromeAsync
           view={view}
-          season={season}
-          pinNames={view === "surplus" ? surplusPinNames(pin) : undefined}
+          season={payoff?.meta.season ?? season}
+          pinNames={
+            view === "surplus"
+              ? surplusPinNames(pin)
+              : view === "payoff"
+                ? await payoffPinNames(pin, payoff?.meta.season)
+                : undefined
+          }
         />
       </Suspense>
 
@@ -171,7 +184,15 @@ export default async function PlayerVisualizationsPage({
           <div className="sports-card h-[480px] animate-pulse bg-secondary/40" />
         }
       >
-        {view === "surplus" ? (
+        {view === "payoff" ? (
+          <PlayerPayoffBoard
+            season={payoff?.meta.season}
+            fieldSize={fieldSize}
+            rankEnd={payoffRankEnd}
+            pin={pin || undefined}
+            team={team || undefined}
+          />
+        ) : view === "surplus" ? (
           <PlayerSurplusBoard
             fieldSize={fieldSize}
             rankEnd={surplusRankEnd}
@@ -223,6 +244,13 @@ function surplusPinNames(pin: string): Record<string, string> | undefined {
   );
 }
 
+async function payoffPinNames(pin: string, season?: string): Promise<Record<string, string> | undefined> {
+  const pins = await payoffPinIds(pin, season);
+  if (!pins.size) return undefined;
+  const names = new Map((getPayoffSeason(season)?.players ?? []).map((p) => [p.nbaId, p.name]));
+  return Object.fromEntries([...pins].map(([urlId, nbaId]) => [urlId, names.get(nbaId) ?? urlId]));
+}
+
 async function PlayerVisualizationsHubChromeAsync({
   view,
   season,
@@ -232,7 +260,7 @@ async function PlayerVisualizationsHubChromeAsync({
   season: string;
   pinNames?: Record<string, string>;
 }) {
-  const seasonOptions = await getPlayerRaceTrackerSeasonOptions();
+  const seasonOptions = view === "payoff" ? payoffSeasons() : await getPlayerRaceTrackerSeasonOptions();
   const options = seasonOptions.length ? seasonOptions : [season];
   return (
     <PlayerVisualizationsHubChrome

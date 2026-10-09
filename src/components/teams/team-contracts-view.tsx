@@ -7,6 +7,8 @@ import { BrefPayrollTable, PayrollColorKey } from "@/components/teams/bref-payro
 import { TeamContractValueChart } from "@/components/teams/team-contract-value";
 import type { TeamContractsView } from "@/data/queries/team-contracts";
 import { getTeamContractValue } from "@/data/runtime/contract-value";
+import { getTeamPayoff } from "@/data/runtime/salary-payoff";
+import { TeamSalaryPayoff } from "@/components/teams/team-salary-payoff";
 import type { TeamPayrollPresentation } from "@/data/types/front-office";
 import { type } from "@/lib/design-system";
 import { formatUsdCompact, formatUsdSignedCompact } from "@/lib/format-money";
@@ -219,6 +221,8 @@ export function TeamContractsPageView({
   const cap = contracts.salaryCap ?? capContext?.salaryCap ?? null;
   const hasNotes = contracts.rows.some((r) => contracts.notes[r.brefId]);
   const contractValue = getTeamContractValue(franchiseId);
+  const payoff = getTeamPayoff(franchiseId);
+  const payoffNow = payoff?.total.pct.at(-1) ?? null;
 
   return (
     <div
@@ -255,6 +259,22 @@ export function TeamContractsPageView({
           }
         >
           <TeamContractValueChart value={contractValue} contracts={contracts} teamKey={teamKey} />
+        </Panel>
+      ) : null}
+
+      {payoff ? (
+        <Panel
+          title={`Salary paid off · ${payoff.meta.season}`}
+          id="payoff-heading"
+          aside={
+            payoffNow != null ? (
+              <span className={cn(type.caption, "tabular-nums text-muted-foreground")}>
+                Roster total {Math.round(payoffNow)}%
+              </span>
+            ) : null
+          }
+        >
+          <TeamSalaryPayoff payoff={payoff} />
         </Panel>
       ) : null}
 

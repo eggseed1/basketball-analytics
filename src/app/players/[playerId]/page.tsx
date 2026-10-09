@@ -730,6 +730,7 @@ export default async function PlayerPage({
               playerId={playerId}
               playerName={displayName}
               teamKey={teamKey}
+              nbaId={identity?.nbaId}
             />
           </Suspense>
         ) : null}

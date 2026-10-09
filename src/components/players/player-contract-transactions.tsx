@@ -142,11 +142,14 @@ export function PlayerContractTransactions({
   value,
   model,
   playerId,
+  children,
 }: {
   playerId?: string | null;
   contract: PlayerContractSnapshot;
   value: ContractValueView | null;
   model: ContractValueModel;
+  /** Extra cards below the contract, such as salary paid off. */
+  children?: ReactNode;
 }) {
   const total = contract.years.reduce((sum, year) => sum + year.salary, 0);
   const span =
@@ -303,6 +306,7 @@ export function PlayerContractTransactions({
         ) : null}
         {estimate ? <MethodNotes model={model} /> : null}
       </div>
+      {children}
     </section>
   );
 }

@@ -4,6 +4,7 @@ import {
   type GlassSurfaceHonor,
 } from "@/components/brand/glass-surface";
 import { PlayerContractTransactions } from "@/components/players/player-contract-transactions";
+import { PlayerSalaryPayoff } from "@/components/players/player-salary-payoff";
 import { getPlayerArrival, teamNicknames } from "@/data/queries/acquisition-paths";
 import { getPlayerContractSnapshot } from "@/data/queries/player-front-office";
 import { contractValueModel, getContractValue } from "@/data/runtime/contract-value";
@@ -74,10 +75,12 @@ export async function PlayerContractSectionIsland({
   playerId,
   playerName,
   teamKey,
+  nbaId,
 }: {
   playerId: string;
   playerName: string;
   teamKey?: string | null;
+  nbaId?: string | null;
 }) {
   let contract: Awaited<ReturnType<typeof getPlayerContractSnapshot>>;
   try {
@@ -99,6 +102,8 @@ export async function PlayerContractSectionIsland({
       contract={contract}
       value={getContractValue(contract.franchiseId, contract.brefId)}
       model={contractValueModel()}
-    />
+    >
+      <PlayerSalaryPayoff nbaId={nbaId ?? (/^\d+$/.test(playerId) ? playerId : null)} playerId={playerId} />
+    </PlayerContractTransactions>
   );
 }

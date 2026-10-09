@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useId, type ReactNode } from "react";
 
 import {
   SnapLayer,
@@ -67,6 +67,9 @@ export function linePath(svg: SVGSVGElement, id: string): string | null {
   return svg.querySelector(`.${raceLineClass(id)} path.recharts-line-curve`)?.getAttribute("d") ?? null;
 }
 
+/** Room past the plot edge so the halo isn't cut off; lines that run off the top still are. */
+const HALO_PAD = 6;
+
 /**
  * Hover for race charts. The hovered line is redrawn on top with a soft halo,
  * a guide follows the date, dashed guides mark the neighbors, and one label
@@ -81,13 +84,22 @@ export function RaceHoverLayer({
 }) {
   const hover = useHoverValue(store);
   const { at, open, glide } = useLingeringMark(hover);
+  const clipId = useId();
   if (!at) return null;
   const state = { "data-open": open || undefined, "data-glide": glide || undefined };
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 z-[1]">
       <svg className="absolute inset-0 size-full overflow-visible">
+        <clipPath id={clipId}>
+          <rect
+            x={at.plot.left - HALO_PAD}
+            y={at.plot.top - HALO_PAD}
+            width={at.plot.width + HALO_PAD * 2}
+            height={at.plot.height + HALO_PAD * 2}
+          />
+        </clipPath>
         {at.d ? (
-          <g key={at.id} className="chart-race-line" {...state}>
+          <g key={at.id} className="chart-race-line" clipPath={`url(#${clipId})`} {...state}>
             <path
               d={at.d}
               fill="none"

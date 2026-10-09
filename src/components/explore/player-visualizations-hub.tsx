@@ -44,7 +44,8 @@ export type VizView =
   | "glass"
   | "defense"
   | "bpm"
-  | "surplus";
+  | "surplus"
+  | "payoff";
 
 /** Signed views where the default field shows both ends. */
 function defaultsToBothEnds(view: VizView): boolean {
@@ -63,6 +64,7 @@ const VIEWS: Array<{ id: VizView; label: string }> = [
   { id: "defense", label: "Stocks" },
   { id: "volume", label: "Scoring volume" },
   { id: "surplus", label: "Contract surplus" },
+  { id: "payoff", label: "Salary paid off" },
 ];
 
 type SearchHit = {
@@ -155,7 +157,7 @@ export function PlayerVisualizationsHubChrome({
   const fieldSize: PlayerRaceFieldSize = (() => {
     const raw = searchParams.get("top");
     if (raw == null || raw === "") {
-      return view === "race" || view === "surplus"
+      return view === "race" || view === "surplus" || view === "payoff"
         ? PLAYER_RACE_DEFAULT_FIELD_SIZE
         : VIZ_SCATTER_DEFAULT_FIELD_SIZE;
     }
@@ -444,7 +446,7 @@ export function PlayerVisualizationsHubChrome({
             </div>
           ) : null}
 
-          {view !== "surplus" ? (
+          {view !== "surplus" && view !== "payoff" ? (
             <>
               <label
                 className={cn(type.caption, "sr-only")}
