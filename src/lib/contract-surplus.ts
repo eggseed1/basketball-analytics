@@ -38,20 +38,44 @@ export type PlayerSurplusRow = {
 
 export type TeamSurplusContract = { name: string; href: string | null; surplus: number };
 
+/**
+ * How a team's contracts are added up. `total` sums every remaining season,
+ * `perSeason` divides each contract by its seasons left first, and `capSeason`
+ * counts only the coming season.
+ */
+export type TeamSurplusSpan = "total" | "perSeason" | "capSeason";
+
+export const TEAM_SURPLUS_SPANS: TeamSurplusSpan[] = ["total", "perSeason", "capSeason"];
+
+export function parseTeamSurplusSpan(raw: string | null | undefined): TeamSurplusSpan {
+  return raw === "season" ? "perSeason" : raw === "next" ? "capSeason" : "total";
+}
+
+export function teamSurplusSpanParam(span: TeamSurplusSpan): string | null {
+  return span === "perSeason" ? "season" : span === "capSeason" ? "next" : null;
+}
+
+export type TeamSurplusTotals = {
+  surplus: number;
+  salary: number;
+  worth: number;
+  /** Contracts counted under this span. */
+  contracts: number;
+  /** 1 is the most surplus in the league under this span. */
+  rank: number;
+  best: TeamSurplusContract | null;
+  worst: TeamSurplusContract | null;
+};
+
 export type TeamSurplusRow = {
   teamId: string;
   teamKey: string;
   name: string;
   conference: "East" | "West";
-  surplus: number;
-  salary: number;
-  worth: number;
   valued: number;
   /** Contracts left out of the sum. They are not counted as zero. */
   missing: number;
-  rank: number;
-  best: TeamSurplusContract | null;
-  worst: TeamSurplusContract | null;
+  spans: Record<TeamSurplusSpan, TeamSurplusTotals>;
 };
 
 export type ContractSurplusMeta = {

@@ -6,14 +6,18 @@ import { getTeamContracts } from "@/data/queries/team-contracts";
 import {
   contractValueGaps,
   contractValueModel,
+  getContractValue,
   getTeamContractValue,
   listContractValues,
 } from "@/data/runtime/contract-value";
-import type {
-  ContractSurplusMeta,
-  PlayerSurplusRow,
-  TeamSurplusContract,
-  TeamSurplusRow,
+import {
+  TEAM_SURPLUS_SPANS,
+  type ContractSurplusMeta,
+  type PlayerSurplusRow,
+  type TeamSurplusContract,
+  type TeamSurplusRow,
+  type TeamSurplusSpan,
+  type TeamSurplusTotals,
 } from "@/lib/contract-surplus";
 import { listCanonicalTeams } from "@/data/identity/team-map";
 import { resolveTeamBrand } from "@/lib/nba-brand";
@@ -57,7 +61,29 @@ export const getPlayerSurplusRows = cache((): PlayerSurplusRow[] => {
     .map((row, i) => ({ ...row, rank: i + 1 }));
 });
 
+type SpanContract = { brefId: string; surplus: number; salary: number; worth: number };
+
+function spanContracts(teamId: string, brefIds: string[], capSeason: string): Record<TeamSurplusSpan, SpanContract[]> {
+  const out: Record<TeamSurplusSpan, SpanContract[]> = { total: [], perSeason: [], capSeason: [] };
+  for (const brefId of brefIds) {
+    const value = getContractValue(teamId, brefId);
+    if (value?.kind !== "estimate" || !value.years.length) continue;
+    const seasons = value.years.length;
+    out.total.push({ brefId, surplus: value.surplus, salary: value.totalSalary, worth: value.totalWorth });
+    out.perSeason.push({
+      brefId,
+      surplus: value.surplus / seasons,
+      salary: value.totalSalary / seasons,
+      worth: value.totalWorth / seasons,
+    });
+    const year = value.years.find((y) => y.season === capSeason);
+    if (year) out.capSeason.push({ brefId, surplus: year.surplus, salary: year.salary, worth: year.worth });
+  }
+  return out;
+}
+
 export const getTeamSurplusRows = cache((): TeamSurplusRow[] => {
+  const { capSeason } = contractValueModel();
   const rows: TeamSurplusRow[] = [];
   for (const team of listCanonicalTeams()) {
     const teamId = team.providerIds.espn;
@@ -65,31 +91,49 @@ export const getTeamSurplusRows = cache((): TeamSurplusRow[] => {
     const value = getTeamContractValue(teamId);
     if (!value) continue;
     const contracts = getTeamContracts(teamId);
-    const pick = (i: number): TeamSurplusContract | null => {
-      const p = value.players.at(i);
-      if (!p) return null;
-      return {
-        name: contracts?.rows.find((r) => r.brefId === p.brefId)?.name ?? p.brefId,
-        href: contracts?.hrefs[p.brefId] ?? null,
-        surplus: p.surplus,
-      };
-    };
+    const named = (p: SpanContract | undefined): TeamSurplusContract | null =>
+      p
+        ? {
+            name: contracts?.rows.find((r) => r.brefId === p.brefId)?.name ?? p.brefId,
+            href: contracts?.hrefs[p.brefId] ?? null,
+            surplus: p.surplus,
+          }
+        : null;
+    const bySpan = spanContracts(teamId, value.players.map((p) => p.brefId), capSeason);
+    const spans = Object.fromEntries(
+      TEAM_SURPLUS_SPANS.map((span) => {
+        const list = [...bySpan[span]].sort((a, b) => b.surplus - a.surplus);
+        const sum = (pick: (c: SpanContract) => number) => list.reduce((s, c) => s + pick(c), 0);
+        const totals: TeamSurplusTotals = {
+          surplus: sum((c) => c.surplus),
+          salary: sum((c) => c.salary),
+          worth: sum((c) => c.worth),
+          contracts: list.length,
+          rank: 0,
+          best: named(list[0]),
+          worst: list.length > 1 ? named(list.at(-1)) : null,
+        };
+        return [span, totals];
+      })
+    ) as Record<TeamSurplusSpan, TeamSurplusTotals>;
     rows.push({
       teamId,
       teamKey: teamKeyFor(teamId),
       name: team.displayName,
       conference: conferenceForEspnTeamId(teamId),
-      surplus: value.surplus,
-      salary: value.totalSalary,
-      worth: value.totalWorth,
       valued: value.players.length,
       missing: value.missing.length,
-      rank: value.rank,
-      best: pick(0),
-      worst: value.players.length > 1 ? pick(-1) : null,
+      spans,
     });
   }
-  return rows.sort((a, b) => a.rank - b.rank);
+  for (const span of TEAM_SURPLUS_SPANS) {
+    [...rows]
+      .sort((a, b) => b.spans[span].surplus - a.spans[span].surplus)
+      .forEach((row, i) => {
+        row.spans[span].rank = i + 1;
+      });
+  }
+  return rows.sort((a, b) => a.spans.total.rank - b.spans.total.rank);
 });
 
 export function getContractSurplusMeta(): ContractSurplusMeta {
