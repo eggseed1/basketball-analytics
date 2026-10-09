@@ -30,11 +30,11 @@ export function MovementCenterView({
   filtered?: boolean;
 }) {
   const presentation = resolveMovementPresentation();
-  const activeFeed = feed.filter(
-    (item) => !isResolvedMovementState(item.cluster.state)
-  );
   const byRecent = (a: MovementFeedItem, b: MovementFeedItem) =>
     b.cluster.lastMeaningfulAt.localeCompare(a.cluster.lastMeaningfulAt);
+  const activeFeed = feed
+    .filter((item) => !isResolvedMovementState(item.cluster.state))
+    .sort(byRecent);
   const resolvedFeed = feed
     .filter(
       (item) =>
