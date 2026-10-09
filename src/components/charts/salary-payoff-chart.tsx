@@ -258,19 +258,38 @@ function PayoffPlot({
             const line = lineById.get(h.id);
             const i = Number(h.label);
             if (!line || !dates[i]) return null;
+            const coveredOn = dates[line.pct.findIndex((p) => p >= 100)];
             return (
               <>
                 <p className="flex items-center gap-1.5">
                   {line.id !== totalId ? <TeamLogo teamKey={line.teamId} size="xs" /> : null}
                   {line.name}
                 </p>
-                <p className="tabular-nums">
-                  {shortDate(dates[i])} · <span className="font-semibold">{pctLabel(line.pct[i] ?? 0)}</span> of{" "}
-                  {formatUsdCompact(line.salary)}
-                </p>
-                <p className="tabular-nums text-muted-foreground">
-                  {formatUsdCompact(line.earned[i] ?? 0)} earned · season {pctLabel(pace[i] ?? 0)} paid
-                </p>
+                {(line.pct[i] ?? 0) >= 100 ? (
+                  <>
+                    <p className="tabular-nums">
+                      {shortDate(dates[i])} · <span className="font-semibold">100% paid off</span>
+                      {coveredOn ? ` on ${shortDate(coveredOn)}` : ""}
+                    </p>
+                    <p className="tabular-nums">
+                      <span className="font-semibold">+{pctLabel((line.pct[i] ?? 0) - 100)}</span> over ·{" "}
+                      {formatUsdCompact((line.earned[i] ?? 0) - line.salary)} beyond the {formatUsdCompact(line.salary)} salary
+                    </p>
+                    <p className="tabular-nums text-muted-foreground">
+                      {formatUsdCompact(line.earned[i] ?? 0)} earned · season {pctLabel(pace[i] ?? 0)} paid
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p className="tabular-nums">
+                      {shortDate(dates[i])} · <span className="font-semibold">{pctLabel(line.pct[i] ?? 0)}</span> of{" "}
+                      {formatUsdCompact(line.salary)}
+                    </p>
+                    <p className="tabular-nums text-muted-foreground">
+                      {formatUsdCompact(line.earned[i] ?? 0)} earned · season {pctLabel(pace[i] ?? 0)} paid
+                    </p>
+                  </>
+                )}
                 {line.href ? <p className="text-muted-foreground">Click to open</p> : null}
               </>
             );
