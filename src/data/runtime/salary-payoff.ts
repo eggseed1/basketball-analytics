@@ -132,7 +132,7 @@ export function getPlayerPayoff(
 export type TeamPayoff = {
   meta: PayoffSeasonMeta;
   players: PayoffSummary[];
-  total: { salary: number; earned: number[]; pct: number[] };
+  total: { salary: number; earned: number[]; pct: number[]; ahead: number[] };
 };
 
 /** Players listed with this team (the team he's on now, for the whole season), plus their total. */
@@ -143,7 +143,8 @@ export function getTeamPayoff(espnTeamId: string, season?: string | null): TeamP
   if (!players.length) return null;
   const salary = players.reduce((s, p) => s + p.salary, 0);
   const earned = found.meta.dates.map((_, i) => players.reduce((s, p) => s + (p.earned[i] ?? 0), 0));
-  return { meta: found.meta, players, total: { salary, earned, pct: earned.map((e) => (e / salary) * 100) } };
+  const ahead = found.meta.dates.map((_, i) => players.reduce((s, p) => s + (p.ahead[i] ?? 0), 0));
+  return { meta: found.meta, players, total: { salary, earned, pct: earned.map((e) => (e / salary) * 100), ahead } };
 }
 
 function nextSeason(season: string): string {

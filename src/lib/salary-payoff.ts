@@ -49,6 +49,11 @@ export type PayoffSeries = {
   earned: number[];
   /** Earned as a percent of the yearly salary. */
   pct: number[];
+  /**
+   * Dollars of worth minus dollars of salary paid out, by date. Unlike `earned`,
+   * play below replacement counts against him, so a bad stretch digs a hole.
+   */
+  ahead: number[];
 };
 
 const DAY_MS = 86_400_000;
@@ -62,6 +67,16 @@ export function seasonDayShare(date: string, opener: string, end: string): numbe
   const total = dayIndex(end) - dayIndex(opener) + 1;
   if (total <= 0) return 0;
   return Math.min(1, Math.max(0, (dayIndex(date) - dayIndex(opener) + 1) / total));
+}
+
+/** Worth so far minus the salary paid out so far; below-replacement play counts as negative wins. */
+export function aheadOfPace(
+  winsAboveReplacement: number,
+  dayShare: number,
+  salary: number,
+  season: Pick<PayoffSeasonFile, "minimum" | "pricePerWin">
+): number {
+  return (season.minimum - salary) * dayShare + winsAboveReplacement * season.pricePerWin;
 }
 
 export function earnedValue(winsAboveReplacement: number, dayShare: number, season: Pick<PayoffSeasonFile, "minimum" | "pricePerWin">): number {
@@ -79,7 +94,8 @@ export function payoffSeries(season: PayoffSeasonFile, key: string): PayoffSerie
   if (!row) return null;
   const [name, teamId, salary, deltas, nbaId] = row;
   const wins = cumulativeWins(deltas);
-  const earned = season.dates.map((date, i) => earnedValue(wins[i] ?? 0, seasonDayShare(date, season.opener, season.end), season));
+  const shares = season.dates.map((date) => seasonDayShare(date, season.opener, season.end));
+  const earned = shares.map((share, i) => earnedValue(wins[i] ?? 0, share, season));
   return {
     key,
     nbaId,
@@ -88,6 +104,7 @@ export function payoffSeries(season: PayoffSeasonFile, key: string): PayoffSerie
     salary,
     earned,
     pct: earned.map((e) => (salary > 0 ? (e / salary) * 100 : 0)),
+    ahead: shares.map((share, i) => aheadOfPace(wins[i] ?? 0, share, salary, season)),
   };
 }
 

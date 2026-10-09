@@ -57,6 +57,8 @@ assert.equal(projectedPct(climber, { ...toy, dates: ["2026-10-20"] }), null, "no
 const below = payoffSeries(toy, "b")!;
 assert.ok(below.earned.every((e) => e >= 0), "earned never goes negative");
 assert.equal(paidOffDate(below, toy.dates), null);
+assert.deepEqual(climber.ahead.map(Math.round), [600_000, 1_800_000, 4_000_000], "worth so far minus salary paid so far");
+assert.deepEqual(below.ahead.map(Math.round), [-5_400_000, -7_200_000, -8_000_000], "below-replacement play digs a hole");
 assert.equal(payoffSeries(toy, "missing"), null);
 assert.equal(shortDate("2026-10-20"), "Oct 20");
 assert.deepEqual(sampleIndexes(5, 10), [0, 1, 2, 3, 4], "short series kept whole");
