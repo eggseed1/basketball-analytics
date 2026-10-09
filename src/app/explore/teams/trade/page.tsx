@@ -30,7 +30,7 @@ export default async function TradeSimulatorPage({
     <main data-motion-page className="site-shell flex flex-col gap-6 py-6 sm:py-8">
       <MotionReveal />
       <PageHeader
-        eyebrow="Teams"
+        eyebrow="Transactions"
         title="Trade simulator"
         subtitle="Current rosters and payroll, scored with last season’s DRBL. A salary-match sketch, not a legality ruling."
       />

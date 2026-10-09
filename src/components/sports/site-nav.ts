@@ -92,12 +92,11 @@ export const PRIMARY_NAV: PrimaryNavItem[] = [
     href: "/explore/teams",
     label: "Teams",
     match: (p) =>
-      p.startsWith("/explore/teams") ||
+      (p.startsWith("/explore/teams") && !p.startsWith("/explore/teams/trade")) ||
       p.startsWith("/teams/") ||
       p.startsWith("/standings") ||
       p.startsWith("/explore/bracket") ||
-      p.startsWith("/franchises") ||
-      p.startsWith("/explore/teams/trade"),
+      p.startsWith("/franchises"),
     subnav: [
       {
         href: "/explore/teams",
@@ -107,11 +106,6 @@ export const PRIMARY_NAV: PrimaryNavItem[] = [
             !p.startsWith("/explore/teams/trade")) ||
           p.startsWith("/teams/") ||
           p.startsWith("/franchises"),
-      },
-      {
-        href: "/explore/teams/trade",
-        label: "Trade",
-        match: (p) => p.startsWith("/explore/teams/trade"),
       },
       {
         href: "/standings",
@@ -153,7 +147,11 @@ export const PRIMARY_NAV: PrimaryNavItem[] = [
     id: "transactions",
     href: "/offseason",
     label: "Transactions",
-    match: (p) => p.startsWith("/offseason") || p.startsWith("/movement") || p.startsWith("/acquisitions"),
+    match: (p) =>
+      p.startsWith("/offseason") ||
+      p.startsWith("/movement") ||
+      p.startsWith("/acquisitions") ||
+      p.startsWith("/explore/teams/trade"),
     subnav: [
       {
         href: "/offseason",
@@ -169,6 +167,11 @@ export const PRIMARY_NAV: PrimaryNavItem[] = [
         href: "/acquisitions",
         label: "How They Got Him",
         match: (p) => p.startsWith("/acquisitions"),
+      },
+      {
+        href: "/explore/teams/trade",
+        label: "Trade simulator",
+        match: (p) => p.startsWith("/explore/teams/trade"),
       },
     ],
   },
