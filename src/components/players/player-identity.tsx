@@ -38,6 +38,8 @@ export type PlayerIdentityProps = {
   /** Canonical player id. Required to link to a player page. */
   playerId?: string;
   name: string;
+  /** Shown instead of `name` below the `sm` breakpoint, for narrow table columns. */
+  shortName?: string;
   teamKey?: string | null;
   teamLabel?: string | null;
   position?: string | null;
@@ -157,6 +159,7 @@ function resolveVariant(
 export function PlayerIdentity({
   playerId,
   name,
+  shortName,
   teamKey,
   teamLabel,
   position,
@@ -309,7 +312,12 @@ export function PlayerIdentity({
                   }
                 />
               ) : null}
-              {resolved === "chip" ? null : (
+              {resolved === "chip" ? null : shortName && shortName !== name ? (
+                <>
+                  <span className="truncate sm:hidden">{shortName}</span>
+                  <span className="hidden truncate sm:inline">{name}</span>
+                </>
+              ) : (
                 <span className="truncate">{name}</span>
               )}
             </>
