@@ -5,10 +5,10 @@
     "season": "2026-27",
     "snapshotDate": "2026-10-09",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-10-09T02:39:30.163Z",
+    "builtAt": "2026-10-09T13:00:11.924Z",
     "rosterPlayerCount": 492,
-    "headlinesScanned": 2272,
-    "latestHeadlineAt": "2026-10-09T02:24:14.000Z",
+    "headlinesScanned": 2406,
+    "latestHeadlineAt": "2026-10-09T12:58:19.000Z",
     "latestTransactionDate": "2026-10-07",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -145,6 +145,10 @@
     "reporter:tim-mcmahon-the": {
       "label": "Tim McMahon. The (ESPN)",
       "credibility": 18
+    },
+    "reporter:chris-haynes": {
+      "label": "Chris Haynes (NBA on Prime)",
+      "credibility": 30
     },
     "ledger:nba-player-movement": {
       "label": "Player movement log",
@@ -771,12 +775,14 @@
         "mv-d46db2f4a349df07",
         "mv-11ebf253ed00ee6f",
         "mv-ed026c229b224a4c",
-        "mv-68127021ed132d89"
+        "mv-68127021ed132d89",
+        "mv-cc3a362bfd9a06f4",
+        "mv-dde500bd8eb47315"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-06T17:10:57.000Z",
-      "lastMeaningfulAt": "2026-10-08T16:18:47.000Z",
+      "lastMeaningfulAt": "2026-10-09T06:54:41.000Z",
       "linkedPlayerIds": [
         "4683692",
         "3136195"
@@ -865,6 +871,24 @@
       ],
       "linkedTeamIds": [
         "20"
+      ]
+    },
+    {
+      "id": "mv-contract-4432247-20261009",
+      "headline": "Jaylen Clark: contract future",
+      "primaryClaimId": "mv-ac811c2d287f65b4",
+      "claimIds": [
+        "mv-ac811c2d287f65b4"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-10-09T09:58:10.000Z",
+      "lastMeaningfulAt": "2026-10-09T09:58:10.000Z",
+      "linkedPlayerIds": [
+        "4432247"
+      ],
+      "linkedTeamIds": [
+        "16"
       ]
     },
     {
@@ -4272,6 +4296,68 @@
       "teamIds": [
         "9"
       ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-cc3a362bfd9a06f4",
+      "clusterId": "mv-contract-4683692-20261006",
+      "summary": "Karl-Anthony Towns, Knicks Remain Far Apart On Extension",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-09T05:27:44.000Z",
+      "sourceId": "reporter:chris-haynes",
+      "sourceLabel": "RealGM, citing Chris Haynes (NBA on Prime)",
+      "reporterLabel": "Chris Haynes",
+      "sourceUrl": "https://basketball.realgm.com/wiretap/287562/Karl-Anthony-Towns-Knicks-Remain-Far-Apart-On-Extension",
+      "playerIds": [
+        "3136195"
+      ],
+      "teamIds": [
+        "18"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "framework"
+    },
+    {
+      "id": "mv-dde500bd8eb47315",
+      "clusterId": "mv-contract-4683692-20261006",
+      "summary": "Knicks Receive Eye-Opening Update on Karl-Anthony Towns’ Contract Standoff",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-09T06:54:41.000Z",
+      "sourceId": "reporter:chris-haynes",
+      "sourceLabel": "Heavy, citing Chris Haynes (NBA on Prime)",
+      "reporterLabel": "Chris Haynes",
+      "sourceUrl": "https://heavy.com/sports/nba/new-york-knicks/knicks-update-karl-anthony-towns-contract/",
+      "playerIds": [
+        "3136195"
+      ],
+      "teamIds": [
+        "18"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "active_talks"
+    },
+    {
+      "id": "mv-ac811c2d287f65b4",
+      "clusterId": "mv-contract-4432247-20261009",
+      "summary": "“Sometimes You Have To Make Sacrifices”: Caitlin Clark Addresses Fever Contract Future With EPIC Extension Decision Still Uncertain",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-09T09:58:10.000Z",
+      "sourceId": "outlet:fadeaway-world",
+      "sourceLabel": "Fadeaway World",
+      "sourceUrl": "https://fadeawayworld.net/wnba/sometimes-you-have-to-make-sacrifices-caitlin-clark-addresses-fever-contract-future-with-epic-extension-decision-still-uncertain",
+      "playerIds": [
+        "4432247"
+      ],
+      "teamIds": [],
       "isOriginal": true
     },
     {

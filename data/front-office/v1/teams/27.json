@@ -2,13 +2,13 @@
   "meta": {
     "methodologyVersion": "p18c2-1.0",
     "snapshotDate": "2026-10-09",
-    "retrievedAt": "2026-10-09T02:44:40.771Z",
+    "retrievedAt": "2026-10-09T13:09:56.711Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "4f7b03ba2e69c0cc6c35e066d5f7bdde8aeb529717ea52d8e20e16156aab6def",
+    "sourceHash": "de14dcd8d5744bc410ebdf893ff16f20c6364f4571520406b757e17f52c5ba53",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -395,29 +395,6 @@
           "href": "/players/5142718"
         },
         {
-          "playerId": "1641789",
-          "playerName": "Jazian Gortman",
-          "age": null,
-          "contractId": "cy-1641789-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1641789-2026",
-              "playerId": "1641789",
-              "franchiseId": "27",
-              "season": "2026-27",
-              "salary": null,
-              "capHit": null,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "espn-roster-no-salary"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1641789"
-        },
-        {
           "playerId": "1642848",
           "playerName": "Tre Johnson",
           "age": null,
@@ -588,7 +565,7 @@
       ],
       "playerSalaryCommitments": 187685719,
       "playersWithSalary": 13,
-      "playersWithoutSalary": 10
+      "playersWithoutSalary": 9
     },
     "draftAssets": {
       "franchiseId": "27",
