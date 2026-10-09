@@ -68,6 +68,7 @@ export function MatchupWashCard({
   className,
   children,
   as: Tag = "section",
+  still = false,
 }: {
   awayTeamKey?: string | null;
   homeTeamKey?: string | null;
@@ -76,6 +77,8 @@ export function MatchupWashCard({
   className?: string;
   children: ReactNode;
   as?: "section" | "div" | "aside" | "header";
+  /** Skip the scroll reveal so long tables are already drawn when scrolled to. */
+  still?: boolean;
 }) {
   const theme = buildGameMatchupTheme(awayTeamKey, homeTeamKey);
 
@@ -88,6 +91,7 @@ export function MatchupWashCard({
       data-matchup-away={theme.awayBrand?.abbr ?? "-"}
       data-matchup-home={theme.homeBrand?.abbr ?? "-"}
       data-matchup-intensity={intensity}
+      data-motion-still={still || undefined}
     >
       {children}
     </GlassSurface>

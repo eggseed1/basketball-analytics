@@ -207,7 +207,8 @@ export function MotionReveal() {
         }
         seen.add(el);
         // Hidden elements get their @starting-style entry when they are shown.
-        if (!el.checkVisibility() || (initial && el.getBoundingClientRect().top <= fold) || clippedOut(el, cache)) continue;
+        // [data-motion-still] keeps its mount entry but is never held for scroll.
+        if (el.closest("[data-motion-still]") || !el.checkVisibility() || (initial && el.getBoundingClientRect().top <= fold) || clippedOut(el, cache)) continue;
         const entry = POSES.find(([selector]) => el.matches(selector));
         if (!entry) continue;
         const style = getComputedStyle(el);

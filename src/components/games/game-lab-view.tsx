@@ -387,6 +387,7 @@ export function GameLabView({
         homeTeamKey={homeKey}
         intensity="subtle"
         className="flex flex-col gap-4 p-4 sm:p-5"
+        still
       >
         <div>
           <h2 className={type.heading}>Box score</h2>
