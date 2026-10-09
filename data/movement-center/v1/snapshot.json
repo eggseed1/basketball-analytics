@@ -5,10 +5,10 @@
     "season": "2026-27",
     "snapshotDate": "2026-10-09",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-10-09T13:00:11.924Z",
+    "builtAt": "2026-10-09T16:15:08.689Z",
     "rosterPlayerCount": 492,
-    "headlinesScanned": 2406,
-    "latestHeadlineAt": "2026-10-09T12:58:19.000Z",
+    "headlinesScanned": 2486,
+    "latestHeadlineAt": "2026-10-09T16:12:44.000Z",
     "latestTransactionDate": "2026-10-07",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -149,6 +149,10 @@
     "reporter:chris-haynes": {
       "label": "Chris Haynes (NBA on Prime)",
       "credibility": 30
+    },
+    "outlet:sporting-news": {
+      "label": "Sporting News",
+      "credibility": 16
     },
     "ledger:nba-player-movement": {
       "label": "Player movement log",
@@ -769,23 +773,29 @@
     },
     {
       "id": "mv-contract-4683692-20261006",
-      "headline": "Cason Wallace and Karl-Anthony Towns: extension talks with the Knicks",
-      "primaryClaimId": "mv-68127021ed132d89",
+      "headline": "Cason Wallace, Karl-Anthony Towns and others: extension talks with the Knicks",
+      "primaryClaimId": "mv-131f6f931d1156c2",
       "claimIds": [
         "mv-d46db2f4a349df07",
         "mv-11ebf253ed00ee6f",
         "mv-ed026c229b224a4c",
         "mv-68127021ed132d89",
         "mv-cc3a362bfd9a06f4",
-        "mv-dde500bd8eb47315"
+        "mv-dde500bd8eb47315",
+        "mv-7ac500302f398c15",
+        "mv-e4dd9d09453d673d",
+        "mv-939567ca4cb43c39",
+        "mv-2bf13912577d2eef",
+        "mv-131f6f931d1156c2"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-06T17:10:57.000Z",
-      "lastMeaningfulAt": "2026-10-09T06:54:41.000Z",
+      "lastMeaningfulAt": "2026-10-09T15:36:04.000Z",
       "linkedPlayerIds": [
         "4683692",
-        "3136195"
+        "3136195",
+        "3062679"
       ],
       "linkedTeamIds": [
         "25",
@@ -4359,6 +4369,114 @@
       ],
       "teamIds": [],
       "isOriginal": true
+    },
+    {
+      "id": "mv-7ac500302f398c15",
+      "clusterId": "mv-contract-4683692-20261006",
+      "summary": "Knicks kill Karl-Anthony Towns, Josh Hart contract talks for now",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-09T13:41:22.000Z",
+      "sourceId": "reporter:shams-charania",
+      "sourceLabel": "ClutchPoints, citing Shams Charania (ESPN)",
+      "reporterLabel": "Shams Charania",
+      "sourceUrl": "https://clutchpoints.com/nba/new-york-knicks/knicks-news-karl-anthony-towns-josh-hart-contract-talks-paused",
+      "playerIds": [
+        "3062679",
+        "3136195"
+      ],
+      "teamIds": [
+        "18"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "active_talks"
+    },
+    {
+      "id": "mv-e4dd9d09453d673d",
+      "clusterId": "mv-contract-4683692-20261006",
+      "summary": "Knicks suspend contract extension talks for Karl-Anthony Towns, Josh Hart 'until later in the season'",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-09T14:12:32.000Z",
+      "sourceId": "outlet:yahoo-sports",
+      "sourceLabel": "Yahoo Sports",
+      "sourceUrl": "https://sports.yahoo.com/nba/breaking-news/article/knicks-suspend-contract-extension-talks-for-karl-anthony-towns-josh-hart-until-later-in-the-season-141716316.html",
+      "playerIds": [
+        "3062679",
+        "3136195"
+      ],
+      "teamIds": [
+        "18"
+      ],
+      "isOriginal": true,
+      "negotiationSpecificity": "active_talks"
+    },
+    {
+      "id": "mv-939567ca4cb43c39",
+      "clusterId": "mv-contract-4683692-20261006",
+      "summary": "Knicks pause contract negotiations with Karl-Athony Towns, Josh Hart, others until 'later in the season'",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-09T14:21:24.000Z",
+      "sourceId": "outlet:cbs-sports",
+      "sourceLabel": "CBS Sports",
+      "sourceUrl": "https://www.cbssports.com/nba/news/knicks-pause-contract-negotiations-karl-athony-towns-josh-hart/",
+      "playerIds": [
+        "3062679"
+      ],
+      "teamIds": [
+        "18"
+      ],
+      "isOriginal": true,
+      "negotiationSpecificity": "active_talks"
+    },
+    {
+      "id": "mv-2bf13912577d2eef",
+      "clusterId": "mv-contract-4683692-20261006",
+      "summary": "Knicks' Karl-Anthony Towns gets major contract update as 'sizable gap' remains in extension talks",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-09T15:20:56.000Z",
+      "sourceId": "outlet:sporting-news",
+      "sourceLabel": "Sporting News",
+      "sourceUrl": "https://www.sportingnews.com/us/nba/new-york-knicks/news/knicks-karl-anthony-towns-gets-major-contract-update-sizable-gap-remains-extension-talks/39818a074e30563ab94afb3f%3E",
+      "playerIds": [
+        "3136195"
+      ],
+      "teamIds": [
+        "18"
+      ],
+      "isOriginal": true,
+      "negotiationSpecificity": "active_talks"
+    },
+    {
+      "id": "mv-131f6f931d1156c2",
+      "clusterId": "mv-contract-4683692-20261006",
+      "summary": "Knicks announce they are pausing all contract extension talks, including with Karl-Anthony Towns",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-09T15:36:04.000Z",
+      "sourceId": "outlet:yahoo-sports",
+      "sourceLabel": "Yahoo Sports",
+      "sourceUrl": "https://sports.yahoo.com/articles/knicks-announce-pausing-contract-extension-153604780.html",
+      "playerIds": [
+        "3136195"
+      ],
+      "teamIds": [
+        "18"
+      ],
+      "isOriginal": true,
+      "negotiationSpecificity": "active_talks"
     },
     {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",
