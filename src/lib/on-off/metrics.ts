@@ -47,6 +47,19 @@ export const K = Object.fromEntries(ON_OFF_KEYS.map((k, i) => [k, i])) as Record
 
 export const emptyVec = (): OnOffVec => new Array(ON_OFF_KEYS.length).fill(0);
 
+/** Every key ratings() reads. Pair windows store only these to keep team files small. */
+export const RATING_KEYS = ["poss", "pts", "pts2", "fg3a", "fg3m", "fta", "ftm"] as const satisfies readonly OnOffKey[];
+
+export const toRatingVec = (v: OnOffVec): OnOffVec => RATING_KEYS.map((k) => v[K[k]]!);
+
+export function fromRatingVec(short: OnOffVec): OnOffVec {
+  const v = emptyVec();
+  RATING_KEYS.forEach((k, i) => {
+    v[K[k]] = short[i] ?? 0;
+  });
+  return v;
+}
+
 export function addVec(into: OnOffVec, from: OnOffVec): void {
   for (let i = 0; i < into.length; i++) into[i]! += from[i] ?? 0;
 }

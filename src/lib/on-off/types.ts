@@ -1,6 +1,6 @@
 import type { LeagueRates, OnOffSplit, OnOffView } from "@/lib/on-off/metrics";
 
-export const ON_OFF_FILE_VERSION = 4;
+export const ON_OFF_FILE_VERSION = 5;
 
 export type OnOffPhase = "regular" | "playoffs";
 export const ON_OFF_PHASES: readonly OnOffPhase[] = ["regular", "playoffs"];
@@ -18,6 +18,9 @@ export const GAME_LOG_VIEWS = ["clean", "all"] as const;
 
 export type OnOffScheduleGame = { id: string; date: string; opp: string; home: boolean };
 
+/** Schedule indexes of his first and last game with the team, and team totals over those games. */
+export type OnOffStint = { first: number; last: number; team: OnOffViews };
+
 export type TeamOnOffPlayer = {
   /** NBA person id. */
   id: string;
@@ -27,10 +30,19 @@ export type TeamOnOffPlayer = {
   /** Regular-season DRBL/100, when the player is rated. */
   rating: number | null;
   log: OnOffGameLog;
+  /** Present when his time with the team is shorter than its schedule. Off splits use it. */
+  stint?: OnOffStint;
 } & OnOffViews;
 
+/**
+ * Totals over the games both teammates were with the team. Each field is present only when it
+ * differs from the full-season row: team when the shared window is shorter than the schedule,
+ * a or b when that player also played outside it. Vectors hold RATING_KEYS only.
+ */
+export type OnOffSharedWindow = { team?: OnOffViews; a?: OnOffViews; b?: OnOffViews };
+
 /** Two teammates on the floor together. With/without splits derive from these and the solo rows. */
-export type TeamOnOffPair = { a: string; b: string } & OnOffViews;
+export type TeamOnOffPair = { a: string; b: string; shared?: OnOffSharedWindow } & OnOffViews;
 
 export type TeamOnOffLineup = { ids: string[] } & OnOffViews;
 
@@ -61,7 +73,7 @@ export type LeagueOnOffPlayer = {
   name: string;
   gp: number;
   poss: PerView<number>;
-  /** Team possessions with him off the floor, offense plus defense. */
+  /** Team possessions with him off the floor during his stint, offense plus defense. */
   offPoss: PerView<number>;
   netDiff: PerView<number | null>;
   /** 95% range of netDiff, from the unrounded swing and standard error. */

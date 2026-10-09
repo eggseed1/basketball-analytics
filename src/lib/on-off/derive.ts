@@ -4,6 +4,7 @@ import {
   addVec,
   compareOnOff,
   fourFactors,
+  fromRatingVec,
   offSplit,
   ratings,
   shotZone,
@@ -16,7 +17,7 @@ import {
   type Ratings,
   type ShotZone,
 } from "@/lib/on-off/metrics";
-import type { LeagueOnOffFile, TeamOnOffFile, TeamOnOffPlayer } from "@/lib/on-off/types";
+import type { LeagueOnOffFile, OnOffViews, TeamOnOffFile, TeamOnOffPlayer } from "@/lib/on-off/types";
 
 /** About 500 minutes on the floor. Below this, league ranks are left blank. */
 export const PERCENTILE_MIN_POSS = 2000;
@@ -100,13 +101,18 @@ export function leagueRates(league: LeagueOnOffFile | null, view: OnOffView): Le
   return league?.rates[view] ?? { fg3Pct: 0.36, ftPct: 0.78, pppVar: 1.4 };
 }
 
+/** Team totals over his first to last game with the team, so off never counts games he wasn't there. */
+export function stintTeam(file: TeamOnOffFile, player: TeamOnOffPlayer, view: OnOffView): OnOffSplit {
+  return (player.stint?.team ?? file.team)[view];
+}
+
 export function playerRow(
   file: TeamOnOffFile,
   league: LeagueOnOffFile | null,
   player: TeamOnOffPlayer,
   view: OnOffView
 ): OnOffPlayerRow {
-  const team = file.team[view];
+  const team = stintTeam(file, player, view);
   const on = player[view];
   const off = offSplit(team, on);
   const cmp = compareOnOff(team, on, leagueRates(league, view));
@@ -151,6 +157,11 @@ export type SideDetail = {
 const zones = (v: number[]): ZoneRow[] =>
   SHOT_ZONES.map(({ zone, label }) => ({ zone, label, ...shotZone(v, zone) }));
 
+function sharedSplit(views: OnOffViews | undefined, view: OnOffView): OnOffSplit | null {
+  const s = views?.[view];
+  return s ? { o: fromRatingVec(s.o), d: fromRatingVec(s.d) } : null;
+}
+
 export type WowyStates = {
   both: Ratings;
   aOnly: Ratings;
@@ -171,12 +182,15 @@ export function wowy(
   if (!pa || !pb || !pair) return null;
   const rates = leagueRates(league, view);
   const both = pair[view];
-  const aOnly = offSplit(pa[view], both);
-  const bOnly = offSplit(pb[view], both);
-  const team = file.team[view];
+  const swapped = pair.a !== a;
+  const aShared = sharedSplit(swapped ? pair.shared?.b : pair.shared?.a, view) ?? pa[view];
+  const bShared = sharedSplit(swapped ? pair.shared?.a : pair.shared?.b, view) ?? pb[view];
+  const aOnly = offSplit(aShared, both);
+  const bOnly = offSplit(bShared, both);
+  const team = sharedSplit(pair.shared?.team, view) ?? file.team[view];
   const neither: OnOffSplit = {
-    o: subVec(subVec(team.o, pa[view].o), pb[view].o),
-    d: subVec(subVec(team.d, pa[view].d), pb[view].d),
+    o: subVec(subVec(team.o, aShared.o), bShared.o),
+    d: subVec(subVec(team.d, aShared.d), bShared.d),
   };
   addVec(neither.o, both.o);
   addVec(neither.d, both.d);
@@ -255,16 +269,18 @@ export function replacements(
   const player = file.players.find((p) => p.id === playerId);
   if (!player) return [];
   const onPoss = possOf(player[view]);
-  const offPoss = possOf(file.team[view]) - onPoss;
+  const offPoss = possOf(stintTeam(file, player, view)) - onPoss;
   if (onPoss <= 0 || offPoss <= 0) return [];
   const byId = new Map(file.players.map((p) => [p.id, p]));
   return file.pairs
     .filter((p) => p.a === playerId || p.b === playerId)
     .map((pair) => {
-      const mate = byId.get(pair.a === playerId ? pair.b : pair.a);
+      const mateIsA = pair.a !== playerId;
+      const mate = byId.get(mateIsA ? pair.a : pair.b);
       if (!mate) return null;
       const together = possOf(pair[view]);
-      const without = possOf(mate[view]) - together;
+      const mateInStint = sharedSplit(mateIsA ? pair.shared?.a : pair.shared?.b, view) ?? mate[view];
+      const without = possOf(mateInStint) - together;
       return {
         id: mate.id,
         name: mate.name,
@@ -307,10 +323,13 @@ export function onOffTrend(
   const player = file.players.find((p) => p.id === playerId);
   if (!player) return [];
   const mine = new Map(player.log[view].map((r) => [r[0], r]));
+  const first = player.stint?.first ?? 0;
+  const last = player.stint?.last ?? file.schedule.length - 1;
   const on = [0, 0, 0, 0];
   const team = [0, 0, 0, 0];
   const out: TrendPoint[] = [];
   for (const row of file.teamLog[view]) {
+    if (row[0] < first || row[0] > last) continue;
     const game = file.schedule[row[0]];
     if (!game) continue;
     const p = mine.get(row[0]);
@@ -325,7 +344,7 @@ export function onOffTrend(
     const offNet = net100(off[0]!, off[1]!, off[2]!, off[3]!);
     const enough = onPoss >= TREND_MIN_POSS && offPoss >= TREND_MIN_POSS;
     out.push({
-      game: out.length + 1,
+      game: row[0] + 1,
       date: game.date,
       opp: game.opp,
       home: game.home,
@@ -358,7 +377,7 @@ export function playerDetail(
   const player = file.players.find((p) => p.id === playerId);
   if (!player || possOf(player[view]) === 0) return null;
   const on = player[view];
-  const off = offSplit(file.team[view], on);
+  const off = offSplit(stintTeam(file, player, view), on);
   const names = new Map(file.players.map((p) => [p.id, p.name]));
 
   const teammates = file.pairs

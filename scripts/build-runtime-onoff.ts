@@ -26,6 +26,7 @@ import {
   emptyVec,
   garbageMarginThreshold,
   HEAVE_SECONDS,
+  toRatingVec,
   type LeagueRates,
   type OnOffSplit,
   type OnOffVec,
@@ -40,6 +41,7 @@ import {
   type OnOffGameRow,
   type OnOffManifest,
   type OnOffPhase,
+  type OnOffSharedWindow,
   type OnOffViews,
   type TeamOnOffFile,
 } from "../src/lib/on-off/types";
@@ -56,6 +58,8 @@ const SHORT_MID_FEET = 14;
 const CORNER3_MAX_Y = 87.5;
 
 type Views = Record<OnOffView, OnOffSplit>;
+/** Schedule indexes of a player's first and last game with the team. */
+type Window = [number, number];
 const emptySplit = (): OnOffSplit => ({ o: emptyVec(), d: emptyVec() });
 const emptyViews = (): Views => ({ clean: emptySplit(), all: emptySplit(), clutch: emptySplit() });
 
@@ -94,11 +98,22 @@ function qualitySums(ids: readonly string[], ratings: Ratings): [number, number]
 type GameTotals = { clean: number[]; all: number[] };
 type GameLogAcc = Map<string, GameTotals>;
 
-type PlayerAcc = { name: string; games: Set<string>; starts: number; views: Views; log: GameLogAcc };
+/** Full stat vectors per game, summed over a stint window at write time. */
+type ByGame = Map<string, Views>;
+
+type PlayerAcc = {
+  name: string;
+  games: Set<string>;
+  starts: number;
+  views: Views;
+  log: GameLogAcc;
+  byGame: ByGame;
+};
 type TeamAcc = {
   games: Set<string>;
   views: Views;
   log: GameLogAcc;
+  byGame: ByGame;
   players: Map<string, PlayerAcc>;
   pairs: Map<string, Views>;
   lineups: Map<string, Views>;
@@ -112,7 +127,30 @@ const newPlayer = (name: string, starts: number): PlayerAcc => ({
   starts,
   views: emptyViews(),
   log: new Map(),
+  byGame: new Map(),
 });
+
+function gameViews(byGame: ByGame, gameId: string): Views {
+  let views = byGame.get(gameId);
+  if (!views) {
+    views = emptyViews();
+    byGame.set(gameId, views);
+  }
+  return views;
+}
+
+function sumGames(byGame: ByGame, gameIds: readonly string[]): Views {
+  const out = emptyViews();
+  for (const id of gameIds) {
+    const views = byGame.get(id);
+    if (!views) continue;
+    for (const view of ON_OFF_VIEWS) {
+      addVec(out[view].o, views[view].o);
+      addVec(out[view].d, views[view].d);
+    }
+  }
+  return out;
+}
 
 function addToLog(log: GameLogAcc, gameId: string, side: "o" | "d", v: OnOffVec, ctx: PossessionContext) {
   let row = log.get(gameId);
@@ -149,6 +187,7 @@ function teamAcc(map: Map<string, TeamAcc>, teamId: string): TeamAcc {
       games: new Set(),
       views: emptyViews(),
       log: new Map(),
+      byGame: new Map(),
       players: new Map(),
       pairs: new Map(),
       lineups: new Map(),
@@ -353,6 +392,7 @@ function accumulateGame(
     ] as const) {
       const t = teamAcc(teams, teamId);
       addToViews(t.views, side, vec, ctx);
+      addToViews(gameViews(t.byGame, poss.gameId), side, vec, ctx);
       addToLog(t.log, poss.gameId, side, vec, ctx);
       const sorted = [...ids].sort();
       for (const id of sorted) {
@@ -363,6 +403,7 @@ function accumulateGame(
         }
         acc.games.add(poss.gameId);
         addToViews(acc.views, side, vec, ctx);
+        addToViews(gameViews(acc.byGame, poss.gameId), side, vec, ctx);
         addToLog(acc.log, poss.gameId, side, vec, ctx);
       }
       for (let i = 0; i < sorted.length; i++) {
@@ -393,6 +434,14 @@ const round = (v: OnOffVec): OnOffVec => v.map((x) => Math.round(x * 10) / 10);
 const roundViews = (views: Views): OnOffViews =>
   Object.fromEntries(
     ON_OFF_VIEWS.map((view) => [view, { o: round(views[view].o), d: round(views[view].d) }])
+  ) as OnOffViews;
+
+const ratingViews = (views: Views): OnOffViews =>
+  Object.fromEntries(
+    ON_OFF_VIEWS.map((view) => [
+      view,
+      { o: toRatingVec(round(views[view].o)), d: toRatingVec(round(views[view].d)) },
+    ])
   ) as OnOffViews;
 
 function leagueRates(teams: Map<string, TeamAcc>, view: OnOffView): LeagueRates {
@@ -476,6 +525,32 @@ async function buildSeason(season: string, phase: OnOffPhase) {
       .filter((s) => s.date)
       .sort((a, b) => a.date.localeCompare(b.date) || a.id.localeCompare(b.id));
     const index = new Map(teamSchedule.map((s, i) => [s.id, i]));
+    const lastIndex = teamSchedule.length - 1;
+    const windows = new Map<string, Window>();
+    for (const [id, p] of players) {
+      const at = [...p.games].map((g) => index.get(g)).filter((i): i is number => i != null);
+      if (at.length) windows.set(id, [Math.min(...at), Math.max(...at)]);
+    }
+    const isFull = (w: Window | undefined) => !w || (w[0] === 0 && w[1] === lastIndex);
+    const sameWindow = (a: Window, b: Window) => a[0] === b[0] && a[1] === b[1];
+    const gamesIn = (w: Window) => teamSchedule.slice(w[0], w[1] + 1).map((s) => s.id);
+    const stintTeam = new Map<string, Views>();
+    for (const [id] of players) {
+      const w = windows.get(id);
+      stintTeam.set(id, isFull(w) ? t.views : sumGames(t.byGame, gamesIn(w!)));
+    }
+    const sharedWindow = (a: string, b: string): OnOffSharedWindow | undefined => {
+      const wa = windows.get(a);
+      const wb = windows.get(b);
+      if (!wa || !wb) return undefined;
+      const w: Window = [Math.max(wa[0], wb[0]), Math.min(wa[1], wb[1])];
+      if (w[0] > w[1] || isFull(w)) return undefined;
+      const ids = gamesIn(w);
+      const shared: OnOffSharedWindow = { team: ratingViews(sumGames(t.byGame, ids)) };
+      if (!sameWindow(wa, w)) shared.a = ratingViews(sumGames(t.players.get(a)!.byGame, ids));
+      if (!sameWindow(wb, w)) shared.b = ratingViews(sumGames(t.players.get(b)!.byGame, ids));
+      return shared;
+    };
     const file: TeamOnOffFile = {
       version: ON_OFF_FILE_VERSION,
       season,
@@ -503,6 +578,15 @@ async function buildSeason(season: string, phase: OnOffPhase) {
         starts: p.starts,
         rating: ratings.get(id) ?? null,
         log: finishLog(p.log, index),
+        ...(isFull(windows.get(id))
+          ? {}
+          : {
+              stint: {
+                first: windows.get(id)![0],
+                last: windows.get(id)![1],
+                team: roundViews(stintTeam.get(id)!),
+              },
+            }),
         ...roundViews(p.views),
       })),
       pairs: [...t.pairs.entries()]
@@ -512,7 +596,8 @@ async function buildSeason(season: string, phase: OnOffPhase) {
         })
         .map(([key, views]) => {
           const [a, b] = key.split("|");
-          return { a: a!, b: b!, ...roundViews(views) };
+          const shared = sharedWindow(a!, b!);
+          return { a: a!, b: b!, ...(shared ? { shared } : {}), ...roundViews(views) };
         }),
       lineups: [...t.lineups.entries()]
         .filter(([, views]) => totalPoss(views) >= LINEUP_MIN_POSS)
@@ -523,7 +608,8 @@ async function buildSeason(season: string, phase: OnOffPhase) {
     await writeJson(path.join(dir, `${teamId}.json`), file);
 
     for (const [id, p] of players) {
-      const cmp = ON_OFF_VIEWS.map((view) => compareOnOff(t.views[view], p.views[view], rates[view]));
+      const team = stintTeam.get(id)!;
+      const cmp = ON_OFF_VIEWS.map((view) => compareOnOff(team[view], p.views[view], rates[view]));
       const r1 = (x: number | null) => (x == null ? null : Math.round(x * 10) / 10);
       const range = (c: (typeof cmp)[number]): [number, number] | null =>
         c.netDiff == null || c.netDiffSe == null
@@ -539,7 +625,7 @@ async function buildSeason(season: string, phase: OnOffPhase) {
         poss: perView((i) => possIn(p.views[ON_OFF_VIEWS[i]!])),
         offPoss: perView((i) => {
           const view = ON_OFF_VIEWS[i]!;
-          return possIn(t.views[view]) - possIn(p.views[view]);
+          return possIn(team[view]) - possIn(p.views[view]);
         }),
         netDiff: perView((i) => r1(cmp[i]!.netDiff)),
         netDiffRange: perView((i) => range(cmp[i]!)),

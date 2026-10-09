@@ -398,6 +398,8 @@ export function TeamOnOffPanel({
         </div>
         <PlayerTable rows={data.rows} season={season} teamAbbr={teamAbbr} />
         <p className={cn(type.caption, "text-muted-foreground")}>
+          Off counts only games from his first to last game with {teamAbbr}, so a traded or
+          midseason signing isn&apos;t measured against games before he arrived or after he left.
           Swing is on net minus off net. The ± figure is the 95% range from sampling noise, so a
           +4 swing with ±8 could easily be zero. Small sample marks fewer than 1,000 possessions
           on or off, which covers every clutch split
@@ -409,7 +411,8 @@ export function TeamOnOffPanel({
       <div className="flex flex-col gap-3">
         <h3 className={type.heading}>With and without</h3>
         <p className={cn(type.bodySm, "max-w-prose text-muted-foreground")}>
-          Pick two regulars to split the season into the four ways they shared the floor.
+          Pick two regulars to split the games they were both with the team into the four ways
+          they shared the floor.
         </p>
         <WowyExplorer key={activePhase} players={pairPlayers} pairs={data.pairs} />
       </div>

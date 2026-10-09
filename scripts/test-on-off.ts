@@ -14,6 +14,7 @@ import {
   onOffTrend,
   playerDetail,
   replacements,
+  stintTeam,
   teamPlayerRows,
   wowy,
 } from "../src/lib/on-off/derive";
@@ -27,6 +28,7 @@ import {
   luckAdjustedPts,
   offSplit,
   ratings,
+  toRatingVec,
   type OnOffSplit,
   type OnOffVec,
 } from "../src/lib/on-off/metrics";
@@ -216,6 +218,72 @@ function testReplacementsAndTrend() {
   assert.equal(onOffTrend(t, "a", "clutch").length, 0);
 }
 
+function testStintWindows() {
+  // Three games of 300 possessions each side. "a" arrived by trade for games 1 and 2.
+  const s = (poss: number, pts: number, dpts: number): OnOffSplit => ({
+    o: vec({ poss, pts, pts2: pts * 2, sec: poss * 14 }),
+    d: vec({ poss, pts: dpts, pts2: dpts * 2, sec: poss * 14 }),
+  });
+  const views = (poss: number, pts: number, dpts: number) => ({
+    clean: s(poss, pts, dpts),
+    all: s(poss, pts, dpts),
+    clutch: s(poss / 10, pts / 10, dpts / 10),
+  });
+  const file = syntheticFile();
+  file.games = 3;
+  file.schedule = [
+    { id: "g0", date: "2025-10-22", opp: "AAA", home: true },
+    { id: "g1", date: "2025-10-24", opp: "BBB", home: false },
+    { id: "g2", date: "2025-10-26", opp: "CCC", home: true },
+  ];
+  file.team = views(900, 1000, 950);
+  file.teamLog = { clean: [], all: [[0, 300, 300, 300, 330], [1, 300, 350, 300, 310], [2, 300, 350, 300, 310]] };
+  file.players[0] = {
+    ...file.players[0]!,
+    gp: 2,
+    log: { clean: [], all: [[1, 200, 250, 200, 190], [2, 200, 250, 200, 190]] },
+    stint: { first: 1, last: 2, team: views(600, 700, 620) },
+    ...views(400, 500, 380),
+  };
+  file.players[1] = { ...file.players[1]!, ...views(500, 560, 530) };
+  const compact = (v: ReturnType<typeof views>) =>
+    Object.fromEntries(
+      ON_OFF_VIEWS.map((k) => [k, { o: toRatingVec(v[k].o), d: toRatingVec(v[k].d) }])
+    ) as ReturnType<typeof views>;
+  file.pairs = [
+    {
+      a: "a",
+      b: "b",
+      shared: { team: compact(views(600, 700, 620)), b: compact(views(350, 400, 360)) },
+      ...views(250, 300, 240),
+    },
+  ];
+
+  const row = teamPlayerRows(file, null, "all").find((r) => r.id === "a")!;
+  close(row.onShare, 400 / 600);
+  const off = offSplit(file.players[0].stint!.team.all, file.players[0].all);
+  assert.equal(off.o[K.poss], 200, "off covers only the games after the trade");
+  close(row.cmp.netDiff, (100 * 500) / 400 - (100 * 380) / 400 - ((100 * 200) / 200 - (100 * 240) / 200));
+
+  const w = wowy(file, null, "a", "b", "all")!;
+  assert.equal(w.aOnly.poss / 2, 400 - 250);
+  assert.equal(w.bOnly.poss / 2, 350 - 250, "b's games before a arrived stay out");
+  assert.equal(w.neither.poss / 2, 600 - 400 - 350 + 250);
+  const flipped = wowy(file, null, "b", "a", "all")!;
+  assert.equal(flipped.aOnly.poss, w.bOnly.poss);
+  assert.equal(flipped.neither.poss, w.neither.poss);
+  const neitherPts = 700 - 500 - 400 + 300;
+  close(w.neither.ortg, (neitherPts / (600 - 400 - 350 + 250)) * 100);
+
+  const trend = onOffTrend(file, "a", "all");
+  assert.deepEqual(trend.map((p) => p.game), [2, 3], "trend starts at his first game with the team");
+  assert.equal(trend.at(-1)!.offPoss, 400);
+
+  const r = replacements(file, "a", "all");
+  // b: 250 of a's 400 with him (62.5%); 100 of the 200 a sat (50%).
+  assert.equal(r.length, 0);
+}
+
 function testCommittedFiles() {
   const root = path.join(process.cwd(), "public/runtime/on-off");
   const manifestPath = path.join(root, "manifest.json");
@@ -249,8 +317,26 @@ function checkSeason(root: string, season: string, phase: OnOffPhase, teams: str
     }
     const star = file.players[0]!;
     const last = onOffTrend(file, star.id, "all").at(-1);
-    const cmp = compareOnOff(file.team.all, star.all, LEAGUE);
+    const cmp = compareOnOff(stintTeam(file, star, "all"), star.all, LEAGUE);
     if (last?.swing != null && cmp.netDiff != null) close(last.swing, cmp.netDiff, 0.05);
+
+    for (const p of file.players) {
+      if (!p.stint) continue;
+      const { first, last: end } = p.stint;
+      assert.ok(first >= 0 && end < file.games && first <= end, `${label} ${p.name} stint bounds`);
+      assert.ok(first > 0 || end < file.games - 1, `${label} ${p.name} full-season stint is omitted`);
+      assert.ok(p.log.all.every((r) => r[0] >= first && r[0] <= end), `${label} ${p.name} played inside his stint`);
+      for (const view of ON_OFF_VIEWS) {
+        for (const side of ["o", "d"] as const) {
+          const offPoss = p.stint.team[view][side][K.poss]! - p[view][side][K.poss]!;
+          assert.ok(offPoss >= -0.5, `${label} ${p.name} ${view}.${side} off possessions ${offPoss}`);
+        }
+      }
+    }
+    for (const pair of file.pairs) {
+      const w = wowy(file, null, pair.a, pair.b, "all");
+      assert.ok(w && w.neither.poss >= -1 && w.aOnly.poss >= -1 && w.bOnly.poss >= -1, `${label} wowy states`);
+    }
 
     for (const view of ON_OFF_VIEWS) {
       for (const side of ["o", "d"] as const) {
@@ -293,5 +379,6 @@ testOffIsTeamMinusOn();
 testWowyPartitions();
 testQualityContext();
 testReplacementsAndTrend();
+testStintWindows();
 testCommittedFiles();
 console.log("on-off: ok");

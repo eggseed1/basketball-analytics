@@ -159,7 +159,7 @@ export function OnOffTrendChart({ points, color }: { points: TrendPoint[]; color
         ) : null}
       </p>
       <p className={cn(type.caption, "text-muted-foreground")}>
-        Each point is his swing from the team&apos;s first game through that one. Ticks along the bottom mark
+        Each point is his swing from his first game with the team through that one. Ticks along the bottom mark
         the {playedCount} games he played. The line starts once he has 250 possessions on and off,
         since early values swing wildly.
       </p>
