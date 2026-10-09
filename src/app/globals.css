@@ -2228,6 +2228,71 @@ svg [data-motion-dot] {
   }
 }
 
+/* Playoff bracket team lines. The brand edge is its own element so the linked
+   hover can tint the whole line without fighting an inline box-shadow. */
+[data-bracket-line] [data-bracket-edge] {
+  width: 2px;
+  background: color-mix(in oklab, var(--wash) 55%, transparent);
+}
+
+[data-bracket-line][data-winner] {
+  background-color: color-mix(in oklab, var(--wash) 22%, transparent);
+}
+
+[data-bracket-line][data-winner] [data-bracket-edge] {
+  width: 3px;
+  background: var(--wash);
+}
+
+[data-bracket-line][data-linked] {
+  outline: none;
+  background-color: color-mix(in oklab, var(--wash) 34%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--wash) 75%, transparent);
+}
+
+[data-bracket-line][data-linked] [data-bracket-edge] {
+  width: 3px;
+  background: var(--wash);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  div[data-bracket-line] {
+    transition: background-color 140ms ease, box-shadow 140ms ease;
+  }
+
+  [data-bracket-line] [data-bracket-edge] {
+    transition: width 140ms ease, background-color 140ms ease;
+  }
+}
+
+/* Bracket fit. zoom lays text out again at the smaller size, so it stays crisp
+   and the height is right on first paint. Thresholds are the grid's full-size
+   minimum width (cards at 6.25rem, connectors, play-in gaps) times each step;
+   below the last step the bracket scrolls sideways. Text inside needs unitless
+   or explicit line-heights: an inherited px line-height is rescaled by zoom. */
+[data-bracket-fit] {
+  container-type: inline-size;
+}
+
+@container (width < 1012px) {
+  [data-bracket-grid][data-cards="9"] { zoom: 0.9; }
+}
+@container (width < 911px) {
+  [data-bracket-grid][data-cards="9"] { zoom: 0.8; }
+}
+@container (width < 810px) {
+  [data-bracket-grid][data-cards="9"] { zoom: 0.72; }
+}
+@container (width < 796px) {
+  [data-bracket-grid][data-cards="7"] { zoom: 0.9; }
+}
+@container (width < 717px) {
+  [data-bracket-grid][data-cards="7"] { zoom: 0.8; }
+}
+@container (width < 637px) {
+  [data-bracket-grid][data-cards="7"] { zoom: 0.72; }
+}
+
 /* Motion page entry (player and team pages). Built on @starting-style transitions so hover replays
    (keyframes) can restart freely, and tab panels that leave display:none
    play their entry again. Each property carries its own delay so hover

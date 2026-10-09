@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 
 import { HashAnchorScroll } from "@/components/continuity/hash-anchor-scroll";
 import { MotionReveal } from "@/components/continuity/motion-reveal";
-import { PlayoffBracket } from "@/components/explore/playoff-bracket";
+import { PlayoffBracket, PlayoffBracketSkeleton } from "@/components/explore/playoff-bracket";
 import { TeamSeasonTable } from "@/components/explore/team-season-table";
 import { TeamSeasonToolbar } from "@/components/explore/team-season-toolbar";
 import { PageHeader, SectionHeader } from "@/components/layout/page-header";
@@ -173,9 +173,7 @@ export default async function StandingsPage({ searchParams }: PageProps) {
       </section>
 
       <section id="bracket" className="scroll-mt-48">
-        <Suspense
-          fallback={<div className="h-72 animate-pulse rounded-xl bg-secondary" aria-busy="true" />}
-        >
+        <Suspense fallback={<PlayoffBracketSkeleton />}>
           <BracketBody season={season} />
         </Suspense>
       </section>

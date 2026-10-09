@@ -1,6 +1,9 @@
 "use client";
 
-import { useRef, type ReactNode } from "react";
+import { useEffect, useRef, type CSSProperties, type ReactNode } from "react";
+
+/** Grace period before clearing, so crossing the gap between two items doesn't flash. */
+const CLEAR_DELAY_MS = 90;
 
 /**
  * Hovering any `[data-link-key]` inside marks every element that shares a key
@@ -12,14 +15,25 @@ import { useRef, type ReactNode } from "react";
 export function LinkedHover({
   children,
   className,
+  style,
 }: {
   children: ReactNode;
   className?: string;
+  style?: CSSProperties;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const current = useRef<string | null>(null);
+  const clearTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => () => {
+    if (clearTimer.current) clearTimeout(clearTimer.current);
+  }, []);
 
   const apply = (key: string | null) => {
+    if (clearTimer.current) {
+      clearTimeout(clearTimer.current);
+      clearTimer.current = null;
+    }
     if (key === current.current) return;
     current.current = key;
     const root = ref.current;
@@ -31,15 +45,23 @@ export function LinkedHover({
     }
   };
 
+  const clearSoon = () => {
+    if (current.current === null || clearTimer.current) return;
+    clearTimer.current = setTimeout(() => apply(null), CLEAR_DELAY_MS);
+  };
+
   return (
     <div
       ref={ref}
       className={className}
+      style={style}
       onPointerOver={(event) => {
         const target = event.target instanceof Element ? event.target : null;
-        apply(target?.closest("[data-link-key]")?.getAttribute("data-link-key") ?? null);
+        const key = target?.closest("[data-link-key]")?.getAttribute("data-link-key") ?? null;
+        if (key) apply(key);
+        else clearSoon();
       }}
-      onPointerLeave={() => apply(null)}
+      onPointerLeave={clearSoon}
       onFocus={(event) => {
         apply(event.target.closest("[data-link-key]")?.getAttribute("data-link-key") ?? null);
       }}

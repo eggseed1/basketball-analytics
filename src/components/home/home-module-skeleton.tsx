@@ -1,3 +1,4 @@
+import { PlayoffBracketSkeleton } from "@/components/explore/playoff-bracket";
 import type { HomeLayout, HomeModuleId, HomeSeasonPhase } from "@/lib/home-season-moment";
 import { cn } from "@/lib/utils";
 
@@ -10,7 +11,7 @@ const HEIGHT: Record<HomeModuleId, string> = {
   moment: "h-[52px] sm:h-8",
   "phase-bar": "h-9 sm:h-4",
   calendar: "h-[168px]",
-  bracket: "h-72",
+  bracket: "",
   standings: "h-[567px] lg:h-[575px]",
   "standings-race": "h-80",
   findings: "h-[1673px] lg:h-[925px]",
@@ -45,6 +46,7 @@ export function HomeModuleSkeleton({ id, phase }: { id: HomeModuleId; phase?: Ho
       </div>
     );
   }
+  if (id === "bracket") return <PlayoffBracketSkeleton />;
   if (id === "phase-bar") {
     return (
       <div data-skeleton aria-hidden className={cn("flex items-center", HEIGHT["phase-bar"])}>
