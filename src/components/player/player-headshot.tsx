@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useState } from "react";
 
+import { cdnImageProps } from "@/lib/cdn-image";
 import { cn } from "@/lib/utils";
 import {
   nbaPlayerHeadshotUrl,
@@ -52,9 +53,9 @@ export function PlayerHeadshot({
 
   return (
     <Image
-      src={src}
+      {...cdnImageProps(src)}
       alt=""
-      width={px}
+      width={Math.ceil(px * 1.4)}
       height={px}
       data-avatar={size}
       className={cn(
@@ -62,7 +63,6 @@ export function PlayerHeadshot({
         className
       )}
       onError={() => setFailed(true)}
-      unoptimized
       loading="lazy"
     />
   );

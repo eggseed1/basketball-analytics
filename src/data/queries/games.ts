@@ -744,7 +744,7 @@ export async function getRecentGameSummaries(
 }
 
 /** Home week strip: this week's slate, or upcoming previews when quiet. */
-const STRIP_REFRESH_BUDGET_MS = 1_500;
+const STRIP_REFRESH_BUDGET_MS = 4_000;
 const SETTLED_STATUSES = new Set(["final", "postponed", "cancelled"]);
 
 /**

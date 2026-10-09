@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import { cdnImageProps } from "@/lib/cdn-image";
 import { cn } from "@/lib/utils";
 import type {
   HistoricalLogoSource,
@@ -127,7 +128,7 @@ export function TeamLogo({
 
   return (
     <Image
-      src={src}
+      {...cdnImageProps(src)}
       alt=""
       width={px}
       height={px}
@@ -135,7 +136,6 @@ export function TeamLogo({
       data-logo={size}
       className={cn("team-logo-img shrink-0 object-contain", className)}
       onError={() => setFailed(true)}
-      unoptimized
     />
   );
 }

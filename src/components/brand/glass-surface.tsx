@@ -12,7 +12,7 @@ import {
 import dynamic from "next/dynamic";
 
 import { useOwnerTheme } from "@/components/design-system/theme-provider";
-import { HOF_OUTLINE_CLASS } from "@/lib/hall-of-fame-style";
+import { HOF_OUTLINE_CLASS } from "@/lib/hall-of-fame-classes";
 import { cn } from "@/lib/utils";
 
 /** Liquid SVG glass — only fetched when a surface opts into `effect="liquid"`. */

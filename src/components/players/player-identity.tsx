@@ -25,11 +25,6 @@ import {
   textLinkClassName,
   type,
 } from "@/lib/design-system";
-import {
-  careerSpanLabel,
-  lookupPlayerPreviewAccolades,
-  lookupPlayerSearchRow,
-} from "@/lib/player-identity-preview-data";
 import { stripFloatingTransform } from "@/lib/strip-floating-transform";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import type { PlayerCardStint } from "@/lib/player-team-context";
@@ -127,6 +122,25 @@ const VARIANT_CONFIG: Record<PlayerIdentityVariant, VariantConfig> = {
 
 const NEVER_PLAYED_COPY = "This player has not played in an NBA game.";
 
+// The preview lookups carry the full player search index and awards snapshot,
+// so they load on first hover instead of shipping with every page.
+type PreviewData = typeof import("@/lib/player-identity-preview-data");
+let previewData: PreviewData | null = null;
+let previewDataLoad: Promise<PreviewData> | null = null;
+
+function loadPreviewData(): Promise<PreviewData> {
+  previewDataLoad ??= import("@/lib/player-identity-preview-data").then(
+    (mod) => (previewData = mod)
+  );
+  return previewDataLoad;
+}
+
+function warmPreviewData() {
+  void loadPreviewData().catch(() => {
+    previewDataLoad = null;
+  });
+}
+
 function resolveVariant(
   variant: PlayerIdentityVariant | undefined,
   compact: boolean | undefined
@@ -216,11 +230,27 @@ export function PlayerIdentity({
   const brandTeamKey =
     lastCardStint(resolvedStints)?.teamKey || teamKey || undefined;
   const brand = resolveTeamBrand(brandTeamKey);
-  const searchRow = useMemo(() => lookupPlayerSearchRow(id), [id]);
-  const span = careerSpanLabel(searchRow);
+  const [data, setData] = useState(previewData);
+  useEffect(() => {
+    if (!open || data) return;
+    let live = true;
+    loadPreviewData().then(
+      (mod) => {
+        if (live) setData(mod);
+      },
+      () => {
+        previewDataLoad = null;
+      }
+    );
+    return () => {
+      live = false;
+    };
+  }, [open, data]);
+  const searchRow = useMemo(() => data?.lookupPlayerSearchRow(id) ?? null, [data, id]);
+  const span = data?.careerSpanLabel(searchRow) ?? null;
   const accolades = useMemo(
-    () => lookupPlayerPreviewAccolades(id || nbaId, cfg.accoladeLimit),
-    [id, nbaId, cfg.accoladeLimit]
+    () => data?.lookupPlayerPreviewAccolades(id || nbaId, cfg.accoladeLimit) ?? [],
+    [data, id, nbaId, cfg.accoladeLimit]
   );
 
   const teamOnly =
@@ -244,6 +274,8 @@ export function PlayerIdentity({
           render={trigger}
           delay={cfg.openDelay}
           closeDelay={cfg.closeDelay}
+          onPointerEnter={warmPreviewData}
+          onFocus={warmPreviewData}
           className={cn(
             "inline-flex min-w-0 max-w-full items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
             resolved !== "chip" && children == null && type.body,

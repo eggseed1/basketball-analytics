@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import type { ArcadePlayer } from "@/arcade/league";
+import { cdnImageUrl } from "@/lib/cdn-image";
 import { espnHeadshotUrl, nbaHeadshotUrl } from "@/lib/nba-brand";
 import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
@@ -30,7 +31,7 @@ export function PlayerAvatar({ player, className }: { player: ArcadePlayer; clas
       {src ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
-          src={src}
+          src={cdnImageUrl(src, 128)}
           alt=""
           className="size-full object-cover object-top"
           onError={() => setFailed((urls) => [...urls, src])}

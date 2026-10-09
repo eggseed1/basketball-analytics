@@ -36,9 +36,10 @@ export const metadata = {
   description: "NBA games, standings, impact leaders, and analytics coverage.",
 };
 
-// Cache the assembled homepage briefly at the route level. Provider-specific
-// live-score fetches still keep their own shorter refresh policy.
-export const revalidate = 60;
+// Keep this request-time. OpenNext has no incremental cache here, so ISR would
+// render the whole page before the first byte on every request. Streaming lets
+// modules arrive one by one, and the worker page cache shares the result.
+export const dynamic = "force-dynamic";
 
 async function HomeCalendar({ season }: { season: string }) {
   return <WeekGameCalendar season={season} />;

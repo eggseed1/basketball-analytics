@@ -1,3 +1,4 @@
+import { cdnImageUrl } from "@/lib/cdn-image";
 import { cn } from "@/lib/utils";
 import type {
   HistoricalTeamBrand,
@@ -112,7 +113,7 @@ export function HistoricalTeamMark({
   return (
     // eslint-disable-next-line @next/next/no-img-element -- static/CDN marks; avoid client Image islands in lists
     <img
-      src={brand.logoUrl!}
+      src={cdnImageUrl(brand.logoUrl!, px)}
       alt=""
       width={px}
       height={px}

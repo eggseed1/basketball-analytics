@@ -24,11 +24,18 @@ type OpenNextHandler = {
   fetch(request: Request, env: WorkerEnv, ctx: WorkerContext): Promise<Response>;
 };
 
-const PAGE_CACHE_TTL_SECONDS = 15 * 60;
+type CachePolicy = { fresh: number; stale: number };
+
+// Seconds a cached page is served as-is, then how much longer it may be served
+// while a background render replaces it. Every visitor gets the same HTML
+// (nothing reads cookies or headers), so pages are shared across visitors.
+const LIVE_POLICY: CachePolicy = { fresh: 60, stale: 10 * 60 };
+const DAILY_POLICY: CachePolicy = { fresh: 15 * 60, stale: 6 * 60 * 60 };
 const PAGE_CACHE_MAX_BYTES = 5 * 1024 * 1024;
-const CACHEABLE_PATH = /^\/(players|teams)\/[^/]+$/;
-// Every query param these routes (and their client components) read. Any other
-// param could change the HTML, so those requests skip the cache entirely.
+const UNCACHED_PATH = /^\/(?:api|internal|_next)(?:\/|$)|\.[a-z0-9]+$/i;
+const LIVE_PATH = /^\/(?:scores|dashboard|explore\/games|games\/[^/]+)?$/;
+// Query params pages read that are safe to key on. Any other param could change
+// the HTML in ways the key can't see, so those requests skip the cache.
 const CACHEABLE_PARAMS = new Set([
   "season", "view", "seasonType", "page", "stat", "filter", "mode",
   "tab", "rate", "arc", "gamesPage", "sort", "dir", "from", "theme",
@@ -46,22 +53,25 @@ const UNCACHEABLE_MARKERS = [
   /NEXT_REDIRECT/,
 ];
 
-function pageCacheKey(request: Request, env: WorkerEnv): string | null {
+type PageCacheEntry = { key: string; policy: CachePolicy };
+
+function pageCacheEntry(request: Request, env: WorkerEnv): PageCacheEntry | null {
   if (request.method !== "GET" || !env.PAGE_CACHE) return null;
   const version = env.CF_VERSION_METADATA?.id;
   if (!version) return null;
   if (request.headers.has("rsc") || request.headers.has("next-router-prefetch")) return null;
   const url = new URL(request.url);
-  if (!CACHEABLE_PATH.test(url.pathname)) return null;
+  if (UNCACHED_PATH.test(url.pathname)) return null;
   const params = [...url.searchParams.entries()];
   if (params.some(([k, v]) => !CACHEABLE_PARAMS.has(k) || v.length > 40)) return null;
   params.sort(([a, av], [b, bv]) => a.localeCompare(b) || av.localeCompare(bv));
   const query = new URLSearchParams(params).toString();
   const key = `page:${version}:${url.pathname}${query ? `?${query}` : ""}`;
-  return key.length <= 480 ? key : null;
+  if (key.length > 480) return null;
+  return { key, policy: LIVE_PATH.test(url.pathname) ? LIVE_POLICY : DAILY_POLICY };
 }
 
-function cachedResponse(raw: string): Response | null {
+function cachedResponse(raw: string, policy: CachePolicy): { response: Response; stale: boolean } | null {
   const newline = raw.indexOf("\n");
   if (newline < 0) return null;
   try {
@@ -69,19 +79,32 @@ function cachedResponse(raw: string): Response | null {
       at: number;
       headers: Record<string, string>;
     };
+    const age = Math.max(0, Math.round((Date.now() - meta.at) / 1000));
+    if (age >= policy.fresh + policy.stale) return null;
+    const stale = age >= policy.fresh;
     const headers = new Headers(meta.headers);
     headers.set("cache-control", "private, no-cache, no-store, max-age=0, must-revalidate");
-    headers.set("age", String(Math.max(0, Math.round((Date.now() - meta.at) / 1000))));
-    headers.set("x-page-cache", "HIT");
-    return new Response(raw.slice(newline + 1), { status: 200, headers });
+    headers.set("age", String(age));
+    headers.set("x-page-cache", stale ? "STALE" : "HIT");
+    return { response: new Response(raw.slice(newline + 1), { status: 200, headers }), stale };
   } catch {
     return null;
   }
 }
 
+function isCacheableResponse(response: Response): response is Response & { body: ReadableStream<Uint8Array> } {
+  const type = response.headers.get("content-type") ?? "";
+  return (
+    response.status === 200 &&
+    response.body !== null &&
+    type.startsWith("text/html") &&
+    !response.headers.has("set-cookie")
+  );
+}
+
 async function storePage(
   env: WorkerEnv,
-  key: string,
+  { key, policy }: PageCacheEntry,
   headers: Headers,
   body: ReadableStream<Uint8Array>
 ): Promise<void> {
@@ -95,32 +118,44 @@ async function storePage(
   }
   const meta = JSON.stringify({ at: Date.now(), headers: replayed });
   await env.PAGE_CACHE!.put(key, `${meta}\n${html}`, {
-    expirationTtl: PAGE_CACHE_TTL_SECONDS,
+    expirationTtl: policy.fresh + policy.stale,
   });
+}
+
+// Keys this isolate is already re-rendering, so a burst of stale hits starts one render.
+const refreshing = new Set<string>();
+
+async function refreshPage(request: Request, env: WorkerEnv, ctx: WorkerContext, entry: PageCacheEntry) {
+  if (refreshing.has(entry.key)) return;
+  refreshing.add(entry.key);
+  try {
+    const response = await (handler as OpenNextHandler).fetch(request, env, ctx);
+    if (isCacheableResponse(response)) await storePage(env, entry, response.headers, response.body);
+    else await response.body?.cancel();
+  } finally {
+    refreshing.delete(entry.key);
+  }
 }
 
 async function servePage(
   request: Request,
   env: WorkerEnv,
   ctx: WorkerContext,
-  key: string
+  entry: PageCacheEntry
 ): Promise<Response> {
-  const raw = await env.PAGE_CACHE!.get(key, "text").catch(() => null);
-  const hit = raw ? cachedResponse(raw) : null;
-  if (hit) return hit;
+  const raw = await env.PAGE_CACHE!.get(entry.key, "text").catch(() => null);
+  const cached = raw ? cachedResponse(raw, entry.policy) : null;
+  if (cached) {
+    if (cached.stale) {
+      ctx.waitUntil(refreshPage(new Request(request), env, ctx, entry).catch(() => undefined));
+    }
+    return cached.response;
+  }
 
   const response = await (handler as OpenNextHandler).fetch(request, env, ctx);
-  const type = response.headers.get("content-type") ?? "";
-  if (
-    response.status !== 200 ||
-    !response.body ||
-    !type.startsWith("text/html") ||
-    response.headers.has("set-cookie")
-  ) {
-    return response;
-  }
+  if (!isCacheableResponse(response)) return response;
   const [toClient, toCache] = response.body.tee();
-  ctx.waitUntil(storePage(env, key, response.headers, toCache).catch(() => undefined));
+  ctx.waitUntil(storePage(env, entry, response.headers, toCache).catch(() => undefined));
   const headers = new Headers(response.headers);
   headers.set("x-page-cache", "MISS");
   return new Response(toClient, { status: response.status, headers });
@@ -155,8 +190,8 @@ const worker = {
       const { success } = await env.API_RATE_LIMITER.limit({ key: `api:${ip}` });
       if (!success) return tooManyRequests();
     }
-    const cacheKey = pageCacheKey(request, env);
-    if (cacheKey) return servePage(request, env, ctx, cacheKey);
+    const cacheEntry = pageCacheEntry(request, env);
+    if (cacheEntry) return servePage(request, env, ctx, cacheEntry);
     return (handler as OpenNextHandler).fetch(request, env, ctx);
   },
 };

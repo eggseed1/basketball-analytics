@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useMemo, useState } from "react";
+import { cdnImageProps } from "@/lib/cdn-image";
 import { cn } from "@/lib/utils";
 import { faceCropBox, parsePortraitPhoto } from "@/lib/portrait-photo";
 import {
@@ -109,6 +110,9 @@ export function PlayerHeadshot({
   // circle cuts off the chin, so show them whole.
   const tallPortrait = !box && BREF_HEADSHOT.test(photo.src);
   const backdrop = tallPortrait || (box !== null && !box.covers);
+  // CDN headshots are about 1.4:1, so covering the circle draws them wider than it.
+  const drawnPx = Math.ceil(px * (box ? parseFloat(box.style.width) / 100 : tallPortrait ? 1 : 1.4));
+  const image = cdnImageProps(photo.src);
 
   return (
     <span
@@ -126,22 +130,21 @@ export function PlayerHeadshot({
       {backdrop ? (
         <Image
           key={`${candidate}-backdrop`}
-          src={photo.src}
+          {...image}
           alt=""
           aria-hidden
-          width={px}
-          height={px}
+          width={Math.ceil(px / 2)}
+          height={Math.ceil(px / 2)}
           loading={priority ? undefined : "eager"}
           className="absolute inset-0 h-full w-full scale-125 object-cover"
           style={{ filter: `blur(${Math.max(2, Math.round(px * 0.06))}px)` }}
-          unoptimized
         />
       ) : null}
       <Image
         key={candidate}
-        src={photo.src}
+        {...image}
         alt={name ? `${name} ${photo.crop ? "photo" : "headshot"}` : ""}
-        width={px}
+        width={drawnPx}
         height={px}
         priority={priority}
         // Small avatars sit in overflow boards; native lazy often never fires on
@@ -162,7 +165,6 @@ export function PlayerHeadshot({
             return { list: candidates, index: Math.min(i + 1, candidates.length) };
           });
         }}
-        unoptimized
       />
     </span>
   );
