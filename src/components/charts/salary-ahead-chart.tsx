@@ -24,16 +24,6 @@ export type AheadLine = {
   strong?: boolean;
 };
 
-/** Which lines get a name at the right edge: all of a small field, else the ends plus strong lines. */
-function labeledIds(lines: AheadLine[], totalId: string | undefined, max: number): Set<string> {
-  if (lines.length <= max) return new Set(lines.map((l) => l.id));
-  const keep = new Set(lines.filter((l) => l.strong || l.id === totalId).map((l) => l.id));
-  const ranked = lines.filter((l) => !keep.has(l.id)).sort((a, b) => (b.ahead.at(-1) ?? 0) - (a.ahead.at(-1) ?? 0));
-  const each = Math.max(0, Math.floor((max - keep.size) / 2));
-  for (const l of [...ranked.slice(0, each), ...ranked.slice(Math.max(each, ranked.length - each))]) keep.add(l.id);
-  return keep;
-}
-
 function niceStep(range: number, target: number): number {
   const raw = range / target;
   const pow = 10 ** Math.floor(Math.log10(raw || 1));
@@ -64,54 +54,27 @@ function useWidth<T extends HTMLElement>(fallback: number) {
   return [ref, width] as const;
 }
 
-function lastName(name: string): string {
-  const parts = name.split(" ");
-  const tail = parts.at(-1) ?? name;
-  return /^(Jr\.?|Sr\.?|II|III|IV)$/.test(tail) && parts.length > 2 ? parts.at(-2)! : tail;
-}
-
 function toneOf(value: number): string {
   return value >= 0 ? POSITIVE : NEGATIVE;
 }
 
-/** Labels at the right edge, nudged apart so none overlap. */
-function spreadLabels(ys: number[], gap: number, top: number, bottom: number): number[] {
-  const order = ys.map((y, i) => ({ y, i })).sort((a, b) => a.y - b.y);
-  const out = new Array<number>(ys.length);
-  let prev = -Infinity;
-  for (const item of order) {
-    const y = Math.max(item.y, prev + gap, top);
-    out[item.i] = y;
-    prev = y;
-  }
-  let next = Infinity;
-  for (let k = order.length - 1; k >= 0; k--) {
-    const i = order[k].i;
-    out[i] = Math.min(out[i], next - gap, bottom);
-    next = out[i];
-  }
-  return out;
-}
-
-/** Every line on one chart around a zero line, named at the right edge. */
+/** Every line on one chart around a zero line; hover names a line. */
 export function AheadRace({
   dates,
   lines,
   totalId,
   height = 380,
-  maxLabels = 24,
 }: {
   dates: string[];
   lines: AheadLine[];
   totalId?: string;
   height?: number;
-  maxLabels?: number;
 }) {
   const router = useRouter();
   const [ref, width] = useWidth<HTMLDivElement>(720);
   const [hover, setHover] = useState<{ id: string; i: number } | null>(null);
   const narrow = width < 560;
-  const m = { l: 60, r: narrow ? 96 : 184, t: 12, b: 26 };
+  const m = { l: 60, r: 14, t: 12, b: 26 };
   const innerW = Math.max(40, width - m.l - m.r);
   const innerH = height - m.t - m.b;
   const n = dates.length;
@@ -120,17 +83,9 @@ export function AheadRace({
   const y = (v: number) => m.t + ((scale.max - v) / (scale.max - scale.min)) * innerH;
   const path = (values: number[]) => values.map((v, i) => `${i ? "L" : "M"}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join("");
 
-  const labeled = labeledIds(lines, totalId, Math.min(maxLabels, Math.floor(innerH / 13)));
-  const labelLines = lines.filter((l) => labeled.has(l.id));
-  const ends = labelLines.map((l) => y(l.ahead.at(-1) ?? 0));
-  const labelYs = spreadLabels(ends, 13, m.t + 4, height - m.b);
   const drawOrder = [...lines].sort((a, b) => Number(Boolean(a.strong)) - Number(Boolean(b.strong)));
   const crowded = lines.length > 40;
   const baseOpacity = lines.length > 150 ? 0.3 : crowded ? 0.55 : 0.8;
-  const shortName = (name: string) => {
-    const last = lastName(name);
-    return narrow && last.length > 12 ? `${last.slice(0, 11)}…` : last;
-  };
   const tickCount = Math.min(narrow ? 3 : 6, n);
   const xTicks = Array.from({ length: tickCount }, (_, k) => Math.round((k * (n - 1)) / Math.max(1, tickCount - 1)));
   const hovered = hover ? lines.find((l) => l.id === hover.id) : null;
@@ -203,34 +158,26 @@ export function AheadRace({
             />
           );
         })}
-        {labelLines.map((line, k) => {
-          const total = line.id === totalId;
-          const end = line.ahead.at(-1) ?? 0;
-          const ly = labelYs[k];
-          const active = hover?.id === line.id;
-          return (
-            <g key={`label-${line.id}`} onPointerEnter={() => setHover({ id: line.id, i: n - 1 })}>
-              <line x1={m.l + innerW + 2} x2={m.l + innerW + 8} y1={ends[k]} y2={ly} stroke="var(--muted-foreground)" strokeOpacity={0.5} />
-              <text
-                x={m.l + innerW + 10}
-                y={ly + 3.5}
-                className={cn("text-[10.5px] tabular-nums", active || total || line.strong ? "font-bold" : "font-medium")}
-                fill={total ? "var(--foreground)" : toneOf(end)}
-              >
-                {narrow ? (total ? "Roster" : shortName(line.name)) : `${total ? "Roster" : shortName(line.name)} ${formatUsdSignedCompact(end)}`}
-              </text>
-            </g>
-          );
-        })}
+        {hovered && hover ? (
+          <path
+            d={path(hovered.ahead)}
+            fill="none"
+            stroke={hovered.id === totalId ? "var(--foreground)" : toneOf(hovered.ahead.at(-1) ?? 0)}
+            strokeWidth={hovered.id === totalId ? 3.5 : 2.75}
+            strokeLinejoin="round"
+            pointerEvents="none"
+          />
+        ) : null}
         {hovered && hover ? (
           <circle cx={x(hover.i)} cy={y(hovered.ahead[hover.i] ?? 0)} r={4} fill={hovered.id === totalId ? "var(--foreground)" : toneOf(hovered.ahead[hover.i] ?? 0)} stroke="var(--background)" strokeWidth={1.5} />
         ) : null}
       </svg>
       {hovered && hover ? (
         <div
-          className="glass-pill pointer-events-none absolute z-10 flex flex-col gap-0.5 rounded-md px-2.5 py-1.5 text-[12px] shadow-md"
+          className="glass-pill pointer-events-none absolute z-10 flex w-max flex-col gap-0.5 whitespace-nowrap rounded-md px-2.5 py-1.5 text-[12px] shadow-md"
           style={{
-            left: Math.min(x(hover.i) + 12, width - 200),
+            left: x(hover.i) > width / 2 ? x(hover.i) - 12 : x(hover.i) + 12,
+            transform: x(hover.i) > width / 2 ? "translateX(-100%)" : undefined,
             top: Math.max(0, Math.min(y(hovered.ahead[hover.i] ?? 0) - 30, height - 80)),
           }}
         >
@@ -365,11 +312,7 @@ export function PayoffViewToggle({ views }: { views: Array<{ id: string; label: 
           </button>
         ))}
       </div>
-      {views.map((v) => (
-        <div key={v.id} hidden={active !== v.id}>
-          {v.node}
-        </div>
-      ))}
+      {views.find((v) => v.id === active)?.node}
     </div>
   );
 }

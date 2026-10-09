@@ -159,7 +159,7 @@ export async function PlayerPayoffBoard({
             label: "Ahead or behind",
             node: (
               <div className="flex flex-col gap-4">
-                <AheadRace dates={aheadIndexes.map((i) => meta.dates[i])} lines={aheadLines} height={440} maxLabels={20} />
+                <AheadRace dates={aheadIndexes.map((i) => meta.dates[i])} lines={aheadLines} height={440} />
                 <AheadList rows={aheadRows} label="Players ranked by dollars ahead of their salary" />
               </div>
             ),
