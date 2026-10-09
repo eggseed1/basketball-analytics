@@ -86,14 +86,20 @@ const StandingsTrackerChart = dynamic(
 export function StandingsTrackerView({
   payload,
   seasonOptions,
+  embedded = false,
+  conference: conferenceFilter = "All",
 }: {
   payload: StandingsTrackerPayload;
   seasonOptions: string[];
+  /** Season and conference come from the surrounding page controls. */
+  embedded?: boolean;
+  conference?: "East" | "West" | "All";
 }) {
   const chartTheme = useChartTheme();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [conference, setConference] = useState<"East" | "West" | "All">("All");
+  const [localConference, setConference] = useState<"East" | "West" | "All">("All");
+  const conference = embedded ? conferenceFilter : localConference;
   const [window, setWindow] = useState<StandingsTrackerWindow>("all");
   const [selectedTeamIds, setSelectedTeamIds] = useState<Set<string>>(
     () => new Set()
@@ -169,7 +175,7 @@ export function StandingsTrackerView({
               .map((season) => (
                 <Link
                   key={season}
-                  href={standingsVisualizationsHref(season, "tracker")}
+                  href={standingsVisualizationsHref(season)}
                   className="font-semibold underline"
                 >
                   {season}
@@ -189,7 +195,7 @@ export function StandingsTrackerView({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap items-center gap-3">
+      <div className={cn("flex flex-wrap items-center gap-3", embedded && "hidden")}>
         <div className="flex flex-wrap items-center gap-2">
           <label className={cn(type.caption, "sr-only")} htmlFor="tracker-season">
             Season

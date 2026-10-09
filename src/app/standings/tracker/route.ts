@@ -4,6 +4,6 @@ import { legacyStandingsRedirect, STANDINGS_VISUALIZATIONS_PATH } from "@/lib/st
 
 export function GET(req: NextRequest) {
   return NextResponse.redirect(
-    legacyStandingsRedirect(req.url, STANDINGS_VISUALIZATIONS_PATH, "tracker")
+    legacyStandingsRedirect(req.url, STANDINGS_VISUALIZATIONS_PATH)
   );
 }

@@ -8,7 +8,13 @@ import {
 import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 
-async function StandingsTrackerBody({ season }: { season: string }) {
+type TrackerProps = {
+  season: string;
+  embedded?: boolean;
+  conference?: "East" | "West" | "All";
+};
+
+async function StandingsTrackerBody({ season, embedded, conference }: TrackerProps) {
   try {
     const [payload, seasonOptions] = await Promise.all([
       getStandingsTrackerPayload(season),
@@ -21,7 +27,12 @@ async function StandingsTrackerBody({ season }: { season: string }) {
           <div className="sports-card h-[480px] animate-pulse bg-secondary/40" />
         }
       >
-        <StandingsTrackerView payload={payload} seasonOptions={seasonOptions} />
+        <StandingsTrackerView
+          payload={payload}
+          seasonOptions={seasonOptions}
+          embedded={embedded}
+          conference={conference}
+        />
       </Suspense>
     );
   } catch (error) {
@@ -40,14 +51,14 @@ async function StandingsTrackerBody({ season }: { season: string }) {
   }
 }
 
-export function StandingsTrackerIsland({ season }: { season: string }) {
+export function StandingsTrackerIsland(props: TrackerProps) {
   return (
     <Suspense
       fallback={
         <div className="sports-card h-[480px] animate-pulse bg-secondary/40" />
       }
     >
-      <StandingsTrackerBody season={season} />
+      <StandingsTrackerBody {...props} />
     </Suspense>
   );
 }

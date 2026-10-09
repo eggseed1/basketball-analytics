@@ -244,7 +244,7 @@ export function TeamDestinationIdentity({
                   </TransitionLink>
                   {" · "}
                   <TransitionLink
-                    href={standingsVisualizationsHref(season, "tracker")}
+                    href={standingsVisualizationsHref(season)}
                     className="font-semibold underline-offset-2 hover:underline"
                   >
                     Tracker <span data-motion-arrow aria-hidden>→</span>
@@ -265,7 +265,7 @@ export function TeamDestinationIdentity({
                   </TransitionLink>
                   {" · "}
                   <TransitionLink
-                    href={standingsVisualizationsHref(season, "tracker")}
+                    href={standingsVisualizationsHref(season)}
                     className="font-semibold underline-offset-2 hover:underline"
                   >
                     Tracker <span data-motion-arrow aria-hidden>→</span>

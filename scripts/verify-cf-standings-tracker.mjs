@@ -144,7 +144,7 @@ const checks = [];
 for (const [legacy, target] of [
   ["/explore/teams?season=2024-25", "/standings?season=2024-25#team-stats"],
   ["/explore/bracket", "/standings#bracket"],
-  ["/standings/tracker?season=2024-25", "/standings/visualizations?season=2024-25#tracker"],
+  ["/standings/tracker?season=2024-25", "/standings/visualizations?season=2024-25"],
 ]) {
   const url = `${BASE}${legacy}`;
   const res = await fetch(url, {

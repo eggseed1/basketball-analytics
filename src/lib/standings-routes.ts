@@ -1,29 +1,27 @@
+import { TEAM_VIZ_DEFAULT_VIEW, type TeamVizView } from "@/lib/team-viz";
+
 export type StandingsSection = "conferences" | "bracket" | "team-stats";
-export type StandingsVisualizationsSection = "margin" | "tracker";
 
 export const STANDINGS_VISUALIZATIONS_PATH = "/standings/visualizations";
 
-function withQuery(path: string, season: string | undefined, hash: string | undefined): string {
-  const qs = season ? `?season=${encodeURIComponent(season)}` : "";
-  return `${path}${qs}${hash ? `#${hash}` : ""}`;
-}
-
 export function standingsHref(season?: string, section?: StandingsSection): string {
-  return withQuery("/standings", season, section);
+  const qs = season ? `?season=${encodeURIComponent(season)}` : "";
+  return `/standings${qs}${section ? `#${section}` : ""}`;
 }
 
 /** Legacy board/bracket/tracker URLs: same query string, new page and section. */
-export function legacyStandingsRedirect(requestUrl: string, path: string, section: string): URL {
+export function legacyStandingsRedirect(requestUrl: string, path: string, section?: string): URL {
   const from = new URL(requestUrl);
   const to = new URL(path, from);
   to.search = from.search;
-  to.hash = section;
+  if (section) to.hash = section;
   return to;
 }
 
-export function standingsVisualizationsHref(
-  season?: string,
-  section?: StandingsVisualizationsSection
-): string {
-  return withQuery(STANDINGS_VISUALIZATIONS_PATH, season, section);
+export function standingsVisualizationsHref(season?: string, view?: TeamVizView): string {
+  const params = new URLSearchParams();
+  if (view && view !== TEAM_VIZ_DEFAULT_VIEW) params.set("view", view);
+  if (season) params.set("season", season);
+  const qs = params.toString();
+  return qs ? `${STANDINGS_VISUALIZATIONS_PATH}?${qs}` : STANDINGS_VISUALIZATIONS_PATH;
 }

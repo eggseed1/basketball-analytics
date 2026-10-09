@@ -144,7 +144,7 @@ export default async function StandingsPage({ searchParams }: PageProps) {
   const sp = await searchParams;
 
   if (one(sp, "view") === "tracker") {
-    redirect(standingsVisualizationsHref(one(sp, "season"), "tracker"));
+    redirect(standingsVisualizationsHref(one(sp, "season")));
   }
 
   const seasons = await getAvailableSeasons();
