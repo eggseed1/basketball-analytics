@@ -78,6 +78,7 @@
     "test:player-team-render": "tsx scripts/test-player-team-render-contract.ts",
     "test:team-wash-gradient": "tsx scripts/test-team-wash-gradient-freeze.ts",
     "test:team-viz": "tsx scripts/test-team-viz.ts",
+    "test:contract-surplus": "tsx --require ./scripts/lib/stub-server-only.cjs scripts/test-contract-surplus.ts",
     "test:player-team-context": "tsx scripts/test-player-team-context.ts",
     "test:r1-wins-sort-equivalence": "tsx scripts/test-r1-wins-sort-equivalence.ts",
     "p17:3": "tsx scripts/p17-3-temporal-identity-audit.ts",

@@ -95,6 +95,7 @@ export async function PlayerContractSectionIsland({
   if (!contract) return null;
   return (
     <PlayerContractTransactions
+      playerId={playerId}
       contract={contract}
       value={getContractValue(contract.franchiseId, contract.brefId)}
       model={contractValueModel()}

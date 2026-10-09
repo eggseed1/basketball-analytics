@@ -4,11 +4,13 @@ import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { LeaguePlayerScatterIsland } from "@/components/explore/league-player-scatter-island";
 import { LeagueUsageEfficiencyIsland } from "@/components/explore/league-usage-efficiency-island";
 import { PlayerRaceTrackerIsland } from "@/components/explore/player-race-tracker-island";
+import { PlayerSurplusBoard } from "@/components/explore/player-surplus-board";
 import {
   PlayerVisualizationsHubChrome,
   type VizView,
 } from "@/components/explore/player-visualizations-hub";
 import { PageHeader } from "@/components/layout/page-header";
+import { getPlayerSurplusRows } from "@/data/queries/contract-surplus";
 import { getPlayerRaceTrackerSeasonOptions } from "@/data/queries/player-race-tracker";
 import {
   canonicalSeasonFromStartYear,
@@ -31,7 +33,7 @@ import { parseVizRankEnd } from "@/lib/viz-field-filter";
 export const metadata = {
   title: "Player visualizations",
   description:
-    "NBA player race charts and league scatters for usage, impact, shot diet, creation, FT pressure, glass, and scoring volume.",
+    "NBA player race charts, league scatters for usage, impact, shot diet, creation, FT pressure, glass, and scoring volume, and contract surplus rankings.",
 };
 
 interface PageProps {
@@ -56,7 +58,8 @@ function parseView(raw: string | undefined): VizView {
     raw === "ft" ||
     raw === "glass" ||
     raw === "defense" ||
-    raw === "bpm"
+    raw === "bpm" ||
+    raw === "surplus"
   ) {
     return raw;
   }
@@ -68,7 +71,7 @@ function parseVizFieldSize(
   view: VizView
 ): PlayerRaceFieldSize {
   if (raw == null || raw === "") {
-    return view === "race"
+    return view === "race" || view === "surplus"
       ? PLAYER_RACE_DEFAULT_FIELD_SIZE
       : VIZ_SCATTER_DEFAULT_FIELD_SIZE;
   }
@@ -108,6 +111,7 @@ export default async function PlayerVisualizationsPage({
     ? parseVizRankEnd(one(sp, "end"), leagueScatterDefaultRankEnd(scatterKind))
     : parseVizRankEnd(one(sp, "end"), "high");
   const usageRankEnd = parseVizRankEnd(one(sp, "end"), "high");
+  const surplusRankEnd = parseVizRankEnd(one(sp, "end"), "both");
   const raceMinMinutes = parsePlayerRaceMinMinutes(one(sp, "minmp"));
   const scatterMinMinutes = parseVizScatterMinMinutes(one(sp, "minmp"));
   const pin = one(sp, "pin") ?? "";
@@ -137,7 +141,9 @@ export default async function PlayerVisualizationsPage({
       : "";
 
   const subtitle =
-    view === "usage"
+    view === "surplus"
+      ? "Every current contract we can estimate, ranked by projected surplus. Pick how many to show, highlight a team, or pin a player."
+      : view === "usage"
       ? `${season} · ${fieldBlurb}${minutesBlurb} · usage rate × true shooting. Use the side leaders list, team highlight, or pin search, and click a point to open their page.`
       : scatterMeta
         ? `${season} · ${fieldBlurb}${minutesBlurb} · ${scatterMeta.blurb} Use the side leaders list, team highlight, or pin search, and click a point to open their page.`
@@ -156,6 +162,7 @@ export default async function PlayerVisualizationsPage({
         <PlayerVisualizationsHubChromeAsync
           view={view}
           season={season}
+          pinNames={view === "surplus" ? surplusPinNames(pin) : undefined}
         />
       </Suspense>
 
@@ -164,7 +171,14 @@ export default async function PlayerVisualizationsPage({
           <div className="sports-card h-[480px] animate-pulse bg-secondary/40" />
         }
       >
-        {view === "usage" ? (
+        {view === "surplus" ? (
+          <PlayerSurplusBoard
+            fieldSize={fieldSize}
+            rankEnd={surplusRankEnd}
+            pin={pin || undefined}
+            team={team || undefined}
+          />
+        ) : view === "usage" ? (
           <LeagueUsageEfficiencyIsland
             season={season}
             pin={pin || undefined}
@@ -199,12 +213,24 @@ export default async function PlayerVisualizationsPage({
   );
 }
 
+function surplusPinNames(pin: string): Record<string, string> | undefined {
+  const ids = new Set(pin.split(",").map((id) => id.trim()).filter(Boolean));
+  if (!ids.size) return undefined;
+  return Object.fromEntries(
+    getPlayerSurplusRows()
+      .filter((r) => r.playerId && ids.has(r.playerId))
+      .map((r) => [r.playerId!, r.name])
+  );
+}
+
 async function PlayerVisualizationsHubChromeAsync({
   view,
   season,
+  pinNames,
 }: {
   view: VizView;
   season: string;
+  pinNames?: Record<string, string>;
 }) {
   const seasonOptions = await getPlayerRaceTrackerSeasonOptions();
   const options = seasonOptions.length ? seasonOptions : [season];
@@ -213,6 +239,7 @@ async function PlayerVisualizationsHubChromeAsync({
       view={view}
       season={options.includes(season) ? season : (options[0] ?? season)}
       seasonOptions={options}
+      pinNames={pinNames}
     />
   );
 }

@@ -3,6 +3,7 @@ import type { CSSProperties } from "react";
 
 import { surplusTone } from "@/components/players/player-contract-transactions";
 import type { TeamContractsView } from "@/data/queries/team-contracts";
+import { PLAYER_SURPLUS_RANKING_PATH, teamSurplusRankingHref } from "@/lib/contract-surplus";
 import type { ContractValueGap, TeamContractValue, TeamContractValuePlayer } from "@/data/runtime/contract-value";
 import { type } from "@/lib/design-system";
 import { formatOrdinal } from "@/lib/format";
@@ -56,9 +57,11 @@ function Money({ dollars }: { dollars: number }) {
 export function TeamContractValueChart({
   value,
   contracts,
+  teamKey,
 }: {
   value: TeamContractValue;
   contracts: TeamContractsView;
+  teamKey?: string | null;
 }) {
   const nameOf = new Map(contracts.rows.map((r) => [r.brefId, r.name]));
   const max = Math.max(...value.players.map((p) => Math.abs(p.surplus)), 1);
@@ -158,8 +161,21 @@ export function TeamContractValueChart({
         </p>
         <p>
           The team total of {formatUsdSignedCompact(value.surplus)} adds up each player&apos;s middle
-          estimate and ranks {formatOrdinal(value.rank)} of {value.teams} teams. Every player&apos;s
-          own range is wide, so read the total as a rough guide.
+          estimate and ranks{" "}
+          <Link
+            href={teamSurplusRankingHref(teamKey)}
+            className="font-semibold text-foreground underline underline-offset-2"
+          >
+            {formatOrdinal(value.rank)} of {value.teams} teams
+          </Link>
+          . Every player&apos;s own range is wide, so read the total as a rough guide.{" "}
+          <Link
+            href={PLAYER_SURPLUS_RANKING_PATH}
+            className="font-semibold text-foreground underline underline-offset-2"
+          >
+            See every contract in the league ranked
+          </Link>
+          .
         </p>
         {missingByReason.length ? (
           <p>

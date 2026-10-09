@@ -1,3 +1,6 @@
+import Link from "next/link";
+import type { ReactNode } from "react";
+
 import { ContractValueChart } from "@/components/players/contract-value-chart";
 import { MoreInfo } from "@/components/ui/more-info";
 import { TextLink } from "@/components/ui/text-link";
@@ -12,6 +15,7 @@ import type {
 } from "@/data/queries/player-front-office";
 import { type } from "@/lib/design-system";
 import { formatOrdinal } from "@/lib/format";
+import { playerSurplusRankingHref } from "@/lib/contract-surplus";
 import { formatUsdCompact, formatUsdSignedCompact } from "@/lib/format-money";
 import { teamSalaryHref } from "@/lib/team-destination";
 import { cn } from "@/lib/utils";
@@ -36,7 +40,7 @@ export function surplusTone(dollars: number): string {
   return dollars > 0 ? "text-[var(--chart-3)]" : "text-destructive";
 }
 
-function Stat({ label, value, detail, tone }: { label: string; value: string; detail: string; tone?: string }) {
+function Stat({ label, value, detail, tone }: { label: string; value: string; detail: ReactNode; tone?: string }) {
   return (
     <div className="flex min-w-0 flex-col gap-0.5">
       <p className={cn(type.caption, "font-semibold uppercase tracking-wide text-muted-foreground")}>
@@ -137,7 +141,9 @@ export function PlayerContractTransactions({
   contract,
   value,
   model,
+  playerId,
 }: {
+  playerId?: string | null;
   contract: PlayerContractSnapshot;
   value: ContractValueView | null;
   model: ContractValueModel;
@@ -162,9 +168,16 @@ export function PlayerContractTransactions({
               : ""}
           </p>
         </div>
-        <TextLink href={teamSalaryHref(contract.franchiseId, "contracts")} className={type.caption}>
-          {contract.teamAbbr} payroll <span data-motion-arrow aria-hidden>→</span>
-        </TextLink>
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+          {estimate ? (
+            <TextLink href={playerSurplusRankingHref(playerId)} className={type.caption}>
+              Surplus rankings <span data-motion-arrow aria-hidden>→</span>
+            </TextLink>
+          ) : null}
+          <TextLink href={teamSalaryHref(contract.franchiseId, "contracts")} className={type.caption}>
+            {contract.teamAbbr} payroll <span data-motion-arrow aria-hidden>→</span>
+          </TextLink>
+        </div>
       </div>
 
       <div className="sports-card flex flex-col gap-4 p-4 sm:p-5">
@@ -184,7 +197,14 @@ export function PlayerContractTransactions({
             <Stat
               label="Among contracts"
               value={`${formatOrdinal(estimate.percentile)} percentile`}
-              detail={`By total surplus, of ${model.contracts} we can estimate`}
+              detail={
+                <Link
+                  href={playerSurplusRankingHref(playerId)}
+                  className="underline-offset-2 hover:text-foreground hover:underline"
+                >
+                  By total surplus, of {model.contracts} we can estimate
+                </Link>
+              }
             />
           </div>
         ) : value?.kind === "missing" ? (

@@ -12,7 +12,8 @@ export type TeamVizView =
   | "luck"
   | "homeroad"
   | "close"
-  | "quarters";
+  | "quarters"
+  | "surplus";
 
 export const TEAM_VIZ_VIEWS: Array<{ id: TeamVizView; label: string }> = [
   { id: "race", label: "Race tracker" },
@@ -26,7 +27,13 @@ export const TEAM_VIZ_VIEWS: Array<{ id: TeamVizView; label: string }> = [
   { id: "homeroad", label: "Home vs road" },
   { id: "close", label: "Close games" },
   { id: "quarters", label: "Quarter by quarter" },
+  { id: "surplus", label: "Contract surplus" },
 ];
+
+/** Views built from current contracts rather than a season's games. */
+export function teamVizIgnoresSeason(view: TeamVizView): boolean {
+  return view === "surplus";
+}
 
 export const TEAM_VIZ_DEFAULT_VIEW: TeamVizView = "race";
 

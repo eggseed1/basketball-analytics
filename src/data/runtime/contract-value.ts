@@ -154,6 +154,45 @@ export function getTeamContractValue(teamId: string): TeamContractValue | null {
   return team?.players.length ? team : null;
 }
 
+export type ContractValueEntry = {
+  teamId: string;
+  brefId: string;
+  salary: number;
+  worth: number;
+  surplus: number;
+  surplusLow: number;
+  surplusHigh: number;
+  percentile: number;
+  seasons: string[];
+};
+
+/** Every valued contract in the league. Contracts we couldn't value are left out. */
+export function listContractValues(): ContractValueEntry[] {
+  const out: ContractValueEntry[] = [];
+  for (const [key, row] of Object.entries(data.players)) {
+    if ("reason" in row) continue;
+    out.push({
+      teamId: row.team,
+      brefId: key.slice(key.indexOf(":") + 1),
+      salary: row.salary,
+      worth: row.worth,
+      surplus: row.surplus,
+      surplusLow: row.low,
+      surplusHigh: row.high,
+      percentile: row.pct,
+      seasons: row.years.map((y) => y[0]),
+    });
+  }
+  return out;
+}
+
+/** Contracts left out of every surplus ranking, by reason. */
+export function contractValueGaps(): Record<ContractValueGap, number> {
+  const counts: Record<ContractValueGap, number> = { "no-drbl": 0, thin: 0, waived: 0 };
+  for (const row of Object.values(data.players)) if ("reason" in row) counts[row.reason] += 1;
+  return counts;
+}
+
 export function getContractValue(teamId: string, brefId: string): ContractValueView | null {
   const row = data.players[`${teamId}:${brefId}`];
   if (!row) return null;

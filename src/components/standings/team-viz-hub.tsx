@@ -10,6 +10,7 @@ import {
   parseTeamVizConference,
   TEAM_VIZ_DEFAULT_VIEW,
   TEAM_VIZ_VIEWS,
+  teamVizIgnoresSeason,
   type TeamVizView,
 } from "@/lib/team-viz";
 import { cn } from "@/lib/utils";
@@ -106,7 +107,7 @@ export function TeamVizHub({
       </div>
 
       <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center">
-        {seasonOptions.length > 1 ? (
+        {seasonOptions.length > 1 && !teamVizIgnoresSeason(view) ? (
           <>
             <label className="sr-only" htmlFor="team-viz-season">
               Season

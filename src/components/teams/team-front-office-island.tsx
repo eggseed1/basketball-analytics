@@ -7,6 +7,7 @@ import {
 } from "@/data/front-office/load-team-front-office";
 import { getTeamContracts, getTeamFuturePicks } from "@/data/queries/team-contracts";
 import { getTeamContractValue } from "@/data/runtime/contract-value";
+import { resolveTeamBrand } from "@/lib/nba-brand";
 import { PayrollSalaryStack } from "@/components/teams/viz/payroll-salary-stack";
 import { VizCard } from "@/components/teams/viz/viz-kit";
 
@@ -63,6 +64,7 @@ export async function TeamFrontOfficeIsland({ teamId }: { teamId: string }) {
         labels={labels}
         contractValue={getTeamContractValue(franchiseId)}
         contracts={contracts}
+        teamKey={resolveTeamBrand(franchiseId)?.abbr}
       />
       {contracts && contracts.rows.length && contracts.seasons.length ? (
         <VizCard

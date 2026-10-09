@@ -43,7 +43,13 @@ export type VizView =
   | "ft"
   | "glass"
   | "defense"
-  | "bpm";
+  | "bpm"
+  | "surplus";
+
+/** Signed views where the default field shows both ends. */
+function defaultsToBothEnds(view: VizView): boolean {
+  return view === "race" || view === "impact" || view === "bpm" || view === "surplus";
+}
 
 const VIEWS: Array<{ id: VizView; label: string }> = [
   { id: "race", label: "Race tracker" },
@@ -56,6 +62,7 @@ const VIEWS: Array<{ id: VizView; label: string }> = [
   { id: "glass", label: "Glass work" },
   { id: "defense", label: "Stocks" },
   { id: "volume", label: "Scoring volume" },
+  { id: "surplus", label: "Contract surplus" },
 ];
 
 type SearchHit = {
@@ -119,17 +126,21 @@ export function PlayerVisualizationsHubChrome({
   view,
   season,
   seasonOptions,
+  pinNames,
 }: {
   view: VizView;
   season: string;
   seasonOptions: string[];
+  /** Names for pins that arrive in the URL, before any search runs. */
+  pinNames?: Record<string, string>;
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [pinQuery, setPinQuery] = useState("");
   const [pinHits, setPinHits] = useState<SearchHit[]>([]);
   const [pinOpen, setPinOpen] = useState(false);
-  const [pinLabels, setPinLabels] = useState<Record<string, string>>({});
+  const [searchedLabels, setPinLabels] = useState<Record<string, string>>({});
+  const pinLabels = useMemo(() => ({ ...pinNames, ...searchedLabels }), [pinNames, searchedLabels]);
 
   const pinIds = useMemo(
     () => parsePinIds(searchParams.get("pin")),
@@ -144,7 +155,7 @@ export function PlayerVisualizationsHubChrome({
   const fieldSize: PlayerRaceFieldSize = (() => {
     const raw = searchParams.get("top");
     if (raw == null || raw === "") {
-      return view === "race"
+      return view === "race" || view === "surplus"
         ? PLAYER_RACE_DEFAULT_FIELD_SIZE
         : VIZ_SCATTER_DEFAULT_FIELD_SIZE;
     }
@@ -161,6 +172,7 @@ export function PlayerVisualizationsHubChrome({
         leagueScatterDefaultRankEnd(view)
       );
     }
+    if (view === "surplus") return parseVizRankEnd(searchParams.get("end"), "both");
     return parseVizRankEnd(searchParams.get("end"), "high");
   })();
   const minMinutes =
@@ -244,15 +256,11 @@ export function PlayerVisualizationsHubChrome({
   const setRankEnd = (end: PlayerRaceRankEnd) => {
     if (end === "both") {
       // Default for signed boards — omit from URL when that is the default.
-      const signedDefault =
-        view === "race" || view === "impact" || view === "bpm";
-      replaceParams({ end: signedDefault ? null : "both" });
+      replaceParams({ end: defaultsToBothEnds(view) ? null : "both" });
       return;
     }
     if (end === "high") {
-      const signedDefault =
-        view === "race" || view === "impact" || view === "bpm";
-      replaceParams({ end: signedDefault ? "high" : null });
+      replaceParams({ end: defaultsToBothEnds(view) ? "high" : null });
       return;
     }
     replaceParams({ end: "low" });
@@ -296,7 +304,7 @@ export function PlayerVisualizationsHubChrome({
 
       <div className="flex flex-col gap-2">
         <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center">
-          {seasonOptions.length > 1 ? (
+          {seasonOptions.length > 1 && view !== "surplus" ? (
             <>
               <label
                 className={cn(type.caption, "sr-only")}
@@ -436,35 +444,39 @@ export function PlayerVisualizationsHubChrome({
             </div>
           ) : null}
 
-          <label
-            className={cn(type.caption, "sr-only")}
-            htmlFor="viz-shared-minmp"
-          >
-            Minimum minutes
-          </label>
-          <select
-            id="viz-shared-minmp"
-            value={String(minMinutes)}
-            onChange={(event) => {
-              const n = Number(event.target.value);
-              replaceParams({ minmp: String(Math.max(0, n)) });
-            }}
-            className={selectClassName()}
-            aria-label="Minimum minutes played"
-          >
-            {PLAYER_RACE_MIN_MINUTES_OPTIONS.map((n) => (
-              <option key={n} value={n}>
-                {n === 0 ? "Any minutes" : `≥ ${n.toLocaleString()} MP`}
-              </option>
-            ))}
-            {!PLAYER_RACE_MIN_MINUTES_OPTIONS.includes(
-              minMinutes as (typeof PLAYER_RACE_MIN_MINUTES_OPTIONS)[number]
-            ) ? (
-              <option value={minMinutes}>
-                ≥ {minMinutes.toLocaleString()} MP
-              </option>
-            ) : null}
-          </select>
+          {view !== "surplus" ? (
+            <>
+              <label
+                className={cn(type.caption, "sr-only")}
+                htmlFor="viz-shared-minmp"
+              >
+                Minimum minutes
+              </label>
+              <select
+                id="viz-shared-minmp"
+                value={String(minMinutes)}
+                onChange={(event) => {
+                  const n = Number(event.target.value);
+                  replaceParams({ minmp: String(Math.max(0, n)) });
+                }}
+                className={selectClassName()}
+                aria-label="Minimum minutes played"
+              >
+                {PLAYER_RACE_MIN_MINUTES_OPTIONS.map((n) => (
+                  <option key={n} value={n}>
+                    {n === 0 ? "Any minutes" : `≥ ${n.toLocaleString()} MP`}
+                  </option>
+                ))}
+                {!PLAYER_RACE_MIN_MINUTES_OPTIONS.includes(
+                  minMinutes as (typeof PLAYER_RACE_MIN_MINUTES_OPTIONS)[number]
+                ) ? (
+                  <option value={minMinutes}>
+                    ≥ {minMinutes.toLocaleString()} MP
+                  </option>
+                ) : null}
+              </select>
+            </>
+          ) : null}
 
           <label
             className={cn(type.caption, "sr-only")}

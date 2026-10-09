@@ -254,7 +254,7 @@ export function TeamContractsPageView({
             </span>
           }
         >
-          <TeamContractValueChart value={contractValue} contracts={contracts} />
+          <TeamContractValueChart value={contractValue} contracts={contracts} teamKey={teamKey} />
         </Panel>
       ) : null}
 

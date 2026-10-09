@@ -5,11 +5,13 @@ import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { PageHeader } from "@/components/layout/page-header";
 import { StandingsMarginSkeleton } from "@/components/standings/standings-body-skeleton";
 import { StandingsTrackerIsland } from "@/components/standings/standings-tracker-island";
+import { TeamSurplusBoard } from "@/components/standings/team-surplus-board";
 import { TeamVizHub } from "@/components/standings/team-viz-hub";
 import { TeamVizQuarters } from "@/components/standings/team-viz-quarters";
 import { TeamVizScatter } from "@/components/standings/team-viz-scatter";
 import { EmptyState } from "@/components/ui/empty-state";
 import { getLeagueStandings } from "@/data/queries";
+import { getContractSurplusMeta, getTeamSurplusRows } from "@/data/queries/contract-surplus";
 import { resolveStandingsSeason } from "@/data/queries/standings-season";
 import { getStandingsTrackerSeasonOptions } from "@/data/queries/standings-tracker";
 import { getTeamVizRows, teamVizBoxSeasons } from "@/data/queries/team-visualizations";
@@ -19,6 +21,7 @@ import {
   parseTeamVizView,
   TEAM_VIZ_SCATTERS,
   TEAM_VIZ_VIEWS,
+  teamVizIgnoresSeason,
   type TeamVizConference,
   type TeamVizRow,
   type TeamVizView,
@@ -28,7 +31,7 @@ import { cn } from "@/lib/utils";
 export const metadata = {
   title: "Team visualizations",
   description:
-    "NBA team charts: standings race, scoring margin, offense vs defense, pace, shot diet, possession battle, luck, home and road splits, close games, and quarter-by-quarter scoring.",
+    "NBA team charts: standings race, scoring margin, offense vs defense, pace, shot diet, possession battle, luck, home and road splits, close games, quarter-by-quarter scoring, and contract surplus.",
 };
 
 interface PageProps {
@@ -153,7 +156,11 @@ export default async function TeamVisualizationsPage({ searchParams }: PageProps
       <PageHeader
         eyebrow="Teams"
         title="Visualizations"
-        subtitle={`${season} · ${viewLabel}. Every chart is built from regular-season games. Pick a view, filter by conference, or highlight teams.`}
+        subtitle={
+          teamVizIgnoresSeason(view)
+            ? `${viewLabel}. Built from current contracts and DRBL's projections, not one season's games. Filter by conference or highlight teams.`
+            : `${season} · ${viewLabel}. Every chart is built from regular-season games. Pick a view, filter by conference, or highlight teams.`
+        }
       />
 
       <Suspense fallback={<div className="h-20 animate-pulse rounded-xl bg-secondary" />}>
@@ -163,6 +170,8 @@ export default async function TeamVisualizationsPage({ searchParams }: PageProps
       <section className="pb-8">
         {view === "race" ? (
           <StandingsTrackerIsland season={season} embedded conference={conference ?? "All"} />
+        ) : view === "surplus" ? (
+          <TeamSurplusBoard rows={getTeamSurplusRows()} meta={getContractSurplusMeta()} />
         ) : view === "margin" ? (
           <Suspense fallback={<StandingsMarginSkeleton />}>
             <MarginBody season={season} conference={conference} />

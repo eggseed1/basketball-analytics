@@ -1,9 +1,12 @@
+import Link from "next/link";
+
 import { surplusTone } from "@/components/players/player-contract-transactions";
 import { TeamContractValueChart, teamSurplusHint } from "@/components/teams/team-contract-value";
 import { MoreInfo } from "@/components/ui/more-info";
 import type { TeamContractsView } from "@/data/queries/team-contracts";
 import type { TeamContractValue } from "@/data/runtime/contract-value";
 import type { TeamFrontOfficeSummary } from "@/data/types/front-office";
+import { teamSurplusRankingHref } from "@/lib/contract-surplus";
 import { formatUsdCompact, formatUsdSignedCompact } from "@/lib/format-money";
 import { cn } from "@/lib/utils";
 
@@ -12,7 +15,9 @@ export function TeamFrontOfficeSummaryCard({
   labels,
   contractValue,
   contracts,
+  teamKey,
 }: {
+  teamKey?: string | null;
   summary: TeamFrontOfficeSummary;
   labels?: { salary?: string; firsts?: string; seconds?: string };
   contractValue?: TeamContractValue | null;
@@ -77,7 +82,14 @@ export function TeamFrontOfficeSummaryCard({
             <dd className={cn("mt-1 text-2xl font-semibold tabular-nums", surplusTone(contractValue.surplus))}>
               {formatUsdSignedCompact(contractValue.surplus)}
             </dd>
-            <dd className="mt-0.5 text-xs text-muted-foreground">{teamSurplusHint(contractValue)}</dd>
+            <dd className="mt-0.5 text-xs text-muted-foreground">
+              <Link
+                href={teamSurplusRankingHref(teamKey)}
+                className="underline-offset-2 hover:text-foreground hover:underline"
+              >
+                {teamSurplusHint(contractValue)}
+              </Link>
+            </dd>
           </div>
         ) : null}
       </dl>
@@ -87,7 +99,7 @@ export function TeamFrontOfficeSummaryCard({
           summary={`How the ${formatUsdSignedCompact(contractValue.surplus)} contract surplus adds up`}
           bodyClassName="mt-3"
         >
-          <TeamContractValueChart value={contractValue} contracts={contracts} />
+          <TeamContractValueChart value={contractValue} contracts={contracts} teamKey={teamKey} />
         </MoreInfo>
       ) : null}
 
