@@ -1,3 +1,4 @@
+import { MotionReveal } from "@/components/continuity/motion-reveal";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -121,7 +122,8 @@ export default async function HofPlayerExamplePage({ searchParams }: PageProps) 
         colorA={atmosphere?.colorA}
         colorB={atmosphere?.colorB}
       />
-      <main className="relative z-[1] flex flex-1 flex-col gap-4 sm:gap-5">
+      <main data-motion-page className="relative z-[1] flex flex-1 flex-col gap-4 sm:gap-5">
+        <MotionReveal />
         <p className={cn(type.caption, "font-semibold uppercase tracking-wide text-muted-foreground")}>
           Internal example · Hall of Fame golden outline
         </p>

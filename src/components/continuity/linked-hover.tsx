@@ -24,7 +24,6 @@ export function LinkedHover({
     current.current = key;
     const root = ref.current;
     if (!root) return;
-    root.toggleAttribute("data-linking", key != null);
     const active = new Set(key?.split(/\s+/) ?? []);
     for (const el of root.querySelectorAll("[data-link-key]")) {
       const keys = el.getAttribute("data-link-key")?.split(/\s+/) ?? [];

@@ -1,3 +1,4 @@
+import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { LearnIndexClient } from "@/components/learn/learn-index-client";
 import { PageHeader } from "@/components/layout/page-header";
 import { learnHrefFor, listLearnConcepts } from "@/content/learn/registry";
@@ -14,7 +15,8 @@ export default function LearnIndexPage() {
     .map((c) => ({ ...c, href: learnHrefFor(c.id) }));
 
   return (
-    <main className="site-shell flex flex-col gap-6 py-6 sm:py-8">
+    <main data-motion-page className="site-shell flex flex-col gap-6 py-6 sm:py-8">
+      <MotionReveal />
       <PageHeader
         eyebrow="Learn"
         title="Understand every number"

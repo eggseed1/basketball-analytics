@@ -74,17 +74,15 @@ function headline(years: ContractValueChartYear[]): string {
 /** Paid vs worth, one row per contract season, with the gap between them filled in. */
 type Series = "salary" | "worth" | "range" | "gap";
 
-const FADED = 0.15;
-
 export function ContractValueChart({ years }: { years: ContractValueChartYear[] }) {
   const [selected, setSelected] = useState(years[0]?.season ?? null);
   const [series, setSeries] = useState<Series | null>(null);
-  const faded = (key: Series) => series != null && series !== key;
+  const ring = (key: Series, color: string) =>
+    series === key ? `0 0 0 3px color-mix(in oklab, ${color} 35%, transparent)` : undefined;
   const legendClass = (key: Series) =>
     cn(
-      "inline-flex cursor-default items-center gap-1.5 transition-[color,opacity] duration-150",
-      series === key && "text-foreground",
-      faded(key) && "opacity-50"
+      "inline-flex cursor-default items-center gap-1.5 transition-colors duration-150",
+      series === key && "font-medium text-foreground"
     );
   if (!years.length) return null;
 
@@ -150,7 +148,7 @@ export function ContractValueChart({ years }: { years: ContractValueChartYear[] 
                   style={{
                     left: `${pct(y.worthLow)}%`,
                     width: `${pct(y.worthHigh) - pct(y.worthLow)}%`,
-                    opacity: faded("range") ? FADED : undefined,
+                    boxShadow: ring("range", "var(--chart-3)"),
                     background: series === "range" ? "color-mix(in oklab, var(--chart-3) 32%, transparent)" : undefined,
                   }}
                 />
@@ -162,13 +160,14 @@ export function ContractValueChart({ years }: { years: ContractValueChartYear[] 
                     left: `${pct(lo)}%`,
                     width: `${pct(hi) - pct(lo)}%`,
                     background: gapColor,
-                    opacity: faded("gap") ? FADED : agrees ? 0.85 : 0.4,
+                    opacity: series === "gap" ? 1 : agrees ? 0.85 : 0.4,
+                    boxShadow: ring("gap", gapColor),
                   }}
                 />
                 <span
                   data-motion-dot
                   className="absolute top-1/2 h-5 w-[3px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-foreground"
-                  style={{ left: `${pct(y.salary)}%`, opacity: faded("salary") ? FADED : undefined }}
+                  style={{ left: `${pct(y.salary)}%`, boxShadow: ring("salary", "var(--foreground)") }}
                 />
                 <span
                   data-motion-mark
@@ -177,7 +176,7 @@ export function ContractValueChart({ years }: { years: ContractValueChartYear[] 
                     {
                       left: `${pct(y.worth)}%`,
                       "--mark-from": `${pct(y.salary)}%`,
-                      opacity: faded("worth") ? FADED : undefined,
+                      boxShadow: ring("worth", "var(--chart-3)"),
                     } as CSSProperties
                   }
                 />

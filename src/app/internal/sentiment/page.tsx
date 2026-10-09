@@ -1,3 +1,4 @@
+import { MotionReveal } from "@/components/continuity/motion-reveal";
 import Link from "next/link";
 
 import { getSentimentBuildHealth } from "@/data/queries/team-sentiment";
@@ -20,7 +21,8 @@ export default function InternalSentimentPage() {
   const observationIds = snapshot?.meta.observationBatchIds ?? [];
 
   return (
-    <main className="site-shell flex flex-col gap-6 py-8">
+    <main data-motion-page className="site-shell flex flex-col gap-6 py-8">
+      <MotionReveal />
       <div>
         <p className={cn(type.caption, "text-muted-foreground")}>
           <Link href="/internal/design-system" className="underline">

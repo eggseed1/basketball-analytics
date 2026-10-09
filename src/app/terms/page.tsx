@@ -1,3 +1,4 @@
+import { MotionReveal } from "@/components/continuity/motion-reveal";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
@@ -22,7 +23,8 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 
 export default function TermsPage() {
   return (
-    <main className="site-shell flex flex-col gap-8 py-6 sm:py-8">
+    <main data-motion-page className="site-shell flex flex-col gap-8 py-6 sm:py-8">
+      <MotionReveal />
       <PageHeader
         eyebrow="Terms"
         title="Terms of use"

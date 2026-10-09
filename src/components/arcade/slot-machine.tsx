@@ -128,6 +128,7 @@ function Reel({
       style={{ height: cellHeight * 3 }}
     >
       <ul
+        role="list"
         className="slot-reel__strip"
         style={{
           transform: `translate3d(0, ${go ? landing : 0}px, 0)`,

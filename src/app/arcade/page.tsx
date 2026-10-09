@@ -1,3 +1,4 @@
+import { MotionReveal } from "@/components/continuity/motion-reveal";
 import type { CSSProperties, ReactNode } from "react";
 
 import {
@@ -54,7 +55,8 @@ const GAMES = [
 
 export default function ArcadePage() {
   return (
-    <main className="site-shell flex flex-col gap-8 py-6 sm:py-8">
+    <main data-motion-page className="site-shell flex flex-col gap-8 py-6 sm:py-8">
+      <MotionReveal />
       <PageHeader
         eyebrow="Arcade"
         title="Games"
@@ -64,9 +66,9 @@ export default function ArcadePage() {
       <section className="flex flex-col gap-3">
         <h2 className={type.heading}>Play</h2>
         <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {GAMES.map((game) => (
+          {GAMES.map((game, i) => (
             <li key={game.href}>
-              <ArcadeCard {...game} />
+              <ArcadeCard {...game} index={i} />
             </li>
           ))}
         </ul>
@@ -88,6 +90,7 @@ export default function ArcadePage() {
               meta="Unfinished"
               art={<GmLabArt />}
               tints={["#30d158", "#64d2ff"]}
+              index={GAMES.length}
             />
           </li>
         </ul>
@@ -103,6 +106,7 @@ function ArcadeCard({
   meta,
   art,
   tints,
+  index,
 }: {
   href: string;
   title: string;
@@ -110,10 +114,13 @@ function ArcadeCard({
   meta: string;
   art: ReactNode;
   tints: string[];
+  index: number;
 }) {
   return (
     <TransitionLink
       href={href}
+      data-motion-tile
+      style={{ "--i": index } as CSSProperties}
       className={cn(
         "group sports-card flex h-full flex-col overflow-hidden",
         "transition-[transform,box-shadow] hover:-translate-y-0.5 hover:shadow-[0_14px_30px_-18px_rgb(0_0_0/0.45)]",

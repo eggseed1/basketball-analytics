@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 
+import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { PageHeader } from "@/components/layout/page-header";
 import { type } from "@/lib/design-system";
 import { SITE_CONTACT_URL } from "@/lib/site-url";
@@ -22,7 +23,8 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 
 export default function PrivacyPage() {
   return (
-    <main className="site-shell flex flex-col gap-8 py-6 sm:py-8">
+    <main data-motion-page className="site-shell flex flex-col gap-8 py-6 sm:py-8">
+      <MotionReveal />
       <PageHeader
         eyebrow="Privacy"
         title="Privacy"

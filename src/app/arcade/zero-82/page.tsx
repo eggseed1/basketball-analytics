@@ -1,3 +1,4 @@
+import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { Zero82Game } from "@/components/arcade/zero-82-game";
 import { PageHeader } from "@/components/layout/page-header";
 
@@ -8,7 +9,8 @@ export const metadata = {
 
 export default function Zero82Page() {
   return (
-    <main className="site-shell flex flex-col gap-6 py-6 sm:py-8">
+    <main data-motion-page className="site-shell flex flex-col gap-6 py-6 sm:py-8">
+      <MotionReveal />
       <PageHeader
         eyebrow="Arcade"
         title="0–82"

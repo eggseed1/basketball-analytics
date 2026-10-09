@@ -44,7 +44,8 @@ export default async function SentimentPage({ searchParams }: PageProps) {
 
   if (!feed) {
     return (
-      <main className="site-shell py-8">
+      <main data-motion-page className="site-shell py-8">
+        <MotionReveal />
         <p className={cn(type.bodySm, "text-muted-foreground")}>
           Sentiment snapshot unavailable.
         </p>

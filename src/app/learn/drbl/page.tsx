@@ -1,3 +1,4 @@
+import { MotionReveal } from "@/components/continuity/motion-reveal";
 import type { ReactNode } from "react";
 import Link from "next/link";
 import type { Metadata } from "next";
@@ -113,8 +114,9 @@ function Card({
 
 export default function LearnDrblPage() {
   return (
-    <main className="site-shell flex flex-col gap-8 py-6 sm:py-8">
-      <div className="site-prose flex w-full flex-col gap-8 lg:mx-0 lg:max-w-4xl">
+    <main data-motion-page className="site-shell flex flex-col gap-8 py-6 sm:py-8">
+      <MotionReveal />
+      <div data-motion-stack className="site-prose flex w-full flex-col gap-8 lg:mx-0 lg:max-w-4xl">
         <Link
           href="/learn"
           className="text-[14px] font-semibold text-muted-foreground underline-offset-4 hover:underline"
@@ -138,7 +140,7 @@ export default function LearnDrblPage() {
 
         <section className="flex flex-col gap-3">
           <h2 className="text-[18px] font-bold">Two main numbers</h2>
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div data-motion-list className="grid gap-3 sm:grid-cols-2">
             <Card title="DRBL/100" href="/learn/drbl-100" question="How good?">
               Impact per 100 possessions. Positive is above the baseline, near
               zero is about even, negative is below. This is the main ranking

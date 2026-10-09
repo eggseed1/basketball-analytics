@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { useEffect } from "react";
 
 import { hardReload, useStaleClientRecovery } from "@/lib/stale-client-error";
@@ -18,7 +19,8 @@ export default function AppRouteError({
   }, [error]);
 
   return (
-    <main className="site-shell flex min-h-[60vh] flex-1 items-center py-8">
+    <main data-motion-page className="site-shell flex min-h-[60vh] flex-1 items-center py-8">
+      <MotionReveal />
       <section className="w-full rounded-lg border border-border bg-background/70 p-5 shadow-sm sm:p-7">
         <p className="text-[12px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
           Page interrupted
@@ -35,7 +37,7 @@ export default function AppRouteError({
             Reference: {error.digest}
           </p>
         ) : null}
-        <div className="mt-5 flex flex-wrap gap-3">
+        <div data-motion-list className="mt-5 flex flex-wrap gap-3">
           <button
             type="button"
             onClick={stale ? hardReload : retry}

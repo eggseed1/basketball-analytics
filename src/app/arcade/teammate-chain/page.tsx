@@ -1,3 +1,4 @@
+import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { TeammateChainGame } from "@/components/arcade/teammate-chain-game";
 import { PageHeader } from "@/components/layout/page-header";
 
@@ -8,7 +9,8 @@ export const metadata = {
 
 export default function TeammateChainPage() {
   return (
-    <main className="site-shell flex flex-col gap-6 py-6 sm:py-8">
+    <main data-motion-page className="site-shell flex flex-col gap-6 py-6 sm:py-8">
+      <MotionReveal />
       <PageHeader
         eyebrow="Arcade"
         title="Teammate Chain"

@@ -87,7 +87,13 @@ export function PlayerShotDiet({
                     <Cell
                       key={slice.key}
                       fill={slice.fill}
-                      style={{ opacity: focus && focus !== slice.key ? 0.3 : 1, transition: "opacity 180ms ease" }}
+                      stroke="var(--foreground)"
+                      strokeOpacity={focus === slice.key ? 0.55 : 0}
+                      strokeWidth={2}
+                      style={{
+                        filter: focus === slice.key ? "brightness(1.08) saturate(1.25)" : "none",
+                        transition: "filter 180ms ease, stroke-opacity 180ms ease",
+                      }}
                     />
                   ))}
                 </Pie>
@@ -124,7 +130,7 @@ export function PlayerShotDiet({
                 <li
                   key={slice.key}
                   data-hover-item
-                  data-focus-off={focus && focus !== slice.key ? "" : undefined}
+                  data-focus-on={focus === slice.key ? "" : undefined}
                   className="flex flex-col gap-1.5"
                   onMouseEnter={() => setFocus(slice.key)}
                 >

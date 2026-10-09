@@ -36,7 +36,8 @@ export default async function MovementCenterPage({ searchParams }: PageProps) {
   const feed = await getMovementFeed();
   if (!feed) {
     return (
-      <main className="site-shell py-8">
+      <main data-motion-page className="site-shell py-8">
+        <MotionReveal />
         <p className="text-muted-foreground">Movement Center snapshot unavailable.</p>
       </main>
     );

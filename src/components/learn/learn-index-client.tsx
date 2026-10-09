@@ -43,7 +43,7 @@ export function LearnIndexClient({
   }, [filtered]);
 
   return (
-    <div className="flex flex-col gap-6">
+    <div data-motion-stack className="flex flex-col gap-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div className="w-full max-w-md">
           <label className="text-[12px] font-semibold text-muted-foreground">

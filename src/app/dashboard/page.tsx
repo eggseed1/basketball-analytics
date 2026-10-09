@@ -1,3 +1,4 @@
+import { MotionReveal } from "@/components/continuity/motion-reveal";
 import Link from "next/link";
 import { Suspense } from "react";
 
@@ -39,7 +40,8 @@ export default async function DashboardPage({
   const season = seasonParam ?? seasons[0] ?? "2024-25";
 
   return (
-    <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-4 px-4 py-6 sm:px-6">
+    <main data-motion-page className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-4 px-4 py-6 sm:px-6">
+      <MotionReveal />
       <header className="flex flex-col gap-3 border-b border-border pb-4 lg:flex-row lg:items-end lg:justify-between">
         <div className="flex flex-col gap-1">
           <p className="text-sm text-muted-foreground">
@@ -92,7 +94,7 @@ async function DashboardBoards({ season }: { season: string }) {
 
 function DashboardSkeleton() {
   return (
-    <div className="flex flex-col gap-3" aria-busy="true" aria-live="polite">
+    <div data-skeleton className="flex flex-col gap-3" aria-busy="true" aria-live="polite">
       <div className="h-9 animate-pulse rounded border border-border bg-muted/40" />
       <div className="grid gap-3 lg:grid-cols-3">
         {[0, 1, 2].map((i) => (

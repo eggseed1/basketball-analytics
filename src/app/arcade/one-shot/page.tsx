@@ -1,3 +1,4 @@
+import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { PageHeader } from "@/components/layout/page-header";
 import { OneShotGame } from "@/components/one-shot/one-shot-game";
 
@@ -8,7 +9,8 @@ export const metadata = {
 
 export default function OneShotPage() {
   return (
-    <main className="flex flex-col gap-5 py-6 sm:py-8">
+    <main data-motion-page className="flex flex-col gap-5 py-6 sm:py-8">
+      <MotionReveal />
       <div className="site-shell">
         <PageHeader
           eyebrow="Arcade"

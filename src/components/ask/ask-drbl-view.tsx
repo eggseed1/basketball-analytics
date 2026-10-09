@@ -660,6 +660,7 @@ export function AskDrblView({
 
   return (
     <div
+      data-motion-stack
       className="relative flex flex-col gap-6"
       data-updating={pending ? "true" : "false"}
     >
@@ -806,7 +807,7 @@ export function AskDrblView({
               Updating…
             </p>
           ) : null}
-          <AskResultBlock result={displayResult} askContext={askContext} />
+          <AskResultBlock key={displayResult.rawQuery} result={displayResult} askContext={askContext} />
         </div>
       ) : null}
 

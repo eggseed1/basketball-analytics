@@ -1,3 +1,4 @@
+import { MotionReveal } from "@/components/continuity/motion-reveal";
 import type { Metadata } from "next";
 
 import { DesignSystemLab } from "@/components/design-system/design-system-lab";
@@ -13,7 +14,8 @@ export const metadata: Metadata = {
  */
 export default function DesignSystemPage() {
   return (
-    <main className="site-shell flex flex-col gap-5 py-5 sm:py-7">
+    <main data-motion-page className="site-shell flex flex-col gap-5 py-5 sm:py-7">
+      <MotionReveal />
       <DesignSystemLab />
     </main>
   );

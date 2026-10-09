@@ -10,12 +10,14 @@ type Pose = (el: Element, style: CSSStyleDeclaration) => Keyframe;
    blur flashes clear until the fade ends. Frosted surfaces fade themselves. */
 const FROST = ".sports-card, .glass-surface, .glass-card, .frost-surface, .frost-surface-soft, .frost-surface-muted";
 const CARD = ".sports-card, .glass-surface, .glass-card";
+/* Marked static, or already running its own entry animation. */
+const STATIC = "[data-motion-static], .arcade-pop";
 const SECTION = [
-  `[data-motion-page] > :not(.hof-page-frame, [data-motion-stack], [data-skeleton], [data-motion-static], :has(${FROST}))`,
-  `:is(.hof-page-frame__inner, [data-motion-stack]) > :not([data-motion-stack], :has(${FROST}))`,
-  `:is(${CARD}):not(a, [data-skeleton], [data-motion-tile], [data-motion-static] *, :is(${CARD}) *)`,
+  `[data-motion-page] > :not(.hof-page-frame, [data-motion-stack], [data-skeleton], ${STATIC}, :has(${FROST}))`,
+  `:is(.hof-page-frame__inner, [data-motion-stack]) > :not([data-motion-stack], [data-skeleton], ${STATIC}, :has(${FROST}))`,
+  `:is(${CARD}):not(a, [data-skeleton], [data-motion-tile], ${STATIC}, [data-motion-static] *, :is(${CARD}) *)`,
 ].join(", ");
-const LIST = `:is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li):not(:has(${FROST})), [data-motion-item]`;
+const LIST = `:is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li):not(${STATIC}, :has(${FROST})), [data-motion-item]:not(${STATIC})`;
 const FROST_ROW = "tbody > tr:has(> .board-sticky-frost)";
 
 /** Start poses, matched in order. They mirror the @starting-style rules in globals.css. */

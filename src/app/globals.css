@@ -1850,10 +1850,10 @@ html:not([data-surface="glass"]) .color-scheme-switch {
   }
 }
 
-/* Chart hover. Rows in a [data-hover-group] dim around the hovered
-   [data-hover-item], whose bars thicken and markers swell. Points in a
-   [data-hover-svg] fade around the hovered [data-hover-point], which grows
-   and raises its guide line. Labels come from ChartHoverTip (data-tip). */
+/* Chart hover. The hovered [data-hover-item] lifts: its bars thicken and its
+   markers swell. The hovered [data-hover-point] grows and raises its guide
+   line. Everything around them keeps full color. Labels come from
+   ChartHoverTip (data-tip). */
 svg [data-motion-dot] {
   transform-box: fill-box;
   transform-origin: center;
@@ -1864,8 +1864,12 @@ svg [data-motion-dot] {
   pointer-events: none;
 }
 
-[data-zone-off] {
-  opacity: 0.08;
+/* Hundreds of shots can share a zone, so the lift is a ring with no
+   transition. A filter or scale there repaints the court for every frame. */
+[data-zone-on] {
+  stroke: var(--foreground);
+  stroke-width: 1.6px;
+  stroke-opacity: 0.9;
 }
 
 .chart-hover-tip {
@@ -1926,10 +1930,6 @@ svg [data-motion-dot] {
 
   [data-hover-guide] {
     transition: opacity 160ms ease;
-  }
-
-  [data-zone-off] {
-    transition: opacity 220ms ease;
   }
 
   .chart-hover-tip {
@@ -1994,10 +1994,6 @@ svg [data-motion-dot] {
 }
 
 @media (hover: hover) {
-  [data-hover-group]:has([data-hover-item]:hover) [data-hover-item]:not(:hover) {
-    filter: saturate(0.35) opacity(0.42);
-  }
-
   [data-hover-item]:hover [data-motion-bar] {
     filter: brightness(1.1) saturate(1.25);
   }
@@ -2020,10 +2016,14 @@ svg [data-motion-dot] {
   }
 }
 
-/* Linked hover from another view (a chart slice lighting its list row) dims the
-   rest of the list the same way a direct hover would. */
-[data-hover-group]:not(:hover) > [data-focus-off] {
-  filter: saturate(0.35) opacity(0.42);
+/* Linked hover from another view (a chart slice lighting its list row) lifts
+   that row the same way a direct hover would. */
+[data-focus-on] [data-motion-bar] {
+  filter: brightness(1.1) saturate(1.25);
+}
+
+[data-focus-on] [data-motion-bar="x"] {
+  transform: scaleY(1.5);
 }
 
 /* Team tab charts. The hovered mark lifts and gets a ring; the marks around
@@ -2196,10 +2196,6 @@ svg [data-motion-dot] {
     box-shadow: inset 0 0 0 100vmax var(--motion-row-tint);
   }
 
-  [data-linking] :is(li, span, div)[data-link-key]:not([data-linked]) {
-    opacity: 0.5;
-  }
-
   /* Divs often carry inline shadows (bracket brand edges), so they ring instead. */
   div[data-linked] {
     outline: 1.5px solid color-mix(in oklab, var(--foreground) 45%, transparent);
@@ -2217,7 +2213,7 @@ svg [data-motion-dot] {
   }
 
   :is(li, div)[data-link-key] {
-    transition: opacity 160ms ease, box-shadow 160ms ease, outline-color 160ms ease;
+    transition: box-shadow 160ms ease, outline-color 160ms ease;
   }
 
   [data-stat-tile] > :is(:last-child, dd),
@@ -2281,9 +2277,9 @@ svg [data-motion-dot] {
       opacity 200ms ease;
   }
 
-  [data-motion-page] > :not(.hof-page-frame, [data-motion-stack], [data-skeleton], [data-motion-static], :has(.sports-card, .glass-surface, .glass-card, .frost-surface, .frost-surface-soft, .frost-surface-muted)),
-  [data-motion-page] :is(.hof-page-frame__inner, [data-motion-stack]) > :not([data-motion-stack], :has(.sports-card, .glass-surface, .glass-card, .frost-surface, .frost-surface-soft, .frost-surface-muted)),
-  [data-motion-page] :is(.sports-card, .glass-surface, .glass-card):not(a, [data-skeleton], [data-motion-tile], [data-motion-static] *, :is(.sports-card, .glass-surface, .glass-card) *) {
+  [data-motion-page] > :not(.hof-page-frame, [data-motion-stack], [data-skeleton], [data-motion-static], .arcade-pop, :has(.sports-card, .glass-surface, .glass-card, .frost-surface, .frost-surface-soft, .frost-surface-muted)),
+  [data-motion-page] :is(.hof-page-frame__inner, [data-motion-stack]) > :not([data-motion-stack], [data-skeleton], [data-motion-static], .arcade-pop, :has(.sports-card, .glass-surface, .glass-card, .frost-surface, .frost-surface-soft, .frost-surface-muted)),
+  [data-motion-page] :is(.sports-card, .glass-surface, .glass-card):not(a, [data-skeleton], [data-motion-tile], [data-motion-static], [data-motion-static] *, .arcade-pop, :is(.sports-card, .glass-surface, .glass-card) *) {
     transition:
       opacity 420ms ease,
       translate 560ms var(--motion-ease);
@@ -2307,7 +2303,7 @@ svg [data-motion-dot] {
       opacity 360ms ease 80ms;
   }
 
-  [data-motion-page] :is([data-motion-list] > *, [data-motion-item], :is(ul, ol):not(nav *, [role]) > li) {
+  [data-motion-page] :is([data-motion-list] > *, [data-motion-item], :is(ul, ol):not(nav *, [role]) > li):not([data-motion-static], .arcade-pop) {
     --d: calc(var(--n, var(--i, 0)) * 45ms + 80ms);
     transition:
       opacity 380ms ease var(--d),
@@ -2422,9 +2418,9 @@ svg [data-motion-dot] {
   }
 
   @starting-style {
-    [data-motion-page] > :not(.hof-page-frame, [data-motion-stack], [data-skeleton], [data-motion-static], :has(.sports-card, .glass-surface, .glass-card, .frost-surface, .frost-surface-soft, .frost-surface-muted)),
-    [data-motion-page] :is(.hof-page-frame__inner, [data-motion-stack]) > :not([data-motion-stack], :has(.sports-card, .glass-surface, .glass-card, .frost-surface, .frost-surface-soft, .frost-surface-muted)),
-    [data-motion-page] :is(.sports-card, .glass-surface, .glass-card):not(a, [data-skeleton], [data-motion-tile], [data-motion-static] *, :is(.sports-card, .glass-surface, .glass-card) *) {
+    [data-motion-page] > :not(.hof-page-frame, [data-motion-stack], [data-skeleton], [data-motion-static], .arcade-pop, :has(.sports-card, .glass-surface, .glass-card, .frost-surface, .frost-surface-soft, .frost-surface-muted)),
+    [data-motion-page] :is(.hof-page-frame__inner, [data-motion-stack]) > :not([data-motion-stack], [data-skeleton], [data-motion-static], .arcade-pop, :has(.sports-card, .glass-surface, .glass-card, .frost-surface, .frost-surface-soft, .frost-surface-muted)),
+    [data-motion-page] :is(.sports-card, .glass-surface, .glass-card):not(a, [data-skeleton], [data-motion-tile], [data-motion-static], [data-motion-static] *, .arcade-pop, :is(.sports-card, .glass-surface, .glass-card) *) {
       opacity: 0;
       translate: 0 14px;
     }
@@ -2434,8 +2430,8 @@ svg [data-motion-dot] {
       scale: 0.82;
     }
 
-    [data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li):not(:has(.sports-card, .glass-surface, .glass-card, .frost-surface, .frost-surface-soft, .frost-surface-muted)),
-    [data-motion-page] [data-motion-item] {
+    [data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li):not([data-motion-static], .arcade-pop, :has(.sports-card, .glass-surface, .glass-card, .frost-surface, .frost-surface-soft, .frost-surface-muted)),
+    [data-motion-page] [data-motion-item]:not([data-motion-static], .arcade-pop) {
       opacity: 0;
       translate: 0 8px;
     }

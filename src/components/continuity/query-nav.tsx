@@ -147,6 +147,7 @@ export function QueryUpdatingChrome({ pending }: { pending: boolean }) {
   if (!pending) return null;
   return (
     <div
+      data-motion-static
       className="pointer-events-none absolute inset-x-0 top-0 z-30"
       aria-live="polite"
       aria-atomic="true"

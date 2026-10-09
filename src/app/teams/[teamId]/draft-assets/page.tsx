@@ -42,7 +42,8 @@ export default async function TeamDraftAssetsPage({
 
   if (seasonParam && !isCurrentFrontOfficeSeason(seasonParam)) {
     return (
-      <main className="mx-auto max-w-5xl px-4 py-10">
+      <main data-motion-page className="mx-auto max-w-5xl px-4 py-10">
+        <MotionReveal />
         <h1 className="text-2xl font-semibold">Historical draft assets</h1>
         <p className="mt-3 text-sm text-muted-foreground">
           Draft assets for {seasonParam} are not shown as current franchise
@@ -107,7 +108,8 @@ export default async function TeamDraftAssetsPage({
   }
   if (!slice) {
     return (
-      <main className="mx-auto max-w-5xl px-4 py-10">
+      <main data-motion-page className="mx-auto max-w-5xl px-4 py-10">
+        <MotionReveal />
         <h1 className="text-2xl font-semibold">Draft assets unavailable</h1>
         <p className="mt-3 text-sm text-muted-foreground">
           No validated front-office snapshot is published for this franchise.

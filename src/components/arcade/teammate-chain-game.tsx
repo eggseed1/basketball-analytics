@@ -155,7 +155,7 @@ function ChainBoard({ league }: { league: ArcadeLeague }) {
               }}
             />
             {matches.length ? (
-              <ul className="flex flex-col overflow-hidden rounded-lg border border-border bg-background">
+              <ul role="list" className="flex flex-col overflow-hidden rounded-lg border border-border bg-background">
                 {matches.map((p) => {
                   const span = years.get(p.id);
                   return (

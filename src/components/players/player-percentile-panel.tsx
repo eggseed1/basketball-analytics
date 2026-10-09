@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  startTransition,
   useCallback,
   useEffect,
   useId,
@@ -1187,13 +1188,14 @@ export function PlayerPercentilePanel({
     (target: string) => {
       setFullPending(true);
       void fetchPercentiles(playerId, target, "full")
+        .catch(() => null)
         .then((full) => {
           if (desiredSeason.current !== target) return;
-          if (full?.metrics.length) applyCached(target, full);
-        })
-        .catch(() => undefined)
-        .finally(() => {
-          if (desiredSeason.current === target) setFullPending(false);
+          // This lands while the reader may be scrolling, so the render yields.
+          startTransition(() => {
+            if (full?.metrics.length) applyCached(target, full);
+            setFullPending(false);
+          });
         });
     },
     [applyCached, playerId]

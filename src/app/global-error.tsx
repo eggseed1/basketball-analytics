@@ -30,7 +30,8 @@ export default function GlobalError({
             color: "#171717",
           }}
         >
-          <section style={{ width: "min(680px, 100%)" }}>
+          <style>{`@media (prefers-reduced-motion: no-preference) { [data-global-error] { animation: global-error-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both; } } @keyframes global-error-in { from { opacity: 0; translate: 0 14px; } }`}</style>
+          <section data-global-error style={{ width: "min(680px, 100%)" }}>
             <p style={{ fontSize: 12, fontWeight: 700, textTransform: "uppercase" }}>
               Application interrupted
             </p>

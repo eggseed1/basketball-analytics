@@ -1,3 +1,4 @@
+import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
@@ -17,8 +18,9 @@ export default function LearnWar1Page() {
   if (!guide) notFound();
 
   return (
-    <main className="site-shell flex flex-col gap-8 py-6 sm:py-8">
-      <div className="site-prose flex w-full flex-col gap-8 lg:mx-0 lg:max-w-4xl">
+    <main data-motion-page className="site-shell flex flex-col gap-8 py-6 sm:py-8">
+      <MotionReveal />
+      <div data-motion-stack className="site-prose flex w-full flex-col gap-8 lg:mx-0 lg:max-w-4xl">
         <AppLink
           href="/learn/drbl"
           className="text-[14px] font-semibold text-muted-foreground underline-offset-4 hover:underline"

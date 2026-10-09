@@ -16,6 +16,7 @@ import {
 } from "@/data/providers/historical/season-range";
 import { ESPN_PLAYER_SEASON_HORIZON_START } from "@/gm/myleague/constants";
 import { MatchupOrbs } from "@/components/brand/matchup-orbs";
+import { MotionReveal } from "@/components/continuity/motion-reveal";
 
 export function GmShell({ children }: { children: ReactNode }) {
   const league = useGmStore((s) => s.league);
@@ -55,7 +56,8 @@ export function GmShell({ children }: { children: ReactNode }) {
 
   if (!hydrated) {
     return (
-      <main className="site-shell flex flex-1 flex-col gap-4 py-8">
+      <main data-motion-page className="site-shell flex flex-1 flex-col gap-4 py-8">
+        <MotionReveal />
         <p className="text-muted-foreground">Loading front office…</p>
       </main>
     );
@@ -70,7 +72,8 @@ export function GmShell({ children }: { children: ReactNode }) {
     // Decade anchors first in the select via optgroup-like ordering: keep full list.
 
     return (
-      <main className="site-shell flex flex-1 flex-col gap-5 py-6 sm:py-8">
+      <main data-motion-page className="site-shell flex flex-1 flex-col gap-5 py-6 sm:py-8">
+        <MotionReveal />
         <p className="rounded-md border border-dashed border-amber-600/30 bg-amber-500/5 px-3 py-2 text-[13px] text-muted-foreground">
           Franchise Lab is an unfinished Milestone 2 scaffold. Its draft,
           medical, staff, and cap tools are simulation shells, not a finished
@@ -118,7 +121,7 @@ export function GmShell({ children }: { children: ReactNode }) {
           </div>
         ) : null}
 
-        <div className="grid grid-cols-4 gap-x-3 gap-y-5 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10">
+        <div data-motion-list className="grid grid-cols-4 gap-x-3 gap-y-5 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10">
           {FRANCHISES.map((f) => {
             const brand = resolveTeamBrand(f.id);
             return (
@@ -127,10 +130,10 @@ export function GmShell({ children }: { children: ReactNode }) {
                 type="button"
                 disabled={seeding}
                 onClick={() => void newLeague(f.id, season)}
-                className="flex flex-col items-center gap-2 disabled:opacity-50"
+                className="group flex flex-col items-center gap-2 disabled:opacity-50"
               >
                 <span
-                  className="flex size-[4.5rem] items-center justify-center rounded-full bg-secondary"
+                  className="flex size-[4.5rem] items-center justify-center rounded-full bg-secondary transition-[scale,box-shadow] duration-200 group-hover:scale-[1.06] group-hover:shadow-[0_8px_18px_-10px_rgb(0_0_0/0.45)] group-disabled:scale-100 group-disabled:shadow-none"
                   style={
                     brand
                       ? {
@@ -166,6 +169,7 @@ export function GmShell({ children }: { children: ReactNode }) {
 
   return (
     <main
+      data-motion-page
       className="site-shell flex flex-1 flex-col gap-4 py-4 sm:py-6"
       style={
         {
@@ -174,6 +178,7 @@ export function GmShell({ children }: { children: ReactNode }) {
         } as CSSProperties
       }
     >
+      <MotionReveal />
       <p className="rounded-md border border-dashed border-amber-600/30 bg-amber-500/5 px-3 py-2 text-[13px] text-muted-foreground">
         Franchise Lab · unfinished Milestone 2 scaffold, not a finished
         MyLeague product.

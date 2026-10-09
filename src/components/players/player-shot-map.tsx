@@ -322,7 +322,7 @@ export function PlayerShotMapView({
                       data-hover-point
                       data-tip={`${shot.made ? "Make" : "Miss"} · ${shot.dist.toFixed(0)} ft`}
                       data-tip-sub={`${shot.kind} · ${shot.zone}`}
-                      data-zone-off={focusZone && shot.zone !== focusZone ? "" : undefined}
+                      data-zone-on={focusZone && shot.zone === focusZone ? "" : undefined}
                       style={{ "--i": i % 48 } as CSSProperties}
                       cx={courtX(shot.x)}
                       cy={courtY(shot.y)}
@@ -346,7 +346,7 @@ export function PlayerShotMapView({
                       data-hover-point
                       data-tip={`${bin.fgm} of ${bin.fga} · ${formatPct(pct)}`}
                       data-tip-sub={`${league != null ? `League ${formatPct(league)} in ${bin.zone}` : bin.zone}${small ? " · small sample" : ""}`}
-                      data-zone-off={focusZone && bin.zone !== focusZone ? "" : undefined}
+                      data-zone-on={focusZone && bin.zone === focusZone ? "" : undefined}
                       style={{ "--i": i % 30 } as CSSProperties}
                       cx={courtX(bin.x)}
                       cy={courtY(bin.y)}
