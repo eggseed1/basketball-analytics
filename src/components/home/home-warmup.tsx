@@ -20,8 +20,8 @@ export function HomeWarmup() {
         <div className="home-warmup__court">
           <div className="home-warmup__hop">
             <svg className="home-warmup__ball" viewBox="0 0 40 40">
-              <circle cx="20" cy="20" r="18" fill="#e8702a" />
-              <g fill="none" stroke="#3b1a06" strokeWidth="1.6" strokeLinecap="round">
+              <circle className="home-warmup__skin" cx="20" cy="20" r="18" />
+              <g fill="none" stroke="#0b0d14" strokeOpacity="0.55" strokeWidth="1.6" strokeLinecap="round">
                 <circle cx="20" cy="20" r="18" />
                 <path d="M2 20h36" />
                 <path d="M20 2v36" />

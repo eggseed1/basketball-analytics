@@ -2717,6 +2717,11 @@ svg [data-motion-dot] {
   animation: home-warmup-spin 1.8s linear infinite;
 }
 
+.home-warmup__skin {
+  fill: #1d428a;
+  animation: home-warmup-skin 1.8s infinite;
+}
+
 .home-warmup__shadow {
   margin-top: 3px;
   height: 6px;
@@ -2786,6 +2791,22 @@ svg [data-motion-dot] {
   }
 }
 
+/* Swaps at each floor contact: the squash sits at 52% of the 0.9s hop. */
+@keyframes home-warmup-skin {
+  0%,
+  24% {
+    fill: #1d428a;
+  }
+  28%,
+  74% {
+    fill: #c8102e;
+  }
+  78%,
+  100% {
+    fill: #1d428a;
+  }
+}
+
 @keyframes home-warmup-shadow {
   0%,
   100% {
@@ -2830,6 +2851,7 @@ svg [data-motion-dot] {
 @media (prefers-reduced-motion: reduce) {
   .home-warmup__hop,
   .home-warmup__ball,
+  .home-warmup__skin,
   .home-warmup__shadow,
   .home-warmup__meter {
     animation: none;
