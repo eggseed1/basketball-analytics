@@ -5,10 +5,10 @@
     "season": "2026-27",
     "snapshotDate": "2026-10-09",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-10-09T19:57:30.398Z",
+    "builtAt": "2026-10-09T20:10:11.464Z",
     "rosterPlayerCount": 492,
-    "headlinesScanned": 2565,
-    "latestHeadlineAt": "2026-10-09T19:55:00.000Z",
+    "headlinesScanned": 2574,
+    "latestHeadlineAt": "2026-10-09T20:07:38.000Z",
     "latestTransactionDate": "2026-10-07",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -787,12 +787,13 @@
         "mv-e4dd9d09453d673d",
         "mv-939567ca4cb43c39",
         "mv-2bf13912577d2eef",
-        "mv-131f6f931d1156c2"
+        "mv-131f6f931d1156c2",
+        "mv-614b30d194de079d"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-06T17:10:57.000Z",
-      "lastMeaningfulAt": "2026-10-09T15:36:04.000Z",
+      "lastMeaningfulAt": "2026-10-09T20:06:25.000Z",
       "linkedPlayerIds": [
         "4683692",
         "3136195",
@@ -4537,6 +4538,29 @@
         "20"
       ],
       "isOriginal": true
+    },
+    {
+      "id": "mv-614b30d194de079d",
+      "clusterId": "mv-contract-4683692-20261006",
+      "summary": "Shams Charania Drops Concerning Knicks News on KAT, Josh Hart Extension Talks",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-09T20:06:25.000Z",
+      "sourceId": "reporter:shams-charania",
+      "sourceLabel": "Heavy, citing Shams Charania (ESPN)",
+      "reporterLabel": "Shams Charania",
+      "sourceUrl": "https://heavy.com/sports/nba/new-york-knicks/shams-charania-drops-concerning-knicks-news-on-kat-josh-hart-contract-talks/",
+      "playerIds": [
+        "3062679",
+        "3136195"
+      ],
+      "teamIds": [
+        "18"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "active_talks"
     },
     {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",
