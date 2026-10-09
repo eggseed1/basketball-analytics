@@ -14,7 +14,7 @@ import {
   rotationMinutesPct,
   rotationStartRate,
 } from "@/lib/team-explorer";
-import { type, sectionLinkClassName } from "@/lib/design-system";
+import { type } from "@/lib/design-system";
 import { formatNumber, formatPct } from "@/lib/format";
 import { teamPageHref } from "@/lib/team-destination";
 import { cn } from "@/lib/utils";
@@ -302,8 +302,6 @@ export async function TeamLineupsIsland({
   const shape = buildRotationPositionShape(roster.players);
   const empty =
     ladder.starters.length + ladder.bench.length + ladder.spot.length === 0;
-  const playersHref = teamPageHref(teamId, { season, tab: "players" });
-  const defenseHref = teamPageHref(teamId, { season, tab: "defense" });
   const onOffHref = teamPageHref(teamId, { season, tab: "onoff" });
 
   return (
@@ -312,35 +310,20 @@ export async function TeamLineupsIsland({
       className="scroll-mt-16 flex flex-col gap-4"
       aria-label="Rotation"
     >
-      <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <div>
-          <h2 className="text-[20px] font-bold tracking-tight">Rotation</h2>
-          <p className={cn(type.bodySm, "text-muted-foreground")}>
-            Starter / bench ladder from box-score minutes and starts for{" "}
-            {season}. Lineup and player on/off ratings are on the On/Off tab.
-            {roster.omitsMidSeasonMoves ? ` ${MID_SEASON_MOVES_NOTE}` : null}
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-3">
-          <TransitionLink
-            href={playersHref}
-            className={cn(type.caption, sectionLinkClassName)}
-          >
-            Full roster <span data-motion-arrow aria-hidden>→</span>
-          </TransitionLink>
+      <div>
+        <h2 className="text-[20px] font-bold tracking-tight">Rotation</h2>
+        <p className={cn(type.bodySm, "text-muted-foreground")}>
+          Starter / bench ladder from box-score minutes and starts for{" "}
+          {season}. Lineup and player on/off ratings are on the{" "}
           <TransitionLink
             href={onOffHref}
-            className={cn(type.caption, sectionLinkClassName)}
+            className="font-semibold underline underline-offset-2"
           >
-            On/off <span data-motion-arrow aria-hidden>→</span>
+            On/Off tab
           </TransitionLink>
-          <TransitionLink
-            href={defenseHref}
-            className={cn(type.caption, sectionLinkClassName)}
-          >
-            Hustle / defense <span data-motion-arrow aria-hidden>→</span>
-          </TransitionLink>
-        </div>
+          .
+          {roster.omitsMidSeasonMoves ? ` ${MID_SEASON_MOVES_NOTE}` : null}
+        </p>
       </div>
 
       {empty ? (

@@ -1,11 +1,9 @@
-import { TransitionLink } from "@/components/continuity/query-nav";
 import { LinkedHover } from "@/components/continuity/linked-hover";
 import { PlayerIdentity } from "@/components/players/player-identity";
 import type { PlayerSeason, TeamSeasonStats } from "@/data/types";
-import { type, sectionLinkClassName } from "@/lib/design-system";
+import { type } from "@/lib/design-system";
 import { formatNumber, formatPct } from "@/lib/format";
 import type { RankedMetric } from "@/lib/team-page-metrics";
-import { teamPageHref } from "@/lib/team-destination";
 import { TeamMetricTile } from "@/components/teams/team-metric-tile";
 import { OffenseUsageMap } from "@/components/teams/viz/offense-usage-map";
 import { cn } from "@/lib/utils";
@@ -138,37 +136,18 @@ export async function TeamOffenseIsland({
     .slice(0, 5);
 
   const hasBoard = offenseMetrics.some((m) => !m.missingReason);
-  const playersHref = teamPageHref(teamId, { season, tab: "players" });
-  const rotationHref = teamPageHref(teamId, { season, tab: "lineups" });
-
   return (
     <section
       id="offense"
       className="scroll-mt-16 flex flex-col gap-4"
       aria-label="Offense"
     >
-      <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <div>
-          <h2 className="text-[20px] font-bold tracking-tight">Offense</h2>
-          <p className={cn(type.bodySm, "text-muted-foreground")}>
-            Season board shooting and creation ranks for {season}, plus roster
-            scoring, usage, and efficiency from the actual team list.
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-3">
-          <TransitionLink
-            href={playersHref}
-            className={cn(type.caption, sectionLinkClassName)}
-          >
-            Full roster <span data-motion-arrow aria-hidden>→</span>
-          </TransitionLink>
-          <TransitionLink
-            href={rotationHref}
-            className={cn(type.caption, sectionLinkClassName)}
-          >
-            Rotation <span data-motion-arrow aria-hidden>→</span>
-          </TransitionLink>
-        </div>
+      <div>
+        <h2 className="text-[20px] font-bold tracking-tight">Offense</h2>
+        <p className={cn(type.bodySm, "text-muted-foreground")}>
+          Season board shooting and creation ranks for {season}, plus roster
+          scoring, usage, and efficiency from the actual team list.
+        </p>
       </div>
 
       {hasBoard ? (

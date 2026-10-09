@@ -203,11 +203,11 @@ function team(
   );
   assert.equal(
     teamArcFullHref("bos", "2025-26", true),
-    "/teams/bos?season=2025-26&arc=full"
+    "/teams/bos/history?season=2025-26&arc=full#arc"
   );
   assert.equal(
     teamArcFullHref("bos", "2025-26", false),
-    "/teams/bos?season=2025-26"
+    "/teams/bos/history?season=2025-26#arc"
   );
   assert.equal(
     teamArcGamesHref("2", "2024-25"),

@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 import { analyzeTeamProfile } from "@/analytics";
 import { StatDisclosure } from "@/components/analytics/stat-disclosure";
@@ -8,13 +8,8 @@ import { DestinationClientShell } from "@/components/continuity/destination-clie
 import { DestinationSectionSkeleton } from "@/components/continuity/destination-loading-frame";
 import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { GlassTintScaleProvider } from "@/components/brand/glass-surface";
-import { TeamArcIsland } from "@/components/teams/team-arc-island";
-import { TeamAssetsIsland } from "@/components/teams/team-assets-island";
-import { TeamContextBar } from "@/components/teams/team-context-bar";
-import { TeamDraftHistorySection } from "@/components/teams/team-draft-history-section";
 import { TeamDestinationIdentity } from "@/components/teams/team-destination-identity";
 import { TeamEvidenceIsland } from "@/components/teams/team-evidence-island";
-import { TeamFrontOfficeIsland } from "@/components/teams/team-front-office-island";
 import { TeamGamesIsland } from "@/components/teams/team-games-island";
 import { TeamHustleIsland } from "@/components/teams/team-hustle-island";
 import { TeamLeadershipSection } from "@/components/teams/team-leadership-section";
@@ -23,9 +18,6 @@ import { TeamOnOffIsland } from "@/components/teams/team-on-off-island";
 import { TeamOffenseIsland } from "@/components/teams/team-offense-island";
 import { TeamPlayoffsIsland } from "@/components/teams/team-playoffs-island";
 import { TeamSplitsIsland } from "@/components/teams/team-splits-island";
-import { FranchiseTimeline } from "@/components/teams/franchise-timeline";
-import { TeamFranchiseHistoryIsland } from "@/components/teams/team-franchise-history-island";
-import { TeamMatchupPreview } from "@/components/teams/team-matchup-preview";
 import { TeamOpeningNight } from "@/components/teams/overview/team-opening-night";
 import { TeamOverviewVisuals } from "@/components/teams/overview/team-overview-visuals";
 import { TeamSeasonRecapIsland } from "@/components/teams/overview/team-season-recap-island";
@@ -33,6 +25,7 @@ import { StatsRankGrid } from "@/components/teams/viz/stats-rank-grid";
 import { TeamPrimaryNav } from "@/components/teams/team-primary-nav";
 import { TeamRosterIsland } from "@/components/teams/team-roster-island";
 import { TeamRosterBuiltIsland } from "@/components/teams/team-roster-built-island";
+import { TeamSalaryAssetsTab } from "@/components/teams/team-salary-assets-tab";
 import { TeamSentimentTab } from "@/components/teams/team-sentiment-tab";
 import { TeamRosterSourcesSection } from "@/components/teams/team-roster-sources-section";
 import { TeamScheduleIsland } from "@/components/teams/team-schedule-island";
@@ -54,8 +47,10 @@ import { shiftCanonicalSeason } from "@/lib/player-stat-comps";
 import {
   parseTeamPageTab,
   parseTeamRateMode,
+  parseTeamSalaryView,
   parseTeamSeasonKind,
   resolveTeamIdentityFallback,
+  teamFranchiseHistoryHref,
   type TeamPageHrefOpts,
 } from "@/lib/team-destination";
 import { buildTeamRankedMetrics, formatMetricDelta, leagueRankOf } from "@/lib/team-page-metrics";
@@ -128,15 +123,13 @@ export default async function TeamProfilePage({
   const { teamId } = await params;
   const sp = await searchParams;
   const seasonParam = Array.isArray(sp.season) ? sp.season[0] : sp.season;
-  const tab = parseTeamPageTab(Array.isArray(sp.tab) ? sp.tab[0] : sp.tab);
+  const rawTab = Array.isArray(sp.tab) ? sp.tab[0] : sp.tab;
+  if (rawTab === "history") redirect(teamFranchiseHistoryHref(teamId, seasonParam));
+  const tab = parseTeamPageTab(rawTab);
   const seasonType = parseTeamSeasonKind(
     Array.isArray(sp.seasonType) ? sp.seasonType[0] : sp.seasonType
   );
   const rate = parseTeamRateMode(Array.isArray(sp.rate) ? sp.rate[0] : sp.rate);
-  const arcParam = Array.isArray(sp.arc) ? sp.arc[0] : sp.arc;
-  const gamesPageRaw = Array.isArray(sp.gamesPage) ? sp.gamesPage[0] : sp.gamesPage;
-  const gamesPage = Math.max(1, Number(gamesPageRaw) || 1);
-  const showingFullArc = arcParam === "full";
   const currentSeason = canonicalSeasonFromStartYear(currentNbaStartYear());
   const season = seasonParam ?? currentSeason;
   const priorSeason = shiftCanonicalSeason(season, -1);
@@ -289,9 +282,8 @@ export default async function TeamProfilePage({
     themeMode: themeMode === "modern" ? "modern" : "historical",
   };
 
-  const franchiseFirstSeason = modernBrand
-    ? getFranchiseHistory(modernBrand.id)?.firstSeason
-    : undefined;
+  const franchise = modernBrand ? getFranchiseHistory(modernBrand.id) : null;
+  const franchiseFirstSeason = franchise?.firstSeason;
   const seasonOptions = [
     ...new Set([
       season,
@@ -376,6 +368,8 @@ export default async function TeamProfilePage({
           useHistoricalMark={useHistoricalMark}
           boardAvailable={boardAvailable}
           hrefOpts={hrefOpts}
+          franchise={franchise}
+          historyHref={teamFranchiseHistoryHref(teamId, seasonParam)}
         />
 
         <TeamPrimaryNav
@@ -383,7 +377,6 @@ export default async function TeamProfilePage({
           tab={tab}
           hrefOpts={hrefOpts}
         />
-        <TeamContextBar teamId={teamId} tab={tab} hrefOpts={hrefOpts} />
 
         {tab === "overview" ? (
           seasonAwaitingGames ? (
@@ -434,9 +427,20 @@ export default async function TeamProfilePage({
             <TeamRosterIsland
               teamId={resolvedTeamId}
               season={season}
-              teamKey={identityTeam.abbreviation}
               sortParam={Array.isArray(sp.sort) ? sp.sort[0] : sp.sort}
               sortDirParam={Array.isArray(sp.dir) ? sp.dir[0] : sp.dir}
+            />
+          </Suspense>
+        ) : null}
+
+        {tab === "players" ? (
+          <Suspense
+            fallback={<DestinationSectionSkeleton label="Loading rotation…" />}
+          >
+            <TeamLineupsIsland
+              teamId={resolvedTeamId}
+              season={season}
+              teamKey={identityTeam.abbreviation}
             />
           </Suspense>
         ) : null}
@@ -471,7 +475,7 @@ export default async function TeamProfilePage({
           )
         ) : null}
 
-        {tab === "defense" ? (
+        {tab === "offense" ? (
           <Suspense
             fallback={<DestinationSectionSkeleton label="Loading hustle…" />}
           >
@@ -481,18 +485,6 @@ export default async function TeamProfilePage({
               teamKey={identityTeam.abbreviation}
               team={boardTeam ?? null}
               defenseMetrics={defenseMetrics}
-            />
-          </Suspense>
-        ) : null}
-
-        {tab === "lineups" ? (
-          <Suspense
-            fallback={<DestinationSectionSkeleton label="Loading rotation…" />}
-          >
-            <TeamLineupsIsland
-              teamId={resolvedTeamId}
-              season={season}
-              teamKey={identityTeam.abbreviation}
             />
           </Suspense>
         ) : null}
@@ -517,15 +509,11 @@ export default async function TeamProfilePage({
               team={identityTeam}
               brand={modernBrand}
               season={season}
-              gamesPage={gamesPage}
-              fromHistory={fromHistory}
-              theme={themeMode === "modern" ? undefined : themeMode}
+              schedule={
+                <TeamScheduleIsland teamId={resolvedTeamId} season={season} teamKey={identityTeam.abbreviation} />
+              }
             />
           </Suspense>
-        ) : null}
-
-        {tab === "schedule" ? (
-          <TeamScheduleIsland teamId={resolvedTeamId} season={season} teamKey={identityTeam.abbreviation} />
         ) : null}
 
         {tab === "splits" ? (
@@ -542,35 +530,6 @@ export default async function TeamProfilePage({
           >
             <TeamPlayoffsIsland teamId={resolvedTeamId} season={season} teamKey={identityTeam.abbreviation} />
           </Suspense>
-        ) : null}
-
-        {tab === "history" ? (
-          <div data-motion-stack className="flex flex-col gap-4">
-            <TeamFranchiseHistoryIsland
-              abbreviation={identityTeam.abbreviation}
-              franchiseToken={modernBrand?.id}
-            />
-            <FranchiseTimeline canonicalTeamId={resolvedTeamId} />
-            <Suspense
-              fallback={
-                <DestinationSectionSkeleton label="Loading Team Arc…" />
-              }
-            >
-              <TeamArcIsland
-                teamRouteKey={teamId}
-                teamId={resolvedTeamId}
-                teamName={displayName}
-                abbreviation={identityTeam.abbreviation}
-                season={season}
-                priorSeason={priorSeason}
-                showingFullArc={showingFullArc}
-                teamEspnId={askTeamId}
-                currentBoard={league}
-                priorBoard={priorLeague}
-              />
-            </Suspense>
-            <TeamMatchupPreview canonicalTeamId={resolvedTeamId} />
-          </div>
         ) : null}
 
         {tab === "organization" ? (
@@ -604,26 +563,13 @@ export default async function TeamProfilePage({
         ) : null}
 
         {tab === "payroll" ? (
-          <div data-motion-stack className="flex flex-col gap-6">
-            <Suspense
-              fallback={<DestinationSectionSkeleton label="Loading salary…" />}
-            >
-              <TeamFrontOfficeIsland teamId={resolvedTeamId} season={season} />
-            </Suspense>
-            <Suspense
-              fallback={
-                <DestinationSectionSkeleton label="Loading Cap & assets…" />
-              }
-            >
-              <TeamAssetsIsland
-                teamId={askTeamId}
-                abbreviation={identityTeam.abbreviation}
-                season={season}
-                teamKey={identityTeam.abbreviation}
-              />
-            </Suspense>
-            <TeamDraftHistorySection teamId={askTeamId} />
-          </div>
+          <TeamSalaryAssetsTab
+            teamId={resolvedTeamId}
+            espnTeamId={askTeamId}
+            abbreviation={identityTeam.abbreviation}
+            season={season}
+            view={parseTeamSalaryView(Array.isArray(sp.view) ? sp.view[0] : sp.view)}
+          />
         ) : null}
 
         {tab === "stats" ? (

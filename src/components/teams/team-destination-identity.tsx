@@ -3,6 +3,7 @@ import { HistoricalTeamMark } from "@/components/brand/historical-team-mark";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { TransitionLink } from "@/components/continuity/query-nav";
 import { TeamSeasonSelect } from "@/components/teams/team-season-select";
+import { FRANCHISE_HISTORY_AS_OF, type FranchiseHistory } from "@/data/franchises/history";
 import type { StandingRow } from "@/data/types/standings";
 import type { TeamSeasonStats } from "@/data/types";
 import { type } from "@/lib/design-system";
@@ -137,6 +138,8 @@ export function TeamDestinationIdentity({
   useHistoricalMark,
   boardAvailable = true,
   hrefOpts,
+  franchise,
+  historyHref,
 }: {
   teamId: string;
   team: Pick<
@@ -154,6 +157,8 @@ export function TeamDestinationIdentity({
   useHistoricalMark: boolean;
   boardAvailable?: boolean;
   hrefOpts?: TeamPageHrefOpts;
+  franchise?: FranchiseHistory | null;
+  historyHref: string;
 }) {
   const displayName =
     useHistoricalMark && historicalBrand?.displayName
@@ -222,8 +227,7 @@ export function TeamDestinationIdentity({
               >
                 {displayAbbr}
                 {team.conference ? ` · ${team.conference}` : ""}
-                {headerDivision ? ` · ${headerDivision}` : standing ? ` · #${standing.rank}` : null}{" "}
-                · {season}
+                {headerDivision ? ` · ${headerDivision}` : standing ? ` · #${standing.rank}` : null}
               </p>
               <h1 className={cn(type.display, "mt-0.5")}>{displayName}</h1>
               {standing ? (
@@ -321,7 +325,73 @@ export function TeamDestinationIdentity({
             </div>
           ))}
         </dl>
+
+        <TeamAccolades franchise={franchise ?? null} href={historyHref} />
       </GlassSurface>
     </section>
+  );
+}
+
+function TeamAccolades({
+  franchise,
+  href,
+}: {
+  franchise: FranchiseHistory | null;
+  href: string;
+}) {
+  const titles = franchise?.championships ?? [];
+  const items = franchise
+    ? [
+        {
+          label: titles.length === 1 ? "Title" : "Titles",
+          value: String(titles.length),
+          hint: titles.length ? titles.slice(-3).join(", ") : undefined,
+        },
+        { label: "Finals", value: String(franchise.finalsAppearances) },
+        { label: "Conf. titles", value: String(franchise.conferenceTitles) },
+        { label: "Division titles", value: String(franchise.divisionTitles) },
+        { label: "Playoff trips", value: String(franchise.playoffAppearances) },
+        { label: "Retired numbers", value: String(franchise.retiredNumbers) },
+      ]
+    : [];
+
+  return (
+    <TransitionLink
+      href={href}
+      className="group mt-2 flex flex-col gap-3 rounded-md glass-pill px-3 py-3 transition-colors hover:bg-foreground/[0.04]"
+    >
+      <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+        <p className={cn(type.caption, "font-semibold uppercase tracking-wide text-muted-foreground")}>
+          Franchise accolades
+          {franchise ? (
+            <span className="font-normal normal-case tracking-normal">
+              {" "}· since {franchise.firstSeason}, through {FRANCHISE_HISTORY_AS_OF}
+            </span>
+          ) : null}
+        </p>
+        <span className={cn(type.caption, "font-semibold text-foreground")}>
+          Franchise history <span data-motion-arrow aria-hidden>→</span>
+        </span>
+      </div>
+      {items.length ? (
+        <dl className="grid grid-cols-3 gap-x-3 gap-y-2 lg:grid-cols-6">
+          {items.map((item) => (
+            <div key={item.label} className="min-w-0">
+              <dt className={cn(type.caption, "truncate text-muted-foreground")}>{item.label}</dt>
+              <dd className={cn(type.bodySm, "truncate font-semibold tabular-nums")}>
+                {item.value}
+                {item.hint ? (
+                  <span className={cn(type.caption, "font-normal text-muted-foreground")}> · {item.hint}</span>
+                ) : null}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      ) : (
+        <p className={cn(type.caption, "text-muted-foreground")}>
+          Timeline, season arc and head-to-head history.
+        </p>
+      )}
+    </TransitionLink>
   );
 }

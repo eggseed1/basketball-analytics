@@ -217,7 +217,7 @@ export function teamArcFullHref(
   const params = new URLSearchParams();
   params.set("season", season);
   if (showingFull) params.set("arc", "full");
-  return `/teams/${encodeURIComponent(teamRouteKey)}?${params.toString()}`;
+  return `/teams/${encodeURIComponent(teamRouteKey)}/history?${params.toString()}#arc`;
 }
 
 export function teamArcGamesHref(teamId: string, season: string): string {

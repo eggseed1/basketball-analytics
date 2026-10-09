@@ -13,6 +13,7 @@ import type {
 import { type } from "@/lib/design-system";
 import { formatOrdinal } from "@/lib/format";
 import { formatUsdCompact, formatUsdSignedCompact } from "@/lib/format-money";
+import { teamSalaryHref } from "@/lib/team-destination";
 import { cn } from "@/lib/utils";
 
 function yearTerms(year: PlayerContractYearView): string | null {
@@ -161,7 +162,7 @@ export function PlayerContractTransactions({
               : ""}
           </p>
         </div>
-        <TextLink href={`/teams/${contract.franchiseId}/payroll`} className={type.caption}>
+        <TextLink href={teamSalaryHref(contract.franchiseId, "contracts")} className={type.caption}>
           {contract.teamAbbr} payroll <span data-motion-arrow aria-hidden>→</span>
         </TextLink>
       </div>

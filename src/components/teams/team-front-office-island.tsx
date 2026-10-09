@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 import { TeamFrontOfficeSummaryCard } from "@/components/teams/team-front-office-summary";
 import {
   buildTeamFrontOfficeSummary,
@@ -12,18 +10,11 @@ import { getTeamContractValue } from "@/data/runtime/contract-value";
 import { PayrollSalaryStack } from "@/components/teams/viz/payroll-salary-stack";
 import { VizCard } from "@/components/teams/viz/viz-kit";
 
-export async function TeamFrontOfficeIsland({
-  teamId,
-  season,
-}: {
-  teamId: string;
-  season: string;
-}) {
+export async function TeamFrontOfficeIsland({ teamId }: { teamId: string }) {
   const franchiseId = resolveFrontOfficeFranchiseId(teamId);
   if (!franchiseId) return null;
 
   const frontOfficeSeason = getCurrentFrontOfficeSeason();
-  const viewingHistoricalStats = season !== frontOfficeSeason;
 
   const slice = await resolveTeamFrontOfficeSlice(franchiseId, frontOfficeSeason);
   if (!slice) {
@@ -67,18 +58,6 @@ export async function TeamFrontOfficeIsland({
 
   return (
     <div className="flex flex-col gap-3">
-      {viewingHistoricalStats ? (
-        <p className="text-sm text-muted-foreground">
-          Current {frontOfficeSeason} payroll and draft capital while browsing{" "}
-          {season} team stats.{" "}
-          <Link
-            href={`/teams/${franchiseId}?season=${encodeURIComponent(frontOfficeSeason)}&tab=payroll`}
-            className="font-semibold underline"
-          >
-            Switch to {frontOfficeSeason}
-          </Link>
-        </p>
-      ) : null}
       <TeamFrontOfficeSummaryCard
         summary={summary}
         labels={labels}

@@ -240,8 +240,7 @@ export function TeamArcSection({
       </LinkedHover>
       <p className="text-[12px] text-muted-foreground">
         Off = team PPG · Def = opponent PPG. Missing cells are unavailable, not
-        zero. Roster for a year lives under Who drives it after you select the
-        season.
+        zero. Pick a season to see that year&apos;s roster on the Players tab.
       </p>
     </div>
   );

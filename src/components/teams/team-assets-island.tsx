@@ -13,17 +13,14 @@ import type { TeamAssetLedger } from "@/data/types/team-assets";
 export async function TeamAssetsIsland({
   teamId,
   abbreviation,
-  season,
-  teamKey,
+  view,
 }: {
   teamId: string;
   abbreviation: string;
-  season: string;
-  teamKey: string;
+  view: "summary" | "picks";
 }) {
   const franchiseId = resolveFrontOfficeFranchiseId(teamId);
   const frontOfficeSeason = getCurrentFrontOfficeSeason();
-  const viewingHistoricalStats = season !== frontOfficeSeason;
   const frontOffice = franchiseId
     ? await resolveTeamFrontOfficeSlice(franchiseId, frontOfficeSeason)
     : null;
@@ -69,30 +66,28 @@ export async function TeamAssetsIsland({
     })
   );
 
+  const picks = view === "picks";
+
   return (
     <section
-      id="assets"
+      id={picks ? "draft-picks" : "assets"}
       className="scroll-mt-16 flex flex-col gap-3"
-      aria-label="Cap and assets"
+      aria-label={picks ? "Draft picks and rights" : "Cap and assets"}
     >
       <div>
         <h2 className="text-[20px] font-bold tracking-tight">
-          Cap &amp; assets
+          {picks ? <>Draft picks &amp; rights</> : <>Cap &amp; assets</>}
         </h2>
         <p className="text-[14px] text-muted-foreground">
-          {contracts
-            ? "Salaries by season, future picks and unsigned draft rights."
-            : `${frontOfficeSeason} payroll, cap space, and draft picks from the current roster snapshot${
-                assetLedger.structuredLedgerAvailable
-                  ? " plus the structured asset ledger (picks, exceptions, rights)."
-                  : "."
-              }`}
-          {viewingHistoricalStats ? (
-            <>
-              {" "}
-              Team stats elsewhere on this page are {season}.
-            </>
-          ) : null}
+          {picks
+            ? "Every future first and second the team holds, plus unsigned draft rights."
+            : contracts
+              ? `${frontOfficeSeason} cap position, trade exceptions and the asset ledger.`
+              : `${frontOfficeSeason} payroll and cap space from the current roster snapshot${
+                  assetLedger.structuredLedgerAvailable
+                    ? " plus the structured asset ledger (picks, exceptions, rights)."
+                    : "."
+                }`}
         </p>
       </div>
       <div className="sports-card p-4 sm:p-5">
@@ -102,12 +97,7 @@ export async function TeamAssetsIsland({
           draftAssets={draftAssets}
           contracts={contracts}
           futurePicks={futurePicks}
-          payrollHref={
-            franchiseId ? `/teams/${franchiseId}/payroll` : undefined
-          }
-          draftAssetsHref={
-            franchiseId ? `/teams/${franchiseId}/draft-assets` : undefined
-          }
+          view={view}
         />
       </div>
     </section>

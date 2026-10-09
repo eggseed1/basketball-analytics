@@ -2,9 +2,7 @@ import type { ReactNode } from "react";
 
 import { TeamScheduleView } from "@/components/teams/team-schedule-view";
 import { type } from "@/lib/design-system";
-import { teamPageHref } from "@/lib/team-destination";
 import { buildTeamSchedule, regularSeasonGapNote } from "@/lib/team-schedule";
-import { TransitionLink } from "@/components/continuity/query-nav";
 import { cn } from "@/lib/utils";
 import { ScheduleCalendar } from "@/components/teams/viz/schedule-calendar";
 import { LocalTipTime } from "@/components/sports/local-tip-time";
@@ -52,24 +50,7 @@ export function TeamScheduleIsland({
 }) {
   const { rows, summary } = buildTeamSchedule(teamId, season);
 
-  if (rows.length === 0) {
-    return (
-      <section id="schedule" className="scroll-mt-16" aria-label="Schedule">
-        <h2 className="text-[20px] font-bold tracking-tight">Schedule</h2>
-        <p className={cn(type.bodySm, "mt-1 text-muted-foreground")}>
-          No schedule on file for {season}. Results from older seasons are on
-          the{" "}
-          <TransitionLink
-            href={teamPageHref(teamId, { season, tab: "games" })}
-            className="font-semibold underline underline-offset-2"
-          >
-            Games tab
-          </TransitionLink>
-          .
-        </p>
-      </section>
-    );
-  }
+  if (rows.length === 0) return null;
 
   const played = summary.wins + summary.losses;
   const next = summary.nextGame;

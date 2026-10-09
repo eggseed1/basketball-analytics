@@ -1,19 +1,16 @@
 import Link from "next/link";
 import type { CSSProperties, ReactNode } from "react";
 
-import { GlassSurface } from "@/components/brand/glass-surface";
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
-import { TeamLogo } from "@/components/brand/team-logo";
 import { surplusTone } from "@/components/players/player-contract-transactions";
 import { BrefPayrollTable, PayrollColorKey } from "@/components/teams/bref-payroll-table";
-import { TeamContractValueChart, teamSurplusHint } from "@/components/teams/team-contract-value";
+import { TeamContractValueChart } from "@/components/teams/team-contract-value";
 import type { TeamContractsView } from "@/data/queries/team-contracts";
-import { getTeamContractValue, type TeamContractValue } from "@/data/runtime/contract-value";
+import { getTeamContractValue } from "@/data/runtime/contract-value";
 import type { TeamPayrollPresentation } from "@/data/types/front-office";
 import { type } from "@/lib/design-system";
 import { formatUsdCompact, formatUsdSignedCompact } from "@/lib/format-money";
-import { brandAtmosphereColors } from "@/lib/game-matchup-theme";
-import { resolveTeamBrand, teamChartColor } from "@/lib/nba-brand";
+import { teamChartColor } from "@/lib/nba-brand";
 import { cn } from "@/lib/utils";
 
 type CapContext = TeamPayrollPresentation["capContext"];
@@ -32,186 +29,7 @@ function signedRoom(payroll: number, line: number): { text: string; over: boolea
   return { text: `${formatUsdCompact(Math.abs(diff))} ${diff > 0 ? "over" : "under"}`, over: diff > 0 };
 }
 
-function SummaryTile({
-  label,
-  value,
-  hint,
-  tone,
-  href,
-  linkText,
-}: {
-  label: string;
-  value: string;
-  hint?: string;
-  tone?: string;
-  /** In-page link to the breakdown behind the value. */
-  href?: string;
-  linkText?: string;
-}) {
-  return (
-    <div className="glass-pill min-w-0 rounded-md px-3 py-2.5">
-      <dt className={cn(type.caption, "truncate font-semibold uppercase tracking-wide text-muted-foreground")}>
-        {label}
-      </dt>
-      <dd className={cn(type.title, "mt-0.5 truncate tabular-nums tracking-tight", tone)}>
-        {href ? (
-          <a href={href} className="underline-offset-4 hover:underline">
-            {value}
-          </a>
-        ) : (
-          value
-        )}
-      </dd>
-      {hint ? <p className={cn(type.caption, "mt-0.5 truncate text-muted-foreground")}>{hint}</p> : null}
-      {href && linkText ? (
-        <a href={href} className={cn(type.caption, "mt-0.5 block truncate font-semibold text-foreground underline-offset-2 hover:underline")}>
-          {linkText}
-        </a>
-      ) : null}
-    </div>
-  );
-}
-
 const OVER_TONE = "text-amber-700 dark:text-amber-400";
-
-function PayrollHeader({
-  teamName,
-  teamKey,
-  franchiseId,
-  contracts,
-  capContext,
-  contractValue,
-}: {
-  teamName: string;
-  teamKey: string;
-  franchiseId: string;
-  contracts: TeamContractsView;
-  capContext?: CapContext | null;
-  contractValue: TeamContractValue | null;
-}) {
-  const brand = resolveTeamBrand(teamKey);
-  const wash = brandAtmosphereColors(brand?.primary, brand?.secondary);
-  const payroll = contracts.totals?.years[0] ?? null;
-  const signed = contracts.rows.filter((r) => r.years[0]).length;
-  const cap = contracts.salaryCap ?? capContext?.salaryCap ?? null;
-  const largest = contracts.largestGuarantee;
-  const largestHref = largest?.brefId ? contracts.hrefs[largest.brefId] : undefined;
-  const capRoom = payroll != null && cap != null ? signedRoom(payroll, cap) : null;
-  const taxRoom = payroll != null && capContext?.luxuryTax ? signedRoom(payroll, capContext.luxuryTax) : null;
-  const apron = capContext?.secondApron != null && payroll != null && capContext.firstApron != null && payroll > capContext.firstApron
-    ? { label: "Second apron", room: signedRoom(payroll, capContext.secondApron) }
-    : capContext?.firstApron != null && payroll != null
-      ? { label: "First apron", room: signedRoom(payroll, capContext.firstApron) }
-      : null;
-
-  return (
-    <GlassSurface
-      as="header"
-      effect="css"
-      backdropBlur={16}
-      accentColor={wash?.colorA}
-      accentColorB={wash?.colorB}
-      className="relative isolate px-4 pb-5 pt-6 sm:px-5"
-    >
-      <div
-        aria-hidden
-        className="absolute inset-x-0 top-0 h-1"
-        style={{
-          background: `linear-gradient(90deg, var(--team-primary), ${brand?.secondary ? `color-mix(in oklab, ${brand.secondary} 70%, var(--team-primary))` : "var(--team-primary)"})`,
-        }}
-      />
-      <div aria-hidden className="pointer-events-none absolute right-10 top-1/2 -z-10 hidden -translate-y-1/2 scale-[2.4] opacity-[0.07] md:block">
-        <TeamLogo teamKey={teamKey} size="xl" />
-      </div>
-      <div className="flex flex-wrap items-center gap-4">
-        <TeamLogo teamKey={teamKey} size="xl" priority />
-        <div className="min-w-0 flex-1 basis-[14rem]">
-          <p className={cn(type.caption, "font-semibold uppercase tracking-[0.12em] text-muted-foreground")}>
-            {brand?.abbr ?? contracts.code} · Payroll &amp; contracts
-            {contracts.capSeason ? ` · ${contracts.capSeason}` : ""}
-          </p>
-          <h1 className={cn(type.display, "mt-0.5")}>{teamName}</h1>
-          <nav className={cn(type.caption, "mt-2 flex flex-wrap gap-2")} aria-label="Team pages">
-            <Link
-              href={`/teams/${franchiseId}`}
-              className="glass-pill rounded-full px-3 py-1 font-semibold hover:bg-foreground/[0.06]"
-            >
-              ← Team overview
-            </Link>
-            <Link
-              href={`/teams/${franchiseId}/draft-assets`}
-              className="glass-pill rounded-full px-3 py-1 font-semibold hover:bg-foreground/[0.06]"
-            >
-              Draft picks &amp; rights
-            </Link>
-          </nav>
-        </div>
-      </div>
-
-      <dl className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
-        <SummaryTile
-          label={`${contracts.capSeason ?? ""} payroll`.trim()}
-          value={payroll != null ? formatUsdCompact(payroll) : "—"}
-          hint={`${signed} ${signed === 1 ? "player" : "players"} signed`}
-        />
-        <SummaryTile
-          label="Contract surplus"
-          value={contractValue ? formatUsdSignedCompact(contractValue.surplus) : "—"}
-          hint={contractValue ? teamSurplusHint(contractValue) : "No contracts valued"}
-          tone={contractValue ? surplusTone(contractValue.surplus) : undefined}
-          href={contractValue ? "#value-heading" : undefined}
-          linkText="See each contract ↓"
-        />
-        <SummaryTile
-          label="Salary cap"
-          value={capRoom?.text ?? "—"}
-          hint={cap != null ? `Cap ${formatUsdCompact(cap)}` : undefined}
-          tone={capRoom?.over ? OVER_TONE : capRoom ? "text-positive" : undefined}
-        />
-        <SummaryTile
-          label="Luxury tax"
-          value={taxRoom?.text ?? "—"}
-          hint={capContext?.luxuryTax ? `Tax line ${formatUsdCompact(capContext.luxuryTax)}` : undefined}
-          tone={taxRoom?.over ? OVER_TONE : taxRoom ? "text-positive" : undefined}
-        />
-        <SummaryTile
-          label={apron?.label ?? "Apron"}
-          value={apron?.room.text ?? "—"}
-          hint={
-            apron
-              ? `Line ${formatUsdCompact(apron.label === "First apron" ? capContext!.firstApron! : capContext!.secondApron!)}`
-              : undefined
-          }
-          tone={apron?.room.over ? OVER_TONE : apron ? "text-positive" : undefined}
-        />
-        <div className="glass-pill grid min-w-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 rounded-md px-3 py-2.5">
-          {largest ? (
-            <dd className="col-start-1 row-span-3 row-start-1">
-              <PlayerHeadshot playerId={playerIdFromHref(largestHref)} name={largest.name} teamKey={teamKey} size="sm" />
-            </dd>
-          ) : null}
-          <dt className={cn(type.caption, "col-start-2 truncate font-semibold uppercase tracking-wide text-muted-foreground")}>
-            Largest guarantee
-          </dt>
-          <dd className={cn(type.title, "col-start-2 mt-0.5 truncate tabular-nums tracking-tight")}>
-            {largest ? formatUsdCompact(largest.amount) : "—"}
-          </dd>
-          {largest ? (
-            <dd className={cn(type.caption, "col-start-2 mt-0.5 min-w-0 truncate text-muted-foreground")}>
-              {largestHref ? (
-                <Link href={largestHref} className="font-semibold text-foreground underline-offset-2 hover:underline">
-                  {largest.name}
-                </Link>
-              ) : (
-                largest.name
-              )}
-            </dd>
-          ) : null}
-        </div>
-      </dl>
-    </GlassSurface>
-  );
-}
 
 /** Where this season's payroll sits against the cap, the tax line and both aprons. */
 function CapLadder({
@@ -384,15 +202,13 @@ function Panel({ title, id, aside, children, className }: { title: string; id: s
   );
 }
 
-/** Full payroll page: branded header, cap position, contract grid, future books, notes. */
+/** Contracts subtab: cap position, contract grid, contract value, future books, notes. */
 export function TeamContractsPageView({
-  teamName,
   teamKey,
   franchiseId,
   contracts,
   capContext,
 }: {
-  teamName: string;
   teamKey: string;
   franchiseId: string;
   contracts: TeamContractsView;
@@ -415,15 +231,6 @@ export function TeamContractsPageView({
         } as CSSProperties
       }
     >
-      <PayrollHeader
-        teamName={teamName}
-        teamKey={teamKey}
-        franchiseId={franchiseId}
-        contracts={contracts}
-        capContext={capContext}
-        contractValue={contractValue}
-      />
-
       {payroll != null ? (
         <Panel title="Cap position" id="cap-heading">
           <CapLadder payroll={payroll} cap={cap} capContext={capContext} accent={accent} season={contracts.capSeason} />

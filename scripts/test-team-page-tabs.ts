@@ -10,8 +10,10 @@ import {
   parseTeamPageTab,
   parseTeamRateMode,
   parseTeamSeasonKind,
-  teamContextBarVisibility,
+  parseTeamSalaryView,
+  teamFranchiseHistoryHref,
   teamPageHref,
+  teamSalaryHref,
 } from "../src/lib/team-destination";
 import { buildTeamRankedMetrics, ftRate } from "../src/lib/team-page-metrics";
 import type { TeamSeasonStats } from "../src/data/types";
@@ -64,30 +66,17 @@ function main() {
   assert.equal(parseTeamSeasonKind("playoffs"), "playoffs");
   assert.equal(parseTeamRateMode("per100"), "per100");
 
-  assert.deepEqual(teamContextBarVisibility("overview"), {
-    seasonType: false,
-    rate: false,
-  });
-  assert.deepEqual(teamContextBarVisibility("games"), {
-    seasonType: true,
-    rate: false,
-  });
-  assert.deepEqual(teamContextBarVisibility("history"), {
-    seasonType: false,
-    rate: false,
-  });
-  assert.deepEqual(teamContextBarVisibility("organization"), {
-    seasonType: false,
-    rate: false,
-  });
-  assert.deepEqual(teamContextBarVisibility("playoffs"), {
-    seasonType: false,
-    rate: false,
-  });
-  assert.deepEqual(teamContextBarVisibility("stats"), {
-    seasonType: false,
-    rate: false,
-  });
+  assert.equal(parseTeamPageTab("defense"), "offense", "defense merged into offense");
+  assert.equal(parseTeamPageTab("lineups"), "players", "rotation lives on players");
+  assert.equal(parseTeamPageTab("rotation"), "players");
+  assert.equal(parseTeamPageTab("schedule"), "games", "schedule lives on games");
+  assert.equal(parseTeamPageTab("history"), "overview", "history has its own page");
+  assert.equal(teamFranchiseHistoryHref("25", "2025-26"), "/teams/25/history?season=2025-26");
+  assert.equal(teamFranchiseHistoryHref("okc"), "/teams/okc/history");
+  assert.equal(parseTeamSalaryView("contracts"), "contracts");
+  assert.equal(parseTeamSalaryView("nope"), "summary");
+  assert.equal(teamSalaryHref("okc"), "/teams/okc?tab=payroll");
+  assert.equal(teamSalaryHref("okc", "picks", "2025-26"), "/teams/okc?season=2025-26&tab=payroll&view=picks");
 
   const href = teamPageHref("atl", {
     season: "2025-26",
@@ -137,7 +126,9 @@ function main() {
   assert.ok(page.includes('tab === "payroll"'));
   assert.ok(page.includes('tab === "sentiment"'));
   assert.ok(page.includes("TeamLeadershipSection"));
-  assert.ok(page.includes("TeamDraftHistorySection"));
+  assert.ok(page.includes("TeamSalaryAssetsTab"));
+  const salaryTab = readFileSync(join(process.cwd(), "src/components/teams/team-salary-assets-tab.tsx"), "utf8");
+  assert.ok(salaryTab.includes("TeamDraftHistorySection"), "draft history lives on the Draft picks subtab");
 
   console.log("test-team-page-tabs: ok");
 }

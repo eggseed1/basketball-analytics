@@ -63,14 +63,10 @@ export type TeamPageTab =
   | "overview"
   | "players"
   | "offense"
-  | "defense"
-  | "lineups"
   | "onoff"
   | "games"
-  | "schedule"
   | "splits"
   | "playoffs"
-  | "history"
   | "organization"
   | "sentiment"
   | "payroll"
@@ -93,23 +89,48 @@ export type TeamRateMode =
 export const TEAM_PAGE_TABS: Array<{ id: TeamPageTab; label: string }> = [
   { id: "overview", label: "Overview" },
   { id: "players", label: "Players" },
-  { id: "offense", label: "Offense" },
-  { id: "defense", label: "Defense" },
-  { id: "lineups", label: "Rotation" },
+  { id: "offense", label: "Offense & Defense" },
   { id: "onoff", label: "On/Off" },
   { id: "games", label: "Games" },
-  { id: "schedule", label: "Schedule" },
   { id: "splits", label: "Splits" },
   { id: "playoffs", label: "Playoffs" },
-  { id: "history", label: "History" },
   { id: "organization", label: "Organization" },
   { id: "sentiment", label: "Sentiment" },
   { id: "payroll", label: "Salary & Assets" },
   { id: "stats", label: "All Stats" },
 ];
 
+/** The franchise history page that replaced the History tab. */
+export function teamFranchiseHistoryHref(teamId: string, season?: string | null): string {
+  const base = `/teams/${encodeURIComponent(teamId)}/history`;
+  return season ? `${base}?season=${encodeURIComponent(season)}` : base;
+}
+
+export type TeamSalaryView = "summary" | "contracts" | "picks";
+
+export const TEAM_SALARY_VIEWS: Array<{ id: TeamSalaryView; label: string }> = [
+  { id: "summary", label: "Summary" },
+  { id: "contracts", label: "Contracts" },
+  { id: "picks", label: "Draft picks" },
+];
+
+export function parseTeamSalaryView(raw?: string | null): TeamSalaryView {
+  return TEAM_SALARY_VIEWS.find((v) => v.id === raw)?.id ?? "summary";
+}
+
+/** Salary & Assets subtab; replaced the standalone payroll and draft-assets pages. */
+export function teamSalaryHref(teamId: string, view: TeamSalaryView = "summary", season?: string | null): string {
+  const q = new URLSearchParams();
+  if (season) q.set("season", season);
+  q.set("tab", "payroll");
+  if (view !== "summary") q.set("view", view);
+  return `/teams/${encodeURIComponent(teamId)}?${q.toString()}`;
+}
+
 export function parseTeamPageTab(raw?: string | null): TeamPageTab {
-  if (raw === "rotation") return "lineups";
+  if (raw === "rotation" || raw === "lineups") return "players";
+  if (raw === "defense") return "offense";
+  if (raw === "schedule") return "games";
   if (raw === "on-off") return "onoff";
   if (raw === "contracts" || raw === "cap" || raw === "salary" || raw === "assets") return "payroll";
   if (raw === "movement" || raw === "media") return "sentiment";
@@ -139,34 +160,6 @@ export function parseTeamRateMode(raw?: string | null): TeamRateMode {
     return raw;
   }
   return "perGame";
-}
-
-/** Season type / rate filters only where they change the tab's ledger. */
-export function teamContextBarVisibility(tab: TeamPageTab): {
-  seasonType: boolean;
-  rate: boolean;
-} {
-  switch (tab) {
-    case "games":
-      return { seasonType: true, rate: false };
-    // Rate modes are URL-ready but not consumed by tab ledgers yet —
-    // hide the chips so Overview (and peers) don't imply live switching.
-    case "overview":
-    case "players":
-    case "offense":
-    case "defense":
-    case "lineups":
-    case "onoff":
-    case "splits":
-    case "stats":
-    case "playoffs":
-    case "history":
-    case "organization":
-    case "sentiment":
-    case "payroll":
-    default:
-      return { seasonType: false, rate: false };
-  }
 }
 
 export type TeamPageHrefOpts = {

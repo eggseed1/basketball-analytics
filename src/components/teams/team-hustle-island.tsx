@@ -1,4 +1,3 @@
-import { TransitionLink } from "@/components/continuity/query-nav";
 import { PlayerIdentity } from "@/components/players/player-identity";
 import { getTeamRosterCached } from "@/data/queries/request-cache";
 import {
@@ -8,10 +7,9 @@ import {
   teamHustlePerGame,
 } from "@/data/transformers/hustle-stats";
 import type { PlayerSeason, TeamSeasonStats } from "@/data/types";
-import { type, sectionLinkClassName } from "@/lib/design-system";
+import { type } from "@/lib/design-system";
 import { formatCountingRate, formatNumber, formatOrdinal } from "@/lib/format";
 import type { RankedMetric } from "@/lib/team-page-metrics";
-import { teamPageHref } from "@/lib/team-destination";
 import { TeamMetricTile } from "@/components/teams/team-metric-tile";
 import { DefenseStocksButterfly } from "@/components/teams/viz/defense-stocks-butterfly";
 import { vizAccentStyle } from "@/components/teams/viz/viz-kit";
@@ -107,9 +105,6 @@ export async function TeamHustleIsland({
     })
   ) as Record<(typeof PLAYER_COLUMNS)[number]["key"], { max: number; sorted: number[] }>;
   const hasDefenseBoard = defenseMetrics.some((m) => !m.missingReason);
-  const playersHref = teamPageHref(teamId, { season, tab: "players" });
-  const rotationHref = teamPageHref(teamId, { season, tab: "lineups" });
-
   if (roster.status !== "ok") {
     return (
       <section
@@ -134,28 +129,12 @@ export async function TeamHustleIsland({
       className="scroll-mt-16 flex flex-col gap-4"
       aria-label="Defense"
     >
-      <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <div>
-          <h2 className="text-[20px] font-bold tracking-tight">Defense</h2>
-          <p className={cn(type.bodySm, "text-muted-foreground")}>
-            Season board defense ranks for {season}, box-score stocks, and NBA
-            hustle tracking when published.
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-3">
-          <TransitionLink
-            href={playersHref}
-            className={cn(type.caption, sectionLinkClassName)}
-          >
-            Full roster <span data-motion-arrow aria-hidden>→</span>
-          </TransitionLink>
-          <TransitionLink
-            href={rotationHref}
-            className={cn(type.caption, sectionLinkClassName)}
-          >
-            Rotation <span data-motion-arrow aria-hidden>→</span>
-          </TransitionLink>
-        </div>
+      <div>
+        <h2 className="text-[20px] font-bold tracking-tight">Defense</h2>
+        <p className={cn(type.bodySm, "text-muted-foreground")}>
+          Season board defense ranks for {season}, box-score stocks, and NBA
+          hustle tracking when published.
+        </p>
       </div>
 
       {hasDefenseBoard ? (

@@ -1,10 +1,9 @@
 import { TransitionLink } from "@/components/continuity/query-nav";
 import { PlayerSeasonTable } from "@/components/explore/player-season-table";
-import { TeamRosterSection } from "@/components/teams/team-roster-section";
 import { currentRosterPlayersMissing } from "@/data/queries/current-team-scope";
 import { getExplorePlayersBoardView } from "@/data/queries/explore-players-board";
 import { getTeamRosterCached } from "@/data/queries/request-cache";
-import { type, sectionLinkClassName } from "@/lib/design-system";
+import { type } from "@/lib/design-system";
 import { formatNumber } from "@/lib/format";
 import {
   buildRosterBuckets,
@@ -16,19 +15,16 @@ import {
   parsePlayerSeasonSortKey,
   type PlayerSeasonSortKey,
 } from "@/lib/player-season-sort";
-import { teamPageHref } from "@/lib/team-destination";
 import { cn } from "@/lib/utils";
 
 export async function TeamRosterIsland({
   teamId,
   season,
-  teamKey,
   sortParam,
   sortDirParam,
 }: {
   teamId: string;
   season: string;
-  teamKey: string;
   sortParam?: string | null;
   sortDirParam?: string | null;
 }) {
@@ -68,8 +64,6 @@ export async function TeamRosterIsland({
   const ladder = buildRotationLadder(players);
   const withMinutes = players.filter((p) => p.minutes > 0);
   const minutesLeader = buckets.rotation[0];
-  const rotationHref = teamPageHref(teamId, { season, tab: "lineups" });
-  const offenseHref = teamPageHref(teamId, { season, tab: "offense" });
 
   return (
     <div className="flex flex-col gap-6">
@@ -78,34 +72,18 @@ export async function TeamRosterIsland({
         className="scroll-mt-16 flex flex-col gap-3"
         aria-label="Roster board"
       >
-        <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <div>
-            <h2 className="text-[20px] font-bold tracking-tight">
-              Roster board
-            </h2>
-            <p className={cn(type.bodySm, "text-muted-foreground")}>
-              {preseason
-                ? `${season} roster as listed today. Players who changed teams this offseason show up with their new team. Stats stay blank until games are played.`
-                : `${season} roster with the same columns as Explore Players, scoped to this team.`}
-              {!preseason && roster.omitsMidSeasonMoves
-                ? ` ${MID_SEASON_MOVES_NOTE}`
-                : null}
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-3">
-            <TransitionLink
-              href={rotationHref}
-              className={cn(type.caption, sectionLinkClassName)}
-            >
-              Rotation <span data-motion-arrow aria-hidden>→</span>
-            </TransitionLink>
-            <TransitionLink
-              href={offenseHref}
-              className={cn(type.caption, sectionLinkClassName)}
-            >
-              Offense <span data-motion-arrow aria-hidden>→</span>
-            </TransitionLink>
-          </div>
+        <div>
+          <h2 className="text-[20px] font-bold tracking-tight">
+            Roster board
+          </h2>
+          <p className={cn(type.bodySm, "text-muted-foreground")}>
+            {preseason
+              ? `${season} roster as listed today. Players who changed teams this offseason show up with their new team. Stats stay blank until games are played.`
+              : `${season} roster with the same columns as Explore Players, scoped to this team.`}
+            {!preseason && roster.omitsMidSeasonMoves
+              ? ` ${MID_SEASON_MOVES_NOTE}`
+              : null}
+          </p>
         </div>
 
         {roster.status === "ok" && withMinutes.length ? (
@@ -189,32 +167,6 @@ export async function TeamRosterIsland({
             .
           </p>
         ) : null}
-      </section>
-
-      <section className="flex flex-col gap-3" aria-label="Who drives it">
-        <div>
-          <h2 className="text-[20px] font-bold tracking-tight">
-            Who drives it?
-          </h2>
-          <p className={cn(type.bodySm, "text-muted-foreground")}>
-            Compact highlights from the same roster.
-          </p>
-        </div>
-        <div className="sports-card p-4 sm:p-5">
-          <TeamRosterSection
-            buckets={buckets}
-            season={season}
-            teamKey={teamKey}
-            teamId={teamId}
-            status={preseason && !withMinutes.length ? "error" : roster.status}
-            unavailableMessage={
-              preseason && !withMinutes.length
-                ? `Rotation highlights start once ${season} games are played.`
-                : roster.warning
-            }
-            showExploreLink={false}
-          />
-        </div>
       </section>
     </div>
   );

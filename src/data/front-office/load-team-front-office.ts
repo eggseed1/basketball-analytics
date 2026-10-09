@@ -22,6 +22,7 @@ import {
   getRuntimeFrontOfficeSlice,
 } from "@/data/runtime/front-office-snapshot";
 import { resolveTeamBrand } from "@/lib/nba-brand";
+import { teamSalaryHref } from "@/lib/team-destination";
 import type { DraftAsset } from "@/data/types/front-office";
 
 type TeamSlice = {
@@ -202,8 +203,8 @@ export function buildTeamFrontOfficeSummary(
       : null,
     futureFirstsControlled: firsts,
     futureSecondsControlled: seconds,
-    payrollHref: `/teams/${id}/payroll`,
-    draftAssetsHref: `/teams/${id}/draft-assets`,
+    payrollHref: teamSalaryHref(id, "contracts"),
+    draftAssetsHref: teamSalaryHref(id, "picks"),
     capabilities: slice.capabilities,
     disclosures: hasAssets
       ? [

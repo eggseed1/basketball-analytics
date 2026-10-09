@@ -99,14 +99,15 @@ export function teamProfileHref(
   return `${base}?season=${encodeURIComponent(season.trim())}`;
 }
 
-/** `/teams/{canonicalTeamId}?tab=history` — franchise scrapbook + arc. */
+/** `/teams/{canonicalTeamId}/history` — franchise scrapbook + arc. */
 export function teamHistoryHref(
   teamKey: string,
   season?: string | null
 ): string {
-  const base = teamProfileHref(teamKey, season);
-  const join = base.includes("?") ? "&" : "?";
-  return `${base}${join}tab=history#franchise-book`;
+  const normalized = normalizeTeamParam(teamKey);
+  const id = normalized?.canonicalTeamId ?? teamKey.trim();
+  const base = `/teams/${encodeURIComponent(id)}/history`;
+  return season?.trim() ? `${base}?season=${encodeURIComponent(season.trim())}` : base;
 }
 
 /** Leaderboard deep link - always writes canonical ESPN id into `?team=`. */

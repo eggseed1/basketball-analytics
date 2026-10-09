@@ -134,17 +134,21 @@ function main() {
     "Team identity before Suspense islands"
   );
   for (const island of [
-    "TeamArcIsland",
     "TeamEvidenceIsland",
     "TeamRosterIsland",
     "TeamGamesIsland",
     "TeamTransactionsIsland",
-    "TeamAssetsIsland",
-    "TeamFrontOfficeIsland",
-    "FranchiseTimeline",
-    "TeamMatchupPreview",
+    "TeamSalaryAssetsTab",
   ]) {
     assert.ok(teamPage.includes(island), `Team page includes ${island}`);
+  }
+  const salaryTab = read("src/components/teams/team-salary-assets-tab.tsx");
+  for (const island of ["TeamAssetsIsland", "TeamFrontOfficeIsland", "TeamContractsPageView"]) {
+    assert.ok(salaryTab.includes(island), `Salary & Assets tab includes ${island}`);
+  }
+  const teamHistoryPage = read("src/app/teams/[teamId]/history/page.tsx");
+  for (const island of ["TeamArcIsland", "FranchiseTimeline", "TeamMatchupPreview", "TeamFranchiseHistoryIsland"]) {
+    assert.ok(teamHistoryPage.includes(island), `Team history page includes ${island}`);
   }
   assert.equal(
     /key=\{[^}]*season/.test(teamPage),

@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 import { surplusTone } from "@/components/players/player-contract-transactions";
 import { TeamContractValueChart, teamSurplusHint } from "@/components/teams/team-contract-value";
 import { MoreInfo } from "@/components/ui/more-info";
@@ -35,8 +33,8 @@ export function TeamFrontOfficeSummaryCard({
           Salary &amp; Assets
         </h2>
         <p className="text-[14px] text-muted-foreground">
-          Current-season salary commitments, draft picks and draft history for
-          this franchise. Missing salaries stay blank instead of showing zero.
+          Current-season payroll and draft picks for this franchise. Missing
+          salaries stay blank instead of showing zero.
         </p>
       </div>
 
@@ -92,21 +90,6 @@ export function TeamFrontOfficeSummaryCard({
           <TeamContractValueChart value={contractValue} contracts={contracts} />
         </MoreInfo>
       ) : null}
-
-      <div className="flex flex-wrap gap-3">
-        <Link
-          href={summary.payrollHref}
-          className="inline-flex items-center rounded-md bg-foreground px-3 py-2 text-sm font-semibold text-background"
-        >
-          Full payroll page
-        </Link>
-        <Link
-          href={summary.draftAssetsHref}
-          className="inline-flex items-center rounded-md border border-border px-3 py-2 text-sm font-semibold"
-        >
-          Draft Assets
-        </Link>
-      </div>
 
       {summary.disclosures.length > 0 ? (
         <ul className="space-y-1 text-xs text-muted-foreground">

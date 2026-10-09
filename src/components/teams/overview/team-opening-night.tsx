@@ -32,7 +32,7 @@ export function TeamOpeningNight({
   teamName: string;
 }) {
   const opener = facts.opener;
-  const scheduleHref = teamPageHref(teamId, { season, tab: "schedule" });
+  const scheduleHref = `${teamPageHref(teamId, { season, tab: "games" })}#schedule`;
   const rosterHref = teamPageHref(teamId, { season, tab: "players" });
 
   return (
