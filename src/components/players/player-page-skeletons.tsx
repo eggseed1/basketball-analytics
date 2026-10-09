@@ -4,6 +4,7 @@
  */
 
 import { LoadingTopBar } from "@/components/continuity/destination-loading-frame";
+import { LoadingBarSignal } from "@/components/continuity/viewport-loading-bar";
 import { cn } from "@/lib/utils";
 
 function Pulse({ className }: { className?: string }) {
@@ -55,7 +56,7 @@ export function PlayerPercentileSkeleton({
       aria-busy="true"
       aria-live="polite"
     >
-      {showBar ? <div className="query-updating-bar rounded-full" /> : null}
+      {showBar ? <LoadingBarSignal /> : null}
       <p className="text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
         {label}
       </p>
@@ -77,7 +78,7 @@ export function PlayerBoardSkeleton({
       aria-busy="true"
       aria-live="polite"
     >
-      <div className="query-updating-bar rounded-full" />
+      <LoadingBarSignal />
       <p className="text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
         {label}
       </p>

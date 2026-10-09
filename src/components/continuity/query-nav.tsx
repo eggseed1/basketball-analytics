@@ -17,6 +17,7 @@ import {
 } from "react";
 
 import { useRouteTransitionOptional } from "@/components/continuity/route-transition";
+import { LoadingBarSignal } from "@/components/continuity/viewport-loading-bar";
 import { cn } from "@/lib/utils";
 
 type QueryNavContextValue = {
@@ -146,15 +147,12 @@ export function QueryNavProvider({
 export function QueryUpdatingChrome({ pending }: { pending: boolean }) {
   if (!pending) return null;
   return (
-    <div
-      data-motion-static
-      className="pointer-events-none absolute inset-x-0 top-0 z-30"
-      aria-live="polite"
-      aria-atomic="true"
-    >
-      <div className="query-updating-bar" />
-      <p className="sr-only">Updating results…</p>
-    </div>
+    <>
+      <LoadingBarSignal />
+      <p className="sr-only" aria-live="polite" aria-atomic="true">
+        Updating results…
+      </p>
+    </>
   );
 }
 

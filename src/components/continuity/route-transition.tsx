@@ -9,6 +9,7 @@ import {
   type ReactNode,
 } from "react";
 
+import { ViewportLoadingBar } from "@/components/continuity/viewport-loading-bar";
 import { cn } from "@/lib/utils";
 
 type RouteTransitionContextValue = {
@@ -25,16 +26,15 @@ export function useRouteTransitionOptional(): RouteTransitionContextValue | null
 }
 
 function RouteUpdatingChrome({ pending }: { pending: boolean }) {
-  if (!pending) return null;
   return (
-    <div
-      className="pointer-events-none fixed inset-x-0 top-0 z-[60]"
-      aria-live="polite"
-      aria-atomic="true"
-    >
-      <div className="query-updating-bar" />
-      <p className="sr-only">Loading destination…</p>
-    </div>
+    <>
+      <ViewportLoadingBar active={pending} />
+      {pending ? (
+        <p className="sr-only" aria-live="polite" aria-atomic="true">
+          Loading destination…
+        </p>
+      ) : null}
+    </>
   );
 }
 

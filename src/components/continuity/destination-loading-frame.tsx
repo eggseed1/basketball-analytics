@@ -6,6 +6,7 @@
 import { Loader2 } from "lucide-react";
 import type { ReactNode } from "react";
 
+import { LoadingBarSignal } from "@/components/continuity/viewport-loading-bar";
 import { PageHeader } from "@/components/layout/page-header";
 import { cn } from "@/lib/utils";
 
@@ -24,18 +25,9 @@ export function LoadingStatus({ children }: { children: ReactNode }) {
   );
 }
 
-/**
- * Progress line pinned to the top edge of a loading frame (the frame must be
- * `relative`). Overlaid, so it doesn't push the skeleton below where the real
- * content lands.
- */
+/** Lights the viewport-wide progress line while this loading frame is up. */
 export function LoadingTopBar() {
-  return (
-    <div
-      aria-hidden
-      className="query-updating-bar pointer-events-none absolute inset-x-0 top-0 rounded-full"
-    />
-  );
+  return <LoadingBarSignal />;
 }
 
 export function DestinationLoadingFrame({
@@ -89,7 +81,7 @@ export function DestinationSectionSkeleton({
 }) {
   return (
     <div className="flex flex-col gap-3" aria-busy="true" aria-live="polite">
-      <div className="query-updating-bar h-[3px] rounded-full" />
+      <LoadingBarSignal />
       <LoadingStatus>{label}</LoadingStatus>
       <SkeletonBlock className="h-36" />
       <SkeletonBlock className="h-48" />
