@@ -216,7 +216,7 @@ export function buildFollowUpLinks(
           "View team →",
           `/teams/${team.id}${seasons[0] ? `?season=${encodeURIComponent(seasons[0])}` : ""}`
         );
-        add("Team leaderboard →", `/explore/teams`);
+        add("Team leaderboard →", "/standings#team-stats");
       }
       break;
     case "team_season_compare": {

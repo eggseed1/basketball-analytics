@@ -11,6 +11,7 @@ import { formatOrdinal, formatPct } from "@/lib/format";
 import type { HistoricalTeamBrand } from "@/lib/historical-team-brand";
 import { brandAtmosphereColors } from "@/lib/game-matchup-theme";
 import type { TeamBrand } from "@/lib/nba-brand";
+import { standingsVisualizationsHref } from "@/lib/standings-routes";
 import type { TeamPageHrefOpts } from "@/lib/team-destination";
 import type { TeamStandingsDisplay } from "@/lib/team-standings-context";
 import { cn } from "@/lib/utils";
@@ -243,7 +244,7 @@ export function TeamDestinationIdentity({
                   </TransitionLink>
                   {" · "}
                   <TransitionLink
-                    href={`/standings/tracker?season=${encodeURIComponent(season)}`}
+                    href={standingsVisualizationsHref(season, "tracker")}
                     className="font-semibold underline-offset-2 hover:underline"
                   >
                     Tracker <span data-motion-arrow aria-hidden>→</span>
@@ -264,7 +265,7 @@ export function TeamDestinationIdentity({
                   </TransitionLink>
                   {" · "}
                   <TransitionLink
-                    href={`/standings/tracker?season=${encodeURIComponent(season)}`}
+                    href={standingsVisualizationsHref(season, "tracker")}
                     className="font-semibold underline-offset-2 hover:underline"
                   >
                     Tracker <span data-motion-arrow aria-hidden>→</span>

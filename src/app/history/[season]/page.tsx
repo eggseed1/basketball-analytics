@@ -19,6 +19,7 @@ import { resolveHistoricalTeamBrand } from "@/lib/historical-team-brand";
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { HISTORY_VERSION } from "@/lib/history/capabilities";
+import { standingsHref } from "@/lib/standings-routes";
 import { MotionReveal } from "@/components/continuity/motion-reveal";
 
 export const dynamic = "force-dynamic";
@@ -264,7 +265,7 @@ export default async function HistorySeasonPage({
               </li>
               <li>
                 <Link
-                  href={`/explore/teams?season=${encodeURIComponent(season)}`}
+                  href={standingsHref(season, "team-stats")}
                   className="underline-offset-4 hover:underline"
                 >
                   Teams board

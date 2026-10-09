@@ -22,6 +22,7 @@ import {
   startYearFromCanonicalSeason,
 } from "@/data/providers/historical/season-range";
 import { type } from "@/lib/design-system";
+import { standingsHref } from "@/lib/standings-routes";
 import { cn } from "@/lib/utils";
 import { historyHref } from "@/themes/history-url";
 import {
@@ -718,7 +719,7 @@ export function TimeMachineLanding({
           {[
             { href: `/history/${encodeURIComponent(archiveSeason)}`, label: `Season games · ${archiveSeason}` },
             { href: `/explore/players?season=${encodeURIComponent(archiveSeason)}`, label: `Players board · ${archiveSeason}` },
-            { href: `/explore/teams?season=${encodeURIComponent(archiveSeason)}`, label: `Teams · ${archiveSeason}` },
+            { href: standingsHref(archiveSeason, "team-stats"), label: `Teams · ${archiveSeason}` },
             { href: "/awards", label: "Trophy case" },
             { href: "/franchises", label: "Franchises" },
           ].map((link) => (
@@ -740,7 +741,7 @@ export function TimeMachineLanding({
           Franchise History
         </Link>
         {" · "}
-        <Link href="/explore/teams" className="underline underline-offset-4">
+        <Link href="/standings#team-stats" className="underline underline-offset-4">
           Live teams
         </Link>
       </p>

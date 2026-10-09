@@ -7,6 +7,7 @@ import { askDrblHref } from "@/components/players/player-ask-links";
 import type { LandmarkGameCard } from "@/content/history/landmark-games";
 import { formatNumber, formatPct } from "@/lib/format";
 import { textLinkClassName } from "@/lib/design-system";
+import { standingsHref } from "@/lib/standings-routes";
 import { cn } from "@/lib/utils";
 import type { GameSummary } from "@/data/types";
 import type { NbaTransactionEvent } from "@/data/types/transaction-event";
@@ -237,7 +238,7 @@ export function TimeMachineSnapshot({
         title="Teams"
         action={
           <TransitionLink
-            href={`/explore/teams?season=${encodeURIComponent(season)}`}
+            href={standingsHref(season, "team-stats")}
             className="text-[14px] text-muted-foreground underline-offset-4 hover:underline"
           >
             Full team board

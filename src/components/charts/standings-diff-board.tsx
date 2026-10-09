@@ -50,8 +50,8 @@ export function StandingsDiffBoard({
           Scoring margin · {season}
         </p>
         <p id={`${chartId}-desc`} className={cn(type.caption, "text-muted-foreground")}>
-          Average point differential across both conferences, to read alongside
-          the W/L table.
+          Average point differential per game for all 30 teams. A better guide
+          to team strength than W/L alone.
         </p>
       </div>
       <div className="w-full min-w-0" style={{ height: Math.max(280, data.length * 18 + 32) }}>

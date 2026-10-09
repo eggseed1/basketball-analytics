@@ -16,6 +16,10 @@ import {
 } from "@/lib/standings-tracker";
 import { useChartTheme } from "@/lib/chart-theme";
 import { type } from "@/lib/design-system";
+import {
+  STANDINGS_VISUALIZATIONS_PATH,
+  standingsVisualizationsHref,
+} from "@/lib/standings-routes";
 import { cn } from "@/lib/utils";
 
 const WINDOW_OPTIONS: { id: StandingsTrackerWindow; label: string }[] = [
@@ -146,7 +150,7 @@ export function StandingsTrackerView({
     const params = new URLSearchParams(searchParams.toString());
     params.delete("view");
     params.set("season", season);
-    router.push(`/standings/tracker?${params.toString()}`);
+    router.push(`${STANDINGS_VISUALIZATIONS_PATH}?${params.toString()}`, { scroll: false });
   };
 
   if (payload.teams.every((team) => team.points.length === 0)) {
@@ -165,7 +169,7 @@ export function StandingsTrackerView({
               .map((season) => (
                 <Link
                   key={season}
-                  href={`/standings/tracker?season=${encodeURIComponent(season)}`}
+                  href={standingsVisualizationsHref(season, "tracker")}
                   className="font-semibold underline"
                 >
                   {season}

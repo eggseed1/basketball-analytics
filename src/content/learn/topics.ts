@@ -584,7 +584,7 @@ export const LEARN_TOPICS: LearnTopic[] = [
     ],
     caveats: ["Does not alone explain how the margin was created."],
     relatedIds: ["net", "plus_minus", "season_evidence"],
-    seeInAction: [{ label: "Explore teams", href: "/explore/teams" }],
+    seeInAction: [{ label: "Explore teams", href: "/standings#team-stats" }],
   },
   {
     id: "plus_minus",
@@ -646,7 +646,7 @@ export const LEARN_TOPICS: LearnTopic[] = [
       "Our ratings can run about 1.5 points per 100 higher than other public on/off numbers because possession counting differs slightly. The swing itself usually lands within about 1.5 points.",
     ],
     relatedIds: ["net", "plus_minus", "drbl"],
-    seeInAction: [{ label: "Explore teams", href: "/explore/teams" }],
+    seeInAction: [{ label: "Explore teams", href: "/standings#team-stats" }],
   },
   {
     id: "pace",
@@ -736,7 +736,7 @@ export const LEARN_TOPICS: LearnTopic[] = [
     howDrblUses: ["Team profile traits and shooting context."],
     caveats: ["Not accuracy; pair with 3P% / eFG%."],
     relatedIds: ["fg3", "efg"],
-    seeInAction: [{ label: "Explore teams", href: "/explore/teams" }],
+    seeInAction: [{ label: "Explore teams", href: "/standings#team-stats" }],
   },
   {
     id: "assist_to_turnover",
@@ -765,7 +765,7 @@ export const LEARN_TOPICS: LearnTopic[] = [
     howDrblUses: ["Team boards and Team Season Compare rebounding category."],
     caveats: ["Not on lightweight GameSummary evidence rows."],
     relatedIds: ["reb", "diff"],
-    seeInAction: [{ label: "Explore teams", href: "/explore/teams" }],
+    seeInAction: [{ label: "Explore teams", href: "/standings#team-stats" }],
   },
   {
     id: "essentially_even",

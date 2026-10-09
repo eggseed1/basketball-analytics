@@ -100,7 +100,7 @@ const checks = [];
 
 {
   const { status, text, url } = await fetchText(
-    "/standings/tracker?season=2024-25"
+    "/standings/visualizations?season=2024-25"
   );
   checks.push({ name: "tracker HTTP 200", ok: status === 200, url, status });
   checks.push({
@@ -131,11 +131,34 @@ const checks = [];
   const { status, text, url } = await fetchText("/standings");
   checks.push({ name: "table HTTP 200", ok: status === 200, url, status });
   checks.push({
-    name: "table view is standings-only",
+    name: "standings has tables, bracket, and team stats (no tracker)",
     ok:
-      /Standings/i.test(text) &&
-      !/Open tracker|Team boards|Add team/i.test(text),
+      /Eastern Conference/i.test(text) &&
+      /First Round/i.test(text) &&
+      /Team stats/i.test(text) &&
+      !/Add team/i.test(text),
     url,
+  });
+}
+
+for (const [legacy, target] of [
+  ["/explore/teams?season=2024-25", "/standings?season=2024-25#team-stats"],
+  ["/explore/bracket", "/standings#bracket"],
+  ["/standings/tracker?season=2024-25", "/standings/visualizations?season=2024-25#tracker"],
+]) {
+  const url = `${BASE}${legacy}`;
+  const res = await fetch(url, {
+    redirect: "manual",
+    headers: { "User-Agent": "DRBL-cf-verify/1.0" },
+    signal: AbortSignal.timeout(30_000),
+  });
+  const location = res.headers.get("location") ?? "";
+  checks.push({
+    name: `${legacy.split("?")[0]} redirects to ${target.split(/[?#]/)[0]}`,
+    ok: res.status >= 300 && res.status < 400 && location.endsWith(target),
+    url,
+    status: res.status,
+    detail: location,
   });
 }
 
@@ -811,26 +834,7 @@ for (const check of teamTabChecks) {
 }
 
 {
-  const { status, text, url } = await fetchText("/explore/teams");
-  checks.push({
-    name: "explore teams HTTP 200",
-    ok: status === 200,
-    url,
-    status,
-  });
-  checks.push({
-    name: "explore teams is board-only (no bracket)",
-    ok:
-      (/Teams/i.test(text) || /point differential/i.test(text)) &&
-      /point differential/i.test(text) &&
-      !/First Round/i.test(text) &&
-      !/Conf\. Semis/i.test(text),
-    url,
-  });
-}
-
-{
-  const { status, text, url } = await fetchText("/explore/bracket");
+  const { status, text, url } = await fetchText("/standings?season=2024-25");
   checks.push({
     name: "bracket HTTP 200",
     ok: status === 200,

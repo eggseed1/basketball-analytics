@@ -2,6 +2,7 @@ import { TeamLogo } from "@/components/brand/team-logo";
 import { AppLink } from "@/components/ui/app-link";
 import { type } from "@/lib/design-system";
 import type { HomeSeasonMoment, OpenerGame, SeasonChampion } from "@/lib/home-season-moment";
+import { standingsHref } from "@/lib/standings-routes";
 import { cn } from "@/lib/utils";
 
 const OPENER_GAMES_SHOWN = 6;
@@ -114,7 +115,7 @@ export function SeasonMomentCard({ moment }: { moment: HomeSeasonMoment }) {
         </p>
         {champion ? (
           <MomentLinks
-            links={[[`/explore/bracket?season=${champion.season}`, `${champion.season} playoff bracket`]]}
+            links={[[standingsHref(champion.season, "bracket"), `${champion.season} playoff bracket`]]}
           />
         ) : null}
       </section>

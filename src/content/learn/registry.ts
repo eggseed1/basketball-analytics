@@ -183,7 +183,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     learnSlug: "point-differential",
     relatedIds: ["net", "plus_minus"],
     seeInAction: [
-      { label: "Team profiles", href: "/explore/teams" },
+      { label: "Team profiles", href: "/standings#team-stats" },
       { label: "Ask DRBL", href: "/ask?q=Boston%20point%20differential" },
     ],
   },

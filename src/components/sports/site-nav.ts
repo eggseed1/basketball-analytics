@@ -2,9 +2,11 @@
  * DRBL top-level information architecture.
  * Labels describe user mental models; hrefs keep existing routes stable.
  *
- * - Teams → franchise boards + league standings surfaces (table, bracket, tracker)
+ * - Teams → standings (tables, bracket, team stats) + visualizations (race, margin)
  * - Players → player boards + visualizations (race, usage × efficiency)
  */
+
+import { STANDINGS_VISUALIZATIONS_PATH } from "@/lib/standings-routes";
 
 export type NavLink = {
   href: string;
@@ -89,7 +91,7 @@ export const PRIMARY_NAV: PrimaryNavItem[] = [
   },
   {
     id: "teams",
-    href: "/explore/teams",
+    href: "/standings",
     label: "Teams",
     match: (p) =>
       (p.startsWith("/explore/teams") && !p.startsWith("/explore/teams/trade")) ||
@@ -99,28 +101,17 @@ export const PRIMARY_NAV: PrimaryNavItem[] = [
       p.startsWith("/franchises"),
     subnav: [
       {
-        href: "/explore/teams",
-        label: "Board",
+        href: "/standings",
+        label: "Standings",
         match: (p) =>
-          (p.startsWith("/explore/teams") &&
-            !p.startsWith("/explore/teams/trade")) ||
+          (p.startsWith("/standings") && !p.startsWith(STANDINGS_VISUALIZATIONS_PATH)) ||
           p.startsWith("/teams/") ||
           p.startsWith("/franchises"),
       },
       {
-        href: "/standings",
-        label: "Standings",
-        match: (p) => p === "/standings",
-      },
-      {
-        href: "/explore/bracket",
-        label: "Bracket",
-        match: (p) => p.startsWith("/explore/bracket"),
-      },
-      {
-        href: "/standings/tracker",
-        label: "Tracker",
-        match: (p) => p.startsWith("/standings/tracker"),
+        href: STANDINGS_VISUALIZATIONS_PATH,
+        label: "Visualizations",
+        match: (p) => p.startsWith(STANDINGS_VISUALIZATIONS_PATH),
       },
     ],
   },

@@ -35,7 +35,7 @@ export default function FranchisesPage() {
         </div>
         <div className="flex flex-wrap gap-2">
           <TransitionLink
-            href="/explore/teams"
+            href="/standings#team-stats"
             className="rounded-md bg-foreground px-4 py-2 text-[14px] font-semibold text-background"
           >
             Live teams

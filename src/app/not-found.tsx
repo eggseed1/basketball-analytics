@@ -9,8 +9,7 @@ export const metadata: Metadata = {
 const SECTIONS = [
   { href: "/scores", label: "Scores" },
   { href: "/explore/players", label: "Players" },
-  { href: "/explore/teams", label: "Teams" },
-  { href: "/standings", label: "Standings" },
+  { href: "/standings", label: "Teams" },
 ];
 
 export default function NotFound() {

@@ -45,6 +45,7 @@ import {
 import { formatNumber, formatPct } from "@/lib/format";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { shiftCanonicalSeason } from "@/lib/player-stat-comps";
+import { standingsHref } from "@/lib/standings-routes";
 import {
   pickPlayerSeasonBoardRow,
   primaryTeamForSeason,
@@ -531,7 +532,7 @@ async function execTeamSeasonStat(
       },
       {
         label: "Team leaderboard →",
-        href: `/explore/teams?season=${encodeURIComponent(season)}`,
+        href: standingsHref(season, "team-stats"),
       },
     ],
   };

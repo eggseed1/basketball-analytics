@@ -24,6 +24,7 @@ const cases: Array<[string, string]> = [
   ["/players/1966/season-compare", "Players"],
   ["/players/1966/season-rank", "Players"],
   ["/standings", "Teams"],
+  ["/standings/visualizations", "Teams"],
   ["/standings/tracker", "Teams"],
   ["/explore/bracket", "Teams"],
   ["/explore/teams", "Teams"],
@@ -72,10 +73,21 @@ assert.deepEqual(
 
 const teams = PRIMARY_NAV.find((n) => n.id === "teams");
 assert.ok(teams?.subnav?.length);
+assert.equal(teams.href, "/standings");
 assert.deepEqual(
   teams.subnav.map((s) => s.label),
-  ["Board", "Trade", "Standings", "Bracket", "Tracker"]
+  ["Standings", "Visualizations"]
 );
+const teamsSubnavFor = (p: string) =>
+  teams.subnav!.filter((s) => s.match?.(p)).map((s) => s.label);
+for (const [path, expected] of [
+  ["/standings", ["Standings"]],
+  ["/teams/2", ["Standings"]],
+  ["/franchises/bos", ["Standings"]],
+  ["/standings/visualizations", ["Visualizations"]],
+] as const) {
+  assert.deepEqual(teamsSubnavFor(path), expected, `${path} teams subnav`);
+}
 
 assert.equal(
   PRIMARY_NAV.find((n) => n.id === "standings"),

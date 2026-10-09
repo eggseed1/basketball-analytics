@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 const BROWSE = [
   { href: "/scores", label: "Games", key: "bos" },
   { href: "/explore/players", label: "Players", key: "gsw" },
-  { href: "/explore/teams", label: "Teams", key: "den" },
+  { href: "/standings#team-stats", label: "Teams", key: "den" },
   { href: "/standings", label: "Standings", key: "nyk" },
   { href: "/compare", label: "Compare", key: "lal" },
   { href: "/offseason", label: "Transactions", key: "mia" },

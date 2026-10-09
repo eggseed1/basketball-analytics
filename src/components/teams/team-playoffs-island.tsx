@@ -9,6 +9,7 @@ import {
 } from "@/lib/team-snapshot-games";
 import { type, sectionLinkClassName } from "@/lib/design-system";
 import { formatNumber, formatPct } from "@/lib/format";
+import { standingsHref } from "@/lib/standings-routes";
 import { teamPageHref } from "@/lib/team-destination";
 import { cn } from "@/lib/utils";
 import { PlayoffsSeriesPath } from "@/components/teams/viz/playoffs-series-path";
@@ -195,7 +196,7 @@ export async function TeamPlayoffsIsland({
             Postseason game log
           </h3>
           <TransitionLink
-            href={`/explore/bracket?season=${encodeURIComponent(season)}`}
+            href={standingsHref(season, "bracket")}
             className={cn(type.caption, sectionLinkClassName)}
           >
             League bracket <span data-motion-arrow aria-hidden>→</span>
