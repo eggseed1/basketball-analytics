@@ -88,11 +88,15 @@ const STAT_COLUMNS: { label: string; title: string; value: (t: SideTally) => str
   { label: "PF", title: "Personal fouls", value: (t) => String(t.pf) },
 ];
 
-/** Feed spot (feet from the attacked rim) → full-court position. */
+/**
+ * Feed spot (feet from the attacked rim) → full-court position. Both feeds put
+ * negative x on the shooter's left ("Left Corner 3"), so a shooter facing the
+ * left rim has their left toward the bottom edge, and the reverse at the right rim.
+ */
 function toCourt(ev: CourtEvent): { cx: number; cy: number } {
   const along = RIM_FROM_BASELINE + ev.y;
   const cx = ev.attack === "away" ? along : COURT_W - along;
-  const cy = ev.attack === "away" ? COURT_H / 2 + ev.x : COURT_H / 2 - ev.x;
+  const cy = ev.attack === "away" ? COURT_H / 2 - ev.x : COURT_H / 2 + ev.x;
   return {
     cx: Math.min(Math.max(cx, 0.6), COURT_W - 0.6),
     cy: Math.min(Math.max(cy, 0.6), COURT_H - 0.6),
