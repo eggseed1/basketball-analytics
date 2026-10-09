@@ -564,6 +564,7 @@ export default async function TeamProfilePage({
 
         {tab === "payroll" ? (
           <TeamSalaryAssetsTab
+            routeTeamId={teamId}
             teamId={resolvedTeamId}
             espnTeamId={askTeamId}
             abbreviation={identityTeam.abbreviation}

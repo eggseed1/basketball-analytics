@@ -1,12 +1,12 @@
 import { Suspense } from "react";
 
 import { DestinationSectionSkeleton } from "@/components/continuity/destination-loading-frame";
-import { TransitionLink } from "@/components/continuity/query-nav";
 import { TeamAssetsIsland } from "@/components/teams/team-assets-island";
 import { TeamContractsPageView } from "@/components/teams/team-contracts-view";
 import { TeamDraftHistorySection } from "@/components/teams/team-draft-history-section";
 import { TeamFrontOfficeIsland } from "@/components/teams/team-front-office-island";
 import { TeamPayrollView } from "@/components/teams/team-payroll-view";
+import { TeamSalaryViewSwitch } from "@/components/teams/team-salary-view-switch";
 import {
   buildTeamPayrollPresentation,
   getCurrentFrontOfficeSeason,
@@ -19,7 +19,15 @@ import { resolveTeamBrand } from "@/lib/nba-brand";
 import { TEAM_SALARY_VIEWS, teamSalaryHref, type TeamSalaryView } from "@/lib/team-destination";
 import { cn } from "@/lib/utils";
 
-async function TeamContractsIsland({ teamId, season }: { teamId: string; season: string }) {
+async function TeamContractsIsland({
+  routeTeamId,
+  teamId,
+  season,
+}: {
+  routeTeamId: string;
+  teamId: string;
+  season: string;
+}) {
   const franchiseId = resolveFrontOfficeFranchiseId(teamId);
   const contracts = franchiseId ? getTeamContracts(franchiseId) : null;
   const slice = franchiseId ? await resolveTeamFrontOfficeSlice(franchiseId) : null;
@@ -32,7 +40,7 @@ async function TeamContractsIsland({ teamId, season }: { teamId: string; season:
         contracts={contracts}
         capContext={slice ? buildTeamPayrollPresentation(slice).capContext : null}
         season={season}
-        seasonHref={(other) => `${teamSalaryHref(teamId, "contracts", other)}#payoff-heading`}
+        seasonHref={(other) => `${teamSalaryHref(routeTeamId, "contracts", other)}#payoff-heading`}
       />
     );
   }
@@ -44,13 +52,22 @@ async function TeamContractsIsland({ teamId, season }: { teamId: string; season:
   );
 }
 
+const LOADING_LABELS: Record<TeamSalaryView, string> = {
+  summary: "Loading salary…",
+  contracts: "Loading contracts…",
+  picks: "Loading draft picks…",
+};
+
 export function TeamSalaryAssetsTab({
+  routeTeamId,
   teamId,
   espnTeamId,
   abbreviation,
   season,
   view,
 }: {
+  /** The id in the current URL. Links keep it so switching views stays on this route. */
+  routeTeamId: string;
   teamId: string;
   espnTeamId: string;
   abbreviation: string;
@@ -61,32 +78,52 @@ export function TeamSalaryAssetsTab({
 
   return (
     <div data-motion-stack className="flex flex-col gap-6">
-      <div className="flex flex-col gap-2">
-        <nav className="flex flex-wrap gap-1.5" aria-label="Salary and assets views">
-          {TEAM_SALARY_VIEWS.map((item) => (
-            <TransitionLink
-              key={item.id}
-              href={teamSalaryHref(teamId, item.id, season)}
-              scroll={false}
-              aria-current={view === item.id ? "page" : undefined}
-              className={cn(
-                type.caption,
-                "glass-pill rounded-md px-2.5 py-1 font-semibold transition-colors",
-                view === item.id ? "glass-pill-active" : "text-muted-foreground hover:text-foreground"
-              )}
-            >
-              {item.label}
-            </TransitionLink>
-          ))}
-        </nav>
-        {season !== frontOfficeSeason ? (
-          <p className={cn(type.caption, "text-muted-foreground")}>
-            Salary and draft picks are the franchise&apos;s current {frontOfficeSeason} books. They don&apos;t change with
-            the {season} season picked above.
-          </p>
-        ) : null}
-      </div>
+      <TeamSalaryViewSwitch
+        active={view}
+        items={TEAM_SALARY_VIEWS.map((item) => ({
+          ...item,
+          href: teamSalaryHref(routeTeamId, item.id, season),
+          loadingLabel: LOADING_LABELS[item.id],
+        }))}
+        note={
+          season !== frontOfficeSeason ? (
+            <p className={cn(type.caption, "text-muted-foreground")}>
+              Salary and draft picks are the franchise&apos;s current {frontOfficeSeason} books. They don&apos;t change
+              with the {season} season picked above.
+            </p>
+          ) : null
+        }
+      >
+        <SalaryViewContent
+          routeTeamId={routeTeamId}
+          teamId={teamId}
+          espnTeamId={espnTeamId}
+          abbreviation={abbreviation}
+          season={season}
+          view={view}
+        />
+      </TeamSalaryViewSwitch>
+    </div>
+  );
+}
 
+function SalaryViewContent({
+  routeTeamId,
+  teamId,
+  espnTeamId,
+  abbreviation,
+  season,
+  view,
+}: {
+  routeTeamId: string;
+  teamId: string;
+  espnTeamId: string;
+  abbreviation: string;
+  season: string;
+  view: TeamSalaryView;
+}) {
+  return (
+    <>
       {view === "summary" ? (
         <>
           <Suspense fallback={<DestinationSectionSkeleton label="Loading salary…" />}>
@@ -100,7 +137,7 @@ export function TeamSalaryAssetsTab({
 
       {view === "contracts" ? (
         <Suspense fallback={<DestinationSectionSkeleton label="Loading contracts…" />}>
-          <TeamContractsIsland teamId={teamId} season={season} />
+          <TeamContractsIsland routeTeamId={routeTeamId} teamId={teamId} season={season} />
         </Suspense>
       ) : null}
 
@@ -112,6 +149,6 @@ export function TeamSalaryAssetsTab({
           <TeamDraftHistorySection teamId={espnTeamId} />
         </>
       ) : null}
-    </div>
+    </>
   );
 }
