@@ -11,14 +11,15 @@ import {
 import { getLearnConcept } from "@/content/learn/registry";
 
 /** Custom App Router portal at /learn/drbl (not served by [slug]). */
-const CUSTOM_LEARN_PORTALS = new Set(["drbl"]);
+const CUSTOM_LEARN_PORTALS = new Set(["drbl", "salary"]);
 
 export type ResolvedLearnPage =
   | { kind: "guide"; guide: StatGuide }
   | { kind: "topic"; topic: LearnTopic }
   | { kind: "portal"; slug: string };
 
-export function resolveLearnPage(slug: string): ResolvedLearnPage | null {
+export function resolveLearnPage(rawSlug: string): ResolvedLearnPage | null {
+  const slug = rawSlug.split("#")[0];
   if (CUSTOM_LEARN_PORTALS.has(slug)) {
     return { kind: "portal", slug };
   }

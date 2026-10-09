@@ -14,12 +14,15 @@ export type LearnCategoryId =
   | "systems"
   | "status"
   | "transactions"
+  | "salary"
   | "sentiment";
 
 export type LearnCategoryMeta = {
   id: LearnCategoryId;
   label: string;
   description: string;
+  /** A long-form guide that teaches the whole topic with charts. */
+  guide?: { href: string; label: string; blurb: string };
 };
 
 export const LEARN_CATEGORIES: LearnCategoryMeta[] = [
@@ -68,6 +71,16 @@ export const LEARN_CATEGORIES: LearnCategoryMeta[] = [
     id: "transactions",
     label: "Transactions",
     description: "Source events vs structured trades, and why genealogy waits.",
+  },
+  {
+    id: "salary",
+    label: "Salary & contracts",
+    description: "The cap, the tax and aprons, contract options, and how we price what a player's play is worth.",
+    guide: {
+      href: "/learn/salary",
+      label: "The salary and contracts guide",
+      blurb: "Charts built from this season's real payrolls and contracts, explaining everything the team salary pages and contract boards show.",
+    },
   },
   {
     id: "sentiment",
@@ -1281,6 +1294,139 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     showTooltip: true,
     learnSlug: "transaction-layers",
     relatedIds: ["structured_transaction", "source_event"],
+  },
+
+  // --- Salary & contracts ---
+  {
+    id: "salary_cap",
+    aliases: ["cap_space"],
+    label: "Salary cap",
+    shortName: "Salary cap",
+    category: "salary",
+    tooltip:
+      "The payroll line set each league year. Teams under it can sign free agents with cap space; teams over it have to use exceptions and trades.",
+    showTooltip: true,
+    learnSlug: "salary#cap",
+    relatedIds: ["luxury_tax", "salary_aprons"],
+  },
+  {
+    id: "luxury_tax",
+    aliases: ["tax_line"],
+    label: "Luxury tax",
+    shortName: "Luxury tax",
+    category: "salary",
+    tooltip:
+      "A second, higher payroll line. Teams above it at the end of the season pay a tax on every dollar over, at rising rates.",
+    showTooltip: true,
+    learnSlug: "salary#cap",
+    relatedIds: ["salary_cap", "salary_aprons"],
+  },
+  {
+    id: "salary_aprons",
+    aliases: ["apron", "first_apron", "second_apron"],
+    label: "First and second apron",
+    shortName: "Aprons",
+    category: "salary",
+    tooltip:
+      "Two lines above the tax. Crossing them takes away team-building tools; over the second apron a team's future first-round pick can be frozen.",
+    showTooltip: true,
+    learnSlug: "salary#cap",
+    relatedIds: ["luxury_tax", "salary_frozen_pick"],
+  },
+  {
+    id: "player_option",
+    aliases: [],
+    label: "Player option",
+    shortName: "Player option",
+    category: "salary",
+    tooltip:
+      "A contract year the player decides on. He opts in when the salary beats what he could get elsewhere.",
+    showTooltip: true,
+    learnSlug: "salary#contracts",
+    relatedIds: ["team_option", "contract_surplus"],
+  },
+  {
+    id: "team_option",
+    aliases: [],
+    label: "Team option",
+    shortName: "Team option",
+    category: "salary",
+    tooltip: "A contract year the team decides on. It picks the year up when the player is worth the salary.",
+    showTooltip: true,
+    learnSlug: "salary#contracts",
+    relatedIds: ["player_option", "contract_surplus"],
+  },
+  {
+    id: "non_guaranteed",
+    aliases: ["partial_guarantee", "not_guaranteed"],
+    label: "Not fully guaranteed",
+    shortName: "Non-guaranteed",
+    category: "salary",
+    tooltip:
+      "Salary the team can avoid paying, in full or in part, by waiving the player before a set date. Shown in italics on payroll tables.",
+    showTooltip: true,
+    learnSlug: "salary#contracts",
+  },
+  {
+    id: "salary_on_books",
+    aliases: ["committed_salary"],
+    label: "Salary on the books",
+    shortName: "On the books",
+    category: "salary",
+    tooltip:
+      "Salary already signed for a future season. It shrinks each year out because most of those seasons haven't been negotiated yet.",
+    showTooltip: true,
+    learnSlug: "salary#contracts",
+  },
+  {
+    id: "price_per_win",
+    aliases: ["player_worth", "market_price_per_win"],
+    label: "Worth and price per win",
+    shortName: "Worth",
+    category: "salary",
+    tooltip:
+      "What a player's play would cost on the open market: the league minimum for a replacement player, plus a market price for each win above replacement.",
+    showTooltip: true,
+    learnSlug: "salary#worth",
+    relatedIds: ["contract_surplus", "salary_paid_off"],
+  },
+  {
+    id: "contract_surplus",
+    aliases: ["surplus", "contract_value"],
+    label: "Contract surplus",
+    shortName: "Surplus",
+    category: "salary",
+    tooltip:
+      "Projected worth minus salary over every remaining season of a deal, with a range. Positive means the team gets more than it pays for.",
+    showTooltip: true,
+    learnSlug: "salary#surplus",
+    relatedIds: ["price_per_win", "player_option", "team_option"],
+    seeInAction: [{ label: "Contract surplus board", href: "/explore/players/visualizations?view=surplus" }],
+  },
+  {
+    id: "salary_paid_off",
+    aliases: ["payoff", "paid_off"],
+    label: "Salary paid off",
+    shortName: "Paid off",
+    category: "salary",
+    tooltip:
+      "How much of this season's salary a player's play has covered so far, compared with how much of the season has been paid out.",
+    showTooltip: true,
+    learnSlug: "salary#paid-off",
+    relatedIds: ["price_per_win"],
+    seeInAction: [{ label: "Salary paid off board", href: "/explore/players/visualizations?view=payoff" }],
+  },
+  {
+    id: "salary_frozen_pick",
+    aliases: ["frozen_pick", "pick_protection"],
+    label: "Pick protections and frozen picks",
+    shortName: "Pick terms",
+    category: "salary",
+    tooltip:
+      "Conditions on a traded first-round pick, such as staying with the original team if it lands in the top 5. A frozen pick can't be traded because of the second apron.",
+    showTooltip: true,
+    learnSlug: "salary#picks",
+    relatedIds: ["salary_aprons", "draft_capital"],
   },
 
   // --- Sentiment ---

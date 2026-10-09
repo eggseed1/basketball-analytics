@@ -94,6 +94,18 @@ export function LearnIndexClient({
                       {meta.description}
                     </p>
                   </div>
+                  {meta.guide ? (
+                    <TransitionLink
+                      href={meta.guide.href}
+                      className="sports-card flex items-center justify-between gap-3 px-4 py-3 hover:bg-secondary/50"
+                    >
+                      <span>
+                        <span className="block text-[16px] font-semibold">{meta.guide.label}</span>
+                        <span className="block text-[14px] text-muted-foreground">{meta.guide.blurb}</span>
+                      </span>
+                      <span className="shrink-0 text-[14px] font-semibold text-muted-foreground">Read →</span>
+                    </TransitionLink>
+                  ) : null}
                   <ul className="sports-card divide-y divide-black/5 dark:divide-white/10">
                     {items.map((g) => (
                       <li key={g.id}>
