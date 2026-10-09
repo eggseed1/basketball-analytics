@@ -1,29 +1,33 @@
 "use client";
 
-import {
-  memo,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type MutableRefObject,
-} from "react";
+import { memo, useMemo, useRef } from "react";
 import {
   CartesianGrid,
   Line,
   LineChart,
   ReferenceLine,
   ResponsiveContainer,
-  Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
 
-import {
-  FrostRechartsTooltip,
-  rechartsFrostWrapperStyle,
-} from "@/components/brand/frost-recharts-tooltip";
 import { TeamLogo } from "@/components/brand/team-logo";
+import {
+  useHoverLinkTarget,
+  useHoverStore,
+  type HoverLink,
+} from "@/components/charts/hover-layer";
+import {
+  chartSvg,
+  linePath,
+  plotBox,
+  plotY,
+  pointerSvgY,
+  raceLineClass,
+  RaceHoverLayer,
+  sameRaceHover,
+  type RaceHover,
+} from "@/components/charts/race-hover-layer";
 import type {
   PlayerRaceChartRow,
   PlayerRaceMetric,
@@ -47,83 +51,6 @@ import { teamLeagueChartColor } from "@/lib/nba-brand";
 import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 
-type RechartsPointerState = {
-  activeLabel?: string | number;
-};
-
-type HoverSnapshot = {
-  playerId: string | null;
-  row: PlayerRaceChartRow | null;
-};
-
-type PlotCache = {
-  top: number;
-  height: number;
-};
-
-function svgPlotArea(svg: Element): PlotCache | null {
-  const rect = svg.querySelector("clipPath rect");
-  if (!rect) return null;
-  const top = Number(rect.getAttribute("y"));
-  const height = Number(rect.getAttribute("height"));
-  if (!Number.isFinite(top) || !Number.isFinite(height) || height <= 0) {
-    return null;
-  }
-  return { top, height };
-}
-
-function pointerSvgY(
-  svg: SVGSVGElement,
-  clientX: number,
-  clientY: number
-): number | null {
-  const ctm = svg.getScreenCTM();
-  if (!ctm) return null;
-  const point = svg.createSVGPoint();
-  point.x = clientX;
-  point.y = clientY;
-  return point.matrixTransform(ctm.inverse()).y;
-}
-
-function resolveHoverFromPointer(
-  root: HTMLElement | null,
-  state: RechartsPointerState,
-  rowByLabel: Map<string, PlayerRaceChartRow>,
-  players: PlayerRacePlayer[],
-  yDomain: [number, number],
-  clientX: number,
-  clientY: number,
-  plotCache: MutableRefObject<PlotCache | null>
-): HoverSnapshot {
-  const svg = root?.querySelector("svg.recharts-surface");
-  if (!(svg instanceof SVGSVGElement)) return { playerId: null, row: null };
-
-  const row =
-    state.activeLabel != null
-      ? (rowByLabel.get(String(state.activeLabel)) ?? null)
-      : null;
-  if (!row) return { playerId: null, row: null };
-
-  let plot = plotCache.current;
-  if (!plot) {
-    plot = svgPlotArea(svg);
-    plotCache.current = plot;
-  }
-  const pointerY = pointerSvgY(svg, clientX, clientY);
-  if (!plot || pointerY == null) return { playerId: null, row };
-
-  return {
-    playerId: nearestPlayerRaceAtPointer(
-      players,
-      row,
-      pointerY,
-      yDomain,
-      plot
-    ),
-    row,
-  };
-}
-
 function gapLabel(gap: number, metric: PlayerRaceMetric) {
   const n = Math.abs(gap);
   const unit = playerRaceMetricShort(metric).toLowerCase();
@@ -131,304 +58,72 @@ function gapLabel(gap: number, metric: PlayerRaceMetric) {
   return `${formatted} ${unit}`;
 }
 
+function lastPoint(d: string): { x: number; y: number } | null {
+  const nums = d.match(/-?\d*\.?\d+(?:e-?\d+)?/gi);
+  if (!nums || nums.length < 2) return null;
+  return { x: Number(nums[nums.length - 2]), y: Number(nums[nums.length - 1]) };
+}
+
 /**
- * Stable line layer — selection can remount strokes. Hover id only updates
- * when the nearest player changes (not every date tick), so paths stay calm.
+ * The field of lines. It only changes with the field or the selection; hover
+ * is drawn by RaceHoverLayer on top, so pointer moves never touch these.
  */
 const PlayerRaceLines = memo(function PlayerRaceLines({
   players,
   selectedPlayerIds,
-  hoveredPlayerId,
+  colors,
   isDark,
-  onSelectPlayer,
 }: {
   players: PlayerRacePlayer[];
   selectedPlayerIds: Set<string>;
-  hoveredPlayerId: string | null;
+  colors: Map<string, string>;
   isDark: boolean;
-  onSelectPlayer: (playerId: string) => void;
 }) {
   const hasSelection = selectedPlayerIds.size > 0;
-  const hasHover = hoveredPlayerId != null;
   const dense = players.length > 48;
-  const surface = isDark ? "dark" : "light";
-  const colors = useMemo(() => {
-    const map = new Map<string, string>();
-    for (const player of players) {
-      map.set(
-        player.playerId,
-        teamLeagueChartColor(player.teamId, { surface }).color
-      );
-    }
-    return map;
-  }, [players, surface]);
+  const lineType = dense ? "linear" : "monotone";
 
   const { background, foreground } = useMemo(() => {
     const bg: PlayerRacePlayer[] = [];
     const fg: PlayerRacePlayer[] = [];
     for (const player of players) {
-      const selected = selectedPlayerIds.has(player.playerId);
-      const hovered = hoveredPlayerId === player.playerId;
-      if (selected || hovered) fg.push(player);
+      if (selectedPlayerIds.has(player.playerId)) fg.push(player);
       else bg.push(player);
     }
     return { background: bg, foreground: fg };
-  }, [hoveredPlayerId, players, selectedPlayerIds]);
+  }, [players, selectedPlayerIds]);
 
-  const lineType = dense ? "linear" : "monotone";
-
-  const renderLine = (
-    player: PlayerRacePlayer,
-    options: { selected: boolean; hovered: boolean; muted: boolean }
-  ) => {
-    const color = colors.get(player.playerId) ?? "#8e8e93";
-    const emphasis: ChartLineEmphasis = options.muted
-      ? "muted"
-      : options.hovered
-        ? "focus"
-        : options.selected
-          ? "selected"
-          : "default";
+  const renderLine = (player: PlayerRacePlayer, selected: boolean) => {
+    const emphasis: ChartLineEmphasis = selected
+      ? "selected"
+      : hasSelection
+        ? "muted"
+        : "default";
     const baseOpacity = chartLineStrokeOpacity(emphasis, isDark);
-    const strokeOpacity =
-      dense && emphasis === "default" ? baseOpacity * 0.45 : baseOpacity;
     return (
       <Line
         key={player.playerId}
+        className={raceLineClass(player.playerId)}
         yAxisId="right"
         type={lineType}
         dataKey={player.playerId}
         name={player.shortName}
-        stroke={color}
-        strokeWidth={
-          options.hovered ? 3 : options.selected ? 2.75 : dense ? 0.85 : 1.15
-        }
-        strokeOpacity={strokeOpacity}
+        stroke={colors.get(player.playerId) ?? "#8e8e93"}
+        strokeWidth={selected ? 2.75 : dense ? 0.85 : 1.15}
+        strokeOpacity={dense && emphasis === "default" ? baseOpacity * 0.45 : baseOpacity}
         dot={false}
         activeDot={false}
         connectNulls
         isAnimationActive={false}
-        onClick={() => onSelectPlayer(player.playerId)}
-        style={{ cursor: "pointer" }}
       />
     );
   };
 
   return (
     <>
-      {background.map((player) =>
-        renderLine(player, {
-          selected: false,
-          hovered: false,
-          // Dense fields: don't remute every stroke on hover — that reflows
-          // hundreds of <Line> props and feels choppy. Selection still dims.
-          muted:
-            hasSelection ||
-            (!dense && hasHover),
-        })
-      )}
-      {foreground.map((player) =>
-        renderLine(player, {
-          selected: selectedPlayerIds.has(player.playerId),
-          hovered: hoveredPlayerId === player.playerId,
-          muted: false,
-        })
-      )}
-      {/* Paint selected / hovered strokes again on top so they stay visible. */}
-      {foreground.map((player) => {
-        const hovered = hoveredPlayerId === player.playerId;
-        const color = colors.get(player.playerId) ?? "#8e8e93";
-        return (
-          <Line
-            key={`top-${player.playerId}`}
-            yAxisId="right"
-            type={lineType}
-            dataKey={player.playerId}
-            stroke={color}
-            strokeWidth={hovered ? 3.25 : 2.85}
-            strokeOpacity={chartLineStrokeOpacity(
-              hovered ? "focus" : "selected",
-              isDark
-            )}
-            dot={false}
-            activeDot={false}
-            connectNulls
-            isAnimationActive={false}
-            legendType="none"
-            style={{ pointerEvents: "none" }}
-          />
-        );
-      })}
+      {background.map((player) => renderLine(player, false))}
+      {foreground.map((player) => renderLine(player, true))}
     </>
-  );
-});
-
-const RaceHoverTooltip = memo(function RaceHoverTooltip({
-  active,
-  label,
-  rowByLabel,
-  playerById,
-  players,
-  selectedPlayerIds,
-  hoverRef,
-  metric,
-  onSelectPlayer,
-}: {
-  active?: boolean;
-  label?: string | number;
-  rowByLabel: Map<string, PlayerRaceChartRow>;
-  playerById: Map<string, PlayerRacePlayer>;
-  players: PlayerRacePlayer[];
-  selectedPlayerIds: Set<string>;
-  hoverRef: MutableRefObject<HoverSnapshot>;
-  metric: PlayerRaceMetric;
-  onSelectPlayer: (playerId: string) => void;
-}) {
-  if (!active) return null;
-
-  const row =
-    (label != null ? rowByLabel.get(String(label)) : null) ??
-    hoverRef.current.row;
-  const focusId =
-    hoverRef.current.playerId ??
-    (selectedPlayerIds.size === 1 ? [...selectedPlayerIds][0]! : null);
-  const focusPlayer = focusId ? (playerById.get(focusId) ?? null) : null;
-  const focusValue =
-    focusPlayer && row ? row[focusPlayer.playerId] : null;
-  const neighbors = focusPlayer
-    ? playerRaceNeighborsAt(players, focusPlayer.playerId, row)
-    : null;
-
-  return (
-    <FrostRechartsTooltip active={active}>
-      <p className={cn(type.caption, "font-semibold")}>
-        {String(label ?? "")}
-      </p>
-      {focusPlayer && typeof focusValue === "number" ? (
-        <div className="mt-1.5">
-          <div className="flex items-center justify-between gap-3">
-            <span className="inline-flex items-center gap-1.5 font-semibold">
-              <TeamLogo teamKey={focusPlayer.teamId} size="xs" />
-              <span>{focusPlayer.displayName}</span>
-            </span>
-            <span className="tabular-nums font-bold">
-              {formatPlayerRaceValue(focusValue, metric)}
-            </span>
-          </div>
-          {neighbors?.above ? (
-            <p className={cn(type.caption, "mt-1 text-muted-foreground")}>
-              {neighbors.above.shortName} is{" "}
-              <span className="font-semibold text-foreground">
-                {gapLabel(neighbors.above.gap, metric)} ahead
-              </span>
-            </p>
-          ) : (
-            <p className={cn(type.caption, "mt-1 text-muted-foreground")}>
-              Top of this board
-            </p>
-          )}
-          {neighbors?.below ? (
-            <p className={cn(type.caption, "text-muted-foreground")}>
-              {neighbors.below.shortName} is{" "}
-              <span className="font-semibold text-foreground">
-                {gapLabel(neighbors.below.gap, metric)} behind
-              </span>
-            </p>
-          ) : null}
-          <button
-            type="button"
-            className={cn(type.caption, "mt-2 font-semibold underline")}
-            onClick={() => {
-              if (focusId) onSelectPlayer(focusId);
-            }}
-          >
-            Pin this player
-          </button>
-        </div>
-      ) : (
-        <p className={cn(type.caption, "mt-1.5 text-muted-foreground")}>
-          Snap to a line to inspect
-        </p>
-      )}
-    </FrostRechartsTooltip>
-  );
-});
-
-const RaceHoverStrip = memo(function RaceHoverStrip({
-  focusPlayerId,
-  focusRow,
-  players,
-  playerById,
-  rows,
-  metric,
-}: {
-  focusPlayerId: string | null;
-  focusRow: PlayerRaceChartRow | null;
-  players: PlayerRacePlayer[];
-  playerById: Map<string, PlayerRacePlayer>;
-  rows: PlayerRaceChartRow[];
-  metric: PlayerRaceMetric;
-}) {
-  const player = focusPlayerId
-    ? (playerById.get(focusPlayerId) ?? null)
-    : null;
-  const row = focusRow ?? rows[rows.length - 1] ?? null;
-  const neighbors = focusPlayerId
-    ? playerRaceNeighborsAt(players, focusPlayerId, row)
-    : null;
-
-  if (!player) {
-    return (
-      <p
-        className={cn(
-          type.caption,
-          "mt-2 text-center text-muted-foreground"
-        )}
-      >
-        Move along the chart to snap to the nearest player line, then click to pin.
-      </p>
-    );
-  }
-
-  const value = row?.[player.playerId];
-
-  return (
-    <div
-      className="mt-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 rounded-md border border-border/60 bg-background/70 px-3 py-2"
-      aria-live="polite"
-    >
-      {neighbors?.above ? (
-        <span className={cn(type.caption, "inline-flex items-center gap-1.5")}>
-          <span className="font-semibold">{neighbors.above.shortName}</span>
-          <span className="text-muted-foreground">
-            {gapLabel(neighbors.above.gap, metric)} ahead
-          </span>
-        </span>
-      ) : (
-        <span className={cn(type.caption, "text-muted-foreground")}>
-          No one ahead
-        </span>
-      )}
-      <span className={cn(type.caption, "font-bold text-foreground")}>
-        · {player.displayName}{" "}
-        {typeof value === "number"
-          ? formatPlayerRaceValue(value, metric)
-          : formatPlayerRaceValue(player.currentValue, metric)}{" "}
-        ·
-      </span>
-      {neighbors?.below ? (
-        <span className={cn(type.caption, "inline-flex items-center gap-1.5")}>
-          <span className="font-semibold">{neighbors.below.shortName}</span>
-          <span className="text-muted-foreground">
-            {gapLabel(neighbors.below.gap, metric)} behind
-          </span>
-        </span>
-      ) : (
-        <span className={cn(type.caption, "text-muted-foreground")}>
-          No one behind
-        </span>
-      )}
-    </div>
   );
 });
 
@@ -439,6 +134,7 @@ export function PlayerRaceTrackerChart({
   onSelectPlayer,
   yDomain,
   metric,
+  hoverLink,
 }: {
   rows: PlayerRaceChartRow[];
   players: PlayerRacePlayer[];
@@ -446,78 +142,76 @@ export function PlayerRaceTrackerChart({
   onSelectPlayer: (playerId: string) => void;
   yDomain: [number, number];
   metric: PlayerRaceMetric;
+  /** Lets the leader list beside the chart light up a line. */
+  hoverLink?: HoverLink;
 }) {
   const chartTheme = useChartTheme();
-  /** Footer strip only — never feeds Recharts children on every date tick. */
-  const [stripHover, setStripHover] = useState<HoverSnapshot>({
-    playerId: null,
-    row: null,
-  });
-  /** Nearest player under the pointer — updates only when that id changes. */
-  const [hoveredPlayerId, setHoveredPlayerId] = useState<string | null>(null);
   const chartRootRef = useRef<HTMLDivElement>(null);
-  const hoverRef = useRef<HoverSnapshot>({ playerId: null, row: null });
-  const plotCacheRef = useRef<PlotCache | null>(null);
-  const hoverRafRef = useRef<number | null>(null);
-  const lastHoverKeyRef = useRef<string>("");
-  const lastHoverPlayerRef = useRef<string | null>(null);
+  const hover = useHoverStore<RaceHover>(sameRaceHover);
 
   const playerById = useMemo(
     () => new Map(players.map((player) => [player.playerId, player])),
     [players]
   );
-
-  const rowByLabel = useMemo(() => {
-    const map = new Map<string, PlayerRaceChartRow>();
-    for (const row of rows) map.set(row.label, row);
-    return map;
-  }, [rows]);
+  const rowByLabel = useMemo(
+    () => new Map(rows.map((row) => [row.label, row])),
+    [rows]
+  );
+  const colors = useMemo(() => {
+    const surface = chartTheme.isDark ? "dark" : "light";
+    return new Map(
+      players.map((player) => [
+        player.playerId,
+        teamLeagueChartColor(player.teamId, { surface }).color,
+      ])
+    );
+  }, [chartTheme.isDark, players]);
 
   const ticks = useMemo(() => playerRaceYAxisTicks(yDomain), [yDomain]);
   const showZeroLine = yDomain[0] < -1e-9 && yDomain[1] > 1e-9;
+  const pinnedId =
+    selectedPlayerIds.size === 1 ? [...selectedPlayerIds][0]! : null;
+  const lastRow = rows[rows.length - 1] ?? null;
 
-  const stripFocusId =
-    stripHover.playerId ??
-    (selectedPlayerIds.size === 1 ? [...selectedPlayerIds][0]! : null);
-
-  useEffect(() => {
-    plotCacheRef.current = null;
-  }, [rows, players, yDomain]);
-
-  useEffect(() => {
-    return () => {
-      if (hoverRafRef.current != null) {
-        cancelAnimationFrame(hoverRafRef.current);
-      }
+  const hoverAt = (
+    playerId: string,
+    row: PlayerRaceChartRow,
+    at: { x: number } | null
+  ): RaceHover | null => {
+    const root = chartRootRef.current;
+    const svg = chartSvg(root);
+    const plot = svg ? plotBox(svg) : null;
+    const value = row[playerId];
+    if (!root || !svg || !plot || typeof value !== "number") return null;
+    const previous = hover.get();
+    const d = previous?.id === playerId ? previous.d : linePath(svg, playerId);
+    const end = at ? { x: at.x, y: plotY(plot, yDomain, value) } : d ? lastPoint(d) : null;
+    if (!end) return null;
+    const { above, below } = playerRaceNeighborsAt(players, playerId, row);
+    return {
+      key: `${playerId}|${row.label}`,
+      id: playerId,
+      label: row.label,
+      x: end.x,
+      y: end.y,
+      width: root.clientWidth,
+      height: root.clientHeight,
+      color: colors.get(playerId) ?? "#8e8e93",
+      d,
+      plot,
+      guides: [above, below]
+        .filter((n) => n != null)
+        .map((n) => plotY(plot, yDomain, n.value)),
     };
-  }, []);
-
-  const scheduleStripHover = (next: HoverSnapshot) => {
-    hoverRef.current = next;
-    const key = `${next.playerId ?? ""}|${next.row?.label ?? ""}`;
-    if (key === lastHoverKeyRef.current) return;
-    lastHoverKeyRef.current = key;
-    if (hoverRafRef.current != null) cancelAnimationFrame(hoverRafRef.current);
-    hoverRafRef.current = requestAnimationFrame(() => {
-      setStripHover(next);
-      if (next.playerId !== lastHoverPlayerRef.current) {
-        lastHoverPlayerRef.current = next.playerId;
-        setHoveredPlayerId(next.playerId);
-      }
-    });
   };
 
-  const clearHover = () => {
-    if (hoverRafRef.current != null) {
-      cancelAnimationFrame(hoverRafRef.current);
-      hoverRafRef.current = null;
-    }
-    lastHoverKeyRef.current = "";
-    lastHoverPlayerRef.current = null;
-    hoverRef.current = { playerId: null, row: null };
-    setStripHover({ playerId: null, row: null });
-    setHoveredPlayerId(null);
-  };
+  useHoverLinkTarget(hoverLink, {
+    show(playerId) {
+      const row = [...rows].reverse().find((r) => typeof r[playerId] === "number");
+      hover.set(row ? hoverAt(playerId, row, null) : null);
+    },
+    clear: () => hover.set(null),
+  });
 
   if (!rows.length || !players.length) {
     return (
@@ -529,6 +223,12 @@ export function PlayerRaceTrackerChart({
     );
   }
 
+  const pinnedPlayer = pinnedId ? (playerById.get(pinnedId) ?? null) : null;
+  const pinnedNeighbors = pinnedPlayer
+    ? playerRaceNeighborsAt(players, pinnedPlayer.playerId, lastRow)
+    : null;
+  const pinnedValue = pinnedPlayer ? lastRow?.[pinnedPlayer.playerId] : null;
+
   return (
     <div className="relative flex h-full min-h-[280px] w-full flex-col">
       <div
@@ -539,33 +239,29 @@ export function PlayerRaceTrackerChart({
           <LineChart
             data={rows}
             margin={{ top: 12, right: 12, bottom: 8, left: 8 }}
-            onMouseMove={(state, reactEvent) => {
-              const next = resolveHoverFromPointer(
-                chartRootRef.current,
-                state,
-                rowByLabel,
-                players,
-                yDomain,
-                reactEvent.clientX,
-                reactEvent.clientY,
-                plotCacheRef
-              );
-              scheduleStripHover(next);
+            style={{ cursor: "pointer" }}
+            onMouseMove={(state, event) => {
+              const row =
+                state.activeLabel != null
+                  ? rowByLabel.get(String(state.activeLabel))
+                  : undefined;
+              const svg = chartSvg(chartRootRef.current);
+              const plot = svg ? plotBox(svg) : null;
+              const x = state.activeCoordinate?.x;
+              const pointerY =
+                svg && plot ? pointerSvgY(svg, event.clientX, event.clientY) : null;
+              if (!row || !plot || x == null || pointerY == null) {
+                hover.set(null);
+                return;
+              }
+              const playerId = nearestPlayerRaceAtPointer(players, row, pointerY, yDomain, plot);
+              hover.set(playerId ? hoverAt(playerId, row, { x }) : null);
             }}
-            onClick={(state, reactEvent) => {
-              const { playerId } = resolveHoverFromPointer(
-                chartRootRef.current,
-                state,
-                rowByLabel,
-                players,
-                yDomain,
-                reactEvent.clientX,
-                reactEvent.clientY,
-                plotCacheRef
-              );
-              if (playerId) onSelectPlayer(playerId);
+            onClick={() => {
+              const current = hover.get();
+              if (current) onSelectPlayer(current.id);
             }}
-            onMouseLeave={clearHover}
+            onMouseLeave={() => hover.set(null)}
           >
             <CartesianGrid
               strokeDasharray="3 6"
@@ -611,44 +307,89 @@ export function PlayerRaceTrackerChart({
                 strokeDasharray="4 4"
               />
             ) : null}
-            <Tooltip
-              cursor={{ stroke: "var(--border)", strokeDasharray: "4 4" }}
-              isAnimationActive={false}
-              animationDuration={0}
-              wrapperStyle={rechartsFrostWrapperStyle}
-              content={(props) => (
-                <RaceHoverTooltip
-                  active={props.active}
-                  label={props.label}
-                  rowByLabel={rowByLabel}
-                  playerById={playerById}
-                  players={players}
-                  selectedPlayerIds={selectedPlayerIds}
-                  hoverRef={hoverRef}
-                  metric={metric}
-                  onSelectPlayer={onSelectPlayer}
-                />
-              )}
-            />
             <PlayerRaceLines
               players={players}
               selectedPlayerIds={selectedPlayerIds}
-              hoveredPlayerId={hoveredPlayerId}
+              colors={colors}
               isDark={chartTheme.isDark}
-              onSelectPlayer={onSelectPlayer}
             />
           </LineChart>
         </ResponsiveContainer>
+        <RaceHoverLayer
+          store={hover}
+          render={(h) => {
+            const player = playerById.get(h.id);
+            const row = rowByLabel.get(h.label);
+            const value = row?.[h.id];
+            if (!player || typeof value !== "number") return null;
+            const { above, below } = playerRaceNeighborsAt(players, h.id, row);
+            return (
+              <>
+                <p className="flex items-center gap-1.5">
+                  <TeamLogo teamKey={player.teamId} size="xs" />
+                  {player.displayName}
+                </p>
+                <p className="tabular-nums">
+                  {h.label} ·{" "}
+                  <span className="font-semibold">{formatPlayerRaceValue(value, metric)}</span>
+                </p>
+                <p className="text-muted-foreground">
+                  {above
+                    ? `${above.shortName} ${gapLabel(above.gap, metric)} ahead`
+                    : "Top of this board"}
+                  {below ? ` · ${below.shortName} ${gapLabel(below.gap, metric)} behind` : ""}
+                </p>
+                <p className="text-muted-foreground">
+                  Click to {selectedPlayerIds.has(h.id) ? "unpin" : "pin"}
+                </p>
+              </>
+            );
+          }}
+        />
       </div>
 
-      <RaceHoverStrip
-        focusPlayerId={stripFocusId}
-        focusRow={stripHover.row}
-        players={players}
-        playerById={playerById}
-        rows={rows}
-        metric={metric}
-      />
+      <div
+        className="mt-2 flex min-h-[2.375rem] flex-wrap items-center justify-center gap-x-3 gap-y-1 rounded-md border border-transparent px-3 py-2 data-[pinned]:border-border/60 data-[pinned]:bg-background/70"
+        data-pinned={pinnedPlayer ? "" : undefined}
+        aria-live="polite"
+      >
+        {pinnedPlayer ? (
+          <>
+            {pinnedNeighbors?.above ? (
+              <span className={cn(type.caption, "inline-flex items-center gap-1.5")}>
+                <span className="font-semibold">{pinnedNeighbors.above.shortName}</span>
+                <span className="text-muted-foreground">
+                  {gapLabel(pinnedNeighbors.above.gap, metric)} ahead
+                </span>
+              </span>
+            ) : (
+              <span className={cn(type.caption, "text-muted-foreground")}>No one ahead</span>
+            )}
+            <span className={cn(type.caption, "font-bold text-foreground")}>
+              · {pinnedPlayer.displayName}{" "}
+              {formatPlayerRaceValue(
+                typeof pinnedValue === "number" ? pinnedValue : pinnedPlayer.currentValue,
+                metric
+              )}{" "}
+              ·
+            </span>
+            {pinnedNeighbors?.below ? (
+              <span className={cn(type.caption, "inline-flex items-center gap-1.5")}>
+                <span className="font-semibold">{pinnedNeighbors.below.shortName}</span>
+                <span className="text-muted-foreground">
+                  {gapLabel(pinnedNeighbors.below.gap, metric)} behind
+                </span>
+              </span>
+            ) : (
+              <span className={cn(type.caption, "text-muted-foreground")}>No one behind</span>
+            )}
+          </>
+        ) : (
+          <p className={cn(type.caption, "text-center text-muted-foreground")}>
+            Move along the chart to snap to the nearest player line, then click to pin.
+          </p>
+        )}
+      </div>
     </div>
   );
 }

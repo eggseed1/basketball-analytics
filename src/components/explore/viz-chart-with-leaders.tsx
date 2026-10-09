@@ -4,6 +4,11 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
+import {
+  HoverLinkContext,
+  hoverLinkRowProps,
+  useHoverLink,
+} from "@/components/charts/hover-layer";
 import { BoardPlayerName } from "@/lib/board-compact-name";
 import { useChartTheme } from "@/lib/chart-theme";
 import { type } from "@/lib/design-system";
@@ -42,6 +47,7 @@ export function VizChartWithLeaders({
 }) {
   const chartTheme = useChartTheme();
   const [leaderFilter, setLeaderFilter] = useState("");
+  const hoverLink = useHoverLink();
 
   const filtered = useMemo(() => {
     const q = leaderFilter.trim().toLowerCase();
@@ -70,7 +76,7 @@ export function VizChartWithLeaders({
             <p className={cn(type.caption, "text-muted-foreground")}>{hint}</p>
           )}
         </div>
-        {children}
+        <HoverLinkContext.Provider value={hoverLink}>{children}</HoverLinkContext.Provider>
       </div>
 
       <aside className="sports-card flex max-h-[min(560px,70vh)] flex-col overflow-hidden p-3 md:sticky md:top-20">
@@ -98,7 +104,7 @@ export function VizChartWithLeaders({
               player.teamId ?? player.teamAbbr
             );
             return (
-              <li key={player.playerId}>
+              <li key={player.playerId} {...hoverLinkRowProps(hoverLink, player.playerId)}>
                 <div
                   className={cn(
                     "flex w-full items-center gap-2 rounded-md border px-2 py-1.5 transition-colors",

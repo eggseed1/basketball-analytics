@@ -12,5 +12,5 @@ export function StandingsBodySkeleton() {
 
 /** Scoring-margin card at its rendered height for 30 teams. */
 export function StandingsMarginSkeleton() {
-  return <SkeletonBlock className="h-[666px] sm:h-[658px]" />;
+  return <SkeletonBlock className="h-[658px] sm:h-[650px]" />;
 }

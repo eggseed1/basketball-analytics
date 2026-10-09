@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useMemo } from "react";
+import { useId, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
   CartesianGrid,
@@ -8,16 +8,21 @@ import {
   ResponsiveContainer,
   Scatter,
   ScatterChart,
-  Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
 
-import {
-  FrostRechartsTooltip,
-  rechartsFrostWrapperStyle,
-} from "@/components/brand/frost-recharts-tooltip";
 import { TeamLogo } from "@/components/brand/team-logo";
+import {
+  dotMarkByKey,
+  nearestDotMark,
+  sameMarkKey,
+  StoreSnapLayer,
+  useHoverStore,
+  useHoverValue,
+  type HoverMark,
+  type HoverStore,
+} from "@/components/charts/hover-layer";
 import { useTeamVizParams } from "@/components/standings/team-viz-hub";
 import { fitNumericDomain } from "@/lib/chart-numeric-domain";
 import { useChartTheme } from "@/lib/chart-theme";
@@ -58,8 +63,9 @@ function LogoDot({ cx = 0, cy = 0, payload }: { cx?: number; cy?: number; payloa
   const r = big ? 17 : 12;
   const logo = teamLogoUrl(payload.key);
   return (
-    <g style={{ cursor: "pointer" }}>
+    <g>
       <circle
+        data-dot-key={payload.key}
         cx={cx}
         cy={cy}
         r={r}
@@ -111,6 +117,8 @@ export function TeamVizScatter({
   const router = useRouter();
   const chartTheme = useChartTheme();
   const { teamKeys, toggleTeam, conference } = useTeamVizParams();
+  const plotRef = useRef<HTMLDivElement>(null);
+  const hover = useHoverStore<HoverMark>(sameMarkKey);
 
   const allPoints = useMemo<Point[]>(() => {
     const out: Point[] = [];
@@ -164,6 +172,8 @@ export function TeamVizScatter({
   const domainX = axisX.domain;
   const domainY = axisY.domain;
 
+  const pointByKey = useMemo(() => new Map(points.map((p) => [p.key, p])), [points]);
+
   const ranked = useMemo(
     () =>
       points
@@ -196,7 +206,19 @@ export function TeamVizScatter({
           </p>
         </div>
 
-        <div className="relative h-[340px] w-full sm:h-[440px]">
+        <div
+          ref={plotRef}
+          data-snap-host
+          className="relative h-[340px] w-full sm:h-[440px]"
+          onPointerMove={(event) => {
+            if (plotRef.current) hover.set(nearestDotMark(plotRef.current, event.clientX, event.clientY));
+          }}
+          onPointerLeave={() => hover.set(null)}
+          onClick={() => {
+            const key = hover.get()?.key;
+            if (key) router.push(teamProfileHref(key, season));
+          }}
+        >
           {spec.quadrants ? (
             <div
               aria-hidden
@@ -261,44 +283,37 @@ export function TeamVizScatter({
                   ifOverflow="hidden"
                 />
               ) : null}
-              <Tooltip
-                cursor={false}
-                isAnimationActive={false}
-                wrapperStyle={rechartsFrostWrapperStyle}
-                content={({ active, payload }) => {
-                  if (!active || !payload?.length) return null;
-                  const p = payload[0]?.payload as Point;
-                  return (
-                    <FrostRechartsTooltip active={active}>
-                      <p className="font-semibold">
-                        {p.row.name} · {p.row.wins}-{p.row.losses}
-                      </p>
-                      <p>
-                        {spec.x.label}: {spec.x.format(p.x)}
-                      </p>
-                      <p>
-                        {spec.y.label}: {spec.y.format(p.y)}
-                      </p>
-                      {p.rank != null && spec.rank.label !== spec.x.label && spec.rank.label !== spec.y.label ? (
-                        <p className="text-muted-foreground">
-                          {spec.rank.label}: {spec.rank.format(p.rank)}
-                        </p>
-                      ) : null}
-                    </FrostRechartsTooltip>
-                  );
-                }}
-              />
-              <Scatter
-                data={ordered}
-                isAnimationActive={false}
-                shape={LogoDot}
-                onClick={(point) => {
-                  const p = point as unknown as Point;
-                  if (p?.key) router.push(teamProfileHref(p.key, season));
-                }}
-              />
+              <Scatter data={ordered} isAnimationActive={false} shape={LogoDot} />
             </ScatterChart>
           </ResponsiveContainer>
+          <StoreSnapLayer
+            store={hover}
+            size={34}
+            color={(m) => pointByKey.get(m.key)?.color ?? "var(--foreground)"}
+            render={(m) => {
+              const p = pointByKey.get(m.key);
+              if (!p) return null;
+              return (
+                <>
+                  <p className="flex items-center gap-1.5">
+                    <TeamLogo teamKey={p.key} size="xs" />
+                    {p.row.name} · {p.row.wins}-{p.row.losses}
+                  </p>
+                  <p className="tabular-nums">
+                    {spec.x.label}: {spec.x.format(p.x)}
+                  </p>
+                  <p className="tabular-nums">
+                    {spec.y.label}: {spec.y.format(p.y)}
+                  </p>
+                  {p.rank != null && spec.rank.label !== spec.x.label && spec.rank.label !== spec.y.label ? (
+                    <p className="tabular-nums text-muted-foreground">
+                      {spec.rank.label}: {spec.rank.format(p.rank)}
+                    </p>
+                  ) : null}
+                </>
+              );
+            }}
+          />
         </div>
         <p className={cn(type.caption, "text-muted-foreground")}>
           {spec.reference === "average"
@@ -311,28 +326,61 @@ export function TeamVizScatter({
       <aside className="sports-card flex max-h-[min(560px,70vh)] flex-col overflow-hidden p-3 md:sticky md:top-44">
         <h2 className={cn(type.bodySm, "font-bold")}>{spec.rank.label}</h2>
         <p className={cn(type.caption, "mb-2 text-muted-foreground")}>Click a team to highlight it.</p>
-        <ol className="flex min-h-0 flex-col gap-0.5 overflow-y-auto">
-          {ranked.map((p, index) => (
-            <li key={p.key}>
-              <button
-                type="button"
-                aria-pressed={p.highlighted}
-                onClick={() => toggleTeam(p.key)}
-                className={cn(
-                  type.caption,
-                  "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-secondary/70",
-                  p.highlighted && "bg-secondary font-semibold"
-                )}
-              >
-                <span className="w-5 shrink-0 text-right tabular-nums text-muted-foreground">{index + 1}</span>
-                <TeamLogo teamKey={p.key} size="xs" />
-                <span className="min-w-0 flex-1 truncate font-semibold">{p.key}</span>
-                <span className="tabular-nums">{spec.rank.format(p.rank!)}</span>
-              </button>
-            </li>
-          ))}
-        </ol>
+        <RankList
+          ranked={ranked}
+          format={spec.rank.format}
+          hover={hover}
+          onToggle={toggleTeam}
+          onRowHover={(key) =>
+            hover.set(key && plotRef.current ? dotMarkByKey(plotRef.current, [key]) : null)
+          }
+        />
       </aside>
     </div>
+  );
+}
+
+/** The ranking beside the chart. Its row and the chart's logo light up together. */
+function RankList({
+  ranked,
+  format,
+  hover,
+  onToggle,
+  onRowHover,
+}: {
+  ranked: Point[];
+  format: (value: number) => string;
+  hover: HoverStore<HoverMark>;
+  onToggle: (key: string) => void;
+  onRowHover: (key: string | null) => void;
+}) {
+  const hoveredKey = useHoverValue(hover)?.key ?? null;
+  return (
+    <ol className="flex min-h-0 flex-col gap-0.5 overflow-y-auto">
+      {ranked.map((p, index) => (
+        <li key={p.key}>
+          <button
+            type="button"
+            aria-pressed={p.highlighted}
+            onClick={() => onToggle(p.key)}
+            onPointerEnter={() => onRowHover(p.key)}
+            onPointerLeave={() => onRowHover(null)}
+            onFocus={() => onRowHover(p.key)}
+            onBlur={() => onRowHover(null)}
+            className={cn(
+              type.caption,
+              "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-secondary/70",
+              hoveredKey === p.key && "bg-secondary/70",
+              p.highlighted && "bg-secondary font-semibold"
+            )}
+          >
+            <span className="w-5 shrink-0 text-right tabular-nums text-muted-foreground">{index + 1}</span>
+            <TeamLogo teamKey={p.key} size="xs" />
+            <span className="min-w-0 flex-1 truncate font-semibold">{p.key}</span>
+            <span className="tabular-nums">{format(p.rank!)}</span>
+          </button>
+        </li>
+      ))}
+    </ol>
   );
 }

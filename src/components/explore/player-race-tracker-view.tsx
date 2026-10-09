@@ -7,6 +7,7 @@ import { useCallback, useDeferredValue, useMemo, useState } from "react";
 
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { TeamLogo } from "@/components/brand/team-logo";
+import { hoverLinkRowProps, useHoverLink } from "@/components/charts/hover-layer";
 import type { PlayerRaceTrackerPayload } from "@/data/queries/player-race-tracker";
 import { useChartTheme } from "@/lib/chart-theme";
 import { BoardPlayerName } from "@/lib/board-compact-name";
@@ -93,6 +94,7 @@ export function PlayerRaceTrackerView({
   seasonOptions: string[];
 }) {
   const chartTheme = useChartTheme();
+  const hoverLink = useHoverLink();
   const router = useRouter();
   const searchParams = useSearchParams();
   const [chartWindow, setChartWindow] = useState<PlayerRaceWindow>("all");
@@ -337,6 +339,7 @@ export function PlayerRaceTrackerView({
               onSelectPlayer={togglePlayer}
               yDomain={yDomain}
               metric={payload.metric}
+              hoverLink={hoverLink}
             />
           </div>
 
@@ -391,7 +394,7 @@ export function PlayerRaceTrackerView({
               const hrefId =
                 player.espnId ?? player.nbaId ?? player.playerId;
               return (
-                <li key={player.playerId}>
+                <li key={player.playerId} {...hoverLinkRowProps(hoverLink, player.playerId)}>
                   <div
                     className={cn(
                       "flex w-full items-center gap-2 rounded-md border px-2 py-1.5 transition-colors",

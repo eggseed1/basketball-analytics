@@ -71,6 +71,9 @@ export function TeamSurplusBoard({ rows, meta }: { rows: TeamSurplusRow[]; meta:
               key={r.teamId}
               onClick={() => toggleTeam(r.teamKey)}
               aria-current={highlighted || undefined}
+              data-hover-item
+              data-tip={`${r.name}: ${formatUsdSignedCompact(r.surplus)} across ${r.valued} contracts`}
+              data-tip-sub={sub || undefined}
               className={cn(
                 ROW,
                 "cursor-pointer rounded-md px-1 py-1 transition-colors hover:bg-secondary/60",
@@ -88,11 +91,7 @@ export function TeamSurplusBoard({ rows, meta }: { rows: TeamSurplusRow[]; meta:
                   {r.teamKey}
                 </Link>
               </span>
-              <span
-                className="relative h-4"
-                data-tip={`${r.name}: ${formatUsdSignedCompact(r.surplus)} across ${r.valued} contracts`}
-                data-tip-sub={sub || undefined}
-              >
+              <span className="relative h-4" data-tip-anchor>
                 <span aria-hidden className="absolute inset-y-[-2px] left-1/2 w-px bg-foreground/30" />
                 <span
                   aria-hidden

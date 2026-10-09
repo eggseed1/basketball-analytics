@@ -1903,6 +1903,40 @@ svg [data-motion-dot] {
   display: none;
 }
 
+/* Snapped hover inside Recharts charts (hover-layer.tsx). One marker and one
+   label glide between marks while open and fade in place when they open or
+   close. The chart under them never changes. */
+.chart-snap-mark,
+.chart-snap-tip {
+  opacity: 0;
+  scale: 0.92;
+}
+
+.chart-snap-mark {
+  translate: -50% -50%;
+}
+
+[data-snap-host]:has(> .chart-snap-tip[data-open]) {
+  cursor: pointer;
+}
+
+.chart-snap-mark[data-open],
+.chart-snap-tip[data-open] {
+  opacity: 1;
+  scale: 1;
+}
+
+/* The hovered race line, redrawn on top of the field. */
+.chart-race-line,
+.chart-race-guide {
+  opacity: 0;
+}
+
+.chart-race-line[data-open],
+.chart-race-guide[data-open] {
+  opacity: 1;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   [data-hover-item],
   [data-hover-point] {
@@ -1946,6 +1980,41 @@ svg [data-motion-dot] {
       scale 200ms var(--motion-ease),
       left 180ms var(--motion-ease),
       top 180ms var(--motion-ease);
+  }
+
+  .chart-snap-mark,
+  .chart-snap-tip {
+    transition:
+      opacity 120ms ease,
+      scale 160ms var(--motion-ease);
+  }
+
+  .chart-snap-mark[data-glide],
+  .chart-snap-tip[data-glide] {
+    transition:
+      opacity 120ms ease,
+      scale 160ms var(--motion-ease),
+      left 170ms var(--motion-ease),
+      top 170ms var(--motion-ease),
+      translate 200ms var(--motion-ease);
+  }
+
+  .chart-race-line,
+  .chart-race-guide {
+    transition: opacity 140ms ease;
+  }
+
+  .chart-race-guide[data-glide] {
+    transition:
+      opacity 140ms ease,
+      left 170ms var(--motion-ease),
+      top 170ms var(--motion-ease);
+  }
+
+  @starting-style {
+    .chart-race-line[data-open] {
+      opacity: 0;
+    }
   }
 
   .chart-tip-float {
@@ -2013,6 +2082,28 @@ svg [data-motion-dot] {
 
   [data-hover-point]:hover [data-hover-guide] {
     opacity: 0.4;
+  }
+
+  /* Quarter grid: the hovered column tints like the hovered row, and the cell
+     where they cross gets a ring. */
+  [data-quarter-grid] [data-col-on] {
+    box-shadow: inset 0 0 0 100vmax var(--motion-row-tint);
+  }
+
+  [data-quarter-grid] th[data-col-on] {
+    color: var(--foreground);
+  }
+
+  [data-quarter-grid] tbody td[data-col]:hover {
+    box-shadow:
+      inset 0 0 0 1.5px color-mix(in oklab, var(--foreground) 45%, transparent),
+      inset 0 0 0 100vmax var(--motion-row-tint);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-quarter-grid] th {
+    transition: box-shadow 160ms ease, color 160ms ease;
   }
 }
 

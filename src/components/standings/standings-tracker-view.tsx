@@ -7,6 +7,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
 
 import { TeamLogo } from "@/components/brand/team-logo";
+import { hoverLinkRowProps, useHoverLink } from "@/components/charts/hover-layer";
 import type { StandingsTrackerPayload } from "@/data/queries/standings-tracker";
 import {
   buildStandingsTrackerChartRows,
@@ -96,6 +97,7 @@ export function StandingsTrackerView({
   conference?: "East" | "West" | "All";
 }) {
   const chartTheme = useChartTheme();
+  const hoverLink = useHoverLink();
   const router = useRouter();
   const searchParams = useSearchParams();
   const [localConference, setConference] = useState<"East" | "West" | "All">("All");
@@ -264,7 +266,11 @@ export function StandingsTrackerView({
               <button
                 key={teamId}
                 type="button"
-                onClick={() => toggleTeam(teamId)}
+                {...hoverLinkRowProps(hoverLink, teamId)}
+                onClick={() => {
+                  hoverLink.clear();
+                  toggleTeam(teamId);
+                }}
                 className={cn(
                   type.caption,
                   TOOLBAR_CONTROL,
@@ -328,6 +334,7 @@ export function StandingsTrackerView({
             selectedTeamIds={selectedTeamIds}
             onSelectTeam={toggleTeam}
             yDomain={yDomain}
+            hoverLink={hoverLink}
           />
         </div>
 

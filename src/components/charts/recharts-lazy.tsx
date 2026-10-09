@@ -198,14 +198,6 @@ export const AwardDynastyBarsLazy = dynamic(
   { ssr: false, loading: () => pulse }
 );
 
-export const StandingsDiffBarsLazy = dynamic(
-  () =>
-    import("@/components/charts/standings-diff-bars").then((m) => ({
-      default: m.StandingsDiffBars,
-    })),
-  { ssr: false, loading: () => <div className="h-full animate-pulse rounded-lg bg-muted/40" /> }
-);
-
 export const TradeImpactBarsLazy = dynamic(
   () =>
     import("@/components/charts/trade-impact-bars").then((m) => ({

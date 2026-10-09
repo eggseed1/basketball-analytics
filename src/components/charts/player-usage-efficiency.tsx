@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  useDeferredValue,
-  useId,
-  useMemo,
-  useRef,
-  useState,
-  type PointerEvent as ReactPointerEvent,
-} from "react";
+import { useDeferredValue, useId, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
   CartesianGrid,
@@ -20,7 +13,15 @@ import {
   ZAxis,
 } from "recharts";
 
-import { ChartTooltipSurface } from "@/components/charts/chart-tooltip";
+import {
+  dotMarkByKey,
+  nearestDotMark,
+  sameMarkKey,
+  StoreSnapLayer,
+  useHoverLinkTarget,
+  useHoverStore,
+  type HoverMark,
+} from "@/components/charts/hover-layer";
 import { useQueryNavOptional } from "@/components/continuity/query-nav";
 import { useChartTheme } from "@/lib/chart-theme";
 import { type } from "@/lib/design-system";
@@ -38,9 +39,6 @@ type ChartPoint = UsageEfficiencyPoint & {
   z: number;
   fill: string;
 };
-
-/** Pointer distance (px) that still snaps to the nearest dot. */
-const SNAP_PX = 36;
 
 function dotKey(p: Pick<ChartPoint, "isSelf" | "playerId">) {
   return `${p.isSelf ? "pin" : "peer"}-${p.playerId}`;
@@ -173,41 +171,12 @@ export function PlayerUsageEfficiencyChart({
   );
   const byKey = useMemo(() => new Map(data.map((p) => [dotKey(p), p])), [data]);
   const plotRef = useRef<HTMLDivElement>(null);
-  const [near, setNear] = useState<{ key: string; x: number; y: number; width: number } | null>(null);
-  const nearPoint = near ? byKey.get(near.key) : undefined;
-
-  /** Snap to the closest rendered dot so the label follows the pointer, not just exact hits. */
-  const trackPointer = (event: ReactPointerEvent<HTMLDivElement>) => {
-    const box = plotRef.current;
-    const svg = box?.querySelector<SVGSVGElement>("svg.recharts-surface");
-    if (!box || !svg) return;
-    const boxRect = box.getBoundingClientRect();
-    const svgRect = svg.getBoundingClientRect();
-    const mx = event.clientX - svgRect.left;
-    const my = event.clientY - svgRect.top;
-    let best: { key: string; x: number; y: number } | null = null;
-    let bestDistance = SNAP_PX * SNAP_PX;
-    for (const dot of svg.querySelectorAll<SVGCircleElement>("circle[data-dot-key]")) {
-      const x = dot.cx.baseVal.value;
-      const y = dot.cy.baseVal.value;
-      const distance = (x - mx) ** 2 + (y - my) ** 2;
-      if (distance < bestDistance) {
-        bestDistance = distance;
-        best = { key: dot.dataset.dotKey ?? "", x, y };
-      }
-    }
-    if (!best) {
-      if (near) setNear(null);
-      return;
-    }
-    if (near?.key === best.key) return;
-    setNear({
-      key: best.key,
-      x: best.x + svgRect.left - boxRect.left,
-      y: best.y + svgRect.top - boxRect.top,
-      width: boxRect.width,
-    });
-  };
+  const hover = useHoverStore<HoverMark>(sameMarkKey);
+  useHoverLinkTarget(null, {
+    show: (id) =>
+      hover.set(plotRef.current ? dotMarkByKey(plotRef.current, [`pin-${id}`, `peer-${id}`]) : null),
+    clear: () => hover.set(null),
+  });
 
   const peers = useMemo(() => data.filter((p) => !p.isSelf), [data]);
   const pinned = useMemo(() => data.filter((p) => p.isSelf), [data]);
@@ -334,11 +303,16 @@ export function PlayerUsageEfficiencyChart({
       ) : (
         <div
           ref={plotRef}
-          className={cn("relative h-[320px] w-full sm:h-[380px]", nearPoint && "cursor-pointer")}
-          onPointerMove={trackPointer}
-          onPointerLeave={() => setNear(null)}
+          data-snap-host
+          className="relative h-[320px] w-full sm:h-[380px]"
+          onPointerMove={(event) => {
+            if (plotRef.current) hover.set(nearestDotMark(plotRef.current, event.clientX, event.clientY));
+          }}
+          onPointerLeave={() => hover.set(null)}
           onClick={() => {
-            if (nearPoint?.playerId) router.push(`/players/${nearPoint.playerId}`);
+            const key = hover.get()?.key;
+            const playerId = key ? byKey.get(key)?.playerId : null;
+            if (playerId) router.push(`/players/${playerId}`);
           }}
         >
           <QuadrantLabels />
@@ -438,46 +412,32 @@ export function PlayerUsageEfficiencyChart({
               ) : null}
             </ScatterChart>
           </ResponsiveContainer>
-          {near && nearPoint ? (
-            <>
-              <span
-                aria-hidden
-                className="pointer-events-none absolute z-[2] size-4 rounded-full border-2 transition-[left,top] duration-150 ease-out motion-reduce:transition-none"
-                style={{
-                  left: near.x,
-                  top: near.y,
-                  translate: "-50% -50%",
-                  borderColor: nearPoint.fill,
-                  boxShadow: `0 0 0 3px color-mix(in oklab, ${nearPoint.fill} 24%, transparent)`,
-                }}
-              />
-              <ChartTooltipSurface
-                className="chart-tip-float pointer-events-none absolute z-[3]"
-                style={{
-                  left: near.x,
-                  top: near.y,
-                  translate: `${
-                    near.x < 110 ? "12px" : near.x > near.width - 110 ? "calc(-100% - 12px)" : "-50%"
-                  } ${near.y < 96 ? "14px" : "calc(-100% - 14px)"}`,
-                }}
-              >
-                <p>
-                  {nearPoint.playerName}
-                  {nearPoint.isSelf ? ` · ${highlightLabel}` : ""}
-                  {nearPoint.teamAbbr ? ` · ${nearPoint.teamAbbr}` : ""}
-                </p>
-                <p className="tabular-nums">
-                  USG {formatPct(nearPoint.usagePct)} · TS {formatPct(nearPoint.trueShootingPct)}
-                </p>
-                {medians.usage != null && medians.ts != null ? (
-                  <p className="tabular-nums text-muted-foreground">
-                    vs median: {signedPts((nearPoint.usagePct - medians.usage) * 100)} USG ·{" "}
-                    {signedPts((nearPoint.trueShootingPct - medians.ts) * 100)} TS
+          <StoreSnapLayer
+            store={hover}
+            color={(m) => byKey.get(m.key)?.fill ?? "var(--foreground)"}
+            render={(m) => {
+              const p = byKey.get(m.key);
+              if (!p) return null;
+              return (
+                <>
+                  <p>
+                    {p.playerName}
+                    {p.isSelf ? ` · ${highlightLabel}` : ""}
+                    {p.teamAbbr ? ` · ${p.teamAbbr}` : ""}
                   </p>
-                ) : null}
-              </ChartTooltipSurface>
-            </>
-          ) : null}
+                  <p className="tabular-nums">
+                    USG {formatPct(p.usagePct)} · TS {formatPct(p.trueShootingPct)}
+                  </p>
+                  {medians.usage != null && medians.ts != null ? (
+                    <p className="tabular-nums text-muted-foreground">
+                      vs median: {signedPts((p.usagePct - medians.usage) * 100)} USG ·{" "}
+                      {signedPts((p.trueShootingPct - medians.ts) * 100)} TS
+                    </p>
+                  ) : null}
+                </>
+              );
+            }}
+          />
         </div>
       )}
 

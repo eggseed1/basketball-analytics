@@ -1,22 +1,33 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useRef } from "react";
 import {
   CartesianGrid,
   Line,
   LineChart,
   ReferenceLine,
   ResponsiveContainer,
-  Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
 
-import {
-  FrostRechartsTooltip,
-  rechartsFrostWrapperStyle,
-} from "@/components/brand/frost-recharts-tooltip";
 import { TeamLogo } from "@/components/brand/team-logo";
+import {
+  useHoverLinkTarget,
+  useHoverStore,
+  type HoverLink,
+} from "@/components/charts/hover-layer";
+import {
+  chartSvg,
+  linePath,
+  plotBox,
+  plotY,
+  pointerSvgY,
+  raceLineClass,
+  RaceHoverLayer,
+  sameRaceHover,
+  type RaceHover,
+} from "@/components/charts/race-hover-layer";
 import type {
   StandingsTrackerChartRow,
   StandingsTrackerTeam,
@@ -40,59 +51,10 @@ function gapGamesLabel(gap: number) {
   return n === 1 ? "1 game" : `${n} games`;
 }
 
-type RechartsPointerState = {
-  activeLabel?: string | number;
-};
-
-function svgPlotArea(svg: Element): { top: number; height: number } | null {
-  const rect = svg.querySelector("clipPath rect");
-  if (!rect) return null;
-  const top = Number(rect.getAttribute("y"));
-  const height = Number(rect.getAttribute("height"));
-  if (!Number.isFinite(top) || !Number.isFinite(height) || height <= 0) {
-    return null;
-  }
-  return { top, height };
-}
-
-function pointerSvgY(
-  svg: SVGSVGElement,
-  clientX: number,
-  clientY: number
-): number | null {
-  const ctm = svg.getScreenCTM();
-  if (!ctm) return null;
-  const point = svg.createSVGPoint();
-  point.x = clientX;
-  point.y = clientY;
-  return point.matrixTransform(ctm.inverse()).y;
-}
-
-function resolveHoverFromPointer(
-  root: HTMLElement | null,
-  state: RechartsPointerState,
-  rows: StandingsTrackerChartRow[],
-  teams: StandingsTrackerTeam[],
-  yDomain: [number, number],
-  clientX: number,
-  clientY: number
-): { teamId: string | null; row: StandingsTrackerChartRow | null } {
-  const svg = root?.querySelector("svg.recharts-surface");
-  if (!(svg instanceof SVGSVGElement)) return { teamId: null, row: null };
-
-  const row = state.activeLabel != null
-    ? rows.find((item) => item.label === String(state.activeLabel)) ?? null
-    : null;
-  if (!row) return { teamId: null, row: null };
-
-  const plot = svgPlotArea(svg);
-  const pointerY = pointerSvgY(svg, clientX, clientY);
-  if (!plot || pointerY == null) return { teamId: null, row };
-
-  return {
-    teamId: nearestTrackerTeamAtPointer(teams, row, pointerY, yDomain, plot),
-    row,
-  };
+function lastPoint(d: string): { x: number; y: number } | null {
+  const nums = d.match(/-?\d*\.?\d+(?:e-?\d+)?/gi);
+  if (!nums || nums.length < 2) return null;
+  return { x: Number(nums[nums.length - 2]), y: Number(nums[nums.length - 1]) };
 }
 
 export function StandingsTrackerChart({
@@ -101,40 +63,82 @@ export function StandingsTrackerChart({
   selectedTeamIds,
   onSelectTeam,
   yDomain,
+  hoverLink,
 }: {
   rows: StandingsTrackerChartRow[];
   teams: StandingsTrackerTeam[];
   selectedTeamIds: Set<string>;
   onSelectTeam: (teamId: string) => void;
   yDomain: [number, number];
+  /** Lets a team list beside the chart light up a line. */
+  hoverLink?: HoverLink;
 }) {
   const chartTheme = useChartTheme();
-  const [hoverTeamId, setHoverTeamId] = useState<string | null>(null);
-  const [hoverRow, setHoverRow] = useState<StandingsTrackerChartRow | null>(
-    null
-  );
   const chartRootRef = useRef<HTMLDivElement>(null);
+  const hover = useHoverStore<RaceHover>(sameRaceHover);
 
   const teamById = useMemo(
     () => new Map(teams.map((team) => [team.teamId, team])),
     [teams]
   );
+  const rowByLabel = useMemo(
+    () => new Map(rows.map((row) => [row.label, row])),
+    [rows]
+  );
 
   const ticks = useMemo(() => trackerYAxisTicks(yDomain), [yDomain]);
   const hasSelection = selectedTeamIds.size > 0;
-  const focusTeamId =
-    hoverTeamId ??
-    (selectedTeamIds.size === 1 ? [...selectedTeamIds][0]! : null);
+  const pinnedId =
+    selectedTeamIds.size === 1 ? [...selectedTeamIds][0]! : null;
+  const lastRow = rows[rows.length - 1] ?? null;
 
-  const focusNeighbors = useMemo(() => {
-    if (!focusTeamId) return null;
-    const row = hoverRow ?? rows[rows.length - 1] ?? null;
+  const pinned = useMemo(() => {
+    if (!pinnedId) return null;
     return {
-      team: teamById.get(focusTeamId) ?? null,
-      row,
-      ...standingsNeighborsAt(teams, focusTeamId, row),
+      team: teamById.get(pinnedId) ?? null,
+      ...standingsNeighborsAt(teams, pinnedId, lastRow),
     };
-  }, [focusTeamId, hoverRow, rows, teamById, teams]);
+  }, [lastRow, pinnedId, teamById, teams]);
+
+  const hoverAt = (
+    teamId: string,
+    row: StandingsTrackerChartRow,
+    at: { x: number; y?: number } | null
+  ): RaceHover | null => {
+    const root = chartRootRef.current;
+    const svg = chartSvg(root);
+    const plot = svg ? plotBox(svg) : null;
+    const value = row[teamId];
+    if (!root || !svg || !plot || typeof value !== "number") return null;
+    const previous = hover.get();
+    const d = previous?.id === teamId ? previous.d : linePath(svg, teamId);
+    const end = at ?? (d ? lastPoint(d) : null);
+    if (!end) return null;
+    const { above, below } = standingsNeighborsAt(teams, teamId, row);
+    return {
+      key: `${teamId}|${row.label}`,
+      id: teamId,
+      label: row.label,
+      x: end.x,
+      y: end.y ?? plotY(plot, yDomain, value),
+      width: root.clientWidth,
+      height: root.clientHeight,
+      color: chartTheme.leagueTeamColor(teamId).color,
+      d,
+      plot,
+      guides: [above, below]
+        .filter((n) => n != null)
+        .map((n) => plotY(plot, yDomain, n.diff)),
+    };
+  };
+
+  useHoverLinkTarget(hoverLink, {
+    show(teamId) {
+      const row = [...rows].reverse().find((r) => typeof r[teamId] === "number");
+      hover.set(row ? hoverAt(teamId, row, null) : null);
+    },
+    clear: () => hover.set(null),
+  });
 
   if (!rows.length || !teams.length) {
     return (
@@ -150,41 +154,35 @@ export function StandingsTrackerChart({
     <div className="relative flex h-full min-h-[280px] w-full flex-col">
       <div
         ref={chartRootRef}
-        className="relative h-[min(400px,54vw)] min-h-[260px] w-full"
+        className={cn("relative h-[min(400px,54vw)] min-h-[260px] w-full")}
       >
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={rows}
             margin={{ top: 12, right: 12, bottom: 8, left: 8 }}
-            onMouseMove={(state, reactEvent) => {
-              const { teamId, row } = resolveHoverFromPointer(
-                chartRootRef.current,
-                state,
-                rows,
-                teams,
-                yDomain,
-                reactEvent.clientX,
-                reactEvent.clientY
-              );
-              setHoverTeamId(teamId);
-              setHoverRow(row);
+            style={{ cursor: "pointer" }}
+            onMouseMove={(state, event) => {
+              const row =
+                state.activeLabel != null
+                  ? rowByLabel.get(String(state.activeLabel))
+                  : undefined;
+              const svg = chartSvg(chartRootRef.current);
+              const plot = svg ? plotBox(svg) : null;
+              const x = state.activeCoordinate?.x;
+              const pointerY =
+                svg && plot ? pointerSvgY(svg, event.clientX, event.clientY) : null;
+              if (!row || !plot || x == null || pointerY == null) {
+                hover.set(null);
+                return;
+              }
+              const teamId = nearestTrackerTeamAtPointer(teams, row, pointerY, yDomain, plot);
+              hover.set(teamId ? hoverAt(teamId, row, { x }) : null);
             }}
-            onClick={(state, reactEvent) => {
-              const { teamId } = resolveHoverFromPointer(
-                chartRootRef.current,
-                state,
-                rows,
-                teams,
-                yDomain,
-                reactEvent.clientX,
-                reactEvent.clientY
-              );
-              if (teamId) onSelectTeam(teamId);
+            onClick={() => {
+              const current = hover.get();
+              if (current) onSelectTeam(current.id);
             }}
-            onMouseLeave={() => {
-              setHoverTeamId(null);
-              setHoverRow(null);
-            }}
+            onMouseLeave={() => hover.set(null)}
           >
             <CartesianGrid
               strokeDasharray="3 6"
@@ -234,236 +232,131 @@ export function StandingsTrackerChart({
                 fontSize: 10,
               }}
             />
-            {/* Neighbor reference marks for the focused team */}
-            {focusNeighbors?.above ? (
+            {pinned?.above ? (
               <ReferenceLine
                 yAxisId="right"
-                y={focusNeighbors.above.diff}
+                y={pinned.above.diff}
                 stroke="var(--muted-foreground)"
                 strokeOpacity={chartTheme.referenceOpacity()}
                 strokeDasharray="2 4"
               />
             ) : null}
-            {focusNeighbors?.below ? (
+            {pinned?.below ? (
               <ReferenceLine
                 yAxisId="right"
-                y={focusNeighbors.below.diff}
+                y={pinned.below.diff}
                 stroke="var(--muted-foreground)"
                 strokeOpacity={chartTheme.referenceOpacity()}
                 strokeDasharray="2 4"
               />
             ) : null}
-            <Tooltip
-              wrapperStyle={rechartsFrostWrapperStyle}
-              content={({ active, payload, label }) => {
-                if (!active || !payload?.length) return null;
-                const entries = payload
-                  .filter((item) => typeof item.value === "number")
-                  .sort(
-                    (a, b) => Number(b.value ?? 0) - Number(a.value ?? 0)
-                  );
-                const focusId =
-                  hoverTeamId ??
-                  (hasSelection
-                    ? entries.find((item) =>
-                        selectedTeamIds.has(String(item.dataKey))
-                      )?.dataKey
-                    : entries[0]?.dataKey);
-                const focusEntry = entries.find(
-                  (item) => String(item.dataKey) === String(focusId)
-                );
-                const focusTeam = focusEntry
-                  ? teamById.get(String(focusEntry.dataKey))
-                  : null;
-                const row =
-                  rows.find((item) => item.label === label) ?? null;
-                const neighbors = focusTeam
-                  ? standingsNeighborsAt(teams, focusTeam.teamId, row)
-                  : null;
-
-                return (
-                  <FrostRechartsTooltip active={active}>
-                    <p className={cn(type.caption, "font-semibold")}>{label}</p>
-                    {focusTeam && typeof focusEntry?.value === "number" ? (
-                      <div className="mt-1.5 border-b border-border/60 pb-1.5">
-                        <div className="flex items-center justify-between gap-3">
-                          <span className="inline-flex items-center gap-1.5 font-semibold">
-                            <TeamLogo teamKey={focusTeam.teamId} size="xs" />
-                            <span>{focusTeam.displayName}</span>
-                            <span className="text-muted-foreground">
-                              {focusTeam.abbreviation}
-                            </span>
-                          </span>
-                          <span className="tabular-nums font-bold">
-                            {diffLabel(Number(focusEntry.value))}
-                          </span>
-                        </div>
-                        {neighbors?.above ? (
-                          <p className={cn(type.caption, "mt-1 text-muted-foreground")}>
-                            {neighbors.above.abbreviation} is{" "}
-                            <span className="font-semibold text-foreground">
-                              {gapGamesLabel(neighbors.above.gap)} ahead
-                            </span>
-                          </p>
-                        ) : (
-                          <p className={cn(type.caption, "mt-1 text-muted-foreground")}>
-                            Top of this board
-                          </p>
-                        )}
-                        {neighbors?.below ? (
-                          <p className={cn(type.caption, "text-muted-foreground")}>
-                            {neighbors.below.abbreviation} is{" "}
-                            <span className="font-semibold text-foreground">
-                              {gapGamesLabel(neighbors.below.gap)} behind
-                            </span>
-                          </p>
-                        ) : null}
-                      </div>
-                    ) : null}
-                    <ul className="mt-1.5 flex flex-col gap-1">
-                      {entries.slice(0, 5).map((item) => {
-                        const team = teamById.get(String(item.dataKey));
-                        if (!team) return null;
-                        const isFocus = team.teamId === String(focusId);
-                        return (
-                          <li
-                            key={team.teamId}
-                            className={cn(
-                              "flex items-center justify-between gap-3",
-                              isFocus && "font-semibold"
-                            )}
-                          >
-                            <span className="inline-flex items-center gap-1.5">
-                              <TeamLogo teamKey={team.teamId} size="xs" />
-                              {team.abbreviation}
-                            </span>
-                            <span className="tabular-nums">
-                              {diffLabel(Number(item.value))}
-                            </span>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                    <button
-                      type="button"
-                      className={cn(
-                        type.caption,
-                        "mt-2 font-semibold underline"
-                      )}
-                      onClick={() => {
-                        if (focusId) onSelectTeam(String(focusId));
-                      }}
-                    >
-                      Pin this team
-                    </button>
-                  </FrostRechartsTooltip>
-                );
-              }}
-            />
             {teams.map((team) => {
               const selected = selectedTeamIds.has(team.teamId);
               const { color } = chartTheme.leagueTeamColor(team.teamId);
-              const muted = hasSelection && !selected;
-              const isFocus = focusTeamId === team.teamId;
-              const emphasis = muted
-                ? "muted"
-                : isFocus
-                  ? "focus"
-                  : selected
-                    ? "selected"
-                    : "default";
               return (
                 <Line
                   key={team.teamId}
+                  className={raceLineClass(team.teamId)}
                   yAxisId="right"
                   type="monotone"
                   dataKey={team.teamId}
                   name={team.abbreviation}
                   stroke={color}
-                  strokeWidth={isFocus ? 2.75 : selected ? 2.25 : 1.2}
-                  strokeOpacity={chartTheme.lineOpacity(emphasis)}
+                  strokeWidth={selected ? 2.25 : 1.2}
+                  strokeOpacity={chartTheme.lineOpacity(
+                    hasSelection && !selected ? "muted" : selected ? "selected" : "default"
+                  )}
                   dot={false}
-                  activeDot={
-                    isFocus
-                      ? {
-                          r: 5,
-                          strokeWidth: 2,
-                          stroke: "var(--background)",
-                          fill: color,
-                        }
-                      : false
-                  }
+                  activeDot={false}
                   connectNulls
                   isAnimationActive={false}
-                  onClick={() => onSelectTeam(team.teamId)}
-                  style={{ cursor: "pointer" }}
                 />
               );
             })}
           </LineChart>
         </ResponsiveContainer>
+        <RaceHoverLayer
+          store={hover}
+          render={(h) => {
+            const team = teamById.get(h.id);
+            const row = rowByLabel.get(h.label);
+            const value = row?.[h.id];
+            if (!team || typeof value !== "number") return null;
+            const { above, below } = standingsNeighborsAt(teams, h.id, row);
+            return (
+              <>
+                <p className="flex items-center gap-1.5">
+                  <TeamLogo teamKey={team.teamId} size="xs" />
+                  {team.displayName}
+                </p>
+                <p className="tabular-nums">
+                  {h.label} · <span className="font-semibold">{diffLabel(value)}</span> vs .500
+                </p>
+                <p className="text-muted-foreground">
+                  {above
+                    ? `${above.abbreviation} ${gapGamesLabel(above.gap)} ahead`
+                    : "Top of this board"}
+                  {below ? ` · ${below.abbreviation} ${gapGamesLabel(below.gap)} behind` : ""}
+                </p>
+                <p className="text-muted-foreground">
+                  Click to {selectedTeamIds.has(h.id) ? "unpin" : "pin"}
+                </p>
+              </>
+            );
+          }}
+        />
       </div>
 
-      {focusNeighbors?.team ? (
-        <div
-          className="mt-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 rounded-md border border-border/60 bg-background/70 px-3 py-2"
-          aria-live="polite"
-        >
-          {focusNeighbors.above ? (
-            <span className={cn(type.caption, "inline-flex items-center gap-1.5")}>
-              <TeamLogo teamKey={focusNeighbors.above.teamId} size="xs" />
-              <span className="font-semibold">
-                {focusNeighbors.above.abbreviation}
+      <div
+        className="mt-2 flex min-h-[2.375rem] flex-wrap items-center justify-center gap-x-3 gap-y-1 rounded-md border border-transparent px-3 py-2 data-[pinned]:border-border/60 data-[pinned]:bg-background/70"
+        data-pinned={pinned?.team ? "" : undefined}
+        aria-live="polite"
+      >
+        {pinned?.team ? (
+          <>
+            {pinned.above ? (
+              <span className={cn(type.caption, "inline-flex items-center gap-1.5")}>
+                <TeamLogo teamKey={pinned.above.teamId} size="xs" />
+                <span className="font-semibold">{pinned.above.abbreviation}</span>
+                <span className="text-muted-foreground">
+                  {gapGamesLabel(pinned.above.gap)} ahead
+                </span>
+                <span className="tabular-nums text-muted-foreground">
+                  ({diffLabel(pinned.above.diff)})
+                </span>
               </span>
-              <span className="text-muted-foreground">
-                {gapGamesLabel(focusNeighbors.above.gap)} ahead
-              </span>
-              <span className="tabular-nums text-muted-foreground">
-                ({diffLabel(focusNeighbors.above.diff)})
-              </span>
+            ) : (
+              <span className={cn(type.caption, "text-muted-foreground")}>No one ahead</span>
+            )}
+            <span className={cn(type.caption, "font-bold text-foreground")}>
+              · {pinned.team.displayName}{" "}
+              <span className="text-muted-foreground">({pinned.team.abbreviation})</span>{" "}
+              {typeof lastRow?.[pinned.team.teamId] === "number"
+                ? diffLabel(Number(lastRow[pinned.team.teamId]))
+                : diffLabel(pinned.team.currentDiff)}{" "}
+              ·
             </span>
-          ) : (
-            <span className={cn(type.caption, "text-muted-foreground")}>
-              No one ahead
-            </span>
-          )}
-          <span className={cn(type.caption, "font-bold text-foreground")}>
-            · {focusNeighbors.team.displayName}{" "}
-            <span className="text-muted-foreground">
-              ({focusNeighbors.team.abbreviation})
-            </span>{" "}
-            {typeof (focusNeighbors.row?.[focusNeighbors.team.teamId]) ===
-            "number"
-              ? diffLabel(
-                  Number(focusNeighbors.row[focusNeighbors.team.teamId])
-                )
-              : diffLabel(focusNeighbors.team.currentDiff)}{" "}
-            ·
-          </span>
-          {focusNeighbors.below ? (
-            <span className={cn(type.caption, "inline-flex items-center gap-1.5")}>
-              <TeamLogo teamKey={focusNeighbors.below.teamId} size="xs" />
-              <span className="font-semibold">
-                {focusNeighbors.below.abbreviation}
+            {pinned.below ? (
+              <span className={cn(type.caption, "inline-flex items-center gap-1.5")}>
+                <TeamLogo teamKey={pinned.below.teamId} size="xs" />
+                <span className="font-semibold">{pinned.below.abbreviation}</span>
+                <span className="text-muted-foreground">
+                  {gapGamesLabel(pinned.below.gap)} behind
+                </span>
+                <span className="tabular-nums text-muted-foreground">
+                  ({diffLabel(pinned.below.diff)})
+                </span>
               </span>
-              <span className="text-muted-foreground">
-                {gapGamesLabel(focusNeighbors.below.gap)} behind
-              </span>
-              <span className="tabular-nums text-muted-foreground">
-                ({diffLabel(focusNeighbors.below.diff)})
-              </span>
-            </span>
-          ) : (
-            <span className={cn(type.caption, "text-muted-foreground")}>
-              No one behind
-            </span>
-          )}
-        </div>
-      ) : (
-        <p className={cn(type.caption, "mt-2 text-center text-muted-foreground")}>
-          Move along the chart to snap to the nearest team line. Click to pin.
-        </p>
-      )}
+            ) : (
+              <span className={cn(type.caption, "text-muted-foreground")}>No one behind</span>
+            )}
+          </>
+        ) : (
+          <p className={cn(type.caption, "text-center text-muted-foreground")}>
+            Move along the chart to snap to the nearest team line. Click to pin.
+          </p>
+        )}
+      </div>
     </div>
   );
 }

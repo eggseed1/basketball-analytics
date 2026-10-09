@@ -1,6 +1,6 @@
 "use client";
 
-import { useDeferredValue, useId, useMemo } from "react";
+import { useDeferredValue, useId, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
   CartesianGrid,
@@ -8,16 +8,20 @@ import {
   ResponsiveContainer,
   Scatter,
   ScatterChart,
-  Tooltip,
   XAxis,
   YAxis,
   ZAxis,
 } from "recharts";
 
 import {
-  FrostRechartsTooltip,
-  rechartsFrostWrapperStyle,
-} from "@/components/brand/frost-recharts-tooltip";
+  dotMarkByKey,
+  nearestDotMark,
+  sameMarkKey,
+  StoreSnapLayer,
+  useHoverLinkTarget,
+  useHoverStore,
+  type HoverMark,
+} from "@/components/charts/hover-layer";
 import { useChartTheme } from "@/lib/chart-theme";
 import { type } from "@/lib/design-system";
 import {
@@ -42,6 +46,7 @@ function PeerDot({ cx = 0, cy = 0, size = 36, payload }: ScatterShapeProps) {
   const r = Math.max(3, Math.sqrt(size) / 2);
   return (
     <circle
+      data-dot-key={payload?.playerId}
       cx={cx}
       cy={cy}
       r={r}
@@ -55,6 +60,7 @@ function PinDot({ cx = 0, cy = 0, size = 140, payload }: ScatterShapeProps) {
   const r = Math.max(5, Math.sqrt(size) / 2);
   return (
     <circle
+      data-dot-key={payload?.playerId}
       cx={cx}
       cy={cy}
       r={r}
@@ -84,6 +90,12 @@ export function LeaguePlayerScatterChart({
   const meta = leagueScatterMeta(kind);
   const focalName = playerName?.trim() ?? "";
   const deferredPoints = useDeferredValue(points);
+  const plotRef = useRef<HTMLDivElement>(null);
+  const hover = useHoverStore<HoverMark>(sameMarkKey);
+  useHoverLinkTarget(null, {
+    show: (id) => hover.set(plotRef.current ? dotMarkByKey(plotRef.current, [id]) : null),
+    clear: () => hover.set(null),
+  });
 
   const data = useMemo<ChartPoint[]>(
     () =>
@@ -97,6 +109,7 @@ export function LeaguePlayerScatterChart({
       }),
     [chartTheme, deferredPoints]
   );
+  const byKey = useMemo(() => new Map(data.map((p) => [p.playerId, p])), [data]);
   const peers = useMemo(() => data.filter((p) => !p.isSelf), [data]);
   const pinned = useMemo(() => data.filter((p) => p.isSelf), [data]);
   const medians = useMemo(
@@ -160,7 +173,19 @@ export function LeaguePlayerScatterChart({
           Not enough qualified peers for {meta.title.toLowerCase()} in {season}.
         </p>
       ) : (
-        <div className="h-[300px] w-full sm:h-[360px]">
+        <div
+          ref={plotRef}
+          data-snap-host
+          className="relative h-[300px] w-full sm:h-[360px]"
+          onPointerMove={(event) => {
+            if (plotRef.current) hover.set(nearestDotMark(plotRef.current, event.clientX, event.clientY));
+          }}
+          onPointerLeave={() => hover.set(null)}
+          onClick={() => {
+            const key = hover.get()?.key;
+            if (key) router.push(`/players/${key}`);
+          }}
+        >
           <ResponsiveContainer width="100%" height="100%">
             <ScatterChart margin={{ top: 18, right: 28, bottom: 28, left: 12 }}>
               <CartesianGrid
@@ -221,55 +246,41 @@ export function LeaguePlayerScatterChart({
                   strokeDasharray="4 4"
                 />
               ) : null}
-              <Tooltip
-                cursor={false}
-                isAnimationActive={false}
-                animationDuration={0}
-                wrapperStyle={rechartsFrostWrapperStyle}
-                content={({ active, payload }) => {
-                  if (!active || !payload?.length) return null;
-                  const p = payload[0]?.payload as ChartPoint;
-                  return (
-                    <FrostRechartsTooltip active={active}>
-                      <p className="font-semibold">
-                        {p.playerName}
-                        {p.isSelf ? ` · ${highlightLabel}` : ""}
-                      </p>
-                      {p.teamAbbr ? (
-                        <p className="text-muted-foreground">{p.teamAbbr}</p>
-                      ) : null}
-                      <p>{p.xTooltip}</p>
-                      <p>{p.yTooltip}</p>
-                    </FrostRechartsTooltip>
-                  );
-                }}
-              />
               <Scatter
                 data={peers}
                 name="Peers"
-                cursor="pointer"
                 isAnimationActive={false}
                 shape={PeerDot}
-                onClick={(point) => {
-                  const p = point as unknown as ChartPoint;
-                  if (p?.playerId) router.push(`/players/${p.playerId}`);
-                }}
               />
               {pinned.length ? (
                 <Scatter
                   data={pinned}
                   name="Pinned"
-                  cursor="pointer"
                   isAnimationActive={false}
                   shape={PinDot}
-                  onClick={(point) => {
-                    const p = point as unknown as ChartPoint;
-                    if (p?.playerId) router.push(`/players/${p.playerId}`);
-                  }}
                 />
               ) : null}
             </ScatterChart>
           </ResponsiveContainer>
+          <StoreSnapLayer
+            store={hover}
+            color={(m) => byKey.get(m.key)?.fill ?? "var(--foreground)"}
+            render={(m) => {
+              const p = byKey.get(m.key);
+              if (!p) return null;
+              return (
+                <>
+                  <p>
+                    {p.playerName}
+                    {p.isSelf ? ` · ${highlightLabel}` : ""}
+                    {p.teamAbbr ? ` · ${p.teamAbbr}` : ""}
+                  </p>
+                  <p className="tabular-nums">{p.xTooltip}</p>
+                  <p className="tabular-nums">{p.yTooltip}</p>
+                </>
+              );
+            }}
+          />
         </div>
       )}
       <p className={cn(type.caption, "text-muted-foreground")}>

@@ -159,10 +159,13 @@ function SurplusRow({
   );
   return (
     <li
+      data-hover-item
+      data-tip={`${row.name}: ${formatUsdSignedCompact(row.surplus)}`}
+      data-tip-sub={`80% range ${formatUsdSignedCompact(row.surplusLow)} to ${formatUsdSignedCompact(row.surplusHigh)} · worth ${formatUsdCompact(row.worth)} against ${formatUsdCompact(row.salary)} in salary`}
       className={cn(
         ROW,
-        "rounded-md border-t border-border/40 px-1 py-1.5 first:border-t-0",
-        emphasized && "bg-secondary"
+        "group rounded-md border-t border-border/40 px-1 py-1.5 transition-colors first:border-t-0 hover:bg-secondary/60",
+        emphasized && "bg-secondary hover:bg-secondary"
       )}
     >
       <span className={cn(type.caption, "tabular-nums text-muted-foreground", emphasized && "font-semibold text-foreground")}>
@@ -177,24 +180,21 @@ function SurplusRow({
           </span>
         </p>
       </div>
-      <div
-        className="relative h-5"
-        data-tip={`${row.name}: ${formatUsdSignedCompact(row.surplus)}`}
-        data-tip-sub={`80% range ${formatUsdSignedCompact(row.surplusLow)} to ${formatUsdSignedCompact(row.surplusHigh)} · worth ${formatUsdCompact(row.worth)} against ${formatUsdCompact(row.salary)} in salary`}
-      >
+      <div className="relative h-5">
         <span aria-hidden className="absolute inset-y-0 w-px bg-foreground/30" style={{ left: pct(0) }} />
         <span
           aria-hidden
-          className="absolute top-1/2 h-[3px] -translate-y-1/2 rounded-full"
+          className="absolute top-1/2 h-[3px] -translate-y-1/2 rounded-full opacity-35 transition-[height,opacity] duration-200 group-hover:h-[5px] group-hover:opacity-60 motion-reduce:transition-none"
           style={{
             left: pct(row.surplusLow),
             width: `calc(${pct(row.surplusHigh)} - ${pct(row.surplusLow)})`,
             background: row.surplus > 0 ? "var(--chart-3)" : "var(--destructive)",
-            opacity: 0.35,
           }}
         />
         <span
           aria-hidden
+          data-tip-anchor
+          data-motion-dot
           className={cn(
             "absolute top-1/2 size-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full",
             emphasized && "size-3 ring-2 ring-foreground"

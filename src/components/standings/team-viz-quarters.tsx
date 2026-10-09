@@ -48,6 +48,7 @@ function cellStyle(v: number, scale: number) {
 export function TeamVizQuarters({ rows, season }: { rows: TeamVizRow[]; season: string }) {
   const { teamKeys, toggleTeam, conference } = useTeamVizParams();
   const [sortBy, setSortBy] = useState<ColumnId>("total");
+  const [hoverCol, setHoverCol] = useState<ColumnId | null>(null);
 
   const table = useMemo(
     () =>
@@ -82,12 +83,26 @@ export function TeamVizQuarters({ rows, season }: { rows: TeamVizRow[]; season: 
         </p>
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[560px] border-separate border-spacing-0 text-[13px]">
+        <table
+          data-quarter-grid
+          onPointerOver={(e) => {
+            const col = (e.target as Element).closest<HTMLElement>("[data-col]")?.dataset.col as ColumnId | undefined;
+            setHoverCol(col ?? null);
+          }}
+          onPointerLeave={() => setHoverCol(null)}
+          className="w-full min-w-[560px] border-separate border-spacing-0 text-[13px]"
+        >
           <thead>
             <tr className="text-muted-foreground">
               <th className="sticky left-0 z-10 bg-card px-2 py-2 text-left font-semibold">Team</th>
               {COLUMNS.map((c) => (
-                <th key={c.id} className="px-1 py-2 text-right font-semibold" aria-sort={sortBy === c.id ? "descending" : "none"}>
+                <th
+                  key={c.id}
+                  data-col={c.id}
+                  data-col-on={hoverCol === c.id || undefined}
+                  className="px-1 py-2 text-right font-semibold"
+                  aria-sort={sortBy === c.id ? "descending" : "none"}
+                >
                   <button
                     type="button"
                     onClick={() => setSortBy(c.id)}
@@ -136,6 +151,10 @@ export function TeamVizQuarters({ rows, season }: { rows: TeamVizRow[]; season: 
                   return (
                     <td
                       key={c.id}
+                      data-col={c.id}
+                      data-col-on={hoverCol === c.id || undefined}
+                      data-tip={`${t.row.name} · ${c.label}`}
+                      data-tip-sub={`${v > 0 ? "+" : ""}${v.toFixed(1)} net points per game`}
                       className="border-t border-border/50 px-2.5 py-1.5 text-right tabular-nums"
                       style={cellStyle(v, scale)}
                     >
