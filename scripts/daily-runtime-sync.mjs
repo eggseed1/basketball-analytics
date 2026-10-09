@@ -188,7 +188,7 @@ const TRANSACTION_STEPS = [
     args: ["scripts/build-runtime-transactions-snapshot.mjs"],
   },
 ];
-const SOFT_FAIL = new Set(["drbl-recompute", "on-off-pbp", "on-off-playoffs", "percentile-pools", ...TRANSACTION_STEPS.map((s) => s.label)]);
+const SOFT_FAIL = new Set(["team-game-box", "drbl-recompute", "on-off-pbp", "on-off-playoffs", "percentile-pools", ...TRANSACTION_STEPS.map((s) => s.label)]);
 
 async function runTransactionSteps() {
   const failed = [];
@@ -246,6 +246,12 @@ async function main() {
       label: "game-snapshot",
       cmd: "node",
       args: ["scripts/build-runtime-game-snapshot.mjs"],
+    },
+    {
+      // Team totals for the Games tab log; only fetches finals it doesn't have.
+      label: "team-game-box",
+      cmd: "npx",
+      args: ["tsx", "scripts/build-team-game-box-snapshot.ts", "--season", info.season, "--fetch"],
     },
     {
       label: "bref-advanced",
