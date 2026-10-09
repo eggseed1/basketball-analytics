@@ -37,13 +37,13 @@ export function applyOwnerTheme(options: {
   }
 }
 
-/** Inline boot script - first paint matches stored prefs. Default: light + glass. */
+/** Inline boot script - first paint matches stored prefs. Default: follow the system + glass. */
 export const OWNER_THEME_BOOT_SCRIPT = `(function(){
   try {
     var t = localStorage.getItem("${COLOR_SCHEME_KEY}");
     var s = localStorage.getItem("${SURFACE_KEY}");
     var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    var dark = t === "dark" || (t === "system" && prefersDark);
+    var dark = t === "dark" || (t !== "light" && prefersDark);
     document.documentElement.classList.toggle("dark", dark);
     if (s === "solid") document.documentElement.removeAttribute("data-surface");
     else document.documentElement.setAttribute("data-surface", "glass");

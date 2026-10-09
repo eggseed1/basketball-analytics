@@ -34,9 +34,9 @@ const OwnerThemeContext = createContext<Omit<
 > | null>(null);
 
 function readScheme(): ColorScheme {
-  if (typeof window === "undefined") return "light";
+  if (typeof window === "undefined") return "system";
   const raw = localStorage.getItem(COLOR_SCHEME_KEY);
-  return isColorScheme(raw) ? raw : "light";
+  return isColorScheme(raw) ? raw : "system";
 }
 
 function readSurface(): SurfaceStyle {
@@ -73,7 +73,7 @@ const readDarkClass = () => document.documentElement.classList.contains("dark");
 const serverDarkClass = () => false;
 
 export function OwnerThemeProvider({ children }: { children: ReactNode }) {
-  const [scheme, setSchemeState] = useState<ColorScheme>("light");
+  const [scheme, setSchemeState] = useState<ColorScheme>("system");
   const [surface, setSurfaceState] = useState<SurfaceStyle>("glass");
   const [hydrated, setHydrated] = useState(false);
 
