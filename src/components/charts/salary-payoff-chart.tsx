@@ -265,31 +265,18 @@ function PayoffPlot({
                   {line.id !== totalId ? <TeamLogo teamKey={line.teamId} size="xs" /> : null}
                   {line.name}
                 </p>
-                {(line.pct[i] ?? 0) >= 100 ? (
-                  <>
-                    <p className="tabular-nums">
-                      {shortDate(dates[i])} · <span className="font-semibold">100% played off</span>
-                      {coveredOn ? ` on ${shortDate(coveredOn)}` : ""}
-                    </p>
-                    <p className="tabular-nums">
-                      <span className="font-semibold">+{pctLabel((line.pct[i] ?? 0) - 100)}</span> over ·{" "}
-                      {formatUsdCompact((line.earned[i] ?? 0) - line.salary)} beyond the {formatUsdCompact(line.salary)} salary
-                    </p>
-                    <p className="tabular-nums text-muted-foreground">
-                      {formatUsdCompact(line.earned[i] ?? 0)} earned · season {pctLabel(pace[i] ?? 0)} paid
-                    </p>
-                  </>
-                ) : (
-                  <>
-                    <p className="tabular-nums">
-                      {shortDate(dates[i])} · <span className="font-semibold">{pctLabel(line.pct[i] ?? 0)}</span> of{" "}
-                      {formatUsdCompact(line.salary)}
-                    </p>
-                    <p className="tabular-nums text-muted-foreground">
-                      {formatUsdCompact(line.earned[i] ?? 0)} earned · season {pctLabel(pace[i] ?? 0)} paid
-                    </p>
-                  </>
-                )}
+                <p className="tabular-nums">
+                  {shortDate(dates[i])} · <span className="font-semibold">{pctLabel(line.pct[i] ?? 0)} played off</span>
+                </p>
+                {(line.pct[i] ?? 0) >= 100 && coveredOn ? (
+                  <p className="tabular-nums">
+                    Covered {shortDate(coveredOn)} · {formatUsdCompact((line.earned[i] ?? 0) - line.salary)} over
+                  </p>
+                ) : null}
+                <p className="tabular-nums">
+                  {formatUsdCompact(line.earned[i] ?? 0)} earned on {formatUsdCompact(line.salary)}
+                </p>
+                <p className="tabular-nums text-muted-foreground">Season {pctLabel(pace[i] ?? 0)} played</p>
                 {line.href ? <p className="text-muted-foreground">Click to open</p> : null}
               </>
             );
@@ -361,7 +348,7 @@ export function SalaryPayoffChart({
       <PayoffPlot {...plot} hoverLink={hoverLink} cap={Y_CAP} className="h-[min(360px,62vw)] min-h-[240px]" />
       <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
         <p className={cn(type.caption, "text-muted-foreground")}>
-          The dotted line is the share of the season&apos;s salary paid out so far.
+          The dotted line is the share of the season played so far.
           {clipped ? ` Lines above ${Y_CAP}% run off the top here; full screen fits every line.` : ""}
         </p>
         <button
@@ -395,7 +382,7 @@ export function SalaryPayoffChart({
               </div>
               <PayoffPlot {...plot} cap={null} className="min-h-0 flex-1" />
               <p className={cn(type.caption, "text-muted-foreground")}>
-                The dotted line is the share of the season&apos;s salary paid out so far. Press Esc to close.
+                The dotted line is the share of the season played so far. Press Esc to close.
               </p>
             </div>,
             document.body
