@@ -141,7 +141,7 @@ function CommitmentColumns({ data, accent }: { data: TeamContractsView; accent: 
           <div
             data-motion-bar="y"
             data-tip-anchor
-            className="w-full max-w-16 rounded-t-md"
+            className="w-full max-w-24 rounded-t-md"
             style={
               {
                 height: `${Math.max(3, (bar.total / max) * 70)}%`,
@@ -165,11 +165,14 @@ function PayrollNotesList({ data, teamKey }: { data: TeamContractsView; teamKey:
   const rows = data.rows.filter((r) => data.notes[r.brefId]);
   if (!rows.length) return null;
   return (
-    <ul className="divide-y divide-border/60">
+    <ul className="grid gap-x-8 lg:grid-cols-2">
       {rows.map((row) => {
         const href = data.hrefs[row.brefId];
         return (
-          <li key={row.brefId} className="flex gap-3 py-2.5">
+          <li
+            key={row.brefId}
+            className="flex gap-3 border-t border-border/60 py-2.5 first:border-t-0 lg:[&:nth-child(2)]:border-t-0"
+          >
             <PlayerHeadshot playerId={playerIdFromHref(href)} name={row.name} teamKey={teamKey} size="xs" />
             <div className="min-w-0">
               {href ? (
@@ -295,19 +298,18 @@ export function TeamContractsPageView({
         </Panel>
       ) : null}
 
-      <div data-motion-stack className={cn("grid gap-6", hasNotes && "lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]")}>
-        <Panel title="Salary on the books" id="books-heading">
-          <CommitmentColumns data={contracts} accent={accent} />
-          <p className={cn(type.caption, "text-muted-foreground")}>
-            Money already committed for each season, before any new signings.
-          </p>
+      <Panel title="Salary on the books" id="books-heading">
+        <CommitmentColumns data={contracts} accent={accent} />
+        <p className={cn(type.caption, "text-muted-foreground")}>
+          Money already committed for each season, before any new signings.
+        </p>
+      </Panel>
+
+      {hasNotes ? (
+        <Panel title="Contract notes" id="notes-heading">
+          <PayrollNotesList data={contracts} teamKey={teamKey} />
         </Panel>
-        {hasNotes ? (
-          <Panel title="Contract notes" id="notes-heading">
-            <PayrollNotesList data={contracts} teamKey={teamKey} />
-          </Panel>
-        ) : null}
-      </div>
+      ) : null}
     </div>
   );
 }
