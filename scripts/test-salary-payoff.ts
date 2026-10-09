@@ -1,11 +1,14 @@
 import assert from "node:assert/strict";
 
 import {
+  currentPayoffSeason,
   getPayoffSeason,
   getPlayerPayoff,
   getTeamPayoff,
   payoffLeftOutNote,
+  payoffSeasonOptions,
   payoffSeasons,
+  payoffWaiting,
   sampleIndexes,
 } from "@/data/runtime/salary-payoff";
 import {
@@ -88,7 +91,7 @@ for (const season of seasons) {
   if (note) assert.ok(!/\b1 (salaries|players)\b/.test(note), "left-out counts agree in number");
 
   const first = players[0];
-  if (first.nbaId) assert.equal(getPlayerPayoff(first.nbaId)?.player.key, first.key, "player lookup finds his line");
+  if (first.nbaId) assert.equal(getPlayerPayoff(first.nbaId, season)?.player.key, first.key, "player lookup finds his line");
   const team = getTeamPayoff(first.teamId, season)!;
   assert.ok(team.players.every((p) => p.teamId === first.teamId), "team lines are that team's");
   const salary = team.players.reduce((s, p) => s + p.salary, 0);
@@ -96,6 +99,21 @@ for (const season of seasons) {
   const earned = team.players.reduce((s, p) => s + (p.earned.at(-1) ?? 0), 0);
   assert.ok(Math.abs((team.total.earned.at(-1) ?? 0) - earned) < 1, "team total earned adds up");
 }
+// ---- Seasons stay separate
+const current = currentPayoffSeason();
+assert.ok(payoffSeasonOptions().includes(current), "this league year is always offered");
+assert.equal(payoffSeasonOptions()[0], current, "newest first");
+const waiting = payoffWaiting(current);
+if (!getPayoffSeason(current)) {
+  assert.ok(waiting, "this league year without lines says it's waiting");
+  assert.ok(waiting!.previous == null || waiting!.previous < current, "points back to a finished season");
+  assert.equal(getPlayerPayoff(getPayoffSeason(waiting!.previous)?.players[0]?.nbaId, current), null, "no carrying last season's line forward");
+} else {
+  assert.equal(waiting, null, "a season with lines isn't waiting");
+}
+for (const season of seasons) if (season !== current) assert.equal(payoffWaiting(season), null, `${season} never waits`);
+assert.equal(getPayoffSeason("1999-00"), null, "a season with no lines is null, not another season");
+
 assert.equal(getPlayerPayoff(null), null);
 assert.equal(getPlayerPayoff("no-such-player"), null);
 assert.equal(getTeamPayoff("no-such-team"), null);

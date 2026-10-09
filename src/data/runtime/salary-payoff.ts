@@ -4,6 +4,10 @@
  */
 import { loadPlayerIdAliases } from "@/data/providers/impact/player-id-aliases";
 import {
+  canonicalSeasonFromStartYear,
+  currentNbaStartYear,
+} from "@/data/providers/historical/season-range";
+import {
   paceSeries,
   paidOffDate,
   payoffSeries,
@@ -43,6 +47,34 @@ export function payoffSeasons(): string[] {
   return Object.keys(data.seasons).sort().reverse();
 }
 
+/** The league year we're in; it rolls over July 1, before opening night. */
+export function currentPayoffSeason(): string {
+  return canonicalSeasonFromStartYear(currentNbaStartYear());
+}
+
+/** Seasons a picker should offer: this league year plus every baked one, newest first. */
+export function payoffSeasonOptions(): string[] {
+  return [...new Set([currentPayoffSeason(), ...payoffSeasons()])].sort().reverse();
+}
+
+export type PayoffWaiting = {
+  season: string;
+  /** Opening night, when the schedule has it. */
+  opener: string | null;
+  /** The newest finished season with lines, to point at instead. */
+  previous: string | null;
+};
+
+/** This league year before its first reading: show a note, never last season's lines. */
+export function payoffWaiting(season: string): PayoffWaiting | null {
+  if (season !== currentPayoffSeason() || data.seasons[season]?.dates.length) return null;
+  return {
+    season,
+    opener: data.openers?.[season] ?? null,
+    previous: payoffSeasons().find((s) => s < season) ?? null,
+  };
+}
+
 function meta(season: string, file: PayoffSeasonFile): PayoffSeasonMeta {
   return {
     season,
@@ -79,25 +111,22 @@ function seasonSummaries(season: string): PayoffSummary[] {
   return rows;
 }
 
-/** The season to show by default: the newest with readings. */
-export function defaultPayoffSeason(): string | null {
-  return payoffSeasons()[0] ?? null;
-}
-
+/** Exactly this season (this league year by default), or null when it has no lines. */
 export function getPayoffSeason(season?: string | null): { meta: PayoffSeasonMeta; players: PayoffSummary[] } | null {
-  const key = season && data.seasons[season] ? season : defaultPayoffSeason();
-  if (!key) return null;
-  return { meta: meta(key, data.seasons[key]), players: seasonSummaries(key) };
+  const key = season ?? currentPayoffSeason();
+  const file = data.seasons[key];
+  if (!file?.dates.length) return null;
+  return { meta: meta(key, file), players: seasonSummaries(key) };
 }
 
-/** Newest season this player has a line in. */
-export function getPlayerPayoff(nbaId: string | null | undefined): { meta: PayoffSeasonMeta; player: PayoffSummary } | null {
-  if (!nbaId) return null;
-  for (const season of payoffSeasons()) {
-    const player = seasonSummaries(season).find((p) => p.nbaId === nbaId);
-    if (player) return { meta: meta(season, data.seasons[season]), player };
-  }
-  return null;
+/** His line in exactly this season (this league year by default). */
+export function getPlayerPayoff(
+  nbaId: string | null | undefined,
+  season?: string | null
+): { meta: PayoffSeasonMeta; player: PayoffSummary } | null {
+  const found = nbaId ? getPayoffSeason(season) : null;
+  const player = found?.players.find((p) => p.nbaId === nbaId);
+  return found && player ? { meta: found.meta, player } : null;
 }
 
 export type TeamPayoff = {

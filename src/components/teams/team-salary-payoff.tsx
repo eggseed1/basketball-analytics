@@ -52,6 +52,7 @@ export function TeamSalaryPayoff({ payoff }: { payoff: TeamPayoff }) {
         rows={rows}
         colors="team"
         totalId={TEAM_PAYOFF_TOTAL_ID}
+        title={`Salary paid off · ${meta.season}`}
         listLabel="Players by share of salary covered"
       />
       <div className={cn(type.caption, "flex flex-col gap-1 text-muted-foreground")}>

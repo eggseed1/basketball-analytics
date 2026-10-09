@@ -35,6 +35,8 @@ export type PayoffSnapshotFile = {
   version: 1;
   generatedAt: string;
   seasons: Record<string, PayoffSeasonFile>;
+  /** Opening night of each regular season on the schedule, including ones not started. */
+  openers?: Record<string, string>;
 };
 
 export type PayoffSeries = {

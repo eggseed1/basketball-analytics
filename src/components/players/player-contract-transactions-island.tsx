@@ -76,11 +76,14 @@ export async function PlayerContractSectionIsland({
   playerName,
   teamKey,
   nbaId,
+  season,
 }: {
   playerId: string;
   playerName: string;
   teamKey?: string | null;
   nbaId?: string | null;
+  /** Season picked in the URL, if any. */
+  season?: string | null;
 }) {
   let contract: Awaited<ReturnType<typeof getPlayerContractSnapshot>>;
   try {
@@ -103,7 +106,11 @@ export async function PlayerContractSectionIsland({
       value={getContractValue(contract.franchiseId, contract.brefId)}
       model={contractValueModel()}
     >
-      <PlayerSalaryPayoff nbaId={nbaId ?? (/^\d+$/.test(playerId) ? playerId : null)} playerId={playerId} />
+      <PlayerSalaryPayoff
+        nbaId={nbaId ?? (/^\d+$/.test(playerId) ? playerId : null)}
+        playerId={playerId}
+        season={season}
+      />
     </PlayerContractTransactions>
   );
 }

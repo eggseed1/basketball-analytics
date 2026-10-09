@@ -12,7 +12,12 @@ import {
 } from "@/components/explore/player-visualizations-hub";
 import { PageHeader } from "@/components/layout/page-header";
 import { getPlayerSurplusRows } from "@/data/queries/contract-surplus";
-import { getPayoffSeason, payoffPinIds, payoffSeasons } from "@/data/runtime/salary-payoff";
+import {
+  currentPayoffSeason,
+  getPayoffSeason,
+  payoffPinIds,
+  payoffSeasonOptions,
+} from "@/data/runtime/salary-payoff";
 import { getPlayerRaceTrackerSeasonOptions } from "@/data/queries/player-race-tracker";
 import {
   canonicalSeasonFromStartYear,
@@ -116,7 +121,8 @@ export default async function PlayerVisualizationsPage({
   const usageRankEnd = parseVizRankEnd(one(sp, "end"), "high");
   const surplusRankEnd = parseVizRankEnd(one(sp, "end"), "both");
   const payoffRankEnd = parseVizRankEnd(one(sp, "end"), "high");
-  const payoff = view === "payoff" ? getPayoffSeason(seasonParam) : null;
+  const payoffSeason =
+    seasonParam && /^\d{4}-\d{2}$/.test(seasonParam) ? seasonParam : currentPayoffSeason();
   const raceMinMinutes = parsePlayerRaceMinMinutes(one(sp, "minmp"));
   const scatterMinMinutes = parseVizScatterMinMinutes(one(sp, "minmp"));
   const pin = one(sp, "pin") ?? "";
@@ -149,7 +155,7 @@ export default async function PlayerVisualizationsPage({
     view === "surplus"
       ? "Every current contract we can estimate, ranked by projected surplus. Pick how many to show, highlight a team, or pin a player."
       : view === "payoff"
-      ? `${payoff?.meta.season ?? season} · how much of each player's salary his play has covered, starting from 0 on opening night. Pick how many to show, highlight a team, or pin a player.`
+      ? `${payoffSeason} · how much of each player's salary his play has covered, starting from 0 on opening night. Pick how many to show, highlight a team, or pin a player.`
       : view === "usage"
       ? `${season} · ${fieldBlurb}${minutesBlurb} · usage rate × true shooting. Use the side leaders list, team highlight, or pin search, and click a point to open their page.`
       : scatterMeta
@@ -168,12 +174,12 @@ export default async function PlayerVisualizationsPage({
       <Suspense fallback={null}>
         <PlayerVisualizationsHubChromeAsync
           view={view}
-          season={payoff?.meta.season ?? season}
+          season={view === "payoff" ? payoffSeason : season}
           pinNames={
             view === "surplus"
               ? surplusPinNames(pin)
               : view === "payoff"
-                ? await payoffPinNames(pin, payoff?.meta.season)
+                ? await payoffPinNames(pin, payoffSeason)
                 : undefined
           }
         />
@@ -186,7 +192,7 @@ export default async function PlayerVisualizationsPage({
       >
         {view === "payoff" ? (
           <PlayerPayoffBoard
-            season={payoff?.meta.season}
+            season={payoffSeason}
             fieldSize={fieldSize}
             rankEnd={payoffRankEnd}
             pin={pin || undefined}
@@ -260,7 +266,7 @@ async function PlayerVisualizationsHubChromeAsync({
   season: string;
   pinNames?: Record<string, string>;
 }) {
-  const seasonOptions = view === "payoff" ? payoffSeasons() : await getPlayerRaceTrackerSeasonOptions();
+  const seasonOptions = view === "payoff" ? payoffSeasonOptions() : await getPlayerRaceTrackerSeasonOptions();
   const options = seasonOptions.length ? seasonOptions : [season];
   return (
     <PlayerVisualizationsHubChrome

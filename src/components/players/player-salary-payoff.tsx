@@ -1,11 +1,14 @@
 import { SalaryPayoffChart } from "@/components/charts/salary-payoff-chart";
+import { SalaryPayoffWaiting } from "@/components/charts/salary-payoff-waiting";
 import { TextLink } from "@/components/ui/text-link";
 import {
+  currentPayoffSeason,
   getPlayerPayoff,
   payoffLeftOutNote,
   payoffLine,
   payoffMethodNote,
   payoffSourceNote,
+  payoffWaiting,
   sampleIndexes,
 } from "@/data/runtime/salary-payoff";
 import { type } from "@/lib/design-system";
@@ -18,9 +21,33 @@ function pct(n: number): string {
   return `${Math.round(n).toLocaleString()}%`;
 }
 
-/** How much of this season's salary his play has covered, night by night. */
-export function PlayerSalaryPayoff({ nbaId, playerId }: { nbaId?: string | null; playerId: string }) {
-  const found = getPlayerPayoff(nbaId);
+/** How much of the season's salary his play has covered, night by night. */
+export function PlayerSalaryPayoff({
+  nbaId,
+  playerId,
+  season,
+}: {
+  nbaId?: string | null;
+  playerId: string;
+  /** The season picked on the page; this league year when none is. */
+  season?: string | null;
+}) {
+  const picked = season ?? currentPayoffSeason();
+  const waiting = payoffWaiting(picked);
+  if (waiting) {
+    return (
+      <div className="sports-card flex flex-col gap-2 p-4 sm:p-5" aria-labelledby="salary-payoff-title">
+        <h3 id="salary-payoff-title" className={type.heading}>
+          Salary paid off · {waiting.season}
+        </h3>
+        <SalaryPayoffWaiting
+          waiting={waiting}
+          previousHref={waiting.previous ? `/players/${playerId}?season=${waiting.previous}#contract` : null}
+        />
+      </div>
+    );
+  }
+  const found = getPlayerPayoff(nbaId, picked);
   if (!found) return null;
   const { meta, player } = found;
   const now = player.pct.at(-1) ?? 0;
@@ -49,7 +76,7 @@ export function PlayerSalaryPayoff({ nbaId, playerId }: { nbaId?: string | null;
           </p>
         </div>
         <TextLink
-          href={`/explore/players/visualizations?view=payoff&pin=${encodeURIComponent(nbaId ?? playerId)}${meta.kind === "paced" ? `&season=${meta.season}` : ""}`}
+          href={`/explore/players/visualizations?view=payoff&season=${meta.season}&pin=${encodeURIComponent(nbaId ?? playerId)}`}
           className={type.caption}
         >
           League board <span data-motion-arrow aria-hidden>→</span>
@@ -59,6 +86,7 @@ export function PlayerSalaryPayoff({ nbaId, playerId }: { nbaId?: string | null;
         dates={indexes.map((i) => meta.dates[i])}
         pace={indexes.map((i) => meta.pace[i])}
         lines={[payoffLine(player, indexes, true)]}
+        title={`${player.name} · salary paid off, ${meta.season}`}
       />
       <div className={cn(type.caption, "flex flex-col gap-1 text-muted-foreground")}>
         <p>{payoffMethodNote(meta)}</p>

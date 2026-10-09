@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useMemo, useRef, type CSSProperties } from "react";
+import { Maximize2, X } from "lucide-react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { createPortal } from "react-dom";
 import {
   CartesianGrid,
   Line,
@@ -80,41 +82,35 @@ function lastPoint(d: string): { x: number; y: number } | null {
   return { x: Number(nums[nums.length - 2]), y: Number(nums[nums.length - 1]) };
 }
 
-export function SalaryPayoffChart({
+function payoffTicks(yMax: number): number[] {
+  const step = yMax > 1500 ? 500 : yMax > 600 ? 250 : yMax > 200 ? 100 : 50;
+  return Array.from({ length: Math.floor(yMax / step) + 1 }, (_, i) => i * step);
+}
+
+function PayoffPlot({
   dates,
   pace,
   lines,
-  colors = "league",
+  colorById,
   totalId,
   hoverLink,
+  cap,
   className,
 }: {
   dates: string[];
   pace: number[];
   lines: PayoffLine[];
-  /** `team` gives one franchise's lines separable shades of its color. */
-  colors?: "league" | "team";
-  /** A line drawn as the team total: thicker and in the ink color. */
+  colorById: Map<string, string>;
   totalId?: string;
   hoverLink?: HoverLink;
-  className?: string;
+  /** Top of the y axis at most; null fits every line. */
+  cap: number | null;
+  className: string;
 }) {
   const theme = useChartTheme();
   const router = useRouter();
   const rootRef = useRef<HTMLDivElement>(null);
   const hover = useHoverStore<RaceHover>(sameRaceHover);
-
-  const colorById = useMemo(() => {
-    const out = new Map<string, string>();
-    const palette = colors === "team" && lines[0] ? theme.teamPalette(lines[0].teamId, Math.max(lines.length, 2)) : null;
-    lines.forEach((line, i) => {
-      out.set(
-        line.id,
-        line.id === totalId ? "var(--foreground)" : palette ? palette[i % palette.length] : theme.leagueTeamColor(line.teamId).color
-      );
-    });
-    return out;
-  }, [colors, lines, theme, totalId]);
 
   const rows = useMemo(
     () =>
@@ -127,11 +123,10 @@ export function SalaryPayoffChart({
   );
 
   const peak = Math.max(110, ...lines.map((l) => Math.max(...l.pct)));
-  const yMax = Math.min(Y_CAP, Math.ceil(peak / 50) * 50);
-  const clipped = peak > Y_CAP;
+  const step = payoffTicks(Math.ceil(peak / 50) * 50)[1] ?? 50;
+  const yMax = Math.min(cap ?? Infinity, Math.ceil(peak / step) * step);
   const domain: [number, number] = [0, yMax];
-  const step = yMax > 200 ? 100 : 50;
-  const ticks = Array.from({ length: Math.floor(yMax / step) + 1 }, (_, i) => i * step);
+  const ticks = payoffTicks(yMax);
   const lineById = useMemo(() => new Map(lines.map((l) => [l.id, l])), [lines]);
   const anyStrong = lines.some((l) => l.strong && l.id !== totalId);
 
@@ -167,11 +162,8 @@ export function SalaryPayoffChart({
     clear: () => hover.set(null),
   });
 
-  if (!dates.length || !lines.length) return null;
-
   return (
-    <div className={cn("flex flex-col gap-1.5", className)}>
-      <div ref={rootRef} className="relative h-[min(360px,62vw)] min-h-[240px] w-full">
+    <div ref={rootRef} className={cn("relative w-full", className)}>
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={rows}
@@ -284,11 +276,112 @@ export function SalaryPayoffChart({
             );
           }}
         />
+    </div>
+  );
+}
+
+export function SalaryPayoffChart({
+  dates,
+  pace,
+  lines,
+  colors = "league",
+  totalId,
+  hoverLink,
+  title,
+  className,
+}: {
+  dates: string[];
+  pace: number[];
+  lines: PayoffLine[];
+  /** `team` gives one franchise's lines separable shades of its color. */
+  colors?: "league" | "team";
+  /** A line drawn as the team total: thicker and in the ink color. */
+  totalId?: string;
+  hoverLink?: HoverLink;
+  /** Heading for the full-screen view. */
+  title: string;
+  className?: string;
+}) {
+  const theme = useChartTheme();
+  const [full, setFull] = useState(false);
+  const closeRef = useRef<HTMLButtonElement>(null);
+
+  const colorById = useMemo(() => {
+    const out = new Map<string, string>();
+    const palette = colors === "team" && lines[0] ? theme.teamPalette(lines[0].teamId, Math.max(lines.length, 2)) : null;
+    lines.forEach((line, i) => {
+      out.set(
+        line.id,
+        line.id === totalId ? "var(--foreground)" : palette ? palette[i % palette.length] : theme.leagueTeamColor(line.teamId).color
+      );
+    });
+    return out;
+  }, [colors, lines, theme, totalId]);
+
+  useEffect(() => {
+    if (!full) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setFull(false);
+    };
+    const overflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.addEventListener("keydown", onKey);
+    closeRef.current?.focus();
+    return () => {
+      document.body.style.overflow = overflow;
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [full]);
+
+  if (!dates.length || !lines.length) return null;
+  const clipped = lines.some((l) => l.pct.some((p) => p > Y_CAP));
+  const plot = { dates, pace, lines, colorById, totalId };
+
+  return (
+    <div className={cn("flex flex-col gap-1.5", className)}>
+      <PayoffPlot {...plot} hoverLink={hoverLink} cap={Y_CAP} className="h-[min(360px,62vw)] min-h-[240px]" />
+      <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+        <p className={cn(type.caption, "text-muted-foreground")}>
+          The dotted line is the share of the season&apos;s salary paid out so far.
+          {clipped ? ` Lines above ${Y_CAP}% run off the top here; full screen fits every line.` : ""}
+        </p>
+        <button
+          type="button"
+          onClick={() => setFull(true)}
+          className={cn(type.caption, "inline-flex items-center gap-1 font-semibold text-muted-foreground hover:text-foreground")}
+        >
+          <Maximize2 aria-hidden className="size-3.5" />
+          Full screen
+        </button>
       </div>
-      <p className={cn(type.caption, "text-muted-foreground")}>
-        The dotted line is the share of the season&apos;s salary paid out so far.
-        {clipped ? ` Lines above ${Y_CAP}% run off the top; the list has every number.` : ""}
-      </p>
+      {full
+        ? createPortal(
+            <div
+              role="dialog"
+              aria-modal="true"
+              aria-label={title}
+              className="fixed inset-0 z-[100] flex flex-col gap-3 bg-background p-4 sm:p-6"
+            >
+              <div className="flex items-center justify-between gap-4">
+                <h2 className={type.heading}>{title}</h2>
+                <button
+                  ref={closeRef}
+                  type="button"
+                  onClick={() => setFull(false)}
+                  className={cn(type.caption, "glass-pill inline-flex items-center gap-1 rounded-md px-2.5 py-1 font-semibold")}
+                >
+                  <X aria-hidden className="size-3.5" />
+                  Close
+                </button>
+              </div>
+              <PayoffPlot {...plot} cap={null} className="min-h-0 flex-1" />
+              <p className={cn(type.caption, "text-muted-foreground")}>
+                The dotted line is the share of the season&apos;s salary paid out so far. Press Esc to close.
+              </p>
+            </div>,
+            document.body
+          )
+        : null}
     </div>
   );
 }
@@ -301,6 +394,7 @@ export function SalaryPayoffPanel({
   rows,
   colors,
   totalId,
+  title,
   listLabel,
 }: {
   dates: string[];
@@ -309,13 +403,23 @@ export function SalaryPayoffPanel({
   rows: PayoffRow[];
   colors?: "league" | "team";
   totalId?: string;
+  /** Heading for the full-screen view. */
+  title: string;
   listLabel: string;
 }) {
   const hoverLink = useHoverLink();
   const pacePct = pace.at(-1) ?? 0;
   return (
     <div className="flex flex-col gap-4">
-      <SalaryPayoffChart dates={dates} pace={pace} lines={lines} colors={colors} totalId={totalId} hoverLink={hoverLink} />
+      <SalaryPayoffChart
+        dates={dates}
+        pace={pace}
+        lines={lines}
+        colors={colors}
+        totalId={totalId}
+        hoverLink={hoverLink}
+        title={title}
+      />
       <PayoffList rows={rows} pacePct={pacePct} hoverLink={hoverLink} label={listLabel} />
     </div>
   );

@@ -19,7 +19,7 @@ import { resolveTeamBrand } from "@/lib/nba-brand";
 import { TEAM_SALARY_VIEWS, teamSalaryHref, type TeamSalaryView } from "@/lib/team-destination";
 import { cn } from "@/lib/utils";
 
-async function TeamContractsIsland({ teamId }: { teamId: string }) {
+async function TeamContractsIsland({ teamId, season }: { teamId: string; season: string }) {
   const franchiseId = resolveFrontOfficeFranchiseId(teamId);
   const contracts = franchiseId ? getTeamContracts(franchiseId) : null;
   const slice = franchiseId ? await resolveTeamFrontOfficeSlice(franchiseId) : null;
@@ -31,6 +31,8 @@ async function TeamContractsIsland({ teamId }: { teamId: string }) {
         franchiseId={franchiseId}
         contracts={contracts}
         capContext={slice ? buildTeamPayrollPresentation(slice).capContext : null}
+        season={season}
+        seasonHref={(other) => `${teamSalaryHref(teamId, "contracts", other)}#payoff-heading`}
       />
     );
   }
@@ -98,7 +100,7 @@ export function TeamSalaryAssetsTab({
 
       {view === "contracts" ? (
         <Suspense fallback={<DestinationSectionSkeleton label="Loading contracts…" />}>
-          <TeamContractsIsland teamId={teamId} />
+          <TeamContractsIsland teamId={teamId} season={season} />
         </Suspense>
       ) : null}
 

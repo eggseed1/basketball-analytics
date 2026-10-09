@@ -1,4 +1,5 @@
 import { SalaryPayoffPanel, type PayoffRow } from "@/components/charts/salary-payoff-chart";
+import { SalaryPayoffWaiting } from "@/components/charts/salary-payoff-waiting";
 import {
   getPayoffSeason,
   payoffPinIds,
@@ -6,6 +7,7 @@ import {
   payoffLine,
   payoffMethodNote,
   payoffSourceNote,
+  payoffWaiting,
   sampleIndexes,
   type PayoffSummary,
 } from "@/data/runtime/salary-payoff";
@@ -38,17 +40,34 @@ export async function PlayerPayoffBoard({
   pin,
   team,
 }: {
-  season?: string;
+  season: string;
   fieldSize: PlayerRaceFieldSize;
   rankEnd: PlayerRaceRankEnd;
   pin?: string;
   team?: string;
 }) {
+  const waiting = payoffWaiting(season);
+  if (waiting) {
+    const q = new URLSearchParams({ view: "payoff", season: waiting.previous ?? "" });
+    if (pin) q.set("pin", pin);
+    if (team) q.set("team", team);
+    return (
+      <section className="sports-card flex flex-col gap-2 p-4 sm:p-5" aria-labelledby="player-payoff-title">
+        <h2 id="player-payoff-title" className={type.heading}>
+          Salary paid off · {waiting.season}
+        </h2>
+        <SalaryPayoffWaiting
+          waiting={waiting}
+          previousHref={waiting.previous ? `/explore/players/visualizations?${q}` : null}
+        />
+      </section>
+    );
+  }
   const found = getPayoffSeason(season);
   if (!found || !found.players.length) {
     return (
       <p className={cn(type.bodySm, "sports-card px-4 py-10 text-center text-muted-foreground")}>
-        No salary payoff readings are available right now.
+        No salary payoff lines for {season}.
       </p>
     );
   }
@@ -104,6 +123,7 @@ export async function PlayerPayoffBoard({
         pace={indexes.map((i) => meta.pace[i])}
         lines={shown.map((p) => payoffLine(p, indexes, strong(p)))}
         rows={rows}
+        title={`Salary paid off · ${meta.season}`}
         listLabel="Players ranked by share of salary covered"
       />
       <div className={cn(type.caption, "flex flex-col gap-1 text-muted-foreground")}>

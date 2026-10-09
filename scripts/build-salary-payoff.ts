@@ -312,5 +312,10 @@ if (pacedSeason) {
   }
 }
 
-const out: PayoffSnapshotFile = { version: 1, generatedAt: new Date().toISOString(), seasons };
+const openers: Record<string, string> = {};
+for (const season of new Set(games.filter((g) => g.gameType === "regular").map((g) => g.season))) {
+  const range = regularSeason(season);
+  if (range) openers[season] = range.opener;
+}
+const out: PayoffSnapshotFile = { version: 1, generatedAt: new Date().toISOString(), seasons, openers };
 writeFileSync(OUT, `${JSON.stringify(out)}\n`);

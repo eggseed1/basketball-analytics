@@ -731,6 +731,7 @@ export default async function PlayerPage({
               playerName={displayName}
               teamKey={teamKey}
               nbaId={identity?.nbaId}
+              season={seasonParam}
             />
           </Suspense>
         ) : null}

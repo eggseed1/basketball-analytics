@@ -7,7 +7,8 @@ import { BrefPayrollTable, PayrollColorKey } from "@/components/teams/bref-payro
 import { TeamContractValueChart } from "@/components/teams/team-contract-value";
 import type { TeamContractsView } from "@/data/queries/team-contracts";
 import { getTeamContractValue } from "@/data/runtime/contract-value";
-import { getTeamPayoff } from "@/data/runtime/salary-payoff";
+import { getTeamPayoff, payoffWaiting } from "@/data/runtime/salary-payoff";
+import { SalaryPayoffWaiting } from "@/components/charts/salary-payoff-waiting";
 import { TeamSalaryPayoff } from "@/components/teams/team-salary-payoff";
 import type { TeamPayrollPresentation } from "@/data/types/front-office";
 import { type } from "@/lib/design-system";
@@ -210,18 +211,25 @@ export function TeamContractsPageView({
   franchiseId,
   contracts,
   capContext,
+  season,
+  seasonHref,
 }: {
   teamKey: string;
   franchiseId: string;
   contracts: TeamContractsView;
   capContext?: CapContext | null;
+  /** Season picked on the team page; salary paid off follows it. */
+  season: string;
+  /** This view in another season. */
+  seasonHref: (season: string) => string;
 }) {
   const accent = teamAccent(teamKey);
   const payroll = contracts.totals?.years[0] ?? null;
   const cap = contracts.salaryCap ?? capContext?.salaryCap ?? null;
   const hasNotes = contracts.rows.some((r) => contracts.notes[r.brefId]);
   const contractValue = getTeamContractValue(franchiseId);
-  const payoff = getTeamPayoff(franchiseId);
+  const waiting = payoffWaiting(season);
+  const payoff = waiting ? null : getTeamPayoff(franchiseId, season);
   const payoffNow = payoff?.total.pct.at(-1) ?? null;
 
   return (
@@ -259,6 +267,15 @@ export function TeamContractsPageView({
           }
         >
           <TeamContractValueChart value={contractValue} contracts={contracts} teamKey={teamKey} />
+        </Panel>
+      ) : null}
+
+      {waiting ? (
+        <Panel title={`Salary paid off · ${waiting.season}`} id="payoff-heading">
+          <SalaryPayoffWaiting
+            waiting={waiting}
+            previousHref={waiting.previous ? seasonHref(waiting.previous) : null}
+          />
         </Panel>
       ) : null}
 
