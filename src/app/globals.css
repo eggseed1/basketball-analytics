@@ -2663,6 +2663,195 @@ svg [data-motion-dot] {
   }
 }
 
+/* Home warm-up card: sits over the skeleton, never takes clicks or layout. */
+.home-warmup {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  pointer-events: none;
+}
+
+.home-warmup__card {
+  display: flex;
+  width: min(280px, 100%);
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 22px 22px 18px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: color-mix(in oklab, var(--card) 86%, transparent);
+  box-shadow: 0 18px 50px -20px rgb(0 0 0 / 35%);
+  backdrop-filter: blur(16px) saturate(1.2);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  animation: home-warmup-in 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) 0.3s both;
+}
+
+.home-warmup__court {
+  position: relative;
+  display: flex;
+  height: 78px;
+  width: 64px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.home-warmup__hop {
+  position: relative;
+  z-index: 1;
+  width: 40px;
+  height: 40px;
+  transform-origin: 50% 100%;
+  animation: home-warmup-bounce 0.9s infinite;
+}
+
+.home-warmup__ball {
+  display: block;
+  width: 100%;
+  height: 100%;
+  animation: home-warmup-spin 1.8s linear infinite;
+}
+
+.home-warmup__shadow {
+  margin-top: 3px;
+  height: 6px;
+  width: 34px;
+  border-radius: 50%;
+  background: color-mix(in oklab, var(--foreground) 40%, transparent);
+  filter: blur(1.5px);
+  animation: home-warmup-shadow 0.9s infinite;
+}
+
+.home-warmup__steps {
+  position: relative;
+  height: 20px;
+  width: 100%;
+  overflow: hidden;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.home-warmup__steps > span {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  animation: home-warmup-step calc(var(--n) * 1.8s) infinite both;
+  animation-delay: calc(var(--i) * 1.8s);
+}
+
+.home-warmup__meter {
+  height: 3px;
+  width: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, var(--ring), transparent) 0 0 / 50% 100% no-repeat,
+    color-mix(in oklab, var(--foreground) 8%, transparent);
+  animation: home-warmup-meter 1.3s ease-in-out infinite;
+}
+
+@keyframes home-warmup-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+}
+
+@keyframes home-warmup-bounce {
+  0%,
+  100% {
+    transform: translateY(-34px);
+    animation-timing-function: cubic-bezier(0.45, 0, 0.9, 0.5);
+  }
+  44% {
+    transform: translateY(0) scale(1, 1);
+  }
+  52% {
+    transform: translateY(0) scale(1.14, 0.84);
+  }
+  60% {
+    transform: translateY(0) scale(1, 1);
+    animation-timing-function: cubic-bezier(0.1, 0.5, 0.55, 1);
+  }
+}
+
+@keyframes home-warmup-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes home-warmup-shadow {
+  0%,
+  100% {
+    transform: scaleX(0.45);
+    opacity: 0.25;
+    animation-timing-function: cubic-bezier(0.45, 0, 0.9, 0.5);
+  }
+  44%,
+  60% {
+    transform: scaleX(1);
+    opacity: 0.6;
+    animation-timing-function: cubic-bezier(0.1, 0.5, 0.55, 1);
+  }
+}
+
+@keyframes home-warmup-step {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  4%,
+  17% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  21%,
+  100% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes home-warmup-meter {
+  0% {
+    background-position: -100% 0, 0 0;
+  }
+  100% {
+    background-position: 200% 0, 0 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-warmup__hop,
+  .home-warmup__ball,
+  .home-warmup__shadow,
+  .home-warmup__meter {
+    animation: none;
+  }
+
+  .home-warmup__steps > span {
+    animation-name: home-warmup-step-fade;
+  }
+}
+
+@keyframes home-warmup-step-fade {
+  0%,
+  21%,
+  100% {
+    opacity: 0;
+  }
+  4%,
+  17% {
+    opacity: 1;
+  }
+}
+
 @keyframes query-updating-slide {
   0% {
     background-position: 100% 0;
