@@ -1,11 +1,11 @@
 {
-  "retrievedAt": "2026-10-08",
+  "retrievedAt": "2026-10-09",
   "teams": [
     {
       "teamId": "1",
       "abbr": "ATL",
       "displayName": "Atlanta Hawks",
-      "checkedAt": "2026-10-08",
+      "checkedAt": "2026-10-09",
       "owners": [
         {
           "name": "Tony Ressler",
@@ -48,7 +48,7 @@
       "teamId": "17",
       "abbr": "BKN",
       "displayName": "Brooklyn Nets",
-      "checkedAt": "2026-10-08",
+      "checkedAt": "2026-10-09",
       "owners": [
         {
           "name": "Joseph Tsai",
@@ -90,7 +90,7 @@
       "teamId": "2",
       "abbr": "BOS",
       "displayName": "Boston Celtics",
-      "checkedAt": "2026-10-08",
+      "checkedAt": "2026-10-09",
       "owners": [
         {
           "name": "William Chisholm",
@@ -142,7 +142,7 @@
       "teamId": "30",
       "abbr": "CHA",
       "displayName": "Charlotte Hornets",
-      "checkedAt": "2026-10-08",
+      "checkedAt": "2026-10-09",
       "owners": [
         {
           "name": "Gabe Plotkin & Rick Schnall",
@@ -189,7 +189,7 @@
       "teamId": "4",
       "abbr": "CHI",
       "displayName": "Chicago Bulls",
-      "checkedAt": "2026-10-08",
+      "checkedAt": "2026-10-09",
       "owners": [
         {
           "name": "Jerry Reinsdorf",
@@ -234,7 +234,7 @@
       "teamId": "5",
       "abbr": "CLE",
       "displayName": "Cleveland Cavaliers",
-      "checkedAt": "2026-10-08",
+      "checkedAt": "2026-10-09",
       "owners": [
         {
           "name": "Dan Gilbert",
@@ -296,7 +296,7 @@
       "teamId": "6",
       "abbr": "DAL",
       "displayName": "Dallas Mavericks",
-      "checkedAt": "2026-10-08",
+      "checkedAt": "2026-10-09",
       "owners": [
         {
           "name": "Miriam Adelson and Patrick Dumont",
@@ -353,7 +353,7 @@
       "teamId": "7",
       "abbr": "DEN",
       "displayName": "Denver Nuggets",
-      "checkedAt": "2026-10-08",
+      "checkedAt": "2026-10-09",
       "owners": [
         {
           "name": "Kroenke Sports & Entertainment",
@@ -400,7 +400,7 @@
       "teamId": "8",
       "abbr": "DET",
       "displayName": "Detroit Pistons",
-      "checkedAt": "2026-10-08",
+      "checkedAt": "2026-10-09",
       "owners": [
         {
           "name": "Tom Gores",
@@ -442,7 +442,7 @@
       "teamId": "9",
       "abbr": "GS",
       "displayName": "Golden State Warriors",
-      "checkedAt": "2026-10-08",
+      "checkedAt": "2026-10-09",
       "owners": [
         {
           "name": "Joe Lacob",
@@ -490,7 +490,7 @@
       "teamId": "10",
       "abbr": "HOU",
       "displayName": "Houston Rockets",
-      "checkedAt": "2026-10-08",
+      "checkedAt": "2026-10-09",
       "owners": [
         {
           "name": "Tilman Fertitta",
@@ -532,7 +532,7 @@
       "teamId": "11",
       "abbr": "IND",
       "displayName": "Indiana Pacers",
-      "checkedAt": "2026-10-08",
+      "checkedAt": "2026-10-09",
       "owners": [
         {
           "name": "Herb Simon",
@@ -575,7 +575,7 @@
       "teamId": "12",
       "abbr": "LAC",
       "displayName": "LA Clippers",
-      "checkedAt": "2026-10-08",
+      "checkedAt": "2026-10-09",
       "owners": [
         {
           "name": "Steve Ballmer",
@@ -626,7 +626,7 @@
       "teamId": "13",
       "abbr": "LAL",
       "displayName": "Los Angeles Lakers",
-      "checkedAt": "2026-10-08",
+      "checkedAt": "2026-10-09",
       "owners": [
         {
           "name": "Mark Walter",
@@ -670,7 +670,7 @@
       "teamId": "29",
       "abbr": "MEM",
       "displayName": "Memphis Grizzlies",
-      "checkedAt": "2026-10-08",
+      "checkedAt": "2026-10-09",
       "owners": [
         {
           "name": "Memphis Basketball, LLC",
@@ -714,7 +714,7 @@
       "teamId": "14",
       "abbr": "MIA",
       "displayName": "Miami Heat",
-      "checkedAt": "2026-10-08",
+      "checkedAt": "2026-10-09",
       "owners": [
         {
           "name": "Micky Arison",
@@ -762,7 +762,7 @@
       "teamId": "15",
       "abbr": "MIL",
       "displayName": "Milwaukee Bucks",
-      "checkedAt": "2026-10-08",
+      "checkedAt": "2026-10-09",
       "owners": [
         {
           "name": "Wes Edens, Jimmy Haslam, Jamie Dinan, Mike Fascitelli",
@@ -804,7 +804,7 @@
       "teamId": "16",
       "abbr": "MIN",
       "displayName": "Minnesota Timberwolves",
-      "checkedAt": "2026-10-08",
+      "checkedAt": "2026-10-09",
       "owners": [
         {
           "name": "Alex Rodriguez, Marc Lore",
@@ -850,7 +850,7 @@
       "teamId": "3",
       "abbr": "NO",
       "displayName": "New Orleans Pelicans",
-      "checkedAt": "2026-10-08",
+      "checkedAt": "2026-10-09",
       "owners": [
         {
           "name": "Gayle Benson",
@@ -888,7 +888,7 @@
       "teamId": "18",
       "abbr": "NY",
       "displayName": "New York Knicks",
-      "checkedAt": "2026-10-08",
+      "checkedAt": "2026-10-09",
       "owners": [
         {
           "name": "Madison Square Garden Sports",
@@ -932,7 +932,7 @@
       "teamId": "25",
       "abbr": "OKC",
       "displayName": "Oklahoma City Thunder",
-      "checkedAt": "2026-10-08",
+      "checkedAt": "2026-10-09",
       "owners": [
         {
           "name": "Professional Basketball Club LLC",
@@ -971,7 +971,7 @@
       "teamId": "19",
       "abbr": "ORL",
       "displayName": "Orlando Magic",
-      "checkedAt": "2026-10-08",
+      "checkedAt": "2026-10-09",
       "owners": [
         {
           "name": "RDV Sports, Inc.",
@@ -1020,7 +1020,7 @@
       "teamId": "20",
       "abbr": "PHI",
       "displayName": "Philadelphia 76ers",
-      "checkedAt": "2026-10-08",
+      "checkedAt": "2026-10-09",
       "owners": [
         {
           "name": "Harris Blitzer Sports & Entertainment",
@@ -1068,7 +1068,7 @@
       "teamId": "21",
       "abbr": "PHX",
       "displayName": "Phoenix Suns",
-      "checkedAt": "2026-10-08",
+      "checkedAt": "2026-10-09",
       "owners": [
         {
           "name": "Mat and Justin Ishbia",
@@ -1115,7 +1115,7 @@
       "teamId": "22",
       "abbr": "POR",
       "displayName": "Portland Trail Blazers",
-      "checkedAt": "2026-10-08",
+      "checkedAt": "2026-10-09",
       "owners": [
         {
           "name": "Tom Dundon",
@@ -1157,7 +1157,7 @@
       "teamId": "24",
       "abbr": "SA",
       "displayName": "San Antonio Spurs",
-      "checkedAt": "2026-10-08",
+      "checkedAt": "2026-10-09",
       "owners": [
         {
           "name": "Spurs Sports & Entertainment",
@@ -1206,7 +1206,7 @@
       "teamId": "23",
       "abbr": "SAC",
       "displayName": "Sacramento Kings",
-      "checkedAt": "2026-10-08",
+      "checkedAt": "2026-10-09",
       "owners": [
         {
           "name": "Vivek Ranadivé",
@@ -1248,7 +1248,7 @@
       "teamId": "28",
       "abbr": "TOR",
       "displayName": "Toronto Raptors",
-      "checkedAt": "2026-10-08",
+      "checkedAt": "2026-10-09",
       "owners": [
         {
           "name": "Maple Leaf Sports & Entertainment",
@@ -1290,7 +1290,7 @@
       "teamId": "26",
       "abbr": "UTAH",
       "displayName": "Utah Jazz",
-      "checkedAt": "2026-10-08",
+      "checkedAt": "2026-10-09",
       "owners": [
         {
           "name": "Ryan Smith",
@@ -1343,7 +1343,7 @@
       "teamId": "27",
       "abbr": "WSH",
       "displayName": "Washington Wizards",
-      "checkedAt": "2026-10-08",
+      "checkedAt": "2026-10-09",
       "owners": [
         {
           "name": "Monumental Sports & Entertainment",

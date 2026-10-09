@@ -3,12 +3,12 @@
     "methodologyVersion": "movement-m1-0.2+movement-rules-v2",
     "status": "NEWS_INGEST_M1",
     "season": "2026-27",
-    "snapshotDate": "2026-10-08",
+    "snapshotDate": "2026-10-09",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-10-08T13:44:39.765Z",
+    "builtAt": "2026-10-09T00:27:14.155Z",
     "rosterPlayerCount": 492,
-    "headlinesScanned": 2068,
-    "latestHeadlineAt": "2026-10-08T13:36:31.000Z",
+    "headlinesScanned": 2230,
+    "latestHeadlineAt": "2026-10-09T00:24:53.000Z",
     "latestTransactionDate": "2026-10-07",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -72,7 +72,7 @@
     },
     "outlet:sportsnaut": {
       "label": "Sportsnaut",
-      "credibility": 12
+      "credibility": 16
     },
     "outlet:realgm": {
       "label": "RealGM",
@@ -426,12 +426,13 @@
         "mv-268aa6f823567f77",
         "mv-16c64cf12c0ffcaa",
         "mv-47978b5263ca5efd",
-        "mv-c7126afbd6cc9211"
+        "mv-c7126afbd6cc9211",
+        "mv-73f6a092f8aa6e51"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-09-26T13:03:20.000Z",
-      "lastMeaningfulAt": "2026-10-07T16:38:16.000Z",
+      "lastMeaningfulAt": "2026-10-08T20:53:30.000Z",
       "linkedPlayerIds": [
         "3062679",
         "3136195",
@@ -763,17 +764,18 @@
     },
     {
       "id": "mv-contract-4683692-20261006",
-      "headline": "Cason Wallace and Karl-Anthony Towns: extension talks",
-      "primaryClaimId": "mv-ed026c229b224a4c",
+      "headline": "Cason Wallace and Karl-Anthony Towns: extension talks with the Knicks",
+      "primaryClaimId": "mv-68127021ed132d89",
       "claimIds": [
         "mv-d46db2f4a349df07",
         "mv-11ebf253ed00ee6f",
-        "mv-ed026c229b224a4c"
+        "mv-ed026c229b224a4c",
+        "mv-68127021ed132d89"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-06T17:10:57.000Z",
-      "lastMeaningfulAt": "2026-10-06T18:57:35.000Z",
+      "lastMeaningfulAt": "2026-10-08T16:18:47.000Z",
       "linkedPlayerIds": [
         "4683692",
         "3136195"
@@ -4203,6 +4205,48 @@
       "playerIds": [
         "6442",
         "6583"
+      ],
+      "teamIds": [
+        "18"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-68127021ed132d89",
+      "clusterId": "mv-contract-4683692-20261006",
+      "summary": "NY Knicks Will Win Karl-Anthony Towns Contract Standoff? NEW Report Explains Why KAT Likely Takes Discount Contract",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-08T16:18:47.000Z",
+      "sourceId": "outlet:sportsnaut",
+      "sourceLabel": "Sportsnaut",
+      "sourceUrl": "https://sportsnaut.com/nba/why-new-york-knicks-win-karl-anthony-towns-contract-standoff",
+      "playerIds": [
+        "3136195"
+      ],
+      "teamIds": [
+        "18"
+      ],
+      "isOriginal": true,
+      "negotiationSpecificity": "active_talks"
+    },
+    {
+      "id": "mv-73f6a092f8aa6e51",
+      "clusterId": "mv-trade-3062679-20260926",
+      "summary": "Knicks rumors: ClutchPoints insider clarifies all Karl-Anthony Towns, Josh Hart trade buzz",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-08T20:53:30.000Z",
+      "sourceId": "outlet:clutchpoints",
+      "sourceLabel": "ClutchPoints",
+      "sourceUrl": "https://clutchpoints.com/nba/new-york-knicks/knicks-rumors-clutchpoints-insider-clarifies-karl-anthony-towns-josh-hart-trade-buzz",
+      "playerIds": [
+        "3062679",
+        "3136195"
       ],
       "teamIds": [
         "18"
