@@ -5,10 +5,10 @@
     "season": "2026-27",
     "snapshotDate": "2026-10-09",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-10-09T16:15:08.689Z",
+    "builtAt": "2026-10-09T19:57:30.398Z",
     "rosterPlayerCount": 492,
-    "headlinesScanned": 2486,
-    "latestHeadlineAt": "2026-10-09T16:12:44.000Z",
+    "headlinesScanned": 2565,
+    "latestHeadlineAt": "2026-10-09T19:55:00.000Z",
     "latestTransactionDate": "2026-10-07",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -152,7 +152,7 @@
     },
     "outlet:sporting-news": {
       "label": "Sporting News",
-      "credibility": 16
+      "credibility": 12
     },
     "ledger:nba-player-movement": {
       "label": "Player movement log",
@@ -246,7 +246,7 @@
     },
     {
       "id": "mv-contract-4433621-20260911",
-      "headline": "Jalen Duren: free agency",
+      "headline": "Jalen Duren: extension talks with the Pistons",
       "primaryClaimId": "mv-8ffe37ccf68a5ff9",
       "claimIds": [
         "mv-bd4b79713a4e86bb",
@@ -265,6 +265,7 @@
         "mv-4de1ae6dca2bb178",
         "mv-53bd501523aa2ead",
         "mv-8ffe37ccf68a5ff9",
+        "mv-efacd48e50350d3d",
         "mv-espn-tx-48599cfb4807969c"
       ],
       "evidenceClass": "reported",
@@ -899,6 +900,24 @@
       ],
       "linkedTeamIds": [
         "16"
+      ]
+    },
+    {
+      "id": "mv-trade-3059318-20261009",
+      "headline": "Joel Embiid: trade talk",
+      "primaryClaimId": "mv-7c74180313e08719",
+      "claimIds": [
+        "mv-7c74180313e08719"
+      ],
+      "evidenceClass": "reported",
+      "state": "denied",
+      "firstSeenAt": "2026-10-09T18:53:50.000Z",
+      "lastMeaningfulAt": "2026-10-09T18:53:50.000Z",
+      "linkedPlayerIds": [
+        "3059318"
+      ],
+      "linkedTeamIds": [
+        "20"
       ]
     },
     {
@@ -4477,6 +4496,47 @@
       ],
       "isOriginal": true,
       "negotiationSpecificity": "active_talks"
+    },
+    {
+      "id": "mv-efacd48e50350d3d",
+      "clusterId": "mv-contract-4433621-20260911",
+      "summary": "Why Jalen Duren was reportedly called '4th-best player' in Pistons contract talks",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-09T18:37:40.000Z",
+      "sourceId": "outlet:sporting-news",
+      "sourceLabel": "Sporting News",
+      "sourceUrl": "https://www.sportingnews.com/us/nba/detroit-pistons/news/jalen-duren-4th-best-player-pistons-contract-talks/ae37063c095f5cfa44f745e5%3E",
+      "playerIds": [
+        "4433621"
+      ],
+      "teamIds": [
+        "8"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "active_talks"
+    },
+    {
+      "id": "mv-7c74180313e08719",
+      "clusterId": "mv-trade-3059318-20261009",
+      "summary": "76ers' Joel Embiid denies tardiness report, questions why it happened: 'It feels like I'm an easy target'",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "denied",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-09T18:53:50.000Z",
+      "sourceId": "outlet:yahoo-sports",
+      "sourceLabel": "Yahoo Sports",
+      "sourceUrl": "https://sports.yahoo.com/nba/article/76ers-joel-embiid-denies-tardiness-report-questions-why-it-happened-it-feels-like-im-an-easy-target-191017824.html",
+      "playerIds": [
+        "3059318"
+      ],
+      "teamIds": [
+        "20"
+      ],
+      "isOriginal": true
     },
     {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",
