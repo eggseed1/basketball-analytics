@@ -271,7 +271,7 @@ export function TeamContractsPageView({
       ) : null}
 
       {waiting ? (
-        <Panel title={`Salary paid off · ${waiting.season}`} id="payoff-heading">
+        <Panel title={`Salary played off · ${waiting.season}`} id="payoff-heading">
           <SalaryPayoffWaiting
             waiting={waiting}
             previousHref={waiting.previous ? seasonHref(waiting.previous) : null}
@@ -281,7 +281,7 @@ export function TeamContractsPageView({
 
       {payoff ? (
         <Panel
-          title={`Salary paid off · ${payoff.meta.season}`}
+          title={`Salary played off · ${payoff.meta.season}`}
           id="payoff-heading"
           aside={
             payoffNow != null ? (

@@ -268,7 +268,7 @@ function PayoffPlot({
                 {(line.pct[i] ?? 0) >= 100 ? (
                   <>
                     <p className="tabular-nums">
-                      {shortDate(dates[i])} · <span className="font-semibold">100% paid off</span>
+                      {shortDate(dates[i])} · <span className="font-semibold">100% played off</span>
                       {coveredOn ? ` on ${shortDate(coveredOn)}` : ""}
                     </p>
                     <p className="tabular-nums">
@@ -473,7 +473,7 @@ function PayoffList({
         <span />
         <span className="text-right">Covered</span>
         <span className="text-right">Earned</span>
-        <span className="text-right">Paid off</span>
+        <span className="text-right">Played off</span>
       </div>
       <ol className="flex flex-col" aria-label={label}>
         {rows.map((r, i) => (

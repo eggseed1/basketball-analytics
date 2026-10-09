@@ -1,3 +1,4 @@
+import { AheadList, AheadRace, PayoffViewToggle, type AheadLine, type AheadRow } from "@/components/charts/salary-ahead-chart";
 import { SalaryPayoffPanel, type PayoffRow } from "@/components/charts/salary-payoff-chart";
 import { SalaryPayoffWaiting } from "@/components/charts/salary-payoff-waiting";
 import {
@@ -54,7 +55,7 @@ export async function PlayerPayoffBoard({
     return (
       <section className="sports-card flex flex-col gap-2 p-4 sm:p-5" aria-labelledby="player-payoff-title">
         <h2 id="player-payoff-title" className={type.heading}>
-          Salary paid off · {waiting.season}
+          Salary played off · {waiting.season}
         </h2>
         <SalaryPayoffWaiting
           waiting={waiting}
@@ -90,6 +91,38 @@ export async function PlayerPayoffBoard({
   }).sort((a, b) => a.rank - b.rank);
   const unmatchedPins = new Set((pin ?? "").split(",").map((p) => p.trim()).filter(Boolean)).size - pinMap.size;
 
+  const aheadEnd = (p: PayoffSummary) => p.ahead.at(-1) ?? 0;
+  const aheadRank = new Map(
+    [...players].sort((a, b) => aheadEnd(b) - aheadEnd(a) || a.name.localeCompare(b.name)).map((p, i) => [p.key, i + 1])
+  );
+  const shownAhead = applyVizFieldFilter(players, {
+    fieldSize,
+    rankEnd,
+    keyOf: (p) => p.key,
+    sortValue: aheadEnd,
+    isPinned: strong,
+  }).sort((a, b) => (aheadRank.get(a.key) ?? 0) - (aheadRank.get(b.key) ?? 0));
+  const aheadIndexes = sampleIndexes(meta.dates.length, shownAhead.length > WIDE_FIELD ? WIDE_FIELD_POINTS : meta.dates.length);
+  const aheadLines: AheadLine[] = shownAhead.map((p) => ({
+    id: p.key,
+    name: p.name,
+    teamId: p.teamId,
+    href: p.nbaId ? `/players/${p.nbaId}` : null,
+    salary: p.salary,
+    ahead: aheadIndexes.map((i) => Math.round((p.ahead[i] ?? 0) / 1000) * 1000),
+    strong: strong(p),
+  }));
+  const aheadRows: AheadRow[] = shownAhead.map((p) => ({
+    id: p.key,
+    rank: aheadRank.get(p.key) ?? 0,
+    name: p.name,
+    teamId: p.teamId,
+    href: p.nbaId ? `/players/${p.nbaId}` : null,
+    salary: p.salary,
+    ahead: aheadEnd(p),
+    strong: strong(p),
+  }));
+
   const indexes = sampleIndexes(meta.dates.length, shown.length > WIDE_FIELD ? WIDE_FIELD_POINTS : meta.dates.length);
   const rows: PayoffRow[] = shown.map((p) => ({
     id: p.key,
@@ -110,21 +143,42 @@ export async function PlayerPayoffBoard({
     <section className="sports-card flex flex-col gap-3 p-4 sm:p-5" aria-labelledby="player-payoff-title">
       <div>
         <h2 id="player-payoff-title" className={type.heading}>
-          Salary paid off · {meta.season}
+          Salary played off · {meta.season}
         </h2>
         <p className={cn(type.bodySm, "mt-1 text-muted-foreground")}>
-          {fieldBlurb(fieldSize, rankEnd, players.length)}, ranked by how much of this season&apos;s
-          salary their play has covered{meta.kind === "nightly" ? ` through ${shortDate(meta.through)}` : ""}.
-          Cheap deals climb fastest, since a little play covers a small salary.
+          {fieldBlurb(fieldSize, rankEnd, players.length)}
+          {meta.kind === "nightly" ? `, through ${shortDate(meta.through)}` : ""}. Ahead or behind is what each
+          player&apos;s play has been worth so far minus the salary paid out so far. Played off is the share of the
+          year&apos;s salary his play has covered.
         </p>
       </div>
-      <SalaryPayoffPanel
-        dates={indexes.map((i) => meta.dates[i])}
-        pace={indexes.map((i) => meta.pace[i])}
-        lines={shown.map((p) => payoffLine(p, indexes, strong(p)))}
-        rows={rows}
-        title={`Salary paid off · ${meta.season}`}
-        listLabel="Players ranked by share of salary covered"
+      <PayoffViewToggle
+        views={[
+          {
+            id: "ahead",
+            label: "Ahead or behind",
+            node: (
+              <div className="flex flex-col gap-4">
+                <AheadRace dates={aheadIndexes.map((i) => meta.dates[i])} lines={aheadLines} height={440} maxLabels={20} />
+                <AheadList rows={aheadRows} label="Players ranked by dollars ahead of their salary" />
+              </div>
+            ),
+          },
+          {
+            id: "played-off",
+            label: "Played off",
+            node: (
+              <SalaryPayoffPanel
+                dates={indexes.map((i) => meta.dates[i])}
+                pace={indexes.map((i) => meta.pace[i])}
+                lines={shown.map((p) => payoffLine(p, indexes, strong(p)))}
+                rows={rows}
+                title={`Salary played off · ${meta.season}`}
+                listLabel="Players ranked by share of salary covered"
+              />
+            ),
+          },
+        ]}
       />
       <div className={cn(type.caption, "flex flex-col gap-1 text-muted-foreground")}>
         <p>{payoffMethodNote(meta)}</p>

@@ -38,7 +38,7 @@ export function PlayerSalaryPayoff({
     return (
       <div className="sports-card flex flex-col gap-2 p-4 sm:p-5" aria-labelledby="salary-payoff-title">
         <h3 id="salary-payoff-title" className={type.heading}>
-          Salary paid off · {waiting.season}
+          Salary played off · {waiting.season}
         </h3>
         <SalaryPayoffWaiting
           waiting={waiting}
@@ -62,7 +62,7 @@ export function PlayerSalaryPayoff({
       <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-1">
         <div>
           <h3 id="salary-payoff-title" className={type.heading}>
-            Salary paid off · {meta.season}
+            Salary played off · {meta.season}
           </h3>
           <p className={cn(type.bodySm, "text-muted-foreground")}>
             {pct(now)} of his {formatUsdCompact(player.salary)} salary
@@ -86,7 +86,7 @@ export function PlayerSalaryPayoff({
         dates={indexes.map((i) => meta.dates[i])}
         pace={indexes.map((i) => meta.pace[i])}
         lines={[payoffLine(player, indexes, true)]}
-        title={`${player.name} · salary paid off, ${meta.season}`}
+        title={`${player.name} · salary played off, ${meta.season}`}
       />
       <div className={cn(type.caption, "flex flex-col gap-1 text-muted-foreground")}>
         <p>{payoffMethodNote(meta)}</p>

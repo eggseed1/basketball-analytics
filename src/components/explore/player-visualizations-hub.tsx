@@ -64,7 +64,7 @@ const VIEWS: Array<{ id: VizView; label: string }> = [
   { id: "defense", label: "Stocks" },
   { id: "volume", label: "Scoring volume" },
   { id: "surplus", label: "Contract surplus" },
-  { id: "payoff", label: "Salary paid off" },
+  { id: "payoff", label: "Salary played off" },
 ];
 
 type SearchHit = {

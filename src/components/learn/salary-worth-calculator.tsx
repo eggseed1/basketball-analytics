@@ -131,7 +131,7 @@ export function SalaryWorthCalculator({
           </dd>
         </div>
         <div>
-          <dt className={cn(type.caption, "text-muted-foreground")}>Salary paid off</dt>
+          <dt className={cn(type.caption, "text-muted-foreground")}>Salary played off</dt>
           <dd className="text-[20px] font-bold tabular-nums">{Math.round(paidOff)}%</dd>
         </div>
       </dl>

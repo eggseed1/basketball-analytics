@@ -1405,16 +1405,16 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
   },
   {
     id: "salary_paid_off",
-    aliases: ["payoff", "paid_off"],
-    label: "Salary paid off",
-    shortName: "Paid off",
+    aliases: ["payoff", "paid_off", "played_off"],
+    label: "Salary played off",
+    shortName: "Played off",
     category: "salary",
     tooltip:
       "How much of this season's salary a player's play has covered so far, compared with how much of the season has been paid out.",
     showTooltip: true,
-    learnSlug: "salary#paid-off",
+    learnSlug: "salary#played-off",
     relatedIds: ["price_per_win"],
-    seeInAction: [{ label: "Salary paid off board", href: "/explore/players/visualizations?view=payoff" }],
+    seeInAction: [{ label: "Salary played off board", href: "/explore/players/visualizations?view=payoff" }],
   },
   {
     id: "salary_frozen_pick",

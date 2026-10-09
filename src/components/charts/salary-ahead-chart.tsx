@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 
@@ -19,7 +20,19 @@ export type AheadLine = {
   salary: number;
   /** Worth so far minus salary paid so far, dollars, one per date. */
   ahead: number[];
+  /** Pinned or on a highlighted team. */
+  strong?: boolean;
 };
+
+/** Which lines get a name at the right edge: all of a small field, else the ends plus strong lines. */
+function labeledIds(lines: AheadLine[], totalId: string | undefined, max: number): Set<string> {
+  if (lines.length <= max) return new Set(lines.map((l) => l.id));
+  const keep = new Set(lines.filter((l) => l.strong || l.id === totalId).map((l) => l.id));
+  const ranked = lines.filter((l) => !keep.has(l.id)).sort((a, b) => (b.ahead.at(-1) ?? 0) - (a.ahead.at(-1) ?? 0));
+  const each = Math.max(0, Math.floor((max - keep.size) / 2));
+  for (const l of [...ranked.slice(0, each), ...ranked.slice(Math.max(each, ranked.length - each))]) keep.add(l.id);
+  return keep;
+}
 
 function niceStep(range: number, target: number): number {
   const raw = range / target;
@@ -86,17 +99,19 @@ export function AheadRace({
   lines,
   totalId,
   height = 380,
+  maxLabels = 24,
 }: {
   dates: string[];
   lines: AheadLine[];
   totalId?: string;
   height?: number;
+  maxLabels?: number;
 }) {
   const router = useRouter();
   const [ref, width] = useWidth<HTMLDivElement>(720);
   const [hover, setHover] = useState<{ id: string; i: number } | null>(null);
   const narrow = width < 560;
-  const m = { l: 60, r: narrow ? 92 : 150, t: 12, b: 26 };
+  const m = { l: 60, r: narrow ? 96 : 184, t: 12, b: 26 };
   const innerW = Math.max(40, width - m.l - m.r);
   const innerH = height - m.t - m.b;
   const n = dates.length;
@@ -105,8 +120,17 @@ export function AheadRace({
   const y = (v: number) => m.t + ((scale.max - v) / (scale.max - scale.min)) * innerH;
   const path = (values: number[]) => values.map((v, i) => `${i ? "L" : "M"}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join("");
 
-  const ends = lines.map((l) => y(l.ahead.at(-1) ?? 0));
+  const labeled = labeledIds(lines, totalId, Math.min(maxLabels, Math.floor(innerH / 13)));
+  const labelLines = lines.filter((l) => labeled.has(l.id));
+  const ends = labelLines.map((l) => y(l.ahead.at(-1) ?? 0));
   const labelYs = spreadLabels(ends, 13, m.t + 4, height - m.b);
+  const drawOrder = [...lines].sort((a, b) => Number(Boolean(a.strong)) - Number(Boolean(b.strong)));
+  const crowded = lines.length > 40;
+  const baseOpacity = lines.length > 150 ? 0.3 : crowded ? 0.55 : 0.8;
+  const shortName = (name: string) => {
+    const last = lastName(name);
+    return narrow && last.length > 12 ? `${last.slice(0, 11)}…` : last;
+  };
   const tickCount = Math.min(narrow ? 3 : 6, n);
   const xTicks = Array.from({ length: tickCount }, (_, k) => Math.round((k * (n - 1)) / Math.max(1, tickCount - 1)));
   const hovered = hover ? lines.find((l) => l.id === hover.id) : null;
@@ -164,7 +188,7 @@ export function AheadRace({
           </text>
         ))}
         {hover ? <line x1={x(hover.i)} x2={x(hover.i)} y1={m.t} y2={height - m.b} stroke="var(--foreground)" strokeOpacity={0.25} /> : null}
-        {lines.map((line) => {
+        {drawOrder.map((line) => {
           const total = line.id === totalId;
           const active = hover?.id === line.id;
           return (
@@ -173,13 +197,13 @@ export function AheadRace({
               d={path(line.ahead)}
               fill="none"
               stroke={total ? "var(--foreground)" : toneOf(line.ahead.at(-1) ?? 0)}
-              strokeOpacity={total ? 0.9 : 0.8}
-              strokeWidth={total ? 3 : active ? 2.75 : 1.4}
+              strokeOpacity={total || line.strong ? 0.95 : baseOpacity}
+              strokeWidth={total ? 3 : active ? 2.75 : line.strong ? 2.25 : crowded ? 1 : 1.4}
               strokeLinejoin="round"
             />
           );
         })}
-        {lines.map((line, k) => {
+        {labelLines.map((line, k) => {
           const total = line.id === totalId;
           const end = line.ahead.at(-1) ?? 0;
           const ly = labelYs[k];
@@ -190,10 +214,10 @@ export function AheadRace({
               <text
                 x={m.l + innerW + 10}
                 y={ly + 3.5}
-                className={cn("text-[10.5px] tabular-nums", active || total ? "font-bold" : "font-medium")}
+                className={cn("text-[10.5px] tabular-nums", active || total || line.strong ? "font-bold" : "font-medium")}
                 fill={total ? "var(--foreground)" : toneOf(end)}
               >
-                {narrow ? (total ? "Roster" : lastName(line.name)) : `${total ? "Roster" : lastName(line.name)} ${formatUsdSignedCompact(end)}`}
+                {narrow ? (total ? "Roster" : shortName(line.name)) : `${total ? "Roster" : shortName(line.name)} ${formatUsdSignedCompact(end)}`}
               </text>
             </g>
           );
@@ -225,6 +249,81 @@ export function AheadRace({
           {hovered.href ? <p className="text-muted-foreground">Click to open</p> : null}
         </div>
       ) : null}
+    </div>
+  );
+}
+
+export type AheadRow = {
+  id: string;
+  rank: number;
+  name: string;
+  teamId: string;
+  href: string | null;
+  salary: number;
+  /** Dollars ahead (or behind, negative) at the last reading. */
+  ahead: number;
+  strong?: boolean;
+};
+
+const ROW =
+  "grid grid-cols-[1.75rem_minmax(0,1fr)_minmax(0,6rem)_4.5rem] items-center gap-2 sm:grid-cols-[2rem_minmax(0,12rem)_minmax(0,1fr)_5.5rem_5rem]";
+
+/** Players ranked by dollars ahead, each bar running right of zero when ahead and left when behind. */
+export function AheadList({ rows, label }: { rows: AheadRow[]; label: string }) {
+  const max = Math.max(1, ...rows.map((r) => Math.abs(r.ahead)));
+  const half = (v: number) => `${(Math.abs(v) / max) * 50}%`;
+  return (
+    <div className="flex flex-col gap-1">
+      <div aria-hidden className={cn(ROW, "hidden text-[11px] font-semibold uppercase tracking-wide text-muted-foreground sm:grid")}>
+        <span>#</span>
+        <span>Player</span>
+        <span />
+        <span className="text-right">Ahead</span>
+        <span className="text-right">Salary</span>
+      </div>
+      <ol className="flex flex-col" aria-label={label}>
+        {rows.map((r) => (
+          <li
+            key={r.id}
+            data-hover-item
+            className={cn(
+              ROW,
+              "rounded-md border-t border-border/40 px-1 py-1.5 transition-colors first:border-t-0 hover:bg-secondary/60",
+              r.strong && "bg-secondary hover:bg-secondary"
+            )}
+          >
+            <span className="text-[12px] tabular-nums text-muted-foreground">{r.rank}</span>
+            <span className="flex min-w-0 items-center gap-1.5">
+              <TeamLogo teamKey={r.teamId} size="xs" />
+              {r.href ? (
+                <Link href={r.href} className="truncate text-[14px] font-semibold underline-offset-2 hover:underline">
+                  {r.name}
+                </Link>
+              ) : (
+                <span className="truncate text-[14px] font-semibold">{r.name}</span>
+              )}
+            </span>
+            <span className="relative h-3 rounded-sm bg-muted/50">
+              <span aria-hidden className="absolute inset-y-[-2px] left-1/2 w-px bg-foreground/50" />
+              <span
+                aria-hidden
+                className="absolute inset-y-0 rounded-sm"
+                style={{
+                  left: r.ahead >= 0 ? "50%" : `calc(50% - ${half(r.ahead)})`,
+                  width: half(r.ahead),
+                  background: toneOf(r.ahead),
+                }}
+              />
+            </span>
+            <span className="text-right text-[14px] font-semibold tabular-nums" style={{ color: toneOf(r.ahead) }}>
+              {formatUsdSignedCompact(r.ahead)}
+            </span>
+            <span className="hidden text-right text-[12px] tabular-nums text-muted-foreground sm:block">
+              {formatUsdCompact(r.salary)}
+            </span>
+          </li>
+        ))}
+      </ol>
     </div>
   );
 }

@@ -40,7 +40,7 @@ import { parseVizRankEnd } from "@/lib/viz-field-filter";
 export const metadata = {
   title: "Player visualizations",
   description:
-    "NBA player race charts, league scatters for usage, impact, shot diet, creation, FT pressure, glass, and scoring volume, and contract surplus rankings, and how much of each salary players have paid off.",
+    "NBA player race charts, league scatters for usage, impact, shot diet, creation, FT pressure, glass, and scoring volume, and contract surplus rankings, and how much of each salary players have played off.",
 };
 
 interface PageProps {
@@ -120,7 +120,7 @@ export default async function PlayerVisualizationsPage({
     : parseVizRankEnd(one(sp, "end"), "high");
   const usageRankEnd = parseVizRankEnd(one(sp, "end"), "high");
   const surplusRankEnd = parseVizRankEnd(one(sp, "end"), "both");
-  const payoffRankEnd = parseVizRankEnd(one(sp, "end"), "high");
+  const payoffRankEnd = parseVizRankEnd(one(sp, "end"), "both");
   const payoffSeason =
     seasonParam && /^\d{4}-\d{2}$/.test(seasonParam) ? seasonParam : currentPayoffSeason();
   const raceMinMinutes = parsePlayerRaceMinMinutes(one(sp, "minmp"));

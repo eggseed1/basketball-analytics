@@ -55,7 +55,7 @@ const CONTENTS = [
   { id: "contracts", label: "Contracts" },
   { id: "worth", label: "Worth" },
   { id: "surplus", label: "Surplus" },
-  { id: "paid-off", label: "Paid off" },
+  { id: "played-off", label: "Played off" },
   { id: "picks", label: "Draft picks" },
   { id: "limits", label: "Limits" },
 ];
@@ -373,24 +373,24 @@ export default function LearnSalaryPage() {
 
         {payoff ? (
           <GuideSection
-            id="paid-off"
-            eyebrow="Paid off"
-            title="Salary paid off: the same math, one night at a time"
+            id="played-off"
+            eyebrow="Played off"
+            title="Salary played off: the same math, one night at a time"
             lead={
               <p>
-                <strong>Salary paid off</strong> applies the worth math as a season happens. Each night it adds up the
+                <strong>Salary played off</strong> applies the worth math as a season happens. Each night it adds up the
                 wins a player has produced so far, prices them, and divides by his salary for the year. The dotted line
                 is how much of the salary has been paid out by that date. A player above it is ahead of his contract; a
                 player at 100% has covered the whole year. Here are four {payoff.season} players chosen to show the range.
               </p>
             }
-            seeIt={[{ label: "Salary paid off board", href: PAYOFF_BOARD }]}
+            seeIt={[{ label: "Salary played off board", href: PAYOFF_BOARD }]}
           >
             <SalaryPayoffChart
               dates={payoff.dates}
               pace={payoff.pace}
               lines={payoff.lines}
-              title={`Salary paid off, ${payoff.season}`}
+              title={`Salary played off, ${payoff.season}`}
             />
             <ul className="grid gap-2 sm:grid-cols-2">
               {payoff.lines.map((line) => (

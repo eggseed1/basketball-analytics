@@ -68,7 +68,7 @@ export function TeamSalaryPayoff({ payoff }: { payoff: TeamPayoff }) {
         rows={rows}
         colors="team"
         totalId={TEAM_PAYOFF_TOTAL_ID}
-        title={`Salary paid off · ${meta.season}`}
+        title={`Salary played off · ${meta.season}`}
         listLabel="Players by share of salary covered"
       />
       <div className={cn(type.caption, "flex flex-col gap-1 text-muted-foreground")}>
@@ -102,7 +102,7 @@ export function TeamSalaryPayoff({ payoff }: { payoff: TeamPayoff }) {
     <PayoffViewToggle
       views={[
         { id: "ahead", label: "Ahead or behind", node: ahead },
-        { id: "paid-off", label: "Paid off", node: paidOff },
+        { id: "played-off", label: "Played off", node: paidOff },
       ]}
     />
   );
