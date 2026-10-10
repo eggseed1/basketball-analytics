@@ -24,7 +24,6 @@ export type LeagueSeasonAverages = {
   ftPct: number | null;
   efgPct: number | null;
   tsPct: number | null;
-  pace: number | null;
   ortg: number | null;
 };
 

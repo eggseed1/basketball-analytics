@@ -191,18 +191,12 @@ const ORG_STEPS = [
   { label: "player-bio", cmd: "node", args: ["scripts/build-runtime-player-bio-snapshot.mjs"] },
   // Draft years from the bios above when stats.nba.com drafthistory is blocked.
   { label: "draft-year", cmd: "node", args: ["scripts/build-runtime-draft-year-snapshot.mjs"] },
-  // League per-game averages for the compare tool's era adjustment (one BRef page).
-  { label: "league-averages", cmd: "node", args: ["scripts/build-league-season-averages.mjs"] },
   // Wikipedia's retired-numbers list; a few unresolved names are skipped, not fatal.
   { label: "retired-jerseys", cmd: "node", args: ["scripts/build-retired-jerseys.mjs"] },
   // Headshots for players the lookup has never resolved (rookies, new aliases); NBA/ESPN CDNs only.
   { label: "portraits", cmd: "node", args: ["scripts/build-runtime-portrait-lookup.mjs", "--new-only"] },
   // Arcade league file picks up a season once it is complete in the BRef bake.
   { label: "arcade", cmd: "node", args: ["scripts/build-arcade-data.mjs"] },
-  // BRef totals include games in progress, so franchise records only refresh after the Finals.
-  ...(info.phase === "offseason"
-    ? [{ label: "franchise-records", cmd: "node", args: ["scripts/build-franchise-records.mjs"] }]
-    : []),
 ];
 
 async function runOrgSteps() {

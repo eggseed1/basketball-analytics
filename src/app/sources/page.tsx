@@ -36,7 +36,7 @@ function Ext({ href, children }: { href: string; children: ReactNode }) {
 const DATA_SOURCES: { name: ReactNode; uses: string }[] = [
   {
     name: <Ext href="https://www.nba.com/stats">NBA.com and NBA Stats</Ext>,
-    uses: "Box scores, play-by-play, shot charts, play types, on/off, hustle stats, player awards, transactions, schedules, cap figures and key dates.",
+    uses: "Box scores, play-by-play, shot charts, play types, on/off, hustle stats, player awards, franchise records, league averages, transactions, schedules, cap figures and key dates.",
   },
   {
     name: <Ext href="https://www.espn.com/nba/">ESPN</Ext>,
@@ -44,7 +44,7 @@ const DATA_SOURCES: { name: ReactNode; uses: string }[] = [
   },
   {
     name: <Ext href="https://www.basketball-reference.com/">Basketball-Reference</Ext>,
-    uses: "Past-season advanced and per-game tables, careers that ended before 1996-97, contracts and franchise records.",
+    uses: "Past-season advanced and per-game tables, careers that ended before 1996-97 and contracts. Some early league averages (before 1983) are kept from an earlier copy.",
   },
   {
     name: <Ext href="https://www.darko.app/">DARKO</Ext>,
@@ -60,7 +60,7 @@ const DATA_SOURCES: { name: ReactNode; uses: string }[] = [
   },
   {
     name: <Ext href="https://www.wikipedia.org/">Wikipedia and Wikidata</Ext>,
-    uses: "Retired numbers and team front office listings.",
+    uses: "Retired numbers, team front office listings and ABA season records.",
   },
   {
     name: "News outlets and team blogs",

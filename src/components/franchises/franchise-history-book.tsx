@@ -138,9 +138,9 @@ export function FranchiseHistoryBook({
         {f.recordsSource ? (
           <MoreInfo summary="What counts" className="mt-1">
             <p>
-              Records, titles and leaders include every league this franchise played in (NBA, ABA
-              or BAA). Retired numbers include banners for coaches and owners. Streaks and lore are
-              curated.
+              Records and titles include every league this franchise played in (NBA, ABA or BAA).
+              Career leaders count NBA games only, so ABA seasons don&apos;t add to them. Retired
+              numbers include banners for coaches and owners. Streaks and lore are curated.
             </p>
           </MoreInfo>
         ) : null}
@@ -242,7 +242,7 @@ export function FranchiseHistoryBook({
             Franchise leaders
           </h3>
           <p className="mb-1 text-[13px] text-muted-foreground">
-            Career totals in this continuous franchise.
+            Career NBA totals in this continuous franchise.
           </p>
           <LeaderRow label="Points" leader={f.leaders.points} />
           <LeaderRow label="Rebounds" leader={f.leaders.rebounds} />

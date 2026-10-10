@@ -1,0 +1,50 @@
+{
+ "about": "ABA regular seasons and playoff results for the four franchises that joined the NBA in 1976. NBA Stats has no ABA seasons. Entered from the Wikipedia season lists below; divisionTitle is a first-place division finish (the ABA dropped divisions during 1975-76).",
+ "sources": ["https://en.wikipedia.org/wiki/List_of_Indiana_Pacers_seasons", "https://en.wikipedia.org/wiki/List_of_Brooklyn_Nets_seasons", "https://en.wikipedia.org/wiki/List_of_San_Antonio_Spurs_seasons", "https://en.wikipedia.org/wiki/List_of_Denver_Nuggets_seasons"],
+ "franchises": {
+  "ind": [
+   {"season": "1967-68", "wins": 38, "losses": 40, "divisionTitle": false, "playoffs": true, "finals": false, "champion": false},
+   {"season": "1968-69", "wins": 44, "losses": 34, "divisionTitle": true, "playoffs": true, "finals": true, "champion": false},
+   {"season": "1969-70", "wins": 59, "losses": 25, "divisionTitle": true, "playoffs": true, "finals": true, "champion": true},
+   {"season": "1970-71", "wins": 58, "losses": 26, "divisionTitle": true, "playoffs": true, "finals": false, "champion": false},
+   {"season": "1971-72", "wins": 47, "losses": 37, "divisionTitle": false, "playoffs": true, "finals": true, "champion": true},
+   {"season": "1972-73", "wins": 51, "losses": 33, "divisionTitle": false, "playoffs": true, "finals": true, "champion": true},
+   {"season": "1973-74", "wins": 46, "losses": 38, "divisionTitle": false, "playoffs": true, "finals": false, "champion": false},
+   {"season": "1974-75", "wins": 45, "losses": 39, "divisionTitle": false, "playoffs": true, "finals": true, "champion": false},
+   {"season": "1975-76", "wins": 39, "losses": 45, "divisionTitle": false, "playoffs": true, "finals": false, "champion": false}
+  ],
+  "bkn": [
+   {"season": "1967-68", "wins": 36, "losses": 42, "divisionTitle": false, "playoffs": false, "finals": false, "champion": false},
+   {"season": "1968-69", "wins": 17, "losses": 61, "divisionTitle": false, "playoffs": false, "finals": false, "champion": false},
+   {"season": "1969-70", "wins": 39, "losses": 45, "divisionTitle": false, "playoffs": true, "finals": false, "champion": false},
+   {"season": "1970-71", "wins": 40, "losses": 44, "divisionTitle": false, "playoffs": true, "finals": false, "champion": false},
+   {"season": "1971-72", "wins": 44, "losses": 40, "divisionTitle": false, "playoffs": true, "finals": true, "champion": false},
+   {"season": "1972-73", "wins": 30, "losses": 54, "divisionTitle": false, "playoffs": true, "finals": false, "champion": false},
+   {"season": "1973-74", "wins": 55, "losses": 29, "divisionTitle": true, "playoffs": true, "finals": true, "champion": true},
+   {"season": "1974-75", "wins": 58, "losses": 26, "divisionTitle": false, "playoffs": true, "finals": false, "champion": false},
+   {"season": "1975-76", "wins": 55, "losses": 29, "divisionTitle": false, "playoffs": true, "finals": true, "champion": true}
+  ],
+  "sas": [
+   {"season": "1967-68", "wins": 46, "losses": 32, "divisionTitle": false, "playoffs": true, "finals": false, "champion": false},
+   {"season": "1968-69", "wins": 41, "losses": 37, "divisionTitle": false, "playoffs": true, "finals": false, "champion": false},
+   {"season": "1969-70", "wins": 45, "losses": 39, "divisionTitle": false, "playoffs": true, "finals": false, "champion": false},
+   {"season": "1970-71", "wins": 30, "losses": 54, "divisionTitle": false, "playoffs": true, "finals": false, "champion": false},
+   {"season": "1971-72", "wins": 42, "losses": 42, "divisionTitle": false, "playoffs": true, "finals": false, "champion": false},
+   {"season": "1972-73", "wins": 28, "losses": 56, "divisionTitle": false, "playoffs": false, "finals": false, "champion": false},
+   {"season": "1973-74", "wins": 45, "losses": 39, "divisionTitle": false, "playoffs": true, "finals": false, "champion": false},
+   {"season": "1974-75", "wins": 51, "losses": 33, "divisionTitle": false, "playoffs": true, "finals": false, "champion": false},
+   {"season": "1975-76", "wins": 50, "losses": 34, "divisionTitle": false, "playoffs": true, "finals": false, "champion": false}
+  ],
+  "den": [
+   {"season": "1967-68", "wins": 45, "losses": 33, "divisionTitle": false, "playoffs": true, "finals": false, "champion": false},
+   {"season": "1968-69", "wins": 44, "losses": 34, "divisionTitle": false, "playoffs": true, "finals": false, "champion": false},
+   {"season": "1969-70", "wins": 51, "losses": 33, "divisionTitle": true, "playoffs": true, "finals": false, "champion": false},
+   {"season": "1970-71", "wins": 30, "losses": 54, "divisionTitle": false, "playoffs": false, "finals": false, "champion": false},
+   {"season": "1971-72", "wins": 34, "losses": 50, "divisionTitle": false, "playoffs": true, "finals": false, "champion": false},
+   {"season": "1972-73", "wins": 47, "losses": 37, "divisionTitle": false, "playoffs": true, "finals": false, "champion": false},
+   {"season": "1973-74", "wins": 37, "losses": 47, "divisionTitle": false, "playoffs": false, "finals": false, "champion": false},
+   {"season": "1974-75", "wins": 65, "losses": 19, "divisionTitle": true, "playoffs": true, "finals": false, "champion": false},
+   {"season": "1975-76", "wins": 60, "losses": 24, "divisionTitle": false, "playoffs": true, "finals": true, "champion": false}
+  ]
+ }
+}

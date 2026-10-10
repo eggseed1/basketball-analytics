@@ -4,7 +4,7 @@
  * Vancouver).
  *
  * Records, titles, best/worst seasons and career leaders come from
- * `verified-records.json` (scripts/build-franchise-records.mjs). Retired
+ * `verified-records.json` (scripts/build-team-season-history.py). Retired
  * number counts come from `retired-jerseys.json`. The curated entries below
  * only supply what those sources lack: streaks, previous homes and fan lore.
  */
@@ -1254,7 +1254,7 @@ function applyVerified(curated: CuratedFranchiseHistory): FranchiseHistory {
       threes: leaders.threes ?? curated.leaders.threes,
     },
     retiredNumbers: retiredBannerCount(curated.id) ?? curated.retiredNumbers,
-    recordsSource: "Basketball-Reference",
+    recordsSource: "NBA Stats",
   };
 }
 

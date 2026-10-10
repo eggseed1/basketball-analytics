@@ -1,9 +1,9 @@
 {
- "source": "Basketball-Reference franchise index, franchise season tables, and career leaders (NBA, ABA, and BAA seasons of each continuous franchise)",
- "generatedAt": "2026-09-30T05:10:31.460Z",
+ "source": "NBA Stats teamyearbyyearstats and franchiseplayers; ABA seasons from Wikipedia season lists. Career leaders count NBA games only.",
+ "generatedAt": "2026-10-10",
  "franchises": {
   "atl": {
-   "code": "ATL",
+   "teamId": 1610612737,
    "name": "Atlanta Hawks",
    "leagues": "NBA",
    "firstSeason": "1949-50",
@@ -59,8 +59,67 @@
     }
    }
   },
+  "bkn": {
+   "teamId": 1610612751,
+   "name": "Brooklyn Nets",
+   "leagues": "NBA/ABA",
+   "firstSeason": "1967-68",
+   "regularSeasonWins": 2074,
+   "regularSeasonLosses": 2702,
+   "playoffAppearances": 31,
+   "divisionTitles": 5,
+   "conferenceTitles": 2,
+   "leagueTitles": 2,
+   "seasonsPlayed": 59,
+   "lastSeason": "2025-26",
+   "bestSeason": {
+    "season": "1974-75",
+    "wins": 58,
+    "losses": 26
+   },
+   "worstSeason": {
+    "season": "2009-10",
+    "wins": 12,
+    "losses": 70
+   },
+   "finalsAppearances": 5,
+   "championships": [
+    1974,
+    1976
+   ],
+   "championshipLeagues": {
+    "1974": "ABA",
+    "1976": "ABA"
+   },
+   "leaders": {
+    "points": {
+     "player": "Brook Lopez",
+     "value": 10444
+    },
+    "rebounds": {
+     "player": "Buck Williams",
+     "value": 7576
+    },
+    "assists": {
+     "player": "Jason Kidd",
+     "value": 4620
+    },
+    "steals": {
+     "player": "Jason Kidd",
+     "value": 950
+    },
+    "blocks": {
+     "player": "Brook Lopez",
+     "value": 972
+    },
+    "threes": {
+     "player": "Joe Harris",
+     "value": 984
+    }
+   }
+  },
   "bos": {
-   "code": "BOS",
+   "teamId": 1610612738,
    "name": "Boston Celtics",
    "leagues": "NBA/BAA",
    "firstSeason": "1946-47",
@@ -150,67 +209,8 @@
     }
    }
   },
-  "bkn": {
-   "code": "NJN",
-   "name": "Brooklyn Nets",
-   "leagues": "NBA/ABA",
-   "firstSeason": "1967-68",
-   "regularSeasonWins": 2074,
-   "regularSeasonLosses": 2702,
-   "playoffAppearances": 31,
-   "divisionTitles": 5,
-   "conferenceTitles": 2,
-   "leagueTitles": 2,
-   "seasonsPlayed": 59,
-   "lastSeason": "2025-26",
-   "bestSeason": {
-    "season": "1974-75",
-    "wins": 58,
-    "losses": 26
-   },
-   "worstSeason": {
-    "season": "2009-10",
-    "wins": 12,
-    "losses": 70
-   },
-   "finalsAppearances": 5,
-   "championships": [
-    1974,
-    1976
-   ],
-   "championshipLeagues": {
-    "1974": "ABA",
-    "1976": "ABA"
-   },
-   "leaders": {
-    "points": {
-     "player": "Brook Lopez",
-     "value": 10444
-    },
-    "rebounds": {
-     "player": "Buck Williams",
-     "value": 7576
-    },
-    "assists": {
-     "player": "Jason Kidd",
-     "value": 4620
-    },
-    "steals": {
-     "player": "Jason Kidd",
-     "value": 950
-    },
-    "blocks": {
-     "player": "Brook Lopez",
-     "value": 972
-    },
-    "threes": {
-     "player": "Joe Harris",
-     "value": 984
-    }
-   }
-  },
   "cha": {
-   "code": "CHA",
+   "teamId": 1610612766,
    "name": "Charlotte Hornets",
    "leagues": "NBA",
    "firstSeason": "1988-89",
@@ -263,7 +263,7 @@
    }
   },
   "chi": {
-   "code": "CHI",
+   "teamId": 1610612741,
    "name": "Chicago Bulls",
    "leagues": "NBA",
    "firstSeason": "1966-67",
@@ -330,7 +330,7 @@
    }
   },
   "cle": {
-   "code": "CLE",
+   "teamId": 1610612739,
    "name": "Cleveland Cavaliers",
    "leagues": "NBA",
    "firstSeason": "1970-71",
@@ -387,7 +387,7 @@
    }
   },
   "dal": {
-   "code": "DAL",
+   "teamId": 1610612742,
    "name": "Dallas Mavericks",
    "leagues": "NBA",
    "firstSeason": "1980-81",
@@ -444,14 +444,14 @@
    }
   },
   "den": {
-   "code": "DEN",
+   "teamId": 1610612743,
    "name": "Denver Nuggets",
    "leagues": "NBA/ABA",
    "firstSeason": "1967-68",
    "regularSeasonWins": 2471,
    "regularSeasonLosses": 2306,
-   "playoffAppearances": 41,
-   "divisionTitles": 13,
+   "playoffAppearances": 39,
+   "divisionTitles": 12,
    "conferenceTitles": 1,
    "leagueTitles": 1,
    "seasonsPlayed": 59,
@@ -487,7 +487,7 @@
      "value": 6080
     },
     "steals": {
-     "player": "Fat Lever",
+     "player": "Lafayette Lever",
      "value": 1167
     },
     "blocks": {
@@ -501,14 +501,14 @@
    }
   },
   "det": {
-   "code": "DET",
+   "teamId": 1610612765,
    "name": "Detroit Pistons",
    "leagues": "NBA/BAA",
    "firstSeason": "1948-49",
    "regularSeasonWins": 2931,
    "regularSeasonLosses": 3231,
    "playoffAppearances": 44,
-   "divisionTitles": 12,
+   "divisionTitles": 13,
    "conferenceTitles": 5,
    "leagueTitles": 3,
    "seasonsPlayed": 78,
@@ -562,7 +562,7 @@
    }
   },
   "gsw": {
-   "code": "GSW",
+   "teamId": 1610612744,
    "name": "Golden State Warriors",
    "leagues": "NBA/BAA",
    "firstSeason": "1946-47",
@@ -631,7 +631,7 @@
    }
   },
   "hou": {
-   "code": "HOU",
+   "teamId": 1610612745,
    "name": "Houston Rockets",
    "leagues": "NBA",
    "firstSeason": "1967-68",
@@ -690,7 +690,7 @@
    }
   },
   "ind": {
-   "code": "IND",
+   "teamId": 1610612754,
    "name": "Indiana Pacers",
    "leagues": "NBA/ABA",
    "firstSeason": "1967-68",
@@ -729,8 +729,8 @@
      "value": 25279
     },
     "rebounds": {
-     "player": "Mel Daniels",
-     "value": 7643
+     "player": "Dale Davis",
+     "value": 6006
     },
     "assists": {
      "player": "Reggie Miller",
@@ -751,8 +751,8 @@
    }
   },
   "lac": {
-   "code": "LAC",
-   "name": "Los Angeles Clippers",
+   "teamId": 1610612746,
+   "name": "LA Clippers",
    "leagues": "NBA",
    "firstSeason": "1970-71",
    "regularSeasonWins": 1935,
@@ -795,7 +795,7 @@
     },
     "blocks": {
      "player": "DeAndre Jordan",
-     "value": 1277
+     "value": 1276
     },
     "threes": {
      "player": "Paul George",
@@ -804,14 +804,14 @@
    }
   },
   "lal": {
-   "code": "LAL",
+   "teamId": 1610612747,
    "name": "Los Angeles Lakers",
    "leagues": "NBA/BAA",
    "firstSeason": "1948-49",
    "regularSeasonWins": 3653,
    "regularSeasonLosses": 2515,
    "playoffAppearances": 66,
-   "divisionTitles": 35,
+   "divisionTitles": 37,
    "conferenceTitles": 19,
    "leagueTitles": 17,
    "seasonsPlayed": 78,
@@ -893,7 +893,7 @@
    }
   },
   "mem": {
-   "code": "MEM",
+   "teamId": 1610612763,
    "name": "Memphis Grizzlies",
    "leagues": "NBA",
    "firstSeason": "1995-96",
@@ -946,7 +946,7 @@
    }
   },
   "mia": {
-   "code": "MIA",
+   "teamId": 1610612748,
    "name": "Miami Heat",
    "leagues": "NBA",
    "firstSeason": "1988-89",
@@ -1007,7 +1007,7 @@
    }
   },
   "mil": {
-   "code": "MIL",
+   "teamId": 1610612749,
    "name": "Milwaukee Bucks",
    "leagues": "NBA",
    "firstSeason": "1968-69",
@@ -1066,7 +1066,7 @@
    }
   },
   "min": {
-   "code": "MIN",
+   "teamId": 1610612750,
    "name": "Minnesota Timberwolves",
    "leagues": "NBA",
    "firstSeason": "1989-90",
@@ -1119,7 +1119,7 @@
    }
   },
   "nop": {
-   "code": "NOH",
+   "teamId": 1610612740,
    "name": "New Orleans Pelicans",
    "leagues": "NBA",
    "firstSeason": "2002-03",
@@ -1151,7 +1151,7 @@
     },
     "rebounds": {
      "player": "Anthony Davis",
-     "value": 4906
+     "value": 4905
     },
     "assists": {
      "player": "Chris Paul",
@@ -1172,14 +1172,14 @@
    }
   },
   "nyk": {
-   "code": "NYK",
+   "teamId": 1610612752,
    "name": "New York Knicks",
    "leagues": "NBA/BAA",
    "firstSeason": "1946-47",
    "regularSeasonWins": 3078,
    "regularSeasonLosses": 3191,
-   "playoffAppearances": 47,
-   "divisionTitles": 8,
+   "playoffAppearances": 46,
+   "divisionTitles": 9,
    "conferenceTitles": 5,
    "leagueTitles": 3,
    "seasonsPlayed": 80,
@@ -1233,7 +1233,7 @@
    }
   },
   "okc": {
-   "code": "OKC",
+   "teamId": 1610612760,
    "name": "Oklahoma City Thunder",
    "leagues": "NBA",
    "firstSeason": "1967-68",
@@ -1292,14 +1292,14 @@
    }
   },
   "orl": {
-   "code": "ORL",
+   "teamId": 1610612753,
    "name": "Orlando Magic",
    "leagues": "NBA",
    "firstSeason": "1989-90",
    "regularSeasonWins": 1401,
    "regularSeasonLosses": 1566,
    "playoffAppearances": 19,
-   "divisionTitles": 8,
+   "divisionTitles": 9,
    "conferenceTitles": 2,
    "leagueTitles": 0,
    "seasonsPlayed": 37,
@@ -1345,14 +1345,14 @@
    }
   },
   "phi": {
-   "code": "PHI",
+   "teamId": 1610612755,
    "name": "Philadelphia 76ers",
    "leagues": "NBA",
    "firstSeason": "1949-50",
    "regularSeasonWins": 3170,
    "regularSeasonLosses": 2935,
    "playoffAppearances": 55,
-   "divisionTitles": 12,
+   "divisionTitles": 13,
    "conferenceTitles": 5,
    "leagueTitles": 3,
    "seasonsPlayed": 77,
@@ -1406,7 +1406,7 @@
    }
   },
   "phx": {
-   "code": "PHO",
+   "teamId": 1610612756,
    "name": "Phoenix Suns",
    "leagues": "NBA",
    "firstSeason": "1968-69",
@@ -1459,7 +1459,7 @@
    }
   },
   "por": {
-   "code": "POR",
+   "teamId": 1610612757,
    "name": "Portland Trail Blazers",
    "leagues": "NBA",
    "firstSeason": "1970-71",
@@ -1516,14 +1516,14 @@
    }
   },
   "sac": {
-   "code": "SAC",
+   "teamId": 1610612758,
    "name": "Sacramento Kings",
    "leagues": "NBA/BAA",
    "firstSeason": "1948-49",
    "regularSeasonWins": 2810,
    "regularSeasonLosses": 3359,
    "playoffAppearances": 30,
-   "divisionTitles": 6,
+   "divisionTitles": 7,
    "conferenceTitles": 0,
    "leagueTitles": 1,
    "seasonsPlayed": 78,
@@ -1573,7 +1573,7 @@
    }
   },
   "sas": {
-   "code": "SAS",
+   "teamId": 1610612759,
    "name": "San Antonio Spurs",
    "leagues": "NBA/ABA",
    "firstSeason": "1967-68",
@@ -1624,7 +1624,7 @@
      "value": 6829
     },
     "steals": {
-     "player": "Manu Ginóbili",
+     "player": "Manu Ginobili",
      "value": 1392
     },
     "blocks": {
@@ -1632,13 +1632,13 @@
      "value": 3020
     },
     "threes": {
-     "player": "Manu Ginóbili",
+     "player": "Manu Ginobili",
      "value": 1495
     }
    }
   },
   "tor": {
-   "code": "TOR",
+   "teamId": 1610612761,
    "name": "Toronto Raptors",
    "leagues": "NBA",
    "firstSeason": "1995-96",
@@ -1695,14 +1695,14 @@
    }
   },
   "uta": {
-   "code": "UTA",
+   "teamId": 1610612762,
    "name": "Utah Jazz",
    "leagues": "NBA",
    "firstSeason": "1974-75",
    "regularSeasonWins": 2216,
    "regularSeasonLosses": 1980,
    "playoffAppearances": 31,
-   "divisionTitles": 11,
+   "divisionTitles": 12,
    "conferenceTitles": 2,
    "leagueTitles": 0,
    "seasonsPlayed": 52,
@@ -1748,7 +1748,7 @@
    }
   },
   "was": {
-   "code": "WAS",
+   "teamId": 1610612764,
    "name": "Washington Wizards",
    "leagues": "NBA",
    "firstSeason": "1961-62",
