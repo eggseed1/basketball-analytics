@@ -1,4 +1,5 @@
 import { CACHE_TTL_MS } from "./cache-policy";
+import { assertLiveBrefAllowed } from "./bref-live-policy";
 import { isBrefCombinedTeam } from "./bref-scraper";
 
 export const LUKA_BREF_ID = "doncilu01";
@@ -458,6 +459,7 @@ export async function fetchBrefPlayerPage(
   brefId: string
 ): Promise<BrefPlayerPage> {
   const url = `https://www.basketball-reference.com/players/${brefId[0]}/${brefId}.html`;
+  assertLiveBrefAllowed(url);
   const now = Date.now();
   const cached = memoryCache.get(url);
   if (cached && cached.freshUntil > now) return cached.value;

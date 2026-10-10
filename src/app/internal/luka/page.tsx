@@ -1,9 +1,11 @@
 import { MotionReveal } from "@/components/continuity/motion-reveal";
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 
 import { PageAtmosphere } from "@/components/brand/page-atmosphere";
 import { DestinationClientShell } from "@/components/continuity/destination-client-shell";
 import { LukaBrefProfileView } from "@/components/internal/luka-bref-profile";
+import { liveBrefAllowed } from "@/data/providers/nba/bref-live-policy";
 import { getLukaBrefProfile } from "@/data/queries/luka-bref-profile";
 import { getLukaShotMap } from "@/data/queries/luka-shots";
 import { brandAtmosphereColors } from "@/lib/game-matchup-theme";
@@ -23,6 +25,7 @@ interface PageProps {
  * Does not replace /players/[playerId].
  */
 export default async function LukaBrefExamplePage({ searchParams }: PageProps) {
+  if (!liveBrefAllowed()) notFound();
   const sp = await searchParams;
   const profile = await getLukaBrefProfile(sp);
   const shotMap =

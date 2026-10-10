@@ -3,6 +3,7 @@ import {
   sharedGetOrSet,
   sharedPeek,
 } from "@/data/cache/shared-ttl-cache";
+import { assertLiveBrefAllowed, liveBrefAllowed } from "./bref-live-policy";
 import { CACHE_TTL_MS, isCurrentCanonicalSeason } from "./cache-policy";
 
 const DEFAULT_TTL_MS = CACHE_TTL_MS.brefCurrent;
@@ -177,13 +178,7 @@ export async function fetchBrefAdvancedSeason(
     // fall through to live scrape
   }
 
-  // Slim edge only: never hang on live BRef for missing seasons.
-  const { slimEdgeProductEnabled } = await import(
-    "@/data/providers/nba/runtime-policy"
-  );
-  if (slimEdgeProductEnabled()) {
-    return [];
-  }
+  if (!liveBrefAllowed()) return [];
 
   const year = brefSeasonYear(canonicalSeason);
   const url = `https://www.basketball-reference.com/leagues/NBA_${year}_advanced.html`;
@@ -329,6 +324,7 @@ export function peekBrefAdvancedSeason(
 }
 
 async function fetchBrefHtml(url: string): Promise<string> {
+  assertLiveBrefAllowed(url);
   let lastError: unknown;
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
