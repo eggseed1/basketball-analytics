@@ -300,12 +300,16 @@ def main():
         except Exception as error:  # noqa: BLE001
             print(f"[play-types] {season} skipped: {error}")
         try:
-            onoff_seasons[season] = on_off_season(season)
-            print(f"[on-off] {season}: {len(onoff_seasons[season])} player-team rows")
+            rows = on_off_season(season)
+            if not rows:
+                raise ValueError("no player-team rows")
+            onoff_seasons[season] = rows
+            print(f"[on-off] {season}: {len(rows)} player-team rows")
         except Exception as error:  # noqa: BLE001
             print(f"[on-off] {season} skipped: {error}")
 
-    keep = sorted(set(DEFAULT_SEASONS) | set(seasons))
+    # Never drop a season already baked; a one-season refresh keeps the rest.
+    keep = sorted(set(play_seasons) | set(onoff_seasons) | set(league_zones) | set(seasons))
     write(
         PLAY_OUT,
         {
