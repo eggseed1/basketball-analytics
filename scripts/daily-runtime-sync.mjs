@@ -43,6 +43,16 @@ const now = new Date();
 const info = nbaSeasonPhaseInfo(now);
 const minGp = dailyGameLogMinGp(now);
 
+/**
+ * In-season bakes are rebuilt every run but committed only on Mondays and
+ * June 25-30, so git holds the finished season once offseason runs stop
+ * rebuilding them. First scheduled run of the day (12:17 UTC) only.
+ */
+const seasonCloseWindow = now.getUTCMonth() === 5 && now.getUTCDate() >= 25;
+const firstRunOfDay = now.getUTCHours() < 14;
+const commitSeasonSnapshots = firstRunOfDay && (now.getUTCDay() === 1 || seasonCloseWindow);
+const archiveSeasonToR2 = firstRunOfDay && seasonCloseWindow;
+
 function log(message) {
   console.log(`[daily-runtime-sync] ${message}`);
 }
@@ -183,6 +193,8 @@ const ORG_STEPS = [
   { label: "draft-year", cmd: "node", args: ["scripts/build-runtime-draft-year-snapshot.mjs"] },
   // Hall of Fame classes newer than the curated list (one BRef page).
   { label: "hall-of-fame", cmd: "node", args: ["scripts/build-hof-snapshot.mjs"] },
+  // League per-game averages for the compare tool's era adjustment (one BRef page).
+  { label: "league-averages", cmd: "node", args: ["scripts/build-league-season-averages.mjs"] },
   // Wikipedia's retired-numbers list; a few unresolved names are skipped, not fatal.
   { label: "retired-jerseys", cmd: "node", args: ["scripts/build-retired-jerseys.mjs"] },
   // Headshots for players the lookup has never resolved (rookies, new aliases); NBA/ESPN CDNs only.
@@ -474,6 +486,8 @@ async function main() {
     phase: info.phase,
     season: info.season,
     skipped: "false",
+    commit_season: String(commitSeasonSnapshots),
+    archive_season: String(archiveSeasonToR2),
   });
   log(`ok → ${dest} (${report.durationMs}ms)`);
 }

@@ -215,6 +215,25 @@ jobs:
             src/data/runtime/on-off-snapshot.json \
             src/data/runtime/team-game-box-snapshot.json \
             public/runtime/on-off
+          # In-season bakes, weekly and after the Finals, so offseason deploys
+          # (which skip these bakes) still ship the finished season.
+          if [ "${{ steps.sync.outputs.commit_season }}" = "true" ]; then
+            git add -- \
+              src/data/runtime/game-snapshot.json \
+              src/data/runtime/bref-advanced-snapshot.json \
+              src/data/runtime/standings-snapshot.json \
+              src/data/runtime/team-board-snapshot.json \
+              src/data/runtime/current-roster-snapshot.json \
+              src/data/runtime/drbl-overlay-snapshot.json \
+              src/data/runtime/drbl-published-seasons.json \
+              src/data/runtime/impact-overlay-snapshot.json \
+              src/data/runtime/percentile-pools-snapshot.json \
+              src/data/runtime/player-search-snapshot.json \
+              src/data/runtime/espn-name-index.json \
+              src/data/runtime/stat-detective-windows.json \
+              src/data/runtime/recent-insights-snapshot.json \
+              src/data/drbl/precomputed
+          fi
           if git diff --cached --quiet; then
             echo "No data changes to commit."
             exit 0
@@ -225,6 +244,24 @@ jobs:
             sleep $((attempt * 10))
           done
           echo "::warning::Could not push the data refresh; the deploy still uses it."
+
+      # Past seasons' game logs and shot charts are served from R2, and CI only
+      # bakes the current season, so the finished season is copied there after
+      # the Finals (June 25-30) before offseason deploys stop baking it.
+      - name: Archive season game logs and shots to R2
+        if: steps.sync.outputs.archive_season == 'true'
+        continue-on-error: true
+        timeout-minutes: 40
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          SEASONS: ${{ steps.sync.outputs.season }}
+        run: |
+          node scripts/upload-player-game-logs-r2.mjs
+          # Cloudflare allows 1,200 API calls per 5 minutes across the account.
+          sleep 320
+          node scripts/upload-player-shots-r2.mjs
+          sleep 320
 
       - name: Upload sync report
         if: always()

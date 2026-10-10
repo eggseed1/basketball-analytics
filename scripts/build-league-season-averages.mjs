@@ -75,6 +75,10 @@ const html = await res.text();
 const table = html.slice(html.indexOf("<table"), html.indexOf("</table>"));
 const body = table.slice(table.indexOf("<tbody"));
 
+// Completed seasons only; the live year's partial averages would shift every night.
+const now = new Date();
+const currentStartYear = now.getUTCMonth() >= 6 ? now.getUTCFullYear() : now.getUTCFullYear() - 1;
+
 const seasons = {};
 for (const tr of body.split("<tr").slice(1)) {
   const cells = Object.fromEntries(
@@ -87,6 +91,7 @@ for (const tr of body.split("<tr").slice(1)) {
   if (!/^\d{4}-\d{2}$/.test(season ?? "") || num(cells.pts_per_g) == null) {
     continue;
   }
+  if (Number(season.slice(0, 4)) >= currentStartYear) continue;
   const row = {};
   for (const [key, col] of Object.entries(COLUMNS)) {
     const since = FIRST_TRACKED[key];
@@ -97,6 +102,15 @@ for (const tr of body.split("<tr").slice(1)) {
 
 const keys = Object.keys(seasons).sort();
 if (keys.length < 70) throw new Error(`Only parsed ${keys.length} seasons`);
+
+const prior = await fs
+  .readFile(OUT, "utf8")
+  .then((raw) => JSON.parse(raw).seasons)
+  .catch(() => null);
+if (prior && JSON.stringify(prior) === JSON.stringify(seasons)) {
+  console.log(`Unchanged: ${keys.length} seasons (${keys[0]} to ${keys.at(-1)})`);
+  process.exit(0);
+}
 
 await fs.writeFile(
   OUT,

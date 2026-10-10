@@ -47,7 +47,8 @@ async function main() {
     process.exit(1);
   }
   // Last, so the season list never points at logs that haven't landed yet.
-  entries.push({ key: "manifest.json", file: path.join(SRC, "manifest.json") });
+  const manifest = await mergedManifest();
+  if (manifest) entries.push({ key: "manifest.json", file: manifest });
 
   console.log(`Uploading ${entries.length} files from ${seasons.length} seasons to r2://${BUCKET}`);
 
@@ -68,6 +69,43 @@ async function main() {
     }
   }
   console.log("Done.");
+}
+
+/**
+ * A partial bake (CI holds only the current season) must not replace the
+ * bucket's season list, so the local manifest is unioned with the one in R2.
+ * Returns null, and the manifest is left alone, when R2's copy can't be read.
+ */
+async function mergedManifest() {
+  const local = JSON.parse(await fs.readFile(path.join(SRC, "manifest.json"), "utf8"));
+  const remoteFile = path.join(os.tmpdir(), `drbl-gamelogs-manifest-${Date.now()}.json`);
+  const got = spawnSync(
+    "npx",
+    ["wrangler", "r2", "object", "get", `${BUCKET}/manifest.json`, "--remote", "--file", remoteFile],
+    { stdio: "inherit" }
+  );
+  let remote;
+  try {
+    if (got.status !== 0) throw new Error(`wrangler exited ${got.status}`);
+    remote = JSON.parse(await fs.readFile(remoteFile, "utf8"));
+  } catch (error) {
+    console.warn(`Could not read r2://${BUCKET}/manifest.json (${error.message}); leaving it unchanged.`);
+    return null;
+  } finally {
+    await fs.rm(remoteFile, { force: true });
+  }
+  const newestFirst = (list) => [...new Set(list)].sort((a, b) => b.localeCompare(a));
+  const merged = {
+    ...remote,
+    ...local,
+    seasons: newestFirst([...(remote.seasons ?? []), ...(local.seasons ?? [])]),
+    seasonCounts: { ...(remote.seasonCounts ?? {}), ...(local.seasonCounts ?? {}) },
+    usableSeasons: newestFirst([...(remote.usableSeasons ?? []), ...(local.usableSeasons ?? [])]),
+  };
+  const out = path.join(os.tmpdir(), `drbl-gamelogs-manifest-merged-${Date.now()}.json`);
+  await fs.writeFile(out, JSON.stringify(merged));
+  console.log(`Manifest seasons: ${merged.usableSeasons.join(", ")}`);
+  return out;
 }
 
 function sleep(ms) {
