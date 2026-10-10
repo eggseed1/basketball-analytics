@@ -647,7 +647,11 @@ export function TransactionEventDetail({
         {fromDraft
           ? "This record is built from the draft order: pick number, round and position."
           : <>
-              {fromNbaCom ? "This record is built from per-player lines." : "This record is free text from the source."}{" "}
+              {fromNbaCom
+                ? "This record is built from NBA.com's per-player lines."
+                : event.source === "espn-site-v2-transactions"
+                  ? "This record is free text from ESPN's transaction feed."
+                  : "This record is free text from the source."}{" "}
               Players and picks are read from it, not from a structured ownership ledger.
             </>}
       </p>

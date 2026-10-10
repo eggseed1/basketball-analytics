@@ -7,7 +7,8 @@ import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { ShareSnapshotDialog } from "@/components/share/share-snapshot-dialog";
 import { type } from "@/lib/design-system";
-import { resolveTeamBrand, teamChartColor } from "@/lib/nba-brand";
+import { playerHeadshotCandidates, resolveTeamBrand, teamChartColor } from "@/lib/nba-brand";
+import { photoCreditFor, photoCreditText } from "@/lib/photo-credits";
 import { percentileSavantColor, SAVANT_LEGEND } from "@/lib/player-grade";
 import type { PercentileMetric } from "@/lib/player-percentile-metrics";
 import type { PercentileCategory } from "@/lib/player-stat-sheet-registry";
@@ -56,6 +57,7 @@ function PercentileShareGraphic({
 }) {
   const brand = resolveTeamBrand(teamKey);
   const frame = teamChartColor(teamKey, { surface: "dark" }).color;
+  const credit = photoCreditFor(playerHeadshotCandidates({ playerId, espnId: playerId })[0]);
   return (
     <div
       className="w-[540px] max-w-[540px] shrink-0 select-none px-7 pb-7 pt-8 text-white"
@@ -172,6 +174,11 @@ function PercentileShareGraphic({
       <p className="mt-7 text-center text-[10.5px] font-semibold uppercase tracking-[0.16em] text-white/40">
         DRBL · League percentiles for {season} · 100 is best
       </p>
+      {credit ? (
+        <p className="mt-2 text-center text-[9px] leading-snug text-white/35">
+          {photoCreditText(credit)}
+        </p>
+      ) : null}
     </div>
   );
 }

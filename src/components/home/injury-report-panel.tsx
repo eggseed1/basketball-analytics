@@ -95,7 +95,8 @@ export function InjuryReportPanel({ entries, today }: { entries: InjuryEntry[]; 
       <div>
         <h2 id="injury-report-title" className="type-heading">Injury report</h2>
         <p className="type-body-sm text-muted-foreground">
-          {counts || `${entries.length} listed`} across {teams} {teams === 1 ? "team" : "teams"}.
+          {counts || `${entries.length} listed`} across {teams} {teams === 1 ? "team" : "teams"}. From
+          ESPN&apos;s injury feed, which can lag team announcements.
         </p>
       </div>
       <ul className="flex flex-col divide-y divide-border">

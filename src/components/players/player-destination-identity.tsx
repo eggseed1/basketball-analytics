@@ -5,6 +5,7 @@ import {
   type GlassSurfaceHonor,
 } from "@/components/brand/glass-surface";
 import { HistoricalTeamMark } from "@/components/brand/historical-team-mark";
+import { PhotoCreditLine } from "@/components/brand/photo-credit-line";
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { TextLink } from "@/components/ui/text-link";
 import { TeamLogo } from "@/components/brand/team-logo";
@@ -303,6 +304,7 @@ export function PlayerDestinationIdentity({
                         !useTwoColumnLayout && "sm:justify-start"
                       )}
                     />
+                    <PhotoCreditLine portraitUrl={portraitUrl} className="mt-1" />
                   </div>
                   {accolades ? (
                     <div className="flex min-w-0 w-full justify-center">

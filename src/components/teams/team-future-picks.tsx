@@ -126,7 +126,7 @@ export function FuturePicksSourceNote({ data }: { data: TeamFuturePicksView }) {
     : null;
   return (
     <p className={cn(type.caption, "text-muted-foreground")}>
-      Terms are worded as reported{asOf ? `, as of ${asOf}` : ""}. Ranges like 1-8 are pick numbers; &quot;via&quot;
+      Terms are worded as reported by Spotrac{asOf ? `, as of ${asOf}` : ""}. Ranges like 1-8 are pick numbers; &quot;via&quot;
       lists the teams a pick passed through. Logos show whose pick it originally was.
     </p>
   );

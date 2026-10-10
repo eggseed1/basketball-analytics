@@ -18,6 +18,9 @@ import { ESPN_PLAYER_SEASON_HORIZON_START } from "@/gm/myleague/constants";
 import { MatchupOrbs } from "@/components/brand/matchup-orbs";
 import { MotionReveal } from "@/components/continuity/motion-reveal";
 
+const GM_FICTION_NOTE =
+  "Rosters start from real players, but ratings, injuries, trades and signings here are simulated and say nothing about the real players.";
+
 export function GmShell({ children }: { children: ReactNode }) {
   const league = useGmStore((s) => s.league);
   const hydrated = useGmStore((s) => s.hydrated);
@@ -77,7 +80,7 @@ export function GmShell({ children }: { children: ReactNode }) {
         <p className="rounded-md border border-dashed border-amber-600/30 bg-amber-500/5 px-3 py-2 text-[13px] text-muted-foreground">
           Franchise Lab is an unfinished Milestone 2 scaffold. Its draft,
           medical, staff, and cap tools are simulation shells, not a finished
-          MyLeague product.
+          MyLeague product. {GM_FICTION_NOTE}
         </p>
         <div>
           <h1 className="text-[28px] font-bold tracking-tight sm:text-[32px]">
@@ -181,7 +184,7 @@ export function GmShell({ children }: { children: ReactNode }) {
       <MotionReveal />
       <p className="rounded-md border border-dashed border-amber-600/30 bg-amber-500/5 px-3 py-2 text-[13px] text-muted-foreground">
         Franchise Lab · unfinished Milestone 2 scaffold, not a finished
-        MyLeague product.
+        MyLeague product. {GM_FICTION_NOTE}
       </p>
       <header
         className="sports-card relative isolate overflow-hidden px-4 py-4"

@@ -8,7 +8,8 @@ import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { ShareSnapshotDialog } from "@/components/share/share-snapshot-dialog";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { type } from "@/lib/design-system";
-import { resolveTeamBrand, teamChartColor } from "@/lib/nba-brand";
+import { playerHeadshotCandidates, resolveTeamBrand, teamChartColor } from "@/lib/nba-brand";
+import { photoCreditFor, photoCreditText } from "@/lib/photo-credits";
 import { cn } from "@/lib/utils";
 
 type ShareLayout = "clean" | "bars";
@@ -106,6 +107,9 @@ function CompareShareGraphic({
   const bSeason = seasonLabel(result, "b");
   const aColor = shareSideColor(result.aTeamKey, FALLBACK_A);
   const bColor = shareSideColor(result.bTeamKey, FALLBACK_B);
+  const credits = [result.aId, result.bId]
+    .map((id) => photoCreditFor(playerHeadshotCandidates({ playerId: id })[0]))
+    .filter((c) => c !== null);
 
   return (
     <div
@@ -270,6 +274,11 @@ function CompareShareGraphic({
       <p className="mt-8 text-center text-[11px] font-semibold uppercase tracking-[0.22em] text-white/45">
         DRBL
       </p>
+      {credits.map((credit) => (
+        <p key={credit.filePage} className="mt-2 text-center text-[9px] leading-snug text-white/35">
+          {photoCreditText(credit)}
+        </p>
+      ))}
     </div>
   );
 }

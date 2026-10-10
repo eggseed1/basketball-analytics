@@ -9,6 +9,9 @@ export function SiteFooter() {
           player images belong to their owners.
         </p>
         <nav aria-label="Site policies" className="flex shrink-0 gap-4">
+          <TransitionLink href="/sources" className="hover:text-foreground hover:underline">
+            Sources
+          </TransitionLink>
           <TransitionLink href="/terms" className="hover:text-foreground hover:underline">
             Terms
           </TransitionLink>

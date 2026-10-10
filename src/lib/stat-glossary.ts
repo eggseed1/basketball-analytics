@@ -33,7 +33,7 @@ const ENTRIES: Record<string, StatGlossaryEntry> = {
   },
   DPM: {
     title: "DARKO DPM",
-    body: "Daily Player Metric from DARKO: estimated points per 100 possessions vs average, blending box score and on/off. 0 is average; stars are often +3 to +6.",
+    body: "Daily Player Metric from DARKO, Kostya Medvedovsky's model (darko.app): estimated points per 100 possessions vs average, blending box score and on/off. 0 is average; stars are often +3 to +6.",
   },
   "O-DPM": {
     title: "DARKO offensive DPM",
