@@ -154,6 +154,8 @@ const ORG_STEPS = [
   { label: "retired-jerseys", cmd: "node", args: ["scripts/build-retired-jerseys.mjs"] },
   // Headshots for players the lookup has never resolved (rookies, new aliases); NBA/ESPN CDNs only.
   { label: "portraits", cmd: "node", args: ["scripts/build-runtime-portrait-lookup.mjs", "--new-only"] },
+  // Arcade league file picks up a season once it is complete in the BRef bake.
+  { label: "arcade", cmd: "node", args: ["scripts/build-arcade-data.mjs"] },
   // BRef totals include games in progress, so franchise records only refresh after the Finals.
   ...(info.phase === "offseason"
     ? [{ label: "franchise-records", cmd: "node", args: ["scripts/build-franchise-records.mjs"] }]

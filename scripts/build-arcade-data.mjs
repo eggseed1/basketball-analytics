@@ -1,7 +1,7 @@
 /**
  * Bake the Arcade games' shared league file from the bundled season stats:
- * one row per player-season (1996-97 on) with team(s), position, minutes,
- * BPM, VORP, per-game box score and DARKO.
+ * one row per completed player-season (1996-97 on) with team(s), position,
+ * minutes, BPM, VORP, per-game box score and DARKO.
  *
  *   node scripts/build-arcade-data.mjs
  *
@@ -58,7 +58,12 @@ function playerId(name, birthYear, espnId) {
   return pid;
 }
 
-const seasonKeys = Object.keys(bref.seasons).sort();
+// Completed seasons only; the live year's partial lines would skew the games.
+const now = new Date();
+const currentStartYear = now.getUTCMonth() >= 6 ? now.getUTCFullYear() : now.getUTCFullYear() - 1;
+const seasonKeys = Object.keys(bref.seasons)
+  .filter((season) => Number(season.slice(0, 4)) < currentStartYear)
+  .sort();
 const seasons = {};
 let darkoJoined = 0;
 let rows = 0;
@@ -158,6 +163,17 @@ const out = {
 };
 
 const file = path.join(root, "public/runtime/arcade/league-seasons.json");
+const withoutStamp = (json) => JSON.stringify({ ...json, generatedAt: null });
+let prior = null;
+try {
+  prior = JSON.parse(readFileSync(file, "utf8"));
+} catch {
+  // first build
+}
+if (prior && withoutStamp(prior) === withoutStamp(out)) {
+  console.log(`arcade: unchanged (${seasonKeys[0]}..${seasonKeys.at(-1)})`);
+  process.exit(0);
+}
 mkdirSync(path.dirname(file), { recursive: true });
 writeFileSync(file, JSON.stringify(out));
 console.log(
