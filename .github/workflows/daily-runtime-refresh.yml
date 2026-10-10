@@ -313,6 +313,13 @@ jobs:
         if: always() && steps.sync.outcome != 'skipped'
         run: node scripts/check-step-health.mjs
 
+      - name: Check R2 write access
+        if: always() && steps.sync.outcome != 'skipped'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: node scripts/check-r2-write.mjs
+
       - name: Summary
         if: always()
         run: |
