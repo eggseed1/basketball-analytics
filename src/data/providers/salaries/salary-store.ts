@@ -1,6 +1,13 @@
 /**
- * Player salary lookup from vendored historical CSV (2000-2025 start years).
- * Source file: data/salaries/player-salaries-2000-2025.csv
+ * Player salary lookup by season start year.
+ *
+ * Sources, later ones filling gaps or taking over:
+ *   data/salaries/player-salaries-2000-2025.csv   history
+ *   data/salaries/player-salaries-supplement.csv  newest finished season
+ *   src/data/runtime/bref-team-contracts-snapshot.json  current and future
+ *     seasons from Basketball-Reference team contracts, refreshed nightly
+ *
+ * Both CSVs label rows by season END year (2025 = 2024-25).
  */
 
 import { readFileSync } from "node:fs";
@@ -31,23 +38,12 @@ export function normalizePlayerName(name: string): string {
     .replace(/\s+/g, " ");
 }
 
-function salaryPath(): string {
-  return path.join(
-    process.cwd(),
-    "data",
-    "salaries",
-    "player-salaries-2000-2025.csv"
-  );
-}
-
-function loadIndex(): Index {
-  if (cached) return cached;
+function readCsv(file: string): Index {
   const index: Index = new Map();
   let raw: string;
   try {
-    raw = readFileSync(salaryPath(), "utf8");
+    raw = readFileSync(path.join(process.cwd(), "data", "salaries", file), "utf8");
   } catch {
-    cached = index;
     return index;
   }
 
@@ -63,15 +59,68 @@ function loadIndex(): Index {
     const salaryStr = line.slice(secondLast + 1, lastComma).trim();
     const seasonStr = line.slice(lastComma + 1).trim();
     const dollars = Number(salaryStr);
-    const seasonStart = Number(seasonStr);
-    if (!player || !Number.isFinite(dollars) || !Number.isFinite(seasonStart)) {
+    const seasonEnd = Number(seasonStr);
+    if (!player || !Number.isFinite(dollars) || !Number.isFinite(seasonEnd)) {
       continue;
     }
-    const key = `${seasonStart}|${normalizePlayerName(player)}`;
+    const key = `${seasonEnd - 1}|${normalizePlayerName(player)}`;
     const prev = index.get(key);
     // Keep highest if duplicates
     if (prev == null || dollars > prev) index.set(key, dollars);
   }
+  return index;
+}
+
+type BrefContractsFile = {
+  teams?: Record<
+    string,
+    {
+      capSeason?: string;
+      rows?: Array<{ name?: string; years?: Array<{ amount?: number } | null> }>;
+    }
+  >;
+};
+
+/** Each team's contract table, first column = its cap season. */
+function readBrefContracts(): Index {
+  const index: Index = new Map();
+  let file: BrefContractsFile;
+  try {
+    file = JSON.parse(
+      readFileSync(
+        path.join(process.cwd(), "src", "data", "runtime", "bref-team-contracts-snapshot.json"),
+        "utf8"
+      )
+    ) as BrefContractsFile;
+  } catch {
+    return index;
+  }
+  for (const team of Object.values(file.teams ?? {})) {
+    const firstStart = Number(team.capSeason?.slice(0, 4));
+    if (!Number.isFinite(firstStart)) continue;
+    for (const row of team.rows ?? []) {
+      if (!row.name) continue;
+      const name = normalizePlayerName(row.name);
+      (row.years ?? []).forEach((year, i) => {
+        const dollars = Number(year?.amount);
+        if (!Number.isFinite(dollars) || dollars <= 0) return;
+        const key = `${firstStart + i}|${name}`;
+        // A traded or waived player can sit on two teams' tables; count the larger.
+        const prev = index.get(key);
+        if (prev == null || dollars > prev) index.set(key, dollars);
+      });
+    }
+  }
+  return index;
+}
+
+function loadIndex(): Index {
+  if (cached) return cached;
+  const index = readCsv("player-salaries-2000-2025.csv");
+  for (const [key, dollars] of readCsv("player-salaries-supplement.csv")) {
+    if (!index.has(key)) index.set(key, dollars);
+  }
+  for (const [key, dollars] of readBrefContracts()) index.set(key, dollars);
   cached = index;
   return index;
 }
@@ -104,6 +153,16 @@ export function salaryMapForSeason(
     if (!key.startsWith(prefix)) continue;
     const name = key.slice(prefix.length);
     out.set(name, Math.round((dollars / 1_000_000) * 100) / 100);
+  }
+  return out;
+}
+
+/** Normalized name → whole dollars for one season (start year). */
+export function salaryDollarsForSeason(seasonStartYear: number): Map<string, number> {
+  const out = new Map<string, number>();
+  const prefix = `${seasonStartYear}|`;
+  for (const [key, dollars] of loadIndex()) {
+    if (key.startsWith(prefix)) out.set(key.slice(prefix.length), Math.trunc(dollars));
   }
   return out;
 }

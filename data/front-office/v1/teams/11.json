@@ -2,13 +2,15 @@
   "meta": {
     "methodologyVersion": "p18c2-1.0",
     "snapshotDate": "2026-10-10",
-    "retrievedAt": "2026-10-10T00:09:33.779Z",
+    "retrievedAt": "2026-10-10T02:32:29.798Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
+      "data/salaries/player-salaries-supplement.csv",
+      "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "de14dcd8d5744bc410ebdf893ff16f20c6364f4571520406b757e17f52c5ba53",
+    "sourceHash": "8b67e3d85e0ed4422900ff451a164f2cb96de10f07afb28d607aae983897c0b5",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -61,12 +63,12 @@
               "playerId": "1630169",
               "franchiseId": "11",
               "season": "2026-27",
-              "salary": 42176400,
-              "capHit": 42176400,
+              "salary": 48924624,
+              "capHit": 48924624,
               "guaranteedAmount": null,
               "guaranteeStatus": "UNKNOWN",
               "optionType": "UNKNOWN",
-              "source": "salary-csv-carry-forward"
+              "source": "salary-index"
             }
           ],
           "guaranteedTotal": null,
@@ -84,39 +86,16 @@
               "playerId": "1627783",
               "franchiseId": "11",
               "season": "2026-27",
-              "salary": 42176400,
-              "capHit": 42176400,
+              "salary": 48924624,
+              "capHit": 48924624,
               "guaranteedAmount": null,
               "guaranteeStatus": "UNKNOWN",
               "optionType": "UNKNOWN",
-              "source": "salary-csv-carry-forward"
+              "source": "salary-index"
             }
           ],
           "guaranteedTotal": null,
           "href": "/players/1627783"
-        },
-        {
-          "playerId": "1630167",
-          "playerName": "Obi Toppin",
-          "age": null,
-          "contractId": "cy-1630167-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1630167-2026",
-              "playerId": "1630167",
-              "franchiseId": "11",
-              "season": "2026-27",
-              "salary": 12975000,
-              "capHit": 12975000,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "salary-csv-carry-forward"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1630167"
         },
         {
           "playerId": "1627826",
@@ -130,39 +109,85 @@
               "playerId": "1627826",
               "franchiseId": "11",
               "season": "2026-27",
-              "salary": 11743210,
-              "capHit": 11743210,
+              "salary": 20342140,
+              "capHit": 20342140,
               "guaranteedAmount": null,
               "guaranteeStatus": "UNKNOWN",
               "optionType": "UNKNOWN",
-              "source": "salary-csv-carry-forward"
+              "source": "salary-index"
             }
           ],
           "guaranteedTotal": null,
           "href": "/players/1627826"
         },
         {
-          "playerId": "1626204",
-          "playerName": "Larry Nance Jr.",
+          "playerId": "1629614",
+          "playerName": "Andrew Nembhard",
           "age": null,
-          "contractId": "cy-1626204-2026",
+          "contractId": "cy-1629614-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-1626204-2026",
-              "playerId": "1626204",
+              "contractId": "cy-1629614-2026",
+              "playerId": "1629614",
               "franchiseId": "11",
               "season": "2026-27",
-              "salary": 11205000,
-              "capHit": 11205000,
+              "salary": 19550160,
+              "capHit": 19550160,
               "guaranteedAmount": null,
               "guaranteeStatus": "UNKNOWN",
               "optionType": "UNKNOWN",
-              "source": "salary-csv-carry-forward"
+              "source": "salary-index"
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/1626204"
+          "href": "/players/1629614"
+        },
+        {
+          "playerId": "1630167",
+          "playerName": "Obi Toppin",
+          "age": null,
+          "contractId": "cy-1630167-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1630167-2026",
+              "playerId": "1630167",
+              "franchiseId": "11",
+              "season": "2026-27",
+              "salary": 15000000,
+              "capHit": 15000000,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "salary-index"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1630167"
+        },
+        {
+          "playerId": "204456",
+          "playerName": "T.J. McConnell",
+          "age": null,
+          "contractId": "cy-204456-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-204456-2026",
+              "playerId": "204456",
+              "franchiseId": "11",
+              "season": "2026-27",
+              "salary": 11000000,
+              "capHit": 11000000,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "salary-index"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/204456"
         },
         {
           "playerId": "1630174",
@@ -181,57 +206,11 @@
               "guaranteedAmount": null,
               "guaranteeStatus": "UNKNOWN",
               "optionType": "UNKNOWN",
-              "source": "salary-csv-carry-forward"
+              "source": "salary-index"
             }
           ],
           "guaranteedTotal": null,
           "href": "/players/1630174"
-        },
-        {
-          "playerId": "204456",
-          "playerName": "T.J. McConnell",
-          "age": null,
-          "contractId": "cy-204456-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-204456-2026",
-              "playerId": "204456",
-              "franchiseId": "11",
-              "season": "2026-27",
-              "salary": 9300000,
-              "capHit": 9300000,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "salary-csv-carry-forward"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/204456"
-        },
-        {
-          "playerId": "1626162",
-          "playerName": "Kelly Oubre Jr.",
-          "age": null,
-          "contractId": "cy-1626162-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1626162-2026",
-              "playerId": "1626162",
-              "franchiseId": "11",
-              "season": "2026-27",
-              "salary": 7983000,
-              "capHit": 7983000,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "salary-csv-carry-forward"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1626162"
         },
         {
           "playerId": "1641716",
@@ -245,16 +224,39 @@
               "playerId": "1641716",
               "franchiseId": "11",
               "season": "2026-27",
-              "salary": 6362520,
-              "capHit": 6362520,
+              "salary": 8478542,
+              "capHit": 8478542,
               "guaranteedAmount": null,
               "guaranteeStatus": "UNKNOWN",
               "optionType": "UNKNOWN",
-              "source": "salary-csv-carry-forward"
+              "source": "salary-index"
             }
           ],
           "guaranteedTotal": null,
           "href": "/players/1641716"
+        },
+        {
+          "playerId": "1626162",
+          "playerName": "Kelly Oubre Jr.",
+          "age": null,
+          "contractId": "cy-1626162-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1626162-2026",
+              "playerId": "1626162",
+              "franchiseId": "11",
+              "season": "2026-27",
+              "salary": 8050000,
+              "capHit": 8050000,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "salary-index"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1626162"
         },
         {
           "playerId": "1641767",
@@ -268,39 +270,16 @@
               "playerId": "1641767",
               "franchiseId": "11",
               "season": "2026-27",
-              "salary": 2663880,
-              "capHit": 2663880,
+              "salary": 5031669,
+              "capHit": 5031669,
               "guaranteedAmount": null,
               "guaranteeStatus": "UNKNOWN",
               "optionType": "UNKNOWN",
-              "source": "salary-csv-carry-forward"
+              "source": "salary-index"
             }
           ],
           "guaranteedTotal": null,
           "href": "/players/1641767"
-        },
-        {
-          "playerId": "1641738",
-          "playerName": "Kobe Brown",
-          "age": null,
-          "contractId": "cy-1641738-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1641738-2026",
-              "playerId": "1641738",
-              "franchiseId": "11",
-              "season": "2026-27",
-              "salary": 2533920,
-              "capHit": 2533920,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "salary-csv-carry-forward"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1641738"
         },
         {
           "playerId": "1630643",
@@ -314,62 +293,62 @@
               "playerId": "1630643",
               "franchiseId": "11",
               "season": "2026-27",
-              "salary": 2088033,
-              "capHit": 2088033,
+              "salary": 2667944,
+              "capHit": 2667944,
               "guaranteedAmount": null,
               "guaranteeStatus": "UNKNOWN",
               "optionType": "UNKNOWN",
-              "source": "salary-csv-carry-forward"
+              "source": "salary-index"
             }
           ],
           "guaranteedTotal": null,
           "href": "/players/1630643"
         },
         {
-          "playerId": "201949",
-          "playerName": "James Johnson",
+          "playerId": "1641738",
+          "playerName": "Kobe Brown",
           "age": null,
-          "contractId": "cy-201949-2026",
+          "contractId": "cy-1641738-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-201949-2026",
-              "playerId": "201949",
+              "contractId": "cy-1641738-2026",
+              "playerId": "1641738",
               "franchiseId": "11",
               "season": "2026-27",
-              "salary": 2087519,
-              "capHit": 2087519,
+              "salary": 2654880,
+              "capHit": 2654880,
               "guaranteedAmount": null,
               "guaranteeStatus": "UNKNOWN",
               "optionType": "UNKNOWN",
-              "source": "salary-csv-carry-forward"
+              "source": "salary-index-carry-forward"
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/201949"
+          "href": "/players/1641738"
         },
         {
-          "playerId": "1629614",
-          "playerName": "Andrew Nembhard",
+          "playerId": "1626204",
+          "playerName": "Larry Nance Jr.",
           "age": null,
-          "contractId": "cy-1629614-2026",
+          "contractId": "cy-1626204-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-1629614-2026",
-              "playerId": "1629614",
+              "contractId": "cy-1626204-2026",
+              "playerId": "1626204",
               "franchiseId": "11",
               "season": "2026-27",
-              "salary": 2019699,
-              "capHit": 2019699,
+              "salary": 2449421,
+              "capHit": 2449421,
               "guaranteedAmount": null,
               "guaranteeStatus": "UNKNOWN",
               "optionType": "UNKNOWN",
-              "source": "salary-csv-carry-forward"
+              "source": "salary-index"
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/1629614"
+          "href": "/players/1626204"
         },
         {
           "playerId": "1642277",
@@ -383,12 +362,12 @@
               "playerId": "1642277",
               "franchiseId": "11",
               "season": "2026-27",
-              "salary": 1850842,
-              "capHit": 1850842,
+              "salary": 2296271,
+              "capHit": 2296271,
               "guaranteedAmount": null,
               "guaranteeStatus": "UNKNOWN",
               "optionType": "UNKNOWN",
-              "source": "salary-csv-carry-forward"
+              "source": "salary-index"
             }
           ],
           "guaranteedTotal": null,
@@ -406,6 +385,29 @@
               "playerId": "1631245",
               "franchiseId": "11",
               "season": "2026-27",
+              "salary": 1366314,
+              "capHit": 1366314,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "salary-index-carry-forward"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1631245"
+        },
+        {
+          "playerId": "201949",
+          "playerName": "James Johnson",
+          "age": null,
+          "contractId": "cy-201949-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-201949-2026",
+              "playerId": "201949",
+              "franchiseId": "11",
+              "season": "2026-27",
               "salary": null,
               "capHit": null,
               "guaranteedAmount": null,
@@ -415,7 +417,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/1631245"
+          "href": "/players/201949"
         },
         {
           "playerId": "1641771",
@@ -467,11 +469,11 @@
       "futureCommitments": [
         {
           "season": "2026-27",
-          "totalSalaryDollars": 168165423,
+          "totalSalaryDollars": 207736589,
           "playersUnderContract": 15
         }
       ],
-      "playerSalaryCommitments": 168165423,
+      "playerSalaryCommitments": 207736589,
       "playersWithSalary": 15,
       "playersWithoutSalary": 3
     },

@@ -1,9 +1,9 @@
 {
   "methodologyVersion": "1.0",
   "datasetVersion": "1.0",
-  "builtAt": "2026-10-10T00:09:36.213Z",
-  "season": "2025-26",
-  "sourceHash": "7e69f9e9c5e44991f5c62299465cca0790865a9abe1b2df425b985e5c7897d1e",
+  "builtAt": "2026-10-10T02:33:45.585Z",
+  "season": "2026-27",
+  "sourceHash": "cc7e760495b0436e727b592a41b673cf24515d5ba2f8f5c9860bca7ffe49cf95",
   "structuredTransactionCount": 3,
   "ownershipEdgeCount": 15,
   "contractCount": 565,
@@ -24,7 +24,7 @@
   },
   "limitations": [
     "Structured trades are seeded verified deals — not a complete league ledger.",
-    "Draft pick baseline assumes each team owns its own picks 2026–2030 until a licensed pick ledger arrives.",
+    "Draft pick baseline assumes each team owns its own picks 2027–2031; team pages show Spotrac's pick ownership instead.",
     "Contracts are salary CSV rows by season — options/guarantees/TPEs/dead money not modeled.",
     "ESPN free-text blurbs remain separate and are never parsed into this ledger."
   ],

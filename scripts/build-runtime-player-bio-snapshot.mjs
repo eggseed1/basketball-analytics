@@ -177,9 +177,24 @@ async function fetchJson(url, headers = {}, timeoutMs = 8_000) {
   return res.json();
 }
 
+/** stats.nba.com times out from CI runners; stop asking after a few straight misses. */
+const NBA_STATS_MAX_STRAIGHT_FAILURES = 5;
+let nbaStatsStraightFailures = 0;
+
 async function fetchNbaBio(nbaId) {
+  if (nbaStatsStraightFailures >= NBA_STATS_MAX_STRAIGHT_FAILURES) return null;
   const url = `https://stats.nba.com/stats/commonplayerinfo?PlayerID=${encodeURIComponent(nbaId)}`;
-  const payload = await fetchJson(url, NBA_HEADERS, 10_000);
+  let payload;
+  try {
+    payload = await fetchJson(url, NBA_HEADERS, 10_000);
+    nbaStatsStraightFailures = 0;
+  } catch (error) {
+    nbaStatsStraightFailures += 1;
+    if (nbaStatsStraightFailures === NBA_STATS_MAX_STRAIGHT_FAILURES) {
+      console.warn("[player-bio] stats.nba.com unreachable; using ESPN only");
+    }
+    throw error;
+  }
   const set =
     payload?.resultSets?.find((row) => row.name === "CommonPlayerInfo") ??
     payload?.resultSets?.[0];
@@ -283,8 +298,13 @@ async function mapPool(items, concurrency, worker) {
 }
 
 async function main() {
+  /** Last bake first, so a failed fetch tonight keeps what we already knew. */
   /** @type {Record<string, object>} */
-  const byId = {};
+  const byId = await fs
+    .readFile(OUT, "utf8")
+    .then((raw) => JSON.parse(raw).players ?? {})
+    .catch(() => ({}));
+  const priorCount = Object.keys(byId).length;
 
   function store(ids, bio) {
     if (!bio) return;
@@ -408,6 +428,15 @@ async function main() {
     playerCount: Object.keys(byId).length,
     players: byId,
   };
+
+  const prior = await fs
+    .readFile(OUT, "utf8")
+    .then((raw) => JSON.parse(raw).players ?? null)
+    .catch(() => null);
+  if (prior && JSON.stringify(prior) === JSON.stringify(byId)) {
+    console.log(`[player-bio] unchanged ids=${payload.playerCount} (was ${priorCount}); kept ${OUT}`);
+    return;
+  }
 
   await fs.mkdir(path.dirname(OUT), { recursive: true });
   await fs.writeFile(OUT, JSON.stringify(payload));

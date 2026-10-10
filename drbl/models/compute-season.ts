@@ -162,7 +162,7 @@ export async function computeSeasonDrbl(
     delayMs?: number;
     /** Re-download raw PBP/box even when cached. */
     force?: boolean;
-    /** Refresh leaguegamelog game list (needed nightly so new finals appear). */
+    /** Refresh the game list (needed nightly so new finals appear). */
     refreshGameList?: boolean;
     minPossessions?: number;
   } = {}

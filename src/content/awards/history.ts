@@ -516,18 +516,31 @@ export const HOF_HISTORY: AwardHistoryRow[] = [
   { season: "1959", winner: "John Schommer" },
 ];
 
+/** Curated rows plus nightly-snapshot winners for seasons the curated list lacks. */
+function withSnapshotSeasons(
+  curated: AwardHistoryRow[],
+  description: string
+): AwardHistoryRow[] {
+  const known = new Set(curated.map((row) => row.season));
+  const added = awardHistoryFromSnapshotDescription(description).filter(
+    (row) => !known.has(row.season)
+  );
+  if (added.length === 0) return curated;
+  return [...added, ...curated].sort((a, b) => b.season.localeCompare(a.season));
+}
+
 export function getAwardHistory(slug: string): AwardHistoryRow[] {
   switch (slug) {
     case "championships":
       return listChampionshipHistory();
     case "mvp":
-      return MVP_HISTORY;
+      return withSnapshotSeasons(MVP_HISTORY, "NBA Most Valuable Player");
     case "finals-mvp":
-      return FINALS_MVP_HISTORY;
+      return withSnapshotSeasons(FINALS_MVP_HISTORY, "NBA Finals Most Valuable Player");
     case "dpoy":
-      return DPOY_HISTORY;
+      return withSnapshotSeasons(DPOY_HISTORY, "NBA Defensive Player of the Year");
     case "roy":
-      return ROY_HISTORY;
+      return withSnapshotSeasons(ROY_HISTORY, "NBA Rookie of the Year");
     case "all-nba":
       return awardHistoryFromSnapshotDescription("All-NBA");
     case "all-defense":

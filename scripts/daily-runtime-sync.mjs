@@ -128,10 +128,18 @@ const ORG_STEPS = [
   { label: "salary-payoff", cmd: "npx", args: ["tsx", "scripts/build-salary-payoff.ts", "--record"] },
   { label: "front-office", cmd: "npx", args: ["tsx", "scripts/sync-team-front-office.ts"] },
   { label: "front-office-snapshot", cmd: "node", args: ["scripts/build-runtime-front-office-snapshot.mjs"] },
+  // Headless Chromium; a blocked or short read keeps the last snapshot.
+  { label: "future-picks", cmd: "node", args: ["scripts/import-spotrac-future-picks.mjs", "--fetch"] },
   { label: "asset-ledger", cmd: "node", args: ["scripts/sync-asset-ledger.mjs"] },
   { label: "asset-ledger-snapshot", cmd: "node", args: ["scripts/build-runtime-asset-ledger.mjs"] },
   // A team that fails to fetch keeps yesterday's entry; a mass change aborts without writing.
   { label: "team-leadership", cmd: "npx", args: ["tsx", "scripts/build-team-leadership.ts"] },
+  // Award pages pick up new winners from here; a blocked or empty page keeps the last bake.
+  { label: "player-awards", cmd: "node", args: ["scripts/build-runtime-player-awards.mjs"] },
+  // ESPN rosters and profiles; merges over the last bake so new players get vitals.
+  { label: "player-bio", cmd: "node", args: ["scripts/build-runtime-player-bio-snapshot.mjs"] },
+  // Draft years from the bios above when stats.nba.com drafthistory is blocked.
+  { label: "draft-year", cmd: "node", args: ["scripts/build-runtime-draft-year-snapshot.mjs"] },
 ];
 
 async function runOrgSteps() {
@@ -190,7 +198,7 @@ const TRANSACTION_STEPS = [
     args: ["scripts/build-runtime-transactions-snapshot.mjs"],
   },
 ];
-const SOFT_FAIL = new Set(["team-game-box", "drbl-recompute", "on-off-pbp", "on-off-playoffs", "percentile-pools", "salary-payoff", ...TRANSACTION_STEPS.map((s) => s.label)]);
+const SOFT_FAIL = new Set(["team-game-box", "drbl-recompute", "on-off-pbp", "on-off-playoffs", "season-shots", "hot-cold", "percentile-pools", "salary-payoff", ...TRANSACTION_STEPS.map((s) => s.label)]);
 
 async function runTransactionSteps() {
   const failed = [];
@@ -281,6 +289,12 @@ async function main() {
       cmd: "npx",
       args: ["tsx", "scripts/build-runtime-onoff.ts", info.season],
     },
+    {
+      // Shot charts from the play-by-play the recompute just cached.
+      label: "season-shots",
+      cmd: "npx",
+      args: ["tsx", "scripts/build-season-shots-from-pbp.ts", "--season", info.season],
+    },
     ...(info.phase === "playoffs"
       ? [
           {
@@ -332,6 +346,12 @@ async function main() {
         GAMELOG_MIN_GP: String(minGp),
         GAMELOG_CONCURRENCY: process.env.GAMELOG_CONCURRENCY || "6",
       },
+    },
+    {
+      // Hot & Cold boards from the logs just written.
+      label: "hot-cold",
+      cmd: "npx",
+      args: ["tsx", "scripts/build-stat-detective-windows.ts"],
     },
     {
       label: "recent-insights",

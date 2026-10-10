@@ -59,6 +59,14 @@ export async function downloadCdnBoxScore(gameId: string): Promise<unknown> {
   return fetchJson(cdnBoxScoreUrl(gameId), CDN_HEADERS);
 }
 
+/** Full league schedule for the current season only, with live status and scores. */
+export async function downloadCdnSchedule(): Promise<unknown> {
+  return fetchJson(
+    "https://cdn.nba.com/static/json/staticData/scheduleLeagueV2.json",
+    CDN_HEADERS
+  );
+}
+
 /** Fallback PBP via stats.nba.com playbyplayv3. */
 export async function downloadStatsPlayByPlayV3(
   gameId: string

@@ -2,7 +2,7 @@
  * Nightly / on-demand DRBL recompute for the current NBA season.
  *
  * Full season refit (Approach B) — not per-game patches. New games appear via
- * `--refresh-games` leaguegamelog refresh; raw PBP stays cached unless forced.
+ * `--refresh-games` game list refresh; raw PBP stays cached unless forced.
  *
  * Skips when the game list is empty or gamesProcessed already matches the
  * refreshed list (unless DRBL_FORCE_RECOMPUTE=1).
@@ -75,12 +75,12 @@ async function loadGameList(season: string): Promise<DrblGameMeta[]> {
   for (let attempt = 1; attempt <= LIST_ATTEMPTS; attempt++) {
     try {
       const games = await listSeasonGames(season, { force: true });
-      log(`leaguegamelog refresh ok (attempt ${attempt}, n=${games.length})`);
+      log(`game list refresh ok (attempt ${attempt}, n=${games.length})`);
       return games;
     } catch (error) {
       lastError = error;
       log(
-        `leaguegamelog refresh failed attempt ${attempt}/${LIST_ATTEMPTS}: ${
+        `game list refresh failed attempt ${attempt}/${LIST_ATTEMPTS}: ${
           error instanceof Error ? error.message : String(error)
         }`
       );
@@ -91,7 +91,7 @@ async function loadGameList(season: string): Promise<DrblGameMeta[]> {
   try {
     const cached = await listSeasonGames(season, { force: false });
     log(
-      `falling back to cached leaguegamelog (n=${cached.length}) after refresh failures`
+      `falling back to cached game list (n=${cached.length}) after refresh failures`
     );
     return cached;
   } catch (error) {
@@ -114,13 +114,13 @@ async function main() {
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
     log(`skip compute — could not load game list: ${msg}`);
-    // Soft skip so daily BRef/logs still deploy when Stats NBA is down.
+    // Soft skip so daily BRef/logs still deploy when the game list is down.
     if (process.env.DRBL_HARD_FAIL === "1") process.exit(1);
     return;
   }
 
   const availableGames = games.length;
-  log(`leaguegamelog finals=${availableGames}`);
+  log(`game list finals=${availableGames}`);
 
   if (availableGames < MIN_GAMES_TO_PUBLISH) {
     log(

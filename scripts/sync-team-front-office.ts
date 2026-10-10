@@ -23,7 +23,7 @@ import {
   canonicalSeasonFromStartYear,
   currentNbaStartYear,
 } from "@/data/providers/historical/season-range";
-import { normalizePlayerName } from "@/data/providers/salaries/salary-store";
+import { normalizePlayerName, salaryDollarsForSeason } from "@/data/providers/salaries/salary-store";
 import type {
   FrontOfficeCapabilities,
   FrontOfficeLeagueSnapshot,
@@ -58,24 +58,7 @@ function sha256(text: string): string {
 }
 
 function loadSalaryMap(seasonStart: number): Map<string, number> {
-  const csvPath = path.join(ROOT, "data", "salaries", "player-salaries-2000-2025.csv");
-  if (!existsSync(csvPath)) return new Map();
-  const raw = readFileSync(csvPath, "utf8");
-  const map = new Map<string, number>();
-  for (const line of raw.split(/\r?\n/).slice(1)) {
-    if (!line.trim()) continue;
-    const last = line.lastIndexOf(",");
-    const second = line.lastIndexOf(",", last - 1);
-    if (last < 0 || second < 0) continue;
-    const player = line.slice(0, second).trim();
-    const dollars = Number(line.slice(second + 1, last).trim());
-    const season = Number(line.slice(last + 1).trim());
-    if (season !== seasonStart || !Number.isFinite(dollars)) continue;
-    const key = normalizePlayerName(player);
-    const prev = map.get(key);
-    if (prev == null || dollars > prev) map.set(key, Math.trunc(dollars));
-  }
-  return map;
+  return salaryDollarsForSeason(seasonStart);
 }
 
 function loadEspnToNbaAlias(): Map<string, string> {
@@ -252,9 +235,9 @@ async function main() {
     const contractId = `cy-${playerId}-${SEASON_START}`;
     const source =
       salariesCurrent.get(key) != null
-        ? "salary-csv-2000-2025"
+        ? "salary-index"
         : salariesPrior.get(key) != null
-          ? "salary-csv-carry-forward"
+          ? "salary-index-carry-forward"
           : "espn-roster-no-salary";
 
     const year: PlayerContractYear = {
@@ -358,6 +341,8 @@ async function main() {
       sourceSet: [
         "espn-site-roster-live",
         "data/salaries/player-salaries-2000-2025.csv",
+        "data/salaries/player-salaries-supplement.csv",
+        "src/data/runtime/bref-team-contracts-snapshot.json",
         "data/cba/league-cap-seasons.json",
       ],
       sourceHash,

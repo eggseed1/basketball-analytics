@@ -7,17 +7,20 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { gzipSync } from "node:zlib";
 
+import { nbaSeasonPhaseInfo } from "./lib/nba-season-phase.mjs";
+
 const ROOT = process.cwd();
 const OUT = path.join(ROOT, "src", "data", "runtime", "hustle-overlay-snapshot.json");
 
-const SEASONS = [
-  "2020-21",
-  "2021-22",
-  "2022-23",
-  "2023-24",
-  "2024-25",
-  "2025-26",
-];
+/** Hustle tracking starts usable in 2020-21; runs through the current season. */
+const FIRST_START_YEAR = 2020;
+const SEASONS = Array.from(
+  { length: nbaSeasonPhaseInfo(new Date()).startYear - FIRST_START_YEAR + 1 },
+  (_, i) => {
+    const start = FIRST_START_YEAR + i;
+    return `${start}-${String((start + 1) % 100).padStart(2, "0")}`;
+  }
+);
 
 const NBA_HEADERS = {
   Accept: "application/json, text/plain, */*",
@@ -137,6 +140,10 @@ async function fetchHustleSeason(season) {
   throw lastError;
 }
 
+const prior = await fs
+  .readFile(OUT, "utf8")
+  .then((raw) => JSON.parse(raw).seasons ?? {})
+  .catch(() => ({}));
 const seasons = {};
 for (const season of SEASONS) {
   try {
@@ -145,8 +152,9 @@ for (const season of SEASONS) {
       `[hustle-snapshot] ${season} → ${seasons[season].length} players`
     );
   } catch (error) {
+    if (prior[season]) seasons[season] = prior[season];
     console.warn(
-      `[hustle-snapshot] ${season} skipped: ${
+      `[hustle-snapshot] ${season} ${prior[season] ? "kept last bake" : "skipped"}: ${
         error instanceof Error ? error.message : error
       }`
     );

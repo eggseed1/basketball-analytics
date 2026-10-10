@@ -17,10 +17,8 @@
 import { appendFile, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 
-import { downloadCdnBoxScore } from "../drbl/download/cdn-client";
-import { rawPath, readOrFetchJson } from "../drbl/download/disk-cache";
+import { cdnBoxGameMeta, cdnGameIds } from "../drbl/download/season-games";
 import { processGame } from "../drbl/index";
-import type { DrblGameMeta } from "../drbl/types";
 import {
   homeWinProbabilityFromState,
   nextBall,
@@ -32,9 +30,6 @@ import {
 const PARAMS_FILE = path.join(process.cwd(), "src/lib/win-prob-params.json");
 const STEP_SECONDS = 15;
 const REGULATION = 2880;
-const REGULAR_SEASON_GAMES = 1230;
-/** Series per playoff round, first round to Finals. */
-const PLAYOFF_SERIES = [8, 4, 2, 1];
 const CONCURRENCY = 8;
 /** Fewer finished regular-season games than this means the download is broken, not the season. */
 const MIN_REGULAR_SEASON_GAMES = 1000;
@@ -68,56 +63,6 @@ function latestFinishedSeason(now = new Date()): string {
   return seasonLabel(now.getUTCMonth() >= 6 ? year - 1 : year - 2);
 }
 
-function gameIds(season: string, playoffs: boolean): string[] {
-  const yy = season.slice(2, 4);
-  if (!playoffs) {
-    return Array.from({ length: REGULAR_SEASON_GAMES }, (_, i) => `002${yy}0${String(i + 1).padStart(4, "0")}`);
-  }
-  const ids: string[] = [];
-  PLAYOFF_SERIES.forEach((series, round) => {
-    for (let s = 0; s < series; s++) for (let g = 1; g <= 7; g++) ids.push(`004${yy}00${round + 1}${s}${g}`);
-  });
-  return ids;
-}
-
-type CdnBox = {
-  game?: {
-    gameStatus?: number;
-    gameEt?: string;
-    gameTimeUTC?: string;
-    homeTeam?: { teamId?: number | string; teamTricode?: string; score?: number };
-    awayTeam?: { teamId?: number | string; teamTricode?: string; score?: number };
-  };
-};
-
-/** Final-game metadata from the CDN box score; null for ids that were never played. */
-async function metaFor(season: string, gameId: string): Promise<DrblGameMeta | null> {
-  try {
-    const { data } = await readOrFetchJson<CdnBox>(
-      rawPath("games", gameId, "boxscore.json"),
-      () => downloadCdnBoxScore(gameId) as Promise<CdnBox>,
-      { endpoint: `cdn.nba.com/liveData/boxscore/boxscore_${gameId}.json` }
-    );
-    const g = data.game;
-    const date = (g?.gameEt ?? g?.gameTimeUTC ?? "").slice(0, 10);
-    if (!g?.homeTeam?.teamId || !g.awayTeam?.teamId || g.gameStatus !== 3 || !date) return null;
-    return {
-      gameId,
-      season,
-      gameDate: date,
-      homeTeamId: String(g.homeTeam.teamId),
-      awayTeamId: String(g.awayTeam.teamId),
-      homeTeamTricode: g.homeTeam.teamTricode ?? "",
-      awayTeamTricode: g.awayTeam.teamTricode ?? "",
-      homeScore: Number(g.homeTeam.score ?? 0),
-      awayScore: Number(g.awayTeam.score ?? 0),
-      status: 3,
-    };
-  } catch {
-    return null;
-  }
-}
-
 async function mapPool<T, R>(items: readonly T[], size: number, fn: (item: T) => Promise<R>): Promise<R[]> {
   const out = new Array<R>(items.length);
   let next = 0;
@@ -136,7 +81,7 @@ const elapsedOf = (period: number, clockSec: number) =>
   period <= 4 ? (period - 1) * 720 + (720 - clockSec) : REGULATION + (period - 5) * 300 + (300 - clockSec);
 
 async function loadGame(season: string, gameId: string): Promise<LoadedGame | null> {
-  const meta = await metaFor(season, gameId);
+  const meta = await cdnBoxGameMeta(season, gameId);
   if (!meta || meta.homeScore === meta.awayScore) return null;
   let events;
   try {
@@ -175,7 +120,8 @@ async function loadGame(season: string, gameId: string): Promise<LoadedGame | nu
 }
 
 async function loadSeason(season: string, playoffs: boolean): Promise<LoadedGame[]> {
-  const games = (await mapPool(gameIds(season, playoffs), CONCURRENCY, (id) => loadGame(season, id))).filter(
+  const ids = cdnGameIds(season, playoffs ? "004" : "002");
+  const games = (await mapPool(ids, CONCURRENCY, (id) => loadGame(season, id))).filter(
     (g): g is LoadedGame => g != null
   );
   console.log(`${season} ${playoffs ? "playoffs" : "regular season"}: ${games.length} games`);

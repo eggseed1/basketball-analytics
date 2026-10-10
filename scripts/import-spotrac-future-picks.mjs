@@ -2,8 +2,12 @@
  * Future draft picks (who holds every 1st and 2nd, with the terms in
  * Spotrac's words) from spotrac.com/nba/draft/future.
  *
- * Spotrac blocks scripted requests, so the page is read in a browser and
- * saved. To refresh:
+ * Spotrac blocks plain HTTP clients, so the page is read in a browser.
+ *
+ *   node scripts/import-spotrac-future-picks.mjs --fetch   # headless Chromium (nightly)
+ *   node scripts/import-spotrac-future-picks.mjs           # rebuild from the saved raw file
+ *
+ * If headless reads get blocked, save the page by hand instead:
  *   1. Open https://www.spotrac.com/nba/draft/future in a browser.
  *   2. Run the expression from `node scripts/import-spotrac-future-picks.mjs --extractor`
  *      in the devtools console and save the printed JSON to
@@ -48,12 +52,53 @@ function mostCommon(values) {
   return [...counts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0];
 }
 
+const SOURCE_URL = "https://www.spotrac.com/nba/draft/future";
+/** Spotrac's edge rejects the HeadlessChrome user agent. */
+const BROWSER_UA =
+  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36";
+/** A read with fewer pick rows than this share of the last snapshot is a broken page, not trades. */
+const MIN_SHARE_OF_PRIOR = 0.8;
+
+async function fetchTables() {
+  const { chromium } = await import("playwright");
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage({ userAgent: BROWSER_UA });
+    await page.goto(SOURCE_URL, { waitUntil: "domcontentloaded", timeout: 60_000 });
+    await page.waitForSelector("table h2", { state: "attached", timeout: 30_000 });
+    // Each team also has a pick-count summary table with no pick rows.
+    await page.evaluate(() =>
+      document.querySelectorAll('[id^="draft-summary"] table').forEach((t) => t.remove())
+    );
+    return JSON.parse(await page.evaluate(EXTRACTOR));
+  } finally {
+    await browser.close();
+  }
+}
+
+async function readJson(file) {
+  return fs
+    .readFile(file, "utf8")
+    .then((text) => JSON.parse(text))
+    .catch(() => null);
+}
+
 async function main() {
   if (process.argv.includes("--extractor")) {
     console.log(EXTRACTOR);
     return;
   }
-  const raw = JSON.parse(await fs.readFile(RAW, "utf8"));
+  let raw;
+  if (process.argv.includes("--fetch")) {
+    const tables = await fetchTables();
+    const saved = await readJson(RAW);
+    raw = { retrievedAt: new Date().toISOString().slice(0, 10), tables };
+    if (JSON.stringify(saved?.tables) !== JSON.stringify(tables)) {
+      await fs.writeFile(RAW, `${JSON.stringify(raw, null, 2)}\n`);
+    }
+  } else {
+    raw = JSON.parse(await fs.readFile(RAW, "utf8"));
+  }
   const tables = raw.tables;
   if (!Array.isArray(tables) || tables.length !== 60) {
     throw new Error(`expected 60 tables (30 teams × 2 rounds), got ${tables?.length}`);
@@ -87,12 +132,17 @@ async function main() {
   const out = {
     version: 1,
     source: "spotrac.com/nba/draft/future",
-    sourceUrl: "https://www.spotrac.com/nba/draft/future",
+    sourceUrl: SOURCE_URL,
     retrievedAt: raw.retrievedAt,
     teams,
   };
-  await fs.writeFile(OUT, `${JSON.stringify(out)}\n`);
   const count = Object.values(teams).reduce((n, t) => n + t.picks.length, 0);
+  const prior = await readJson(OUT);
+  const priorCount = Object.values(prior?.teams ?? {}).reduce((n, t) => n + (t.picks?.length ?? 0), 0);
+  if (count < priorCount * MIN_SHARE_OF_PRIOR) {
+    throw new Error(`only ${count} pick rows against ${priorCount} last time; keeping the last snapshot`);
+  }
+  await fs.writeFile(OUT, `${JSON.stringify(out)}\n`);
   console.log(`[spotrac-future-picks] ${Object.keys(teams).length} teams, ${count} pick rows → ${path.relative(process.cwd(), OUT)}`);
 }
 

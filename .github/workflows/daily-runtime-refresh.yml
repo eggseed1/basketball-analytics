@@ -135,6 +135,11 @@ jobs:
           restore-keys: |
             drbl-precomputed-${{ runner.os }}-${{ steps.season.outputs.season }}-
 
+      # Spotrac future picks are read in headless Chromium.
+      - name: Playwright Chromium
+        continue-on-error: true
+        run: npx playwright install --with-deps chromium
+
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
@@ -189,6 +194,11 @@ jobs:
             data/asset-ledger/v1 \
             src/data/runtime/asset-ledger-snapshot.json \
             src/data/runtime/team-leadership.json \
+            src/data/runtime/player-awards-snapshot.json \
+            data/draft-picks/spotrac/v1 \
+            src/data/runtime/future-picks-snapshot.json \
+            src/data/runtime/player-bio-snapshot.json \
+            src/data/runtime/draft-year-snapshot.json \
             src/data/runtime/play-type-snapshot.json \
             src/data/runtime/on-off-snapshot.json \
             src/data/runtime/team-game-box-snapshot.json \

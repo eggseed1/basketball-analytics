@@ -4,6 +4,7 @@
 
 import type { CBARules, SeasonYear } from "@/gm/myleague/types";
 import capFile from "../../../data/cba/salary-cap-by-year.json";
+import capSeasonsFile from "../../../data/cba/league-cap-seasons.json";
 
 type CapRow = {
   salaryCapM: number;
@@ -164,10 +165,38 @@ const EPOCHS: CbaEpoch[] = [
 
 let capTable: Record<string, CapRow> | null = null;
 
+type LeagueCapSeason = {
+  seasonStartYear: number;
+  salaryCap: number;
+  luxuryTax: number | null;
+  firstApron: number | null;
+  secondApron: number | null;
+  status: string;
+};
+
+/** Official thresholds in data/cba/league-cap-seasons.json win over the history table. */
 function loadCapTable(): Record<string, CapRow> {
   if (capTable) return capTable;
-  capTable = (capFile as { bySeasonEndYear: Record<string, CapRow> })
-    .bySeasonEndYear;
+  const table = {
+    ...(capFile as { bySeasonEndYear: Record<string, CapRow> }).bySeasonEndYear,
+  };
+  const toM = (dollars: number) => Math.round(dollars / 1000) / 1000;
+  for (const row of (capSeasonsFile as { seasons: LeagueCapSeason[] }).seasons) {
+    if (row.status !== "OFFICIAL" || !row.salaryCap) continue;
+    const key = String(row.seasonStartYear + 1);
+    const prior = table[key];
+    const salaryCapM = toM(row.salaryCap);
+    table[key] = {
+      ...prior,
+      salaryCapM,
+      luxuryTaxM: row.luxuryTax ? toM(row.luxuryTax) : (prior?.luxuryTaxM ?? 0),
+      ...(row.firstApron ? { firstApronM: toM(row.firstApron) } : {}),
+      ...(row.secondApron ? { secondApronM: toM(row.secondApron) } : {}),
+      // The CBA max for 10+ year veterans is 35% of the cap.
+      maxSalaryM: prior?.maxSalaryM ?? Math.round(salaryCapM * 0.35 * 10) / 10,
+    };
+  }
+  capTable = table;
   return capTable;
 }
 

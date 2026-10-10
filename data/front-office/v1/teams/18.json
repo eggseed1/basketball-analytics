@@ -2,13 +2,15 @@
   "meta": {
     "methodologyVersion": "p18c2-1.0",
     "snapshotDate": "2026-10-10",
-    "retrievedAt": "2026-10-10T00:09:33.779Z",
+    "retrievedAt": "2026-10-10T02:32:29.798Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
+      "data/salaries/player-salaries-supplement.csv",
+      "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "de14dcd8d5744bc410ebdf893ff16f20c6364f4571520406b757e17f52c5ba53",
+    "sourceHash": "8b67e3d85e0ed4422900ff451a164f2cb96de10f07afb28d607aae983897c0b5",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -61,12 +63,12 @@
               "playerId": "1626157",
               "franchiseId": "18",
               "season": "2026-27",
-              "salary": 49205800,
-              "capHit": 49205800,
+              "salary": 57078728,
+              "capHit": 57078728,
               "guaranteedAmount": null,
               "guaranteeStatus": "UNKNOWN",
               "optionType": "UNKNOWN",
-              "source": "salary-csv-carry-forward"
+              "source": "salary-index"
             }
           ],
           "guaranteedTotal": null,
@@ -84,12 +86,12 @@
               "playerId": "1628384",
               "franchiseId": "18",
               "season": "2026-27",
-              "salary": 36637932,
-              "capHit": 36637932,
+              "salary": 42500000,
+              "capHit": 42500000,
               "guaranteedAmount": null,
               "guaranteeStatus": "UNKNOWN",
               "optionType": "UNKNOWN",
-              "source": "salary-csv-carry-forward"
+              "source": "salary-index"
             }
           ],
           "guaranteedTotal": null,
@@ -107,12 +109,12 @@
               "playerId": "1628973",
               "franchiseId": "18",
               "season": "2026-27",
-              "salary": 24960001,
-              "capHit": 24960001,
+              "salary": 37739521,
+              "capHit": 37739521,
               "guaranteedAmount": null,
               "guaranteeStatus": "UNKNOWN",
               "optionType": "UNKNOWN",
-              "source": "salary-csv-carry-forward"
+              "source": "salary-index"
             }
           ],
           "guaranteedTotal": null,
@@ -130,39 +132,16 @@
               "playerId": "1628969",
               "franchiseId": "18",
               "season": "2026-27",
-              "salary": 23300000,
-              "capHit": 23300000,
+              "salary": 33482145,
+              "capHit": 33482145,
               "guaranteedAmount": null,
               "guaranteeStatus": "UNKNOWN",
               "optionType": "UNKNOWN",
-              "source": "salary-csv-carry-forward"
+              "source": "salary-index"
             }
           ],
           "guaranteedTotal": null,
           "href": "/players/1628969"
-        },
-        {
-          "playerId": "1628971",
-          "playerName": "Bruce Brown",
-          "age": null,
-          "contractId": "cy-1628971-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1628971-2026",
-              "playerId": "1628971",
-              "franchiseId": "18",
-              "season": "2026-27",
-              "salary": 23000000,
-              "capHit": 23000000,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "salary-csv-carry-forward"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1628971"
         },
         {
           "playerId": "1628404",
@@ -176,16 +155,177 @@
               "playerId": "1628404",
               "franchiseId": "18",
               "season": "2026-27",
-              "salary": 18144000,
-              "capHit": 18144000,
+              "salary": 20923760,
+              "capHit": 20923760,
               "guaranteedAmount": null,
               "guaranteeStatus": "UNKNOWN",
               "optionType": "UNKNOWN",
-              "source": "salary-csv-carry-forward"
+              "source": "salary-index"
             }
           ],
           "guaranteedTotal": null,
           "href": "/players/1628404"
+        },
+        {
+          "playerId": "1629013",
+          "playerName": "Landry Shamet",
+          "age": null,
+          "contractId": "cy-1629013-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1629013-2026",
+              "playerId": "1629013",
+              "franchiseId": "18",
+              "season": "2026-27",
+              "salary": 5357143,
+              "capHit": 5357143,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "salary-index"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1629013"
+        },
+        {
+          "playerId": "1630631",
+          "playerName": "Jose Alvarado",
+          "age": null,
+          "contractId": "cy-1630631-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1630631-2026",
+              "playerId": "1630631",
+              "franchiseId": "18",
+              "season": "2026-27",
+              "salary": 4500000,
+              "capHit": 4500000,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "salary-index"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1630631"
+        },
+        {
+          "playerId": "1630540",
+          "playerName": "Miles McBride",
+          "age": null,
+          "contractId": "cy-1630540-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1630540-2026",
+              "playerId": "1630540",
+              "franchiseId": "18",
+              "season": "2026-27",
+              "salary": 3956523,
+              "capHit": 3956523,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "salary-index"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1630540"
+        },
+        {
+          "playerId": "1628396",
+          "playerName": "Tony Bradley",
+          "age": null,
+          "contractId": "cy-1628396-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1628396-2026",
+              "playerId": "1628396",
+              "franchiseId": "18",
+              "season": "2026-27",
+              "salary": 3204816,
+              "capHit": 3204816,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "salary-index-carry-forward"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1628396"
+        },
+        {
+          "playerId": "1642359",
+          "playerName": "Pacome Dadiet",
+          "age": null,
+          "contractId": "cy-1642359-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1642359-2026",
+              "playerId": "1642359",
+              "franchiseId": "18",
+              "season": "2026-27",
+              "salary": 2983680,
+              "capHit": 2983680,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "salary-index"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1642359"
+        },
+        {
+          "playerId": "1630534",
+          "playerName": "Ochai Agbaji",
+          "age": null,
+          "contractId": "cy-1630534-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1630534-2026",
+              "playerId": "1630534",
+              "franchiseId": "18",
+              "season": "2026-27",
+              "salary": 2449421,
+              "capHit": 2449421,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "salary-index"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1630534"
+        },
+        {
+          "playerId": "1628971",
+          "playerName": "Bruce Brown",
+          "age": null,
+          "contractId": "cy-1628971-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1628971-2026",
+              "playerId": "1628971",
+              "franchiseId": "18",
+              "season": "2026-27",
+              "salary": 2449421,
+              "capHit": 2449421,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "salary-index"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1628971"
         },
         {
           "playerId": "203903",
@@ -199,12 +339,12 @@
               "playerId": "203903",
               "franchiseId": "18",
               "season": "2026-27",
-              "salary": 14092577,
-              "capHit": 14092577,
+              "salary": 2449421,
+              "capHit": 2449421,
               "guaranteedAmount": null,
               "guaranteeStatus": "UNKNOWN",
               "optionType": "UNKNOWN",
-              "source": "salary-csv-carry-forward"
+              "source": "salary-index"
             }
           ],
           "guaranteedTotal": null,
@@ -222,12 +362,12 @@
               "playerId": "203083",
               "franchiseId": "18",
               "season": "2026-27",
-              "salary": 5000000,
-              "capHit": 5000000,
+              "salary": 2449421,
+              "capHit": 2449421,
               "guaranteedAmount": null,
               "guaranteeStatus": "UNKNOWN",
               "optionType": "UNKNOWN",
-              "source": "salary-csv-carry-forward"
+              "source": "salary-index"
             }
           ],
           "guaranteedTotal": null,
@@ -245,62 +385,16 @@
               "playerId": "1629234",
               "franchiseId": "18",
               "season": "2026-27",
-              "salary": 5000000,
-              "capHit": 5000000,
+              "salary": 2449421,
+              "capHit": 2449421,
               "guaranteedAmount": null,
               "guaranteeStatus": "UNKNOWN",
               "optionType": "UNKNOWN",
-              "source": "salary-csv-carry-forward"
+              "source": "salary-index"
             }
           ],
           "guaranteedTotal": null,
           "href": "/players/1629234"
-        },
-        {
-          "playerId": "1630540",
-          "playerName": "Miles McBride",
-          "age": null,
-          "contractId": "cy-1630540-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1630540-2026",
-              "playerId": "1630540",
-              "franchiseId": "18",
-              "season": "2026-27",
-              "salary": 4710144,
-              "capHit": 4710144,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "salary-csv-carry-forward"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1630540"
-        },
-        {
-          "playerId": "1630534",
-          "playerName": "Ochai Agbaji",
-          "age": null,
-          "contractId": "cy-1630534-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1630534-2026",
-              "playerId": "1630534",
-              "franchiseId": "18",
-              "season": "2026-27",
-              "salary": 4310280,
-              "capHit": 4310280,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "salary-csv-carry-forward"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1630534"
         },
         {
           "playerId": "1630164",
@@ -314,12 +408,12 @@
               "playerId": "1630164",
               "franchiseId": "18",
               "season": "2026-27",
-              "salary": 2237691,
-              "capHit": 2237691,
+              "salary": 2449421,
+              "capHit": 2449421,
               "guaranteedAmount": null,
               "guaranteeStatus": "UNKNOWN",
               "optionType": "UNKNOWN",
-              "source": "salary-csv-carry-forward"
+              "source": "salary-index"
             }
           ],
           "guaranteedTotal": null,
@@ -337,108 +431,62 @@
               "playerId": "1642278",
               "franchiseId": "18",
               "season": "2026-27",
-              "salary": 2087519,
-              "capHit": 2087519,
+              "salary": 2296271,
+              "capHit": 2296271,
               "guaranteedAmount": null,
               "guaranteeStatus": "UNKNOWN",
               "optionType": "UNKNOWN",
-              "source": "salary-csv-carry-forward"
+              "source": "salary-index"
             }
           ],
           "guaranteedTotal": null,
           "href": "/players/1642278"
         },
         {
-          "playerId": "1630631",
-          "playerName": "Jose Alvarado",
+          "playerId": "1642885",
+          "playerName": "Mohamed Diawara",
           "age": null,
-          "contractId": "cy-1630631-2026",
+          "contractId": "cy-1642885-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-1630631-2026",
-              "playerId": "1630631",
+              "contractId": "cy-1642885-2026",
+              "playerId": "1642885",
               "franchiseId": "18",
               "season": "2026-27",
-              "salary": 1988598,
-              "capHit": 1988598,
+              "salary": 2232143,
+              "capHit": 2232143,
               "guaranteedAmount": null,
               "guaranteeStatus": "UNKNOWN",
               "optionType": "UNKNOWN",
-              "source": "salary-csv-carry-forward"
+              "source": "salary-index"
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/1630631"
+          "href": "/players/1642885"
         },
         {
-          "playerId": "1642359",
-          "playerName": "Pacome Dadiet",
+          "playerId": "1641755",
+          "playerName": "Kevin McCullar Jr.",
           "age": null,
-          "contractId": "cy-1642359-2026",
+          "contractId": "cy-1641755-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-1642359-2026",
-              "playerId": "1642359",
+              "contractId": "cy-1641755-2026",
+              "playerId": "1641755",
               "franchiseId": "18",
               "season": "2026-27",
-              "salary": 1808080,
-              "capHit": 1808080,
+              "salary": 1366314,
+              "capHit": 1366314,
               "guaranteedAmount": null,
               "guaranteeStatus": "UNKNOWN",
               "optionType": "UNKNOWN",
-              "source": "salary-csv-carry-forward"
+              "source": "salary-index-carry-forward"
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/1642359"
-        },
-        {
-          "playerId": "1629013",
-          "playerName": "Landry Shamet",
-          "age": null,
-          "contractId": "cy-1629013-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1629013-2026",
-              "playerId": "1629013",
-              "franchiseId": "18",
-              "season": "2026-27",
-              "salary": 1343690,
-              "capHit": 1343690,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "salary-csv-carry-forward"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1629013"
-        },
-        {
-          "playerId": "1628396",
-          "playerName": "Tony Bradley",
-          "age": null,
-          "contractId": "cy-1628396-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1628396-2026",
-              "playerId": "1628396",
-              "franchiseId": "18",
-              "season": "2026-27",
-              "salary": 600545,
-              "capHit": 600545,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "salary-csv-carry-forward"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1628396"
+          "href": "/players/1641755"
         },
         {
           "playerId": "4683730",
@@ -462,52 +510,6 @@
           ],
           "guaranteedTotal": null,
           "href": "/players/4683730"
-        },
-        {
-          "playerId": "1642885",
-          "playerName": "Mohamed Diawara",
-          "age": null,
-          "contractId": "cy-1642885-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1642885-2026",
-              "playerId": "1642885",
-              "franchiseId": "18",
-              "season": "2026-27",
-              "salary": null,
-              "capHit": null,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "espn-roster-no-salary"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1642885"
-        },
-        {
-          "playerId": "1641755",
-          "playerName": "Kevin McCullar Jr.",
-          "age": null,
-          "contractId": "cy-1641755-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1641755-2026",
-              "playerId": "1641755",
-              "franchiseId": "18",
-              "season": "2026-27",
-              "salary": null,
-              "capHit": null,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "espn-roster-no-salary"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1641755"
         },
         {
           "playerId": "4838721",
@@ -536,13 +538,13 @@
       "futureCommitments": [
         {
           "season": "2026-27",
-          "totalSalaryDollars": 218426857,
-          "playersUnderContract": 17
+          "totalSalaryDollars": 232317570,
+          "playersUnderContract": 19
         }
       ],
-      "playerSalaryCommitments": 218426857,
-      "playersWithSalary": 17,
-      "playersWithoutSalary": 4
+      "playerSalaryCommitments": 232317570,
+      "playersWithSalary": 19,
+      "playersWithoutSalary": 2
     },
     "draftAssets": {
       "franchiseId": "18",

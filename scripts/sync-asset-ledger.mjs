@@ -7,10 +7,11 @@ import fs from "node:fs/promises";
 import { createHash } from "node:crypto";
 import path from "node:path";
 
+import { nbaSeasonPhaseInfo } from "./lib/nba-season-phase.mjs";
+
 const ROOT = process.cwd();
 const OUT = path.join(ROOT, "data", "asset-ledger", "v1");
-const SEASON = "2025-26";
-const SEASON_START = 2025;
+const { season: SEASON, startYear: SEASON_START } = nbaSeasonPhaseInfo(new Date());
 const METHODOLOGY = "1.0";
 const DATASET = "1.0";
 
@@ -163,7 +164,8 @@ async function loadSalaryRows() {
     if (last < 0 || second < 0) continue;
     const playerName = line.slice(0, second).trim();
     const salary = Number(line.slice(second + 1, last).trim());
-    const seasonStart = Number(line.slice(last + 1).trim());
+    // The CSV labels rows by season end year (2025 = 2024-25).
+    const seasonStart = Number(line.slice(last + 1).trim()) - 1;
     if (!playerName || !Number.isFinite(salary) || !Number.isFinite(seasonStart)) continue;
     rows.push({ playerName, salary: Math.trunc(salary), seasonStart });
   }
@@ -389,7 +391,7 @@ async function main() {
     capabilities,
     limitations: [
       "Structured trades are seeded verified deals — not a complete league ledger.",
-      "Draft pick baseline assumes each team owns its own picks 2026–2030 until a licensed pick ledger arrives.",
+      `Draft pick baseline assumes each team owns its own picks ${SEASON_START + 1}–${SEASON_START + 5}; team pages show Spotrac's pick ownership instead.`,
       "Contracts are salary CSV rows by season — options/guarantees/TPEs/dead money not modeled.",
       "ESPN free-text blurbs remain separate and are never parsed into this ledger.",
     ],

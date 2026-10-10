@@ -67,10 +67,12 @@ async function main() {
   const years = {};
 
   // Preserve prior bake if live drafthistory flakes during deploy.
+  let priorYears = null;
   try {
     const prior = JSON.parse(await fs.readFile(OUT, "utf8"));
-    Object.assign(years, prior.years ?? {});
-    console.log(`prior bake: ${Object.keys(prior.years ?? {}).length} keys`);
+    priorYears = prior.years ?? {};
+    Object.assign(years, priorYears);
+    console.log(`prior bake: ${Object.keys(priorYears).length} keys`);
   } catch {
     /* first run */
   }
@@ -123,6 +125,11 @@ async function main() {
     count: Object.keys(years).length,
     years,
   };
+
+  if (priorYears && JSON.stringify(priorYears) === JSON.stringify(years)) {
+    console.log(`unchanged (${payload.count} keys); kept ${OUT}`);
+    return;
+  }
 
   await fs.mkdir(path.dirname(OUT), { recursive: true });
   await fs.writeFile(OUT, `${JSON.stringify(payload)}\n`, "utf8");

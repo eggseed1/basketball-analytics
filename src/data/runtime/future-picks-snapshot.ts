@@ -28,7 +28,12 @@ type SnapshotFile = {
 
 const data = snapshot as unknown as SnapshotFile;
 
-export function bundledFuturePicks(teamId: string): {
+/** The draft runs in late June, so from July on that year's picks are used. */
+function nextDraftYear(now: Date): number {
+  return now.getUTCMonth() >= 6 ? now.getUTCFullYear() + 1 : now.getUTCFullYear();
+}
+
+export function bundledFuturePicks(teamId: string, now = new Date()): {
   abbr: string;
   picks: FuturePick[];
   retrievedAt: string | null;
@@ -36,5 +41,11 @@ export function bundledFuturePicks(teamId: string): {
 } | null {
   const team = data.teams?.[teamId];
   if (!team) return null;
-  return { ...team, retrievedAt: data.retrievedAt ?? null, sourceUrl: data.sourceUrl ?? null };
+  const firstYear = nextDraftYear(now);
+  return {
+    ...team,
+    picks: team.picks.filter((pick) => pick.year >= firstYear),
+    retrievedAt: data.retrievedAt ?? null,
+    sourceUrl: data.sourceUrl ?? null,
+  };
 }

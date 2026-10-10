@@ -337,6 +337,12 @@ async function correctAgainstOfficialIds(map) {
   console.log(`[player-awards] official id check: ${fixed} corrected`);
 }
 
+/** A page that parses to nothing is a block page or a layout change; keep the last snapshot. */
+function requireRows(rows, url) {
+  if (rows.length === 0) throw new Error(`no rows parsed from ${url}`);
+  return rows;
+}
+
 function resolveNbaId(nameToNba, name, brefSlug, slugToNba) {
   if (slugToNba.has(brefSlug)) return slugToNba.get(brefSlug);
   const n = normalizeName(name);
@@ -385,7 +391,7 @@ async function main() {
     console.log(`[player-awards] fetch ${page.url}`);
     const html = await fetchText(page.url);
     if (page.kind === "season_winner") {
-      const rows = parseSeasonWinnerRows(html);
+      const rows = requireRows(parseSeasonWinnerRows(html), page.url);
       console.log(`[player-awards]   ${rows.length} season-winner rows`);
       for (const row of rows) {
         const nbaId = resolveNbaId(nameToNba, row.name, row.brefSlug, slugToNba);
@@ -399,7 +405,7 @@ async function main() {
         pushAward(byNbaId, nbaId, page.description, row.season);
       }
     } else if (page.kind === "season_team") {
-      const rows = parseSeasonTeamRows(html);
+      const rows = requireRows(parseSeasonTeamRows(html), page.url);
       console.log(`[player-awards]   ${rows.length} team-selection rows`);
       for (const row of rows) {
         const nbaId = resolveNbaId(nameToNba, row.name, row.brefSlug, slugToNba);
@@ -413,7 +419,7 @@ async function main() {
         pushAward(byNbaId, nbaId, page.description, row.season, row.teamNote);
       }
     } else if (page.kind === "all_star_counts") {
-      const rows = parseAllStarCounts(html);
+      const rows = requireRows(parseAllStarCounts(html), page.url);
       console.log(`[player-awards]   ${rows.length} all-star players`);
       for (const row of rows) {
         const nbaId = resolveNbaId(nameToNba, row.name, row.brefSlug, slugToNba);
@@ -453,6 +459,16 @@ async function main() {
     slugs,
     players,
   };
+
+  const prior = await fs
+    .readFile(OUT, "utf8")
+    .then((raw) => JSON.parse(raw))
+    .catch(() => null);
+  const body = (p) => JSON.stringify({ names: p.names, slugs: p.slugs, players: p.players });
+  if (prior && body(prior) === body(payload)) {
+    console.log(`[player-awards] unchanged (players=${payload.playerCount}); kept ${OUT}`);
+    return;
+  }
 
   await fs.mkdir(path.dirname(OUT), { recursive: true });
   await fs.writeFile(OUT, JSON.stringify(payload));
