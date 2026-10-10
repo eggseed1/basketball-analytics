@@ -1,5 +1,5 @@
 {
-  "_comment": "Official NBA salary cap / tax / aprons by season-end year (e.g. 2025 = 2024-25). Figures in millions USD. Sources: RealGM / Spotrac CBA history.",
+  "_comment": "Official NBA salary cap / tax / aprons by season-end year (e.g. 2025 = 2024-25). Figures in millions USD. Sources: RealGM / Spotrac CBA history. Rows from 2027 on come from NBA Communications via scripts/sync-official-cap.mjs; their minSalaryM is the prior year's grown at the cap's rate, as the CBA does.",
   "bySeasonEndYear": {
     "2001": { "salaryCapM": 35.5, "luxuryTaxM": 0, "minSalaryM": 0.316, "maxSalaryM": 12.4 },
     "2002": { "salaryCapM": 42.5, "luxuryTaxM": 0, "minSalaryM": 0.333, "maxSalaryM": 14.9 },
@@ -26,6 +26,7 @@
     "2023": { "salaryCapM": 123.655, "luxuryTaxM": 150.267, "firstApronM": 156.983, "minSalaryM": 1.019, "maxSalaryM": 43.3 },
     "2024": { "salaryCapM": 136.021, "luxuryTaxM": 165.294, "firstApronM": 172.346, "secondApronM": 182.794, "minSalaryM": 1.116, "maxSalaryM": 47.6 },
     "2025": { "salaryCapM": 140.588, "luxuryTaxM": 170.814, "firstApronM": 178.132, "secondApronM": 188.931, "minSalaryM": 1.157, "maxSalaryM": 49.2 },
-    "2026": { "salaryCapM": 154.647, "luxuryTaxM": 187.895, "firstApronM": 195.945, "secondApronM": 207.824, "minSalaryM": 1.2, "maxSalaryM": 54.1 }
+    "2026": { "salaryCapM": 154.647, "luxuryTaxM": 187.895, "firstApronM": 195.945, "secondApronM": 207.824, "minSalaryM": 1.2, "maxSalaryM": 54.1 },
+    "2027": { "salaryCapM": 164.961, "luxuryTaxM": 200.428, "firstApronM": 209.015, "secondApronM": 221.686, "minSalaryM": 1.28, "maxSalaryM": 57.7 }
   }
 }

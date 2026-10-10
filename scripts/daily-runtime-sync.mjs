@@ -122,9 +122,13 @@ const ORG_STEPS = [
   { label: "headline-ratings", cmd: "npx", args: ["tsx", "scripts/sentiment-rate-headlines.ts"] },
   { label: "sentiment-build", cmd: "npx", args: ["tsx", "scripts/sentiment-build-snapshot.ts"] },
   { label: "sentiment-snapshot", cmd: "node", args: ["scripts/build-runtime-sentiment-snapshot.mjs"] },
+  // Next season's cap, tax and aprons once NBA Communications posts them (~June 30).
+  { label: "official-cap", cmd: "node", args: ["scripts/sync-official-cap.mjs"] },
   // New rostered players get ESPN ↔ NBA ids before anything below joins on them.
   { label: "new-player-aliases", cmd: "npx", args: ["tsx", "scripts/sync-new-player-aliases.ts"] },
   { label: "bref-team-contracts", cmd: "node", args: ["scripts/build-runtime-bref-team-contracts.mjs"] },
+  // BRef drops a season's salaries each July; this keeps them.
+  { label: "salary-archive", cmd: "node", args: ["scripts/archive-bref-salaries.mjs"] },
   { label: "contract-value", cmd: "npx", args: ["tsx", "scripts/build-contract-value.ts"] },
   // After the season's DRBL bake: records tonight's reading, then rebuilds the lines.
   { label: "salary-payoff", cmd: "npx", args: ["tsx", "scripts/build-salary-payoff.ts", "--record"] },
@@ -142,6 +146,8 @@ const ORG_STEPS = [
   { label: "player-bio", cmd: "node", args: ["scripts/build-runtime-player-bio-snapshot.mjs"] },
   // Draft years from the bios above when stats.nba.com drafthistory is blocked.
   { label: "draft-year", cmd: "node", args: ["scripts/build-runtime-draft-year-snapshot.mjs"] },
+  // Headshots for players the lookup has never resolved (rookies, new aliases); NBA/ESPN CDNs only.
+  { label: "portraits", cmd: "node", args: ["scripts/build-runtime-portrait-lookup.mjs", "--new-only"] },
   // BRef totals include games in progress, so franchise records only refresh after the Finals.
   ...(info.phase === "offseason"
     ? [{ label: "franchise-records", cmd: "node", args: ["scripts/build-franchise-records.mjs"] }]

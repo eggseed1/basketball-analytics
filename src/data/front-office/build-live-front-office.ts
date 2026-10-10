@@ -245,6 +245,7 @@ export const buildLiveTeamFrontOfficeSlice = cache(
         sourceSet: [
           "live-espn-roster",
           "data/salaries/player-salaries-2000-2025.csv",
+          "data/salaries/player-salaries-bref-archive.csv",
           "data/salaries/player-salaries-supplement.csv",
           "src/data/runtime/bref-team-contracts-snapshot.json",
           "data/cba/league-cap-seasons.json",

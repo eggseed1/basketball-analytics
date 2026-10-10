@@ -202,6 +202,10 @@ jobs:
             src/data/franchises/verified-records.json \
             data/impact/player-id-aliases.json \
             src/data/runtime/player-id-aliases-snapshot.json \
+            src/data/media/portrait-lookup.json \
+            data/salaries/player-salaries-bref-archive.csv \
+            data/cba/league-cap-seasons.json \
+            data/cba/salary-cap-by-year.json \
             src/data/runtime/play-type-snapshot.json \
             src/data/runtime/on-off-snapshot.json \
             src/data/runtime/team-game-box-snapshot.json \

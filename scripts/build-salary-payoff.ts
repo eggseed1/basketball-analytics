@@ -222,7 +222,11 @@ function buildNightly(season: string): PayoffSeasonFile | null {
 function readSalaries(season: string): Map<string, number> {
   const endYear = String(Number(season.slice(0, 4)) + 1);
   const out = new Map<string, number>();
-  for (const rel of ["data/salaries/player-salaries-2000-2025.csv", "data/salaries/player-salaries-supplement.csv"]) {
+  for (const rel of [
+    "data/salaries/player-salaries-2000-2025.csv",
+    "data/salaries/player-salaries-bref-archive.csv",
+    "data/salaries/player-salaries-supplement.csv",
+  ]) {
     const seenHere = new Map<string, number>();
     for (const line of readFileSync(path.join(root, rel), "utf8").split("\n").slice(1)) {
       const m = line.match(/^(.*),(\d+),(\d{4})\s*$/);

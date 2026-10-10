@@ -2,12 +2,14 @@
  * Player salary lookup by season start year.
  *
  * Sources, later ones filling gaps or taking over:
- *   data/salaries/player-salaries-2000-2025.csv   history
- *   data/salaries/player-salaries-supplement.csv  newest finished season
+ *   data/salaries/player-salaries-2000-2025.csv     history
+ *   data/salaries/player-salaries-bref-archive.csv  2026-27 on, kept nightly
+ *     from the contracts snapshot so finished seasons survive BRef's rollover
+ *   data/salaries/player-salaries-supplement.csv    2025-26, scaled from DARKO
  *   src/data/runtime/bref-team-contracts-snapshot.json  current and future
  *     seasons from Basketball-Reference team contracts, refreshed nightly
  *
- * Both CSVs label rows by season END year (2025 = 2024-25).
+ * The CSVs label rows by season END year (2025 = 2024-25).
  */
 
 import { readFileSync } from "node:fs";
@@ -117,8 +119,10 @@ function readBrefContracts(): Index {
 function loadIndex(): Index {
   if (cached) return cached;
   const index = readCsv("player-salaries-2000-2025.csv");
-  for (const [key, dollars] of readCsv("player-salaries-supplement.csv")) {
-    if (!index.has(key)) index.set(key, dollars);
+  for (const file of ["player-salaries-bref-archive.csv", "player-salaries-supplement.csv"]) {
+    for (const [key, dollars] of readCsv(file)) {
+      if (!index.has(key)) index.set(key, dollars);
+    }
   }
   for (const [key, dollars] of readBrefContracts()) index.set(key, dollars);
   cached = index;

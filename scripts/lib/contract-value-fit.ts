@@ -99,10 +99,12 @@ export function loadInputs(): ContractValueInputs {
   };
   for (const [season, bucket] of readSalaries("data/salaries/player-salaries-2000-2025.csv"))
     salaryBySeason.set(season, bucket);
-  for (const [season, extra] of readSalaries("data/salaries/player-salaries-supplement.csv")) {
-    const bucket = salaryBySeason.get(season) ?? new Map<string, number>();
-    for (const [key, salary] of extra) if (!bucket.has(key)) bucket.set(key, salary);
-    salaryBySeason.set(season, bucket);
+  for (const rel of ["data/salaries/player-salaries-bref-archive.csv", "data/salaries/player-salaries-supplement.csv"]) {
+    for (const [season, extra] of readSalaries(rel)) {
+      const bucket = salaryBySeason.get(season) ?? new Map<string, number>();
+      for (const [key, salary] of extra) if (!bucket.has(key)) bucket.set(key, salary);
+      salaryBySeason.set(season, bucket);
+    }
   }
 
   const seasons = Object.keys(overlay).sort();

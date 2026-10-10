@@ -9,7 +9,10 @@
  * - BRef headshot fallback for historical slugs when NBA/ESPN CDNs fail
  * - Alias/legend dual-keys are authoritative (applied last)
  *
- *   node scripts/build-runtime-portrait-lookup.mjs
+ *   node scripts/build-runtime-portrait-lookup.mjs [--new-only]
+ *
+ * --new-only probes only people with no portrait yet (new rookies, fresh
+ * aliases) and skips the historical BRef fill, so it is cheap enough nightly.
  */
 import fs from "node:fs/promises";
 import { createHash } from "node:crypto";
@@ -18,6 +21,7 @@ import path from "node:path";
 const ROOT = process.cwd();
 const OUT = path.join(ROOT, "src", "data", "media", "portrait-lookup.json");
 const RUNTIME = path.join(ROOT, "src", "data", "runtime");
+const NEW_ONLY = process.argv.includes("--new-only");
 
 const PLACEHOLDER_SHA = new Set([
   "b3ebe78bfd1cecb8880e51e6a48c9093c5cfb7065f981826d12fb4c01a1b0965",
@@ -53,9 +57,14 @@ function normalizeName(name) {
 }
 
 const validateCache = new Map();
+const requestsByHost = {};
 async function validate(url, sizeFloor = SIZE_FLOOR_NBA_ESPN) {
   const cacheKey = `${url}|${sizeFloor}`;
   if (validateCache.has(cacheKey)) return validateCache.get(cacheKey);
+  const host = new URL(url).host;
+  // BRef blocks clients above ~20 requests/minute; only full rebuilds use its headshots.
+  if (NEW_ONLY && host.endsWith("basketball-reference.com")) return null;
+  requestsByHost[host] = (requestsByHost[host] ?? 0) + 1;
   const pending = (async () => {
     try {
       const res = await fetch(url, {
@@ -261,7 +270,22 @@ for (const person of people) {
   brefBridged += 1;
 }
 
-const list = people.filter((p) => p.nbaId || p.espnId || p.brefSlug);
+const priorPortraits =
+  priorLookup.portraits && typeof priorLookup.portraits === "object"
+    ? priorLookup.portraits
+    : {};
+const hasPrior = (nbaId, espnId, brefSlug) =>
+  Boolean(
+    (nbaId && priorPortraits[nbaId]) ||
+      (espnId && priorPortraits[espnId]) ||
+      (brefSlug && priorPortraits[`bref:${brefSlug}`])
+  );
+
+const list = people.filter(
+  (p) =>
+    (p.nbaId || p.espnId || p.brefSlug) &&
+    !(NEW_ONLY && hasPrior(p.nbaId, p.espnId, p.brefSlug))
+);
 console.log(
   `[portraits] candidates=${list.length} brefBridged=${brefBridged} validateCache starting…`
 );
@@ -334,6 +358,7 @@ for (const row of [...(aliasesSnap.aliases ?? []), ...(legend.aliases ?? [])]) {
     .trim()
     .toLowerCase();
   if (!nbaId && !espnId) continue;
+  if (NEW_ONLY && hasPrior(nbaId, espnId, brefSlug)) continue;
 
   let nbaPortrait = nbaId ? portraits[nbaId] : null;
   let espnPortrait = espnId ? portraits[espnId] : null;
@@ -365,10 +390,7 @@ for (const row of [...(aliasesSnap.aliases ?? []), ...(legend.aliases ?? [])]) {
 
 // Preserve prior verified keys we didn't re-evaluate, but drop collision-shaped
 // ESPN-number→NBA-CDN entries and wrong nba→foreign-espncdn rows for aliased ids.
-const prior =
-  priorLookup.portraits && typeof priorLookup.portraits === "object"
-    ? priorLookup.portraits
-    : {};
+const prior = priorPortraits;
 const aliasedNba = new Map(
   list.filter((p) => p.nbaId && p.espnId).map((p) => [p.nbaId, p.espnId])
 );
@@ -376,6 +398,13 @@ let preserved = 0;
 let droppedCollision = 0;
 for (const [key, url] of Object.entries(prior)) {
   if (portraits[key]) continue;
+  // Unprobed rows were validated by an earlier full run; the checks below
+  // assume every live key was just re-evaluated.
+  if (NEW_ONLY) {
+    portraits[key] = url;
+    preserved += 1;
+    continue;
+  }
   if (isCollisionNbaCdn(key, url)) {
     droppedCollision += 1;
     continue;
@@ -433,7 +462,7 @@ for (const row of legend.aliases ?? []) {
 
 // Historical search coverage: validate BRef headshots for remaining bref: slugs.
 const brefSearchSlugs = [];
-for (const p of searchSnap.players ?? []) {
+for (const p of NEW_ONLY ? [] : searchSnap.players ?? []) {
   if (!Array.isArray(p)) continue;
   const id = String(p[0] ?? "");
   if (!id.startsWith("bref:") || portraits[id]) continue;
@@ -480,6 +509,16 @@ for (const [key, url] of Object.entries(portraits)) {
   }
 }
 console.log(`[portraits] dropped wrong-person bref keys=${droppedWrongPerson}`);
+console.log(`[portraits] requests ${JSON.stringify(requestsByHost)}`);
+
+const priorKeys = Object.keys(prior);
+if (
+  priorKeys.length === Object.keys(portraits).length &&
+  priorKeys.every((key) => prior[key] === portraits[key])
+) {
+  console.log(`[portraits] unchanged (${priorKeys.length} keys)`);
+  process.exit(0);
+}
 
 const payload = {
   version: "drbl-player-media-v2",
