@@ -119,11 +119,6 @@
       "count": 2
     }
   },
-  "src/components/explore/player-race-tracker-chart.tsx": {
-    "react-hooks/refs": {
-      "count": 5
-    }
-  },
   "src/components/explore/player-race-tracker-island.tsx": {
     "react-hooks/error-boundaries": {
       "count": 1
