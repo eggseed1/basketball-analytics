@@ -54,7 +54,7 @@ concurrency:
 
 jobs:
   guard:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 5
     permissions:
       actions: read
@@ -82,7 +82,7 @@ jobs:
   refresh:
     needs: guard
     if: needs.guard.outputs.skip != 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     # Full DRBL season refit + overlay + OpenNext can exceed 3h on cold cache.
     timeout-minutes: 300
     permissions:
