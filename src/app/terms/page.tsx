@@ -28,7 +28,7 @@ export default function TermsPage() {
       <PageHeader
         eyebrow="Terms"
         title="Terms of use"
-        subtitle="Updated October 5, 2026. Using the site means you accept these terms."
+        subtitle="Updated October 10, 2026. Using the site means you accept these terms."
       />
 
       <Section title="Using the site">
@@ -56,7 +56,11 @@ export default function TermsPage() {
         <p>
           This site is not affiliated with or endorsed by the NBA, any of its teams or any player.
           Team names, logos and player images belong to their owners and appear only to identify the
-          teams and players being discussed.
+          teams and players being discussed. If you own one of them and want it taken down,{" "}
+          <a href={SITE_CONTACT_URL} className="underline underline-offset-2" target="_blank" rel="noreferrer">
+            open a removal request
+          </a>{" "}
+          and we&apos;ll remove it.
         </p>
       </Section>
 
