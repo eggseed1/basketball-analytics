@@ -1,8 +1,8 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-09",
-    "retrievedAt": "2026-10-09T22:29:33.451Z",
+    "snapshotDate": "2026-10-10",
+    "retrievedAt": "2026-10-10T00:09:33.779Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
@@ -418,6 +418,29 @@
           "href": "/players/5113969"
         },
         {
+          "playerId": "4684443",
+          "playerName": "Rafael Castro",
+          "age": null,
+          "contractId": "cy-4684443-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-4684443-2026",
+              "playerId": "4684443",
+              "franchiseId": "13",
+              "season": "2026-27",
+              "salary": null,
+              "capHit": null,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "espn-roster-no-salary"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/4684443"
+        },
+        {
           "playerId": "4433599",
           "playerName": "Arthur Kaluma",
           "age": null,
@@ -439,29 +462,6 @@
           ],
           "guaranteedTotal": null,
           "href": "/players/4433599"
-        },
-        {
-          "playerId": "5107258",
-          "playerName": "William Kyle III",
-          "age": null,
-          "contractId": "cy-5107258-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-5107258-2026",
-              "playerId": "5107258",
-              "franchiseId": "13",
-              "season": "2026-27",
-              "salary": null,
-              "capHit": null,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "espn-roster-no-salary"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/5107258"
         },
         {
           "playerId": "1643024",

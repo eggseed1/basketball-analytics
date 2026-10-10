@@ -3,12 +3,12 @@
     "methodologyVersion": "movement-m1-0.2+movement-rules-v2",
     "status": "NEWS_INGEST_M1",
     "season": "2026-27",
-    "snapshotDate": "2026-10-09",
+    "snapshotDate": "2026-10-10",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-10-09T22:25:14.845Z",
+    "builtAt": "2026-10-10T00:05:46.162Z",
     "rosterPlayerCount": 492,
-    "headlinesScanned": 2600,
-    "latestHeadlineAt": "2026-10-09T22:22:38.000Z",
+    "headlinesScanned": 2616,
+    "latestHeadlineAt": "2026-10-10T00:04:00.000Z",
     "latestTransactionDate": "2026-10-07",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -919,6 +919,25 @@
       ],
       "linkedTeamIds": [
         "20"
+      ]
+    },
+    {
+      "id": "mv-trade-3945274-20261009",
+      "headline": "Luka Dončić and Walker Kessler: trade talk",
+      "primaryClaimId": "mv-2f428e5810081c14",
+      "claimIds": [
+        "mv-2f428e5810081c14"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-10-09T23:11:42.000Z",
+      "lastMeaningfulAt": "2026-10-09T23:11:42.000Z",
+      "linkedPlayerIds": [
+        "3945274",
+        "4433136"
+      ],
+      "linkedTeamIds": [
+        "13"
       ]
     },
     {
@@ -4561,6 +4580,27 @@
       ],
       "isOriginal": false,
       "negotiationSpecificity": "active_talks"
+    },
+    {
+      "id": "mv-2f428e5810081c14",
+      "clusterId": "mv-trade-3945274-20261009",
+      "summary": "Lakers Pushed to Trade for 6’11” Notorious Luka Doncic Enemy as Kessler’s Backup",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-09T23:11:42.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/los-angeles-lakers/lakers-trade-doncic-enemy-kessler-backup/",
+      "playerIds": [
+        "3945274",
+        "4433136"
+      ],
+      "teamIds": [
+        "13"
+      ],
+      "isOriginal": true
     },
     {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",
