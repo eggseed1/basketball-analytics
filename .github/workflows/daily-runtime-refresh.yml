@@ -303,7 +303,21 @@ jobs:
             echo "::error title=Missing deploy token::The CLOUDFLARE_API_TOKEN repo secret is empty. Set it under Settings → Secrets and variables → Actions."
             exit 1
           fi
-          npx opennextjs-cloudflare deploy
+          set -o pipefail
+          npx opennextjs-cloudflare deploy 2>&1 | tee /tmp/deploy.log
+
+      # Cloudflare rejects Workers over 64 MiB uncompressed (wrangler's "Total Upload").
+      - name: Check Worker size
+        if: always()
+        run: |
+          [ -f /tmp/deploy.log ] || exit 0
+          kib=$(grep -oE 'Total Upload: [0-9.]+ KiB' /tmp/deploy.log | head -1 | grep -oE '[0-9.]+' || true)
+          [ -n "$kib" ] || exit 0
+          echo "Worker upload: ${kib} KiB of 65536 KiB"
+          if awk -v k="$kib" 'BEGIN { exit !(k > 61440) }'; then
+            echo "::error title=Worker bundle near the 64 MiB limit::Upload is ${kib} KiB; deploys fail above 65536 KiB. Move large bundled JSON to static assets or R2."
+            exit 1
+          fi
 
       - name: Check Movement Center freshness
         if: always() && steps.sync.outcome != 'skipped'
