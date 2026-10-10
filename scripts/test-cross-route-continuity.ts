@@ -28,7 +28,14 @@ function main() {
     "src/components/continuity/route-transition.tsx"
   );
   assert.ok(routeTransition.includes("startRouteTransition"));
-  assert.ok(routeTransition.includes("query-updating-bar"));
+  assert.ok(
+    routeTransition.includes("<ViewportLoadingBar"),
+    "Route transitions drive the one viewport-wide loading bar"
+  );
+  assert.ok(
+    read("src/components/continuity/viewport-loading-bar.tsx").includes("query-updating-bar"),
+    "Viewport loading bar renders the shared bar style"
+  );
 
   const queryNav = read("src/components/continuity/query-nav.tsx");
   assert.ok(

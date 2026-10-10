@@ -115,6 +115,7 @@ export function GameLabView({
   events = [],
   pbpSource,
   officialTeamStats = null,
+  pregameMargin,
   hidePeriodTable = false,
 }: {
   analysis: GameAnalysisSummary;
@@ -122,6 +123,8 @@ export function GameLabView({
   events?: PlayByPlayEvent[];
   pbpSource?: string;
   officialTeamStats?: { home: OfficialTeamStats; away: OfficialTeamStats } | null;
+  /** Expected home margin before tip-off, for the win probability chart. */
+  pregameMargin?: number;
   /** Parent renders GameIdentityShell, so the lab never renders a hero. */
   omitHero?: boolean;
   /** The hero already shows the line score. */
@@ -235,7 +238,7 @@ export function GameLabView({
           <p className={cn(type.bodySm, "mt-1 text-muted-foreground")}>
             {flowTab === "margin"
               ? "Who led and by how much. Hover or drag across the chart to see each scoring play."
-              : "Approximate win probability over the game. Hover for the matching play."}
+              : "Estimated chance to win after each score, from the margin, the time left, who gets the ball next and how both teams have played this season. Hover for the matching play."}
           </p>
         </div>
 
@@ -285,6 +288,7 @@ export function GameLabView({
                 finalAwayScore={outcome.awayScore}
                 events={events}
                 final={final}
+                pregameMargin={pregameMargin}
               />
             )}
 

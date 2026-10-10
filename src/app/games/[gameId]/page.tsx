@@ -20,6 +20,7 @@ import { getGameAnalysis } from "@/data/queries";
 import { getHistoricalProductGame } from "@/data/history/product";
 import { loadRawArchiveShotEventsAsync } from "@/data/history/raw-archive-shots";
 import { getGameShellCached } from "@/data/queries/request-cache";
+import { runtimePregameMargin } from "@/data/runtime/pregame-margin";
 import { withBudget } from "@/data/queries/budget";
 import { validateGamePresentation } from "@/lib/game-presentation";
 import { longUpstreamBudgetsEnabled } from "@/data/providers/nba/runtime-policy";
@@ -40,7 +41,9 @@ async function GameLabDeepBody({ gameId, hidePeriodTable }: { gameId: string; ar
   );
   const payload = result.value;
   if (!payload) return <p className="text-[13px] text-muted-foreground">Deep Game Lab analysis is temporarily unavailable for this game.</p>;
-  return <GameLabView analysis={payload.analysis} players={payload.players} events={payload.events} pbpSource={payload.pbpSource} officialTeamStats={payload.officialTeamStats} omitHero hidePeriodTable={hidePeriodTable} />;
+  const shell = await getGameShellCached(gameId);
+  const pregameMargin = shell ? runtimePregameMargin(shell.game) : undefined;
+  return <GameLabView analysis={payload.analysis} players={payload.players} events={payload.events} pbpSource={payload.pbpSource} officialTeamStats={payload.officialTeamStats} pregameMargin={pregameMargin} omitHero hidePeriodTable={hidePeriodTable} />;
 }
 
 async function HistoricalDeepBody({ gameId, seasonHint, homeLabel, awayLabel }: { gameId: string; seasonHint?: string; homeLabel: string; awayLabel: string }) {

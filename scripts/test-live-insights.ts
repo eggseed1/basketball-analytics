@@ -2,7 +2,14 @@ import assert from "node:assert/strict";
 
 import type { PlayByPlayEvent } from "@/data/types/play-by-play";
 import { buildLiveInsights, buildRightNow, foulTroubleThreshold } from "@/lib/games/live-insights";
-import { buildWinProbabilitySeries, homeWinProbabilityAt } from "@/lib/game-win-probability";
+import {
+  WIN_PROB_PARAMS,
+  buildWinProbabilitySeries,
+  homeWinProbabilityAt,
+  homeWinProbabilityFromState,
+  nextBall,
+  pregameHomeMargin,
+} from "@/lib/game-win-probability";
 import { parseOfficialTeamStats } from "@/lib/games/official-team-stats";
 
 let n = 0;
@@ -161,11 +168,71 @@ assert.equal(parseOfficialTeamStats(boxTeams, { homeProviderTeamId: "7" }), null
 
 const near = (v: number, want: number, tol: number, msg: string) =>
   assert.ok(Math.abs(v - want) <= tol, `${msg}: got ${v.toFixed(3)}`);
-near(homeWinProbabilityAt(0, 0, 1, "12:00"), 0.5, 1e-6, "tied at tip is a coin flip");
-near(homeWinProbabilityAt(59, 50, 3, "12:00"), 0.8, 0.03, "9-point halftime lead");
-near(homeWinProbabilityAt(100, 95, 4, "2:00"), 0.95, 0.03, "5-point lead, 2:00 left");
-near(homeWinProbabilityAt(95, 100, 4, "2:00"), 0.05, 0.03, "symmetric for the trailing side");
+near(homeWinProbabilityAt(0, 0, 1, "12:00"), 0.5, 1e-6, "even matchup tied at tip is a coin flip");
+near(homeWinProbabilityAt(59, 50, 3, "12:00"), 0.75, 0.02, "9-point halftime lead");
+near(homeWinProbabilityAt(100, 95, 4, "2:00"), 0.89, 0.02, "5-point lead, 2:00 left");
+near(
+  homeWinProbabilityAt(95, 100, 4, "2:00"),
+  1 - homeWinProbabilityAt(100, 95, 4, "2:00"),
+  1e-9,
+  "symmetric for the trailing side"
+);
 near(homeWinProbabilityAt(100, 100, 4, "0:00"), 0.5, 1e-6, "tied at the horn");
-assert.ok(homeWinProbabilityAt(101, 100, 4, "0:01") > 0.99, "1-point lead with a second left");
+assert.equal(homeWinProbabilityAt(101, 100, 4, "0:00"), 1, "a lead at the horn is a win");
+assert.equal(homeWinProbabilityAt(101, 100, 5, "0:00"), 1, "same at the end of overtime");
+near(homeWinProbabilityFromState(0, 2880, 6), 0.63, 0.02, "6-point pregame favorite at tip");
+assert.ok(homeWinProbabilityFromState(0, 60, 6) < 0.54, "the pregame edge fades with the clock");
+assert.ok(
+  homeWinProbabilityFromState(1, 10, 0, WIN_PROB_PARAMS, 1) - homeWinProbabilityFromState(1, 10, 0, WIN_PROB_PARAMS, -1) > 0.2,
+  "late, having the ball matters"
+);
+
+const play = (homeScored: boolean, clock = "1:00", period = 4) => ({ homeScored, clock, period });
+assert.equal(nextBall(play(true)), -1, "after a home basket the away team inbounds");
+assert.equal(nextBall(play(false)), 1, "and the reverse");
+assert.equal(nextBall(play(true), play(true)), 1, "home still shooting free throws at the same clock");
+assert.equal(nextBall(play(true), play(true, "0:58")), -1, "a later home score is a new trip");
+assert.equal(nextBall(play(true), play(false)), -1, "other team scoring next means it had the ball");
+
+const hc = WIN_PROB_PARAMS.homeCourt;
+const blowouts = [
+  { date: "2025-11-01", homeTeamId: "A", awayTeamId: "B", homeScore: 110, awayScore: 100 },
+  { date: "2025-11-03", homeTeamId: "A", awayTeamId: "B", homeScore: 110, awayScore: 100 },
+  { date: "2025-11-05", homeTeamId: "A", awayTeamId: "B", homeScore: 90, awayScore: 130 },
+];
+near(
+  pregameHomeMargin({ homeTeamId: "A", awayTeamId: "B", date: "2025-11-05", seasonGames: blowouts }),
+  hc + 2 * (10 - hc),
+  1e-9,
+  "home court plus the rating gap, from games before the date only"
+);
+const evenLastYear = [{ date: "2025-03-01", homeTeamId: "A", awayTeamId: "B", homeScore: 100 + hc, awayScore: 100 }];
+near(
+  pregameHomeMargin({
+    homeTeamId: "A",
+    awayTeamId: "B",
+    date: "2025-11-05",
+    seasonGames: blowouts,
+    priorSeasonGames: evenLastYear,
+  }),
+  hc + (2 * 2 * (10 - hc)) / (2 + WIN_PROB_PARAMS.priorGames),
+  1e-9,
+  "last season pulls early ratings toward it"
+);
+near(
+  pregameHomeMargin({ homeTeamId: "A", awayTeamId: "B", date: "2025-10-20", seasonGames: blowouts }),
+  hc,
+  1e-9,
+  "no games yet means home court alone"
+);
+
+const lateTimeline = [
+  { elapsedGameTime: 2820, period: 4, clock: "1:00", homeScore: 100, awayScore: 98, margin: 2, eventIndex: 0, points: 2, scoringTeamId: "H" },
+];
+const hornSeries = buildWinProbabilitySeries(lateTimeline as never, { finalHomeScore: 100, finalAwayScore: 98, final: true });
+assert.equal(hornSeries.at(-1)!.elapsedGameTime, 2880, "the final 100% sits at the horn, not a second after the last basket");
+near(hornSeries[0]!.homeWp, 0.5, 1e-6, "tip-off seeded at the pregame estimate");
+const favored = buildWinProbabilitySeries(lateTimeline as never, { final: false, pregameMargin: 6 });
+near(favored[0]!.homeWp, homeWinProbabilityFromState(0, 2880, 6), 1e-9, "pregame margin moves tip-off");
 
 console.log("live insights: ok");

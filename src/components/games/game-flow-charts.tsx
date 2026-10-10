@@ -370,6 +370,7 @@ export function GameWinProbabilityChart({
   finalAwayScore,
   events,
   final,
+  pregameMargin,
 }: {
   timeline: ScoreTimelinePoint[];
   homeLabel: string;
@@ -383,6 +384,7 @@ export function GameWinProbabilityChart({
   events?: PlayByPlayEvent[];
   /** Only a final game resolves to 100%; live games end at the current estimate. */
   final: boolean;
+  pregameMargin?: number;
 }) {
   const chartTheme = useChartTheme();
   const [hover, setHover] = useState<number | null>(null);
@@ -392,8 +394,9 @@ export function GameWinProbabilityChart({
         finalHomeScore,
         finalAwayScore,
         final,
+        pregameMargin,
       }),
-    [timeline, finalHomeScore, finalAwayScore, final]
+    [timeline, finalHomeScore, finalAwayScore, final, pregameMargin]
   );
 
   const { maxT, periodMarks, areaHome, areaAway } = useMemo(() => {
@@ -582,7 +585,7 @@ export function GameWinProbabilityChart({
           </p>
         ) : (
           <p className={cn(type.caption, "mt-1 text-muted-foreground")}>
-            Approximate scoreboard model, not Vegas odds.
+            Model fit to recent NBA seasons of play-by-play, not Vegas odds.
           </p>
         )}
       </div>
