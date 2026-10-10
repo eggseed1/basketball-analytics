@@ -28,6 +28,7 @@ import { loadIngestRoster } from "@/sentiment/ingest-roster";
 import { appendIngestItems, type FanPostIngestItem } from "@/sentiment/ingest-store";
 
 import { sampleOutputPath, writeSample } from "./lib/fan-eval-sample";
+import { fanPostId, freshFanPosts, legacyFanPostId, requireFanPostKey } from "./lib/fan-post-id";
 import { rateNewFanPosts } from "./lib/fan-tone";
 
 type YoutubeConfig = {
@@ -122,7 +123,9 @@ async function main() {
   const rows = new Map<string, FanPostIngestItem>();
   const samplePath = sampleOutputPath();
   const textById = new Map<string, string>();
+  const legacyIdOf = new Map<string, string>();
   const dryRun = process.argv.includes("--dry-run") || samplePath !== null;
+  if (!dryRun) requireFanPostKey();
   let failures = 0;
   const allPlans: ChannelPlan[] = [
     ...config.channels.map((c) => ({
@@ -215,7 +218,8 @@ async function main() {
             text,
             entities.playerIds.map((pid) => nameById.get(pid)!).filter(Boolean)
           );
-          const id = createHash("sha1").update(thread.id).digest("hex").slice(0, 16);
+          const id = fanPostId(thread.id);
+          legacyIdOf.set(id, legacyFanPostId(thread.id));
           rows.set(id, {
             id,
             platform: "youtube",
@@ -245,12 +249,12 @@ async function main() {
   }
 
   if (failures && !rows.size) throw new Error("YouTube ingest kept no comments");
-  const all = [...rows.values()];
-  if (samplePath) writeSample(samplePath, all, textById, nameById);
+  if (samplePath) writeSample(samplePath, [...rows.values()], textById, nameById);
   if (dryRun) {
-    console.log(`sentiment:ingest:youtube dry run kept=${all.length}`);
+    console.log(`sentiment:ingest:youtube dry run kept=${rows.size}`);
     return;
   }
+  const all = freshFanPosts("youtube", [...rows.values()], legacyIdOf, new Date());
   await rateNewFanPosts({
     source: "youtube",
     rows: all,

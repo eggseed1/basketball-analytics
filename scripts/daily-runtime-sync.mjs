@@ -164,6 +164,8 @@ const ORG_STEPS = [
   { label: "youtube-ingest", cmd: "npx", args: ["tsx", "scripts/sentiment-ingest-youtube.ts"] },
   { label: "headline-ratings", cmd: "npx", args: ["tsx", "scripts/sentiment-rate-headlines.ts"] },
   { label: "sentiment-build", cmd: "npx", args: ["tsx", "scripts/sentiment-build-snapshot.ts"] },
+  // Must follow sentiment-build, which saves the days about to be deleted into the history files.
+  { label: "fan-post-retention", cmd: "npx", args: ["tsx", "scripts/sentiment-prune-fan-posts.ts"] },
   { label: "sentiment-snapshot", cmd: "node", args: ["scripts/build-runtime-sentiment-snapshot.mjs"] },
   // Next season's cap, tax and aprons once NBA Communications posts them (~June 30).
   { label: "official-cap", cmd: "node", args: ["scripts/sync-official-cap.mjs"] },

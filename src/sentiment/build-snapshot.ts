@@ -52,6 +52,7 @@ import {
 } from "@/sentiment/ingest-aggregate";
 import { loadIngestRoster } from "@/sentiment/ingest-roster";
 import {
+  fanPostCutoffDay,
   readIngestItems,
   type FanPostIngestItem,
   type HeadlineToneItem,
@@ -137,8 +138,11 @@ const HISTORY_DAYS = 400;
 const STORYLINE_SERIES_DAYS = 14;
 /** Fewer items than this toward a player or topic leaves its tone blank. */
 const STORYLINE_TONE_FLOOR = 3;
-/** Rating talk is rare, so it looks back further than the 7-day lanes. */
-const RATING_TALK_DAYS = 30;
+/**
+ * Rating talk is rare, so it looks back further than the 7-day lanes. Must
+ * stay inside FAN_POST_RETENTION_DAYS or older days lose their fan posts.
+ */
+const RATING_TALK_DAYS = 28;
 
 function buildPlayerHistoryFiles(
   profiles: PlayerSentimentProfile[],
@@ -154,20 +158,46 @@ function buildPlayerHistoryFiles(
     }
     return dailyScoreSeries([...byId.values()], sinceMs, now.getTime());
   };
+  const cutoffDay = fanPostCutoffDay(now);
+  const sinceDay = new Date(sinceMs).toISOString().slice(0, 10);
+  const stored = readStoredHistoryFiles();
   const files = new Map<string, SentimentHistoryFile>();
-  for (const profile of profiles) {
-    const fan = collect(fanByPlayer, profile.playerIds);
-    const media = collect(newsByPlayer, profile.playerIds);
-    if (!fan.length && !media.length) continue;
-    const file: SentimentHistoryFile = {
-      playerIds: profile.playerIds,
-      builtAt: now.toISOString(),
-      fan,
-      media,
-    };
-    for (const id of profile.playerIds) files.set(id, file);
+  const addGroup = (playerIds: string[]) => {
+    const computedFan = collect(fanByPlayer, playerIds);
+    const frozenFan = playerIds.map((id) => stored.get(id)).find(Boolean)?.fan;
+    const fan = frozenFan
+      ? [
+          ...frozenFan.filter((point) => point.date >= sinceDay && point.date < cutoffDay),
+          ...computedFan.filter((point) => point.date >= cutoffDay),
+        ]
+      : computedFan;
+    const media = collect(newsByPlayer, playerIds);
+    if (!fan.length && !media.length) return;
+    const file: SentimentHistoryFile = { playerIds, builtAt: now.toISOString(), fan, media };
+    for (const id of playerIds) files.set(id, file);
+  };
+  for (const profile of profiles) addGroup(profile.playerIds);
+  // A player missing from this build (a quiet week drops profiles below the
+  // floor) still keeps fan days whose rows are already deleted.
+  for (const file of stored.values()) {
+    if (!file.playerIds.some((id) => files.has(id))) addGroup(file.playerIds);
   }
   return files;
+}
+
+/** Bluesky and YouTube rows past the retention cutoff are deleted, so older fan days can't be recomputed. */
+function readStoredHistoryFiles(): Map<string, SentimentHistoryFile> {
+  const stored = new Map<string, SentimentHistoryFile>();
+  if (!existsSync(HISTORY_DIR)) return stored;
+  for (const name of readdirSync(HISTORY_DIR)) {
+    if (!name.endsWith(".json")) continue;
+    try {
+      stored.set(name.slice(0, -5), readJson<SentimentHistoryFile>(path.join(HISTORY_DIR, name)));
+    } catch {
+      continue;
+    }
+  }
+  return stored;
 }
 
 function writePlayerHistoryFiles(files: Map<string, SentimentHistoryFile>) {

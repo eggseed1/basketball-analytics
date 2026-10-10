@@ -3,12 +3,20 @@
  * Node-only (scripts + sentiment:build); the Worker reads the built snapshot.
  *
  * News rows keep the headline and link so the UI can cite exemplars.
- * Bluesky and YouTube rows keep hashed ids, counts and scores only (S0:
- * exemplar ids, not raw posts). Reddit keeps no per-post rows at all, only
- * daily averages per player, team and league.
+ * Bluesky and YouTube rows keep keyed-hash ids, counts and scores only, and
+ * are deleted once they are older than FAN_POST_RETENTION_DAYS. Reddit keeps
+ * no per-post rows at all, only daily averages per player, team and league.
  */
 
-import { appendFileSync, existsSync, mkdirSync, readFileSync, readdirSync } from "node:fs";
+import {
+  appendFileSync,
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  readdirSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import path from "node:path";
 
 export const INGEST_ROOT = path.join(process.cwd(), "data", "sentiment", "ingest", "v1");
@@ -52,8 +60,8 @@ export type RedditDailyItem = {
 };
 
 /**
- * A Bluesky post or YouTube comment. The id is a hash of the platform id, and
- * no text, handle or author is kept.
+ * A Bluesky post or YouTube comment. The id is a keyed hash of the platform
+ * id, and no text, handle or author is kept.
  */
 export type FanPostIngestItem = {
   id: string;
@@ -128,6 +136,47 @@ export function readIngestItems<T extends { id: string }>(source: IngestSource):
     }
   }
   return rows;
+}
+
+/** The privacy page promises per-post rows are gone within 30 days. */
+export const FAN_POST_RETENTION_DAYS = 29;
+
+export const FAN_POST_SOURCES = ["bluesky", "youtube"] as const;
+
+/** First UTC day still kept as rows; earlier days live only in the history files. */
+export function fanPostCutoffDay(now: Date): string {
+  return new Date(now.getTime() - FAN_POST_RETENTION_DAYS * 86_400_000)
+    .toISOString()
+    .slice(0, 10);
+}
+
+/** Rewrites a store keeping only rows that pass `keep`; returns how many were dropped. */
+export function pruneIngestItems<T extends { id: string }>(
+  source: IngestSource,
+  keep: (row: T) => boolean
+): number {
+  const dir = sourceDir(source);
+  if (!existsSync(dir)) return 0;
+  let dropped = 0;
+  for (const file of readdirSync(dir).filter((f) => f.endsWith(".jsonl"))) {
+    const filePath = path.join(dir, file);
+    const kept: string[] = [];
+    for (const line of readFileSync(filePath, "utf8").split("\n")) {
+      if (!line.trim()) continue;
+      let row: T;
+      try {
+        row = JSON.parse(line) as T;
+      } catch {
+        dropped += 1;
+        continue;
+      }
+      if (keep(row)) kept.push(line);
+      else dropped += 1;
+    }
+    if (kept.length) writeFileSync(filePath, `${kept.join("\n")}\n`);
+    else rmSync(filePath);
+  }
+  return dropped;
 }
 
 /** Appends rows not already stored; returns how many were new. */

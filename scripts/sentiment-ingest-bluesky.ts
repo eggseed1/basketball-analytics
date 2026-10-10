@@ -12,7 +12,6 @@
  * (scripts/lib/fan-tone.ts) before the text is dropped.
  */
 
-import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 
@@ -27,6 +26,7 @@ import { loadIngestRoster } from "@/sentiment/ingest-roster";
 import { appendIngestItems, type FanPostIngestItem } from "@/sentiment/ingest-store";
 
 import { sampleOutputPath, writeSample } from "./lib/fan-eval-sample";
+import { fanPostId, freshFanPosts, legacyFanPostId, requireFanPostKey } from "./lib/fan-post-id";
 import { rateNewFanPosts } from "./lib/fan-tone";
 
 type BlueskyConfig = {
@@ -151,7 +151,9 @@ async function main() {
   const rows = new Map<string, FanPostIngestItem>();
   const samplePath = sampleOutputPath();
   const textById = new Map<string, string>();
+  const legacyIdOf = new Map<string, string>();
   const dryRun = process.argv.includes("--dry-run") || samplePath !== null;
+  if (!dryRun) requireFanPostKey();
   let failures = 0;
 
   for (const query of config.queries) {
@@ -168,7 +170,8 @@ async function main() {
         if (!isNbaHeadline(text, true)) continue;
         const createdAt = post.record.createdAt ? new Date(post.record.createdAt) : null;
         if (!createdAt || Number.isNaN(createdAt.getTime())) continue;
-        const id = createHash("sha1").update(post.uri).digest("hex").slice(0, 16);
+        const id = fanPostId(post.uri);
+        legacyIdOf.set(id, legacyFanPostId(post.uri));
         const prior = rows.get(id);
         const teamIds = new Set([...(prior?.teamIds ?? []), ...(query.teamId ? [query.teamId] : entities.teamIds)]);
         const tone = scoreFanText(
@@ -203,12 +206,12 @@ async function main() {
   }
 
   if (failures === config.queries.length) throw new Error("every Bluesky query failed");
-  const all = [...rows.values()];
-  if (samplePath) writeSample(samplePath, all, textById, nameById);
+  if (samplePath) writeSample(samplePath, [...rows.values()], textById, nameById);
   if (dryRun) {
-    console.log(`sentiment:ingest:bluesky dry run kept=${all.length}`);
+    console.log(`sentiment:ingest:bluesky dry run kept=${rows.size}`);
     return;
   }
+  const all = freshFanPosts("bluesky", [...rows.values()], legacyIdOf, new Date());
   await rateNewFanPosts({
     source: "bluesky",
     rows: all,

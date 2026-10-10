@@ -23,6 +23,8 @@ name: Daily player-viz runtime refresh
 #   vars.REDDIT_USER_AGENT                  — repo variable, not a secret
 #   YOUTUBE_API_KEY                         — Google Cloud key with YouTube Data API v3
 #   vars.BLUESKY_HANDLE, BLUESKY_APP_PASSWORD — only if logged-out Bluesky search stops working
+#   SENTIMENT_ID_KEY                        — HMAC key for stored Bluesky and YouTube ids; both
+#                                             ingests fail without it (openssl rand -hex 32)
 #   CLOUDFLARE_AI_TOKEN                     — token with only Workers AI permission; rates headline,
 #                                             Bluesky and YouTube tone per player (word-list scores
 #                                             are used without it)
@@ -163,6 +165,7 @@ jobs:
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
           BLUESKY_HANDLE: ${{ vars.BLUESKY_HANDLE }}
           BLUESKY_APP_PASSWORD: ${{ secrets.BLUESKY_APP_PASSWORD }}
+          SENTIMENT_ID_KEY: ${{ secrets.SENTIMENT_ID_KEY }}
           CLOUDFLARE_AI_TOKEN: ${{ secrets.CLOUDFLARE_AI_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: node scripts/daily-runtime-sync.mjs

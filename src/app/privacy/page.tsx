@@ -28,26 +28,60 @@ export default function PrivacyPage() {
       <PageHeader
         eyebrow="Privacy"
         title="Privacy"
-        subtitle="Updated October 4, 2026. This is a free, non-commercial NBA stats site with no accounts and no ads."
+        subtitle="Updated October 10, 2026. This is a free, non-commercial NBA stats site with no accounts and no ads."
       />
 
       <Section title="What we collect about you">
         <p>
-          No personal information. The site has no sign-in, no analytics or tracking scripts, no ad
-          networks and no cookies of its own. Questions you type into Ask DRBL go to the server to
-          be answered and are not saved there.
+          We don&apos;t collect personal information. The site has no sign-in, no analytics or
+          tracking scripts, no ad networks and no cookies of its own. Questions you type into Ask
+          DRBL go to the server to be answered and are not saved there.
         </p>
-        <p>
-          A few settings are saved in your browser&apos;s local storage so they survive a reload:
-          light or dark theme, your watchlist, your recent Ask DRBL questions and the location you
-          typed for game-watch options. They stay on your device, and clearing site data in your
-          browser removes them.
-        </p>
+        <p>Some things are saved in your browser so they survive a reload:</p>
+        <ul className="flex list-disc flex-col gap-1 pl-5">
+          <li>
+            Local storage: light or dark theme and the solid or glass look, your watchlist, your
+            recent Ask DRBL questions, the location you typed for game-watch options, arcade best
+            scores and One Shot saves.
+          </li>
+          <li>IndexedDB: leagues you play in GM mode.</li>
+          <li>
+            Session storage: a flag that stops the page from reloading itself more than once after
+            we ship an update. It clears when you close the tab.
+          </li>
+        </ul>
+        <p>We don&apos;t keep a copy of any of it. Clearing site data in your browser removes it.</p>
         <p>
           The site runs on Cloudflare, which handles each request the way any web host does. We
           do not log individual requests. When something breaks, the server keeps the error
           message and the player, team or season involved for up to 7 days so we can fix it. Those
           logs do not include IP addresses or anything you typed.
+        </p>
+        <p>
+          To stop abuse, Cloudflare counts requests to the site&apos;s data API by IP address and
+          turns away an address that sends too many in a minute. The count lives in
+          Cloudflare&apos;s rate limiter for about a minute and we never see or store it.
+          Cloudflare also asks browsers to report failed connections to it (Network Error
+          Logging). Those reports go to Cloudflare, not to us, under{" "}
+          <a
+            href="https://www.cloudflare.com/privacypolicy/"
+            className="underline underline-offset-2"
+            target="_blank"
+            rel="noreferrer"
+          >
+            its privacy policy
+          </a>
+          .
+        </p>
+      </Section>
+
+      <Section title="Images from other sites">
+        <p>
+          Player headshots and team logos load straight from ESPN, NBA.com, Basketball-Reference
+          and Wikimedia Commons. Your browser requests each image from that site, so the site sees
+          your IP address and browser the same way it would if you visited it, and its own privacy
+          policy applies. Some of these sites set their own cookies on those image responses. Your
+          browser&apos;s third-party cookie setting controls whether it keeps them.
         </p>
       </Section>
 
@@ -68,8 +102,13 @@ export default function PrivacyPage() {
             Team fan blogs and news outlets: the headline and link, so a reader can open the source.
           </li>
           <li>
-            Bluesky posts and YouTube comments: a scrambled id, the date, the tone score and any
-            model rating, plus the like count for Bluesky. The text, author and handle are not kept.
+            Bluesky posts and YouTube comments: an id made by hashing the post&apos;s id with a
+            secret key, the date, the tone score, any model rating, the topics, players and
+            teams it names, and which search found it (Bluesky) or which channel it was posted on
+            (YouTube). Bluesky rows also keep the like count, and YouTube rows keep a hash of the
+            video id so replies under one video are weighed together. The text, author and handle
+            are never kept, and without the key nobody can match a row to a post. These rows are
+            deleted after 30 days. After that only the daily average tone per player remains.
           </li>
           <li>
             Reddit, if connected: only post titles from the last 24 hours are read, through
@@ -79,24 +118,43 @@ export default function PrivacyPage() {
           </li>
         </ul>
         <p>
-          The site shows these as averages. If a platform ends our access or asks us to delete its
-          data, we delete everything derived from it, averages included, and rebuild the pages
-          without it.
+          The site shows these as averages. If you want one of your posts or comments dropped
+          before the 30 days are up, send us its link and we&apos;ll delete its row by hand. If a
+          platform ends our access or asks us to delete its data, we delete what we hold from it,
+          averages included, and rebuild the pages without it. The site&apos;s data files live in
+          a public GitHub repository, so earlier versions of those files stay in its history.
+        </p>
+        <p>
+          YouTube comments are read through the YouTube API Services. By using the sentiment pages
+          you agree to be bound by the{" "}
+          <a
+            href="https://www.youtube.com/t/terms"
+            className="underline underline-offset-2"
+            target="_blank"
+            rel="noreferrer"
+          >
+            YouTube Terms of Service
+          </a>
+          , and Google&apos;s use of data is covered by the{" "}
+          <a
+            href="https://policies.google.com/privacy"
+            className="underline underline-offset-2"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Google Privacy Policy
+          </a>
+          .
         </p>
       </Section>
 
       <Section title="Credits">
         <p>
-          RAPTOR ratings are FiveThirtyEight&apos;s, published under the{" "}
-          <a
-            href="https://creativecommons.org/licenses/by/4.0/"
-            className="underline underline-offset-2"
-            target="_blank"
-            rel="noreferrer"
-          >
-            CC BY 4.0
-          </a>{" "}
-          license.
+          Data sources, photo credits and licenses are listed on the{" "}
+          <Link href="/sources" className="underline underline-offset-2">
+            sources page
+          </Link>
+          .
         </p>
       </Section>
 

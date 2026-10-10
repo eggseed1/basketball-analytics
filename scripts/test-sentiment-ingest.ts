@@ -15,8 +15,10 @@ import {
   groupByEntity,
   type ScoredIngestItem,
 } from "../src/sentiment/ingest-aggregate";
+import { FAN_POST_RETENTION_DAYS, fanPostCutoffDay } from "../src/sentiment/ingest-store";
 import { parseRss } from "../src/sentiment/rss";
 import type { SentimentCuratedSnapshot } from "../src/sentiment/curated-types";
+import { fanPostId, legacyFanPostId, requireFanPostKey } from "./lib/fan-post-id";
 
 function testLexicon() {
   assert.ok(scoreHeadline("Hornets Waive Rob Dillingham", "", ["Rob Dillingham"]).score < 0);
@@ -151,6 +153,27 @@ function testHeadlineModel() {
   assert.equal(parseHeadlineTone(""), null);
 }
 
+function testFanPostIds() {
+  const saved = process.env.SENTIMENT_ID_KEY;
+  try {
+    delete process.env.SENTIMENT_ID_KEY;
+    assert.throws(() => requireFanPostKey());
+    const uri = "at://did:plc:example/app.bsky.feed.post/1";
+    assert.equal(fanPostId(uri), legacyFanPostId(uri));
+    process.env.SENTIMENT_ID_KEY = "a".repeat(64);
+    const keyed = fanPostId(uri);
+    assert.match(keyed, /^[0-9a-f]{16}$/);
+    assert.notEqual(keyed, legacyFanPostId(uri));
+    process.env.SENTIMENT_ID_KEY = "b".repeat(64);
+    assert.notEqual(fanPostId(uri), keyed);
+  } finally {
+    if (saved === undefined) delete process.env.SENTIMENT_ID_KEY;
+    else process.env.SENTIMENT_ID_KEY = saved;
+  }
+  assert.equal(fanPostCutoffDay(new Date("2026-10-30T12:00:00Z")), "2026-10-01");
+  assert.ok(FAN_POST_RETENTION_DAYS < 30);
+}
+
 function testSnapshot() {
   const snapshot = JSON.parse(
     readFileSync(path.join(process.cwd(), "src", "data", "runtime", "sentiment-snapshot.json"), "utf8")
@@ -189,4 +212,5 @@ testRss();
 testLanes();
 testHeadlineModel();
 testSnapshot();
+testFanPostIds();
 console.log("test-sentiment-ingest: ok");
