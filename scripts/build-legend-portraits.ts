@@ -4,11 +4,9 @@
  * lookup checks it before the main registry, whose legend photos are often
  * post-career (retired-player headshots) or keyed to the wrong person.
  *
- * Per legend, the first of:
- *   1. the Basketball-Reference headshot (BRef uses photos from the career)
- *   2. a Wikimedia Commons photo from the player's category (or Wikidata image)
- *      dated inside the player's seasons, free license, one clear face
- * Legends with neither keep whatever the registry had.
+ * Per legend, a Wikimedia Commons photo from the player's category (or
+ * Wikidata image) dated inside the player's seasons, free license, one clear
+ * face. Legends without one keep whatever the registry had.
  *
  * Usage: npx tsx scripts/build-legend-portraits.ts   (macOS; needs `swift`)
  */
@@ -23,12 +21,9 @@ const ROOT = process.cwd();
 const SHARDS = path.join(ROOT, "public/runtime/legend-careers");
 const OUT = path.join(ROOT, "src/data/media/legend-portraits.json");
 const CACHE_DIR = path.join(ROOT, "data/cache/player-photos");
-const VERDICTS = path.join(CACHE_DIR, "verdicts.json");
 const COMMONS_CACHE = path.join(CACHE_DIR, "legend-commons.json");
 const UA =
   "basketball-analytics/1.0 (https://drbl.io; educational)";
-const BREF_UA = "Mozilla/5.0 (compatible; BasketballAnalytics/portrait-rebuild; educational)";
-const BREF_DELAY_MS = Number(process.env.BREF_DELAY_MS || 1500);
 const FREE_LICENSE = /^(cc by(-sa)?( \d(\.\d)?)?|cc0|public domain|pd)/i;
 const FACE_PX_NEEDED = 140 * 2 * 0.4;
 const THUMB_WIDTHS = [330, 500, 960, 1280, 1920];
@@ -58,7 +53,7 @@ async function get(url: string, init: RequestInit = {}, tries = 4): Promise<Resp
         signal: AbortSignal.timeout(30000),
         ...init,
         headers: {
-          "User-Agent": url.includes("basketball-reference") ? BREF_UA : UA,
+          "User-Agent": UA,
           ...(init.headers ?? {}),
         },
       });
@@ -95,33 +90,6 @@ async function loadLegends(): Promise<Legend[]> {
       out.push({ slug, name: row.b.n, first: Math.min(...seasons), last: Math.max(...seasons) + 1 });
     }
   }
-  return out;
-}
-
-async function brefHeadshots(legends: Legend[]): Promise<Map<string, string>> {
-  const verdicts = await readJson<Record<string, boolean>>(VERDICTS, {});
-  const out = new Map<string, string>();
-  let probed = 0;
-  for (const { slug } of legends) {
-    const url = `https://www.basketball-reference.com/req/202106291/images/headshots/${slug}.jpg`;
-    if (!(url in verdicts)) {
-      await sleep(BREF_DELAY_MS);
-      const res = await get(url);
-      if (res.status === 429) {
-        await fs.writeFile(VERDICTS, JSON.stringify(verdicts));
-        throw new Error("Basketball-Reference rate limit hit; rerun later (progress cached)");
-      }
-      const buf = Buffer.from(await res.arrayBuffer());
-      const type = res.headers.get("content-type") ?? "";
-      verdicts[url] = res.ok && type.startsWith("image/") && buf.length >= 2500;
-      if (++probed % 50 === 0) {
-        await fs.writeFile(VERDICTS, JSON.stringify(verdicts));
-        console.log(`  bref probed ${probed}`);
-      }
-    }
-    if (verdicts[url]) out.set(slug, url);
-  }
-  await fs.writeFile(VERDICTS, JSON.stringify(verdicts));
   return out;
 }
 
@@ -357,11 +325,7 @@ async function main() {
   const phase = process.argv[2] ?? "all";
   console.log(`legends ${legends.length}; phase ${phase}`);
 
-  const bref = phase === "commons" ? new Map<string, string>() : await brefHeadshots(legends);
-  console.log(`bref headshots ${bref.size}`);
-  if (phase === "bref") return;
-  const rest = phase === "commons" ? legends : legends.filter((l) => !bref.has(l.slug));
-  const commons = await commonsPhotos(rest);
+  const commons = await commonsPhotos(legends);
   console.log(`commons in-career photos ${commons.size}`);
   if (phase === "commons") {
     await fs.writeFile(
@@ -373,7 +337,7 @@ async function main() {
 
   const portraits: Record<string, string> = {};
   for (const { slug } of legends) {
-    const url = bref.get(slug) ?? commons.get(slug);
+    const url = commons.get(slug);
     if (url) portraits[`bref:${slug}`] = url;
   }
   await fs.writeFile(

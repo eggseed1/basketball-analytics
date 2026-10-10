@@ -63,9 +63,7 @@ export function getPlayerMedia(
           ? "a.espncdn.com"
           : url.includes("cdn.nba.com")
             ? "cdn.nba.com"
-            : url.includes("basketball-reference.com")
-              ? "basketball-reference.com"
-              : "registry",
+            : "registry",
       });
     } else {
       out.set(id, {

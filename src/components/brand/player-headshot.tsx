@@ -12,8 +12,6 @@ import {
 
 type Size = "xs" | "sm" | "md" | "lg" | "xl";
 
-const BREF_HEADSHOT = /basketball-reference\.com\/.*\/headshots\//;
-
 const PX: Record<Size, number> = {
   xs: 28,
   sm: 36,
@@ -106,12 +104,9 @@ export function PlayerHeadshot({
 
   const photo = parsePortraitPhoto(candidate);
   const box = photo.crop ? faceCropBox(photo.crop) : null;
-  // Basketball-Reference headshots are tight 2:3 portraits; covering the
-  // circle cuts off the chin, so show them whole.
-  const tallPortrait = !box && BREF_HEADSHOT.test(photo.src);
-  const backdrop = tallPortrait || (box !== null && !box.covers);
+  const backdrop = box !== null && !box.covers;
   // CDN headshots are about 1.4:1, so covering the circle draws them wider than it.
-  const drawnPx = Math.ceil(px * (box ? parseFloat(box.style.width) / 100 : tallPortrait ? 1 : 1.4));
+  const drawnPx = Math.ceil(px * (box ? parseFloat(box.style.width) / 100 : 1.4));
   const image = cdnImageProps(photo.src);
 
   return (
@@ -150,13 +145,7 @@ export function PlayerHeadshot({
         // Small avatars sit in overflow boards; native lazy often never fires on
         // mobile Safari inside horizontal scrollers.
         loading={priority ? undefined : "eager"}
-        className={
-          box
-            ? "absolute max-w-none"
-            : tallPortrait
-              ? "relative h-full w-full object-contain"
-              : "h-full w-full object-cover object-top"
-        }
+        className={box ? "absolute max-w-none" : "h-full w-full object-cover object-top"}
         style={box?.style}
         onError={() => {
           setFailed((prev) => {

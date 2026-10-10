@@ -77,8 +77,7 @@ export default function PrivacyPage() {
 
       <Section title="Images from other sites">
         <p>
-          Player headshots and team logos load straight from ESPN, NBA.com, Basketball-Reference
-          and Wikimedia Commons. Your browser requests each image from that site, so the site sees
+          Player headshots and team logos load straight from ESPN, NBA.com and Wikimedia Commons. Your browser requests each image from that site, so the site sees
           your IP address and browser the same way it would if you visited it, and its own privacy
           policy applies. Some of these sites set their own cookies on those image responses. Your
           browser&apos;s third-party cookie setting controls whether it keeps them.

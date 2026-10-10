@@ -6,13 +6,15 @@
  * - ESPN athlete ID → prefer a.espncdn.com/…/full/{espnId}.png
  * - Never key an ESPN id to NBA CDN using that same number (ID collision)
  * - Dual-key nba + espn + bref:{slug} when known
- * - BRef headshot fallback for historical slugs when NBA/ESPN CDNs fail
+ * - No Basketball-Reference headshots: they aren't ours to hotlink. Players
+ *   the NBA and ESPN CDNs miss get Commons photos from
+ *   build-legend-portraits.ts / build-player-photo-fallbacks.ts, or initials.
  * - Alias/legend dual-keys are authoritative (applied last)
  *
  *   node scripts/build-runtime-portrait-lookup.mjs [--new-only]
  *
  * --new-only probes only people with no portrait yet (new rookies, fresh
- * aliases) and skips the historical BRef fill, so it is cheap enough nightly.
+ * aliases), so it is cheap enough nightly.
  */
 import fs from "node:fs/promises";
 import { createHash } from "node:crypto";
@@ -27,7 +29,7 @@ const PLACEHOLDER_SHA = new Set([
   "b3ebe78bfd1cecb8880e51e6a48c9093c5cfb7065f981826d12fb4c01a1b0965",
 ]);
 const SIZE_FLOOR_NBA_ESPN = 8000;
-const SIZE_FLOOR_BREF = 2500;
+const BREF_HOST = /^https?:\/\/(?:www\.)?basketball-reference\.com\//;
 const UA =
   "Mozilla/5.0 (compatible; BasketballAnalytics/portrait-rebuild; educational)";
 
@@ -39,9 +41,6 @@ function nbaUrl(id) {
 }
 function espnUrl(id) {
   return `https://a.espncdn.com/i/headshots/nba/players/full/${id}.png`;
-}
-function brefUrl(slug) {
-  return `https://www.basketball-reference.com/req/202106291/images/headshots/${slug}.jpg`;
 }
 function sha(buf) {
   return createHash("sha256").update(buf).digest("hex");
@@ -62,8 +61,6 @@ async function validate(url, sizeFloor = SIZE_FLOOR_NBA_ESPN) {
   const cacheKey = `${url}|${sizeFloor}`;
   if (validateCache.has(cacheKey)) return validateCache.get(cacheKey);
   const host = new URL(url).host;
-  // BRef blocks clients above ~20 requests/minute; only full rebuilds use its headshots.
-  if (NEW_ONLY && host.endsWith("basketball-reference.com")) return null;
   requestsByHost[host] = (requestsByHost[host] ?? 0) + 1;
   const pending = (async () => {
     try {
@@ -274,11 +271,19 @@ const priorPortraits =
   priorLookup.portraits && typeof priorLookup.portraits === "object"
     ? priorLookup.portraits
     : {};
+// People the CDNs miss but the Commons builders cover need no nightly probe.
+const commonsCovered = {};
+for (const name of ["legend-portraits.json", "portrait-fallbacks.json"]) {
+  const json = await readJson(path.join(ROOT, "src", "data", "media", name)).catch(() => ({}));
+  for (const [key, url] of Object.entries(json.portraits ?? {})) {
+    if (typeof url === "string" && !BREF_HOST.test(url)) commonsCovered[key] = url;
+  }
+}
 const hasPrior = (nbaId, espnId, brefSlug) =>
   Boolean(
-    (nbaId && priorPortraits[nbaId]) ||
-      (espnId && priorPortraits[espnId]) ||
-      (brefSlug && priorPortraits[`bref:${brefSlug}`])
+    (nbaId && (priorPortraits[nbaId] || commonsCovered[nbaId])) ||
+      (espnId && (priorPortraits[espnId] || commonsCovered[espnId])) ||
+      (brefSlug && (priorPortraits[`bref:${brefSlug}`] || commonsCovered[`bref:${brefSlug}`]))
   );
 
 const list = people.filter(
@@ -293,8 +298,6 @@ console.log(
 const portraits = {};
 let promoted = 0;
 let failed = 0;
-let brefFallback = 0;
-
 await mapPool(list, 16, async (person) => {
   const nbaId = person.nbaId || "";
   const espnId = person.espnId || "";
@@ -302,7 +305,6 @@ await mapPool(list, 16, async (person) => {
 
   let nbaOk = null;
   let espnOk = null;
-  let brefOk = null;
 
   if (nbaId && !BLOCKED_NBA_LATEST.has(nbaId)) {
     nbaOk = await validate(nbaUrl(nbaId));
@@ -310,30 +312,26 @@ await mapPool(list, 16, async (person) => {
   if (espnId) {
     espnOk = await validate(espnUrl(espnId));
   }
-  if (brefSlug && !nbaOk && !espnOk) {
-    brefOk = await validate(brefUrl(brefSlug), SIZE_FLOOR_BREF);
-    if (brefOk) brefFallback += 1;
-  }
 
   const bestNba = nbaOk;
   const bestEspn = espnOk;
-  const best = bestNba || bestEspn || brefOk;
+  const best = bestNba || bestEspn;
   if (!best) {
     failed += 1;
     return;
   }
 
-  if (nbaId) portraits[nbaId] = bestNba || bestEspn || brefOk;
+  if (nbaId) portraits[nbaId] = best;
   if (espnId) {
     // ESPN athlete keys must never point at NBA CDN for the ESPN number.
-    const espnPortrait = bestEspn || (bestNba && !isCollisionNbaCdn(espnId, bestNba) ? bestNba : null) || brefOk;
+    const espnPortrait = bestEspn || (bestNba && !isCollisionNbaCdn(espnId, bestNba) ? bestNba : null);
     if (espnPortrait) {
       portraits[espnId] = espnPortrait;
       portraits[`espn:${espnId}`] = espnPortrait;
     }
   }
   if (brefSlug) {
-    portraits[`bref:${brefSlug}`] = bestNba || bestEspn || brefOk;
+    portraits[`bref:${brefSlug}`] = best;
   }
   promoted += 1;
 });
@@ -377,10 +375,7 @@ for (const row of [...(aliasesSnap.aliases ?? []), ...(legend.aliases ?? [])]) {
   }
   if (nbaId) {
     // Prefer real NBA CDN; else alias ESPN; never a foreign ESPN athlete.
-    const next =
-      nbaPortrait ||
-      espnPortrait ||
-      (brefSlug ? await validate(brefUrl(brefSlug), SIZE_FLOOR_BREF) : null);
+    const next = nbaPortrait || espnPortrait;
     if (next) portraits[nbaId] = next;
   }
   if (brefSlug && (portraits[nbaId] || portraits[espnId])) {
@@ -398,6 +393,7 @@ let preserved = 0;
 let droppedCollision = 0;
 for (const [key, url] of Object.entries(prior)) {
   if (portraits[key]) continue;
+  if (typeof url === "string" && BREF_HOST.test(url)) continue;
   // Unprobed rows were validated by an earlier full run; the checks below
   // assume every live key was just re-evaluated.
   if (NEW_ONLY) {
@@ -442,16 +438,7 @@ for (const p of searchSnap.players ?? []) {
 for (const [nbaId, slugRaw] of Object.entries(awards.slugs ?? {})) {
   const slug = String(slugRaw ?? "").trim().toLowerCase();
   if (!slug) continue;
-  if (portraits[nbaId]) {
-    portraits[`bref:${slug}`] = portraits[nbaId];
-  } else {
-    const ok = await validate(brefUrl(slug), SIZE_FLOOR_BREF);
-    if (ok) {
-      portraits[`bref:${slug}`] = ok;
-      portraits[nbaId] = ok;
-      brefFallback += 1;
-    }
-  }
+  if (portraits[nbaId]) portraits[`bref:${slug}`] = portraits[nbaId];
 }
 for (const row of legend.aliases ?? []) {
   const nbaId = String(row.nbaPlayerId ?? "").trim();
@@ -459,25 +446,6 @@ for (const row of legend.aliases ?? []) {
   if (!nbaId || !slug || !portraits[nbaId]) continue;
   portraits[`bref:${slug}`] = portraits[nbaId];
 }
-
-// Historical search coverage: validate BRef headshots for remaining bref: slugs.
-const brefSearchSlugs = [];
-for (const p of NEW_ONLY ? [] : searchSnap.players ?? []) {
-  if (!Array.isArray(p)) continue;
-  const id = String(p[0] ?? "");
-  if (!id.startsWith("bref:") || portraits[id]) continue;
-  const slug = id.slice(5).toLowerCase();
-  if (/^[a-z0-9]+$/.test(slug)) brefSearchSlugs.push(slug);
-}
-console.log(
-  `[portraits] bref search fill candidates=${brefSearchSlugs.length}…`
-);
-await mapPool(brefSearchSlugs, 16, async (slug) => {
-  const ok = await validate(brefUrl(slug), SIZE_FLOOR_BREF);
-  if (!ok) return;
-  portraits[`bref:${slug}`] = ok;
-  brefFallback += 1;
-});
 
 // Stale preserved rows once pointed legend slugs at another player's headshot
 // (Willis Reed → Bob Pettit on the NBA CDN; P.J. Brown's NBA id 136 read as
@@ -557,5 +525,5 @@ for (const mirror of [
 }
 
 console.log(
-  `[portraits] wrote ${OUT} count=${payload.count} promoted=${promoted} failed=${failed} preserved=${preserved} droppedCollision=${droppedCollision} brefAttached=${brefAttached} brefFallback=${brefFallback}`
+  `[portraits] wrote ${OUT} count=${payload.count} promoted=${promoted} failed=${failed} preserved=${preserved} droppedCollision=${droppedCollision} brefAttached=${brefAttached}`
 );

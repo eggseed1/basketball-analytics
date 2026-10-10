@@ -16,25 +16,36 @@ export type PortraitLookupFile = {
   count: number;
 };
 
+/** Basketball-Reference's headshots aren't ours to hotlink; those players show initials instead. */
+const BLOCKED_PORTRAIT_HOST = /^https?:\/\/(?:www\.)?basketball-reference\.com\//;
+
+function allowedPortraits(map: Record<string, string> | undefined): Record<string, string> {
+  if (!map || typeof map !== "object") return {};
+  return Object.fromEntries(
+    Object.entries(map).filter(([, url]) => typeof url === "string" && !BLOCKED_PORTRAIT_HOST.test(url))
+  );
+}
+
 const file = portraitLookupJson as PortraitLookupFile;
-const portraits: Record<string, string> =
-  file?.portraits && typeof file.portraits === "object" ? file.portraits : {};
+const portraits = allowedPortraits(file?.portraits);
 /** Routes the registry misses (scripts/build-player-photo-fallbacks.ts). */
-const fallbacks: Record<string, string> =
-  (portraitFallbacksJson as { portraits?: Record<string, string> }).portraits ?? {};
+const fallbacks = allowedPortraits(
+  (portraitFallbacksJson as { portraits?: Record<string, string> }).portraits
+);
 /**
  * Playing-days photos for pre-1996-97 players (scripts/build-legend-portraits.ts).
  * Wins over the registry, whose legend entries are often post-career shots.
  */
-const legends: Record<string, string> =
-  (legendPortraitsJson as { portraits?: Record<string, string> }).portraits ?? {};
+const legends = allowedPortraits(
+  (legendPortraitsJson as { portraits?: Record<string, string> }).portraits
+);
 
 export function loadPortraitLookup(): PortraitLookupFile | null {
   if (!Object.keys(portraits).length) return null;
   return {
     version: file.version ?? "bundled",
     portraits,
-    count: file.count ?? Object.keys(portraits).length,
+    count: Object.keys(portraits).length,
   };
 }
 

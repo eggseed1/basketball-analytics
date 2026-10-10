@@ -6,8 +6,7 @@
  * PERSON_ID (nba_api static list, unique names only), then take the first of:
  *   1. a registry portrait already keyed by that NBA id or BRef slug
  *   2. a validated cdn.nba.com headshot
- *   3. a validated Basketball-Reference headshot (slug from Wikidata)
- *   4. the player's Wikidata image (Wikimedia Commons, free license), kept
+ *   3. the player's Wikidata image (Wikimedia Commons, free license), kept
  *      only when macOS Vision finds one clear face; stored with face crop and
  *      photo credit (see src/lib/portrait-photo.ts)
  *
@@ -37,7 +36,6 @@ const agentFor = (url: string) =>
   /wikimedia\.org|wikidata\.org|wikipedia\.org/.test(url) ? UA : CDN_UA;
 const NBA_API_URL =
   "https://raw.githubusercontent.com/swar/nba_api/master/src/nba_api/stats/library/data.py";
-const BREF_DELAY_MS = Number(process.env.BREF_DELAY_MS || 3200);
 const NBA_PLACEHOLDER_SHA =
   "b3ebe78bfd1cecb8880e51e6a48c9093c5cfb7065f981826d12fb4c01a1b0965";
 const FREE_LICENSE = /^(cc by(-sa)?( \d(\.\d)?)?|cc0|public domain|pd)/i;
@@ -164,19 +162,6 @@ async function validNbaHeadshot(id: string, verdicts: Verdicts): Promise<string 
     const { res, buf } = await fetchBuffer(url);
     const sha = createHash("sha256").update(buf).digest("hex");
     verdicts[url] = res.ok && buf.length >= 8000 && sha !== NBA_PLACEHOLDER_SHA;
-    await fs.writeFile(CACHE_FILE, JSON.stringify(verdicts));
-  }
-  return verdicts[url] ? url : null;
-}
-
-async function validBrefHeadshot(slug: string, verdicts: Verdicts): Promise<string | null> {
-  const url = `https://www.basketball-reference.com/req/202106291/images/headshots/${slug}.jpg`;
-  if (!(url in verdicts)) {
-    await sleep(BREF_DELAY_MS);
-    const { res, buf } = await fetchBuffer(url);
-    const type = res.headers.get("content-type") ?? "";
-    if (res.status === 429) throw new Error("Basketball-Reference rate limit hit; rerun later");
-    verdicts[url] = res.ok && type.startsWith("image/") && buf.length >= 2500;
     await fs.writeFile(CACHE_FILE, JSON.stringify(verdicts));
   }
   return verdicts[url] ? url : null;
@@ -326,12 +311,6 @@ async function main() {
     if (nba) {
       fallbacks[route] = { url: nba, source: "cdn.nba.com" };
       bump("cdn.nba.com");
-      continue;
-    }
-    const bref = wd?.slug ? await validBrefHeadshot(wd.slug, verdicts) : null;
-    if (bref) {
-      fallbacks[route] = { url: bref, source: "basketball-reference.com" };
-      bump("basketball-reference.com");
       continue;
     }
     if (wd?.image) {

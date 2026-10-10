@@ -77,11 +77,6 @@ const nextConfig: NextConfig = {
         hostname: "cdn.nba.com",
         pathname: "/**",
       },
-      {
-        protocol: "https",
-        hostname: "www.basketball-reference.com",
-        pathname: "/req/**",
-      },
     ],
   },
   // Historical BDL season JSON lives under data/cache (gitignored locally but
