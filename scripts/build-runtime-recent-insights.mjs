@@ -1,6 +1,9 @@
 /**
- * Bake homepage Recent Insights from completed 2025-26 games + player logs.
+ * Bake homepage Recent Insights from the season's completed games + player logs.
  * Prefer last slate dates; expand backward until we have enough material.
+ *
+ * Usage: npx tsx scripts/build-runtime-recent-insights.mjs [season]
+ * (defaults to the current NBA season by date)
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -13,6 +16,9 @@ const require = createRequire(import.meta.url);
 async function main() {
   const { buildAboveNormNights, buildRecentInsights } = await import(
     pathToFileURL(path.join(ROOT, "src/lib/recent-insights.ts")).href
+  );
+  const { canonicalSeasonFromStartYear, currentNbaStartYear } = await import(
+    pathToFileURL(path.join(ROOT, "src/lib/nba-season-phase.ts")).href
   );
 
   const gameSnap = JSON.parse(
@@ -34,7 +40,8 @@ async function main() {
     )
   );
 
-  const season = "2025-26";
+  const season =
+    process.argv[2] ?? canonicalSeasonFromStartYear(currentNbaStartYear());
   const logRoot = path.join(ROOT, "public/runtime/player-game-logs", season);
   if (!fs.existsSync(logRoot)) {
     // CI checkouts don't carry the per-player logs; the live homepage path
@@ -97,7 +104,8 @@ async function main() {
   );
   finals.sort((a, b) => b.gameDate.localeCompare(a.gameDate));
   if (!finals.length) {
-    throw new Error(`No final ${season} games in game-snapshot`);
+    console.log(`[recent-insights] no final ${season} games yet; keeping existing snapshot`);
+    return;
   }
 
   const dates = [...new Set(finals.map((g) => g.gameDate))].sort((a, b) =>
