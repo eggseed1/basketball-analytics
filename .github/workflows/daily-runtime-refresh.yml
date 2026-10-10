@@ -210,7 +210,6 @@ jobs:
             data/cba/league-cap-seasons.json \
             data/cba/salary-cap-by-year.json \
             src/content/awards/retired-jerseys.json \
-            src/data/runtime/hof-inductees-snapshot.json \
             data/movement-center/trade-deadlines.json \
             public/runtime/arcade/league-seasons.json \
             data/ops/step-health.json \

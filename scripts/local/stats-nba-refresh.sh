@@ -1,6 +1,6 @@
 #!/bin/bash
 # Nightly stats.nba.com bakes that cloud runners can't reach: hustle tracking,
-# play types, team on/off and league shot zones. stats.nba.com drops requests
+# play types, team on/off, league shot zones and player awards. stats.nba.com drops requests
 # from GitHub Actions and Cloudflare IPs, so this runs on a home machine from a
 # dedicated clone (never the dev checkout) and pushes a data-only commit that
 # the next scheduled deploy picks up.
@@ -15,6 +15,7 @@ FILES=(
   src/data/runtime/hustle-overlay-snapshot.json
   src/data/runtime/play-type-snapshot.json
   src/data/runtime/on-off-snapshot.json
+  src/data/runtime/player-awards-snapshot.json
 )
 
 log() { echo "[stats-nba-refresh] $(date -u +%Y-%m-%dT%H:%M:%SZ) $*"; }
@@ -39,6 +40,10 @@ fi
 
 node scripts/build-runtime-hustle-snapshot.mjs || log "hustle failed; keeping the last bake"
 "$VENV/bin/python" scripts/build-runtime-playtype-onoff-snapshot.py "$SEASON" || log "play types failed; keeping the last bake"
+# About 600 recent players at half a second each, so weekly (Mondays) is enough for award news.
+if [ "$(date +%u)" = "1" ] || [ "${FORCE:-0}" = "1" ]; then
+  "$VENV/bin/python" scripts/build-runtime-player-awards.py || log "awards failed; keeping the last bake"
+fi
 
 git add -- "${FILES[@]}"
 if git diff --cached --quiet; then

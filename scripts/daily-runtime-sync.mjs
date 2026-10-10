@@ -187,14 +187,10 @@ const ORG_STEPS = [
   { label: "asset-ledger-snapshot", cmd: "node", args: ["scripts/build-runtime-asset-ledger.mjs"] },
   // A team that fails to fetch keeps yesterday's entry; a mass change aborts without writing.
   { label: "team-leadership", cmd: "npx", args: ["tsx", "scripts/build-team-leadership.ts"] },
-  // Award pages pick up new winners from here; a blocked or empty page keeps the last bake.
-  { label: "player-awards", cmd: "node", args: ["scripts/build-runtime-player-awards.mjs"] },
   // ESPN rosters and profiles; merges over the last bake so new players get vitals.
   { label: "player-bio", cmd: "node", args: ["scripts/build-runtime-player-bio-snapshot.mjs"] },
   // Draft years from the bios above when stats.nba.com drafthistory is blocked.
   { label: "draft-year", cmd: "node", args: ["scripts/build-runtime-draft-year-snapshot.mjs"] },
-  // Hall of Fame classes newer than the curated list (one BRef page).
-  { label: "hall-of-fame", cmd: "node", args: ["scripts/build-hof-snapshot.mjs"] },
   // League per-game averages for the compare tool's era adjustment (one BRef page).
   { label: "league-averages", cmd: "node", args: ["scripts/build-league-season-averages.mjs"] },
   // Wikipedia's retired-numbers list; a few unresolved names are skipped, not fatal.

@@ -9,8 +9,6 @@ import {
   allStarCareerHistoryFromSnapshot,
   awardHistoryFromSnapshotDescription,
 } from "@/content/awards/history-from-snapshot";
-import hofSnapshot from "@/data/runtime/hof-inductees-snapshot.json";
-import { nbaPersonIdFromPlayerRoute } from "@/data/runtime/legend-nba-to-bref";
 import { teamHistoryHref } from "@/lib/team-identity";
 
 export type AwardHistoryRow = {
@@ -518,22 +516,8 @@ export const HOF_HISTORY: AwardHistoryRow[] = [
   { season: "1959", winner: "John Schommer" },
 ];
 
-/** Curated inductees plus nightly-snapshot classes newer than the curated list. */
-export const HOF_INDUCTEES: AwardHistoryRow[] = (() => {
-  const newest = Math.max(...HOF_HISTORY.map((row) => Number(row.season)));
-  const added: AwardHistoryRow[] = [];
-  for (const row of (hofSnapshot as { inductees?: { year: number; name: string; slug: string | null }[] })
-    .inductees ?? []) {
-    if (row.year <= newest) continue;
-    const nbaId = row.slug ? nbaPersonIdFromPlayerRoute(`bref:${row.slug}`) : null;
-    added.push({
-      season: String(row.year),
-      winner: row.name,
-      ...(row.slug ? { href: `/players/${nbaId ?? `bref:${row.slug}`}` } : {}),
-    });
-  }
-  return [...added, ...HOF_HISTORY];
-})();
+/** Player-category inductees; add each new class by hand after the April announcement. */
+export const HOF_INDUCTEES: AwardHistoryRow[] = HOF_HISTORY;
 
 /** Curated rows plus nightly-snapshot winners for seasons the curated list lacks. */
 function withSnapshotSeasons(

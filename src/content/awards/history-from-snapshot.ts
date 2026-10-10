@@ -50,7 +50,6 @@ export function awardHistoryFromSnapshotDescription(
     for (const row of awards) {
       if (!Array.isArray(row) || row[0] !== description) continue;
       const season = String(row[1] ?? "").trim();
-      // Skip synthetic All-Star placeholders (AS-01 …).
       if (!season || !/^\d{4}-\d{2}$/.test(season)) continue;
       const note = row[2] != null ? String(row[2]).trim() : "";
       rows.push({
@@ -77,10 +76,7 @@ export function awardHistoryFromSnapshotDescription(
   });
 }
 
-/**
- * All-Star pages: career selection counts (BRef bake stores AS-NN placeholders,
- * not calendar seasons).
- */
+/** All-Star pages: career selection counts. */
 export function allStarCareerHistoryFromSnapshot(): AwardHistoryRow[] {
   const counts = new Map<string, number>();
   for (const [nbaId, awards] of Object.entries(players)) {
