@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { listDrblSeasons } from "@/data/drbl/season-registry";
 import { fetchDrblBoardProvenance } from "@/data/providers/nba/drbl-loader";
 
 /**
@@ -8,7 +9,8 @@ import { fetchDrblBoardProvenance } from "@/data/providers/nba/drbl-loader";
  */
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const season = searchParams.get("season") ?? "2025-26";
+  const season =
+    searchParams.get("season") ?? [...listDrblSeasons()].sort().at(-1) ?? "2025-26";
   const provenance = await fetchDrblBoardProvenance(season);
   if (!provenance) {
     return NextResponse.json(

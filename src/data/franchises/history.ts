@@ -1,7 +1,7 @@
 /**
- * Public franchise history book for fan browsing. As-of end of 2025-26
- * (Knicks 2026 title included). Counts treat continuous franchises across
- * relocations (e.g. OKC includes Seattle; MEM includes Vancouver).
+ * Public franchise history book for fan browsing. Counts treat continuous
+ * franchises across relocations (e.g. OKC includes Seattle; MEM includes
+ * Vancouver).
  *
  * Records, titles, best/worst seasons and career leaders come from
  * `verified-records.json` (scripts/build-franchise-records.mjs). Retired
@@ -75,7 +75,11 @@ type CuratedFranchiseHistory = Omit<
   "playoffWins" | "playoffLosses" | "recordsSource"
 > & { playoffWins: number; playoffLosses: number };
 
-export const FRANCHISE_HISTORY_AS_OF = "2025-26";
+export const FRANCHISE_HISTORY_AS_OF = Object.values(
+  verifiedRecords.franchises as Record<string, { lastSeason?: string | null }>
+)
+  .map((f) => f.lastSeason ?? "")
+  .reduce((a, b) => (b > a ? b : a), "2025-26");
 
 const CURATED_FRANCHISE_HISTORIES: CuratedFranchiseHistory[] = [
   {

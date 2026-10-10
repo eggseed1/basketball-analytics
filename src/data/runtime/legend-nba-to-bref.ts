@@ -7,6 +7,7 @@
  */
 import legendFile from "./legend-player-aliases.json";
 import awardsFile from "./player-awards-snapshot.json";
+import aliasFile from "./player-id-aliases-snapshot.json";
 
 type LegendRow = {
   nbaPlayerId?: string;
@@ -72,13 +73,20 @@ for (const row of legendRows) {
   }
 }
 
+/** Award winners in the modern ESPN crosswalk have full ESPN player pages. */
+const CROSSWALK_NBA_IDS = new Set(
+  ((aliasFile as { aliases?: { nbaPlayerId?: string }[] }).aliases ?? []).map(
+    (row) => String(row.nbaPlayerId ?? "").trim()
+  )
+);
+
 for (const [nbaIdRaw, slugRaw] of Object.entries(awardSlugs)) {
   const nbaId = String(nbaIdRaw ?? "").trim();
   const slug = String(slugRaw ?? "")
     .trim()
     .toLowerCase();
   if (!nbaId || !slug) continue;
-  if (KEEP_ESPN_NBA_IDS.has(nbaId)) continue;
+  if (KEEP_ESPN_NBA_IDS.has(nbaId) || CROSSWALK_NBA_IDS.has(nbaId)) continue;
   if (!LEGEND_NBA_TO_BREF[nbaId]) {
     LEGEND_NBA_TO_BREF[nbaId] = `bref:${slug}`;
   }
@@ -139,6 +147,10 @@ for (const [nbaId, brefRoute] of Object.entries(LEGEND_NBA_TO_BREF)) {
   if (slug && !LEGEND_BREF_TO_NBA[slug]) {
     LEGEND_BREF_TO_NBA[slug] = nbaId;
   }
+}
+for (const [nbaId, slugRaw] of Object.entries(awardSlugs)) {
+  const slug = String(slugRaw ?? "").trim().toLowerCase();
+  if (slug && !LEGEND_BREF_TO_NBA[slug]) LEGEND_BREF_TO_NBA[slug] = nbaId;
 }
 
 /**

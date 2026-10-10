@@ -25,6 +25,10 @@ import {
 } from "@/data/providers/historical/season-range";
 import { leagueScatterDefaultRankEnd, leagueScatterMeta } from "@/lib/league-player-scatter";
 import {
+  defaultExplorePlayersSeason,
+  priorSeasonForStats,
+} from "@/lib/player-board-season";
+import {
   parsePlayerRaceFieldSize,
   parsePlayerRaceMetric,
   parsePlayerRaceMinMinutes,
@@ -97,9 +101,7 @@ export default async function PlayerVisualizationsPage({
   const season =
     seasonParam && /^\d{4}-\d{2}$/.test(seasonParam)
       ? seasonParam
-      : currentSeason === "2026-27"
-        ? "2025-26"
-        : currentSeason;
+      : defaultExplorePlayersSeason([currentSeason, priorSeasonForStats(currentSeason)]);
   const metric = parsePlayerRaceMetric(one(sp, "metric"));
   const metricLabel = playerRaceMetricLabel(metric).toLowerCase();
   const fieldSize = parseVizFieldSize(one(sp, "top"), view);

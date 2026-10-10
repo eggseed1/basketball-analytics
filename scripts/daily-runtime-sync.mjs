@@ -122,6 +122,8 @@ const ORG_STEPS = [
   { label: "headline-ratings", cmd: "npx", args: ["tsx", "scripts/sentiment-rate-headlines.ts"] },
   { label: "sentiment-build", cmd: "npx", args: ["tsx", "scripts/sentiment-build-snapshot.ts"] },
   { label: "sentiment-snapshot", cmd: "node", args: ["scripts/build-runtime-sentiment-snapshot.mjs"] },
+  // New rostered players get ESPN ↔ NBA ids before anything below joins on them.
+  { label: "new-player-aliases", cmd: "npx", args: ["tsx", "scripts/sync-new-player-aliases.ts"] },
   { label: "bref-team-contracts", cmd: "node", args: ["scripts/build-runtime-bref-team-contracts.mjs"] },
   { label: "contract-value", cmd: "npx", args: ["tsx", "scripts/build-contract-value.ts"] },
   // After the season's DRBL bake: records tonight's reading, then rebuilds the lines.
@@ -140,6 +142,10 @@ const ORG_STEPS = [
   { label: "player-bio", cmd: "node", args: ["scripts/build-runtime-player-bio-snapshot.mjs"] },
   // Draft years from the bios above when stats.nba.com drafthistory is blocked.
   { label: "draft-year", cmd: "node", args: ["scripts/build-runtime-draft-year-snapshot.mjs"] },
+  // BRef totals include games in progress, so franchise records only refresh after the Finals.
+  ...(info.phase === "offseason"
+    ? [{ label: "franchise-records", cmd: "node", args: ["scripts/build-franchise-records.mjs"] }]
+    : []),
 ];
 
 async function runOrgSteps() {

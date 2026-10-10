@@ -3,6 +3,10 @@ import type { CSSProperties } from "react";
 
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { getPlayerPortraitUrl } from "@/data/media/get-player-media";
+import {
+  canonicalSeasonFromStartYear,
+  currentNbaStartYear,
+} from "@/data/providers/historical/season-range";
 import { CAREER_COMPARE_KEY } from "@/lib/career-average-row";
 import { type } from "@/lib/design-system";
 import { buildGameMatchupTheme } from "@/lib/game-matchup-theme";
@@ -18,21 +22,23 @@ type FeaturedMatchup = {
   season?: string;
 };
 
+const LAST_COMPLETED_SEASON = canonicalSeasonFromStartYear(currentNbaStartYear() - 1);
+
 const FEATURED: FeaturedMatchup[] = [
   {
     a: { id: "3112335", name: "Nikola Jokic", teamKey: "DEN" },
     b: { id: "3945274", name: "Luka Doncic", teamKey: "LAL" },
-    season: "2025-26",
+    season: LAST_COMPLETED_SEASON,
   },
   {
     a: { id: "4278073", name: "Shai Gilgeous-Alexander", teamKey: "OKC" },
     b: { id: "5104157", name: "Victor Wembanyama", teamKey: "SAS" },
-    season: "2025-26",
+    season: LAST_COMPLETED_SEASON,
   },
   {
     a: { id: "4594268", name: "Anthony Edwards", teamKey: "MIN" },
     b: { id: "4432166", name: "Cade Cunningham", teamKey: "DET" },
-    season: "2025-26",
+    season: LAST_COMPLETED_SEASON,
   },
   {
     a: { id: "1035", name: "Michael Jordan", teamKey: "CHI" },

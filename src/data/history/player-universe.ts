@@ -29,6 +29,10 @@ import {
   twoPointPct,
 } from "@/data/providers/nba/compute-advanced";
 import { mergePlayerSeasonRows } from "@/data/providers/nba/espn-stat-integrity";
+import {
+  canonicalSeasonFromStartYear,
+  currentNbaStartYear,
+} from "@/data/providers/historical/season-range";
 
 const HISTORY_ROOT = path.join(
   process.cwd(),
@@ -330,7 +334,9 @@ export function leftJoinPlayerUniverse(
   });
 }
 
-const CURRENT_ACTIVE_FLOOR = "2023-24";
+function currentActiveFloor(): string {
+  return canonicalSeasonFromStartYear(currentNbaStartYear() - 2);
+}
 
 export function getMasterPlayerRegistry(): MasterPlayerRecord[] {
   if (masterCache) return masterCache;
@@ -400,7 +406,7 @@ function careerToMaster(c: HistoryCareerSummary): MasterPlayerRecord {
     displayName: c.playerName,
     firstSeason: c.firstSeason,
     lastSeason: c.lastSeason,
-    isActive: c.lastSeason >= CURRENT_ACTIVE_FLOOR ? true : false,
+    isActive: c.lastSeason >= currentActiveFloor(),
     teamHistory: c.teams,
     identityStatus: "RESOLVED",
     careerSpanSource: "player-season-membership",

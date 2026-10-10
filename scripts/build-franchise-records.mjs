@@ -3,10 +3,13 @@
  * per-franchise season table, career leaders). Overlaid on the curated
  * history book in `src/data/franchises/history.ts`.
  *
- * Usage: node scripts/build-franchise-records.mjs
+ * Usage: node scripts/build-franchise-records.mjs [--force]
+ *
+ * Offseason only: during a season BRef's totals include games in progress.
  */
 import fs from "node:fs/promises";
 import path from "node:path";
+import { nbaSeasonPhaseInfo } from "./lib/nba-season-phase.mjs";
 
 const OUT = path.join(
   process.cwd(),
@@ -109,7 +112,21 @@ function seasonEndYear(season) {
   return Number.isFinite(start) ? start + 1 : null;
 }
 
+async function readPrior() {
+  try {
+    return JSON.parse(await fs.readFile(OUT, "utf8"));
+  } catch {
+    return null;
+  }
+}
+
 async function main() {
+  const phase = nbaSeasonPhaseInfo().phase;
+  if (phase !== "offseason" && !process.argv.includes("--force")) {
+    console.log(`[franchise-records] skip: ${phase} in progress`);
+    return;
+  }
+  const prior = await readPrior();
   const index = await fetchHtml("https://www.basketball-reference.com/teams/");
   const activeStart = index.indexOf('id="teams_active"');
   const activeEnd = index.indexOf("</table>", activeStart);
@@ -137,9 +154,11 @@ async function main() {
       leagueTitles: int(row.cells.years_league_champion),
     };
   }
-  console.log(
-    `[franchise-records] index: ${Object.keys(franchises).length} franchises`
-  );
+  const indexed = Object.keys(franchises).length;
+  console.log(`[franchise-records] index: ${indexed} franchises`);
+  if (indexed < 30) {
+    throw new Error(`BRef index parsed ${indexed} franchises, expected 30`);
+  }
 
   for (const [id, f] of Object.entries(franchises)) {
     await sleep(DELAY_MS);
@@ -196,6 +215,7 @@ async function main() {
       process.stdout.write(`[franchise-records] ${id} seasons ${seasons.length}`);
     } catch (error) {
       console.log(`[franchise-records] ${id} seasons FAIL ${error.message}`);
+      if (prior?.franchises?.[id]) franchises[id] = prior.franchises[id];
       continue;
     }
 
@@ -218,9 +238,17 @@ async function main() {
       console.log(` · leaders ${Object.keys(leaders).length}`);
     } catch (error) {
       console.log(` · leaders FAIL ${error.message}`);
+      if (prior?.franchises?.[id]?.leaders) f.leaders = prior.franchises[id].leaders;
     }
   }
 
+  if (
+    prior &&
+    JSON.stringify(prior.franchises) === JSON.stringify(franchises)
+  ) {
+    console.log("[franchise-records] unchanged");
+    return;
+  }
   const payload = {
     source:
       "Basketball-Reference franchise index, franchise season tables, and career leaders (NBA, ABA, and BAA seasons of each continuous franchise)",
