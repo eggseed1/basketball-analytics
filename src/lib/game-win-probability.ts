@@ -5,6 +5,7 @@
  */
 
 import { elapsedGameTimeSeconds, type ScoreTimelinePoint } from "@/lib/history/score-flow";
+import winProbFit from "@/lib/win-prob-params.json";
 
 const REGULATION_SECONDS = 4 * 12 * 60;
 
@@ -41,15 +42,8 @@ export function nextBall(play: ScoringPlay, next?: ScoringPlay): BallSide {
   return play.homeScored === sameTrip ? 1 : -1;
 }
 
-/** Fit on 2023-24 and 2024-25 regular seasons, checked on 2025-26. */
-export const WIN_PROB_PARAMS: WinProbParams = {
-  marginSd: 18.41,
-  endSd: 1.36,
-  homeCourt: 2.02,
-  priorGames: 4.47,
-  carryover: 1,
-  ballValue: 0.53,
-};
+/** Refit each July by .github/workflows/win-probability-refit.yml; see `fit` in the JSON for seasons. */
+export const WIN_PROB_PARAMS: WinProbParams = winProbFit.params;
 
 /** Standard normal CDF (Abramowitz & Stegun 7.1.26, error under 1.5e-7). */
 function normalCdf(z: number): number {

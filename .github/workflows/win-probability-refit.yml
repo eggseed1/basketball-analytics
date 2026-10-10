@@ -1,0 +1,69 @@
+name: Win probability refit
+
+# Once a year, after the Finals, refits the Game Lab win probability model on
+# the two regular seasons before the one that just ended and scores it on that
+# season. src/lib/win-prob-params.json only changes when the new parameters do
+# at least as well there as the current ones. The next deploy ships them.
+#
+# Games download from the NBA CDN (no stats.nba.com, no secrets). The fit logs
+# numbers only.
+
+on:
+  schedule:
+    # July 15, after the Finals and before the next season's schedule matters.
+    - cron: "37 13 15 7 *"
+  workflow_dispatch:
+
+concurrency:
+  group: win-probability-refit
+  cancel-in-progress: false
+
+jobs:
+  refit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Cache NBA game downloads
+        uses: actions/cache@v4
+        with:
+          path: data/drbl/raw/games
+          key: wp-raw-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            wp-raw-${{ runner.os }}-
+
+      - name: Refit
+        run: npx tsx scripts/fit-win-probability.ts --write
+
+      - name: Check the new parameters
+        run: npm run test:live-insights
+
+      - name: Commit new parameters
+        run: |
+          if git diff --quiet -- src/lib/win-prob-params.json; then
+            echo "Parameters unchanged; nothing to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- src/lib/win-prob-params.json
+          git commit -m "Refit win probability on the latest finished season"
+          for attempt in 1 2 3; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
+            sleep $((attempt * 10))
+          done
+          echo "::error::Could not push the refit parameters."
+          exit 1

@@ -1,15 +1,26 @@
 /**
  * Fit and check the win probability model against NBA play-by-play.
  *
- *   npx tsx scripts/fit-win-probability.ts
+ *   npx tsx scripts/fit-win-probability.ts            # report only
+ *   npx tsx scripts/fit-win-probability.ts --write    # also update src/lib/win-prob-params.json
+ *   npx tsx scripts/fit-win-probability.ts --test 2025-26
  *
- * Samples the score every 15 seconds of game time in every cached game. Fits on
- * the 2023-24 and 2024-25 regular seasons (2022-23 only seeds carried-over
- * ratings), then scores the old and new models on 2025-26, which the fit never
- * saw, plus the 2024-25 and 2025-26 playoffs. Prints parameters to paste into
- * WIN_PROB_PARAMS.
+ * The test season defaults to the newest one whose Finals are over. The fit uses
+ * the two regular seasons before it (the season before those only seeds
+ * carried-over ratings), then scores the current and new parameters on the test
+ * season, which the fit never saw. --write only replaces the parameters when the
+ * new ones score at least as well there.
+ *
+ * Games come from the NBA CDN by game id, so this never needs stats.nba.com.
+ * Output is numbers only; no play text is printed.
  */
-import { listSeasonGames, processGame } from "../drbl/index";
+import { appendFile, readFile, writeFile } from "node:fs/promises";
+import path from "node:path";
+
+import { downloadCdnBoxScore } from "../drbl/download/cdn-client";
+import { rawPath, readOrFetchJson } from "../drbl/download/disk-cache";
+import { processGame } from "../drbl/index";
+import type { DrblGameMeta } from "../drbl/types";
 import {
   homeWinProbabilityFromState,
   nextBall,
@@ -18,14 +29,23 @@ import {
   type WinProbParams,
 } from "../src/lib/game-win-probability";
 
+const PARAMS_FILE = path.join(process.cwd(), "src/lib/win-prob-params.json");
 const STEP_SECONDS = 15;
 const REGULATION = 2880;
-const OLD: WinProbParams = { marginSd: 15, endSd: 0, homeCourt: 0, priorGames: 0, carryover: 0, ballValue: 0 };
+const REGULAR_SEASON_GAMES = 1230;
+/** Series per playoff round, first round to Finals. */
+const PLAYOFF_SERIES = [8, 4, 2, 1];
+const CONCURRENCY = 8;
+/** Fewer finished regular-season games than this means the download is broken, not the season. */
+const MIN_REGULAR_SEASON_GAMES = 1000;
+
+type ParamsFile = {
+  params: WinProbParams;
+  fit: { trainSeasons: string[]; testSeason: string; testLogLoss: number; fittedAt: string };
+};
 
 type Side = { sum: number; homeN: number; awayN: number };
 type GameRow = {
-  season: string;
-  playoffs: boolean;
   date: string;
   homeWin: boolean;
   /** Each team's games this season before this one, and last season in full. */
@@ -33,11 +53,137 @@ type GameRow = {
   away: { now: Side; prior: Side | null };
   /** [margin, seconds left] every STEP_SECONDS, tip-off first. */
   states: Array<[number, number]>;
-  /** [margin, seconds left, ball] right after each scoring play, ball assumed to the other side. */
+  /** [margin, seconds left, ball] right after each scoring play. */
   scores: Array<[number, number, BallSide]>;
 };
-
 type Result = { date: string; home: string; away: string; hs: number; as: number };
+type LoadedGame = { result: Result; states: GameRow["states"]; scores: GameRow["scores"] };
+
+const seasonLabel = (start: number) => `${start}-${String((start + 1) % 100).padStart(2, "0")}`;
+const seasonShift = (season: string, by: number) => seasonLabel(Number(season.slice(0, 4)) + by);
+
+/** Newest season with the Finals over: from July on, the one that just ended. */
+function latestFinishedSeason(now = new Date()): string {
+  const year = now.getUTCFullYear();
+  return seasonLabel(now.getUTCMonth() >= 6 ? year - 1 : year - 2);
+}
+
+function gameIds(season: string, playoffs: boolean): string[] {
+  const yy = season.slice(2, 4);
+  if (!playoffs) {
+    return Array.from({ length: REGULAR_SEASON_GAMES }, (_, i) => `002${yy}0${String(i + 1).padStart(4, "0")}`);
+  }
+  const ids: string[] = [];
+  PLAYOFF_SERIES.forEach((series, round) => {
+    for (let s = 0; s < series; s++) for (let g = 1; g <= 7; g++) ids.push(`004${yy}00${round + 1}${s}${g}`);
+  });
+  return ids;
+}
+
+type CdnBox = {
+  game?: {
+    gameStatus?: number;
+    gameEt?: string;
+    gameTimeUTC?: string;
+    homeTeam?: { teamId?: number | string; teamTricode?: string; score?: number };
+    awayTeam?: { teamId?: number | string; teamTricode?: string; score?: number };
+  };
+};
+
+/** Final-game metadata from the CDN box score; null for ids that were never played. */
+async function metaFor(season: string, gameId: string): Promise<DrblGameMeta | null> {
+  try {
+    const { data } = await readOrFetchJson<CdnBox>(
+      rawPath("games", gameId, "boxscore.json"),
+      () => downloadCdnBoxScore(gameId) as Promise<CdnBox>,
+      { endpoint: `cdn.nba.com/liveData/boxscore/boxscore_${gameId}.json` }
+    );
+    const g = data.game;
+    const date = (g?.gameEt ?? g?.gameTimeUTC ?? "").slice(0, 10);
+    if (!g?.homeTeam?.teamId || !g.awayTeam?.teamId || g.gameStatus !== 3 || !date) return null;
+    return {
+      gameId,
+      season,
+      gameDate: date,
+      homeTeamId: String(g.homeTeam.teamId),
+      awayTeamId: String(g.awayTeam.teamId),
+      homeTeamTricode: g.homeTeam.teamTricode ?? "",
+      awayTeamTricode: g.awayTeam.teamTricode ?? "",
+      homeScore: Number(g.homeTeam.score ?? 0),
+      awayScore: Number(g.awayTeam.score ?? 0),
+      status: 3,
+    };
+  } catch {
+    return null;
+  }
+}
+
+async function mapPool<T, R>(items: readonly T[], size: number, fn: (item: T) => Promise<R>): Promise<R[]> {
+  const out = new Array<R>(items.length);
+  let next = 0;
+  await Promise.all(
+    Array.from({ length: size }, async () => {
+      while (next < items.length) {
+        const i = next++;
+        out[i] = await fn(items[i]!);
+      }
+    })
+  );
+  return out;
+}
+
+const elapsedOf = (period: number, clockSec: number) =>
+  period <= 4 ? (period - 1) * 720 + (720 - clockSec) : REGULATION + (period - 5) * 300 + (300 - clockSec);
+
+async function loadGame(season: string, gameId: string): Promise<LoadedGame | null> {
+  const meta = await metaFor(season, gameId);
+  if (!meta || meta.homeScore === meta.awayScore) return null;
+  let events;
+  try {
+    events = [...(await processGame(meta, { persist: false })).events].sort((a, b) => a.orderNumber - b.orderNumber);
+  } catch {
+    return null;
+  }
+  const lastPeriod = Math.max(4, ...events.map((e) => e.period));
+  const end = elapsedOf(lastPeriod, 0);
+  const states: GameRow["states"] = [];
+  let i = 0;
+  let margin = 0;
+  for (let t = 0; t < end; t += STEP_SECONDS) {
+    while (i < events.length && elapsedOf(events[i]!.period, events[i]!.clockSeconds) <= t) {
+      margin = events[i]!.scoreHome - events[i]!.scoreAway;
+      i += 1;
+    }
+    const period = t < REGULATION ? Math.floor(t / 720) + 1 : 5 + Math.floor((t - REGULATION) / 300);
+    const periodStart = period <= 4 ? (period - 1) * 720 : REGULATION + (period - 5) * 300;
+    const periodLen = period <= 4 ? 720 : 300;
+    states.push([margin, remainingSeconds(period, periodLen - (t - periodStart))]);
+  }
+  const plays: Array<{ margin: number; period: number; clock: number; homeScored: boolean }> = [];
+  let prev = 0;
+  for (const e of events) {
+    const m = e.scoreHome - e.scoreAway;
+    if (m === prev) continue;
+    plays.push({ margin: m, period: e.period, clock: e.clockSeconds, homeScored: m > prev });
+    prev = m;
+  }
+  return {
+    result: { date: meta.gameDate, home: meta.homeTeamId, away: meta.awayTeamId, hs: meta.homeScore, as: meta.awayScore },
+    states,
+    scores: plays.map((p, k) => [p.margin, remainingSeconds(p.period, p.clock), nextBall(p, plays[k + 1])]),
+  };
+}
+
+async function loadSeason(season: string, playoffs: boolean): Promise<LoadedGame[]> {
+  const games = (await mapPool(gameIds(season, playoffs), CONCURRENCY, (id) => loadGame(season, id))).filter(
+    (g): g is LoadedGame => g != null
+  );
+  console.log(`${season} ${playoffs ? "playoffs" : "regular season"}: ${games.length} games`);
+  if (!playoffs && games.length < MIN_REGULAR_SEASON_GAMES) {
+    throw new Error(`Only ${games.length} ${season} regular-season games loaded; refusing to fit on partial data.`);
+  }
+  return games;
+}
 
 const emptySide = (): Side => ({ sum: 0, homeN: 0, awayN: 0 });
 
@@ -56,79 +202,12 @@ function sideTotals(results: readonly Result[]): Map<string, Side> {
   return out;
 }
 
-const elapsedOf = (period: number, clockSec: number) =>
-  period <= 4 ? (period - 1) * 720 + (720 - clockSec) : REGULATION + (period - 5) * 300 + (300 - clockSec);
-
-async function loadSeason(season: string, playoffs: boolean) {
-  const refs = await listSeasonGames(season, { seasonType: playoffs ? "Playoffs" : "Regular Season" });
-  const games: Array<{ result: Result; states: GameRow["states"]; scores: GameRow["scores"] }> = [];
-  for (const ref of refs) {
-    try {
-      const g = await processGame(ref, { persist: false });
-      const m = g.meta;
-      if (m.homeScore === m.awayScore) continue;
-      const events = [...g.events].sort((a, b) => a.orderNumber - b.orderNumber);
-      const lastPeriod = Math.max(4, ...events.map((e) => e.period));
-      const end = elapsedOf(lastPeriod, 0);
-      const states: Array<[number, number]> = [];
-      let i = 0;
-      let margin = 0;
-      for (let t = 0; t < end; t += STEP_SECONDS) {
-        while (i < events.length && elapsedOf(events[i]!.period, events[i]!.clockSeconds) <= t) {
-          margin = events[i]!.scoreHome - events[i]!.scoreAway;
-          i += 1;
-        }
-        const period = t < REGULATION ? Math.floor(t / 720) + 1 : 5 + Math.floor((t - REGULATION) / 300);
-        const periodStart = period <= 4 ? (period - 1) * 720 : REGULATION + (period - 5) * 300;
-        const periodLen = period <= 4 ? 720 : 300;
-        states.push([margin, remainingSeconds(period, periodLen - (t - periodStart))]);
-      }
-      const plays: Array<{ margin: number; period: number; clock: number; homeScored: boolean }> = [];
-      let prev = 0;
-      for (const e of events) {
-        const margin = e.scoreHome - e.scoreAway;
-        if (margin === prev) continue;
-        plays.push({ margin, period: e.period, clock: e.clockSeconds, homeScored: margin > prev });
-        prev = margin;
-      }
-      const scores: GameRow["scores"] = plays.map((p, i) => [
-        p.margin,
-        remainingSeconds(p.period, p.clock),
-        nextBall(p, plays[i + 1]),
-      ]);
-      games.push({
-        result: { date: m.gameDate, home: m.homeTeamId, away: m.awayTeamId, hs: m.homeScore, as: m.awayScore },
-        states,
-        scores,
-      });
-    } catch {
-      // quarantined or missing raw files are skipped
-    }
-  }
-  return games;
-}
-
-function rows(
-  season: string,
-  playoffs: boolean,
-  games: Awaited<ReturnType<typeof loadSeason>>,
-  seasonResults: readonly Result[],
-  priorResults: readonly Result[] | null
-): GameRow[] {
-  const prior = priorResults ? sideTotals(priorResults) : null;
+function rows(games: readonly LoadedGame[], seasonResults: readonly Result[], priorResults: readonly Result[]): GameRow[] {
+  const prior = sideTotals(priorResults);
   return games.map(({ result, states, scores }) => {
     const before = sideTotals(seasonResults.filter((r) => r.date < result.date));
-    const pick = (team: string) => ({ now: before.get(team) ?? emptySide(), prior: prior?.get(team) ?? null });
-    return {
-      season,
-      playoffs,
-      date: result.date,
-      homeWin: result.hs > result.as,
-      home: pick(result.home),
-      away: pick(result.away),
-      states,
-      scores,
-    };
+    const pick = (team: string) => ({ now: before.get(team) ?? emptySide(), prior: prior.get(team) ?? null });
+    return { date: result.date, homeWin: result.hs > result.as, home: pick(result.home), away: pick(result.away), states, scores };
   });
 }
 
@@ -144,8 +223,6 @@ function rating(side: { now: Side; prior: Side | null }, p: WinProbParams): numb
 
 const pregame = (g: GameRow, p: WinProbParams) => p.homeCourt + rating(g.home, p) - rating(g.away, p);
 
-type Score = { logLoss: number; brier: number; n: number };
-
 /** "clock" is the 15-second grid with the ball unknown; "plays" is right after each score, as the chart draws it. */
 type SampleSet = "clock" | "plays";
 
@@ -156,8 +233,8 @@ function score(
   games: readonly GameRow[],
   p: WinProbParams,
   filter?: (remSec: number, i: number) => boolean,
-  set: SampleSet = "clock"
-): Score {
+  set: SampleSet = "plays"
+): { logLoss: number; brier: number; n: number } {
   let ll = 0;
   let br = 0;
   let n = 0;
@@ -175,7 +252,7 @@ function score(
   return { logLoss: ll / n, brier: br / n, n };
 }
 
-function goldenMin(f: (x: number) => number, lo: number, hi: number, iters = 40): number {
+function goldenMin(f: (x: number) => number, lo: number, hi: number, iters = 30): number {
   const g = (Math.sqrt(5) - 1) / 2;
   let a = lo;
   let b = hi;
@@ -201,68 +278,61 @@ function goldenMin(f: (x: number) => number, lo: number, hi: number, iters = 40)
   return (a + b) / 2;
 }
 
-function fit(train: readonly GameRow[]): WinProbParams {
-  const bounds: Record<keyof WinProbParams, [number, number]> = {
-    marginSd: [8, 24],
-    endSd: [0, 6],
-    homeCourt: [-2, 6],
-    priorGames: [0, 60],
-    carryover: [0, 1],
-    ballValue: [-1, 3],
-  };
-  let p: WinProbParams = {
-    marginSd: 18,
-    endSd: 1.6,
-    homeCourt: 2,
-    priorGames: 4,
-    carryover: 1,
-    ballValue: 0.35,
-  };
+const BOUNDS: Record<keyof WinProbParams, [number, number]> = {
+  marginSd: [8, 24],
+  endSd: [0, 6],
+  homeCourt: [-2, 6],
+  priorGames: [0, 60],
+  carryover: [0, 1],
+  ballValue: [-1, 3],
+};
+
+function fit(train: readonly GameRow[], start: WinProbParams): WinProbParams {
+  let p = { ...start };
   for (let round = 0; round < 4; round++) {
-    for (const key of Object.keys(bounds) as Array<keyof WinProbParams>) {
-      const [lo, hi] = bounds[key];
-      const best = goldenMin((x) => score(train, { ...p, [key]: x }, undefined, "plays").logLoss, lo, hi, 30);
-      p = { ...p, [key]: best };
+    for (const key of Object.keys(BOUNDS) as Array<keyof WinProbParams>) {
+      const [lo, hi] = BOUNDS[key];
+      p = { ...p, [key]: goldenMin((x) => score(train, { ...p, [key]: x }).logLoss, lo, hi) };
     }
-    console.log(`round ${round + 1}`, fmtParams(p), score(train, p, undefined, "plays").logLoss.toFixed(5));
+    console.log(`round ${round + 1}`, fmtParams(p), score(train, p).logLoss.toFixed(5));
   }
+  // Possession and late fouls only matter late, so tune them on the last two minutes.
   const late = (rem: number) => rem <= 120;
   for (let round = 0; round < 3; round++) {
     for (const key of ["endSd", "ballValue"] as const) {
-      const [lo, hi] = bounds[key];
-      p = { ...p, [key]: goldenMin((x) => score(train, { ...p, [key]: x }, late, "plays").logLoss, lo, hi, 30) };
+      const [lo, hi] = BOUNDS[key];
+      p = { ...p, [key]: goldenMin((x) => score(train, { ...p, [key]: x }, late).logLoss, lo, hi) };
     }
-    console.log(`late round ${round + 1}`, fmtParams(p), score(train, p, late, "plays").logLoss.toFixed(5));
   }
   return p;
 }
 
+const round2 = (p: WinProbParams): WinProbParams =>
+  Object.fromEntries(Object.entries(p).map(([k, v]) => [k, Math.round(v * 100) / 100])) as WinProbParams;
+
 const fmtParams = (p: WinProbParams) =>
   Object.entries(p)
-    .map(([k, v]) => `${k}=${(v as number).toFixed(3)}`)
+    .map(([k, v]) => `${k}=${v.toFixed(3)}`)
     .join(" ");
 
 function report(label: string, games: readonly GameRow[], params: Record<string, WinProbParams>) {
-  const phases: Array<[string, (rem: number, i: number) => boolean]> = [
-    ["all states", () => true],
-    ["tip-off", (_rem, i) => i === 0],
-    ["1st half", (rem, i) => i > 0 && rem > 1440],
+  const phases: Array<[string, (rem: number) => boolean]> = [
+    ["all", () => true],
+    ["1st half", (rem) => rem > 1440],
     ["3rd quarter", (rem) => rem <= 1440 && rem > 720],
-    ["4th, 12-5 min", (rem, i) => i > 0 && rem <= 720 && rem > 300 && rem !== 300],
-    ["last 5 min + OT", (rem, i) => i > 0 && rem <= 300],
+    ["4th, 12-5 min", (rem) => rem <= 720 && rem > 300],
+    ["last 5 min + OT", (rem) => rem <= 300],
   ];
-  console.log(`\n${label}: ${games.length} games`);
-  for (const set of ["clock", "plays"] as const) {
-    console.log(`  ${set === "clock" ? "every 15 seconds" : "right after each score"}`);
-    for (const [name, f] of phases) {
-      if (set === "plays" && name === "tip-off") continue;
-      const cells = Object.entries(params).map(([k, p]) => {
-        const s = score(games, p, set === "plays" ? (rem) => f(rem, 1) : f, set);
-        return `${k} logloss ${s.logLoss.toFixed(4)} brier ${s.brier.toFixed(4)}`;
-      });
-      console.log(`    ${name.padEnd(16)} ${cells.join(" | ")}`);
-    }
+  console.log(`\n${label}: ${games.length} games, right after each score`);
+  for (const [name, f] of phases) {
+    const cells = Object.entries(params).map(([k, p]) => {
+      const s = score(games, p, f);
+      return `${k} logloss ${s.logLoss.toFixed(4)} brier ${s.brier.toFixed(4)}`;
+    });
+    console.log(`  ${name.padEnd(16)} ${cells.join(" | ")}`);
   }
+  const tip = Object.entries(params).map(([k, p]) => `${k} ${score(games, p, (_r, i) => i === 0, "clock").logLoss.toFixed(4)}`);
+  console.log(`  ${"tip-off".padEnd(16)} logloss ${tip.join(" | ")}`);
   for (const [k, p] of Object.entries(params)) {
     const buckets = Array.from({ length: 10 }, () => ({ q: 0, y: 0, n: 0 }));
     for (const g of games) {
@@ -276,7 +346,7 @@ function report(label: string, games: readonly GameRow[], params: Record<string,
       }
     }
     console.log(
-      `  ${k} calibration after scores (predicted -> actual):`,
+      `  ${k} calibration (predicted -> actual):`,
       buckets
         .filter((b) => b.n > 0)
         .map((b) => `${Math.round((100 * b.q) / b.n)}->${Math.round((100 * b.y) / b.n)}`)
@@ -285,74 +355,74 @@ function report(label: string, games: readonly GameRow[], params: Record<string,
   }
 }
 
-/** Leader's actual win rate vs the model in the last two minutes, by lead and time left. */
-function lateTable(games: readonly GameRow[], params: Record<string, WinProbParams>) {
-  const times: Array<[number, number]> = [
-    [0, 10],
-    [10, 30],
-    [30, 60],
-    [60, 120],
-  ];
-  console.log("\nlast two minutes, right after each score: leader wins (actual vs model)");
-  for (const [lo, hi] of times) for (const leaderBall of [true, false]) {
-    const cells: string[] = [];
-    for (let lead = 1; lead <= 6; lead++) {
-      const acc: Record<string, number> = {};
-      let won = 0;
-      let n = 0;
-      for (const g of games) {
-        for (const [margin, rem, ball] of g.scores) {
-          if (rem <= lo || rem > hi || Math.abs(margin) !== lead) continue;
-          if ((ball === Math.sign(margin)) !== leaderBall) continue;
-          const sign = margin > 0 ? 1 : -1;
-          won += (sign > 0) === g.homeWin ? 1 : 0;
-          n += 1;
-          for (const [k, p] of Object.entries(params)) {
-            const q = homeWinProbabilityFromState(margin, rem, pregame(g, p), p, ball);
-            acc[k] = (acc[k] ?? 0) + (sign > 0 ? q : 1 - q);
-          }
-        }
-      }
-      if (!n) continue;
-      const model = Object.entries(acc)
-        .map(([k, v]) => `${k} ${Math.round((100 * v) / n)}`)
-        .join("/");
-      cells.push(`+${lead}: ${Math.round((100 * won) / n)} (${model}) n=${n}`);
-    }
-    console.log(`  ${lo}-${hi}s ${leaderBall ? "leader ball" : "other ball "}  ${cells.join("  ")}`);
-  }
-}
-
 async function main() {
-  const seasons = ["2022-23", "2023-24", "2024-25", "2025-26"];
-  const regular = new Map<string, Awaited<ReturnType<typeof loadSeason>>>();
-  for (const s of seasons) {
-    regular.set(s, await loadSeason(s, false));
-    console.log(`${s}: ${regular.get(s)!.length} regular-season games`);
-  }
-  const results = (s: string) => regular.get(s)?.map((g) => g.result) ?? [];
-  const seasonRows = (s: string, prev: string) => rows(s, false, regular.get(s)!, results(s), results(prev));
+  const args = process.argv.slice(2);
+  const write = args.includes("--write");
+  const testFlag = args.indexOf("--test");
+  const test = testFlag >= 0 ? args[testFlag + 1]! : latestFinishedSeason();
+  const trainSeasons = [seasonShift(test, -2), seasonShift(test, -1)];
+  const seed = seasonShift(test, -3);
+  console.log(`fit on ${trainSeasons.join(" + ")} (ratings seeded from ${seed}), test on ${test}`);
 
-  const train = [...seasonRows("2023-24", "2022-23"), ...seasonRows("2024-25", "2023-24")];
-  const test = seasonRows("2025-26", "2024-25");
+  const current = JSON.parse(await readFile(PARAMS_FILE, "utf8")) as ParamsFile;
 
-  const fitted = fit(train);
+  const regular = new Map<string, LoadedGame[]>();
+  for (const s of [seed, ...trainSeasons, test]) regular.set(s, await loadSeason(s, false));
+  const results = (s: string) => regular.get(s)!.map((g) => g.result);
+  const seasonRows = (s: string) => rows(regular.get(s)!, results(s), results(seasonShift(s, -1)));
+
+  const train = trainSeasons.flatMap(seasonRows);
+  const testRows = seasonRows(test);
+
+  const fitted = round2(fit(train, current.params));
   console.log("\nfitted", fmtParams(fitted));
+  const models = { current: current.params, new: fitted };
 
-  report("train 2023-24 + 2024-25 regular season", train, { old: OLD, noBall: { ...fitted, ballValue: 0 }, new: fitted });
-  report("test 2025-26 regular season", test, { old: OLD, noBall: { ...fitted, ballValue: 0 }, new: fitted });
-  lateTable(test, { old: OLD, new: fitted });
+  report(`train ${trainSeasons.join(" + ")}`, train, models);
+  report(`test ${test}`, testRows, models);
 
-  const playoffRows: GameRow[] = [];
-  for (const [s, prev] of [
-    ["2024-25", "2023-24"],
-    ["2025-26", "2024-25"],
-  ] as const) {
-    const games = await loadSeason(s, true);
-    const seasonResults = [...results(s), ...games.map((g) => g.result)];
-    playoffRows.push(...rows(s, true, games, seasonResults, results(prev)));
+  const playoffs = await loadSeason(test, true);
+  report(`${test} playoffs`, rows(playoffs, [...results(test), ...playoffs.map((g) => g.result)], results(seasonShift(test, -1))), models);
+
+  const before = score(testRows, current.params).logLoss;
+  const after = score(testRows, fitted).logLoss;
+  const unchanged = JSON.stringify(fitted) === JSON.stringify(current.params);
+  const better = after <= before;
+  const verdict = unchanged
+    ? "Parameters unchanged."
+    : better
+      ? `New parameters score ${after.toFixed(4)} on ${test} vs ${before.toFixed(4)} for the current ones.`
+      : `Kept current parameters: new ones score ${after.toFixed(4)} on ${test}, current ${before.toFixed(4)}.`;
+  console.log(`\n${verdict}`);
+
+  if (write && better && !unchanged) {
+    const next: ParamsFile = {
+      params: fitted,
+      fit: {
+        trainSeasons,
+        testSeason: test,
+        testLogLoss: Math.round(after * 10000) / 10000,
+        fittedAt: new Date().toISOString().slice(0, 10),
+      },
+    };
+    await writeFile(PARAMS_FILE, `${JSON.stringify(next, null, 2)}\n`);
+    console.log(`Wrote ${path.relative(process.cwd(), PARAMS_FILE)}`);
   }
-  report("playoffs 2024-25 + 2025-26", playoffRows, { old: OLD, noBall: { ...fitted, ballValue: 0 }, new: fitted });
+
+  if (process.env.GITHUB_STEP_SUMMARY) {
+    await appendFile(
+      process.env.GITHUB_STEP_SUMMARY,
+      [
+        "### Win probability refit",
+        "",
+        `- fit on ${trainSeasons.join(" + ")}, tested on ${test}`,
+        `- current: \`${fmtParams(current.params)}\``,
+        `- new: \`${fmtParams(fitted)}\``,
+        `- ${verdict}`,
+        "",
+      ].join("\n")
+    );
+  }
 }
 
 main().catch((error) => {

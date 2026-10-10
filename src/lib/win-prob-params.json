@@ -1,0 +1,19 @@
+{
+  "params": {
+    "marginSd": 18.33,
+    "endSd": 1.26,
+    "homeCourt": 1.99,
+    "priorGames": 4.52,
+    "carryover": 1,
+    "ballValue": 0.52
+  },
+  "fit": {
+    "trainSeasons": [
+      "2023-24",
+      "2024-25"
+    ],
+    "testSeason": "2025-26",
+    "testLogLoss": 0.437,
+    "fittedAt": "2026-10-10"
+  }
+}
