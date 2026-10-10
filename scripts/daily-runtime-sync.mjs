@@ -54,6 +54,37 @@ async function writeGithubOutput(values) {
   await fs.appendFile(dest, `${lines.join("\n")}\n`);
 }
 
+/** Step label → whether it succeeded this run; steps that didn't run are absent. */
+const stepOutcomes = new Map();
+function noteStep(label, ok) {
+  stepOutcomes.set(label, ok);
+}
+
+/**
+ * data/ops/step-health.json lists only steps that are failing and since when,
+ * so the file changes when a step breaks or recovers, not every run.
+ * scripts/check-step-health.mjs alerts once a failure outlasts its limit.
+ */
+async function updateStepHealth() {
+  const file = path.join(ROOT, "data", "ops", "step-health.json");
+  let health = { failing: {} };
+  try {
+    health = JSON.parse(await fs.readFile(file, "utf8"));
+  } catch {
+    // first run
+  }
+  const failing = { ...(health.failing ?? {}) };
+  const nowIso = new Date().toISOString();
+  for (const [label, ok] of stepOutcomes) {
+    if (ok) delete failing[label];
+    else failing[label] ??= { since: nowIso };
+  }
+  const next = { ...health, failing: Object.fromEntries(Object.entries(failing).sort(([a], [b]) => a.localeCompare(b))) };
+  if (JSON.stringify(next) === JSON.stringify(health)) return;
+  await fs.mkdir(path.dirname(file), { recursive: true });
+  await fs.writeFile(file, `${JSON.stringify(next, null, 2)}\n`);
+}
+
 async function writeReport(report) {
   const outDir = path.join(ROOT, "artifacts");
   await fs.mkdir(outDir, { recursive: true });
@@ -96,8 +127,10 @@ async function runMovementSteps() {
     try {
       await run(step.cmd, step.args);
       done.push(step.label);
+      noteStep(step.label, true);
     } catch (error) {
       log(`soft-fail ${step.label}: ${error instanceof Error ? error.message : String(error)}`);
+      noteStep(step.label, false);
       failed ??= step.label;
       if (step.label !== "news-ingest") break;
     }
@@ -169,8 +202,10 @@ async function runOrgSteps() {
     try {
       await run(step.cmd, step.args);
       done.push(step.label);
+      noteStep(step.label, true);
     } catch (error) {
       log(`soft-fail ${step.label}: ${error instanceof Error ? error.message : String(error)}`);
+      noteStep(step.label, false);
       failed.push(step.label);
     }
   }
@@ -225,8 +260,10 @@ async function runTransactionSteps() {
   for (const step of TRANSACTION_STEPS) {
     try {
       await run(step.cmd, step.args);
+      noteStep(step.label, true);
     } catch (error) {
       log(`soft-fail ${step.label}: ${error instanceof Error ? error.message : String(error)}`);
+      noteStep(step.label, false);
       failed.push(step.label);
       if (!step.optional) break;
     }
@@ -259,6 +296,7 @@ async function main() {
       generatedAt: now.toISOString(),
       durationMs: Date.now() - started,
     };
+    await updateStepHealth();
     const dest = await writeReport(report);
     await writeGithubOutput({
       should_deploy: "true",
@@ -392,7 +430,9 @@ async function main() {
     try {
       await run(step.cmd, step.args, step.env);
       completed.push(step.label);
+      noteStep(step.label, true);
     } catch (error) {
+      noteStep(step.label, false);
       // Keep BRef / logs / standings moving if Stats NBA flakes on DRBL.
       if (SOFT_FAIL.has(step.label)) {
         log(
@@ -427,6 +467,7 @@ async function main() {
     generatedAt: new Date().toISOString(),
     durationMs: Date.now() - started,
   };
+  await updateStepHealth();
   const dest = await writeReport(report);
   await writeGithubOutput({
     should_deploy: "true",

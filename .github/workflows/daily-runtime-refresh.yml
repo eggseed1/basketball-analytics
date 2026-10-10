@@ -210,6 +210,7 @@ jobs:
             src/data/runtime/hof-inductees-snapshot.json \
             data/movement-center/trade-deadlines.json \
             public/runtime/arcade/league-seasons.json \
+            data/ops/step-health.json \
             src/data/runtime/play-type-snapshot.json \
             src/data/runtime/on-off-snapshot.json \
             src/data/runtime/team-game-box-snapshot.json \
@@ -267,6 +268,10 @@ jobs:
       - name: Check Movement Center freshness
         if: always() && steps.sync.outcome != 'skipped'
         run: node scripts/check-movement-freshness.mjs
+
+      - name: Check nightly step health
+        if: always() && steps.sync.outcome != 'skipped'
+        run: node scripts/check-step-health.mjs
 
       - name: Summary
         if: always()
