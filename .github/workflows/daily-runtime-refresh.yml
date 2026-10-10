@@ -245,13 +245,13 @@ jobs:
           done
           echo "::warning::Could not push the data refresh; the deploy still uses it."
 
-      # Past seasons' game logs and shot charts are served from R2, and CI only
-      # bakes the current season, so the finished season is copied there after
-      # the Finals (June 25-30) before offseason deploys stop baking it.
-      - name: Archive season game logs and shots to R2
+      # Past seasons' game logs, shot charts and game files are served from R2,
+      # and CI only bakes the current season, so the finished season is copied
+      # there after the Finals (June 25-30) before offseason deploys stop baking it.
+      - name: Archive season game logs, shots and games to R2
         if: steps.sync.outputs.archive_season == 'true'
         continue-on-error: true
-        timeout-minutes: 40
+        timeout-minutes: 75
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -261,6 +261,9 @@ jobs:
           # Cloudflare allows 1,200 API calls per 5 minutes across the account.
           sleep 320
           node scripts/upload-player-shots-r2.mjs
+          sleep 320
+          # Box scores and play-by-play the DRBL recompute cached for the season.
+          ONLY=games node scripts/upload-game-archive-r2.mjs
           sleep 320
 
       - name: Upload sync report
