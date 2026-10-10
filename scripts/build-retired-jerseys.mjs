@@ -237,8 +237,12 @@ async function main() {
       ...(row.honorary ? { honorary: true } : {}),
     });
   }
-  if (problems.length) {
+  // A handful usually means a new retiree to add to PERSON_ID_OVERRIDES; many means the page changed shape.
+  if (problems.length > 5) {
     throw new Error(`Unresolved player rows (add overrides):\n${problems.join("\n")}`);
+  }
+  if (problems.length) {
+    console.warn(`Skipped unresolved player rows (add overrides):\n${problems.join("\n")}`);
   }
 
   const out = {
@@ -252,6 +256,15 @@ async function main() {
     ambiguousNames: [...ambiguousNames].sort(),
     jerseys,
   };
+  const prior = await fs
+    .readFile(OUT, "utf8")
+    .then(JSON.parse)
+    .catch(() => null);
+  const withoutStamp = (json) => JSON.stringify({ ...json, generatedAt: null });
+  if (prior && withoutStamp(prior) === withoutStamp(out)) {
+    console.log("retired jerseys unchanged");
+    return;
+  }
   await fs.writeFile(OUT, JSON.stringify(out, null, 2) + "\n");
   console.log(
     `wrote ${jerseys.length} player banners across ${Object.keys(bannerCounts).length} franchises → ${path.relative(process.cwd(), OUT)}`

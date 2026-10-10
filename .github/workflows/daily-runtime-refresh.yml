@@ -206,6 +206,8 @@ jobs:
             data/salaries/player-salaries-bref-archive.csv \
             data/cba/league-cap-seasons.json \
             data/cba/salary-cap-by-year.json \
+            src/content/awards/retired-jerseys.json \
+            src/data/runtime/hof-inductees-snapshot.json \
             src/data/runtime/play-type-snapshot.json \
             src/data/runtime/on-off-snapshot.json \
             src/data/runtime/team-game-box-snapshot.json \

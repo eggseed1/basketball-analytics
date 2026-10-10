@@ -146,6 +146,10 @@ const ORG_STEPS = [
   { label: "player-bio", cmd: "node", args: ["scripts/build-runtime-player-bio-snapshot.mjs"] },
   // Draft years from the bios above when stats.nba.com drafthistory is blocked.
   { label: "draft-year", cmd: "node", args: ["scripts/build-runtime-draft-year-snapshot.mjs"] },
+  // Hall of Fame classes newer than the curated list (one BRef page).
+  { label: "hall-of-fame", cmd: "node", args: ["scripts/build-hof-snapshot.mjs"] },
+  // Wikipedia's retired-numbers list; a few unresolved names are skipped, not fatal.
+  { label: "retired-jerseys", cmd: "node", args: ["scripts/build-retired-jerseys.mjs"] },
   // Headshots for players the lookup has never resolved (rookies, new aliases); NBA/ESPN CDNs only.
   { label: "portraits", cmd: "node", args: ["scripts/build-runtime-portrait-lookup.mjs", "--new-only"] },
   // BRef totals include games in progress, so franchise records only refresh after the Finals.

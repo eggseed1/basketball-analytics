@@ -1,5 +1,5 @@
 import type { PlayerAccoladeBadge } from "@/data/queries/player-awards";
-import { HOF_HISTORY } from "@/content/awards/history";
+import { HOF_INDUCTEES } from "@/content/awards/history";
 import { remapLegendNbaIdToBref } from "@/data/runtime/legend-nba-to-bref";
 
 export { HOF_OUTLINE_CLASS, HOF_PAGE_FRAME_CLASS } from "@/lib/hall-of-fame-classes";
@@ -19,7 +19,7 @@ const HOF_ROUTE_ALIASES: Record<string, string[]> = {
 /** Player route ids from curated HOF history (ESPN / NBA ids in href). */
 const HOF_PLAYER_IDS: Set<string> = (() => {
   const ids = new Set<string>();
-  for (const row of HOF_HISTORY) {
+  for (const row of HOF_INDUCTEES) {
     const href = row.href?.trim();
     if (!href) continue;
     const match = /^\/players\/([^/?#]+)/.exec(href);
