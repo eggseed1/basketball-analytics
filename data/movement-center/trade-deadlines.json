@@ -1,0 +1,10 @@
+{
+  "_comment": "Season start year → NBA trade deadline (ET date). scripts/sync-trade-deadlines.mjs adds each season from nba.com/news/key-dates once the league publishes it.",
+  "source": "https://www.nba.com/news/key-dates",
+  "deadlines": {
+    "2023": "2024-02-08",
+    "2024": "2025-02-06",
+    "2025": "2026-02-05",
+    "2026": "2027-02-11"
+  }
+}

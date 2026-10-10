@@ -1,16 +1,12 @@
 /**
- * League dates that close movement stories. Add each season's deadline once
- * the NBA publishes its key dates; a season without one never closes trade
- * stories by date.
+ * League dates that close movement stories. The nightly trade-deadlines step
+ * adds each season's deadline once the NBA publishes its key dates; a season
+ * without one never closes trade stories by date.
  */
+import deadlinesFile from "../../data/movement-center/trade-deadlines.json";
 
 /** Season start year → trade deadline (ET date). */
-const TRADE_DEADLINES: Record<number, string> = {
-  2023: "2024-02-08",
-  2024: "2025-02-06",
-  2025: "2026-02-05",
-  2026: "2027-02-11",
-};
+const TRADE_DEADLINES: Record<string, string> = deadlinesFile.deadlines;
 
 /** Days after the deadline before an open trade story is closed, for late ledger posts. */
 export const DEADLINE_GRACE_DAYS = 2;

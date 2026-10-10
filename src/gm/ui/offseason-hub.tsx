@@ -176,7 +176,7 @@ export function OffseasonHub() {
               </tr>
             </thead>
             <tbody className="divide-y divide-black/5">
-              {listSalaryCapHistory(2015, 2026)
+              {listSalaryCapHistory(2015)
                 .slice()
                 .reverse()
                 .map((row) => {

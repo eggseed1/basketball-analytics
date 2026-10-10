@@ -312,10 +312,19 @@ export function listCbaEpochs(): Array<{
   });
 }
 
+/** Latest season end year with a cap row on file. */
+export function latestCapSeasonEndYear(): number {
+  return Math.max(
+    ...Object.keys(loadCapTable())
+      .map(Number)
+      .filter((y) => Number.isFinite(y))
+  );
+}
+
 /** Year-by-year cap rows for UI / debugging. */
 export function listSalaryCapHistory(
   fromEndYear = 2001,
-  toEndYear = 2026
+  toEndYear = latestCapSeasonEndYear()
 ): Array<CapRow & { seasonEndYear: number; label: string }> {
   const rows: Array<CapRow & { seasonEndYear: number; label: string }> = [];
   for (let y = fromEndYear; y <= toEndYear; y++) {

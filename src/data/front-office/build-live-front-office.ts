@@ -19,6 +19,7 @@ import type {
 } from "@/data/types/front-office";
 import { FRONT_OFFICE_METHODOLOGY_VERSION } from "@/data/types/front-office";
 import { playerPageHref } from "@/lib/player-season-resolve";
+import { upcomingDraftYears } from "@/lib/nba-season-phase";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 
@@ -72,7 +73,7 @@ function baselineOwnPicks(
   retrievedAt: string
 ): DraftAsset[] {
   const assets: DraftAsset[] = [];
-  for (const draftYear of [2027, 2028, 2029, 2030]) {
+  for (const draftYear of upcomingDraftYears()) {
     for (const round of [1, 2] as const) {
       assets.push({
         assetId: `own-${franchiseId}-${draftYear}-r${round}`,

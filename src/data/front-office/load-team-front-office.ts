@@ -23,6 +23,7 @@ import {
 } from "@/data/runtime/front-office-snapshot";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { teamSalaryHref } from "@/lib/team-destination";
+import { upcomingDraftYears } from "@/lib/nba-season-phase";
 import type { DraftAsset } from "@/data/types/front-office";
 
 type TeamSlice = {
@@ -131,7 +132,10 @@ export function buildTeamPayrollPresentation(
 export function buildTeamDraftAssetsPresentation(
   slice: TeamSlice
 ): TeamDraftAssetsPresentation {
-  const assets = slice.team.draftAssets.assets ?? [];
+  const draftYears = upcomingDraftYears();
+  const assets = (slice.team.draftAssets.assets ?? []).filter(
+    (a) => a.draftYear >= draftYears[0]!
+  );
   const hasAssets = assets.length > 0;
   const assetsByYear: Record<string, DraftAsset[]> = {};
   for (const asset of assets) {
@@ -167,7 +171,7 @@ export function buildTeamDraftAssetsPresentation(
     capabilities: slice.capabilities,
     disclosures: hasAssets
       ? [
-          "Each team's own first and second round picks for 2027–2030. \"Own\" means the team's original pick, not confirmed ownership.",
+          `Each team's own first and second round picks for ${draftYears[0]}–${draftYears[draftYears.length - 1]}. "Own" means the team's original pick, not confirmed ownership.`,
           "Traded, conveyed, protected, and swap-affected picks are not modeled yet.",
         ]
       : [
@@ -182,7 +186,10 @@ export function buildTeamFrontOfficeSummary(
 ): TeamFrontOfficeSummary {
   const id = slice.team.franchiseId;
   const salaryOk = slice.team.payroll.playersWithSalary > 0;
-  const assets = slice.team.draftAssets.assets ?? [];
+  const firstDraftYear = upcomingDraftYears(1)[0]!;
+  const assets = (slice.team.draftAssets.assets ?? []).filter(
+    (a) => a.draftYear >= firstDraftYear
+  );
   const hasAssets = assets.length > 0;
   const firsts = hasAssets
     ? assets.filter(

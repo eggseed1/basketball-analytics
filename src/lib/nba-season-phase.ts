@@ -23,6 +23,12 @@ export function currentNbaStartYear(now = new Date()): number {
     : now.getUTCFullYear() - 1;
 }
 
+/** The next `count` NBA draft years. Rolls over on July 1, after the June draft. */
+export function upcomingDraftYears(count = 4, now = new Date()): number[] {
+  const first = currentNbaStartYear(now) + 1;
+  return Array.from({ length: count }, (_, i) => first + i);
+}
+
 export function canonicalSeasonFromStartYear(startYear: number): string {
   const endTwo = String((startYear + 1) % 100).padStart(2, "0");
   return `${startYear}-${endTwo}`;

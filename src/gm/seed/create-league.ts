@@ -19,6 +19,7 @@ import {
   effectiveScoutLevel,
   generateScoutMarket,
 } from "@/gm/seed/scouts";
+import { currentNbaStartYear } from "@/lib/nba-season-phase";
 
 const FIRST = [
   "Jordan", "Alex", "Chris", "Micah", "Devon", "Kai", "Roman", "Ellis",
@@ -71,7 +72,8 @@ function makePlayer(
   rng: () => number,
   teamId: string | null,
   scoutLevel: number,
-  starChance: number
+  starChance: number,
+  season: number
 ): GmPlayer {
   const ratings = makeRatings(rng, starChance);
   const age = randInt(rng, 19, 36);
@@ -96,7 +98,7 @@ function makePlayer(
           yearsRemaining: randInt(rng, 1, 4),
           annualSalaryM: Math.round(salary * 10) / 10,
           birdRights: age > 26 ? "bird" : "early",
-          signedSeason: 2026 - randInt(rng, 0, 3),
+          signedSeason: season - randInt(rng, 0, 3),
         }
       : null,
     injury: null,
@@ -113,7 +115,7 @@ export function createGeneratedLeague(options?: {
 }): GmLeagueState {
   const seed = options?.seed ?? Date.now() % 1_000_000;
   const rng = createRng(seed);
-  const season = options?.season ?? 2026;
+  const season = options?.season ?? currentNbaStartYear() + 1;
   const userTeamId = options?.userTeamId ?? "bos";
 
   const teams: GmTeam[] = FRANCHISES.map((f, i) => {
@@ -170,14 +172,14 @@ export function createGeneratedLeague(options?: {
     const starChance = team.ownerGoal === "contend" ? 0.18 : 0.08;
     for (let i = 0; i < 15; i++) {
       players.push(
-        makePlayer(rng, team.id, team.staff.scoutLevel, starChance)
+        makePlayer(rng, team.id, team.staff.scoutLevel, starChance, season)
       );
     }
   }
 
   // Free agents + draft pool
   for (let i = 0; i < 40; i++) {
-    const p = makePlayer(rng, null, 2, 0.05);
+    const p = makePlayer(rng, null, 2, 0.05, season);
     p.contract = null;
     players.push(p);
   }

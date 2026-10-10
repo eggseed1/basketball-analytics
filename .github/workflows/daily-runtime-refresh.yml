@@ -208,6 +208,7 @@ jobs:
             data/cba/salary-cap-by-year.json \
             src/content/awards/retired-jerseys.json \
             src/data/runtime/hof-inductees-snapshot.json \
+            data/movement-center/trade-deadlines.json \
             src/data/runtime/play-type-snapshot.json \
             src/data/runtime/on-off-snapshot.json \
             src/data/runtime/team-game-box-snapshot.json \

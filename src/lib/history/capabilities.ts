@@ -5,6 +5,8 @@
  * Null semantics: 0 = measured zero; null = not measured / unavailable.
  */
 
+import { currentNbaStartYear } from "@/lib/nba-season-phase";
+
 export const HISTORY_VERSION = "drbl-history-v1" as const;
 
 export type CapabilityLevel =
@@ -125,7 +127,7 @@ function seasonLabel(startYear: number): string {
  */
 export const SEASON_CAPABILITIES: SeasonCapabilityRow[] = (() => {
   const rows: SeasonCapabilityRow[] = [];
-  for (let y = 1996; y <= 2025; y++) {
+  for (let y = 1996; y <= currentNbaStartYear(); y++) {
     const season = seasonLabel(y);
     if (y >= 2020) {
       rows.push(row(season, "CDN_LIVEDATA", MODERN_DRBL));

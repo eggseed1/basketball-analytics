@@ -128,7 +128,7 @@ npm run test:movement-ingest
 - `transaction-clusters.ts`: ledger trades since June 1 (ESPN plus NBA.com gap rows) become completed clusters (both team rows merge into one deal). A story resolves when a matching ledger row (same player, same family, dated from 2 days before the first report until the story would have expired) appears:
   - `completed` / `materialized` when the move lands with a team the reports named, or when they named no team besides the one sending him.
   - `fell_through` / `partially_materialized` when he is traded to or signs with a team the reports didn't name.
-  - `fell_through` / `did_not_materialize` when a contract story's player is traded away from every named team first, or when a trade story is still open 2 days after the trade deadline (`calendar.ts`; a season without a published deadline never closes by date).
+  - `fell_through` / `did_not_materialize` when a contract story's player is traded away from every named team first, or when a trade story is still open 2 days after the trade deadline (`calendar.ts` reads `data/movement-center/trade-deadlines.json`, which the nightly `trade-deadlines` step fills from nba.com's key dates; a season without a published deadline never closes by date).
   - Each fell-through story carries a `resolutionNote` that says why. Stories with no new reports for 60 days expire and leave the feed.
   - The same rules run at request time (`live-resolve.ts`) against ESPN's live feed.
 - Scoring `movement-m1-0.2`: relays that credit a reporter count as that reporter for corroboration, so five outlets repeating one scoop corroborate once.

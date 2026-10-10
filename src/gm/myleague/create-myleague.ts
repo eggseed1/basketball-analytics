@@ -26,11 +26,12 @@ import {
 } from "@/gm/myleague/simulation-universe";
 import { mapGmPhaseToMyLeague } from "@/gm/myleague/phase";
 import { uid } from "@/gm/engine/rng";
+import { currentNbaStartYear } from "@/lib/nba-season-phase";
 
 export const DEFAULT_MYLEAGUE_SETTINGS: MyLeagueSettings = {
   mode: "alternate_history",
   startEra: "latest",
-  startSeason: 2026,
+  startSeason: currentNbaStartYear() + 1,
   difficulty: "realistic",
   scoutingFog: "realistic",
   historicalAccuracy: 0.5,

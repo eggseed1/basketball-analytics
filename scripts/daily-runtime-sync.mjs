@@ -124,6 +124,8 @@ const ORG_STEPS = [
   { label: "sentiment-snapshot", cmd: "node", args: ["scripts/build-runtime-sentiment-snapshot.mjs"] },
   // Next season's cap, tax and aprons once NBA Communications posts them (~June 30).
   { label: "official-cap", cmd: "node", args: ["scripts/sync-official-cap.mjs"] },
+  // Trade deadline from nba.com key dates (~August); movement stories close against it.
+  { label: "trade-deadlines", cmd: "node", args: ["scripts/sync-trade-deadlines.mjs"] },
   // New rostered players get ESPN ↔ NBA ids before anything below joins on them.
   { label: "new-player-aliases", cmd: "npx", args: ["tsx", "scripts/sync-new-player-aliases.ts"] },
   { label: "bref-team-contracts", cmd: "node", args: ["scripts/build-runtime-bref-team-contracts.mjs"] },

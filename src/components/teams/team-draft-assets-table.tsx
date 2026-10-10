@@ -1,8 +1,7 @@
 import type { TeamDraftAssetsPresentation } from "@/data/types/front-office";
 import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
-
-const YEARS = [2027, 2028, 2029, 2030];
+import { upcomingDraftYears } from "@/lib/nba-season-phase";
 
 function cellLabel(
   assets: TeamDraftAssetsPresentation["assetsByYear"][string] | undefined,
@@ -36,6 +35,8 @@ export function TeamDraftAssetsTable({
     );
   }
 
+  const years = upcomingDraftYears();
+
   return (
     <div className={cn("flex flex-col gap-2", className)}>
       <div className="flex flex-wrap items-baseline justify-between gap-2">
@@ -64,7 +65,7 @@ export function TeamDraftAssetsTable({
           <thead>
             <tr className="border-b border-border bg-muted/40 text-left">
               <th className="px-2 py-1.5 font-semibold">Round</th>
-              {YEARS.map((year) => (
+              {years.map((year) => (
                 <th
                   key={year}
                   className="px-2 py-1.5 text-center font-semibold tabular-nums"
@@ -80,7 +81,7 @@ export function TeamDraftAssetsTable({
                 <td className="px-2 py-1.5 font-semibold">
                   {round === 1 ? "1st" : "2nd"}
                 </td>
-                {YEARS.map((year) => {
+                {years.map((year) => {
                   const label = cellLabel(data.assetsByYear[String(year)], round);
                   return (
                     <td
