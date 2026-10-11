@@ -29,7 +29,7 @@ export const DRBL_VOCABULARY: DrblVocabEntry[] = [
     label: "DRBL/100",
     tier: "canonical",
     glossary:
-      "DRBL/100 estimates impact per 100 possessions. It is the primary ability-rate ranking number.",
+      "DRBL/100 estimates the points per 100 possessions a player adds compared with an average player. It blends the play-by-play rate with box-score ratings and pulls small samples toward zero. Zero is the playing-time-weighted average, so a little more than half of players sit below it. It is the primary ability-rate ranking number.",
     synonyms: [
       "drbl/100",
       "drbl 100",

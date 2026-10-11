@@ -17,10 +17,16 @@ const REQUIRED = [
   "DRBL-B",
   "non-additive",
   "traditional WAR",
+  "not 0",
+  "Go deeper",
+  "See it on the board",
+  "drblGuide()",
 ];
 
-/** Research codenames belong in reports, not on the fan-facing overview. */
-const FORBIDDEN = ["UIR", "M16j", "M17b", "research boundary"];
+const SECTIONS = ["measures", "pieces", "small-samples", "scale", "tested", "carryover", "war1", "sides", "built-on", "seasons", "limits"];
+
+/** Research codenames belong in reports, not on the fan-facing guide. */
+const FORBIDDEN = ["UIR", "M16j", "M17b", "research boundary", "validated rate", "DARKO"];
 
 async function main() {
   const file = path.join(
@@ -41,20 +47,12 @@ async function main() {
   for (const needle of FORBIDDEN) {
     assert.ok(!src.includes(needle), `learn/drbl page should not mention ${needle}`);
   }
-  // Primary surface should not headline both R1 Points and WAR1 as equals.
-  const simpleIdx = src.indexOf("Two main numbers");
-  const deepIdx = src.indexOf("R1 Points and the WAR1 conversion");
-  assert.ok(simpleIdx >= 0 && deepIdx > simpleIdx);
-  const simpleBlock = src.slice(simpleIdx, deepIdx);
-  assert.ok(simpleBlock.includes("WAR1"));
-  assert.ok(
-    !simpleBlock.includes("Wins Above R1"),
-    "Wins Above R1 must not be a simple-surface primary label"
-  );
-  assert.ok(
-    !simpleBlock.includes('title="R1 Points"'),
-    "R1 Points must not be a simple-surface Card title"
-  );
+  for (const id of SECTIONS) {
+    assert.ok(src.includes(`id: "${id}"`), `contents bar missing ${id}`);
+    assert.ok(src.includes(`id="${id}"`), `guide section missing ${id}`);
+  }
+  // DRBL/100 leads; WAR1 gets its own section after it.
+  assert.ok(src.indexOf('id="measures"') < src.indexOf('id="war1"'));
   console.log("test-learn-drbl-page: ok");
 }
 

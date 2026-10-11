@@ -33,6 +33,8 @@ export type ContractValueModel = {
   capKnownThrough: string;
   contracts: number;
   weights: number[];
+  /** Past seasons projected from DRBL/100 mapped onto WAR1, mixed with WAR1 by drblShare. Null when WAR1 only. */
+  projectionBasis?: { drblShare: number; intercept: number; slope: number } | null;
   backtest: Array<{ horizon: number; n: number; rmse: number; naiveRmse: number; coverage80: number }>;
   /** Refit as of past seasons and scored on the salaries paid afterward. */
   outOfSample: {

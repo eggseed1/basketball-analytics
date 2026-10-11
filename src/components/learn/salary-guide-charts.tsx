@@ -308,7 +308,7 @@ export function ContractAnatomy({ examples, seasons }: { examples: ContractExamp
   );
 }
 
-type Column = {
+export type Column = {
   key: string;
   value: number;
   top: string;
@@ -320,7 +320,7 @@ type Column = {
   mark?: number | null;
 };
 
-function ColumnPlot({ columns, max, label, rule }: { columns: Column[]; max: number; label: string; rule?: number }) {
+export function ColumnPlot({ columns, max, label, rule }: { columns: Column[]; max: number; label: string; rule?: number }) {
   const h = (v: number) => `${(v / max) * 100}%`;
   return (
     <ol className="flex items-stretch gap-2 sm:gap-4" aria-label={label}>

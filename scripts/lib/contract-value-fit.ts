@@ -11,6 +11,7 @@ import path from "node:path";
 
 import {
   baseRate,
+  basisWins,
   possessionFeatures,
   projectSeasons,
   seasonLabel,
@@ -21,6 +22,17 @@ import {
   type ProjectionParams,
   type SeasonLine,
 } from "../../src/contracts/value-model";
+import { P1_POINTS_PER_WIN } from "../../src/lib/drbl-public-labels";
+
+/**
+ * What projections are built from: "drbl100" (each past season's DRBL/100,
+ * mapped onto the WAR1 scale, mixed with its WAR1 by DRBL_SHARE) or "war1".
+ * Realized worth, price per win and replacement stay WAR1 either way. Set
+ * CONTRACT_VALUE_BASIS=war1 or CONTRACT_VALUE_DRBL_SHARE=0..1 to compare.
+ */
+export const PROJECTION_BASIS: "drbl100" | "war1" =
+  process.env.CONTRACT_VALUE_BASIS === "war1" ? "war1" : "drbl100";
+const DRBL_SHARE = Number(process.env.CONTRACT_VALUE_DRBL_SHARE ?? 0.5);
 
 const root = process.cwd();
 export const readJson = <T>(rel: string): T =>
@@ -130,12 +142,14 @@ export function loadInputs(): ContractValueInputs {
       const possessions = Number(row[5]);
       const war1 = row[12];
       if (war1 == null || !Number.isFinite(possessions)) continue;
+      const drbl100 = row[3];
       const key = looseName(name);
       const entry = histories.get(id) ?? { name, lines: [] };
       entry.lines.push({
         season,
         possessions,
         war1,
+        drblWins: drbl100 != null && Number.isFinite(drbl100) ? (drbl100 * possessions) / 100 / P1_POINTS_PER_WIN : null,
         age: ageCounts.get(key) === 1 ? ages.get(key) ?? null : null,
       });
       entry.name = name;
@@ -238,7 +252,22 @@ export function fitModel(inputs: ContractValueInputs, throughStartYear: number):
   );
   const priorByShare = { intercept: priorIntercept, slope: priorSlope, maxShare: PRIOR_MAX_SHARE };
 
-  // ---- Aging: year-over-year change in WAR1 rate by age (delta method)
+  // ---- DRBL/100 onto the WAR1 scale, same season, weighted by possessions
+  let drblBasis: ProjectionParams["drblBasis"];
+  if (PROJECTION_BASIS === "drbl100") {
+    const rows = [...histories.values()].flatMap((h) =>
+      linesThrough(h.lines).filter((l) => l.drblWins != null && l.possessions > 0)
+    );
+    const [intercept, slope] = weightedLeastSquares(
+      rows.map((l) => [1, l.drblWins! / l.possessions]),
+      rows.map((l) => l.war1 / l.possessions),
+      rows.map((l) => l.possessions)
+    );
+    drblBasis = { intercept, slope, share: DRBL_SHARE };
+  }
+  const basisRate = (l: SeasonLine) => basisWins(l, { drblBasis }) / l.possessions;
+
+  // ---- Aging: year-over-year change in the projected rate by age (delta method)
   const agingRows: number[][] = [];
   const agingY: number[] = [];
   const agingW: number[] = [];
@@ -248,7 +277,7 @@ export function fitModel(inputs: ContractValueInputs, throughStartYear: number):
       const b = lines.find((l) => seasonStartYear(l.season) === seasonStartYear(a.season) + 1);
       if (!b || a.age == null || a.possessions < 1000 || b.possessions < 1000) continue;
       agingRows.push([1, a.age]);
-      agingY.push(b.war1 / b.possessions - a.war1 / a.possessions);
+      agingY.push(basisRate(b) - basisRate(a));
       agingW.push((2 * a.possessions * b.possessions) / (a.possessions + b.possessions));
     }
   }
@@ -294,7 +323,7 @@ export function fitModel(inputs: ContractValueInputs, throughStartYear: number):
 
   // ---- Regression strength and season weights: grid search on next-season rate
   function rateError(weights: number[], K: number): number {
-    const p = { weights, regressionPossessions: K, leagueRate, priorByShare } as ProjectionParams;
+    const p = { weights, regressionPossessions: K, leagueRate, priorByShare, drblBasis } as ProjectionParams;
     let se = 0;
     let n = 0;
     for (let i = 1; i < seasons.length; i++) {
@@ -312,7 +341,7 @@ export function fitModel(inputs: ContractValueInputs, throughStartYear: number):
   }
   let best = { weights: [3, 2, 1], K: 8000, err: Infinity };
   for (const weights of [[3, 2, 1], [2, 1.5, 1], [5, 4, 3], [1, 1, 1], [1]])
-    for (const K of [2000, 4000, 6000, 8000, 10000, 12000, 15000, 20000]) {
+    for (const K of [500, 1000, 2000, 4000, 6000, 8000, 10000, 12000, 15000, 20000]) {
       const err = rateError(weights, K);
       if (err < best.err) best = { weights, K, err };
     }
@@ -322,6 +351,7 @@ export function fitModel(inputs: ContractValueInputs, throughStartYear: number):
     regressionPossessions: best.K,
     leagueRate,
     priorByShare,
+    drblBasis,
     replacementRate,
     aging,
     possessions,

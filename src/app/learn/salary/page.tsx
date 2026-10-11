@@ -256,7 +256,8 @@ export default function LearnSalaryPage() {
                 this season.
               </p>
               <p className="mt-2">
-                Wins come from <Link href="/learn/drbl/war1" className="font-semibold text-foreground underline-offset-4 hover:underline">WAR1</Link>,
+                For seasons already played, wins come from{" "}
+                <Link href="/learn/drbl/war1" className="font-semibold text-foreground underline-offset-4 hover:underline">WAR1</Link>,
                 adjusted down to replacement level. A player at or below replacement is worth the minimum, never less.
                 Move the sliders to see how the two pieces add up.
               </p>
@@ -287,9 +288,27 @@ export default function LearnSalaryPage() {
           lead={
             <p>
               <strong>Contract surplus</strong> runs the worth math for every season left on a contract and subtracts
-              the salary. Future seasons need a projection of the player&apos;s wins, so we weight his last three DRBL
-              seasons (the latest counts most), pull small samples toward average, apply an aging curve, and estimate
-              his minutes. Each year gets an 80% range, and in back-tests about 80% of real outcomes landed inside it.
+              the salary. Future seasons need a projection of the player&apos;s wins, so we weight his last{" "}
+              {["one", "two", "three", "four", "five"][prices.projection.seasons - 1] ?? prices.projection.seasons} DRBL
+              seasons (the latest counts most), pull small samples toward average, apply
+              an aging curve, and estimate his minutes. Each year gets an 80% range, and in back-tests about 80% of real
+              outcomes landed inside it.
+              {prices.projection.drblShare != null && prices.projection.drblShare > 0 ? (
+                <>
+                  {" "}
+                  Each past season counts{" "}
+                  {prices.projection.drblShare === 1
+                    ? "its "
+                    : prices.projection.drblShare === 0.5
+                      ? "half from WAR1 and half from "
+                      : `${Math.round((1 - prices.projection.drblShare) * 100)}% from WAR1 and the rest from `}
+                  <Link href="/learn/drbl" className="font-semibold text-foreground underline-offset-4 hover:underline">
+                    DRBL/100
+                  </Link>{" "}
+                  turned into wins. In back-tests, leaning on DRBL/100 predicted real team records better, and WAR1
+                  history predicted each player&apos;s next WAR1 a little better.
+                </>
+              ) : null}
             </p>
           }
           seeIt={[

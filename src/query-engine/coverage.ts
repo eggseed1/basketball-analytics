@@ -171,7 +171,7 @@ export function getAskMetricCoverageAudit(
       playerCoverage:
         "Precomputed DRBL overlay via a verified player identity join",
       reliable: true,
-      sourceLabel: "DRBL season overlay (validated ability)",
+      sourceLabel: "DRBL season overlay (DRBL/100)",
       notes:
         "Only registry DRBL seasons. Requires a valid estimate + identity join. Never invents 0 or substitutes DARKO.",
     },

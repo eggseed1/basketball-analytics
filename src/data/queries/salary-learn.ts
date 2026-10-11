@@ -205,7 +205,15 @@ export function worthScatter(): WorthScatter | null {
   };
 }
 
-export type PricePerWin = { season: string; cap: number; pricePerWin: number; minimum: number; share: number };
+export type PricePerWin = {
+  season: string;
+  cap: number;
+  pricePerWin: number;
+  minimum: number;
+  share: number;
+  /** How future seasons are projected: seasons weighted, and DRBL/100's share against WAR1 (null when WAR1 only). */
+  projection: { seasons: number; drblShare: number | null };
+};
 
 /** The prices the contract model uses for the first season on the books. */
 export function contractPrices(): PricePerWin {
@@ -216,6 +224,7 @@ export function contractPrices(): PricePerWin {
     pricePerWin: model.pricePerWinShare * model.capSeasonCap,
     minimum: model.minimumShare * model.capSeasonCap,
     share: model.pricePerWinShare,
+    projection: { seasons: model.weights.length, drblShare: model.projectionBasis?.drblShare ?? null },
   };
 }
 

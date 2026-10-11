@@ -128,7 +128,7 @@ const ENTRIES: Record<string, StatGlossaryEntry> = {
   },
   DRBL: {
     title: "Differential Replacement Basketball Level",
-    body: "Estimated player impact from play-by-play. DRBL/100 is how good (rate); WAR1 is how much (season value). R1 Points are the underlying accounting total.",
+    body: "Estimated player impact from play-by-play and the box score. DRBL/100 is how good (rate); WAR1 is how much (season value). R1 Points are the underlying accounting total.",
     learnMoreHref: "/learn/drbl",
   },
   BPM: {

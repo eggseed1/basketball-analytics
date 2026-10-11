@@ -847,8 +847,8 @@ export function buildPlayerRaceSeries(
 
 /**
  * Reliability prior for reconstructed season-rate paths.
- * Visual K is softer than production EB so mid-season movement stays visible;
- * the series still snaps to the published season rate at the end.
+ * A visual path, not the published formula: it skips the box-score blend and
+ * the games-played scale c, and snaps to the published season rate at the end.
  */
 function seasonRatePrior(metric: PlayerRaceMetric): {
   k: number;

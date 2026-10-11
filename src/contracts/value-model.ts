@@ -5,13 +5,17 @@
  * Production is DRBL wins (WAR1) re-based to replacement level: WAR1 sits near
  * an average-player baseline, so we add back what a minimum-salary player
  * would lose over the same possessions. Value is those wins times the
- * league's going price per win, expressed as a share of the cap.
+ * league's going price per win, expressed as a share of the cap. Future
+ * seasons are projected from a mix of past WAR1 and past DRBL/100 mapped onto
+ * the WAR1 scale (`drblBasis`); seasons already played are judged on WAR1.
  */
 
 export type SeasonLine = {
   season: string;
   possessions: number;
   war1: number;
+  /** DRBL/100 over the season in wins: DRBL/100 × possessions / 100 / points per win. */
+  drblWins?: number | null;
   /** Age that season (Basketball Reference, as of Feb 1). */
   age: number | null;
 };
@@ -96,6 +100,12 @@ export type ProjectionParams = {
    * score doesn't, so pay is a fair prior.
    */
   priorByShare?: { intercept: number; slope: number; maxShare: number };
+  /**
+   * Projects partly from DRBL/100: a season's DRBL/100 rate mapped onto WAR1
+   * per possession (intercept + slope × DRBL/100 wins per possession), given
+   * `share` of the weight against that season's WAR1.
+   */
+  drblBasis?: { intercept: number; slope: number; share?: number };
   /** WAR1 per possession of minimum-salary players. */
   replacementRate: number;
   aging: AgingCurve;
@@ -157,6 +167,14 @@ export function priorRate(params: ProjectionParams, salaryShare: number | null |
   return prior.intercept + prior.slope * Math.min(salaryShare, prior.maxShare);
 }
 
+/** A season's production on the WAR1 scale, mixing in DRBL/100 when the params map it. */
+export function basisWins(line: SeasonLine, params: Pick<ProjectionParams, "drblBasis">): number {
+  const basis = params.drblBasis;
+  if (!basis || line.drblWins == null) return line.war1;
+  const share = basis.share ?? 1;
+  return share * (basis.intercept * line.possessions + basis.slope * line.drblWins) + (1 - share) * line.war1;
+}
+
 export function baseRate(
   history: SeasonLine[],
   lastObservedStartYear: number,
@@ -170,7 +188,7 @@ export function baseRate(
   params.weights.forEach((weight, k) => {
     const line = byYear.get(lastObservedStartYear - k);
     if (!line) return;
-    num += weight * line.war1;
+    num += weight * basisWins(line, params);
     den += weight * line.possessions;
     recent += line.possessions;
   });

@@ -112,14 +112,14 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
       ],
       upsides: [
         "The clearest DRBL answer for who delivered the most this season.",
-        "Built from the same play-by-play ledger as DRBL/100.",
+        "Comes straight from the play-by-play credit, the same starting point DRBL/100 blends with the box score.",
         "Fixed conversion to win-style units keeps the story easy to tell.",
         "Preferred headline for season value on boards and leader tables.",
       ],
       downsides: [
         "Rewards heavy minutes when the rate is merely good, not great.",
         "The WAR name can sound like other win metrics. Inside DRBL it means above R1.",
-        "Does not price contracts or predict fit on a new team.",
+        "Doesn't predict how a player would fit on a new team.",
       ],
       apply: [
         "Sort by WAR1 for who accrued the most this season.",
@@ -355,7 +355,7 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
     },
     deep: {
       definition:
-        "DRBL-P is the diagnostic possession component: Approach-B marginal contribution from expected-possession residuals versus a contextual, role-matched R1 reference. DRBL-O and DRBL-D are its offensive and defensive halves. P, LN, and B are non-additive diagnostics; they do not sum to DRBL/100 and are not fused into the canonical v1 validated rate as a three-way total.",
+        "DRBL-P is the diagnostic possession component: Approach-B marginal contribution from expected-possession residuals versus a contextual, role-matched R1 reference. DRBL-O and DRBL-D are its offensive and defensive halves. P, LN, and B are non-additive diagnostics. They do not sum to DRBL/100.",
       formula:
         "DRBL-P = possession-component diagnostic (Approach-B vs R1);  DRBL-O + DRBL-D = P split;  P + LN + B ≠ DRBL/100",
       calculation: [
@@ -521,12 +521,12 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
       doesnt: [
         "Camera-derived gravity or off-ball measurement.",
         "Canonical ability ranking.",
-        "Shipped individual predictive uncertainty for the validated rate.",
+        "Shipped individual predictive uncertainty for DRBL/100.",
       ],
       upsides: [
         "Interpretable in familiar box terms.",
         "Useful disagreement diagnostics with P and LN.",
-        "Keeps behavioral signal visible without fusing it into v1 ability.",
+        "Keeps these habits visible as their own number, apart from DRBL/100.",
       ],
       downsides: [
         "Invites gravity metaphors the data do not support.",

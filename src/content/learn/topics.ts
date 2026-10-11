@@ -1077,7 +1077,7 @@ export const LEARN_TOPICS: LearnTopic[] = [
       "Review reserved / out-of-time protocols from the sealed research reports.",
       "Score each season's ratings on the games that came after them: from the first 3% of a season up to 60%, and from one full season to the next. The blend is fit only on earlier seasons for each test.",
       "Inspect sample sizes and error summaries where published.",
-      "On one reserved external comparison, DRBL and BPM were statistically indistinguishable; broader head-to-heads were limited by historical coverage of other metrics.",
+      "On one reserved external comparison of the earlier play-by-play-only rating, DRBL and BPM were statistically indistinguishable; broader head-to-heads were limited by historical coverage of other metrics.",
     ],
     caveats: [
       "Do not read that comparison as “DRBL beat BPM” or “DRBL is the best public metric.”",

@@ -1,9 +1,11 @@
 /**
  * Bake contract surplus estimates for every current contract.
  *
- * Fits the model on DRBL seasons (WAR1) joined to historical salaries:
- * replacement rate, price per win, regression, aging, playing time and the
- * size of projection misses by horizon. Then values each contract year.
+ * Fits the model on DRBL seasons joined to historical salaries: replacement
+ * rate, price per win, regression, aging, playing time and the size of
+ * projection misses by horizon. Projections start from past WAR1 mixed with
+ * past DRBL/100; realized worth and price per win use WAR1. Then values each
+ * contract year.
  *
  * Writes src/data/runtime/contract-value-snapshot.json.
  */
@@ -244,6 +246,13 @@ const out = {
     capKnownThrough: seasonLabel(lastCapYear),
     weights: params.weights,
     regressionPossessions: params.regressionPossessions,
+    projectionBasis: params.drblBasis
+      ? {
+          drblShare: params.drblBasis.share ?? 1,
+          intercept: Number(params.drblBasis.intercept.toFixed(6)),
+          slope: Number(params.drblBasis.slope.toFixed(4)),
+        }
+      : null,
     aging,
     possessions,
     errorByHorizon: params.errorByHorizon,

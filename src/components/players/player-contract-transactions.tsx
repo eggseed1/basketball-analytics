@@ -91,17 +91,25 @@ function MethodNotes({ model }: { model: ContractValueModel }) {
   const priceFrom = model.priceSeasons[0];
   const priceTo = model.priceSeasons[model.priceSeasons.length - 1];
   const weights = model.weights.map((w) => String(w));
+  const drblShare = model.projectionBasis?.drblShare ?? null;
   return (
     <MoreInfo>
       <p>
-        Worth is what his projected DRBL wins would cost on the open market. We count wins above
-        a minimum-salary player in the same minutes and price them at what teams paid per DRBL win
+        Worth is what his projected wins would cost on the open market. We count wins above
+        a minimum-salary player in the same minutes and price them at what teams paid per WAR1 win
         from {priceFrom} to {priceTo}: {(model.pricePerWinShare * 100).toFixed(1)}% of the cap,
         about {capSeasonPrice} in {model.capSeason}.
       </p>
       <p>
-        Projections weight his last {weights.length} seasons {listJoin(weights)}, newest first, and
-        pull toward what players at his salary usually produce, then adjust for age. Playing time
+        Projections weight his last {weights.length} seasons {listJoin(weights)}, newest first
+        {drblShare == null
+          ? ", using each season's WAR1"
+          : drblShare === 1
+            ? ", using each season's DRBL/100 turned into wins"
+            : drblShare === 0.5
+              ? ", counting each season half from WAR1 and half from DRBL/100 turned into wins"
+              : `, counting each season ${Math.round(drblShare * 100)}% from DRBL/100 turned into wins and the rest from WAR1`}
+        . They pull toward what players at his salary usually produce, then adjust for age. Playing time
         comes from recent minutes, age and salary, since teams play the players they pay. A season
         lost to injury still pulls the playing time down.
       </p>
@@ -296,7 +304,7 @@ export function PlayerContractTransactions({
 
         {estimate ? (
           <p className={cn(type.caption, "text-muted-foreground")}>
-            Worth is projected from DRBL wins over {estimate.basisSeasons.join(", ")} (
+            Worth is projected from his DRBL seasons {estimate.basisSeasons.join(", ")} (
             {estimate.basisPossessions.toLocaleString()} possessions). Surplus is worth minus
             salary, after options.
           </p>

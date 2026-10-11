@@ -228,6 +228,7 @@ jobs:
               src/data/runtime/current-roster-snapshot.json \
               src/data/runtime/drbl-overlay-snapshot.json \
               src/data/runtime/drbl-published-seasons.json \
+              src/data/runtime/drbl-guide-snapshot.json \
               src/data/runtime/impact-overlay-snapshot.json \
               src/data/runtime/percentile-pools-snapshot.json \
               src/data/runtime/player-search-snapshot.json \
