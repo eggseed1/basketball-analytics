@@ -12,6 +12,8 @@
  *   of games, scored on the last 40%.
  * - Cross season: shipped artifact ratings for season N scored on every
  *   game of season N+1.
+ * Box shadows are rebuilt from the rating window; forward box weights are
+ * refit per test from blocks whose target possessions precede the test games.
  * A candidate is eligible to replace published DRBL/100 only if its ΔRMSE
  * interval sits below 0 in every cross-season test and never above 0
  * within season.
@@ -63,6 +65,13 @@ import {
   shrinkTowardBoxPrior,
   type BoxPriorTotals,
 } from "../drbl/models/box-prior";
+import { buildBoxPriorV2, solveBoxForward } from "../drbl/models/box-forward";
+import {
+  blocksBefore,
+  blocksThrough,
+  forwardTrainingBlocks,
+  type ForwardTrainingBlock,
+} from "../drbl/evaluation/box-forward-data";
 import type { DrblBoxPlayer } from "../drbl/types";
 
 const ROOT = process.cwd();
@@ -72,7 +81,8 @@ const INNER_FRAC = 2 / 3;
 const MIN_GAMES = 500;
 const RIDGE_LAMBDAS = [400, 800, 1600, 3200, 6400];
 const ANCHORED = `Anchored lineup (${ANCHORED_LINEUP_VERSION})`;
-const BOX = `DRBL-P shrunk toward box rating (${BOX_PRIOR_VERSION})`;
+const BOX_V1 = "DRBL-P shrunk toward same-season box rating (v1)";
+const BOX = `Box blend: v1 + forward box (${BOX_PRIOR_VERSION})`;
 
 const log = (...a: unknown[]) => console.log(new Date().toISOString().slice(11, 19), ...a);
 
@@ -175,13 +185,50 @@ async function drblComponents(season: string, window: readonly OutcomeGame[]) {
   };
 }
 
-/** Box weights fit on the rating window only; empty when the window is too small to fit. */
-function boxShrunk(games: readonly OutcomeGame[], raw: Ratings, n: Ratings): Ratings {
+interface ForwardFit {
+  weightsPer100: number[];
+  blocks: string[];
+}
+
+function forwardFit(blocks: readonly ForwardTrainingBlock[]): ForwardFit | null {
+  if (blocks.length === 0) return null;
+  return {
+    weightsPer100: solveBoxForward(blocks.map((b) => b.block)),
+    blocks: blocks.map((b) => `${b.info.kind} ${b.info.from}→${b.info.to}`),
+  };
+}
+
+/**
+ * Same-season box weights fit on the rating window only; v2 also needs
+ * forward weights fit without the test games. Empty when the window is too
+ * small to fit.
+ */
+function boxShadows(
+  games: readonly OutcomeGame[],
+  published: Ratings,
+  raw: Ratings,
+  n: Ratings,
+  forward: ForwardFit | null
+): { v1: Ratings; v2: Ratings | null } {
   const totals: BoxPriorTotals = new Map();
   for (const g of games) addBoxScoreToTotals(totals, boxByGame.get(g.gameId) ?? []);
   const input = anchoredInputOf(games);
-  const fit = fitBoxPrior(input.rows, boxPriorFeatures(totals, input.appearances));
-  return fit ? shrinkTowardBoxPrior(raw, n, fit.ratingsPer100) : new Map();
+  const boxFeatures = boxPriorFeatures(totals, input.appearances);
+  const fit = fitBoxPrior(input.rows, boxFeatures);
+  if (!fit) return { v1: new Map(), v2: null };
+  const v2 = forward
+    ? buildBoxPriorV2({
+        fit,
+        boxFeatures,
+        forwardWeightsPer100: forward.weightsPer100,
+        appearances: input.appearances,
+        rows: input.rows,
+        drbl100: published,
+        rawAbilityRate: raw,
+        possessions: n,
+      }).ratings
+    : null;
+  return { v1: shrinkTowardBoxPrior(raw, n, fit.ratingsPer100), v2 };
 }
 
 function scoreboardRidge(games: readonly OutcomeGame[], lambda: number): Ratings {
@@ -213,7 +260,7 @@ function selectRidgeLambda(window: readonly OutcomeGame[]): { lambda: number; tr
   return { lambda: best.lambda, trace };
 }
 
-async function withinSeason(season: string, games: OutcomeGame[]) {
+async function withinSeason(season: string, games: OutcomeGame[], forward: ForwardFit | null) {
   const end = Math.floor(games.length * EARLY_FRAC);
   const train = games.slice(0, end);
   const test = games.slice(end);
@@ -222,21 +269,19 @@ async function withinSeason(season: string, games: OutcomeGame[]) {
   const comps = await drblComponents(season, train);
   const exp = exposureOf(train);
   const f = (r: Ratings) => gameFeature(test, r, exp);
-  const report = scoreOutcomes(
-    `${season}: first 60% of games → last 40%`,
-    test,
-    {
-      [PUBLISHED]: f(comps.published),
-      "DRBL-P raw rate (unshrunk)": f(comps.pRaw),
-      "DRBL-LN (stored lineup)": f(comps.ln),
-      "DRBL-B (box)": f(comps.b),
-      "Raw on-court +/- per 100": f(rawPlusMinus(train)),
-      [`Scoreboard lineup ridge (λ=${lambda})`]: f(scoreboardRidge(train, lambda)),
-      [ANCHORED]: f(anchored(train, comps.published)),
-      [BOX]: f(boxShrunk(train, comps.pRaw, comps.n)),
-    },
-    teamFeature(train, test)
-  );
+  const box = boxShadows(train, comps.published, comps.pRaw, comps.n, forward);
+  const features: Record<string, number[]> = {
+    [PUBLISHED]: f(comps.published),
+    "DRBL-P raw rate (unshrunk)": f(comps.pRaw),
+    "DRBL-LN (stored lineup)": f(comps.ln),
+    "DRBL-B (box)": f(comps.b),
+    "Raw on-court +/- per 100": f(rawPlusMinus(train)),
+    [`Scoreboard lineup ridge (λ=${lambda})`]: f(scoreboardRidge(train, lambda)),
+    [ANCHORED]: f(anchored(train, comps.published)),
+    [BOX_V1]: f(box.v1),
+  };
+  if (box.v2) features[BOX] = f(box.v2);
+  const report = scoreOutcomes(`${season}: first 60% of games → last 40%`, test, features, teamFeature(train, test));
   return { report, ridgeSelection: { lambda, trace } };
 }
 
@@ -260,7 +305,6 @@ async function artifactRatings(season: string) {
     ln: pick("drblLn"),
     b: pick("drblB"),
     anchored: pick("drblAnchored100"),
-    box: pick("drblBox100"),
   };
 }
 
@@ -274,11 +318,19 @@ async function darko(season: string): Promise<Map<string, number>> {
   return m;
 }
 
-async function crossSeason(from: string, fromGames: OutcomeGame[], to: string, toGames: OutcomeGame[], lambda: number) {
+async function crossSeason(
+  from: string,
+  fromGames: OutcomeGame[],
+  to: string,
+  toGames: OutcomeGame[],
+  lambda: number,
+  forward: ForwardFit | null
+) {
   log(`cross: ${from} ratings → ${to} games`);
   const art = await artifactRatings(from);
   const exp = exposureOf(fromGames);
   const f = (r: Ratings) => gameFeature(toGames, r, exp);
+  const box = boxShadows(fromGames, art.published, art.pRaw, art.n, forward);
   const features: Record<string, number[]> = {
     [PUBLISHED]: f(art.published),
     "DRBL-P raw rate (unshrunk)": f(art.pRaw),
@@ -287,8 +339,9 @@ async function crossSeason(from: string, fromGames: OutcomeGame[], to: string, t
     "Raw on-court +/- per 100": f(rawPlusMinus(fromGames)),
     [`Scoreboard lineup ridge (λ=${lambda})`]: f(scoreboardRidge(fromGames, lambda)),
     [ANCHORED]: f(art.anchored.size > 0 ? art.anchored : anchored(fromGames, art.published)),
-    [BOX]: f(art.box.size > 0 ? art.box : boxShrunk(fromGames, art.pRaw, art.n)),
+    [BOX_V1]: f(box.v1),
   };
+  if (box.v2) features[BOX] = f(box.v2);
   const d = await darko(from);
   if (d.size > 0) features[`DARKO ${from} (external)`] = f(d);
   return scoreOutcomes(
@@ -310,9 +363,9 @@ function markdown(reports: OutcomeReport[], generatedAt: string): string {
     "",
     "R² is the share of final-margin variance explained beyond home court, out of sample. ΔRMSE is the candidate's error minus published DRBL/100's error in points, with a 95% game-bootstrap interval. Negative means the candidate predicts margins better.",
     "",
-    `Promotion rule: a candidate can replace published DRBL/100 only if its interval sits below 0 in every cross-season test and never above 0 within season. Passing makes it eligible; switching is still a product decision. ${ANCHORED} and ${BOX} are stored as the shadow fields \`drblAnchored100\` and \`drblBox100\`.`,
+    `Promotion rule: a candidate can replace published DRBL/100 only if its interval sits below 0 in every cross-season test and never above 0 within season. Passing makes it eligible; switching is still a product decision. ${ANCHORED} and ${BOX} are stored as the shadow fields \`drblAnchored100\` and \`drblBox100\`. ${BOX_V1} is the same-season half of the blend.`,
     "",
-    "Cross-season rows use each season's shipped artifact as is; the section title names its pipeline version.",
+    "Cross-season rows use each season's shipped artifact as is; the section title names its pipeline version. Both box rows are rebuilt here from the rating window instead of read from the artifact. The blend's forward weights are refit for each test on earlier possessions only: through the rating season for cross-season tests, through the season before for within-season tests. The first local season has nothing earlier, so its within-season test has no blend row.",
   ];
   for (const r of reports) {
     lines.push("", `## ${r.label}`, "", `${r.games} games.`, "", "| Rating | R² | RMSE | ΔRMSE vs published [95% CI] | Verdict |", "|---|---|---|---|---|");
@@ -338,18 +391,25 @@ async function main() {
   }
   log("seasons with local possessions:", seasons.join(", "));
   await requireEpvModel();
+  const forwardBlocks = await forwardTrainingBlocks(seasons, ROOT, (s) => log(s, "forward box blocks"));
 
   const reports: OutcomeReport[] = [];
   const selections: Record<string, unknown> = {};
+  const boxForward: Record<string, string[] | null> = {};
   let prev: { season: string; games: OutcomeGame[]; lambda: number } | null = null;
   for (const season of seasons) {
     const games = await loadSeason(season);
     log(season, "games", games.length);
-    const w = await withinSeason(season, games);
+    const within = forwardFit(blocksBefore(forwardBlocks, season));
+    const w = await withinSeason(season, games, within);
     reports.push(w.report);
     selections[season] = w.ridgeSelection;
+    boxForward[w.report.label] = within?.blocks ?? null;
     if (prev && Number(season.slice(0, 4)) === Number(prev.season.slice(0, 4)) + 1) {
-      reports.push(await crossSeason(prev.season, prev.games, season, games, prev.lambda));
+      const cross = forwardFit(blocksThrough(forwardBlocks, prev.season));
+      const r = await crossSeason(prev.season, prev.games, season, games, prev.lambda, cross);
+      reports.push(r);
+      boxForward[r.label] = cross?.blocks ?? null;
     }
     prev = { season, games, lambda: w.ridgeSelection.lambda };
   }
@@ -363,6 +423,7 @@ async function main() {
         generatedAt,
         anchoredLineup: { version: ANCHORED_LINEUP_VERSION, config: ANCHORED_LINEUP_CONFIG },
         ridgeSelection: selections,
+        boxForwardTrainingBlocks: boxForward,
         reports,
       },
       null,

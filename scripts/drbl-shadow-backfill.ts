@@ -1,7 +1,8 @@
 /**
  * Adds the shadow fields `drblAnchored100` and `drblBox100` to an existing
  * season artifact from local normalized games, without recomputing anything
- * else. Both are built on the artifact's own drbl100 / rawAbilityRate.
+ * else. Both are built on the artifact's own drbl100 / rawAbilityRate;
+ * drblBox100 also needs drbl/models/box-forward-weights.json.
  *
  *   npm run drbl:shadow-backfill -- --season 2025-26
  *
@@ -20,13 +21,12 @@ import {
   fitAnchoredLineup,
 } from "../drbl/models/anchored-lineup";
 import {
-  addBoxScoreToTotals,
-  attachBoxPrior,
-  boxPriorFeatures,
-  boxPriorSummary,
-  fitBoxPrior,
-  type BoxPriorTotals,
-} from "../drbl/models/box-prior";
+  BOX_FORWARD_WEIGHTS_PATH,
+  boxPriorV2ForSeason,
+  boxPriorV2Summary,
+  loadBoxForwardWeights,
+} from "../drbl/models/box-forward";
+import { addBoxScoreToTotals, attachBoxPrior, type BoxPriorTotals } from "../drbl/models/box-prior";
 import type { DrblSeasonArtifact } from "../drbl/models/compute-season";
 
 function arg(name: string): string | undefined {
@@ -88,13 +88,21 @@ async function main() {
     input,
     new Map(artifact.players.map((p) => [p.playerId, p.drbl100]))
   );
-  const box = fitBoxPrior(input.rows, boxPriorFeatures(boxTotals, input.appearances));
+  const weights = await loadBoxForwardWeights();
+  if (!weights) throw new Error(`${BOX_FORWARD_WEIGHTS_PATH} missing or stale; run npm run drbl:box-forward-fit`);
+  const box = boxPriorV2ForSeason({
+    rows: input.rows,
+    appearances: input.appearances,
+    totals: boxTotals,
+    players: artifact.players,
+    weights,
+  });
   if (!box) throw new Error(`too few 5v5 possessions (${input.rows.length}) to fit the box prior`);
   const update = (a: DrblSeasonArtifact): DrblSeasonArtifact => ({
     ...a,
-    players: attachBoxPrior(attachAnchoredLineup(a.players, anchored), box),
+    players: attachBoxPrior(attachAnchoredLineup(a.players, anchored), box.ratings),
     anchoredLineupModel: anchoredLineupSummary(anchored),
-    boxPriorModel: boxPriorSummary(box),
+    boxPriorModel: boxPriorV2Summary(box, weights),
   });
 
   await rewrite(sitePath, update);
@@ -105,7 +113,7 @@ async function main() {
   }
   const ids = artifact.players.map((p) => p.playerId);
   console.log(
-    `[shadow] ${season} anchored ${ids.filter((id) => anchored.ratingsPer100.has(id)).length}/${ids.length}, box ${ids.filter((id) => box.ratingsPer100.has(id)).length}/${ids.length} artifact players`
+    `[shadow] ${season} anchored ${ids.filter((id) => anchored.ratingsPer100.has(id)).length}/${ids.length}, box ${ids.filter((id) => box.ratings.has(id)).length}/${ids.length} artifact players`
   );
 }
 

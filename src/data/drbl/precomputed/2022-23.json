@@ -154,7 +154,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 7.04,
-      "drblBox100": 2.99
+      "drblBox100": 2.72
     },
     {
       "playerId": "202710",
@@ -226,7 +226,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 6.09,
-      "drblBox100": 4.41
+      "drblBox100": 4.08
     },
     {
       "playerId": "201939",
@@ -298,7 +298,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 6.33,
-      "drblBox100": 2.98
+      "drblBox100": 2.91
     },
     {
       "playerId": "1628378",
@@ -370,7 +370,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 5.29,
-      "drblBox100": 2.42
+      "drblBox100": 2.72
     },
     {
       "playerId": "203954",
@@ -442,7 +442,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 7.45,
-      "drblBox100": 3.96
+      "drblBox100": 4.06
     },
     {
       "playerId": "203999",
@@ -514,7 +514,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 6.83,
-      "drblBox100": 4.44
+      "drblBox100": 5.23
     },
     {
       "playerId": "1628983",
@@ -586,7 +586,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 6.38,
-      "drblBox100": 2.96
+      "drblBox100": 2.81
     },
     {
       "playerId": "203076",
@@ -730,7 +730,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 5.33,
-      "drblBox100": 2.56
+      "drblBox100": 2.76
     },
     {
       "playerId": "1629661",
@@ -802,7 +802,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 5.21,
-      "drblBox100": 2.19
+      "drblBox100": 1.97
     },
     {
       "playerId": "201142",
@@ -874,7 +874,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 5.01,
-      "drblBox100": 2.96
+      "drblBox100": 2.74
     },
     {
       "playerId": "1629627",
@@ -946,7 +946,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 5.27,
-      "drblBox100": 2.74
+      "drblBox100": 2.5
     },
     {
       "playerId": "203081",
@@ -1018,7 +1018,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 4.45,
-      "drblBox100": 2.98
+      "drblBox100": 2.99
     },
     {
       "playerId": "1630530",
@@ -1090,7 +1090,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 3.41,
-      "drblBox100": 1.65
+      "drblBox100": 1.24
     },
     {
       "playerId": "1628418",
@@ -1162,7 +1162,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 4.89,
-      "drblBox100": 2.25
+      "drblBox100": 1.06
     },
     {
       "playerId": "202695",
@@ -1234,7 +1234,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 5.22,
-      "drblBox100": 2.66
+      "drblBox100": 2.54
     },
     {
       "playerId": "1631117",
@@ -1306,7 +1306,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 3.97,
-      "drblBox100": 3.1
+      "drblBox100": 2.56
     },
     {
       "playerId": "1631109",
@@ -1378,7 +1378,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 4.9,
-      "drblBox100": 2.76
+      "drblBox100": 1.78
     },
     {
       "playerId": "201572",
@@ -1450,7 +1450,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 4.38,
-      "drblBox100": 1.67
+      "drblBox100": 1.82
     },
     {
       "playerId": "1630217",
@@ -1522,7 +1522,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 4.01,
-      "drblBox100": 1.34
+      "drblBox100": 1.58
     },
     {
       "playerId": "203991",
@@ -1594,7 +1594,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 4.84,
-      "drblBox100": 2.55
+      "drblBox100": 2.41
     },
     {
       "playerId": "1629057",
@@ -1666,7 +1666,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 3.75,
-      "drblBox100": 3.41
+      "drblBox100": 3
     },
     {
       "playerId": "202681",
@@ -1738,7 +1738,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 4.1,
-      "drblBox100": 1.91
+      "drblBox100": 2.16
     },
     {
       "playerId": "1630198",
@@ -1810,7 +1810,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 3.28,
-      "drblBox100": 1.15
+      "drblBox100": 0.58
     },
     {
       "playerId": "1626246",
@@ -1882,7 +1882,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 4.96,
-      "drblBox100": 2.62
+      "drblBox100": 1.78
     },
     {
       "playerId": "1629018",
@@ -1954,7 +1954,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 2.14,
-      "drblBox100": 0.9
+      "drblBox100": 0.6
     },
     {
       "playerId": "1626162",
@@ -2026,7 +2026,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 2.09,
-      "drblBox100": 0.49
+      "drblBox100": 0.36
     },
     {
       "playerId": "1629029",
@@ -2098,7 +2098,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 3.88,
-      "drblBox100": 2.94
+      "drblBox100": 3.37
     },
     {
       "playerId": "204001",
@@ -2170,7 +2170,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 4.55,
-      "drblBox100": 2.28
+      "drblBox100": 2.24
     },
     {
       "playerId": "1628379",
@@ -2242,7 +2242,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 3.66,
-      "drblBox100": 0.79
+      "drblBox100": 0.02
     },
     {
       "playerId": "1630193",
@@ -2314,7 +2314,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 3.72,
-      "drblBox100": 1.3
+      "drblBox100": 1.14
     },
     {
       "playerId": "1629651",
@@ -2386,7 +2386,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 3.11,
-      "drblBox100": 2.52
+      "drblBox100": 2.49
     },
     {
       "playerId": "1629008",
@@ -2458,7 +2458,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 3,
-      "drblBox100": 0.97
+      "drblBox100": 1.1
     },
     {
       "playerId": "1630169",
@@ -2530,7 +2530,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 3.35,
-      "drblBox100": 2.79
+      "drblBox100": 2.87
     },
     {
       "playerId": "1629634",
@@ -2602,7 +2602,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 2.45,
-      "drblBox100": 2.12
+      "drblBox100": 1.26
     },
     {
       "playerId": "1630559",
@@ -2674,7 +2674,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 3.43,
-      "drblBox100": 1.19
+      "drblBox100": 0.58
     },
     {
       "playerId": "1629021",
@@ -2746,7 +2746,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 3.03,
-      "drblBox100": 1.45
+      "drblBox100": 1.03
     },
     {
       "playerId": "1628369",
@@ -2818,7 +2818,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 4.12,
-      "drblBox100": 1.98
+      "drblBox100": 2.59
     },
     {
       "playerId": "1627763",
@@ -2890,7 +2890,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.8,
-      "drblBox100": 1.42
+      "drblBox100": 0.72
     },
     {
       "playerId": "1628966",
@@ -2962,7 +2962,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 3.18,
-      "drblBox100": 0.77
+      "drblBox100": -0.12
     },
     {
       "playerId": "203932",
@@ -3034,7 +3034,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 3.35,
-      "drblBox100": 1.68
+      "drblBox100": 2.06
     },
     {
       "playerId": "2544",
@@ -3106,7 +3106,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 4.16,
-      "drblBox100": 1.49
+      "drblBox100": 1.94
     },
     {
       "playerId": "1629650",
@@ -3178,7 +3178,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 3.41,
-      "drblBox100": 3.87
+      "drblBox100": 2.31
     },
     {
       "playerId": "1631106",
@@ -3250,7 +3250,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 2.99,
-      "drblBox100": 0.71
+      "drblBox100": 0.51
     },
     {
       "playerId": "1628386",
@@ -3322,7 +3322,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 2.48,
-      "drblBox100": 1.9
+      "drblBox100": 2.21
     },
     {
       "playerId": "1629750",
@@ -3394,7 +3394,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 3.76,
-      "drblBox100": 1.22
+      "drblBox100": 0.71
     },
     {
       "playerId": "1627739",
@@ -3466,7 +3466,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 2.65,
-      "drblBox100": 2.19
+      "drblBox100": 1.11
     },
     {
       "playerId": "203507",
@@ -3538,7 +3538,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 3.41,
-      "drblBox100": 2.55
+      "drblBox100": 2.97
     },
     {
       "playerId": "1628384",
@@ -3610,7 +3610,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 3.24,
-      "drblBox100": 0.78
+      "drblBox100": 1.19
     },
     {
       "playerId": "1628977",
@@ -3682,7 +3682,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 2.98,
-      "drblBox100": 0.16
+      "drblBox100": -0.23
     },
     {
       "playerId": "1630573",
@@ -3754,7 +3754,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 2.54,
-      "drblBox100": 0.56
+      "drblBox100": 0.06
     },
     {
       "playerId": "202711",
@@ -3826,7 +3826,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 3.47,
-      "drblBox100": 0.46
+      "drblBox100": -0.22
     },
     {
       "playerId": "1630208",
@@ -3898,7 +3898,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 2.89,
-      "drblBox100": 2.02
+      "drblBox100": 0.95
     },
     {
       "playerId": "1630184",
@@ -3970,7 +3970,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 3.5,
-      "drblBox100": -0.18
+      "drblBox100": -0.5
     },
     {
       "playerId": "1626164",
@@ -4042,7 +4042,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 3.99,
-      "drblBox100": 1.24
+      "drblBox100": 1.51
     },
     {
       "playerId": "1626167",
@@ -4114,7 +4114,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 2.95,
-      "drblBox100": 1.92
+      "drblBox100": 1.64
     },
     {
       "playerId": "1629655",
@@ -4186,7 +4186,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 2,
-      "drblBox100": 1.88
+      "drblBox100": 1.27
     },
     {
       "playerId": "1630180",
@@ -4258,7 +4258,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.99,
-      "drblBox100": 0.67
+      "drblBox100": 0.21
     },
     {
       "playerId": "203497",
@@ -4330,7 +4330,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 2.68,
-      "drblBox100": 2.05
+      "drblBox100": 2.01
     },
     {
       "playerId": "1631288",
@@ -4402,7 +4402,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 3.4,
-      "drblBox100": 1.2
+      "drblBox100": 0.47
     },
     {
       "playerId": "1626153",
@@ -4474,7 +4474,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 3.17,
-      "drblBox100": 2.25
+      "drblBox100": 2.22
     },
     {
       "playerId": "1630322",
@@ -4546,7 +4546,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 3.04,
-      "drblBox100": -0.2
+      "drblBox100": -0.22
     },
     {
       "playerId": "1629048",
@@ -4618,7 +4618,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 2.89,
-      "drblBox100": 1.96
+      "drblBox100": 1.44
     },
     {
       "playerId": "202692",
@@ -4690,7 +4690,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 2.17,
-      "drblBox100": 1.07
+      "drblBox100": 0.23
     },
     {
       "playerId": "203585",
@@ -4762,7 +4762,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 3.28,
-      "drblBox100": -0.65
+      "drblBox100": -1.08
     },
     {
       "playerId": "1627884",
@@ -4834,7 +4834,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 3.19,
-      "drblBox100": 0.46
+      "drblBox100": -0.03
     },
     {
       "playerId": "203488",
@@ -4906,7 +4906,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 2.89,
-      "drblBox100": 0.57
+      "drblBox100": 0.16
     },
     {
       "playerId": "1628368",
@@ -4978,7 +4978,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.31,
-      "drblBox100": 1.21
+      "drblBox100": 1.48
     },
     {
       "playerId": "203496",
@@ -5050,7 +5050,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 2.19,
-      "drblBox100": 1.33
+      "drblBox100": 0.7
     },
     {
       "playerId": "1629726",
@@ -5122,7 +5122,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.95,
-      "drblBox100": -0.79
+      "drblBox100": -1.26
     },
     {
       "playerId": "1630168",
@@ -5194,7 +5194,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 3.25,
-      "drblBox100": 1.91
+      "drblBox100": 1.56
     },
     {
       "playerId": "1626204",
@@ -5266,7 +5266,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 2.94,
-      "drblBox100": 1.84
+      "drblBox100": 1.39
     },
     {
       "playerId": "1626172",
@@ -5338,7 +5338,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 2.76,
-      "drblBox100": 2.29
+      "drblBox100": 2.43
     },
     {
       "playerId": "1627741",
@@ -5410,7 +5410,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.87,
-      "drblBox100": 0.82
+      "drblBox100": 0.7
     },
     {
       "playerId": "1630178",
@@ -5482,7 +5482,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.47,
-      "drblBox100": 0.82
+      "drblBox100": 0.53
     },
     {
       "playerId": "1630532",
@@ -5554,7 +5554,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 3.55,
-      "drblBox100": 0.44
+      "drblBox100": 0.4
     },
     {
       "playerId": "203897",
@@ -5626,7 +5626,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 2.6,
-      "drblBox100": 0.77
+      "drblBox100": 0.75
     },
     {
       "playerId": "1629004",
@@ -5698,7 +5698,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 3.04,
-      "drblBox100": -0.52
+      "drblBox100": -0.79
     },
     {
       "playerId": "201942",
@@ -5770,7 +5770,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 3.38,
-      "drblBox100": 1.07
+      "drblBox100": 0.95
     },
     {
       "playerId": "1628969",
@@ -5842,7 +5842,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 2.1,
-      "drblBox100": 0.85
+      "drblBox100": 0.84
     },
     {
       "playerId": "1629680",
@@ -5914,7 +5914,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 2.26,
-      "drblBox100": 0.42
+      "drblBox100": 0.31
     },
     {
       "playerId": "1628973",
@@ -5986,7 +5986,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 2.49,
-      "drblBox100": 1.14
+      "drblBox100": 1.06
     },
     {
       "playerId": "203083",
@@ -6058,7 +6058,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 2.06,
-      "drblBox100": 2.36
+      "drblBox100": 2.14
     },
     {
       "playerId": "1626181",
@@ -6130,7 +6130,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.15,
-      "drblBox100": 0.46
+      "drblBox100": -0.35
     },
     {
       "playerId": "1628989",
@@ -6202,7 +6202,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.91,
-      "drblBox100": 0.73
+      "drblBox100": 0.89
     },
     {
       "playerId": "203084",
@@ -6274,7 +6274,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.95,
-      "drblBox100": 0.74
+      "drblBox100": 0.55
     },
     {
       "playerId": "1630231",
@@ -6346,7 +6346,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.73,
-      "drblBox100": 0.6
+      "drblBox100": -0.07
     },
     {
       "playerId": "1629002",
@@ -6418,7 +6418,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 2.69,
-      "drblBox100": 0.94
+      "drblBox100": 0.36
     },
     {
       "playerId": "1629714",
@@ -6490,7 +6490,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 2.5,
-      "drblBox100": 1.92
+      "drblBox100": 0.75
     },
     {
       "playerId": "203939",
@@ -6562,7 +6562,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 2.77,
-      "drblBox100": 1
+      "drblBox100": 1.02
     },
     {
       "playerId": "1628401",
@@ -6634,7 +6634,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 3.18,
-      "drblBox100": 0.92
+      "drblBox100": 1.13
     },
     {
       "playerId": "1630557",
@@ -6706,7 +6706,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.47,
-      "drblBox100": 0.11
+      "drblBox100": -0.69
     },
     {
       "playerId": "1630194",
@@ -6778,7 +6778,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 2.32,
-      "drblBox100": 2.27
+      "drblBox100": 1.97
     },
     {
       "playerId": "202722",
@@ -6850,7 +6850,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.66,
-      "drblBox100": -0.72
+      "drblBox100": -1.27
     },
     {
       "playerId": "203914",
@@ -6922,7 +6922,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 2.18,
-      "drblBox100": -0.07
+      "drblBox100": -0.47
     },
     {
       "playerId": "1629011",
@@ -6994,7 +6994,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 2.44,
-      "drblBox100": 2.5
+      "drblBox100": 2.85
     },
     {
       "playerId": "1630527",
@@ -7066,7 +7066,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.22,
-      "drblBox100": -2.95
+      "drblBox100": -2.83
     },
     {
       "playerId": "1631100",
@@ -7138,7 +7138,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.62,
-      "drblBox100": -0.58
+      "drblBox100": -1.02
     },
     {
       "playerId": "1628449",
@@ -7210,7 +7210,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.49,
-      "drblBox100": 1.38
+      "drblBox100": 0.94
     },
     {
       "playerId": "1629636",
@@ -7282,7 +7282,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 2.44,
-      "drblBox100": 0.81
+      "drblBox100": 1.3
     },
     {
       "playerId": "1628371",
@@ -7354,7 +7354,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 2.02,
-      "drblBox100": 4.17
+      "drblBox100": 3.24
     },
     {
       "playerId": "1630688",
@@ -7426,7 +7426,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 2.65,
-      "drblBox100": -0.28
+      "drblBox100": -0.24
     },
     {
       "playerId": "1631207",
@@ -7498,7 +7498,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.65,
-      "drblBox100": -0.32
+      "drblBox100": -0.27
     },
     {
       "playerId": "1627751",
@@ -7570,7 +7570,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.96,
-      "drblBox100": 1.7
+      "drblBox100": 1.82
     },
     {
       "playerId": "202691",
@@ -7642,7 +7642,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.84,
-      "drblBox100": -0.05
+      "drblBox100": -0.02
     },
     {
       "playerId": "1630214",
@@ -7714,7 +7714,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.41,
-      "drblBox100": 1.43
+      "drblBox100": 1.13
     },
     {
       "playerId": "1629656",
@@ -7786,7 +7786,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.46,
-      "drblBox100": 0.22
+      "drblBox100": 0.23
     },
     {
       "playerId": "203924",
@@ -7858,7 +7858,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.83,
-      "drblBox100": 0.57
+      "drblBox100": 0.31
     },
     {
       "playerId": "1627814",
@@ -7930,7 +7930,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.32,
-      "drblBox100": -0.47
+      "drblBox100": -1.16
     },
     {
       "playerId": "203992",
@@ -8002,7 +8002,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.46,
-      "drblBox100": 0.2
+      "drblBox100": -0.16
     },
     {
       "playerId": "1630695",
@@ -8074,7 +8074,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.66,
-      "drblBox100": 2.03
+      "drblBox100": 0.59
     },
     {
       "playerId": "1630171",
@@ -8146,7 +8146,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.57,
-      "drblBox100": 0.08
+      "drblBox100": -0.12
     },
     {
       "playerId": "1626163",
@@ -8218,7 +8218,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.81,
-      "drblBox100": 1.84
+      "drblBox100": 0.62
     },
     {
       "playerId": "1627936",
@@ -8290,7 +8290,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 2.8,
-      "drblBox100": 0.7
+      "drblBox100": 0.93
     },
     {
       "playerId": "1629028",
@@ -8362,7 +8362,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.56,
-      "drblBox100": 0.79
+      "drblBox100": 0.81
     },
     {
       "playerId": "202699",
@@ -8434,7 +8434,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.81,
-      "drblBox100": 0.56
+      "drblBox100": 0.79
     },
     {
       "playerId": "1627745",
@@ -8506,7 +8506,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.3,
-      "drblBox100": -0.19
+      "drblBox100": -1.08
     },
     {
       "playerId": "1631114",
@@ -8578,7 +8578,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.35,
-      "drblBox100": 0.5
+      "drblBox100": 0.51
     },
     {
       "playerId": "203925",
@@ -8650,7 +8650,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.07,
-      "drblBox100": -0.27
+      "drblBox100": -0.89
     },
     {
       "playerId": "1629026",
@@ -8722,7 +8722,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.57,
-      "drblBox100": 0.79
+      "drblBox100": 0.51
     },
     {
       "playerId": "1626149",
@@ -8794,7 +8794,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 2.58,
-      "drblBox100": 0.36
+      "drblBox100": -0.17
     },
     {
       "playerId": "1629117",
@@ -8866,7 +8866,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 2.04,
-      "drblBox100": 0.37
+      "drblBox100": -0.1
     },
     {
       "playerId": "1630284",
@@ -8938,7 +8938,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 2.07,
-      "drblBox100": -1.72
+      "drblBox100": -1.67
     },
     {
       "playerId": "1627734",
@@ -9010,7 +9010,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.44,
-      "drblBox100": 1.97
+      "drblBox100": 2.61
     },
     {
       "playerId": "203486",
@@ -9082,7 +9082,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.4,
-      "drblBox100": 1.79
+      "drblBox100": 1.39
     },
     {
       "playerId": "1630539",
@@ -9154,7 +9154,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.2,
-      "drblBox100": -1.4
+      "drblBox100": -1.58
     },
     {
       "playerId": "1628410",
@@ -9226,7 +9226,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.53,
-      "drblBox100": -0.9
+      "drblBox100": -1.04
     },
     {
       "playerId": "1628962",
@@ -9298,7 +9298,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.92,
-      "drblBox100": 0.84
+      "drblBox100": -0.28
     },
     {
       "playerId": "1627832",
@@ -9370,7 +9370,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 2.14,
-      "drblBox100": 0.98
+      "drblBox100": 1.69
     },
     {
       "playerId": "1628960",
@@ -9442,7 +9442,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.29,
-      "drblBox100": 0.21
+      "drblBox100": 0.29
     },
     {
       "playerId": "1630600",
@@ -9514,7 +9514,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.97,
-      "drblBox100": 0.93
+      "drblBox100": 0.49
     },
     {
       "playerId": "1630620",
@@ -9586,7 +9586,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.54,
-      "drblBox100": 7.46
+      "drblBox100": 5.42
     },
     {
       "playerId": "1630543",
@@ -9658,7 +9658,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.88,
-      "drblBox100": 1.15
+      "drblBox100": 0.38
     },
     {
       "playerId": "203484",
@@ -9730,7 +9730,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.35,
-      "drblBox100": 0.21
+      "drblBox100": 0.54
     },
     {
       "playerId": "1630598",
@@ -9802,7 +9802,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.53,
-      "drblBox100": -0.48
+      "drblBox100": -0.9
     },
     {
       "playerId": "1630577",
@@ -9874,7 +9874,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.64,
-      "drblBox100": -0.77
+      "drblBox100": -1.37
     },
     {
       "playerId": "1629630",
@@ -9946,7 +9946,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.8,
-      "drblBox100": 0.89
+      "drblBox100": 1.49
     },
     {
       "playerId": "1626224",
@@ -10018,7 +10018,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 2.29,
-      "drblBox100": -0.36
+      "drblBox100": -0.68
     },
     {
       "playerId": "1629667",
@@ -10090,7 +10090,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.98,
-      "drblBox100": -0.05
+      "drblBox100": -0.39
     },
     {
       "playerId": "1628396",
@@ -10162,7 +10162,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.29,
-      "drblBox100": 2.78
+      "drblBox100": 0.76
     },
     {
       "playerId": "1629723",
@@ -10234,7 +10234,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.59,
-      "drblBox100": 0.35
+      "drblBox100": 0.42
     },
     {
       "playerId": "1628436",
@@ -10306,7 +10306,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.7,
-      "drblBox100": 0.94
+      "drblBox100": 0.24
     },
     {
       "playerId": "1629012",
@@ -10378,7 +10378,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.02,
-      "drblBox100": -0.27
+      "drblBox100": -0.76
     },
     {
       "playerId": "1629139",
@@ -10450,7 +10450,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.02,
-      "drblBox100": 0.03
+      "drblBox100": -0.84
     },
     {
       "playerId": "1631165",
@@ -10522,7 +10522,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.08,
-      "drblBox100": 3.03
+      "drblBox100": 1.38
     },
     {
       "playerId": "1631199",
@@ -10594,7 +10594,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.35,
-      "drblBox100": -0.09
+      "drblBox100": -0.45
     },
     {
       "playerId": "1630215",
@@ -10666,7 +10666,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.04,
-      "drblBox100": -2.63
+      "drblBox100": -1.89
     },
     {
       "playerId": "201143",
@@ -10810,7 +10810,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.26,
-      "drblBox100": 0.89
+      "drblBox100": 0.22
     },
     {
       "playerId": "1629646",
@@ -10882,7 +10882,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.74,
-      "drblBox100": 2.04
+      "drblBox100": 1.44
     },
     {
       "playerId": "203952",
@@ -10954,7 +10954,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.31,
-      "drblBox100": 0.11
+      "drblBox100": 0.46
     },
     {
       "playerId": "1631217",
@@ -11026,7 +11026,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.68,
-      "drblBox100": -0.99
+      "drblBox100": -0.97
     },
     {
       "playerId": "1630529",
@@ -11098,7 +11098,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 2.33,
-      "drblBox100": 0.32
+      "drblBox100": 0.78
     },
     {
       "playerId": "1631105",
@@ -11170,7 +11170,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.65,
-      "drblBox100": 1.12
+      "drblBox100": 0.71
     },
     {
       "playerId": "1630639",
@@ -11242,7 +11242,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.72,
-      "drblBox100": -2
+      "drblBox100": -2.14
     },
     {
       "playerId": "1630568",
@@ -11314,7 +11314,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.07,
-      "drblBox100": 1.84
+      "drblBox100": 0.92
     },
     {
       "playerId": "202331",
@@ -11386,7 +11386,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 2.14,
-      "drblBox100": 0.69
+      "drblBox100": 1.31
     },
     {
       "playerId": "1626195",
@@ -11458,7 +11458,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.26,
-      "drblBox100": 1.98
+      "drblBox100": 1.32
     },
     {
       "playerId": "1630209",
@@ -11530,7 +11530,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.96,
-      "drblBox100": 0.46
+      "drblBox100": 0.04
     },
     {
       "playerId": "1628975",
@@ -11602,7 +11602,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.86,
-      "drblBox100": -0.33
+      "drblBox100": -0.52
     },
     {
       "playerId": "1630643",
@@ -11674,7 +11674,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.07,
-      "drblBox100": 6.52
+      "drblBox100": 3.68
     },
     {
       "playerId": "1626174",
@@ -11746,7 +11746,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.46,
-      "drblBox100": 1.21
+      "drblBox100": 0.72
     },
     {
       "playerId": "1629675",
@@ -11818,7 +11818,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.79,
-      "drblBox100": 0.35
+      "drblBox100": 0.03
     },
     {
       "playerId": "1631112",
@@ -11890,7 +11890,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.14,
-      "drblBox100": -1.07
+      "drblBox100": -0.53
     },
     {
       "playerId": "1629014",
@@ -11962,7 +11962,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.57,
-      "drblBox100": -0.25
+      "drblBox100": -0.2
     },
     {
       "playerId": "1629001",
@@ -12034,7 +12034,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.05,
-      "drblBox100": 0.38
+      "drblBox100": 0.74
     },
     {
       "playerId": "1629056",
@@ -12106,7 +12106,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.14,
-      "drblBox100": -0.91
+      "drblBox100": -0.69
     },
     {
       "playerId": "1631099",
@@ -12178,7 +12178,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.07,
-      "drblBox100": 0.09
+      "drblBox100": 0.04
     },
     {
       "playerId": "1630590",
@@ -12250,7 +12250,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.87,
-      "drblBox100": -2.23
+      "drblBox100": -1.65
     },
     {
       "playerId": "1628978",
@@ -12322,7 +12322,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.34,
-      "drblBox100": 0.45
+      "drblBox100": 0.67
     },
     {
       "playerId": "1627780",
@@ -12394,7 +12394,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.76,
-      "drblBox100": 0.99
+      "drblBox100": 0.6
     },
     {
       "playerId": "1628972",
@@ -12466,7 +12466,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0,
-      "drblBox100": -0.34
+      "drblBox100": -0.57
     },
     {
       "playerId": "1627885",
@@ -12538,7 +12538,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.16,
-      "drblBox100": 4.82
+      "drblBox100": 3.34
     },
     {
       "playerId": "203109",
@@ -12610,7 +12610,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.79,
-      "drblBox100": 1.24
+      "drblBox100": 0.37
     },
     {
       "playerId": "1629632",
@@ -12682,7 +12682,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.04,
-      "drblBox100": -0.2
+      "drblBox100": -0.46
     },
     {
       "playerId": "1630233",
@@ -12754,7 +12754,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.49,
-      "drblBox100": -0.85
+      "drblBox100": -1.27
     },
     {
       "playerId": "1629013",
@@ -12826,7 +12826,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.44,
-      "drblBox100": -1.12
+      "drblBox100": -1.05
     },
     {
       "playerId": "1626158",
@@ -12898,7 +12898,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.29,
-      "drblBox100": -1.49
+      "drblBox100": -2.08
     },
     {
       "playerId": "1630596",
@@ -12970,7 +12970,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.1,
-      "drblBox100": 0.7
+      "drblBox100": 1.18
     },
     {
       "playerId": "203078",
@@ -13042,7 +13042,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.95,
-      "drblBox100": 0.09
+      "drblBox100": 0.33
     },
     {
       "playerId": "1630240",
@@ -13114,7 +13114,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.07,
-      "drblBox100": -0.52
+      "drblBox100": -0.82
     },
     {
       "playerId": "1630531",
@@ -13186,7 +13186,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.97,
-      "drblBox100": 0.46
+      "drblBox100": 0.21
     },
     {
       "playerId": "203082",
@@ -13258,7 +13258,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.23,
-      "drblBox100": -1.09
+      "drblBox100": -1.49
     },
     {
       "playerId": "203944",
@@ -13330,7 +13330,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.36,
-      "drblBox100": 0.74
+      "drblBox100": 1.37
     },
     {
       "playerId": "1629611",
@@ -13402,7 +13402,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.79,
-      "drblBox100": -0.03
+      "drblBox100": -0.41
     },
     {
       "playerId": "1626192",
@@ -13474,7 +13474,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.49,
-      "drblBox100": -0.44
+      "drblBox100": -0.35
     },
     {
       "playerId": "1630678",
@@ -13546,7 +13546,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.67,
-      "drblBox100": -3.2
+      "drblBox100": -2.58
     },
     {
       "playerId": "1628389",
@@ -13618,7 +13618,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.5,
-      "drblBox100": 0.65
+      "drblBox100": 1.04
     },
     {
       "playerId": "1630696",
@@ -13690,7 +13690,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.46,
-      "drblBox100": 0.56
+      "drblBox100": 0.27
     },
     {
       "playerId": "1626156",
@@ -13762,7 +13762,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.21,
-      "drblBox100": 0.26
+      "drblBox100": 0.52
     },
     {
       "playerId": "1629060",
@@ -13834,7 +13834,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.19,
-      "drblBox100": -0.83
+      "drblBox100": -1.3
     },
     {
       "playerId": "1630175",
@@ -13906,7 +13906,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.84,
-      "drblBox100": 0.42
+      "drblBox100": -0.03
     },
     {
       "playerId": "201935",
@@ -13978,7 +13978,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.74,
-      "drblBox100": 1.92
+      "drblBox100": 2.52
     },
     {
       "playerId": "201950",
@@ -14050,7 +14050,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.87,
-      "drblBox100": 0.48
+      "drblBox100": 1.3
     },
     {
       "playerId": "1628381",
@@ -14194,7 +14194,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.09,
-      "drblBox100": 0.02
+      "drblBox100": -0.48
     },
     {
       "playerId": "202709",
@@ -14266,7 +14266,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.15,
-      "drblBox100": -0.23
+      "drblBox100": -0.93
     },
     {
       "playerId": "1631466",
@@ -14338,7 +14338,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.73,
-      "drblBox100": -0.81
+      "drblBox100": -0.86
     },
     {
       "playerId": "1629626",
@@ -14410,7 +14410,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.28,
-      "drblBox100": -0.43
+      "drblBox100": -0.7
     },
     {
       "playerId": "1630583",
@@ -14482,7 +14482,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.72,
-      "drblBox100": 0.32
+      "drblBox100": 0.07
     },
     {
       "playerId": "1630637",
@@ -14554,7 +14554,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.68,
-      "drblBox100": -1.18
+      "drblBox100": -1.44
     },
     {
       "playerId": "1628404",
@@ -14626,7 +14626,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 2.09,
-      "drblBox100": 0.78
+      "drblBox100": 1.15
     },
     {
       "playerId": "1630237",
@@ -14698,7 +14698,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.52,
-      "drblBox100": -0.28
+      "drblBox100": -0.6
     },
     {
       "playerId": "1626157",
@@ -14770,7 +14770,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.14,
-      "drblBox100": 0.9
+      "drblBox100": 1.09
     },
     {
       "playerId": "1630170",
@@ -14842,7 +14842,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.58,
-      "drblBox100": -0.24
+      "drblBox100": -0.68
     },
     {
       "playerId": "203490",
@@ -14914,7 +14914,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0,
-      "drblBox100": 0.84
+      "drblBox100": 0.37
     },
     {
       "playerId": "1627759",
@@ -14986,7 +14986,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.09,
-      "drblBox100": 0.03
+      "drblBox100": 0.69
     },
     {
       "playerId": "1626168",
@@ -15058,7 +15058,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.52,
-      "drblBox100": 0.03
+      "drblBox100": -0.32
     },
     {
       "playerId": "1627777",
@@ -15130,7 +15130,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.67,
-      "drblBox100": -0.72
+      "drblBox100": -1.24
     },
     {
       "playerId": "1630183",
@@ -15202,7 +15202,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.36,
-      "drblBox100": -0.13
+      "drblBox100": -0.01
     },
     {
       "playerId": "1628964",
@@ -15274,7 +15274,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.08,
-      "drblBox100": 1.2
+      "drblBox100": 0.54
     },
     {
       "playerId": "1626171",
@@ -15346,7 +15346,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.41,
-      "drblBox100": 0.4
+      "drblBox100": 0.25
     },
     {
       "playerId": "1630167",
@@ -15418,7 +15418,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.31,
-      "drblBox100": -0.96
+      "drblBox100": -1.15
     },
     {
       "playerId": "1628221",
@@ -15490,7 +15490,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.54,
-      "drblBox100": -0.24
+      "drblBox100": -0.23
     },
     {
       "playerId": "1630206",
@@ -15562,7 +15562,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.07,
-      "drblBox100": -0.11
+      "drblBox100": -0.71
     },
     {
       "playerId": "1628981",
@@ -15634,7 +15634,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.21,
-      "drblBox100": 1.08
+      "drblBox100": 0.33
     },
     {
       "playerId": "1630181",
@@ -15706,7 +15706,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.02,
-      "drblBox100": -1.6
+      "drblBox100": -1.98
     },
     {
       "playerId": "202689",
@@ -15778,7 +15778,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.53,
-      "drblBox100": -0.46
+      "drblBox100": -0.6
     },
     {
       "playerId": "1628976",
@@ -15850,7 +15850,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.59,
-      "drblBox100": 0.66
+      "drblBox100": 0.72
     },
     {
       "playerId": "1629660",
@@ -15922,7 +15922,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.02,
-      "drblBox100": -0.24
+      "drblBox100": -1.02
     },
     {
       "playerId": "201588",
@@ -15994,7 +15994,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.35,
-      "drblBox100": -0.36
+      "drblBox100": -0.82
     },
     {
       "playerId": "1630579",
@@ -16066,7 +16066,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.8,
-      "drblBox100": 0.51
+      "drblBox100": -0.14
     },
     {
       "playerId": "1628997",
@@ -16210,7 +16210,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.68,
-      "drblBox100": -1.21
+      "drblBox100": -1.66
     },
     {
       "playerId": "202694",
@@ -16282,7 +16282,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.71,
-      "drblBox100": -0.79
+      "drblBox100": -0.8
     },
     {
       "playerId": "1630541",
@@ -16354,7 +16354,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.56,
-      "drblBox100": -1.51
+      "drblBox100": -1.83
     },
     {
       "playerId": "1630219",
@@ -16426,7 +16426,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.04,
-      "drblBox100": 2.26
+      "drblBox100": 0.93
     },
     {
       "playerId": "201949",
@@ -16498,7 +16498,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.18,
-      "drblBox100": -2.62
+      "drblBox100": -1.88
     },
     {
       "playerId": "1631132",
@@ -16570,7 +16570,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.22,
-      "drblBox100": -0.01
+      "drblBox100": 0.06
     },
     {
       "playerId": "1629234",
@@ -16642,7 +16642,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.1,
-      "drblBox100": 0.94
+      "drblBox100": 0.34
     },
     {
       "playerId": "1631108",
@@ -16714,7 +16714,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.09,
-      "drblBox100": -2.23
+      "drblBox100": -2.7
     },
     {
       "playerId": "1630241",
@@ -16786,7 +16786,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.16,
-      "drblBox100": 2.02
+      "drblBox100": 1.6
     },
     {
       "playerId": "203526",
@@ -16858,7 +16858,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.43,
-      "drblBox100": -0.49
+      "drblBox100": -0.8
     },
     {
       "playerId": "203501",
@@ -16930,7 +16930,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.7,
-      "drblBox100": -0.34
+      "drblBox100": -0.47
     },
     {
       "playerId": "1629676",
@@ -17002,7 +17002,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.24,
-      "drblBox100": -2.35
+      "drblBox100": -2.2
     },
     {
       "playerId": "1629731",
@@ -17074,7 +17074,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.77,
-      "drblBox100": -0.57
+      "drblBox100": -0.62
     },
     {
       "playerId": "1630534",
@@ -17146,7 +17146,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.4,
-      "drblBox100": -1.53
+      "drblBox100": -1.77
     },
     {
       "playerId": "1631309",
@@ -17218,7 +17218,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.5,
-      "drblBox100": -4.89
+      "drblBox100": -2.92
     },
     {
       "playerId": "1630846",
@@ -17290,7 +17290,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.07,
-      "drblBox100": -1.08
+      "drblBox100": -0.69
     },
     {
       "playerId": "1631116",
@@ -17362,7 +17362,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.31,
-      "drblBox100": -3.04
+      "drblBox100": -2.62
     },
     {
       "playerId": "1631097",
@@ -17434,7 +17434,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.11,
-      "drblBox100": -0.61
+      "drblBox100": -1.16
     },
     {
       "playerId": "202066",
@@ -17506,7 +17506,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.32,
-      "drblBox100": -1.89
+      "drblBox100": -1.87
     },
     {
       "playerId": "1630256",
@@ -17650,7 +17650,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.74,
-      "drblBox100": -0.12
+      "drblBox100": 0.01
     },
     {
       "playerId": "204456",
@@ -17722,7 +17722,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.59,
-      "drblBox100": 0.17
+      "drblBox100": 0.01
     },
     {
       "playerId": "1629663",
@@ -17794,7 +17794,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.11,
-      "drblBox100": 1.31
+      "drblBox100": 0.6
     },
     {
       "playerId": "1641645",
@@ -17866,7 +17866,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.52,
-      "drblBox100": 0.4
+      "drblBox100": 0.48
     },
     {
       "playerId": "1630182",
@@ -17938,7 +17938,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.59,
-      "drblBox100": -0.55
+      "drblBox100": -0.77
     },
     {
       "playerId": "1629023",
@@ -18010,7 +18010,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.37,
-      "drblBox100": -0.35
+      "drblBox100": -0.46
     },
     {
       "playerId": "1628425",
@@ -18082,7 +18082,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.14,
-      "drblBox100": 0.49
+      "drblBox100": 1
     },
     {
       "playerId": "1630535",
@@ -18154,7 +18154,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.37,
-      "drblBox100": -4.89
+      "drblBox100": -3.48
     },
     {
       "playerId": "203552",
@@ -18226,7 +18226,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.43,
-      "drblBox100": -1.07
+      "drblBox100": -1.61
     },
     {
       "playerId": "1629674",
@@ -18298,7 +18298,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.28,
-      "drblBox100": 0.16
+      "drblBox100": -0.37
     },
     {
       "playerId": "1630552",
@@ -18370,7 +18370,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.2,
-      "drblBox100": 0.17
+      "drblBox100": -0.19
     },
     {
       "playerId": "1628963",
@@ -18442,7 +18442,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.09,
-      "drblBox100": -0.02
+      "drblBox100": -0.52
     },
     {
       "playerId": "203210",
@@ -18514,7 +18514,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.58,
-      "drblBox100": 0.1
+      "drblBox100": -0.49
     },
     {
       "playerId": "1627826",
@@ -18586,7 +18586,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.48,
-      "drblBox100": 0.69
+      "drblBox100": 0.77
     },
     {
       "playerId": "1626169",
@@ -18658,7 +18658,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.46,
-      "drblBox100": 0.02
+      "drblBox100": -0.67
     },
     {
       "playerId": "1629006",
@@ -18730,7 +18730,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.03,
-      "drblBox100": -0.01
+      "drblBox100": 0.05
     },
     {
       "playerId": "1631367",
@@ -18802,7 +18802,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.03,
-      "drblBox100": 0.04
+      "drblBox100": 0.01
     },
     {
       "playerId": "1628993",
@@ -18874,7 +18874,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.14,
-      "drblBox100": -5.74
+      "drblBox100": -3.24
     },
     {
       "playerId": "1630631",
@@ -18946,7 +18946,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.25,
-      "drblBox100": -0.77
+      "drblBox100": -0.49
     },
     {
       "playerId": "203482",
@@ -19018,7 +19018,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.3,
-      "drblBox100": 0.26
+      "drblBox100": 0.5
     },
     {
       "playerId": "203926",
@@ -19090,7 +19090,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.6,
-      "drblBox100": -1.37
+      "drblBox100": -2.3
     },
     {
       "playerId": "1630587",
@@ -19162,7 +19162,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.4,
-      "drblBox100": -1.09
+      "drblBox100": -1.63
     },
     {
       "playerId": "1631260",
@@ -19234,7 +19234,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.3,
-      "drblBox100": -1.89
+      "drblBox100": -2.24
     },
     {
       "playerId": "1629684",
@@ -19306,7 +19306,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.24,
-      "drblBox100": -0.23
+      "drblBox100": -0.4
     },
     {
       "playerId": "1628995",
@@ -19378,7 +19378,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.26,
-      "drblBox100": -1.63
+      "drblBox100": -2.12
     },
     {
       "playerId": "203469",
@@ -19450,7 +19450,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.35,
-      "drblBox100": 0.48
+      "drblBox100": -0.23
     },
     {
       "playerId": "203473",
@@ -19522,7 +19522,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.78,
-      "drblBox100": -0.23
+      "drblBox100": -0.86
     },
     {
       "playerId": "201587",
@@ -19594,7 +19594,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.16,
-      "drblBox100": 0.03
+      "drblBox100": -0.13
     },
     {
       "playerId": "1631197",
@@ -19666,7 +19666,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.66,
-      "drblBox100": -3.22
+      "drblBox100": -2.42
     },
     {
       "playerId": "203933",
@@ -19738,7 +19738,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.45,
-      "drblBox100": -1.28
+      "drblBox100": -1.33
     },
     {
       "playerId": "1630270",
@@ -19810,7 +19810,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.57,
-      "drblBox100": -2.22
+      "drblBox100": -2.53
     },
     {
       "playerId": "1630644",
@@ -19882,7 +19882,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.11,
-      "drblBox100": 0.42
+      "drblBox100": 0.23
     },
     {
       "playerId": "1631128",
@@ -19954,7 +19954,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.55,
-      "drblBox100": -0.92
+      "drblBox100": -1.5
     },
     {
       "playerId": "1630192",
@@ -20026,7 +20026,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.8,
-      "drblBox100": -0.83
+      "drblBox100": -1.05
     },
     {
       "playerId": "1630162",
@@ -20098,7 +20098,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.12,
-      "drblBox100": -0.12
+      "drblBox100": 0.45
     },
     {
       "playerId": "1629645",
@@ -20170,7 +20170,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.29,
-      "drblBox100": -0.04
+      "drblBox100": 0.21
     },
     {
       "playerId": "1630625",
@@ -20242,7 +20242,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.65,
-      "drblBox100": -1.95
+      "drblBox100": -1.37
     },
     {
       "playerId": "1627736",
@@ -20314,7 +20314,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.58,
-      "drblBox100": -0.95
+      "drblBox100": -1.02
     },
     {
       "playerId": "1629875",
@@ -20386,7 +20386,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.39,
-      "drblBox100": -4.52
+      "drblBox100": -3.19
     },
     {
       "playerId": "201933",
@@ -20458,7 +20458,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.3,
-      "drblBox100": 0.52
+      "drblBox100": 0.51
     },
     {
       "playerId": "1628988",
@@ -20530,7 +20530,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.11,
-      "drblBox100": -1.78
+      "drblBox100": -1.89
     },
     {
       "playerId": "1627750",
@@ -20602,7 +20602,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.23,
-      "drblBox100": 0.13
+      "drblBox100": 0.64
     },
     {
       "playerId": "1629022",
@@ -20674,7 +20674,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.77,
-      "drblBox100": -1.35
+      "drblBox100": -1.9
     },
     {
       "playerId": "1631306",
@@ -20746,7 +20746,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.26,
-      "drblBox100": -2.26
+      "drblBox100": -2.2
     },
     {
       "playerId": "203994",
@@ -20818,7 +20818,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.05,
-      "drblBox100": 0.6
+      "drblBox100": 0.93
     },
     {
       "playerId": "1630249",
@@ -20890,7 +20890,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.51,
-      "drblBox100": -3.01
+      "drblBox100": -2.23
     },
     {
       "playerId": "1631205",
@@ -20962,7 +20962,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.07,
-      "drblBox100": -7.52
+      "drblBox100": -4.53
     },
     {
       "playerId": "1628984",
@@ -21034,7 +21034,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.97,
-      "drblBox100": -0.09
+      "drblBox100": -0.66
     },
     {
       "playerId": "1629622",
@@ -21106,7 +21106,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.26,
-      "drblBox100": -0.6
+      "drblBox100": -0.83
     },
     {
       "playerId": "1629640",
@@ -21178,7 +21178,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.61,
-      "drblBox100": -0.68
+      "drblBox100": -0.95
     },
     {
       "playerId": "1631298",
@@ -21250,7 +21250,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.36,
-      "drblBox100": 0.61
+      "drblBox100": 0.33
     },
     {
       "playerId": "1631245",
@@ -21322,7 +21322,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.43,
-      "drblBox100": -1.58
+      "drblBox100": -1.51
     },
     {
       "playerId": "1629669",
@@ -21394,7 +21394,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.12,
-      "drblBox100": -1.48
+      "drblBox100": -1.44
     },
     {
       "playerId": "1629644",
@@ -21466,7 +21466,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.21,
-      "drblBox100": -2.86
+      "drblBox100": -2.64
     },
     {
       "playerId": "1630692",
@@ -21538,7 +21538,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.38,
-      "drblBox100": 0.16
+      "drblBox100": -0.09
     },
     {
       "playerId": "1630526",
@@ -21610,7 +21610,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.25,
-      "drblBox100": -0.51
+      "drblBox100": -0.53
     },
     {
       "playerId": "204060",
@@ -21682,7 +21682,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.22,
-      "drblBox100": -0.41
+      "drblBox100": -0.64
     },
     {
       "playerId": "1626145",
@@ -21754,7 +21754,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.17,
-      "drblBox100": 0.3
+      "drblBox100": 0.21
     },
     {
       "playerId": "202696",
@@ -21826,7 +21826,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.91,
-      "drblBox100": 0.51
+      "drblBox100": 0.88
     },
     {
       "playerId": "1630288",
@@ -21898,7 +21898,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.75,
-      "drblBox100": -1.95
+      "drblBox100": -2.07
     },
     {
       "playerId": "1630554",
@@ -21970,7 +21970,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.91,
-      "drblBox100": -4.04
+      "drblBox100": -2.91
     },
     {
       "playerId": "203920",
@@ -22042,7 +22042,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.3,
-      "drblBox100": -3.49
+      "drblBox100": -2.96
     },
     {
       "playerId": "1628370",
@@ -22114,7 +22114,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.83,
-      "drblBox100": -0.34
+      "drblBox100": -0.48
     },
     {
       "playerId": "1630267",
@@ -22186,7 +22186,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.55,
-      "drblBox100": -1.57
+      "drblBox100": -0.35
     },
     {
       "playerId": "1631115",
@@ -22258,7 +22258,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.2,
-      "drblBox100": 0.11
+      "drblBox100": -0.19
     },
     {
       "playerId": "1631230",
@@ -22330,7 +22330,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0,
-      "drblBox100": -0.35
+      "drblBox100": -0.99
     },
     {
       "playerId": "1628971",
@@ -22474,7 +22474,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.12,
-      "drblBox100": -2.12
+      "drblBox100": -1.74
     },
     {
       "playerId": "1630551",
@@ -22546,7 +22546,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.61,
-      "drblBox100": -3.07
+      "drblBox100": -1.86
     },
     {
       "playerId": "1630564",
@@ -22618,7 +22618,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.8,
-      "drblBox100": -0.75
+      "drblBox100": -0.53
     },
     {
       "playerId": "200768",
@@ -22690,7 +22690,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.46,
-      "drblBox100": 0.09
+      "drblBox100": 0.44
     },
     {
       "playerId": "1628464",
@@ -22762,7 +22762,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.52,
-      "drblBox100": -1.09
+      "drblBox100": -1.04
     },
     {
       "playerId": "1629639",
@@ -22834,7 +22834,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.94,
-      "drblBox100": -0.48
+      "drblBox100": -0.04
     },
     {
       "playerId": "1630191",
@@ -22906,7 +22906,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.2,
-      "drblBox100": -0.17
+      "drblBox100": -0.25
     },
     {
       "playerId": "1627742",
@@ -22978,7 +22978,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.34,
-      "drblBox100": -0.3
+      "drblBox100": -0.1
     },
     {
       "playerId": "1631111",
@@ -23050,7 +23050,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.23,
-      "drblBox100": -3.74
+      "drblBox100": -2.62
     },
     {
       "playerId": "201569",
@@ -23122,7 +23122,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.3,
-      "drblBox100": -0.89
+      "drblBox100": -1.23
     },
     {
       "playerId": "1630250",
@@ -23194,7 +23194,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.26,
-      "drblBox100": -6.2
+      "drblBox100": -4.16
     },
     {
       "playerId": "1629677",
@@ -23266,7 +23266,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.25,
-      "drblBox100": -1.97
+      "drblBox100": -1.21
     },
     {
       "playerId": "1630228",
@@ -23338,7 +23338,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.77,
-      "drblBox100": -0.78
+      "drblBox100": -1.01
     },
     {
       "playerId": "1631123",
@@ -23410,7 +23410,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.88,
-      "drblBox100": -3.5
+      "drblBox100": -2.44
     },
     {
       "playerId": "1630346",
@@ -23482,7 +23482,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.01,
-      "drblBox100": -3.8
+      "drblBox100": -3.49
     },
     {
       "playerId": "203086",
@@ -23554,7 +23554,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.67,
-      "drblBox100": -1.18
+      "drblBox100": -1.14
     },
     {
       "playerId": "201980",
@@ -23626,7 +23626,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.95,
-      "drblBox100": -3.29
+      "drblBox100": -2.52
     },
     {
       "playerId": "1629020",
@@ -23698,7 +23698,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.59,
-      "drblBox100": 0.54
+      "drblBox100": 0.75
     },
     {
       "playerId": "1630702",
@@ -23770,7 +23770,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.74,
-      "drblBox100": -1.89
+      "drblBox100": -2.12
     },
     {
       "playerId": "1630224",
@@ -23842,7 +23842,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.39,
-      "drblBox100": -0.86
+      "drblBox100": -1.01
     },
     {
       "playerId": "1630174",
@@ -23914,7 +23914,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.42,
-      "drblBox100": -0.72
+      "drblBox100": -0.93
     },
     {
       "playerId": "1629052",
@@ -23986,7 +23986,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.52,
-      "drblBox100": -0.82
+      "drblBox100": -1.07
     },
     {
       "playerId": "1627783",
@@ -24058,7 +24058,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.3,
-      "drblBox100": 0.43
+      "drblBox100": 0.91
     },
     {
       "playerId": "1631311",
@@ -24130,7 +24130,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.37,
-      "drblBox100": -5.18
+      "drblBox100": -3.26
     },
     {
       "playerId": "1630561",
@@ -24202,7 +24202,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.94,
-      "drblBox100": -5.36
+      "drblBox100": -3.8
     },
     {
       "playerId": "201580",
@@ -24274,7 +24274,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.95,
-      "drblBox100": -1.76
+      "drblBox100": -1.81
     },
     {
       "playerId": "201144",
@@ -24346,7 +24346,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.26,
-      "drblBox100": 0.5
+      "drblBox100": 0.72
     },
     {
       "playerId": "203500",
@@ -24418,7 +24418,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 1.72,
-      "drblBox100": 1.26
+      "drblBox100": 2.07
     },
     {
       "playerId": "1629631",
@@ -24490,7 +24490,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.38,
-      "drblBox100": -0.99
+      "drblBox100": -1.1
     },
     {
       "playerId": "1629647",
@@ -24562,7 +24562,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.68,
-      "drblBox100": -0.42
+      "drblBox100": -0.99
     },
     {
       "playerId": "203915",
@@ -24634,7 +24634,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.52,
-      "drblBox100": 0.2
+      "drblBox100": 0.38
     },
     {
       "playerId": "1631254",
@@ -24706,7 +24706,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.49,
-      "drblBox100": -0.18
+      "drblBox100": -0.59
     },
     {
       "playerId": "1631216",
@@ -24778,7 +24778,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.44,
-      "drblBox100": -2.58
+      "drblBox100": -2.7
     },
     {
       "playerId": "1630647",
@@ -24850,7 +24850,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.49,
-      "drblBox100": -1.83
+      "drblBox100": -1.46
     },
     {
       "playerId": "201586",
@@ -24922,7 +24922,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.15,
-      "drblBox100": -3.38
+      "drblBox100": -2.75
     },
     {
       "playerId": "1628424",
@@ -24994,7 +24994,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.22,
-      "drblBox100": -1.78
+      "drblBox100": -1.49
     },
     {
       "playerId": "202685",
@@ -25066,7 +25066,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.14,
-      "drblBox100": 0.08
+      "drblBox100": 0.44
     },
     {
       "playerId": "1628998",
@@ -25138,7 +25138,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.96,
-      "drblBox100": -2.07
+      "drblBox100": -1.7
     },
     {
       "playerId": "1630176",
@@ -25210,7 +25210,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.08,
-      "drblBox100": -0.87
+      "drblBox100": -0.56
     },
     {
       "playerId": "1628435",
@@ -25282,7 +25282,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.86,
-      "drblBox100": -0.85
+      "drblBox100": -1.48
     },
     {
       "playerId": "1629653",
@@ -25354,7 +25354,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.89,
-      "drblBox100": -2.14
+      "drblBox100": -0.84
     },
     {
       "playerId": "1630586",
@@ -25426,7 +25426,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.29,
-      "drblBox100": 0.22
+      "drblBox100": -0.44
     },
     {
       "playerId": "1630578",
@@ -25498,7 +25498,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.33,
-      "drblBox100": 0.41
+      "drblBox100": 0.7
     },
     {
       "playerId": "1629678",
@@ -25570,7 +25570,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.75,
-      "drblBox100": -2.07
+      "drblBox100": -2.17
     },
     {
       "playerId": "1631172",
@@ -25642,7 +25642,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.6,
-      "drblBox100": -2.53
+      "drblBox100": -1.92
     },
     {
       "playerId": "1627747",
@@ -25714,7 +25714,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.71,
-      "drblBox100": -0.37
+      "drblBox100": -0.32
     },
     {
       "playerId": "1630200",
@@ -25786,7 +25786,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.19,
-      "drblBox100": 0.01
+      "drblBox100": 0.04
     },
     {
       "playerId": "1626196",
@@ -25858,7 +25858,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.62,
-      "drblBox100": -0.75
+      "drblBox100": -0.95
     },
     {
       "playerId": "1631102",
@@ -25930,7 +25930,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.11,
-      "drblBox100": -3.91
+      "drblBox100": -3.11
     },
     {
       "playerId": "1630172",
@@ -26002,7 +26002,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.23,
-      "drblBox100": -0.74
+      "drblBox100": -0.94
     },
     {
       "playerId": "1630245",
@@ -26074,7 +26074,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.6,
-      "drblBox100": -1.04
+      "drblBox100": -1.15
     },
     {
       "playerId": "101108",
@@ -26146,7 +26146,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.89,
-      "drblBox100": 1.04
+      "drblBox100": 1.54
     },
     {
       "playerId": "1630243",
@@ -26218,7 +26218,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.97,
-      "drblBox100": -7.27
+      "drblBox100": -3.75
     },
     {
       "playerId": "202083",
@@ -26362,7 +26362,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.25,
-      "drblBox100": 0.36
+      "drblBox100": 0.52
     },
     {
       "playerId": "1630580",
@@ -26434,7 +26434,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.11,
-      "drblBox100": -8.52
+      "drblBox100": -5.86
     },
     {
       "playerId": "1630591",
@@ -26506,7 +26506,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1,
-      "drblBox100": -0.94
+      "drblBox100": -0.56
     },
     {
       "playerId": "1628372",
@@ -26578,7 +26578,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.56,
-      "drblBox100": -0.61
+      "drblBox100": -0.51
     },
     {
       "playerId": "1631213",
@@ -26650,7 +26650,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.23,
-      "drblBox100": -6.72
+      "drblBox100": -4.47
     },
     {
       "playerId": "1628420",
@@ -26722,7 +26722,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.38,
-      "drblBox100": 0.04
+      "drblBox100": -0.05
     },
     {
       "playerId": "201152",
@@ -26794,7 +26794,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.66,
-      "drblBox100": -0.39
+      "drblBox100": -0.21
     },
     {
       "playerId": "1626179",
@@ -26866,7 +26866,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.56,
-      "drblBox100": -0.77
+      "drblBox100": -0.42
     },
     {
       "playerId": "1629662",
@@ -26938,7 +26938,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.36,
-      "drblBox100": -2.28
+      "drblBox100": -1.11
     },
     {
       "playerId": "1630205",
@@ -27010,7 +27010,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.37,
-      "drblBox100": -1.61
+      "drblBox100": -1.7
     },
     {
       "playerId": "1627749",
@@ -27082,7 +27082,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.56,
-      "drblBox100": -0.29
+      "drblBox100": 0.16
     },
     {
       "playerId": "203937",
@@ -27154,7 +27154,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": 0.51,
-      "drblBox100": 0.39
+      "drblBox100": 0.49
     },
     {
       "playerId": "1630556",
@@ -27226,7 +27226,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.4,
-      "drblBox100": -2.68
+      "drblBox100": -2.2
     },
     {
       "playerId": "203493",
@@ -27298,7 +27298,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.41,
-      "drblBox100": -0.7
+      "drblBox100": -0.98
     },
     {
       "playerId": "1630560",
@@ -27370,7 +27370,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.63,
-      "drblBox100": -2
+      "drblBox100": -2.45
     },
     {
       "playerId": "1629629",
@@ -27442,7 +27442,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.27,
-      "drblBox100": -1.68
+      "drblBox100": -1.79
     },
     {
       "playerId": "1629643",
@@ -27514,7 +27514,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.38,
-      "drblBox100": -1.25
+      "drblBox100": -1.26
     },
     {
       "playerId": "1629638",
@@ -27586,7 +27586,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.75,
-      "drblBox100": -1.43
+      "drblBox100": -1.64
     },
     {
       "playerId": "1629033",
@@ -27658,7 +27658,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.4,
-      "drblBox100": -1.76
+      "drblBox100": -1.93
     },
     {
       "playerId": "1631219",
@@ -27730,7 +27730,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.5,
-      "drblBox100": -3.69
+      "drblBox100": -3.14
     },
     {
       "playerId": "1629633",
@@ -27802,7 +27802,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.43,
-      "drblBox100": -2.88
+      "drblBox100": -1.78
     },
     {
       "playerId": "1629641",
@@ -27874,7 +27874,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.01,
-      "drblBox100": -2.06
+      "drblBox100": -2.18
     },
     {
       "playerId": "1631107",
@@ -27946,7 +27946,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.15,
-      "drblBox100": -3.33
+      "drblBox100": -2.1
     },
     {
       "playerId": "1630537",
@@ -28018,7 +28018,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.7,
-      "drblBox100": -2.46
+      "drblBox100": -2.4
     },
     {
       "playerId": "203487",
@@ -28090,7 +28090,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.84,
-      "drblBox100": -3.76
+      "drblBox100": -2.96
     },
     {
       "playerId": "1629670",
@@ -28162,7 +28162,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.03,
-      "drblBox100": -1.37
+      "drblBox100": -2.01
     },
     {
       "playerId": "1629130",
@@ -28234,7 +28234,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.57,
-      "drblBox100": -2.88
+      "drblBox100": -2.67
     },
     {
       "playerId": "1631212",
@@ -28306,7 +28306,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.38,
-      "drblBox100": -1.91
+      "drblBox100": -2.42
     },
     {
       "playerId": "1627823",
@@ -28378,7 +28378,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.1,
-      "drblBox100": -2.12
+      "drblBox100": -1.93
     },
     {
       "playerId": "1631160",
@@ -28450,7 +28450,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.69,
-      "drblBox100": -6.74
+      "drblBox100": -4.28
     },
     {
       "playerId": "1628427",
@@ -28522,7 +28522,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.03,
-      "drblBox100": -1.28
+      "drblBox100": -1.71
     },
     {
       "playerId": "1629162",
@@ -28594,7 +28594,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.26,
-      "drblBox100": -0.71
+      "drblBox100": -0.7
     },
     {
       "playerId": "203967",
@@ -28666,7 +28666,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.22,
-      "drblBox100": -1.03
+      "drblBox100": -1.05
     },
     {
       "playerId": "1631222",
@@ -28738,7 +28738,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.95,
-      "drblBox100": -3.25
+      "drblBox100": -2.85
     },
     {
       "playerId": "203114",
@@ -28810,7 +28810,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.93,
-      "drblBox100": -0.77
+      "drblBox100": -0.06
     },
     {
       "playerId": "1631119",
@@ -28882,7 +28882,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.25,
-      "drblBox100": -0.54
+      "drblBox100": -0.77
     },
     {
       "playerId": "1629312",
@@ -28954,7 +28954,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.83,
-      "drblBox100": -1.83
+      "drblBox100": -1.78
     },
     {
       "playerId": "1629623",
@@ -29026,7 +29026,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.55,
-      "drblBox100": -6.06
+      "drblBox100": -4.34
     },
     {
       "playerId": "202330",
@@ -29098,7 +29098,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.28,
-      "drblBox100": -0.94
+      "drblBox100": -0.84
     },
     {
       "playerId": "1630570",
@@ -29170,7 +29170,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.17,
-      "drblBox100": -0.62
+      "drblBox100": -1.24
     },
     {
       "playerId": "1630188",
@@ -29242,7 +29242,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.25,
-      "drblBox100": -0.45
+      "drblBox100": -0.4
     },
     {
       "playerId": "201988",
@@ -29314,7 +29314,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.94,
-      "drblBox100": -2.89
+      "drblBox100": -2.8
     },
     {
       "playerId": "203457",
@@ -29386,7 +29386,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.05,
-      "drblBox100": -2.09
+      "drblBox100": -1.71
     },
     {
       "playerId": "1627752",
@@ -29458,7 +29458,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.98,
-      "drblBox100": -1.73
+      "drblBox100": -1.98
     },
     {
       "playerId": "1631303",
@@ -29530,7 +29530,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.9,
-      "drblBox100": -5.24
+      "drblBox100": -3.62
     },
     {
       "playerId": "1630547",
@@ -29602,7 +29602,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.13,
-      "drblBox100": -4.43
+      "drblBox100": -3.65
     },
     {
       "playerId": "1631098",
@@ -29674,7 +29674,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.19,
-      "drblBox100": -4.46
+      "drblBox100": -3.52
     },
     {
       "playerId": "1629216",
@@ -29746,7 +29746,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.24,
-      "drblBox100": -1.57
+      "drblBox100": -1.34
     },
     {
       "playerId": "1629599",
@@ -29818,7 +29818,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.65,
-      "drblBox100": -3.41
+      "drblBox100": -3.66
     },
     {
       "playerId": "1629652",
@@ -29890,7 +29890,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.45,
-      "drblBox100": -0.9
+      "drblBox100": -0.46
     },
     {
       "playerId": "1630230",
@@ -29962,7 +29962,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.2,
-      "drblBox100": -1.06
+      "drblBox100": -1.17
     },
     {
       "playerId": "202693",
@@ -30034,7 +30034,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.52,
-      "drblBox100": -2.49
+      "drblBox100": -2.21
     },
     {
       "playerId": "1627788",
@@ -30106,7 +30106,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.56,
-      "drblBox100": -4.24
+      "drblBox100": -3.73
     },
     {
       "playerId": "1630177",
@@ -30178,7 +30178,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.88,
-      "drblBox100": -1.06
+      "drblBox100": -1.27
     },
     {
       "playerId": "1628380",
@@ -30250,7 +30250,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.13,
-      "drblBox100": -0.36
+      "drblBox100": -0.48
     },
     {
       "playerId": "1628470",
@@ -30394,7 +30394,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.19,
-      "drblBox100": -1.18
+      "drblBox100": -1.83
     },
     {
       "playerId": "201577",
@@ -30466,7 +30466,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.37,
-      "drblBox100": -3.98
+      "drblBox100": -3.51
     },
     {
       "playerId": "201976",
@@ -30538,7 +30538,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.3,
-      "drblBox100": -0.64
+      "drblBox100": -0.48
     },
     {
       "playerId": "203506",
@@ -30610,7 +30610,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.13,
-      "drblBox100": -1.53
+      "drblBox100": -1.08
     },
     {
       "playerId": "1631101",
@@ -30682,7 +30682,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.44,
-      "drblBox100": -1.52
+      "drblBox100": -2.1
     },
     {
       "playerId": "1628365",
@@ -30754,7 +30754,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.38,
-      "drblBox100": -0.5
+      "drblBox100": -0.13
     },
     {
       "playerId": "1630173",
@@ -30826,7 +30826,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.13,
-      "drblBox100": -0.56
+      "drblBox100": -0.57
     },
     {
       "playerId": "1631246",
@@ -30898,7 +30898,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.3,
-      "drblBox100": -7.2
+      "drblBox100": -3.99
     },
     {
       "playerId": "201959",
@@ -30970,7 +30970,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.17,
-      "drblBox100": -1.75
+      "drblBox100": -1.79
     },
     {
       "playerId": "1627854",
@@ -31042,7 +31042,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.54,
-      "drblBox100": -5.49
+      "drblBox100": -4.46
     },
     {
       "playerId": "1629642",
@@ -31114,7 +31114,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.74,
-      "drblBox100": -1.93
+      "drblBox100": -2.43
     },
     {
       "playerId": "1629673",
@@ -31186,7 +31186,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.81,
-      "drblBox100": -1.08
+      "drblBox100": -0.81
     },
     {
       "playerId": "203903",
@@ -31258,7 +31258,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.87,
-      "drblBox100": -1.46
+      "drblBox100": -0.82
     },
     {
       "playerId": "1631120",
@@ -31330,7 +31330,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.43,
-      "drblBox100": -3.4
+      "drblBox100": -2.56
     },
     {
       "playerId": "2617",
@@ -31402,7 +31402,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.5,
-      "drblBox100": -6.47
+      "drblBox100": -5.02
     },
     {
       "playerId": "203085",
@@ -31474,7 +31474,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.71,
-      "drblBox100": -1.85
+      "drblBox100": -2.37
     },
     {
       "playerId": "1626220",
@@ -31546,7 +31546,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.49,
-      "drblBox100": -0.68
+      "drblBox100": -0.42
     },
     {
       "playerId": "1629003",
@@ -31618,7 +31618,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.89,
-      "drblBox100": -1.35
+      "drblBox100": -1.51
     },
     {
       "playerId": "2738",
@@ -31690,7 +31690,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.14,
-      "drblBox100": -3.09
+      "drblBox100": -2.01
     },
     {
       "playerId": "1630544",
@@ -31762,7 +31762,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.18,
-      "drblBox100": -2.42
+      "drblBox100": -2.04
     },
     {
       "playerId": "1629308",
@@ -31834,7 +31834,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.53,
-      "drblBox100": -2.83
+      "drblBox100": -2.9
     },
     {
       "playerId": "1629134",
@@ -31906,7 +31906,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.12,
-      "drblBox100": -3.22
+      "drblBox100": -3.07
     },
     {
       "playerId": "1630558",
@@ -31978,7 +31978,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.26,
-      "drblBox100": -1.76
+      "drblBox100": -1.84
     },
     {
       "playerId": "1628467",
@@ -32050,7 +32050,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.23,
-      "drblBox100": -1.15
+      "drblBox100": -1.5
     },
     {
       "playerId": "1627827",
@@ -32122,7 +32122,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.13,
-      "drblBox100": -1.08
+      "drblBox100": -0.61
     },
     {
       "playerId": "1631113",
@@ -32194,7 +32194,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.63,
-      "drblBox100": -3.19
+      "drblBox100": -2.63
     },
     {
       "playerId": "1631121",
@@ -32266,7 +32266,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -3.56,
-      "drblBox100": -3.17
+      "drblBox100": -3.49
     },
     {
       "playerId": "201599",
@@ -32338,7 +32338,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.62,
-      "drblBox100": -0.14
+      "drblBox100": -0.74
     },
     {
       "playerId": "1630548",
@@ -32410,7 +32410,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -3.36,
-      "drblBox100": -5.84
+      "drblBox100": -4.35
     },
     {
       "playerId": "1629603",
@@ -32482,7 +32482,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.52,
-      "drblBox100": -4.59
+      "drblBox100": -3.32
     },
     {
       "playerId": "1627863",
@@ -32554,7 +32554,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.51,
-      "drblBox100": -2.11
+      "drblBox100": -2.47
     },
     {
       "playerId": "201145",
@@ -32626,7 +32626,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.5,
-      "drblBox100": -1.71
+      "drblBox100": -2.3
     },
     {
       "playerId": "202687",
@@ -32698,7 +32698,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.15,
-      "drblBox100": -0.2
+      "drblBox100": -0.44
     },
     {
       "playerId": "1628408",
@@ -32770,7 +32770,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -3.1,
-      "drblBox100": -6.8
+      "drblBox100": -3.82
     },
     {
       "playerId": "1628373",
@@ -32842,7 +32842,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.41,
-      "drblBox100": -3.8
+      "drblBox100": -3.21
     },
     {
       "playerId": "203468",
@@ -32914,7 +32914,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.58,
-      "drblBox100": -0.89
+      "drblBox100": -0.45
     },
     {
       "playerId": "1630550",
@@ -32986,7 +32986,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.66,
-      "drblBox100": -2.89
+      "drblBox100": -3.11
     },
     {
       "playerId": "203521",
@@ -33058,7 +33058,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -3.08,
-      "drblBox100": -4.2
+      "drblBox100": -3.69
     },
     {
       "playerId": "1630225",
@@ -33130,7 +33130,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.97,
-      "drblBox100": -8.36
+      "drblBox100": -5.39
     },
     {
       "playerId": "1630528",
@@ -33202,7 +33202,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -4.03,
-      "drblBox100": -3.76
+      "drblBox100": -3.52
     },
     {
       "playerId": "1630593",
@@ -33274,7 +33274,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -3.65,
-      "drblBox100": -2.16
+      "drblBox100": -2.43
     },
     {
       "playerId": "1630201",
@@ -33346,7 +33346,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.71,
-      "drblBox100": -3.06
+      "drblBox100": -2.88
     },
     {
       "playerId": "1630197",
@@ -33418,7 +33418,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -4.04,
-      "drblBox100": -1.4
+      "drblBox100": -1.43
     },
     {
       "playerId": "1631110",
@@ -33490,7 +33490,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.35,
-      "drblBox100": -1.84
+      "drblBox100": -1.5
     },
     {
       "playerId": "203200",
@@ -33562,7 +33562,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -3.56,
-      "drblBox100": -3.33
+      "drblBox100": -3.24
     },
     {
       "playerId": "1627853",
@@ -33634,7 +33634,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.73,
-      "drblBox100": -6.03
+      "drblBox100": -4.77
     },
     {
       "playerId": "1628382",
@@ -33706,7 +33706,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -3.72,
-      "drblBox100": -3.89
+      "drblBox100": -3.22
     },
     {
       "playerId": "203458",
@@ -33778,7 +33778,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.6,
-      "drblBox100": -1.22
+      "drblBox100": -0.82
     },
     {
       "playerId": "1626159",
@@ -33850,7 +33850,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.84,
-      "drblBox100": -1.62
+      "drblBox100": -1.26
     },
     {
       "playerId": "1630166",
@@ -33922,7 +33922,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.3,
-      "drblBox100": -0.85
+      "drblBox100": -0.64
     },
     {
       "playerId": "203471",
@@ -33994,7 +33994,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.59,
-      "drblBox100": -1.16
+      "drblBox100": -1.04
     },
     {
       "playerId": "203115",
@@ -34066,7 +34066,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -3.7,
-      "drblBox100": -2.3
+      "drblBox100": -2.63
     },
     {
       "playerId": "1630567",
@@ -34138,7 +34138,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -0.96,
-      "drblBox100": -0.66
+      "drblBox100": 0.1
     },
     {
       "playerId": "1630563",
@@ -34210,7 +34210,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.87,
-      "drblBox100": -5.71
+      "drblBox100": -3.83
     },
     {
       "playerId": "1630549",
@@ -34282,7 +34282,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -3.34,
-      "drblBox100": 0.02
+      "drblBox100": -0.32
     },
     {
       "playerId": "1630613",
@@ -34354,7 +34354,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -3.09,
-      "drblBox100": -7.1
+      "drblBox100": -5.31
     },
     {
       "playerId": "201567",
@@ -34426,7 +34426,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.09,
-      "drblBox100": -0.73
+      "drblBox100": -0.44
     },
     {
       "playerId": "1629027",
@@ -34498,7 +34498,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.81,
-      "drblBox100": -0.32
+      "drblBox100": 0.38
     },
     {
       "playerId": "1630700",
@@ -34570,7 +34570,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.32,
-      "drblBox100": -1.6
+      "drblBox100": -1.47
     },
     {
       "playerId": "1630699",
@@ -34642,7 +34642,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.63,
-      "drblBox100": -3.72
+      "drblBox100": -3.08
     },
     {
       "playerId": "201565",
@@ -34714,7 +34714,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -3.12,
-      "drblBox100": -5.64
+      "drblBox100": -4.3
     },
     {
       "playerId": "203095",
@@ -34786,7 +34786,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -3.36,
-      "drblBox100": -4.16
+      "drblBox100": -3.15
     },
     {
       "playerId": "1630595",
@@ -34858,7 +34858,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.86,
-      "drblBox100": -3.48
+      "drblBox100": -2.24
     },
     {
       "playerId": "1629628",
@@ -34930,7 +34930,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.49,
-      "drblBox100": -1.66
+      "drblBox100": -1.43
     },
     {
       "playerId": "1630235",
@@ -35002,7 +35002,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -3.81,
-      "drblBox100": -5.05
+      "drblBox100": -4.31
     },
     {
       "playerId": "1626166",
@@ -35074,7 +35074,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.44,
-      "drblBox100": -2.08
+      "drblBox100": -1.55
     },
     {
       "playerId": "1630202",
@@ -35146,7 +35146,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -3.45,
-      "drblBox100": -3.49
+      "drblBox100": -2.86
     },
     {
       "playerId": "1628415",
@@ -35218,7 +35218,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.55,
-      "drblBox100": -1.95
+      "drblBox100": -1.3
     },
     {
       "playerId": "1631103",
@@ -35290,7 +35290,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.23,
-      "drblBox100": -2.45
+      "drblBox100": -2.65
     },
     {
       "playerId": "1631223",
@@ -35362,7 +35362,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -3.2,
-      "drblBox100": -2.52
+      "drblBox100": -2.47
     },
     {
       "playerId": "201937",
@@ -35434,7 +35434,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.64,
-      "drblBox100": -1.79
+      "drblBox100": -1.16
     },
     {
       "playerId": "200782",
@@ -35506,7 +35506,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.8,
-      "drblBox100": -1.72
+      "drblBox100": -1.48
     },
     {
       "playerId": "1631133",
@@ -35578,7 +35578,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.66,
-      "drblBox100": -3.38
+      "drblBox100": -3.31
     },
     {
       "playerId": "203935",
@@ -35650,7 +35650,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.18,
-      "drblBox100": -0.86
+      "drblBox100": 0.19
     },
     {
       "playerId": "1628398",
@@ -35722,7 +35722,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.19,
-      "drblBox100": -1.52
+      "drblBox100": -0.88
     },
     {
       "playerId": "203943",
@@ -35794,7 +35794,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -3.3,
-      "drblBox100": -4.25
+      "drblBox100": -3.19
     },
     {
       "playerId": "1629659",
@@ -35866,7 +35866,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.16,
-      "drblBox100": -2
+      "drblBox100": -1.52
     },
     {
       "playerId": "1631157",
@@ -35938,7 +35938,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -4.06,
-      "drblBox100": -15.2
+      "drblBox100": -9.56
     },
     {
       "playerId": "202704",
@@ -36010,7 +36010,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -3.1,
-      "drblBox100": -2.44
+      "drblBox100": -2.1
     },
     {
       "playerId": "1630195",
@@ -36082,7 +36082,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -3.79,
-      "drblBox100": -13.89
+      "drblBox100": -8.86
     },
     {
       "playerId": "1631323",
@@ -36154,7 +36154,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -4.7,
-      "drblBox100": -4.08
+      "drblBox100": -3.87
     },
     {
       "playerId": "200752",
@@ -36226,7 +36226,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.22,
-      "drblBox100": -3
+      "drblBox100": -2.51
     },
     {
       "playerId": "1631095",
@@ -36298,7 +36298,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.86,
-      "drblBox100": -1.34
+      "drblBox100": -1.35
     },
     {
       "playerId": "1630581",
@@ -36370,7 +36370,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -3.21,
-      "drblBox100": -1.14
+      "drblBox100": -0.51
     },
     {
       "playerId": "203110",
@@ -36442,7 +36442,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -1.25,
-      "drblBox100": -0.65
+      "drblBox100": 0.27
     },
     {
       "playerId": "1630538",
@@ -36514,7 +36514,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -3.55,
-      "drblBox100": -1.72
+      "drblBox100": -1.66
     },
     {
       "playerId": "1628432",
@@ -36586,7 +36586,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -4.11,
-      "drblBox100": -4.12
+      "drblBox100": -3.67
     },
     {
       "playerId": "1630163",
@@ -36658,7 +36658,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -2.74,
-      "drblBox100": -0.81
+      "drblBox100": -0.11
     },
     {
       "playerId": "1629614",
@@ -36730,7 +36730,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -3.6,
-      "drblBox100": -1.76
+      "drblBox100": -1.6
     },
     {
       "playerId": "1630572",
@@ -36802,7 +36802,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -3.19,
-      "drblBox100": -1.6
+      "drblBox100": -1.55
     },
     {
       "playerId": "1627732",
@@ -36874,7 +36874,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -3.23,
-      "drblBox100": -0.31
+      "drblBox100": 0.21
     },
     {
       "playerId": "1631094",
@@ -36946,7 +36946,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -3.46,
-      "drblBox100": -1.37
+      "drblBox100": -1.1
     },
     {
       "playerId": "203648",
@@ -37018,7 +37018,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -5.4,
-      "drblBox100": -5.34
+      "drblBox100": -4.65
     },
     {
       "playerId": "201609",
@@ -37090,7 +37090,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -4.88,
-      "drblBox100": -3.71
+      "drblBox100": -3.39
     },
     {
       "playerId": "203476",
@@ -37162,7 +37162,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -5.75,
-      "drblBox100": -3.15
+      "drblBox100": -2.64
     },
     {
       "playerId": "1630533",
@@ -37234,7 +37234,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -5.5,
-      "drblBox100": -4.98
+      "drblBox100": -3.95
     },
     {
       "playerId": "1630553",
@@ -37306,7 +37306,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -5.29,
-      "drblBox100": -5.47
+      "drblBox100": -4.4
     },
     {
       "playerId": "1631093",
@@ -37378,7 +37378,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -5.17,
-      "drblBox100": -2.16
+      "drblBox100": -2.05
     },
     {
       "playerId": "202322",
@@ -37450,7 +37450,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -5.68,
-      "drblBox100": -2.61
+      "drblBox100": -2.25
     },
     {
       "playerId": "1630227",
@@ -37522,7 +37522,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -5.04,
-      "drblBox100": -4.52
+      "drblBox100": -3.81
     },
     {
       "playerId": "1630165",
@@ -37594,7 +37594,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -4.95,
-      "drblBox100": -2.38
+      "drblBox100": -1.9
     },
     {
       "playerId": "201566",
@@ -37666,7 +37666,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -4.23,
-      "drblBox100": -1.83
+      "drblBox100": -1.1
     },
     {
       "playerId": "202397",
@@ -37738,7 +37738,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -7.17,
-      "drblBox100": -7.21
+      "drblBox100": -5.65
     },
     {
       "playerId": "1631104",
@@ -37810,7 +37810,7 @@
       "preprocessingVersion": "drbl-parser-2026.08.11",
       "reconstructionVersion": "drbl-recon-2026.08.11",
       "drblAnchored100": -7.34,
-      "drblBox100": -6.18
+      "drblBox100": -5.46
     }
   ],
   "anchoredLineupModel": {
@@ -37824,7 +37824,7 @@
     "homeAdvantagePer100": 1.96
   },
   "boxPriorModel": {
-    "version": "drbl-box-prior-v1",
+    "version": "drbl-box-prior-v2",
     "shadow": true,
     "shrinkK": 3200,
     "boxScale": 2,
@@ -37845,6 +37845,74 @@
       "personalFoulsPer100": -0.012,
       "minutesPerGame": 0.406,
       "startRate": -0.103
+    },
+    "v1Share": 0.5,
+    "forwardScale": 1.3022,
+    "forward": {
+      "version": "drbl-box-forward-v1",
+      "fittedAt": "2026-10-11T03:30:18.321Z",
+      "blocks": [
+        {
+          "kind": "half",
+          "from": "2022-23",
+          "to": "2022-23",
+          "possessions": 122949
+        },
+        {
+          "kind": "pair",
+          "from": "2022-23",
+          "to": "2023-24",
+          "possessions": 244778
+        },
+        {
+          "kind": "half",
+          "from": "2023-24",
+          "to": "2023-24",
+          "possessions": 121460
+        },
+        {
+          "kind": "pair",
+          "from": "2023-24",
+          "to": "2024-25",
+          "possessions": 245610
+        },
+        {
+          "kind": "half",
+          "from": "2024-25",
+          "to": "2024-25",
+          "possessions": 122663
+        },
+        {
+          "kind": "pair",
+          "from": "2024-25",
+          "to": "2025-26",
+          "possessions": 247784
+        },
+        {
+          "kind": "half",
+          "from": "2025-26",
+          "to": "2025-26",
+          "possessions": 123286
+        }
+      ],
+      "weightsPer100": {
+        "pointsPer100": 1.024,
+        "fieldGoalsAttemptedPer100": -0.82,
+        "threePointersAttemptedPer100": 0.909,
+        "threePointersMadePer100": -0.697,
+        "freeThrowsAttemptedPer100": -0.158,
+        "offensiveReboundsPer100": 0.401,
+        "defensiveReboundsPer100": 0.213,
+        "assistsPer100": 0.404,
+        "stealsPer100": 0.296,
+        "blocksPer100": 0.115,
+        "turnoversPer100": -0.138,
+        "personalFoulsPer100": 0.027,
+        "minutesPerGame": 0.327,
+        "startRate": 0.23,
+        "drbl100": 0.238,
+        "onCourtNetPer100": 0.317
+      }
     }
   }
 }

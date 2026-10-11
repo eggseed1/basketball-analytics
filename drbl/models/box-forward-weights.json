@@ -1,0 +1,84 @@
+{
+  "version": "drbl-box-forward-v1",
+  "fittedAt": "2026-10-11T03:30:18.321Z",
+  "features": [
+    "pointsPer100",
+    "fieldGoalsAttemptedPer100",
+    "threePointersAttemptedPer100",
+    "threePointersMadePer100",
+    "freeThrowsAttemptedPer100",
+    "offensiveReboundsPer100",
+    "defensiveReboundsPer100",
+    "assistsPer100",
+    "stealsPer100",
+    "blocksPer100",
+    "turnoversPer100",
+    "personalFoulsPer100",
+    "minutesPerGame",
+    "startRate",
+    "drbl100",
+    "onCourtNetPer100"
+  ],
+  "weightsPer100": [
+    1.024,
+    -0.820078,
+    0.909009,
+    -0.696503,
+    -0.158393,
+    0.400694,
+    0.213287,
+    0.404016,
+    0.296313,
+    0.115053,
+    -0.137808,
+    0.027029,
+    0.326703,
+    0.230196,
+    0.237745,
+    0.316972
+  ],
+  "blocks": [
+    {
+      "kind": "half",
+      "from": "2022-23",
+      "to": "2022-23",
+      "possessions": 122949
+    },
+    {
+      "kind": "pair",
+      "from": "2022-23",
+      "to": "2023-24",
+      "possessions": 244778
+    },
+    {
+      "kind": "half",
+      "from": "2023-24",
+      "to": "2023-24",
+      "possessions": 121460
+    },
+    {
+      "kind": "pair",
+      "from": "2023-24",
+      "to": "2024-25",
+      "possessions": 245610
+    },
+    {
+      "kind": "half",
+      "from": "2024-25",
+      "to": "2024-25",
+      "possessions": 122663
+    },
+    {
+      "kind": "pair",
+      "from": "2024-25",
+      "to": "2025-26",
+      "possessions": 247784
+    },
+    {
+      "kind": "half",
+      "from": "2025-26",
+      "to": "2025-26",
+      "possessions": 123286
+    }
+  ]
+}

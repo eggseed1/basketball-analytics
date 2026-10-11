@@ -6,7 +6,8 @@
  * on every 5v5 possession on the summed rates of the ten players on the
  * floor, so the target is the scoreboard, not DRBL-P.
  *
- * drblBox100 = N/(N+shrinkK) × rawAbilityRate + shrinkK/(N+shrinkK) × boxScale × box.
+ * v1 = N/(N+shrinkK) × rawAbilityRate + shrinkK/(N+shrinkK) × boxScale × box.
+ * The stored drblBox100 (v2) blends v1 with the forward rating in box-forward.ts.
  *
  * Shadow only: never read by the site overlay or any published surface.
  * Config is frozen; change it only with a fresh run of
@@ -15,7 +16,7 @@
 import type { DrblBoxPlayer } from "../types";
 import { choleskySolve, type AnchoredLineupPossession } from "./anchored-lineup";
 
-export const BOX_PRIOR_VERSION = "drbl-box-prior-v1";
+export const BOX_PRIOR_VERSION = "drbl-box-prior-v2";
 
 export const BOX_PRIOR_STATS = [
   "points",
@@ -232,22 +233,15 @@ export function boxPriorSummary(fit: BoxPriorFit): BoxPriorSummary {
   };
 }
 
-export function attachBoxPrior<T extends { playerId: string; rawAbilityRate: number; possessions: number }>(
+/** Sets drblBox100 from `values` (null clears it); players without a finite value stay absent. */
+export function attachBoxPrior<T extends { playerId: string }>(
   players: T[],
-  fit: BoxPriorFit | null
+  values: ReadonlyMap<string, number> | null
 ): (T & { drblBox100?: number })[] {
-  const values = fit
-    ? shrinkTowardBoxPrior(
-        new Map(players.map((p) => [p.playerId, p.rawAbilityRate])),
-        new Map(players.map((p) => [p.playerId, p.possessions])),
-        fit.ratingsPer100,
-        fit.config
-      )
-    : new Map<string, number>();
   return players.map((p) => {
     const { drblBox100: _stale, ...rest } = p as T & { drblBox100?: number };
     void _stale;
-    const v = values.get(p.playerId);
+    const v = values?.get(p.playerId);
     if (v == null || !Number.isFinite(v)) return rest as T;
     return { ...rest, drblBox100: Number(v.toFixed(2)) } as T & { drblBox100: number };
   });

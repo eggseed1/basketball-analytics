@@ -48,15 +48,14 @@ import {
   fitAnchoredLineup,
   type AnchoredLineupSummary,
 } from "./anchored-lineup";
+import { addBoxScoreToTotals, attachBoxPrior, type BoxPriorTotals } from "./box-prior";
 import {
-  addBoxScoreToTotals,
-  attachBoxPrior,
-  boxPriorFeatures,
-  boxPriorSummary,
-  fitBoxPrior,
-  type BoxPriorSummary,
-  type BoxPriorTotals,
-} from "./box-prior";
+  BOX_FORWARD_WEIGHTS_PATH,
+  boxPriorV2ForSeason,
+  boxPriorV2Summary,
+  loadBoxForwardWeights,
+  type BoxPriorV2Summary,
+} from "./box-forward";
 import {
   DRBL_PARSER_VERSION,
   DRBL_RECONSTRUCTION_VERSION,
@@ -148,7 +147,7 @@ export interface DrblSeasonArtifact {
   /** Shadow lineup fit behind players[].drblAnchored100; not published. */
   anchoredLineupModel?: AnchoredLineupSummary;
   /** Shadow box-prior fit behind players[].drblBox100; not published. */
-  boxPriorModel?: BoxPriorSummary;
+  boxPriorModel?: BoxPriorV2Summary;
   /** Ranking semantics version (bumps when sort key / formulas change). */
   rankingFormulaVersion?: string;
   rankingMode?: string;
@@ -176,7 +175,7 @@ export interface DrblSeasonArtifact {
  * 8) Team-level WAR calibration (M13)
  * 9) Formal WP leverage → DRBL-L (M14; independent of WAR)
  * 10) Shadow lineup ridge anchored on drbl100 → drblAnchored100 (unpublished)
- * 11) Shadow DRBL-P shrunk toward a scoreboard-trained box rating → drblBox100 (unpublished)
+ * 11) Shadow box prior v2 (DRBL-P shrunk toward a scoreboard-trained box rating, blended with frozen forward weights) → drblBox100 (unpublished)
  */
 export async function computeSeasonDrbl(
   season: string,
@@ -525,11 +524,23 @@ export async function computeSeasonDrbl(
     anchoredInput,
     new Map(finalizedPlayers.map((p) => [p.playerId, p.drbl100]))
   );
-  const boxPrior = fitBoxPrior(
-    anchoredInput.rows,
-    boxPriorFeatures(boxTotals, anchoredInput.appearances)
+  const boxForwardWeights = await loadBoxForwardWeights();
+  if (!boxForwardWeights) {
+    console.warn(`[drbl] ${BOX_FORWARD_WEIGHTS_PATH} missing or stale; drblBox100 left blank`);
+  }
+  const boxPrior = boxForwardWeights
+    ? boxPriorV2ForSeason({
+        rows: anchoredInput.rows,
+        appearances: anchoredInput.appearances,
+        totals: boxTotals,
+        players: finalizedPlayers,
+        weights: boxForwardWeights,
+      })
+    : null;
+  const players = attachBoxPrior(
+    attachAnchoredLineup(finalizedPlayers, anchoredLineup),
+    boxPrior?.ratings ?? null
   );
-  const players = attachBoxPrior(attachAnchoredLineup(finalizedPlayers, anchoredLineup), boxPrior);
 
   return {
     season,
@@ -624,7 +635,8 @@ export async function computeSeasonDrbl(
       possessions: leverageModel.possessions,
     },
     anchoredLineupModel: anchoredLineupSummary(anchoredLineup),
-    boxPriorModel: boxPrior ? boxPriorSummary(boxPrior) : undefined,
+    boxPriorModel:
+      boxPrior && boxForwardWeights ? boxPriorV2Summary(boxPrior, boxForwardWeights) : undefined,
     players,
   };
 }

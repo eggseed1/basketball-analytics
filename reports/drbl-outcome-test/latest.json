@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-11T03:11:04.818Z",
+  "generatedAt": "2026-10-11T03:34:00.706Z",
   "anchoredLineup": {
     "version": "drbl-anchored-lineup-v1",
     "config": {
@@ -52,6 +52,39 @@
         "lambda_6400": 14.9864
       }
     }
+  },
+  "boxForwardTrainingBlocks": {
+    "2022-23: first 60% of games → last 40%": null,
+    "2023-24: first 60% of games → last 40%": [
+      "half 2022-23→2022-23"
+    ],
+    "Shipped 2022-23 ratings (drbl-ranking-v2) → every 2023-24 game": [
+      "half 2022-23→2022-23"
+    ],
+    "2024-25: first 60% of games → last 40%": [
+      "half 2022-23→2022-23",
+      "pair 2022-23→2023-24",
+      "half 2023-24→2023-24"
+    ],
+    "Shipped 2023-24 ratings (drbl-ranking-v2) → every 2024-25 game": [
+      "half 2022-23→2022-23",
+      "pair 2022-23→2023-24",
+      "half 2023-24→2023-24"
+    ],
+    "2025-26: first 60% of games → last 40%": [
+      "half 2022-23→2022-23",
+      "pair 2022-23→2023-24",
+      "half 2023-24→2023-24",
+      "pair 2023-24→2024-25",
+      "half 2024-25→2024-25"
+    ],
+    "Shipped 2024-25 ratings (drbl-ranking-v2-seq) → every 2025-26 game": [
+      "half 2022-23→2022-23",
+      "pair 2022-23→2023-24",
+      "half 2023-24→2023-24",
+      "pair 2023-24→2024-25",
+      "half 2024-25→2024-25"
+    ]
   },
   "reports": [
     {
@@ -146,7 +179,7 @@
           }
         },
         {
-          "name": "DRBL-P shrunk toward box rating (drbl-box-prior-v1)",
+          "name": "DRBL-P shrunk toward same-season box rating (v1)",
           "rmse": 12.90044316656861,
           "r2": 0.19730443113950258,
           "vsPublished": {
@@ -225,7 +258,7 @@
           }
         },
         {
-          "name": "Published + DRBL-P shrunk toward box rating (drbl-box-prior-v1)",
+          "name": "Published + DRBL-P shrunk toward same-season box rating (v1)",
           "rmse": 12.91322117835071,
           "r2": 0.1957134884006635,
           "vsPublished": {
@@ -329,13 +362,24 @@
           }
         },
         {
-          "name": "DRBL-P shrunk toward box rating (drbl-box-prior-v1)",
+          "name": "DRBL-P shrunk toward same-season box rating (v1)",
           "rmse": 14.267471635147908,
           "r2": 0.21915529429638325,
           "vsPublished": {
             "delta": -0.8530492745006093,
             "lo": -1.2411816924722459,
             "hi": -0.4129956410556819,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Box blend: v1 + forward box (drbl-box-prior-v2)",
+          "rmse": 14.226225061995214,
+          "r2": 0.22366353715975518,
+          "vsPublished": {
+            "delta": -0.8942958476533036,
+            "lo": -1.2392450130202288,
+            "hi": -0.5267108799930984,
             "verdict": "better"
           }
         }
@@ -408,13 +452,24 @@
           }
         },
         {
-          "name": "Published + DRBL-P shrunk toward box rating (drbl-box-prior-v1)",
+          "name": "Published + DRBL-P shrunk toward same-season box rating (v1)",
           "rmse": 14.306835230127659,
           "r2": 0.2148406887897284,
           "vsPublished": {
             "delta": -0.8136856795208587,
             "lo": -1.2376266363099475,
             "hi": -0.34138154185814074,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + Box blend: v1 + forward box (drbl-box-prior-v2)",
+          "rmse": 14.225461559287405,
+          "r2": 0.22374686482866435,
+          "vsPublished": {
+            "delta": -0.8950593503611124,
+            "lo": -1.325282908774268,
+            "hi": -0.476681552487193,
             "verdict": "better"
           }
         }
@@ -512,13 +567,24 @@
           }
         },
         {
-          "name": "DRBL-P shrunk toward box rating (drbl-box-prior-v1)",
-          "rmse": 14.188958353547868,
-          "r2": 0.1781928834727693,
+          "name": "DRBL-P shrunk toward same-season box rating (v1)",
+          "rmse": 14.188719007308311,
+          "r2": 0.1782206085219371,
           "vsPublished": {
-            "delta": -0.7388848732272155,
-            "lo": -0.9348591247668079,
-            "hi": -0.5233274557650045,
+            "delta": -0.7391242194667722,
+            "lo": -0.9353033784135576,
+            "hi": -0.523424196440132,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Box blend: v1 + forward box (drbl-box-prior-v2)",
+          "rmse": 14.124019349931327,
+          "r2": 0.18569804489413055,
+          "vsPublished": {
+            "delta": -0.8038238768437562,
+            "lo": -1.0076081477576455,
+            "hi": -0.5957783687991469,
             "verdict": "better"
           }
         },
@@ -602,13 +668,24 @@
           }
         },
         {
-          "name": "Published + DRBL-P shrunk toward box rating (drbl-box-prior-v1)",
-          "rmse": 14.14421391144451,
-          "r2": 0.1833677978603735,
+          "name": "Published + DRBL-P shrunk toward same-season box rating (v1)",
+          "rmse": 14.14396930206796,
+          "r2": 0.18339604321466496,
           "vsPublished": {
-            "delta": -0.7836293153305736,
-            "lo": -1.0223665806700666,
-            "hi": -0.5314374072512056,
+            "delta": -0.7838739247071231,
+            "lo": -1.0223024456600633,
+            "hi": -0.5310220611135055,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + Box blend: v1 + forward box (drbl-box-prior-v2)",
+          "rmse": 14.063125284131463,
+          "r2": 0.19270444486242488,
+          "vsPublished": {
+            "delta": -0.8647179426436207,
+            "lo": -1.1153369511712157,
+            "hi": -0.6091665162193483,
             "verdict": "better"
           }
         },
@@ -717,7 +794,7 @@
           }
         },
         {
-          "name": "DRBL-P shrunk toward box rating (drbl-box-prior-v1)",
+          "name": "DRBL-P shrunk toward same-season box rating (v1)",
           "rmse": 14.92896378434571,
           "r2": 0.17304604154437386,
           "vsPublished": {
@@ -725,6 +802,17 @@
             "lo": -0.6648768620598737,
             "hi": 0.07894755216050164,
             "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Box blend: v1 + forward box (drbl-box-prior-v2)",
+          "rmse": 14.6910670905282,
+          "r2": 0.19919147912436297,
+          "vsPublished": {
+            "delta": -0.5352473849508232,
+            "lo": -0.8531005379469221,
+            "hi": -0.18377312744537022,
+            "verdict": "better"
           }
         }
       ],
@@ -796,13 +884,24 @@
           }
         },
         {
-          "name": "Published + DRBL-P shrunk toward box rating (drbl-box-prior-v1)",
+          "name": "Published + DRBL-P shrunk toward same-season box rating (v1)",
           "rmse": 14.903727923193395,
           "r2": 0.17583943795517065,
           "vsPublished": {
             "delta": -0.32258655228562816,
             "lo": -0.6124832763844879,
             "hi": -0.030709611681098536,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + Box blend: v1 + forward box (drbl-box-prior-v2)",
+          "rmse": 14.725079187226944,
+          "r2": 0.19547919521420554,
+          "vsPublished": {
+            "delta": -0.5012352882520794,
+            "lo": -0.8165142146401827,
+            "hi": -0.15676743911344815,
             "verdict": "better"
           }
         }
@@ -900,13 +999,24 @@
           }
         },
         {
-          "name": "DRBL-P shrunk toward box rating (drbl-box-prior-v1)",
-          "rmse": 14.191140841407728,
-          "r2": 0.20312054568095417,
+          "name": "DRBL-P shrunk toward same-season box rating (v1)",
+          "rmse": 14.19167511821172,
+          "r2": 0.20306054173520993,
           "vsPublished": {
-            "delta": -0.5316328634812724,
-            "lo": -0.7566827620512466,
-            "hi": -0.3208783902081649,
+            "delta": -0.531098586677281,
+            "lo": -0.7561533251396781,
+            "hi": -0.3205858370238346,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Box blend: v1 + forward box (drbl-box-prior-v2)",
+          "rmse": 14.159020834705045,
+          "r2": 0.20672375238049157,
+          "vsPublished": {
+            "delta": -0.563752870183956,
+            "lo": -0.7620281478284383,
+            "hi": -0.356877972291608,
             "verdict": "better"
           }
         },
@@ -990,13 +1100,24 @@
           }
         },
         {
-          "name": "Published + DRBL-P shrunk toward box rating (drbl-box-prior-v1)",
-          "rmse": 14.203084529928732,
-          "r2": 0.20177862605946095,
+          "name": "Published + DRBL-P shrunk toward same-season box rating (v1)",
+          "rmse": 14.203564305377128,
+          "r2": 0.20172469784618552,
           "vsPublished": {
-            "delta": -0.5196891749602681,
-            "lo": -0.7345940442284,
-            "hi": -0.32171603378227864,
+            "delta": -0.5192093995118725,
+            "lo": -0.7339999307294516,
+            "hi": -0.3211286567058753,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + Box blend: v1 + forward box (drbl-box-prior-v2)",
+          "rmse": 14.171303816702153,
+          "r2": 0.20534681758179574,
+          "vsPublished": {
+            "delta": -0.5514698881868476,
+            "lo": -0.7463362708357835,
+            "hi": -0.3457257197831396,
             "verdict": "better"
           }
         },
@@ -1105,13 +1226,24 @@
           }
         },
         {
-          "name": "DRBL-P shrunk toward box rating (drbl-box-prior-v1)",
+          "name": "DRBL-P shrunk toward same-season box rating (v1)",
           "rmse": 14.96556095197376,
           "r2": 0.288071730994666,
           "vsPublished": {
             "delta": -1.0229532985218963,
             "lo": -1.4671743349492647,
             "hi": -0.5806485745802288,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Box blend: v1 + forward box (drbl-box-prior-v2)",
+          "rmse": 14.728159913519228,
+          "r2": 0.3104794409277778,
+          "vsPublished": {
+            "delta": -1.2603543369764285,
+            "lo": -1.6769705513689974,
+            "hi": -0.8531324324200682,
             "verdict": "better"
           }
         }
@@ -1184,13 +1316,24 @@
           }
         },
         {
-          "name": "Published + DRBL-P shrunk toward box rating (drbl-box-prior-v1)",
+          "name": "Published + DRBL-P shrunk toward same-season box rating (v1)",
           "rmse": 14.984066550406858,
           "r2": 0.2863099788980039,
           "vsPublished": {
             "delta": -1.0044477000887984,
             "lo": -1.4731563743094718,
             "hi": -0.5284394836380599,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + Box blend: v1 + forward box (drbl-box-prior-v2)",
+          "rmse": 14.67564828878077,
+          "r2": 0.3153874942796132,
+          "vsPublished": {
+            "delta": -1.312865961714886,
+            "lo": -1.8126622566830797,
+            "hi": -0.8107330633063103,
             "verdict": "better"
           }
         }
@@ -1288,13 +1431,24 @@
           }
         },
         {
-          "name": "DRBL-P shrunk toward box rating (drbl-box-prior-v1)",
-          "rmse": 14.89109709022219,
-          "r2": 0.17892946035292212,
+          "name": "DRBL-P shrunk toward same-season box rating (v1)",
+          "rmse": 14.891706788951304,
+          "r2": 0.1788622234112971,
           "vsPublished": {
-            "delta": -0.28904223787545114,
-            "lo": -0.5194646126865212,
-            "hi": -0.07968689513745453,
+            "delta": -0.2884325391463385,
+            "lo": -0.51932200397043,
+            "hi": -0.07907357685005856,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Box blend: v1 + forward box (drbl-box-prior-v2)",
+          "rmse": 14.688097001784882,
+          "r2": 0.20116305295036296,
+          "vsPublished": {
+            "delta": -0.49204232631275957,
+            "lo": -0.7028209020631522,
+            "hi": -0.28755546319813696,
             "verdict": "better"
           }
         },
@@ -1378,13 +1532,24 @@
           }
         },
         {
-          "name": "Published + DRBL-P shrunk toward box rating (drbl-box-prior-v1)",
-          "rmse": 14.849050257364935,
-          "r2": 0.1835597001523822,
+          "name": "Published + DRBL-P shrunk toward same-season box rating (v1)",
+          "rmse": 14.849420756664157,
+          "r2": 0.18351895756919545,
           "vsPublished": {
-            "delta": -0.3310890707327072,
-            "lo": -0.5041481446702765,
-            "hi": -0.17532766502738006,
+            "delta": -0.3307185714334846,
+            "lo": -0.5034923602730235,
+            "hi": -0.17486884379060008,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + Box blend: v1 + forward box (drbl-box-prior-v2)",
+          "rmse": 14.695514387587556,
+          "r2": 0.20035603513970635,
+          "vsPublished": {
+            "delta": -0.484624940510086,
+            "lo": -0.6878083097043959,
+            "hi": -0.28761466147800085,
             "verdict": "better"
           }
         },

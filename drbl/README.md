@@ -37,6 +37,7 @@ Writes:
 - `data/drbl/normalized/{season}/` — events, possessions, reconcile, offline player season
 - `src/data/drbl/precomputed/{season}.json` — loaded by the website
 - `drbl/models/epv-coeffs.json` — fitted EPV coefficients, tracked; written by `drbl:epv`, and `drbl:compute` fails without them
+- `drbl/models/box-forward-weights.json` — frozen forward box weights, tracked; written by `drbl:box-forward-fit`, and `drbl:compute` leaves `drblBox100` blank without them
 
 ## Layout
 

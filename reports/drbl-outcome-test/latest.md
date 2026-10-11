@@ -1,12 +1,12 @@
 # DRBL outcome test
 
-Generated 2026-10-11T03:11:04.818Z by `npm run drbl:outcome-test`.
+Generated 2026-10-11T03:34:00.706Z by `npm run drbl:outcome-test`.
 
 R² is the share of final-margin variance explained beyond home court, out of sample. ΔRMSE is the candidate's error minus published DRBL/100's error in points, with a 95% game-bootstrap interval. Negative means the candidate predicts margins better.
 
-Promotion rule: a candidate can replace published DRBL/100 only if its interval sits below 0 in every cross-season test and never above 0 within season. Passing makes it eligible; switching is still a product decision. Anchored lineup (drbl-anchored-lineup-v1) and DRBL-P shrunk toward box rating (drbl-box-prior-v1) are stored as the shadow fields `drblAnchored100` and `drblBox100`.
+Promotion rule: a candidate can replace published DRBL/100 only if its interval sits below 0 in every cross-season test and never above 0 within season. Passing makes it eligible; switching is still a product decision. Anchored lineup (drbl-anchored-lineup-v1) and Box blend: v1 + forward box (drbl-box-prior-v2) are stored as the shadow fields `drblAnchored100` and `drblBox100`. DRBL-P shrunk toward same-season box rating (v1) is the same-season half of the blend.
 
-Cross-season rows use each season's shipped artifact as is; the section title names its pipeline version.
+Cross-season rows use each season's shipped artifact as is; the section title names its pipeline version. Both box rows are rebuilt here from the rating window instead of read from the artifact. The blend's forward weights are refit for each test on earlier possessions only: through the rating season for cross-season tests, through the season before for within-season tests. The first local season has nothing earlier, so its within-season test has no blend row.
 
 ## 2022-23: first 60% of games → last 40%
 
@@ -23,7 +23,7 @@ Cross-season rows use each season's shipped artifact as is; the section title na
 | Raw on-court +/- per 100 | 17.5% | 13.08 | -0.546 [-0.861, -0.243] | better |
 | Scoreboard lineup ridge (λ=6400) | 17.1% | 13.11 | -0.516 [-0.828, -0.202] | better |
 | Anchored lineup (drbl-anchored-lineup-v1) | 13.7% | 13.38 | -0.247 [-0.374, -0.127] | better |
-| DRBL-P shrunk toward box rating (drbl-box-prior-v1) | 19.7% | 12.90 | -0.723 [-1.088, -0.342] | better |
+| DRBL-P shrunk toward same-season box rating (v1) | 19.7% | 12.90 | -0.723 [-1.088, -0.342] | better |
 
 Added on top of published (two slopes):
 
@@ -35,7 +35,7 @@ Added on top of published (two slopes):
 | Published + Raw on-court +/- per 100 | 17.3% | -0.533 [-0.837, -0.233] | better |
 | Published + Scoreboard lineup ridge (λ=6400) | 17.0% | -0.505 [-0.806, -0.205] | better |
 | Published + Anchored lineup (drbl-anchored-lineup-v1) | 14.4% | -0.302 [-0.529, -0.063] | better |
-| Published + DRBL-P shrunk toward box rating (drbl-box-prior-v1) | 19.6% | -0.710 [-1.104, -0.296] | better |
+| Published + DRBL-P shrunk toward same-season box rating (v1) | 19.6% | -0.710 [-1.104, -0.296] | better |
 
 ## 2023-24: first 60% of games → last 40%
 
@@ -52,7 +52,8 @@ Added on top of published (two slopes):
 | Raw on-court +/- per 100 | 17.0% | 14.71 | -0.407 [-0.751, -0.047] | better |
 | Scoreboard lineup ridge (λ=6400) | 18.2% | 14.60 | -0.518 [-0.841, -0.186] | better |
 | Anchored lineup (drbl-anchored-lineup-v1) | 16.8% | 14.73 | -0.394 [-0.566, -0.202] | better |
-| DRBL-P shrunk toward box rating (drbl-box-prior-v1) | 21.9% | 14.27 | -0.853 [-1.241, -0.413] | better |
+| DRBL-P shrunk toward same-season box rating (v1) | 21.9% | 14.27 | -0.853 [-1.241, -0.413] | better |
+| Box blend: v1 + forward box (drbl-box-prior-v2) | 22.4% | 14.23 | -0.894 [-1.239, -0.527] | better |
 
 Added on top of published (two slopes):
 
@@ -64,7 +65,8 @@ Added on top of published (two slopes):
 | Published + Raw on-court +/- per 100 | 16.9% | -0.403 [-0.695, -0.107] | better |
 | Published + Scoreboard lineup ridge (λ=6400) | 18.0% | -0.498 [-0.825, -0.158] | better |
 | Published + Anchored lineup (drbl-anchored-lineup-v1) | 17.8% | -0.478 [-0.813, -0.119] | better |
-| Published + DRBL-P shrunk toward box rating (drbl-box-prior-v1) | 21.5% | -0.814 [-1.238, -0.341] | better |
+| Published + DRBL-P shrunk toward same-season box rating (v1) | 21.5% | -0.814 [-1.238, -0.341] | better |
+| Published + Box blend: v1 + forward box (drbl-box-prior-v2) | 22.4% | -0.895 [-1.325, -0.477] | better |
 
 ## Shipped 2022-23 ratings (drbl-ranking-v2) → every 2023-24 game
 
@@ -81,7 +83,8 @@ Added on top of published (two slopes):
 | Raw on-court +/- per 100 | 13.7% | 14.54 | -0.384 [-0.585, -0.175] | better |
 | Scoreboard lineup ridge (λ=6400) | 13.4% | 14.56 | -0.366 [-0.567, -0.157] | better |
 | Anchored lineup (drbl-anchored-lineup-v1) | 13.0% | 14.60 | -0.328 [-0.429, -0.223] | better |
-| DRBL-P shrunk toward box rating (drbl-box-prior-v1) | 17.8% | 14.19 | -0.739 [-0.935, -0.523] | better |
+| DRBL-P shrunk toward same-season box rating (v1) | 17.8% | 14.19 | -0.739 [-0.935, -0.523] | better |
+| Box blend: v1 + forward box (drbl-box-prior-v2) | 18.6% | 14.12 | -0.804 [-1.008, -0.596] | better |
 | DARKO 2022-23 (external) | 11.7% | 14.71 | -0.219 [-0.464, +0.037] | no clear difference |
 
 Added on top of published (two slopes):
@@ -94,7 +97,8 @@ Added on top of published (two slopes):
 | Published + Raw on-court +/- per 100 | 13.6% | -0.382 [-0.568, -0.191] | better |
 | Published + Scoreboard lineup ridge (λ=6400) | 13.5% | -0.367 [-0.544, -0.180] | better |
 | Published + Anchored lineup (drbl-anchored-lineup-v1) | 14.4% | -0.447 [-0.637, -0.249] | better |
-| Published + DRBL-P shrunk toward box rating (drbl-box-prior-v1) | 18.3% | -0.784 [-1.022, -0.531] | better |
+| Published + DRBL-P shrunk toward same-season box rating (v1) | 18.3% | -0.784 [-1.022, -0.531] | better |
+| Published + Box blend: v1 + forward box (drbl-box-prior-v2) | 19.3% | -0.865 [-1.115, -0.609] | better |
 | Published + DARKO 2022-23 (external) | 13.3% | -0.351 [-0.519, -0.180] | better |
 
 ## 2024-25: first 60% of games → last 40%
@@ -112,7 +116,8 @@ Added on top of published (two slopes):
 | Raw on-court +/- per 100 | 23.8% | 14.33 | -0.896 [-1.307, -0.453] | better |
 | Scoreboard lineup ridge (λ=6400) | 21.2% | 14.57 | -0.653 [-0.991, -0.299] | better |
 | Anchored lineup (drbl-anchored-lineup-v1) | 17.6% | 14.90 | -0.323 [-0.489, -0.151] | better |
-| DRBL-P shrunk toward box rating (drbl-box-prior-v1) | 17.3% | 14.93 | -0.297 [-0.665, +0.079] | no clear difference |
+| DRBL-P shrunk toward same-season box rating (v1) | 17.3% | 14.93 | -0.297 [-0.665, +0.079] | no clear difference |
+| Box blend: v1 + forward box (drbl-box-prior-v2) | 19.9% | 14.69 | -0.535 [-0.853, -0.184] | better |
 
 Added on top of published (two slopes):
 
@@ -124,7 +129,8 @@ Added on top of published (two slopes):
 | Published + Raw on-court +/- per 100 | 23.5% | -0.865 [-1.281, -0.429] | better |
 | Published + Scoreboard lineup ridge (λ=6400) | 20.8% | -0.616 [-0.976, -0.246] | better |
 | Published + Anchored lineup (drbl-anchored-lineup-v1) | 18.2% | -0.382 [-0.676, -0.079] | better |
-| Published + DRBL-P shrunk toward box rating (drbl-box-prior-v1) | 17.6% | -0.323 [-0.612, -0.031] | better |
+| Published + DRBL-P shrunk toward same-season box rating (v1) | 17.6% | -0.323 [-0.612, -0.031] | better |
+| Published + Box blend: v1 + forward box (drbl-box-prior-v2) | 19.5% | -0.501 [-0.817, -0.157] | better |
 
 ## Shipped 2023-24 ratings (drbl-ranking-v2) → every 2024-25 game
 
@@ -141,7 +147,8 @@ Added on top of published (two slopes):
 | Raw on-court +/- per 100 | 14.1% | 14.73 | +0.011 [-0.251, +0.258] | no clear difference |
 | Scoreboard lineup ridge (λ=6400) | 14.3% | 14.72 | -0.007 [-0.244, +0.222] | no clear difference |
 | Anchored lineup (drbl-anchored-lineup-v1) | 15.2% | 14.64 | -0.084 [-0.178, +0.005] | no clear difference |
-| DRBL-P shrunk toward box rating (drbl-box-prior-v1) | 20.3% | 14.19 | -0.532 [-0.757, -0.321] | better |
+| DRBL-P shrunk toward same-season box rating (v1) | 20.3% | 14.19 | -0.531 [-0.756, -0.321] | better |
+| Box blend: v1 + forward box (drbl-box-prior-v2) | 20.7% | 14.16 | -0.564 [-0.762, -0.357] | better |
 | DARKO 2023-24 (external) | 12.6% | 14.86 | +0.141 [-0.112, +0.423] | no clear difference |
 
 Added on top of published (two slopes):
@@ -154,7 +161,8 @@ Added on top of published (two slopes):
 | Published + Raw on-court +/- per 100 | 16.2% | -0.167 [-0.304, -0.037] | better |
 | Published + Scoreboard lineup ridge (λ=6400) | 16.0% | -0.151 [-0.276, -0.030] | better |
 | Published + Anchored lineup (drbl-anchored-lineup-v1) | 15.1% | -0.074 [-0.153, +0.004] | no clear difference |
-| Published + DRBL-P shrunk toward box rating (drbl-box-prior-v1) | 20.2% | -0.520 [-0.735, -0.322] | better |
+| Published + DRBL-P shrunk toward same-season box rating (v1) | 20.2% | -0.519 [-0.734, -0.321] | better |
+| Published + Box blend: v1 + forward box (drbl-box-prior-v2) | 20.5% | -0.551 [-0.746, -0.346] | better |
 | Published + DARKO 2023-24 (external) | 16.3% | -0.182 [-0.305, -0.053] | better |
 
 ## 2025-26: first 60% of games → last 40%
@@ -172,7 +180,8 @@ Added on top of published (two slopes):
 | Raw on-court +/- per 100 | 24.1% | 15.46 | -0.531 [-0.997, -0.066] | better |
 | Scoreboard lineup ridge (λ=1600) | 21.1% | 15.76 | -0.229 [-0.652, +0.221] | no clear difference |
 | Anchored lineup (drbl-anchored-lineup-v1) | 20.9% | 15.78 | -0.213 [-0.394, -0.046] | better |
-| DRBL-P shrunk toward box rating (drbl-box-prior-v1) | 28.8% | 14.97 | -1.023 [-1.467, -0.581] | better |
+| DRBL-P shrunk toward same-season box rating (v1) | 28.8% | 14.97 | -1.023 [-1.467, -0.581] | better |
+| Box blend: v1 + forward box (drbl-box-prior-v2) | 31.0% | 14.73 | -1.260 [-1.677, -0.853] | better |
 
 Added on top of published (two slopes):
 
@@ -184,7 +193,8 @@ Added on top of published (two slopes):
 | Published + Raw on-court +/- per 100 | 25.0% | -0.630 [-0.966, -0.261] | better |
 | Published + Scoreboard lineup ridge (λ=1600) | 22.6% | -0.382 [-0.652, -0.103] | better |
 | Published + Anchored lineup (drbl-anchored-lineup-v1) | 20.6% | -0.189 [-0.417, +0.015] | no clear difference |
-| Published + DRBL-P shrunk toward box rating (drbl-box-prior-v1) | 28.6% | -1.004 [-1.473, -0.528] | better |
+| Published + DRBL-P shrunk toward same-season box rating (v1) | 28.6% | -1.004 [-1.473, -0.528] | better |
+| Published + Box blend: v1 + forward box (drbl-box-prior-v2) | 31.5% | -1.313 [-1.813, -0.811] | better |
 
 ## Shipped 2024-25 ratings (drbl-ranking-v2-seq) → every 2025-26 game
 
@@ -201,7 +211,8 @@ Added on top of published (two slopes):
 | Raw on-court +/- per 100 | 9.8% | 15.61 | +0.427 [+0.195, +0.678] | worse |
 | Scoreboard lineup ridge (λ=6400) | 10.5% | 15.55 | +0.365 [+0.157, +0.597] | worse |
 | Anchored lineup (drbl-anchored-lineup-v1) | 15.3% | 15.13 | -0.055 [-0.156, +0.050] | no clear difference |
-| DRBL-P shrunk toward box rating (drbl-box-prior-v1) | 17.9% | 14.89 | -0.289 [-0.519, -0.080] | better |
+| DRBL-P shrunk toward same-season box rating (v1) | 17.9% | 14.89 | -0.288 [-0.519, -0.079] | better |
+| Box blend: v1 + forward box (drbl-box-prior-v2) | 20.1% | 14.69 | -0.492 [-0.703, -0.288] | better |
 | DARKO 2024-25 (external) | 16.3% | 15.03 | -0.148 [-0.468, +0.122] | no clear difference |
 
 Added on top of published (two slopes):
@@ -214,5 +225,6 @@ Added on top of published (two slopes):
 | Published + Raw on-court +/- per 100 | 15.0% | -0.025 [-0.078, +0.029] | no clear difference |
 | Published + Scoreboard lineup ridge (λ=6400) | 14.8% | -0.014 [-0.057, +0.032] | no clear difference |
 | Published + Anchored lineup (drbl-anchored-lineup-v1) | 15.2% | -0.047 [-0.122, +0.029] | no clear difference |
-| Published + DRBL-P shrunk toward box rating (drbl-box-prior-v1) | 18.4% | -0.331 [-0.504, -0.175] | better |
+| Published + DRBL-P shrunk toward same-season box rating (v1) | 18.4% | -0.331 [-0.503, -0.175] | better |
+| Published + Box blend: v1 + forward box (drbl-box-prior-v2) | 20.0% | -0.485 [-0.688, -0.288] | better |
 | Published + DARKO 2024-25 (external) | 18.4% | -0.334 [-0.518, -0.171] | better |
