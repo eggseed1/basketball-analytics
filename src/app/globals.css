@@ -1077,10 +1077,12 @@ html:not([data-surface="glass"]) .color-scheme-switch {
 }
 
 /* Page wash - glass samples this color (Apple materials). A soft mesh: one
-   orb per team color plus a third that blends the two, each with an
-   off-center core so rotation reads as a slow swirl. Each gradient radius
-   stays inside its circle, or the rounded edge clips it into a visible arc.
-   Only transform animates, so the layers stay on the compositor. */
+   orb per team color plus a third that blends the two. Only transform
+   animates, so the layers stay on the compositor. Each box is exactly its
+   gradient's diameter and fades to transparent at the edge, so it needs no
+   rounded mask. Don't rotate these layers or grow them past the gradient:
+   viewport-sized rotated layers draw as visible square tiles on some GPUs,
+   iPhone Safari especially. */
 .page-atmosphere {
   pointer-events: none;
   position: fixed;
@@ -1117,17 +1119,16 @@ html:not([data-surface="glass"]) .color-scheme-switch {
 .page-atmosphere__orb {
   content: "";
   position: absolute;
-  border-radius: 9999px;
   will-change: transform;
 }
 
 .page-atmosphere::before {
-  width: 120vmax;
-  height: 120vmax;
-  left: -54vmax;
-  top: -60vmax;
+  width: 100vmax;
+  height: 100vmax;
+  left: -53.6vmax;
+  top: -54.8vmax;
   background: radial-gradient(
-    circle 50vmax at 42% 46%,
+    circle closest-side,
     var(--orb-a) 0%,
     color-mix(in oklab, var(--orb-a) 62%, transparent) 36%,
     color-mix(in oklab, var(--orb-a) 22%, transparent) 70%,
@@ -1137,12 +1138,12 @@ html:not([data-surface="glass"]) .color-scheme-switch {
 }
 
 .page-atmosphere::after {
-  width: 110vmax;
-  height: 110vmax;
-  right: -50vmax;
-  top: -54vmax;
+  width: 90vmax;
+  height: 90vmax;
+  right: -48.8vmax;
+  top: -50.6vmax;
   background: radial-gradient(
-    circle 45vmax at 58% 44%,
+    circle closest-side,
     var(--orb-b) 0%,
     color-mix(in oklab, var(--orb-b) 62%, transparent) 36%,
     color-mix(in oklab, var(--orb-b) 22%, transparent) 70%,
@@ -1152,12 +1153,12 @@ html:not([data-surface="glass"]) .color-scheme-switch {
 }
 
 .page-atmosphere__orb {
-  width: 90vmax;
-  height: 90vmax;
-  left: 4vw;
-  bottom: -62vmax;
+  width: 70vmax;
+  height: 70vmax;
+  left: calc(4vw + 10vmax);
+  bottom: -43vmax;
   background: radial-gradient(
-    circle 35vmax at 50% 40%,
+    circle closest-side,
     var(--orb-d) 0%,
     color-mix(in oklab, var(--orb-d) 50%, transparent) 44%,
     transparent 100%
@@ -1183,52 +1184,52 @@ html:not([data-surface="glass"]) .color-scheme-switch {
 
 @keyframes atmosphere-drift-a {
   0% {
-    transform: translate3d(0, 0, 0) rotate(0deg) scale(1, 1);
+    transform: translate3d(0, 0, 0) scale(1, 1);
   }
   25% {
-    transform: translate3d(22vw, 16vh, 0) rotate(70deg) scale(1.16, 0.9);
+    transform: translate3d(22vw, 16vh, 0) scale(1.16, 0.9);
   }
   50% {
-    transform: translate3d(36vw, 34vh, 0) rotate(150deg) scale(0.94, 1.1);
+    transform: translate3d(36vw, 34vh, 0) scale(0.94, 1.1);
   }
   75% {
-    transform: translate3d(12vw, 44vh, 0) rotate(220deg) scale(1.1, 0.92);
+    transform: translate3d(12vw, 44vh, 0) scale(1.1, 0.92);
   }
   100% {
-    transform: translate3d(-4vw, 22vh, 0) rotate(300deg) scale(1.2, 1.04);
+    transform: translate3d(-4vw, 22vh, 0) scale(1.2, 1.04);
   }
 }
 
 @keyframes atmosphere-drift-b {
   0% {
-    transform: translate3d(0, 0, 0) rotate(0deg) scale(1, 1);
+    transform: translate3d(0, 0, 0) scale(1, 1);
   }
   25% {
-    transform: translate3d(-18vw, 26vh, 0) rotate(-60deg) scale(0.92, 1.12);
+    transform: translate3d(-18vw, 26vh, 0) scale(0.92, 1.12);
   }
   50% {
-    transform: translate3d(-36vw, 12vh, 0) rotate(-140deg) scale(1.18, 0.94);
+    transform: translate3d(-36vw, 12vh, 0) scale(1.18, 0.94);
   }
   75% {
-    transform: translate3d(-26vw, 40vh, 0) rotate(-210deg) scale(1.04, 1.1);
+    transform: translate3d(-26vw, 40vh, 0) scale(1.04, 1.1);
   }
   100% {
-    transform: translate3d(-8vw, 30vh, 0) rotate(-280deg) scale(0.96, 0.9);
+    transform: translate3d(-8vw, 30vh, 0) scale(0.96, 0.9);
   }
 }
 
 @keyframes atmosphere-drift-c {
   0% {
-    transform: translate3d(0, 0, 0) rotate(0deg) scale(1, 1);
+    transform: translate3d(0, 0, 0) scale(1, 1);
   }
   33% {
-    transform: translate3d(30vw, -18vh, 0) rotate(90deg) scale(1.15, 0.9);
+    transform: translate3d(30vw, -18vh, 0) scale(1.15, 0.9);
   }
   66% {
-    transform: translate3d(52vw, -6vh, 0) rotate(180deg) scale(0.9, 1.12);
+    transform: translate3d(52vw, -6vh, 0) scale(0.9, 1.12);
   }
   100% {
-    transform: translate3d(18vw, -26vh, 0) rotate(260deg) scale(1.08, 1);
+    transform: translate3d(18vw, -26vh, 0) scale(1.08, 1);
   }
 }
 
