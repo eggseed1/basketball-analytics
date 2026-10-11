@@ -106,7 +106,7 @@
   },
   "src/components/compare/player-compare-view.tsx": {
     "react-hooks/set-state-in-effect": {
-      "count": 4
+      "count": 2
     }
   },
   "src/components/design-system/theme-provider.tsx": {

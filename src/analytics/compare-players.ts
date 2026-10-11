@@ -11,9 +11,19 @@ import {
   SHEET_STAT_BY_ID,
   SHEET_STAT_CATEGORY_ORDER,
   SHEET_STAT_DEFS,
+  type SheetRateMode,
   type SheetStatCategory,
   type SheetStatId,
 } from "@/lib/player-stat-sheet-registry";
+
+/** Counting-stat bases offered on compare. Rates and percentages ignore it. */
+export type CompareBasis = Extract<SheetRateMode, "perGame" | "per36" | "per100">;
+
+export const COMPARE_BASES: Array<{ id: CompareBasis; label: string }> = [
+  { id: "perGame", label: "Per game" },
+  { id: "per36", label: "Per 36" },
+  { id: "per100", label: "Per 100 poss" },
+];
 
 function percentileOf(value: number, pool: number[], invert = false): number {
   if (!pool.length || !Number.isFinite(value)) return 50;
@@ -45,24 +55,41 @@ const COMPARE_DIMS: Array<{
 
 /** Default-on metrics in the compare UI (player can enable the rest). */
 export const COMPARE_DEFAULT_METRIC_IDS: SheetStatId[] = [
+  "mp",
   "pts",
   "trb",
+  "orb",
   "ast",
-  "stl",
-  "blk",
   "tov",
   "fgPct",
+  "fg3",
+  "fg3a",
   "fg3Pct",
+  "fta",
   "ftPct",
   "efg",
   "ts",
-  "usg",
-  "tovPct",
-  "astPct",
-  "ortg",
+  "stl",
+  "blk",
+  "stlPct",
+  "blkPct",
+  "drbPct",
   "drtg",
+  "hustleDefl",
+  "hustleContest",
+  "usg",
+  "atr",
+  "astPct",
+  "tovPct",
+  "trbPct",
+  "threePar",
+  "ftr",
+  "ortg",
   "net",
+  "per",
+  "ws48",
   "bpm",
+  "vorp",
   "darko",
   "raptor",
   "winsAdded",
@@ -114,8 +141,10 @@ export function buildPlayerComparison(options: {
   careerSpanB?: string;
   teamKeysA?: string[];
   teamKeysB?: string[];
+  basis?: CompareBasis;
 }): PlayerComparisonResult {
   const { a, b } = options;
+  const mode: CompareBasis = options.basis ?? "perGame";
   const careerMode =
     isCareerCompareKey(a.season) || isCareerCompareKey(b.season);
   const peersA = careerMode ? [] : (options.peersA ?? options.peers ?? []);
@@ -138,9 +167,10 @@ export function buildPlayerComparison(options: {
   for (const spec of COMPARE_DIMS) {
     const def = SHEET_STAT_BY_ID[spec.id];
     if (!def) continue;
+    // Per 36 pins minutes to 36 and per 100 to a possession-derived constant.
+    if (spec.id === "mp" && mode !== "perGame") continue;
     const label = spec.label ?? def.label;
     const invert = Boolean(spec.invert);
-    const mode = "perGame" as const;
 
     const aRaw = getSheetStatValue(a, spec.id, mode);
     const bRaw = getSheetStatValue(b, spec.id, mode);
@@ -240,6 +270,7 @@ export function buildPlayerComparison(options: {
     seasonA,
     seasonB,
     mode: careerMode ? "career" : "season",
+    basis: mode,
     dimensions,
     differenceSummary,
   };

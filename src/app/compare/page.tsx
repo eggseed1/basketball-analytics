@@ -3,6 +3,22 @@ import { Suspense } from "react";
 
 import { buildPlayerComparison } from "@/analytics";
 import type { PlayerComparisonResult } from "@/analytics";
+import {
+  COMPARE_BASES,
+  type CompareBasis,
+} from "@/analytics/compare-players";
+import {
+  careerArc,
+  compareBio,
+  poolShootingAverages,
+  qualifiedComparePool,
+  scatterSide,
+  scatterValues,
+  type CompareArcPoint,
+  type CompareBio,
+  type CompareScatterSide,
+  type CompareShootingAverages,
+} from "@/analytics/compare-player-context";
 import { teamComparePath } from "@/analytics/compare-team-seasons";
 import type { TeamSeasonComparison } from "@/analytics/compare-team-seasons";
 import { teamSeasonRankPath } from "@/analytics/rank-team-seasons";
@@ -10,7 +26,10 @@ import type { TeamSeasonRanking } from "@/analytics/rank-team-seasons";
 import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { CompareEmptyState } from "@/components/compare/compare-empty-state";
 import { ComparePicker } from "@/components/compare/compare-picker";
-import { PlayerCompareView } from "@/components/compare/player-compare-view";
+import {
+  PlayerCompareView,
+  type PlayerCompareContext,
+} from "@/components/compare/player-compare-view";
 import {
   TeamComparePicker,
   TeamCompareView,
@@ -82,6 +101,30 @@ type EraSide = {
   peers: PlayerSeason[];
   unadjusted: Set<SheetStatId>;
 };
+
+type CompareSideContext = {
+  bio: CompareBio | null;
+  arc: CompareArcPoint[];
+  shooting: CompareShootingAverages | null;
+  scatter: CompareScatterSide | null;
+  scatterSelf: Array<number | null> | null;
+};
+
+const EMPTY_SIDE_CONTEXT: CompareSideContext = {
+  bio: null,
+  arc: [],
+  shooting: null,
+  scatter: null,
+  scatterSelf: null,
+};
+
+function buildForEveryBasis(
+  build: (basis: CompareBasis) => PlayerComparisonResult
+): Record<CompareBasis, PlayerComparisonResult> {
+  return Object.fromEntries(
+    COMPARE_BASES.map(({ id }) => [id, build(id)])
+  ) as Record<CompareBasis, PlayerComparisonResult>;
+}
 
 /** Labels of shown metrics this side couldn't adjust (no league average). */
 function unadjustedLabels(
@@ -222,6 +265,8 @@ async function loadSeasonRow(
         ...row,
         playerId,
         playerName: row.playerName || fromPeers?.playerName || playerId,
+        // Live rows carry today's age, not the age that season.
+        age: fromPeers?.age,
         usagePct:
           row.usagePct != null && row.usagePct > 0
             ? row.usagePct
@@ -590,6 +635,8 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
   let eraSideB: EraSide | null = null;
   let partialA: SheetStatId[] = [];
   let partialB: SheetStatId[] = [];
+  let contextA = EMPTY_SIDE_CONTEXT;
+  let contextB = EMPTY_SIDE_CONTEXT;
 
   if (aId && bId) {
     const loadSide = async (
@@ -602,6 +649,7 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
       teamKeys: string[];
       partial: SheetStatId[];
       era: EraSide | null;
+      context: CompareSideContext;
     }> => {
       if (isCareerCompareKey(seasonKey)) {
         const career = await getPlayerCareerSeasons(playerId).catch(
@@ -618,6 +666,7 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
           career.filter((r) => r.gamesPlayed > 0)
         );
         const eraRow = careerRow(adjusted.map((x) => x.row));
+        const arc = careerArc(career);
         return {
           row: played ? { ...played.row, playerId } : null,
           peers: [],
@@ -631,20 +680,38 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
                 unadjusted: new Set(adjusted.flatMap((x) => [...x.unadjusted])),
               }
             : null,
+          context: {
+            ...EMPTY_SIDE_CONTEXT,
+            bio: played ? compareBio(played.row, arc.length) : null,
+            arc,
+          },
         };
       }
-      const peers = await loadPeersForSeason(seasonKey);
+      const [peers, career] = await Promise.all([
+        loadPeersForSeason(seasonKey),
+        getPlayerCareerSeasons(playerId).catch(() => [] as PlayerSeason[]),
+      ]);
       const loaded = await loadSeasonRow(playerId, seasonKey, peers);
       const row = loaded
         ? blankUntrackedSeasonStats({ ...loaded, season: seasonKey })
         : null;
       const teamKeys = seasonTeamKeysForRow(row, seasonKey);
       const adjusted = row ? eraAdjustSeasonRow(row) : null;
+      const pool = qualifiedComparePool(peers);
+      const arc = careerArc(career);
+      const arcAge = arc.find((p) => p.season === seasonKey)?.age;
       return {
         row,
         peers,
         teamKeys,
         partial: [],
+        context: {
+          bio: row ? { ...compareBio(row), age: arcAge ?? compareBio(row).age } : null,
+          arc,
+          shooting: poolShootingAverages(seasonKey, pool),
+          scatter: scatterSide(seasonKey, pool),
+          scatterSelf: row ? scatterValues(row) : null,
+        },
         era: adjusted
           ? {
               row: adjusted.row,
@@ -673,47 +740,72 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
     eraSideB = sideB.era;
     partialA = sideA.partial;
     partialB = sideB.partial;
+    contextA = sideA.context;
+    contextB = sideB.context;
   }
 
-  const result =
+  const results =
     aRow && bRow
-      ? buildPlayerComparison({
-          a: aRow,
-          b: bRow,
-          peersA,
-          peersB,
-          careerSpanA,
-          careerSpanB,
-          teamKeysA,
-          teamKeysB,
-        })
+      ? buildForEveryBasis((basis) =>
+          buildPlayerComparison({
+            a: aRow!,
+            b: bRow!,
+            peersA,
+            peersB,
+            careerSpanA,
+            careerSpanB,
+            teamKeysA,
+            teamKeysB,
+            basis,
+          })
+        )
       : null;
+  const result = results?.perGame ?? null;
 
   // One shared season needs no era translation.
   const sameSeason = seasonA === seasonB && !isCareerCompareKey(seasonA);
-  const eraResult =
+  const eraResults =
     result && !sameSeason && eraSideA && eraSideB
-      ? buildPlayerComparison({
-          a: eraSideA.row,
-          b: eraSideB.row,
-          peersA: eraSideA.peers,
-          peersB: eraSideB.peers,
-          careerSpanA,
-          careerSpanB,
-          teamKeysA,
-          teamKeysB,
-        })
+      ? buildForEveryBasis((basis) =>
+          buildPlayerComparison({
+            a: eraSideA!.row,
+            b: eraSideB!.row,
+            peersA: eraSideA!.peers,
+            peersB: eraSideB!.peers,
+            careerSpanA,
+            careerSpanB,
+            teamKeysA,
+            teamKeysB,
+            basis,
+          })
+        )
       : null;
-  const era = eraResult
+  const era = eraResults
     ? {
-        result: eraResult,
+        results: eraResults,
         reference: ERA_REFERENCE_SEASON,
         source: LEAGUE_AVERAGES_SOURCE,
-        unadjustedA: unadjustedLabels(eraResult, eraSideA!.unadjusted, "a"),
-        unadjustedB: unadjustedLabels(eraResult, eraSideB!.unadjusted, "b"),
+        unadjustedA: unadjustedLabels(
+          eraResults.perGame,
+          eraSideA!.unadjusted,
+          "a"
+        ),
+        unadjustedB: unadjustedLabels(
+          eraResults.perGame,
+          eraSideB!.unadjusted,
+          "b"
+        ),
         initiallyOn: one(sp, "era") === "adj",
       }
     : null;
+  const basisParam = one(sp, "basis");
+  const context: PlayerCompareContext = {
+    a: contextA,
+    b: contextB,
+    initialBasis: COMPARE_BASES.some((b) => b.id === basisParam)
+      ? (basisParam as CompareBasis)
+      : "perGame",
+  };
   const coverage = result
     ? [
         ...trackingNotes(result, "a", partialA),
@@ -772,7 +864,8 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
         </p>
       ) : (
         <PlayerCompareView
-          result={result}
+          results={results!}
+          context={context}
           era={era}
           coverage={coverage}
           aPortraitUrl={aPortraitUrl}

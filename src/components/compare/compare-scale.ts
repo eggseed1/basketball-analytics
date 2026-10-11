@@ -30,6 +30,24 @@ const ZERO_CENTERED = new Set([
   "drblD",
 ]);
 
+/**
+ * Volume and shot-mix stats. More minutes or more threes describes a role, not
+ * a better player, so these stay out of edge counts, gaps and the radar.
+ */
+export const STYLE_METRIC_IDS = new Set([
+  "mp",
+  "fga",
+  "fg2a",
+  "fg3a",
+  "fta",
+  "threePar",
+  "ftr",
+]);
+
+export function isEdgeMetric(d: ComparisonDimension): boolean {
+  return !STYLE_METRIC_IDS.has(d.id);
+}
+
 /** Both sides ranked in a peer pool, so the two positions share one scale. */
 export function hasPeerPercentiles(d: ComparisonDimension): boolean {
   return (
@@ -96,11 +114,12 @@ export function pickRadarAxes(
   dimensions: ComparisonDimension[],
   max = RADAR_MAX_AXES
 ): ComparisonDimension[] {
-  const ranked = dimensions.filter(hasPeerPercentiles);
+  const candidates = dimensions.filter(isEdgeMetric);
+  const ranked = candidates.filter(hasPeerPercentiles);
   const scored =
     ranked.length >= 3
       ? ranked
-      : dimensions.filter(
+      : candidates.filter(
           (d) =>
             !hasPeerPercentiles(d) &&
             compareScore(d, "a") != null &&

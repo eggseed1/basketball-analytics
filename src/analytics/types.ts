@@ -109,6 +109,8 @@ export type PlayerComparisonResult = {
   seasonA?: string;
   seasonB?: string;
   mode?: "career" | "season";
+  /** Counting-stat basis the dimensions were built on. */
+  basis?: "perGame" | "per36" | "per100";
   dimensions: ComparisonDimension[];
   /** Plain-language difference drivers (data-backed only). */
   differenceSummary: string[];

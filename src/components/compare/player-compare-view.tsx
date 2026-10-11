@@ -1,37 +1,64 @@
 "use client";
 
 import {
+  Children,
   useEffect,
   useId,
   useMemo,
   useRef,
   useState,
   type CSSProperties,
+  type ReactNode,
 } from "react";
 import { ChevronDown } from "lucide-react";
 
 import type { ComparisonDimension, PlayerComparisonResult } from "@/analytics";
+import type {
+  CompareArcPoint,
+  CompareBio,
+  CompareScatterSide,
+  CompareShootingAverages,
+} from "@/analytics/compare-player-context";
 import {
   CATEGORY_ORDER,
+  COMPARE_BASES,
   COMPARE_DEFAULT_METRIC_IDS,
+  type CompareBasis,
 } from "@/analytics/compare-players";
 import { GlassSurface } from "@/components/brand/glass-surface";
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { PlayerCompareRadarLazy } from "@/components/charts/recharts-lazy";
+import { CompareCareerArc } from "@/components/compare/compare-career-arc";
+import {
+  ComparePeerScatter,
+  SCATTER_PRESETS,
+  type ScatterPreset,
+} from "@/components/compare/compare-peer-scatter";
 import { CompareShareControls } from "@/components/compare/compare-share-controls";
 import {
   compareGap,
   compareScore,
+  isEdgeMetric,
   pickRadarAxes,
 } from "@/components/compare/compare-scale";
+import {
+  BAR_TRACK,
+  FROST_TILE,
+  SECTION_LABEL,
+  metricLabel,
+} from "@/components/compare/compare-ui";
+import {
+  Playmaking,
+  ScoringMix,
+  ShootingSplits,
+} from "@/components/compare/compare-visuals";
 import { MetricHelp } from "@/components/learn/metric-help";
 import { PlayerIdentity } from "@/components/players/player-identity";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { useChartTheme } from "@/lib/chart-theme";
-import { conceptIdForColumnLabel } from "@/lib/learn-column-concepts";
 import { type } from "@/lib/design-system";
-import { formatOrdinal } from "@/lib/format";
+import { formatNumber, formatOrdinal } from "@/lib/format";
 import {
   compareMatchupColors,
   resolveTeamBrand,
@@ -41,31 +68,108 @@ import { normalizeTeamParam } from "@/lib/team-identity";
 import { cn } from "@/lib/utils";
 import { MatchupOrbs } from "@/components/brand/matchup-orbs";
 
-type ValueMode = "raw" | "percentile";
 type Edge = "a" | "b" | "even";
 
 /** Mirror share graphic: value+bar | metric | value+bar */
 const MATCHUP_ROW_GRID =
   "grid grid-cols-[minmax(0,1fr)_4.75rem_minmax(0,1fr)] items-center gap-x-2 sm:gap-x-3";
 
-const KEY_NUMBER_IDS = ["pts", "trb", "ast", "ts", "drbl100"] as const;
+const KEY_NUMBER_IDS = ["pts", "trb", "ast", "atr", "ts", "drbl100"] as const;
 
 /** Percentile points inside which two players read as even. */
 const EVEN_PCT_POINTS = 3;
 /** Relative raw gap inside which two players read as even (no percentiles). */
 const EVEN_RAW_SHARE = 0.02;
 
-const SECTION_LABEL = cn(
-  type.micro,
-  "font-bold uppercase tracking-[0.12em] text-muted-foreground"
-);
+const BASIS_PHRASE: Record<CompareBasis, string> = {
+  perGame: "per game",
+  per36: "per 36 minutes",
+  per100: "per 100 possessions",
+};
 
-/** Nested tile inside the glass card: translucent fill, no second blur layer. */
-const FROST_TILE =
-  "frost-surface rounded-lg shadow-[inset_0_1px_0_rgb(255_255_255/0.55)] dark:shadow-[inset_0_1px_0_rgb(255_255_255/0.07)]";
+type TabId =
+  | "overview"
+  | "scoring"
+  | "playmaking"
+  | "defense"
+  | "impact"
+  | "career"
+  | "all";
 
-/** Quiet capsule track shared by every compare bar, matching the percentile panel. */
-const BAR_TRACK = "overflow-hidden rounded-full bg-foreground/[0.08]";
+const TABS: Array<{ id: TabId; label: string }> = [
+  { id: "overview", label: "Overview" },
+  { id: "scoring", label: "Scoring" },
+  { id: "playmaking", label: "Playmaking" },
+  { id: "defense", label: "Defense & boards" },
+  { id: "impact", label: "Impact" },
+  { id: "career", label: "Career arc" },
+  { id: "all", label: "All stats" },
+];
+
+/** Rows each topic tab lists under its charts, in this order. */
+const TAB_ROW_IDS: Partial<Record<TabId, string[]>> = {
+  scoring: [
+    "pts",
+    "fga",
+    "fgPct",
+    "fg2",
+    "fg2Pct",
+    "fg3",
+    "fg3a",
+    "fg3Pct",
+    "fta",
+    "ftPct",
+    "efg",
+    "ts",
+    "threePar",
+    "ftr",
+    "usg",
+    "ortg",
+  ],
+  playmaking: ["ast", "tov", "atr", "astPct", "tovPct", "usg", "hustleScrAst"],
+  defense: [
+    "trb",
+    "orb",
+    "drb",
+    "trbPct",
+    "orbPct",
+    "drbPct",
+    "stl",
+    "blk",
+    "stlPct",
+    "blkPct",
+    "pf",
+    "drtg",
+    "dbpm",
+    "dws",
+    "hustleDefl",
+    "hustleContest",
+    "hustleChrg",
+    "hustleLoose",
+    "hustleBoxOut",
+  ],
+  impact: [
+    "drbl100",
+    "drblO",
+    "drblD",
+    "war1",
+    "darko",
+    "darkoOff",
+    "darkoDef",
+    "raptor",
+    "winsAdded",
+    "bpm",
+    "obpm",
+    "dbpm",
+    "vorp",
+    "per",
+    "ws",
+    "ws48",
+    "pie",
+    "net",
+    "plusMinus",
+  ],
+};
 
 function formatPctile(n: number | undefined): string {
   if (n == null || !Number.isFinite(n)) return "—";
@@ -131,12 +235,17 @@ function EdgeLabel({
   );
 }
 
-function metricLabel(label: string) {
-  const conceptId = conceptIdForColumnLabel(label);
-  return conceptId ? (
-    <MetricHelp conceptId={conceptId}>{label}</MetricHelp>
-  ) : (
-    label
+function PctileTag({ value }: { value?: number }) {
+  if (value == null || !Number.isFinite(value)) return null;
+  return (
+    <span
+      className={cn(
+        type.micro,
+        "font-semibold tabular-nums text-muted-foreground"
+      )}
+    >
+      {formatPctile(value)} pct
+    </span>
   );
 }
 
@@ -144,45 +253,23 @@ function MatchupBarRow({
   dimension,
   aName,
   bName,
-  valueMode,
   aFill,
   bFill,
 }: {
   dimension: ComparisonDimension;
   aName: string;
   bName: string;
-  valueMode: ValueMode;
   aFill: string;
   bFill: string;
 }) {
-  const hasPct =
-    dimension.aPercentile != null || dimension.bPercentile != null;
-  const showPct = valueMode === "percentile" && hasPct;
-
   const aTrack = compareScore(dimension, "a");
   const bTrack = compareScore(dimension, "b");
 
   const edge = edgeOf(dimension);
+  const style = !isEdgeMetric(dimension);
   // Keep the trailing side readable — faint fills made losing bars disappear.
-  const aOpacity = edge === "b" ? 0.72 : 1;
-  const bOpacity = edge === "a" ? 0.72 : 1;
-
-  const aValue = showPct
-    ? formatPctile(dimension.aPercentile)
-    : dimension.aDisplay;
-  const bValue = showPct
-    ? formatPctile(dimension.bPercentile)
-    : dimension.bDisplay;
-  const aTitle = showPct
-    ? dimension.aDisplay
-    : dimension.aPercentile != null
-      ? `${formatOrdinal(dimension.aPercentile)} percentile`
-      : undefined;
-  const bTitle = showPct
-    ? dimension.bDisplay
-    : dimension.bPercentile != null
-      ? `${formatOrdinal(dimension.bPercentile)} percentile`
-      : undefined;
+  const aOpacity = edge === "b" && !style ? 0.72 : 1;
+  const bOpacity = edge === "a" && !style ? 0.72 : 1;
 
   return (
     <div className="border-b border-border/60 py-2.5 last:border-0">
@@ -192,11 +279,12 @@ function MatchupBarRow({
             <span
               className={cn(
                 type.bodySm,
-                "w-full truncate text-right font-semibold tabular-nums"
+                "flex w-full items-baseline justify-end gap-2 truncate text-right font-semibold tabular-nums"
               )}
-              title={aTitle ?? aName}
+              title={aName}
             >
-              {aValue}
+              <PctileTag value={dimension.aPercentile} />
+              {dimension.aDisplay}
             </span>
             <div className={cn(BAR_TRACK, "h-2 w-full")}>
               <div
@@ -224,11 +312,12 @@ function MatchupBarRow({
             <span
               className={cn(
                 type.bodySm,
-                "w-full truncate text-left font-semibold tabular-nums"
+                "flex w-full items-baseline gap-2 truncate text-left font-semibold tabular-nums"
               )}
-              title={bTitle ?? bName}
+              title={bName}
             >
-              {bValue}
+              {dimension.bDisplay}
+              <PctileTag value={dimension.bPercentile} />
             </span>
             <div className={cn(BAR_TRACK, "h-2 w-full")}>
               <div
@@ -372,7 +461,8 @@ function EdgeTally({
       />
       <p className={cn(type.caption, "mt-2 text-muted-foreground")}>
         A count of the metrics shown. Each one counts the same, so this is a
-        tally, not an overall rating.
+        tally, not an overall rating. Volume and shot-mix stats such as MP and
+        3PAr describe a role, so they aren&apos;t counted.
       </p>
     </section>
   );
@@ -395,7 +485,7 @@ function KeyNumbers({
   if (!cards.length) return null;
   return (
     <section
-      className="grid grid-cols-2 gap-2 border-b border-border/60 p-3 sm:grid-cols-5 sm:px-5"
+      className="grid grid-cols-2 gap-2 border-b border-border/60 p-3 min-[480px]:grid-cols-3 lg:grid-cols-6 sm:px-5"
       aria-label="Key numbers"
     >
       {cards.map((d) => {
@@ -696,6 +786,28 @@ function TeamChipRow({ teamKeys }: { teamKeys: string[] }) {
   );
 }
 
+function bioLine(bio: CompareBio | null): string | null {
+  if (!bio) return null;
+  const parts: string[] = [];
+  if (bio.seasons != null) {
+    parts.push(`${bio.seasons} ${bio.seasons === 1 ? "season" : "seasons"}`);
+  } else if (bio.age != null) {
+    parts.push(`Age ${bio.age}`);
+  }
+  if (bio.position) parts.push(bio.position);
+  if (bio.gamesPlayed > 0) {
+    parts.push(
+      `${formatNumber(bio.gamesPlayed)} GP${
+        bio.gamesStarted > 0 ? ` (${formatNumber(bio.gamesStarted)} GS)` : ""
+      }`
+    );
+  }
+  if (bio.minutesPerGame != null) {
+    parts.push(`${formatNumber(bio.minutesPerGame, 1)} MPG`);
+  }
+  return parts.length ? parts.join(" · ") : null;
+}
+
 function FaceSide({
   playerId,
   name,
@@ -705,6 +817,7 @@ function FaceSide({
   portraitUrl,
   color,
   align,
+  bio,
 }: {
   playerId: string;
   name: string;
@@ -714,7 +827,9 @@ function FaceSide({
   portraitUrl?: string | null;
   color: string;
   align: "left" | "right";
+  bio: CompareBio | null;
 }) {
+  const line = bioLine(bio);
   return (
     <div
       className={cn(
@@ -761,6 +876,16 @@ function FaceSide({
         ) : null}
         <TeamChipRow teamKeys={teamKeys} />
       </PlayerIdentity>
+      {line ? (
+        <p
+          className={cn(
+            type.micro,
+            "mt-1.5 max-w-full text-center font-semibold tabular-nums text-muted-foreground"
+          )}
+        >
+          {line}
+        </p>
+      ) : null}
     </div>
   );
 }
@@ -939,6 +1064,53 @@ function MetricPicker({
   );
 }
 
+/** A topic tab: its charts in a grid, then the matching stat rows. */
+function TopicPanel({
+  ids,
+  dims,
+  aName,
+  bName,
+  aFill,
+  bFill,
+  children,
+}: {
+  ids: string[];
+  dims: Map<string, ComparisonDimension>;
+  aName: string;
+  bName: string;
+  aFill: string;
+  bFill: string;
+  children?: ReactNode;
+}) {
+  const rows = ids
+    .map((id) => dims.get(id))
+    .filter((d): d is ComparisonDimension => d != null);
+  const visuals = Children.toArray(children);
+  return (
+    <>
+      {visuals.length ? (
+        <div className="grid min-w-0 gap-3 border-b border-border/60 p-3 sm:px-5 sm:py-4 md:grid-cols-2">
+          {visuals}
+        </div>
+      ) : null}
+      {rows.length ? (
+        <section className="px-3 py-1 sm:px-5">
+          {rows.map((d) => (
+            <MatchupBarRow
+              key={d.id}
+              dimension={d}
+              aName={aName}
+              bName={bName}
+              aFill={aFill}
+              bFill={bFill}
+            />
+          ))}
+        </section>
+      ) : null}
+    </>
+  );
+}
+
 function defaultVisibleIds(dimensions: ComparisonDimension[]): string[] {
   const available = new Set(dimensions.map((d) => d.id));
   const defaults = COMPARE_DEFAULT_METRIC_IDS.filter((id) => available.has(id));
@@ -946,7 +1118,7 @@ function defaultVisibleIds(dimensions: ComparisonDimension[]): string[] {
 }
 
 export type PlayerCompareEra = {
-  result: PlayerComparisonResult;
+  results: Record<CompareBasis, PlayerComparisonResult>;
   reference: string;
   source: string;
   unadjustedA: string[];
@@ -989,8 +1161,7 @@ function EraNote({
       {percentileOnly ? (
         <p>
           Percentiles already rank each player within his own season, so they
-          don&apos;t change. Switch Display to raw values to see the adjusted
-          numbers.
+          don&apos;t change. Only the values move.
         </p>
       ) : null}
       {left.map((x) => (
@@ -1003,14 +1174,38 @@ function EraNote({
   );
 }
 
+export type PlayerCompareSideContext = {
+  bio: CompareBio | null;
+  arc: CompareArcPoint[];
+  shooting: CompareShootingAverages | null;
+  scatter: CompareScatterSide | null;
+  /** This player's own values in SCATTER_FIELDS order, as played. */
+  scatterSelf: Array<number | null> | null;
+};
+
+export type PlayerCompareContext = {
+  a: PlayerCompareSideContext;
+  b: PlayerCompareSideContext;
+  initialBasis: CompareBasis;
+};
+
+function setUrlParam(key: string, value: string | null) {
+  const url = new URL(window.location.href);
+  if (value == null) url.searchParams.delete(key);
+  else url.searchParams.set(key, value);
+  window.history.replaceState(window.history.state, "", url);
+}
+
 export function PlayerCompareView({
-  result: playedResult,
+  results: playedResults,
+  context,
   era,
   coverage = [],
   aPortraitUrl,
   bPortraitUrl,
 }: {
-  result: PlayerComparisonResult;
+  results: Record<CompareBasis, PlayerComparisonResult>;
+  context: PlayerCompareContext;
   era?: PlayerCompareEra | null;
   /** Notes on stats the league hadn't started tracking yet. */
   coverage?: string[];
@@ -1019,25 +1214,23 @@ export function PlayerCompareView({
 }) {
   const [origin, setOrigin] = useState("");
   const [eraOn, setEraOn] = useState(() => Boolean(era?.initiallyOn));
+  const [basis, setBasisState] = useState<CompareBasis>(context.initialBasis);
+  const [tab, setTab] = useState<TabId>("overview");
   const eraActive = Boolean(era && eraOn);
-  const result = eraActive && era ? era.result : playedResult;
+  const result =
+    eraActive && era ? era.results[basis] : playedResults[basis];
   const theme = useChartTheme();
 
   const setEraMode = (on: boolean) => {
     setEraOn(on);
-    const url = new URL(window.location.href);
-    if (on) url.searchParams.set("era", "adj");
-    else url.searchParams.delete("era");
-    window.history.replaceState(window.history.state, "", url);
+    setUrlParam("era", on ? "adj" : null);
   };
-  const hasAnyPercentile = result.dimensions.some(
-    (d) => d.aPercentile != null || d.bPercentile != null
-  );
-  const [valueMode, setValueMode] = useState<ValueMode>(() =>
-    hasAnyPercentile ? "percentile" : "raw"
-  );
+  const setBasis = (next: CompareBasis) => {
+    setBasisState(next);
+    setUrlParam("basis", next === "perGame" ? null : next);
+  };
   const [visibleIds, setVisibleIds] = useState(() =>
-    defaultVisibleIds(result.dimensions)
+    defaultVisibleIds(playedResults.perGame.dimensions)
   );
 
   useEffect(() => {
@@ -1045,23 +1238,27 @@ export function PlayerCompareView({
   }, []);
 
   useEffect(() => {
-    if (!hasAnyPercentile && valueMode === "percentile") {
-      setValueMode("raw");
-    }
-  }, [hasAnyPercentile, valueMode]);
+    setVisibleIds(defaultVisibleIds(playedResults.perGame.dimensions));
+  }, [
+    playedResults.perGame.dimensions,
+    result.aId,
+    result.bId,
+    result.seasonA,
+    result.seasonB,
+  ]);
 
-  useEffect(() => {
-    if (hasAnyPercentile) setValueMode("percentile");
-  }, [hasAnyPercentile, result.aId, result.bId, result.seasonA, result.seasonB]);
-
-  useEffect(() => {
-    setVisibleIds(defaultVisibleIds(result.dimensions));
-  }, [result.aId, result.bId, result.seasonA, result.seasonB]);
-
+  const dimsById = useMemo(
+    () => new Map(result.dimensions.map((d) => [d.id, d])),
+    [result.dimensions]
+  );
   const visibleSet = useMemo(() => new Set(visibleIds), [visibleIds]);
   const visibleDimensions = useMemo(
     () => result.dimensions.filter((d) => visibleSet.has(d.id)),
     [result.dimensions, visibleSet]
+  );
+  const edgeDimensions = useMemo(
+    () => visibleDimensions.filter(isEdgeMetric),
+    [visibleDimensions]
   );
   const radarAxes = useMemo(
     () => pickRadarAxes(visibleDimensions),
@@ -1088,6 +1285,19 @@ export function PlayerCompareView({
   const closeNote = careerMode
     ? "The career metrics shown are close. No gap clears the even line."
     : "The season metrics shown are within a few percentile points of each other. Small gaps may be sample noise.";
+
+  const scatterSides = careerMode ? [] : [context.a.scatter, context.b.scatter];
+  const scatterTile = (preset: ScatterPreset, wide = true) =>
+    scatterSides.some(Boolean) ? (
+      <ComparePeerScatter
+        className={cn(FROST_TILE, "p-4", wide && "md:col-span-2")}
+        preset={preset}
+        sides={scatterSides}
+        a={{ name: aShort, color: aFill, values: context.a.scatterSelf }}
+        b={{ name: bShort, color: bFill, values: context.b.scatterSelf }}
+        note={eraActive ? "Plotted as played." : undefined}
+      />
+    ) : null;
 
   return (
     <div className="flex flex-col gap-3">
@@ -1144,6 +1354,7 @@ export function PlayerCompareView({
             portraitUrl={aPortraitUrl}
             color={aFill}
             align="left"
+            bio={context.a.bio}
           />
           <div className="pointer-events-none absolute inset-y-0 left-1/2 flex -translate-x-1/2 items-center">
             <span
@@ -1166,81 +1377,23 @@ export function PlayerCompareView({
             portraitUrl={bPortraitUrl}
             color={bFill}
             align="right"
+            bio={context.b.bio}
           />
         </header>
         </div>
 
-        <KeyNumbers
-          dimensions={result.dimensions}
-          aColor={aFill}
-          bColor={bFill}
-        />
-
-        <EdgeTally
-          dimensions={visibleDimensions}
-          aName={aShort}
-          bName={bShort}
-          aColor={aFill}
-          bColor={bFill}
-        />
-
         <div
-          className={cn(
-            "grid min-w-0 gap-3 border-b border-border/60 p-3 sm:px-5 sm:py-4",
-            showRadar && "md:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]"
-          )}
-        >
-          {showRadar ? (
-            <div className={cn(FROST_TILE, "min-w-0 p-4")}>
-              <PlayerCompareRadarLazy
-                axes={radarAxes}
-                dimensions={visibleDimensions}
-                aName={aShort}
-                bName={bShort}
-                aColor={aFill}
-                bColor={bFill}
-              />
-            </div>
-          ) : null}
-          <div className={cn(FROST_TILE, "min-w-0 p-4")}>
-            <CategoryEdges
-              dimensions={visibleDimensions}
-              aName={aShort}
-              bName={bShort}
-              aColor={aFill}
-              bColor={bFill}
-            />
-          </div>
-        </div>
-
-        <BiggestGaps
-          dimensions={visibleDimensions}
-          aName={aShort}
-          bName={bShort}
-          aColor={aFill}
-          bColor={bFill}
-          fallbackNote={closeNote}
-        />
-
-        <div
-          className="flex min-w-0 flex-wrap items-center justify-between gap-3 border-y border-border/60 px-3 py-3 sm:px-5"
+          className="flex min-w-0 flex-wrap items-end justify-between gap-3 border-y border-border/60 px-3 py-3 sm:px-5"
           data-capture-exclude=""
         >
           <div className="flex min-w-0 flex-wrap items-end gap-3">
             <SegmentedControl
               size="sm"
-              label="Display"
-              value={valueMode}
-              onChange={setValueMode}
+              label="Counting stats"
+              value={basis}
+              onChange={setBasis}
               className="min-w-0 max-w-full"
-              options={[
-                { id: "raw", label: "Raw values" },
-                {
-                  id: "percentile",
-                  label: "Percentile",
-                  disabled: !hasAnyPercentile,
-                },
-              ]}
+              options={COMPARE_BASES}
             />
             {era ? (
               <SegmentedControl
@@ -1268,7 +1421,7 @@ export function PlayerCompareView({
             era={era}
             aName={result.aName}
             bName={result.bName}
-            percentileOnly={!careerMode && valueMode === "percentile"}
+            percentileOnly={!careerMode}
           />
         ) : null}
 
@@ -1285,36 +1438,223 @@ export function PlayerCompareView({
           </div>
         ) : null}
 
-        <section className="px-3 py-1 sm:px-5">
-          <h2 className="sr-only">Dimensions</h2>
-          {CATEGORY_ORDER.map((group) => {
-            const rows = visibleDimensions.filter((d) => d.group === group);
-            if (!rows.length) return null;
-            return (
-              <div key={group} className="mb-1 last:mb-0">
-                <h3
-                  className={cn(
-                    type.micro,
-                    "border-b border-border/70 py-2 font-bold uppercase tracking-wide text-muted-foreground"
-                  )}
-                >
-                  {GROUP_TITLE[group] ?? group}
-                </h3>
-                {rows.map((d) => (
-                  <MatchupBarRow
-                    key={d.id}
-                    dimension={d}
+        <KeyNumbers
+          dimensions={result.dimensions}
+          aColor={aFill}
+          bColor={bFill}
+        />
+
+        <div
+          className="border-b border-border/60 px-3 py-3 sm:px-5"
+          data-capture-exclude=""
+        >
+          <SegmentedControl
+            size="sm"
+            label="View"
+            value={tab}
+            onChange={setTab}
+            className="min-w-0 max-w-full"
+            options={TABS}
+          />
+        </div>
+
+        {tab === "overview" ? (
+          <>
+            <EdgeTally
+              dimensions={edgeDimensions}
+              aName={aShort}
+              bName={bShort}
+              aColor={aFill}
+              bColor={bFill}
+            />
+
+            <div
+              className={cn(
+                "grid min-w-0 gap-3 border-b border-border/60 p-3 sm:px-5 sm:py-4",
+                showRadar && "md:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]"
+              )}
+            >
+              {showRadar ? (
+                <div className={cn(FROST_TILE, "min-w-0 p-4")}>
+                  <PlayerCompareRadarLazy
+                    axes={radarAxes}
+                    dimensions={visibleDimensions}
                     aName={aShort}
                     bName={bShort}
-                    valueMode={valueMode}
-                    aFill={aFill}
-                    bFill={bFill}
+                    aColor={aFill}
+                    bColor={bFill}
                   />
-                ))}
+                </div>
+              ) : null}
+              <div className={cn(FROST_TILE, "min-w-0 p-4")}>
+                <CategoryEdges
+                  dimensions={edgeDimensions}
+                  aName={aShort}
+                  bName={bShort}
+                  aColor={aFill}
+                  bColor={bFill}
+                />
               </div>
-            );
-          })}
-        </section>
+            </div>
+
+            <BiggestGaps
+              dimensions={edgeDimensions}
+              aName={aShort}
+              bName={bShort}
+              aColor={aFill}
+              bColor={bFill}
+              fallbackNote={closeNote}
+            />
+          </>
+        ) : null}
+
+        {tab === "scoring" ? (
+          <TopicPanel
+            ids={TAB_ROW_IDS.scoring!}
+            dims={dimsById}
+            aName={aShort}
+            bName={bShort}
+            aFill={aFill}
+            bFill={bFill}
+          >
+            <div className={cn(FROST_TILE, "min-w-0 p-4")}>
+              <ScoringMix
+                dims={dimsById}
+                aName={aShort}
+                bName={bShort}
+                aColor={aFill}
+                bColor={bFill}
+                basisPhrase={BASIS_PHRASE[basis]}
+              />
+            </div>
+            <div className={cn(FROST_TILE, "min-w-0 p-4")}>
+              <ShootingSplits
+                dims={dimsById}
+                aName={aShort}
+                bName={bShort}
+                aColor={aFill}
+                bColor={bFill}
+                leagueA={eraActive ? null : context.a.shooting}
+                leagueB={eraActive ? null : context.b.shooting}
+              />
+            </div>
+            {scatterTile(SCATTER_PRESETS.usage)}
+          </TopicPanel>
+        ) : null}
+
+        {tab === "playmaking" ? (
+          <TopicPanel
+            ids={TAB_ROW_IDS.playmaking!}
+            dims={dimsById}
+            aName={aShort}
+            bName={bShort}
+            aFill={aFill}
+            bFill={bFill}
+          >
+            <div className={cn(FROST_TILE, "min-w-0 p-4")}>
+              <Playmaking
+                dims={dimsById}
+                aName={aShort}
+                bName={bShort}
+                aColor={aFill}
+                bColor={bFill}
+                basisPhrase={BASIS_PHRASE[basis]}
+              />
+            </div>
+            {scatterTile(SCATTER_PRESETS.creation, false)}
+          </TopicPanel>
+        ) : null}
+
+        {tab === "defense" ? (
+          <TopicPanel
+            ids={TAB_ROW_IDS.defense!}
+            dims={dimsById}
+            aName={aShort}
+            bName={bShort}
+            aFill={aFill}
+            bFill={bFill}
+          >
+            {scatterTile(SCATTER_PRESETS.glass)}
+          </TopicPanel>
+        ) : null}
+
+        {tab === "impact" ? (
+          <TopicPanel
+            ids={TAB_ROW_IDS.impact!}
+            dims={dimsById}
+            aName={aShort}
+            bName={bShort}
+            aFill={aFill}
+            bFill={bFill}
+          >
+            {scatterTile(SCATTER_PRESETS.drbl)}
+          </TopicPanel>
+        ) : null}
+
+        {tab === "career" ? (
+          <div className="border-b border-border/60 p-3 sm:px-5 sm:py-4">
+            <div className={cn(FROST_TILE, "min-w-0 p-4")}>
+              {context.a.arc.length || context.b.arc.length ? (
+                <CompareCareerArc
+                  a={{
+                    name: aShort,
+                    color: aFill,
+                    points: context.a.arc,
+                    focusSeason: careerMode ? undefined : result.seasonA,
+                  }}
+                  b={{
+                    name: bShort,
+                    color: bFill,
+                    points: context.b.arc,
+                    focusSeason: careerMode ? undefined : result.seasonB,
+                  }}
+                />
+              ) : (
+                <p className={cn(type.bodySm, "text-muted-foreground")}>
+                  No season-by-season history is available for these players.
+                </p>
+              )}
+            </div>
+          </div>
+        ) : null}
+
+        {tab === "all" ? (
+          <section className="px-3 py-1 sm:px-5">
+            <h2 className="sr-only">All stats</h2>
+            <p className={cn(type.caption, "pt-3 text-muted-foreground")}>
+              Every metric picked under Metrics, grouped by category.
+              {careerMode
+                ? " Career rows have no league percentiles, so bars compare the two players directly."
+                : " Small grey numbers are league percentiles for that season."}
+            </p>
+            {CATEGORY_ORDER.map((group) => {
+              const rows = visibleDimensions.filter((d) => d.group === group);
+              if (!rows.length) return null;
+              return (
+                <div key={group} className="mb-1 last:mb-0">
+                  <h3
+                    className={cn(
+                      type.micro,
+                      "border-b border-border/70 py-2 font-bold uppercase tracking-wide text-muted-foreground"
+                    )}
+                  >
+                    {GROUP_TITLE[group] ?? group}
+                  </h3>
+                  {rows.map((d) => (
+                    <MatchupBarRow
+                      key={d.id}
+                      dimension={d}
+                      aName={aShort}
+                      bName={bShort}
+                      aFill={aFill}
+                      bFill={bFill}
+                    />
+                  ))}
+                </div>
+              );
+            })}
+          </section>
+        ) : null}
 
         <footer className="frost-surface-muted flex items-center justify-between gap-3 border-t border-border/60 px-4 py-2.5 sm:px-5">
           <p
@@ -1355,7 +1695,6 @@ export function ComparisonDimensionRow({
       dimension={dimension}
       aName={aName}
       bName={bName}
-      valueMode="raw"
       aFill={aColor ?? teamBrandCompareBarFill(undefined)}
       bFill={bColor ?? teamBrandCompareBarFill(undefined)}
     />

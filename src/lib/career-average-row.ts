@@ -35,6 +35,51 @@ function sumField(
   return sumOptional(rows, pick) ?? 0;
 }
 
+/** Makes over attempts, summed only across seasons that published both. */
+function pooledRatio(
+  rows: PlayerSeason[],
+  num: (r: PlayerSeason) => number,
+  den: (r: PlayerSeason) => number
+): number | undefined {
+  let n = 0;
+  let d = 0;
+  for (const row of rows) {
+    const a = num(row);
+    const b = den(row);
+    if (!Number.isFinite(a) || !Number.isFinite(b)) continue;
+    n += a;
+    d += b;
+  }
+  return d > 0 ? n / d : undefined;
+}
+
+/**
+ * Career shooting from summed makes and attempts. Averaging each season's
+ * percentage by minutes lets a 2-for-12 season from three count as much as a
+ * 150-for-400 one.
+ */
+function careerShooting(pool: PlayerSeason[]) {
+  const fgm = (r: PlayerSeason) => r.fieldGoalsMade;
+  const fga = (r: PlayerSeason) => r.fieldGoalsAttempted;
+  const tpm = (r: PlayerSeason) => r.threePointersMade;
+  const tpa = (r: PlayerSeason) => r.threePointersAttempted;
+  const fta = (r: PlayerSeason) => r.freeThrowsAttempted;
+  return {
+    fieldGoalPct: pooledRatio(pool, fgm, fga),
+    twoPointPct: pooledRatio(pool, (r) => fgm(r) - tpm(r), (r) => fga(r) - tpa(r)),
+    threePointPct: pooledRatio(pool, tpm, tpa),
+    freeThrowPct: pooledRatio(pool, (r) => r.freeThrowsMade, fta),
+    effectiveFieldGoalPct: pooledRatio(pool, (r) => fgm(r) + 0.5 * tpm(r), fga),
+    trueShootingPct: pooledRatio(
+      pool,
+      (r) => r.points,
+      (r) => 2 * (fga(r) + 0.44 * fta(r))
+    ),
+    threePointAttemptRate: pooledRatio(pool, tpa, fga),
+    freeThrowRate: pooledRatio(pool, fta, fga),
+  };
+}
+
 /** Minutes-weighted mean of rate fields (skip missing). */
 function weightedMean(
   rows: PlayerSeason[],
@@ -97,6 +142,7 @@ function buildFromPool(
   gs: number,
   minutes: number
 ): PlayerSeason {
+  const shot = careerShooting(pool);
   return withPlayerSeasonDefaults({
     playerId: first.playerId,
     playerName: first.playerName,
@@ -124,15 +170,33 @@ function buildFromPool(
     personalFouls: sumField(pool, (r) => r.personalFouls),
     points: sumField(pool, (r) => r.points),
     plusMinus: sumField(pool, (r) => r.plusMinus),
-    fieldGoalPct: weightedMean(pool, (r) => r.fieldGoalPct) ?? Number.NaN,
-    twoPointPct: weightedMean(pool, (r) => r.twoPointPct) ?? Number.NaN,
-    threePointPct: weightedMean(pool, (r) => r.threePointPct) ?? Number.NaN,
-    freeThrowPct: weightedMean(pool, (r) => r.freeThrowPct) ?? Number.NaN,
-    effectiveFieldGoalPct: weightedMean(pool, (r) => r.effectiveFieldGoalPct),
-    trueShootingPct: weightedMean(pool, (r) => r.trueShootingPct),
+    fieldGoalPct:
+      shot.fieldGoalPct ??
+      weightedMean(pool, (r) => r.fieldGoalPct) ??
+      Number.NaN,
+    twoPointPct:
+      shot.twoPointPct ?? weightedMean(pool, (r) => r.twoPointPct) ?? Number.NaN,
+    threePointPct:
+      shot.threePointPct ??
+      weightedMean(pool, (r) => r.threePointPct) ??
+      Number.NaN,
+    freeThrowPct:
+      shot.freeThrowPct ??
+      weightedMean(pool, (r) => r.freeThrowPct) ??
+      Number.NaN,
+    effectiveFieldGoalPct:
+      shot.effectiveFieldGoalPct ??
+      weightedMean(pool, (r) => r.effectiveFieldGoalPct),
+    trueShootingPct:
+      shot.trueShootingPct ?? weightedMean(pool, (r) => r.trueShootingPct),
     threePointAttemptRate:
-      weightedMean(pool, (r) => r.threePointAttemptRate) ?? Number.NaN,
-    freeThrowRate: weightedMean(pool, (r) => r.freeThrowRate) ?? Number.NaN,
+      shot.threePointAttemptRate ??
+      weightedMean(pool, (r) => r.threePointAttemptRate) ??
+      Number.NaN,
+    freeThrowRate:
+      shot.freeThrowRate ??
+      weightedMean(pool, (r) => r.freeThrowRate) ??
+      Number.NaN,
     turnoverPct: weightedMean(pool, (r) => r.turnoverPct) ?? Number.NaN,
     usagePct: weightedMean(pool, (r) => r.usagePct),
     assistPct: weightedMean(pool, (r) => r.assistPct) ?? Number.NaN,
