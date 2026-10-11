@@ -7,8 +7,9 @@ import {
   isDrblSeason,
   listDrblSeasons,
   HISTORICAL_NORMALIZATION_VERSION,
-  DRBL_V1_ABILITY_VERSION,
+  DRBL_BOX_BLEND_ABILITY_VERSION,
 } from "../../historical/season-registry";
+import { BOX_BLEND_MODEL_VERSION } from "../../models/published-rating";
 import { HISTORICAL_NORMALIZATION_VERSION as SCHEMA_VERSION } from "../../historical/normalized-event-schema";
 import { adaptDrblEventsToHistoricalNormalized } from "../../historical/adapters/nba-cdn-playbyplayv3";
 import type { DrblEvent } from "../../types";
@@ -26,20 +27,22 @@ describe("M17a season registry", () => {
     assert.equal(isDrblSeason("2024-25"), true);
     assert.equal(isDrblSeason("2020-21"), true);
     assert.equal(isDrblSeason("1997-98"), false);
-    assert.equal(SEASON_REGISTRY.length, 6);
+    assert.equal(SEASON_REGISTRY.length, 7);
+    assert.equal(getSeasonEntry("2026-27")!.drblAvailable, false);
   });
 
-  it("marks retrospective frozen-v1 seasons distinctly from production", () => {
+  it("marks retrospective seasons distinctly from production", () => {
     const h = getSeasonEntry("2023-24");
     assert.ok(h);
     assert.equal(h!.modelProductStatus, "RETROSPECTIVE_FROZEN_V1");
-    assert.equal(h!.abilityModelVersion, DRBL_V1_ABILITY_VERSION);
+    assert.equal(h!.abilityModelVersion, DRBL_BOX_BLEND_ABILITY_VERSION);
   });
 
-  it("carries frozen v1 version metadata", () => {
+  it("stamps republished seasons with the box blend version", () => {
+    assert.equal(DRBL_BOX_BLEND_ABILITY_VERSION, BOX_BLEND_MODEL_VERSION);
     const e = getSeasonEntry("2025-26");
     assert.ok(e);
-    assert.equal(e!.abilityModelVersion, DRBL_V1_ABILITY_VERSION);
+    assert.equal(e!.abilityModelVersion, DRBL_BOX_BLEND_ABILITY_VERSION);
     assert.equal(e!.normalizationVersion, HISTORICAL_NORMALIZATION_VERSION);
     assert.equal(e!.supportTier, "B_CANONICAL_WITH_DOCUMENTED_SOURCE_LIMITATION");
     assert.equal(e!.modelProductStatus, "CANONICAL_PRODUCTION");

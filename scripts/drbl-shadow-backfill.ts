@@ -1,8 +1,10 @@
 /**
- * Adds the shadow fields `drblAnchored100` and `drblBox100` to an existing
- * season artifact from local normalized games, without recomputing anything
- * else. Both are built on the artifact's own drbl100 / rawAbilityRate;
- * drblBox100 also needs drbl/models/box-forward-weights.json.
+ * Republishes an existing season artifact's DRBL/100 as the box blend and
+ * adds the shadow `drblAnchored100`, from local normalized games, without
+ * recomputing anything else. Both are built on the play-by-play rate
+ * (`drblPbp100`, or `drbl100` on artifacts not yet republished) and
+ * rawAbilityRate, so re-running is safe. Needs
+ * drbl/models/box-forward-weights.json.
  *
  *   npm run drbl:shadow-backfill -- --season 2025-26
  *
@@ -21,13 +23,18 @@ import {
   fitAnchoredLineup,
 } from "../drbl/models/anchored-lineup";
 import {
-  BOX_FORWARD_WEIGHTS_PATH,
   boxPriorV2ForSeason,
   boxPriorV2Summary,
-  loadBoxForwardWeights,
+  requireBoxForwardWeights,
 } from "../drbl/models/box-forward";
-import { addBoxScoreToTotals, attachBoxPrior, type BoxPriorTotals } from "../drbl/models/box-prior";
+import { addBoxScoreToTotals, type BoxPriorTotals } from "../drbl/models/box-prior";
 import type { DrblSeasonArtifact } from "../drbl/models/compute-season";
+import type { DrblPlayerSeasonRow } from "../drbl/models/player-value";
+import {
+  BOX_BLEND_ABILITY_INPUT,
+  BOX_BLEND_MODEL_VERSION,
+  publishBoxBlend,
+} from "../drbl/models/published-rating";
 
 function arg(name: string): string | undefined {
   const i = process.argv.indexOf(`--${name}`);
@@ -50,6 +57,8 @@ async function rewrite(file: string, update: (a: DrblSeasonArtifact) => DrblSeas
   const body = pretty ? JSON.stringify(next, null, 2) : JSON.stringify(next);
   await writeFile(file, raw.endsWith("\n") ? `${body}\n` : body, "utf8");
 }
+
+const pbp = (p: DrblPlayerSeasonRow) => p.drblPbp100 ?? p.drbl100;
 
 async function main() {
   const season = arg("season");
@@ -84,23 +93,25 @@ async function main() {
     throw new Error(`local games (${loaded}) don't match the artifact (${gamesProcessed}); refusing to backfill`);
   }
 
-  const anchored = fitAnchoredLineup(
-    input,
-    new Map(artifact.players.map((p) => [p.playerId, p.drbl100]))
-  );
-  const weights = await loadBoxForwardWeights();
-  if (!weights) throw new Error(`${BOX_FORWARD_WEIGHTS_PATH} missing or stale; run npm run drbl:box-forward-fit`);
+  const anchored = fitAnchoredLineup(input, new Map(artifact.players.map((p) => [p.playerId, pbp(p)])));
+  const weights = await requireBoxForwardWeights();
   const box = boxPriorV2ForSeason({
     rows: input.rows,
     appearances: input.appearances,
     totals: boxTotals,
-    players: artifact.players,
+    players: artifact.players.map((p) => ({ ...p, drblPbp100: pbp(p) })),
+    games: loaded,
     weights,
   });
-  if (!box) throw new Error(`too few 5v5 possessions (${input.rows.length}) to fit the box prior`);
+  if (!box) throw new Error(`no box features for ${season}; refusing to publish DRBL/100`);
+  if (box.fitSource === "frozen") {
+    console.warn(`[shadow] ${season}: too few possessions for season box weights; using ${weights.fallbackFrom}'s`);
+  }
   const update = (a: DrblSeasonArtifact): DrblSeasonArtifact => ({
     ...a,
-    players: attachBoxPrior(attachAnchoredLineup(a.players, anchored), box.ratings),
+    publishedAbilityInput: BOX_BLEND_ABILITY_INPUT,
+    abilityModelVersion: BOX_BLEND_MODEL_VERSION,
+    players: publishBoxBlend(attachAnchoredLineup(a.players, anchored), box.ratings),
     anchoredLineupModel: anchoredLineupSummary(anchored),
     boxPriorModel: boxPriorV2Summary(box, weights),
   });

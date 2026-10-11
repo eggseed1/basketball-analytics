@@ -9,14 +9,14 @@
  *
  * Tests:
  * - Within season: ratings rebuilt with production code from the first 60%
- *   of games, scored on the last 40%.
+ *   of games (DRBL_OUTCOME_EARLY_FRAC overrides; reports then go to
+ *   early-{pct}/), scored on the rest.
  * - Cross season: shipped artifact ratings for season N scored on every
  *   game of season N+1.
- * Box shadows are rebuilt from the rating window; forward box weights are
- * refit per test from blocks whose target possessions precede the test games.
- * A candidate is eligible to replace published DRBL/100 only if its ΔRMSE
- * interval sits below 0 in every cross-season test and never above 0
- * within season.
+ * Box ratings are rebuilt from the rating window; the blend's forward weights
+ * and calibration are refit per test from blocks whose target possessions
+ * precede the test games. A future replacement for published DRBL/100 should
+ * beat it in every cross-season test and never trail it within season.
  */
 import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
@@ -58,31 +58,36 @@ import {
   fitBehaviorModel,
 } from "../drbl/models/behavior";
 import {
-  BOX_PRIOR_VERSION,
   addBoxScoreToTotals,
   boxPriorFeatures,
+  boxPriorFitFromWeights,
   fitBoxPrior,
   shrinkTowardBoxPrior,
   type BoxPriorTotals,
 } from "../drbl/models/box-prior";
-import { buildBoxPriorV2, solveBoxForward } from "../drbl/models/box-forward";
+import { buildBoxPriorV2, calibrationAt, type BoxForwardCalibrationPoint } from "../drbl/models/box-forward";
+import { BOX_BLEND_MODEL_VERSION } from "../drbl/models/published-rating";
 import {
   blocksBefore,
   blocksThrough,
-  forwardTrainingBlocks,
-  type ForwardTrainingBlock,
+  fitForward,
+  forwardTrainingData,
+  type ForwardFit,
 } from "../drbl/evaluation/box-forward-data";
 import type { DrblBoxPlayer } from "../drbl/types";
 
 const ROOT = process.cwd();
-const OUT_DIR = path.join(ROOT, "reports/drbl-outcome-test");
-const EARLY_FRAC = 0.6;
+const EARLY_FRAC = Number(process.env.DRBL_OUTCOME_EARLY_FRAC ?? 0.6);
+const OUT_DIR = path.join(
+  ROOT,
+  EARLY_FRAC === 0.6 ? "reports/drbl-outcome-test" : `reports/drbl-outcome-test/early-${Math.round(EARLY_FRAC * 100)}`
+);
 const INNER_FRAC = 2 / 3;
 const MIN_GAMES = 500;
 const RIDGE_LAMBDAS = [400, 800, 1600, 3200, 6400];
 const ANCHORED = `Anchored lineup (${ANCHORED_LINEUP_VERSION})`;
-const BOX_V1 = "DRBL-P shrunk toward same-season box rating (v1)";
-const BOX = `Box blend: v1 + forward box (${BOX_PRIOR_VERSION})`;
+const BOX_V1 = "Play-by-play rate shrunk toward same-season box rating (blend half)";
+const BOX = `DRBL/100, box blend (${BOX_BLEND_MODEL_VERSION})`;
 
 const log = (...a: unknown[]) => console.log(new Date().toISOString().slice(11, 19), ...a);
 
@@ -185,50 +190,42 @@ async function drblComponents(season: string, window: readonly OutcomeGame[]) {
   };
 }
 
-interface ForwardFit {
-  weightsPer100: number[];
-  blocks: string[];
-}
-
-function forwardFit(blocks: readonly ForwardTrainingBlock[]): ForwardFit | null {
-  if (blocks.length === 0) return null;
-  return {
-    weightsPer100: solveBoxForward(blocks.map((b) => b.block)),
-    blocks: blocks.map((b) => `${b.info.kind} ${b.info.from}→${b.info.to}`),
-  };
-}
-
 /**
- * Same-season box weights fit on the rating window only; v2 also needs
- * forward weights fit without the test games. Empty when the window is too
- * small to fit.
+ * Box ratings built from the rating window only. The same-season box weights
+ * fall back to `fallbackBoxWeights` (fit on an earlier season) when the window
+ * is too short; the blend also needs forward weights and a calibration fit
+ * without the test games.
  */
-function boxShadows(
+function boxRatings(
   games: readonly OutcomeGame[],
-  published: Ratings,
+  pbp: Ratings,
   raw: Ratings,
   n: Ratings,
-  forward: ForwardFit | null
-): { v1: Ratings; v2: Ratings | null } {
+  forward: ForwardFit | null,
+  fallbackBoxWeights: number[] | null
+): { v1: Ratings | null; blend: Ratings | null; fitSource: "season" | "frozen" | null } {
   const totals: BoxPriorTotals = new Map();
   for (const g of games) addBoxScoreToTotals(totals, boxByGame.get(g.gameId) ?? []);
   const input = anchoredInputOf(games);
   const boxFeatures = boxPriorFeatures(totals, input.appearances);
-  const fit = fitBoxPrior(input.rows, boxFeatures);
-  if (!fit) return { v1: new Map(), v2: null };
-  const v2 = forward
+  const seasonFit = fitBoxPrior(input.rows, boxFeatures);
+  const fit = seasonFit ?? (fallbackBoxWeights ? boxPriorFitFromWeights(boxFeatures, fallbackBoxWeights) : null);
+  if (!fit) return { v1: null, blend: null, fitSource: null };
+  const blend = forward
     ? buildBoxPriorV2({
         fit,
         boxFeatures,
         forwardWeightsPer100: forward.weightsPer100,
+        calibration: calibrationAt(forward.calibration, games.length),
+        playerShrinkK: forward.playerShrinkK,
         appearances: input.appearances,
         rows: input.rows,
-        drbl100: published,
+        drblPbp100: pbp,
         rawAbilityRate: raw,
         possessions: n,
       }).ratings
     : null;
-  return { v1: shrinkTowardBoxPrior(raw, n, fit.ratingsPer100), v2 };
+  return { v1: seasonFit ? shrinkTowardBoxPrior(raw, n, seasonFit.ratingsPer100) : null, blend, fitSource: seasonFit ? "season" : "frozen" };
 }
 
 function scoreboardRidge(games: readonly OutcomeGame[], lambda: number): Ratings {
@@ -260,7 +257,12 @@ function selectRidgeLambda(window: readonly OutcomeGame[]): { lambda: number; tr
   return { lambda: best.lambda, trace };
 }
 
-async function withinSeason(season: string, games: OutcomeGame[], forward: ForwardFit | null) {
+async function withinSeason(
+  season: string,
+  games: OutcomeGame[],
+  forward: ForwardFit | null,
+  fallbackBoxWeights: number[] | null
+) {
   const end = Math.floor(games.length * EARLY_FRAC);
   const train = games.slice(0, end);
   const test = games.slice(end);
@@ -269,7 +271,7 @@ async function withinSeason(season: string, games: OutcomeGame[], forward: Forwa
   const comps = await drblComponents(season, train);
   const exp = exposureOf(train);
   const f = (r: Ratings) => gameFeature(test, r, exp);
-  const box = boxShadows(train, comps.published, comps.pRaw, comps.n, forward);
+  const box = boxRatings(train, comps.published, comps.pRaw, comps.n, forward, fallbackBoxWeights);
   const features: Record<string, number[]> = {
     [PUBLISHED]: f(comps.published),
     "DRBL-P raw rate (unshrunk)": f(comps.pRaw),
@@ -278,11 +280,17 @@ async function withinSeason(season: string, games: OutcomeGame[], forward: Forwa
     "Raw on-court +/- per 100": f(rawPlusMinus(train)),
     [`Scoreboard lineup ridge (λ=${lambda})`]: f(scoreboardRidge(train, lambda)),
     [ANCHORED]: f(anchored(train, comps.published)),
-    [BOX_V1]: f(box.v1),
   };
-  if (box.v2) features[BOX] = f(box.v2);
-  const report = scoreOutcomes(`${season}: first 60% of games → last 40%`, test, features, teamFeature(train, test));
-  return { report, ridgeSelection: { lambda, trace } };
+  if (box.v1) features[BOX_V1] = f(box.v1);
+  if (box.blend) features[box.fitSource === "frozen" ? `${BOX} with last season's box weights` : BOX] = f(box.blend);
+  const pctOf = (f: number) => `${Math.round(f * 100)}%`;
+  const report = scoreOutcomes(
+    `${season}: first ${pctOf(EARLY_FRAC)} of games → last ${pctOf(1 - EARLY_FRAC)}`,
+    test,
+    features,
+    teamFeature(train, test)
+  );
+  return { report, ridgeSelection: { lambda, trace }, boxFitSource: box.fitSource };
 }
 
 async function artifactRatings(season: string) {
@@ -297,9 +305,10 @@ async function artifactRatings(season: string) {
     }
     return m;
   };
+  const pbp = pick("drblPbp100");
   return {
     version: artifact.version ?? "unknown version",
-    published: pick("drbl100"),
+    pbp: pbp.size > 0 ? pbp : pick("drbl100"),
     pRaw: pick("rawAbilityRate"),
     n: pick("possessions"),
     ln: pick("drblLn"),
@@ -330,18 +339,18 @@ async function crossSeason(
   const art = await artifactRatings(from);
   const exp = exposureOf(fromGames);
   const f = (r: Ratings) => gameFeature(toGames, r, exp);
-  const box = boxShadows(fromGames, art.published, art.pRaw, art.n, forward);
+  const box = boxRatings(fromGames, art.pbp, art.pRaw, art.n, forward, null);
   const features: Record<string, number[]> = {
-    [PUBLISHED]: f(art.published),
+    [PUBLISHED]: f(art.pbp),
     "DRBL-P raw rate (unshrunk)": f(art.pRaw),
     "DRBL-LN (stored lineup)": f(art.ln),
     "DRBL-B (box)": f(art.b),
     "Raw on-court +/- per 100": f(rawPlusMinus(fromGames)),
     [`Scoreboard lineup ridge (λ=${lambda})`]: f(scoreboardRidge(fromGames, lambda)),
-    [ANCHORED]: f(art.anchored.size > 0 ? art.anchored : anchored(fromGames, art.published)),
-    [BOX_V1]: f(box.v1),
+    [ANCHORED]: f(art.anchored.size > 0 ? art.anchored : anchored(fromGames, art.pbp)),
   };
-  if (box.v2) features[BOX] = f(box.v2);
+  if (box.v1) features[BOX_V1] = f(box.v1);
+  if (box.blend) features[BOX] = f(box.blend);
   const d = await darko(from);
   if (d.size > 0) features[`DARKO ${from} (external)`] = f(d);
   return scoreOutcomes(
@@ -361,21 +370,21 @@ function markdown(reports: OutcomeReport[], generatedAt: string): string {
     "",
     `Generated ${generatedAt} by \`npm run drbl:outcome-test\`.`,
     "",
-    "R² is the share of final-margin variance explained beyond home court, out of sample. ΔRMSE is the candidate's error minus published DRBL/100's error in points, with a 95% game-bootstrap interval. Negative means the candidate predicts margins better.",
+    `R² is the share of final-margin variance explained beyond home court, out of sample. Slope is the final margin regressed on the margin the rating implies (on-court rating differences summed over every possession, per 100); 1 means the rating is in real points per 100, below 1 means it is spread too wide. ΔRMSE is the rating's error minus the error of ${PUBLISHED} in points, with a 95% game-bootstrap interval. Negative means the rating predicts margins better.`,
     "",
-    `Promotion rule: a candidate can replace published DRBL/100 only if its interval sits below 0 in every cross-season test and never above 0 within season. Passing makes it eligible; switching is still a product decision. ${ANCHORED} and ${BOX} are stored as the shadow fields \`drblAnchored100\` and \`drblBox100\`. ${BOX_V1} is the same-season half of the blend.`,
+    `Published DRBL/100 is ${BOX}. Its baseline here is the play-by-play-only rate it replaced in October 2026, which the artifacts keep as \`drblPbp100\`. A future replacement should beat published DRBL/100 in every cross-season test and never trail it within season. ${BOX_V1} is the same-season half of the blend, and ${ANCHORED} is stored as the shadow field \`drblAnchored100\`.`,
     "",
-    "Cross-season rows use each season's shipped artifact as is; the section title names its pipeline version. Both box rows are rebuilt here from the rating window instead of read from the artifact. The blend's forward weights are refit for each test on earlier possessions only: through the rating season for cross-season tests, through the season before for within-season tests. The first local season has nothing earlier, so its within-season test has no blend row.",
+    "Cross-season rows use each season's shipped artifact; the section title names its pipeline version. Both box rows are rebuilt here from the rating window instead of read from the artifact. The blend's forward weights and calibration are refit for each test on earlier possessions only: through the rating season for cross-season tests, through the season before for within-season tests. The first local season has nothing earlier, so its within-season test has no blend row. When a within-season window is too short to fit its own box weights, the blend uses the previous season's, as the nightly compute does in opening week, and the row says so.",
   ];
   for (const r of reports) {
-    lines.push("", `## ${r.label}`, "", `${r.games} games.`, "", "| Rating | R² | RMSE | ΔRMSE vs published [95% CI] | Verdict |", "|---|---|---|---|---|");
+    lines.push("", `## ${r.label}`, "", `${r.games} games.`, "", "| Rating | R² | RMSE | Slope | ΔRMSE vs play-by-play DRBL/100 [95% CI] | Verdict |", "|---|---|---|---|---|---|");
     for (const s of r.results) {
       const d = s.vsPublished;
       lines.push(
-        `| ${s.name} | ${pct(s.r2)} | ${s.rmse.toFixed(2)} | ${d ? `${signed(d.delta)} [${signed(d.lo)}, ${signed(d.hi)}]` : "—"} | ${d ? d.verdict : "baseline"} |`
+        `| ${s.name} | ${pct(s.r2)} | ${s.rmse.toFixed(2)} | ${s.slope == null ? "—" : s.slope.toFixed(2)} | ${d ? `${signed(d.delta)} [${signed(d.lo)}, ${signed(d.hi)}]` : "—"} | ${d ? d.verdict : "baseline"} |`
       );
     }
-    lines.push("", "Added on top of published (two slopes):", "", "| Combination | R² | ΔRMSE [95% CI] | Verdict |", "|---|---|---|---|");
+    lines.push("", "Added on top of play-by-play DRBL/100 (two slopes):", "", "| Combination | R² | ΔRMSE [95% CI] | Verdict |", "|---|---|---|---|");
     for (const s of r.incremental) {
       const d = s.vsPublished!;
       lines.push(`| ${s.name} | ${pct(s.r2)} | ${signed(d.delta)} [${signed(d.lo)}, ${signed(d.hi)}] | ${d.verdict} |`);
@@ -391,25 +400,46 @@ async function main() {
   }
   log("seasons with local possessions:", seasons.join(", "));
   await requireEpvModel();
-  const forwardBlocks = await forwardTrainingBlocks(seasons, ROOT, (s) => log(s, "forward box blocks"));
+  const forwardData = await forwardTrainingData(seasons, ROOT, (s) => log(s, "forward box blocks"));
+  const forwardBlocks = forwardData.blocks;
 
   const reports: OutcomeReport[] = [];
   const selections: Record<string, unknown> = {};
-  const boxForward: Record<string, string[] | null> = {};
+  const boxForward: Record<
+    string,
+    {
+      blocks: string[];
+      playerShrinkK: number;
+      sseByShrinkK: Record<string, number>;
+      calibration: BoxForwardCalibrationPoint[];
+      boxFit: string | null;
+    } | null
+  > = {};
+  const describe = (fit: ForwardFit | null, boxFit: string | null) =>
+    fit
+      ? {
+          blocks: fit.blocks,
+          playerShrinkK: fit.playerShrinkK,
+          sseByShrinkK: fit.sseByShrinkK,
+          calibration: fit.calibration.map((p) => ({ games: p.games, calibration: Number(p.calibration.toFixed(4)) })),
+          boxFit,
+        }
+      : null;
   let prev: { season: string; games: OutcomeGame[]; lambda: number } | null = null;
   for (const season of seasons) {
     const games = await loadSeason(season);
     log(season, "games", games.length);
-    const within = forwardFit(blocksBefore(forwardBlocks, season));
-    const w = await withinSeason(season, games, within);
+    const within = fitForward(blocksBefore(forwardBlocks, season));
+    const prevSeason = `${Number(season.slice(0, 4)) - 1}-${season.slice(2, 4)}`;
+    const w = await withinSeason(season, games, within, forwardData.seasonBoxWeights.get(prevSeason) ?? null);
     reports.push(w.report);
     selections[season] = w.ridgeSelection;
-    boxForward[w.report.label] = within?.blocks ?? null;
+    boxForward[w.report.label] = describe(within, w.boxFitSource);
     if (prev && Number(season.slice(0, 4)) === Number(prev.season.slice(0, 4)) + 1) {
-      const cross = forwardFit(blocksThrough(forwardBlocks, prev.season));
+      const cross = fitForward(blocksThrough(forwardBlocks, prev.season));
       const r = await crossSeason(prev.season, prev.games, season, games, prev.lambda, cross);
       reports.push(r);
-      boxForward[r.label] = cross?.blocks ?? null;
+      boxForward[r.label] = describe(cross, "season");
     }
     prev = { season, games, lambda: w.ridgeSelection.lambda };
   }

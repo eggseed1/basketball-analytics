@@ -1,5 +1,5 @@
 /**
- * Published-method DRBL/100, DRBL-P raw rate and possessions rebuilt from a
+ * Play-by-play-only DRBL/100, DRBL-P raw rate and possessions rebuilt from a
  * window of local normalized games. Needs the fitted EPV coefficients loaded
  * (requireEpvModel) before the first call.
  */
@@ -12,7 +12,8 @@ import {
 import { loadNormalizedGame } from "./m16c-dataset";
 
 export interface WindowDrbl {
-  drbl100: Map<string, number>;
+  /** Play-by-play-only DRBL/100 (EB1600), the box blend's input. */
+  drblPbp100: Map<string, number>;
   raw: Map<string, number>;
   possessions: Map<string, number>;
 }
@@ -48,7 +49,7 @@ export async function drblForWindow(
     behaviorRatingsPer100: null,
   });
   return {
-    drbl100: new Map(rows.map((r) => [canon(r.playerId), r.drbl100])),
+    drblPbp100: new Map(rows.map((r) => [canon(r.playerId), r.drbl100])),
     raw: new Map(rows.map((r) => [canon(r.playerId), r.rawAbilityRate])),
     possessions: new Map(rows.map((r) => [canon(r.playerId), r.possessions])),
   };

@@ -68,6 +68,9 @@ export type PackageShape = {
   positions: string[];
 };
 
+/** DRBL/100 net change inside this margin reads as even. */
+export const DRBL_NET_EVEN_MARGIN = 0.1;
+
 export type TradeSketchSide = {
   sentSalary: number | null;
   receivedSalary: number | null;

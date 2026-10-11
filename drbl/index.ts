@@ -7,7 +7,7 @@ import {
 import { rawPath, readOrFetchJson, writeJson } from "./download/disk-cache";
 import { listSeasonGames } from "./download/season-games";
 import { statsBoxScoreV3ToCdnShape } from "./download/stats-boxscore-adapt";
-import { normalizeBoxScore, normalizePlayByPlay } from "./ingest/normalize";
+import { hasFeedOrderNumbers, normalizeBoxScore, normalizePlayByPlay } from "./ingest/normalize";
 import { reconstructLineups } from "./possessions/reconstruct-lineups";
 import { reconstructPossessions } from "./possessions/reconstruct-possessions";
 import { reconcileLineupMinutes } from "./possessions/reconcile-lineups";
@@ -138,7 +138,9 @@ export async function processGame(
     throw new Error(`No PBP events for ${meta.gameId}`);
   }
 
-  const lineups = reconstructLineups(events, box);
+  const lineups = reconstructLineups(events, box, {
+    inferPeriodStarters: !hasFeedOrderNumbers(rawPbp),
+  });
   const possessions = reconstructPossessions(events, box, lineups);
   const lineupReport = reconcileLineupMinutes(box, events, lineups);
   const reconcile = reconcileGame(box, events, possessions, {

@@ -62,6 +62,12 @@ export function listCanonicalR1Seasons(): string[] {
   );
 }
 
+/** Games behind a runtime-published season's artifact, or null when the season isn't in the sidecar. */
+export function drblPublishedGames(season: string): number | null {
+  const games = Number(publishedFile.seasons?.[season]?.gamesProcessed);
+  return Number.isFinite(games) && games > 0 ? games : null;
+}
+
 export function isDrblSeason(season: string): boolean {
   if (isRegistryDrblSeason(season)) return true;
   return isSeasonInPublishedFile(publishedFile, season);

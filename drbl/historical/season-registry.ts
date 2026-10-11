@@ -2,6 +2,8 @@
  * Canonical season registry — single source for website season selection.
  * Historical seasons are added only after M17a support-tier gates pass.
  */
+import { BOX_BLEND_MODEL_VERSION } from "../models/published-rating";
+
 export type HistoricalSupportTier =
   | "A_FULL_SOURCE_SUPPORT"
   | "B_CANONICAL_WITH_DOCUMENTED_SOURCE_LIMITATION"
@@ -43,6 +45,8 @@ export type SeasonRegistryEntry = {
 
 /** Frozen v1 versions for published canonical seasons. */
 export const DRBL_V1_ABILITY_VERSION = "drbl-ability-eb1600-r1-v1";
+/** DRBL/100 as the box blend; R1 Points and WAR1 keep their v1 versions. */
+export const DRBL_BOX_BLEND_ABILITY_VERSION = BOX_BLEND_MODEL_VERSION;
 export const DRBL_V1_R1_POINTS_VERSION = "drbl-r1-points-v1";
 export const DRBL_V1_R1_WINEQ_VERSION = "drbl-r1-wineq-v1";
 export const HISTORICAL_NORMALIZATION_VERSION = "historical-pbp-normalized-v1";
@@ -67,8 +71,8 @@ export const SEASON_REGISTRY: readonly SeasonRegistryEntry[] = [
     modelProductStatus: "RETROSPECTIVE_FROZEN_V1",
     supportTier: "B_CANONICAL_WITH_DOCUMENTED_SOURCE_LIMITATION",
     dataQualityNote:
-      "Retrospective frozen-v1 (M17a.2). CDN-era source; raw lineup completeness ~99.1% (below strict 99.9% Tier-A gate). Scoreboard exact. Same k=1600 / P1 as current production.",
-    abilityModelVersion: DRBL_V1_ABILITY_VERSION,
+      "72-game season. The play-by-play rate comes from the original feed, where about 0.9% of lineup snapshots are incomplete. The box-score and lineup inputs come from a re-import of stats.nba.com play-by-play. Scores match the official box score.",
+    abilityModelVersion: DRBL_BOX_BLEND_ABILITY_VERSION,
     r1PointValueVersion: DRBL_V1_R1_POINTS_VERSION,
     r1WinEquivalentVersion: DRBL_V1_R1_WINEQ_VERSION,
     normalizationVersion: HISTORICAL_NORMALIZATION_VERSION,
@@ -87,8 +91,8 @@ export const SEASON_REGISTRY: readonly SeasonRegistryEntry[] = [
     modelProductStatus: "RETROSPECTIVE_FROZEN_V1",
     supportTier: "B_CANONICAL_WITH_DOCUMENTED_SOURCE_LIMITATION",
     dataQualityNote:
-      "Retrospective frozen-v1 (M17a.2). CDN-era source; raw lineup completeness ~98.9%. Scoreboard exact. Frozen v1 formulas unchanged.",
-    abilityModelVersion: DRBL_V1_ABILITY_VERSION,
+      "The play-by-play rate comes from the original feed, where about 1.1% of lineup snapshots are incomplete. The box-score and lineup inputs come from a re-import of stats.nba.com play-by-play. Scores match the official box score.",
+    abilityModelVersion: DRBL_BOX_BLEND_ABILITY_VERSION,
     r1PointValueVersion: DRBL_V1_R1_POINTS_VERSION,
     r1WinEquivalentVersion: DRBL_V1_R1_WINEQ_VERSION,
     normalizationVersion: HISTORICAL_NORMALIZATION_VERSION,
@@ -107,8 +111,8 @@ export const SEASON_REGISTRY: readonly SeasonRegistryEntry[] = [
     modelProductStatus: "RETROSPECTIVE_FROZEN_V1",
     supportTier: "B_CANONICAL_WITH_DOCUMENTED_SOURCE_LIMITATION",
     dataQualityNote:
-      "Retrospective frozen-v1 (M17a.2). CDN-era source; raw lineup completeness ~98.6%. Scoreboard exact. Frozen v1 formulas unchanged.",
-    abilityModelVersion: DRBL_V1_ABILITY_VERSION,
+      "About 1.4% of lineup snapshots in the source play-by-play are incomplete. Scores match the official box score.",
+    abilityModelVersion: DRBL_BOX_BLEND_ABILITY_VERSION,
     r1PointValueVersion: DRBL_V1_R1_POINTS_VERSION,
     r1WinEquivalentVersion: DRBL_V1_R1_WINEQ_VERSION,
     normalizationVersion: HISTORICAL_NORMALIZATION_VERSION,
@@ -127,8 +131,8 @@ export const SEASON_REGISTRY: readonly SeasonRegistryEntry[] = [
     modelProductStatus: "RETROSPECTIVE_FROZEN_V1",
     supportTier: "B_CANONICAL_WITH_DOCUMENTED_SOURCE_LIMITATION",
     dataQualityNote:
-      "Retrospective frozen-v1 (M17a.2). CDN-era source; raw lineup completeness ~98.6%. Scoreboard exact. Frozen v1 formulas unchanged.",
-    abilityModelVersion: DRBL_V1_ABILITY_VERSION,
+      "About 1.4% of lineup snapshots in the source play-by-play are incomplete. Scores match the official box score.",
+    abilityModelVersion: DRBL_BOX_BLEND_ABILITY_VERSION,
     r1PointValueVersion: DRBL_V1_R1_POINTS_VERSION,
     r1WinEquivalentVersion: DRBL_V1_R1_WINEQ_VERSION,
     normalizationVersion: HISTORICAL_NORMALIZATION_VERSION,
@@ -147,8 +151,8 @@ export const SEASON_REGISTRY: readonly SeasonRegistryEntry[] = [
     modelProductStatus: "CANONICAL_PRODUCTION",
     supportTier: "B_CANONICAL_WITH_DOCUMENTED_SOURCE_LIMITATION",
     dataQualityNote:
-      "Canonical production season (M16l3). Source/reconstruction metadata notes raw lineup completeness below a strict 99.9% historical Tier-A gate; product remains canonical. Frozen v1 formulas unchanged.",
-    abilityModelVersion: DRBL_V1_ABILITY_VERSION,
+      "Canonical production season (M16l3). Source/reconstruction metadata notes raw lineup completeness below a strict 99.9% historical Tier-A gate; product remains canonical. DRBL/100 is the box blend; R1 Points and WAR1 formulas unchanged.",
+    abilityModelVersion: DRBL_BOX_BLEND_ABILITY_VERSION,
     r1PointValueVersion: DRBL_V1_R1_POINTS_VERSION,
     r1WinEquivalentVersion: DRBL_V1_R1_WINEQ_VERSION,
     normalizationVersion: HISTORICAL_NORMALIZATION_VERSION,
@@ -168,7 +172,7 @@ export const SEASON_REGISTRY: readonly SeasonRegistryEntry[] = [
     supportTier: "B_CANONICAL_WITH_DOCUMENTED_SOURCE_LIMITATION",
     dataQualityNote:
       "Canonical production season; reserved outcomes consumed once in M16l2. Source-quality metadata only — model product status remains CANONICAL_PRODUCTION.",
-    abilityModelVersion: DRBL_V1_ABILITY_VERSION,
+    abilityModelVersion: DRBL_BOX_BLEND_ABILITY_VERSION,
     r1PointValueVersion: DRBL_V1_R1_POINTS_VERSION,
     r1WinEquivalentVersion: DRBL_V1_R1_WINEQ_VERSION,
     normalizationVersion: HISTORICAL_NORMALIZATION_VERSION,

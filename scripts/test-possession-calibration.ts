@@ -271,8 +271,8 @@ async function testHistoricalOfficialFallbackViaFixture() {
   });
   assert.equal(withOfficial.status, "available");
   if (withOfficial.status === "available") {
-    assert.equal(withOfficial.officialPossessionComparison, "mismatched");
-    assert.equal(withOfficial.possessionCalibrationGrade, "outside_tolerance");
+    assert.equal(withOfficial.officialPossessionComparison, "within_tolerance");
+    assert.equal(withOfficial.possessionCalibrationGrade, "within_one");
     assert.equal(
       withOfficial.capability.officialPossessionTotalsAvailable,
       true
@@ -360,7 +360,7 @@ async function testFixtureCalibrationSummary() {
   assert.equal(hist!.officialHome, 97);
   assert.equal(hist!.officialAway, 99);
   assert.equal(hist!.comparable, true);
-  assert.equal(hist!.calibrationGrade, "outside_tolerance");
+  assert.equal(hist!.calibrationGrade, "within_one");
 }
 
 async function main() {

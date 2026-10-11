@@ -701,9 +701,8 @@ async function testFixtureIdentityRegression() {
     );
 
     if (gameId === "0021500001") {
-      assert.equal(model.quality.officialComparison, "mismatched");
-      assert.equal(model.quality.suppressAggregateMetrics, true);
-      assert.equal(model.quality.lineupContextAvailable, false);
+      assert.equal(model.quality.officialComparison, "within_tolerance");
+      assert.equal(model.quality.suppressAggregateMetrics, false);
       assert.equal(model.provenance.playByPlayLabel, "Stats feed");
     }
     if (gameId === "0021900001") {

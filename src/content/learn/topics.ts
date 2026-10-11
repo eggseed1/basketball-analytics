@@ -1024,11 +1024,12 @@ export const LEARN_TOPICS: LearnTopic[] = [
       "A possession starts with an expected scoring value (what you’d typically get from that situation).",
       "Shots, passes, turnovers, fouls, and other logged actions move that expectation up or down.",
       "When the public play-by-play clearly ties a change to a player, DRBL credits them.",
-      "Those credits build a per-possession rate (shrunk for small samples) and a season pile-up above the R1 baseline.",
+      "Those credits build a play-by-play rate and a season pile-up above the R1 baseline.",
+      "DRBL/100 blends that rate with ratings built from the box score, which settle down faster in small samples.",
     ],
     howDrblUses: [
       "Credits are measured against a role-matched R1 expected-points baseline.",
-      "DRBL/100 is that rate, pulled toward zero when the sample is small.",
+      "DRBL/100 is that rate blended with box-score ratings, pulled toward zero when the sample is small, and scaled to points per 100 in later games.",
       "WAR1 is the season total (R1 Points) converted into win-style units.",
     ],
     calculation: [
@@ -1036,7 +1037,7 @@ export const LEARN_TOPICS: LearnTopic[] = [
       "Actions occur → expected value changes.",
       "Credit is attributed for observable contributions.",
       "Possessions accumulate into a raw ability rate.",
-      "Small samples are pulled toward zero so early-season noise doesn’t dominate.",
+      "The rate is blended with box-score ratings, and small samples are pulled toward zero so early-season noise doesn’t dominate.",
       "Season value accumulates as R1 Points → WAR1.",
     ],
     caveats: [
@@ -1069,11 +1070,12 @@ export const LEARN_TOPICS: LearnTopic[] = [
       "Those tests shaped the published method. They are not settings on the public boards.",
     ],
     howDrblUses: [
-      "Published DRBL/100 uses the small-sample adjustment that held up in testing.",
+      "Published DRBL/100 is the blend of play-by-play and box-score ratings. In every season tested, it predicted later games better than the play-by-play-only rating it replaced.",
       "Product boards do not claim DRBL beats DARKO, BPM, or other externals.",
     ],
     calculation: [
       "Review reserved / out-of-time protocols from the sealed research reports.",
+      "Score each season's ratings on the games that came after them: from the first 3% of a season up to 60%, and from one full season to the next. The blend is fit only on earlier seasons for each test.",
       "Inspect sample sizes and error summaries where published.",
       "On one reserved external comparison, DRBL and BPM were statistically indistinguishable; broader head-to-heads were limited by historical coverage of other metrics.",
     ],
@@ -1084,7 +1086,7 @@ export const LEARN_TOPICS: LearnTopic[] = [
     ],
     relatedIds: ["drbl", "how_drbl_works", "drbl_limitations", "drbl_historical"],
     seeInAction: [{ label: "DRBL overview", href: "/learn/drbl" }],
-    sources: ["reports/m16j/", "reports/m17b/", "reports/m17c/", "reports/m17c_provenance/"],
+    sources: ["reports/m16j/", "reports/m17b/", "reports/m17c/", "reports/m17c_provenance/", "reports/drbl-outcome-test/"],
   },
   {
     id: "drbl_historical",
@@ -1146,7 +1148,7 @@ export const LEARN_TOPICS: LearnTopic[] = [
     caveats: [
       "Better off-ball measurement is still research and isn't on any board.",
       "Do not add P + LN + B and call it DRBL/100.",
-      "The 2024-25 and 2025-26 ratings use 1,225 of the 1,230 regular-season games. Five neutral-site games per season were missing from the game list when those ratings were sealed. Refitting with them moves DRBL/100 by less than 0.01 on average and 0.21 at most, so the published ratings stand. On/off uses all 1,230.",
+      "The play-by-play part of the 2024-25 and 2025-26 ratings uses 1,225 of the 1,230 regular-season games. Five neutral-site games per season were missing from the game list when that part was sealed. Adding them back moved the earlier play-by-play-only rating by less than 0.01 on average and 0.21 at most, so the published ratings stand. The box-score part and On/off use all 1,230.",
     ],
     relatedIds: ["drbl", "drbl_ln", "drbl_b", "r1", "drbl_validation", "drbl_historical"],
     seeInAction: [{ label: "DRBL overview", href: "/learn/drbl" }],

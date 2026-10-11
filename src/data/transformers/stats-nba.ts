@@ -11,6 +11,7 @@ import {
 } from "@/data/providers/nba/compute-advanced";
 import { NBA_TEAM_META } from "@/data/providers/nba/nba-team-meta";
 import { getCanonicalTeamFromProvider } from "@/data/identity/team-map";
+import { MISSING_PLAYER_STAT } from "@/data/transformers/player-season-defaults";
 
 function n(row: Record<string, string | number | null>, key: string): number {
   const value = row[key];
@@ -229,7 +230,7 @@ export function transformStatsNbaPlayerSeason(
     dDpm: darko?.dDpm ?? 0,
     boxDpm: darko?.boxDpm ?? 0,
     onOffDpm: darko?.onOffDpm ?? 0,
-    drbl100: drbl?.drbl100 ?? 0,
+    drbl100: drbl?.drbl100 ?? MISSING_PLAYER_STAT,
     rawAbilityRate: drbl?.rawAbilityRate,
     drblPossessions:
       drbl?.actualPossessions ?? drbl?.possessions ?? undefined,
@@ -449,7 +450,7 @@ export function transformStatsNbaCareerTotalsRow(
     dDpm: 0,
     boxDpm: 0,
     onOffDpm: 0,
-    drbl100: 0,
+    drbl100: MISSING_PLAYER_STAT,
     r1Points: null,
     r1WinEquivalents: null,
     drblP: 0,

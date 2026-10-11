@@ -1,6 +1,6 @@
 {
-  "version": "drbl-box-forward-v1",
-  "fittedAt": "2026-10-11T03:30:18.321Z",
+  "version": "drbl-box-forward-v2",
+  "fittedAt": "2026-10-11T18:35:47.426Z",
   "features": [
     "pointsPer100",
     "fieldGoalsAttemptedPer100",
@@ -16,68 +16,315 @@
     "personalFoulsPer100",
     "minutesPerGame",
     "startRate",
-    "drbl100",
+    "drblPbp100",
     "onCourtNetPer100"
   ],
   "weightsPer100": [
-    1.024,
-    -0.820078,
-    0.909009,
-    -0.696503,
-    -0.158393,
-    0.400694,
-    0.213287,
-    0.404016,
-    0.296313,
-    0.115053,
-    -0.137808,
-    0.027029,
-    0.326703,
-    0.230196,
-    0.237745,
-    0.316972
+    1.219603,
+    -0.868189,
+    0.89815,
+    -0.740953,
+    -0.182697,
+    0.33324,
+    0.190965,
+    0.400637,
+    0.29982,
+    0.120233,
+    -0.183376,
+    0.026671,
+    0.336589,
+    0.155037,
+    0.168727,
+    0.299471
   ],
+  "calibration": [
+    {
+      "games": 50,
+      "calibration": 0.357119
+    },
+    {
+      "games": 100,
+      "calibration": 0.411755
+    },
+    {
+      "games": 200,
+      "calibration": 0.52484
+    },
+    {
+      "games": 400,
+      "calibration": 0.623721
+    },
+    {
+      "games": 615,
+      "calibration": 0.7473
+    },
+    {
+      "games": 1230,
+      "calibration": 0.799118
+    }
+  ],
+  "playerShrinkK": 500,
+  "fallbackBoxWeightsPer100": [
+    2.165283,
+    -1.67152,
+    0.213468,
+    0.478121,
+    0.108899,
+    0.693677,
+    0.589411,
+    0.64855,
+    0.472752,
+    0.445824,
+    -0.92362,
+    -0.01661,
+    0.183003,
+    0.341452
+  ],
+  "fallbackFrom": "2025-26",
   "blocks": [
+    {
+      "kind": "early",
+      "from": "2020-21",
+      "to": "2020-21",
+      "games": 50,
+      "possessions": 204682
+    },
+    {
+      "kind": "early",
+      "from": "2020-21",
+      "to": "2020-21",
+      "games": 100,
+      "possessions": 194682
+    },
+    {
+      "kind": "early",
+      "from": "2020-21",
+      "to": "2020-21",
+      "games": 200,
+      "possessions": 174782
+    },
+    {
+      "kind": "early",
+      "from": "2020-21",
+      "to": "2020-21",
+      "games": 400,
+      "possessions": 135012
+    },
+    {
+      "kind": "half",
+      "from": "2020-21",
+      "to": "2020-21",
+      "games": 540,
+      "possessions": 107145
+    },
+    {
+      "kind": "pair",
+      "from": "2020-21",
+      "to": "2021-22",
+      "games": 1080,
+      "possessions": 242476
+    },
+    {
+      "kind": "early",
+      "from": "2021-22",
+      "to": "2021-22",
+      "games": 50,
+      "possessions": 232281
+    },
+    {
+      "kind": "early",
+      "from": "2021-22",
+      "to": "2021-22",
+      "games": 100,
+      "possessions": 222330
+    },
+    {
+      "kind": "early",
+      "from": "2021-22",
+      "to": "2021-22",
+      "games": 200,
+      "possessions": 202713
+    },
+    {
+      "kind": "early",
+      "from": "2021-22",
+      "to": "2021-22",
+      "games": 400,
+      "possessions": 163654
+    },
+    {
+      "kind": "half",
+      "from": "2021-22",
+      "to": "2021-22",
+      "games": 615,
+      "possessions": 121395
+    },
+    {
+      "kind": "pair",
+      "from": "2021-22",
+      "to": "2022-23",
+      "games": 1230,
+      "possessions": 246796
+    },
+    {
+      "kind": "early",
+      "from": "2022-23",
+      "to": "2022-23",
+      "games": 50,
+      "possessions": 236646
+    },
+    {
+      "kind": "early",
+      "from": "2022-23",
+      "to": "2022-23",
+      "games": 100,
+      "possessions": 226563
+    },
+    {
+      "kind": "early",
+      "from": "2022-23",
+      "to": "2022-23",
+      "games": 200,
+      "possessions": 206484
+    },
+    {
+      "kind": "early",
+      "from": "2022-23",
+      "to": "2022-23",
+      "games": 400,
+      "possessions": 166244
+    },
     {
       "kind": "half",
       "from": "2022-23",
       "to": "2022-23",
+      "games": 615,
       "possessions": 122949
     },
     {
       "kind": "pair",
       "from": "2022-23",
       "to": "2023-24",
+      "games": 1230,
       "possessions": 244778
+    },
+    {
+      "kind": "early",
+      "from": "2023-24",
+      "to": "2023-24",
+      "games": 50,
+      "possessions": 234630
+    },
+    {
+      "kind": "early",
+      "from": "2023-24",
+      "to": "2023-24",
+      "games": 100,
+      "possessions": 224523
+    },
+    {
+      "kind": "early",
+      "from": "2023-24",
+      "to": "2023-24",
+      "games": 200,
+      "possessions": 204513
+    },
+    {
+      "kind": "early",
+      "from": "2023-24",
+      "to": "2023-24",
+      "games": 400,
+      "possessions": 164391
     },
     {
       "kind": "half",
       "from": "2023-24",
       "to": "2023-24",
+      "games": 615,
       "possessions": 121460
     },
     {
       "kind": "pair",
       "from": "2023-24",
       "to": "2024-25",
+      "games": 1230,
       "possessions": 245610
+    },
+    {
+      "kind": "early",
+      "from": "2024-25",
+      "to": "2024-25",
+      "games": 50,
+      "possessions": 235437
+    },
+    {
+      "kind": "early",
+      "from": "2024-25",
+      "to": "2024-25",
+      "games": 100,
+      "possessions": 225426
+    },
+    {
+      "kind": "early",
+      "from": "2024-25",
+      "to": "2024-25",
+      "games": 200,
+      "possessions": 205542
+    },
+    {
+      "kind": "early",
+      "from": "2024-25",
+      "to": "2024-25",
+      "games": 400,
+      "possessions": 165396
     },
     {
       "kind": "half",
       "from": "2024-25",
       "to": "2024-25",
+      "games": 615,
       "possessions": 122663
     },
     {
       "kind": "pair",
       "from": "2024-25",
       "to": "2025-26",
+      "games": 1230,
       "possessions": 247784
+    },
+    {
+      "kind": "early",
+      "from": "2025-26",
+      "to": "2025-26",
+      "games": 50,
+      "possessions": 237430
+    },
+    {
+      "kind": "early",
+      "from": "2025-26",
+      "to": "2025-26",
+      "games": 100,
+      "possessions": 227330
+    },
+    {
+      "kind": "early",
+      "from": "2025-26",
+      "to": "2025-26",
+      "games": 200,
+      "possessions": 206895
+    },
+    {
+      "kind": "early",
+      "from": "2025-26",
+      "to": "2025-26",
+      "games": 400,
+      "possessions": 166466
     },
     {
       "kind": "half",
       "from": "2025-26",
       "to": "2025-26",
+      "games": 615,
       "possessions": 123286
     }
   ]

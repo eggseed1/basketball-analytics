@@ -93,7 +93,7 @@ for (const season of await discoverSeasons()) {
     const players = Array.isArray(raw?.players) ? raw.players : [];
     seasons[season] = players
       .map(slimPlayer)
-      .filter((row) => row[0] && Number(row[5]) > 0);
+      .filter((row) => row[0] && Number(row[5]) > 0 && row[3] != null);
     console.log(
       `[drbl-overlay] ${season} → ${seasons[season].length} players (games=${gamesProcessed})`
     );

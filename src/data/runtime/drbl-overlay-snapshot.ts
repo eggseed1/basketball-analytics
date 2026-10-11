@@ -80,7 +80,7 @@ function toDrblRow(row: SlimRow): DrblPlayerSeasonRow {
       teamId: teamId ?? "",
       possessions,
       actualPossessions: possessions,
-      drbl100: drbl100 ?? 0,
+      drbl100: drbl100 ?? Number.NaN,
       rawAbilityRate: rawAbilityRate ?? Number.NaN,
       posteriorAbilityRate: rawAbilityRate ?? Number.NaN,
       fusedRateRaw: rawAbilityRate ?? Number.NaN,
@@ -116,7 +116,7 @@ function toDrblRow(row: SlimRow): DrblPlayerSeasonRow {
     teamId: "",
     possessions,
     actualPossessions: possessions,
-    drbl100: drbl100 ?? 0,
+    drbl100: drbl100 ?? Number.NaN,
     rawAbilityRate: rawAbilityRate ?? Number.NaN,
     posteriorAbilityRate: rawAbilityRate ?? Number.NaN,
     fusedRateRaw: rawAbilityRate ?? Number.NaN,
@@ -138,7 +138,7 @@ export function getBundledDrblSeason(season: string): DrblPlayerSeasonRow[] {
   if (!key) return [];
   const cached = seasonCache.get(key);
   if (cached) return cached;
-  const rows = (seasons[key] ?? []).map(toDrblRow);
+  const rows = (seasons[key] ?? []).map(toDrblRow).filter((r) => Number.isFinite(r.drbl100));
   seasonCache.set(key, rows);
   return rows;
 }

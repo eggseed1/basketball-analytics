@@ -5,6 +5,8 @@ import type { Metadata } from "next";
 
 import { P1_POINTS_PER_WIN } from "@/lib/drbl-public-labels";
 
+import boxForwardWeights from "../../../../drbl/models/box-forward-weights.json";
+
 export const metadata: Metadata = {
   title: "What is DRBL?",
   description:
@@ -40,7 +42,7 @@ const DEEPER: Array<{ title: string; note?: string; links: DeeperLink[] }> = [
       {
         href: "/learn/r1",
         label: "R1",
-        blurb: "The role-matched baseline every DRBL number is measured against.",
+        blurb: "The role-matched baseline behind play-by-play credit and WAR1.",
       },
     ],
   },
@@ -132,9 +134,9 @@ export default function LearnDrblPage() {
             What is DRBL?
           </h1>
           <p className="max-w-2xl text-[16px] leading-relaxed text-muted-foreground">
-            DRBL reads public play-by-play and estimates how much each player
-            helped or hurt his team&apos;s expected scoring, compared with a
-            role-matched baseline. Two numbers carry almost all of it.
+            DRBL reads public play-by-play and box scores and estimates how
+            much each player helped or hurt his team&apos;s scoring. Two numbers
+            carry almost all of it.
           </p>
         </header>
 
@@ -142,8 +144,8 @@ export default function LearnDrblPage() {
           <h2 className="text-[18px] font-bold">Two main numbers</h2>
           <div data-motion-list className="grid gap-3 sm:grid-cols-2">
             <Card title="DRBL/100" href="/learn/drbl-100" question="How good?">
-              Impact per 100 possessions. Positive is above the baseline, near
-              zero is about even, negative is below. This is the main ranking
+              Impact per 100 possessions. Positive is above average, near zero
+              is about average, negative is below. This is the main ranking
               number.
             </Card>
             <Card title="WAR1" href="/learn/drbl/war1" question="How much?">
@@ -209,11 +211,14 @@ export default function LearnDrblPage() {
               WAR1 is not traditional WAR. The name is intended as Wins Above R1, and R1 is a role-matched baseline, not classic replacement level.
             </p>
             <p>
-              DRBL/100 itself is the raw rate pulled toward zero by an
-              empirical-Bayes prior, so small samples can&apos;t dominate:
+              DRBL/100 is a separate calculation. It blends the play-by-play
+              rate with ratings built from the box score, pulls small samples
+              toward zero, and scales the result to points per 100 in later
+              games. N is the player&apos;s possessions on offense and defense
+              combined:
             </p>
             <p className="font-mono text-[13px] text-foreground/85">
-              validatedDRBL100 = EB<sub>1600</sub>(rawAbilityRate) toward 0 · k = 1600
+              DRBL/100 = c × N / (N + {boxForwardWeights.playerShrinkK}) × blend
             </p>
           </div>
         </details>

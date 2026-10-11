@@ -1,5 +1,5 @@
 /**
- * Shadow DRBL/100 that shrinks DRBL-P toward a box-score rating instead of 0.
+ * Shrinks the play-by-play rate toward a box-score rating instead of 0.
  *
  * Box rating: per-100 box rates (plus minutes per game and start rate),
  * standardized within the season. Weights come from a regression of points
@@ -7,9 +7,8 @@
  * floor, so the target is the scoreboard, not DRBL-P.
  *
  * v1 = N/(N+shrinkK) × rawAbilityRate + shrinkK/(N+shrinkK) × boxScale × box.
- * The stored drblBox100 (v2) blends v1 with the forward rating in box-forward.ts.
+ * Published DRBL/100 blends v1 with the forward rating in box-forward.ts.
  *
- * Shadow only: never read by the site overlay or any published surface.
  * Config is frozen; change it only with a fresh run of
  * `scripts/drbl-outcome-test.ts`.
  */
@@ -191,6 +190,17 @@ export function fitBoxPrior(
   };
 }
 
+/** Ratings from weights fit elsewhere, for windows too short to fit their own. */
+export function boxPriorFitFromWeights(
+  features: ReadonlyMap<string, number[]>,
+  weightsPer100: readonly number[],
+  config: BoxPriorConfig = BOX_PRIOR_CONFIG
+): BoxPriorFit {
+  const ratingsPer100 = new Map<string, number>();
+  for (const [id, z] of features) ratingsPer100.set(id, z.reduce((s, v, i) => s + v * weightsPer100[i]!, 0));
+  return { version: BOX_PRIOR_VERSION, config: { ...config }, possessions: 0, weightsPer100: [...weightsPer100], ratingsPer100 };
+}
+
 /** DRBL-P raw rate shrunk toward boxScale × box rating; players without either stay absent. */
 export function shrinkTowardBoxPrior(
   raw: ReadonlyMap<string, number>,
@@ -211,7 +221,6 @@ export function shrinkTowardBoxPrior(
 
 export interface BoxPriorSummary {
   version: typeof BOX_PRIOR_VERSION;
-  shadow: true;
   shrinkK: number;
   boxScale: number;
   possessions: number;
@@ -222,7 +231,6 @@ export interface BoxPriorSummary {
 export function boxPriorSummary(fit: BoxPriorFit): BoxPriorSummary {
   return {
     version: fit.version,
-    shadow: true,
     shrinkK: fit.config.shrinkK,
     boxScale: fit.config.boxScale,
     possessions: fit.possessions,
@@ -231,18 +239,4 @@ export function boxPriorSummary(fit: BoxPriorFit): BoxPriorSummary {
       BOX_PRIOR_FEATURES.map((f, i) => [f, Number(fit.weightsPer100[i]!.toFixed(3))])
     ) as BoxPriorSummary["weightsPer100"],
   };
-}
-
-/** Sets drblBox100 from `values` (null clears it); players without a finite value stay absent. */
-export function attachBoxPrior<T extends { playerId: string }>(
-  players: T[],
-  values: ReadonlyMap<string, number> | null
-): (T & { drblBox100?: number })[] {
-  return players.map((p) => {
-    const { drblBox100: _stale, ...rest } = p as T & { drblBox100?: number };
-    void _stale;
-    const v = values?.get(p.playerId);
-    if (v == null || !Number.isFinite(v)) return rest as T;
-    return { ...rest, drblBox100: Number(v.toFixed(2)) } as T & { drblBox100: number };
-  });
 }

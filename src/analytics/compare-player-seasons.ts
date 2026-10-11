@@ -41,6 +41,8 @@ export const SEASON_COMPARE_TOLERANCE = {
   mpg: 1.5,
   gp: 3,
   cpi: 1.25,
+  /** DRBL/100 spreads about 1.7× wider than DRBL-P/O/D and other impact rates. */
+  drbl: 0.35,
   impact: 0.2,
   teamDiff: 1.5,
 } as const;
@@ -671,8 +673,8 @@ export function comparePlayerSeasons(options: {
     "ability",
     aDrbl ? a.drbl100 : null,
     bDrbl ? b.drbl100 : null,
-    SEASON_COMPARE_TOLERANCE.impact,
-    "Canonical validated ability rate."
+    SEASON_COMPARE_TOLERANCE.drbl,
+    "Canonical ability rate."
   );
   pushDrblOrUnavailable(
     "drbl_o",

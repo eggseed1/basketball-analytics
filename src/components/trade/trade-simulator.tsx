@@ -30,6 +30,7 @@ import {
   type TradeSalaryFit,
 } from "@/lib/trade-salary-matching";
 import {
+  DRBL_NET_EVEN_MARGIN,
   summarizePlayerTrade,
   type TradeSimPlayer,
   type TradeSimTeam,
@@ -196,9 +197,9 @@ function SideImpact({
         </div>
         <Badge
           variant={
-            side.drblNet != null && side.drblNet > 0.05
+            side.drblNet != null && side.drblNet > DRBL_NET_EVEN_MARGIN
               ? "positive"
-              : side.drblNet != null && side.drblNet < -0.05
+              : side.drblNet != null && side.drblNet < -DRBL_NET_EVEN_MARGIN
                 ? "negative"
                 : "neutral"
           }
@@ -770,11 +771,11 @@ export function TradeSimulator({
   const aWins =
     sketch.sideA.drblNet != null &&
     sketch.sideB.drblNet != null &&
-    sketch.sideA.drblNet > sketch.sideB.drblNet + 0.05;
+    sketch.sideA.drblNet > sketch.sideB.drblNet + DRBL_NET_EVEN_MARGIN;
   const bWins =
     sketch.sideA.drblNet != null &&
     sketch.sideB.drblNet != null &&
-    sketch.sideB.drblNet > sketch.sideA.drblNet + 0.05;
+    sketch.sideB.drblNet > sketch.sideA.drblNet + DRBL_NET_EVEN_MARGIN;
 
   return (
     <div className="flex min-w-0 flex-col gap-4">

@@ -113,7 +113,7 @@ const ENTRIES: Record<string, StatGlossaryEntry> = {
   },
   "DRBL/100": {
     title: "DRBL/100",
-    body: "Estimated impact per 100 possessions. DRBL’s primary ability-rate ranking number. Deeper: validated ability rate vs a role-matched R1 reference after EB1600 shrinkage (k = 1600).",
+    body: "Estimated impact per 100 possessions. DRBL’s primary ability-rate ranking number. Deeper: the play-by-play rate blended with box-score ratings, with small samples pulled toward zero and the scale fit to points per 100 in later games. Zero is the playing-time-weighted league average.",
     learnMoreHref: "/learn/drbl-100",
   },
   "DRBL impact": {
@@ -123,7 +123,7 @@ const ENTRIES: Record<string, StatGlossaryEntry> = {
   },
   "DRBL ±": {
     title: "DRBL uncertainty (legacy diagnostic)",
-    body: "Not available for the validated DRBL/100 point estimate. Predictive intervals remain unresolved. Legacy ± fields are diagnostic-only and are not shown as calibrated confidence intervals.",
+    body: "Not available for the DRBL/100 point estimate. Predictive intervals remain unresolved. Legacy ± fields are diagnostic-only and are not shown as calibrated confidence intervals.",
     learnMoreHref: "/learn/drbl-limitations",
   },
   DRBL: {

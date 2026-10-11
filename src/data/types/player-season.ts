@@ -125,7 +125,7 @@ export interface PlayerSeason {
   winsAdded?: number;
 
   /**
-   * Canonical DRBL/100 - validated P-only EB1600 point estimate (M16k1+).
+   * Canonical DRBL/100, the box blend (drbl-box-blend-v2).
    * Canonical overall ranking uses descending unrounded drbl100.
    */
   drbl100: number;
@@ -135,7 +135,7 @@ export interface PlayerSeason {
   drblPossessions?: number;
   /** Production ability model id when DRBL overlay is present. */
   abilityModelVersion?: string;
-  /** Season DRBL board rank (descending unrounded validatedDRBL100). */
+  /** Season DRBL board rank (descending unrounded drbl100). */
   drblRank?: number;
   /** DRBL-P possession / Approach B component. */
   drblP: number;

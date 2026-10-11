@@ -105,61 +105,166 @@ function inferShotResult(
   return null;
 }
 
-function normalizePlayerKey(name: string): string {
+/** Surnames a feed may still use after the player changed his name. */
+const FORMER_SURNAMES: ReadonlyMap<string, string> = new Map([["kanter", "freedom"]]);
+
+const NAME_SUFFIX = / (jr|sr|ii|iii|iv)$/;
+
+function foldName(name: string): string {
   return name
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
     .replace(/[^a-z0-9 ]/g, "")
     .replace(/\s+/g, " ")
     .trim();
 }
 
+/** Lowercase, accents folded, punctuation and Jr./Sr./II–IV dropped, former surnames mapped. */
+export function normalizePlayerKey(name: string): string {
+  return foldName(name)
+    .replace(NAME_SUFFIX, "")
+    .split(" ")
+    .map((part) => FORMER_SURNAMES.get(part) ?? part)
+    .join(" ");
+}
+
+/** Last name plus suffix: "williams|iii" for Robert Williams III, "williams|" for Grant Williams. */
+function surnameSuffixKey(name: string): string {
+  const parts = normalizePlayerKey(name).split(" ");
+  return `${parts[parts.length - 1]}|${NAME_SUFFIX.exec(foldName(name))?.[1] ?? ""}`;
+}
+
 export type NormalizePbpOptions = {
   /** Optional box roster for resolving historical "SUB: X FOR Y" names → IDs. */
-  rosterPlayers?: Array<{ playerId: string; playerName: string }>;
+  rosterPlayers?: Array<{ playerId: string; playerName: string; teamId?: string }>;
 };
 
-function buildRosterIndex(
-  rosterPlayers: Array<{ playerId: string; playerName: string; teamId?: string }> | undefined
-): {
+type RosterIndex = {
   byFull: Map<string, string>;
   byLastUnique: Map<string, string>;
-} {
+  /** Namesakes the feed tells apart only by suffix ("Williams III" and "Williams"). */
+  bySurnameSuffixUnique: Map<string, string>;
+};
+
+/** One index for the whole box plus one per team, keyed "*" and teamId. */
+function buildRosterIndex(
+  rosterPlayers: Array<{ playerId: string; playerName: string; teamId?: string }> | undefined
+): Map<string, RosterIndex> {
+  const out = new Map<string, RosterIndex>();
+  if (!rosterPlayers) return out;
+  const teams = new Map<string, typeof rosterPlayers>([["*", rosterPlayers]]);
+  for (const p of rosterPlayers) {
+    if (!p.teamId) continue;
+    teams.set(p.teamId, [...(teams.get(p.teamId) ?? []), p]);
+  }
+  for (const [key, players] of teams) out.set(key, buildOneRosterIndex(players));
+  return out;
+}
+
+function buildOneRosterIndex(
+  rosterPlayers: Array<{ playerId: string; playerName: string }>
+): RosterIndex {
   const byFull = new Map<string, string>();
   const lastCounts = new Map<string, string[]>();
-  if (!rosterPlayers) return { byFull, byLastUnique: new Map() };
+  const abbreviatedCounts = new Map<string, string[]>();
   for (const p of rosterPlayers) {
     const full = normalizePlayerKey(p.playerName);
     if (full) byFull.set(full, p.playerId);
     const parts = full.split(" ");
-    if (parts.length >= 1) {
-      const last = parts[parts.length - 1]!;
+    // Surnames of one or two words ("Silva", "da Silva").
+    for (const n of [1, 2]) {
+      if (n === 2 && parts.length < 3) continue;
+      const last = parts.slice(-n).join(" ");
       const arr = lastCounts.get(last) ?? [];
       arr.push(p.playerId);
       lastCounts.set(last, arr);
     }
-    // Also index abbreviated "X. Last" style from nameI-like forms.
+    // Abbreviated "C. Martin" and "Co. Martin" forms; namesakes share the first.
     if (parts.length >= 2) {
-      const abbreviated = normalizePlayerKey(
-        `${parts[0]![0]}. ${parts[parts.length - 1]}`
-      );
-      if (abbreviated) byFull.set(abbreviated, p.playerId);
+      for (const n of [1, 2]) {
+        if (parts[0]!.length < n) continue;
+        const abbreviated = `${parts[0]!.slice(0, n)} ${parts[parts.length - 1]}`;
+        const arr = abbreviatedCounts.get(abbreviated) ?? [];
+        arr.push(p.playerId);
+        abbreviatedCounts.set(abbreviated, arr);
+      }
     }
+  }
+  for (const [abbreviated, ids] of abbreviatedCounts) {
+    const uniq = [...new Set(ids)];
+    if (uniq.length === 1 && !byFull.has(abbreviated)) byFull.set(abbreviated, uniq[0]!);
   }
   const byLastUnique = new Map<string, string>();
   for (const [last, ids] of lastCounts) {
     const uniq = [...new Set(ids)];
     if (uniq.length === 1) byLastUnique.set(last, uniq[0]!);
   }
-  return { byFull, byLastUnique };
+  const suffixCounts = new Map<string, string[]>();
+  for (const p of rosterPlayers) {
+    const k = surnameSuffixKey(p.playerName);
+    suffixCounts.set(k, [...(suffixCounts.get(k) ?? []), p.playerId]);
+  }
+  const bySurnameSuffixUnique = new Map<string, string>();
+  for (const [k, ids] of suffixCounts) {
+    const uniq = [...new Set(ids)];
+    if (uniq.length === 1) bySurnameSuffixUnique.set(k, uniq[0]!);
+  }
+  return { byFull, byLastUnique, bySurnameSuffixUnique };
 }
 
 function resolveRosterId(
-  index: ReturnType<typeof buildRosterIndex>,
-  name: string
+  indexes: ReturnType<typeof buildRosterIndex>,
+  name: string,
+  teamId?: string | null
 ): string | null {
   const key = normalizePlayerKey(name);
   if (!key) return null;
-  return index.byFull.get(key) ?? index.byLastUnique.get(key) ?? null;
+  const surnameOnly = !key.includes(" ");
+  for (const index of [teamId ? indexes.get(teamId) : undefined, indexes.get("*")]) {
+    if (!index) continue;
+    const id =
+      index.byFull.get(key) ??
+      index.byLastUnique.get(key) ??
+      (surnameOnly ? index.bySurnameSuffixUnique.get(surnameSuffixKey(name)) : undefined);
+    if (id) return id;
+  }
+  return null;
+}
+
+function isNbaTeamId(id: number): boolean {
+  return id >= 1610612700 && id < 1610612800;
+}
+
+/**
+ * playbyplayv3 rebounds carry no offensive/defensive subType; a rebound by
+ * the team that missed the last shot or free throw is offensive. Events must
+ * be in feed order.
+ */
+function labelReboundsByLastMiss(events: DrblEvent[]): void {
+  let missTeamId: string | null = null;
+  let period = 0;
+  for (const e of events) {
+    if (e.period !== period) {
+      period = e.period;
+      missTeamId = null;
+    }
+    const shot = e.actionType === "2pt" || e.actionType === "3pt" || e.actionType === "freethrow";
+    if (shot && e.shotResult === "Missed") missTeamId = e.teamId;
+    else if (e.actionType === "rebound" && e.teamId && missTeamId) {
+      e.subType = e.teamId === missTeamId ? "offensive" : "defensive";
+    }
+  }
+}
+
+/**
+ * False for stats.nba.com playbyplayv3, which has no orderNumber, numbers
+ * actions out of chronological order and skips substitutions made between
+ * periods.
+ */
+export function hasFeedOrderNumbers(raw: unknown): boolean {
+  const actions = (raw as { game?: { actions?: Array<Record<string, unknown>> } }).game?.actions;
+  return Array.isArray(actions) && actions.some((a) => a.orderNumber != null);
 }
 
 /**
@@ -179,24 +284,37 @@ export function normalizePlayByPlay(
   const rosterIndex = buildRosterIndex(options.rosterPlayers);
 
   const events: DrblEvent[] = [];
+  // Lineup lookups need chronological action numbers; without orderNumber
+  // only the feed's own order is chronological.
+  const numberByPosition = !hasFeedOrderNumbers(raw);
 
-  for (const action of actions) {
+  for (const [position, action] of actions.entries()) {
     const actionTypeRaw = asString(action.actionType);
     const shotValue = asNullableNumber(action.shotValue);
-    const actionType = mapActionType(actionTypeRaw, shotValue);
+    let actionType = mapActionType(actionTypeRaw, shotValue);
     const subType = asString(action.subType);
     const description = asString(action.description);
+    // playbyplayv3 logs steals and blocks as untyped "X STEAL (1 STL)" rows.
+    if (numberByPosition && actionType === "unknown") {
+      if (/\bSTEAL\b/.test(description)) actionType = "steal";
+      else if (/\bBLOCK\b/.test(description)) actionType = "block";
+    }
     const shotResult = inferShotResult(
       actionTypeRaw,
       asString(action.shotResult),
       description,
       actionType
     );
-    const playerIdNum = asNumber(action.personId);
-    const teamIdNum = asNumber(action.teamId);
+    let playerIdNum = asNumber(action.personId);
+    let teamIdNum = asNumber(action.teamId);
+    // ...and team rows ("Nets Rebound") with the team id as personId.
+    if (numberByPosition && !teamIdNum && isNbaTeamId(playerIdNum)) {
+      teamIdNum = playerIdNum;
+      playerIdNum = 0;
+    }
     const possessionNum = asNumber(action.possession);
     const clockRaw = asString(action.clock);
-    const actionNumber = asNumber(action.actionNumber);
+    const actionNumber = numberByPosition ? position + 1 : asNumber(action.actionNumber);
     const orderNumber =
       asNumber(action.orderNumber) || actionNumber;
 
@@ -206,10 +324,11 @@ export function normalizePlayByPlay(
       if (subMatch) {
         const inName = subMatch[1]!.trim();
         const outName = subMatch[2]!.trim();
+        const subTeamId = teamIdNum ? String(teamIdNum) : null;
         const outId =
           (playerIdNum ? String(playerIdNum) : null) ||
-          resolveRosterId(rosterIndex, outName);
-        const inId = resolveRosterId(rosterIndex, inName);
+          resolveRosterId(rosterIndex, outName, subTeamId);
+        const inId = resolveRosterId(rosterIndex, inName, subTeamId);
         const base = {
           gameId,
           period: asNumber(action.period),
@@ -236,10 +355,11 @@ export function normalizePlayByPlay(
           blockPlayerId: null,
           assistSource: null as "cdn" | "description" | null,
         };
+        // Out then in, both at this row's place in the feed's order.
         events.push({
           ...base,
           actionNumber,
-          orderNumber: orderNumber * 10,
+          orderNumber,
           playerId: outId,
           playerName: outName,
           substitutionSide: "out",
@@ -247,7 +367,7 @@ export function normalizePlayByPlay(
         events.push({
           ...base,
           actionNumber,
-          orderNumber: orderNumber * 10 + 1,
+          orderNumber: orderNumber + 0.5,
           playerId: inId,
           playerName: inName,
           substitutionSide: "in",
@@ -318,7 +438,7 @@ export function normalizePlayByPlay(
       assistPlayerId: assistIdNum
         ? String(assistIdNum)
         : assistFromDesc
-          ? resolveRosterId(rosterIndex, assistFromDesc)
+          ? resolveRosterId(rosterIndex, assistFromDesc, teamIdNum ? String(teamIdNum) : null)
           : null,
       assistPlayerName: assistName || assistFromDesc,
       stealPlayerId: stealIdNum ? String(stealIdNum) : null,
@@ -331,6 +451,7 @@ export function normalizePlayByPlay(
     });
   }
 
+  if (numberByPosition) labelReboundsByLastMiss(events);
   return events.sort(
     (a, b) =>
       a.period - b.period ||

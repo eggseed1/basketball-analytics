@@ -28,6 +28,7 @@ import { fusePlayerRating } from "./fusion";
 import {
   ABILITY_LINEAGE_VERSION,
   CANONICAL_ABILITY_INPUT,
+  type PublishedAbilityInputKind,
 } from "./ability-lineage";
 import {
   predictHalfWidth,
@@ -112,10 +113,14 @@ export interface DrblPlayerSeasonRow {
   possessions: number;
   actualPossessions: number;
   /**
-   * Canonical ability rate per 100 (M16k1+: validated P-only EB1600).
-   * NOT the default Explore table sort key.
+   * Published DRBL/100. finalizePlayerSeasonRows writes the play-by-play-only
+   * rate (validated P-only EB1600) here; computeSeasonDrbl then publishes the
+   * box blend in its place and keeps this rate as drblPbp100
+   * (published-rating.ts). NOT the default Explore table sort key.
    */
   drbl100: number;
+  /** Play-by-play-only DRBL/100 (EB1600); internal input to the box blend, not shown on the site. */
+  drblPbp100?: number;
   rawAbilityRate: number;
   /** Legacy fused EB200 posterior — diagnostic only after M16k1. */
   posteriorAbilityRate: number;
@@ -123,8 +128,8 @@ export interface DrblPlayerSeasonRow {
   reliabilityWeight: number;
   priorMean: number;
   priorEquivalentPossessions: number;
-  /** Canonical published ability source (M16k1: validated_raw_eb1600). */
-  publishedAbilityInput: "validated_raw_eb1600" | "fused_rate";
+  /** Published ability source (box_blend_v2 since October 2026). */
+  publishedAbilityInput: PublishedAbilityInputKind;
   abilityLineageVersion: string;
   /** Production model id after M16k1 cutover. */
   abilityModelVersion?: string;
@@ -132,10 +137,8 @@ export interface DrblPlayerSeasonRow {
   drblP: number;
   drblLn: number;
   drblB: number;
-  /** Shadow only (never published): scoreboard lineup ridge anchored on drbl100. */
+  /** Shadow only (never published): scoreboard lineup ridge anchored on the play-by-play rate. */
   drblAnchored100?: number;
-  /** Shadow only (never published): DRBL-P shrunk toward a scoreboard-trained box rating. */
-  drblBox100?: number;
   drblO: number;
   drblD: number;
   sdv100: number;

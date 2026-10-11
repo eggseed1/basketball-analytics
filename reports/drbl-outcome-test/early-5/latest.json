@@ -1,0 +1,3090 @@
+{
+  "generatedAt": "2026-10-11T18:43:34.804Z",
+  "anchoredLineup": {
+    "version": "drbl-anchored-lineup-v1",
+    "config": {
+      "priorWeight": 4,
+      "lambda": 6400,
+      "homeLambdaScale": 0.25,
+      "interceptLambdaScale": 0.01,
+      "minPriorAppearances": 100,
+      "fillMaxAppearances": 1500
+    }
+  },
+  "ridgeSelection": {
+    "2020-21": {
+      "lambda": 400,
+      "trace": {
+        "lambda_400": 17.0604,
+        "lambda_800": 17.3636,
+        "lambda_1600": 17.8256,
+        "lambda_3200": 18.3217,
+        "lambda_6400": 18.7082
+      }
+    },
+    "2021-22": {
+      "lambda": 400,
+      "trace": {
+        "lambda_400": 13.4265,
+        "lambda_800": 13.5399,
+        "lambda_1600": 13.5835,
+        "lambda_3200": 13.5957,
+        "lambda_6400": 13.5972
+      }
+    },
+    "2022-23": {
+      "lambda": 800,
+      "trace": {
+        "lambda_400": 11.9743,
+        "lambda_800": 11.9422,
+        "lambda_1600": 11.9525,
+        "lambda_3200": 12.0054,
+        "lambda_6400": 12.0522
+      }
+    },
+    "2023-24": {
+      "lambda": 6400,
+      "trace": {
+        "lambda_400": 17.9275,
+        "lambda_800": 17.9175,
+        "lambda_1600": 17.8822,
+        "lambda_3200": 17.841,
+        "lambda_6400": 17.809
+      }
+    },
+    "2024-25": {
+      "lambda": 6400,
+      "trace": {
+        "lambda_400": 10.3591,
+        "lambda_800": 10.2876,
+        "lambda_1600": 10.2462,
+        "lambda_3200": 10.2276,
+        "lambda_6400": 10.2215
+      }
+    },
+    "2025-26": {
+      "lambda": 6400,
+      "trace": {
+        "lambda_400": 16.4733,
+        "lambda_800": 16.4004,
+        "lambda_1600": 16.2964,
+        "lambda_3200": 16.1859,
+        "lambda_6400": 16.0945
+      }
+    }
+  },
+  "boxForwardTrainingBlocks": {
+    "2020-21: first 5% of games → last 95%": null,
+    "2021-22: first 5% of games → last 95%": {
+      "blocks": [
+        "early 2020-21→2020-21 (50 games)",
+        "early 2020-21→2020-21 (100 games)",
+        "early 2020-21→2020-21 (200 games)",
+        "early 2020-21→2020-21 (400 games)",
+        "half 2020-21→2020-21 (540 games)"
+      ],
+      "playerShrinkK": 500,
+      "sseByShrinkK": {
+        "500": 1143318.8,
+        "1000": 1143326.9,
+        "2000": 1143338.5,
+        "4000": 1143349.8,
+        "8000": 1143358.6
+      },
+      "calibration": [
+        {
+          "games": 50,
+          "calibration": 0.2643
+        },
+        {
+          "games": 100,
+          "calibration": 0.3627
+        },
+        {
+          "games": 200,
+          "calibration": 0.5118
+        },
+        {
+          "games": 400,
+          "calibration": 0.6313
+        },
+        {
+          "games": 540,
+          "calibration": 0.7289
+        }
+      ],
+      "boxFit": "season"
+    },
+    "Shipped 2020-21 ratings (drbl-ranking-v2) → every 2021-22 game": {
+      "blocks": [
+        "early 2020-21→2020-21 (50 games)",
+        "early 2020-21→2020-21 (100 games)",
+        "early 2020-21→2020-21 (200 games)",
+        "early 2020-21→2020-21 (400 games)",
+        "half 2020-21→2020-21 (540 games)"
+      ],
+      "playerShrinkK": 500,
+      "sseByShrinkK": {
+        "500": 1143318.8,
+        "1000": 1143326.9,
+        "2000": 1143338.5,
+        "4000": 1143349.8,
+        "8000": 1143358.6
+      },
+      "calibration": [
+        {
+          "games": 50,
+          "calibration": 0.2643
+        },
+        {
+          "games": 100,
+          "calibration": 0.3627
+        },
+        {
+          "games": 200,
+          "calibration": 0.5118
+        },
+        {
+          "games": 400,
+          "calibration": 0.6313
+        },
+        {
+          "games": 540,
+          "calibration": 0.7289
+        }
+      ],
+      "boxFit": "season"
+    },
+    "2022-23: first 5% of games → last 95%": {
+      "blocks": [
+        "early 2020-21→2020-21 (50 games)",
+        "early 2020-21→2020-21 (100 games)",
+        "early 2020-21→2020-21 (200 games)",
+        "early 2020-21→2020-21 (400 games)",
+        "half 2020-21→2020-21 (540 games)",
+        "pair 2020-21→2021-22 (1080 games)",
+        "early 2021-22→2021-22 (50 games)",
+        "early 2021-22→2021-22 (100 games)",
+        "early 2021-22→2021-22 (200 games)",
+        "early 2021-22→2021-22 (400 games)",
+        "half 2021-22→2021-22 (615 games)"
+      ],
+      "playerShrinkK": 500,
+      "sseByShrinkK": {
+        "500": 2801931,
+        "1000": 2801962.3,
+        "2000": 2801992.6,
+        "4000": 2802018.1,
+        "8000": 2802037.4
+      },
+      "calibration": [
+        {
+          "games": 50,
+          "calibration": 0.3278
+        },
+        {
+          "games": 100,
+          "calibration": 0.3609
+        },
+        {
+          "games": 200,
+          "calibration": 0.449
+        },
+        {
+          "games": 400,
+          "calibration": 0.5324
+        },
+        {
+          "games": 615,
+          "calibration": 0.6513
+        },
+        {
+          "games": 1080,
+          "calibration": 0.7419
+        }
+      ],
+      "boxFit": "season"
+    },
+    "Shipped 2021-22 ratings (drbl-ranking-v2) → every 2022-23 game": {
+      "blocks": [
+        "early 2020-21→2020-21 (50 games)",
+        "early 2020-21→2020-21 (100 games)",
+        "early 2020-21→2020-21 (200 games)",
+        "early 2020-21→2020-21 (400 games)",
+        "half 2020-21→2020-21 (540 games)",
+        "pair 2020-21→2021-22 (1080 games)",
+        "early 2021-22→2021-22 (50 games)",
+        "early 2021-22→2021-22 (100 games)",
+        "early 2021-22→2021-22 (200 games)",
+        "early 2021-22→2021-22 (400 games)",
+        "half 2021-22→2021-22 (615 games)"
+      ],
+      "playerShrinkK": 500,
+      "sseByShrinkK": {
+        "500": 2801931,
+        "1000": 2801962.3,
+        "2000": 2801992.6,
+        "4000": 2802018.1,
+        "8000": 2802037.4
+      },
+      "calibration": [
+        {
+          "games": 50,
+          "calibration": 0.3278
+        },
+        {
+          "games": 100,
+          "calibration": 0.3609
+        },
+        {
+          "games": 200,
+          "calibration": 0.449
+        },
+        {
+          "games": 400,
+          "calibration": 0.5324
+        },
+        {
+          "games": 615,
+          "calibration": 0.6513
+        },
+        {
+          "games": 1080,
+          "calibration": 0.7419
+        }
+      ],
+      "boxFit": "season"
+    },
+    "2023-24: first 5% of games → last 95%": {
+      "blocks": [
+        "early 2020-21→2020-21 (50 games)",
+        "early 2020-21→2020-21 (100 games)",
+        "early 2020-21→2020-21 (200 games)",
+        "early 2020-21→2020-21 (400 games)",
+        "half 2020-21→2020-21 (540 games)",
+        "pair 2020-21→2021-22 (1080 games)",
+        "early 2021-22→2021-22 (50 games)",
+        "early 2021-22→2021-22 (100 games)",
+        "early 2021-22→2021-22 (200 games)",
+        "early 2021-22→2021-22 (400 games)",
+        "half 2021-22→2021-22 (615 games)",
+        "pair 2021-22→2022-23 (1230 games)",
+        "early 2022-23→2022-23 (50 games)",
+        "early 2022-23→2022-23 (100 games)",
+        "early 2022-23→2022-23 (200 games)",
+        "early 2022-23→2022-23 (400 games)",
+        "half 2022-23→2022-23 (615 games)"
+      ],
+      "playerShrinkK": 500,
+      "sseByShrinkK": {
+        "500": 4468660,
+        "1000": 4468685.2,
+        "2000": 4468715.6,
+        "4000": 4468746.1,
+        "8000": 4468772.9
+      },
+      "calibration": [
+        {
+          "games": 50,
+          "calibration": 0.3089
+        },
+        {
+          "games": 100,
+          "calibration": 0.353
+        },
+        {
+          "games": 200,
+          "calibration": 0.4514
+        },
+        {
+          "games": 400,
+          "calibration": 0.5726
+        },
+        {
+          "games": 615,
+          "calibration": 0.7194
+        },
+        {
+          "games": 1230,
+          "calibration": 0.7087
+        }
+      ],
+      "boxFit": "season"
+    },
+    "Shipped 2022-23 ratings (drbl-ranking-v2) → every 2023-24 game": {
+      "blocks": [
+        "early 2020-21→2020-21 (50 games)",
+        "early 2020-21→2020-21 (100 games)",
+        "early 2020-21→2020-21 (200 games)",
+        "early 2020-21→2020-21 (400 games)",
+        "half 2020-21→2020-21 (540 games)",
+        "pair 2020-21→2021-22 (1080 games)",
+        "early 2021-22→2021-22 (50 games)",
+        "early 2021-22→2021-22 (100 games)",
+        "early 2021-22→2021-22 (200 games)",
+        "early 2021-22→2021-22 (400 games)",
+        "half 2021-22→2021-22 (615 games)",
+        "pair 2021-22→2022-23 (1230 games)",
+        "early 2022-23→2022-23 (50 games)",
+        "early 2022-23→2022-23 (100 games)",
+        "early 2022-23→2022-23 (200 games)",
+        "early 2022-23→2022-23 (400 games)",
+        "half 2022-23→2022-23 (615 games)"
+      ],
+      "playerShrinkK": 500,
+      "sseByShrinkK": {
+        "500": 4468660,
+        "1000": 4468685.2,
+        "2000": 4468715.6,
+        "4000": 4468746.1,
+        "8000": 4468772.9
+      },
+      "calibration": [
+        {
+          "games": 50,
+          "calibration": 0.3089
+        },
+        {
+          "games": 100,
+          "calibration": 0.353
+        },
+        {
+          "games": 200,
+          "calibration": 0.4514
+        },
+        {
+          "games": 400,
+          "calibration": 0.5726
+        },
+        {
+          "games": 615,
+          "calibration": 0.7194
+        },
+        {
+          "games": 1230,
+          "calibration": 0.7087
+        }
+      ],
+      "boxFit": "season"
+    },
+    "2024-25: first 5% of games → last 95%": {
+      "blocks": [
+        "early 2020-21→2020-21 (50 games)",
+        "early 2020-21→2020-21 (100 games)",
+        "early 2020-21→2020-21 (200 games)",
+        "early 2020-21→2020-21 (400 games)",
+        "half 2020-21→2020-21 (540 games)",
+        "pair 2020-21→2021-22 (1080 games)",
+        "early 2021-22→2021-22 (50 games)",
+        "early 2021-22→2021-22 (100 games)",
+        "early 2021-22→2021-22 (200 games)",
+        "early 2021-22→2021-22 (400 games)",
+        "half 2021-22→2021-22 (615 games)",
+        "pair 2021-22→2022-23 (1230 games)",
+        "early 2022-23→2022-23 (50 games)",
+        "early 2022-23→2022-23 (100 games)",
+        "early 2022-23→2022-23 (200 games)",
+        "early 2022-23→2022-23 (400 games)",
+        "half 2022-23→2022-23 (615 games)",
+        "pair 2022-23→2023-24 (1230 games)",
+        "early 2023-24→2023-24 (50 games)",
+        "early 2023-24→2023-24 (100 games)",
+        "early 2023-24→2023-24 (200 games)",
+        "early 2023-24→2023-24 (400 games)",
+        "half 2023-24→2023-24 (615 games)"
+      ],
+      "playerShrinkK": 500,
+      "sseByShrinkK": {
+        "500": 6135158.2,
+        "1000": 6135184.2,
+        "2000": 6135222.2,
+        "4000": 6135263.7,
+        "8000": 6135301.6
+      },
+      "calibration": [
+        {
+          "games": 50,
+          "calibration": 0.3258
+        },
+        {
+          "games": 100,
+          "calibration": 0.3721
+        },
+        {
+          "games": 200,
+          "calibration": 0.4852
+        },
+        {
+          "games": 400,
+          "calibration": 0.6109
+        },
+        {
+          "games": 615,
+          "calibration": 0.7273
+        },
+        {
+          "games": 1230,
+          "calibration": 0.768
+        }
+      ],
+      "boxFit": "season"
+    },
+    "Shipped 2023-24 ratings (drbl-ranking-v2) → every 2024-25 game": {
+      "blocks": [
+        "early 2020-21→2020-21 (50 games)",
+        "early 2020-21→2020-21 (100 games)",
+        "early 2020-21→2020-21 (200 games)",
+        "early 2020-21→2020-21 (400 games)",
+        "half 2020-21→2020-21 (540 games)",
+        "pair 2020-21→2021-22 (1080 games)",
+        "early 2021-22→2021-22 (50 games)",
+        "early 2021-22→2021-22 (100 games)",
+        "early 2021-22→2021-22 (200 games)",
+        "early 2021-22→2021-22 (400 games)",
+        "half 2021-22→2021-22 (615 games)",
+        "pair 2021-22→2022-23 (1230 games)",
+        "early 2022-23→2022-23 (50 games)",
+        "early 2022-23→2022-23 (100 games)",
+        "early 2022-23→2022-23 (200 games)",
+        "early 2022-23→2022-23 (400 games)",
+        "half 2022-23→2022-23 (615 games)",
+        "pair 2022-23→2023-24 (1230 games)",
+        "early 2023-24→2023-24 (50 games)",
+        "early 2023-24→2023-24 (100 games)",
+        "early 2023-24→2023-24 (200 games)",
+        "early 2023-24→2023-24 (400 games)",
+        "half 2023-24→2023-24 (615 games)"
+      ],
+      "playerShrinkK": 500,
+      "sseByShrinkK": {
+        "500": 6135158.2,
+        "1000": 6135184.2,
+        "2000": 6135222.2,
+        "4000": 6135263.7,
+        "8000": 6135301.6
+      },
+      "calibration": [
+        {
+          "games": 50,
+          "calibration": 0.3258
+        },
+        {
+          "games": 100,
+          "calibration": 0.3721
+        },
+        {
+          "games": 200,
+          "calibration": 0.4852
+        },
+        {
+          "games": 400,
+          "calibration": 0.6109
+        },
+        {
+          "games": 615,
+          "calibration": 0.7273
+        },
+        {
+          "games": 1230,
+          "calibration": 0.768
+        }
+      ],
+      "boxFit": "season"
+    },
+    "2025-26: first 5% of games → last 95%": {
+      "blocks": [
+        "early 2020-21→2020-21 (50 games)",
+        "early 2020-21→2020-21 (100 games)",
+        "early 2020-21→2020-21 (200 games)",
+        "early 2020-21→2020-21 (400 games)",
+        "half 2020-21→2020-21 (540 games)",
+        "pair 2020-21→2021-22 (1080 games)",
+        "early 2021-22→2021-22 (50 games)",
+        "early 2021-22→2021-22 (100 games)",
+        "early 2021-22→2021-22 (200 games)",
+        "early 2021-22→2021-22 (400 games)",
+        "half 2021-22→2021-22 (615 games)",
+        "pair 2021-22→2022-23 (1230 games)",
+        "early 2022-23→2022-23 (50 games)",
+        "early 2022-23→2022-23 (100 games)",
+        "early 2022-23→2022-23 (200 games)",
+        "early 2022-23→2022-23 (400 games)",
+        "half 2022-23→2022-23 (615 games)",
+        "pair 2022-23→2023-24 (1230 games)",
+        "early 2023-24→2023-24 (50 games)",
+        "early 2023-24→2023-24 (100 games)",
+        "early 2023-24→2023-24 (200 games)",
+        "early 2023-24→2023-24 (400 games)",
+        "half 2023-24→2023-24 (615 games)",
+        "pair 2023-24→2024-25 (1230 games)",
+        "early 2024-25→2024-25 (50 games)",
+        "early 2024-25→2024-25 (100 games)",
+        "early 2024-25→2024-25 (200 games)",
+        "early 2024-25→2024-25 (400 games)",
+        "half 2024-25→2024-25 (615 games)"
+      ],
+      "playerShrinkK": 500,
+      "sseByShrinkK": {
+        "500": 7834795.7,
+        "1000": 7834831.1,
+        "2000": 7834883.2,
+        "4000": 7834940.7,
+        "8000": 7834993.3
+      },
+      "calibration": [
+        {
+          "games": 50,
+          "calibration": 0.3412
+        },
+        {
+          "games": 100,
+          "calibration": 0.3824
+        },
+        {
+          "games": 200,
+          "calibration": 0.5093
+        },
+        {
+          "games": 400,
+          "calibration": 0.6112
+        },
+        {
+          "games": 615,
+          "calibration": 0.7142
+        },
+        {
+          "games": 1230,
+          "calibration": 0.7752
+        }
+      ],
+      "boxFit": "season"
+    },
+    "Shipped 2024-25 ratings (drbl-ranking-v2-seq) → every 2025-26 game": {
+      "blocks": [
+        "early 2020-21→2020-21 (50 games)",
+        "early 2020-21→2020-21 (100 games)",
+        "early 2020-21→2020-21 (200 games)",
+        "early 2020-21→2020-21 (400 games)",
+        "half 2020-21→2020-21 (540 games)",
+        "pair 2020-21→2021-22 (1080 games)",
+        "early 2021-22→2021-22 (50 games)",
+        "early 2021-22→2021-22 (100 games)",
+        "early 2021-22→2021-22 (200 games)",
+        "early 2021-22→2021-22 (400 games)",
+        "half 2021-22→2021-22 (615 games)",
+        "pair 2021-22→2022-23 (1230 games)",
+        "early 2022-23→2022-23 (50 games)",
+        "early 2022-23→2022-23 (100 games)",
+        "early 2022-23→2022-23 (200 games)",
+        "early 2022-23→2022-23 (400 games)",
+        "half 2022-23→2022-23 (615 games)",
+        "pair 2022-23→2023-24 (1230 games)",
+        "early 2023-24→2023-24 (50 games)",
+        "early 2023-24→2023-24 (100 games)",
+        "early 2023-24→2023-24 (200 games)",
+        "early 2023-24→2023-24 (400 games)",
+        "half 2023-24→2023-24 (615 games)",
+        "pair 2023-24→2024-25 (1230 games)",
+        "early 2024-25→2024-25 (50 games)",
+        "early 2024-25→2024-25 (100 games)",
+        "early 2024-25→2024-25 (200 games)",
+        "early 2024-25→2024-25 (400 games)",
+        "half 2024-25→2024-25 (615 games)"
+      ],
+      "playerShrinkK": 500,
+      "sseByShrinkK": {
+        "500": 7834795.7,
+        "1000": 7834831.1,
+        "2000": 7834883.2,
+        "4000": 7834940.7,
+        "8000": 7834993.3
+      },
+      "calibration": [
+        {
+          "games": 50,
+          "calibration": 0.3412
+        },
+        {
+          "games": 100,
+          "calibration": 0.3824
+        },
+        {
+          "games": 200,
+          "calibration": 0.5093
+        },
+        {
+          "games": 400,
+          "calibration": 0.6112
+        },
+        {
+          "games": 615,
+          "calibration": 0.7142
+        },
+        {
+          "games": 1230,
+          "calibration": 0.7752
+        }
+      ],
+      "boxFit": "season"
+    }
+  },
+  "reports": [
+    {
+      "label": "2020-21: first 5% of games → last 95%",
+      "games": 1026,
+      "results": [
+        {
+          "name": "Home court only",
+          "rmse": 15.075497377490565,
+          "r2": 0
+        },
+        {
+          "name": "Team net rating (roster-blind)",
+          "rmse": 15.010212188249875,
+          "r2": 0.00864234555374055,
+          "slope": 0.14,
+          "vsPublished": {
+            "delta": 0.006998373012624626,
+            "lo": -0.0579084215605743,
+            "hi": 0.06691739766609572,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Play-by-play DRBL/100 (EB1600, pre-blend)",
+          "rmse": 15.00321381523725,
+          "r2": 0.009566552780657323,
+          "slope": 0.819
+        },
+        {
+          "name": "DRBL-P raw rate (unshrunk)",
+          "rmse": 15.000293867996266,
+          "r2": 0.009952034454553949,
+          "slope": 0.153,
+          "vsPublished": {
+            "delta": -0.002919947240984655,
+            "lo": -0.0321212742864585,
+            "hi": 0.025631054877729653,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "DRBL-LN (stored lineup)",
+          "rmse": 15.080944238828295,
+          "r2": -0.0007227417035755579,
+          "slope": -0.036,
+          "vsPublished": {
+            "delta": 0.07773042359104387,
+            "lo": -0.004324628289072763,
+            "hi": 0.17703609693917244,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "DRBL-B (box)",
+          "rmse": 15.045702948883953,
+          "r2": 0.003948789984447254,
+          "slope": 1.395,
+          "vsPublished": {
+            "delta": 0.04248913364670237,
+            "lo": -0.05450817712000955,
+            "hi": 0.14758965173408534,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Raw on-court +/- per 100",
+          "rmse": 14.985045482719178,
+          "r2": 0.011963856328901512,
+          "slope": 0.036,
+          "vsPublished": {
+            "delta": -0.018168332518072816,
+            "lo": -0.08249923156198236,
+            "hi": 0.044425014185847544,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Scoreboard lineup ridge (λ=400)",
+          "rmse": 14.976532442628748,
+          "r2": 0.013086148830801392,
+          "slope": 0.189,
+          "vsPublished": {
+            "delta": -0.02668137260850223,
+            "lo": -0.10247318464391597,
+            "hi": 0.049967746070610275,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Anchored lineup (drbl-anchored-lineup-v1)",
+          "rmse": 14.99519468060846,
+          "r2": 0.010625032205450413,
+          "slope": 0.212,
+          "vsPublished": {
+            "delta": -0.00801913462879078,
+            "lo": -0.02151660073619155,
+            "hi": 0.005454166690695317,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Play-by-play rate shrunk toward same-season box rating (blend half)",
+          "rmse": 14.996182774260195,
+          "r2": 0.01049464012258361,
+          "slope": 0.077,
+          "vsPublished": {
+            "delta": -0.00703104097705598,
+            "lo": -0.09411017395064647,
+            "hi": 0.08211357133693475,
+            "verdict": "no clear difference"
+          }
+        }
+      ],
+      "incremental": [
+        {
+          "name": "Published + DRBL-P raw rate (unshrunk)",
+          "rmse": 15.018325651425759,
+          "r2": 0.00757033970131582,
+          "vsPublished": {
+            "delta": 0.015111836188507866,
+            "lo": -0.007626886740558447,
+            "hi": 0.03848831187312385,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + DRBL-LN (stored lineup)",
+          "rmse": 14.960952467092143,
+          "r2": 0.015138439092084899,
+          "vsPublished": {
+            "delta": -0.04226134814510729,
+            "lo": -0.10552990196233658,
+            "hi": 0.029893438935410188,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + DRBL-B (box)",
+          "rmse": 14.988018836340476,
+          "r2": 0.011571722409997931,
+          "vsPublished": {
+            "delta": -0.015194978896774458,
+            "lo": -0.0645745286704944,
+            "hi": 0.03595629268970413,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + Raw on-court +/- per 100",
+          "rmse": 14.988963700252647,
+          "r2": 0.01144709491152196,
+          "vsPublished": {
+            "delta": -0.014250114984603712,
+            "lo": -0.06757625553903246,
+            "hi": 0.03607639866541312,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + Scoreboard lineup ridge (λ=400)",
+          "rmse": 14.975264937611076,
+          "r2": 0.013253192214019549,
+          "vsPublished": {
+            "delta": -0.027948877626174706,
+            "lo": -0.08262695153600141,
+            "hi": 0.02845139569428845,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + Anchored lineup (drbl-anchored-lineup-v1)",
+          "rmse": 14.998924429238231,
+          "r2": 0.010132797335536625,
+          "vsPublished": {
+            "delta": -0.004289385999019402,
+            "lo": -0.049465277151774956,
+            "hi": 0.03995124616541723,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + Play-by-play rate shrunk toward same-season box rating (blend half)",
+          "rmse": 14.986249382080857,
+          "r2": 0.011805092197535672,
+          "vsPublished": {
+            "delta": -0.016964433156394065,
+            "lo": -0.07163187392482939,
+            "hi": 0.032548417207351577,
+            "verdict": "no clear difference"
+          }
+        }
+      ]
+    },
+    {
+      "label": "2021-22: first 5% of games → last 95%",
+      "games": 1169,
+      "results": [
+        {
+          "name": "Home court only",
+          "rmse": 15.323669802929512,
+          "r2": 0
+        },
+        {
+          "name": "Team net rating (roster-blind)",
+          "rmse": 15.045456840961098,
+          "r2": 0.03598190000271162,
+          "slope": 0.272,
+          "vsPublished": {
+            "delta": -0.0351312126639467,
+            "lo": -0.16252265263048216,
+            "hi": 0.09505303485138406,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Play-by-play DRBL/100 (EB1600, pre-blend)",
+          "rmse": 15.080588053625045,
+          "r2": 0.031474670320096654,
+          "slope": 1.719
+        },
+        {
+          "name": "DRBL-P raw rate (unshrunk)",
+          "rmse": 15.0637346386094,
+          "r2": 0.03363822499826308,
+          "slope": 0.325,
+          "vsPublished": {
+            "delta": -0.016853415015644302,
+            "lo": -0.08793169981373694,
+            "hi": 0.0574384721550345,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "DRBL-LN (stored lineup)",
+          "rmse": 15.182294738765215,
+          "r2": 0.018366736942171613,
+          "slope": 0.535,
+          "vsPublished": {
+            "delta": 0.10170668514017045,
+            "lo": 0.004110482768737711,
+            "hi": 0.20670002602831694,
+            "verdict": "worse"
+          }
+        },
+        {
+          "name": "DRBL-B (box)",
+          "rmse": 15.254289718725504,
+          "r2": 0.009034783575738836,
+          "slope": 1.35,
+          "vsPublished": {
+            "delta": 0.17370166510045948,
+            "lo": 0.03900954903292053,
+            "hi": 0.3111856724902893,
+            "verdict": "worse"
+          }
+        },
+        {
+          "name": "Raw on-court +/- per 100",
+          "rmse": 15.107914243491328,
+          "r2": 0.02796153337979801,
+          "slope": 0.054,
+          "vsPublished": {
+            "delta": 0.0273261898662831,
+            "lo": -0.0684500196183162,
+            "hi": 0.1379527273280008,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Scoreboard lineup ridge (λ=400)",
+          "rmse": 15.22758773299131,
+          "r2": 0.012501032134018653,
+          "slope": 0.197,
+          "vsPublished": {
+            "delta": 0.14699967936626557,
+            "lo": 0.04948506969287614,
+            "hi": 0.25134473270132673,
+            "verdict": "worse"
+          }
+        },
+        {
+          "name": "Anchored lineup (drbl-anchored-lineup-v1)",
+          "rmse": 15.070828260112071,
+          "r2": 0.03272787721710191,
+          "slope": 0.421,
+          "vsPublished": {
+            "delta": -0.009759793512973403,
+            "lo": -0.033089008036718326,
+            "hi": 0.013171376018627612,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Play-by-play rate shrunk toward same-season box rating (blend half)",
+          "rmse": 14.92244841418781,
+          "r2": 0.05168067195574533,
+          "slope": 0.162,
+          "vsPublished": {
+            "delta": -0.15813963943723408,
+            "lo": -0.30436714422909894,
+            "hi": -0.008814913003615032,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "DRBL/100, box blend (drbl-box-blend-v2)",
+          "rmse": 14.84635992718588,
+          "r2": 0.06132684010251088,
+          "slope": 1.174,
+          "vsPublished": {
+            "delta": -0.2342281264391648,
+            "lo": -0.4061546557929443,
+            "hi": -0.0651734394286958,
+            "verdict": "better"
+          }
+        }
+      ],
+      "incremental": [
+        {
+          "name": "Published + DRBL-P raw rate (unshrunk)",
+          "rmse": 15.067010978031018,
+          "r2": 0.03321781484512454,
+          "vsPublished": {
+            "delta": -0.013577075594026766,
+            "lo": -0.06110471347274071,
+            "hi": 0.03640031464928484,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + DRBL-LN (stored lineup)",
+          "rmse": 15.080260023199797,
+          "r2": 0.031516804263320486,
+          "vsPublished": {
+            "delta": -0.0003280304252477606,
+            "lo": -0.025497728015851706,
+            "hi": 0.024983683964366676,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + DRBL-B (box)",
+          "rmse": 15.06767065268023,
+          "r2": 0.03313315629390212,
+          "vsPublished": {
+            "delta": -0.012917400944814972,
+            "lo": -0.05836228424854362,
+            "hi": 0.03341700758849164,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + Raw on-court +/- per 100",
+          "rmse": 15.062689182729697,
+          "r2": 0.03377235555296598,
+          "vsPublished": {
+            "delta": -0.017898870895347585,
+            "lo": -0.06456468033851692,
+            "hi": 0.03221849998469217,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + Scoreboard lineup ridge (λ=400)",
+          "rmse": 15.084569262503043,
+          "r2": 0.030963229970700668,
+          "vsPublished": {
+            "delta": 0.00398120887799891,
+            "lo": -0.0004142130052890991,
+            "hi": 0.008447947011207546,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + Anchored lineup (drbl-anchored-lineup-v1)",
+          "rmse": 15.07543548869592,
+          "r2": 0.03213638683923503,
+          "vsPublished": {
+            "delta": -0.005152564929124637,
+            "lo": -0.036723529341733396,
+            "hi": 0.025985304793216812,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + Play-by-play rate shrunk toward same-season box rating (blend half)",
+          "rmse": 14.918731481495923,
+          "r2": 0.05215303413461214,
+          "vsPublished": {
+            "delta": -0.1618565721291212,
+            "lo": -0.2885749891402476,
+            "hi": -0.031946561138612495,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + DRBL/100, box blend (drbl-box-blend-v2)",
+          "rmse": 14.84921594476076,
+          "r2": 0.060965657305355636,
+          "vsPublished": {
+            "delta": -0.23137210886428505,
+            "lo": -0.39431519600803,
+            "hi": -0.07470234201720061,
+            "verdict": "better"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Shipped 2020-21 ratings (drbl-ranking-v2) → every 2021-22 game",
+      "games": 1230,
+      "results": [
+        {
+          "name": "Home court only",
+          "rmse": 15.31583100862716,
+          "r2": 0
+        },
+        {
+          "name": "Team net rating (roster-blind)",
+          "rmse": 14.819408292585551,
+          "r2": 0.0637742205396028,
+          "slope": 0.56,
+          "vsPublished": {
+            "delta": -0.030495720587328634,
+            "lo": -0.25023466918925763,
+            "hi": 0.17691212439208215,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Play-by-play DRBL/100 (EB1600, pre-blend)",
+          "rmse": 14.84990401317288,
+          "r2": 0.05991708190860601,
+          "slope": 1.182
+        },
+        {
+          "name": "DRBL-P raw rate (unshrunk)",
+          "rmse": 14.63974668409584,
+          "r2": 0.08633709552458457,
+          "slope": 0.878,
+          "vsPublished": {
+            "delta": -0.21015732907704,
+            "lo": -0.3194198302371358,
+            "hi": -0.10067925088963392,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "DRBL-LN (stored lineup)",
+          "rmse": 15.015819303563712,
+          "r2": 0.038792976921182776,
+          "slope": 0.407,
+          "vsPublished": {
+            "delta": 0.16591529039083142,
+            "lo": 0.02119348549252642,
+            "hi": 0.3227518796320652,
+            "verdict": "worse"
+          }
+        },
+        {
+          "name": "DRBL-B (box)",
+          "rmse": 15.288503865740001,
+          "r2": 0.003565299690124646,
+          "slope": 0.925,
+          "vsPublished": {
+            "delta": 0.43859985256712086,
+            "lo": 0.22957614193299136,
+            "hi": 0.6279637508380791,
+            "verdict": "worse"
+          }
+        },
+        {
+          "name": "Raw on-court +/- per 100",
+          "rmse": 14.5347729919208,
+          "r2": 0.09939288251127387,
+          "slope": 0.17,
+          "vsPublished": {
+            "delta": -0.31513102125208015,
+            "lo": -0.49187608544690953,
+            "hi": -0.14323049617296846,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Scoreboard lineup ridge (λ=400)",
+          "rmse": 14.610322836564125,
+          "r2": 0.09000607457960508,
+          "slope": 0.43,
+          "vsPublished": {
+            "delta": -0.23958117660875544,
+            "lo": -0.4052133970775387,
+            "hi": -0.06527602992606596,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Anchored lineup (drbl-anchored-lineup-v1)",
+          "rmse": 14.729603694841746,
+          "r2": 0.07508676774668299,
+          "slope": 0.378,
+          "vsPublished": {
+            "delta": -0.12030031833113419,
+            "lo": -0.17914931584034832,
+            "hi": -0.059737028162096806,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Play-by-play rate shrunk toward same-season box rating (blend half)",
+          "rmse": 14.056326728627381,
+          "r2": 0.15770823374521092,
+          "slope": 0.535,
+          "vsPublished": {
+            "delta": -0.7935772845454991,
+            "lo": -1.0142858578194964,
+            "hi": -0.5895607283763766,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "DRBL/100, box blend (drbl-box-blend-v2)",
+          "rmse": 14.26304256090604,
+          "r2": 0.13275216429581715,
+          "slope": 0.92,
+          "vsPublished": {
+            "delta": -0.5868614522668398,
+            "lo": -0.7770529684284213,
+            "hi": -0.40188700230165786,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "DARKO 2020-21 (external)",
+          "rmse": 14.402009430485242,
+          "r2": 0.11577039733649619,
+          "slope": 0.482,
+          "vsPublished": {
+            "delta": -0.4478945826876384,
+            "lo": -0.6882841700547875,
+            "hi": -0.2231993297418846,
+            "verdict": "better"
+          }
+        }
+      ],
+      "incremental": [
+        {
+          "name": "Published + DRBL-P raw rate (unshrunk)",
+          "rmse": 14.619500489597629,
+          "r2": 0.0888624678727461,
+          "vsPublished": {
+            "delta": -0.2304035235752515,
+            "lo": -0.38108119659759154,
+            "hi": -0.0787326217803308,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + DRBL-LN (stored lineup)",
+          "rmse": 14.828872141933827,
+          "r2": 0.06257806901939633,
+          "vsPublished": {
+            "delta": -0.021031871239053146,
+            "lo": -0.06868230872730408,
+            "hi": 0.02880843842914338,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + DRBL-B (box)",
+          "rmse": 14.827917242434186,
+          "r2": 0.06269879497927522,
+          "vsPublished": {
+            "delta": -0.02198677073869426,
+            "lo": -0.08071591033071357,
+            "hi": 0.03959157004667091,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + Raw on-court +/- per 100",
+          "rmse": 14.536310664845942,
+          "r2": 0.0992023171086408,
+          "vsPublished": {
+            "delta": -0.31359334832693797,
+            "lo": -0.46578912475988865,
+            "hi": -0.16161781902029304,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + Scoreboard lineup ridge (λ=400)",
+          "rmse": 14.605577323853614,
+          "r2": 0.09059712057768432,
+          "vsPublished": {
+            "delta": -0.2443266893192657,
+            "lo": -0.3834496283621007,
+            "hi": -0.09600817635310754,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + Anchored lineup (drbl-anchored-lineup-v1)",
+          "rmse": 14.704858290936398,
+          "r2": 0.07819182432045435,
+          "vsPublished": {
+            "delta": -0.14504572223648182,
+            "lo": -0.2584364757712496,
+            "hi": -0.022497892438137157,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + Play-by-play rate shrunk toward same-season box rating (blend half)",
+          "rmse": 14.000407124891028,
+          "r2": 0.16439660029300174,
+          "vsPublished": {
+            "delta": -0.8494968882818519,
+            "lo": -1.1196418169025275,
+            "hi": -0.6104170464197889,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + DRBL/100, box blend (drbl-box-blend-v2)",
+          "rmse": 14.262479083684456,
+          "r2": 0.13282068610608166,
+          "vsPublished": {
+            "delta": -0.5874249294884244,
+            "lo": -0.7996735732870714,
+            "hi": -0.3796163186246666,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + DARKO 2020-21 (external)",
+          "rmse": 14.335540577990663,
+          "r2": 0.12391344149098049,
+          "vsPublished": {
+            "delta": -0.5143634351822168,
+            "lo": -0.7011801426793909,
+            "hi": -0.33526013513174036,
+            "verdict": "better"
+          }
+        }
+      ]
+    },
+    {
+      "label": "2022-23: first 5% of games → last 95%",
+      "games": 1169,
+      "results": [
+        {
+          "name": "Home court only",
+          "rmse": 13.696755155527903,
+          "r2": 0
+        },
+        {
+          "name": "Team net rating (roster-blind)",
+          "rmse": 13.685020818046096,
+          "r2": 0.0017127138223527183,
+          "slope": 0.083,
+          "vsPublished": {
+            "delta": 0.00328778346325187,
+            "lo": -0.04488381811575337,
+            "hi": 0.053709224616032,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Play-by-play DRBL/100 (EB1600, pre-blend)",
+          "rmse": 13.681733034582845,
+          "r2": 0.0021923270010644202,
+          "slope": 0.519
+        },
+        {
+          "name": "DRBL-P raw rate (unshrunk)",
+          "rmse": 13.690598149228663,
+          "r2": 0.0008988439044735896,
+          "slope": 0.088,
+          "vsPublished": {
+            "delta": 0.008865114645818295,
+            "lo": -0.00658697293421362,
+            "hi": 0.025521303586053534,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "DRBL-LN (stored lineup)",
+          "rmse": 13.688318902723871,
+          "r2": 0.001231482148066343,
+          "slope": 0.181,
+          "vsPublished": {
+            "delta": 0.006585868141026907,
+            "lo": -0.02474632483661665,
+            "hi": 0.03889485949619953,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "DRBL-B (box)",
+          "rmse": 13.699988333518732,
+          "r2": -0.0004721643275216181,
+          "slope": -0.526,
+          "vsPublished": {
+            "delta": 0.01825529893588751,
+            "lo": -0.03600465619932969,
+            "hi": 0.07298583079705345,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Raw on-court +/- per 100",
+          "rmse": 13.673968854993351,
+          "r2": 0.0033244876346650853,
+          "slope": 0.025,
+          "vsPublished": {
+            "delta": -0.007764179589493381,
+            "lo": -0.05974973500530112,
+            "hi": 0.04625162479303846,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Scoreboard lineup ridge (λ=800)",
+          "rmse": 13.691131063225711,
+          "r2": 0.0008210612762189484,
+          "slope": 0.105,
+          "vsPublished": {
+            "delta": 0.009398028642866763,
+            "lo": -0.03215049023309291,
+            "hi": 0.05083258738151919,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Anchored lineup (drbl-anchored-lineup-v1)",
+          "rmse": 13.68159914215887,
+          "r2": 0.00221185643259858,
+          "slope": 0.136,
+          "vsPublished": {
+            "delta": -0.0001338924239746575,
+            "lo": -0.014559819628653159,
+            "hi": 0.013574785514792964,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Play-by-play rate shrunk toward same-season box rating (blend half)",
+          "rmse": 13.520757620767641,
+          "r2": 0.025534045936914662,
+          "slope": 0.093,
+          "vsPublished": {
+            "delta": -0.16097541381520308,
+            "lo": -0.2690046100347825,
+            "hi": -0.04947592339181561,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "DRBL/100, box blend (drbl-box-blend-v2)",
+          "rmse": 13.449388022702498,
+          "r2": 0.03579437189428869,
+          "slope": 0.65,
+          "vsPublished": {
+            "delta": -0.23234501188034606,
+            "lo": -0.35753293963905186,
+            "hi": -0.10837545352442213,
+            "verdict": "better"
+          }
+        }
+      ],
+      "incremental": [
+        {
+          "name": "Published + DRBL-P raw rate (unshrunk)",
+          "rmse": 13.69829094472726,
+          "r2": -0.00022426849051071507,
+          "vsPublished": {
+            "delta": 0.016557910144415544,
+            "lo": 0.005348112616466949,
+            "hi": 0.02740620298263252,
+            "verdict": "worse"
+          }
+        },
+        {
+          "name": "Published + DRBL-LN (stored lineup)",
+          "rmse": 13.684192963980685,
+          "r2": 0.0018334898448828518,
+          "vsPublished": {
+            "delta": 0.0024599293978404546,
+            "lo": -0.01569246666023716,
+            "hi": 0.020837332311517187,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + DRBL-B (box)",
+          "rmse": 13.676529581550831,
+          "r2": 0.0029511574834115706,
+          "vsPublished": {
+            "delta": -0.0052034530320135275,
+            "lo": -0.04831566381374408,
+            "hi": 0.039161378283500525,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + Raw on-court +/- per 100",
+          "rmse": 13.674677231067559,
+          "r2": 0.0032212199759762417,
+          "vsPublished": {
+            "delta": -0.007055803515285675,
+            "lo": -0.054454896889929216,
+            "hi": 0.039256420906928824,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + Scoreboard lineup ridge (λ=800)",
+          "rmse": 13.687925557768343,
+          "r2": 0.001288882171611161,
+          "vsPublished": {
+            "delta": 0.006192523185498899,
+            "lo": -0.02440347288033351,
+            "hi": 0.037629596669413345,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + Anchored lineup (drbl-anchored-lineup-v1)",
+          "rmse": 13.698288259823274,
+          "r2": -0.00022387639694598782,
+          "vsPublished": {
+            "delta": 0.016555225240429294,
+            "lo": -0.007129000685935694,
+            "hi": 0.03961419808731925,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + Play-by-play rate shrunk toward same-season box rating (blend half)",
+          "rmse": 13.502624600212828,
+          "r2": 0.02814605375881374,
+          "vsPublished": {
+            "delta": -0.17910843437001667,
+            "lo": -0.30683957686326124,
+            "hi": -0.04391080046906204,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + DRBL/100, box blend (drbl-box-blend-v2)",
+          "rmse": 13.417615647195099,
+          "r2": 0.04034460385567695,
+          "vsPublished": {
+            "delta": -0.2641173873877456,
+            "lo": -0.4051304725518108,
+            "hi": -0.11549022601552927,
+            "verdict": "better"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Shipped 2021-22 ratings (drbl-ranking-v2) → every 2022-23 game",
+      "games": 1230,
+      "results": [
+        {
+          "name": "Home court only",
+          "rmse": 13.673232374798758,
+          "r2": 0
+        },
+        {
+          "name": "Team net rating (roster-blind)",
+          "rmse": 13.37057184014937,
+          "r2": 0.04378054754606697,
+          "slope": 0.412,
+          "vsPublished": {
+            "delta": 0.12387830172684389,
+            "lo": -0.026916570542738327,
+            "hi": 0.28175518899234575,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Play-by-play DRBL/100 (EB1600, pre-blend)",
+          "rmse": 13.246693538422527,
+          "r2": 0.061417205335776215,
+          "slope": 1.261
+        },
+        {
+          "name": "DRBL-P raw rate (unshrunk)",
+          "rmse": 13.09002059815034,
+          "r2": 0.08348775729276503,
+          "slope": 0.974,
+          "vsPublished": {
+            "delta": -0.1566729402721858,
+            "lo": -0.22389034853911127,
+            "hi": -0.08816006953001221,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "DRBL-LN (stored lineup)",
+          "rmse": 13.284528969265692,
+          "r2": 0.05604795619405856,
+          "slope": 0.454,
+          "vsPublished": {
+            "delta": 0.037835430843164986,
+            "lo": -0.15620906368640242,
+            "hi": 0.2360728969306951,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "DRBL-B (box)",
+          "rmse": 13.196964295498692,
+          "r2": 0.06845102107737344,
+          "slope": 2.741,
+          "vsPublished": {
+            "delta": -0.04972924292383496,
+            "lo": -0.2663162435635815,
+            "hi": 0.15933189090457134,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Raw on-court +/- per 100",
+          "rmse": 13.009786114558397,
+          "r2": 0.09468873579115511,
+          "slope": 0.155,
+          "vsPublished": {
+            "delta": -0.23690742386413,
+            "lo": -0.40571768943938125,
+            "hi": -0.0696329008275356,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Scoreboard lineup ridge (λ=400)",
+          "rmse": 12.883270203110559,
+          "r2": 0.11221083259077835,
+          "slope": 0.447,
+          "vsPublished": {
+            "delta": -0.3634233353119676,
+            "lo": -0.6015925203644752,
+            "hi": -0.1363623637628617,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Anchored lineup (drbl-anchored-lineup-v1)",
+          "rmse": 13.008778524368504,
+          "r2": 0.09482896060606438,
+          "slope": 0.451,
+          "vsPublished": {
+            "delta": -0.23791501405402293,
+            "lo": -0.32309894668403416,
+            "hi": -0.14284544593910553,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Play-by-play rate shrunk toward same-season box rating (blend half)",
+          "rmse": 12.902092695328903,
+          "r2": 0.10961481288391461,
+          "slope": 0.454,
+          "vsPublished": {
+            "delta": -0.34460084309362315,
+            "lo": -0.5110261813414336,
+            "hi": -0.17716354550748825,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "DRBL/100, box blend (drbl-box-blend-v2)",
+          "rmse": 12.877730819528448,
+          "r2": 0.11297410890392678,
+          "slope": 0.755,
+          "vsPublished": {
+            "delta": -0.3689627188940783,
+            "lo": -0.5353141178370535,
+            "hi": -0.2070322543720824,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "DARKO 2021-22 (external)",
+          "rmse": 13.045837227484157,
+          "r2": 0.08966441043997397,
+          "slope": 0.327,
+          "vsPublished": {
+            "delta": -0.2008563109383701,
+            "lo": -0.3808415311851565,
+            "hi": -0.004343481035776975,
+            "verdict": "better"
+          }
+        }
+      ],
+      "incremental": [
+        {
+          "name": "Published + DRBL-P raw rate (unshrunk)",
+          "rmse": 13.027651367674151,
+          "r2": 0.09220065187053827,
+          "vsPublished": {
+            "delta": -0.2190421707483754,
+            "lo": -0.3526773975420152,
+            "hi": -0.08505672220169025,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + DRBL-LN (stored lineup)",
+          "rmse": 13.093602935152344,
+          "r2": 0.08298604609095395,
+          "vsPublished": {
+            "delta": -0.15309060327018287,
+            "lo": -0.2597252933591161,
+            "hi": -0.042100904744840406,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + DRBL-B (box)",
+          "rmse": 13.038564473368947,
+          "r2": 0.09067910982041483,
+          "vsPublished": {
+            "delta": -0.20812906505357986,
+            "lo": -0.3433770016255231,
+            "hi": -0.08235697629866046,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + Raw on-court +/- per 100",
+          "rmse": 13.024237886498495,
+          "r2": 0.09267630936758164,
+          "vsPublished": {
+            "delta": -0.22245565192403127,
+            "lo": -0.3662135099515549,
+            "hi": -0.07390737316520912,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + Scoreboard lineup ridge (λ=400)",
+          "rmse": 12.860157543147055,
+          "r2": 0.11539337290381635,
+          "vsPublished": {
+            "delta": -0.3865359952754712,
+            "lo": -0.5787492488126382,
+            "hi": -0.20357525414302557,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + Anchored lineup (drbl-anchored-lineup-v1)",
+          "rmse": 12.930959199792822,
+          "r2": 0.1056261482350348,
+          "vsPublished": {
+            "delta": -0.3157343386297047,
+            "lo": -0.4739788455524554,
+            "hi": -0.14323099906667913,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + Play-by-play rate shrunk toward same-season box rating (blend half)",
+          "rmse": 12.91407395842419,
+          "r2": 0.10796036926516195,
+          "vsPublished": {
+            "delta": -0.3326195799983367,
+            "lo": -0.49843360368396894,
+            "hi": -0.162220209944838,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + DRBL/100, box blend (drbl-box-blend-v2)",
+          "rmse": 12.892897037904332,
+          "r2": 0.11088356200307736,
+          "vsPublished": {
+            "delta": -0.3537965005181949,
+            "lo": -0.5308641722499452,
+            "hi": -0.18298996402162615,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + DARKO 2021-22 (external)",
+          "rmse": 12.99970018017215,
+          "r2": 0.09609189038974575,
+          "vsPublished": {
+            "delta": -0.24699335825037672,
+            "lo": -0.38059802573117096,
+            "hi": -0.09436655493834323,
+            "verdict": "better"
+          }
+        }
+      ]
+    },
+    {
+      "label": "2023-24: first 5% of games → last 95%",
+      "games": 1169,
+      "results": [
+        {
+          "name": "Home court only",
+          "rmse": 15.673516110405709,
+          "r2": 0
+        },
+        {
+          "name": "Team net rating (roster-blind)",
+          "rmse": 15.266604510803601,
+          "r2": 0.051249449345154185,
+          "slope": 0.297,
+          "vsPublished": {
+            "delta": -0.25569478795585354,
+            "lo": -0.411957365948993,
+            "hi": -0.10627137352465255,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Play-by-play DRBL/100 (EB1600, pre-blend)",
+          "rmse": 15.522299298759455,
+          "r2": 0.019202755376888536,
+          "slope": 1.312
+        },
+        {
+          "name": "DRBL-P raw rate (unshrunk)",
+          "rmse": 15.569999423882193,
+          "r2": 0.01316550092315949,
+          "slope": 0.238,
+          "vsPublished": {
+            "delta": 0.0477001251227378,
+            "lo": -0.0021221510060591697,
+            "hi": 0.0988629472704492,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "DRBL-LN (stored lineup)",
+          "rmse": 15.678548790713416,
+          "r2": -0.0006422921640953927,
+          "slope": 0.25,
+          "vsPublished": {
+            "delta": 0.15624949195396098,
+            "lo": 0.06263990933208774,
+            "hi": 0.25615205568172605,
+            "verdict": "worse"
+          }
+        },
+        {
+          "name": "DRBL-B (box)",
+          "rmse": 15.67322504911731,
+          "r2": 0.00003714017758449373,
+          "slope": -0.69,
+          "vsPublished": {
+            "delta": 0.15092575035785494,
+            "lo": 0.035172835559597715,
+            "hi": 0.2651514716144696,
+            "verdict": "worse"
+          }
+        },
+        {
+          "name": "Raw on-court +/- per 100",
+          "rmse": 15.182504585719963,
+          "r2": 0.0616735196041821,
+          "slope": 0.076,
+          "vsPublished": {
+            "delta": -0.3397947130394918,
+            "lo": -0.4944916281811498,
+            "hi": -0.19364777002572353,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Scoreboard lineup ridge (λ=6400)",
+          "rmse": 15.250085929822918,
+          "r2": 0.05330144907731127,
+          "slope": 1.471,
+          "vsPublished": {
+            "delta": -0.27221336893653714,
+            "lo": -0.40554479918549546,
+            "hi": -0.13902459155863944,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Anchored lineup (drbl-anchored-lineup-v1)",
+          "rmse": 15.43232987274415,
+          "r2": 0.030539482315709354,
+          "slope": 0.379,
+          "vsPublished": {
+            "delta": -0.08996942601530478,
+            "lo": -0.12738597798408513,
+            "hi": -0.05378438598168245,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Play-by-play rate shrunk toward same-season box rating (blend half)",
+          "rmse": 15.065907047903933,
+          "r2": 0.07603036702017618,
+          "slope": 0.189,
+          "vsPublished": {
+            "delta": -0.45639225085552226,
+            "lo": -0.6352152051165572,
+            "hi": -0.2683956349318777,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "DRBL/100, box blend (drbl-box-blend-v2)",
+          "rmse": 15.10640859460151,
+          "r2": 0.07105589054102845,
+          "slope": 1.054,
+          "vsPublished": {
+            "delta": -0.4158907041579454,
+            "lo": -0.5547417619299093,
+            "hi": -0.2651471410721271,
+            "verdict": "better"
+          }
+        }
+      ],
+      "incremental": [
+        {
+          "name": "Published + DRBL-P raw rate (unshrunk)",
+          "rmse": 15.532976056960702,
+          "r2": 0.01785304084954975,
+          "vsPublished": {
+            "delta": 0.010676758201247694,
+            "lo": -0.00970110229631338,
+            "hi": 0.030389361160034767,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + DRBL-LN (stored lineup)",
+          "rmse": 15.518514969584205,
+          "r2": 0.01968093288216366,
+          "vsPublished": {
+            "delta": -0.0037843291752501784,
+            "lo": -0.05117550042915653,
+            "hi": 0.04524441272076807,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + DRBL-B (box)",
+          "rmse": 15.527427774916463,
+          "r2": 0.01855454906061149,
+          "vsPublished": {
+            "delta": 0.005128476157008066,
+            "lo": -0.018799571440608176,
+            "hi": 0.0282110480147999,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + Raw on-court +/- per 100",
+          "rmse": 15.166155947050129,
+          "r2": 0.06369322606119632,
+          "vsPublished": {
+            "delta": -0.356143351709326,
+            "lo": -0.5372949554627819,
+            "hi": -0.1787543609056943,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + Scoreboard lineup ridge (λ=6400)",
+          "rmse": 15.236180144084038,
+          "r2": 0.055027155438151065,
+          "vsPublished": {
+            "delta": -0.2861191546754167,
+            "lo": -0.4509449363307585,
+            "hi": -0.12524941113807841,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + Anchored lineup (drbl-anchored-lineup-v1)",
+          "rmse": 15.180022649110548,
+          "r2": 0.06198027748805646,
+          "vsPublished": {
+            "delta": -0.34227664964890714,
+            "lo": -0.5254400757779845,
+            "hi": -0.1671805247231024,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + Play-by-play rate shrunk toward same-season box rating (blend half)",
+          "rmse": 15.03916598800255,
+          "r2": 0.07930743486576741,
+          "vsPublished": {
+            "delta": -0.48313331075690513,
+            "lo": -0.6985693276454139,
+            "hi": -0.25961162375986113,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + DRBL/100, box blend (drbl-box-blend-v2)",
+          "rmse": 15.006564825668773,
+          "r2": 0.08329477227249393,
+          "vsPublished": {
+            "delta": -0.5157344730906814,
+            "lo": -0.7238074219856188,
+            "hi": -0.3082332811786799,
+            "verdict": "better"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Shipped 2022-23 ratings (drbl-ranking-v2) → every 2023-24 game",
+      "games": 1230,
+      "results": [
+        {
+          "name": "Home court only",
+          "rmse": 15.651845961507536,
+          "r2": 0
+        },
+        {
+          "name": "Team net rating (roster-blind)",
+          "rmse": 15.077985653049826,
+          "r2": 0.07198387766156922,
+          "slope": 0.748,
+          "vsPublished": {
+            "delta": 0.1501424262747424,
+            "lo": -0.02596862855384785,
+            "hi": 0.3456679814268764,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Play-by-play DRBL/100 (EB1600, pre-blend)",
+          "rmse": 14.927843226775083,
+          "r2": 0.09037371668686223,
+          "slope": 1.336
+        },
+        {
+          "name": "DRBL-P raw rate (unshrunk)",
+          "rmse": 14.780160372549837,
+          "r2": 0.10828276115776692,
+          "slope": 1.066,
+          "vsPublished": {
+            "delta": -0.14768285422524663,
+            "lo": -0.22538318238679977,
+            "hi": -0.07046640055563458,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "DRBL-LN (stored lineup)",
+          "rmse": 14.831570665797233,
+          "r2": 0.10206859663889623,
+          "slope": 0.75,
+          "vsPublished": {
+            "delta": -0.09627256097784986,
+            "lo": -0.3329723420057622,
+            "hi": 0.14251271628947393,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "DRBL-B (box)",
+          "rmse": 15.236220661064063,
+          "r2": 0.052403654143804546,
+          "slope": 7.062,
+          "vsPublished": {
+            "delta": 0.30837743428898,
+            "lo": 0.08428809072963439,
+            "hi": 0.5435118048406551,
+            "verdict": "worse"
+          }
+        },
+        {
+          "name": "Raw on-court +/- per 100",
+          "rmse": 14.544221301096403,
+          "r2": 0.13652490100046777,
+          "slope": 0.254,
+          "vsPublished": {
+            "delta": -0.38362192567868014,
+            "lo": -0.5847655951177053,
+            "hi": -0.17536487998012973,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Scoreboard lineup ridge (λ=800)",
+          "rmse": 14.50881948041793,
+          "r2": 0.14072332273262944,
+          "slope": 0.635,
+          "vsPublished": {
+            "delta": -0.4190237463571531,
+            "lo": -0.6556579881250464,
+            "hi": -0.17231428106372526,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Anchored lineup (drbl-anchored-lineup-v1)",
+          "rmse": 14.599704099799853,
+          "r2": 0.12992442469589682,
+          "slope": 0.488,
+          "vsPublished": {
+            "delta": -0.3281391269752305,
+            "lo": -0.4291176597851152,
+            "hi": -0.22270797517077057,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Play-by-play rate shrunk toward same-season box rating (blend half)",
+          "rmse": 14.188719007308311,
+          "r2": 0.1782206085219371,
+          "slope": 0.664,
+          "vsPublished": {
+            "delta": -0.7391242194667722,
+            "lo": -0.9353033784135576,
+            "hi": -0.523424196440132,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "DRBL/100, box blend (drbl-box-blend-v2)",
+          "rmse": 14.235580511796945,
+          "r2": 0.1727834140317871,
+          "slope": 1.183,
+          "vsPublished": {
+            "delta": -0.6922627149781384,
+            "lo": -0.8564660219297711,
+            "hi": -0.5296724988447608,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "DARKO 2022-23 (external)",
+          "rmse": 14.70919337615895,
+          "r2": 0.11682537056267661,
+          "slope": 0.389,
+          "vsPublished": {
+            "delta": -0.21864985061613318,
+            "lo": -0.46368849137381396,
+            "hi": 0.037229265005686685,
+            "verdict": "no clear difference"
+          }
+        }
+      ],
+      "incremental": [
+        {
+          "name": "Published + DRBL-P raw rate (unshrunk)",
+          "rmse": 14.754177114434846,
+          "r2": 0.11141525128271068,
+          "vsPublished": {
+            "delta": -0.17366611234023743,
+            "lo": -0.30596844857240413,
+            "hi": -0.042397048260998105,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + DRBL-LN (stored lineup)",
+          "rmse": 14.69656839658168,
+          "r2": 0.1183407869823162,
+          "vsPublished": {
+            "delta": -0.2312748301934029,
+            "lo": -0.3717475468159268,
+            "hi": -0.07685579404289022,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + DRBL-B (box)",
+          "rmse": 14.819363517229027,
+          "r2": 0.10354607619683998,
+          "vsPublished": {
+            "delta": -0.10847970954605657,
+            "lo": -0.20201859278714274,
+            "hi": -0.015696280496371173,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + Raw on-court +/- per 100",
+          "rmse": 14.545675313561707,
+          "r2": 0.13635224599351636,
+          "vsPublished": {
+            "delta": -0.38216791321337595,
+            "lo": -0.5677199576555321,
+            "hi": -0.1909942742299613,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + Scoreboard lineup ridge (λ=800)",
+          "rmse": 14.485727648599312,
+          "r2": 0.14345634761318993,
+          "vsPublished": {
+            "delta": -0.4421155781757715,
+            "lo": -0.6420895072026944,
+            "hi": -0.23332388250577907,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + Anchored lineup (drbl-anchored-lineup-v1)",
+          "rmse": 14.48052920772898,
+          "r2": 0.14407100676972084,
+          "vsPublished": {
+            "delta": -0.4473140190461038,
+            "lo": -0.6373601987573583,
+            "hi": -0.24881361057420293,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + Play-by-play rate shrunk toward same-season box rating (blend half)",
+          "rmse": 14.14396930206796,
+          "r2": 0.18339604321466496,
+          "vsPublished": {
+            "delta": -0.7838739247071231,
+            "lo": -1.0223024456600633,
+            "hi": -0.5310220611135055,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + DRBL/100, box blend (drbl-box-blend-v2)",
+          "rmse": 14.135978809855837,
+          "r2": 0.18431844685997156,
+          "vsPublished": {
+            "delta": -0.7918644169192461,
+            "lo": -1.0283761641516467,
+            "hi": -0.554211303180697,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + DARKO 2022-23 (external)",
+          "rmse": 14.577262683502237,
+          "r2": 0.13259718044804514,
+          "vsPublished": {
+            "delta": -0.35058054327284616,
+            "lo": -0.5193018589401035,
+            "hi": -0.18008196320622538,
+            "verdict": "better"
+          }
+        }
+      ]
+    },
+    {
+      "label": "2024-25: first 5% of games → last 95%",
+      "games": 1169,
+      "results": [
+        {
+          "name": "Home court only",
+          "rmse": 15.980242176261273,
+          "r2": 0
+        },
+        {
+          "name": "Team net rating (roster-blind)",
+          "rmse": 15.115377131050515,
+          "r2": 0.10531272302337813,
+          "slope": 0.448,
+          "vsPublished": {
+            "delta": -0.6473747452377907,
+            "lo": -0.875063010579856,
+            "hi": -0.4248524628564585,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Play-by-play DRBL/100 (EB1600, pre-blend)",
+          "rmse": 15.762751876288306,
+          "r2": 0.02703466962717349,
+          "slope": 1.515
+        },
+        {
+          "name": "DRBL-P raw rate (unshrunk)",
+          "rmse": 15.825258908319025,
+          "r2": 0.019302801423850546,
+          "slope": 0.29,
+          "vsPublished": {
+            "delta": 0.0625070320307195,
+            "lo": 0.0027103005206736697,
+            "hi": 0.12045164840266231,
+            "verdict": "worse"
+          }
+        },
+        {
+          "name": "DRBL-LN (stored lineup)",
+          "rmse": 15.675862066435755,
+          "r2": 0.03773175653622607,
+          "slope": 0.859,
+          "vsPublished": {
+            "delta": -0.08688980985255057,
+            "lo": -0.22826442642868017,
+            "hi": 0.05199887305790796,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "DRBL-B (box)",
+          "rmse": 15.958079179013644,
+          "r2": 0.0027718764300733723,
+          "slope": 1.094,
+          "vsPublished": {
+            "delta": 0.19532730272533882,
+            "lo": 0.07285723742894845,
+            "hi": 0.3234608571477775,
+            "verdict": "worse"
+          }
+        },
+        {
+          "name": "Raw on-court +/- per 100",
+          "rmse": 15.271722056086391,
+          "r2": 0.08670872354149994,
+          "slope": 0.094,
+          "vsPublished": {
+            "delta": -0.49102982020191455,
+            "lo": -0.6956677000219038,
+            "hi": -0.29044011847758,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Scoreboard lineup ridge (λ=6400)",
+          "rmse": 15.24686238474546,
+          "r2": 0.08967965789123522,
+          "slope": 2.021,
+          "vsPublished": {
+            "delta": -0.5158894915428451,
+            "lo": -0.6972162415440373,
+            "hi": -0.33041611168278884,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Anchored lineup (drbl-anchored-lineup-v1)",
+          "rmse": 15.585019260404701,
+          "r2": 0.04885227524541558,
+          "slope": 0.484,
+          "vsPublished": {
+            "delta": -0.17773261588360434,
+            "lo": -0.2385824657772453,
+            "hi": -0.1205809543520342,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Play-by-play rate shrunk toward same-season box rating (blend half)",
+          "rmse": 15.77934147284263,
+          "r2": 0.02498558627982872,
+          "slope": 0.165,
+          "vsPublished": {
+            "delta": 0.016589596554323904,
+            "lo": -0.09664698600299992,
+            "hi": 0.13832446082874483,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "DRBL/100, box blend (drbl-box-blend-v2)",
+          "rmse": 15.475463916035723,
+          "r2": 0.06217751593715748,
+          "slope": 1.572,
+          "vsPublished": {
+            "delta": -0.2872879602525824,
+            "lo": -0.42002119261610993,
+            "hi": -0.1587801780361513,
+            "verdict": "better"
+          }
+        }
+      ],
+      "incremental": [
+        {
+          "name": "Published + DRBL-P raw rate (unshrunk)",
+          "rmse": 15.77792673709036,
+          "r2": 0.02516041308311956,
+          "vsPublished": {
+            "delta": 0.015174860802053658,
+            "lo": -0.00526007467140488,
+            "hi": 0.03940654964819856,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + DRBL-LN (stored lineup)",
+          "rmse": 15.661703371299184,
+          "r2": 0.03946924436589205,
+          "vsPublished": {
+            "delta": -0.10104850498912121,
+            "lo": -0.2067103607480778,
+            "hi": 0.0031248438029756187,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + DRBL-B (box)",
+          "rmse": 15.769744235371084,
+          "r2": 0.026171263034719727,
+          "vsPublished": {
+            "delta": 0.006992359082778066,
+            "lo": -0.022060517678948344,
+            "hi": 0.0355320562791146,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + Raw on-court +/- per 100",
+          "rmse": 15.262156093663723,
+          "r2": 0.08785250730005789,
+          "vsPublished": {
+            "delta": -0.5005957826245826,
+            "lo": -0.7292947932422429,
+            "hi": -0.27461821986755375,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + Scoreboard lineup ridge (λ=6400)",
+          "rmse": 15.20943715590243,
+          "r2": 0.09414315118357486,
+          "vsPublished": {
+            "delta": -0.5533147203858757,
+            "lo": -0.7906172239137188,
+            "hi": -0.31666541698349704,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + Anchored lineup (drbl-anchored-lineup-v1)",
+          "rmse": 15.121002642123143,
+          "r2": 0.10464664506548471,
+          "vsPublished": {
+            "delta": -0.6417492341651627,
+            "lo": -0.8655263765227073,
+            "hi": -0.3890743594938062,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + Play-by-play rate shrunk toward same-season box rating (blend half)",
+          "rmse": 15.734482678842559,
+          "r2": 0.030521406628086334,
+          "vsPublished": {
+            "delta": -0.02826919744574674,
+            "lo": -0.08267975764839441,
+            "hi": 0.03220980640558935,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + DRBL/100, box blend (drbl-box-blend-v2)",
+          "rmse": 15.465696580686574,
+          "r2": 0.06336095522856322,
+          "vsPublished": {
+            "delta": -0.29705529560173183,
+            "lo": -0.4580116900099842,
+            "hi": -0.13860571799733812,
+            "verdict": "better"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Shipped 2023-24 ratings (drbl-ranking-v2) → every 2024-25 game",
+      "games": 1230,
+      "results": [
+        {
+          "name": "Home court only",
+          "rmse": 15.897213081355991,
+          "r2": 0
+        },
+        {
+          "name": "Team net rating (roster-blind)",
+          "rmse": 15.169122111322286,
+          "r2": 0.0895021932447303,
+          "slope": 0.605,
+          "vsPublished": {
+            "delta": 0.44634840643328744,
+            "lo": 0.1999236638587849,
+            "hi": 0.6882738418040084,
+            "verdict": "worse"
+          }
+        },
+        {
+          "name": "Play-by-play DRBL/100 (EB1600, pre-blend)",
+          "rmse": 14.722773704888999,
+          "r2": 0.14229630138328497,
+          "slope": 1.659
+        },
+        {
+          "name": "DRBL-P raw rate (unshrunk)",
+          "rmse": 14.588175140052542,
+          "r2": 0.15790721483239634,
+          "slope": 1.184,
+          "vsPublished": {
+            "delta": -0.13459856483645716,
+            "lo": -0.26309898736963966,
+            "hi": -0.006771159616640432,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "DRBL-LN (stored lineup)",
+          "rmse": 15.309709338403746,
+          "r2": 0.07254702176477934,
+          "slope": 0.602,
+          "vsPublished": {
+            "delta": 0.5869356335147469,
+            "lo": 0.3238116698931588,
+            "hi": 0.8559300351327792,
+            "verdict": "worse"
+          }
+        },
+        {
+          "name": "DRBL-B (box)",
+          "rmse": 15.51960868841806,
+          "r2": 0.046941535916725896,
+          "slope": 3.245,
+          "vsPublished": {
+            "delta": 0.7968349835290613,
+            "lo": 0.555685844009993,
+            "hi": 1.0506758302266608,
+            "verdict": "worse"
+          }
+        },
+        {
+          "name": "Raw on-court +/- per 100",
+          "rmse": 14.733805849831407,
+          "r2": 0.1410104218493572,
+          "slope": 0.183,
+          "vsPublished": {
+            "delta": 0.01103214494240845,
+            "lo": -0.2510308964664265,
+            "hi": 0.25804199368524117,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Scoreboard lineup ridge (λ=6400)",
+          "rmse": 14.716197017698903,
+          "r2": 0.14306240553626504,
+          "slope": 0.996,
+          "vsPublished": {
+            "delta": -0.0065766871900958535,
+            "lo": -0.24413609157815408,
+            "hi": 0.22225231508600096,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Anchored lineup (drbl-anchored-lineup-v1)",
+          "rmse": 14.638651713466494,
+          "r2": 0.1520696792451255,
+          "slope": 0.534,
+          "vsPublished": {
+            "delta": -0.08412199142250465,
+            "lo": -0.17825190123890877,
+            "hi": 0.005273889186380387,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Play-by-play rate shrunk toward same-season box rating (blend half)",
+          "rmse": 14.19167511821172,
+          "r2": 0.20306054173520993,
+          "slope": 0.651,
+          "vsPublished": {
+            "delta": -0.5310985866772793,
+            "lo": -0.7561533251396781,
+            "hi": -0.32058583702383103,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "DRBL/100, box blend (drbl-box-blend-v2)",
+          "rmse": 14.30576936314322,
+          "r2": 0.1901950122644549,
+          "slope": 1.068,
+          "vsPublished": {
+            "delta": -0.4170043417457787,
+            "lo": -0.6072605813010785,
+            "hi": -0.23034970433233504,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "DARKO 2023-24 (external)",
+          "rmse": 14.863706188981455,
+          "r2": 0.12579711937875437,
+          "slope": 0.481,
+          "vsPublished": {
+            "delta": 0.14093248409245618,
+            "lo": -0.11155354340980494,
+            "hi": 0.4231668303739067,
+            "verdict": "no clear difference"
+          }
+        }
+      ],
+      "incremental": [
+        {
+          "name": "Published + DRBL-P raw rate (unshrunk)",
+          "rmse": 14.604179034704345,
+          "r2": 0.15605857284606717,
+          "vsPublished": {
+            "delta": -0.1185946701846543,
+            "lo": -0.23259589580784557,
+            "hi": -0.006231394788287048,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + DRBL-LN (stored lineup)",
+          "rmse": 14.697318764646266,
+          "r2": 0.14525959117152298,
+          "vsPublished": {
+            "delta": -0.025454940242733315,
+            "lo": -0.0777450601184615,
+            "hi": 0.027129398789503156,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + DRBL-B (box)",
+          "rmse": 14.736097999200295,
+          "r2": 0.14074313373742386,
+          "vsPublished": {
+            "delta": 0.013324294311296114,
+            "lo": -0.007447908562658867,
+            "hi": 0.030754424055109197,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + Raw on-court +/- per 100",
+          "rmse": 14.556072761986112,
+          "r2": 0.1616093141589955,
+          "vsPublished": {
+            "delta": -0.16670094290288695,
+            "lo": -0.3038404242898558,
+            "hi": -0.03722317294464972,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + Scoreboard lineup ridge (λ=6400)",
+          "rmse": 14.572220164191208,
+          "r2": 0.15974818846222982,
+          "vsPublished": {
+            "delta": -0.15055354069779092,
+            "lo": -0.2761544145311632,
+            "hi": -0.030335800885248787,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + Anchored lineup (drbl-anchored-lineup-v1)",
+          "rmse": 14.648302555601846,
+          "r2": 0.15095127854599377,
+          "vsPublished": {
+            "delta": -0.07447114928715237,
+            "lo": -0.1534330983293959,
+            "hi": 0.0038019065627086235,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + Play-by-play rate shrunk toward same-season box rating (blend half)",
+          "rmse": 14.203564305377126,
+          "r2": 0.20172469784618574,
+          "vsPublished": {
+            "delta": -0.5192093995118725,
+            "lo": -0.7339999307294516,
+            "hi": -0.32112865670587176,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + DRBL/100, box blend (drbl-box-blend-v2)",
+          "rmse": 14.31593435316826,
+          "r2": 0.1890437866401954,
+          "vsPublished": {
+            "delta": -0.4068393517207394,
+            "lo": -0.5994265207705745,
+            "hi": -0.2150580266371751,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + DARKO 2023-24 (external)",
+          "rmse": 14.541014354899014,
+          "r2": 0.1633430644904722,
+          "vsPublished": {
+            "delta": -0.181759349989985,
+            "lo": -0.3051050026687001,
+            "hi": -0.05297773772901593,
+            "verdict": "better"
+          }
+        }
+      ]
+    },
+    {
+      "label": "2025-26: first 5% of games → last 95%",
+      "games": 1169,
+      "results": [
+        {
+          "name": "Home court only",
+          "rmse": 16.519745658124965,
+          "r2": 0
+        },
+        {
+          "name": "Team net rating (roster-blind)",
+          "rmse": 16.12958729014868,
+          "r2": 0.04667760081234329,
+          "slope": 0.311,
+          "vsPublished": {
+            "delta": -0.0003529114571279024,
+            "lo": -0.22461187072042854,
+            "hi": 0.2235234350321189,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Play-by-play DRBL/100 (EB1600, pre-blend)",
+          "rmse": 16.12994020160581,
+          "r2": 0.04663588343029845,
+          "slope": 2.25
+        },
+        {
+          "name": "DRBL-P raw rate (unshrunk)",
+          "rmse": 16.038630999952826,
+          "r2": 0.05739903867000995,
+          "slope": 0.481,
+          "vsPublished": {
+            "delta": -0.09130920165298306,
+            "lo": -0.18039630583916022,
+            "hi": 0.00027182226292765677,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "DRBL-LN (stored lineup)",
+          "rmse": 16.033554985416714,
+          "r2": 0.0579955857245914,
+          "slope": 1.154,
+          "vsPublished": {
+            "delta": -0.09638521618909479,
+            "lo": -0.2850635461295141,
+            "hi": 0.07732023254444087,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "DRBL-B (box)",
+          "rmse": 16.25535603085325,
+          "r2": 0.03175277948498323,
+          "slope": 4.112,
+          "vsPublished": {
+            "delta": 0.12541582924744077,
+            "lo": -0.08623454715469947,
+            "hi": 0.35351213613527577,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Raw on-court +/- per 100",
+          "rmse": 16.104859529145987,
+          "r2": 0.04959837716028315,
+          "slope": 0.081,
+          "vsPublished": {
+            "delta": -0.02508067245982204,
+            "lo": -0.2352545435556639,
+            "hi": 0.17571900455059009,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Scoreboard lineup ridge (λ=6400)",
+          "rmse": 16.127878545373047,
+          "r2": 0.04687957726142211,
+          "slope": 1.586,
+          "vsPublished": {
+            "delta": -0.002061656232761777,
+            "lo": -0.1921233223807306,
+            "hi": 0.1735504552424274,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Anchored lineup (drbl-anchored-lineup-v1)",
+          "rmse": 16.02126406747488,
+          "r2": 0.0594392657105014,
+          "slope": 0.601,
+          "vsPublished": {
+            "delta": -0.10867613413092769,
+            "lo": -0.1623565799491935,
+            "hi": -0.05522452112284171,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Play-by-play rate shrunk toward same-season box rating (blend half)",
+          "rmse": 16.02409223974232,
+          "r2": 0.05910716924680981,
+          "slope": 0.206,
+          "vsPublished": {
+            "delta": -0.1058479618634891,
+            "lo": -0.26306367476480474,
+            "hi": 0.058336727126860666,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "DRBL/100, box blend (drbl-box-blend-v2)",
+          "rmse": 15.862064635474146,
+          "r2": 0.07803864527851512,
+          "slope": 1.308,
+          "vsPublished": {
+            "delta": -0.2678755661316625,
+            "lo": -0.43272967049787603,
+            "hi": -0.10945407939197338,
+            "verdict": "better"
+          }
+        }
+      ],
+      "incremental": [
+        {
+          "name": "Published + DRBL-P raw rate (unshrunk)",
+          "rmse": 16.047477798183124,
+          "r2": 0.0563588875019736,
+          "vsPublished": {
+            "delta": -0.08246240342268507,
+            "lo": -0.17366871326025546,
+            "hi": 0.014992039850266536,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + DRBL-LN (stored lineup)",
+          "rmse": 15.991723016814767,
+          "r2": 0.06290460229648831,
+          "vsPublished": {
+            "delta": -0.13821718479104206,
+            "lo": -0.2554254602072614,
+            "hi": -0.03140636985733458,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + DRBL-B (box)",
+          "rmse": 16.04034177563124,
+          "r2": 0.05719794110716714,
+          "vsPublished": {
+            "delta": -0.08959842597456813,
+            "lo": -0.18502412630714105,
+            "hi": 0.012798943525869078,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + Raw on-court +/- per 100",
+          "rmse": 16.002907606022063,
+          "r2": 0.061593337429239337,
+          "vsPublished": {
+            "delta": -0.1270325955837457,
+            "lo": -0.24357009772199234,
+            "hi": -0.012355222525179954,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + Scoreboard lineup ridge (λ=6400)",
+          "rmse": 16.034265584201535,
+          "r2": 0.05791208558677019,
+          "vsPublished": {
+            "delta": -0.09567461740427419,
+            "lo": -0.19882537286721558,
+            "hi": 0.00026481761932650727,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + Anchored lineup (drbl-anchored-lineup-v1)",
+          "rmse": 15.966593492801769,
+          "r2": 0.06584740701071568,
+          "vsPublished": {
+            "delta": -0.16334670880404012,
+            "lo": -0.2884622295892534,
+            "hi": -0.040499653413846204,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + Play-by-play rate shrunk toward same-season box rating (blend half)",
+          "rmse": 16.00755715886444,
+          "r2": 0.06104796088644149,
+          "vsPublished": {
+            "delta": -0.1223830427413688,
+            "lo": -0.22848700362413865,
+            "hi": -0.014066808411335785,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + DRBL/100, box blend (drbl-box-blend-v2)",
+          "rmse": 15.876792600100291,
+          "r2": 0.07632576383225265,
+          "vsPublished": {
+            "delta": -0.2531476015055176,
+            "lo": -0.40732578604864855,
+            "hi": -0.10436847481691203,
+            "verdict": "better"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Shipped 2024-25 ratings (drbl-ranking-v2-seq) → every 2025-26 game",
+      "games": 1230,
+      "results": [
+        {
+          "name": "Home court only",
+          "rmse": 16.433741842926413,
+          "r2": 0
+        },
+        {
+          "name": "Team net rating (roster-blind)",
+          "rmse": 15.842880691745988,
+          "r2": 0.07061559110776527,
+          "slope": 0.516,
+          "vsPublished": {
+            "delta": 0.6627413636483457,
+            "lo": 0.3835927905790477,
+            "hi": 0.9387522835471813,
+            "verdict": "worse"
+          }
+        },
+        {
+          "name": "Play-by-play DRBL/100 (EB1600, pre-blend)",
+          "rmse": 15.180139328097642,
+          "r2": 0.1467454858611107,
+          "slope": 1.873
+        },
+        {
+          "name": "DRBL-P raw rate (unshrunk)",
+          "rmse": 15.412260376696933,
+          "r2": 0.12045157732099177,
+          "slope": 1.122,
+          "vsPublished": {
+            "delta": 0.23212104859929106,
+            "lo": 0.05918007711987627,
+            "hi": 0.39930812904330004,
+            "verdict": "worse"
+          }
+        },
+        {
+          "name": "DRBL-LN (stored lineup)",
+          "rmse": 15.864077892518045,
+          "r2": 0.06812696199170987,
+          "slope": 0.516,
+          "vsPublished": {
+            "delta": 0.6839385644204032,
+            "lo": 0.40791070383925465,
+            "hi": 0.9769994792832755,
+            "verdict": "worse"
+          }
+        },
+        {
+          "name": "DRBL-B (box)",
+          "rmse": 16.316741101073298,
+          "r2": 0.014188399334121415,
+          "slope": 2.111,
+          "vsPublished": {
+            "delta": 1.1366017729756557,
+            "lo": 0.8304109190241711,
+            "hi": 1.4548060222868724,
+            "verdict": "worse"
+          }
+        },
+        {
+          "name": "Raw on-court +/- per 100",
+          "rmse": 15.60753069378233,
+          "r2": 0.09802297662619275,
+          "slope": 0.159,
+          "vsPublished": {
+            "delta": 0.42739136568468794,
+            "lo": 0.19483613460836402,
+            "hi": 0.6778268400655438,
+            "verdict": "worse"
+          }
+        },
+        {
+          "name": "Scoreboard lineup ridge (λ=6400)",
+          "rmse": 15.545375343000076,
+          "r2": 0.10519272916180611,
+          "slope": 0.853,
+          "vsPublished": {
+            "delta": 0.3652360149024343,
+            "lo": 0.1570040235888044,
+            "hi": 0.5972853027128266,
+            "verdict": "worse"
+          }
+        },
+        {
+          "name": "Anchored lineup (drbl-anchored-lineup-v1)",
+          "rmse": 15.125515799664608,
+          "r2": 0.15287506287695096,
+          "slope": 0.588,
+          "vsPublished": {
+            "delta": -0.05462352843303364,
+            "lo": -0.15593279475255706,
+            "hi": 0.049987512907080145,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Play-by-play rate shrunk toward same-season box rating (blend half)",
+          "rmse": 14.891706788951304,
+          "r2": 0.1788622234112971,
+          "slope": 0.649,
+          "vsPublished": {
+            "delta": -0.2884325391463385,
+            "lo": -0.51932200397043,
+            "hi": -0.07907357685005856,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "DRBL/100, box blend (drbl-box-blend-v2)",
+          "rmse": 14.674478841748323,
+          "r2": 0.20264365949382757,
+          "slope": 1.158,
+          "vsPublished": {
+            "delta": -0.5056604863493188,
+            "lo": -0.6748970759008159,
+            "hi": -0.33805193465146566,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "DARKO 2024-25 (external)",
+          "rmse": 15.032174620107513,
+          "r2": 0.1632981997961761,
+          "slope": 0.601,
+          "vsPublished": {
+            "delta": -0.14796470799012873,
+            "lo": -0.46756097033376953,
+            "hi": 0.12227051410505752,
+            "verdict": "no clear difference"
+          }
+        }
+      ],
+      "incremental": [
+        {
+          "name": "Published + DRBL-P raw rate (unshrunk)",
+          "rmse": 15.203748549833914,
+          "r2": 0.14408933893193177,
+          "vsPublished": {
+            "delta": 0.023609221736272445,
+            "lo": 0.00683533946439141,
+            "hi": 0.04378982989569025,
+            "verdict": "worse"
+          }
+        },
+        {
+          "name": "Published + DRBL-LN (stored lineup)",
+          "rmse": 15.177286896645938,
+          "r2": 0.14706611814161274,
+          "vsPublished": {
+            "delta": -0.002852431451703552,
+            "lo": -0.029278750283642907,
+            "hi": 0.026074131306273785,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + DRBL-B (box)",
+          "rmse": 15.188798629534126,
+          "r2": 0.1457717536391091,
+          "vsPublished": {
+            "delta": 0.008659301436484412,
+            "lo": -0.02753075989908993,
+            "hi": 0.04743473317163449,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + Raw on-court +/- per 100",
+          "rmse": 15.155485351149173,
+          "r2": 0.14951476674188025,
+          "vsPublished": {
+            "delta": -0.02465397694846949,
+            "lo": -0.07821370277148176,
+            "hi": 0.029303980397752838,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + Scoreboard lineup ridge (λ=6400)",
+          "rmse": 15.16591822537417,
+          "r2": 0.14834343381466153,
+          "vsPublished": {
+            "delta": -0.014221102723471546,
+            "lo": -0.056757052483279224,
+            "hi": 0.03207221466908017,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + Anchored lineup (drbl-anchored-lineup-v1)",
+          "rmse": 15.133119968373856,
+          "r2": 0.15202308529637454,
+          "vsPublished": {
+            "delta": -0.04701935972378557,
+            "lo": -0.12189664900423658,
+            "hi": 0.029225442774118093,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + Play-by-play rate shrunk toward same-season box rating (blend half)",
+          "rmse": 14.849420756664157,
+          "r2": 0.18351895756919545,
+          "vsPublished": {
+            "delta": -0.3307185714334846,
+            "lo": -0.5034923602730235,
+            "hi": -0.17486884379060008,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + DRBL/100, box blend (drbl-box-blend-v2)",
+          "rmse": 14.66335146044944,
+          "r2": 0.2038524416532681,
+          "vsPublished": {
+            "delta": -0.5167878676482012,
+            "lo": -0.7228620324355965,
+            "hi": -0.31392986152465774,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + DARKO 2024-25 (external)",
+          "rmse": 14.846225567217108,
+          "r2": 0.18387028857136212,
+          "vsPublished": {
+            "delta": -0.3339137608805345,
+            "lo": -0.517684315279638,
+            "hi": -0.1706389981095473,
+            "verdict": "better"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -48,14 +48,14 @@ import {
   fitAnchoredLineup,
   type AnchoredLineupSummary,
 } from "./anchored-lineup";
-import { addBoxScoreToTotals, attachBoxPrior, type BoxPriorTotals } from "./box-prior";
+import { addBoxScoreToTotals, type BoxPriorTotals } from "./box-prior";
 import {
-  BOX_FORWARD_WEIGHTS_PATH,
   boxPriorV2ForSeason,
   boxPriorV2Summary,
-  loadBoxForwardWeights,
+  requireBoxForwardWeights,
   type BoxPriorV2Summary,
 } from "./box-forward";
+import { BOX_BLEND_ABILITY_INPUT, BOX_BLEND_MODEL_VERSION, publishBoxBlend } from "./published-rating";
 import {
   DRBL_PARSER_VERSION,
   DRBL_RECONSTRUCTION_VERSION,
@@ -146,7 +146,7 @@ export interface DrblSeasonArtifact {
   behaviorRetrospectiveOnly?: boolean;
   /** Shadow lineup fit behind players[].drblAnchored100; not published. */
   anchoredLineupModel?: AnchoredLineupSummary;
-  /** Shadow box-prior fit behind players[].drblBox100; not published. */
+  /** Box blend behind published players[].drbl100. */
   boxPriorModel?: BoxPriorV2Summary;
   /** Ranking semantics version (bumps when sort key / formulas change). */
   rankingFormulaVersion?: string;
@@ -175,7 +175,7 @@ export interface DrblSeasonArtifact {
  * 8) Team-level WAR calibration (M13)
  * 9) Formal WP leverage → DRBL-L (M14; independent of WAR)
  * 10) Shadow lineup ridge anchored on drbl100 → drblAnchored100 (unpublished)
- * 11) Shadow box prior v2 (DRBL-P shrunk toward a scoreboard-trained box rating, blended with frozen forward weights) → drblBox100 (unpublished)
+ * 11) Box blend (play-by-play rate shrunk toward a scoreboard-trained box rating, blended with a forward box rating and calibrated to points per 100) → published drbl100; the play-by-play rate stays as drblPbp100
  */
 export async function computeSeasonDrbl(
   season: string,
@@ -524,31 +524,28 @@ export async function computeSeasonDrbl(
     anchoredInput,
     new Map(finalizedPlayers.map((p) => [p.playerId, p.drbl100]))
   );
-  const boxForwardWeights = await loadBoxForwardWeights();
-  if (!boxForwardWeights) {
-    console.warn(`[drbl] ${BOX_FORWARD_WEIGHTS_PATH} missing or stale; drblBox100 left blank`);
+  const boxForwardWeights = await requireBoxForwardWeights();
+  const boxPrior = boxPriorV2ForSeason({
+    rows: anchoredInput.rows,
+    appearances: anchoredInput.appearances,
+    totals: boxTotals,
+    players: finalizedPlayers.map((p) => ({ ...p, drblPbp100: p.drbl100 })),
+    games: processedGames.length,
+    weights: boxForwardWeights,
+  });
+  if (!boxPrior) throw new Error(`[drbl] ${season}: no box features; refusing to publish DRBL/100`);
+  if (boxPrior.fitSource === "frozen") {
+    console.warn(`[drbl] ${season}: too few possessions for season box weights; using ${boxForwardWeights.fallbackFrom}'s`);
   }
-  const boxPrior = boxForwardWeights
-    ? boxPriorV2ForSeason({
-        rows: anchoredInput.rows,
-        appearances: anchoredInput.appearances,
-        totals: boxTotals,
-        players: finalizedPlayers,
-        weights: boxForwardWeights,
-      })
-    : null;
-  const players = attachBoxPrior(
-    attachAnchoredLineup(finalizedPlayers, anchoredLineup),
-    boxPrior?.ratings ?? null
-  );
+  const players = publishBoxBlend(attachAnchoredLineup(finalizedPlayers, anchoredLineup), boxPrior.ratings);
 
   return {
     season,
     version: "drbl-ranking-v2",
     sequentialAttributionVersion: SEQUENTIAL_ATTRIBUTION_VERSION,
     abilityLineageVersion: ABILITY_LINEAGE_VERSION,
-    publishedAbilityInput: CANONICAL_ABILITY_INPUT,
-    abilityModelVersion: VALIDATED_ABILITY_MODEL_VERSION,
+    publishedAbilityInput: BOX_BLEND_ABILITY_INPUT,
+    abilityModelVersion: BOX_BLEND_MODEL_VERSION,
     rankingMode: "season_value",
     rankingFormulaVersion: "2.0.0",
     generatedAt,
@@ -635,8 +632,7 @@ export async function computeSeasonDrbl(
       possessions: leverageModel.possessions,
     },
     anchoredLineupModel: anchoredLineupSummary(anchoredLineup),
-    boxPriorModel:
-      boxPrior && boxForwardWeights ? boxPriorV2Summary(boxPrior, boxForwardWeights) : undefined,
+    boxPriorModel: boxPriorV2Summary(boxPrior, boxForwardWeights),
     players,
   };
 }

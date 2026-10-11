@@ -6,8 +6,8 @@ import {
   BOX_PRIOR_CONFIG,
   BOX_PRIOR_FEATURES,
   addBoxScoreToTotals,
-  attachBoxPrior,
   boxPriorFeatures,
+  boxPriorFitFromWeights,
   fitBoxPrior,
   shrinkTowardBoxPrior,
   type BoxPriorTotals,
@@ -121,8 +121,12 @@ describe("box prior", () => {
     assert.equal(out.has("z"), false);
   });
 
-  it("leaves rows absent, never 0, when the fit is unavailable", () => {
-    const rows = attachBoxPrior([{ playerId: "a", rawAbilityRate: 1, possessions: 100, drblBox100: 5 }], null);
-    assert.equal("drblBox100" in rows[0]!, false);
+  it("rates players from frozen weights when the season is too short to fit", () => {
+    const { totals, appearances } = synthetic(0.05, 500);
+    const features = boxPriorFeatures(totals, appearances);
+    const weights = BOX_PRIOR_FEATURES.map((_, i) => (i === STEALS ? 2 : 0));
+    const fit = boxPriorFitFromWeights(features, weights);
+    assert.equal(fit.possessions, 0);
+    for (const [id, z] of features) assert.equal(fit.ratingsPer100.get(id), 2 * z[STEALS]!);
   });
 });

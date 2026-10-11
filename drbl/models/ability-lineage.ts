@@ -23,9 +23,14 @@ import { PRIOR_EQUIVALENT_POSSESSIONS } from "./ranking-config";
 
 export const ABILITY_LINEAGE_VERSION = "ability-lineage-v1";
 
-/** Canonical published ability after M16k1 cutover. */
+/**
+ * Published ability input. "validated_raw_eb1600" is the play-by-play-only
+ * rate (M16k1); since October 2026 it feeds the box blend ("box_blend_v2",
+ * drbl/models/published-rating.ts) and is kept as drblPbp100.
+ */
 export type PublishedAbilityInputKind =
   | "validated_raw_eb1600"
+  | "box_blend_v2"
   | "fused_rate";
 
 export const CANONICAL_ABILITY_INPUT: PublishedAbilityInputKind =

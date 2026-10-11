@@ -33,8 +33,8 @@ export function DrblSeasonSupportNotice({ season }: { season: string }) {
           <span className="font-medium text-foreground">
             DRBL unavailable for this season.
           </span>{" "}
-          Canonical DRBL/100 and WAR1 require play-by-play seasons that
-          pass frozen-v1 support gates. Box-score stats may still load.
+          DRBL/100 and WAR1 need a full season of play-by-play that passes
+          our data checks. Box-score stats may still load.
         </p>
         <p className="mt-1">
           <Link
@@ -73,7 +73,7 @@ export function DrblSeasonSupportNotice({ season }: { season: string }) {
           {entry.dataQualityNote ? ` - ${entry.dataQualityNote}` : ""}
         </p>
         <p className="mt-1">
-          Frozen v1 applied retrospectively.{" "}
+          Rated after the season with the current model.{" "}
           <Link
             href="/learn/drbl"
             className="underline-offset-4 hover:underline"

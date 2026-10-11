@@ -237,6 +237,8 @@ export interface ScoredRating {
   name: string;
   rmse: number;
   r2: number;
+  /** Margin regressed on the rating's implied margin; 1 means real points per 100. */
+  slope?: number;
   vsPublished?: DeltaRmse;
 }
 
@@ -248,7 +250,8 @@ export interface OutcomeReport {
   incremental: ScoredRating[];
 }
 
-export const PUBLISHED = "Published DRBL/100";
+/** Baseline every rating is compared against: the play-by-play-only rate DRBL/100 used before the box blend. */
+export const PUBLISHED = "Play-by-play DRBL/100 (EB1600, pre-blend)";
 
 /** `features` must include PUBLISHED. Home-court-only R² is 0 by construction. */
 export function scoreOutcomes(
@@ -265,22 +268,30 @@ export function scoreOutcomes(
     const sse = pred.reduce((s, v, i) => s + (v - y[i]!) ** 2, 0);
     return { pred, rmse: rmse(pred, y), r2: 1 - sse / sse0 };
   };
+  const all = y.map((_, i) => i);
+  const slope = (x: number[]) => Number(ols([x], y, all)[1]!.toFixed(3));
   const pubX = features[PUBLISHED];
   if (!pubX) throw new Error(`features must include "${PUBLISHED}"`);
   const pub = fit([pubX]);
   const results: ScoredRating[] = [{ name: "Home court only", rmse: rmse(base, y), r2: 0 }];
   if (teamX) {
     const t = fit([teamX]);
-    results.push({ name: "Team net rating (roster-blind)", rmse: t.rmse, r2: t.r2, vsPublished: bootDelta(t.pred, pub.pred, y) });
+    results.push({
+      name: "Team net rating (roster-blind)",
+      rmse: t.rmse,
+      r2: t.r2,
+      slope: slope(teamX),
+      vsPublished: bootDelta(t.pred, pub.pred, y),
+    });
   }
   const incremental: ScoredRating[] = [];
   for (const [name, x] of Object.entries(features)) {
     if (name === PUBLISHED) {
-      results.push({ name, rmse: pub.rmse, r2: pub.r2 });
+      results.push({ name, rmse: pub.rmse, r2: pub.r2, slope: slope(pubX) });
       continue;
     }
     const s = fit([x]);
-    results.push({ name, rmse: s.rmse, r2: s.r2, vsPublished: bootDelta(s.pred, pub.pred, y) });
+    results.push({ name, rmse: s.rmse, r2: s.r2, slope: slope(x), vsPublished: bootDelta(s.pred, pub.pred, y) });
     const both = fit([pubX, x]);
     incremental.push({
       name: `Published + ${name}`,

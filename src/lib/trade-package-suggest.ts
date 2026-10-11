@@ -85,6 +85,9 @@ function midWindow(fit: TradeSalaryFit, side: "a" | "b"): number {
   return (s.outgoing + s.maxIncoming) / 2;
 }
 
+/** Keeps DRBL/100 (spread ~1.2 per player) level with salary fit in $M and the size penalty. */
+const DRBL_INTEREST_WEIGHT = 0.6;
+
 function scorePackage(args: {
   fit: TradeSalaryFit;
   sketch: TradeSketch;
@@ -103,7 +106,7 @@ function scorePackage(args: {
 
   const seedDrbl =
     seedSide === "a" ? (sketch.sideA.drblNet ?? 0) : (sketch.sideB.drblNet ?? 0);
-  const drblInterest = Math.abs(seedDrbl) * 2 + seedDrbl;
+  const drblInterest = (Math.abs(seedDrbl) * 2 + seedDrbl) * DRBL_INTEREST_WEIGHT;
 
   const sizePenalty = -(seedPlayers.length + returnPlayers.length) * 0.35;
 

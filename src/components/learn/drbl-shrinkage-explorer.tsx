@@ -6,11 +6,21 @@ import { AppLink } from "@/components/ui/app-link";
 import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 
-export type ShrinkagePlayer = [id: string, name: string, possessions: number, raw: number, drbl100: number];
+/** `before` is DRBL/100 with the small-sample discount taken back out. */
+export type ShrinkagePlayer = [id: string, name: string, possessions: number, before: number, drbl100: number];
 
-const K = 1600;
+export type ShrinkageModel = {
+  /** Possessions at which a player's sample is trusted halfway. */
+  playerShrinkK: number;
+  /** Possessions at which the play-by-play rate and the box score split the first half evenly. */
+  pbpHandoff: number;
+  /** Share of the rating that mixes the play-by-play rate with the box score. */
+  v1Share: number;
+  /** Season scale fit on later games. */
+  calibration: number;
+};
+
 const MAX_N = 12_000;
-const rho = (n: number) => n / (n + K);
 const sliderToN = (v: number) => Math.max(25, Math.round(((v / 1000) ** 2 * MAX_N) / 25) * 25);
 const nToSlider = (n: number) => Math.round(Math.sqrt(Math.min(n, MAX_N) / MAX_N) * 1000);
 
@@ -75,26 +85,52 @@ function pickPresets(players: ShrinkagePlayer[]): Preset[] {
   });
 }
 
+function SplitBar({
+  share,
+  left,
+  right,
+  leftClass,
+}: {
+  share: number;
+  left: string;
+  right: string;
+  leftClass: string;
+}) {
+  return (
+    <div className="flex h-6 overflow-hidden rounded-sm text-[12px] font-semibold" aria-hidden>
+      <div
+        className={cn("flex items-center overflow-hidden whitespace-nowrap px-2 text-white", leftClass)}
+        style={{ width: `${share * 100}%` }}
+      >
+        {share >= 0.22 ? `${left} ${pct(share)}` : null}
+      </div>
+      <div className="flex flex-1 items-center justify-end overflow-hidden whitespace-nowrap bg-foreground/15 px-2">
+        {share <= 0.78 ? `${right} ${pct(1 - share)}` : null}
+      </div>
+    </div>
+  );
+}
+
 function NumberLine({
-  raw,
-  shrunk,
+  before,
+  after,
   min,
   max,
 }: {
-  raw: number;
-  shrunk: number;
+  before: number;
+  after: number;
   min: number;
   max: number;
 }) {
   const at = (x: number) => `${((Math.min(max, Math.max(min, x)) - min) / (max - min)) * 100}%`;
-  const lo = Math.min(raw, shrunk);
-  const hi = Math.max(raw, shrunk);
-  const rawLeftOfShrunk = raw < shrunk;
+  const lo = Math.min(before, after);
+  const hi = Math.max(before, after);
+  const beforeLeftOfAfter = before < after;
   const share = (x: number) => (x - min) / (max - min);
   const anchor = (x: number, outward: "left" | "right") =>
     share(x) > 0.85 ? "-translate-x-full" : share(x) < 0.15 ? "" : outward === "left" ? "-translate-x-full" : "";
   return (
-    <div className="relative mx-2 h-20" aria-hidden>
+    <div className="relative mx-2 h-24" aria-hidden>
       <div className="absolute inset-x-0 top-9 h-px bg-foreground/25" />
       <div
         className="absolute top-[34px] h-[5px] rounded-full bg-[var(--chart-3)]/30"
@@ -105,60 +141,68 @@ function NumberLine({
         className={cn(type.micro, "absolute top-0 -translate-x-1/2 whitespace-nowrap font-semibold text-muted-foreground")}
         style={{ left: at(0) }}
       >
-        Prior 0
+        Average 0
       </span>
       <span
         className="absolute top-[30px] h-3.5 w-3.5 -translate-x-1/2 rounded-full border-2 border-foreground bg-background"
-        style={{ left: at(raw) }}
+        style={{ left: at(before) }}
       />
       <span
         className="absolute top-[30px] h-3.5 w-3.5 -translate-x-1/2 rounded-full bg-[var(--chart-3)] ring-2 ring-background"
-        style={{ left: at(shrunk) }}
+        style={{ left: at(after) }}
       />
       <span
         className={cn(
           type.caption,
           "absolute top-12 whitespace-nowrap font-semibold tabular-nums",
-          anchor(raw, rawLeftOfShrunk ? "left" : "right")
+          anchor(before, beforeLeftOfAfter ? "left" : "right")
         )}
-        style={{ left: at(raw) }}
+        style={{ left: at(before) }}
       >
-        Raw {signed(raw, 1)}
+        Before {signed(before, 1)}
       </span>
       <span
         className={cn(
           type.caption,
-          "absolute top-12 whitespace-nowrap font-semibold tabular-nums text-[var(--chart-3)]",
-          anchor(shrunk, rawLeftOfShrunk ? "right" : "left")
+          "absolute top-16 whitespace-nowrap font-semibold tabular-nums text-[var(--chart-3)]",
+          anchor(after, beforeLeftOfAfter ? "right" : "left")
         )}
-        style={{ left: at(shrunk) }}
+        style={{ left: at(after) }}
       >
-        DRBL/100 {signed(shrunk, 2)}
+        DRBL/100 {signed(after, 2)}
       </span>
     </div>
   );
 }
 
-/** Raw rate vs published DRBL/100 for a real season, plus a what-if calculator. */
+/** Published DRBL/100 against the same rating before the small-sample discount, plus a what-if calculator. */
 export function DrblShrinkageExplorer({
   season,
   players,
+  model,
   minPossessions,
 }: {
   season: string;
   players: ShrinkagePlayer[];
+  model: ShrinkageModel;
   minPossessions: number;
 }) {
+  const trust = (n: number) => n / (n + model.playerShrinkK);
+  const pbpShare = (n: number) => (model.v1Share * n) / (n + model.pbpHandoff);
+  const K = model.playerShrinkK;
+  const handoff = model.pbpHandoff;
+
   const presets = useMemo(() => pickPresets(players), [players]);
   const byName = useMemo(() => [...players].sort((a, b) => a[1].localeCompare(b[1])), [players]);
   const first = presets[0]?.player ?? players[0]!;
   const [selectedId, setSelectedId] = useState<string | null>(first[0]);
   const [n, setN] = useState(first[2]);
-  const [raw, setRaw] = useState(first[3]);
+  const [before, setBefore] = useState(first[3]);
 
   const selected = selectedId ? players.find((p) => p[0] === selectedId) ?? null : null;
-  const weight = rho(n);
-  const shrunk = selected ? selected[4] : weight * raw;
+  const weight = trust(n);
+  const pbp = pbpShare(n);
+  const after = selected ? selected[4] : weight * before;
 
   const xMin = Math.floor(Math.min(...players.map((p) => p[3])));
   const xMax = Math.ceil(Math.max(...players.map((p) => p[3])));
@@ -172,17 +216,15 @@ export function DrblShrinkageExplorer({
   const choose = (p: ShrinkagePlayer) => {
     setSelectedId(p[0]);
     setN(p[2]);
-    setRaw(p[3]);
+    setBefore(p[3]);
   };
 
   const zero = useMemo(() => {
     const share = (rows: ShrinkagePlayer[]) =>
       rows.length ? rows.filter((p) => p[4] < 0).length / rows.length : null;
-    const sorted = players.map((p) => p[4]).sort((a, b) => a - b);
     const regulars = players.filter((p) => p[2] >= 4000);
     return {
       below: share(players),
-      median: sorted.length ? sorted[Math.floor(sorted.length / 2)]! : null,
       regulars: regulars.length,
       regularsBelow: share(regulars),
     };
@@ -190,40 +232,41 @@ export function DrblShrinkageExplorer({
 
   const subject = selected ? selected[1] : "This made-up player";
   const sentence =
-    `${subject} has a raw ${signed(raw, 1)} over ${n.toLocaleString()} possessions. ` +
-    `The sample counts for ${pct(weight)} and the prior of zero for ${pct(1 - weight)}, ` +
-    `so DRBL/100 is ${signed(shrunk, 2)}.`;
+    `${subject} has played ${n.toLocaleString()} possessions. ` +
+    `His play-by-play rate gets ${pct(pbp)} of the weight and the box-score estimate ${pct(1 - pbp)}. ` +
+    `The sample is trusted ${pct(weight)}, so ${signed(before, 1)} before the discount becomes a DRBL/100 of ${signed(after, 2)}.`;
 
   return (
     <section className="sports-card flex flex-col gap-4 p-4 sm:p-5" aria-labelledby="shrinkage-heading">
       <div className="flex flex-col gap-1">
         <h2 id="shrinkage-heading" className="text-[18px] font-bold">
-          Why small samples get pulled toward zero
+          How DRBL/100 handles small samples
         </h2>
       </div>
 
       <div className={cn(type.body, "flex max-w-3xl flex-col gap-3")}>
         <p>
-          A player&apos;s raw rate swings a lot when he hasn&apos;t played much. A few good weeks can put
-          a bench player far above everyone else per 100 possessions, and a few bad ones can sink him just
-          as far. Most of that swing is luck, so DRBL doesn&apos;t use the raw rate as his rating.
+          A player&apos;s play-by-play rate swings a lot when he hasn&apos;t played much. A few good weeks can
+          put a bench player far above everyone else per 100 possessions, and most of that swing is luck. DRBL/100
+          handles this in two steps. Possessions count on both offense and defense.
         </p>
         <p>
-          DRBL/100 starts every player at 0 and moves toward his raw rate as he plays. Possessions count
-          on both offense and defense. The starting guess is worth {K.toLocaleString()} possessions, so a
-          player&apos;s own numbers count for {pct(rho(400))} at 400 possessions, half at{" "}
-          {K.toLocaleString()}, and {pct(rho(6400))} at 6,400.
+          First, it mixes the play-by-play rate with an estimate built mostly from his box score. Box-score stats
+          settle down faster, so they carry a small sample. The play-by-play rate gets {pct(pbpShare(400))} of the
+          weight at 400 possessions, {pct(pbpShare(handoff))} at {handoff.toLocaleString()}, and{" "}
+          {pct(pbpShare(MAX_N))} at {MAX_N.toLocaleString()}. It never passes {pct(model.v1Share)}.
         </p>
         <p>
-          A hot or cold start barely moves DRBL/100. Only players who keep it up over thousands of
-          possessions reach the top or bottom of the board. On the chart, the amber dots (small samples)
-          sit close to the flat zero line, and the green dots (big samples) sit near the diagonal.
+          Second, it decides how far that mix may stray from 0, the league average. A player is trusted{" "}
+          {pct(trust(250))} at 250 possessions, half at {K.toLocaleString()}, and {pct(trust(6000))} at 6,000. A hot
+          or cold start barely moves DRBL/100. On the chart, the amber dots (small samples) sit close to the flat
+          zero line, and the green dots (big samples) sit near the diagonal.
         </p>
       </div>
 
       <p className={cn(type.bodySm, "text-muted-foreground")}>
-        Each dot is a {season} player. Across is his raw rate, up is his published DRBL/100. With no
-        shrinkage every dot would sit on the dashed diagonal. Tap a dot or move the sliders.
+        Each dot is a {season} player. Across is his rating before the small-sample discount, up is his published
+        DRBL/100. With no discount every dot would sit on the dashed diagonal. Tap a dot or move the sliders.
       </p>
 
       <div className="flex flex-wrap gap-1.5" role="group" aria-label="Example players">
@@ -310,7 +353,7 @@ export function DrblShrinkageExplorer({
               type="button"
               tabIndex={-1}
               aria-hidden
-              title={`${p[1]}: raw ${signed(p[3], 1)}, DRBL/100 ${signed(p[4], 2)}, ${p[2].toLocaleString()} poss.`}
+              title={`${p[1]}: ${signed(p[3], 1)} before the discount, DRBL/100 ${signed(p[4], 2)}, ${p[2].toLocaleString()} poss.`}
               onClick={() => choose(p)}
               onMouseEnter={() => choose(p)}
               className="absolute flex h-3 w-3 -translate-x-1/2 translate-y-1/2 items-center justify-center"
@@ -319,11 +362,11 @@ export function DrblShrinkageExplorer({
               <span className={cn("block h-[7px] w-[7px] rounded-full opacity-70", BAND_STYLE[bandOf(p[2])])} />
             </button>
           ))}
-          {raw >= xMin && raw <= xMax && Math.abs(shrunk) <= yAbs ? (
+          {before >= xMin && before <= xMax && Math.abs(after) <= yAbs ? (
             <span
               aria-hidden
               className="pointer-events-none absolute h-4 w-4 -translate-x-1/2 translate-y-1/2 rounded-full border-[3px] border-foreground bg-background/40"
-              style={{ left: `${left(raw)}%`, bottom: `${bottom(shrunk)}%` }}
+              style={{ left: `${left(before)}%`, bottom: `${bottom(after)}%` }}
             />
           ) : null}
         </div>
@@ -340,7 +383,7 @@ export function DrblShrinkageExplorer({
           ))}
         </div>
         <p className={cn(type.micro, "absolute bottom-0 right-0 font-semibold text-muted-foreground")}>
-          Raw rate per 100 possessions <span data-motion-arrow aria-hidden>→</span>
+          Before the small-sample discount <span data-motion-arrow aria-hidden>→</span>
         </p>
       </div>
 
@@ -353,7 +396,7 @@ export function DrblShrinkageExplorer({
         ))}
         <li className="inline-flex items-center gap-1.5">
           <span aria-hidden className="w-4 border-t-2 border-dashed border-foreground/45" />
-          No shrinkage
+          No discount
         </li>
         <li className="inline-flex items-center gap-1.5">
           <span aria-hidden className="w-4 border-t-2 border-[var(--chart-3)]" />
@@ -381,18 +424,18 @@ export function DrblShrinkageExplorer({
         </label>
         <label className="flex flex-col gap-1.5">
           <span className={cn(type.caption, "flex justify-between font-semibold")}>
-            <span>Raw rate</span>
-            <span className="tabular-nums">{signed(raw, 1)}</span>
+            <span>Before the discount</span>
+            <span className="tabular-nums">{signed(before, 1)}</span>
           </span>
           <input
             type="range"
             min={xMin}
             max={xMax}
             step={0.1}
-            value={raw}
+            value={before}
             onChange={(e) => {
               setSelectedId(null);
-              setRaw(Number(e.target.value));
+              setBefore(Number(e.target.value));
             }}
             className="accent-[var(--chart-3)]"
           />
@@ -417,48 +460,41 @@ export function DrblShrinkageExplorer({
         </label>
       </div>
 
-      <div className="flex flex-col gap-2" aria-live="polite">
+      <div className="flex flex-col gap-3" aria-live="polite">
         <p className={cn(type.bodySm, "max-w-3xl")}>{sentence}</p>
-        <div className="flex h-6 overflow-hidden rounded-sm text-[12px] font-semibold" aria-hidden>
-          <div
-            className="flex items-center overflow-hidden whitespace-nowrap bg-[var(--chart-3)] px-2 text-white"
-            style={{ width: `${weight * 100}%` }}
-          >
-            {weight >= 0.18 ? `Sample ${pct(weight)}` : null}
-          </div>
-          <div className="flex flex-1 items-center justify-end overflow-hidden whitespace-nowrap bg-foreground/15 px-2">
-            {weight <= 0.82 ? `Prior ${pct(1 - weight)}` : null}
-          </div>
+        <div className="flex flex-col gap-1">
+          <span className={cn(type.caption, "font-semibold text-muted-foreground")}>What the rating is built from</span>
+          <SplitBar share={pbp} left="Play-by-play" right="Box score" leftClass="bg-sky-600" />
         </div>
-        <NumberLine raw={raw} shrunk={shrunk} min={xMin} max={xMax} />
+        <div className="flex flex-col gap-1">
+          <span className={cn(type.caption, "font-semibold text-muted-foreground")}>How much the sample is trusted</span>
+          <SplitBar share={weight} left="Trusted" right="Pulled to 0" leftClass="bg-[var(--chart-3)]" />
+        </div>
+        <NumberLine before={before} after={after} min={xMin} max={xMax} />
       </div>
 
       <div className="flex max-w-3xl flex-col gap-1.5 rounded-md border border-border/60 p-3 sm:p-4">
         <h3 className="text-[15px] font-bold">What a DRBL/100 of 0 means</h3>
         <p className={type.bodySm}>
-          Zero is average. It means the player produced what DRBL expects from someone in his role, and a
-          negative number means he fell short of that expectation. Since zero is the middle, roughly half
-          the league lands on each side.
-          {zero.below != null && zero.median != null ? (
-            <>
-              {" "}
-              In {season}, {pct(zero.below)} of these players are below zero and the median is{" "}
-              {signed(zero.median, 2)}.
-            </>
+          Zero is the league average possession. Weight every player by how much he played and the league comes
+          out at 0. Players who play a lot tend to be better, so most of the bench lands below zero.
+          {zero.below != null ? (
+            <> In {season}, {pct(zero.below)} of these players are below zero.</>
           ) : null}
           {zero.regularsBelow != null && zero.regulars >= 20 ? (
             <>
               {" "}
-              Among the {zero.regulars} players with 4,000 or more possessions, {pct(zero.regularsBelow)} are
-              below zero. That fits teams giving the most minutes to players who help them.
+              Among the {zero.regulars} players with 4,000 or more possessions, {pct(zero.regularsBelow)} are below
+              zero.
             </>
           ) : null}
         </p>
       </div>
 
       <p className={cn(type.caption, "text-muted-foreground")}>
-        Players with at least {minPossessions} possessions in {season}. The prior is worth {K.toLocaleString()}{" "}
-        possessions, so at {K.toLocaleString()} possessions the sample and the prior count equally.
+        Players with at least {minPossessions} possessions in {season}. The box-score estimate also uses minutes,
+        starts and the team&apos;s net rating with him on the floor. Each season&apos;s numbers are scaled by{" "}
+        {model.calibration.toFixed(2)} so that +1 matches about one point per 100 possessions in later games.
         {selected ? (
           <>
             {" "}
