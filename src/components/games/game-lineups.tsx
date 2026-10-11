@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState, type ReactNode } from "react";
 
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
+import { useDelayedValue } from "@/components/sports/use-score-delay";
 import type { GameSummary } from "@/data/types";
 import type {
   GameLineups,
@@ -36,8 +37,10 @@ function inPregameWindow(game: GameSummary, now: number): boolean {
 }
 
 function useGameLineups(gameId: string, mode: Mode, poll: boolean) {
-  const [data, setData] = useState<GameLineups | null>(null);
-  const [loaded, setLoaded] = useState(false);
+  const [state, setState] = useState<{ data: GameLineups | null; loaded: boolean }>({
+    data: null,
+    loaded: false,
+  });
 
   useEffect(() => {
     if (!mode || !poll) return;
@@ -48,13 +51,15 @@ function useGameLineups(gameId: string, mode: Mode, poll: boolean) {
         const res = await fetch(`/api/games/${encodeURIComponent(gameId)}/lineups`, {
           cache: "no-store",
         });
-        if (!res.ok) return;
+        if (!res.ok) {
+          if (!stopped) setState((s) => (s.loaded ? s : { ...s, loaded: true }));
+          return;
+        }
         const body = (await res.json()) as { data?: GameLineups | null };
-        if (!stopped) setData(body.data ?? null);
+        if (!stopped) setState({ data: body.data ?? null, loaded: true });
       } catch {
         // Keep the last lineup; the next poll retries.
-      } finally {
-        if (!stopped) setLoaded(true);
+        if (!stopped) setState((s) => (s.loaded ? s : { ...s, loaded: true }));
       }
     };
     void load();
@@ -65,7 +70,7 @@ function useGameLineups(gameId: string, mode: Mode, poll: boolean) {
     };
   }, [gameId, mode, poll]);
 
-  return { data, loaded };
+  return state;
 }
 
 const LINEUP_SIZE = 5;
@@ -294,11 +299,14 @@ export function GameLineupsPanel({
     return () => window.clearInterval(id);
   }, []);
   const mode = lineupMode(game);
-  const { data, loaded } = useGameLineups(
+  const latest = useGameLineups(
     game.id,
     mode,
     mode !== "pregame" || inPregameWindow(game, now)
   );
+  const delayed = useDelayedValue(latest);
+  const held = delayed.due ?? (mode === "pregame" ? delayed.earliest : null);
+  const { data, loaded } = held?.value ?? { data: null, loaded: false };
   if (!mode) return center ?? null;
 
   const heading =

@@ -142,9 +142,6 @@
   "src/components/game/game-play-by-play.tsx": {
     "react-hooks/refs": {
       "count": 1
-    },
-    "react-hooks/set-state-in-effect": {
-      "count": 1
     }
   },
   "src/components/games/possession-explorer.tsx": {

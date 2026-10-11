@@ -4,7 +4,7 @@ import { GameIdentityShell } from "@/components/games/game-identity-shell";
 import { GamePreTipBoard } from "@/components/games/game-pre-tip-board";
 import { GamePreviewSection, GameTabs, type GameTab } from "@/components/games/game-preview-section";
 import { PossessionExplorerIsland } from "@/components/games/possession-explorer-island";
-import { SpoilerShield } from "@/components/games/spoiler-shield";
+import { DelayedGameSection } from "@/components/games/delayed-game-section";
 import { needsScoreMask } from "@/lib/score-delay";
 import { RuntimeGameFallback } from "@/components/games/runtime-game-fallback";
 import { HistoricalGameExperience } from "@/components/history/historical-game-experience";
@@ -90,10 +90,10 @@ export default async function GamePage({ params, searchParams }: GamePageProps) 
     <GameIdentityShell game={shell.game} brandPresentation={brandPresentation} arrivalLabel={arrival?.label} />
     {presentation.canRenderDeepFeatures ? <GameTabs gameId={gameId} active={tab} options={tabOptions} defaultTab={defaultTab} query={sp} /> : null}
     {presentation.canRenderDeepFeatures && tab === "preview" ? <Suspense fallback={<DestinationSectionSkeleton label="Loading game preview…" />}><GamePreviewSection game={shell.game} /></Suspense> : null}
-    {showGame && preTip ? <GamePreTipBoard game={shell.game} /> : null}
     {!presentation.canRenderDeepFeatures ? <GameUnavailablePanel gameId={gameId} backHref={backHref} /> : null}
-    {showGame && !preTip ? (
-      <SpoilerShield gameId={gameId} risky={needsScoreMask(shell.game, new Date().getTime())}>
+    {showGame ? (
+      <DelayedGameSection risky={needsScoreMask(shell.game, new Date().getTime())}>
+      {preTip ? <GamePreTipBoard game={shell.game} /> : <>
       <Suspense fallback={<DestinationSectionSkeleton label="Loading Game Flow & shots…" />}><HistoricalDeepBody gameId={gameId} seasonHint={seasonHint} homeLabel={shell.game.homeTeamAbbr ?? "Home"} awayLabel={shell.game.awayTeamAbbr ?? "Away"} /></Suspense>
       <Suspense fallback={<DestinationSectionSkeleton label="Loading Game Lab analysis…" />}><GameLabDeepBody gameId={gameId} arrival={arrival} hidePeriodTable={heroHasLineScore} /></Suspense>
       <details className="group sports-card overflow-hidden">
@@ -108,7 +108,8 @@ export default async function GamePage({ params, searchParams }: GamePageProps) 
           <Suspense fallback={<DestinationSectionSkeleton label="Loading Possession Explorer…" />}><PossessionExplorerIsland gameId={gameId} awayTeamKey={shell.game.awayTeamId} homeTeamKey={shell.game.homeTeamId} /></Suspense>
         </div>
       </details>
-      </SpoilerShield>
+      </>}
+      </DelayedGameSection>
     ) : null}
   </main>;
   if (eraTheme) return <EraThemeScope theme={eraTheme}>{body}</EraThemeScope>;

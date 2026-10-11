@@ -3439,22 +3439,21 @@ html[data-score-delay] [data-score-scope]:not([data-delay-applied]) {
   visibility: hidden;
 }
 
-[data-spoiler-shield],
-[data-shield-body] {
+[data-delay-section],
+[data-delay-body] {
   display: contents;
 }
 
-[data-shield-cover] {
+[data-delay-placeholder] {
   display: none;
 }
 
-[data-spoiler-shield][data-shield-on] > [data-shield-cover],
-html[data-score-delay] [data-spoiler-shield][data-shield-risky]:not([data-shield-ready]) > [data-shield-cover] {
+[data-delay-section][data-delay-waiting] > [data-delay-placeholder],
+html[data-score-delay] [data-delay-section][data-delay-risky]:not([data-delay-ready]) > [data-delay-placeholder] {
   display: flex;
 }
 
-[data-spoiler-shield][data-shield-on] > [data-shield-body],
-html[data-score-delay] [data-spoiler-shield][data-shield-risky]:not([data-shield-ready]) > [data-shield-body] {
+html[data-score-delay] [data-delay-section][data-delay-risky]:not([data-delay-ready]) > [data-delay-body] {
   display: none;
 }
 

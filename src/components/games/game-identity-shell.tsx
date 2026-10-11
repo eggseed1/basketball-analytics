@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { HistoricalTeamMark } from "@/components/brand/historical-team-mark";
 import { GameLineupsPanel } from "@/components/games/game-lineups";
@@ -16,7 +16,7 @@ import { LiveIndicator } from "@/components/sports/live-indicator";
 import { LocalTipTime } from "@/components/sports/local-tip-time";
 import { finalLabel, gameTypeBadge } from "@/components/sports/score-tile";
 import { useLiveGameRefresh } from "@/components/sports/use-live-scoreboard-refresh";
-import { ScoreDelayScope, useScoreDelaySeconds } from "@/components/sports/use-score-delay";
+import { ScoreDelayScope } from "@/components/sports/use-score-delay";
 import { TeamIdentity } from "@/components/teams/team-identity";
 import type { Game, GameSummary } from "@/data/types";
 import { type } from "@/lib/design-system";
@@ -33,7 +33,6 @@ import { gameSideBrandKey } from "@/lib/game-team-identity";
 import { needsLivePolling } from "@/lib/live-refresh-policy";
 import { validateGamePresentation } from "@/lib/game-presentation";
 import type { HistoricalBrandPresentation } from "@/lib/historical-team-brand";
-import { publishDelayedStatus } from "@/lib/score-delay";
 import { cn } from "@/lib/utils";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -338,16 +337,12 @@ export function GameIdentityShell({
 }) {
   const validation = validateGamePresentation(game);
   const summary = toSummary(game);
-  const { game: live } = useLiveGameRefresh(summary, {
+  const { game: live, latest } = useLiveGameRefresh(summary, {
     season: game.season,
     enabled: needsLivePolling(game.status),
   });
   const shown = live ?? summary;
-  useLiveBoxScoreRefresh(shown.status);
-  const delayOn = useScoreDelaySeconds() > 0;
-  useLayoutEffect(() => {
-    publishDelayedStatus(game.id, shown.status);
-  }, [game.id, shown.status]);
+  useLiveBoxScoreRefresh((latest ?? summary).status);
   if (!validation.canRenderScoreHeader) {
     return (
       <header className="sports-card flex flex-col gap-2 p-4 sm:p-5">
@@ -458,18 +453,14 @@ export function GameIdentityShell({
         />
       </div>
 
-      {delayOn && isLiveLikeStatus(shown.status) ? (
-        lineScore
-      ) : (
-        <GameLineupsPanel
-          game={shown}
-          awayLabel={sideShortName(resolveSideBrand(shown, "away", brandPresentation))}
-          homeLabel={sideShortName(resolveSideBrand(shown, "home", brandPresentation))}
-          awayTeamKey={gameSideBrandKey(shown, "away") ?? null}
-          homeTeamKey={gameSideBrandKey(shown, "home") ?? null}
-          center={lineScore}
-        />
-      )}
+      <GameLineupsPanel
+        game={shown}
+        awayLabel={sideShortName(resolveSideBrand(shown, "away", brandPresentation))}
+        homeLabel={sideShortName(resolveSideBrand(shown, "home", brandPresentation))}
+        awayTeamKey={gameSideBrandKey(shown, "away") ?? null}
+        homeTeamKey={gameSideBrandKey(shown, "home") ?? null}
+        center={lineScore}
+      />
     </MatchupWashCard>
     </ScoreDelayScope>
   );

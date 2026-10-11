@@ -66,7 +66,10 @@ export function useLiveScoreboardRefresh(
     liveIntervalMs?: number;
   }
 ): {
+  /** On the viewer's score delay. */
   games: GameSummary[];
+  /** Newest data, for driving refreshes; never render scores from this. */
+  latestGames: GameSummary[];
   lastRetrievedAt: string | null;
   failureStreak: number;
   diagnostics: LiveRefreshDiagnostics;
@@ -211,6 +214,7 @@ export function useLiveScoreboardRefresh(
 
   return {
     games: shown,
+    latestGames: games,
     lastRetrievedAt,
     failureStreak,
     diagnostics: diagnostics.current,
@@ -224,13 +228,14 @@ export function useLiveGameRefresh(
   options?: { season?: string; enabled?: boolean }
 ): {
   game: GameSummary | null;
+  latest: GameSummary | null;
   failureStreak: number;
 } {
   const list = initial ? [initial] : [];
-  const { games, failureStreak } = useLiveScoreboardRefresh(list, {
+  const { games, latestGames, failureStreak } = useLiveScoreboardRefresh(list, {
     season: options?.season ?? initial?.season,
     enabled: options?.enabled !== false && Boolean(initial),
     liveIntervalMs: LIVE_GAME_INTERVAL_MS,
   });
-  return { game: games[0] ?? initial, failureStreak };
+  return { game: games[0] ?? initial, latest: latestGames[0] ?? initial, failureStreak };
 }

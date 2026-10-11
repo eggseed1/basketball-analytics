@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 
+import { useDelayedValue } from "@/components/sports/use-score-delay";
 import type { PlayByPlayEvent } from "@/data/types";
 import { isLiveLikeStatus, type GameStatusKind } from "@/lib/game-status";
 import { resolveRefreshIntervalMs } from "@/lib/live-refresh-policy";
@@ -58,16 +59,10 @@ function useLivePlays(
   initial: PlayByPlayEvent[],
   live: boolean
 ): { events: PlayByPlayEvent[]; source: string | null } {
-  const [events, setEvents] = useState(initial);
-  const [source, setSource] = useState<string | null>(null);
-  const eventsRef = useRef(events);
-  eventsRef.current = events;
-
-  useEffect(() => {
-    setEvents((prev) =>
-      live && prev.length > initial.length ? prev : initial
-    );
-  }, [initial, live]);
+  const [polled, setPolled] = useState<{ events: PlayByPlayEvent[]; source: string | null } | null>(null);
+  const eventsRef = useRef(initial);
+  eventsRef.current = polled && polled.events.length > initial.length ? polled.events : initial;
+  const held = useDelayedValue(polled).due?.value ?? null;
 
   useEffect(() => {
     if (!live || !gameId) return;
@@ -87,8 +82,7 @@ function useLivePlays(
       const next = body.data?.events;
       if (!next?.length || cancelled) return;
       if (next.length >= eventsRef.current.length) {
-        setEvents(next);
-        if (body.source) setSource(body.source);
+        setPolled({ events: next, source: body.source ?? null });
       }
     };
 
@@ -117,7 +111,8 @@ function useLivePlays(
     };
   }, [gameId, live]);
 
-  return { events, source };
+  if (live && held && held.events.length > initial.length) return held;
+  return { events: initial, source: null };
 }
 
 export function GamePlayByPlayPanel({

@@ -86,7 +86,50 @@ export function needsScoreMask(
   return tip != null && now - tip < RECENT_TIP_MS;
 }
 
-export type ScoreSnapshot = { at: number; game: GameSummary };
+export type Snapshot<T> = { at: number; value: T };
+
+/**
+ * Inserts a timestamped value in time order. Data fetched earlier can arrive
+ * later (a server render shown on delay), so this is not always an append.
+ */
+export function insertSnapshot<T>(
+  list: Snapshot<T>[] | undefined,
+  value: T,
+  at: number,
+  same: (a: T, b: T) => boolean = Object.is
+): Snapshot<T>[] {
+  if (!list?.length) return [{ at, value }];
+  let i = list.length;
+  while (i > 0 && list[i - 1].at > at) i--;
+  if (i > 0 && same(list[i - 1].value, value)) return list;
+  return [...list.slice(0, i), { at, value }, ...list.slice(i)];
+}
+
+/**
+ * The newest snapshot at least `delayMs` old, if any, plus the earliest one
+ * held. `list` comes back pruned to the due snapshot and anything newer.
+ */
+export function pickDue<T>(
+  list: Snapshot<T>[],
+  now: number,
+  delayMs: number
+): { due: Snapshot<T> | null; earliest: Snapshot<T> | null; list: Snapshot<T>[]; nextAt: number | null } {
+  const cutoff = now - delayMs;
+  let due = -1;
+  for (let i = 0; i < list.length; i++) {
+    if (list[i].at <= cutoff) due = i;
+    else break;
+  }
+  const pending = list[due + 1];
+  return {
+    due: due >= 0 ? list[due] : null,
+    earliest: list[0] ?? null,
+    list: due > 0 ? list.slice(due) : list,
+    nextAt: pending ? pending.at + delayMs : null,
+  };
+}
+
+export type ScoreSnapshot = Snapshot<GameSummary>;
 
 function progressKey(g: GameSummary): string {
   return [
@@ -103,41 +146,27 @@ function progressKey(g: GameSummary): string {
   ].join("|");
 }
 
-/** Appends a timestamped snapshot when anything a viewer could see has changed. */
+/** Records a timestamped snapshot when anything a viewer could see has changed. */
 export function recordSnapshot(
   list: ScoreSnapshot[] | undefined,
   game: GameSummary,
   at: number
 ): ScoreSnapshot[] {
-  if (!list?.length) return [{ at, game }];
-  const last = list[list.length - 1];
-  if (progressKey(last.game) === progressKey(game)) return list;
-  return [...list, { at, game }];
+  return insertSnapshot(list, game, at, (a, b) => progressKey(a) === progressKey(b));
 }
 
-/**
- * The newest snapshot at least `delayMs` old, or null when the viewer should
- * see nothing yet. `list` comes back pruned to that snapshot and anything newer.
- */
+/** The game as it stood `delayMs` ago, or null when the viewer should see nothing yet. */
 export function pickDelayed(
   list: ScoreSnapshot[],
   now: number,
   delayMs: number
 ): { game: GameSummary | null; list: ScoreSnapshot[]; nextAt: number | null } {
-  const cutoff = now - delayMs;
-  let due = -1;
-  for (let i = 0; i < list.length; i++) {
-    if (list[i].at <= cutoff) due = i;
-    else break;
-  }
-  const pending = list[due + 1];
-  const nextAt = pending ? pending.at + delayMs : null;
-  if (due >= 0) return { game: list[due].game, list: list.slice(due), nextAt };
-  const first = list[0];
-  if (!first) return { game: null, list, nextAt: null };
+  const { due, earliest, list: kept, nextAt } = pickDue(list, now, delayMs);
+  if (due) return { game: due.value, list: kept, nextAt };
+  if (!earliest) return { game: null, list: kept, nextAt: null };
   return {
-    game: needsScoreMask(first.game, first.at) ? null : first.game,
-    list,
+    game: needsScoreMask(earliest.value, earliest.at) ? null : earliest.value,
+    list: kept,
     nextAt,
   };
 }
@@ -159,23 +188,4 @@ export function maskGame(game: GameSummary): GameSummary {
     homeRecord: undefined,
     awayRecord: undefined,
   };
-}
-
-const delayedStatus = new Map<string, GameSummary["status"]>();
-const statusListeners = new Set<() => void>();
-
-/** The game header publishes the status the delayed viewer sees; the spoiler cover reads it. */
-export function publishDelayedStatus(gameId: string, status: GameSummary["status"]) {
-  if (delayedStatus.get(gameId) === status) return;
-  delayedStatus.set(gameId, status);
-  statusListeners.forEach((fn) => fn());
-}
-
-export function readDelayedStatus(gameId: string): GameSummary["status"] | undefined {
-  return delayedStatus.get(gameId);
-}
-
-export function subscribeDelayedStatus(onChange: () => void): () => void {
-  statusListeners.add(onChange);
-  return () => statusListeners.delete(onChange);
 }
