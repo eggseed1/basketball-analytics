@@ -138,7 +138,10 @@ export async function loadCareerFromBrefSlug(
         playerName: displayName,
         teamId: tot.teamAbbr || "UNK",
         teamName: tot.teamAbbr || "Unknown",
-        teamAbbreviation: tot.teamAbbr || undefined,
+        teamAbbreviation:
+          tot.league === "ABA" && tot.teamAbbr && tot.teamAbbr !== "TOT"
+            ? `${tot.teamAbbr} (ABA)`
+            : tot.teamAbbr || undefined,
         teamIdProvider: "nba",
         providerTeamId: tot.teamAbbr || undefined,
         season,

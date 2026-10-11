@@ -36,7 +36,7 @@ function Ext({ href, children }: { href: string; children: ReactNode }) {
 const DATA_SOURCES: { name: ReactNode; uses: string }[] = [
   {
     name: <Ext href="https://www.nba.com/stats">NBA.com and NBA Stats</Ext>,
-    uses: "Box scores, play-by-play, shot charts, play types, on/off, hustle stats, player awards, franchise records, league averages, transactions, schedules, cap figures and key dates.",
+    uses: "Box scores, play-by-play, shot charts, play types, on/off, hustle stats, player awards, franchise records, league averages, careers that ended before 1996-97, transactions, schedules, cap figures and key dates.",
   },
   {
     name: <Ext href="https://www.espn.com/nba/">ESPN</Ext>,
@@ -44,7 +44,7 @@ const DATA_SOURCES: { name: ReactNode; uses: string }[] = [
   },
   {
     name: <Ext href="https://www.basketball-reference.com/">Basketball-Reference</Ext>,
-    uses: "Past-season advanced and per-game tables, careers that ended before 1996-97 and contracts. Some early league averages (before 1983) are kept from an earlier copy.",
+    uses: "Past-season advanced and per-game tables and contracts. Kept from an earlier copy: ABA seasons and advanced tables for careers that ended before 1996-97, a few early players NBA Stats has no record of, and some league averages before 1983.",
   },
   {
     name: <Ext href="https://www.darko.app/">DARKO</Ext>,

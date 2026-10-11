@@ -43,6 +43,8 @@ export type BrefCountingRow = {
   season: string;
   teamAbbr: string;
   combined: boolean;
+  /** "ABA" for ABA seasons in baked legend careers; NBA otherwise. */
+  league?: string | null;
   position: string | null;
   age: number | null;
   gamesPlayed: number | null;

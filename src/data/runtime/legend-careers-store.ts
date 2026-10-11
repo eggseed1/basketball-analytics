@@ -1,7 +1,7 @@
 /**
- * Baked Basketball-Reference careers for pre-1996-97 players.
- * Workers cannot reach BRef player pages at request time; these shards are
- * written by scripts/build-legend-careers.ts into
+ * Baked careers for pre-1996-97 players, keyed by Basketball-Reference slug.
+ * NBA seasons and bios come from NBA Stats; ABA seasons and the advanced rows
+ * are older BRef values. Written by scripts/build-legend-careers.py into
  * public/runtime/legend-careers/{letter}.json and served as static assets.
  */
 import { existsSync, readFileSync } from "node:fs";
@@ -18,8 +18,8 @@ type AssetsFetcher = {
 };
 
 type N = number | null;
-/** Columns 16+ (shots, ORB/DRB, PF, age) are absent in older shards. */
-type TotalsTuple = [string, string, 0 | 1, ...N[]];
+/** Columns 16+ (shots, ORB/DRB, PF, age) are absent in older shards; column 26 is "ABA" on ABA seasons. */
+type TotalsTuple = [string, string, 0 | 1, ...(N | string)[]];
 /** Columns 14+ (rebound/steal/block rates, OWS/DWS, OBPM/DBPM) may be absent. */
 type AdvancedTuple = [string, string, 0 | 1, ...N[]];
 type CompactBio = {
@@ -152,6 +152,7 @@ export async function loadBundledBrefCareer(
         offensiveRebounds: n(22),
         defensiveRebounds: n(23),
         personalFouls: n(24),
+        league: typeof r[26] === "string" ? r[26] : null,
       };
     }),
     advanced: (career.a ?? []).map((r) => {
