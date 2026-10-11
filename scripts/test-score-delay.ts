@@ -14,6 +14,8 @@ import {
   pickDelayed,
   pickDue,
   recordSnapshot,
+  scoreDelayLabel,
+  scoreDelayShortLabel,
   type ScoreSnapshot,
 } from "../src/lib/score-delay";
 
@@ -36,9 +38,18 @@ function game(over: Partial<GameSummary>): GameSummary {
 
 function testParse() {
   assert.equal(parseScoreDelay("60"), 60);
-  assert.equal(parseScoreDelay("45"), 0);
+  assert.equal(parseScoreDelay("47"), 47);
+  assert.equal(parseScoreDelay("300"), 300);
+  assert.equal(parseScoreDelay("301"), 0);
+  assert.equal(parseScoreDelay("12.5"), 0);
   assert.equal(parseScoreDelay(null), 0);
   assert.equal(parseScoreDelay("-15"), 0);
+  assert.equal(scoreDelayLabel(0), "Off");
+  assert.equal(scoreDelayLabel(45), "45 sec");
+  assert.equal(scoreDelayLabel(120), "2 min");
+  assert.equal(scoreDelayLabel(95), "1 min 35 sec");
+  assert.equal(scoreDelayShortLabel(45), "45s");
+  assert.equal(scoreDelayShortLabel(95), "1:35");
 }
 
 function testRecordDedupes() {

@@ -4,31 +4,33 @@ import { isFinalStatus, isLiveLikeStatus } from "@/lib/game-status";
 
 export const SCORE_DELAY_KEY = "drbl-score-delay-v1";
 
-export const SCORE_DELAY_OPTIONS: ReadonlyArray<{ seconds: number; label: string }> = [
-  { seconds: 0, label: "Off" },
-  { seconds: 15, label: "15 sec" },
-  { seconds: 30, label: "30 sec" },
-  { seconds: 60, label: "1 min" },
-  { seconds: 120, label: "2 min" },
-  { seconds: 300, label: "5 min" },
-];
-
-const ALLOWED = new Set(SCORE_DELAY_OPTIONS.map((o) => o.seconds));
+export const SCORE_DELAY_MAX_SECONDS = 300;
 
 export function parseScoreDelay(raw: string | null | undefined): number {
   const n = Number(raw);
-  return Number.isInteger(n) && ALLOWED.has(n) ? n : 0;
+  return Number.isInteger(n) && n > 0 && n <= SCORE_DELAY_MAX_SECONDS ? n : 0;
 }
 
+/** "Off", "45 sec", "2 min", "1 min 30 sec". */
 export function scoreDelayLabel(seconds: number): string {
-  return SCORE_DELAY_OPTIONS.find((o) => o.seconds === seconds)?.label ?? "Off";
+  if (seconds <= 0) return "Off";
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  if (!m) return `${s} sec`;
+  return s ? `${m} min ${s} sec` : `${m} min`;
+}
+
+/** Header-sized label: "45s", "2:00", "1:30". */
+export function scoreDelayShortLabel(seconds: number): string {
+  if (seconds < 60) return `${seconds}s`;
+  return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
 }
 
 /** Sets `data-score-delay` on <html> before paint so live scores never flash. */
 export const SCORE_DELAY_BOOT_SCRIPT = `(function(){
   try {
     var d = Number(localStorage.getItem("${SCORE_DELAY_KEY}"));
-    if ([${[...ALLOWED].filter(Boolean).join(",")}].indexOf(d) >= 0) document.documentElement.setAttribute("data-score-delay", String(d));
+    if (d % 1 === 0 && d > 0 && d <= ${SCORE_DELAY_MAX_SECONDS}) document.documentElement.setAttribute("data-score-delay", String(d));
   } catch (e) {}
 })();`;
 

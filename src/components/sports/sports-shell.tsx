@@ -14,7 +14,7 @@ import { DrblLogo } from "@/components/brand/drbl-logo";
 import { TransitionLink } from "@/components/continuity/query-nav";
 import { RouteTransitionProvider } from "@/components/continuity/route-transition";
 import { ColorSchemeSwitch } from "@/components/sports/color-scheme-switch";
-import { ScoreDelayControl } from "@/components/sports/score-delay-control";
+import { ScoreDelayControl, ScoreDelaySlider } from "@/components/sports/score-delay-control";
 import { SiteChrome } from "@/components/sports/site-chrome";
 import { SiteFooter } from "@/components/sports/site-footer";
 import { SiteSearch } from "@/components/sports/site-search";
@@ -331,11 +331,8 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
               </span>
               <ColorSchemeSwitch />
             </div>
-            <div className="site-shell flex shrink-0 items-center justify-between gap-3 border-t border-border py-4">
-              <span className="text-[14px] font-semibold text-muted-foreground">
-                Live score delay
-              </span>
-              <ScoreDelayControl showLabel />
+            <div className="site-shell shrink-0 border-t border-border py-4">
+              <ScoreDelaySlider />
             </div>
           </div>
         ) : null}

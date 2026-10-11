@@ -13,7 +13,7 @@ import {
 import type { GameSummary } from "@/data/types";
 import { isFinalStatus, isLiveLikeStatus } from "@/lib/game-status";
 import {
-  SCORE_DELAY_OPTIONS,
+  SCORE_DELAY_MAX_SECONDS,
   insertSnapshot,
   maskGame,
   pickDelayed,
@@ -25,7 +25,7 @@ import {
   type Snapshot,
 } from "@/lib/score-delay";
 
-const MAX_DELAY_MS = Math.max(...SCORE_DELAY_OPTIONS.map((o) => o.seconds)) * 1000;
+const MAX_DELAY_MS = SCORE_DELAY_MAX_SECONDS * 1000;
 
 const noopSubscribe = () => () => {};
 
