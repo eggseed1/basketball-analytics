@@ -1,16 +1,17 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-10",
-    "retrievedAt": "2026-10-10T02:42:53.853Z",
+    "snapshotDate": "2026-10-11",
+    "retrievedAt": "2026-10-11T17:53:51.347Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
+      "data/salaries/player-salaries-bref-archive.csv",
       "data/salaries/player-salaries-supplement.csv",
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "8b67e3d85e0ed4422900ff451a164f2cb96de10f07afb28d607aae983897c0b5",
+    "sourceHash": "78d29012712d51a71c869dce6028dd306db6b7c7d03347f8462f8a3b17957024",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -282,15 +283,15 @@
           "href": "/players/1630598"
         },
         {
-          "playerId": "5149077",
+          "playerId": "1643412",
           "playerName": "Kingston Flemings",
           "age": null,
-          "contractId": "cy-5149077-2026",
+          "contractId": "cy-1643412-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-5149077-2026",
-              "playerId": "5149077",
+              "contractId": "cy-1643412-2026",
+              "playerId": "1643412",
               "franchiseId": "1",
               "season": "2026-27",
               "salary": 7348680,
@@ -302,18 +303,18 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/5149077"
+          "href": "/players/1643412"
         },
         {
-          "playerId": "5106262",
+          "playerId": "1643544",
           "playerName": "Zuby Ejiofor",
           "age": null,
-          "contractId": "cy-5106262-2026",
+          "contractId": "cy-1643544-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-5106262-2026",
-              "playerId": "5106262",
+              "contractId": "cy-1643544-2026",
+              "playerId": "1643544",
               "franchiseId": "1",
               "season": "2026-27",
               "salary": 3453360,
@@ -325,7 +326,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/5106262"
+          "href": "/players/1643544"
         },
         {
           "playerId": "1642854",
@@ -420,15 +421,15 @@
           "href": "/players/1642484"
         },
         {
-          "playerId": "5105571",
+          "playerId": "1643539",
           "playerName": "Henri Veesaar",
           "age": null,
-          "contractId": "cy-5105571-2026",
+          "contractId": "cy-1643539-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-5105571-2026",
-              "playerId": "5105571",
+              "contractId": "cy-1643539-2026",
+              "playerId": "1643539",
               "franchiseId": "1",
               "season": "2026-27",
               "salary": 1357763,
@@ -440,18 +441,18 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/5105571"
+          "href": "/players/1643539"
         },
         {
-          "playerId": "4712902",
+          "playerId": "1643723",
           "playerName": "Cameron Corhen",
           "age": null,
-          "contractId": "cy-4712902-2026",
+          "contractId": "cy-1643723-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-4712902-2026",
-              "playerId": "4712902",
+              "contractId": "cy-1643723-2026",
+              "playerId": "1643723",
               "franchiseId": "1",
               "season": "2026-27",
               "salary": null,
@@ -463,7 +464,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/4712902"
+          "href": "/players/1643723"
         },
         {
           "playerId": "1642933",
@@ -489,15 +490,15 @@
           "href": "/players/1642933"
         },
         {
-          "playerId": "4683857",
+          "playerId": "1642937",
           "playerName": "Kobe Johnson",
           "age": null,
-          "contractId": "cy-4683857-2026",
+          "contractId": "cy-1642937-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-4683857-2026",
-              "playerId": "4683857",
+              "contractId": "cy-1642937-2026",
+              "playerId": "1642937",
               "franchiseId": "1",
               "season": "2026-27",
               "salary": null,
@@ -509,7 +510,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/4683857"
+          "href": "/players/1642937"
         }
       ],
       "futureCommitments": [

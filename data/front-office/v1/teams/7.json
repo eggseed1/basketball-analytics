@@ -1,16 +1,17 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-10",
-    "retrievedAt": "2026-10-10T02:42:53.853Z",
+    "snapshotDate": "2026-10-11",
+    "retrievedAt": "2026-10-11T17:53:51.347Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
+      "data/salaries/player-salaries-bref-archive.csv",
       "data/salaries/player-salaries-supplement.csv",
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "8b67e3d85e0ed4422900ff451a164f2cb96de10f07afb28d607aae983897c0b5",
+    "sourceHash": "78d29012712d51a71c869dce6028dd306db6b7c7d03347f8462f8a3b17957024",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -420,15 +421,15 @@
           "href": "/players/1641801"
         },
         {
-          "playerId": "4698719",
+          "playerId": "1642350",
           "playerName": "Trevon Brazile",
           "age": null,
-          "contractId": "cy-4698719-2026",
+          "contractId": "cy-1642350-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-4698719-2026",
-              "playerId": "4698719",
+              "contractId": "cy-1642350-2026",
+              "playerId": "1642350",
               "franchiseId": "7",
               "season": "2026-27",
               "salary": 1357763,
@@ -440,18 +441,18 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/4698719"
+          "href": "/players/1642350"
         },
         {
-          "playerId": "4065813",
+          "playerId": "1643813",
           "playerName": "Alpha Diallo",
           "age": null,
-          "contractId": "cy-4065813-2026",
+          "contractId": "cy-1643813-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-4065813-2026",
-              "playerId": "4065813",
+              "contractId": "cy-1643813-2026",
+              "playerId": "1643813",
               "franchiseId": "7",
               "season": "2026-27",
               "salary": null,
@@ -463,18 +464,18 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/4065813"
+          "href": "/players/1643813"
         },
         {
-          "playerId": "4395667",
+          "playerId": "1641863",
           "playerName": "Dane Goodwin",
           "age": null,
-          "contractId": "cy-4395667-2026",
+          "contractId": "cy-1641863-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-4395667-2026",
-              "playerId": "4395667",
+              "contractId": "cy-1641863-2026",
+              "playerId": "1641863",
               "franchiseId": "7",
               "season": "2026-27",
               "salary": null,
@@ -486,18 +487,18 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/4395667"
+          "href": "/players/1641863"
         },
         {
-          "playerId": "4432976",
+          "playerId": "1641746",
           "playerName": "Coleman Hawkins",
           "age": null,
-          "contractId": "cy-4432976-2026",
+          "contractId": "cy-1641746-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-4432976-2026",
-              "playerId": "4432976",
+              "contractId": "cy-1641746-2026",
+              "playerId": "1641746",
               "franchiseId": "7",
               "season": "2026-27",
               "salary": null,
@@ -509,18 +510,18 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/4432976"
+          "href": "/players/1641746"
         },
         {
-          "playerId": "4565698",
+          "playerId": "1643624",
           "playerName": "Bryce Hopkins",
           "age": null,
-          "contractId": "cy-4565698-2026",
+          "contractId": "cy-1643624-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-4565698-2026",
-              "playerId": "4565698",
+              "contractId": "cy-1643624-2026",
+              "playerId": "1643624",
               "franchiseId": "7",
               "season": "2026-27",
               "salary": null,
@@ -532,7 +533,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/4565698"
+          "href": "/players/1643624"
         }
       ],
       "futureCommitments": [

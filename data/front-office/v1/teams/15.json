@@ -1,16 +1,17 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-10",
-    "retrievedAt": "2026-10-10T02:42:53.853Z",
+    "snapshotDate": "2026-10-11",
+    "retrievedAt": "2026-10-11T17:53:51.347Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
+      "data/salaries/player-salaries-bref-archive.csv",
       "data/salaries/player-salaries-supplement.csv",
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "8b67e3d85e0ed4422900ff451a164f2cb96de10f07afb28d607aae983897c0b5",
+    "sourceHash": "78d29012712d51a71c869dce6028dd306db6b7c7d03347f8462f8a3b17957024",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -190,15 +191,15 @@
           "href": "/players/1631260"
         },
         {
-          "playerId": "5082206",
+          "playerId": "1643415",
           "playerName": "Brayden Burries",
           "age": null,
-          "contractId": "cy-5082206-2026",
+          "contractId": "cy-1643415-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-5082206-2026",
-              "playerId": "5082206",
+              "contractId": "cy-1643415-2026",
+              "playerId": "1643415",
               "franchiseId": "15",
               "season": "2026-27",
               "salary": 6417360,
@@ -210,7 +211,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/5082206"
+          "href": "/players/1643415"
         },
         {
           "playerId": "1631170",
@@ -259,15 +260,15 @@
           "href": "/players/1631172"
         },
         {
-          "playerId": "5164559",
+          "playerId": "1643417",
           "playerName": "Nate Ament",
           "age": null,
-          "contractId": "cy-5164559-2026",
+          "contractId": "cy-1643417-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-5164559-2026",
-              "playerId": "5164559",
+              "contractId": "cy-1643417-2026",
+              "playerId": "1643417",
               "franchiseId": "15",
               "season": "2026-27",
               "salary": 5502000,
@@ -279,7 +280,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/5164559"
+          "href": "/players/1643417"
         },
         {
           "playerId": "1629645",
@@ -443,15 +444,15 @@
           "href": "/players/1641780"
         },
         {
-          "playerId": "5214989",
+          "playerId": "1642881",
           "playerName": "Bogoljub Markovic",
           "age": null,
-          "contractId": "cy-5214989-2026",
+          "contractId": "cy-1642881-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-5214989-2026",
-              "playerId": "5214989",
+              "contractId": "cy-1642881-2026",
+              "playerId": "1642881",
               "franchiseId": "15",
               "season": "2026-27",
               "salary": 1357763,
@@ -463,7 +464,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/5214989"
+          "href": "/players/1642881"
         },
         {
           "playerId": "1642880",
@@ -512,15 +513,15 @@
           "href": "/players/1642504"
         },
         {
-          "playerId": "4398257",
+          "playerId": "1641868",
           "playerName": "Jake Stephens",
           "age": null,
-          "contractId": "cy-4398257-2026",
+          "contractId": "cy-1641868-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-4398257-2026",
-              "playerId": "4398257",
+              "contractId": "cy-1641868-2026",
+              "playerId": "1641868",
               "franchiseId": "15",
               "season": "2026-27",
               "salary": null,
@@ -532,7 +533,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/4398257"
+          "href": "/players/1641868"
         }
       ],
       "futureCommitments": [

@@ -1,16 +1,17 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-10",
-    "retrievedAt": "2026-10-10T02:42:53.853Z",
+    "snapshotDate": "2026-10-11",
+    "retrievedAt": "2026-10-11T17:53:51.347Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
+      "data/salaries/player-salaries-bref-archive.csv",
       "data/salaries/player-salaries-supplement.csv",
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "8b67e3d85e0ed4422900ff451a164f2cb96de10f07afb28d607aae983897c0b5",
+    "sourceHash": "78d29012712d51a71c869dce6028dd306db6b7c7d03347f8462f8a3b17957024",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -259,15 +260,15 @@
           "href": "/players/1642275"
         },
         {
-          "playerId": "5281370",
+          "playerId": "1643419",
           "playerName": "Hannes Steinbach",
           "age": null,
-          "contractId": "cy-5281370-2026",
+          "contractId": "cy-1643419-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-5281370-2026",
-              "playerId": "5281370",
+              "contractId": "cy-1643419-2026",
+              "playerId": "1643419",
               "franchiseId": "30",
               "season": "2026-27",
               "salary": 5227200,
@@ -279,18 +280,18 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/5281370"
+          "href": "/players/1643419"
         },
         {
-          "playerId": "5060701",
+          "playerId": "1643515",
           "playerName": "Christian Anderson",
           "age": null,
-          "contractId": "cy-5060701-2026",
+          "contractId": "cy-1643515-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-5060701-2026",
-              "playerId": "5060701",
+              "contractId": "cy-1643515-2026",
+              "playerId": "1643515",
               "franchiseId": "30",
               "season": "2026-27",
               "salary": 4257480,
@@ -302,7 +303,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/5060701"
+          "href": "/players/1643515"
         },
         {
           "playerId": "1626192",
@@ -443,15 +444,15 @@
           "href": "/players/1641790"
         },
         {
-          "playerId": "4684269",
+          "playerId": "1643573",
           "playerName": "Kylan Boswell",
           "age": null,
-          "contractId": "cy-4684269-2026",
+          "contractId": "cy-1643573-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-4684269-2026",
-              "playerId": "4684269",
+              "contractId": "cy-1643573-2026",
+              "playerId": "1643573",
               "franchiseId": "30",
               "season": "2026-27",
               "salary": null,
@@ -463,18 +464,18 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/4684269"
+          "href": "/players/1643573"
         },
         {
-          "playerId": "4897504",
+          "playerId": "1643769",
           "playerName": "Wyatt Fricks",
           "age": null,
-          "contractId": "cy-4897504-2026",
+          "contractId": "cy-1643769-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-4897504-2026",
-              "playerId": "4897504",
+              "contractId": "cy-1643769-2026",
+              "playerId": "1643769",
               "franchiseId": "30",
               "season": "2026-27",
               "salary": null,
@@ -486,18 +487,18 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/4897504"
+          "href": "/players/1643769"
         },
         {
-          "playerId": "4278729",
+          "playerId": "1641935",
           "playerName": "Jarkel Joiner",
           "age": null,
-          "contractId": "cy-4278729-2026",
+          "contractId": "cy-1641935-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-4278729-2026",
-              "playerId": "4278729",
+              "contractId": "cy-1641935-2026",
+              "playerId": "1641935",
               "franchiseId": "30",
               "season": "2026-27",
               "salary": null,
@@ -509,7 +510,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/4278729"
+          "href": "/players/1641935"
         }
       ],
       "futureCommitments": [

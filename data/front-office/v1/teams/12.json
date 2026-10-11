@@ -1,16 +1,17 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-10",
-    "retrievedAt": "2026-10-10T02:42:53.853Z",
+    "snapshotDate": "2026-10-11",
+    "retrievedAt": "2026-10-11T17:53:51.347Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
+      "data/salaries/player-salaries-bref-archive.csv",
       "data/salaries/player-salaries-supplement.csv",
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "8b67e3d85e0ed4422900ff451a164f2cb96de10f07afb28d607aae983897c0b5",
+    "sourceHash": "78d29012712d51a71c869dce6028dd306db6b7c7d03347f8462f8a3b17957024",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -190,15 +191,15 @@
           "href": "/players/1627884"
         },
         {
-          "playerId": "5254165",
+          "playerId": "1643413",
           "playerName": "Keaton Wagler",
           "age": null,
-          "contractId": "cy-5254165-2026",
+          "contractId": "cy-1643413-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-5254165-2026",
-              "playerId": "5254165",
+              "contractId": "cy-1643413-2026",
+              "playerId": "1643413",
               "franchiseId": "12",
               "season": "2026-27",
               "salary": 9674760,
@@ -210,7 +211,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/5254165"
+          "href": "/players/1643413"
         },
         {
           "playerId": "201572",
@@ -466,15 +467,15 @@
           "href": "/players/1629618"
         },
         {
-          "playerId": "5075626",
+          "playerId": "1642394",
           "playerName": "Baba Miller",
           "age": null,
-          "contractId": "cy-5075626-2026",
+          "contractId": "cy-1642394-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-5075626-2026",
-              "playerId": "5075626",
+              "contractId": "cy-1642394-2026",
+              "playerId": "1642394",
               "franchiseId": "12",
               "season": "2026-27",
               "salary": 1705630,
@@ -486,18 +487,41 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/5075626"
+          "href": "/players/1642394"
         },
         {
-          "playerId": "5105832",
-          "playerName": "Nick Martinelli",
+          "playerId": "1643141",
+          "playerName": "Jahmyl Telfort",
           "age": null,
-          "contractId": "cy-5105832-2026",
+          "contractId": "cy-1643141-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-5105832-2026",
-              "playerId": "5105832",
+              "contractId": "cy-1643141-2026",
+              "playerId": "1643141",
+              "franchiseId": "12",
+              "season": "2026-27",
+              "salary": 1366314,
+              "capHit": 1366314,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "salary-index-carry-forward"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1643141"
+        },
+        {
+          "playerId": "5105853",
+          "playerName": "Fletcher Loyer",
+          "age": null,
+          "contractId": "cy-5105853-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-5105853-2026",
+              "playerId": "5105853",
               "franchiseId": "12",
               "season": "2026-27",
               "salary": null,
@@ -509,19 +533,42 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/5105832"
+          "href": "/players/5105853"
+        },
+        {
+          "playerId": "1643568",
+          "playerName": "Nick Martinelli",
+          "age": null,
+          "contractId": "cy-1643568-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1643568-2026",
+              "playerId": "1643568",
+              "franchiseId": "12",
+              "season": "2026-27",
+              "salary": null,
+              "capHit": null,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "espn-roster-no-salary"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1643568"
         }
       ],
       "futureCommitments": [
         {
           "season": "2026-27",
-          "totalSalaryDollars": 206484947,
-          "playersUnderContract": 19
+          "totalSalaryDollars": 207851261,
+          "playersUnderContract": 20
         }
       ],
-      "playerSalaryCommitments": 206484947,
-      "playersWithSalary": 19,
-      "playersWithoutSalary": 1
+      "playerSalaryCommitments": 207851261,
+      "playersWithSalary": 20,
+      "playersWithoutSalary": 2
     },
     "draftAssets": {
       "franchiseId": "12",

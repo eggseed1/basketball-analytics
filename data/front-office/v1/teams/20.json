@@ -1,16 +1,17 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-10",
-    "retrievedAt": "2026-10-10T02:42:53.853Z",
+    "snapshotDate": "2026-10-11",
+    "retrievedAt": "2026-10-11T17:53:51.347Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
+      "data/salaries/player-salaries-bref-archive.csv",
       "data/salaries/player-salaries-supplement.csv",
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "8b67e3d85e0ed4422900ff451a164f2cb96de10f07afb28d607aae983897c0b5",
+    "sourceHash": "78d29012712d51a71c869dce6028dd306db6b7c7d03347f8462f8a3b17957024",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -443,15 +444,15 @@
           "href": "/players/1631126"
         },
         {
-          "playerId": "3904625",
+          "playerId": "1629605",
           "playerName": "Tacko Fall",
           "age": null,
-          "contractId": "cy-3904625-2026",
+          "contractId": "cy-1629605-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-3904625-2026",
-              "playerId": "3904625",
+              "contractId": "cy-1629605-2026",
+              "playerId": "1629605",
               "franchiseId": "20",
               "season": "2026-27",
               "salary": 1357763,
@@ -463,18 +464,18 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/3904625"
+          "href": "/players/1629605"
         },
         {
-          "playerId": "4592444",
+          "playerId": "1642392",
           "playerName": "Jameer Nelson Jr.",
           "age": null,
-          "contractId": "cy-4592444-2026",
+          "contractId": "cy-1642392-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-4592444-2026",
-              "playerId": "4592444",
+              "contractId": "cy-1642392-2026",
+              "playerId": "1642392",
               "franchiseId": "20",
               "season": "2026-27",
               "salary": 1357763,
@@ -486,18 +487,18 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/4592444"
+          "href": "/players/1642392"
         },
         {
-          "playerId": "4897471",
+          "playerId": "1643148",
           "playerName": "Saint Thomas",
           "age": null,
-          "contractId": "cy-4897471-2026",
+          "contractId": "cy-1643148-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-4897471-2026",
-              "playerId": "4897471",
+              "contractId": "cy-1643148-2026",
+              "playerId": "1643148",
               "franchiseId": "20",
               "season": "2026-27",
               "salary": 1357763,
@@ -509,18 +510,18 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/4897471"
+          "href": "/players/1643148"
         },
         {
-          "playerId": "4702049",
+          "playerId": "1643575",
           "playerName": "Duke Miles",
           "age": null,
-          "contractId": "cy-4702049-2026",
+          "contractId": "cy-1643575-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-4702049-2026",
-              "playerId": "4702049",
+              "contractId": "cy-1643575-2026",
+              "playerId": "1643575",
               "franchiseId": "20",
               "season": "2026-27",
               "salary": null,
@@ -532,7 +533,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/4702049"
+          "href": "/players/1643575"
         }
       ],
       "futureCommitments": [

@@ -6292,6 +6292,30 @@
       "matchMethod": "unique_name_same_team_roster",
       "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
       "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4898260",
+      "nbaPlayerId": "1643091",
+      "playerName": "Tyson Degenhart",
+      "matchMethod": "unique_name_same_team_roster",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4702784",
+      "nbaPlayerId": "1643727",
+      "playerName": "J'Vonne Hadley",
+      "matchMethod": "unique_name_same_team_roster",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4065697",
+      "nbaPlayerId": "1628372",
+      "playerName": "Dennis Smith Jr.",
+      "matchMethod": "unique_name_same_team_roster",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
     }
   ]
 }

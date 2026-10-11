@@ -1,16 +1,17 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-10",
-    "retrievedAt": "2026-10-10T02:42:53.853Z",
+    "snapshotDate": "2026-10-11",
+    "retrievedAt": "2026-10-11T17:53:51.347Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
+      "data/salaries/player-salaries-bref-archive.csv",
       "data/salaries/player-salaries-supplement.csv",
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "8b67e3d85e0ed4422900ff451a164f2cb96de10f07afb28d607aae983897c0b5",
+    "sourceHash": "78d29012712d51a71c869dce6028dd306db6b7c7d03347f8462f8a3b17957024",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -213,15 +214,15 @@
           "href": "/players/1641717"
         },
         {
-          "playerId": "5174983",
+          "playerId": "1643530",
           "playerName": "Aday Mara",
           "age": null,
-          "contractId": "cy-5174983-2026",
+          "contractId": "cy-1643530-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-5174983-2026",
-              "playerId": "5174983",
+              "contractId": "cy-1643530-2026",
+              "playerId": "1643530",
               "franchiseId": "25",
               "season": "2026-27",
               "salary": 5791680,
@@ -233,7 +234,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/5174983"
+          "href": "/players/1643530"
         },
         {
           "playerId": "1642260",
@@ -282,15 +283,15 @@
           "href": "/players/1629026"
         },
         {
-          "playerId": "5061603",
+          "playerId": "1642850",
           "playerName": "Thomas Sorber",
           "age": null,
-          "contractId": "cy-5061603-2026",
+          "contractId": "cy-1642850-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-5061603-2026",
-              "playerId": "5061603",
+              "contractId": "cy-1642850-2026",
+              "playerId": "1642850",
               "franchiseId": "25",
               "season": "2026-27",
               "salary": 4887720,
@@ -302,18 +303,18 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/5061603"
+          "href": "/players/1642850"
         },
         {
-          "playerId": "5241364",
+          "playerId": "1642892",
           "playerName": "Bennett Stirtz",
           "age": null,
-          "contractId": "cy-5241364-2026",
+          "contractId": "cy-1642892-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-5241364-2026",
-              "playerId": "5241364",
+              "contractId": "cy-1642892-2026",
+              "playerId": "1642892",
               "franchiseId": "25",
               "season": "2026-27",
               "salary": 4717320,
@@ -325,7 +326,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/5241364"
+          "href": "/players/1642892"
         },
         {
           "playerId": "1642272",
@@ -397,15 +398,15 @@
           "href": "/players/1642964"
         },
         {
-          "playerId": "5109790",
+          "playerId": "1643754",
           "playerName": "Christoph Tilly",
           "age": null,
-          "contractId": "cy-5109790-2026",
+          "contractId": "cy-1643754-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-5109790-2026",
-              "playerId": "5109790",
+              "contractId": "cy-1643754-2026",
+              "playerId": "1643754",
               "franchiseId": "25",
               "season": "2026-27",
               "salary": 1357763,
@@ -417,18 +418,18 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/5109790"
+          "href": "/players/1643754"
         },
         {
-          "playerId": "5105800",
+          "playerId": "1643717",
           "playerName": "Josh Dix",
           "age": null,
-          "contractId": "cy-5105800-2026",
+          "contractId": "cy-1643717-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-5105800-2026",
-              "playerId": "5105800",
+              "contractId": "cy-1643717-2026",
+              "playerId": "1643717",
               "franchiseId": "25",
               "season": "2026-27",
               "salary": null,
@@ -440,18 +441,18 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/5105800"
+          "href": "/players/1643717"
         },
         {
-          "playerId": "5116468",
+          "playerId": "1643808",
           "playerName": "Andrew Holifield",
           "age": null,
-          "contractId": "cy-5116468-2026",
+          "contractId": "cy-1643808-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-5116468-2026",
-              "playerId": "5116468",
+              "contractId": "cy-1643808-2026",
+              "playerId": "1643808",
               "franchiseId": "25",
               "season": "2026-27",
               "salary": null,
@@ -463,18 +464,18 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/5116468"
+          "href": "/players/1643808"
         },
         {
-          "playerId": "5106270",
+          "playerId": "1642923",
           "playerName": "Otega Oweh",
           "age": null,
-          "contractId": "cy-5106270-2026",
+          "contractId": "cy-1642923-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-5106270-2026",
-              "playerId": "5106270",
+              "contractId": "cy-1642923-2026",
+              "playerId": "1642923",
               "franchiseId": "25",
               "season": "2026-27",
               "salary": null,
@@ -486,18 +487,18 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/5106270"
+          "href": "/players/1642923"
         },
         {
-          "playerId": "4897155",
+          "playerId": "1643208",
           "playerName": "Anthony Pritchard",
           "age": null,
-          "contractId": "cy-4897155-2026",
+          "contractId": "cy-1643208-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-4897155-2026",
-              "playerId": "4897155",
+              "contractId": "cy-1643208-2026",
+              "playerId": "1643208",
               "franchiseId": "25",
               "season": "2026-27",
               "salary": null,
@@ -509,18 +510,18 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/4897155"
+          "href": "/players/1643208"
         },
         {
-          "playerId": "4277923",
+          "playerId": "1629015",
           "playerName": "Zhaire Smith",
           "age": null,
-          "contractId": "cy-4277923-2026",
+          "contractId": "cy-1629015-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-4277923-2026",
-              "playerId": "4277923",
+              "contractId": "cy-1629015-2026",
+              "playerId": "1629015",
               "franchiseId": "25",
               "season": "2026-27",
               "salary": null,
@@ -532,7 +533,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/4277923"
+          "href": "/players/1629015"
         }
       ],
       "futureCommitments": [

@@ -1,16 +1,17 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-10",
-    "retrievedAt": "2026-10-10T02:42:53.853Z",
+    "snapshotDate": "2026-10-11",
+    "retrievedAt": "2026-10-11T17:53:51.347Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
+      "data/salaries/player-salaries-bref-archive.csv",
       "data/salaries/player-salaries-supplement.csv",
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "8b67e3d85e0ed4422900ff451a164f2cb96de10f07afb28d607aae983897c0b5",
+    "sourceHash": "78d29012712d51a71c869dce6028dd306db6b7c7d03347f8462f8a3b17957024",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -167,15 +168,15 @@
           "href": "/players/1628370"
         },
         {
-          "playerId": "5142620",
+          "playerId": "1643411",
           "playerName": "Darius Acuff Jr.",
           "age": null,
-          "contractId": "cy-5142620-2026",
+          "contractId": "cy-1643411-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-5142620-2026",
-              "playerId": "5142620",
+              "contractId": "cy-1643411-2026",
+              "playerId": "1643411",
               "franchiseId": "23",
               "season": "2026-27",
               "salary": 8021640,
@@ -187,7 +188,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/5142620"
+          "href": "/players/1643411"
         },
         {
           "playerId": "1630173",
@@ -236,15 +237,15 @@
           "href": "/players/1642363"
         },
         {
-          "playerId": "4917149",
+          "playerId": "1642284",
           "playerName": "Alex Karaban",
           "age": null,
-          "contractId": "cy-4917149-2026",
+          "contractId": "cy-1642284-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-4917149-2026",
-              "playerId": "4917149",
+              "contractId": "cy-1642284-2026",
+              "playerId": "1642284",
               "franchiseId": "23",
               "season": "2026-27",
               "salary": 2948280,
@@ -256,7 +257,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/4917149"
+          "href": "/players/1642284"
         },
         {
           "playerId": "1631342",
@@ -374,15 +375,15 @@
           "href": "/players/1642928"
         },
         {
-          "playerId": "5106058",
+          "playerId": "1643567",
           "playerName": "Emanuel Sharp",
           "age": null,
-          "contractId": "cy-5106058-2026",
+          "contractId": "cy-1643567-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-5106058-2026",
-              "playerId": "5106058",
+              "contractId": "cy-1643567-2026",
+              "playerId": "1643567",
               "franchiseId": "23",
               "season": "2026-27",
               "salary": 1357763,
@@ -394,7 +395,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/5106058"
+          "href": "/players/1643567"
         },
         {
           "playerId": "1641778",

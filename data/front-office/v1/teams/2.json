@@ -1,16 +1,17 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-10",
-    "retrievedAt": "2026-10-10T02:42:53.853Z",
+    "snapshotDate": "2026-10-11",
+    "retrievedAt": "2026-10-11T17:53:51.347Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
+      "data/salaries/player-salaries-bref-archive.csv",
       "data/salaries/player-salaries-supplement.csv",
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "8b67e3d85e0ed4422900ff451a164f2cb96de10f07afb28d607aae983897c0b5",
+    "sourceHash": "78d29012712d51a71c869dce6028dd306db6b7c7d03347f8462f8a3b17957024",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -236,15 +237,15 @@
           "href": "/players/1631199"
         },
         {
-          "playerId": "5142621",
+          "playerId": "1643416",
           "playerName": "Chris Cenac Jr.",
           "age": null,
-          "contractId": "cy-5142621-2026",
+          "contractId": "cy-1643416-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-5142621-2026",
-              "playerId": "5142621",
+              "contractId": "cy-1643416-2026",
+              "playerId": "1643416",
               "franchiseId": "2",
               "season": "2026-27",
               "salary": 2988120,
@@ -256,7 +257,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/5142621"
+          "href": "/players/1643416"
         },
         {
           "playerId": "1642864",
@@ -397,15 +398,15 @@
           "href": "/players/1641775"
         },
         {
-          "playerId": "4837238",
+          "playerId": "1643620",
           "playerName": "Tucker DeVries",
           "age": null,
-          "contractId": "cy-4837238-2026",
+          "contractId": "cy-1643620-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-4837238-2026",
-              "playerId": "4837238",
+              "contractId": "cy-1643620-2026",
+              "playerId": "1643620",
               "franchiseId": "2",
               "season": "2026-27",
               "salary": 1357763,
@@ -417,18 +418,18 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/4837238"
+          "href": "/players/1643620"
         },
         {
-          "playerId": "5106272",
+          "playerId": "1642870",
           "playerName": "Milos Uzan",
           "age": null,
-          "contractId": "cy-5106272-2026",
+          "contractId": "cy-1642870-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-5106272-2026",
-              "playerId": "5106272",
+              "contractId": "cy-1642870-2026",
+              "playerId": "1642870",
               "franchiseId": "2",
               "season": "2026-27",
               "salary": 1357763,
@@ -440,7 +441,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/5106272"
+          "href": "/players/1642870"
         },
         {
           "playerId": "1642873",
@@ -489,15 +490,15 @@
           "href": "/players/1643060"
         },
         {
-          "playerId": "4398356",
+          "playerId": "1642440",
           "playerName": "Gabe McGlothan",
           "age": null,
-          "contractId": "cy-4398356-2026",
+          "contractId": "cy-1642440-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-4398356-2026",
-              "playerId": "4398356",
+              "contractId": "cy-1642440-2026",
+              "playerId": "1642440",
               "franchiseId": "2",
               "season": "2026-27",
               "salary": null,
@@ -509,18 +510,18 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/4398356"
+          "href": "/players/1642440"
         },
         {
-          "playerId": "5106283",
+          "playerId": "1641759",
           "playerName": "Dillon Mitchell",
           "age": null,
-          "contractId": "cy-5106283-2026",
+          "contractId": "cy-1641759-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-5106283-2026",
-              "playerId": "5106283",
+              "contractId": "cy-1641759-2026",
+              "playerId": "1641759",
               "franchiseId": "2",
               "season": "2026-27",
               "salary": null,
@@ -532,7 +533,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/5106283"
+          "href": "/players/1641759"
         }
       ],
       "futureCommitments": [

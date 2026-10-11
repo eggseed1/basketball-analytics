@@ -1,16 +1,17 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-10",
-    "retrievedAt": "2026-10-10T02:42:53.853Z",
+    "snapshotDate": "2026-10-11",
+    "retrievedAt": "2026-10-11T17:53:51.347Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
+      "data/salaries/player-salaries-bref-archive.csv",
       "data/salaries/player-salaries-supplement.csv",
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "8b67e3d85e0ed4422900ff451a164f2cb96de10f07afb28d607aae983897c0b5",
+    "sourceHash": "78d29012712d51a71c869dce6028dd306db6b7c7d03347f8462f8a3b17957024",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -167,15 +168,15 @@
           "href": "/players/1630171"
         },
         {
-          "playerId": "5095151",
+          "playerId": "1643410",
           "playerName": "Caleb Wilson",
           "age": null,
-          "contractId": "cy-5095151-2026",
+          "contractId": "cy-1643410-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-5095151-2026",
-              "playerId": "5095151",
+              "contractId": "cy-1643410-2026",
+              "playerId": "1643410",
               "franchiseId": "4",
               "season": "2026-27",
               "salary": 10683720,
@@ -187,7 +188,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/5095151"
+          "href": "/players/1643410"
         },
         {
           "playerId": "1627741",
@@ -328,15 +329,15 @@
           "href": "/players/1641824"
         },
         {
-          "playerId": "5242496",
+          "playerId": "1642855",
           "playerName": "Noa Essengue",
           "age": null,
-          "contractId": "cy-5242496-2026",
+          "contractId": "cy-1642855-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-5242496-2026",
-              "playerId": "5242496",
+              "contractId": "cy-1642855-2026",
+              "playerId": "1642855",
               "franchiseId": "4",
               "season": "2026-27",
               "salary": 5701200,
@@ -348,18 +349,18 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/5242496"
+          "href": "/players/1642855"
         },
         {
-          "playerId": "4848625",
+          "playerId": "1643517",
           "playerName": "Dailyn Swain",
           "age": null,
-          "contractId": "cy-4848625-2026",
+          "contractId": "cy-1643517-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-4848625-2026",
-              "playerId": "4848625",
+              "contractId": "cy-1643517-2026",
+              "playerId": "1643517",
               "franchiseId": "4",
               "season": "2026-27",
               "salary": 4965480,
@@ -371,7 +372,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/4848625"
+          "href": "/players/1643517"
         },
         {
           "playerId": "1631159",
@@ -466,15 +467,15 @@
           "href": "/players/1641815"
         },
         {
-          "playerId": "5105555",
+          "playerId": "1643591",
           "playerName": "Tobe Awaka",
           "age": null,
-          "contractId": "cy-5105555-2026",
+          "contractId": "cy-1643591-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-5105555-2026",
-              "playerId": "5105555",
+              "contractId": "cy-1643591-2026",
+              "playerId": "1643591",
               "franchiseId": "4",
               "season": "2026-27",
               "salary": null,
@@ -486,7 +487,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/5105555"
+          "href": "/players/1643591"
         },
         {
           "playerId": "1630527",
@@ -535,15 +536,15 @@
           "href": "/players/1641779"
         },
         {
-          "playerId": "4898010",
+          "playerId": "1643637",
           "playerName": "Jaylin Sellers",
           "age": null,
-          "contractId": "cy-4898010-2026",
+          "contractId": "cy-1643637-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-4898010-2026",
-              "playerId": "4898010",
+              "contractId": "cy-1643637-2026",
+              "playerId": "1643637",
               "franchiseId": "4",
               "season": "2026-27",
               "salary": null,
@@ -555,7 +556,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/4898010"
+          "href": "/players/1643637"
         }
       ],
       "futureCommitments": [

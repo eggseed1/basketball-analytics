@@ -1,16 +1,17 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-10",
-    "retrievedAt": "2026-10-10T02:42:53.853Z",
+    "snapshotDate": "2026-10-11",
+    "retrievedAt": "2026-10-11T17:53:51.347Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
+      "data/salaries/player-salaries-bref-archive.csv",
       "data/salaries/player-salaries-supplement.csv",
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "8b67e3d85e0ed4422900ff451a164f2cb96de10f07afb28d607aae983897c0b5",
+    "sourceHash": "78d29012712d51a71c869dce6028dd306db6b7c7d03347f8462f8a3b17957024",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -98,15 +99,15 @@
           "href": "/players/1630191"
         },
         {
-          "playerId": "5041935",
+          "playerId": "1643409",
           "playerName": "Cameron Boozer",
           "age": null,
-          "contractId": "cy-5041935-2026",
+          "contractId": "cy-1643409-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-5041935-2026",
-              "playerId": "5041935",
+              "contractId": "cy-1643409-2026",
+              "playerId": "1643409",
               "franchiseId": "29",
               "season": "2026-27",
               "salary": 11849760,
@@ -118,7 +119,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/5041935"
+          "href": "/players/1643409"
         },
         {
           "playerId": "1629660",
@@ -282,15 +283,15 @@
           "href": "/players/1642383"
         },
         {
-          "playerId": "5231919",
+          "playerId": "1643510",
           "playerName": "Karim Lopez",
           "age": null,
-          "contractId": "cy-5231919-2026",
+          "contractId": "cy-1643510-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-5231919-2026",
-              "playerId": "5231919",
+              "contractId": "cy-1643510-2026",
+              "playerId": "1643510",
               "franchiseId": "29",
               "season": "2026-27",
               "salary": 3746760,
@@ -302,7 +303,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/5231919"
+          "href": "/players/1643510"
         },
         {
           "playerId": "1641765",
@@ -466,15 +467,15 @@
           "href": "/players/1642914"
         },
         {
-          "playerId": "5105817",
+          "playerId": "1643721",
           "playerName": "Carson Cooper",
           "age": null,
-          "contractId": "cy-5105817-2026",
+          "contractId": "cy-1643721-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-5105817-2026",
-              "playerId": "5105817",
+              "contractId": "cy-1643721-2026",
+              "playerId": "1643721",
               "franchiseId": "29",
               "season": "2026-27",
               "salary": null,
@@ -486,7 +487,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/5105817"
+          "href": "/players/1643721"
         },
         {
           "playerId": "1642942",

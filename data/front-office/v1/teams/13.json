@@ -1,16 +1,17 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-10",
-    "retrievedAt": "2026-10-10T02:42:53.853Z",
+    "snapshotDate": "2026-10-11",
+    "retrievedAt": "2026-10-11T17:53:51.347Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
+      "data/salaries/player-salaries-bref-archive.csv",
       "data/salaries/player-salaries-supplement.csv",
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "8b67e3d85e0ed4422900ff451a164f2cb96de10f07afb28d607aae983897c0b5",
+    "sourceHash": "78d29012712d51a71c869dce6028dd306db6b7c7d03347f8462f8a3b17957024",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -282,15 +283,15 @@
           "href": "/players/1642261"
         },
         {
-          "playerId": "5113969",
+          "playerId": "1643418",
           "playerName": "Cameron Carr",
           "age": null,
-          "contractId": "cy-5113969-2026",
+          "contractId": "cy-1643418-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-5113969-2026",
-              "playerId": "5113969",
+              "contractId": "cy-1643418-2026",
+              "playerId": "1643418",
               "franchiseId": "13",
               "season": "2026-27",
               "salary": 3315360,
@@ -302,7 +303,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/5113969"
+          "href": "/players/1643418"
         },
         {
           "playerId": "1626172",
@@ -466,15 +467,15 @@
           "href": "/players/4684443"
         },
         {
-          "playerId": "4433599",
+          "playerId": "1641751",
           "playerName": "Arthur Kaluma",
           "age": null,
-          "contractId": "cy-4433599-2026",
+          "contractId": "cy-1641751-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-4433599-2026",
-              "playerId": "4433599",
+              "contractId": "cy-1641751-2026",
+              "playerId": "1641751",
               "franchiseId": "13",
               "season": "2026-27",
               "salary": null,
@@ -486,18 +487,18 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/4433599"
+          "href": "/players/1641751"
         },
         {
-          "playerId": "5114350",
+          "playerId": "1643758",
           "playerName": "AK Okereke",
           "age": null,
-          "contractId": "cy-5114350-2026",
+          "contractId": "cy-1643758-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-5114350-2026",
-              "playerId": "5114350",
+              "contractId": "cy-1643758-2026",
+              "playerId": "1643758",
               "franchiseId": "13",
               "season": "2026-27",
               "salary": null,
@@ -509,7 +510,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/5114350"
+          "href": "/players/1643758"
         },
         {
           "playerId": "1631306",

@@ -1,16 +1,17 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-10",
-    "retrievedAt": "2026-10-10T02:42:53.853Z",
+    "snapshotDate": "2026-10-11",
+    "retrievedAt": "2026-10-11T17:53:51.347Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
+      "data/salaries/player-salaries-bref-archive.csv",
       "data/salaries/player-salaries-supplement.csv",
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "8b67e3d85e0ed4422900ff451a164f2cb96de10f07afb28d607aae983897c0b5",
+    "sourceHash": "78d29012712d51a71c869dce6028dd306db6b7c7d03347f8462f8a3b17957024",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -98,15 +99,15 @@
           "href": "/players/1629027"
         },
         {
-          "playerId": "5142718",
+          "playerId": "1643407",
           "playerName": "AJ Dybantsa",
           "age": null,
-          "contractId": "cy-5142718-2026",
+          "contractId": "cy-1643407-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-5142718-2026",
-              "playerId": "5142718",
+              "contractId": "cy-1643407-2026",
+              "playerId": "1643407",
               "franchiseId": "27",
               "season": "2026-27",
               "salary": 14748000,
@@ -118,7 +119,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/5142718"
+          "href": "/players/1643407"
         },
         {
           "playerId": "1642259",
@@ -443,6 +444,29 @@
           "href": "/players/1641736"
         },
         {
+          "playerId": "1641789",
+          "playerName": "Jazian Gortman",
+          "age": null,
+          "contractId": "cy-1641789-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1641789-2026",
+              "playerId": "1641789",
+              "franchiseId": "27",
+              "season": "2026-27",
+              "salary": null,
+              "capHit": null,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "espn-roster-no-salary"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1641789"
+        },
+        {
           "playerId": "1631211",
           "playerName": "Trevor Keels",
           "age": null,
@@ -512,15 +536,15 @@
           "href": "/players/1641753"
         },
         {
-          "playerId": "5105841",
+          "playerId": "1643590",
           "playerName": "Felix Okpara",
           "age": null,
-          "contractId": "cy-5105841-2026",
+          "contractId": "cy-1643590-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-5105841-2026",
-              "playerId": "5105841",
+              "contractId": "cy-1643590-2026",
+              "playerId": "1643590",
               "franchiseId": "27",
               "season": "2026-27",
               "salary": null,
@@ -532,7 +556,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/5105841"
+          "href": "/players/1643590"
         },
         {
           "playerId": "4704043",
@@ -567,7 +591,7 @@
       ],
       "playerSalaryCommitments": 194195153,
       "playersWithSalary": 16,
-      "playersWithoutSalary": 6
+      "playersWithoutSalary": 7
     },
     "draftAssets": {
       "franchiseId": "27",

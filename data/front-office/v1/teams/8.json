@@ -1,16 +1,17 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-10",
-    "retrievedAt": "2026-10-10T02:42:53.853Z",
+    "snapshotDate": "2026-10-11",
+    "retrievedAt": "2026-10-11T17:53:51.347Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
+      "data/salaries/player-salaries-bref-archive.csv",
       "data/salaries/player-salaries-supplement.csv",
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "8b67e3d85e0ed4422900ff451a164f2cb96de10f07afb28d607aae983897c0b5",
+    "sourceHash": "78d29012712d51a71c869dce6028dd306db6b7c7d03347f8462f8a3b17957024",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -259,15 +260,15 @@
           "href": "/players/1630194"
         },
         {
-          "playerId": "5258459",
+          "playerId": "1643536",
           "playerName": "Ebuka Okorie",
           "age": null,
-          "contractId": "cy-5258459-2026",
+          "contractId": "cy-1643536-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-5258459-2026",
-              "playerId": "5258459",
+              "contractId": "cy-1643536-2026",
+              "playerId": "1643536",
               "franchiseId": "8",
               "season": "2026-27",
               "salary": 4481280,
@@ -279,7 +280,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/5258459"
+          "href": "/players/1643536"
         },
         {
           "playerId": "1642450",
@@ -443,15 +444,15 @@
           "href": "/players/1641989"
         },
         {
-          "playerId": "5037878",
+          "playerId": "1642391",
           "playerName": "Ugonna Onyenso",
           "age": null,
-          "contractId": "cy-5037878-2026",
+          "contractId": "cy-1642391-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-5037878-2026",
-              "playerId": "5037878",
+              "contractId": "cy-1642391-2026",
+              "playerId": "1642391",
               "franchiseId": "8",
               "season": "2026-27",
               "salary": null,
@@ -463,18 +464,18 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/5037878"
+          "href": "/players/1642391"
         },
         {
-          "playerId": "4592843",
+          "playerId": "1642924",
           "playerName": "Brice Williams",
           "age": null,
-          "contractId": "cy-4592843-2026",
+          "contractId": "cy-1642924-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-4592843-2026",
-              "playerId": "4592843",
+              "contractId": "cy-1642924-2026",
+              "playerId": "1642924",
               "franchiseId": "8",
               "season": "2026-27",
               "salary": null,
@@ -486,7 +487,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/4592843"
+          "href": "/players/1642924"
         }
       ],
       "futureCommitments": [

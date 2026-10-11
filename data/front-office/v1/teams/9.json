@@ -1,16 +1,17 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-10",
-    "retrievedAt": "2026-10-10T02:42:53.853Z",
+    "snapshotDate": "2026-10-11",
+    "retrievedAt": "2026-10-11T17:53:51.347Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
+      "data/salaries/player-salaries-bref-archive.csv",
       "data/salaries/player-salaries-supplement.csv",
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "8b67e3d85e0ed4422900ff451a164f2cb96de10f07afb28d607aae983897c0b5",
+    "sourceHash": "78d29012712d51a71c869dce6028dd306db6b7c7d03347f8462f8a3b17957024",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -190,15 +191,15 @@
           "href": "/players/201143"
         },
         {
-          "playerId": "5175737",
+          "playerId": "1642865",
           "playerName": "Yaxel Lendeborg",
           "age": null,
-          "contractId": "cy-5175737-2026",
+          "contractId": "cy-1642865-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-5175737-2026",
-              "playerId": "5175737",
+              "contractId": "cy-1642865-2026",
+              "playerId": "1642865",
               "franchiseId": "9",
               "season": "2026-27",
               "salary": 6096240,
@@ -210,7 +211,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/5175737"
+          "href": "/players/1642865"
         },
         {
           "playerId": "1641764",
@@ -374,15 +375,15 @@
           "href": "/players/1630314"
         },
         {
-          "playerId": "5170949",
+          "playerId": "1642893",
           "playerName": "Alex Toohey",
           "age": null,
-          "contractId": "cy-5170949-2026",
+          "contractId": "cy-1642893-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-5170949-2026",
-              "playerId": "5170949",
+              "contractId": "cy-1642893-2026",
+              "playerId": "1642893",
               "franchiseId": "9",
               "season": "2026-27",
               "salary": 2185116,
@@ -394,7 +395,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/5170949"
+          "href": "/players/1642893"
         },
         {
           "playerId": "1642954",
@@ -489,15 +490,15 @@
           "href": "/players/1643018"
         },
         {
-          "playerId": "4703396",
+          "playerId": "1643633",
           "playerName": "Graham Ike",
           "age": null,
-          "contractId": "cy-4703396-2026",
+          "contractId": "cy-1643633-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-4703396-2026",
-              "playerId": "4703396",
+              "contractId": "cy-1643633-2026",
+              "playerId": "1643633",
               "franchiseId": "9",
               "season": "2026-27",
               "salary": null,
@@ -509,7 +510,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/4703396"
+          "href": "/players/1643633"
         },
         {
           "playerId": "1642502",

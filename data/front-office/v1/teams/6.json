@@ -1,16 +1,17 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-10",
-    "retrievedAt": "2026-10-10T02:42:53.853Z",
+    "snapshotDate": "2026-10-11",
+    "retrievedAt": "2026-10-11T17:53:51.347Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
+      "data/salaries/player-salaries-bref-archive.csv",
       "data/salaries/player-salaries-supplement.csv",
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "8b67e3d85e0ed4422900ff451a164f2cb96de10f07afb28d607aae983897c0b5",
+    "sourceHash": "78d29012712d51a71c869dce6028dd306db6b7c7d03347f8462f8a3b17957024",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -282,15 +283,15 @@
           "href": "/players/1641726"
         },
         {
-          "playerId": "4873153",
+          "playerId": "1643516",
           "playerName": "Morez Johnson Jr.",
           "age": null,
-          "contractId": "cy-4873153-2026",
+          "contractId": "cy-1643516-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-4873153-2026",
-              "playerId": "4873153",
+              "contractId": "cy-1643516-2026",
+              "playerId": "1643516",
               "franchiseId": "6",
               "season": "2026-27",
               "salary": 6754800,
@@ -302,7 +303,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/4873153"
+          "href": "/players/1643516"
         },
         {
           "playerId": "1641724",
@@ -374,15 +375,15 @@
           "href": "/players/203939"
         },
         {
-          "playerId": "5279129",
+          "playerId": "1643547",
           "playerName": "Sergio de Larrea",
           "age": null,
-          "contractId": "cy-5279129-2026",
+          "contractId": "cy-1643547-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-5279129-2026",
-              "playerId": "5279129",
+              "contractId": "cy-1643547-2026",
+              "playerId": "1643547",
               "franchiseId": "6",
               "season": "2026-27",
               "salary": 3182280,
@@ -394,18 +395,18 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/5279129"
+          "href": "/players/1643547"
         },
         {
-          "playerId": "5148538",
+          "playerId": "1641844",
           "playerName": "Tarik Biberovic",
           "age": null,
-          "contractId": "cy-5148538-2026",
+          "contractId": "cy-1641844-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-5148538-2026",
-              "playerId": "5148538",
+              "contractId": "cy-1641844-2026",
+              "playerId": "1641844",
               "franchiseId": "6",
               "season": "2026-27",
               "salary": 3000000,
@@ -417,7 +418,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/5148538"
+          "href": "/players/1641844"
         },
         {
           "playerId": "1630619",
@@ -443,15 +444,15 @@
           "href": "/players/1630619"
         },
         {
-          "playerId": "5106040",
+          "playerId": "1643588",
           "playerName": "Tobi Lawal",
           "age": null,
-          "contractId": "cy-5106040-2026",
+          "contractId": "cy-1643588-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-5106040-2026",
-              "playerId": "5106040",
+              "contractId": "cy-1643588-2026",
+              "playerId": "1643588",
               "franchiseId": "6",
               "season": "2026-27",
               "salary": null,
@@ -463,18 +464,18 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/5106040"
+          "href": "/players/1643588"
         },
         {
-          "playerId": "4431775",
+          "playerId": "1641754",
           "playerName": "Seth Lundy",
           "age": null,
-          "contractId": "cy-4431775-2026",
+          "contractId": "cy-1641754-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-4431775-2026",
-              "playerId": "4431775",
+              "contractId": "cy-1641754-2026",
+              "playerId": "1641754",
               "franchiseId": "6",
               "season": "2026-27",
               "salary": null,
@@ -486,7 +487,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/4431775"
+          "href": "/players/1641754"
         },
         {
           "playerId": "1642967",

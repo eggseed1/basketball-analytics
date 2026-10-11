@@ -3,13 +3,13 @@
     "methodologyVersion": "movement-m1-0.2+movement-rules-v2",
     "status": "NEWS_INGEST_M1",
     "season": "2026-27",
-    "snapshotDate": "2026-10-10",
+    "snapshotDate": "2026-10-11",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-10-10T02:38:01.711Z",
+    "builtAt": "2026-10-11T17:43:54.545Z",
     "rosterPlayerCount": 492,
-    "headlinesScanned": 2646,
-    "latestHeadlineAt": "2026-10-10T02:36:11.000Z",
-    "latestTransactionDate": "2026-10-07",
+    "headlinesScanned": 2939,
+    "latestHeadlineAt": "2026-10-11T17:32:40.000Z",
+    "latestTransactionDate": "2026-10-10",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
       "Basketball News",
@@ -76,7 +76,7 @@
     },
     "outlet:realgm": {
       "label": "RealGM",
-      "credibility": 8
+      "credibility": 16
     },
     "outlet:nbc-sports-bay-area": {
       "label": "NBC Sports Bay Area",
@@ -84,7 +84,7 @@
     },
     "outlet:yahoo-sports": {
       "label": "Yahoo Sports",
-      "credibility": 16
+      "credibility": 12
     },
     "outlet:espn": {
       "label": "ESPN",
@@ -104,7 +104,7 @@
     },
     "outlet:clutchpoints": {
       "label": "ClutchPoints",
-      "credibility": 12
+      "credibility": 16
     },
     "reporter:fred-katz": {
       "label": "Fred Katz (The Athletic)",
@@ -116,7 +116,7 @@
     },
     "outlet:heavy": {
       "label": "Heavy",
-      "credibility": 16
+      "credibility": 12
     },
     "reporter:malika-andrews": {
       "label": "Malika Andrews (ESPN)",
@@ -136,7 +136,7 @@
     },
     "outlet:fadeaway-world": {
       "label": "Fadeaway World",
-      "credibility": 16
+      "credibility": 12
     },
     "outlet:new-york-post": {
       "label": "New York Post",
@@ -153,6 +153,14 @@
     "outlet:sporting-news": {
       "label": "Sporting News",
       "credibility": 12
+    },
+    "reporter:bobby-marks-speaking": {
+      "label": "Bobby Marks. Speaking (ESPN)",
+      "credibility": 18
+    },
+    "reporter:shams-charania-the": {
+      "label": "Shams Charania. The (ESPN)",
+      "credibility": 18
     },
     "ledger:nba-player-movement": {
       "label": "Player movement log",
@@ -638,19 +646,30 @@
     },
     {
       "id": "mv-contract-4709138-20261002",
-      "headline": "Brandin Podziemski: contract future with the Warriors",
+      "headline": "Brandin Podziemski: extension talks with the Warriors",
       "primaryClaimId": "mv-ed74883e53566860",
       "claimIds": [
         "mv-12b9f7a9d7c69451",
         "mv-321957fd1dc9ab59",
         "mv-ed74883e53566860",
         "mv-8afc140afe6c1878",
-        "mv-ccd8e5b6cf73497e"
+        "mv-ccd8e5b6cf73497e",
+        "mv-294e13a7721a91b5",
+        "mv-a8c9377d53a16398",
+        "mv-e2cfa2d0e76ae7c2",
+        "mv-37f916cd1ac56faf",
+        "mv-c8de01ee84ca7b49",
+        "mv-4c94438d947bf0ee",
+        "mv-9f425f74ab199ece",
+        "mv-61a07ff6e0e1f8fb",
+        "mv-20b601e187cbc7d1",
+        "mv-b16a6cf298fd33c7",
+        "mv-nba-tx-2ca8f86bb5e24687"
       ],
       "evidenceClass": "reported",
-      "state": "unresolved",
+      "state": "completed",
       "firstSeenAt": "2026-10-02T08:48:49.000Z",
-      "lastMeaningfulAt": "2026-10-09T00:44:24.000Z",
+      "lastMeaningfulAt": "2026-10-10T12:00:00.000Z",
       "linkedPlayerIds": [
         "4709138"
       ],
@@ -774,8 +793,8 @@
     },
     {
       "id": "mv-contract-4683692-20261006",
-      "headline": "Cason Wallace, Karl-Anthony Towns and others: extension talks with the Knicks",
-      "primaryClaimId": "mv-131f6f931d1156c2",
+      "headline": "Cason Wallace, Karl-Anthony Towns and others: contract talks with the Knicks",
+      "primaryClaimId": "mv-19597af40d29a98c",
       "claimIds": [
         "mv-d46db2f4a349df07",
         "mv-11ebf253ed00ee6f",
@@ -788,12 +807,17 @@
         "mv-939567ca4cb43c39",
         "mv-2bf13912577d2eef",
         "mv-131f6f931d1156c2",
-        "mv-614b30d194de079d"
+        "mv-614b30d194de079d",
+        "mv-c420653c326ca3fb",
+        "mv-b50bd29e589a070d",
+        "mv-356797c1f3e80723",
+        "mv-a6f52c59628caa80",
+        "mv-19597af40d29a98c"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-06T17:10:57.000Z",
-      "lastMeaningfulAt": "2026-10-09T20:06:25.000Z",
+      "lastMeaningfulAt": "2026-10-11T06:35:07.000Z",
       "linkedPlayerIds": [
         "4683692",
         "3136195",
@@ -888,14 +912,15 @@
     {
       "id": "mv-contract-4432247-20261009",
       "headline": "Jaylen Clark: contract future",
-      "primaryClaimId": "mv-ac811c2d287f65b4",
+      "primaryClaimId": "mv-db48c6b7b385a15b",
       "claimIds": [
-        "mv-ac811c2d287f65b4"
+        "mv-ac811c2d287f65b4",
+        "mv-db48c6b7b385a15b"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-09T09:58:10.000Z",
-      "lastMeaningfulAt": "2026-10-09T09:58:10.000Z",
+      "lastMeaningfulAt": "2026-10-10T19:41:30.000Z",
       "linkedPlayerIds": [
         "4432247"
       ],
@@ -926,18 +951,57 @@
       "headline": "Luka Dončić and Walker Kessler: trade talk",
       "primaryClaimId": "mv-2f428e5810081c14",
       "claimIds": [
-        "mv-2f428e5810081c14"
+        "mv-2f428e5810081c14",
+        "mv-ff2016272a3c9e6f"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-09T23:11:42.000Z",
-      "lastMeaningfulAt": "2026-10-09T23:11:42.000Z",
+      "lastMeaningfulAt": "2026-10-11T12:59:30.000Z",
       "linkedPlayerIds": [
         "3945274",
         "4433136"
       ],
       "linkedTeamIds": [
         "13"
+      ]
+    },
+    {
+      "id": "mv-contract-6450-20261010",
+      "headline": "Kawhi Leonard: contract future with the Raptors",
+      "primaryClaimId": "mv-c6130fe14f2e79c6",
+      "claimIds": [
+        "mv-c6130fe14f2e79c6"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-10-10T03:53:33.000Z",
+      "lastMeaningfulAt": "2026-10-10T03:53:33.000Z",
+      "linkedPlayerIds": [
+        "6450"
+      ],
+      "linkedTeamIds": [
+        "28"
+      ]
+    },
+    {
+      "id": "mv-contract-6430-20261011",
+      "headline": "Jimmy Butler and De'Aaron Fox: contract future with the Warriors",
+      "primaryClaimId": "mv-b5a1e0b636d859c1",
+      "claimIds": [
+        "mv-b5a1e0b636d859c1"
+      ],
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "firstSeenAt": "2026-10-11T12:59:17.000Z",
+      "lastMeaningfulAt": "2026-10-11T12:59:17.000Z",
+      "linkedPlayerIds": [
+        "6430",
+        "4066259"
+      ],
+      "linkedTeamIds": [
+        "9",
+        "24"
       ]
     },
     {
@@ -4603,6 +4667,399 @@
       "isOriginal": true
     },
     {
+      "id": "mv-c6130fe14f2e79c6",
+      "clusterId": "mv-contract-6450-20261010",
+      "summary": "Kawhi Leonard Says Money Doesn’t Matter To Him After $115 Million Raptors Extension",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-10T03:53:33.000Z",
+      "sourceId": "outlet:fadeaway-world",
+      "sourceLabel": "Fadeaway World",
+      "sourceUrl": "https://fadeawayworld.net/nba/toronto-raptors/kawhi-leonard-says-money-doesnt-matter-to-him-after-115-million-raptors-extension",
+      "playerIds": [
+        "6450"
+      ],
+      "teamIds": [
+        "28"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-294e13a7721a91b5",
+      "clusterId": "mv-contract-4709138-20261002",
+      "summary": "Brandin Podziemski, Warriors reportedly agree to five-year, $110M contract",
+      "claimType": "contract_movement",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-10T08:24:03.000Z",
+      "sourceId": "reporter:shams-charania",
+      "sourceLabel": "NBC Sports Bay Area, citing Shams Charania (ESPN)",
+      "reporterLabel": "Shams Charania",
+      "sourceUrl": "https://www.nbcsportsbayarea.com/nba/golden-state-warriors/brandin-podziemski-contract-extension-2/1970134/",
+      "playerIds": [
+        "4709138"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "offer"
+    },
+    {
+      "id": "mv-c420653c326ca3fb",
+      "clusterId": "mv-contract-4683692-20261006",
+      "summary": "Knicks can extend Towns and Hart without crossing second apron",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-10T09:28:07.000Z",
+      "sourceId": "reporter:bobby-marks-speaking",
+      "sourceLabel": "TalkBasket, citing Bobby Marks. Speaking (ESPN)",
+      "reporterLabel": "Bobby Marks. Speaking, Bobby Marks",
+      "sourceUrl": "https://www.talkbasket.net/224584-knicks-can-extend-towns-and-hart-without-crossing-second-apron",
+      "playerIds": [
+        "3136195"
+      ],
+      "teamIds": [
+        "18"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-a8c9377d53a16398",
+      "clusterId": "mv-contract-4709138-20261002",
+      "summary": "Putting Brandin Podziemski's Warriors contract extension into perspective",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-10T11:38:04.000Z",
+      "sourceId": "reporter:shams-charania-the",
+      "sourceLabel": "NBC Sports Bay Area, citing Shams Charania. The (ESPN)",
+      "reporterLabel": "Shams Charania. The, Anthony Slater. The, Shams Charania, Anthony Slater",
+      "sourceUrl": "https://www.nbcsportsbayarea.com/nba/golden-state-warriors/brandin-podziemski-contract-extension-analysis/1970158/",
+      "playerIds": [
+        "4709138"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-b50bd29e589a070d",
+      "clusterId": "mv-contract-4683692-20261006",
+      "summary": "Knicks Reportedly Announced Contract Talks Are On Hold Because Karl-Anthony Towns’ Comments Upset James Dolan",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-10T12:56:00.000Z",
+      "sourceId": "outlet:fadeaway-world",
+      "sourceLabel": "Fadeaway World",
+      "sourceUrl": "https://fadeawayworld.net/nba/new-york-knicks/knicks-reportedly-announced-contract-talks-on-hold-because-karl-anthony-towns-comments-upset-james-dolan",
+      "playerIds": [
+        "3136195"
+      ],
+      "teamIds": [
+        "18"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "active_talks"
+    },
+    {
+      "id": "mv-e2cfa2d0e76ae7c2",
+      "clusterId": "mv-contract-4709138-20261002",
+      "summary": "Brandin Podziemski lands $110M extension with Warriors",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-10T15:05:37.000Z",
+      "sourceId": "reporter:shams-charania",
+      "sourceLabel": "TalkBasket, citing Shams Charania (ESPN)",
+      "reporterLabel": "Shams Charania",
+      "sourceUrl": "https://www.talkbasket.net/224610-brandin-podziemski-lands-110m-extension-with-warriors",
+      "playerIds": [
+        "4709138"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-37f916cd1ac56faf",
+      "clusterId": "mv-contract-4709138-20261002",
+      "summary": "Warriors' Brandin Podziemski reportedly agrees to 5-year, $110 million rookie-scale extension",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-10T15:10:52.000Z",
+      "sourceId": "outlet:yahoo-sports",
+      "sourceLabel": "Yahoo Sports",
+      "sourceUrl": "https://sports.yahoo.com/nba/breaking-news/article/warriors-brandin-podziemski-reportedly-agrees-to-5-year-110-million-rookie-scale-extension-151052507.html",
+      "playerIds": [
+        "4709138"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "offer"
+    },
+    {
+      "id": "mv-c8de01ee84ca7b49",
+      "clusterId": "mv-contract-4709138-20261002",
+      "summary": "Warriors’ Brandin Podziemski Agrees To Long-Term Contract Extension",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-10T15:14:10.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/golden-state-warriors/brandin-podziemski-agrees-long-term-contract-extension/",
+      "playerIds": [
+        "4709138"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "offer"
+    },
+    {
+      "id": "mv-4c94438d947bf0ee",
+      "clusterId": "mv-contract-4709138-20261002",
+      "summary": "Brandin Podziemski, Warriors Agree To Five-Year, $110 Million Extension",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-10T15:14:24.000Z",
+      "sourceId": "outlet:realgm",
+      "sourceLabel": "RealGM",
+      "sourceUrl": "https://basketball.realgm.com/wiretap/287583/Brandin-Podziemski-Warriors-Agree-To-Five-Year-$110-Million-Extension",
+      "playerIds": [
+        "4709138"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "offer"
+    },
+    {
+      "id": "mv-9f425f74ab199ece",
+      "clusterId": "mv-contract-4709138-20261002",
+      "summary": "Brandin Podziemski agrees to $110 million contract extension with Warriors before 2026 season",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-10T15:21:39.000Z",
+      "sourceId": "reporter:shams-charania",
+      "sourceLabel": "ClutchPoints, citing Shams Charania (ESPN)",
+      "reporterLabel": "Shams Charania",
+      "sourceUrl": "https://clutchpoints.com/nba/golden-state-warriors/warriors-news-brandin-podziemski-agrees-110-million-contract-extension-dubs-before-2026-season",
+      "playerIds": [
+        "4709138"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "offer"
+    },
+    {
+      "id": "mv-61a07ff6e0e1f8fb",
+      "clusterId": "mv-contract-4709138-20261002",
+      "summary": "Brandin Podziemski Agrees To Five-Year, $110 Million Extension With Warriors",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-10T15:46:41.000Z",
+      "sourceId": "outlet:fadeaway-world",
+      "sourceLabel": "Fadeaway World",
+      "sourceUrl": "https://fadeawayworld.net/nba-trade-rumors/golden-state-warriors/brandin-podziemski-agrees-five-year-110-million-extension-warriors",
+      "playerIds": [
+        "4709138"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "offer"
+    },
+    {
+      "id": "mv-20b601e187cbc7d1",
+      "clusterId": "mv-contract-4709138-20261002",
+      "summary": "Warriors, Brandin Podziemski reportedly agree to five-year, $110 million contract extension",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-10T15:51:02.000Z",
+      "sourceId": "outlet:yahoo-sports",
+      "sourceLabel": "Yahoo Sports",
+      "sourceUrl": "https://sports.yahoo.com/articles/warriors-brandin-podziemski-reportedly-agree-155102890.html",
+      "playerIds": [
+        "4709138"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "offer"
+    },
+    {
+      "id": "mv-356797c1f3e80723",
+      "clusterId": "mv-contract-4683692-20261006",
+      "summary": "What Josh Hart said about Knicks’ contract extension situation",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-10T18:25:25.000Z",
+      "sourceId": "outlet:clutchpoints",
+      "sourceLabel": "ClutchPoints",
+      "sourceUrl": "https://clutchpoints.com/nba/new-york-knicks/knicks-news-what-josh-hart-said-about-new-yorks-contract-extension-situation",
+      "playerIds": [
+        "3062679"
+      ],
+      "teamIds": [
+        "18"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-a6f52c59628caa80",
+      "clusterId": "mv-contract-4683692-20261006",
+      "summary": "Josh Hart 'Not Too Stressed' About Knicks Stopping Extension Talks",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-10T18:51:48.000Z",
+      "sourceId": "outlet:realgm",
+      "sourceLabel": "RealGM",
+      "sourceUrl": "https://basketball.realgm.com/wiretap/287584/Josh-Hart-Not-Too-Stressed-About-Knicks-Stopping-Extension-Talks",
+      "playerIds": [
+        "3062679"
+      ],
+      "teamIds": [
+        "18"
+      ],
+      "isOriginal": true,
+      "negotiationSpecificity": "active_talks"
+    },
+    {
+      "id": "mv-db48c6b7b385a15b",
+      "clusterId": "mv-contract-4432247-20261009",
+      "summary": "Caitlin Clark Undecided On EPIC Extension, Says 'No Matter What, I'm Gonna Be Here'",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-10T19:41:30.000Z",
+      "sourceId": "outlet:realgm",
+      "sourceLabel": "RealGM",
+      "sourceUrl": "https://basketball.realgm.com/wiretap/287586/Caitlin-Clark-Undecided-On-EPIC-Extension-Says-No-Matter-What-Im-Gonna-Be-Here",
+      "playerIds": [
+        "4432247"
+      ],
+      "teamIds": [],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-b16a6cf298fd33c7",
+      "clusterId": "mv-contract-4709138-20261002",
+      "summary": "Warriors’ Brandin Podziemski thanks Golden State for taking a ‘leap with faith’ on his extension",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-11T05:30:54.000Z",
+      "sourceId": "outlet:clutchpoints",
+      "sourceLabel": "ClutchPoints",
+      "sourceUrl": "https://clutchpoints.com/nba/golden-state-warriors/warriors-news-brandin-podziemski-thanks-golden-state-taking-leap-faith-extension",
+      "playerIds": [
+        "4709138"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-19597af40d29a98c",
+      "clusterId": "mv-contract-4683692-20261006",
+      "summary": "Josh Hart admits contract uncertainty can affect Knicks players",
+      "claimType": "contract_movement",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-11T06:35:07.000Z",
+      "sourceId": "outlet:talkbasket",
+      "sourceLabel": "TalkBasket",
+      "sourceUrl": "https://www.talkbasket.net/224621-josh-hart-admits-contract-uncertainty-can-affect-knicks-players",
+      "playerIds": [
+        "3062679"
+      ],
+      "teamIds": [
+        "18"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-b5a1e0b636d859c1",
+      "clusterId": "mv-contract-6430-20261011",
+      "summary": "NBA Trade Rumors: Warriors’ Jimmy Butler Stance, De’Aaron Fox & Extension Effects",
+      "claimType": "extension_talks",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-11T12:59:17.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/golden-state-warriors/nba-trade-rumors-warriors-jimmy-butler-stance-deaaron-fox/",
+      "playerIds": [
+        "6430",
+        "4066259"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-ff2016272a3c9e6f",
+      "clusterId": "mv-trade-3945274-20261009",
+      "summary": "Report: Lakers Rejected Trade for 9x All-Star, Box-Office Luka Doncic Teammate",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-11T12:59:30.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/los-angeles-lakers/lakers-rejected-all-star-trade-irving/",
+      "playerIds": [
+        "3945274"
+      ],
+      "teamIds": [
+        "13"
+      ],
+      "isOriginal": false
+    },
+    {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",
       "clusterId": "mv-contract-3907387-20260904",
       "summary": "Signed guard Ben Simmons to a Contract.",
@@ -4787,6 +5244,26 @@
       ],
       "teamIds": [
         "28"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-nba-tx-2ca8f86bb5e24687",
+      "clusterId": "mv-contract-4709138-20261002",
+      "summary": "Re-signed guard Brandin Podziemski to a Rookie Scale Extension.",
+      "claimType": "contract_movement",
+      "evidenceClass": "reported",
+      "state": "completed",
+      "provenanceKind": "completed_transaction",
+      "publishedAt": "2026-10-10T12:00:00.000Z",
+      "sourceId": "ledger:nba-player-movement",
+      "sourceLabel": "Player movement log",
+      "sourceUrl": "/offseason",
+      "playerIds": [
+        "4709138"
+      ],
+      "teamIds": [
+        "9"
       ],
       "isOriginal": true
     },
@@ -5754,6 +6231,16 @@
       "outcome": "materialized",
       "resolvedAt": "2026-10-01T12:00:00.000Z",
       "transactionRef": "espn-tx-5e58bd3ff340c9fb",
+      "suppressTradeSpeculation": false
+    },
+    {
+      "clusterId": "mv-contract-4709138-20261002",
+      "playerIds": [
+        "4709138"
+      ],
+      "outcome": "materialized",
+      "resolvedAt": "2026-10-10T12:00:00.000Z",
+      "transactionRef": "nba-tx-2ca8f86bb5e24687",
       "suppressTradeSpeculation": false
     },
     {

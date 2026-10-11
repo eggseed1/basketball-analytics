@@ -1,16 +1,17 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-10",
-    "retrievedAt": "2026-10-10T02:42:53.853Z",
+    "snapshotDate": "2026-10-11",
+    "retrievedAt": "2026-10-11T17:53:51.347Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
+      "data/salaries/player-salaries-bref-archive.csv",
       "data/salaries/player-salaries-supplement.csv",
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "8b67e3d85e0ed4422900ff451a164f2cb96de10f07afb28d607aae983897c0b5",
+    "sourceHash": "78d29012712d51a71c869dce6028dd306db6b7c7d03347f8462f8a3b17957024",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -420,15 +421,15 @@
           "href": "/players/1642884"
         },
         {
-          "playerId": "5107157",
+          "playerId": "1643553",
           "playerName": "Ryan Conwell",
           "age": null,
-          "contractId": "cy-5107157-2026",
+          "contractId": "cy-1643553-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-5107157-2026",
-              "playerId": "5107157",
+              "contractId": "cy-1643553-2026",
+              "playerId": "1643553",
               "franchiseId": "14",
               "season": "2026-27",
               "salary": 1357763,
@@ -440,18 +441,18 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/5107157"
+          "href": "/players/1643553"
         },
         {
-          "playerId": "4837356",
+          "playerId": "1643621",
           "playerName": "Tre Donaldson",
           "age": null,
-          "contractId": "cy-4837356-2026",
+          "contractId": "cy-1643621-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-4837356-2026",
-              "playerId": "4837356",
+              "contractId": "cy-1643621-2026",
+              "playerId": "1643621",
               "franchiseId": "14",
               "season": "2026-27",
               "salary": null,
@@ -463,7 +464,30 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/4837356"
+          "href": "/players/1643621"
+        },
+        {
+          "playerId": "1643727",
+          "playerName": "J'Vonne Hadley",
+          "age": null,
+          "contractId": "cy-1643727-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1643727-2026",
+              "playerId": "1643727",
+              "franchiseId": "14",
+              "season": "2026-27",
+              "salary": null,
+              "capHit": null,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "espn-roster-no-salary"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1643727"
         },
         {
           "playerId": "1630283",
@@ -489,15 +513,15 @@
           "href": "/players/1630283"
         },
         {
-          "playerId": "4432753",
+          "playerId": "1643019",
           "playerName": "Gabe Madsen",
           "age": null,
-          "contractId": "cy-4432753-2026",
+          "contractId": "cy-1643019-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-4432753-2026",
-              "playerId": "4432753",
+              "contractId": "cy-1643019-2026",
+              "playerId": "1643019",
               "franchiseId": "14",
               "season": "2026-27",
               "salary": null,
@@ -509,18 +533,18 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/4432753"
+          "href": "/players/1643019"
         },
         {
-          "playerId": "4693954",
-          "playerName": "Ian Schieffelin",
+          "playerId": "1631311",
+          "playerName": "Lester Quinones",
           "age": null,
-          "contractId": "cy-4693954-2026",
+          "contractId": "cy-1631311-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-4693954-2026",
-              "playerId": "4693954",
+              "contractId": "cy-1631311-2026",
+              "playerId": "1631311",
               "franchiseId": "14",
               "season": "2026-27",
               "salary": null,
@@ -532,7 +556,53 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/4693954"
+          "href": "/players/1631311"
+        },
+        {
+          "playerId": "1643867",
+          "playerName": "Ian Schieffelin",
+          "age": null,
+          "contractId": "cy-1643867-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1643867-2026",
+              "playerId": "1643867",
+              "franchiseId": "14",
+              "season": "2026-27",
+              "salary": null,
+              "capHit": null,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "espn-roster-no-salary"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1643867"
+        },
+        {
+          "playerId": "1628372",
+          "playerName": "Dennis Smith Jr.",
+          "age": null,
+          "contractId": "cy-1628372-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1628372-2026",
+              "playerId": "1628372",
+              "franchiseId": "14",
+              "season": "2026-27",
+              "salary": null,
+              "capHit": null,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "espn-roster-no-salary"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1628372"
         }
       ],
       "futureCommitments": [
@@ -544,7 +614,7 @@
       ],
       "playerSalaryCommitments": 224303080,
       "playersWithSalary": 17,
-      "playersWithoutSalary": 4
+      "playersWithoutSalary": 7
     },
     "draftAssets": {
       "franchiseId": "14",

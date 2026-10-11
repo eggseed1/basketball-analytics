@@ -1,16 +1,17 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-10",
-    "retrievedAt": "2026-10-10T02:42:53.853Z",
+    "snapshotDate": "2026-10-11",
+    "retrievedAt": "2026-10-11T17:53:51.347Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
+      "data/salaries/player-salaries-bref-archive.csv",
       "data/salaries/player-salaries-supplement.csv",
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "8b67e3d85e0ed4422900ff451a164f2cb96de10f07afb28d607aae983897c0b5",
+    "sourceHash": "78d29012712d51a71c869dce6028dd306db6b7c7d03347f8462f8a3b17957024",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -167,15 +168,15 @@
           "href": "/players/1629021"
         },
         {
-          "playerId": "5101761",
+          "playerId": "1643414",
           "playerName": "Mikel Brown Jr.",
           "age": null,
-          "contractId": "cy-5101761-2026",
+          "contractId": "cy-1643414-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-5101761-2026",
-              "playerId": "5101761",
+              "contractId": "cy-1643414-2026",
+              "playerId": "1643414",
               "franchiseId": "17",
               "season": "2026-27",
               "salary": 8787000,
@@ -187,7 +188,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/5101761"
+          "href": "/players/1643414"
         },
         {
           "playerId": "1631165",
@@ -351,15 +352,15 @@
           "href": "/players/1642879"
         },
         {
-          "playerId": "4870564",
+          "playerId": "1643538",
           "playerName": "Joshua Jefferson",
           "age": null,
-          "contractId": "cy-4870564-2026",
+          "contractId": "cy-1643538-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-4870564-2026",
-              "playerId": "4870564",
+              "contractId": "cy-1643538-2026",
+              "playerId": "1643538",
               "franchiseId": "17",
               "season": "2026-27",
               "salary": 2969520,
@@ -371,7 +372,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/4870564"
+          "href": "/players/1643538"
         },
         {
           "playerId": "1642874",
@@ -397,15 +398,15 @@
           "href": "/players/1642874"
         },
         {
-          "playerId": "5105626",
+          "playerId": "1643548",
           "playerName": "Tyler Bilodeau",
           "age": null,
-          "contractId": "cy-5105626-2026",
+          "contractId": "cy-1643548-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-5105626-2026",
-              "playerId": "5105626",
+              "contractId": "cy-1643548-2026",
+              "playerId": "1643548",
               "franchiseId": "17",
               "season": "2026-27",
               "salary": null,
@@ -417,18 +418,18 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/5105626"
+          "href": "/players/1643548"
         },
         {
-          "playerId": "4432189",
+          "playerId": "1643120",
           "playerName": "Dain Dainja",
           "age": null,
-          "contractId": "cy-4432189-2026",
+          "contractId": "cy-1643120-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-4432189-2026",
-              "playerId": "4432189",
+              "contractId": "cy-1643120-2026",
+              "playerId": "1643120",
               "franchiseId": "17",
               "season": "2026-27",
               "salary": null,
@@ -440,7 +441,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/4432189"
+          "href": "/players/1643120"
         },
         {
           "playerId": "1643052",

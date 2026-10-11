@@ -1,16 +1,17 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-10",
-    "retrievedAt": "2026-10-10T02:42:53.853Z",
+    "snapshotDate": "2026-10-11",
+    "retrievedAt": "2026-10-11T17:53:51.347Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
+      "data/salaries/player-salaries-bref-archive.csv",
       "data/salaries/player-salaries-supplement.csv",
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "8b67e3d85e0ed4422900ff451a164f2cb96de10f07afb28d607aae983897c0b5",
+    "sourceHash": "78d29012712d51a71c869dce6028dd306db6b7c7d03347f8462f8a3b17957024",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -121,15 +122,15 @@
           "href": "/players/1630182"
         },
         {
-          "playerId": "5041955",
+          "playerId": "1643408",
           "playerName": "Darryn Peterson",
           "age": null,
-          "contractId": "cy-5041955-2026",
+          "contractId": "cy-1643408-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-5041955-2026",
-              "playerId": "5041955",
+              "contractId": "cy-1643408-2026",
+              "playerId": "1643408",
               "franchiseId": "26",
               "season": "2026-27",
               "salary": 13195320,
@@ -141,7 +142,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/5041955"
+          "href": "/players/1643408"
         },
         {
           "playerId": "203994",
@@ -420,15 +421,15 @@
           "href": "/players/1641725"
         },
         {
-          "playerId": "4683933",
+          "playerId": "1642926",
           "playerName": "Tamar Bates",
           "age": null,
-          "contractId": "cy-4683933-2026",
+          "contractId": "cy-1642926-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-4683933-2026",
-              "playerId": "4683933",
+              "contractId": "cy-1642926-2026",
+              "playerId": "1642926",
               "franchiseId": "26",
               "season": "2026-27",
               "salary": 1366314,
@@ -440,18 +441,18 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/4683933"
+          "href": "/players/1642926"
         },
         {
-          "playerId": "4684682",
+          "playerId": "1643265",
           "playerName": "Jonas Aidoo",
           "age": null,
-          "contractId": "cy-4684682-2026",
+          "contractId": "cy-1643265-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-4684682-2026",
-              "playerId": "4684682",
+              "contractId": "cy-1643265-2026",
+              "playerId": "1643265",
               "franchiseId": "26",
               "season": "2026-27",
               "salary": null,
@@ -463,18 +464,18 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/4684682"
+          "href": "/players/1643265"
         },
         {
-          "playerId": "4278395",
+          "playerId": "1641917",
           "playerName": "Taylor Funk",
           "age": null,
-          "contractId": "cy-4278395-2026",
+          "contractId": "cy-1641917-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-4278395-2026",
-              "playerId": "4278395",
+              "contractId": "cy-1641917-2026",
+              "playerId": "1641917",
               "franchiseId": "26",
               "season": "2026-27",
               "salary": null,
@@ -486,7 +487,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/4278395"
+          "href": "/players/1641917"
         },
         {
           "playerId": "1642396",
