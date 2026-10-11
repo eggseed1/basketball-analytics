@@ -49,6 +49,15 @@ import {
   type AnchoredLineupSummary,
 } from "./anchored-lineup";
 import {
+  addBoxScoreToTotals,
+  attachBoxPrior,
+  boxPriorFeatures,
+  boxPriorSummary,
+  fitBoxPrior,
+  type BoxPriorSummary,
+  type BoxPriorTotals,
+} from "./box-prior";
+import {
   DRBL_PARSER_VERSION,
   DRBL_RECONSTRUCTION_VERSION,
 } from "../constants";
@@ -138,6 +147,8 @@ export interface DrblSeasonArtifact {
   behaviorRetrospectiveOnly?: boolean;
   /** Shadow lineup fit behind players[].drblAnchored100; not published. */
   anchoredLineupModel?: AnchoredLineupSummary;
+  /** Shadow box-prior fit behind players[].drblBox100; not published. */
+  boxPriorModel?: BoxPriorSummary;
   /** Ranking semantics version (bumps when sort key / formulas change). */
   rankingFormulaVersion?: string;
   rankingMode?: string;
@@ -165,6 +176,7 @@ export interface DrblSeasonArtifact {
  * 8) Team-level WAR calibration (M13)
  * 9) Formal WP leverage → DRBL-L (M14; independent of WAR)
  * 10) Shadow lineup ridge anchored on drbl100 → drblAnchored100 (unpublished)
+ * 11) Shadow DRBL-P shrunk toward a scoreboard-trained box rating → drblBox100 (unpublished)
  */
 export async function computeSeasonDrbl(
   season: string,
@@ -217,12 +229,14 @@ export async function computeSeasonDrbl(
   let cutoffDate = "";
   const lineupRows: LineupPossessionRow[] = [];
   const anchoredInput = createAnchoredLineupInput();
+  const boxTotals: BoxPriorTotals = new Map();
 
   for (const g of processedGames) {
     accumulateReplacementSignals(g.box, g.events, g.possessions, roleAccum);
     accumulateBehaviorSignals(g.box, g.events, g.possessions, behaviorAccum);
     lineupRows.push(...buildLineupRows(g.box, g.events, g.possessions));
     addGameToAnchoredLineupInput(anchoredInput, g.box.homeTeamId, g.possessions);
+    addBoxScoreToTotals(boxTotals, g.box.players);
     if (g.box.gameDate && g.box.gameDate > cutoffDate) {
       cutoffDate = g.box.gameDate;
     }
@@ -511,7 +525,11 @@ export async function computeSeasonDrbl(
     anchoredInput,
     new Map(finalizedPlayers.map((p) => [p.playerId, p.drbl100]))
   );
-  const players = attachAnchoredLineup(finalizedPlayers, anchoredLineup);
+  const boxPrior = fitBoxPrior(
+    anchoredInput.rows,
+    boxPriorFeatures(boxTotals, anchoredInput.appearances)
+  );
+  const players = attachBoxPrior(attachAnchoredLineup(finalizedPlayers, anchoredLineup), boxPrior);
 
   return {
     season,
@@ -606,6 +624,7 @@ export async function computeSeasonDrbl(
       possessions: leverageModel.possessions,
     },
     anchoredLineupModel: anchoredLineupSummary(anchoredLineup),
+    boxPriorModel: boxPrior ? boxPriorSummary(boxPrior) : undefined,
     players,
   };
 }

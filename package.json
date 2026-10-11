@@ -194,7 +194,7 @@
     "drbl:m17b": "tsx scripts/drbl-m17b.ts",
     "drbl:m18a": "tsx scripts/drbl-m18a.ts",
     "drbl:outcome-test": "NODE_OPTIONS=--max-old-space-size=8000 tsx scripts/drbl-outcome-test.ts",
-    "drbl:anchored-backfill": "tsx scripts/drbl-anchored-lineup-backfill.ts",
+    "drbl:shadow-backfill": "tsx scripts/drbl-shadow-backfill.ts",
     "drbl:m18b_0": "tsx scripts/drbl-m18b_0.ts",
     "verify:cf:standings-tracker": "node scripts/verify-cf-standings-tracker.mjs",
     "shots:sync": "node scripts/build-runtime-player-shots.mjs",

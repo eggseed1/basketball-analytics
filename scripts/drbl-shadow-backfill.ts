@@ -1,8 +1,9 @@
 /**
- * Adds the shadow `drblAnchored100` field to an existing season artifact
- * from local normalized possessions, without recomputing anything else.
+ * Adds the shadow fields `drblAnchored100` and `drblBox100` to an existing
+ * season artifact from local normalized games, without recomputing anything
+ * else. Both are built on the artifact's own drbl100 / rawAbilityRate.
  *
- *   npx tsx scripts/drbl-anchored-lineup-backfill.ts --season 2025-26
+ *   npm run drbl:shadow-backfill -- --season 2025-26
  *
  * Needs data/drbl/normalized/{season}/{gameId}/ on disk. Keeps the artifact's
  * existing formatting (single-line or indented).
@@ -18,6 +19,14 @@ import {
   createAnchoredLineupInput,
   fitAnchoredLineup,
 } from "../drbl/models/anchored-lineup";
+import {
+  addBoxScoreToTotals,
+  attachBoxPrior,
+  boxPriorFeatures,
+  boxPriorSummary,
+  fitBoxPrior,
+  type BoxPriorTotals,
+} from "../drbl/models/box-prior";
 import type { DrblSeasonArtifact } from "../drbl/models/compute-season";
 
 function arg(name: string): string | undefined {
@@ -58,41 +67,45 @@ async function main() {
   if (gameIds.length === 0) throw new Error(`no normalized games under ${gamesDir}`);
 
   const input = createAnchoredLineupInput();
+  const boxTotals: BoxPriorTotals = new Map();
   let loaded = 0;
   for (const id of gameIds) {
     const g = await loadNormalizedGame(season, id);
     if (!g) continue;
     addGameToAnchoredLineupInput(input, g.box.homeTeamId, g.possessions);
+    addBoxScoreToTotals(boxTotals, g.box.players);
     loaded += 1;
   }
   const gamesProcessed = Number(artifact.gamesProcessed ?? artifact.gameCount ?? 0);
   console.log(
-    `[anchored] ${season} games loaded=${loaded} artifact gamesProcessed=${gamesProcessed} possessions=${input.rows.length}`
+    `[shadow] ${season} games loaded=${loaded} artifact gamesProcessed=${gamesProcessed} possessions=${input.rows.length}`
   );
   if (gamesProcessed > 0 && Math.abs(loaded - gamesProcessed) > Math.max(10, gamesProcessed * 0.02)) {
     throw new Error(`local games (${loaded}) don't match the artifact (${gamesProcessed}); refusing to backfill`);
   }
 
-  const fit = fitAnchoredLineup(
+  const anchored = fitAnchoredLineup(
     input,
     new Map(artifact.players.map((p) => [p.playerId, p.drbl100]))
   );
-  const summary = anchoredLineupSummary(fit);
+  const box = fitBoxPrior(input.rows, boxPriorFeatures(boxTotals, input.appearances));
+  if (!box) throw new Error(`too few 5v5 possessions (${input.rows.length}) to fit the box prior`);
   const update = (a: DrblSeasonArtifact): DrblSeasonArtifact => ({
     ...a,
-    players: attachAnchoredLineup(a.players, fit),
-    anchoredLineupModel: summary,
+    players: attachBoxPrior(attachAnchoredLineup(a.players, anchored), box),
+    anchoredLineupModel: anchoredLineupSummary(anchored),
+    boxPriorModel: boxPriorSummary(box),
   });
 
   await rewrite(sitePath, update);
-  console.log(`[anchored] wrote ${path.relative(root, sitePath)}`);
+  console.log(`[shadow] wrote ${path.relative(root, sitePath)}`);
   if (await exists(offlinePath)) {
     await rewrite(offlinePath, update);
-    console.log(`[anchored] wrote ${path.relative(root, offlinePath)}`);
+    console.log(`[shadow] wrote ${path.relative(root, offlinePath)}`);
   }
-  const rated = artifact.players.filter((p) => fit.ratingsPer100.has(p.playerId)).length;
+  const ids = artifact.players.map((p) => p.playerId);
   console.log(
-    `[anchored] ${season} rated ${rated}/${artifact.players.length} artifact players; home=${summary.homeAdvantagePer100}/100`
+    `[shadow] ${season} anchored ${ids.filter((id) => anchored.ratingsPer100.has(id)).length}/${ids.length}, box ${ids.filter((id) => box.ratingsPer100.has(id)).length}/${ids.length} artifact players`
   );
 }
 

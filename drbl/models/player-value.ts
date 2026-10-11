@@ -134,6 +134,8 @@ export interface DrblPlayerSeasonRow {
   drblB: number;
   /** Shadow only (never published): scoreboard lineup ridge anchored on drbl100. */
   drblAnchored100?: number;
+  /** Shadow only (never published): DRBL-P shrunk toward a scoreboard-trained box rating. */
+  drblBox100?: number;
   drblO: number;
   drblD: number;
   sdv100: number;

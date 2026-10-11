@@ -198,6 +198,8 @@ Possession/stint margin ~ player-on-court design + ridge; controls for opponent/
 Optional aggregates with provenance: endpoint, coverage, `as_of_timestamp`, `post_game_only`, missing_rate, definition, parser_version.  
 “Gravity” = **DRBL Gravity Proxy** only.
 
+**Shadow box prior (Oct 2026):** `box-prior.ts` fits box-rate weights on scoreboard points per possession (not on DRBL-P) and stores `players[].drblBox100` = DRBL-P shrunk toward 2 × box rating with K 3200, plus `boxPriorModel`. Unpublished. It beats published drbl100 on every cross-season outcome test (2022-23 through 2025-26) and is never worse within season; it rates rebounding centers higher than DARKO does, and position-aware weights didn't change that.
+
 **v1:** `behavior.ts` builds public features (usage, three rate, AST/TOV/STL/BLK per 100, FT rate, rim rate from x/y, gravity proxy = teammate 3PA share on offense). Ridge predicts residual/100; chrono holdout MAE; writes `behavior-{season}.json`. Missing B does not block P/LN.
 
 ### 7.6 Defense

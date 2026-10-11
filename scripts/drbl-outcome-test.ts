@@ -12,8 +12,9 @@
  *   of games, scored on the last 40%.
  * - Cross season: shipped artifact ratings for season N scored on every
  *   game of season N+1.
- * A candidate only replaces published DRBL/100 if its ΔRMSE interval sits
- * below 0 in the cross-season test and never above 0 within season.
+ * A candidate is eligible to replace published DRBL/100 only if its ΔRMSE
+ * interval sits below 0 in every cross-season test and never above 0
+ * within season.
  */
 import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
@@ -54,6 +55,15 @@ import {
   finalizeBehaviorRows,
   fitBehaviorModel,
 } from "../drbl/models/behavior";
+import {
+  BOX_PRIOR_VERSION,
+  addBoxScoreToTotals,
+  boxPriorFeatures,
+  fitBoxPrior,
+  shrinkTowardBoxPrior,
+  type BoxPriorTotals,
+} from "../drbl/models/box-prior";
+import type { DrblBoxPlayer } from "../drbl/types";
 
 const ROOT = process.cwd();
 const OUT_DIR = path.join(ROOT, "reports/drbl-outcome-test");
@@ -62,6 +72,7 @@ const INNER_FRAC = 2 / 3;
 const MIN_GAMES = 500;
 const RIDGE_LAMBDAS = [400, 800, 1600, 3200, 6400];
 const ANCHORED = `Anchored lineup (${ANCHORED_LINEUP_VERSION})`;
+const BOX = `DRBL-P shrunk toward box rating (${BOX_PRIOR_VERSION})`;
 
 const log = (...a: unknown[]) => console.log(new Date().toISOString().slice(11, 19), ...a);
 
@@ -84,6 +95,8 @@ async function localSeasons(): Promise<string[]> {
   return out.sort();
 }
 
+const boxByGame = new Map<string, DrblBoxPlayer[]>();
+
 async function loadSeason(season: string): Promise<OutcomeGame[]> {
   const dir = path.join(ROOT, "data/drbl/normalized", season);
   const ids = (await readdir(dir)).filter((n) => /^\d{10}$/.test(n)).sort();
@@ -98,6 +111,10 @@ async function loadSeason(season: string): Promise<OutcomeGame[]> {
       if (!off.length || !def.length) continue;
       poss.push({ offenseIsHome: p.offenseTeamId === g.box.homeTeamId, off, def, points: p.points });
     }
+    boxByGame.set(
+      g.box.gameId,
+      g.box.players.map((p) => ({ ...p, playerId: canon(p.playerId) }))
+    );
     games.push({
       gameId: g.box.gameId,
       date: g.box.gameDate || "",
@@ -152,9 +169,19 @@ async function drblComponents(season: string, window: readonly OutcomeGame[]) {
   return {
     published: pick((r) => r.drbl100),
     pRaw: pick((r) => r.rawAbilityRate),
+    n: pick((r) => r.possessions),
     ln: pick((r) => r.drblLn),
     b: pick((r) => r.drblB),
   };
+}
+
+/** Box weights fit on the rating window only; empty when the window is too small to fit. */
+function boxShrunk(games: readonly OutcomeGame[], raw: Ratings, n: Ratings): Ratings {
+  const totals: BoxPriorTotals = new Map();
+  for (const g of games) addBoxScoreToTotals(totals, boxByGame.get(g.gameId) ?? []);
+  const input = anchoredInputOf(games);
+  const fit = fitBoxPrior(input.rows, boxPriorFeatures(totals, input.appearances));
+  return fit ? shrinkTowardBoxPrior(raw, n, fit.ratingsPer100) : new Map();
 }
 
 function scoreboardRidge(games: readonly OutcomeGame[], lambda: number): Ratings {
@@ -206,6 +233,7 @@ async function withinSeason(season: string, games: OutcomeGame[]) {
       "Raw on-court +/- per 100": f(rawPlusMinus(train)),
       [`Scoreboard lineup ridge (λ=${lambda})`]: f(scoreboardRidge(train, lambda)),
       [ANCHORED]: f(anchored(train, comps.published)),
+      [BOX]: f(boxShrunk(train, comps.pRaw, comps.n)),
     },
     teamFeature(train, test)
   );
@@ -214,7 +242,8 @@ async function withinSeason(season: string, games: OutcomeGame[]) {
 
 async function artifactRatings(season: string) {
   const raw = await readFile(path.join(ROOT, "src/data/drbl/precomputed", `${season}.json`), "utf8");
-  const players = (JSON.parse(raw) as { players: Record<string, unknown>[] }).players;
+  const artifact = JSON.parse(raw) as { version?: string; players: Record<string, unknown>[] };
+  const players = artifact.players;
   const pick = (k: string): Map<string, number> => {
     const m = new Map<string, number>();
     for (const p of players) {
@@ -224,11 +253,14 @@ async function artifactRatings(season: string) {
     return m;
   };
   return {
+    version: artifact.version ?? "unknown version",
     published: pick("drbl100"),
     pRaw: pick("rawAbilityRate"),
+    n: pick("possessions"),
     ln: pick("drblLn"),
     b: pick("drblB"),
     anchored: pick("drblAnchored100"),
+    box: pick("drblBox100"),
   };
 }
 
@@ -255,10 +287,16 @@ async function crossSeason(from: string, fromGames: OutcomeGame[], to: string, t
     "Raw on-court +/- per 100": f(rawPlusMinus(fromGames)),
     [`Scoreboard lineup ridge (λ=${lambda})`]: f(scoreboardRidge(fromGames, lambda)),
     [ANCHORED]: f(art.anchored.size > 0 ? art.anchored : anchored(fromGames, art.published)),
+    [BOX]: f(art.box.size > 0 ? art.box : boxShrunk(fromGames, art.pRaw, art.n)),
   };
   const d = await darko(from);
   if (d.size > 0) features[`DARKO ${from} (external)`] = f(d);
-  return scoreOutcomes(`Shipped ${from} ratings → every ${to} game`, toGames, features, teamFeature(fromGames, toGames));
+  return scoreOutcomes(
+    `Shipped ${from} ratings (${art.version}) → every ${to} game`,
+    toGames,
+    features,
+    teamFeature(fromGames, toGames)
+  );
 }
 
 const pct = (v: number) => `${(100 * v).toFixed(1)}%`;
@@ -272,7 +310,9 @@ function markdown(reports: OutcomeReport[], generatedAt: string): string {
     "",
     "R² is the share of final-margin variance explained beyond home court, out of sample. ΔRMSE is the candidate's error minus published DRBL/100's error in points, with a 95% game-bootstrap interval. Negative means the candidate predicts margins better.",
     "",
-    `Promotion rule: a candidate replaces published DRBL/100 only if its cross-season interval sits below 0 and no within-season interval sits above 0. ${ANCHORED} is stored as the shadow field \`drblAnchored100\` until it passes.`,
+    `Promotion rule: a candidate can replace published DRBL/100 only if its interval sits below 0 in every cross-season test and never above 0 within season. Passing makes it eligible; switching is still a product decision. ${ANCHORED} and ${BOX} are stored as the shadow fields \`drblAnchored100\` and \`drblBox100\`.`,
+    "",
+    "Cross-season rows use each season's shipped artifact as is; the section title names its pipeline version.",
   ];
   for (const r of reports) {
     lines.push("", `## ${r.label}`, "", `${r.games} games.`, "", "| Rating | R² | RMSE | ΔRMSE vs published [95% CI] | Verdict |", "|---|---|---|---|---|");
