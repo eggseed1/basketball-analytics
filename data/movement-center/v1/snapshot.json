@@ -5,10 +5,10 @@
     "season": "2026-27",
     "snapshotDate": "2026-10-11",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-10-11T17:43:54.545Z",
+    "builtAt": "2026-10-11T20:42:21.350Z",
     "rosterPlayerCount": 492,
-    "headlinesScanned": 2939,
-    "latestHeadlineAt": "2026-10-11T17:32:40.000Z",
+    "headlinesScanned": 2953,
+    "latestHeadlineAt": "2026-10-11T19:58:48.000Z",
     "latestTransactionDate": "2026-10-10",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -68,7 +68,7 @@
     },
     "outlet:the-athletic": {
       "label": "The Athletic",
-      "credibility": 12
+      "credibility": 24
     },
     "outlet:sportsnaut": {
       "label": "Sportsnaut",
@@ -161,6 +161,10 @@
     "reporter:shams-charania-the": {
       "label": "Shams Charania. The (ESPN)",
       "credibility": 18
+    },
+    "outlet:hoops-rumors": {
+      "label": "Hoops Rumors",
+      "credibility": 16
     },
     "ledger:nba-player-movement": {
       "label": "Player movement log",
@@ -793,8 +797,8 @@
     },
     {
       "id": "mv-contract-4683692-20261006",
-      "headline": "Cason Wallace, Karl-Anthony Towns and others: contract talks with the Knicks",
-      "primaryClaimId": "mv-19597af40d29a98c",
+      "headline": "Cason Wallace, Karl-Anthony Towns and others: extension talks with the Knicks",
+      "primaryClaimId": "mv-40b83775fa3db0a0",
       "claimIds": [
         "mv-d46db2f4a349df07",
         "mv-11ebf253ed00ee6f",
@@ -812,12 +816,15 @@
         "mv-b50bd29e589a070d",
         "mv-356797c1f3e80723",
         "mv-a6f52c59628caa80",
-        "mv-19597af40d29a98c"
+        "mv-19597af40d29a98c",
+        "mv-abc07a6198394751",
+        "mv-5c0f20121fb57063",
+        "mv-40b83775fa3db0a0"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-06T17:10:57.000Z",
-      "lastMeaningfulAt": "2026-10-11T06:35:07.000Z",
+      "lastMeaningfulAt": "2026-10-11T18:59:42.000Z",
       "linkedPlayerIds": [
         "4683692",
         "3136195",
@@ -5058,6 +5065,68 @@
         "13"
       ],
       "isOriginal": false
+    },
+    {
+      "id": "mv-abc07a6198394751",
+      "clusterId": "mv-contract-4683692-20261006",
+      "summary": "Karl-Anthony Towns on Knicks tabling player extensions: 'It was news to me'",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-11T18:20:49.000Z",
+      "sourceId": "outlet:the-athletic",
+      "sourceLabel": "The Athletic",
+      "sourceUrl": "https://www.nytimes.com/athletic/7681236/2026/10/11/karl-anthony-towns-knicks-contract-extension/",
+      "playerIds": [
+        "3136195"
+      ],
+      "teamIds": [
+        "18"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-5c0f20121fb57063",
+      "clusterId": "mv-contract-4683692-20261006",
+      "summary": "Karl-Anthony Towns 'Very Disappointed' By Knicks' Decision To Pause Extension Talks",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-11T18:46:56.000Z",
+      "sourceId": "outlet:realgm",
+      "sourceLabel": "RealGM",
+      "sourceUrl": "https://basketball.realgm.com/wiretap/287591/Karl-Anthony-Towns-Very-Disappointed-By-Knicks-Decision-To-Pause-Extension-Talks",
+      "playerIds": [
+        "3136195"
+      ],
+      "teamIds": [
+        "18"
+      ],
+      "isOriginal": true,
+      "negotiationSpecificity": "active_talks"
+    },
+    {
+      "id": "mv-40b83775fa3db0a0",
+      "clusterId": "mv-contract-4683692-20261006",
+      "summary": "Towns ‘Very Disappointed’ By Knicks Pausing Extension Talks",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-11T18:59:42.000Z",
+      "sourceId": "outlet:hoops-rumors",
+      "sourceLabel": "Hoops Rumors",
+      "sourceUrl": "https://www.hoopsrumors.com/2026/10/towns-very-disappointed-by-knicks-pausing-extension-talks.html",
+      "playerIds": [
+        "3136195"
+      ],
+      "teamIds": [
+        "18"
+      ],
+      "isOriginal": true,
+      "negotiationSpecificity": "active_talks"
     },
     {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",
