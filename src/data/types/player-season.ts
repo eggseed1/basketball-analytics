@@ -34,6 +34,8 @@ export interface PlayerSeason {
   nbaTeamId?: string;
   /** Season identifier, e.g. "2024-25". */
   season: string;
+  /** Set on ABA seasons only; NBA league boards don't apply to them. */
+  league?: "ABA";
   position?: Position;
   age?: number;
   /** Calendar draft year when known (NBA Stats drafthistory). */

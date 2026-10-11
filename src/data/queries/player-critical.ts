@@ -391,6 +391,49 @@ export async function getPlayerCriticalCareerSeasons(
   playerId: string
 ): Promise<PlayerSeason[]> {
   const identity = await resolvePlayerIdentityCached(playerId).catch(() => null);
+  const rows = await loadCriticalCareerSeasons(playerId, identity);
+  return withAbaSeasons(playerId, identity?.nbaId ?? null, rows);
+}
+
+/**
+ * NBA and ESPN careers stop at the NBA; ABA seasons exist only in the bundled
+ * legend careers, so add any the career doesn't already cover.
+ */
+async function withAbaSeasons(
+  playerId: string,
+  nbaId: string | null,
+  rows: PlayerSeason[]
+): Promise<PlayerSeason[]> {
+  let slug = parseBrefPlayerSlug(playerId);
+  if (!slug && nbaId) {
+    try {
+      const { remapLegendNbaIdToBref } = await import("@/data/runtime/legend-nba-to-bref");
+      const route = remapLegendNbaIdToBref(nbaId);
+      slug = route ? parseBrefPlayerSlug(route) : null;
+    } catch {
+      slug = null;
+    }
+  }
+  if (!slug) return rows;
+  let aba: PlayerSeason[] = [];
+  try {
+    const { loadCareerFromBrefSlug } = await import(
+      "@/data/providers/nba/bref-career-from-page"
+    );
+    aba = await loadCareerFromBrefSlug(slug, playerId, { abaOnly: true });
+  } catch {
+    return rows;
+  }
+  const covered = new Set(rows.map((r) => r.season));
+  const missing = aba.filter((r) => !covered.has(r.season));
+  if (!missing.length) return rows;
+  return [...rows, ...missing].sort((a, b) => b.season.localeCompare(a.season));
+}
+
+async function loadCriticalCareerSeasons(
+  playerId: string,
+  identity: Awaited<ReturnType<typeof resolvePlayerIdentityCached>> | null
+): Promise<PlayerSeason[]> {
   const provider = getDataProvider();
   const statsId = identity?.nbaId ?? playerId;
   const lookupIds = uniquePlayerIds(

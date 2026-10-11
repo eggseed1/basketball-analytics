@@ -233,6 +233,18 @@ export async function loadPlayerPercentileMetrics(
   const statsSeason = statsCtx.statsSeason;
   const priorSeason = shiftCanonicalSeason(statsSeason, -1);
 
+  const seasonRows = career.filter((row) => row.season === statsSeason);
+  if (seasonRows.length > 0 && seasonRows.every((row) => row.league === "ABA")) {
+    return {
+      metrics: [],
+      teamKey: brandableTeamKey(identityTeamKey) ?? undefined,
+      mode,
+      profileComps: [],
+      profileHistoricalComps: [],
+      ...statsCtx,
+    };
+  }
+
   const careerSeasons = careerSeasonsForPeerBoards(
     career,
     statsSeason,

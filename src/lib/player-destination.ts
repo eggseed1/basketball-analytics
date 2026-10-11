@@ -58,7 +58,8 @@ export function resolvePlayerSeason(
       ),
     });
     if (historical) {
-      const peak = peakCareerSeason(career);
+      const nba = career.filter((row) => row.league !== "ABA");
+      const peak = peakCareerSeason(nba.length > 0 ? nba : career);
       if (peak) return peak;
     }
   }

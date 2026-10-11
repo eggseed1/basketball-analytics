@@ -100,9 +100,14 @@ function pickAdvancedRow(
  */
 export async function loadCareerFromBrefSlug(
   brefSlug: string,
-  routePlayerId: string
+  routePlayerId: string,
+  options?: {
+    /** Only the ABA seasons from the bundled legend careers; never fetches. */
+    abaOnly?: boolean;
+  }
 ): Promise<PlayerSeason[]> {
   const baked = await loadBundledBrefCareer(brefSlug);
+  if (options?.abaOnly && !baked) return [];
   const page = baked
     ? null
     : await fetchBrefPlayerPage(brefSlug);
@@ -119,6 +124,7 @@ export async function loadCareerFromBrefSlug(
   for (const season of seasons) {
     const tot = pickTotalsRow(totals, season);
     if (!tot || !(tot.gamesPlayed && tot.gamesPlayed > 0)) continue;
+    if (options?.abaOnly && tot.league !== "ABA") continue;
     const adv = pickAdvancedRow(advanced, season, tot.teamAbbr);
     const gp = tot.gamesPlayed ?? 0;
     // Pre-1979-80 there was no three, so every field goal is a two.
@@ -145,6 +151,7 @@ export async function loadCareerFromBrefSlug(
         teamIdProvider: "nba",
         providerTeamId: tot.teamAbbr || undefined,
         season,
+        league: tot.league === "ABA" ? "ABA" : undefined,
         gamesPlayed: gp,
         // Early seasons predate starts, steals, blocks, turnovers, and the
         // three; unpublished stays NaN (blank), not 0.
