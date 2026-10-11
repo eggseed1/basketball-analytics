@@ -4,6 +4,8 @@ import { GameIdentityShell } from "@/components/games/game-identity-shell";
 import { GamePreTipBoard } from "@/components/games/game-pre-tip-board";
 import { GamePreviewSection, GameTabs, type GameTab } from "@/components/games/game-preview-section";
 import { PossessionExplorerIsland } from "@/components/games/possession-explorer-island";
+import { SpoilerShield } from "@/components/games/spoiler-shield";
+import { needsScoreMask } from "@/lib/score-delay";
 import { RuntimeGameFallback } from "@/components/games/runtime-game-fallback";
 import { HistoricalGameExperience } from "@/components/history/historical-game-experience";
 import { GameUnavailablePanel } from "@/components/games/game-unavailable";
@@ -88,9 +90,12 @@ export default async function GamePage({ params, searchParams }: GamePageProps) 
     <GameIdentityShell game={shell.game} brandPresentation={brandPresentation} arrivalLabel={arrival?.label} />
     {presentation.canRenderDeepFeatures ? <GameTabs gameId={gameId} active={tab} options={tabOptions} defaultTab={defaultTab} query={sp} /> : null}
     {presentation.canRenderDeepFeatures && tab === "preview" ? <Suspense fallback={<DestinationSectionSkeleton label="Loading game preview…" />}><GamePreviewSection game={shell.game} /></Suspense> : null}
-    {showGame && preTip ? <GamePreTipBoard game={shell.game} /> : showGame ? <Suspense fallback={<DestinationSectionSkeleton label="Loading Game Flow & shots…" />}><HistoricalDeepBody gameId={gameId} seasonHint={seasonHint} homeLabel={shell.game.homeTeamAbbr ?? "Home"} awayLabel={shell.game.awayTeamAbbr ?? "Away"} /></Suspense> : null}
-    {!presentation.canRenderDeepFeatures ? <GameUnavailablePanel gameId={gameId} backHref={backHref} /> : !showGame || preTip ? null : <Suspense fallback={<DestinationSectionSkeleton label="Loading Game Lab analysis…" />}><GameLabDeepBody gameId={gameId} arrival={arrival} hidePeriodTable={heroHasLineScore} /></Suspense>}
+    {showGame && preTip ? <GamePreTipBoard game={shell.game} /> : null}
+    {!presentation.canRenderDeepFeatures ? <GameUnavailablePanel gameId={gameId} backHref={backHref} /> : null}
     {showGame && !preTip ? (
+      <SpoilerShield gameId={gameId} risky={needsScoreMask(shell.game, new Date().getTime())}>
+      <Suspense fallback={<DestinationSectionSkeleton label="Loading Game Flow & shots…" />}><HistoricalDeepBody gameId={gameId} seasonHint={seasonHint} homeLabel={shell.game.homeTeamAbbr ?? "Home"} awayLabel={shell.game.awayTeamAbbr ?? "Away"} /></Suspense>
+      <Suspense fallback={<DestinationSectionSkeleton label="Loading Game Lab analysis…" />}><GameLabDeepBody gameId={gameId} arrival={arrival} hidePeriodTable={heroHasLineScore} /></Suspense>
       <details className="group sports-card overflow-hidden">
         <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3.5 sm:px-5 [&::-webkit-details-marker]:hidden">
           <span className="flex flex-col">
@@ -103,6 +108,7 @@ export default async function GamePage({ params, searchParams }: GamePageProps) 
           <Suspense fallback={<DestinationSectionSkeleton label="Loading Possession Explorer…" />}><PossessionExplorerIsland gameId={gameId} awayTeamKey={shell.game.awayTeamId} homeTeamKey={shell.game.homeTeamId} /></Suspense>
         </div>
       </details>
+      </SpoilerShield>
     ) : null}
   </main>;
   if (eraTheme) return <EraThemeScope theme={eraTheme}>{body}</EraThemeScope>;

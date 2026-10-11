@@ -3434,6 +3434,30 @@ svg [data-motion-dot] {
   box-shadow: 0 0 0 3px #fff, 0 0 18px 4px rgb(255 190 80 / 0.9);
 }
 
+/* Score delay: hide server-rendered scores until the client applies the delay. */
+html[data-score-delay] [data-score-scope]:not([data-delay-applied]) {
+  visibility: hidden;
+}
+
+[data-spoiler-shield],
+[data-shield-body] {
+  display: contents;
+}
+
+[data-shield-cover] {
+  display: none;
+}
+
+[data-spoiler-shield][data-shield-on] > [data-shield-cover],
+html[data-score-delay] [data-spoiler-shield][data-shield-risky]:not([data-shield-ready]) > [data-shield-cover] {
+  display: flex;
+}
+
+[data-spoiler-shield][data-shield-on] > [data-shield-body],
+html[data-score-delay] [data-spoiler-shield][data-shield-risky]:not([data-shield-ready]) > [data-shield-body] {
+  display: none;
+}
+
 /* Landmark season poster band, tinted by era via --era. */
 .tm-poster {
   background:

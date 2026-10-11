@@ -235,6 +235,7 @@ export function shouldDisplayScores(options: {
   awayScore: number;
 }): boolean {
   const { status, homeScore, awayScore } = options;
+  if (Number.isNaN(homeScore) || Number.isNaN(awayScore)) return false;
   if (isLiveLikeStatus(status) || status === "final" || status === "suspended") {
     return true;
   }

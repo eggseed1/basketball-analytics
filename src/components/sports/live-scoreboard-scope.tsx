@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 
 import { useLiveScoreboardRefresh } from "@/components/sports/use-live-scoreboard-refresh";
+import { ScoreDelayScope } from "@/components/sports/use-score-delay";
 import type { GameSummary } from "@/data/types";
 
 /**
@@ -23,5 +24,5 @@ export function LiveScoreboardScope({
     season,
     enabled,
   });
-  return <>{children(games)}</>;
+  return <ScoreDelayScope>{children(games)}</ScoreDelayScope>;
 }

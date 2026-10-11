@@ -8,6 +8,7 @@ import { SmoothScroll } from "@/components/smooth-scroll";
 import { ChartHoverTip } from "@/components/charts/chart-hover-tip";
 import { ScrollHoverGuard } from "@/components/continuity/scroll-hover-guard";
 import { OWNER_THEME_BOOT_SCRIPT } from "@/lib/owner-theme";
+import { SCORE_DELAY_BOOT_SCRIPT } from "@/lib/score-delay";
 import { SITE_NAME, SITE_URL } from "@/lib/site-url";
 
 import "./globals.css";
@@ -70,6 +71,10 @@ export default function RootLayout({
         <script
           id="owner-theme-boot"
           dangerouslySetInnerHTML={{ __html: OWNER_THEME_BOOT_SCRIPT }}
+        />
+        <script
+          id="score-delay-boot"
+          dangerouslySetInnerHTML={{ __html: SCORE_DELAY_BOOT_SCRIPT }}
         />
         <OwnerThemeProvider>
           <SmoothScroll />

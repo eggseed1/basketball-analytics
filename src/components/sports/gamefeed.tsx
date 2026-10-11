@@ -10,6 +10,7 @@ import {
   TransitionLink,
 } from "@/components/continuity/query-nav";
 import { LiveScoreboardScope } from "@/components/sports/live-scoreboard-scope";
+import { ScoreDelayScope, useDelayedGames } from "@/components/sports/use-score-delay";
 import { UpcomingGameList } from "@/components/sports/upcoming-game-list";
 import type { GameSummary } from "@/data/types";
 import {
@@ -313,11 +314,12 @@ function ViewTabs({
 
 function MonthGrid({
   monthKey,
-  games,
+  games: monthGames,
 }: {
   monthKey: string;
   games: GameSummary[];
 }) {
+  const games = useDelayedGames(monthGames);
   const [year, month] = monthKey.split("-").map(Number) as [number, number];
   const byDate = groupByDate(games);
   const dim = daysInMonth(year, month);
@@ -601,7 +603,9 @@ export function Gamefeed({
 
           {view === "month" ? (
             <>
-              <MonthGrid monthKey={monthKey} games={monthGames} />
+              <ScoreDelayScope>
+                <MonthGrid monthKey={monthKey} games={monthGames} />
+              </ScoreDelayScope>
               {monthGames.length === 0 ? (
                 <p className="rounded-md border border-dashed border-border px-4 py-8 text-center text-[14px] text-muted-foreground">
                   No games on the scoreboard for {monthLabel(monthKey)}. Try{" "}

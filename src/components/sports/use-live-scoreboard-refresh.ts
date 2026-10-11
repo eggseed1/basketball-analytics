@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { useDelayedGames } from "@/components/sports/use-score-delay";
 import type { GameSummary } from "@/data/types";
 import { parseTipOffMs } from "@/lib/game-countdown";
 import {
@@ -206,8 +207,10 @@ export function useLiveScoreboardRefresh(
     };
   }, [enabled, poll, liveIntervalMs]);
 
+  const shown = useDelayedGames(games);
+
   return {
-    games,
+    games: shown,
     lastRetrievedAt,
     failureStreak,
     diagnostics: diagnostics.current,

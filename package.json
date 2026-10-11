@@ -221,7 +221,8 @@
     "front-office:sync": "npx tsx scripts/sync-team-front-office.ts && node scripts/build-runtime-front-office-snapshot.mjs",
     "drbl:season-readiness": "tsx scripts/drbl-season-readiness.ts",
     "test:home-season-moment": "tsx scripts/test-home-season-moment.ts",
-    "test:on-off": "tsx scripts/test-on-off.ts"
+    "test:on-off": "tsx scripts/test-on-off.ts",
+    "test:score-delay": "tsx scripts/test-score-delay.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
