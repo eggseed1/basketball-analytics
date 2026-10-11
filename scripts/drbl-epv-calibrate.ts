@@ -16,7 +16,7 @@ import {
   loadEpvRowsForSeasons,
   rollingOriginBySeason,
 } from "../drbl/models/epv-data";
-import type { EpvModelArtifact } from "../drbl/models/expected-points";
+import { EPV_COEFFS_PATH, type EpvModelArtifact } from "../drbl/models/expected-points";
 import type { EpvCalibrationMetrics } from "../drbl/models/epv-model";
 
 function arg(name: string): string | undefined {
@@ -88,10 +88,9 @@ async function main() {
     mode,
   };
 
-  const outDir = path.join(process.cwd(), "data", "drbl", "models");
-  await mkdir(outDir, { recursive: true });
-  const outPath = path.join(outDir, "epv-coeffs.json");
-  await writeFile(outPath, JSON.stringify(artifact, null, 2), "utf8");
+  const outPath = path.join(process.cwd(), EPV_COEFFS_PATH);
+  await mkdir(path.dirname(outPath), { recursive: true });
+  await writeFile(outPath, `${JSON.stringify(artifact, null, 2)}\n`, "utf8");
 
   const ridgeBetter =
     holdoutMetrics.mae <= heuristicMetrics.mae ? "ridge" : "heuristic";

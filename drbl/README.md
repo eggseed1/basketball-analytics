@@ -36,6 +36,7 @@ Writes:
 - `data/drbl/raw/` — immutable NBA JSON (gitignored)
 - `data/drbl/normalized/{season}/` — events, possessions, reconcile, offline player season
 - `src/data/drbl/precomputed/{season}.json` — loaded by the website
+- `drbl/models/epv-coeffs.json` — fitted EPV coefficients, tracked; written by `drbl:epv`, and `drbl:compute` fails without them
 
 ## Layout
 

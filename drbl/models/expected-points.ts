@@ -1,6 +1,8 @@
 /**
  * DRBL-Core / M5 expected possession value.
- * Prefer fitted ridge coefficients when present; else hand-tuned prior.
+ * Fitted ridge coefficients from the tracked EPV_COEFFS_PATH once loaded;
+ * the hand-tuned prior only before loading. Season computes call
+ * requireEpvModel so a published artifact never uses the prior.
  */
 
 import { readFile } from "node:fs/promises";
@@ -37,6 +39,9 @@ export interface EpvModelArtifact {
   mode?: string;
 }
 
+/** Repo-relative; refit with `npm run drbl:epv`, which overwrites it. */
+export const EPV_COEFFS_PATH = path.join("drbl", "models", "epv-coeffs.json");
+
 let cachedCoeffs: number[] | null | undefined;
 
 export function clearEpvCoefficientCache(): void {
@@ -45,13 +50,7 @@ export function clearEpvCoefficientCache(): void {
 
 export async function loadEpvCoefficients(): Promise<number[] | null> {
   if (cachedCoeffs !== undefined) return cachedCoeffs;
-  const file = path.join(
-    process.cwd(),
-    "data",
-    "drbl",
-    "models",
-    "epv-coeffs.json"
-  );
+  const file = path.join(process.cwd(), EPV_COEFFS_PATH);
   try {
     const raw = await readFile(file, "utf8");
     const artifact = JSON.parse(raw) as EpvModelArtifact;
@@ -106,4 +105,13 @@ function clamp(n: number, lo: number, hi: number): number {
 export async function warmEpvModel(): Promise<boolean> {
   const coeffs = await loadEpvCoefficients();
   return coeffs != null;
+}
+
+/** Like warmEpvModel, but throws instead of falling back to the hand-tuned prior. */
+export async function requireEpvModel(): Promise<void> {
+  if (!(await warmEpvModel())) {
+    throw new Error(
+      `fitted EPV coefficients missing or invalid at ${EPV_COEFFS_PATH}; refusing to fall back to the hand-tuned prior`
+    );
+  }
 }

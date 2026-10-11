@@ -1,0 +1,53 @@
+{
+  "version": "epv-ridge-v1",
+  "fittedAt": "2026-08-12T01:44:23.885Z",
+  "featureNames": [
+    "bias",
+    "offenseIsHome",
+    "clockLe4",
+    "clockLe8",
+    "periodGe4",
+    "absDiffGe10",
+    "absDiffGe20",
+    "trailingGe10",
+    "leadingGe10",
+    "clockNorm"
+  ],
+  "coefficients": [
+    1.138709,
+    -0.015257,
+    -0.61111,
+    0.113626,
+    0.055415,
+    -0.010306,
+    0.105776,
+    -0.120629,
+    0.110323,
+    -0.051525
+  ],
+  "train": {
+    "n": 8142,
+    "mae": 1.108,
+    "rmse": 1.175,
+    "meanPredicted": 1.119,
+    "meanActual": 1.117
+  },
+  "holdout": {
+    "n": 2192,
+    "mae": 1.124,
+    "rmse": 1.19,
+    "meanPredicted": 1.11,
+    "meanActual": 1.116
+  },
+  "heuristicHoldout": {
+    "n": 2192,
+    "mae": 1.125,
+    "rmse": 1.192,
+    "meanPredicted": 1.085,
+    "meanActual": 1.116
+  },
+  "seasons": [
+    "2024-25"
+  ],
+  "mode": "chrono"
+}

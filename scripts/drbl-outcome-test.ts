@@ -39,7 +39,7 @@ import {
   ANCHORED_LINEUP_VERSION,
   fitAnchoredLineup,
 } from "../drbl/models/anchored-lineup";
-import { warmEpvModel } from "../drbl/models/expected-points";
+import { requireEpvModel } from "../drbl/models/expected-points";
 import {
   attributeGamePlayerValue,
   finalizePlayerSeasonRows,
@@ -337,7 +337,7 @@ async function main() {
     throw new Error(`no season under data/drbl/normalized has ≥${MIN_GAMES} games`);
   }
   log("seasons with local possessions:", seasons.join(", "));
-  await warmEpvModel();
+  await requireEpvModel();
 
   const reports: OutcomeReport[] = [];
   const selections: Record<string, unknown> = {};

@@ -9,7 +9,7 @@ import {
   SEQUENTIAL_ATTRIBUTION_VERSION,
   type DrblPlayerSeasonRow,
 } from "./player-value";
-import { warmEpvModel } from "./expected-points";
+import { requireEpvModel } from "./expected-points";
 import {
   accumulateReplacementSignals,
   buildReplacementPool,
@@ -197,7 +197,7 @@ export async function computeSeasonDrbl(
     games = games.slice(0, options.limit);
   }
 
-  await warmEpvModel();
+  await requireEpvModel();
 
   const processedGames: Awaited<ReturnType<typeof processGame>>[] = [];
   let gamesFailed = 0;
