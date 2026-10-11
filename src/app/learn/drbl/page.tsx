@@ -116,6 +116,12 @@ export default function LearnDrblPage() {
   const pbpKeepsOwn = carryover.buckets.filter((b) => b.pbpToNextPbp > b.blendToNextPbp).length;
   const contract = contractValueModel();
   const drblShare = contract.projectionBasis?.drblShare ?? null;
+  const basisStudy = guide.contractBasis ?? null;
+  const basisRow = (key: "war1" | "mix" | "drbl") => basisStudy?.rows.find((r) => r.key === key && Number.isFinite(r.r2));
+  const [basisWar1, basisMix, basisDrbl] = [basisRow("war1"), basisRow("mix"), basisRow("drbl")];
+  const pct = (r2: number) => `${Math.round(r2 * 100)}%`;
+  const countWord = (n: number) =>
+    ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"][n] ?? String(n);
   const war1Leader = [...scatter.points].sort((a, b) => b[5] - a[5])[0];
   const drblLeader = leaders[0];
   const firstSeason = coverage[0];
@@ -456,7 +462,7 @@ DRBL/100 = c × N / (N + ${sampleK}) × blend`}
               <li>
                 <strong>Contract surplus</strong> projects a player&apos;s future seasons from his recent history.
                 {drblShare != null
-                  ? ` Each past season counts ${drblShare === 1 ? "its DRBL/100" : drblShare === 0.5 ? "half from DRBL/100 and half from WAR1" : `${Math.round(drblShare * 100)}% from DRBL/100 and the rest from WAR1`}, both turned into wins.`
+                  ? ` Each past season counts ${drblShare === 1 ? "its DRBL/100, turned into wins." : `${drblShare === 0.5 ? "half from DRBL/100 and half from WAR1" : `${Math.round(drblShare * 100)}% from DRBL/100 and the rest from WAR1`}, both turned into wins.`}`
                   : " Each past season counts its WAR1."}{" "}
                 What a season already played was worth, and salary played off, use WAR1. See the{" "}
                 <Link href="/learn/salary#surplus" className={linkClass}>
@@ -493,6 +499,27 @@ DRBL/100 = c × N / (N + ${sampleK}) × blend`}
                 Why a mix? Tested on past contracts, projections from WAR1 history alone predicted each player&apos;s
                 next WAR1 a little better. Projections that leaned on DRBL/100 predicted real team records better. The
                 half-and-half mix kept most of both.
+              </p>
+            </GuideNote>
+          ) : null}
+          {drblShare === 1 && basisStudy && basisWar1 && basisMix && basisDrbl ? (
+            <GuideNote>
+              <p>
+                Why DRBL/100 alone? We refit the contract model on the seasons before each year from{" "}
+                {basisStudy.seasons[0]} to {basisStudy.seasons.at(-1)}, once on WAR1, once on DRBL/100 and on mixes of
+                the two. Then we checked each projection against the next season&apos;s{" "}
+                {basisStudy.games.toLocaleString("en-US")} games. Projections from DRBL/100 explained{" "}
+                {pct(basisDrbl.r2)} of the spread in final margins, against {pct(basisWar1.r2)} for WAR1 and{" "}
+                {pct(basisMix.r2)} for the half-and-half mix we used before.
+                {basisDrbl.teamR != null && basisWar1.teamR != null
+                  ? ` They also tracked team records more closely (correlation ${basisDrbl.teamR.toFixed(2)}, against ${basisWar1.teamR.toFixed(2)} for WAR1).`
+                  : ""}{" "}
+                DRBL/100 did better than WAR1 in{" "}
+                {basisStudy.drblBetterSeasons === basisStudy.seasons.length
+                  ? `all ${countWord(basisStudy.seasons.length)}`
+                  : `${countWord(basisStudy.drblBetterSeasons)} of ${countWord(basisStudy.seasons.length)}`}{" "}
+                seasons. WAR1 history still predicts next season&apos;s WAR1 more closely, since that&apos;s the same
+                measure.
               </p>
             </GuideNote>
           ) : null}

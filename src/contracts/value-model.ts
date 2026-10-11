@@ -6,8 +6,9 @@
  * an average-player baseline, so we add back what a minimum-salary player
  * would lose over the same possessions. Value is those wins times the
  * league's going price per win, expressed as a share of the cap. Future
- * seasons are projected from a mix of past WAR1 and past DRBL/100 mapped onto
- * the WAR1 scale (`drblBasis`); seasons already played are judged on WAR1.
+ * seasons are projected from past DRBL/100 mapped onto the WAR1 scale
+ * (`drblBasis`, optionally mixed with WAR1 by `share`); seasons already played
+ * are judged on WAR1.
  */
 
 export type SeasonLine = {

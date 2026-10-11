@@ -56,6 +56,15 @@ export type DrblGuideSnapshot = {
   scatter: { season: string; minPossessions: number; points: DrblGuideScatterPoint[] };
   carryover: { minPossessions: number; seasons: string; buckets: DrblCarryoverBucket[] };
   outcome: { generatedAt: string; tests: DrblOutcomeTest[] };
+  /** scripts/study-contract-basis.ts: contract projections scored on next-season games. Null when not run. */
+  contractBasis?: {
+    generatedAt: string;
+    seasons: string[];
+    games: number;
+    teamSeasons: number | null;
+    drblBetterSeasons: number;
+    rows: Array<{ key: "war1" | "mix" | "drbl"; r2: number; teamR: number | null }>;
+  } | null;
 };
 
 export function drblGuide(): DrblGuideSnapshot {

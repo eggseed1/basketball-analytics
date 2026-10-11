@@ -28,11 +28,13 @@ import { P1_POINTS_PER_WIN } from "../../src/lib/drbl-public-labels";
  * What projections are built from: "drbl100" (each past season's DRBL/100,
  * mapped onto the WAR1 scale, mixed with its WAR1 by DRBL_SHARE) or "war1".
  * Realized worth, price per win and replacement stay WAR1 either way. Set
- * CONTRACT_VALUE_BASIS=war1 or CONTRACT_VALUE_DRBL_SHARE=0..1 to compare.
+ * CONTRACT_VALUE_BASIS=war1 or CONTRACT_VALUE_DRBL_SHARE=0..1 to compare;
+ * scripts/study-contract-basis.ts scores the options against game margins
+ * and team records (DRBL/100 only won every season).
  */
 export const PROJECTION_BASIS: "drbl100" | "war1" =
   process.env.CONTRACT_VALUE_BASIS === "war1" ? "war1" : "drbl100";
-const DRBL_SHARE = Number(process.env.CONTRACT_VALUE_DRBL_SHARE ?? 0.5);
+const DRBL_SHARE = Number(process.env.CONTRACT_VALUE_DRBL_SHARE ?? 1);
 
 const root = process.cwd();
 export const readJson = <T>(rel: string): T =>
@@ -190,8 +192,33 @@ export const REPLACEMENT_MAX_SHARE = 0.015;
 const AGE_KNEE = 30;
 const LOW_SHARE_CAP = 0.05;
 
-export function fitModel(inputs: ContractValueInputs, throughStartYear: number): FittedModel {
+/** Study overrides; production reads the env defaults above. */
+export type FitOptions = {
+  basis?: "drbl100" | "war1";
+  drblShare?: number;
+  /** Skip the grid search and use these season weights and regression K. */
+  fixed?: { weights: number[]; K: number };
+  /** Grid-search target: next-season WAR1 rate, or next-season basis rate. */
+  tuneOn?: "war1" | "basis";
+};
+
+/**
+ * The grid search on the DRBL basis picks K 8000, but less shrinkage spreads
+ * projections and the minimum-salary floor then lifts league-wide worth about
+ * 7% over salary. K 15000 keeps the coming season within 5% of even and scores
+ * within 0.005 R² of K 8000 on next-season game margins.
+ */
+export const PRODUCTION_FIT: FitOptions = { fixed: { weights: [3, 2, 1], K: 15000 } };
+
+export function fitModel(
+  inputs: ContractValueInputs,
+  throughStartYear: number,
+  options: FitOptions = PRODUCTION_FIT
+): FittedModel {
   const { overlay, salaryBySeason, histories, capFor, lineAt, shareFor } = inputs;
+  const basis = options.basis ?? PROJECTION_BASIS;
+  const drblShare = options.drblShare ?? DRBL_SHARE;
+  const tuneOn = options.tuneOn ?? "basis";
   const seasons = inputs.seasons.filter((s) => seasonStartYear(s) <= throughStartYear);
   const linesThrough = (lines: SeasonLine[]) =>
     lines.filter((l) => seasonStartYear(l.season) <= throughStartYear);
@@ -254,7 +281,7 @@ export function fitModel(inputs: ContractValueInputs, throughStartYear: number):
 
   // ---- DRBL/100 onto the WAR1 scale, same season, weighted by possessions
   let drblBasis: ProjectionParams["drblBasis"];
-  if (PROJECTION_BASIS === "drbl100") {
+  if (basis === "drbl100") {
     const rows = [...histories.values()].flatMap((h) =>
       linesThrough(h.lines).filter((l) => l.drblWins != null && l.possessions > 0)
     );
@@ -263,7 +290,7 @@ export function fitModel(inputs: ContractValueInputs, throughStartYear: number):
       rows.map((l) => l.war1 / l.possessions),
       rows.map((l) => l.possessions)
     );
-    drblBasis = { intercept, slope, share: DRBL_SHARE };
+    drblBasis = { intercept, slope, share: drblShare };
   }
   const basisRate = (l: SeasonLine) => basisWins(l, { drblBasis }) / l.possessions;
 
@@ -321,7 +348,7 @@ export function fitModel(inputs: ContractValueInputs, throughStartYear: number):
     max: Math.max(...[...histories.values()].flatMap((h) => linesThrough(h.lines).map((l) => l.possessions))),
   };
 
-  // ---- Regression strength and season weights: grid search on next-season rate
+  // ---- Regression strength and season weights: grid search on next-season basis rate
   function rateError(weights: number[], K: number): number {
     const p = { weights, regressionPossessions: K, leagueRate, priorByShare, drblBasis } as ProjectionParams;
     let se = 0;
@@ -333,18 +360,21 @@ export function fitModel(inputs: ContractValueInputs, throughStartYear: number):
         if (!actual || actual.possessions < 1000) continue;
         const base = baseRate(h.lines.filter((l) => seasonStartYear(l.season) < t), t - 1, p, shareFor(id, t));
         if (!base) continue;
-        se += ((base.rate - actual.war1 / actual.possessions) * actual.possessions) ** 2;
+        const target = tuneOn === "basis" ? basisRate(actual) : actual.war1 / actual.possessions;
+        se += ((base.rate - target) * actual.possessions) ** 2;
         n += 1;
       }
     }
     return Math.sqrt(se / n);
   }
   let best = { weights: [3, 2, 1], K: 8000, err: Infinity };
-  for (const weights of [[3, 2, 1], [2, 1.5, 1], [5, 4, 3], [1, 1, 1], [1]])
-    for (const K of [500, 1000, 2000, 4000, 6000, 8000, 10000, 12000, 15000, 20000]) {
-      const err = rateError(weights, K);
-      if (err < best.err) best = { weights, K, err };
-    }
+  if (options.fixed) best = { ...options.fixed, err: rateError(options.fixed.weights, options.fixed.K) };
+  else
+    for (const weights of [[3, 2, 1], [2, 1.5, 1], [5, 4, 3], [1, 1, 1], [1]])
+      for (const K of [500, 1000, 2000, 4000, 6000, 8000, 10000, 12000, 15000, 20000]) {
+        const err = rateError(weights, K);
+        if (err < best.err) best = { weights, K, err };
+      }
 
   const params: ProjectionParams = {
     weights: best.weights,

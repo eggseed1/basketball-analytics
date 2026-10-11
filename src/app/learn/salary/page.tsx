@@ -305,8 +305,10 @@ export default function LearnSalaryPage() {
                   <Link href="/learn/drbl" className="font-semibold text-foreground underline-offset-4 hover:underline">
                     DRBL/100
                   </Link>{" "}
-                  turned into wins. In back-tests, leaning on DRBL/100 predicted real team records better, and WAR1
-                  history predicted each player&apos;s next WAR1 a little better.
+                  turned into wins.{" "}
+                  {prices.projection.drblShare === 1
+                    ? "In back-tests, projections from DRBL/100 predicted next season's game margins and team records better than projections from WAR1. WAR1 history still predicts next season's WAR1 more closely, since that's the same measure."
+                    : "In back-tests, leaning on DRBL/100 predicted real team records better, and WAR1 history predicted each player's next WAR1 a little better."}
                 </>
               ) : null}
             </p>

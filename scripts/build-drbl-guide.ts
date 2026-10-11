@@ -1,8 +1,8 @@
 /**
  * Bake the numbers behind the DRBL guide at /learn/drbl.
  *
- * Reads the published season artifacts and the latest outcome test, and
- * writes src/data/runtime/drbl-guide-snapshot.json. The season artifacts are
+ * Reads the published season artifacts, the latest outcome test and the
+ * contract basis study, and writes src/data/runtime/drbl-guide-snapshot.json. The season artifacts are
  * too large to bundle into the page, so the guide reads only this summary.
  *
  * Run: npx tsx scripts/build-drbl-guide.ts
@@ -170,6 +170,38 @@ const tests = outcome.reports.flatMap((r) => {
   ];
 });
 
+type BasisResult = { name: string; r2: number; vsWar1?: { verdict: string } | null };
+type BasisStudy = {
+  generatedAt: string;
+  scoreboard: Array<{ season: string; games: number; results: BasisResult[] }>;
+  pooled: BasisResult[];
+  team: Array<{ name: string; n: number; r: number }> | null;
+};
+const BASIS_ROWS = [
+  { key: "war1", name: "WAR1 only" },
+  { key: "mix", name: "Mix 50% DRBL" },
+  { key: "drbl", name: "DRBL/100 only, [3,2,1] K15000 (shipped)" },
+] as const;
+const basisFile = path.join(root, "reports/contract-basis-study/latest.json");
+const basisStudy = existsSync(basisFile) ? (JSON.parse(readFileSync(basisFile, "utf8")) as BasisStudy) : null;
+const contractBasis =
+  basisStudy && basisStudy.scoreboard.length
+    ? {
+        generatedAt: basisStudy.generatedAt,
+        seasons: basisStudy.scoreboard.map((s) => s.season),
+        games: basisStudy.scoreboard.reduce((s, x) => s + x.games, 0),
+        teamSeasons: basisStudy.team?.[0]?.n ?? null,
+        drblBetterSeasons: basisStudy.scoreboard.filter(
+          (s) => s.results.find((r) => r.name === BASIS_ROWS[2].name)?.vsWar1?.verdict === "better"
+        ).length,
+        rows: BASIS_ROWS.map((b) => ({
+          key: b.key,
+          r2: round(basisStudy.pooled.find((r) => r.name === b.name)?.r2 ?? NaN, 3),
+          teamR: basisStudy.team ? round(basisStudy.team.find((r) => r.name === b.name)?.r ?? NaN, 3) : null,
+        })),
+      }
+    : null;
+
 const out = {
   version: 1,
   generatedAt: new Date().toISOString(),
@@ -181,6 +213,7 @@ const out = {
   scatter,
   carryover: { minPossessions: PAIR_MIN, seasons: `${artifacts[0].season} to ${latest.season}`, buckets: carryover },
   outcome: { generatedAt: outcome.generatedAt, tests },
+  contractBasis,
 };
 writeFileSync(path.join(root, "src/data/runtime/drbl-guide-snapshot.json"), JSON.stringify(out));
 console.log(
