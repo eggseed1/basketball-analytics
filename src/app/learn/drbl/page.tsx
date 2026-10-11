@@ -495,15 +495,6 @@ DRBL/100 = c × N / (N + ${sampleK}) × blend`}
             { label: "Compare players", href: "/compare" },
           ]}
         >
-          {drblShare != null && drblShare > 0 && drblShare < 1 ? (
-            <GuideNote>
-              <p>
-                Why a mix? Tested on past contracts, projections from WAR1 history alone predicted each player&apos;s
-                next WAR1 a little better. Projections that leaned on DRBL/100 predicted real team records better. The
-                half-and-half mix kept most of both.
-              </p>
-            </GuideNote>
-          ) : null}
           {drblShare === 1 && basisStudy && basisWar1 && basisMix && basisDrbl ? (
             <GuideNote>
               <p>
@@ -520,7 +511,8 @@ DRBL/100 = c × N / (N + ${sampleK}) × blend`}
                 {basisStudy.drblBetterSeasons === basisStudy.seasons.length
                   ? `all ${countWord(basisStudy.seasons.length)}`
                   : `${countWord(basisStudy.drblBetterSeasons)} of ${countWord(basisStudy.seasons.length)}`}{" "}
-                seasons. That result is also why WAR1 now builds on DRBL/100.
+                seasons. WAR1 now builds on DRBL/100 too, so seasons already played and projected seasons use the same
+                rating.
               </p>
             </GuideNote>
           ) : null}

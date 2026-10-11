@@ -257,8 +257,9 @@ export default function LearnSalaryPage() {
               </p>
               <p className="mt-2">
                 For seasons already played, wins come from{" "}
-                <Link href="/learn/drbl/war1" className="font-semibold text-foreground underline-offset-4 hover:underline">WAR1</Link>,
-                adjusted down to replacement level. A player at or below replacement is worth the minimum, never less.
+                <Link href="/learn/drbl/war1" className="font-semibold text-foreground underline-offset-4 hover:underline">WAR1</Link>.
+                WAR1 counts from an average player, so we move the baseline down to replacement level, which adds a
+                little for every possession played. A player at or below replacement is worth the minimum, never less.
                 Move the sliders to see how the two pieces add up.
               </p>
             </>
@@ -293,22 +294,16 @@ export default function LearnSalaryPage() {
               seasons (the latest counts most), pull small samples toward average, apply
               an aging curve, and estimate his minutes. Each year gets an 80% range, and in back-tests about 80% of real
               outcomes landed inside it.
-              {prices.projection.drblShare != null && prices.projection.drblShare > 0 ? (
+              {prices.projection.drblShare === 1 ? (
                 <>
                   {" "}
-                  Each past season counts{" "}
-                  {prices.projection.drblShare === 1
-                    ? "its "
-                    : prices.projection.drblShare === 0.5
-                      ? "half from WAR1 and half from "
-                      : `${Math.round((1 - prices.projection.drblShare) * 100)}% from WAR1 and the rest from `}
+                  Each past season counts its{" "}
                   <Link href="/learn/drbl" className="font-semibold text-foreground underline-offset-4 hover:underline">
                     DRBL/100
                   </Link>{" "}
-                  turned into wins.{" "}
-                  {prices.projection.drblShare === 1
-                    ? "That is the same as his WAR1 for the season. In back-tests, projections built this way predicted next season's game margins and team records better than projections from play-by-play credit alone, which is how WAR1 was counted before October 2026."
-                    : "In back-tests, leaning on DRBL/100 predicted real team records better, and WAR1 history predicted each player's next WAR1 a little better."}
+                  turned into wins. That is the same as his WAR1 for the season. In back-tests, projections built this
+                  way predicted next season&apos;s game margins and team records better than projections from
+                  play-by-play credit alone, which is how WAR1 was counted before October 2026.
                 </>
               ) : null}
             </p>
