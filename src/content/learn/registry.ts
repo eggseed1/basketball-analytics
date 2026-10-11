@@ -683,7 +683,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "R1 Pts",
     category: "proprietary",
     tooltip:
-      "The point-credit ledger behind WAR1. Same player order as WAR1, different units. Usually hidden on main boards.",
+      "WAR1 in points: DRBL/100 times possessions, divided by 100. Same player order as WAR1. Usually hidden on main boards.",
     showTooltip: true,
     learnSlug: "r1-points",
     relatedIds: ["r1_win_eq", "drbl", "r1"],
@@ -701,7 +701,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "WAR1",
     category: "proprietary",
     tooltip:
-      "How much season value did they pile up? DRBL's wins-style total above the role-matched R1 baseline.",
+      "How much season value did they pile up? DRBL/100 times playing time, in wins above an average player.",
     showTooltip: true,
     learnSlug: "war1",
     relatedIds: ["drbl", "r1_points", "r1"],

@@ -45,7 +45,7 @@ export const DRBL_VOCABULARY: DrblVocabEntry[] = [
     label: "R1 Points",
     tier: "diagnostic",
     glossary:
-      "R1 Points are advanced accounting behind WAR1 (same ranking). Prefer WAR1 on public boards.",
+      "R1 Points are WAR1 in points: DRBL/100 × possessions ÷ 100 (same ranking). Prefer WAR1 on public boards.",
     synonyms: ["r1 points", "r1 pts", "r1 point"],
   },
   {
@@ -53,7 +53,7 @@ export const DRBL_VOCABULARY: DrblVocabEntry[] = [
     label: "WAR1",
     tier: "canonical",
     glossary:
-      "WAR1 is how much season value the player accumulated, in win-equivalent units. Not traditional WAR.",
+      "WAR1 is how much season value the player accumulated: DRBL/100 times playing time, in wins above an average player. It always has the sign of DRBL/100. Not traditional WAR.",
     synonyms: [
       "wins above r1",
       "war1",

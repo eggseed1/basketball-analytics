@@ -2,7 +2,7 @@
  * Canonical season registry — single source for website season selection.
  * Historical seasons are added only after M17a support-tier gates pass.
  */
-import { BOX_BLEND_MODEL_VERSION } from "../models/published-rating";
+import { BLEND_R1_POINTS_VERSION, BLEND_R1_WINEQ_VERSION, BOX_BLEND_MODEL_VERSION } from "../models/published-rating";
 
 export type HistoricalSupportTier =
   | "A_FULL_SOURCE_SUPPORT"
@@ -73,8 +73,8 @@ export const SEASON_REGISTRY: readonly SeasonRegistryEntry[] = [
     dataQualityNote:
       "72-game season. The play-by-play rate comes from the original feed, where about 0.9% of lineup snapshots are incomplete. The box-score and lineup inputs come from a re-import of stats.nba.com play-by-play. Scores match the official box score.",
     abilityModelVersion: DRBL_BOX_BLEND_ABILITY_VERSION,
-    r1PointValueVersion: DRBL_V1_R1_POINTS_VERSION,
-    r1WinEquivalentVersion: DRBL_V1_R1_WINEQ_VERSION,
+    r1PointValueVersion: BLEND_R1_POINTS_VERSION,
+    r1WinEquivalentVersion: BLEND_R1_WINEQ_VERSION,
     normalizationVersion: HISTORICAL_NORMALIZATION_VERSION,
     qualityFlags: ["SOURCE_LINEUP_INCOMPLETE_RAW", "RETROSPECTIVE_FROZEN_V1"],
   },
@@ -93,8 +93,8 @@ export const SEASON_REGISTRY: readonly SeasonRegistryEntry[] = [
     dataQualityNote:
       "The play-by-play rate comes from the original feed, where about 1.1% of lineup snapshots are incomplete. The box-score and lineup inputs come from a re-import of stats.nba.com play-by-play. Scores match the official box score.",
     abilityModelVersion: DRBL_BOX_BLEND_ABILITY_VERSION,
-    r1PointValueVersion: DRBL_V1_R1_POINTS_VERSION,
-    r1WinEquivalentVersion: DRBL_V1_R1_WINEQ_VERSION,
+    r1PointValueVersion: BLEND_R1_POINTS_VERSION,
+    r1WinEquivalentVersion: BLEND_R1_WINEQ_VERSION,
     normalizationVersion: HISTORICAL_NORMALIZATION_VERSION,
     qualityFlags: ["SOURCE_LINEUP_INCOMPLETE_RAW", "RETROSPECTIVE_FROZEN_V1"],
   },
@@ -113,8 +113,8 @@ export const SEASON_REGISTRY: readonly SeasonRegistryEntry[] = [
     dataQualityNote:
       "About 1.4% of lineup snapshots in the source play-by-play are incomplete. Scores match the official box score.",
     abilityModelVersion: DRBL_BOX_BLEND_ABILITY_VERSION,
-    r1PointValueVersion: DRBL_V1_R1_POINTS_VERSION,
-    r1WinEquivalentVersion: DRBL_V1_R1_WINEQ_VERSION,
+    r1PointValueVersion: BLEND_R1_POINTS_VERSION,
+    r1WinEquivalentVersion: BLEND_R1_WINEQ_VERSION,
     normalizationVersion: HISTORICAL_NORMALIZATION_VERSION,
     qualityFlags: ["SOURCE_LINEUP_INCOMPLETE_RAW", "RETROSPECTIVE_FROZEN_V1"],
   },
@@ -133,8 +133,8 @@ export const SEASON_REGISTRY: readonly SeasonRegistryEntry[] = [
     dataQualityNote:
       "About 1.4% of lineup snapshots in the source play-by-play are incomplete. Scores match the official box score.",
     abilityModelVersion: DRBL_BOX_BLEND_ABILITY_VERSION,
-    r1PointValueVersion: DRBL_V1_R1_POINTS_VERSION,
-    r1WinEquivalentVersion: DRBL_V1_R1_WINEQ_VERSION,
+    r1PointValueVersion: BLEND_R1_POINTS_VERSION,
+    r1WinEquivalentVersion: BLEND_R1_WINEQ_VERSION,
     normalizationVersion: HISTORICAL_NORMALIZATION_VERSION,
     qualityFlags: ["SOURCE_LINEUP_INCOMPLETE_RAW", "RETROSPECTIVE_FROZEN_V1"],
   },
@@ -153,8 +153,8 @@ export const SEASON_REGISTRY: readonly SeasonRegistryEntry[] = [
     dataQualityNote:
       "Canonical production season (M16l3). Source/reconstruction metadata notes raw lineup completeness below a strict 99.9% historical Tier-A gate; product remains canonical. DRBL/100 is the box blend; R1 Points and WAR1 formulas unchanged.",
     abilityModelVersion: DRBL_BOX_BLEND_ABILITY_VERSION,
-    r1PointValueVersion: DRBL_V1_R1_POINTS_VERSION,
-    r1WinEquivalentVersion: DRBL_V1_R1_WINEQ_VERSION,
+    r1PointValueVersion: BLEND_R1_POINTS_VERSION,
+    r1WinEquivalentVersion: BLEND_R1_WINEQ_VERSION,
     normalizationVersion: HISTORICAL_NORMALIZATION_VERSION,
     qualityFlags: ["SOURCE_LINEUP_INCOMPLETE_RAW"],
   },
@@ -173,8 +173,8 @@ export const SEASON_REGISTRY: readonly SeasonRegistryEntry[] = [
     dataQualityNote:
       "Canonical production season; reserved outcomes consumed once in M16l2. Source-quality metadata only — model product status remains CANONICAL_PRODUCTION.",
     abilityModelVersion: DRBL_BOX_BLEND_ABILITY_VERSION,
-    r1PointValueVersion: DRBL_V1_R1_POINTS_VERSION,
-    r1WinEquivalentVersion: DRBL_V1_R1_WINEQ_VERSION,
+    r1PointValueVersion: BLEND_R1_POINTS_VERSION,
+    r1WinEquivalentVersion: BLEND_R1_WINEQ_VERSION,
     normalizationVersion: HISTORICAL_NORMALIZATION_VERSION,
     qualityFlags: ["SOURCE_LINEUP_INCOMPLETE_RAW"],
   },

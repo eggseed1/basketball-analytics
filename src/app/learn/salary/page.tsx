@@ -307,7 +307,7 @@ export default function LearnSalaryPage() {
                   </Link>{" "}
                   turned into wins.{" "}
                   {prices.projection.drblShare === 1
-                    ? "In back-tests, projections from DRBL/100 predicted next season's game margins and team records better than projections from WAR1. WAR1 history still predicts next season's WAR1 more closely, since that's the same measure."
+                    ? "That is the same as his WAR1 for the season. In back-tests, projections built this way predicted next season's game margins and team records better than projections from play-by-play credit alone, which is how WAR1 was counted before October 2026."
                     : "In back-tests, leaning on DRBL/100 predicted real team records better, and WAR1 history predicted each player's next WAR1 a little better."}
                 </>
               ) : null}

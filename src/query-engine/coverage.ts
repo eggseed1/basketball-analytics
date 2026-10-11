@@ -182,9 +182,9 @@ export function getAskMetricCoverageAudit(
       latestSeason: listCanonicalR1Seasons().at(-1) ?? current,
       playerCoverage: "Canonical R1 seasons in DRBL registry",
       reliable: true,
-      sourceLabel: "DRBL R1 Points (accounting / advanced)",
+      sourceLabel: "DRBL R1 Points (advanced)",
       notes:
-        "Underlying point-equivalent attribution. Prefer WAR1 on the public surface. Null when unpublished.",
+        "DRBL/100 × possessions ÷ 100. Prefer WAR1 on the public surface. Null when unpublished.",
     },
     {
       metricId: "r1_win_eq",
@@ -195,7 +195,7 @@ export function getAskMetricCoverageAudit(
       reliable: true,
       sourceLabel: "DRBL WAR1",
       notes:
-        "R1 Points ÷ frozen P1. Not traditional WAR. Identical ordering to R1 Points.",
+        "R1 Points ÷ frozen P1, built on DRBL/100. Not traditional WAR. Identical ordering to R1 Points.",
     },
     {
       metricId: "drbl_o",

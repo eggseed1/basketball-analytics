@@ -97,13 +97,13 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
     shortName: "WAR1",
     category: "proprietary",
     blurb:
-      "How much season value did the player accumulate? DRBL's wins-style total above the role-matched R1 baseline.",
+      "How much season value did the player accumulate? DRBL/100 times playing time, in wins above an average player.",
     plain: {
       teaches: [
         "DRBL/100 answers how good. WAR1 answers how much they added this season.",
         "Two players can look similar on DRBL/100 but differ a lot on WAR1 if one played far more minutes.",
-        "The name is intended as Wins Above R1. It uses DRBL's own baseline, not generic replacement-level WAR.",
-        "A roster that sums to about 0 WAR1 projects like a mid-30s win team (~35–38), not a classic ~20-win replacement club. That is an empirical read of the R1 platform, not a promise that Σ WAR1 equals standings wins.",
+        "WAR1 always has the same sign as DRBL/100. Zero is an average player, not replacement level.",
+        "A roster that sums to about 0 WAR1 has played like a 40-win team, about average. That is a read of recent seasons, not a promise that Σ WAR1 equals standings wins.",
       ],
       doesnt: [
         "A different ranking from R1 Points. Same order, friendlier units.",
@@ -112,13 +112,14 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
       ],
       upsides: [
         "The clearest DRBL answer for who delivered the most this season.",
-        "Comes straight from the play-by-play credit, the same starting point DRBL/100 blends with the box score.",
+        "Built on DRBL/100, so it carries the box-score blend, the small-sample pull and the scale tested against final scores.",
         "Fixed conversion to win-style units keeps the story easy to tell.",
         "Preferred headline for season value on boards and leader tables.",
       ],
       downsides: [
         "Rewards heavy minutes when the rate is merely good, not great.",
-        "The WAR name can sound like other win metrics. Inside DRBL it means above R1.",
+        "Below-average players who play a lot pile up negative WAR1, even if a team had no better option.",
+        "WAR1 totals run smaller than standings wins. In recent seasons each WAR1 lined up with about 1.3 real wins.",
         "Doesn't predict how a player would fit on a new team.",
       ],
       apply: [
@@ -129,36 +130,37 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
     },
     deep: {
       definition:
-        "WAR1 is DRBL's win-equivalent season-value statistic above its contextual R1 reference. Formally it is a fixed linear conversion of R1 Points by the frozen P1 points-per-win constant. The name is intended as Wins Above R1, but WAR1 is the public product label. It is not traditional WAR. R1 is a contextual role-matched reference, not a conventional fringe-player replacement baseline. Because the divisor is a fixed positive constant, rank(R1 Points) = rank(WAR1) exactly.",
+        "WAR1 is DRBL's win-equivalent season-value statistic. R1 Points are the published DRBL/100 times the player's combined offensive and defensive possessions, divided by 100: the points he added compared with an average player over the same possessions. WAR1 divides R1 Points by the frozen P1 points-per-win constant. It is not traditional WAR, and its zero is the possession-weighted average player, not replacement level. Because the divisor is a fixed positive constant, rank(R1 Points) = rank(WAR1) exactly, and WAR1 always has the sign of DRBL/100. Until October 2026, R1 Points came from the play-by-play credit alone (rawAbilityRate × N / 100); that version is kept internally but no longer shown.",
       formula:
-        "R1 Points = V = (rawAbilityRate × N) / 100;  WAR1 = R1 Points / P1;  P1 = 37.490662671779255;  rank(R1 Points) = rank(WAR1)",
+        "R1 Points = (DRBL/100 × N) / 100;  WAR1 = R1 Points / P1;  P1 = 37.490662671779255;  rank(R1 Points) = rank(WAR1)",
       calculation: [
-        "Accumulate Approach-B attribution above the role-matched R1 baseline into R1 Points (V), equivalently (rawAbilityRate × N) / 100 at full precision.",
+        "Take the published DRBL/100 at full precision and the player's combined possessions N.",
+        "R1 Points = DRBL/100 × N / 100.",
         "Divide by the frozen P1 constant 37.490662671779255 to express win-equivalent units: WAR1 = R1 Points / P1.",
-        "Publish WAR1 as the preferred public cumulative metric; keep R1 Points for research and accounting.",
         "Because P1 is a fixed positive constant, rank(WAR1) equals rank(R1 Points) exactly. Do not interpret WAR1 as classic replacement-level WAR.",
-        "Empirical team projection: when roster Σ WAR1 ≈ 0, recent seasons put that club around ~35–38 standings wins (regression intercept vs actual W–L). That is the height of the R1 platform in win units, not a causal replacement-team identity.",
+        "Team check: across 180 team seasons from 2020-21 to 2025-26, wins per 82 ≈ 40.2 + 1.31 × roster Σ WAR1 (r = 0.93). A roster summing to 0 has played like an average team.",
       ],
       teaches: [
-        "Linear rescaling of R1 Points into win-equivalent language.",
-        "Exact rank equivalence with the underlying accounting total.",
+        "Linear rescaling of DRBL/100 and playing time into win-equivalent language.",
+        "Exact rank equivalence with R1 Points.",
         "Separation from ability-rate ranking (DRBL/100).",
         "Why playing time matters for value even when rates look similar.",
-        "Zero collective WAR1 ≈ mid-30s projected wins, not classic fringe replacement.",
+        "Zero collective WAR1 ≈ an average, roughly 40-win team.",
       ],
       doesnt: [
-        "Independent information from R1 Points beyond unit choice.",
+        "Independent information from DRBL/100 and possessions beyond unit choice.",
         "Calibrated uncertainty bands on the win total.",
         "A substitute for DRBL/100 on ability ranking.",
       ],
       upsides: [
         "Readable season-value currency for non-specialists.",
         "Frozen P1 avoids drifting conversions mid-product.",
-        "Preserves full accounting fidelity of R1 Points.",
+        "Inherits DRBL/100's out-of-sample tests against final scores.",
       ],
       downsides: [
-        "Still inherits all attribution and baseline limitations of R1 Points.",
+        "Inherits every limitation of DRBL/100.",
         "WAR naming collision requires constant disclaimers.",
+        "Runs smaller than standings wins (about 1.3 real wins per WAR1 in recent seasons).",
         "Cross-era win meaning is not fully validated.",
       ],
       apply: [
@@ -553,7 +555,7 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
       teaches: [
         "What “above R1” means: better than the expectation DRBL set for that role and context.",
         "Why DRBL value is measured against a fixed baseline instead of a loose league average.",
-        "How WAR1 and R1 Points get their meaning from this reference.",
+        "Why DRBL-P, DRBL-O and DRBL-D are read against this reference. WAR1 and R1 Points now build on DRBL/100, whose zero is the league average.",
       ],
       doesnt: [
         "The same thing as conventional fringe-player “replacement level.”",
@@ -573,18 +575,18 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
       apply: [
         "Read every DRBL total as “versus R1,” not “versus a free-agent-minimum archetype.”",
         "When someone says replacement, translate back to role-matched R1.",
-        "Use R1 Points / WAR1 for accumulated value above this baseline.",
+        "Use DRBL-P, DRBL-O and DRBL-D for credit above this baseline.",
       ],
     },
     deep: {
       definition:
-        "R1 is the contextual, role-matched expected-points reference used for Approach-B attribution in DRBL. Player value is measured relative to this cutoff-frozen baseline. It is not currently claimed to equal conventional NBA fringe-player replacement level, and WAR1 must not be marketed as traditional WAR.",
+        "R1 is the contextual, role-matched expected-points reference used for Approach-B attribution in DRBL. Play-by-play credit is measured relative to this cutoff-frozen baseline. It is not currently claimed to equal conventional NBA fringe-player replacement level. Since October 2026, R1 Points and WAR1 are built from published DRBL/100 rather than from this play-by-play credit directly, and WAR1 must not be marketed as traditional WAR.",
       formula:
         "R1 = contextual role-matched expected-points baseline (cutoff-frozen);  attribution is vs R1, not classic replacement",
       calculation: [
         "Define role-matched expected points for possessions under the frozen R1 specification.",
         "Attribute Approach-B residuals relative to that expectation.",
-        "Accumulate player credit above R1 into R1 Points; convert to WAR1 via frozen P1 when displaying win units.",
+        "Feed the per-100 credit into the DRBL/100 blend; R1 Points and WAR1 follow DRBL/100.",
       ],
       teaches: [
         "Baseline semantics behind every DRBL “above R1” statement.",
@@ -599,16 +601,16 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
       upsides: [
         "Keeps attribution language precise across O/D and cumulative metrics.",
         "Frozen cutoffs protect accounting reproducibility.",
-        "Supports research additivity and stint conservation work via R1 Points.",
+        "Supports research additivity and stint conservation work on the play-by-play credit.",
       ],
       downsides: [
         "Easy to smuggle “replacement” rhetoric into product copy.",
         "Harder elevator pitch than “vs average.”",
-        "Requires ongoing education next to WAR1.",
+        "Shares a name with WAR1 and R1 Points, which now measure against the league average instead.",
       ],
       apply: [
         "Anchor methodology pages and tooltips on “role-matched R1,” not WAR.",
-        "When auditing totals, reconcile to R1 Points accounting first.",
+        "When auditing play-by-play credit, reconcile to the R1 ledger first.",
         "Refuse forbidden equivalences like “R1 = replacement.”",
       ],
       sources: ["/learn/drbl", "DRBL vocabulary / forbidden claims"],
@@ -621,10 +623,10 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
     shortName: "R1 Pts",
     category: "proprietary",
     blurb:
-      "The point-credit ledger behind WAR1: same player order, different units. Usually hidden on main boards in favor of WAR1.",
+      "WAR1 in points: DRBL/100 times possessions, divided by 100. Same player order as WAR1. Usually hidden on main boards in favor of WAR1.",
     plain: {
       teaches: [
-        "The raw accumulated credit total that win-equivalents are built from.",
+        "The season points total that WAR1 is built from: points added compared with an average player.",
         "Ranking matches WAR1 exactly: same order, in point units instead of win-ish units.",
         "Why a points total is handy for checking that player credit adds up to team results.",
       ],
@@ -651,13 +653,13 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
     },
     deep: {
       definition:
-        "R1 Points are the underlying point-equivalent accumulated attribution above the contextual role-matched R1 reference. They remain canonical for accounting, additivity, stint conservation, team decomposition, and research. The product surface normally hides them from primary UI and prefers WAR1, a fixed linear conversion of the same quantity. rank(R1 Points) = rank(WAR1).",
+        "R1 Points are the published DRBL/100 times the player's combined possessions N, divided by 100: points added compared with a possession-weighted average player. The product surface normally hides them from primary UI and prefers WAR1, a fixed linear conversion of the same quantity. rank(R1 Points) = rank(WAR1). Until October 2026, R1 Points were the play-by-play credit alone (rawAbilityRate × N / 100); that ledger is kept internally for research.",
       formula:
-        "R1 Points = accumulated point-equivalent attribution above R1;  WAR1 = R1 Points / 37.490662671779255;  rank(R1 Points) = rank(WAR1)",
+        "R1 Points = (DRBL/100 × N) / 100;  WAR1 = R1 Points / 37.490662671779255;  rank(R1 Points) = rank(WAR1)",
       calculation: [
-        "Attribute Approach-B residuals versus the role-matched R1 expected-points baseline.",
-        "Sum player point-equivalent credit into the R1 Points accounting total.",
-        "For public win units, divide by frozen P1 (37.490662671779255); keep R1 Points for research and conservation checks.",
+        "Take published DRBL/100 at full precision and combined possessions N.",
+        "R1 Points = DRBL/100 × N / 100.",
+        "For public win units, divide by frozen P1 (37.490662671779255).",
         "Omit R1 Points from primary simple surfaces; expose in deep/methodology contexts.",
       ],
       teaches: [

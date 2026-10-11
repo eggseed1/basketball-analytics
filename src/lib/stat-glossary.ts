@@ -88,12 +88,12 @@ const ENTRIES: Record<string, StatGlossaryEntry> = {
   },
   "R1 Points": {
     title: "R1 Points",
-    body: "Advanced accounting: point-equivalent attribution above R1. Public boards prefer WAR1 (same ordering).",
+    body: "DRBL/100 × possessions ÷ 100: points added compared with an average player over the season. Public boards prefer WAR1 (same ordering).",
     learnMoreHref: "/learn/r1-points",
   },
   WAR1: {
     title: "WAR1",
-    body: "Realized season value above DRBL's contextual R1 reference, in win-equivalent units. Not traditional replacement-level WAR.",
+    body: "Season value in win-equivalent units: DRBL/100 times playing time. Zero is an average player, and WAR1 always has the sign of DRBL/100. Not traditional replacement-level WAR.",
     learnMoreHref: "/learn/drbl/war1",
   },
   "Wins Above R1": {
@@ -128,7 +128,7 @@ const ENTRIES: Record<string, StatGlossaryEntry> = {
   },
   DRBL: {
     title: "Differential Replacement Basketball Level",
-    body: "Estimated player impact from play-by-play and the box score. DRBL/100 is how good (rate); WAR1 is how much (season value). R1 Points are the underlying accounting total.",
+    body: "Estimated player impact from play-by-play and the box score. DRBL/100 is how good (rate); WAR1 is how much (season value), built from DRBL/100 and playing time. R1 Points are the same total in points.",
     learnMoreHref: "/learn/drbl",
   },
   BPM: {

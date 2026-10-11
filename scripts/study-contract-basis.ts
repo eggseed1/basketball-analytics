@@ -17,6 +17,10 @@
  * but each favors its own basis.
  *
  * Writes reports/contract-basis-study/latest.json. Manual only.
+ *
+ * The committed report was run while the overlay's WAR1 was play-by-play
+ * credit alone. WAR1 now equals DRBL/100 turned into wins, so a rerun on the
+ * current overlay compares the same basis against itself.
  */
 import { mkdir, readdir, writeFile } from "node:fs/promises";
 import path from "node:path";

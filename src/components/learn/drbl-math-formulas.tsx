@@ -174,13 +174,7 @@ export function Drbl100FormulaEquations() {
 export function War1FormulaEquations() {
   return (
     <div className="flex flex-col gap-5">
-      <MathStack title="1. R1 Points (accounting total)">
-        <MathDisplay>
-          <MathEq
-            lhs={<MathRoman>R1 Points</MathRoman>}
-            rhs={<MathVar>V</MathVar>}
-          />
-        </MathDisplay>
+      <MathStack title="1. R1 Points (season total)">
         <MathDisplay>
           <MathEq
             lhs={<MathRoman>R1 Points</MathRoman>}
@@ -189,7 +183,7 @@ export function War1FormulaEquations() {
                 <MathFrac
                   num={
                     <span>
-                      <MathRoman>rawAbilityRate</MathRoman>
+                      <MathRoman>DRBL/100</MathRoman>
                       <MathOp>×</MathOp>
                       <MathVar>N</MathVar>
                     </span>
@@ -200,9 +194,10 @@ export function War1FormulaEquations() {
             }
           />
           <MathNote>
-            Same Approach-B attributed residual <MathVar>V</MathVar> as in the
-            DRBL/100 path. WAR1 is built from this realized ledger, not from
-            shrinking DRBL/100 again.
+            Published DRBL/100 at full precision times{" "}
+            <MathVar>N</MathVar>, the player&apos;s combined offensive and
+            defensive possessions: points added compared with an average player
+            over the same possessions.
           </MathNote>
         </MathDisplay>
       </MathStack>
@@ -247,8 +242,8 @@ export function War1FormulaEquations() {
           />
           <MathNote>
             Because <MathVar>P1</MathVar> is a fixed positive constant, ordering
-            is identical. WAR1 means win-style units above the contextual
-            role-matched R1 reference, not classic replacement-level WAR.
+            is identical, and WAR1 always has the sign of DRBL/100. Zero is an
+            average player, not classic replacement level.
           </MathNote>
         </MathDisplay>
       </MathStack>

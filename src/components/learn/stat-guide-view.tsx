@@ -37,10 +37,10 @@ export function StatGuideView({
         {guide.slug === "war1" ? (
           <aside className="max-w-2xl rounded-md border border-border/70 frost-surface-soft px-3 py-2.5 text-[14px] leading-relaxed text-muted-foreground">
             <span className="font-semibold text-foreground">Where zero sits: </span>
-            a roster whose players add up to about 0 WAR1 plays like a team that
-            wins roughly 35 to 38 games, not a 20-win replacement-level team.
-            That comes from how the R1 baseline is set. Team WAR1 totals are not
-            a prediction of standings wins.
+            zero is an average player, so a roster whose players add up to about
+            0 WAR1 has played like a 40-win team. Each WAR1 has lined up with
+            about 1.3 real wins. Team WAR1 totals are not a prediction of
+            standings wins.
           </aside>
         ) : null}
       </LearnHeader>

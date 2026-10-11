@@ -66,7 +66,7 @@ const DEEPER: Array<{ title: string; note?: string; links: DeeperLink[] }> = [
     title: "How it works",
     links: [
       { href: "/learn/how-drbl-works", label: "How DRBL works", blurb: "Follow one possession from play-by-play to player credit." },
-      { href: "/learn/r1", label: "R1", blurb: "The role-matched baseline behind play-by-play credit and WAR1." },
+      { href: "/learn/r1", label: "R1", blurb: "The role-matched baseline behind the play-by-play credit." },
     ],
   },
   {
@@ -358,13 +358,14 @@ DRBL/100 = c × N / (N + ${sampleK}) × blend`}
             <>
               <p>
                 <strong>WAR1</strong> answers a different question: how much did a player add over the whole season? It
-                adds up his play-by-play credit for the season in points above the R1 baseline, called{" "}
-                <strong>R1 Points</strong>, and turns points into wins at a fixed rate. Minutes count, so a starter
-                usually beats an equally good bench player.
+                multiplies his DRBL/100 by his possessions to get <strong>R1 Points</strong>, the points he added
+                compared with an average player in the same minutes, and turns points into wins at a fixed rate.
+                Minutes count, so a starter usually beats an equally good bench player. WAR1 always has the same sign
+                as DRBL/100.
               </p>
               <p className="mt-2">
-                WAR1 is not traditional WAR. The name is meant as Wins Above R1, and R1 is a role-matched baseline, not
-                classic replacement level.
+                WAR1 is not traditional WAR. Its zero is an average player, not replacement level, so a below-average
+                player who plays a lot ends up further below zero.
               </p>
             </>
           }
@@ -374,21 +375,22 @@ DRBL/100 = c × N / (N + ${sampleK}) × blend`}
           ]}
         >
           <pre className="overflow-x-auto rounded-md bg-secondary/60 px-4 py-3 font-mono text-[12.5px] text-foreground/85">
-            {`WAR1 = R1 Points / ${P1_POINTS_PER_WIN.toFixed(2)}`}
+            {`R1 Points = DRBL/100 × possessions / 100\nWAR1 = R1 Points / ${P1_POINTS_PER_WIN.toFixed(2)}`}
           </pre>
           <GuideNote>
             <p>
               The divisor is a fixed number of points per win (shown rounded), so ranking players by R1 Points or by
-              WAR1 gives the same order. WAR1 comes straight from the play-by-play credit, without the box score, the
-              small-sample pull or the scale. That&apos;s why a player can rank higher on one than the other.
+              WAR1 gives the same order. Until October 2026, WAR1 counted play-by-play credit alone, without the box
+              score, the small-sample pull or the scale, so it could fall below zero for a player with a positive
+              DRBL/100. Every season on the site now uses the version above.
             </p>
           </GuideNote>
           <DrblWar1Scatter scatter={scatter} />
           <GuideNote>
             <p>
-              The two mostly agree. Dots high on the chart played heavy minutes at a good rate
+              Dots high on the chart played heavy minutes at a good rate
               {war1Leader ? `; ${war1Leader[1]} led with ${war1Leader[5].toFixed(1)} WAR1` : ""}. Dots far right but
-              lower were very good in fewer minutes or had a box score that rated them above their play-by-play credit
+              lower were very good in fewer minutes
               {drblLeader ? `, like ${drblLeader.name} at ${signed(drblLeader.drbl100)} DRBL/100` : ""}.
             </p>
           </GuideNote>
@@ -506,20 +508,19 @@ DRBL/100 = c × N / (N + ${sampleK}) × blend`}
             <GuideNote>
               <p>
                 Why DRBL/100 alone? We refit the contract model on the seasons before each year from{" "}
-                {basisStudy.seasons[0]} to {basisStudy.seasons.at(-1)}, once on WAR1, once on DRBL/100 and on mixes of
-                the two. Then we checked each projection against the next season&apos;s{" "}
-                {basisStudy.games.toLocaleString("en-US")} games. Projections from DRBL/100 explained{" "}
-                {pct(basisDrbl.r2)} of the spread in final margins, against {pct(basisWar1.r2)} for WAR1 and{" "}
-                {pct(basisMix.r2)} for the half-and-half mix we used before.
+                {basisStudy.seasons[0]} to {basisStudy.seasons.at(-1)}, once on play-by-play credit alone (how WAR1
+                was counted before October 2026), once on DRBL/100 and on mixes of the two. Then we checked each
+                projection against the next season&apos;s {basisStudy.games.toLocaleString("en-US")} games.
+                Projections from DRBL/100 explained {pct(basisDrbl.r2)} of the spread in final margins, against{" "}
+                {pct(basisWar1.r2)} for play-by-play credit and {pct(basisMix.r2)} for a half-and-half mix.
                 {basisDrbl.teamR != null && basisWar1.teamR != null
-                  ? ` They also tracked team records more closely (correlation ${basisDrbl.teamR.toFixed(2)}, against ${basisWar1.teamR.toFixed(2)} for WAR1).`
+                  ? ` They also tracked team records more closely (correlation ${basisDrbl.teamR.toFixed(2)}, against ${basisWar1.teamR.toFixed(2)}).`
                   : ""}{" "}
-                DRBL/100 did better than WAR1 in{" "}
+                DRBL/100 did better in{" "}
                 {basisStudy.drblBetterSeasons === basisStudy.seasons.length
                   ? `all ${countWord(basisStudy.seasons.length)}`
                   : `${countWord(basisStudy.drblBetterSeasons)} of ${countWord(basisStudy.seasons.length)}`}{" "}
-                seasons. WAR1 history still predicts next season&apos;s WAR1 more closely, since that&apos;s the same
-                measure.
+                seasons. That result is also why WAR1 now builds on DRBL/100.
               </p>
             </GuideNote>
           ) : null}

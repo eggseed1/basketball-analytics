@@ -2,12 +2,12 @@
  * Contract surplus model. Pure functions only; the bake script fits the
  * parameters and the site reads the baked snapshot.
  *
- * Production is DRBL wins (WAR1) re-based to replacement level: WAR1 sits near
- * an average-player baseline, so we add back what a minimum-salary player
- * would lose over the same possessions. Value is those wins times the
- * league's going price per win, expressed as a share of the cap. Future
- * seasons are projected from past DRBL/100 mapped onto the WAR1 scale
- * (`drblBasis`, optionally mixed with WAR1 by `share`); seasons already played
+ * Production is DRBL wins (WAR1) re-based to replacement level: WAR1's zero is
+ * an average player, so we add back what a minimum-salary player would lose
+ * over the same possessions. Value is those wins times the league's going
+ * price per win, expressed as a share of the cap. Future seasons are projected
+ * from past DRBL/100 in wins (`drblBasis`, which matches WAR1 when the
+ * possession counts agree; `share` can mix in WAR1); seasons already played
  * are judged on WAR1.
  */
 

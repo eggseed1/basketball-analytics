@@ -10,7 +10,7 @@ import { getStatGuide } from "@/content/stats/guides";
 export const metadata: Metadata = {
   title: "WAR1",
   description:
-    "The season value a player accumulated, as a wins-style total above DRBL’s R1 baseline. This is not classic WAR.",
+    "The season value a player accumulated: DRBL/100 times playing time, in wins above an average player. This is not classic WAR.",
 };
 
 export default function LearnWar1Page() {
