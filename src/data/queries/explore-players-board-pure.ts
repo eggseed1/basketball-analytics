@@ -10,6 +10,12 @@ import {
   defaultPlayerSeasonSortDir,
   type PlayerSeasonSortKey,
 } from "@/lib/player-season-sort";
+import { boardStatValue } from "@/lib/player-board-stats";
+import type { PlayerBoardRate } from "@/lib/explore-players-display";
+import {
+  getSheetStatValue,
+  type SheetStatId,
+} from "@/lib/player-stat-sheet-registry";
 
 /** Display + Level-2 context fields only - not the full canonical PlayerSeason. */
 export type ExplorePlayerBoardRow = {
@@ -74,8 +80,63 @@ export type ExplorePlayerBoardRow = {
   hustleChargesDrawn?: number;
   hustleLooseBallsRecovered?: number;
   hustleBoxOuts?: number;
+  /** Season totals and published rates; omitted when the source lacks them. */
+  personalFouls?: number;
+  plusMinus?: number;
+  fieldGoalsMade?: number;
+  fieldGoalsAttempted?: number;
+  threePointersMade?: number;
+  freeThrowsMade?: number;
+  stealPct?: number;
+  blockPct?: number;
+  defensiveReboundPct?: number;
+  offensiveReboundPct?: number;
+  reboundPct?: number;
+  assistPct?: number;
+  threePointAttemptRate?: number;
+  freeThrowRate?: number;
+  pie?: number;
+  per?: number;
+  ows?: number;
+  dws?: number;
+  winShares?: number;
+  winSharesPer48?: number;
+  obpm?: number;
+  dbpm?: number;
+  vorp?: number;
+  drblO?: number;
+  drblD?: number;
   portraitUrl?: string | null;
 };
+
+/** Board fields filled straight from the sheet registry (totals mode). */
+const SHEET_BACKED_FIELDS = [
+  ["personalFouls", "pf"],
+  ["plusMinus", "plusMinus"],
+  ["fieldGoalsMade", "fg"],
+  ["fieldGoalsAttempted", "fga"],
+  ["threePointersMade", "fg3"],
+  ["freeThrowsMade", "ft"],
+  ["stealPct", "stlPct"],
+  ["blockPct", "blkPct"],
+  ["defensiveReboundPct", "drbPct"],
+  ["offensiveReboundPct", "orbPct"],
+  ["reboundPct", "trbPct"],
+  ["assistPct", "astPct"],
+  ["threePointAttemptRate", "threePar"],
+  ["freeThrowRate", "ftr"],
+  ["pie", "pie"],
+  ["per", "per"],
+  ["ows", "ows"],
+  ["dws", "dws"],
+  ["winShares", "ws"],
+  ["winSharesPer48", "ws48"],
+  ["obpm", "obpm"],
+  ["dbpm", "dbpm"],
+  ["vorp", "vorp"],
+] as const satisfies ReadonlyArray<
+  readonly [keyof ExplorePlayerBoardRow, SheetStatId]
+>;
 
 function perGame(total: number, gp: number): number {
   if (!gp) return 0;
@@ -143,10 +204,18 @@ export function toExplorePlayerBoardRow(p: PlayerSeason): ExplorePlayerBoardRow 
   if (p.defensiveRebounds != null && Number.isFinite(p.defensiveRebounds)) {
     row.defensiveRebounds = p.defensiveRebounds;
   }
+  for (const [field, sheetId] of SHEET_BACKED_FIELDS) {
+    const value = getSheetStatValue(p, sheetId, "totals");
+    if (value != null) row[field] = value;
+  }
   if (hasValidDrblEstimate(p)) {
     row.drbl100 = p.drbl100;
     row.r1Points = p.r1Points ?? null;
     row.r1WinEquivalents = p.r1WinEquivalents ?? null;
+    const drblO = getSheetStatValue(p, "drblO");
+    const drblD = getSheetStatValue(p, "drblD");
+    if (drblO != null) row.drblO = drblO;
+    if (drblD != null) row.drblD = drblD;
   }
   if (p.hustleDeflections != null) row.hustleDeflections = p.hustleDeflections;
   if (p.hustleContestedShots != null) {
@@ -163,84 +232,41 @@ export function toExplorePlayerBoardRow(p: PlayerSeason): ExplorePlayerBoardRow 
   return row;
 }
 
-function sortKeyIsImpact(key: PlayerSeasonSortKey): boolean {
-  return (
-    key === "darkoDpm" ||
-    key === "darkoOff" ||
-    key === "darkoDef" ||
-    key === "raptor" ||
-    key === "oRaptor" ||
-    key === "dRaptor" ||
-    key === "winsAdded" ||
-    key === "bpm"
-  );
-}
+const TEXT_SORT_KEYS = new Set<PlayerSeasonSortKey>([
+  "playerName",
+  "teamName",
+  "position",
+]);
 
-function sortKeyIsDrbl(key: PlayerSeasonSortKey): boolean {
-  return (
-    key === "drbl100" || key === "r1Points" || key === "r1WinEquivalents"
-  );
-}
-
-function sortKeyIsHustle(key: PlayerSeasonSortKey): boolean {
-  return (
-    key === "hustleDeflections" ||
-    key === "hustleContestedShots" ||
-    key === "hustleScreenAssists" ||
-    key === "hustleChargesDrawn" ||
-    key === "hustleLooseBallsRecovered" ||
-    key === "hustleBoxOuts"
-  );
-}
-
-function sortKeyIsOptionalRating(key: PlayerSeasonSortKey): boolean {
-  return (
-    key === "offensiveRating" ||
-    key === "defensiveRating" ||
-    key === "netRating" ||
-    key === "trueShootingPct" ||
-    key === "effectiveFieldGoalPct" ||
-    key === "usagePct" ||
-    key === "age" ||
-    key === "twoPointPct" ||
-    key === "turnoverPct" ||
-    key === "relativeTrueShootingPct" ||
-    sortKeyIsImpact(key) ||
-    sortKeyIsDrbl(key) ||
-    sortKeyIsHustle(key)
-  );
-}
-
+/** Missing values sort last in both directions; they never count as 0. */
 function sortValue(
   row: ExplorePlayerBoardRow,
   key: PlayerSeasonSortKey,
-  sortDir: "asc" | "desc"
+  sortDir: "asc" | "desc",
+  rate: PlayerBoardRate
 ): string | number {
-  const v = row[key as keyof ExplorePlayerBoardRow];
-  if (v == null || (typeof v === "number" && Number.isNaN(v))) {
-    if (typeof v === "string") return "";
-    if (
-      sortKeyIsOptionalRating(key) ||
-      sortKeyIsImpact(key) ||
-      sortKeyIsDrbl(key)
-    ) {
-      return sortDir === "asc"
-        ? Number.POSITIVE_INFINITY
-        : Number.NEGATIVE_INFINITY;
-    }
-    return 0;
+  if (TEXT_SORT_KEYS.has(key)) {
+    const v = row[key as keyof ExplorePlayerBoardRow];
+    return typeof v === "string" ? v : "";
   }
-  return v as string | number;
+  const v = boardStatValue(row, key, rate);
+  if (v == null) {
+    return sortDir === "asc"
+      ? Number.POSITIVE_INFINITY
+      : Number.NEGATIVE_INFINITY;
+  }
+  return v;
 }
 
 export function sortExplorePlayerRows(
   rows: ExplorePlayerBoardRow[],
   sortKey: PlayerSeasonSortKey,
-  sortDir: "asc" | "desc"
+  sortDir: "asc" | "desc",
+  rate: PlayerBoardRate = "perGame"
 ): ExplorePlayerBoardRow[] {
   return [...rows].sort((a, b) => {
-    const av = sortValue(a, sortKey, sortDir);
-    const bv = sortValue(b, sortKey, sortDir);
+    const av = sortValue(a, sortKey, sortDir, rate);
+    const bv = sortValue(b, sortKey, sortDir, rate);
     if (typeof av === "string" && typeof bv === "string") {
       return sortDir === "asc" ? av.localeCompare(bv) : bv.localeCompare(av);
     }

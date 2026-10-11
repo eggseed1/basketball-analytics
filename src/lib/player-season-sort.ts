@@ -1,53 +1,6 @@
 /** Shared sort keys for player-season tables (server + client safe). */
 
-export type PlayerSeasonSortKey =
-  | "playerName"
-  | "teamName"
-  | "position"
-  | "gamesPlayed"
-  | "mpg"
-  | "ppg"
-  | "rpg"
-  | "apg"
-  | "spg"
-  | "bpg"
-  | "tov"
-  | "fieldGoalPct"
-  | "threePointPct"
-  | "freeThrowPct"
-  | "effectiveFieldGoalPct"
-  | "trueShootingPct"
-  | "relativeTrueShootingPct"
-  | "usagePct"
-  | "age"
-  | "twoPointPct"
-  | "turnoverPct"
-  | "threePointersAttempted"
-  | "freeThrowsAttempted"
-  | "offensiveRebounds"
-  | "defensiveRebounds"
-  | "offensiveRating"
-  | "defensiveRating"
-  | "netRating"
-  | "darkoDpm"
-  | "darkoOff"
-  | "darkoDef"
-  | "raptor"
-  | "oRaptor"
-  | "dRaptor"
-  | "winsAdded"
-  | "bpm"
-  | "drbl100"
-  | "r1Points"
-  | "r1WinEquivalents"
-  | "hustleDeflections"
-  | "hustleContestedShots"
-  | "hustleScreenAssists"
-  | "hustleChargesDrawn"
-  | "hustleLooseBallsRecovered"
-  | "hustleBoxOuts";
-
-const SORT_KEYS = new Set<string>([
+export const PLAYER_SEASON_SORT_KEYS = [
   "playerName",
   "teamName",
   "position",
@@ -59,8 +12,16 @@ const SORT_KEYS = new Set<string>([
   "spg",
   "bpg",
   "tov",
+  "personalFouls",
+  "plusMinus",
+  "fieldGoalsMade",
+  "fieldGoalsAttempted",
   "fieldGoalPct",
+  "threePointersMade",
   "threePointPct",
+  "twoPointersMade",
+  "twoPointersAttempted",
+  "freeThrowsMade",
   "freeThrowPct",
   "effectiveFieldGoalPct",
   "trueShootingPct",
@@ -73,9 +34,28 @@ const SORT_KEYS = new Set<string>([
   "freeThrowsAttempted",
   "offensiveRebounds",
   "defensiveRebounds",
+  "stealPct",
+  "blockPct",
+  "defensiveReboundPct",
+  "offensiveReboundPct",
+  "reboundPct",
+  "assistPct",
+  "threePointAttemptRate",
+  "freeThrowRate",
+  "assistToTurnover",
   "offensiveRating",
   "defensiveRating",
   "netRating",
+  "pie",
+  "per",
+  "ows",
+  "dws",
+  "winShares",
+  "winSharesPer48",
+  "obpm",
+  "dbpm",
+  "bpm",
+  "vorp",
   "darkoDpm",
   "darkoOff",
   "darkoDef",
@@ -83,8 +63,9 @@ const SORT_KEYS = new Set<string>([
   "oRaptor",
   "dRaptor",
   "winsAdded",
-  "bpm",
   "drbl100",
+  "drblO",
+  "drblD",
   "r1Points",
   "r1WinEquivalents",
   "hustleDeflections",
@@ -93,7 +74,11 @@ const SORT_KEYS = new Set<string>([
   "hustleChargesDrawn",
   "hustleLooseBallsRecovered",
   "hustleBoxOuts",
-]);
+] as const;
+
+export type PlayerSeasonSortKey = (typeof PLAYER_SEASON_SORT_KEYS)[number];
+
+const SORT_KEYS = new Set<string>(PLAYER_SEASON_SORT_KEYS);
 
 export function parsePlayerSeasonSortKey(
   value: string | string[] | undefined
@@ -113,7 +98,12 @@ export function defaultPlayerSeasonSortDir(
   if (key === "playerName" || key === "teamName" || key === "position") {
     return "asc";
   }
-  if (key === "defensiveRating" || key === "tov" || key === "turnoverPct") {
+  if (
+    key === "defensiveRating" ||
+    key === "tov" ||
+    key === "turnoverPct" ||
+    key === "personalFouls"
+  ) {
     return "asc";
   }
   // DRBL/100 and WAR1 default to descending.

@@ -143,10 +143,7 @@ export async function TeamRosterIsland({
             pageCount={1}
             sortKey={view.sortKey}
             sortDir={view.sortDir}
-            hasDarko={view.hasDarko}
-            hasRaptor={view.hasRaptor}
-            hasDrbl={view.hasDrbl}
-            hasHustle={view.hasHustle}
+            emptyColumns={view.emptyColumns}
             seasonAwaitingGames={view.seasonAwaitingGames}
           />
         )}

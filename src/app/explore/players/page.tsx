@@ -13,6 +13,8 @@ import {
   getExplorePlayersBoardView,
   parseExplorePlayersSortDir,
 } from "@/data/queries/explore-players-board";
+import { parsePlayerBoardRate } from "@/lib/explore-players-display";
+import { boardColumnLabel } from "@/lib/player-board-stats";
 import { defaultExplorePlayersSeason } from "@/lib/player-board-season";
 import { filtersFromSearchParams, isAllSeasonsParam } from "@/lib/search-params";
 import { DEFAULT_PLAYER_MINIMUM_MINUTES } from "@/data/types";
@@ -64,6 +66,7 @@ async function ExplorePlayersBoard({
     filters,
     sortKey,
     sortDir,
+    rate: parsePlayerBoardRate([searchParams.rate].flat()[0] ?? null),
     page: 1,
   });
 
@@ -102,10 +105,7 @@ async function ExplorePlayersBoard({
         pageCount={view.pageCount}
         sortKey={view.sortKey}
         sortDir={view.sortDir}
-        hasDarko={view.hasDarko}
-        hasRaptor={view.hasRaptor}
-        hasDrbl={view.hasDrbl}
-        hasHustle={view.hasHustle}
+        emptyColumns={view.emptyColumns}
         seasonAwaitingGames={view.seasonAwaitingGames}
       />
     </div>
@@ -122,6 +122,7 @@ export default async function ExplorePlayersPage({
   ]);
   const defaultSeason = defaultExplorePlayersSeason(seasons);
   const { teams, source, warnings } = teamCatalog;
+  const subtitleSort = parsePlayerSeasonSortKey(params.sort);
 
   return (
     <main data-motion-page className="site-shell flex min-w-0 max-w-full flex-1 flex-col gap-5 overflow-x-clip py-6 sm:py-8">
@@ -129,8 +130,8 @@ export default async function ExplorePlayersPage({
       <PageHeader
         title="Players"
         subtitle={
-          parsePlayerSeasonSortKey(params.sort)
-            ? `Sorted by ${parsePlayerSeasonSortKey(params.sort)}. Click any column header to re-rank.`
+          subtitleSort
+            ? `Sorted by ${boardColumnLabel(subtitleSort)}. Click any column header to re-rank.`
             : undefined
         }
       />

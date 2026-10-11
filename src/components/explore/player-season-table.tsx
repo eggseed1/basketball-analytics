@@ -27,7 +27,6 @@ import {
 } from "@/components/ui/table";
 import { SortableTableHead } from "@/components/ui/sortable-table-head";
 import type { ExplorePlayerBoardRow } from "@/data/queries/explore-players-board";
-import { formatCountingRate, formatNumber, formatPct } from "@/lib/format";
 import { textLinkClassName, boardType } from "@/lib/design-system";
 import {
   filterPlayerBoardViewColumns,
@@ -38,7 +37,11 @@ import {
   type PlayerBoardRate,
   type PlayerBoardView,
 } from "@/lib/explore-players-display";
-import { sheetStatOrderIndex } from "@/lib/player-stat-sheet-registry";
+import {
+  boardColumnLabel,
+  boardStatValue,
+  formatBoardStat,
+} from "@/lib/player-board-stats";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { cn } from "@/lib/utils";
 import {
@@ -130,10 +133,8 @@ export interface PlayerSeasonTableProps {
   pageCount: number;
   sortKey: PlayerSeasonSortKey;
   sortDir: "asc" | "desc";
-  hasDarko: boolean;
-  hasRaptor: boolean;
-  hasDrbl: boolean;
-  hasHustle?: boolean;
+  /** Columns with no value anywhere on this board; hidden, not shown as 0. */
+  emptyColumns?: PlayerSeasonSortKey[];
   seasonAwaitingGames?: boolean;
 }
 
@@ -145,10 +146,7 @@ export function PlayerSeasonTable({
   pageCount,
   sortKey,
   sortDir,
-  hasDarko,
-  hasRaptor,
-  hasDrbl,
-  hasHustle = true,
+  emptyColumns,
   seasonAwaitingGames = false,
 }: PlayerSeasonTableProps) {
   const { pending, replaceParams, searchParams } = useQueryNav();
@@ -228,16 +226,15 @@ export function PlayerSeasonTable({
 
   const viewParam = searchParams.get("view");
   const rate = parsePlayerBoardRate(searchParams.get("rate"));
+  const emptyKey = emptyColumns?.join(",") ?? "";
   // Rows are memoized, so groups must keep its identity while more rows load.
   const groups = useMemo(
     () =>
-      buildPlayerBoardGroups(parsePlayerBoardViews(viewParam), {
-        hasDarko,
-        hasRaptor,
-        hasDrbl,
-        hasHustle,
-      }),
-    [viewParam, hasDarko, hasRaptor, hasDrbl, hasHustle]
+      buildPlayerBoardGroups(
+        parsePlayerBoardViews(viewParam),
+        new Set(emptyKey ? (emptyKey.split(",") as PlayerSeasonSortKey[]) : [])
+      ),
+    [viewParam, emptyKey]
   );
   // Always show category band headers — including a single category and the
   // partitioned "all stats" layout.
@@ -429,7 +426,6 @@ export function PlayerSeasonTable({
                       <StatHead
                         key={`${group.id}-${col}`}
                         col={col}
-                        view={group.id}
                         sortKey={sortKey}
                         sortDir={sortDir}
                         onSort={toggleSort}
@@ -444,7 +440,6 @@ export function PlayerSeasonTable({
                     <StatHead
                       key={`${group.id}-${col}`}
                       col={col}
-                      view={group.id}
                       sortKey={sortKey}
                       sortDir={sortDir}
                       onSort={toggleSort}
@@ -627,143 +622,37 @@ const StatRow = memo(function StatRow({
 
 type TableCol = PlayerSeasonSortKey;
 
-type BoardColumnFlags = {
-  hasDarko: boolean;
-  hasRaptor: boolean;
-  hasDrbl: boolean;
-  hasHustle?: boolean;
-};
-
 type BoardGroup = {
   id: PlayerBoardView;
   label: string;
   keys: TableCol[];
 };
 
-function columnsForView(
-  view: PlayerBoardView,
-  flags: BoardColumnFlags
-): TableCol[] {
-  return [...filterPlayerBoardViewColumns(view, flags)].sort(
-    (a, b) => sheetStatOrderIndex(a) - sheetStatOrderIndex(b)
-  );
-}
+type EmptyColumns = ReadonlySet<PlayerSeasonSortKey>;
 
-/** Full union of category presets, bucketed under Counting / Shooting / … bands. */
-function partitionAllColumnsIntoCategories(
-  flags: BoardColumnFlags
-): BoardGroup[] {
+/** Full union of category presets, bucketed under Impact / Profile / … bands. */
+function partitionAllColumnsIntoCategories(empty: EmptyColumns): BoardGroup[] {
   return PLAYER_BOARD_CATEGORY_VIEWS.map((cat) => ({
     id: cat.id,
     label: cat.label,
-    keys: columnsForView(cat.id, flags),
+    keys: filterPlayerBoardViewColumns(cat.id, empty),
   })).filter((group) => group.keys.length > 0);
 }
 
 function buildPlayerBoardGroups(
   views: PlayerBoardView[],
-  flags: BoardColumnFlags
+  empty: EmptyColumns
 ): BoardGroup[] {
   if (views.length === 1 && views[0] === "all") {
-    return partitionAllColumnsIntoCategories(flags);
+    return partitionAllColumnsIntoCategories(empty);
   }
   return views
     .map((id) => ({
       id,
       label: playerBoardViewLabel(id),
-      keys: columnsForView(id, flags),
+      keys: filterPlayerBoardViewColumns(id, empty),
     }))
     .filter((group) => group.keys.length > 0);
-}
-
-/** Sheet abbreviations — same labels as Statistics / percentile. */
-function columnLabel(col: TableCol, _view: PlayerBoardView): string {
-  switch (col) {
-    case "gamesPlayed":
-      return "GP";
-    case "mpg":
-      return "MP";
-    case "age":
-      return "Age";
-    case "usagePct":
-      return "USG%";
-    case "darkoDpm":
-      return "DARKO";
-    case "darkoOff":
-      return "DARKO-O";
-    case "darkoDef":
-      return "DARKO-D";
-    case "ppg":
-      return "PTS";
-    case "apg":
-      return "AST";
-    case "rpg":
-      return "TRB";
-    case "tov":
-      return "TOV";
-    case "trueShootingPct":
-      return "TS%";
-    case "relativeTrueShootingPct":
-      return "rTS%";
-    case "turnoverPct":
-      return "TOV%";
-    case "twoPointPct":
-      return "2P%";
-    case "threePointPct":
-      return "3P%";
-    case "threePointersAttempted":
-      return "3PA";
-    case "freeThrowPct":
-      return "FT%";
-    case "freeThrowsAttempted":
-      return "FTA";
-    case "offensiveRebounds":
-      return "ORB";
-    case "defensiveRebounds":
-      return "DRB";
-    case "spg":
-      return "STL";
-    case "bpg":
-      return "BLK";
-    case "fieldGoalPct":
-      return "FG%";
-    case "effectiveFieldGoalPct":
-      return "eFG%";
-    case "offensiveRating":
-      return "ORtg";
-    case "defensiveRating":
-      return "DRtg";
-    case "netRating":
-      return "NET";
-    case "raptor":
-      return "RAPTOR";
-    case "oRaptor":
-      return "O-RAPTOR";
-    case "dRaptor":
-      return "D-RAPTOR";
-    case "winsAdded":
-      return "WAR";
-    case "bpm":
-      return "BPM";
-    case "drbl100":
-      return "DRBL/100";
-    case "r1WinEquivalents":
-      return "WAR1";
-    case "hustleDeflections":
-      return "Defl";
-    case "hustleContestedShots":
-      return "Contest";
-    case "hustleScreenAssists":
-      return "ScrAst";
-    case "hustleChargesDrawn":
-      return "Chrg";
-    case "hustleLooseBallsRecovered":
-      return "Loose";
-    case "hustleBoxOuts":
-      return "BoxOut";
-    default:
-      return col;
-  }
 }
 
 function columnHelp(col: TableCol): string | null {
@@ -795,13 +684,43 @@ function columnHelp(col: TableCol): string | null {
     case "netRating":
       return "net";
     case "raptor":
-      return "raptor";
     case "oRaptor":
     case "dRaptor":
-    case "winsAdded":
       return "raptor";
+    case "winsAdded":
+      return "wins_added";
     case "bpm":
       return "bpm";
+    case "obpm":
+      return "obpm";
+    case "dbpm":
+      return "dbpm";
+    case "per":
+      return "per";
+    case "winShares":
+      return "ws";
+    case "winSharesPer48":
+      return "ws48";
+    case "vorp":
+      return "vorp";
+    case "pie":
+      return "pie";
+    case "plusMinus":
+      return "plus_minus";
+    case "assistToTurnover":
+      return "ast_to";
+    case "offensiveReboundPct":
+      return "orb";
+    case "threePointAttemptRate":
+      return "three_par";
+    case "drbl100":
+      return "drbl";
+    case "drblO":
+      return "drbl_o";
+    case "drblD":
+      return "drbl_d";
+    case "r1WinEquivalents":
+      return "r1_win_eq";
     default:
       return null;
   }
@@ -814,159 +733,17 @@ function formatStat(
   seasonAwaitingGames: boolean
 ): string {
   if (seasonAwaitingGames) return "—";
-  switch (col) {
-    case "gamesPlayed":
-      return formatNumber(player.gamesPlayed);
-    case "mpg":
-      return formatNumber(
-        rate === "totals" ? player.minutes : player.mpg,
-        rate === "totals" ? 0 : 1
-      );
-    case "age":
-      return player.age != null ? formatNumber(player.age, 0) : "-";
-    case "usagePct":
-      return formatOptionalPct(player.usagePct);
-    case "darkoDpm":
-      return formatOptionalImpact(player.darkoDpm);
-    case "darkoOff":
-      return formatOptionalImpact(player.darkoOff);
-    case "darkoDef":
-      return formatOptionalImpact(player.darkoDef);
-    case "ppg":
-      return formatCounting(player.ppg, player.points, player.mpg, rate);
-    case "apg":
-      return formatCounting(player.apg, player.assists, player.mpg, rate);
-    case "rpg":
-      return formatCounting(player.rpg, player.rebounds, player.mpg, rate);
-    case "tov":
-      return formatCounting(player.tov, player.turnovers, player.mpg, rate);
-    case "trueShootingPct":
-      return formatOptionalPct(player.trueShootingPct);
-    case "relativeTrueShootingPct":
-      return formatRelativeTs(player.relativeTrueShootingPct);
-    case "turnoverPct":
-      return formatOptionalPct(player.turnoverPct);
-    case "twoPointPct":
-      return formatOptionalPct(player.twoPointPct);
-    case "threePointPct":
-      return formatPct(player.threePointPct);
-    case "threePointersAttempted":
-      return formatOptionalCounting(
-        player.threePointersAttempted,
-        player.gamesPlayed,
-        player.mpg,
-        rate
-      );
-    case "freeThrowPct":
-      return formatPct(player.freeThrowPct);
-    case "freeThrowsAttempted":
-      return formatOptionalCounting(
-        player.freeThrowsAttempted,
-        player.gamesPlayed,
-        player.mpg,
-        rate
-      );
-    case "offensiveRebounds":
-      return formatOptionalCounting(
-        player.offensiveRebounds,
-        player.gamesPlayed,
-        player.mpg,
-        rate
-      );
-    case "defensiveRebounds":
-      return formatOptionalCounting(
-        player.defensiveRebounds,
-        player.gamesPlayed,
-        player.mpg,
-        rate
-      );
-    case "spg":
-      return formatCounting(player.spg, player.steals, player.mpg, rate);
-    case "bpg":
-      return formatCounting(player.bpg, player.blocks, player.mpg, rate);
-    case "fieldGoalPct":
-      return formatPct(player.fieldGoalPct);
-    case "effectiveFieldGoalPct":
-      return formatOptionalPct(player.effectiveFieldGoalPct);
-    case "offensiveRating":
-      return formatOptionalRating(player.offensiveRating);
-    case "defensiveRating":
-      return formatOptionalRating(player.defensiveRating);
-    case "netRating":
-      return formatOptionalNet(player.netRating);
-    case "raptor":
-      return formatOptionalImpact(player.raptor);
-    case "oRaptor":
-      return formatOptionalImpact(player.oRaptor);
-    case "dRaptor":
-      return formatOptionalImpact(player.dRaptor);
-    case "winsAdded":
-      return player.winsAdded != null
-        ? formatNumber(player.winsAdded, 1)
-        : "-";
-    case "bpm":
-      return formatOptionalImpact(player.bpm);
-    case "drbl100":
-      return formatOptionalDrbl(player.drbl100);
-    case "r1WinEquivalents":
-      return formatOptionalDrbl(player.r1WinEquivalents);
-    case "hustleDeflections":
-      return formatOptionalCounting(
-        player.hustleDeflections,
-        player.gamesPlayed,
-        player.mpg,
-        rate
-      );
-    case "hustleContestedShots":
-      return formatOptionalCounting(
-        player.hustleContestedShots,
-        player.gamesPlayed,
-        player.mpg,
-        rate
-      );
-    case "hustleScreenAssists":
-      return formatOptionalCounting(
-        player.hustleScreenAssists,
-        player.gamesPlayed,
-        player.mpg,
-        rate
-      );
-    case "hustleChargesDrawn":
-      return formatOptionalCounting(
-        player.hustleChargesDrawn,
-        player.gamesPlayed,
-        player.mpg,
-        rate
-      );
-    case "hustleLooseBallsRecovered":
-      return formatOptionalCounting(
-        player.hustleLooseBallsRecovered,
-        player.gamesPlayed,
-        player.mpg,
-        rate
-      );
-    case "hustleBoxOuts":
-      return formatOptionalCounting(
-        player.hustleBoxOuts,
-        player.gamesPlayed,
-        player.mpg,
-        rate
-      );
-    default:
-      return "-";
-  }
+  return formatBoardStat(col, boardStatValue(player, col, rate), rate);
 }
 
 function StatHead({
   col,
-  view,
   sortKey,
   sortDir,
   onSort,
   groupedStart,
 }: {
   col: TableCol;
-  view: PlayerBoardView;
   sortKey: SortKey;
   sortDir: "asc" | "desc";
   onSort: (key: SortKey) => void;
@@ -981,7 +758,7 @@ function StatHead({
       onClick={() => onSort(col)}
       helpConceptId={columnHelp(col)}
     >
-      {columnLabel(col, view)}
+      {boardColumnLabel(col)}
     </SortableTableHead>
   );
 }
@@ -1011,66 +788,4 @@ function StatCell({
       {formatStat(col, player, rate, seasonAwaitingGames)}
     </TableCell>
   );
-}
-
-function formatCounting(
-  perGame: number,
-  total: number,
-  mpg: number,
-  rate: PlayerBoardRate
-): string {
-  if (rate === "totals") return formatNumber(total, 0);
-  if (rate === "perGame" || mpg <= 0) return formatCountingRate(perGame);
-  const scaled = (perGame * 100) / mpg;
-  return formatCountingRate(scaled);
-}
-
-function formatOptionalCounting(
-  total: number | undefined,
-  gp: number,
-  mpg: number,
-  rate: PlayerBoardRate
-): string {
-  if (total == null || Number.isNaN(total)) return "-";
-  return formatCounting(gp ? total / gp : 0, total, mpg, rate);
-}
-
-function formatRelativeTs(n: number | undefined): string {
-  if (n == null || Number.isNaN(n)) return "-";
-  const pts = n * 100;
-  const sign = pts > 0 ? "+" : "";
-  return `${sign}${formatNumber(pts, 1)}`;
-}
-
-function formatSigned(n: number): string {
-  const sign = n > 0 ? "+" : "";
-  return `${sign}${formatNumber(n, 1)}`;
-}
-
-/** Missing ≠ zero - ESPN boards omit individual DRtg/NET. */
-function formatOptionalRating(n: number | undefined): string {
-  if (n == null || Number.isNaN(n)) return "-";
-  return formatNumber(n, 1);
-}
-
-function formatOptionalPct(n: number | undefined): string {
-  if (n == null || Number.isNaN(n)) return "-";
-  return formatPct(n);
-}
-
-function formatOptionalNet(n: number | undefined): string {
-  if (n == null || Number.isNaN(n)) return "-";
-  return formatSigned(n);
-}
-
-function formatOptionalImpact(n: number | undefined): string {
-  if (n == null || Number.isNaN(n)) return "-";
-  const sign = n > 0 ? "+" : "";
-  return `${sign}${n.toFixed(2)}`;
-}
-
-/** Missing DRBL ≠ zero - never display placeholder zeros as estimates. */
-function formatOptionalDrbl(n: number | null | undefined): string {
-  if (n == null || Number.isNaN(n)) return "-";
-  return formatNumber(n, 1);
 }

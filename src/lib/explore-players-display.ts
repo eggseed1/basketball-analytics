@@ -11,12 +11,12 @@ import {
  */
 export const PLAYER_BOARD_VIEWS = [
   { id: "all", label: "All" },
+  { id: "impact", label: "Impact" },
   { id: "profile", label: "Profile" },
   { id: "shooting", label: "Shooting" },
   { id: "defense", label: "Defense" },
   { id: "hustle", label: "Hustle" },
   { id: "advanced", label: "Advanced" },
-  { id: "impact", label: "Impact" },
 ] as const;
 
 export type PlayerBoardView = (typeof PLAYER_BOARD_VIEWS)[number]["id"];
@@ -115,49 +115,13 @@ export function parsePlayerBoardRate(value: string | null): PlayerBoardRate {
 }
 
 /**
- * Columns available on the Explore board, bucketed like the sheet.
- * Subset of SHEET_STAT_DEFS — only keys the board can render/sort today.
+ * Columns on the Explore board, bucketed like the sheet. Every SHEET_STAT_DEFS
+ * stat appears here under its sheet category (test-explore-players-board).
  */
 export const PLAYER_BOARD_VIEW_COLUMNS: Record<
   PlayerBoardView,
   PlayerSeasonSortKey[]
 > = {
-  profile: [
-    "gamesPlayed",
-    "mpg",
-    "ppg",
-    "rpg",
-    "offensiveRebounds",
-    "defensiveRebounds",
-    "apg",
-    "tov",
-  ],
-  shooting: [
-    "fieldGoalPct",
-    "twoPointPct",
-    "threePointPct",
-    "threePointersAttempted",
-    "freeThrowPct",
-    "freeThrowsAttempted",
-    "effectiveFieldGoalPct",
-    "trueShootingPct",
-  ],
-  defense: ["spg", "bpg", "defensiveRating"],
-  hustle: [
-    "hustleDeflections",
-    "hustleContestedShots",
-    "hustleScreenAssists",
-    "hustleChargesDrawn",
-    "hustleLooseBallsRecovered",
-    "hustleBoxOuts",
-  ],
-  advanced: [
-    "usagePct",
-    "turnoverPct",
-    "offensiveRating",
-    "netRating",
-    "bpm",
-  ],
   impact: [
     "darkoDpm",
     "darkoOff",
@@ -167,7 +131,75 @@ export const PLAYER_BOARD_VIEW_COLUMNS: Record<
     "dRaptor",
     "winsAdded",
     "r1WinEquivalents",
+    "vorp",
     "drbl100",
+    "drblO",
+    "drblD",
+  ],
+  profile: [
+    "gamesPlayed",
+    "mpg",
+    "ppg",
+    "rpg",
+    "offensiveRebounds",
+    "defensiveRebounds",
+    "apg",
+    "tov",
+    "personalFouls",
+    "plusMinus",
+  ],
+  shooting: [
+    "fieldGoalsMade",
+    "fieldGoalsAttempted",
+    "fieldGoalPct",
+    "threePointersMade",
+    "threePointersAttempted",
+    "threePointPct",
+    "twoPointersMade",
+    "twoPointersAttempted",
+    "twoPointPct",
+    "freeThrowsMade",
+    "freeThrowsAttempted",
+    "freeThrowPct",
+    "effectiveFieldGoalPct",
+    "trueShootingPct",
+  ],
+  defense: [
+    "spg",
+    "bpg",
+    "stealPct",
+    "blockPct",
+    "defensiveReboundPct",
+    "defensiveRating",
+    "dbpm",
+    "dws",
+  ],
+  hustle: [
+    "hustleDeflections",
+    "hustleContestedShots",
+    "hustleScreenAssists",
+    "hustleChargesDrawn",
+    "hustleLooseBallsRecovered",
+    "hustleBoxOuts",
+  ],
+  advanced: [
+    "threePointAttemptRate",
+    "freeThrowRate",
+    "usagePct",
+    "turnoverPct",
+    "assistPct",
+    "offensiveReboundPct",
+    "reboundPct",
+    "assistToTurnover",
+    "offensiveRating",
+    "netRating",
+    "pie",
+    "per",
+    "ows",
+    "winShares",
+    "winSharesPer48",
+    "obpm",
+    "bpm",
   ],
   /** Filled below as the deduped union in sheet category order. */
   all: [],
@@ -183,44 +215,22 @@ PLAYER_BOARD_VIEW_COLUMNS.all = (() => {
       out.push(key);
     }
   }
-  out.sort((a, b) => sheetStatOrderIndex(a) - sheetStatOrderIndex(b));
   return out;
 })();
 
+/** GP has no sheet column, so it leads its band ahead of the sheet order. */
+function boardColumnOrder(key: PlayerSeasonSortKey): number {
+  return key === "gamesPlayed" ? -1 : sheetStatOrderIndex(key);
+}
+
+/** A view's columns minus those with no value anywhere on the current board. */
 export function filterPlayerBoardViewColumns(
   view: PlayerBoardView,
-  flags: {
-    hasDarko: boolean;
-    hasRaptor: boolean;
-    hasDrbl: boolean;
-    hasHustle?: boolean;
-  }
+  emptyColumns: ReadonlySet<PlayerSeasonSortKey>
 ): PlayerSeasonSortKey[] {
-  return PLAYER_BOARD_VIEW_COLUMNS[view].filter((key) => {
-    if (key === "drbl100" || key === "r1WinEquivalents") return flags.hasDrbl;
-    if (key === "darkoDpm" || key === "darkoOff" || key === "darkoDef") {
-      return flags.hasDarko;
-    }
-    if (
-      key === "raptor" ||
-      key === "oRaptor" ||
-      key === "dRaptor" ||
-      key === "winsAdded"
-    ) {
-      return flags.hasRaptor;
-    }
-    if (
-      key === "hustleDeflections" ||
-      key === "hustleContestedShots" ||
-      key === "hustleScreenAssists" ||
-      key === "hustleChargesDrawn" ||
-      key === "hustleLooseBallsRecovered" ||
-      key === "hustleBoxOuts"
-    ) {
-      return flags.hasHustle !== false;
-    }
-    return true;
-  });
+  return PLAYER_BOARD_VIEW_COLUMNS[view]
+    .filter((key) => !emptyColumns.has(key))
+    .sort((a, b) => boardColumnOrder(a) - boardColumnOrder(b));
 }
 
 /** Category for an Explore column — sheet taxonomy only. */

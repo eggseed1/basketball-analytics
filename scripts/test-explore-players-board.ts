@@ -20,6 +20,17 @@ import {
 } from "../src/analytics/leaderboard-context";
 import { transformEspnPlayerSeason } from "../src/data/transformers/espn";
 import type { PlayerSeason } from "../src/data/types";
+import {
+  filterPlayerBoardViewColumns,
+  PLAYER_BOARD_CATEGORY_VIEWS,
+  PLAYER_BOARD_VIEW_COLUMNS,
+} from "../src/lib/explore-players-display";
+import { boardStatValue, formatBoardStat } from "../src/lib/player-board-stats";
+import {
+  SHEET_STAT_CATEGORY_ORDER,
+  SHEET_STAT_DEFS,
+  sheetStatIdFor,
+} from "../src/lib/player-stat-sheet-registry";
 import { normalizeTeamParam } from "../src/lib/team-identity";
 
 function fakeSeason(
@@ -307,6 +318,69 @@ function main() {
   const drtgCtx = buildLeaderboardRowContext(board[3]!, drtgIndex);
   assert.ok(drtgCtx);
   assert.equal(drtgCtx!.primary.id, "defense");
+
+  // Every sheet stat sits on the board, in the same category as the sheet.
+  for (const def of SHEET_STAT_DEFS) {
+    const owner = PLAYER_BOARD_CATEGORY_VIEWS.find((cat) =>
+      PLAYER_BOARD_VIEW_COLUMNS[cat.id].some(
+        (key) => sheetStatIdFor(key) === def.id
+      )
+    );
+    assert.equal(owner?.id, def.category, `${def.id} on the board`);
+  }
+  assert.deepEqual(
+    PLAYER_BOARD_CATEGORY_VIEWS.map((cat) => cat.id),
+    SHEET_STAT_CATEGORY_ORDER
+  );
+  assert.deepEqual(
+    filterPlayerBoardViewColumns("advanced", new Set()).slice(-6),
+    ["per", "ows", "winShares", "winSharesPer48", "obpm", "bpm"]
+  );
+  assert.equal(filterPlayerBoardViewColumns("profile", new Set())[0], "gamesPlayed");
+  assert.ok(
+    !filterPlayerBoardViewColumns("profile", new Set(["plusMinus"])).includes(
+      "plusMinus"
+    )
+  );
+
+  const bref = toExplorePlayerBoardRow({
+    ...fakeSeason("ws", { teamId: "2", points: 900 }),
+    fieldGoalsMade: 350,
+    fieldGoalsAttempted: 700,
+    threePointersMade: 100,
+    threePointersAttempted: 280,
+    freeThrowsMade: 100,
+    personalFouls: 120,
+    winShares: 7.4,
+    winSharesPer48: 0.162,
+    vorp: 2.9,
+    per: 19.8,
+    ows: 4.5,
+    dws: 2.9,
+    obpm: 2.1,
+    dbpm: 0,
+    stealPct: 0.018,
+  });
+  assert.equal(bref.winShares, 7.4);
+  assert.equal(bref.vorp, 2.9);
+  assert.equal(bref.dbpm, undefined, "exact 0 BRef box value is unpublished");
+  assert.equal(boardStatValue(bref, "twoPointersMade", "totals"), 250);
+  assert.equal(boardStatValue(bref, "twoPointersAttempted", "perGame"), 420 / 50);
+  assert.equal(boardStatValue(bref, "personalFouls", "per100"), (120 * 100) / 1500);
+  assert.equal(boardStatValue(bref, "assistToTurnover", "totals"), 2);
+  assert.equal(formatBoardStat("winSharesPer48", 0.162, "perGame"), "0.162");
+  assert.equal(formatBoardStat("dbpm", null, "perGame"), "-");
+  assert.equal(formatBoardStat("obpm", 2.1, "perGame"), "+2.1");
+
+  // Sort follows the rate toggle: per game and totals can disagree.
+  const iron = toExplorePlayerBoardRow(
+    fakeSeason("iron", { teamId: "2", points: 1600, gamesPlayed: 82 })
+  );
+  const short = toExplorePlayerBoardRow(
+    fakeSeason("short", { teamId: "2", points: 1000, gamesPlayed: 40 })
+  );
+  assert.equal(sortExplorePlayerRows([iron, short], "ppg", "desc", "perGame")[0]!.playerId, "short");
+  assert.equal(sortExplorePlayerRows([iron, short], "ppg", "desc", "totals")[0]!.playerId, "iron");
 
   console.log("test-explore-players-board: ok");
 }

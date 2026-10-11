@@ -12,6 +12,11 @@ import { getPlayerSeasonBoardSnapshot } from "@/data/queries/player-data-health"
 import { hasValidDrblEstimate } from "@/data/queries/percentiles";
 import type { BasketballFilters } from "@/data/types";
 import {
+  PLAYER_BOARD_VIEW_COLUMNS,
+  type PlayerBoardRate,
+} from "@/lib/explore-players-display";
+import { boardStatValue } from "@/lib/player-board-stats";
+import {
   defaultPlayerSeasonSortDir,
   type PlayerSeasonSortKey,
 } from "@/lib/player-season-sort";
@@ -43,6 +48,8 @@ export type ExplorePlayersBoardView = {
   hasRaptor: boolean;
   hasDrbl: boolean;
   hasHustle: boolean;
+  /** Board columns with no nonzero value on the full filtered board. */
+  emptyColumns: PlayerSeasonSortKey[];
   /** Full filtered board size used for Level-2 percentile pools. */
   boardSampleSize: number;
   /** Serializable percentile pools for the active sort (full board). */
@@ -93,6 +100,17 @@ function serializeContextPools(
   return out;
 }
 
+/** All-zero counts are unpublished history (pre-1973 steals), not real zeros. */
+function emptyBoardColumns(rows: ExplorePlayerBoardRow[]): PlayerSeasonSortKey[] {
+  return PLAYER_BOARD_VIEW_COLUMNS.all.filter(
+    (key) =>
+      !rows.some((row) => {
+        const v = boardStatValue(row, key, "totals");
+        return v != null && v !== 0;
+      })
+  );
+}
+
 /**
  * Filtered full board → sort → page window → slim rows + Level-2 pools.
  */
@@ -100,6 +118,7 @@ export async function getExplorePlayersBoardView(options: {
   filters: BasketballFilters;
   sortKey?: PlayerSeasonSortKey;
   sortDir?: "asc" | "desc";
+  rate?: PlayerBoardRate;
   page?: number;
   pageSize?: number;
   /** Skip percentile pools - used for infinite-scroll page fetches. */
@@ -118,30 +137,27 @@ export async function getExplorePlayersBoardView(options: {
       p.hustleLooseBallsRecovered != null ||
       p.hustleBoxOuts != null
   );
-  const requested = options.sortKey;
-  const raptorSort =
-    requested === "raptor" ||
-    requested === "oRaptor" ||
-    requested === "dRaptor" ||
-    requested === "winsAdded";
+  const mapped = board.rows.map(toExplorePlayerBoardRow);
+  const emptyColumns = emptyBoardColumns(mapped);
+  const requested =
+    options.sortKey && !emptyColumns.includes(options.sortKey)
+      ? options.sortKey
+      : undefined;
   // Prefer WAR1 for registry seasons when present; else DARKO; else PPG.
-  // Never keep a RAPTOR sort when this season has no RAPTOR rows.
   const sortKey =
-    raptorSort && !hasRaptor
-      ? hasDrbl
-        ? "r1WinEquivalents"
-        : hasDarko
-          ? "darkoDpm"
-          : "ppg"
-      : (requested ??
-        (hasDrbl ? "r1WinEquivalents" : hasDarko ? "darkoDpm" : "ppg"));
+    requested ?? (hasDrbl ? "r1WinEquivalents" : hasDarko ? "darkoDpm" : "ppg");
   const sortDir =
-    options.sortDir ?? defaultPlayerSeasonSortDir(sortKey);
+    (requested ? options.sortDir : undefined) ??
+    defaultPlayerSeasonSortDir(sortKey);
   const pageSize = options.pageSize ?? EXPLORE_PLAYERS_PAGE_SIZE;
 
-  const mapped = board.rows.map(toExplorePlayerBoardRow);
   const withRelativeTs = attachRelativeTrueShooting(mapped);
-  const sorted = sortExplorePlayerRows(withRelativeTs, sortKey, sortDir);
+  const sorted = sortExplorePlayerRows(
+    withRelativeTs,
+    sortKey,
+    sortDir,
+    options.rate
+  );
   const totalCount = sorted.length;
   const pageCount = Math.max(1, Math.ceil(totalCount / pageSize) || 1);
   const page = Math.min(
@@ -173,6 +189,7 @@ export async function getExplorePlayersBoardView(options: {
     hasRaptor,
     hasDrbl,
     hasHustle,
+    emptyColumns,
     boardSampleSize: contextIndex?.sampleSize ?? totalCount,
     contextPools: contextIndex ? serializeContextPools(contextIndex) : {},
     health: board.health,

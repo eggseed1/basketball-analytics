@@ -296,11 +296,35 @@ const SHEET_STAT_ID_ALIASES: Record<string, SheetStatId> = {
   hustleChargesDrawn: "hustleChrg",
   hustleLooseBallsRecovered: "hustleLoose",
   hustleBoxOuts: "hustleBoxOut",
+  personalFouls: "pf",
+  fieldGoalsMade: "fg",
+  fieldGoalsAttempted: "fga",
+  threePointersMade: "fg3",
+  twoPointersMade: "fg2",
+  twoPointersAttempted: "fg2a",
+  freeThrowsMade: "ft",
+  stealPct: "stlPct",
+  blockPct: "blkPct",
+  defensiveReboundPct: "drbPct",
+  offensiveReboundPct: "orbPct",
+  reboundPct: "trbPct",
+  assistPct: "astPct",
+  threePointAttemptRate: "threePar",
+  freeThrowRate: "ftr",
+  assistToTurnover: "atr",
+  winShares: "ws",
+  winSharesPer48: "ws48",
 };
 
 const SHEET_STAT_ORDER_INDEX = new Map(
   SHEET_STAT_DEFS.map((def, index) => [def.id, index] as const)
 );
+
+/** Sheet column id for a percentile / explore metric id, or null if none. */
+export function sheetStatIdFor(id: string): SheetStatId | null {
+  const sheetId = SHEET_STAT_ID_ALIASES[id] ?? (id as SheetStatId);
+  return SHEET_STAT_ORDER_INDEX.has(sheetId) ? sheetId : null;
+}
 
 /** Stable sort key so every surface lists stats in SHEET_STAT_DEFS order. */
 export function sheetStatOrderIndex(id: string): number {
