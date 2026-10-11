@@ -28,9 +28,10 @@ import { P1_POINTS_PER_WIN } from "../../src/lib/drbl-public-labels";
  * What projections are built from: "drbl100" (each past season's DRBL/100,
  * mapped onto the WAR1 scale, mixed with its WAR1 by DRBL_SHARE) or "war1".
  * Realized worth, price per win and replacement stay WAR1 either way. Set
- * CONTRACT_VALUE_BASIS=war1 or CONTRACT_VALUE_DRBL_SHARE=0..1 to compare;
- * scripts/study-contract-basis.ts scores the options against game margins
- * and team records (DRBL/100 only won every season).
+ * CONTRACT_VALUE_BASIS=war1 or CONTRACT_VALUE_DRBL_SHARE=0..1 to compare.
+ * reports/contract-basis-study/latest.json scored the options against game
+ * margins and team records (DRBL/100 only won every season). That study ran
+ * against play-by-play WAR1 and can't be rerun now that WAR1 is DRBL/100.
  */
 export const PROJECTION_BASIS: "drbl100" | "war1" =
   process.env.CONTRACT_VALUE_BASIS === "war1" ? "war1" : "drbl100";

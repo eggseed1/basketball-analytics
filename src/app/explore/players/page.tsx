@@ -6,7 +6,10 @@ import { ExplorePlayersClientShell } from "@/components/explore/explore-players-
 import { PlayerBoardHealthBanner } from "@/components/explore/player-board-health-banner";
 import { TeamCatalogFallbackNotice } from "@/components/explore/team-catalog-fallback-notice";
 import { PageHeader } from "@/components/layout/page-header";
-import { parsePlayerSeasonSortKey } from "@/lib/player-season-sort";
+import {
+  parsePlayerSeasonSortKey,
+  type PlayerSeasonSortKey,
+} from "@/lib/player-season-sort";
 import { PlayerSeasonTable } from "@/components/explore/player-season-table";
 import { getAvailableSeasons, getTeamsCatalog } from "@/data/queries";
 import {
@@ -38,13 +41,15 @@ function TableSkeleton() {
   );
 }
 
-async function ExplorePlayersBoard({
-  searchParams,
-  defaultSeason,
-}: {
-  searchParams: Record<string, string | string[] | undefined>;
-  defaultSeason: string;
-}) {
+type BoardLoad = {
+  view: Awaited<ReturnType<typeof getExplorePlayersBoardView>>;
+  season: string;
+};
+
+async function loadBoard(
+  searchParams: Record<string, string | string[] | undefined>,
+  defaultSeason: string
+): Promise<BoardLoad> {
   const filters = filtersFromSearchParams({
     ...searchParams,
     season: isAllSeasonsParam(searchParams.season)
@@ -56,8 +61,7 @@ async function ExplorePlayersBoard({
   const season = isAllSeasonsParam(filters.season)
     ? "ALL"
     : filters.season ?? defaultSeason;
-  const initialSortKey = parsePlayerSeasonSortKey(searchParams.sort);
-  const sortKey = initialSortKey;
+  const sortKey = parsePlayerSeasonSortKey(searchParams.sort);
   const sortDir = sortKey
     ? parseExplorePlayersSortDir(searchParams.dir, sortKey)
     : undefined;
@@ -69,6 +73,28 @@ async function ExplorePlayersBoard({
     rate: parsePlayerBoardRate([searchParams.rate].flat()[0] ?? null),
     page: 1,
   });
+  return { view, season };
+}
+
+function sortSubtitle(label: string): string {
+  return `Sorted by ${label}. Click any column header to re-rank.`;
+}
+
+/** The board falls back to its default sort when the asked-for column is empty. */
+async function SortSubtitle({
+  requested,
+  load,
+}: {
+  requested: PlayerSeasonSortKey;
+  load: Promise<BoardLoad>;
+}) {
+  const { view } = await load;
+  if (view.sortKey === requested) return sortSubtitle(boardColumnLabel(requested));
+  return `No ${boardColumnLabel(requested)} for this season, so the board is sorted by ${boardColumnLabel(view.sortKey)}.`;
+}
+
+async function ExplorePlayersBoard({ load }: { load: Promise<BoardLoad> }) {
+  const { view, season } = await load;
 
   if (view.totalCount === 0) {
     return (
@@ -123,6 +149,7 @@ export default async function ExplorePlayersPage({
   const defaultSeason = defaultExplorePlayersSeason(seasons);
   const { teams, source, warnings } = teamCatalog;
   const subtitleSort = parsePlayerSeasonSortKey(params.sort);
+  const load = loadBoard(params, defaultSeason);
 
   return (
     <main data-motion-page className="site-shell flex min-w-0 max-w-full flex-1 flex-col gap-5 overflow-x-clip py-6 sm:py-8">
@@ -130,9 +157,11 @@ export default async function ExplorePlayersPage({
       <PageHeader
         title="Players"
         subtitle={
-          subtitleSort
-            ? `Sorted by ${boardColumnLabel(subtitleSort)}. Click any column header to re-rank.`
-            : undefined
+          subtitleSort ? (
+            <Suspense fallback={sortSubtitle(boardColumnLabel(subtitleSort))}>
+              <SortSubtitle requested={subtitleSort} load={load} />
+            </Suspense>
+          ) : undefined
         }
       />
 
@@ -156,10 +185,7 @@ export default async function ExplorePlayersPage({
             already-revealed board visible instead of flashing the skeleton.
           */}
           <Suspense fallback={<TableSkeleton />}>
-            <ExplorePlayersBoard
-              searchParams={params}
-              defaultSeason={defaultSeason}
-            />
+            <ExplorePlayersBoard load={load} />
           </Suspense>
         </ExplorePlayersClientShell>
       </Suspense>

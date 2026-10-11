@@ -11,6 +11,7 @@ GitHub and Cloudflare clients, so this runs on the home runner
 Writes, only when changed:
   src/data/franchises/verified-records.json   records, titles, best/worst, leaders
   src/data/runtime/league-season-averages.json  compare tool era adjustment
+  src/data/runtime/league-pace.json              per 100 possessions fallback
 
 Only completed seasons count. NBA Stats has no ABA seasons, so the four
 ex-ABA clubs add data/franchises/aba-seasons.json to their records and
@@ -30,6 +31,7 @@ from curl_cffi import requests
 ROOT = os.getcwd()
 RECORDS_OUT = os.path.join(ROOT, "src", "data", "franchises", "verified-records.json")
 AVERAGES_OUT = os.path.join(ROOT, "src", "data", "runtime", "league-season-averages.json")
+PACE_OUT = os.path.join(ROOT, "src", "data", "runtime", "league-pace.json")
 ABA_PATH = os.path.join(ROOT, "data", "franchises", "aba-seasons.json")
 
 HEADERS = {
@@ -116,6 +118,15 @@ def write_if_changed(path, payload, compare_keys, indent):
     with open(path, "w", encoding="utf8") as fh:
         fh.write(json.dumps(payload, ensure_ascii=False, indent=indent) + "\n")
     return True
+
+
+def league_pace(seasons):
+    """Possessions per team game, pts / ORtg x 100. The averages file is too big for client bundles."""
+    return {
+        season: round(100 * row["pts"] / row["ortg"], 1)
+        for season, row in seasons.items()
+        if row.get("pts") and row.get("ortg")
+    }
 
 
 def completed(season, current_start):
@@ -308,6 +319,12 @@ def main():
         },
         ["source", "seasons"],
         1,
+    )
+    write_if_changed(
+        PACE_OUT,
+        {"source": "pts / ORtg x 100 from league-season-averages.json", "pace": league_pace(seasons)},
+        ["source", "pace"],
+        None,
     )
     keys = sorted(seasons)
     print(

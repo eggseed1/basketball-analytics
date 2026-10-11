@@ -58,6 +58,23 @@ export function TeamIdentity({
 
   const nameIsText = children == null || typeof children === "string";
 
+  // Exhibition opponents (London Lions, Euroleague clubs) have no team page.
+  if (!href && !brand && !canonical) {
+    return (
+      <span className={cn("inline-flex max-w-full items-center", className)}>
+        <span
+          className={cn(
+            "inline-flex min-w-0 max-w-full items-center gap-1.5",
+            !nameClassName && type.body,
+            nameClassName
+          )}
+        >
+          {children ?? <span className="truncate">{text}</span>}
+        </span>
+      </span>
+    );
+  }
+
   return (
     <PreviewCard.Root open={open} onOpenChange={setOpen}>
       <span className={cn("inline-flex max-w-full items-center", className)}>

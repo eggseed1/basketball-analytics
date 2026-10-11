@@ -133,6 +133,8 @@ export interface PlayerSeason {
   rawAbilityRate?: number;
   /** Actual combined possession appearances from DRBL overlay. */
   drblPossessions?: number;
+  /** Offensive possessions on court, set where a row spans seasons (career). */
+  onCourtPossessions?: number;
   /** Production ability model id when DRBL overlay is present. */
   abilityModelVersion?: string;
   /** Season DRBL board rank (descending unrounded drbl100). */

@@ -56,7 +56,6 @@ const COUNT_TOTALS: Partial<
   hustleBoxOuts: (r) => r.hustleBoxOuts,
 };
 
-/** Per 100 on the board is per 100 minutes played. */
 function scaleCount(
   total: number | null | undefined,
   row: Row,
@@ -65,7 +64,11 @@ function scaleCount(
   const t = finite(total);
   if (t == null) return null;
   if (rate === "totals") return t;
-  if (rate === "per100") return row.minutes > 0 ? (t * 100) / row.minutes : null;
+  if (rate === "per100") {
+    return row.possessions != null && row.possessions > 0
+      ? (t * 100) / row.possessions
+      : null;
+  }
   return row.gamesPlayed > 0 ? t / row.gamesPlayed : null;
 }
 
@@ -83,6 +86,7 @@ export function boardStatValue(
   if (total) return scaleCount(total(row), row, rate);
   switch (key) {
     case "mpg":
+      if (rate === "per100") return scaleCount(row.minutes, row, rate);
       return finite(rate === "totals" ? row.minutes : row.mpg);
     case "assistToTurnover":
       return row.turnovers > 0 ? row.assists / row.turnovers : null;

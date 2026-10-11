@@ -3,6 +3,7 @@
  * Labels, categories, and order for Statistics / Career / BRef packs.
  */
 
+import leaguePace from "@/data/runtime/league-pace.json";
 import type { PlayerSeason } from "@/data/types";
 import { formatNumber, formatPct } from "@/lib/format";
 
@@ -391,19 +392,23 @@ export function darkoDefense(row: PlayerSeason): number | null {
   return null;
 }
 
+const LEAGUE_PACE = (leaguePace as { pace: Record<string, number> }).pace;
+
+/**
+ * Offensive possessions while on court, the base for "per 100 possessions".
+ * DRBL counts both ends, so its total is halved. Without DRBL, minutes at
+ * league pace; seasons before 1973-74 have no pace and stay blank.
+ */
 export function estimatePossessions(row: PlayerSeason): number | null {
+  if (row.onCourtPossessions != null && row.onCourtPossessions > 0) {
+    return row.onCourtPossessions;
+  }
   if (row.drblPossessions != null && row.drblPossessions > 0) {
-    return row.drblPossessions;
+    return row.drblPossessions / 2;
   }
-  if (row.offensiveRating != null && row.offensiveRating > 0 && row.points > 0) {
-    return (row.points / row.offensiveRating) * 100;
-  }
-  const est =
-    row.fieldGoalsAttempted +
-    0.44 * row.freeThrowsAttempted +
-    row.turnovers -
-    row.offensiveRebounds;
-  return est > 0 ? est : null;
+  const pace = LEAGUE_PACE[row.season];
+  if (pace == null || !(row.minutes > 0)) return null;
+  return (row.minutes * pace) / 48;
 }
 
 export function scaleCount(

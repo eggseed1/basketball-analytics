@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 import {
   gameSideBrandKey,
   gameSideCanonicalTeamId,
+  withGameSideFeedLabels,
 } from "@/lib/game-team-identity";
 import { formatTipTime } from "@/lib/tip-time";
 import { useViewerTimeZone } from "@/components/sports/local-tip-time";
@@ -44,7 +45,7 @@ function resolveSideBrand(
   const key = gameSideBrandKey(game, side);
   const modern = resolveHistoricalTeamBrand(key, game.season, "modern_surface");
   if (modern?.logoUrl) return modern;
-  if (brand) return brand;
+  if (brand) return withGameSideFeedLabels(brand, game, side);
   return {
     displayName: key,
     abbreviation: key.slice(0, 3).toUpperCase(),

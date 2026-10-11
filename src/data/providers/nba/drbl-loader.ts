@@ -8,6 +8,7 @@ import {
   sha256Hex,
   type BoardProvenance,
 } from "../../../../drbl/models/board-provenance";
+import { restoreNameAccents } from "@/data/drbl/restore-name-accents";
 import { isDrblSeason } from "@/data/drbl/season-registry";
 import {
   CACHE_TTL_MS,
@@ -30,6 +31,17 @@ const BUNDLED_PATH: Record<string, string> = {
   "2025-26": "src/data/drbl/precomputed/2025-26.json",
 };
 
+function withAccentedNames(artifact: DrblSeasonArtifact): DrblSeasonArtifact {
+  let changed = false;
+  const players = artifact.players.map((row) => {
+    const name = restoreNameAccents(row.playerName);
+    if (name === row.playerName) return row;
+    changed = true;
+    return { ...row, playerName: name };
+  });
+  return changed ? { ...artifact, players } : artifact;
+}
+
 /**
  * Prefer process-cached disk JSON for known seasons (avoids bundling ~2.5MB
  * of DRBL artifacts into the webpack graph / every client shared chunk).
@@ -49,10 +61,10 @@ async function readPrecomputed(
     );
     const bundled = getBundledDrblSeason(season);
     if (bundled.length > 0) {
-      const artifact = {
+      const artifact = withAccentedNames({
         season,
         players: bundled,
-      } as DrblSeasonArtifact;
+      } as DrblSeasonArtifact);
       artifactCache.set(season, artifact);
       return artifact;
     }
@@ -86,8 +98,9 @@ async function readPrecomputed(
       const raw = await readFile(file, "utf8");
       const parsed = JSON.parse(raw) as DrblSeasonArtifact;
       if (parsed?.players?.length) {
-        artifactCache.set(season, parsed);
-        return parsed;
+        const artifact = withAccentedNames(parsed);
+        artifactCache.set(season, artifact);
+        return artifact;
       }
     } catch {
       // try next

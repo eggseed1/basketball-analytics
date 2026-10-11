@@ -4,6 +4,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
+import leaguePace from "@/data/runtime/league-pace.json";
 import { withPlayerSeasonDefaults } from "@/data/transformers/player-season-defaults";
 import type { PlayerSeason } from "@/data/types";
 import { buildCareerAverageRow, careerSeasonPool } from "@/lib/career-average-row";
@@ -15,6 +16,7 @@ import {
   leagueAveragesFor,
   trackedSince,
 } from "@/lib/era-adjust";
+import { estimatePossessions } from "@/lib/player-stat-sheet-registry";
 
 function season(over: Partial<PlayerSeason>): PlayerSeason {
   return withPlayerSeasonDefaults({
@@ -76,4 +78,19 @@ test("a career straddling the tracking start averages only tracked seasons", () 
   const { row, partial } = applyTrackedCareerStats(built, careerSeasonPool(seasons));
   assert.ok(partial.includes("stl"));
   assert.equal(row.steals / row.gamesPlayed, 2);
+});
+
+test("career per 100 sums each season's possessions, blank if any season has no pace", () => {
+  const modern = [
+    season({ season: "2023-24", minutes: 2400, drblPossessions: 10000 }),
+    season({ season: "2024-25", minutes: 2000 }),
+  ];
+  const built = buildCareerAverageRow(modern)!;
+  const pace = leaguePace.pace["2024-25"]!;
+  assert.equal(estimatePossessions(built), 5000 + (2000 * pace) / 48);
+  const straddle = buildCareerAverageRow([
+    season({ season: "1972-73" }),
+    season({ season: "1973-74" }),
+  ])!;
+  assert.equal(estimatePossessions(straddle), null);
 });

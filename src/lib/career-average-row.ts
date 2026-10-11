@@ -1,5 +1,6 @@
 import type { PlayerSeason } from "@/data/types";
 import { withPlayerSeasonDefaults } from "@/data/transformers/player-season-defaults";
+import { estimatePossessions } from "@/lib/player-stat-sheet-registry";
 
 /** URL / picker sentinel for career-average compare mode. */
 export const CAREER_COMPARE_KEY = "career";
@@ -236,8 +237,20 @@ function buildFromPool(
     drblO: weightedMean(pool, (r) => r.drblO) ?? Number.NaN,
     drblD: weightedMean(pool, (r) => r.drblD) ?? Number.NaN,
     r1WinEquivalents: sumOptional(pool, (r) => r.r1WinEquivalents) ?? null,
+    onCourtPossessions: careerPossessions(pool),
     draftYear: first.draftYear,
   });
+}
+
+/** Undefined when any season lacks an estimate, so per 100 stays blank. */
+function careerPossessions(pool: PlayerSeason[]): number | undefined {
+  let total = 0;
+  for (const row of pool) {
+    const poss = estimatePossessions(row);
+    if (poss == null) return undefined;
+    total += poss;
+  }
+  return total > 0 ? total : undefined;
 }
 
 export function careerSpanLabel(seasons: PlayerSeason[]): string {

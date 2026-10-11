@@ -366,7 +366,23 @@ function main() {
   assert.equal(bref.dbpm, undefined, "exact 0 BRef box value is unpublished");
   assert.equal(boardStatValue(bref, "twoPointersMade", "totals"), 250);
   assert.equal(boardStatValue(bref, "twoPointersAttempted", "perGame"), 420 / 50);
-  assert.equal(boardStatValue(bref, "personalFouls", "per100"), (120 * 100) / 1500);
+  // 1500 minutes at 2025-26 league pace (99.9 possessions per 48).
+  assert.equal(bref.possessions, (1500 * 99.9) / 48);
+  assert.equal(
+    boardStatValue(bref, "personalFouls", "per100"),
+    (120 * 100) / bref.possessions!
+  );
+  const drblRow = toExplorePlayerBoardRow({
+    ...fakeSeason("drbl", { teamId: "2", points: 900 }),
+    drblPossessions: 6000,
+  });
+  assert.equal(drblRow.possessions, 3000, "DRBL counts both ends");
+  const preTurnovers = toExplorePlayerBoardRow({
+    ...fakeSeason("old", { teamId: "2", points: 900 }),
+    season: "1965-66",
+  });
+  assert.equal(preTurnovers.possessions, undefined);
+  assert.equal(boardStatValue(preTurnovers, "ppg", "per100"), null);
   assert.equal(boardStatValue(bref, "assistToTurnover", "totals"), 2);
   assert.equal(formatBoardStat("winSharesPer48", 0.162, "perGame"), "0.162");
   assert.equal(formatBoardStat("dbpm", null, "perGame"), "-");

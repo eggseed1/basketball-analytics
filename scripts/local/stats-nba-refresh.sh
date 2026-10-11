@@ -19,6 +19,7 @@ FILES=(
   src/data/runtime/player-awards-snapshot.json
   src/data/franchises/verified-records.json
   src/data/runtime/league-season-averages.json
+  src/data/runtime/league-pace.json
 )
 
 log() { echo "[stats-nba-refresh] $(date -u +%Y-%m-%dT%H:%M:%SZ) $*"; }

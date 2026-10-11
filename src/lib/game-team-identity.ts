@@ -163,6 +163,24 @@ export function applyHistoricalTeamEraToGame(game: Game): Game {
 }
 
 /**
+ * The brand registry only knows exhibition opponents (London Lions) by raw id,
+ * so its text fallback reads "134478". The feed's own name and abbr win there.
+ */
+export function withGameSideFeedLabels<
+  B extends { source: string; displayName: string; abbreviation: string },
+>(brand: B, game: GameTeamFields, side: "home" | "away"): B {
+  if (brand.source !== "text_fallback") return brand;
+  const name = (side === "home" ? game.homeTeamName : game.awayTeamName)?.trim();
+  const abbr = (side === "home" ? game.homeTeamAbbr : game.awayTeamAbbr)?.trim();
+  if (!name && !abbr) return brand;
+  return {
+    ...brand,
+    displayName: name || brand.displayName,
+    abbreviation: abbr ? abbr.toUpperCase() : brand.abbreviation,
+  };
+}
+
+/**
  * Branding / logo key for a game side.
  *
  * Order:

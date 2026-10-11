@@ -13,6 +13,7 @@ import {
 import { boardStatValue } from "@/lib/player-board-stats";
 import type { PlayerBoardRate } from "@/lib/explore-players-display";
 import {
+  estimatePossessions,
   getSheetStatValue,
   type SheetStatId,
 } from "@/lib/player-stat-sheet-registry";
@@ -80,6 +81,8 @@ export type ExplorePlayerBoardRow = {
   hustleChargesDrawn?: number;
   hustleLooseBallsRecovered?: number;
   hustleBoxOuts?: number;
+  /** Offensive possessions on court; the per 100 base, same as the sheet. */
+  possessions?: number;
   /** Season totals and published rates; omitted when the source lacks them. */
   personalFouls?: number;
   plusMinus?: number;
@@ -204,6 +207,8 @@ export function toExplorePlayerBoardRow(p: PlayerSeason): ExplorePlayerBoardRow 
   if (p.defensiveRebounds != null && Number.isFinite(p.defensiveRebounds)) {
     row.defensiveRebounds = p.defensiveRebounds;
   }
+  const possessions = estimatePossessions(p);
+  if (possessions != null) row.possessions = possessions;
   for (const [field, sheetId] of SHEET_BACKED_FIELDS) {
     const value = getSheetStatValue(p, sheetId, "totals");
     if (value != null) row[field] = value;

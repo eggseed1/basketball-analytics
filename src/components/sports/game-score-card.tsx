@@ -17,6 +17,7 @@ import { buildGameMatchupTheme } from "@/lib/game-matchup-theme";
 import {
   gameSideBrandKey,
   gameSideCanonicalTeamId,
+  withGameSideFeedLabels,
 } from "@/lib/game-team-identity";
 import {
   resolveHistoricalTeamBrand,
@@ -372,7 +373,7 @@ export function resolveSideBrand(
     game.season,
     presentation
   );
-  if (brand) return brand;
+  if (brand) return withGameSideFeedLabels(brand, game, side);
   const key = gameSideBrandKey(game, side);
   const name =
     (side === "away" ? game.awayTeamName : game.homeTeamName)?.trim() || key;

@@ -56,7 +56,7 @@ export type DrblGuideSnapshot = {
   scatter: { season: string; minPossessions: number; points: DrblGuideScatterPoint[] };
   carryover: { minPossessions: number; seasons: string; buckets: DrblCarryoverBucket[] };
   outcome: { generatedAt: string; tests: DrblOutcomeTest[] };
-  /** scripts/study-contract-basis.ts: contract projections scored on next-season games. Null when not run. */
+  /** reports/contract-basis-study/latest.json: contract projections scored on next-season games (frozen). */
   contractBasis?: {
     generatedAt: string;
     seasons: string[];
