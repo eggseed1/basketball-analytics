@@ -191,6 +191,8 @@ Freeze candidate pool at historical date. Levels: **R1** contextual NBA (primary
 
 Possession/stint margin ~ player-on-court design + ridge; controls for opponent/teammate strength, home, transition/half-court, garbage time. Adjusted association — not causal unless separately identified.
 
+**Shadow (Oct 2026):** `anchored-lineup.ts` fits scoreboard points per possession with each player shrunk toward 4 × drbl100 (λ 6400). Stored as `players[].drblAnchored100` plus `anchoredLineupModel`; not in the site overlay or any published surface. Stored DRBL-LN predicts worse than published DRBL/100 on the outcome test and stays out of drbl100.
+
 ### 7.5 DRBL-B (M10)
 
 Optional aggregates with provenance: endpoint, coverage, `as_of_timestamp`, `post_game_only`, missing_rate, definition, parser_version.  
@@ -215,6 +217,8 @@ Leakage bans: future stats, final outcomes in pre-outcome features, future lineu
 Rolling-origin folds (example): train …2022-23 / val 2023-24 / test 2024-25; then shift forward.
 
 Ablation: P → P+LN → P+B → full. Drop components that don’t help holdout.
+
+**Outcome test** (`npm run drbl:outcome-test`, needs local normalized possessions): ratings from early games or the prior season predict final margins of unseen games. Writes `reports/drbl-outcome-test/latest.md`. A candidate replaces published drbl100 only if its cross-season ΔRMSE interval is below 0 and no within-season interval is above 0. Future-DRBL-P targets (M16c/M17b) are circular and don't count.
 
 ---
 

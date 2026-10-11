@@ -1,0 +1,543 @@
+{
+  "generatedAt": "2026-10-11T02:04:47.362Z",
+  "anchoredLineup": {
+    "version": "drbl-anchored-lineup-v1",
+    "config": {
+      "priorWeight": 4,
+      "lambda": 6400,
+      "homeLambdaScale": 0.25,
+      "interceptLambdaScale": 0.01,
+      "minPriorAppearances": 100,
+      "fillMaxAppearances": 1500
+    }
+  },
+  "ridgeSelection": {
+    "2024-25": {
+      "lambda": 6400,
+      "trace": {
+        "lambda_400": 16.1301,
+        "lambda_800": 15.9971,
+        "lambda_1600": 15.8682,
+        "lambda_3200": 15.7783,
+        "lambda_6400": 15.7383
+      }
+    },
+    "2025-26": {
+      "lambda": 1600,
+      "trace": {
+        "lambda_400": 14.9303,
+        "lambda_800": 14.8925,
+        "lambda_1600": 14.8843,
+        "lambda_3200": 14.92,
+        "lambda_6400": 14.9864
+      }
+    }
+  },
+  "reports": [
+    {
+      "label": "2024-25: first 60% of games → last 40%",
+      "games": 492,
+      "results": [
+        {
+          "name": "Home court only",
+          "rmse": 16.41681859536525,
+          "r2": 0
+        },
+        {
+          "name": "Team net rating (roster-blind)",
+          "rmse": 14.635993285760069,
+          "r2": 0.20518435959109427,
+          "vsPublished": {
+            "delta": -0.03407022229097123,
+            "lo": -0.3264659329364381,
+            "hi": 0.24739638005496012,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published DRBL/100",
+          "rmse": 14.67006350805104,
+          "r2": 0.20147964841526889
+        },
+        {
+          "name": "DRBL-P raw rate (unshrunk)",
+          "rmse": 14.328260532992317,
+          "r2": 0.23825617747735495,
+          "vsPublished": {
+            "delta": -0.34180297505872304,
+            "lo": -0.5686230435222974,
+            "hi": -0.10567379314114334,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "DRBL-LN (stored lineup)",
+          "rmse": 15.027308792609844,
+          "r2": 0.16211498612277697,
+          "vsPublished": {
+            "delta": 0.3572452845588039,
+            "lo": -0.06591338128469104,
+            "hi": 0.7812259564377246,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "DRBL-B (box)",
+          "rmse": 16.22066783623461,
+          "r2": 0.023753559530101054,
+          "vsPublished": {
+            "delta": 1.5506043281835709,
+            "lo": 0.9997524375617886,
+            "hi": 2.0688499649930456,
+            "verdict": "worse"
+          }
+        },
+        {
+          "name": "Raw on-court +/- per 100",
+          "rmse": 14.3306108854107,
+          "r2": 0.23800624996190767,
+          "vsPublished": {
+            "delta": -0.3394526226403407,
+            "lo": -0.5682710641439588,
+            "hi": -0.09500387949789868,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Scoreboard lineup ridge (λ=6400)",
+          "rmse": 14.573730655925957,
+          "r2": 0.21193238818667315,
+          "vsPublished": {
+            "delta": -0.09633285212508369,
+            "lo": -0.31741768385476377,
+            "hi": 0.14580113161695607,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Anchored lineup (drbl-anchored-lineup-v1)",
+          "rmse": 14.501511242701024,
+          "r2": 0.2197234974245098,
+          "vsPublished": {
+            "delta": -0.16855226535001577,
+            "lo": -0.3677534338673514,
+            "hi": 0.020079007342793886,
+            "verdict": "no clear difference"
+          }
+        }
+      ],
+      "incremental": [
+        {
+          "name": "Published + DRBL-P raw rate (unshrunk)",
+          "rmse": 14.317973304673018,
+          "r2": 0.23934959974226921,
+          "vsPublished": {
+            "delta": -0.35209020337802244,
+            "lo": -0.6820775526910889,
+            "hi": 0.028975777186861507,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + DRBL-LN (stored lineup)",
+          "rmse": 14.600090587719842,
+          "r2": 0.20907900826326997,
+          "vsPublished": {
+            "delta": -0.06997292033119784,
+            "lo": -0.21946412179454455,
+            "hi": 0.07936927711034691,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + DRBL-B (box)",
+          "rmse": 14.717790549014813,
+          "r2": 0.19627544354061666,
+          "vsPublished": {
+            "delta": 0.04772704096377289,
+            "lo": 0.012111204650713248,
+            "hi": 0.08696994395862845,
+            "verdict": "worse"
+          }
+        },
+        {
+          "name": "Published + Raw on-court +/- per 100",
+          "rmse": 14.346529073015974,
+          "r2": 0.23631249158501488,
+          "vsPublished": {
+            "delta": -0.3235344350350662,
+            "lo": -0.573009845205295,
+            "hi": -0.05288782019358429,
+            "verdict": "better"
+          }
+        },
+        {
+          "name": "Published + Scoreboard lineup ridge (λ=6400)",
+          "rmse": 14.579083994323248,
+          "r2": 0.21135332335477897,
+          "vsPublished": {
+            "delta": -0.09097951372779178,
+            "lo": -0.24915888142227693,
+            "hi": 0.07585534958373152,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + Anchored lineup (drbl-anchored-lineup-v1)",
+          "rmse": 14.533522677421814,
+          "r2": 0.21627484458262136,
+          "vsPublished": {
+            "delta": -0.13654083062922595,
+            "lo": -0.3273796148254675,
+            "hi": 0.04726953293677205,
+            "verdict": "no clear difference"
+          }
+        }
+      ]
+    },
+    {
+      "label": "2025-26: first 60% of games → last 40%",
+      "games": 492,
+      "results": [
+        {
+          "name": "Home court only",
+          "rmse": 17.736784157142598,
+          "r2": 0
+        },
+        {
+          "name": "Team net rating (roster-blind)",
+          "rmse": 15.272413282653222,
+          "r2": 0.25857782057375167,
+          "vsPublished": {
+            "delta": -0.013203530164117794,
+            "lo": -0.3932461450348832,
+            "hi": 0.36728485063536986,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published DRBL/100",
+          "rmse": 15.28561681281734,
+          "r2": 0.25729529612099833
+        },
+        {
+          "name": "DRBL-P raw rate (unshrunk)",
+          "rmse": 15.171459327897615,
+          "r2": 0.2683473460679551,
+          "vsPublished": {
+            "delta": -0.11415748491972444,
+            "lo": -0.37448183172659455,
+            "hi": 0.13036065903983562,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "DRBL-LN (stored lineup)",
+          "rmse": 15.821694227309253,
+          "r2": 0.20428744241287566,
+          "vsPublished": {
+            "delta": 0.5360774144919134,
+            "lo": 0.06883660345314091,
+            "hi": 1.0118015021933697,
+            "verdict": "worse"
+          }
+        },
+        {
+          "name": "DRBL-B (box)",
+          "rmse": 17.526642257066477,
+          "r2": 0.023555232837389695,
+          "vsPublished": {
+            "delta": 2.2410254442491375,
+            "lo": 1.6267269545902359,
+            "hi": 2.8447588192816333,
+            "verdict": "worse"
+          }
+        },
+        {
+          "name": "Raw on-court +/- per 100",
+          "rmse": 15.457339426368591,
+          "r2": 0.24051408294166698,
+          "vsPublished": {
+            "delta": 0.1717226135512515,
+            "lo": -0.19798057650733547,
+            "hi": 0.5233638099213866,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Scoreboard lineup ridge (λ=1600)",
+          "rmse": 15.759187677562458,
+          "r2": 0.21056224430499804,
+          "vsPublished": {
+            "delta": 0.47357086474511867,
+            "lo": 0.054561039353224317,
+            "hi": 0.9005924005567412,
+            "verdict": "worse"
+          }
+        },
+        {
+          "name": "Anchored lineup (drbl-anchored-lineup-v1)",
+          "rmse": 15.333416199638878,
+          "r2": 0.2526430355176045,
+          "vsPublished": {
+            "delta": 0.04779938682153784,
+            "lo": -0.17859512207616035,
+            "hi": 0.2615928096473148,
+            "verdict": "no clear difference"
+          }
+        }
+      ],
+      "incremental": [
+        {
+          "name": "Published + DRBL-P raw rate (unshrunk)",
+          "rmse": 15.178035429353669,
+          "r2": 0.26771293579278954,
+          "vsPublished": {
+            "delta": -0.10758138346367119,
+            "lo": -0.2986029022883123,
+            "hi": 0.07551781704880867,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + DRBL-LN (stored lineup)",
+          "rmse": 15.210912822664428,
+          "r2": 0.2645370616405309,
+          "vsPublished": {
+            "delta": -0.07470399015291207,
+            "lo": -0.2316857705869726,
+            "hi": 0.08590813232697236,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + DRBL-B (box)",
+          "rmse": 15.314826816971255,
+          "r2": 0.25445404526626303,
+          "vsPublished": {
+            "delta": 0.029210004153915392,
+            "lo": -0.04709208728490388,
+            "hi": 0.09792137129243983,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + Raw on-court +/- per 100",
+          "rmse": 15.233236009485633,
+          "r2": 0.26237678052996394,
+          "vsPublished": {
+            "delta": -0.05238080333170636,
+            "lo": -0.19634234212494306,
+            "hi": 0.09424400486179074,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + Scoreboard lineup ridge (λ=1600)",
+          "rmse": 15.244429592900941,
+          "r2": 0.2612923516433089,
+          "vsPublished": {
+            "delta": -0.04118721991639873,
+            "lo": -0.16101065364236966,
+            "hi": 0.07110692615984959,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + Anchored lineup (drbl-anchored-lineup-v1)",
+          "rmse": 15.27891999703944,
+          "r2": 0.2579459296032244,
+          "vsPublished": {
+            "delta": -0.006696815777900156,
+            "lo": -0.10194421209996207,
+            "hi": 0.08761269584416809,
+            "verdict": "no clear difference"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Shipped 2024-25 ratings → every 2025-26 game",
+      "games": 1230,
+      "results": [
+        {
+          "name": "Home court only",
+          "rmse": 16.433741842926413,
+          "r2": 0
+        },
+        {
+          "name": "Team net rating (roster-blind)",
+          "rmse": 15.842880691745988,
+          "r2": 0.07061559110776527,
+          "vsPublished": {
+            "delta": 0.6627413636483457,
+            "lo": 0.3835927905790477,
+            "hi": 0.9387522835471813,
+            "verdict": "worse"
+          }
+        },
+        {
+          "name": "Published DRBL/100",
+          "rmse": 15.180139328097642,
+          "r2": 0.1467454858611107
+        },
+        {
+          "name": "DRBL-P raw rate (unshrunk)",
+          "rmse": 15.412260376696933,
+          "r2": 0.12045157732099177,
+          "vsPublished": {
+            "delta": 0.23212104859929106,
+            "lo": 0.05918007711987627,
+            "hi": 0.3993081290433018,
+            "verdict": "worse"
+          }
+        },
+        {
+          "name": "DRBL-LN (stored lineup)",
+          "rmse": 15.864077892518045,
+          "r2": 0.06812696199170987,
+          "vsPublished": {
+            "delta": 0.6839385644204032,
+            "lo": 0.40791070383925465,
+            "hi": 0.9769994792832755,
+            "verdict": "worse"
+          }
+        },
+        {
+          "name": "DRBL-B (box)",
+          "rmse": 16.316741101073298,
+          "r2": 0.014188399334121415,
+          "vsPublished": {
+            "delta": 1.1366017729756557,
+            "lo": 0.8304109190241711,
+            "hi": 1.4548060222868724,
+            "verdict": "worse"
+          }
+        },
+        {
+          "name": "Raw on-court +/- per 100",
+          "rmse": 15.60753069378233,
+          "r2": 0.09802297662619275,
+          "vsPublished": {
+            "delta": 0.42739136568468794,
+            "lo": 0.19483613460836402,
+            "hi": 0.6778268400655438,
+            "verdict": "worse"
+          }
+        },
+        {
+          "name": "Scoreboard lineup ridge (λ=6400)",
+          "rmse": 15.545375343000076,
+          "r2": 0.10519272916180611,
+          "vsPublished": {
+            "delta": 0.3652360149024343,
+            "lo": 0.1570040235888044,
+            "hi": 0.5972853027128266,
+            "verdict": "worse"
+          }
+        },
+        {
+          "name": "Anchored lineup (drbl-anchored-lineup-v1)",
+          "rmse": 15.125515799664608,
+          "r2": 0.15287506287695096,
+          "vsPublished": {
+            "delta": -0.05462352843303364,
+            "lo": -0.15593279475255706,
+            "hi": 0.049987512907080145,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "DARKO 2024-25 (external)",
+          "rmse": 15.032174620107513,
+          "r2": 0.1632981997961761,
+          "vsPublished": {
+            "delta": -0.14796470799012873,
+            "lo": -0.46756097033376953,
+            "hi": 0.12227051410505752,
+            "verdict": "no clear difference"
+          }
+        }
+      ],
+      "incremental": [
+        {
+          "name": "Published + DRBL-P raw rate (unshrunk)",
+          "rmse": 15.203748549833914,
+          "r2": 0.14408933893193177,
+          "vsPublished": {
+            "delta": 0.023609221736272445,
+            "lo": 0.00683533946439141,
+            "hi": 0.04378982989569025,
+            "verdict": "worse"
+          }
+        },
+        {
+          "name": "Published + DRBL-LN (stored lineup)",
+          "rmse": 15.177286896645938,
+          "r2": 0.14706611814161274,
+          "vsPublished": {
+            "delta": -0.002852431451703552,
+            "lo": -0.029278750283642907,
+            "hi": 0.026074131306273785,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + DRBL-B (box)",
+          "rmse": 15.188798629534126,
+          "r2": 0.1457717536391091,
+          "vsPublished": {
+            "delta": 0.008659301436484412,
+            "lo": -0.02753075989908993,
+            "hi": 0.04743473317163449,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + Raw on-court +/- per 100",
+          "rmse": 15.155485351149173,
+          "r2": 0.14951476674188025,
+          "vsPublished": {
+            "delta": -0.02465397694846949,
+            "lo": -0.07821370277148176,
+            "hi": 0.029303980397752838,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + Scoreboard lineup ridge (λ=6400)",
+          "rmse": 15.16591822537417,
+          "r2": 0.14834343381466153,
+          "vsPublished": {
+            "delta": -0.014221102723471546,
+            "lo": -0.056757052483279224,
+            "hi": 0.03207221466908017,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + Anchored lineup (drbl-anchored-lineup-v1)",
+          "rmse": 15.133119968373856,
+          "r2": 0.15202308529637454,
+          "vsPublished": {
+            "delta": -0.04701935972378557,
+            "lo": -0.12189664900423658,
+            "hi": 0.029225442774118093,
+            "verdict": "no clear difference"
+          }
+        },
+        {
+          "name": "Published + DARKO 2024-25 (external)",
+          "rmse": 14.846225567217108,
+          "r2": 0.18387028857136212,
+          "vsPublished": {
+            "delta": -0.3339137608805345,
+            "lo": -0.517684315279638,
+            "hi": -0.1706389981095473,
+            "verdict": "better"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -132,6 +132,8 @@ export interface DrblPlayerSeasonRow {
   drblP: number;
   drblLn: number;
   drblB: number;
+  /** Shadow only (never published): scoreboard lineup ridge anchored on drbl100. */
+  drblAnchored100?: number;
   drblO: number;
   drblD: number;
   sdv100: number;

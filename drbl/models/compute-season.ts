@@ -41,6 +41,14 @@ import {
 } from "./ability-lineage";
 import { VALIDATED_ABILITY_MODEL_VERSION } from "./validated-ability-v1";
 import {
+  addGameToAnchoredLineupInput,
+  anchoredLineupSummary,
+  attachAnchoredLineup,
+  createAnchoredLineupInput,
+  fitAnchoredLineup,
+  type AnchoredLineupSummary,
+} from "./anchored-lineup";
+import {
   DRBL_PARSER_VERSION,
   DRBL_RECONSTRUCTION_VERSION,
 } from "../constants";
@@ -128,6 +136,8 @@ export interface DrblSeasonArtifact {
     notes: string;
   };
   behaviorRetrospectiveOnly?: boolean;
+  /** Shadow lineup fit behind players[].drblAnchored100; not published. */
+  anchoredLineupModel?: AnchoredLineupSummary;
   /** Ranking semantics version (bumps when sort key / formulas change). */
   rankingFormulaVersion?: string;
   rankingMode?: string;
@@ -154,6 +164,7 @@ export interface DrblSeasonArtifact {
  * 7) Calibrate ± uncertainty intervals from OOF residuals (M12)
  * 8) Team-level WAR calibration (M13)
  * 9) Formal WP leverage → DRBL-L (M14; independent of WAR)
+ * 10) Shadow lineup ridge anchored on drbl100 → drblAnchored100 (unpublished)
  */
 export async function computeSeasonDrbl(
   season: string,
@@ -205,11 +216,13 @@ export async function computeSeasonDrbl(
   const behaviorAccum = new Map();
   let cutoffDate = "";
   const lineupRows: LineupPossessionRow[] = [];
+  const anchoredInput = createAnchoredLineupInput();
 
   for (const g of processedGames) {
     accumulateReplacementSignals(g.box, g.events, g.possessions, roleAccum);
     accumulateBehaviorSignals(g.box, g.events, g.possessions, behaviorAccum);
     lineupRows.push(...buildLineupRows(g.box, g.events, g.possessions));
+    addGameToAnchoredLineupInput(anchoredInput, g.box.homeTeamId, g.possessions);
     if (g.box.gameDate && g.box.gameDate > cutoffDate) {
       cutoffDate = g.box.gameDate;
     }
@@ -475,7 +488,7 @@ export async function computeSeasonDrbl(
     processedGames.length,
     generatedAt
   );
-  const players = finalizePlayerSeasonRows(accumulators, {
+  const finalizedPlayers = finalizePlayerSeasonRows(accumulators, {
     minPossessions: options.minPossessions ?? 50,
     lineupRatingsPer100: lineupModel?.ratingsPer100 ?? null,
     behaviorRatingsPer100: behaviorModel?.ratingsPer100 ?? null,
@@ -494,6 +507,11 @@ export async function computeSeasonDrbl(
     abilityLineageVersion: ABILITY_LINEAGE_VERSION,
     abilityModelVersion: VALIDATED_ABILITY_MODEL_VERSION,
   }));
+  const anchoredLineup = fitAnchoredLineup(
+    anchoredInput,
+    new Map(finalizedPlayers.map((p) => [p.playerId, p.drbl100]))
+  );
+  const players = attachAnchoredLineup(finalizedPlayers, anchoredLineup);
 
   return {
     season,
@@ -587,6 +605,7 @@ export async function computeSeasonDrbl(
       exampleClutchLambdaStar: leverageModel.exampleClutchLambdaStar,
       possessions: leverageModel.possessions,
     },
+    anchoredLineupModel: anchoredLineupSummary(anchoredLineup),
     players,
   };
 }
