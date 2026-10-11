@@ -463,9 +463,7 @@ DRBL/100 = c × N / (N + ${sampleK}) × blend`}
             <ul className="flex list-disc flex-col gap-1.5 pl-5">
               <li>
                 <strong>Contract surplus</strong> projects a player&apos;s future seasons from his recent history.
-                {drblShare != null
-                  ? ` Each past season counts ${drblShare === 1 ? "its DRBL/100, turned into wins." : `${drblShare === 0.5 ? "half from DRBL/100 and half from WAR1" : `${Math.round(drblShare * 100)}% from DRBL/100 and the rest from WAR1`}, both turned into wins.`}`
-                  : " Each past season counts its WAR1."}{" "}
+                {" "}Each past season counts its DRBL/100, turned into wins, which is the same as its WAR1.{" "}
                 What a season already played was worth, and salary played off, use WAR1. See the{" "}
                 <Link href="/learn/salary#surplus" className={linkClass}>
                   salary guide
