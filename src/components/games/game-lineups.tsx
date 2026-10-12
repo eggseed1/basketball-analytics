@@ -309,6 +309,11 @@ export function GameLineupsPanel({
   const { data, loaded } = held?.value ?? { data: null, loaded: false };
   if (!mode) return center ?? null;
 
+  if (delayed.delayMs && mode !== "pregame" && !loaded) return center ?? null;
+  const reveal =
+    delayed.delayMs > 0 &&
+    "animate-in fade-in slide-in-from-top-2 fill-mode-both duration-700 ease-out motion-reduce:animate-none";
+
   const heading =
     mode === "pregame" ? "Starting lineups" : mode === "break" ? "Last on the floor" : "On the floor";
   if (!loaded && mode !== "pregame") {
@@ -381,7 +386,7 @@ export function GameLineupsPanel({
   );
 
   return (
-    <section aria-label={heading} className="flex flex-col gap-2 border-t border-border/50 pt-3">
+    <section aria-label={heading} className={cn("flex flex-col gap-2 border-t border-border/50 pt-3", reveal)}>
       <h2 className={cn(type.micro, "font-bold uppercase tracking-[0.1em] text-muted-foreground")}>
         {heading}
       </h2>
