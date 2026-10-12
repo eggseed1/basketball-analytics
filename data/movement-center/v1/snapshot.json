@@ -5,10 +5,10 @@
     "season": "2026-27",
     "snapshotDate": "2026-10-12",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-10-12T17:37:40.981Z",
+    "builtAt": "2026-10-12T18:43:41.570Z",
     "rosterPlayerCount": 501,
-    "headlinesScanned": 3168,
-    "latestHeadlineAt": "2026-10-12T17:36:02.000Z",
+    "headlinesScanned": 3196,
+    "latestHeadlineAt": "2026-10-12T18:41:51.000Z",
     "latestTransactionDate": "2026-10-11",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -152,7 +152,7 @@
     },
     "outlet:sporting-news": {
       "label": "Sporting News",
-      "credibility": 12
+      "credibility": 16
     },
     "reporter:bobby-marks-speaking": {
       "label": "Bobby Marks. Speaking (ESPN)",
@@ -173,6 +173,10 @@
     "outlet:essentiallysports": {
       "label": "EssentiallySports",
       "credibility": 16
+    },
+    "reporter:brian-windhorst": {
+      "label": "Brian Windhorst (ESPN)",
+      "credibility": 30
     },
     "ledger:nba-player-movement": {
       "label": "Player movement log",
@@ -580,17 +584,18 @@
     {
       "id": "mv-trade-6442-20261001",
       "headline": "Kyrie Irving, Anthony Davis and others: trade talk",
-      "primaryClaimId": "mv-62fc808e224a7baa",
+      "primaryClaimId": "mv-6350e063859c6fae",
       "claimIds": [
         "mv-d510f782fadebd47",
         "mv-62fc808e224a7baa",
         "mv-a98f425d77b5fe76",
-        "mv-7627c3b86b24a57c"
+        "mv-7627c3b86b24a57c",
+        "mv-6350e063859c6fae"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-01T01:04:56.000Z",
-      "lastMeaningfulAt": "2026-10-12T15:28:36.000Z",
+      "lastMeaningfulAt": "2026-10-12T17:59:28.000Z",
       "linkedPlayerIds": [
         "6442",
         "6583",
@@ -807,7 +812,7 @@
     },
     {
       "id": "mv-contract-4683692-20261006",
-      "headline": "Cason Wallace, Karl-Anthony Towns and others: extension talks with the Thunder",
+      "headline": "Cason Wallace, Karl-Anthony Towns and others: extension talks with the Knicks",
       "primaryClaimId": "mv-abb18f46843d904e",
       "claimIds": [
         "mv-d46db2f4a349df07",
@@ -836,12 +841,13 @@
         "mv-517696837090b53f",
         "mv-fc9ce7087a0e782e",
         "mv-2b8efe7981fc622a",
-        "mv-abb18f46843d904e"
+        "mv-abb18f46843d904e",
+        "mv-8029dae4eb322330"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-06T17:10:57.000Z",
-      "lastMeaningfulAt": "2026-10-12T13:52:53.000Z",
+      "lastMeaningfulAt": "2026-10-12T18:36:38.000Z",
       "linkedPlayerIds": [
         "4683692",
         "3136195",
@@ -5547,6 +5553,48 @@
         "6"
       ],
       "isOriginal": false
+    },
+    {
+      "id": "mv-6350e063859c6fae",
+      "clusterId": "mv-trade-6442-20261001",
+      "summary": "Dallas Mavericks Give Clear Verdict On Kyrie Irving’s Future Amid Trade Rumors",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-12T17:59:28.000Z",
+      "sourceId": "reporter:brian-windhorst",
+      "sourceLabel": "Heavy, citing Brian Windhorst (ESPN)",
+      "reporterLabel": "Brian Windhorst",
+      "sourceUrl": "https://heavy.com/sports/nba/dallas-mavericks/verdict-on-kyrie-irving-future/",
+      "playerIds": [
+        "6442"
+      ],
+      "teamIds": [
+        "6"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-8029dae4eb322330",
+      "clusterId": "mv-contract-4683692-20261006",
+      "summary": "Knicks' Karl-Anthony Towns 'disappointed' with New York after contract extension talks shut down",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-12T18:36:38.000Z",
+      "sourceId": "outlet:sporting-news",
+      "sourceLabel": "Sporting News",
+      "sourceUrl": "https://www.sportingnews.com/us/nba/new-york-knicks/news/knicks-karl-anthony-towns-disappointed-new-york-after-contract-extension-talks-shut-down/6ae5db32f68ae05686706f56%3E",
+      "playerIds": [
+        "3136195"
+      ],
+      "teamIds": [
+        "18"
+      ],
+      "isOriginal": true,
+      "negotiationSpecificity": "active_talks"
     },
     {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",
