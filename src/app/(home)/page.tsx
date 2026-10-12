@@ -30,6 +30,17 @@ import {
   type HomeSeasonMoment,
 } from "@/lib/home-season-moment";
 import { yieldForStreaming } from "@/lib/stream-yield";
+import { SITE_NAME, SITE_URL } from "@/lib/site-url";
+
+const WEBSITE_JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: SITE_NAME,
+  alternateName: ["drbl.io", "DRBL Basketball"],
+  url: `${SITE_URL}/`,
+  description:
+    "NBA scores, standings, player and team stats, DRBL impact ratings, contract value, on/off splits and fan sentiment.",
+};
 
 export const metadata = {
   title: { absolute: "DRBL: NBA Stats, Advanced Metrics and Analytics" },
@@ -307,6 +318,13 @@ export default async function HomePage() {
       className="site-shell flex flex-col gap-5 py-5 sm:py-7"
       data-season-phase={moment.phase}
     >
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(WEBSITE_JSON_LD).replace(/</g, "\\u003c"),
+        }}
+      />
+      <h1 className="sr-only">DRBL basketball: NBA stats and analytics</h1>
       <MotionReveal />
       {layout.top.map(render)}
 
