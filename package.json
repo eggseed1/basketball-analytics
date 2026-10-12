@@ -23,6 +23,7 @@
     "test:season-glance": "tsx scripts/test-season-glance.ts",
     "test:season-pulse": "tsx scripts/test-season-pulse.ts",
     "test:season-metrics": "tsx scripts/test-season-metrics.ts",
+    "test:legend-boards": "node scripts/build-legend-boards.mjs --check",
     "test:darko-parse": "tsx scripts/test-darko-parse.ts",
     "bake:contract-value": "tsx scripts/build-contract-value.ts",
     "eval:contract-value": "tsx scripts/eval-contract-value.ts",

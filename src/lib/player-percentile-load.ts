@@ -4,6 +4,7 @@ import {
   enrichPlayerCareerAdvancedCached,
   resolvePlayerIdentityCached,
 } from "@/data/queries/request-cache";
+import { SEASON_TABLES_FIRST_SEASON } from "@/data/runtime/legend-careers-store";
 import type { PlayerSeason } from "@/data/types";
 import { shiftCanonicalSeason } from "@/lib/player-stat-comps";
 import { resolvePlayerStatsSeason } from "@/lib/player-board-season";
@@ -289,6 +290,12 @@ export async function loadPlayerPercentileMetrics(
     peerSeason: string,
     opts?: { archive?: boolean }
   ): Promise<PlayerSeason[]> => {
+    if (peerSeason < SEASON_TABLES_FIRST_SEASON) {
+      const board = await import("@/data/providers/nba/bref-career-from-page")
+        .then((m) => m.loadLegendPeerBoard(peerSeason))
+        .catch(() => [] as PlayerSeason[]);
+      return board.filter((row) => row.gamesPlayed >= 15);
+    }
     if (mode === "fast" || preferBundled) {
       try {
         const bundled = await loadBundledPeerBoard(peerSeason, opts);

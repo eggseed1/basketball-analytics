@@ -8,7 +8,10 @@ import {
   type BrefCountingRow,
   type BrefPlayerAdvancedRow,
 } from "@/data/providers/nba/bref-player-page";
-import { loadBundledBrefCareer } from "@/data/runtime/legend-careers-store";
+import {
+  loadBundledBrefCareer,
+  loadLegendSeasonBoard,
+} from "@/data/runtime/legend-careers-store";
 import { displayNameForBrefSlug } from "@/data/runtime/legend-nba-to-bref";
 import {
   findPlayerSearchRowByName,
@@ -111,20 +114,62 @@ export async function loadCareerFromBrefSlug(
   const page = baked
     ? null
     : await fetchBrefPlayerPage(brefSlug);
-  const totals = baked?.totals ?? page?.regular.totals ?? [];
-  const advanced = baked?.advanced ?? page?.regular.advanced ?? [];
+  return brefCareerRows({
+    totals: baked?.totals ?? page?.regular.totals ?? [],
+    advanced: baked?.advanced ?? page?.regular.advanced ?? [],
+    displayName: baked?.bio.displayName || page?.bio.displayName || brefSlug,
+    routePlayerId,
+    abaOnly: options?.abaOnly,
+  });
+}
+
+const legendBoardCache = new Map<string, Promise<PlayerSeason[]>>();
+
+/** League board for a season before the season tables, from the legend careers. */
+export function loadLegendPeerBoard(season: string): Promise<PlayerSeason[]> {
+  let pending = legendBoardCache.get(season);
+  if (!pending) {
+    pending = loadLegendSeasonBoard(season).then((board) => {
+      if (!board) {
+        legendBoardCache.delete(season);
+        return [];
+      }
+      return board.flatMap(({ slug, career }) =>
+        brefCareerRows({
+          totals: career.totals,
+          advanced: career.advanced,
+          displayName: career.bio.displayName,
+          routePlayerId: `bref:${slug}`,
+        })
+      );
+    });
+    legendBoardCache.set(season, pending);
+  }
+  return pending;
+}
+
+function brefCareerRows({
+  totals,
+  advanced,
+  displayName,
+  routePlayerId,
+  abaOnly,
+}: {
+  totals: BrefCountingRow[];
+  advanced: BrefPlayerAdvancedRow[];
+  displayName: string;
+  routePlayerId: string;
+  abaOnly?: boolean;
+}): PlayerSeason[] {
   const seasons = [
     ...new Set(totals.map((r) => r.season).filter(Boolean)),
   ].sort((a, b) => b.localeCompare(a));
-
-  const displayName =
-    baked?.bio.displayName || page?.bio.displayName || brefSlug;
   const rows: PlayerSeason[] = [];
 
   for (const season of seasons) {
     const tot = pickTotalsRow(totals, season);
     if (!tot || !(tot.gamesPlayed && tot.gamesPlayed > 0)) continue;
-    if (options?.abaOnly && tot.league !== "ABA") continue;
+    if (abaOnly && tot.league !== "ABA") continue;
     const adv = pickAdvancedRow(advanced, season, tot.teamAbbr);
     const gp = tot.gamesPlayed ?? 0;
     // Pre-1979-80 there was no three, so every field goal is a two.

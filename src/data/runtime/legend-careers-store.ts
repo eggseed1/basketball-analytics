@@ -58,8 +58,7 @@ function cloudflareAssets(): AssetsFetcher | null {
   }
 }
 
-async function loadShard(letter: string): Promise<Shard | null> {
-  const pathname = `/runtime/legend-careers/${letter}.json`;
+async function loadShard(pathname: string): Promise<Shard | null> {
   const assets = cloudflareAssets();
   if (assets) {
     try {
@@ -78,14 +77,20 @@ async function loadShard(letter: string): Promise<Shard | null> {
   }
 }
 
-function shardFor(letter: string): Promise<Shard | null> {
-  let pending = shardCache.get(letter);
+/** A failed load is retried on the next request; caching it would blank those players until the isolate recycles. */
+function shardAt(pathname: string): Promise<Shard | null> {
+  let pending = shardCache.get(pathname);
   if (!pending) {
-    pending = loadShard(letter);
-    shardCache.set(letter, pending);
+    pending = loadShard(pathname).then((shard) => {
+      if (!shard) shardCache.delete(pathname);
+      return shard;
+    });
+    shardCache.set(pathname, pending);
   }
   return pending;
 }
+
+const shardFor = (letter: string) => shardAt(`/runtime/legend-careers/${letter}.json`);
 
 function expandBio(b: CompactBio | undefined, slug: string): BrefPlayerBio {
   const heightInches = b?.h ?? null;
@@ -118,7 +123,32 @@ export async function loadBundledBrefCareer(
 ): Promise<BundledBrefCareer | null> {
   const key = String(slug ?? "").trim().toLowerCase();
   if (!/^[a-z]{3,12}\d{2}$/.test(key)) return null;
-  const career = (await shardFor(key[0]!))?.[key];
+  return expandCareer((await shardFor(key[0]!))?.[key], key);
+}
+
+/** First season covered by the season tables; earlier boards come from the legend careers. */
+export const SEASON_TABLES_FIRST_SEASON = "1996-97";
+
+/**
+ * Every NBA player's row for one season before the season tables, keyed by slug.
+ * Written by scripts/build-legend-boards.mjs; null when the season has no board.
+ */
+export async function loadLegendSeasonBoard(
+  season: string
+): Promise<Array<{ slug: string; career: BundledBrefCareer }> | null> {
+  if (!/^\d{4}-\d{2}$/.test(season) || season >= SEASON_TABLES_FIRST_SEASON) return null;
+  const board = await shardAt(`/runtime/legend-boards/${season}.json`);
+  if (!board) return null;
+  return Object.entries(board).flatMap(([slug, compact]) => {
+    const career = expandCareer(compact, slug);
+    return career ? [{ slug, career }] : [];
+  });
+}
+
+function expandCareer(
+  career: CompactCareer | undefined,
+  key: string
+): BundledBrefCareer | null {
   if (!career?.t?.length) return null;
   return {
     bio: expandBio(career.b, key),

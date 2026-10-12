@@ -47,10 +47,12 @@ const REPLAYED_HEADERS = [
 ];
 // Streamed server errors, notFound() and redirects inside a 200 stream.
 // next/dynamic ssr:false also emits a digest, which is not an error.
+// Pages flag a degraded render (a known player whose career didn't load) with data-page-cache="skip".
 const UNCACHEABLE_MARKERS = [
   /data-dgst="(?!BAILOUT_TO_CLIENT_SIDE_RENDERING")/,
   /NEXT_HTTP_ERROR_FALLBACK/,
   /NEXT_REDIRECT/,
+  /data-page-cache="skip"/,
 ];
 
 type PageCacheEntry = { key: string; policy: CachePolicy };

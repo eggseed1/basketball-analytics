@@ -878,6 +878,7 @@ export default async function PlayerPage({
         colorB={atmosphere?.colorB}
       />
       <main data-motion-page className="relative z-[1] flex flex-1 flex-col gap-4 sm:gap-5">
+        {career.length === 0 ? <span hidden data-page-cache="skip" /> : null}
         <MotionReveal />
         <GlassTintScaleProvider scale={PLAYER_CARD_TINT_SCALE}>
           {honor === "hof" ? (
