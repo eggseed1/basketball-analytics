@@ -3286,8 +3286,9 @@ svg [data-motion-dot] {
    lit panels keep only their drop shadow. Scroll containers are skipped
    because the rim layers would scroll with their content, and so is anything
    already drawing its own ::before/::after. Without mask-composite the rim
-   layers would paint across the whole surface, so only the hairline ships. */
-:is(
+   layers would paint across the whole surface, so only the hairline ships.
+   Light mode only: dark surfaces keep their original border and shadow. */
+:where(html:not(.dark)) :is(
     .sports-card,
     .glass-surface,
     .glass-card,
@@ -3299,7 +3300,7 @@ svg [data-motion-dot] {
 }
 
 @layer components {
-  :where(
+  :where(html:not(.dark)) :where(
       .sports-card,
       .glass-surface,
       .glass-card,
@@ -3311,7 +3312,7 @@ svg [data-motion-dot] {
   }
 }
 
-:is(.sports-card, .glass-surface):not(.hof-outline, .board-scroll-host, .loading-shimmer, [data-no-lit-edge], .touch-scroll-x, [class*="overflow-auto"], [class*="overflow-x-auto"], [class*="overflow-y-auto"], [class*="overflow-scroll"], [class*="overflow-x-scroll"], [class*="overflow-y-scroll"], [class*="before:"], [class*="after:"]) {
+:where(html:not(.dark)) :is(.sports-card, .glass-surface):not(.hof-outline, .board-scroll-host, .loading-shimmer, [data-no-lit-edge], .touch-scroll-x, [class*="overflow-auto"], [class*="overflow-x-auto"], [class*="overflow-y-auto"], [class*="overflow-scroll"], [class*="overflow-x-scroll"], [class*="overflow-y-scroll"], [class*="before:"], [class*="after:"]) {
   box-shadow: var(--lit-drop-shadow) !important;
 }
 
@@ -3321,15 +3322,6 @@ svg [data-motion-dot] {
   --rim-top-b: rgb(255 255 255);
   --rim-bottom-a: rgb(255 255 255 / 0.85);
   --rim-bottom-b: rgb(255 255 255 / 0.85);
-}
-
-:where(.dark) :where(.sports-card, .glass-surface, .glass-card) {
-  --lit-hairline: rgb(0 0 0 / 0.45);
-  --lit-drop-shadow: 0 1px 2px rgb(0 0 0 / 28%), 0 10px 28px rgb(0 0 0 / 24%);
-  --rim-top-a: rgb(255 255 255 / 0.26);
-  --rim-top-b: rgb(255 255 255 / 0.26);
-  --rim-bottom-a: rgb(255 255 255 / 0.18);
-  --rim-bottom-b: rgb(255 255 255 / 0.18);
 }
 
 :where(
@@ -3342,19 +3334,6 @@ svg [data-motion-dot] {
   --rim-top-b: rgb(255 255 255 / 0.9);
   --rim-bottom-a: rgb(255 255 255 / 0.6);
   --rim-bottom-b: rgb(255 255 255 / 0.6);
-}
-
-:where(.dark)
-  :where(
-    .lit-edge,
-    :where(.sports-card, .glass-surface, .glass-card)
-      :is(div, li, section, article, figure, aside, dl):is(.border, .frost-surface, .frost-surface-soft, .frost-surface-muted)
-  ) {
-  --lit-hairline: rgb(0 0 0 / 0.35);
-  --rim-top-a: rgb(255 255 255 / 0.17);
-  --rim-top-b: rgb(255 255 255 / 0.17);
-  --rim-bottom-a: rgb(255 255 255 / 0.12);
-  --rim-bottom-b: rgb(255 255 255 / 0.12);
 }
 
 .matchup-rim {
@@ -3371,29 +3350,15 @@ svg [data-motion-dot] {
   --rim-bottom-b: color-mix(in oklab, var(--rim-home) 22%, transparent);
 }
 
-.dark :is(.matchup-rim, [data-lit-team]) {
-  --rim-top-a: color-mix(in oklab, color-mix(in oklab, var(--rim-away) 50%, white) 40%, transparent);
-  --rim-top-b: color-mix(in oklab, color-mix(in oklab, var(--rim-home) 50%, white) 40%, transparent);
-  --rim-bottom-a: color-mix(in oklab, color-mix(in oklab, var(--rim-away) 60%, white) 30%, transparent);
-  --rim-bottom-b: color-mix(in oklab, color-mix(in oklab, var(--rim-home) 60%, white) 30%, transparent);
-}
-
 @supports (color: oklch(from red l c h)) {
   :is(.matchup-rim, [data-lit-team]) {
     --rim-bottom-a: oklch(from var(--rim-away) 0.66 min(c, 0.12) h / 0.22);
     --rim-bottom-b: oklch(from var(--rim-home) 0.66 min(c, 0.12) h / 0.22);
   }
-
-  .dark :is(.matchup-rim, [data-lit-team]) {
-    --rim-top-a: oklch(from var(--rim-away) 0.84 min(c, 0.1) h / 0.34);
-    --rim-top-b: oklch(from var(--rim-home) 0.84 min(c, 0.1) h / 0.34);
-    --rim-bottom-a: oklch(from var(--rim-away) 0.76 min(c, 0.12) h / 0.52);
-    --rim-bottom-b: oklch(from var(--rim-home) 0.76 min(c, 0.12) h / 0.52);
-  }
 }
 
 @supports (mask-composite: exclude) {
-  :where(
+  :where(html:not(.dark)) :where(
       .matchup-rim,
       :is(
           .sports-card,
