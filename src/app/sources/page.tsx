@@ -44,20 +44,8 @@ const DATA_SOURCES: { name: ReactNode; uses: string }[] = [
     uses: "Scores, schedules, standings, rosters, injury status, transaction notes and player bios.",
   },
   {
-    name: <Ext href="https://www.basketball-reference.com/">Basketball-Reference</Ext>,
-    uses: "Team payrolls and contracts. Kept from an earlier copy: the all-time player list behind search, ABA seasons and advanced tables for careers that ended before 1996-97, a few early players NBA Stats has no record of, and some league averages before 1983.",
-  },
-  {
-    name: <Ext href="https://www.darko.app/">DARKO</Ext>,
-    uses: "DARKO player ratings, a model by Kostya Medvedovsky.",
-  },
-  {
     name: <Ext href="https://github.com/fivethirtyeight/data/tree/master/nba-raptor">FiveThirtyEight RAPTOR</Ext>,
     uses: "Historical RAPTOR ratings, used under CC BY 4.0.",
-  },
-  {
-    name: <Ext href="https://www.spotrac.com/nba/draft/future/">Spotrac</Ext>,
-    uses: "Future draft pick ownership and protection terms.",
   },
   {
     name: <Ext href="https://www.wikipedia.org/">Wikipedia and Wikidata</Ext>,
