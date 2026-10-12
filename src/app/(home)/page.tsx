@@ -37,14 +37,14 @@ const WEBSITE_JSON_LD = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   name: SITE_NAME,
-  alternateName: ["drbl.io", "DRBL Basketball"],
+  alternateName: ["DRBL Analytics", "drbl.io", "DRBL Basketball"],
   url: `${SITE_URL}/`,
   description:
     "NBA scores, standings, player and team stats, DRBL impact ratings, contract value, on/off splits and fan sentiment.",
 };
 
 export const metadata = {
-  title: { absolute: "DRBL: NBA Stats, Advanced Metrics and Analytics" },
+  title: { absolute: "DRBL Analytics: NBA Stats and Advanced Metrics" },
   description:
     "NBA scores, standings, player and team stats, DRBL impact ratings, contract value, on/off splits and fan sentiment.",
   alternates: {
@@ -320,7 +320,7 @@ export default async function HomePage() {
       data-season-phase={moment.phase}
     >
       <JsonLd data={WEBSITE_JSON_LD} />
-      <h1 className="sr-only">DRBL basketball: NBA stats and analytics</h1>
+      <h1 className="sr-only">DRBL Analytics: NBA stats and basketball analytics</h1>
       <MotionReveal />
       {layout.top.map(render)}
 

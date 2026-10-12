@@ -29,7 +29,7 @@ const SITE_DESCRIPTION =
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME}: NBA Stats, Advanced Metrics and Analytics`,
+    default: `${SITE_NAME} Analytics: NBA Stats and Advanced Metrics`,
     template: `%s | ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
