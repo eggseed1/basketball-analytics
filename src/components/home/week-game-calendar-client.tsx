@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useLayoutEffect, useRef } from "react";
+import { useEffect, useId, useLayoutEffect, useRef } from "react";
 import { HomeGameStripCard } from "@/components/home/home-game-strip-card";
 import { AppLink } from "@/components/ui/app-link";
 import { InlineScript } from "@/components/ui/inline-script";
@@ -34,6 +34,9 @@ function isSettledStatus(status: GameStatusKind | undefined): boolean {
   return status === "final" || status === "postponed" || status === "cancelled";
 }
 
+/** Width of the `.scroll-fade-x` edge fade; the anchored card starts past it. */
+const EDGE_FADE_PX = 24;
+
 function StripScroller({ games }: { games: GameSummary[] }) {
   const ordered = orderStrip(games);
   const scrollerRef = useRef<HTMLDivElement>(null);
@@ -49,12 +52,36 @@ function StripScroller({ games }: { games: GameSummary[] }) {
     anchoredRef.current = true;
     const padding = parseFloat(getComputedStyle(scroller).paddingLeft) || 0;
     scroller.scrollLeft +=
-      card.getBoundingClientRect().left - scroller.getBoundingClientRect().left - padding;
+      card.getBoundingClientRect().left - scroller.getBoundingClientRect().left - padding - EDGE_FADE_PX;
   }, [anchor]);
+
+  useEffect(() => {
+    const scroller = scrollerRef.current;
+    if (!scroller) return;
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const max = scroller.scrollWidth - scroller.clientWidth;
+      scroller.toggleAttribute("data-fade-start", scroller.scrollLeft > 2);
+      scroller.toggleAttribute("data-fade-end", scroller.scrollLeft < max - 2);
+    };
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    update();
+    scroller.addEventListener("scroll", schedule, { passive: true });
+    const observer = new ResizeObserver(schedule);
+    observer.observe(scroller);
+    return () => {
+      scroller.removeEventListener("scroll", schedule);
+      observer.disconnect();
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, [ordered.length]);
 
   return (
     <>
-      <div ref={scrollerRef} id={scrollerId} className="-mx-1 -my-3 flex gap-4 touch-scroll-x px-1 py-3">
+      <div ref={scrollerRef} id={scrollerId} className="scroll-fade-x -mx-1 -my-3 flex gap-4 touch-scroll-x px-1 py-3">
         {ordered.map((game) => (
           <HomeGameStripCard key={game.id} game={game} />
         ))}
@@ -62,7 +89,7 @@ function StripScroller({ games }: { games: GameSummary[] }) {
       {/* Streamed under Suspense, the strip parses inside a hidden container, so wait for layout. */}
       {anchor > 0 ? (
         <InlineScript
-          html={`(function f(n){var s=document.getElementById(${JSON.stringify(scrollerId)}),c=s&&s.children[${anchor}];if(!c)return;if(!s.clientWidth){if(n<600)requestAnimationFrame(function(){f(n+1)});return}s.scrollLeft+=c.getBoundingClientRect().left-s.getBoundingClientRect().left-(parseFloat(getComputedStyle(s).paddingLeft)||0)})(0)`}
+          html={`(function f(n){var s=document.getElementById(${JSON.stringify(scrollerId)}),c=s&&s.children[${anchor}];if(!c)return;if(!s.clientWidth){if(n<600)requestAnimationFrame(function(){f(n+1)});return}s.scrollLeft+=c.getBoundingClientRect().left-s.getBoundingClientRect().left-(parseFloat(getComputedStyle(s).paddingLeft)||0)-${EDGE_FADE_PX}})(0)`}
         />
       ) : null}
     </>

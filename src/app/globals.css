@@ -1424,6 +1424,43 @@ html:not([data-surface="glass"]) .color-scheme-switch {
   -webkit-overflow-scrolling: touch;
 }
 
+/* Fade a horizontal strip's edge only while more content sits past it, so the
+   first and last items stay crisp at either end. Script sets the attributes. */
+@property --scroll-fade-start {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
+@property --scroll-fade-end {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
+.scroll-fade-x {
+  mask-image: linear-gradient(
+    to right,
+    rgb(0 0 0 / 0.15) 0,
+    rgb(0 0 0 / 0.7) calc(var(--scroll-fade-start) * 0.5),
+    #000 var(--scroll-fade-start),
+    #000 calc(100% - var(--scroll-fade-end)),
+    rgb(0 0 0 / 0.7) calc(100% - var(--scroll-fade-end) * 0.5),
+    rgb(0 0 0 / 0.15) 100%
+  );
+  transition:
+    --scroll-fade-start 200ms ease-out,
+    --scroll-fade-end 200ms ease-out;
+}
+
+.scroll-fade-x[data-fade-start] {
+  --scroll-fade-start: 24px;
+}
+
+.scroll-fade-x[data-fade-end] {
+  --scroll-fade-end: 24px;
+}
+
 /* ─── NBA Time Machine - era theme layer (CSS variables only) ───
    Immersion without costume: no CRT, scanlines, or grain overlays.
    Applied via [data-era-theme] on a scoped wrapper. */
