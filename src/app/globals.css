@@ -1077,7 +1077,9 @@ html:not([data-surface="glass"]) .color-scheme-switch {
 }
 
 /* Page wash - glass samples this color (Apple materials). A soft mesh: one
-   orb per team color plus a third that blends the two. Only transform
+   orb per team color plus a third low orb in the first color. Don't blend the
+   two colors for the third orb: a mix such as blue and red reads as a purple
+   that belongs to neither palette. Only transform
    animates, so the layers stay on the compositor. Each box is exactly its
    gradient's diameter and fades to transparent at the edge, so it needs no
    rounded mask. Don't rotate these layers or grow them past the gradient:
@@ -1092,7 +1094,7 @@ html:not([data-surface="glass"]) .color-scheme-switch {
   --orb-a: color-mix(in oklab, var(--atmosphere-a, transparent) 22%, transparent);
   --orb-b: color-mix(in oklab, var(--atmosphere-b, transparent) 18%, transparent);
   --orb-c: transparent;
-  --orb-d: color-mix(in oklab, var(--orb-a) 50%, var(--orb-b));
+  --orb-d: var(--orb-a);
   background: radial-gradient(
     ellipse 80% 50% at 52% -10%,
     var(--orb-c) 0%,
@@ -1110,7 +1112,6 @@ html:not([data-surface="glass"]) .color-scheme-switch {
     --orb-a: oklch(from var(--atmosphere-a) 0.8 min(c, 0.13) calc(h - 6) / 0.66);
     --orb-b: oklch(from var(--atmosphere-b) 0.74 min(c, 0.17) calc(h - 6) / 0.5);
     --orb-c: oklch(from var(--atmosphere-a) 0.9 min(c, 0.06) calc(h + 30) / 0.5);
-    --orb-d: color-mix(in oklch, var(--orb-a), var(--orb-b));
   }
 }
 
