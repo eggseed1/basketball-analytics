@@ -41,6 +41,7 @@
     "test:game-matchup-theme": "tsx scripts/test-game-matchup-theme.ts",
     "test:game-shell": "tsx --require ./scripts/lib/stub-server-only.cjs scripts/test-game-shell.ts",
     "test:ask-drbl": "tsx --require ./scripts/lib/stub-server-only.cjs scripts/test-ask-drbl.ts",
+    "test:ask-agent": "tsx --require ./scripts/lib/stub-server-only.cjs --test src/ask-agent/ask-agent.test.ts",
     "test:compare-drbl": "tsx scripts/test-compare-drbl.ts",
     "test:ask-examples": "tsx scripts/test-ask-examples.ts",
     "test:ask-recent-store": "tsx scripts/test-ask-recent-store.ts",

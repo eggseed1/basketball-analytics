@@ -83,5 +83,7 @@ next-env.d.ts
 
 # wrangler files
 .wrangler
+# Ask DRBL agent database dump (scripts/build-ask-db.ts)
+.ask-db
 .dev.vars*
 !.dev.vars.example

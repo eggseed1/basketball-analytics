@@ -1,4 +1,6 @@
+import { askAgentEnabled } from "@/ask-agent/env";
 import { MotionReveal } from "@/components/continuity/motion-reveal";
+import { AskAgentChat } from "@/components/ask/ask-agent-chat";
 import { AskDrblView } from "@/components/ask/ask-drbl-view";
 import { getAskDrblAnswer } from "@/data/queries/ask-drbl";
 import {
@@ -68,6 +70,7 @@ export default async function AskPage({ searchParams }: AskPageProps) {
   return (
     <main data-motion-page className="site-shell flex flex-1 flex-col gap-6 py-6 sm:py-8">
       <MotionReveal />
+      {askAgentEnabled() ? <AskAgentChat /> : null}
       <AskDrblView
         initialQuery={q || (sp.q ?? "").trim()}
         result={result}

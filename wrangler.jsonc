@@ -71,6 +71,20 @@
 	"version_metadata": {
 		"binding": "CF_VERSION_METADATA"
 	},
+	// Ask DRBL agent. Kept inside the 10,000 free neurons a day by src/ask-agent/budget.ts.
+	"ai": {
+		"binding": "AI",
+		"remote": true
+	},
+	// Read-only tables for the Ask DRBL agent, built by scripts/build-ask-db.ts.
+	// The id is local-only until `wrangler d1 create drbl-ask` is run for a deploy.
+	"d1_databases": [
+		{
+			"binding": "ASK_DB",
+			"database_name": "drbl-ask",
+			"database_id": "00000000-0000-0000-0000-000000000000"
+		}
+	],
 	"images": {
 		// Enable image optimization
 		// see https://opennext.js.org/cloudflare/howtos/image
