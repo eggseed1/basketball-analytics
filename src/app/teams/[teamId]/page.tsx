@@ -102,12 +102,14 @@ export async function generateMetadata({ params, searchParams }: TeamPageProps) 
       ? `?season=${encodeURIComponent(seasonParam)}`
       : "";
   return {
-    title: fullName ?? "Team",
+    title: fullName
+      ? `${fullName} ${season}: ${pastSeason ? "Roster and Stats" : "Roster, Stats and Payroll"}`
+      : "Team",
     alternates: {
       canonical: `/teams/${encodeURIComponent(canonicalTeamId)}${pastSeason}`,
     },
     description: fullName
-      ? `${fullName} roster, games, transactions, and team stats.`
+      ? `${fullName} ${season} roster, schedule and results, team stats${pastSeason ? "" : ", payroll"} and transactions.`
       : undefined,
     ...(pastSeason ? {} : shareImageMetadata("teams", canonicalTeamId, fullName ?? "Team")),
   };

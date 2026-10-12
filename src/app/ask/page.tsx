@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+
 import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { AskDrblView } from "@/components/ask/ask-drbl-view";
 import { getAskDrblAnswer } from "@/data/queries/ask-drbl";
@@ -10,11 +12,8 @@ import {
 import { parseAskContextFromSearchParams } from "@/query-engine/ask-context";
 import { daySeed } from "@/query-engine/ask-examples";
 
-export const metadata = {
-  title: "Ask DRBL",
-  description:
-    "Natural-language basketball analytics: structured queries over trusted DRBL data.",
-};
+const ASK_DESCRIPTION =
+  "Natural-language basketball analytics: structured queries over trusted DRBL data.";
 
 interface AskPageProps {
   searchParams: Promise<{
@@ -35,11 +34,11 @@ interface AskPageProps {
   }>;
 }
 
-export default async function AskPage({ searchParams }: AskPageProps) {
-  const sp = await searchParams;
+type AskSearchParams = Awaited<AskPageProps["searchParams"]>;
+
+function resolveAskRequest(sp: AskSearchParams) {
   const mode: AskInputMode = sp.mode === "builder" ? "builder" : "natural";
   const askContext = parseAskContextFromSearchParams(sp);
-
   const builder = parseAskBuilderParams({
     op: sp.op,
     player: sp.player,
@@ -58,6 +57,34 @@ export default async function AskPage({ searchParams }: AskPageProps) {
 
   const playerId = (sp.playerId ?? "").trim() || undefined;
   const teamId = (sp.teamId ?? "").trim() || undefined;
+  return { mode, askContext, builder, q, playerId, teamId };
+}
+
+function clip(text: string, max: number): string {
+  return text.length > max ? `${text.slice(0, max - 1).trimEnd()}…` : text;
+}
+
+export async function generateMetadata({ searchParams }: AskPageProps): Promise<Metadata> {
+  const { q, playerId, teamId, askContext } = resolveAskRequest(await searchParams);
+  const base: Metadata = { alternates: { canonical: "/ask" } };
+  if (!q) return { ...base, title: "Ask DRBL", description: ASK_DESCRIPTION };
+  const result = await getAskDrblAnswer(q, { playerId, teamId, context: askContext }).catch(() => null);
+  const answered = result && (result.status === "ok" || result.status === "partial") && result.headline;
+  const answer = answered
+    ? result.valueDisplay
+      ? `${result.headline}: ${result.valueDisplay}`
+      : result.headline!
+    : null;
+  return {
+    ...base,
+    title: { absolute: `${clip(q, 80)} | Ask DRBL` },
+    description: answer ? clip(answer, 200) : ASK_DESCRIPTION,
+  };
+}
+
+export default async function AskPage({ searchParams }: AskPageProps) {
+  const sp = await searchParams;
+  const { mode, askContext, builder, q, playerId, teamId } = resolveAskRequest(sp);
 
   // Context never overrides seasons already present in `q` (explicit / builder).
   const result = q

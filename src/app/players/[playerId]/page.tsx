@@ -221,10 +221,10 @@ export async function generateMetadata({ params }: PlayerPageProps) {
   const canonicalId =
     identity?.espnId ?? uniqueEspnIdForBrefName(playerId, displayName) ?? playerId;
   return {
-    title: displayName ?? "Player",
+    title: displayName ? `${displayName} Stats and Advanced Metrics` : "Player",
     alternates: { canonical: `/players/${encodeURIComponent(canonicalId)}` },
     description: displayName
-      ? `${displayName} stats, game log, shot chart, and impact metrics.`
+      ? `${displayName} stats by season, game log, shot chart, on/off splits, DRBL impact rating and contract.`
       : undefined,
     ...shareImageMetadata("players", canonicalId, displayName ?? "Player"),
   };

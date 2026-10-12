@@ -32,9 +32,11 @@ import {
 import { yieldForStreaming } from "@/lib/stream-yield";
 
 export const metadata = {
-  title: "Home",
-  description: "NBA games, standings, impact leaders, and analytics coverage.",
+  title: { absolute: "DRBL: NBA Stats, Advanced Metrics and Analytics" },
+  description:
+    "NBA scores, standings, player and team stats, DRBL impact ratings, contract value, on/off splits and fan sentiment.",
   alternates: {
+    canonical: "/",
     types: { "application/rss+xml": [{ url: "/findings/feed.xml", title: "DRBL findings" }] },
   },
 };

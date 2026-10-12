@@ -380,7 +380,7 @@ async function execSeasonStat(ast: BasketballQueryAst): Promise<AskDrblResult> {
   const def = metricById(metricId)!;
   const contextLines = [
     `${row.gamesPlayed} GP · ${formatNumber(perGame(row.minutes, row.gamesPlayed), 1)} MPG`,
-    `Team: ${row.teamName}`,
+    ...(row.teamName ? [`Team: ${row.teamName}`] : []),
   ];
   if (metricId === "ts_pct") {
     contextLines.push(

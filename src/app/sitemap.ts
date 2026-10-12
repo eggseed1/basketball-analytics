@@ -3,10 +3,16 @@ import type { MetadataRoute } from "next";
 import { AWARD_DEFINITIONS } from "@/content/awards/catalog";
 import { listDiscoverableLearnSlugs } from "@/content/learn/resolve";
 import rosterSnapshot from "@/data/runtime/current-roster-snapshot.json";
+import gameSnapshot from "@/data/runtime/game-snapshot.json";
+import { getPlayerSearchIndex } from "@/data/runtime/player-search-snapshot";
 import { absoluteUrl } from "@/lib/site-url";
 
 type RosterFile = {
   players?: Record<string, { teamId?: string }>;
+};
+
+type GameSnapshotFile = {
+  games?: Array<{ id?: string; gameDate?: string; statusDetail?: string }>;
 };
 
 const SECTION_PATHS: Array<{ path: string; changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"] }> = [
@@ -48,10 +54,28 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const teamIds = [...new Set(Object.values(rosterPlayers).map((p) => p.teamId).filter(Boolean))] as string[];
   teamIds.sort((a, b) => Number(a) - Number(b));
 
+  const currentPlayerIds = new Set(Object.keys(rosterPlayers));
+  const formerPlayerIds = getPlayerSearchIndex()
+    .map((row) => row.id)
+    .filter((id) => id && !currentPlayerIds.has(id));
+
+  const finishedGames = ((gameSnapshot as GameSnapshotFile).games ?? []).filter(
+    (g) => g.id && /^Final/.test(g.statusDetail ?? "")
+  );
+
   return [
     ...SECTION_PATHS.map(({ path, changeFrequency }) => ({ url: absoluteUrl(path), changeFrequency })),
     ...teamIds.map((id) => ({ url: absoluteUrl(`/teams/${id}`), changeFrequency: "daily" as const })),
     ...Object.keys(rosterPlayers).map((id) => ({ url: absoluteUrl(`/players/${id}`), changeFrequency: "daily" as const })),
+    ...formerPlayerIds.map((id) => ({
+      url: absoluteUrl(`/players/${encodeURIComponent(id)}`),
+      changeFrequency: "monthly" as const,
+    })),
+    ...finishedGames.map((g) => ({
+      url: absoluteUrl(`/games/${g.id}`),
+      ...(g.gameDate ? { lastModified: g.gameDate } : {}),
+      changeFrequency: "yearly" as const,
+    })),
     ...listDiscoverableLearnSlugs().map((slug) => ({ url: absoluteUrl(`/learn/${slug}`), changeFrequency: "monthly" as const })),
     ...AWARD_DEFINITIONS.map((a) => ({ url: absoluteUrl(`/awards/${a.slug}`), changeFrequency: "yearly" as const })),
   ];
