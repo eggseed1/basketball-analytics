@@ -104,14 +104,69 @@ function columnValues(table: HTMLTableElement, col: number): Value[] {
   return [...table.tBodies].flatMap((body) => [...body.rows].map((row) => readValue(cellAt(row, col))));
 }
 
+const ARROW_WIDTH = 7;
+const ARROW_GAP = 3;
+
+/**
+ * Puts the arrow beside the label on its open side (left of right-aligned
+ * labels, right of the rest) so it never sits on the text, whatever the
+ * column width or header height.
+ */
+function labelBox(th: HTMLTableCellElement) {
+  let left = Infinity;
+  let right = -Infinity;
+  let top = Infinity;
+  let bottom = -Infinity;
+  const walker = document.createTreeWalker(th, NodeFilter.SHOW_TEXT);
+  const range = document.createRange();
+  for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+    if (!node.textContent?.trim()) continue;
+    range.selectNodeContents(node);
+    const box = range.getBoundingClientRect();
+    // sr-only text is a 1px box.
+    if (box.width <= 1 || box.height <= 1) continue;
+    left = Math.min(left, box.left);
+    right = Math.max(right, box.right);
+    top = Math.min(top, box.top);
+    bottom = Math.max(bottom, box.bottom);
+  }
+  return left < right ? { left, right, top, height: bottom - top } : null;
+}
+
+function placeArrow(th: HTMLTableCellElement) {
+  const label = labelBox(th);
+  if (!label) return;
+  const cell = th.getBoundingClientRect();
+  const align = getComputedStyle(th).textAlign;
+  const before = align === "right" || align === "end";
+  const x = before ? label.left - cell.left - ARROW_GAP - ARROW_WIDTH : label.right - cell.left + ARROW_GAP;
+  th.style.setProperty("--sort-arrow-x", `${Math.max(0, Math.round(x))}px`);
+  th.style.setProperty("--sort-arrow-y", `${Math.round(label.top + label.height / 2 - cell.top)}px`);
+}
+
+const arrowResize =
+  typeof ResizeObserver === "undefined"
+    ? null
+    : new ResizeObserver((entries) => {
+        for (const entry of entries) placeArrow(entry.target as HTMLTableCellElement);
+      });
+
 function applySort(table: HTMLTableElement) {
   const state = sorts.get(table);
   if (!state) return;
   const { columnOf, keys } = headerGrid(table);
   const col = keys.indexOf(state.key);
   for (const [cell, c] of columnOf) {
-    if (c === col) cell.setAttribute("aria-sort", state.dir === "asc" ? "ascending" : "descending");
-    else cell.removeAttribute("aria-sort");
+    if (c === col) {
+      cell.setAttribute("aria-sort", state.dir === "asc" ? "ascending" : "descending");
+      cell.setAttribute("data-sort-arrow", "");
+      placeArrow(cell);
+      arrowResize?.observe(cell);
+    } else if (cell.hasAttribute("data-sort-arrow")) {
+      cell.removeAttribute("aria-sort");
+      cell.removeAttribute("data-sort-arrow");
+      arrowResize?.unobserve(cell);
+    }
   }
   const kind = col >= 0 ? kindOf(columnValues(table, col)) : "text";
   for (const body of table.tBodies) {

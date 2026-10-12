@@ -1529,8 +1529,9 @@ html:not([data-surface="glass"]) .color-scheme-switch {
 }
 
 /* Click-to-sort headers (SortableTables). Group headers that span several
-   columns don't sort. The arrow sits in the header's corner so it never wraps
-   under the label; sticky headers are already positioned. */
+   columns don't sort. The arrow is placed beside the label from measured
+   offsets so it never wraps or shifts the column; sticky headers are
+   already positioned. */
 [data-sortable-tables] thead th:not([colspan]:not([colspan="1"]), [data-no-table-sort] *) {
   cursor: pointer;
   user-select: none;
@@ -1541,25 +1542,29 @@ html:not([data-surface="glass"]) .color-scheme-switch {
   color: var(--foreground);
 }
 
-[data-sortable-tables] thead th[aria-sort]:not([class*="sticky"]) {
+[data-sortable-tables] thead th[data-sort-arrow]:not([class*="sticky"]) {
   position: relative;
 }
 
-[data-sortable-tables] thead th[aria-sort]::after {
+[data-sortable-tables] thead th[data-sort-arrow]::after {
   position: absolute;
-  top: 50%;
-  right: 0;
+  top: var(--sort-arrow-y, 50%);
+  left: var(--sort-arrow-x, auto);
+  right: auto;
+  width: 7px;
   translate: 0 -50%;
-  font-size: 9px;
+  font-size: 8px;
   line-height: 1;
+  text-align: center;
   opacity: 0.8;
+  pointer-events: none;
 }
 
-[data-sortable-tables] thead th[aria-sort="descending"]::after {
+[data-sortable-tables] thead th[data-sort-arrow][aria-sort="descending"]::after {
   content: "▼";
 }
 
-[data-sortable-tables] thead th[aria-sort="ascending"]::after {
+[data-sortable-tables] thead th[data-sort-arrow][aria-sort="ascending"]::after {
   content: "▲";
 }
 
