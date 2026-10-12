@@ -277,8 +277,8 @@ async function loadHomeAnalytics(): Promise<HomeAnalytics> {
             drblO: drbl.drblO ?? row.drblO,
             drblD: drbl.drblD ?? row.drblD,
             drblP: drbl.drblP ?? row.drblP,
-            drblLn: drbl.drblLn ?? row.drblLn,
-            drblB: drbl.drblB ?? row.drblB,
+            drblLn: drbl.drblLn ?? Number.NaN,
+            drblB: drbl.drblB ?? Number.NaN,
             r1Points:
               drbl.r1Points != null && Number.isFinite(drbl.r1Points)
                 ? drbl.r1Points

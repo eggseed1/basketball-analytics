@@ -380,7 +380,7 @@ export const PLAYER_PERCENTILE_METRICS: PercentileMetricDef[] = [
     format: (v) => v.toFixed(1),
     group: "overall",
     side: "overall",
-    eligible: hasValidDrblEstimate,
+    eligible: (r) => hasValidDrblEstimate(r) && Number.isFinite(r.drblLn),
     percentileField: "drblLnPercentile",
   },
   {
@@ -392,7 +392,7 @@ export const PLAYER_PERCENTILE_METRICS: PercentileMetricDef[] = [
     format: (v) => v.toFixed(1),
     group: "overall",
     side: "overall",
-    eligible: hasValidDrblEstimate,
+    eligible: (r) => hasValidDrblEstimate(r) && Number.isFinite(r.drblB),
     percentileField: "drblBPercentile",
   },
   {

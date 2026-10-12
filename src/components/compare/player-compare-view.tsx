@@ -304,7 +304,9 @@ function MatchupBarRow({
           >
             {metricLabel(dimension.label)}
           </p>
-          <EdgeLabel edge={edge} aName={aName} bName={bName} />
+          {dimension.delta != null && Number.isFinite(dimension.delta) ? (
+            <EdgeLabel edge={edge} aName={aName} bName={bName} />
+          ) : null}
         </div>
 
         <div className="min-w-0" style={{ opacity: bOpacity }}>

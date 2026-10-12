@@ -4,6 +4,7 @@
  */
 
 import leaguePace from "@/data/runtime/league-pace.json";
+import { hasValidDrblEstimate } from "@/data/queries/percentiles";
 import type { PlayerSeason } from "@/data/types";
 import { formatNumber, formatPct } from "@/lib/format";
 
@@ -584,11 +585,11 @@ export function getSheetStatValue(
     case "war1":
       return finiteNum(row.r1WinEquivalents);
     case "drbl100":
-      return row.drbl100 !== 0 ? finiteNum(row.drbl100) : null;
+      return hasValidDrblEstimate(row) ? finiteNum(row.drbl100) : null;
     case "drblO":
-      return row.drblO !== 0 ? finiteNum(row.drblO) : null;
+      return hasValidDrblEstimate(row) ? finiteNum(row.drblO) : null;
     case "drblD":
-      return row.drblD !== 0 ? finiteNum(row.drblD) : null;
+      return hasValidDrblEstimate(row) ? finiteNum(row.drblD) : null;
     case "hustleDefl":
       return row.hustleDeflections != null
         ? count(row.hustleDeflections)

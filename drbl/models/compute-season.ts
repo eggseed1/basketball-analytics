@@ -378,7 +378,7 @@ export async function computeSeasonDrbl(
     stackRows.push({
       playerId: p.playerId,
       drblP: p.drblP,
-      drblLn: p.drblLn,
+      drblLn: p.drblLn ?? 0,
       drblB:
         earlyBehaviorModel?.ratingsPer100.has(p.playerId) ? p.drblB : null,
       targetPer100: futureTarget,

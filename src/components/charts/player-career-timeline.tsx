@@ -59,7 +59,7 @@ export function PlayerCareerTimeline({
           "bpm",
           "usagePct",
         ].includes(metric.key);
-        if (impact && value === 0) return null;
+        if (!Number.isFinite(value) || (impact && value === 0)) return null;
         return {
           season: row.season,
           short: row.season.slice(2), // 24-25

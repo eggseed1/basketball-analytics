@@ -135,8 +135,10 @@ export interface DrblPlayerSeasonRow {
   abilityModelVersion?: string;
   /** DRBL-P Approach B component (EB-shrunk raw rate). */
   drblP: number;
-  drblLn: number;
-  drblB: number;
+  /** Null when the lineup model has no rating for the player (not in its training games). */
+  drblLn: number | null;
+  /** Null when the behavior model has no rating for the player. */
+  drblB: number | null;
   /** Shadow only (never published): scoreboard lineup ridge anchored on the play-by-play rate. */
   drblAnchored100?: number;
   drblO: number;
@@ -549,6 +551,7 @@ export function finalizePlayerSeasonRows(
     fusedRateRaw: number;
     drblP: number;
     drblLn: number;
+    hasLn: boolean;
     drblB: number;
     hasB: boolean;
     drblO: number;
@@ -600,6 +603,7 @@ export function finalizePlayerSeasonRows(
         ? acc.leverageWeightSum / n / meanRawLambda
         : 1;
 
+    const hasLn = lnMap != null && lnMap.has(acc.playerId);
     const drblLnRaw = lnMap?.get(acc.playerId) ?? 0;
     const drblLn = empiricalBayesShrink(drblLnRaw, n);
     const hasB = bMap != null && bMap.has(acc.playerId);
@@ -623,6 +627,7 @@ export function finalizePlayerSeasonRows(
       fusedRateRaw,
       drblP,
       drblLn,
+      hasLn,
       drblB,
       hasB,
       drblO,
@@ -747,8 +752,8 @@ export function finalizePlayerSeasonRows(
       priorEquivalentPossessions: VALIDATED_K,
       abilityModelVersion: VALIDATED_ABILITY_MODEL_VERSION,
       drblP: d.drblP,
-      drblLn: d.drblLn,
-      drblB: d.drblB,
+      drblLn: d.hasLn ? d.drblLn : null,
+      drblB: d.hasB ? d.drblB : null,
       drblO: d.drblO,
       drblD: d.drblD,
       sdv100: d.sdv100,
@@ -824,8 +829,8 @@ export function finalizePlayerSeasonRows(
     fusedRateRaw: Number(p.fusedRateRaw.toFixed(4)),
     reliabilityWeight: Number(p.reliabilityWeight.toFixed(4)),
     drblP: Number(p.drblP.toFixed(2)),
-    drblLn: Number(p.drblLn.toFixed(2)),
-    drblB: Number(p.drblB.toFixed(2)),
+    drblLn: p.drblLn == null ? null : Number(p.drblLn.toFixed(2)),
+    drblB: p.drblB == null ? null : Number(p.drblB.toFixed(2)),
     drblO: Number(p.drblO.toFixed(2)),
     drblD: Number(p.drblD.toFixed(2)),
     sdv100: Number(p.sdv100.toFixed(2)),

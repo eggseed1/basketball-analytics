@@ -247,7 +247,7 @@ export function buildFutureBlockStackRows(
     rows.push({
       playerId: p.playerId,
       drblP: p.drblP,
-      drblLn: p.drblLn,
+      drblLn: p.drblLn ?? 0,
       drblB: earlyBehaviorModel?.ratingsPer100.has(p.playerId)
         ? p.drblB
         : null,

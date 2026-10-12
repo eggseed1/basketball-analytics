@@ -158,8 +158,8 @@ export function buildSavantSections(
           percentiles,
           "drblLn",
           "DRBL-LN",
-          hasValidDrblEstimate(row) ? formatSigned(row.drblLn, 1) : null,
-          hasValidDrblEstimate(row) ? row.drblLn : null,
+          hasValidDrblEstimate(row) && Number.isFinite(row.drblLn) ? formatSigned(row.drblLn, 1) : null,
+          hasValidDrblEstimate(row) && Number.isFinite(row.drblLn) ? row.drblLn : null,
           "overall",
           { missing: !hasValidDrblEstimate(row) }
         ),
@@ -167,8 +167,8 @@ export function buildSavantSections(
           percentiles,
           "drblB",
           "DRBL-B",
-          hasValidDrblEstimate(row) ? formatSigned(row.drblB, 1) : null,
-          hasValidDrblEstimate(row) ? row.drblB : null,
+          hasValidDrblEstimate(row) && Number.isFinite(row.drblB) ? formatSigned(row.drblB, 1) : null,
+          hasValidDrblEstimate(row) && Number.isFinite(row.drblB) ? row.drblB : null,
           "overall",
           { missing: !hasValidDrblEstimate(row) }
         ),

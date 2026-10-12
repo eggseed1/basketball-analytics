@@ -185,8 +185,8 @@ async function drblComponents(season: string, window: readonly OutcomeGame[]) {
     published: pick((r) => r.drbl100),
     pRaw: pick((r) => r.rawAbilityRate),
     n: pick((r) => r.possessions),
-    ln: pick((r) => r.drblLn),
-    b: pick((r) => r.drblB),
+    ln: pick((r) => r.drblLn ?? 0),
+    b: pick((r) => r.drblB ?? 0),
   };
 }
 

@@ -351,4 +351,20 @@ describe("finalizePlayerSeasonRows integration", () => {
     assert.equal(row.priorEquivalentPossessions, 1600);
     assert.equal(row.r1Points, 10);
   });
+
+  it("leaves DRBL-LN and DRBL-B null for players the lineup or behavior model did not rate", () => {
+    const map = new Map<string, DrblPlayerAccumulator>();
+    map.set("rated", acc("rated", "Rated", 2000, 40));
+    map.set("late", acc("late", "Late", 300, 3));
+    const rows = finalizePlayerSeasonRows(map, {
+      minPossessions: 50,
+      lineupRatingsPer100: new Map([["rated", 1.5]]),
+      behaviorRatingsPer100: new Map([["rated", -0.4]]),
+    });
+    const byId = new Map(rows.map((r) => [r.playerId, r]));
+    assert.equal(typeof byId.get("rated")!.drblLn, "number");
+    assert.equal(typeof byId.get("rated")!.drblB, "number");
+    assert.equal(byId.get("late")!.drblLn, null);
+    assert.equal(byId.get("late")!.drblB, null);
+  });
 });
