@@ -151,7 +151,7 @@ export function HomeGameStripCard({ game }: { game: GameSummary }) {
       className="relative isolate flex w-max min-w-[168px] shrink-0 flex-col gap-2.5 px-4 py-3.5"
       style={STRIP_CARD_STYLE}
     >
-      <MatchupOrbs away={matchup.awayWash} home={matchup.homeWash} winner={winner} />
+      <MatchupOrbs away={matchup.awayWash} home={matchup.homeWash} winner={winner} rim />
       <TransitionLink
         href={`/games/${game.id}`}
         className="absolute inset-0 z-0 rounded-[inherit]"

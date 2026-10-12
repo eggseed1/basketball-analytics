@@ -654,7 +654,7 @@ export function HistoricalGameSurface({
       </p>
 
       <section className="sports-card relative isolate p-5 sm:p-6">
-        <MatchupOrbs away={matchup.awayWash} home={matchup.homeWash} winner={finalWinner({ status: "final", awayScore: s.awayScore, homeScore: s.homeScore })} />
+        <MatchupOrbs away={matchup.awayWash} home={matchup.homeWash} winner={finalWinner({ status: "final", awayScore: s.awayScore, homeScore: s.homeScore })} rim />
         <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
           Final
         </p>

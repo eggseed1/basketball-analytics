@@ -4,15 +4,18 @@ import type { CSSProperties } from "react";
  * Two soft drifting team-color orbs behind a game card, the home strip look.
  * The card needs `isolate` (or any stacking context) so the orbs sit above its
  * fill and below its content. A decided game brightens the winner's orb.
+ * `rim` adds the lit team-color edge used on game cards.
  */
 export function MatchupOrbs({
   away,
   home,
   winner = null,
+  rim = false,
 }: {
   away: string;
   home: string;
   winner?: "away" | "home" | null;
+  rim?: boolean;
 }) {
   const strength = (side: "away" | "home") => (winner == null ? 0.8 : winner === side ? 1 : 0.45);
   return (
@@ -25,6 +28,9 @@ export function MatchupOrbs({
         className="strip-orb strip-orb--b"
         style={{ right: -60, bottom: -16, "--orb-color": home, "--orb-strength": strength("home") } as CSSProperties}
       />
+      {rim ? (
+        <span className="matchup-rim" style={{ "--rim-away": away, "--rim-home": home } as CSSProperties} />
+      ) : null}
     </span>
   );
 }

@@ -3189,6 +3189,100 @@ svg [data-motion-dot] {
   }
 }
 
+/* Lit glass edge on game cards, measured off the Apple Sports ticker: a half
+   pixel hairline, a half pixel rim that is lit on the top and bottom edges and
+   fades out as it turns down the sides, and a glow under 3px deep (deeper at
+   the bottom). Thicker rims or glows read as a colored border instead of an
+   edge. Dark lights the rim with each team's color; light mode can't brighten a
+   white card, so its top rim is white over the hairline and the team color only
+   tints the bottom. Without mask-composite the rim layers would paint across
+   the whole card, so only the hairline ships there. */
+:is(.glass-surface, .sports-card):has(> span > .matchup-rim) {
+  border: 0.5px solid rgb(0 0 0 / 0.12) !important;
+}
+
+.dark :is(.glass-surface, .sports-card):has(> span > .matchup-rim) {
+  border-color: rgb(0 0 0 / 0.45) !important;
+}
+
+.matchup-rim {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  --rim-top-a: rgb(255 255 255);
+  --rim-top-b: rgb(255 255 255);
+  --rim-bottom-a: color-mix(in oklab, var(--rim-away) 22%, transparent);
+  --rim-bottom-b: color-mix(in oklab, var(--rim-home) 22%, transparent);
+}
+
+.dark .matchup-rim {
+  --rim-top-a: color-mix(in oklab, color-mix(in oklab, var(--rim-away) 50%, white) 60%, transparent);
+  --rim-top-b: color-mix(in oklab, color-mix(in oklab, var(--rim-home) 50%, white) 60%, transparent);
+  --rim-bottom-a: color-mix(in oklab, color-mix(in oklab, var(--rim-away) 60%, white) 45%, transparent);
+  --rim-bottom-b: color-mix(in oklab, color-mix(in oklab, var(--rim-home) 60%, white) 45%, transparent);
+}
+
+@supports (color: oklch(from red l c h)) {
+  .matchup-rim {
+    --rim-bottom-a: oklch(from var(--rim-away) 0.66 min(c, 0.12) h / 0.22);
+    --rim-bottom-b: oklch(from var(--rim-home) 0.66 min(c, 0.12) h / 0.22);
+  }
+
+  .dark .matchup-rim {
+    --rim-top-a: oklch(from var(--rim-away) 0.84 min(c, 0.1) h / 0.5);
+    --rim-top-b: oklch(from var(--rim-home) 0.84 min(c, 0.1) h / 0.5);
+    --rim-bottom-a: oklch(from var(--rim-away) 0.76 min(c, 0.12) h / 0.8);
+    --rim-bottom-b: oklch(from var(--rim-home) 0.76 min(c, 0.12) h / 0.8);
+  }
+}
+
+@supports (mask-composite: exclude) {
+  .matchup-rim::before,
+  .matchup-rim::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background:
+      linear-gradient(90deg, var(--rim-top-a), var(--rim-top-b)) top / 100% 50% no-repeat,
+      linear-gradient(90deg, var(--rim-bottom-a), var(--rim-bottom-b)) bottom / 100% 50% no-repeat;
+  }
+
+  .matchup-rim::before {
+    mask: linear-gradient(
+      to bottom,
+      rgb(0 0 0 / 0.5) 0,
+      rgb(0 0 0 / 0.35) 0.75px,
+      rgb(0 0 0 / 0.18) 1.5px,
+      rgb(0 0 0 / 0.07) 2.25px,
+      transparent 3.25px,
+      transparent calc(100% - 4.5px),
+      rgb(0 0 0 / 0.05) calc(100% - 3px),
+      rgb(0 0 0 / 0.1) calc(100% - 1.5px),
+      rgb(0 0 0 / 0.55) calc(100% - 1px),
+      rgb(0 0 0 / 0.6) 100%
+    );
+  }
+
+  .matchup-rim::after {
+    padding: 0.5px;
+    mask:
+      linear-gradient(
+        to bottom,
+        #000 0,
+        rgb(0 0 0 / 0.3) 7px,
+        transparent 14px,
+        transparent calc(100% - 14px),
+        rgb(0 0 0 / 0.3) calc(100% - 7px),
+        #000 100%
+      ),
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask-composite: intersect, exclude, add;
+  }
+}
+
 .strip-orb--b {
   animation-duration: 22s;
   animation-delay: -9s;

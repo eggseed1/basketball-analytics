@@ -209,7 +209,7 @@ export const ScoreTile = memo(function ScoreTile({
         className
       )}
     >
-      <MatchupOrbs away={matchup.awayWash} home={matchup.homeWash} winner={finalWinner(game)} />
+      <MatchupOrbs away={matchup.awayWash} home={matchup.homeWash} winner={finalWinner(game)} rim />
       <TransitionLink
         href={`/games/${game.id}`}
         className="absolute inset-0 z-0 rounded-[inherit] outline-none focus-visible:ring-2 focus-visible:ring-ring"

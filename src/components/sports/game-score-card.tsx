@@ -352,7 +352,7 @@ export function GameMatchupBoard({
       style={motionIndex != null ? ({ ...STRIP_CARD_STYLE, "--i": motionIndex } as CSSProperties) : STRIP_CARD_STYLE}
       className={cn("score-row relative isolate px-3 py-3", className)}
     >
-      <MatchupOrbs away={matchup.awayWash} home={matchup.homeWash} winner={finalWinner(game)} />
+      <MatchupOrbs away={matchup.awayWash} home={matchup.homeWash} winner={finalWinner(game)} rim />
       <MatchupBoard
         game={game}
         brandPresentation={brandPresentation}
@@ -468,7 +468,7 @@ export const GameScoreCard = memo(function GameScoreCard({
         className
       )}
     >
-      <MatchupOrbs away={matchup.awayWash} home={matchup.homeWash} winner={finalWinner(game)} />
+      <MatchupOrbs away={matchup.awayWash} home={matchup.homeWash} winner={finalWinner(game)} rim />
       <div className="relative">
         <MatchupBoard
           game={game}
