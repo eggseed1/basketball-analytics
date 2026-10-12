@@ -250,7 +250,7 @@ function StoryCard({
   return (
     <div
       data-motion="replay"
-      className="flex min-w-0 flex-col gap-2 rounded-[12px] bg-foreground/[0.03] p-2.5 ring-1 ring-inset ring-foreground/[0.06]"
+      className="lit-edge flex min-w-0 flex-col gap-2 rounded-[12px] bg-foreground/[0.03] p-2.5"
     >
       <h3 className={cn(type.caption, "px-1 font-semibold")}>{title}</h3>
       {groups.map((g, i) => (

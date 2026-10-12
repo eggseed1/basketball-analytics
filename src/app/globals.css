@@ -3189,20 +3189,34 @@ svg [data-motion-dot] {
   }
 }
 
-/* Lit glass edge on game cards, measured off the Apple Sports ticker: a half
-   pixel hairline, a half pixel rim that is lit on the top and bottom edges and
-   fades out as it turns down the sides, and a glow under 3px deep (deeper at
-   the bottom). Thicker rims or glows read as a colored border instead of an
-   edge. Dark lights the rim with each team's color; light mode can't brighten a
-   white card, so its top rim is white over the hairline and the team color only
-   tints the bottom. Without mask-composite the rim layers would paint across
-   the whole card, so only the hairline ships there. */
-:is(.glass-surface, .sports-card):has(> span > .matchup-rim) {
+/* Lit glass edge, measured off the Apple Sports ticker: a half pixel hairline,
+   a half pixel rim that is lit on the top and bottom edges and fades out as it
+   turns down the sides, and a glow under 3px deep (deeper at the bottom).
+   Thicker rims or glows read as a colored border instead of an edge. The rim
+   is the surface's own color lightened: game cards (.matchup-rim) light it
+   with each team's color, neutral panels and tiles (.lit-edge, and every
+   .sports-card under [data-lit-edges]) with white. Light mode can't brighten a
+   white card, so there the top rim is white over the hairline and team color
+   only tints the bottom. The old 1px inset highlight would double the rim, so
+   lit surfaces keep only their drop shadow. Without mask-composite the rim
+   layers would paint across the whole surface, so only the hairline ships. */
+:is(.glass-surface, .sports-card):has(> span > .matchup-rim),
+[data-lit-edges] .sports-card,
+.lit-edge {
   border: 0.5px solid rgb(0 0 0 / 0.12) !important;
+  --lit-drop-shadow: 0 1px 2px rgb(0 0 0 / 2.5%), 0 6px 20px rgb(0 0 0 / 3.5%);
 }
 
-.dark :is(.glass-surface, .sports-card):has(> span > .matchup-rim) {
+.dark :is(.glass-surface, .sports-card):has(> span > .matchup-rim),
+.dark [data-lit-edges] .sports-card,
+.dark .lit-edge {
   border-color: rgb(0 0 0 / 0.45) !important;
+  --lit-drop-shadow: 0 1px 2px rgb(0 0 0 / 28%), 0 10px 28px rgb(0 0 0 / 24%);
+}
+
+:is(.glass-surface, .sports-card):has(> span > .matchup-rim),
+[data-lit-edges] .sports-card {
+  box-shadow: var(--lit-drop-shadow) !important;
 }
 
 .matchup-rim {
@@ -3216,11 +3230,28 @@ svg [data-motion-dot] {
   --rim-bottom-b: color-mix(in oklab, var(--rim-home) 22%, transparent);
 }
 
+[data-lit-edges] .sports-card,
+.lit-edge {
+  position: relative;
+  --rim-top-a: rgb(255 255 255);
+  --rim-top-b: rgb(255 255 255);
+  --rim-bottom-a: rgb(255 255 255 / 0.85);
+  --rim-bottom-b: rgb(255 255 255 / 0.85);
+}
+
+.dark [data-lit-edges] .sports-card,
+.dark .lit-edge {
+  --rim-top-a: rgb(255 255 255 / 0.26);
+  --rim-top-b: rgb(255 255 255 / 0.26);
+  --rim-bottom-a: rgb(255 255 255 / 0.18);
+  --rim-bottom-b: rgb(255 255 255 / 0.18);
+}
+
 .dark .matchup-rim {
-  --rim-top-a: color-mix(in oklab, color-mix(in oklab, var(--rim-away) 50%, white) 60%, transparent);
-  --rim-top-b: color-mix(in oklab, color-mix(in oklab, var(--rim-home) 50%, white) 60%, transparent);
-  --rim-bottom-a: color-mix(in oklab, color-mix(in oklab, var(--rim-away) 60%, white) 45%, transparent);
-  --rim-bottom-b: color-mix(in oklab, color-mix(in oklab, var(--rim-home) 60%, white) 45%, transparent);
+  --rim-top-a: color-mix(in oklab, color-mix(in oklab, var(--rim-away) 50%, white) 40%, transparent);
+  --rim-top-b: color-mix(in oklab, color-mix(in oklab, var(--rim-home) 50%, white) 40%, transparent);
+  --rim-bottom-a: color-mix(in oklab, color-mix(in oklab, var(--rim-away) 60%, white) 30%, transparent);
+  --rim-bottom-b: color-mix(in oklab, color-mix(in oklab, var(--rim-home) 60%, white) 30%, transparent);
 }
 
 @supports (color: oklch(from red l c h)) {
@@ -3230,26 +3261,28 @@ svg [data-motion-dot] {
   }
 
   .dark .matchup-rim {
-    --rim-top-a: oklch(from var(--rim-away) 0.84 min(c, 0.1) h / 0.5);
-    --rim-top-b: oklch(from var(--rim-home) 0.84 min(c, 0.1) h / 0.5);
-    --rim-bottom-a: oklch(from var(--rim-away) 0.76 min(c, 0.12) h / 0.8);
-    --rim-bottom-b: oklch(from var(--rim-home) 0.76 min(c, 0.12) h / 0.8);
+    --rim-top-a: oklch(from var(--rim-away) 0.84 min(c, 0.1) h / 0.34);
+    --rim-top-b: oklch(from var(--rim-home) 0.84 min(c, 0.1) h / 0.34);
+    --rim-bottom-a: oklch(from var(--rim-away) 0.76 min(c, 0.12) h / 0.52);
+    --rim-bottom-b: oklch(from var(--rim-home) 0.76 min(c, 0.12) h / 0.52);
   }
 }
 
 @supports (mask-composite: exclude) {
-  .matchup-rim::before,
-  .matchup-rim::after {
+  :is(.matchup-rim, [data-lit-edges] .sports-card, .lit-edge)::before,
+  :is(.matchup-rim, [data-lit-edges] .sports-card, .lit-edge)::after {
     content: "";
     position: absolute;
     inset: 0;
+    z-index: 2;
     border-radius: inherit;
+    pointer-events: none;
     background:
       linear-gradient(90deg, var(--rim-top-a), var(--rim-top-b)) top / 100% 50% no-repeat,
       linear-gradient(90deg, var(--rim-bottom-a), var(--rim-bottom-b)) bottom / 100% 50% no-repeat;
   }
 
-  .matchup-rim::before {
+  :is(.matchup-rim, [data-lit-edges] .sports-card, .lit-edge)::before {
     mask: linear-gradient(
       to bottom,
       rgb(0 0 0 / 0.5) 0,
@@ -3265,7 +3298,7 @@ svg [data-motion-dot] {
     );
   }
 
-  .matchup-rim::after {
+  :is(.matchup-rim, [data-lit-edges] .sports-card, .lit-edge)::after {
     padding: 0.5px;
     mask:
       linear-gradient(

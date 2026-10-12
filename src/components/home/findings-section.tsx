@@ -255,9 +255,9 @@ export function InsightCard({ insight, asOf }: { insight: RecentInsight; asOf: s
     <article
       data-motion={cardHref ? "card" : undefined}
       className={cn(
-        "relative flex min-w-0 flex-col overflow-hidden rounded-[11px] bg-foreground/[0.035] ring-1 ring-inset ring-foreground/[0.06]",
+        "lit-edge flex min-w-0 flex-col overflow-hidden rounded-[11px] bg-foreground/[0.035]",
         cardHref &&
-          "transition-[background-color,box-shadow] hover:bg-foreground/[0.06] hover:ring-foreground/[0.14] has-[a[data-card-link]:focus-visible]:ring-2 has-[a[data-card-link]:focus-visible]:ring-ring"
+          "transition-[background-color,box-shadow] hover:bg-foreground/[0.06] has-[a[data-card-link]:focus-visible]:ring-2 has-[a[data-card-link]:focus-visible]:ring-ring"
       )}
     >
       {cardHref ? (
