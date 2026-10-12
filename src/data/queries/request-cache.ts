@@ -208,7 +208,6 @@ export const getPlayerCareerSeasonsCached = cache(async (playerId: string) => {
   const { preferBundledProductDataOnEdge } = await import(
     "@/data/providers/nba/runtime-policy"
   );
-  // Bundled BRef career on CF is sync; keep a thin outer budget for identity only.
   const budgetMs = preferBundledProductDataOnEdge()
     ? 1_200
     : runtimeTimeoutMs(7_000, 3_400);
@@ -218,6 +217,17 @@ export const getPlayerCareerSeasonsCached = cache(async (playerId: string) => {
     [] as PlayerSeason[]
   );
   if (result.value.length > 0) return result.value;
+  // Legend careers are static assets; a cold fetch can outlast the budget, so read them unbudgeted.
+  const { loadCareerFromBrefSlug, parseBrefPlayerSlug } = await import(
+    "@/data/providers/nba/bref-career-from-page"
+  );
+  const slug = parseBrefPlayerSlug(playerId);
+  if (slug) {
+    const legend = await loadCareerFromBrefSlug(slug, playerId).catch(
+      () => [] as PlayerSeason[]
+    );
+    if (legend.length > 0) return legend;
+  }
   return currentTeamFallbackRow(playerId);
 });
 
