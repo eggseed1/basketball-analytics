@@ -76,6 +76,7 @@ export function PlayerUpcomingGames({
                     <time className="tabular-nums">{game.gameDate}</time>
                     <span className="ml-1.5 font-normal text-muted-foreground">
                       vs {line.oppLabel}
+                      {game.gameType === "preseason" ? " (preseason)" : null}
                     </span>
                   </span>
                   <span

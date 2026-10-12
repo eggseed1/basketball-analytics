@@ -573,11 +573,15 @@ export class ResilientNBADataProvider extends StatsNbaDataProvider {
     const metadata = payload.events ?? {};
     const wanted =
       seasonType === 2 ? /regular season/i : /postseason|playoffs?/i;
-    const preferred = (payload.seasonTypes ?? []).filter((block) =>
+    const seasonTypes = payload.seasonTypes ?? [];
+    const preferred = seasonTypes.filter((block) =>
       wanted.test(block.displayName ?? "")
     );
-    const blocks =
-      preferred.length > 0 ? preferred : payload.seasonTypes ?? [];
+    // ESPN answers a season type it has no games for with the blocks it does
+    // have (preseason before opening night), so a labeled miss means no games.
+    const labeled = seasonTypes.some((block) => block.displayName?.trim());
+    if (preferred.length === 0 && labeled) return [];
+    const blocks = preferred.length > 0 ? preferred : seasonTypes;
     const entries: EspnGameLogEvent[] = [];
 
     for (const block of blocks) {

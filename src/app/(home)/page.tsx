@@ -34,6 +34,9 @@ import { yieldForStreaming } from "@/lib/stream-yield";
 export const metadata = {
   title: "Home",
   description: "NBA games, standings, impact leaders, and analytics coverage.",
+  alternates: {
+    types: { "application/rss+xml": [{ url: "/findings/feed.xml", title: "DRBL findings" }] },
+  },
 };
 
 // Keep this request-time. OpenNext has no incremental cache here, so ISR would

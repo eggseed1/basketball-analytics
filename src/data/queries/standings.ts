@@ -27,8 +27,13 @@ export async function getLeagueStandings(
     }
   }
 
+  // Mid-October to opening night the new season is all 0-0; keep the finished one up.
   const board = await fetchLeagueStandings(resolved);
-  if (standingsHaveResults(board) || !isPreseasonRosterSeason(resolved)) {
+  const current = canonicalSeasonFromStartYear(currentNbaStartYear());
+  if (
+    standingsHaveResults(board) ||
+    (!isPreseasonRosterSeason(resolved) && resolved !== current)
+  ) {
     return board;
   }
 

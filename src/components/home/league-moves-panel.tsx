@@ -1,4 +1,5 @@
 import { TeamLogo } from "@/components/brand/team-logo";
+import { NewSinceTag } from "@/components/home/new-since-tag";
 import { LEAGUE_MOVE_MAX_AGE_DAYS, type LeagueMove, type LeagueMoveKind } from "@/lib/league-moves";
 
 const KIND: Record<LeagueMoveKind, { label: string; color: string }> = {
@@ -40,11 +41,14 @@ export function LeagueMovesPanel({ moves }: { moves: LeagueMove[] }) {
                 )}
               </span>
               <div className="flex min-w-0 flex-1 flex-col gap-1">
-                <span
-                  className="text-[10px] font-bold uppercase tracking-[0.08em]"
-                  style={{ color: kind.color }}
-                >
-                  {kind.label}
+                <span className="flex items-center gap-1.5">
+                  <span
+                    className="text-[10px] font-bold uppercase tracking-[0.08em]"
+                    style={{ color: kind.color }}
+                  >
+                    {kind.label}
+                  </span>
+                  <NewSinceTag id={`move:${m.id}`} />
                 </span>
                 <a
                   href={m.url}

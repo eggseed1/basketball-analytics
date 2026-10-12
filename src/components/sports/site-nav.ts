@@ -204,6 +204,7 @@ export const PRIMARY_NAV: PrimaryNavItem[] = [
     match: (p) => p.startsWith("/arcade") || p === "/gm" || p.startsWith("/gm/"),
     subnav: [
       { href: "/arcade", label: "All games", match: (p) => p === "/arcade" },
+      { href: "/arcade/daily", label: "Daily", match: (p) => p.startsWith("/arcade/daily") },
       {
         href: "/arcade/higher-or-lower",
         label: "Higher or Lower",

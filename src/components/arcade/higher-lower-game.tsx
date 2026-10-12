@@ -246,7 +246,7 @@ function HigherLowerBoard({ league }: { league: ArcadeLeague }) {
   );
 }
 
-function GuessButton({
+export function GuessButton({
   onClick,
   icon,
   quiet,
@@ -274,7 +274,7 @@ function GuessButton({
   );
 }
 
-function SeasonCard({
+export function SeasonCard({
   league,
   row,
   stat,

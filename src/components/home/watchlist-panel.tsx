@@ -15,6 +15,7 @@ import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { PlayerIdentity } from "@/components/players/player-identity";
 import { TeamIdentity } from "@/components/teams/team-identity";
+import { useWatchlistStatus, WatchlistItemStatus } from "@/components/home/watchlist-item-status";
 import { ESPN_TEAM_META } from "@/data/providers/nba/team-meta";
 import { TEAM_BRANDS } from "@/lib/nba-brand";
 import { cn } from "@/lib/utils";
@@ -111,9 +112,10 @@ export function WatchlistPanel() {
     () => new Set(items.map((i) => itemKey(i))),
     [items]
   );
+  const status = useWatchlistStatus(items, ready);
 
   return (
-    <section className="sports-card flex flex-col gap-3 p-4 sm:p-[21px]">
+    <section className="@container sports-card flex flex-col gap-3 p-4 sm:p-[21px]">
       <div className="flex items-center justify-between gap-2">
         <h2 className="type-heading">Watchlist</h2>
         <button
@@ -147,60 +149,65 @@ export function WatchlistPanel() {
           </div>
         </button>
       ) : (
-        <ul className="grid gap-2 sm:grid-cols-2">
+        <ul className="grid gap-2 @xl:grid-cols-2">
           {items.map((item) => (
             <li
               key={itemKey(item)}
               data-motion="chip"
-              className="flex items-center gap-2 rounded-md bg-secondary/50 px-3 py-2"
+              className="flex flex-col gap-1 rounded-md bg-secondary/50 px-3 py-2"
             >
-              {item.kind === "player" ? (
-                <PlayerIdentity
-                  playerId={item.id}
-                  name={item.name}
-                  teamKey={item.teamKey}
-                  variant="compact"
-                  className="min-w-0 flex-1"
-                  nameClassName="w-full gap-2"
+              <div className="flex items-center gap-2">
+                {item.kind === "player" ? (
+                  <PlayerIdentity
+                    playerId={item.id}
+                    name={item.name}
+                    teamKey={item.teamKey}
+                    variant="compact"
+                    className="min-w-0 flex-1"
+                    nameClassName="w-full gap-2"
+                  >
+                    <span className="relative inline-flex shrink-0">
+                      <PlayerHeadshot
+                        playerId={item.id}
+                        name={item.name}
+                        teamKey={item.teamKey}
+                        size="xs"
+                      />
+                      {item.teamKey ? (
+                        <span className="absolute -right-1 -bottom-1 rounded-full bg-background p-px ring-1 ring-border">
+                          <TeamLogo teamKey={item.teamKey} size="2xs" />
+                        </span>
+                      ) : null}
+                    </span>
+                    <span className="min-w-0 flex-1 truncate text-[16px] font-semibold underline decoration-foreground/40 underline-offset-2">
+                      {item.name}
+                    </span>
+                  </PlayerIdentity>
+                ) : (
+                  <TeamIdentity
+                    teamKey={item.teamKey ?? item.id}
+                    label={item.name}
+                    className="min-w-0 flex-1"
+                    nameClassName="w-full gap-2"
+                  >
+                    <TeamLogo teamKey={item.teamKey ?? item.id} size="xs" />
+                    <span className="min-w-0 flex-1 truncate text-[16px] font-semibold underline decoration-foreground/40 underline-offset-2">
+                      {item.name}
+                    </span>
+                  </TeamIdentity>
+                )}
+                <button
+                  type="button"
+                  onClick={() => remove(item)}
+                  className="rounded-md p-1 text-muted-foreground hover:bg-background hover:text-foreground"
+                  aria-label={`Remove ${item.name}`}
                 >
-                  <span className="relative inline-flex shrink-0">
-                    <PlayerHeadshot
-                      playerId={item.id}
-                      name={item.name}
-                      teamKey={item.teamKey}
-                      size="xs"
-                    />
-                    {item.teamKey ? (
-                      <span className="absolute -right-1 -bottom-1 rounded-full bg-background p-px ring-1 ring-border">
-                        <TeamLogo teamKey={item.teamKey} size="2xs" />
-                      </span>
-                    ) : null}
-                  </span>
-                  <span className="min-w-0 flex-1 truncate text-[16px] font-semibold underline decoration-foreground/40 underline-offset-2">
-                    {item.name}
-                  </span>
-                </PlayerIdentity>
-              ) : (
-                <TeamIdentity
-                  teamKey={item.teamKey ?? item.id}
-                  label={item.name}
-                  className="min-w-0 flex-1"
-                  nameClassName="w-full gap-2"
-                >
-                  <TeamLogo teamKey={item.teamKey ?? item.id} size="xs" />
-                  <span className="min-w-0 flex-1 truncate text-[16px] font-semibold underline decoration-foreground/40 underline-offset-2">
-                    {item.name}
-                  </span>
-                </TeamIdentity>
-              )}
-              <button
-                type="button"
-                onClick={() => remove(item)}
-                className="rounded-md p-1 text-muted-foreground hover:bg-background hover:text-foreground"
-                aria-label={`Remove ${item.name}`}
-              >
-                <X className="size-3.5" />
-              </button>
+                  <X className="size-3.5" />
+                </button>
+              </div>
+              {status ? (
+                <WatchlistItemStatus status={status.byKey.get(itemKey(item))} fetchedAt={status.fetchedAt} />
+              ) : null}
             </li>
           ))}
           <li>

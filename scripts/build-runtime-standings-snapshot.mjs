@@ -1,6 +1,6 @@
 /**
  * Bake ESPN conference standings for Cloudflare Workers.
- * cdn.espn.com/core/nba/standings is preferred at runtime; this is the build-time safety net.
+ * The Worker reads this snapshot first; live ESPN boards are its fallback.
  */
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -101,36 +101,40 @@ function buildLeagueStandings(season, children) {
   return { season, conferences };
 }
 
-async function fetchSeason(season, espnYear) {
+/**
+ * The CDN board ignores seasontype and counts preseason games until the
+ * regular season starts, so it only backs up completed seasons.
+ */
+async function fetchSeason(season, espnYear, { allowCdn }) {
   const headers = {
     Accept: "application/json",
     "User-Agent": "Mozilla/5.0 DRBL-standings-snapshot/1.0",
   };
+  let siteError;
   try {
-    const cdnRes = await fetch(`${CDN}?xhr=1&season=${espnYear}`, {
+    const siteRes = await fetch(`${SITE}?season=${espnYear}&seasontype=2`, {
       headers,
       signal: AbortSignal.timeout(20000),
     });
-    if (cdnRes.ok) {
-      const payload = await cdnRes.json();
-      const groups = payload?.content?.standings?.groups ?? [];
-      if (groups.length) return buildLeagueStandings(season, groups);
-    }
-  } catch {
-    /* fall through */
+    if (!siteRes.ok) throw new Error(`site HTTP ${siteRes.status}`);
+    const payload = await siteRes.json();
+    const children = payload?.children ?? [];
+    if (!children.length) throw new Error("empty children");
+    return buildLeagueStandings(season, children);
+  } catch (error) {
+    siteError = error;
   }
+  if (!allowCdn) throw siteError;
 
-  const siteRes = await fetch(`${SITE}?season=${espnYear}`, {
+  const cdnRes = await fetch(`${CDN}?xhr=1&season=${espnYear}`, {
     headers,
     signal: AbortSignal.timeout(20000),
   });
-  if (!siteRes.ok) {
-    throw new Error(`site HTTP ${siteRes.status}`);
-  }
-  const payload = await siteRes.json();
-  const children = payload?.children ?? [];
-  if (!children.length) throw new Error("empty children");
-  return buildLeagueStandings(season, children);
+  if (!cdnRes.ok) throw new Error(`cdn HTTP ${cdnRes.status}`);
+  const payload = await cdnRes.json();
+  const groups = payload?.content?.standings?.groups ?? [];
+  if (!groups.length) throw new Error("empty cdn groups");
+  return buildLeagueStandings(season, groups);
 }
 
 const seasons = {};
@@ -139,7 +143,9 @@ for (const startYear of startYears) {
   const season = canonicalSeason(startYear);
   const espnYear = startYear + 1;
   try {
-    seasons[season] = await fetchSeason(season, espnYear);
+    seasons[season] = await fetchSeason(season, espnYear, {
+      allowCdn: startYear < currentStartYear,
+    });
     const rows = seasons[season].conferences.reduce(
       (n, c) => n + c.rows.length,
       0
@@ -152,21 +158,31 @@ for (const startYear of startYears) {
   }
 }
 
+let previous = null;
+try {
+  previous = JSON.parse(await fs.readFile(OUT, "utf8"));
+} catch {
+  /* no prior */
+}
+
 if (Object.keys(seasons).length === 0) {
-  try {
-    const previous = JSON.parse(await fs.readFile(OUT, "utf8"));
-    if (previous?.seasons && Object.keys(previous.seasons).length) {
-      console.warn(
-        `[standings-snapshot] refresh failed (${failures.join(" | ")}); retaining prior`
-      );
-      process.exit(0);
-    }
-  } catch {
-    /* no prior */
+  if (previous?.seasons && Object.keys(previous.seasons).length) {
+    console.warn(
+      `[standings-snapshot] refresh failed (${failures.join(" | ")}); retaining prior`
+    );
+    process.exit(0);
   }
   throw new Error(
     `standings-snapshot failed: ${failures.join(" | ") || "no seasons"}`
   );
+}
+
+for (const startYear of startYears) {
+  const season = canonicalSeason(startYear);
+  if (!seasons[season] && previous?.seasons?.[season]) {
+    console.warn(`[standings-snapshot] ${season} kept from the last bake`);
+    seasons[season] = previous.seasons[season];
+  }
 }
 
 const payload = {

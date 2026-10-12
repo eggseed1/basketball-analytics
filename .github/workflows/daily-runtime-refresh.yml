@@ -212,6 +212,7 @@ jobs:
             src/content/awards/retired-jerseys.json \
             data/movement-center/trade-deadlines.json \
             public/runtime/arcade/league-seasons.json \
+            src/data/runtime/findings-archive.json \
             data/ops/step-health.json \
             src/data/runtime/play-type-snapshot.json \
             src/data/runtime/on-off-snapshot.json \
@@ -287,6 +288,13 @@ jobs:
             src/data/runtime/drbl-published-seasons.json
             src/data/runtime/drbl-overlay-snapshot.json
           if-no-files-found: ignore
+
+      - name: Share images
+        if: >-
+          steps.sync.outputs.should_deploy == 'true' &&
+          (github.event_name != 'workflow_dispatch' || inputs.deploy)
+        continue-on-error: true
+        run: npx tsx --require ./scripts/lib/stub-server-only.cjs scripts/build-share-images.ts
 
       - name: Build OpenNext bundle
         if: >-

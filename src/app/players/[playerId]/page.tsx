@@ -5,6 +5,7 @@ import { PageAtmosphere } from "@/components/brand/page-atmosphere";
 import { PriorSeasonStatsNotice } from "@/components/explore/season-not-started-notice";
 import { PlayerOnOffIsland } from "@/components/players/player-on-off-island";
 import { getOnOffSeasons } from "@/data/queries/on-off";
+import { shareImageMetadata } from "@/lib/share-images";
 import { GlassSurface, GlassTintScaleProvider } from "@/components/brand/glass-surface";
 import { DestinationClientShell } from "@/components/continuity/destination-client-shell";
 import { HistoricalCareerSurface } from "@/components/players/historical-career-surface";
@@ -225,6 +226,7 @@ export async function generateMetadata({ params }: PlayerPageProps) {
     description: displayName
       ? `${displayName} stats, game log, shot chart, and impact metrics.`
       : undefined,
+    ...shareImageMetadata("players", canonicalId, displayName ?? "Player"),
   };
 }
 

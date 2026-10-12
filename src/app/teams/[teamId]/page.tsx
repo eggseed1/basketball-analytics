@@ -74,6 +74,7 @@ import {
   parseDestinationHistoryArrival,
 } from "@/themes/history-url";
 import { yieldForStreaming } from "@/lib/stream-yield";
+import { shareImageMetadata } from "@/lib/share-images";
 
 /** Team color stays a hint on cards, close to the neutral home page cards. */
 const TEAM_CARD_TINT_SCALE = 0.3;
@@ -108,6 +109,7 @@ export async function generateMetadata({ params, searchParams }: TeamPageProps) 
     description: fullName
       ? `${fullName} roster, games, transactions, and team stats.`
       : undefined,
+    ...(pastSeason ? {} : shareImageMetadata("teams", canonicalTeamId, fullName ?? "Team")),
   };
 }
 

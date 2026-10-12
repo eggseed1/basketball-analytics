@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { TeamLogo } from "@/components/brand/team-logo";
+import { NewSinceTag } from "@/components/home/new-since-tag";
 import type { InjuryEntry, InjuryStatus } from "@/lib/injury-report";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { cn } from "@/lib/utils";
@@ -35,6 +36,11 @@ function shortDate(iso: string): string {
   });
 }
 
+/** A status or injury change counts as a new listing. */
+function injurySeenId(entry: InjuryEntry): string {
+  return `injury:${entry.athleteId}:${entry.status}:${entry.injury ?? ""}`;
+}
+
 function teamOf(entry: InjuryEntry): string | null {
   return resolveTeamBrand(entry.teamAbbr)?.abbr ?? entry.teamAbbr;
 }
@@ -59,7 +65,10 @@ function Row({ entry, today }: { entry: InjuryEntry; today: string }) {
           >
             {entry.name}
           </Link>
-          <StatusPill entry={entry} />
+          <span className="flex shrink-0 items-center gap-1.5">
+            <NewSinceTag id={injurySeenId(entry)} />
+            <StatusPill entry={entry} />
+          </span>
         </div>
         <div className="flex items-center justify-between gap-2 text-[11px] text-muted-foreground">
           <span className="flex min-w-0 items-center gap-1.5">

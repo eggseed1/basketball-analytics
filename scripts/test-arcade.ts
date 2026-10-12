@@ -13,6 +13,18 @@ import {
   judgeHigherLower,
   nextHigherLowerRow,
 } from "../src/arcade/higher-lower";
+import {
+  DAILY_EPOCH,
+  DAILY_LAST_SEASON,
+  DAILY_ROUNDS,
+  dailyNumber,
+  dailyPuzzle,
+  dailyRecordFor,
+  dailyResults,
+  dailyShareText,
+  withGuess,
+  type Guess,
+} from "../src/arcade/daily";
 import { parseLeague, playerLabel } from "../src/arcade/league";
 import {
   buildTeammateGraph,
@@ -119,8 +131,41 @@ function testTeammates() {
   assert.ok(puzzle.best.length >= 3 && puzzle.best.length <= 5);
 }
 
+function testDaily() {
+  const a = dailyPuzzle(league, "2026-10-12");
+  const b = dailyPuzzle(league, "2026-10-12");
+  assert.equal(dailyNumber(DAILY_EPOCH), 1);
+  assert.equal(dailyNumber("2026-10-21"), 11);
+  assert.equal(a.rows.length, DAILY_ROUNDS + 1);
+  assert.deepEqual(a.rows.map((r) => `${r.pid}|${r.season}`), b.rows.map((r) => `${r.pid}|${r.season}`));
+  assert.equal(new Set(a.rows.map((r) => r.pid)).size, a.rows.length, "no repeat players");
+  assert.ok(a.rows.every((r) => r.season <= DAILY_LAST_SEASON));
+  const later = { ...league, rows: [...league.rows].reverse() };
+  assert.deepEqual(
+    dailyPuzzle(later, "2026-10-12").rows.map((r) => r.pid),
+    a.rows.map((r) => r.pid),
+    "row order in the file doesn't change the puzzle"
+  );
+  assert.notDeepEqual(dailyPuzzle(league, "2026-10-13").rows.map((r) => r.pid), a.rows.map((r) => r.pid));
+
+  const right = a.rows.slice(1).map((row, i): Guess => (a.stat.value(row)! >= a.stat.value(a.rows[i]!)! ? "higher" : "lower"));
+  assert.deepEqual(dailyResults(a, right), Array(DAILY_ROUNDS).fill(true));
+  const text = dailyShareText(a, dailyResults(a, right), "https://drbl.io/arcade/daily");
+  assert.match(text, /^DRBL Daily #2: 10\/10\n/);
+
+  let rec = dailyRecordFor(null, "2026-10-12");
+  for (const g of right) rec = withGuess(rec, g);
+  assert.equal(rec.streak, 1);
+  rec = dailyRecordFor(rec, "2026-10-13");
+  assert.deepEqual(rec.guesses, []);
+  for (const g of right) rec = withGuess(rec, g);
+  assert.equal(rec.streak, 2);
+  assert.equal(dailyRecordFor(rec, "2026-10-15").streak, 0, "a skipped day resets the streak");
+}
+
 testLeague();
 testHigherLower();
 testZero82();
 testTeammates();
+testDaily();
 console.log("arcade: ok");

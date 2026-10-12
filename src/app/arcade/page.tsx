@@ -15,10 +15,18 @@ import { cn } from "@/lib/utils";
 
 export const metadata = {
   title: "Arcade",
-  description: "Basketball games: Higher or Lower, 0–82, Teammate Chain, ONE SHOT and the GM Lab.",
+  description: "Basketball games: the daily Higher or Lower, Higher or Lower, 0–82, Teammate Chain, ONE SHOT and the GM Lab.",
 };
 
 const GAMES = [
+  {
+    href: "/arcade/daily",
+    title: "Daily Higher or Lower",
+    blurb: "Ten calls on one stat, the same ten for everyone. Come back tomorrow for a new set and keep your day streak.",
+    meta: "New puzzle every day · share your score",
+    art: <HigherLowerArt />,
+    tints: ["#30d158", "#0a84ff"],
+  },
   {
     href: "/arcade/higher-or-lower",
     title: "Higher or Lower",

@@ -19,6 +19,7 @@ import {
   pointsAddUp,
   teamColor,
 } from "@/components/home/insight-visuals";
+import { NewSinceTag } from "@/components/home/new-since-tag";
 import { AppLink } from "@/components/ui/app-link";
 import type { RecentInsight, RecentInsightGame } from "@/lib/recent-insights";
 import { recentInsightDateLabel, surpriseRule } from "@/lib/recent-insights";
@@ -55,15 +56,23 @@ export function FindingsSection({
 
   return (
     <section className="sports-card flex flex-col gap-3 p-4 sm:p-[21px]">
-      <div>
-        <h2 className="type-heading">Recent Insights</h2>
-        <p className="type-body-sm text-muted-foreground">
-          {empty
-            ? "No games in the latest window. Insights will update as new games are completed."
-            : seasonLabel
-              ? `What stood out in the latest ${seasonLabel} games.`
-              : "What stood out in the latest games."}
-        </p>
+      <div className="flex flex-wrap items-end justify-between gap-2">
+        <div>
+          <h2 className="type-heading">Recent Insights</h2>
+          <p className="type-body-sm text-muted-foreground">
+            {empty
+              ? "No games in the latest window. Insights will update as new games are completed."
+              : seasonLabel
+                ? `What stood out in the latest ${seasonLabel} games.`
+                : "What stood out in the latest games."}
+          </p>
+        </div>
+        <AppLink
+          href="/findings"
+          className="text-[13px] font-semibold underline-offset-4 hover:underline"
+        >
+          Past nights <span data-motion-arrow aria-hidden>→</span>
+        </AppLink>
       </div>
       {cards.length ? (
         <div data-motion-list className="grid min-w-0 gap-3 sm:grid-cols-2">
@@ -182,8 +191,9 @@ function categoryLabel(insight: RecentInsight): string {
   return tail.charAt(0) + tail.slice(1).toLowerCase();
 }
 
-function InsightCard({ insight, asOf }: { insight: RecentInsight; asOf: string }) {
-  const nightLabel = recentInsightDateLabel(insight.gameDate, asOf);
+/** `asOf` turns on the "Today" and "Last night" labels; pass null for plain dates. */
+export function InsightCard({ insight, asOf }: { insight: RecentInsight; asOf: string | null }) {
+  const nightLabel = asOf ? recentInsightDateLabel(insight.gameDate, asOf) : null;
   const dateLabel = nightLabel
     ? nightLabel.charAt(0) + nightLabel.slice(1).toLowerCase()
     : shortDate(insight.gameDate);
@@ -268,7 +278,10 @@ function InsightCard({ insight, asOf }: { insight: RecentInsight; asOf: string }
           <span className="font-bold uppercase tracking-[0.1em]" style={{ color: accent }}>
             {categoryLabel(insight)}
           </span>
-          <span className="text-muted-foreground">{dateLabel}</span>
+          <span className="flex items-center gap-1.5 text-muted-foreground">
+            <NewSinceTag id={`finding:${insight.id}`} />
+            {dateLabel}
+          </span>
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">

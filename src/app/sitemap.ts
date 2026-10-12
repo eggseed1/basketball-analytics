@@ -30,6 +30,8 @@ const SECTION_PATHS: Array<{ path: string; changeFrequency: MetadataRoute.Sitema
   { path: "/history", changeFrequency: "monthly" },
   { path: "/awards", changeFrequency: "monthly" },
   { path: "/arcade", changeFrequency: "monthly" },
+  { path: "/arcade/daily", changeFrequency: "daily" },
+  { path: "/findings", changeFrequency: "daily" },
   { path: "/arcade/higher-or-lower", changeFrequency: "monthly" },
   { path: "/arcade/zero-82", changeFrequency: "monthly" },
   { path: "/arcade/teammate-chain", changeFrequency: "monthly" },

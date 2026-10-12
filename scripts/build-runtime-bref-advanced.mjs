@@ -31,6 +31,8 @@ const PRESERVE_OUTSIDE_WINDOW =
   process.env.BREF_PRUNE !== "1";
 const BREF_SEASON_WINDOW = Number(process.env.BREF_SEASON_WINDOW || 30);
 const windowAnchor = INCLUDE_CURRENT ? currentStart : currentStart - 1;
+/** The season in progress changes nightly, so its cached tables never count as done. */
+const isLiveSeason = (start) => INCLUDE_CURRENT && start === currentStart;
 const ADV_START_YEARS = Array.from(
   { length: BREF_SEASON_WINDOW },
   (_, i) => windowAnchor - i
@@ -367,6 +369,7 @@ for (const start of ADV_START_YEARS) {
   const missingStints = combinedMissingStints(existing);
   if (
     existing?.length &&
+    !isLiveSeason(start) &&
     !advancedNeedsRates(existing) &&
     !staleSplits &&
     !missingStints
@@ -387,6 +390,7 @@ for (const start of ADV_START_YEARS) {
     const advanced = collapseToSeasonGrain(
       dedupeByPlayerTeam(parseTable(html, mapAdvanced, { includeCombined: true }))
     );
+    if (!advanced.length) throw new Error("no rows yet");
     // Preserve ortg/drtg / espn ids if we already merged them.
     const prevByKey = new Map(
       (existing ?? []).map((r) => [`${foldName(r.n)}|${r.t}`, r])
@@ -421,7 +425,12 @@ for (const start of PG_START_YEARS) {
   const canonical = canonicalSeason(start);
   const existing = seasons[canonical]?.perGame;
   const staleSplits = hasMultiTeamDuplicates(existing);
-  if (existing?.length && !perGameNeedsCounting(existing) && !staleSplits) {
+  if (
+    existing?.length &&
+    !isLiveSeason(start) &&
+    !perGameNeedsCounting(existing) &&
+    !staleSplits
+  ) {
     console.log(
       `[bref-snapshot] ${canonical} per-game cached (${existing.length})`
     );
@@ -438,6 +447,7 @@ for (const start of PG_START_YEARS) {
     const perGame = collapseToSeasonGrain(
       dedupeByPlayerTeam(parseTable(html, mapPerGame, { includeCombined: true }))
     );
+    if (!perGame.length) throw new Error("no rows yet");
     const prevByKey = new Map(
       (existing ?? []).map((r) => [`${r.n.toLowerCase()}|${r.t}`, r])
     );
@@ -465,7 +475,8 @@ for (const start of PG_START_YEARS) {
   if (
     existing?.length &&
     !advancedNeedsRatings(existing) &&
-    !forceTotRatings
+    !forceTotRatings &&
+    !isLiveSeason(start)
   ) {
     console.log(`[bref-snapshot] ${canonical} ratings cached`);
     continue;

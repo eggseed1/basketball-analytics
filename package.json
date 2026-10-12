@@ -48,6 +48,7 @@
     "test:player-data-health": "tsx scripts/test-player-data-health.ts",
     "test:player-board-resilience": "tsx scripts/test-player-board-resilience.ts",
     "test:explore-players-board": "tsx scripts/test-explore-players-board.ts",
+    "test:lib-unit": "tsx --test src/lib/*.test.ts",
     "test:ui-continuity": "tsx scripts/test-ui-continuity.ts",
     "test:cross-route-continuity": "tsx scripts/test-cross-route-continuity.ts",
     "test:progressive-destinations": "tsx scripts/test-progressive-destinations.ts",

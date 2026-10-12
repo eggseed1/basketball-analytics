@@ -9,6 +9,16 @@ import { computeStandingsFromGameArchive } from "@/lib/standings-from-games";
 import { espnFetchJson } from "@/data/providers/nba/espn-client";
 import { preferBundledProductDataOnEdge } from "@/data/providers/nba/runtime-policy";
 import { espnYearFromCanonicalSeason } from "@/data/providers/nba/season";
+import {
+  canonicalSeasonFromStartYear,
+  currentNbaStartYear,
+} from "@/data/providers/historical/season-range";
+import { nbaTodayIso } from "@/lib/nba-calendar-date";
+import {
+  regularGamesThrough,
+  standingsCountUnscheduledGames,
+  withoutRecords,
+} from "@/lib/standings-preseason-guard";
 
 const SITE_API_STANDINGS_URL =
   "https://site.api.espn.com/apis/v2/sports/basketball/nba/standings";
@@ -157,7 +167,7 @@ async function fetchStandingsFromSiteApi(
   const year = espnYearFromCanonicalSeason(season);
   try {
     const payload = await espnFetchJson<EspnStandingsResponse>(
-      `${SITE_API_STANDINGS_URL}?season=${year}`,
+      `${SITE_API_STANDINGS_URL}?season=${year}&seasontype=2`,
       { ttlMs: 1000 * 60 * 5, timeoutMs: 2_500, retries: 1 }
     );
     return buildLeagueStandings(season, payload.children ?? []);
@@ -185,7 +195,25 @@ function standingsFromGameArchive(season: string): LeagueStandings | null {
 
 const archiveStandingsCache = new Map<string, LeagueStandings | null>();
 
+/**
+ * Current-season records can't hold more games than the regular-season
+ * schedule has reached; a board that does is counting preseason games.
+ */
 export async function fetchLeagueStandings(
+  season: string
+): Promise<LeagueStandings> {
+  const board = await fetchLeagueStandingsUnchecked(season);
+  if (season !== canonicalSeasonFromStartYear(currentNbaStartYear())) return board;
+  const scheduled = regularGamesThrough(getRuntimeSnapshotGames(season), season, nbaTodayIso());
+  if (!scheduled || !standingsCountUnscheduledGames(board, scheduled)) return board;
+  const fromSite = await fetchStandingsFromSiteApi(season);
+  if (fromSite && rowCount(fromSite) > 0 && !standingsCountUnscheduledGames(fromSite, scheduled)) {
+    return fromSite;
+  }
+  return withoutRecords(board);
+}
+
+async function fetchLeagueStandingsUnchecked(
   season: string
 ): Promise<LeagueStandings> {
   if (preferBundledProductDataOnEdge()) {

@@ -75,6 +75,8 @@ next-env.d.ts
 /public/runtime/player-game-logs/
 # Deploy-baked play-by-play for Cloudflare Static Assets
 /public/runtime/play-by-play/
+# Deploy-baked share images (scripts/build-share-images.ts)
+/public/og/
 
 # OpenNext
 .open-next

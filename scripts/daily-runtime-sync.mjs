@@ -197,6 +197,12 @@ const ORG_STEPS = [
   { label: "portraits", cmd: "node", args: ["scripts/build-runtime-portrait-lookup.mjs", "--new-only"] },
   // Arcade league file picks up a season once it is complete in the BRef bake.
   { label: "arcade", cmd: "node", args: ["scripts/build-arcade-data.mjs"] },
+  // Live ESPN box scores; a night with no finals leaves the archive as it is.
+  {
+    label: "findings-archive",
+    cmd: "npx",
+    args: ["tsx", "--require", "./scripts/lib/stub-server-only.cjs", "scripts/build-findings-archive.ts"],
+  },
 ];
 
 async function runOrgSteps() {
