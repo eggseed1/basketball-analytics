@@ -1,5 +1,5 @@
 import type { PlayByPlayEvent } from "@/data/types/play-by-play";
-import type { GameSummary } from "@/data/types";
+import type { Game, GameSummary } from "@/data/types";
 
 /** The game as it stood right after one play, stamped with when the play happened. */
 export type ScorePoint = {
@@ -141,20 +141,47 @@ export function pointAt(
  * `game` shown as it stood at `point`. Records stay only while they can't
  * give away the result: before the final, a finished game's records already count it.
  */
-export function gameAtPoint(game: GameSummary, point: ScorePoint | null): GameSummary {
+export function gameAtPoint<T extends Game>(game: T, point: ScorePoint | null): T {
   const status = point?.status ?? "pregame";
   const keepRecords = status === "final" || game.status !== "final";
-  return {
+  const away = point?.away ?? 0;
+  const home = point?.home ?? 0;
+  const shown: T = {
     ...game,
     status,
     period: point && point.period > 0 ? point.period : undefined,
     displayClock: point?.clock || undefined,
     statusDetail: point?.detail ?? "Pregame",
-    awayScore: point?.away ?? 0,
-    homeScore: point?.home ?? 0,
+    awayScore: away,
+    homeScore: home,
     awayPeriodScores: point?.awayPeriods.length ? point.awayPeriods : undefined,
     homePeriodScores: point?.homePeriods.length ? point.homePeriods : undefined,
     awayRecord: keepRecords ? game.awayRecord : undefined,
     homeRecord: keepRecords ? game.homeRecord : undefined,
   };
+  if ("margin" in shown) {
+    const summary = shown as T & GameSummary;
+    summary.totalPoints = away + home;
+    summary.margin = home - away;
+    summary.absMargin = Math.abs(home - away);
+  }
+  return shown;
+}
+
+/**
+ * Plays that had happened by `cutoff`, using the same forward-only play times
+ * as `scoreTimeline`. Null when no play carries a time, so callers can't cut.
+ */
+export function eventsThrough<E extends Pick<PlayByPlayEvent, "wallMs">>(
+  events: readonly E[],
+  cutoff: number
+): E[] | null {
+  let at = -Infinity;
+  const out: E[] = [];
+  for (const e of events) {
+    if (e.wallMs != null && e.wallMs > at) at = e.wallMs;
+    if (at > cutoff) break;
+    out.push(e);
+  }
+  return Number.isFinite(at) ? out : null;
 }

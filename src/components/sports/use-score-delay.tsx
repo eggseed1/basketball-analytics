@@ -22,11 +22,12 @@ import {
   pickDue,
   readScoreDelay,
   recordSnapshot,
+  scoreProgressKey,
   subscribeScoreDelay,
   type ScoreSnapshot,
   type Snapshot,
 } from "@/lib/score-delay";
-import { gameAtPoint, mergePoints, pointAt, type ScorePoint } from "@/lib/score-timeline";
+import { eventsThrough, gameAtPoint, mergePoints, pointAt, type ScorePoint } from "@/lib/score-timeline";
 
 const MAX_DELAY_MS = SCORE_DELAY_MAX_SECONDS * 1000;
 
@@ -91,6 +92,25 @@ export function useDelayedValue<T>(value: T, at?: number): Delayed<T> & { delayM
     return { due: now, earliest: now, delayMs };
   }
   return { ...state, delayMs };
+}
+
+const PLAYS_TICK_MS = 2_000;
+
+/**
+ * Polled plays the viewer may see: with a delay, those that happened at least
+ * that long ago. Plays without times fall back to holding each poll for the delay.
+ */
+export function useDelayedPlays<E extends { wallMs?: number | null }>(events: E[] | null): E[] | null {
+  const delayMs = useScoreDelaySeconds() * 1000;
+  const held = useDelayedValue(events).due?.value ?? null;
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (!delayMs || !events) return;
+    const id = window.setInterval(() => setNow(Date.now()), PLAYS_TICK_MS);
+    return () => window.clearInterval(id);
+  }, [delayMs, events]);
+  if (!delayMs || !events) return events;
+  return eventsThrough(events, now - delayMs) ?? held;
 }
 
 const TIMELINE_POLL_MS = 10_000;
@@ -177,6 +197,20 @@ function useScoreTimelines(
   return timelines;
 }
 
+function sameShown(
+  a: ReadonlyMap<string, GameSummary | null>,
+  b: ReadonlyMap<string, GameSummary | null>
+): boolean {
+  if (a.size !== b.size) return false;
+  for (const [id, game] of b) {
+    if (!a.has(id)) return false;
+    const was = a.get(id) ?? null;
+    if (was === game) continue;
+    if (!was || !game || scoreProgressKey(was) !== scoreProgressKey(game)) return false;
+  }
+  return true;
+}
+
 /**
  * Shows each game as it stood the chosen delay ago. Play-by-play times place
  * the score exactly; without them, updates seen on this page are held back
@@ -190,6 +224,7 @@ export function useDelayedGames(games: GameSummary[]): GameSummary[] {
   const [shown, setShown] = useState<ReadonlyMap<string, GameSummary | null>>(
     () => new Map()
   );
+  const shownRef = useRef(shown);
 
   useLayoutEffect(() => {
     const now = Date.now();
@@ -216,7 +251,12 @@ export function useDelayedGames(games: GameSummary[]): GameSummary[] {
         next.set(g.id, picked.game);
         if (picked.nextAt != null) wake = Math.min(wake, picked.nextAt);
       }
-      setShown(next);
+      // `games` can arrive as a new array with the same content on every render;
+      // skipping the update then stops this effect from re-rendering itself forever.
+      if (!sameShown(shownRef.current, next)) {
+        shownRef.current = next;
+        setShown(next);
+      }
       if (wake < Infinity) timer = setTimeout(resolve, Math.max(250, wake - t));
     };
     resolve();

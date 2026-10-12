@@ -80,7 +80,7 @@ export function gameUsagePct(params: {
     params.teamFieldGoalsAttempted +
     0.44 * params.teamFreeThrowsAttempted +
     params.teamTurnovers;
-  if (params.minutes <= 0 || teamPoss <= 0 || params.teamMinutes <= 0) {
+  if (!(params.minutes > 0) || !(teamPoss > 0) || !(params.teamMinutes > 0)) {
     return undefined;
   }
   return (

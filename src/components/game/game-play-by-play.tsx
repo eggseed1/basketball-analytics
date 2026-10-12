@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import { useDelayedValue } from "@/components/sports/use-score-delay";
+import { useDelayedPlays } from "@/components/sports/use-score-delay";
 import type { PlayByPlayEvent } from "@/data/types";
 import { isLiveLikeStatus, type GameStatusKind } from "@/lib/game-status";
 import { resolveRefreshIntervalMs } from "@/lib/live-refresh-policy";
@@ -62,7 +62,8 @@ function useLivePlays(
   const [polled, setPolled] = useState<{ events: PlayByPlayEvent[]; source: string | null } | null>(null);
   const eventsRef = useRef(initial);
   eventsRef.current = polled && polled.events.length > initial.length ? polled.events : initial;
-  const held = useDelayedValue(polled).due?.value ?? null;
+  const visible = useDelayedPlays(polled?.events ?? null);
+  const held = polled && visible ? { events: visible, source: polled.source } : null;
 
   useEffect(() => {
     if (!live || !gameId) return;

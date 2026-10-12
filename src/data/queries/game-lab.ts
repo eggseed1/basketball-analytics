@@ -39,6 +39,8 @@ import {
   parseOfficialTeamStats,
   type OfficialTeamStats,
 } from "@/lib/games/official-team-stats";
+import { boxAtCutoff } from "@/lib/box-at-cutoff";
+import { eventsThrough, gameAtPoint, pointAt, scoreTimeline } from "@/lib/score-timeline";
 export type { GameAnalysisSummary };
 
 export type GameAnalysisPayload = {
@@ -50,7 +52,37 @@ export type GameAnalysisPayload = {
   officialTeamStats?: { home: OfficialTeamStats; away: OfficialTeamStats } | null;
   /** Shell availability - mirrors coverage.availability. */
   availability: "full" | "partial" | "scoreboard";
+  /**
+   * How an `asOfMs` request was met: "cut" rebuilt everything from the plays
+   * by then, "unchanged" means the game had already ended by then, and
+   * "unavailable" means the payload is the live game and must be held back.
+   */
+  asOf?: "cut" | "unchanged" | "unavailable";
 };
+
+/** Box, plays and score as they stood at `asOfMs`, or null when the feed can't be cut. */
+function cutAtTime(
+  input: { game: Game; players: PlayerGame[]; playByPlay: GamePlayByPlay | null },
+  asOfMs: number
+): { game: Game; players: PlayerGame[]; playByPlay: GamePlayByPlay } | "unchanged" | null {
+  const { game, players, playByPlay } = input;
+  if (!playByPlay) return null;
+  const points = scoreTimeline(playByPlay.events);
+  const end = points.findLast((p) => p.status === "final");
+  if (end && end.at <= asOfMs) return "unchanged";
+  const events = eventsThrough(playByPlay.events, asOfMs);
+  if (!events) return null;
+  const rebuilt = boxAtCutoff(players, events, {
+    home: game.homeTeamAbbr ?? "",
+    away: game.awayTeamAbbr ?? "",
+  });
+  if (!rebuilt) return null;
+  return {
+    game: gameAtPoint(game, pointAt(points, asOfMs).point),
+    players: rebuilt,
+    playByPlay: { ...playByPlay, events },
+  };
+}
 
 function matchTeamSeason(
   rows: TeamSeasonStats[],
@@ -251,7 +283,11 @@ async function loadPlayByPlayForGameLab(
 }
 
 export async function getGameAnalysis(
-  gameId: string
+  gameId: string,
+  options?: {
+    /** Show the game as it stood at this time (epoch ms), for a viewer's score delay. */
+    asOfMs?: number;
+  }
 ): Promise<GameAnalysisPayload | null> {
   const shell = await getGameShellCached(gameId);
   if (!shell) return null;
@@ -317,6 +353,19 @@ export async function getGameAnalysis(
         box.game.teamIdProvider ?? inferGameTeamProvider(box.game)
       );
       availability = "full";
+    }
+  }
+
+  let asOf: GameAnalysisPayload["asOf"];
+  let officialBoxTeams = "boxTeams" in hydrated.value ? hydrated.value.boxTeams : undefined;
+  if (options?.asOfMs != null) {
+    const cut = cutAtTime({ game, players, playByPlay }, options.asOfMs);
+    if (cut === "unchanged") asOf = "unchanged";
+    else if (!cut) asOf = "unavailable";
+    else {
+      asOf = "cut";
+      ({ game, players, playByPlay } = cut);
+      officialBoxTeams = undefined;
     }
   }
 
@@ -399,11 +448,9 @@ export async function getGameAnalysis(
     players: alignedPlayers,
     events: playByPlay?.events ?? [],
     pbpSource: playByPlay?.source,
-    officialTeamStats: parseOfficialTeamStats(
-      "boxTeams" in hydrated.value ? hydrated.value.boxTeams : undefined,
-      orientedGame
-    ),
+    officialTeamStats: parseOfficialTeamStats(officialBoxTeams, orientedGame),
     availability,
+    ...(asOf ? { asOf } : {}),
   };
 }
 

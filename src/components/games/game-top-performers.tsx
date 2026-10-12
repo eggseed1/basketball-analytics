@@ -13,7 +13,7 @@ function topScorers(players: PlayerGame[]): PlayerGame[] {
       (a, b) =>
         b.points - a.points ||
         (b.gameScore ?? 0) - (a.gameScore ?? 0) ||
-        b.minutes - a.minutes
+        (b.minutes || 0) - (a.minutes || 0)
     )
     .slice(0, PER_TEAM);
 }

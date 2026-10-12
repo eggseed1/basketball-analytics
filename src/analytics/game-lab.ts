@@ -748,6 +748,11 @@ function teamContextMetrics(
   return out;
 }
 
+/** Minutes are NaN on lines rebuilt from plays; those players played unless marked out. */
+function playedInGame(p: PlayerGame): boolean {
+  return p.minutes > 0 || (Number.isNaN(p.minutes) && !p.didNotPlay);
+}
+
 function buildPlayerHighlights(options: {
   players: PlayerGame[];
   game: Game;
@@ -756,7 +761,8 @@ function buildPlayerHighlights(options: {
   boxContext: BoxScoreGameContextIndex;
 }): GamePlayerHighlights {
   const { players, game, homeLabel, awayLabel, boxContext } = options;
-  const active = players.filter((p) => p.minutes > 0);
+  const active = players.filter(playedInGame);
+  const byMinutes = (a: PlayerGame, b: PlayerGame) => (b.minutes || 0) - (a.minutes || 0);
   const sideOf = (teamId: string): "home" | "away" =>
     teamId === game.homeTeamId ? "home" : "away";
   const labelOf = (teamId: string) =>
@@ -780,7 +786,7 @@ function buildPlayerHighlights(options: {
   });
 
   const scoring = [...active]
-    .sort((a, b) => b.points - a.points || b.minutes - a.minutes)
+    .sort((a, b) => b.points - a.points || byMinutes(a, b))
     .slice(0, 5)
     .filter((p) => p.points > 0)
     .map((p) =>
@@ -800,7 +806,7 @@ function buildPlayerHighlights(options: {
         .filter((p) => p.gameScore != null)
         .sort(
           (a, b) =>
-            (b.gameScore ?? 0) - (a.gameScore ?? 0) || b.minutes - a.minutes
+            (b.gameScore ?? 0) - (a.gameScore ?? 0) || byMinutes(a, b)
         )
         .slice(0, 5)
         .map((p) =>
@@ -829,8 +835,9 @@ function buildPlayerHighlights(options: {
           )
         );
 
-  const plusMinus = [...active]
-    .sort((a, b) => b.plusMinus - a.plusMinus || b.minutes - a.minutes)
+  const plusMinus = active
+    .filter((p) => Number.isFinite(p.plusMinus))
+    .sort((a, b) => b.plusMinus - a.plusMinus || byMinutes(a, b))
     .slice(0, 5)
     .filter((p) => p.plusMinus !== 0)
     .map((p) =>
@@ -1002,7 +1009,7 @@ export function analyzeGame(options: {
     boxContext: boxScoreContext,
   });
 
-  const hasBoxScore = players.some((p) => p.minutes > 0 || p.points > 0);
+  const hasBoxScore = players.some((p) => playedInGame(p) || p.points > 0);
   const hasTeamTotals = Boolean(home && away);
   const hasPeriodScores = flow.available;
   const hasHomeSeasonContext = teamContext.some((m) => m.side === "home");

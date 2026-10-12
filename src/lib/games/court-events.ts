@@ -239,7 +239,7 @@ export function buildCourtEvents(
       continue;
     }
 
-    if (/\bfoul\b/i.test(d) && !/\btechnical\b/i.test(d)) {
+    if (/\bfoul\b|\boffensive charge\b/i.test(d) && !/\btechnical\b/i.test(d)) {
       if (!side) continue;
       tick(side, "pf");
       if (hasLoc) {

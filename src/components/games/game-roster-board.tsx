@@ -47,7 +47,7 @@ function statCells(g: PlayerGame): string[] {
     `${g.fieldGoalsMade}-${g.fieldGoalsAttempted}`,
     `${g.threePointersMade}-${g.threePointersAttempted}`,
     `${g.freeThrowsMade}-${g.freeThrowsAttempted}`,
-    g.plusMinus > 0 ? `+${g.plusMinus}` : String(g.plusMinus),
+    g.plusMinus > 0 ? `+${g.plusMinus}` : formatNumber(g.plusMinus),
     ts != null ? formatPct(ts) : "—",
   ];
 }

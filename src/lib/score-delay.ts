@@ -4,6 +4,11 @@ import { isFinalStatus, isLiveLikeStatus } from "@/lib/game-status";
 
 export const SCORE_DELAY_KEY = "drbl-score-delay-v1";
 
+/** Mirrors the saved delay so server-rendered game pages can show the game that long ago. */
+export const SCORE_DELAY_COOKIE = "drbl-score-delay";
+
+const COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
+
 export const SCORE_DELAY_MAX_SECONDS = 300;
 
 export function parseScoreDelay(raw: string | null | undefined): number {
@@ -26,13 +31,23 @@ export function scoreDelayShortLabel(seconds: number): string {
   return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
 }
 
-/** Sets `data-score-delay` on <html> before paint so live scores never flash. */
+/** Sets `data-score-delay` on <html> before paint so live scores never flash, and syncs the cookie. */
 export const SCORE_DELAY_BOOT_SCRIPT = `(function(){
   try {
     var d = Number(localStorage.getItem("${SCORE_DELAY_KEY}"));
-    if (d % 1 === 0 && d > 0 && d <= ${SCORE_DELAY_MAX_SECONDS}) document.documentElement.setAttribute("data-score-delay", String(d));
+    var ok = d % 1 === 0 && d > 0 && d <= ${SCORE_DELAY_MAX_SECONDS};
+    if (ok) document.documentElement.setAttribute("data-score-delay", String(d));
+    var m = document.cookie.match(/(?:^|; )${SCORE_DELAY_COOKIE}=(\\d+)/);
+    if (ok && (!m || m[1] !== String(d))) document.cookie = "${SCORE_DELAY_COOKIE}=" + d + "; path=/; max-age=${COOKIE_MAX_AGE}; samesite=lax";
+    if (!ok && m) document.cookie = "${SCORE_DELAY_COOKIE}=; path=/; max-age=0; samesite=lax";
   } catch (e) {}
 })();`;
+
+function writeScoreDelayCookie(seconds: number) {
+  document.cookie = seconds
+    ? `${SCORE_DELAY_COOKIE}=${seconds}; path=/; max-age=${COOKIE_MAX_AGE}; samesite=lax`
+    : `${SCORE_DELAY_COOKIE}=; path=/; max-age=0; samesite=lax`;
+}
 
 const listeners = new Set<() => void>();
 
@@ -50,6 +65,7 @@ export function writeScoreDelay(seconds: number): void {
     if (value) window.localStorage.setItem(SCORE_DELAY_KEY, String(value));
     else window.localStorage.removeItem(SCORE_DELAY_KEY);
   } catch {}
+  writeScoreDelayCookie(value);
   syncScoreDelayAttribute(value);
   listeners.forEach((fn) => fn());
 }
@@ -133,7 +149,8 @@ export function pickDue<T>(
 
 export type ScoreSnapshot = Snapshot<GameSummary>;
 
-function progressKey(g: GameSummary): string {
+/** Everything about a game a viewer could see change, as one comparable string. */
+export function scoreProgressKey(g: GameSummary): string {
   return [
     g.status,
     g.period,
@@ -154,7 +171,7 @@ export function recordSnapshot(
   game: GameSummary,
   at: number
 ): ScoreSnapshot[] {
-  return insertSnapshot(list, game, at, (a, b) => progressKey(a) === progressKey(b));
+  return insertSnapshot(list, game, at, (a, b) => scoreProgressKey(a) === scoreProgressKey(b));
 }
 
 /** The game as it stood `delayMs` ago, or null when the viewer should see nothing yet. */

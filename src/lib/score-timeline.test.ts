@@ -3,7 +3,14 @@ import { test } from "node:test";
 
 import type { GameSummary } from "@/data/types";
 import type { PlayByPlayEvent } from "@/data/types/play-by-play";
-import { gameAtPoint, mergePoints, pointAt, recentPoints, scoreTimeline } from "./score-timeline";
+import {
+  eventsThrough,
+  gameAtPoint,
+  mergePoints,
+  pointAt,
+  recentPoints,
+  scoreTimeline,
+} from "./score-timeline";
 
 const T0 = Date.parse("2026-10-20T23:40:00Z");
 
@@ -163,6 +170,23 @@ test("gameAtPoint hides records that already count the result", () => {
 
   const liveGame = { ...finalGame, status: "in_progress" } as GameSummary;
   assert.equal(gameAtPoint(liveGame, pointAt(points, s(60)).point).awayRecord, "1-0");
+});
+
+test("gameAtPoint recomputes summary margins from the shown score", () => {
+  const summary = { ...finalGame, totalPoints: 16, margin: -2, absMargin: 2 } as GameSummary;
+  const shown = gameAtPoint(summary, pointAt(scoreTimeline(events), s(60)).point);
+  assert.equal(shown.totalPoints, 5);
+  assert.equal(shown.margin, 1);
+  assert.equal(shown.absMargin, 1);
+});
+
+test("eventsThrough cuts at the cutoff using forward-only play times", () => {
+  const cut = eventsThrough(events, s(60))!;
+  assert.equal(cut.length, 3);
+  assert.deepEqual([cut.at(-1)!.scoreAway, cut.at(-1)!.scoreHome], [2, 3]);
+  assert.equal(eventsThrough(events, s(-100))!.length, 0);
+  assert.equal(eventsThrough(events, s(99999))!.length, events.length);
+  assert.equal(eventsThrough([play({ period: 1, clock: "11:00", away: 2, home: 0, wall: null })], s(0)), null);
 });
 
 test("gameAtPoint before the first play reads as pregame", () => {

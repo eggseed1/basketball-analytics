@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef, useState, type ReactNode, type SVGProps } f
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { ChartTooltipSurface } from "@/components/charts/chart-tooltip";
 import { TransitionLink } from "@/components/continuity/query-nav";
-import { useDelayedValue } from "@/components/sports/use-score-delay";
+import { useDelayedPlays } from "@/components/sports/use-score-delay";
 import type { PlayByPlayEvent } from "@/data/types";
 import { type } from "@/lib/design-system";
 import {
@@ -273,7 +273,7 @@ export function GameShotChart({
   // The route re-renders with fresh plays while live, and this chart also polls;
   // show whichever set reaches later so the two never fall out of step.
   const [polled, setPolled] = useState<PlayByPlayEvent[] | null>(null);
-  const heldPolled = useDelayedValue(polled).due?.value ?? null;
+  const heldPolled = useDelayedPlays(polled);
   const events = useMemo(() => fresherEvents(initialEvents, heldPolled), [initialEvents, heldPolled]);
   const lastPlay = useMemo(() => latestPlay(events), [events]);
   const { court, ticks, marks, fga } = useMemo(

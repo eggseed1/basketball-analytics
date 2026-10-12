@@ -117,6 +117,7 @@ export function GameLabView({
   officialTeamStats = null,
   pregameMargin,
   hidePeriodTable = false,
+  rebuiltFromPlays = false,
 }: {
   analysis: GameAnalysisSummary;
   players: PlayerGame[];
@@ -129,6 +130,8 @@ export function GameLabView({
   omitHero?: boolean;
   /** The hero already shows the line score. */
   hidePeriodTable?: boolean;
+  /** Player lines were counted from the plays up to the viewer's score delay. */
+  rebuiltFromPlays?: boolean;
 }) {
   const chartTheme = useChartTheme();
   const { outcome, flow } = analysis;
@@ -399,6 +402,12 @@ export function GameLabView({
             Injured or inactive players are marked OUT.
             {final ? "" : " Bench players who haven't checked in yet are marked Not in yet."}
           </p>
+          {rebuiltFromPlays ? (
+            <p className={cn(type.bodySm, "mt-1 text-muted-foreground")}>
+              Counted from the play-by-play up to your score delay, so a line can be a play off the
+              official box. Minutes and +/- stay blank until the game ends on your delay.
+            </p>
+          ) : null}
         </div>
         {players.length === 0 ? (
           <p className={cn(type.bodySm, "text-muted-foreground")}>

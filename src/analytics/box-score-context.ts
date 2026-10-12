@@ -268,7 +268,7 @@ export function buildBoxScorePlayerContext(options: {
   playerGameLog?: PlayerGame[];
 }): BoxScorePlayerContext {
   const { player, gamePlayers, seasonRow, playerGameLog } = options;
-  const played = gamePlayers.filter((p) => p.minutes > 0);
+  const played = gamePlayers.filter((p) => p.minutes > 0 || (Number.isNaN(p.minutes) && !p.didNotPlay));
   const lines: BoxScoreStatLine[] = [];
 
   for (const def of STAT_DEFS) {
