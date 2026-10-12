@@ -10,11 +10,13 @@ import { getBundledDrblSeason } from "@/data/runtime/drbl-overlay-snapshot";
 import { getBundledPlayerIdAliasIndex } from "@/data/runtime/player-id-aliases-snapshot";
 import { nbaTodayIso } from "@/lib/nba-calendar-date";
 import { priorSeasonForStats } from "@/lib/player-board-season";
+import { scoreTimeline } from "@/lib/score-timeline";
 import {
   playerLineFor,
   scoringTrend,
   teamGameWindow,
   type WatchDrbl,
+  type WatchGame,
   type WatchInjury,
   type WatchPlayerStatus,
   type WatchStatus,
@@ -106,6 +108,32 @@ async function gameLog(playerId: string, season: string): Promise<PlayerGame[]> 
   return value;
 }
 
+/** A delayed viewer can still be watching a game this long after tip-off. */
+const RECENT_TIP_MS = 4 * 60 * 60 * 1000;
+
+/** Final-buzzer times from play-by-play for games that tipped in the last few hours. */
+async function endTimes(lasts: (WatchGame | null)[]): Promise<Map<string, number>> {
+  const now = Date.now();
+  const recent = [
+    ...new Set(
+      lasts
+        .filter((g): g is WatchGame => g != null && g.tipOffAt != null)
+        .filter((g) => now - Date.parse(g.tipOffAt!) < RECENT_TIP_MS)
+        .map((g) => g.gameId)
+    ),
+  ];
+  const { getGamePlayByPlay } = await import("./games");
+  const out = new Map<string, number>();
+  await Promise.all(
+    recent.map(async (gameId) => {
+      const { value } = await withBudget(getGamePlayByPlay(gameId).catch(() => null), GAME_LOG_BUDGET_MS, null);
+      const end = value ? scoreTimeline(value.events).findLast((p) => p.status === "final") : undefined;
+      if (end) out.set(gameId, end.at);
+    })
+  );
+  return out;
+}
+
 export async function getWatchlistStatus(options: {
   players: string[];
   teams: string[];
@@ -117,15 +145,29 @@ export async function getWatchlistStatus(options: {
     Promise.all(options.players.map((id) => gameLog(id, season))),
   ]);
 
+  const playerTeams = options.players.map((id) => getBundledCurrentRosterEntry(id)?.teamId ?? null);
+  const windows = new Map(
+    [...new Set([...options.teams, ...playerTeams.filter((t): t is string => t != null)])].map(
+      (teamId) => [teamId, teamGameWindow(games, teamId)] as const
+    )
+  );
+  const ended = await endTimes([...windows.values()].map((w) => w.last));
+  const windowFor = (teamId: string | null) => {
+    const w = teamId ? windows.get(teamId) : undefined;
+    if (!w) return { last: null, live: null, next: null };
+    const endedAt = w.last ? ended.get(w.last.gameId) : undefined;
+    return endedAt != null && w.last ? { ...w, last: { ...w.last, endedAt } } : w;
+  };
+
   const teams: WatchTeamStatus[] = options.teams.map((id) => ({
     kind: "team",
     id,
-    ...teamGameWindow(games, id),
+    ...windowFor(id),
   }));
 
   const players: WatchPlayerStatus[] = options.players.map((id, i) => {
-    const teamId = getBundledCurrentRosterEntry(id)?.teamId ?? null;
-    const window = teamId ? teamGameWindow(games, teamId) : { last: null, live: null, next: null };
+    const teamId = playerTeams[i] ?? null;
+    const window = windowFor(teamId);
     const log = logs[i] ?? [];
     return {
       kind: "player",

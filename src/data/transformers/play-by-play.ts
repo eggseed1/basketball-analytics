@@ -34,6 +34,12 @@ export function formatPlayClock(clockSeconds: number): string {
   return `${minutes}:${String(seconds).padStart(2, "0")}`;
 }
 
+function wallClockMs(value: unknown): number | null {
+  if (typeof value !== "string" || !value) return null;
+  const ms = Date.parse(value);
+  return Number.isFinite(ms) ? ms : null;
+}
+
 function finiteOrNull(value: unknown): number | null {
   if (value == null || value === "") return null;
   const n = Number(value);
@@ -132,6 +138,7 @@ export function transformNbaPlayByPlay(
         points:
           asNumber(action.points) || pointsFromAction(actionType, shotResult),
         ...playSpot(action, isFieldGoal),
+        wallMs: wallClockMs(action.timeActual),
       } satisfies PlayByPlayEvent;
     })
     .filter((e) => e.description.trim().length > 0 || e.actionType === "period")

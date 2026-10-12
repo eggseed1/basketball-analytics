@@ -16,6 +16,8 @@ export type WatchGame = {
   opponentScore: number | null;
   /** The team's overall record as the feed reports it; regular season and playoffs only. */
   record: string | null;
+  /** When the final buzzer sounded (epoch ms), for games that ended in the last few hours. */
+  endedAt?: number | null;
 };
 
 export type WatchPlayerLine = {

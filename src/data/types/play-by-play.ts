@@ -35,6 +35,8 @@ export interface PlayByPlayEvent {
    */
   locX?: number | null;
   locY?: number | null;
+  /** When the play happened (epoch ms), from the feed's wall clock. Null when the source has none. */
+  wallMs?: number | null;
 }
 
 export interface GamePlayByPlay {

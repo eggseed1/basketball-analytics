@@ -137,13 +137,27 @@ export function WatchlistItemStatus({
   fetchedAt: number;
 }) {
   const delaySeconds = useScoreDelaySeconds();
+  const endedAt = status?.last?.endedAt ?? null;
+  const shownAt = endedAt != null && delaySeconds > 0 ? endedAt + delaySeconds * 1000 : null;
+  const [revealed, setRevealed] = useState<number | null>(null);
+  useEffect(() => {
+    if (shownAt == null) return;
+    const timer = window.setTimeout(() => setRevealed(shownAt), Math.max(0, shownAt - Date.now()));
+    return () => window.clearTimeout(timer);
+  }, [shownAt]);
+
   if (!status) return null;
   const player = status.kind === "player" ? status : null;
   const last = status.last;
+  // With the buzzer time known, the game reads as live until the viewer's delay
+  // has passed it; without it, a recent final stays hidden behind a note.
+  const stillLive = shownAt != null && revealed !== shownAt && fetchedAt < shownAt;
   const masked =
     last != null &&
     delaySeconds > 0 &&
+    endedAt == null &&
     needsScoreMask({ status: "final", tipOffAt: last.tipOffAt ?? undefined }, fetchedAt);
+  const liveGame = status.live ?? (stillLive ? last : null);
   const line = player?.line && player.line.gameId === last?.gameId ? playerLineText(player.line) : null;
   const notes = [player?.trend ? trendText(player.trend) : null, player?.drbl ? drblText(player.drbl) : null].filter(
     (n): n is string => n != null
@@ -165,9 +179,9 @@ export function WatchlistItemStatus({
           {player.injury.injury ? <span className="truncate">{player.injury.injury}</span> : null}
         </span>
       ) : null}
-      {status.live ? (
-        <GameLink game={status.live}>
-          <span className="font-semibold text-foreground">Live</span> {opponentText(status.live)}
+      {liveGame ? (
+        <GameLink game={liveGame}>
+          <span className="font-semibold text-foreground">Live</span> {opponentText(liveGame)}
         </GameLink>
       ) : last ? (
         <LastLine game={last} line={line} masked={masked} />

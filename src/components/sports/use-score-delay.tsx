@@ -3,6 +3,7 @@
 import {
   createContext,
   useContext,
+  useEffect,
   useLayoutEffect,
   useRef,
   useState,
@@ -16,6 +17,7 @@ import {
   SCORE_DELAY_MAX_SECONDS,
   insertSnapshot,
   maskGame,
+  needsScoreMask,
   pickDelayed,
   pickDue,
   readScoreDelay,
@@ -24,6 +26,7 @@ import {
   type ScoreSnapshot,
   type Snapshot,
 } from "@/lib/score-delay";
+import { gameAtPoint, mergePoints, pointAt, type ScorePoint } from "@/lib/score-timeline";
 
 const MAX_DELAY_MS = SCORE_DELAY_MAX_SECONDS * 1000;
 
@@ -90,14 +93,100 @@ export function useDelayedValue<T>(value: T, at?: number): Delayed<T> & { delayM
   return { ...state, delayMs };
 }
 
+const TIMELINE_POLL_MS = 10_000;
+const TIMELINE_HIDDEN_POLL_MS = 60_000;
+const TIMELINE_RETRY_MS = 2_500;
+const TIMELINE_RETRIES = 4;
+
 /**
- * Shows each game as it stood at least the chosen delay ago. Updates are
- * recorded while the delay is off too, so turning it on mid-game has history.
+ * Score points stamped with when each play happened, for live and recently
+ * finished games. They let a delayed viewer see a game as it stood that long
+ * ago from the first render instead of waiting out the delay.
+ */
+function useScoreTimelines(
+  games: GameSummary[],
+  delayMs: number
+): ReadonlyMap<string, ScorePoint[]> {
+  const [timelines, setTimelines] = useState<ReadonlyMap<string, ScorePoint[]>>(() => new Map());
+  const candidates = delayMs
+    ? games
+        .filter((g) => isLiveLikeStatus(g.status) || isFinalStatus(g.status) || g.status === "suspended")
+        .map((g) => `${g.id}|${isLiveLikeStatus(g.status) ? "live" : "done"}|${g.tipOffAt ?? ""}`)
+        .sort()
+        .join(",")
+    : "";
+
+  useEffect(() => {
+    if (!candidates) return;
+    const now = Date.now();
+    const wanted = candidates.split(",").map((key) => {
+      const [id, state, tip] = key.split("|");
+      return { id: id!, live: state === "live", tipOffAt: tip || undefined };
+    });
+    const ids = wanted
+      .filter((g) => needsScoreMask({ status: g.live ? "in_progress" : "final", tipOffAt: g.tipOffAt }, now))
+      .map((g) => g.id);
+    if (!ids.length) return;
+    const anyLive = wanted.some((g) => g.live);
+
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    const loaded = new Set<string>();
+    let retries = 0;
+    const load = async () => {
+      try {
+        const res = await fetch(`/api/scores/timeline?ids=${encodeURIComponent(ids.join(","))}`, {
+          cache: "no-store",
+        });
+        if (!res.ok) return;
+        const body = (await res.json()) as { data?: Record<string, ScorePoint[]> };
+        if (cancelled || !body.data) return;
+        const fresh = body.data;
+        for (const [id, points] of Object.entries(fresh)) if (points.length) loaded.add(id);
+        setTimelines((prev) => {
+          const next = new Map(prev);
+          for (const [id, points] of Object.entries(fresh)) {
+            if (points.length) next.set(id, mergePoints(prev.get(id) ?? [], points));
+          }
+          return next;
+        });
+      } catch {}
+    };
+    const loop = async () => {
+      await load();
+      if (cancelled) return;
+      // A cold play-by-play fetch can miss the server's time budget; until a game has
+      // a timeline it falls back to holding updates for the full delay.
+      const missing = ids.some((id) => !loaded.has(id));
+      if (missing && retries < TIMELINE_RETRIES) {
+        retries += 1;
+        timer = setTimeout(loop, TIMELINE_RETRY_MS);
+        return;
+      }
+      if (!anyLive) return;
+      const hidden = document.visibilityState === "hidden";
+      timer = setTimeout(loop, hidden ? TIMELINE_HIDDEN_POLL_MS : TIMELINE_POLL_MS);
+    };
+    void loop();
+    return () => {
+      cancelled = true;
+      if (timer) clearTimeout(timer);
+    };
+  }, [candidates]);
+
+  return timelines;
+}
+
+/**
+ * Shows each game as it stood the chosen delay ago. Play-by-play times place
+ * the score exactly; without them, updates seen on this page are held back
+ * instead, recorded while the delay is off too so turning it on mid-game has history.
  */
 export function useDelayedGames(games: GameSummary[]): GameSummary[] {
   const delayMs = useScoreDelaySeconds() * 1000;
   const asOf = useDelayAsOf();
   const history = useRef(new Map<string, ScoreSnapshot[]>());
+  const timelines = useScoreTimelines(games, delayMs);
   const [shown, setShown] = useState<ReadonlyMap<string, GameSummary | null>>(
     () => new Map()
   );
@@ -116,6 +205,13 @@ export function useDelayedGames(games: GameSummary[]): GameSummary[] {
       const next = new Map<string, GameSummary | null>();
       let wake = Infinity;
       for (const g of games) {
+        const points = timelines.get(g.id);
+        if (points?.length) {
+          const { point, nextAt } = pointAt(points, t - delayMs);
+          next.set(g.id, point?.status === "final" && isFinalStatus(g.status) ? g : gameAtPoint(g, point));
+          if (nextAt != null) wake = Math.min(wake, nextAt + delayMs);
+          continue;
+        }
         const picked = pickDelayed(history.current.get(g.id) ?? [], t, delayMs);
         next.set(g.id, picked.game);
         if (picked.nextAt != null) wake = Math.min(wake, picked.nextAt);
@@ -127,7 +223,7 @@ export function useDelayedGames(games: GameSummary[]): GameSummary[] {
     return () => {
       if (timer) clearTimeout(timer);
     };
-  }, [games, delayMs, asOf]);
+  }, [games, delayMs, asOf, timelines]);
 
   if (!delayMs) return games;
   return games.map((g) => {

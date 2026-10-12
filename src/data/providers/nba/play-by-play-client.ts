@@ -154,6 +154,7 @@ export function normalizeEspnSummary(raw: unknown): unknown {
       shootingPlay?: boolean;
       pointsAttempted?: number | string;
       coordinate?: { x?: number; y?: number };
+      wallclock?: string;
       team?: { id?: string | number; abbreviation?: string };
       participants?: Array<{
         athlete?: {
@@ -231,6 +232,7 @@ export function normalizeEspnSummary(raw: unknown): unknown {
       points: Number(play.scoreValue ?? 0) || 0,
       locX: hasSpot ? cx - 25 : null,
       locY: hasSpot ? cy : null,
+      timeActual: play.wallclock ?? "",
     };
   });
   return { game: { actions } };
