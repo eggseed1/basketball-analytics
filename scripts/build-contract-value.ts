@@ -14,6 +14,7 @@ import path from "node:path";
 
 import {
   baseRate,
+  exercisedOptionYears,
   projectSeasons,
   seasonLabel,
   seasonStartYear,
@@ -37,7 +38,7 @@ const contractTeams = readJson<{
     {
       code: string;
       seasons: string[];
-      rows: Array<{ name: string; brefId: string; age?: number; years: ContractCell[] }>;
+      rows: Array<{ name: string; brefId: string; age?: number; years: ContractCell[]; guaranteed?: number | null }>;
       notes: Record<string, string>;
     }
   >;
@@ -102,6 +103,7 @@ let matchedByName = 0;
 for (const [teamId, team] of Object.entries(contractTeams)) {
   for (const row of team.rows) {
     const years: ContractYearInput[] = [];
+    const exercised = exercisedOptionYears(row.years, row.guaranteed);
     row.years.forEach((cell, i) => {
       const season = team.seasons[i];
       if (!cell || !season || !Number.isFinite(cell.amount)) return;
@@ -109,7 +111,7 @@ for (const [teamId, team] of Object.entries(contractTeams)) {
         season,
         salary: cell.amount,
         cap: capFor2(seasonStartYear(season)),
-        option: cell.option ?? null,
+        option: exercised.has(i) ? null : (cell.option ?? null),
         notGuaranteed: cell.notGuaranteed === true,
       });
     });

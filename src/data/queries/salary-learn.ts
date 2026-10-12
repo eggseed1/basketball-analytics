@@ -5,6 +5,7 @@
 import capHistoryFile from "../../../data/cba/salary-cap-by-year.json";
 import capSeasonsFile from "../../../data/cba/league-cap-seasons.json";
 
+import { exercisedOptionYears } from "@/contracts/value-model";
 import { contractValueModel, getContractValue, listContractValues } from "@/data/runtime/contract-value";
 import { bundledContractTeamIds, bundledTeamContracts, type BrefSalaryCell } from "@/data/runtime/bref-team-contracts";
 import { bundledFuturePicks } from "@/data/runtime/future-picks-snapshot";
@@ -117,8 +118,8 @@ export type ContractExample = {
   seasons: Array<{ season: string; amount: number; kind: ContractCellKind }>;
 };
 
-function cellKind(cell: NonNullable<BrefSalaryCell>): ContractCellKind {
-  if (cell.option) return cell.option;
+function cellKind(cell: NonNullable<BrefSalaryCell>, exercised: boolean): ContractCellKind {
+  if (cell.option && !exercised) return cell.option;
   return cell.notGuaranteed ? "partial" : "guaranteed";
 }
 
@@ -130,8 +131,9 @@ export function contractExamples(): ContractExample[] {
     if (!team) continue;
     for (const row of team.rows) {
       if (/^Waived\b/.test(team.notes[row.brefId] ?? "")) continue;
+      const exercised = exercisedOptionYears(row.years, row.guaranteed);
       const seasons = row.years
-        .map((cell, i) => (cell ? { season: team.seasons[i], amount: cell.amount, kind: cellKind(cell) } : null))
+        .map((cell, i) => (cell ? { season: team.seasons[i], amount: cell.amount, kind: cellKind(cell, exercised.has(i)) } : null))
         .filter((s): s is ContractExample["seasons"][number] => s != null);
       if (seasons.length < 2) continue;
       const total = seasons.reduce((s, y) => s + y.amount, 0);
@@ -303,13 +305,15 @@ function valuedExample(teamId: string, brefId: string): ValuedContractExample | 
   const found = contractRow(teamId, brefId);
   if (value?.kind !== "estimate" || !found) return null;
   const meta = teamMeta(teamId);
+  const exercised = exercisedOptionYears(found.row.years, found.row.guaranteed);
   return {
     name: found.row.name,
     abbr: meta.abbr,
     teamKey: meta.key,
     years: value.years.map((y) => {
-      const cell = found.row.years[found.team.seasons.indexOf(y.season)];
-      return { ...y, kind: cell ? cellKind(cell) : "guaranteed" };
+      const i = found.team.seasons.indexOf(y.season);
+      const cell = found.row.years[i];
+      return { ...y, kind: cell ? cellKind(cell, exercised.has(i)) : "guaranteed" };
     }),
     surplus: value.surplus,
     surplusLow: value.surplusLow,

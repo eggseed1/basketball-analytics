@@ -21,8 +21,9 @@ import { teamSalaryHref } from "@/lib/team-destination";
 import { cn } from "@/lib/utils";
 
 function yearTerms(year: PlayerContractYearView): string | null {
+  const option = year.option === "player" ? "Player option" : year.option === "team" ? "Team option" : null;
   const parts = [
-    year.option === "player" ? "Player option" : year.option === "team" ? "Team option" : null,
+    option && year.optionExercised ? `${option} exercised` : option,
     year.notGuaranteed ? "Not guaranteed" : null,
   ].filter(Boolean);
   return parts.length ? parts.join(" · ") : null;

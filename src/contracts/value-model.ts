@@ -259,6 +259,43 @@ export type ContractYearInput = {
   notGuaranteed: boolean;
 };
 
+type ContractCell = { amount: number; option?: "player" | "team"; notGuaranteed?: true } | null;
+
+const GUARANTEE_SLACK = 2;
+
+/**
+ * Indexes of option years already picked up. Basketball Reference keeps the
+ * option tag on a year after it is exercised but adds that salary to the
+ * guaranteed total, so walking the years in order, an option the remaining
+ * guarantee still covers has been exercised. A partly guaranteed year makes
+ * the rest of the guarantee ambiguous, so the walk stops there. Without a
+ * guaranteed total only the first season counts, since its options come due
+ * before it starts.
+ */
+export function exercisedOptionYears(
+  cells: ContractCell[],
+  guaranteed: number | null | undefined
+): Set<number> {
+  const out = new Set<number>();
+  if (guaranteed == null) {
+    const first = cells.findIndex((cell) => cell != null);
+    if (first >= 0 && cells[first]?.option) out.add(first);
+    return out;
+  }
+  let left = guaranteed;
+  for (let i = 0; i < cells.length; i++) {
+    const cell = cells[i];
+    if (!cell) continue;
+    if (cell.notGuaranteed) break;
+    if (cell.option) {
+      if (cell.amount > left + GUARANTEE_SLACK) break;
+      out.add(i);
+    }
+    left -= cell.amount;
+  }
+  return out;
+}
+
 export type ContractYearValue = {
   season: string;
   salary: number;

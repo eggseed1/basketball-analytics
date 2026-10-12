@@ -9,6 +9,7 @@ import path from "node:path";
 
 import {
   agingDelta,
+  exercisedOptionYears,
   normalQuantile,
   priorRate,
   projectSeasons,
@@ -60,6 +61,23 @@ function testOptions() {
   assert.ok(cut.surplus >= 0, "non-guaranteed year keeps only the upside");
   const plain = valueContract([year()], bad, market);
   assert.ok(plain.surplus < team.surplus);
+}
+
+function testExercisedOptions() {
+  const t = (amount: number) => ({ amount, option: "team" as const });
+  const p = (amount: number) => ({ amount, option: "player" as const });
+  const firm = (amount: number) => ({ amount });
+  const ids = (s: Set<number>) => [...s].sort((a, b) => a - b);
+  assert.deepEqual(ids(exercisedOptionYears([t(4.9e6), t(7.26e6), null], 4.9e6)), [0], "picked-up rookie option, next still open");
+  assert.deepEqual(ids(exercisedOptionYears([p(30.17e6), firm(16.35e6), p(17.65e6)], 46.52e6)), [0], "opted in, later option open");
+  assert.deepEqual(ids(exercisedOptionYears([t(16.87e6), firm(43.5e6), p(57.42e6)], 60.37e6)), [0], "option before an extension");
+  assert.deepEqual(
+    ids(exercisedOptionYears([firm(10.45e6), { amount: 9.9e6, notGuaranteed: true }, t(9.35e6)], 13e6)),
+    [],
+    "a partial guarantee says nothing about later options"
+  );
+  assert.deepEqual(ids(exercisedOptionYears([firm(30e6), p(32e6)], 30e6)), [], "open player option");
+  assert.deepEqual(ids(exercisedOptionYears([t(5.88e6), t(6e6)], null)), [0], "no guarantee total: first season is decided");
 }
 
 function testRangeOrder() {
@@ -186,6 +204,7 @@ testNormalQuantile();
 testCertainValue();
 testReplacementFloor();
 testOptions();
+testExercisedOptions();
 testRangeOrder();
 testAboveMax();
 testWeightedLeastSquares();

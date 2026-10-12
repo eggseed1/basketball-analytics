@@ -2,6 +2,7 @@ import "server-only";
 
 import { cache } from "react";
 
+import { exercisedOptionYears } from "@/contracts/value-model";
 import { resolvePlayerIdentityCached } from "@/data/identity/player-identity-cache";
 import {
   bundledContractTeamIds,
@@ -18,6 +19,8 @@ export type PlayerContractYearView = {
   /** Integer USD; a season with no salary is omitted, never 0. */
   salary: number;
   option: "player" | "team" | null;
+  /** The option was already picked up, so the year is guaranteed. */
+  optionExercised: boolean;
   notGuaranteed: boolean;
 };
 
@@ -37,6 +40,7 @@ function toSnapshot(
   row: BrefContractRow
 ): PlayerContractSnapshot | null {
   const years: PlayerContractYearView[] = [];
+  const exercised = exercisedOptionYears(row.years, row.guaranteed);
   row.years.forEach((cell, i) => {
     const season = team.seasons[i];
     if (!cell || !season || !Number.isFinite(cell.amount)) return;
@@ -44,6 +48,7 @@ function toSnapshot(
       season,
       salary: cell.amount,
       option: cell.option ?? null,
+      optionExercised: cell.option != null && exercised.has(i),
       notGuaranteed: cell.notGuaranteed === true,
     });
   });

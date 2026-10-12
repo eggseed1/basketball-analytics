@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { CSSProperties } from "react";
 
 import { surplusTone } from "@/components/players/player-contract-transactions";
+import { exercisedOptionYears } from "@/contracts/value-model";
 import type { TeamContractsView } from "@/data/queries/team-contracts";
 import { PLAYER_SURPLUS_RANKING_PATH, teamSurplusRankingHref } from "@/lib/contract-surplus";
 import type { ContractValueGap, TeamContractValue, TeamContractValuePlayer } from "@/data/runtime/contract-value";
@@ -36,7 +37,9 @@ function listJoin(items: string[]): string {
  */
 function optionNote(p: TeamContractValuePlayer, contracts: TeamContractsView): string | null {
   if (Math.abs(p.surplus - (p.totalWorth - p.totalSalary)) < 50_000) return null;
-  const cells = contracts.rows.find((r) => r.brefId === p.brefId)?.years ?? [];
+  const row = contracts.rows.find((r) => r.brefId === p.brefId);
+  const exercised = row ? exercisedOptionYears(row.years, row.guaranteed) : new Set<number>();
+  const cells = (row?.years ?? []).map((c, i) => (c && exercised.has(i) ? { ...c, option: undefined } : c));
   const parts = [
     cells.some((c) => c?.option === "team") ? "Team option: upside only" : null,
     cells.some((c) => c?.notGuaranteed && c.option !== "team") ? "Unguaranteed year: upside only" : null,
