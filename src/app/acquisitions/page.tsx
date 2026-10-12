@@ -63,6 +63,7 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
   return {
     title: "How they got him",
     description: "How each NBA team acquired its players, and where the trades led, from the transaction log.",
+    alternates: { canonical: "/acquisitions" },
   };
 }
 

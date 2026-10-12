@@ -26,7 +26,8 @@ import { cn } from "@/lib/utils";
 import { yieldForStreaming } from "@/lib/stream-yield";
 
 export const metadata = {
-  title: "Standings",
+  alternates: { canonical: "/standings" },
+  title: "NBA standings",
   description:
     "NBA conference standings, playoff bracket, and team efficiency stats by season.",
 };

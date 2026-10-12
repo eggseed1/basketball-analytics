@@ -11,6 +11,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 export const metadata = {
+  alternates: { canonical: "/movement" },
   title: "Movement Center",
   description:
     "NBA trade and contract reporting from publisher headlines, scored for evidence and linked to the transactions that followed.",

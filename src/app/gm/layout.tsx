@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Franchise Lab",
   description: "Basketball front-office GM simulation.",
+  alternates: { canonical: "/gm" },
 };
 
 export default function GmLayout({ children }: { children: React.ReactNode }) {

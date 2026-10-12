@@ -30,6 +30,7 @@ import { parseHistorySearchParams } from "@/themes/history-url";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
+  alternates: { canonical: "/history" },
   title: "NBA Time Machine",
   description:
     "NBA history by season: snapshots, landmark eras, Finals closes, and teams and players as they were in each era.",

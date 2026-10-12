@@ -24,7 +24,8 @@ import { cn } from "@/lib/utils";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Games",
+  alternates: { canonical: "/explore/games" },
+  title: "NBA game archive",
   description: "NBA games from 1960 to present with score cards and filters.",
 };
 

@@ -3,6 +3,7 @@ import { Zero82Game } from "@/components/arcade/zero-82-game";
 import { PageHeader } from "@/components/layout/page-header";
 
 export const metadata = {
+  alternates: { canonical: "/arcade/zero-82" },
   title: "0–82",
   description: "Draft the worst possible starting five, one random team at a time, or flip it and chase 82–0.",
 };

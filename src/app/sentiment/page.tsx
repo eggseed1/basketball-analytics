@@ -9,7 +9,8 @@ import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 
 export const metadata = {
-  title: "Sentiment",
+  alternates: { canonical: "/sentiment" },
+  title: "NBA fan sentiment",
   description:
     "Fan and media tone for NBA players and teams, measured from publisher headlines and fan posts, with the storylines and headlines behind each score.",
 };

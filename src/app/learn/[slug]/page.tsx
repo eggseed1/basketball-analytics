@@ -24,12 +24,14 @@ export async function generateMetadata({
   const { slug } = await params;
   const page = resolveLearnPage(slug);
   if (!page || page.kind === "portal") return { title: "Learn" };
+  const alternates = { canonical: `/learn/${slug}` };
   if (page.kind === "guide") {
-    return { title: page.guide.shortName, description: page.guide.blurb };
+    return { title: page.guide.shortName, description: page.guide.blurb, alternates };
   }
   return {
     title: page.topic.shortName,
     description: page.topic.oneSentence,
+    alternates,
   };
 }
 

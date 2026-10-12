@@ -3,6 +3,7 @@ import { PageHeader } from "@/components/layout/page-header";
 import { OneShotGame } from "@/components/one-shot/one-shot-game";
 
 export const metadata = {
+  alternates: { canonical: "/arcade/one-shot" },
   title: "ONE SHOT",
   description: "Be born anywhere in the world and try to reach the NBA. A basketball life sim with fictional players and real league structures.",
 };

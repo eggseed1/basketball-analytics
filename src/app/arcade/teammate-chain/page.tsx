@@ -3,6 +3,7 @@ import { TeammateChainGame } from "@/components/arcade/teammate-chain-game";
 import { PageHeader } from "@/components/layout/page-header";
 
 export const metadata = {
+  alternates: { canonical: "/arcade/teammate-chain" },
   title: "Teammate Chain",
   description: "Connect two NBA stars through the fewest shared teammates.",
 };

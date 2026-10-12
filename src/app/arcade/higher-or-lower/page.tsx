@@ -3,6 +3,7 @@ import { HigherLowerGame } from "@/components/arcade/higher-lower-game";
 import { PageHeader } from "@/components/layout/page-header";
 
 export const metadata = {
+  alternates: { canonical: "/arcade/higher-or-lower" },
   title: "Higher or Lower",
   description: "Guess whether the next player's season stat is higher or lower and build a streak.",
 };

@@ -1,6 +1,8 @@
 import { Suspense, type ReactNode } from "react";
 import { GameLabView } from "@/components/games/game-lab-view";
 import { GameIdentityShell } from "@/components/games/game-identity-shell";
+import { JsonLd } from "@/components/seo/json-ld";
+import { absoluteUrl } from "@/lib/site-url";
 import { GamePreTipBoard } from "@/components/games/game-pre-tip-board";
 import { GamePreviewSection, GameTabs, type GameTab } from "@/components/games/game-preview-section";
 import { PossessionExplorerIsland } from "@/components/games/possession-explorer-island";
@@ -95,7 +97,21 @@ export default async function GamePage({ params, searchParams }: GamePageProps) 
   const delaySeconds = showGame && risky ? parseScoreDelay((await cookies()).get(SCORE_DELAY_COOKIE)?.value) : 0;
   const asOfMs = delaySeconds ? renderedAt - delaySeconds * 1000 : undefined;
   const holdIfCut = (node: ReactNode) => (asOfMs != null ? <DelayedGameSection risky>{node}</DelayedGameSection> : node);
+  const gameDate = gameDateLabel(shell.game.gameDate);
+  const awayName = shell.game.awayTeamName ?? shell.game.awayTeamAbbr ?? shell.game.awayTeamId;
+  const homeName = shell.game.homeTeamName ?? shell.game.homeTeamAbbr ?? shell.game.homeTeamId;
   const body = <main data-motion-page className="site-shell flex flex-1 flex-col gap-5 py-5 sm:gap-6 sm:py-7">
+    <h1 className="sr-only">{`${awayName} vs. ${homeName}${gameDate ? `, ${gameDate}` : ""}`}</h1>
+    <JsonLd data={{
+      "@context": "https://schema.org",
+      "@type": "SportsEvent",
+      name: `${awayName} at ${homeName}`,
+      sport: "Basketball",
+      url: absoluteUrl(`/games/${encodeURIComponent(gameId)}`),
+      ...(shell.game.gameDate ? { startDate: shell.game.gameDate } : {}),
+      awayTeam: { "@type": "SportsTeam", name: awayName },
+      homeTeam: { "@type": "SportsTeam", name: homeName },
+    }} />
     <MotionReveal />
     <GameIdentityShell game={shell.game} brandPresentation={brandPresentation} arrivalLabel={arrival?.label} />
     {presentation.canRenderDeepFeatures ? <GameTabs gameId={gameId} active={tab} options={tabOptions} defaultTab={defaultTab} query={sp} /> : null}

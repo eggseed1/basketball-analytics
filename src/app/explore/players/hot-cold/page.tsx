@@ -17,6 +17,7 @@ import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 
 export const metadata = {
+  alternates: { canonical: "/explore/players/hot-cold" },
   title: "Hot & Cold",
   description:
     "NBA players running well above or below their own usual points, true shooting, or rebounds over a recent stretch of games. Each player is measured against himself, not the league.",

@@ -14,7 +14,8 @@ import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 
 export const metadata = {
-  title: "Arcade",
+  alternates: { canonical: "/arcade" },
+  title: "Basketball arcade games",
   description: "Basketball games: the daily Higher or Lower, Higher or Lower, 0–82, Teammate Chain, ONE SHOT and the GM Lab.",
 };
 

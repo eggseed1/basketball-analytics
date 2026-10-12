@@ -4,7 +4,8 @@ import { PageHeader } from "@/components/layout/page-header";
 import { learnHrefFor, listLearnConcepts } from "@/content/learn/registry";
 
 export const metadata = {
-  title: "Learn",
+  alternates: { canonical: "/learn" },
+  title: "Learn NBA advanced stats",
   description:
     "DRBL glossary: the stats, labels, and methods a casual fan needs to read the site.",
 };

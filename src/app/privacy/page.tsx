@@ -8,6 +8,7 @@ import { SITE_CONTACT_URL } from "@/lib/site-url";
 import { cn } from "@/lib/utils";
 
 export const metadata = {
+  alternates: { canonical: "/privacy" },
   title: "Privacy",
   description: "What this site stores about visitors and what it keeps from public posts it reads.",
 };

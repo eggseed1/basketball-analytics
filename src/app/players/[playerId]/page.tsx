@@ -6,6 +6,8 @@ import { PriorSeasonStatsNotice } from "@/components/explore/season-not-started-
 import { PlayerOnOffIsland } from "@/components/players/player-on-off-island";
 import { getOnOffSeasons } from "@/data/queries/on-off";
 import { shareImageMetadata } from "@/lib/share-images";
+import { absoluteUrl } from "@/lib/site-url";
+import { JsonLd } from "@/components/seo/json-ld";
 import { GlassSurface, GlassTintScaleProvider } from "@/components/brand/glass-surface";
 import { DestinationClientShell } from "@/components/continuity/destination-client-shell";
 import { HistoricalCareerSurface } from "@/components/players/historical-career-surface";
@@ -879,6 +881,21 @@ export default async function PlayerPage({
       />
       <main data-motion-page className="relative z-[1] flex flex-1 flex-col gap-4 sm:gap-5">
         {career.length === 0 ? <span hidden data-page-cache="skip" /> : null}
+        <JsonLd
+          data={{
+            "@context": "https://schema.org",
+            "@type": "ProfilePage",
+            mainEntity: {
+              "@type": "Person",
+              name: displayName,
+              url: absoluteUrl(
+                `/players/${encodeURIComponent(
+                  identity?.espnId ?? uniqueEspnIdForBrefName(playerId, displayName) ?? playerId
+                )}`
+              ),
+            },
+          }}
+        />
         <MotionReveal />
         <GlassTintScaleProvider scale={PLAYER_CARD_TINT_SCALE}>
           {honor === "hof" ? (

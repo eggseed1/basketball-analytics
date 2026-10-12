@@ -10,6 +10,7 @@ import { SITE_CONTACT_URL } from "@/lib/site-url";
 import { cn } from "@/lib/utils";
 
 export const metadata = {
+  alternates: { canonical: "/sources" },
   title: "Sources and credits",
   description: "Where the site's numbers, headlines and photos come from, with photo licenses.",
 };

@@ -35,7 +35,8 @@ import {
 } from "@/offseason";
 
 export const metadata = {
-  title: "Transactions",
+  alternates: { canonical: "/offseason" },
+  title: "NBA transactions",
   description:
     "NBA transaction events, each with its date, team and description.",
 };

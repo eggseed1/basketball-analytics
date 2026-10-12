@@ -4,7 +4,8 @@ import { PageHeader } from "@/components/layout/page-header";
 import { loadTradeSimulatorBoard } from "@/data/queries/trade-simulator";
 
 export const metadata = {
-  title: "Trade simulator",
+  alternates: { canonical: "/explore/teams/trade" },
+  title: "NBA trade simulator",
   description:
     "Build two-team swaps with CBA salary-matching package suggestions and DRBL impact. This is a salary-fit sketch, not a full legality ruling.",
 };

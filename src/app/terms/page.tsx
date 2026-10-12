@@ -8,6 +8,7 @@ import { SITE_CONTACT_URL } from "@/lib/site-url";
 import { cn } from "@/lib/utils";
 
 export const metadata = {
+  alternates: { canonical: "/terms" },
   title: "Terms",
   description: "The ground rules for using this site and what its numbers can and can't tell you.",
 };

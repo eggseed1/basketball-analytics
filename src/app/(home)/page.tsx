@@ -31,6 +31,7 @@ import {
 } from "@/lib/home-season-moment";
 import { yieldForStreaming } from "@/lib/stream-yield";
 import { SITE_NAME, SITE_URL } from "@/lib/site-url";
+import { JsonLd } from "@/components/seo/json-ld";
 
 const WEBSITE_JSON_LD = {
   "@context": "https://schema.org",
@@ -318,12 +319,7 @@ export default async function HomePage() {
       className="site-shell flex flex-col gap-5 py-5 sm:py-7"
       data-season-phase={moment.phase}
     >
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(WEBSITE_JSON_LD).replace(/</g, "\\u003c"),
-        }}
-      />
+      <JsonLd data={WEBSITE_JSON_LD} />
       <h1 className="sr-only">DRBL basketball: NBA stats and analytics</h1>
       <MotionReveal />
       {layout.top.map(render)}

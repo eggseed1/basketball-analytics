@@ -23,7 +23,8 @@ import { filtersFromSearchParams, isAllSeasonsParam } from "@/lib/search-params"
 import { DEFAULT_PLAYER_MINIMUM_MINUTES } from "@/data/types";
 
 export const metadata = {
-  title: "Players",
+  alternates: { canonical: "/explore/players" },
+  title: "NBA player stats leaderboard",
   description:
     "NBA player leaderboard with seasons from 1960 to present. DRBL/100 and WAR1 for registry seasons.",
 };

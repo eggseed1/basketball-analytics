@@ -8,7 +8,8 @@ import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 
 export const metadata = {
-  title: "Awards",
+  alternates: { canonical: "/awards" },
+  title: "NBA awards history",
   description:
     "NBA award history: championships, MVP, Finals MVP, DPOY, and more.",
 };

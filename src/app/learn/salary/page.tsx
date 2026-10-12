@@ -42,6 +42,7 @@ import { cn } from "@/lib/utils";
 import { type } from "@/lib/design-system";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/learn/salary" },
   title: "Salary & contracts guide",
   description:
     "How the NBA salary cap, tax and aprons work, how contracts are built, and how DRBL prices what a player's play is worth.",

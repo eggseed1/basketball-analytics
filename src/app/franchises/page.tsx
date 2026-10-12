@@ -8,7 +8,8 @@ import {
 } from "@/data/queries/franchises";
 
 export const metadata = {
-  title: "History",
+  alternates: { canonical: "/franchises" },
+  title: "NBA franchise history",
   description:
     "NBA franchise history: titles, playoff ledgers, all-time records, and fan lore.",
 };

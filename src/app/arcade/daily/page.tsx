@@ -3,6 +3,7 @@ import { DailyGame } from "@/components/arcade/daily-game";
 import { PageHeader } from "@/components/layout/page-header";
 
 export const metadata = {
+  alternates: { canonical: "/arcade/daily" },
   title: "Daily Higher or Lower",
   description: "Ten higher-or-lower calls on real player seasons. Everyone gets the same ten each day.",
 };

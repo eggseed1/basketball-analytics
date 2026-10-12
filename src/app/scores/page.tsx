@@ -26,7 +26,8 @@ import { isPreTipStatus } from "@/lib/game-status";
 import { nbaTodayIso } from "@/lib/nba-calendar-date";
 
 export const metadata = {
-  title: "Games",
+  alternates: { canonical: "/scores" },
+  title: "NBA scores and schedule",
   description: "Live NBA scores, recent results, weekly and monthly schedules, and upcoming tip-offs.",
 };
 

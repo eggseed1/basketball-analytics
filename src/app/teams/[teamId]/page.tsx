@@ -4,6 +4,8 @@ import { notFound, redirect } from "next/navigation";
 import { analyzeTeamProfile } from "@/analytics";
 import { StatDisclosure } from "@/components/analytics/stat-disclosure";
 import { PageAtmosphere } from "@/components/brand/page-atmosphere";
+import { JsonLd } from "@/components/seo/json-ld";
+import { absoluteUrl } from "@/lib/site-url";
 import { DestinationClientShell } from "@/components/continuity/destination-client-shell";
 import { DestinationSectionSkeleton } from "@/components/continuity/destination-loading-frame";
 import { MotionReveal } from "@/components/continuity/motion-reveal";
@@ -357,6 +359,16 @@ export default async function TeamProfilePage({
       />
       <GlassTintScaleProvider scale={TEAM_CARD_TINT_SCALE}>
       <main data-motion-page className="site-shell relative z-[1] flex flex-col gap-4 py-5 sm:gap-5 sm:py-7">
+        <JsonLd
+          data={{
+            "@context": "https://schema.org",
+            "@type": "SportsTeam",
+            name: identityTeam.fullName,
+            sport: "Basketball",
+            url: absoluteUrl(`/teams/${encodeURIComponent(identityTeam.teamId)}`),
+            memberOf: { "@type": "SportsOrganization", name: "National Basketball Association" },
+          }}
+        />
         <MotionReveal />
         <TeamDestinationIdentity
           teamId={teamId}

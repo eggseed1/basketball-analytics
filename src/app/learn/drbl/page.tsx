@@ -26,6 +26,7 @@ import boxForwardWeights from "../../../../drbl/models/box-forward-weights.json"
 import { BOX_PRIOR_CONFIG } from "../../../../drbl/models/box-prior";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/learn/drbl" },
   title: "DRBL guide",
   description:
     "How DRBL/100 rates players from play-by-play and the box score, how it was tested against real final scores, and the numbers built on it: WAR1, DRBL-O, DRBL-D and contract surplus.",
