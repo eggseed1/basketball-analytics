@@ -1528,6 +1528,41 @@ html:not([data-surface="glass"]) .color-scheme-switch {
   }
 }
 
+/* Click-to-sort headers (SortableTables). Group headers that span several
+   columns don't sort. The arrow sits in the header's corner so it never wraps
+   under the label; sticky headers are already positioned. */
+[data-sortable-tables] thead th:not([colspan]:not([colspan="1"])) {
+  cursor: pointer;
+  user-select: none;
+}
+
+[data-sortable-tables] thead th:not([colspan]:not([colspan="1"])):hover,
+[data-sortable-tables] thead th[aria-sort] {
+  color: var(--foreground);
+}
+
+[data-sortable-tables] thead th[aria-sort]:not([class*="sticky"]) {
+  position: relative;
+}
+
+[data-sortable-tables] thead th[aria-sort]::after {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  translate: 0 -50%;
+  font-size: 9px;
+  line-height: 1;
+  opacity: 0.8;
+}
+
+[data-sortable-tables] thead th[aria-sort="descending"]::after {
+  content: "▼";
+}
+
+[data-sortable-tables] thead th[aria-sort="ascending"]::after {
+  content: "▲";
+}
+
 /* ─── NBA Time Machine - era theme layer (CSS variables only) ───
    Immersion without costume: no CRT, scanlines, or grain overlays.
    Applied via [data-era-theme] on a scoped wrapper. */

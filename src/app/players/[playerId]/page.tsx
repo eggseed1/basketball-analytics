@@ -14,6 +14,7 @@ import { PlayerCareerDataGuardBanner } from "@/components/players/player-career-
 import { PlayerCareerIsland } from "@/components/players/player-career-island";
 import { PlayerDestinationIdentity } from "@/components/players/player-destination-identity";
 import { MotionReveal } from "@/components/continuity/motion-reveal";
+import { SortableTables } from "@/components/continuity/sortable-tables";
 import { PlayerPercentileIsland } from "@/components/players/player-percentile-island";
 import { PlayerNotYetPlayed } from "@/components/players/player-not-yet-played";
 import { unplayedDrafteeFor } from "@/data/runtime/draftee-search";
@@ -877,8 +878,9 @@ export default async function PlayerPage({
         colorA={atmosphere?.colorA}
         colorB={atmosphere?.colorB}
       />
-      <main data-motion-page className="relative z-[1] flex flex-1 flex-col gap-4 sm:gap-5">
+      <main data-motion-page data-sortable-tables className="relative z-[1] flex flex-1 flex-col gap-4 sm:gap-5">
         <MotionReveal />
+        <SortableTables />
         <GlassTintScaleProvider scale={PLAYER_CARD_TINT_SCALE}>
           {honor === "hof" ? (
             <div className={HOF_PAGE_FRAME_CLASS}>
