@@ -611,6 +611,7 @@ function CompComparePanel({
             points={metric.series!}
             height={chartHeight}
             savantScale
+            drawKey={metric.id}
             selectedSeason={viewSeason}
             onSeasonSelect={handleChartSeason}
           />

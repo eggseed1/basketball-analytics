@@ -1507,6 +1507,27 @@ html:not([data-surface="glass"]) .color-scheme-switch {
   }
 }
 
+/* Career chart dots pop in as the redrawn line reaches them; the delay is set
+   inline from where the dot sits along the line. */
+@keyframes career-dot-in {
+  from {
+    opacity: 0;
+    scale: 0.4;
+  }
+}
+
+.career-dot-draw {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: career-dot-in 220ms cubic-bezier(0.33, 1, 0.68, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .career-dot-draw {
+    animation: none;
+  }
+}
+
 /* ─── NBA Time Machine - era theme layer (CSS variables only) ───
    Immersion without costume: no CRT, scanlines, or grain overlays.
    Applied via [data-era-theme] on a scoped wrapper. */

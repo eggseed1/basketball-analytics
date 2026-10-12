@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useId, useMemo } from "react";
+import { useCallback, useId, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {
   Curve,
   Line,
@@ -156,6 +156,54 @@ export function buildSavantSegmentedChart(points: CareerSeriesPoint[]): {
   };
 }
 
+const DRAW_MS = 650;
+const DRAW_EASING = "cubic-bezier(0.33, 1, 0.68, 1)";
+
+/**
+ * One draw-in per stat switch, shared by the stroke and the dots. Recharts
+ * remounts both when the data changes, so the clock lives with the chart and
+ * remounted pieces pick up mid-draw instead of starting over.
+ */
+class DrawClock {
+  private drawnRun = 0;
+  private clockRun = 0;
+  private startedAt = 0;
+  private animation: Animation | null = null;
+
+  elapsed(run: number): number {
+    const now = performance.now();
+    if (this.clockRun !== run) {
+      this.clockRun = run;
+      this.startedAt = now;
+    }
+    return now - this.startedAt;
+  }
+
+  /** Draws `path` in for `run`, or follows a reshape while that run is still drawing. */
+  draw(path: SVGPathElement, run: number): void {
+    const inFlight = this.drawnRun === run && this.animation?.playState === "running";
+    if (run <= this.drawnRun && !inFlight) return;
+    this.drawnRun = run;
+    const elapsed = this.elapsed(run);
+    if (elapsed >= DRAW_MS) return;
+    const length = path.getTotalLength();
+    const dash = `${length} ${length}`;
+    this.animation?.cancel();
+    this.animation = path.animate(
+      [
+        { strokeDasharray: dash, strokeDashoffset: length },
+        { strokeDasharray: dash, strokeDashoffset: 0 },
+      ],
+      { duration: DRAW_MS, easing: DRAW_EASING }
+    );
+    this.animation.currentTime = elapsed;
+  }
+}
+
+function prefersReducedMotion(): boolean {
+  return typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
 /**
  * One monotone curve colored with a user-space X gradient.
  * objectBoundingBox stroke gradients reverse on rising/falling segments;
@@ -166,6 +214,9 @@ export function CareerMonotoneStroke(props: {
   strokeWidth?: number | string;
   gradientId: string;
   strokeStops: CareerStrokeStop[];
+  /** Bumped when the plotted stat changes; the next new path draws in. */
+  drawRun?: number;
+  drawClock?: DrawClock;
 }) {
   const points = (props.points ?? []).filter(
     (p): p is { x: number; y: number } =>
@@ -174,6 +225,25 @@ export function CareerMonotoneStroke(props: {
       Number.isFinite(p.x) &&
       Number.isFinite(p.y)
   );
+  const groupRef = useRef<SVGGElement>(null);
+  const lastShape = useRef<string | null>(null);
+  const shape = points.map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" ");
+  const drawRun = props.drawRun ?? 0;
+  const drawClock = props.drawClock;
+
+  // Recharts can hand over the new points a render or two after the stat
+  // switch (the axis domain settles last), so the draw starts when the path
+  // itself changes. Refreshes of the same stat move the path without a
+  // pending run and stay still.
+  useLayoutEffect(() => {
+    const changed = shape !== lastShape.current;
+    lastShape.current = shape;
+    if (!changed || !drawClock || drawRun === 0) return;
+    const path = groupRef.current?.querySelector("path");
+    if (!path || prefersReducedMotion()) return;
+    drawClock.draw(path, drawRun);
+  }, [shape, drawRun, drawClock]);
+
   if (points.length < 2 || props.strokeStops.length === 0) return null;
 
   const x1 = points[0]!.x;
@@ -184,7 +254,7 @@ export function CareerMonotoneStroke(props: {
       : Number(props.strokeWidth) || 2.5;
 
   return (
-    <g className="recharts-career-monotone-stroke">
+    <g ref={groupRef} className="recharts-career-monotone-stroke">
       <defs>
         <linearGradient
           id={props.gradientId}
@@ -214,6 +284,50 @@ export function CareerMonotoneStroke(props: {
   );
 }
 
+/** Replays a dot's pop-in each draw run, timed to when the line reaches it. */
+function DotDrawIn({
+  run,
+  delay,
+  drawClock,
+  children,
+}: {
+  run?: number;
+  delay?: number;
+  drawClock?: DrawClock;
+  children: ReactNode;
+}) {
+  if (!run || delay == null || !drawClock) return <>{children}</>;
+  return (
+    <DotDrawInGroup key={run} run={run} delay={delay} drawClock={drawClock}>
+      {children}
+    </DotDrawInGroup>
+  );
+}
+
+function DotDrawInGroup({
+  run,
+  delay,
+  drawClock,
+  children,
+}: {
+  run: number;
+  delay: number;
+  drawClock: DrawClock;
+  children: ReactNode;
+}) {
+  const ref = useRef<SVGGElement>(null);
+  useLayoutEffect(() => {
+    if (!ref.current) return;
+    const elapsed = drawClock.elapsed(run);
+    ref.current.style.animationDelay = `${Math.round(delay - elapsed)}ms`;
+  }, [run, delay, drawClock]);
+  return (
+    <g ref={ref} className="career-dot-draw">
+      {children}
+    </g>
+  );
+}
+
 function TeamDot(props: {
   cx?: number;
   cy?: number;
@@ -221,6 +335,9 @@ function TeamDot(props: {
   selectedSeason?: string;
   onSelect?: (row: ChartRow) => void;
   active?: boolean;
+  drawRun?: number;
+  drawDelay?: number;
+  drawClock?: DrawClock;
 }) {
   const { cx, cy, payload, selectedSeason, onSelect, active } = props;
   if (cx == null || cy == null || !payload) return null;
@@ -242,14 +359,16 @@ function TeamDot(props: {
       {onSelect ? (
         <circle cx={cx} cy={cy} r={14} fill="transparent" stroke="none" />
       ) : null}
-      <circle
-        cx={cx}
-        cy={cy}
-        r={r}
-        fill={payload.color}
-        stroke={selected ? "var(--foreground)" : "var(--background)"}
-        strokeWidth={selected ? 2 : 1.5}
-      />
+      <DotDrawIn run={props.drawRun} delay={props.drawDelay} drawClock={props.drawClock}>
+        <circle
+          cx={cx}
+          cy={cy}
+          r={r}
+          fill={payload.color}
+          stroke={selected ? "var(--foreground)" : "var(--background)"}
+          strokeWidth={selected ? 2 : 1.5}
+        />
+      </DotDrawIn>
     </g>
   );
 }
@@ -272,6 +391,9 @@ function SavantDot(props: {
   selectedSeason?: string;
   onSelect?: (row: ChartRow) => void;
   active?: boolean;
+  drawRun?: number;
+  drawDelay?: number;
+  drawClock?: DrawClock;
 }) {
   const { cx, cy, payload, selectedSeason, onSelect, active } = props;
   if (cx == null || cy == null || !payload) return null;
@@ -292,14 +414,16 @@ function SavantDot(props: {
       {onSelect ? (
         <circle cx={cx} cy={cy} r={14} fill="transparent" stroke="none" />
       ) : null}
-      <circle
-        cx={cx}
-        cy={cy}
-        r={r}
-        fill={payload.color}
-        stroke={selected ? "var(--foreground)" : "var(--background)"}
-        strokeWidth={selected ? 2 : 1.5}
-      />
+      <DotDrawIn run={props.drawRun} delay={props.drawDelay} drawClock={props.drawClock}>
+        <circle
+          cx={cx}
+          cy={cy}
+          r={r}
+          fill={payload.color}
+          stroke={selected ? "var(--foreground)" : "var(--background)"}
+          strokeWidth={selected ? 2 : 1.5}
+        />
+      </DotDrawIn>
     </g>
   );
 }
@@ -366,6 +490,7 @@ export function CareerTeamTrendChart({
   onSeasonSelect,
   savantScale = false,
   showLegend = true,
+  drawKey,
 }: {
   points: CareerSeriesPoint[];
   height?: number;
@@ -379,8 +504,17 @@ export function CareerTeamTrendChart({
   savantScale?: boolean;
   /** Franchise color key under the plot. Default on. */
   showLegend?: boolean;
+  /** The plotted stat; switching it draws the line in again. */
+  drawKey?: string;
 }) {
   const chartTheme = useChartTheme();
+  const [seenDrawKey, setSeenDrawKey] = useState(drawKey);
+  const [drawRun, setDrawRun] = useState(0);
+  const [drawClock] = useState(() => new DrawClock());
+  if (drawKey !== seenDrawKey) {
+    setSeenDrawKey(drawKey);
+    setDrawRun((run) => run + 1);
+  }
   const palette = useMemo(
     () => distinctTeamColors(points.map((p) => p.teamId), chartTheme.surface),
     [points, chartTheme.surface]
@@ -459,10 +593,18 @@ export function CareerTeamTrendChart({
 
   const useSavantDots = hasPercentileColors;
 
+  // The stroke eases out (cubic), so it reaches point i at 1 - (1 - f)^(1/3)
+  // of the draw; each dot pops in as the line gets to it.
+  const dotDelay = (index: number) => {
+    const f = data.length > 1 ? index / (data.length - 1) : 0;
+    return DRAW_MS * (1 - Math.cbrt(1 - f));
+  };
+
   const renderDot = (props: {
     cx?: number;
     cy?: number;
     payload?: ChartRow;
+    index?: number;
   }) => {
     const Dot = useSavantDots ? SavantDot : TeamDot;
     return (
@@ -472,6 +614,9 @@ export function CareerTeamTrendChart({
         payload={props.payload}
         selectedSeason={selectedSeason}
         onSelect={onSeasonSelect ? handleSelect : undefined}
+        drawRun={drawRun}
+        drawDelay={props.index != null ? dotDelay(props.index) : undefined}
+        drawClock={drawClock}
       />
     );
   };
@@ -555,6 +700,8 @@ export function CareerTeamTrendChart({
                   strokeWidth={shapeProps.strokeWidth}
                   gradientId={strokeGradId}
                   strokeStops={strokeStops}
+                  drawRun={drawRun}
+                  drawClock={drawClock}
                 />
               )}
               dot={renderDot}

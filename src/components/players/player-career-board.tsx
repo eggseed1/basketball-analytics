@@ -363,7 +363,7 @@ export function PlayerCareerBoard({
             </div>
 
             {points.length > 0 ? (
-              <CareerTeamTrendChart points={points} height={200} />
+              <CareerTeamTrendChart points={points} height={200} drawKey={selected.id} />
             ) : (
               <p className={cn(type.caption, "text-muted-foreground")}>
                 {selected.label} is not published for these seasons.
