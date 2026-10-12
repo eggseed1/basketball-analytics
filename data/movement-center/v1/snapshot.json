@@ -5,10 +5,10 @@
     "season": "2026-27",
     "snapshotDate": "2026-10-12",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-10-12T01:03:04.501Z",
+    "builtAt": "2026-10-12T14:32:46.413Z",
     "rosterPlayerCount": 492,
-    "headlinesScanned": 2988,
-    "latestHeadlineAt": "2026-10-12T01:00:40.000Z",
+    "headlinesScanned": 3114,
+    "latestHeadlineAt": "2026-10-12T14:27:35.000Z",
     "latestTransactionDate": "2026-10-10",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -51,7 +51,7 @@
       "credibility": 12
     },
     "reporter:jake-fischer": {
-      "label": "Jake Fischer (Bleacher Report)",
+      "label": "Jake Fischer (The Stein Line)",
       "credibility": 30
     },
     "reporter:shams-charania": {
@@ -76,7 +76,7 @@
     },
     "outlet:realgm": {
       "label": "RealGM",
-      "credibility": 16
+      "credibility": 8
     },
     "outlet:nbc-sports-bay-area": {
       "label": "NBC Sports Bay Area",
@@ -84,7 +84,7 @@
     },
     "outlet:yahoo-sports": {
       "label": "Yahoo Sports",
-      "credibility": 12
+      "credibility": 16
     },
     "outlet:espn": {
       "label": "ESPN",
@@ -136,7 +136,7 @@
     },
     "outlet:fadeaway-world": {
       "label": "Fadeaway World",
-      "credibility": 12
+      "credibility": 16
     },
     "outlet:new-york-post": {
       "label": "New York Post",
@@ -162,8 +162,16 @@
       "label": "Shams Charania. The (ESPN)",
       "credibility": 18
     },
+    "reporter:jovan-buha": {
+      "label": "Jovan Buha (The Athletic)",
+      "credibility": 22
+    },
     "outlet:hoops-rumors": {
       "label": "Hoops Rumors",
+      "credibility": 16
+    },
+    "outlet:essentiallysports": {
+      "label": "EssentiallySports",
       "credibility": 16
     },
     "ledger:nba-player-movement": {
@@ -797,8 +805,8 @@
     },
     {
       "id": "mv-contract-4683692-20261006",
-      "headline": "Cason Wallace, Karl-Anthony Towns and others: extension talks with the Knicks",
-      "primaryClaimId": "mv-a9c044c3c366e2a8",
+      "headline": "Cason Wallace, Karl-Anthony Towns and others: extension talks with the Thunder",
+      "primaryClaimId": "mv-abb18f46843d904e",
       "claimIds": [
         "mv-d46db2f4a349df07",
         "mv-11ebf253ed00ee6f",
@@ -820,16 +828,23 @@
         "mv-abc07a6198394751",
         "mv-5c0f20121fb57063",
         "mv-40b83775fa3db0a0",
-        "mv-a9c044c3c366e2a8"
+        "mv-b34f9ff32fa59f09",
+        "mv-a9c044c3c366e2a8",
+        "mv-bb509e66405f94fa",
+        "mv-517696837090b53f",
+        "mv-fc9ce7087a0e782e",
+        "mv-2b8efe7981fc622a",
+        "mv-abb18f46843d904e"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-06T17:10:57.000Z",
-      "lastMeaningfulAt": "2026-10-11T23:22:43.000Z",
+      "lastMeaningfulAt": "2026-10-12T13:52:53.000Z",
       "linkedPlayerIds": [
         "4683692",
         "3136195",
-        "3062679"
+        "3062679",
+        "4431823"
       ],
       "linkedTeamIds": [
         "25",
@@ -875,15 +890,16 @@
     {
       "id": "mv-trade-3202-20261007",
       "headline": "Kevin Durant, Rudy Gobert and others: trade talk",
-      "primaryClaimId": "mv-c1fabda3717d7f60",
+      "primaryClaimId": "mv-6287f889f0b5ecbe",
       "claimIds": [
         "mv-f6a93efa0cda8c42",
-        "mv-c1fabda3717d7f60"
+        "mv-c1fabda3717d7f60",
+        "mv-6287f889f0b5ecbe"
       ],
-      "evidenceClass": "rumored",
+      "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-07T12:59:38.000Z",
-      "lastMeaningfulAt": "2026-10-07T16:29:31.000Z",
+      "lastMeaningfulAt": "2026-10-12T12:20:00.000Z",
       "linkedPlayerIds": [
         "3202",
         "3032976",
@@ -892,9 +908,10 @@
       ],
       "linkedTeamIds": [
         "2",
+        "22",
+        "29",
         "10",
         "16",
-        "22",
         "4"
       ]
     },
@@ -1010,6 +1027,85 @@
       "linkedTeamIds": [
         "9",
         "24"
+      ]
+    },
+    {
+      "id": "mv-trade-4432907-20261011",
+      "headline": "Justin Champagnie, Jaden Hardy and others: trade talk",
+      "primaryClaimId": "mv-69370bf78d6efc81",
+      "claimIds": [
+        "mv-69370bf78d6efc81"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-10-11T17:28:41.000Z",
+      "lastMeaningfulAt": "2026-10-11T17:28:41.000Z",
+      "linkedPlayerIds": [
+        "4432907",
+        "4868423",
+        "5104155"
+      ],
+      "linkedTeamIds": [
+        "13",
+        "27"
+      ]
+    },
+    {
+      "id": "mv-contract-4712849-20261012",
+      "headline": "Anthony Black: extension talks with the Magic",
+      "primaryClaimId": "mv-e3853ce25ff7ef6e",
+      "claimIds": [
+        "mv-821879b1fe3054fc",
+        "mv-e3853ce25ff7ef6e"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-10-12T02:42:54.000Z",
+      "lastMeaningfulAt": "2026-10-12T09:09:26.000Z",
+      "linkedPlayerIds": [
+        "4712849"
+      ],
+      "linkedTeamIds": [
+        "19"
+      ]
+    },
+    {
+      "id": "mv-trade-4431823-20261012",
+      "headline": "Miles McBride: trade talk",
+      "primaryClaimId": "mv-49e89700ff444441",
+      "claimIds": [
+        "mv-6e3fb38ad581bfd3",
+        "mv-49e89700ff444441"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-10-12T03:03:51.000Z",
+      "lastMeaningfulAt": "2026-10-12T08:19:39.000Z",
+      "linkedPlayerIds": [
+        "4431823"
+      ],
+      "linkedTeamIds": [
+        "18"
+      ]
+    },
+    {
+      "id": "mv-trade-4683692-20261012",
+      "headline": "Cason Wallace: trade talk",
+      "primaryClaimId": "mv-5002105306d818fc",
+      "claimIds": [
+        "mv-5002105306d818fc"
+      ],
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "firstSeenAt": "2026-10-12T12:59:31.000Z",
+      "lastMeaningfulAt": "2026-10-12T12:59:31.000Z",
+      "linkedPlayerIds": [
+        "4683692"
+      ],
+      "linkedTeamIds": [
+        "7",
+        "13",
+        "25"
       ]
     },
     {
@@ -5068,6 +5164,29 @@
       "isOriginal": false
     },
     {
+      "id": "mv-69370bf78d6efc81",
+      "clusterId": "mv-trade-4432907-20261011",
+      "summary": "Lakers Could Trade Jaden Hardy For Bilal Coulibaly Or Justin Champagnie, Per Insider",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-11T17:28:41.000Z",
+      "sourceId": "reporter:jovan-buha",
+      "sourceLabel": "Fadeaway World, citing Jovan Buha (The Athletic)",
+      "reporterLabel": "Jovan Buha",
+      "sourceUrl": "https://fadeawayworld.net/nba-trade-rumors/los-angeles-lakers/lakers-could-trade-jaden-hardy-for-bilal-coulibaly-or-justin-champagnie-per-insider",
+      "playerIds": [
+        "4432907",
+        "4868423",
+        "5104155"
+      ],
+      "teamIds": [
+        "13"
+      ],
+      "isOriginal": false
+    },
+    {
       "id": "mv-abc07a6198394751",
       "clusterId": "mv-contract-4683692-20261006",
       "summary": "Karl-Anthony Towns on Knicks tabling player extensions: 'It was news to me'",
@@ -5130,6 +5249,27 @@
       "negotiationSpecificity": "active_talks"
     },
     {
+      "id": "mv-b34f9ff32fa59f09",
+      "clusterId": "mv-contract-4683692-20261006",
+      "summary": "Karl-Anthony Towns Admits He Was Blindsided By Knicks’ Decision To Halt Contract Extension Talks",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-11T19:47:59.000Z",
+      "sourceId": "outlet:fadeaway-world",
+      "sourceLabel": "Fadeaway World",
+      "sourceUrl": "https://fadeawayworld.net/nba-trade-rumors/new-york-knick/karl-anthony-towns-admits-he-was-blindsided-by-knicks-decision-to-halt-contract-extension-talks",
+      "playerIds": [
+        "3136195"
+      ],
+      "teamIds": [
+        "18"
+      ],
+      "isOriginal": true,
+      "negotiationSpecificity": "active_talks"
+    },
+    {
       "id": "mv-a9c044c3c366e2a8",
       "clusterId": "mv-contract-4683692-20261006",
       "summary": "Karl-Anthony Towns ‘very disappointed’ Knicks shut down contract talks: ‘News to me’",
@@ -5146,6 +5286,241 @@
       ],
       "teamIds": [
         "18"
+      ],
+      "isOriginal": true,
+      "negotiationSpecificity": "active_talks"
+    },
+    {
+      "id": "mv-bb509e66405f94fa",
+      "clusterId": "mv-contract-4683692-20261006",
+      "summary": "Karl-Anthony Towns on Knicks tabling contract extension talks: 'It was news to me'",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-12T01:30:11.000Z",
+      "sourceId": "outlet:yahoo-sports",
+      "sourceLabel": "Yahoo Sports",
+      "sourceUrl": "https://sports.yahoo.com/articles/karl-anthony-towns-knicks-tabling-013011685.html",
+      "playerIds": [
+        "3136195"
+      ],
+      "teamIds": [
+        "18"
+      ],
+      "isOriginal": true,
+      "negotiationSpecificity": "active_talks"
+    },
+    {
+      "id": "mv-821879b1fe3054fc",
+      "clusterId": "mv-contract-4712849-20261012",
+      "summary": "Anthony Black, Magic Unlikely To Agree To Extension By Deadline",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-12T02:42:54.000Z",
+      "sourceId": "outlet:realgm",
+      "sourceLabel": "RealGM",
+      "sourceUrl": "https://basketball.realgm.com/wiretap/287597/Anthony-Black-Magic-Unlikely-To-Agree-To-Extension-By-Deadline",
+      "playerIds": [
+        "4712849"
+      ],
+      "teamIds": [
+        "19"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "offer"
+    },
+    {
+      "id": "mv-6e3fb38ad581bfd3",
+      "clusterId": "mv-trade-4431823-20261012",
+      "summary": "Knicks Hit With Miles McBride Trade Warning as New Report Emerges",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-12T03:03:51.000Z",
+      "sourceId": "reporter:marc-stein",
+      "sourceLabel": "Heavy, citing Marc Stein (The Stein Line)",
+      "reporterLabel": "Marc Stein, Jake Fischer",
+      "sourceUrl": "https://heavy.com/sports/nba/new-york-knicks/knicks-miles-mcbride-trade-warning-report/",
+      "playerIds": [
+        "4431823"
+      ],
+      "teamIds": [
+        "18"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-517696837090b53f",
+      "clusterId": "mv-contract-4683692-20261006",
+      "summary": "Knicks To Prioritize Re-Signing Karl-Anthony Towns Over Josh Hart, Could Trade Deuce McBride",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-12T05:30:55.000Z",
+      "sourceId": "reporter:marc-stein",
+      "sourceLabel": "RealGM, citing Marc Stein (The Stein Line)",
+      "reporterLabel": "Marc Stein, Jake Fischer",
+      "sourceUrl": "https://basketball.realgm.com/wiretap/287602/Knicks-To-Prioritize-Re-Signing-Karl-Anthony-Towns-Over-Josh-Hart-Could-Trade-Deuce-McBride",
+      "playerIds": [
+        "3062679",
+        "3136195",
+        "4431823"
+      ],
+      "teamIds": [
+        "18"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-fc9ce7087a0e782e",
+      "clusterId": "mv-contract-4683692-20261006",
+      "summary": "Good News Emerges Between OKC Thunder And Cason Wallace Contract Talks",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-12T07:21:46.000Z",
+      "sourceId": "reporter:marc-stein",
+      "sourceLabel": "Heavy, citing Marc Stein (The Stein Line)",
+      "reporterLabel": "Marc Stein",
+      "sourceUrl": "https://heavy.com/sports/nba/oklahoma-city-thunder/good-news-cason-wallace-contract-talks/",
+      "playerIds": [
+        "4683692"
+      ],
+      "teamIds": [
+        "25"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "active_talks"
+    },
+    {
+      "id": "mv-2b8efe7981fc622a",
+      "clusterId": "mv-contract-4683692-20261006",
+      "summary": "Thunder, Cason Wallace discuss extension worth $25M annually",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-12T08:12:28.000Z",
+      "sourceId": "reporter:marc-stein",
+      "sourceLabel": "TalkBasket, citing Marc Stein (The Stein Line)",
+      "reporterLabel": "Marc Stein",
+      "sourceUrl": "https://www.talkbasket.net/224655-thunder-cason-wallace-discuss-extension-worth-25m-annually",
+      "playerIds": [
+        "4683692"
+      ],
+      "teamIds": [
+        "25"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-49e89700ff444441",
+      "clusterId": "mv-trade-4431823-20261012",
+      "summary": "Knicks could trade Miles McBride amid contract uncertainty",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-12T08:19:39.000Z",
+      "sourceId": "reporter:marc-stein",
+      "sourceLabel": "TalkBasket, citing Marc Stein (The Stein Line)",
+      "reporterLabel": "Marc Stein, Jake Fischer",
+      "sourceUrl": "https://www.talkbasket.net/224656-knicks-could-trade-miles-mcbride-amid-contract-uncertainty",
+      "playerIds": [
+        "4431823"
+      ],
+      "teamIds": [
+        "18"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-e3853ce25ff7ef6e",
+      "clusterId": "mv-contract-4712849-20261012",
+      "summary": "Magic unlikely to extend Anthony Black before restricted free agency",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-12T09:09:26.000Z",
+      "sourceId": "reporter:jake-fischer",
+      "sourceLabel": "TalkBasket, citing Jake Fischer (The Stein Line)",
+      "reporterLabel": "Jake Fischer, Marc Stein",
+      "sourceUrl": "https://www.talkbasket.net/224659-magic-unlikely-to-extend-anthony-black-before-restricted-free-agency",
+      "playerIds": [
+        "4712849"
+      ],
+      "teamIds": [
+        "19"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-6287f889f0b5ecbe",
+      "clusterId": "mv-trade-3202-20261007",
+      "summary": "“It wasn’t Memphis That Traded Him”: Ja Morant’s Father Makes Feelings Clear on Grizzlies Trade Before Blazers Debut",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-12T12:20:00.000Z",
+      "sourceId": "outlet:essentiallysports",
+      "sourceLabel": "EssentiallySports",
+      "sourceUrl": "https://www.essentiallysports.com/nba-active-basketball-news-it-wasnt-memphis-that-traded-him-ja-morant-father-makes-feelings-clear-on-grizzlies-trade-before-blazers-debuta/",
+      "playerIds": [
+        "4279888"
+      ],
+      "teamIds": [
+        "22",
+        "29"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-5002105306d818fc",
+      "clusterId": "mv-trade-4683692-20261012",
+      "summary": "NBA Trade Rumors: Cason Wallace, Nuggets Call & Lakers Chatter",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-12T12:59:31.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/los-angeles-lakers/nba-trade-rumors-cason-wallace-nuggets-lakers/",
+      "playerIds": [
+        "4683692"
+      ],
+      "teamIds": [
+        "7",
+        "13"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-abb18f46843d904e",
+      "clusterId": "mv-contract-4683692-20261006",
+      "summary": "Thunder rumors: Where OKC is starting Cason Wallace contract talks amid $30 million threat",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "original_report",
+      "publishedAt": "2026-10-12T13:52:53.000Z",
+      "sourceId": "reporter:brett-siegel",
+      "sourceLabel": "Brett Siegel (ClutchPoints)",
+      "reporterLabel": "Brett Siegel",
+      "sourceUrl": "https://clutchpoints.com/nba/oklahoma-city-thunder/thunder-rumors-where-starting-cason-wallace-contract-talks-amid-30-million-threat",
+      "playerIds": [
+        "4683692"
+      ],
+      "teamIds": [
+        "25"
       ],
       "isOriginal": true,
       "negotiationSpecificity": "active_talks"

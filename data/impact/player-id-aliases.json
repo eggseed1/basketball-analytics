@@ -6332,6 +6332,14 @@
       "matchMethod": "unique_name_same_team_roster",
       "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
       "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4684443",
+      "nbaPlayerId": "1643572",
+      "playerName": "Rafael Castro",
+      "matchMethod": "unique_name_same_team_roster",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
     }
   ]
 }
