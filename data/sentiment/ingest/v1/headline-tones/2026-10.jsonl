@@ -2629,3 +2629,4 @@
 {"id":"fanblogs:ec438e862331d400:3135045","store":"fanblogs","rowId":"ec438e862331d400","playerId":"3135045","publishedAt":"2026-10-12T12:00:00.000Z","tone":-1,"modelVersion":"headline-llama33-70b-v1","ratedAt":"2026-10-12T17:29:30.981Z"}
 {"id":"news:aa8140ccec62e932:3059318","store":"news","rowId":"aa8140ccec62e932","playerId":"3059318","publishedAt":"2026-10-12T15:20:15.000Z","tone":0,"modelVersion":"headline-llama33-70b-v1","ratedAt":"2026-10-12T17:29:31.004Z"}
 {"id":"fanblogs:e9973cb602b9249e:3992","store":"fanblogs","rowId":"e9973cb602b9249e","playerId":"3992","publishedAt":"2026-10-12T16:58:24.000Z","tone":1,"modelVersion":"headline-llama33-70b-v1","ratedAt":"2026-10-12T17:29:34.195Z"}
+{"id":"news:8b00b7a55f6ccce4:4278077","store":"news","rowId":"8b00b7a55f6ccce4","playerId":"4278077","publishedAt":"2026-10-12T17:36:02.000Z","tone":0,"modelVersion":"headline-llama33-70b-v1","ratedAt":"2026-10-12T17:41:57.212Z"}
