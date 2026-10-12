@@ -77,7 +77,11 @@ function kindOf(values: Value[]): Kind {
   return "text";
 }
 
-/** Rows that can move: a merged body cell means rows belong together, so leave the table alone. */
+/**
+ * Rows that can move. Group rows (one full-width cell, or cells spanning rows) mean
+ * rows belong together, so the table is left alone; a row whose stats are merged
+ * into a note (DNP) still moves and reads as blank.
+ */
 function sortableRows(body: HTMLTableSectionElement) {
   const rows = [...body.rows];
   const movable: HTMLTableRowElement[] = [];
@@ -86,10 +90,14 @@ function sortableRows(body: HTMLTableSectionElement) {
     if (!firstOrder.has(row)) firstOrder.set(row, orderSeq++);
     const label = row.cells[0]?.textContent?.trim() ?? "";
     if (PINNED.test(label)) pinned.push(row);
-    else if ([...row.cells].some((cell) => cell.colSpan > 1 || cell.rowSpan > 1)) return null;
+    else if (row.cells.length === 1 || [...row.cells].some((cell) => cell.rowSpan > 1)) return null;
     else movable.push(row);
   }
   return { rows, movable, pinned };
+}
+
+function canSort(table: HTMLTableElement) {
+  return [...table.tBodies].some((body) => (sortableRows(body)?.movable.length ?? 0) > 1);
 }
 
 function columnValues(table: HTMLTableElement, col: number): Value[] {
@@ -149,7 +157,8 @@ function watch(table: HTMLTableElement) {
  * Click any column header in a table under `[data-sortable-tables]` to sort
  * its rows: highest first, then lowest first. Blank values stay at the bottom
  * either way, and summary rows such as Career stay last. Tables that already
- * sort themselves (their headers carry aria-sort from React) are left alone.
+ * sort themselves (aria-sort from React, or a header that is one big button)
+ * and anything under `[data-no-table-sort]` are left alone.
  * Nothing is touched until a click, so server HTML still hydrates cleanly.
  */
 export function SortableTables() {
@@ -157,12 +166,15 @@ export function SortableTables() {
     const onClick = (event: MouseEvent) => {
       const target = event.target instanceof Element ? event.target : null;
       const th = target?.closest("th");
-      if (!th || !th.closest(SCOPE)) return;
+      if (!th || !th.closest(SCOPE) || th.closest("[data-no-table-sort]")) return;
       const control = target?.closest(INTERACTIVE);
       if (control && th.contains(control)) return;
+      const ownSort = th.querySelector("button");
+      if (ownSort && ownSort.textContent?.trim() === th.textContent?.trim()) return;
       const table = th.closest("table");
       if (!table?.tHead?.contains(th)) return;
       if (!sorts.has(table) && table.tHead.querySelector("[aria-sort]")) return;
+      if (!canSort(table)) return;
       const { columnOf, keys } = headerGrid(table);
       const col = columnOf.get(th as HTMLTableCellElement);
       if (col == null) return;

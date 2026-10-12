@@ -7,6 +7,7 @@ import { SportsShell } from "@/components/sports/sports-shell";
 import { SmoothScroll } from "@/components/smooth-scroll";
 import { ChartHoverTip } from "@/components/charts/chart-hover-tip";
 import { ScrollHoverGuard } from "@/components/continuity/scroll-hover-guard";
+import { SortableTables } from "@/components/continuity/sortable-tables";
 import { OWNER_THEME_BOOT_SCRIPT } from "@/lib/owner-theme";
 import { SCORE_DELAY_BOOT_SCRIPT } from "@/lib/score-delay";
 import { SITE_NAME, SITE_URL } from "@/lib/site-url";
@@ -80,6 +81,7 @@ export default function RootLayout({
           <SmoothScroll />
           <ChartHoverTip />
           <ScrollHoverGuard />
+          <SortableTables />
           <a
             href="#main-content"
             className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-foreground focus:px-3 focus:py-2 focus:text-background"
@@ -88,6 +90,7 @@ export default function RootLayout({
           </a>
           <div
             id="main-content"
+            data-sortable-tables
             className="flex min-h-dvh min-w-0 flex-col overflow-x-clip"
           >
             <SportsShell>{children}</SportsShell>

@@ -1531,12 +1531,12 @@ html:not([data-surface="glass"]) .color-scheme-switch {
 /* Click-to-sort headers (SortableTables). Group headers that span several
    columns don't sort. The arrow sits in the header's corner so it never wraps
    under the label; sticky headers are already positioned. */
-[data-sortable-tables] thead th:not([colspan]:not([colspan="1"])) {
+[data-sortable-tables] thead th:not([colspan]:not([colspan="1"]), [data-no-table-sort] *) {
   cursor: pointer;
   user-select: none;
 }
 
-[data-sortable-tables] thead th:not([colspan]:not([colspan="1"])):hover,
+[data-sortable-tables] thead th:not([colspan]:not([colspan="1"]), [data-no-table-sort] *):hover,
 [data-sortable-tables] thead th[aria-sort] {
   color: var(--foreground);
 }
