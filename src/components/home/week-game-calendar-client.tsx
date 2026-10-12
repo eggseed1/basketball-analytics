@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useLayoutEffect, useRef } from "react";
+import { useId, useLayoutEffect, useRef } from "react";
 import { HomeGameStripCard } from "@/components/home/home-game-strip-card";
 import { AppLink } from "@/components/ui/app-link";
 import { InlineScript } from "@/components/ui/inline-script";
@@ -34,7 +34,7 @@ function isSettledStatus(status: GameStatusKind | undefined): boolean {
   return status === "final" || status === "postponed" || status === "cancelled";
 }
 
-/** Width of the `.scroll-fade-x` edge fade; the anchored card starts past it. */
+/** Width of the scroller edge fade (globals.css); the anchored card starts past it. */
 const EDGE_FADE_PX = 24;
 
 function StripScroller({ games }: { games: GameSummary[] }) {
@@ -55,33 +55,9 @@ function StripScroller({ games }: { games: GameSummary[] }) {
       card.getBoundingClientRect().left - scroller.getBoundingClientRect().left - padding - EDGE_FADE_PX;
   }, [anchor]);
 
-  useEffect(() => {
-    const scroller = scrollerRef.current;
-    if (!scroller) return;
-    let frame = 0;
-    const update = () => {
-      frame = 0;
-      const max = scroller.scrollWidth - scroller.clientWidth;
-      scroller.toggleAttribute("data-fade-start", scroller.scrollLeft > 2);
-      scroller.toggleAttribute("data-fade-end", scroller.scrollLeft < max - 2);
-    };
-    const schedule = () => {
-      if (!frame) frame = requestAnimationFrame(update);
-    };
-    update();
-    scroller.addEventListener("scroll", schedule, { passive: true });
-    const observer = new ResizeObserver(schedule);
-    observer.observe(scroller);
-    return () => {
-      scroller.removeEventListener("scroll", schedule);
-      observer.disconnect();
-      if (frame) cancelAnimationFrame(frame);
-    };
-  }, [ordered.length]);
-
   return (
     <>
-      <div ref={scrollerRef} id={scrollerId} className="scroll-fade-x -mx-1 -my-3 flex gap-4 touch-scroll-x px-1 py-3">
+      <div ref={scrollerRef} id={scrollerId} className="-mx-1 -my-3 flex gap-4 touch-scroll-x px-1 py-3">
         {ordered.map((game) => (
           <HomeGameStripCard key={game.id} game={game} />
         ))}

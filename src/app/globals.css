@@ -1424,8 +1424,13 @@ html:not([data-surface="glass"]) .color-scheme-switch {
   -webkit-overflow-scrolling: touch;
 }
 
-/* Fade a horizontal strip's edge only while more content sits past it, so the
-   first and last items stay crisp at either end. Script sets the attributes. */
+/* Fade a horizontal scroller's edge only while more content sits past it, so
+   the first and last items stay crisp at either end. Driven by the scroller's
+   own inline scroll timeline: a scroller that fits has an inactive timeline,
+   so it gets no mask and never clips focus rings or shadows. Frozen columns
+   pin the start edge, so tables with one only fade at the end. Browsers
+   without scroll-driven animations show the plain cut. In a layer so an
+   `animate-*` utility on a scroller still wins. */
 @property --scroll-fade-start {
   syntax: "<length>";
   inherits: false;
@@ -1438,27 +1443,68 @@ html:not([data-surface="glass"]) .color-scheme-switch {
   initial-value: 0px;
 }
 
-.scroll-fade-x {
-  mask-image: linear-gradient(
-    to right,
-    rgb(0 0 0 / 0.15) 0,
-    rgb(0 0 0 / 0.7) calc(var(--scroll-fade-start) * 0.5),
-    #000 var(--scroll-fade-start),
-    #000 calc(100% - var(--scroll-fade-end)),
-    rgb(0 0 0 / 0.7) calc(100% - var(--scroll-fade-end) * 0.5),
-    rgb(0 0 0 / 0.15) 100%
-  );
-  transition:
-    --scroll-fade-start 200ms ease-out,
-    --scroll-fade-end 200ms ease-out;
+@keyframes scroll-fade-mask {
+  from,
+  to {
+    mask-image: linear-gradient(
+      to right,
+      rgb(0 0 0 / 0.15) 0,
+      rgb(0 0 0 / 0.7) calc(var(--scroll-fade-start) * 0.5),
+      #000 var(--scroll-fade-start),
+      #000 calc(100% - var(--scroll-fade-end)),
+      rgb(0 0 0 / 0.7) calc(100% - var(--scroll-fade-end) * 0.5),
+      rgb(0 0 0 / 0.15) 100%
+    );
+  }
 }
 
-.scroll-fade-x[data-fade-start] {
-  --scroll-fade-start: 24px;
+@keyframes scroll-fade-start {
+  from {
+    --scroll-fade-start: 0px;
+  }
+  to {
+    --scroll-fade-start: 24px;
+  }
 }
 
-.scroll-fade-x[data-fade-end] {
-  --scroll-fade-end: 24px;
+@keyframes scroll-fade-end {
+  from {
+    --scroll-fade-end: 24px;
+  }
+  to {
+    --scroll-fade-end: 0px;
+  }
+}
+
+@layer components {
+  @supports (animation-timeline: scroll()) {
+    :is(
+        .touch-scroll-x,
+        .board-scroll-host,
+        [class*="overflow-x-auto"],
+        [class*="overflow-x-scroll"],
+        [class*="overflow-auto"],
+        [class*="overflow-scroll"]
+      ):not([data-no-scroll-fade]) {
+      animation:
+        scroll-fade-mask linear both,
+        scroll-fade-start linear both,
+        scroll-fade-end linear both;
+      animation-timeline: scroll(self inline);
+      animation-range:
+        normal,
+        0px 24px,
+        calc(100% - 24px) 100%;
+
+      &:has(
+          [data-frozen-row],
+          .board-frozen-spacer,
+          :is(.sticky, [class*="sticky"]):is([class*="left-"], [class*="start-"])
+        ) {
+        animation-name: scroll-fade-mask, none, scroll-fade-end;
+      }
+    }
+  }
 }
 
 /* ─── NBA Time Machine - era theme layer (CSS variables only) ───
@@ -3230,30 +3276,85 @@ svg [data-motion-dot] {
    a half pixel rim that is lit on the top and bottom edges and fades out as it
    turns down the sides, and a glow under 3px deep (deeper at the bottom).
    Thicker rims or glows read as a colored border instead of an edge. The rim
-   is the surface's own color lightened: game cards (.matchup-rim) light it
-   with each team's color, neutral panels and tiles (.lit-edge, and every
-   .sports-card under [data-lit-edges]) with white. Light mode can't brighten a
+   is the surface's own color lightened: game cards (.matchup-rim) and
+   team-tinted glass ([data-lit-team]) light it with team colors, neutral
+   surfaces with white. Two tiers: panels (.sports-card, .glass-surface,
+   .glass-card) and the tiles nested in them (rounded bordered or frosted
+   boxes, or .lit-edge), which get a softer rim. Light mode can't brighten a
    white card, so there the top rim is white over the hairline and team color
    only tints the bottom. The old 1px inset highlight would double the rim, so
-   lit surfaces keep only their drop shadow. Without mask-composite the rim
+   lit panels keep only their drop shadow. Scroll containers are skipped
+   because the rim layers would scroll with their content, and so is anything
+   already drawing its own ::before/::after. Without mask-composite the rim
    layers would paint across the whole surface, so only the hairline ships. */
-:is(.glass-surface, .sports-card):has(> span > .matchup-rim),
-[data-lit-edges] .sports-card,
-.lit-edge {
-  border: 0.5px solid rgb(0 0 0 / 0.12) !important;
-  --lit-drop-shadow: 0 1px 2px rgb(0 0 0 / 2.5%), 0 6px 20px rgb(0 0 0 / 3.5%);
+:is(
+    .sports-card,
+    .glass-surface,
+    .glass-card,
+    .lit-edge,
+    :where(.sports-card, .glass-surface, .glass-card)
+      :is(div, li, section, article, figure, aside, dl):is(.border, .frost-surface, .frost-surface-soft, .frost-surface-muted):is(.rounded-md, .rounded-lg, .rounded-xl, .rounded-2xl, [class*="rounded-["])
+  ):not(.hof-outline, .board-scroll-host, .loading-shimmer, .border-dashed, .rounded-full, [role="tab"], [data-no-lit-edge], .touch-scroll-x, [class*="overflow-auto"], [class*="overflow-x-auto"], [class*="overflow-y-auto"], [class*="overflow-scroll"], [class*="overflow-x-scroll"], [class*="overflow-y-scroll"], [class*="before:"], [class*="after:"]) {
+  border: 0.5px solid var(--lit-hairline, rgb(0 0 0 / 0.12)) !important;
 }
 
-.dark :is(.glass-surface, .sports-card):has(> span > .matchup-rim),
-.dark [data-lit-edges] .sports-card,
-.dark .lit-edge {
-  border-color: rgb(0 0 0 / 0.45) !important;
-  --lit-drop-shadow: 0 1px 2px rgb(0 0 0 / 28%), 0 10px 28px rgb(0 0 0 / 24%);
+@layer components {
+  :where(
+      .sports-card,
+      .glass-surface,
+      .glass-card,
+      .lit-edge,
+      :where(.sports-card, .glass-surface, .glass-card)
+        :is(div, li, section, article, figure, aside, dl):is(.border, .frost-surface, .frost-surface-soft, .frost-surface-muted):is(.rounded-md, .rounded-lg, .rounded-xl, .rounded-2xl, [class*="rounded-["])
+    ) {
+    position: relative;
+  }
 }
 
-:is(.glass-surface, .sports-card):has(> span > .matchup-rim),
-[data-lit-edges] .sports-card {
+:is(.sports-card, .glass-surface):not(.hof-outline, .board-scroll-host, .loading-shimmer, [data-no-lit-edge], .touch-scroll-x, [class*="overflow-auto"], [class*="overflow-x-auto"], [class*="overflow-y-auto"], [class*="overflow-scroll"], [class*="overflow-x-scroll"], [class*="overflow-y-scroll"], [class*="before:"], [class*="after:"]) {
   box-shadow: var(--lit-drop-shadow) !important;
+}
+
+:where(.sports-card, .glass-surface, .glass-card) {
+  --lit-drop-shadow: 0 1px 2px rgb(0 0 0 / 2.5%), 0 6px 20px rgb(0 0 0 / 3.5%);
+  --rim-top-a: rgb(255 255 255);
+  --rim-top-b: rgb(255 255 255);
+  --rim-bottom-a: rgb(255 255 255 / 0.85);
+  --rim-bottom-b: rgb(255 255 255 / 0.85);
+}
+
+:where(.dark) :where(.sports-card, .glass-surface, .glass-card) {
+  --lit-hairline: rgb(0 0 0 / 0.45);
+  --lit-drop-shadow: 0 1px 2px rgb(0 0 0 / 28%), 0 10px 28px rgb(0 0 0 / 24%);
+  --rim-top-a: rgb(255 255 255 / 0.26);
+  --rim-top-b: rgb(255 255 255 / 0.26);
+  --rim-bottom-a: rgb(255 255 255 / 0.18);
+  --rim-bottom-b: rgb(255 255 255 / 0.18);
+}
+
+:where(
+    .lit-edge,
+    :where(.sports-card, .glass-surface, .glass-card)
+      :is(div, li, section, article, figure, aside, dl):is(.border, .frost-surface, .frost-surface-soft, .frost-surface-muted)
+  ) {
+  --lit-hairline: rgb(0 0 0 / 0.08);
+  --rim-top-a: rgb(255 255 255 / 0.9);
+  --rim-top-b: rgb(255 255 255 / 0.9);
+  --rim-bottom-a: rgb(255 255 255 / 0.6);
+  --rim-bottom-b: rgb(255 255 255 / 0.6);
+}
+
+:where(.dark)
+  :where(
+    .lit-edge,
+    :where(.sports-card, .glass-surface, .glass-card)
+      :is(div, li, section, article, figure, aside, dl):is(.border, .frost-surface, .frost-surface-soft, .frost-surface-muted)
+  ) {
+  --lit-hairline: rgb(0 0 0 / 0.35);
+  --rim-top-a: rgb(255 255 255 / 0.17);
+  --rim-top-b: rgb(255 255 255 / 0.17);
+  --rim-bottom-a: rgb(255 255 255 / 0.12);
+  --rim-bottom-b: rgb(255 255 255 / 0.12);
 }
 
 .matchup-rim {
@@ -3261,30 +3362,16 @@ svg [data-motion-dot] {
   inset: 0;
   border-radius: inherit;
   pointer-events: none;
+}
+
+:is(.matchup-rim, [data-lit-team]) {
   --rim-top-a: rgb(255 255 255);
   --rim-top-b: rgb(255 255 255);
   --rim-bottom-a: color-mix(in oklab, var(--rim-away) 22%, transparent);
   --rim-bottom-b: color-mix(in oklab, var(--rim-home) 22%, transparent);
 }
 
-[data-lit-edges] .sports-card,
-.lit-edge {
-  position: relative;
-  --rim-top-a: rgb(255 255 255);
-  --rim-top-b: rgb(255 255 255);
-  --rim-bottom-a: rgb(255 255 255 / 0.85);
-  --rim-bottom-b: rgb(255 255 255 / 0.85);
-}
-
-.dark [data-lit-edges] .sports-card,
-.dark .lit-edge {
-  --rim-top-a: rgb(255 255 255 / 0.26);
-  --rim-top-b: rgb(255 255 255 / 0.26);
-  --rim-bottom-a: rgb(255 255 255 / 0.18);
-  --rim-bottom-b: rgb(255 255 255 / 0.18);
-}
-
-.dark .matchup-rim {
+.dark :is(.matchup-rim, [data-lit-team]) {
   --rim-top-a: color-mix(in oklab, color-mix(in oklab, var(--rim-away) 50%, white) 40%, transparent);
   --rim-top-b: color-mix(in oklab, color-mix(in oklab, var(--rim-home) 50%, white) 40%, transparent);
   --rim-bottom-a: color-mix(in oklab, color-mix(in oklab, var(--rim-away) 60%, white) 30%, transparent);
@@ -3292,12 +3379,12 @@ svg [data-motion-dot] {
 }
 
 @supports (color: oklch(from red l c h)) {
-  .matchup-rim {
+  :is(.matchup-rim, [data-lit-team]) {
     --rim-bottom-a: oklch(from var(--rim-away) 0.66 min(c, 0.12) h / 0.22);
     --rim-bottom-b: oklch(from var(--rim-home) 0.66 min(c, 0.12) h / 0.22);
   }
 
-  .dark .matchup-rim {
+  .dark :is(.matchup-rim, [data-lit-team]) {
     --rim-top-a: oklch(from var(--rim-away) 0.84 min(c, 0.1) h / 0.34);
     --rim-top-b: oklch(from var(--rim-home) 0.84 min(c, 0.1) h / 0.34);
     --rim-bottom-a: oklch(from var(--rim-away) 0.76 min(c, 0.12) h / 0.52);
@@ -3306,21 +3393,32 @@ svg [data-motion-dot] {
 }
 
 @supports (mask-composite: exclude) {
-  :is(.matchup-rim, [data-lit-edges] .sports-card, .lit-edge)::before,
-  :is(.matchup-rim, [data-lit-edges] .sports-card, .lit-edge)::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    border-radius: inherit;
-    pointer-events: none;
-    background:
-      linear-gradient(90deg, var(--rim-top-a), var(--rim-top-b)) top / 100% 50% no-repeat,
-      linear-gradient(90deg, var(--rim-bottom-a), var(--rim-bottom-b)) bottom / 100% 50% no-repeat;
-  }
+  :where(
+      .matchup-rim,
+      :is(
+          .sports-card,
+          .glass-surface,
+          .glass-card,
+          .lit-edge,
+          :where(.sports-card, .glass-surface, .glass-card)
+            :is(div, li, section, article, figure, aside, dl):is(.border, .frost-surface, .frost-surface-soft, .frost-surface-muted):is(.rounded-md, .rounded-lg, .rounded-xl, .rounded-2xl, [class*="rounded-["])
+        ):not(.hof-outline, .board-scroll-host, .loading-shimmer, .border-dashed, .rounded-full, [role="tab"], [data-no-lit-edge], .touch-scroll-x, [class*="overflow-auto"], [class*="overflow-x-auto"], [class*="overflow-y-auto"], [class*="overflow-scroll"], [class*="overflow-x-scroll"], [class*="overflow-y-scroll"], [class*="before:"], [class*="after:"], :has(> span > .matchup-rim))
+    ) {
+    &::before,
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      border-radius: inherit;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg, var(--rim-top-a), var(--rim-top-b)) top / 100% 50% no-repeat,
+        linear-gradient(90deg, var(--rim-bottom-a), var(--rim-bottom-b)) bottom / 100% 50% no-repeat;
+    }
 
-  :is(.matchup-rim, [data-lit-edges] .sports-card, .lit-edge)::before {
-    mask: linear-gradient(
+    &::before {
+      mask: linear-gradient(
       to bottom,
       rgb(0 0 0 / 0.5) 0,
       rgb(0 0 0 / 0.35) 0.75px,
@@ -3332,24 +3430,25 @@ svg [data-motion-dot] {
       rgb(0 0 0 / 0.1) calc(100% - 1.5px),
       rgb(0 0 0 / 0.55) calc(100% - 1px),
       rgb(0 0 0 / 0.6) 100%
-    );
-  }
+      );
+    }
 
-  :is(.matchup-rim, [data-lit-edges] .sports-card, .lit-edge)::after {
-    padding: 0.5px;
-    mask:
-      linear-gradient(
-        to bottom,
-        #000 0,
-        rgb(0 0 0 / 0.3) 7px,
-        transparent 14px,
-        transparent calc(100% - 14px),
-        rgb(0 0 0 / 0.3) calc(100% - 7px),
-        #000 100%
-      ),
-      linear-gradient(#000 0 0) content-box,
-      linear-gradient(#000 0 0);
-    mask-composite: intersect, exclude, add;
+    &::after {
+      padding: 0.5px;
+      mask:
+        linear-gradient(
+          to bottom,
+          #000 0,
+          rgb(0 0 0 / 0.3) 7px,
+          transparent 14px,
+          transparent calc(100% - 14px),
+          rgb(0 0 0 / 0.3) calc(100% - 7px),
+          #000 100%
+        ),
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+      mask-composite: intersect, exclude, add;
+    }
   }
 }
 

@@ -94,10 +94,14 @@ export function GlassSurface({
 
   if (effect === "css") {
     const solid = surface === "solid";
+    const rimColors = a
+      ? ({ "--rim-away": a, "--rim-home": b ?? a } as CSSProperties)
+      : undefined;
     return createElement(
       as,
       {
         ...rest,
+        "data-lit-team": a ? "" : undefined,
         className: cn(
           "glass-surface rounded-[var(--card-radius)]",
           honor === "hof" && HOF_OUTLINE_CLASS,
@@ -114,6 +118,7 @@ export function GlassSurface({
             : `saturate(150%) blur(${backdropBlur}px)`,
           border: solid ? undefined : "var(--glass-edge-border)",
           boxShadow: solid ? undefined : "var(--glass-edge-shadow)",
+          ...rimColors,
           ...style,
         },
       },

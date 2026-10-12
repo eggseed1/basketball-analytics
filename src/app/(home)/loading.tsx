@@ -8,7 +8,7 @@ import { nbaTodayIso } from "@/lib/nba-calendar-date";
 export default function Loading() {
   const phase = guessHomeSeasonPhase(nbaTodayIso());
   return (
-    <main data-lit-edges className="site-shell relative flex flex-col gap-5 py-5 sm:py-7" aria-busy="true" aria-live="polite">
+    <main className="site-shell relative flex flex-col gap-5 py-5 sm:py-7" aria-busy="true" aria-live="polite">
       <LoadingTopBar />
       <HomeLayoutSkeleton layout={homeLayoutForPhase(phase)} phase={phase} />
       <HomeWarmup />
