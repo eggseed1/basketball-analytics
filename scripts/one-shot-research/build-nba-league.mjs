@@ -2,8 +2,8 @@
  * ONE SHOT research authoring: the real NBA season the game compares against.
  *
  * Inputs (bundled site snapshots, refreshed by their own pipelines):
- *   src/data/runtime/bref-advanced-snapshot.json  Basketball Reference per-game rows, 1996-97 on
- *   src/data/runtime/player-awards-snapshot.json  Basketball Reference award history
+ *   src/data/runtime/season-tables-snapshot.json  NBA Stats per-game rows, 1996-97 on
+ *   src/data/runtime/player-awards-snapshot.json  NBA Stats award history
  *
  * Output:
  *   src/one-shot/data/nba-league.json  latest season, one row per player, plus
@@ -13,7 +13,7 @@
  */
 import fs from "node:fs";
 
-const snap = JSON.parse(fs.readFileSync("src/data/runtime/bref-advanced-snapshot.json", "utf8"));
+const snap = JSON.parse(fs.readFileSync("src/data/runtime/season-tables-snapshot.json", "utf8"));
 const aw = JSON.parse(fs.readFileSync("src/data/runtime/player-awards-snapshot.json", "utf8"));
 const OUT = "src/one-shot/data/nba-league.json";
 

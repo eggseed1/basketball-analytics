@@ -90,7 +90,7 @@ export function loadInputs(): ContractValueInputs {
     })
   ) as Record<string, OverlayRow[]>;
   const bref = readJson<{ seasons: Record<string, { perGame?: Array<{ n: string; age?: number }> }> }>(
-    "src/data/runtime/bref-advanced-snapshot.json"
+    "src/data/runtime/season-tables-snapshot.json"
   ).seasons;
   const capByEndYear = readJson<{
     bySeasonEndYear: Record<string, { salaryCapM: number; minSalaryM: number }>;

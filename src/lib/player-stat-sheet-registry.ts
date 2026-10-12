@@ -184,7 +184,7 @@ export const SHEET_STAT_DEFS: SheetStatDef[] = [
   { id: "stlPct", label: "STL%", category: "defense", kind: "pct" },
   { id: "blkPct", label: "BLK%", category: "defense", kind: "pct" },
   { id: "drbPct", label: "DRB%", category: "defense", kind: "pct" },
-  { id: "drtg", label: "DRtg", category: "defense", kind: "rate" },
+  { id: "drtg", label: "On DRtg", category: "defense", kind: "rate" },
   { id: "dbpm", label: "DBPM", category: "defense", kind: "rate" },
   { id: "dws", label: "DWS", category: "defense", kind: "rate" },
   // Hustle
@@ -203,7 +203,7 @@ export const SHEET_STAT_DEFS: SheetStatDef[] = [
   { id: "orbPct", label: "ORB%", category: "advanced", kind: "pct" },
   { id: "trbPct", label: "TRB%", category: "advanced", kind: "pct" },
   { id: "atr", label: "AST/TO", category: "advanced", kind: "rate", digits: 2 },
-  { id: "ortg", label: "ORtg", category: "advanced", kind: "rate" },
+  { id: "ortg", label: "On ORtg", category: "advanced", kind: "rate" },
   { id: "net", label: "NET", category: "advanced", kind: "rate" },
   { id: "pie", label: "PIE", category: "advanced", kind: "pct" },
   { id: "per", label: "PER", category: "advanced", kind: "rate" },

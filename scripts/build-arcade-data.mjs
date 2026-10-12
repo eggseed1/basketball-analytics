@@ -18,7 +18,7 @@ import path from "node:path";
 
 const root = process.cwd();
 const bref = JSON.parse(
-  readFileSync(path.join(root, "src/data/runtime/bref-advanced-snapshot.json"), "utf8")
+  readFileSync(path.join(root, "src/data/runtime/season-tables-snapshot.json"), "utf8")
 );
 const impact = JSON.parse(
   readFileSync(path.join(root, "src/data/runtime/impact-overlay-snapshot.json"), "utf8")

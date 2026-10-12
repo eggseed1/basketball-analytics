@@ -223,7 +223,7 @@ jobs:
           if [ "${{ steps.sync.outputs.commit_season }}" = "true" ]; then
             git add -- \
               src/data/runtime/game-snapshot.json \
-              src/data/runtime/bref-advanced-snapshot.json \
+              src/data/runtime/season-tables-snapshot.json \
               src/data/runtime/standings-snapshot.json \
               src/data/runtime/team-board-snapshot.json \
               src/data/runtime/current-roster-snapshot.json \

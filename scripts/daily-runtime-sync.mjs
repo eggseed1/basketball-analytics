@@ -332,17 +332,6 @@ async function main() {
       args: ["tsx", "scripts/build-team-game-box-snapshot.ts", "--season", info.season, "--fetch"],
     },
     {
-      label: "bref-advanced",
-      cmd: "node",
-      args: ["scripts/build-runtime-bref-advanced.mjs"],
-      env: {
-        // Refresh the live year + two priors; keep the rest of the snapshot.
-        BREF_SEASON_WINDOW: "3",
-        BREF_INCLUDE_CURRENT: "1",
-        BREF_PRESERVE_OUTSIDE_WINDOW: "1",
-      },
-    },
-    {
       label: "drbl-recompute",
       cmd: "npx",
       args: ["tsx", "scripts/drbl-daily-recompute.ts"],

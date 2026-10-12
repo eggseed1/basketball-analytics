@@ -17,7 +17,7 @@ const BREF = path.join(
   "src",
   "data",
   "runtime",
-  "bref-advanced-snapshot.json"
+  "season-tables-snapshot.json"
 );
 const ALIASES = path.join(
   ROOT,

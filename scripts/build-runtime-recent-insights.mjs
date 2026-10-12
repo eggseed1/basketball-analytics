@@ -35,7 +35,7 @@ async function main() {
   );
   const bref = JSON.parse(
     fs.readFileSync(
-      path.join(ROOT, "src/data/runtime/bref-advanced-snapshot.json"),
+      path.join(ROOT, "src/data/runtime/season-tables-snapshot.json"),
       "utf8"
     )
   );

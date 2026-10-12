@@ -36,7 +36,7 @@ function Ext({ href, children }: { href: string; children: ReactNode }) {
 const DATA_SOURCES: { name: ReactNode; uses: string }[] = [
   {
     name: <Ext href="https://www.nba.com/stats">NBA.com and NBA Stats</Ext>,
-    uses: "Box scores, play-by-play, shot charts, play types, on/off, hustle stats, player awards, franchise records, league averages, careers that ended before 1996-97, transactions, schedules, cap figures and key dates.",
+    uses: "Box scores, season totals from 1996-97 on (the per-game, per-100-possession and advanced tables are built from them), play-by-play, shot charts, play types, on-court ratings, on/off, hustle stats, player awards, franchise records, league averages, careers that ended before 1996-97, transactions, schedules, cap figures and key dates.",
   },
   {
     name: <Ext href="https://www.espn.com/nba/">ESPN</Ext>,
@@ -44,7 +44,7 @@ const DATA_SOURCES: { name: ReactNode; uses: string }[] = [
   },
   {
     name: <Ext href="https://www.basketball-reference.com/">Basketball-Reference</Ext>,
-    uses: "Past-season advanced and per-game tables and contracts. Kept from an earlier copy: ABA seasons and advanced tables for careers that ended before 1996-97, a few early players NBA Stats has no record of, and some league averages before 1983.",
+    uses: "Team payrolls and contracts. Kept from an earlier copy: the all-time player list behind search, ABA seasons and advanced tables for careers that ended before 1996-97, a few early players NBA Stats has no record of, and some league averages before 1983.",
   },
   {
     name: <Ext href="https://www.darko.app/">DARKO</Ext>,
@@ -98,6 +98,21 @@ export default function SourcesPage() {
         <p>
           The sources don&apos;t endorse this site, and numbers here can differ from theirs when the site
           computes them differently.
+        </p>
+      </Section>
+
+      <Section title="Formulas">
+        <p>
+          PER, Win Shares, Box Plus/Minus and VORP are computed here from NBA Stats season totals with
+          their published formulas.{" "}
+          <Ext href="https://www.basketball-reference.com/about/per.html">PER</Ext> is John
+          Hollinger&apos;s.{" "}
+          <Ext href="https://www.basketball-reference.com/about/ws.html">Win Shares</Ext> is Justin
+          Kubatko&apos;s method, built on Dean Oliver&apos;s points produced and defensive rating.{" "}
+          <Ext href="https://www.basketball-reference.com/about/bpm2.html">Box Plus/Minus 2.0</Ext> and
+          VORP are Daniel Myers&apos;. Our BPM uses whole-season totals, so it can differ a little from
+          versions built game by game. Offensive and defensive ratings on player pages are NBA Stats&apos;
+          on-court ratings: how the team scored and allowed points while that player was on the floor.
         </p>
       </Section>
 

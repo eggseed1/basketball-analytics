@@ -1,11 +1,13 @@
 /**
- * Bundled Basketball-Reference advanced / per-game snapshot.
+ * Bundled season tables (per-game and advanced) built from NBA Stats totals by
+ * scripts/build-season-tables.ts. Rows keep the slim Basketball-Reference-style
+ * shape the site was built on; ortg/drtg are NBA's on-court team ratings.
  * Loaded on the module graph for Cloudflare Workers (no node:fs).
  *
  * Keep transforms memoized — remapping ~650 players × N seasons per request
  * will trip Cloudflare 1102 CPU limits.
  */
-import snapshot from "./bref-advanced-snapshot.json";
+import snapshot from "./season-tables-snapshot.json";
 import {
   lookupEspnIdByPlayerName,
   lookupPlayerNameByEspnId,

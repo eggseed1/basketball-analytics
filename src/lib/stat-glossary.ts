@@ -25,11 +25,11 @@ const ENTRIES: Record<string, StatGlossaryEntry> = {
   },
   PER: {
     title: "Player efficiency rating",
-    body: "All-in-one box-score rate (league average ≈ 15). Rewards positive production and penalizes misses and turnovers.",
+    body: "All-in-one box-score rate (league average ≈ 15). Rewards positive production and penalizes misses and turnovers. John Hollinger's formula, computed here from NBA box score totals.",
   },
   VORP: {
     title: "Value over replacement player",
-    body: "Estimate of how many wins a player adds versus a cheap bench replacement, scaled to playing time. Higher is more valuable.",
+    body: "Box plus/minus above replacement level (-2.0), scaled by the share of team minutes played. Measured in points per 100 team possessions over a season; multiply by about 2.7 for wins. Daniel Myers' formula, computed here from NBA box score totals.",
   },
   DPM: {
     title: "DARKO DPM",
@@ -133,7 +133,7 @@ const ENTRIES: Record<string, StatGlossaryEntry> = {
   },
   BPM: {
     title: "Box plus/minus",
-    body: "Estimated point differential per 100 possessions vs league average from box-score stats. 0 is average; +2 is strong.",
+    body: "Estimated point differential per 100 possessions vs league average from box-score stats. 0 is average; +2 is strong. Daniel Myers' BPM 2.0, computed here over the whole season from NBA box score totals, so it can differ a little from game-by-game versions.",
   },
   OBPM: {
     title: "Offensive box plus/minus",
@@ -145,7 +145,7 @@ const ENTRIES: Record<string, StatGlossaryEntry> = {
   },
   WS: {
     title: "Win shares",
-    body: "Credit for team wins from box-score production (offense + defense). Roughly, 1 WS ≈ a win contributed.",
+    body: "Credit for team wins from box-score production (offense + defense). Roughly, 1 WS ≈ a win contributed. Justin Kubatko's method with Dean Oliver's points produced and defensive rating, computed here from NBA box score totals.",
   },
   "WS/48": {
     title: "Win shares per 48 minutes",
@@ -161,11 +161,19 @@ const ENTRIES: Record<string, StatGlossaryEntry> = {
   },
   ORtg: {
     title: "Offensive rating",
-    body: "Points produced per 100 possessions. Team or on-court context; higher means more efficient offense.",
+    body: "Points scored per 100 possessions. Higher means more efficient offense.",
   },
   DRtg: {
     title: "Defensive rating",
     body: "Points allowed per 100 possessions. Lower is better defense.",
+  },
+  "On ORtg": {
+    title: "On-court offensive rating",
+    body: "His team's points per 100 possessions while he's on the court, from NBA Stats. It reflects the lineups he plays in, not only his own offense.",
+  },
+  "On DRtg": {
+    title: "On-court defensive rating",
+    body: "Opponents' points per 100 possessions while he's on the court, from NBA Stats. Lower is better. It reflects the whole lineup's defense.",
   },
   NRtg: {
     title: "Net rating",

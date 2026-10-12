@@ -361,7 +361,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "ORtg",
     category: "team",
     tooltip:
-      "Points scored per 100 possessions. On player pages, season boards may supply only an approximate individual estimate. Missing ratings stay unavailable, never fabricated.",
+      "Points scored per 100 possessions. On player pages it's NBA Stats' on-court rating: the team's points per 100 possessions while he plays, so it reflects his lineups too. Missing ratings stay unavailable, never fabricated.",
     showTooltip: true,
     learnSlug: "offensive-rating",
     relatedIds: ["drtg", "net", "ts"],
@@ -372,7 +372,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     label: "Defensive rating",
     shortName: "DRtg",
     category: "team",
-    tooltip: "Points allowed per 100 possessions. Lower is better.",
+    tooltip: "Points allowed per 100 possessions. Lower is better. On player pages it's NBA Stats' on-court rating: opponents' points per 100 possessions while he plays.",
     showTooltip: true,
     learnSlug: "defensive-rating",
     relatedIds: ["ortg", "net"],

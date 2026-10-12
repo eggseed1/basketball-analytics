@@ -184,8 +184,8 @@ export const PLAYER_PERCENTILE_METRICS: PercentileMetricDef[] = [
   },
   {
     key: "offensiveRating",
-    label: "Offensive Rating",
-    shortLabel: "ORtg",
+    label: "On-court offensive rating",
+    shortLabel: "On ORtg",
     direction: "higherBetter",
     value: (r) => r.offensiveRating ?? 0,
     format: (v) => v.toFixed(1),
@@ -194,8 +194,8 @@ export const PLAYER_PERCENTILE_METRICS: PercentileMetricDef[] = [
   },
   {
     key: "defensiveRating",
-    label: "Defensive Rating",
-    shortLabel: "DRtg",
+    label: "On-court defensive rating",
+    shortLabel: "On DRtg",
     direction: "lowerBetter",
     value: (r) => r.defensiveRating ?? 0,
     format: (v) => v.toFixed(1),

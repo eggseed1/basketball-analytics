@@ -1,7 +1,7 @@
 #!/bin/bash
 # Nightly stats.nba.com bakes that cloud runners can't reach: hustle tracking,
-# play types, team on/off, league shot zones, player awards, franchise records and
-# league averages. stats.nba.com drops requests
+# play types, team on/off, league shot zones, player awards, franchise records,
+# league averages and the season tables. stats.nba.com drops requests
 # from GitHub Actions and Cloudflare IPs, so this runs on a home machine from a
 # dedicated clone (never the dev checkout) and pushes a data-only commit that
 # the next scheduled deploy picks up.
@@ -20,6 +20,8 @@ FILES=(
   src/data/franchises/verified-records.json
   src/data/runtime/league-season-averages.json
   src/data/runtime/league-pace.json
+  src/data/runtime/season-tables-snapshot.json
+  src/data/runtime/nba-espn-player-ids.json
 )
 
 log() { echo "[stats-nba-refresh] $(date -u +%Y-%m-%dT%H:%M:%SZ) $*"; }
@@ -48,6 +50,12 @@ fi
 if [ "$REFRESH" = "1" ] || [ "${FORCE:-0}" = "1" ]; then
   node scripts/build-runtime-hustle-snapshot.mjs || log "hustle failed; keeping the last bake"
   "$VENV/bin/python" scripts/build-runtime-playtype-onoff-snapshot.py "$SEASON" || log "play types failed; keeping the last bake"
+  # Totals cache outside the clone; the first run fills every season since 1996-97.
+  if "$VENV/bin/python" scripts/build-nba-season-totals.py "$SEASON"; then
+    npx --yes tsx@4 scripts/build-season-tables.ts || log "season tables failed; keeping the last bake"
+  else
+    log "season totals failed; keeping the last bake"
+  fi
 else
   log "no games in this phase; skipping the nightly bakes"
 fi

@@ -1648,7 +1648,7 @@ function buildMaskedPercentileMetrics(
     push({
       id: "ortg",
       category: "advanced",
-      label: "ORtg",
+      label: "On ORtg",
       value: seasonStats.offensiveRating,
       values: pool
         .map((p) => p.offensiveRating)
@@ -1672,7 +1672,7 @@ function buildMaskedPercentileMetrics(
     push({
       id: "drtg",
       category: "advanced",
-      label: "DRtg",
+      label: "On DRtg",
       value: seasonStats.defensiveRating,
       values: pool
         .filter(hasTrackedAdvancedRatings)

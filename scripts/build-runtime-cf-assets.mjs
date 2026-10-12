@@ -76,7 +76,6 @@ const legendAliasPath = path.join(
   "impact",
   "legend-player-aliases.json"
 );
-let nameIndexByName = {};
 try {
   const raw = JSON.parse(await fs.readFile(aliasPath, "utf8"));
   let aliases = Array.isArray(raw.aliases) ? raw.aliases : [];
@@ -97,7 +96,6 @@ try {
       if (!byName[key]) byName[key] = String(row.espnPlayerId);
     }
   }
-  nameIndexByName = byName;
   const dest = path.join(RUNTIME, "espn-name-index.json");
   await fs.writeFile(
     dest,
@@ -114,36 +112,12 @@ try {
   );
 }
 
-/** Bake ESPN athlete ids onto BRef rows so peer boards skip runtime name scans. */
+// Season rows carry ESPN ids from scripts/build-season-tables.ts, which settles
+// father/son name clashes by NBA person id. Don't re-match them by name here.
 try {
-  const brefPath = path.join(RUNTIME, "bref-advanced-snapshot.json");
-  const snap = JSON.parse(await fs.readFile(brefPath, "utf8"));
-  let hit = 0;
-  let miss = 0;
-  for (const block of Object.values(snap.seasons ?? {})) {
-    for (const key of ["advanced", "perGame"]) {
-      const rows = block?.[key];
-      if (!Array.isArray(rows)) continue;
-      for (const row of rows) {
-        let id = null;
-        for (const k of nameKeys(row?.n)) {
-          if (nameIndexByName[k]) {
-            id = nameIndexByName[k];
-            break;
-          }
-        }
-        if (id) {
-          row.e = id;
-          hit += 1;
-        } else {
-          delete row.e;
-          miss += 1;
-        }
-      }
-    }
-  }
-  await fs.writeFile(brefPath, JSON.stringify(snap));
-  console.log(`[cf-assets] bref espn ids baked (hit=${hit} miss=${miss})`);
+  const snap = JSON.parse(
+    await fs.readFile(path.join(RUNTIME, "season-tables-snapshot.json"), "utf8")
+  );
 
   /** Slim header-search index — keeps /api/players/search off the 10MB BRef module. */
   function normName(name) {
@@ -155,16 +129,17 @@ try {
       .replace(/\s+/g, " ")
       .trim();
   }
-  /** BRef year_max 1969 → canonical 1968-69. */
-  function seasonFromEndYear(year) {
-    const y = Number(year);
-    if (!Number.isFinite(y) || y < 1947 || y > 2100) return null;
-    return `${y - 1}-${String(y).slice(2)}`;
-  }
   const byKey = new Map();
   const seasonKeys = Object.keys(snap.seasons ?? {}).sort((a, b) =>
     b.localeCompare(a)
   );
+  const earliestSeason = new Map();
+  for (const season of seasonKeys) {
+    for (const adv of snap.seasons[season]?.advanced ?? []) {
+      if (adv.p != null) earliestSeason.set(String(adv.p), season);
+    }
+  }
+  const firstTableSeason = seasonKeys.at(-1);
   for (const season of seasonKeys) {
     const advanced = snap.seasons[season]?.advanced ?? [];
     const perGame = snap.seasons[season]?.perGame ?? [];
@@ -175,7 +150,7 @@ try {
       const pg = pgByKey.get(`${String(adv.n).toLowerCase()}|${adv.t}`);
       const espnId = String(adv.e || pg?.e || "").trim();
       const nameKey = normName(adv.n);
-      const dedupe = espnId || nameKey;
+      const dedupe = espnId || (adv.p != null ? `nba:${adv.p}` : nameKey);
       if (!dedupe || byKey.has(dedupe)) continue;
       const gp = Math.max(1, Number(adv.gp) || Number(pg?.gp) || 0);
       const mpg =
@@ -184,139 +159,97 @@ try {
           ? Number(adv.mp) / Number(adv.gp)
           : 0);
       // Row: [id, name, team, lastSeason, minutes, firstSeason?]
-      byKey.set(dedupe, [
-        espnId || (nameIndexByName[nameKey] ?? `bref:${nameKey}`),
+      const row = [
+        espnId || `bref:${nameKey}`,
         String(adv.n),
         String(adv.t || ""),
         season,
         Math.round(mpg * gp),
-      ]);
+      ];
+      // A career that shows up in the first table season may have started earlier.
+      const first = earliestSeason.get(String(adv.p));
+      if (first && first !== firstTableSeason) row[5] = first;
+      byKey.set(dedupe, row);
     }
   }
 
-  // All-era BRef letter index so legends (Russell, Cousy, Wilt, …) are searchable
-  // even when they predate the modern advanced-board bake window.
-  const BREF_UA =
-    "Mozilla/5.0 (compatible; BasketballAnalytics/0.1; educational)";
-  let allEraAdded = 0;
+  // All-era rows (Russell, Cousy, Wilt, …) and first seasons came from an earlier
+  // Basketball-Reference index pull, frozen in player-search-frozen.json. Never refetch them.
   const endYear = (season) => Number(String(season).slice(0, 4)) + 1;
-  const rowsByName = new Map();
-  const usedIds = new Set();
-  for (const row of byKey.values()) {
-    const key = normName(row[1]);
-    rowsByName.set(key, [...(rowsByName.get(key) ?? []), row]);
-    usedIds.add(String(row[0]));
-  }
-  const failedLetters = [];
-  const letters = "abcdefghijklmnopqrstuvwxyz".split("");
-  for (const letter of letters) {
-    try {
-      const url = `https://www.basketball-reference.com/players/${letter}/`;
-      let res = null;
-      for (let attempt = 0; attempt < 3; attempt += 1) {
-        if (attempt) await new Promise((r) => setTimeout(r, 5000 * attempt));
-        res = await fetch(url, {
-          headers: { Accept: "text/html", "User-Agent": BREF_UA },
-          signal: AbortSignal.timeout(20000),
-        }).catch(() => null);
-        if (res?.ok) break;
-      }
-      if (!res?.ok) {
-        console.warn(
-          `[cf-assets] bref index ${letter}/ HTTP ${res?.status ?? "error"}`
-        );
-        failedLetters.push(letter);
-        continue;
-      }
-      const html = await res.text();
-      const rowRe =
-        /data-append-csv="([^"]+)"[\s\S]*?href="\/players\/[^"]+"[^>]*>([^<]+)<\/a>[\s\S]*?data-stat="year_min"\s*>\s*(\d{4})[\s\S]*?data-stat="year_max"\s*>\s*(\d{4})/gi;
-      let match;
-      while ((match = rowRe.exec(html)) !== null) {
-        const slug = String(match[1] ?? "")
-          .trim()
-          .toLowerCase();
-        const name = String(match[2] ?? "")
-          .replace(/\*/g, "")
-          .trim();
-        const first = seasonFromEndYear(match[3]);
-        const last = seasonFromEndYear(match[4]);
-        if (!slug || !name || !last) continue;
-        const nameKey = normName(name);
-        // Same name is not the same player (Tim Hardaway / Tim Hardaway Jr.,
-        // two Nate Williamses): join a modern row only when careers end together.
-        const existing = (rowsByName.get(nameKey) ?? []).find(
-          (row) => Math.abs(endYear(row[3]) - endYear(last)) <= 1
-        );
-        if (existing) {
-          if (!existing[5] && first) existing[5] = first;
-          // Upgrade name-shaped bref: ids to bref:{slug} so player pages can
-          // scrape the full career (Jordan/Barkley/etc. are not ESPN-linked).
-          const curId = String(existing[0] ?? "");
-          if (
-            curId.toLowerCase().startsWith("bref:") &&
-            !/^[a-z]{3,12}\d{2}$/i.test(curId.slice(curId.indexOf(":") + 1))
-          ) {
-            existing[0] = `bref:${slug}`;
-          }
-          continue;
-        }
-        // The name index strips suffixes, so its ESPN id can belong to a
-        // namesake who already has a row.
-        const indexedEspn = nameIndexByName[nameKey] ?? "";
-        const espnId =
-          indexedEspn && !usedIds.has(indexedEspn) && !rowsByName.has(nameKey)
-            ? indexedEspn
-            : "";
-        const row = [espnId || `bref:${slug}`, name, "", last, 0, first || last];
-        byKey.set(espnId || `bref:${slug}`, row);
-        usedIds.add(row[0]);
-        rowsByName.set(nameKey, [...(rowsByName.get(nameKey) ?? []), row]);
-        allEraAdded += 1;
-      }
-      await new Promise((r) => setTimeout(r, 700));
-    } catch (error) {
-      failedLetters.push(letter);
-      console.warn(
-        `[cf-assets] bref index ${letter}/ skipped: ${
-          error instanceof Error ? error.message : error
-        }`
-      );
-    }
-  }
-
   const searchDest = path.join(RUNTIME, "player-search-snapshot.json");
-
-  // A rate-limited BRef letter page must not drop pre-1997 players from search:
-  // carry their rows forward from the last snapshot that had them.
-  let carried = 0;
-  if (failedLetters.length) {
-    const previous = await fs
-      .readFile(searchDest, "utf8")
-      .then((text) => JSON.parse(text))
-      .catch(() => null);
-    const failed = new Set(failedLetters);
-    const presentNames = new Set(
-      [...byKey.values()].map((row) => normName(row[1]))
-    );
-    for (const row of previous?.players ?? []) {
-      if (!row?.[5]) continue;
-      const slug = String(row[0]).startsWith("bref:")
-        ? String(row[0]).slice(5)
-        : "";
-      const letter = /^[a-z]+\d{2}$/.test(slug)
-        ? slug[0]
-        : String(row[1]).trim().split(/\s+/).pop()?.[0]?.toLowerCase();
-      if (!letter || !failed.has(letter)) continue;
-      const nameKey = normName(row[1]);
-      if (presentNames.has(nameKey)) continue;
-      presentNames.add(nameKey);
-      byKey.set(`carried:${row[0]}`, row);
-      carried += 1;
+  const previous = JSON.parse(
+    await fs.readFile(path.join(RUNTIME, "player-search-frozen.json"), "utf8")
+  );
+  // NBA and Basketball-Reference disagree on suffixes ("Marcus Morris Sr." / "Marcus Morris").
+  const baseName = (name) =>
+    normName(name).replace(/\b(jr|sr|ii|iii|iv)\b/g, "").replace(/\s+/g, " ").trim();
+  const previousById = new Map();
+  const previousByName = new Map();
+  for (const row of previous.players) {
+    if (!row?.[5]) continue;
+    previousById.set(String(row[0]), row);
+    const key = baseName(row[1]);
+    previousByName.set(key, [...(previousByName.get(key) ?? []), row]);
+  }
+  const claimed = new Set();
+  const current = [...byKey.values()];
+  const claim = (row, match) => {
+    claimed.add(match);
+    row[5] = match[5];
+    // Keep bref:{slug} ids so legend player pages resolve (Jordan, Barkley, …).
+    const curId = String(row[0]);
+    if (
+      curId.toLowerCase().startsWith("bref:") &&
+      !/^[a-z]{3,12}\d{2}$/i.test(curId.slice(5)) &&
+      /^bref:[a-z]{3,12}\d{2}$/i.test(String(match[0]))
+    ) {
+      row[0] = match[0];
     }
-    console.warn(
-      `[cf-assets] bref index failed for ${failedLetters.join(",")}; carried ${carried} rows from the previous snapshot`
+  };
+  const unmatched = [];
+  for (const row of current) {
+    const match = previousById.get(String(row[0]));
+    if (match && !claimed.has(match)) claim(row, match);
+    else unmatched.push(row);
+  }
+  // Same name is not the same player (Tim Hardaway / Tim Hardaway Jr.):
+  // join by name only when careers end together.
+  const renamed = [];
+  for (const row of unmatched) {
+    const match = (previousByName.get(baseName(row[1])) ?? [])
+      .filter((prev) => !claimed.has(prev) && Math.abs(endYear(prev[3]) - endYear(row[3])) <= 1)
+      .sort((a, b) => Math.abs(endYear(a[3]) - endYear(row[3])) - Math.abs(endYear(b[3]) - endYear(row[3])))[0];
+    if (match) claim(row, match);
+    else renamed.push(row);
+  }
+  // Spelled differently ("Ha Ha" / "Ha Seung-Jin"): same last season, team and minutes.
+  for (const row of renamed) {
+    const candidates = previous.players.filter(
+      (prev) =>
+        prev?.[5] &&
+        !claimed.has(prev) &&
+        prev[3] === row[3] &&
+        prev[2] === row[2] &&
+        Math.abs(Number(prev[4]) - Number(row[4])) <= 10
     );
+    if (candidates.length === 1) claim(row, candidates[0]);
+  }
+  const usedIds = new Set(current.map((row) => String(row[0])));
+  let allEraAdded = 0;
+  let unclaimedModern = 0;
+  for (const row of previous.players) {
+    if (!row?.[5] || claimed.has(row) || usedIds.has(String(row[0]))) continue;
+    // Careers that reached the season tables are already listed under NBA's name.
+    if (String(row[3]) >= firstTableSeason) {
+      unclaimedModern += 1;
+      continue;
+    }
+    usedIds.add(String(row[0]));
+    byKey.set(`carried:${row[0]}`, row);
+    allEraAdded += 1;
+  }
+  if (unclaimedModern) {
+    console.warn(`[cf-assets] ${unclaimedModern} earlier search rows had no season-table match`);
   }
 
   const players = [...byKey.values()];
