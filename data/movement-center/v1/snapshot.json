@@ -3,13 +3,13 @@
     "methodologyVersion": "movement-m1-0.2+movement-rules-v2",
     "status": "NEWS_INGEST_M1",
     "season": "2026-27",
-    "snapshotDate": "2026-10-12",
+    "snapshotDate": "2026-10-13",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-10-12T19:39:27.627Z",
+    "builtAt": "2026-10-13T02:05:17.060Z",
     "rosterPlayerCount": 501,
-    "headlinesScanned": 3208,
-    "latestHeadlineAt": "2026-10-12T19:29:55.000Z",
-    "latestTransactionDate": "2026-10-11",
+    "headlinesScanned": 3279,
+    "latestHeadlineAt": "2026-10-13T02:02:45.000Z",
+    "latestTransactionDate": "2026-10-12",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
       "Basketball News",
@@ -84,7 +84,7 @@
     },
     "outlet:yahoo-sports": {
       "label": "Yahoo Sports",
-      "credibility": 16
+      "credibility": 12
     },
     "outlet:espn": {
       "label": "ESPN",
@@ -104,7 +104,7 @@
     },
     "outlet:clutchpoints": {
       "label": "ClutchPoints",
-      "credibility": 12
+      "credibility": 16
     },
     "reporter:fred-katz": {
       "label": "Fred Katz (The Athletic)",
@@ -210,12 +210,13 @@
     },
     {
       "id": "mv-trade-6450-20260911",
-      "headline": "Kawhi Leonard: reported trade agreement",
-      "primaryClaimId": "mv-84a3b749c812f42d",
+      "headline": "Kawhi Leonard: trade talk",
+      "primaryClaimId": "mv-c11e951da014b875",
       "claimIds": [
         "mv-185526df333e959b",
         "mv-5a0b8de7508b803e",
         "mv-84a3b749c812f42d",
+        "mv-c11e951da014b875",
         "mv-nba-tx-4fbd3cd7ed6bc29b",
         "mv-nba-tx-76c295a5724938b2"
       ],
@@ -228,7 +229,8 @@
       ],
       "linkedTeamIds": [
         "12",
-        "28"
+        "28",
+        "18"
       ],
       "deal": {
         "date": "2026-09-14",
@@ -1060,21 +1062,24 @@
     },
     {
       "id": "mv-contract-4712849-20261012",
-      "headline": "Anthony Black: extension talks with the Magic",
+      "headline": "Anthony Black and Brandon Miller: extension talks",
       "primaryClaimId": "mv-e3853ce25ff7ef6e",
       "claimIds": [
         "mv-821879b1fe3054fc",
-        "mv-e3853ce25ff7ef6e"
+        "mv-e3853ce25ff7ef6e",
+        "mv-f91362009cd576c0"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-12T02:42:54.000Z",
-      "lastMeaningfulAt": "2026-10-12T09:09:26.000Z",
+      "lastMeaningfulAt": "2026-10-12T23:35:00.000Z",
       "linkedPlayerIds": [
-        "4712849"
+        "4712849",
+        "4433287"
       ],
       "linkedTeamIds": [
-        "19"
+        "19",
+        "30"
       ]
     },
     {
@@ -1114,6 +1119,24 @@
         "7",
         "13",
         "25"
+      ]
+    },
+    {
+      "id": "mv-trade-4432816-20261013",
+      "headline": "LaMelo Ball: trade talk",
+      "primaryClaimId": "mv-9d063012845160d0",
+      "claimIds": [
+        "mv-9d063012845160d0"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-10-13T01:41:37.000Z",
+      "lastMeaningfulAt": "2026-10-13T01:41:37.000Z",
+      "linkedPlayerIds": [
+        "4432816"
+      ],
+      "linkedTeamIds": [
+        "16"
       ]
     },
     {
@@ -5576,6 +5599,26 @@
       "isOriginal": false
     },
     {
+      "id": "mv-c11e951da014b875",
+      "clusterId": "mv-trade-6450-20260911",
+      "summary": "Kawhi Leonard available for matchup with Knicks, says coach Darko Rajaković",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-12T18:34:00.000Z",
+      "sourceId": "outlet:yahoo-sports",
+      "sourceLabel": "Yahoo Sports",
+      "sourceUrl": "https://sports.yahoo.com/articles/kawhi-leonard-available-matchup-knicks-183400619.html",
+      "playerIds": [
+        "6450"
+      ],
+      "teamIds": [
+        "18"
+      ],
+      "isOriginal": true
+    },
+    {
       "id": "mv-8029dae4eb322330",
       "clusterId": "mv-contract-4683692-20261006",
       "summary": "Knicks' Karl-Anthony Towns 'disappointed' with New York after contract extension talks shut down",
@@ -5595,6 +5638,45 @@
       ],
       "isOriginal": true,
       "negotiationSpecificity": "active_talks"
+    },
+    {
+      "id": "mv-f91362009cd576c0",
+      "clusterId": "mv-contract-4712849-20261012",
+      "summary": "NBA rumors, news roundup: Brandon Miller a $200 million man? No Anthony Black extension.",
+      "claimType": "extension_talks",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-12T23:35:00.000Z",
+      "sourceId": "outlet:yahoo-sports",
+      "sourceLabel": "Yahoo Sports",
+      "sourceUrl": "https://sports.yahoo.com/articles/nba-rumors-news-roundup-brandon-233500069.html",
+      "playerIds": [
+        "4433287",
+        "4712849"
+      ],
+      "teamIds": [],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-9d063012845160d0",
+      "clusterId": "mv-trade-4432816-20261013",
+      "summary": "Chris Finch believes Timberwolves ‘traded moodiness for giddiness’ with LaMelo Ball",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-13T01:41:37.000Z",
+      "sourceId": "outlet:clutchpoints",
+      "sourceLabel": "ClutchPoints",
+      "sourceUrl": "https://clutchpoints.com/nba/minnesota-timberwolves/timberwolves-news-chris-finch-traded-moodiness-giddiness-lamelo-ball",
+      "playerIds": [
+        "4432816"
+      ],
+      "teamIds": [
+        "16"
+      ],
+      "isOriginal": true
     },
     {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",

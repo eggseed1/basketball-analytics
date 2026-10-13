@@ -1,8 +1,8 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-12",
-    "retrievedAt": "2026-10-12T19:43:09.421Z",
+    "snapshotDate": "2026-10-13",
+    "retrievedAt": "2026-10-13T02:10:17.958Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
@@ -11,7 +11,7 @@
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "49fda6f1444495c36e35e627d2ed02c56acf9119383026e183870b937479b4f4",
+    "sourceHash": "d3bdf0cd864fe368c94816506fc4d26816ab57220b90beeb8dedcdc8cae1f9fc",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -512,6 +512,29 @@
             ],
             "guaranteedTotal": null,
             "href": "/players/1642937"
+          },
+          {
+            "playerId": "1643724",
+            "playerName": "Isaac McKneely",
+            "age": null,
+            "contractId": "cy-1643724-2026",
+            "contractType": "UNKNOWN",
+            "years": [
+              {
+                "contractId": "cy-1643724-2026",
+                "playerId": "1643724",
+                "franchiseId": "1",
+                "season": "2026-27",
+                "salary": null,
+                "capHit": null,
+                "guaranteedAmount": null,
+                "guaranteeStatus": "UNKNOWN",
+                "optionType": "UNKNOWN",
+                "source": "espn-roster-no-salary"
+              }
+            ],
+            "guaranteedTotal": null,
+            "href": "/players/1643724"
           }
         ],
         "futureCommitments": [
@@ -523,7 +546,7 @@
         ],
         "playerSalaryCommitments": 196933711,
         "playersWithSalary": 17,
-        "playersWithoutSalary": 3
+        "playersWithoutSalary": 4
       },
       "draftAssets": {
         "franchiseId": "1",
@@ -8808,6 +8831,29 @@
             "href": "/players/1643548"
           },
           {
+            "playerId": "5107242",
+            "playerName": "Dion Brown",
+            "age": null,
+            "contractId": "cy-5107242-2026",
+            "contractType": "UNKNOWN",
+            "years": [
+              {
+                "contractId": "cy-5107242-2026",
+                "playerId": "5107242",
+                "franchiseId": "17",
+                "season": "2026-27",
+                "salary": null,
+                "capHit": null,
+                "guaranteedAmount": null,
+                "guaranteeStatus": "UNKNOWN",
+                "optionType": "UNKNOWN",
+                "source": "espn-roster-no-salary"
+              }
+            ],
+            "guaranteedTotal": null,
+            "href": "/players/5107242"
+          },
+          {
             "playerId": "1643120",
             "playerName": "Dain Dainja",
             "age": null,
@@ -8886,7 +8932,7 @@
         ],
         "playerSalaryCommitments": 160105139,
         "playersWithSalary": 15,
-        "playersWithoutSalary": 4
+        "playersWithoutSalary": 5
       },
       "draftAssets": {
         "franchiseId": "17",
@@ -12932,6 +12978,29 @@
             "href": "/players/1643808"
           },
           {
+            "playerId": "4685802",
+            "playerName": "Robert McCray V",
+            "age": null,
+            "contractId": "cy-4685802-2026",
+            "contractType": "UNKNOWN",
+            "years": [
+              {
+                "contractId": "cy-4685802-2026",
+                "playerId": "4685802",
+                "franchiseId": "25",
+                "season": "2026-27",
+                "salary": null,
+                "capHit": null,
+                "guaranteedAmount": null,
+                "guaranteeStatus": "UNKNOWN",
+                "optionType": "UNKNOWN",
+                "source": "espn-roster-no-salary"
+              }
+            ],
+            "guaranteedTotal": null,
+            "href": "/players/4685802"
+          },
+          {
             "playerId": "1642923",
             "playerName": "Otega Oweh",
             "age": null,
@@ -13010,7 +13079,7 @@
         ],
         "playerSalaryCommitments": 217523069,
         "playersWithSalary": 16,
-        "playersWithoutSalary": 5
+        "playersWithoutSalary": 6
       },
       "draftAssets": {
         "franchiseId": "25",
@@ -13459,6 +13528,29 @@
             "href": "/players/1643265"
           },
           {
+            "playerId": "4395997",
+            "playerName": "Terrell Brown Jr.",
+            "age": null,
+            "contractId": "cy-4395997-2026",
+            "contractType": "UNKNOWN",
+            "years": [
+              {
+                "contractId": "cy-4395997-2026",
+                "playerId": "4395997",
+                "franchiseId": "26",
+                "season": "2026-27",
+                "salary": null,
+                "capHit": null,
+                "guaranteedAmount": null,
+                "guaranteeStatus": "UNKNOWN",
+                "optionType": "UNKNOWN",
+                "source": "espn-roster-no-salary"
+              }
+            ],
+            "guaranteedTotal": null,
+            "href": "/players/4395997"
+          },
+          {
             "playerId": "1641917",
             "playerName": "Taylor Funk",
             "age": null,
@@ -13503,6 +13595,29 @@
             ],
             "guaranteedTotal": null,
             "href": "/players/1642396"
+          },
+          {
+            "playerId": "1643753",
+            "playerName": "Mohamed Wague",
+            "age": null,
+            "contractId": "cy-1643753-2026",
+            "contractType": "UNKNOWN",
+            "years": [
+              {
+                "contractId": "cy-1643753-2026",
+                "playerId": "1643753",
+                "franchiseId": "26",
+                "season": "2026-27",
+                "salary": null,
+                "capHit": null,
+                "guaranteedAmount": null,
+                "guaranteeStatus": "UNKNOWN",
+                "optionType": "UNKNOWN",
+                "source": "espn-roster-no-salary"
+              }
+            ],
+            "guaranteedTotal": null,
+            "href": "/players/1643753"
           }
         ],
         "futureCommitments": [
@@ -13514,7 +13629,7 @@
         ],
         "playerSalaryCommitments": 184596059,
         "playersWithSalary": 17,
-        "playersWithoutSalary": 3
+        "playersWithoutSalary": 5
       },
       "draftAssets": {
         "franchiseId": "26",
@@ -14076,6 +14191,29 @@
             ],
             "guaranteedTotal": null,
             "href": "/players/4704043"
+          },
+          {
+            "playerId": "1631214",
+            "playerName": "Alondes Williams",
+            "age": null,
+            "contractId": "cy-1631214-2026",
+            "contractType": "UNKNOWN",
+            "years": [
+              {
+                "contractId": "cy-1631214-2026",
+                "playerId": "1631214",
+                "franchiseId": "27",
+                "season": "2026-27",
+                "salary": null,
+                "capHit": null,
+                "guaranteedAmount": null,
+                "guaranteeStatus": "UNKNOWN",
+                "optionType": "UNKNOWN",
+                "source": "espn-roster-no-salary"
+              }
+            ],
+            "guaranteedTotal": null,
+            "href": "/players/1631214"
           }
         ],
         "futureCommitments": [
@@ -14087,7 +14225,7 @@
         ],
         "playerSalaryCommitments": 194195153,
         "playersWithSalary": 16,
-        "playersWithoutSalary": 7
+        "playersWithoutSalary": 8
       },
       "draftAssets": {
         "franchiseId": "27",

@@ -2,9 +2,42 @@
   "source": "espn-site-v2-transactions",
   "datasetVersion": "1.0",
   "espnCalendarYear": 2026,
-  "fetchedAt": "2026-10-12T19:39:06.160Z",
-  "apiCount": 367,
+  "fetchedAt": "2026-10-13T02:03:48.188Z",
+  "apiCount": 370,
   "rows": [
+    {
+      "date": "2026-10-12T07:00Z",
+      "description": "Waived G Chucky Hepburn.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2026-10-12T07:00Z",
+      "description": "Waived G Lonnie Walker IV.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2026-10-12T07:00Z",
+      "description": "Waived G Caleb Houstan.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
     {
       "date": "2026-10-06T07:00Z",
       "description": "Waived G Terrell Brown Jr.",
