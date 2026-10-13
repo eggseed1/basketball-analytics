@@ -21,6 +21,8 @@ import path from "node:path";
 import { HISTORY_VERSION } from "@/lib/history/capabilities";
 import { standingsHref } from "@/lib/standings-routes";
 import { MotionReveal } from "@/components/continuity/motion-reveal";
+import { getHistoricalLeadersBundle } from "@/data/queries/time-machine";
+import { historyHref } from "@/themes/history-url";
 
 export const dynamic = "force-dynamic";
 
@@ -96,6 +98,10 @@ export default async function HistorySeasonPage({
   const seasons = listHistoryProductSeasons();
   const available = seasons.includes(season);
   const caps = getSeasonCapabilities(season);
+  const drblWithoutArchive =
+    !available && caps?.fields.drbl === "SUPPORTED"
+      ? await getHistoricalLeadersBundle(season, 10)
+      : null;
   const manifest = getHistorySeasonManifest(season);
 
   const filtered = available
@@ -221,15 +227,77 @@ export default async function HistorySeasonPage({
           {season} NBA Season
         </h1>
         <p className="mt-2 max-w-xl text-[14px] text-muted-foreground">
-          Teams, a sample of players, and a paged game list for this season.
-          Full player boards are in Players.{" "}
-          {caps?.fields.drbl === "SUPPORTED"
-            ? "DRBL is available for this season."
-            : "DRBL is currently available for supported seasons beginning in 2018-19."}
+          {drblWithoutArchive
+            ? "DRBL is available for this season. The game list is not in this archive. Full player boards are in Players."
+            : caps?.fields.drbl === "SUPPORTED"
+              ? "Teams, a sample of players, and a paged game list for this season. Full player boards are in Players. DRBL is available for this season."
+              : "Teams, a sample of players, and a paged game list for this season. Full player boards are in Players. DRBL is currently available for supported seasons beginning in 2018-19."}
         </p>
       </div>
 
       {!available ? (
+        drblWithoutArchive ? (
+          <section className="flex flex-col gap-3" aria-label="DRBL leaders">
+            <div>
+              <h2 className="text-[17px] font-bold tracking-tight">
+                DRBL/100
+              </h2>
+              <p className="mt-1 max-w-xl text-[13px] text-muted-foreground">
+                The game list for {season} is not in this archive. The rating
+                is published.
+              </p>
+            </div>
+            {drblWithoutArchive.drblNote ? (
+              <p className="text-[13px] text-muted-foreground">
+                {drblWithoutArchive.drblNote}
+              </p>
+            ) : null}
+            {drblWithoutArchive.drbl.length ? (
+              <div className="sports-card overflow-hidden">
+                <ol className="divide-y divide-border">
+                  {drblWithoutArchive.drbl.map((row, index) => (
+                    <li key={row.playerId}>
+                      <Link
+                        href={`/players/${encodeURIComponent(row.playerId)}?season=${encodeURIComponent(season)}&from=history`}
+                        prefetch={false}
+                        className="flex items-center gap-2 px-4 py-2.5 text-[14px] hover:bg-secondary/40"
+                      >
+                        <span className="w-5 tabular-nums text-muted-foreground">
+                          {index + 1}
+                        </span>
+                        <span className="min-w-0 flex-1 truncate font-medium">
+                          {row.playerName}
+                          <span className="font-normal text-muted-foreground">
+                            {" "}
+                            · {row.teamAbbr}
+                          </span>
+                        </span>
+                        <span className="tabular-nums font-semibold">
+                          {row.value.toFixed(2)}
+                        </span>
+                      </Link>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            ) : null}
+            <p className="text-[13px] text-muted-foreground">
+              <Link
+                href={`/explore/players?season=${encodeURIComponent(season)}&sort=drbl100&dir=desc`}
+                className="underline-offset-4 hover:underline"
+              >
+                Full DRBL board
+              </Link>
+              <span className="mx-2">·</span>
+              <Link
+                href={historyHref({ season })}
+                className="underline-offset-4 hover:underline"
+              >
+                Time Machine
+              </Link>
+            </p>
+          </section>
+        ) : (
         <div className="sports-card p-5">
           <p className="text-[14px] font-semibold">Season not precomputed yet</p>
           <p className="mt-1 text-[13px] text-muted-foreground">
@@ -250,6 +318,7 @@ export default async function HistorySeasonPage({
             </ul>
           ) : null}
         </div>
+        )
       ) : (
         <>
           <section className="flex flex-col gap-2" aria-label="Explore">
