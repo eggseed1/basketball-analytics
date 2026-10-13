@@ -2,7 +2,7 @@
   "meta": {
     "methodologyVersion": "p18c2-1.0",
     "snapshotDate": "2026-10-13",
-    "retrievedAt": "2026-10-13T02:10:17.958Z",
+    "retrievedAt": "2026-10-13T14:18:45.322Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
@@ -11,7 +11,7 @@
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "d3bdf0cd864fe368c94816506fc4d26816ab57220b90beeb8dedcdc8cae1f9fc",
+    "sourceHash": "34002717718f40f722b3f248a19bbeaaefc1360ae53a65a0e0aa81c25046a696",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -258,29 +258,6 @@
           ],
           "guaranteedTotal": null,
           "href": "/players/1641747"
-        },
-        {
-          "playerId": "1629022",
-          "playerName": "Lonnie Walker IV",
-          "age": null,
-          "contractId": "cy-1629022-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1629022-2026",
-              "playerId": "1629022",
-              "franchiseId": "7",
-              "season": "2026-27",
-              "salary": 3286399,
-              "capHit": 3286399,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "salary-index"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1629022"
         },
         {
           "playerId": "1628963",
@@ -539,12 +516,12 @@
       "futureCommitments": [
         {
           "season": "2026-27",
-          "totalSalaryDollars": 226405816,
-          "playersUnderContract": 17
+          "totalSalaryDollars": 223119417,
+          "playersUnderContract": 16
         }
       ],
-      "playerSalaryCommitments": 226405816,
-      "playersWithSalary": 17,
+      "playerSalaryCommitments": 223119417,
+      "playersWithSalary": 16,
       "playersWithoutSalary": 4
     },
     "draftAssets": {

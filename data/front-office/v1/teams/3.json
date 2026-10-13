@@ -2,7 +2,7 @@
   "meta": {
     "methodologyVersion": "p18c2-1.0",
     "snapshotDate": "2026-10-13",
-    "retrievedAt": "2026-10-13T02:10:17.958Z",
+    "retrievedAt": "2026-10-13T14:18:45.322Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
@@ -11,7 +11,7 @@
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "d3bdf0cd864fe368c94816506fc4d26816ab57220b90beeb8dedcdc8cae1f9fc",
+    "sourceHash": "34002717718f40f722b3f248a19bbeaaefc1360ae53a65a0e0aa81c25046a696",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -329,52 +329,6 @@
           "href": "/players/1642358"
         },
         {
-          "playerId": "1631216",
-          "playerName": "Caleb Houstan",
-          "age": null,
-          "contractId": "cy-1631216-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1631216-2026",
-              "playerId": "1631216",
-              "franchiseId": "3",
-              "season": "2026-27",
-              "salary": 2625627,
-              "capHit": 2625627,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "salary-index"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1631216"
-        },
-        {
-          "playerId": "1631132",
-          "playerName": "Christian Koloko",
-          "age": null,
-          "contractId": "cy-1631132-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1631132-2026",
-              "playerId": "1631132",
-              "franchiseId": "3",
-              "season": "2026-27",
-              "salary": 2625627,
-              "capHit": 2625627,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "salary-index"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1631132"
-        },
-        {
           "playerId": "1631121",
           "playerName": "Bryce McGowens",
           "age": null,
@@ -467,6 +421,29 @@
           "href": "/players/1631255"
         },
         {
+          "playerId": "1631132",
+          "playerName": "Christian Koloko",
+          "age": null,
+          "contractId": "cy-1631132-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1631132-2026",
+              "playerId": "1631132",
+              "franchiseId": "3",
+              "season": "2026-27",
+              "salary": 263940,
+              "capHit": 263940,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "salary-index-carry-forward"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1631132"
+        },
+        {
           "playerId": "1643738",
           "playerName": "Malik Dia",
           "age": null,
@@ -539,12 +516,12 @@
       "futureCommitments": [
         {
           "season": "2026-27",
-          "totalSalaryDollars": 204110200,
-          "playersUnderContract": 18
+          "totalSalaryDollars": 199122886,
+          "playersUnderContract": 17
         }
       ],
-      "playerSalaryCommitments": 204110200,
-      "playersWithSalary": 18,
+      "playerSalaryCommitments": 199122886,
+      "playersWithSalary": 17,
       "playersWithoutSalary": 3
     },
     "draftAssets": {

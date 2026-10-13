@@ -5,10 +5,10 @@
     "season": "2026-27",
     "snapshotDate": "2026-10-13",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-10-13T02:05:17.060Z",
+    "builtAt": "2026-10-13T14:08:38.003Z",
     "rosterPlayerCount": 501,
-    "headlinesScanned": 3279,
-    "latestHeadlineAt": "2026-10-13T02:02:45.000Z",
+    "headlinesScanned": 3401,
+    "latestHeadlineAt": "2026-10-13T14:03:15.000Z",
     "latestTransactionDate": "2026-10-12",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -76,7 +76,7 @@
     },
     "outlet:realgm": {
       "label": "RealGM",
-      "credibility": 8
+      "credibility": 16
     },
     "outlet:nbc-sports-bay-area": {
       "label": "NBC Sports Bay Area",
@@ -177,6 +177,10 @@
     "reporter:brian-windhorst": {
       "label": "Brian Windhorst (ESPN)",
       "credibility": 30
+    },
+    "outlet:basketball-news": {
+      "label": "Basketball News",
+      "credibility": 16
     },
     "ledger:nba-player-movement": {
       "label": "Player movement log",
@@ -1123,20 +1127,27 @@
     },
     {
       "id": "mv-trade-4432816-20261013",
-      "headline": "LaMelo Ball: trade talk",
-      "primaryClaimId": "mv-9d063012845160d0",
+      "headline": "LaMelo Ball, Julius Randle and others: trade talk",
+      "primaryClaimId": "mv-a73cea72acb9c5ff",
       "claimIds": [
-        "mv-9d063012845160d0"
+        "mv-9d063012845160d0",
+        "mv-bed5ef87d7e300f5",
+        "mv-b6352aec0c6a4ad5",
+        "mv-a73cea72acb9c5ff"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-13T01:41:37.000Z",
-      "lastMeaningfulAt": "2026-10-13T01:41:37.000Z",
+      "lastMeaningfulAt": "2026-10-13T12:00:00.000Z",
       "linkedPlayerIds": [
-        "4432816"
+        "4432816",
+        "3064514",
+        "4396971"
       ],
       "linkedTeamIds": [
-        "16"
+        "16",
+        "17",
+        "30"
       ]
     },
     {
@@ -5670,6 +5681,68 @@
       "sourceId": "outlet:clutchpoints",
       "sourceLabel": "ClutchPoints",
       "sourceUrl": "https://clutchpoints.com/nba/minnesota-timberwolves/timberwolves-news-chris-finch-traded-moodiness-giddiness-lamelo-ball",
+      "playerIds": [
+        "4432816"
+      ],
+      "teamIds": [
+        "16"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-bed5ef87d7e300f5",
+      "clusterId": "mv-trade-4432816-20261013",
+      "summary": "Chris Finch: LaMelo Ball Has Helped Wolves Trade 'Moodiness For Giddiness'",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-13T03:03:13.000Z",
+      "sourceId": "outlet:realgm",
+      "sourceLabel": "RealGM",
+      "sourceUrl": "https://basketball.realgm.com/wiretap/287608/Chris-Finch-LaMelo-Ball-Has-Helped-Wolves-Trade-Moodiness-For-Giddiness",
+      "playerIds": [
+        "4432816"
+      ],
+      "teamIds": [
+        "16"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-b6352aec0c6a4ad5",
+      "clusterId": "mv-trade-4432816-20261013",
+      "summary": "“Moodiness for Giddiness”: Timberwolves HC Takes Subtle Shot at Julius Randle, Naz Reid in Comments Over LaMelo Ball Trade",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-13T11:20:00.000Z",
+      "sourceId": "outlet:essentiallysports",
+      "sourceLabel": "EssentiallySports",
+      "sourceUrl": "https://www.essentiallysports.com/moodiness-for-giddiness-timberwolves-hc-takes-subtle-shot-at-julius-randle-naz-reid-in-comments-over-lamelo-ball-trade/",
+      "playerIds": [
+        "3064514",
+        "4396971",
+        "4432816"
+      ],
+      "teamIds": [
+        "16"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-a73cea72acb9c5ff",
+      "clusterId": "mv-trade-4432816-20261013",
+      "summary": "“We’ve Traded Moodiness for Giddiness”: Timberwolves HC Makes Surprising Remarks on Trading for LaMelo Ball",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-13T12:00:00.000Z",
+      "sourceId": "outlet:basketball-news",
+      "sourceLabel": "Basketball News",
+      "sourceUrl": "https://www.basketballnews.com/news/basketballnews-nba-active-news-weve-traded-moodiness-for-giddiness-timberwolves-hc-makes-surprising-remarks-on-trading-for-lamelo-ball/",
       "playerIds": [
         "4432816"
       ],

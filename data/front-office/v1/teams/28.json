@@ -2,7 +2,7 @@
   "meta": {
     "methodologyVersion": "p18c2-1.0",
     "snapshotDate": "2026-10-13",
-    "retrievedAt": "2026-10-13T02:10:17.958Z",
+    "retrievedAt": "2026-10-13T14:18:45.322Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
@@ -11,7 +11,7 @@
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "d3bdf0cd864fe368c94816506fc4d26816ab57220b90beeb8dedcdc8cae1f9fc",
+    "sourceHash": "34002717718f40f722b3f248a19bbeaaefc1360ae53a65a0e0aa81c25046a696",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -375,29 +375,6 @@
           "href": "/players/1642918"
         },
         {
-          "playerId": "1642935",
-          "playerName": "Chucky Hepburn",
-          "age": null,
-          "contractId": "cy-1642935-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1642935-2026",
-              "playerId": "1642935",
-              "franchiseId": "28",
-              "season": "2026-27",
-              "salary": 1366314,
-              "capHit": 1366314,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "salary-index-carry-forward"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1642935"
-        },
-        {
           "playerId": "1641998",
           "playerName": "Trey Jemison III",
           "age": null,
@@ -562,12 +539,12 @@
       "futureCommitments": [
         {
           "season": "2026-27",
-          "totalSalaryDollars": 207500956,
-          "playersUnderContract": 18
+          "totalSalaryDollars": 206134642,
+          "playersUnderContract": 17
         }
       ],
-      "playerSalaryCommitments": 207500956,
-      "playersWithSalary": 18,
+      "playerSalaryCommitments": 206134642,
+      "playersWithSalary": 17,
       "playersWithoutSalary": 4
     },
     "draftAssets": {
