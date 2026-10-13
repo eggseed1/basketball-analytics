@@ -225,7 +225,7 @@ export default async function HistorySeasonPage({
           Full player boards are in Players.{" "}
           {caps?.fields.drbl === "SUPPORTED"
             ? "DRBL is available for this season."
-            : "DRBL is currently available for supported seasons beginning in 2020-21."}
+            : "DRBL is currently available for supported seasons beginning in 2018-19."}
         </p>
       </div>
 

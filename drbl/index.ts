@@ -1,3 +1,6 @@
+import { readFile } from "node:fs/promises";
+
+import { isBeforePublishedDrblSeason } from "./constants";
 import {
   downloadCdnBoxScore,
   downloadCdnPlayByPlay,
@@ -51,8 +54,42 @@ export interface DrblProcessedGame {
   reconcile: DrblGameReconcileReport;
 }
 
-async function loadRawPbp(gameId: string, force = false): Promise<unknown> {
+async function cachedPbpIsStats(file: string): Promise<boolean> {
+  try {
+    const meta = JSON.parse(await readFile(`${file}.meta.json`, "utf8")) as {
+      endpoint?: string;
+    };
+    return String(meta.endpoint ?? "").includes("stats.nba.com");
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Published seasons keep the CDN feed they were built from.
+ * Earlier seasons use stats.nba.com play-by-play. The CDN file for 2019-20
+ * can omit substitutions that the stats feed still has, and those gaps
+ * invent minutes.
+ */
+async function loadRawPbp(
+  gameId: string,
+  force = false,
+  preferStats = false
+): Promise<unknown> {
   const file = rawPath("games", gameId, "playbyplay.json");
+  const statsEndpoint = `stats.nba.com/stats/playbyplayv3?GameID=${gameId}`;
+  if (preferStats) {
+    const alreadyStats = !force && (await cachedPbpIsStats(file));
+    const { data } = await readOrFetchJson(
+      file,
+      () => downloadStatsPlayByPlayV3(gameId),
+      {
+        force: force || !alreadyStats,
+        endpoint: statsEndpoint,
+      }
+    );
+    return data;
+  }
   try {
     const { data } = await readOrFetchJson(
       file,
@@ -69,7 +106,7 @@ async function loadRawPbp(gameId: string, force = false): Promise<unknown> {
       () => downloadStatsPlayByPlayV3(gameId),
       {
         force: true,
-        endpoint: `stats.nba.com/stats/playbyplayv3?GameID=${gameId}`,
+        endpoint: statsEndpoint,
       }
     );
     return data;
@@ -117,7 +154,11 @@ export async function processGame(
   options: { force?: boolean; persist?: boolean } = {}
 ): Promise<DrblProcessedGame> {
   const [rawPbp, rawBox] = await Promise.all([
-    loadRawPbp(meta.gameId, options.force),
+    loadRawPbp(
+      meta.gameId,
+      options.force,
+      isBeforePublishedDrblSeason(meta.season)
+    ),
     loadRawBox(meta.gameId, options.force),
   ]);
 

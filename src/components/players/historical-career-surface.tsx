@@ -26,7 +26,7 @@ function perGame(
 
 /**
  * Compact historical career surface from precomputed product artifacts.
- * DRBL/WAR1 only where scientifically supported (2020-21+); else —.
+ * DRBL/WAR1 only where published (2018-19+); else —.
  */
 export function HistoricalCareerSurface({
   career,
@@ -131,7 +131,7 @@ export function HistoricalCareerSurface({
                       title={
                         drblOk
                           ? undefined
-                          : "DRBL is currently available for supported seasons beginning in 2020-21."
+                          : "DRBL is currently available for supported seasons beginning in 2018-19."
                       }
                     >
                       —

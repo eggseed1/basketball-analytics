@@ -59,6 +59,7 @@ import { BOX_BLEND_ABILITY_INPUT, BOX_BLEND_MODEL_VERSION, publishBoxBlend } fro
 import {
   DRBL_PARSER_VERSION,
   DRBL_RECONSTRUCTION_VERSION,
+  isBeforePublishedDrblSeason,
 } from "../constants";
 
 export interface DrblSeasonArtifact {
@@ -78,6 +79,8 @@ export interface DrblSeasonArtifact {
   gamesProcessed: number;
   gamesFailed: number;
   gamesQuarantined: number;
+  /** Games dropped because reconstructed minutes missed the box by more than ±2. */
+  gamesLineupExcluded?: number;
   replacementLevel: "R1";
   lineupModel?: {
     version: string;
@@ -164,6 +167,25 @@ export interface DrblSeasonArtifact {
 }
 
 /**
+ * Seasons before the published 2020-21 window only train on games whose
+ * reconstructed minutes match the box. A guessed five is not a substitute.
+ */
+export function seasonRequiresLineupMinutes(season: string): boolean {
+  return isBeforePublishedDrblSeason(season);
+}
+
+export function includeGameInSeasonModel(
+  reconcile: { quarantined: boolean; lineup: { ok: boolean } | null },
+  options: { requireLineupMinutes?: boolean } = {}
+): boolean {
+  if (reconcile.quarantined) return false;
+  if (options.requireLineupMinutes && reconcile.lineup && !reconcile.lineup.ok) {
+    return false;
+  }
+  return true;
+}
+
+/**
  * Season compute:
  * 1) Process + quarantine filter
  * 2) Build R1 replacement pool
@@ -187,6 +209,11 @@ export async function computeSeasonDrbl(
     /** Refresh the game list (needed nightly so new finals appear). */
     refreshGameList?: boolean;
     minPossessions?: number;
+    /**
+     * Drop games whose reconstructed minutes miss the box.
+     * Defaults on for seasons before 2020-21.
+     */
+    requireLineupMinutes?: boolean;
   } = {}
 ): Promise<DrblSeasonArtifact> {
   let games = await listSeasonGames(season, {
@@ -201,6 +228,9 @@ export async function computeSeasonDrbl(
   const processedGames: Awaited<ReturnType<typeof processGame>>[] = [];
   let gamesFailed = 0;
   let gamesQuarantined = 0;
+  let gamesLineupExcluded = 0;
+  const requireLineupMinutes =
+    options.requireLineupMinutes ?? seasonRequiresLineupMinutes(season);
 
   for (let i = 0; i < games.length; i++) {
     const meta = games[i]!;
@@ -212,11 +242,20 @@ export async function computeSeasonDrbl(
       if (processed.reconcile.quarantined) {
         gamesQuarantined += 1;
         gamesFailed += 1;
+      } else if (
+        !includeGameInSeasonModel(processed.reconcile, { requireLineupMinutes })
+      ) {
+        gamesLineupExcluded += 1;
       } else {
         processedGames.push(processed);
       }
     } catch {
       gamesFailed += 1;
+    }
+    if (i % 25 === 0 || i === games.length - 1) {
+      console.log(
+        `[drbl] ${season} ${i + 1}/${games.length} kept=${processedGames.length} lineupExcluded=${gamesLineupExcluded} quarantined=${gamesQuarantined} failed=${gamesFailed}`
+      );
     }
     if (options.delayMs && i < games.length - 1) {
       await new Promise((r) => setTimeout(r, options.delayMs));
@@ -556,6 +595,7 @@ export async function computeSeasonDrbl(
     gamesProcessed: processedGames.length,
     gamesFailed,
     gamesQuarantined,
+    gamesLineupExcluded,
     replacementLevel: "R1",
     behaviorRetrospectiveOnly: true,
     fusionTarget: {

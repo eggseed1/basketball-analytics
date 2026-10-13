@@ -8,7 +8,7 @@
  *
  * Writes src/data/runtime/percentile-pools-snapshot.json.
  */
-import { writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
 // Bundled overlays, same as Cloudflare Workers production.
@@ -28,7 +28,15 @@ async function main() {
   let worst = { err: 0, at: "" };
   const errors: number[] = [];
 
-  for (const season of [...listBundledBrefSeasons()].sort()) {
+  const only = (process.env.PERCENTILE_SEASONS ?? "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+  const seasonsToBuild = [...listBundledBrefSeasons()]
+    .sort()
+    .filter((season) => only.length === 0 || only.includes(season));
+
+  for (const season of seasonsToBuild) {
     const board = await loadBundledPeerBoard(season);
     if (!board) {
       console.log(`${season}: not bundled, skipped`);
@@ -73,7 +81,17 @@ async function main() {
   );
 
   const file = path.join(process.cwd(), "src/data/runtime/percentile-pools-snapshot.json");
-  writeFileSync(file, JSON.stringify({ version: 1, generatedAt: new Date().toISOString(), seasons }));
+  let merged = seasons;
+  if (only.length > 0) {
+    const existing = JSON.parse(readFileSync(file, "utf8")) as {
+      seasons?: Record<string, Record<string, number[]>>;
+    };
+    merged = { ...(existing.seasons ?? {}), ...seasons };
+  }
+  writeFileSync(
+    file,
+    JSON.stringify({ version: 1, generatedAt: new Date().toISOString(), seasons: merged })
+  );
   console.log(`wrote ${path.relative(process.cwd(), file)}`);
 }
 

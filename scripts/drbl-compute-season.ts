@@ -46,6 +46,7 @@ async function main() {
     gamesProcessed: artifact.gamesProcessed,
     gamesFailed: artifact.gamesFailed,
     gamesQuarantined: artifact.gamesQuarantined,
+    gamesLineupExcluded: artifact.gamesLineupExcluded,
     version: artifact.version,
     artifactGenerationId: (artifact as { artifactGenerationId?: string })
       .artifactGenerationId,

@@ -3,8 +3,14 @@
 import { useMemo, useState, type ReactNode } from "react";
 
 import { GlassSurface } from "@/components/brand/glass-surface";
-import { CareerTeamTrendChartLazy as CareerTeamTrendChart } from "@/components/charts/recharts-lazy";
+import {
+  CareerTeamTrendChartLazy as CareerTeamTrendChart,
+  TalentYearChartLazy as TalentYearChart,
+} from "@/components/charts/recharts-lazy";
+import { buildTalentSeries } from "@/lib/player-talent-trend";
 import type { CareerSeriesPoint } from "@/components/players/career-team-trend-chart";
+import type { CompactPlayerGameLogRow } from "@/data/history/player-game-log";
+import { efgPct, tsPct } from "@/lib/player-page-contract";
 import {
   Select,
   SelectContent,
@@ -96,6 +102,8 @@ type MetricDef = {
 };
 
 const METRICS: MetricDef[] = [
+  { id: "drbl100", label: "DRBL", category: "impact", digits: 1, primary: true },
+  { id: "bpm", label: "BPM", category: "advanced", digits: 1, primary: true },
   { id: "darko", label: "DARKO", category: "impact", digits: 2, primary: true },
   { id: "war1", label: "WAR1", category: "impact", digits: 1, primary: true },
   { id: "ppg", label: "PTS", category: "profile", primary: true },
@@ -122,7 +130,6 @@ const METRICS: MetricDef[] = [
   { id: "drtg", label: "DRtg", category: "defense", digits: 1 },
   { id: "net", label: "NET", category: "advanced", digits: 1 },
   { id: "per", label: "PER", category: "advanced", digits: 1 },
-  { id: "bpm", label: "BPM", category: "advanced", digits: 1 },
   { id: "vorp", label: "VORP", category: "advanced", digits: 1 },
   { id: "ws", label: "WS", category: "advanced", digits: 1 },
   { id: "cpi", label: "CPI", category: "impact", digits: 1 },
@@ -132,7 +139,6 @@ const METRICS: MetricDef[] = [
   { id: "oRaptor", label: "O-RAPTOR", category: "impact", digits: 2 },
   { id: "dRaptor", label: "D-RAPTOR", category: "impact", digits: 2 },
   { id: "winsAdded", label: "WAR", category: "impact", digits: 2 },
-  { id: "drbl100", label: "DRBL", category: "impact", digits: 1 },
   { id: "drblO", label: "DRBL-O", category: "impact", digits: 1 },
   { id: "drblD", label: "DRBL-D", category: "impact", digits: 1 },
 ];
@@ -161,8 +167,8 @@ function metricValue(row: CareerBoardRow, id: MetricId): number | null {
   return raw;
 }
 
-/** The chart tracks overall level across a career, so lead with impact. DARKO spans 1996-97+, WAR1 2020-21+. */
-const DEFAULT_METRIC_ORDER: MetricId[] = ["darko", "war1", "ppg"];
+/** Lead with stats we compute. DRBL/100 from 2018-19, BPM from 1996-97. */
+const DEFAULT_METRIC_ORDER: MetricId[] = ["drbl100", "war1", "darko", "bpm", "ppg"];
 
 function defaultCareerMetric(rows: CareerBoardRow[]): MetricId {
   return (
@@ -186,6 +192,7 @@ function seriesFor(
     const { color, abbr } = teamChartColor(row.teamId);
     points.push({
       season: shortSeason(row.season),
+      fullSeason: row.season,
       value,
       teamId: row.teamId,
       teamAbbr: row.teamAbbr || abbr,
@@ -239,6 +246,92 @@ const CAREER_SEASON_COL_STYLE = {
   maxWidth: CAREER_SEASON_COL_WIDTH,
 } as const;
 
+const IMPACT_GAME_METRICS = new Set<MetricId>([
+  "drbl100",
+  "war1",
+  "darko",
+  "bpm",
+  "vorp",
+  "drblO",
+  "drblD",
+  "darkoOff",
+  "darkoDef",
+  "raptor",
+]);
+
+/** Hollinger game score per 36. Missing rebound splits count as 0. */
+function gameBoxScore(game: CompactPlayerGameLogRow): number | null {
+  if (game.minutesNum < 8) return null;
+  const raw =
+    game.points +
+    0.4 * game.fgm -
+    0.7 * game.fga -
+    0.4 * (game.fta - game.ftm) +
+    0.7 * (game.orb ?? 0) +
+    0.3 * (game.drb ?? 0) +
+    game.steals +
+    0.7 * game.assists +
+    0.7 * game.blocks -
+    0.4 * (game.pf ?? 0) -
+    game.turnovers;
+  if (!Number.isFinite(raw)) return null;
+  return (raw * 36) / game.minutesNum;
+}
+
+/** Same 0–100 scale as the season chips. A raw 0.65 rate would sit under a 65 line. */
+function percentDots(rate: number | null): number | null {
+  if (rate == null || !Number.isFinite(rate)) return null;
+  return rate * 100;
+}
+
+function gameDotValue(
+  metric: MetricId,
+  game: CompactPlayerGameLogRow
+): number | null {
+  if (game.minutesNum <= 0) return null;
+  switch (metric) {
+    case "ppg":
+      return game.points;
+    case "apg":
+      return game.assists;
+    case "rpg":
+      return game.rebounds;
+    case "mpg":
+      return game.minutesNum;
+    case "orpg":
+      return game.orb;
+    case "drpg":
+      return game.drb;
+    case "spg":
+      return game.steals;
+    case "bpg":
+      return game.blocks;
+    case "tov":
+      return game.turnovers;
+    case "pf":
+      return game.pf;
+    case "ts":
+      return percentDots(tsPct(game.points, game.fga, game.fta));
+    case "fgPct":
+      return percentDots(game.fga > 0 ? game.fgm / game.fga : null);
+    case "twoPct": {
+      const twoPa = game.fga - game.threePa;
+      const twoPm = game.fgm - game.threePm;
+      return percentDots(twoPa > 0 ? twoPm / twoPa : null);
+    }
+    case "threePct":
+      return percentDots(game.threePa > 0 ? game.threePm / game.threePa : null);
+    case "ftPct":
+      return percentDots(game.fta > 0 ? game.ftm / game.fta : null);
+    case "efg":
+      return percentDots(efgPct(game.fgm, game.fga, game.threePm));
+    case "threePar":
+      return percentDots(game.fga > 0 ? game.threePa / game.fga : null);
+    default:
+      return null;
+  }
+}
+
 export function PlayerCareerBoard({
   playerId,
   season,
@@ -248,6 +341,8 @@ export function PlayerCareerBoard({
   teamKey,
   fromHistory = false,
   themeMode = "historical",
+  gameLogs = [],
+  chart = "seasons",
 }: {
   playerId: string;
   season: string;
@@ -257,6 +352,9 @@ export function PlayerCareerBoard({
   teamKey?: string | null;
   fromHistory?: boolean;
   themeMode?: ThemeMode;
+  gameLogs?: CompactPlayerGameLogRow[];
+  /** "games" is the career-page dot chart. Overview keeps the season line. */
+  chart?: "seasons" | "games";
 }) {
   const [metric, setMetric] = useState<MetricId>(() => defaultCareerMetric(rows));
   const primary = useMemo(
@@ -274,6 +372,35 @@ export function PlayerCareerBoard({
   const selected =
     METRICS.find((item) => item.id === metric) ?? METRICS[0]!;
   const points = seriesFor(rows, selected);
+  const talentKind = IMPACT_GAME_METRICS.has(selected.id) ? "impact" : "box";
+  const talent = useMemo(() => {
+    if (chart !== "games") return null;
+    const bySeason = new Map<string, CompactPlayerGameLogRow[]>();
+    for (const game of gameLogs) {
+      const list = bySeason.get(game.season) ?? [];
+      list.push(game);
+      bySeason.set(game.season, list);
+    }
+    const seasons = [...points]
+      .sort((a, b) => (a.fullSeason ?? "").localeCompare(b.fullSeason ?? ""))
+      .flatMap((point) => {
+        if (!point.fullSeason) return [];
+        const games = bySeason.get(point.fullSeason) ?? [];
+        return [
+          {
+            season: point.fullSeason,
+            value: point.value,
+            games: games.map((game) => ({
+              date: game.date,
+              minutes: game.minutesNum,
+              box: gameDotValue(selected.id, game),
+              boxScore: gameBoxScore(game),
+            })),
+          },
+        ];
+      });
+    return buildTalentSeries({ kind: talentKind, seasons });
+  }, [chart, gameLogs, points, selected.id, talentKind]);
   const newestFirst = useMemo(
     () => [...rows].sort((a, b) => b.season.localeCompare(a.season)),
     [rows]
@@ -294,7 +421,11 @@ export function PlayerCareerBoard({
     seasonType === "playoffs" ? "Playoffs" : "Regular season";
 
   return (
-    <section id="career" className="scroll-mt-16 flex flex-col gap-4" aria-label="Career">
+    <section
+      id="career"
+      className="scroll-mt-16 flex flex-col gap-4"
+      aria-label={chart === "games" ? "Career stats" : "Season stats"}
+    >
       <GlassSurface
         effect="css"
         accentColor={wash?.colorA}
@@ -302,7 +433,9 @@ export function PlayerCareerBoard({
         className="flex flex-col gap-4 p-4 sm:p-5"
       >
         <div>
-          <h2 className={type.heading}>Season stats</h2>
+          <h2 className={type.heading}>
+            {chart === "games" ? "Career stats" : "Season stats"}
+          </h2>
           <p className={cn(type.bodySm, "mt-1 text-muted-foreground")}>
             Career trend + season grid. Click a season to open that year’s
             game log.
@@ -362,7 +495,21 @@ export function PlayerCareerBoard({
               </Select>
             </div>
 
-            {points.length > 0 ? (
+            {talent ? (
+              <>
+                <TalentYearChart
+                  dots={talent.dots}
+                  line={talent.line}
+                  kind={talentKind}
+                  height={260}
+                />
+                <p className={cn(type.caption, "text-muted-foreground")}>
+                  {talentKind === "impact"
+                    ? `Small dots are games. Large dots are each season's published ${selected.label}, and the line runs through them. Plus-minus is blank in these logs.`
+                    : "Small dots are games. Large dots are the season average, and the line runs through them."}
+                </p>
+              </>
+            ) : points.length > 0 ? (
               <CareerTeamTrendChart points={points} height={200} drawKey={selected.id} />
             ) : (
               <p className={cn(type.caption, "text-muted-foreground")}>

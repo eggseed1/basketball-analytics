@@ -3,12 +3,16 @@
  * Design may restyle; season/view semantics stay frozen.
  */
 
-import { historySeasonSupportsDrbl } from "@/data/history/player-career-types";
+import {
+  DRBL_SUPPORTED_START,
+  historySeasonSupportsDrbl,
+} from "@/data/history/player-career-types";
 import { startYearFromCanonicalSeason } from "@/data/providers/historical/season-range";
+
+export { DRBL_SUPPORTED_START };
 
 export const PLAYER_GAME_LOG_PAGE_SIZE = 40;
 export const PLAYER_GAME_LOG_SUPPORTED_START = "1996-97";
-export const DRBL_SUPPORTED_START = "2020-21";
 
 export type PlayerPageView =
   | "overview"
@@ -111,7 +115,7 @@ export function playerPageNavViews(
   ];
   if (caps.sentiment) out.push({ id: "sentiment", label: "Sentiment" });
   if (caps.gameLogs) out.push({ id: "games", label: "Game Logs" });
-  out.push({ id: "career", label: "Career" });
+  out.push({ id: "career", label: "Career stats" });
   if (caps.splits) out.push({ id: "splits", label: "Splits" });
   out.push({ id: "shooting", label: "Shooting" });
   out.push({ id: "advanced", label: "Advanced" });

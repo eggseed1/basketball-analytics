@@ -681,6 +681,7 @@ export default async function PlayerPage({
                 teamKey={teamKey}
                 fromHistory={fromHistory}
                 themeMode={themeMode}
+                chart={view === "career" ? "games" : "seasons"}
               />
             </Suspense>
           )

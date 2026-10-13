@@ -5,6 +5,7 @@
  * Null semantics: 0 = measured zero; null = not measured / unavailable.
  */
 
+import { DRBL_SUPPORTED_START } from "@/data/history/player-career-types";
 import { currentNbaStartYear } from "@/lib/nba-season-phase";
 
 export const HISTORY_VERSION = "drbl-history-v1" as const;
@@ -123,7 +124,7 @@ function seasonLabel(startYear: number): string {
 /**
  * Authoritative season capability table for product UI (1996-97 → present).
  * Game-level flags (e.g. scoreTimelineAvailable) still override per artifact.
- * DRBL/WAR1 only 2020-21+; never invent pre-2020 support.
+ * DRBL/WAR1 from the published start. Earlier seasons stay unavailable.
  */
 export const SEASON_CAPABILITIES: SeasonCapabilityRow[] = (() => {
   const rows: SeasonCapabilityRow[] = [];
@@ -133,13 +134,19 @@ export const SEASON_CAPABILITIES: SeasonCapabilityRow[] = (() => {
       rows.push(row(season, "CDN_LIVEDATA", MODERN_DRBL));
       continue;
     }
-    if (season === "2019-20") {
+    if (season >= DRBL_SUPPORTED_START) {
       rows.push(
         row(
           season,
           "STATS_V3_ADAPT",
-          { ...ARCHIVE_FACTUAL, pbp: "PARTIAL", scoreTimeline: "PARTIAL" },
-          "Known source anomalies: descriptive product OK; canonical DRBL blocked"
+          {
+            ...ARCHIVE_FACTUAL,
+            pbp: "PARTIAL",
+            scoreTimeline: "PARTIAL",
+            drbl: "SUPPORTED",
+            war1: "SUPPORTED",
+          },
+          "Play-by-play is from stats.nba.com. Games whose reconstructed minutes miss the box by more than 2 are left out of DRBL."
         )
       );
       continue;

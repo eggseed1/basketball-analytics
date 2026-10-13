@@ -9,6 +9,7 @@ import { getPlayerSeasonBoardSnapshot } from "@/data/queries/player-data-health"
 import { getTeamSeasonStats } from "@/data/queries/team-seasons";
 import { listTransactionEvents } from "@/data/queries/offseason-tracker";
 import { fetchDrblSeason } from "@/data/providers/nba/drbl-loader";
+import { nbaTeamAbbr } from "@/data/providers/nba/nba-team-meta";
 import { isDrblSeason } from "@/data/drbl/season-registry";
 import { hasValidatedDrblEstimate } from "@/data/queries/percentiles";
 import {
@@ -305,7 +306,7 @@ export async function getHistoricalLeadersBundle(
       return {
         playerId: profileId,
         playerName: row.playerName,
-        teamAbbr: row.teamId || "—",
+        teamAbbr: nbaTeamAbbr(row.teamId || "") || "—",
         teamId: row.teamId,
         value: row.drbl100,
         metric: "drbl100" as const,

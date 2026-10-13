@@ -26,6 +26,8 @@ const MIN_GAMES = Number(process.env.DRBL_MIN_GAMES ?? "50");
 
 /** Always attempt these (historical seals + current production). */
 const SEED_SEASONS = [
+  "2018-19",
+  "2019-20",
   "2020-21",
   "2021-22",
   "2022-23",

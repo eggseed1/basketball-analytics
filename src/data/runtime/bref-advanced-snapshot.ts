@@ -14,7 +14,18 @@ import {
   normalizeEspnLookupName,
 } from "./espn-name-index";
 import { resolveCanonicalTeam } from "@/data/identity/team-map";
+import { bundledHeightInches } from "./player-bio-snapshot";
 import type { PlayerSeason } from "@/data/types";
+import {
+  bundledDrblOverlayMeta,
+  getBundledDrblSeason,
+} from "./drbl-overlay-snapshot";
+import {
+  bundledDarkoSeasonIds,
+  bundledRaptorSeasonIds,
+  getBundledDarkoSeason,
+  getBundledRaptorSeason,
+} from "./impact-overlay-snapshot";
 
 type SlimAdvanced = {
   n: string;
@@ -516,6 +527,197 @@ function ensureCareerSlimIndex() {
   }
   careerSlimIndex = { byEspn, byName };
   return careerSlimIndex;
+}
+
+export type BundledCompPoolRow = {
+  playerId: string;
+  playerName: string;
+  season: string;
+  teamId: string;
+  age: number;
+  gamesPlayed: number;
+  minutes: number;
+  bpm: number;
+  vorp: number | null;
+  trueShootingPct: number;
+  usagePct: number;
+  assistPct: number;
+  reboundPct: number;
+  drbl100: number | null;
+  war1: number | null;
+  drblO: number | null;
+  drblD: number | null;
+  darko: number | null;
+  darkoOff: number | null;
+  darkoDef: number | null;
+  raptor: number | null;
+  obpm: number | null;
+  dbpm: number | null;
+  pts36: number | null;
+  trb36: number | null;
+  ast36: number | null;
+  heightInches: number | null;
+  positionCode: number | null;
+  /** Prior seasons with at least 10 games. */
+  experience: number;
+};
+
+let bundledCompPool: BundledCompPoolRow[] | null = null;
+
+/**
+ * One slim row per ESPN id × season for same-age comps. Built from the
+ * already-walked career index so player pages do not rematerialize peer boards.
+ */
+export function getBundledCompPool(): BundledCompPoolRow[] {
+  if (bundledCompPool) return bundledCompPool;
+  const index = ensureCareerSlimIndex();
+  const idByName = new Map<string, string>();
+  for (const [nameKey, hits] of index.byName) {
+    const espnId = hits.find((hit) => hit.adv.e)?.adv.e;
+    idByName.set(nameKey, espnId || `n:${nameKey}`);
+  }
+  const best = new Map<string, BundledCompPoolRow>();
+  for (const [nameKey, hits] of index.byName) {
+    const playerId = idByName.get(nameKey)!;
+    for (const hit of hits) {
+      const age = hit.pg?.age;
+      const bpm = hit.adv.bpm;
+      const gp = hit.adv.gp || hit.pg?.gp || 0;
+      if (age == null || !Number.isFinite(age) || age < 18 || age > 44) continue;
+      if (bpm == null || !Number.isFinite(bpm)) continue;
+      if (gp < 1) continue;
+      const mpg =
+        hit.pg?.mp ??
+        (hit.adv.mp > 0 && gp > 0 ? hit.adv.mp / gp : 0);
+      const key = `${playerId}|${hit.season}`;
+      const prev = best.get(key);
+      if (prev && prev.gamesPlayed >= gp) continue;
+      const resolvedTeam = resolveCanonicalTeam(hit.adv.t);
+      best.set(key, {
+        playerId,
+        playerName: hit.adv.n,
+        season: hit.season,
+        teamId:
+          resolvedTeam.status === "resolved"
+            ? resolvedTeam.team.canonicalTeamId
+            : hit.adv.t,
+        age: Math.round(age),
+        gamesPlayed: gp,
+        minutes: mpg * gp,
+        bpm,
+        vorp: Number.isFinite(hit.adv.vorp) ? hit.adv.vorp : null,
+        trueShootingPct: pctAsFraction(hit.adv.ts),
+        usagePct: percentPoints(hit.adv.usg),
+        assistPct: percentPoints(hit.adv.astPct ?? 0),
+        reboundPct: percentPoints(hit.adv.trbPct ?? 0),
+        drbl100: null,
+        war1: null,
+        drblO: null,
+        drblD: null,
+        darko: null,
+        darkoOff: null,
+        darkoDef: null,
+        raptor: null,
+        obpm: Number.isFinite(hit.adv.obpm) ? hit.adv.obpm : null,
+        dbpm: Number.isFinite(hit.adv.dbpm) ? hit.adv.dbpm : null,
+        pts36: per36(hit.pg?.pts, mpg),
+        trb36: per36(hit.pg?.trb, mpg),
+        ast36: per36(hit.pg?.ast, mpg),
+        heightInches: bundledHeightInches(playerId),
+        positionCode: positionCode(hit.pg?.pos),
+        experience: 0,
+      });
+    }
+  }
+  const drblSeasons = bundledDrblOverlayMeta().seasons ?? [];
+  for (const season of drblSeasons) {
+    for (const row of getBundledDrblSeason(season)) {
+      const espnId = lookupEspnIdByPlayerName(row.playerName);
+      if (!espnId) continue;
+      const hit = best.get(`${espnId}|${season}`);
+      if (!hit) continue;
+      hit.drbl100 = Number.isFinite(row.drbl100) ? row.drbl100 : null;
+      hit.war1 =
+        row.r1WinEquivalents != null && Number.isFinite(row.r1WinEquivalents)
+          ? row.r1WinEquivalents
+          : null;
+      hit.drblO = row.drblO != null && Number.isFinite(row.drblO) ? row.drblO : null;
+      hit.drblD = row.drblD != null && Number.isFinite(row.drblD) ? row.drblD : null;
+    }
+  }
+  for (const season of bundledDarkoSeasonIds()) {
+    for (const row of getBundledDarkoSeason(season)) {
+      const espnId = lookupEspnIdByPlayerName(row.playerName);
+      if (!espnId) continue;
+      const hit = best.get(`${espnId}|${season}`);
+      if (!hit) continue;
+      hit.darko = Number.isFinite(row.impact) ? row.impact : null;
+      hit.darkoOff =
+        row.offensive != null && Number.isFinite(row.offensive) ? row.offensive : null;
+      hit.darkoDef =
+        row.defensive != null && Number.isFinite(row.defensive) ? row.defensive : null;
+    }
+  }
+  for (const season of bundledRaptorSeasonIds()) {
+    for (const row of getBundledRaptorSeason(season)) {
+      const espnId = lookupEspnIdByPlayerName(row.playerName);
+      if (!espnId) continue;
+      const hit = best.get(`${espnId}|${season}`);
+      if (!hit) continue;
+      hit.raptor = Number.isFinite(row.impact) ? row.impact : null;
+    }
+  }
+  const byPlayer = new Map<string, BundledCompPoolRow[]>();
+  for (const row of best.values()) {
+    const list = byPlayer.get(row.playerId) ?? [];
+    list.push(row);
+    byPlayer.set(row.playerId, list);
+  }
+  for (const list of byPlayer.values()) {
+    list.sort((a, b) => a.season.localeCompare(b.season));
+    let prior = 0;
+    for (const row of list) {
+      row.experience = prior;
+      if (row.gamesPlayed >= 10) prior += 1;
+    }
+  }
+  bundledCompPool = [...best.values()];
+  return bundledCompPool;
+}
+
+function per36(perGame: number | undefined, minutesPerGame: number): number | null {
+  if (perGame == null || !Number.isFinite(perGame) || minutesPerGame < 8) return null;
+  return (perGame * 36) / minutesPerGame;
+}
+
+function positionCode(pos: string | undefined): number | null {
+  if (!pos) return null;
+  const label = pos.toUpperCase().replace(/[^A-Z]/g, "");
+  const scale: Record<string, number> = {
+    PG: 0,
+    G: 0.25,
+    SG: 0.5,
+    GF: 0.75,
+    SF: 1,
+    F: 1,
+    PF: 1.5,
+    FC: 1.75,
+    CF: 1.75,
+    C: 2,
+  };
+  if (label in scale) return scale[label]!;
+  if (label.startsWith("PG")) return 0;
+  if (label.startsWith("SG")) return 0.5;
+  if (label.startsWith("SF")) return 1;
+  if (label.startsWith("PF")) return 1.5;
+  if (label.startsWith("C")) return 2;
+  if (label.startsWith("G")) return 0.25;
+  if (label.startsWith("F")) return 1;
+  return null;
+}
+
+export function compPositionCode(pos: string | undefined): number | null {
+  return positionCode(pos);
 }
 
 function hitsToCareerRows(

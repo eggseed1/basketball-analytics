@@ -78,7 +78,7 @@ function resolvePercentileCategory(
 /**
  * Prefer DARKO → WAR1 → DRBL/100 for the percentile board default.
  * DARKO covers ~1996–present continuously; WAR1/DRBL only exist from
- * 2020-21+, so defaulting to WAR1 made career sparklines look gapped
+ * 2018-19+, so defaulting to WAR1 made career sparklines look gapped
  * (a point in the early teens, then nothing until ~2021).
  */
 export function defaultPercentileMetricId(

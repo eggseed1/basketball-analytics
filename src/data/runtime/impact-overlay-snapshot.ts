@@ -74,6 +74,14 @@ function toRaptorRating(season: string, row: RaptorSlimRow): RaptorRating {
   };
 }
 
+export function bundledDarkoSeasonIds(): string[] {
+  return Object.keys(darkoSeasons);
+}
+
+export function bundledRaptorSeasonIds(): string[] {
+  return Object.keys(raptorSeasons);
+}
+
 export function getBundledDarkoSeason(season: string): DarkoRating[] {
   const key = String(season ?? "").trim();
   if (!key) return [];

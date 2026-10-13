@@ -1,9 +1,17 @@
 {
   "version": 1,
   "minGames": 50,
-  "generatedAt": "2026-10-11T20:28:52.104Z",
+  "generatedAt": "2026-10-13T18:45:58.925Z",
   "note": "Runtime-published DRBL seasons from precomputed artifacts (nightly bake).",
   "seasons": {
+    "2018-19": {
+      "gamesProcessed": 1185,
+      "players": 510
+    },
+    "2019-20": {
+      "gamesProcessed": 1043,
+      "players": 518
+    },
     "2020-21": {
       "gamesProcessed": 1080,
       "players": 532

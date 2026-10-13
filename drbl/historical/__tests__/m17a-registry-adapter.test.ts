@@ -17,6 +17,8 @@ import type { DrblEvent } from "../../types";
 describe("M17a season registry", () => {
   it("is the single source for DRBL seasons", () => {
     assert.deepEqual(listDrblSeasons(), [
+      "2018-19",
+      "2019-20",
       "2020-21",
       "2021-22",
       "2022-23",
@@ -24,10 +26,13 @@ describe("M17a season registry", () => {
       "2024-25",
       "2025-26",
     ]);
+    assert.equal(isDrblSeason("2018-19"), true);
+    assert.equal(isDrblSeason("2019-20"), true);
     assert.equal(isDrblSeason("2024-25"), true);
     assert.equal(isDrblSeason("2020-21"), true);
+    assert.equal(isDrblSeason("2017-18"), false);
     assert.equal(isDrblSeason("1997-98"), false);
-    assert.equal(SEASON_REGISTRY.length, 7);
+    assert.equal(SEASON_REGISTRY.length, 9);
     assert.equal(getSeasonEntry("2026-27")!.drblAvailable, false);
   });
 

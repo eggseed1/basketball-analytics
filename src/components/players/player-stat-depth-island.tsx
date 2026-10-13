@@ -1132,7 +1132,7 @@ async function AdvancedView({
           />
         ) : (
           <div className="rounded-md border border-border px-3 py-2 text-[13px] text-muted-foreground">
-            DRBL/100 available 2020-21+ only (never shown as 0 for earlier eras).
+            DRBL/100 available 2018-19+ only (never shown as 0 for earlier eras).
           </div>
         )}
         {caps.advancedDrbl ? (
@@ -1150,7 +1150,7 @@ async function AdvancedView({
           />
         ) : (
           <div className="rounded-md border border-border px-3 py-2 text-[13px] text-muted-foreground">
-            WAR1 follows the same 2020-21+ support window as DRBL/100.
+            WAR1 follows the same 2018-19+ support window as DRBL/100.
           </div>
         )}
       </div>

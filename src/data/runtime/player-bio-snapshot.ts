@@ -52,6 +52,12 @@ function lookup(id: string | null | undefined): Player | null {
   return expand(players[key]);
 }
 
+export function bundledHeightInches(playerId: string | null | undefined): number | null {
+  const key = String(playerId ?? "").trim();
+  const height = key ? players[key]?.h : undefined;
+  return height != null && Number.isFinite(height) && height > 0 ? height : null;
+}
+
 export function getBundledPlayerBio(
   playerId: string,
   relatedIds: Array<string | null | undefined> = []

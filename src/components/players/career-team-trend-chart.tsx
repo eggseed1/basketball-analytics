@@ -2,11 +2,13 @@
 
 import { useCallback, useId, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {
+  CartesianGrid,
+  ComposedChart,
   Curve,
   Line,
-  LineChart,
   ReferenceLine,
   ResponsiveContainer,
+  Scatter,
   Tooltip,
   XAxis,
   YAxis,
@@ -33,6 +35,14 @@ function formatCareerChartNumber(value: number): string {
   }
   return formatNumber(value, 1);
 }
+
+export type CareerGameDot = {
+  /** Axis label matching `CareerSeriesPoint.season`, e.g. "24-25". */
+  season: string;
+  value: number;
+  /** Fractional calendar year so games spread through the season. */
+  year: number;
+};
 
 export type CareerSeriesPoint = {
   /** Short label on the axis, e.g. "16-17". */
@@ -484,6 +494,7 @@ function CareerChartTooltip({
 
 export function CareerTeamTrendChart({
   points,
+  gameDots,
   height = 220,
   className,
   selectedSeason,
@@ -493,6 +504,8 @@ export function CareerTeamTrendChart({
   drawKey,
 }: {
   points: CareerSeriesPoint[];
+  /** Individual games stacked on each season tick. Same units as the line. */
+  gameDots?: CareerGameDot[];
   height?: number;
   className?: string;
   selectedSeason?: string;
@@ -644,6 +657,36 @@ export function CareerTeamTrendChart({
   const showFranchiseLegend =
     showLegend && !useSavantDots && visibleLegend.length > 1;
 
+  const yearRows = useMemo(
+    () =>
+      data.map((row) => {
+        const start = Number((row.fullSeason ?? "").slice(0, 4));
+        const year = Number.isFinite(start) ? start + 0.72 : Number.NaN;
+        return { ...row, year };
+      }),
+    [data]
+  );
+  const scatterDots = useMemo(
+    () =>
+      (gameDots ?? []).filter(
+        (dot) => Number.isFinite(dot.year) && Number.isFinite(dot.value)
+      ),
+    [gameDots]
+  );
+  const useYearAxis = scatterDots.length > 0 && yearRows.every((row) => Number.isFinite(row.year));
+  const yearTicks = useMemo(() => {
+    if (!useYearAxis) return [];
+    const years = [
+      ...yearRows.map((row) => row.year),
+      ...scatterDots.map((dot) => dot.year),
+    ];
+    const min = Math.floor(Math.min(...years));
+    const max = Math.ceil(Math.max(...years));
+    const ticks: number[] = [];
+    for (let y = min + (min % 2); y <= max; y += 2) ticks.push(y);
+    return ticks;
+  }, [useYearAxis, yearRows, scatterDots]);
+
   return (
     <div className={cn("flex min-w-0 flex-col", className)}>
       {/*
@@ -656,12 +699,16 @@ export function CareerTeamTrendChart({
         style={{ height }}
       >
         <ResponsiveContainer width="100%" height={height}>
-          <LineChart
-            data={data}
+          <ComposedChart
+            data={useYearAxis ? yearRows : data}
             margin={{ top: 8, right: 8, left: 0, bottom: 2 }}
           >
             <XAxis
-              dataKey="season"
+              dataKey={useYearAxis ? "year" : "season"}
+              type={useYearAxis ? "number" : "category"}
+              ticks={useYearAxis ? yearTicks : undefined}
+              domain={useYearAxis ? ["dataMin - 0.3", "dataMax + 0.3"] : undefined}
+              tickFormatter={useYearAxis ? (value: number) => String(Math.round(value)) : undefined}
               tick={{ fontSize: 12 }}
               tickLine={false}
               axisLine={false}
@@ -679,16 +726,34 @@ export function CareerTeamTrendChart({
               wrapperStyle={rechartsFrostWrapperStyle}
               content={<CareerChartTooltip />}
             />
-            {teamChangeSeasons.map((season) => (
-              <ReferenceLine
-                key={season}
-                x={season}
-                stroke="var(--border)"
-                strokeWidth={1}
-                strokeOpacity={0.85}
-                ifOverflow="extendDomain"
+            {teamChangeSeasons.map((season) => {
+              const at = useYearAxis
+                ? yearRows.find((row) => row.season === season)?.year
+                : season;
+              if (at == null) return null;
+              return (
+                <ReferenceLine
+                  key={season}
+                  x={at}
+                  stroke="var(--border)"
+                  strokeWidth={1}
+                  strokeOpacity={0.85}
+                  ifOverflow="extendDomain"
+                />
+              );
+            })}
+            {useYearAxis ? (
+              <Scatter
+                data={scatterDots}
+                dataKey="value"
+                fill={chartTheme.teamColor(themedPlotPoints[0]?.teamId).color}
+                fillOpacity={chartTheme.isDark ? 0.45 : 0.35}
+                stroke="none"
+                r={2.4}
+                isAnimationActive={false}
+                legendType="none"
               />
-            ))}
+            ) : null}
             <Line
               type="monotone"
               dataKey="value"
@@ -704,11 +769,11 @@ export function CareerTeamTrendChart({
                   drawClock={drawClock}
                 />
               )}
-              dot={renderDot}
-              activeDot={renderActiveDot}
+              dot={useYearAxis ? false : renderDot}
+              activeDot={useYearAxis ? false : renderActiveDot}
               isAnimationActive={false}
             />
-          </LineChart>
+          </ComposedChart>
         </ResponsiveContainer>
       </div>
       {showFranchiseLegend ? (
@@ -732,6 +797,162 @@ export function CareerTeamTrendChart({
           ))}
         </ul>
       ) : null}
+    </div>
+  );
+}
+
+function valueAxisTicks(min: number, max: number): number[] {
+  const span = max - min;
+  const step = span > 20 ? 5 : span > 10 ? 2 : 1;
+  const start = Math.ceil(min / step) * step;
+  const ticks: number[] = [];
+  for (let value = start; value <= max + 1e-6; value += step) ticks.push(value);
+  if (min < 0 && max > 0 && !ticks.includes(0)) ticks.push(0);
+  return ticks.sort((a, b) => a - b);
+}
+
+function yearAxisTicks(min: number, max: number): number[] {
+  const start = min % 2 === 0 ? min : min + 1;
+  const ticks: number[] = [];
+  for (let year = start; year <= max; year += 2) ticks.push(year);
+  return ticks;
+}
+
+export function TalentYearChart({
+  dots,
+  line,
+  kind,
+  height = 260,
+}: {
+  dots: Array<{ year: number; value: number }>;
+  line: Array<{ year: number; value: number }>;
+  kind: "impact" | "box";
+  height?: number;
+}) {
+  const theme = useChartTheme();
+  const years = [...dots, ...line].map((point) => point.year);
+  const xMin = Math.floor(Math.min(...years));
+  const xMax = Math.ceil(Math.max(...years));
+  const values = [...dots, ...line].map((point) => point.value);
+  const yMin = Math.min(...values);
+  const yMax = Math.max(...values);
+  const yPad = Math.max(0.35, (yMax - yMin) * 0.12);
+  const dotFill = theme.isDark ? "#93c5fd" : "#8eb8e6";
+  const lineStroke = theme.isDark ? "#60a5fa" : "#2f6fed";
+  const dotOpacity = kind === "impact" ? 0.32 : 0.18;
+  const dotRadius = kind === "impact" ? 1.35 : 1.05;
+  const ring = theme.isDark ? "#0b1220" : "#ffffff";
+  return (
+    <div className="relative w-full min-w-0 shrink-0" style={{ height }}>
+      <ResponsiveContainer width="100%" height={height}>
+        <ComposedChart margin={{ top: 8, right: 12, left: 0, bottom: 4 }}>
+          <CartesianGrid
+            vertical={false}
+            stroke="currentColor"
+            strokeOpacity={theme.isDark ? 0.14 : 0.08}
+            strokeDasharray="1 4"
+          />
+          <XAxis
+            dataKey="year"
+            type="number"
+            domain={[xMin - 0.15, xMax + 0.15]}
+            ticks={yearAxisTicks(xMin, xMax)}
+            tickFormatter={(value: number) => String(value)}
+            tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
+            tickLine={false}
+            axisLine={false}
+          />
+          <YAxis
+            tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
+            tickLine={false}
+            axisLine={false}
+            width={32}
+            domain={[yMin - yPad, yMax + yPad]}
+            ticks={valueAxisTicks(yMin - yPad, yMax + yPad)}
+            tickFormatter={formatCareerChartNumber}
+          />
+          <ReferenceLine
+            y={0}
+            stroke="currentColor"
+            strokeOpacity={0.35}
+            strokeDasharray="4 4"
+          />
+          <Scatter
+            data={dots}
+            dataKey="value"
+            tooltipType="none"
+            isAnimationActive={false}
+            legendType="none"
+            shape={(props: { cx?: number; cy?: number }) => {
+              if (props.cx == null || props.cy == null || !Number.isFinite(props.cx)) {
+                return <g />;
+              }
+              return (
+                <circle
+                  cx={props.cx}
+                  cy={props.cy}
+                  r={dotRadius}
+                  fill={dotFill}
+                  fillOpacity={dotOpacity}
+                  pointerEvents="none"
+                />
+              );
+            }}
+          />
+          <Line
+            data={line}
+            type="monotone"
+            dataKey="value"
+            stroke={lineStroke}
+            strokeWidth={2}
+            dot={false}
+            activeDot={false}
+            tooltipType="none"
+            style={{ pointerEvents: "none" }}
+            isAnimationActive={false}
+          />
+          <Scatter
+            data={line}
+            name="season"
+            dataKey="value"
+            tooltipType="none"
+            isAnimationActive={false}
+            legendType="none"
+            shape={(props: {
+              cx?: number;
+              cy?: number;
+              payload?: { season?: string; value?: number };
+            }) => {
+              if (props.cx == null || props.cy == null || !Number.isFinite(props.cx)) {
+                return <g />;
+              }
+              const value = props.payload?.value;
+              const season = props.payload?.season;
+              const label =
+                value != null && Number.isFinite(value)
+                  ? formatCareerChartNumber(value)
+                  : null;
+              return (
+                <g
+                  data-tip={season || label || undefined}
+                  data-tip-sub={season && label ? label : undefined}
+                >
+                  <circle cx={props.cx} cy={props.cy} r={12} fill="transparent" />
+                  <circle
+                    data-tip-anchor=""
+                    cx={props.cx}
+                    cy={props.cy}
+                    r={5.5}
+                    fill={lineStroke}
+                    stroke={ring}
+                    strokeWidth={2}
+                  />
+                </g>
+              );
+            }}
+          />
+        </ComposedChart>
+      </ResponsiveContainer>
     </div>
   );
 }

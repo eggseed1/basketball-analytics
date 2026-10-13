@@ -112,6 +112,7 @@ export async function PlayerCareerIsland({
   teamKey,
   fromHistory = false,
   themeMode = "historical",
+  chart = "seasons",
 }: {
   playerId: string;
   season: string;
@@ -121,6 +122,7 @@ export async function PlayerCareerIsland({
   teamKey?: string | null;
   fromHistory?: boolean;
   themeMode?: ThemeMode;
+  chart?: "seasons" | "games";
 }) {
   try {
     const source =
@@ -142,6 +144,11 @@ export async function PlayerCareerIsland({
     const rows = toBoardRows(filtered);
     const seasons = rows.map((row) => row.season);
     const compare = pickCompare(seasons, season, compareSeason);
+    const recent = [...rows].sort((a, b) => b.season.localeCompare(a.season));
+    const gameLogs =
+      chart === "games"
+        ? await loadCareerGameLogs(playerId, recent.map((row) => row.season))
+        : [];
 
     return (
       <PlayerCareerBoard
@@ -153,6 +160,8 @@ export async function PlayerCareerIsland({
         teamKey={teamKey}
         fromHistory={fromHistory}
         themeMode={themeMode}
+        gameLogs={gameLogs}
+        chart={chart}
       />
     );
   } catch {
@@ -167,7 +176,27 @@ export async function PlayerCareerIsland({
         teamKey={teamKey}
         fromHistory={fromHistory}
         themeMode={themeMode}
+        chart={chart}
       />
     );
   }
+}
+
+async function loadCareerGameLogs(playerId: string, seasons: string[]) {
+  const [{ resolvePlayerSeasonGameLog }, { resolveNbaIdForDrbl }] =
+    await Promise.all([
+      import("@/data/runtime/player-game-logs-store"),
+      import("@/data/identity/player-identity"),
+    ]);
+  const nbaId = await resolveNbaIdForDrbl(playerId).catch(() => null);
+  const logs = await Promise.all(
+    seasons.map((season) =>
+      resolvePlayerSeasonGameLog({
+        season,
+        playerId,
+        nbaId,
+      }).catch(() => [])
+    )
+  );
+  return logs.flat();
 }

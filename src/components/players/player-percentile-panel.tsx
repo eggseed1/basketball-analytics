@@ -629,7 +629,7 @@ function CompComparePanel({
       {metric.id === "r1WinEquivalents" ||
       metric.id.startsWith("drbl") ? (
         <p className={cn(type.caption, "text-muted-foreground")}>
-          DRBL / WAR1 coverage starts in 2020-21. Switch to DARKO for earlier seasons.
+          DRBL / WAR1 coverage starts in 2018-19. Switch to DARKO for earlier seasons.
         </p>
       ) : null}
 

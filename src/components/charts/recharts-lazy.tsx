@@ -145,6 +145,22 @@ export const SentimentPerformanceScatterLazy = dynamic(
   { ssr: false, loading: () => pulse }
 );
 
+export const PlayerCompFuturesChartLazy = dynamic(
+  () =>
+    import("@/components/players/player-comp-futures-chart").then((m) => ({
+      default: m.PlayerCompFuturesChart,
+    })),
+  { ssr: false, loading: () => pulse }
+);
+
+export const TalentYearChartLazy = dynamic(
+  () =>
+    import("@/components/players/career-team-trend-chart").then((m) => ({
+      default: m.TalentYearChart,
+    })),
+  { ssr: false, loading: () => pulse }
+);
+
 export const CareerTeamTrendChartLazy = dynamic(
   () =>
     import("@/components/players/career-team-trend-chart").then((m) => ({
