@@ -5,10 +5,10 @@
     "season": "2026-27",
     "snapshotDate": "2026-10-13",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-10-13T14:08:38.003Z",
+    "builtAt": "2026-10-13T21:42:50.731Z",
     "rosterPlayerCount": 501,
-    "headlinesScanned": 3401,
-    "latestHeadlineAt": "2026-10-13T14:03:15.000Z",
+    "headlinesScanned": 3562,
+    "latestHeadlineAt": "2026-10-13T21:09:25.000Z",
     "latestTransactionDate": "2026-10-12",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -68,7 +68,7 @@
     },
     "outlet:the-athletic": {
       "label": "The Athletic",
-      "credibility": 24
+      "credibility": 12
     },
     "outlet:sportsnaut": {
       "label": "Sportsnaut",
@@ -76,7 +76,7 @@
     },
     "outlet:realgm": {
       "label": "RealGM",
-      "credibility": 16
+      "credibility": 8
     },
     "outlet:nbc-sports-bay-area": {
       "label": "NBC Sports Bay Area",
@@ -100,7 +100,7 @@
     },
     "outlet:talkbasket": {
       "label": "TalkBasket",
-      "credibility": 16
+      "credibility": 12
     },
     "outlet:clutchpoints": {
       "label": "ClutchPoints",
@@ -181,6 +181,10 @@
     "outlet:basketball-news": {
       "label": "Basketball News",
       "credibility": 16
+    },
+    "outlet:marca": {
+      "label": "Marca",
+      "credibility": 12
     },
     "ledger:nba-player-movement": {
       "label": "Player movement log",
@@ -671,7 +675,7 @@
     },
     {
       "id": "mv-contract-4709138-20261002",
-      "headline": "Brandin Podziemski: extension talks with the Warriors",
+      "headline": "Brandin Podziemski and Draymond Green: contract talks with the Warriors",
       "primaryClaimId": "mv-ed74883e53566860",
       "claimIds": [
         "mv-12b9f7a9d7c69451",
@@ -689,6 +693,7 @@
         "mv-61a07ff6e0e1f8fb",
         "mv-20b601e187cbc7d1",
         "mv-b16a6cf298fd33c7",
+        "mv-18bd887c0bde1e26",
         "mv-nba-tx-2ca8f86bb5e24687"
       ],
       "evidenceClass": "reported",
@@ -696,7 +701,8 @@
       "firstSeenAt": "2026-10-02T08:48:49.000Z",
       "lastMeaningfulAt": "2026-10-10T12:00:00.000Z",
       "linkedPlayerIds": [
-        "4709138"
+        "4709138",
+        "6589"
       ],
       "linkedTeamIds": [
         "9"
@@ -759,12 +765,13 @@
       "claimIds": [
         "mv-ac71e037974744a0",
         "mv-d2a9f6adeed1b232",
-        "mv-9a555206cc4a7ca7"
+        "mv-9a555206cc4a7ca7",
+        "mv-74c51c9e2709e583"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-05T07:47:20.000Z",
-      "lastMeaningfulAt": "2026-10-06T19:09:44.000Z",
+      "lastMeaningfulAt": "2026-10-13T20:15:11.000Z",
       "linkedPlayerIds": [
         "6589",
         "4701232",
@@ -818,7 +825,7 @@
     },
     {
       "id": "mv-contract-4683692-20261006",
-      "headline": "Cason Wallace, Karl-Anthony Towns and others: extension talks with the Knicks",
+      "headline": "Cason Wallace, Karl-Anthony Towns and others: contract talks with the Knicks",
       "primaryClaimId": "mv-abb18f46843d904e",
       "claimIds": [
         "mv-d46db2f4a349df07",
@@ -848,12 +855,13 @@
         "mv-fc9ce7087a0e782e",
         "mv-2b8efe7981fc622a",
         "mv-abb18f46843d904e",
-        "mv-8029dae4eb322330"
+        "mv-8029dae4eb322330",
+        "mv-e8884129ec6b1bc1"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-06T17:10:57.000Z",
-      "lastMeaningfulAt": "2026-10-12T18:36:38.000Z",
+      "lastMeaningfulAt": "2026-10-13T15:07:28.000Z",
       "linkedPlayerIds": [
         "4683692",
         "3136195",
@@ -1148,6 +1156,49 @@
         "16",
         "17",
         "30"
+      ]
+    },
+    {
+      "id": "mv-contract-3032977-20261013",
+      "headline": "Giannis Antetokounmpo: contract future",
+      "primaryClaimId": "mv-d3b0498977a48f7e",
+      "claimIds": [
+        "mv-d3b0498977a48f7e"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-10-13T16:02:16.000Z",
+      "lastMeaningfulAt": "2026-10-13T16:02:16.000Z",
+      "linkedPlayerIds": [
+        "3032977"
+      ],
+      "linkedTeamIds": [
+        "14"
+      ]
+    },
+    {
+      "id": "mv-contract-4066354-20261013",
+      "headline": "Payton Pritchard: extension talks with the Celtics",
+      "primaryClaimId": "mv-c4857f5411416cbb",
+      "claimIds": [
+        "mv-220b2d7bf8c42c88",
+        "mv-745c06c135bc3cd6",
+        "mv-0230bb5b1b2c265a",
+        "mv-7b328292baaee18b",
+        "mv-625f62d5fc58b97f",
+        "mv-8bf0c2aebc28e9f1",
+        "mv-e9726a8e390f2b21",
+        "mv-c4857f5411416cbb"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-10-13T16:29:04.000Z",
+      "lastMeaningfulAt": "2026-10-13T20:36:40.000Z",
+      "linkedPlayerIds": [
+        "4066354"
+      ],
+      "linkedTeamIds": [
+        "2"
       ]
     },
     {
@@ -5732,6 +5783,27 @@
       "isOriginal": true
     },
     {
+      "id": "mv-18bd887c0bde1e26",
+      "clusterId": "mv-contract-4709138-20261002",
+      "summary": "Draymond Green identifies ‘weird' aspect of Brandin Podziemski Warriors contract",
+      "claimType": "contract_movement",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-13T11:32:17.000Z",
+      "sourceId": "outlet:yahoo-sports",
+      "sourceLabel": "Yahoo Sports",
+      "sourceUrl": "https://sports.yahoo.com/articles/draymond-green-identifies-weird-aspect-113217636.html",
+      "playerIds": [
+        "6589",
+        "4709138"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": true
+    },
+    {
       "id": "mv-a73cea72acb9c5ff",
       "clusterId": "mv-trade-4432816-20261013",
       "summary": "“We’ve Traded Moodiness for Giddiness”: Timberwolves HC Makes Surprising Remarks on Trading for LaMelo Ball",
@@ -5750,6 +5822,234 @@
         "16"
       ],
       "isOriginal": true
+    },
+    {
+      "id": "mv-e8884129ec6b1bc1",
+      "clusterId": "mv-contract-4683692-20261006",
+      "summary": "“It’s Business”: Carmelo Anthony Supports Knicks’ Controversial Stance on Karl-Anthony Towns, Josh Hart Contract Decisions",
+      "claimType": "contract_movement",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-13T15:07:28.000Z",
+      "sourceId": "outlet:essentiallysports",
+      "sourceLabel": "EssentiallySports",
+      "sourceUrl": "https://www.essentiallysports.com/nba-legends-basketball-news-its-business-carmelo-anthony-supports-new-york-knicks-controversial-stance-on-karl-anthony-towns-josh-hart-contract-decisions/",
+      "playerIds": [
+        "3062679",
+        "3136195"
+      ],
+      "teamIds": [
+        "18"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-d3b0498977a48f7e",
+      "clusterId": "mv-contract-3032977-20261013",
+      "summary": "Giannis Antetokounmpo Now Eligible For Extension, Waiting Until January Adds $82M",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-13T16:02:16.000Z",
+      "sourceId": "outlet:realgm",
+      "sourceLabel": "RealGM",
+      "sourceUrl": "https://basketball.realgm.com/wiretap/287620/Giannis-Antetokounmpo-Now-Eligible-For-Extension-Waiting-Until-January-Adds-$82M",
+      "playerIds": [
+        "3032977"
+      ],
+      "teamIds": [],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-220b2d7bf8c42c88",
+      "clusterId": "mv-contract-4066354-20261013",
+      "summary": "Celtics, Pritchard agree to 2-year, $44.2 million contract extension (Report)",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-13T16:29:04.000Z",
+      "sourceId": "outlet:yahoo-sports",
+      "sourceLabel": "Yahoo Sports",
+      "sourceUrl": "https://sports.yahoo.com/articles/celtics-pritchard-agree-2-44-162904515.html",
+      "playerIds": [
+        "4066354"
+      ],
+      "teamIds": [
+        "2"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "offer"
+    },
+    {
+      "id": "mv-745c06c135bc3cd6",
+      "clusterId": "mv-contract-4066354-20261013",
+      "summary": "Payton Pritchard, Celtics Agree To Two-Year Extension",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-13T19:55:22.000Z",
+      "sourceId": "reporter:shams-charania",
+      "sourceLabel": "Hoops Rumors, citing Shams Charania (ESPN)",
+      "reporterLabel": "Shams Charania",
+      "sourceUrl": "https://www.hoopsrumors.com/2026/10/payton-pritchard-celtics-agree-to-two-year-extension.html",
+      "playerIds": [
+        "4066354"
+      ],
+      "teamIds": [
+        "2"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "offer"
+    },
+    {
+      "id": "mv-0230bb5b1b2c265a",
+      "clusterId": "mv-contract-4066354-20261013",
+      "summary": "Celtics reportedly sign G Payton Pritchard to 2-year, $44.2 million extension, with a mutual option",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-13T19:57:53.000Z",
+      "sourceId": "outlet:yahoo-sports",
+      "sourceLabel": "Yahoo Sports",
+      "sourceUrl": "https://sports.yahoo.com/nba/article/celtics-reportedly-sign-g-payton-pritchard-to-2-year-442-million-extension-with-a-mutual-option-195753973.html",
+      "playerIds": [
+        "4066354"
+      ],
+      "teamIds": [
+        "2"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-7b328292baaee18b",
+      "clusterId": "mv-contract-4066354-20261013",
+      "summary": "Celtics, Payton Pritchard agree to $44 million contract extension",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-13T20:04:07.000Z",
+      "sourceId": "reporter:shams-charania",
+      "sourceLabel": "ClutchPoints, citing Shams Charania (ESPN)",
+      "reporterLabel": "Shams Charania",
+      "sourceUrl": "https://clutchpoints.com/nba/boston-celtics/celtics-news-payton-pritchard-44-million-contract-extension",
+      "playerIds": [
+        "4066354"
+      ],
+      "teamIds": [
+        "2"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "offer"
+    },
+    {
+      "id": "mv-625f62d5fc58b97f",
+      "clusterId": "mv-contract-4066354-20261013",
+      "summary": "Payton Pritchard agrees to a contract extension with the Celtics",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-13T20:11:38.000Z",
+      "sourceId": "outlet:talkbasket",
+      "sourceLabel": "TalkBasket",
+      "sourceUrl": "https://www.talkbasket.net/224752-payton-pritchard-agrees-to-a-contract-extension-with-the-celtics",
+      "playerIds": [
+        "4066354"
+      ],
+      "teamIds": [
+        "2"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "offer"
+    },
+    {
+      "id": "mv-8bf0c2aebc28e9f1",
+      "clusterId": "mv-contract-4066354-20261013",
+      "summary": "Payton Pritchard, Celtics Agree To Two-Year, $44.2M Extension",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-13T20:14:23.000Z",
+      "sourceId": "outlet:realgm",
+      "sourceLabel": "RealGM",
+      "sourceUrl": "https://basketball.realgm.com/wiretap/287623/Payton-Pritchard-Celtics-Agree-To-Two-Year-$442M-Extension",
+      "playerIds": [
+        "4066354"
+      ],
+      "teamIds": [
+        "2"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "offer"
+    },
+    {
+      "id": "mv-74c51c9e2709e583",
+      "clusterId": "mv-trade-6589-20261005",
+      "summary": "Lakers eye more roster changes with Dalton Knecht and a $48 million standout linked to potential exits",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-13T20:15:11.000Z",
+      "sourceId": "outlet:marca",
+      "sourceLabel": "Marca",
+      "sourceUrl": "https://www.marca.com/en/basketball/nba/los-angeles-lakers/2026/10/13/lakers-eye-more-roster-changes-with-dalton-knecht-and-48-million-standout-linked-to-potential-exits.html",
+      "playerIds": [
+        "4897943"
+      ],
+      "teamIds": [
+        "13"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "contact"
+    },
+    {
+      "id": "mv-e9726a8e390f2b21",
+      "clusterId": "mv-contract-4066354-20261013",
+      "summary": "Payton Pritchard, Celtics agree to 2-year, $44.2 million contract extension: Sources",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-13T20:28:43.000Z",
+      "sourceId": "outlet:the-athletic",
+      "sourceLabel": "The Athletic",
+      "sourceUrl": "https://www.nytimes.com/athletic/7687436/2026/10/13/payton-pritchard-celtics-contract-extension-news/",
+      "playerIds": [
+        "4066354"
+      ],
+      "teamIds": [
+        "2"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "offer"
+    },
+    {
+      "id": "mv-c4857f5411416cbb",
+      "clusterId": "mv-contract-4066354-20261013",
+      "summary": "Celtics reportedly reach contract extension with Payton Pritchard for two years, $44.2 million",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-13T20:36:40.000Z",
+      "sourceId": "outlet:yahoo-sports",
+      "sourceLabel": "Yahoo Sports",
+      "sourceUrl": "https://sports.yahoo.com/articles/celtics-reportedly-reach-contract-extension-203640829.html",
+      "playerIds": [
+        "4066354"
+      ],
+      "teamIds": [
+        "2"
+      ],
+      "isOriginal": false
     },
     {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",
@@ -6928,7 +7228,8 @@
     {
       "clusterId": "mv-contract-4709138-20261002",
       "playerIds": [
-        "4709138"
+        "4709138",
+        "6589"
       ],
       "outcome": "materialized",
       "resolvedAt": "2026-10-10T12:00:00.000Z",

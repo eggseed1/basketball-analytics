@@ -2,7 +2,7 @@
   "meta": {
     "methodologyVersion": "p18c2-1.0",
     "snapshotDate": "2026-10-13",
-    "retrievedAt": "2026-10-13T14:18:45.322Z",
+    "retrievedAt": "2026-10-13T21:48:17.678Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
@@ -513,15 +513,15 @@
           "href": "/players/1643141"
         },
         {
-          "playerId": "5105853",
+          "playerId": "1643630",
           "playerName": "Fletcher Loyer",
           "age": null,
-          "contractId": "cy-5105853-2026",
+          "contractId": "cy-1643630-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-5105853-2026",
-              "playerId": "5105853",
+              "contractId": "cy-1643630-2026",
+              "playerId": "1643630",
               "franchiseId": "12",
               "season": "2026-27",
               "salary": null,
@@ -533,7 +533,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/5105853"
+          "href": "/players/1643630"
         },
         {
           "playerId": "1643568",
