@@ -2,9 +2,53 @@
   "source": "espn-site-v2-transactions",
   "datasetVersion": "1.0",
   "espnCalendarYear": 2026,
-  "fetchedAt": "2026-10-13T21:41:25.409Z",
-  "apiCount": 370,
+  "fetchedAt": "2026-10-14T17:12:01.384Z",
+  "apiCount": 374,
   "rows": [
+    {
+      "date": "2026-10-13T07:00Z",
+      "description": "Waived F Mohamed Wague.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2026-10-13T07:00Z",
+      "description": "Waived G R.J. Davis.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2026-10-13T07:00Z",
+      "description": "Waived F Pedro Bradshaw.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2026-10-13T07:00Z",
+      "description": "Waived G Isaac McKneely.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
     {
       "date": "2026-10-12T07:00Z",
       "description": "Waived G Chucky Hepburn.",

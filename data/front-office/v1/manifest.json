@@ -1,13 +1,13 @@
 {
   "methodologyVersion": "p18c2-1.0",
-  "snapshotDate": "2026-10-13",
-  "retrievedAt": "2026-10-13T21:48:17.678Z",
-  "sourceHash": "34002717718f40f722b3f248a19bbeaaefc1360ae53a65a0e0aa81c25046a696",
+  "snapshotDate": "2026-10-14",
+  "retrievedAt": "2026-10-14T17:24:18.793Z",
+  "sourceHash": "edb4f2900bd0d742c2309c6da95d9fd4406fef3d2bb28328232fd701b0d35b6b",
   "status": "VALIDATED",
   "season": "2026-27",
   "teamCount": 30,
   "teamsWithPayroll": 30,
-  "playersWithSalary": 513,
+  "playersWithSalary": 511,
   "capabilities": {
     "PAYROLL": "PARTIAL",
     "CONTRACTS": "PARTIAL",

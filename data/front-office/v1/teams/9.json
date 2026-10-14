@@ -1,8 +1,8 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-13",
-    "retrievedAt": "2026-10-13T21:48:17.678Z",
+    "snapshotDate": "2026-10-14",
+    "retrievedAt": "2026-10-14T17:24:18.793Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
@@ -11,7 +11,7 @@
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "34002717718f40f722b3f248a19bbeaaefc1360ae53a65a0e0aa81c25046a696",
+    "sourceHash": "edb4f2900bd0d742c2309c6da95d9fd4406fef3d2bb28328232fd701b0d35b6b",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -421,29 +421,6 @@
           "href": "/players/1642954"
         },
         {
-          "playerId": "1642939",
-          "playerName": "Miles Kelly",
-          "age": null,
-          "contractId": "cy-1642939-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1642939-2026",
-              "playerId": "1642939",
-              "franchiseId": "9",
-              "season": "2026-27",
-              "salary": 1366314,
-              "capHit": 1366314,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "salary-index-carry-forward"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1642939"
-        },
-        {
           "playerId": "1631207",
           "playerName": "Dalen Terry",
           "age": null,
@@ -465,6 +442,29 @@
           ],
           "guaranteedTotal": null,
           "href": "/players/1631207"
+        },
+        {
+          "playerId": "1631174",
+          "playerName": "Tyler Burton",
+          "age": null,
+          "contractId": "cy-1631174-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1631174-2026",
+              "playerId": "1631174",
+              "franchiseId": "9",
+              "season": "2026-27",
+              "salary": null,
+              "capHit": null,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "espn-roster-no-salary"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1631174"
         },
         {
           "playerId": "1643018",
@@ -539,13 +539,13 @@
       "futureCommitments": [
         {
           "season": "2026-27",
-          "totalSalaryDollars": 224672820,
-          "playersUnderContract": 18
+          "totalSalaryDollars": 223306506,
+          "playersUnderContract": 17
         }
       ],
-      "playerSalaryCommitments": 224672820,
-      "playersWithSalary": 18,
-      "playersWithoutSalary": 3
+      "playerSalaryCommitments": 223306506,
+      "playersWithSalary": 17,
+      "playersWithoutSalary": 4
     },
     "draftAssets": {
       "franchiseId": "9",

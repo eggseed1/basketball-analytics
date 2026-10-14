@@ -3,13 +3,13 @@
     "methodologyVersion": "movement-m1-0.2+movement-rules-v2",
     "status": "NEWS_INGEST_M1",
     "season": "2026-27",
-    "snapshotDate": "2026-10-13",
+    "snapshotDate": "2026-10-14",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-10-13T21:42:50.731Z",
+    "builtAt": "2026-10-14T17:13:31.439Z",
     "rosterPlayerCount": 501,
-    "headlinesScanned": 3562,
-    "latestHeadlineAt": "2026-10-13T21:09:25.000Z",
-    "latestTransactionDate": "2026-10-12",
+    "headlinesScanned": 3842,
+    "latestHeadlineAt": "2026-10-14T17:11:03.000Z",
+    "latestTransactionDate": "2026-10-13",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
       "Basketball News",
@@ -136,7 +136,7 @@
     },
     "outlet:fadeaway-world": {
       "label": "Fadeaway World",
-      "credibility": 16
+      "credibility": 12
     },
     "outlet:new-york-post": {
       "label": "New York Post",
@@ -185,6 +185,14 @@
     "outlet:marca": {
       "label": "Marca",
       "credibility": 12
+    },
+    "reporter:bobby-marks": {
+      "label": "Bobby Marks (ESPN)",
+      "credibility": 30
+    },
+    "reporter:john-hollinger-how": {
+      "label": "John Hollinger. How (The Athletic)",
+      "credibility": 18
     },
     "ledger:nba-player-movement": {
       "label": "Player movement log",
@@ -520,12 +528,13 @@
       "claimIds": [
         "mv-93f1c209f853bc38",
         "mv-941d78a0033dbed0",
-        "mv-4db5818888af6370"
+        "mv-4db5818888af6370",
+        "mv-98b7512700852435"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-09-28T18:36:30.000Z",
-      "lastMeaningfulAt": "2026-09-29T16:09:19.000Z",
+      "lastMeaningfulAt": "2026-10-14T13:57:18.000Z",
       "linkedPlayerIds": [
         "3112335"
       ],
@@ -594,18 +603,20 @@
     {
       "id": "mv-trade-6442-20261001",
       "headline": "Kyrie Irving, Anthony Davis and others: trade talk",
-      "primaryClaimId": "mv-6350e063859c6fae",
+      "primaryClaimId": "mv-b2b47aacc4e994d9",
       "claimIds": [
         "mv-d510f782fadebd47",
         "mv-62fc808e224a7baa",
         "mv-a98f425d77b5fe76",
         "mv-7627c3b86b24a57c",
-        "mv-6350e063859c6fae"
+        "mv-6350e063859c6fae",
+        "mv-ed86dc90a9f02908",
+        "mv-b2b47aacc4e994d9"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-01T01:04:56.000Z",
-      "lastMeaningfulAt": "2026-10-12T17:59:28.000Z",
+      "lastMeaningfulAt": "2026-10-14T07:44:31.000Z",
       "linkedPlayerIds": [
         "6442",
         "6583",
@@ -614,6 +625,7 @@
       "linkedTeamIds": [
         "6",
         "18",
+        "8",
         "27"
       ]
     },
@@ -766,16 +778,18 @@
         "mv-ac71e037974744a0",
         "mv-d2a9f6adeed1b232",
         "mv-9a555206cc4a7ca7",
-        "mv-74c51c9e2709e583"
+        "mv-74c51c9e2709e583",
+        "mv-81705535ee965e52"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-05T07:47:20.000Z",
-      "lastMeaningfulAt": "2026-10-13T20:15:11.000Z",
+      "lastMeaningfulAt": "2026-10-13T23:53:52.000Z",
       "linkedPlayerIds": [
         "6589",
         "4701232",
-        "4897943"
+        "4897943",
+        "4278077"
       ],
       "linkedTeamIds": [
         "13",
@@ -996,15 +1010,16 @@
     {
       "id": "mv-trade-3945274-20261009",
       "headline": "Luka Dončić and Walker Kessler: trade talk",
-      "primaryClaimId": "mv-2f428e5810081c14",
+      "primaryClaimId": "mv-db37464b00615528",
       "claimIds": [
         "mv-2f428e5810081c14",
-        "mv-ff2016272a3c9e6f"
+        "mv-ff2016272a3c9e6f",
+        "mv-db37464b00615528"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-09T23:11:42.000Z",
-      "lastMeaningfulAt": "2026-10-11T12:59:30.000Z",
+      "lastMeaningfulAt": "2026-10-13T22:53:11.000Z",
       "linkedPlayerIds": [
         "3945274",
         "4433136"
@@ -1161,14 +1176,15 @@
     {
       "id": "mv-contract-3032977-20261013",
       "headline": "Giannis Antetokounmpo: contract future",
-      "primaryClaimId": "mv-d3b0498977a48f7e",
+      "primaryClaimId": "mv-a590cde37ba884d3",
       "claimIds": [
-        "mv-d3b0498977a48f7e"
+        "mv-d3b0498977a48f7e",
+        "mv-a590cde37ba884d3"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-13T16:02:16.000Z",
-      "lastMeaningfulAt": "2026-10-13T16:02:16.000Z",
+      "lastMeaningfulAt": "2026-10-14T13:50:48.000Z",
       "linkedPlayerIds": [
         "3032977"
       ],
@@ -1199,6 +1215,24 @@
       ],
       "linkedTeamIds": [
         "2"
+      ]
+    },
+    {
+      "id": "mv-contract-3102531-20261014",
+      "headline": "Kristaps Porziņģis: free agency",
+      "primaryClaimId": "mv-dab3945f667dc615",
+      "claimIds": [
+        "mv-dab3945f667dc615"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-10-14T08:52:43.000Z",
+      "lastMeaningfulAt": "2026-10-14T08:52:43.000Z",
+      "linkedPlayerIds": [
+        "3102531"
+      ],
+      "linkedTeamIds": [
+        "9"
       ]
     },
     {
@@ -6048,6 +6082,149 @@
       ],
       "teamIds": [
         "2"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-db37464b00615528",
+      "clusterId": "mv-trade-3945274-20261009",
+      "summary": "Lakers Pushed to Trade for Young 6’10” Double-Double Gem Amid Kessler Injury",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-13T22:53:11.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/los-angeles-lakers/lakers-trade-double-double-center/",
+      "playerIds": [
+        "4433136"
+      ],
+      "teamIds": [
+        "13"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-ed86dc90a9f02908",
+      "clusterId": "mv-trade-6442-20261001",
+      "summary": "Pistons Pushed to Trade 41% 3-Point Sniper Amid Rising Kyrie Irving Interest",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-13T23:16:26.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/detroit-pistons/pistons-trade-shooter-kyrie/",
+      "playerIds": [
+        "6442"
+      ],
+      "teamIds": [
+        "8"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "contact"
+    },
+    {
+      "id": "mv-81705535ee965e52",
+      "clusterId": "mv-trade-6589-20261005",
+      "summary": "Jarred Vanderbilt And Dalton Knecht Are On The Trade Block As Lakers Explore Potential Deals",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-13T23:53:52.000Z",
+      "sourceId": "outlet:fadeaway-world",
+      "sourceLabel": "Fadeaway World",
+      "sourceUrl": "https://fadeawayworld.net/nba-trade-rumors/los-angeles-lakers/jarred-vanderbilt-and-dalton-knecht-are-on-the-trade-block-as-lakers-explore-potential-deals",
+      "playerIds": [
+        "4278077",
+        "4897943"
+      ],
+      "teamIds": [
+        "13"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-b2b47aacc4e994d9",
+      "clusterId": "mv-trade-6442-20261001",
+      "summary": "Kyrie Irving could attract tempting trade offers if he stays healthy",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-14T07:44:31.000Z",
+      "sourceId": "reporter:jake-fischer",
+      "sourceLabel": "TalkBasket, citing Jake Fischer (The Stein Line)",
+      "reporterLabel": "Jake Fischer",
+      "sourceUrl": "https://www.talkbasket.net/224776-kyrie-irving-could-attract-tempting-trade-offers-if-he-stays-healthy",
+      "playerIds": [
+        "6442"
+      ],
+      "teamIds": [],
+      "isOriginal": false,
+      "negotiationSpecificity": "offer"
+    },
+    {
+      "id": "mv-dab3945f667dc615",
+      "clusterId": "mv-contract-3102531-20261014",
+      "summary": "Kristaps Porzingis visits Warriors amid health uncertainty",
+      "claimType": "free_agent_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-14T08:52:43.000Z",
+      "sourceId": "reporter:anthony-slater",
+      "sourceLabel": "TalkBasket, citing Anthony Slater (ESPN)",
+      "reporterLabel": "Anthony Slater",
+      "sourceUrl": "https://www.talkbasket.net/224783-kristaps-porzingis-visits-warriors-amid-health-uncertainty",
+      "playerIds": [
+        "3102531"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-a590cde37ba884d3",
+      "clusterId": "mv-contract-3032977-20261013",
+      "summary": "Why Giannis Antetokounmpo Could Make $82 Million More by Delaying Contract Extension",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-14T13:50:48.000Z",
+      "sourceId": "reporter:bobby-marks",
+      "sourceLabel": "Heavy, citing Bobby Marks (ESPN)",
+      "reporterLabel": "Bobby Marks",
+      "sourceUrl": "https://heavy.com/sports/nba/miami-heat/giannis-antetokounmpo-82-million-contract/",
+      "playerIds": [
+        "3032977"
+      ],
+      "teamIds": [],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-98b7512700852435",
+      "clusterId": "mv-contract-3112335-20260928",
+      "summary": "Nuggets rumors: John Hollinger claims ‘justifiable paranoia’ about Nikola Jokic contract despite assurances",
+      "claimType": "contract_movement",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-14T13:57:18.000Z",
+      "sourceId": "reporter:john-hollinger-how",
+      "sourceLabel": "ClutchPoints, citing John Hollinger. How (The Athletic)",
+      "reporterLabel": "John Hollinger. How",
+      "sourceUrl": "https://clutchpoints.com/nba/denver-nuggets/nuggets-rumors-john-hollinger-claims-justifiable-paranoia-nikola-jokic-contract-assurances",
+      "playerIds": [
+        "3112335"
+      ],
+      "teamIds": [
+        "7"
       ],
       "isOriginal": false
     },

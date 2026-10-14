@@ -6364,6 +6364,22 @@
       "matchMethod": "unique_name_same_team_roster",
       "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
       "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4701192",
+      "nbaPlayerId": "1642940",
+      "playerName": "Viktor Lakhin",
+      "matchMethod": "unique_name_same_team_roster",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4897696",
+      "nbaPlayerId": "1642481",
+      "playerName": "Jamarion Sharp",
+      "matchMethod": "unique_name_same_team_roster",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
     }
   ]
 }

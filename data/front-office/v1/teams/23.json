@@ -1,8 +1,8 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-13",
-    "retrievedAt": "2026-10-13T21:48:17.678Z",
+    "snapshotDate": "2026-10-14",
+    "retrievedAt": "2026-10-14T17:24:18.793Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
@@ -11,7 +11,7 @@
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "34002717718f40f722b3f248a19bbeaaefc1360ae53a65a0e0aa81c25046a696",
+    "sourceHash": "edb4f2900bd0d742c2309c6da95d9fd4406fef3d2bb28328232fd701b0d35b6b",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -444,6 +444,29 @@
           "href": "/players/1641745"
         },
         {
+          "playerId": "1642940",
+          "playerName": "Viktor Lakhin",
+          "age": null,
+          "contractId": "cy-1642940-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1642940-2026",
+              "playerId": "1642940",
+              "franchiseId": "23",
+              "season": "2026-27",
+              "salary": null,
+              "capHit": null,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "espn-roster-no-salary"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1642940"
+        },
+        {
           "playerId": "1641803",
           "playerName": "Tristen Newton",
           "age": null,
@@ -499,7 +522,7 @@
       ],
       "playerSalaryCommitments": 195117598,
       "playersWithSalary": 15,
-      "playersWithoutSalary": 4
+      "playersWithoutSalary": 5
     },
     "draftAssets": {
       "franchiseId": "23",
