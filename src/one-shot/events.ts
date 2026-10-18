@@ -1,4 +1,6 @@
 import { calendar, cohortLevel, levelOf, performanceLevel, roleFor, schoolLabel, stageOf } from "./career";
+import { LIFE_EVENTS } from "./life-events";
+import { AFTER_SCENES } from "./after-scenes";
 import { ADVISOR, ASSET_INFO, canPay, charge, income, invested, LIFESTYLE, mix, netWorth, PRESETS, trailingIndex } from "./finance";
 import { nationalTeam, seniorBar } from "./international";
 import { clamp, hashString } from "./rng";
@@ -99,6 +101,13 @@ const stakeOf = (s: LifeState) => Math.round((worth(s) * 0.15) / 1000) * 1000;
 const loanOf = (s: LifeState) => Math.round(Math.min(cash(s) * 0.3, 50_000 * country(s.residence.countryId).model.costIndex + cash(s) * 0.05) / 500) * 500;
 const housePrice = (s: LifeState) => Math.round((140_000 * country(s.birthplace.countryId).model.costIndex) / 1000) * 1000;
 const BRANDS = ["sportswear brand", "energy drink", "phone carrier", "car dealership", "bank", "snack company", "video game studio"] as const;
+/** What a college player can be paid for his name while he stays eligible. */
+function nilPay(s: LifeState): number {
+  const rolePay = { star: 220_000, starter: 45_000, rotation: 14_000, bench: 5_000, "deep-bench": 2_000, none: 1_000 }[s.placement.role];
+  const buzz = 1 + s.exposure / 100;
+  const program = s.placement.coaching >= 85 ? 2 : s.placement.coaching >= 70 ? 1 : 0.5;
+  return Math.max(1000, Math.round((rolePay * buzz * program) / 500) * 500);
+}
 function endorsementValue(s: LifeState): number {
   const e = (s.exposure / 100) ** 2;
   const base = s.placement.node === "nba" ? 2_500_000 : s.placement.node === "g-league" ? 40_000 : 90_000 * country(s.placement.countryId).model.costIndex;
@@ -336,7 +345,14 @@ export const EVENTS: EventTemplate[] = [
   },
   {
     id: "bwb-invite", ages: [14.5, 17.9], cooldown: 0, once: true,
-    weight: (s) => (s.residence.countryId !== "US" && s.exposure >= 28 && performanceLevel(s) >= cohortLevel(age(s)) * 1.1 ? 2.5 : 0),
+    weight: (s) => {
+      if (s.residence.countryId === "US") return 0;
+      const lvl = performanceLevel(s);
+      const bar = cohortLevel(age(s));
+      if (lvl < bar * 1.1) return 0;
+      const thin = country(s.residence.countryId).model.exposureBase < 25 && !country(s.residence.countryId).model.verifiedPro;
+      return s.exposure >= 28 || (thin && lvl >= bar * 1.22) ? 2.5 : 0;
+    },
     title: "Basketball Without Borders",
     body: "You are invited to a Basketball Without Borders camp. The NBA, FIBA and federations pick campers by invitation.",
     choices: [
@@ -556,8 +572,8 @@ export const EVENTS: EventTemplate[] = [
     id: "new-coach", ages: [17, 32], cooldown: 24, weight: (s) => (["university", "domestic-pro", "foreign-pro", "g-league"].includes(s.placement.node) ? 1.2 : 0), title: "A new head coach",
     body: "The team fires its coach. The new one does not know you.",
     choices: [
-      { id: "earn", label: "Earn it in practice", preview: "Discipline up. Role may grow.", growth: 1, risk: 0, apply: ({ s, rolls }) => (tr(s, "discipline", 3), rolls[0]! < 0.5 ? (bumpRole(s, 1), "He moves you up the rotation.") : "He takes his time deciding.") },
-      { id: "ask", label: "Ask about your minutes", preview: "Could go either way.", growth: 0, risk: 2, apply: ({ s, rolls }) => (rolls[0]! < 0.4 ? (bumpRole(s, 1), "He likes the directness. More minutes.") : (bumpRole(s, -1), "He does not like the question.")) },
+      { id: "earn", label: "Earn it in practice", preview: "Discipline up. A higher coach rating makes the bump more likely.", growth: 1, risk: 0, apply: ({ s, rolls }) => (tr(s, "discipline", 3), rolls[0]! < minuteChance(s, 0.28) ? (bumpRole(s, 1), "He moves you up the rotation.") : "He takes his time deciding.") },
+      { id: "ask", label: "Ask about your minutes", preview: "A high coach rating helps. A low one can cost you a spot.", growth: 0, risk: 2, apply: ({ s, rolls }) => (rolls[0]! < minuteChance(s, 0.12) ? (bumpRole(s, 1), "He likes the directness. More minutes.") : (bumpRole(s, -1), "He does not like the question.")) },
     ],
   },
   {
@@ -720,7 +736,7 @@ export const EVENTS: EventTemplate[] = [
     },
   },
   {
-    id: "summer-league-look", ages: [19, 27], cooldown: 12, weight: (s) => (s.achievements.nbaDebut === null && s.placement.node !== "nba" && currentLevel(s) >= 64 && s.exposure >= 50 ? 1.5 : 0), title: "Summer league invite",
+    id: "summer-league-look", ages: [19, 27], cooldown: 12, weight: (s) => (s.achievements.nbaDebut === null && s.placement.node !== "nba" && currentLevel(s) >= 64 && (s.exposure >= 50 || (currentLevel(s) >= 68 && country(s.residence.countryId).model.exposureBase < 25)) ? 1.5 : 0), title: "Summer league invite",
     body: "An NBA team invites you to its summer league roster.",
     choices: [
       { id: "go", label: "Play summer league", preview: "Exposure up a lot. Camp chance.", growth: 2, risk: 1, apply: ({ s, rolls }) => (expo(s, 10), rolls[0]! < 0.35 ? ((s.flags.campOffer = true), "You play well enough to earn a training camp invite.") : "Solid week. They keep your number.") },
@@ -764,10 +780,27 @@ export const EVENTS: EventTemplate[] = [
     ],
   },
   {
+    id: "fight-minutes", ages: [13, 34], cooldown: 8, weight: (s) => (onTeam(s) && !s.condition.injury && !["star", "none"].includes(s.placement.role) ? 1.6 : 0), title: "Fight for minutes",
+    body: (s) => `Coaching is ${Math.round(s.placement.coaching)}. You're not the go-to, so the minutes are still up for grabs.`,
+    choices: [
+      { id: "earn", label: "Outwork the rotation", preview: "Odds rise when coaching is high and you take coaching well.", growth: 2, risk: 1, apply: ({ s, rolls }) => {
+        energy(s, -8);
+        tr(s, "discipline", 2);
+        if (rolls[0]! < minuteChance(s, 0.2)) return (bumpRole(s, 1), "You win the reps. The coach puts you in earlier.");
+        return "You stay late all month. The rotation doesn't move.";
+      } },
+      { id: "ask", label: "Ask him straight", preview: "A high coach rating helps. A low one can cost you a spot.", growth: 0, risk: 2, apply: ({ s, rolls }) => {
+        if (rolls[0]! < minuteChance(s, 0.08)) return (bumpRole(s, 1), tr(s, "confidence", 2), "He says you've earned a longer leash.");
+        return (bumpRole(s, -1), tr(s, "coachability", -2), "He hears a complaint. Your minutes get cut.");
+      } },
+      { id: "wait", label: "Wait your turn", preview: "Nothing changes.", growth: 0, risk: 0, apply: () => "You keep the role you have." },
+    ],
+  },
+  {
     id: "bench-stuck", ages: [12, 32], cooldown: 18, weight: (s) => (onTeam(s) && ["bench", "deep-bench"].includes(s.placement.role) ? 1.5 : 0), title: "Stuck on the bench",
     body: "You've played garbage time for a month.",
     choices: [
-      { id: "work", label: "Stay after practice every day", preview: "Discipline up. A shot at more minutes.", growth: 2, risk: 0, apply: ({ s, rolls }) => (tr(s, "discipline", 3), energy(s, -6), rolls[0]! < 0.45 ? (bumpRole(s, 1), "The coach notices. You're in the rotation.") : "Nothing changes yet. You keep working.") },
+      { id: "work", label: "Stay after practice every day", preview: "Discipline up. A higher coach rating makes the extra minutes more likely.", growth: 2, risk: 0, apply: ({ s, rolls }) => (tr(s, "discipline", 3), energy(s, -6), rolls[0]! < minuteChance(s, 0.22) ? (bumpRole(s, 1), "The coach notices. You're in the rotation.") : "Nothing changes yet. You keep working.") },
       { id: "talk", label: "Ask the coach what's missing", preview: "Coachability up. He'll tell you.", growth: 1, risk: 0, apply: ({ s }) => (tr(s, "coachability", 3), sk(s, "decisions", 1), "Fewer turnovers, he says. You write it down.") },
       { id: "leave", label: "Look for a new team", preview: "You'll hear offers at the next window.", growth: 1, risk: 1, apply: ({ s }) => ((s.flags.reviewSoon = true), tr(s, "coachability", -2), "You tell your coach you want out.") },
     ],
@@ -880,6 +913,14 @@ export const EVENTS: EventTemplate[] = [
       } },
       { id: "rent", label: "Help with rent instead", preview: "Send 10% more of each paycheck home.", growth: 0, risk: 0, apply: ({ s }) => ((s.finance.sendHomeShare = Math.min(0.5, s.finance.sendHomeShare + 0.1)), "They move somewhere bigger.") },
       { id: "later", label: "Not yet", preview: "Keep your money.", growth: 0, risk: 1, apply: () => "Maybe next year." },
+    ],
+  },
+  {
+    id: "nil-deal", ages: [17.5, 23], cooldown: 16, weight: (s) => (s.placement.node === "university" ? (s.placement.role === "star" || s.exposure >= 55 ? 1.7 : 0.85) : 0), title: "An NIL offer",
+    body: (s) => `${s.placement.coaching >= 85 ? "A collective that follows the program" : "A business in town"} wants to pay you for your name and your posts: ${usd(nilPay(s))} a year while you are in school.`,
+    choices: [
+      { id: "sign", label: "Sign the deal", preview: (s) => `${usd(nilPay(s))} a year. You stay eligible.`, growth: 0, risk: 0, apply: ({ s }) => (s.finance.endorsements.push({ brand: "an NIL deal", perYear: nilPay(s), yearsLeft: 2 }), expo(s, 2), "The money shows up. You are still on the roster.") },
+      { id: "pass", label: "Turn it down", preview: "No payment. Less noise.", growth: 0, risk: 0, apply: ({ s }) => (tr(s, "discipline", 1), "You keep the posts to yourself.") },
     ],
   },
   {
@@ -1202,6 +1243,8 @@ export const EVENTS: EventTemplate[] = [
       { id: "stay", label: "Ask to stay up", preview: "Practice with the team. Coachability down.", growth: 0, risk: 0, apply: ({ s }) => (tr(s, "coachability", -2), sk(s, "iq", 1), "You watch from the end of the bench.") },
     ],
   },
+  ...LIFE_EVENTS,
+  ...AFTER_SCENES,
 ];
 
 /* ---------------------------------------------------- shared helpers */
@@ -1216,12 +1259,18 @@ function setYouthPlacement(s: LifeState, node: "school-team", teamName: string, 
   s.placement = { ...s.placement, node, teamName, leagueId: null, role: "rotation", coaching: country(s.residence.countryId).model.coachingAccess * 0.6, since: s.ageMonths, contract: null, costPerYear: cost };
 }
 
+/** Odds of winning a minutes fight. Coaching 50 is the middle. Coachability helps a little. */
+function minuteChance(s: LifeState, base: number): number {
+  return clamp(base + (s.placement.coaching - 50) / 140 + s.traits.coachability / 280, 0.08, 0.85);
+}
+
 function bumpRole(s: LifeState, d: number) {
   const order = ["deep-bench", "bench", "rotation", "starter", "star"] as const;
   const i = order.indexOf(s.placement.role as (typeof order)[number]);
   if (i < 0) return;
   s.placement.role = order[clamp(i + d, 0, order.length - 1)]!;
   s.flags.roleBump = s.ageMonths;
+  s.flags.roleAt = s.ageMonths;
 }
 
 const FAMILY_TARGETS = ["US", "GB", "DE", "FR", "ES", "AU", "CA", "AE", "CN", "JP"];

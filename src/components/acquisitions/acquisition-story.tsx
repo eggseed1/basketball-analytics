@@ -20,6 +20,7 @@ import type {
   TeamAcquisitionEntry,
 } from "@/trades/acquisition-types";
 import { teamNameAt } from "@/trades/team-era-names";
+import { LinkCue } from "@/components/ui/link-cue";
 
 type Names = Record<string, string>;
 
@@ -514,7 +515,7 @@ export function PlayerArrivalLine({
         href={acquisitionHref(teamId, player, arrival.date)}
         className="font-semibold text-foreground/90 underline-offset-2 hover:underline"
       >
-        How they got him <span data-motion-arrow aria-hidden>→</span>
+        How they got him <LinkCue />
       </Link>
     </p>
   );

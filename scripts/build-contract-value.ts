@@ -248,6 +248,7 @@ const out = {
     capKnownThrough: seasonLabel(lastCapYear),
     weights: params.weights,
     regressionPossessions: params.regressionPossessions,
+    priorByShare: params.priorByShare ?? null,
     projectionBasis: params.drblBasis
       ? {
           drblShare: params.drblBasis.share ?? 1,

@@ -2,6 +2,7 @@ import { TransitionLink } from "@/components/continuity/query-nav";
 import { AWARD_DEFINITIONS } from "@/content/awards/catalog";
 import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
+import { LinkCue } from "@/components/ui/link-cue";
 
 export function AwardSiblingNav({ currentSlug }: { currentSlug: string }) {
   const idx = AWARD_DEFINITIONS.findIndex((a) => a.slug === currentSlug);
@@ -36,7 +37,7 @@ export function AwardSiblingNav({ currentSlug }: { currentSlug: string }) {
             "min-w-0 text-right font-semibold text-muted-foreground underline-offset-4 hover:underline"
           )}
         >
-          {next.shortLabel} <span data-motion-arrow aria-hidden>→</span>
+          {next.shortLabel} <LinkCue />
         </TransitionLink>
       ) : (
         <span />

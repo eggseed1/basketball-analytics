@@ -102,7 +102,7 @@ const TRAITS: TraitDef[] = [
   },
   {
     id: "orb",
-    label: "Offensive rebound %",
+    label: "Off. rebound %",
     pick: (t) => t.offensiveReboundPct,
     format: (v) => formatPct(v),
     strengthPhrase: "offensive rebounding",

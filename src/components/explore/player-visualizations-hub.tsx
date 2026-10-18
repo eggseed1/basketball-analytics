@@ -1,11 +1,10 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 
 import { type } from "@/lib/design-system";
 import {
-  PLAYER_RACE_METRIC_GROUPS,
   PLAYER_RACE_METRICS,
   PLAYER_RACE_MIN_MINUTES_OPTIONS,
   PLAYER_RACE_TOP_N_OPTIONS,
@@ -30,8 +29,12 @@ import {
   VIZ_TEAM_OPTIONS,
   VIZ_TEAM_HIGHLIGHT_MAX,
 } from "@/lib/viz-team-highlight";
-import { cn } from "@/lib/utils";
 import { TeamLogo } from "@/components/brand/team-logo";
+import { FilterBar, FilterSelect } from "@/components/explore/filter-bar";
+import { ChoiceChip, ChoiceTrack } from "@/components/ui/choice-chip";
+import { Calendar } from "lucide-react";
+import { espnYearFromCanonicalSeason } from "@/data/providers/nba/season";
+import { cn } from "@/lib/utils";
 
 export type VizView =
   | "race"
@@ -67,12 +70,6 @@ const VIEWS: Array<{ id: VizView; label: string }> = [
   { id: "payoff", label: "Salary played off" },
 ];
 
-type SearchHit = {
-  id: string;
-  name: string;
-  team: string;
-};
-
 function parsePinIds(raw: string | null): string[] {
   if (!raw) return [];
   return [
@@ -89,39 +86,19 @@ function isScatterView(view: VizView): boolean {
   return view !== "race";
 }
 
-function Chip({
-  active,
-  onClick,
-  children,
-}: {
-  active: boolean;
-  onClick?: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      aria-pressed={active}
-      onClick={onClick}
-      className={cn(
-        type.caption,
-        "glass-pill rounded-md px-2.5 py-1 font-semibold transition-colors",
-        active
-          ? "glass-pill-active"
-          : "text-muted-foreground hover:text-foreground"
-      )}
-    >
-      {children}
-    </button>
-  );
+function seasonYear(season: string) {
+  try {
+    return String(espnYearFromCanonicalSeason(season));
+  } catch {
+    return season.slice(0, 4);
+  }
 }
 
-function selectClassName(extra?: string) {
-  return cn(
-    type.bodySm,
-    "w-full rounded-md border border-border/70 frost-surface px-2.5 py-1.5 font-semibold sm:w-auto sm:px-3",
-    extra
-  );
+function fieldSizeLabel(value: string, rankEnd: PlayerRaceRankEnd) {
+  if (value === "all") return "All players";
+  if (rankEnd === "low") return `Bottom ${value}`;
+  if (rankEnd === "both") return `Both ends · ${value}`;
+  return `Top ${value}`;
 }
 
 export function PlayerVisualizationsHubChrome({
@@ -138,11 +115,7 @@ export function PlayerVisualizationsHubChrome({
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [pinQuery, setPinQuery] = useState("");
-  const [pinHits, setPinHits] = useState<SearchHit[]>([]);
-  const [pinOpen, setPinOpen] = useState(false);
-  const [searchedLabels, setPinLabels] = useState<Record<string, string>>({});
-  const pinLabels = useMemo(() => ({ ...pinNames, ...searchedLabels }), [pinNames, searchedLabels]);
+  const pinLabels = pinNames ?? {};
 
   const pinIds = useMemo(
     () => parsePinIds(searchParams.get("pin")),
@@ -205,53 +178,8 @@ export function PlayerVisualizationsHubChrome({
     [router, searchParams]
   );
 
-  useEffect(() => {
-    const q = pinQuery.trim();
-    if (q.length < 2) {
-      setPinHits([]);
-      return;
-    }
-    const controller = new AbortController();
-    const timer = globalThis.setTimeout(async () => {
-      try {
-        const params = new URLSearchParams({
-          q,
-          season,
-          scope: "season",
-        });
-        const res = await fetch(`/api/players/search?${params}`, {
-          signal: controller.signal,
-        });
-        if (!res.ok) return;
-        const json = (await res.json()) as { results?: SearchHit[] };
-        setPinHits((json.results ?? []).slice(0, 8));
-        setPinOpen(true);
-      } catch {
-        /* aborted / network */
-      }
-    }, 180);
-    return () => {
-      controller.abort();
-      globalThis.clearTimeout(timer);
-    };
-  }, [pinQuery, season]);
-
-  const pinPlayer = (hit: SearchHit) => {
-    const next = [...new Set([...pinIds, hit.id])].slice(0, 12);
-    setPinLabels((prev) => ({ ...prev, [hit.id]: hit.name }));
-    setPinQuery("");
-    setPinHits([]);
-    setPinOpen(false);
-    replaceParams({ pin: next.join(",") });
-  };
-
   const unpinPlayer = (playerId: string) => {
     const next = pinIds.filter((id) => id !== playerId);
-    setPinLabels((prev) => {
-      const copy = { ...prev };
-      delete copy[playerId];
-      return copy;
-    });
     replaceParams({ pin: next.length ? next.join(",") : null });
   };
 
@@ -268,296 +196,142 @@ export function PlayerVisualizationsHubChrome({
     replaceParams({ end: "low" });
   };
 
-  return (
-    <div className="flex flex-col gap-3">
-      <div
-        className="flex flex-wrap gap-1.5"
-        role="tablist"
-        aria-label="Visualization"
-      >
-        {VIEWS.map((item) => {
-          const active = view === item.id;
-          return (
-            <button
-              key={item.id}
-              type="button"
-              role="tab"
-              aria-selected={active}
-              onClick={() =>
-                replaceParams({
-                  view: item.id === "race" ? null : item.id,
-                  // Metric is race-only; keep top / end / minmp / pin / season.
-                  ...(isScatterView(item.id) ? { metric: null } : {}),
-                })
-              }
-              className={cn(
-                type.caption,
-                "glass-pill rounded-md px-2.5 py-1 font-semibold transition-colors",
-                active
-                  ? "glass-pill-active"
-                  : "text-muted-foreground hover:text-foreground"
-              )}
-            >
-              {item.label}
-            </button>
-          );
-        })}
-      </div>
+  const fieldOptions = [
+    { value: "all", label: fieldSizeLabel("all", rankEnd) },
+    ...PLAYER_RACE_TOP_N_OPTIONS.map((n) => ({
+      value: String(n),
+      label: fieldSizeLabel(String(n), rankEnd),
+    })),
+    ...(fieldSize !== "all" &&
+    !PLAYER_RACE_TOP_N_OPTIONS.includes(fieldSize as (typeof PLAYER_RACE_TOP_N_OPTIONS)[number])
+      ? [{ value: String(fieldSize), label: fieldSizeLabel(String(fieldSize), rankEnd) }]
+      : []),
+  ];
+  const minuteOptions = [
+    ...PLAYER_RACE_MIN_MINUTES_OPTIONS.map((n) => ({
+      value: String(n),
+      label: n === 0 ? "Any minutes" : `≥ ${n.toLocaleString()} MP`,
+    })),
+    ...(!PLAYER_RACE_MIN_MINUTES_OPTIONS.includes(
+      minMinutes as (typeof PLAYER_RACE_MIN_MINUTES_OPTIONS)[number]
+    )
+      ? [{ value: String(minMinutes), label: `≥ ${minMinutes.toLocaleString()} MP` }]
+      : []),
+  ];
 
-      <div className="flex flex-col gap-2">
-        <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center">
+  return (
+    <FilterBar label="Visualization filters">
+      <ChoiceTrack role="tablist" aria-label="Visualization" className="flex-wrap">
+        {VIEWS.map((item) => (
+          <ChoiceChip
+            key={item.id}
+            active={view === item.id}
+            role="tab"
+            aria-selected={view === item.id}
+            onClick={() =>
+              replaceParams({
+                view: item.id === "race" ? null : item.id,
+                ...(isScatterView(item.id) ? { metric: null } : {}),
+              })
+            }
+          >
+            {item.label}
+          </ChoiceChip>
+        ))}
+      </ChoiceTrack>
+
+      <div className="flex w-full min-w-0 flex-wrap items-center gap-2">
           {seasonOptions.length > 1 && view !== "surplus" ? (
-            <>
-              <label
-                className={cn(type.caption, "sr-only")}
-                htmlFor="viz-shared-season"
-              >
-                Season
-              </label>
-              <select
-                id="viz-shared-season"
-                value={
-                  seasonOptions.includes(season) ? season : seasonOptions[0]
-                }
-                onChange={(event) =>
-                  replaceParams({ season: event.target.value })
-                }
-                className={selectClassName("col-span-1")}
-              >
-                {seasonOptions.map((option) => (
-                  <option key={option} value={option}>
-                    {option} season
-                  </option>
-                ))}
-              </select>
-            </>
+            <FilterSelect
+              id="viz-shared-season"
+              label="Season"
+              value={seasonOptions.includes(season) ? season : seasonOptions[0]}
+              onChange={(value) => replaceParams({ season: value })}
+              icon={<Calendar className="size-3.5 text-muted-foreground" aria-hidden />}
+              options={seasonOptions.map((option) => ({
+                value: option,
+                label: seasonYear(option),
+              }))}
+              className="min-w-[5.5rem]"
+            />
           ) : null}
 
           {view === "race" ? (
-            <>
-              <label
-                className={cn(type.caption, "sr-only")}
-                htmlFor="viz-race-metric"
-              >
-                Metric
-              </label>
-              <select
-                id="viz-race-metric"
-                value={metric}
-                onChange={(event) => {
-                  const next = event.target.value as PlayerRaceMetric;
-                  const patch: Record<string, string | null> = {
-                    metric: next,
-                  };
-                  if (!playerRaceMetricCanBeNegative(next)) {
-                    patch.end = null;
-                  }
-                  replaceParams(patch);
-                }}
-                className={selectClassName(
-                  "col-span-2 sm:col-auto sm:min-w-[11rem]"
-                )}
-                aria-label="Race metric"
-              >
-                {PLAYER_RACE_METRIC_GROUPS.map((group) => (
-                  <optgroup key={group} label={group}>
-                    {PLAYER_RACE_METRICS.filter((row) => row.group === group).map(
-                      (option) => (
-                        <option key={option.id} value={option.id}>
-                          {option.label} ({option.shortLabel})
-                        </option>
-                      )
-                    )}
-                  </optgroup>
-                ))}
-              </select>
-            </>
+            <FilterSelect
+              id="viz-race-metric"
+              label="Metric"
+              value={metric}
+              onChange={(value) => {
+                const next = value as PlayerRaceMetric;
+                const patch: Record<string, string | null> = { metric: next };
+                if (!playerRaceMetricCanBeNegative(next)) patch.end = null;
+                replaceParams(patch);
+              }}
+              options={PLAYER_RACE_METRICS.map((option) => ({
+                value: option.id,
+                label: `${option.label} (${option.shortLabel})`,
+                group: option.group,
+              }))}
+              className="min-w-[8rem]"
+            />
           ) : null}
 
-          <label
-            className={cn(type.caption, "sr-only")}
-            htmlFor="viz-shared-top"
-          >
-            Field size
-          </label>
-          <select
+          <FilterSelect
             id="viz-shared-top"
+            label="Field size"
             value={fieldSelectValue}
-            onChange={(event) => {
-              const value = event.target.value;
+            onChange={(value) =>
               replaceParams({
-                top:
-                  value === "all"
-                    ? "all"
-                    : playerRaceFieldSizeParam(Number(value)),
-              });
-            }}
-            className={selectClassName()}
-            aria-label="Number of players in the field"
-          >
-            <option value="all">All players</option>
-            {PLAYER_RACE_TOP_N_OPTIONS.map((n) => (
-              <option key={n} value={n}>
-                {rankEnd === "low"
-                  ? `Bottom ${n}`
-                  : rankEnd === "both"
-                    ? `Both ends · ${n}`
-                    : `Top ${n}`}
-              </option>
-            ))}
-            {fieldSize !== "all" &&
-            !PLAYER_RACE_TOP_N_OPTIONS.includes(
-              fieldSize as (typeof PLAYER_RACE_TOP_N_OPTIONS)[number]
-            ) ? (
-              <option value={fieldSize}>
-                {rankEnd === "low"
-                  ? `Bottom ${fieldSize}`
-                  : rankEnd === "both"
-                    ? `Both ends · ${fieldSize}`
-                    : `Top ${fieldSize}`}
-              </option>
-            ) : null}
-          </select>
+                top: value === "all" ? "all" : playerRaceFieldSizeParam(Number(value)),
+              })
+            }
+            options={fieldOptions}
+          />
 
           {showRankEnd ? (
-            <div
-              className="col-span-2 flex items-center gap-1 rounded-md border border-border/70 frost-surface p-0.5 sm:col-auto"
-              role="group"
-              aria-label="Ranking end"
-            >
-              <Chip
-                active={rankEnd === "high"}
-                onClick={() => setRankEnd("high")}
-              >
+            <ChoiceTrack role="group" aria-label="Ranking end">
+              <ChoiceChip active={rankEnd === "high"} onClick={() => setRankEnd("high")}>
                 Highest
-              </Chip>
-              <Chip
-                active={rankEnd === "both"}
-                onClick={() => setRankEnd("both")}
-              >
+              </ChoiceChip>
+              <ChoiceChip active={rankEnd === "both"} onClick={() => setRankEnd("both")}>
                 Both
-              </Chip>
-              <Chip
-                active={rankEnd === "low"}
-                onClick={() => setRankEnd("low")}
-              >
+              </ChoiceChip>
+              <ChoiceChip active={rankEnd === "low"} onClick={() => setRankEnd("low")}>
                 Lowest
-              </Chip>
-            </div>
+              </ChoiceChip>
+            </ChoiceTrack>
           ) : null}
 
           {view !== "surplus" && view !== "payoff" ? (
-            <>
-              <label
-                className={cn(type.caption, "sr-only")}
-                htmlFor="viz-shared-minmp"
-              >
-                Minimum minutes
-              </label>
-              <select
-                id="viz-shared-minmp"
-                value={String(minMinutes)}
-                onChange={(event) => {
-                  const n = Number(event.target.value);
-                  replaceParams({ minmp: String(Math.max(0, n)) });
-                }}
-                className={selectClassName()}
-                aria-label="Minimum minutes played"
-              >
-                {PLAYER_RACE_MIN_MINUTES_OPTIONS.map((n) => (
-                  <option key={n} value={n}>
-                    {n === 0 ? "Any minutes" : `≥ ${n.toLocaleString()} MP`}
-                  </option>
-                ))}
-                {!PLAYER_RACE_MIN_MINUTES_OPTIONS.includes(
-                  minMinutes as (typeof PLAYER_RACE_MIN_MINUTES_OPTIONS)[number]
-                ) ? (
-                  <option value={minMinutes}>
-                    ≥ {minMinutes.toLocaleString()} MP
-                  </option>
-                ) : null}
-              </select>
-            </>
+            <FilterSelect
+              id="viz-shared-minmp"
+              label="Minimum minutes"
+              value={String(minMinutes)}
+              onChange={(value) => replaceParams({ minmp: String(Math.max(0, Number(value))) })}
+              options={minuteOptions}
+            />
           ) : null}
 
-          <label
-            className={cn(type.caption, "sr-only")}
-            htmlFor="viz-shared-team"
-          >
-            Highlight team
-          </label>
-          <select
+          <FilterSelect
+            key={teamKeys.join(",")}
             id="viz-shared-team"
+            label="Highlight team"
             value=""
-            onChange={(event) => {
-              const next = parseVizTeamKey(event.target.value);
-              if (!next) return;
-              if (teamKeys.includes(next)) return;
-              if (teamKeys.length >= VIZ_TEAM_HIGHLIGHT_MAX) return;
+            placeholder={
+              teamKeys.length
+                ? `Add team (${teamKeys.length}/${VIZ_TEAM_HIGHLIGHT_MAX})`
+                : "Highlight a team"
+            }
+            onChange={(value) => {
+              const next = parseVizTeamKey(value);
+              if (!next || teamKeys.includes(next) || teamKeys.length >= VIZ_TEAM_HIGHLIGHT_MAX) return;
               replaceParams({ team: vizTeamParam([...teamKeys, next]) });
             }}
-            className={selectClassName("col-span-2 sm:col-auto sm:min-w-[12rem]")}
-            aria-label="Add team roster highlight"
-          >
-            <option value="">
-              {teamKeys.length
-                ? `Add team (${teamKeys.length}/${VIZ_TEAM_HIGHLIGHT_MAX})…`
-                : "Highlight a team…"}
-            </option>
-            {VIZ_TEAM_OPTIONS.filter(
-              (option) => !teamKeys.includes(option.value)
-            ).map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-
-          <div className="relative col-span-2 min-w-0 w-full sm:min-w-[12rem] sm:max-w-xs sm:flex-1">
-            <label
-              className={cn(type.caption, "sr-only")}
-              htmlFor="viz-shared-pin"
-            >
-              Pin a player
-            </label>
-            <input
-              id="viz-shared-pin"
-              value={pinQuery}
-              onChange={(event) => setPinQuery(event.target.value)}
-              onFocus={() => setPinOpen(true)}
-              onBlur={() => {
-                globalThis.setTimeout(() => setPinOpen(false), 150);
-              }}
-              placeholder="Pin a player…"
-              className={cn(
-                type.bodySm,
-                "w-full rounded-md border border-border/70 frost-surface px-3 py-1.5 font-semibold"
-              )}
-              autoComplete="off"
-            />
-            {pinOpen && pinHits.length ? (
-              <ul className="absolute z-20 mt-1 max-h-64 w-full overflow-auto rounded-md border border-border/70 bg-background shadow-lg">
-                {pinHits.map((hit) => (
-                  <li key={hit.id}>
-                    <button
-                      type="button"
-                      className={cn(
-                        type.caption,
-                        "flex w-full items-center gap-2 px-3 py-2 text-left hover:bg-secondary/70"
-                      )}
-                      onMouseDown={(event) => event.preventDefault()}
-                      onClick={() => pinPlayer(hit)}
-                    >
-                      <span className="min-w-0 flex-1 truncate font-semibold">
-                        {hit.name}
-                      </span>
-                      <span className="text-muted-foreground">{hit.team}</span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            ) : null}
-          </div>
+            options={VIZ_TEAM_OPTIONS.filter((option) => !teamKeys.includes(option.value)).map(
+              (option) => ({ value: option.value, label: option.label })
+            )}
+            className="min-w-[9rem]"
+          />
         </div>
 
         {teamKeys.length || pinIds.length ? (
@@ -605,7 +379,6 @@ export function PlayerVisualizationsHubChrome({
             ))}
           </div>
         ) : null}
-      </div>
-    </div>
+    </FilterBar>
   );
 }

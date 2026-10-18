@@ -48,7 +48,6 @@ export default function AwardsIndexPage() {
     <main data-motion-page className="site-shell flex flex-col gap-8 py-6 sm:py-8">
       <MotionReveal />
       <PageHeader
-        eyebrow="Awards"
         title="Trophy case"
         subtitle="League award history. Open a trophy to see its winners, dynasties and eras."
       />

@@ -133,7 +133,18 @@ export function SeasonBarSlider({
   const labelId = useId();
   const trackRef = useRef<HTMLDivElement>(null);
   const draggingRef = useRef(false);
-  const index = Math.max(0, seasons.indexOf(value));
+  const exact = seasons.indexOf(value);
+  const index =
+    exact >= 0
+      ? exact
+      : (() => {
+          let best = -1;
+          for (let i = 0; i < seasons.length; i++) {
+            const candidate = seasons[i]!;
+            if (candidate <= value && (best < 0 || candidate > seasons[best]!)) best = i;
+          }
+          return best >= 0 ? best : Math.max(0, seasons.length - 1);
+        })();
   const last = Math.max(0, seasons.length - 1);
   const snappedRatio = last === 0 ? 0 : index / last;
   const [dragRatio, setDragRatio] = useState<number | null>(null);

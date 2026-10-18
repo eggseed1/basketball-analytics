@@ -1,4 +1,6 @@
 import Link from "next/link";
+
+import { LinkCue } from "@/components/ui/link-cue";
 import type { CSSProperties, ReactNode } from "react";
 
 import { TeamLogo } from "@/components/brand/team-logo";
@@ -725,14 +727,12 @@ export function FirstRoundPicksChart({ years, teams }: { years: number[]; teams:
 
 export function GuideSection({
   id,
-  eyebrow,
   title,
   lead,
   children,
   seeIt,
 }: {
   id: string;
-  eyebrow: string;
   title: string;
   lead: ReactNode;
   children?: ReactNode;
@@ -741,7 +741,6 @@ export function GuideSection({
   return (
     <section id={id} aria-labelledby={`${id}-title`} className="sports-card flex scroll-mt-24 flex-col gap-4 p-4 sm:p-6">
       <div className="flex flex-col gap-1.5">
-        <p className={cn(type.micro, "font-semibold uppercase tracking-[0.14em] text-muted-foreground")}>{eyebrow}</p>
         <h2 id={`${id}-title`} className="text-[20px] font-bold tracking-tight sm:text-[22px]">
           {title}
         </h2>
@@ -752,8 +751,9 @@ export function GuideSection({
         <div className="flex flex-wrap items-center gap-2 border-t border-border/60 pt-3">
           <span className={cn(type.caption, "font-semibold text-muted-foreground")}>See it on the site</span>
           {seeIt.map((link) => (
-            <Link key={link.href} href={link.href} className="rounded-full bg-secondary px-3 py-1 text-[13px] font-semibold hover:bg-secondary/70">
-              {link.label} →
+            <Link key={link.href} href={link.href} className="inline-flex items-center gap-0.5 rounded-full bg-secondary px-3 py-1 text-[13px] font-semibold hover:bg-secondary/70">
+              {link.label}
+              <LinkCue />
             </Link>
           ))}
         </div>

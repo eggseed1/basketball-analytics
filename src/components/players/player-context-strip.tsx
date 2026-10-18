@@ -5,8 +5,9 @@ import Link from "next/link";
 
 import { TeamLogo } from "@/components/brand/team-logo";
 import { PlayerIdentity } from "@/components/players/player-identity";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 import type { StatComp } from "@/lib/player-stat-comps";
-import { cn } from "@/lib/utils";
+import { LinkCue } from "@/components/ui/link-cue";
 
 export type SimilarPlayerMode = {
   id: string;
@@ -88,32 +89,14 @@ export function PlayerContextStrip({
   return (
     <div className="flex flex-col gap-4">
       {available.length > 1 ? (
-        <div
-          role="tablist"
-          aria-label="Similar-player metric"
-          className="flex flex-wrap gap-1"
-        >
-          {available.map((m) => {
-            const selected = m.id === active.id;
-            return (
-              <button
-                key={m.id}
-                type="button"
-                role="tab"
-                aria-selected={selected}
-                onClick={() => setModeId(m.id)}
-                className={cn(
-                  "rounded-md px-2.5 py-1 text-[12px] font-semibold transition-colors",
-                  selected
-                    ? "bg-foreground text-background"
-                    : "text-muted-foreground hover:text-foreground"
-                )}
-              >
-                {m.label}
-              </button>
-            );
-          })}
-        </div>
+        <SegmentedControl
+          label="Similar-player metric"
+          className="gap-0 [&_p]:sr-only"
+          size="sm"
+          value={active.id}
+          options={available.map((m) => ({ id: m.id, label: m.label }))}
+          onChange={setModeId}
+        />
       ) : null}
 
       {league.length ? (
@@ -165,7 +148,7 @@ export function PlayerContextStrip({
           href={compareHref}
           className="font-semibold underline-offset-2 hover:underline"
         >
-          Open full player compare <span data-motion-arrow aria-hidden>→</span>
+          Open full player compare <LinkCue />
         </Link>
       </p>
     </div>

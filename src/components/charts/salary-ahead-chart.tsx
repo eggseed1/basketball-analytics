@@ -8,6 +8,12 @@ import { TeamLogo } from "@/components/brand/team-logo";
 import { formatUsdCompact, formatUsdSignedCompact } from "@/lib/format-money";
 import { shortDate } from "@/lib/salary-payoff";
 import { cn } from "@/lib/utils";
+import {
+  segmentedItemActiveClassName,
+  segmentedItemClassName,
+  segmentedItemIdleClassName,
+  segmentedTrackClassName,
+} from "@/components/ui/segmented-style";
 
 const POSITIVE = "var(--chart-3)";
 const NEGATIVE = "var(--destructive)";
@@ -295,7 +301,7 @@ export function PayoffViewToggle({ views }: { views: Array<{ id: string; label: 
   const [active, setActive] = useState(views[0]?.id);
   return (
     <div className="flex flex-col gap-3">
-      <div role="tablist" aria-label="Payoff view" className="inline-flex w-fit gap-1 rounded-lg bg-secondary p-1">
+      <div role="tablist" aria-label="Payoff view" className={segmentedTrackClassName}>
         {views.map((v) => (
           <button
             key={v.id}
@@ -304,8 +310,9 @@ export function PayoffViewToggle({ views }: { views: Array<{ id: string; label: 
             aria-selected={active === v.id}
             onClick={() => setActive(v.id)}
             className={cn(
-              "rounded-md px-3 py-1 text-[13px] font-semibold",
-              active === v.id ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+              segmentedItemClassName,
+              "px-3 py-1 text-[13px]",
+              active === v.id ? segmentedItemActiveClassName : segmentedItemIdleClassName
             )}
           >
             {v.label}

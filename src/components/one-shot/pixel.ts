@@ -224,11 +224,14 @@ export function drawPortrait(ctx: CanvasRenderingContext2D, s: Pick<LifeState, "
 
 /* ------------------------------------------------------------ scene kinds */
 
-type SceneKind = "nursery" | "yard" | "street" | "dusk" | "gym" | "club" | "college" | "hall" | "pro" | "gleague" | "nba" | "draft" | "coach" | "studio" | "podcast" | "scout" | "trainer";
+type SceneKind = "nursery" | "yard" | "street" | "dusk" | "gym" | "club" | "college" | "hall" | "pro" | "gleague" | "nba" | "draft" | "coach" | "studio" | "podcast" | "scout" | "trainer" | "date" | "brawl" | "hotel" | "flu" | "banquet" | "golf" | "classroom" | "cards" | "clinic";
+
+const STAGED: SceneKind[] = ["date", "brawl", "hotel", "flu", "banquet", "golf", "classroom", "cards", "clinic"];
 
 export function sceneKind(s: LifeState): SceneKind {
   const age = s.ageMonths / 12;
   if (age < 3) return "nursery";
+  if (typeof s.flags.scene === "string" && typeof s.flags.sceneUntil === "number" && s.ageMonths <= s.flags.sceneUntil && (STAGED as string[]).includes(s.flags.scene)) return s.flags.scene as SceneKind;
   if (s.after) return ({ coach: "coach", media: "studio", podcast: "podcast", scout: "scout", trainer: "trainer" } as const)[s.after.track];
   const d = s.achievements.drafted;
   if (d && s.ageMonths - d.month <= 1) return "draft";
@@ -319,6 +322,24 @@ export function drawScene(ctx: CanvasRenderingContext2D, s: LifeState, frame: nu
       return drawScout(px, s, env, frame, hero);
     case "trainer":
       return drawTrainer(px, s, env, frame, hero, heightPx);
+    case "date":
+      return drawDate(px, env, frame, hero, heightPx);
+    case "brawl":
+      return drawBrawl(px, s, env, frame, hero, heightPx);
+    case "hotel":
+      return drawHotel(px, env, frame, hero, heightPx);
+    case "flu":
+      return drawFlu(px, s, env, frame, hero, heightPx);
+    case "banquet":
+      return drawBanquet(px, env, frame, hero, heightPx);
+    case "golf":
+      return drawGolf(px, env, frame, hero, heightPx);
+    case "classroom":
+      return drawClassroom(px, s, env, frame, hero, heightPx);
+    case "cards":
+      return drawCards(px, env, frame, hero, heightPx);
+    case "clinic":
+      return drawClinic(px, env, frame, hero, heightPx);
   }
   if (env.snow && (kind === "yard" || kind === "street" || kind === "dusk")) drawSnowfall(px, env, frame);
   const indoor = !["yard", "street", "dusk"].includes(kind);
@@ -328,6 +349,81 @@ export function drawScene(ctx: CanvasRenderingContext2D, s: LifeState, frame: nu
   }
   drawPlayer(px, { x: 128, footY: FEET, h: heightPx, ...hero, kit: env.kit, facing: -1, pose: "dribble", frame });
   if (kind === "nba" && typeof s.flags.champAt === "number" && s.ageMonths - s.flags.champAt <= 1) drawTitle(px, env, frame);
+}
+
+type Hero = { skin: string; hair: string; style: number; age: number };
+
+function drawDate(px: Px, env: Env, frame: number, hero: Hero, h: number) {
+  for (let y = 0; y < H; y++) px(0, y, W, 1, y < 70 ? shade("#1A1424", y / 140) : "#2A2430");
+  px(18, 28, 70, 36, "#3A2430");
+  px(22, 32, 22, 14, "#F2D3A2");
+  px(110, 40, 50, 8, "#C45C26");
+  px(118, 48, 6, 10, "#E8E0D4");
+  drawPlayer(px, { x: 70, footY: FEET, h: Math.round(h * 0.85), ...hero, kit: env.kit, facing: 1, pose: "stand", frame });
+  drawPlayer(px, { x: 96, footY: FEET - 1, h: Math.round(h * 0.8), skin: SKIN[(hashString(env.kit.primary) + 2) % 6]!, hair: HAIR[1]!, style: 1, age: 22, kit: { ...env.kit, primary: "#6E2430" }, facing: -1, pose: "stand", frame });
+}
+
+function drawBrawl(px: Px, s: LifeState, env: Env, frame: number, hero: Hero, h: number) {
+  drawArena(px, env, frame, { density: 0.9, teamShare: 0.5, rows: 6, dark: true, led: true, banners: false, jumbo: false });
+  const fan = SKIN[hashString(`${s.seed}:fan`) % 6]!;
+  drawPlayer(px, { x: 78, footY: 58, h: Math.round(h * 0.55), skin: fan, hair: HAIR[3]!, style: 0, age: 40, kit: { ...env.kit, primary: "#C4C0B4", uniform: false }, facing: 1, pose: "stand", frame });
+  drawPlayer(px, { x: 100, footY: FEET - 6, h, ...hero, kit: env.kit, facing: -1, pose: "defend", frame });
+  if (frame % 8 < 4) px(88, 40, 8, 2, "#F2E6C8");
+}
+
+function drawHotel(px: Px, env: Env, frame: number, hero: Hero, h: number) {
+  for (let y = 0; y < H; y++) px(0, y, W, 1, "#241E18");
+  px(0, 78, W, 30, "#3A3228");
+  px(24, 36, 70, 48, "#6A5038");
+  px(30, 42, 58, 8, "#E8D8A8");
+  px(34, 52, 10, 10, "#C45C26");
+  px(48, 52, 10, 10, "#C45C26");
+  px(140, 24, 28, 40, frame % 20 < 10 ? "#8FB4D4" : "#6E90B0");
+  drawPlayer(px, { x: 120, footY: FEET, h: Math.round(h * 0.9), ...hero, kit: env.kit, facing: -1, pose: "stand", frame });
+}
+
+function drawFlu(px: Px, s: LifeState, env: Env, frame: number, hero: Hero, h: number) {
+  drawArena(px, env, frame, { density: 0.97, teamShare: 0.65, rows: 7, dark: true, led: true, banners: true, jumbo: true });
+  const opp = opponentKit(s.seed, s.placement.teamName, `${s.season?.key ?? ""}:${s.lastGame?.opponent ?? ""}`);
+  drawPlayer(px, { x: 70, footY: FEET - 2, h: Math.round(h * 0.92), skin: SKIN[1]!, hair: HAIR[0]!, style: 2, age: 26, kit: opp, facing: 1, pose: "defend", frame });
+  drawPlayer(px, { x: 118, footY: FEET + (frame % 12 < 6 ? 1 : 0), h, ...hero, kit: env.kit, facing: -1, pose: "dribble", frame });
+  px(108, FEET - h - 6, 10, 3, "#E8E8E8");
+}
+
+function drawBanquet(px: Px, env: Env, frame: number, hero: Hero, h: number) {
+  for (let y = 0; y < H; y++) px(0, y, W, 1, y < HORIZON ? "#1C140E" : "#3A2A20");
+  for (let i = 0; i < 5; i++) px(16 + i * 34, 70, 28, 6, "#6A4030");
+  px(70, 22, 50, 16, frame % 16 < 8 ? "#E8C56A" : "#C4A24A");
+  drawPlayer(px, { x: 96, footY: FEET - 4, h: Math.round(h * 0.9), ...hero, kit: env.kit, facing: 1, pose: "suit", frame });
+}
+
+function drawGolf(px: Px, env: Env, frame: number, hero: Hero, h: number) {
+  drawSky(px, { ...env, snow: false }, false, frame);
+  px(0, HORIZON, W, H - HORIZON, "#3E7A3A");
+  px(40, 78, 30, 4, "#E8E4D0");
+  px(150, 60, 8, 18, "#5A4030");
+  px(146, 56, 16, 6, "#2E6A32");
+  drawPlayer(px, { x: 78, footY: FEET, h: Math.round(h * 0.88), ...hero, kit: { ...env.kit, primary: "#F2F2EA" }, facing: 1, pose: "polo", frame });
+}
+
+function drawClassroom(px: Px, s: LifeState, env: Env, frame: number, hero: Hero, h: number) {
+  drawGym(px, env, false, s, frame);
+  for (let i = 0; i < 4; i++) drawPlayer(px, { x: 36 + i * 22, footY: FEET, h: Math.round(h * 0.55), skin: SKIN[i % 6]!, hair: HAIR[i % 5]!, style: i % 3, age: 15, kit: env.kit, facing: -1, pose: "stand", frame });
+  drawPlayer(px, { x: 150, footY: FEET - 2, h, ...hero, kit: env.kit, facing: -1, pose: "stand", frame });
+}
+
+function drawCards(px: Px, env: Env, frame: number, hero: Hero, h: number) {
+  for (let y = 0; y < H; y++) px(0, y, W, 1, "#1A1814");
+  px(20, 62, 150, 10, "#C4B49A");
+  for (let i = 0; i < 8; i++) px(28 + i * 16, 52, 10, 14, i % 2 ? "#F4F0E4" : "#E8D2A0");
+  drawPlayer(px, { x: 96, footY: 74, h: Math.round(h * 0.7), ...hero, kit: env.kit, facing: 1, pose: "stand", frame });
+}
+
+function drawClinic(px: Px, env: Env, frame: number, hero: Hero, h: number) {
+  for (let y = 0; y < H; y++) px(0, y, W, 1, y < 80 ? "#E8EEF2" : "#D0D6DC");
+  px(120, 30, 40, 50, "#F7FBFC");
+  px(126, 48, 28, 4, "#8AA0A8");
+  drawPlayer(px, { x: 70, footY: FEET, h: Math.round(h * 0.9), ...hero, kit: env.kit, facing: 1, pose: "stand", frame });
 }
 
 /** Title month: confetti and the trophy, a gold ball over a net on a tapered stand. */
@@ -847,8 +943,6 @@ function drawPlayer(px: Px, f: Figure) {
 }
 
 /* ------------------------------------------------------------ special scenes */
-
-type Hero = { skin: string; hair: string; style: number; age: number };
 
 function drawNursery(px: Px, s: LifeState, env: Env, frame: number, hero: Hero) {
   const r = rand(`${env.seed}:room`);

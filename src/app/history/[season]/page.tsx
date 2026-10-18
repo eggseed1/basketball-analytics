@@ -21,6 +21,7 @@ import path from "node:path";
 import { HISTORY_VERSION } from "@/lib/history/capabilities";
 import { standingsHref } from "@/lib/standings-routes";
 import { MotionReveal } from "@/components/continuity/motion-reveal";
+import { LinkCue } from "@/components/ui/link-cue";
 import { getHistoricalLeadersBundle } from "@/data/queries/time-machine";
 import { historyHref } from "@/themes/history-url";
 
@@ -239,18 +240,13 @@ export default async function HistorySeasonPage({
         drblWithoutArchive ? (
           <section className="flex flex-col gap-3" aria-label="DRBL leaders">
             <div>
-              <h2 className="text-[17px] font-bold tracking-tight">
-                DRBL/100
-              </h2>
+              <h2 className="text-[17px] font-bold tracking-tight">DRBL/100</h2>
               <p className="mt-1 max-w-xl text-[13px] text-muted-foreground">
-                The game list for {season} is not in this archive. The rating
-                is published.
+                The game list for {season} is not in this archive. The rating is published.
               </p>
             </div>
             {drblWithoutArchive.drblNote ? (
-              <p className="text-[13px] text-muted-foreground">
-                {drblWithoutArchive.drblNote}
-              </p>
+              <p className="text-[13px] text-muted-foreground">{drblWithoutArchive.drblNote}</p>
             ) : null}
             {drblWithoutArchive.drbl.length ? (
               <div className="sports-card overflow-hidden">
@@ -262,19 +258,12 @@ export default async function HistorySeasonPage({
                         prefetch={false}
                         className="flex items-center gap-2 px-4 py-2.5 text-[14px] hover:bg-secondary/40"
                       >
-                        <span className="w-5 tabular-nums text-muted-foreground">
-                          {index + 1}
-                        </span>
+                        <span className="w-5 tabular-nums text-muted-foreground">{index + 1}</span>
                         <span className="min-w-0 flex-1 truncate font-medium">
                           {row.playerName}
-                          <span className="font-normal text-muted-foreground">
-                            {" "}
-                            · {row.teamAbbr}
-                          </span>
+                          <span className="font-normal text-muted-foreground"> · {row.teamAbbr}</span>
                         </span>
-                        <span className="tabular-nums font-semibold">
-                          {row.value.toFixed(2)}
-                        </span>
+                        <span className="tabular-nums font-semibold">{row.value.toFixed(2)}</span>
                       </Link>
                     </li>
                   ))}
@@ -289,10 +278,7 @@ export default async function HistorySeasonPage({
                 Full DRBL board
               </Link>
               <span className="mx-2">·</span>
-              <Link
-                href={historyHref({ season })}
-                className="underline-offset-4 hover:underline"
-              >
+              <Link href={historyHref({ season })} className="underline-offset-4 hover:underline">
                 Time Machine
               </Link>
             </p>
@@ -478,7 +464,7 @@ export default async function HistorySeasonPage({
                   href={`/explore/players?season=${encodeURIComponent(season)}`}
                   className="underline-offset-4 hover:underline"
                 >
-                  Open full Players directory <span data-motion-arrow aria-hidden>→</span>
+                  Open full Players directory <LinkCue />
                 </Link>
               </p>
             </section>

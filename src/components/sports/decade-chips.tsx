@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 
-import { cn } from "@/lib/utils";
+import { FilterBar } from "@/components/explore/filter-bar";
+import { ChoiceTrack, choiceChipClassName } from "@/components/ui/choice-chip";
 
 const DECADES = [
   { id: "1960s", from: 1960, to: 1969, label: "1960s" },
@@ -30,7 +31,8 @@ export function DecadeChips({
     : undefined;
 
   return (
-    <div className="flex gap-2 overflow-x-auto pb-1">
+    <FilterBar label="Decade">
+      <ChoiceTrack scrollable aria-label="Decade">
       {DECADES.map((decade) => {
         const firstInDecade = seasons.find((s) => {
           const y = Number(s.slice(0, 4));
@@ -51,17 +53,15 @@ export function DecadeChips({
           <Link
             key={decade.id}
             href={href}
-            className={cn(
-              "glass-pill shrink-0 rounded-md px-3 py-1.5 text-[14px] font-semibold transition-colors",
+            className={choiceChipClassName(
               active || (pathname === hrefBase && decade.id === "1960s" && !currentSeason)
-                ? "glass-pill-active"
-                : "text-muted-foreground hover:text-foreground"
             )}
           >
             {decade.label}
           </Link>
         );
       })}
-    </div>
+      </ChoiceTrack>
+    </FilterBar>
   );
 }

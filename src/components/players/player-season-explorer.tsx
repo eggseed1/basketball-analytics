@@ -12,6 +12,7 @@ import type { PlayerSeason } from "@/data/types";
 import { formatMinutes, formatNumber, formatPct } from "@/lib/format";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { cn } from "@/lib/utils";
+import { LinkCue } from "@/components/ui/link-cue";
 
 /**
  * Compact career season surface - high-value fields + Compare / Rank / Ask.
@@ -61,7 +62,7 @@ export function PlayerSeasonExplorer({
         <details className="group">
           <summary className="cursor-pointer list-none py-1 text-[12px] font-semibold text-muted-foreground underline-offset-2 hover:underline [&::-webkit-details-marker]:hidden">
             <span className="group-open:hidden">
-              Show {rest.length} earlier seasons <span data-motion-arrow aria-hidden>→</span>
+              Show {rest.length} earlier seasons <LinkCue />
             </span>
             <span className="hidden group-open:inline">Hide earlier seasons</span>
           </summary>

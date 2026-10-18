@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
+import { LinkCue } from "@/components/ui/link-cue";
 
 export function SentimentAssociationNote({
   association,
@@ -26,7 +27,7 @@ export function SentimentAssociationNote({
         <>
           {" "}
           <Link href={movementHref} className="font-semibold underline">
-            View movement story <span data-motion-arrow aria-hidden>→</span>
+            View movement story <LinkCue />
           </Link>
         </>
       ) : null}

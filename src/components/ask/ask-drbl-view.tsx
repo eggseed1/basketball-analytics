@@ -44,7 +44,8 @@ import { AskLeaderboardChartLazy } from "@/components/charts/recharts-lazy";
 import { QueryUpdatingChrome } from "@/components/continuity/query-nav";
 import { MetricHelp } from "@/components/learn/metric-help";
 import { PlayerIdentity } from "@/components/players/player-identity";
-import { AppLink } from "@/components/ui/app-link";
+import { askChipClassName, askSubmitClassName, askTextareaClassName } from "@/components/ask/ask-field";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 import {
   conceptIdForAskMetric,
   conceptIdForAskStatus,
@@ -64,6 +65,8 @@ const AskBuilderForm = dynamic(
 );
 import { assertInternalHref } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
+import { AppLink } from "@/components/ui/app-link";
+import { LinkCue } from "@/components/ui/link-cue";
 
 function askHrefWithContext(
   q: string,
@@ -184,7 +187,7 @@ function AmbiguityPicker({
                 })}
                 className="shrink-0 text-[12px] font-semibold text-muted-foreground underline-offset-2 hover:underline"
               >
-                Continue <span data-motion-arrow aria-hidden>→</span>
+                Continue <LinkCue />
               </AppLink>
             </li>
           ))
@@ -313,23 +316,19 @@ function formatRecentTime(at: number): string {
 function ExamplesList({
   examples,
   onPick,
-  compact,
 }: {
   examples: AskExample[];
   onPick: (prompt: string) => void;
   compact?: boolean;
 }) {
   return (
-    <ul className={cn("flex flex-col gap-1.5", compact && "gap-1")}>
+    <ul className="flex flex-wrap gap-2">
       {examples.map((ex) => (
         <li key={ex.id}>
           <button
             type="button"
             onClick={() => onPick(ex.prompt)}
-            className={cn(
-              "text-left font-semibold underline-offset-2 hover:underline",
-              compact ? "text-[14px]" : "text-[14px]"
-            )}
+            className={askChipClassName}
           >
             {ex.prompt}
           </button>
@@ -723,43 +722,20 @@ export function AskDrblView({
         </div>
       ) : null}
 
-      <div
-        className="inline-flex w-fit rounded-md border border-border bg-secondary/30 p-0.5"
-        role="tablist"
-        aria-label="ASK input mode"
-      >
-        <button
-          type="button"
-          role="tab"
-          aria-selected={mode === "natural"}
-          onClick={() => setMode("natural")}
-          className={cn(
-            "rounded px-3 py-1.5 text-[12px] font-bold",
-            mode === "natural"
-              ? "bg-background text-foreground shadow-sm"
-              : "text-muted-foreground"
-          )}
-        >
-          Ask naturally
-        </button>
-        <button
-          type="button"
-          role="tab"
-          aria-selected={mode === "builder"}
-          onClick={() => setMode("builder")}
-          className={cn(
-            "rounded px-3 py-1.5 text-[12px] font-bold",
-            mode === "builder"
-              ? "bg-background text-foreground shadow-sm"
-              : "text-muted-foreground"
-          )}
-        >
-          Build a query
-        </button>
-      </div>
+      <SegmentedControl
+        label="How to ask"
+        className="gap-0 [&_p]:sr-only"
+        size="sm"
+        value={mode}
+        options={[
+          { id: "natural", label: "Ask naturally" },
+          { id: "builder", label: "Build a query" },
+        ]}
+        onChange={setMode}
+      />
 
       {mode === "natural" ? (
-        <form onSubmit={onSubmit} className="flex flex-col gap-3">
+        <form onSubmit={onSubmit} className="flex flex-col gap-2">
           <label className="sr-only" htmlFor="ask-drbl-input">
             Ask DRBL
           </label>
@@ -767,19 +743,19 @@ export function AskDrblView({
             id="ask-drbl-input"
             value={value}
             onChange={(e) => setValue(e.target.value)}
-            rows={hasResult ? 2 : 3}
+            rows={2}
             placeholder="Ask a basketball analytics question…"
-            className="w-full resize-y rounded-md border border-border bg-background px-4 py-3 text-[16px] font-medium outline-none ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring"
+            className={askTextareaClassName}
           />
           <div className="flex flex-wrap items-center gap-2">
             <button
               type="submit"
               disabled={pending || !value.trim()}
-              className="rounded-md bg-foreground px-4 py-2.5 text-[14px] font-bold text-background disabled:opacity-50"
+              className={askSubmitClassName}
             >
               {pending ? "Running…" : hasResult ? "Ask another" : "Run query"}
             </button>
-            <p className="text-[12px] text-muted-foreground">
+            <p className="type-caption text-muted-foreground">
               Results are shareable via the URL.
             </p>
           </div>

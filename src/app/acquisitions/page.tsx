@@ -147,9 +147,6 @@ export default async function AcquisitionsPage({ searchParams }: PageProps) {
     <main data-motion-page className="site-shell flex flex-col gap-6 py-6 sm:py-8">
       <MotionReveal />
       <header className="flex flex-col gap-3">
-        <p className={cn(type.caption, "font-semibold uppercase tracking-wide text-muted-foreground")}>
-          Transactions · How they got him
-        </p>
         {story ? (
           <div className="flex items-center gap-3">
             {story.player.playerId ? (

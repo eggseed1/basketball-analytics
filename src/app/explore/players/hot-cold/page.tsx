@@ -60,7 +60,6 @@ export default async function HotColdPage({
     <main data-motion-page className="site-shell flex flex-col gap-6 py-6 sm:py-8">
       <MotionReveal />
       <PageHeader
-        eyebrow={season ? `Players · ${season}` : "Players"}
         title="Hot & Cold"
         subtitle={
           season
@@ -69,7 +68,7 @@ export default async function HotColdPage({
         }
         meta={
           season ? (
-            <span>
+            <span className={cn(type.bodySm, "text-foreground")}>
               {season} regular season
               {throughDate ? `, games through ${formatDate(throughDate)}` : ""}
             </span>
@@ -109,13 +108,6 @@ export default async function HotColdPage({
       </div>
 
       <section className="flex flex-col gap-3">
-        <div className="flex flex-col gap-0.5">
-          <h2 className={cn(type.bodySm, "font-bold")}>{active.question}</h2>
-          <p className={cn(type.caption, "text-muted-foreground")}>
-            {active.note} Rows read {active.baselineLabel.toLowerCase()} →{" "}
-            {active.windowLabel.toLowerCase()}.
-          </p>
-        </div>
         <div className="sports-card p-4 sm:p-5">
           <HotColdColumns risers={active.risers} fallers={active.fallers} metric={metric} />
         </div>

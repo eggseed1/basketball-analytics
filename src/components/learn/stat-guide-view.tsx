@@ -13,11 +13,9 @@ import type { StatGuide } from "@/content/stats/guides";
 
 export function StatGuideView({
   guide,
-  eyebrow,
   visual,
 }: {
   guide: StatGuide;
-  eyebrow: string;
   visual?: ReactNode;
 }) {
   const [depth, setDepth] = useState<"plain" | "deep">("plain");
@@ -28,7 +26,6 @@ export function StatGuideView({
   return (
     <div data-motion-stack className="flex flex-col gap-6">
       <LearnHeader
-        eyebrow={eyebrow}
         title={guide.name}
         lead={guide.blurb}
         depth={depth}

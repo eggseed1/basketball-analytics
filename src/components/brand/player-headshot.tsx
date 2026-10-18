@@ -86,7 +86,7 @@ export function PlayerHeadshot({
     return (
       <span
         className={cn(
-          "inline-flex shrink-0 items-center justify-center rounded-full font-bold tracking-wide text-white ring-2 ring-white/80",
+          "inline-flex shrink-0 items-center justify-center rounded-full font-bold tracking-wide text-white ring-1 ring-white/80",
           SIZE_CLASS[size],
           className
         )}
@@ -112,13 +112,13 @@ export function PlayerHeadshot({
   return (
     <span
       className={cn(
-        "relative inline-flex shrink-0 overflow-hidden rounded-full bg-muted ring-2 ring-white/90",
+        "relative inline-flex shrink-0 overflow-hidden rounded-full bg-muted ring-1 ring-white/90",
         SIZE_CLASS[size],
         className
       )}
       data-avatar={size}
       style={{
-        boxShadow: brand ? `0 0 0 2px ${brand.primary}` : undefined,
+        boxShadow: brand ? `0 0 0 1px ${brand.primary}` : undefined,
       }}
       title={photo.credit ?? undefined}
     >

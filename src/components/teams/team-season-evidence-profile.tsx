@@ -6,6 +6,7 @@ import {
 } from "@/analytics/season-evidence";
 import { TeamSeasonEvidenceSection } from "@/components/compare/team-season-evidence-section";
 import { MetricHelp } from "@/components/learn/metric-help";
+import { LinkCue } from "@/components/ui/link-cue";
 
 /**
  * Team Profile Season Evidence - compact glimpse; full cards stay behind
@@ -67,7 +68,7 @@ export function TeamSeasonEvidenceProfileSection({
         {hasGames ? (
           <details className="group">
             <summary className="cursor-pointer list-none text-[14px] font-semibold underline-offset-2 hover:underline [&::-webkit-details-marker]:hidden">
-              See games <span data-motion-arrow aria-hidden>→</span>
+              See games <LinkCue />
             </summary>
             <div id="evidence-games" className="mt-3 scroll-mt-16">
               <TeamSeasonEvidenceSection

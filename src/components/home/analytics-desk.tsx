@@ -90,14 +90,14 @@ export function AnalyticsDesk({
           {embedded ? "Recent news" : "Analytics desk"}
         </h2>
         {embedded ? (
-          <p className="type-body-sm text-muted-foreground">
+          <p className="type-caption text-muted-foreground">
             {updatedLabel ??
               (isPending && !hasLoaded
                 ? "Loading analytics coverage…"
                 : "Analytics coverage · refresh for newer takes")}
           </p>
         ) : (
-          <p className="type-body-sm text-muted-foreground">
+          <p className="type-caption text-muted-foreground">
             Recent NBA analytics coverage, credited to the outlet and writer.
             {updatedLabel ? ` · ${updatedLabel}` : ""}
           </p>
@@ -129,8 +129,8 @@ export function AnalyticsDesk({
       <div
         className={
           embedded
-            ? "-mx-4 -mb-4 flex flex-col divide-y divide-border/70 sm:-mx-5 sm:-mb-5"
-            : "flex flex-col gap-px overflow-hidden rounded-[9px] border border-black/5 bg-black/5"
+            ? "-mx-4 -mb-4 flex flex-col divide-y divide-border/40"
+            : "flex flex-col gap-px overflow-hidden rounded-[9px] border border-border/40 bg-border/40"
         }
         aria-busy="true"
         aria-label="Loading recent news"
@@ -138,7 +138,7 @@ export function AnalyticsDesk({
         {Array.from({ length: embedded ? NEWS_LIMIT : 4 }).map((_, i) => (
           <div
             key={i}
-            className={embedded ? "flex h-[103px] flex-col justify-center px-4 sm:px-5 lg:h-[86px]" : "bg-card px-4 py-3.5"}
+            className={embedded ? "flex h-[103px] flex-col justify-center px-4 lg:h-[86px]" : "bg-card px-4 py-3.5"}
           >
             <div className="mb-2 h-4 w-[80%] animate-pulse rounded bg-secondary" />
             <div className="h-3 w-[40%] animate-pulse rounded bg-secondary" />
@@ -146,7 +146,7 @@ export function AnalyticsDesk({
         ))}
       </div>
     ) : articles.length === 0 ? (
-      <div className="type-body-sm rounded-md border border-dashed border-black/10 px-4 py-8 text-center text-muted-foreground">
+      <div className="type-body-sm rounded-md border border-dashed border-border/40 px-4 py-8 text-center text-muted-foreground">
         No fresh headlines right now.
         {!isPending ? (
           <>
@@ -165,10 +165,10 @@ export function AnalyticsDesk({
       <ul
         className={
           embedded
-            ? `-mx-4 -mb-4 flex flex-col divide-y divide-border/70 sm:-mx-5 sm:-mb-5 ${
+            ? `-mx-4 -mb-4 flex flex-col divide-y divide-border/40 ${
                 isPending ? "opacity-70" : ""
               }`
-            : `grid gap-px overflow-hidden rounded-md border border-black/5 bg-black/5 sm:grid-cols-2 lg:grid-cols-3 ${
+            : `grid gap-px overflow-hidden rounded-md border border-border/40 bg-border/40 sm:grid-cols-2 lg:grid-cols-3 ${
                 isPending ? "opacity-70" : ""
               }`
         }
@@ -180,13 +180,12 @@ export function AnalyticsDesk({
               href={a.url}
               data-motion="row"
               className={cn(
-                "flex h-full flex-col gap-2 px-4 py-3.5 transition-colors hover:bg-secondary/40",
-                embedded && "sm:px-5"
+                "flex h-full flex-col gap-2 px-4 py-3.5 transition-colors hover:bg-secondary/40"
               )}
             >
               {embedded ? (
                 <>
-                  <h3 className="text-[18px] font-semibold leading-snug tracking-tight text-foreground">
+                  <h3 className="type-body-sm font-semibold leading-snug text-foreground">
                     {a.title}
                   </h3>
                   <div className="flex items-center justify-between gap-3">
@@ -211,7 +210,7 @@ export function AnalyticsDesk({
                       {a.author ?? "Byline pending"}
                     </p>
                   </div>
-                  <h3 className="text-[14px] font-semibold leading-snug tracking-tight text-foreground">
+                  <h3 className="type-body-sm font-semibold leading-snug text-foreground">
                     {a.title}
                   </h3>
                   {a.publishedAt ? (
@@ -236,14 +235,14 @@ export function AnalyticsDesk({
 
   if (embedded) {
     return (
-      <section className="sports-card flex flex-col gap-3 overflow-hidden p-4 sm:p-5">
+      <section className="sports-card flex flex-col gap-3 overflow-hidden p-4">
         {body}
       </section>
     );
   }
 
   return (
-    <section className="flex flex-col gap-4 border-t border-black/5 pt-8 pb-4">
+    <section className="flex flex-col gap-4 border-t border-border/40 pt-8 pb-4">
       {body}
     </section>
   );

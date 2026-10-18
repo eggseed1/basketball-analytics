@@ -7,6 +7,10 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
 
 import { TeamLogo } from "@/components/brand/team-logo";
+import { FilterBar, FilterSelect } from "@/components/explore/filter-bar";
+import { ChoiceChip, ChoiceTrack } from "@/components/ui/choice-chip";
+import { Calendar } from "lucide-react";
+import { espnYearFromCanonicalSeason } from "@/data/providers/nba/season";
 import { hoverLinkRowProps, useHoverLink } from "@/components/charts/hover-layer";
 import type { StandingsTrackerPayload } from "@/data/queries/standings-tracker";
 import {
@@ -197,43 +201,41 @@ export function StandingsTrackerView({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className={cn("flex flex-wrap items-center gap-3", embedded && "hidden")}>
-        <div className="flex flex-wrap items-center gap-2">
-          <label className={cn(type.caption, "sr-only")} htmlFor="tracker-season">
-            Season
-          </label>
-          <select
-            id="tracker-season"
-            value={payload.requestedSeason}
-            onChange={(event) => setSeason(event.target.value)}
-            className={cn(
-              type.bodySm,
-              "rounded-md border border-border/70 frost-surface px-3 py-1.5 font-semibold"
-            )}
-          >
-            {seasonOptions.map((season) => (
-              <option key={season} value={season}>
-                {season} season
-              </option>
-            ))}
-          </select>
-          <div
-            className="flex flex-wrap gap-1.5"
-            role="group"
-            aria-label="Conference filter"
-          >
-            {CONFERENCE_OPTIONS.map((option) => (
-              <Chip
-                key={option.id}
-                active={conference === option.id}
-                onClick={() => setConference(option.id)}
-              >
-                {option.label}
-              </Chip>
-            ))}
+      {embedded ? null : (
+        <FilterBar label="Standings tracker filters">
+          <div className="flex w-full min-w-0 flex-wrap items-center gap-2">
+            <FilterSelect
+              id="tracker-season"
+              label="Season"
+              value={payload.requestedSeason}
+              onChange={setSeason}
+              icon={<Calendar className="size-3.5 text-muted-foreground" aria-hidden />}
+              options={seasonOptions.map((season) => ({
+                value: season,
+                label: (() => {
+                  try {
+                    return String(espnYearFromCanonicalSeason(season));
+                  } catch {
+                    return season.slice(0, 4);
+                  }
+                })(),
+              }))}
+              className="min-w-[5.5rem]"
+            />
+            <ChoiceTrack role="group" aria-label="Conference filter">
+              {CONFERENCE_OPTIONS.map((option) => (
+                <ChoiceChip
+                  key={option.id}
+                  active={conference === option.id}
+                  onClick={() => setConference(option.id)}
+                >
+                  {option.label}
+                </ChoiceChip>
+              ))}
+            </ChoiceTrack>
           </div>
-        </div>
-      </div>
+        </FilterBar>
+      )}
 
       {payload.season !== payload.requestedSeason ? (
         <p className={cn(type.caption, "text-muted-foreground")}>

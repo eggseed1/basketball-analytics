@@ -1,3 +1,5 @@
+import { cache } from "react";
+
 import {
   fetchLeagueStandings,
   standingsHaveResults,
@@ -11,7 +13,7 @@ import {
 import { isPreseasonRosterSeason } from "@/data/providers/nba/espn-roster-client";
 import { shiftCanonicalSeason } from "@/lib/player-stat-comps";
 
-export async function getLeagueStandings(
+export const getLeagueStandings = cache(async function getLeagueStandings(
   season?: string
 ): Promise<LeagueStandings> {
   const resolved =
@@ -40,7 +42,7 @@ export async function getLeagueStandings(
   const prior = shiftCanonicalSeason(resolved, -1);
   const priorBoard = await fetchLeagueStandings(prior).catch(() => null);
   return priorBoard && standingsHaveResults(priorBoard) ? priorBoard : board;
-}
+});
 
 function standingRecord(wins: number, losses: number): string {
   return `${wins}-${losses}`;

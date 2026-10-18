@@ -153,18 +153,18 @@ export const PlayerCompFuturesChartLazy = dynamic(
   { ssr: false, loading: () => pulse }
 );
 
-export const TalentYearChartLazy = dynamic(
-  () =>
-    import("@/components/players/career-team-trend-chart").then((m) => ({
-      default: m.TalentYearChart,
-    })),
-  { ssr: false, loading: () => pulse }
-);
-
 export const CareerTeamTrendChartLazy = dynamic(
   () =>
     import("@/components/players/career-team-trend-chart").then((m) => ({
       default: m.CareerTeamTrendChart,
+    })),
+  { ssr: false, loading: () => pulse }
+);
+
+export const TalentYearChartLazy = dynamic(
+  () =>
+    import("@/components/players/career-team-trend-chart").then((m) => ({
+      default: m.TalentYearChart,
     })),
   { ssr: false, loading: () => pulse }
 );

@@ -155,7 +155,6 @@ export default async function TeamVisualizationsPage({ searchParams }: PageProps
     <main data-motion-page className="site-shell flex flex-1 flex-col gap-5 py-6 sm:py-8">
       <MotionReveal />
       <PageHeader
-        eyebrow="Teams"
         title="Visualizations"
         subtitle={
           teamVizIgnoresSeason(view)

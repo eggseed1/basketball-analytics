@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import type { TeamSeasonEvidence } from "@/analytics/season-evidence";
 import { cn } from "@/lib/utils";
+import { LinkCue } from "@/components/ui/link-cue";
 
 function ResultBadge({ result }: { result: "W" | "L" | "-" }) {
   return (
@@ -103,7 +104,7 @@ export function TeamSeasonEvidenceSection({
                   </ul>
                 </div>
                 <p className="mt-auto pt-1 text-[12px] font-semibold">
-                  Open Game Lab <span data-motion-arrow aria-hidden>→</span>
+                  Open Game Lab <LinkCue />
                 </p>
               </Link>
             </li>

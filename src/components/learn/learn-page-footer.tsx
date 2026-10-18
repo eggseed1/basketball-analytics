@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 
 import { AppLink } from "@/components/ui/app-link";
+import { LinkCue } from "@/components/ui/link-cue";
 import {
   LEARN_CATEGORIES,
   getLearnConcept,
@@ -56,7 +57,7 @@ export function LearnPageFooter({
       {onSite.length ? (
         <FooterGroup title="See it in DRBL">
           {onSite.map((a) => (
-            <Chip key={a.href} href={a.href} label={`${a.label} →`} />
+            <Chip key={a.href} href={a.href} label={a.label} cue />
           ))}
         </FooterGroup>
       ) : null}
@@ -88,13 +89,14 @@ function FooterGroup({
   );
 }
 
-function Chip({ href, label }: { href: string; label: string }) {
+function Chip({ href, label, cue = false }: { href: string; label: string; cue?: boolean }) {
   return (
     <AppLink
       href={href}
-      className="rounded-full bg-secondary px-3 py-1.5 text-[14px] font-semibold hover:bg-secondary/70"
+      className="inline-flex items-center gap-0.5 rounded-[4px] border border-border/25 bg-foreground/[0.035] px-2.5 py-1.5 text-[12px] font-medium text-muted-foreground hover:text-foreground"
     >
       {label}
+      {cue ? <LinkCue /> : null}
     </AppLink>
   );
 }

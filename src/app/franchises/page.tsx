@@ -1,11 +1,7 @@
 import { MotionReveal } from "@/components/continuity/motion-reveal";
-import { TransitionLink } from "@/components/continuity/query-nav";
-
 import { FranchiseHistoryTable } from "@/components/franchises/franchise-history-table";
-import {
-  franchiseHistoryAsOf,
-  listFranchiseHistories,
-} from "@/data/queries/franchises";
+import { PageHeader } from "@/components/layout/page-header";
+import { listFranchiseHistories } from "@/data/queries/franchises";
 
 export const metadata = {
   alternates: { canonical: "/franchises" },
@@ -16,46 +12,11 @@ export const metadata = {
 
 export default function FranchisesPage() {
   const franchises = listFranchiseHistories();
-  const asOf = franchiseHistoryAsOf();
 
   return (
     <main data-motion-page className="site-shell flex flex-1 flex-col gap-5 py-6 sm:py-8">
       <MotionReveal />
-      <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div className="max-w-2xl">
-          <p className="text-[12px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
-            History
-          </p>
-          <h1 className="mt-1 text-[28px] font-bold tracking-tight sm:text-[32px]">
-            Franchises
-          </h1>
-          <p className="mt-1 text-[16px] leading-relaxed text-muted-foreground">
-            Titles, Finals trips, playoff records and win percentages for every
-            franchise, through {asOf}.
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <TransitionLink
-            href="/standings#team-stats"
-            className="rounded-md bg-foreground px-4 py-2 text-[14px] font-semibold text-background"
-          >
-            Live teams
-          </TransitionLink>
-          <TransitionLink
-            href="/history"
-            className="rounded-md bg-secondary px-4 py-2 text-[14px] font-semibold"
-          >
-            Time Machine
-          </TransitionLink>
-          <TransitionLink
-            href="/gm"
-            className="rounded-md border border-border px-4 py-2 text-[14px] font-semibold text-muted-foreground"
-            title="Unfinished Franchise Lab scaffold"
-          >
-            GM lab
-          </TransitionLink>
-        </div>
-      </header>
+      <PageHeader title="Franchises" />
 
       <FranchiseHistoryTable franchises={franchises} />
 

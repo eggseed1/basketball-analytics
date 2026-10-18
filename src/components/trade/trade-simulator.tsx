@@ -1,14 +1,13 @@
 "use client";
 
 import {
-  useCallback,
   useEffect,
   useMemo,
   useState,
   type CSSProperties,
 } from "react";
 import Link from "next/link";
-import { ArrowLeftRight, Check, Copy, RotateCcw, X } from "lucide-react";
+import { ArrowLeftRight, Check, RotateCcw, Share2, X } from "lucide-react";
 
 import { MatchupWashCard } from "@/components/brand/team-wash-card";
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
@@ -37,7 +36,13 @@ import {
   type TradeSketchSide,
 } from "@/lib/trade-simulator";
 import type { TradeSimulatorBoard } from "@/data/queries/trade-simulator";
+import { FilterSelect } from "@/components/explore/filter-bar";
+import { ChoiceTrack, searchFieldClassName } from "@/components/ui/choice-chip";
+import { ShareCardFrame, SHARE_PALETTE, type ShareAppearance } from "@/components/share/share-card";
+import { ShareSnapshotDialog } from "@/components/share/share-snapshot-dialog";
+import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
+import { LinkCue } from "@/components/ui/link-cue";
 
 function signed(value: number, digits = 2): string {
   const text = formatNumber(value, digits);
@@ -393,24 +398,26 @@ function PlayerColumn({
         </div>
       </div>
       <div className="flex gap-2 px-3 sm:px-4">
-        <input
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          placeholder="Find a player"
-          className="h-9 min-w-0 flex-1 rounded-md border border-border bg-transparent px-3 text-[14px] outline-none"
-        />
-        <select
+        <ChoiceTrack className="min-w-0 flex-1">
+          <input
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Find a player"
+            aria-label={`Find a player on ${team.abbr}`}
+            className={searchFieldClassName}
+          />
+        </ChoiceTrack>
+        <FilterSelect
+          id={`trade-sort-${team.id}`}
+          label="Sort players"
           value={sort}
-          onChange={(event) =>
-            setSort(event.target.value as "salary" | "drbl" | "name")
-          }
-          className="h-9 shrink-0 rounded-md border border-border bg-transparent px-2 text-[13px]"
-          aria-label="Sort players"
-        >
-          <option value="salary">Salary</option>
-          <option value="drbl">DRBL</option>
-          <option value="name">Name</option>
-        </select>
+          onChange={(value) => setSort(value as "salary" | "drbl" | "name")}
+          options={[
+            { value: "salary", label: "Salary" },
+            { value: "drbl", label: "DRBL" },
+            { value: "name", label: "Name" },
+          ]}
+        />
       </div>
       <ul className="flex max-h-[26rem] flex-col gap-0.5 overflow-y-auto overscroll-contain px-2 pb-3 sm:px-3 sm:pb-4">
         {players.map((player) => {
@@ -484,27 +491,104 @@ function PlayerColumn({
   );
 }
 
-function CopyLinkButton() {
-  const [copied, setCopied] = useState(false);
-  const copy = useCallback(async () => {
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 1600);
-    } catch {
-      setCopied(false);
-    }
-  }, []);
-
-  return (
-    <Button type="button" variant="outline" size="sm" onClick={copy}>
-      {copied ? (
-        <Check data-icon="inline-start" />
+function TradeShareGraphic({
+  teamA,
+  teamB,
+  playersA,
+  playersB,
+  appearance,
+}: {
+  teamA: TradeSimTeam;
+  teamB: TradeSimTeam;
+  playersA: TradeSimPlayer[];
+  playersB: TradeSimPlayer[];
+  appearance: ShareAppearance;
+}) {
+  const palette = SHARE_PALETTE[appearance];
+  const side = (team: TradeSimTeam, players: TradeSimPlayer[], align: "left" | "right") => (
+    <div style={{ textAlign: align, minWidth: 0, flex: 1 }}>
+      <p style={{ margin: 0, fontSize: 12, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: palette.muted }}>
+        {team.abbr} sends
+      </p>
+      {players.length ? (
+        players.map((player) => (
+          <p key={player.id} style={{ margin: "8px 0 0", fontSize: 14, fontWeight: 650, color: palette.fg }}>
+            {player.name}
+            <span style={{ display: "block", fontSize: 12, fontWeight: 500, color: palette.muted }}>
+              {formatUsdCompact(player.salary)}
+              {player.drbl100 == null ? "" : ` · DRBL ${signed(player.drbl100)}`}
+            </span>
+          </p>
+        ))
       ) : (
-        <Copy data-icon="inline-start" />
+        <p style={{ margin: "8px 0 0", fontSize: 13, color: palette.muted }}>Nobody yet</p>
       )}
-      {copied ? "Copied" : "Copy link"}
-    </Button>
+    </div>
+  );
+  return (
+    <ShareCardFrame
+      appearance={appearance}
+      colorA={resolveTeamBrand(teamA.abbr)?.primary}
+      colorB={resolveTeamBrand(teamB.abbr)?.primary}
+    >
+      <p style={{ margin: 0, fontSize: 20, fontWeight: 700, letterSpacing: "-0.02em" }}>
+        {teamA.abbr} and {teamB.abbr}
+      </p>
+      <div style={{ display: "flex", gap: 16 }}>
+        {side(teamA, playersA, "left")}
+        {side(teamB, playersB, "right")}
+      </div>
+    </ShareCardFrame>
+  );
+}
+
+function TradeShareButton({
+  teamA,
+  teamB,
+  playersA,
+  playersB,
+}: {
+  teamA: TradeSimTeam;
+  teamB: TradeSimTeam;
+  playersA: TradeSimPlayer[];
+  playersB: TradeSimPlayer[];
+}) {
+  const [open, setOpen] = useState(false);
+  const moving = playersA.length + playersB.length;
+  const shareText = moving
+    ? `${teamA.abbr} sends ${playersA.map((player) => player.name).join(", ") || "nobody"}. ${teamB.abbr} sends ${playersB.map((player) => player.name).join(", ") || "nobody"}.`
+    : `${teamA.abbr} and ${teamB.abbr} trade sketch.`;
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className={cn(
+          "glass-pill inline-flex h-9 items-center gap-2 rounded-md px-3 font-semibold",
+          type.bodySm
+        )}
+      >
+        <Share2 className="size-3.5" aria-hidden />
+        Share snapshot
+      </button>
+      <ShareSnapshotDialog
+        open={open}
+        onClose={() => setOpen(false)}
+        fileName={`drbl-trade-${teamA.abbr}-${teamB.abbr}.png`}
+        shareTitle={`${teamA.abbr} and ${teamB.abbr}`}
+        shareText={shareText}
+        canCapture
+        graphic={(appearance) => (
+          <TradeShareGraphic
+            teamA={teamA}
+            teamB={teamB}
+            playersA={playersA}
+            playersB={playersB}
+            appearance={appearance}
+          />
+        )}
+      />
+    </>
   );
 }
 
@@ -779,6 +863,25 @@ export function TradeSimulator({
 
   return (
     <div className="flex min-w-0 flex-col gap-4">
+      <div className="flex flex-wrap items-center justify-end gap-1.5" data-capture-exclude="">
+        {hasPackage ? (
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={clearDeal}
+          >
+            <RotateCcw data-icon="inline-start" />
+            Clear
+          </Button>
+        ) : null}
+        <TradeShareButton
+          teamA={teamA}
+          teamB={teamB}
+          playersA={playersA}
+          playersB={playersB}
+        />
+      </div>
       <MatchupWashCard
         awayTeamKey={teamA.abbr}
         homeTeamKey={teamB.abbr}
@@ -786,78 +889,56 @@ export function TradeSimulator({
         className="min-w-0 p-3 sm:p-4"
       >
         <div className="flex min-w-0 flex-col gap-3">
-          <div className="flex flex-wrap items-center justify-end gap-1.5">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={swapTeams}
-              aria-label="Swap sides"
-            >
-              <ArrowLeftRight data-icon="inline-start" />
-              Flip
-            </Button>
-            {hasPackage ? (
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={clearDeal}
-              >
-                <RotateCcw data-icon="inline-start" />
-                Clear
-              </Button>
-            ) : null}
-            <CopyLinkButton />
-          </div>
-
           <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-end gap-2 sm:gap-3">
             <label className="flex min-w-0 flex-col gap-1 text-[12px] font-semibold">
               <span className="flex min-w-0 items-center gap-2">
                 <TeamLogo teamKey={teamA.abbr} size="sm" />
                 <span className="truncate">Team A · {teamA.abbr}</span>
               </span>
-              <select
-                className="h-10 w-full min-w-0 rounded-md border border-border bg-background/80 px-2 text-[14px] sm:px-3 sm:text-[15px]"
+              <FilterSelect
+                id="trade-team-a"
+                label={`Team A, ${teamA.name}`}
                 value={teamA.id}
-                onChange={(event) => {
-                  setTeamAId(event.target.value);
+                trackClassName="w-full"
+                className="h-10 w-full max-w-none text-[14px]"
+                onChange={(value) => {
+                  setTeamAId(value);
                   setSendA([]);
                 }}
-              >
-                {teams
+                options={teams
                   .filter((team) => team.id !== teamB.id)
-                  .map((team) => (
-                    <option key={team.id} value={team.id}>
-                      {team.abbr} · {team.name}
-                    </option>
-                  ))}
-              </select>
+                  .map((team) => ({ value: team.id, label: `${team.abbr} · ${team.name}` }))}
+              />
             </label>
             <div className="flex h-10 items-center justify-center px-0.5">
-              <ArrowLeftRight className="size-4 shrink-0 text-muted-foreground" />
+              <button
+                type="button"
+                onClick={swapTeams}
+                aria-label="Swap sides"
+                className="glass-pill flex size-9 items-center justify-center rounded-md text-foreground"
+              >
+                <ArrowLeftRight className="size-4 shrink-0" />
+              </button>
             </div>
             <label className="flex min-w-0 flex-col gap-1 text-right text-[12px] font-semibold">
               <span className="flex min-w-0 items-center justify-end gap-2">
                 <span className="truncate">Team B · {teamB.abbr}</span>
                 <TeamLogo teamKey={teamB.abbr} size="sm" />
               </span>
-              <select
-                className="h-10 w-full min-w-0 rounded-md border border-border bg-background/80 px-2 text-right text-[14px] sm:px-3 sm:text-[15px]"
+              <FilterSelect
+                id="trade-team-b"
+                label={`Team B, ${teamB.name}`}
                 value={teamB.id}
-                onChange={(event) => {
-                  setTeamBId(event.target.value);
+                trackClassName="w-full"
+                className="h-10 w-full max-w-none justify-end text-right text-[14px]"
+                onChange={(value) => {
+                  setTeamBId(value);
                   setSendB([]);
                 }}
-              >
-                {teams
+                options={teams
                   .filter((team) => team.id !== teamA.id)
-                  .map((team) => (
-                    <option key={team.id} value={team.id}>
-                      {team.abbr} · {team.name}
-                    </option>
-                  ))}
-              </select>
+                  .map((team) => ({ value: team.id, label: `${team.abbr} · ${team.name}` }))}
+              />
             </label>
           </div>
         </div>
@@ -901,7 +982,7 @@ export function TradeSimulator({
             <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-start gap-2 sm:gap-3">
               <div className="flex min-w-0 flex-col gap-1.5">
                 <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
-                  {teamA.abbr} sends <span data-motion-arrow aria-hidden>→</span>
+                  {teamA.abbr} sends <LinkCue />
                 </p>
                 {playersA.length ? (
                   playersA.map((player) => (

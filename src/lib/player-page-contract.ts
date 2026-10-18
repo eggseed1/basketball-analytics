@@ -113,7 +113,6 @@ export function playerPageNavViews(
   const out: Array<{ id: PlayerPageView; label: string }> = [
     { id: "overview", label: "Overview" },
   ];
-  if (caps.sentiment) out.push({ id: "sentiment", label: "Sentiment" });
   if (caps.gameLogs) out.push({ id: "games", label: "Game Logs" });
   out.push({ id: "career", label: "Career stats" });
   if (caps.splits) out.push({ id: "splits", label: "Splits" });
@@ -121,6 +120,7 @@ export function playerPageNavViews(
   out.push({ id: "advanced", label: "Advanced" });
   if (caps.onOff) out.push({ id: "onoff", label: "On/Off" });
   if (caps.gameHighs) out.push({ id: "highs", label: "Game Highs" });
+  if (caps.sentiment) out.push({ id: "sentiment", label: "Sentiment" });
   return out;
 }
 

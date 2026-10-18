@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-labelledby="title">
+  <title id="title">DRBL jersey R</title>
+  <g fill="#111114">
+    <path fill-rule="evenodd" d="M92.00 24.00 A74.00 74.00 0 0 1 166.00 98.00 A74.00 74.00 0 0 1 92.00 172.00 Z M98.00 98.00 A24.00 24.00 0 1 0 146.00 98.00 A24.00 24.00 0 1 0 98.00 98.00 Z"/>
+    <rect x="36" y="24" width="58" height="196"/>
+    <polygon points="117.3,146.7 142.7,121.3 198.7,177.3 173.3,202.7"/>
+    <circle cx="186" cy="190" r="30"/>
+  </g>
+</svg>

@@ -1,4 +1,3 @@
-import { GlassSurface } from "@/components/brand/glass-surface";
 import { PlayerGameLogBoard } from "@/components/players/player-game-log-board";
 import { getPlayerGameLogCached } from "@/data/queries/request-cache";
 import { brandAtmosphereColors } from "@/lib/game-matchup-theme";
@@ -10,13 +9,11 @@ import { cn } from "@/lib/utils";
 export async function PlayerGamesIsland({
   playerId,
   season,
-  seasons,
   seasonType = "regular",
   teamKey,
 }: {
   playerId: string;
   season: string;
-  seasons: string[];
   seasonType?: PlayerSeasonKind;
   teamKey?: string | null;
 }) {
@@ -47,28 +44,22 @@ export async function PlayerGamesIsland({
       seasonType === "playoffs" ? "playoff" : "regular-season";
 
     return (
-      <section id="games" className="scroll-mt-16" aria-label="Game logs">
-        <GlassSurface
-          effect="css"
+      <section id="games" className="scroll-mt-16 flex flex-col gap-3" aria-label="Game logs">
+        <div>
+          <h2 className={type.heading}>Game logs</h2>
+          <p className={cn(type.bodySm, "mt-1 text-muted-foreground")}>
+            Filter by stat group, home or away, or starter. Date opens
+            Game Lab.
+          </p>
+        </div>
+        <PlayerGameLogBoard
+          games={gameLog}
+          season={season}
+          seasonType={seasonType}
+          seasonTypeLabel={kindLabel}
           accentColor={wash?.colorA}
           accentColorB={wash?.colorB}
-          className="flex flex-col gap-3 p-4 sm:p-5"
-        >
-          <div>
-            <h2 className={type.heading}>Game logs</h2>
-            <p className={cn(type.bodySm, "mt-1 text-muted-foreground")}>
-              Filter by season, stat group, home/away, or starter. Date opens
-              Game Lab.
-            </p>
-          </div>
-          <PlayerGameLogBoard
-            games={gameLog}
-            season={season}
-            seasons={seasons}
-            seasonType={seasonType}
-            seasonTypeLabel={kindLabel}
-          />
-        </GlassSurface>
+        />
       </section>
     );
   } catch {

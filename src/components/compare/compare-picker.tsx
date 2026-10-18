@@ -640,8 +640,13 @@ export function ComparePicker({
       aria-hidden
       className={cn(
         type.caption,
-        "glass-pill glass-pill-active flex size-12 shrink-0 items-center justify-center rounded-full font-black uppercase tracking-wide shadow-[0_6px_18px_rgb(0_0_0/0.12)]"
+        "flex size-12 shrink-0 items-center justify-center rounded-full font-black uppercase tracking-wide"
       )}
+      style={{
+        background: "var(--material-elevated-bg)",
+        border: "1px solid var(--material-elevated-border)",
+        boxShadow: "var(--material-elevated-shadow)",
+      }}
     >
       vs
     </span>
@@ -663,8 +668,8 @@ export function ComparePicker({
   return (
     <GlassSurface
       as="form"
-      effect={hero ? "liquid" : "css"}
-      backdropBlur={hero ? 18 : 24}
+      effect="css"
+      backdropBlur={24}
       overflowVisible
       accentColor={hero ? NBA_ATMOSPHERE.colorA : null}
       accentColorB={hero ? NBA_ATMOSPHERE.colorB : null}

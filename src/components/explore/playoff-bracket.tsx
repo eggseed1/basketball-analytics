@@ -32,26 +32,22 @@ const LINE_W = "1rem";
 const GAP_W = "0.5rem";
 
 function modeCopy(model: PlayoffBracketModel): {
-  eyebrow: string;
   title: string;
   detail: string;
 } {
   if (model.mode === "complete") {
     return {
-      eyebrow: "Playoffs",
       title: `${model.season} bracket`,
       detail: "Results from completed postseason games.",
     };
   }
   if (model.mode === "postseason") {
     return {
-      eyebrow: "Playoffs",
       title: `${model.season} bracket`,
       detail: "Updates as postseason games are recorded.",
     };
   }
   return {
-    eyebrow: "Playoff race",
     title: `${model.season} projection`,
     detail:
       model.source === "standings"
@@ -326,9 +322,6 @@ export function PlayoffBracket({ model }: { model: PlayoffBracketModel }) {
   return (
     <section className="sports-card flex flex-col gap-3 p-3 sm:p-4">
       <div>
-        <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
-          {copy.eyebrow}
-        </p>
         <h2 className="text-[16px] font-bold tracking-tight sm:text-[18px]">{copy.title}</h2>
         <p className="mt-0.5 text-[11px] leading-snug text-muted-foreground">
           {copy.detail}
@@ -375,9 +368,6 @@ export function PlayoffBracketSkeleton() {
       aria-label="Loading playoff bracket"
     >
       <div aria-hidden className="animate-pulse">
-        <p className="text-[10px] font-bold uppercase tracking-[0.12em]">
-          <span className={SKELETON_TEXT}>Playoffs</span>
-        </p>
         <h2 className="text-[16px] font-bold tracking-tight sm:text-[18px]">
           <span className={SKELETON_TEXT}>2025-26 bracket</span>
         </h2>

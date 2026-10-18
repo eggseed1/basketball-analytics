@@ -27,7 +27,6 @@ export default function PrivacyPage() {
     <main data-motion-page className="site-shell flex flex-col gap-8 py-6 sm:py-8">
       <MotionReveal />
       <PageHeader
-        eyebrow="Privacy"
         title="Privacy"
         subtitle="Updated October 10, 2026. This is a free, non-commercial NBA stats site with no accounts and no ads."
       />

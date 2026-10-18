@@ -487,21 +487,17 @@ function ResumeStat({
       ) : null}
     </>
   );
-  const className =
-    "rounded-md frost-surface px-3 py-3 backdrop-blur-sm transition-colors frost-surface-hover";
-  const style = {
-    boxShadow: `inset 3px 0 0 ${accent}`,
-  } as const;
+  const className = "min-w-0 px-1 py-1";
 
   if (href) {
     return (
-      <Link href={href} scroll={false} className={className} style={style}>
+      <Link href={href} scroll={false} className={className}>
         {body}
       </Link>
     );
   }
   return (
-    <div className={className} style={style}>
+    <div className={className}>
       {body}
     </div>
   );

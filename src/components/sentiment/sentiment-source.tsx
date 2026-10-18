@@ -6,7 +6,6 @@ import type {
 import Link from "next/link";
 
 import { ToneAgreementChart } from "@/components/sentiment/tone-agreement-chart";
-import { MoreInfo } from "@/components/ui/more-info";
 import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 
@@ -118,9 +117,123 @@ export function SentimentSourcesStrip({
   const fanCount = fans?.itemCount ?? reddit?.itemCount ?? 0;
   return (
     <div className={cn(type.caption, "flex flex-col gap-1.5 text-muted-foreground")}>
-      <p className="flex flex-wrap items-center gap-x-3 gap-y-1">
-        <span className="font-semibold text-foreground">
-          Data as of {formatSentimentDate(snapshotDate, true)}
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+        <span className="group/asof relative">
+          <button
+            type="button"
+            className="cursor-help font-semibold text-foreground underline decoration-dashed decoration-muted-foreground/70 underline-offset-[3px] hover:decoration-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+            aria-describedby="sentiment-sources"
+          >
+            Data as of {formatSentimentDate(snapshotDate, true)}
+          </button>
+          <span
+            id="sentiment-sources"
+            role="region"
+            aria-label="Sources and method"
+            className="absolute left-0 top-[calc(100%-2px)] z-40 hidden w-[min(42rem,calc(100vw-2.5rem))] pt-2 group-focus-within/asof:block group-hover/asof:block"
+          >
+            <span className="flex max-h-[min(70vh,32rem)] flex-col gap-2 overflow-y-auto rounded-md border border-border/50 bg-background/95 p-3 shadow-lg backdrop-blur-md">
+              <ul className="flex flex-col gap-1">
+                <li className="flex flex-wrap items-baseline gap-1.5">
+                  <LaneOriginTag lane={{ origin: "headlines", asOf: headlines?.asOf ?? undefined, mentionVolume: 0 }} />
+                  {headlines?.itemCount ? (
+                    <span>
+                      Media lanes. {headlines.itemCount.toLocaleString()} NBA headlines from{" "}
+                      {headlines.outlets.length} publishers, {formatSentimentDate(headlines.firstDate)} to{" "}
+                      {formatSentimentDate(headlines.asOf)}. A player needs {headlines.floor} headlines in
+                      the last 7 days to get a score.{" "}
+                      {headlines.toneModel ? (
+                        <>
+                          A language model rates each headline as
+                          positive, neutral or negative toward each player it names. Checked against 127
+                          labeled headlines, it matched the label about 7 times in 10 and never rated one
+                          the opposite way. Players named only in the summary, and team scores, still use
+                          a word list. {Math.round((headlines.ratedShare ?? 0) * 100)}% of this
+                          week&apos;s player mentions have a model rating.
+                        </>
+                      ) : (
+                        <>
+                          Tone comes from a word list. Checked against 127 labeled headlines, it matched
+                          the label about half the time, so read it as rough.
+                        </>
+                      )}
+                    </span>
+                  ) : (
+                    <span>No headlines ingested yet.</span>
+                  )}
+                </li>
+                <li className="flex flex-wrap items-baseline gap-1.5">
+                  {fans ? (
+                    <>
+                      <LaneOriginTag
+                        lane={{ origin: "fans", asOf: fans.asOf ?? undefined, mentionVolume: 0 }}
+                        inactive={!fans.itemCount}
+                      />
+                      {fans.itemCount ? (
+                        <span>
+                          Fan lanes. {fans.itemCount.toLocaleString()} fan posts: {fanPartsText(fans)},{" "}
+                          {formatSentimentDate(fans.firstDate)} to {formatSentimentDate(fans.asOf)}.
+                          {" "}A player or team needs{" "}
+                          {fans.floor} posts in the last 7 days to get a score. Comments under the same
+                          video share weight, so 100 comments on one video count for less than 100 posts
+                          spread across many places.{" "}
+                          {fans.toneModel ? (
+                            <>
+                              Fan blog headlines get the same model rating as news headlines. Social posts
+                              and video comments that name a player are rated by the same model when they
+                              are collected, up to a nightly limit. Checked against 143 labeled fan posts, it
+                              matched the label about 3 times in 4 and rated 2 the opposite way. The word
+                              list matched about half and rated 18 the opposite way. Older posts, posts past
+                              the nightly limit and team scores keep the word list.{" "}
+                              {Math.round((fans.ratedShare ?? 0) * 100)}% of this week&apos;s player
+                              mentions in posts and comments have a model rating.
+                            </>
+                          ) : headlines?.toneModel ? (
+                            "Fan blog headlines get the same model rating as news headlines. Comments and posts are scored with a word list that matched hand labels about half the time, so read it as rough."
+                          ) : (
+                            "Tone comes from a word list that matched hand labels about half the time, so read it as rough."
+                          )}
+                        </span>
+                      ) : (
+                        <span>No fan posts collected yet, so fan lanes are blank.</span>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      <LaneOriginTag
+                        lane={{ origin: "reddit", asOf: reddit?.asOf ?? undefined, mentionVolume: 0 }}
+                        inactive={!reddit?.itemCount}
+                      />
+                      {reddit?.itemCount ? (
+                        <span>
+                          Fan lanes. {reddit.itemCount.toLocaleString()} fan forum posts. A
+                          player needs {reddit.floor} posts in the last 7 days to get a score.
+                        </span>
+                      ) : (
+                        <span>Not connected yet, so fan lanes are blank.</span>
+                      )}
+                    </>
+                  )}
+                </li>
+              </ul>
+              <ToneAgreementChart />
+              <p>
+                Fan and media tone are kept separate from performance metrics and Movement Center
+                evidence. The{" "}
+                <Link href="/privacy" className="underline underline-offset-2">
+                  privacy page
+                </Link>{" "}
+                lists what is kept from each source.
+              </p>
+              <p>
+                {fans?.toneModel
+                  ? "A language model rates the tone of headlines, fan posts and comments toward the players they name. Team scores and fan posts from before the model still use a word list, so read those as rough."
+                  : headlines?.toneModel
+                    ? "A language model rates each headline's tone toward the players it names. Fan comments and posts are scored with a word list, so read fan scores as rough."
+                    : "Tone comes from a word list, so read scores as rough."}
+              </p>
+            </span>
+          </span>
         </span>
         <span className="inline-flex items-center gap-1.5">
           <LaneOriginTag lane={{ origin: "headlines", asOf: headlines?.asOf ?? undefined, mentionVolume: 0 }} />
@@ -133,108 +246,7 @@ export function SentimentSourcesStrip({
           />
           {fanCount ? `${fanCount.toLocaleString()} fan posts` : "none yet"}
         </span>
-      </p>
-      <p>
-        {fans?.toneModel
-          ? "A language model rates the tone of headlines, fan posts and comments toward the players they name. Team scores and fan posts from before the model still use a word list, so read those as rough."
-          : headlines?.toneModel
-            ? "A language model rates each headline's tone toward the players it names. Fan comments and posts are scored with a word list, so read fan scores as rough."
-            : "Tone comes from a word list, so read scores as rough."}
-      </p>
-      <MoreInfo summary="Sources and method">
-      <ul className="flex flex-col gap-1">
-        <li className="flex flex-wrap items-baseline gap-1.5">
-          <LaneOriginTag lane={{ origin: "headlines", asOf: headlines?.asOf ?? undefined, mentionVolume: 0 }} />
-          {headlines?.itemCount ? (
-            <span>
-              Media lanes. {headlines.itemCount.toLocaleString()} NBA headlines from{" "}
-              {headlines.outlets.length} publishers, {formatSentimentDate(headlines.firstDate)} to{" "}
-              {formatSentimentDate(headlines.asOf)}. A player needs {headlines.floor} headlines in
-              the last 7 days to get a score.{" "}
-              {headlines.toneModel ? (
-                <>
-                  A language model rates each headline as
-                  positive, neutral or negative toward each player it names. Checked against 127
-                  labeled headlines, it matched the label about 7 times in 10 and never rated one
-                  the opposite way. Players named only in the summary, and team scores, still use
-                  a word list. {Math.round((headlines.ratedShare ?? 0) * 100)}% of this
-                  week&apos;s player mentions have a model rating.
-                </>
-              ) : (
-                <>
-                  Tone comes from a word list. Checked against 127 labeled headlines, it matched
-                  the label about half the time, so read it as rough.
-                </>
-              )}
-            </span>
-          ) : (
-            <span>No headlines ingested yet.</span>
-          )}
-        </li>
-        <li className="flex flex-wrap items-baseline gap-1.5">
-          {fans ? (
-            <>
-              <LaneOriginTag
-                lane={{ origin: "fans", asOf: fans.asOf ?? undefined, mentionVolume: 0 }}
-                inactive={!fans.itemCount}
-              />
-              {fans.itemCount ? (
-                <span>
-                  Fan lanes. {fans.itemCount.toLocaleString()} fan posts: {fanPartsText(fans)},{" "}
-                  {formatSentimentDate(fans.firstDate)} to {formatSentimentDate(fans.asOf)}.
-                  {" "}A player or team needs{" "}
-                  {fans.floor} posts in the last 7 days to get a score. Comments under the same
-                  video share weight, so 100 comments on one video count for less than 100 posts
-                  spread across many places.{" "}
-                  {fans.toneModel ? (
-                    <>
-                      Fan blog headlines get the same model rating as news headlines. Social posts
-                      and video comments that name a player are rated by the same model when they
-                      are collected, up to a nightly limit. Checked against 143 labeled fan posts, it
-                      matched the label about 3 times in 4 and rated 2 the opposite way. The word
-                      list matched about half and rated 18 the opposite way. Older posts, posts past
-                      the nightly limit and team scores keep the word list.{" "}
-                      {Math.round((fans.ratedShare ?? 0) * 100)}% of this week&apos;s player
-                      mentions in posts and comments have a model rating.
-                    </>
-                  ) : headlines?.toneModel ? (
-                    "Fan blog headlines get the same model rating as news headlines. Comments and posts are scored with a word list that matched hand labels about half the time, so read it as rough."
-                  ) : (
-                    "Tone comes from a word list that matched hand labels about half the time, so read it as rough."
-                  )}
-                </span>
-              ) : (
-                <span>No fan posts collected yet, so fan lanes are blank.</span>
-              )}
-            </>
-          ) : (
-            <>
-              <LaneOriginTag
-                lane={{ origin: "reddit", asOf: reddit?.asOf ?? undefined, mentionVolume: 0 }}
-                inactive={!reddit?.itemCount}
-              />
-              {reddit?.itemCount ? (
-                <span>
-                  Fan lanes. {reddit.itemCount.toLocaleString()} fan forum posts. A
-                  player needs {reddit.floor} posts in the last 7 days to get a score.
-                </span>
-              ) : (
-                <span>Not connected yet, so fan lanes are blank.</span>
-              )}
-            </>
-          )}
-        </li>
-      </ul>
-      <ToneAgreementChart />
-      <p>
-        Fan and media tone are kept separate from performance metrics and Movement Center
-        evidence. The{" "}
-        <Link href="/privacy" className="underline underline-offset-2">
-          privacy page
-        </Link>{" "}
-        lists what is kept from each source.
-      </p>
-      </MoreInfo>
+      </div>
     </div>
   );
 }

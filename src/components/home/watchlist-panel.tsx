@@ -115,13 +115,15 @@ export function WatchlistPanel() {
   const status = useWatchlistStatus(items, ready);
 
   return (
-    <section className="@container sports-card flex flex-col gap-3 p-4 sm:p-[21px]">
+    <section
+      className="@container sports-card flex flex-col gap-3 p-4 sm:p-[21px]"
+    >
       <div className="flex items-center justify-between gap-2">
         <h2 className="type-heading">Watchlist</h2>
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="inline-flex items-center gap-1 rounded-md bg-secondary px-3 py-1.5 text-[12px] font-semibold"
+          className="sports-pill"
         >
           <Plus className="size-3.5" aria-hidden />
           Add
@@ -136,7 +138,7 @@ export function WatchlistPanel() {
           onClick={() => setOpen(true)}
           className="flex flex-col items-center justify-center gap-2 rounded-xl px-4 py-4 text-center transition-colors hover:bg-secondary/50"
         >
-          <span data-motion-pop className="flex size-10 items-center justify-center rounded-full bg-secondary text-foreground">
+          <span data-motion-pop className="flex size-10 items-center justify-center rounded-full bg-foreground/[0.045] text-foreground">
             <Plus className="size-5" aria-hidden />
           </span>
           <div className="flex flex-col items-center gap-1 text-center">
@@ -179,7 +181,7 @@ export function WatchlistPanel() {
                         </span>
                       ) : null}
                     </span>
-                    <span className="min-w-0 flex-1 truncate text-[16px] font-semibold underline decoration-foreground/40 underline-offset-2">
+                    <span className="min-w-0 flex-1 truncate type-body-sm font-semibold underline decoration-foreground/40 underline-offset-2">
                       {item.name}
                     </span>
                   </PlayerIdentity>
@@ -191,7 +193,7 @@ export function WatchlistPanel() {
                     nameClassName="w-full gap-2"
                   >
                     <TeamLogo teamKey={item.teamKey ?? item.id} size="xs" />
-                    <span className="min-w-0 flex-1 truncate text-[16px] font-semibold underline decoration-foreground/40 underline-offset-2">
+                    <span className="min-w-0 flex-1 truncate type-body-sm font-semibold underline decoration-foreground/40 underline-offset-2">
                       {item.name}
                     </span>
                   </TeamIdentity>
@@ -340,9 +342,9 @@ function WatchlistAddModal({
         "open:flex open:flex-col"
       )}
     >
-      <div className="flex items-start justify-between gap-3 border-b border-border px-4 py-3">
+      <div className="flex items-start justify-between gap-3 border-b border-border/40 px-4 py-3">
         <div>
-          <h3 id={titleId} className="text-[16px] font-bold tracking-tight">
+          <h3 id={titleId} className="type-title">
             Add to watchlist
           </h3>
           <p className="text-[12px] text-muted-foreground">
@@ -416,7 +418,7 @@ function WatchlistAddModal({
                 : "No matches."}
             </p>
           ) : (
-            <ul className="divide-y divide-border">
+            <ul className="divide-y divide-border/40">
               {hits.map((hit) => {
                 const key = itemKey(hit);
                 const onList = watched.has(key);
@@ -452,7 +454,7 @@ function WatchlistAddModal({
                           className="block min-w-0"
                           nameClassName="inline"
                         >
-                          <span className="block truncate text-[16px] font-semibold underline decoration-foreground/40 underline-offset-2">
+                          <span className="block truncate type-body-sm font-semibold underline decoration-foreground/40 underline-offset-2">
                             {hit.name}
                           </span>
                         </PlayerIdentity>
@@ -463,7 +465,7 @@ function WatchlistAddModal({
                           className="block min-w-0"
                           nameClassName="inline"
                         >
-                          <span className="block truncate text-[16px] font-semibold underline decoration-foreground/40 underline-offset-2">
+                          <span className="block truncate type-body-sm font-semibold underline decoration-foreground/40 underline-offset-2">
                             {hit.name}
                           </span>
                         </TeamIdentity>

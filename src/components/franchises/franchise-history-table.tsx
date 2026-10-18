@@ -1,26 +1,24 @@
 "use client";
 
-import { TransitionLink } from "@/components/continuity/query-nav";
 import { useMemo, useState } from "react";
+import { ArrowDown, ArrowUp } from "lucide-react";
 
 import { TeamLogo } from "@/components/brand/team-logo";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { SortableTableHead } from "@/components/ui/sortable-table-head";
+import { TeamIdentity } from "@/components/teams/team-identity";
+import { ChoiceChip, ChoiceTrack } from "@/components/ui/choice-chip";
 import type { FranchiseHistory } from "@/data/franchises/history";
 import {
   franchiseTitleCount,
   franchiseWinPct,
 } from "@/data/queries/franchises";
+import { textLinkClassName, type } from "@/lib/design-system";
 import { formatNumber, formatPct } from "@/lib/format";
-import { resolveTeamBrand } from "@/lib/nba-brand";
 import { teamHistoryHref } from "@/lib/team-identity";
 import { cn } from "@/lib/utils";
+
+const thBase =
+  "py-2 font-semibold text-[12px] uppercase tracking-[0.08em] text-muted-foreground";
+const tdBase = "type-caption py-2 tabular-nums";
 
 type SortKey =
   | "name"
@@ -92,131 +90,111 @@ export function FranchiseHistoryTable({
     setSortDir(defaultDir(key));
   };
 
+  const columns: Array<{
+    key: SortKey;
+    label: string;
+    align: "left" | "right";
+  }> = [
+    { key: "name", label: "Franchise", align: "left" },
+    { key: "titles", label: "Titles", align: "right" },
+    { key: "finals", label: "Finals", align: "right" },
+    { key: "playoffApps", label: "Playoff apps", align: "right" },
+    { key: "rsWins", label: "RS W", align: "right" },
+    { key: "rsPct", label: "RS %", align: "right" },
+    { key: "founded", label: "First season", align: "left" },
+  ];
+
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex flex-wrap gap-2">
+      <ChoiceTrack>
         {(["all", "East", "West"] as const).map((c) => (
-          <button
-            key={c}
-            type="button"
-            onClick={() => setConf(c)}
-            className={cn(
-              "rounded-md px-3 py-1.5 text-[14px] font-semibold transition-colors",
-              conf === c
-                ? "bg-foreground text-background"
-                : "bg-secondary text-foreground hover:bg-foreground/10"
-            )}
-          >
+          <ChoiceChip key={c} active={conf === c} onClick={() => setConf(c)}>
             {c === "all" ? "All franchises" : c}
-          </button>
+          </ChoiceChip>
         ))}
-      </div>
+      </ChoiceTrack>
 
       <div className="sports-card overflow-x-auto">
-        <Table container={false} className="min-w-[900px] text-[12px]">
-          <TableHeader className="sticky top-0 z-20 border-b border-border bg-card">
-            <TableRow className="hover:bg-transparent">
-              <SortableTableHead
-                sticky
-                active={sortKey === "name"}
-                dir={sortDir}
-                onClick={() => onSort("name")}
-                align="left"
-              >
-                Franchise
-              </SortableTableHead>
-              <SortableTableHead
-                active={sortKey === "titles"}
-                dir={sortDir}
-                onClick={() => onSort("titles")}
-              >
-                Titles
-              </SortableTableHead>
-              <SortableTableHead
-                active={sortKey === "finals"}
-                dir={sortDir}
-                onClick={() => onSort("finals")}
-              >
-                Finals
-              </SortableTableHead>
-              <SortableTableHead
-                active={sortKey === "playoffApps"}
-                dir={sortDir}
-                onClick={() => onSort("playoffApps")}
-              >
-                Playoff apps
-              </SortableTableHead>
-              <SortableTableHead
-                active={sortKey === "rsWins"}
-                dir={sortDir}
-                onClick={() => onSort("rsWins")}
-              >
-                RS W
-              </SortableTableHead>
-              <SortableTableHead
-                active={sortKey === "rsPct"}
-                dir={sortDir}
-                onClick={() => onSort("rsPct")}
-              >
-                RS %
-              </SortableTableHead>
-              <SortableTableHead
-                active={sortKey === "founded"}
-                dir={sortDir}
-                onClick={() => onSort("founded")}
-                align="left"
-              >
-                First season
-              </SortableTableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {rows.map((f) => {
-              const brand = resolveTeamBrand(f.abbr);
-              const titles = franchiseTitleCount(f);
-              return (
-                <TableRow
-                  key={f.id}
-                  style={
-                    brand
-                      ? { boxShadow: `inset 3px 0 0 ${brand.primary}` }
-                      : undefined
-                  }
-                >
-                  <TableCell className="sticky left-0 z-10 bg-card">
-                    <TransitionLink
-                      href={teamHistoryHref(f.abbr)}
-                      className="flex items-center gap-2 font-semibold hover:underline"
+        <table className="w-full min-w-[900px] text-left">
+          <thead className="border-b border-border/40 bg-secondary/50">
+            <tr>
+              {columns.map((column) => {
+                const active = sortKey === column.key;
+                const Icon = sortDir === "asc" ? ArrowUp : ArrowDown;
+                return (
+                  <th
+                    key={column.key}
+                    aria-sort={active ? (sortDir === "asc" ? "ascending" : "descending") : "none"}
+                    className={cn(
+                      thBase,
+                      column.key === "name" && "pl-3 pr-2",
+                      column.key === "founded" && "pl-2 pr-3",
+                      column.align === "right" && "px-1",
+                      column.align === "right" ? "text-right" : "text-left"
+                    )}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => onSort(column.key)}
+                      className={cn(
+                        "inline-flex items-baseline gap-1 text-[12px] font-semibold uppercase tracking-[0.08em]",
+                        column.align === "right" && "ml-auto",
+                        active ? "text-foreground" : "hover:text-foreground"
+                      )}
                     >
-                      <TeamLogo teamKey={f.abbr} size="xs" />
-                      <span className="whitespace-nowrap">
-                        {f.city} {f.name}
+                      {column.align === "right" && active ? (
+                        <Icon className="size-3 shrink-0 self-center" aria-hidden />
+                      ) : null}
+                      {column.label}
+                      {column.align === "left" && active ? (
+                        <Icon className="size-3 shrink-0 self-center" aria-hidden />
+                      ) : null}
+                      <span className="sr-only">
+                        {active
+                          ? `Sorted ${sortDir === "asc" ? "ascending" : "descending"}`
+                          : "Sort"}
                       </span>
-                    </TransitionLink>
-                  </TableCell>
-                  <TableCell className="text-right tabular-nums font-bold">
-                    {titles}
-                  </TableCell>
-                  <TableCell className="text-right tabular-nums">
-                    {f.finalsAppearances}
-                  </TableCell>
-                  <TableCell className="text-right tabular-nums">
-                    {f.playoffAppearances}
-                  </TableCell>
-                  <TableCell className="text-right tabular-nums">
-                    {formatNumber(f.regularSeasonWins)}
-                  </TableCell>
-                  <TableCell className="text-right tabular-nums">
-                    {formatPct(franchiseWinPct(f))}
-                  </TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {f.firstSeason}
-                  </TableCell>
-                </TableRow>
+                    </button>
+                  </th>
+                );
+              })}
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((f) => {
+              const titles = franchiseTitleCount(f);
+              const name = `${f.city} ${f.name}`;
+              return (
+                <tr
+                  key={f.id}
+                  className="border-b border-border/40 last:border-0 hover:bg-secondary/40"
+                >
+                  <td className="min-w-[11.5rem] py-2 pl-3 pr-2">
+                    <TeamIdentity
+                      teamKey={f.abbr}
+                      href={teamHistoryHref(f.abbr)}
+                      label={name}
+                      nameClassName="flex min-w-0 items-center gap-2 whitespace-nowrap no-underline hover:no-underline"
+                    >
+                      <span className="shrink-0">
+                        <TeamLogo teamKey={f.abbr} size="xs" />
+                      </span>
+                      <span className={cn(type.bodySm, textLinkClassName, "truncate")}>
+                        {name}
+                      </span>
+                    </TeamIdentity>
+                  </td>
+                  <td className={cn(tdBase, "px-1 text-right font-bold")}>{titles}</td>
+                  <td className={cn(tdBase, "px-1 text-right")}>{f.finalsAppearances}</td>
+                  <td className={cn(tdBase, "px-1 text-right")}>{f.playoffAppearances}</td>
+                  <td className={cn(tdBase, "px-1 text-right")}>{formatNumber(f.regularSeasonWins)}</td>
+                  <td className={cn(tdBase, "px-1 text-right")}>{formatPct(franchiseWinPct(f))}</td>
+                  <td className={cn(tdBase, "pl-2 pr-3 text-muted-foreground")}>{f.firstSeason}</td>
+                </tr>
               );
             })}
-          </TableBody>
-        </Table>
+          </tbody>
+        </table>
       </div>
     </div>
   );

@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/table";
 import { SortableTableHead } from "@/components/ui/sortable-table-head";
 import type { TeamSeasonStats } from "@/data/types";
-import { type } from "@/lib/design-system";
 import { formatNumber, formatPct } from "@/lib/format";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { cn } from "@/lib/utils";
@@ -139,17 +138,8 @@ export function TeamSeasonTable({ teams }: { teams: TeamSeasonStats[] }) {
     setSortDir(defaultDir(key));
   };
 
-  const activeLabel = COLUMNS.find((c) => c.key === sortKey)?.label ?? sortKey;
-
   return (
     <div className="flex flex-col gap-3">
-      <p className={cn(type.caption, "text-muted-foreground")}>
-        {filtered.length} teams · sorted by{" "}
-        <span className="font-medium text-foreground">
-          {activeLabel} {sortDir === "asc" ? "↑" : "↓"}
-        </span>
-      </p>
-
       <div className="sports-card overflow-x-auto">
         <Table container={false} className="min-w-[980px] text-[12px]">
           <TableHeader className="sticky top-0 z-20 border-b border-border bg-card">

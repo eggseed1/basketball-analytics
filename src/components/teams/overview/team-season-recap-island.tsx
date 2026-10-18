@@ -1,14 +1,14 @@
 import { analyzeTeamProfile } from "@/analytics";
-import { TransitionLink } from "@/components/continuity/query-nav";
+import { SectionLink } from "@/components/ui/section-link";
 import { TeamOverviewVisuals } from "@/components/teams/overview/team-overview-visuals";
 import { withBudget } from "@/data/queries/budget";
 import { getTeamSeasonBoardCached } from "@/data/queries/request-cache";
-import { type, sectionLinkClassName } from "@/lib/design-system";
+import { getLeagueStandings } from "@/data/queries/standings";
+import { type } from "@/lib/design-system";
 import { teamPageHref } from "@/lib/team-destination";
 import { resolveTeamFromBoard } from "@/lib/team-explorer";
 import { buildTeamRankedMetrics } from "@/lib/team-page-metrics";
 import { cn } from "@/lib/utils";
-
 /** Preseason overview: the full visual board for the season that just ended. */
 export async function TeamSeasonRecapIsland({
   routeTeamId,
@@ -24,6 +24,17 @@ export async function TeamSeasonRecapIsland({
 
   const analysis = analyzeTeamProfile({ team, league, prior: null });
   const ranked = buildTeamRankedMetrics({ team, league, prior: null, standing: null, traits: analysis.traits });
+  const standings = await getLeagueStandings(season).catch(() => null);
+  const standing =
+    standings?.season === season
+      ? standings.conferences
+          .flatMap((conference) => conference.rows)
+          .find((row) => row.abbreviation.toLowerCase() === team.abbreviation.toLowerCase())
+      : null;
+  const record =
+    standing && standing.wins + standing.losses > 0
+      ? { wins: standing.wins, losses: standing.losses }
+      : null;
 
   return (
     <section className="flex flex-col gap-4" aria-label={`${season} in review`}>
@@ -34,12 +45,7 @@ export async function TeamSeasonRecapIsland({
             Last season&apos;s results and league ranks, shown until the new season has games.
           </p>
         </div>
-        <TransitionLink
-          href={teamPageHref(routeTeamId, { season })}
-          className={cn(type.caption, sectionLinkClassName)}
-        >
-          Open the {season} page <span data-motion-arrow aria-hidden>→</span>
-        </TransitionLink>
+        <SectionLink href={teamPageHref(routeTeamId, { season })}>Open the {season} page</SectionLink>
       </div>
       <TeamOverviewVisuals
         team={team}
@@ -48,6 +54,8 @@ export async function TeamSeasonRecapIsland({
         traits={analysis.traits}
         howTheyWin={analysis.howTheyWin}
         season={season}
+        record={record}
+        showRosterWar1={false}
       />
     </section>
   );

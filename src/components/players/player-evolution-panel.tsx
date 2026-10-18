@@ -6,6 +6,7 @@ import { useState } from "react";
 import type { PlayerEvolutionResult } from "@/analytics";
 import { TeamWashCard } from "@/components/brand/team-wash-card";
 import { cn } from "@/lib/utils";
+import { LinkCue } from "@/components/ui/link-cue";
 
 /**
  * Progressive "What changed?" surface for player YoY evolution.
@@ -38,7 +39,7 @@ export function PlayerEvolutionPanel({
             href={compareHref}
             className="text-[14px] font-semibold underline-offset-4 hover:underline"
           >
-            Compare seasons <span data-motion-arrow aria-hidden>→</span>
+            Compare seasons <LinkCue />
           </Link>
         ) : null}
       </div>

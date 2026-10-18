@@ -31,7 +31,6 @@ export default async function TradeSimulatorPage({
     <main data-motion-page className="site-shell flex flex-col gap-6 py-6 sm:py-8">
       <MotionReveal />
       <PageHeader
-        eyebrow="Transactions"
         title="Trade simulator"
         subtitle={`Current rosters and payroll, scored with ${
           board && board.statsSeason !== board.season ? `${board.statsSeason} ` : ""

@@ -818,6 +818,7 @@ function yearAxisTicks(min: number, max: number): number[] {
   return ticks;
 }
 
+/** Career page: small dots are games, large dots are seasons, the line runs through the seasons. */
 export function TalentYearChart({
   dots,
   line,
@@ -825,7 +826,7 @@ export function TalentYearChart({
   height = 260,
 }: {
   dots: Array<{ year: number; value: number }>;
-  line: Array<{ year: number; value: number }>;
+  line: Array<{ year: number; value: number; season?: string }>;
   kind: "impact" | "box";
   height?: number;
 }) {

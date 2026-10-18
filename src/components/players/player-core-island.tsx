@@ -58,6 +58,7 @@ import { hasValidDrblEstimate } from "@/data/queries/percentiles";
 import { resolvePlayerIdentity } from "@/data/identity/player-identity";
 import Link from "next/link";
 import { gradeFromPercentile } from "@/lib/player-grade";
+import { LinkCue } from "@/components/ui/link-cue";
 
 function formatSignedImpact(value: number, digits = 1): string {
   const abs = formatNumber(Math.abs(value), digits);
@@ -449,7 +450,7 @@ export async function PlayerCoreIsland({
                   href="/learn/drbl"
                   className="text-[11px] font-semibold text-muted-foreground underline-offset-2 hover:underline"
                 >
-                  Learn <span data-motion-arrow aria-hidden>→</span>
+                  Learn <LinkCue />
                 </Link>
               </div>
               {hasDrbl && seasonStats ? (
@@ -541,7 +542,7 @@ export async function PlayerCoreIsland({
                           href="/learn/how-drbl-works"
                           className="font-semibold text-foreground underline-offset-2 hover:underline"
                         >
-                          Why does DRBL rate him this way? <span data-motion-arrow aria-hidden>→</span>
+                          Why does DRBL rate him this way? <LinkCue />
                         </Link>
                       </p>
                     </>
@@ -558,7 +559,7 @@ export async function PlayerCoreIsland({
                     href="/learn/drbl-historical-data"
                     className="font-semibold underline-offset-2 hover:underline"
                   >
-                    Why? <span data-motion-arrow aria-hidden>→</span>
+                    Why? <LinkCue />
                   </Link>
                 </p>
               )}
@@ -688,7 +689,7 @@ export async function PlayerCoreIsland({
                   href="#seasons"
                   className="text-[11px] font-semibold text-muted-foreground underline-offset-2 hover:underline"
                 >
-                  Full explorer <span data-motion-arrow aria-hidden>→</span>
+                  Full explorer <LinkCue />
                 </a>
               </div>
               {recentSeasons.length === 0 ? (
@@ -845,7 +846,7 @@ export async function PlayerCoreIsland({
 
         <details className="group">
           <summary className="cursor-pointer list-none text-[13px] font-semibold text-muted-foreground underline-offset-2 hover:underline [&::-webkit-details-marker]:hidden">
-            <span className="group-open:hidden">Show full season table <span data-motion-arrow aria-hidden>→</span></span>
+            <span className="group-open:hidden">Show full season table <LinkCue /></span>
             <span className="hidden group-open:inline">
               Hide full season table
             </span>
@@ -989,7 +990,7 @@ export async function PlayerCoreIsland({
                 href={`/compare?a=${playerId}&season=${season}`}
                 className="font-semibold underline-offset-2 hover:underline"
               >
-                Compare this player <span data-motion-arrow aria-hidden>→</span>
+                Compare this player <LinkCue />
               </TransitionLink>
             </p>
           )}

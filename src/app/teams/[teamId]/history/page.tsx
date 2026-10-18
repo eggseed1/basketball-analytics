@@ -7,7 +7,6 @@ import { TeamLogo } from "@/components/brand/team-logo";
 import { DestinationClientShell } from "@/components/continuity/destination-client-shell";
 import { DestinationSectionSkeleton } from "@/components/continuity/destination-loading-frame";
 import { MotionReveal } from "@/components/continuity/motion-reveal";
-import { TransitionLink } from "@/components/continuity/query-nav";
 import { FranchiseTimeline } from "@/components/teams/franchise-timeline";
 import { TeamArcIsland } from "@/components/teams/team-arc-island";
 import { TeamFranchiseHistoryIsland } from "@/components/teams/team-franchise-history-island";
@@ -16,13 +15,14 @@ import {
   canonicalSeasonFromStartYear,
   currentNbaStartYear,
 } from "@/data/providers/historical/season-range";
+import { getFranchiseHistory } from "@/data/queries/franchises";
 import { getTeamSeasonBoardCached } from "@/data/queries/request-cache";
 import { type } from "@/lib/design-system";
 import { brandAtmosphereColors } from "@/lib/game-matchup-theme";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { isSeasonAwaitingFirstGame } from "@/lib/nba-season-status";
 import { shiftCanonicalSeason } from "@/lib/player-stat-comps";
-import { resolveTeamIdentityFallback, teamPageHref } from "@/lib/team-destination";
+import { resolveTeamIdentityFallback } from "@/lib/team-destination";
 import { resolveTeamFromBoard } from "@/lib/team-explorer";
 import { yieldForStreaming } from "@/lib/stream-yield";
 import { cn } from "@/lib/utils";
@@ -84,7 +84,10 @@ export default async function TeamHistoryPage({ params, searchParams }: TeamHist
   const brand = resolveTeamBrand(team.abbreviation);
   const askTeamId = brand?.espnTeamId ?? team.teamId;
   const atmosphere = brandAtmosphereColors(brand?.primary, brand?.secondary);
-  const backHref = teamPageHref(teamId, { season });
+  const franchise =
+    (brand?.id ? getFranchiseHistory(brand.id) : null) ??
+    getFranchiseHistory(team.abbreviation);
+  const titleCount = franchise?.championships.length ?? 0;
 
   return (
     <DestinationClientShell>
@@ -104,14 +107,15 @@ export default async function TeamHistoryPage({ params, searchParams }: TeamHist
               <TeamLogo teamKey={team.abbreviation} size="xl" priority />
               <div className="min-w-0 flex-1 basis-[10rem]">
                 <p className={cn(type.caption, "font-semibold uppercase tracking-[0.12em] text-muted-foreground")}>
-                  <TransitionLink href={backHref} className="underline-offset-2 hover:underline">
-                    <span aria-hidden>←</span> {team.abbreviation} {season}
-                  </TransitionLink>
+                  {team.abbreviation}
+                  {franchise ? ` · ${franchise.conference}` : ""}
                 </p>
-                <h1 className={cn(type.display, "mt-0.5")}>{team.fullName} history</h1>
-                <p className={cn(type.caption, "mt-1.5 text-muted-foreground")}>
-                  Titles, retired numbers, the franchise timeline, a season-by-season arc, and head-to-head records.
-                </p>
+                <h1 className={cn(type.display, "mt-0.5")}>{team.fullName}</h1>
+                {franchise ? (
+                  <p className={cn(type.caption, "mt-1.5 text-muted-foreground")}>
+                    {titleCount} {titleCount === 1 ? "title" : "titles"} · since {franchise.firstSeason}
+                  </p>
+                ) : null}
               </div>
             </div>
           </GlassSurface>

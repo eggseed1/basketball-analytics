@@ -38,6 +38,7 @@ import { EVENT_BY_ID, eligibleEvents, eventRate, type EventTemplate } from "./ev
 import { canOpen, LADDER, rungCost, rungCountry, rungPay, takeJob, trackOptions, TRACK_LABEL, yearInJob } from "./after";
 import { applyMoney, charge, makeAgent, newFinance, stepFinance, type MoneyAction } from "./finance";
 import { evaluate, KIND_EXPOSURE, nationalTeam, playTournament, tournamentsFor, type Selection } from "./international";
+import { hofEligible, hofSpeech } from "./ceremony";
 import { allStarPick, conference, monthHonor, nbaHonors, risingStar, threePointInvite } from "./league";
 import { gameScoreTotal } from "./stats";
 import { drawName, formatName, poolFor, townName } from "./names";
@@ -212,6 +213,34 @@ function decide(s: LifeState, d: Omit<PendingDecision, "id" | "rolls" | "created
   s.clock.pauseReason = "decision";
 }
 
+export function isCeremony(templateId: string) {
+  return templateId === "fanfare" || templateId === "hof";
+}
+
+/** Pauses the life on a title, an MVP, a gold, or the hall. Auto mode does not click through it. */
+function fanfare(s: LifeState, templateId: "fanfare" | "hof", title: string, body: string) {
+  log(s, "milestone", title, null, "good");
+  if (s.pendingDecision) return;
+  decide(s, {
+    templateId,
+    title,
+    body,
+    choices: [{ id: "ok", label: templateId === "hof" ? "Stand for the ovation" : "Take it in", preview: "Time stays paused until you do." }],
+    required: true,
+  });
+}
+
+function maybeHof(s: LifeState) {
+  if (s.flags.hofDone || s.pendingDecision || !hofEligible(s)) return;
+  const age = s.ageMonths / 12;
+  const retired = Boolean(s.after) || s.placement.node === "unattached";
+  const due = Boolean(s.flags.hofWait) || (age >= 45 && retired && calendar(s).month === 8);
+  if (!due) return;
+  delete s.flags.hofWait;
+  s.flags.hofDone = true;
+  fanfare(s, "hof", "Hall of Fame", hofSpeech(s));
+}
+
 const clone = (s: LifeState): LifeState => structuredClone(s);
 
 /* --------------------------------------------------------------- clock */
@@ -219,6 +248,12 @@ const clone = (s: LifeState): LifeState => structuredClone(s);
 export interface AdvanceOptions {
   auto?: boolean;
   stopAtDecision?: boolean;
+  /** Leave a title, MVP, gold medal, or Hall of Fame speech on screen. */
+  holdCeremony?: boolean;
+}
+
+function holdCeremony(s: LifeState, opts: AdvanceOptions) {
+  return Boolean(opts.holdCeremony && s.pendingDecision && isCeremony(s.pendingDecision.templateId));
 }
 
 /**
@@ -230,7 +265,7 @@ export function advance(state: LifeState, months: number, opts: AdvanceOptions =
   let done = 0;
   while (done < months && !s.ended) {
     if (s.pendingDecision) {
-      if (!opts.auto) break;
+      if (!opts.auto || holdCeremony(s, opts)) break;
       resolveInPlace(s, autoChoice(s));
       continue;
     }
@@ -238,7 +273,7 @@ export function advance(state: LifeState, months: number, opts: AdvanceOptions =
     done++;
   }
   if (opts.auto) {
-    while (s.pendingDecision && !s.ended) resolveInPlace(s, autoChoice(s));
+    while (s.pendingDecision && !s.ended && !holdCeremony(s, opts)) resolveInPlace(s, autoChoice(s));
   }
   return s;
 }
@@ -349,7 +384,13 @@ function seasonStep(s: LifeState) {
   }
   const nba = s.placement.node === "nba";
   if (!s.season) {
-    s.placement.role = roleFor(performanceLevel(s) + (nba ? trustOf(s) : 0), level.need);
+    const coachEdge = clamp((s.placement.coaching - 50) / 15, -2, 3);
+    const earned = roleFor(performanceLevel(s) + (nba ? trustOf(s) : 0) + coachEdge, level.need);
+    const order = ["deep-bench", "bench", "rotation", "starter", "star"] as const;
+    const earnedAt = order.indexOf(earned as (typeof order)[number]);
+    const heldAt = order.indexOf(s.placement.role as (typeof order)[number]);
+    const fought = typeof s.flags.roleBump === "number" && s.ageMonths - s.flags.roleBump <= 8 && heldAt > earnedAt;
+    s.placement.role = fought ? s.placement.role : earned;
     s.season = newSeason(s, level);
     if (nba) startNbaSeason(s, s.season);
   }
@@ -358,7 +399,8 @@ function seasonStep(s: LifeState) {
   const played: BoxScore[] = [];
   let minutes = 0;
   for (let g = 0; g < n; g++) {
-    const box = simulateGame(s, level, rng, s.condition.injury ? 0 : undefined, undefined, nba ? (s.season.teamEdge ?? 0) : 0);
+    const box = simulateGame(s, level, rng, s.condition.injury || (typeof s.flags.suspended === "number" && s.flags.suspended > 0) ? 0 : undefined, undefined, nba ? (s.season.teamEdge ?? 0) : 0);
+    applyNight(s, box);
     if (nba) box.opponent = nbaOpponent(s, s.placement.teamName);
     box.seasonKey = s.season.key;
     addBox(s.season, box);
@@ -375,9 +417,23 @@ function seasonStep(s: LifeState) {
       nbaGameMilestones(s, box);
     }
   }
+  if (typeof s.flags.suspended === "number" && s.flags.suspended > 0) {
+    s.flags.suspended -= 1;
+    if (s.flags.suspended <= 0) delete s.flags.suspended;
+  }
   const share = n > 0 ? minutes / (n * level.model.minutesCap) : 0;
   const perf = clamp(0.6 + (performanceLevel(s) - level.need) / 30, 0.2, 1.6);
   s.exposure = clamp(s.exposure + (level.model.exposure / 100) * share * perf * 1.8 - 0.15, 0, 100);
+  // A thin basketball country does not scout itself. Dominating it is how film gets out.
+  const thin = country(s.placement.countryId).model.exposureBase < 25 && level.model.exposure < 30;
+  const gap = performanceLevel(s) - level.need;
+  if (thin && gap >= 10 && n > 0) {
+    s.exposure = clamp(s.exposure + clamp((gap - 6) / 10, 0.35, 1.8), 0, 100);
+    if (!s.flags.breakout && s.exposure >= 22) {
+      s.flags.breakout = s.ageMonths;
+      log(s, "milestone", "Word gets out. People outside the local league start asking for your film.", null, "good");
+    }
+  }
   const last = idx === level.model.season.months - 1;
   if (nba) nbaMonth(s, level, played, last);
   if (last) {
@@ -387,14 +443,30 @@ function seasonStep(s: LifeState) {
   }
 }
 
+function applyNight(s: LifeState, box: BoxScore) {
+  if (typeof s.flags.fluLeft !== "number" || s.flags.fluLeft <= 0 || box.min <= 0) return;
+  box.pts += 8 + Math.round(box.pts * 0.35);
+  box.fgm += 3;
+  box.fga += 5;
+  s.condition.health = clamp(s.condition.health - 8, 5, 100);
+  s.condition.energy = clamp(s.condition.energy - 12, 5, 100);
+  s.flags.fluLeft = s.flags.fluLeft - 1;
+  if (s.flags.fluLeft <= 0) delete s.flags.fluLeft;
+  s.flags.scene = "flu";
+  s.flags.sceneUntil = s.ageMonths + 1;
+  log(s, "milestone", `You can barely stand. ${box.pts} points anyway.`, null, "good");
+}
+
 function finalizeSeason(s: LifeState, level: Level | null) {
   const season = s.season;
   if (!season) return;
   s.season = null;
-  const awards = seasonAwards(s, season, level);
+  const awards = seasonAwards(s, season, level).filter((a) => season.node !== "nba" || season.gp >= 65 || !/Most Valuable Player|All-NBA|Defensive Player|All-Defensive|Rookie of the Year|All-Rookie|Sixth Man|title/.test(a));
   if (awards.length) {
     season.awards = [...(season.awards ?? []), ...awards];
-    log(s, "milestone", `${season.levelLabel} honors: ${awards.join(", ")}.`, null, "good");
+    const big = awards.find((a) => /Most Valuable Player|League MVP|Defensive Player of the Year|Rookie of the Year/.test(a));
+    if (big) fanfare(s, "fanfare", big, `${season.levelLabel}${season.teamName ? `, ${season.teamName}` : ""}. ${awards.join(", ")}. People stand because they mean it.`);
+    else log(s, "milestone", `${season.levelLabel} honors: ${awards.join(", ")}.`, null, "good");
     s.evidence.push({ month: s.ageMonths, text: `${awards[0]} (${season.levelLabel}, age ${season.ageYears})`, weight: ((level?.model.exposure ?? 10) / 10) * 1.2 });
   }
   if (season.gp > 0 || season.wins + season.losses > 0) s.seasons.push(season);
@@ -473,7 +545,7 @@ function offseasonReview(s: LifeState) {
     s.flags.overseasAsked = s.ageMonths;
     if (!offers.some((o) => o.node === "foreign-pro")) log(s, "info", "No club abroad bites this time.", null, "bad");
   }
-  const free = !s.placement.contract || s.placement.contract.yearsLeft <= 0 || ["deep-bench", "bench", "none"].includes(s.placement.role);
+  const free = !s.placement.contract || s.placement.contract.yearsLeft <= 0;
   const asked = typeof s.flags.overseasAsked === "number" && s.ageMonths - s.flags.overseasAsked < 10;
   const abroadOk = !hunted && !asked && free && s.ageMonths >= 19 * 12 && s.placement.node !== "nba" && s.placement.node !== "university" && !offers.some((o) => o.node === "foreign-pro") && overseasPossible(s);
   if (!offers.length && renew === null && !nbaFA && !expired && !abroadOk) return;
@@ -726,8 +798,9 @@ function roleStep(s: LifeState, level: Level, line: SeasonLine, boxes: BoxScore[
   }
   s.flags.nbaTrust = Math.round(trust * 10) / 10;
   const lvl = performanceLevel(s);
-  const up = ROLE_STEPS.indexOf(roleFor(lvl + trust - 1.5, level.need));
-  const down = ROLE_STEPS.indexOf(roleFor(lvl + trust + 2.5, level.need));
+  const coachEdge = clamp((s.placement.coaching - 50) / 15, -2, 3);
+  const up = ROLE_STEPS.indexOf(roleFor(lvl + trust + coachEdge - 1.5, level.need));
+  const down = ROLE_STEPS.indexOf(roleFor(lvl + trust + coachEdge + 2.5, level.need));
   const settled = s.ageMonths - num(s.flags.roleAt) >= 3;
   const move = (to: number) => {
     setRole(s, line, ROLE_STEPS[to]!);
@@ -823,9 +896,10 @@ function playSeries(s: LifeState, line: SeasonLine, po: PlayoffRun, level: Level
   for (let g = 0; won < 4 && lost < 4; g++) {
     const atHome = [0, 1, 4, 6].includes(g) === homeCourt;
     const edge = (line.teamEdge ?? 0) + (0.5 - oppW) * 0.9 + (atHome ? 0.03 : -0.03);
-    const sit = s.condition.injury !== null || (s.placement.role === "deep-bench" && rng.next() < 0.6);
+    const sit = s.condition.injury !== null || (typeof s.flags.suspended === "number" && s.flags.suspended > 0) || (s.placement.role === "deep-bench" && rng.next() < 0.6);
     const box = simulateGame(s, level, rng, sit ? 0 : undefined, undefined, edge);
     if (sit) for (const k of BOX_KEYS) box[k] = 0;
+    applyNight(s, box);
     box.opponent = opp;
     box.seasonKey = key;
     pushGame(s, box);
@@ -859,12 +933,15 @@ function playSeries(s: LifeState, line: SeasonLine, po: PlayoffRun, level: Level
   (line.awards ??= []).push("NBA champion");
   s.flags.champAt = s.ageMonths;
   s.exposure = clamp(s.exposure + 8, 0, 100);
-  log(s, "milestone", `${text} The ${line.teamName} are NBA champions.`, null, "good");
   const fin = finals.reduce((a, b) => a + gameScoreTotal(b), 0) / Math.max(1, finals.length);
-  if ((s.placement.role === "star" || s.placement.role === "starter") && finals.length >= 4 && fin >= 18) {
-    line.awards.push("Finals MVP");
-    log(s, "milestone", "Finals MVP.", null, "good");
-  }
+  const finalsMvp = (s.placement.role === "star" || s.placement.role === "starter") && finals.length >= 4 && fin >= 18;
+  if (finalsMvp) line.awards.push("Finals MVP");
+  fanfare(
+    s,
+    "fanfare",
+    finalsMvp ? "NBA champions, Finals MVP" : "NBA champions",
+    `${text} The ${line.teamName} are NBA champions.${finalsMvp ? " They hand you Finals MVP." : ""} The building does not sit down.`
+  );
   s.evidence.push({ month: s.ageMonths, text: `NBA champion with the ${line.teamName}`, weight: 12 });
 }
 
@@ -1233,7 +1310,8 @@ function runTournament(s: LifeState, sel: Selection) {
   s.condition.energy = clamp(s.condition.energy - 12, 5, 100);
   s.evidence.push({ month: s.ageMonths, text: `${r.finish} at the ${sel.t.short} with ${country(sel.nat).name}${r.gp ? `: ${(r.pts / r.gp).toFixed(1)} ppg` : ""}`, weight: KIND_EXPOSURE[r.kind] * 0.9 * perf });
   s.evidence = [...s.evidence].sort((a, b) => b.weight - a.weight).slice(0, 24);
-  log(s, "milestone", run.summary, null, r.medal ? "good" : "neutral");
+  if (r.medal === "gold") fanfare(s, "fanfare", `Gold, ${sel.t.short}`, `${run.summary} The anthem plays and nobody in your section sits.`);
+  else log(s, "milestone", run.summary, null, r.medal ? "good" : "neutral");
 }
 
 /* --------------------------------------------------------------- agent */
@@ -1329,6 +1407,7 @@ function endChecks(s: LifeState) {
     s.clock.pauseReason = "ended";
     return;
   }
+  if (!s.pendingDecision) maybeHof(s);
   if (!s.pendingDecision) {
     const retireAt = typeof s.flags.retireAt === "number" ? s.flags.retireAt : 36 * 12;
     if (s.after) {
@@ -1380,6 +1459,14 @@ function resolveInPlace(s: LifeState, choiceId: string) {
     return;
   }
   switch (d.templateId) {
+    case "fanfare":
+      log(s, "decision", "You take it in.");
+      return;
+    case "hof":
+      s.evidence.push({ month: s.ageMonths, text: "Inducted into the Hall of Fame", weight: 14 });
+      s.evidence = [...s.evidence].sort((a, b) => b.weight - a.weight).slice(0, 24);
+      log(s, "milestone", "The speech ends. The hall stands.", null, "good");
+      return;
     case "offers": {
       const renew = typeof s.flags.renewSalary === "number" ? s.flags.renewSalary : 0;
       clearRenewal(s);
@@ -1608,7 +1695,7 @@ function resolveInPlace(s: LifeState, choiceId: string) {
       if (win < odds) {
         const line = currentNbaLine(s);
         if (line) (line.awards ??= []).push(`${name} champion`);
-        log(s, "milestone", `You win the ${name}.`, null, "good");
+        fanfare(s, "fanfare", `${name} champion`, `You win the ${name}. The arena treats it like a title for one night.`);
       } else {
         log(s, "decision", final < 0.4 ? `You make the final round of the ${name} and finish second.` : `You go out in the first round of the ${name}.`);
       }
@@ -1741,9 +1828,12 @@ function retireFromPlaying(s: LifeState) {
   s.condition.injury = null;
   s.keepPlaying = false;
   log(s, "milestone", `You retire from playing at ${Math.floor(s.ageMonths / 12)}.`);
+  if (hofEligible(s)) s.flags.hofWait = true;
 }
 
 function afterMonth(s: LifeState) {
+  maybeHof(s);
+  if (s.pendingDecision) return;
   s.condition.energy = clamp(s.condition.energy + 8, 5, 100);
   s.condition.health = clamp(s.condition.health + 0.5, 0, 100);
   money(s);
@@ -1823,7 +1913,7 @@ export function manageMoney(state: LifeState, action: MoneyAction): LifeState {
 
 export const AUTO_STRATEGY = [
   "Life events: the option with the lowest injury and setback risk; ties go to the one that builds more, then to the first listed.",
-  "Team offers: the highest level you can afford where the coach expects at least bench minutes. A move sideways needs clearly more scouting exposure. Otherwise, stay.",
+  "Team offers: the highest level you can afford where the coach expects at least bench minutes. A move sideways needs clearly more scouting exposure. Otherwise, stay. Years left on a contract, or college eligibility, means no offers to leave.",
   "Draft: declare when scouts rate you in draft range or NBA-ready, or on the NBA radar from age 21. If you pressed Declare yourself, it declares.",
   "Draft interviews: the answer that fits his personality best. Workouts: only teams in range when projected in the top 45, otherwise a dozen teams.",
   "After the draft: a two-way deal first, then a camp deal, then stay.",

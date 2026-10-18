@@ -10,7 +10,7 @@ import { Suspense, type ReactNode } from "react";
 
 import { AnalyticsDesk } from "@/components/home/analytics-desk";
 import { MotionReveal } from "@/components/continuity/motion-reveal";
-import { AppLink } from "@/components/ui/app-link";
+import { SectionLink } from "@/components/ui/section-link";
 import { HotColdColumns } from "@/components/explore/hot-cold-board";
 import { AboveNormPanel } from "@/components/home/above-norm-panel";
 import { FindingsSection } from "@/components/home/findings-section";
@@ -18,7 +18,7 @@ import { InjuryReportPanel } from "@/components/home/injury-report-panel";
 import { LeagueMovesPanel } from "@/components/home/league-moves-panel";
 import { SeasonPulsePanel } from "@/components/home/season-pulse-panel";
 import { HomeStandingsPanel } from "@/components/home/home-standings-panel";
-import { HomeModuleSkeleton } from "@/components/home/home-module-skeleton";
+import { HomeModuleFrame, HomeModuleSkeleton } from "@/components/home/home-module-skeleton";
 import { SentimentMoversPanel } from "@/components/home/sentiment-movers-panel";
 import { TopPerformersPanel } from "@/components/home/top-performers-panel";
 import { SeasonMomentCard, SeasonPhaseBar } from "@/components/home/season-moment";
@@ -99,18 +99,15 @@ async function HomeHotCold() {
     <section className="sports-card flex flex-col gap-3 p-4">
       <div className="flex flex-wrap items-end justify-between gap-2">
         <div>
-          <h2 className="type-heading">Hot & Cold</h2>
-          <p className="type-body-sm text-muted-foreground">
+          <h2 className="type-title">Hot & Cold</h2>
+          <p className="type-caption text-muted-foreground">
             Scoring over the last 5 games of {season} against each
             player&apos;s own season average. Rows read season avg → last 5.
           </p>
         </div>
-        <AppLink
-          href="/explore/players/hot-cold"
-          className="text-[13px] font-semibold underline-offset-4 hover:underline"
-        >
-          Open Hot & Cold <span data-motion-arrow aria-hidden>→</span>
-        </AppLink>
+        <SectionLink href="/explore/players/hot-cold" className="pt-0.5">
+          Open Hot &amp; Cold
+        </SectionLink>
       </div>
       <HotColdColumns risers={window.risers} fallers={window.fallers} limit={4} />
     </section>
@@ -127,29 +124,14 @@ async function HomeFindings() {
   ]);
   if (live) {
     return (
-      <FindingsSection
-        insights={live.insights}
-        seasonLabel={live.preseason ? `${live.season} preseason` : live.season}
-      />
+      <FindingsSection insights={live.insights} />
     );
   }
 
-  const {
-    getBundledRecentInsights,
-    recentInsightsSnapshotMeta,
-  } = await import("@/data/runtime/recent-insights-snapshot");
+  const { getBundledRecentInsights } = await import("@/data/runtime/recent-insights-snapshot");
   const insights = getBundledRecentInsights();
-  const meta = recentInsightsSnapshotMeta();
-  const seasonLabel =
-    meta.season && meta.slateDates?.length
-      ? `${meta.season} (through ${meta.slateDates[0]})`
-      : meta.season;
   return (
-    <FindingsSection
-      insights={insights}
-      seasonLabel={seasonLabel}
-      empty={insights.length === 0}
-    />
+    <FindingsSection insights={insights} empty={insights.length === 0} />
   );
 }
 
@@ -301,21 +283,16 @@ export default async function HomePage() {
   const season = canonicalSeasonFromStartYear(currentNbaStartYear());
   const moment = await getHomeSeasonMoment();
   const layout = homeLayoutForPhase(moment.phase);
-  const render = (id: HomeModuleId) => renderModule(id, moment, season);
-  // Below lg the columns use `display: contents`, so the watchlist can sit
-  // right under the week strip on phones and tablets.
-  const renderGridModule = (id: HomeModuleId) =>
-    id === "watchlist" ? (
-      <div key={id} className="order-first min-w-0 lg:order-none">
-        {render(id)}
-      </div>
-    ) : (
-      render(id)
-    );
+  const render = (id: HomeModuleId) => (
+    <HomeModuleFrame key={id} id={id}>
+      {renderModule(id, moment, season)}
+    </HomeModuleFrame>
+  );
 
   return (
     <main
       data-motion-page
+      data-home-stack
       className="site-shell flex flex-col gap-5 py-5 sm:py-7"
       data-season-phase={moment.phase}
     >
@@ -324,12 +301,12 @@ export default async function HomePage() {
       <MotionReveal />
       {layout.top.map(render)}
 
-      <div className="grid min-w-0 grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_21.25rem] xl:grid-cols-[minmax(0,1fr)_23rem]">
-        <div className="contents lg:flex lg:min-w-0 lg:flex-col lg:gap-4">
-          {layout.main.map(renderGridModule)}
+      <div className="home-columns grid min-w-0 grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_21.25rem] xl:grid-cols-[minmax(0,1fr)_23rem]">
+        <div className="home-column contents lg:flex lg:min-w-0 lg:flex-col lg:gap-4">
+          {layout.main.map(render)}
         </div>
-        <div className="contents lg:flex lg:min-w-0 lg:flex-col lg:gap-4">
-          {layout.side.map(renderGridModule)}
+        <div className="home-column contents lg:flex lg:min-w-0 lg:flex-col lg:gap-4">
+          {layout.side.map(render)}
         </div>
       </div>
 

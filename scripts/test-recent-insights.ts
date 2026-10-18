@@ -15,6 +15,7 @@ import {
   type SlatePlayerLine,
 } from "../src/lib/recent-insights";
 import { slateFlowFromTimeline } from "../src/lib/recent-insights-flow";
+import { recordNoteFor } from "../src/lib/record-book";
 
 const game: SlateGameInput = {
   id: "g1",
@@ -254,6 +255,159 @@ function trade(n: number, from: number, to: number, a: Step[2], b: Step[2], pa: 
   }).find((c) => c.focus === "threes");
   assert.equal(threes?.hero?.value, "21");
   assert.deepEqual(threes?.contributors?.map((c) => c.value), [7, 6, 5, 3]);
+}
+
+// Notable box-score shapes surface, and an ordinary line does not.
+{
+  const quiet = buildRecentInsights({
+    games: [game],
+    lines: [line("ord", { points: 18, rebounds: 4, assists: 3 }, null)],
+  });
+  assert.equal(quiet.filter((c) => c.focus === "moment").length, 0);
+
+  const five = buildRecentInsights({
+    games: [game],
+    lines: [line("five", { points: 12, rebounds: 7, assists: 6, steals: 5, blocks: 5 }, null)],
+  }).find((c) => c.focus === "moment");
+  assert.equal(five?.moment?.kind, "meters");
+  assert.equal(five?.moment?.marks.length, 5);
+  assert.match(five!.description, /Nobody else on his team had all five/);
+  assert.doesNotMatch(five!.description, /history|first player|only player/i);
+
+  const recordNote = recordNoteFor(
+    {
+      playerName: "Someone Else",
+      gameDate: "2026-01-02",
+      points: 82,
+      rebounds: 4,
+      assists: 3,
+      steals: 1,
+      blocks: 0,
+      threePm: 2,
+      turnovers: 3,
+      minutesNum: 40,
+    },
+    "regular",
+    {
+      builtAt: "2026-01-01",
+      source: "test",
+      fromSeason: "1996-97",
+      throughSeason: "2024-25",
+      throughDate: "2025-04-13",
+      regularSeasonGames: 1,
+      playoffGames: 0,
+      playerGameRows: 1,
+      seasons: ["2005-06"],
+      note: "test",
+      records: [
+        {
+          id: "regular-game-pts",
+          group: "game",
+          scope: "regular",
+          title: "Points in a game",
+          blurb: "Regular season.",
+          decimals: 0,
+          order: "high",
+          leaders: [
+            {
+              playerId: "1",
+              name: "Kobe Bryant",
+              team: "LAL",
+              opponent: "TOR",
+              date: "2006-01-22",
+              season: "2005-06",
+              gameId: "0020500591",
+              value: 81,
+              detail: "81 pts",
+            },
+          ],
+        },
+      ],
+      shapes: [{ id: "regular-pts50", scope: "regular", title: "50 or more points", count: 180, examples: [] }],
+    }
+  );
+  assert.match(recordNote ?? "", /past the regular-season high/);
+  assert.match(recordNote ?? "", /Kobe Bryant/);
+  assert.doesNotMatch(recordNote ?? "", /NBA history/i);
+
+  const shot = buildRecentInsights({
+    games: [game],
+    lines: [
+      line(
+        "siakam",
+        { playerName: "Pascal", points: 24, fgm: 8, fga: 10, threePm: 5, threePa: 7, ftm: 3, fta: 3 },
+        null
+      ),
+    ],
+  }).find((c) => c.playerId === "siakam");
+  assert.equal(shot?.moment?.kind, "splits");
+  assert.match(shot!.description, /8 of 10 from the field and 5 of 7 from three/);
+  assert.match(shot!.headline, /8-10 FG, 5-7 3P/);
+
+  const lineNight = buildRecentInsights({
+    games: [game],
+    lines: [
+      line(
+        "tjd",
+        { playerName: "Trayce", points: 23, fgm: 4, fga: 5, threePm: 0, threePa: 0, ftm: 15, fta: 16 },
+        null
+      ),
+    ],
+  }).find((c) => c.playerId === "tjd");
+  assert.match(lineNight!.description, /15 of 16 at the line, on 4 of 5 from the field/);
+  assert.match(lineNight!.headline, /15-16/);
+
+  const glass = buildRecentInsights({
+    games: [game],
+    lines: [line("turner", { playerName: "Myles", points: 7, rebounds: 13, blocks: 3, fgm: 3, fga: 9 }, null)],
+  }).find((c) => c.playerId === "turner");
+  assert.match(glass!.description, /13 rebounds and 3 blocks/);
+
+  const combo = buildRecentInsights({
+    games: [game],
+    lines: [
+      line("jok", { points: 32, rebounds: 12, assists: 8, playerName: "Nikola" }, null),
+      line("next", { points: 14, playerName: "Teammate" }, null),
+    ],
+  }).find((c) => c.playerId === "jok");
+  assert.equal(combo?.moment?.marks.map((m) => m.tick).join(","), "30,10,5");
+  assert.match(combo!.description, /32 points, 12 rebounds, and 8 assists/);
+
+  const share = buildRecentInsights({
+    games: [{ ...game, homeScore: 88, awayScore: 90 }],
+    lines: [line("usage", { points: 42, fgm: 15, fga: 28 }, null)],
+  }).find((c) => c.playerId === "usage");
+  assert.equal(share?.moment?.kind, "share");
+  assert.match(share!.description, /42 of his team's 88 points/);
+
+  const clean = buildRecentInsights({
+    games: [game],
+    lines: [line("pass", { points: 16, assists: 12, turnovers: 0, minutesNum: 34 }, null)],
+  }).find((c) => c.focus === "moment");
+  assert.equal(clean?.moment?.kind, "clean");
+  assert.match(clean!.description, /0 turnovers in 34 minutes, with 12 assists/);
+
+  const messy = buildRecentInsights({
+    games: [game],
+    lines: [line("sloppy", { points: 8, assists: 2, turnovers: 0, minutesNum: 32 }, null)],
+  });
+  assert.equal(messy.filter((c) => c.focus === "moment").length, 0);
+
+  const run = buildRecentInsights({
+    games: [
+      { ...game, id: "d1", gameDate: "2026-10-10" },
+      { ...game, id: "d2", gameDate: "2026-10-12" },
+      { ...game, id: "d3", gameDate: "2026-10-14" },
+    ],
+    lines: [10, 12, 14].map((day, i) => ({
+      ...line("hot", { points: 30 + i, opponentAbbr: `T${i}` }, null),
+      gameId: `d${i + 1}`,
+      gameDate: `2026-10-${day}`,
+    })),
+  }).find((c) => c.id === "run30-hot");
+  assert.ok(run, "expected three games of 30");
+  assert.match(run!.description, /Three games of 30 or more inside a week/);
+  assert.equal(run?.trend?.length, 3);
 }
 
 // A quiet slate still fills six cards from real results, with stories ahead of fill.

@@ -68,10 +68,10 @@ function EdgeBadge({
   return (
     <span
       className={cn(
-        "rounded-md px-2 py-0.5 text-[12px] font-bold tabular-nums",
+        "rounded-md px-2 py-0.5 text-[12px] font-semibold tabular-nums",
         edge === "even" || edge === "unavailable"
-          ? "bg-secondary text-muted-foreground"
-          : "bg-foreground text-background"
+          ? "bg-foreground/[0.05] text-muted-foreground"
+          : "bg-foreground/[0.06] text-foreground"
       )}
     >
       {text}

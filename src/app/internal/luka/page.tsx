@@ -44,7 +44,7 @@ export default async function LukaBrefExamplePage({ searchParams }: PageProps) {
   const atmosphere = brandAtmosphereColors(brand?.primary, brand?.secondary);
 
   return (
-    <DestinationClientShell className="site-shell relative flex flex-1 flex-col gap-4 py-5 sm:py-7">
+    <DestinationClientShell className="site-shell relative flex flex-1 flex-col gap-4 pb-5 sm:pb-7">
       <PageAtmosphere
         colorA={atmosphere?.colorA}
         colorB={atmosphere?.colorB}

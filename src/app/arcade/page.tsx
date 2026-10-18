@@ -67,7 +67,6 @@ export default function ArcadePage() {
     <main data-motion-page className="site-shell flex flex-col gap-8 py-6 sm:py-8">
       <MotionReveal />
       <PageHeader
-        eyebrow="Arcade"
         title="Games"
         subtitle="Basketball games, most of them built on 30 seasons of real player stats."
       />

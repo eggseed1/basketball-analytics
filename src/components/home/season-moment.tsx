@@ -1,5 +1,6 @@
 import { TeamLogo } from "@/components/brand/team-logo";
 import { AppLink } from "@/components/ui/app-link";
+import { SectionLink } from "@/components/ui/section-link";
 import { type } from "@/lib/design-system";
 import type { HomeSeasonMoment, OpenerGame, SeasonChampion } from "@/lib/home-season-moment";
 import { standingsHref } from "@/lib/standings-routes";
@@ -34,13 +35,9 @@ function MomentLinks({ links }: { links: Array<[string, string]> }) {
   return (
     <div className="flex flex-wrap gap-x-4 gap-y-1">
       {links.map(([href, label]) => (
-        <AppLink
-          key={href}
-          href={href}
-          className={cn(type.caption, "font-semibold underline-offset-4 hover:underline")}
-        >
-          {label} <span data-motion-arrow aria-hidden>→</span>
-        </AppLink>
+        <SectionLink key={href} href={href}>
+          {label}
+        </SectionLink>
       ))}
     </div>
   );
@@ -93,7 +90,7 @@ export function SeasonMomentCard({ moment }: { moment: HomeSeasonMoment }) {
 
   if (phase === "draft-free-agency") {
     return (
-      <section aria-label="Offseason" className="sports-card flex flex-col gap-3 p-4 sm:p-5">
+      <section aria-label="Offseason" className="sports-card flex flex-col gap-3 p-4">
         <Eyebrow>Offseason · Draft and free agency</Eyebrow>
         {champion ? (
           <div className="flex items-center gap-3">
@@ -124,7 +121,7 @@ export function SeasonMomentCard({ moment }: { moment: HomeSeasonMoment }) {
 
   if (phase === "offseason") {
     return (
-      <section aria-label="Offseason" className="sports-card flex flex-col gap-3 p-4 sm:p-5">
+      <section aria-label="Offseason" className="sports-card flex flex-col gap-3 p-4">
         <Eyebrow>Offseason</Eyebrow>
         {marks.opener && daysToOpener != null ? (
           <>

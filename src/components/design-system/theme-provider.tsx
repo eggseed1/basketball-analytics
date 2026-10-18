@@ -16,16 +16,20 @@ import {
   COLOR_SCHEME_KEY,
   isColorScheme,
   SURFACE_KEY,
+  REDUCE_MOTION_KEY,
   type ColorScheme,
+  type MotionPref,
   type SurfaceStyle,
 } from "@/lib/owner-theme";
 
 type OwnerThemeContextValue = {
   scheme: ColorScheme;
   surface: SurfaceStyle;
+  motion: MotionPref;
   resolvedDark: boolean;
   setScheme: (scheme: ColorScheme) => void;
   setSurface: (surface: SurfaceStyle) => void;
+  setMotion: (motion: MotionPref) => void;
 };
 
 const OwnerThemeContext = createContext<Omit<
@@ -44,6 +48,11 @@ function readSurface(): SurfaceStyle {
   const raw = localStorage.getItem(SURFACE_KEY);
   if (raw === "solid") return "solid";
   return "glass";
+}
+
+function readMotion(): MotionPref {
+  if (typeof window === "undefined") return "system";
+  return localStorage.getItem(REDUCE_MOTION_KEY) === "reduce" ? "reduce" : "system";
 }
 
 const darkListeners = new Set<() => void>();
@@ -75,11 +84,13 @@ const serverDarkClass = () => false;
 export function OwnerThemeProvider({ children }: { children: ReactNode }) {
   const [scheme, setSchemeState] = useState<ColorScheme>("system");
   const [surface, setSurfaceState] = useState<SurfaceStyle>("glass");
+  const [motion, setMotionState] = useState<MotionPref>("system");
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
     setSchemeState(readScheme());
     setSurfaceState(readSurface());
+    setMotionState(readMotion());
     setHydrated(true);
   }, []);
 
@@ -90,13 +101,14 @@ export function OwnerThemeProvider({ children }: { children: ReactNode }) {
       applyOwnerTheme({
         scheme,
         surface,
+        motion,
         prefersDark: media.matches,
       });
     };
     sync();
     media.addEventListener("change", sync);
     return () => media.removeEventListener("change", sync);
-  }, [hydrated, scheme, surface]);
+  }, [hydrated, scheme, surface, motion]);
 
   const setScheme = useCallback((next: ColorScheme) => {
     localStorage.setItem(COLOR_SCHEME_KEY, next);
@@ -108,9 +120,15 @@ export function OwnerThemeProvider({ children }: { children: ReactNode }) {
     setSurfaceState(next);
   }, []);
 
+  const setMotion = useCallback((next: MotionPref) => {
+    if (next === "reduce") localStorage.setItem(REDUCE_MOTION_KEY, "reduce");
+    else localStorage.removeItem(REDUCE_MOTION_KEY);
+    setMotionState(next);
+  }, []);
+
   const value = useMemo(
-    () => ({ scheme, surface, setScheme, setSurface }),
-    [scheme, surface, setScheme, setSurface]
+    () => ({ scheme, surface, motion, setScheme, setSurface, setMotion }),
+    [scheme, surface, motion, setScheme, setSurface, setMotion]
   );
 
   return (

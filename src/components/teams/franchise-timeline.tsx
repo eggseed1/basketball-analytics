@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { LinkCue } from "@/components/ui/link-cue";
 import {
   getFranchiseByCanonicalId,
   type FranchiseRecord,
@@ -54,7 +55,7 @@ export function FranchiseTimeline({
                 prefetch={false}
                 className="text-[12px] font-semibold underline-offset-2 hover:underline"
               >
-                Open {id.seasonFrom} <span data-motion-arrow aria-hidden>→</span>
+                Open {id.seasonFrom} <LinkCue />
               </Link>
             </li>
           ))}
@@ -86,7 +87,7 @@ export function FranchiseTimeline({
             prefetch={false}
             className="font-semibold underline-offset-2 hover:underline"
           >
-            All franchises <span data-motion-arrow aria-hidden>→</span>
+            All franchises <LinkCue />
           </Link>
         </p>
       </div>

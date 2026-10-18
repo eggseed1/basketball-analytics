@@ -1,5 +1,7 @@
 import type { CSSProperties } from "react";
 
+import { BouncingBasketball } from "@/components/brand/bouncing-basketball";
+
 const STEPS = [
   "Checking tonight's scores",
   "Pulling the standings",
@@ -17,21 +19,7 @@ export function HomeWarmup() {
   return (
     <div className="home-warmup" aria-hidden>
       <div className="home-warmup__card">
-        <div className="home-warmup__court">
-          <div className="home-warmup__hop">
-            <svg className="home-warmup__ball" viewBox="0 0 40 40">
-              <circle className="home-warmup__skin" cx="20" cy="20" r="18" />
-              <g fill="none" stroke="#0b0d14" strokeOpacity="0.55" strokeWidth="1.6" strokeLinecap="round">
-                <circle cx="20" cy="20" r="18" />
-                <path d="M2 20h36" />
-                <path d="M20 2v36" />
-                <path d="M7.5 7.5c5 4 5 21 0 25" />
-                <path d="M32.5 7.5c-5 4-5 21 0 25" />
-              </g>
-            </svg>
-          </div>
-          <span className="home-warmup__shadow" />
-        </div>
+        <BouncingBasketball size={52} />
         <div className="home-warmup__steps">
           {STEPS.map((step, i) => (
             <span key={step} style={{ "--i": i, "--n": STEPS.length } as CSSProperties}>

@@ -31,14 +31,11 @@ export function LoadingTopBar() {
 }
 
 export function DestinationLoadingFrame({
-  eyebrow,
   title,
   subtitle,
   className,
   children,
 }: {
-  /** Match the real page header's eyebrow so the title lands in the same place. */
-  eyebrow?: string;
   title: string;
   subtitle?: string;
   className?: string;
@@ -56,7 +53,6 @@ export function DestinationLoadingFrame({
     >
       <LoadingTopBar />
       <PageHeader
-        eyebrow={eyebrow}
         title={title}
         subtitle={subtitle}
         actions={<LoadingStatus>Loading</LoadingStatus>}

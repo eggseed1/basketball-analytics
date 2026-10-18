@@ -6,6 +6,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useTransition } from "react";
 
 import { GlassSurface } from "@/components/brand/glass-surface";
+import { ChoiceChip, ChoiceTrack } from "@/components/ui/choice-chip";
 import {
   Select,
   SelectContent,
@@ -14,7 +15,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { espnYearFromCanonicalSeason } from "@/data/providers/nba/season";
-import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 
 function ChipGroup({
@@ -28,24 +28,9 @@ function ChipGroup({
   scrollable?: boolean;
 } & Omit<HTMLAttributes<HTMLDivElement>, "children" | "className">) {
   return (
-    <GlassSurface
-      effect="css"
-      overflowVisible={!scrollable}
-      className={cn(
-        "flex min-w-0 items-center gap-0.5 p-1",
-        scrollable &&
-          "w-full max-w-full flex-nowrap touch-scroll-x [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
-        className
-      )}
-      style={
-        scrollable
-          ? { overflowX: "auto", overflowY: "hidden" }
-          : undefined
-      }
-      {...rest}
-    >
+    <ChoiceTrack className={className} scrollable={scrollable} {...rest}>
       {children}
-    </GlassSurface>
+    </ChoiceTrack>
   );
 }
 
@@ -59,20 +44,9 @@ function Chip({
   children: ReactNode;
 }) {
   return (
-    <button
-      type="button"
-      aria-pressed={active}
-      onClick={onClick}
-      className={cn(
-        type.caption,
-        "rounded-md px-2.5 py-1.5 font-semibold transition-colors",
-        active
-          ? "bg-secondary text-foreground"
-          : "text-muted-foreground hover:bg-foreground/10 hover:text-foreground"
-      )}
-    >
+    <ChoiceChip active={active} onClick={onClick}>
       {children}
-    </button>
+    </ChoiceChip>
   );
 }
 

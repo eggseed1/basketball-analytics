@@ -10,6 +10,7 @@ import {
 import { historyHref } from "@/themes/history-url";
 import type { ThemeMode } from "@/themes/era-theme";
 import { cn } from "@/lib/utils";
+import { LinkCue } from "@/components/ui/link-cue";
 
 export function SeasonExplorer({
   season,
@@ -56,10 +57,13 @@ export function SeasonExplorer({
             className="sports-pill shrink-0 text-[14px]"
             prefetch={false}
           >
-            ← {prevSeason}
+            <LinkCue direction="back" />
+            {prevSeason}
           </TransitionLink>
         ) : (
-          <span className="sports-pill shrink-0 text-[14px] opacity-40">←</span>
+          <span className="sports-pill inline-flex shrink-0 items-center text-[14px] opacity-40">
+            <LinkCue direction="back" />
+          </span>
         )}
 
         <label className="sr-only" htmlFor="tm-season">
@@ -84,10 +88,12 @@ export function SeasonExplorer({
             className="sports-pill shrink-0 text-[14px]"
             prefetch={false}
           >
-            {nextSeason} <span data-motion-arrow aria-hidden>→</span>
+            {nextSeason} <LinkCue />
           </TransitionLink>
         ) : (
-          <span className="sports-pill shrink-0 text-[14px] opacity-40">→</span>
+          <span className="sports-pill inline-flex shrink-0 items-center text-[14px] opacity-40">
+            <LinkCue />
+          </span>
         )}
       </div>
     </nav>
@@ -135,10 +141,14 @@ export function DateExplorer({
           className="sports-pill text-[14px]"
           prefetch={false}
         >
-          ← Prev day
+          <LinkCue direction="back" />
+          Prev day
         </TransitionLink>
       ) : (
-        <span className="sports-pill text-[14px] opacity-40">← Prev day</span>
+        <span className="sports-pill inline-flex items-center gap-0.5 text-[14px] opacity-40">
+          <LinkCue direction="back" />
+          Prev day
+        </span>
       )}
 
       <label className="sr-only" htmlFor="tm-date">
@@ -158,10 +168,10 @@ export function DateExplorer({
           className="sports-pill text-[14px]"
           prefetch={false}
         >
-          Next day <span data-motion-arrow aria-hidden>→</span>
+          Next day <LinkCue />
         </TransitionLink>
       ) : (
-        <span className="sports-pill text-[14px] opacity-40">Next day <span data-motion-arrow aria-hidden>→</span></span>
+        <span className="sports-pill text-[14px] opacity-40">Next day <LinkCue /></span>
       )}
     </nav>
   );

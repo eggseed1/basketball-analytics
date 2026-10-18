@@ -16,6 +16,7 @@ import { formatOrdinal } from "@/lib/format";
 import { formatUsdCompact } from "@/lib/format-money";
 import { shortDate } from "@/lib/salary-payoff";
 import { cn } from "@/lib/utils";
+import { LinkCue } from "@/components/ui/link-cue";
 
 function pct(n: number): string {
   return `${Math.round(n).toLocaleString()}%`;
@@ -79,7 +80,7 @@ export function PlayerSalaryPayoff({
           href={`/explore/players/visualizations?view=payoff&season=${meta.season}&pin=${encodeURIComponent(nbaId ?? playerId)}`}
           className={type.caption}
         >
-          League board <span data-motion-arrow aria-hidden>→</span>
+          League board <LinkCue />
         </TextLink>
       </div>
       <SalaryPayoffChart

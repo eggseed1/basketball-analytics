@@ -414,7 +414,7 @@ export function PlayerSeasonTable({
                       key={group.id}
                       colSpan={group.keys.length}
                       className={cn(
-                        "h-8 border-l border-border px-2 text-center font-semibold uppercase text-muted-foreground",
+                        "h-8 border-l border-border/40 px-2 text-center font-semibold uppercase text-muted-foreground",
                         boardType.head
                       )}
                     >
@@ -749,7 +749,7 @@ function StatHead({
   onSort: (key: SortKey) => void;
   groupedStart?: boolean;
 }) {
-  const className = cn(groupedStart && "border-l border-border");
+  const className = cn(groupedStart && "border-l border-border/40");
   return (
     <SortableTableHead
       className={className}
@@ -781,7 +781,7 @@ function StatCell({
       className={cn(
         "board-stat text-right tabular-nums",
         boardType.cell,
-        groupedStart && "border-l border-border",
+        groupedStart && "border-l border-border/40",
         seasonAwaitingGames && "text-muted-foreground"
       )}
     >

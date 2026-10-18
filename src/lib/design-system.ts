@@ -1,3 +1,5 @@
+import type { CSSProperties } from "react";
+
 /**
  * Site type scale + layout tokens.
  * Prefer these names over one-off text-[NNpx] classes.
@@ -38,9 +40,22 @@ export const boardType = {
 export const textLinkClassName =
   "font-semibold underline decoration-foreground/40 underline-offset-2 hover:decoration-foreground";
 
-/** "See all →" style link in a section header; underlines on hover only. */
+/** Section action ("See all schedule"). Pair with SectionLink so the chevron is included. */
 export const sectionLinkClassName =
-  "font-semibold text-muted-foreground underline-offset-4 hover:text-foreground hover:underline";
+  "inline-flex items-center gap-0.5 font-medium text-muted-foreground underline-offset-4 hover:text-foreground hover:underline";
+
+/** One hairline between rows, under headers, and between list items. */
+export const hairlineRuleClassName = "border-border/40";
+export const hairlineDivideClassName = "divide-y divide-border/40";
+
+/**
+ * Blur for the subtle glass cards. Inline because the CSS build drops
+ * backdrop-filter on these card selectors.
+ */
+export const subtleGlassStyle: CSSProperties = {
+  backdropFilter: "blur(12px) saturate(140%)",
+  WebkitBackdropFilter: "blur(12px) saturate(140%)",
+};
 
 /** Box inside a card, the home page tile: soft fill and a hairline ring, no border. */
 export const surfaceTileClassName = "rounded-[11px] bg-foreground/[0.035] ring-1 ring-inset ring-foreground/[0.06]";

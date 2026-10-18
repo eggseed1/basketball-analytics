@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-labelledby="title">
+  <title id="title">DRBL monogram</title>
+  <g fill="#111114" transform="translate(-6,0)">
+    <path fill-rule="evenodd" d="M62.00 52.00 A76.00 76.00 0 0 1 138.00 128.00 A76.00 76.00 0 0 1 62.00 204.00 Z M66.00 128.00 A24.00 24.00 0 1 0 114.00 128.00 A24.00 24.00 0 1 0 66.00 128.00 Z"/>
+    <rect x="16" y="52" width="50" height="152"/>
+    <path fill-rule="evenodd" d="M198.00 52.00 A50.00 50.00 0 0 1 248.00 102.00 A50.00 50.00 0 0 1 198.00 152.00 Z M202.00 102.00 A16.00 16.00 0 1 0 234.00 102.00 A16.00 16.00 0 1 0 202.00 102.00 Z"/>
+    <rect x="156.0" y="52" width="46" height="152"/>
+    <polygon points="174.7,151.3 197.3,128.7 250.0,181.4 227.4,204.0"/>
+  </g>
+</svg>

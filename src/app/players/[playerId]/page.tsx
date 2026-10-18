@@ -521,6 +521,13 @@ export default async function PlayerPage({
 
   const mainContent = (
     <>
+        {statsCtx.usingPriorSeasonStats ? (
+          <PriorSeasonStatsNotice
+            variant="banner"
+            requestSeason={statsCtx.requestSeason}
+            statsSeason={statsCtx.statsSeason}
+          />
+        ) : null}
         <PlayerDestinationIdentity
           playerId={playerId}
           espnId={identity?.espnId}
@@ -536,7 +543,6 @@ export default async function PlayerPage({
           heightLabel={heightLabel}
           weightLabel={weightLabel}
           birthDate={player?.birthDate ?? null}
-          draftInfo={player?.draftInfo ?? null}
           college={player?.college ?? null}
           portraitUrl={portraitUrl}
           historicalBrand={historicalBrand}
@@ -652,16 +658,9 @@ export default async function PlayerPage({
           <Suspense
             fallback={<PlayerBoardSkeleton label="Loading game log…" />}
           >
-            {statsCtx.usingPriorSeasonStats ? (
-              <PriorSeasonStatsNotice
-                requestSeason={statsCtx.requestSeason}
-                statsSeason={statsCtx.statsSeason}
-              />
-            ) : null}
             <PlayerGamesIslandDeferred
               playerId={playerId}
               season={statsCtx.statsSeason}
-              seasons={seasonOptions}
               seasonType={seasonType}
               teamKey={teamKey}
             />
@@ -708,12 +707,6 @@ export default async function PlayerPage({
             fallback={<PlayerBoardSkeleton label="Loading statistics…" />}
           >
             <div className="flex flex-col gap-3">
-              {statsCtx.usingPriorSeasonStats ? (
-                <PriorSeasonStatsNotice
-                  requestSeason={statsCtx.requestSeason}
-                  statsSeason={statsCtx.statsSeason}
-                />
-              ) : null}
               <PlayerStatsIsland
                 playerId={playerId}
                 season={season}
@@ -799,12 +792,6 @@ export default async function PlayerPage({
           <Suspense
             fallback={<PlayerBoardSkeleton label="Loading shot chart…" />}
           >
-            {statsCtx.usingPriorSeasonStats ? (
-              <PriorSeasonStatsNotice
-                requestSeason={statsCtx.requestSeason}
-                statsSeason={statsCtx.statsSeason}
-              />
-            ) : null}
             <PlayerVisualizationsIslandDeferred
               playerId={playerId}
               nbaId={identity?.nbaId}
@@ -822,12 +809,6 @@ export default async function PlayerPage({
 
         {view === "onoff" ? (
           <Suspense fallback={<PlayerBoardSkeleton label="Loading on/off…" />}>
-            {statsCtx.usingPriorSeasonStats ? (
-              <PriorSeasonStatsNotice
-                requestSeason={statsCtx.requestSeason}
-                statsSeason={statsCtx.statsSeason}
-              />
-            ) : null}
             <GlassSurface effect="css" className="p-4 sm:p-6" honor={honor}>
               <PlayerOnOffIsland
                 playerId={playerId}
@@ -843,12 +824,6 @@ export default async function PlayerPage({
           <Suspense
             fallback={<PlayerBoardSkeleton label="Loading deep stats…" />}
           >
-            {statsCtx.usingPriorSeasonStats ? (
-              <PriorSeasonStatsNotice
-                requestSeason={statsCtx.requestSeason}
-                statsSeason={statsCtx.statsSeason}
-              />
-            ) : null}
             <GlassSurface effect="css" className="p-1 sm:p-2" honor={honor}>
               <PlayerStatDepthIslandDeferred
                 playerId={playerId}
@@ -875,7 +850,7 @@ export default async function PlayerPage({
   );
 
   const body = (
-    <DestinationClientShell className="site-shell flex flex-1 flex-col gap-4 py-5 sm:gap-5 sm:py-7">
+    <DestinationClientShell className="site-shell flex flex-1 flex-col gap-4 pb-5 sm:gap-5 sm:pb-7">
       <PageAtmosphere
         colorA={atmosphere?.colorA}
         colorB={atmosphere?.colorB}

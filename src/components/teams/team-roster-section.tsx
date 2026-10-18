@@ -7,6 +7,7 @@ import type { PlayerSeason } from "@/data/types";
 import { hasValidDrblEstimate } from "@/data/queries/percentiles";
 import { formatNumber } from "@/lib/format";
 import type { TeamRosterBuckets } from "@/lib/team-explorer";
+import { LinkCue } from "@/components/ui/link-cue";
 
 function valueDetail(player: PlayerSeason): string {
   if (hasValidDrblEstimate(player)) {
@@ -185,7 +186,7 @@ export function TeamRosterSection({
             href={`/explore/players?team=${encodeURIComponent(teamId)}&season=${encodeURIComponent(season)}`}
             className="font-semibold underline-offset-2 hover:underline"
           >
-            Full roster board <span data-motion-arrow aria-hidden>→</span>
+            Full roster board <LinkCue />
           </Link>
           <span className="mx-2">·</span>
           Lineup plus-minus and possession evidence are not available yet. Use

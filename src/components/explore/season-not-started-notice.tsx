@@ -6,17 +6,22 @@ export function PriorSeasonStatsNotice({
   requestSeason,
   statsSeason,
   className,
+  variant = "card",
 }: {
   requestSeason: string;
   statsSeason: string;
   className?: string;
+  /** Card sits in a section. Banner is one quiet line. */
+  variant?: "card" | "banner";
 }) {
   if (requestSeason === statsSeason) return null;
   return (
     <div
       role="status"
       className={cn(
-        "rounded-lg border border-border bg-muted/40 px-3 py-2 text-sm text-muted-foreground",
+        variant === "banner"
+          ? "type-caption text-muted-foreground"
+          : "rounded-lg border border-border bg-muted/40 px-3 py-2 text-sm text-muted-foreground",
         className
       )}
     >

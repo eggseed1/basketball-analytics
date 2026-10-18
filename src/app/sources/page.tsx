@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import Link from "next/link";
 
 import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { PageHeader } from "@/components/layout/page-header";
@@ -37,7 +38,7 @@ function Ext({ href, children }: { href: string; children: ReactNode }) {
 const DATA_SOURCES: { name: ReactNode; uses: string }[] = [
   {
     name: <Ext href="https://www.nba.com/stats">NBA.com and NBA Stats</Ext>,
-    uses: "Box scores, season totals from 1996-97 on (the per-game, per-100-possession and advanced tables are built from them), play-by-play, shot charts, play types, on-court ratings, on/off, hustle stats, player awards, franchise records, league averages, careers that ended before 1996-97, transactions, schedules, cap figures and key dates.",
+    uses: "Box scores, season totals from 1996-97 on (the per-game, per-100-possession and advanced tables are built from them), play-by-play, shot charts, play types, on-court ratings, on/off, hustle stats, player awards, franchise records, the record book lines that are counted from game logs since 1996-97, league averages, careers that ended before 1996-97, transactions, schedules, cap figures and key dates.",
   },
   {
     name: <Ext href="https://www.espn.com/nba/">ESPN</Ext>,
@@ -49,7 +50,7 @@ const DATA_SOURCES: { name: ReactNode; uses: string }[] = [
   },
   {
     name: <Ext href="https://www.wikipedia.org/">Wikipedia and Wikidata</Ext>,
-    uses: "Retired numbers, team front office listings and ABA season records.",
+    uses: "Retired numbers, team front office listings, ABA season records, and the longest winning streaks in the record book.",
   },
   {
     name: "News outlets and team blogs",
@@ -71,10 +72,20 @@ export default function SourcesPage() {
     <main data-motion-page className="site-shell flex flex-col gap-8 py-6 sm:py-8">
       <MotionReveal />
       <PageHeader
-        eyebrow="Sources"
         title="Sources and credits"
         subtitle="The site computes its own numbers from public data. These are the places that data comes from."
       />
+
+      <Section title="Who made the site">
+        <p>
+          Mason Anapolle and Hannah Park made this site and designed it. Mason Anapolle created the
+          original statistics, including DRBL and WAR1. The{" "}
+          <Link href="/about" className={linkClass}>
+            about page
+          </Link>{" "}
+          says more.
+        </p>
+      </Section>
 
       <Section title="Data">
         <ul className="flex flex-col gap-2">

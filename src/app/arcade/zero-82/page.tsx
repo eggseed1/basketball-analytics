@@ -13,7 +13,6 @@ export default function Zero82Page() {
     <main data-motion-page className="site-shell flex flex-col gap-6 py-6 sm:py-8">
       <MotionReveal />
       <PageHeader
-        eyebrow="Arcade"
         title="0–82"
         subtitle="Spin a random team and season, take one of its players, and fill PG, SG, SF, PF and C. Lose every game if you can."
       />

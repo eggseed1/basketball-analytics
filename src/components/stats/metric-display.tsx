@@ -3,7 +3,6 @@ import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { type } from "@/lib/design-system";
 import { Badge } from "@/components/ui/badge";
-import { Surface } from "@/components/ui/surface";
 
 export function StatLabel({
   children,
@@ -36,6 +35,7 @@ export function StatValue({
 }) {
   return (
     <p
+      data-stat-value
       className={cn(
         "tabular-nums tracking-tight text-foreground",
         size === "sm" && type.body,
@@ -151,10 +151,12 @@ export function MetricCard({
   className?: string;
 }) {
   return (
-    <Surface
-      variant="subtle"
-      padding="sm"
-      className={cn("flex min-w-0 flex-col gap-1", className)}
+    <div
+      data-stat-tile
+      className={cn(
+        "-mx-2 flex min-w-0 flex-col gap-0.5 rounded-[6px] px-2 py-1",
+        className
+      )}
     >
       <StatLabel>{label}</StatLabel>
       <StatValue size="md">{value}</StatValue>
@@ -163,24 +165,21 @@ export function MetricCard({
         {percentile != null ? <PercentileBadge percentile={percentile} /> : null}
         {delta != null ? <StatDelta value={delta} /> : null}
       </div>
-    </Surface>
+    </div>
   );
 }
 
 export function StatGroup({
   children,
+  columns = 4,
   className,
 }: {
   children: ReactNode;
+  columns?: 2 | 3 | 4 | 6;
   className?: string;
 }) {
   return (
-    <div
-      className={cn(
-        "grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6",
-        className
-      )}
-    >
+    <div data-stat-group data-columns={columns} className={className}>
       {children}
     </div>
   );

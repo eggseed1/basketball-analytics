@@ -32,6 +32,8 @@ import { longUpstreamBudgetsEnabled } from "@/data/providers/nba/runtime-policy"
 import { parseThemeMode, resolveActiveEraTheme } from "@/themes/era-theme";
 import { yieldForStreaming } from "@/lib/stream-yield";
 import { shareImageMetadata } from "@/lib/share-images";
+import { JsonLd } from "@/components/seo/json-ld";
+import { absoluteUrl } from "@/lib/site-url";
 
 interface GamePageProps { params: Promise<{ gameId: string }>; searchParams: Promise<Record<string, string | string[] | undefined>>; }
 function gameDateLabel(isoDate: string | undefined): string | null { if (!isoDate || !/^\d{4}-\d{2}-\d{2}$/.test(isoDate)) return null; return new Date(`${isoDate}T12:00:00Z`).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" }); }

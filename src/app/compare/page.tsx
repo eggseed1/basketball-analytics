@@ -20,7 +20,6 @@ import {
   type CompareScatterSide,
   type CompareShootingAverages,
 } from "@/analytics/compare-player-context";
-import { teamComparePath } from "@/analytics/compare-team-seasons";
 import type { TeamSeasonComparison } from "@/analytics/compare-team-seasons";
 import { teamSeasonRankPath } from "@/analytics/rank-team-seasons";
 import type { TeamSeasonRanking } from "@/analytics/rank-team-seasons";
@@ -36,10 +35,10 @@ import {
   TeamCompareView,
 } from "@/components/compare/team-compare-view";
 import {
-  TeamSeasonRankPicker,
   TeamSeasonRankView,
 } from "@/components/compare/team-season-rank-view";
 import { PageHeader } from "@/components/layout/page-header";
+import { SegmentedLinks } from "@/components/ui/segmented-links";
 import {
   getFilteredPlayerSeasons,
   getPlayerCareerSeasons,
@@ -55,7 +54,7 @@ import {
 } from "@/data/providers/historical/season-range";
 import { preferBundledProductDataOnEdge } from "@/data/providers/nba/runtime-policy";
 import { getPlayerSearchIndex } from "@/data/runtime/player-search-snapshot";
-import { hasRuntimeTeamBoard } from "@/data/runtime/team-board-snapshot";
+import { hasRuntimeTeamBoard, runtimeTeamBoardMeta } from "@/data/runtime/team-board-snapshot";
 import { shareImageMetadata } from "@/lib/share-images";
 import { getPlayerPortraitUrl } from "@/data/media/get-player-media";
 import {
@@ -87,6 +86,30 @@ const COMPARE_METADATA: Metadata = {
     "Side-by-side NBA player and team comparisons that show edges by dimension instead of an opaque overall score.",
   alternates: { canonical: "/compare" },
 };
+
+function indexedPlayerName(id: string | undefined): string | null {
+  if (!id) return null;
+  return getPlayerSearchIndex().find((row) => row.id === id)?.name ?? null;
+}
+
+export async function generateMetadata({ searchParams }: ComparePageProps): Promise<Metadata> {
+  const sp = await searchParams;
+  const aId = one(sp, "a");
+  const bId = one(sp, "b");
+  const aName = indexedPlayerName(aId);
+  const bName = indexedPlayerName(bId);
+  if (!aId || !bId || !aName || !bName) return COMPARE_METADATA;
+  const seasonA = one(sp, "seasonA") ?? one(sp, "season");
+  const seasonB = one(sp, "seasonB") ?? one(sp, "season");
+  const shared = seasonA && seasonA === seasonB && /^\d{4}-\d{2}$/.test(seasonA) ? seasonA : null;
+  const params = new URLSearchParams({ a: aId, b: bId, ...(shared ? { season: shared } : {}) });
+  return {
+    title: `${aName} vs. ${bName}${shared ? ` ${shared}` : ""}: Stats Comparison`,
+    description: `${aName} and ${bName} side by side${shared ? ` in ${shared}` : ""}: per-game, shooting and advanced stats compared stat by stat.`,
+    alternates: { canonical: `/compare?${params.toString()}` },
+    ...shareImageMetadata("players", aId, `${aName} vs. ${bName}`),
+  };
+}
 
 interface ComparePageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -360,39 +383,22 @@ function resolveTeamCompareSeason(preferred: string): string {
   return key || canonicalSeasonFromStartYear(currentNbaStartYear() - 1);
 }
 
-function TeamsSubnav({
-  active,
-  compareHref,
-  rankHref,
+function CompareModeSwitch({
+  mode,
+  teamsHref = "/compare?mode=teams",
 }: {
-  active: "compare" | "rank";
-  compareHref: string;
-  rankHref: string;
+  mode: "players" | "teams";
+  teamsHref?: string;
 }) {
   return (
-    <p className={cn(type.bodySm, "flex flex-wrap gap-x-3 gap-y-1 font-semibold")}>
-      <Link
-        href={compareHref}
-        className={
-          active === "compare"
-            ? undefined
-            : "text-muted-foreground underline-offset-2 hover:underline"
-        }
-      >
-        Compare teams / seasons
-      </Link>
-      <span className="text-muted-foreground">·</span>
-      <Link
-        href={rankHref}
-        className={
-          active === "rank"
-            ? undefined
-            : "text-muted-foreground underline-offset-2 hover:underline"
-        }
-      >
-        Rank seasons
-      </Link>
-    </p>
+    <SegmentedLinks
+      label="Compare"
+      value={mode}
+      options={[
+        { id: "players", label: "Players", href: "/compare" },
+        { id: "teams", label: "Teams", href: teamsHref },
+      ]}
+    />
   );
 }
 
@@ -444,19 +450,6 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
               : loaded.availableSeasons.slice(0, 5).reverse()
           )
         : "/compare?mode=teams&view=rank";
-      const compareHref = resolvedId
-        ? teamComparePath({
-            teamA: resolvedId,
-            teamB: resolvedId,
-            seasonA: resolveTeamCompareSeason(currentSeason),
-            seasonB: resolveTeamCompareSeason(
-              shiftCanonicalSeason(
-                resolveTeamCompareSeason(currentSeason),
-                -1
-              )
-            ),
-          })
-        : "/compare?mode=teams";
 
       return (
         <main data-motion-page className="site-shell flex flex-col gap-5 py-5 sm:py-7">
@@ -465,62 +458,37 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
             title="Compare"
             subtitle="Rank a franchise’s seasons head to head, with no opaque team score."
           >
-            <p className={cn(type.bodySm, "font-semibold")}>
-              <Link
-                href="/compare"
-                className="text-muted-foreground underline-offset-2 hover:underline"
-              >
-                Players
-              </Link>
-              <span className="mx-2 text-muted-foreground">·</span>
-              <span>Teams</span>
-            </p>
-            <TeamsSubnav
-              active="rank"
-              compareHref={compareHref}
-              rankHref={rankHref}
-            />
+            <CompareModeSwitch mode="teams" teamsHref={rankHref} />
           </PageHeader>
 
-          {!rankTeamId ? (
-            <p
-              className={cn(
-                type.bodySm,
-                "rounded-md border border-dashed border-border px-4 py-10 text-center text-muted-foreground"
-              )}
-            >
-              Open Rank seasons from a team page, or use{" "}
-              <code className="type-caption">
-                /compare?mode=teams&view=rank&teamId=…
-              </code>
-              .
-            </p>
-          ) : (
-            <>
-              <Suspense
-                fallback={
-                  <div className="h-24 animate-pulse rounded-xl bg-secondary" />
-                }
-              >
-                <TeamSeasonRankPicker
-                  teamId={resolvedId || rankTeamId}
-                  availableSeasons={
-                    loaded.availableSeasons.length
-                      ? loaded.availableSeasons
-                      : defaultSeasons
-                  }
-                  selected={
-                    loaded.ranking?.seasons ??
-                    (seasonsList.length
-                      ? seasonsList
-                      : loaded.availableSeasons
-                          .slice(0, 5)
-                          .sort((a, b) => a.localeCompare(b)))
-                  }
-                />
-              </Suspense>
+          <Suspense
+            fallback={
+              <div className="h-24 animate-pulse rounded-xl bg-secondary" />
+            }
+          >
+            <TeamComparePicker
+              intent="rank"
+              teamAId={resolvedId || rankTeamId || undefined}
+              teamAName={loaded.ranking?.fullName}
+              seasonA=""
+              seasonB=""
+              availableSeasons={
+                loaded.availableSeasons.length
+                  ? loaded.availableSeasons
+                  : defaultSeasons
+              }
+              selectedSeasons={
+                loaded.ranking?.seasons ??
+                (seasonsList.length
+                  ? seasonsList
+                  : loaded.availableSeasons
+                      .slice(0, 5)
+                      .sort((a, b) => a.localeCompare(b)))
+              }
+            />
+          </Suspense>
 
-              {seasonsError ? (
+          {!rankTeamId ? null : seasonsError ? (
                 <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[14px] text-muted-foreground">
                   {seasonsError}
                 </p>
@@ -535,8 +503,6 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
                   Could not rank those team seasons.
                 </p>
               )}
-            </>
-          )}
         </main>
       );
     }
@@ -561,12 +527,6 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
           })
         : { comparison: null, error: null };
 
-    const resolvedCompareId =
-      loaded.comparison?.sideA.teamId ?? teamA ?? teamIdParam;
-    const rankHref = resolvedCompareId
-      ? `/compare?mode=teams&view=rank&teamId=${encodeURIComponent(resolvedCompareId)}`
-      : "/compare?mode=teams&view=rank";
-
     return (
       <main data-motion-page className="site-shell flex flex-col gap-5 py-5 sm:py-7">
         <MotionReveal />
@@ -574,21 +534,7 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
           title="Compare"
           subtitle="Compare team seasons or two teams on transparent board metrics."
         >
-          <p className={cn(type.bodySm, "font-semibold")}>
-            <Link
-              href="/compare"
-              className="text-muted-foreground underline-offset-2 hover:underline"
-            >
-              Players
-            </Link>
-            <span className="mx-2 text-muted-foreground">·</span>
-            <span>Teams</span>
-          </p>
-          <TeamsSubnav
-            active="compare"
-            compareHref="/compare?mode=teams"
-            rankHref={rankHref}
-          />
+          <CompareModeSwitch mode="teams" />
         </PageHeader>
 
         <Suspense
@@ -597,21 +543,18 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
           }
         >
           <TeamComparePicker
+            intent="compare"
             teamAId={loaded.comparison?.sideA.teamId ?? teamA}
             teamBId={loaded.comparison?.sideB.teamId ?? teamB}
             teamAName={loaded.comparison?.sideA.fullName}
             teamBName={loaded.comparison?.sideB.fullName}
             seasonA={loaded.comparison?.sideA.season ?? seasonA}
             seasonB={loaded.comparison?.sideB.season ?? seasonB}
+            seasonChoices={runtimeTeamBoardMeta().seasons}
           />
         </Suspense>
 
-        {!teamA || !teamB ? (
-          <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[14px] text-muted-foreground">
-            Search for Team A and Team B (same franchise + two seasons, or two
-            franchises).
-          </p>
-        ) : loaded.error ? (
+        {!teamA || !teamB ? null : loaded.error ? (
           <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[14px] text-muted-foreground">
             {loaded.error}
           </p>
@@ -852,16 +795,7 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
         title="Compare"
         subtitle="Search any player (active or retired). Default is career average. Switch either side to a single season for year-true percentiles."
       >
-        <p className={cn(type.bodySm, "font-semibold")}>
-          <span>Players</span>
-          <span className="mx-2 text-muted-foreground">·</span>
-          <Link
-            href="/compare?mode=teams"
-            className="text-muted-foreground underline-offset-2 hover:underline"
-          >
-            Teams
-          </Link>
-        </p>
+        <CompareModeSwitch mode="players" />
       </PageHeader>
 
       <Suspense fallback={<div className="h-24 animate-pulse rounded-xl bg-secondary" />}>

@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import type { CompactTeamGameRow } from "@/data/history/team-matchup-index";
 import { TEAM_GAMES_PAGE_SIZE } from "@/data/history/team-matchup-index";
+import { LinkCue } from "@/components/ui/link-cue";
 
 function gameHref(gameId: string, season: string): string {
   return `/games/${encodeURIComponent(gameId)}?season=${encodeURIComponent(season)}`;
@@ -89,7 +90,7 @@ export function TeamGamesLog({
                     </span>
                   </span>
                   <span className="tabular-nums text-muted-foreground">
-                    {score} · Game <span data-motion-arrow aria-hidden>→</span>
+                    {score} · Game <LinkCue />
                   </span>
                 </Link>
               </li>
@@ -119,10 +120,10 @@ export function TeamGamesLog({
               prefetch={false}
               className="font-semibold underline-offset-2 hover:underline"
             >
-              Next <span data-motion-arrow aria-hidden>→</span>
+              Next <LinkCue />
             </Link>
           ) : (
-            <span className="text-muted-foreground">Next <span data-motion-arrow aria-hidden>→</span></span>
+            <span className="text-muted-foreground">Next <LinkCue /></span>
           )}
         </nav>
       ) : null}

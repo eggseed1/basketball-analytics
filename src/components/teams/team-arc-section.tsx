@@ -12,6 +12,7 @@ import { teamSeasonRankPath } from "@/analytics/rank-team-seasons";
 import { LinkedHover } from "@/components/continuity/linked-hover";
 import { askDrblTeamHref } from "@/components/teams/team-ask-links";
 import { cn } from "@/lib/utils";
+import { LinkCue } from "@/components/ui/link-cue";
 
 export function TeamArcSection({
   arc,
@@ -65,7 +66,7 @@ export function TeamArcSection({
             href={rankHref}
             className="underline-offset-2 hover:underline"
           >
-            Rank this team&apos;s seasons <span data-motion-arrow aria-hidden>→</span>
+            Rank this team&apos;s seasons <LinkCue />
           </Link>
         </div>
       </div>
@@ -240,7 +241,7 @@ export function TeamArcSection({
       </LinkedHover>
       <p className="text-[12px] text-muted-foreground">
         Off = team PPG · Def = opponent PPG. Missing cells are unavailable, not
-        zero. Pick a season to see that year&apos;s roster on the Players tab.
+        zero.
       </p>
     </div>
   );

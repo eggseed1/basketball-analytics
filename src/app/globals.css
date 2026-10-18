@@ -56,7 +56,7 @@
 
   /* Even-px type scale (no odd sizes, no rem decimals). */
   --text-caption: 12px;
-  --text-caption--line-height: 16px;
+  --text-caption--line-height: 14px;
   --text-body-sm: 14px;
   --text-body-sm--line-height: 20px;
   --text-body: 16px;
@@ -70,7 +70,7 @@
   --text-display: 32px;
   --text-display--line-height: 40px;
   --text-xs: 12px;
-  --text-xs--line-height: 16px;
+  --text-xs--line-height: 14px;
   --text-sm: 14px;
   --text-sm--line-height: 20px;
   --text-base: 16px;
@@ -413,6 +413,39 @@
   --os-rose: #ff6482;
 }
 
+@keyframes os-confetti-fall {
+  0% {
+    transform: translateY(-12vh) rotate(var(--os-spin, 0deg));
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(108vh) rotate(calc(var(--os-spin, 0deg) + 280deg));
+    opacity: 0.85;
+  }
+}
+
+.os-confetti-bit {
+  animation-name: os-confetti-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .os-confetti-bit {
+    animation: none;
+  }
+}
+
+/* Settings → Motion → Reduced. System still follows the media query above. */
+html[data-reduce-motion="on"] *,
+html[data-reduce-motion="on"] *::before,
+html[data-reduce-motion="on"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
 /* Era themes keep their own squarer corners. */
 .tm-scope {
   --card-radius: var(--radius-md);
@@ -426,6 +459,17 @@
   box-shadow: var(--material-standard-shadow);
   backdrop-filter: saturate(150%) blur(var(--material-standard-blur));
   -webkit-backdrop-filter: saturate(150%) blur(var(--material-standard-blur));
+}
+
+.sports-card.sports-card-subtle,
+html:not([data-surface="glass"]) .sports-card.sports-card-subtle,
+html:not([data-surface="glass"]).dark .sports-card.sports-card-subtle,
+html.dark:not([data-surface="glass"]) .sports-card.sports-card-subtle {
+  background: var(--material-subtle-bg);
+  border-color: var(--material-subtle-border);
+  box-shadow: var(--material-subtle-shadow);
+  --lit-hairline: rgb(0 0 0 / 0.05);
+  --lit-drop-shadow: 0 1px 2px rgb(0 0 0 / 0.03);
 }
 
 html:not([data-surface="glass"]) .sports-card {
@@ -510,7 +554,40 @@ html.dark[data-surface="glass"] .bg-card {
 }
 
 .sports-pill {
-  @apply inline-flex items-center gap-1.5 rounded-md bg-secondary px-3 py-1.5 text-sm font-medium text-foreground transition hover:bg-muted;
+  @apply inline-flex items-center gap-1 rounded-md px-2.5 py-1 text-[12px] font-medium text-foreground transition;
+  background: color-mix(in oklab, var(--foreground) 4.5%, transparent);
+}
+
+.sports-pill:hover {
+  background: color-mix(in oklab, var(--foreground) 8%, transparent);
+}
+
+/* Stat row: open numbers, no rules between them. */
+[data-stat-group] {
+  display: grid;
+  gap: 1rem 1.5rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (min-width: 640px) {
+  [data-stat-group][data-columns="2"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  [data-stat-group][data-columns="3"],
+  [data-stat-group][data-columns="6"] {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  [data-stat-group][data-columns="4"] {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  [data-stat-group][data-columns="6"] {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
 }
 
 /* Glass material - translucent fill + blur, light and dark. */
@@ -728,7 +805,7 @@ html:not([data-surface="glass"]) .board-scroll-frame {
   max-width: 100%;
   min-width: 0;
   overflow-x: auto;
-  overflow-y: visible;
+  overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-x: contain;
   border-radius: 0;
@@ -1153,6 +1230,88 @@ html:not([data-surface="glass"]) .color-scheme-switch {
   animation: atmosphere-drift-b 24s ease-in-out infinite alternate;
 }
 
+/* Share PNG: the same wash, contained in the card instead of the viewport.
+   Appearance is on the element because the sheet can be dark while the page is light. */
+.share-atmosphere {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  --orb-a: color-mix(in oklab, var(--atmosphere-a, transparent) 22%, transparent);
+  --orb-b: color-mix(in oklab, var(--atmosphere-b, transparent) 18%, transparent);
+  --orb-d: var(--orb-a);
+}
+
+@supports (color: oklch(from red l c h)) {
+  .share-atmosphere {
+    --orb-a: oklch(from var(--atmosphere-a) 0.8 min(c, 0.13) calc(h - 6) / 0.66);
+    --orb-b: oklch(from var(--atmosphere-b) 0.74 min(c, 0.17) calc(h - 6) / 0.5);
+    --orb-d: oklch(from var(--atmosphere-a) 0.9 min(c, 0.06) calc(h + 30) / 0.5);
+  }
+}
+
+.share-atmosphere[data-appearance="dark"] {
+  --orb-a: color-mix(in oklab, var(--atmosphere-a, transparent) 18%, transparent);
+  --orb-b: color-mix(in oklab, var(--atmosphere-b, transparent) 14%, transparent);
+}
+
+@supports (color: oklch(from red l c h)) {
+  .share-atmosphere[data-appearance="dark"] {
+    --orb-a: oklch(from var(--atmosphere-a) 0.36 min(c, 0.13) calc(h - 6) / 0.5);
+    --orb-b: oklch(from var(--atmosphere-b) 0.36 min(c, 0.15) calc(h - 6) / 0.4);
+    --orb-d: oklch(from var(--atmosphere-a) 0.28 min(c, 0.07) calc(h + 30) / 0.32);
+  }
+}
+
+.share-atmosphere__a,
+.share-atmosphere__b,
+.share-atmosphere__c {
+  position: absolute;
+}
+
+.share-atmosphere__a {
+  width: 128%;
+  height: 128%;
+  left: -58%;
+  top: -62%;
+  background: radial-gradient(
+    circle closest-side,
+    var(--orb-a) 0%,
+    color-mix(in oklab, var(--orb-a) 62%, transparent) 36%,
+    color-mix(in oklab, var(--orb-a) 22%, transparent) 70%,
+    transparent 100%
+  );
+}
+
+.share-atmosphere__b {
+  width: 110%;
+  height: 110%;
+  right: -52%;
+  top: -48%;
+  background: radial-gradient(
+    circle closest-side,
+    var(--orb-b) 0%,
+    color-mix(in oklab, var(--orb-b) 62%, transparent) 36%,
+    color-mix(in oklab, var(--orb-b) 22%, transparent) 70%,
+    transparent 100%
+  );
+}
+
+.share-atmosphere__c {
+  width: 90%;
+  height: 90%;
+  left: 8%;
+  bottom: -48%;
+  opacity: 0.8;
+  background: radial-gradient(
+    circle closest-side,
+    var(--orb-d) 0%,
+    color-mix(in oklab, var(--orb-d) 50%, transparent) 44%,
+    transparent 100%
+  );
+}
+
 .page-atmosphere__orb {
   width: 70vmax;
   height: 70vmax;
@@ -1245,7 +1404,20 @@ html:not([data-surface="glass"]) .color-scheme-switch {
 /* Typography roles - even px only; use instead of one-off text-[NNpx]. */
 .type-caption {
   font-size: 12px;
-  line-height: 16px;
+  line-height: 14px;
+}
+
+/* A px font size does not reset line-height, so 11px notes were inheriting the
+   24px body leading. Skip anything that already sets its own leading. */
+:where(:not([class*="leading-"]):is(
+  [class*="text-[9px]"],
+  [class*="text-[9.5px]"],
+  [class*="text-[10px]"],
+  [class*="text-[10.5px]"],
+  [class*="text-[11px]"],
+  [class*="text-[12px]"]
+)) {
+  line-height: 1.25;
 }
 .type-body-sm {
   font-size: 14px;
@@ -1260,18 +1432,21 @@ html:not([data-surface="glass"]) .color-scheme-switch {
   line-height: 24px;
   font-weight: 600;
   letter-spacing: -0.02em;
+  text-transform: capitalize;
 }
 .type-heading {
   font-size: 20px;
   line-height: 28px;
   font-weight: 700;
   letter-spacing: -0.02em;
+  text-transform: capitalize;
 }
 .type-page {
   font-size: 24px;
   line-height: 32px;
   font-weight: 700;
   letter-spacing: -0.03em;
+  text-transform: capitalize;
 }
 .type-display {
   font-size: 32px;
@@ -1296,9 +1471,18 @@ html:not([data-surface="glass"]) .color-scheme-switch {
   line-height: 1;
 }
 
-/* Sticky header respects notch / Dynamic Island / home indicator. */
+/* Sticky header respects notch / Dynamic Island / home indicator.
+   The bottom edge is the only stroke you see, so it stays lighter than a card rim. */
 .site-chrome {
   padding-top: env(safe-area-inset-top, 0px);
+  --lit-hairline: rgb(0 0 0 / 0.05);
+  --lit-drop-shadow: 0 1px 2px rgb(0 0 0 / 0.03);
+  --rim-bottom-a: rgb(255 255 255 / 0.28);
+  --rim-bottom-b: rgb(255 255 255 / 0.28);
+}
+
+.dark .site-chrome {
+  border-bottom-color: rgb(255 255 255 / 0.03) !important;
 }
 
 /* DRBL lockup — frost tile + court-arc mark (NBA atmosphere accents). */
@@ -1382,12 +1566,278 @@ html:not([data-surface="glass"]) .color-scheme-switch {
 }
 
 .site-subnav-band {
+  --subnav-pad: 6px;
+  --subnav-bg: transparent;
   max-width: 100%;
   min-width: 0;
+  padding-top: var(--subnav-pad);
+  padding-bottom: 0;
+  background: var(--subnav-bg);
+  border-top: 0.5px solid rgb(255 255 255 / 14%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 12%);
 }
 
-/* Site chrome - desktop-first web width, not phone-app column.
-   Gutters include safe-area so content never sits under the notch or curved edges. */
+.dark .site-subnav-band {
+  --subnav-bg: transparent;
+  border-top-color: rgb(255 255 255 / 8%);
+}
+
+.site-subnav-row {
+  padding-bottom: var(--subnav-pad);
+}
+
+.site-subnav-mark {
+  bottom: calc(var(--subnav-pad) * -1);
+}
+
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Installed home-screen app: no browser chrome, no pull-to-reload bounce. */
+@media (display-mode: standalone) {
+  html,
+  body {
+    overscroll-behavior-y: none;
+  }
+}
+
+html[data-standalone] .app-shell {
+  padding-bottom: calc(5rem + env(safe-area-inset-bottom, 0px));
+}
+
+html[data-standalone] .app-safe-bottom {
+  padding-bottom: 0;
+}
+
+html[data-standalone] .site-menu-button,
+html[data-standalone] .site-desktop-nav {
+  display: none;
+}
+
+#app-boot {
+  display: none;
+}
+
+html.booting #app-boot {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.bb-stage {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.bb-hop {
+  position: relative;
+  z-index: 1;
+  width: var(--bb-size);
+  height: var(--bb-size);
+  transform-origin: 50% 100%;
+  animation: bb-hop 1.05s infinite;
+}
+
+.bb-ball {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.bb-spin {
+  transform-origin: 50% 50%;
+  animation: bb-spin 1.05s linear infinite;
+}
+
+.bb-skin {
+  fill: #c8102e;
+}
+
+.bb-skin-blue {
+  fill: #1d428a;
+  opacity: 0;
+  animation: bb-color 2.1s linear infinite;
+}
+
+.bb-lines {
+  fill: none;
+  stroke: #1a1a1a;
+  stroke-width: 2.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.bb-shadow {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: calc(var(--bb-size) * 0.82);
+  height: calc(var(--bb-size) * 0.16);
+  margin-left: calc(var(--bb-size) * -0.41);
+  border-radius: 50%;
+  background: rgb(0 0 0 / 45%);
+  filter: blur(3px);
+  animation: bb-shadow 1.05s infinite;
+}
+
+.bb-meter {
+  height: 3px;
+  width: min(180px, 46vw);
+  border-radius: 999px;
+  background:
+    linear-gradient(90deg, transparent, var(--foreground), transparent) 0 0 / 42% 100% no-repeat,
+    color-mix(in oklab, var(--foreground) 12%, transparent);
+  animation: home-warmup-meter 1.15s ease-in-out infinite;
+}
+
+@keyframes bb-hop {
+  0% {
+    transform: translateY(0) scale(1, 1);
+    animation-timing-function: cubic-bezier(0.55, 0, 0.95, 0.35);
+  }
+  45% {
+    transform: translateY(var(--bb-drop)) scale(1, 0.94);
+    animation-timing-function: cubic-bezier(0.45, 0, 1, 0.55);
+  }
+  50% {
+    transform: translateY(var(--bb-drop)) scale(1.2, 0.66);
+    animation-timing-function: linear;
+  }
+  57% {
+    transform: translateY(var(--bb-drop)) scale(0.9, 1.16);
+    animation-timing-function: cubic-bezier(0.12, 0.7, 0.25, 1);
+  }
+  100% {
+    transform: translateY(0) scale(1, 1);
+  }
+}
+
+/* One hop is 1.05s. The ball spins the whole way. Color snaps when it leaves the floor. */
+@keyframes bb-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes bb-color {
+  0%,
+  26.9% {
+    opacity: 0;
+  }
+  27%,
+  76.9% {
+    opacity: 1;
+  }
+  77%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes bb-shadow {
+  0%,
+  100% {
+    transform: scaleX(0.32);
+    opacity: 0.16;
+    animation-timing-function: cubic-bezier(0.55, 0, 0.95, 0.35);
+  }
+  45%,
+  57% {
+    transform: scaleX(1);
+    opacity: 0.42;
+  }
+  50% {
+    transform: scaleX(1.18);
+    opacity: 0.55;
+    animation-timing-function: cubic-bezier(0.12, 0.7, 0.25, 1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bb-hop,
+  .bb-spin,
+  .bb-skin-blue,
+  .bb-shadow,
+  .bb-meter {
+    animation: none;
+  }
+}
+
+.app-tab-bar {
+  display: none;
+}
+
+/* Phone browser and the installed app. Desktop keeps the two columns. */
+@media (max-width: 1023px) {
+  [data-home-stack] > .home-columns,
+  [data-home-stack] .home-column {
+    display: contents;
+  }
+
+  [data-home-stack] [data-home-module="moment"],
+  [data-home-stack] [data-home-module="phase-bar"] {
+    order: 0;
+  }
+  [data-home-stack] [data-home-module="calendar"] {
+    order: 1;
+  }
+  [data-home-stack] [data-home-module="watchlist"] {
+    order: 2;
+  }
+  [data-home-stack] [data-home-module="findings"] {
+    order: 3;
+  }
+  [data-home-stack] [data-home-module="standings"] {
+    order: 4;
+  }
+  [data-home-stack] [data-home-module="top-performers"] {
+    order: 5;
+  }
+  [data-home-stack] [data-home-module="above-norm"] {
+    order: 6;
+  }
+  [data-home-stack] [data-home-module="league-moves"] {
+    order: 7;
+  }
+  [data-home-stack] [data-home-module="transactions"] {
+    order: 8;
+  }
+  [data-home-stack] [data-home-module="news"] {
+    order: 9;
+  }
+  [data-home-stack] [data-home-module="sentiment"] {
+    order: 10;
+  }
+  [data-home-stack] [data-home-module="season-glance"] {
+    order: 11;
+  }
+  [data-home-stack] [data-home-module="bracket"],
+  [data-home-stack] [data-home-module="injuries"],
+  [data-home-stack] [data-home-module="hot-cold"],
+  [data-home-stack] [data-home-module="standings-race"] {
+    order: 12;
+  }
+}
+
+html[data-standalone] .app-tab-bar {
+  position: fixed;
+  right: max(12px, env(safe-area-inset-right, 0px));
+  bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+  left: max(12px, env(safe-area-inset-left, 0px));
+  z-index: 45;
+  display: flex;
+  align-items: stretch;
+}
+
+/* Site chrome. Gutters include safe-area so content stays clear of the notch. */
+/* Same gap from the nav, or its section row, down to the page title. */
+main[data-motion-page] {
+  padding-top: var(--space-page-y);
+}
+
 .site-shell {
   @apply mx-auto w-full min-w-0;
   max-width: var(--page-max-standard);
@@ -1851,8 +2301,12 @@ html:not([data-surface="glass"]) .color-scheme-switch {
     background-color: var(--motion-row-tint);
   }
 
-  :is(a, button):focus-visible [data-motion-arrow] {
+  :is(a, button):focus-visible [data-motion-arrow]:not([data-motion-arrow="back"]) {
     translate: 4px 0;
+  }
+
+  :is(a, button):focus-visible [data-motion-arrow="back"] {
+    translate: -4px 0;
   }
 
   .recharts-active-dot {
@@ -1909,8 +2363,12 @@ html:not([data-surface="glass"]) .color-scheme-switch {
     scale: 1.1;
   }
 
-  :is(a, button, [data-motion]):hover [data-motion-arrow] {
+  :is(a, button, [data-motion]):hover [data-motion-arrow]:not([data-motion-arrow="back"]) {
     translate: 4px 0;
+  }
+
+  :is(a, button, [data-motion]):hover [data-motion-arrow="back"] {
+    translate: -4px 0;
   }
 
   :is(a, button):hover [data-motion-pop] {
@@ -2555,6 +3013,18 @@ svg [data-motion-dot] {
   scale: 1;
 }
 
+/* Player stat tabs: one hairline across the row. The selected tab darkens that same line. */
+[data-motion-tabs="stats"] [role="tab"]::after {
+  inset-inline: 0;
+  bottom: -0.5px;
+  height: 0.5px;
+  border-radius: 0;
+}
+
+[data-motion-tabs="stats"] [role="tab"][aria-selected="true"]::after {
+  background: color-mix(in oklab, var(--foreground) 45%, transparent);
+}
+
 [data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li, tbody > tr, [data-frozen-row]) {
   --n: 12;
 }
@@ -2580,7 +3050,7 @@ svg [data-motion-dot] {
   }
 
   [data-motion-page] > :not(.hof-page-frame, [data-motion-stack], [data-skeleton], [data-motion-static], .arcade-pop, :has(.sports-card, .glass-surface, .glass-card, .frost-surface, .frost-surface-soft, .frost-surface-muted)),
-  [data-motion-page] :is(.hof-page-frame__inner, [data-motion-stack]) > :not([data-motion-stack], [data-skeleton], [data-motion-static], .arcade-pop, :has(.sports-card, .glass-surface, .glass-card, .frost-surface, .frost-surface-soft, .frost-surface-muted)),
+  [data-motion-page] :is(.hof-page-frame__inner, [data-motion-stack]):not([data-motion-static]) > :not([data-motion-stack], [data-skeleton], [data-motion-static], .arcade-pop, :has(.sports-card, .glass-surface, .glass-card, .frost-surface, .frost-surface-soft, .frost-surface-muted)),
   [data-motion-page] :is(.sports-card, .glass-surface, .glass-card):not(a, [data-skeleton], [data-motion-tile], [data-motion-static], [data-motion-static] *, .arcade-pop, :is(.sports-card, .glass-surface, .glass-card) *) {
     transition:
       opacity 420ms ease,
@@ -2605,7 +3075,7 @@ svg [data-motion-dot] {
       opacity 360ms ease 80ms;
   }
 
-  [data-motion-page] :is([data-motion-list] > *, [data-motion-item], :is(ul, ol):not(nav *, [role]) > li):not([data-motion-static], .arcade-pop) {
+  [data-motion-page] :is([data-motion-list] > *, [data-motion-item], :is(ul, ol):not(nav *, [role]) > li):not([data-motion-static], [data-motion-static] *, .arcade-pop) {
     --d: calc(var(--n, var(--i, 0)) * 45ms + 80ms);
     transition:
       opacity 380ms ease var(--d),
@@ -2721,7 +3191,7 @@ svg [data-motion-dot] {
 
   @starting-style {
     [data-motion-page] > :not(.hof-page-frame, [data-motion-stack], [data-skeleton], [data-motion-static], .arcade-pop, :has(.sports-card, .glass-surface, .glass-card, .frost-surface, .frost-surface-soft, .frost-surface-muted)),
-    [data-motion-page] :is(.hof-page-frame__inner, [data-motion-stack]) > :not([data-motion-stack], [data-skeleton], [data-motion-static], .arcade-pop, :has(.sports-card, .glass-surface, .glass-card, .frost-surface, .frost-surface-soft, .frost-surface-muted)),
+    [data-motion-page] :is(.hof-page-frame__inner, [data-motion-stack]):not([data-motion-static]) > :not([data-motion-stack], [data-skeleton], [data-motion-static], .arcade-pop, :has(.sports-card, .glass-surface, .glass-card, .frost-surface, .frost-surface-soft, .frost-surface-muted)),
     [data-motion-page] :is(.sports-card, .glass-surface, .glass-card):not(a, [data-skeleton], [data-motion-tile], [data-motion-static], [data-motion-static] *, .arcade-pop, :is(.sports-card, .glass-surface, .glass-card) *) {
       opacity: 0;
       translate: 0 14px;
@@ -2732,7 +3202,7 @@ svg [data-motion-dot] {
       scale: 0.82;
     }
 
-    [data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li):not([data-motion-static], .arcade-pop, :has(.sports-card, .glass-surface, .glass-card, .frost-surface, .frost-surface-soft, .frost-surface-muted)),
+    [data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li):not([data-motion-static], [data-motion-static] *, .arcade-pop, :has(.sports-card, .glass-surface, .glass-card, .frost-surface, .frost-surface-soft, .frost-surface-muted)),
     [data-motion-page] [data-motion-item]:not([data-motion-static], .arcade-pop) {
       opacity: 0;
       translate: 0 8px;
@@ -2993,47 +3463,6 @@ svg [data-motion-dot] {
   animation: home-warmup-in 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) 0.3s both;
 }
 
-.home-warmup__court {
-  position: relative;
-  display: flex;
-  height: 78px;
-  width: 64px;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-end;
-}
-
-.home-warmup__hop {
-  position: relative;
-  z-index: 1;
-  width: 40px;
-  height: 40px;
-  transform-origin: 50% 100%;
-  animation: home-warmup-bounce 0.9s infinite;
-}
-
-.home-warmup__ball {
-  display: block;
-  width: 100%;
-  height: 100%;
-  animation: home-warmup-spin 1.8s linear infinite;
-}
-
-.home-warmup__skin {
-  fill: #1d428a;
-  animation: home-warmup-skin 1.8s infinite;
-}
-
-.home-warmup__shadow {
-  margin-top: 3px;
-  height: 6px;
-  width: 34px;
-  border-radius: 50%;
-  background: color-mix(in oklab, var(--foreground) 40%, transparent);
-  filter: blur(1.5px);
-  animation: home-warmup-shadow 0.9s infinite;
-}
-
 .home-warmup__steps {
   position: relative;
   height: 20px;
@@ -3069,61 +3498,6 @@ svg [data-motion-dot] {
   }
 }
 
-@keyframes home-warmup-bounce {
-  0%,
-  100% {
-    transform: translateY(-34px);
-    animation-timing-function: cubic-bezier(0.45, 0, 0.9, 0.5);
-  }
-  44% {
-    transform: translateY(0) scale(1, 1);
-  }
-  52% {
-    transform: translateY(0) scale(1.14, 0.84);
-  }
-  60% {
-    transform: translateY(0) scale(1, 1);
-    animation-timing-function: cubic-bezier(0.1, 0.5, 0.55, 1);
-  }
-}
-
-@keyframes home-warmup-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* Swaps at each floor contact: the squash sits at 52% of the 0.9s hop. */
-@keyframes home-warmup-skin {
-  0%,
-  24% {
-    fill: #1d428a;
-  }
-  28%,
-  74% {
-    fill: #c8102e;
-  }
-  78%,
-  100% {
-    fill: #1d428a;
-  }
-}
-
-@keyframes home-warmup-shadow {
-  0%,
-  100% {
-    transform: scaleX(0.45);
-    opacity: 0.25;
-    animation-timing-function: cubic-bezier(0.45, 0, 0.9, 0.5);
-  }
-  44%,
-  60% {
-    transform: scaleX(1);
-    opacity: 0.6;
-    animation-timing-function: cubic-bezier(0.1, 0.5, 0.55, 1);
-  }
-}
-
 @keyframes home-warmup-step {
   0% {
     opacity: 0;
@@ -3151,10 +3525,6 @@ svg [data-motion-dot] {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .home-warmup__hop,
-  .home-warmup__ball,
-  .home-warmup__skin,
-  .home-warmup__shadow,
   .home-warmup__meter {
     animation: none;
   }
@@ -3286,7 +3656,6 @@ svg [data-motion-dot] {
   }
 }
 
-/* Score strip tiles read as near-solid white; dark keeps the frost. */
 :root {
   --strip-card-bg: rgb(255 255 255 / 0.92);
 }
@@ -3312,24 +3681,24 @@ svg [data-motion-dot] {
     color-mix(in oklab, var(--orb-fill) 12%, transparent) 71%,
     transparent 100%
   );
-  opacity: calc(var(--orb-strength, 1) * 0.07);
+  opacity: calc(var(--orb-strength, 1) * 0.16);
   animation: strip-orb-drift 18s ease-in-out infinite alternate;
 }
 
 .dark .strip-orb {
-  opacity: calc(var(--orb-strength, 1) * 0.2);
+  opacity: calc(var(--orb-strength, 1) * 0.34);
 }
 
 /* Same pastel rebuild as the page wash, so navy or maroon tints read clean. */
 @supports (color: oklch(from red l c h)) {
   .strip-orb {
     --orb-fill: oklch(from var(--orb-color) 0.78 min(c, 0.13) h);
-    opacity: calc(var(--orb-strength, 1) * 0.32);
+    opacity: calc(var(--orb-strength, 1) * 0.55);
   }
 
   .dark .strip-orb {
     --orb-fill: oklch(from var(--orb-color) 0.48 min(c, 0.12) h);
-    opacity: calc(var(--orb-strength, 1) * 0.3);
+    opacity: calc(var(--orb-strength, 1) * 0.48);
   }
 }
 
@@ -3407,14 +3776,14 @@ svg [data-motion-dot] {
 :is(.matchup-rim, [data-lit-team]) {
   --rim-top-a: rgb(255 255 255);
   --rim-top-b: rgb(255 255 255);
-  --rim-bottom-a: color-mix(in oklab, var(--rim-away) 22%, transparent);
-  --rim-bottom-b: color-mix(in oklab, var(--rim-home) 22%, transparent);
+  --rim-bottom-a: color-mix(in oklab, var(--rim-away) 12%, transparent);
+  --rim-bottom-b: color-mix(in oklab, var(--rim-home) 12%, transparent);
 }
 
 @supports (color: oklch(from red l c h)) {
   :is(.matchup-rim, [data-lit-team]) {
-    --rim-bottom-a: oklch(from var(--rim-away) 0.66 min(c, 0.12) h / 0.22);
-    --rim-bottom-b: oklch(from var(--rim-home) 0.66 min(c, 0.12) h / 0.22);
+    --rim-bottom-a: oklch(from var(--rim-away) 0.66 min(c, 0.12) h / 0.12);
+    --rim-bottom-b: oklch(from var(--rim-home) 0.66 min(c, 0.12) h / 0.12);
   }
 }
 
@@ -3627,37 +3996,18 @@ svg [data-motion-dot] {
   }
 }
 
-/* Time Machine landing: a console that stays dark in both themes. */
-.tm-console {
-  background:
-    radial-gradient(60% 70% at 12% 0%, rgb(255 170 60 / 0.16), transparent 70%),
-    radial-gradient(55% 65% at 95% 100%, rgb(70 120 255 / 0.18), transparent 70%),
-    linear-gradient(rgb(255 255 255 / 0.035) 1px, transparent 1px) 0 0 / 100% 28px,
-    linear-gradient(90deg, rgb(255 255 255 / 0.035) 1px, transparent 1px) 0 0 / 28px 100%,
-    linear-gradient(180deg, #14161d, #0b0c11);
-  box-shadow:
-    0 1px 0 rgb(255 255 255 / 0.1) inset,
-    0 0 0 1px rgb(255 255 255 / 0.06) inset,
-    0 30px 60px -30px rgb(10 12 30 / 0.7);
-}
-
+/* Time Machine season readout. Same quiet tile as the rest of the cards. */
 .tm-led {
-  background: linear-gradient(180deg, #040507, #0a0b0f);
-  box-shadow:
-    inset 0 2px 10px rgb(0 0 0 / 0.8),
-    0 0 0 1px rgb(255 255 255 / 0.07);
+  background: color-mix(in oklab, var(--foreground) 4%, transparent);
 }
 
 .tm-led-digits {
-  color: var(--led);
-  text-shadow:
-    0 0 6px color-mix(in srgb, var(--led) 70%, transparent),
-    0 0 22px color-mix(in srgb, var(--led) 45%, transparent);
+  color: var(--foreground);
 }
 
 .tm-led-ghost {
-  color: var(--led);
-  opacity: 0.07;
+  color: var(--foreground);
+  opacity: 0.08;
 }
 
 .tm-flip {
@@ -3700,29 +4050,29 @@ svg [data-motion-dot] {
 .tm-range::-webkit-slider-thumb {
   appearance: none;
   width: 14px;
-  height: 30px;
-  margin-top: -9px;
-  border-radius: 5px;
-  background: #ffd27a;
-  border: 2px solid #0b0c11;
-  box-shadow: 0 0 0 1px #ffd27a, 0 0 16px 2px rgb(255 190 80 / 0.75);
+  height: 22px;
+  margin-top: -5px;
+  border-radius: 6px;
+  background: var(--foreground);
+  border: 2px solid var(--background);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.18);
 }
 
 .tm-range::-moz-range-thumb {
   width: 10px;
-  height: 26px;
-  border-radius: 5px;
-  background: #ffd27a;
-  border: 2px solid #0b0c11;
-  box-shadow: 0 0 0 1px #ffd27a, 0 0 16px 2px rgb(255 190 80 / 0.75);
+  height: 18px;
+  border-radius: 6px;
+  background: var(--foreground);
+  border: 2px solid var(--background);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.18);
 }
 
 .tm-range:focus-visible::-webkit-slider-thumb {
-  box-shadow: 0 0 0 3px #fff, 0 0 18px 4px rgb(255 190 80 / 0.9);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--foreground) 25%, transparent);
 }
 
 .tm-range:focus-visible::-moz-range-thumb {
-  box-shadow: 0 0 0 3px #fff, 0 0 18px 4px rgb(255 190 80 / 0.9);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--foreground) 25%, transparent);
 }
 
 /* Score delay: hide server-rendered scores until the client applies the delay. */
@@ -3756,8 +4106,24 @@ html[data-score-delay] [data-delay-section][data-delay-risky]:not([data-delay-re
     linear-gradient(135deg, var(--era), color-mix(in oklab, var(--era) 45%, #0b0c11));
 }
 
+@keyframes insight-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.insight-arrive {
+  animation: insight-arrive 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .tm-flip {
+  .tm-flip,
+  .insight-arrive {
     animation: none;
   }
 }

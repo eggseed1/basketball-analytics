@@ -1,6 +1,26 @@
+import type { ReactNode } from "react";
+
 import { PlayoffBracketSkeleton } from "@/components/explore/playoff-bracket";
 import type { HomeLayout, HomeModuleId, HomeSeasonPhase } from "@/lib/home-season-moment";
 import { cn } from "@/lib/utils";
+
+/** Installed phone app reads these and stacks the homepage in one order. */
+export function HomeModuleFrame({
+  id,
+  children,
+}: {
+  id: HomeModuleId;
+  children: ReactNode;
+}) {
+  return (
+    <div
+      data-home-module={id}
+      className={cn("min-w-0", id === "watchlist" && "order-first lg:order-none")}
+    >
+      {children}
+    </div>
+  );
+}
 
 /*
  * Heights are the rendered module heights on a phone (390px) and at lg+
@@ -59,7 +79,7 @@ export function HomeModuleSkeleton({ id, phase }: { id: HomeModuleId; phase?: Ho
       data-skeleton
       aria-hidden
       className={cn(
-        "sports-card flex flex-col gap-3 overflow-hidden p-4 sm:p-5",
+        "sports-card flex flex-col gap-3 overflow-hidden p-4",
         id === "moment" ? "h-44" : HEIGHT[id]
       )}
     >
@@ -72,26 +92,27 @@ export function HomeModuleSkeleton({ id, phase }: { id: HomeModuleId; phase?: Ho
 
 /** The homepage grid with every module as a placeholder. */
 export function HomeLayoutSkeleton({ layout, phase }: { layout: HomeLayout; phase: HomeSeasonPhase }) {
-  const cell = (id: HomeModuleId) =>
-    id === "watchlist" ? (
-      <div key={id} className="order-first min-w-0 lg:order-none">
-        <HomeModuleSkeleton id={id} phase={phase} />
-      </div>
-    ) : (
-      <HomeModuleSkeleton key={id} id={id} phase={phase} />
-    );
+  const cell = (id: HomeModuleId) => (
+    <HomeModuleFrame key={id} id={id}>
+      <HomeModuleSkeleton id={id} phase={phase} />
+    </HomeModuleFrame>
+  );
   return (
-    <>
+    <div data-home-stack className="flex flex-col gap-5">
       {layout.top.map((id) => (
-        <HomeModuleSkeleton key={id} id={id} phase={phase} />
+        <HomeModuleFrame key={id} id={id}>
+          <HomeModuleSkeleton id={id} phase={phase} />
+        </HomeModuleFrame>
       ))}
-      <div className="grid min-w-0 grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_21.25rem] xl:grid-cols-[minmax(0,1fr)_23rem]">
-        <div className="contents lg:flex lg:min-w-0 lg:flex-col lg:gap-4">{layout.main.map(cell)}</div>
-        <div className="contents lg:flex lg:min-w-0 lg:flex-col lg:gap-4">{layout.side.map(cell)}</div>
+      <div className="home-columns grid min-w-0 grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_21.25rem] xl:grid-cols-[minmax(0,1fr)_23rem]">
+        <div className="home-column contents lg:flex lg:min-w-0 lg:flex-col lg:gap-4">{layout.main.map(cell)}</div>
+        <div className="home-column contents lg:flex lg:min-w-0 lg:flex-col lg:gap-4">{layout.side.map(cell)}</div>
       </div>
       {layout.bottom.map((id) => (
-        <HomeModuleSkeleton key={id} id={id} phase={phase} />
+        <HomeModuleFrame key={id} id={id}>
+          <HomeModuleSkeleton id={id} phase={phase} />
+        </HomeModuleFrame>
       ))}
-    </>
+    </div>
   );
 }

@@ -3,6 +3,9 @@
  * Pure: no I/O. Feed slate games + player lines + optional season baselines.
  */
 
+import { recordNoteFor, scopeFromGameType, type RecordBook } from "./record-book";
+import { pointsRun, recognizeMoment } from "./recent-insight-moments";
+
 export type RecentInsightCategory =
   | "PLAYER · ABOVE HIS NORM"
   | "PLAYER · BIG NIGHT"
@@ -50,7 +53,25 @@ export type RecentInsightFocus =
   | "takeover"
   | "quarter"
   | "threes"
-  | "lead";
+  | "lead"
+  | "moment";
+
+/** One mark on a moment chart. `tick` is the notable line, in the same units as `value`. */
+export type MomentMark = {
+  label: string;
+  value: number;
+  tick?: number;
+  /** Attempts, when value is makes. */
+  of?: number;
+  tip: string;
+};
+
+/** A box-score shape worth its own chart. Not a league record. */
+export type InsightMoment = {
+  kind: "meters" | "share" | "splits" | "clean" | "threes";
+  marks: MomentMark[];
+  share?: { points: number; team: number };
+};
 
 /** Box-score line behind a player card. Counts only; nothing derived is stored. */
 export type RecentInsightStatLine = {
@@ -147,6 +168,8 @@ export type RecentInsight = {
   focusPeriod?: number;
   /** Who made the team's threes, most first (shooting cards). */
   contributors?: { name: string; value: number }[];
+  /** Box-score shape chart, when the night cleared one. */
+  moment?: InsightMoment;
   /** Higher = more interesting. */
   priority: number;
   /** Soft diversity bucket for selection. */
@@ -237,6 +260,8 @@ export type RecentInsightsBuildOptions = {
   recentByPlayer?: Map<string, SlatePlayerLine[]>;
   /** Soft max cards (default 6). */
   limit?: number;
+  /** When set, rare lines pick up a sentence from the record book. */
+  recordBook?: RecordBook;
   /** Reference "today" YYYY-MM-DD for date language helpers (unused in engine). */
   asOfDate?: string;
 };
@@ -503,6 +528,64 @@ export function buildRecentInsights(
     if (threes) push(threes);
   }
 
+  // —— Box-score shapes (one per player; the rarest line wins) ——
+  for (const line of lines) {
+    const g = gameById.get(line.gameId)!;
+    const mates = lines.filter((l) => l.gameId === line.gameId && l.teamId === line.teamId && l.profileId !== line.profileId);
+    const teamPoints = line.teamId === g.homeTeamId ? g.homeScore : g.awayScore;
+    const hit = recognizeMoment(line, { mates, teamPoints });
+    const scope = scopeFromGameType(g.gameType);
+    const note = scope && options.recordBook ? recordNoteFor(line, scope, options.recordBook) : null;
+    if (!hit && !note) continue;
+    if (!hit && note) {
+      push({
+        id: `record-${line.gameId}-${line.profileId}`,
+        category: "PLAYER · BIG NIGHT",
+        headline: `${line.playerName} · ${line.points} points`,
+        description: note,
+        context: contextFor(g),
+        gameId: g.id,
+        playerId: line.profileId,
+        teamId: line.teamId,
+        gameDate: g.gameDate,
+        priority: 96,
+        bucket: "player",
+        focus: "moment",
+        hero: { value: String(line.points), label: "points" },
+        moment: {
+          kind: "meters",
+          marks: [
+            { label: "PTS", value: line.points, tip: `${line.points} points` },
+            { label: "REB", value: line.rebounds, tip: `${line.rebounds} rebounds` },
+            { label: "AST", value: line.assists, tip: `${line.assists} assists` },
+          ],
+        },
+        line: statLineOf(line),
+        game: gameOf(g),
+      });
+      continue;
+    }
+    if (!hit) continue;
+    push({
+      id: `moment-${hit.shape}-${line.gameId}-${line.profileId}`,
+      category: hit.category,
+      headline: `${line.playerName} · ${hit.heroValue} ${hit.heroLabel}`,
+      description: note ? `${hit.description} ${note}` : hit.description,
+      context: contextFor(g),
+      gameId: g.id,
+      playerId: line.profileId,
+      teamId: line.teamId,
+      gameDate: g.gameDate,
+      priority: hit.priority,
+      bucket: "player",
+      focus: "moment",
+      hero: { value: hit.heroValue, label: hit.heroLabel },
+      moment: hit.moment,
+      line: statLineOf(line),
+      game: gameOf(g),
+    });
+  }
+
   // —— Player performances ——
   for (const line of lines) {
     if (line.points < 40) continue;
@@ -574,41 +657,6 @@ export function buildRecentInsights(
       priority: 55,
       bucket: "support",
       focus: "triple_double",
-      line: statLineOf(line),
-      game: gameOf(g),
-    });
-  }
-
-  const efficient = lines
-    .map((line) => ({
-      line,
-      ts: tsPct(line.points, line.fga, line.fta),
-    }))
-    .filter(
-      (x) =>
-        x.ts != null &&
-        x.ts >= 0.68 &&
-        x.line.fga >= 15 &&
-        x.line.points >= 25 &&
-        x.line.minutesNum >= 24
-    )
-    .sort((a, b) => (b.ts ?? 0) - (a.ts ?? 0));
-  if (efficient[0]) {
-    const { line, ts } = efficient[0];
-    const g = gameById.get(line.gameId)!;
-    push({
-      id: `eff-${line.gameId}-${line.profileId}`,
-      category: "PLAYER · EFFICIENCY",
-      headline: `${line.playerName} · ${formatPct(ts!)} TS`,
-      description: `${line.points} points on ${line.fgm}/${line.fga} FG, very efficient for ${line.fga} shot attempts.`,
-      context: contextFor(g),
-      gameId: g.id,
-      playerId: line.profileId,
-      teamId: line.teamId,
-      gameDate: g.gameDate,
-      priority: 62 + Math.min(15, ((ts ?? 0) - 0.68) * 100),
-      bucket: "efficiency",
-      focus: "efficiency",
       line: statLineOf(line),
       game: gameOf(g),
     });
@@ -743,10 +791,57 @@ export function buildRecentInsights(
       gameId: g.id,
       teamId: winnerId,
       gameDate: g.gameDate,
-      priority: 68 + Math.min(15, deficit - 8),
+      priority: 40 + Math.min(12, deficit - 8),
       bucket: "team",
       focus: "comeback",
       game: gameOf(g),
+    });
+  }
+
+  // —— Three games of 30, from the lines already loaded ——
+  const byPlayer = new Map<string, SlatePlayerLine[]>();
+  for (const line of lines) {
+    const arr = byPlayer.get(line.profileId) ?? [];
+    arr.push(line);
+    byPlayer.set(line.profileId, arr);
+  }
+  if (options.recentByPlayer) {
+    for (const [id, hist] of options.recentByPlayer) {
+      const have = byPlayer.get(id);
+      if (!have || hist.length > have.length) byPlayer.set(id, hist);
+    }
+  }
+  for (const [profileId, hist] of byPlayer) {
+    const run = pointsRun(hist);
+    if (!run) continue;
+    const ordered = [...hist].sort((a, b) => a.gameDate.localeCompare(b.gameDate) || a.gameId.localeCompare(b.gameId));
+    const last3 = ordered.slice(-3);
+    const last = last3.at(-1)!;
+    if (!lines.some((l) => l.profileId === profileId)) continue;
+    const g = gameById.get(last.gameId);
+    const listed = last3.map((r) => `${r.points} vs ${r.opponentAbbr}`).join(", ");
+    push({
+      id: `run30-${profileId}`,
+      category: "TREND · STREAK",
+      headline: `${last.playerName} · 30 three times`,
+      description: run.inAWeek
+        ? `${listed}. Three games of 30 or more inside a week.`
+        : `${listed}. Three games of 30 or more in this window.`,
+      context: g ? contextFor(g) : `${formatShortDate(last.gameDate)} · three games`,
+      gameId: last.gameId,
+      playerId: profileId,
+      teamId: last.teamId,
+      gameDate: last.gameDate,
+      priority: run.inAWeek ? 64 : 58,
+      bucket: "trend",
+      focus: "trend",
+      hero: { value: run.points.join(" · "), label: "Points in those games" },
+      line: statLineOf(last),
+      trend: last3.map((r) => ({
+        gameDate: r.gameDate,
+        opponentAbbr: r.opponentAbbr,
+        points: r.points,
+      })),
     });
   }
 
@@ -959,7 +1054,11 @@ function flowStories(g: SlateGameInput, lines: SlatePlayerLine[]): RecentInsight
       headline: `${W} · erased ${-low}`,
       description: `${W} trailed by ${-low} ${p.clockKnown === false ? "in" : `with ${p.clock} left in`} the ${periodName(p.period, flow.periods)} and won by ${margin}${otTail(g)}.`,
       teamId: teamIdOf(g, winner),
-      priority: 72 + Math.min(20, (-low - 12) * 1.5),
+      priority:
+        50 +
+        Math.min(16, (-low - 12) * 1.2) +
+        (margin <= 3 ? 6 : 0) +
+        (isOt(g) ? 4 : 0),
       bucket: "game",
       focus: "deficit",
       hero: { value: `−${-low}`, label: "Biggest deficit" },
@@ -1009,7 +1108,7 @@ function flowStories(g: SlateGameInput, lines: SlatePlayerLine[]): RecentInsight
         `${team} scored ${best.points} straight ${when}, ${swing}.` +
         (best.side === loser ? ` ${team} still lost by ${margin}${otTail(g)}.` : ""),
       teamId: teamIdOf(g, best.side),
-      priority: 60 + Math.min(25, (best.points - 14) * 2.5),
+      priority: 46 + Math.min(20, (best.points - 14) * 2),
       bucket: "game",
       focus: "run",
       hero: { value: `${best.points}-0`, label: "Run" },
@@ -1147,7 +1246,7 @@ function flowStories(g: SlateGameInput, lines: SlatePlayerLine[]): RecentInsight
       description: `${points} of his ${line.points} points came in the ${periodName(period + 1, flow.periods)}${quarter}`,
       playerId: line.profileId,
       teamId: line.teamId,
-      priority: Math.min(92, 62 + (points - 12) * 2 + (period >= 3 ? 6 : 0)),
+      priority: Math.min(80, 48 + (points - 12) * 1.5 + (period >= 3 ? 4 : 0)),
       bucket: "player",
       focus: "takeover",
       hero: { value: String(points), label: `PTS in ${shortPeriodLabel(period + 1)}` },
@@ -1254,17 +1353,17 @@ function selectDiverseInsights(
   );
   const out: RecentInsight[] = [];
   const usedPlayers = new Set<string>();
-  const usedGames = new Set<string>();
-  const usedBuckets = new Map<string, number>();
-  // Game stories are the point of the section, so they get one more slot.
-  const capFor = (bucket: string) => (bucket === "game" ? 3 : 2);
+  const tagCount = new Map<string, number>();
+  // The visible tag is the part after the dot. A six-card grid should not be
+  // four Scoring lines. First take the best card of each tag, then a second
+  // of a tag if the slate has nothing else as interesting.
+  const tagOf = (c: RecentInsight) =>
+    (c.category.split("·")[1]?.trim() ?? c.category).toLowerCase();
 
-  const tryAdd = (c: RecentInsight, enforceDiversity: boolean) => {
+  const tryAdd = (c: RecentInsight, tagCap: number | null) => {
     if (out.length >= limit) return;
     if (out.some((x) => x.id === c.id)) return;
-    // One card per player; the highest-priority story wins.
     if (c.playerId && usedPlayers.has(c.playerId)) return;
-    // One game-level story per game (a comeback and a close finish are the same game).
     const gameLevel = (x: RecentInsight) => x.bucket === "game" || x.bucket === "team";
     if (
       c.gameId &&
@@ -1273,18 +1372,16 @@ function selectDiverseInsights(
     ) {
       return;
     }
-    if (enforceDiversity) {
-      const n = usedBuckets.get(c.bucket) ?? 0;
-      if (n >= capFor(c.bucket)) return;
-    }
+    const tag = tagOf(c);
+    if (tagCap != null && (tagCount.get(tag) ?? 0) >= tagCap) return;
     out.push(c);
     if (c.playerId) usedPlayers.add(c.playerId);
-    if (c.gameId) usedGames.add(c.gameId);
-    usedBuckets.set(c.bucket, (usedBuckets.get(c.bucket) ?? 0) + 1);
+    tagCount.set(tag, (tagCount.get(tag) ?? 0) + 1);
   };
 
-  for (const c of sorted) tryAdd(c, true);
-  for (const c of sorted) tryAdd(c, false);
+  for (const c of sorted) tryAdd(c, 1);
+  for (const c of sorted) tryAdd(c, 2);
+  for (const c of sorted) tryAdd(c, null);
   return out;
 }
 

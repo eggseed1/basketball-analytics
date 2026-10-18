@@ -282,8 +282,7 @@ export function FranchiseHistoryBook({
 
       <p className="text-[12px] text-muted-foreground">
         Continuous franchises keep relocated history. Conference titles count
-        from 1970-71, when the NBA split into conferences. Season boards and
-        roster live on the other team tabs.
+        from 1970-71, when the NBA split into conferences.
       </p>
     </section>
   );

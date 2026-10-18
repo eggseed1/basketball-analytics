@@ -4,6 +4,7 @@ import { RosterArrivals } from "@/components/acquisitions/acquisition-story";
 import { getTeamRosterArrivals } from "@/data/queries/acquisition-paths";
 import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
+import { LinkCue } from "@/components/ui/link-cue";
 
 /** Current roster with the move that brought each player in. */
 export async function TeamRosterBuiltIsland({ espnTeamId }: { espnTeamId: string }) {
@@ -17,7 +18,7 @@ export async function TeamRosterBuiltIsland({ espnTeamId }: { espnTeamId: string
           href={`/acquisitions?team=${encodeURIComponent(espnTeamId)}`}
           className={cn(type.caption, "font-semibold underline-offset-2 hover:underline")}
         >
-          Every arrival since 2000 <span data-motion-arrow aria-hidden>→</span>
+          Every arrival since 2000 <LinkCue />
         </Link>
       </div>
       <RosterArrivals teamId={espnTeamId} onRoster={roster.onRoster} notLogged={roster.notLogged} />

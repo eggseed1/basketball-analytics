@@ -7,7 +7,8 @@ import {
   currentNbaStartYear,
 } from "@/data/providers/historical/season-range";
 import { getRuntimeSnapshotGames } from "@/data/runtime/game-snapshot";
-import { sectionLinkClassName, type } from "@/lib/design-system";
+import { type } from "@/lib/design-system";
+import { SectionLink } from "@/components/ui/section-link";
 import { priorSeason } from "@/lib/season-glance";
 import {
   CLOSE_MARGIN,
@@ -28,7 +29,6 @@ import {
 } from "@/lib/season-pulse";
 import { teamPageHref } from "@/lib/team-destination";
 import { cn } from "@/lib/utils";
-
 const UP_BG = "bg-[#15803d] dark:bg-[#4ade80]";
 const DOWN_BG = "bg-[#7e22ce] dark:bg-[#c084fc]";
 
@@ -222,7 +222,7 @@ function TeamRow({
       >
         <span className="flex min-w-0 items-center gap-2">
           <TeamLogo teamKey={team.abbr} size="xs" />
-          <span className="min-w-0 flex-1 truncate text-[13px] font-semibold">{team.name}</span>
+          <span className="type-body-sm min-w-0 flex-1 truncate font-semibold">{team.name}</span>
           <span className="shrink-0 text-[12px] font-semibold tabular-nums">{value}</span>
         </span>
         {visual || aside ? (
@@ -376,24 +376,14 @@ export function SeasonPulsePanel() {
   });
   if (!pulse) return null;
 
-  const reviewing = season !== current;
   const complete = pulse.phase === "complete";
   const share = pulse.gamesPlayed / REGULAR_SEASON_GAMES;
 
   return (
-    <section className="sports-card flex flex-col gap-5 px-4 py-4 sm:px-5 sm:py-5">
+    <section className="sports-card flex flex-col gap-5 p-4">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <div className="flex flex-col gap-0.5">
-          <h2 className={type.heading}>{complete ? `${season} in review` : `${season} so far`}</h2>
-          <p className={cn(type.caption, "text-muted-foreground")}>
-            {reviewing
-              ? `How ${season} played out. This switches to ${current} once most teams have played.`
-              : "The storylines change as the season goes. Updated daily from every finished game."}
-          </p>
-        </div>
-        <Link href="/standings" className={cn(type.bodySm, sectionLinkClassName)}>
-          Standings <span data-motion-arrow aria-hidden>→</span>
-        </Link>
+        <h2 className={type.heading}>{complete ? `${season} in review` : `${season} so far`}</h2>
+        <SectionLink href="/standings">Standings</SectionLink>
       </div>
 
       <div className="flex flex-col gap-1.5">
@@ -417,7 +407,7 @@ export function SeasonPulsePanel() {
 
       <div className="flex flex-col gap-3">
         <div className="flex flex-col gap-0.5">
-          <h3 className="text-[15px] font-bold tracking-tight">{LADDER_TITLE[pulse.phase]}</h3>
+          <h3 className="type-body-sm font-semibold tracking-tight">{LADDER_TITLE[pulse.phase]}</h3>
           <p className={cn(type.caption, "text-muted-foreground")}>
             Each row is games above .500 (wins minus losses), best at the top.
             {pulse.phase === "complete"

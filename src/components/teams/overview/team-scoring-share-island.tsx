@@ -3,13 +3,13 @@ import { TransitionLink } from "@/components/continuity/query-nav";
 import { withBudget } from "@/data/queries/budget";
 import { getTeamRosterCached } from "@/data/queries/request-cache";
 import type { PlayerSeason } from "@/data/types";
-import { type, sectionLinkClassName } from "@/lib/design-system";
+import { SectionLink } from "@/components/ui/section-link";
+import { type } from "@/lib/design-system";
 import { formatNumber, formatPct } from "@/lib/format";
 import { MID_SEASON_MOVES_NOTE } from "@/lib/team-explorer";
 import { teamPageHref } from "@/lib/team-destination";
 import { teamChartColor } from "@/lib/nba-brand";
 import { cn } from "@/lib/utils";
-
 const TOP = 6;
 const R = 70;
 const STROKE = 22;
@@ -54,7 +54,7 @@ export async function TeamScoringShareIsland({
   const topThreeShare = top.slice(0, 3).reduce((a, p) => a + p.points, 0) / total;
 
   return (
-    <section className="sports-card flex flex-col gap-3 p-4 sm:p-5" aria-label="Scoring share">
+    <section className="sports-card flex h-full flex-col gap-3 p-4 sm:p-5" aria-label="Scoring share">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
           <h2 className={type.heading}>Who carries the scoring</h2>
@@ -63,15 +63,10 @@ export async function TeamScoringShareIsland({
             {roster.omitsMidSeasonMoves ? ` ${MID_SEASON_MOVES_NOTE}` : ""}
           </p>
         </div>
-        <TransitionLink
-          href={teamPageHref(teamId, { season, tab: "players" })}
-          className={cn(type.caption, sectionLinkClassName)}
-        >
-          Full roster <span data-motion-arrow aria-hidden>→</span>
-        </TransitionLink>
+        <SectionLink href={teamPageHref(teamId, { season, tab: "players" })}>Full roster</SectionLink>
       </div>
 
-      <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-center">
+      <div className="flex flex-col items-center gap-4">
         <div className="relative shrink-0">
           <svg viewBox="0 0 180 180" className="size-44" data-hover-svg role="img" aria-label="Scoring share donut">
             <g data-motion-shape style={{ transformOrigin: "90px 90px" }}>

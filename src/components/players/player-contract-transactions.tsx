@@ -19,6 +19,7 @@ import { playerSurplusRankingHref } from "@/lib/contract-surplus";
 import { formatUsdCompact, formatUsdSignedCompact } from "@/lib/format-money";
 import { teamSalaryHref } from "@/lib/team-destination";
 import { cn } from "@/lib/utils";
+import { LinkCue } from "@/components/ui/link-cue";
 
 function yearTerms(year: PlayerContractYearView): string | null {
   const option = year.option === "player" ? "Player option" : year.option === "team" ? "Team option" : null;
@@ -39,18 +40,6 @@ const signedUsd = formatUsdSignedCompact;
 export function surplusTone(dollars: number): string {
   if (Math.abs(dollars) < 50_000) return "text-muted-foreground";
   return dollars > 0 ? "text-[var(--chart-3)]" : "text-destructive";
-}
-
-function Stat({ label, value, detail, tone }: { label: string; value: string; detail: ReactNode; tone?: string }) {
-  return (
-    <div className="flex min-w-0 flex-col gap-0.5">
-      <p className={cn(type.caption, "font-semibold uppercase tracking-wide text-muted-foreground")}>
-        {label}
-      </p>
-      <p className={cn("text-[22px] font-bold tabular-nums tracking-tight", tone)}>{value}</p>
-      <p className={cn(type.caption, "text-muted-foreground")}>{detail}</p>
-    </div>
-  );
 }
 
 function windowLabel(model: ContractValueModel): string {
@@ -183,41 +172,34 @@ export function PlayerContractTransactions({
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
           {estimate ? (
             <TextLink href={playerSurplusRankingHref(playerId)} className={type.caption}>
-              Surplus rankings <span data-motion-arrow aria-hidden>→</span>
+              Surplus rankings <LinkCue />
             </TextLink>
           ) : null}
           <TextLink href={teamSalaryHref(contract.franchiseId, "contracts")} className={type.caption}>
-            {contract.teamAbbr} payroll <span data-motion-arrow aria-hidden>→</span>
+            {contract.teamAbbr} payroll <LinkCue />
           </TextLink>
         </div>
       </div>
 
       <div className="sports-card flex flex-col gap-4 p-4 sm:p-5">
         {estimate ? (
-          <div className="grid gap-4 sm:grid-cols-3">
-            <Stat
-              label="Projected surplus"
-              value={signedUsd(estimate.surplus)}
-              detail={`80% range ${signedUsd(estimate.surplusLow)} to ${signedUsd(estimate.surplusHigh)}`}
-              tone={surplusTone(estimate.surplus)}
-            />
-            <Stat
-              label="Estimated worth"
-              value={formatUsdCompact(estimate.totalWorth)}
-              detail={`Against ${formatUsdCompact(estimate.totalSalary)} in salary`}
-            />
-            <Stat
-              label="Among contracts"
-              value={`${formatOrdinal(estimate.percentile)} percentile`}
-              detail={
-                <Link
-                  href={playerSurplusRankingHref(playerId)}
-                  className="underline-offset-2 hover:text-foreground hover:underline"
-                >
-                  By total surplus, of {model.contracts} we can estimate
-                </Link>
-              }
-            />
+          <div className="flex flex-col gap-1">
+            <p className={cn(type.caption, "font-semibold uppercase tracking-wide text-muted-foreground")}>
+              Projected surplus
+            </p>
+            <p className={cn("text-[28px] font-bold tabular-nums tracking-tight", surplusTone(estimate.surplus))}>
+              {signedUsd(estimate.surplus)}
+            </p>
+            <p className={cn(type.bodySm, "text-muted-foreground")}>
+              Worth {formatUsdCompact(estimate.totalWorth)} on {formatUsdCompact(estimate.totalSalary)} in
+              salary. Likely {signedUsd(estimate.surplusLow)} to {signedUsd(estimate.surplusHigh)}.{" "}
+              <Link
+                href={playerSurplusRankingHref(playerId)}
+                className="underline-offset-2 hover:text-foreground hover:underline"
+              >
+                {formatOrdinal(estimate.percentile)} of {model.contracts} contracts.
+              </Link>
+            </p>
           </div>
         ) : value?.kind === "missing" ? (
           <MissingNote reason={value.reason} model={model} />
@@ -245,69 +227,47 @@ export function PlayerContractTransactions({
           />
         ) : null}
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left">
-            <thead className={cn(type.caption, "uppercase tracking-wide text-muted-foreground")}>
-              <tr className="border-b border-border/70">
-                <th className="pb-1.5 pr-2 font-semibold">Season</th>
-                <th className="px-2 pb-1.5 text-right font-semibold">Salary</th>
-                {estimate ? (
-                  <>
-                    <th className="px-2 pb-1.5 text-right font-semibold">Est. worth</th>
-                    <th className="hidden px-2 pb-1.5 text-right font-semibold sm:table-cell">
-                      80% range
-                    </th>
-                    <th className="px-2 pb-1.5 text-right font-semibold">Surplus</th>
-                  </>
-                ) : null}
-                <th className="hidden pb-1.5 pl-2 text-right font-semibold sm:table-cell">Notes</th>
-              </tr>
-            </thead>
-            <tbody className={type.bodySm}>
-              {contract.years.map((year) => {
-                const v = bySeason.get(year.season);
-                const note = yearNote(year, v?.worthAboveMax ?? false);
-                return (
-                  <tr key={year.season} className="border-b border-border/40 last:border-0">
-                    <td className="py-1.5 pr-2 tabular-nums">
-                      <span className="whitespace-nowrap">{year.season}</span>
-                      {note ? (
-                        <span className={cn(type.caption, "block text-muted-foreground sm:hidden")}>
-                          {note}
-                        </span>
-                      ) : null}
-                    </td>
-                    <td className="px-2 py-1.5 text-right tabular-nums">
-                      {formatUsdCompact(year.salary)}
-                    </td>
-                    {estimate ? (
-                      <>
-                        <td className="px-2 py-1.5 text-right tabular-nums">
-                          {v ? formatUsdCompact(v.worth) : "—"}
-                        </td>
-                        <td className="hidden px-2 py-1.5 text-right tabular-nums text-muted-foreground sm:table-cell">
-                          {v ? `${formatUsdCompact(v.worthLow)}–${formatUsdCompact(v.worthHigh)}` : "—"}
-                        </td>
-                        <td className={cn("px-2 py-1.5 text-right font-semibold tabular-nums", v && surplusTone(v.surplus))}>
-                          {v ? signedUsd(v.surplus) : "—"}
-                        </td>
-                      </>
-                    ) : null}
-                    <td className="hidden py-1.5 pl-2 text-right text-muted-foreground sm:table-cell">
-                      {note ?? "—"}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+        {estimate ? null : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead className={cn(type.caption, "uppercase tracking-wide text-muted-foreground")}>
+                <tr className="border-b border-border/70">
+                  <th className="pb-1.5 pr-2 font-semibold">Season</th>
+                  <th className="px-2 pb-1.5 text-right font-semibold">Salary</th>
+                  <th className="hidden pb-1.5 pl-2 text-right font-semibold sm:table-cell">Notes</th>
+                </tr>
+              </thead>
+              <tbody className={type.bodySm}>
+                {contract.years.map((year) => {
+                  const note = yearNote(year, false);
+                  return (
+                    <tr key={year.season} className="border-b border-border/40 last:border-0">
+                      <td className="py-1.5 pr-2 tabular-nums">
+                        <span className="whitespace-nowrap">{year.season}</span>
+                        {note ? (
+                          <span className={cn(type.caption, "block text-muted-foreground sm:hidden")}>
+                            {note}
+                          </span>
+                        ) : null}
+                      </td>
+                      <td className="px-2 py-1.5 text-right tabular-nums">
+                        {formatUsdCompact(year.salary)}
+                      </td>
+                      <td className="hidden py-1.5 pl-2 text-right text-muted-foreground sm:table-cell">
+                        {note ?? "—"}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
 
         {estimate ? (
           <p className={cn(type.caption, "text-muted-foreground")}>
-            Worth is projected from his DRBL seasons {estimate.basisSeasons.join(", ")} (
-            {estimate.basisPossessions.toLocaleString()} possessions). Surplus is worth minus
-            salary, after options.
+            From his DRBL seasons {estimate.basisSeasons.join(", ")} (
+            {estimate.basisPossessions.toLocaleString()} possessions).
           </p>
         ) : null}
         {contract.note ? (

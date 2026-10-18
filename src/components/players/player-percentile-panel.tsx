@@ -38,6 +38,7 @@ import { PlayerIdentity } from "@/components/players/player-identity";
 import { useSetPlayerViewSeason } from "@/components/players/player-view-season";
 import { StatTooltip } from "@/components/ui/stat-tooltip";
 import { type } from "@/lib/design-system";
+import { seasonOnTrack } from "@/lib/player-board-season";
 import { BoardPlayerName } from "@/lib/board-compact-name";
 import { brandAtmosphereColors } from "@/lib/game-matchup-theme";
 import { CareerTeamTrendChartLazy as CareerTeamTrendChart } from "@/components/charts/recharts-lazy";
@@ -1104,11 +1105,7 @@ function SeasonUnavailable({
       <button
         type="button"
         onClick={onRetry}
-        className={cn(
-          type.caption,
-          "rounded-md border border-border/70 px-2 py-1 font-semibold text-muted-foreground",
-          "hover:border-foreground/30 hover:bg-foreground/5 hover:text-foreground"
-        )}
+        className="sports-pill font-semibold"
       >
         Try again
       </button>
@@ -1162,9 +1159,10 @@ export function PlayerPercentilePanel({
   const queryNav = useQueryNavOptional();
   const setViewSeasonShared = useSetPlayerViewSeason();
   const fetchGen = useRef(0);
-  const desiredSeason = useRef(season);
+  const trackedSeason = seasonOnTrack(seasons, season);
+  const desiredSeason = useRef(trackedSeason);
 
-  const [viewSeason, setViewSeason] = useState(season);
+  const [viewSeason, setViewSeason] = useState(trackedSeason);
   const [viewMetrics, setViewMetrics] = useState(metrics);
   const [viewTeamKey, setViewTeamKey] = useState(teamKey);
   const [busy, setBusy] = useState(false);
@@ -1246,23 +1244,23 @@ export function PlayerPercentilePanel({
 
   useEffect(() => {
     if (metrics.length > 0) {
-      writeCache(playerId, season, { metrics, teamKey, profileComps });
+      writeCache(playerId, trackedSeason, { metrics, teamKey, profileComps });
     }
-    if (season !== desiredSeason.current) return;
-    setViewSeason(season);
+    if (trackedSeason !== desiredSeason.current) return;
+    setViewSeason(trackedSeason);
     if (metrics.length > 0) {
       setViewMetrics(metrics);
       setViewTeamKey(teamKey);
     }
     setBusy(false);
-  }, [metrics, playerId, profileComps, season, teamKey]);
+  }, [metrics, playerId, profileComps, season, seasons, teamKey, trackedSeason]);
 
   // SSR ships fast metrics; upgrade sparklines, YoY peers and comps when idle.
   // No run-once ref: Strict Mode's cleanup would cancel the only scheduled call.
   useEffect(() => {
     if (ssrHasComps) return;
     let cancelled = false;
-    const targetSeason = season;
+    const targetSeason = trackedSeason;
     const hydrate = () => {
       if (cancelled || desiredSeason.current !== targetSeason) return;
       upgradeToFull(targetSeason);
@@ -1279,21 +1277,24 @@ export function PlayerPercentilePanel({
       cancelled = true;
       window.clearTimeout(timeoutId);
     };
-  }, [season, ssrHasComps, upgradeToFull]);
+  }, [ssrHasComps, trackedSeason, upgradeToFull]);
 
   const urlSeason = queryNav?.searchParams.get("season");
-  useEffect(() => {
-    // Ignore URL-driven reloads we already handled via shallow replace / commit.
-    if (!urlSeason || urlSeason === desiredSeason.current) return;
-    desiredSeason.current = urlSeason;
-    setViewSeason(urlSeason);
-    loadSeason(urlSeason);
-  }, [loadSeason, urlSeason]);
 
   const timeline = useMemo(
     () => [...seasons].sort((a, b) => a.localeCompare(b)),
     [seasons]
   );
+
+  useEffect(() => {
+    // Ignore URL-driven reloads we already handled via shallow replace / commit.
+    if (!urlSeason) return;
+    const next = seasonOnTrack(timeline, urlSeason);
+    if (next === desiredSeason.current) return;
+    desiredSeason.current = next;
+    setViewSeason(next);
+    if (timeline.includes(urlSeason)) loadSeason(next);
+  }, [loadSeason, timeline, urlSeason]);
 
   useEffect(() => {
     let cancelled = false;
@@ -1494,10 +1495,7 @@ export function PlayerPercentilePanel({
             onClick={() => setExpanded(true)}
             disabled={!listed.length}
             className={cn(
-              "inline-flex shrink-0 items-center gap-1.5 rounded-md border border-border/70 px-2 py-1",
-              type.caption,
-              "font-semibold text-muted-foreground transition-colors",
-              "hover:border-foreground/30 hover:bg-foreground/5 hover:text-foreground",
+              "sports-pill shrink-0 font-semibold",
               "disabled:pointer-events-none disabled:opacity-40"
             )}
             aria-haspopup="dialog"

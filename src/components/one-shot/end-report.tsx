@@ -5,16 +5,36 @@ import { useEffect, useRef, useState } from "react";
 import { fmtHeight } from "@/one-shot/body";
 import { perGame } from "@/one-shot/career";
 import { invested, netWorth } from "@/one-shot/finance";
-import { awardCount, honorsLine, medalCount, nbaHonorList, outcomeTier, shareText, TIER_LABEL } from "@/one-shot/report";
+import { earningsRank, MAX_ALL_TIME, MAX_BOARD, ordinal, rowRank, type EarningsRow } from "@/one-shot/leaderboard";
+import { awardCount, honorsLine, medalCount, nbaHonorList, outcomeTier, shareText, TIER_LABEL, type CareerSummary } from "@/one-shot/report";
 import type { LifeState } from "@/one-shot/types";
 import { country, countryFlag } from "@/one-shot/world";
 
+import { EarningsPanel, type AllTimeStatus } from "./earnings-board";
 import { Portrait } from "./panels-left";
 import { SeasonTable } from "./stats-panel";
 import { shareCardPng } from "./pixel";
 import { Btn, Chip, Kv, money, Panel } from "./ui";
 
-export function EndReport({ life, units, onNew, onHome }: { life: LifeState; units: "metric" | "imperial"; onNew: () => void; onHome: () => void }) {
+export function EndReport({
+  life,
+  units,
+  board,
+  allTime,
+  allTimeStatus,
+  highlightBoardId,
+  onNew,
+  onHome,
+}: {
+  life: LifeState;
+  units: "metric" | "imperial";
+  board: CareerSummary[];
+  allTime: EarningsRow[];
+  allTimeStatus: AllTimeStatus;
+  highlightBoardId?: string | null;
+  onNew: () => void;
+  onHome: () => void;
+}) {
   const [note, setNote] = useState<string | null>(null);
   const heading = useRef<HTMLHeadingElement>(null);
   useEffect(() => heading.current?.focus(), []);
@@ -35,6 +55,17 @@ export function EndReport({ life, units, onNew, onHome }: { life: LifeState; uni
   const coachW = life.after?.years.reduce((a, y) => a + (y.wins ?? 0), 0) ?? 0;
   const coachL = life.after?.years.reduce((a, y) => a + (y.losses ?? 0), 0) ?? 0;
   const honors = honorsLine(life);
+  const place = earningsRank(board, life.runId);
+  const onDevice = place ? `${ordinal(place.rank)} of ${place.of} on this device` : `Outside the top ${MAX_BOARD} on this device`;
+  const shared = highlightBoardId ? rowRank(allTime, highlightBoardId) : null;
+  const allTimeLabel =
+    allTimeStatus === "loading"
+      ? "Checking"
+      : allTimeStatus === "down"
+        ? "Not reachable"
+        : shared
+          ? `${ordinal(shared.rank)} of ${shared.of}`
+          : `Outside the top ${MAX_ALL_TIME}`;
   const moments = life.history.filter((h) => h.kind === "milestone" || h.kind === "draft" || h.kind === "move" || (h.kind === "injury" && h.tone === "bad")).slice(-10);
   const copy = async (value: string, done: string) => {
     try {
@@ -90,6 +121,8 @@ export function EndReport({ life, units, onNew, onHome }: { life: LifeState; uni
           {nbaHonors ? <Kv k="NBA honors" v={nbaHonors} /> : null}
           {awards ? <Kv k="Season honors" v={awards} mono /> : null}
           <Kv k="Career earnings, pre-tax" v={life.earnings > 0 ? money(life.earnings) : "None"} mono />
+          <Kv k="On this device" v={onDevice} />
+          <Kv k="All-time" v={allTimeLabel} />
           {life.after ? <Kv k="After playing" v={`${life.after.title}, ${life.after.employer}`} /> : null}
           {coachW + coachL > 0 ? <Kv k="Coaching record" v={`${coachW}-${coachL}`} mono /> : null}
           {life.earnings > 0 || invested(life.finance) > 0 ? <Kv k="Net worth at the end" v={money(netWorth(life.finance))} mono /> : null}
@@ -125,6 +158,15 @@ export function EndReport({ life, units, onNew, onHome }: { life: LifeState; uni
         </div>
       </Panel>
       <div className="flex min-w-0 flex-col gap-5">
+        <Panel title="Earnings">
+          <EarningsPanel
+            personal={board}
+            allTime={allTime}
+            allTimeStatus={allTimeStatus}
+            highlightRunId={life.runId}
+            highlightBoardId={highlightBoardId}
+          />
+        </Panel>
         <Panel title="Key moments">
           <ol className="flex flex-col">
             {moments.map((h) => (

@@ -14,9 +14,11 @@ import { DrblLogo } from "@/components/brand/drbl-logo";
 import { TransitionLink } from "@/components/continuity/query-nav";
 import { RouteTransitionProvider } from "@/components/continuity/route-transition";
 import { ColorSchemeSwitch } from "@/components/sports/color-scheme-switch";
-import { ScoreDelayControl, ScoreDelaySlider } from "@/components/sports/score-delay-control";
+import { SiteSettings } from "@/components/sports/site-settings";
 import { SiteChrome } from "@/components/sports/site-chrome";
 import { SiteFooter } from "@/components/sports/site-footer";
+import { AppTabBar } from "@/components/sports/app-tab-bar";
+import { IosInstallTray } from "@/components/sports/ios-install-tray";
 import { SiteSearch } from "@/components/sports/site-search";
 import { cn } from "@/lib/utils";
 import {
@@ -108,7 +110,7 @@ function DomainSubnavLinks({
     >
       <div
         role="tablist"
-        className="flex max-w-full items-center gap-0.5 touch-scroll-x [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="site-subnav-row flex max-w-full items-start gap-0.5 touch-scroll-x [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {item.subnav.map((link) => {
           const active = subnavActive(link, pathname, search, item.subnav);
@@ -119,7 +121,7 @@ function DomainSubnavLinks({
               role="tab"
               aria-selected={active}
               className={cn(
-                "relative shrink-0 px-3 py-1.5 text-[12px] font-semibold tracking-tight transition-colors duration-[var(--duration-fast)] ease-[var(--ease-standard)]",
+                "relative shrink-0 px-3 py-2 text-[12px] font-semibold tracking-tight transition-colors duration-[var(--duration-fast)] ease-[var(--ease-standard)]",
                 active
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground"
@@ -129,7 +131,7 @@ function DomainSubnavLinks({
               {active ? (
                 <span
                   aria-hidden
-                  className="absolute inset-x-2 -bottom-px h-0.5 rounded-full bg-foreground"
+                  className="site-subnav-mark absolute inset-x-0 h-[0.5px] bg-foreground"
                 />
               ) : null}
             </TransitionLink>
@@ -171,7 +173,8 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
   const destinationWash =
     pathname.startsWith("/teams/") ||
     pathname.startsWith("/players/") ||
-    pathname.startsWith("/games/");
+    pathname.startsWith("/games/") ||
+    pathname.startsWith("/arcade/one-shot");
 
   function closeMenu() {
     setMenuOpen(false);
@@ -203,7 +206,7 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
 
   return (
     <RouteTransitionProvider>
-      <div className="flex min-h-full min-w-0 flex-1 flex-col overflow-x-clip">
+      <div className="app-shell flex min-h-full min-w-0 flex-1 flex-col overflow-x-clip">
         {destinationWash ? null : (
           <PageAtmosphere
             colorA={NBA_ATMOSPHERE.colorA}
@@ -228,7 +231,7 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
               <div className="ml-auto flex min-w-0 flex-1 items-center justify-end gap-2 sm:flex-initial">
                 <SiteSearch />
                 <div className="hidden items-center gap-1 md:flex">
-                  <ScoreDelayControl />
+                  <SiteSettings />
                   <ColorSchemeSwitch />
                 </div>
                 <button
@@ -237,7 +240,7 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
                   aria-expanded={isMenuOpen}
                   aria-controls="mobile-nav-menu"
                   onClick={toggleMenu}
-                  className="flex size-9 shrink-0 items-center justify-center rounded-md text-foreground transition hover:bg-muted md:hidden"
+                  className="site-menu-button flex size-9 shrink-0 items-center justify-center rounded-md text-foreground transition hover:bg-muted md:hidden"
                 >
                   <Menu className="size-4" aria-hidden />
                 </button>
@@ -245,7 +248,7 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
             </div>
 
             {/* Desktop / tablet: full ordered nav */}
-            <div className="hidden flex-wrap items-center gap-x-2 gap-y-2 md:flex">
+            <div className="site-desktop-nav hidden flex-wrap items-center gap-x-2 gap-y-2 md:flex">
               <nav
                 aria-label="Primary"
                 className="flex min-w-0 flex-1 items-center gap-0.5 overflow-x-auto lg:gap-1"
@@ -262,8 +265,14 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
           </div>
 
           {active?.subnav?.length ? (
-            <div className="site-subnav-band border-t border-border/55 bg-secondary/45 dark:bg-secondary/70">
-              <div className="site-shell py-2">
+            <div
+              className="site-subnav-band -mb-[0.5px]"
+              style={{
+                background: "var(--subnav-bg)",
+                boxShadow: "inset 0 1px 0 rgb(255 255 255 / 12%)",
+              }}
+            >
+              <div className="site-shell">
                 <Suspense
                   fallback={
                     <DomainSubnavLinks
@@ -327,12 +336,9 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
 
             <div className="site-shell flex shrink-0 items-center justify-between gap-3 border-t border-border py-4">
               <span className="text-[14px] font-semibold text-muted-foreground">
-                Appearance
+                Settings
               </span>
-              <ColorSchemeSwitch />
-            </div>
-            <div className="site-shell shrink-0 border-t border-border py-4">
-              <ScoreDelaySlider />
+              <SiteSettings />
             </div>
           </div>
         ) : null}
@@ -340,9 +346,11 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
         <div className="relative z-[1] flex min-h-0 min-w-0 flex-1 flex-col overflow-x-clip">
           {children}
         </div>
-        <div className="relative z-[1] pb-[env(safe-area-inset-bottom,0px)]">
+        <div className="app-safe-bottom relative z-[1] pb-[env(safe-area-inset-bottom,0px)]">
           <SiteFooter />
         </div>
+        <AppTabBar pathname={pathname} menuOpen={isMenuOpen} onMore={toggleMenu} />
+        <IosInstallTray />
       </div>
     </RouteTransitionProvider>
   );

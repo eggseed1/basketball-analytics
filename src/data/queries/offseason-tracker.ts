@@ -125,7 +125,7 @@ export async function getTeamOffseasonActivity(
 
 export async function getOffseasonTimeline(
   filters: TransactionEventFilters,
-  options?: { force?: boolean; page?: number; pageSize?: number }
+  options?: { force?: boolean; page?: number; pageSize?: number; sort?: "newest" | "oldest" }
 ): Promise<{
   page: TransactionEventPage;
   byDate: Array<{ date: string; events: NbaTransactionEvent[] }>;
@@ -139,6 +139,7 @@ export async function getOffseasonTimeline(
   const built = buildFilteredOffseasonFeed(index, filters, {
     page: options?.page ?? 1,
     pageSize: options?.pageSize ?? 40,
+    sort: options?.sort,
   });
   return {
     page: built.page,

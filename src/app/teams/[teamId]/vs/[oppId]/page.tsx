@@ -11,6 +11,7 @@ import { resolveHistoricalTeamBrand } from "@/lib/historical-team-brand";
 import { TeamAtmosphere } from "@/components/brand/team-atmosphere";
 import { brandWashColor } from "@/lib/game-matchup-theme";
 import { resolveTeamBrand } from "@/lib/nba-brand";
+import { LinkCue } from "@/components/ui/link-cue";
 
 export const dynamic = "force-dynamic";
 
@@ -241,7 +242,7 @@ export default async function TeamMatchupPage({
                   prefetch={false}
                   className="font-semibold underline-offset-2 hover:underline"
                 >
-                  Next <span data-motion-arrow aria-hidden>→</span>
+                  Next <LinkCue />
                 </Link>
               ) : null}
             </nav>

@@ -3,15 +3,9 @@
 import { useMemo, useState } from "react";
 
 import { useQueryNav } from "@/components/continuity/query-nav";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { FilterBar, FilterSelect } from "@/components/explore/filter-bar";
+import { ChoiceTrack, searchFieldClassName } from "@/components/ui/choice-chip";
+import { Calendar } from "lucide-react";
 import type { Team } from "@/data/types";
 
 export interface GameFilterToolbarProps {
@@ -61,86 +55,67 @@ export function GameFilterToolbar({
   );
 
   return (
-    <form
-      className="grid gap-4 sports-card p-4 sm:grid-cols-2 lg:grid-cols-4"
-      aria-label="Game filters"
-      onSubmit={(event) => {
-        event.preventDefault();
-        updateParams({
-          startDate: startDraft || null,
-          endDate: endDraft || null,
-        });
-      }}
-      data-pending={pending ? "true" : "false"}
-    >
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="game-filter-season">Season</Label>
-        <Select
+    <FilterBar label="Game filters" pending={pending}>
+      <form
+        className="flex w-full min-w-0 flex-wrap items-center gap-2"
+        onSubmit={(event) => {
+          event.preventDefault();
+          updateParams({
+            startDate: startDraft || null,
+            endDate: endDraft || null,
+          });
+        }}
+      >
+        <FilterSelect
+          id="game-filter-season"
+          label="Season"
           value={season}
-          onValueChange={(value) => {
-            if (value != null) updateParams({ season: String(value) });
-          }}
-        >
-          <SelectTrigger id="game-filter-season" className="w-full">
-            <SelectValue placeholder="Season" />
-          </SelectTrigger>
-          <SelectContent>
-            {seasons.map((s) => (
-              <SelectItem key={s} value={s}>
-                {s}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="game-filter-team">Team</Label>
-        <Select
+          onChange={(value) => updateParams({ season: value })}
+          icon={<Calendar className="size-3.5 text-muted-foreground" aria-hidden />}
+          options={seasons.map((s) => ({ value: s, label: s }))}
+          className="min-w-[5.5rem]"
+        />
+        <FilterSelect
+          id="game-filter-team"
+          label="Team"
           value={team}
-          onValueChange={(value) => {
-            if (value != null) updateParams({ team: String(value) });
-          }}
-        >
-          <SelectTrigger id="game-filter-team" className="w-full">
-            <SelectValue placeholder="Team" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="ALL">All teams</SelectItem>
-            {sortedTeams.map((t) => (
-              <SelectItem key={t.id} value={t.id}>
-                {t.fullName}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="game-filter-start">Start date</Label>
-        <Input
-          id="game-filter-start"
-          type="date"
-          value={startDraft}
-          onChange={(e) => setStartDraft(e.target.value)}
-          onBlur={() => updateParams({ startDate: startDraft || null })}
+          onChange={(value) => updateParams({ team: value })}
+          options={[
+            { value: "ALL", label: "All teams" },
+            ...sortedTeams.map((t) => ({ value: t.id, label: t.fullName })),
+          ]}
+          className="min-w-[8rem]"
         />
-      </div>
-
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="game-filter-end">End date</Label>
-        <Input
-          id="game-filter-end"
-          type="date"
-          value={endDraft}
-          onChange={(e) => setEndDraft(e.target.value)}
-          onBlur={() => updateParams({ endDate: endDraft || null })}
-        />
-      </div>
-
-      <p className="sr-only" aria-live="polite">
-        {pending ? "Updating game results…" : "Game results updated."}
-      </p>
-    </form>
+        <ChoiceTrack>
+          <label className="sr-only" htmlFor="game-filter-start">
+            Start date
+          </label>
+          <input
+            id="game-filter-start"
+            type="date"
+            value={startDraft}
+            onChange={(e) => setStartDraft(e.target.value)}
+            onBlur={() => updateParams({ startDate: startDraft || null })}
+            className={searchFieldClassName}
+          />
+        </ChoiceTrack>
+        <ChoiceTrack>
+          <label className="sr-only" htmlFor="game-filter-end">
+            End date
+          </label>
+          <input
+            id="game-filter-end"
+            type="date"
+            value={endDraft}
+            onChange={(e) => setEndDraft(e.target.value)}
+            onBlur={() => updateParams({ endDate: endDraft || null })}
+            className={searchFieldClassName}
+          />
+        </ChoiceTrack>
+        <p className="sr-only" aria-live="polite">
+          {pending ? "Updating game results…" : "Game results updated."}
+        </p>
+      </form>
+    </FilterBar>
   );
 }

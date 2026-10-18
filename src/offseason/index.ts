@@ -73,14 +73,14 @@ export function statusLabel(status: TransactionStatus): string {
 }
 
 const SOURCE_TEXT_CATEGORY_LABELS: Record<TransactionType, string> = {
-  signing: "Signing (source text)",
-  trade: "Trade-related (source text)",
-  waive: "Waiver (source text)",
-  draft: "Draft-related (source text)",
-  extension: "Extension (source text)",
-  option: "Option (source text)",
-  release: "Release (source text)",
-  other: "Other (source text)",
+  signing: "Signing",
+  trade: "Trade",
+  waive: "Waiver",
+  draft: "Draft",
+  extension: "Extension",
+  option: "Option",
+  release: "Release",
+  other: "Other",
 };
 
 /**

@@ -4,7 +4,8 @@ import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { LaneOriginTag } from "@/components/sentiment/sentiment-source";
 import { getSentimentMoversBoard } from "@/data/queries/home-sentiment";
-import { sectionLinkClassName, type } from "@/lib/design-system";
+import { SectionLink } from "@/components/ui/section-link";
+import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 
 function scorePct(score: number) {
@@ -17,11 +18,9 @@ function deltaLabel(delta: number) {
 }
 
 function MoverList({
-  title,
   tone,
   rows,
 }: {
-  title: string;
   tone: "up" | "down";
   rows: Array<{
     playerId: string;
@@ -33,14 +32,9 @@ function MoverList({
 }) {
   if (rows.length === 0) {
     return (
-      <div className="flex min-w-0 flex-col gap-2">
-        <h3 className={cn(type.caption, "font-semibold uppercase tracking-wide text-muted-foreground")}>
-          {title}
-        </h3>
-        <p className={cn(type.caption, "text-muted-foreground")}>
-          No movers in this direction yet.
-        </p>
-      </div>
+      <p className={cn(type.caption, "text-muted-foreground")}>
+        No movers in this direction yet.
+      </p>
     );
   }
 
@@ -48,11 +42,7 @@ function MoverList({
     tone === "up" ? "text-delta-up" : "text-delta-down";
 
   return (
-    <div className="flex min-w-0 flex-col gap-2">
-      <h3 className={cn(type.caption, "font-semibold uppercase tracking-wide text-muted-foreground")}>
-        {title}
-      </h3>
-      <ul className="-mx-2 flex flex-col">
+    <ul className="flex min-w-0 flex-col divide-y divide-border/40">
         {rows.map((row) => (
           <li key={row.playerId}>
             <Link
@@ -90,7 +80,6 @@ function MoverList({
           </li>
         ))}
       </ul>
-    </div>
   );
 }
 
@@ -101,7 +90,7 @@ export async function SentimentMoversPanel() {
   const sample = board.risers[0] ?? board.fallers[0];
 
   return (
-    <section className="sports-card flex flex-col gap-3 px-4 py-4 sm:px-5 sm:py-4">
+    <section className="sports-card flex flex-col gap-3 p-4">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <div className="flex flex-col gap-0.5">
           <div className="flex items-center gap-2">
@@ -114,17 +103,12 @@ export async function SentimentMoversPanel() {
             {board.season} · fan mood · change over {board.window}, in percentage points
           </p>
         </div>
-        <Link
-          href="/sentiment"
-          className={cn(type.bodySm, sectionLinkClassName)}
-        >
-          League board <span data-motion-arrow aria-hidden>→</span>
-        </Link>
+        <SectionLink href="/sentiment">League board</SectionLink>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <MoverList title="Risers" tone="up" rows={board.risers} />
-        <MoverList title="Fallers" tone="down" rows={board.fallers} />
+        <MoverList tone="up" rows={board.risers} />
+        <MoverList tone="down" rows={board.fallers} />
       </div>
 
       <p className={cn(type.caption, "text-muted-foreground")}>{board.disclaimer}</p>

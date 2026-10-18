@@ -7,6 +7,8 @@ const surfaceVariants = cva("overflow-hidden", {
   variants: {
     variant: {
       flat: "bg-transparent",
+      light:
+        "rounded-[var(--radius-md)] border border-border/25 bg-[color-mix(in_oklab,var(--card)_94%,transparent)] shadow-none",
       subtle: "material-subtle rounded-[var(--radius-md)]",
       glass: "sports-card",
       elevated: "material-elevated rounded-[var(--radius-lg)]",

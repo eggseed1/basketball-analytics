@@ -12,6 +12,7 @@ import {
   resolveSideBrand,
   sideShortName,
 } from "@/components/sports/game-score-card";
+import { GameStatusTag } from "@/components/sports/game-status-tag";
 import { LiveIndicator } from "@/components/sports/live-indicator";
 import { LocalTipTime } from "@/components/sports/local-tip-time";
 import { finalLabel, gameTypeBadge } from "@/components/sports/score-tile";
@@ -203,14 +204,9 @@ function StatusCenter({ game }: { game: GameSummary }) {
     );
   }
   return (
-    <span
-      className={cn(
-        type.caption,
-        "font-bold uppercase tracking-[0.12em] text-muted-foreground"
-      )}
-    >
+    <GameStatusTag>
       {isFinalStatus(game.status) ? finalLabel(game) : statusHeadline(game.status)}
-    </span>
+    </GameStatusTag>
   );
 }
 

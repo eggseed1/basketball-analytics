@@ -5,7 +5,6 @@ import type { PlayerSeason } from "@/data/types";
 import { loadPlayerPercentileMetrics } from "@/lib/player-percentile-load";
 import { resolvePlayerStatsSeason } from "@/lib/player-board-season";
 import { cardStintsForSeason } from "@/lib/player-team-context";
-import { PriorSeasonStatsNotice } from "@/components/explore/season-not-started-notice";
 
 export async function PlayerPercentileIsland({
   playerId,
@@ -45,14 +44,8 @@ export async function PlayerPercentileIsland({
 
     return (
       <div className="flex flex-col gap-3">
-        {statsCtx.usingPriorSeasonStats ? (
-          <PriorSeasonStatsNotice
-            requestSeason={statsCtx.requestSeason}
-            statsSeason={statsCtx.statsSeason}
-          />
-        ) : null}
         <PlayerPercentilePanel
-          season={season}
+          season={statsCtx.statsSeason}
           seasons={seasonOptions}
           playerId={playerId}
           playerName={displayName}

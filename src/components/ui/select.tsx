@@ -61,17 +61,27 @@ function SelectTrigger({
 function SelectContent({
   className,
   children,
+  header,
   side = "bottom",
   sideOffset = 4,
   align = "start",
   alignOffset = 0,
   alignItemWithTrigger = false,
+  collisionAvoidance,
   ...props
 }: SelectPrimitive.Popup.Props &
   Pick<
     SelectPrimitive.Positioner.Props,
-    "align" | "alignOffset" | "side" | "sideOffset" | "alignItemWithTrigger"
-  >) {
+    | "align"
+    | "alignOffset"
+    | "side"
+    | "sideOffset"
+    | "alignItemWithTrigger"
+    | "collisionAvoidance"
+  > & {
+    /** Stays above the scrolling list, for a search field. */
+    header?: React.ReactNode
+  }) {
   return (
     <SelectPrimitive.Portal>
       <SelectPrimitive.Positioner
@@ -80,6 +90,7 @@ function SelectContent({
         align={align}
         alignOffset={alignOffset}
         alignItemWithTrigger={alignItemWithTrigger}
+        collisionAvoidance={collisionAvoidance}
         positionMethod="fixed"
         className="z-50"
         render={(positionerProps) => (
@@ -127,6 +138,7 @@ function SelectContent({
           }}
           {...props}
         >
+          {header}
           <SelectScrollUpButton />
           <SelectPrimitive.List className="relative z-[1] min-h-0 flex-1 overflow-x-hidden overflow-y-auto">
             {children}

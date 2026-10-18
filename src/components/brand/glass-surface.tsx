@@ -53,6 +53,8 @@ export function GlassSurface({
   backdropBlur = 24,
   effect = "css",
   honor,
+  variant = "standard",
+  tintScale: tintScaleProp,
   style,
   ...rest
 }: {
@@ -65,14 +67,20 @@ export function GlassSurface({
   backdropBlur?: number;
   effect?: GlassSurfaceEffect;
   honor?: GlassSurfaceHonor;
+  /** Subtle material: thinner veil, so a team wash reads through the frost. */
+  variant?: "standard" | "subtle";
+  /** Multiplies the team-color mix. 1 is the whisper used on most surfaces. */
+  tintScale?: number;
   style?: CSSProperties;
 } & Omit<HTMLAttributes<HTMLElement>, "children" | "className" | "style">) {
   // Light/dark values come from CSS vars (globals.css) so server HTML and the
   // first client render produce the same inline style in either theme.
   const { surface } = useOwnerTheme();
-  const tintScale = useContext(GlassTintScale);
+  const contextTint = useContext(GlassTintScale);
+  const tintScale = tintScaleProp ?? contextTint;
+  const subtle = variant === "subtle";
   // Same fill as `.sports-card`, so opaque washes mixed from --card sit flush.
-  const veil = "var(--material-standard-bg)";
+  const veil = subtle ? "var(--material-subtle-bg)" : "var(--material-standard-bg)";
   const a = accentColor?.trim() || null;
   const b = accentColorB?.trim() || null;
   // Whisper of team color only - frost stays dominant (not the opaque matchup wash).
@@ -112,12 +120,24 @@ export function GlassSurface({
           background: solid ? "var(--card)" : gradient(veil),
           backdropFilter: solid
             ? undefined
-            : `saturate(150%) blur(${backdropBlur}px)`,
+            : subtle
+              ? "saturate(140%) blur(var(--material-subtle-blur))"
+              : `saturate(150%) blur(${backdropBlur}px)`,
           WebkitBackdropFilter: solid
             ? undefined
-            : `saturate(150%) blur(${backdropBlur}px)`,
-          border: solid ? undefined : "var(--glass-edge-border)",
-          boxShadow: solid ? undefined : "var(--glass-edge-shadow)",
+            : subtle
+              ? "saturate(140%) blur(var(--material-subtle-blur))"
+              : `saturate(150%) blur(${backdropBlur}px)`,
+          border: solid
+            ? undefined
+            : subtle
+              ? "1px solid var(--material-subtle-border)"
+              : "var(--glass-edge-border)",
+          boxShadow: solid
+            ? undefined
+            : subtle
+              ? "var(--material-subtle-shadow)"
+              : "var(--glass-edge-shadow)",
           ...rimColors,
           ...style,
         },

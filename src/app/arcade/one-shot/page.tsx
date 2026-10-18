@@ -14,7 +14,6 @@ export default function OneShotPage() {
       <MotionReveal />
       <div className="site-shell">
         <PageHeader
-          eyebrow="Arcade"
           title="ONE SHOT"
           subtitle="One life, from birth to the NBA or somewhere short of it. Set the focus, take the offers, play the games."
         />

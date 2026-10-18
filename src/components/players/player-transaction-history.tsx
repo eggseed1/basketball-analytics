@@ -5,12 +5,13 @@ import { TransactionDescription } from "@/components/offseason/transaction-descr
 import { TeamLogo } from "@/components/brand/team-logo";
 import { TextLink } from "@/components/ui/text-link";
 import { type } from "@/lib/design-system";
-import { sourceTextCategoryLabel } from "@/offseason";
+import { TransactionKindTag } from "@/components/offseason/transaction-event-ui";
 import type { NbaTransactionEvent } from "@/data/types/transaction-event";
 import { isTradeRelatedSourceCategory } from "@/lib/transaction-event-presentation";
 import { tradeAcquirePresentationFromEvent } from "@/lib/trade-acquire-presentation";
 import type { TransactionPlayerResolution } from "@/lib/transaction-player-resolution";
 import { cn } from "@/lib/utils";
+import { LinkCue } from "@/components/ui/link-cue";
 
 export function PlayerTransactionHistory({
   events,
@@ -40,7 +41,7 @@ export function PlayerTransactionHistory({
           href={`/offseason?q=${encodeURIComponent(playerName)}`}
           className={type.caption}
         >
-          All <span data-motion-arrow aria-hidden>→</span>
+          All <LinkCue />
         </TextLink>
       </div>
       <ul data-motion-list className="flex flex-col gap-2">
@@ -80,9 +81,7 @@ export function PlayerTransactionHistory({
                     </span>
                   </>
                 ) : null}
-                <span className="font-medium uppercase tracking-wide">
-                  {sourceTextCategoryLabel(event.sourceTextCategory)}
-                </span>
+                <TransactionKindTag category={event.sourceTextCategory} />
               </p>
               {tradeAcquire ? (
                 <TradeAcquireBoxes

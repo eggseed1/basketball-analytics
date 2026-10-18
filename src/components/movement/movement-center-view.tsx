@@ -76,14 +76,6 @@ export function MovementCenterView({
   return (
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-2">
-        <p
-          className={cn(
-            type.caption,
-            "font-semibold uppercase tracking-wide text-muted-foreground"
-          )}
-        >
-          {presentation.productName} · {meta.season}
-        </p>
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
           {presentation.seasonalLabel}
         </h1>

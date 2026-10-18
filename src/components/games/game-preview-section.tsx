@@ -5,6 +5,12 @@ import { withBudget } from "@/data/queries/budget";
 import { getGamePreview } from "@/data/queries/game-preview";
 import type { Game } from "@/data/types";
 import { cn } from "@/lib/utils";
+import {
+  segmentedItemActiveClassName,
+  segmentedItemClassName,
+  segmentedItemIdleClassName,
+  segmentedTrackClassName,
+} from "@/components/ui/segmented-style";
 
 export type GameTab = "preview" | "game";
 
@@ -50,7 +56,7 @@ export function GameTabs({
   return (
     <nav
       aria-label="Game sections"
-      className="inline-flex max-w-full self-start touch-scroll-x rounded-[var(--radius-lg)] bg-secondary p-1"
+      className={cn(segmentedTrackClassName, "touch-scroll-x")}
     >
       {options.map((opt) => {
         const isActive = opt.id === active;
@@ -62,10 +68,9 @@ export function GameTabs({
             replace
             aria-current={isActive ? "page" : undefined}
             className={cn(
-              "shrink-0 rounded-[var(--radius-md)] px-3.5 py-1.5 type-body-sm font-semibold transition-colors duration-[var(--duration-fast)] ease-[var(--ease-standard)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
-              isActive
-                ? "bg-card text-foreground shadow-sm"
-                : "text-muted-foreground hover:bg-card/60 hover:text-foreground"
+              segmentedItemClassName,
+              "px-3.5 py-1.5 type-body-sm",
+              isActive ? segmentedItemActiveClassName : segmentedItemIdleClassName
             )}
           >
             {opt.label}

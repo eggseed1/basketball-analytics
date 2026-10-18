@@ -201,14 +201,7 @@ export function PlayerStatsBoard({
         className="flex flex-col gap-4 p-4 sm:p-5"
         honor={honor}
       >
-        <div>
-          <h2 className={type.heading}>Statistics</h2>
-          <p className={cn(type.bodySm, "mt-1 text-muted-foreground")}>
-            Spreadsheet view. Scroll sideways for every published column.
-            Counting stats follow the rate toggle; percentages and ratings stay
-            unscaled.
-          </p>
-        </div>
+        <h2 className={type.heading}>Statistics</h2>
 
         <div className="flex flex-col gap-2.5">
           <FilterRow label="Season type">
@@ -316,7 +309,7 @@ export function PlayerStatsBoard({
                       <th
                         key={group.id}
                         colSpan={group.cols.length}
-                        className="h-7 border-l border-border/70 px-2 py-1.5 text-center font-semibold"
+                        className="h-7 border-l border-border/40 px-2 py-1.5 text-center font-semibold"
                       >
                         {group.label}
                       </th>
@@ -329,7 +322,7 @@ export function PlayerStatsBoard({
                           key={col.id}
                           className={cn(
                             "whitespace-nowrap px-2 py-2 text-right font-semibold",
-                            ki === 0 && "border-l border-border/70"
+                            ki === 0 && "border-l border-border/40"
                           )}
                         >
                           {col.label}
@@ -437,7 +430,7 @@ export function PlayerStatsBoard({
                               className={cn(
                                 type.caption,
                                 "whitespace-nowrap px-2 py-1.5 text-right tabular-nums",
-                                ki === 0 && "border-l border-border/70"
+                                ki === 0 && "border-l border-border/40"
                               )}
                             >
                               {formatSheetStatValue(

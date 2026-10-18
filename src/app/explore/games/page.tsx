@@ -7,7 +7,6 @@ import { TeamCatalogFallbackNotice } from "@/components/explore/team-catalog-fal
 import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { PageHeader } from "@/components/layout/page-header";
 import { DecadeChips } from "@/components/sports/decade-chips";
-import { GameScoreCard } from "@/components/sports/game-score-card";
 import {
   getAvailableSeasons,
   getFilteredGames,
@@ -18,8 +17,6 @@ import {
   canonicalSeasonFromStartYear,
   currentNbaStartYear,
 } from "@/data/providers/historical/season-range";
-import { type } from "@/lib/design-system";
-import { cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -55,7 +52,6 @@ export default async function ExploreGamesPage({
   ]);
   const { teams, source, warnings } = teamCatalog;
 
-  const cards = games.slice(0, 12);
   const TABLE_CAP = 200;
   const SCATTER_CAP = 400;
   const tableGames = games.slice(0, TABLE_CAP);
@@ -70,7 +66,7 @@ export default async function ExploreGamesPage({
   return (
     <main data-motion-page className="site-shell flex flex-1 flex-col gap-5 py-6 sm:py-8">
       <MotionReveal />
-      <PageHeader eyebrow="Games" title="Explore" />
+      <PageHeader title="Explore" />
 
       <TeamCatalogFallbackNotice source={source} warnings={warnings} />
 
@@ -88,33 +84,14 @@ export default async function ExploreGamesPage({
           teams={teams}
           defaultSeason={defaultSeason}
         >
-          <section className="flex flex-col gap-1">
-            {cards.length === 0 ? (
-              <div
-                className={cn(
-                  type.bodySm,
-                  "sports-card px-4 py-8 text-center text-muted-foreground"
-                )}
-              >
-                No games for this season filter.
-              </div>
-            ) : (
-              cards.map((game, i) => <GameScoreCard key={game.id} game={game} motionIndex={i} />)
-            )}
-          </section>
-
-          <div className="pb-8">
-            <GameScoringScatter games={scatterGames} />
-            <div className="mt-4">
-              <GameSeasonTable games={tableGames} />
-              {truncated ? (
-                <p className="mt-2 text-[12px] text-muted-foreground">
-                  Showing {tableGames.length} of {games.length} games. Narrow the
-                  season or date filters for the full set.
-                </p>
-              ) : null}
-            </div>
-          </div>
+          <GameSeasonTable games={tableGames} />
+          {truncated ? (
+            <p className="text-[12px] text-muted-foreground">
+              Showing {tableGames.length} of {games.length} games. Narrow the
+              season or date filters for the full set.
+            </p>
+          ) : null}
+          <GameScoringScatter games={scatterGames} />
         </ExploreGamesClientShell>
       </Suspense>
     </main>

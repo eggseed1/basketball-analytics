@@ -5,6 +5,7 @@ import { TeamLogo } from "@/components/brand/team-logo";
 import {
   InsightContributorBars,
   InsightEventPips,
+  InsightMomentChart,
   InsightFlowChart,
   InsightLeadWorm,
   InsightPeriodBars,
@@ -19,10 +20,13 @@ import {
   pointsAddUp,
   teamColor,
 } from "@/components/home/insight-visuals";
-import { NewSinceTag } from "@/components/home/new-since-tag";
+import { InsightCardLink, InsightMorph } from "@/components/home/insight-morph";
 import { AppLink } from "@/components/ui/app-link";
+import { Badge } from "@/components/ui/badge";
+import { SectionLink } from "@/components/ui/section-link";
 import type { RecentInsight, RecentInsightGame } from "@/lib/recent-insights";
-import { recentInsightDateLabel, surpriseRule } from "@/lib/recent-insights";
+import { findingHref, insightMorphName } from "@/lib/finding-href";
+import { surpriseRule } from "@/lib/recent-insights";
 import { cn } from "@/lib/utils";
 
 export { AnalyticsDesk } from "@/components/home/analytics-desk";
@@ -32,50 +36,122 @@ function todayIsoDate(): string {
   return new Intl.DateTimeFormat("en-CA", { timeZone: "America/New_York" }).format(new Date());
 }
 
-function shortDate(iso: string): string {
+function writtenDate(iso: string): string {
   const d = new Date(`${iso}T12:00:00Z`);
   if (!Number.isFinite(d.getTime())) return iso;
-  return d.toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
+  return d.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+}
+
+/**
+ * Estimated content height in px. Tuned to the rendered cards: a two-mark meter
+ * is the short one, period bars and the lead chart sit together, and a quarter
+ * stack with its caption runs taller.
+ */
+function visualWeight(insight: RecentInsight): number {
+  const { line, game, focus, trend, moment } = insight;
+  const header = line && insight.playerId ? 96 : 80;
+
+  if (moment) {
+    if (moment.kind === "share" || moment.kind === "threes") return header + 40;
+    if (moment.kind === "clean") {
+      const rows = moment.marks.filter((m) => m.label !== "TOV").length;
+      return header + 28 + rows * 22;
+    }
+    const row = moment.kind === "splits" ? 20 : 18;
+    return header + moment.marks.length * row;
+  }
+
+  if (line) {
+    switch (focus) {
+      case "surprise":
+        return header + 72;
+      case "points":
+        return header + (pointsAddUp(line) ? 56 : 60);
+      case "efficiency":
+        return header + 64;
+      case "rebounds":
+      case "assists":
+        return header + 36;
+      case "stocks":
+        return header + 52;
+      case "triple_double":
+        return header + 84;
+      case "trend":
+        return header + (trend?.length ? 64 : 20);
+      case "takeover":
+        return header + (insight.periodPoints ? 72 : 20);
+      default:
+        return header + 20;
+    }
+  }
+
+  if (focus === "threes" && insight.contributors?.length) {
+    return header + 16 + Math.min(4, insight.contributors.length) * 22;
+  }
+  if (game && focus === "quarter") return header + 132;
+  if (game?.flow) return header + 93;
+  if (game?.home.periods) {
+    if (focus === "combined") return header + 132;
+    return header + 93;
+  }
+  return header;
+}
+
+/**
+ * Rows of the closest heights. The earlier story stays on the left, and the
+ * row that contains the earliest story stays first.
+ */
+export function orderByHeight(items: RecentInsight[], columns: number): RecentInsight[] {
+  const width = Math.max(1, columns);
+  const ranked = items
+    .map((insight, index) => ({ insight, index, weight: visualWeight(insight) }))
+    .sort((a, b) => a.weight - b.weight || a.index - b.index);
+  const rows: Array<typeof ranked> = [];
+  for (let i = 0; i < ranked.length; i += width) {
+    rows.push(ranked.slice(i, i + width).sort((a, b) => a.index - b.index));
+  }
+  rows.sort((a, b) => a[0]!.index - b[0]!.index);
+  return rows.flatMap((row) => row.map((item) => item.insight));
+}
+
+function pairByHeight(items: RecentInsight[]): RecentInsight[] {
+  return orderByHeight(items, 2);
 }
 
 /** Homepage Recent Insights: cards from the latest completed games. */
 export function FindingsSection({
   insights,
-  seasonLabel,
   empty = false,
 }: {
   insights: RecentInsight[];
-  /** e.g. "2025-26 Finals window" when anchoring offseason. */
-  seasonLabel?: string | null;
   empty?: boolean;
 }) {
   const asOf = todayIsoDate();
   const stories = insights.filter((x) => x.focus !== "surprise");
   // Two columns, so an odd last card would leave a hole; drop it instead.
-  const cards = stories.length > 1 && stories.length % 2 ? stories.slice(0, -1) : stories;
+  const even = stories.length > 1 && stories.length % 2 ? stories.slice(0, -1) : stories;
+  const cards = pairByHeight(even);
 
   return (
-    <section className="sports-card flex flex-col gap-3 p-4 sm:p-[21px]">
-      <div className="flex flex-wrap items-end justify-between gap-2">
-        <div>
-          <h2 className="type-heading">Recent Insights</h2>
-          <p className="type-body-sm text-muted-foreground">
-            {empty
-              ? "No games in the latest window. Insights will update as new games are completed."
-              : seasonLabel
-                ? `What stood out in the latest ${seasonLabel} games.`
-                : "What stood out in the latest games."}
-          </p>
-        </div>
-        <AppLink
-          href="/findings"
-          className="text-[13px] font-semibold underline-offset-4 hover:underline"
-        >
-          Past nights <span data-motion-arrow aria-hidden>→</span>
-        </AppLink>
+    <section
+      className="sports-card flex flex-col gap-3 p-4 sm:p-[21px]"
+    >
+      <div className="flex items-center justify-between gap-3">
+        <h2 className="type-heading">Recent Insights</h2>
+        <SectionLink href="/findings">See all</SectionLink>
       </div>
+      {empty ? (
+        <p className="type-caption text-muted-foreground">
+          No games in the latest window. Insights will update as new games are completed.
+        </p>
+      ) : null}
       {cards.length ? (
-        <div data-motion-list className="grid min-w-0 gap-3 sm:grid-cols-2">
+        <div data-motion-list className="grid min-w-0 items-stretch gap-4 sm:grid-cols-2">
           {cards.map((insight) => (
             <InsightCard key={insight.id} insight={insight} asOf={asOf} />
           ))}
@@ -178,7 +254,7 @@ function ScoreLink({ href, label }: { href: string | null; label: string }) {
   return (
     <AppLink
       href={href}
-      className="relative z-[2] tabular-nums underline-offset-4 hover:text-foreground hover:underline"
+      className="pointer-events-auto tabular-nums underline-offset-4 hover:text-foreground hover:underline"
       title="Open box score"
     >
       {label}
@@ -186,105 +262,137 @@ function ScoreLink({ href, label }: { href: string | null; label: string }) {
   );
 }
 
-function categoryLabel(insight: RecentInsight): string {
-  const tail = insight.category.split("·")[1]?.trim() ?? insight.category;
+export function insightCategoryLabel(category: string): string {
+  const tail = category.split("·")[1]?.trim() ?? category;
   return tail.charAt(0) + tail.slice(1).toLowerCase();
 }
 
-/** `asOf` turns on the "Today" and "Last night" labels; pass null for plain dates. */
-export function InsightCard({ insight, asOf }: { insight: RecentInsight; asOf: string | null }) {
-  const nightLabel = asOf ? recentInsightDateLabel(insight.gameDate, asOf) : null;
-  const dateLabel = nightLabel
-    ? nightLabel.charAt(0) + nightLabel.slice(1).toLowerCase()
-    : shortDate(insight.gameDate);
+function categoryLabel(insight: RecentInsight): string {
+  return insightCategoryLabel(insight.category);
+}
+
+/** Tag ink follows the category, the same color for every team. */
+const TAG_INK: Record<string, string> = {
+  scoring: "light-dark(#9a3412, #fdba74)",
+  playmaking: "light-dark(#1d4ed8, #93c5fd)",
+  rebounding: "light-dark(#047857, #6ee7b7)",
+  defense: "light-dark(#4338ca, #a5b4fc)",
+  efficiency: "light-dark(#0f766e, #5eead4)",
+  "big night": "light-dark(#b45309, #fcd34d)",
+  "above his norm": "light-dark(#6d28d9, #c4b5fd)",
+  takeover: "light-dark(#c2410c, #fdba74)",
+  clutch: "light-dark(#be123c, #fda4af)",
+  pace: "light-dark(#0369a1, #7dd3fc)",
+  comeback: "light-dark(#15803d, #86efac)",
+  run: "light-dark(#1d4ed8, #93c5fd)",
+  seesaw: "light-dark(#7e22ce, #d8b4fe)",
+  "late winner": "light-dark(#a16207, #fde68a)",
+  "biggest lead": "light-dark(#334155, #cbd5e1)",
+};
+
+export function insightTagColor(category: string): string {
+  const tail = (category.split("·")[1]?.trim() ?? category).toLowerCase();
+  return TAG_INK[tail] ?? "light-dark(#3f3f46, #d4d4d8)";
+}
+
+function tagColor(category: string): string {
+  return insightTagColor(category);
+}
+
+function insightVisual(insight: RecentInsight) {
+  const { line, game, focus, trend } = insight;
+  const accent = teamColor(insight.teamId ?? game?.home.teamId);
+  if (line) {
+    switch (focus) {
+      case "surprise":
+        return <InsightVsNorm line={line} color={accent} />;
+      case "points":
+        return pointsAddUp(line) ? (
+          <InsightPointsMix line={line} color={accent} />
+        ) : (
+          <InsightShootingSplits line={line} color={accent} />
+        );
+      case "efficiency":
+        return <InsightShotDots line={line} color={accent} />;
+      case "rebounds":
+      case "assists":
+      case "stocks":
+        return <InsightEventPips line={line} focus={focus} color={accent} />;
+      case "triple_double":
+        return <InsightTripleDoubleRings line={line} color={accent} />;
+      case "trend":
+        return trend?.length ? <InsightTrendBars points={trend} color={accent} /> : null;
+      case "moment":
+        return insight.moment ? <InsightMomentChart moment={insight.moment} color={accent} /> : null;
+      case "takeover":
+        return insight.periodPoints ? (
+          <InsightPeriodBars
+            periodPoints={insight.periodPoints}
+            focusPeriod={insight.focusPeriod}
+            color={accent}
+          />
+        ) : null;
+    }
+  }
+  if (focus === "threes" && insight.contributors?.length) {
+    return <InsightContributorBars items={insight.contributors.slice(0, 4)} color={accent} />;
+  }
+  if (game && focus === "quarter") {
+    return <InsightQuarterStack game={game} focusPeriod={insight.focusPeriod} />;
+  }
+  if (game?.flow) return <InsightFlowChart game={game} />;
+  if (game?.home.periods) {
+    if (focus === "combined") return <InsightQuarterStack game={game} />;
+    return <InsightLeadWorm game={game} focus={focus} />;
+  }
+  return null;
+}
+
+/** The same chart as the card, named so it can grow into the detail page. */
+export function InsightFigure({ insight }: { insight: RecentInsight }) {
+  const visual = insightVisual(insight);
+  if (!visual) return null;
+  return <InsightMorph name={insightMorphName(insight.id)}>{visual}</InsightMorph>;
+}
+
+/** `asOf` is unused. The card writes the game date. */
+export function InsightCard({ insight, asOf: _asOf }: { insight: RecentInsight; asOf: string | null }) {
+  const dateLabel = writtenDate(insight.gameDate);
 
   const gameHref = insight.gameId ? `/games/${encodeURIComponent(insight.gameId)}` : null;
   const playerHref = insight.playerId ? `/players/${encodeURIComponent(insight.playerId)}` : null;
 
-  const { line, game, focus, trend } = insight;
+  const { line, game, focus } = insight;
   const hero = heroFor(insight);
   const accent = teamColor(insight.teamId ?? game?.home.teamId);
   const isPlayer = Boolean(line && insight.playerId);
   const cardHref = isPlayer ? playerHref : (gameHref ?? playerHref);
-  const visual = (() => {
-    if (line) {
-      switch (focus) {
-        case "surprise":
-          return <InsightVsNorm line={line} color={accent} />;
-        case "points":
-          return pointsAddUp(line) ? (
-            <InsightPointsMix line={line} color={accent} />
-          ) : (
-            <InsightShootingSplits line={line} color={accent} />
-          );
-        case "efficiency":
-          return <InsightShotDots line={line} color={accent} />;
-        case "rebounds":
-        case "assists":
-        case "stocks":
-          return <InsightEventPips line={line} focus={focus} color={accent} />;
-        case "triple_double":
-          return <InsightTripleDoubleRings line={line} color={accent} />;
-        case "trend":
-          return trend?.length ? <InsightTrendBars points={trend} color={accent} /> : null;
-        case "takeover":
-          return insight.periodPoints ? (
-            <InsightPeriodBars
-              periodPoints={insight.periodPoints}
-              focusPeriod={insight.focusPeriod}
-              color={accent}
-            />
-          ) : null;
-      }
-    }
-    if (focus === "threes" && insight.contributors?.length) {
-      return <InsightContributorBars items={insight.contributors.slice(0, 4)} color={accent} />;
-    }
-    if (game && focus === "quarter") {
-      return <InsightQuarterStack game={game} focusPeriod={insight.focusPeriod} />;
-    }
-    if (game?.flow) return <InsightFlowChart game={game} />;
-    if (game?.home.periods) {
-      if (focus === "combined") return <InsightQuarterStack game={game} />;
-      return <InsightLeadWorm game={game} focus={focus} />;
-    }
-    return null;
-  })();
+  const visual = insightVisual(insight);
 
   return (
     <article
       data-motion={cardHref ? "card" : undefined}
-      className={cn(
-        "lit-edge relative flex min-w-0 flex-col overflow-hidden rounded-[11px] bg-foreground/[0.035] dark:ring-1 dark:ring-inset dark:ring-foreground/[0.06]",
-        cardHref &&
-          "transition-[background-color,box-shadow] hover:bg-foreground/[0.06] dark:hover:ring-foreground/[0.14] has-[a[data-card-link]:focus-visible]:ring-2 has-[a[data-card-link]:focus-visible]:ring-ring"
-      )}
+      className="lit-edge relative flex h-full min-w-0 flex-col overflow-hidden rounded-[11px] bg-foreground/[0.035]"
     >
-      {cardHref ? (
-        <Link
-          href={cardHref}
-          data-card-link
-          aria-label={
-            isPlayer && line
-              ? `${line.playerName}: ${insight.headline}`
-              : `${insight.headline}. Open the game`
-          }
-          className="absolute inset-0 z-[1] rounded-[11px] outline-none"
-        />
-      ) : null}
+      <InsightCardLink href={findingHref(insight.id)} name={insightMorphName(insight.id)} label={insight.headline} />
       <span aria-hidden className="h-[3px] w-full" style={{ background: accent }} />
-      <div className="flex flex-1 flex-col gap-2 px-3.5 pb-3 pt-2.5">
-        <div className="flex items-center justify-between gap-2 text-[11px]">
-          <span className="font-bold uppercase tracking-[0.1em]" style={{ color: accent }}>
+      <div className="pointer-events-none relative z-[2] flex h-full flex-col p-4">
+        <div className="flex flex-col gap-2">
+        <div className="type-caption flex items-center justify-between gap-2">
+          <Badge
+            size="sm"
+            className="border-transparent font-bold transition-none"
+            style={{
+              color: tagColor(insight.category),
+              backgroundColor: "color-mix(in srgb, currentColor 16%, transparent)",
+            }}
+          >
             {categoryLabel(insight)}
-          </span>
-          <span className="flex items-center gap-1.5 text-muted-foreground">
-            <NewSinceTag id={`finding:${insight.id}`} />
-            {dateLabel}
-          </span>
+          </Badge>
+          <span className="text-muted-foreground">{dateLabel}</span>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="flex flex-nowrap items-center gap-2.5">
           {isPlayer && line ? (
             <>
               <PlayerHeadshot
@@ -297,11 +405,11 @@ export function InsightCard({ insight, asOf }: { insight: RecentInsight; asOf: s
               <div className="min-w-[8rem] flex-1">
                 <Link
                   href={playerHref!}
-                  className="relative z-[2] block truncate text-[15px] font-bold leading-tight tracking-tight hover:underline"
+                  className="type-body pointer-events-auto block truncate font-bold leading-tight tracking-tight hover:underline"
                 >
                   {line.playerName}
                 </Link>
-                <p className="mt-0.5 flex items-center gap-1.5 text-[12px] text-muted-foreground">
+                <p className="type-caption mt-0.5 flex items-center gap-1.5 text-muted-foreground">
                   {insight.teamId ? <TeamLogo teamKey={insight.teamId} size="2xs" /> : null}
                   <ScoreLink href={gameHref} label={playerScoreLabel(insight)} />
                 </p>
@@ -309,7 +417,7 @@ export function InsightCard({ insight, asOf }: { insight: RecentInsight; asOf: s
             </>
           ) : game ? (
             <>
-              {hero ? (
+              {hero && !visual ? (
                 <div className="min-w-0 flex-1">
                   <h3 className="sr-only">{insight.headline}</h3>
                   <p
@@ -318,31 +426,37 @@ export function InsightCard({ insight, asOf }: { insight: RecentInsight; asOf: s
                   >
                     {hero.value}
                   </p>
-                  <p className="mt-1 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+                  <p className="type-micro mt-1 font-semibold uppercase tracking-wide text-muted-foreground">
                     {hero.label}
                   </p>
                 </div>
               ) : (
-                <h3 className="min-w-[8rem] flex-1 text-[16px] font-bold leading-snug tracking-tight">
+                <h3 className="type-body min-w-0 flex-1 truncate font-bold leading-snug tracking-tight">
                   {insight.headline}
                 </h3>
               )}
-              <div className="ml-auto flex shrink-0 flex-col items-end gap-1">
-                <div className="flex -space-x-2">
+              {gameHref ? (
+                <AppLink
+                  href={gameHref}
+                  className="pointer-events-auto ml-auto flex shrink-0 -space-x-2 rounded-full outline-offset-2 hover:opacity-70"
+                  aria-label={gameScoreLabel(game)}
+                >
+                  <TeamLogo teamKey={game.away.teamId} size="sm" />
+                  <TeamLogo teamKey={game.home.teamId} size="sm" />
+                </AppLink>
+              ) : (
+                <div className="ml-auto flex shrink-0 -space-x-2">
                   <TeamLogo teamKey={game.away.teamId} size="sm" />
                   <TeamLogo teamKey={game.home.teamId} size="sm" />
                 </div>
-                <p className="text-[12px] text-muted-foreground">
-                  <ScoreLink href={gameHref} label={gameScoreLabel(game)} />
-                </p>
-              </div>
+              )}
             </>
           ) : (
-            <h3 className="min-w-[8rem] flex-1 text-[16px] font-bold leading-snug tracking-tight">
+            <h3 className="type-body min-w-[8rem] flex-1 font-bold leading-snug tracking-tight">
               {insight.headline}
             </h3>
           )}
-          {hero && (isPlayer || !game) ? (
+          {hero && !visual && (isPlayer || !game) ? (
             <div className="ml-auto shrink-0 text-right">
               <p
                 className={cn(
@@ -353,23 +467,38 @@ export function InsightCard({ insight, asOf }: { insight: RecentInsight; asOf: s
               >
                 {hero.value}
               </p>
-              <p className="mt-1 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+              <p className="type-micro mt-1 font-semibold uppercase tracking-wide text-muted-foreground">
                 {hero.label}
               </p>
             </div>
           ) : null}
         </div>
 
-        <p className="line-clamp-2 text-[12px] leading-snug text-muted-foreground" title={insight.description}>
+        {game && !isPlayer && gameHref ? (
+          <AppLink
+            href={gameHref}
+            className="type-caption pointer-events-auto -mt-0.5 self-end text-muted-foreground hover:text-foreground hover:underline"
+          >
+            {gameScoreLabel(game)}
+          </AppLink>
+        ) : null}
+
+        <p className="type-caption line-clamp-2 min-h-7 text-muted-foreground" title={insight.description}>
           {insight.description}
         </p>
+        </div>
 
-        {visual || (line && focus !== "surprise") ? (
-          <div className="mt-auto flex min-w-0 flex-col gap-2">
-            {visual}
-            {line && focus !== "surprise" ? <InsightStatLine line={line} focus={focus} /> : null}
+        {visual ? (
+          <div className="mt-6 min-w-0">
+            <InsightMorph name={insightMorphName(insight.id)}>{visual}</InsightMorph>
           </div>
         ) : null}
+        {!visual && line && focus !== "surprise" ? (
+          <div className="mt-6 min-w-0">
+            <InsightStatLine line={line} focus={focus} />
+          </div>
+        ) : null}
+        <div aria-hidden className="min-h-4 flex-1" />
       </div>
     </article>
   );

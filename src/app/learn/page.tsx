@@ -19,7 +19,6 @@ export default function LearnIndexPage() {
     <main data-motion-page className="site-shell flex flex-col gap-6 py-6 sm:py-8">
       <MotionReveal />
       <PageHeader
-        eyebrow="Learn"
         title="Understand every number"
         subtitle="Every stat, label and method the site uses, grouped by topic."
       />

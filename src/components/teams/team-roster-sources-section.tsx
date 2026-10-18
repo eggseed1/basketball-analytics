@@ -4,10 +4,10 @@ import Link from "next/link";
 import { vizAccentStyle } from "@/components/teams/viz/viz-kit";
 import { getTeamRosterArrivals } from "@/data/queries/acquisition-paths";
 import type { TeamAcquisitionEntry } from "@/trades/acquisition-types";
-import { sectionLinkClassName, type } from "@/lib/design-system";
+import { SectionLink } from "@/components/ui/section-link";
+import { type } from "@/lib/design-system";
 import { playerPageHref } from "@/lib/player-season-resolve";
 import { cn } from "@/lib/utils";
-
 type Bucket = { id: string; label: string; share: number; players: Array<{ label: string; playerId?: string }> };
 
 const KINDS: Array<{ how: TeamAcquisitionEntry["how"]; label: string; share: number }> = [
@@ -66,12 +66,7 @@ export async function TeamRosterSourcesSection({ teamId, teamKey }: { teamId: st
             {longestNote}
           </p>
         </div>
-        <Link
-          href={`/acquisitions?team=${encodeURIComponent(teamId)}`}
-          className={cn(type.caption, sectionLinkClassName)}
-        >
-          Every arrival since 2000 <span data-motion-arrow aria-hidden>→</span>
-        </Link>
+        <SectionLink href={`/acquisitions?team=${encodeURIComponent(teamId)}`}>Every arrival since 2000</SectionLink>
       </div>
       <div data-viz style={vizAccentStyle(teamKey)} className="sports-card flex flex-col gap-4 p-4 sm:p-5">
         <div aria-hidden className="flex h-3 w-full gap-0.5 overflow-hidden rounded-full">
