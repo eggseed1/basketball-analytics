@@ -150,8 +150,8 @@ function repairHistoryIds(data: Record<string, unknown>) {
       continue;
     }
     const fresh = `h${++entry}`;
-    const prior = earlier == null ? null : (history[earlier] as { id?: string });
-    if (prior) {
+    if (earlier != null) {
+      const prior = history[earlier] as { id?: string };
       prior.id = fresh;
       indexById.set(fresh, earlier);
     }
