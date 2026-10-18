@@ -5,6 +5,7 @@ import {
   useCallback,
   useEffect,
   useId,
+  useSyncExternalStore,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -315,11 +316,11 @@ function CompMarkTip({
   const [coords, setCoords] = useState<{ top: number; left: number } | null>(
     null
   );
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  );
 
   useLayoutEffect(() => {
     if (!open || !triggerRef.current) {

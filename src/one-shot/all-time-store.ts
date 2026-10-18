@@ -13,9 +13,9 @@ type PageCache = {
   put(key: string, value: string): Promise<void>;
 };
 
-function kv(): PageCache | null {
+async function kv(): Promise<PageCache | null> {
   try {
-    const { getCloudflareContext } = require("@opennextjs/cloudflare") as {
+    const { getCloudflareContext } = (await import("@opennextjs/cloudflare")) as {
       getCloudflareContext: () => { env?: { PAGE_CACHE?: PageCache } };
     };
     return getCloudflareContext()?.env?.PAGE_CACHE ?? null;
@@ -53,7 +53,7 @@ async function writeFileBoard(rows: EarningsRow[]) {
 
 /** Shared board. Cloudflare KV when the worker has it, a local file in dev. */
 export async function readAllTime(): Promise<{ entries: EarningsRow[]; unavailable: boolean }> {
-  const cache = kv();
+  const cache = await kv();
   if (cache) {
     try {
       return { entries: parseList(await cache.get(KEY)), unavailable: false };
@@ -74,7 +74,7 @@ export async function submitAllTime(raw: unknown): Promise<
   const current = await readAllTime();
   if (current.unavailable) return { ok: false, status: 503, error: "The all-time board is not reachable.", unavailable: true };
   const entries = placeRows(current.entries, row);
-  const cache = kv();
+  const cache = await kv();
   try {
     if (cache) await cache.put(KEY, JSON.stringify(entries));
     else await writeFileBoard(entries);

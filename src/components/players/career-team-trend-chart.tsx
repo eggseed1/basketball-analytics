@@ -652,11 +652,6 @@ export function CareerTeamTrendChart({
     );
   };
 
-  if (data.length < 2) return null;
-
-  const showFranchiseLegend =
-    showLegend && !useSavantDots && visibleLegend.length > 1;
-
   const yearRows = useMemo(
     () =>
       data.map((row) => {
@@ -686,6 +681,11 @@ export function CareerTeamTrendChart({
     for (let y = min + (min % 2); y <= max; y += 2) ticks.push(y);
     return ticks;
   }, [useYearAxis, yearRows, scatterDots]);
+
+  if (data.length < 2) return null;
+
+  const showFranchiseLegend =
+    showLegend && !useSavantDots && visibleLegend.length > 1;
 
   return (
     <div className={cn("flex min-w-0 flex-col", className)}>

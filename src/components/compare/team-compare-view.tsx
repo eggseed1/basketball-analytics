@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 
 import type {
   TeamCompareEdge,
@@ -231,6 +231,11 @@ export function TeamComparePicker({
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [mode, setMode] = useState<"compare" | "rank">(intent);
+  const [intentSeen, setIntentSeen] = useState(intent);
+  if (intent !== intentSeen) {
+    setIntentSeen(intent);
+    setMode(intent);
+  }
   const [a, setA] = useState<Hit>({
     id: teamAId ?? "",
     name: teamAName ?? "",
@@ -242,17 +247,13 @@ export function TeamComparePicker({
   const [sa, setSa] = useState(seasonA);
   const [sb, setSb] = useState(seasonB);
   const [picked, setPicked] = useState<string[]>(selectedSeasons);
-  const ranking = mode === "rank";
-
-  useEffect(() => {
-    setMode(intent);
-  }, [intent]);
-
-  useEffect(() => {
+  const pickedKey = selectedSeasons.join("|");
+  const [pickedKeySeen, setPickedKeySeen] = useState(pickedKey);
+  if (pickedKey !== pickedKeySeen) {
+    setPickedKeySeen(pickedKey);
     setPicked(selectedSeasons);
-    // Join keeps a parent re-render from clearing a season the user just toggled.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedSeasons.join("|")]);
+  }
+  const ranking = mode === "rank";
 
   function go() {
     if (!a.id || !b.id || !sa || !sb) return;
