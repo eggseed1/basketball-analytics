@@ -20,7 +20,7 @@ function first(value: string | string[] | undefined): string {
 
 export default async function RecordBookPage({ searchParams }: PageProps) {
   const params = await searchParams;
-  const book = getRecordBook();
+  const book = await getRecordBook();
   const through = book.throughDate ? formatRecordDate(book.throughDate) : null;
   const ready = Boolean(book.throughSeason && book.records.length);
 

@@ -82,6 +82,11 @@ const nextConfig: NextConfig = {
   // Historical BDL season JSON lives under data/cache (gitignored locally but
   // required at runtime for Explore Games / Game Lab when present).
   // Scope tracing to game routes only — never attach the full tree to every page.
+  outputFileTracingExcludes: {
+    // Served as a static asset. Tracing it back into the server function puts
+    // the book into the Worker upload.
+    "/*": ["./public/runtime/record-book.json"],
+  },
   outputFileTracingIncludes: {
     // Runtime data is intentionally loaded from disk instead of bundled into
     // client/server chunks. Next cannot statically trace dynamic path.join()

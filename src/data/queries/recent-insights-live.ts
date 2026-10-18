@@ -199,7 +199,7 @@ async function buildLive(season: string): Promise<LiveRecentInsights | null> {
     await loadLines(games);
     const slate = games.map((g) => slateInput(g, flows.get(g.id)));
     const lines = games.flatMap((g) => boxes.get(g.id) ?? []);
-    insights = buildRecentInsights({ games: slate, lines, limit: CARD_LIMIT, recordBook: getRecordBook() });
+    insights = buildRecentInsights({ games: slate, lines, limit: CARD_LIMIT, recordBook: await getRecordBook() });
     aboveNorm = buildAboveNormNights({ games: slate, lines }, ABOVE_NORM_LIMIT);
     slateDates = window;
     if (insights.length >= CARD_LIMIT || games.length >= MAX_GAMES) break;
@@ -264,7 +264,7 @@ async function buildDays(season: string): Promise<{
       flows.set(g.id, flow);
     })
   );
-  const book = getRecordBook();
+  const book = await getRecordBook();
   const days = dates
     .map((date) => {
       const night = games.filter((g) => g.gameDate === date);

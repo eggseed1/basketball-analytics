@@ -20,7 +20,7 @@ from datetime import datetime, timezone
 
 from curl_cffi import requests
 
-SNAP = os.path.join("src", "data", "runtime", "record-book-snapshot.json")
+SNAP = os.path.join("public", "runtime", "record-book.json")
 CACHE = os.path.join("data", "cache", "record-book", "bref")
 DELAY = float(os.environ.get("BREF_DELAY", "1.1"))
 BREF = "https://www.basketball-reference.com/leaders/{slug}.html"

@@ -9,7 +9,7 @@ games inside the book.
   ~/.cache/drbl-stats-runner/venv/bin/python scripts/build-record-book.py
 
 Raw responses are cached under data/cache/record-book/ (gitignored).
-The site snapshot is src/data/runtime/record-book-snapshot.json.
+The site snapshot is public/runtime/record-book.json.
 """
 
 from __future__ import annotations
@@ -31,7 +31,7 @@ HEADERS = {
     "x-nba-stats-token": "true",
 }
 CACHE = os.path.join("data", "cache", "record-book")
-OUT = os.path.join("src", "data", "runtime", "record-book-snapshot.json")
+OUT = os.path.join("public", "runtime", "record-book.json")
 DELAY_S = float(os.environ.get("NBA_STATS_DELAY", "0.35"))
 KEEP = 12
 
