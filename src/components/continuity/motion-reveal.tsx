@@ -11,10 +11,10 @@ type Pose = (el: Element, style: CSSStyleDeclaration) => Keyframe;
 const FROST = ".sports-card, .glass-surface, .glass-card, .frost-surface, .frost-surface-soft, .frost-surface-muted";
 const CARD = ".sports-card, .glass-surface, .glass-card";
 /* Marked static, or already running its own entry animation. */
-const STATIC = "[data-motion-static], .arcade-pop";
+const STATIC = "[data-motion-static], [data-motion-static] *, .arcade-pop";
 const SECTION = [
   `[data-motion-page] > :not(.hof-page-frame, [data-motion-stack], [data-skeleton], ${STATIC}, :has(${FROST}))`,
-  `:is(.hof-page-frame__inner, [data-motion-stack]) > :not([data-motion-stack], [data-skeleton], ${STATIC}, :has(${FROST}))`,
+  `:is(.hof-page-frame__inner, [data-motion-stack]):not([data-motion-static]) > :not([data-motion-stack], [data-skeleton], ${STATIC}, :has(${FROST}))`,
   `:is(${CARD}):not(a, [data-skeleton], [data-motion-tile], ${STATIC}, [data-motion-static] *, :is(${CARD}) *)`,
 ].join(", ");
 const LIST = `:is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li):not(${STATIC}, :has(${FROST})), [data-motion-item]:not(${STATIC})`;

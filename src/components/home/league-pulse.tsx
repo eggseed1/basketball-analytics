@@ -34,19 +34,19 @@ export function LeaguePulse({
           <button
             type="button"
             onClick={() => setExpanded((v) => !v)}
-            className="rounded-md bg-secondary px-3 py-1.5 text-[14px] font-semibold"
+            className="sports-pill"
           >
             {expanded ? "Show top 8" : "Expand all"}
           </button>
           <Link
             href="/standings"
-            className="rounded-md bg-foreground px-3 py-1.5 text-[14px] font-semibold text-background"
+            className="sports-pill"
           >
             Full standings
           </Link>
           <Link
             href="/standings#team-stats"
-            className="rounded-md bg-secondary px-3 py-1.5 text-[14px] font-semibold"
+            className="sports-pill"
           >
             Team advanced
           </Link>

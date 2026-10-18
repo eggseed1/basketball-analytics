@@ -3,7 +3,7 @@ import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 
 /**
- * Compact scout-phrase strip for player overview — label, not a module.
+ * Scout-phrase section for the player card column.
  * Same-build peer comps belong on a deeper surface if we add them later.
  */
 export function PlayerRoleLine({
@@ -17,46 +17,35 @@ export function PlayerRoleLine({
   const evidenceInline = role.evidence
     .map((bit) => `${bit.label} ${bit.display}`)
     .join(" · ");
+  const detailBits = [
+    role.defenseLabel,
+    role.dietLine.replace(/ shot diet$/i, "").replace(/ diet$/i, ""),
+    evidenceInline,
+  ].filter(Boolean);
 
   return (
-    <aside
-      className={cn(
-        "player-role-card flex flex-wrap items-baseline gap-x-3 gap-y-1 border-y border-border/50 py-2",
-        className
-      )}
+    <section
+      className={cn("flex flex-col gap-1.5", className)}
       aria-label="Playing style"
     >
       <p
         className={cn(
-          type.micro,
-          "shrink-0 font-bold uppercase tracking-[0.12em] text-muted-foreground"
+          type.caption,
+          "font-semibold uppercase tracking-wide text-muted-foreground"
         )}
       >
         Style · {role.season}
       </p>
-
-      <p className={cn(type.bodySm, "min-w-0 font-semibold tracking-tight")}>
+      <p className={cn(type.bodySm, "font-semibold tracking-tight")}>
         {role.phrase}
-        {role.defenseLabel ? (
-          <span className="font-normal text-muted-foreground">
-            {" "}
-            · {role.defenseLabel}
-          </span>
-        ) : null}
-        <span className="font-normal text-muted-foreground">
-          {" "}
-          · {role.dietLine.replace(/ shot diet$/i, "").replace(/ diet$/i, "")}
-        </span>
-        {evidenceInline ? (
-          <span className="font-normal tabular-nums text-muted-foreground">
-            {" "}
-            · {evidenceInline}
-          </span>
-        ) : null}
       </p>
-
+      {detailBits.length ? (
+        <p className={cn(type.caption, "tabular-nums text-muted-foreground")}>
+          {detailBits.join(" · ")}
+        </p>
+      ) : null}
       {showExpand ? (
-        <details className="group ml-auto">
+        <details className="group">
           <summary
             className={cn(
               type.caption,
@@ -65,18 +54,13 @@ export function PlayerRoleLine({
           >
             How we got this
           </summary>
-          <ul
-            className={cn(
-              type.caption,
-              "mt-1.5 max-w-xl space-y-1 text-muted-foreground"
-            )}
-          >
+          <ul className={cn(type.caption, "mt-1.5 space-y-1 text-muted-foreground")}>
             {role.why.map((line) => (
               <li key={line}>{line}</li>
             ))}
           </ul>
         </details>
       ) : null}
-    </aside>
+    </section>
   );
 }

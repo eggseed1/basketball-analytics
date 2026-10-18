@@ -12,6 +12,7 @@ import {
   resolveSideBrand,
   sideShortName,
 } from "@/components/sports/game-score-card";
+import { GameStatusTag } from "@/components/sports/game-status-tag";
 import { LiveIndicator } from "@/components/sports/live-indicator";
 import { LocalTipTime } from "@/components/sports/local-tip-time";
 import type { GameSummary } from "@/data/types";
@@ -69,12 +70,12 @@ function StatusLine({ game }: { game: GameSummary }) {
     );
   }
   if (isFinalStatus(game.status)) {
-    return <span className="font-semibold">{finalLabel(game)}</span>;
+    return <GameStatusTag>{finalLabel(game)}</GameStatusTag>;
   }
   if (isPreTipStatus(game.status) && game.status !== "delayed") {
     return <PreTipStatus tipOffAt={game.tipOffAt} nbaDate={game.gameDate} />;
   }
-  return <span className="font-semibold">{statusHeadline(game.status)}</span>;
+  return <GameStatusTag>{statusHeadline(game.status)}</GameStatusTag>;
 }
 
 function PreTipStatus({ tipOffAt, nbaDate }: { tipOffAt?: string | null; nbaDate?: string | null }) {

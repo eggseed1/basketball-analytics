@@ -17,6 +17,7 @@ import { FrostFloatingSurface } from "@/components/brand/frost-floating-surface"
 import { explainMetric } from "@/analytics/explanations";
 import { getLearnConcept } from "@/content/learn/registry";
 import { cn } from "@/lib/utils";
+import { LinkCue } from "@/components/ui/link-cue";
 
 const PANEL_PAD = 8;
 const PANEL_WIDTH = 288; // ~18rem
@@ -188,7 +189,7 @@ export function MetricHelp({
                   className="mt-2 inline-block text-[12px] font-semibold underline-offset-2 hover:underline"
                   onClick={close}
                 >
-                  Learn more <span data-motion-arrow aria-hidden>→</span>
+                  Learn more <LinkCue />
                 </Link>
               ) : null}
             </FrostFloatingSurface>,

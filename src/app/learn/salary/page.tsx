@@ -42,6 +42,7 @@ import { cn } from "@/lib/utils";
 import { type } from "@/lib/design-system";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/learn/salary" },
   title: "Salary & contracts guide",
   description:
     "How the NBA salary cap, tax and aprons work, how contracts are built, and how DRBL prices what a player's play is worth.",
@@ -120,7 +121,6 @@ export default function LearnSalaryPage() {
         </Link>
 
         <header className="flex flex-col gap-3">
-          <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">Salary & contracts</p>
           <h1 className="text-[2rem] font-bold tracking-tight sm:text-[2.25rem]">How NBA money works</h1>
           <p className="max-w-2xl text-[16px] leading-relaxed text-muted-foreground">
             Every chart on this page is drawn from the same payrolls, contracts and DRBL seasons behind the team salary
@@ -138,7 +138,6 @@ export default function LearnSalaryPage() {
         {lines ? (
           <GuideSection
             id="cap"
-            eyebrow="Cap lines"
             title={`Four lines every payroll is measured against in ${lines.season}`}
             lead={
               <>
@@ -178,7 +177,6 @@ export default function LearnSalaryPage() {
         {firstCap && latestCap && growth ? (
           <GuideSection
             id="cap-growth"
-            eyebrow="Cap growth"
             title="The same salary is a smaller share every year"
             lead={
               <p>
@@ -205,7 +203,6 @@ export default function LearnSalaryPage() {
         {examples.length ? (
           <GuideSection
             id="contracts"
-            eyebrow="Contracts"
             title="Reading a contract, year by year"
             lead={
               <p>
@@ -242,7 +239,6 @@ export default function LearnSalaryPage() {
 
         <GuideSection
           id="worth"
-          eyebrow="Worth"
           title="Putting a price on a player's play"
           lead={
             <>
@@ -284,7 +280,6 @@ export default function LearnSalaryPage() {
 
         <GuideSection
           id="surplus"
-          eyebrow="Surplus"
           title="Surplus: worth minus salary over the whole deal"
           lead={
             <p>
@@ -390,7 +385,6 @@ export default function LearnSalaryPage() {
         {payoff ? (
           <GuideSection
             id="played-off"
-            eyebrow="Played off"
             title="Salary played off: the same math, one night at a time"
             lead={
               <p>
@@ -442,7 +436,6 @@ export default function LearnSalaryPage() {
         {picks.teams.length ? (
           <GuideSection
             id="picks"
-            eyebrow="Draft picks"
             title={`First-round picks, ${picks.years[0]} to ${picks.years.at(-1)}`}
             lead={
               <p>
@@ -468,7 +461,6 @@ export default function LearnSalaryPage() {
 
         <GuideSection
           id="limits"
-          eyebrow="Limits"
           title="What these numbers don't do"
           lead={
             <ul className="flex list-disc flex-col gap-1.5 pl-5">

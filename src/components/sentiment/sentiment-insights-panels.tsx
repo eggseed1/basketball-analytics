@@ -16,6 +16,7 @@ import type {
 } from "@/sentiment/curated-types";
 import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
+import { LinkCue } from "@/components/ui/link-cue";
 
 function scorePct(score: number) {
   return `${Math.round(((score + 1) / 2) * 100)}%`;
@@ -359,7 +360,7 @@ export function SentimentDivergenceBoard({
                       href={`/players/${encodeURIComponent(row.playerId)}?view=sentiment`}
                       className={cn(type.caption, "font-semibold underline-offset-4 hover:underline")}
                     >
-                      Player sentiment <span data-motion-arrow aria-hidden>→</span>
+                      Player sentiment <LinkCue />
                     </Link>
                   </div>
                 </div>

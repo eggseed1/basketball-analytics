@@ -1,10 +1,13 @@
 "use client";
 
-import { useMemo, useState, type ReactNode } from "react";
+import { useMemo, useState } from "react";
 
+import { GlassSurface } from "@/components/brand/glass-surface";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { useQueryNavOptional } from "@/components/continuity/query-nav";
+import { FilterBar } from "@/components/explore/filter-bar";
 import { TeamIdentity } from "@/components/teams/team-identity";
+import { ChoiceChip, ChoiceTrack } from "@/components/ui/choice-chip";
 import { TextLink } from "@/components/ui/text-link";
 import type { PlayerGame } from "@/data/types";
 import { type } from "@/lib/design-system";
@@ -39,12 +42,6 @@ const COUNT_LABEL = {
 
 type CountKey = keyof typeof COUNT_LABEL;
 
-function shortSeason(season: string) {
-  const m = /^(\d{4})-(\d{2})$/.exec(season);
-  if (!m) return season;
-  return `${m[1].slice(2)}-${m[2]}`;
-}
-
 function started(g: PlayerGame) {
   return Boolean(g.startPosition && g.startPosition.trim());
 }
@@ -60,55 +57,6 @@ function efgFromLine(g: PlayerGame): number | null {
   if (g.effectiveFieldGoalPct != null) return g.effectiveFieldGoalPct;
   if (g.fieldGoalsAttempted <= 0) return null;
   return (g.fieldGoalsMade + 0.5 * g.threePointersMade) / g.fieldGoalsAttempted;
-}
-
-function GlassChip({
-  active,
-  onClick,
-  children,
-}: {
-  active: boolean;
-  onClick: () => void;
-  children: string;
-}) {
-  return (
-    <button
-      type="button"
-      aria-pressed={active}
-      onClick={onClick}
-      className={cn(
-        type.caption,
-        "glass-pill rounded-md px-2.5 py-1 font-semibold transition-colors",
-        active
-          ? "glass-pill-active"
-          : "text-muted-foreground hover:text-foreground"
-      )}
-    >
-      {children}
-    </button>
-  );
-}
-
-function FilterRow({
-  label,
-  children,
-}: {
-  label: string;
-  children: ReactNode;
-}) {
-  return (
-    <div className="flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-1">
-      <p
-        className={cn(
-          type.caption,
-          "shrink-0 font-semibold uppercase tracking-wide text-muted-foreground"
-        )}
-      >
-        {label}
-      </p>
-      <div className="flex flex-wrap gap-1">{children}</div>
-    </div>
-  );
 }
 
 function OppCell({
@@ -149,15 +97,17 @@ function OppCell({
 export function PlayerGameLogBoard({
   games,
   season,
-  seasons,
   seasonType,
   seasonTypeLabel,
+  accentColor,
+  accentColorB,
 }: {
   games: PlayerGame[];
   season: string;
-  seasons: string[];
   seasonType: PlayerSeasonKind;
   seasonTypeLabel: string;
+  accentColor?: string | null;
+  accentColorB?: string | null;
 }) {
   const queryNav = useQueryNavOptional();
   const [category, setCategory] = useState<LogCategory>("impact");
@@ -198,10 +148,6 @@ export function PlayerGameLogBoard({
     };
   };
 
-  function setSeason(next: string) {
-    queryNav?.replaceParams({ season: next });
-  }
-
   function setSeasonType(next: PlayerSeasonKind) {
     queryNav?.replaceParams({
       seasonType: next === "playoffs" ? "playoffs" : null,
@@ -210,84 +156,63 @@ export function PlayerGameLogBoard({
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-        <FilterRow label="Type">
-          {(
-            [
-              ["regular", "Regular"],
-              ["playoffs", "Playoffs"],
-            ] as const
-          ).map(([id, label]) => (
-            <GlassChip
-              key={id}
-              active={seasonType === id}
-              onClick={() => setSeasonType(id)}
-            >
-              {label}
-            </GlassChip>
-          ))}
-        </FilterRow>
-        {seasons.length > 1 ? (
-          <FilterRow label="Season">
-            {[...seasons]
-              .sort((a, b) => a.localeCompare(b))
-              .map((option) => (
-                <GlassChip
-                  key={option}
-                  active={option === season}
-                  onClick={() => setSeason(option)}
-                >
-                  {shortSeason(option)}
-                </GlassChip>
-              ))}
-          </FilterRow>
-        ) : null}
-        <FilterRow label="Category">
-          {CATEGORIES.map((item) => (
-            <GlassChip
-              key={item.id}
-              active={item.id === category}
-              onClick={() => setCategory(item.id)}
-            >
-              {item.label}
-            </GlassChip>
-          ))}
-        </FilterRow>
-        <FilterRow label="Location">
-          {(
-            [
-              ["all", "All"],
-              ["home", "Home"],
-              ["away", "Away"],
-            ] as const
-          ).map(([id, label]) => (
-            <GlassChip
-              key={id}
-              active={place === id}
-              onClick={() => setPlace(id)}
-            >
-              {label}
-            </GlassChip>
-          ))}
-        </FilterRow>
-        <FilterRow label="Role">
-          {(
-            [
-              ["all", "All"],
-              ["starter", "Starter"],
-              ["bench", "Bench"],
-            ] as const
-          ).map(([id, label]) => (
-            <GlassChip
-              key={id}
-              active={role === id}
-              onClick={() => setRole(id)}
-            >
-              {label}
-            </GlassChip>
-          ))}
-        </FilterRow>
-      </div>
+      <FilterBar label="Game log filters">
+        <div className="flex w-full min-w-0 flex-wrap items-center gap-2">
+          <ChoiceTrack aria-label="Type">
+            {(
+              [
+                ["regular", "Regular"],
+                ["playoffs", "Playoffs"],
+              ] as const
+            ).map(([id, label]) => (
+              <ChoiceChip
+                key={id}
+                active={seasonType === id}
+                onClick={() => setSeasonType(id)}
+              >
+                {label}
+              </ChoiceChip>
+            ))}
+          </ChoiceTrack>
+          <ChoiceTrack aria-label="Category">
+            {CATEGORIES.map((item) => (
+              <ChoiceChip
+                key={item.id}
+                active={item.id === category}
+                onClick={() => setCategory(item.id)}
+              >
+                {item.label}
+              </ChoiceChip>
+            ))}
+          </ChoiceTrack>
+          <ChoiceTrack aria-label="Location">
+            {(
+              [
+                ["all", "All"],
+                ["home", "Home"],
+                ["away", "Away"],
+              ] as const
+            ).map(([id, label]) => (
+              <ChoiceChip key={id} active={place === id} onClick={() => setPlace(id)}>
+                {label}
+              </ChoiceChip>
+            ))}
+          </ChoiceTrack>
+          <ChoiceTrack aria-label="Role">
+            {(
+              [
+                ["all", "All"],
+                ["starter", "Starter"],
+                ["bench", "Bench"],
+              ] as const
+            ).map(([id, label]) => (
+              <ChoiceChip key={id} active={role === id} onClick={() => setRole(id)}>
+                {label}
+              </ChoiceChip>
+            ))}
+          </ChoiceTrack>
+        </div>
+      </FilterBar>
 
       {filtered.length === 0 ? (
         <p className={cn(type.bodySm, "text-muted-foreground")}>
@@ -295,8 +220,14 @@ export function PlayerGameLogBoard({
           {games.length ? "" : ` for ${season}`}.
         </p>
       ) : (
-        <div className="board-scroll-host overflow-x-auto rounded-md">
-          <table className="w-full min-w-[640px] text-left text-[14px]">
+        <GlassSurface
+          effect="css"
+          accentColor={accentColor}
+          accentColorB={accentColorB}
+          className="p-4 sm:p-5"
+        >
+          <div className="board-scroll-host overflow-x-auto">
+            <table className="w-full min-w-[640px] text-left text-[14px]">
             <thead
               className={cn(
                 type.caption,
@@ -532,7 +463,8 @@ export function PlayerGameLogBoard({
               })}
             </tbody>
           </table>
-        </div>
+          </div>
+        </GlassSurface>
       )}
     </div>
   );

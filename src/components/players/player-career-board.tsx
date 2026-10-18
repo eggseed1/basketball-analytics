@@ -3,8 +3,14 @@
 import { useMemo, useState, type ReactNode } from "react";
 
 import { GlassSurface } from "@/components/brand/glass-surface";
-import { CareerTeamTrendChartLazy as CareerTeamTrendChart } from "@/components/charts/recharts-lazy";
+import {
+  CareerTeamTrendChartLazy as CareerTeamTrendChart,
+  TalentYearChartLazy as TalentYearChart,
+} from "@/components/charts/recharts-lazy";
+import { buildTalentSeries } from "@/lib/player-talent-trend";
 import type { CareerSeriesPoint } from "@/components/players/career-team-trend-chart";
+import type { CompactPlayerGameLogRow } from "@/data/history/player-game-log";
+import { efgPct, tsPct } from "@/lib/player-page-contract";
 import {
   Select,
   SelectContent,
@@ -186,6 +192,7 @@ function seriesFor(
     const { color, abbr } = teamChartColor(row.teamId);
     points.push({
       season: shortSeason(row.season),
+      fullSeason: row.season,
       value,
       teamId: row.teamId,
       teamAbbr: row.teamAbbr || abbr,
@@ -229,15 +236,95 @@ function GlassChip({
   );
 }
 
-/** Sticky season col — fixed rail so category chips never shift the freeze width. */
-const CAREER_SEASON_COL_WIDTH = "4.75rem";
-const CAREER_SEASON_COL_CLASS =
-  "board-sticky-frost sticky left-0 z-10 box-border p-0";
-const CAREER_SEASON_COL_STYLE = {
-  width: CAREER_SEASON_COL_WIDTH,
-  minWidth: CAREER_SEASON_COL_WIDTH,
-  maxWidth: CAREER_SEASON_COL_WIDTH,
-} as const;
+const IMPACT_GAME_METRICS = new Set<MetricId>([
+  "drbl100",
+  "war1",
+  "darko",
+  "bpm",
+  "vorp",
+  "drblO",
+  "drblD",
+  "darkoOff",
+  "darkoDef",
+  "raptor",
+]);
+
+/** Hollinger game score per 36. Missing rebound splits count as 0. */
+function gameBoxScore(game: CompactPlayerGameLogRow): number | null {
+  if (game.minutesNum < 8) return null;
+  const raw =
+    game.points +
+    0.4 * game.fgm -
+    0.7 * game.fga -
+    0.4 * (game.fta - game.ftm) +
+    0.7 * (game.orb ?? 0) +
+    0.3 * (game.drb ?? 0) +
+    game.steals +
+    0.7 * game.assists +
+    0.7 * game.blocks -
+    0.4 * (game.pf ?? 0) -
+    game.turnovers;
+  if (!Number.isFinite(raw)) return null;
+  return (raw * 36) / game.minutesNum;
+}
+
+/** Same 0–100 scale as the season chips. A raw 0.65 rate would sit under a 65 line. */
+function percentDots(rate: number | null): number | null {
+  if (rate == null || !Number.isFinite(rate)) return null;
+  return rate * 100;
+}
+
+function gameDotValue(
+  metric: MetricId,
+  game: CompactPlayerGameLogRow
+): number | null {
+  if (game.minutesNum <= 0) return null;
+  switch (metric) {
+    case "ppg":
+      return game.points;
+    case "apg":
+      return game.assists;
+    case "rpg":
+      return game.rebounds;
+    case "mpg":
+      return game.minutesNum;
+    case "orpg":
+      return game.orb;
+    case "drpg":
+      return game.drb;
+    case "spg":
+      return game.steals;
+    case "bpg":
+      return game.blocks;
+    case "tov":
+      return game.turnovers;
+    case "pf":
+      return game.pf;
+    case "ts":
+      return percentDots(tsPct(game.points, game.fga, game.fta));
+    case "fgPct":
+      return percentDots(game.fga > 0 ? game.fgm / game.fga : null);
+    case "twoPct": {
+      const twoPa = game.fga - game.threePa;
+      const twoPm = game.fgm - game.threePm;
+      return percentDots(twoPa > 0 ? twoPm / twoPa : null);
+    }
+    case "threePct":
+      return percentDots(game.threePa > 0 ? game.threePm / game.threePa : null);
+    case "ftPct":
+      return percentDots(game.fta > 0 ? game.ftm / game.fta : null);
+    case "efg":
+      return percentDots(efgPct(game.fgm, game.fga, game.threePm));
+    case "threePar":
+      return percentDots(game.fga > 0 ? game.threePa / game.fga : null);
+    default:
+      return null;
+  }
+}
+
+const thBase =
+  "py-2 font-semibold text-[12px] uppercase tracking-[0.08em] text-muted-foreground";
+const tdBase = "type-caption py-2 tabular-nums";
 
 export function PlayerCareerBoard({
   playerId,
@@ -248,6 +335,8 @@ export function PlayerCareerBoard({
   teamKey,
   fromHistory = false,
   themeMode = "historical",
+  gameLogs = [],
+  chart = "seasons",
 }: {
   playerId: string;
   season: string;
@@ -257,6 +346,9 @@ export function PlayerCareerBoard({
   teamKey?: string | null;
   fromHistory?: boolean;
   themeMode?: ThemeMode;
+  gameLogs?: CompactPlayerGameLogRow[];
+  /** Games is the career-page dot chart. Overview keeps the season line. */
+  chart?: "seasons" | "games";
 }) {
   const [metric, setMetric] = useState<MetricId>(() => defaultCareerMetric(rows));
   const primary = useMemo(
@@ -274,6 +366,35 @@ export function PlayerCareerBoard({
   const selected =
     METRICS.find((item) => item.id === metric) ?? METRICS[0]!;
   const points = seriesFor(rows, selected);
+  const talentKind = IMPACT_GAME_METRICS.has(selected.id) ? "impact" : "box";
+  const talent = useMemo(() => {
+    if (chart !== "games") return null;
+    const bySeason = new Map<string, CompactPlayerGameLogRow[]>();
+    for (const game of gameLogs) {
+      const list = bySeason.get(game.season) ?? [];
+      list.push(game);
+      bySeason.set(game.season, list);
+    }
+    const seasons = [...points]
+      .sort((a, b) => (a.fullSeason ?? "").localeCompare(b.fullSeason ?? ""))
+      .flatMap((point) => {
+        if (!point.fullSeason) return [];
+        const games = bySeason.get(point.fullSeason) ?? [];
+        return [
+          {
+            season: point.fullSeason,
+            value: point.value,
+            games: games.map((game) => ({
+              date: game.date,
+              minutes: game.minutesNum,
+              box: gameDotValue(selected.id, game),
+              boxScore: gameBoxScore(game),
+            })),
+          },
+        ];
+      });
+    return buildTalentSeries({ kind: talentKind, seasons });
+  }, [chart, gameLogs, points, selected.id, talentKind]);
   const newestFirst = useMemo(
     () => [...rows].sort((a, b) => b.season.localeCompare(a.season)),
     [rows]
@@ -294,21 +415,17 @@ export function PlayerCareerBoard({
     seasonType === "playoffs" ? "Playoffs" : "Regular season";
 
   return (
-    <section id="career" className="scroll-mt-16 flex flex-col gap-4" aria-label="Career">
+    <section
+      id="career"
+      className="scroll-mt-16 flex flex-col gap-4"
+      aria-label={chart === "games" ? "Career stats" : "Season stats"}
+    >
       <GlassSurface
         effect="css"
         accentColor={wash?.colorA}
         accentColorB={wash?.colorB}
         className="flex flex-col gap-4 p-4 sm:p-5"
       >
-        <div>
-          <h2 className={type.heading}>Season stats</h2>
-          <p className={cn(type.bodySm, "mt-1 text-muted-foreground")}>
-            Career trend + season grid. Click a season to open that year’s
-            game log.
-          </p>
-        </div>
-
         {rows.length === 0 ? (
           <p className={cn(type.bodySm, "text-muted-foreground")}>
             {seasonType === "playoffs"
@@ -362,136 +479,138 @@ export function PlayerCareerBoard({
               </Select>
             </div>
 
-            {points.length > 0 ? (
+            {talent ? (
+              <>
+                <TalentYearChart
+                  dots={talent.dots}
+                  line={talent.line}
+                  kind={talentKind}
+                  height={260}
+                />
+                <p className={cn(type.caption, "text-muted-foreground")}>
+                  {talentKind === "impact"
+                    ? `Small dots are games. Large dots are each season's published ${selected.label}, and the line runs through them. Plus-minus is blank in these logs.`
+                    : "Small dots are games. Large dots are the season average, and the line runs through them."}
+                </p>
+              </>
+            ) : points.length > 0 ? (
               <CareerTeamTrendChart points={points} height={200} drawKey={selected.id} />
             ) : (
               <p className={cn(type.caption, "text-muted-foreground")}>
                 {selected.label} is not published for these seasons.
               </p>
             )}
-
-            <div className="flex flex-wrap gap-1.5" role="tablist" aria-label="Table categories">
-              {TABLE_CATEGORIES.map((cat) => (
-                <GlassChip
-                  key={cat.id}
-                  active={tableCat === cat.id}
-                  onClick={() => setTableCat(cat.id)}
-                >
-                  {cat.label}
-                </GlassChip>
-              ))}
-            </div>
-
-            <div className="sports-card board-scroll-host overflow-x-auto rounded-md">
-              <table className="w-full min-w-[48rem] text-left">
-                <colgroup>
-                  <col style={CAREER_SEASON_COL_STYLE} />
-                </colgroup>
-                <thead
-                  className={cn(
-                    type.caption,
-                    "uppercase tracking-wide text-muted-foreground"
-                  )}
-                >
-                  <tr>
-                    <th
-                      style={CAREER_SEASON_COL_STYLE}
-                      className={cn(CAREER_SEASON_COL_CLASS, "font-semibold")}
-                    >
-                      <div
-                        className="box-border overflow-hidden py-1 pr-2"
-                        style={CAREER_SEASON_COL_STYLE}
-                      >
-                        Season
-                      </div>
-                    </th>
-                    <th className="px-1.5 py-1 text-right font-semibold">Tm</th>
-                    <th className="px-1.5 py-1 text-right font-semibold">G</th>
-                    {tableCols.map((col) => (
-                      <th
-                        key={col.id}
-                        className="px-1.5 py-1 text-right font-semibold"
-                      >
-                        {col.label}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {newestFirst.map((row) => {
-                    const active = row.season === season;
-                    return (
-                      <tr
-                        key={row.season}
-                        className={active ? "board-row-active" : undefined}
-                      >
-                        <td
-                          style={CAREER_SEASON_COL_STYLE}
-                          className={CAREER_SEASON_COL_CLASS}
-                        >
-                          <div
-                            className="box-border overflow-hidden py-1.5 pr-2"
-                            style={CAREER_SEASON_COL_STYLE}
-                          >
-                            <TextLink
-                              href={playerDepthHref(playerId, {
-                                season: row.season,
-                                depth: "games",
-                                seasonType,
-                                fromHistory,
-                                themeMode,
-                              })}
-                              scroll={false}
-                              className={cn(
-                                type.caption,
-                                active &&
-                                  "font-semibold underline decoration-foreground/40"
-                              )}
-                            >
-                              {row.season}
-                            </TextLink>
-                          </div>
-                        </td>
-                        <td
-                          className={cn(
-                            type.caption,
-                            "px-1.5 py-1.5 text-right tabular-nums"
-                          )}
-                        >
-                          {row.teamAbbr || "-"}
-                        </td>
-                        <td
-                          className={cn(
-                            type.caption,
-                            "px-1.5 py-1.5 text-right tabular-nums"
-                          )}
-                        >
-                          {formatNumber(row.gamesPlayed)}
-                        </td>
-                        {tableCols.map((col) => (
-                          <td
-                            key={col.id}
-                            className={cn(
-                              type.caption,
-                              "px-1.5 py-1.5 text-right tabular-nums"
-                            )}
-                          >
-                            {formatCell(row, col)}
-                          </td>
-                        ))}
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-            <p className={cn(type.caption, "text-muted-foreground")}>
-              Showing {kindLabel.toLowerCase()} · {tableCols.length} columns.
-              Switch category or scroll sideways for more.
-            </p>
           </>
         )}
       </GlassSurface>
+
+      {rows.length > 0 ? (
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-wrap gap-1.5" role="tablist" aria-label="Table categories">
+            {TABLE_CATEGORIES.map((cat) => (
+              <GlassChip
+                key={cat.id}
+                active={tableCat === cat.id}
+                onClick={() => setTableCat(cat.id)}
+              >
+                {cat.label}
+              </GlassChip>
+            ))}
+          </div>
+
+          <div className="sports-card overflow-x-auto">
+            <table className="w-full text-left">
+              <thead className="border-b border-border/40 bg-secondary/50">
+                <tr>
+                  <th
+                    className={cn(
+                      thBase,
+                      "sticky left-0 z-10 bg-secondary/50 pl-4 pr-3 text-left"
+                    )}
+                  >
+                    Season
+                  </th>
+                  <th className={cn(thBase, "px-2 text-right")}>Tm</th>
+                  <th className={cn(thBase, "px-2 text-right")}>G</th>
+                  {tableCols.map((col, index) => (
+                    <th
+                      key={col.id}
+                      className={cn(
+                        thBase,
+                        "px-2 text-right",
+                        index === tableCols.length - 1 && "pr-4"
+                      )}
+                    >
+                      {col.label}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {newestFirst.map((row) => {
+                  const active = row.season === season;
+                  return (
+                    <tr
+                      key={row.season}
+                      className={cn(
+                        "group border-b border-border/40 last:border-0",
+                        active ? "bg-secondary/60" : "hover:bg-secondary/40"
+                      )}
+                    >
+                      <td
+                        className={cn(
+                          tdBase,
+                          "sticky left-0 z-10 bg-card pl-4 pr-3 text-left group-hover:bg-secondary",
+                          active && "bg-secondary"
+                        )}
+                      >
+                        <TextLink
+                          href={playerDepthHref(playerId, {
+                            season: row.season,
+                            depth: "games",
+                            seasonType,
+                            fromHistory,
+                            themeMode,
+                          })}
+                          scroll={false}
+                          className={cn(
+                            "whitespace-nowrap",
+                            active && "font-semibold"
+                          )}
+                        >
+                          {row.season}
+                        </TextLink>
+                      </td>
+                      <td className={cn(tdBase, "px-2 text-right")}>
+                        {row.teamAbbr || "-"}
+                      </td>
+                      <td className={cn(tdBase, "px-2 text-right")}>
+                        {formatNumber(row.gamesPlayed)}
+                      </td>
+                      {tableCols.map((col, index) => (
+                        <td
+                          key={col.id}
+                          className={cn(
+                            tdBase,
+                            "px-2 text-right",
+                            index === tableCols.length - 1 && "pr-4"
+                          )}
+                        >
+                          {formatCell(row, col)}
+                        </td>
+                      ))}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+          <p className={cn(type.caption, "text-muted-foreground")}>
+            Showing {kindLabel.toLowerCase()} · {tableCols.length} columns.
+            Switch category or scroll sideways for more.
+          </p>
+        </div>
+      ) : null}
     </section>
   );
 }

@@ -10,7 +10,6 @@ import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { TextLink } from "@/components/ui/text-link";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { PlayerDepthNav } from "@/components/players/player-depth-nav";
-import { PlayerDraftLine } from "@/components/players/player-draft-line";
 import { PlayerIdentityVitals } from "@/components/players/player-identity-vitals";
 import { PlayerTeamPositionLine } from "@/components/players/player-team-position-line";
 import { PlayerUpcomingGamesFromSnapshot } from "@/components/players/player-upcoming-games-island";
@@ -80,7 +79,6 @@ export type PlayerDestinationIdentityProps = {
   heightLabel?: string | null;
   weightLabel?: string | null;
   birthDate?: string | null;
-  draftInfo?: string | null;
   college?: string | null;
   portraitUrl?: string | null;
   historicalBrand?: HistoricalTeamBrand | null;
@@ -117,7 +115,6 @@ export function PlayerDestinationIdentity({
   heightLabel,
   weightLabel,
   birthDate,
-  draftInfo,
   college,
   portraitUrl = null,
   historicalBrand,
@@ -166,7 +163,7 @@ export function PlayerDestinationIdentity({
       initialSeason={season}
       seasonOptions={seasonOptions}
     >
-      {children ? <div className="min-w-0">{children}</div> : null}
+      {children ? <div className="min-w-0 empty:hidden">{children}</div> : null}
 
       <section
         id="overview"
@@ -297,13 +294,6 @@ export function PlayerDestinationIdentity({
                         !useTwoColumnLayout && "sm:items-start"
                       )}
                     />
-                    <PlayerDraftLine
-                      draftInfo={draftInfo}
-                      className={cn(
-                        "mt-0.5 justify-center",
-                        !useTwoColumnLayout && "sm:justify-start"
-                      )}
-                    />
                     <PhotoCreditLine portraitUrl={portraitUrl} className="mt-1" />
                   </div>
                   {accolades ? (
@@ -314,6 +304,8 @@ export function PlayerDestinationIdentity({
                 </div>
               </div>
             </GlassSurface>
+
+            {frontOffice}
 
             {recentSeasons.length > 0 ? (
               <GlassSurface
@@ -428,15 +420,21 @@ export function PlayerDestinationIdentity({
               </GlassSurface>
             ) : null}
 
-            {frontOffice}
+            {view === "overview" && role ? (
+              <GlassSurface
+                accentColor={wash?.colorA}
+                accentColorB={wash?.colorB}
+                className="relative w-full min-w-0 p-0"
+                effect="css"
+                honor={honor}
+              >
+                <div className="relative z-[1] w-full px-3 py-2.5">{role}</div>
+              </GlassSurface>
+            ) : null}
           </div>
 
           {hero ? <div className="min-h-0 min-w-0">{hero}</div> : null}
         </div>
-
-        {view === "overview" && role ? (
-          <div className="min-w-0">{role}</div>
-        ) : null}
 
         <PlayerDepthNav
           playerId={playerId}

@@ -14,7 +14,6 @@ const BROWSE = [
   { href: "/ask", label: "Ask DRBL", key: "phx" },
   { href: "/learn", label: "Learn", key: "mil" },
   { href: "/awards", label: "Awards", key: "sas" },
-  { href: "/history", label: "History", key: "chi" },
 ];
 
 export function BrowseCircles({

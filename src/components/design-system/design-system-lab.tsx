@@ -17,13 +17,14 @@ import {
 import { PageHeader, SectionHeader } from "@/components/layout/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { BackLink, SectionLink } from "@/components/ui/section-link";
 import { EmptyState, InlineError, Skeleton } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { Surface } from "@/components/ui/surface";
 import { TextLink } from "@/components/ui/text-link";
 import { useOwnerTheme } from "@/components/design-system/theme-provider";
-import { boardType, material, shell, type } from "@/lib/design-system";
+import { boardType, material, shell, subtleGlassStyle, type } from "@/lib/design-system";
 import type { ColorScheme, SurfaceStyle } from "@/lib/owner-theme";
 import { cn } from "@/lib/utils";
 
@@ -35,6 +36,7 @@ const SECTIONS = [
   { id: "materials", label: "Glass materials" },
   { id: "radii-shadows", label: "Radii & shadows" },
   { id: "buttons", label: "Buttons" },
+  { id: "links", label: "Links" },
   { id: "inputs", label: "Inputs" },
   { id: "tabs", label: "Tabs" },
   { id: "badges", label: "Badges" },
@@ -67,8 +69,8 @@ const TYPE_ROWS = [
   { name: "Title 3", className: type.title3, meta: "20 / 28 / 600", sample: "Four Factors" },
   { name: "Title", className: type.title, meta: "18 / 24 / 600", sample: "East standings" },
   { name: "Body", className: type.body, meta: "16 / 24 / 400", sample: "Waived G Ethan Thompson." },
-  { name: "Body sm", className: type.bodySm, meta: "14 / 20 / 400", sample: "See all transactions →" },
-  { name: "Caption", className: type.caption, meta: "12 / 16 / 400", sample: "2025–26 · Regular season" },
+  { name: "Body sm", className: type.bodySm, meta: "14 / 20 / 400", sample: "See all transactions" },
+  { name: "Caption", className: type.caption, meta: "12 / 14 / 400", sample: "2025–26 · Regular season" },
   { name: "Micro", className: type.micro, meta: "10 / 14 / 400", sample: "LIVE" },
 ] as const;
 
@@ -372,14 +374,21 @@ export function DesignSystemLab() {
           </div>
         </LabSection>
 
-        <LabSection id="buttons" title="Buttons">
+        <LabSection
+          id="buttons"
+          title="Buttons"
+          description="One button component. Use these variants instead of one-off classes."
+        >
           <div className="flex flex-col gap-4">
-            {(["default", "secondary", "outline", "ghost", "destructive"] as const).map(
+            {(["default", "secondary", "outline", "ghost", "destructive", "link"] as const).map(
               (variant) => (
                 <div key={variant} className="flex flex-wrap items-center gap-2">
                   <span className="w-24 type-caption capitalize text-muted-foreground">
                     {variant}
                   </span>
+                  <Button variant={variant} size="xs">
+                    XS
+                  </Button>
                   <Button variant={variant} size="sm">
                     Small
                   </Button>
@@ -393,7 +402,44 @@ export function DesignSystemLab() {
                 </div>
               )
             )}
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="w-24 type-caption text-muted-foreground">Icon</span>
+              <Button size="icon-xs" variant="outline" aria-label="Small icon">
+                <Sun />
+              </Button>
+              <Button size="icon-sm" variant="outline" aria-label="Icon">
+                <Sun />
+              </Button>
+              <Button size="icon" variant="secondary" aria-label="Medium icon">
+                <Sun />
+              </Button>
+              <Button size="icon-lg" aria-label="Large icon">
+                <Sun />
+              </Button>
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="w-24 type-caption text-muted-foreground">Pill</span>
+              <span className="sports-pill">Filter</span>
+              <span className="sports-pill opacity-40">Disabled</span>
+            </div>
           </div>
+        </LabSection>
+
+        <LabSection
+          id="links"
+          title="Links"
+          description="Section actions and back links use a chevron. The text arrow is not a control."
+        >
+          <Surface variant="subtle" padding="md" className="flex flex-col gap-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <h3 className={type.heading}>This week&apos;s games</h3>
+              <SectionLink href="/scores?view=week">See all schedule</SectionLink>
+            </div>
+            <div className="flex flex-wrap items-center gap-4">
+              <BackLink href="#overview">Overview</BackLink>
+              <TextLink href="/players">Player name</TextLink>
+            </div>
+          </Surface>
         </LabSection>
 
         <LabSection id="inputs" title="Inputs">
@@ -484,7 +530,6 @@ export function DesignSystemLab() {
         <LabSection id="headers" title="Page & section headers">
           <Surface variant="glass" padding="md">
             <PageHeader
-              eyebrow="Player"
               title="Luka Dončić"
               subtitle="Los Angeles Lakers · Guard"
               meta={
@@ -509,7 +554,7 @@ export function DesignSystemLab() {
         </LabSection>
 
         <LabSection id="statistics" title="Statistics">
-          <StatGroup>
+          <StatGroup columns={6}>
             <MetricCard label="PTS" value="28.4" rank={3} percentile={96} />
             <MetricCard label="AST" value="8.1" rank={7} percentile={88} />
             <MetricCard label="REB" value="7.9" rank={22} percentile={72} />
@@ -530,18 +575,16 @@ export function DesignSystemLab() {
           </div>
         </LabSection>
 
-        <LabSection id="tables" title="Tables" description="boardType + tabular-nums. Sticky name columns stay in board-scroll-host.">
-          <div className="board-scroll-frame overflow-x-auto rounded-[var(--radius-md)] border border-border">
+        <LabSection id="tables" title="Tables" description="Subtle glass. Headers are 10px. Numbers use tabular-nums.">
+          <div className="sports-card sports-card-subtle overflow-hidden" style={subtleGlassStyle}>
+            <div className="overflow-x-auto">
             <table className="board-stats w-full border-separate border-spacing-0 text-left">
               <thead>
                 <tr>
                   {["Player", "Tm", "GP", "PTS", "AST", "REB", "TS%", "USG%"].map((h) => (
                     <th
                       key={h}
-                      className={cn(
-                        "border-b border-border px-2 py-1.5 font-semibold uppercase text-muted-foreground",
-                        boardType.head
-                      )}
+                      className="border-b border-border/25 px-2 py-1.5 text-[10px] font-medium uppercase leading-none tracking-[0.04em] text-muted-foreground"
                     >
                       {h}
                     </th>
@@ -554,14 +597,14 @@ export function DesignSystemLab() {
                   ["Shai Gilgeous-Alexander", "OKC", "68", "32.1", "6.2", "5.1", "63.4", "33.0"],
                   ["Nikola Jokić", "DEN", "64", "29.2", "10.1", "12.4", "66.1", "29.8"],
                 ].map((row) => (
-                  <tr key={row[0]} className="hover:bg-[var(--surface-hover)]">
+                  <tr key={row[0]} className="hover:bg-foreground/[0.03] [&:last-child>td]:border-b-0">
                     {row.map((cell, i) => (
                       <td
                         key={`${row[0]}-${i}`}
                         className={cn(
-                          "border-b border-border/60 px-2 py-1",
+                          "border-b border-border/25 px-2 py-1",
                           boardType.cell,
-                          i === 0 ? cn(boardType.name, "font-semibold") : "tabular-nums"
+                          i === 0 ? "text-[12px] font-semibold leading-4" : "tabular-nums"
                         )}
                       >
                         {cell}
@@ -571,6 +614,7 @@ export function DesignSystemLab() {
                 ))}
               </tbody>
             </table>
+            </div>
           </div>
         </LabSection>
 
@@ -593,20 +637,24 @@ export function DesignSystemLab() {
           </div>
         </LabSection>
 
-        <LabSection id="patterns" title="Composition patterns">
-          <Surface variant="glass" padding="md" className="flex flex-col gap-4">
+        <LabSection
+          id="patterns"
+          title="Composition patterns"
+          description="A light panel. Stats sit in one row, with space between them."
+        >
+          <Surface variant="light" padding="md" className="flex flex-col gap-4">
             <PageHeader
               title="Boston Celtics"
               subtitle="2025–26 · 52–30 · 2nd East"
-              actions={<Button size="sm" variant="secondary">Share</Button>}
+              subtitleClassName={type.caption}
             />
-            <StatGroup className="lg:grid-cols-4">
+            <StatGroup columns={4}>
               <MetricCard label="ORTG" value="118.2" rank={3} />
               <MetricCard label="DRTG" value="110.4" rank={5} />
               <MetricCard label="NET" value="+7.8" percentile={95} />
               <MetricCard label="PACE" value="99.1" rank={14} />
             </StatGroup>
-            <p className={cn(type.bodySm, "text-muted-foreground")}>
+            <p className={cn(type.caption, "text-muted-foreground")}>
               Identity links:{" "}
               <PlayerIdentity
                 playerId="1629029"
@@ -615,14 +663,20 @@ export function DesignSystemLab() {
                 teamLabel="LAL"
                 variant="compact"
                 className="inline-flex align-baseline"
-                nameClassName="inline"
+                nameClassName="inline text-[12px]! leading-[14px]!"
               >
                 Luka Dončić
               </PlayerIdentity>
               {" · "}
-              <TeamIdentity teamKey="bos" label="Celtics" />
+              <TeamIdentity
+                teamKey="bos"
+                label="Celtics"
+                nameClassName="text-[12px]! leading-[14px]!"
+              />
               {" · "}
-              <TextLink href="/standings">Standings</TextLink>
+              <TextLink href="/standings" className="text-[12px]! leading-[14px]!">
+                Standings
+              </TextLink>
             </p>
           </Surface>
         </LabSection>

@@ -11,13 +11,17 @@ export function MatchupOrbs({
   home,
   winner = null,
   rim = false,
+  gain = 1,
 }: {
   away: string;
   home: string;
   winner?: "away" | "home" | null;
   rim?: boolean;
+  /** Scales both orbs. 1 is the default; lower keeps the wash lighter. */
+  gain?: number;
 }) {
-  const strength = (side: "away" | "home") => (winner == null ? 0.8 : winner === side ? 1 : 0.45);
+  const strength = (side: "away" | "home") =>
+    (winner == null ? 0.8 : winner === side ? 1 : 0.45) * gain;
   return (
     <span aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-[inherit]">
       <span

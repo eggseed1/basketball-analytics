@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-labelledby="title">
+  <title id="title">c-arch.svg</title>
+  
+  <g id="symbol" fill="#111114">
+    <path fill-rule="evenodd" d="M32 162 A96 96 0 0 1 224 162 L224 190 L32 190 Z M76 162 A52 52 0 0 1 180 162 Z"/>
+  </g>
+
+</svg>

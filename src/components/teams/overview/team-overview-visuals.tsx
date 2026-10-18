@@ -5,6 +5,7 @@ import { LeagueStrips, NetLadder } from "@/components/teams/overview/league-cont
 import { SeasonFlowChart } from "@/components/teams/overview/season-flow-chart";
 import { TeamDnaRadar } from "@/components/teams/overview/team-dna-radar";
 import { QuarterProfile, SplitsPanel, StrengthsPanel } from "@/components/teams/overview/team-overview-panels";
+import { TeamRosterWar1Island } from "@/components/teams/overview/team-roster-war1-island";
 import { TeamScoringShareIsland } from "@/components/teams/overview/team-scoring-share-island";
 import type { TeamSeasonStats } from "@/data/types";
 import { type } from "@/lib/design-system";
@@ -28,6 +29,8 @@ export function TeamOverviewVisuals({
   traits,
   howTheyWin,
   season,
+  record,
+  showRosterWar1 = true,
 }: {
   team: TeamSeasonStats;
   league: TeamSeasonStats[];
@@ -35,6 +38,9 @@ export function TeamOverviewVisuals({
   traits: TeamTrait[];
   howTheyWin: AnalyticalFinding[];
   season: string;
+  record: { wins: number; losses: number } | null;
+  /** The preseason recap already shows this season's games. Its WAR1 card is the one below the review. */
+  showRosterWar1?: boolean;
 }) {
   const teamId = team.teamId;
   const teamKey = team.abbreviation;
@@ -72,6 +78,17 @@ export function TeamOverviewVisuals({
         Rates and ranks come from season team totals. Game-by-game charts use final scores from the
         schedule. Neither adjusts for opponent strength.
       </p>
+
+      {showRosterWar1 ? (
+        <Suspense fallback={<div className="sports-card h-72 animate-pulse" aria-label="Loading roster WAR1" />}>
+          <TeamRosterWar1Island
+            season={season}
+            teamKey={teamKey}
+            gamesPlayed={Number.isFinite(team.gamesPlayed) ? team.gamesPlayed : null}
+            record={record}
+          />
+        </Suspense>
+      ) : null}
     </div>
   );
 }

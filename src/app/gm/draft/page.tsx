@@ -96,9 +96,6 @@ function DraftBody() {
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="max-w-xl">
-          <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-            War room
-          </p>
           <h2 className="text-lg font-semibold tracking-tight">
             Scouting board
             {league.phase !== "draft" ? " · preview" : ""}
@@ -312,10 +309,7 @@ function ScoutDossier({
   return (
     <aside className="flex flex-col gap-3 rounded-md border border-border bg-card p-4">
       <div>
-        <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-          Scout dossier
-        </p>
-        <h3 className="mt-1 text-[1.35rem] font-bold leading-tight tracking-tight">
+        <h3 className="text-[1.35rem] font-bold leading-tight tracking-tight">
           {displayPlayerName(player)}
         </h3>
         <p className="mt-1 text-[14px] text-muted-foreground">

@@ -1,11 +1,12 @@
 "use client";
 
-import { useMemo, type HTMLAttributes, type ReactNode } from "react";
+import { useMemo, type CSSProperties, type HTMLAttributes, type ReactNode } from "react";
 import { Calendar, ChevronLeft, ChevronRight, Shirt } from "lucide-react";
 
 import { GlassSurface } from "@/components/brand/glass-surface";
-import { TeamLogo } from "@/components/brand/team-logo";
+import { ChoiceChip, ChoiceTrack } from "@/components/ui/choice-chip";
 import { useQueryNav } from "@/components/continuity/query-nav";
+import { TeamSelect } from "@/components/teams/team-select";
 import { PlayerFilterSearch } from "@/components/explore/player-filter-search";
 import {
   Select,
@@ -53,24 +54,9 @@ function ChipGroup({
   scrollable?: boolean;
 } & Omit<HTMLAttributes<HTMLDivElement>, "children" | "className">) {
   return (
-    <GlassSurface
-      effect="css"
-      overflowVisible={!scrollable}
-      className={cn(
-        "flex min-w-0 items-center gap-0.5 p-1",
-        scrollable &&
-          "w-full max-w-full flex-nowrap touch-scroll-x [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
-        className
-      )}
-      style={
-        scrollable
-          ? { overflowX: "auto", overflowY: "hidden" }
-          : undefined
-      }
-      {...rest}
-    >
+    <ChoiceTrack className={className} scrollable={scrollable} {...rest}>
       {children}
-    </GlassSurface>
+    </ChoiceTrack>
   );
 }
 
@@ -86,31 +72,9 @@ function Chip({
   disabled?: boolean;
 }) {
   return (
-    <button
-      type="button"
-      disabled={disabled}
-      aria-pressed={active}
-      onClick={onClick}
-      className={cn(
-        type.caption,
-        "rounded-md px-2.5 py-1.5 font-semibold transition-colors",
-        active
-          ? "bg-secondary text-foreground"
-          : "text-muted-foreground hover:bg-foreground/10 hover:text-foreground",
-        disabled && "pointer-events-none opacity-40"
-      )}
-    >
+    <ChoiceChip active={active} onClick={onClick} disabled={disabled}>
       {children}
-    </button>
-  );
-}
-
-function TeamOption({ team }: { team: Team }) {
-  return (
-    <span className="flex min-w-0 items-center gap-2">
-      <TeamLogo teamKey={team.abbreviation || team.id} size="xs" />
-      <span className="truncate">{team.fullName}</span>
-    </span>
+    </ChoiceChip>
   );
 }
 
@@ -210,28 +174,23 @@ export function PlayerFilterToolbar({
     replaceParams(normalized);
   }
 
-  const { east, west, flat, groupByConference } = useMemo(() => {
-    const byName = (a: Team, b: Team) => a.fullName.localeCompare(b.fullName);
-    const eastTeams = teams.filter((t) => t.conference === "East").sort(byName);
-    const westTeams = teams.filter((t) => t.conference === "West").sort(byName);
-    const group =
-      eastTeams.length >= 5 &&
-      westTeams.length >= 5 &&
-      eastTeams.length + westTeams.length >= teams.length * 0.8;
-    return {
-      east: eastTeams,
-      west: westTeams,
-      flat: [...teams].sort(byName),
-      groupByConference: group,
-    };
-  }, [teams]);
-
   const selectedTeam = useMemo(
     () => teams.find((t) => t.id === team || t.abbreviation === team),
     [teams, team]
   );
-  const conferenceTeams =
-    conference === "East" ? east : conference === "West" ? west : null;
+  const teamChoices = useMemo(() => {
+    const listed = conference
+      ? teams.filter((row) => row.conference === conference)
+      : teams;
+    return [...listed]
+      .sort((a, b) => a.fullName.localeCompare(b.fullName))
+      .map((row) => ({
+        id: row.id,
+        abbreviation: row.abbreviation,
+        fullName: row.fullName,
+        conference: row.conference,
+      }));
+  }, [teams, conference]);
 
   const seasonIsAll = season.toUpperCase() === "ALL";
   const seasonIndex = seasonIsAll ? -1 : Math.max(0, seasons.indexOf(season));
@@ -256,6 +215,15 @@ export function PlayerFilterToolbar({
     <GlassSurface
       effect="css"
       className="relative z-40 w-full min-w-0 max-w-full p-2 sm:p-3"
+      style={
+        {
+          background: "var(--material-subtle-bg)",
+          backdropFilter: "blur(12px) saturate(140%)",
+          WebkitBackdropFilter: "blur(12px) saturate(140%)",
+          "--lit-hairline": "rgb(0 0 0 / 0.05)",
+          "--lit-drop-shadow": "0 1px 2px rgb(0 0 0 / 0.03)",
+        } as CSSProperties
+      }
     >
     <form
       className="flex w-full min-w-0 max-w-full flex-col gap-2"
@@ -265,7 +233,7 @@ export function PlayerFilterToolbar({
       }}
       data-pending={pending ? "true" : "false"}
     >
-      <div className="flex w-full min-w-0 max-w-full flex-wrap items-center gap-2 max-sm:gap-1.5">
+      <div className="flex w-full min-w-0 flex-wrap items-center gap-2">
         <ChipGroup>
           <button
             type="button"
@@ -380,7 +348,9 @@ export function PlayerFilterToolbar({
           <Chip active>Regular</Chip>
           <Chip disabled>Playoffs</Chip>
         </ChipGroup>
+      </div>
 
+      <div className="flex w-full min-w-0 flex-wrap items-center gap-2">
         <ChipGroup aria-label="Conference">
           {(["East", "West"] as const).map((conf) => (
             <Chip
@@ -406,84 +376,20 @@ export function PlayerFilterToolbar({
           ))}
         </ChipGroup>
 
-        <ChipGroup>
-          <Select
-            value={team}
-            onValueChange={(value) => {
-              if (value == null) return;
-              const patch: Record<string, string | null> = {
-                team: String(value),
-              };
-              if (value !== "ALL" && conference) {
-                const picked = teams.find(
-                  (t) => t.id === value || t.abbreviation === value
-                );
-                if (picked && picked.conference !== conference) {
-                  patch.conference = null;
-                }
-              }
-              updateParams(patch);
-            }}
-          >
-            <SelectTrigger
-              id="filter-team"
-              className={cn(selectTriggerClass, "min-w-0 max-w-[9rem] sm:min-w-[8.5rem]")}
-              aria-label="Team"
-            >
-              <SelectValue placeholder="Select team">
-                {selectedTeam ? (
-                  <TeamOption team={selectedTeam} />
-                ) : (
-                  "Select team"
-                )}
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent
-              align="start"
-              side="bottom"
-              alignItemWithTrigger={false}
-              className="min-w-[16rem]"
-            >
-              <SelectItem value="ALL">All teams</SelectItem>
-              {conferenceTeams ? (
-                conferenceTeams.map((t) => (
-                  <SelectItem key={t.id} value={t.id}>
-                    <TeamOption team={t} />
-                  </SelectItem>
-                ))
-              ) : groupByConference ? (
-                <>
-                  <SelectGroup>
-                    <SelectLabel className="px-2 pt-2 text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
-                      Eastern Conference
-                    </SelectLabel>
-                    {east.map((t) => (
-                      <SelectItem key={t.id} value={t.id}>
-                        <TeamOption team={t} />
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                  <SelectGroup>
-                    <SelectLabel className="px-2 pt-2 text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
-                      Western Conference
-                    </SelectLabel>
-                    {west.map((t) => (
-                      <SelectItem key={t.id} value={t.id}>
-                        <TeamOption team={t} />
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </>
-              ) : (
-                flat.map((t) => (
-                  <SelectItem key={t.id} value={t.id}>
-                    <TeamOption team={t} />
-                  </SelectItem>
-                ))
-              )}
-            </SelectContent>
-          </Select>
-        </ChipGroup>
+        <TeamSelect
+          id="filter-team"
+          value={team}
+          teams={teamChoices}
+          empty={{ value: "ALL", label: "All teams" }}
+          onChange={(value) => {
+            const patch: Record<string, string | null> = { team: value };
+            if (value !== "ALL" && conference) {
+              const picked = teams.find((t) => t.id === value || t.abbreviation === value);
+              if (picked && picked.conference !== conference) patch.conference = null;
+            }
+            updateParams(patch);
+          }}
+        />
 
         <ChipGroup>
           {POSITIONS.map((pos) => (
@@ -526,7 +432,7 @@ export function PlayerFilterToolbar({
           </Select>
         </ChipGroup>
 
-        <ChipGroup className="relative min-w-0 w-full flex-1 basis-full sm:basis-auto sm:min-w-[10rem]">
+        <ChipGroup className="relative min-w-[12rem] w-full flex-1">
           <PlayerFilterSearch
             season={season}
             value={playerQuery}
@@ -535,7 +441,7 @@ export function PlayerFilterToolbar({
         </ChipGroup>
       </div>
 
-      <div className="flex w-full min-w-0 max-w-full flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+      <div className="flex w-full min-w-0 flex-col gap-2 border-t border-border/40 pt-2 sm:flex-row sm:items-center sm:justify-between">
         <ChipGroup scrollable aria-label="Stat categories">
           {PLAYER_BOARD_VIEWS.map((item) => (
             <Chip

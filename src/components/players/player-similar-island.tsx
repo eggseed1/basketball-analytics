@@ -1,4 +1,5 @@
 import { GlassSurface } from "@/components/brand/glass-surface";
+import { PlayerCompFuturesPanel } from "@/components/players/player-comp-futures-panel";
 import type { GlassSurfaceHonor } from "@/components/brand/glass-surface";
 import {
   PlayerContextStrip,
@@ -88,7 +89,9 @@ export async function PlayerSimilarIsland({
     });
   }
 
-  if (loadError) {
+  const futuresFocal =
+    career.find((row) => row.season === statsSeason) ?? career[0] ?? null;
+  if (loadError && !futuresFocal) {
     return (
       <PlayerPanelUnavailable
         label="Similar players unavailable"
@@ -97,7 +100,7 @@ export async function PlayerSimilarIsland({
     );
   }
 
-  if (!modes.length) return null;
+  if (!modes.length && !futuresFocal) return null;
 
   const focalCompareId = espnId || playerId;
   const compareHref = `/compare?a=${encodeURIComponent(focalCompareId)}&season=${encodeURIComponent(statsSeason)}`;
@@ -112,17 +115,24 @@ export async function PlayerSimilarIsland({
       <div>
         <h2 className={cn(type.heading, "tracking-tight")}>Similar players</h2>
         <p className="mt-1 text-[13px] leading-snug text-muted-foreground">
-          Closest {statsSeason} profiles, historical lookalikes across eras, and
-          nearest comps by metric. This is not a new rating. Switch chips to
-          change the lens.
+          Closest {statsSeason} profiles and lookalikes in other seasons. The
+          chart below is same-age comps on the impact chip you pick.
         </p>
       </div>
-      <PlayerContextStrip
-        modes={modes}
-        defaultModeId="profile"
-        focalPlayerId={focalCompareId}
-        season={statsSeason}
-        compareHref={compareHref}
+      {modes.length ? (
+        <PlayerContextStrip
+          modes={modes}
+          defaultModeId="profile"
+          focalPlayerId={focalCompareId}
+          season={statsSeason}
+          compareHref={compareHref}
+        />
+      ) : null}
+      <PlayerCompFuturesPanel
+        focal={futuresFocal}
+        career={career}
+        teamKey={identityTeamKey}
+        espnId={espnId}
       />
     </GlassSurface>
   );

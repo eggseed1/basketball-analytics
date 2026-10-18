@@ -8,7 +8,8 @@ import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 
 export const metadata = {
-  title: "Awards",
+  alternates: { canonical: "/awards" },
+  title: "NBA awards history",
   description:
     "NBA award history: championships, MVP, Finals MVP, DPOY, and more.",
 };
@@ -47,7 +48,6 @@ export default function AwardsIndexPage() {
     <main data-motion-page className="site-shell flex flex-col gap-8 py-6 sm:py-8">
       <MotionReveal />
       <PageHeader
-        eyebrow="Awards"
         title="Trophy case"
         subtitle="League award history. Open a trophy to see its winners, dynasties and eras."
       />

@@ -12,6 +12,12 @@ import { COURT_SVG, courtX, courtY } from "@/lib/nba-court";
 import { GRADE_BAND_GRADIENT, percentileSavantColor } from "@/lib/player-grade";
 import { cn } from "@/lib/utils";
 import {
+  segmentedItemActiveClassName,
+  segmentedItemClassName,
+  segmentedItemIdleClassName,
+  segmentedTrackClassName,
+} from "@/components/ui/segmented-style";
+import {
   leagueZoneKey,
   type LeagueShotZones,
   type PlayerShotMap,
@@ -80,7 +86,7 @@ function Segmented<T extends string>({
     <div
       role="group"
       aria-label={label}
-      className="inline-flex rounded-lg bg-foreground/[0.06] p-0.5"
+      className={segmentedTrackClassName}
     >
       {options.map(([id, text]) => (
         <button
@@ -89,11 +95,9 @@ function Segmented<T extends string>({
           aria-pressed={value === id}
           onClick={() => onChange(id)}
           className={cn(
-            type.caption,
-            "rounded-md px-3 py-1 font-semibold transition-colors",
-            value === id
-              ? "bg-background text-foreground shadow-sm"
-              : "text-muted-foreground hover:text-foreground"
+            segmentedItemClassName,
+            "px-3 py-1 type-caption",
+            value === id ? segmentedItemActiveClassName : segmentedItemIdleClassName
           )}
         >
           {text}

@@ -12,11 +12,9 @@ import type { LearnTopic } from "@/content/learn/topics";
 
 export function LearnTopicView({
   topic,
-  eyebrow,
   visual,
 }: {
   topic: LearnTopic;
-  eyebrow: string;
   /** Interactive explainer shown between the lead and the bullets. */
   visual?: ReactNode;
 }) {
@@ -31,7 +29,6 @@ export function LearnTopicView({
   return (
     <div data-motion-stack className="flex flex-col gap-6">
       <LearnHeader
-        eyebrow={eyebrow}
         title={topic.name}
         lead={topic.oneSentence}
         depth={hasDeep ? depth : null}

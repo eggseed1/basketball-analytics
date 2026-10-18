@@ -8,6 +8,7 @@ import { resolveMovementPresentation } from "@/movement-center/prominence";
 import type { PlayerMovementBundle } from "@/movement-center/types";
 import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
+import { LinkCue } from "@/components/ui/link-cue";
 
 /** Rumor Mill tab body — no outer glass shell (lives inside intelligence rail). */
 export function MovementRumorPanel({
@@ -58,7 +59,7 @@ export function MovementRumorPanel({
             href={`/movement?player=${encodeURIComponent(playerId)}`}
             className={type.caption}
           >
-            Full movement monitor <span data-motion-arrow aria-hidden>→</span>
+            Full movement monitor <LinkCue />
           </TextLink>
         </>
       ) : (

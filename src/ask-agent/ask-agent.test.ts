@@ -7,8 +7,37 @@ import test from "node:test";
 import { runAskAgent, type AskAgentEvent } from "./agent";
 import type { AskAgentEnv, D1Database, KvNamespace } from "./env";
 import { checkGrounding } from "./grounding";
+import { reviewMeasure } from "./measure";
+import { presentAskAnswer } from "./present";
+import { askAgentSystemPrompt } from "./prompt";
 import { nameKeyOf } from "./schema";
 import { guardSql, SQL_ROW_LIMIT } from "./sql-guard";
+
+test("the prompt asks for a measure before a shape-of-game query", () => {
+  const prompt = askAgentSystemPrompt("2026-10-16");
+  assert.match(prompt, /call set_measure before run_sql/);
+  assert.match(prompt, /Never rank by the minimum of those three/);
+  assert.match(prompt, /0\.12 is 0\.12, not 12%/);
+});
+
+test("a complete-game plan has to use the DARKO ends", () => {
+  const question = "Who is the most interchangeable player, with no holes, in any system?";
+  const rejected = reviewMeasure(question, {
+    claim: "Highest floor of the DRBL components",
+    level: "drbl_per100",
+    hole: "min of drbl offense, defense, and playmaking",
+    rejected: "box score",
+  });
+  assert.equal(rejected.ok, false);
+  const accepted = reviewMeasure(question, {
+    claim: "The best player whose weaker end is still well above average",
+    level: "impact_ratings.total",
+    hole: "the weaker of impact_ratings.offense and impact_ratings.defense",
+    rejected: "A DRBL floor can stay high for a specialist",
+  });
+  assert.equal(accepted.ok, true);
+  if (accepted.ok) assert.match(accepted.guidance, /several players/);
+});
 
 test("guardSql wraps a single SELECT with a row cap", () => {
   const out = guardSql("SELECT name FROM players WHERE team = 'DEN';");
@@ -36,6 +65,18 @@ test("guardSql refuses writes, stacked statements, comments and system tables", 
   ]) {
     assert.equal(guardSql(sql).ok, false, sql);
   }
+});
+
+test("presentAskAnswer hides the query and keeps the sentence", () => {
+  const raw =
+    "OKC has 15.66 WAR, the most of any team【" +
+    '{"sql":"SELECT team_id, SUM(wins_above_r1) as total_war FROM drbl_ratings","purpose":"Top 5"}' +
+    "】. Shai leads them.";
+  const out = presentAskAnswer(raw);
+  assert.equal(out.includes("sql"), false);
+  assert.equal(out.includes("team_id"), false);
+  assert.equal(out.includes("【"), false);
+  assert.match(out, /^OKC has 15\.66 WAR, the most of any team\. Shai leads them\.$/);
 });
 
 test("nameKeyOf strips accents, punctuation and suffixes", () => {
@@ -96,13 +137,13 @@ function scriptedModel(replies: unknown[]) {
   };
 }
 
-const toolCallReply = (args: string) => ({
+const toolCallReply = (args: string, name = "run_sql") => ({
   choices: [
     {
       finish_reason: "tool_calls",
       message: {
         content: null,
-        tool_calls: [{ id: "c1", type: "function", function: { name: "run_sql", arguments: args } }],
+        tool_calls: [{ id: "c1", type: "function", function: { name, arguments: args } }],
       },
     },
   ],
@@ -156,6 +197,71 @@ test("agent retries a cut-off or garbled reply instead of showing it", async () 
   assert.ok(answer && answer.type === "answer");
   assert.equal(answer.text, "No data on that.");
   assert.equal(events.filter((e) => e.type === "step").length, 0);
+});
+
+test("a shape-of-game question cannot query until the measure is accepted", async () => {
+  let queries = 0;
+  const db = fakeDb([{ name: "Giannis Antetokounmpo", total: 6.5 }]);
+  const inner = db.prepare.bind(db);
+  db.prepare = () => {
+    queries += 1;
+    return inner();
+  };
+  const model = scriptedModel([
+    toolCallReply(JSON.stringify({ sql: "SELECT MIN(offense, defense, playmaking) FROM drbl_ratings", purpose: "Lowest component" })),
+    toolCallReply(
+      JSON.stringify({
+        claim: "Best player whose weaker end stays high",
+        level: "impact_ratings.total",
+        hole: "weaker of impact_ratings.offense and impact_ratings.defense",
+        rejected: "DRBL component floor",
+      }),
+      "set_measure"
+    ),
+    toolCallReply(JSON.stringify({ sql: "SELECT name, total FROM impact_ratings", purpose: "Weaker end" })),
+    answerReply("Giannis holds up on both ends. Jokic is the best player on the list."),
+  ]);
+  const events = await collect(
+    { AI: model.ai, ASK_DB: db, PAGE_CACHE: memoryKv() },
+    "Who has no holes and would fit any coaching system?"
+  );
+  const steps = events.filter((e) => e.type === "step_done");
+  assert.equal(steps[0]?.type, "step_done");
+  if (steps[0]?.type === "step_done") {
+    assert.equal(steps[0].ok, false);
+    assert.equal(steps[0].summary, "Need a measure first");
+  }
+  assert.equal(steps[1]?.type, "step_done");
+  if (steps[1]?.type === "step_done") assert.equal(steps[1].summary, "Measure set");
+  assert.equal(queries, 1);
+  const answer = events.find((e) => e.type === "answer");
+  assert.ok(answer && answer.type === "answer");
+  assert.match(answer.text, /Giannis/);
+});
+
+test("agent answers from the rows it has once it runs out of steps", async () => {
+  const tool = toolCallReply(JSON.stringify({ sql: "SELECT 1", purpose: "Another lookup" }));
+  const model = scriptedModel([
+    tool,
+    tool,
+    tool,
+    tool,
+    tool,
+    tool,
+    tool,
+    answerReply("Victor Wembanyama has the highest floor of the three skills in 2025-26."),
+  ]);
+  const events = await collect(
+    { AI: model.ai, ASK_DB: fakeDb([{ name: "Victor Wembanyama" }]), PAGE_CACHE: memoryKv() },
+    "Who is the most interchangeable?"
+  );
+  const answer = events.find((e) => e.type === "answer");
+  assert.ok(answer && answer.type === "answer");
+  assert.match(answer.text, /Victor Wembanyama/);
+  assert.equal(events.some((e) => e.type === "error"), false);
+  const last = model.calls.at(-1) as { tools?: unknown; messages: Array<{ content?: string }> };
+  assert.equal(last.tools, undefined);
+  assert.match(last.messages.at(-1)?.content ?? "", /Stop querying/);
 });
 
 test("agent stops before calling the model once the daily cap is used", async () => {

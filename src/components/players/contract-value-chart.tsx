@@ -21,9 +21,6 @@ export type ContractValueChartYear = {
 const STEPS = [5e6, 10e6, 20e6, 25e6, 50e6, 100e6];
 /** Surplus this small reads as even. */
 const EVEN = 50_000;
-/** A trend smaller than this over the deal isn't worth calling out. */
-const TREND_MIN = 5e6;
-
 function gridStep(max: number): number {
   return STEPS.find((s) => max / s <= 4) ?? STEPS[STEPS.length - 1]!;
 }
@@ -40,36 +37,6 @@ function sign(d: number): -1 | 0 | 1 {
 
 const SURPLUS_TONE = (d: number) =>
   sign(d) === 0 ? "text-muted-foreground" : d > 0 ? "text-[var(--chart-3)]" : "text-destructive";
-
-/** One plain sentence on how the whole deal looks. */
-function headline(years: ContractValueChartYear[]): string {
-  const n = years.length;
-  const ahead = years.filter((y) => sign(y.surplus) > 0).length;
-  const behind = years.filter((y) => sign(y.surplus) < 0).length;
-  let lead: string;
-  if (n === 1) {
-    lead =
-      ahead === 1
-        ? "Projected to be worth more than his salary this season."
-        : behind === 1
-          ? "Projected to be worth less than his salary this season."
-          : "Projected to be worth about his salary this season.";
-  } else if (ahead === n) lead = "Worth more than his salary in every season of the deal.";
-  else if (behind === n) lead = "Paid more than he's projected to be worth in every season.";
-  else lead = `Worth more than his salary in ${ahead} of ${n} seasons.`;
-
-  if (n < 2) return lead;
-  const first = years[0]!;
-  const last = years[n - 1]!;
-  const change = last.surplus - first.surplus;
-  if (Math.abs(change) < TREND_MIN) return lead;
-  const salaryRises = last.salary > first.salary + TREND_MIN;
-  const overall = years.reduce((s, y) => s + y.surplus, 0);
-  const shrinking = change < 0;
-  const tail = shrinking && salaryRises ? " as his salary rises" : " over the deal";
-  if (overall >= 0) return `${lead} The edge ${shrinking ? "shrinks" : "grows"}${tail}.`;
-  return `${lead} The loss ${shrinking ? "grows" : "narrows"}${tail}.`;
-}
 
 /** Paid vs worth, one row per contract season, with the gap between them filled in. */
 type Series = "salary" | "worth" | "range" | "gap";
@@ -96,8 +63,6 @@ export function ContractValueChart({ years }: { years: ContractValueChartYear[] 
 
   return (
     <div className="flex flex-col gap-3">
-      <p className={cn(type.body, "font-semibold leading-snug")}>{headline(years)}</p>
-
       <div data-hover-group className="flex flex-col">
         {years.map((y, i) => {
           const isActive = y.season === active.season;
@@ -249,14 +214,8 @@ export function ContractValueChart({ years }: { years: ContractValueChartYear[] 
         <li className={legendClass("gap")} onMouseEnter={() => setSeries("gap")}>
           <span aria-hidden className="h-1.5 w-4 rounded-full bg-[var(--chart-3)]" />
           <span aria-hidden className="-ml-1 h-1.5 w-4 rounded-full bg-[var(--destructive)]" />
-          Gain or loss
+          Surplus
         </li>
-        {years.some((y) => sign(y.worth - y.salary) !== sign(y.surplus)) ? (
-          <li className="inline-flex items-center gap-1.5">
-            <span aria-hidden className="h-1.5 w-4 rounded-full bg-muted-foreground/40" />
-            Grey where option terms flip the surplus
-          </li>
-        ) : null}
       </ul>
     </div>
   );

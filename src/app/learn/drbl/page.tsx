@@ -26,6 +26,7 @@ import boxForwardWeights from "../../../../drbl/models/box-forward-weights.json"
 import { BOX_PRIOR_CONFIG } from "../../../../drbl/models/box-prior";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/learn/drbl" },
   title: "DRBL guide",
   description:
     "How DRBL/100 rates players from play-by-play and the box score, how it was tested against real final scores, and the numbers built on it: WAR1, DRBL-O, DRBL-D and contract surplus.",
@@ -136,7 +137,6 @@ export default function LearnDrblPage() {
         </Link>
 
         <header className="flex flex-col gap-3">
-          <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">DRBL numbers</p>
           <h1 className="text-[2rem] font-bold tracking-tight sm:text-[2.25rem]">How DRBL rates players</h1>
           <p className="max-w-2xl text-[16px] leading-relaxed text-muted-foreground">
             DRBL reads public play-by-play and box scores and estimates how much each player helped or hurt his
@@ -154,7 +154,6 @@ export default function LearnDrblPage() {
 
         <GuideSection
           id="measures"
-          eyebrow="What it measures"
           title="Points per 100 possessions, against an average player"
           lead={
             <>
@@ -189,7 +188,6 @@ export default function LearnDrblPage() {
 
         <GuideSection
           id="pieces"
-          eyebrow="Two readings"
           title="Play-by-play credit and the box score, blended"
           lead={
             <>
@@ -254,7 +252,6 @@ DRBL/100 = c × N / (N + ${sampleK}) × blend`}
 
         <GuideSection
           id="small-samples"
-          eyebrow="Small samples"
           title="Small samples start near zero"
           lead={
             <p>
@@ -272,7 +269,6 @@ DRBL/100 = c × N / (N + ${sampleK}) × blend`}
 
         <GuideSection
           id="scale"
-          eyebrow="Scale"
           title="Early ratings are scaled down"
           lead={
             <p>
@@ -296,7 +292,6 @@ DRBL/100 = c × N / (N + ${sampleK}) × blend`}
 
         <GuideSection
           id="tested"
-          eyebrow="Tested"
           title="Tested against real final scores"
           lead={
             <p>
@@ -324,7 +319,6 @@ DRBL/100 = c × N / (N + ${sampleK}) × blend`}
 
         <GuideSection
           id="carryover"
-          eyebrow="Season to season"
           title="Steadier from one season to the next"
           lead={
             <p>
@@ -352,7 +346,6 @@ DRBL/100 = c × N / (N + ${sampleK}) × blend`}
 
         <GuideSection
           id="war1"
-          eyebrow="WAR1"
           title="WAR1: how much, not how good"
           lead={
             <>
@@ -398,7 +391,6 @@ DRBL/100 = c × N / (N + ${sampleK}) × blend`}
 
         <GuideSection
           id="sides"
-          eyebrow="Offense and defense"
           title="Offense, defense and the diagnostics"
           lead={
             <p>
@@ -457,7 +449,6 @@ DRBL/100 = c × N / (N + ${sampleK}) × blend`}
 
         <GuideSection
           id="built-on"
-          eyebrow="Built on it"
           title="Where the rest of the site uses DRBL/100"
           lead={
             <ul className="flex list-disc flex-col gap-1.5 pl-5">
@@ -519,12 +510,11 @@ DRBL/100 = c × N / (N + ${sampleK}) × blend`}
         {firstSeason && lastSeason ? (
           <GuideSection
             id="seasons"
-            eyebrow="Seasons"
             title={`Seasons covered: ${firstSeason.season} to ${lastSeason.season}`}
             lead={
               <p>
                 DRBL is published for every regular season from {firstSeason.season} on. Older seasons show box scores
-                but no DRBL, and a blank there means not published, not 0. {firstSeason.season} has fewer games because
+                but no DRBL, and a blank there means not published, not 0. 2020-21 has fewer games because
                 it was a 72-game season.
                 {coverage.some((c) => c.games === 1225)
                   ? " Seasons showing 1,225 games are missing five neutral-site games from the play-by-play part. When we checked, adding them back moved the play-by-play rate by less than 0.01 on average."
@@ -548,7 +538,6 @@ DRBL/100 = c × N / (N + ${sampleK}) × blend`}
 
         <GuideSection
           id="limits"
-          eyebrow="Limits"
           title="What DRBL doesn't do"
           lead={
             <ul className="flex list-disc flex-col gap-1.5 pl-5">

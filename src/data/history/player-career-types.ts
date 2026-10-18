@@ -72,7 +72,10 @@ export type HistoryPlayerGame = {
   starter: boolean | null;
 };
 
-/** DRBL available only for supported product seasons (2020-21+). */
+/** First season with a published DRBL artifact. Earlier seasons stay blank. */
+export const DRBL_SUPPORTED_START = "2018-19";
+
+/** DRBL available only for supported product seasons. */
 export function historySeasonSupportsDrbl(season: string): boolean {
-  return season >= "2020-21";
+  return season >= DRBL_SUPPORTED_START;
 }

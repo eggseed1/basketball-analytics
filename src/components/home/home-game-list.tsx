@@ -31,7 +31,7 @@ export function HomeGameList({
           {emptyLabel}
         </p>
       ) : (
-        <ul className="flex flex-col divide-y divide-border rounded-lg border border-border">
+        <ul className="flex flex-col divide-y divide-border/40 rounded-lg border border-border/40">
           {games.map((card) => (
             <li key={card.game.id}>
               <HomeGameRow card={card} mode={mode} />

@@ -65,6 +65,7 @@ import {
 import { mergePlayerSeasonStats } from "@/lib/player-destination";
 import { slimEdgeProductEnabled } from "@/data/providers/nba/runtime-policy";
 import { statTipProps } from "@/lib/stat-glossary";
+import { LinkCue } from "@/components/ui/link-cue";
 
 function pct(n: number | null): string {
   if (n == null) return "—";
@@ -402,7 +403,7 @@ async function CareerView({
               prefetch={false}
               className="font-semibold underline-offset-2 hover:underline"
             >
-              Open {season} game log <span data-motion-arrow aria-hidden>→</span>
+              Open {season} game log <LinkCue />
             </TransitionLink>
           </p>
         </>
@@ -955,7 +956,7 @@ async function ShootingView({
                 prefetch={false}
                 className="font-semibold underline-offset-2 hover:underline"
               >
-                Game log → open a game for flow / PBP <span data-motion-arrow aria-hidden>→</span>
+                Game log → open a game for flow / PBP <LinkCue />
               </TransitionLink>
             </p>
           ) : null}
@@ -1132,7 +1133,7 @@ async function AdvancedView({
           />
         ) : (
           <div className="rounded-md border border-border px-3 py-2 text-[13px] text-muted-foreground">
-            DRBL/100 available 2020-21+ only (never shown as 0 for earlier eras).
+            DRBL/100 available 2018-19+ only (never shown as 0 for earlier eras).
           </div>
         )}
         {caps.advancedDrbl ? (
@@ -1150,7 +1151,7 @@ async function AdvancedView({
           />
         ) : (
           <div className="rounded-md border border-border px-3 py-2 text-[13px] text-muted-foreground">
-            WAR1 follows the same 2020-21+ support window as DRBL/100.
+            WAR1 follows the same 2018-19+ support window as DRBL/100.
           </div>
         )}
       </div>
@@ -1203,7 +1204,7 @@ async function AdvancedView({
           prefetch={false}
           className="font-semibold underline-offset-2 hover:underline"
         >
-          Learn DRBL / WAR1 semantics <span data-motion-arrow aria-hidden>→</span>
+          Learn DRBL / WAR1 semantics <LinkCue />
         </TransitionLink>
       </p>
     </section>
@@ -1283,7 +1284,7 @@ async function HighsView({
                         prefetch={false}
                         className="font-semibold underline-offset-2 hover:underline"
                       >
-                        Game <span data-motion-arrow aria-hidden>→</span>
+                        Game <LinkCue />
                       </TransitionLink>
                     </td>
                   </tr>
@@ -1314,7 +1315,7 @@ async function HighsView({
                   prefetch={false}
                   className="text-[12px] font-semibold underline-offset-2 hover:underline"
                 >
-                  Open game <span data-motion-arrow aria-hidden>→</span>
+                  Open game <LinkCue />
                 </TransitionLink>
                 {h.tied > 0 ? (
                   <details className="text-[12px]">
@@ -1400,7 +1401,7 @@ async function OverviewDepthLinks({
                 prefetch={false}
                 className="underline-offset-2 hover:underline"
               >
-                {label} <span data-motion-arrow aria-hidden>→</span>
+                {label} <LinkCue />
               </TransitionLink>
             );
           })}

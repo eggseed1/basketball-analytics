@@ -5,9 +5,11 @@ import { Share2 } from "lucide-react";
 
 import type { ComparisonDimension, PlayerComparisonResult } from "@/analytics";
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
+import { SHARE_PALETTE, ShareCardFrame, type ShareAppearance } from "@/components/share/share-card";
 import { ShareSnapshotDialog } from "@/components/share/share-snapshot-dialog";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { type } from "@/lib/design-system";
+import { brandAtmosphereColors } from "@/lib/game-matchup-theme";
 import { playerHeadshotCandidates, resolveTeamBrand, teamChartColor } from "@/lib/nba-brand";
 import { photoCreditFor, photoCreditText } from "@/lib/photo-credits";
 import { cn } from "@/lib/utils";
@@ -68,11 +70,6 @@ function slugFileName(result: PlayerComparisonResult) {
   return `drbl-compare-${a}-vs-${b}-${sa}-${sb}.png`;
 }
 
-function lastName(name: string) {
-  const parts = name.trim().split(/\s+/);
-  return (parts[parts.length - 1] ?? name).toUpperCase();
-}
-
 function seasonLabel(result: PlayerComparisonResult, side: "a" | "b") {
   if (side === "a") return result.seasonA ?? result.season ?? "";
   return result.seasonB ?? result.season ?? "";
@@ -84,12 +81,12 @@ function sideWins(d: ComparisonDimension, side: "a" | "b") {
   return side === "a" ? d.delta > 0 : d.delta < 0;
 }
 
-function shareSideColor(teamKey: string | undefined, fallback: string) {
-  const chart = teamChartColor(teamKey, { surface: "dark" });
+function shareSideColor(teamKey: string | undefined, fallback: string, appearance: ShareAppearance) {
+  const chart = teamChartColor(teamKey, { surface: appearance });
   if (chart.abbr && chart.abbr !== "-") return chart.color;
   const brand = resolveTeamBrand(teamKey);
   if (brand) {
-    return teamChartColor(brand.abbr, { surface: "dark" }).color;
+    return teamChartColor(brand.abbr, { surface: appearance }).color;
   }
   return fallback;
 }
@@ -98,28 +95,35 @@ function CompareShareGraphic({
   result,
   metrics,
   layout,
+  appearance,
 }: {
   result: PlayerComparisonResult;
   metrics: ComparisonDimension[];
   layout: ShareLayout;
+  appearance: ShareAppearance;
 }) {
+  const palette = SHARE_PALETTE[appearance];
+  const aWash = brandAtmosphereColors(
+    resolveTeamBrand(result.aTeamKey)?.primary,
+    resolveTeamBrand(result.aTeamKey)?.secondary
+  );
+  const bWash = brandAtmosphereColors(
+    resolveTeamBrand(result.bTeamKey)?.primary,
+    resolveTeamBrand(result.bTeamKey)?.secondary
+  );
   const aSeason = seasonLabel(result, "a");
   const bSeason = seasonLabel(result, "b");
-  const aColor = shareSideColor(result.aTeamKey, FALLBACK_A);
-  const bColor = shareSideColor(result.bTeamKey, FALLBACK_B);
+  const aColor = shareSideColor(result.aTeamKey, FALLBACK_A, appearance);
+  const bColor = shareSideColor(result.bTeamKey, FALLBACK_B, appearance);
   const credits = [result.aId, result.bId]
     .map((id) => photoCreditFor(playerHeadshotCandidates({ playerId: id })[0]))
     .filter((c) => c !== null);
 
   return (
-    <div
-      className="w-[540px] max-w-[540px] shrink-0 select-none px-7 pb-7 pt-8 text-white"
-      style={{
-        background:
-          "radial-gradient(120% 80% at 50% 0%, #1a1a1f 0%, #0c0c0e 55%, #080809 100%)",
-        fontFamily:
-          'ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif',
-      }}
+    <ShareCardFrame
+      appearance={appearance}
+      colorA={aWash?.colorA ?? bWash?.colorA}
+      colorB={bWash?.colorA ?? aWash?.colorB}
     >
       <div className="grid grid-cols-2 gap-6">
         {(
@@ -128,43 +132,31 @@ function CompareShareGraphic({
               id: result.aId,
               name: result.aName,
               season: aSeason,
-              color: aColor,
+              teamKey: result.aTeamKey,
             },
             {
               id: result.bId,
               name: result.bName,
               season: bSeason,
-              color: bColor,
+              teamKey: result.bTeamKey,
             },
           ] as const
         ).map((p) => (
-          <div
-            key={p.id}
-            className="flex min-w-0 flex-col items-center gap-3"
-          >
-            <div
-              className="overflow-hidden rounded-sm p-[2px]"
-              style={{ background: p.color }}
-            >
-              <div className="overflow-hidden rounded-[1px] bg-[#111]">
-                <PlayerHeadshot
-                  playerId={p.id}
-                  name={p.name}
-                  size="xl"
-                  className="!h-[148px] !w-[148px] !rounded-none !ring-0"
-                  priority
-                />
-              </div>
-            </div>
+          <div key={p.id} className="flex min-w-0 flex-col items-center gap-3">
+            <PlayerHeadshot
+              playerId={p.id}
+              name={p.name}
+              teamKey={p.teamKey}
+              size="xl"
+              className="!h-[120px] !w-[120px]"
+              priority
+            />
             <div className="w-full min-w-0 px-1 text-center">
-              <p
-                className="truncate text-[18px] font-black uppercase leading-tight tracking-[0.04em] sm:text-[20px]"
-                title={lastName(p.name)}
-              >
-                {lastName(p.name)}
+              <p className="truncate text-[18px] font-semibold leading-tight tracking-tight" title={p.name}>
+                {p.name}
               </p>
               {p.season ? (
-                <p className="mt-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-white/55">
+                <p className="mt-1 text-[12px] font-semibold" style={{ color: palette.muted }}>
                   {p.season}
                 </p>
               ) : null}
@@ -186,8 +178,9 @@ function CompareShareGraphic({
               className={cn(
                 SHARE_ROW_GRID,
                 "py-3",
-                i > 0 && "border-t border-white/15"
+                i > 0 && "border-t"
               )}
+              style={i > 0 ? { borderColor: palette.line } : undefined}
             >
               <div className="min-w-0">
                 {layout === "bars" ? (
@@ -201,7 +194,7 @@ function CompareShareGraphic({
                     >
                       {d.aDisplay}
                     </span>
-                    <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/10">
+                    <div className="h-1.5 w-full overflow-hidden rounded-full" style={{ background: palette.track }}>
                       <div
                         className="ml-auto h-full rounded-full"
                         style={{
@@ -225,8 +218,11 @@ function CompareShareGraphic({
                 )}
               </div>
 
-              <div className="flex h-7 w-full items-center justify-center rounded-full border border-white/70 px-1.5">
-                <span className="truncate text-[10px] font-bold uppercase tracking-[0.12em] text-white">
+              <div
+                className="flex h-7 w-full items-center justify-center rounded-md px-1.5"
+                style={{ background: palette.tile }}
+              >
+                <span className="truncate text-[11px] font-semibold" style={{ color: palette.fg }}>
                   {d.label}
                 </span>
               </div>
@@ -243,7 +239,7 @@ function CompareShareGraphic({
                     >
                       {d.bDisplay}
                     </span>
-                    <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/10">
+                    <div className="h-1.5 w-full overflow-hidden rounded-full" style={{ background: palette.track }}>
                       <div
                         className="h-full rounded-full"
                         style={{
@@ -271,15 +267,15 @@ function CompareShareGraphic({
         })}
       </div>
 
-      <p className="mt-8 text-center text-[11px] font-semibold uppercase tracking-[0.22em] text-white/45">
+      <p className="text-center text-[11px] font-semibold" style={{ color: palette.muted }}>
         DRBL
       </p>
       {credits.map((credit) => (
-        <p key={credit.filePage} className="mt-2 text-center text-[9px] leading-snug text-white/35">
+        <p key={credit.filePage} className="text-center text-[9px] leading-snug" style={{ color: palette.muted }}>
           {photoCreditText(credit)}
         </p>
       ))}
-    </div>
+    </ShareCardFrame>
   );
 }
 
@@ -434,19 +430,20 @@ export function CompareShareControls({
         shareText={compareShareText(result)}
         canCapture={selectedMetrics.length > 0}
         controls={controls}
-        graphic={
+        graphic={(appearance) => (
           <CompareShareGraphic
             result={result}
             metrics={selectedMetrics}
             layout={layout}
+            appearance={appearance}
           />
-        }
+        )}
         emptyPreview={
           <div className="flex h-40 flex-col items-center justify-center gap-1 text-center">
-            <p className={cn(type.bodySm, "font-semibold text-white")}>
+            <p className={cn(type.bodySm, "font-semibold text-foreground")}>
               {result.aName} vs {result.bName}
             </p>
-            <p className={cn(type.caption, "text-white/60")}>
+            <p className={cn(type.caption, "text-muted-foreground")}>
               Pick metrics to preview the snapshot
             </p>
           </div>

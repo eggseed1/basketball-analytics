@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import { AppLink } from "@/components/ui/app-link";
 import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
+import { LinkCue } from "@/components/ui/link-cue";
 
 /** `before` is DRBL/100 with the small-sample discount taken back out. */
 export type ShrinkagePlayer = [id: string, name: string, possessions: number, before: number, drbl100: number];
@@ -383,7 +384,7 @@ export function DrblShrinkageExplorer({
           ))}
         </div>
         <p className={cn(type.micro, "absolute bottom-0 right-0 font-semibold text-muted-foreground")}>
-          Before the small-sample discount <span data-motion-arrow aria-hidden>→</span>
+          Before the small-sample discount <LinkCue />
         </p>
       </div>
 
@@ -502,7 +503,7 @@ export function DrblShrinkageExplorer({
               href={`/players/${selected[0]}`}
               className="font-semibold text-foreground underline-offset-2 hover:underline"
             >
-              Open {selected[1]}&apos;s page <span data-motion-arrow aria-hidden>→</span>
+              Open {selected[1]}&apos;s page <LinkCue />
             </AppLink>
           </>
         ) : null}

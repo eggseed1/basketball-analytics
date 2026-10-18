@@ -25,6 +25,7 @@ import { type } from "@/lib/design-system";
 import { standingsHref } from "@/lib/standings-routes";
 import { cn } from "@/lib/utils";
 import { historyHref } from "@/themes/history-url";
+import { LinkCue } from "@/components/ui/link-cue";
 import {
   ERA_THEMES,
   defaultTimeMachineSeason,
@@ -158,29 +159,26 @@ function LedReadout({
   label,
   meta,
   value,
-  led,
   large,
 }: {
   label: string;
   meta?: string;
   value: string;
-  led: string;
   large?: boolean;
 }) {
   return (
     <div className="flex min-w-0 flex-col gap-1.5">
-      <div className="flex items-center justify-between gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-white/45">
-        <span>{label}</span>
-        {meta ? <span className="truncate text-white/60">{meta}</span> : null}
+      <div className="flex items-center justify-between gap-2 type-caption text-muted-foreground">
+        <span className="font-semibold">{label}</span>
+        {meta ? <span className="truncate">{meta}</span> : null}
       </div>
       <div
         className={cn(
-          "tm-led grid overflow-hidden rounded-[10px] font-mono font-bold leading-none tabular-nums tracking-tight",
+          "tm-led grid overflow-hidden rounded-[8px] font-bold leading-none tabular-nums tracking-tight",
           large
-            ? "px-4 py-3 text-[40px] sm:px-5 sm:py-4 sm:text-[56px]"
-            : "px-4 py-2.5 text-[22px] sm:text-[26px]"
+            ? "px-4 py-3 text-[32px] sm:text-[40px]"
+            : "px-4 py-2.5 text-[20px] sm:text-[22px]"
         )}
-        style={{ "--led": led } as CSSProperties}
       >
         <span aria-hidden className="tm-led-ghost col-start-1 row-start-1">
           8888-88
@@ -351,20 +349,13 @@ export function TimeMachineLanding({
   return (
     <main data-motion-page className="site-shell flex flex-1 flex-col gap-12 py-8 sm:py-12">
       <MotionReveal />
-      <section className="tm-console dark relative z-[2] mx-auto w-full max-w-4xl rounded-[22px] p-5 text-white sm:p-8">
-        <div className="grid gap-7 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:items-end">
+      <section className="sports-card relative z-[2] mx-auto w-full max-w-4xl p-4 sm:p-5">
+        <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:items-end">
           <header>
-            <p className="flex items-center gap-2 text-[12px] font-bold uppercase tracking-[0.22em] text-[#ffd27a]">
-              <span
-                aria-hidden
-                className="size-1.5 rounded-full bg-[#ffd27a] shadow-[0_0_10px_2px_rgb(255_200_100/0.8)]"
-              />
-              Time Machine
-            </p>
-            <h1 className="mt-3 text-balance text-[34px] font-black leading-[1.02] tracking-tight sm:text-[46px]">
+            <h1 className="type-title-1 text-balance">
               Enter the NBA Time Machine
             </h1>
-            <p className="mt-3 max-w-md text-[15px] leading-relaxed text-white/65">
+            <p className="mt-2 max-w-md type-body-sm text-muted-foreground">
               Pick a season to see its standings, leaders and games on any day.
             </p>
           </header>
@@ -374,14 +365,9 @@ export function TimeMachineLanding({
               label="Destination"
               meta={`${dialEra.name} · ${backLabel}`}
               value={dialSeason}
-              led="#ffb547"
               large
             />
-            <LedReadout
-              label="Present"
-              value={presentSeason}
-              led="#4ef08a"
-            />
+            <LedReadout label="Present" value={presentSeason} />
           </div>
         </div>
 
@@ -424,7 +410,7 @@ export function TimeMachineLanding({
           </div>
           <div
             aria-hidden
-            className="relative mt-2 h-4 text-[10px] font-semibold tabular-nums text-white/40"
+            className="relative mt-2 h-4 type-micro font-semibold tabular-nums text-muted-foreground"
           >
             {tickYears.map((y) => {
               const pct =
@@ -467,27 +453,22 @@ export function TimeMachineLanding({
                   }}
                   aria-pressed={active}
                   className={cn(
-                    "group flex flex-col items-start gap-1 rounded-[10px] px-3 py-2 text-left ring-1 ring-inset transition",
+                    "group flex flex-col items-start gap-1 rounded-[8px] px-3 py-2 text-left ring-1 ring-inset transition",
                     active
-                      ? "bg-white/[0.1] ring-[color:var(--era)]"
-                      : "bg-white/[0.03] ring-white/[0.08] hover:bg-white/[0.07]"
+                      ? "bg-foreground/[0.06] ring-[color:var(--era)]"
+                      : "bg-foreground/[0.03] ring-foreground/10 hover:bg-foreground/[0.06]"
                   )}
                   style={{ "--era": ERA_ACCENT[era.id] } as CSSProperties}
                   title={`${era.name}: ${era.description}`}
                 >
-                  <span className="flex items-center gap-1.5 text-[14px] font-bold leading-tight tracking-tight">
+                  <span className="flex items-center gap-1.5 type-body-sm font-semibold leading-tight tracking-tight">
                     <span
                       aria-hidden
                       className="size-2 rounded-full bg-[color:var(--era)]"
-                      style={
-                        active
-                          ? { boxShadow: `0 0 10px 1px ${ERA_ACCENT[era.id]}` }
-                          : undefined
-                      }
                     />
                     {era.shortLabel}
                   </span>
-                  <span className="text-[11px] tabular-nums text-white/50">
+                  <span className="type-micro tabular-nums text-muted-foreground">
                     {eraYears(era)}
                   </span>
                 </button>
@@ -550,7 +531,7 @@ export function TimeMachineLanding({
                     }
                   }
                 }}
-                className="h-12 w-full rounded-[10px] bg-white/[0.05] px-4 text-[16px] font-semibold tabular-nums text-white outline-none ring-1 ring-inset ring-white/[0.1] transition-shadow placeholder:font-medium placeholder:text-white/40 focus:ring-2 focus:ring-[#ffd27a]/60"
+                className="h-12 w-full rounded-[8px] bg-foreground/[0.035] px-4 type-body font-semibold tabular-nums text-foreground outline-none ring-1 ring-inset ring-foreground/10 transition-shadow placeholder:font-medium placeholder:text-muted-foreground focus:ring-2 focus:ring-ring/50"
               />
               {showList ? (
                 <GlassSurface
@@ -603,18 +584,34 @@ export function TimeMachineLanding({
             <button
               type="submit"
               disabled={pending}
-              className="inline-flex h-12 shrink-0 items-center justify-center gap-1.5 rounded-[10px] bg-[#ffc53d] px-5 text-[15px] font-bold text-[#1a1407] shadow-[0_0_24px_-4px_rgb(255_197_61/0.7)] transition hover:brightness-105 active:translate-y-px disabled:opacity-60 sm:px-6"
+              className="inline-flex h-12 shrink-0 items-center justify-center gap-1.5 rounded-[8px] bg-primary px-5 type-body-sm font-semibold text-primary-foreground transition hover:bg-primary/80 active:translate-y-px disabled:opacity-60 sm:px-6"
             >
               {pending ? "Traveling…" : "Travel"}
-              {pending ? null : <span data-motion-arrow aria-hidden>→</span>}
+              {pending ? null : <LinkCue />}
             </button>
           </div>
           {error ? (
-            <p className="mt-2 text-[13px] font-medium text-[#ff8a7a]" role="alert">
+            <p className="mt-2 type-caption font-medium text-destructive" role="alert">
               {error}
             </p>
           ) : null}
         </form>
+      </section>
+
+      <section className="mx-auto w-full max-w-5xl">
+        <SectionTitle
+          title="Record book"
+          note="Single games, seasons, careers, and team marks back to the 1946-47 BAA season."
+        />
+        <Link
+          href="/history/records"
+          className="sports-card mt-5 flex flex-col gap-1 p-4 transition-transform duration-200 hover:-translate-y-1"
+        >
+          <span className="text-[16px] font-bold tracking-tight">Open the record book</span>
+          <span className="text-[13px] leading-relaxed text-muted-foreground">
+            Points, rebounds, assists, threes, streaks, and the rare lines. Lists that stop in 1996-97 say so.
+          </span>
+        </Link>
       </section>
 
       {landmarks.length ? (
@@ -657,7 +654,7 @@ export function TimeMachineLanding({
                         href={l.boardHref}
                         className="relative z-[1] mt-auto pt-1 text-[12px] font-semibold text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
                       >
-                        {l.boardLabel} <span data-motion-arrow aria-hidden>→</span>
+                        {l.boardLabel} <LinkCue />
                       </Link>
                     ) : null}
                   </div>
@@ -690,8 +687,7 @@ export function TimeMachineLanding({
                   {game.title}
                 </Link>
                 <p
-                  className="tm-led self-start rounded-[8px] px-3 py-1.5 font-mono text-[17px] font-bold tabular-nums tracking-tight"
-                  style={{ "--led": "#ffb547" } as CSSProperties}
+                  className="tm-led self-start rounded-[8px] px-3 py-1.5 type-title font-bold tabular-nums tracking-tight"
                 >
                   <span className="tm-led-digits">{game.scoreLine}</span>
                 </p>
@@ -702,7 +698,7 @@ export function TimeMachineLanding({
                   href={game.historyHref}
                   className="relative z-[1] mt-auto pt-1 text-[12px] font-semibold text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
                 >
-                  Open that date <span data-motion-arrow aria-hidden>→</span>
+                  Open that date <LinkCue />
                 </Link>
               </li>
             ))}
@@ -728,7 +724,7 @@ export function TimeMachineLanding({
                 href={link.href}
                 className="inline-flex items-center gap-1 rounded-full bg-card px-3.5 py-2 text-[13px] font-semibold ring-1 ring-inset ring-foreground/[0.08] transition hover:-translate-y-0.5 hover:bg-foreground/[0.05]"
               >
-                {link.label} <span data-motion-arrow aria-hidden>→</span>
+                {link.label} <LinkCue />
               </Link>
             </li>
           ))}

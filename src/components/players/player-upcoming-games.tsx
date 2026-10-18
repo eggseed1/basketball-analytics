@@ -1,5 +1,4 @@
 import { TransitionLink } from "@/components/continuity/query-nav";
-import { TextLink } from "@/components/ui/text-link";
 import type { GameSummary, TeamSeasonStats } from "@/data/types";
 import { type } from "@/lib/design-system";
 import type { TeamBrand } from "@/lib/nba-brand";
@@ -51,13 +50,10 @@ export function PlayerUpcomingGames({
         >
           Upcoming games
         </p>
-        <TextLink href="/scores" className={type.caption}>
-          Scores <span data-motion-arrow aria-hidden>→</span>
-        </TextLink>
+        <p className={cn(type.caption, "text-muted-foreground")}>
+          {season} · {team.abbreviation}
+        </p>
       </div>
-      <p className={cn(type.caption, "text-muted-foreground")}>
-        {season} · {team.abbreviation}
-      </p>
       {upcoming.length === 0 ? (
         <p className={cn(type.caption, "text-muted-foreground")}>
           No upcoming tip-offs scheduled in the near window.

@@ -230,7 +230,7 @@ export function paginateFeedItems(
 export function buildFilteredOffseasonFeed(
   index: TransactionEventIndex,
   filters: TransactionEventFilters = {},
-  options: { page?: number; pageSize?: number } = {}
+  options: { page?: number; pageSize?: number; sort?: "newest" | "oldest" } = {}
 ): {
   page: TransactionEventPage;
   feed: ReturnType<typeof paginateFeedItems>;
@@ -242,6 +242,7 @@ export function buildFilteredOffseasonFeed(
     index.clusters,
     index.byId
   );
+  if (options.sort === "oldest") feedItems.reverse();
   const feed = paginateFeedItems(
     feedItems,
     options.page ?? 1,
@@ -269,7 +270,9 @@ export function buildFilteredOffseasonFeed(
     byMonthMap.set(key, list);
   }
   const byMonth = [...byMonthMap.entries()]
-    .sort((a, b) => b[0].localeCompare(a[0]))
+    .sort((a, b) =>
+      options.sort === "oldest" ? a[0].localeCompare(b[0]) : b[0].localeCompare(a[0])
+    )
     .map(([monthKey, items]) => ({ monthKey, items }));
 
   return { page, feed, byMonth };

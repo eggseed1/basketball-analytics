@@ -19,10 +19,10 @@ import { TeamOffenseIsland } from "@/components/teams/team-offense-island";
 import { TeamPlayoffsIsland } from "@/components/teams/team-playoffs-island";
 import { TeamSplitsIsland } from "@/components/teams/team-splits-island";
 import { TeamOpeningNight } from "@/components/teams/overview/team-opening-night";
+import { TeamRosterWar1Island } from "@/components/teams/overview/team-roster-war1-island";
 import { TeamOverviewVisuals } from "@/components/teams/overview/team-overview-visuals";
 import { TeamSeasonRecapIsland } from "@/components/teams/overview/team-season-recap-island";
 import { StatsRankGrid } from "@/components/teams/viz/stats-rank-grid";
-import { TeamPrimaryNav } from "@/components/teams/team-primary-nav";
 import { TeamRosterIsland } from "@/components/teams/team-roster-island";
 import { TeamRosterBuiltIsland } from "@/components/teams/team-roster-built-island";
 import { TeamSalaryAssetsTab } from "@/components/teams/team-salary-assets-tab";
@@ -75,6 +75,8 @@ import {
 } from "@/themes/history-url";
 import { yieldForStreaming } from "@/lib/stream-yield";
 import { shareImageMetadata } from "@/lib/share-images";
+import { JsonLd } from "@/components/seo/json-ld";
+import { absoluteUrl } from "@/lib/site-url";
 
 /** Team color stays a hint on cards, close to the neutral home page cards. */
 const TEAM_CARD_TINT_SCALE = 0.3;
@@ -102,12 +104,14 @@ export async function generateMetadata({ params, searchParams }: TeamPageProps) 
       ? `?season=${encodeURIComponent(seasonParam)}`
       : "";
   return {
-    title: fullName ?? "Team",
+    title: fullName
+      ? `${fullName} ${season}: ${pastSeason ? "Roster and Stats" : "Roster, Stats and Payroll"}`
+      : "Team",
     alternates: {
       canonical: `/teams/${encodeURIComponent(canonicalTeamId)}${pastSeason}`,
     },
     description: fullName
-      ? `${fullName} roster, games, transactions, and team stats.`
+      ? `${fullName} ${season} roster, schedule and results, team stats${pastSeason ? "" : ", payroll"} and transactions.`
       : undefined,
     ...(pastSeason ? {} : shareImageMetadata("teams", canonicalTeamId, fullName ?? "Team")),
   };
@@ -355,6 +359,16 @@ export default async function TeamProfilePage({
       />
       <GlassTintScaleProvider scale={TEAM_CARD_TINT_SCALE}>
       <main data-motion-page className="site-shell relative z-[1] flex flex-col gap-4 py-5 sm:gap-5 sm:py-7">
+        <JsonLd
+          data={{
+            "@context": "https://schema.org",
+            "@type": "SportsTeam",
+            name: identityTeam.fullName,
+            sport: "Basketball",
+            url: absoluteUrl(`/teams/${encodeURIComponent(identityTeam.teamId)}`),
+            memberOf: { "@type": "SportsOrganization", name: "National Basketball Association" },
+          }}
+        />
         <MotionReveal />
         <TeamDestinationIdentity
           teamId={teamId}
@@ -374,12 +388,6 @@ export default async function TeamProfilePage({
           historyHref={teamFranchiseHistoryHref(teamId, seasonParam)}
         />
 
-        <TeamPrimaryNav
-          teamId={teamId}
-          tab={tab}
-          hrefOpts={hrefOpts}
-        />
-
         {tab === "overview" ? (
           seasonAwaitingGames ? (
             <div data-motion-stack className="flex flex-col gap-4">
@@ -394,6 +402,16 @@ export default async function TeamProfilePage({
               >
                 <TeamSeasonRecapIsland routeTeamId={teamId} season={priorSeason} />
               </Suspense>
+              <Suspense
+                fallback={<DestinationSectionSkeleton label="Loading roster WAR1…" />}
+              >
+                <TeamRosterWar1Island
+                  season={season}
+                  teamKey={identityTeam.abbreviation}
+                  gamesPlayed={null}
+                  record={null}
+                />
+              </Suspense>
             </div>
           ) : boardAvailable && analysis ? (
             <TeamOverviewVisuals
@@ -403,6 +421,11 @@ export default async function TeamProfilePage({
               traits={traits}
               howTheyWin={analysis.howTheyWin}
               season={season}
+              record={
+                standing && standing.wins + standing.losses > 0
+                  ? { wins: standing.wins, losses: standing.losses }
+                  : null
+              }
             />
           ) : (
             <section

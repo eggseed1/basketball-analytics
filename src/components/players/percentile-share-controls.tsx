@@ -5,11 +5,13 @@ import { Share2 } from "lucide-react";
 
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { TeamLogo } from "@/components/brand/team-logo";
+import { SHARE_PALETTE, ShareCardFrame, type ShareAppearance } from "@/components/share/share-card";
 import { ShareSnapshotDialog } from "@/components/share/share-snapshot-dialog";
 import { type } from "@/lib/design-system";
-import { playerHeadshotCandidates, resolveTeamBrand, teamChartColor } from "@/lib/nba-brand";
+import { playerHeadshotCandidates, resolveTeamBrand } from "@/lib/nba-brand";
+import { brandAtmosphereColors } from "@/lib/game-matchup-theme";
 import { photoCreditFor, photoCreditText } from "@/lib/photo-credits";
-import { percentileSavantColor, SAVANT_LEGEND } from "@/lib/player-grade";
+import { percentileSavantColor } from "@/lib/player-grade";
 import type { PercentileMetric } from "@/lib/player-percentile-metrics";
 import type { PercentileCategory } from "@/lib/player-stat-sheet-registry";
 import { cn } from "@/lib/utils";
@@ -48,51 +50,44 @@ function PercentileShareGraphic({
   season,
   teamKey,
   sections,
+  appearance,
 }: {
   playerId: string;
   playerName: string;
   season: string;
   teamKey?: string;
   sections: PercentileShareSection[];
+  appearance: ShareAppearance;
 }) {
   const brand = resolveTeamBrand(teamKey);
-  const frame = teamChartColor(teamKey, { surface: "dark" }).color;
+  const wash = brand ? brandAtmosphereColors(brand.primary, brand.secondary) : null;
+  const palette = SHARE_PALETTE[appearance];
   const credit = photoCreditFor(playerHeadshotCandidates({ playerId, espnId: playerId })[0]);
+  const legend = [
+    ["Poor", percentileSavantColor(10, appearance)],
+    ["Average", percentileSavantColor(50, appearance)],
+    ["Great", percentileSavantColor(90, appearance)],
+  ] as const;
   return (
-    <div
-      className="w-[540px] max-w-[540px] shrink-0 select-none px-7 pb-7 pt-8 text-white"
-      style={{
-        background:
-          "radial-gradient(120% 80% at 50% 0%, #1a1a1f 0%, #0c0c0e 55%, #080809 100%)",
-        fontFamily: 'ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif',
-      }}
-    >
-      <div className="flex items-center gap-5">
-        <div className="shrink-0 overflow-hidden rounded-sm p-[2px]" style={{ background: frame }}>
-          <div className="overflow-hidden rounded-[1px] bg-[#111]">
-            <PlayerHeadshot
-              playerId={playerId}
-              espnId={playerId}
-              name={playerName}
-              teamKey={teamKey}
-              size="xl"
-              className="!h-[120px] !w-[120px] !rounded-none !ring-0"
-              priority
-            />
-          </div>
-        </div>
+    <ShareCardFrame appearance={appearance} colorA={wash?.colorA} colorB={wash?.colorB}>
+      <div className="flex items-center gap-4">
+        <PlayerHeadshot
+          playerId={playerId}
+          espnId={playerId}
+          name={playerName}
+          teamKey={teamKey}
+          size="xl"
+          className="!h-[104px] !w-[104px]"
+          priority
+        />
         <div className="min-w-0">
-          <p className="text-[26px] font-black uppercase leading-[1.05] tracking-[0.03em]">
-            {playerName}
-          </p>
-          <p className="mt-2 flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-white/60">
-            {brand ? (
-              <TeamLogo teamKey={teamKey} size="xs" className="!h-5 !w-5" />
-            ) : null}
+          <p className="text-[26px] font-semibold leading-[1.1] tracking-tight">{playerName}</p>
+          <p className="mt-1.5 flex items-center gap-2 text-[13px] font-semibold" style={{ color: palette.muted }}>
+            {brand ? <TeamLogo teamKey={teamKey} size="xs" className="!h-5 !w-5" /> : null}
             {season}
             {brand ? ` · ${brand.abbr}` : null}
           </p>
-          <p className="mt-1 text-[11px] font-bold uppercase tracking-[0.18em] text-white/40">
+          <p className="mt-1 text-[12px] font-semibold" style={{ color: palette.muted }}>
             Percentile rankings
           </p>
         </div>
@@ -103,9 +98,9 @@ function PercentileShareGraphic({
         <span className="relative h-4">
           {(
             [
-              ["Poor", SAVANT_LEGEND.poor, "0%", "translateX(0)"],
-              ["Avg", SAVANT_LEGEND.average, "50%", "translateX(-50%)"],
-              ["Great", SAVANT_LEGEND.great, "100%", "translateX(-100%)"],
+              [legend[0][0], legend[0][1], "0%", "translateX(0)"],
+              [legend[1][0], legend[1][1], "50%", "translateX(-50%)"],
+              [legend[2][0], legend[2][1], "100%", "translateX(-100%)"],
             ] as const
           ).map(([label, color, left, transform]) => (
             <span
@@ -123,24 +118,25 @@ function PercentileShareGraphic({
       <div className="mt-2 flex flex-col gap-5">
         {sections.map((section) => (
           <div key={section.id}>
-            <p className="border-b border-white/25 pb-1.5 text-[11px] font-bold uppercase tracking-[0.16em] text-white/55">
+            <p className="border-b pb-1.5 text-[11px] font-semibold uppercase tracking-[0.12em]" style={{ borderColor: palette.line, color: palette.muted }}>
               {section.label}
             </p>
             {section.metrics.map((m, i) => {
               const pct = Math.max(0, Math.min(100, m.percentile));
-              const color = percentileSavantColor(pct, "dark");
+              const color = percentileSavantColor(pct, appearance);
               return (
                 <div
                   key={m.id}
-                  className={cn(SHARE_ROW_GRID, "py-2", i > 0 && "border-t border-white/10")}
+                  className={cn(SHARE_ROW_GRID, "py-2", i > 0 && "border-t")}
+                  style={i > 0 ? { borderColor: palette.line } : undefined}
                 >
                   <span className="truncate text-[14px] font-semibold">{m.label}</span>
                   <span className="relative h-[26px]">
                     {m.showPercentile ? (
                       <>
                         <span
-                          className="absolute top-1/2 h-2 -translate-y-1/2 rounded-full bg-white/10"
-                          style={{ left: PIP / 2, right: PIP / 2 }}
+                          className="absolute top-1/2 h-2 -translate-y-1/2 rounded-full"
+                          style={{ left: PIP / 2, right: PIP / 2, background: palette.track }}
                         />
                         <span
                           className="absolute top-1/2 h-2 -translate-y-1/2 rounded-full"
@@ -151,14 +147,14 @@ function PercentileShareGraphic({
                           }}
                         />
                         <span
-                          className="absolute top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full text-[11px] font-bold tabular-nums text-white ring-2 ring-[#0c0c0e]"
-                          style={{ left: pipLeft(pct), width: PIP, height: PIP, background: color }}
+                          className="absolute top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full text-[11px] font-bold tabular-nums text-white"
+                          style={{ left: pipLeft(pct), width: PIP, height: PIP, background: color, boxShadow: `0 0 0 2px ${palette.card}` }}
                         >
                           {Math.round(m.percentile)}
                         </span>
                       </>
                     ) : (
-                      <span className="absolute inset-y-0 left-0 flex items-center text-[11px] text-white/45">
+                      <span className="absolute inset-y-0 left-0 flex items-center text-[11px]" style={{ color: palette.muted }}>
                         {m.interpretation === "descriptive" ? "Volume, not a skill grade" : "Role context"}
                       </span>
                     )}
@@ -171,15 +167,15 @@ function PercentileShareGraphic({
         ))}
       </div>
 
-      <p className="mt-7 text-center text-[10.5px] font-semibold uppercase tracking-[0.16em] text-white/40">
-        DRBL · League percentiles for {season} · 100 is best
+      <p className="text-center text-[11px] font-semibold" style={{ color: palette.muted }}>
+        DRBL · League percentiles for {season}. 100 is best
       </p>
       {credit ? (
-        <p className="mt-2 text-center text-[9px] leading-snug text-white/35">
+        <p className="text-center text-[9px] leading-snug" style={{ color: palette.muted }}>
           {photoCreditText(credit)}
         </p>
       ) : null}
-    </div>
+    </ShareCardFrame>
   );
 }
 
@@ -305,10 +301,7 @@ export function PercentileShareControls({
         onClick={openDialog}
         disabled={!available.length}
         className={cn(
-          "inline-flex shrink-0 items-center gap-1.5 rounded-md border border-border/70 px-2 py-1",
-          type.caption,
-          "font-semibold text-muted-foreground transition-colors",
-          "hover:border-foreground/30 hover:bg-foreground/5 hover:text-foreground",
+          "sports-pill shrink-0 font-semibold",
           "disabled:pointer-events-none disabled:opacity-40"
         )}
         aria-haspopup="dialog"
@@ -325,19 +318,20 @@ export function PercentileShareControls({
         shareText={`${playerName} ${season} percentile rankings · DRBL`}
         canCapture={chosen.length > 0}
         controls={controls}
-        graphic={
+        graphic={(appearance) => (
           <PercentileShareGraphic
             playerId={playerId}
             playerName={playerName}
             season={season}
             teamKey={teamKey}
             sections={chosen}
+            appearance={appearance}
           />
-        }
+        )}
         emptyPreview={
           <div className="flex h-40 flex-col items-center justify-center gap-1 text-center">
-            <p className={cn(type.bodySm, "font-semibold text-white")}>{playerName}</p>
-            <p className={cn(type.caption, "text-white/60")}>Pick rankings to preview the snapshot</p>
+            <p className={cn(type.bodySm, "font-semibold text-foreground")}>{playerName}</p>
+            <p className={cn(type.caption, "text-muted-foreground")}>Pick rankings to preview the snapshot</p>
           </div>
         }
       />

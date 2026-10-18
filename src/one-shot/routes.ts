@@ -1,5 +1,6 @@
 import { cohortLevel, eliteYouthLabel, hasClubAcademies, levelOf, minutesBand, nodeLabel, performanceLevel, roleFor } from "./career";
-import { poolFor, townName } from "./names";
+import { citiesFor } from "./cities";
+import { poolFor } from "./names";
 import { clamp, createStreams, hashString, rngOf, type Rng } from "./rng";
 import { canAfford } from "./training";
 import type { LifeState, NodeKind, Offer, Role } from "./types";
@@ -12,13 +13,11 @@ import { country, domesticProLeagues, foreignProLeagues, league, maybeLeague, ty
  * offer. Moving abroad always comes from a named invitation.
  */
 
-const MASCOTS = ["Hawks", "Lions", "Comets", "Rangers", "Royals", "Falcons", "Waves", "Wolves", "Stars", "Titans", "Pioneers", "Owls"];
+const MASCOTS = ["Hawks", "Lions", "Comets", "Rangers", "Royals", "Falcons", "Waves", "Wolves", "Stars", "Titans", "Pioneers", "Owls", "Storm", "Aces", "Kings", "United", "Athletic", "Basket", "Eagles", "Foxes", "Mariners", "Miners", "Cyclones", "Guards"];
 
 function clubName(rng: Rng, countryId: string, kind: "club" | "school" | "university"): string {
-  const c = country(countryId);
   const pool = poolFor(countryId);
-  const town = townName(rng, pool);
-  const place = rng.chance(0.35) || !town ? (c.capital ?? c.name) : town;
+  const place = rng.pick(citiesFor(countryId));
   const mascot = rng.pick(MASCOTS);
   if (kind === "school") return `${place} High School`;
   if (kind === "university") return rng.chance(0.5) ? `${place} State` : `University of ${place}`;
@@ -126,7 +125,7 @@ function build(state: LifeState, d: Draft): Offer {
     leagueId: d.leagueId,
     teamName: d.teamName,
     role,
-    minutesBand: minutesBand(role, d.cap ?? (l?.model?.minutesCap ?? 32)),
+    minutesBand: minutesBand(role, d.cap ?? (l?.model?.minutesCap ?? 32), d.coaching),
     coaching: Math.round(d.coaching),
     difficulty: Math.round(clamp(50 + (d.need - lvl) * 3, 0, 100)),
     exposure: Math.round(d.exposure),
@@ -160,11 +159,18 @@ export function offseasonOffers(state: LifeState): Offer[] {
   const pros = domesticProLeagues(res.id);
   const top = pros[0];
   const clubCoaching = res.model.coachingAccess;
+  const thinMarket = res.model.exposureBase < 25 && !res.model.verifiedPro;
   const r = Array.from({ length: 8 }, () => rng.next());
   const nameRng = rng;
 
   if (age < 6) return offers;
-  if (state.placement.node === "nba" && state.placement.contract && state.placement.contract.yearsLeft > 0) return offers;
+  // Years left on a deal, or college eligibility, means he is not a free agent.
+  // The one exception is a search he started himself.
+  const yearsLeft = state.placement.contract?.yearsLeft ?? 0;
+  const inCollege = node === "university" && state.education.amateur && state.education.universityYears < 4;
+  const committed = yearsLeft > 0 || inCollege;
+  const hunting = typeof state.flags.overseasHunt === "number";
+  if (committed && !hunting) return offers;
 
   if (age < 10 && (node === "home" || node === "playground" || node === "school-team")) {
     if (state.family.courtAccess !== "poor" || state.family.means >= 3) {
@@ -195,17 +201,19 @@ export function offseasonOffers(state: LifeState): Offer[] {
     if (res.id === "CA" && age >= 14 && age < 17 && node !== "us-high-school" && lvl >= cohort * 1.05 && E + r[1]! * 15 >= 18 && state.education.academics >= 40) {
       offers.push(build(state, { kind: "scholarship", node: "us-high-school", countryId: "US", leagueId: "nfhs", teamName: clubName(nameRng, "US", "school"), need: cohort * 1.05, coaching: 66, exposure: 40, costPerYear: Math.round(2500 * res.model.costIndex), reason: "A US prep school that recruits Canadian travel-team players offers a partial scholarship.", extra: ["Partial scholarship (model). The family covers the rest.", "Puts you on the US high school and NCAA route."] }));
     }
-    // Invitations abroad need a scout's eye: high exposure or a camp invite.
-    const invited = state.achievements.campInvite !== null || E >= 40;
+    // Invitations abroad need a scout's eye, or a player who is clearly the best thing in a country scouts rarely visit.
+    const dominant = thinMarket && lvl >= Math.max(40, cohort * 1.28);
+    const invited = state.achievements.campInvite !== null || E >= 40 || dominant;
+    const how = state.achievements.campInvite !== null ? "your camp" : E >= 40 ? "a showcase" : "film of you dominating at home";
     if (age >= 14 && age < 17 && invited && lvl >= cohort * 1.16) {
       const hostOptions = ["ES", "FR", "DE", "IT", "LT", "RS", "TR", "GR"].filter((id) => id !== res.id);
       const host = hostOptions[Math.floor(r[1]! * hostOptions.length)]!;
       const hostTop = domesticProLeagues(host)[0];
       if (hostTop) {
-        offers.push(build(state, { kind: "move", node: "elite-youth", countryId: host, leagueId: hostTop.id, teamName: clubName(nameRng, host, "club"), need: cohort * 1.15, coaching: 84, exposure: 34, costPerYear: 0, reason: `A ${hostTop.name} club scout followed up after ${state.achievements.campInvite !== null ? "your camp" : "a showcase"} and offered a youth contract with housing and school.`, extra: ["Youth contract covers housing and school (model)."] }));
+        offers.push(build(state, { kind: "move", node: "elite-youth", countryId: host, leagueId: hostTop.id, teamName: clubName(nameRng, host, "club"), need: cohort * 1.15, coaching: 84, exposure: 34, costPerYear: 0, reason: `A ${hostTop.name} club scout followed up after ${how} and offered a youth contract with housing and school.`, extra: ["Youth contract covers housing and school (model)."] }));
       }
       if (state.education.academics >= 40 && age < 16.5) {
-        offers.push(build(state, { kind: "scholarship", node: "us-high-school", countryId: "US", leagueId: "nfhs", teamName: clubName(nameRng, "US", "school"), need: cohort * 1.05, coaching: 66, exposure: 40, costPerYear: 0, reason: "A US high school coach offered a scholarship after seeing your film.", extra: ["Scholarship covers tuition and boarding (model).", "Puts you on the US high school and NCAA route."] }));
+        offers.push(build(state, { kind: "scholarship", node: "us-high-school", countryId: "US", leagueId: "nfhs", teamName: clubName(nameRng, "US", "school"), need: cohort * 1.05, coaching: 66, exposure: 40, costPerYear: 0, reason: `A US high school coach offered a scholarship after seeing ${how}.`, extra: ["Scholarship covers tuition and boarding (model).", "Puts you on the US high school and NCAA route."] }));
       }
     }
     if (top && age >= Math.max(16, top.model!.minAge) && lvl >= top.model!.strength * 0.8 - 8) {
@@ -213,15 +221,29 @@ export function offseasonOffers(state: LifeState): Offer[] {
     }
   }
 
-  // College: amateurs who finished secondary school.
+  // College: amateurs who finished secondary school. A great player can hear from a
+  // top program, a mid-major, and a Division III school in the same summer.
   const ncaa = league("ncaa");
   if (age >= 17.5 && age < 20.5 && state.education.amateur && node !== "university") {
-    const scoutNeed = res.id === "US" ? 18 : 30;
-    if (lvl >= 43 && E + r[2]! * 15 >= scoutNeed && state.education.academics >= 45) {
-      const high = lvl >= 52 && E >= scoutNeed + 15;
-      offers.push(build(state, { kind: "scholarship", node: "university", countryId: "US", leagueId: "ncaa", teamName: clubName(nameRng, "US", "university"), need: ncaa.model!.strength * 0.8 + (high ? 3 : -5), coaching: high ? 86 : 72, exposure: high ? 88 : 66, costPerYear: 0, years: 4, reason: high ? "A high-major program offers a full scholarship." : "A mid-major program offers a full scholarship.", extra: ["Full scholarship (model). You can test the draft each spring under NCAA rules."] }));
-    } else if (lvl >= 43 && state.education.academics < 45 && E >= scoutNeed) {
-      state.flags.ncaaGradesBlocked = state.ageMonths;
+    const us = res.id === "US";
+    const scoutNeed = us ? 18 : 30;
+    const seen = us || E + r[2]! * 15 >= scoutNeed || lvl >= 58 || (thinMarket && lvl >= 52 && E >= 12);
+    const grades = state.education.academics;
+    if (seen && lvl >= 43 && grades < 45 && E >= scoutNeed) state.flags.ncaaGradesBlocked = state.ageMonths;
+    if (seen) {
+      const place = () => nameRng.pick(citiesFor("US"));
+      const college: Offer[] = [];
+      const top = grades >= 45 && (lvl >= 55 || (lvl >= 50 && E >= (us ? 22 : 34)));
+      if (top) {
+        college.push(build(state, { kind: "scholarship", node: "university", countryId: "US", leagueId: "ncaa", teamName: `University of ${place()}`, need: ncaa.model!.strength * 0.9, coaching: 90, exposure: 92, costPerYear: 0, years: 4, reason: "A top program offers a full scholarship.", extra: ["Full scholarship (model). You can test the draft each spring under NCAA rules.", "NIL money can follow once you are on campus."] }));
+      }
+      if (grades >= 45 && lvl >= 44) {
+        college.push(build(state, { kind: "scholarship", node: "university", countryId: "US", leagueId: "ncaa", teamName: `${place()} State`, need: ncaa.model!.strength * 0.72, coaching: 74, exposure: 64, costPerYear: 0, years: 4, reason: "A mid-major offers a full scholarship.", extra: ["Full scholarship (model). You can test the draft each spring under NCAA rules."] }));
+      }
+      if (grades >= 40 && lvl >= 36) {
+        college.push(build(state, { kind: "scholarship", node: "university", countryId: "US", leagueId: "ncaa", teamName: `${place()} College`, need: ncaa.model!.strength * 0.5, coaching: 58, exposure: 30, costPerYear: 0, years: 4, reason: "A Division III school offers a roster spot.", extra: ["No athletic scholarship. Aid, if any, is academic (model).", "You can test the draft each spring under NCAA rules."] }));
+      }
+      offers.unshift(...college);
     }
   }
 
@@ -235,7 +257,6 @@ export function offseasonOffers(state: LifeState): Offer[] {
     if (!pros.length && node !== "local-senior" && age >= 17) {
       offers.push(build(state, { kind: "join", node: "local-senior", countryId: res.id, leagueId: null, teamName: clubName(nameRng, res.id, "club"), need: 24, coaching: clubCoaching * 0.7, exposure: 8, costPerYear: 0, salary: 0, reason: `A senior club in ${res.name} wants you. The snapshot has no verified professional league here.`, extra: ["Competition details for this country are unverified in the 2026-10-08 snapshot."] }));
     }
-    const hunting = typeof state.flags.overseasHunt === "number";
     if (hunting) {
       const slack = state.finance.agent ? 10 : 8;
       const options = foreignProLeagues(res.id)
@@ -251,7 +272,8 @@ export function offseasonOffers(state: LifeState): Offer[] {
       }
       offers.unshift(...found);
     }
-    if (!hunting && E + agentBoost(state) >= 22 + r[3]! * 15) {
+    const breakout = thinMarket && lvl >= 60 && E >= 14;
+    if (!hunting && (E + agentBoost(state) >= 22 + r[3]! * 15 || breakout)) {
       const options = foreignProLeagues(res.id)
         .filter((l) => lvl >= l.model!.strength * 0.8 - 7 && l.model!.minAge <= age)
         .sort((a, b) => b.model!.strength - a.model!.strength);
@@ -265,10 +287,12 @@ export function offseasonOffers(state: LifeState): Offer[] {
     }
     const gl = league("g-league");
     const abroad = res.id !== "US";
-    if (age >= 18 && node !== "g-league" && node !== "nba" && lvl >= (abroad ? 56 : 52) && E + agentBoost(state) * 0.6 >= (abroad ? 52 : 40) + r[6]! * 15) {
+    const gSeen = E + agentBoost(state) * 0.6 >= (abroad ? 52 : 40) + r[6]! * 15 || (thinMarket && lvl >= 64);
+    if (age >= 18 && node !== "g-league" && node !== "nba" && lvl >= (abroad ? 56 : 52) && gSeen) {
       offers.push(build(state, { kind: "contract", node: "g-league", countryId: "US", leagueId: "g-league", teamName: `G League affiliate (${nbaTeam(r[7]!)})`, need: gl.model!.strength * 0.8, coaching: gl.model!.coaching, exposure: gl.model!.exposure, costPerYear: 0, salary: 40500, years: 1, reason: abroad ? "A G League team saw your film and invites you to training camp. You make the roster." : "A G League team invites you to its local tryout and keeps you.", extra: ["G League players can be called up on 10-day or two-way deals."] }));
     }
   }
+  if (committed) return offers.filter((o) => o.node === "foreign-pro").slice(0, 4);
   return offers.slice(0, 4);
 }
 

@@ -2,14 +2,12 @@
 
 import { useId, useLayoutEffect, useRef } from "react";
 import { HomeGameStripCard } from "@/components/home/home-game-strip-card";
-import { AppLink } from "@/components/ui/app-link";
 import { InlineScript } from "@/components/ui/inline-script";
-import { sectionLinkClassName } from "@/lib/design-system";
+import { SectionLink } from "@/components/ui/section-link";
 import { LiveScoreboardScope } from "@/components/sports/live-scoreboard-scope";
 import type { GameSummary } from "@/data/types";
 import { parseTipOffMs } from "@/lib/game-countdown";
 import type { GameStatusKind } from "@/lib/game-status";
-
 type StripGame = GameSummary & {
   awayStarters: Array<{ id: string; name: string }>;
   homeStarters: Array<{ id: string; name: string }>;
@@ -88,13 +86,10 @@ export function WeekGameCalendarClient({
         <h2 className="type-heading min-w-0">
           {mode === "week" ? "This week's games" : "Upcoming games"}
         </h2>
-        <AppLink
-          href="/scores?view=week"
-          className={`type-body-sm shrink-0 ${sectionLinkClassName}`}
-        >
-          <span className="sm:hidden">Schedule <span data-motion-arrow aria-hidden>→</span></span>
-          <span className="hidden sm:inline">See all schedule <span data-motion-arrow aria-hidden>→</span></span>
-        </AppLink>
+        <SectionLink href="/scores?view=week">
+          <span className="sm:hidden">Schedule</span>
+          <span className="hidden sm:inline">See all schedule</span>
+        </SectionLink>
       </div>
 
       {initialGames.length === 0 ? (

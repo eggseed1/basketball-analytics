@@ -24,7 +24,7 @@
   --space-component-gap: var(--space-3);
   --space-card-padding: var(--space-4);
   --space-section: var(--space-8);
-  --space-page-y: var(--space-5);
+  --space-page-y: var(--space-6);
   --space-page-gutter: var(--space-4);
 
   /* ── Radii ── */
@@ -91,10 +91,10 @@
 
   /* ── Material 1 — subtle glass ── */
   --material-subtle-bg: rgb(255 255 255 / 45%);
-  --material-subtle-border: rgb(255 255 255 / 32%);
+  --material-subtle-border: rgb(255 255 255 / 14%);
   --material-subtle-blur: var(--blur-glass-sm);
   --material-subtle-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 24%),
+    inset 0 1px 0 rgb(255 255 255 / 12%),
     0 1px 2px rgb(0 0 0 / 2%);
 
   /* ── Material 2 — standard glass (sports-card) ── */
@@ -173,9 +173,9 @@
 
   /* Nested glass: opaque-enough secondary fills (mirror light white frosts). */
   --material-subtle-bg: rgb(var(--glass-raised-rgb) / 78%);
-  --material-subtle-border: rgb(255 255 255 / 7%);
+  --material-subtle-border: rgb(255 255 255 / 4%);
   --material-subtle-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 5%),
+    inset 0 1px 0 rgb(255 255 255 / 3%),
     0 1px 2px rgb(0 0 0 / 22%);
 
   --material-standard-bg: rgb(var(--glass-rgb) / 80%);
@@ -220,7 +220,7 @@
 @media (min-width: 640px) {
   :root {
     --space-page-gutter: var(--page-gutter-tablet);
-    --space-page-y: var(--space-6);
+    --space-page-y: var(--space-8);
   }
 }
 
@@ -307,18 +307,21 @@ html:not([data-surface="glass"]) .material-elevated {
   line-height: 28px;
   font-weight: 600;
   letter-spacing: -0.02em;
+  text-transform: capitalize;
 }
 .type-title-2 {
   font-size: 24px;
   line-height: 32px;
   font-weight: 600;
   letter-spacing: -0.02em;
+  text-transform: capitalize;
 }
 .type-title-1 {
   font-size: 32px;
   line-height: 40px;
   font-weight: 700;
   letter-spacing: -0.03em;
+  text-transform: capitalize;
 }
 .type-display-lg {
   font-size: 40px;

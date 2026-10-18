@@ -5,9 +5,9 @@ import { cn } from "@/lib/utils";
 import { type } from "@/lib/design-system";
 
 export function PageHeader({
-  eyebrow,
   title,
   subtitle,
+  subtitleClassName,
   meta,
   about,
   aboutLabel,
@@ -16,9 +16,9 @@ export function PageHeader({
   className,
   children,
 }: {
-  eyebrow?: ReactNode;
   title: ReactNode;
   subtitle?: ReactNode;
+  subtitleClassName?: string;
   meta?: ReactNode;
   /** Method and source notes, collapsed until the reader asks for them. */
   about?: ReactNode;
@@ -35,16 +35,11 @@ export function PageHeader({
     >
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0 flex flex-col gap-1.5">
-          {eyebrow ? (
-            <p className="type-caption font-semibold uppercase tracking-wide text-muted-foreground">
-              {eyebrow}
-            </p>
-          ) : null}
           <h1 className={cn(type.title1, "min-w-0 wrap-break-word")}>
             {title}
           </h1>
           {subtitle ? (
-            <p className={cn(type.bodySm, "text-muted-foreground")}>{subtitle}</p>
+            <p className={cn(subtitleClassName ?? type.bodySm, "text-muted-foreground")}>{subtitle}</p>
           ) : null}
           {meta ? (
             <div className={cn(type.caption, "flex flex-wrap items-center gap-x-2 gap-y-1 text-muted-foreground")}>

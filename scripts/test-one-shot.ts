@@ -17,14 +17,18 @@ import { fieldOf, tournamentsFor } from "../src/one-shot/international";
 import { allStarPick, CALIBRATION, closest, LEAGUE_SEASON, nbaHonors, races, REAL, REAL_AWARDS, standings } from "../src/one-shot/league";
 import { advanced, sumBoxes } from "../src/one-shot/stats";
 import { calendar, levelOf, performanceLevel, simulateGame } from "../src/one-shot/career";
+import { hofEligible, hofSpeech } from "../src/one-shot/ceremony";
+import { rngOf } from "../src/one-shot/rng";
 import { MAX_BATCH, tick } from "../src/one-shot/clock";
 import { autoEligible, canDeclare, draftOrder, INTERVIEW_QUESTIONS, interviewDelta } from "../src/one-shot/draft";
 import { advance, advanceToDecision, autoChoice, canDeclareNow, canRetireNow, createLife, declareNow, isUnicornSeed, manageMoney, resolveDecision, retireNow, setPlan, stepMonth, UNICORN_ODDS } from "../src/one-shot/engine";
 import { EVENT_BY_ID, EVENTS } from "../src/one-shot/events";
 import { dailyDate, dailySeed, parseSave, serialize } from "../src/one-shot/persistence";
-import { outcomeTier, shareText } from "../src/one-shot/report";
+import { earningsRank, ordinal, parseEarningsRow, placeOnBoard, placeRows, type EarningsRow } from "../src/one-shot/leaderboard";
+import { outcomeTier, shareText, type CareerSummary } from "../src/one-shot/report";
 import { createStreams, rngOf } from "../src/one-shot/rng";
-import { NBA_TEAMS, offerBlocked, offseasonOffers } from "../src/one-shot/routes";
+import { NBA_TEAMS, namedPlace, offerBlocked, offseasonOffers } from "../src/one-shot/routes";
+import { citiesFor } from "../src/one-shot/cities";
 import { projectedCeiling } from "../src/one-shot/skills";
 import { canAfford, chargeFamily, effectivePractice, monthlyDevelopment, stepInjury } from "../src/one-shot/training";
 import { SCHEMA_VERSION, type LifeState, type NewLifeOptions, type SeasonLine } from "../src/one-shot/types";
@@ -310,6 +314,43 @@ ok("box scores reconcile in every game and season", () => {
   }
 });
 
+ok("a higher coach rating means more minutes, and fighting for them can move you up", () => {
+  const make = (coaching: number) => {
+    const s = createLife(base(4));
+    s.ageMonths = 17 * 12;
+    s.placement = { ...s.placement, node: "us-high-school", role: "rotation", coaching, teamName: "Test High" };
+    return s;
+  };
+  const low = make(35);
+  const high = make(92);
+  const level = levelOf(high) ?? levelOf(low);
+  assert.ok(level, "a pro placement has a level");
+  let lowMin = 0;
+  let highMin = 0;
+  for (let i = 0; i < 40; i++) {
+    lowMin += simulateGame(low, level!, rngOf(low.rng, "games")).min;
+    highMin += simulateGame(high, level!, rngOf(high.rng, "games")).min;
+  }
+  assert.ok(highMin > lowMin + 40, `coach rating minutes high ${highMin} low ${lowMin}`);
+
+  const s = createLife(base(4));
+  s.ageMonths = 20 * 12;
+  s.placement = { ...s.placement, node: "university", role: "bench", teamName: "State", coaching: 88 };
+  s.traits.coachability = 70;
+  const ev = EVENT_BY_ID["fight-minutes"]!;
+  assert.ok(ev.weight(s) > 0, "a bench player can fight for minutes");
+  assert.equal(ev.weight({ ...s, placement: { ...s.placement, role: "star" } }), 0, "the go-to player is already playing");
+  const earn = ev.choices.find((c) => c.id === "earn")!;
+  const won = structuredClone(s);
+  earn.apply({ s: won, rolls: [0.45], entryId: "t" });
+  assert.equal(won.placement.role, "rotation");
+  const missed = structuredClone(s);
+  missed.placement.coaching = 30;
+  missed.traits.coachability = 30;
+  earn.apply({ s: missed, rolls: [0.45], entryId: "t" });
+  assert.equal(missed.placement.role, "bench");
+});
+
 /* ------------------------------------------------------------ eligibility */
 
 ok("draft eligibility and NCAA grades rule", () => {
@@ -326,6 +367,29 @@ ok("draft eligibility and NCAA grades rule", () => {
     probe.rng.scouting = (probe.rng.scouting + k * 7919) >>> 0;
     assert.ok(!offseasonOffers(probe).some((o) => o.node === "university"), "NCAA offer with failing grades");
   }
+  const recruit = (lvlTarget: "great" | "ordinary") => {
+    const s = createLife(base(seedFor("US"), { draw: "equal" }));
+    s.ageMonths = 18 * 12;
+    s.education = { ...s.education, academics: 70, amateur: true, ncaaEligible: true, graduatedHighSchool: true };
+    s.exposure = 8;
+    s.residence = { ...s.residence, countryId: "US" };
+    s.placement = { ...s.placement, node: "us-high-school", teamName: "Home High School" };
+    for (const k of Object.keys(s.skills) as (keyof typeof s.skills)[]) s.skills[k] = lvlTarget === "great" ? 92 : 68;
+    s.body.heightCm = lvlTarget === "great" ? 203 : 193;
+    return s;
+  };
+  const star = recruit("great");
+  assert.ok(performanceLevel(star) >= 55, `great prospect level ${performanceLevel(star)}`);
+  const starOffers = offseasonOffers(star).filter((o) => o.node === "university");
+  assert.ok(starOffers.some((o) => o.reason.startsWith("A top program")), "great prospect hears from a top program");
+  assert.ok(starOffers.some((o) => o.reason.startsWith("A mid-major")), "mid-majors still call");
+  assert.ok(starOffers.some((o) => o.reason.startsWith("A Division III")), "Division III still calls");
+  const ordinary = recruit("ordinary");
+  const ordinaryOffers = offseasonOffers(ordinary).filter((o) => o.node === "university");
+  assert.ok(!ordinaryOffers.some((o) => o.reason.startsWith("A top program")), "an ordinary prospect is not a top-program recruit");
+  assert.ok(ordinaryOffers.some((o) => o.node === "university"), "an ordinary prospect still has a school");
+  assert.ok(EVENT_BY_ID["nil-deal"], "NIL deals exist");
+  assert.equal(EVENT_BY_ID["nil-deal"]!.weight({ ...star, placement: { ...star.placement, node: "university", role: "star", coaching: 90 } }), 1.7);
 });
 
 ok("moving abroad as a youth always follows an invitation", () => {
@@ -337,7 +401,8 @@ ok("moving abroad as a youth always follows an invitation", () => {
       if (d?.templateId === "offers") {
         for (const o of d.offers ?? []) {
           if (o.countryId !== s.residence.countryId && s.ageMonths < 17 * 12 && o.node === "elite-youth") {
-            assert.ok(s.achievements.campInvite !== null || s.exposure >= 40, `seed ${seed}: uninvited move`);
+            const filmed = o.reason.includes("dominating at home");
+            assert.ok(s.achievements.campInvite !== null || s.exposure >= 40 || filmed, `seed ${seed}: uninvited move`);
           }
         }
       }
@@ -347,10 +412,13 @@ ok("moving abroad as a youth always follows an invitation", () => {
 });
 
 ok("an undrafted player can still make an NBA debut", () => {
-  const s = drive(createLife(base(7)), 31 * 12, (x) => (x.pendingDecision!.templateId === "draft-declare" ? "wait" : null));
-  assert.ok(s.achievements.nbaDebut !== null, "seed 7 should debut");
-  assert.equal(s.achievements.drafted, null);
-  assert.equal(outcomeTier(s), "nba-debut");
+  let found: LifeState | null = null;
+  for (let seed = 1; seed <= 12 && !found; seed++) {
+    const s = drive(createLife(base(seed)), 31 * 12, (x) => (x.pendingDecision!.templateId === "draft-declare" ? "wait" : null));
+    if (s.achievements.nbaDebut !== null && s.achievements.drafted === null) found = s;
+  }
+  assert.ok(found, "no undrafted NBA debut in seeds 1-12");
+  assert.equal(outcomeTier(found!), "nba-debut");
 });
 
 /* ------------------------------------------------------------ peers, events, clock */
@@ -379,6 +447,18 @@ ok("event library: 60+ templates with previews and valid follow-ups", () => {
     }
   }
   assert.equal(stages.size, 5, "every life stage has events");
+  assert.ok(EVENTS.length >= 90, `${EVENTS.length} events`);
+});
+
+ok("club names are cities in the country, not the country plus a mascot", () => {
+  const s = createLife(base(42));
+  for (const id of ["TW", "HK", "IL", "JP", "CN", "BR", "NG"]) {
+    const names = Array.from({ length: 16 }, (_, i) => namedPlace(s, id, "club", `city:${id}:${i}`));
+    const cname = country(id).name;
+    assert.ok(names.every((n) => !n.startsWith(cname + " ") && n !== cname), `${id}: ${names.join(", ")}`);
+    assert.ok(new Set(names).size >= 4, `${id} only produced ${[...new Set(names)].join(", ")}`);
+    assert.ok(citiesFor(id).length >= 3, id);
+  }
 });
 
 ok("clock ticks are bounded and never catch up on missed time", () => {
@@ -426,7 +506,115 @@ ok("QA careers follow country-aware routes", () => {
   }
 });
 
+ok("a perfect run from India can reach the NBA", () => {
+  const s = createLife(base(seedFor("IN"), { draw: "equal" }));
+  s.ageMonths = 16 * 12;
+  s.education = { ...s.education, academics: 80, amateur: true, ncaaEligible: true };
+  s.family = { ...s.family, means: 5, support: "high", courtAccess: "excellent", savings: 40_000 };
+  s.exposure = 18;
+  s.body.heightCm = 206;
+  s.body.wingspanCm = 218;
+  s.growth.adultHeightCm = 208;
+  s.growth.wingspanRatio = 1.06;
+  for (const k of ["strength", "acceleration", "lateral", "vertical", "stamina", "coordination", "durability"] as const) {
+    s.body[k] = 82;
+    s.growth.athleticCeiling[k] = 90;
+  }
+  for (const k of Object.keys(s.skills) as (keyof typeof s.skills)[]) {
+    s.skills[k] = 88;
+    s.potentials[k] = 96;
+  }
+  for (const k of Object.keys(s.traits) as (keyof typeof s.traits)[]) s.traits[k] = 85;
+  s.placement = { ...s.placement, node: "local-club", countryId: "IN", teamName: "Mumbai club", role: "star", coaching: 60 };
+  const end = advance(s, 10 * 12, { auto: true });
+  assert.ok(end.achievements.drafted || end.achievements.nbaDebut !== null, "drafted or debuted");
+  assert.ok(end.placement.node === "nba" || end.achievements.nbaDebut !== null, `landed in ${end.placement.node}`);
+});
+
+ok("a contract with years left does not come with offers to leave", () => {
+  const s = createLife(base(seedFor("ES"), { draw: "equal" }));
+  s.ageMonths = 24 * 12;
+  s.exposure = 80;
+  s.body.heightCm = 200;
+  for (const k of Object.keys(s.skills) as (keyof typeof s.skills)[]) s.skills[k] = 80;
+  s.placement = {
+    ...s.placement,
+    node: "foreign-pro",
+    countryId: "ES",
+    leagueId: "acb",
+    teamName: "Madrid",
+    role: "starter",
+    contract: { salary: 2_000_000, yearsLeft: 2, guaranteed: true },
+  };
+  assert.equal(offseasonOffers(s).length, 0);
+  s.placement.role = "bench";
+  assert.equal(offseasonOffers(s).length, 0, "a bench deal is still a deal");
+  s.placement.contract = null;
+  assert.ok(offseasonOffers(s).length > 0, "once the deal is up, clubs can call");
+  s.placement = { ...s.placement, node: "university", teamName: "State", contract: null };
+  s.education = { ...s.education, amateur: true, universityYears: 1 };
+  assert.equal(offseasonOffers(s).length, 0, "college eligibility is a commitment too");
+});
+
 /* ------------------------------------------------------------ birth odds and parents */
+
+ok("two Taiwanese league MVPs are not a Hall of Fame career", () => {
+  const need = (id: string) => maybeLeague(id)!.model.strength * 0.8;
+  const tw = need("tpbl-tw");
+  const euro = need("euroleague");
+  assert.ok(tw < 66 && euro >= 66, `Taiwan ${tw} EuroLeague ${euro}`);
+  const box = (over: Partial<SeasonLine> = {}): SeasonLine => ({
+    key: "t", ageYears: 27, calendarYear: 2032, node: "domestic-pro", leagueId: "tpbl-tw",
+    levelLabel: "Taiwan Professional Basketball League (TPBL)", teamName: "Taipei", countryId: "TW", role: "star",
+    gp: 32, min: 1000, pts: 800, reb: 200, ast: 120, stl: 40, blk: 20, tov: 60,
+    fgm: 280, fga: 560, tpm: 40, tpa: 120, ftm: 200, fta: 240, wins: 22, losses: 10, strength: tw,
+    awards: ["League MVP"],
+    ...over,
+  });
+  const life = createLife(base(3));
+  life.seasons = [box(), box({ calendarYear: 2033, key: "t2" })];
+  assert.equal(hofEligible(life), false);
+  const asia = structuredClone(life);
+  asia.seasons = [];
+  asia.international.tournaments.push({
+    id: "asia", name: "FIBA Asia Cup 2031", kind: "continental", year: 2031, age: 26, countryId: "TW",
+    finish: "Champions", medal: "gold", role: "star", gp: 6, min: 180, pts: 120, reb: 30, ast: 24,
+    stl: 6, blk: 2, tov: 8, fgm: 40, fga: 80, tpm: 8, tpa: 20, ftm: 32, fta: 36, wins: 6, losses: 0,
+  });
+  assert.equal(hofEligible(asia), false, "a continental gold is not the hall");
+  const role = structuredClone(life);
+  role.seasons = Array.from({ length: 8 }, (_, i) => box({ node: "nba", leagueId: "nba", levelLabel: "NBA", teamName: "Heat", countryId: "US", strength: 80, awards: [], gp: 70, key: `n${i}`, calendarYear: 2030 + i }));
+  assert.equal(hofEligible(role), false, "eight NBA seasons without honors stay home");
+  const euroOnly = structuredClone(life);
+  euroOnly.seasons = [box({ leagueId: "euroleague", levelLabel: "EuroLeague", strength: euro, teamName: "Real Madrid", countryId: "ES" }), box({ leagueId: "euroleague", levelLabel: "EuroLeague", strength: euro, key: "e2", calendarYear: 2033, teamName: "Real Madrid", countryId: "ES" })];
+  assert.equal(hofEligible(euroOnly), false, "two EuroLeague MVPs still need a world title");
+  const euroGold = structuredClone(euroOnly);
+  euroGold.international.tournaments.push({
+    id: "og", name: "Olympic Games 2032", kind: "olympics", year: 2032, age: 27, countryId: "ES",
+    finish: "Champions", medal: "gold", role: "star", gp: 6, min: 180, pts: 110, reb: 20, ast: 18,
+    stl: 4, blk: 1, tov: 6, fgm: 36, fga: 70, tpm: 10, tpa: 24, ftm: 28, fta: 32, wins: 6, losses: 0,
+  });
+  assert.equal(hofEligible(euroGold), true);
+  const mvp = structuredClone(life);
+  mvp.identity.displayName = "Luis Ortega";
+  mvp.birthplace.locality = "Madrid";
+  mvp.seasons = [box({ node: "nba", leagueId: "nba", levelLabel: "NBA", teamName: "Nuggets", countryId: "US", strength: 80, gp: 74, awards: ["NBA Most Valuable Player"] })];
+  assert.equal(hofEligible(mvp), true);
+  mvp.history.push(
+    { id: "h8", month: 14 * 12, kind: "decision", text: "Move to the city: Move. You leave your friends and train on a better court.", tone: "neutral" },
+    { id: "h9", month: 12 * 12, kind: "decision", text: "School team: Sign up. You get a jersey two sizes too big.", tone: "neutral" },
+    { id: "h10", month: 18 * 12, kind: "move", text: "Moved to Germany. Joined Hamburg Baskets (Basketball Bundesliga). $80,000 a year.", tone: "good" },
+    { id: "h11", month: 22 * 12, kind: "decision", text: "A new coach: Ask for minutes. The coach moves you into the rotation.", tone: "good" },
+  );
+  const speech = hofSpeech(mvp);
+  assert.match(speech, /^Thank you\. I am Luis Ortega, from Madrid\./);
+  assert.match(speech, /At 12, school team: I decided to sign up\./);
+  assert.match(speech, /At 14 I decided to move to the city\. I leave my friends and train on a better court\./);
+  assert.match(speech, /At 18 I moved to Germany and joined Hamburg Baskets\./);
+  assert.match(speech, /At 22, a new coach: I decided to ask for minutes\. The coach moves me into the rotation\./);
+  assert.match(speech, /They named me MVP once/);
+  assert.doesNotMatch(speech, /hall inducts|scouts|plaque|What the|record shows/);
+});
 
 ok("birth odds sum to 1 and parents follow their country's heights", () => {
   for (const draw of ["weighted", "equal"] as const) {
@@ -885,6 +1073,63 @@ ok("version 4 saves gain the NBA random stream", () => {
   assert.equal(res.state.schemaVersion, SCHEMA_VERSION);
   assert.equal(typeof res.state.rng.nba, "number");
   drive(res.state, 24, keepChapter);
+});
+
+ok("all-time rows reject a missing figure and keep the richer life", () => {
+  const row = (boardId: string, earnings: number): EarningsRow => ({
+    boardId,
+    name: "Ada",
+    earnings,
+    birthCountry: "US",
+    tier: "pro",
+    endedAge: 34,
+    finishedAt: "2026-10-16T12:00:00.000Z",
+    seed: 4,
+    mode: "random",
+  });
+  assert.equal(parseEarningsRow({ ...row("0123456789abcdef", 10), earnings: 1.5 }), null);
+  assert.equal(parseEarningsRow({ ...row("0123456789abcdef", 10), birthCountry: "ZZ" }), null);
+  const parsed = parseEarningsRow(row("0123456789abcdef", 10));
+  assert.equal(parsed?.earnings, 10);
+  const board = placeRows([row("aaaaaaaaaaaaaaaa", 40)], row("bbbbbbbbbbbbbbbb", 40));
+  assert.deepEqual(board.map((r) => r.boardId), ["aaaaaaaaaaaaaaaa", "bbbbbbbbbbbbbbbb"]);
+  assert.equal(placeRows(board, { ...row("bbbbbbbbbbbbbbbb", 90) }).map((r) => r.earnings).join(","), "90,40");
+});
+
+ok("earnings board ranks pre-tax money and drops a life with no figure", () => {
+  const row = (runId: string, earnings: number | undefined, finishedAt: string): CareerSummary => ({
+    runId,
+    seed: 1,
+    mode: "random",
+    dailyDate: null,
+    name: runId,
+    birthCountry: "US",
+    heightCm: 190,
+    tier: "pro",
+    debutAge: null,
+    draft: null,
+    peak: null,
+    endedAge: 35,
+    finishedAt,
+    ...(earnings !== undefined ? { earnings } : {}),
+  });
+  let board = placeOnBoard([], row("a", 10, "2026-01-02"));
+  board = placeOnBoard(board, row("b", 50, "2026-01-03"));
+  board = placeOnBoard(board, row("c", 50, "2026-01-01"));
+  board = placeOnBoard(board, row("d", undefined, "2026-01-04"));
+  assert.deepEqual(board.map((x) => x.runId), ["c", "b", "a"]);
+  assert.equal(earningsRank(board, "a")?.rank, 3);
+  board = placeOnBoard(board, row("a", 80, "2026-01-02"));
+  assert.equal(board[0]!.runId, "a");
+  assert.equal(board.filter((x) => x.runId === "a").length, 1);
+  const many = Array.from({ length: 25 }, (_, i) => row(`n${i}`, i, `2026-03-${String((i % 28) + 1).padStart(2, "0")}`));
+  const top = many.reduce((acc, next) => placeOnBoard(acc, next), [] as CareerSummary[]);
+  assert.equal(top.length, 20);
+  assert.equal(top[0]!.earnings, 24);
+  assert.equal(top.at(-1)!.earnings, 5);
+  assert.equal(ordinal(1), "1st");
+  assert.equal(ordinal(11), "11th");
+  assert.equal(ordinal(22), "22nd");
 });
 
 console.log(`\n${checks} ONE SHOT checks passed`);

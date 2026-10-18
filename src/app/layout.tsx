@@ -2,12 +2,15 @@ import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 
+import { BouncingBasketball } from "@/components/brand/bouncing-basketball";
 import { OwnerThemeProvider } from "@/components/design-system/theme-provider";
 import { SportsShell } from "@/components/sports/sports-shell";
 import { SmoothScroll } from "@/components/smooth-scroll";
 import { ChartHoverTip } from "@/components/charts/chart-hover-tip";
 import { ScrollHoverGuard } from "@/components/continuity/scroll-hover-guard";
 import { SortableTables } from "@/components/continuity/sortable-tables";
+import { APP_BOOT_SCRIPT } from "@/lib/app-boot";
+import { APPLE_STARTUP_SCREENS, appleStartupHref } from "@/lib/apple-startup";
 import { OWNER_THEME_BOOT_SCRIPT } from "@/lib/owner-theme";
 import { SCORE_DELAY_BOOT_SCRIPT } from "@/lib/score-delay";
 import { SITE_NAME, SITE_URL } from "@/lib/site-url";
@@ -29,11 +32,30 @@ const SITE_DESCRIPTION =
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: SITE_NAME,
+    default: `${SITE_NAME} Analytics: NBA Stats and Advanced Metrics`,
     template: `%s | ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
-  applicationName: SITE_NAME,
+  applicationName: "DRBL",
+  appleWebApp: {
+    capable: true,
+    title: "DRBL",
+    statusBarStyle: "black-translucent",
+    startupImage: APPLE_STARTUP_SCREENS.flatMap((screen) => [
+      {
+        url: appleStartupHref(screen.width, screen.height, false),
+        media: `${screen.media} and (prefers-color-scheme: light)`,
+      },
+      {
+        url: appleStartupHref(screen.width, screen.height, true),
+        media: `${screen.media} and (prefers-color-scheme: dark)`,
+      },
+    ]),
+  },
+  formatDetection: { telephone: false },
+  other: {
+    "apple-mobile-web-app-capable": "yes",
+  },
   openGraph: {
     type: "website",
     siteName: SITE_NAME,
@@ -77,6 +99,37 @@ export default function RootLayout({
           id="score-delay-boot"
           dangerouslySetInnerHTML={{ __html: SCORE_DELAY_BOOT_SCRIPT }}
         />
+        <div
+          id="app-boot"
+          aria-hidden="true"
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 80,
+            alignItems: "center",
+            justifyContent: "center",
+            background: "#f2f2f7",
+            transition: "opacity 0.4s ease",
+          }}
+        >
+          <BouncingBasketball size={88} />
+          <p
+            data-boot-word=""
+            style={{
+              margin: 0,
+              fontSize: 28,
+              fontWeight: 700,
+              letterSpacing: "-0.04em",
+              lineHeight: 1,
+              color: "#1d1d1f",
+              fontFamily: "var(--font-sans), system-ui, sans-serif",
+            }}
+          >
+            DRBL
+          </p>
+          <div className="bb-meter" />
+        </div>
+        <script id="app-boot-script" dangerouslySetInnerHTML={{ __html: APP_BOOT_SCRIPT }} />
         <OwnerThemeProvider>
           <SmoothScroll />
           <ChartHoverTip />

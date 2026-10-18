@@ -3,6 +3,7 @@
 import { FormEvent, Fragment, ReactNode, useRef, useState } from "react";
 
 import type { AskAgentEvent } from "@/ask-agent/agent";
+import { askChipClassName, askSubmitClassName, askTextareaClassName } from "@/components/ask/ask-field";
 import { AppLink } from "@/components/ui/app-link";
 import { cn } from "@/lib/utils";
 
@@ -266,13 +267,13 @@ export function AskAgentChat() {
           rows={2}
           maxLength={500}
           placeholder={exchanges.length ? "Ask a follow-up…" : "Ask anything about players, teams, contracts or awards…"}
-          className="w-full resize-y rounded-md border border-border bg-background px-4 py-3 text-[16px] font-medium outline-none ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring"
+          className={askTextareaClassName}
         />
         <div className="flex flex-wrap items-center gap-2">
           <button
             type="submit"
             disabled={pending || !value.trim()}
-            className="rounded-md bg-foreground px-4 py-2.5 text-[14px] font-bold text-background disabled:opacity-50"
+            className={askSubmitClassName}
           >
             {pending ? "Working…" : "Ask"}
           </button>
@@ -281,23 +282,26 @@ export function AskAgentChat() {
               type="button"
               disabled={pending}
               onClick={() => setExchanges([])}
-              className="text-[12px] font-semibold text-muted-foreground underline-offset-2 hover:underline disabled:opacity-50"
+              className="text-[13px] font-semibold text-muted-foreground underline-offset-2 hover:underline disabled:opacity-50"
             >
               New chat
             </button>
-          ) : (
-            EXAMPLES.map((example) => (
+          ) : null}
+        </div>
+        {exchanges.length ? null : (
+          <div className="flex flex-wrap items-center gap-2">
+            {EXAMPLES.map((example) => (
               <button
                 key={example}
                 type="button"
                 onClick={() => void ask(example)}
-                className="rounded-md bg-secondary/50 px-2.5 py-1.5 text-left text-[12px] font-semibold"
+                className={askChipClassName}
               >
                 {example}
               </button>
-            ))
-          )}
-        </div>
+            ))}
+          </div>
+        )}
       </form>
     </section>
   );

@@ -27,6 +27,8 @@ const artifactCache = new Map<string, DrblSeasonArtifact>();
 
 /** Disk paths for known seasons — loaded once per process (not webpack-bundled). */
 const BUNDLED_PATH: Record<string, string> = {
+  "2018-19": "src/data/drbl/precomputed/2018-19.json",
+  "2019-20": "src/data/drbl/precomputed/2019-20.json",
   "2024-25": "src/data/drbl/precomputed/2024-25.json",
   "2025-26": "src/data/drbl/precomputed/2025-26.json",
 };

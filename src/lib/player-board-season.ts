@@ -88,6 +88,17 @@ export function resolvePlayerStatsSeason(
   };
 }
 
+/** Season on a track, or the latest one at or before `season` when that year is missing. */
+export function seasonOnTrack(seasons: readonly string[], season: string): string {
+  if (seasons.includes(season)) return season;
+  let best: string | null = null;
+  for (const candidate of seasons) {
+    if (candidate <= season && (best == null || candidate > best)) best = candidate;
+  }
+  if (best) return best;
+  return [...seasons].sort((a, b) => b.localeCompare(a))[0] ?? season;
+}
+
 export function priorSeasonStatsNotice(
   requestSeason: string,
   statsSeason: string

@@ -131,7 +131,7 @@ export function HistoricalCareerSurface({
                       title={
                         drblOk
                           ? undefined
-                          : "DRBL is currently available for supported seasons beginning in 2020-21."
+                          : "DRBL is currently available for supported seasons beginning in 2018-19."
                       }
                     >
                       —

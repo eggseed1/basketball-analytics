@@ -1,6 +1,7 @@
 import { runAskDrbl } from "@/query-engine";
 
 import type { D1Database } from "./env";
+import { needsMeasure, planFromArgs, reviewMeasure } from "./measure";
 import type { ToolSpec } from "./model";
 import { nameKeyOf } from "./schema";
 import { guardSql, SQL_ROW_LIMIT } from "./sql-guard";
@@ -16,7 +17,7 @@ export type ToolOutput = {
   links?: Array<{ label: string; href: string }>;
 };
 
-export type ToolContext = { db?: D1Database };
+export type ToolContext = { db?: D1Database; question?: string; measure?: { ready: boolean } };
 
 type Tool = {
   spec: ToolSpec;
@@ -86,6 +87,16 @@ const runSql: Tool = {
   label: (args) => String(args.purpose ?? "Queried the database"),
   async run(args, ctx) {
     if (!ctx.db) return noDatabase();
+    if (ctx.question && needsMeasure(ctx.question) && !ctx.measure?.ready) {
+      return {
+        ok: false,
+        data: {
+          error:
+            "Call set_measure first. Say what would make a player the answer, which column is overall impact, which column is the hole, and which measure you are rejecting.",
+        },
+        summary: "Need a measure first",
+      };
+    }
     const raw = String(args.sql ?? "");
     const guarded = guardSql(raw);
     if (!guarded.ok) return { ok: false, data: { error: guarded.error }, summary: guarded.error, sql: raw };
@@ -105,7 +116,7 @@ const runSql: Tool = {
       };
     } catch (error) {
       const message = error instanceof Error ? error.message.replace(/^D1_ERROR:\s*/, "") : "Query failed";
-      return { ok: false, data: { error: message }, summary: "Query failed", sql: raw };
+      return { ok: false, data: { error: message }, summary: message.slice(0, 140), sql: raw };
     }
   },
 };
@@ -147,7 +158,41 @@ const drblEngine: Tool = {
   },
 };
 
-const TOOLS: Tool[] = [findPlayer, runSql, drblEngine];
+const setMeasure: Tool = {
+  spec: {
+    type: "function",
+    function: {
+      name: "set_measure",
+      description:
+        "Required before run_sql when the question is a judgment about the shape of a game (no holes, any system, interchangeable, complete, two-way). State the basketball claim, the overall-impact column, the hole column, and the measure you will not use. The reply tells you what to query. It does not contain the answer.",
+      parameters: {
+        type: "object",
+        properties: {
+          claim: { type: "string", description: "What basketball fact would make this player the answer" },
+          level: {
+            type: "string",
+            description: "Overall impact column: impact_ratings.total, drbl_per100, or wins_above_r1",
+          },
+          hole: {
+            type: "string",
+            description: "The weak-side columns, or none if the question is not about a hole",
+          },
+          rejected: { type: "string", description: "The tempting measure you will not rank on, and why" },
+        },
+        required: ["claim", "level", "hole", "rejected"],
+      },
+    },
+  },
+  label: () => "Decided what to measure",
+  async run(args, ctx) {
+    const review = reviewMeasure(ctx.question ?? "", planFromArgs(args));
+    if (!review.ok) return { ok: false, data: { error: review.error }, summary: "Measure rejected" };
+    if (ctx.measure) ctx.measure.ready = true;
+    return { ok: true, data: { guidance: review.guidance }, summary: "Measure set" };
+  },
+};
+
+const TOOLS: Tool[] = [findPlayer, setMeasure, runSql, drblEngine];
 
 export const ASK_AGENT_TOOL_SPECS: ToolSpec[] = TOOLS.map((t) => t.spec);
 

@@ -4,6 +4,10 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useTransition } from "react";
 
 import { TeamLogo } from "@/components/brand/team-logo";
+import { FilterBar, FilterSelect } from "@/components/explore/filter-bar";
+import { ChoiceChip, ChoiceTrack } from "@/components/ui/choice-chip";
+import { Calendar } from "lucide-react";
+import { espnYearFromCanonicalSeason } from "@/data/providers/nba/season";
 import { type } from "@/lib/design-system";
 import { STANDINGS_VISUALIZATIONS_PATH } from "@/lib/standings-routes";
 import {
@@ -22,17 +26,13 @@ import {
   vizTeamParam,
 } from "@/lib/viz-team-highlight";
 
-const pillClass = (active: boolean) =>
-  cn(
-    type.caption,
-    "glass-pill rounded-md px-2.5 py-1 font-semibold transition-colors",
-    active ? "glass-pill-active" : "text-muted-foreground hover:text-foreground"
-  );
-
-const selectClass = cn(
-  type.bodySm,
-  "w-full rounded-md border border-border/70 frost-surface px-2.5 py-1.5 font-semibold sm:w-auto sm:px-3"
-);
+function seasonYear(season: string) {
+  try {
+    return String(espnYearFromCanonicalSeason(season));
+  } catch {
+    return season.slice(0, 4);
+  }
+}
 
 export function useTeamVizParams() {
   const router = useRouter();
@@ -90,88 +90,67 @@ export function TeamVizHub({
   const { replaceParams, isPending, teamKeys, toggleTeam, conference } = useTeamVizParams();
 
   return (
-    <div className={cn("flex flex-col gap-3", isPending && "opacity-70")} data-pending={isPending ? "true" : "false"}>
-      <div className="flex flex-wrap gap-1.5" role="tablist" aria-label="Visualization">
+    <FilterBar label="Team visualization filters" pending={isPending}>
+      <ChoiceTrack role="tablist" aria-label="Visualization" className="flex-wrap">
         {TEAM_VIZ_VIEWS.map((item) => (
-          <button
+          <ChoiceChip
             key={item.id}
-            type="button"
+            active={view === item.id}
             role="tab"
             aria-selected={view === item.id}
             onClick={() => replaceParams({ view: item.id === TEAM_VIZ_DEFAULT_VIEW ? null : item.id })}
-            className={pillClass(view === item.id)}
           >
             {item.label}
-          </button>
+          </ChoiceChip>
         ))}
-      </div>
+      </ChoiceTrack>
 
-      <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center">
+      <div className="flex w-full min-w-0 flex-wrap items-center gap-2">
         {seasonOptions.length > 1 && !teamVizIgnoresSeason(view) ? (
-          <>
-            <label className="sr-only" htmlFor="team-viz-season">
-              Season
-            </label>
-            <select
-              id="team-viz-season"
-              value={seasonOptions.includes(season) ? season : seasonOptions[0]}
-              onChange={(event) => replaceParams({ season: event.target.value })}
-              className={selectClass}
-            >
-              {seasonOptions.map((option) => (
-                <option key={option} value={option}>
-                  {option} season
-                </option>
-              ))}
-            </select>
-          </>
+          <FilterSelect
+            id="team-viz-season"
+            label="Season"
+            value={seasonOptions.includes(season) ? season : seasonOptions[0]}
+            onChange={(value) => replaceParams({ season: value })}
+            icon={<Calendar className="size-3.5 text-muted-foreground" aria-hidden />}
+            options={seasonOptions.map((option) => ({ value: option, label: seasonYear(option) }))}
+            className="min-w-[5.5rem]"
+          />
         ) : null}
 
-        <div
-          className="flex items-center gap-1 rounded-md border border-border/70 frost-surface p-0.5"
-          role="group"
-          aria-label="Conference"
-        >
+        <ChoiceTrack role="group" aria-label="Conference">
           {([null, "East", "West"] as const).map((conf) => (
-            <button
+            <ChoiceChip
               key={conf ?? "all"}
-              type="button"
-              aria-pressed={conference === conf}
+              active={conference === conf}
               onClick={() => replaceParams({ conf: conf ? conf.toLowerCase() : null })}
-              className={pillClass(conference === conf)}
             >
               {conf ?? "All"}
-            </button>
+            </ChoiceChip>
           ))}
-        </div>
+        </ChoiceTrack>
 
         {view !== "race" ? (
-          <>
-            <label className="sr-only" htmlFor="team-viz-team">
-              Highlight a team
-            </label>
-            <select
-              id="team-viz-team"
-              value=""
-              onChange={(event) => {
-                const key = parseVizTeamKey(event.target.value);
-                if (key) toggleTeam(key);
-              }}
-              disabled={teamKeys.length >= VIZ_TEAM_HIGHLIGHT_MAX}
-              className={cn(selectClass, "col-span-2 sm:col-auto sm:min-w-[12rem]")}
-            >
-              <option value="">
-                {teamKeys.length
-                  ? `Highlight (${teamKeys.length}/${VIZ_TEAM_HIGHLIGHT_MAX})…`
-                  : "Highlight a team…"}
-              </option>
-              {VIZ_TEAM_OPTIONS.filter((option) => !teamKeys.includes(option.value)).map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </>
+          <FilterSelect
+            key={teamKeys.join(",")}
+            id="team-viz-team"
+            label="Highlight a team"
+            value=""
+            placeholder={
+              teamKeys.length
+                ? `Highlight (${teamKeys.length}/${VIZ_TEAM_HIGHLIGHT_MAX})`
+                : "Highlight a team"
+            }
+            onChange={(value) => {
+              const key = parseVizTeamKey(value);
+              if (key) toggleTeam(key);
+            }}
+            options={VIZ_TEAM_OPTIONS.filter((option) => !teamKeys.includes(option.value)).map((option) => ({
+              value: option.value,
+              label: option.label,
+            }))}
+            className="min-w-[9rem]"
+          />
         ) : null}
       </div>
 
@@ -197,6 +176,6 @@ export function TeamVizHub({
           ))}
         </div>
       ) : null}
-    </div>
+    </FilterBar>
   );
 }

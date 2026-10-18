@@ -3,11 +3,11 @@ import type { CSSProperties } from "react";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { TransitionLink } from "@/components/continuity/query-nav";
 import { LocalTipTime } from "@/components/sports/local-tip-time";
-import { type, sectionLinkClassName } from "@/lib/design-system";
+import { SectionLink } from "@/components/ui/section-link";
+import { type } from "@/lib/design-system";
 import { teamPageHref } from "@/lib/team-destination";
 import type { ScheduleFacts } from "@/lib/team-overview-data";
 import { cn } from "@/lib/utils";
-
 const REGULAR_SEASON_GAMES = 82;
 const PRE_CUP_GAMES = 80;
 
@@ -124,12 +124,8 @@ export function TeamOpeningNight({
           <div className="mb-2 flex items-baseline justify-between gap-2">
             <p className={cn(type.micro, "font-semibold uppercase tracking-wide text-muted-foreground")}>First games</p>
             <div className="flex gap-3">
-              <TransitionLink href={rosterHref} className={cn(type.caption, sectionLinkClassName)}>
-                Roster <span data-motion-arrow aria-hidden>→</span>
-              </TransitionLink>
-              <TransitionLink href={scheduleHref} className={cn(type.caption, sectionLinkClassName)}>
-                Full schedule <span data-motion-arrow aria-hidden>→</span>
-              </TransitionLink>
+              <SectionLink href={rosterHref}>Roster</SectionLink>
+              <SectionLink href={scheduleHref}>Full schedule</SectionLink>
             </div>
           </div>
           <ol

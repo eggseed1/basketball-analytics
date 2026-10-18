@@ -3,6 +3,7 @@ import type { PayoffWaiting } from "@/data/runtime/salary-payoff";
 import { type } from "@/lib/design-system";
 import { shortDate } from "@/lib/salary-payoff";
 import { cn } from "@/lib/utils";
+import { LinkCue } from "@/components/ui/link-cue";
 
 /** Before the first night of games: say when lines start rather than drawing last season. */
 export function SalaryPayoffWaiting({
@@ -23,7 +24,7 @@ export function SalaryPayoffWaiting({
         <>
           {" "}
           <TextLink href={previousHref}>
-            See how {waiting.previous} finished <span data-motion-arrow aria-hidden>→</span>
+            See how {waiting.previous} finished <LinkCue />
           </TextLink>
         </>
       ) : null}

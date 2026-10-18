@@ -10,6 +10,7 @@ import {
 import { createPortal } from "react-dom";
 
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
+import { searchFieldClassName } from "@/components/ui/choice-chip";
 import { Input } from "@/components/ui/input";
 import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
@@ -301,7 +302,7 @@ export function PlayerFilterSearch({
         placeholder="Search player"
         aria-label="Search player"
         autoComplete="off"
-        className="h-7 border-0 bg-transparent shadow-none focus-visible:ring-0"
+        className={searchFieldClassName}
       />
       {menu}
     </div>

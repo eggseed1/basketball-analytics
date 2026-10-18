@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-labelledby="title">
+  <title id="title">DRBL lane</title>
+  <g fill="#111114">
+    <!-- Paint, with the ball cut out at the nail -->
+    <path fill-rule="evenodd" d="M78 36 H178 V220 H78 Z M128 168 A28 28 0 1 0 128.1 168 A28 28 0 1 0 128 168 Z"/>
+    <!-- Free-throw circle, top half standing on the line -->
+    <path fill-rule="evenodd" d="M128 28 A58 58 0 1 1 127.9 28 Z M128 56 A30 30 0 1 0 128.1 56 Z"/>
+    <!-- Lane hashes -->
+    <rect x="62" y="108" width="16" height="10"/>
+    <rect x="178" y="108" width="16" height="10"/>
+    <rect x="62" y="132" width="16" height="10"/>
+    <rect x="178" y="132" width="16" height="10"/>
+  </g>
+</svg>

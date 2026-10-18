@@ -209,20 +209,20 @@ export function StrengthsPanel({
 }) {
   if (!strengths.length && !weaknesses.length) return null;
   return (
-    <section className="sports-card flex flex-col gap-4 p-4 sm:p-5" aria-label="Strengths and weaknesses">
+    <section className="sports-card flex h-full flex-col gap-4 p-4 sm:p-5" aria-label="Strengths and weaknesses">
       <div>
         <h2 className={type.heading}>Strengths and weaknesses</h2>
         <p className={cn(type.bodySm, "mt-1 text-muted-foreground")}>
           Their best and worst league percentiles on the season board.
         </p>
       </div>
-      <div className="grid gap-5 sm:grid-cols-2">
-        <div>
-          <p className={cn(type.micro, "mb-2 font-semibold uppercase tracking-wide")} style={{ color: WIN_TEXT }}>
+      <div className="grid flex-1 gap-5 sm:grid-cols-2">
+        <div className="flex flex-col">
+          <p className={cn(type.micro, "mb-3 font-semibold uppercase tracking-wide")} style={{ color: WIN_TEXT }}>
             Strengths
           </p>
           {strengths.length ? (
-            <ul data-hover-group className="flex flex-col gap-3">
+            <ul data-hover-group className="flex flex-1 flex-col justify-between gap-6">
               {strengths.map((t) => (
                 <TraitRow key={t.id} t={t} />
               ))}
@@ -231,12 +231,12 @@ export function StrengthsPanel({
             <p className={cn(type.caption, "text-muted-foreground")}>Nothing in the top third of the league.</p>
           )}
         </div>
-        <div>
-          <p className={cn(type.micro, "mb-2 font-semibold uppercase tracking-wide")} style={{ color: LOSS_TEXT }}>
+        <div className="flex flex-col">
+          <p className={cn(type.micro, "mb-3 font-semibold uppercase tracking-wide")} style={{ color: LOSS_TEXT }}>
             Weaknesses
           </p>
           {weaknesses.length ? (
-            <ul data-hover-group className="flex flex-col gap-3">
+            <ul data-hover-group className="flex flex-1 flex-col justify-between gap-6">
               {weaknesses.map((t) => (
                 <TraitRow key={t.id} t={t} />
               ))}
@@ -247,9 +247,9 @@ export function StrengthsPanel({
         </div>
       </div>
       {howTheyWin.length ? (
-        <div className="grid gap-2 sm:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-3">
           {howTheyWin.map((f) => (
-            <div key={f.id} className="rounded-lg bg-secondary/50 px-3 py-2.5">
+            <div key={f.id}>
               <p className={cn(type.micro, "font-bold uppercase tracking-wide text-muted-foreground")}>{f.title}</p>
               <p className={cn(type.caption, "mt-1 text-muted-foreground")}>{f.body}</p>
             </div>

@@ -2,12 +2,13 @@ import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
-import { LearnPageFooter, learnEyebrow } from "@/components/learn/learn-page-footer";
+import { LearnPageFooter } from "@/components/learn/learn-page-footer";
 import { StatGuideView } from "@/components/learn/stat-guide-view";
 import { AppLink } from "@/components/ui/app-link";
 import { getStatGuide } from "@/content/stats/guides";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/learn/drbl/war1" },
   title: "WAR1",
   description:
     "The season value a player accumulated: DRBL/100 times playing time, in wins above an average player. This is not classic WAR.",
@@ -28,7 +29,7 @@ export default function LearnWar1Page() {
           ← What is DRBL?
         </AppLink>
 
-        <StatGuideView guide={guide} eyebrow={learnEyebrow(guide.id)} />
+        <StatGuideView guide={guide} />
 
         <LearnPageFooter conceptId={guide.id} />
       </div>

@@ -155,20 +155,19 @@ export default async function PlayerVisualizationsPage({
 
   const subtitle =
     view === "surplus"
-      ? "Every current contract we can estimate, ranked by projected surplus. Pick how many to show, highlight a team, or pin a player."
+      ? "Every current contract we can estimate, ranked by projected surplus. Pick how many to show, or highlight a team."
       : view === "payoff"
-      ? `${payoffSeason} · how much of each player's salary his play has covered, starting from 0 on opening night. Pick how many to show, highlight a team, or pin a player.`
+      ? `${payoffSeason} · how much of each player's salary his play has covered, starting from 0 on opening night. Pick how many to show, or highlight a team.`
       : view === "usage"
-      ? `${season} · ${fieldBlurb}${minutesBlurb} · usage rate × true shooting. Use the side leaders list, team highlight, or pin search, and click a point to open their page.`
+      ? `${season} · ${fieldBlurb}${minutesBlurb} · usage rate × true shooting. Use the side leaders list or a team highlight, and click a point to open their page.`
       : scatterMeta
-        ? `${season} · ${fieldBlurb}${minutesBlurb} · ${scatterMeta.blurb} Use the side leaders list, team highlight, or pin search, and click a point to open their page.`
-        : `${season} player race · ${fieldBlurb} by ${metricLabel}${minutesBlurb}. Rate stats show season levels; counting and season totals accumulate over time. Pick a team to highlight the roster, or search to pin anyone.`;
+        ? `${season} · ${fieldBlurb}${minutesBlurb} · ${scatterMeta.blurb} Use the side leaders list or a team highlight, and click a point to open their page.`
+        : `${season} player race · ${fieldBlurb} by ${metricLabel}${minutesBlurb}. Rate stats show season levels; counting and season totals accumulate over time. Pick a team to highlight the roster.`;
 
   return (
     <main data-motion-page className="site-shell flex flex-1 flex-col gap-5 py-6 sm:py-8">
       <MotionReveal />
       <PageHeader
-        eyebrow="Players"
         title="Visualizations"
         subtitle={subtitle}
       />

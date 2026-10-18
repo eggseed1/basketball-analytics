@@ -1,9 +1,11 @@
 "use client";
 
+import type { EarningsRow } from "@/one-shot/leaderboard";
 import { TIER_LABEL, type CareerSummary } from "@/one-shot/report";
 import type { DrawMode, Mode, Pacing } from "@/one-shot/types";
 import { country, countryFlag, PLAYABLE_COUNTRIES } from "@/one-shot/world";
 
+import { EarningsPanel, type AllTimeStatus } from "./earnings-board";
 import { Btn, Panel, Segmented } from "./ui";
 
 export interface StartOptions {
@@ -20,6 +22,9 @@ export function StartScreen({
   continueLabel,
   onContinue,
   careers,
+  board,
+  allTime,
+  allTimeStatus,
   replaySeed,
   onClearReplay,
   recovery,
@@ -35,6 +40,9 @@ export function StartScreen({
   continueLabel: string | null;
   onContinue: () => void;
   careers: CareerSummary[];
+  board: CareerSummary[];
+  allTime: EarningsRow[];
+  allTimeStatus: AllTimeStatus;
   replaySeed: number | null;
   onClearReplay: () => void;
   recovery: string | null;
@@ -143,6 +151,10 @@ export function StartScreen({
         <p className="mt-4 text-[11.5px] text-[var(--os-dim)]">Fiction. Real leagues and federations appear as context; every player, offer and result is invented.</p>
       </Panel>
 
+      <div className="flex flex-col gap-5">
+      <Panel title="Earnings">
+        <EarningsPanel personal={board} allTime={allTime} allTimeStatus={allTimeStatus} />
+      </Panel>
       <Panel title="Recent careers">
         {careers.length ? (
           <ol className="flex flex-col">
@@ -172,6 +184,7 @@ export function StartScreen({
           <p className="text-[12.5px] text-[var(--os-dim)]">Finished lives show up here. The last 15 are kept on this device.</p>
         )}
       </Panel>
+      </div>
     </div>
   );
 }

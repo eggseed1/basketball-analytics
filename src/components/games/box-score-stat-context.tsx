@@ -9,6 +9,7 @@ import {
   type BoxScoreStatLine,
 } from "@/analytics/box-score-context";
 import { cn } from "@/lib/utils";
+import { LinkCue } from "@/components/ui/link-cue";
 
 function LineDetail({ line }: { line: BoxScoreStatLine }) {
   return (
@@ -97,7 +98,7 @@ export function BoxScoreContextBody({
           href={context.playerHref}
           className="text-[12px] font-semibold underline-offset-2 hover:underline"
         >
-          View player <span data-motion-arrow aria-hidden>→</span>
+          View player <LinkCue />
         </Link>
         <span className="text-[11px] text-muted-foreground">
           Game percentile = among players who played · Season avg = board

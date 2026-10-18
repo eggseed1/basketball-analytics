@@ -1,4 +1,4 @@
-import { TransitionLink } from "@/components/continuity/query-nav";
+import { SectionLink } from "@/components/ui/section-link";
 import {
   computeTeamFormSummary,
   computeTeamMarginSplits,
@@ -7,13 +7,12 @@ import {
   hasTeamSnapshotGames,
   type TeamSplitBucket,
 } from "@/lib/team-snapshot-games";
-import { type, sectionLinkClassName } from "@/lib/design-system";
+import { type } from "@/lib/design-system";
 import { formatNumber, formatPct } from "@/lib/format";
 import { teamPageHref } from "@/lib/team-destination";
 import { cn } from "@/lib/utils";
 import { buildTeamSchedule } from "@/lib/team-schedule";
 import { HomeAwayMirror, SplitsMonthWaffle } from "@/components/teams/viz/splits-charts";
-
 function fmtRecord(wins: number, losses: number, games: number): string {
   if (!games) return "—";
   return `${wins}-${losses}`;
@@ -169,12 +168,7 @@ export async function TeamSplitsIsland({
             schedule ({season}). Box-score only and not opponent-adjusted.
           </p>
         </div>
-        <TransitionLink
-          href={gamesHref}
-          className={cn(type.caption, sectionLinkClassName)}
-        >
-          Game log <span data-motion-arrow aria-hidden>→</span>
-        </TransitionLink>
+        <SectionLink href={gamesHref}>Game log</SectionLink>
       </div>
 
       <div className="sports-card flex flex-col gap-3 p-4 sm:p-5">

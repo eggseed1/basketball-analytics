@@ -10,10 +10,10 @@ import {
 } from "@/components/sentiment/sentiment-source";
 import { getTeamSentimentBoard } from "@/data/queries/team-sentiment";
 import type { CuratedSentimentLane } from "@/sentiment/curated-types";
-import { textLinkClassName, type, sectionLinkClassName } from "@/lib/design-system";
+import { SectionLink } from "@/components/ui/section-link";
+import { textLinkClassName, type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 import { SentimentToneMap } from "@/components/teams/viz/sentiment-tone-map";
-
 function LaneStat({ label, lane }: { label: string; lane?: CuratedSentimentLane }) {
   return (
     <div className="flex flex-col gap-1">
@@ -59,9 +59,7 @@ export async function TeamSentimentIsland({ teamId }: { teamId: string }) {
             {formatSentimentDate(board.snapshotDate, true)}.
           </p>
         </div>
-        <Link href="/sentiment?view=teams" className={cn(type.caption, sectionLinkClassName)}>
-          All teams <span data-motion-arrow aria-hidden>→</span>
-        </Link>
+        <SectionLink href="/sentiment?view=teams">All teams</SectionLink>
       </div>
 
       <SentimentToneMap teamId={board.teamId} teamProfile={team} players={board.players} />

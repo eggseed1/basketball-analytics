@@ -96,14 +96,6 @@ export function SentimentCenterView({
   return (
     <div key={view} data-motion-stack className="flex flex-col gap-8">
       <header className="flex flex-col gap-3">
-        <p
-          className={cn(
-            type.caption,
-            "font-semibold uppercase tracking-wide text-muted-foreground"
-          )}
-        >
-          Sentiment · {feed.season}
-        </p>
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
           {view === "players"
             ? "Player sentiment"

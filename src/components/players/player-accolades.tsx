@@ -16,6 +16,7 @@ import { AwardTrophyIcon } from "@/components/awards/award-trophy-icon";
 import type { PlayerAccoladeBadge } from "@/data/queries/player-awards";
 import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
+import { LinkCue } from "@/components/ui/link-cue";
 
 function formatSeasonLabel(season: string): string {
   if (season === "inducted") return "Inducted";
@@ -216,7 +217,7 @@ function AccoladeTag({ badge }: { badge: PlayerAccoladeBadge }) {
                     "mt-2 font-semibold uppercase tracking-[0.1em] text-muted-foreground"
                   )}
                 >
-                  View full history <span data-motion-arrow aria-hidden>→</span>
+                  View full history <LinkCue />
                 </p>
               </FrostFloatingSurface>
             </div>,

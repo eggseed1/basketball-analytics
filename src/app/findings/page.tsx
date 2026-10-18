@@ -1,62 +1,65 @@
 import { MotionReveal } from "@/components/continuity/motion-reveal";
-import { InsightCard } from "@/components/home/findings-section";
+import { FindingsArchiveView, type FindingsNight } from "@/components/home/findings-archive-view";
 import { PageHeader } from "@/components/layout/page-header";
+import { buttonVariants } from "@/components/ui/button";
 import archive from "@/data/runtime/findings-archive.json";
-import {
-  findingsDateHeading,
-  groupFindingsByDate,
-  type FindingsArchive,
-} from "@/lib/findings-archive";
+import { groupFindingsByDate, type FindingsArchive } from "@/lib/findings-archive";
 
 export const metadata = {
-  title: "Findings",
-  description: "What stood out in each night of NBA games, newest first.",
+  title: "Recent Insights",
+  description: "What stood out each night of NBA games, newest first.",
   alternates: {
     canonical: "/findings",
     types: { "application/rss+xml": [{ url: "/findings/feed.xml", title: "DRBL findings" }] },
   },
 };
 
-export default function FindingsPage() {
-  const groups = groupFindingsByDate((archive as FindingsArchive).findings);
+type Day = FindingsNight;
+
+export default async function FindingsPage() {
+  const saved = groupFindingsByDate((archive as FindingsArchive).findings);
+  const days: Day[] = saved.map((group) => ({
+    date: group.date,
+    preseason: group.findings[0]?.preseason ?? false,
+    season: group.findings[0]?.season ?? "",
+    insights: group.findings,
+  }));
+
+  try {
+    const { getRecentInsightDays } = await import("@/data/queries/recent-insights-live");
+    const live = await getRecentInsightDays();
+    if (live) {
+      const seen = new Set(live.days.map((d) => d.date));
+      const older = days.filter((d) => !seen.has(d.date));
+      days.splice(
+        0,
+        days.length,
+        ...live.days.map((d) => ({
+          date: d.date,
+          preseason: live.preseason,
+          season: live.season,
+          insights: d.insights,
+        })),
+        ...older
+      );
+    }
+  } catch {
+    // The saved nights still render.
+  }
+
   return (
     <main data-motion-page className="site-shell flex flex-col gap-6 py-6 sm:py-8">
       <MotionReveal />
       <PageHeader
-        eyebrow="Findings"
-        title="Past nights"
-        subtitle="The Recent Insights cards from each night of games, kept after they leave the home page."
-        about="The nightly run saves the cards the home page showed for the latest completed games. Preseason nights carry a label next to the date."
+        title="Recent Insights"
         actions={
-          <a
-            href="/findings/feed.xml"
-            className="text-[13px] font-semibold underline-offset-4 hover:underline"
-          >
+          <a href="/findings/feed.xml" className={buttonVariants({ variant: "secondary", size: "sm" })}>
             RSS feed
           </a>
         }
       />
-      {groups.length ? (
-        groups.map((group) => {
-          const first = group.findings[0]!;
-          return (
-            <section key={group.date} className="flex flex-col gap-3">
-              <h2 className="type-heading flex flex-wrap items-baseline gap-x-2">
-                {findingsDateHeading(group.date)}
-                {first.preseason ? (
-                  <span className="whitespace-nowrap type-body-sm font-normal text-muted-foreground">
-                    {first.season} preseason
-                  </span>
-                ) : null}
-              </h2>
-              <div data-motion-list className="grid min-w-0 gap-3 sm:grid-cols-2">
-                {group.findings.map((finding) => (
-                  <InsightCard key={finding.id} insight={finding} asOf={null} />
-                ))}
-              </div>
-            </section>
-          );
-        })
+      {days.length ? (
+        <FindingsArchiveView days={days} />
       ) : (
         <p className="type-body-sm text-muted-foreground">
           No findings saved yet. Cards appear here after the first night of games.

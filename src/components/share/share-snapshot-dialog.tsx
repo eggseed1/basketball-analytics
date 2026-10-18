@@ -12,10 +12,13 @@ import { createPortal } from "react-dom";
 import { Check, Copy, Download, Link2, Share2, X } from "lucide-react";
 
 import { FitWidth } from "@/components/explore/fit-width";
+import { useOwnerTheme } from "@/components/design-system/theme-provider";
+import { SHARE_PALETTE, type ShareAppearance } from "@/components/share/share-card";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 
-async function captureNode(node: HTMLElement): Promise<string> {
+async function captureNode(node: HTMLElement, backgroundColor: string): Promise<string> {
   await new Promise((r) => requestAnimationFrame(() => r(null)));
   const imgs = Array.from(node.querySelectorAll("img"));
   await Promise.all(
@@ -32,7 +35,7 @@ async function captureNode(node: HTMLElement): Promise<string> {
   return (await import("html-to-image")).toPng(node, {
     cacheBust: true,
     pixelRatio: Math.min(2.5, (window.devicePixelRatio || 2) * 1.25),
-    backgroundColor: "#0c0c0e",
+    backgroundColor,
     filter: (el) => {
       if (!(el instanceof HTMLElement)) return true;
       return !el.hasAttribute("data-capture-exclude");
@@ -83,8 +86,8 @@ function ShareAction({
 }
 
 /**
- * Bottom-sheet share dialog around a fixed-width dark graphic: copy link,
- * download PNG, native share, post to X, copy text.
+ * Bottom-sheet share dialog: copy link, download PNG, native share, post to X, copy text.
+ * The graphic picks light or dark. The PNG uses that card, not the page behind it.
  */
 export function ShareSnapshotDialog({
   open,
@@ -105,19 +108,28 @@ export function ShareSnapshotDialog({
   shareText: string;
   canCapture: boolean;
   controls?: ReactNode;
-  graphic: ReactNode;
+  graphic: (appearance: ShareAppearance) => ReactNode;
   emptyPreview?: ReactNode;
 }) {
   const titleId = useId();
   const graphicRef = useRef<HTMLDivElement>(null);
+  const wasOpen = useRef(false);
+  const { resolvedDark } = useOwnerTheme();
+  const [appearance, setAppearance] = useState<ShareAppearance>(resolvedDark ? "dark" : "light");
   const [busy, setBusy] = useState(false);
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const palette = SHARE_PALETTE[appearance];
 
   const close = useCallback(() => {
     setError(null);
     onClose();
   }, [onClose]);
+
+  useEffect(() => {
+    if (open && !wasOpen.current) setAppearance(resolvedDark ? "dark" : "light");
+    wasOpen.current = open;
+  }, [open, resolvedDark]);
 
   useEffect(() => {
     if (!open) return;
@@ -152,12 +164,12 @@ export function ShareSnapshotDialog({
     const prevTransform = scaleWrap?.style.transform ?? "";
     if (scaleWrap) scaleWrap.style.transform = "none";
     try {
-      return await captureNode(node);
+      return await captureNode(node, palette.canvas);
     } finally {
       if (scaleWrap) scaleWrap.style.transform = prevTransform;
       setBusy(false);
     }
-  }, [canCapture]);
+  }, [canCapture, palette.canvas]);
 
   const downloadPng = useCallback(async () => {
     try {
@@ -228,12 +240,12 @@ export function ShareSnapshotDialog({
       />
       <div
         className={cn(
-          "relative z-[1] flex max-h-[min(92vh,100dvh)] w-full max-w-lg min-w-0 flex-col gap-4 overflow-x-clip overflow-y-auto",
-          "rounded-t-[var(--radius-2xl)] border border-border/70 p-4 shadow-[var(--shadow-overlay)]",
-          "frost-surface pb-[max(1rem,env(safe-area-inset-bottom))] sm:rounded-[var(--radius-2xl)] sm:p-5 sm:pb-5"
+          "relative z-[1] flex max-h-[min(92vh,100dvh)] min-h-0 w-full max-w-lg flex-col overflow-hidden",
+          "rounded-t-[var(--radius-2xl)] border border-border/70 shadow-[var(--shadow-overlay)]",
+          "frost-surface pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:rounded-[var(--radius-2xl)] sm:pb-4"
         )}
       >
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center justify-between gap-3 px-4 pt-4 sm:px-5 sm:pt-5">
           <button
             type="button"
             onClick={close}
@@ -248,21 +260,37 @@ export function ShareSnapshotDialog({
           <span className="size-9" aria-hidden />
         </div>
 
-        {controls}
+        <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-4 py-4 sm:px-5">
+          <SegmentedControl
+            size="sm"
+            label="Appearance"
+            value={appearance}
+            onChange={setAppearance}
+            options={[
+              { id: "light", label: "Light" },
+              { id: "dark", label: "Dark" },
+            ]}
+          />
 
-        <div className="min-w-0 overflow-x-clip rounded-[var(--radius-xl)] border border-border/50 bg-black/50 p-2 sm:p-3">
-          {canCapture ? (
-            <div className="mx-auto max-h-[44vh] overflow-y-auto overflow-x-clip">
-              <FitWidth className="mx-auto w-full min-w-0">
-                <div ref={graphicRef}>{graphic}</div>
-              </FitWidth>
-            </div>
-          ) : (
-            emptyPreview
-          )}
+          {controls}
+
+          <div
+            className="min-w-0 overflow-hidden rounded-[var(--radius-xl)] border border-border/50 p-2 sm:p-3"
+            style={{ background: palette.canvas }}
+          >
+            {canCapture ? (
+              <div className="mx-auto max-h-[32vh] overflow-y-auto overflow-x-hidden">
+                <FitWidth className="mx-auto w-full min-w-0">
+                  <div ref={graphicRef}>{graphic(appearance)}</div>
+                </FitWidth>
+              </div>
+            ) : (
+              emptyPreview
+            )}
+          </div>
         </div>
 
-        <div className="flex justify-center gap-1 touch-scroll-x pb-1 pt-1">
+        <div className="frost-surface relative z-10 flex shrink-0 justify-center gap-1 border-t border-border/60 px-2 pt-3 touch-scroll-x">
           <ShareAction
             label={copied ? "Copied" : "Copy link"}
             icon={copied ? <Check className="size-5" /> : <Link2 className="size-5" />}

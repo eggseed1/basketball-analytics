@@ -14,7 +14,8 @@ import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 
 export const metadata = {
-  title: "Arcade",
+  alternates: { canonical: "/arcade" },
+  title: "Basketball arcade games",
   description: "Basketball games: the daily Higher or Lower, Higher or Lower, 0–82, Teammate Chain, ONE SHOT and the GM Lab.",
 };
 
@@ -66,7 +67,6 @@ export default function ArcadePage() {
     <main data-motion-page className="site-shell flex flex-col gap-8 py-6 sm:py-8">
       <MotionReveal />
       <PageHeader
-        eyebrow="Arcade"
         title="Games"
         subtitle="Basketball games, most of them built on 30 seasons of real player stats."
       />

@@ -1,5 +1,5 @@
-import { TransitionLink } from "@/components/continuity/query-nav";
 import { PlayoffBracket } from "@/components/explore/playoff-bracket";
+import { SectionLink } from "@/components/ui/section-link";
 import { TeamGamesLog } from "@/components/teams/team-games-log";
 import { getPlayoffBracketModel } from "@/data/queries/playoff-bracket";
 import {
@@ -7,13 +7,12 @@ import {
   paginateSnapshotTeamGames,
   teamSnapshotGames,
 } from "@/lib/team-snapshot-games";
-import { type, sectionLinkClassName } from "@/lib/design-system";
+import { type } from "@/lib/design-system";
 import { formatNumber, formatPct } from "@/lib/format";
 import { standingsHref } from "@/lib/standings-routes";
 import { teamPageHref } from "@/lib/team-destination";
 import { cn } from "@/lib/utils";
 import { PlayoffsSeriesPath } from "@/components/teams/viz/playoffs-series-path";
-
 function findStandingSeed(
   teamId: string,
   standings: Awaited<ReturnType<typeof getPlayoffBracketModel>>["standings"]
@@ -102,12 +101,7 @@ export async function TeamPlayoffsIsland({
             {seed != null ? `Your seed: ${seed}.` : null}
           </p>
         </div>
-        <TransitionLink
-          href={gamesHref}
-          className={cn(type.caption, sectionLinkClassName)}
-        >
-          Regular-season games <span data-motion-arrow aria-hidden>→</span>
-        </TransitionLink>
+        <SectionLink href={gamesHref}>Regular-season games</SectionLink>
       </div>
 
       <div className="sports-card flex flex-col gap-4 p-4 sm:p-5">
@@ -195,12 +189,7 @@ export async function TeamPlayoffsIsland({
           <h3 className={cn(type.bodySm, "font-semibold")}>
             Postseason game log
           </h3>
-          <TransitionLink
-            href={standingsHref(season, "bracket")}
-            className={cn(type.caption, sectionLinkClassName)}
-          >
-            League bracket <span data-motion-arrow aria-hidden>→</span>
-          </TransitionLink>
+          <SectionLink href={standingsHref(season, "bracket")}>League bracket</SectionLink>
         </div>
         {compact.length === 0 ? (
           <p className={cn(type.bodySm, "text-muted-foreground")}>

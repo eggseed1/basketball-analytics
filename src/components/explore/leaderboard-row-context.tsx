@@ -8,6 +8,7 @@ import { formatLeaderboardPercentile, type LeaderboardRowContext } from "@/analy
 import { FrostFloatingSurface } from "@/components/brand/frost-floating-surface";
 import { stripFloatingTransform } from "@/lib/strip-floating-transform";
 import { cn } from "@/lib/utils";
+import { LinkCue } from "@/components/ui/link-cue";
 
 /** Shared with PlayerIdentity floating policy (PreviewCard) - same Floating UI knobs. */
 export const LEADERBOARD_CONTEXT_COLLISION = {
@@ -68,7 +69,7 @@ export function LeaderboardContextBody({
           href={context.playerHref}
           className="text-[12px] font-semibold underline-offset-2 hover:underline"
         >
-          View player <span data-motion-arrow aria-hidden>→</span>
+          View player <LinkCue />
         </Link>
         {context.primary.learnHref ? (
           <Link

@@ -3,12 +3,15 @@
  * Design may restyle; season/view semantics stay frozen.
  */
 
-import { historySeasonSupportsDrbl } from "@/data/history/player-career-types";
+import {
+  DRBL_SUPPORTED_START,
+  historySeasonSupportsDrbl,
+} from "@/data/history/player-career-types";
 import { startYearFromCanonicalSeason } from "@/data/providers/historical/season-range";
 
 export const PLAYER_GAME_LOG_PAGE_SIZE = 40;
 export const PLAYER_GAME_LOG_SUPPORTED_START = "1996-97";
-export const DRBL_SUPPORTED_START = "2020-21";
+export { DRBL_SUPPORTED_START };
 
 export type PlayerPageView =
   | "overview"
@@ -109,7 +112,6 @@ export function playerPageNavViews(
   const out: Array<{ id: PlayerPageView; label: string }> = [
     { id: "overview", label: "Overview" },
   ];
-  if (caps.sentiment) out.push({ id: "sentiment", label: "Sentiment" });
   if (caps.gameLogs) out.push({ id: "games", label: "Game Logs" });
   out.push({ id: "career", label: "Career" });
   if (caps.splits) out.push({ id: "splits", label: "Splits" });
@@ -117,6 +119,7 @@ export function playerPageNavViews(
   out.push({ id: "advanced", label: "Advanced" });
   if (caps.onOff) out.push({ id: "onoff", label: "On/Off" });
   if (caps.gameHighs) out.push({ id: "highs", label: "Game Highs" });
+  if (caps.sentiment) out.push({ id: "sentiment", label: "Sentiment" });
   return out;
 }
 

@@ -24,6 +24,12 @@ import { gameSideBrandKey } from "@/lib/game-team-identity";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { nbaTodayIso } from "@/lib/nba-calendar-date";
 import { cn } from "@/lib/utils";
+import {
+  segmentedItemActiveClassName,
+  segmentedItemClassName,
+  segmentedItemIdleClassName,
+  segmentedTrackClassName,
+} from "@/components/ui/segmented-style";
 import { formatTipTime } from "@/lib/tip-time";
 import { useViewerTimeZone } from "@/components/sports/local-tip-time";
 
@@ -291,18 +297,18 @@ function ViewTabs({
   ];
 
   return (
-    <div className="inline-flex rounded-md border border-border bg-secondary/40 p-0.5">
+    <div className={segmentedTrackClassName} role="tablist" aria-label="Scores range">
       {tabs.map((tab) => (
         <TransitionLink
           key={tab.id}
           href={tab.href}
           scroll={false}
-          aria-current={view === tab.id ? "page" : undefined}
+          role="tab"
+          aria-selected={view === tab.id}
           className={cn(
-            "rounded-sm px-2.5 py-1.5 text-[14px] font-semibold transition-colors sm:px-3",
-            view === tab.id
-              ? "bg-card text-foreground shadow-sm"
-              : "text-muted-foreground hover:text-foreground"
+            segmentedItemClassName,
+            "px-2.5 py-1.5 text-[14px] sm:px-3",
+            view === tab.id ? segmentedItemActiveClassName : segmentedItemIdleClassName
           )}
         >
           {tab.label}
@@ -534,7 +540,7 @@ export function Gamefeed({
   return (
     <QueryNavProvider className="gap-0">
       <div className="flex flex-col gap-4">
-        <GlassSurface as="section" className="flex flex-col gap-4 p-4 sm:p-5">
+        <section className="flex flex-col gap-4">
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
               <h1 className="text-[28px] font-bold tracking-tight sm:text-[32px]">
@@ -558,7 +564,7 @@ export function Gamefeed({
               <TransitionLink
                 href={scoresHref({ view: "month", month: prevMonth })}
                 scroll={false}
-                className="rounded-md bg-secondary px-3 py-1.5 text-[14px] font-semibold"
+                className="sports-pill"
               >
                 Prev
               </TransitionLink>
@@ -568,7 +574,7 @@ export function Gamefeed({
               <TransitionLink
                 href={scoresHref({ view: "month", month: nextMonth })}
                 scroll={false}
-                className="rounded-md bg-secondary px-3 py-1.5 text-[14px] font-semibold"
+                className="sports-pill"
               >
                 Next
               </TransitionLink>
@@ -576,27 +582,27 @@ export function Gamefeed({
           ) : null}
 
           {view === "week" ? (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-center gap-2">
               <TransitionLink
                 href={scoresHref({ view: "week", week: prevWeek })}
                 scroll={false}
-                className="rounded-md bg-secondary px-3 py-1.5 text-[14px] font-semibold"
+                className="sports-pill"
               >
                 Prev
               </TransitionLink>
-              <p className="min-w-[9rem] flex-1 text-center text-[16px] font-bold tracking-tight sm:flex-none">
+              <p className="min-w-[9rem] text-center text-[16px] font-bold tracking-tight">
                 {weekRangeLabel(weekStart, weekEnd)}
               </p>
               <TransitionLink
                 href={scoresHref({ view: "week", week: nextWeek })}
                 scroll={false}
-                className="rounded-md bg-secondary px-3 py-1.5 text-[14px] font-semibold"
+                className="sports-pill"
               >
                 Next
               </TransitionLink>
             </div>
           ) : null}
-        </GlassSurface>
+        </section>
 
         <div className="query-updating-content flex flex-col gap-4">
           {view === "day" ? children : null}

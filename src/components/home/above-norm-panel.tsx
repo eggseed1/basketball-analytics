@@ -30,11 +30,11 @@ function Row({ insight }: { insight: RecentInsight }) {
         <div className="flex items-baseline justify-between gap-2">
           <Link
             href={`/players/${encodeURIComponent(insight.playerId)}`}
-            className="truncate text-[14px] font-semibold leading-tight hover:underline"
+            className="type-body-sm truncate font-semibold leading-tight hover:underline"
           >
             {line.playerName}
           </Link>
-          <span className="shrink-0 text-[15px] font-black tabular-nums" style={{ color }}>
+          <span className="type-body-sm shrink-0 font-semibold tabular-nums" style={{ color }}>
             +{Math.round(value - avg)} {rule.label}
           </span>
         </div>
@@ -45,11 +45,11 @@ function Row({ insight }: { insight: RecentInsight }) {
           />
           <span
             aria-hidden
-            className="absolute -inset-y-1 w-0.5 rounded-full bg-foreground/75"
+            className="absolute -inset-y-px w-px rounded-full bg-foreground/70"
             style={{ left: `${(avg / scale) * 100}%` }}
           />
         </span>
-        <div className="flex items-center justify-between gap-2 text-[11px] text-muted-foreground">
+        <div className="type-caption flex items-center justify-between gap-2 text-muted-foreground">
           <span className="flex min-w-0 items-center gap-1.5">
             {insight.teamId ? <TeamLogo teamKey={insight.teamId} size="2xs" /> : null}
             {insight.gameId ? (
@@ -79,19 +79,14 @@ export function AboveNormPanel({ nights }: { nights: RecentInsight[] }) {
   if (!rows.length) return null;
   const seasons = [...new Set(rows.map((r) => r.line!.baseline!.season))].join(" and ");
   return (
-    <section aria-labelledby="above-norm-title" className="sports-card flex flex-col gap-2 p-4 sm:p-[21px]">
-      <div>
-        <h2 id="above-norm-title" className="type-heading">Above their norm</h2>
-        <p className="type-body-sm text-muted-foreground">
-          Players who beat their own averages by the most in the latest games.
-        </p>
-      </div>
-      <ul className="flex flex-col divide-y divide-border">
+    <section aria-labelledby="above-norm-title" className="sports-card flex flex-col gap-2 p-4">
+      <h2 id="above-norm-title" className="type-heading">Above their norm</h2>
+      <ul className="flex flex-col divide-y divide-border/40">
         {rows.map((r) => (
           <Row key={r.id} insight={r} />
         ))}
       </ul>
-      <p className="text-[11px] text-muted-foreground">
+      <p className="type-caption text-muted-foreground">
         Bars are the game, ticks are his per-game average for {seasons}. Players without a full
         season of games are left out.
       </p>

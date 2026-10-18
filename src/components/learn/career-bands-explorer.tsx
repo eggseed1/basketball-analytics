@@ -6,6 +6,7 @@ import type { CareerBands, CareerBandSeason } from "@/analytics/career-bands";
 import { AppLink } from "@/components/ui/app-link";
 import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
+import { LinkCue } from "@/components/ui/link-cue";
 
 const PRESETS = [
   { id: "2544", name: "LeBron James" },
@@ -271,7 +272,7 @@ export function CareerBandsExplorer() {
           <p className={cn(type.caption, "text-muted-foreground")}>
             A season counts with 20 games at 15 minutes a game, or 15 games at 18 minutes.{" "}
             <AppLink href={`/players/${loaded.playerId}`} className="font-semibold text-foreground underline-offset-2 hover:underline">
-              Open {loaded.playerName}&apos;s page <span data-motion-arrow aria-hidden>→</span>
+              Open {loaded.playerName}&apos;s page <LinkCue />
             </AppLink>
           </p>
         </>

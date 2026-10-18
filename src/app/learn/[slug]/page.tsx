@@ -4,7 +4,7 @@ import { Suspense } from "react";
 
 import { CareerBandsExplorer } from "@/components/learn/career-bands-explorer";
 import { DrblShrinkage } from "@/components/learn/drbl-shrinkage";
-import { LearnPageFooter, learnEyebrow } from "@/components/learn/learn-page-footer";
+import { LearnPageFooter } from "@/components/learn/learn-page-footer";
 import { LearnTopicView } from "@/components/learn/learn-topic-view";
 import { StatGuideView } from "@/components/learn/stat-guide-view";
 import { AppLink } from "@/components/ui/app-link";
@@ -43,7 +43,6 @@ export default async function LearnStatPage({
   if (!page || page.kind === "portal") notFound();
 
   const conceptId = page.kind === "guide" ? page.guide.id : page.topic.id;
-  const eyebrow = learnEyebrow(conceptId);
 
   return (
     <main data-motion-page className="site-shell flex flex-col gap-8 py-6 sm:py-8">
@@ -59,7 +58,6 @@ export default async function LearnStatPage({
         {page.kind === "guide" ? (
           <StatGuideView
             guide={page.guide}
-            eyebrow={eyebrow}
             visual={
               page.guide.slug === "drbl-100" ? (
                 <Suspense key="drbl-shrinkage" fallback={<div className="h-[42rem] animate-pulse rounded-md bg-foreground/[0.05]" />}>
@@ -71,7 +69,6 @@ export default async function LearnStatPage({
         ) : (
           <LearnTopicView
             topic={page.topic}
-            eyebrow={eyebrow}
             visual={CAREER_BAND_TOPICS.has(page.topic.id) ? <CareerBandsExplorer /> : undefined}
           />
         )}

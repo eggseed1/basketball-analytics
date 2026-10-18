@@ -29,7 +29,8 @@ import {
 import { cn } from "@/lib/utils";
 
 export const metadata = {
-  title: "Team visualizations",
+  alternates: { canonical: "/standings/visualizations" },
+  title: "NBA team visualizations",
   description:
     "NBA team charts: standings race, scoring margin, offense vs defense, pace, shot diet, possession battle, luck, home and road splits, close games, quarter-by-quarter scoring, and contract surplus.",
 };
@@ -154,7 +155,6 @@ export default async function TeamVisualizationsPage({ searchParams }: PageProps
     <main data-motion-page className="site-shell flex flex-1 flex-col gap-5 py-6 sm:py-8">
       <MotionReveal />
       <PageHeader
-        eyebrow="Teams"
         title="Visualizations"
         subtitle={
           teamVizIgnoresSeason(view)

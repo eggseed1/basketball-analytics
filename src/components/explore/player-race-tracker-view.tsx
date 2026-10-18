@@ -244,26 +244,24 @@ export function PlayerRaceTrackerView({
 
   return (
     <div className="flex flex-col gap-4">
-      <p className={cn(type.caption, "text-muted-foreground")}>
-        {payload.players.length} players ·{" "}
-        {playerRaceModeLabel(payload.metric)}{" "}
-        {payload.metricLabel.toLowerCase()}
-        {chartPlayers.length < deferredPlayers.length
-          ? ` · charting ${chartPlayers.length} lines (pins/selection always included)`
-          : ""}
-        {getPlayerRaceMetricDef(payload.metric).description
-          ? ` · ${getPlayerRaceMetricDef(payload.metric).description}`
-          : ""}
-      </p>
-
-      {payload.warning ? (
-        <p className={cn(type.caption, "text-muted-foreground")}>
-          {payload.warning}
-        </p>
-      ) : null}
-
       <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_minmax(200px,240px)]">
+        <div className="flex min-w-0 flex-col gap-2">
         <div className="sports-card overflow-hidden p-3 sm:p-4">
+          <div
+            className="mb-3 flex w-fit flex-wrap gap-1 rounded-full border border-border/70 bg-background/80 px-2 py-1 backdrop-blur-sm"
+            role="group"
+            aria-label="Chart time window"
+          >
+            {WINDOW_OPTIONS.map((option) => (
+              <Chip
+                key={String(option.id)}
+                active={chartWindow === option.id}
+                onClick={() => setChartWindow(option.id)}
+              >
+                {option.label}
+              </Chip>
+            ))}
+          </div>
           <div className="mb-3 flex min-h-9 flex-wrap items-center gap-2">
             {effectiveSelectedIds.size ? (
               <>
@@ -342,22 +340,23 @@ export function PlayerRaceTrackerView({
               hoverLink={hoverLink}
             />
           </div>
-
-          <div
-            className="mx-auto mt-3 flex w-fit flex-wrap justify-center gap-1 rounded-full border border-border/70 bg-background/80 px-2 py-1 backdrop-blur-sm"
-            role="group"
-            aria-label="Chart time window"
-          >
-            {WINDOW_OPTIONS.map((option) => (
-              <Chip
-                key={String(option.id)}
-                active={chartWindow === option.id}
-                onClick={() => setChartWindow(option.id)}
-              >
-                {option.label}
-              </Chip>
-            ))}
-          </div>
+        </div>
+        <p className={cn(type.caption, "text-muted-foreground")}>
+          {payload.players.length} players ·{" "}
+          {playerRaceModeLabel(payload.metric)}{" "}
+          {payload.metricLabel.toLowerCase()}
+          {chartPlayers.length < deferredPlayers.length
+            ? ` · charting ${chartPlayers.length} lines (pins/selection always included)`
+            : ""}
+          {getPlayerRaceMetricDef(payload.metric).description
+            ? ` · ${getPlayerRaceMetricDef(payload.metric).description}`
+            : ""}
+        </p>
+        {payload.warning ? (
+          <p className={cn(type.caption, "text-muted-foreground")}>
+            {payload.warning}
+          </p>
+        ) : null}
         </div>
 
         <aside className="sports-card flex max-h-[min(560px,70vh)] flex-col overflow-hidden p-3 md:sticky md:top-20">

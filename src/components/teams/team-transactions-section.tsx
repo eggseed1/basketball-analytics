@@ -8,6 +8,7 @@ import {
 } from "@/lib/transaction-player-resolution";
 import type { NbaTransactionEvent } from "@/data/types/transaction-event";
 import { isTradeRelatedSourceCategory } from "@/lib/transaction-event-presentation";
+import { LinkCue } from "@/components/ui/link-cue";
 import {
   nonTradeSentences,
   tradeAcquirePresentationFromEvent,
@@ -116,7 +117,7 @@ export function TeamTransactionsSection({
         <TextLink
           href={`/offseason?team=${encodeURIComponent(teamFilterId)}&year=${offseasonYear}`}
         >
-          View all transactions <span data-motion-arrow aria-hidden>→</span>
+          View all transactions <LinkCue />
         </TextLink>
       </p>
     </div>

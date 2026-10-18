@@ -1,6 +1,8 @@
 import type { CSSProperties } from "react";
 
 import type {
+  InsightMoment,
+  MomentMark,
   RecentInsightFocus,
   RecentInsightGame,
   RecentInsightStatLine,
@@ -23,11 +25,25 @@ function luminance(hex: string): number | null {
   return 0.2126 * ch[0]! + 0.7152 * ch[1]! + 0.0722 * ch[2]!;
 }
 
-/**
- * Team color that stays visible on the card in both themes: silver-type
- * primaries fall back to the secondary, and pure black follows the theme.
- */
-export function teamColor(teamKey?: string | null): string {
+/** Pull a dark team hex toward white so it stays readable on a dark card. */
+function liftForDark(hex: string): string {
+  const m = /^#?([0-9a-f]{6})$/i.exec(hex.trim());
+  if (!m) return hex;
+  const n = parseInt(m[1]!, 16);
+  const mix = (c: number) => Math.round(c + (255 - c) * 0.62);
+  const part = (v: number) => mix(v).toString(16).padStart(2, "0");
+  return `#${part((n >> 16) & 255)}${part((n >> 8) & 255)}${part(n & 255)}`;
+}
+
+/** Light mode keeps the hex. Dark mode uses a lighter mix when the hex would vanish. */
+function themePaint(color: string): string {
+  if (color.startsWith("var(")) return color;
+  const lum = luminance(color);
+  if (lum == null || lum >= 0.32) return color;
+  return `light-dark(${color}, ${liftForDark(color)})`;
+}
+
+function readableTeamHex(teamKey?: string | null): string {
   const brand = resolveTeamBrand(teamKey);
   if (!brand) return FALLBACK_COLOR;
   let color = brand.primary;
@@ -35,6 +51,15 @@ export function teamColor(teamKey?: string | null): string {
   const lum = luminance(color);
   if (lum == null || lum < 0.02 || lum > 0.5) return FALLBACK_COLOR;
   return color;
+}
+
+/**
+ * Team color that stays visible on the card in both themes: silver-type
+ * primaries fall back to the secondary, and pure black follows the theme.
+ * Dark navy and green lift toward white in dark mode.
+ */
+export function teamColor(teamKey?: string | null): string {
+  return themePaint(readableTeamHex(teamKey));
 }
 
 /** Hex distance check so two similar team colors don't blend in one chart. */
@@ -52,17 +77,17 @@ function colorsClash(a: string, b: string): boolean {
 }
 
 export function gameColors(game: RecentInsightGame): { away: string; home: string } {
-  const home = teamColor(game.home.teamId);
-  let away = teamColor(game.away.teamId);
-  if (away === home || colorsClash(home, away)) {
+  const homeHex = readableTeamHex(game.home.teamId);
+  let awayHex = readableTeamHex(game.away.teamId);
+  if (awayHex === homeHex || colorsClash(homeHex, awayHex)) {
     const alt = resolveTeamBrand(game.away.teamId)?.secondary;
     const lum = alt ? luminance(alt) : null;
-    away =
-      alt && lum != null && lum >= 0.02 && lum <= 0.5 && !colorsClash(home, alt)
+    awayHex =
+      alt && lum != null && lum >= 0.02 && lum <= 0.5 && !colorsClash(homeHex, alt)
         ? alt
         : "var(--muted-foreground)";
   }
-  return { away, home };
+  return { away: themePaint(awayHex), home: themePaint(homeHex) };
 }
 
 /** Home minus away, cumulative through each period. */
@@ -433,7 +458,11 @@ export function InsightPointsMix({
 }) {
   const parts = pointsParts(line);
   if (!parts) return null;
-  const ink = color.startsWith("var(") ? "var(--background)" : "#fff";
+  const ink = color.startsWith("var(")
+    ? "var(--background)"
+    : color.startsWith("light-dark(")
+      ? "light-dark(#fff, #102018)"
+      : "#fff";
   const avg = line.seasonPpg != null && line.seasonPpg > 0 ? line.seasonPpg : null;
   const scale = avg != null ? Math.max(line.points, avg) * 1.06 : line.points;
   const diff = avg != null ? line.points - avg : null;
@@ -700,6 +729,150 @@ export function InsightVsNorm({
         Bars are this game. Ticks are his {base.season} per-game averages over {base.games} games.
       </figcaption>
     </figure>
+  );
+}
+
+/**
+ * The shape of a notable line. Each row is the count, and the tick is the
+ * line that made it worth showing. Hover a row for the exact reading.
+ */
+export function InsightMomentChart({ moment, color }: { moment: InsightMoment; color: string }) {
+  if (moment.kind === "share" && moment.share && moment.share.team > 0) {
+    const { points, team } = moment.share;
+    const pct = Math.round((points / team) * 100);
+    return (
+      <figure data-hover-group className="flex flex-col gap-1.5">
+        <div
+          className="relative z-[2] h-3 overflow-hidden rounded-full bg-foreground/10"
+          data-tip={`${points} of ${team} points`}
+          data-tip-sub={`${pct}% of his team's points. The rest of the team scored ${team - points}.`}
+          tabIndex={0}
+        >
+          <div className="h-full rounded-full" style={{ width: `${pct}%`, background: color }} />
+        </div>
+        <figcaption className="flex justify-between text-[11px] text-muted-foreground">
+          <span className="font-semibold tabular-nums text-foreground">{points} pts</span>
+          <span className="tabular-nums">Team {team}</span>
+        </figcaption>
+      </figure>
+    );
+  }
+
+  if (moment.kind === "splits") {
+    return (
+      <figure data-hover-group className="flex flex-col gap-2">
+        {moment.marks.map((m) => (
+          <ShotPips key={m.label} mark={m} color={color} />
+        ))}
+      </figure>
+    );
+  }
+
+  if (moment.kind === "threes") {
+    const m = moment.marks[0];
+    if (!m) return null;
+    const made = m.value;
+    const att = Math.max(m.of ?? made, made);
+    return (
+      <figure data-hover-group className="flex flex-col gap-1.5">
+        <div
+          className="relative z-[2] flex flex-wrap gap-1"
+          data-tip={m.tip}
+          data-tip-sub="Filled dots are makes."
+          tabIndex={0}
+          role="img"
+          aria-label={m.tip}
+        >
+          {Array.from({ length: att }, (_, i) => (
+            <span
+              key={i}
+              aria-hidden
+              className="h-2.5 w-2.5 rounded-full"
+              style={{ background: i < made ? color : "transparent", boxShadow: "inset 0 0 0 1.5px " + color }}
+            />
+          ))}
+        </div>
+        <figcaption className="text-[11px] text-muted-foreground">
+          <span className="font-semibold tabular-nums text-foreground">{made}</span> of {att}
+        </figcaption>
+      </figure>
+    );
+  }
+
+  if (moment.kind === "clean") {
+    const rest = moment.marks.filter((m) => m.label !== "TOV");
+    return (
+      <figure data-hover-group className="flex items-end gap-4">
+        <div className="relative z-[2]" data-tip="0 turnovers" data-tip-sub={moment.marks[0]?.tip} tabIndex={0}>
+          <p className="text-[28px] font-black leading-none tabular-nums" style={{ color }}>
+            0
+          </p>
+          <p className="mt-1 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">TOV</p>
+        </div>
+        <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+          {rest.map((m) => (
+            <MomentMeter key={m.label} mark={m} color={color} />
+          ))}
+        </div>
+      </figure>
+    );
+  }
+
+  return (
+    <figure data-hover-group className="flex flex-col gap-1.5">
+      {moment.marks.map((m) => (
+        <MomentMeter key={m.label} mark={m} color={color} />
+      ))}
+    </figure>
+  );
+}
+
+function ShotPips({ mark: m, color }: { mark: MomentMark; color: string }) {
+  const made = m.value;
+  const att = Math.max(m.of ?? made, made);
+  return (
+    <div
+      className="relative z-[2] grid grid-cols-[2.25rem_1fr_auto] items-center gap-2"
+      data-tip={m.tip}
+      data-tip-sub="Filled dots are makes."
+      tabIndex={0}
+    >
+      <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">{m.label}</span>
+      <span className="flex flex-wrap gap-1" role="img" aria-label={m.tip}>
+        {Array.from({ length: att }, (_, i) => (
+          <span
+            key={i}
+            aria-hidden
+            className="size-3 rounded-full"
+            style={{ background: i < made ? color : "transparent", boxShadow: "inset 0 0 0 1.5px " + color }}
+          />
+        ))}
+      </span>
+      <span className="text-[12px] font-black tabular-nums">{made}/{att}</span>
+    </div>
+  );
+}
+
+function MomentMeter({ mark: m, color }: { mark: MomentMark; color: string }) {
+  const scale = Math.max(m.value, m.tick ?? 0, m.of ?? 0, 1);
+  const fill = m.of != null && m.of > 0 ? m.value / m.of : m.value / scale;
+  const tickAt = m.tick != null ? (m.of != null && m.of > 0 ? m.tick / m.of : m.tick / scale) : null;
+  return (
+    <div
+      className="relative z-[2] grid grid-cols-[2.25rem_1fr_auto] items-center gap-2"
+      data-tip={m.tip}
+      data-tip-sub={m.tick != null ? `The tick marks ${m.tick}.` : undefined}
+      tabIndex={0}
+    >
+      <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">{m.label}</span>
+      <span className="relative h-2 rounded-full bg-foreground/10">
+        <span className="absolute inset-y-0 left-0 rounded-full" style={{ width: `${Math.min(100, fill * 100)}%`, background: color }} />
+        {tickAt != null ? (
+          <span aria-hidden className="absolute inset-y-[-3px] w-px bg-foreground" style={{ left: `${Math.min(100, tickAt * 100)}%` }} />
+        ) : null}
+      </span>
+      <span className="text-[12px] font-black tabular-nums">{m.of != null ? `${m.value}/${m.of}` : m.value}</span>
+    </div>
   );
 }
 

@@ -174,15 +174,8 @@ function main() {
 
   // --- Nav ---
   assert.equal(primaryNavLabelForPath("/history"), "History");
-  assert.equal(primaryNavLabelForPath("/history?season=1978-79"), "History");
   assert.equal(primaryNavLabelForPath("/franchises"), "Teams");
-  const historyNav = PRIMARY_NAV.find((n) => n.id === "history");
-  assert.ok(historyNav);
-  assert.deepEqual(
-    historyNav?.subnav?.map((s) => s.href),
-    ["/history", "/awards"]
-  );
-  assert.ok(!PRIMARY_NAV.some((n) => n.subnav?.some((s) => s.href === "/franchises")));
+  assert.ok(PRIMARY_NAV.some((n) => n.id === "history" && n.href === "/history"));
 
   // ASK context: season embedded in supported query strings (v1 contract)
   const askQ = `Who led the NBA in scoring in 1978-79?`;

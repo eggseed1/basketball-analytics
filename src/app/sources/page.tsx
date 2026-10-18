@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import Link from "next/link";
 
 import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { PageHeader } from "@/components/layout/page-header";
@@ -10,6 +11,7 @@ import { SITE_CONTACT_URL } from "@/lib/site-url";
 import { cn } from "@/lib/utils";
 
 export const metadata = {
+  alternates: { canonical: "/sources" },
   title: "Sources and credits",
   description: "Where the site's numbers, headlines and photos come from, with photo licenses.",
 };
@@ -36,7 +38,7 @@ function Ext({ href, children }: { href: string; children: ReactNode }) {
 const DATA_SOURCES: { name: ReactNode; uses: string }[] = [
   {
     name: <Ext href="https://www.nba.com/stats">NBA.com and NBA Stats</Ext>,
-    uses: "Box scores, play-by-play, shot charts, play types, on/off, hustle stats, player awards, franchise records, league averages, careers that ended before 1996-97, transactions, schedules, cap figures and key dates.",
+    uses: "Box scores, play-by-play, shot charts, play types, on/off, hustle stats, player awards, franchise records, the record book lines that are counted from game logs since 1996-97, league averages, careers that ended before 1996-97, transactions, schedules, cap figures and key dates.",
   },
   {
     name: <Ext href="https://www.espn.com/nba/">ESPN</Ext>,
@@ -44,7 +46,7 @@ const DATA_SOURCES: { name: ReactNode; uses: string }[] = [
   },
   {
     name: <Ext href="https://www.basketball-reference.com/">Basketball-Reference</Ext>,
-    uses: "Past-season advanced and per-game tables and contracts. Kept from an earlier copy: ABA seasons and advanced tables for careers that ended before 1996-97, a few early players NBA Stats has no record of, and some league averages before 1983.",
+    uses: "Past-season advanced and per-game tables, contracts, and the record book leader lists for single games, seasons, careers, and team seasons. Kept from an earlier copy: ABA seasons and advanced tables for careers that ended before 1996-97, a few early players NBA Stats has no record of, and some league averages before 1983.",
   },
   {
     name: <Ext href="https://www.darko.app/">DARKO</Ext>,
@@ -60,7 +62,7 @@ const DATA_SOURCES: { name: ReactNode; uses: string }[] = [
   },
   {
     name: <Ext href="https://www.wikipedia.org/">Wikipedia and Wikidata</Ext>,
-    uses: "Retired numbers, team front office listings and ABA season records.",
+    uses: "Retired numbers, team front office listings, ABA season records, and the longest winning streaks in the record book.",
   },
   {
     name: "News outlets and team blogs",
@@ -82,10 +84,20 @@ export default function SourcesPage() {
     <main data-motion-page className="site-shell flex flex-col gap-8 py-6 sm:py-8">
       <MotionReveal />
       <PageHeader
-        eyebrow="Sources"
         title="Sources and credits"
         subtitle="The site computes its own numbers from public data. These are the places that data comes from."
       />
+
+      <Section title="Who made the site">
+        <p>
+          Mason Anapolle and Hannah Park made this site and designed it. Mason Anapolle created the
+          original statistics, including DRBL and WAR1. The{" "}
+          <Link href="/about" className={linkClass}>
+            about page
+          </Link>{" "}
+          says more.
+        </p>
+      </Section>
 
       <Section title="Data">
         <ul className="flex flex-col gap-2">

@@ -1,10 +1,9 @@
 import { TeamLogo } from "@/components/brand/team-logo";
 import { TransactionDescription } from "@/components/offseason/transaction-description";
 import { TeamIdentity } from "@/components/teams/team-identity";
-import { AppLink } from "@/components/ui/app-link";
+import { SectionLink } from "@/components/ui/section-link";
 import { listTransactionEvents } from "@/data/queries/offseason-tracker";
 import { resolvePlayersForTransactionEvents } from "@/data/queries/transaction-player-resolve";
-import { sectionLinkClassName } from "@/lib/design-system";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 
 /**
@@ -21,14 +20,12 @@ export async function OffseasonPulsePanel({ limit = 5 }: { limit?: number } = {}
   );
 
   return (
-    <section className="sports-card flex flex-col gap-3 px-4 py-4 sm:px-[20px] sm:py-[16px]">
+    <section className="sports-card flex flex-col gap-3 p-4">
       <div className="flex items-center justify-between gap-2">
         <h2 className="type-heading">Recent NBA Transactions</h2>
-        <AppLink href="/offseason" className={`type-body-sm ${sectionLinkClassName}`}>
-          See all transactions <span data-motion-arrow aria-hidden>→</span>
-        </AppLink>
+        <SectionLink href="/offseason">See all transactions</SectionLink>
       </div>
-      <ul className="flex flex-col gap-4">
+      <ul className="flex flex-col divide-y divide-border/40">
         {events.map((event) => {
           const brand =
             resolveTeamBrand(event.teamId) ??
@@ -38,7 +35,7 @@ export async function OffseasonPulsePanel({ limit = 5 }: { limit?: number } = {}
             <li
               key={event.id}
               data-motion="row"
-              className="flex items-center justify-between gap-3"
+              className="flex items-center justify-between gap-3 py-2.5 first:pt-0 last:pb-0"
             >
               <div className="flex min-w-0 items-center gap-2">
                 <TeamIdentity

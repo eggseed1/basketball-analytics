@@ -1,4 +1,5 @@
 import { TransitionLink } from "@/components/continuity/query-nav";
+import { LinkCue } from "@/components/ui/link-cue";
 
 export type AskDrblHrefOptions = {
   playerId?: string;
@@ -116,7 +117,7 @@ export function PlayerAskLinks({
             className="group flex flex-col rounded-xl border border-border frost-surface px-3 py-2.5 sm:px-4"
           >
             <span className="text-[14px] font-semibold underline-offset-2 group-hover:underline">
-              {link.label} <span data-motion-arrow aria-hidden>→</span>
+              {link.label} <LinkCue />
             </span>
             <span className="text-[12px] text-muted-foreground">{link.hint}</span>
           </TransitionLink>

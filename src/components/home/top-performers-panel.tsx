@@ -6,7 +6,8 @@ import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { MetricHelp } from "@/components/learn/metric-help";
 import { PlayerIdentity } from "@/components/players/player-identity";
-import { AppLink } from "@/components/ui/app-link";
+import { ChoiceChip, ChoiceTrack } from "@/components/ui/choice-chip";
+import { SectionLink } from "@/components/ui/section-link";
 import type {
   HomeDarkoLeader,
   HomeDrblLeader,
@@ -20,7 +21,7 @@ import { BoardPlayerName } from "@/lib/board-compact-name";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { normalizePlayerName } from "@/lib/player-name";
 import { formatImpact, formatPct } from "@/lib/stat-explainers";
-import { sectionLinkClassName, type } from "@/lib/design-system";
+import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 
 type SortKey = "war1" | "drbl" | "darko" | "raptor" | "ts" | "usage";
@@ -464,37 +465,28 @@ export function TopPerformersPanel({
               : "/explore/players?sort=darkoDpm";
 
   return (
-    <section className="sports-card flex flex-col gap-4 p-4 sm:p-[21px]">
+    <section className="sports-card flex flex-col gap-3 p-4">
       <div className="flex flex-col gap-3">
         <div className="flex min-w-0 items-start justify-between gap-3">
-          <h2 className="type-heading min-w-0 wrap-break-word">
+          <h2 className="type-heading min-w-0 whitespace-nowrap">
             {season ? `${season} top performers` : "Top performers"}
           </h2>
-          <AppLink
-            href={leaderboardHref}
-            className={cn(type.bodySm, "shrink-0 pt-0.5", sectionLinkClassName)}
-          >
-            <span className="sm:hidden">Leaderboard <span data-motion-arrow aria-hidden>→</span></span>
-            <span className="hidden sm:inline">See full leaderboard <span data-motion-arrow aria-hidden>→</span></span>
-          </AppLink>
+          <SectionLink href={leaderboardHref} className="pt-0.5">
+            See all
+          </SectionLink>
         </div>
-        <div className="-mx-1 flex flex-nowrap gap-1 touch-scroll-x px-1 pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <ChoiceTrack scrollable className="border-0 bg-transparent p-0">
           {sortChips.map(([key, label]) => (
-            <button
+            <ChoiceChip
               key={key}
-              type="button"
+              active={sort === key}
               onClick={() => setSort(key)}
-              className={cn(
-                "glass-pill shrink-0 rounded-md px-2.5 py-1 type-caption font-semibold transition-colors",
-                sort === key
-                  ? "glass-pill-active"
-                  : "text-muted-foreground hover:text-foreground"
-              )}
+              className="shrink-0"
             >
               {label}
-            </button>
+            </ChoiceChip>
           ))}
-        </div>
+        </ChoiceTrack>
         {drblFallbackNote ? (
           <p className="text-[12px] text-muted-foreground">
             {drblFallbackNote}
@@ -502,90 +494,107 @@ export function TopPerformersPanel({
         ) : null}
       </div>
 
-      <div className="overflow-hidden">
-        <div
-          className={cn(
-            "flex items-center justify-between gap-2 border-b border-border px-3 py-2 font-semibold uppercase tracking-wide text-muted-foreground",
-            type.caption
-          )}
-        >
-          <span>Player</span>
-          <span className="text-right">{metricHelp}</span>
-        </div>
-        <ol className="divide-y divide-black/5">
-          {rows.map((row) => {
-            const value =
-              sort === "ts"
-                ? row.ts != null
-                  ? formatPct(row.ts)
-                  : "-"
-                : sort === "usage"
-                  ? row.usg != null
-                    ? formatPct(row.usg)
-                    : "-"
-                  : sort === "war1"
-                    ? row.war1 != null
-                      ? formatNumber(row.war1, 1)
-                      : "-"
-                    : sort === "drbl"
-                      ? row.drbl != null
-                        ? formatNumber(row.drbl, 2)
-                        : "-"
-                      : sort === "raptor"
-                        ? row.raptor != null
-                          ? formatImpact(row.raptor)
-                          : "-"
-                        : row.darko != null
-                          ? formatImpact(row.darko)
-                          : "-";
-            return (
-              <li key={row.key}>
-                <div data-motion="row" className="flex items-center gap-2 px-3 py-2.5">
-                  <span className="w-4 shrink-0 text-[12px] font-bold tabular-nums text-muted-foreground">
+      <div className="overflow-x-auto">
+        <table className="w-full table-fixed text-left">
+          <colgroup>
+            <col className="w-7" />
+            <col />
+            <col className="w-16" />
+          </colgroup>
+          <thead className="border-b border-border/40 bg-secondary/50">
+            <tr>
+              <th className="py-2 pl-3 pr-1 text-left text-[12px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+                #
+              </th>
+              <th className="py-2 pl-2 pr-2 text-left text-[12px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+                Player
+              </th>
+              <th className="py-2 pl-1 pr-3 text-right text-[12px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+                {metricHelp}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((row) => {
+              const value =
+                sort === "ts"
+                  ? row.ts != null
+                    ? formatPct(row.ts)
+                    : "—"
+                  : sort === "usage"
+                    ? row.usg != null
+                      ? formatPct(row.usg)
+                      : "—"
+                    : sort === "war1"
+                      ? row.war1 != null
+                        ? formatNumber(row.war1, 1)
+                        : "—"
+                      : sort === "drbl"
+                        ? row.drbl != null
+                          ? formatNumber(row.drbl, 2)
+                          : "—"
+                        : sort === "raptor"
+                          ? row.raptor != null
+                            ? formatImpact(row.raptor)
+                            : "—"
+                          : row.darko != null
+                            ? formatImpact(row.darko)
+                            : "—";
+              return (
+                <tr
+                  key={row.key}
+                  data-motion="row"
+                  className="border-b border-border/40 last:border-0 hover:bg-secondary/40"
+                >
+                  <td className="py-2 pl-3 pr-1 text-[12px] font-bold tabular-nums text-muted-foreground">
                     {row.rank}
-                  </span>
-                  <PlayerIdentity
-                    playerId={row.id}
-                    name={row.name}
-                    nbaId={row.nbaId}
-                    teamKey={row.teamKey}
-                    teamLabel={row.teamLabel}
-                    variant="compact"
-                    className="min-w-0 flex-1"
-                    nameClassName="w-full gap-2"
-                  >
-                    {row.teamKey ? (
-                      <TeamLogo teamKey={row.teamKey} size="xs" />
-                    ) : null}
-                    <PlayerHeadshot
+                  </td>
+                  <td className="min-w-0 py-2 pl-2 pr-2">
+                    <PlayerIdentity
                       playerId={row.id}
-                      nbaId={row.nbaId}
                       name={row.name}
+                      nbaId={row.nbaId}
                       teamKey={row.teamKey}
-                      size="xs"
-                    />
-                    <span
-                      className={cn(
-                        type.body,
-                        "min-w-0 flex-1 truncate font-semibold underline-offset-2 hover:underline"
-                      )}
+                      teamLabel={row.teamLabel}
+                      variant="compact"
+                      className="min-w-0"
+                      nameClassName="w-full gap-2"
                     >
-                      <BoardPlayerName name={row.name} />
-                    </span>
-                  </PlayerIdentity>
-                  <span className="shrink-0 text-right text-[12px] font-medium tabular-nums text-[#535353]">
+                      {row.teamKey ? (
+                        <TeamLogo teamKey={row.teamKey} size="xs" />
+                      ) : null}
+                      <PlayerHeadshot
+                        playerId={row.id}
+                        nbaId={row.nbaId}
+                        name={row.name}
+                        teamKey={row.teamKey}
+                        size="xs"
+                      />
+                      <span
+                        className={cn(
+                          type.bodySm,
+                          "min-w-0 flex-1 truncate font-semibold underline-offset-2 hover:underline"
+                        )}
+                      >
+                        <BoardPlayerName name={row.name} />
+                      </span>
+                    </PlayerIdentity>
+                  </td>
+                  <td className="type-caption py-2 pl-1 pr-3 text-right font-medium tabular-nums">
                     {value}
-                  </span>
-                </div>
-              </li>
-            );
-          })}
-          {rows.length === 0 ? (
-            <li className="type-body-sm px-3 py-6 text-center text-muted-foreground">
-              Leaders unavailable.
-            </li>
-          ) : null}
-        </ol>
+                  </td>
+                </tr>
+              );
+            })}
+            {rows.length === 0 ? (
+              <tr>
+                <td colSpan={3} className="type-body-sm px-3 py-6 text-center text-muted-foreground">
+                  Leaders unavailable.
+                </td>
+              </tr>
+            ) : null}
+          </tbody>
+        </table>
       </div>
     </section>
   );

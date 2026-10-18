@@ -17,6 +17,7 @@ import {
   type PlayerStatMode,
 } from "@/lib/player-page-contract";
 import { cn } from "@/lib/utils";
+import { LinkCue } from "@/components/ui/link-cue";
 
 type ColId =
   | "season"
@@ -205,7 +206,7 @@ function cellFor(
           prefetch={false}
           className="font-semibold underline-offset-2 hover:underline"
         >
-          View <span data-motion-arrow aria-hidden>→</span>
+          View <LinkCue />
         </TransitionLink>
       );
     default:

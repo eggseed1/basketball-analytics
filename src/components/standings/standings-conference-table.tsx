@@ -9,13 +9,14 @@ import { cn } from "@/lib/utils";
 
 const thBase =
   "py-2 font-semibold text-[12px] uppercase tracking-[0.08em] text-muted-foreground";
-const tdBase = "py-2 text-[14px] leading-5 tabular-nums";
+const tdBase = "type-caption py-2 tabular-nums";
 
 export function StandingsConferenceTable({
   title,
   rows,
   compact = false,
   seedLines = false,
+  bare = false,
 }: {
   title: string;
   rows: StandingRow[];
@@ -23,12 +24,10 @@ export function StandingsConferenceTable({
   compact?: boolean;
   /** Dashed rules under the last playoff seed (6) and last play-in seed (10). */
   seedLines?: boolean;
+  /** Table only. Use when a parent card already has the title. */
+  bare?: boolean;
 }) {
-  return (
-    <section className="sports-card overflow-hidden">
-      <div className="border-b border-border px-3 py-2 text-[14px] font-bold tracking-tight">
-        {title}
-      </div>
+  const table = (
       <div className="overflow-x-auto">
         <table
           className={cn(
@@ -59,7 +58,7 @@ export function StandingsConferenceTable({
               </>
             )}
           </colgroup>
-          <thead className="border-b border-border bg-secondary/50">
+          <thead className="border-b border-border/40 bg-secondary/50">
             <tr>
               <th className={cn(thBase, "pl-3 pr-1")}>#</th>
               <th
@@ -94,7 +93,7 @@ export function StandingsConferenceTable({
                   key={row.teamId}
                   data-motion="row"
                   className={cn(
-                    "border-b border-border last:border-0 hover:bg-secondary/40",
+                    "border-b border-border/40 last:border-0 hover:bg-secondary/40",
                     seedLines &&
                       (seed === 6 || seed === 10) &&
                       "border-b-2 border-dashed border-b-foreground/35"
@@ -118,14 +117,14 @@ export function StandingsConferenceTable({
                         <TeamLogo teamKey={row.abbreviation} size="xs" />
                       </span>
                       {compact ? (
-                        <span className={cn(type.body, textLinkClassName)}>
+                        <span className={cn(type.bodySm, textLinkClassName)}>
                           {row.abbreviation}
                         </span>
                       ) : (
                         <>
                           <span
                             className={cn(
-                              type.body,
+                              type.bodySm,
                               textLinkClassName,
                               "sm:hidden"
                             )}
@@ -134,7 +133,7 @@ export function StandingsConferenceTable({
                           </span>
                           <span
                             className={cn(
-                              type.body,
+                              type.bodySm,
                               textLinkClassName,
                               "hidden min-w-0 truncate sm:block"
                             )}
@@ -214,6 +213,14 @@ export function StandingsConferenceTable({
           </tbody>
         </table>
       </div>
+  );
+  if (bare) return table;
+  return (
+    <section className="sports-card overflow-hidden">
+      <div className="border-b border-border/40 px-3 py-2 text-[14px] font-bold tracking-tight">
+        {title}
+      </div>
+      {table}
     </section>
   );
 }

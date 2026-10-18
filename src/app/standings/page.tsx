@@ -26,7 +26,8 @@ import { cn } from "@/lib/utils";
 import { yieldForStreaming } from "@/lib/stream-yield";
 
 export const metadata = {
-  title: "Standings",
+  alternates: { canonical: "/standings" },
+  title: "NBA standings",
   description:
     "NBA conference standings, playoff bracket, and team efficiency stats by season.",
 };
@@ -86,28 +87,35 @@ async function ConferenceTables({
   }
 
   return (
-    <div className="flex flex-col gap-3">
-      {data.season !== season ? (
-        <p
-          className={cn(
-            type.bodySm,
-            "w-fit max-w-full rounded-lg border border-border bg-secondary/50 px-3 py-1.5 text-muted-foreground"
-          )}
-          role="status"
-        >
-          Showing {data.season} final standings because the {season} season
-          has not started.
-        </p>
+    <div className={cn("grid gap-4", !conference && "lg:grid-cols-2")}>
+      {conference !== "West" ? (
+        <StandingsConferenceTable title="Eastern Conference" rows={east} />
       ) : null}
-      <div className={cn("grid gap-4", !conference && "lg:grid-cols-2")}>
-        {conference !== "West" ? (
-          <StandingsConferenceTable title="Eastern Conference" rows={east} />
-        ) : null}
-        {conference !== "East" ? (
-          <StandingsConferenceTable title="Western Conference" rows={west} />
-        ) : null}
-      </div>
+      {conference !== "East" ? (
+        <StandingsConferenceTable title="Western Conference" rows={west} />
+      ) : null}
     </div>
+  );
+}
+
+async function StandingsPriorSeasonNotice({ season }: { season: string }) {
+  let shown = season;
+  try {
+    shown = (await getLeagueStandings(season)).season;
+  } catch {
+    return null;
+  }
+  if (shown === season) return null;
+  return (
+    <p
+      className={cn(
+        type.bodySm,
+        "w-fit max-w-full rounded-lg border border-border bg-secondary/50 px-3 py-1.5 text-muted-foreground"
+      )}
+      role="status"
+    >
+      Showing {shown} final standings because the {season} season has not started.
+    </p>
   );
 }
 
@@ -156,10 +164,12 @@ export default async function StandingsPage({ searchParams }: PageProps) {
     <main data-motion-page className="site-shell flex flex-1 flex-col gap-5 py-6 sm:py-8">
       <MotionReveal />
       <HashAnchorScroll />
+      <Suspense fallback={null}>
+        <StandingsPriorSeasonNotice season={season} />
+      </Suspense>
       <PageHeader
-        eyebrow="Teams"
         title="Standings"
-        subtitle={`${season} conference standings, playoff bracket, and team efficiency. Click a team to open its profile.`}
+        subtitle="Conference standings, playoff bracket, and team efficiency. Click a team to open its profile."
       />
 
       <Suspense fallback={<div className="h-12 animate-pulse rounded-xl bg-secondary" />}>
@@ -179,10 +189,7 @@ export default async function StandingsPage({ searchParams }: PageProps) {
       </section>
 
       <section id="team-stats" className="flex scroll-mt-48 flex-col gap-3 pb-8">
-        <SectionHeader
-          title="Team stats"
-          description="Point differential, shooting, and per-game box stats for every team. Sort any column."
-        />
+        <SectionHeader title="Team stats" />
         <Suspense
           fallback={<div className="h-72 animate-pulse rounded-xl bg-secondary" aria-busy="true" />}
         >

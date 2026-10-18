@@ -29,6 +29,8 @@ export function outcomeTier(s: LifeState): OutcomeTier {
 
 export interface CareerSummary {
   runId: string;
+  /** Unique id for the all-time board. A seed can be played more than once. */
+  boardId?: string;
   seed: number;
   mode: LifeState["mode"];
   dailyDate: string | null;
@@ -42,6 +44,8 @@ export interface CareerSummary {
   endedAge: number;
   finishedAt: string;
   honors?: string | null;
+  /** Career earnings before tax. Absent on lives saved before the board existed. */
+  earnings?: number;
   netWorth?: number;
   after?: string | null;
   unicorn?: boolean;
@@ -85,10 +89,19 @@ export function honorsLine(s: LifeState): string | null {
   return parts.length ? parts.join(" · ") : null;
 }
 
+function newBoardId(): string {
+  const c = globalThis.crypto;
+  if (c?.randomUUID) return c.randomUUID();
+  const bytes = new Uint8Array(16);
+  c?.getRandomValues?.(bytes);
+  return [...bytes].map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
 export function summarize(s: LifeState, finishedAt: string): CareerSummary {
   const best = [...s.seasons].filter((x) => x.gp >= 5).sort((a, b) => b.strength * 0.4 + perGame(b, "pts") - (a.strength * 0.4 + perGame(a, "pts")))[0];
   return {
     runId: s.runId,
+    boardId: newBoardId(),
     seed: s.seed,
     mode: s.mode,
     dailyDate: s.dailyDate,
@@ -102,6 +115,7 @@ export function summarize(s: LifeState, finishedAt: string): CareerSummary {
     endedAge: Math.floor(s.ageMonths / 12),
     finishedAt,
     honors: honorsLine(s),
+    earnings: Math.round(s.earnings),
     netWorth: Math.round(netWorth(s.finance)),
     after: s.after ? `${s.after.title}, ${s.after.employer}` : null,
     ...(s.unicorn ? { unicorn: true } : {}),

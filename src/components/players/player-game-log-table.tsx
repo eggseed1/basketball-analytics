@@ -9,6 +9,7 @@ import {
   type PlayerPageView,
 } from "@/lib/player-page-contract";
 import { cn } from "@/lib/utils";
+import { LinkCue } from "@/components/ui/link-cue";
 
 function pct(made: number, att: number): string {
   const p = fgPct(made, att);
@@ -302,7 +303,7 @@ export function PlayerGameLogTable({
               prefetch={false}
               className="font-semibold underline-offset-2 hover:underline"
             >
-              Next <span data-motion-arrow aria-hidden>→</span>
+              Next <LinkCue />
             </TransitionLink>
           ) : null}
         </nav>

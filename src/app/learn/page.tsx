@@ -4,7 +4,8 @@ import { PageHeader } from "@/components/layout/page-header";
 import { learnHrefFor, listLearnConcepts } from "@/content/learn/registry";
 
 export const metadata = {
-  title: "Learn",
+  alternates: { canonical: "/learn" },
+  title: "Learn NBA advanced stats",
   description:
     "DRBL glossary: the stats, labels, and methods a casual fan needs to read the site.",
 };
@@ -18,7 +19,6 @@ export default function LearnIndexPage() {
     <main data-motion-page className="site-shell flex flex-col gap-6 py-6 sm:py-8">
       <MotionReveal />
       <PageHeader
-        eyebrow="Learn"
         title="Understand every number"
         subtitle="Every stat, label and method the site uses, grouped by topic."
       />

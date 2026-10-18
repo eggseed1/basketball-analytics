@@ -33,6 +33,8 @@ export type ContractValueModel = {
   capKnownThrough: string;
   contracts: number;
   weights: number[];
+  /** Salary prior used when projecting: WAR1 per possession = intercept + slope × cap share. */
+  priorByShare?: { intercept: number; slope: number; maxShare: number } | null;
   /** Past seasons projected from DRBL/100 mapped onto WAR1, mixed with WAR1 by drblShare. Null when WAR1 only. */
   projectionBasis?: { drblShare: number; intercept: number; slope: number } | null;
   backtest: Array<{ horizon: number; n: number; rmse: number; naiveRmse: number; coverage80: number }>;

@@ -10,6 +10,7 @@ import {
   getFilteredPlayerSeasons,
 } from "@/data/queries";
 import { toDashboardPlayer } from "@/lib/dashboard-player";
+import { LinkCue } from "@/components/ui/link-cue";
 
 export const revalidate = 60;
 
@@ -71,7 +72,7 @@ export default async function DashboardPage({
             href={`/explore/players?season=${season}`}
             className="text-sm text-muted-foreground underline-offset-4 hover:underline"
           >
-            Open explore table <span data-motion-arrow aria-hidden>→</span>
+            Open explore table <LinkCue />
           </Link>
         </div>
       </header>

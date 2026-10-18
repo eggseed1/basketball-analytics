@@ -67,6 +67,7 @@ import {
 import { normalizeTeamParam } from "@/lib/team-identity";
 import { cn } from "@/lib/utils";
 import { MatchupOrbs } from "@/components/brand/matchup-orbs";
+import { LinkCue } from "@/components/ui/link-cue";
 
 type Edge = "a" | "b" | "even";
 
@@ -668,7 +669,7 @@ function BiggestGaps({
           >
             <span className="truncate text-right">← {aName}</span>
             <span />
-            <span className="truncate">{bName} <span data-motion-arrow aria-hidden>→</span></span>
+            <span className="truncate">{bName} <LinkCue /></span>
           </div>
           <ul className="mt-1 flex flex-col gap-2">
             {gaps.map(({ d, gap }) => {
@@ -1315,14 +1316,6 @@ export function PlayerCompareView({
         <MatchupOrbs away={aFill} home={bFill} />
         <div className="flex items-center justify-between gap-3 px-4 py-3 sm:px-5">
           <div className="min-w-0">
-            <p
-              className={cn(
-                type.micro,
-                "font-bold uppercase tracking-[0.14em] text-muted-foreground"
-              )}
-            >
-              DRBL · Player matchup
-            </p>
             <p className={cn(type.title, "mt-0.5 truncate")}>
               {result.aName} vs {result.bName}
             </p>

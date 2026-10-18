@@ -40,8 +40,8 @@ export function PlayerDepthNav({
     <div
       role="tablist"
       aria-label="Player statistics views"
-      data-motion-tabs
-      className="flex flex-wrap items-center gap-x-2 gap-y-2 border-b-2 border-foreground/70 px-1 py-2"
+      data-motion-tabs="stats"
+      className="flex flex-nowrap items-end gap-x-2 overflow-x-auto border-b-[0.5px] border-foreground/20 px-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
     >
       {tabs.map((tab) => {
         const selected = tab.id === view;
@@ -62,7 +62,7 @@ export function PlayerDepthNav({
             prefetch={tab.id === "games"}
             className={cn(
               type.bodySm,
-              "px-2 py-1 font-bold tracking-tight",
+              "shrink-0 whitespace-nowrap px-2 py-2 font-bold tracking-tight",
               selected
                 ? "text-foreground"
                 : "text-muted-foreground hover:text-foreground"

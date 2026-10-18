@@ -8,6 +8,7 @@ import { SITE_CONTACT_URL } from "@/lib/site-url";
 import { cn } from "@/lib/utils";
 
 export const metadata = {
+  alternates: { canonical: "/terms" },
   title: "Terms",
   description: "The ground rules for using this site and what its numbers can and can't tell you.",
 };
@@ -26,15 +27,18 @@ export default function TermsPage() {
     <main data-motion-page className="site-shell flex flex-col gap-8 py-6 sm:py-8">
       <MotionReveal />
       <PageHeader
-        eyebrow="Terms"
         title="Terms of use"
-        subtitle="Updated October 10, 2026. Using the site means you accept these terms."
+        subtitle="Updated October 16, 2026. Using the site means you accept these terms."
       />
 
       <Section title="Using the site">
         <p>
-          The site is free and non-commercial, for personal and informational use. Please don&apos;t
-          scrape it at volume, overload it or try to get around its rate limits. Automated requests
+          The site is free and non-commercial, for personal and informational use. If you want to
+          scrape the site or download its data in bulk,{" "}
+          <a href={SITE_CONTACT_URL} className="underline underline-offset-2" target="_blank" rel="noreferrer">
+            contact us first
+          </a>
+          . Don&apos;t overload the site or try to get around its rate limits. Automated requests
           that slow the site down for everyone else may be blocked.
         </p>
       </Section>
@@ -76,8 +80,9 @@ export default function TermsPage() {
 
       <Section title="Sharing">
         <p>
-          You&apos;re welcome to quote numbers and share charts from the site. Please link back to
-          the page you took them from.
+          You&apos;re welcome to quote numbers and share charts from the site. You must credit DRBL
+          and link back to the site, and to the page you took them from when there is one. A mention
+          without a link, or a link that doesn&apos;t name the site, doesn&apos;t meet this.
         </p>
       </Section>
 

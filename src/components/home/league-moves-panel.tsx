@@ -1,6 +1,6 @@
 import { TeamLogo } from "@/components/brand/team-logo";
 import { NewSinceTag } from "@/components/home/new-since-tag";
-import { LEAGUE_MOVE_MAX_AGE_DAYS, type LeagueMove, type LeagueMoveKind } from "@/lib/league-moves";
+import { type LeagueMove, type LeagueMoveKind } from "@/lib/league-moves";
 
 const KIND: Record<LeagueMoveKind, { label: string; color: string }> = {
   coaching: { label: "Coaching", color: "#2f6fdb" },
@@ -21,14 +21,9 @@ function shortDate(ms: number): string {
 export function LeagueMovesPanel({ moves }: { moves: LeagueMove[] }) {
   if (!moves.length) return null;
   return (
-    <section aria-labelledby="league-moves-title" className="sports-card flex flex-col gap-2 p-4 sm:p-[21px]">
-      <div>
-        <h2 id="league-moves-title" className="type-heading">League & team moves</h2>
-        <p className="type-body-sm text-muted-foreground">
-          Front office, coaching, ownership and league news from the last {LEAGUE_MOVE_MAX_AGE_DAYS} days.
-        </p>
-      </div>
-      <ul className="flex flex-col divide-y divide-border">
+    <section aria-labelledby="league-moves-title" className="sports-card flex flex-col gap-2 p-4">
+      <h2 id="league-moves-title" className="type-heading">League & team moves</h2>
+      <ul className="flex flex-col divide-y divide-border/40">
         {moves.map((m) => {
           const kind = KIND[m.kind];
           return (
@@ -43,7 +38,7 @@ export function LeagueMovesPanel({ moves }: { moves: LeagueMove[] }) {
               <div className="flex min-w-0 flex-1 flex-col gap-1">
                 <span className="flex items-center gap-1.5">
                   <span
-                    className="text-[10px] font-bold uppercase tracking-[0.08em]"
+                    className="type-micro font-bold uppercase tracking-[0.08em]"
                     style={{ color: kind.color }}
                   >
                     {kind.label}
@@ -54,11 +49,11 @@ export function LeagueMovesPanel({ moves }: { moves: LeagueMove[] }) {
                   href={m.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[13px] font-semibold leading-snug hover:underline"
+                  className="type-body-sm font-semibold leading-snug hover:underline"
                 >
                   {m.title}
                 </a>
-                <span className="text-[11px] text-muted-foreground">
+                <span className="type-caption text-muted-foreground">
                   {shortDate(m.publishedMs)}
                   {m.publication ? ` · ${m.publication}` : ""}
                 </span>

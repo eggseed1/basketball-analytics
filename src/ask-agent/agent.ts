@@ -2,6 +2,7 @@ import { DAILY_NEURON_CAP, neuronsUsedToday, recordNeurons } from "./budget";
 import type { AskAgentEnv } from "./env";
 import { checkGrounding, type GroundingResult } from "./grounding";
 import { callModel, type ChatMessage } from "./model";
+import { presentAskAnswer } from "./present";
 import { askAgentSystemPrompt } from "./prompt";
 import { ASK_AGENT_TOOL_SPECS, runTool, toolLabel, toolMessageContent } from "./tools";
 
@@ -49,6 +50,7 @@ export async function runAskAgent(options: {
     ...options.history.slice(-MAX_HISTORY_TURNS).map((t) => ({ role: t.role, content: t.content }) as ChatMessage),
     { role: "user", content: options.question },
   ];
+  const measure = { ready: false };
   const toolOutputs: unknown[] = [];
   const links = new Map<string, string>();
   let neurons = 0;
@@ -57,7 +59,15 @@ export async function runAskAgent(options: {
 
   try {
     for (let step = 0; step < MAX_STEPS; step++) {
-      const turn = await callModel(env.AI, messages, ASK_AGENT_TOOL_SPECS);
+      const lastStep = step === MAX_STEPS - 1;
+      if (lastStep) {
+        messages.push({
+          role: "user",
+          content:
+            "Stop querying. Answer from the rows you already have. If they do not settle the question, say what they do settle and what is missing.",
+        });
+      }
+      const turn = await callModel(env.AI, messages, lastStep ? [] : ASK_AGENT_TOOL_SPECS);
       neurons += turn.neurons;
       usedToday = await recordNeurons(env.PAGE_CACHE, turn.neurons);
 
@@ -67,11 +77,8 @@ export async function runAskAgent(options: {
         return;
       }
 
-      if (!turn.toolCalls.length) {
-        const text = (turn.content || "I couldn't put an answer together from the data.")
-          .replace(/[\u2010\u2011]/g, "-")
-          .replace(/\s+[–—]\s+/g, ", ")
-          .replace(/\]\s+\(\//g, "](/");
+      if (!turn.toolCalls.length || lastStep) {
+        const text = presentAskAnswer(turn.content || "I couldn't put an answer together from the data.");
         emit({
           type: "answer",
           text,
@@ -85,7 +92,11 @@ export async function runAskAgent(options: {
       for (const call of turn.toolCalls) {
         const id = `${step}-${call.id}`;
         emit({ type: "step", id, label: toolLabel(call.function.name, parseArgs(call.function.arguments)) });
-        const output = await runTool(call.function.name, call.function.arguments, { db: env.ASK_DB });
+        const output = await runTool(call.function.name, call.function.arguments, {
+          db: env.ASK_DB,
+          question: options.question,
+          measure,
+        });
         toolOutputs.push(output.data);
         for (const link of output.links ?? []) if (!links.has(link.href)) links.set(link.href, link.label);
         emit({ type: "step_done", id, ok: output.ok, summary: output.summary, sql: output.sql });
@@ -97,7 +108,6 @@ export async function runAskAgent(options: {
         return;
       }
     }
-    emit({ type: "error", message: "That question took too many steps. Try asking for one thing at a time." });
   } catch (error) {
     emit({ type: "error", message: error instanceof Error ? error.message : "Something went wrong." });
   } finally {

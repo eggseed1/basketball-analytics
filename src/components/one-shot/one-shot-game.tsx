@@ -2,27 +2,35 @@
 
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 
+import { NBA_ATMOSPHERE, PageAtmosphere } from "@/components/brand/page-atmosphere";
+import { kitFor } from "@/components/one-shot/kit";
 import { cn } from "@/lib/utils";
+import { brandAtmosphereColors } from "@/lib/game-matchup-theme";
 import { tick, TICK_MS } from "@/one-shot/clock";
-import { advance, advanceToDecision, createLife, declareNow, manageMoney, rename, resolveDecision, retireNow, setPlan } from "@/one-shot/engine";
+import { advance, advanceToDecision, createLife, declareNow, isCeremony, manageMoney, rename, resolveDecision, retireNow, setPlan } from "@/one-shot/engine";
 import type { MoneyAction } from "@/one-shot/finance";
 import {
   addCareer,
   clearSave,
   dailyDate,
   dailySeed,
+  loadBoard,
   loadCareers,
   loadPrefs,
   loadSave,
   randomSeed,
+  recordEarnings,
   savePrefs,
   writeSave,
   type Prefs,
 } from "@/one-shot/persistence";
+import { rowFromSummary, type EarningsRow } from "@/one-shot/leaderboard";
 import { summarize, type CareerSummary } from "@/one-shot/report";
 import type { DrawMode, FocusId, LifeState, Speed, Workload } from "@/one-shot/types";
 
+import type { AllTimeStatus } from "./earnings-board";
 import { BirthReveal } from "./birth-reveal";
+import { CeremonyOverlay } from "./ceremony-overlay";
 import { EndReport } from "./end-report";
 import { DecisionPanel, DecisionWaiting, FocusPanel, LifeRecord, LifeScene } from "./panels-center";
 import { FamilyAndResources, IdentityCard, PhysiquePanel, StatusPanel } from "./panels-left";
@@ -137,6 +145,7 @@ interface Boot {
   saved: LifeState | null;
   recovery: { reason: string; raw: string | null } | null;
   careers: CareerSummary[];
+  board: CareerSummary[];
   prefs: Prefs;
   opts: StartOptions;
   replaySeed: number | null;
@@ -152,6 +161,7 @@ function boot(): Boot {
     saved: save.ok && !save.state.ended ? save.state : null,
     recovery: !save.ok && save.reason !== "empty" ? { reason: save.reason, raw: save.raw } : null,
     careers: loadCareers(),
+    board: loadBoard(),
     prefs: loadPrefs(),
     opts: {
       mode: params.get("daily") === "1" ? "daily" : "random",
@@ -170,6 +180,10 @@ function Game({ expanded, onExpand }: { expanded: boolean; onExpand: () => void 
   const [saved, setSaved] = useState<LifeState | null>(init.saved);
   const [recovery, setRecovery] = useState(init.recovery);
   const [careers, setCareers] = useState<CareerSummary[]>(init.careers);
+  const [board, setBoard] = useState<CareerSummary[]>(init.board);
+  const [allTime, setAllTime] = useState<EarningsRow[]>([]);
+  const [allTimeStatus, setAllTimeStatus] = useState<AllTimeStatus>("loading");
+  const [highlightBoardId, setHighlightBoardId] = useState<string | null>(null);
   const [prefs, setPrefsState] = useState<Prefs>(init.prefs);
   const [life, setLife] = useState<LifeState | null>(null);
   const lifeRef = useRef<LifeState | null>(null);
@@ -183,6 +197,27 @@ function Game({ expanded, onExpand }: { expanded: boolean; onExpand: () => void 
   const units = prefs.units;
   const today = dailyDate();
 
+  useEffect(() => {
+    let cancel = false;
+    fetch("/api/one-shot/leaderboard")
+      .then((res) => res.json())
+      .then((data: { entries?: EarningsRow[]; unavailable?: boolean }) => {
+        if (cancel) return;
+        if (data.unavailable || !Array.isArray(data.entries)) {
+          setAllTimeStatus("down");
+          return;
+        }
+        setAllTime(data.entries);
+        setAllTimeStatus("ready");
+      })
+      .catch(() => {
+        if (!cancel) setAllTimeStatus("down");
+      });
+    return () => {
+      cancel = true;
+    };
+  }, []);
+
   const setPrefs = useCallback((p: Prefs) => {
     setPrefsState(p);
     savePrefs(p);
@@ -193,7 +228,26 @@ function Game({ expanded, onExpand }: { expanded: boolean; onExpand: () => void 
     lifeRef.current = next;
     setLife(next);
     if (next.ended && !prev?.ended) {
-      setCareers(addCareer(summarize(next, new Date().toISOString())));
+      const summary = summarize(next, new Date().toISOString());
+      setCareers(addCareer(summary));
+      setBoard(recordEarnings(summary));
+      setHighlightBoardId(summary.boardId ?? null);
+      const row = rowFromSummary(summary);
+      if (row) {
+        void fetch("/api/one-shot/leaderboard", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(row),
+        })
+          .then((res) => res.json())
+          .then((data: { entries?: EarningsRow[]; unavailable?: boolean }) => {
+            if (Array.isArray(data.entries)) {
+              setAllTime(data.entries);
+              setAllTimeStatus("ready");
+            } else setAllTimeStatus("down");
+          })
+          .catch(() => setAllTimeStatus("down"));
+      }
       clearSave();
       setSaved(null);
       setScreen("report");
@@ -202,7 +256,8 @@ function Game({ expanded, onExpand }: { expanded: boolean; onExpand: () => void 
 
   const pendingId = life?.pendingDecision?.id ?? null;
   const auto = life?.clock.autoDecisions ?? false;
-  const decisionPause = Boolean(pendingId) && !auto;
+  const ceremony = Boolean(life?.pendingDecision && isCeremony(life.pendingDecision.templateId));
+  const decisionPause = Boolean(pendingId) && (!auto || ceremony);
   const effectivePause: UiPause = decisionPause ? "decision" : pause;
   const running = screen === "play" && Boolean(life) && !life?.ended && effectivePause === null;
   const speed = life?.clock.speed ?? 1;
@@ -217,7 +272,7 @@ function Game({ expanded, onExpand }: { expanded: boolean; onExpand: () => void 
       const t = tick(acc, pacing, speed);
       acc = t.acc;
       if (t.months < 1) return;
-      commit(advance(cur, t.months, { auto: cur.clock.autoDecisions }));
+      commit(advance(cur, t.months, { auto: cur.clock.autoDecisions, holdCeremony: true }));
     }, TICK_MS);
     return () => window.clearInterval(id);
   }, [running, speed, pacing, commit]);
@@ -434,8 +489,13 @@ function Game({ expanded, onExpand }: { expanded: boolean; onExpand: () => void 
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }, [recovery]);
 
+  const kit = life && screen !== "start" ? kitFor(life.seed, life.placement.node, life.placement.teamName) : null;
+  const wash = kit?.uniform ? brandAtmosphereColors(kit.primary, kit.secondary) : null;
+
   return (
-    <div ref={rootRef} className="flex min-h-0 flex-1 flex-col">
+    <>
+    <PageAtmosphere colorA={wash?.colorA ?? NBA_ATMOSPHERE.colorA} colorB={wash?.colorB ?? NBA_ATMOSPHERE.colorB} />
+    <div ref={rootRef} className="relative z-[1] flex min-h-0 flex-1 flex-col">
       {screen !== "play" ? (
         <div className="mb-3 flex items-center gap-3 sm:mb-4">
           {expanded ? <p className={EYEBROW}>ONE SHOT</p> : null}
@@ -453,6 +513,9 @@ function Game({ expanded, onExpand }: { expanded: boolean; onExpand: () => void 
             continueLabel={saved ? `${saved.identity.displayName}, ${ageLabel(saved.ageMonths)}` : null}
             onContinue={continueLife}
             careers={careers}
+            board={board}
+            allTime={allTime}
+            allTimeStatus={allTimeStatus}
             replaySeed={replaySeed}
             onClearReplay={() => setReplaySeed(null)}
             recovery={recovery?.reason ?? null}
@@ -482,7 +545,22 @@ function Game({ expanded, onExpand }: { expanded: boolean; onExpand: () => void 
         </div>
       ) : null}
 
-      {screen === "report" && life ? <EndReport life={life} units={units} onNew={() => beBorn()} onHome={() => setScreen("start")} /> : null}
+      {screen === "report" && life ? (
+        <EndReport
+          life={life}
+          units={units}
+          board={board}
+          allTime={allTime}
+          allTimeStatus={allTimeStatus}
+          highlightBoardId={highlightBoardId}
+          onNew={() => beBorn()}
+          onHome={() => setScreen("start")}
+        />
+      ) : null}
+
+      {screen === "play" && life && ceremony ? (
+        <CeremonyOverlay life={life} reducedMotion={reducedMotion} onClose={() => choose(life.pendingDecision!.choices[0]!.id)} />
+      ) : null}
 
       {screen === "play" && life ? (
         <div data-os-play className="flex flex-col gap-3 sm:gap-4 md:min-h-0 md:flex-1">
@@ -507,7 +585,7 @@ function Game({ expanded, onExpand }: { expanded: boolean; onExpand: () => void 
               <div className="order-2 md:order-none">
                 <LifeScene life={life} animate={running && !reducedMotion} />
               </div>
-              {life.pendingDecision && !auto ? (
+              {life.pendingDecision && !auto && !ceremony ? (
                 <div className="order-3 md:order-none">
                   {hiddenDecision === life.pendingDecision.id ? (
                     <DecisionWaiting life={life} onOpen={() => setHiddenDecision(null)} />
@@ -578,5 +656,6 @@ function Game({ expanded, onExpand }: { expanded: boolean; onExpand: () => void 
 
       {sourcesOpen ? <SourcesDrawer life={screen === "start" ? null : life} onClose={closeSources} /> : null}
     </div>
+    </>
   );
 }

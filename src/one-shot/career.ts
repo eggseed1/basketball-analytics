@@ -151,8 +151,13 @@ export const ROLE_LABEL: Record<Role, string> = {
 
 const ROLE_MINUTES: Record<Role, number> = { none: 0, "deep-bench": 4, bench: 11, rotation: 20, starter: 28, star: 33 };
 
-export function minutesBand(role: Role, cap: number): string {
-  const m = Math.round((ROLE_MINUTES[role] * cap) / 36);
+/** Extra minutes from the coach rating. 50 is even. Each 10 points is about a minute in a full game. */
+export function coachMinuteBonus(coaching: number, cap: number): number {
+  return ((clamp(coaching, 0, 100) - 50) / 10) * (cap / 36);
+}
+
+export function minutesBand(role: Role, cap: number, coaching = 50): string {
+  const m = Math.round((ROLE_MINUTES[role] * cap) / 36 + coachMinuteBonus(coaching, cap));
   return role === "none" ? "0" : `${Math.max(1, m - 4)}-${m + 4} min`;
 }
 
@@ -192,7 +197,7 @@ export function simulateGame(state: LifeState, level: Level, rng: Rng, minutesOv
   const role = roleOverride ?? (state.placement.role === "none" ? roleFor(lvl, level.need) : state.placement.role);
   const s = state.skills;
   const fatigue = clamp(state.condition.energy / 100, 0.5, 1);
-  const baseMin = minutesOverride ?? (ROLE_MINUTES[role] * level.model.minutesCap) / 36;
+  const baseMin = minutesOverride ?? (ROLE_MINUTES[role] * level.model.minutesCap) / 36 + coachMinuteBonus(state.placement.coaching, level.model.minutesCap);
   const min = Math.max(0, Math.round(clamp(rng.normal(baseMin * (0.85 + 0.15 * fatigue), 3), 0, level.model.minutesCap + 4)));
   const diff = lvl - level.need;
   const eff = clamp(0.5 + diff / 40, 0.15, 0.92);

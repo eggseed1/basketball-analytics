@@ -1,10 +1,8 @@
-import Link from "next/link";
-
 import { MovementClusterCard } from "@/components/movement/movement-cluster-card";
+import { SectionLink } from "@/components/ui/section-link";
 import { getTeamMovementFeed } from "@/data/queries/movement-center.server";
-import { type, sectionLinkClassName } from "@/lib/design-system";
+import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
-
 export async function TeamMovementIsland({
   teamId,
 }: {
@@ -28,12 +26,7 @@ export async function TeamMovementIsland({
             Unresolved movement reporting linked to this franchise.
           </p>
         </div>
-        <Link
-          href={`/movement`}
-          className={cn(type.caption, sectionLinkClassName)}
-        >
-          Full board <span data-motion-arrow aria-hidden>→</span>
-        </Link>
+        <SectionLink href="/movement">Full board</SectionLink>
       </div>
       <ul className="flex flex-col gap-2">
         {items.slice(0, 3).map((item) => (

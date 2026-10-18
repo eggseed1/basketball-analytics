@@ -1,4 +1,5 @@
 import { ADVISOR, ASSETS, makeAgent, mix, newFinance } from "./finance";
+import { earningsOf, MAX_BOARD, placeOnBoard, rankByEarnings } from "./leaderboard";
 import { hashString, streamSeed } from "./rng";
 import type { CareerSummary } from "./report";
 import { SCHEMA_VERSION, type AdvisorStyle, type LifeState } from "./types";
@@ -6,6 +7,7 @@ import { WORLD_VERSION } from "./world";
 
 export const SAVE_KEY = "drbl.oneShot.save";
 export const CAREERS_KEY = "drbl.oneShot.careers";
+export const BOARD_KEY = "drbl.oneShot.earnings";
 export const PREFS_KEY = "drbl.oneShot.prefs";
 export const MAX_CAREERS = 15;
 
@@ -179,6 +181,33 @@ export function addCareer(c: CareerSummary): CareerSummary[] {
     storage()?.setItem(CAREERS_KEY, JSON.stringify(list));
   } catch {
     /* storage full or blocked; the list still shows for this session */
+  }
+  return list;
+}
+
+function isBoardRow(x: unknown): x is CareerSummary {
+  if (!x || typeof x !== "object") return false;
+  const c = x as CareerSummary;
+  return typeof c.runId === "string" && typeof c.name === "string" && typeof c.finishedAt === "string" && earningsOf(c) !== null;
+}
+
+/** Top lives on this device by career earnings before tax. */
+export function loadBoard(): CareerSummary[] {
+  try {
+    const raw = storage()?.getItem(BOARD_KEY);
+    const list = raw ? (JSON.parse(raw) as unknown[]) : [];
+    return Array.isArray(list) ? rankByEarnings(list.filter(isBoardRow)).slice(0, MAX_BOARD) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function recordEarnings(c: CareerSummary): CareerSummary[] {
+  const list = placeOnBoard(loadBoard(), c);
+  try {
+    storage()?.setItem(BOARD_KEY, JSON.stringify(list));
+  } catch {
+    /* storage full or blocked; the board still shows for this session */
   }
   return list;
 }

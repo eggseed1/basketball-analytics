@@ -13,20 +13,26 @@ import {
   presentationForSourceEvent,
 } from "@/lib/transaction-event-presentation";
 import { sourceTextCategoryLabel } from "@/offseason";
+import type { TransactionType } from "@/offseason";
+import { GlassSurface } from "@/components/brand/glass-surface";
 import { TeamLogo } from "@/components/brand/team-logo";
-import { useQueryNav } from "@/components/continuity/query-nav";
+import { TransitionLink, useQueryNav } from "@/components/continuity/query-nav";
 import { TradeAcquireBoxes } from "@/components/offseason/trade-acquire-boxes";
 import { TransactionDescription } from "@/components/offseason/transaction-description";
 import { MoreInfo } from "@/components/ui/more-info";
+import { Badge } from "@/components/ui/badge";
 import { TeamIdentity } from "@/components/teams/team-identity";
+import { TeamSelect, currentTeamChoices } from "@/components/teams/team-select";
 import { TextLink } from "@/components/ui/text-link";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import {
   tradeAcquirePresentationFromEvent,
   tradeAcquirePresentationFromEvents,
 } from "@/lib/trade-acquire-presentation";
-import { monthLabel } from "@/data/providers/transactions/offseason-window";
+import { choiceTrackClassName, searchFieldClassName } from "@/components/ui/choice-chip";
+import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
+import { LinkCue } from "@/components/ui/link-cue";
 
 export { sourceTextCategoryLabel };
 
@@ -36,10 +42,48 @@ function teamAbbr(event: NbaTransactionEvent): string {
   return brand?.abbr ?? event.teamAbbr ?? event.teamId;
 }
 
+function tagVariant(category: TransactionType) {
+  switch (category) {
+    case "waive":
+    case "release":
+      return "negative" as const;
+    case "signing":
+    case "extension":
+      return "positive" as const;
+    case "trade":
+      return "info" as const;
+    case "option":
+      return "warning" as const;
+    case "draft":
+      return "elite" as const;
+    default:
+      return "transaction" as const;
+  }
+}
+
+export function TransactionKindTag({ category }: { category: TransactionType }) {
+  return (
+    <Badge size="sm" variant={tagVariant(category)} className="border-transparent font-bold">
+      {sourceTextCategoryLabel(category)}
+    </Badge>
+  );
+}
+
+function uniqueCategories(events: NbaTransactionEvent[]): TransactionType[] {
+  const seen = new Set<TransactionType>();
+  const out: TransactionType[] = [];
+  for (const event of events) {
+    if (seen.has(event.sourceTextCategory)) continue;
+    seen.add(event.sourceTextCategory);
+    out.push(event.sourceTextCategory);
+  }
+  return out;
+}
+
 export function TransactionEventRow({
   event,
   compact,
-  hideClusterHint,
+  hideClusterHint: _hideClusterHint,
   playerResolutions,
   sourceTextOnly,
 }: {
@@ -57,14 +101,21 @@ export function TransactionEventRow({
     !sourceTextOnly && isTradeRelated
       ? tradeAcquirePresentationFromEvent(event)
       : null;
+  const detailHref = `/offseason?event=${encodeURIComponent(event.id)}`;
 
   return (
     <article
       className={cn(
-        "flex gap-3 border-b border-border/70 py-3 last:border-0",
+        "relative flex gap-3 border-b border-border/70 py-3 last:border-0 hover:bg-foreground/[0.03] [&_a:not([data-row-link])]:relative [&_a:not([data-row-link])]:z-[2]",
         compact && "py-2"
       )}
     >
+      <TransitionLink
+        href={detailHref}
+        data-row-link
+        aria-label={`${event.date}, ${abbr}. Open detail`}
+        className="absolute inset-0 z-[1]"
+      />
       {!tradeAcquire ? (
         <TeamIdentity
           teamKey={event.teamId}
@@ -92,19 +143,8 @@ export function TransactionEventRow({
               {tradeAcquire.sides.map((s) => s.teamAbbr).join(" ↔ ")}
             </span>
           )}
-          <span className="text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
-            {presentation.title}
-          </span>
-          {!isTradeRelated ? (
-            <span className="text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
-              · {sourceTextCategoryLabel(event.sourceTextCategory)}
-            </span>
-          ) : null}
+          <TransactionKindTag category={event.sourceTextCategory} />
         </div>
-        <p className="mt-1 text-[12px] font-semibold text-muted-foreground">
-          {presentation.sourceCountLabel}
-          {isTradeRelated ? " · transaction archive" : " · transaction note"}
-        </p>
         {tradeAcquire ? (
           <TradeAcquireBoxes
             presentation={tradeAcquire}
@@ -118,16 +158,6 @@ export function TransactionEventRow({
             className="type-body mt-0.5 leading-relaxed text-foreground"
           />
         )}
-        <p className="mt-1 text-[12px] text-muted-foreground">
-          Season {event.season}
-          {!hideClusterHint && event.relatedClusterId
-            ? " · part of a related-event cluster"
-            : ""}{" "}
-          ·{" "}
-          <TextLink href={`/offseason?event=${encodeURIComponent(event.id)}`}>
-            Detail
-          </TextLink>
-        </p>
       </div>
     </article>
   );
@@ -175,16 +205,12 @@ export function RelatedEventClusterCard({
             <p className="text-[14px] font-bold tracking-tight">
               {abbrs.join(" ↔ ")}
             </p>
-            <span className="text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
-              {presentation.title}
+            <span className="inline-flex flex-wrap gap-1">
+              {uniqueCategories(events).map((category) => (
+                <TransactionKindTag key={category} category={category} />
+              ))}
             </span>
           </div>
-          <p className="mt-1 text-[14px] text-muted-foreground">
-            {presentation.sourceCountLabel}
-            {isTradeRelated
-              ? ". Source evidence from transaction records, not a verified structured trade ledger."
-              : ". Assembled from source events, not a verified structured trade ledger."}
-          </p>
           {tradeAcquire ? (
             <TradeAcquireBoxes
               presentation={tradeAcquire}
@@ -198,12 +224,8 @@ export function RelatedEventClusterCard({
             aria-expanded={open}
           >
             {open
-              ? presentation.sourceCount === 1
-                ? "Hide source event"
-                : "Hide source events"
-              : presentation.sourceCount === 1
-                ? "Show source event"
-                : "Show source events"}
+              ? "Hide the lines"
+              : "Show the lines"}
           </button>
           {open ? (
             <div data-motion-list className="mt-3 rounded-md border border-border/80 bg-secondary/20 px-3">
@@ -222,8 +244,7 @@ export function RelatedEventClusterCard({
                   Event interpretation
                 </p>
                 <p className="mt-1">
-                  These source events appear to describe the same{" "}
-                  {abbrs.join("-")} transaction.
+                  These notes look like the same {abbrs.join("-")} transaction.
                 </p>
                 <p className="mt-2 font-semibold text-foreground">
                   Assembled from related transaction events
@@ -244,7 +265,7 @@ export function RelatedEventClusterCard({
                   <TextLink
                     href={`/offseason?event=${encodeURIComponent(events[0]!.id)}`}
                   >
-                    Open cluster detail <span data-motion-arrow aria-hidden>→</span>
+                    Open cluster detail <LinkCue />
                   </TextLink>
                 </p>
               </div>
@@ -288,7 +309,6 @@ export function OffseasonFilters({
   q,
   dateFrom,
   dateTo,
-  season,
 }: {
   offseasonYear: number;
   years: number[];
@@ -297,7 +317,6 @@ export function OffseasonFilters({
   q?: string;
   dateFrom?: string;
   dateTo?: string;
-  season?: string;
 }) {
   const { pending, pushHref } = useQueryNav();
   const [year, setYear] = useState(String(offseasonYear));
@@ -305,94 +324,139 @@ export function OffseasonFilters({
   const [query, setQuery] = useState(q ?? "");
   const [from, setFrom] = useState(dateFrom ?? "");
   const [to, setTo] = useState(dateTo ?? "");
-  const [seasonVal, setSeasonVal] = useState(season ?? "");
 
-  function apply() {
+  function apply(next?: {
+    year?: string;
+    team?: string;
+    query?: string;
+    from?: string;
+    to?: string;
+  }) {
     const params = new URLSearchParams();
-    params.set("year", year);
-    if (team) params.set("team", team);
-    if (query.trim()) params.set("q", query.trim());
-    if (from) params.set("from", from);
-    if (to) params.set("to", to);
-    if (seasonVal.trim()) params.set("season", seasonVal.trim());
+    const nextYear = next?.year ?? year;
+    const nextTeam = next?.team ?? team;
+    const nextQuery = next?.query ?? query;
+    const nextFrom = next?.from ?? from;
+    const nextTo = next?.to ?? to;
+    params.set("year", nextYear);
+    if (nextTeam) params.set("team", nextTeam);
+    if (nextQuery.trim()) params.set("q", nextQuery.trim());
+    if (nextFrom) params.set("from", nextFrom);
+    if (nextTo) params.set("to", nextTo);
     pushHref(`/offseason?${params.toString()}`);
   }
 
+  const selectedYear = Number(year);
+  const windowLabel = Number.isFinite(selectedYear)
+    ? `June ${selectedYear} to May ${selectedYear + 1}`
+    : "";
+  const fieldClass = cn(searchFieldClassName, "w-auto");
+  const groupClass = choiceTrackClassName;
+
   return (
-    <div className="sports-card flex flex-col gap-3 px-4 py-4 sm:px-5">
-      <div className="flex flex-wrap items-end gap-3">
-        <label className="flex flex-col gap-1 text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
-          Year
+    <GlassSurface
+      effect="css"
+      className="relative z-40 w-full min-w-0 max-w-full p-2 sm:p-3"
+    >
+      <form
+        className="flex w-full min-w-0 max-w-full flex-col gap-2"
+        aria-label="Transaction filters"
+        onSubmit={(event) => {
+          event.preventDefault();
+          apply();
+        }}
+      >
+      <div className="flex w-full min-w-0 flex-wrap items-center gap-2">
+        <label className={groupClass}>
+          <span className={cn(type.caption, "pl-2 font-medium uppercase tracking-[0.04em] text-muted-foreground")}>
+            Year
+          </span>
           <select
-            className="rounded-md border border-border bg-background px-3 py-2 text-[14px] font-semibold text-foreground"
+            className={cn(fieldClass, "pr-1")}
             value={year}
-            onChange={(e) => setYear(e.target.value)}
+            aria-label="Year"
+            onChange={(e) => {
+              setYear(e.target.value);
+              apply({ year: e.target.value });
+            }}
           >
             {years.map((y) => (
               <option key={y} value={y}>
-                {y}-{String((y + 1) % 100).padStart(2, "0")} · June {y} to May {y + 1}
+                {y}-{String((y + 1) % 100).padStart(2, "0")}
               </option>
             ))}
           </select>
+          <span className={cn(type.caption, "pr-2 text-muted-foreground")}>{windowLabel}</span>
         </label>
-        <label className="flex flex-col gap-1 text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
-          Team
-          <select
-            className="rounded-md border border-border bg-background px-3 py-2 text-[14px] font-semibold text-foreground"
-            value={team}
-            onChange={(e) => setTeam(e.target.value)}
-          >
-            <option value="">All teams</option>
-            {teams.map((t) => (
-              <option key={t.teamId} value={t.teamId}>
-                {t.label}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="flex min-w-[160px] flex-1 flex-col gap-1 text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
-          Search descriptions
+        <TeamSelect
+          id="offseason-team"
+          value={team || "ALL"}
+          empty={{ value: "ALL", label: "All teams" }}
+          teams={teams.map((row) => {
+            const brand = resolveTeamBrand(row.teamId);
+            const known = currentTeamChoices().find(
+              (choice) => choice.abbreviation === brand?.abbr
+            );
+            return {
+              id: row.teamId,
+              abbreviation: brand?.abbr ?? known?.abbreviation ?? row.label,
+              fullName: known?.fullName ?? row.label,
+              conference: known?.conference,
+            };
+          })}
+          onChange={(value) => {
+            const next = value === "ALL" ? "" : value;
+            setTeam(next);
+            apply({ team: next });
+          }}
+        />
+        <label className={cn(groupClass, "min-w-[12rem] flex-1")}>
+          <span className="sr-only">Search</span>
           <input
-            className="rounded-md border border-border bg-background px-3 py-2 text-[14px] font-semibold text-foreground"
+            className={cn(fieldClass, "w-full")}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Trade, draft, waiver…"
+            onBlur={() => apply()}
+            placeholder="Search"
+            aria-label="Search"
           />
         </label>
       </div>
-      <div className="flex flex-wrap items-end gap-3">
-        <label className="flex flex-col gap-1 text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
-          From
+      <div className="flex w-full min-w-0 flex-wrap items-center gap-2 border-t border-border/40 pt-2">
+        <label className={groupClass}>
+          <span className={cn(type.caption, "pl-2 font-medium uppercase tracking-[0.04em] text-muted-foreground")}>
+            From
+          </span>
           <input
             type="date"
-            className="rounded-md border border-border bg-background px-3 py-2 text-[14px] font-semibold text-foreground"
+            className={fieldClass}
             value={from}
-            onChange={(e) => setFrom(e.target.value)}
+            aria-label="From"
+            onChange={(e) => {
+              setFrom(e.target.value);
+              apply({ from: e.target.value });
+            }}
           />
         </label>
-        <label className="flex flex-col gap-1 text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
-          To
+        <label className={groupClass}>
+          <span className={cn(type.caption, "pl-2 font-medium uppercase tracking-[0.04em] text-muted-foreground")}>
+            To
+          </span>
           <input
             type="date"
-            className="rounded-md border border-border bg-background px-3 py-2 text-[14px] font-semibold text-foreground"
+            className={fieldClass}
             value={to}
-            onChange={(e) => setTo(e.target.value)}
-          />
-        </label>
-        <label className="flex flex-col gap-1 text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
-          NBA season
-          <input
-            className="rounded-md border border-border bg-background px-3 py-2 text-[14px] font-semibold text-foreground"
-            value={seasonVal}
-            onChange={(e) => setSeasonVal(e.target.value)}
-            placeholder="Optional YYYY-YY"
+            aria-label="To"
+            onChange={(e) => {
+              setTo(e.target.value);
+              apply({ to: e.target.value });
+            }}
           />
         </label>
         <button
-          type="button"
-          onClick={apply}
+          type="submit"
           disabled={pending}
-          className="rounded-md bg-foreground px-4 py-2 text-[14px] font-bold text-background disabled:opacity-50"
+          className="sports-pill disabled:opacity-50"
         >
           {pending ? "Updating…" : "Apply"}
         </button>
@@ -403,7 +467,8 @@ export function OffseasonFilters({
           activity stays separate unless reciprocal evidence shows one underlying transaction.
         </p>
       </MoreInfo>
-    </div>
+      </form>
+    </GlassSurface>
   );
 }
 
@@ -421,23 +486,15 @@ export function TimelineByMonth({
       </p>
     );
   }
+  const events = byMonth.flatMap((group) => group.events);
   return (
-    <div className="flex flex-col gap-6">
-      {byMonth.map(({ monthKey, events }) => (
-        <section key={monthKey}>
-          <h3 className="text-[12px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
-            {monthLabel(monthKey)}
-          </h3>
-          <div data-motion-list className="mt-2">
-            {events.map((e) => (
-              <TransactionEventRow
-                key={e.id}
-                event={e}
-                playerResolutions={playerResolutionsByEventId?.[e.id]}
-              />
-            ))}
-          </div>
-        </section>
+    <div data-motion-list>
+      {events.map((e) => (
+        <TransactionEventRow
+          key={e.id}
+          event={e}
+          playerResolutions={playerResolutionsByEventId?.[e.id]}
+        />
       ))}
     </div>
   );
@@ -457,27 +514,15 @@ export function TimelineFeedByMonth({
       </p>
     );
   }
+  const items = byMonth.flatMap((group) => group.items);
   return (
-    <div className="flex flex-col gap-6">
-      {byMonth.map(({ monthKey, items }) => (
-        <section key={monthKey}>
-          <h3 className="text-[12px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
-            {monthLabel(monthKey)}
-          </h3>
-          <div data-motion-list className="mt-2">
-            {items.map((item) => (
-              <OffseasonFeedItemRow
-                key={
-                  item.kind === "source_event"
-                    ? item.event.id
-                    : item.cluster.id
-                }
-                item={item}
-                playerResolutionsByEventId={playerResolutionsByEventId}
-              />
-            ))}
-          </div>
-        </section>
+    <div data-motion-list className="sports-card px-4 py-2 sm:px-5">
+      {items.map((item) => (
+        <OffseasonFeedItemRow
+          key={item.kind === "source_event" ? item.event.id : item.cluster.id}
+          item={item}
+          playerResolutionsByEventId={playerResolutionsByEventId}
+        />
       ))}
     </div>
   );
@@ -548,13 +593,10 @@ export function TransactionEventDetail({
         </div>
       </div>
 
-      <div>
-        <p className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
-          {presentation.title}
-        </p>
-        <p className="mt-0.5 text-[12px] font-semibold text-muted-foreground">
-          {presentation.sourceCountLabel}
-        </p>
+      <div className="flex flex-wrap gap-1">
+        {uniqueCategories(detailEvents).map((category) => (
+          <TransactionKindTag key={category} category={category} />
+        ))}
       </div>
 
       {tradeAcquire ? (
@@ -627,19 +669,18 @@ export function TransactionEventDetail({
           {fromDraft
             ? "Each pick is one row for the team that made it. Trades of the pick before or after draft night are separate rows."
             : fromNbaCom
-            ? "This is a single-team source event. The source lists each player or pick a team received on its own line, and DRBL joins one team's lines for a deal into this sentence without adding anything."
-            : "This is a single-team source event. One-sided wording (for example “acquired X for draft considerations”) is shown exactly as recorded. DRBL does not invent the other side of the deal from free text."}
+            ? "This note is one team's line. The source lists each player or pick a team received on its own line, and DRBL joins one team's lines for a deal into this sentence without adding anything."
+            : "This note is one team's line. One-sided wording (for example “acquired X for draft considerations”) is shown as recorded. DRBL does not invent the other side of the deal from free text."}
         </p>
       )}
 
       <dl className="grid gap-2 text-[12px] text-muted-foreground sm:grid-cols-2">
         <div>
           <dt className="font-semibold text-foreground">
-            Source-text category
+            Kind
           </dt>
           <dd>
-            {sourceTextCategoryLabel(event.sourceTextCategory)} (wording only;
-            not a complete package claim)
+            {sourceTextCategoryLabel(event.sourceTextCategory)}. Wording only, not a complete package.
           </dd>
         </div>
       </dl>

@@ -23,6 +23,7 @@ import type {
 } from "@/movement-center/types";
 import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
+import { LinkCue } from "@/components/ui/link-cue";
 
 function formatWhen(claim: MovementClaim) {
   const d = new Date(claim.publishedAt);
@@ -364,7 +365,7 @@ export function MovementClusterCard({
               <>
                 {" "}
                 <Link href={tradeTrailHref} className="font-semibold underline-offset-2 hover:underline">
-                  See where this trade led <span data-motion-arrow aria-hidden>→</span>
+                  See where this trade led <LinkCue />
                 </Link>
               </>
             ) : null}

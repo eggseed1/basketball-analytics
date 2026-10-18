@@ -117,7 +117,7 @@ export function CompareEmptyState() {
                   portraitUrl={getPlayerPortraitUrl(m.a.id)}
                   name={m.a.name}
                   size="md"
-                  className="ring-2 ring-white/80 dark:ring-white/20"
+                  className="ring-1 ring-white/80 dark:ring-white/20"
                 />
                 <div className="min-w-0 flex-1 text-center">
                   <p
@@ -151,7 +151,7 @@ export function CompareEmptyState() {
                   portraitUrl={getPlayerPortraitUrl(m.b.id)}
                   name={m.b.name}
                   size="md"
-                  className="ring-2 ring-white/80 dark:ring-white/20"
+                  className="ring-1 ring-white/80 dark:ring-white/20"
                 />
               </Link>
             </li>

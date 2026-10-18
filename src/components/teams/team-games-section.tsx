@@ -6,6 +6,7 @@ import { LiveScoreboardScope } from "@/components/sports/live-scoreboard-scope";
 import type { GameSummary, TeamSeasonStats } from "@/data/types";
 import type { TeamBrand } from "@/lib/nba-brand";
 import { isLiveLikeStatus } from "@/lib/game-status";
+import { LinkCue } from "@/components/ui/link-cue";
 import {
   filterTeamGames,
   formatTeamGameScoreLine,
@@ -92,7 +93,7 @@ export function TeamGamesSection({
           href="/scores"
           className="font-semibold underline-offset-2 hover:underline"
         >
-          Open scores <span data-motion-arrow aria-hidden>→</span>
+          Open scores <LinkCue />
         </TransitionLink>
         <span className="mx-2">·</span>
         Team page links to Game Lab instead of copying it.

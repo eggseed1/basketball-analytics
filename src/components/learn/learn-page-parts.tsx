@@ -2,17 +2,16 @@
 
 import type { ReactNode } from "react";
 
+import { ChoiceChip, ChoiceTrack } from "@/components/ui/choice-chip";
 import { cn } from "@/lib/utils";
 
 export function LearnHeader({
-  eyebrow,
   title,
   lead,
   depth,
   onDepth,
   children,
 }: {
-  eyebrow: string;
   title: string;
   lead: string;
   depth: "plain" | "deep" | null;
@@ -21,9 +20,6 @@ export function LearnHeader({
 }) {
   return (
     <header className="flex flex-col gap-3">
-      <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-        {eyebrow}
-      </p>
       <h1 className="text-[2rem] font-bold tracking-tight sm:text-[2.25rem]">
         {title}
       </h1>
@@ -32,18 +28,14 @@ export function LearnHeader({
       </p>
       {children}
       {depth ? (
-        <div
-          className="inline-flex w-fit rounded-full bg-secondary p-1"
-          role="group"
-          aria-label="Explanation depth"
-        >
+        <ChoiceTrack role="group" aria-label="Explanation depth" className="w-fit">
           <DepthButton active={depth === "plain"} onClick={() => onDepth("plain")}>
             Plain
           </DepthButton>
           <DepthButton active={depth === "deep"} onClick={() => onDepth("deep")}>
             Full depth
           </DepthButton>
-        </div>
+        </ChoiceTrack>
       ) : null}
     </header>
   );
@@ -59,19 +51,9 @@ function DepthButton({
   children: ReactNode;
 }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-pressed={active}
-      className={cn(
-        "rounded-full px-3.5 py-1.5 text-[14px] font-semibold transition-colors",
-        active
-          ? "bg-foreground text-background"
-          : "text-muted-foreground hover:text-foreground"
-      )}
-    >
+    <ChoiceChip active={active} onClick={onClick}>
       {children}
-    </button>
+    </ChoiceChip>
   );
 }
 

@@ -9,7 +9,11 @@ import {
   type LearnCategoryId,
   type LearnConcept,
 } from "@/content/learn/registry";
+import { ChoiceChip, ChoiceTrack, searchFieldClassName } from "@/components/ui/choice-chip";
+import { FilterBar } from "@/components/explore/filter-bar";
 import { Input } from "@/components/ui/input";
+import { LinkCue } from "@/components/ui/link-cue";
+import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 
 export type LearnIndexConcept = LearnConcept & { href: string | null };
@@ -43,36 +47,34 @@ export function LearnIndexClient({
   }, [filtered]);
 
   return (
-    <div data-motion-stack className="flex flex-col gap-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div className="w-full max-w-md">
-          <label className="text-[12px] font-semibold text-muted-foreground">
-            Search terms
-          </label>
-          <Input
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder="TS%, Copeland, percentile, CPI…"
-            className="mt-1"
-            aria-label="Search Learn terms"
-          />
+    <div data-motion-stack data-motion-static className="flex flex-col gap-6">
+      <FilterBar label="Learn terms">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <ChoiceTrack className="w-full max-w-md">
+            <Input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="Search terms"
+              className={searchFieldClassName}
+              aria-label="Search terms"
+            />
+          </ChoiceTrack>
+          <p className={cn(type.caption, "text-muted-foreground")}>
+            {filtered.length} term{filtered.length === 1 ? "" : "s"}
+          </p>
         </div>
-        <p className="text-[12px] text-muted-foreground">
-          {filtered.length} term{filtered.length === 1 ? "" : "s"}
-        </p>
-      </div>
-
-      <div className="flex flex-wrap gap-2" role="tablist" aria-label="Learn categories">
-        <CatChip active={cat === "all"} onClick={() => setCat("all")} label="All" />
-        {LEARN_CATEGORIES.map((c) => (
-          <CatChip
-            key={c.id}
-            active={cat === c.id}
-            onClick={() => setCat(c.id)}
-            label={c.label}
-          />
-        ))}
-      </div>
+        <ChoiceTrack className="flex-wrap gap-1 p-1" role="tablist" aria-label="Learn categories">
+          <CatChip active={cat === "all"} onClick={() => setCat("all")} label="All" />
+          {LEARN_CATEGORIES.map((c) => (
+            <CatChip
+              key={c.id}
+              active={cat === c.id}
+              onClick={() => setCat(c.id)}
+              label={c.label}
+            />
+          ))}
+        </ChoiceTrack>
+      </FilterBar>
 
       {filtered.length === 0 ? (
         <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[14px] text-muted-foreground">
@@ -103,7 +105,9 @@ export function LearnIndexClient({
                         <span className="block text-[16px] font-semibold">{meta.guide.label}</span>
                         <span className="block text-[14px] text-muted-foreground">{meta.guide.blurb}</span>
                       </span>
-                      <span className="shrink-0 text-[14px] font-semibold text-muted-foreground">Read →</span>
+                      <span className="inline-flex shrink-0 items-center gap-0.5 text-[14px] font-semibold text-muted-foreground">
+                        Read <LinkCue />
+                      </span>
                     </TransitionLink>
                   ) : null}
                   <ul className="sports-card divide-y divide-black/5 dark:divide-white/10">
@@ -163,19 +167,13 @@ function CatChip({
   label: string;
 }) {
   return (
-    <button
-      type="button"
+    <ChoiceChip
+      active={active}
+      onClick={onClick}
       role="tab"
       aria-selected={active}
-      onClick={onClick}
-      className={cn(
-        "rounded-full px-3 py-1.5 text-[12px] font-semibold",
-        active
-          ? "bg-foreground text-background"
-          : "bg-secondary text-muted-foreground hover:text-foreground"
-      )}
     >
       {label}
-    </button>
+    </ChoiceChip>
   );
 }

@@ -64,7 +64,7 @@ export function ImpactLeaders({ leaders }: { leaders: HomeDarkoLeader[] }) {
           </TransitionLink>
         </div>
       </div>
-      <ol className="sports-card divide-y divide-black/5">
+      <ol className="sports-card divide-y divide-border/40">
         {visible.map((p, i) => (
           <li key={`${p.profileId}-${p.playerName}`}>
             <div className="flex gap-3 px-4 py-3 transition-colors hover:bg-secondary/50">

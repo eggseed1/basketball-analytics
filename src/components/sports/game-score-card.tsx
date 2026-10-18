@@ -8,6 +8,7 @@ import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { PlayerIdentity } from "@/components/players/player-identity";
 import { TeamIdentity } from "@/components/teams/team-identity";
 import { GameCountdown } from "@/components/sports/game-countdown";
+import { GameStatusTag } from "@/components/sports/game-status-tag";
 import { LiveIndicator } from "@/components/sports/live-indicator";
 import { LocalTipTime } from "@/components/sports/local-tip-time";
 import type { GameSummary } from "@/data/types";
@@ -229,7 +230,7 @@ function MatchupCenter({
         {clock}
       </span>
     ) : (
-      statusHeadline(game.status)
+      <GameStatusTag>{statusHeadline(game.status)}</GameStatusTag>
     );
   } else if (live) {
     primary = <LiveIndicator />;
@@ -251,7 +252,7 @@ function MatchupCenter({
       );
     }
   } else {
-    primary = statusHeadline(game.status);
+    primary = <GameStatusTag>{statusHeadline(game.status)}</GameStatusTag>;
     secondary = watch;
   }
 

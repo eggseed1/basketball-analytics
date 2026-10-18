@@ -4,8 +4,6 @@ import {
   OffseasonFilters,
   TimelineFeedByMonth,
   TransactionEventDetail,
-  TransactionEventRow,
-  RelatedEventClusterCard,
 } from "@/components/offseason/transaction-event-ui";
 import { OffseasonClientShell } from "@/components/offseason/offseason-client-shell";
 import { TransitionLink } from "@/components/continuity/query-nav";
@@ -16,8 +14,6 @@ import {
   getTransactionEventCoverage,
   listAvailableOffseasonYears,
 } from "@/data/queries/offseason-tracker";
-import { buildOffseasonFeedItems } from "@/data/providers/transactions/transaction-event-clusters";
-import { buildTransactionEventIndex } from "@/data/providers/transactions/transaction-event-index";
 import {
   currentOffseasonLabelYear,
   transactionYearWindow,
@@ -28,14 +24,14 @@ import type { NbaTransactionEvent } from "@/data/types/transaction-event";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { redirect } from "next/navigation";
 import { normalizeTeamParam } from "@/lib/team-identity";
-import { parseSeasonParam } from "@/data/providers/historical/season-range";
 import {
   sourceTextCategoryLabel,
   type TransactionType,
 } from "@/offseason";
 
 export const metadata = {
-  title: "Transactions",
+  alternates: { canonical: "/offseason" },
+  title: "NBA transactions",
   description:
     "NBA transaction events, each with its date, team and description.",
 };
@@ -56,6 +52,24 @@ function one(
   return Array.isArray(v) ? v[0] : v;
 }
 
+function feedPageHref(options: {
+  offseasonYear: number;
+  teamId?: string;
+  q?: string;
+  dateFrom?: string;
+  dateTo?: string;
+  page: number;
+}): string {
+  return `/offseason?${new URLSearchParams({
+    year: String(options.offseasonYear),
+    ...(options.teamId ? { team: options.teamId } : {}),
+    ...(options.q ? { q: options.q } : {}),
+    ...(options.dateFrom ? { from: options.dateFrom } : {}),
+    ...(options.dateTo ? { to: options.dateTo } : {}),
+    page: String(options.page),
+  }).toString()}`;
+}
+
 function longDate(iso: string): string {
   return new Date(`${iso}T12:00:00Z`).toLocaleDateString("en-US", {
     month: "long",
@@ -74,7 +88,6 @@ function resolveTeamFilter(raw?: string): string | undefined {
 
 function collectEventsForResolution(options: {
   timelineEvents: NbaTransactionEvent[];
-  latestFeed: ReturnType<typeof buildOffseasonFeedItems>;
   detailBundle: {
     event: NbaTransactionEvent;
     relatedEvents: NbaTransactionEvent[];
@@ -82,10 +95,6 @@ function collectEventsForResolution(options: {
 }): NbaTransactionEvent[] {
   const byId = new Map<string, NbaTransactionEvent>();
   for (const e of options.timelineEvents) byId.set(e.id, e);
-  for (const item of options.latestFeed) {
-    if (item.kind === "source_event") byId.set(item.event.id, item.event);
-    else for (const e of item.events) byId.set(e.id, e);
-  }
   if (options.detailBundle) {
     byId.set(options.detailBundle.event.id, options.detailBundle.event);
     for (const e of options.detailBundle.relatedEvents) byId.set(e.id, e);
@@ -116,21 +125,10 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
   }
   const page = Math.max(1, Number(one(sp, "page") ?? "1") || 1);
 
-  let season: string | undefined;
-  const seasonRaw = one(sp, "season");
-  if (seasonRaw) {
-    try {
-      season = parseSeasonParam(seasonRaw);
-    } catch {
-      season = undefined;
-    }
-  }
-
   const window = transactionYearWindow(offseasonYear);
   const ongoing = new Date().toISOString().slice(0, 10) <= window.endDate;
   const filters = {
-    transactionYear: season ? undefined : offseasonYear,
-    season,
+    transactionYear: offseasonYear,
     teamId,
     dateFrom: dateFrom || undefined,
     dateTo: dateTo || undefined,
@@ -138,7 +136,7 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
   };
 
   // One index build (or cache hit); derive coverage/pulse/timeline from shared TTL.
-  const [pulse, timeline, coverage, detailBundle, index] =
+  const [pulse, timeline, coverage, detailBundle] =
     await Promise.all([
       getOffseasonPulse({ transactionYear: offseasonYear }),
       getOffseasonTimeline(filters, { page, pageSize: 50 }),
@@ -146,18 +144,10 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
       eventId
         ? getTransactionEventWithRelations(eventId)
         : Promise.resolve(null),
-      buildTransactionEventIndex(),
     ]);
-
-  const latestFeed = buildOffseasonFeedItems(
-    timeline.page.events.slice(0, 12),
-    index.clusters,
-    index.byId
-  ).slice(0, 8);
 
   const eventsToResolve = collectEventsForResolution({
     timelineEvents: timeline.page.events,
-    latestFeed,
     detailBundle: detailBundle
       ? {
           event: detailBundle.event,
@@ -193,17 +183,13 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
     <main data-motion-page className="site-shell flex flex-col gap-5 py-5 sm:py-7">
       <MotionReveal />
       <header className="flex flex-col gap-2">
-        <p className="text-[12px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
-          Transactions
-        </p>
         <h1 className="text-[28px] font-bold tracking-tight sm:text-[32px]">
           {window.upcomingSeason} NBA transactions
         </h1>
-        <p className="max-w-2xl text-[16px] text-muted-foreground">
+        <p className="type-caption max-w-2xl text-muted-foreground">
           Every move recorded from {longDate(window.startDate)}{" "}
           {ongoing ? "through today" : `to ${longDate(window.endDate)}`}: the draft and free
           agency, then trades, signings and waivers through the {window.upcomingSeason} season.
-          These are source events as reported, not a structured trade ledger.
         </p>
       </header>
 
@@ -259,7 +245,6 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
           q={q}
           dateFrom={dateFrom}
           dateTo={dateTo}
-          season={season}
         />
 
         {teamId ? (
@@ -294,47 +279,7 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
             </section>
           ) : null}
 
-          <section className="flex flex-col gap-2">
-            <h2 className="text-[16px] font-bold tracking-tight">Latest</h2>
-            <div data-motion-list className="sports-card px-4 py-2 sm:px-5">
-              {latestFeed.length ? (
-                latestFeed.map((item) =>
-                  item.kind === "related_event_cluster" ? (
-                    <RelatedEventClusterCard
-                      key={item.cluster.id}
-                      cluster={item.cluster}
-                      events={item.events}
-                      playerResolutionsByEventId={playerResolutionsByEventId}
-                    />
-                  ) : (
-                    <TransactionEventRow
-                      key={item.event.id}
-                      event={item.event}
-                      compact
-                      playerResolutions={
-                        playerResolutionsByEventId[item.event.id]
-                      }
-                    />
-                  )
-                )
-              ) : (
-                <p className="py-6 text-center text-[14px] text-muted-foreground">
-                  No events in this view.
-                </p>
-              )}
-            </div>
-          </section>
-
           <section className="flex flex-col gap-3">
-            <div className="flex flex-wrap items-end justify-between gap-2">
-              <h2 className="text-[16px] font-bold tracking-tight">
-                Timeline
-              </h2>
-              <p className="text-[12px] text-muted-foreground">
-                {timeline.page.total} source events · {timeline.feedTotal} feed
-                groups · page {timeline.feedPage}/{timeline.feedPageCount}
-              </p>
-            </div>
             <TimelineFeedByMonth
               byMonth={timeline.feedByMonth}
               playerResolutionsByEventId={playerResolutionsByEventId}
@@ -343,34 +288,32 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
               <div className="flex flex-wrap gap-2">
                 {timeline.feedPage > 1 ? (
                   <TransitionLink
-                    href={`/offseason?${new URLSearchParams({
-                      year: String(offseasonYear),
-                      ...(teamId ? { team: teamId } : {}),
-                      ...(q ? { q } : {}),
-                      ...(dateFrom ? { from: dateFrom } : {}),
-                      ...(dateTo ? { to: dateTo } : {}),
-                      ...(season ? { season } : {}),
-                      page: String(timeline.feedPage - 1),
-                    }).toString()}`}
+                    href={feedPageHref({
+                      offseasonYear,
+                      teamId,
+                      q,
+                      dateFrom,
+                      dateTo,
+                      page: timeline.feedPage - 1,
+                    })}
                     scroll={false}
-                    className="rounded-md bg-secondary px-3 py-1.5 text-[14px] font-semibold"
+                    className="sports-pill"
                   >
                     Previous
                   </TransitionLink>
                 ) : null}
                 {timeline.feedPage < timeline.feedPageCount ? (
                   <TransitionLink
-                    href={`/offseason?${new URLSearchParams({
-                      year: String(offseasonYear),
-                      ...(teamId ? { team: teamId } : {}),
-                      ...(q ? { q } : {}),
-                      ...(dateFrom ? { from: dateFrom } : {}),
-                      ...(dateTo ? { to: dateTo } : {}),
-                      ...(season ? { season } : {}),
-                      page: String(timeline.feedPage + 1),
-                    }).toString()}`}
+                    href={feedPageHref({
+                      offseasonYear,
+                      teamId,
+                      q,
+                      dateFrom,
+                      dateTo,
+                      page: timeline.feedPage + 1,
+                    })}
                     scroll={false}
-                    className="rounded-md bg-secondary px-3 py-1.5 text-[14px] font-semibold"
+                    className="sports-pill"
                   >
                     Next
                   </TransitionLink>
@@ -386,7 +329,7 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
           Archive coverage
         </h2>
         <p className="mt-2">
-          {coverage.sourceEventCount.toLocaleString()} source events ·{" "}
+          {coverage.sourceEventCount.toLocaleString()} notes ·{" "}
           {coverage.relatedClusterCount.toLocaleString()} related clusters ·{" "}
           {coverage.structuredTransactionCount} structured transactions ·{" "}
           {coverage.ownershipEdgeCount} ownership edges ·{" "}

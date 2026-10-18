@@ -45,7 +45,7 @@ function validArguments(raw: string): boolean {
 export async function callModel(ai: WorkersAi, messages: ChatMessage[], tools: ToolSpec[]): Promise<ModelTurn> {
   const response = (await ai.run(ASK_AGENT_MODEL, {
     messages,
-    tools,
+    ...(tools.length ? { tools } : {}),
     max_tokens: MAX_OUTPUT_TOKENS,
   })) as ChatCompletion;
   const choice = response.choices?.[0];

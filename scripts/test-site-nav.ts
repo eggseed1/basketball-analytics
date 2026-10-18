@@ -36,8 +36,7 @@ const cases: Array<[string, string]> = [
   ["/learn/true-shooting", "Learn"],
   ["/franchises", "Teams"],
   ["/franchises/bos", "Teams"],
-  ["/history", "History"],
-  ["/history?season=1978-79", "History"],
+  ["/teams/13/history", "Teams"],
   ["/arcade", "Arcade"],
   ["/arcade/zero-82", "Arcade"],
   ["/gm", "Arcade"],
@@ -84,6 +83,7 @@ for (const [path, expected] of [
   ["/standings", ["Standings"]],
   ["/teams/2", ["Standings"]],
   ["/franchises/bos", ["Standings"]],
+  ["/teams/13/history", ["Standings"]],
   ["/standings/visualizations", ["Visualizations"]],
 ] as const) {
   assert.deepEqual(teamsSubnavFor(path), expected, `${path} teams subnav`);

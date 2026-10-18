@@ -60,20 +60,7 @@ function Column({
   return (
     <div className="flex min-w-0 flex-col gap-1">
       <div className="flex flex-col gap-0.5 pb-1">
-        <h3
-          className={cn(
-            type.caption,
-            "flex items-center gap-1.5 font-semibold uppercase tracking-wide",
-            hot ? "text-delta-up" : "text-delta-down"
-          )}
-        >
-          <span
-            className={cn(
-              "size-1.5 rounded-full",
-              hot ? "bg-data-positive" : "bg-data-negative"
-            )}
-            aria-hidden
-          />
+        <h3 className={cn(type.bodySm, "font-semibold text-foreground")}>
           {hot ? "Running hot" : "Running cold"}
         </h3>
         <p className={cn(type.caption, "text-muted-foreground")}>

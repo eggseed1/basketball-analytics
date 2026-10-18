@@ -16,6 +16,7 @@ export const metadata = {
   title: "Ask DRBL",
   description:
     "Natural-language basketball analytics: structured queries over trusted DRBL data.",
+  alternates: { canonical: "/ask" },
 };
 
 interface AskPageProps {

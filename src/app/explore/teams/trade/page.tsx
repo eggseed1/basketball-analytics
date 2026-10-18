@@ -4,7 +4,8 @@ import { PageHeader } from "@/components/layout/page-header";
 import { loadTradeSimulatorBoard } from "@/data/queries/trade-simulator";
 
 export const metadata = {
-  title: "Trade simulator",
+  alternates: { canonical: "/explore/teams/trade" },
+  title: "NBA trade simulator",
   description:
     "Build two-team swaps with CBA salary-matching package suggestions and DRBL impact. This is a salary-fit sketch, not a full legality ruling.",
 };
@@ -30,7 +31,6 @@ export default async function TradeSimulatorPage({
     <main data-motion-page className="site-shell flex flex-col gap-6 py-6 sm:py-8">
       <MotionReveal />
       <PageHeader
-        eyebrow="Transactions"
         title="Trade simulator"
         subtitle={`Current rosters and payroll, scored with ${
           board && board.statsSeason !== board.season ? `${board.statsSeason} ` : ""

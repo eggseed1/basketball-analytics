@@ -1,6 +1,7 @@
 "use client";
 
 import { TransitionLink } from "@/components/continuity/query-nav";
+import { GameStatusTag } from "@/components/sports/game-status-tag";
 
 import { GlassSurface } from "@/components/brand/glass-surface";
 import { MatchupOrbs, STRIP_CARD_STYLE } from "@/components/brand/matchup-orbs";
@@ -160,9 +161,7 @@ export function HomeGameStripCard({ game }: { game: GameSummary }) {
       <div className="relative z-[1] flex flex-col gap-2.5 pointer-events-none">
         {live ? (
           <div className="flex items-center gap-2">
-            <span className="rounded-full bg-[#22703d] px-2 py-1 text-[12px] font-semibold leading-none text-white">
-              Live
-            </span>
+            <GameStatusTag tone="live">Live</GameStatusTag>
             {clock ? (
               <span
                 className={cn(
@@ -176,9 +175,7 @@ export function HomeGameStripCard({ game }: { game: GameSummary }) {
           </div>
         ) : game.status === "final" ? (
           <div className="flex items-center gap-2">
-            <span className="rounded-full bg-foreground/[0.08] px-2 py-1 text-[12px] font-semibold leading-none text-foreground/80">
-              {statusHeadline(game.status)}
-            </span>
+            <GameStatusTag>{statusHeadline(game.status)}</GameStatusTag>
             {finalAt ? (
               <span
                 className={cn(
@@ -190,7 +187,7 @@ export function HomeGameStripCard({ game }: { game: GameSummary }) {
               </span>
             ) : null}
           </div>
-        ) : (
+        ) : preTip ? (
           <p
             className={cn(
               type.caption,
@@ -199,6 +196,8 @@ export function HomeGameStripCard({ game }: { game: GameSummary }) {
           >
             {when}
           </p>
+        ) : (
+          <GameStatusTag>{statusHeadline(game.status)}</GameStatusTag>
         )}
         <div className="flex flex-col gap-3">
           <TeamRow
