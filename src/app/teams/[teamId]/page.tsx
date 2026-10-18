@@ -77,8 +77,6 @@ import {
 } from "@/themes/history-url";
 import { yieldForStreaming } from "@/lib/stream-yield";
 import { shareImageMetadata } from "@/lib/share-images";
-import { JsonLd } from "@/components/seo/json-ld";
-import { absoluteUrl } from "@/lib/site-url";
 
 /** Team color stays a hint on cards, close to the neutral home page cards. */
 const TEAM_CARD_TINT_SCALE = 0.3;

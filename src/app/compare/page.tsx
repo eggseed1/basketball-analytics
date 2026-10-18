@@ -123,30 +123,6 @@ function one(
   return Array.isArray(v) ? v[0] : v;
 }
 
-// Names come from the player index, never from the URL's an/bn text, so a crafted link can't put arbitrary words in a preview.
-function indexedPlayerName(id: string | undefined): string | null {
-  if (!id) return null;
-  return getPlayerSearchIndex().find((row) => row.id === id)?.name ?? null;
-}
-
-export async function generateMetadata({ searchParams }: ComparePageProps): Promise<Metadata> {
-  const sp = await searchParams;
-  const aId = one(sp, "a");
-  const bId = one(sp, "b");
-  const aName = indexedPlayerName(aId);
-  const bName = indexedPlayerName(bId);
-  if (!aId || !bId || !aName || !bName) return COMPARE_METADATA;
-  const seasonA = one(sp, "seasonA") ?? one(sp, "season");
-  const seasonB = one(sp, "seasonB") ?? one(sp, "season");
-  const shared = seasonA && seasonA === seasonB && /^\d{4}-\d{2}$/.test(seasonA) ? seasonA : null;
-  const params = new URLSearchParams({ a: aId, b: bId, ...(shared ? { season: shared } : {}) });
-  return {
-    title: `${aName} vs. ${bName}${shared ? ` ${shared}` : ""}: Stats Comparison`,
-    description: `${aName} and ${bName} side by side${shared ? ` in ${shared}` : ""}: per-game, shooting and advanced stats compared stat by stat.`,
-    alternates: { canonical: `/compare?${params.toString()}` },
-    ...shareImageMetadata("players", aId, `${aName} vs. ${bName}`),
-  };
-}
 
 type EraSide = {
   row: PlayerSeason;
