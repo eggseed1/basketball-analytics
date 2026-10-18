@@ -4,7 +4,6 @@ export const metadata: Metadata = {
   alternates: { canonical: "/gm" },
   title: "Franchise Lab",
   description: "Basketball front-office GM simulation.",
-  alternates: { canonical: "/gm" },
 };
 
 export default function GmLayout({ children }: { children: React.ReactNode }) {

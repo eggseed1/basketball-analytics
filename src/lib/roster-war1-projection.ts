@@ -201,7 +201,7 @@ export function projectRosterPlayer(
   nbaPlayerId: string,
   deal: { age: number; capSeason: string; salary: number } | null
 ): ProjectedRosterWar1 | null {
-  const model = contractValueModel() as BakedModel;
+  const model = contractValueModel() as unknown as BakedModel;
   if (!deal || deal.salary <= 0 || model.capSeasonCap <= 0) return null;
   if (model.capSeason !== deal.capSeason) return null;
   const history = warHistories().get(nbaPlayerId);

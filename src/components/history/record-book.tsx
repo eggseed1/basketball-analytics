@@ -55,7 +55,7 @@ function playerHref(leader: RecordLeader): string | null {
     if (alias) return `/players/${alias.espnPlayerId}`;
   }
   if (leader.brefId) {
-    const alias = index.byBref.get(leader.brefId.toLowerCase());
+    const alias = index.byBref?.get(leader.brefId.toLowerCase());
     if (alias) return `/players/${alias.espnPlayerId}`;
   }
   return null;
