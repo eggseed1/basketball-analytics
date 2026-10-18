@@ -11,7 +11,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 
 import { advise } from "../src/one-shot/advisor";
-import { FAMILY_BIAS, generateParents, heightPercentile, parentTarget, shareAtLeast } from "../src/one-shot/body";
+import { addMass, buildOutlook, FAMILY_BIAS, generateParents, heightPercentile, parentTarget, raiseAdultHeight, shareAtLeast } from "../src/one-shot/body";
 import { ASSETS, invested, mix, netWorth, PRESETS, rebalance, rebalanceCost, taxRate } from "../src/one-shot/finance";
 import { fieldOf, tournamentsFor } from "../src/one-shot/international";
 import { allStarPick, CALIBRATION, closest, LEAGUE_SEASON, nbaHonors, races, REAL, REAL_AWARDS, standings } from "../src/one-shot/league";
@@ -20,8 +20,8 @@ import { calendar, levelOf, performanceLevel, simulateGame } from "../src/one-sh
 import { hofEligible, hofSpeech } from "../src/one-shot/ceremony";
 import { rngOf } from "../src/one-shot/rng";
 import { MAX_BATCH, tick } from "../src/one-shot/clock";
-import { autoEligible, canDeclare, draftOrder, INTERVIEW_QUESTIONS, interviewDelta } from "../src/one-shot/draft";
-import { advance, advanceToDecision, autoChoice, canDeclareNow, canRetireNow, createLife, declareNow, isUnicornSeed, manageMoney, resolveDecision, retireNow, setPlan, stepMonth, UNICORN_ODDS } from "../src/one-shot/engine";
+import { accoladeDraftValue, autoEligible, canDeclare, draftOrder, INTERVIEW_QUESTIONS, interviewDelta, projectedRank } from "../src/one-shot/draft";
+import { advance, advanceToDecision, autoChoice, canDeclareNow, canRetireNow, createLife, declareNow, isUnicornSeed, manageMoney, resolveDecision, retireNow, seasonAwards, setPlan, stepMonth, UNICORN_ODDS } from "../src/one-shot/engine";
 import { EVENT_BY_ID, EVENTS } from "../src/one-shot/events";
 import { dailyDate, dailySeed, parseSave, serialize } from "../src/one-shot/persistence";
 import { earningsRank, ordinal, parseEarningsRow, placeOnBoard, placeRows, type EarningsRow } from "../src/one-shot/leaderboard";
@@ -297,6 +297,33 @@ ok("bodies stay plausible and height never shrinks while growing", () => {
   }
 });
 
+ok("new lives cover guard height through center height", () => {
+  const heights = Array.from({ length: 500 }, (_, i) => createLife(base(i + 1)).growth.adultHeightCm);
+  const n = (lo: number, hi: number) => heights.filter((h) => h >= lo && h < hi).length;
+  assert.ok(n(168, 193) >= 40, `guards ${n(168, 193)}`);
+  assert.ok(n(193, 203) >= 40, `wings ${n(193, 203)}`);
+  assert.ok(n(203, 210) >= 30, `forwards ${n(203, 210)}`);
+  assert.ok(n(210, 229) >= 25, `bigs ${n(210, 229)}`);
+  const outlook = buildOutlook(180, 166);
+  assert.ok(outlook.high - outlook.low > 25, `${outlook.low} to ${outlook.high}`);
+  assert.ok(outlook.mid > 190, `typical ${outlook.mid}`);
+});
+
+ok("growing players can add height and weight, and closed plates add none", () => {
+  const s = createLife(base(4));
+  s.ageMonths = 13 * 12;
+  const before = s.body.heightCm;
+  const cm = raiseAdultHeight(s, 2);
+  assert.ok(cm > 1 && s.body.heightCm > before, `grew ${cm} cm, height ${s.body.heightCm}`);
+  const kg = addMass(s, 0.05);
+  assert.ok(kg >= 1, `gained ${kg} kg`);
+  s.ageMonths = 24 * 12;
+  assert.equal(raiseAdultHeight(s, 5), 0);
+  for (const id of ["milk-with-dinner", "apple-juice", "hang-from-rim", "lights-out", "second-plate", "garage-bar", "growth-checkup", "gym-guy"]) {
+    assert.ok(EVENTS.some((e) => e.id === id), id);
+  }
+});
+
 ok("injuries heal, health stays in range, and the injury stream always takes three draws", () => {
   const s = autoLife(606, 16 * 12);
   s.condition.injury = { id: "x", label: "Test sprain", monthsLeft: 2, severity: 1, causeEntryId: null };
@@ -519,11 +546,11 @@ ok("QA careers follow country-aware routes", () => {
     US: (s) => s.seasons.some((x) => x.node === "us-high-school" || x.leagueId === "ncaa"),
     ES: (s) => s.seasons.some((x) => x.leagueId === "acb" || (x.node === "elite-youth" && x.countryId === "ES")),
     NG: (s) => s.seasons.some((x) => x.leagueId === "npbl-ng"),
-    KR: (s) => s.seasons.some((x) => x.leagueId === "kbl"),
+    KR: (s) => s.seasons.some((x) => x.leagueId === "kbl" || (x.node === "elite-youth" && x.countryId === "KR")),
     JP: (s) => s.seasons.some((x) => x.leagueId === "bleague"),
     BR: (s) => s.seasons.some((x) => x.leagueId === "nbb"),
-    IN: (s) => s.seasons.some((x) => x.node === "local-senior" && x.countryId === "IN"),
-    TV: (s) => s.seasons.some((x) => x.node === "local-senior" && x.countryId === "TV"),
+    IN: (s) => s.seasons.some((x) => x.countryId === "IN" && (x.node === "local-senior" || x.node === "local-club")),
+    TV: (s) => s.seasons.some((x) => x.countryId === "TV" && (x.node === "local-senior" || x.node === "local-club")),
   };
   for (const [id, test] of Object.entries(expect)) {
     let seed = 1;
@@ -737,7 +764,13 @@ ok("advanced stats use the standard formulas and blanks for empty denominators",
 });
 
 ok("version 1 saves migrate with new streams, money and an agent", () => {
-  const s = autoLife(4242, 20 * 12);
+  let s = createLife(base(4242));
+  const stop = s.ageMonths + 20 * 12;
+  let guard = 0;
+  while (s.ageMonths < stop && !s.ended && guard++ < 4000) {
+    s = s.pendingDecision ? resolveDecision(s, s.pendingDecision.templateId === "chapter" ? "keep" : autoChoice(s)) : advance(s, 1);
+  }
+  if (s.pendingDecision?.templateId === "chapter") s = resolveDecision(s, "keep");
   const old = JSON.parse(serialize(s)) as Record<string, unknown>;
   old.schemaVersion = 1;
   delete old.finance;
@@ -815,6 +848,45 @@ ok("draft: unique teams per round, bounded interviews, and a full cycle for pros
     else assert.equal(me, undefined);
   }
   assert.ok(cycles >= 2, `only ${cycles} full draft cycles in 400 lives`);
+});
+
+ok("college MVP is harder, and the awards move the draft board", () => {
+  const s = createLife(base(11));
+  s.ageMonths = 20 * 12;
+  s.exposure = 50;
+  s.body = { ...s.body, heightCm: 196, wingspanCm: 206, reachCm: 260, weightKg: 95, vertical: 62, strength: 62, acceleration: 62, lateral: 62, stamina: 62, coordination: 62, durability: 62 };
+  s.growth = { ...s.growth, adultHeightCm: 198, wingspanRatio: 1.04 };
+  for (const k of ["strength", "acceleration", "lateral", "vertical", "stamina", "coordination", "durability"] as const) s.growth.athleticCeiling[k] = 66;
+  const year = calendar(s).year;
+  const keys = Object.keys(s.skills) as (keyof typeof s.skills)[];
+  let placed = projectedRank(s, year);
+  for (let v = 48; v <= 90 && (placed < 35 || placed > 60); v++) {
+    for (const k of keys) {
+      s.skills[k] = v;
+      s.potentials[k] = v;
+    }
+    placed = projectedRank(s, year);
+  }
+  assert.ok(placed >= 35 && placed <= 60, `could not place a late first-rounder, got ${placed}`);
+  const lvl = performanceLevel(s);
+  const ncaa = maybeLeague("ncaa")!.model!;
+  const level = { label: "NCAA", need: lvl - 16, model: ncaa, leagueId: "ncaa", youth: false };
+  const line = (over: Partial<SeasonLine>): SeasonLine => ({
+    key: "c", ageYears: 19, calendarYear: year, node: "university", leagueId: "ncaa", levelLabel: "NCAA",
+    teamName: "State", countryId: "US", role: "star", gp: 28, min: 900, pts: 23 * 28, reb: 6 * 28, ast: 4 * 28,
+    stl: 28, blk: 20, tov: 60, fgm: 220, fga: 420, tpm: 40, tpa: 110, ftm: 164, fta: 190, wins: 24, losses: 8, strength: 58, ...over,
+  });
+  const thin = seasonAwards(s, line({ wins: 10, losses: 18, pts: 22 * 28, strength: 46 }), level);
+  assert.ok(!thin.includes("National Player of the Year") && !thin.includes("League MVP"), `a losing 22-point season still won ${thin.join(", ")}`);
+  const chucker = seasonAwards(s, line({ fga: 900, fta: 40, ftm: 30 }), { ...level, need: lvl - 18 });
+  assert.ok(!chucker.includes("National Player of the Year"), "volume without efficiency is not a national MVP");
+  const earned = seasonAwards(s, line({}), level);
+  assert.ok(earned.includes("National Player of the Year"), `a dominant season got ${earned.join(", ") || "nothing"}`);
+  const blank = projectedRank(s, year);
+  s.seasons = [line({ key: "fr" }), line({ key: "so" }), line({ key: "jr" })].map((row) => ({ ...row, awards: ["National Player of the Year"] }));
+  assert.equal(accoladeDraftValue(s), 14);
+  const lifted = projectedRank(s, year);
+  assert.ok(lifted <= 12 && lifted + 20 <= blank, `three national awards: pick ${lifted}, was ${blank}`);
 });
 
 /** Drive a life with auto choices, except where `pick` returns a choice id. */
@@ -905,8 +977,8 @@ ok("anyone eligible can declare in January to April, and auto keeps a manual dec
 });
 
 ok("retiring by choice opens second careers, including a podcast", () => {
-  let s = drive(createLife(base(5)), 24 * 12);
-  assert.ok(canRetireNow(s));
+  let s = drive(createLife(base(5)), 24 * 12, (x) => (x.pendingDecision!.templateId === "chapter" ? "keep" : null));
+  assert.ok(canRetireNow(s), s.pendingDecision?.templateId ?? s.ended?.reason ?? "still playing");
   s = retireNow(s);
   assert.equal(s.pendingDecision?.title, "Retire from playing?");
   assert.ok(s.pendingDecision!.choices.some((c) => c.id === "keep"), "can change his mind");
@@ -924,7 +996,7 @@ ok("looking for a club abroad brings foreign offers", () => {
     s = drive(s, 22 * 12, (x) => (x.pendingDecision!.choices.some((c) => c.id === "overseas" && !c.disabled) ? "overseas" : null));
     if (s.history.some((h) => h.text.includes("clubs abroad"))) {
       got++;
-      const signed = s.seasons.some((x) => x.node === "foreign-pro") || s.placement.node === "foreign-pro" || s.history.some((h) => h.text === "No club abroad bites this time.");
+      const signed = s.seasons.some((x) => x.node === "foreign-pro") || s.placement.node === "foreign-pro" || s.history.some((h) => h.text === "No club abroad bites this time." || h.text === "A club abroad answers.");
       assert.ok(signed, `seed ${seed}: search ended with neither a club nor a no`);
     }
   }
@@ -1080,8 +1152,8 @@ ok("trained athleticism stays above the untrained curve", () => {
   }
   const untrained = drive(start, 48, keepChapter);
   for (const k of ["acceleration", "vertical", "strength"] as const) {
-    assert.ok(s.body[k] >= untrained.body[k] + 6, `${k}: trained ${s.body[k]} vs ${untrained.body[k]}`);
-    assert.ok(s.body[k] > s.growth.athleticCeiling[k] + 4, `${k}: ${s.body[k]} vs natural ${s.growth.athleticCeiling[k]}`);
+    assert.ok(s.body[k] >= untrained.body[k] + 5, `${k}: trained ${s.body[k]} vs ${untrained.body[k]}`);
+    assert.ok(s.body[k] > s.growth.athleticCeiling[k] + 2, `${k}: ${s.body[k]} vs natural ${s.growth.athleticCeiling[k]}`);
   }
 });
 

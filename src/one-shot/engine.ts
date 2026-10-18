@@ -1,4 +1,4 @@
-import { bodyAt, FAMILY_BIAS, generateGrowth, generateParents, HEIGHT_SD } from "./body";
+import { bodyAt, FAMILY_BIAS, frameFromMass, generateGrowth, generateParents, HEIGHT_SD } from "./body";
 import {
   addBox,
   calendar,
@@ -20,6 +20,7 @@ import {
   autoEligible,
   callUpChance,
   canDeclare,
+  accoladeDraftValue,
   draftOrder,
   draftValue,
   gapToSixty,
@@ -64,6 +65,7 @@ import {
   type PlayoffSlot,
   type Role,
   type SeasonLine,
+  type SkillKey,
   type Track,
   type Workload,
   type Workouts,
@@ -133,7 +135,7 @@ export function createLife(opts: NewLifeOptions): LifeState {
     for (const k of Object.keys(potentials) as (keyof typeof potentials)[]) potentials[k] = Math.max(potentials[k], Math.round(clamp(u.normal(91, 4), 82, 99)));
     for (const k of ["motivation", "discipline", "coachability", "composure", "confidence"] as const) traits[k] = Math.max(traits[k], Math.round(clamp(u.normal(74, 7), 62, 95)));
   }
-  const frame = (growth.frameMassFactor < 0.92 ? 1 : growth.frameMassFactor < 0.97 ? 2 : growth.frameMassFactor < 1.04 ? 3 : growth.frameMassFactor < 1.1 ? 4 : 5) as 1 | 2 | 3 | 4 | 5;
+  const frame = frameFromMass(growth.frameMassFactor);
   const budget = Math.round(MONTHLY_BUDGET[means - 1]! * birth.model.costIndex);
   const academics = Math.round(clamp(gen.normal(55, 12), 15, 90));
   const place = { countryId: birth.id, locality, localityKind };
@@ -311,6 +313,7 @@ export function stepMonth(s: LifeState) {
   }
   endGLeagueStint(s);
   stepTraining(s);
+  honorMonth(s);
   money(s);
   if (age >= 18 && s.achievements.nbaCaliber === null && currentLevel(s) >= 70) {
     s.achievements.nbaCaliber = s.ageMonths;
@@ -398,7 +401,7 @@ function seasonStep(s: LifeState) {
   const nba = s.placement.node === "nba";
   if (!s.season) {
     const coachEdge = clamp((s.placement.coaching - 50) / 15, -2, 3);
-    const earned = roleFor(performanceLevel(s) + (nba ? trustOf(s) : 0) + coachEdge, level.need);
+    const earned = roleFor(performanceLevel(s) + (nba ? trustOf(s) : honorRole(s)) + coachEdge, level.need);
     const order = ["deep-bench", "bench", "rotation", "starter", "star"] as const;
     const earnedAt = order.indexOf(earned as (typeof order)[number]);
     const heldAt = order.indexOf(s.placement.role as (typeof order)[number]);
@@ -477,9 +480,12 @@ function finalizeSeason(s: LifeState, level: Level | null) {
   const awards = seasonAwards(s, season, level).filter((a) => season.node !== "nba" || season.gp >= 65 || !/Most Valuable Player|All-NBA|Defensive Player|All-Defensive|Rookie of the Year|All-Rookie|Sixth Man|title/.test(a));
   if (awards.length) {
     season.awards = [...(season.awards ?? []), ...awards];
-    const big = awards.find((a) => /Most Valuable Player|League MVP|Defensive Player of the Year|Rookie of the Year/.test(a));
+    grantHonors(s, awards, season.node === "university");
+    const big = awards.find((a) => /Most Valuable Player|National Player of the Year|Conference Player of the Year|League MVP|Defensive Player of the Year|Rookie of the Year/.test(a));
     if (big) fanfare(s, "fanfare", big, `${season.levelLabel}${season.teamName ? `, ${season.teamName}` : ""}. ${awards.join(", ")}. People stand because they mean it.`);
     else log(s, "milestone", `${season.levelLabel} honors: ${awards.join(", ")}.`, null, "good");
+    if (awards.includes("National Player of the Year")) log(s, "milestone", "Teams rewrite the board. A sponsor sends $75,000, and the work gets a little easier for the next year.", null, "good");
+    else if (awards.includes("Conference Player of the Year")) log(s, "milestone", "The award shows up on the scouting sheet. A sponsor sends $25,000.", null, "good");
     s.evidence.push({ month: s.ageMonths, text: `${awards[0]} (${season.levelLabel}, age ${season.ageYears})`, weight: ((level?.model.exposure ?? 10) / 10) * 1.2 });
   }
   if (season.gp > 0 || season.wins + season.losses > 0) s.seasons.push(season);
@@ -557,6 +563,7 @@ function offseasonReview(s: LifeState) {
     delete s.flags.overseasHunt;
     s.flags.overseasAsked = s.ageMonths;
     if (!offers.some((o) => o.node === "foreign-pro")) log(s, "info", "No club abroad bites this time.", null, "bad");
+    else log(s, "info", "A club abroad answers.", null, "good");
   }
   const free = !s.placement.contract || s.placement.contract.yearsLeft <= 0;
   const asked = typeof s.flags.overseasAsked === "number" && s.ageMonths - s.flags.overseasAsked < 10;
@@ -590,8 +597,54 @@ function pushGame(s: LifeState, box: LifeState["gameLog"][number]) {
   if (s.gameLog.length > 160) s.gameLog.splice(0, s.gameLog.length - 160);
 }
 
+function topSkill(s: LifeState): SkillKey {
+  return (Object.keys(s.skills) as SkillKey[]).reduce((best, k) => (s.skills[k] > s.skills[best] ? k : best));
+}
+
+/** A recent big award keeps paying: buzz, a little skill, and a longer leash from the coach. */
+function grantHonors(s: LifeState, awards: string[], college: boolean) {
+  const national = awards.includes("National Player of the Year");
+  const league = awards.includes("League MVP");
+  const conf = awards.includes("Conference Player of the Year");
+  const kind = national ? "national" : league ? "league" : conf ? "conference" : "";
+  if (kind) {
+    s.flags.honorKind = kind;
+    s.flags.honorUntil = s.ageMonths + 14;
+  }
+  if (national || league) {
+    s.exposure = clamp(s.exposure + (national ? 10 : 6), 0, 100);
+    s.traits.confidence = clamp(s.traits.confidence + (national ? 4 : 2), 0, 100);
+    s.traits.motivation = clamp(s.traits.motivation + 2, 0, 100);
+    const k = topSkill(s);
+    s.skills[k] = Math.min(99, s.skills[k] + (national ? 0.8 : 0.4));
+    if (college) s.finance.cash += national ? 75_000 : 20_000;
+  } else if (conf) {
+    s.exposure = clamp(s.exposure + 5, 0, 100);
+    s.traits.confidence = clamp(s.traits.confidence + 2, 0, 100);
+    const k = topSkill(s);
+    s.skills[k] = Math.min(99, s.skills[k] + 0.35);
+    if (college) s.finance.cash += 25_000;
+  } else if (awards.includes("All-League First Team")) {
+    s.exposure = clamp(s.exposure + 3, 0, 100);
+    s.traits.confidence = clamp(s.traits.confidence + 1, 0, 100);
+  }
+}
+
+function honorMonth(s: LifeState) {
+  if (typeof s.flags.honorUntil !== "number" || s.ageMonths > s.flags.honorUntil) return;
+  const kind = s.flags.honorKind;
+  s.exposure = clamp(s.exposure + (kind === "national" ? 0.5 : kind === "league" ? 0.3 : 0.2), 0, 100);
+  const k = topSkill(s);
+  s.skills[k] = Math.min(99, s.skills[k] + (kind === "national" ? 0.12 : kind === "league" ? 0.08 : 0.05));
+}
+
+function honorRole(s: LifeState): number {
+  if (typeof s.flags.honorUntil !== "number" || s.ageMonths > s.flags.honorUntil) return 0;
+  return s.flags.honorKind === "national" ? 6 : 3;
+}
+
 /** Season honors. NBA lines are placed among the real league; elsewhere stat thresholds (model, no randomness). */
-function seasonAwards(s: LifeState, season: LifeState["seasons"][number], level: Level | null): string[] {
+export function seasonAwards(s: LifeState, season: LifeState["seasons"][number], level: Level | null): string[] {
   if (season.node === "nba") {
     if (season.nbaYear === undefined || calendar(s).month !== 4) return [];
     const total = nbaSeasonTotal(s, season.nbaYear, season)!;
@@ -613,9 +666,29 @@ function seasonAwards(s: LifeState, season: LifeState["seasons"][number], level:
   if (season.ageYears < 10) return [];
   const starter = ["starter", "star"].includes(season.role);
   const margin = performanceLevel(s) - level.need;
-  if (season.role === "star" && ppg >= (level.youth ? 21 : 19)) out.push("All-League First Team");
-  else if (starter && ppg >= (level.youth ? 17 : 15)) out.push("All-League Second Team");
-  if (season.role === "star" && ppg >= (level.youth ? 24 : 22) && margin >= 14) out.push("League MVP");
+  const college = season.node === "university" && season.leagueId === "ncaa";
+  if (college) {
+    const games = season.wins + season.losses;
+    const winPct = games ? season.wins / games : 0;
+    const tsDen = season.fga + 0.44 * season.fta;
+    const ts = tsDen > 0 ? season.pts / (2 * tsDen) : 0;
+    const national =
+      season.role === "star" &&
+      season.gp >= 22 &&
+      ppg >= 23 &&
+      margin >= 16 &&
+      winPct >= 0.62 &&
+      ts >= 0.54 &&
+      (season.strength >= 52 || (season.strength >= 44 && margin >= 24));
+    if (national) out.push("National Player of the Year");
+    else if (starter && season.gp >= 20 && ppg >= 18 && margin >= 10 && winPct >= 0.5) out.push("Conference Player of the Year");
+    if (!national && season.role === "star" && ppg >= 20 && margin >= 12) out.push("All-League First Team");
+    else if (starter && ppg >= 16 && margin >= 8) out.push("All-League Second Team");
+  } else {
+    if (season.role === "star" && ppg >= (level.youth ? 21 : 19)) out.push("All-League First Team");
+    else if (starter && ppg >= (level.youth ? 17 : 15)) out.push("All-League Second Team");
+    if (season.role === "star" && ppg >= (level.youth ? 24 : 22) && margin >= 14) out.push("League MVP");
+  }
   if (starter && rpg >= 11) out.push("Rebounding leader");
   if (starter && apg >= 7.5) out.push("Assists leader");
   if (starter && stocks >= 3.5) out.push("All-Defensive Team");
@@ -1498,7 +1571,7 @@ function askDeclare(s: LifeState, year: number, manual = false) {
   decide(s, {
     templateId: "draft-declare",
     title: `Declare for the ${year} NBA Draft?`,
-    body: `Scouts put you at "${READINESS_LABEL[band]}" and teams project you ${mid <= 60 ? `around pick ${mid}` : "outside the top 60"}. ${s.placement.node === "university" ? "College players can withdraw by late May and keep their eligibility (game rule)." : "Declaring is free; going undrafted makes you a free agent."}`,
+    body: `Scouts put you at "${READINESS_LABEL[band]}" and teams project you ${mid <= 60 ? `around pick ${mid}` : "outside the top 60"}.${accoladeDraftValue(s) >= 4 ? " The awards are on the sheet, and they move that number." : ""} ${s.placement.node === "university" ? "College players can withdraw by late May and keep their eligibility (game rule)." : "Declaring is free; going undrafted makes you a free agent."}`,
     choices: [
       { id: "declare", label: "Declare", preview: "Enter the draft pool. Workouts and interviews follow." },
       { id: "wait", label: s.placement.node === "university" ? "Return to school" : "Wait a year", preview: "Develop another season first." },

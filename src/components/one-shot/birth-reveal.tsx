@@ -3,7 +3,7 @@
 import { Dices } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-import { FAMILY_BIAS, fmtHeight, fmtLength, heightPercentile, parentTarget, shareAtLeast } from "@/one-shot/body";
+import { buildOutlook, FAMILY_BIAS, fmtHeight, fmtLength, heightPercentile, shareAtLeast } from "@/one-shot/body";
 import { MONTHS } from "@/one-shot/career";
 import { MEANS_LABEL, UNICORN_ODDS } from "@/one-shot/engine";
 import type { LifeState } from "@/one-shot/types";
@@ -83,7 +83,7 @@ export function BirthReveal({
   const f = life.family;
   const tone = c.research.status === "verified" ? "green" : c.research.status === "partial" ? "amber" : "dim";
   const share = birthShare(c.id, life.draw);
-  const target = parentTarget(f.fatherHeightCm, f.motherHeightCm);
+  const target = buildOutlook(f.fatherHeightCm, f.motherHeightCm);
   const nat = c.height;
   const top = domesticProLeagues(c.id)[0];
   const tallCm = units === "metric" ? 180 : 182.88;
@@ -186,15 +186,14 @@ export function BirthReveal({
           />
           <Kv k="Father" v={`${fmtHeight(f.fatherHeightCm, units)} · ${ordinal(heightPercentile(f.fatherHeightCm, "male", c.id))} pct`} mono />
           <Kv k="Mother" v={`${fmtHeight(f.motherHeightCm, units)} · ${ordinal(heightPercentile(f.motherHeightCm, "female", c.id))} pct`} mono />
-          <Kv k="Expected adult height" v={`${fmtHeight(target.low, units)} to ${fmtHeight(target.high, units)}`} mono />
-          <Kv k="Most likely" v={fmtHeight(target.mid, units)} mono />
+          <Kv k="Adult height, this family" v={`${fmtHeight(target.low, units)} to ${fmtHeight(target.high, units)}`} mono />
+          <Kv k="Typical build" v={fmtHeight(target.mid, units)} mono />
           <Kv k={`Men ${fmtHeight(tallCm, units)} or taller in ${c.name}`} v={tallShare >= 0.1 ? `${Math.round(tallShare * 100)}%` : `about 1 in ${oneIn(tallShare)}`} mono />
         </dl>
         <p className="mt-2 text-[11.5px] text-[var(--os-dim)]">
           Percentiles compare each parent with adults in {c.name}
           {nat ? `, where men average ${fmtHeight(nat.maleCm, units)} and women ${fmtHeight(nat.femaleCm, units)}` : ""}
-          {nat?.basis === "proxy" ? ` (no measured data here, so the game borrows ${COUNTRIES.find((x) => x.iso3 === nat.proxyIso3)?.name ?? nat.proxyIso3}'s averages)` : ""}. Basketball families run tall, so the game draws fathers {fmtLength(FAMILY_BIAS.male, units)} and mothers {fmtLength(FAMILY_BIAS.female, units)} above those averages. The expected height uses
-          the mid-parent method. In this model, 95% of sons land in that range.
+          {nat?.basis === "proxy" ? ` (no measured data here, so the game borrows ${COUNTRIES.find((x) => x.iso3 === nat.proxyIso3)?.name ?? nat.proxyIso3}'s averages)` : ""}. Basketball families run tall, so the game draws fathers {fmtLength(FAMILY_BIAS.male, units)} and mothers {fmtLength(FAMILY_BIAS.female, units)} above those averages. Adult height is a guard, wing, forward, or big build, shifted by these parents. Most sons of this family land in that range. Food, sleep, and a few other choices can still move it while he is growing.
         </p>
         <dl className="mt-4 grid gap-x-6 sm:grid-cols-2">
           <Kv k="National team" v={c.fibaRank ? `FIBA world #${c.fibaRank.rank}` : c.federation ? "Unranked" : "No FIBA federation"} />
@@ -203,8 +202,7 @@ export function BirthReveal({
           <Kv k="Coaching access" v={`${Math.round(c.model.coachingAccess)}/100 (model)`} mono />
         </dl>
         <p className="mt-4 text-[12px] text-[var(--os-dim)]">
-          {life.unicorn ? "" : "Nobody can scout a newborn. His talent will show in how he grows and plays. "}Where he was born decides which roads are open to him, and his parents decide how tall he is likely to be. It has
-          no effect on skill talent.
+          {life.unicorn ? "" : "Nobody can scout a newborn. His talent will show in how he grows and plays. "}Where he was born decides which roads are open to him. His parents shift how tall he is likely to be, and what he does while he is growing can still change it. Birthplace has no effect on skill talent.
         </p>
         <div className="mt-5 flex flex-wrap gap-2">
           <Btn variant="primary" className="min-h-11 px-6 text-[15px]" onClick={onStart}>

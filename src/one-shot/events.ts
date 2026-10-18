@@ -1,3 +1,4 @@
+import { addMass, raiseAdultHeight } from "./body";
 import { calendar, cohortLevel, levelOf, performanceLevel, roleFor, schoolLabel, stageOf } from "./career";
 import { G_LEAGUE_EVENTS } from "./g-league";
 import { STORY_EVENTS } from "./storylines";
@@ -63,6 +64,8 @@ const restLow = (s: LifeState, months: number) => {
   s.flags.restoreAt = s.ageMonths + months;
 };
 const usd = (n: number) => `$${Math.round(n).toLocaleString("en-US")}`;
+const heightLine = (cm: number) => (cm < 0.15 ? "The tape does not move." : `You grow ${Number.isInteger(cm) ? cm : cm.toFixed(1)} cm.`);
+const massLine = (kg: number) => (kg < 0.5 ? "The scale barely moves." : `You gain about ${Math.round(kg)} kg.`);
 const cost = (s: LifeState, base: number) => Math.round(base * country(s.residence.countryId).model.costIndex);
 const afford = (amount: number) => (s: LifeState) => (canPay(s, amount) ? null : "Not enough money right now.");
 const age = (s: LifeState) => s.ageMonths / 12;
@@ -222,6 +225,70 @@ export const EVENTS: EventTemplate[] = [
     choices: [
       { id: "camp", label: "Go to camp", preview: (s) => `Fundamentals up. Costs ${usd(cost(s, 120))}.`, blocked: (s) => afford(cost(s, 120))(s), growth: 2, apply: ({ s }) => (spend(s, cost(s, 120)), sk(s, "finishing", 2), sk(s, "handle", 2), sk(s, "passing", 1), "A week of drills and a camp T-shirt.") },
       { id: "trip", label: "Family trip instead", preview: "Energy and motivation up.", growth: 0, apply: ({ s }) => (energy(s, 15), tr(s, "motivation", 2), "You come back rested.") },
+    ],
+  },
+  {
+    id: "milk-with-dinner", ages: [8, 17.5], cooldown: 0, once: true, weight: () => 2.2, title: "Milk with dinner",
+    body: "A glass of milk shows up next to the plate. The tall kids at school drink it.",
+    choices: [
+      { id: "drink", label: "Finish it every night", preview: "A little taller and a little heavier while you are still growing.", growth: 2, risk: 0, apply: ({ s }) => { const cm = raiseAdultHeight(s, 1.8); const kg = addMass(s, 0.025); return `${heightLine(cm)} ${massLine(kg)}`; } },
+      { id: "skip", label: "Leave it", preview: "Dinner stays as it is.", growth: 0, risk: 0, apply: () => "You push the glass away." },
+    ],
+  },
+  {
+    id: "apple-juice", ages: [8, 17.5], cooldown: 0, once: true, weight: () => 2, title: "Apple juice in the fridge",
+    body: "There is a jug of apple juice. A cousin swears it is why he grew last summer.",
+    choices: [
+      { id: "drink", label: "Drink it with breakfast", preview: "A small height bump and a little weight. Mostly the sugar.", growth: 2, risk: 0, apply: ({ s }) => { const cm = raiseAdultHeight(s, 0.9); const kg = addMass(s, 0.02); return `${heightLine(cm)} ${massLine(kg)}`; } },
+      { id: "water", label: "Drink water", preview: "No change in size.", growth: 0, risk: 0, apply: () => "The jug stays for someone else." },
+    ],
+  },
+  {
+    id: "hang-from-rim", ages: [10, 18], cooldown: 0, once: true, weight: (s) => (onTeam(s) ? 2.1 : 1.2), title: "Hanging off the rim",
+    body: "After practice the older kids hang from the rim. They say it stretches you out.",
+    choices: [
+      { id: "hang", label: "Hang until it burns", preview: "Height and a little vertical, if you are still growing.", growth: 2, risk: 0, apply: ({ s }) => { const cm = raiseAdultHeight(s, 1.5); ath(s, "vertical", 1); energy(s, -4); return `${heightLine(cm)} Your shoulders ache on the way home.`; } },
+      { id: "shower", label: "Shower and go home", preview: "You skip it.", growth: 0, risk: 0, apply: () => "You are on the bus before they drop down." },
+    ],
+  },
+  {
+    id: "lights-out", ages: [9, 16.5], cooldown: 0, once: true, weight: () => 2, title: "Lights out",
+    body: "A coach says the growing happens while you sleep. He wants you in bed earlier.",
+    choices: [
+      { id: "early", label: "In bed by nine", preview: "Height, and easier mornings.", growth: 2, risk: 0, apply: ({ s }) => { const cm = raiseAdultHeight(s, 1.4); energy(s, 6); return `${heightLine(cm)} You stop falling asleep in class.`; } },
+      { id: "late", label: "Stay up", preview: "You keep your nights.", growth: 0, risk: 0, apply: () => "The game film is still on." },
+    ],
+  },
+  {
+    id: "second-plate", ages: [12, 20], cooldown: 0, once: true, weight: () => 1.8, title: "A second plate",
+    body: "There is more food. The coach has been talking about your weight.",
+    choices: [
+      { id: "eat", label: "Eat it", preview: "You get heavier. Quickness slips a little.", growth: 2, risk: 1, apply: ({ s }) => { const kg = addMass(s, 0.055); ath(s, "strength", 1); ath(s, "lateral", -1); ath(s, "acceleration", -1); return `${massLine(kg)} The first step is slower.`; } },
+      { id: "one", label: "Stop at one plate", preview: "You stay light on your feet.", growth: 1, risk: 0, apply: ({ s }) => (ath(s, "lateral", 1), "You leave the rest and keep your feet.") },
+    ],
+  },
+  {
+    id: "garage-bar", ages: [13, 19], cooldown: 0, once: true, weight: () => 1.7, title: "The older kids are lifting",
+    body: "They have a bar in the garage and they offer you a turn.",
+    choices: [
+      { id: "lift", label: "Go twice a week", preview: "Weight and strength. Your back might complain.", growth: 2, risk: 2, apply: ({ s, rolls }) => { const kg = addMass(s, 0.05); ath(s, "strength", 2); ath(s, "durability", 1); if (rolls[0]! < 0.18) { health(s, -8); energy(s, -6); return `${massLine(kg)} You tweak your back in the third week and sit a few days.`; } return `${massLine(kg)} The bar gets less embarrassing.`; } },
+      { id: "shoot", label: "Use the hour to shoot", preview: "Shooting up. Size stays put.", growth: 1, risk: 0, apply: ({ s }) => (sk(s, "shooting", 1), "You stay on the court.") },
+    ],
+  },
+  {
+    id: "growth-checkup", ages: [11, 17], cooldown: 0, once: true, weight: () => 1.6, title: "A growth checkup",
+    body: (s) => `A doctor in town measures kids who play and talks about how much growing is left. The visit is ${usd(cost(s, 350))}.`,
+    choices: [
+      { id: "go", label: "Go", preview: (s) => `A real measurement and a food plan. Costs ${usd(cost(s, 350))}.`, blocked: (s) => afford(cost(s, 350))(s), growth: 2, risk: 0, apply: ({ s }) => { spend(s, cost(s, 350)); const cm = raiseAdultHeight(s, 2.4); return `She measures your legs and writes down sleep, milk, and meals. ${heightLine(cm)}`; } },
+      { id: "skip", label: "Skip it", preview: "No cost.", growth: 0, risk: 0, apply: () => "You tell your parents you feel fine." },
+    ],
+  },
+  {
+    id: "gym-guy", ages: [14, 19], cooldown: 0, once: true, weight: () => 1.3, title: "A guy at the gym", tone: "bad",
+    body: "He says he has something that makes teenagers grow. He will not talk about it in the lobby. It costs cash, and he wants it kept quiet.",
+    choices: [
+      { id: "take", label: "Take it", preview: "The biggest height jump available. You can get sick, and people may talk.", growth: 2, risk: 3, blocked: (s) => afford(cost(s, 600))(s), apply: ({ s, rolls }) => { spend(s, cost(s, 600)); const cm = raiseAdultHeight(s, 5.5); addMass(s, 0.03); health(s, -12); ath(s, "durability", -3); s.flags.hormoneRumor = s.ageMonths; if (rolls[0]! < 0.28) { energy(s, -10); expo(s, -4); return `${heightLine(cm)} You spend a month feeling wrong, and a rumor gets around that you were on something.`; } return `${heightLine(cm)} You feel off for a while. You tell nobody.`; } },
+      { id: "leave", label: "Walk away", preview: "No size. No rumor.", growth: 0, risk: 0, apply: ({ s }) => (tr(s, "composure", 1), "You leave. He finds someone else.") },
     ],
   },
   {

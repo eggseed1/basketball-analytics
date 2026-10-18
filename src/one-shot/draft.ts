@@ -31,12 +31,42 @@ export function autoEligible(state: LifeState, year: number): boolean {
   return a >= 22 && a <= 23 && !state.achievements.drafted && state.placement.node !== "nba";
 }
 
+/**
+ * How much a pre-draft résumé moves the board (model).
+ * A first national award is a lottery argument. Repeats confirm it.
+ * The same season's lesser honors are already inside the big one.
+ */
+export function accoladeDraftValue(state: LifeState): number {
+  let extra = 0;
+  let nationals = 0;
+  for (const season of state.seasons) {
+    if (season.node === "nba" || season.gp < 8) continue;
+    const awards = new Set(season.awards ?? []);
+    const college = season.node === "university" && season.leagueId === "ncaa";
+    const scale = college ? 1 : clamp(season.strength / 72, 0.35, 1);
+    if (awards.has("National Player of the Year")) {
+      nationals += 1;
+      continue;
+    }
+    if (awards.has("League MVP")) {
+      extra += 4.5 * scale;
+      continue;
+    }
+    if (awards.has("Conference Player of the Year")) extra += 2.4;
+    else if (awards.has("All-League First Team")) extra += 1.8 * scale;
+    else if (awards.has("All-League Second Team")) extra += 0.9 * scale;
+    if (college && awards.has("All-Defensive Team") && !awards.has("Conference Player of the Year")) extra += 0.7;
+  }
+  const nationalPts = nationals === 0 ? 0 : 7 + (nationals - 1) * 3.5;
+  return Math.round(Math.min(18, nationalPts + extra) * 10) / 10;
+}
+
 /** How NBA teams value the player on draft night (model). */
 export function draftValue(state: LifeState): number {
   const proj = projectedCeiling(state).mid;
   const lvl = currentLevel(state);
   const age = state.ageMonths / 12;
-  return 0.55 * proj + 0.35 * lvl + 0.07 * state.exposure + clamp(21 - age, -3, 3) * 0.8;
+  return 0.55 * proj + 0.35 * lvl + 0.07 * state.exposure + clamp(21 - age, -3, 3) * 0.8 + accoladeDraftValue(state);
 }
 
 export interface Prospect {

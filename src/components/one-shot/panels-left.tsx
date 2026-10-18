@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 
-import { FRAME_LABEL, fmtHeight, fmtLength, fmtWeight, heightEstimate, heightPercentile, parentTarget } from "@/one-shot/body";
+import { buildOutlook, FRAME_LABEL, fmtHeight, fmtLength, fmtWeight, heightEstimate, heightPercentile } from "@/one-shot/body";
 import { calendar, levelOf, MONTHS, nodeLabel, ROLE_LABEL, STAGE_LABEL, stageOf } from "@/one-shot/career";
 import { projectedRange } from "@/one-shot/draft";
 import { canDeclareNow, canRetireNow, MEANS_LABEL } from "@/one-shot/engine";
@@ -136,7 +136,7 @@ export function PhysiquePanel({ life, units, onUnits }: { life: LifeState; units
   const b = life.body;
   const age = life.ageMonths / 12;
   const est = heightEstimate(life);
-  const target = parentTarget(life.family.fatherHeightCm, life.family.motherHeightCm);
+  const target = buildOutlook(life.family.fatherHeightCm, life.family.motherHeightCm);
   const born = country(life.birthplace.countryId);
   return (
     <Panel
@@ -162,7 +162,7 @@ export function PhysiquePanel({ life, units, onUnits }: { life: LifeState; units
         <Kv k="Frame" v={FRAME_LABEL[b.frame]} />
         <Kv k="Shoots" v={age >= 4 ? (life.identity.hand === "left" ? "Left" : "Right") : "—"} />
         <Kv k="Adult height estimate" v={est ? `${fmtHeight(est.low, units)} to ${fmtHeight(est.high, units)}` : age >= 21 ? "Grown" : "Too early"} mono />
-        {age < 21 ? <Kv k="Parents' target" v={`${fmtHeight(target.low, units)} to ${fmtHeight(target.high, units)}`} mono /> : null}
+        {age < 21 ? <Kv k="Family range" v={`${fmtHeight(target.low, units)} to ${fmtHeight(target.high, units)}`} mono /> : null}
         {age >= 18 ? <Kv k={`Among men in ${born.name}`} v={`${ordinal(heightPercentile(b.heightCm, "male", born.id))} percentile`} mono /> : null}
       </dl>
       {age < 18 ? <p className="mt-2 text-[11.5px] text-[var(--os-dim)]">The range narrows as he grows. No comparisons with adults until he is one.</p> : null}
