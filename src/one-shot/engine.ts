@@ -1109,7 +1109,7 @@ function playPlayoffGame(s: LifeState, line: SeasonLine, po: PlayoffRun, level: 
   const swing = plan === "flow" ? { edge: 0, sit: false, note: "" } : planSwing(s, plan, roll);
   const hurt = s.condition.injury !== null || (typeof s.flags.suspended === "number" && s.flags.suspended > 0);
   const sit = hurt || swing.sit || (plan === "flow" && s.placement.role === "deep-bench" && rng.next() < 0.6);
-  let edge = (line.teamEdge ?? 0) + (myW - oppW) * 0.9 + (atHome ? 0.03 : -0.03) + swing.edge;
+  const edge = (line.teamEdge ?? 0) + (myW - oppW) * 0.9 + (atHome ? 0.03 : -0.03) + swing.edge;
   const box = simulateGame(s, level, rng, sit ? 0 : undefined, undefined, edge);
   if (sit) for (const k of BOX_KEYS) box[k] = 0;
   if (!sit && plan === "hunt") {
