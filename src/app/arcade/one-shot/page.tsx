@@ -10,9 +10,9 @@ export const metadata = {
 
 export default function OneShotPage() {
   return (
-    <main data-motion-page className="flex flex-col gap-5 py-6 sm:py-8">
+    <main data-motion-page className="flex flex-col gap-5 py-6 sm:py-8 [&:has([data-os-play])_[data-os-page-intro]]:sr-only">
       <MotionReveal />
-      <div className="site-shell">
+      <div data-os-page-intro className="site-shell">
         <PageHeader
           title="ONE SHOT"
           subtitle="One life, from birth to the NBA or somewhere short of it. Set the focus, take the offers, play the games."

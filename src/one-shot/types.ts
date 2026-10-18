@@ -152,6 +152,32 @@ export interface SeasonLine {
   playoffs?: PlayoffRun;
 }
 
+export interface PlayoffSlot {
+  name: string;
+  seed: number;
+  /** Regular-season win rate used as series strength. The player's is his real record. */
+  winPct: number;
+}
+
+export interface PlayoffSeries {
+  round: number;
+  side: "Eastern" | "Western" | "Finals";
+  high: string;
+  low: string;
+  highSeed: number;
+  lowSeed: number;
+  highWins: number;
+  lowWins: number;
+  yours: boolean;
+  done: boolean;
+}
+
+export interface PlayoffBracket {
+  east: PlayoffSlot[];
+  west: PlayoffSlot[];
+  series: PlayoffSeries[];
+}
+
 export interface PlayoffRun {
   seed: number;
   conference: "Eastern" | "Western";
@@ -176,6 +202,10 @@ export interface PlayoffRun {
   series: string[];
   result: string;
   champion: boolean;
+  bracket?: PlayoffBracket;
+  /** Finals games he played, for the Finals MVP check. */
+  finalsGp?: number;
+  finalsScore?: number;
 }
 
 export interface BoxScore {

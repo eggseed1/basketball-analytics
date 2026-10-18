@@ -9,6 +9,7 @@ import { FOCUSES, focusAvailable, FOCUS_BY_ID, weeklyHours } from "@/one-shot/tr
 import type { FocusId, HistoryEntry, LifeState, Offer, Workload } from "@/one-shot/types";
 import { country, countryFlag } from "@/one-shot/world";
 
+import { activeBracket, PlayoffBracket } from "./playoff-bracket";
 import { drawScene, SCENE_H, SCENE_W } from "./pixel";
 import { Btn, Chip, money, ordinal, OS, Panel, Segmented } from "./ui";
 
@@ -230,6 +231,11 @@ export function DecisionPanel({
         </Btn>
       </div>
       <p className="text-[13px] text-[var(--os-text)]/90">{d.body}</p>
+      {d.templateId === "playoff-game" ? (
+        <div className="mt-3 max-h-[132px] overflow-y-auto overscroll-contain [scrollbar-width:thin]">
+          <PlayoffDecision life={life} />
+        </div>
+      ) : null}
       <ol className="mt-3 flex flex-col gap-2">
         {d.choices.map((c, i) => {
           const o = offerById.get(c.id);
@@ -256,6 +262,14 @@ export function DecisionPanel({
         })}
       </ol>
     </section>
+  );
+}
+
+function PlayoffDecision({ life }: { life: LifeState }) {
+  const live = activeBracket(life);
+  if (!live) return null;
+  return (
+    <PlayoffBracket po={live.po} you={live.you} />
   );
 }
 
@@ -297,21 +311,42 @@ function OfferDetail({ o }: { o: Offer }) {
   );
 }
 
+/* The later row keeps a repeated id. The injury logged just before an automatic event points at that id. */
+function uniqueHistoryIds(history: HistoryEntry[]): HistoryEntry[] {
+  const out = history.map((h) => ({ ...h }));
+  const indexById = new Map<string, number>();
+  let extra = 0;
+  for (let i = 0; i < out.length; i++) {
+    const id = out[i]!.id;
+    const earlier = indexById.get(id);
+    if (earlier == null) {
+      indexById.set(id, i);
+      continue;
+    }
+    const fresh = `${id}~${++extra}`;
+    out[earlier] = { ...out[earlier]!, id: fresh };
+    indexById.set(fresh, earlier);
+    indexById.set(id, i);
+  }
+  return out;
+}
+
 /* ------------------------------------------------------------ record */
 
 type RecordFilter = "all" | "choices" | "seasons" | "health";
 
 export function LifeRecord({ life }: { life: LifeState }) {
   const [filter, setFilter] = useState<RecordFilter>("all");
-  const byId = useMemo(() => new Map(life.history.map((h) => [h.id, h])), [life.history]);
+  const history = useMemo(() => uniqueHistoryIds(life.history), [life.history]);
+  const byId = useMemo(() => new Map(history.map((h) => [h.id, h])), [history]);
   const entries = useMemo(() => {
     const keep = (h: HistoryEntry) =>
       filter === "all" ||
       (filter === "choices" && (h.kind === "decision" || h.kind === "move" || h.kind === "draft")) ||
       (filter === "seasons" && (h.kind === "season" || h.kind === "milestone")) ||
       (filter === "health" && h.kind === "injury");
-    return life.history.filter(keep).slice(-80).reverse();
-  }, [life.history, filter]);
+    return history.filter(keep).slice(-80).reverse();
+  }, [history, filter]);
   return (
     <Panel id="os-record" title="Life record">
       <div className="mb-2 flex flex-wrap gap-1.5" role="group" aria-label="Filter life record">

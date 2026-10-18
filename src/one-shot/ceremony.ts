@@ -116,7 +116,11 @@ function speakHistory(text: string, age: number): { weight: number; line: string
   if (twoWay) return { weight: 4, line: `I signed a two-way with the ${twoWay[1]}.` };
   const camp = text.match(/^Signed a training camp deal with the ([^.]+)/);
   if (camp) return { weight: 4, line: `I took a training camp deal with the ${camp[1]} and tried to make the roster.` };
-  if (text.startsWith("Signed with a G League")) return { weight: 4, line: `I signed in the G League and waited on a call.` };
+  if (text.startsWith("Signed with a G League")) return { weight: 4, line: `I signed in the G League and waited on a 10-day.` };
+  if (text.includes("call you up on a 10-day")) return { weight: 5, line: `They called me up on a 10-day. I dressed and waited for a minute.` };
+  if (text.includes("The 10-day ends")) return { weight: 4, line: `The 10-day ended. I was back with the affiliate the next morning.` };
+  if (text.includes("keep you. The 10-day becomes")) return { weight: 5, line: `They kept me after the 10-day. That was the roster spot.` };
+  if (text.includes("sign you for the rest of the season")) return { weight: 5, line: `After two call-ups they signed me for the rest of the season.` };
   if (text.includes("highlight tape") || text.includes("calling clubs abroad")) return { weight: 4, line: `I sent my tape to clubs abroad.` };
   if (text.startsWith("You withdraw from the national")) return { weight: 3, line: `I sat out the national team that summer.` };
   if (text.startsWith("One more season")) return { weight: 3, line: `They asked if I was finished. I played another year.` };

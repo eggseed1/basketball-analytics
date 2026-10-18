@@ -1,4 +1,6 @@
 import { calendar, cohortLevel, levelOf, performanceLevel, roleFor, schoolLabel, stageOf } from "./career";
+import { G_LEAGUE_EVENTS } from "./g-league";
+import { STORY_EVENTS } from "./storylines";
 import { LIFE_EVENTS } from "./life-events";
 import { AFTER_SCENES } from "./after-scenes";
 import { ADVISOR, ASSET_INFO, canPay, charge, income, invested, LIFESTYLE, mix, netWorth, PRESETS, trailingIndex } from "./finance";
@@ -675,7 +677,7 @@ export const EVENTS: EventTemplate[] = [
     title: "A passport offer",
     body: (s) => `${country(s.placement.countryId).name} could naturalize you for its national team.`,
     choices: [
-      { id: "accept", label: "Accept", preview: (s) => `Adds a citizenship. You stop counting as an import there (game rule).${s.international.caps === 0 ? " You would play for its national team." : " You already have caps, so you stay with your first team (game rule)."}`, growth: 1, risk: 1, apply: ({ s }) => {
+      { id: "accept", label: "Accept", preview: (s) => `Adds a citizenship. You stop counting as an import there (game rule).${s.international.caps === 0 ? " You would play for its national team. Your birth federation stops calling." : " You already have caps, so you stay with your first team (game rule)."}`, growth: 1, risk: 1, apply: ({ s }) => {
         s.citizenships.push(s.placement.countryId);
         if (s.international.caps === 0) s.international.countryId = s.placement.countryId;
         return "You take the oath. Your birthplace does not change.";
@@ -1236,13 +1238,26 @@ export const EVENTS: EventTemplate[] = [
     ],
   },
   {
-    id: "g-league-assign", ages: [19, 25], cooldown: 12, weight: (s) => (s.placement.node === "nba" && s.placement.role === "deep-bench" ? 1.6 : 0), title: "G League assignment",
-    body: (s) => `The ${s.placement.teamName} want to send you down for a few weeks of minutes.`,
+    id: "g-league-assign", ages: [19, 25], cooldown: 12, weight: (s) => (s.placement.node === "nba" && s.placement.role === "deep-bench" && s.flags.gStint !== "ten-day" ? 1.6 : 0), title: "G League assignment",
+    body: (s) => `The ${s.placement.teamName} want to send you to their affiliate for a month of minutes.`,
     choices: [
-      { id: "go", label: "Go play", preview: "Confidence and IQ up.", growth: 2, risk: 0, apply: ({ s }) => (sk(s, "iq", 2), sk(s, "decisions", 1), tr(s, "confidence", 3), "Thirty minutes a night. You come back sharper.") },
-      { id: "stay", label: "Ask to stay up", preview: "Practice with the team. Coachability down.", growth: 0, risk: 0, apply: ({ s }) => (tr(s, "coachability", -2), sk(s, "iq", 1), "You watch from the end of the bench.") },
+      { id: "go", label: "Go play", preview: "A month of real minutes, then back to the bench.", growth: 2, risk: 0, apply: ({ s }) => {
+        const team = s.placement.teamName ?? "the club";
+        s.flags.gParent = team;
+        s.flags.gStint = "assign";
+        s.flags.gStintUntil = s.ageMonths + 1;
+        s.flags.gNbaSalary = s.placement.contract?.salary ?? 0;
+        s.placement = { node: "g-league", countryId: "US", leagueId: "g-league", teamName: `${team} G League affiliate`, role: "starter", coaching: 80, since: s.ageMonths, contract: { salary: 40_500, yearsLeft: 1, guaranteed: false }, costPerYear: 0 };
+        s.residence = { countryId: "US", locality: "a G League city", localityKind: "city" };
+        sk(s, "iq", 1);
+        sk(s, "decisions", 1);
+        return `You play thirty minutes a night for the affiliate. The ${team} want you back in a month.`;
+      } },
+      { id: "stay", label: "Ask to stay up", preview: "Practice with the NBA team. Coachability down.", growth: 0, risk: 0, apply: ({ s }) => (tr(s, "coachability", -2), sk(s, "iq", 1), "You watch from the end of the bench.") },
     ],
   },
+  ...G_LEAGUE_EVENTS,
+  ...STORY_EVENTS,
   ...LIFE_EVENTS,
   ...AFTER_SCENES,
 ];

@@ -10,10 +10,12 @@ export async function GET(
     const { gameId } = await context.params;
     const payload = await fetchRawPlayByPlay(gameId);
     if (!payload) {
-      return jsonOk(
-        { error: "Play-by-play not found", gameId, eventCount: 0 },
-        { status: 404 }
-      );
+      return jsonOk({
+        data: { events: [] },
+        gameId,
+        source: null,
+        eventCount: 0,
+      });
     }
     const source =
       payload.source === "disk" ? "cdn" : payload.source;

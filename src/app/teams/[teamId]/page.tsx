@@ -4,8 +4,6 @@ import { notFound, redirect } from "next/navigation";
 import { analyzeTeamProfile } from "@/analytics";
 import { StatDisclosure } from "@/components/analytics/stat-disclosure";
 import { PageAtmosphere } from "@/components/brand/page-atmosphere";
-import { JsonLd } from "@/components/seo/json-ld";
-import { absoluteUrl } from "@/lib/site-url";
 import { DestinationClientShell } from "@/components/continuity/destination-client-shell";
 import { DestinationSectionSkeleton } from "@/components/continuity/destination-loading-frame";
 import { MotionReveal } from "@/components/continuity/motion-reveal";
@@ -25,6 +23,7 @@ import { TeamRosterWar1Island } from "@/components/teams/overview/team-roster-wa
 import { TeamOverviewVisuals } from "@/components/teams/overview/team-overview-visuals";
 import { TeamSeasonRecapIsland } from "@/components/teams/overview/team-season-recap-island";
 import { StatsRankGrid } from "@/components/teams/viz/stats-rank-grid";
+import { TeamPrimaryNav } from "@/components/teams/team-primary-nav";
 import { TeamRosterIsland } from "@/components/teams/team-roster-island";
 import { TeamRosterBuiltIsland } from "@/components/teams/team-roster-built-island";
 import { TeamSalaryAssetsTab } from "@/components/teams/team-salary-assets-tab";
@@ -77,6 +76,8 @@ import {
 } from "@/themes/history-url";
 import { yieldForStreaming } from "@/lib/stream-yield";
 import { shareImageMetadata } from "@/lib/share-images";
+import { JsonLd } from "@/components/seo/json-ld";
+import { absoluteUrl } from "@/lib/site-url";
 
 /** Team color stays a hint on cards, close to the neutral home page cards. */
 const TEAM_CARD_TINT_SCALE = 0.3;
@@ -386,6 +387,12 @@ export default async function TeamProfilePage({
           hrefOpts={hrefOpts}
           franchise={franchise}
           historyHref={teamFranchiseHistoryHref(teamId, seasonParam)}
+        />
+
+        <TeamPrimaryNav
+          teamId={teamId}
+          tab={tab}
+          hrefOpts={hrefOpts}
         />
 
         {tab === "overview" ? (

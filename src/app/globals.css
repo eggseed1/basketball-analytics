@@ -413,6 +413,17 @@
   --os-rose: #ff6482;
 }
 
+/* While a life is on screen, the page title and site footer give their space to the game. */
+main[data-motion-page]:has([data-os-play]) {
+  gap: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+body:has([data-os-play]) .app-safe-bottom {
+  display: none;
+}
+
 @keyframes os-confetti-fall {
   0% {
     transform: translateY(-12vh) rotate(var(--os-spin, 0deg));
@@ -2224,10 +2235,15 @@ main[data-motion-page] {
 @media (prefers-reduced-motion: no-preference) {
   :is([data-motion="card"], a.sports-card, a.frost-surface) {
     transition:
-      translate 240ms var(--motion-ease),
+      opacity 460ms ease,
+      translate 520ms var(--motion-ease),
       box-shadow 240ms ease,
       background-color 180ms ease,
       filter 180ms ease;
+  }
+
+  [data-motion-page] .touch-scroll-x > [data-motion="card"] {
+    transition-delay: calc(min(sibling-index() - 1, 8) * 45ms);
   }
 
   [data-motion="chip"] {
@@ -3203,9 +3219,10 @@ svg [data-motion-dot] {
     }
 
     [data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li):not([data-motion-static], [data-motion-static] *, .arcade-pop, :has(.sports-card, .glass-surface, .glass-card, .frost-surface, .frost-surface-soft, .frost-surface-muted)),
-    [data-motion-page] [data-motion-item]:not([data-motion-static], .arcade-pop) {
+    [data-motion-page] [data-motion-item]:not([data-motion-static], .arcade-pop),
+    [data-motion-page] [data-motion="card"] {
       opacity: 0;
-      translate: 0 8px;
+      translate: 0 14px;
     }
 
     [data-motion-page] :is(tbody > tr:not(:has(> .board-sticky-frost)), [data-frozen-row]) {

@@ -88,11 +88,24 @@ async function fetchJson(
         signal: AbortSignal.timeout(timeoutMs),
       });
       if (!response.ok) {
-        throw new Error(`HTTP ${response.status} for ${url}`);
+        const error = new Error(`HTTP ${response.status} for ${url}`);
+        // A missing log will not appear on the next try. Retrying only repeats the 404.
+        if (response.status >= 400 && response.status < 500) {
+          (error as Error & { clientError?: boolean }).clientError = true;
+        }
+        throw error;
       }
       return await response.json();
     } catch (error) {
       lastError = error;
+      if (
+        error &&
+        typeof error === "object" &&
+        "clientError" in error &&
+        (error as { clientError?: boolean }).clientError
+      ) {
+        break;
+      }
       if (attempt < retries - 1) await delay(250 * (attempt + 1));
     }
   }
@@ -379,6 +392,7 @@ export async function fetchRawPlayByPlay(
   const now = Date.now();
   const cached = memoryCache.get(gameId);
   if (cached && cached.freshUntil > now) {
+    if (cached.value == null) return null;
     return {
       raw: cached.value,
       source: cached.source,
@@ -389,9 +403,20 @@ export async function fetchRawPlayByPlay(
   const pending = inflight.get(gameId);
   if (pending) return pending;
 
-  const request = fetchRawPlayByPlayUncached(gameId).finally(() => {
-    inflight.delete(gameId);
-  });
+  const request = fetchRawPlayByPlayUncached(gameId)
+    .then((result) => {
+      if (!result) {
+        memoryCache.set(gameId, {
+          value: null,
+          source: "disk",
+          freshUntil: Date.now() + 20_000,
+        });
+      }
+      return result;
+    })
+    .finally(() => {
+      inflight.delete(gameId);
+    });
   inflight.set(gameId, request);
   return request;
 }

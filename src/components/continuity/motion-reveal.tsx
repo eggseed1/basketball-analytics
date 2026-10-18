@@ -23,6 +23,7 @@ const FROST_ROW = "tbody > tr:has(> .board-sticky-frost)";
 /** Start poses, matched in order. They mirror the @starting-style rules in globals.css. */
 const POSES: Array<[selector: string, pose: Pose]> = [
   ["[data-motion-tile]", () => ({ opacity: 0, transform: "translateY(14px) scale(0.98)" })],
+  ['[data-motion="card"]', () => ({ opacity: 0, translate: "0 14px" })],
   [SECTION, () => ({ opacity: 0, translate: "0 14px" })],
   [`tbody > tr:not(:has(> .board-sticky-frost)), [data-frozen-row]`, () => ({ opacity: 0, translate: "0 8px" })],
   [FROST_ROW, () => ({ translate: "0 8px" })],

@@ -258,13 +258,15 @@ export function rookieSalary(pick: number): number {
   return Math.round((10_500_000 - (pick - 1) * 280_000) / 10_000) * 10_000;
 }
 
-/** Chance of an NBA call-up this month for a G League player (model). */
+/** Chance of an NBA call-up this month for a G League player (model). A look is a 10-day, not a roster spot. */
 export function callUpChance(state: LifeState): number {
   const lvl = performanceLevel(state);
-  const twoWay = state.placement.contract?.twoWay ? 1.6 : 1;
+  const twoWay = state.placement.contract?.twoWay ? 1.5 : 1;
   const { month } = calendar(state);
   if (![11, 12, 1, 2, 3, 4].includes(month)) return 0;
-  return clamp(((lvl - 66) / 30) * twoWay * (0.5 + state.exposure / 100), 0, 0.3);
+  const scouted = typeof state.flags.gScouted === "number" && state.ageMonths - state.flags.gScouted < 5 ? 0.05 : 0;
+  const climbed = typeof state.flags.gCallups === "number" ? Math.min(2, state.flags.gCallups) * 0.03 : 0;
+  return clamp(((lvl - 60) / 32) * twoWay * (0.4 + state.exposure / 160) + scouted + climbed, 0, 0.28);
 }
 
 export function nbaSeasonMonth(state: LifeState): boolean {

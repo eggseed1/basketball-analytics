@@ -58,7 +58,10 @@ import {
   type NewLifeOptions,
   type Offer,
   type PendingDecision,
+  type PlayoffBracket,
   type PlayoffRun,
+  type PlayoffSeries,
+  type PlayoffSlot,
   type Role,
   type SeasonLine,
   type Track,
@@ -306,6 +309,7 @@ export function stepMonth(s: LifeState) {
     endChecks(s);
     return;
   }
+  endGLeagueStint(s);
   stepTraining(s);
   money(s);
   if (age >= 18 && s.achievements.nbaCaliber === null && currentLevel(s) >= 70) {
@@ -332,12 +336,21 @@ function birthday(s: LifeState) {
     if (s.placement.node === "home") s.placement = { ...s.placement, node: "playground", teamName: null, coaching: country(s.residence.countryId).model.coachingAccess * 0.4, since: s.ageMonths };
   }
   if (age === 12) s.education.level = "secondary";
-  if (age === 18 && s.education.level === "secondary") {
+  if (age === 18 && s.education.level === "secondary" && s.flags.reclass === true && s.flags.usHS) {
+    log(s, "milestone", "You reclassed. One more year of high school before you graduate.");
+  } else if (age === 18 && s.education.level === "secondary") {
     s.education.graduatedHighSchool = s.education.academics >= 25;
     s.education.level = "done";
     if (!s.education.graduatedHighSchool) s.education.ncaaEligible = false;
     if (s.flags.usHS) s.flags.hsGradYear = calendar(s).year;
     log(s, "milestone", s.education.graduatedHighSchool ? "Finished secondary school." : "Left school without a diploma. NCAA route closes (game rule).", null, s.education.graduatedHighSchool ? "good" : "bad");
+  }
+  if (age === 19 && s.education.level === "secondary" && s.flags.reclass === true) {
+    s.education.graduatedHighSchool = s.education.academics >= 25;
+    s.education.level = "done";
+    if (!s.education.graduatedHighSchool) s.education.ncaaEligible = false;
+    s.flags.hsGradYear = calendar(s).year;
+    log(s, "milestone", s.education.graduatedHighSchool ? "Finished the extra year of high school." : "Left school without a diploma. NCAA route closes (game rule).", null, s.education.graduatedHighSchool ? "good" : "bad");
   }
   stepPeersYear(s.rng, s.peers, Math.round(age), s.ageMonths);
   for (const slot of ["primary", "secondary"] as const) {
@@ -857,12 +870,169 @@ function nbaSeasonEnd(s: LifeState, line: SeasonLine) {
     log(s, "season", `The ${line.teamName} miss the playoffs.`);
     return;
   }
-  line.playoffs = { seed, conference: conf, gp: 0, min: 0, pts: 0, reb: 0, ast: 0, stl: 0, blk: 0, tov: 0, fgm: 0, fga: 0, tpm: 0, tpa: 0, ftm: 0, fta: 0, wins: 0, losses: 0, rounds: 0, series: [], result: "", champion: false };
+  line.playoffs = { seed, conference: conf, gp: 0, min: 0, pts: 0, reb: 0, ast: 0, stl: 0, blk: 0, tov: 0, fgm: 0, fga: 0, tpm: 0, tpa: 0, ftm: 0, fta: 0, wins: 0, losses: 0, rounds: 0, series: [], result: "", champion: false, bracket: buildBracket(s, line, seed, conf) };
   s.flags.poKey = line.key;
+  if (w >= 0.54) log(s, "season", `The ${line.teamName} are the ${ordinal(seed)} seed in the ${conf} Conference.`, null, "good");
 }
 
-/** Playoffs: the first two rounds in May, the conference finals and Finals in June. */
+const SEED_WIN = [0.74, 0.68, 0.63, 0.59, 0.56, 0.53, 0.5, 0.46];
+const FIRST_PAIRS: [number, number][] = [
+  [1, 8],
+  [4, 5],
+  [2, 7],
+  [3, 6],
+];
+
+function shuffleTeams(rng: ReturnType<typeof rngOf>, teams: string[]) {
+  const a = [...teams];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(rng.next() * (i + 1));
+    const swap = a[i]!;
+    a[i] = a[j]!;
+    a[j] = swap;
+  }
+  return a;
+}
+
+function buildBracket(s: LifeState, line: SeasonLine, seed: number, conf: "Eastern" | "Western"): PlayoffBracket {
+  const rng = rngOf(s.rng, "nba");
+  const mine = line.teamName ?? "";
+  const myWin = line.wins / Math.max(1, line.wins + line.losses);
+  const eastTeams = NBA_TEAMS.filter((t) => conference(t) === "Eastern" && t !== mine);
+  const westTeams = NBA_TEAMS.filter((t) => conference(t) === "Western" && t !== mine);
+  const player = { name: mine, seed, winPct: clamp(myWin, 0.42, 0.82) };
+  return {
+    east: fillSide(rng, eastTeams, conf === "Eastern" ? player : null),
+    west: fillSide(rng, westTeams, conf === "Western" ? player : null),
+    series: [],
+  };
+}
+
+function fillSide(rng: ReturnType<typeof rngOf>, teams: string[], player: { name: string; seed: number; winPct: number } | null): PlayoffSlot[] {
+  const rest = shuffleTeams(rng, teams);
+  let n = 0;
+  return SEED_WIN.map((winPct, i) => {
+    const seed = i + 1;
+    if (player && player.seed === seed) return { name: player.name, seed, winPct: player.winPct };
+    return { name: rest[n++] ?? `Seed ${seed}`, seed, winPct };
+  });
+}
+
+function winPctOf(po: PlayoffRun, name: string) {
+  const slot = [...(po.bracket?.east ?? []), ...(po.bracket?.west ?? [])].find((t) => t.name === name);
+  return slot?.winPct ?? 0.55;
+}
+
+function seriesWinner(series: PlayoffSeries) {
+  const highWon = series.highWins >= 4;
+  return { name: highWon ? series.high : series.low, seed: highWon ? series.highSeed : series.lowSeed, winPct: 0 };
+}
+
+function openPair(po: PlayoffRun, round: number, side: PlayoffSeries["side"], high: { name: string; seed: number }, low: { name: string; seed: number }, you: string) {
+  po.bracket?.series.push({
+    round,
+    side,
+    high: high.name,
+    low: low.name,
+    highSeed: high.seed,
+    lowSeed: low.seed,
+    highWins: 0,
+    lowWins: 0,
+    yours: high.name === you || low.name === you,
+    done: false,
+  });
+}
+
+function ensureBracketRounds(po: PlayoffRun, you: string) {
+  const b = po.bracket;
+  if (!b) return;
+  for (const side of ["Eastern", "Western"] as const) {
+    const slots = side === "Eastern" ? b.east : b.west;
+    const bySeed = new Map(slots.map((t) => [t.seed, t]));
+    if (!b.series.some((s) => s.side === side && s.round === 0)) {
+      for (const [hi, lo] of FIRST_PAIRS) openPair(po, 0, side, bySeed.get(hi)!, bySeed.get(lo)!, you);
+    }
+    for (let round = 1; round <= 2; round++) {
+      if (b.series.some((s) => s.side === side && s.round === round)) continue;
+      const prev = b.series.filter((s) => s.side === side && s.round === round - 1);
+      if (prev.length < 2 || prev.some((s) => !s.done)) continue;
+      for (let i = 0; i < prev.length; i += 2) {
+        const a = seriesWinner(prev[i]!);
+        const bWin = seriesWinner(prev[i + 1]!);
+        const high = a.seed <= bWin.seed ? a : bWin;
+        const low = high === a ? bWin : a;
+        openPair(po, round, side, high, low, you);
+      }
+    }
+  }
+  if (b.series.some((s) => s.side === "Finals")) return;
+  const east = b.series.find((s) => s.side === "Eastern" && s.round === 2 && s.done);
+  const west = b.series.find((s) => s.side === "Western" && s.round === 2 && s.done);
+  if (!east || !west) return;
+  const a = seriesWinner(east);
+  const w = seriesWinner(west);
+  a.winPct = winPctOf(po, a.name);
+  w.winPct = winPctOf(po, w.name);
+  const high = a.winPct >= w.winPct ? a : w;
+  const low = high === a ? w : a;
+  openPair(po, 3, "Finals", high, low, you);
+}
+
+function cpuGame(rng: ReturnType<typeof rngOf>, series: PlayoffSeries, po: PlayoffRun) {
+  const g = series.highWins + series.lowWins;
+  const homeHigh = [0, 1, 4, 6].includes(g);
+  const edge = winPctOf(po, series.high) - winPctOf(po, series.low) + (homeHigh ? 0.04 : -0.04);
+  if (rng.next() < clamp(0.5 + edge * 1.15, 0.18, 0.82)) series.highWins++;
+  else series.lowWins++;
+  if (series.highWins >= 4 || series.lowWins >= 4) series.done = true;
+}
+
+function tickOtherSeries(po: PlayoffRun, rng: ReturnType<typeof rngOf>, drainRound: number | null) {
+  for (const series of po.bracket?.series ?? []) {
+    if (series.yours || series.done) continue;
+    if (drainRound === null && series.round !== po.rounds) continue;
+    if (drainRound !== null && series.round !== drainRound) continue;
+    if (series.highWins < 4 && series.lowWins < 4) cpuGame(rng, series, po);
+  }
+}
+
+function drainRound(po: PlayoffRun, rng: ReturnType<typeof rngOf>, round: number) {
+  let guard = 0;
+  while (guard++ < 28 && (po.bracket?.series ?? []).some((s) => !s.yours && !s.done && s.round === round)) tickOtherSeries(po, rng, round);
+}
+
+function pivotal(series: PlayoffSeries) {
+  const a = series.highWins;
+  const b = series.lowWins;
+  return a === 3 || b === 3 || (a === b && a >= 2);
+}
+
+function roundName(round: number, conf: string) {
+  if (round === 0) return "First round";
+  if (round === 1) return `${conf} Conference semifinals`;
+  if (round === 2) return `${conf} Conference finals`;
+  return "NBA Finals";
+}
+
+function planSwing(s: LifeState, plan: string, roll: number): { edge: number; sit: boolean; note: string } {
+  if (plan === "bench") return { edge: 0, sit: true, note: "You stayed in the hoodie." };
+  if (plan === "ask") return roll < 0.55 ? { edge: 0.05, sit: false, note: "The coach checked you in." } : { edge: 0, sit: true, note: "The coach left you on the bench." };
+  if (plan === "hunt") return roll < 0.62 ? { edge: 0.09, sit: false, note: "You hunted the matchup and the shots fell." } : { edge: -0.08, sit: false, note: "You hunted the matchup and they didn't fall." };
+  if (plan === "lock") {
+    const stopper = s.skills.perimeterD + s.skills.interiorD >= s.skills.shooting + s.skills.finishing;
+    return { edge: stopper ? 0.07 : 0.02, sit: false, note: "You spent the night on their best scorer." };
+  }
+  if (plan === "trust") {
+    const closer = s.placement.role === "star" || s.placement.role === "starter";
+    if (!closer) return { edge: 0.03, sit: false, note: "You screened and got out of the way." };
+    return roll < 0.58 ? { edge: 0.08, sit: false, note: "You took the last shot and made it." } : { edge: -0.06, sit: false, note: "You took the last shot and missed it." };
+  }
+  return { edge: 0, sit: false, note: "" };
+}
+
+/** Playoffs: first two rounds in May, conference finals and Finals in June. Some games pause for a plan. */
 function playoffStep(s: LifeState) {
+  if (s.pendingDecision) return;
   const key = s.flags.poKey;
   if (typeof key !== "string") return;
   const line = s.seasons.find((x) => x.key === key);
@@ -873,9 +1043,152 @@ function playoffStep(s: LifeState) {
     delete s.flags.poKey;
     return;
   }
+  if (!po.bracket) {
+    const upTo = calendar(s).month === 5 ? 2 : 4;
+    while (po.rounds < upTo && !po.result) playSeries(s, line, po, level);
+    if (po.result) delete s.flags.poKey;
+    return;
+  }
   const upTo = calendar(s).month === 5 ? 2 : 4;
-  while (po.rounds < upTo && !po.result) playSeries(s, line, po, level);
+  const rng = rngOf(s.rng, "nba");
+  let guard = 0;
+  while (po.rounds < upTo && !po.result && !s.pendingDecision && guard++ < 40) {
+    ensureBracketRounds(po, line.teamName ?? "");
+    tickOtherSeries(po, rng, null);
+    const series = po.bracket.series.find((x) => x.yours && !x.done && x.round === po.rounds);
+    if (!series) break;
+    const hurt = s.condition.injury !== null || (typeof s.flags.suspended === "number" && s.flags.suspended > 0);
+    if (!hurt && pivotal(series)) {
+      askPlayoffGame(s, line, po, series);
+      return;
+    }
+    playPlayoffGame(s, line, po, level, series, "flow", 0.5);
+    if (series.highWins >= 4 || series.lowWins >= 4) finishPlayoffSeries(s, line, po, series);
+  }
   if (po.result) delete s.flags.poKey;
+}
+
+function askPlayoffGame(s: LifeState, line: SeasonLine, po: PlayoffRun, series: PlayoffSeries) {
+  const game = series.highWins + series.lowWins + 1;
+  const youHigh = series.high === line.teamName;
+  const opp = youHigh ? series.low : series.high;
+  const atHome = [0, 1, 4, 6].includes(game - 1) === youHigh;
+  const yours = youHigh ? series.highWins : series.lowWins;
+  const theirs = youHigh ? series.lowWins : series.highWins;
+  const closing = Math.max(series.highWins, series.lowWins) === 3;
+  const spot = closing ? (yours === 3 ? "You can end the series tonight." : "They can end the series tonight.") : "The series is tied.";
+  const where = atHome ? "Home" : "Road";
+  const deep = s.placement.role === "deep-bench" || s.placement.role === "none";
+  const closer = s.placement.role === "star";
+  decide(s, {
+    templateId: "playoff-game",
+    title: `${roundName(series.round, po.conference)}, game ${game}`,
+    body: `${spot} ${where} against the ${opp}. The series is ${yours}-${theirs}.`,
+    required: true,
+    choices: deep
+      ? [
+          { id: "ask", label: "Ask to check in", preview: "He plays you about half the time. Those minutes can move the score." },
+          { id: "bench", label: "Stay ready", preview: "You do not play. The game goes the way the roster is built." },
+        ]
+      : [
+          { id: "hunt", label: "Hunt your matchup", preview: "More of your shots. A make swings the margin up. A miss swings it down." },
+          { id: "lock", label: "Guard their best scorer", preview: "Their best scorer is your assignment. Your own looks go down." },
+          { id: "trust", label: closer ? "Take the last shot" : "Clear out for the closer", preview: closer ? "The last possession is yours. It can win the game or lose it." : "You screen and leave the shot to him. The margin tightens a little." },
+        ],
+  });
+}
+
+function playPlayoffGame(s: LifeState, line: SeasonLine, po: PlayoffRun, level: Level, series: PlayoffSeries, plan: string, roll: number) {
+  const rng = rngOf(s.rng, "nba");
+  const g = series.highWins + series.lowWins;
+  const youHigh = series.high === line.teamName;
+  const opp = youHigh ? series.low : series.high;
+  const atHome = [0, 1, 4, 6].includes(g) === youHigh;
+  const oppW = winPctOf(po, opp);
+  const myW = line.wins / Math.max(1, line.wins + line.losses);
+  const swing = plan === "flow" ? { edge: 0, sit: false, note: "" } : planSwing(s, plan, roll);
+  const hurt = s.condition.injury !== null || (typeof s.flags.suspended === "number" && s.flags.suspended > 0);
+  const sit = hurt || swing.sit || (plan === "flow" && s.placement.role === "deep-bench" && rng.next() < 0.6);
+  let edge = (line.teamEdge ?? 0) + (myW - oppW) * 0.9 + (atHome ? 0.03 : -0.03) + swing.edge;
+  const box = simulateGame(s, level, rng, sit ? 0 : undefined, undefined, edge);
+  if (sit) for (const k of BOX_KEYS) box[k] = 0;
+  if (!sit && plan === "hunt") {
+    const extra = roll < 0.62 ? 6 : -4;
+    box.pts = Math.max(0, box.pts + extra);
+    box.teamScore += extra;
+  }
+  if (!sit && plan === "lock") {
+    box.pts = Math.max(0, box.pts - 3);
+    box.teamScore = Math.max(box.pts, box.teamScore - 3);
+  }
+  applyNight(s, box);
+  box.opponent = opp;
+  box.seasonKey = `${line.key}:po`;
+  pushGame(s, box);
+  s.lastGame = box;
+  const weWon = box.teamScore > box.oppScore;
+  if (weWon) {
+    if (youHigh) series.highWins++;
+    else series.lowWins++;
+  } else if (youHigh) series.lowWins++;
+  else series.highWins++;
+  po.wins += weWon ? 1 : 0;
+  po.losses += weWon ? 0 : 1;
+    if (box.min > 0) {
+    po.gp++;
+    for (const k of BOX_KEYS) po[k] += box[k];
+    if (series.round === 3) {
+      po.finalsGp = (po.finalsGp ?? 0) + 1;
+      po.finalsScore = (po.finalsScore ?? 0) + gameScoreTotal(box);
+    }
+  }
+  if (swing.note) {
+    const yours = youHigh ? series.highWins : series.lowWins;
+    const theirs = youHigh ? series.lowWins : series.highWins;
+    log(s, "season", `Game ${g + 1} ${atHome ? "at home" : "on the road"} against the ${opp}, ${box.teamScore}-${box.oppScore}. ${swing.note} Series ${yours}-${theirs}.`, null, weWon ? "good" : "bad");
+  }
+}
+
+function finishPlayoffSeries(s: LifeState, line: SeasonLine, po: PlayoffRun, series: PlayoffSeries) {
+  if (series.done) return;
+  series.done = true;
+  const youHigh = series.high === line.teamName;
+  const won = youHigh ? series.highWins : series.lowWins;
+  const lost = youHigh ? series.lowWins : series.highWins;
+  const opp = youHigh ? series.low : series.high;
+  const label = roundName(series.round, po.conference);
+  s.condition.energy = clamp(s.condition.energy - 4, 5, 100);
+  const text = won === 4 ? `${label}: beat the ${opp} ${won}-${lost}.` : `${label}: lost to the ${opp} ${lost}-${won}.`;
+  po.series.push(text);
+  drainRound(po, rngOf(s.rng, "nba"), series.round);
+  if (won < 4) {
+    po.result = `Lost in the ${series.round === 0 ? "first round" : label}`;
+    log(s, "season", text, null, "bad");
+    return;
+  }
+  po.rounds++;
+  s.exposure = clamp(s.exposure + 3, 0, 100);
+  if (series.round < 3) {
+    log(s, "season", text, null, "good");
+    ensureBracketRounds(po, line.teamName ?? "");
+    return;
+  }
+  po.result = "NBA champion";
+  po.champion = true;
+  (line.awards ??= []).push("NBA champion");
+  s.flags.champAt = s.ageMonths;
+  s.exposure = clamp(s.exposure + 8, 0, 100);
+  const finalsGp = po.finalsGp ?? 0;
+  const fin = finalsGp ? (po.finalsScore ?? 0) / finalsGp : 0;
+  const finalsMvp = (s.placement.role === "star" || s.placement.role === "starter") && finalsGp >= 4 && fin >= 18;
+  if (finalsMvp) line.awards.push("Finals MVP");
+  fanfare(
+    s,
+    "fanfare",
+    finalsMvp ? "NBA champions, Finals MVP" : "NBA champions",
+    `${text} The ${line.teamName} are NBA champions.${finalsMvp ? " They hand you Finals MVP." : ""} The building does not sit down.`
+  );
+  s.evidence.push({ month: s.ageMonths, text: `NBA champion with the ${line.teamName}`, weight: 12 });
 }
 
 function playSeries(s: LifeState, line: SeasonLine, po: PlayoffRun, level: Level) {
@@ -1056,28 +1369,98 @@ function campStep(s: LifeState, year: number) {
     s.residence = { countryId: "US", locality: team.split(" ").slice(0, -1).join(" "), localityKind: "city" };
     log(s, "milestone", `You make the ${team} opening-night roster out of training camp.`, null, "good");
   } else {
+    s.flags.gParent = team;
     s.placement = { node: "g-league", countryId: "US", leagueId: "g-league", teamName: `${team} G League affiliate`, role: "rotation", coaching: 80, since: s.ageMonths, contract: { salary: 40_500, yearsLeft: 1, guaranteed: false }, costPerYear: 0 };
     s.residence = { countryId: "US", locality: "a G League city", localityKind: "city" };
-    log(s, "info", `Waived after camp. You join the ${team} G League affiliate.`, null, "bad");
+    log(s, "info", `Waived after camp. You join the ${team} G League affiliate. A call-up is a 10-day, and most of those end back on the bus.`, null, "bad");
   }
 }
 
-/** A call-up that sticks: the parent club signs him for the rest of the season, and the NBA sim takes over from there. */
+function parentNbaTeam(s: LifeState): string {
+  const named = typeof s.flags.gParent === "string" ? s.flags.gParent : "";
+  const raw = named || (s.placement.teamName ?? "");
+  const cleaned = raw.replace(/ G League affiliate.*$/, "").replace(/^G League affiliate \((.*)\)$/, "$1");
+  if ((NBA_TEAMS as readonly string[]).includes(cleaned)) return cleaned;
+  return teamFor(s, calendar(s).year);
+}
+
+function closePlayingSeason(s: LifeState) {
+  if (s.season && s.season.gp + s.season.wins + s.season.losses > 0) s.seasons.push(s.season);
+  s.season = null;
+}
+
+/** A 10-day or an assignment ends. A roster spot only sticks after you have already been up and played well. */
+function endGLeagueStint(s: LifeState) {
+  const until = s.flags.gStintUntil;
+  if (typeof until !== "number" || s.ageMonths < until) return;
+  const team = parentNbaTeam(s);
+  const ups = typeof s.flags.gCallups === "number" ? s.flags.gCallups : 0;
+  const twoWay = s.placement.contract?.twoWay === true || s.flags.gTwoWay === true;
+  delete s.flags.gStintUntil;
+  if (s.flags.gStint === "assign") {
+    delete s.flags.gStint;
+    const salary = typeof s.flags.gNbaSalary === "number" ? s.flags.gNbaSalary : nbaSalary("deep-bench");
+    closePlayingSeason(s);
+    s.placement = { node: "nba", countryId: "US", leagueId: "nba", teamName: team, role: "deep-bench", coaching: 90, since: s.ageMonths, contract: { salary, yearsLeft: 1, guaranteed: false }, costPerYear: 0 };
+    s.residence = { countryId: "US", locality: team.split(" ").slice(0, -1).join(" ") || team, localityKind: "city" };
+    log(s, "info", `The assignment ends. You are back with the ${team}, at the end of the bench.`);
+    return;
+  }
+  if (s.flags.gStint !== "ten-day" || s.placement.node !== "nba") {
+    delete s.flags.gStint;
+    return;
+  }
+  delete s.flags.gStint;
+  const perf = performanceLevel(s);
+  if (perf >= 74 && ups >= 1) {
+    s.flags.gCallups = ups + 1;
+    s.placement.contract = { salary: nbaSalary("deep-bench"), yearsLeft: 1, guaranteed: false };
+    log(s, "milestone", `The ${team} keep you. The 10-day becomes a deal for the rest of the season.`, null, "good");
+    return;
+  }
+  closePlayingSeason(s);
+  s.flags.gCallups = ups + 1;
+  s.flags.gTwoWay = twoWay;
+  s.placement = {
+    node: "g-league",
+    countryId: "US",
+    leagueId: "g-league",
+    teamName: twoWay ? `${team} G League affiliate (two-way)` : `${team} G League affiliate`,
+    role: perf >= 64 ? "starter" : "rotation",
+    coaching: 80,
+    since: s.ageMonths,
+    contract: twoWay ? { salary: 580_000, yearsLeft: 1, guaranteed: false, twoWay: true } : { salary: 40_500, yearsLeft: 1, guaranteed: false },
+    costPerYear: 0,
+  };
+  s.residence = { countryId: "US", locality: "a G League city", localityKind: "city" };
+    log(s, "info", `The 10-day ends. You ride back to the ${team} affiliate with the film on your phone.`, null, "neutral");
+}
+
+/** Call-ups start as 10-days. A standard deal waits until you have been up twice and are playing well. */
 function gLeagueStep(s: LifeState) {
-  if (s.placement.node !== "g-league" || !nbaSeasonMonth(s)) return;
+  if (s.placement.node !== "g-league" || !nbaSeasonMonth(s) || s.flags.gStint === "assign") return;
   const rng = rngOf(s.rng, "draft");
   const roll = rng.next();
   const play = rng.next();
   if (roll >= callUpChance(s)) return;
-  const parent = s.placement.teamName?.replace(/ G League affiliate.*$/, "").replace(/^G League affiliate \((.*)\)$/, "$1") ?? "";
-  const team = (NBA_TEAMS as readonly string[]).includes(parent) ? parent : teamFor(s, calendar(s).year);
+  const team = parentNbaTeam(s);
+  s.flags.gParent = team;
+  const ups = typeof s.flags.gCallups === "number" ? s.flags.gCallups : 0;
   const twoWay = s.placement.contract?.twoWay === true;
-  if (s.season && s.season.gp + s.season.wins + s.season.losses > 0) s.seasons.push(s.season);
-  s.season = null;
+  const earned = ups >= 2 && performanceLevel(s) >= 72;
+  closePlayingSeason(s);
   s.achievements.rosterSpot ??= s.ageMonths;
-  s.placement = { node: "nba", countryId: "US", leagueId: "nba", teamName: team, role: "deep-bench", coaching: 90, since: s.ageMonths, contract: { salary: nbaSalary("deep-bench"), yearsLeft: 1, guaranteed: false }, costPerYear: 0 };
-  s.residence = { countryId: "US", locality: team.split(" ").slice(0, -1).join(" "), localityKind: "city" };
-  log(s, "milestone", twoWay ? `The ${team} convert your two-way deal into a standard contract for the rest of the season.` : `Called up by the ${team} on a 10-day contract. They sign you for the rest of the season.`, null, "good");
+  s.placement = { node: "nba", countryId: "US", leagueId: "nba", teamName: team, role: "deep-bench", coaching: 90, since: s.ageMonths, contract: { salary: nbaSalary("deep-bench"), yearsLeft: 1, guaranteed: false, ...(twoWay && !earned ? { twoWay: true } : {}) }, costPerYear: 0 };
+  s.residence = { countryId: "US", locality: team.split(" ").slice(0, -1).join(" ") || team, localityKind: "city" };
+  if (earned) {
+    s.flags.gCallups = ups + 1;
+    log(s, "milestone", `The ${team} sign you for the rest of the season. Two call-ups and a run of games got you here.`, null, "good");
+  } else {
+    s.flags.gStint = "ten-day";
+    s.flags.gStintUntil = s.ageMonths + 1;
+    s.flags.gTwoWay = twoWay;
+    log(s, "milestone", `The ${team} call you up on a 10-day. You dress and sit until they need a body.`, null, "good");
+  }
   if (s.achievements.nbaDebut === null && play < 0.8) {
     s.nbaGames += 1;
     recordDebut(s, `Called up from the G League, ${2 + Math.floor(play * 10)} minutes.`);
@@ -1384,10 +1767,9 @@ function runEvent(s: LifeState, t: EventTemplate, causeId: string | null) {
   if (t.auto) {
     const rng = rngOf(s.rng, "events");
     const rolls = [rng.next(), rng.next(), rng.next(), rng.next()];
-    const entryId = `h${s.counters.entry + 1}`;
+    const entryId = `h${++s.counters.entry}`;
     const out = t.auto({ s, rolls, entryId });
     s.history.push({ id: entryId, month: s.ageMonths, kind: "event", text: `${t.title}. ${body} ${out}`, causeId, tone: t.tone ?? "neutral" });
-    s.counters.entry = Math.max(s.counters.entry, Number(entryId.slice(1)));
     return;
   }
   const choices: DecisionChoice[] = (t.choices ?? []).map((c) => ({
@@ -1462,6 +1844,24 @@ function resolveInPlace(s: LifeState, choiceId: string) {
     case "fanfare":
       log(s, "decision", "You take it in.");
       return;
+    case "playoff-game": {
+      const key = s.flags.poKey;
+      const line = typeof key === "string" ? s.seasons.find((x) => x.key === key) : undefined;
+      const po = line?.playoffs;
+      const level = levelOf(s);
+      const series = po?.bracket?.series.find((x) => x.yours && !x.done);
+      if (line && po && level && series) {
+        log(s, "decision", `${d.title}: ${choice.label}.`);
+        playPlayoffGame(s, line, po, level, series, choiceId, d.rolls[0] ?? 0.5);
+        if (series.highWins >= 4 || series.lowWins >= 4) finishPlayoffSeries(s, line, po, series);
+        playoffStep(s);
+        if (!s.pendingDecision && s.flags.reviewSoon && typeof s.flags.poKey !== "string") {
+          delete s.flags.reviewSoon;
+          offseasonReview(s);
+        }
+      }
+      return;
+    }
     case "hof":
       s.evidence.push({ month: s.ageMonths, text: "Inducted into the Hall of Fame", weight: 14 });
       s.evidence = [...s.evidence].sort((a, b) => b.weight - a.weight).slice(0, 24);
@@ -1582,6 +1982,7 @@ function resolveInPlace(s: LifeState, choiceId: string) {
       if (choiceId === "two-way") {
         s.education.amateur = false;
         if (s.season) finalizeSeason(s, levelOf(s));
+        s.flags.gParent = team;
         s.placement = { node: "g-league", countryId: "US", leagueId: "g-league", teamName: `${team} G League affiliate (two-way)`, role: "rotation", coaching: 82, since: s.ageMonths, contract: { salary: 580_000, yearsLeft: 2, guaranteed: false, twoWay: true }, costPerYear: 0 };
         s.residence = { countryId: "US", locality: "a G League city", localityKind: "city" };
         s.achievements.rosterSpot = s.ageMonths;
@@ -1593,6 +1994,7 @@ function resolveInPlace(s: LifeState, choiceId: string) {
       } else if (choiceId === "g-league") {
         s.education.amateur = false;
         if (s.season) finalizeSeason(s, levelOf(s));
+        s.flags.gParent = team;
         s.placement = { node: "g-league", countryId: "US", leagueId: "g-league", teamName: `G League affiliate (${team})`, role: "rotation", coaching: 80, since: s.ageMonths, contract: { salary: 40_500, yearsLeft: 1, guaranteed: false }, costPerYear: 0 };
         s.residence = { countryId: "US", locality: "a G League city", localityKind: "city" };
         log(s, "decision", "Signed with a G League team.");
@@ -1768,6 +2170,10 @@ function acceptOffer(s: LifeState, o: Offer) {
   }
   if (o.salary > 0 && o.node !== "university") s.education.amateur = false;
   if (o.node === "us-high-school") s.flags.usHS = true;
+  if (o.node === "g-league") {
+    const named = o.teamName.replace(/ G League affiliate.*$/, "").replace(/^G League affiliate \((.*)\)$/, "$1");
+    if ((NBA_TEAMS as readonly string[]).includes(named)) s.flags.gParent = named;
+  }
   if (o.node === "university") {
     s.education.level = "university";
     s.education.universityYears = 0;
@@ -1985,6 +2391,12 @@ export function autoChoice(s: LifeState): string {
       return "finish";
     case "nba-contest":
       return "compete";
+    case "playoff-game": {
+      if (open.some((c) => c.id === "ask")) return performanceLevel(s) >= 62 ? "ask" : "bench";
+      if (s.placement.role === "star") return "trust";
+      if (s.skills.perimeterD >= s.skills.shooting) return "lock";
+      return open.find((c) => c.id === "hunt")?.id ?? open[0]!.id;
+    }
     case "crossroads": {
       const onTeam = isProNode(s.placement.node) || s.placement.node === "local-senior";
       if (d.context?.why === "choice") return open.find((c) => c.id === "track:coach")?.id ?? open.find((c) => c.id.startsWith("track:"))?.id ?? "finish";

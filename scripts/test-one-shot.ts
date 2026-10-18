@@ -200,6 +200,40 @@ ok("bad saves are rejected with a reason", () => {
   assert.ok(!r.ok && /newer/.test(r.reason));
 });
 
+ok("an automatic injury does not reuse the event id", () => {
+  let injured = false;
+  for (let seed = 1; seed <= 30 && !injured; seed++) {
+    const s = createLife(base(seed));
+    s.pendingDecision = null;
+    s.scheduled.push({ templateId: "knee-ache", month: s.ageMonths, causeId: null });
+    stepMonth(s);
+    const ids = s.history.map((h) => h.id);
+    assert.equal(new Set(ids).size, ids.length, `duplicate history id on seed ${seed}`);
+    const injury = s.history.find((h) => h.kind === "injury");
+    if (!injury) continue;
+    injured = true;
+    const event = s.history.find((h) => h.kind === "event" && h.text.startsWith("Knee pain"));
+    assert.ok(event);
+    assert.equal(injury.causeId, event.id);
+    assert.notEqual(injury.id, event.id);
+  }
+  assert.ok(injured, "no seeded life logged the knee injury");
+});
+
+ok("a save with a repeated history id keeps the later row", () => {
+  const s = createLife(base(2));
+  const event = s.history[s.history.length - 1]!;
+  s.history.splice(s.history.length - 1, 0, { ...event, id: event.id, kind: "injury", text: "Knee tendon irritation." });
+  const loaded = parseSave(serialize(s));
+  assert.ok(loaded.ok);
+  const ids = loaded.state.history.map((h) => h.id);
+  assert.equal(new Set(ids).size, ids.length);
+  const kept = loaded.state.history.find((h) => h.kind === event.kind && h.text === event.text);
+  assert.equal(kept?.id, event.id);
+  const injury = loaded.state.history.find((h) => h.kind === "injury");
+  assert.ok(injury && injury.id !== event.id);
+});
+
 ok("daily seed follows the UTC date", () => {
   assert.equal(dailyDate(new Date("2026-10-08T23:30:00-05:00")), "2026-10-09");
   assert.equal(dailyDate(new Date("2026-10-08T00:10:00Z")), "2026-10-08");
@@ -966,7 +1000,8 @@ const keepChapter = (x: LifeState) => (x.pendingDecision!.templateId === "chapte
 ok("NBA seasons reconcile: records, playoffs, titles and honors", () => {
   let runs = 0;
   for (const seed of NBA_SEEDS) {
-    const s = drive(createLife(base(seed)), 36 * 12, keepChapter);
+    let s = drive(createLife(base(seed)), 36 * 12, keepChapter);
+    while (s.pendingDecision?.templateId === "playoff-game") s = resolveDecision(s, keepChapter(s) ?? autoChoice(s));
     const nba = s.seasons.filter((x) => x.node === "nba" && x.gp > 0);
     assert.ok(nba.length >= 3, `seed ${seed}: ${nba.length} NBA seasons`);
     const years = new Map<number, number>();
@@ -984,6 +1019,12 @@ ok("NBA seasons reconcile: records, playoffs, titles and honors", () => {
       }
       runs++;
       assert.ok(po.seed >= 1 && po.seed <= 8);
+      if (po.bracket) {
+        assert.equal(po.bracket.east.length, 8);
+        assert.equal(po.bracket.west.length, 8);
+        assert.equal(new Set([...po.bracket.east, ...po.bracket.west].map((t) => t.name)).size, 16);
+        assert.ok(po.bracket.series.some((s) => s.yours));
+      }
       assert.ok(po.result, `seed ${seed}: playoffs never finished`);
       if (po.result === "Left the team before the playoffs") continue;
       assert.equal(po.champion, po.rounds === 4);
