@@ -179,12 +179,12 @@ async function HomeBracket({ season }: { season: string }) {
 }
 
 /**
- * Streamed module. Its placeholder already holds the card frame, so
- * `data-motion-static` skips the card fade and only the contents animate in.
+ * Streamed module. The skeleton stays still. The real section and its cards
+ * ease in when they replace it.
  */
 function Streamed({ id, children }: { id: HomeModuleId; children: ReactNode }) {
   return (
-    <div data-motion-static className="contents">
+    <div className="contents">
       <Suspense fallback={<HomeModuleSkeleton id={id} />}>{children}</Suspense>
     </div>
   );

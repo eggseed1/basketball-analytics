@@ -102,6 +102,14 @@ interface Draft {
   cap?: number;
 }
 
+function offerMemory(state: LifeState): string {
+  const bits: string[] = [];
+  if (typeof state.flags.headline === "number" && state.ageMonths - state.flags.headline <= 4) bits.push("They bring up the night the paper wrote about.");
+  if (state.flags.style === "scorer" || state.flags.style === "connector" || state.flags.style === "defender") bits.push(`They asked for a ${state.flags.style}.`);
+  if (typeof state.flags.listedAs === "string") bits.push(`The sheet lists you as a ${state.flags.listedAs}.`);
+  return bits.length ? ` ${bits.join(" ")}` : "";
+}
+
 function build(state: LifeState, d: Draft): Offer {
   const lvl = performanceLevel(state);
   const role = roleFor(lvl, d.need);
@@ -135,7 +143,7 @@ function build(state: LifeState, d: Draft): Offer {
     guaranteed: d.guaranteed ?? salary > 0,
     twoWay: d.twoWay,
     consequences: [coachingWord(d.coaching) + ". " + exposureWord(d.exposure) + ".", ...consequences],
-    reason: d.reason,
+    reason: d.reason + offerMemory(state),
   };
 }
 
@@ -289,7 +297,7 @@ export function offseasonOffers(state: LifeState): Offer[] {
     const abroad = res.id !== "US";
     const gSeen = E + agentBoost(state) * 0.6 >= (abroad ? 52 : 40) + r[6]! * 15 || (thinMarket && lvl >= 64);
     if (age >= 18 && node !== "g-league" && node !== "nba" && lvl >= (abroad ? 56 : 52) && gSeen) {
-      offers.push(build(state, { kind: "contract", node: "g-league", countryId: "US", leagueId: "g-league", teamName: `G League affiliate (${nbaTeam(r[7]!)})`, need: gl.model!.strength * 0.8, coaching: gl.model!.coaching, exposure: gl.model!.exposure, costPerYear: 0, salary: 40500, years: 1, reason: abroad ? "A G League team saw your film and invites you to training camp. You make the roster." : "A G League team invites you to its local tryout and keeps you.", extra: ["G League players can be called up on 10-day or two-way deals."] }));
+      offers.push(build(state, { kind: "contract", node: "g-league", countryId: "US", leagueId: "g-league", teamName: `G League affiliate (${nbaTeam(r[7]!)})`, need: gl.model!.strength * 0.8, coaching: gl.model!.coaching, exposure: gl.model!.exposure, costPerYear: 0, salary: 40500, years: 1, reason: abroad ? "A G League affiliate saw your film. Camp is a tryout. A call-up, if it comes, starts as a 10-day." : "A G League affiliate invites you to its local tryout and keeps you. The parent NBA team is upstairs. Your name is on the affiliate list.", extra: ["Most call-ups are 10-days and end back with the affiliate.", "A rest-of-season deal comes after more than one look."] }));
     }
   }
   if (committed) return offers.filter((o) => o.node === "foreign-pro").slice(0, 4);

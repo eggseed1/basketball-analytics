@@ -35,11 +35,10 @@ export default async function ExploreGamesPage({
 }: ExploreGamesPageProps) {
   const params = await searchParams;
   const seasons = await getAvailableSeasons();
-  const defaultSeason =
-    seasons.find((s) => s.startsWith("1969")) ??
-    seasons.find((s) => s.startsWith("1960")) ??
-    seasons[0] ??
-    canonicalSeasonFromStartYear(currentNbaStartYear());
+  const currentSeason = canonicalSeasonFromStartYear(currentNbaStartYear());
+  const defaultSeason = seasons.includes(currentSeason)
+    ? currentSeason
+    : (seasons[0] ?? currentSeason);
 
   const filters = filtersFromSearchParams({
     ...params,
@@ -84,7 +83,14 @@ export default async function ExploreGamesPage({
           teams={teams}
           defaultSeason={defaultSeason}
         >
-          <GameSeasonTable games={tableGames} />
+          {games.length === 0 ? (
+            <p className="text-sm text-muted-foreground">
+              No games are stored for this season. Pick a later season from the
+              filters.
+            </p>
+          ) : (
+            <GameSeasonTable games={tableGames} />
+          )}
           {truncated ? (
             <p className="text-[12px] text-muted-foreground">
               Showing {tableGames.length} of {games.length} games. Narrow the

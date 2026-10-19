@@ -13,6 +13,7 @@ import {
 } from "@/data/providers/nba/runtime-policy";
 import {
   bundledCurrentRosterIsFresh,
+  bundledCurrentRosterMeta,
   listBundledEspnRosterEntries,
 } from "@/data/runtime/current-roster-snapshot";
 
@@ -113,6 +114,15 @@ function ageOn(dob: string | undefined, now: Date): number | undefined {
     (now.getUTCMonth() + 1 === m && now.getUTCDate() < d);
   if (beforeBirthday) age -= 1;
   return age;
+}
+
+/**
+ * Bundled ESPN roster shells for a season. Empty when the snapshot is a
+ * different year. Stale is still the 2026-27 roster list.
+ */
+export function bundledRosterSeasonRows(season: string): PlayerSeason[] {
+  if (bundledCurrentRosterMeta().season !== season) return [];
+  return bundledLeagueRosterPlayers(season);
 }
 
 /** Same row shape as the live crawl, read from the bundled ESPN rosters. */

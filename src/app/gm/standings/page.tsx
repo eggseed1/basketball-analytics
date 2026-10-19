@@ -1,6 +1,7 @@
 "use client";
 
 import { TeamLogo } from "@/components/brand/team-logo";
+import { GmPlayoffBracket } from "@/gm/ui/gm-playoff-bracket";
 import { GmShell } from "@/gm/ui/gm-shell";
 import { useGmStore } from "@/gm/state/gm-store";
 import { standingsTable, teamById } from "@/gm/lib/selectors";
@@ -31,28 +32,9 @@ function StandingsBody() {
         league={league}
       />
       {league.playoffBracket?.length ? (
-        <section className="lg:col-span-2">
-          <h2 className="mb-2 font-bold tracking-tight text-xl tracking-wide">
-            Playoff bracket
-          </h2>
-          <ul className="space-y-2 text-sm">
-            {league.playoffBracket.map((s) => (
-              <li
-                key={s.id}
-                className="arena-panel flex flex-wrap items-center gap-2 px-3 py-2"
-              >
-                <span className="text-muted-foreground">
-                  R{s.round} {s.conf}:
-                </span>
-                <TeamLogo teamKey={s.teamAId} size="xs" />
-                {s.teamAId.toUpperCase()} {s.winsA}-{s.winsB}{" "}
-                <TeamLogo teamKey={s.teamBId} size="xs" />
-                {s.teamBId.toUpperCase()}
-                {s.winnerId ? ` · W ${s.winnerId.toUpperCase()}` : ""}
-              </li>
-            ))}
-          </ul>
-        </section>
+        <div className="lg:col-span-2">
+          <GmPlayoffBracket league={league} />
+        </div>
       ) : null}
     </div>
   );
@@ -104,6 +86,12 @@ function ConfTable({
                     <span className="inline-flex items-center gap-2 font-medium">
                       <TeamLogo teamKey={r.teamId} size="xs" />
                       {t?.abbr} {t?.name}
+                    </span>
+                    <span className="gm-winbar" aria-hidden>
+                      <span
+                        data-motion-bar="x"
+                        style={{ width: `${Math.min(100, (r.wins / 82) * 100)}%` }}
+                      />
                     </span>
                   </td>
                   <td className="px-3 py-2 tabular-nums">{r.wins}</td>

@@ -12,6 +12,7 @@ import { createRng, pick, randInt, uid, clamp } from "@/gm/engine/rng";
 import { generateSchedule } from "@/gm/engine/schedule";
 import { emptyStandings } from "@/gm/engine/standings";
 import { autoSetLineup } from "@/gm/engine/lineup";
+import { coachForTeam, openCoachMarket, trainerForLevel } from "@/gm/seed/coaches";
 import { createDraftClass } from "@/gm/seed/prospect-identities";
 import { sealProspect } from "@/gm/engine/scouting";
 import {
@@ -128,15 +129,12 @@ export function createGeneratedLeague(options?: {
       fanConfidence: randInt(rng, 35, 80),
       payrollLuxuryTaxM: 0,
       staff: {
-        headCoach: {
-          name: `${pick(rng, FIRST)} ${pick(rng, LAST)}`,
-          offenseBonus: (rng() - 0.5) * 3,
-          defenseBonus: (rng() - 0.5) * 3,
-          developmentBonus: rng() * 1.5,
-        },
+        headCoach: coachForTeam(f.id),
+        trainer: trainerForLevel(trainerLevel),
+        dead: [],
         scout,
         scoutLevel: scout.eye,
-        trainerLevel,
+        trainerLevel: trainerForLevel(trainerLevel).level,
       },
       starters: emptyStarters(),
       benchOrder: [],
@@ -210,6 +208,8 @@ export function createGeneratedLeague(options?: {
     freeAgents: players.filter((p) => p.teamId === null && !draftPool.includes(p.id)).map((p) => p.id),
     draftPool,
     scoutMarket,
+    coachMarket: openCoachMarket(),
+    staffBook: 1,
     schedule: [],
     standings: emptyStandings(teams),
     boxScores: [],

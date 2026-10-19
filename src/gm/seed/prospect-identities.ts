@@ -5,7 +5,6 @@ import type {
   ProspectArchetypeId,
 } from "@/gm/types";
 import { pick, randInt, clamp } from "@/gm/engine/rng";
-import { uid } from "@/gm/engine/rng";
 
 export type CodenameDef = {
   codename: string;
@@ -446,6 +445,76 @@ const HEIGHT: Record<GmPosition, [number, number]> = {
   C: [81, 87],
 };
 
+function gauss(rng: () => number): number {
+  const u = Math.max(1e-9, rng());
+  const v = rng();
+  return Math.sqrt(-2 * Math.log(u)) * Math.cos(Math.PI * 2 * v);
+}
+
+/** Weights for ages 18 through 24, by the last pick in the band. */
+const AGE_BANDS: Array<{ through: number; weights: number[] }> = [
+  { through: 5, weights: [0.08, 0.48, 0.32, 0.1, 0.02, 0, 0] },
+  { through: 14, weights: [0.02, 0.28, 0.36, 0.24, 0.1, 0, 0] },
+  { through: 30, weights: [0.02, 0.1, 0.24, 0.32, 0.24, 0.08, 0] },
+  { through: 45, weights: [0, 0.04, 0.12, 0.26, 0.32, 0.2, 0.06] },
+  { through: 60, weights: [0, 0.02, 0.08, 0.18, 0.32, 0.28, 0.12] },
+];
+
+function ageForSlot(slot: number, rng: () => number): number {
+  const band = AGE_BANDS.find((row) => slot <= row.through) ?? AGE_BANDS[AGE_BANDS.length - 1]!;
+  let roll = rng();
+  for (let i = 0; i < band.weights.length; i++) {
+    roll -= band.weights[i]!;
+    if (roll <= 0) return 18 + i;
+  }
+  return 22;
+}
+
+/** What the league thinks this slot is worth, before the miss. */
+function consensusImpact(slot: number): number {
+  if (slot <= 5) return 0.55 - (slot - 1) * 0.16;
+  if (slot <= 14) return -0.15 - (slot - 5) * 0.08;
+  if (slot <= 30) return -0.95 - (slot - 14) * 0.02;
+  return -1.35 - (slot - 30) * 0.012;
+}
+
+function prospectRatings(
+  slot: number,
+  age: number,
+  position: GmPosition,
+  rng: () => number
+): { ratings: GmRatings; consensus: number; minutes: number } {
+  const consensus = Math.round(consensusImpact(slot) * 100) / 100;
+  const latent = gauss(rng);
+  const impact = clamp(
+    Math.round((consensus * 0.5 + latent * 1.05) * 100) / 100,
+    -3.2,
+    4.8
+  );
+  const youth = age <= 19 ? 1.4 : age === 20 ? 0.9 : age === 21 ? 0.4 : age === 22 ? 0 : -0.6;
+  const potential = clamp(4.6 + youth + latent * 1.05 + gauss(rng) * 0.45, 0.4, 9.6);
+  const mid = clamp(58 + impact * 7, 28, 88);
+  const skill = () => randInt(rng, Math.round(mid - 8), Math.round(mid + 8));
+  const big = position === "C" || position === "PF";
+  const guard = position === "PG" || position === "SG";
+  const minutes = clamp(Math.round(16 + Math.max(0, consensus) * 12 + Math.max(0, latent) * 4), 8, 32);
+  return {
+    consensus,
+    minutes,
+    ratings: {
+      impact,
+      offense: impact * 0.7 + (rng() - 0.5) * 0.8,
+      defense: impact * 0.55 + (rng() - 0.5) * 0.8,
+      shooting: clamp(skill() + (guard ? 5 : big ? -8 : 0), 18, 95),
+      finishing: clamp(skill() + (big ? 8 : 0), 20, 95),
+      playmaking: clamp(skill() + (guard ? 10 : big ? -10 : 0), 15, 95),
+      rebounding: clamp(skill() + (big ? 12 : -5), 15, 95),
+      durability: randInt(rng, 55, 95),
+      potential,
+    },
+  };
+}
+
 /** Build a full realistic sealed draft class. */
 export function createDraftClass(options: {
   count?: number;
@@ -461,28 +530,28 @@ export function createDraftClass(options: {
 }): GmPlayer[] {
   const count = options.count ?? 60;
   const { rng, seasonEndYear, scoutLevel, seal } = options;
-  const tiers = rollProspectTier(count, rng);
   const used = new Set<string>();
   const out: GmPlayer[] = [];
 
-  // Sort tiers so board index loosely tracks talent for sealing noise
-  const indexed = tiers.map((tier, i) => ({ tier, i }));
-  indexed.sort((a, b) => talentRank(a.tier) - talentRank(b.tier));
-
-  for (let board = 0; board < indexed.length; board++) {
-    const { tier } = indexed[board]!;
+  for (let board = 0; board < count; board++) {
+    const slot = Math.min(
+      60,
+      Math.max(1, Math.round((board * 59) / Math.max(1, count - 1)) + 1)
+    );
     const position = pick(rng, POSITIONS);
-    const ratings = ratingsForTier(tier, position, rng);
+    const age = ageForSlot(slot, rng);
+    const { ratings, consensus, minutes } = prospectRatings(slot, age, position, rng);
     const [hLo, hHi] = HEIGHT[position];
     let raw: GmPlayer = {
-      id: uid("prospect"),
+      id: `prospect-${seasonEndYear}-${board}-${Math.floor(rng() * 1e9).toString(36)}`,
       name: "Prospect",
       teamId: null,
       position,
-      age: randInt(rng, 18, 22),
+      age,
       heightIn: randInt(rng, hLo!, hHi!),
       weightLbs: randInt(rng, position === "C" ? 220 : 185, position === "C" ? 280 : 245),
       ratings,
+      consensus,
       scouted: {
         impact: null,
         offense: null,
@@ -493,27 +562,14 @@ export function createDraftClass(options: {
       injury: null,
       morale: 80,
       personality: randInt(rng, -15, 25),
-      minutesPreference: 18,
+      minutesPreference: minutes,
       draftYear: seasonEndYear,
       identityRevealed: false,
     };
     raw = assignProspectIdentity(raw, rng, used, {
-      eliteEligible: tier === "superstar",
+      eliteEligible: slot <= 5 || ratings.impact >= 3.4,
     });
     out.push(seal(raw, scoutLevel, board, rng));
   }
   return out;
-}
-
-function talentRank(t: ProspectTier): number {
-  return (
-    {
-      superstar: 0,
-      allstar: 1,
-      starter: 2,
-      rotation: 3,
-      fringe: 4,
-      depth: 5,
-    } as const
-  )[t];
 }

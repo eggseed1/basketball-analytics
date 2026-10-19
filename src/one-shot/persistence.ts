@@ -121,9 +121,47 @@ export function parseSave(raw: string | null): LoadResult {
     v = typeof data.schemaVersion === "number" ? data.schemaVersion : v + 1;
   }
   if (v > SCHEMA_VERSION) return { ok: false, reason: `This save comes from a newer version (${v}).`, raw };
+  repairHistoryIds(data);
   const problem = validate(data);
   if (problem) return { ok: false, reason: problem, raw };
   return { ok: true, state: data as unknown as LifeState };
+}
+
+/**
+ * An automatic event used to take the same history id as the injury it logged.
+ * The later row keeps that id, because the injury points at it. The earlier row gets a new one.
+ */
+function repairHistoryIds(data: Record<string, unknown>) {
+  const history = data.history;
+  if (!Array.isArray(history)) return;
+  const counters = (data.counters && typeof data.counters === "object" ? data.counters : null) as { entry?: number } | null;
+  let entry = typeof counters?.entry === "number" ? counters.entry : 0;
+  const indexById = new Map<string, number>();
+  for (let i = 0; i < history.length; i++) {
+    const row = history[i];
+    if (!row || typeof row !== "object") continue;
+    const item = row as { id?: string };
+    const id = typeof item.id === "string" ? item.id : "";
+    const n = /^h(\d+)$/.exec(id);
+    if (n) entry = Math.max(entry, Number(n[1]));
+    const earlier = id ? indexById.get(id) : undefined;
+    if (id && earlier == null) {
+      indexById.set(id, i);
+      continue;
+    }
+    const fresh = `h${++entry}`;
+    if (earlier != null) {
+      const prior = history[earlier] as { id?: string };
+      prior.id = fresh;
+      indexById.set(fresh, earlier);
+    }
+    if (id) indexById.set(id, i);
+    else {
+      item.id = fresh;
+      indexById.set(fresh, i);
+    }
+  }
+  if (counters) counters.entry = Math.max(entry, counters.entry ?? 0);
 }
 
 function validate(d: Record<string, unknown>): string | null {
@@ -200,6 +238,21 @@ export function loadBoard(): CareerSummary[] {
   } catch {
     return [];
   }
+}
+
+/** Write three initials onto a life already stored on this device, and onto the earnings board when that life is on it. */
+export function stampCareer(id: { runId?: string | null; boardId?: string | null }, tag: string): { careers: CareerSummary[]; board: CareerSummary[]; summary: CareerSummary | null } {
+  const match = (c: CareerSummary) => (id.runId != null && c.runId === id.runId) || (id.boardId != null && c.boardId === id.boardId);
+  const careers = loadCareers().map((c) => (match(c) ? { ...c, tag } : c));
+  const board = loadBoard().map((c) => (match(c) ? { ...c, tag } : c));
+  const summary = careers.find(match) ?? board.find(match) ?? null;
+  try {
+    storage()?.setItem(CAREERS_KEY, JSON.stringify(careers));
+    storage()?.setItem(BOARD_KEY, JSON.stringify(board));
+  } catch {
+    /* storage full or blocked; the stamp still shows for this session */
+  }
+  return { careers, board, summary };
 }
 
 export function recordEarnings(c: CareerSummary): CareerSummary[] {

@@ -1,5 +1,10 @@
-import type { GmLeagueState, GmPlayer } from "@/gm/types";
+import type { GmLeagueState, GmNewsItem, GmPlayer } from "@/gm/types";
 import { createRng, clamp, uid } from "@/gm/engine/rng";
+import { progressSheet } from "@/gm/engine/attributes";
+import { aiSelectProspect, pickGrade } from "@/gm/engine/draft-room";
+import { coachEffect } from "@/gm/engine/staff";
+import { regularSeasonComplete } from "@/gm/engine/schedule";
+import { advanceContractYear } from "@/gm/seed/real-books";
 
 const INJURY_TYPES = [
   "Ankle sprain",
@@ -54,61 +59,151 @@ export function rollGameInjuries(
 
 export function developPlayers(
   players: GmPlayer[],
-  seasonAgeBump = true
+  seasonAgeBump = true,
+  coachByTeam?: Record<string, number>,
+  playoffGames?: Record<string, number>
 ): GmPlayer[] {
   return players.map((p) => {
     const age = seasonAgeBump ? p.age + 1 : p.age;
-    const growthWindow = age <= 25;
-    const decline = age >= 32;
-    const pot = p.ratings.potential;
-    const delta = growthWindow
-      ? pot * 0.08
-      : decline
-        ? -0.15 - Math.max(0, age - 32) * 0.05
-        : pot * 0.02;
-    const impact = clamp(p.ratings.impact + delta, -4, 10);
+    const coach = p.teamId ? coachByTeam?.[p.teamId] : 0;
+    const grown = progressSheet(
+      { ...p, age },
+      { coach, minutes: p.minutesPreference, pace: "summer", playoffGames: playoffGames?.[p.id] ?? 0 }
+    );
     return {
-      ...p,
+      ...grown,
       age,
-      ratings: {
-        ...p.ratings,
-        impact,
-        offense: clamp(p.ratings.offense + delta * 0.6, -5, 12),
-        defense: clamp(p.ratings.defense + delta * 0.5, -5, 10),
-        potential: clamp(pot - (growthWindow ? 0.4 : 0.1), 0, 10),
-      },
-      contract: p.contract
-        ? {
-            ...p.contract,
-            yearsRemaining: Math.max(0, p.contract.yearsRemaining - 1),
-          }
-        : null,
+      contract: p.contract ? advanceContractYear(p.contract) : null,
     };
   });
 }
 
-export function aiSelectProspect(state: GmLeagueState, teamId: string): string | null {
-  const team = state.teams.find((t) => t.id === teamId);
-  const need = team
-    ? (Object.entries(team.starters).find(([, id]) => !id)?.[0] as
-        | string
-        | undefined)
-    : undefined;
-  const board = state.draftPool
-    .map((id) => state.players.find((p) => p.id === id))
-    .filter((p): p is GmPlayer => Boolean(p))
-    .sort((a, b) => {
-      const posBonusA = need && a.position === need ? 1.5 : 0;
-      const posBonusB = need && b.position === need ? 1.5 : 0;
-      return (
-        b.ratings.potential +
-        b.ratings.impact +
-        posBonusB -
-        (a.ratings.potential + a.ratings.impact + posBonusA)
-      );
-    });
-  return board[0]?.id ?? null;
+function formBump(player: GmPlayer): number {
+  const line = player.seasonLine;
+  const overall = player.sheet?.overall;
+  if (!line || line.gp < 12 || overall == null) return 0;
+  const production = (line.pts + line.reb * 0.7 + line.ast) / line.gp;
+  const expected = Math.max(4, (overall - 62) * 0.55);
+  return clamp((production - expected) / 40, -0.04, 0.06);
 }
+
+function developmentNews(
+  before: GmPlayer[],
+  after: GmPlayer[],
+  day: number,
+  season: number,
+  headline: string
+): GmNewsItem | null {
+  const moves = after.flatMap((player) => {
+    const prior = before.find((entry) => entry.id === player.id);
+    if (!prior?.sheet || !player.sheet || !player.teamId) return [];
+    const diff = player.sheet.overall - prior.sheet.overall;
+    if (diff === 0) return [];
+    return [{ name: player.name, diff }];
+  });
+  if (!moves.length) return null;
+  const up = moves
+    .filter((row) => row.diff > 0)
+    .sort((a, b) => b.diff - a.diff)
+    .slice(0, 3)
+    .map((row) => `${row.name} up ${row.diff}`);
+  const down = moves
+    .filter((row) => row.diff < 0)
+    .sort((a, b) => a.diff - b.diff)
+    .slice(0, 2)
+    .map((row) => `${row.name} down ${Math.abs(row.diff)}`);
+  const body = [...up, ...down].join(". ");
+  if (!body) return null;
+  return {
+    id: uid("news"),
+    day,
+    season,
+    headline,
+    body: `${body}.`,
+    tone: up.length >= down.length ? "good" : "info",
+  };
+}
+
+function growOnce(league: GmLeagueState, pace: "season"): { players: GmPlayer[]; note: GmNewsItem | null } {
+  const coachByTeam = Object.fromEntries(
+    league.teams.map((team) => [team.id, coachEffect(team).development])
+  );
+  const players = league.players.map((player) => {
+    if (!player.teamId || league.draftPool.includes(player.id)) return player;
+    const minutes =
+      player.seasonLine && player.seasonLine.gp >= 8
+        ? player.seasonLine.min / player.seasonLine.gp
+        : player.minutesPreference;
+    return progressSheet(player, {
+      pace,
+      coach: coachByTeam[player.teamId] ?? 0,
+      minutes,
+      form: formBump(player),
+    });
+  });
+  return {
+    players,
+    note: developmentNews(league.players, players, league.day, league.season, "In-season development"),
+  };
+}
+
+/**
+ * Two checks a year, January and the end of the regular season.
+ * Each one is a fraction of the summer jump. Safe to call every day.
+ */
+export function maybeGrowInSeason(league: GmLeagueState): GmLeagueState {
+  if (league.phase !== "regular") return league;
+  const playedDates = league.schedule
+    .filter((game) => game.played && game.gameDate && game.exhibition !== "allstar")
+    .map((game) => game.gameDate!)
+    .sort();
+  const latest = playedDates[playedDates.length - 1];
+  const marks =
+    league.devMarks?.season === league.season
+      ? league.devMarks
+      : { season: league.season, january: false, finale: false };
+  let players = league.players;
+  const notes: GmNewsItem[] = [];
+  let january = marks.january;
+  let finale = marks.finale;
+  if (!january && latest && latest >= `${league.season}-01-01`) {
+    const grown = growOnce({ ...league, players }, "season");
+    players = grown.players;
+    if (grown.note) notes.push({ ...grown.note, headline: "January check-in" });
+    january = true;
+  }
+  if (!finale && regularSeasonComplete(league.schedule)) {
+    const grown = growOnce({ ...league, players }, "season");
+    players = grown.players;
+    if (grown.note) notes.push({ ...grown.note, headline: "End of the regular season" });
+    finale = true;
+  }
+  if (january === marks.january && finale === marks.finale && players === league.players) return league;
+  return {
+    ...league,
+    players,
+    devMarks: { season: league.season, january, finale },
+    news: [...notes, ...league.news].slice(0, 50),
+  };
+}
+
+export function playoffGamesByPlayer(league: GmLeagueState): Record<string, number> {
+  const counts: Record<string, number> = {};
+  for (const box of league.boxScores) {
+    if (!box.postseason) continue;
+    for (const line of box.players) {
+      if (line.minutes <= 0) continue;
+      counts[line.playerId] = (counts[line.playerId] ?? 0) + 1;
+    }
+  }
+  return counts;
+}
+
+export function offseasonJumpNote(before: GmPlayer[], after: GmPlayer[], league: GmLeagueState): GmNewsItem | null {
+  return developmentNews(before, after, league.day, league.season, "Offseason jumps");
+}
+
+export { aiSelectProspect } from "@/gm/engine/draft-room";
 
 /** Run AI picks until the user's turn (or draft exhausted). */
 export function advanceDraftPastAi(state: GmLeagueState): GmLeagueState {
@@ -119,7 +214,7 @@ export function advanceDraftPastAi(state: GmLeagueState): GmLeagueState {
     guard += 1;
     const idx = next.draftPickIndex ?? 0;
     if (idx >= order.length * 2) {
-      return { ...next, phase: "offseason" };
+      return { ...next, phase: "draft" };
     }
     const teamId = order[idx % order.length];
     if (!teamId) break;
@@ -132,7 +227,7 @@ export function advanceDraftPastAi(state: GmLeagueState): GmLeagueState {
   }
   return {
     ...next,
-    phase: next.draftPool.length === 0 ? "offseason" : next.phase,
+    phase: "draft",
   };
 }
 
@@ -151,7 +246,7 @@ export function finishDraftWithAi(state: GmLeagueState): GmLeagueState {
     if (!pickId) break;
     next = runDraftPick(next, teamId, pickId);
   }
-  return { ...next, phase: "offseason" };
+  return { ...next, phase: "draft" };
 }
 
 export function runDraftPick(
@@ -223,12 +318,15 @@ export function runDraftPick(
   const revealBody = codename
     ? `Pick #${pickNum}: the board knew them as ${codename}. Identity confirmed: ${trueName} is on the roster.`
     : `Pick #${pickNum} is officially on the roster.`;
+  const grade =
+    teamId === state.userTeamId ? ` ${pickGrade(state, playerId)}` : "";
 
   return {
     ...state,
     players: fixed,
     teams,
     draftPool: state.draftPool.filter((id) => id !== playerId),
+    userDraftBoard: state.userDraftBoard?.filter((id) => id !== playerId),
     draftPickIndex: (state.draftPickIndex ?? 0) + 1,
     news: [
       {
@@ -236,7 +334,7 @@ export function runDraftPick(
         day: state.day,
         season: state.season,
         headline: revealHeadline,
-        body: revealBody,
+        body: revealBody + grade,
         tone: "good" as const,
       },
       ...state.news,

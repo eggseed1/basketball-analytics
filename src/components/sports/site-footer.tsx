@@ -12,6 +12,9 @@ export function SiteFooter() {
           <TransitionLink href="/about" className="hover:text-foreground hover:underline">
             About
           </TransitionLink>
+          <TransitionLink href="/about#suggestions" className="hover:text-foreground hover:underline">
+            Suggestions
+          </TransitionLink>
           <TransitionLink href="/sources" className="hover:text-foreground hover:underline">
             Sources
           </TransitionLink>

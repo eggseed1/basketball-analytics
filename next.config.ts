@@ -53,6 +53,16 @@ const nextConfig: NextConfig = {
         destination: "/explore/players/hot-cold",
         permanent: true,
       },
+      { source: "/players", destination: "/explore/players", permanent: false },
+      { source: "/teams", destination: "/standings", permanent: false },
+      { source: "/games", destination: "/scores", permanent: false },
+      { source: "/transactions", destination: "/offseason", permanent: false },
+    ];
+  },
+  async rewrites() {
+    return [
+      { source: "/apple-touch-icon.png", destination: "/apple-icon" },
+      { source: "/apple-touch-icon-precomposed.png", destination: "/apple-icon" },
     ];
   },
   images: {
@@ -82,6 +92,11 @@ const nextConfig: NextConfig = {
   // Historical BDL season JSON lives under data/cache (gitignored locally but
   // required at runtime for Explore Games / Game Lab when present).
   // Scope tracing to game routes only — never attach the full tree to every page.
+  outputFileTracingExcludes: {
+    // Served as a static asset. Tracing it back into the server function puts
+    // the book into the Worker upload.
+    "/*": ["./public/runtime/record-book.json"],
+  },
   outputFileTracingIncludes: {
     // Runtime data is intentionally loaded from disk instead of bundled into
     // client/server chunks. Next cannot statically trace dynamic path.join()

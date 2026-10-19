@@ -460,10 +460,12 @@ export async function getFilteredGames(
     if (archive.games.length > 0) {
       return applyGameFilters(archive.games, filters);
     }
+    // A missing pre-2000 cache must not start a multi-page remote crawl.
+    // On the worker that crawl exceeds the resource limit and the page 503s.
     if (
       start != null &&
       start < 2000 &&
-      !allowRemoteHistoricalCrawl
+      (!allowRemoteHistoricalCrawl || preferBundledProductDataOnEdge())
     ) {
       return [];
     }

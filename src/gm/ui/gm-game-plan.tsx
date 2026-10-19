@@ -5,18 +5,21 @@ import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
 
 import { TeamLogo } from "@/components/brand/team-logo";
+import { ClubMark } from "@/gm/ui/club-mark";
 import { Button } from "@/components/ui/button";
 import { useGmStore } from "@/gm/state/gm-store";
-import { GmSeasonCalendar } from "@/gm/ui/gm-season-calendar";
 import {
   isLineupReady,
   nextUserGame,
   userGamesPlayed,
   userGamesRemaining,
+  userTeam,
 } from "@/gm/lib/selectors";
-import { formatTipDateLong } from "@/gm/seed/real-schedule";
+import { schemeHeadline } from "@/gm/engine/coaching";
+import { formatTipDate, formatTipDateLong } from "@/gm/seed/real-schedule";
+import { gapBefore, tradeDeadlineDate } from "@/gm/engine/schedule";
 import { cn } from "@/lib/utils";
-import type { GmLeagueState, GmScheduleGame } from "@/gm/types";
+import type { GmDigestItem, GmLeagueState, GmScheduleGame } from "@/gm/types";
 
 type StepStatus = "done" | "current" | "upcoming";
 
@@ -68,6 +71,36 @@ function StepRow({
   );
 }
 
+function Digest({ digest }: { digest?: GmDigestItem[] }) {
+  if (!digest?.length) return null;
+  return (
+    <div className="flex flex-col gap-2 border-t border-border pt-3">
+      <p className="text-[13px] font-semibold">Since you last skipped</p>
+      <ul className="flex flex-col gap-2">
+        {digest.map((item) => (
+          <li key={item.headline} className="text-[13px]">
+            <p className="font-semibold">{item.headline}</p>
+            <p className="text-muted-foreground">
+              {item.detail}
+              {item.gameId ? (
+                <>
+                  {" "}
+                  <Link
+                    href={`/gm/game/${item.gameId}`}
+                    className="font-semibold text-foreground underline-offset-4 hover:underline"
+                  >
+                    Box score
+                  </Link>
+                </>
+              ) : null}
+            </p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 function MatchupLine({
   game,
   userTeamId,
@@ -81,18 +114,27 @@ function MatchupLine({
     <span className="inline-flex items-center gap-1.5 font-semibold text-foreground">
       {home ? "vs" : "@"}
       <TeamLogo teamKey={opp} size="xs" />
-      {opp.toUpperCase()}
+      <ClubMark teamId={opp} label={opp.toUpperCase()} />
     </span>
   );
 }
 
 export function GmGamePlan({ league }: { league: GmLeagueState }) {
   const router = useRouter();
-  const simulateNextGame = useGmStore((s) => s.simulateNextGame);
   const simPlayoffDay = useGmStore((s) => s.simPlayoffDay);
+  const startAutoSim = useGmStore((s) => s.startAutoSim);
+  const stopAutoSim = useGmStore((s) => s.stopAutoSim);
+  const simRun = useGmStore((s) => s.simRun);
+  const finishPlayoffRound = useGmStore((s) => s.finishPlayoffRound);
+  const simRestOfPlayoffs = useGmStore((s) => s.simRestOfPlayoffs);
+  const simPlayInNight = useGmStore((s) => s.simPlayInNight);
+  const finishPlayIn = useGmStore((s) => s.finishPlayIn);
+  const openFreeAgency = useGmStore((s) => s.openFreeAgency);
   const runOffseason = useGmStore((s) => s.runOffseason);
+  const simulateNextGame = useGmStore((s) => s.simulateNextGame);
 
   const lineupReady = isLineupReady(league);
+  const scheme = schemeHeadline(userTeam(league).coaching);
   const next = nextUserGame(league);
   const played = userGamesPlayed(league);
   const remaining = userGamesRemaining(league);
@@ -100,6 +142,50 @@ export function GmGamePlan({ league }: { league: GmLeagueState }) {
     (b) =>
       b.homeTeamId === league.userTeamId || b.awayTeamId === league.userTeamId
   );
+
+  if (league.phase === "play_in" && league.playIn) {
+    const lines = league.playIn.conferences.flatMap((conf) => {
+      const bits = [
+        `${conf.conf}: ${conf.sevenId.toUpperCase()} vs ${conf.eightId.toUpperCase()}`,
+        `${conf.nineId.toUpperCase()} vs ${conf.tenId.toUpperCase()}`,
+      ];
+      if (conf.sevenSeedId) bits[0] = `${conf.sevenSeedId.toUpperCase()} took the 7 seed`;
+      if (conf.eightSeedId) bits.push(`${conf.eightSeedId.toUpperCase()} took the 8 seed`);
+      return bits;
+    });
+    return (
+      <section className="sports-card flex flex-col gap-4 p-4">
+        <header>
+          <h2 className="text-[17px] font-bold tracking-tight">Your plan</h2>
+          <p className="text-[13px] text-muted-foreground">
+            Play-in. The 7 seed hosts the 8. The 9 seed hosts the 10. The 7-8
+            loser then hosts the 9-10 winner for the last spot.
+          </p>
+        </header>
+        <ul className="text-[13px] text-muted-foreground">
+          {lines.map((line) => (
+            <li key={line}>{line}</li>
+          ))}
+        </ul>
+        <div className="flex flex-wrap gap-2">
+          <Button onClick={() => simPlayInNight()}>Tonight</Button>
+          <Button variant="outline" onClick={() => finishPlayIn()}>
+            Finish the play-in
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => {
+              finishPlayIn();
+              simRestOfPlayoffs();
+            }}
+          >
+            Sim to the draft
+          </Button>
+        </div>
+        <Digest digest={league.digest} />
+      </section>
+    );
+  }
 
   if (league.phase === "playoffs") {
     return (
@@ -117,12 +203,19 @@ export function GmGamePlan({ league }: { league: GmLeagueState }) {
             detail="Simulates today’s series tips, then come back for the next day."
             status="current"
             action={
-              <Button onClick={() => simPlayoffDay()}>
-                Play next playoff day
-              </Button>
+              <div className="flex flex-wrap gap-2">
+                <Button onClick={() => simPlayoffDay()}>Tonight</Button>
+                <Button variant="outline" onClick={() => finishPlayoffRound()}>
+                  Finish the round
+                </Button>
+                <Button variant="outline" onClick={() => simRestOfPlayoffs()}>
+                  Sim to the draft
+                </Button>
+              </div>
             }
           />
         </ol>
+        <Digest digest={league.digest} />
       </section>
     );
   }
@@ -133,15 +226,15 @@ export function GmGamePlan({ league }: { league: GmLeagueState }) {
         <header>
           <h2 className="text-[17px] font-bold tracking-tight">Your plan</h2>
           <p className="text-[13px] text-muted-foreground">
-            Draft is open. Scout the codenames, take your swing, then start the
-            next season.
+            Draft is open. Scout the codenames, take your swing, then the
+            market opens.
           </p>
         </header>
         <ol className="flex flex-col gap-1">
           <StepRow
             n={1}
-            title="Scout & make your pick"
-            detail="Codenames only until the selection, then the identity drops."
+            title="Scout and make your pick"
+            detail="Codenames stay up until the selection. The name drops on the pick."
             status="current"
             action={
               <Button onClick={() => router.push("/gm/draft")}>
@@ -151,8 +244,46 @@ export function GmGamePlan({ league }: { league: GmLeagueState }) {
           />
           <StepRow
             n={2}
+            title="Open free agency"
+            detail="Finishes the rest of the board with CPU picks, then expires deals."
+            status="upcoming"
+            action={
+              <Button variant="outline" onClick={() => openFreeAgency()}>
+                Open free agency
+              </Button>
+            }
+            />
+        </ol>
+        <Digest digest={league.digest} />
+      </section>
+    );
+  }
+
+  if (league.phase === "free_agency") {
+    return (
+      <section className="sports-card flex flex-col gap-4 p-4">
+        <header>
+          <h2 className="text-[17px] font-bold tracking-tight">Your plan</h2>
+          <p className="text-[13px] text-muted-foreground">
+            Free agency. Sign who you can under the cap, then tip the next year.
+          </p>
+        </header>
+        <ol className="flex flex-col gap-1">
+          <StepRow
+            n={1}
+            title="Work the market"
+            detail={`${league.freeAgents.length} players are unsigned. Room, Bird rights, and the mid-level are what let a deal through.`}
+            status="current"
+            action={
+              <Button onClick={() => router.push("/gm/free-agency")}>
+                Free agency
+              </Button>
+            }
+          />
+          <StepRow
+            n={2}
             title="Start next season"
-            detail="Finishes remaining AI picks and tips off the new year."
+            detail="Other clubs finish their signings. A new schedule and the next cap year load."
             status="upcoming"
             action={
               <Button variant="outline" onClick={() => runOffseason()}>
@@ -161,6 +292,7 @@ export function GmGamePlan({ league }: { league: GmLeagueState }) {
             }
           />
         </ol>
+        <Digest digest={league.digest} />
       </section>
     );
   }
@@ -182,8 +314,8 @@ export function GmGamePlan({ league }: { league: GmLeagueState }) {
               <Button onClick={() => router.push("/gm/offseason")}>
                 Offseason Hub
               </Button>
-              <Button variant="outline" onClick={() => runOffseason()}>
-                Start next season
+              <Button variant="outline" onClick={() => openFreeAgency()}>
+                Open free agency
               </Button>
             </div>
           }
@@ -201,6 +333,13 @@ export function GmGamePlan({ league }: { league: GmLeagueState }) {
       : "done";
   const step3: StepStatus =
     lastBox && lineupReady ? (next ? "upcoming" : "done") : "upcoming";
+  const deadlineDate = tradeDeadlineDate(league.schedule);
+  const deadlineLabel = deadlineDate
+    ? `Walk to ${formatTipDate(deadlineDate).replace(
+        /^([A-Z]{3})/,
+        (month) => month[0] + month.slice(1).toLowerCase()
+      )}`
+    : "Walk to the deadline";
 
   return (
     <div className="flex flex-col gap-4">
@@ -208,34 +347,34 @@ export function GmGamePlan({ league }: { league: GmLeagueState }) {
         <header className="flex flex-col gap-1">
           <h2 className="text-[17px] font-bold tracking-tight">Your plan</h2>
           <p className="text-[13px] text-muted-foreground">
-            Follow these steps for each game. You’ve played{" "}
+            Play the game in front of you, or skip ahead. You’ve played{" "}
             <span className="font-semibold text-foreground">{played}</span> ·{" "}
             <span className="font-semibold text-foreground">{remaining}</span>{" "}
-            left.
+            left. Lineups, trades, and the cap stay put either way.
           </p>
         </header>
 
         <ol className="flex flex-col gap-1">
           <StepRow
             n={1}
-            title="Set your lineup"
+            title="Set the plan"
             detail={
               lineupReady
-                ? "Five starters are locked in."
+                ? scheme ?? "Starters are in. Coaching sets minutes and the system."
                 : "Choose starters before tip-off."
             }
             status={step1}
             action={
               step1 === "current" ? (
                 <Button onClick={() => router.push("/gm/lineup")}>
-                  Set lineup
+                  Set coaching
                 </Button>
               ) : (
                 <Link
                   href="/gm/lineup"
                   className="text-[13px] font-semibold underline-offset-4 hover:underline"
                 >
-                  Edit lineup
+                  Edit coaching
                 </Link>
               )
             }
@@ -254,20 +393,28 @@ export function GmGamePlan({ league }: { league: GmLeagueState }) {
             }
             detail={
               next
-                ? `${next.gameDate ? formatTipDateLong(next.gameDate) : `Day ${next.day}`} · play this tip, then open the box score.`
+                ? `${next.gameDate ? formatTipDateLong(next.gameDate) : `Day ${next.day}`}${
+                    gapBefore(league.schedule, league.userTeamId, next.gameDate) === 1
+                      ? ". Second night of a back-to-back"
+                      : ""
+                  }. Walk the shifts, make a sub, then tip off or watch it play out.`
                 : "Regular season complete for your team."
             }
             status={step2}
             action={
               next && step2 === "current" ? (
-                <Button
-                  onClick={() => {
-                    const boxId = simulateNextGame();
-                    if (boxId) router.push(`/gm/game/${boxId}`);
-                  }}
-                >
-                  Play game & see results
-                </Button>
+                <div className="flex flex-wrap gap-2">
+                  <Button onClick={() => router.push("/gm/night")}>Set tonight&apos;s shifts</Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      const boxId = simulateNextGame();
+                      if (boxId) router.push(`/gm/game/${boxId}?watch=1`);
+                    }}
+                  >
+                    Watch
+                  </Button>
+                </div>
               ) : null
             }
           />
@@ -295,14 +442,36 @@ export function GmGamePlan({ league }: { league: GmLeagueState }) {
 
           <StepRow
             n={4}
-            title="Repeat for the next tip"
-            detail="Come back here after each game and work through the calendar one by one."
-            status={remaining > 0 ? "upcoming" : "done"}
+            title="Or skip ahead"
+            detail="The calendar walks one day at a time. Stop when you want to make a move."
+            status={remaining > 0 ? "current" : "done"}
+            action={
+              remaining > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  {simRun && simRun.kind !== "day" ? (
+                    <Button onClick={() => stopAutoSim()}>Stop</Button>
+                  ) : (
+                    <>
+                      <Button variant="outline" onClick={() => startAutoSim("week")}>
+                        Next four games
+                      </Button>
+                      {!league.tradeDeadlinePassed ? (
+                        <Button variant="outline" onClick={() => startAutoSim("deadline")}>
+                          {deadlineLabel}
+                        </Button>
+                      ) : null}
+                      <Button variant="outline" onClick={() => startAutoSim("season")}>
+                        Rest of the season
+                      </Button>
+                    </>
+                  )}
+                </div>
+              ) : null
+            }
           />
         </ol>
+        <Digest digest={league.digest} />
       </section>
-
-      <GmSeasonCalendar league={league} compact />
     </div>
   );
 }

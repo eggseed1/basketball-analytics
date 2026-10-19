@@ -84,25 +84,39 @@ export function sortedStandings(
 }
 
 export function buildPlayoffBracket(
-  state: GmLeagueState
+  state: GmLeagueState,
+  seeds?: { East: string[]; West: string[] }
 ): GmPlayoffSeries[] {
-  const east = sortedStandings(state.standings, "East", state.teams).slice(0, 8);
-  const west = sortedStandings(state.standings, "West", state.teams).slice(0, 8);
+  const east =
+    seeds?.East ??
+    sortedStandings(state.standings, "East", state.teams)
+      .slice(0, 8)
+      .map((row) => row.teamId);
+  const west =
+    seeds?.West ??
+    sortedStandings(state.standings, "West", state.teams)
+      .slice(0, 8)
+      .map((row) => row.teamId);
   const series: GmPlayoffSeries[] = [];
-  const pair = (conf: "East" | "West", rows: GmStandingsRow[]) => {
-    const seeds = [0, 7, 3, 4, 2, 5, 1, 6];
+  const pair = (conf: "East" | "West", rows: string[]) => {
+    const order = [0, 7, 3, 4, 2, 5, 1, 6];
     for (let i = 0; i < 4; i++) {
-      const a = rows[seeds[i * 2]!]!;
-      const b = rows[seeds[i * 2 + 1]!]!;
+      const high = order[i * 2]!;
+      const low = order[i * 2 + 1]!;
+      const a = rows[high]!;
+      const b = rows[low]!;
       series.push({
         id: uid("series"),
         round: 1,
         conf,
-        teamAId: a.teamId,
-        teamBId: b.teamId,
+        teamAId: a,
+        teamBId: b,
+        seedA: high + 1,
+        seedB: low + 1,
         winsA: 0,
         winsB: 0,
         done: false,
+        games: [],
       });
     }
   };
@@ -111,21 +125,52 @@ export function buildPlayoffBracket(
   return series;
 }
 
+/**
+ * Higher seed hosts games 1, 2, 5, and 7. The other side hosts 3, 4, and 6.
+ * Team A is the higher seed when seedA is the smaller number.
+ */
+export function seriesHosts(series: GmPlayoffSeries): { homeTeamId: string; awayTeamId: string } {
+  const played = series.games?.length ?? series.winsA + series.winsB;
+  const aIsHigher = (series.seedA ?? 1) <= (series.seedB ?? 8);
+  const higher = aIsHigher ? series.teamAId : series.teamBId;
+  const lower = aIsHigher ? series.teamBId : series.teamAId;
+  const higherHosts = played === 0 || played === 1 || played === 4 || played === 6;
+  return higherHosts
+    ? { homeTeamId: higher, awayTeamId: lower }
+    : { homeTeamId: lower, awayTeamId: higher };
+}
+
+/** Better regular-season record. Wins, then point differential. */
+export function betterRecord(state: GmLeagueState, a: string, b: string): string {
+  const left = state.standings[a];
+  const right = state.standings[b];
+  const winsA = left?.wins ?? 0;
+  const winsB = right?.wins ?? 0;
+  if (winsA !== winsB) return winsA > winsB ? a : b;
+  const diffA = (left?.pointsFor ?? 0) - (left?.pointsAgainst ?? 0);
+  const diffB = (right?.pointsFor ?? 0) - (right?.pointsAgainst ?? 0);
+  if (diffA !== diffB) return diffA > diffB ? a : b;
+  return a;
+}
+
 /** Lottery + reverse playoff finish → full first-round draft order. */
-export function computeLotteryOrder(state: GmLeagueState): string[] {
-  const eastTop = new Set(
-    sortedStandings(state.standings, "East", state.teams)
-      .slice(0, 8)
-      .map((x) => x.teamId)
-  );
-  const westTop = new Set(
-    sortedStandings(state.standings, "West", state.teams)
-      .slice(0, 8)
-      .map((x) => x.teamId)
-  );
+export function computeLotteryOrder(
+  state: GmLeagueState,
+  playoffIds?: Set<string>
+): string[] {
+  const inPlayoffs =
+    playoffIds ??
+    new Set([
+      ...sortedStandings(state.standings, "East", state.teams)
+        .slice(0, 8)
+        .map((x) => x.teamId),
+      ...sortedStandings(state.standings, "West", state.teams)
+        .slice(0, 8)
+        .map((x) => x.teamId),
+    ]);
   const byRecordAsc = sortedStandings(state.standings).reverse(); // worst first
   const lottery = byRecordAsc
-    .filter((r) => !eastTop.has(r.teamId) && !westTop.has(r.teamId))
+    .filter((r) => !inPlayoffs.has(r.teamId))
     .map((r) => r.teamId);
   // Mild lottery shuffle among the bottom 4
   const shuffled = [...lottery];
@@ -134,7 +179,7 @@ export function computeLotteryOrder(state: GmLeagueState): string[] {
     [shuffled[i], shuffled[j]] = [shuffled[j]!, shuffled[i]!];
   }
   const playoff = byRecordAsc
-    .filter((r) => eastTop.has(r.teamId) || westTop.has(r.teamId))
+    .filter((r) => inPlayoffs.has(r.teamId))
     .map((r) => r.teamId);
   return [...shuffled, ...playoff];
 }

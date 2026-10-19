@@ -7,26 +7,27 @@ import { cn } from "@/lib/utils";
 
 const LINKS = [
   { href: "/gm", label: "Home" },
-  { href: "/gm/offseason", label: "Offseason" },
   { href: "/gm/roster", label: "Roster" },
-  { href: "/gm/lineup", label: "Lineup" },
-  { href: "/gm/trade", label: "Trade" },
-  { href: "/gm/cap", label: "Cap" },
+  { href: "/gm/lineup", label: "Coaching" },
+  { href: "/gm/players", label: "Players" },
+  { href: "/gm/leaders", label: "Leaders" },
+  { href: "/gm/teams", label: "Teams" },
   { href: "/gm/standings", label: "Standings" },
   { href: "/gm/schedule", label: "Schedule" },
-  { href: "/gm/draft", label: "Draft" },
+  { href: "/gm/trade", label: "Trade" },
+  { href: "/gm/transactions", label: "Transactions" },
+  { href: "/gm/cap", label: "Salary" },
   { href: "/gm/free-agency", label: "FA" },
+  { href: "/gm/draft", label: "Draft" },
   { href: "/gm/medical", label: "Medical" },
   { href: "/gm/staff", label: "Staff" },
+  { href: "/gm/offseason", label: "Offseason" },
 ];
 
 export function GmNav() {
   const pathname = usePathname();
   return (
-    <nav
-      aria-label="Front office"
-      className="flex gap-1 overflow-x-auto pb-1"
-    >
+    <nav aria-label="Front office" className="gm-nav">
       {LINKS.map((link) => {
         const active =
           link.href === "/gm"
@@ -36,12 +37,7 @@ export function GmNav() {
           <Link
             key={link.href}
             href={link.href}
-            className={cn(
-              "shrink-0 rounded-full px-3 py-1.5 text-[13px] font-semibold transition-colors",
-              active
-                ? "bg-foreground text-background"
-                : "bg-secondary text-muted-foreground hover:text-foreground"
-            )}
+            className={cn("gm-nav__link", active && "is-active")}
           >
             {link.label}
           </Link>

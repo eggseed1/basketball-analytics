@@ -1,5 +1,6 @@
 import type { GmLeagueState, GmPlayer, GmTeam } from "@/gm/types";
 import { capStatus } from "@/gm/engine/cap";
+import { overallOf } from "@/gm/engine/lineup";
 import { sortedStandings } from "@/gm/engine/standings";
 
 export function userTeam(league: GmLeagueState): GmTeam {
@@ -9,7 +10,7 @@ export function userTeam(league: GmLeagueState): GmTeam {
 export function userPlayers(league: GmLeagueState): GmPlayer[] {
   return league.players
     .filter((p) => p.teamId === league.userTeamId)
-    .sort((a, b) => b.ratings.impact - a.ratings.impact);
+    .sort((a, b) => overallOf(b) - overallOf(a) || a.name.localeCompare(b.name));
 }
 
 export function teamById(league: GmLeagueState, id: string) {
@@ -21,7 +22,12 @@ export function playerById(league: GmLeagueState, id: string) {
 }
 
 export function userCap(league: GmLeagueState) {
-  return capStatus(userTeam(league), league.players, league.settings);
+  return capStatus(
+    userTeam(league),
+    league.players,
+    league.settings,
+    league.season
+  );
 }
 
 export function userRecord(league: GmLeagueState) {
@@ -87,10 +93,19 @@ export function isLineupReady(league: GmLeagueState): boolean {
   );
 }
 
-export function displayImpact(p: GmPlayer): string {
-  const v = p.scouted.impact ?? p.ratings.impact;
-  if (p.scouted.impact == null) return "?";
-  return (v >= 0 ? "+" : "") + v.toFixed(1);
+/** The rating the league shows. Rostered players use the attribute overall. */
+export function displayOverall(player: GmPlayer): string {
+  return String(overallOf(player));
+}
+
+/**
+ * Draft board overall. Built from the scouted read so the true sheet stays hidden.
+ * Blank when the staff has no read yet.
+ */
+export function scoutedOverall(player: GmPlayer): string {
+  if (player.scouted.impact == null) return "?";
+  const overall = Math.round(76 + player.scouted.impact * 2.35);
+  return String(Math.max(50, Math.min(99, overall)));
 }
 
 /** Public name: codename while identity is sealed, true name after reveal. */

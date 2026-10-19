@@ -31,12 +31,42 @@ export function autoEligible(state: LifeState, year: number): boolean {
   return a >= 22 && a <= 23 && !state.achievements.drafted && state.placement.node !== "nba";
 }
 
+/**
+ * How much a pre-draft résumé moves the board (model).
+ * A first national award is a lottery argument. Repeats confirm it.
+ * The same season's lesser honors are already inside the big one.
+ */
+export function accoladeDraftValue(state: LifeState): number {
+  let extra = 0;
+  let nationals = 0;
+  for (const season of state.seasons) {
+    if (season.node === "nba" || season.gp < 8) continue;
+    const awards = new Set(season.awards ?? []);
+    const college = season.node === "university" && season.leagueId === "ncaa";
+    const scale = college ? 1 : clamp(season.strength / 72, 0.35, 1);
+    if (awards.has("National Player of the Year")) {
+      nationals += 1;
+      continue;
+    }
+    if (awards.has("League MVP")) {
+      extra += 4.5 * scale;
+      continue;
+    }
+    if (awards.has("Conference Player of the Year")) extra += 2.4;
+    else if (awards.has("All-League First Team")) extra += 1.8 * scale;
+    else if (awards.has("All-League Second Team")) extra += 0.9 * scale;
+    if (college && awards.has("All-Defensive Team") && !awards.has("Conference Player of the Year")) extra += 0.7;
+  }
+  const nationalPts = nationals === 0 ? 0 : 7 + (nationals - 1) * 3.5;
+  return Math.round(Math.min(18, nationalPts + extra) * 10) / 10;
+}
+
 /** How NBA teams value the player on draft night (model). */
 export function draftValue(state: LifeState): number {
   const proj = projectedCeiling(state).mid;
   const lvl = currentLevel(state);
   const age = state.ageMonths / 12;
-  return 0.55 * proj + 0.35 * lvl + 0.07 * state.exposure + clamp(21 - age, -3, 3) * 0.8;
+  return 0.55 * proj + 0.35 * lvl + 0.07 * state.exposure + clamp(21 - age, -3, 3) * 0.8 + accoladeDraftValue(state);
 }
 
 export interface Prospect {
@@ -258,13 +288,15 @@ export function rookieSalary(pick: number): number {
   return Math.round((10_500_000 - (pick - 1) * 280_000) / 10_000) * 10_000;
 }
 
-/** Chance of an NBA call-up this month for a G League player (model). */
+/** Chance of an NBA call-up this month for a G League player (model). A look is a 10-day, not a roster spot. */
 export function callUpChance(state: LifeState): number {
   const lvl = performanceLevel(state);
-  const twoWay = state.placement.contract?.twoWay ? 1.6 : 1;
+  const twoWay = state.placement.contract?.twoWay ? 1.5 : 1;
   const { month } = calendar(state);
   if (![11, 12, 1, 2, 3, 4].includes(month)) return 0;
-  return clamp(((lvl - 66) / 30) * twoWay * (0.5 + state.exposure / 100), 0, 0.3);
+  const scouted = typeof state.flags.gScouted === "number" && state.ageMonths - state.flags.gScouted < 5 ? 0.05 : 0;
+  const climbed = typeof state.flags.gCallups === "number" ? Math.min(2, state.flags.gCallups) * 0.03 : 0;
+  return clamp(((lvl - 60) / 32) * twoWay * (0.4 + state.exposure / 160) + scouted + climbed, 0, 0.28);
 }
 
 export function nbaSeasonMonth(state: LifeState): boolean {

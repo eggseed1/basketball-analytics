@@ -4,6 +4,8 @@ import Link from "next/link";
 import { GmShell } from "@/gm/ui/gm-shell";
 import { MyLeagueStatusCard } from "@/gm/ui/myleague-status-card";
 import { GmGamePlan } from "@/gm/ui/gm-game-plan";
+import { GmSeasonCalendar } from "@/gm/ui/gm-season-calendar";
+import { GmAwardBoard } from "@/gm/ui/gm-awards";
 import { useGmStore } from "@/gm/state/gm-store";
 import { userCap, userRecord } from "@/gm/lib/selectors";
 import { formatNumber } from "@/lib/format";
@@ -26,17 +28,25 @@ function CommandCenter() {
 
   return (
     <div className="flex flex-col gap-4">
+      <GmSeasonCalendar league={league} />
+      <GmAwardBoard league={league} />
       <section className="grid gap-3 sm:grid-cols-2">
         <div className="sports-card p-4">
           <p className="text-[14px] font-semibold text-muted-foreground">
-            Record
+            Cap room
           </p>
           <p className="score-num mt-1 text-[2.5rem]">
-            {record?.wins ?? 0}-{record?.losses ?? 0}
+            ${formatNumber(cap.capRoomM, 1)}M
           </p>
           <p className="text-[14px] text-muted-foreground">
-            {league.season - 1}-{String(league.season).slice(-2)} · day{" "}
-            {league.day}
+            {record?.wins ?? 0}-{record?.losses ?? 0} on the year
+            {cap.overSecondApron
+              ? " · second apron"
+              : cap.overFirstApron
+                ? " · first apron"
+                : cap.overTax
+                  ? " · tax"
+                  : ""}
           </p>
         </div>
         <div className="sports-card p-4">
@@ -93,7 +103,20 @@ function CommandCenter() {
             </li>
           ) : (
             news.map((n) => (
-              <li key={n.id} className="px-4 py-3">
+              <li
+                key={n.id}
+                className="border-l-4 px-4 py-3"
+                style={{
+                  borderLeftColor:
+                    n.tone === "good"
+                      ? "#5ee0a0"
+                      : n.tone === "bad"
+                        ? "#ff6b6b"
+                        : n.tone === "trade"
+                          ? "#8eb6ff"
+                          : "var(--team-primary)",
+                }}
+              >
                 <p className="font-semibold">{n.headline}</p>
                 <p className="text-[14px] text-muted-foreground">{n.body}</p>
               </li>

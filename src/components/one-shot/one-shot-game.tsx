@@ -21,6 +21,7 @@ import {
   randomSeed,
   recordEarnings,
   savePrefs,
+  stampCareer,
   writeSave,
   type Prefs,
 } from "@/one-shot/persistence";
@@ -124,7 +125,7 @@ export function OneShotGame() {
           "flex flex-col text-[var(--os-text)]",
           expanded
             ? "mx-auto min-h-full w-full max-w-[1700px] pb-[max(0.75rem,env(safe-area-inset-bottom))] pl-[max(0.75rem,env(safe-area-inset-left))] pr-[max(0.75rem,env(safe-area-inset-right))] pt-[max(0.75rem,env(safe-area-inset-top))] sm:px-5 sm:pb-5 sm:pt-4 md:has-[[data-os-play]]:h-full"
-            : "min-h-[calc(100dvh-var(--os-chrome,0px)-1.5rem)] scroll-mt-[calc(var(--os-chrome,0px)+0.75rem)] px-3 pb-3 sm:px-0 sm:pb-5 md:has-[[data-os-play]]:h-[calc(100dvh-var(--os-chrome,0px)-1.5rem)] md:has-[[data-os-play]]:min-h-[540px]",
+            : "min-h-[calc(100dvh-var(--os-chrome,0px)-1.5rem)] scroll-mt-[calc(var(--os-chrome,0px)+0.75rem)] px-3 pb-2 sm:px-0 md:has-[[data-os-play]]:h-[calc(100dvh-var(--os-chrome,0px))] md:has-[[data-os-play]]:min-h-[540px] md:has-[[data-os-play]]:pb-2",
         )}
       >
         {mounted ? <Game expanded={expanded} onExpand={toggleExpanded} /> : <p className="p-6 text-[13px] text-[var(--os-dim)]">Loading ONE SHOT…</p>}
@@ -223,6 +224,33 @@ function Game({ expanded, onExpand }: { expanded: boolean; onExpand: () => void 
     savePrefs(p);
   }, []);
 
+  const postAllTime = useCallback((row: EarningsRow) => {
+    void fetch("/api/one-shot/leaderboard", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(row),
+    })
+      .then((res) => res.json())
+      .then((data: { entries?: EarningsRow[]; unavailable?: boolean }) => {
+        if (Array.isArray(data.entries)) {
+          setAllTime(data.entries);
+          setAllTimeStatus("ready");
+        } else setAllTimeStatus("down");
+      })
+      .catch(() => setAllTimeStatus("down"));
+  }, []);
+
+  const stamp = useCallback(
+    (id: { runId?: string; boardId?: string }, tag: string) => {
+      const saved = stampCareer(id, tag);
+      setCareers(saved.careers);
+      setBoard(saved.board);
+      const row = saved.summary ? rowFromSummary(saved.summary) : null;
+      if (row) postAllTime(row);
+    },
+    [postAllTime],
+  );
+
   const commit = useCallback((next: LifeState) => {
     const prev = lifeRef.current;
     lifeRef.current = next;
@@ -233,26 +261,12 @@ function Game({ expanded, onExpand }: { expanded: boolean; onExpand: () => void 
       setBoard(recordEarnings(summary));
       setHighlightBoardId(summary.boardId ?? null);
       const row = rowFromSummary(summary);
-      if (row) {
-        void fetch("/api/one-shot/leaderboard", {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify(row),
-        })
-          .then((res) => res.json())
-          .then((data: { entries?: EarningsRow[]; unavailable?: boolean }) => {
-            if (Array.isArray(data.entries)) {
-              setAllTime(data.entries);
-              setAllTimeStatus("ready");
-            } else setAllTimeStatus("down");
-          })
-          .catch(() => setAllTimeStatus("down"));
-      }
+      if (row) postAllTime(row);
       clearSave();
       setSaved(null);
       setScreen("report");
     }
-  }, []);
+  }, [postAllTime]);
 
   const pendingId = life?.pendingDecision?.id ?? null;
   const auto = life?.clock.autoDecisions ?? false;
@@ -370,7 +384,11 @@ function Game({ expanded, onExpand }: { expanded: boolean; onExpand: () => void 
       const c = s.pendingDecision.choices.find((x) => x.id === id);
       if (!c || c.disabled) return;
       commit(resolveDecision(s, id));
-      requestAnimationFrame(() => rootRef.current?.querySelector<HTMLElement>("#os-scene")?.scrollIntoView({ block: "nearest" }));
+      requestAnimationFrame(() => {
+        const root = rootRef.current;
+        const next = root?.querySelector<HTMLElement>("#os-decision") ?? root?.querySelector<HTMLElement>("#os-scene");
+        next?.scrollIntoView({ block: "nearest" });
+      });
     },
     [commit],
   );
@@ -516,6 +534,8 @@ function Game({ expanded, onExpand }: { expanded: boolean; onExpand: () => void 
             board={board}
             allTime={allTime}
             allTimeStatus={allTimeStatus}
+            units={units}
+            onStamp={stamp}
             replaySeed={replaySeed}
             onClearReplay={() => setReplaySeed(null)}
             recovery={recovery?.reason ?? null}
@@ -553,6 +573,7 @@ function Game({ expanded, onExpand }: { expanded: boolean; onExpand: () => void 
           allTime={allTime}
           allTimeStatus={allTimeStatus}
           highlightBoardId={highlightBoardId}
+          onStamp={stamp}
           onNew={() => beBorn()}
           onHome={() => setScreen("start")}
         />
@@ -580,13 +601,13 @@ function Game({ expanded, onExpand }: { expanded: boolean; onExpand: () => void 
             expanded={expanded}
             onExpand={onExpand}
           />
-          <div className="flex flex-col gap-3 sm:gap-4 md:grid md:min-h-0 md:flex-1 md:grid-cols-2 md:grid-rows-1 xl:grid-cols-[26fr_47fr_27fr] xl:gap-5 2xl:gap-6">
-            <div data-os-col className="contents md:col-start-1 md:row-start-1 md:flex md:min-h-0 md:flex-col md:gap-4 md:overflow-y-auto md:overscroll-contain md:[scrollbar-color:var(--os-border)_transparent] md:[scrollbar-width:thin] xl:col-start-2 xl:gap-5">
-              <div className="order-2 md:order-none">
+          <div className="flex flex-col gap-2.5 sm:gap-3 md:grid md:min-h-0 md:flex-1 md:grid-cols-2 md:grid-rows-1 md:gap-3 xl:grid-cols-[24fr_50fr_26fr]">
+            <div data-os-col className="contents md:col-start-1 md:row-start-1 md:flex md:min-h-0 md:flex-col md:gap-3 md:overflow-y-auto md:overscroll-contain md:[scrollbar-color:var(--os-border)_transparent] md:[scrollbar-width:thin] xl:col-start-2">
+              <div className="order-1 md:order-none">
                 <LifeScene life={life} animate={running && !reducedMotion} />
               </div>
               {life.pendingDecision && !auto && !ceremony ? (
-                <div className="order-3 md:order-none">
+                <div className="order-2 md:order-none">
                   {hiddenDecision === life.pendingDecision.id ? (
                     <DecisionWaiting life={life} onOpen={() => setHiddenDecision(null)} />
                   ) : (
@@ -595,31 +616,31 @@ function Game({ expanded, onExpand }: { expanded: boolean; onExpand: () => void 
                 </div>
               ) : null}
               {draftPanelVisible(life) ? (
-                <div className="order-4 md:order-none">
+                <div className="order-5 md:order-none">
                   <DraftPanel life={life} units={units} />
                 </div>
               ) : null}
-              <div className="order-4 md:order-none">
+              <div className="order-6 md:order-none">
                 {life.after ? <AfterPanel life={life} /> : <FocusPanel life={life} onPlan={plan} />}
               </div>
               {hasNbaSeason(life) ? (
-                <div className="order-6 md:order-none">
+                <div className="order-8 md:order-none">
                   <NbaPanel life={life} />
                 </div>
               ) : null}
-              <div className="order-6 md:order-none">
+              <div className="order-9 md:order-none">
                 <StatsPanel life={life} />
               </div>
-              <div className="order-7 md:order-none">
+              <div className="order-10 md:order-none">
                 <LifeRecord life={life} />
               </div>
             </div>
-            <div className="contents md:col-start-2 md:row-start-1 md:flex md:min-h-0 md:flex-col md:gap-4 md:overflow-y-auto md:overscroll-contain md:[scrollbar-color:var(--os-border)_transparent] md:[scrollbar-width:thin] xl:contents">
-              <div className="contents md:flex md:flex-col md:gap-4 xl:col-start-1 xl:row-start-1 xl:min-h-0 xl:gap-5 xl:overflow-y-auto xl:overscroll-contain xl:[scrollbar-color:var(--os-border)_transparent] xl:[scrollbar-width:thin]">
-                <div className="order-1 md:order-none">
+            <div className="contents md:col-start-2 md:row-start-1 md:flex md:min-h-0 md:flex-col md:gap-3 md:overflow-y-auto md:overscroll-contain md:[scrollbar-color:var(--os-border)_transparent] md:[scrollbar-width:thin] xl:contents">
+              <div className="contents md:flex md:flex-col md:gap-3 xl:col-start-1 xl:row-start-1 xl:min-h-0 xl:overflow-y-auto xl:overscroll-contain xl:[scrollbar-color:var(--os-border)_transparent] xl:[scrollbar-width:thin]">
+                <div className="order-2 md:order-none">
                   <IdentityCard life={life} />
                 </div>
-                <div className="order-5 md:order-none">
+                <div className="order-3 md:order-none">
                   <StatusPanel life={life} onDeclare={onDeclare} onRetire={onRetire} />
                 </div>
                 <div className="order-11 md:order-none">
@@ -632,18 +653,18 @@ function Game({ expanded, onExpand }: { expanded: boolean; onExpand: () => void 
                   <MoneyPanel life={life} onMoney={onMoney} />
                 </div>
               </div>
-              <div className="contents md:flex md:flex-col md:gap-4 xl:col-start-3 xl:row-start-1 xl:min-h-0 xl:gap-5 xl:overflow-y-auto xl:overscroll-contain xl:[scrollbar-color:var(--os-border)_transparent] xl:[scrollbar-width:thin]">
-                <div className="order-9 md:order-none">
-                  <SameGeneration life={life} units={units} />
+              <div className="contents md:flex md:flex-col md:gap-3 xl:col-start-3 xl:row-start-1 xl:min-h-0 xl:overflow-y-auto xl:overscroll-contain xl:[scrollbar-color:var(--os-border)_transparent] xl:[scrollbar-width:thin]">
+                <div className="order-7 md:order-none">
+                  <YourRoute life={life} onSources={openSources} />
                 </div>
-                <div className="order-10 md:order-none">
+                <div className="order-11 md:order-none">
                   <CareerMap life={life} />
                 </div>
-                <div className="order-10 md:order-none">
-                  <JerseyWall life={life} />
+                <div className="order-12 md:order-none">
+                  <SameGeneration life={life} units={units} />
                 </div>
-                <div className="order-8 md:order-none">
-                  <YourRoute life={life} onSources={openSources} />
+                <div className="order-13 md:order-none">
+                  <JerseyWall life={life} />
                 </div>
                 <div className="order-14 md:order-none">
                   <ScoutingReportPanel life={life} />

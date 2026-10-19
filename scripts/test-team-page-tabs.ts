@@ -118,6 +118,7 @@ function main() {
     join(process.cwd(), "src/app/teams/[teamId]/page.tsx"),
     "utf8"
   );
+  assert.ok(page.includes("TeamPrimaryNav"));
   assert.ok(page.includes("TeamOverviewVisuals"));
   assert.ok(page.includes("TeamOpeningNight"));
   assert.ok(page.includes("TeamSeasonRecapIsland"));

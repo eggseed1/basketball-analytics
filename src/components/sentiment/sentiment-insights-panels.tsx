@@ -31,10 +31,12 @@ export function SentimentTopicHeat({
   rows,
   highlightTopic,
   origin = "headlines",
+  className,
 }: {
   rows: SentimentTopicHeatRow[];
   highlightTopic?: string;
   origin?: SentimentLaneOrigin;
+  className?: string;
 }) {
   if (!rows.length) return null;
   const shown = rows.slice(0, 8);
@@ -42,7 +44,7 @@ export function SentimentTopicHeat({
   const active = highlightTopic?.trim().toLowerCase();
 
   return (
-    <section className="sports-card flex flex-col gap-3 p-4 sm:p-5">
+    <section className={cn("sports-card flex flex-col gap-3 p-4 sm:p-5", className)}>
       <div className="flex flex-col gap-1">
         <div className="flex items-center gap-2">
           <h2 className={type.heading}>Topic heat</h2>

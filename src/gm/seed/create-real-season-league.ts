@@ -5,9 +5,21 @@
 
 import { getHistoricalGames } from "@/data/queries/historical";
 import {
+  bundledRosterSeasonRows,
+  fetchEspnLeagueRosterPlayers,
+} from "@/data/providers/nba/espn-roster-client";
+import { normalizePlayerName } from "@/data/providers/salaries/salary-store";
+import {
+  canonicalSeasonFromStartYear,
+  currentNbaStartYear,
+  startYearFromCanonicalSeason,
+} from "@/data/providers/historical/season-range";
+import { createPlaceholderSnapshot } from "@/gm/myleague/historical-universe";
+import {
   buildLeagueFromPlayerSeasons,
   defaultGmCanonicalSeason,
 } from "@/gm/seed/create-real-league";
+import { officialSchedule } from "@/gm/engine/schedule";
 import {
   buildScheduleFromRealGames,
   scheduleLooksComplete,
@@ -21,6 +33,7 @@ import {
   createSiteRealNBADataProvider,
 } from "@/gm/myleague/real-nba-provider";
 import { getCbaRules } from "@/gm/myleague/cba-registry";
+import { ESPN_PLAYER_SEASON_HORIZON_START } from "@/gm/myleague/constants";
 import type { PlayerSeason } from "@/data/types";
 
 export async function createRealSeasonLeague(options: {
@@ -33,9 +46,151 @@ export async function createRealSeasonLeague(options: {
   snapshot: HistoricalSeasonSnapshot;
   seasonCanonical: string;
 }> {
-  const seasonCanonical = options.season ?? defaultGmCanonicalSeason();
-  const seasonEnd = canonicalToSeasonEnd(seasonCanonical);
+  const requested = options.season ?? defaultGmCanonicalSeason();
   const provider = options.provider ?? createSiteRealNBADataProvider();
+  const current = canonicalSeasonFromStartYear(currentNbaStartYear());
+  if (requested === current) {
+    return buildCurrentRosterLeague(provider, requested, options);
+  }
+  let lastError: unknown = null;
+  for (
+    let start = startYearFromCanonicalSeason(requested);
+    start >= ESPN_PLAYER_SEASON_HORIZON_START;
+    start -= 1
+  ) {
+    const seasonCanonical = canonicalSeasonFromStartYear(start);
+    try {
+      return await buildOneSeason(provider, seasonCanonical, options);
+    } catch (error) {
+      lastError = error;
+      const message = error instanceof Error ? error.message : "";
+      if (!/not enough|only 0 players|found only/i.test(message)) throw error;
+      if (seasonCanonical === requested) continue;
+    }
+  }
+  throw lastError instanceof Error
+    ? lastError
+    : new Error("No real NBA season could be loaded.");
+}
+
+async function loadRosterShells(season: string): Promise<PlayerSeason[]> {
+  const bundled = bundledRosterSeasonRows(season);
+  try {
+    const live = await fetchEspnLeagueRosterPlayers(season);
+    if (live.length >= 300) return live;
+  } catch {
+    /* bundled rosters still name the current teams */
+  }
+  return bundled;
+}
+
+function indexByName(rows: PlayerSeason[]): Map<string, PlayerSeason> {
+  const map = new Map<string, PlayerSeason>();
+  for (const row of rows) {
+    const key = normalizePlayerName(row.playerName);
+    const prev = map.get(key);
+    if (!prev || row.minutes > prev.minutes) map.set(key, row);
+  }
+  return map;
+}
+
+/** Current teams from the roster list. Counting stats stay on last year's line. */
+function placeOnCurrentRoster(
+  roster: PlayerSeason[],
+  sameSeason: PlayerSeason[],
+  prior: PlayerSeason[]
+): PlayerSeason[] {
+  const currentByName = indexByName(sameSeason.filter((row) => row.gamesPlayed > 0));
+  const priorByName = indexByName(prior.filter((row) => row.gamesPlayed > 0));
+  return roster.map((slot) => {
+    const key = normalizePlayerName(slot.playerName);
+    const stats = currentByName.get(key) ?? priorByName.get(key);
+    if (!stats) return slot;
+    return {
+      ...stats,
+      playerName: slot.playerName || stats.playerName,
+      teamId: slot.teamId,
+      teamName: slot.teamName,
+      position: slot.position || stats.position,
+      age: slot.age ?? stats.age,
+    };
+  });
+}
+
+async function buildCurrentRosterLeague(
+  provider: SiteRealNBADataProvider,
+  seasonCanonical: string,
+  options: {
+    userTeamId: string;
+    season?: string;
+    seed?: number;
+  }
+): Promise<{
+  league: GmLeagueState;
+  snapshot: HistoricalSeasonSnapshot;
+  seasonCanonical: string;
+}> {
+  const seasonEnd = canonicalToSeasonEnd(seasonCanonical);
+  const priorEnd = seasonEnd - 1;
+  const [roster, sameSeason, prior] = await Promise.all([
+    loadRosterShells(seasonCanonical),
+    provider.getPlayerSeasonRows(seasonEnd).catch(() => [] as PlayerSeason[]),
+    provider.getPlayerSeasonRows(priorEnd).catch(() => [] as PlayerSeason[]),
+  ]);
+  if (roster.length < 300) {
+    throw new Error(
+      `${seasonCanonical} roster list is short (${roster.length}). Refusing to use last year's teams.`
+    );
+  }
+  const rows = placeOnCurrentRoster(roster, sameSeason, prior);
+  const schedule = officialSchedule(seasonEnd);
+  const cba = getCbaRules(seasonEnd);
+  const league = buildLeagueFromPlayerSeasons(rows, {
+    userTeamId: options.userTeamId,
+    seasonCanonical,
+    seed: options.seed,
+    salaryCapM: cba.salaryCapM || undefined,
+    luxuryTaxM: cba.luxuryTaxM || undefined,
+    firstApronM: cba.firstApronM,
+    secondApronM: cba.secondApronM,
+    maxRoster: cba.maxRoster,
+    minRoster: cba.minRoster,
+    schedule: schedule.length >= 200 ? schedule : undefined,
+    keepAssignedRoster: true,
+  });
+  league.news = [
+    {
+      ...league.news[0]!,
+      headline: `${seasonCanonical} rosters loaded`,
+      body: `${roster.length} players on this year's teams. Counting stats are from the previous season until ${seasonCanonical} games are played. ${league.news[0]?.body ?? ""}`,
+    },
+    ...league.news.slice(1),
+  ];
+  let snapshot: HistoricalSeasonSnapshot;
+  try {
+    snapshot = await ingestHistoricalSeasonSnapshot(provider, seasonEnd);
+  } catch {
+    snapshot = createPlaceholderSnapshot(seasonEnd, {
+      label: seasonCanonical,
+    });
+  }
+  return { league, snapshot, seasonCanonical };
+}
+
+async function buildOneSeason(
+  provider: SiteRealNBADataProvider,
+  seasonCanonical: string,
+  options: {
+    userTeamId: string;
+    season?: string;
+    seed?: number;
+  }
+): Promise<{
+  league: GmLeagueState;
+  snapshot: HistoricalSeasonSnapshot;
+  seasonCanonical: string;
+}> {
+  const seasonEnd = canonicalToSeasonEnd(seasonCanonical);
 
   const [snapshot, rawGames] = await Promise.all([
     ingestHistoricalSeasonSnapshot(provider, seasonEnd),

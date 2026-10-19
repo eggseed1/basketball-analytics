@@ -7,6 +7,7 @@ import { isNbaRookie, nbaSeasonTotal } from "@/one-shot/engine";
 import { CALIBRATION, closest, LEAGUE_FIRST_SEASON, LEAGUE_SEASON, POOL_GAMES, races, REAL_AWARDS, standings, type Race } from "@/one-shot/league";
 import type { LifeState, SeasonLine } from "@/one-shot/types";
 
+import { PlayoffBracket } from "./playoff-bracket";
 import { Chip, OS, Panel, Segmented, ordinal } from "./ui";
 
 type Tab = "league" | "races" | "career";
@@ -73,6 +74,7 @@ function VsLeague({ f }: { f: NonNullable<ReturnType<typeof focus>> }) {
   return (
     <div>
       <SeasonHead f={f} />
+      {f.line.playoffs?.bracket && f.line.teamName ? <PlayoffBracket po={f.line.playoffs} you={f.line.teamName} /> : null}
       <ul className="flex flex-col">
         {rows.map((r) => (
           <li key={r.metric.key} className="grid grid-cols-[92px_48px_1fr_auto] items-center gap-2 border-b border-[var(--os-border)]/50 py-1 text-[12px] last:border-b-0">
@@ -181,6 +183,7 @@ function Career({ life }: { life: LifeState }) {
   const liveYear = life.season?.node === "nba" ? life.season.nbaYear : undefined;
   const order = ["NBA champion", "Finals MVP", "NBA Most Valuable Player", "All-NBA First Team", "All-NBA Second Team", "All-NBA Third Team", "NBA All-Star", "Defensive Player of the Year", "All-Defensive First Team", "All-Defensive Second Team", "Rookie of the Year", "All-Rookie First Team", "All-Rookie Second Team", "Sixth Man of the Year", "Most Improved Player", "Scoring title", "Rebounding title", "Assists title", "Steals title", "Blocks title", "Rising Stars", "Three-Point Contest champion", "Slam Dunk Contest champion"];
   const trophies = [...counts.entries()].sort((a, b) => (order.indexOf(a[0]) + 1 || 99) - (order.indexOf(b[0]) + 1 || 99));
+  const lastBracket = [...lines].reverse().find((l) => l.playoffs?.bracket && l.teamName);
   return (
     <div className="flex flex-col gap-3">
       <dl className="grid grid-cols-2 gap-x-4 gap-y-1 font-mono text-[12px] tabular-nums sm:grid-cols-4">
@@ -192,7 +195,8 @@ function Career({ life }: { life: LifeState }) {
         <Stat k="Double-doubles" v={typeof flags.nbaDD === "number" ? flags.nbaDD : "—"} />
         <Stat k="Triple-doubles" v={typeof flags.nbaTD === "number" ? flags.nbaTD : "—"} />
         <Stat k="Playoff games" v={poGp} />
-      </dl>
+        </dl>
+      {lastBracket?.playoffs && lastBracket.teamName ? <PlayoffBracket po={lastBracket.playoffs} you={lastBracket.teamName} /> : null}
       <div>
         <h3 className="mb-1 text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--os-dim)]">Honors</h3>
         {trophies.length || monthly ? (

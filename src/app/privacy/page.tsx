@@ -28,7 +28,7 @@ export default function PrivacyPage() {
       <MotionReveal />
       <PageHeader
         title="Privacy"
-        subtitle="Updated October 10, 2026. This is a free, non-commercial NBA stats site with no accounts and no ads."
+        subtitle="Updated October 19, 2026. This is a free, non-commercial NBA stats site with no accounts and no ads."
       />
 
       <Section title="What we collect about you">
@@ -36,6 +36,12 @@ export default function PrivacyPage() {
           We don&apos;t collect personal information. The site has no sign-in, no analytics or
           tracking scripts, no ad networks and no cookies of its own. Questions you type into Ask
           DRBL go to the server to be answered and are not saved there.
+        </p>
+        <p>
+          Notes from the suggestions box on the about page are saved so we can read them. We store
+          the words, the page you sent them from, and the time. We do not ask for a name or an
+          email, and we do not attach an IP address. If you type a name or an email into the note,
+          that text is stored with it. We delete a note when we are done with it.
         </p>
         <p>Some things are saved in your browser so they survive a reload:</p>
         <ul className="flex list-disc flex-col gap-1 pl-5">

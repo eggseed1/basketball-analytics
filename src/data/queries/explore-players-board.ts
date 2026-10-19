@@ -21,6 +21,7 @@ import {
   type PlayerSeasonSortKey,
 } from "@/lib/player-season-sort";
 import { isSeasonAwaitingFirstGame } from "@/lib/nba-season-status";
+import { playerBoardAwaitingTip } from "@/lib/player-board-tip";
 import {
   type ExplorePlayerBoardRow,
   sortExplorePlayerRows,
@@ -175,7 +176,8 @@ export async function getExplorePlayersBoardView(options: {
   const season = options.filters.season ?? "";
   const seasonAwaitingGames =
     board.usingPriorSeasonStats ||
-    isSeasonAwaitingFirstGame(season, board.rows);
+    isSeasonAwaitingFirstGame(season, board.rows) ||
+    playerBoardAwaitingTip(season, board.rows);
 
   return {
     rows,

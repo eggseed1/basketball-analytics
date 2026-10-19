@@ -25,6 +25,8 @@ export function StartScreen({
   board,
   allTime,
   allTimeStatus,
+  units,
+  onStamp,
   replaySeed,
   onClearReplay,
   recovery,
@@ -43,6 +45,8 @@ export function StartScreen({
   board: CareerSummary[];
   allTime: EarningsRow[];
   allTimeStatus: AllTimeStatus;
+  units: "metric" | "imperial";
+  onStamp: (id: { runId?: string; boardId?: string }, tag: string) => void;
   replaySeed: number | null;
   onClearReplay: () => void;
   recovery: string | null;
@@ -153,7 +157,7 @@ export function StartScreen({
 
       <div className="flex flex-col gap-5">
       <Panel title="Earnings">
-        <EarningsPanel personal={board} allTime={allTime} allTimeStatus={allTimeStatus} />
+        <EarningsPanel personal={board} allTime={allTime} allTimeStatus={allTimeStatus} units={units} onStamp={onStamp} />
       </Panel>
       <Panel title="Recent careers">
         {careers.length ? (

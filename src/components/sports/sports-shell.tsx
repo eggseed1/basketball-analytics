@@ -248,12 +248,12 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
             </div>
 
             {/* Desktop / tablet: full ordered nav */}
-            <div className="site-desktop-nav hidden flex-wrap items-center gap-x-2 gap-y-2 md:flex">
+            <div className="site-desktop-nav hidden items-center gap-x-2 md:flex">
               <nav
                 aria-label="Primary"
                 className="flex min-w-0 flex-1 items-center gap-0.5 overflow-x-auto lg:gap-1"
               >
-                {PRIMARY_NAV.map((tab) => (
+                {PRIMARY_NAV.filter((tab) => tab.id !== "arcade").map((tab) => (
                   <PrimaryLink
                     key={tab.id}
                     tab={tab}
@@ -261,6 +261,13 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
                   />
                 ))}
               </nav>
+              {PRIMARY_NAV.filter((tab) => tab.id === "arcade").map((tab) => (
+                <PrimaryLink
+                  key={tab.id}
+                  tab={tab}
+                  active={tab.match(pathname)}
+                />
+              ))}
             </div>
           </div>
 

@@ -10,9 +10,9 @@ import { adultHeights } from "./world";
  * Parents are drawn around their country's measured adult mean (NCD-RisC,
  * 1996 cohort) with within-country SDs of 7 cm (men) and 6.5 cm (women), plus a
  * family bias of +5 cm and +4 cm because every life here is a basketball life.
- * The son's adult target is the mid-parent height with N(0, 6) cm individual
- * variation. Birthplace shifts the expected height through the parents only;
- * it never touches skill talent.
+ * The son's adult target is a basketball build (guard, wing, forward, or big),
+ * shifted by his parents. Food, sleep, and a few choices can still move that
+ * target while the growth plates are open. Birthplace never touches skill talent.
  */
 export const HEIGHT_SD = { male: 7, female: 6.5 } as const;
 export const FAMILY_BIAS = { male: 5, female: 4 } as const;
@@ -89,9 +89,88 @@ export function parentTarget(father: number, mother: number): { mid: number; low
   return { mid: Math.round(mid), low: Math.round(mid - 1.96 * TARGET_SD), high: Math.round(mid + 1.96 * TARGET_SD) };
 }
 
+/** Spots a basketball life can grow into. Weights are the share of new lives. */
+const BUILD_SPOTS = [
+  { id: "guard", weight: 0.3, mean: 188, sd: 4 },
+  { id: "wing", weight: 0.28, mean: 198, sd: 3.6 },
+  { id: "forward", weight: 0.24, mean: 206, sd: 3.2 },
+  { id: "big", weight: 0.18, mean: 214, sd: 3.2 },
+] as const;
+/** Mid-parent height the spot means were written around. */
+const PARENT_ANCHOR = 181;
+const HEIGHT_BONUS_CAP = 14;
+const MASS_BONUS_CAP = 0.16;
+
+export function frameFromMass(frameMassFactor: number): Body["frame"] {
+  return (frameMassFactor < 0.92 ? 1 : frameMassFactor < 0.97 ? 2 : frameMassFactor < 1.04 ? 3 : frameMassFactor < 1.1 ? 4 : 5) as Body["frame"];
+}
+
+/** Where sons of these parents usually land, before food and sleep. */
+export function buildOutlook(father: number, mother: number): { low: number; high: number; mid: number } {
+  const shift = 0.45 * ((father + mother + 13) / 2 - PARENT_ANCHOR);
+  const mid = BUILD_SPOTS.reduce((sum, spot) => sum + spot.weight * spot.mean, 0) + shift;
+  const low = BUILD_SPOTS[0]!.mean - 2 * BUILD_SPOTS[0]!.sd + shift;
+  const high = BUILD_SPOTS[BUILD_SPOTS.length - 1]!.mean + 2 * BUILD_SPOTS[BUILD_SPOTS.length - 1]!.sd + shift;
+  return { low: Math.round(clamp(low, 168, 228)), high: Math.round(clamp(high, 168, 228)), mid: Math.round(clamp(mid, 168, 228)) };
+}
+
+/** How much of a height choice still lands. Near zero once he is done growing. */
+function heightWindow(ageYears: number): number {
+  if (ageYears < 8) return 0.4;
+  if (ageYears < 12) return 1;
+  if (ageYears < 15) return 1;
+  if (ageYears < 17) return 0.7;
+  if (ageYears < 19) return 0.35;
+  if (ageYears < 21) return 0.08;
+  return 0;
+}
+
+function syncMeasurements(state: LifeState) {
+  const measured = bodyAt(state.ageMonths, state.growth, state.body, state.body.frame);
+  state.body.heightCm = measured.heightCm;
+  state.body.weightKg = measured.weightKg;
+  state.body.wingspanCm = measured.wingspanCm;
+  state.body.reachCm = measured.reachCm;
+}
+
+/**
+ * Raise the hidden adult height. Returns the centimeters actually added.
+ * Choices share a cap so milk, sleep, and everything else cannot stack without limit.
+ */
+export function raiseAdultHeight(state: LifeState, centimeters: number): number {
+  const used = typeof state.flags.heightBonus === "number" ? state.flags.heightBonus : 0;
+  const want = Math.max(0, centimeters) * heightWindow(state.ageMonths / 12);
+  const before = state.growth.adultHeightCm;
+  const next = round1(clamp(before + Math.min(want, Math.max(0, HEIGHT_BONUS_CAP - used)), 168, 228));
+  const got = round1(next - before);
+  if (got <= 0) return 0;
+  state.growth.adultHeightCm = next;
+  state.flags.heightBonus = round1(used + got);
+  const d = got / 10;
+  state.body.strength = clamp(round1(state.body.strength + 1.5 * d), 1, 99);
+  state.body.acceleration = clamp(round1(state.body.acceleration - d), 1, 99);
+  state.body.lateral = clamp(round1(state.body.lateral - 1.2 * d), 1, 99);
+  syncMeasurements(state);
+  return got;
+}
+
+/** Add body mass that sticks. Returns kilograms gained, or 0 when he is already at the cap. */
+export function addMass(state: LifeState, factor: number): number {
+  const used = typeof state.flags.massBonus === "number" ? state.flags.massBonus : 0;
+  const gain = Math.min(Math.max(0, factor), Math.max(0, MASS_BONUS_CAP - used));
+  if (gain < 0.004) return 0;
+  const before = state.body.weightKg;
+  state.growth.frameMassFactor = clamp(state.growth.frameMassFactor + gain, 0.84, 1.22);
+  state.flags.massBonus = Math.round((used + gain) * 1000) / 1000;
+  state.body.frame = frameFromMass(state.growth.frameMassFactor);
+  syncMeasurements(state);
+  return Math.max(0, round1(state.body.weightKg - before));
+}
+
 export function generateGrowth(rng: Rng, father: number, mother: number): Growth {
   const mid = (father + mother + 13) / 2;
-  const adultHeightCm = round1(clamp(mid + rng.normal(0, TARGET_SD), 158, 228));
+  const spot = rng.weighted(BUILD_SPOTS, (p) => p.weight);
+  const adultHeightCm = round1(clamp(spot.mean + 0.45 * (mid - PARENT_ANCHOR) + rng.normal(0, spot.sd), 168, 228));
   const pubertyOffsetMonths = Math.round(clamp(rng.normal(0, 13), -30, 30));
   const wingspanRatio = clamp(rng.normal(1.035, 0.025), 0.97, 1.11);
   const frameMassFactor = clamp(rng.normal(1, 0.07), 0.84, 1.18);
@@ -180,9 +259,9 @@ export function heightEstimate(state: LifeState): { low: number; high: number; m
   const frac = heightFraction(state.ageMonths, 0);
   const mid = state.body.heightCm / frac;
   const sd = interp([[4, 7.5], [8, 6.5], [11, 6], [13, 5.5], [15, 4], [17, 2.2], [19, 1], [21, 0]], age);
-  const parentPull = (state.family.fatherHeightCm + state.family.motherHeightCm + 13) / 2;
-  const blend = interp([[4, 0.45], [10, 0.3], [14, 0.15], [17, 0]], age);
-  const center = mid * (1 - blend) + parentPull * blend;
+  const outlook = buildOutlook(state.family.fatherHeightCm, state.family.motherHeightCm).mid;
+  const blend = interp([[4, 0.22], [10, 0.1], [14, 0.04], [17, 0]], age);
+  const center = mid * (1 - blend) + outlook * blend;
   return { low: Math.round(center - 1.3 * sd), high: Math.round(center + 1.3 * sd), mid: Math.round(center) };
 }
 

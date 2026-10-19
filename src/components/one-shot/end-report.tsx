@@ -13,7 +13,7 @@ import { country, countryFlag } from "@/one-shot/world";
 import { EarningsPanel, type AllTimeStatus } from "./earnings-board";
 import { Portrait } from "./panels-left";
 import { SeasonTable } from "./stats-panel";
-import { shareCardPng } from "./pixel";
+import { shareCardPng, type SharePoster } from "./pixel";
 import { Btn, Chip, Kv, money, Panel } from "./ui";
 
 export function EndReport({
@@ -23,6 +23,7 @@ export function EndReport({
   allTime,
   allTimeStatus,
   highlightBoardId,
+  onStamp,
   onNew,
   onHome,
 }: {
@@ -32,10 +33,13 @@ export function EndReport({
   allTime: EarningsRow[];
   allTimeStatus: AllTimeStatus;
   highlightBoardId?: string | null;
+  onStamp?: (id: { runId?: string; boardId?: string }, tag: string) => void;
   onNew: () => void;
   onHome: () => void;
 }) {
   const [note, setNote] = useState<string | null>(null);
+  const [cardUrl, setCardUrl] = useState<string | null>(null);
+  const cardBlob = useRef<Blob | null>(null);
   const heading = useRef<HTMLHeadingElement>(null);
   useEffect(() => heading.current?.focus(), []);
   const tier = outcomeTier(life);
@@ -67,6 +71,44 @@ export function EndReport({
           ? `${ordinal(shared.rank)} of ${shared.of}`
           : `Outside the top ${MAX_ALL_TIME}`;
   const moments = life.history.filter((h) => h.kind === "milestone" || h.kind === "draft" || h.kind === "move" || (h.kind === "injury" && h.tone === "bad")).slice(-10);
+  const poster: SharePoster = {
+    tier: TIER_LABEL[tier],
+    born: `Born in ${life.birthplace.locality}, ${born.name}`,
+    team: life.after?.employer ?? life.placement.teamName,
+    route: route.slice(-6),
+    link,
+    height: fmtHeight(life.body.heightCm, units),
+    seasons: String(life.seasons.length),
+    peak: best ? `${perGame(best, "pts").toFixed(1)} PPG` : null,
+    draft: life.achievements.drafted ? `R${life.achievements.drafted.round} P${life.achievements.drafted.pick}` : life.nbaGames > 0 ? "Undrafted" : null,
+    nbaGames: life.nbaGames,
+    earnings: life.earnings > 0 ? money(life.earnings) : null,
+    honors,
+    ended: `Age ${Math.floor(life.ageMonths / 12)}`,
+  };
+  const fileName = `one-shot-${life.identity.displayName.toLowerCase().replace(/[^a-z0-9]+/g, "-")}.png`;
+  useEffect(() => {
+    let dead = false;
+    let url: string | null = null;
+    cardBlob.current = null;
+    setCardUrl(null);
+    void shareCardPng(life, poster).then((blob) => {
+      if (dead) return;
+      if (!blob) {
+        setNote("Could not draw the card in this browser.");
+        return;
+      }
+      cardBlob.current = blob;
+      url = URL.createObjectURL(blob);
+      setCardUrl(url);
+    });
+    return () => {
+      dead = true;
+      if (url) URL.revokeObjectURL(url);
+    };
+    // Poster fields are derived from this life and the unit toggle.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [life, units, link]);
   const copy = async (value: string, done: string) => {
     try {
       await navigator.clipboard.writeText(value);
@@ -75,25 +117,76 @@ export function EndReport({
       setNote("Copy failed. Your browser blocked clipboard access.");
     }
   };
-  const png = async () => {
-    const facts = [
-      life.achievements.nbaDebut !== null ? `NBA debut at ${Math.floor(life.achievements.nbaDebut / 12)}` : `Ended at ${Math.floor(life.ageMonths / 12)}`,
-      life.achievements.drafted ? `Drafted: round ${life.achievements.drafted.round}, pick ${life.achievements.drafted.pick}` : "Undrafted",
-      `${fmtHeight(life.body.heightCm, units)} · ${life.seasons.length} seasons`,
-      ...(honors ? [honors] : []),
-    ];
-    const blob = await shareCardPng(life, { tier: TIER_LABEL[tier], born: `Born in ${born.name}`, route: route.slice(-4).join(" > "), facts, link });
+  const blobNow = () => cardBlob.current;
+  const saveImage = () => {
+    const blob = blobNow();
     if (!blob) return setNote("Could not draw the card in this browser.");
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `one-shot-${life.identity.displayName.toLowerCase().replace(/[^a-z0-9]+/g, "-")}.png`;
+    a.download = fileName;
     a.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
-    setNote("Card downloaded.");
+    setNote("Image saved.");
+  };
+  const copyImage = async (blob: Blob) => {
+    if (!navigator.clipboard?.write || typeof ClipboardItem === "undefined") return false;
+    try {
+      await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+  const shareImage = async () => {
+    const blob = blobNow();
+    if (!blob) return setNote("Could not draw the card in this browser.");
+    const file = new File([blob], fileName, { type: "image/png" });
+    if (navigator.share && navigator.canShare?.({ files: [file] })) {
+      try {
+        await navigator.share({ files: [file], title: `${life.identity.displayName} · ONE SHOT`, text });
+        setNote("Shared.");
+        return;
+      } catch (err) {
+        if ((err as Error).name === "AbortError") return;
+      }
+    }
+    if (await copyImage(blob)) {
+      setNote("Image copied. Paste it into a chat.");
+      return;
+    }
+    saveImage();
   };
   return (
-    <div className="mx-auto grid w-full max-w-[1100px] gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+    <div className="mx-auto flex w-full max-w-[1100px] flex-col gap-5">
+      <Panel title="Career card">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+          <div className="w-full max-w-[280px] shrink-0">
+            {cardUrl ? (
+              <img src={cardUrl} alt={`${life.identity.displayName}, ONE SHOT career card`} className="w-full rounded-[14px] border border-[var(--os-border)]" />
+            ) : (
+              <div className="flex aspect-[4/5] items-center justify-center rounded-[14px] border border-[var(--os-border)] text-[13px] text-[var(--os-dim)]">Drawing the card.</div>
+            )}
+          </div>
+          <div className="min-w-0">
+            <p className="max-w-[42ch] text-[14px] leading-snug">The image has the portrait, the route, and a replay link. Share it from here, or save it and post it yourself.</p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <Btn variant="primary" onClick={() => void shareImage()} disabled={!cardUrl}>
+                Share image
+              </Btn>
+              <Btn onClick={saveImage} disabled={!cardUrl}>
+                Save image
+              </Btn>
+              <Btn onClick={() => copy(text, "Caption copied.")}>Copy caption</Btn>
+              <Btn onClick={() => copy(link, "Replay link copied.")}>Copy replay link</Btn>
+            </div>
+            <p className="mt-2 min-h-[1.2em] text-[12px] text-[var(--os-green)]" role="status" aria-live="polite">
+              {note}
+            </p>
+          </div>
+        </div>
+      </Panel>
+      <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
       <Panel className="p-5 sm:p-6">
         <p className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--os-dim)]">End report</p>
         <div className="mt-3 flex items-start gap-4">
@@ -138,17 +231,7 @@ export function EndReport({
           />
         </dl>
         {route.length ? <p className="mt-3 text-[12.5px] text-[var(--os-dim)]">Route: {route.join(" → ")}</p> : null}
-        <div className="mt-5 flex flex-wrap gap-2">
-          <Btn variant="primary" onClick={() => copy(text, "Result copied.")}>
-            Copy result
-          </Btn>
-          <Btn onClick={png}>Download card</Btn>
-          <Btn onClick={() => copy(link, "Replay link copied.")}>Copy replay link</Btn>
-        </div>
-        <p className="mt-2 min-h-[1.2em] text-[12px] text-[var(--os-green)]" role="status" aria-live="polite">
-          {note}
-        </p>
-        <div className="mt-3 flex flex-wrap gap-2 border-t border-[var(--os-border)] pt-4">
+        <div className="mt-5 flex flex-wrap gap-2 border-t border-[var(--os-border)] pt-4">
           <Btn variant="primary" onClick={onNew}>
             New life
           </Btn>
@@ -165,6 +248,8 @@ export function EndReport({
             allTimeStatus={allTimeStatus}
             highlightRunId={life.runId}
             highlightBoardId={highlightBoardId}
+            units={units}
+            onStamp={onStamp}
           />
         </Panel>
         <Panel title="Key moments">
@@ -193,6 +278,7 @@ export function EndReport({
             ))}
           </ul>
         </Panel>
+      </div>
       </div>
     </div>
   );

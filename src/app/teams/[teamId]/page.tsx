@@ -23,6 +23,7 @@ import { TeamRosterWar1Island } from "@/components/teams/overview/team-roster-wa
 import { TeamOverviewVisuals } from "@/components/teams/overview/team-overview-visuals";
 import { TeamSeasonRecapIsland } from "@/components/teams/overview/team-season-recap-island";
 import { StatsRankGrid } from "@/components/teams/viz/stats-rank-grid";
+import { TeamPrimaryNav } from "@/components/teams/team-primary-nav";
 import { TeamRosterIsland } from "@/components/teams/team-roster-island";
 import { TeamRosterBuiltIsland } from "@/components/teams/team-roster-built-island";
 import { TeamSalaryAssetsTab } from "@/components/teams/team-salary-assets-tab";
@@ -40,6 +41,7 @@ import { getFranchiseHistory } from "@/data/queries/franchises";
 import { getTeamSeasonBoardCached } from "@/data/queries/request-cache";
 import { formatOrdinal } from "@/lib/format";
 import { isSeasonAwaitingFirstGame } from "@/lib/nba-season-status";
+import { playerBoardAwaitingTip } from "@/lib/player-board-tip";
 import { resolveHistoricalTeamBrand } from "@/lib/historical-team-brand";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { brandAtmosphereColors } from "@/lib/game-matchup-theme";
@@ -149,7 +151,9 @@ export default async function TeamProfilePage({
   // so identity can paint without a second 2.5s budget race.
   const seasonBoard = await getTeamSeasonBoardCached(season);
   const league = seasonBoard.rows;
-  const seasonAwaitingGames = isSeasonAwaitingFirstGame(season, league);
+  const seasonAwaitingGames =
+    isSeasonAwaitingFirstGame(season, league) ||
+    playerBoardAwaitingTip(season, league);
 
   const [priorBoard, exploreSeasons] = await Promise.all([
     seasonAwaitingGames
@@ -386,6 +390,12 @@ export default async function TeamProfilePage({
           hrefOpts={hrefOpts}
           franchise={franchise}
           historyHref={teamFranchiseHistoryHref(teamId, seasonParam)}
+        />
+
+        <TeamPrimaryNav
+          teamId={teamId}
+          tab={tab}
+          hrefOpts={hrefOpts}
         />
 
         {tab === "overview" ? (
