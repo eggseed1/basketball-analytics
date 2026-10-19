@@ -53,6 +53,10 @@ const nextConfig: NextConfig = {
         destination: "/explore/players/hot-cold",
         permanent: true,
       },
+      { source: "/players", destination: "/explore/players", permanent: false },
+      { source: "/teams", destination: "/standings", permanent: false },
+      { source: "/games", destination: "/scores", permanent: false },
+      { source: "/transactions", destination: "/offseason", permanent: false },
     ];
   },
   async rewrites() {

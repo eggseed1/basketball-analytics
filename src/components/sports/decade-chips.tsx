@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 import { FilterBar } from "@/components/explore/filter-bar";
 import { ChoiceTrack, choiceChipClassName } from "@/components/ui/choice-chip";
+import { currentNbaStartYear } from "@/data/providers/historical/season-range";
 
 const DECADES = [
   { id: "1960s", from: 1960, to: 1969, label: "1960s" },
@@ -23,12 +24,11 @@ export function DecadeChips({
   seasons: string[];
   hrefBase?: string;
 }) {
-  const pathname = usePathname();
   const searchParams = useSearchParams();
   const currentSeason = searchParams.get("season");
   const currentStart = currentSeason
     ? Number(currentSeason.slice(0, 4))
-    : undefined;
+    : currentNbaStartYear();
 
   return (
     <FilterBar label="Decade">
@@ -43,19 +43,12 @@ export function DecadeChips({
           currentStart != null &&
           currentStart >= decade.from &&
           currentStart <= decade.to;
-        const href = `${hrefBase}?season=${encodeURIComponent(
-          // Prefer a mid-decade classic when opening 1960s
-          decade.id === "1960s"
-            ? seasons.find((s) => s.startsWith("1969")) ?? firstInDecade
-            : firstInDecade
-        )}`;
+        const href = `${hrefBase}?season=${encodeURIComponent(firstInDecade)}`;
         return (
           <Link
             key={decade.id}
             href={href}
-            className={choiceChipClassName(
-              active || (pathname === hrefBase && decade.id === "1960s" && !currentSeason)
-            )}
+            className={choiceChipClassName(active)}
           >
             {decade.label}
           </Link>
