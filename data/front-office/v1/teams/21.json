@@ -1,8 +1,8 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-14",
-    "retrievedAt": "2026-10-14T17:24:18.793Z",
+    "snapshotDate": "2026-10-19",
+    "retrievedAt": "2026-10-19T05:21:25.453Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
@@ -11,7 +11,7 @@
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "edb4f2900bd0d742c2309c6da95d9fd4406fef3d2bb28328232fd701b0d35b6b",
+    "sourceHash": "a32845889e2890d74b6b2cc96149a6bbfda1045325f421ed184208a02e36ff14",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -260,29 +260,6 @@
           "href": "/players/1630692"
         },
         {
-          "playerId": "1629312",
-          "playerName": "Haywood Highsmith",
-          "age": null,
-          "contractId": "cy-1629312-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1629312-2026",
-              "playerId": "1629312",
-              "franchiseId": "21",
-              "season": "2026-27",
-              "salary": 3449421,
-              "capHit": 3449421,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "salary-index"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1629312"
-        },
-        {
           "playerId": "1643520",
           "playerName": "Koa Peat",
           "age": null,
@@ -488,64 +465,18 @@
           ],
           "guaranteedTotal": null,
           "href": "/players/1630311"
-        },
-        {
-          "playerId": "1631113",
-          "playerName": "Kennedy Chandler",
-          "age": null,
-          "contractId": "cy-1631113-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1631113-2026",
-              "playerId": "1631113",
-              "franchiseId": "21",
-              "season": "2026-27",
-              "salary": null,
-              "capHit": null,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "espn-roster-no-salary"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1631113"
-        },
-        {
-          "playerId": "1630762",
-          "playerName": "Phillip Wheeler",
-          "age": null,
-          "contractId": "cy-1630762-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1630762-2026",
-              "playerId": "1630762",
-              "franchiseId": "21",
-              "season": "2026-27",
-              "salary": null,
-              "capHit": null,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "espn-roster-no-salary"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1630762"
         }
       ],
       "futureCommitments": [
         {
           "season": "2026-27",
-          "totalSalaryDollars": 198840564,
-          "playersUnderContract": 19
+          "totalSalaryDollars": 195391143,
+          "playersUnderContract": 18
         }
       ],
-      "playerSalaryCommitments": 198840564,
-      "playersWithSalary": 19,
-      "playersWithoutSalary": 2
+      "playerSalaryCommitments": 195391143,
+      "playersWithSalary": 18,
+      "playersWithoutSalary": 0
     },
     "draftAssets": {
       "franchiseId": "21",

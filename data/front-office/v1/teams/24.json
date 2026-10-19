@@ -1,8 +1,8 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-14",
-    "retrievedAt": "2026-10-14T17:24:18.793Z",
+    "snapshotDate": "2026-10-19",
+    "retrievedAt": "2026-10-19T05:21:25.453Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
@@ -11,7 +11,7 @@
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "edb4f2900bd0d742c2309c6da95d9fd4406fef3d2bb28328232fd701b0d35b6b",
+    "sourceHash": "a32845889e2890d74b6b2cc96149a6bbfda1045325f421ed184208a02e36ff14",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -375,29 +375,6 @@
           "href": "/players/1629162"
         },
         {
-          "playerId": "1643007",
-          "playerName": "Taelon Peter",
-          "age": null,
-          "contractId": "cy-1643007-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1643007-2026",
-              "playerId": "1643007",
-              "franchiseId": "24",
-              "season": "2026-27",
-              "salary": 2185116,
-              "capHit": 2185116,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "salary-index"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1643007"
-        },
-        {
           "playerId": "1643576",
           "playerName": "Maliq Brown",
           "age": null,
@@ -419,29 +396,6 @@
           ],
           "guaranteedTotal": null,
           "href": "/players/1643576"
-        },
-        {
-          "playerId": "1631399",
-          "playerName": "Jon Elmore",
-          "age": null,
-          "contractId": "cy-1631399-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1631399-2026",
-              "playerId": "1631399",
-              "franchiseId": "24",
-              "season": "2026-27",
-              "salary": null,
-              "capHit": null,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "espn-roster-no-salary"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1631399"
         },
         {
           "playerId": "1643551",
@@ -488,41 +442,18 @@
           ],
           "guaranteedTotal": null,
           "href": "/players/1642357"
-        },
-        {
-          "playerId": "1642013",
-          "playerName": "Malik Williams",
-          "age": null,
-          "contractId": "cy-1642013-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1642013-2026",
-              "playerId": "1642013",
-              "franchiseId": "24",
-              "season": "2026-27",
-              "salary": null,
-              "capHit": null,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "espn-roster-no-salary"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1642013"
         }
       ],
       "futureCommitments": [
         {
           "season": "2026-27",
-          "totalSalaryDollars": 198315672,
-          "playersUnderContract": 15
+          "totalSalaryDollars": 196130556,
+          "playersUnderContract": 14
         }
       ],
-      "playerSalaryCommitments": 198315672,
-      "playersWithSalary": 15,
-      "playersWithoutSalary": 5
+      "playerSalaryCommitments": 196130556,
+      "playersWithSalary": 14,
+      "playersWithoutSalary": 3
     },
     "draftAssets": {
       "franchiseId": "24",

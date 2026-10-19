@@ -1,8 +1,8 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-14",
-    "retrievedAt": "2026-10-14T17:24:18.793Z",
+    "snapshotDate": "2026-10-19",
+    "retrievedAt": "2026-10-19T05:21:25.453Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
@@ -11,7 +11,7 @@
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "edb4f2900bd0d742c2309c6da95d9fd4406fef3d2bb28328232fd701b0d35b6b",
+    "sourceHash": "a32845889e2890d74b6b2cc96149a6bbfda1045325f421ed184208a02e36ff14",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -329,29 +329,6 @@
           "href": "/players/1642878"
         },
         {
-          "playerId": "1642938",
-          "playerName": "Curtis Jones",
-          "age": null,
-          "contractId": "cy-1642938-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1642938-2026",
-              "playerId": "1642938",
-              "franchiseId": "5",
-              "season": "2026-27",
-              "salary": 1366314,
-              "capHit": 1366314,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "salary-index-carry-forward"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1642938"
-        },
-        {
           "playerId": "1642434",
           "playerName": "Riley Minix",
           "age": null,
@@ -421,52 +398,6 @@
           "href": "/players/1643509"
         },
         {
-          "playerId": "1643772",
-          "playerName": "Rashaun Agee",
-          "age": null,
-          "contractId": "cy-1643772-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1643772-2026",
-              "playerId": "1643772",
-              "franchiseId": "5",
-              "season": "2026-27",
-              "salary": null,
-              "capHit": null,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "espn-roster-no-salary"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1643772"
-        },
-        {
-          "playerId": "1643113",
-          "playerName": "Zack Austin",
-          "age": null,
-          "contractId": "cy-1643113-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1643113-2026",
-              "playerId": "1643113",
-              "franchiseId": "5",
-              "season": "2026-27",
-              "salary": null,
-              "capHit": null,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "espn-roster-no-salary"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1643113"
-        },
-        {
           "playerId": "1642400",
           "playerName": "Tristan Enaruna",
           "age": null,
@@ -490,52 +421,6 @@
           "href": "/players/1642400"
         },
         {
-          "playerId": "1642955",
-          "playerName": "Kadary Richmond",
-          "age": null,
-          "contractId": "cy-1642955-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1642955-2026",
-              "playerId": "1642955",
-              "franchiseId": "5",
-              "season": "2026-27",
-              "salary": null,
-              "capHit": null,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "espn-roster-no-salary"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1642955"
-        },
-        {
-          "playerId": "1642283",
-          "playerName": "Jaxson Robinson",
-          "age": null,
-          "contractId": "cy-1642283-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1642283-2026",
-              "playerId": "1642283",
-              "franchiseId": "5",
-              "season": "2026-27",
-              "salary": null,
-              "capHit": null,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "espn-roster-no-salary"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1642283"
-        },
-        {
           "playerId": "1643640",
           "playerName": "Ernest Udeh Jr.",
           "age": null,
@@ -557,41 +442,18 @@
           ],
           "guaranteedTotal": null,
           "href": "/players/1643640"
-        },
-        {
-          "playerId": "1643037",
-          "playerName": "Noam Yaacov",
-          "age": null,
-          "contractId": "cy-1643037-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1643037-2026",
-              "playerId": "1643037",
-              "franchiseId": "5",
-              "season": "2026-27",
-              "salary": null,
-              "capHit": null,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "espn-roster-no-salary"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1643037"
         }
       ],
       "futureCommitments": [
         {
           "season": "2026-27",
-          "totalSalaryDollars": 209458474,
-          "playersUnderContract": 16
+          "totalSalaryDollars": 208092160,
+          "playersUnderContract": 15
         }
       ],
-      "playerSalaryCommitments": 209458474,
-      "playersWithSalary": 16,
-      "playersWithoutSalary": 7
+      "playerSalaryCommitments": 208092160,
+      "playersWithSalary": 15,
+      "playersWithoutSalary": 2
     },
     "draftAssets": {
       "franchiseId": "5",

@@ -1,8 +1,8 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-14",
-    "retrievedAt": "2026-10-14T17:24:18.793Z",
+    "snapshotDate": "2026-10-19",
+    "retrievedAt": "2026-10-19T05:21:25.453Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
@@ -11,7 +11,7 @@
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "edb4f2900bd0d742c2309c6da95d9fd4406fef3d2bb28328232fd701b0d35b6b",
+    "sourceHash": "a32845889e2890d74b6b2cc96149a6bbfda1045325f421ed184208a02e36ff14",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -329,29 +329,6 @@
           "href": "/players/1631133"
         },
         {
-          "playerId": "1641794",
-          "playerName": "Dillon Jones",
-          "age": null,
-          "contractId": "cy-1641794-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1641794-2026",
-              "playerId": "1641794",
-              "franchiseId": "20",
-              "season": "2026-27",
-              "salary": 2449421,
-              "capHit": 2449421,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "salary-index"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1641794"
-        },
-        {
           "playerId": "1642348",
           "playerName": "Justin Edwards",
           "age": null,
@@ -465,87 +442,18 @@
           ],
           "guaranteedTotal": null,
           "href": "/players/1629605"
-        },
-        {
-          "playerId": "1642392",
-          "playerName": "Jameer Nelson Jr.",
-          "age": null,
-          "contractId": "cy-1642392-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1642392-2026",
-              "playerId": "1642392",
-              "franchiseId": "20",
-              "season": "2026-27",
-              "salary": 1357763,
-              "capHit": 1357763,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "salary-index"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1642392"
-        },
-        {
-          "playerId": "1643148",
-          "playerName": "Saint Thomas",
-          "age": null,
-          "contractId": "cy-1643148-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1643148-2026",
-              "playerId": "1643148",
-              "franchiseId": "20",
-              "season": "2026-27",
-              "salary": 1357763,
-              "capHit": 1357763,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "salary-index"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1643148"
-        },
-        {
-          "playerId": "1643575",
-          "playerName": "Duke Miles",
-          "age": null,
-          "contractId": "cy-1643575-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1643575-2026",
-              "playerId": "1643575",
-              "franchiseId": "20",
-              "season": "2026-27",
-              "salary": null,
-              "capHit": null,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "espn-roster-no-salary"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1643575"
         }
       ],
       "futureCommitments": [
         {
           "season": "2026-27",
-          "totalSalaryDollars": 232181319,
-          "playersUnderContract": 20
+          "totalSalaryDollars": 227016372,
+          "playersUnderContract": 17
         }
       ],
-      "playerSalaryCommitments": 232181319,
-      "playersWithSalary": 20,
-      "playersWithoutSalary": 1
+      "playerSalaryCommitments": 227016372,
+      "playersWithSalary": 17,
+      "playersWithoutSalary": 0
     },
     "draftAssets": {
       "franchiseId": "20",

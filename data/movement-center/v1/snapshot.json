@@ -3,13 +3,13 @@
     "methodologyVersion": "movement-m1-0.2+movement-rules-v2",
     "status": "NEWS_INGEST_M1",
     "season": "2026-27",
-    "snapshotDate": "2026-10-14",
+    "snapshotDate": "2026-10-19",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-10-14T17:13:31.439Z",
-    "rosterPlayerCount": 501,
-    "headlinesScanned": 3842,
-    "latestHeadlineAt": "2026-10-14T17:11:03.000Z",
-    "latestTransactionDate": "2026-10-13",
+    "builtAt": "2026-10-19T05:10:58.103Z",
+    "rosterPlayerCount": 454,
+    "headlinesScanned": 4428,
+    "latestHeadlineAt": "2026-10-19T04:54:41.000Z",
+    "latestTransactionDate": "2026-10-17",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
       "Basketball News",
@@ -72,7 +72,7 @@
     },
     "outlet:sportsnaut": {
       "label": "Sportsnaut",
-      "credibility": 16
+      "credibility": 12
     },
     "outlet:realgm": {
       "label": "RealGM",
@@ -134,10 +134,6 @@
       "label": "Brett Siegel (ClutchPoints)",
       "credibility": 22
     },
-    "outlet:fadeaway-world": {
-      "label": "Fadeaway World",
-      "credibility": 12
-    },
     "outlet:new-york-post": {
       "label": "New York Post",
       "credibility": 16
@@ -149,6 +145,10 @@
     "reporter:chris-haynes": {
       "label": "Chris Haynes (NBA on Prime)",
       "credibility": 30
+    },
+    "outlet:fadeaway-world": {
+      "label": "Fadeaway World",
+      "credibility": 16
     },
     "outlet:sporting-news": {
       "label": "Sporting News",
@@ -192,6 +192,10 @@
     },
     "reporter:john-hollinger-how": {
       "label": "John Hollinger. How (The Athletic)",
+      "credibility": 18
+    },
+    "reporter:duane-rankin": {
+      "label": "Duane Rankin (Arizona Republic)",
       "credibility": 18
     },
     "ledger:nba-player-movement": {
@@ -749,17 +753,20 @@
     {
       "id": "mv-trade-3155942-20261005",
       "headline": "Domantas Sabonis and Bronny James: trade talk",
-      "primaryClaimId": "mv-bf030a939aada1a7",
+      "primaryClaimId": "mv-57d20a3caa662316",
       "claimIds": [
         "mv-981e58a85cc89efe",
         "mv-bf030a939aada1a7",
         "mv-35ecc0124773d6d8",
-        "mv-4cefb39799fec15d"
+        "mv-4cefb39799fec15d",
+        "mv-b52ea4d65cdded7c",
+        "mv-57d20a3caa662316",
+        "mv-5f9a351f84c20877"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-05T00:00:00.000Z",
-      "lastMeaningfulAt": "2026-10-07T21:27:31.000Z",
+      "lastMeaningfulAt": "2026-10-18T19:43:02.000Z",
       "linkedPlayerIds": [
         "3155942",
         "4683774"
@@ -773,26 +780,37 @@
     {
       "id": "mv-trade-6589-20261005",
       "headline": "Draymond Green, Mark Williams and others: trade talk",
-      "primaryClaimId": "mv-9a555206cc4a7ca7",
+      "primaryClaimId": "mv-1078d8da46ce0418",
       "claimIds": [
         "mv-ac71e037974744a0",
         "mv-d2a9f6adeed1b232",
         "mv-9a555206cc4a7ca7",
         "mv-74c51c9e2709e583",
-        "mv-81705535ee965e52"
+        "mv-81705535ee965e52",
+        "mv-914c7606dd1f0f3a",
+        "mv-ba7514895146b34a",
+        "mv-cf9f4a7c23eedb58",
+        "mv-1078d8da46ce0418",
+        "mv-353343f40da3ed93",
+        "mv-671e10b7ccb0ec57",
+        "mv-952e6db94b7fbfb6",
+        "mv-212d63247eb469a4"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-05T07:47:20.000Z",
-      "lastMeaningfulAt": "2026-10-13T23:53:52.000Z",
+      "lastMeaningfulAt": "2026-10-18T19:16:25.000Z",
       "linkedPlayerIds": [
         "6589",
         "4701232",
         "4897943",
-        "4278077"
+        "4278077",
+        "4277922"
       ],
       "linkedTeamIds": [
         "13",
+        "15",
+        "14",
         "9",
         "21"
       ]
@@ -839,7 +857,7 @@
     },
     {
       "id": "mv-contract-4683692-20261006",
-      "headline": "Cason Wallace, Karl-Anthony Towns and others: contract talks with the Knicks",
+      "headline": "Cason Wallace, Karl-Anthony Towns and others: extension talks with the Thunder",
       "primaryClaimId": "mv-abb18f46843d904e",
       "claimIds": [
         "mv-d46db2f4a349df07",
@@ -870,12 +888,18 @@
         "mv-2b8efe7981fc622a",
         "mv-abb18f46843d904e",
         "mv-8029dae4eb322330",
-        "mv-e8884129ec6b1bc1"
+        "mv-e8884129ec6b1bc1",
+        "mv-a4e463bcd540cd4b",
+        "mv-055ff48106ab490f",
+        "mv-4439845a715599ab",
+        "mv-324af125c100ef75",
+        "mv-e31db280ca8965d9",
+        "mv-91bdaca0b5633ed8"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-06T17:10:57.000Z",
-      "lastMeaningfulAt": "2026-10-13T15:07:28.000Z",
+      "lastMeaningfulAt": "2026-10-19T04:39:12.000Z",
       "linkedPlayerIds": [
         "4683692",
         "3136195",
@@ -884,7 +908,8 @@
       ],
       "linkedTeamIds": [
         "25",
-        "18"
+        "18",
+        "6"
       ]
     },
     {
@@ -906,24 +931,6 @@
       ]
     },
     {
-      "id": "mv-contract-4065670-20261007",
-      "headline": "Bruce Brown: free agency",
-      "primaryClaimId": "mv-5325d8c9db8a23bd",
-      "claimIds": [
-        "mv-5325d8c9db8a23bd"
-      ],
-      "evidenceClass": "reported",
-      "state": "unresolved",
-      "firstSeenAt": "2026-10-07T12:19:49.000Z",
-      "lastMeaningfulAt": "2026-10-07T12:19:49.000Z",
-      "linkedPlayerIds": [
-        "4065670"
-      ],
-      "linkedTeamIds": [
-        "18"
-      ]
-    },
-    {
       "id": "mv-trade-3202-20261007",
       "headline": "Kevin Durant, Rudy Gobert and others: trade talk",
       "primaryClaimId": "mv-6287f889f0b5ecbe",
@@ -939,16 +946,14 @@
       "linkedPlayerIds": [
         "3202",
         "3032976",
-        "4279888",
-        "4432162"
+        "4279888"
       ],
       "linkedTeamIds": [
         "2",
         "22",
         "29",
         "10",
-        "16",
-        "4"
+        "16"
       ]
     },
     {
@@ -1194,7 +1199,7 @@
     },
     {
       "id": "mv-contract-4066354-20261013",
-      "headline": "Payton Pritchard: extension talks with the Celtics",
+      "headline": "Payton Pritchard and Gary Payton II: extension talks with the Celtics",
       "primaryClaimId": "mv-c4857f5411416cbb",
       "claimIds": [
         "mv-220b2d7bf8c42c88",
@@ -1204,17 +1209,20 @@
         "mv-625f62d5fc58b97f",
         "mv-8bf0c2aebc28e9f1",
         "mv-e9726a8e390f2b21",
-        "mv-c4857f5411416cbb"
+        "mv-c4857f5411416cbb",
+        "mv-espn-tx-15301a7a448fe1bb"
       ],
       "evidenceClass": "reported",
-      "state": "unresolved",
+      "state": "completed",
       "firstSeenAt": "2026-10-13T16:29:04.000Z",
-      "lastMeaningfulAt": "2026-10-13T20:36:40.000Z",
+      "lastMeaningfulAt": "2026-10-16T12:00:00.000Z",
       "linkedPlayerIds": [
-        "4066354"
+        "4066354",
+        "3134903"
       ],
       "linkedTeamIds": [
-        "2"
+        "2",
+        "9"
       ]
     },
     {
@@ -1233,6 +1241,142 @@
       ],
       "linkedTeamIds": [
         "9"
+      ]
+    },
+    {
+      "id": "mv-trade-4896372-20261016",
+      "headline": "Walter Clayton Jr., GG Jackson and others: trade talk",
+      "primaryClaimId": "mv-dc80a248b46d1d4a",
+      "claimIds": [
+        "mv-dc80a248b46d1d4a"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-10-16T07:25:03.000Z",
+      "lastMeaningfulAt": "2026-10-16T07:25:03.000Z",
+      "linkedPlayerIds": [
+        "4896372",
+        "5105550",
+        "4684272"
+      ],
+      "linkedTeamIds": [
+        "29",
+        "28"
+      ]
+    },
+    {
+      "id": "mv-trade-4701208-20261016",
+      "headline": "Moussa Cisse: trade talk",
+      "primaryClaimId": "mv-b66a7dc6c9a8b9da",
+      "claimIds": [
+        "mv-b66a7dc6c9a8b9da"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-10-16T07:30:48.000Z",
+      "lastMeaningfulAt": "2026-10-16T07:30:48.000Z",
+      "linkedPlayerIds": [
+        "4701208"
+      ],
+      "linkedTeamIds": [
+        "20",
+        "6"
+      ]
+    },
+    {
+      "id": "mv-trade-2991043-20261016",
+      "headline": "Caris LeVert and Kevin Porter Jr.: trade talk",
+      "primaryClaimId": "mv-c54d4425baccb20e",
+      "claimIds": [
+        "mv-c54d4425baccb20e"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-10-16T07:58:31.000Z",
+      "lastMeaningfulAt": "2026-10-16T07:58:31.000Z",
+      "linkedPlayerIds": [
+        "2991043",
+        "4397140"
+      ],
+      "linkedTeamIds": [
+        "15"
+      ]
+    },
+    {
+      "id": "mv-contract-4845363-20261016",
+      "headline": "Cam Christie: contract talks with the Clippers",
+      "primaryClaimId": "mv-100359add576da8c",
+      "claimIds": [
+        "mv-100359add576da8c",
+        "mv-espn-tx-6118d729fceb9284"
+      ],
+      "evidenceClass": "reported",
+      "state": "completed",
+      "firstSeenAt": "2026-10-16T08:18:12.000Z",
+      "lastMeaningfulAt": "2026-10-17T12:00:00.000Z",
+      "linkedPlayerIds": [
+        "4845363"
+      ],
+      "linkedTeamIds": [
+        "12"
+      ]
+    },
+    {
+      "id": "mv-trade-4871141-20261016",
+      "headline": "Ariel Hukporti: trade talk",
+      "primaryClaimId": "mv-9364f915c0677378",
+      "claimIds": [
+        "mv-9364f915c0677378"
+      ],
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "firstSeenAt": "2026-10-16T22:43:52.000Z",
+      "lastMeaningfulAt": "2026-10-16T22:43:52.000Z",
+      "linkedPlayerIds": [
+        "4871141"
+      ],
+      "linkedTeamIds": [
+        "20"
+      ]
+    },
+    {
+      "id": "mv-contract-4601023-20261018",
+      "headline": "Oso Ighodaro: reported extension with the Suns",
+      "primaryClaimId": "mv-4de57c980fa507f2",
+      "claimIds": [
+        "mv-9444aa65f45be3e6",
+        "mv-dbc118d63c812280",
+        "mv-4de57c980fa507f2",
+        "mv-21d137ceab669d1d"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-10-18T14:22:03.000Z",
+      "lastMeaningfulAt": "2026-10-18T23:33:42.000Z",
+      "linkedPlayerIds": [
+        "4601023"
+      ],
+      "linkedTeamIds": [
+        "21"
+      ]
+    },
+    {
+      "id": "mv-trade-6430-20261018",
+      "headline": "Jimmy Butler III: trade talk",
+      "primaryClaimId": "mv-5106155f4be246a0",
+      "claimIds": [
+        "mv-5106155f4be246a0"
+      ],
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "firstSeenAt": "2026-10-18T18:59:00.000Z",
+      "lastMeaningfulAt": "2026-10-18T18:59:00.000Z",
+      "linkedPlayerIds": [
+        "6430"
+      ],
+      "linkedTeamIds": [
+        "9",
+        "19"
       ]
     },
     {
@@ -4399,24 +4543,6 @@
       "isOriginal": false
     },
     {
-      "id": "mv-5325d8c9db8a23bd",
-      "clusterId": "mv-contract-4065670-20261007",
-      "summary": "Bruce Brown Says Second Apron Hurt His Free Agency: “I’m Fighting For A Job Right Now”",
-      "claimType": "free_agent_interest",
-      "evidenceClass": "reported",
-      "state": "unresolved",
-      "provenanceKind": "official_statement",
-      "publishedAt": "2026-10-07T12:19:49.000Z",
-      "sourceId": "outlet:fadeaway-world",
-      "sourceLabel": "Fadeaway World",
-      "sourceUrl": "https://fadeawayworld.net/nba/new-york-knicks/bruce-brown-says-second-apron-hurt-his-free-agency-im-fighting-for-a-job-right-now",
-      "playerIds": [
-        "4065670"
-      ],
-      "teamIds": [],
-      "isOriginal": true
-    },
-    {
       "id": "mv-f6a93efa0cda8c42",
       "clusterId": "mv-trade-3202-20261007",
       "summary": "NBA Trade Rumors: Ja Morant, Kevin Durant, Rudy Gobert & More",
@@ -4489,8 +4615,7 @@
       "sourceLabel": "Sportsnaut",
       "sourceUrl": "https://sportsnaut.com/nba/boston-celtics-rudy-gobert-trade-speculation-after-new-rumor",
       "playerIds": [
-        "3032976",
-        "4432162"
+        "3032976"
       ],
       "teamIds": [
         "2"
@@ -5931,7 +6056,8 @@
       "reporterLabel": "Shams Charania",
       "sourceUrl": "https://www.hoopsrumors.com/2026/10/payton-pritchard-celtics-agree-to-two-year-extension.html",
       "playerIds": [
-        "4066354"
+        "4066354",
+        "3134903"
       ],
       "teamIds": [
         "2"
@@ -5952,7 +6078,8 @@
       "sourceLabel": "Yahoo Sports",
       "sourceUrl": "https://sports.yahoo.com/nba/article/celtics-reportedly-sign-g-payton-pritchard-to-2-year-442-million-extension-with-a-mutual-option-195753973.html",
       "playerIds": [
-        "4066354"
+        "4066354",
+        "3134903"
       ],
       "teamIds": [
         "2"
@@ -5973,7 +6100,8 @@
       "reporterLabel": "Shams Charania",
       "sourceUrl": "https://clutchpoints.com/nba/boston-celtics/celtics-news-payton-pritchard-44-million-contract-extension",
       "playerIds": [
-        "4066354"
+        "4066354",
+        "3134903"
       ],
       "teamIds": [
         "2"
@@ -5994,7 +6122,8 @@
       "sourceLabel": "TalkBasket",
       "sourceUrl": "https://www.talkbasket.net/224752-payton-pritchard-agrees-to-a-contract-extension-with-the-celtics",
       "playerIds": [
-        "4066354"
+        "4066354",
+        "3134903"
       ],
       "teamIds": [
         "2"
@@ -6015,7 +6144,8 @@
       "sourceLabel": "RealGM",
       "sourceUrl": "https://basketball.realgm.com/wiretap/287623/Payton-Pritchard-Celtics-Agree-To-Two-Year-$442M-Extension",
       "playerIds": [
-        "4066354"
+        "4066354",
+        "3134903"
       ],
       "teamIds": [
         "2"
@@ -6057,7 +6187,8 @@
       "sourceLabel": "The Athletic",
       "sourceUrl": "https://www.nytimes.com/athletic/7687436/2026/10/13/payton-pritchard-celtics-contract-extension-news/",
       "playerIds": [
-        "4066354"
+        "4066354",
+        "3134903"
       ],
       "teamIds": [
         "2"
@@ -6078,7 +6209,8 @@
       "sourceLabel": "Yahoo Sports",
       "sourceUrl": "https://sports.yahoo.com/articles/celtics-reportedly-reach-contract-extension-203640829.html",
       "playerIds": [
-        "4066354"
+        "4066354",
+        "3134903"
       ],
       "teamIds": [
         "2"
@@ -6225,6 +6357,578 @@
       ],
       "teamIds": [
         "7"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-b52ea4d65cdded7c",
+      "clusterId": "mv-trade-3155942-20261005",
+      "summary": "Kings star Domantas Sabonis was ‘shocked' to hear offseason trade speculation",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-15T11:22:23.000Z",
+      "sourceId": "outlet:nbc-sports-bay-area",
+      "sourceLabel": "NBC Sports Bay Area",
+      "sourceUrl": "https://www.nbcsportsbayarea.com/nba/sacramento-kings/domantas-sabonis-2026-offseason-trade-rumors/1969329/",
+      "playerIds": [
+        "3155942"
+      ],
+      "teamIds": [
+        "23"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-a4e463bcd540cd4b",
+      "clusterId": "mv-contract-4683692-20261006",
+      "summary": "Rumor Links 4 Teams To Karl-Anthony Towns Free Agent Chase Next Summer, Including the Dallas Mavericks",
+      "claimType": "free_agent_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-15T18:58:29.000Z",
+      "sourceId": "outlet:sportsnaut",
+      "sourceLabel": "Sportsnaut",
+      "sourceUrl": "https://sportsnaut.com/nba/karl-anthony-towns-free-agent-suitors-next-summer",
+      "playerIds": [
+        "3136195"
+      ],
+      "teamIds": [
+        "6"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-dc80a248b46d1d4a",
+      "clusterId": "mv-trade-4896372-20261016",
+      "summary": "Grizzlies exploring trade market for GG Jackson II and Walter Clayton Jr.",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-16T07:25:03.000Z",
+      "sourceId": "reporter:jake-fischer",
+      "sourceLabel": "TalkBasket, citing Jake Fischer (The Stein Line)",
+      "reporterLabel": "Jake Fischer",
+      "sourceUrl": "https://www.talkbasket.net/224887-grizzlies-exploring-trade-market-for-gg-jackson-ii-and-walter-clayton-jr",
+      "playerIds": [
+        "4896372",
+        "5105550",
+        "4684272"
+      ],
+      "teamIds": [
+        "29"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-b66a7dc6c9a8b9da",
+      "clusterId": "mv-trade-4701208-20261016",
+      "summary": "76ers could target Moussa Cisse",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-16T07:30:48.000Z",
+      "sourceId": "reporter:jake-fischer",
+      "sourceLabel": "TalkBasket, citing Jake Fischer (The Stein Line)",
+      "reporterLabel": "Jake Fischer",
+      "sourceUrl": "https://www.talkbasket.net/224888-76ers-could-target-moussa-cisse",
+      "playerIds": [
+        "4701208"
+      ],
+      "teamIds": [
+        "20"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-914c7606dd1f0f3a",
+      "clusterId": "mv-trade-6589-20261005",
+      "summary": "Lakers and Bucks discuss Dalton Knecht-Jericho Sims swap",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-16T07:44:17.000Z",
+      "sourceId": "reporter:jake-fischer",
+      "sourceLabel": "TalkBasket, citing Jake Fischer (The Stein Line)",
+      "reporterLabel": "Jake Fischer",
+      "sourceUrl": "https://www.talkbasket.net/224889-lakers-and-bucks-discuss-dalton-knecht-jericho-sims-swap",
+      "playerIds": [
+        "4277922",
+        "4897943"
+      ],
+      "teamIds": [
+        "13",
+        "15"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-c54d4425baccb20e",
+      "clusterId": "mv-trade-2991043-20261016",
+      "summary": "Bucks weigh trading Kevin Porter Jr. and Caris LeVert",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-16T07:58:31.000Z",
+      "sourceId": "reporter:jake-fischer",
+      "sourceLabel": "TalkBasket, citing Jake Fischer (The Stein Line)",
+      "reporterLabel": "Jake Fischer",
+      "sourceUrl": "https://www.talkbasket.net/224891-bucks-weigh-trading-kevin-porter-jr-and-caris-levert",
+      "playerIds": [
+        "2991043",
+        "4397140"
+      ],
+      "teamIds": [
+        "15"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-100359add576da8c",
+      "clusterId": "mv-contract-4845363-20261016",
+      "summary": "Clippers offer Cam Christie a path to stay",
+      "claimType": "contract_movement",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-16T08:18:12.000Z",
+      "sourceId": "reporter:jake-fischer",
+      "sourceLabel": "TalkBasket, citing Jake Fischer (The Stein Line)",
+      "reporterLabel": "Jake Fischer",
+      "sourceUrl": "https://www.talkbasket.net/224892-clippers-offer-cam-christie-a-path-to-stay",
+      "playerIds": [
+        "4845363"
+      ],
+      "teamIds": [
+        "12"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "offer"
+    },
+    {
+      "id": "mv-ba7514895146b34a",
+      "clusterId": "mv-trade-6589-20261005",
+      "summary": "Lakers Insider Reveals Potential Holdup in Dalton Knecht-Bucks Trade Talks",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-16T22:16:54.000Z",
+      "sourceId": "reporter:jovan-buha",
+      "sourceLabel": "Heavy, citing Jovan Buha (The Athletic)",
+      "reporterLabel": "Jovan Buha",
+      "sourceUrl": "https://heavy.com/sports/nba/los-angeles-lakers/lakers-dalton-knecht-bucks-trade-holdup/",
+      "playerIds": [
+        "4897943"
+      ],
+      "teamIds": [
+        "13",
+        "15"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "active_talks"
+    },
+    {
+      "id": "mv-9364f915c0677378",
+      "clusterId": "mv-trade-4871141-20261016",
+      "summary": "76ers Linked to 2 Rival Centers After Ariel Hukporti’s Season-Ending Injury",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-16T22:43:52.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/philadelphia-76ers/76ers-center-trade-hukporti-injury/",
+      "playerIds": [
+        "4871141"
+      ],
+      "teamIds": [
+        "20"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-cf9f4a7c23eedb58",
+      "clusterId": "mv-trade-6589-20261005",
+      "summary": "Lakers Make Major New Move in Dalton Knecht Trade Talks to Land 6’10” Center",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-16T23:23:13.000Z",
+      "sourceId": "reporter:jake-fischer",
+      "sourceLabel": "Heavy, citing Jake Fischer (The Stein Line)",
+      "reporterLabel": "Jake Fischer",
+      "sourceUrl": "https://heavy.com/sports/nba/los-angeles-lakers/lakers-dalton-knecht-trade-talks-center/",
+      "playerIds": [
+        "4897943"
+      ],
+      "teamIds": [
+        "13"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "active_talks"
+    },
+    {
+      "id": "mv-1078d8da46ce0418",
+      "clusterId": "mv-trade-6589-20261005",
+      "summary": "JJ Redick Gets Real On Dalton Knecht’s ‘Tough’ Reality Amid Rampant Lakers Trade Rumors",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-17T03:16:48.000Z",
+      "sourceId": "outlet:fadeaway-world",
+      "sourceLabel": "Fadeaway World",
+      "sourceUrl": "https://fadeawayworld.net/nba/los-angeles-lakers/jj-redick-gets-real-on-dalton-knechts-tough-reality-amid-rampant-lakers-trade-rumors",
+      "playerIds": [
+        "4897943"
+      ],
+      "teamIds": [
+        "13"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-353343f40da3ed93",
+      "clusterId": "mv-trade-6589-20261005",
+      "summary": "Lakers Expect To Cut Ties Or Trade Dalton Knecht Today: Report",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-17T14:36:25.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/los-angeles-lakers/cut-ties-trade-dalton-knecht-today-report/",
+      "playerIds": [
+        "4897943"
+      ],
+      "teamIds": [
+        "13"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-671e10b7ccb0ec57",
+      "clusterId": "mv-trade-6589-20261005",
+      "summary": "Lakers Get Major Trade News on $27M Center as Dalton Knecht Talks Heat Up",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-17T23:14:37.000Z",
+      "sourceId": "reporter:brett-siegel",
+      "sourceLabel": "Heavy, citing Brett Siegel (ClutchPoints)",
+      "reporterLabel": "Brett Siegel",
+      "sourceUrl": "https://heavy.com/sports/nba/los-angeles-lakers/lakers-27m-center-knecht-trade-news/",
+      "playerIds": [
+        "4897943"
+      ],
+      "teamIds": [
+        "13",
+        "14"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "active_talks"
+    },
+    {
+      "id": "mv-9444aa65f45be3e6",
+      "clusterId": "mv-contract-4601023-20261018",
+      "summary": "Suns, Oso Ighodaro Discussing Contract Extension",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-18T14:22:03.000Z",
+      "sourceId": "reporter:duane-rankin",
+      "sourceLabel": "Hoops Rumors, citing Duane Rankin (Arizona Republic)",
+      "reporterLabel": "Duane Rankin",
+      "sourceUrl": "https://www.hoopsrumors.com/2026/10/suns-oso-ighodaro-discussing-contract-extension.html",
+      "playerIds": [
+        "4601023"
+      ],
+      "teamIds": [
+        "21"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-952e6db94b7fbfb6",
+      "clusterId": "mv-trade-6589-20261005",
+      "summary": "JJ Redick Addresses Dalton Knecht Trade Rumors Before Lakers Cut Ties",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-18T16:21:54.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/los-angeles-lakers/jj-redick-dalton-knecht-trade-rumors-lakers-cut-ties/",
+      "playerIds": [
+        "4897943"
+      ],
+      "teamIds": [
+        "13"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-57d20a3caa662316",
+      "clusterId": "mv-trade-3155942-20261005",
+      "summary": "Lakers Bronny James Handed Harsh ‘Loser’ Tag As Trade Buzz Continues",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-18T16:54:53.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/los-angeles-lakers/bronny-james-loser-tag-trade-buzz-continues/",
+      "playerIds": [
+        "4683774"
+      ],
+      "teamIds": [
+        "13"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-5106155f4be246a0",
+      "clusterId": "mv-trade-6430-20261018",
+      "summary": "NBA Trade Rumors: Magic Pressure, Warriors’ Jimmy Butler Plans & More",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-18T18:59:00.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/portland-trail-blazers/nba-trade-rumors-magic-pressure-warriors-jimmy-butler/",
+      "playerIds": [
+        "6430"
+      ],
+      "teamIds": [
+        "9",
+        "19"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-212d63247eb469a4",
+      "clusterId": "mv-trade-6589-20261005",
+      "summary": "Lakers’ Dalton Knecht Breaks Silence on Trade Rumors Amid Roster Deadline",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-18T19:16:25.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/los-angeles-lakers/lakers-dalton-knecht-breaks-silence-on-trade-rumors-amid-roster-deadline/",
+      "playerIds": [
+        "4897943"
+      ],
+      "teamIds": [
+        "13"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-5f9a351f84c20877",
+      "clusterId": "mv-trade-3155942-20261005",
+      "summary": "Lakers Trade Pitch Ships Bronny James for 23-Year-Old March Madness Legend",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-18T19:43:02.000Z",
+      "sourceId": "reporter:brett-siegel",
+      "sourceLabel": "Heavy, citing Brett Siegel (ClutchPoints)",
+      "reporterLabel": "Brett Siegel",
+      "sourceUrl": "https://heavy.com/sports/nba/los-angeles-lakers/lakers-trade-larry-bird-march-madness/",
+      "playerIds": [
+        "4683774"
+      ],
+      "teamIds": [
+        "13"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-dbc118d63c812280",
+      "clusterId": "mv-contract-4601023-20261018",
+      "summary": "Oso Ighodaro agrees to an extension with the Suns",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-18T23:26:51.000Z",
+      "sourceId": "outlet:talkbasket",
+      "sourceLabel": "TalkBasket",
+      "sourceUrl": "https://www.talkbasket.net/225002-oso-ighodaro-agrees-to-an-extension-with-the-suns",
+      "playerIds": [
+        "4601023"
+      ],
+      "teamIds": [
+        "21"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "offer"
+    },
+    {
+      "id": "mv-4de57c980fa507f2",
+      "clusterId": "mv-contract-4601023-20261018",
+      "summary": "Suns, Oso Ighodaro Agree To Three-Year Extension",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-18T23:27:29.000Z",
+      "sourceId": "reporter:shams-charania",
+      "sourceLabel": "Hoops Rumors, citing Shams Charania (ESPN)",
+      "reporterLabel": "Shams Charania, Kelly Iko",
+      "sourceUrl": "https://www.hoopsrumors.com/2026/10/suns-ighodaro-agree-to-three-year-29mm-extension.html",
+      "playerIds": [
+        "4601023"
+      ],
+      "teamIds": [
+        "21"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "offer"
+    },
+    {
+      "id": "mv-21d137ceab669d1d",
+      "clusterId": "mv-contract-4601023-20261018",
+      "summary": "Oso Ighodaro, Suns Agree To Three-Year, $29M Extension",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-18T23:33:42.000Z",
+      "sourceId": "outlet:realgm",
+      "sourceLabel": "RealGM",
+      "sourceUrl": "https://basketball.realgm.com/wiretap/287747/Oso-Ighodaro-Suns-Agree-To-Three-Year-$29M-Extension",
+      "playerIds": [
+        "4601023"
+      ],
+      "teamIds": [
+        "21"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "offer"
+    },
+    {
+      "id": "mv-055ff48106ab490f",
+      "clusterId": "mv-contract-4683692-20261006",
+      "summary": "Thunder, Cason Wallace reportedly beat deadline, agree to 5-year, $139M contract extension",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-19T02:35:30.000Z",
+      "sourceId": "reporter:shams-charania",
+      "sourceLabel": "Yahoo Sports, citing Shams Charania (ESPN)",
+      "reporterLabel": "Shams Charania",
+      "sourceUrl": "https://sports.yahoo.com/nba/breaking-news/article/thunder-cason-wallace-reportedly-beat-deadline-agree-to-5-year-139m-contract-extension-030503662.html",
+      "playerIds": [
+        "4683692"
+      ],
+      "teamIds": [
+        "25"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "offer"
+    },
+    {
+      "id": "mv-4439845a715599ab",
+      "clusterId": "mv-contract-4683692-20261006",
+      "summary": "Cason Wallace, Thunder Agree To Five-Year, $139M Extension",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-19T02:47:41.000Z",
+      "sourceId": "outlet:realgm",
+      "sourceLabel": "RealGM",
+      "sourceUrl": "https://basketball.realgm.com/wiretap/287751/Cason-Wallace-Thunder-Agree-To-Five-Year-$139M-Extension",
+      "playerIds": [
+        "4683692"
+      ],
+      "teamIds": [
+        "25"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "offer"
+    },
+    {
+      "id": "mv-324af125c100ef75",
+      "clusterId": "mv-contract-4683692-20261006",
+      "summary": "Cason Wallace, Thunder Agree To Five-Year Extension",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-19T03:03:05.000Z",
+      "sourceId": "reporter:shams-charania",
+      "sourceLabel": "Hoops Rumors, citing Shams Charania (ESPN)",
+      "reporterLabel": "Shams Charania",
+      "sourceUrl": "https://www.hoopsrumors.com/2026/10/cason-wallace-thunder-agree-to-five-year-139mm-extension.html",
+      "playerIds": [
+        "4683692"
+      ],
+      "teamIds": [
+        "25"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "offer"
+    },
+    {
+      "id": "mv-e31db280ca8965d9",
+      "clusterId": "mv-contract-4683692-20261006",
+      "summary": "Cason Wallace, Thunder agree to 5-year, $139 million contract extension: Source",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-19T03:04:35.000Z",
+      "sourceId": "outlet:the-athletic",
+      "sourceLabel": "The Athletic",
+      "sourceUrl": "https://www.nytimes.com/athletic/7684436/2026/10/18/cason-wallace-contract-thunder-extension-salary/",
+      "playerIds": [
+        "4683692"
+      ],
+      "teamIds": [
+        "25"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "offer"
+    },
+    {
+      "id": "mv-91bdaca0b5633ed8",
+      "clusterId": "mv-contract-4683692-20261006",
+      "summary": "Thunder reportedly lock up guard Cason Wallace with five year, $139 million extension",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-19T04:39:12.000Z",
+      "sourceId": "outlet:yahoo-sports",
+      "sourceLabel": "Yahoo Sports",
+      "sourceUrl": "https://sports.yahoo.com/articles/thunder-reportedly-lock-guard-cason-043912841.html",
+      "playerIds": [
+        "4683692"
+      ],
+      "teamIds": [
+        "25"
       ],
       "isOriginal": false
     },
@@ -6433,6 +7137,46 @@
       ],
       "teamIds": [
         "9"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-espn-tx-15301a7a448fe1bb",
+      "clusterId": "mv-contract-4066354-20261013",
+      "summary": "Re-signed G Payton Pritchard to a veteran extension.",
+      "claimType": "contract_movement",
+      "evidenceClass": "reported",
+      "state": "completed",
+      "provenanceKind": "completed_transaction",
+      "publishedAt": "2026-10-16T12:00:00.000Z",
+      "sourceId": "ledger:espn-transactions",
+      "sourceLabel": "Transaction log",
+      "sourceUrl": "/offseason",
+      "playerIds": [
+        "4066354"
+      ],
+      "teamIds": [
+        "2"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-espn-tx-6118d729fceb9284",
+      "clusterId": "mv-contract-4845363-20261016",
+      "summary": "Signed G Cam Christie to a two-way contract.",
+      "claimType": "contract_movement",
+      "evidenceClass": "reported",
+      "state": "completed",
+      "provenanceKind": "completed_transaction",
+      "publishedAt": "2026-10-17T12:00:00.000Z",
+      "sourceId": "ledger:espn-transactions",
+      "sourceLabel": "Transaction log",
+      "sourceUrl": "/offseason",
+      "playerIds": [
+        "4845363"
+      ],
+      "teamIds": [
+        "12"
       ],
       "isOriginal": true
     },
@@ -7411,6 +8155,27 @@
       "outcome": "materialized",
       "resolvedAt": "2026-10-10T12:00:00.000Z",
       "transactionRef": "nba-tx-2ca8f86bb5e24687",
+      "suppressTradeSpeculation": false
+    },
+    {
+      "clusterId": "mv-contract-4066354-20261013",
+      "playerIds": [
+        "4066354",
+        "3134903"
+      ],
+      "outcome": "materialized",
+      "resolvedAt": "2026-10-16T12:00:00.000Z",
+      "transactionRef": "espn-tx-15301a7a448fe1bb",
+      "suppressTradeSpeculation": false
+    },
+    {
+      "clusterId": "mv-contract-4845363-20261016",
+      "playerIds": [
+        "4845363"
+      ],
+      "outcome": "materialized",
+      "resolvedAt": "2026-10-17T12:00:00.000Z",
+      "transactionRef": "espn-tx-6118d729fceb9284",
       "suppressTradeSpeculation": false
     },
     {

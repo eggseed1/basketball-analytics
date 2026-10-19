@@ -1,8 +1,8 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-14",
-    "retrievedAt": "2026-10-14T17:24:18.793Z",
+    "snapshotDate": "2026-10-19",
+    "retrievedAt": "2026-10-19T05:21:25.453Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
@@ -11,7 +11,7 @@
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "edb4f2900bd0d742c2309c6da95d9fd4406fef3d2bb28328232fd701b0d35b6b",
+    "sourceHash": "a32845889e2890d74b6b2cc96149a6bbfda1045325f421ed184208a02e36ff14",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -398,52 +398,6 @@
           "href": "/players/1631159"
         },
         {
-          "playerId": "1641809",
-          "playerName": "Drew Peterson",
-          "age": null,
-          "contractId": "cy-1641809-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1641809-2026",
-              "playerId": "1641809",
-              "franchiseId": "4",
-              "season": "2026-27",
-              "salary": 1366314,
-              "capHit": 1366314,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "salary-index-carry-forward"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1641809"
-        },
-        {
-          "playerId": "1631115",
-          "playerName": "Orlando Robinson",
-          "age": null,
-          "contractId": "cy-1631115-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1631115-2026",
-              "playerId": "1631115",
-              "franchiseId": "4",
-              "season": "2026-27",
-              "salary": 1366314,
-              "capHit": 1366314,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "salary-index-carry-forward"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1631115"
-        },
-        {
           "playerId": "1641815",
           "playerName": "Isaiah Stevens",
           "age": null,
@@ -490,52 +444,6 @@
           "href": "/players/1643591"
         },
         {
-          "playerId": "1630527",
-          "playerName": "Brandon Boston Jr.",
-          "age": null,
-          "contractId": "cy-1630527-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1630527-2026",
-              "playerId": "1630527",
-              "franchiseId": "4",
-              "season": "2026-27",
-              "salary": null,
-              "capHit": null,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "espn-roster-no-salary"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1630527"
-        },
-        {
-          "playerId": "1641779",
-          "playerName": "Jalen Bridges",
-          "age": null,
-          "contractId": "cy-1641779-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1641779-2026",
-              "playerId": "1641779",
-              "franchiseId": "4",
-              "season": "2026-27",
-              "salary": null,
-              "capHit": null,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "espn-roster-no-salary"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1641779"
-        },
-        {
           "playerId": "1643637",
           "playerName": "Jaylin Sellers",
           "age": null,
@@ -562,13 +470,13 @@
       "futureCommitments": [
         {
           "season": "2026-27",
-          "totalSalaryDollars": 175435133,
-          "playersUnderContract": 18
+          "totalSalaryDollars": 172702505,
+          "playersUnderContract": 16
         }
       ],
-      "playerSalaryCommitments": 175435133,
-      "playersWithSalary": 18,
-      "playersWithoutSalary": 4
+      "playerSalaryCommitments": 172702505,
+      "playersWithSalary": 16,
+      "playersWithoutSalary": 2
     },
     "draftAssets": {
       "franchiseId": "4",

@@ -1,8 +1,8 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-14",
-    "retrievedAt": "2026-10-14T17:24:18.793Z",
+    "snapshotDate": "2026-10-19",
+    "retrievedAt": "2026-10-19T05:21:25.453Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
@@ -11,7 +11,7 @@
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "edb4f2900bd0d742c2309c6da95d9fd4406fef3d2bb28328232fd701b0d35b6b",
+    "sourceHash": "a32845889e2890d74b6b2cc96149a6bbfda1045325f421ed184208a02e36ff14",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -444,29 +444,6 @@
           "href": "/players/1643024"
         },
         {
-          "playerId": "1643572",
-          "playerName": "Rafael Castro",
-          "age": null,
-          "contractId": "cy-1643572-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1643572-2026",
-              "playerId": "1643572",
-              "franchiseId": "13",
-              "season": "2026-27",
-              "salary": null,
-              "capHit": null,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "espn-roster-no-salary"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1643572"
-        },
-        {
           "playerId": "1641751",
           "playerName": "Arthur Kaluma",
           "age": null,
@@ -490,29 +467,6 @@
           "href": "/players/1641751"
         },
         {
-          "playerId": "5107258",
-          "playerName": "William Kyle III",
-          "age": null,
-          "contractId": "cy-5107258-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-5107258-2026",
-              "playerId": "5107258",
-              "franchiseId": "13",
-              "season": "2026-27",
-              "salary": null,
-              "capHit": null,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "espn-roster-no-salary"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/5107258"
-        },
-        {
           "playerId": "1643758",
           "playerName": "AK Okereke",
           "age": null,
@@ -534,29 +488,6 @@
           ],
           "guaranteedTotal": null,
           "href": "/players/1643758"
-        },
-        {
-          "playerId": "1631306",
-          "playerName": "Cole Swider",
-          "age": null,
-          "contractId": "cy-1631306-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1631306-2026",
-              "playerId": "1631306",
-              "franchiseId": "13",
-              "season": "2026-27",
-              "salary": null,
-              "capHit": null,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "espn-roster-no-salary"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1631306"
         }
       ],
       "futureCommitments": [
@@ -568,7 +499,7 @@
       ],
       "playerSalaryCommitments": 202699073,
       "playersWithSalary": 17,
-      "playersWithoutSalary": 5
+      "playersWithoutSalary": 2
     },
     "draftAssets": {
       "franchiseId": "13",

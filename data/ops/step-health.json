@@ -1,4 +1,8 @@
 {
   "_comment": "Nightly steps that are soft-failing, and since when. Written by scripts/daily-runtime-sync.mjs; scripts/check-step-health.mjs alerts after 72h.",
-  "failing": {}
+  "failing": {
+    "hot-cold": {
+      "since": "2026-10-19T05:24:49.826Z"
+    }
+  }
 }

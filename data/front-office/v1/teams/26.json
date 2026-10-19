@@ -1,8 +1,8 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-14",
-    "retrievedAt": "2026-10-14T17:24:18.793Z",
+    "snapshotDate": "2026-10-19",
+    "retrievedAt": "2026-10-19T05:21:25.453Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
@@ -11,7 +11,7 @@
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "edb4f2900bd0d742c2309c6da95d9fd4406fef3d2bb28328232fd701b0d35b6b",
+    "sourceHash": "a32845889e2890d74b6b2cc96149a6bbfda1045325f421ed184208a02e36ff14",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -329,6 +329,29 @@
           "href": "/players/1628964"
         },
         {
+          "playerId": "1628396",
+          "playerName": "Tony Bradley",
+          "age": null,
+          "contractId": "cy-1628396-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1628396-2026",
+              "playerId": "1628396",
+              "franchiseId": "26",
+              "season": "2026-27",
+              "salary": 3204816,
+              "capHit": 3204816,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "salary-index-carry-forward"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1628396"
+        },
+        {
           "playerId": "1642271",
           "playerName": "Kyle Filipowski",
           "age": null,
@@ -421,98 +444,6 @@
           "href": "/players/1641725"
         },
         {
-          "playerId": "1642926",
-          "playerName": "Tamar Bates",
-          "age": null,
-          "contractId": "cy-1642926-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1642926-2026",
-              "playerId": "1642926",
-              "franchiseId": "26",
-              "season": "2026-27",
-              "salary": 1366314,
-              "capHit": 1366314,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "salary-index-carry-forward"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1642926"
-        },
-        {
-          "playerId": "1643265",
-          "playerName": "Jonas Aidoo",
-          "age": null,
-          "contractId": "cy-1643265-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1643265-2026",
-              "playerId": "1643265",
-              "franchiseId": "26",
-              "season": "2026-27",
-              "salary": null,
-              "capHit": null,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "espn-roster-no-salary"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1643265"
-        },
-        {
-          "playerId": "4395997",
-          "playerName": "Terrell Brown Jr.",
-          "age": null,
-          "contractId": "cy-4395997-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-4395997-2026",
-              "playerId": "4395997",
-              "franchiseId": "26",
-              "season": "2026-27",
-              "salary": null,
-              "capHit": null,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "espn-roster-no-salary"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/4395997"
-        },
-        {
-          "playerId": "1641917",
-          "playerName": "Taylor Funk",
-          "age": null,
-          "contractId": "cy-1641917-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1641917-2026",
-              "playerId": "1641917",
-              "franchiseId": "26",
-              "season": "2026-27",
-              "salary": null,
-              "capHit": null,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "espn-roster-no-salary"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1641917"
-        },
-        {
           "playerId": "1642396",
           "playerName": "Blake Hinson",
           "age": null,
@@ -539,13 +470,13 @@
       "futureCommitments": [
         {
           "season": "2026-27",
-          "totalSalaryDollars": 184596059,
+          "totalSalaryDollars": 186434561,
           "playersUnderContract": 17
         }
       ],
-      "playerSalaryCommitments": 184596059,
+      "playerSalaryCommitments": 186434561,
       "playersWithSalary": 17,
-      "playersWithoutSalary": 4
+      "playersWithoutSalary": 1
     },
     "draftAssets": {
       "franchiseId": "26",

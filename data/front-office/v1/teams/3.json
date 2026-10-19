@@ -1,8 +1,8 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-14",
-    "retrievedAt": "2026-10-14T17:24:18.793Z",
+    "snapshotDate": "2026-10-19",
+    "retrievedAt": "2026-10-19T05:21:25.453Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
@@ -11,7 +11,7 @@
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "edb4f2900bd0d742c2309c6da95d9fd4406fef3d2bb28328232fd701b0d35b6b",
+    "sourceHash": "a32845889e2890d74b6b2cc96149a6bbfda1045325f421ed184208a02e36ff14",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -352,29 +352,6 @@
           "href": "/players/1631121"
         },
         {
-          "playerId": "1641723",
-          "playerName": "Kobe Bufkin",
-          "age": null,
-          "contractId": "cy-1641723-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1641723-2026",
-              "playerId": "1641723",
-              "franchiseId": "3",
-              "season": "2026-27",
-              "salary": 2449421,
-              "capHit": 2449421,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "salary-index"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1641723"
-        },
-        {
           "playerId": "1630570",
           "playerName": "Trendon Watford",
           "age": null,
@@ -419,29 +396,6 @@
           ],
           "guaranteedTotal": null,
           "href": "/players/1631255"
-        },
-        {
-          "playerId": "1631132",
-          "playerName": "Christian Koloko",
-          "age": null,
-          "contractId": "cy-1631132-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1631132-2026",
-              "playerId": "1631132",
-              "franchiseId": "3",
-              "season": "2026-27",
-              "salary": 263940,
-              "capHit": 263940,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "salary-index-carry-forward"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1631132"
         },
         {
           "playerId": "1643738",
@@ -516,12 +470,12 @@
       "futureCommitments": [
         {
           "season": "2026-27",
-          "totalSalaryDollars": 199122886,
-          "playersUnderContract": 17
+          "totalSalaryDollars": 196409525,
+          "playersUnderContract": 15
         }
       ],
-      "playerSalaryCommitments": 199122886,
-      "playersWithSalary": 17,
+      "playerSalaryCommitments": 196409525,
+      "playersWithSalary": 15,
       "playersWithoutSalary": 3
     },
     "draftAssets": {

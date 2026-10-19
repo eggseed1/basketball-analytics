@@ -1,8 +1,8 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-14",
-    "retrievedAt": "2026-10-14T17:24:18.793Z",
+    "snapshotDate": "2026-10-19",
+    "retrievedAt": "2026-10-19T05:21:25.453Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
@@ -11,7 +11,7 @@
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "edb4f2900bd0d742c2309c6da95d9fd4406fef3d2bb28328232fd701b0d35b6b",
+    "sourceHash": "a32845889e2890d74b6b2cc96149a6bbfda1045325f421ed184208a02e36ff14",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -375,29 +375,6 @@
           "href": "/players/1630314"
         },
         {
-          "playerId": "1642893",
-          "playerName": "Alex Toohey",
-          "age": null,
-          "contractId": "cy-1642893-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1642893-2026",
-              "playerId": "1642893",
-              "franchiseId": "9",
-              "season": "2026-27",
-              "salary": 2185116,
-              "capHit": 2185116,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "salary-index"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1642893"
-        },
-        {
           "playerId": "1642954",
           "playerName": "Will Richard",
           "age": null,
@@ -419,52 +396,6 @@
           ],
           "guaranteedTotal": null,
           "href": "/players/1642954"
-        },
-        {
-          "playerId": "1631207",
-          "playerName": "Dalen Terry",
-          "age": null,
-          "contractId": "cy-1631207-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1631207-2026",
-              "playerId": "1631207",
-              "franchiseId": "9",
-              "season": "2026-27",
-              "salary": 1357763,
-              "capHit": 1357763,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "salary-index"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1631207"
-        },
-        {
-          "playerId": "1631174",
-          "playerName": "Tyler Burton",
-          "age": null,
-          "contractId": "cy-1631174-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1631174-2026",
-              "playerId": "1631174",
-              "franchiseId": "9",
-              "season": "2026-27",
-              "salary": null,
-              "capHit": null,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "espn-roster-no-salary"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1631174"
         },
         {
           "playerId": "1643018",
@@ -539,13 +470,13 @@
       "futureCommitments": [
         {
           "season": "2026-27",
-          "totalSalaryDollars": 223306506,
-          "playersUnderContract": 17
+          "totalSalaryDollars": 219763627,
+          "playersUnderContract": 15
         }
       ],
-      "playerSalaryCommitments": 223306506,
-      "playersWithSalary": 17,
-      "playersWithoutSalary": 4
+      "playerSalaryCommitments": 219763627,
+      "playersWithSalary": 15,
+      "playersWithoutSalary": 3
     },
     "draftAssets": {
       "franchiseId": "9",
