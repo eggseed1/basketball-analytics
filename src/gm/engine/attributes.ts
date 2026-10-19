@@ -1,0 +1,618 @@
+import type {
+  GmAttributes,
+  GmCountingLine,
+  GmDevPath,
+  GmPlayer,
+  GmPosition,
+  GmPotential,
+  GmSheet,
+  GmTendencies,
+} from "@/gm/types";
+import { clamp, createRng } from "@/gm/engine/rng";
+import entrySkillRates from "@/gm/seed/entry-skill-rates.json";
+
+/** Rebuild stored sheets when this changes. */
+export const SHEET_VERSION = 4;
+
+export type SheetStatHint = {
+  threeRate?: number;
+  threePct?: number;
+  ftPct?: number;
+  fgPct?: number;
+  mpg?: number;
+  ppg?: number;
+  rpg?: number;
+  apg?: number;
+  spg?: number;
+  bpg?: number;
+  /** Percent points. 23.9 means 23.9% of available rebounds. */
+  orbPct?: number;
+  drbPct?: number;
+  blkPct?: number;
+  stlPct?: number;
+  astPct?: number;
+};
+
+type EntrySkill = {
+  orb?: number;
+  drb?: number;
+  blk?: number;
+  stl?: number;
+  ast?: number;
+};
+
+const ENTRY_RATES = entrySkillRates as Record<string, EntrySkill>;
+
+const POS_WEIGHT: Record<GmPosition, [number, number, number, number, number, number]> = {
+  PG: [0.12, 0.22, 0.28, 0.16, 0.06, 0.16],
+  SG: [0.14, 0.26, 0.18, 0.18, 0.06, 0.18],
+  SF: [0.16, 0.2, 0.14, 0.2, 0.12, 0.18],
+  PF: [0.2, 0.14, 0.1, 0.2, 0.18, 0.18],
+  C: [0.22, 0.08, 0.08, 0.22, 0.22, 0.18],
+};
+
+const GROW_KEYS: Record<GmPosition, Array<keyof GmAttributes>> = {
+  PG: ["passAccuracy", "ballHandle", "threePoint", "midrange", "perimeterDefense", "freeThrow"],
+  SG: ["threePoint", "midrange", "ballHandle", "perimeterDefense", "drivingLayup", "freeThrow"],
+  SF: ["threePoint", "midrange", "perimeterDefense", "closeShot", "defReb", "freeThrow"],
+  PF: ["closeShot", "postControl", "interiorDefense", "defReb", "strength", "freeThrow"],
+  C: ["closeShot", "postControl", "interiorDefense", "offReb", "defReb", "strength"],
+};
+
+const DECLINE_KEYS: Array<keyof GmAttributes> = [
+  "speed",
+  "agility",
+  "vertical",
+  "drivingDunk",
+  "stamina",
+  "speedWithBall",
+];
+
+function hashId(id: string): number {
+  let h = 2166136261;
+  for (let i = 0; i < id.length; i++) {
+    h ^= id.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+
+function band(value: number): number {
+  return clamp(Math.round(value), 25, 99);
+}
+
+/** Fractions (0.239) and percent points (23.9) both become percent points. */
+export function asPercentPoints(value: number | undefined): number | undefined {
+  if (value == null || !Number.isFinite(value) || value < 0) return undefined;
+  if (value === 0) return 0;
+  return value <= 1 ? value * 100 : value;
+}
+
+function scale(value: number, stops: Array<[number, number]>): number {
+  const first = stops[0]!;
+  if (value <= first[0]) return first[1];
+  for (let i = 1; i < stops.length; i++) {
+    const prev = stops[i - 1]!;
+    const next = stops[i]!;
+    if (value <= next[0]) {
+      const t = (value - prev[0]) / (next[0] - prev[0]);
+      return prev[1] + t * (next[1] - prev[1]);
+    }
+  }
+  return stops[stops.length - 1]![1];
+}
+
+/** Inverse of `scale`. A 99 three rating maps back to the make rate that earned it. */
+export function threeMakeRateFromRating(rating: number): number {
+  if (rating < 40) return 0.22;
+  return clamp(unscale(rating, THREE_STOPS), 0.22, 0.48);
+}
+
+export function freeThrowMakeRateFromRating(rating: number): number {
+  return clamp(unscale(rating, FT_STOPS), 0.4, 0.96);
+}
+
+/** Close and mid blended into a two-point make rate. */
+export function twoMakeRateFromRating(close: number, mid: number): number {
+  const skill = close * 0.72 + mid * 0.28;
+  return clamp(0.4 + (skill - 60) * 0.0055, 0.4, 0.76);
+}
+
+export function unscale(rating: number, stops: Array<[number, number]>): number {
+  const first = stops[0]!;
+  if (rating <= first[1]) return first[0];
+  for (let i = 1; i < stops.length; i++) {
+    const prev = stops[i - 1]!;
+    const next = stops[i]!;
+    if (rating <= next[1]) {
+      const span = next[1] - prev[1];
+      const t = span === 0 ? 0 : (rating - prev[1]) / span;
+      return prev[0] + t * (next[0] - prev[0]);
+    }
+  }
+  return stops[stops.length - 1]![0];
+}
+
+const ORB_STOPS: Array<[number, number]> = [
+  [0, 25],
+  [2, 38],
+  [5, 55],
+  [8, 70],
+  [12, 82],
+  [16, 92],
+  [20, 97],
+  [24, 99],
+];
+const DRB_STOPS: Array<[number, number]> = [
+  [0, 25],
+  [6, 40],
+  [12, 58],
+  [18, 72],
+  [24, 84],
+  [30, 92],
+  [36, 99],
+];
+const BLK_STOPS: Array<[number, number]> = [
+  [0, 25],
+  [1, 45],
+  [2.5, 65],
+  [4.5, 80],
+  [6.5, 90],
+  [9, 99],
+];
+const STL_STOPS: Array<[number, number]> = [
+  [0, 25],
+  [0.8, 45],
+  [1.5, 62],
+  [2.2, 75],
+  [3, 88],
+  [4, 97],
+];
+const AST_STOPS: Array<[number, number]> = [
+  [0, 25],
+  [5, 48],
+  [10, 62],
+  [18, 78],
+  [28, 90],
+  [40, 99],
+];
+const THREE_STOPS: Array<[number, number]> = [
+  [0.28, 55],
+  [0.33, 68],
+  [0.36, 76],
+  [0.39, 84],
+  [0.42, 92],
+  [0.46, 99],
+];
+const FT_STOPS: Array<[number, number]> = [
+  [0.4, 42],
+  [0.55, 58],
+  [0.7, 72],
+  [0.8, 82],
+  [0.9, 94],
+  [0.95, 99],
+];
+
+export function rateKey(name: string): string {
+  return name
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/\b(jr|sr|ii|iii|iv)\b/g, "")
+    .replace(/[^a-z\s]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function tend(value: number): number {
+  return clamp(Math.round(value), 0, 99);
+}
+
+function mean(values: number[]): number {
+  if (!values.length) return 60;
+  return values.reduce((sum, value) => sum + value, 0) / values.length;
+}
+
+export function categoryMeans(attributes: GmAttributes): number[] {
+  return [
+    mean([
+      attributes.closeShot,
+      attributes.drivingLayup,
+      attributes.drivingDunk,
+      attributes.standingDunk,
+      attributes.postControl,
+    ]),
+    mean([attributes.midrange, attributes.threePoint, attributes.freeThrow]),
+    mean([attributes.passAccuracy, attributes.ballHandle, attributes.speedWithBall]),
+    mean([
+      attributes.interiorDefense,
+      attributes.perimeterDefense,
+      attributes.steal,
+      attributes.block,
+    ]),
+    mean([attributes.offReb, attributes.defReb]),
+    mean([
+      attributes.speed,
+      attributes.agility,
+      attributes.strength,
+      attributes.vertical,
+      attributes.stamina,
+    ]),
+  ];
+}
+
+export function overallFromAttributes(
+  position: GmPosition,
+  attributes: GmAttributes
+): number {
+  const weights = POS_WEIGHT[position];
+  const cats = categoryMeans(attributes);
+  const blended = cats.reduce((sum, cat, index) => sum + cat * weights[index]!, 0);
+  return clamp(Math.round(blended), 25, 99);
+}
+
+export const ATTRIBUTE_GROUPS: Array<{
+  label: string;
+  keys: Array<keyof GmAttributes>;
+}> = [
+  {
+    label: "Finishing",
+    keys: ["closeShot", "drivingLayup", "drivingDunk", "standingDunk", "postControl"],
+  },
+  { label: "Shooting", keys: ["midrange", "threePoint", "freeThrow"] },
+  { label: "Playmaking", keys: ["passAccuracy", "ballHandle", "speedWithBall"] },
+  {
+    label: "Defense",
+    keys: ["interiorDefense", "perimeterDefense", "steal", "block"],
+  },
+  { label: "Rebounding", keys: ["offReb", "defReb"] },
+  {
+    label: "Physical",
+    keys: ["speed", "agility", "strength", "vertical", "stamina"],
+  },
+];
+
+export const ATTRIBUTE_LABEL: Record<keyof GmAttributes, string> = {
+  closeShot: "Close",
+  drivingLayup: "Layup",
+  drivingDunk: "Dunk",
+  standingDunk: "Stand dunk",
+  postControl: "Post",
+  midrange: "Mid",
+  threePoint: "Three",
+  freeThrow: "FT",
+  passAccuracy: "Pass",
+  ballHandle: "Handle",
+  speedWithBall: "SwB",
+  interiorDefense: "Interior",
+  perimeterDefense: "Perimeter",
+  steal: "Steal",
+  block: "Block",
+  offReb: "OReb",
+  defReb: "DReb",
+  speed: "Speed",
+  agility: "Agility",
+  strength: "Strength",
+  vertical: "Vertical",
+  stamina: "Stamina",
+};
+
+export function buildSheet(player: GmPlayer, hint?: SheetStatHint): GmSheet {
+  const rng = createRng(hashId(player.id));
+  const { ratings, position, age } = player;
+  const anchor = clamp(76 + ratings.impact * 2.35, 50, 99);
+  const big = position === "C" || position === "PF";
+  const guard = position === "PG" || position === "SG";
+  const size = big ? 1 : guard ? -1 : 0;
+  const jitter = () => (rng() - 0.5) * 3;
+  const bump = (raw: number, limit = 12) => clamp(raw, -limit, limit);
+
+  const threePct = hint?.threePct;
+  const ftPct = hint?.ftPct;
+  const fgPct = hint?.fgPct;
+  const threeRate = hint?.threeRate;
+  const threeNudge =
+    threePct != null && threePct > 0 ? bump((threePct - 0.36) * 40, 14) : 0;
+  const ftNudge = ftPct != null && ftPct > 0 ? bump((ftPct - 0.78) * 45, 22) : 0;
+  const finishNudge =
+    fgPct != null && fgPct > 0 ? bump((fgPct - 0.46) * 24, 10) : bump(ratings.impact, 6);
+  const ageTax = age >= 33 ? (age - 32) * 2 : 0;
+  const noThree = threeRate != null && threeRate < 0.08;
+  const orbPct = asPercentPoints(hint?.orbPct);
+  const drbPct = asPercentPoints(hint?.drbPct);
+  const blkPct = asPercentPoints(hint?.blkPct);
+  const stlPct = asPercentPoints(hint?.stlPct);
+  const astPct = asPercentPoints(hint?.astPct);
+  const rimFinisher = noThree && fgPct != null && fgPct >= 0.6;
+  const rated = (measured: number | undefined, fallback: number) => {
+    if (measured == null || !Number.isFinite(measured)) return band(fallback + jitter());
+    if (measured >= 97) return band(measured);
+    return band(measured + jitter() * 0.35);
+  };
+
+  const attributes: GmAttributes = {
+    closeShot: rated(
+      rimFinisher ? scale(fgPct!, [[0.6, 82], [0.7, 90], [0.8, 97]]) : undefined,
+      anchor + (big ? 4 : 1) + finishNudge
+    ),
+    drivingLayup: band(anchor + (guard ? 3 : 0) + finishNudge + jitter()),
+    drivingDunk: band(anchor + (big ? -2 : 4) - ageTax + jitter()),
+    standingDunk: rated(
+      rimFinisher ? scale(fgPct!, [[0.6, 80], [0.7, 88], [0.8, 96]]) : undefined,
+      anchor + size * 8
+    ),
+    postControl: band(anchor + (position === "C" ? 8 : position === "PG" ? -14 : size * 6) + jitter()),
+    midrange: band(anchor + (big ? -6 : 2) + threeNudge * 0.35 + jitter()),
+    threePoint: rated(
+      noThree || threePct == null || threePct <= 0
+        ? noThree
+          ? 30
+          : undefined
+        : scale(threePct, THREE_STOPS),
+      anchor + (big ? -12 : guard ? 3 : 1) + threeNudge
+    ),
+    freeThrow: rated(
+      ftPct != null && ftPct > 0 ? scale(ftPct, FT_STOPS) : undefined,
+      anchor + (big ? -2 : 2) + ftNudge
+    ),
+    passAccuracy: rated(
+      astPct != null ? scale(astPct, AST_STOPS) : undefined,
+      anchor + (position === "PG" ? 6 : position === "C" ? -10 : 0) + bump((hint?.apg ?? 3) - 3, 10)
+    ),
+    ballHandle: band(anchor + (position === "PG" ? 8 : position === "C" ? -22 : guard ? 4 : -8) - ageTax * 0.4 + jitter()),
+    speedWithBall: band(anchor + (guard ? 4 : position === "C" ? -16 : -6) - ageTax + jitter()),
+    interiorDefense: band(anchor + size * 8 + bump(ratings.defense * 2, 8) + jitter()),
+    perimeterDefense: band(anchor + (guard ? 5 : big ? -10 : 0) + bump(ratings.defense * 2, 8) + jitter()),
+    steal: rated(
+      stlPct != null ? scale(stlPct, STL_STOPS) : undefined,
+      anchor + (guard ? 3 : -4) + bump(((hint?.spg ?? 0.8) - 0.9) * 10, 10)
+    ),
+    block: rated(
+      blkPct != null ? scale(blkPct, BLK_STOPS) : undefined,
+      anchor + (position === "C" ? 12 : size * 6) + bump(((hint?.bpg ?? 0.4) - 0.5) * 14, 12)
+    ),
+    offReb: rated(
+      orbPct != null ? scale(orbPct, ORB_STOPS) : undefined,
+      anchor - 8 + size * 10 + bump(((hint?.rpg ?? 4) - 5) * 1.2, 8)
+    ),
+    defReb: rated(
+      drbPct != null ? scale(drbPct, DRB_STOPS) : undefined,
+      anchor + size * 8 + bump(((hint?.rpg ?? 4) - 5) * 1.5, 10)
+    ),
+    speed: band(anchor + (big ? -10 : guard ? 4 : 1) - ageTax + jitter()),
+    agility: band(anchor + (big ? -8 : 2) - ageTax + jitter()),
+    strength: band(anchor + (big ? 8 : guard ? -6 : 0) + jitter()),
+    vertical: band(anchor + (big ? -2 : 2) - ageTax * 0.8 + jitter()),
+    stamina: band(anchor - 4 + bump(((hint?.mpg ?? 24) - 28) * 0.6, 8) - ageTax * 0.4),
+  };
+
+  const overall = overallFromAttributes(position, attributes);
+  const tendencies: GmTendencies = {
+    shootClose: tend(big ? 62 : 38 + (100 - attributes.threePoint) * 0.15),
+    shootMid: tend(48 + (attributes.midrange - 70) * 0.4),
+    shootThree: tend(
+      threeRate != null ? threeRate * 100 : Math.max(0, (attributes.threePoint - 30) * 0.9)
+    ),
+    drive: tend(attributes.ballHandle * 0.75 + (guard ? 10 : -8)),
+    postUp: tend(attributes.postControl * 0.8 + (big ? 8 : -20)),
+    dish: tend(30 + attributes.passAccuracy * 0.45 + (hint?.apg ?? 0) * 3),
+    flashyPass: tend(attributes.ballHandle * 0.35 + (position === "PG" ? 8 : 0)),
+    steal: tend(20 + attributes.steal * 0.45),
+    block: tend(15 + attributes.block * 0.5),
+    crashOffensive: tend(25 + attributes.offReb * 0.4),
+    foul: tend(28 + (100 - ratings.durability) * 0.2),
+  };
+
+  const upside = clamp(ratings.potential, 0, 10);
+  const yearsLeft = Math.max(0, (big ? 26 : 24) - age);
+  const ceiling = band(
+    overall + yearsLeft * (age <= 22 ? 2.2 : 1.1) + upside * 1.1
+  );
+  const floor = band(Math.min(overall, overall - (age <= 23 ? 6 : 3) - (10 - upside) * 0.4));
+  let boom = clamp(Math.round(16 + upside * 3.5 + (age <= 22 ? 14 : 0)), 8, 65);
+  let bust = clamp(Math.round(26 - upside * 1.6 + (age >= 29 ? 12 : 0)), 8, 55);
+  let average = 100 - boom - bust;
+  if (average < 10) {
+    const scale = 90 / (boom + bust);
+    boom = Math.round(boom * scale);
+    bust = Math.round(bust * scale);
+    average = 100 - boom - bust;
+  }
+  const roll = rng();
+  const path: GmDevPath =
+    roll < boom / 100 ? "boom" : roll < (boom + average) / 100 ? "average" : "bust";
+  const peakStart = age <= 23 ? (big ? 26 : 24) : Math.min(age, 29);
+  const peakEnd = peakStart + (ratings.durability >= 80 ? 8 : 6);
+  const potential: GmPotential = {
+    floor: Math.min(floor, overall),
+    ceiling: Math.max(ceiling, overall),
+    boom,
+    average,
+    bust,
+    path,
+    peakStart,
+    peakEnd,
+  };
+
+  return { version: SHEET_VERSION, overall, attributes, tendencies, potential };
+}
+
+export function hintFromCounting(line?: GmCountingLine): SheetStatHint | undefined {
+  if (!line || line.gp < 1) return undefined;
+  return {
+    threeRate: line.fga > 0 ? line.tpa / line.fga : 0,
+    threePct: line.tpa > 0 ? line.tpm / line.tpa : undefined,
+    ftPct: line.fta > 0 ? line.ftm / line.fta : undefined,
+    fgPct: line.fga > 0 ? line.fgm / line.fga : undefined,
+    mpg: line.min / line.gp,
+    ppg: line.pts / line.gp,
+    rpg: line.reb / line.gp,
+    apg: line.ast / line.gp,
+    spg: line.stl / line.gp,
+    bpg: line.blk / line.gp,
+    orbPct: line.orbPct,
+    drbPct: line.drbPct,
+    blkPct: line.blkPct,
+    stlPct: line.stlPct,
+    astPct: line.astPct,
+  };
+}
+
+/** 2025-26 saves stored totals without the rebound split. Fill the rates by name. */
+function definedHint(hint: SheetStatHint): SheetStatHint {
+  return Object.fromEntries(
+    Object.entries(hint).filter(([, value]) => value != null)
+  ) as SheetStatHint;
+}
+
+export function sheetHint(player: GmPlayer, hint?: SheetStatHint): SheetStatHint {
+  const fromLine = hintFromCounting(player.nbaSeason) ?? {};
+  const season = player.nbaSeason?.season;
+  const useEntry = season == null || season === "2025-26";
+  const saved = useEntry ? ENTRY_RATES[rateKey(player.name)] : undefined;
+  return {
+    ...definedHint({
+      orbPct: saved?.orb,
+      drbPct: saved?.drb,
+      blkPct: saved?.blk,
+      stlPct: saved?.stl,
+      astPct: saved?.ast,
+    }),
+    ...definedHint(fromLine),
+    ...definedHint(hint ?? {}),
+  };
+}
+
+export function playerSheet(player: GmPlayer, hint?: SheetStatHint): GmSheet {
+  const resolved = sheetHint(player, hint);
+  if (player.sheet?.version === SHEET_VERSION) return player.sheet;
+  return buildSheet(player, resolved);
+}
+
+/** Older saves have no sheet, or a sheet from an earlier formula. */
+export function ensurePlayerSheet(player: GmPlayer): GmPlayer {
+  if (player.sheet?.version === SHEET_VERSION) return player;
+  return { ...player, sheet: buildSheet(player, sheetHint(player)) };
+}
+
+function addKeys(
+  attributes: GmAttributes,
+  keys: Array<keyof GmAttributes>,
+  delta: number
+): GmAttributes {
+  const next = { ...attributes };
+  for (const key of keys) {
+    next[key] = band(next[key] + delta);
+  }
+  return next;
+}
+
+/**
+ * Population aging for a per-possession impact, at the age the player just turned.
+ * Wings peak around 27. Bigs are looked up one year younger, so their peak sits later.
+ * Gains run through the early 20s, the late 20s are flat, and the drop steepens after 32.
+ */
+function agingBase(age: number): number {
+  if (age <= 20) return 0.24;
+  if (age <= 22) return 0.18;
+  if (age <= 24) return 0.1;
+  if (age <= 26) return 0.04;
+  if (age <= 28) return 0;
+  if (age <= 30) return -0.08;
+  if (age === 31) return -0.16;
+  if (age === 32) return -0.22;
+  if (age === 33) return -0.3;
+  if (age === 34) return -0.38;
+  return -0.48;
+}
+
+/** One offseason. Age on the player is the age they just turned. */
+export function progressSheet(
+  player: GmPlayer,
+  opts?: { coach?: number; minutes?: number; pace?: "season" | "summer"; form?: number; playoffGames?: number }
+): GmPlayer {
+  const sheet = player.sheet ?? buildSheet(player);
+  const { potential } = sheet;
+  const age = player.age;
+  const big = player.position === "C" || player.position === "PF";
+  const minutes = opts?.minutes ?? player.minutesPreference ?? 24;
+  const coach = opts?.coach ?? 0;
+  const rng = createRng(hashId(player.id) + age * 997);
+  let delta = agingBase(big ? age - 1 : age);
+  if (delta > 0) {
+    const pathMul = potential.path === "boom" ? 2.1 : potential.path === "bust" ? 0.25 : 1;
+    const minuteMul = clamp(minutes / 26, 0.55, 1.15);
+    const coachMul = 1 + clamp(coach, 0, 1.5) * 0.08;
+    const work = player.personality > 15 ? 1.08 : player.personality < -15 ? 0.92 : 1;
+    delta *= pathMul * minuteMul * coachMul * work;
+    if (potential.path === "bust") delta *= 0.5;
+  } else {
+    const pathMul = potential.path === "boom" ? 0.7 : potential.path === "bust" ? 1.3 : 1;
+    const durable =
+      player.ratings.durability >= 80 ? 0.8 : player.ratings.durability < 55 ? 1.25 : 1;
+    delta *= pathMul * durable;
+  }
+  if (potential.path === "boom" && age >= 25 && age <= 28) delta += 0.05;
+  delta += (rng() - 0.5) * 0.08;
+  if (delta > 0 && sheet.overall >= potential.ceiling) delta = 0;
+  if (delta > 0 && potential.path === "bust" && sheet.overall <= potential.floor + 1) delta = 0;
+  delta = clamp(delta, -0.7, 0.55);
+  if (opts?.pace === "season") {
+    delta = delta > 0 ? delta * 0.32 : delta * 0.12;
+    delta += clamp(opts.form ?? 0, -0.04, 0.06);
+    delta = clamp(delta, -0.16, 0.2);
+  } else if ((opts?.playoffGames ?? 0) >= 4 && age <= potential.peakEnd && delta > -0.15) {
+    delta = clamp(delta + ((opts.playoffGames ?? 0) >= 12 ? 0.05 : 0.03), -0.7, 0.62);
+  }
+
+  const ticks =
+    opts?.pace === "season"
+      ? delta >= 0.05
+        ? 1
+        : delta <= -0.08
+          ? -1
+          : 0
+      : delta >= 0.18
+        ? 2
+        : delta >= 0.08
+          ? 1
+          : delta <= -0.4
+            ? -3
+            : delta <= -0.2
+              ? -2
+              : delta <= -0.08
+                ? -1
+                : 0;
+  let attributes = sheet.attributes;
+  if (ticks > 0) attributes = addKeys(attributes, GROW_KEYS[player.position], ticks);
+  if (ticks < 0) {
+    attributes = addKeys(attributes, DECLINE_KEYS, ticks);
+    if (age >= 33) {
+      attributes = addKeys(
+        attributes,
+        ["drivingLayup", "drivingDunk", "ballHandle", "speedWithBall"],
+        Math.min(-1, Math.round(ticks / 2))
+      );
+    }
+  }
+  const overall = overallFromAttributes(player.position, attributes);
+  const offenseShare = delta > 0 ? 0.62 : 0.45;
+  return {
+    ...player,
+    sheet: { ...sheet, overall, attributes },
+    ratings: {
+      ...player.ratings,
+      impact: clamp(Math.round((player.ratings.impact + delta) * 100) / 100, -4, 10),
+      offense: clamp(
+        Math.round((player.ratings.offense + delta * offenseShare) * 100) / 100,
+        -5,
+        12
+      ),
+      defense: clamp(
+        Math.round((player.ratings.defense + delta * (1 - offenseShare)) * 100) / 100,
+        -5,
+        10
+      ),
+    },
+  };
+}

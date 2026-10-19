@@ -57,6 +57,9 @@ const HUB_SECTIONS = [
 export function OffseasonHub() {
   const league = useGmStore((s) => s.league);
   const runOffseason = useGmStore((s) => s.runOffseason);
+  const openFreeAgency = useGmStore((s) => s.openFreeAgency);
+  const runCpuSignings = useGmStore((s) => s.runCpuSignings);
+  const setAutomation = useGmStore((s) => s.setAutomation);
   const myLeague = useMyLeagueStore((s) => s.myLeague);
   const simulation = useMyLeagueStore((s) => s.simulation);
   const historical = useMyLeagueStore((s) => s.historical);
@@ -78,8 +81,8 @@ export function OffseasonHub() {
       <header className="flex flex-col gap-1">
         <h1 className="text-[28px] font-bold tracking-tight">Offseason Hub</h1>
         <p className="text-[15px] text-muted-foreground">
-          Front-office workspace for the annual loop. Deep decision flows land
-          in later milestones; the links below open the live tools.
+          Playoffs, draft, free agency, then the next season. Each step waits
+          until you advance it.
         </p>
       </header>
 
@@ -120,8 +123,19 @@ export function OffseasonHub() {
             : ""}
         </p>
         <div className="flex flex-wrap gap-2">
-          {(league.phase === "draft" || league.phase === "offseason") && (
-            <Button onClick={() => runOffseason()}>Start next season</Button>
+          {league.phase === "draft" && (
+            <Button onClick={() => openFreeAgency()}>Open free agency</Button>
+          )}
+          {league.phase === "free_agency" && (
+            <>
+              <Button variant="outline" onClick={() => runCpuSignings()}>
+                Let the other teams sign
+              </Button>
+              <Button onClick={() => runOffseason()}>Start next season</Button>
+            </>
+          )}
+          {league.phase === "offseason" && (
+            <Button onClick={() => runOffseason()}>Open free agency</Button>
           )}
           <Link
             href="/gm/draft"
@@ -136,6 +150,35 @@ export function OffseasonHub() {
             Free agency
           </Link>
         </div>
+      </section>
+
+      <section className="sports-card flex flex-col gap-3 p-4">
+        <h2 className="text-[15px] font-bold">Hands-off switches</h2>
+        <label className="flex items-center gap-2 text-[14px]">
+          <input
+            type="checkbox"
+            checked={league.automation?.autoDraft ?? false}
+            onChange={(event) =>
+              setAutomation({ autoDraft: event.target.checked })
+            }
+          />
+          CPU makes your draft picks
+        </label>
+        <label className="flex items-center gap-2 text-[14px]">
+          <input
+            type="checkbox"
+            checked={league.automation?.autoFreeAgency ?? true}
+            onChange={(event) =>
+              setAutomation({ autoFreeAgency: event.target.checked })
+            }
+          />
+          Other teams sign when free agency opens
+        </label>
+        {league.tradeDeadlinePassed && league.phase === "regular" ? (
+          <p className="text-[13px] text-muted-foreground">
+            The trade deadline has passed. Deals wait until the offseason.
+          </p>
+        ) : null}
       </section>
 
       <section className="flex flex-col gap-2">

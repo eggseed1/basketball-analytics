@@ -240,6 +240,21 @@ export function loadBoard(): CareerSummary[] {
   }
 }
 
+/** Write three initials onto a life already stored on this device, and onto the earnings board when that life is on it. */
+export function stampCareer(id: { runId?: string | null; boardId?: string | null }, tag: string): { careers: CareerSummary[]; board: CareerSummary[]; summary: CareerSummary | null } {
+  const match = (c: CareerSummary) => (id.runId != null && c.runId === id.runId) || (id.boardId != null && c.boardId === id.boardId);
+  const careers = loadCareers().map((c) => (match(c) ? { ...c, tag } : c));
+  const board = loadBoard().map((c) => (match(c) ? { ...c, tag } : c));
+  const summary = careers.find(match) ?? board.find(match) ?? null;
+  try {
+    storage()?.setItem(CAREERS_KEY, JSON.stringify(careers));
+    storage()?.setItem(BOARD_KEY, JSON.stringify(board));
+  } catch {
+    /* storage full or blocked; the stamp still shows for this session */
+  }
+  return { careers, board, summary };
+}
+
 export function recordEarnings(c: CareerSummary): CareerSummary[] {
   const list = placeOnBoard(loadBoard(), c);
   try {

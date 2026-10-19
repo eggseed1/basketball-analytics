@@ -1,7 +1,7 @@
 import type { CareerSummary, OutcomeTier } from "./report";
 import { maybeCountry } from "./world";
 
-/** One row on the shared board. Earnings are career pay before tax. */
+/** One row on the shared board. Earnings are career pay before tax. Extra fields are the career line shown when the row is opened. */
 export type EarningsRow = {
   boardId: string;
   name: string;
@@ -12,6 +12,16 @@ export type EarningsRow = {
   finishedAt: string;
   seed: number;
   mode: "random" | "daily";
+  /** Three letters, arcade style. Absent on rows posted before initials existed. */
+  tag?: string | null;
+  heightCm?: number | null;
+  debutAge?: number | null;
+  draft?: string | null;
+  peak?: string | null;
+  honors?: string | null;
+  netWorth?: number | null;
+  after?: string | null;
+  nbaGames?: number | null;
 };
 
 export const MAX_ALL_TIME = 50;
@@ -24,6 +34,25 @@ function cleanName(value: unknown): string | null {
   const name = value.replace(/\s+/g, " ").trim();
   if (name.length < 1 || name.length > 40) return null;
   return name;
+}
+
+/** Keep a short text field, or drop it. A bad extra never rejects the score. */
+function optText(value: unknown, max: number): string | null {
+  if (typeof value !== "string") return null;
+  const text = value.replace(/\s+/g, " ").trim();
+  if (!text || text.length > max) return null;
+  return text;
+}
+
+function optInt(value: unknown, min: number, max: number): number | null {
+  if (typeof value !== "number" || !Number.isInteger(value) || value < min || value > max) return null;
+  return value;
+}
+
+export function cleanTag(value: unknown): string | null {
+  if (typeof value !== "string") return null;
+  const tag = value.trim().toUpperCase();
+  return /^[A-Z]{3}$/.test(tag) ? tag : null;
 }
 
 /** Reject a posted row that is missing a field or outside the game's range. */
@@ -52,6 +81,15 @@ export function parseEarningsRow(raw: unknown): EarningsRow | null {
     finishedAt: new Date(finished).toISOString(),
     seed: r.seed,
     mode: r.mode,
+    tag: cleanTag(r.tag),
+    heightCm: optInt(r.heightCm, 120, 250),
+    debutAge: optInt(r.debutAge, 15, 45),
+    draft: optText(r.draft, 40),
+    peak: optText(r.peak, 90),
+    honors: optText(r.honors, 180),
+    netWorth: optInt(r.netWorth, -2_000_000_000, EARNINGS_CAP),
+    after: optText(r.after, 80),
+    nbaGames: optInt(r.nbaGames, 0, 4000),
   };
 }
 
@@ -78,6 +116,15 @@ export function rowFromSummary(c: CareerSummary): EarningsRow | null {
     finishedAt: c.finishedAt,
     seed: c.seed,
     mode: c.mode,
+    tag: c.tag ?? null,
+    heightCm: c.heightCm,
+    debutAge: c.debutAge,
+    draft: c.draft,
+    peak: c.peak,
+    honors: c.honors ?? null,
+    netWorth: c.netWorth ?? null,
+    after: c.after ?? null,
+    nbaGames: c.nbaGames ?? null,
   });
 }
 

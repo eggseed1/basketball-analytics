@@ -8,6 +8,7 @@ import type {
   ScoutProfile,
   ScoutedRatings,
 } from "@/gm/types";
+import { playerSheet } from "@/gm/engine/attributes";
 import { clamp, createRng, pick, randInt } from "@/gm/engine/rng";
 import {
   archetypeLabel,
@@ -19,6 +20,7 @@ import type { GmScout } from "@/gm/seed/scouts";
 import {
   defaultTeamScout,
   effectiveScoutLevel,
+  expertiseLabel,
   generateScoutMarket,
   scoutMatchBonus,
 } from "@/gm/seed/scouts";
@@ -251,6 +253,156 @@ export function buildScoutProfile(
         ? clamp(boardIndex + 1 + randInt(rng, -3, 4), 1, 60)
         : null,
   };
+}
+
+export type ScoutedPotential = {
+  low: number;
+  high: number;
+  comment: string;
+};
+
+function potentialFit(
+  scout: GmScout | null | undefined,
+  position: GmPlayer["position"]
+): number {
+  if (!scout) return 0;
+  let bonus = clamp(scout.yearsExperience / 50, 0, 0.25);
+  const exp = scout.expertise;
+  if (exp === "general") bonus += 0.35;
+  if (exp === "guards" && (position === "PG" || position === "SG")) bonus += 0.7;
+  if (exp === "wings" && (position === "SF" || position === "SG" || position === "PF")) bonus += 0.65;
+  if (exp === "bigs" && (position === "C" || position === "PF")) bonus += 0.7;
+  if (exp === "international") bonus += 0.2;
+  if (exp === "defense" || exp === "offense") bonus += 0.12;
+  return bonus;
+}
+
+function nameSeed(value: string): number {
+  let h = 2166136261;
+  for (let i = 0; i < value.length; i++) {
+    h ^= value.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+
+function scoutClarity(
+  player: GmPlayer,
+  scout: GmScout | null | undefined
+): number {
+  const eye = scout ? effectiveScoutLevel(scout) : 1;
+  const bonus = potentialFit(scout, player.position);
+  return clamp(eye + bonus, 1, 5.9);
+}
+
+const PATH_LABEL = {
+  boom: "Boom",
+  average: "Steady",
+  bust: "Bust risk",
+} as const;
+
+/**
+ * Madden-style dev read. A sharp, matching scout sees the path.
+ * A thin report stays sealed, or names the wrong lean.
+ */
+export function trajectoryRead(
+  player: GmPlayer,
+  scout: GmScout | null | undefined
+): string {
+  const clarity = scoutClarity(player, scout);
+  if (!scout || clarity < 2.6) return "Trajectory is still sealed.";
+  const path = playerSheet(player).potential.path;
+  const rng = createRng(nameSeed(`${player.id}:path:${scout.id}`));
+  if (clarity < 4.4 && rng() < 0.4) {
+    const wrong =
+      path === "boom" ? "bust" : path === "bust" ? "boom" : rng() < 0.5 ? "boom" : "bust";
+    return PATH_LABEL[wrong];
+  }
+  return PATH_LABEL[path];
+}
+
+/** One combine for the class. Measurables and the medical file lock in. */
+export function applyCombine(player: GmPlayer): GmPlayer {
+  const profile = player.scoutProfile;
+  if (!profile) return player;
+  const sheet = playerSheet(player);
+  const speed = sheet.attributes.speed;
+  const vertical = sheet.attributes.vertical;
+  const agility = sheet.attributes.agility;
+  const athletic = ratingToGrade((speed + vertical + agility) / 3, 0);
+  const lengthBias = player.position === "C" || player.position === "PF" ? 5 : 3;
+  const wingspan = clamp(
+    player.heightIn + lengthBias + ((nameSeed(player.id) % 5) - 2),
+    player.heightIn - 1,
+    player.heightIn + 10
+  );
+  const durability = player.ratings.durability;
+  const medicalNote =
+    durability >= 78
+      ? "Combine medical was clean."
+      : durability >= 62
+        ? "Combine medical noted a minor history. Imaging was clean."
+        : "Combine medical flagged durability. Several teams will slide this prospect.";
+  return {
+    ...player,
+    scoutProfile: {
+      ...profile,
+      grades: { ...profile.grades, athleticism: athletic },
+      heightInEstimate: player.heightIn,
+      weightLbsEstimate: player.weightLbs,
+      medicalNote,
+      combine: {
+        wingspanIn: wingspan,
+        verticalIn: clamp(Math.round(26 + (vertical - 40) * 0.22), 24, 44),
+        sprint: Math.round(clamp(3.45 - (speed - 70) * 0.007, 2.95, 3.75) * 100) / 100,
+      },
+    },
+  };
+}
+
+/**
+ * The true floor and ceiling stay off the screen.
+ * A better eye, and a matching specialty, tighten the range and the note.
+ */
+export function scoutPotentialView(
+  player: GmPlayer,
+  scout: GmScout | null | undefined
+): ScoutedPotential {
+  const sheet = playerSheet(player);
+  const floor = sheet.potential.floor;
+  const ceiling = sheet.potential.ceiling;
+  const clarity = scoutClarity(player, scout);
+  const bonus = potentialFit(scout, player.position);
+  const extra = Math.round((5.6 - clarity) * 5);
+  const rng = createRng(nameSeed(`${player.id}:${scout?.id ?? "none"}`));
+  const shift = Math.round((rng() - 0.5) * extra * 1.1);
+  const low = clamp(Math.round(floor - extra * 0.45 + shift), 25, 98);
+  const high = clamp(
+    Math.round(Math.max(ceiling, low + 1) + extra * 0.55 + Math.max(0, shift) * 0.15),
+    low + 1,
+    99
+  );
+  const matched = bonus >= 0.6;
+  const lane = scout ? expertiseLabel(scout.expertise).toLowerCase() : "";
+  let comment: string;
+  if (!scout) {
+    comment = "No director of scouting. The range is a guess until someone owns the board.";
+  } else if (clarity >= 5) {
+    comment = matched
+      ? `${scout.name} trusts this read. ${expertiseLabel(scout.expertise)} is the specialty, and the range is about as tight as the tape allows.`
+      : `${scout.name} has a strong eye. The range stays narrow even outside the specialty.`;
+  } else if (clarity >= 3.6) {
+    comment = matched
+      ? `${expertiseLabel(scout.expertise)} film is comfortable here. The low end is the part to trust.`
+      : `This sits outside ${scout.name}'s ${lane} lane, so the high end could be off by a tier.`;
+  } else if (clarity >= 2.4) {
+    comment = `${scout.name} wants another look before the room bets the high end.`;
+  } else if (matched) {
+    comment = `Even in the ${lane} lane, the sample is thin. Treat the range as a wide net.`;
+  } else {
+    comment = `${expertiseLabel(scout.expertise)} is the wrong specialty for a ${player.position}. This range is mostly fog.`;
+  }
+  return { low, high, comment };
 }
 
 /** Apply sealed identity + fogged dossier to a prospect. */

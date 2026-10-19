@@ -26,7 +26,7 @@ function perGame(
 
 /**
  * Compact historical career surface from precomputed product artifacts.
- * DRBL/WAR1 only where published (2018-19+); else —.
+ * DRBL/WAR1 only where scientifically supported (2020-21+); else —.
  */
 export function HistoricalCareerSurface({
   career,

@@ -48,6 +48,9 @@ export interface CareerSummary {
   earnings?: number;
   netWorth?: number;
   after?: string | null;
+  nbaGames?: number;
+  /** Three letters the player put on the board. */
+  tag?: string | null;
   unicorn?: boolean;
 }
 
@@ -118,6 +121,7 @@ export function summarize(s: LifeState, finishedAt: string): CareerSummary {
     earnings: Math.round(s.earnings),
     netWorth: Math.round(netWorth(s.finance)),
     after: s.after ? `${s.after.title}, ${s.after.employer}` : null,
+    nbaGames: s.nbaGames,
     ...(s.unicorn ? { unicorn: true } : {}),
   };
 }

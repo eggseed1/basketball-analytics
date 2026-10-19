@@ -6,6 +6,7 @@ import {
   ComposedChart,
   Curve,
   Line,
+  LineChart,
   ReferenceLine,
   ResponsiveContainer,
   Scatter,
@@ -35,14 +36,6 @@ function formatCareerChartNumber(value: number): string {
   }
   return formatNumber(value, 1);
 }
-
-export type CareerGameDot = {
-  /** Axis label matching `CareerSeriesPoint.season`, e.g. "24-25". */
-  season: string;
-  value: number;
-  /** Fractional calendar year so games spread through the season. */
-  year: number;
-};
 
 export type CareerSeriesPoint = {
   /** Short label on the axis, e.g. "16-17". */
@@ -494,7 +487,6 @@ function CareerChartTooltip({
 
 export function CareerTeamTrendChart({
   points,
-  gameDots,
   height = 220,
   className,
   selectedSeason,
@@ -504,8 +496,6 @@ export function CareerTeamTrendChart({
   drawKey,
 }: {
   points: CareerSeriesPoint[];
-  /** Individual games stacked on each season tick. Same units as the line. */
-  gameDots?: CareerGameDot[];
   height?: number;
   className?: string;
   selectedSeason?: string;
@@ -652,36 +642,6 @@ export function CareerTeamTrendChart({
     );
   };
 
-  const yearRows = useMemo(
-    () =>
-      data.map((row) => {
-        const start = Number((row.fullSeason ?? "").slice(0, 4));
-        const year = Number.isFinite(start) ? start + 0.72 : Number.NaN;
-        return { ...row, year };
-      }),
-    [data]
-  );
-  const scatterDots = useMemo(
-    () =>
-      (gameDots ?? []).filter(
-        (dot) => Number.isFinite(dot.year) && Number.isFinite(dot.value)
-      ),
-    [gameDots]
-  );
-  const useYearAxis = scatterDots.length > 0 && yearRows.every((row) => Number.isFinite(row.year));
-  const yearTicks = useMemo(() => {
-    if (!useYearAxis) return [];
-    const years = [
-      ...yearRows.map((row) => row.year),
-      ...scatterDots.map((dot) => dot.year),
-    ];
-    const min = Math.floor(Math.min(...years));
-    const max = Math.ceil(Math.max(...years));
-    const ticks: number[] = [];
-    for (let y = min + (min % 2); y <= max; y += 2) ticks.push(y);
-    return ticks;
-  }, [useYearAxis, yearRows, scatterDots]);
-
   if (data.length < 2) return null;
 
   const showFranchiseLegend =
@@ -699,16 +659,12 @@ export function CareerTeamTrendChart({
         style={{ height }}
       >
         <ResponsiveContainer width="100%" height={height}>
-          <ComposedChart
-            data={useYearAxis ? yearRows : data}
+          <LineChart
+            data={data}
             margin={{ top: 8, right: 8, left: 0, bottom: 2 }}
           >
             <XAxis
-              dataKey={useYearAxis ? "year" : "season"}
-              type={useYearAxis ? "number" : "category"}
-              ticks={useYearAxis ? yearTicks : undefined}
-              domain={useYearAxis ? ["dataMin - 0.3", "dataMax + 0.3"] : undefined}
-              tickFormatter={useYearAxis ? (value: number) => String(Math.round(value)) : undefined}
+              dataKey="season"
               tick={{ fontSize: 12 }}
               tickLine={false}
               axisLine={false}
@@ -726,34 +682,16 @@ export function CareerTeamTrendChart({
               wrapperStyle={rechartsFrostWrapperStyle}
               content={<CareerChartTooltip />}
             />
-            {teamChangeSeasons.map((season) => {
-              const at = useYearAxis
-                ? yearRows.find((row) => row.season === season)?.year
-                : season;
-              if (at == null) return null;
-              return (
-                <ReferenceLine
-                  key={season}
-                  x={at}
-                  stroke="var(--border)"
-                  strokeWidth={1}
-                  strokeOpacity={0.85}
-                  ifOverflow="extendDomain"
-                />
-              );
-            })}
-            {useYearAxis ? (
-              <Scatter
-                data={scatterDots}
-                dataKey="value"
-                fill={chartTheme.teamColor(themedPlotPoints[0]?.teamId).color}
-                fillOpacity={chartTheme.isDark ? 0.45 : 0.35}
-                stroke="none"
-                r={2.4}
-                isAnimationActive={false}
-                legendType="none"
+            {teamChangeSeasons.map((season) => (
+              <ReferenceLine
+                key={season}
+                x={season}
+                stroke="var(--border)"
+                strokeWidth={1}
+                strokeOpacity={0.85}
+                ifOverflow="extendDomain"
               />
-            ) : null}
+            ))}
             <Line
               type="monotone"
               dataKey="value"
@@ -769,11 +707,11 @@ export function CareerTeamTrendChart({
                   drawClock={drawClock}
                 />
               )}
-              dot={useYearAxis ? false : renderDot}
-              activeDot={useYearAxis ? false : renderActiveDot}
+              dot={renderDot}
+              activeDot={renderActiveDot}
               isAnimationActive={false}
             />
-          </ComposedChart>
+          </LineChart>
         </ResponsiveContainer>
       </div>
       {showFranchiseLegend ? (

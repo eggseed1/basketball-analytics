@@ -38,15 +38,27 @@ function Ext({ href, children }: { href: string; children: ReactNode }) {
 const DATA_SOURCES: { name: ReactNode; uses: string }[] = [
   {
     name: <Ext href="https://www.nba.com/stats">NBA.com and NBA Stats</Ext>,
-    uses: "Box scores, season totals from 1996-97 on (the per-game, per-100-possession and advanced tables are built from them), play-by-play, shot charts, play types, on-court ratings, on/off, hustle stats, player awards, franchise records, the record book lines that are counted from game logs since 1996-97, league averages, careers that ended before 1996-97, transactions, schedules, cap figures and key dates.",
+    uses: "Box scores, play-by-play, shot charts, play types, on/off, hustle stats, player awards, franchise records, the record book lines that are counted from game logs since 1996-97, league averages, careers that ended before 1996-97, transactions, schedules, cap figures and key dates.",
   },
   {
     name: <Ext href="https://www.espn.com/nba/">ESPN</Ext>,
     uses: "Scores, schedules, standings, rosters, injury status, transaction notes and player bios.",
   },
   {
+    name: <Ext href="https://www.basketball-reference.com/">Basketball-Reference</Ext>,
+    uses: "Past-season advanced and per-game tables, contracts, and the record book leader lists for single games, seasons, careers, and team seasons. Kept from an earlier copy: ABA seasons and advanced tables for careers that ended before 1996-97, a few early players NBA Stats has no record of, and some league averages before 1983.",
+  },
+  {
+    name: <Ext href="https://www.darko.app/">DARKO</Ext>,
+    uses: "DARKO player ratings, a model by Kostya Medvedovsky.",
+  },
+  {
     name: <Ext href="https://github.com/fivethirtyeight/data/tree/master/nba-raptor">FiveThirtyEight RAPTOR</Ext>,
     uses: "Historical RAPTOR ratings, used under CC BY 4.0.",
+  },
+  {
+    name: <Ext href="https://www.spotrac.com/nba/draft/future/">Spotrac</Ext>,
+    uses: "Future draft pick ownership and protection terms.",
   },
   {
     name: <Ext href="https://www.wikipedia.org/">Wikipedia and Wikidata</Ext>,
@@ -98,21 +110,6 @@ export default function SourcesPage() {
         <p>
           The sources don&apos;t endorse this site, and numbers here can differ from theirs when the site
           computes them differently.
-        </p>
-      </Section>
-
-      <Section title="Formulas">
-        <p>
-          PER, Win Shares, Box Plus/Minus and VORP are computed here from NBA Stats season totals with
-          their published formulas.{" "}
-          <Ext href="https://www.basketball-reference.com/about/per.html">PER</Ext> is John
-          Hollinger&apos;s.{" "}
-          <Ext href="https://www.basketball-reference.com/about/ws.html">Win Shares</Ext> is Justin
-          Kubatko&apos;s method, built on Dean Oliver&apos;s points produced and defensive rating.{" "}
-          <Ext href="https://www.basketball-reference.com/about/bpm2.html">Box Plus/Minus 2.0</Ext> and
-          VORP are Daniel Myers&apos;. Our BPM uses whole-season totals, so it can differ a little from
-          versions built game by game. Offensive and defensive ratings on player pages are NBA Stats&apos;
-          on-court ratings: how the team scored and allowed points while that player was on the floor.
         </p>
       </Section>
 

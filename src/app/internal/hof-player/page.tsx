@@ -143,6 +143,7 @@ export default async function HofPlayerExamplePage({ searchParams }: PageProps) 
               heightLabel={heightLabel}
               weightLabel={weightLabel}
               birthDate={player?.birthDate ?? null}
+              draftInfo={player?.draftInfo ?? null}
               college={player?.college ?? null}
               portraitUrl={portraitUrl}
               seasonOptions={seasonOptions}

@@ -33,7 +33,7 @@ export async function generateMetadata({
   return {
     title: award.title,
     description: award.blurb,
-    alternates: { canonical: `/awards/${award.slug}` },
+    alternates: { canonical: `/awards/${slug}` },
   };
 }
 

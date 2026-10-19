@@ -1204,6 +1204,15 @@ ok("all-time rows reject a missing figure and keep the richer life", () => {
   assert.equal(parseEarningsRow({ ...row("0123456789abcdef", 10), birthCountry: "ZZ" }), null);
   const parsed = parseEarningsRow(row("0123456789abcdef", 10));
   assert.equal(parsed?.earnings, 10);
+  assert.equal(parsed?.tag, null);
+  const tagged = parseEarningsRow({ ...row("0123456789abcdef", 10), tag: "bmb", peak: "25.3 pts in NCAA basketball at 18", nbaGames: 40, heightCm: 201 });
+  assert.equal(tagged?.tag, "BMB");
+  assert.equal(tagged?.peak, "25.3 pts in NCAA basketball at 18");
+  assert.equal(tagged?.nbaGames, 40);
+  assert.equal(tagged?.heightCm, 201);
+  assert.equal(parseEarningsRow({ ...row("0123456789abcdef", 10), tag: "no", nbaGames: -1 })?.tag, null);
+  assert.equal(parseEarningsRow({ ...row("0123456789abcdef", 10), tag: "no", nbaGames: -1 })?.nbaGames, null);
+  assert.equal(parseEarningsRow({ ...row("0123456789abcdef", 10), tag: "no", nbaGames: -1 })?.earnings, 10);
   const board = placeRows([row("aaaaaaaaaaaaaaaa", 40)], row("bbbbbbbbbbbbbbbb", 40));
   assert.deepEqual(board.map((r) => r.boardId), ["aaaaaaaaaaaaaaaa", "bbbbbbbbbbbbbbbb"]);
   assert.equal(placeRows(board, { ...row("bbbbbbbbbbbbbbbb", 90) }).map((r) => r.earnings).join(","), "90,40");

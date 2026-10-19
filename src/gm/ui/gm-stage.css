@@ -1,0 +1,997 @@
+/* Franchise Lab stage. Scoped so the rest of DRBL stays as it is.
+   Team color is the light. The desk follows the site's light or dark mode. */
+
+html [data-gm] {
+  --gm-ink: #eef2f6;
+  --gm-panel: #ffffff;
+  --gm-text: #161b22;
+  --gm-muted: #5c6778;
+  --gm-shade: #e3eaf2;
+  --gm-well: #d5dde8;
+  --gm-day: #f7f9fc;
+  --gm-day-game: #e7eef8;
+  --gm-day-break: #d9e6f6;
+  --gm-line: rgb(16 22 32 / 0.12);
+  --gm-line-strong: rgb(16 22 32 / 0.18);
+  --gm-input: #ffffff;
+  --gm-popover: #ffffff;
+  --gm-secondary: #e7edf4;
+  --gm-accent: #dce6f2;
+  --gm-nav: rgb(16 22 32 / 0.05);
+  --gm-glow: 32%;
+  --gm-shadow: rgb(16 22 32 / 0.16);
+  --gm-sheen: rgb(255 255 255 / 0.8);
+  --gm-mix: #1a1f27;
+  --gm-on-chip: #161b22;
+  --gm-outline: #161b22;
+  --gm-mark-holiday: #8a5a10;
+  --gm-mark-deadline: #c2410c;
+  --gm-mark-cup: #1e4d86;
+  --gm-split: #8b97a8;
+  --gm-ring-track: #d5dde8;
+  --gm-slot: #e7edf4;
+  color-scheme: light;
+  --background: var(--gm-ink);
+  --foreground: var(--gm-text);
+  --card: var(--gm-panel);
+  --card-foreground: var(--gm-text);
+  --popover: var(--gm-popover);
+  --popover-foreground: var(--gm-text);
+  --primary: var(--team-primary, #1d7a45);
+  --primary-foreground: #ffffff;
+  --secondary: var(--gm-secondary);
+  --secondary-foreground: var(--gm-text);
+  --muted: var(--gm-secondary);
+  --muted-foreground: var(--gm-muted);
+  --accent: var(--gm-accent);
+  --accent-foreground: var(--gm-text);
+  --border: var(--gm-line);
+  --input: var(--gm-input);
+  --ring: var(--team-primary, #1d4e89);
+  --destructive: #d92d20;
+  --surface-dark-mix: 0%;
+  --accent-positive: oklch(0.52 0.14 158);
+  --accent-negative: oklch(0.52 0.16 24);
+  --data-positive: oklch(0.48 0.14 156);
+  --data-negative: oklch(0.5 0.17 24);
+  --accent-warning: #b86a00;
+  --accent-info: #1d4e89;
+  color: var(--gm-text);
+  border-radius: 22px;
+  background:
+    radial-gradient(
+      900px 240px at 8% -20%,
+      color-mix(in oklab, var(--team-primary, #3a7) var(--gm-glow), transparent),
+      transparent 70%
+    ),
+    linear-gradient(180deg, var(--gm-shade) 0%, var(--gm-ink) 42%);
+  box-shadow: inset 0 1px 0 var(--gm-sheen);
+}
+
+html.dark [data-gm] {
+  --gm-ink: #0c1016;
+  --gm-panel: #161c26;
+  --gm-text: #f3f5f8;
+  --gm-muted: #a7b0be;
+  --gm-shade: #141a22;
+  --gm-well: #0c1016;
+  --gm-day: #10161e;
+  --gm-day-game: #1a2330;
+  --gm-day-break: #1a2740;
+  --gm-line: rgb(255 255 255 / 0.12);
+  --gm-line-strong: rgb(255 255 255 / 0.14);
+  --gm-input: #0e131a;
+  --gm-popover: #1c2430;
+  --gm-secondary: #1a222c;
+  --gm-accent: #243044;
+  --gm-nav: rgb(255 255 255 / 0.04);
+  --gm-glow: 55%;
+  --gm-shadow: rgb(0 0 0 / 0.85);
+  --gm-sheen: rgb(255 255 255 / 0.06);
+  --gm-mix: white;
+  --gm-on-chip: #ffffff;
+  --gm-outline: #f3f5f8;
+  --gm-mark-holiday: #f3d48a;
+  --gm-mark-deadline: #fb923c;
+  --gm-mark-cup: #9ec0ea;
+  --gm-split: #c4ccd6;
+  --gm-ring-track: #243044;
+  --gm-slot: #1a222c;
+  color-scheme: dark;
+  --destructive: #ff5a4f;
+  --surface-dark-mix: 100%;
+  --accent-positive: oklch(0.76 0.16 158);
+  --accent-negative: oklch(0.7 0.18 24);
+  --data-positive: oklch(0.74 0.17 156);
+  --data-negative: oklch(0.68 0.19 24);
+  --accent-warning: #ffa726;
+  --accent-info: #3d94ff;
+  --ring: var(--team-primary, #8eb6ff);
+}
+
+html [data-gm] .text-muted-foreground {
+  color: var(--gm-muted);
+}
+
+html [data-gm] .text-foreground {
+  color: var(--gm-text);
+}
+
+html [data-gm] .bg-secondary,
+html [data-gm] .bg-secondary\/80,
+html [data-gm] .bg-muted,
+html [data-gm] .bg-muted\/40 {
+  background: color-mix(in oklab, var(--team-primary, #3a7) 16%, var(--gm-shade));
+  color: var(--gm-text);
+}
+
+html [data-gm] .sports-card,
+html.dark [data-gm] .sports-card,
+html[data-surface] [data-gm] .sports-card {
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--team-primary, #3a7) 14%, var(--gm-panel)) 0%,
+      var(--gm-shade) 38%
+    );
+  border: 1px solid var(--gm-line);
+  border-top: 3px solid var(--team-primary, #3a7);
+  box-shadow: 0 18px 40px -28px var(--gm-shadow);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  color: var(--gm-text);
+}
+
+/* Glass mode paints every .bg-card white or smoked. Keep the desk panels solid. */
+html[data-surface] [data-gm] .bg-card,
+html.dark[data-surface] [data-gm] .bg-card {
+  background-color: var(--gm-panel);
+  color: var(--gm-text);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+html [data-gm] .frost-surface,
+html [data-gm] .frost-surface-soft,
+html [data-gm] .frost-surface-muted,
+html.dark [data-gm] .frost-surface,
+html.dark [data-gm] .frost-surface-soft,
+html.dark [data-gm] .frost-surface-muted {
+  background-color: color-mix(in oklab, var(--team-primary, #3a7) 16%, var(--gm-shade));
+}
+
+html [data-gm] .divide-black\/5 > :not([hidden]) ~ :not([hidden]),
+html [data-gm] .divide-border > :not([hidden]) ~ :not([hidden]) {
+  border-color: var(--gm-line);
+}
+
+html [data-gm] table {
+  color: var(--gm-text);
+}
+
+/* overflow-x: auto also computes overflow-y to auto, so wide sheets grew a vertical bar. */
+html [data-gm] :has(> table) {
+  overflow-x: auto;
+  overflow-y: clip;
+}
+
+html [data-gm] thead {
+  background: color-mix(in oklab, var(--team-primary, #3a7) 28%, var(--gm-shade));
+  color: var(--gm-text);
+}
+
+html [data-gm] .border-border {
+  border-color: var(--gm-line);
+}
+
+html [data-gm] select,
+html [data-gm] input {
+  background: var(--gm-input);
+  color: var(--gm-text);
+  border-color: var(--gm-line-strong);
+}
+
+html [data-gm] [data-slot="button"].bg-primary {
+  background: var(--team-primary, #1d7a45);
+  color: #fff;
+  box-shadow: 0 8px 20px -12px var(--team-primary, #1d7a45);
+}
+
+html [data-gm] [data-slot="button"].bg-primary:hover {
+  background: color-mix(in oklab, var(--team-primary, #1d7a45) 82%, white);
+}
+
+html [data-gm] [data-slot="button"].bg-background {
+  background: transparent;
+  color: var(--gm-text);
+  border-color: color-mix(in oklab, var(--team-primary, #3a7) 50%, white 10%);
+}
+
+html [data-gm] .gm-disclaimer {
+  margin: 0;
+  color: var(--gm-muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+html [data-gm] .gm-mast {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 6px 8px 6px 12px;
+  border-radius: 14px;
+  background: color-mix(in oklab, var(--team-primary, #3a7) 12%, var(--gm-panel));
+  box-shadow: inset 3px 0 0 var(--team-primary, #3a7);
+  border: 1px solid color-mix(in oklab, var(--team-primary, #3a7) 32%, var(--gm-line));
+}
+
+html [data-gm] .gm-mast__id {
+  min-width: 0;
+}
+
+html [data-gm] .gm-mast__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  margin: 0;
+  color: var(--gm-muted);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+html [data-gm] .gm-kicker {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gm-muted);
+}
+
+html [data-gm] .gm-mast h1 {
+  margin: 0;
+  overflow: hidden;
+  font-size: 17px;
+  font-weight: 750;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--gm-text);
+}
+
+html [data-gm] .gm-phase {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--team-secondary, var(--gm-text));
+}
+
+html [data-gm] .gm-phase::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 99px;
+  background: #7dffb3;
+  box-shadow: 0 0 8px #7dffb3;
+}
+
+html [data-gm] .gm-phase[data-phase="playoffs"]::before,
+html [data-gm] .gm-phase[data-phase="play_in"]::before {
+  background: #ffd15c;
+  box-shadow: 0 0 8px #ffd15c;
+}
+
+html [data-gm] .gm-phase[data-phase="draft"]::before {
+  background: #8eb6ff;
+  box-shadow: 0 0 8px #8eb6ff;
+}
+
+html [data-gm] .gm-phase[data-phase="free_agency"]::before {
+  background: #5ee0a0;
+  box-shadow: 0 0 8px #5ee0a0;
+}
+
+html [data-gm] .gm-mast__record {
+  margin: 0 0 0 auto;
+  color: var(--team-primary, #3a7);
+  font-size: 20px;
+  font-weight: 750;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+html [data-gm] .gm-mast__tools {
+  display: flex;
+  gap: 6px;
+}
+
+html [data-gm] .gm-mast__tool {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: 9px;
+  border: 1px solid color-mix(in oklab, var(--team-secondary, #c4b) 65%, var(--team-primary, #3a7));
+  background: var(--team-primary, #3a7);
+  color: var(--team-secondary, #fff);
+  cursor: pointer;
+}
+
+html [data-gm] .gm-mast__tool svg {
+  width: 15px;
+  height: 15px;
+}
+
+html [data-gm] .gm-mast__tool:hover {
+  background: color-mix(in oklab, var(--team-primary, #3a7) 78%, white);
+  color: white;
+}
+
+html [data-gm] .gm-player {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 16px;
+  align-items: center;
+  padding: 16px 18px;
+  border-radius: 18px;
+  background:
+    radial-gradient(90% 120% at 0% 0%, color-mix(in oklab, var(--team-primary) 42%, transparent), transparent 62%),
+    linear-gradient(180deg, var(--gm-panel), var(--gm-shade));
+  border: 1px solid color-mix(in oklab, var(--team-primary) 45%, var(--gm-line));
+}
+
+html [data-gm] .gm-player h2 {
+  font-size: 1.75rem;
+  font-weight: 760;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+
+html [data-gm] .gm-player__impact {
+  text-align: right;
+}
+
+html [data-gm] .gm-player__impact .score-num {
+  font-size: 2.6rem;
+  line-height: 0.9;
+}
+
+html [data-gm] .gm-statline {
+  display: grid;
+  grid-template-columns: repeat(11, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+html [data-gm] .gm-statline p:first-child {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gm-muted, #9aa3b2);
+}
+
+html [data-gm] .gm-statline p:last-child {
+  font-variant-numeric: tabular-nums;
+  font-weight: 650;
+}
+
+html [data-gm] .gm-attr {
+  display: grid;
+  grid-template-columns: 108px 1fr 28px;
+  gap: 8px;
+  align-items: center;
+  font-size: 13px;
+}
+
+html [data-gm] .gm-attr__track {
+  height: 8px;
+  border-radius: 99px;
+  background: var(--gm-well);
+  overflow: hidden;
+}
+
+html [data-gm] .gm-attr__track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, color-mix(in oklab, var(--team-primary) 70%, #fff), var(--team-primary));
+}
+
+@media (max-width: 720px) {
+  html [data-gm] .gm-player {
+    grid-template-columns: auto 1fr;
+  }
+  html [data-gm] .gm-player__impact {
+    grid-column: 1 / -1;
+    text-align: left;
+  }
+  html [data-gm] .gm-statline {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+html [data-gm] .gm-award {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--team-primary) 28%, var(--gm-shade));
+  color: var(--gm-on-chip);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+html[data-gm-full] header.site-chrome,
+html[data-gm-full] .page-atmosphere,
+html[data-gm-full] .app-safe-bottom,
+html[data-gm-full] .app-tab-bar {
+  display: none;
+}
+
+html[data-gm-full],
+html[data-gm-full] body {
+  background: #e7edf3;
+  overflow: hidden;
+}
+
+html.dark[data-gm-full],
+html.dark[data-gm-full] body {
+  background: #070b10;
+}
+
+/* The desk is the fullscreen element, so the site header is outside it.
+   Fixed cover is the fallback when the browser refuses the Fullscreen API. */
+html[data-gm-full] [data-gm],
+html [data-gm]:fullscreen,
+html [data-gm]:-webkit-full-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  min-height: 100dvh;
+  margin: 0;
+  border-radius: 0;
+  overflow: auto;
+}
+
+/* The desk is a fixed-height flex column in fullscreen. Children with
+   overflow other than visible would otherwise shrink to nothing. */
+html[data-gm-full] [data-gm] > *,
+html [data-gm]:fullscreen > *,
+html [data-gm]:-webkit-full-screen > * {
+  flex-shrink: 0;
+}
+
+html [data-gm] .gm-leave {
+  margin-top: 6px;
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--gm-muted);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+html [data-gm] .gm-nav {
+  display: flex;
+  gap: 2px;
+  overflow-x: auto;
+  padding: 4px;
+  border-radius: 14px;
+  background: var(--gm-nav);
+}
+
+html [data-gm] .gm-nav__link {
+  flex: 0 0 auto;
+  padding: 8px 12px;
+  border-radius: 10px;
+  color: var(--gm-muted);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+html [data-gm] .gm-nav__link.is-active {
+  color: white;
+  background: color-mix(in oklab, var(--team-primary, #3a7) 78%, #05070a);
+  box-shadow: inset 0 -2px 0 rgb(255 255 255 / 0.45);
+}
+
+html [data-gm] .gm-club-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: color-mix(in oklab, var(--team-primary) 72%, var(--gm-mix));
+  font-weight: 700;
+}
+
+html [data-gm] .gm-focus {
+  border-top: 3px solid var(--team-primary);
+  padding-top: 12px;
+}
+
+html [data-gm] .gm-club-row {
+  box-shadow: inset 3px 0 0 var(--team-primary);
+}
+
+html [data-gm] .gm-club-panel {
+  border-radius: 16px;
+  border-top: 3px solid var(--team-primary);
+  background: color-mix(in oklab, var(--team-primary) 12%, var(--gm-shade));
+  padding: 8px;
+}
+
+html [data-gm] .gm-rot {
+  display: grid;
+  grid-template-columns: minmax(140px, 180px) minmax(160px, 220px) 1fr;
+  gap: 10px;
+  align-items: center;
+}
+
+html [data-gm] .gm-rot__name {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+html [data-gm] .gm-rot__name span {
+  color: var(--gm-muted);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+html [data-gm] .gm-rot__slider {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+html [data-gm] .gm-rot__slider input[type="range"] {
+  width: 100%;
+  accent-color: var(--team-primary);
+}
+
+html [data-gm] .gm-chart {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+html [data-gm] .gm-chart__q {
+  color: var(--gm-muted);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+html [data-gm] .gm-chart__slice {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 1px;
+}
+
+html [data-gm] .gm-chart__cell {
+  display: block;
+  height: 12px;
+  border-radius: 3px;
+  background: var(--gm-well);
+}
+
+html [data-gm] .gm-chart__cell.is-on {
+  background: var(--team-primary);
+}
+
+html [data-gm] button.gm-chart__cell {
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+html [data-gm] button.gm-chart__cell:disabled {
+  cursor: default;
+  opacity: 0.35;
+}
+
+html [data-gm] .gm-chart__cell.is-now {
+  outline: 1px solid var(--gm-outline);
+  outline-offset: 1px;
+}
+
+html [data-gm] .gm-chart__q.is-now {
+  color: var(--gm-text);
+}
+
+html [data-gm] .gm-rot--night {
+  grid-template-columns: minmax(140px, 200px) 1fr;
+}
+
+@media (max-width: 800px) {
+  html [data-gm] .gm-rot {
+    grid-template-columns: 1fr;
+  }
+}
+
+html [data-gm] .gm-pick {
+  border-radius: 16px;
+  background: color-mix(in oklab, var(--pick, #888) 18%, var(--gm-shade));
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--pick, #888) 40%, transparent);
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+html [data-gm] .gm-pick:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    inset 0 0 0 1px var(--pick, #888),
+    0 12px 24px -16px var(--pick, #888);
+}
+
+@media (max-width: 640px) {
+  html [data-gm] .gm-mast {
+    flex-wrap: wrap;
+    row-gap: 6px;
+  }
+
+  html [data-gm] .gm-mast__record {
+    margin-left: 0;
+  }
+}
+
+html [data-gm] .gm-cal__week,
+html [data-gm] .gm-cal__grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 1px;
+}
+
+html [data-gm] .gm-cal__grid {
+  overflow: hidden;
+  border-radius: 12px;
+  background: color-mix(in oklab, var(--gm-text) 22%, var(--gm-day));
+  padding: 1px;
+}
+
+html [data-gm] .gm-cal__week {
+  padding-inline: 1px;
+  color: var(--gm-muted);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+html [data-gm] .gm-cal__week .is-weekend {
+  color: color-mix(in oklab, var(--team-primary, #3a7) 70%, var(--gm-muted));
+}
+
+html [data-gm] .gm-cal__day {
+  display: flex;
+  min-width: 0;
+  min-height: 6.1rem;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 0;
+  background: var(--gm-day);
+  padding: 7px 6px 6px;
+  color: var(--gm-text);
+}
+
+html [data-gm] .gm-cal__num {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+html [data-gm] .gm-cal__b2b {
+  margin-left: 4px;
+  color: var(--gm-mark-deadline);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+html [data-gm] .gm-cal__match {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin-top: auto;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+html [data-gm] .gm-cal__off {
+  display: flex;
+  flex: 1;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+html [data-gm] .gm-cal__day.is-pad {
+  background: var(--gm-well);
+  min-height: 0;
+}
+
+html [data-gm] .gm-cal__day.is-empty {
+  background: var(--gm-day);
+}
+
+html [data-gm] .gm-cal__day.is-weekend:not(.is-game):not(.is-today):not(.is-cup):not(.is-break) {
+  background: color-mix(in oklab, var(--gm-well) 62%, var(--gm-day));
+}
+
+html [data-gm] .gm-cal__day.is-home {
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--team-primary, #3a7) 18%, var(--gm-day)) 0%,
+      var(--gm-day) 72%
+    );
+  box-shadow: inset 0 3px 0 var(--team-primary, #3a7);
+}
+
+html [data-gm] .gm-cal__day.is-away {
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--gm-mark-deadline) 14%, var(--gm-day)) 0%,
+      var(--gm-day) 74%
+    );
+  box-shadow: inset 0 3px 0 color-mix(in oklab, var(--gm-mark-deadline) 85%, var(--gm-text));
+}
+
+html [data-gm] .gm-cal__day.is-today {
+  background: color-mix(in oklab, var(--team-primary, #3a7) 16%, var(--gm-day));
+  box-shadow: inset 0 0 0 2px var(--team-primary, #3a7);
+}
+
+html [data-gm] .gm-cal__day.is-today .gm-cal__num {
+  color: var(--team-primary, #3a7);
+}
+
+html [data-gm] .gm-cal__day.is-past {
+  opacity: 0.4;
+}
+
+html [data-gm] .gm-cal__day.is-cup,
+html [data-gm] .gm-cal__day.is-break {
+  background: var(--gm-day-break);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--gm-mark-cup) 45%, transparent);
+  opacity: 1;
+}
+
+html [data-gm] .gm-cal__day.mark-holiday {
+  --cal-mark: var(--gm-mark-holiday);
+}
+
+html [data-gm] .gm-cal__day.mark-deadline {
+  --cal-mark: var(--gm-mark-deadline);
+}
+
+html [data-gm] .gm-cal__day.mark-opener,
+html [data-gm] .gm-cal__day.mark-finale,
+html [data-gm] .gm-cal__day.mark-cup,
+html [data-gm] .gm-cal__day.mark-break {
+  --cal-mark: var(--gm-mark-cup);
+}
+
+html [data-gm] .gm-cal__day.is-marked:not(.is-today) {
+  box-shadow: inset 3px 0 0 var(--cal-mark, #f3d48a);
+}
+
+html [data-gm] .gm-cal__day.is-today.is-marked {
+  box-shadow:
+    inset 3px 0 0 var(--cal-mark, #f3d48a),
+    inset 0 0 0 2px var(--team-primary, #3a7);
+}
+
+html [data-gm] .gm-cal__day.is-home.is-today,
+html [data-gm] .gm-cal__day.is-away.is-today,
+html [data-gm] .gm-cal__day.is-marked {
+  background: color-mix(in oklab, var(--cal-mark, var(--team-primary, #3a7)) 12%, var(--gm-day));
+}
+
+html [data-gm] .gm-cal__mark {
+  margin-top: 2px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+html [data-gm] .gm-cal__mark .is-holiday,
+html [data-gm] .gm-cal__break.is-holiday {
+  color: var(--gm-mark-holiday);
+}
+
+html [data-gm] .gm-cal__mark .is-deadline,
+html [data-gm] .gm-cal__break.is-deadline {
+  color: var(--gm-mark-deadline);
+}
+
+html [data-gm] .gm-cal__mark .is-cup,
+html [data-gm] .gm-cal__mark .is-break,
+html [data-gm] .gm-cal__mark .is-opener,
+html [data-gm] .gm-cal__mark .is-finale,
+html [data-gm] .gm-cal__break.is-cup,
+html [data-gm] .gm-cal__break.is-break,
+html [data-gm] .gm-cal__break.is-opener,
+html [data-gm] .gm-cal__break.is-finale {
+  color: var(--gm-mark-cup);
+}
+
+html [data-gm] .gm-cal__break {
+  display: block;
+  max-width: 100%;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  line-height: 1.05;
+  overflow-wrap: anywhere;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+html [data-gm] .gm-cal__rail {
+  position: relative;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--gm-day);
+}
+
+html [data-gm] .gm-cal__rail > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: color-mix(in oklab, var(--team-primary, #3a7) 80%, var(--gm-mix));
+}
+
+html [data-gm] .gm-cal__rail > i {
+  position: absolute;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--gm-mark-holiday);
+  transform: translate(-50%, -50%);
+}
+
+html [data-gm] .gm-cal__rail > i.is-deadline {
+  background: var(--gm-mark-deadline);
+}
+
+html [data-gm] .gm-cal__rail > i.is-cup,
+html [data-gm] .gm-cal__rail > i.is-break,
+html [data-gm] .gm-cal__rail > i.is-opener,
+html [data-gm] .gm-cal__rail > i.is-finale {
+  background: var(--gm-mark-cup);
+}
+
+html [data-gm] .gm-cal__foot {
+  color: var(--gm-muted);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html [data-gm] .gm-cal__title,
+  html [data-gm] .gm-cal__grid {
+    animation: gm-cal-month 320ms ease;
+  }
+
+  html [data-gm] .gm-cal__rail > span {
+    transition: width 420ms ease;
+  }
+
+  html [data-gm] .gm-cal__day.is-today {
+    animation: gm-cal-arrive 420ms ease;
+  }
+
+  html [data-gm] .gm-cal.is-running .gm-cal__day.is-today {
+    animation: gm-cal-arrive 420ms ease, gm-cal-pulse 1.2s ease 420ms infinite;
+  }
+
+  html [data-gm] .gm-cal__day.is-landed {
+    animation: gm-cal-land 560ms ease;
+  }
+}
+
+@keyframes gm-cal-month {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes gm-cal-arrive {
+  from {
+    transform: scale(0.94);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes gm-cal-pulse {
+  0%,
+  100% {
+    box-shadow: inset 0 0 0 2px var(--team-primary, #3a7);
+  }
+  50% {
+    box-shadow:
+      inset 0 0 0 2px var(--team-primary, #3a7),
+      0 0 0 5px color-mix(in oklab, var(--team-primary, #3a7) 40%, transparent);
+  }
+}
+
+@keyframes gm-cal-land {
+  from {
+    filter: brightness(1.45);
+    transform: translateY(-3px);
+  }
+  to {
+    filter: none;
+    transform: none;
+  }
+}
+
+html [data-gm] .gm-winbar {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  width: 72px;
+  height: 8px;
+  margin-top: 4px;
+  border-radius: 999px;
+  background: var(--gm-well);
+}
+
+html [data-gm] .gm-winbar > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--team-primary, #3a7);
+  transform-origin: left center;
+}
+
+
+@media (max-width: 720px) {
+  html [data-gm] .gm-cal__day {
+    min-height: 4.6rem;
+    padding: 4px;
+  }
+
+  html [data-gm] .gm-cal__break,
+  html [data-gm] .gm-cal__mark {
+    font-size: 8px;
+    letter-spacing: 0;
+  }
+}

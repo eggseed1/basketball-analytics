@@ -23,6 +23,7 @@ import { standingsHref } from "@/lib/standings-routes";
 import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { LinkCue } from "@/components/ui/link-cue";
 import { getHistoricalLeadersBundle } from "@/data/queries/time-machine";
+import { NBA_TEAM_META } from "@/data/providers/nba/nba-team-meta";
 import { historyHref } from "@/themes/history-url";
 
 export const dynamic = "force-dynamic";
@@ -261,7 +262,7 @@ export default async function HistorySeasonPage({
                         <span className="w-5 tabular-nums text-muted-foreground">{index + 1}</span>
                         <span className="min-w-0 flex-1 truncate font-medium">
                           {row.playerName}
-                          <span className="font-normal text-muted-foreground"> · {row.teamAbbr}</span>
+                          <span className="font-normal text-muted-foreground"> · {NBA_TEAM_META[row.teamAbbr]?.abbreviation ?? row.teamAbbr}</span>
                         </span>
                         <span className="tabular-nums font-semibold">{row.value.toFixed(2)}</span>
                       </Link>

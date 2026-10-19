@@ -114,12 +114,12 @@ const METRICS: MetricDef[] = [
   },
   {
     id: "ortg",
-    label: "On ORtg",
+    label: "ORtg",
     get: (r) => finite(r.offensiveRating),
   },
   {
     id: "drtg",
-    label: "On DRtg",
+    label: "DRtg",
     higherIsBetter: false,
     get: (r) => finite(r.defensiveRating),
   },

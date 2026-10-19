@@ -21,6 +21,7 @@ import {
   randomSeed,
   recordEarnings,
   savePrefs,
+  stampCareer,
   writeSave,
   type Prefs,
 } from "@/one-shot/persistence";
@@ -223,6 +224,33 @@ function Game({ expanded, onExpand }: { expanded: boolean; onExpand: () => void 
     savePrefs(p);
   }, []);
 
+  const postAllTime = useCallback((row: EarningsRow) => {
+    void fetch("/api/one-shot/leaderboard", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(row),
+    })
+      .then((res) => res.json())
+      .then((data: { entries?: EarningsRow[]; unavailable?: boolean }) => {
+        if (Array.isArray(data.entries)) {
+          setAllTime(data.entries);
+          setAllTimeStatus("ready");
+        } else setAllTimeStatus("down");
+      })
+      .catch(() => setAllTimeStatus("down"));
+  }, []);
+
+  const stamp = useCallback(
+    (id: { runId?: string; boardId?: string }, tag: string) => {
+      const saved = stampCareer(id, tag);
+      setCareers(saved.careers);
+      setBoard(saved.board);
+      const row = saved.summary ? rowFromSummary(saved.summary) : null;
+      if (row) postAllTime(row);
+    },
+    [postAllTime],
+  );
+
   const commit = useCallback((next: LifeState) => {
     const prev = lifeRef.current;
     lifeRef.current = next;
@@ -233,26 +261,12 @@ function Game({ expanded, onExpand }: { expanded: boolean; onExpand: () => void 
       setBoard(recordEarnings(summary));
       setHighlightBoardId(summary.boardId ?? null);
       const row = rowFromSummary(summary);
-      if (row) {
-        void fetch("/api/one-shot/leaderboard", {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify(row),
-        })
-          .then((res) => res.json())
-          .then((data: { entries?: EarningsRow[]; unavailable?: boolean }) => {
-            if (Array.isArray(data.entries)) {
-              setAllTime(data.entries);
-              setAllTimeStatus("ready");
-            } else setAllTimeStatus("down");
-          })
-          .catch(() => setAllTimeStatus("down"));
-      }
+      if (row) postAllTime(row);
       clearSave();
       setSaved(null);
       setScreen("report");
     }
-  }, []);
+  }, [postAllTime]);
 
   const pendingId = life?.pendingDecision?.id ?? null;
   const auto = life?.clock.autoDecisions ?? false;
@@ -520,6 +534,8 @@ function Game({ expanded, onExpand }: { expanded: boolean; onExpand: () => void 
             board={board}
             allTime={allTime}
             allTimeStatus={allTimeStatus}
+            units={units}
+            onStamp={stamp}
             replaySeed={replaySeed}
             onClearReplay={() => setReplaySeed(null)}
             recovery={recovery?.reason ?? null}
@@ -557,6 +573,7 @@ function Game({ expanded, onExpand }: { expanded: boolean; onExpand: () => void 
           allTime={allTime}
           allTimeStatus={allTimeStatus}
           highlightBoardId={highlightBoardId}
+          onStamp={stamp}
           onNew={() => beBorn()}
           onHome={() => setScreen("start")}
         />

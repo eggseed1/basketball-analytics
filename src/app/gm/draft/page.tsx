@@ -6,7 +6,7 @@ import Link from "next/link";
 import { GmShell } from "@/gm/ui/gm-shell";
 import { useGmStore } from "@/gm/state/gm-store";
 import {
-  displayImpact,
+  scoutedOverall,
   displayPlayerName,
   userTeam,
 } from "@/gm/lib/selectors";
@@ -14,8 +14,10 @@ import {
   formatHeight,
   GRADE_LEGEND,
   gradeMeaning,
-  sortScoutBoard,
+  scoutPotentialView,
+  trajectoryRead,
 } from "@/gm/engine/scouting";
+import { orderedBoard, rosterNeeds } from "@/gm/engine/draft-room";
 import { expertiseLabel } from "@/gm/seed/scouts";
 import type { GmPlayer, ScoutLetterGrade } from "@/gm/types";
 import { Button } from "@/components/ui/button";
@@ -32,8 +34,8 @@ export default function GmDraftPage() {
 function gradeTone(g: ScoutLetterGrade | null | undefined): string {
   if (!g) return "text-muted-foreground";
   if (g.startsWith("A")) return "text-delta-up";
-  if (g.startsWith("B")) return "text-sky-700 dark:text-sky-400";
-  if (g.startsWith("C")) return "text-amber-700 dark:text-amber-400";
+  if (g.startsWith("B")) return "text-sky-300";
+  if (g.startsWith("C")) return "text-amber-300";
   return "text-delta-down";
 }
 
@@ -41,6 +43,9 @@ function DraftBody() {
   const league = useGmStore((s) => s.league);
   const draftPlayer = useGmStore((s) => s.draftPlayer);
   const runOffseason = useGmStore((s) => s.runOffseason);
+  const moveDraftBoard = useGmStore((s) => s.moveDraftBoard);
+  const resetDraftBoard = useGmStore((s) => s.resetDraftBoard);
+  const runCombine = useGmStore((s) => s.runCombine);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [revealFlash, setRevealFlash] = useState<{
     codename: string;
@@ -56,10 +61,7 @@ function DraftBody() {
 
   const board = useMemo(() => {
     if (!league) return [] as GmPlayer[];
-    const raw = league.draftPool
-      .map((id) => league.players.find((p) => p.id === id)!)
-      .filter(Boolean);
-    return sortScoutBoard(raw);
+    return orderedBoard(league, league.players);
   }, [league]);
 
   useEffect(() => {
@@ -75,6 +77,7 @@ function DraftBody() {
   if (!league) return null;
 
   const team = userTeam(league);
+  const needs = rosterNeeds(team, league.players);
   const scout = team.staff.scout;
   const order = league.lotteryOrder ?? [];
   const pickIndex = league.draftPickIndex ?? 0;
@@ -101,8 +104,9 @@ function DraftBody() {
             {league.phase !== "draft" ? " · preview" : ""}
           </h2>
           <p className="mt-1 text-[14px] leading-relaxed text-muted-foreground">
-            Style tags until pick night. Only true top-of-board talent gets elite
-            codenames. Most of the class is role projection, not legend cosplay.
+            Rank this class yourself. The combine locks height, athleticism, and
+            the medical file. Potential stays a range. The other clubs draft off
+            their own boards, so a name you love can still be there later.
           </p>
           {league.phase === "draft" ? (
             <p className="mt-2 text-sm text-muted-foreground">
@@ -122,7 +126,7 @@ function DraftBody() {
               </Link>
             </p>
           ) : (
-            <p className="mt-1 text-[12px] text-amber-800 dark:text-amber-300">
+            <p className="mt-1 text-[12px] text-amber-300">
               No director of scouting hired, so fog is heavy.{" "}
               <Link href="/gm/staff" className="underline underline-offset-2">
                 Hire a scout
@@ -134,7 +138,7 @@ function DraftBody() {
             className="mt-2 text-[12px] font-medium text-foreground underline underline-offset-2"
             onClick={() => setShowLegend((v) => !v)}
           >
-            {showLegend ? "Hide" : "What do grades & impact mean?"}
+            {showLegend ? "Hide" : "What do grades and overalls mean?"}
           </button>
           {showLegend ? (
             <div className="mt-2 rounded-xl border border-border bg-secondary/50 px-3 py-2.5 text-[12px] leading-relaxed text-muted-foreground">
@@ -152,13 +156,11 @@ function DraftBody() {
                   </li>
                 ))}
               </ul>
-              <p className="mt-2 font-medium text-foreground">Impact number</p>
+              <p className="mt-2 font-medium text-foreground">Overall</p>
               <p className="mt-0.5">
-                Scouted points per 100 possessions vs average (≈ DARKO-style).{" "}
-                <span className="text-foreground">+3.0</span> is star-ish;{" "}
-                <span className="text-foreground">0.0</span> is replacement;
-                negatives are below replacement. Fogged by your scout’s eye and
-                expertise.
+                Your staff’s read of the overall, on the same 50 to 99 scale as
+                the league. An 80 is a solid rotation player. The true sheet
+                stays hidden. The number moves with your scout’s eye.
               </p>
             </div>
           ) : null}
@@ -168,6 +170,26 @@ function DraftBody() {
             Finish draft / next season
           </Button>
         ) : null}
+      </div>
+
+      <div className="flex flex-wrap items-center gap-2">
+        <Button
+          variant="outline"
+          disabled={!league.draftPool.length || league.combineDone}
+          onClick={() => runCombine()}
+        >
+          {league.combineDone ? "Combine is in" : "Run the combine"}
+        </Button>
+        <Button
+          variant="outline"
+          disabled={!league.userDraftBoard?.length}
+          onClick={() => resetDraftBoard()}
+        >
+          Reset to the scout board
+        </Button>
+        <p className="text-[12px] text-muted-foreground">
+          Holes: {needs.slice(0, 2).join(", ")}
+        </p>
       </div>
 
       {revealFlash ? (
@@ -206,53 +228,87 @@ function DraftBody() {
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(280px,340px)]">
         <div className="overflow-hidden rounded-md border border-border bg-card">
           <div className="flex items-center justify-between gap-2 border-b border-border px-3 py-2 text-[12px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-            <span>Big board · scouted upside</span>
+            <span>Your board</span>
             <span className="normal-case tracking-normal text-[10px] font-normal">
-              Grade · Impact
+              Grade · OVR
             </span>
           </div>
           <ul className="max-h-[min(70vh,640px)] divide-y divide-border overflow-y-auto">
             {board.map((p, i) => {
               const active = p.id === selectedId;
               const upside = p.scoutProfile?.grades.upside;
+              const read = scoutPotentialView(p, scout);
+              const need = needs[0];
               return (
                 <li key={p.id}>
-                  <button
-                    type="button"
-                    onClick={() => setSelectedId(p.id)}
+                  <div
                     className={cn(
-                      "flex w-full items-center gap-3 px-3 py-2.5 text-left transition-colors",
+                      "flex w-full items-center gap-2 px-3 py-2.5",
                       active ? "bg-secondary" : "hover:bg-secondary/60"
                     )}
                   >
-                    <span className="w-6 text-[12px] tabular-nums text-muted-foreground">
-                      {i + 1}
-                    </span>
-                    <span className="min-w-0 flex-1">
-                      <span className="block truncate text-[14px] font-semibold tracking-tight">
-                        {displayPlayerName(p)}
+                    <span className="flex w-14 shrink-0 flex-col gap-0.5">
+                      <button
+                        type="button"
+                        className="text-left text-[10px] font-semibold uppercase tracking-wide text-muted-foreground hover:text-foreground"
+                        onClick={() => moveDraftBoard(p.id, "top")}
+                      >
+                        Top
+                      </button>
+                      <span className="flex gap-1.5">
+                        <button
+                          type="button"
+                          className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground hover:text-foreground"
+                          aria-label={`Move ${displayPlayerName(p)} up`}
+                          onClick={() => moveDraftBoard(p.id, "up")}
+                        >
+                          Up
+                        </button>
+                        <button
+                          type="button"
+                          className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground hover:text-foreground"
+                          aria-label={`Move ${displayPlayerName(p)} down`}
+                          onClick={() => moveDraftBoard(p.id, "down")}
+                        >
+                          Down
+                        </button>
                       </span>
-                      <span className="block text-[12px] text-muted-foreground">
-                        {p.position} · {p.age} ·{" "}
-                        {p.scoutProfile?.archetypeLabel ?? "Unknown mold"}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedId(p.id)}
+                      className="flex min-w-0 flex-1 items-center gap-3 text-left"
+                    >
+                      <span className="w-6 text-[12px] tabular-nums text-muted-foreground">
+                        {i + 1}
                       </span>
-                    </span>
-                    <span
-                      className={cn(
-                        "text-[14px] font-bold tabular-nums",
-                        gradeTone(upside)
-                      )}
-                      title={gradeMeaning(upside)}
-                    >
-                      {upside ?? "?"}
-                    </span>
-                    <span
-                      className="w-10 text-right text-[12px] tabular-nums text-muted-foreground"
-                      title="Scouted impact (pts/100 vs avg)"
-                    >
-                      {displayImpact(p)}
-                    </span>
-                  </button>
+                      <span className="min-w-0 flex-1">
+                        <span className="block truncate text-[14px] font-semibold tracking-tight">
+                          {displayPlayerName(p)}
+                        </span>
+                        <span className="block text-[12px] text-muted-foreground">
+                          {p.position} · {p.age} · {read.low}-{read.high} ·{" "}
+                          {p.scoutProfile?.archetypeLabel ?? "Unknown mold"}
+                          {p.position === need ? " · Fits the hole" : ""}
+                        </span>
+                      </span>
+                      <span
+                        className={cn(
+                          "text-[14px] font-bold tabular-nums",
+                          gradeTone(upside)
+                        )}
+                        title={gradeMeaning(upside)}
+                      >
+                        {upside ?? "?"}
+                      </span>
+                      <span
+                        className="w-10 text-right text-[12px] tabular-nums text-muted-foreground"
+                        title="Scouted overall"
+                      >
+                        {scoutedOverall(p)}
+                      </span>
+                    </button>
+                  </div>
                 </li>
               );
             })}
@@ -266,6 +322,7 @@ function DraftBody() {
 
         <ScoutDossier
           player={selected}
+          scout={scout}
           yourTurn={yourTurn}
           onDraft={onDraft}
         />
@@ -276,10 +333,12 @@ function DraftBody() {
 
 function ScoutDossier({
   player,
+  scout,
   yourTurn,
   onDraft,
 }: {
   player: GmPlayer | null;
+  scout: ReturnType<typeof userTeam>["staff"]["scout"];
   yourTurn: boolean;
   onDraft: (id: string) => void;
 }) {
@@ -292,6 +351,7 @@ function ScoutDossier({
   }
 
   const profile = player.scoutProfile;
+  const potential = scoutPotentialView(player, scout);
   const grades = profile?.grades;
   const gradeRows: {
     key: string;
@@ -321,6 +381,19 @@ function ScoutDossier({
         </p>
       </div>
 
+      <div className="rounded-lg bg-secondary/80 px-2.5 py-2">
+        <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+          Scouted potential
+        </p>
+        <p className="mt-1 text-[18px] font-bold tabular-nums">
+          {potential.low}-{potential.high}
+        </p>
+        <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground">
+          {potential.comment}
+        </p>
+        <p className="mt-1 text-[13px] text-foreground">{trajectoryRead(player, scout)}</p>
+      </div>
+
       <div className="grid grid-cols-2 gap-2 text-[12px]">
         <Metric
           label="Height"
@@ -335,9 +408,9 @@ function ScoutDossier({
           }
         />
         <Metric
-          label="Impact"
-          value={displayImpact(player)}
-          hint="Scouted pts/100 vs avg"
+          label="OVR"
+          value={scoutedOverall(player)}
+          hint="Scouted overall"
         />
         <Metric
           label="Confidence"
@@ -358,6 +431,14 @@ function ScoutDossier({
           value={`${Math.round(player.scouted.uncertainty * 100)}%`}
         />
       </div>
+
+      {profile?.combine ? (
+        <div className="grid grid-cols-3 gap-2 text-[12px]">
+          <Metric label="Wingspan" value={formatHeight(profile.combine.wingspanIn)} />
+          <Metric label="Vertical" value={`${profile.combine.verticalIn} in`} />
+          <Metric label="Sprint" value={`${profile.combine.sprint.toFixed(2)}s`} />
+        </div>
+      ) : null}
 
       <div>
         <p className="mb-1.5 text-[12px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">

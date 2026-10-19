@@ -1127,64 +1127,255 @@ function drawTrainer(px: Px, s: LifeState, env: Env, frame: number, hero: Hero, 
 
 /* ------------------------------------------------------------ share card */
 
-/** 1200x630 share card. Returns a PNG blob. */
-export async function shareCardPng(s: LifeState, lines: { tier: string; born: string; route: string; facts: string[]; link: string }): Promise<Blob | null> {
+export interface SharePoster {
+  tier: string;
+  born: string;
+  team: string | null;
+  route: string[];
+  link: string;
+  height: string;
+  seasons: string;
+  peak: string | null;
+  draft: string | null;
+  nbaGames: number;
+  earnings: string | null;
+  honors: string | null;
+  ended: string;
+}
+
+const POSTER_W = 1152;
+const POSTER_H = 1440;
+const SANS = "ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif";
+
+function lumOf(hex: string) {
+  const n = parseInt(hex.slice(1), 16);
+  return (0.2126 * ((n >> 16) & 255) + 0.7152 * ((n >> 8) & 255) + 0.0722 * (n & 255)) / 255;
+}
+
+function posterAccent(primary: string, secondary: string) {
+  if (lumOf(primary) >= 0.22) return primary;
+  if (lumOf(secondary) >= 0.22) return secondary;
+  return mixHex(primary, "#FFFFFF", 0.62);
+}
+
+function ellipsize(ctx: CanvasRenderingContext2D, text: string, maxW: number) {
+  if (ctx.measureText(text).width <= maxW) return text;
+  let t = text;
+  while (t.length > 1 && ctx.measureText(`${t}…`).width > maxW) t = t.slice(0, -1);
+  return `${t}…`;
+}
+
+function wrapLines(ctx: CanvasRenderingContext2D, text: string, maxW: number, maxLines: number) {
+  const words = text.split(/\s+/).filter(Boolean);
+  const lines: string[] = [];
+  let cur = "";
+  for (const word of words) {
+    const next = cur ? `${cur} ${word}` : word;
+    if (ctx.measureText(next).width <= maxW) {
+      cur = next;
+      continue;
+    }
+    if (cur) lines.push(cur);
+    cur = word;
+    if (lines.length === maxLines - 1) break;
+  }
+  if (lines.length < maxLines && cur) lines.push(ellipsize(ctx, cur, maxW));
+  else if (lines.length) lines[lines.length - 1] = ellipsize(ctx, lines[lines.length - 1]!, maxW);
+  return lines;
+}
+
+/** 1152×1440 career poster. Returns a PNG blob. */
+export async function shareCardPng(s: LifeState, poster: SharePoster): Promise<Blob | null> {
   const c = document.createElement("canvas");
-  c.width = 1200;
-  c.height = 630;
+  c.width = POSTER_W;
+  c.height = POSTER_H;
   const ctx = c.getContext("2d");
   if (!ctx) return null;
-  ctx.imageSmoothingEnabled = false;
-  ctx.fillStyle = "#F2F2F7";
-  ctx.fillRect(0, 0, 1200, 630);
-  ctx.fillStyle = "#FFFFFF";
-  ctx.beginPath();
-  ctx.roundRect(32, 32, 1136, 566, 28);
-  ctx.fill();
+  const kit = kitFor(s.seed, s.placement.node, s.placement.teamName);
+  const accent = posterAccent(kit.primary, kit.secondary);
+  const ink = "#0C0E12";
+  const paper = "#171B22";
+  const muted = "#9AA3B2";
+  const text = "#F5F7FA";
+
+  ctx.fillStyle = ink;
+  ctx.fillRect(0, 0, POSTER_W, POSTER_H);
+
   const scene = document.createElement("canvas");
   scene.width = SCENE_W;
   scene.height = SCENE_H;
   const sctx = scene.getContext("2d");
+  const sceneH = SCENE_H * 6;
   if (sctx) {
+    sctx.imageSmoothingEnabled = false;
     drawScene(sctx, s, 0);
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(scene, 0, 0, SCENE_W * 6, sceneH);
+  }
+  const fade = ctx.createLinearGradient(0, sceneH - 220, 0, sceneH);
+  fade.addColorStop(0, "rgba(12,14,18,0)");
+  fade.addColorStop(1, ink);
+  ctx.fillStyle = fade;
+  ctx.fillRect(0, sceneH - 220, POSTER_W, 220);
+  ctx.fillStyle = accent;
+  ctx.fillRect(0, sceneH - 8, POSTER_W, 8);
+
+  if (kit.number !== null) {
     ctx.save();
-    ctx.beginPath();
-    ctx.roundRect(64, 64, 480, 270, 18);
-    ctx.clip();
-    ctx.drawImage(scene, 64, 64, 480, 270);
+    ctx.globalAlpha = 0.09;
+    ctx.fillStyle = accent;
+    ctx.font = `800 340px ${SANS}`;
+    ctx.textAlign = "right";
+    ctx.fillText(String(kit.number), POSTER_W - 36, sceneH + 250);
     ctx.restore();
   }
+
+  const portraitSize = 256;
   const portrait = document.createElement("canvas");
-  portrait.width = 128;
-  portrait.height = 128;
+  portrait.width = portraitSize;
+  portrait.height = portraitSize;
   const pctx = portrait.getContext("2d");
+  const px = 56;
+  const py = sceneH - 168;
   if (pctx) {
     pctx.imageSmoothingEnabled = false;
-    drawPortrait(pctx, s, 128);
+    drawPortrait(pctx, s, portraitSize);
     ctx.save();
+    ctx.imageSmoothingEnabled = false;
     ctx.beginPath();
-    ctx.roundRect(64, 360, 160, 160, 18);
+    ctx.roundRect(px - 8, py - 8, portraitSize + 16, portraitSize + 16, 28);
+    ctx.fillStyle = accent;
+    ctx.fill();
+    ctx.beginPath();
+    ctx.roundRect(px, py, portraitSize, portraitSize, 22);
     ctx.clip();
-    ctx.drawImage(portrait, 64, 360, 160, 160);
+    ctx.drawImage(portrait, px, py, portraitSize, portraitSize);
     ctx.restore();
   }
-  const sans = "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif";
-  ctx.fillStyle = "#6E6E73";
-  ctx.font = `600 22px ${sans}`;
-  ctx.fillText("DRBL ARCADE · ONE SHOT", 588, 100);
-  ctx.fillStyle = "#1D1D1F";
-  ctx.font = `700 52px ${sans}`;
-  ctx.fillText(s.identity.displayName.slice(0, 22), 588, 168);
-  ctx.fillStyle = "#0071E3";
-  ctx.font = `700 34px ${sans}`;
-  ctx.fillText(lines.tier, 588, 222);
-  ctx.fillStyle = "#1D1D1F";
-  ctx.font = `400 26px ${sans}`;
-  ctx.fillText(lines.born, 588, 278);
-  lines.facts.slice(0, 4).forEach((f, i) => ctx.fillText(f.slice(0, 42), 588, 326 + i * 40));
-  ctx.fillStyle = "#6E6E73";
-  ctx.font = `400 21px ${sans}`;
-  ctx.fillText(lines.route.slice(0, 64), 252, 470);
-  ctx.fillText(lines.link.slice(0, 80), 252, 506);
+
+  const tx = px + portraitSize + 36;
+  const tw = POSTER_W - tx - 56;
+  let ty = sceneH + 40;
+  ctx.textAlign = "left";
+  ctx.textBaseline = "alphabetic";
+  ctx.fillStyle = accent;
+  ctx.font = `700 22px ${SANS}`;
+  ctx.letterSpacing = "3px";
+  ctx.fillText(s.unicorn ? "ONE SHOT  ·  UNICORN" : "ONE SHOT", tx, ty);
+  ctx.letterSpacing = "0px";
+  ty += 18;
+  ctx.fillStyle = text;
+  ctx.font = `700 58px ${SANS}`;
+  const nameLines = wrapLines(ctx, s.identity.displayName, tw, 2);
+  for (const line of nameLines) {
+    ty += 64;
+    ctx.fillText(line, tx, ty);
+  }
+  ty += 46;
+  ctx.fillStyle = accent;
+  ctx.font = `700 30px ${SANS}`;
+  ctx.fillText(ellipsize(ctx, poster.tier, tw), tx, ty);
+  ty += 38;
+  ctx.fillStyle = muted;
+  ctx.font = `500 24px ${SANS}`;
+  const meta = [poster.born, poster.team].filter(Boolean).join("  ·  ");
+  for (const line of wrapLines(ctx, meta, tw, 2)) {
+    ctx.fillText(line, tx, ty);
+    ty += 32;
+  }
+
+  const stats: [string, string][] = [
+    ["Height", poster.height],
+    ["Seasons", poster.seasons],
+    ["Best year", poster.peak ?? "—"],
+    ["Left the game", poster.ended],
+  ];
+  if (poster.draft) stats.push(["Draft", poster.draft]);
+  if (poster.nbaGames > 0) stats.push(["NBA games", String(poster.nbaGames)]);
+  if (poster.earnings) stats.push(["Career pay", poster.earnings]);
+
+  const gap = 12;
+  const cols = 4;
+  const tileW = (POSTER_W - 112 - gap * (cols - 1)) / cols;
+  const tileH = 108;
+  let y = Math.max(py + portraitSize + 36, ty + 20);
+  stats.forEach((stat, i) => {
+    const col = i % cols;
+    const row = Math.floor(i / cols);
+    const x = 56 + col * (tileW + gap);
+    const top = y + row * (tileH + gap);
+    ctx.beginPath();
+    ctx.roundRect(x, top, tileW, tileH, 18);
+    ctx.fillStyle = paper;
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255,0.08)";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.fillStyle = muted;
+    ctx.font = `600 16px ${SANS}`;
+    ctx.letterSpacing = "1.5px";
+    ctx.fillText(stat[0].toUpperCase(), x + 18, top + 36);
+    ctx.letterSpacing = "0px";
+    ctx.fillStyle = text;
+    ctx.font = `700 32px ${SANS}`;
+    ctx.fillText(ellipsize(ctx, stat[1], tileW - 36), x + 18, top + 82);
+  });
+  y += Math.ceil(stats.length / cols) * (tileH + gap) + 8;
+
+  if (poster.honors) {
+    ctx.fillStyle = accent;
+    ctx.font = `700 18px ${SANS}`;
+    ctx.letterSpacing = "1.5px";
+    ctx.fillText("HONORS", 56, y + 22);
+    ctx.letterSpacing = "0px";
+    ctx.fillStyle = text;
+    ctx.font = `600 28px ${SANS}`;
+    let hy = y + 64;
+    for (const line of wrapLines(ctx, poster.honors, POSTER_W - 112, 2)) {
+      ctx.fillText(line, 56, hy);
+      hy += 36;
+    }
+    y = hy + 12;
+  }
+
+  const foot = POSTER_H - 96;
+  if (poster.route.length) {
+    ctx.font = `600 22px ${SANS}`;
+    let x = 56;
+    let cy = y;
+    const chipH = 44;
+    const stops = poster.route.slice(-6);
+    for (const stop of stops) {
+      const label = ellipsize(ctx, stop, 280);
+      const w = Math.ceil(ctx.measureText(label).width) + 32;
+      if (x + w > POSTER_W - 56) {
+        x = 56;
+        cy += chipH + 8;
+        if (cy + chipH > foot - 12) break;
+      }
+      ctx.beginPath();
+      ctx.roundRect(x, cy, w, chipH, 22);
+      ctx.fillStyle = mixHex(accent, ink, 0.72);
+      ctx.fill();
+      ctx.fillStyle = text;
+      ctx.fillText(label, x + 16, cy + 29);
+      x += w + 10;
+    }
+  }
+
+  ctx.fillStyle = paper;
+  ctx.fillRect(0, foot, POSTER_W, 96);
+  ctx.fillStyle = accent;
+  ctx.fillRect(0, foot, POSTER_W, 6);
+  ctx.fillStyle = text;
+  ctx.font = `700 22px ${SANS}`;
+  ctx.fillText("Replay this life", 56, foot + 58);
+  ctx.fillStyle = muted;
+  ctx.font = `500 22px ${SANS}`;
+  const shortLink = poster.link.replace(/^https?:\/\//, "");
+  ctx.textAlign = "right";
+  ctx.fillText(ellipsize(ctx, shortLink, 640), POSTER_W - 56, foot + 58);
+  ctx.textAlign = "left";
+
   return new Promise((resolve) => c.toBlob((b) => resolve(b), "image/png"));
 }

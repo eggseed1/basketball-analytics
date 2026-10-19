@@ -1,8 +1,6 @@
 import { Suspense, type ReactNode } from "react";
 import { GameLabView } from "@/components/games/game-lab-view";
 import { GameIdentityShell } from "@/components/games/game-identity-shell";
-import { JsonLd } from "@/components/seo/json-ld";
-import { absoluteUrl } from "@/lib/site-url";
 import { GamePreTipBoard } from "@/components/games/game-pre-tip-board";
 import { GamePreviewSection, GameTabs, type GameTab } from "@/components/games/game-preview-section";
 import { PossessionExplorerIsland } from "@/components/games/possession-explorer-island";
@@ -32,10 +30,11 @@ import { longUpstreamBudgetsEnabled } from "@/data/providers/nba/runtime-policy"
 import { parseThemeMode, resolveActiveEraTheme } from "@/themes/era-theme";
 import { yieldForStreaming } from "@/lib/stream-yield";
 import { shareImageMetadata } from "@/lib/share-images";
+import { JsonLd } from "@/components/seo/json-ld";
+import { absoluteUrl } from "@/lib/site-url";
 
 interface GamePageProps { params: Promise<{ gameId: string }>; searchParams: Promise<Record<string, string | string[] | undefined>>; }
 function gameDateLabel(isoDate: string | undefined): string | null { if (!isoDate || !/^\d{4}-\d{2}-\d{2}$/.test(isoDate)) return null; return new Date(`${isoDate}T12:00:00Z`).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" }); }
-// No final score in the title or description: score-delay visitors would see it in the tab and in link previews.
 export async function generateMetadata({ params }: GamePageProps) { await yieldForStreaming(); const { gameId } = await params; const shell = await getGameShellCached(gameId); if (!shell) return { title: "Game" }; const away = shell.game.awayTeamAbbr ?? shell.game.awayTeamId; const home = shell.game.homeTeamAbbr ?? shell.game.homeTeamId; const awayName = shell.game.awayTeamName ?? away; const homeName = shell.game.homeTeamName ?? home; const date = gameDateLabel(shell.game.gameDate); return { title: `${awayName} vs. ${homeName} Box Score${date ? ` (${date})` : ""}`, description: `${awayName} at ${homeName}${date ? ` on ${date}` : ""}: box score, player stats and impact.`, alternates: { canonical: `/games/${encodeURIComponent(gameId)}` }, ...shareImageMetadata("games", gameId, `${away} @ ${home}`) }; }
 /** Team color stays a hint on cards, close to the neutral home page cards. */
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }

@@ -1,6 +1,5 @@
-import type { Metadata } from "next";
-import Link from "next/link";
 import { Suspense } from "react";
+import type { Metadata } from "next";
 
 import { buildPlayerComparison } from "@/analytics";
 import type { PlayerComparisonResult } from "@/analytics";
@@ -53,8 +52,8 @@ import {
   currentNbaStartYear,
 } from "@/data/providers/historical/season-range";
 import { preferBundledProductDataOnEdge } from "@/data/providers/nba/runtime-policy";
-import { getPlayerSearchIndex } from "@/data/runtime/player-search-snapshot";
 import { hasRuntimeTeamBoard, runtimeTeamBoardMeta } from "@/data/runtime/team-board-snapshot";
+import { getPlayerSearchIndex } from "@/data/runtime/player-search-snapshot";
 import { shareImageMetadata } from "@/lib/share-images";
 import { getPlayerPortraitUrl } from "@/data/media/get-player-media";
 import {
@@ -122,7 +121,6 @@ function one(
   const v = sp[key];
   return Array.isArray(v) ? v[0] : v;
 }
-
 
 type EraSide = {
   row: PlayerSeason;

@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { SentimentPerformanceScatterLazy as SentimentPerformanceScatter } from "@/components/charts/recharts-lazy";
 import { LeagueMoodCharts } from "@/components/sentiment/league-mood-charts";
@@ -17,8 +18,10 @@ import {
 import { SentimentStorylines } from "@/components/sentiment/sentiment-storylines";
 import { SentimentTeamsBoard } from "@/components/sentiment/sentiment-teams-board";
 import { TrackedPlayersBoard } from "@/components/sentiment/tracked-players-board";
+import { computeSentimentMovers } from "@/sentiment/movers";
 import type {
   LeagueSentimentFeed,
+  SentimentMoverRow,
   TeamSentimentProfile,
   TrackedPlayerSentimentRow,
 } from "@/sentiment/curated-types";
@@ -26,6 +29,110 @@ import { type, textLinkClassName } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 
 export type SentimentView = "league" | "overrated" | "players" | "teams" | "headlines";
+
+function moverPts(delta: number) {
+  const pts = Math.round(Math.abs(delta) * 50);
+  return delta > 0 ? `+${pts}` : `−${pts}`;
+}
+
+function MoverColumn({
+  title,
+  tone,
+  rows,
+}: {
+  title: string;
+  tone: "up" | "down";
+  rows: SentimentMoverRow[];
+}) {
+  return (
+    <div className="flex min-w-0 flex-col gap-1">
+      <h3 className={cn(type.caption, "font-semibold uppercase tracking-wide text-muted-foreground")}>
+        {title}
+      </h3>
+      <ul className="-mx-2 flex flex-col">
+        {rows.map((row) => (
+          <li key={row.playerId}>
+            <Link
+              href={`/players/${encodeURIComponent(row.playerId)}?view=sentiment`}
+              className="flex items-center gap-2 rounded-lg px-2 py-1.5 transition-colors hover:bg-foreground/[0.04]"
+            >
+              <PlayerHeadshot
+                playerId={row.playerId}
+                name={row.displayName}
+                teamKey={row.teamKey}
+                size="sm"
+              />
+              <span className="min-w-0 flex-1">
+                <span className={cn(type.bodySm, "block truncate font-semibold")}>
+                  {row.displayName}
+                </span>
+                <span className={cn(type.caption, "flex items-center gap-1 text-muted-foreground")}>
+                  {row.teamKey ? <TeamLogo teamKey={row.teamKey} size="xs" /> : null}
+                  Fan {sentimentPct(row.fanScore)}
+                </span>
+              </span>
+              <span
+                className={cn(
+                  type.bodySm,
+                  "shrink-0 font-bold tabular-nums",
+                  tone === "up" ? "text-delta-up" : "text-delta-down"
+                )}
+              >
+                {moverPts(row.delta)}
+              </span>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+/** Week-over-week fan tone, under the disagreement board. */
+function SentimentWeekMovers({
+  players,
+  className,
+}: {
+  players: TrackedPlayerSentimentRow[];
+  className?: string;
+}) {
+  const { risers, fallers } = computeSentimentMovers(
+    players
+      .filter((row) => row.fan && row.series?.fan && row.series.fan.length >= 2)
+      .map((row) => ({
+        playerIds: [row.playerId],
+        displayName: row.displayName,
+        teamKey: row.teamKey,
+        window: row.window,
+        fan: row.fan,
+        series: row.series,
+      })),
+    { limit: 3, lookbackDays: 7 }
+  );
+  if (risers.length + fallers.length < 2) return null;
+  const sample = risers[0] ?? fallers[0];
+
+  return (
+    <section className={cn("sports-card flex flex-col gap-3 p-4 sm:p-5", className)}>
+      <div className="flex flex-col gap-1">
+        <div className="flex flex-wrap items-center gap-2">
+          <h2 className={type.heading}>Fan mood this week</h2>
+          {sample ? (
+            <LaneOriginTag lane={{ origin: sample.origin, asOf: sample.asOf, mentionVolume: 0 }} />
+          ) : null}
+        </div>
+        <p className={cn(type.bodySm, "text-muted-foreground")}>
+          Who warmed up or cooled off over the last 7 days. The number is the change in fan tone, in
+          percentage points.
+        </p>
+      </div>
+      <div className="grid gap-4 sm:grid-cols-2">
+        {risers.length ? <MoverColumn title="Warmer" tone="up" rows={risers} /> : null}
+        {fallers.length ? <MoverColumn title="Cooler" tone="down" rows={fallers} /> : null}
+      </div>
+    </section>
+  );
+}
 
 function HeadlineToneLeaders({ players }: { players: TrackedPlayerSentimentRow[] }) {
   const measured = players.filter((row) => row.media?.origin === "headlines");
@@ -138,18 +245,22 @@ export function SentimentCenterView({
             }
           />
 
-          <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(17rem,21rem)]">
-            <SentimentDivergenceBoard
-              rows={feed.divergences}
-              players={players}
-              snapshotDate={feed.snapshotDate}
-            />
+          <div className="grid items-stretch gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(17rem,21rem)]">
+            <div className="flex min-w-0 flex-col gap-5">
+              <SentimentDivergenceBoard
+                rows={feed.divergences}
+                players={players}
+                snapshotDate={feed.snapshotDate}
+              />
+              <SentimentWeekMovers players={players} className="lg:flex-1" />
+            </div>
             <div className="flex min-w-0 flex-col gap-5">
               <HeadlineToneLeaders players={players} />
               <SentimentTopicHeat
                 rows={feed.topicHeat}
                 highlightTopic={highlightTopic}
                 origin={feed.topicHeatOrigin}
+                className="lg:flex-1"
               />
             </div>
           </div>

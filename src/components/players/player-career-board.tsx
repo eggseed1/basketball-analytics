@@ -102,8 +102,6 @@ type MetricDef = {
 };
 
 const METRICS: MetricDef[] = [
-  { id: "drbl100", label: "DRBL", category: "impact", digits: 1, primary: true },
-  { id: "bpm", label: "BPM", category: "advanced", digits: 1, primary: true },
   { id: "darko", label: "DARKO", category: "impact", digits: 2, primary: true },
   { id: "war1", label: "WAR1", category: "impact", digits: 1, primary: true },
   { id: "ppg", label: "PTS", category: "profile", primary: true },
@@ -130,6 +128,7 @@ const METRICS: MetricDef[] = [
   { id: "drtg", label: "DRtg", category: "defense", digits: 1 },
   { id: "net", label: "NET", category: "advanced", digits: 1 },
   { id: "per", label: "PER", category: "advanced", digits: 1 },
+  { id: "bpm", label: "BPM", category: "advanced", digits: 1 },
   { id: "vorp", label: "VORP", category: "advanced", digits: 1 },
   { id: "ws", label: "WS", category: "advanced", digits: 1 },
   { id: "cpi", label: "CPI", category: "impact", digits: 1 },
@@ -139,6 +138,7 @@ const METRICS: MetricDef[] = [
   { id: "oRaptor", label: "O-RAPTOR", category: "impact", digits: 2 },
   { id: "dRaptor", label: "D-RAPTOR", category: "impact", digits: 2 },
   { id: "winsAdded", label: "WAR", category: "impact", digits: 2 },
+  { id: "drbl100", label: "DRBL", category: "impact", digits: 1 },
   { id: "drblO", label: "DRBL-O", category: "impact", digits: 1 },
   { id: "drblD", label: "DRBL-D", category: "impact", digits: 1 },
 ];
@@ -167,8 +167,8 @@ function metricValue(row: CareerBoardRow, id: MetricId): number | null {
   return raw;
 }
 
-/** Lead with stats we compute. DRBL/100 from 2018-19, BPM from 1996-97. */
-const DEFAULT_METRIC_ORDER: MetricId[] = ["drbl100", "war1", "darko", "bpm", "ppg"];
+/** The chart tracks overall level across a career, so lead with impact. DARKO spans 1996-97+, WAR1 2020-21+. */
+const DEFAULT_METRIC_ORDER: MetricId[] = ["darko", "war1", "ppg"];
 
 function defaultCareerMetric(rows: CareerBoardRow[]): MetricId {
   return (

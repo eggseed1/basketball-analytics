@@ -1,0 +1,480 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+
+import { PlayerHeadshot } from "@/components/brand/player-headshot";
+import { TeamLogo } from "@/components/brand/team-logo";
+import {
+  ATTRIBUTE_GROUPS,
+  ATTRIBUTE_LABEL,
+  playerSheet,
+} from "@/gm/engine/attributes";
+import { scoutPotentialView } from "@/gm/engine/scouting";
+import { rateLabel, shotLabel, simCountingLine } from "@/gm/lib/counting";
+import { valueForBoard } from "@/gm/lib/season-line";
+import { displayPlayerName, userTeam } from "@/gm/lib/selectors";
+import { ClubMark } from "@/gm/ui/club-mark";
+import { teamColorStyle } from "@/gm/ui/team-colors";
+import type { GmCountingLine, GmLeagueState, GmPlayer } from "@/gm/types";
+import { NBA_TEAM_META } from "@/data/providers/nba/nba-team-meta";
+import { DRBL_PUBLIC_RATE_LABEL, WAR1_LABEL, formatWar1 } from "@/lib/drbl-public-labels";
+import { UNAVAILABLE_STAT_LABEL, formatNumber } from "@/lib/format";
+import { resolveTeamBrand } from "@/lib/nba-brand";
+
+const CLUB_BY_NAME = new Map(
+  Object.values(NBA_TEAM_META).flatMap((team) => [
+    [team.fullName.toLowerCase(), team.abbreviation],
+    [`${team.city} ${team.nickname}`.toLowerCase(), team.abbreviation],
+  ]),
+);
+
+/** Career rows sometimes carry only "Los Angeles Lakers". */
+function clubKey(abbreviation?: string, name?: string): string | undefined {
+  const abbr = abbreviation?.trim();
+  if (abbr && resolveTeamBrand(abbr)) return abbr;
+  const named = name?.trim().toLowerCase();
+  if (!named) return undefined;
+  return CLUB_BY_NAME.get(named);
+}
+
+type CareerRow = {
+  season?: string;
+  teamAbbreviation?: string;
+  teamName?: string;
+  gamesPlayed?: number;
+  minutes?: number;
+  points?: number;
+  rebounds?: number;
+  assists?: number;
+  steals?: number;
+  blocks?: number;
+  fieldGoalsMade?: number;
+  fieldGoalsAttempted?: number;
+  threePointersMade?: number;
+  threePointersAttempted?: number;
+  freeThrowsMade?: number;
+  freeThrowsAttempted?: number;
+  trueShootingPct?: number;
+  per?: number;
+  winShares?: number;
+  bpm?: number;
+};
+
+type AwardChip = { label: string; count: number; seasons: string[] };
+
+function shownRate(total: number | undefined, gp: number): string {
+  if (total == null || !Number.isFinite(total)) return UNAVAILABLE_STAT_LABEL;
+  return rateLabel(total, gp);
+}
+
+function shownShot(made: number | undefined, attempted: number | undefined): string {
+  if (made == null || attempted == null) return UNAVAILABLE_STAT_LABEL;
+  return shotLabel(made, attempted);
+}
+
+function shownNum(value: number | undefined): string {
+  if (value == null || !Number.isFinite(value)) return UNAVAILABLE_STAT_LABEL;
+  return formatNumber(value, 1);
+}
+
+function shownPct(value: number | undefined): string {
+  if (value == null || !Number.isFinite(value) || value <= 0) return UNAVAILABLE_STAT_LABEL;
+  return shotLabel(value, 1);
+}
+
+function feet(inches: number): string {
+  if (!Number.isFinite(inches) || inches <= 0) return UNAVAILABLE_STAT_LABEL;
+  const feetPart = Math.floor(inches / 12);
+  const inchPart = Math.round(inches % 12);
+  return `${feetPart}'${inchPart}"`;
+}
+
+function LineTable({ line }: { line: GmCountingLine }) {
+  const cells: Array<[string, string]> = [
+    ["GP", String(line.gp)],
+    ["MIN", rateLabel(line.min, line.gp)],
+    ["PTS", rateLabel(line.pts, line.gp)],
+    ["REB", rateLabel(line.reb, line.gp)],
+    ["AST", rateLabel(line.ast, line.gp)],
+    ["STL", rateLabel(line.stl, line.gp)],
+    ["BLK", rateLabel(line.blk, line.gp)],
+    ["TOV", rateLabel(line.tov, line.gp)],
+    ["FG%", shotLabel(line.fgm, line.fga)],
+    ["3P%", shotLabel(line.tpm, line.tpa)],
+    ["FT%", shotLabel(line.ftm, line.fta)],
+  ];
+  return (
+    <div className="gm-statline">
+      {cells.map(([label, value]) => (
+        <div key={label}>
+          <p>{label}</p>
+          <p>{value}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export function GmPlayerCard({
+  league,
+  player,
+}: {
+  league: GmLeagueState;
+  player: GmPlayer;
+}) {
+  const team = league.teams.find((entry) => entry.id === player.teamId);
+  const sim = simCountingLine(league, player.id);
+  const value = valueForBoard(league, player);
+  const sheet = playerSheet(player);
+  const scoutRead = scoutPotentialView(player, userTeam(league).staff.scout);
+  const inDraft = league.draftPool.includes(player.id);
+  const mine = userTeam(league);
+  const onRoster = player.teamId === mine.id;
+  const shownName = displayPlayerName(player);
+  const [career, setCareer] = useState<CareerRow[] | null>(null);
+  const [careerNote, setCareerNote] = useState<string | null>(null);
+  const [awards, setAwards] = useState<AwardChip[]>([]);
+  const games = league.boxScores.filter((box) =>
+    box.players.some((line) => line.playerId === player.id)
+  );
+
+  useEffect(() => {
+    const id = player.nbaPlayerId;
+    if (!id) {
+      setCareer(null);
+      setCareerNote("Generated player. No NBA career is on file.");
+      return;
+    }
+    let cancelled = false;
+    setCareer(null);
+    setCareerNote(null);
+    fetch(`/api/gm/accolades/${encodeURIComponent(id)}`)
+      .then(async (res) => {
+        if (!res.ok) return;
+        const payload = (await res.json()) as { awards?: AwardChip[] };
+        if (!cancelled) setAwards(payload.awards ?? []);
+      })
+      .catch(() => {
+        if (!cancelled) setAwards([]);
+      });
+    fetch(`/api/players/${encodeURIComponent(id)}`)
+      .then(async (res) => {
+        if (!res.ok) throw new Error("Career request failed");
+        return (await res.json()) as {
+          data?: { seasons?: CareerRow[] };
+        };
+      })
+      .then((payload) => {
+        if (cancelled) return;
+        const seasons = payload.data?.seasons ?? [];
+        const rows = seasons
+          .filter((row) => row.season && (row.gamesPlayed ?? 0) > 0)
+          .sort((a, b) => String(b.season).localeCompare(String(a.season)));
+        setCareer(rows);
+        if (rows.length === 0) {
+          setCareerNote("No season log came back for this player.");
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setCareerNote("Career log did not load. The season they entered with is still above.");
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [player.nbaPlayerId]);
+
+  return (
+    <div className="flex flex-col gap-4" style={player.teamId ? teamColorStyle(player.teamId) : undefined}>
+      <p className="text-sm">
+        <Link
+          href={
+            onRoster || !player.teamId
+              ? "/gm/roster"
+              : `/gm/players?team=${encodeURIComponent(player.teamId)}`
+          }
+          className="gm-leave"
+        >
+          {onRoster || !team ? "Back to roster" : `Back to the ${team.name}`}
+        </Link>
+      </p>
+      <section className="gm-player">
+        <PlayerHeadshot
+          playerId={player.nbaPlayerId ?? player.id}
+          name={player.name}
+          teamKey={player.teamId}
+          size="xl"
+          priority
+        />
+        <div className="min-w-0">
+          <p className="gm-kicker inline-flex items-center gap-2">
+            {team && !inDraft ? <TeamLogo teamKey={team.id} size="sm" /> : null}
+            {inDraft
+              ? "Draft class"
+              : team
+                ? `${team.city} ${team.name}`
+                : "Free agent"}
+            {player.jersey && !inDraft ? ` · #${player.jersey}` : ""}
+          </p>
+          <h2>{shownName}</h2>
+          <p className="text-sm text-muted-foreground">
+            {player.position} · {feet(player.heightIn)} · {player.weightLbs} lb · Age{" "}
+            {player.age}
+          </p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {player.draftLabel || "Draft info blank"}
+            {player.college ? ` · ${player.college}` : ""}
+          </p>
+          {awards.length > 0 ? (
+            <ul className="mt-2 flex flex-wrap gap-1.5">
+              {awards.map((award) => (
+                <li key={award.label} className="gm-award" title={award.seasons.join(", ")}>
+                  {award.label}
+                  {award.count > 1 ? ` ×${award.count}` : ""}
+                </li>
+              ))}
+            </ul>
+          ) : null}
+        </div>
+        <div className="gm-player__impact">
+          <p className="score-num">{sheet.overall}</p>
+          <p>OVR</p>
+          <p>
+            {WAR1_LABEL} {formatWar1(value.war1, 1)}
+          </p>
+          <p>
+            {DRBL_PUBLIC_RATE_LABEL} {formatWar1(value.drbl100, 1)}
+          </p>
+          <p>
+            Scout {scoutRead.low}-{scoutRead.high}
+          </p>
+          <p>
+            {player.contract
+              ? `$${formatNumber(player.contract.annualSalaryM, 1)}M · ${player.contract.yearsRemaining} yr`
+              : "No deal"}
+          </p>
+        </div>
+      </section>
+
+      <section className="sports-card p-4">
+        <h3 className="font-semibold">Ratings</h3>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Overall is the rating used across the league. The true ceiling stays
+          with the scouting staff.
+        </p>
+        <p className="mt-2 text-sm">
+          Scouted potential {scoutRead.low}-{scoutRead.high}. {scoutRead.comment}
+        </p>
+        {player.sheet?.potential ? (
+          <p className="mt-1 text-sm text-muted-foreground">
+            Peak years {player.sheet.potential.peakStart} to {player.sheet.potential.peakEnd}. The
+            summer is the big jump. January and the end of the season move the rating a step.
+          </p>
+        ) : null}
+        {inDraft ? (
+          <p className="mt-2 text-sm text-muted-foreground">
+            Not in the league yet.{" "}
+            <Link href="/gm/draft" className="underline underline-offset-2">
+              Open the draft board
+            </Link>
+            .
+          </p>
+        ) : null}
+        <div className="mt-3 flex flex-col gap-3">
+          {ATTRIBUTE_GROUPS.map((group) => (
+            <div key={group.label}>
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                {group.label}
+              </p>
+              <div className="mt-1 grid gap-1 sm:grid-cols-2">
+                {group.keys.map((key) => {
+                  const value = sheet.attributes[key];
+                  return (
+                    <div key={key} className="gm-attr">
+                      <span>{ATTRIBUTE_LABEL[key]}</span>
+                      <span className="gm-attr__track">
+                        <span style={{ width: `${value}%` }} />
+                      </span>
+                      <span className="tabular-nums">{value}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+        <h4 className="mt-4 font-semibold">Tendencies</h4>
+        <p className="mt-1 text-sm text-muted-foreground">
+          How often the player takes the action. The attribute is whether it works.
+        </p>
+        <div className="mt-2 grid gap-1 sm:grid-cols-2">
+          {(
+            [
+              ["Close", sheet.tendencies.shootClose],
+              ["Mid", sheet.tendencies.shootMid],
+              ["Three", sheet.tendencies.shootThree],
+              ["Drive", sheet.tendencies.drive],
+              ["Post", sheet.tendencies.postUp],
+              ["Pass", sheet.tendencies.dish],
+              ["Steal", sheet.tendencies.steal],
+              ["Block", sheet.tendencies.block],
+            ] as const
+          ).map(([label, value]) => (
+            <div key={label} className="gm-attr">
+              <span>{label}</span>
+              <span className="gm-attr__track">
+                <span style={{ width: `${value}%` }} />
+              </span>
+              <span className="tabular-nums">{value}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="sports-card p-4">
+        <h3 className="font-semibold">This save</h3>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Games already played in this franchise. Averages update as you sim.
+        </p>
+        {sim ? (
+          <LineTable line={sim} />
+        ) : (
+          <p className="mt-3 text-sm text-muted-foreground">No games yet this save.</p>
+        )}
+        {games.length > 0 ? (
+          <div className="mt-3 overflow-x-auto">
+            <table className="w-full min-w-[520px] text-left text-sm">
+              <thead className="text-xs text-muted-foreground">
+                <tr>
+                  {["Game", "MIN", "PTS", "REB", "AST", "FG", "+/-"].map((label) => (
+                    <th key={label} className="px-2 py-1.5 font-medium">
+                      {label}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {games.slice(0, 12).map((box) => {
+                  const line = box.players.find((entry) => entry.playerId === player.id);
+                  if (!line) return null;
+                  const opponent =
+                    line.teamId === box.homeTeamId ? box.awayTeamId : box.homeTeamId;
+                  const home = line.teamId === box.homeTeamId;
+                  return (
+                    <tr key={box.id}>
+                      <td className="px-2 py-1.5">
+                        {home ? "vs" : "@"}{" "}
+                        <ClubMark teamId={opponent} label={opponent.toUpperCase()} />{" "}
+                        {box.awayScore}-{box.homeScore}
+                      </td>
+                      <td className="px-2 py-1.5 tabular-nums">{line.minutes}</td>
+                      <td className="px-2 py-1.5 tabular-nums">{line.points}</td>
+                      <td className="px-2 py-1.5 tabular-nums">{line.rebounds}</td>
+                      <td className="px-2 py-1.5 tabular-nums">{line.assists}</td>
+                      <td className="px-2 py-1.5 tabular-nums">
+                        {line.fgm}-{line.fga}
+                      </td>
+                      <td className="px-2 py-1.5 tabular-nums">
+                        {line.plusMinus > 0 ? `+${line.plusMinus}` : line.plusMinus}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        ) : null}
+      </section>
+
+      {sim ? (
+        <section className="sports-card p-4">
+          <h3 className="font-semibold">This save</h3>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {WAR1_LABEL} {formatWar1(value.war1, 1)} · {DRBL_PUBLIC_RATE_LABEL}{" "}
+            {formatWar1(value.drbl100, 1)}. Counting totals from games played here.
+          </p>
+          <LineTable line={sim} />
+        </section>
+      ) : null}
+
+      {player.nbaSeason ? (
+        <section className="sports-card p-4">
+          <h3 className="font-semibold">NBA season they entered with</h3>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {player.nbaSeason.season} · {player.nbaSeason.team}. Real counting stats, before this save.
+          </p>
+          <LineTable line={player.nbaSeason} />
+        </section>
+      ) : null}
+
+      <section className="sports-card p-4">
+        <h3 className="font-semibold">Career</h3>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Year by year from the NBA record. Per game.
+        </p>
+        {careerNote ? <p className="mt-3 text-sm text-muted-foreground">{careerNote}</p> : null}
+        {career == null && !careerNote ? (
+          <p className="mt-3 text-sm text-muted-foreground">Loading career…</p>
+        ) : null}
+        {career && career.length > 0 ? (
+          <div className="mt-3 overflow-x-auto">
+            <table className="w-full min-w-[720px] text-left text-sm">
+              <thead className="text-xs text-muted-foreground">
+                <tr>
+                  {["Season", "Team", "GP", "MIN", "PTS", "REB", "AST", "FG%", "3P%", "FT%", "TS%", "PER", "WS", "BPM"].map(
+                    (label) => (
+                      <th key={label} className="px-2 py-1.5 font-medium">
+                        {label}
+                      </th>
+                    )
+                  )}
+                </tr>
+              </thead>
+              <tbody>
+                {career.map((row) => {
+                  const gp = row.gamesPlayed ?? 0;
+                  const club = clubKey(row.teamAbbreviation, row.teamName);
+                  return (
+                    <tr
+                      key={`${row.season}-${row.teamAbbreviation ?? row.teamName}`}
+                      className={club ? "gm-club-row" : undefined}
+                      style={club ? teamColorStyle(club) : undefined}
+                    >
+                      <td className="px-2 py-1.5">{row.season}</td>
+                      <td className="px-2 py-1.5">
+                        <ClubMark
+                          teamId={club}
+                          label={row.teamAbbreviation || row.teamName || "—"}
+                        />
+                      </td>
+                      <td className="px-2 py-1.5 tabular-nums">{gp}</td>
+                      <td className="px-2 py-1.5 tabular-nums">{shownRate(row.minutes, gp)}</td>
+                      <td className="px-2 py-1.5 tabular-nums">{shownRate(row.points, gp)}</td>
+                      <td className="px-2 py-1.5 tabular-nums">{shownRate(row.rebounds, gp)}</td>
+                      <td className="px-2 py-1.5 tabular-nums">{shownRate(row.assists, gp)}</td>
+                      <td className="px-2 py-1.5 tabular-nums">
+                        {shownShot(row.fieldGoalsMade, row.fieldGoalsAttempted)}
+                      </td>
+                      <td className="px-2 py-1.5 tabular-nums">
+                        {shownShot(row.threePointersMade, row.threePointersAttempted)}
+                      </td>
+                      <td className="px-2 py-1.5 tabular-nums">
+                        {shownShot(row.freeThrowsMade, row.freeThrowsAttempted)}
+                      </td>
+                      <td className="px-2 py-1.5 tabular-nums">{shownPct(row.trueShootingPct)}</td>
+                      <td className="px-2 py-1.5 tabular-nums">{shownNum(row.per)}</td>
+                      <td className="px-2 py-1.5 tabular-nums">{shownNum(row.winShares)}</td>
+                      <td className="px-2 py-1.5 tabular-nums">{shownNum(row.bpm)}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        ) : null}
+      </section>
+    </div>
+  );
+}
