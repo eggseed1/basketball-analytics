@@ -147,3 +147,232 @@ export function moveBoard(
   else next.splice(Math.min(next.length, index + 1), 0, playerId);
   return next;
 }
+
+/** Build a 60-pick schedule from the lottery table (R1 then R2). */
+export function expandDraftOrder(lotteryOrder: string[]): string[] {
+  if (!lotteryOrder.length) return [];
+  return [...lotteryOrder, ...lotteryOrder];
+}
+
+export function ensureDraftOrder(state: GmLeagueState): GmLeagueState {
+  if (state.draftOrder?.length) return state;
+  const lottery = state.lotteryOrder ?? [];
+  if (!lottery.length) return state;
+  return { ...state, draftOrder: expandDraftOrder(lottery) };
+}
+
+export function pickOwnerAt(state: GmLeagueState, pickIndex = state.draftPickIndex ?? 0): string | null {
+  if (state.draftOrder?.length) return state.draftOrder[pickIndex] ?? null;
+  const order = state.lotteryOrder ?? [];
+  if (!order.length) return null;
+  if (pickIndex >= order.length * 2) return null;
+  return order[pickIndex % order.length] ?? null;
+}
+
+export function draftSlotCount(state: GmLeagueState): number {
+  if (state.draftOrder?.length) return state.draftOrder.length;
+  return (state.lotteryOrder?.length ?? 0) * 2;
+}
+
+/** Scout mock for this class: remaining pool plus anyone already picked this year. */
+export function classMockBoard(state: GmLeagueState): GmPlayer[] {
+  const pool = new Set(state.draftPool);
+  const klass = state.players.filter(
+    (player) =>
+      pool.has(player.id) ||
+      (player.draftYear === state.season && player.draftPick != null)
+  );
+  return sortScoutBoard(klass);
+}
+
+export function mockRankOf(state: GmLeagueState, playerId: string): number {
+  const rank = classMockBoard(state).findIndex((player) => player.id === playerId);
+  return rank < 0 ? 99 : rank + 1;
+}
+
+export type DraftPickRow = {
+  pick: number;
+  teamId: string;
+  player: GmPlayer;
+  mockRank: number;
+  sleeper: boolean;
+  fall: number;
+};
+
+export function draftPickLog(state: GmLeagueState): DraftPickRow[] {
+  return state.players
+    .filter((player) => player.draftYear === state.season && player.draftPick != null && player.teamId)
+    .map((player) => {
+      const pick = player.draftPick!;
+      const mockRank = mockRankOf(state, player.id);
+      const fall = pick - mockRank;
+      return {
+        pick,
+        teamId: player.teamId!,
+        player,
+        mockRank,
+        sleeper: fall >= 5,
+        fall,
+      };
+    })
+    .sort((a, b) => a.pick - b.pick);
+}
+
+export function fallingProspects(state: GmLeagueState, minFall = 4): Array<{
+  player: GmPlayer;
+  mockRank: number;
+  fall: number;
+}> {
+  const pickNum = (state.draftPickIndex ?? 0) + 1;
+  return classMockBoard(state)
+    .filter((player) => state.draftPool.includes(player.id))
+    .map((player, index) => {
+      const mockRank = index + 1;
+      return { player, mockRank, fall: pickNum - mockRank };
+    })
+    .filter((row) => row.fall >= minFall && row.mockRank <= 20)
+    .slice(0, 5);
+}
+
+export type DraftNightOffer = {
+  id: string;
+  partnerTeamId: string;
+  yourSlot: number;
+  theirSlot: number;
+  /** Future picks the club trading up sends. */
+  upSweetenerIds: string[];
+  direction: "up" | "down";
+  blurb: string;
+};
+
+/**
+ * Draft-night calls. When you are on the clock, clubs later in the order try to jump.
+ * When a board name is sliding, you get a path to move up.
+ */
+export function draftNightOffers(state: GmLeagueState): DraftNightOffer[] {
+  const sealed = ensureDraftOrder(state);
+  const order = sealed.draftOrder ?? [];
+  const idx = sealed.draftPickIndex ?? 0;
+  if (!order.length || idx >= order.length) return [];
+  const user = sealed.userTeamId;
+  const onClock = order[idx] === user;
+  const offers: DraftNightOffer[] = [];
+  const userTeam = sealed.teams.find((team) => team.id === user);
+  if (!userTeam) return [];
+
+  const futureSweeteners = (teamId: string) =>
+    sealed.teams
+      .find((team) => team.id === teamId)
+      ?.draftPicks.filter((pick) => pick.season > sealed.season)
+      .slice(0, 2)
+      .map((pick) => pick.id) ?? [];
+
+  if (onClock) {
+    for (let later = idx + 1; later < Math.min(order.length, idx + 9); later++) {
+      const partnerId = order[later]!;
+      if (partnerId === user) continue;
+      const partner = sealed.teams.find((team) => team.id === partnerId);
+      if (!partner || partner.ownerGoal === "tank") continue;
+      const falling = fallingProspects(sealed, 3)[0];
+      const sweet = futureSweeteners(partnerId);
+      if (!sweet.length && later - idx < 3) continue;
+      offers.push({
+        id: `down-${partnerId}-${later}`,
+        partnerTeamId: partnerId,
+        yourSlot: idx,
+        theirSlot: later,
+        upSweetenerIds: sweet.slice(0, later - idx >= 5 ? 2 : 1),
+        direction: "down",
+        blurb: falling
+          ? `${partner.abbr} will give you pick #${later + 1} and future capital to jump to #${idx + 1} for ${falling.player.name}.`
+          : `${partner.abbr} wants this slot. They offer pick #${later + 1}${sweet.length ? " plus a future pick" : ""}.`,
+      });
+      if (offers.length >= 3) break;
+    }
+    return offers;
+  }
+
+  const userSlots = order
+    .map((teamId, slot) => ({ teamId, slot }))
+    .filter((row) => row.slot > idx && row.teamId === user);
+  const nextUser = userSlots[0];
+  if (!nextUser || nextUser.slot - idx > 12) return [];
+  const falling = fallingProspects(sealed, 3)[0];
+  const topLeft = classMockBoard(sealed).find((player) =>
+    sealed.draftPool.includes(player.id)
+  );
+  if (!falling && !topLeft) return [];
+  const clockTeam = order[idx]!;
+  if (clockTeam === user) return [];
+  const partner = sealed.teams.find((team) => team.id === clockTeam);
+  if (!partner) return [];
+  const sweet = futureSweeteners(user);
+  const target = falling?.player ?? topLeft!;
+  const mock = falling?.mockRank ?? mockRankOf(sealed, target.id);
+  offers.push({
+    id: `up-${clockTeam}-${idx}`,
+    partnerTeamId: clockTeam,
+    yourSlot: nextUser.slot,
+    theirSlot: idx,
+    upSweetenerIds: sweet.slice(0, nextUser.slot - idx >= 6 ? 2 : 1),
+    direction: "up",
+    blurb: `${target.name} is still there (mock #${mock}). ${partner.abbr} will sell #${idx + 1} for your #${nextUser.slot + 1}${sweet.length ? " and future capital" : ""}.`,
+  });
+  return offers;
+}
+
+/** Swap two remaining slots. The club moving up pays the sweetener picks. */
+export function applyDraftNightTrade(
+  state: GmLeagueState,
+  offer: DraftNightOffer
+): GmLeagueState {
+  const sealed = ensureDraftOrder(state);
+  const order = [...(sealed.draftOrder ?? [])];
+  if (!order.length) return state;
+  const a = order[offer.yourSlot];
+  const b = order[offer.theirSlot];
+  if (!a || !b) return state;
+  order[offer.yourSlot] = b;
+  order[offer.theirSlot] = a;
+
+  const movingUpId = offer.direction === "up" ? sealed.userTeamId : offer.partnerTeamId;
+  const movingDownId = offer.direction === "up" ? offer.partnerTeamId : sealed.userTeamId;
+  const sweetIds = new Set(offer.upSweetenerIds);
+  const incoming =
+    sealed.teams
+      .find((club) => club.id === movingUpId)
+      ?.draftPicks.filter((pick) => sweetIds.has(pick.id))
+      .map((pick) => ({ ...pick, ownerTeamId: movingDownId })) ?? [];
+  const teams = sealed.teams.map((team) => {
+    if (team.id === movingUpId) {
+      return {
+        ...team,
+        draftPicks: team.draftPicks.filter((pick) => !sweetIds.has(pick.id)),
+      };
+    }
+    if (team.id === movingDownId) {
+      return { ...team, draftPicks: [...team.draftPicks, ...incoming] };
+    }
+    return team;
+  });
+
+  const up = sealed.teams.find((team) => team.id === movingUpId);
+  const down = sealed.teams.find((team) => team.id === movingDownId);
+  return {
+    ...sealed,
+    draftOrder: order,
+    teams,
+    news: [
+      {
+        id: `news-dtrade-${offer.id}`,
+        day: sealed.day,
+        season: sealed.season,
+        headline: `${up?.abbr ?? "A club"} trades up to pick #${Math.min(offer.yourSlot, offer.theirSlot) + 1}`,
+        body: `${down?.abbr ?? "The partner"} slides to #${Math.max(offer.yourSlot, offer.theirSlot) + 1}. ${offer.blurb}`,
+        tone: "info" as const,
+      },
+      ...sealed.news,
+    ].slice(0, 50),
+    updatedAt: new Date().toISOString(),
+  };
+}

@@ -7,9 +7,25 @@ import type {
   GmTradeProposal,
 } from "@/gm/types";
 import { teamPayrollM, tradeSalaryLegal } from "@/gm/engine/cap";
-import { pickTradePoints, playerTradePoints, stanceMultiplier, tradeStance } from "@/gm/engine/value";
-import { autoSetLineup } from "@/gm/engine/lineup";
+import {
+  pickStars,
+  pickTradePoints,
+  playerStars,
+  playerTradePoints,
+  stanceMultiplier,
+  tradeStance,
+} from "@/gm/engine/value";
+import { autoSetLineup, overallOf } from "@/gm/engine/lineup";
 import { uid } from "@/gm/engine/rng";
+import {
+  dealImprovesFit,
+  fitDelta,
+  movablePlayers,
+  needRank,
+  rosterProfile,
+  targetsForBuyer,
+  wantScore,
+} from "@/gm/engine/roster-fit";
 
 const CASH_ANCHOR = 140.588;
 
@@ -494,6 +510,26 @@ export function findPlayerPackages(
   return hits.slice(0, 8);
 }
 
+type DeadlinePackage = {
+  buyerId: string;
+  sellerId: string;
+  outgoing: GmTradeAsset[];
+  incoming: GmTradeAsset[];
+  target: GmPlayer;
+  score: number;
+};
+
+function packagePlayers(
+  state: GmLeagueState,
+  assets: GmTradeAsset[]
+): GmPlayer[] {
+  return assets
+    .filter((asset) => asset.type === "player")
+    .map((asset) => state.players.find((player) => player.id === asset.id))
+    .filter((player): player is GmPlayer => Boolean(player));
+}
+
+/** Buyer packages that land `target` and improve both clubs' fit. */
 function fairOutgoing(
   state: GmLeagueState,
   buyerId: string,
@@ -502,109 +538,180 @@ function fairOutgoing(
 ): GmTradeAsset[] | null {
   const buyer = state.teams.find((team) => team.id === buyerId);
   if (!buyer) return null;
-  const blocked = new Set(buyer.untouchables ?? []);
-  const pieces = state.players
-    .filter(
-      (player) =>
-        player.teamId === buyerId &&
-        player.contract &&
-        !blocked.has(player.id) &&
-        player.ratings.impact < target.ratings.impact
-    )
-    .sort(
-      (a, b) =>
-        Math.abs((a.contract?.annualSalaryM ?? 0) - (target.contract?.annualSalaryM ?? 0)) -
-        Math.abs((b.contract?.annualSalaryM ?? 0) - (target.contract?.annualSalaryM ?? 0))
-    )
-    .slice(0, 8);
+  const buyerProfile = rosterProfile(state, buyerId);
+  if (needRank(buyerProfile, target.position) > 2) return null;
+
+  const surplus = movablePlayers(state, buyerId, { max: 8 }).filter((player) => {
+    if (player.id === target.id) return false;
+    if (player.position === target.position && Math.abs(overallOf(player) - overallOf(target)) <= 2) {
+      return false;
+    }
+    return needRank(buyerProfile, player.position) >= 2 || overallOf(player) < overallOf(target) - 1;
+  });
+  const picks = [...buyer.draftPicks]
+    .filter((pick) => pick.season >= state.season)
+    .sort((a, b) => pickStars(state, b) - pickStars(state, a));
   const incoming: GmTradeAsset[] = [{ type: "player", id: target.id }];
+  const tries: GmTradeAsset[][] = [];
+
+  for (const pick of picks.slice(0, 4)) {
+    tries.push([{ type: "pick", id: pick.id }]);
+  }
+  for (const piece of surplus.slice(0, 6)) {
+    const gap = playerStars(target) - playerStars(piece);
+    if (gap < 0.25 || gap > 2.2) continue;
+    const sweetener = picks.find((pick) => pickStars(state, pick) <= 2.8);
+    if (sweetener && gap >= 0.6) {
+      tries.push([
+        { type: "player", id: piece.id },
+        { type: "pick", id: sweetener.id },
+      ]);
+    }
+    if (gap <= 1.15) {
+      tries.push([{ type: "player", id: piece.id }]);
+    }
+  }
+  for (let i = 0; i < Math.min(surplus.length, 4); i += 1) {
+    for (let j = i + 1; j < Math.min(surplus.length, 4); j += 1) {
+      const a = surplus[i]!;
+      const b = surplus[j]!;
+      if (playerStars(a) + playerStars(b) < playerStars(target) - 0.5) continue;
+      if (playerStars(a) + playerStars(b) > playerStars(target) + 1.5) continue;
+      tries.push([
+        { type: "player", id: a.id },
+        { type: "player", id: b.id },
+      ]);
+    }
+  }
+
   let best: GmTradeAsset[] | null = null;
-  let bestGap = Infinity;
-  for (const piece of pieces) {
-    const outgoing: GmTradeAsset[] = [{ type: "player", id: piece.id }];
+  let bestScore = -Infinity;
+  for (const outgoing of tries) {
     const verdict = evaluateTrade(state, buyerId, sellerId, outgoing, incoming);
     if (!verdict.ok) continue;
-    if (verdict.fromValue < verdict.toValue - 6) continue;
-    const gap = Math.abs(verdict.fromValue - verdict.toValue);
-    if (gap < bestGap) {
-      bestGap = gap;
+    const outPlayers = packagePlayers(state, outgoing);
+    if (!dealImprovesFit(state, buyerId, sellerId, outPlayers, [target])) {
+      const sellerGetsFutures = outgoing.some(
+        (asset) => asset.type === "pick" || asset.type === "cash"
+      );
+      const sellerDelta = fitDelta(state, sellerId, outPlayers, [target]);
+      const buyerDelta = fitDelta(state, buyerId, [target], outPlayers);
+      if (!(sellerGetsFutures && sellerDelta >= -18 && buyerDelta >= 6)) continue;
+    }
+    const buyerDelta = fitDelta(state, buyerId, [target], outPlayers);
+    const score =
+      buyerDelta +
+      wantScore(buyerProfile, target) -
+      Math.abs(verdict.fromValue - verdict.toValue) * 0.4 +
+      (outgoing.some((asset) => asset.type === "pick") ? 8 : 0);
+    if (score > bestScore) {
+      bestScore = score;
       best = outgoing;
     }
   }
   return best;
 }
 
+function deadlineCandidates(state: GmLeagueState): DeadlinePackage[] {
+  const clubs = state.teams.filter(
+    (team) => team.id !== state.userTeamId && !team.id.startsWith("as-")
+  );
+  const buyers = clubs.filter((team) => tradeStance(state, team.id) === "buy");
+  const sellers = clubs.filter((team) => tradeStance(state, team.id) === "sell");
+  const packs: DeadlinePackage[] = [];
+
+  for (const buyer of buyers) {
+    const buyerProfile = rosterProfile(state, buyer.id);
+    for (const seller of sellers) {
+      if (buyer.id === seller.id) continue;
+      const targets = targetsForBuyer(state, buyer.id, seller.id).filter(
+        (player) =>
+          needRank(buyerProfile, player.position) <= 2 &&
+          (player.age >= 26 || (player.contract?.yearsRemaining ?? 99) <= 2) &&
+          overallOf(player) >= 74
+      );
+      for (const target of targets.slice(0, 3)) {
+        const outgoing = fairOutgoing(state, buyer.id, seller.id, target);
+        if (!outgoing) continue;
+        const outPlayers = packagePlayers(state, outgoing);
+        packs.push({
+          buyerId: buyer.id,
+          sellerId: seller.id,
+          outgoing,
+          incoming: [{ type: "player", id: target.id }],
+          target,
+          score:
+            wantScore(buyerProfile, target) +
+            fitDelta(state, buyer.id, [target], outPlayers) +
+            (outgoing.some((asset) => asset.type === "pick") ? 6 : -4),
+        });
+      }
+    }
+  }
+  return packs.sort((a, b) => b.score - a.score);
+}
+
 /**
  * A few two-team deals the morning of the deadline.
+ * Buyers fill holes; sellers take surplus and picks. No empty 1-for-1 swaps.
  * The user's roster is left alone. Each deal still has to clear evaluateTrade.
  */
 export function cpuDeadlineTrades(state: GmLeagueState): GmLeagueState {
-  const ranked = state.teams
-    .map((team) => {
-      const row = state.standings[team.id];
-      const wins = row?.wins ?? 0;
-      const losses = row?.losses ?? 0;
-      const played = wins + losses;
-      return { team, pct: played > 0 ? wins / played : 0.5 };
-    })
-    .sort((a, b) => b.pct - a.pct);
-  const buyers = ranked.filter((row) => row.team.id !== state.userTeamId).slice(0, 10);
-  const sellers = ranked
-    .filter((row) => row.team.id !== state.userTeamId)
-    .slice(-10)
-    .reverse();
   let next = state;
   const used = new Set<string>();
   let deals = 0;
 
-  for (const seller of sellers) {
-    if (deals >= 3) break;
-    const target = next.players
-      .filter(
-        (player) =>
-          player.teamId === seller.team.id &&
-          player.contract &&
-          (player.contract.yearsRemaining ?? 0) >= 1 &&
-          !(seller.team.untouchables ?? []).includes(player.id) &&
-          player.ratings.impact >= 0.8 &&
-          (player.age >= 27 || player.contract.yearsRemaining <= 2)
-      )
-      .sort((a, b) => b.ratings.impact - a.ratings.impact)[0];
-    if (!target) continue;
+  for (const pack of deadlineCandidates(next)) {
+    if (deals >= 4) break;
+    if (used.has(pack.buyerId) || used.has(pack.sellerId)) continue;
+    const buyer = next.teams.find((team) => team.id === pack.buyerId);
+    const seller = next.teams.find((team) => team.id === pack.sellerId);
+    if (!buyer || !seller) continue;
+    const stillThere = next.players.find(
+      (player) => player.id === pack.target.id && player.teamId === pack.sellerId
+    );
+    if (!stillThere) continue;
+    const outgoing = fairOutgoing(next, pack.buyerId, pack.sellerId, pack.target);
+    if (!outgoing) continue;
 
-    for (const buyer of buyers) {
-      if (used.has(buyer.team.id) || used.has(seller.team.id)) continue;
-      if (buyer.team.id === seller.team.id) continue;
-      const outgoing = fairOutgoing(next, buyer.team.id, seller.team.id, target);
-      if (!outgoing) continue;
-      const sent = next.players.find((player) => player.id === outgoing[0]?.id);
-      next = applyTrade(next, {
-        fromTeamId: buyer.team.id,
-        toTeamId: seller.team.id,
-        fromAssets: outgoing,
-        toAssets: [{ type: "player", id: target.id }],
-        status: "accepted",
-      });
-      const headline = `${buyer.team.city} acquires ${target.name}`;
-      const body = sent
-        ? `${seller.team.city} sends him for ${sent.name}.`
-        : `${seller.team.city} moves him before the deadline.`;
-      next = {
-        ...next,
-        news: next.news.map((item, index) =>
-          index === 0 ? { ...item, headline, body } : item
-        ),
-        teams: next.teams.map((team) =>
-          team.id === buyer.team.id || team.id === seller.team.id
-            ? autoSetLineup(team, next.players)
-            : team
-        ),
-      };
-      used.add(buyer.team.id);
-      used.add(seller.team.id);
-      deals += 1;
-      break;
-    }
+    const sentPlayers = packagePlayers(next, outgoing);
+    const sentPicks = outgoing
+      .filter((asset) => asset.type === "pick")
+      .map((asset) =>
+        next.teams.flatMap((team) => team.draftPicks).find((pick) => pick.id === asset.id)
+      )
+      .filter(Boolean);
+    next = applyTrade(next, {
+      fromTeamId: pack.buyerId,
+      toTeamId: pack.sellerId,
+      fromAssets: outgoing,
+      toAssets: [{ type: "player", id: pack.target.id }],
+      status: "accepted",
+    });
+    const parts = [
+      ...sentPlayers.map((player) => player.name),
+      ...sentPicks.map((pick) =>
+        pick ? `${pick.season} ${pick.round === 1 ? "1st" : "2nd"}` : "a pick"
+      ),
+    ];
+    const headline = `${buyer.city} acquires ${pack.target.name}`;
+    const body = parts.length
+      ? `${seller.city} gets ${parts.join(" and ")}.`
+      : `${seller.city} moves him before the deadline.`;
+    next = {
+      ...next,
+      news: next.news.map((item, index) =>
+        index === 0 ? { ...item, headline, body } : item
+      ),
+      teams: next.teams.map((team) =>
+        team.id === pack.buyerId || team.id === pack.sellerId
+          ? autoSetLineup(team, next.players)
+          : team
+      ),
+    };
+    used.add(pack.buyerId);
+    used.add(pack.sellerId);
+    deals += 1;
   }
   return next;
 }

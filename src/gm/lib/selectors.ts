@@ -108,15 +108,16 @@ export function scoutedOverall(player: GmPlayer): string {
   return String(Math.max(50, Math.min(99, overall)));
 }
 
-/** Public name: codename while identity is sealed, true name after reveal. */
+/** Public name. Prospects keep their generated name on the board; molds stay as labels. */
 export function displayPlayerName(p: GmPlayer): string {
-  if (p.identityRevealed === false && p.codename) return p.codename;
   return p.name;
 }
 
 export function displayPlayerSubtitle(p: GmPlayer): string | null {
-  if (p.identityRevealed === false) return "Identity sealed · scouting only";
-  if (p.codename && p.draftPick) return `Drafted as ${p.codename}`;
+  if (p.codename && p.identityRevealed === false) {
+    return p.codename;
+  }
+  if (p.codename && p.draftPick) return `Board mold ${p.codename}`;
   return null;
 }
 

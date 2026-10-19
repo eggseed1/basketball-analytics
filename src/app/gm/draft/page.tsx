@@ -4,10 +4,12 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 
 import { GmShell } from "@/gm/ui/gm-shell";
+import { GmDraftNight } from "@/gm/ui/gm-draft-night";
 import { useGmStore } from "@/gm/state/gm-store";
 import {
   scoutedOverall,
   displayPlayerName,
+  displayPlayerSubtitle,
   userTeam,
 } from "@/gm/lib/selectors";
 import {
@@ -47,17 +49,7 @@ function DraftBody() {
   const resetDraftBoard = useGmStore((s) => s.resetDraftBoard);
   const runCombine = useGmStore((s) => s.runCombine);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [revealFlash, setRevealFlash] = useState<{
-    codename: string;
-    name: string;
-  } | null>(null);
   const [showLegend, setShowLegend] = useState(false);
-
-  useEffect(() => {
-    if (!revealFlash) return;
-    const t = window.setTimeout(() => setRevealFlash(null), 4200);
-    return () => window.clearTimeout(t);
-  }, [revealFlash]);
 
   const board = useMemo(() => {
     if (!league) return [] as GmPlayer[];
@@ -76,22 +68,17 @@ function DraftBody() {
 
   if (!league) return null;
 
+  if (league.phase === "draft") {
+    return <GmDraftNight />;
+  }
+
   const team = userTeam(league);
   const needs = rosterNeeds(team, league.players);
   const scout = team.staff.scout;
-  const order = league.lotteryOrder ?? [];
-  const pickIndex = league.draftPickIndex ?? 0;
-  const onClock = order[pickIndex % Math.max(1, order.length)];
-  const yourTurn =
-    league.phase === "draft" && (!onClock || onClock === league.userTeamId);
+  const yourTurn = false;
   const selected = board.find((p) => p.id === selectedId) ?? null;
-  const lastNews = league.news[0];
 
   const onDraft = (id: string) => {
-    const p = league.players.find((x) => x.id === id);
-    if (p?.codename && p.identityRevealed === false) {
-      setRevealFlash({ codename: p.codename, name: p.name });
-    }
     draftPlayer(id);
   };
 
@@ -100,23 +87,13 @@ function DraftBody() {
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="max-w-xl">
           <h2 className="text-lg font-semibold tracking-tight">
-            Scouting board
-            {league.phase !== "draft" ? " · preview" : ""}
+            Scouting board · preview
           </h2>
           <p className="mt-1 text-[14px] leading-relaxed text-muted-foreground">
-            Rank this class yourself. The combine locks height, athleticism, and
-            the medical file. Potential stays a range. The other clubs draft off
-            their own boards, so a name you love can still be there later.
+            Rank this class yourself. Generated names stay on the card. Scout
+            molds and builds stay with them. The combine locks height,
+            athleticism, and the medical file. Potential stays a range.
           </p>
-          {league.phase === "draft" ? (
-            <p className="mt-2 text-sm text-muted-foreground">
-              Pick #{pickIndex + 1} · On the clock:{" "}
-              <span className="font-medium text-foreground">
-                {(onClock ?? "?").toUpperCase()}
-              </span>
-              {yourTurn ? " · your selection" : ""}
-            </p>
-          ) : null}
           {scout ? (
             <p className="mt-1 text-[12px] text-muted-foreground">
               Scout: {scout.name} · {expertiseLabel(scout.expertise)} · Eye{" "}
@@ -165,9 +142,9 @@ function DraftBody() {
             </div>
           ) : null}
         </div>
-        {league.phase === "draft" || league.phase === "offseason" ? (
+        {league.phase === "offseason" ? (
           <Button variant="outline" onClick={() => runOffseason()}>
-            Finish draft / next season
+            Start next season
           </Button>
         ) : null}
       </div>
@@ -191,39 +168,6 @@ function DraftBody() {
           Holes: {needs.slice(0, 2).join(", ")}
         </p>
       </div>
-
-      {revealFlash ? (
-        <div className="sports-card border border-foreground/10 bg-foreground px-4 py-3 text-background">
-          <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-background/70">
-            Identity reveal
-          </p>
-          <p className="mt-1 text-[16px] font-semibold">
-            <span className="text-background/75">{revealFlash.codename}</span>
-            {" → "}
-            {revealFlash.name}
-          </p>
-          <p className="mt-0.5 text-[12px] text-background/70">
-            That &ldquo;wait, I know this guy&rdquo; feeling, now locked in.
-          </p>
-        </div>
-      ) : null}
-
-      {lastNews &&
-      league.phase === "draft" &&
-      lastNews.headline.includes("selects") ? (
-        <p className="text-[12px] text-muted-foreground">{lastNews.headline}</p>
-      ) : null}
-
-      {order.length ? (
-        <p className="text-[12px] text-muted-foreground">
-          Lottery order:{" "}
-          {order
-            .slice(0, 14)
-            .map((id) => id.toUpperCase())
-            .join(" · ")}
-          {order.length > 14 ? " · …" : ""}
-        </p>
-      ) : null}
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(280px,340px)]">
         <div className="overflow-hidden rounded-md border border-border bg-card">
@@ -288,7 +232,9 @@ function DraftBody() {
                         </span>
                         <span className="block text-[12px] text-muted-foreground">
                           {p.position} · {p.age} · {read.low}-{read.high} ·{" "}
-                          {p.scoutProfile?.archetypeLabel ?? "Unknown mold"}
+                          {displayPlayerSubtitle(p) ??
+                            p.scoutProfile?.archetypeLabel ??
+                            "Unknown mold"}
                           {p.position === need ? " · Fits the hole" : ""}
                         </span>
                       </span>
@@ -376,9 +322,12 @@ function ScoutDossier({
           {player.position} · Age {player.age}
           {profile?.archetypeLabel ? ` · ${profile.archetypeLabel}` : ""}
         </p>
-        <p className="mt-2 rounded-lg bg-secondary/80 px-2.5 py-1.5 text-[12px] font-medium text-muted-foreground">
-          True name sealed until the pick is in.
-        </p>
+        {displayPlayerSubtitle(player) ? (
+          <p className="mt-2 rounded-lg bg-secondary/80 px-2.5 py-1.5 text-[12px] font-medium text-muted-foreground">
+            Scout mold {displayPlayerSubtitle(player)}. Grades and the build stay
+            on this card.
+          </p>
+        ) : null}
       </div>
 
       <div className="rounded-lg bg-secondary/80 px-2.5 py-2">
@@ -512,9 +461,7 @@ function ScoutDossier({
         </Button>
       ) : (
         <p className="text-center text-[12px] text-muted-foreground">
-          {player.codename
-            ? "Study the tape. Identity stays sealed until pick night."
-            : "Waiting on the clock."}
+          Rank him now. Draft night opens the war room.
         </p>
       )}
     </aside>

@@ -559,10 +559,10 @@ export function progressSheet(
   delta = clamp(delta, -0.7, 0.55);
   if (opts?.pace === "season") {
     delta = delta > 0 ? delta * 0.32 : delta * 0.12;
-    delta += clamp(opts.form ?? 0, -0.04, 0.06);
+    delta += clamp(opts?.form ?? 0, -0.04, 0.06);
     delta = clamp(delta, -0.16, 0.2);
   } else if ((opts?.playoffGames ?? 0) >= 4 && age <= potential.peakEnd && delta > -0.15) {
-    delta = clamp(delta + ((opts.playoffGames ?? 0) >= 12 ? 0.05 : 0.03), -0.7, 0.62);
+    delta = clamp(delta + ((opts?.playoffGames ?? 0) >= 12 ? 0.05 : 0.03), -0.7, 0.62);
   }
 
   const ticks =

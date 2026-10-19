@@ -32,7 +32,7 @@ export function GmNav() {
         const active =
           link.href === "/gm"
             ? pathname === "/gm"
-            : pathname.startsWith(link.href);
+            : pathname === link.href || pathname.startsWith(`${link.href}/`);
         return (
           <Link
             key={link.href}

@@ -8,7 +8,6 @@ import type { GmAutomation, GmLeagueState, GmPlayer, GmSignVia } from "@/gm/type
 import {
   advanceBirdRights,
   evaluateSigning,
-  rosterCount,
   tickDeadMoney,
 } from "@/gm/engine/cap";
 import { developPlayers, finishDraftWithAi, offseasonJumpNote, playoffGamesByPlayer } from "@/gm/engine/progression";
@@ -18,14 +17,14 @@ import { cpuDeadlineTrades } from "@/gm/engine/trades";
 import { generateSchedule, tradeDeadlineDay } from "@/gm/engine/schedule";
 import { drawCupGroups, retieCupGroupGames } from "@/gm/engine/cup";
 import { emptyStandings } from "@/gm/engine/standings";
-import { createRng, clamp, uid } from "@/gm/engine/rng";
+import { createRng, uid } from "@/gm/engine/rng";
 import { getCbaRules } from "@/gm/myleague/cba-registry";
 import { createGeneratedLeague } from "@/gm/seed/create-league";
 import {
   sealProspect,
   staffScoutContext,
 } from "@/gm/engine/scouting";
-import type { CBARules } from "@/gm/myleague/types";
+import { emptyFaMarket, runFaPeriod } from "@/gm/engine/free-agency";
 
 export function automationOf(league: GmLeagueState): GmAutomation {
   return {
@@ -139,12 +138,13 @@ export function enterFreeAgency(state: GmLeagueState): GmLeagueState {
     players: aged,
     freeAgents,
     draftPool: [],
+    faMarket: emptyFaMarket(),
     teams: drafted.teams.map((team) => ageStaff(autoSetLineup(team, aged))),
     news: [
       news(
         drafted,
-        "Free agency is open",
-        `${released} players are on the market. Expiring deals are cleared. Team options on useful players were picked up. Stars declined player options.`
+        "The moratorium is open",
+        `${released} players hit the market. Pitch deals now. Signings lock when the window opens. Team options on useful players were picked up. Stars declined player options.`
       ),
       ...(jumps ? [jumps] : []),
       ...drafted.news,
@@ -152,124 +152,20 @@ export function enterFreeAgency(state: GmLeagueState): GmLeagueState {
   };
 }
 
-function askingSalary(player: GmPlayer, rules: CBARules): number {
-  const max = rules.maxSalaryM || Math.max(5, rules.salaryCapM * 0.35);
-  const min = rules.minSalaryM || Math.max(0.5, rules.salaryCapM * 0.008);
-  const like = (overallOf(player) - 76) / 2.35;
-  const t = clamp((like + 1.5) / 8, 0, 1);
-  return Math.round((min + (max - min) * t * t) * 100) / 100;
-}
-
-function askingYears(player: GmPlayer, rules: CBARules): number {
-  const overall = overallOf(player);
-  const years = overall >= 85 ? 4 : overall >= 81 ? 3 : overall >= 76 ? 2 : 1;
-  return clamp(years, 1, rules.maxContractYears || 5);
-}
-
-/** Other clubs fill out rosters. The user's club signs only when includeUser is set. */
+/**
+ * Run the MyNBA free-agency clock (moratorium → open → fill).
+ * CPU clubs bid; the user club is left alone unless includeUser is set
+ * (includeUser still uses the same day loop; user offers come from the desk).
+ */
 export function runCpuFreeAgency(
   state: GmLeagueState,
-  opts: { includeUser: boolean }
+  _opts: { includeUser: boolean }
 ): GmLeagueState {
-  const rules = getCbaRules(state.season);
-  let players = state.players.map((player) => ({ ...player }));
-  const headlines: string[] = [];
-
-  const order = [...state.teams].sort(
-    (a, b) => rosterCount(a.id, players) - rosterCount(b.id, players)
-  );
-
-  for (const team of order) {
-    if (!opts.includeUser && team.id === state.userTeamId) continue;
-    let guard = 0;
-    while (guard < 10) {
-      guard += 1;
-      const size = rosterCount(team.id, players);
-      if (size >= state.settings.maxRoster) break;
-      const mustFill = size < state.settings.minRoster;
-      const pool = players
-        .filter((player) => player.teamId == null)
-        .sort((a, b) => overallOf(b) - overallOf(a));
-      if (!pool.length) break;
-
-      let choice: GmPlayer | undefined;
-      let salary = 0;
-      let years = 1;
-      let via: GmSignVia = "room";
-      const snapshot = { ...state, players, teams: state.teams };
-      for (const player of pool) {
-        const ask = askingSalary(player, rules);
-        const yearsTry = askingYears(player, rules);
-        const verdict = evaluateSigning(snapshot, team.id, player, ask, yearsTry);
-        if (verdict.ok) {
-          choice = player;
-          salary = ask;
-          years = yearsTry;
-          via = verdict.via;
-          break;
-        }
-      }
-      if (!choice && mustFill && pool[0]) {
-        const min = Math.max(rules.minSalaryM || 1, state.settings.salaryCapM * (2.087 / 140.588));
-        const verdict = evaluateSigning(snapshot, team.id, pool[0], min, 1);
-        if (verdict.ok) {
-          choice = pool[0];
-          salary = min;
-          years = 1;
-          via = verdict.via;
-        }
-      }
-      if (!choice) break;
-      const annual = Math.round(salary * 100) / 100;
-      const signedId = choice.id;
-      players = players.map((player) =>
-        player.id === signedId
-          ? {
-              ...player,
-              teamId: team.id,
-              identityRevealed: true,
-              rightsTeamId: null,
-              rightsKind: undefined,
-              lastSalaryM: undefined,
-              contract: {
-                yearsRemaining: years,
-                annualSalaryM: annual,
-                birdRights: "none" as const,
-                signedSeason: state.season,
-                signedVia: via ?? "room",
-              },
-            }
-          : player
-      );
-      if (overallOf(choice) >= 80 && headlines.length < 8) {
-        headlines.push(
-          `${team.city} ${team.name} sign ${choice.name}, ${years} years, $${annual.toFixed(1)}M`
-        );
-      }
-    }
-  }
-
-  const freeAgents = players
-    .filter((player) => player.teamId == null)
-    .map((player) => player.id);
-
-  return {
-    ...state,
-    players,
-    freeAgents,
-    teams: state.teams.map((team) => autoSetLineup(team, players)),
-    news: [
-      ...headlines.map((headline) =>
-        news(state, headline, "Offseason signing.", "good")
-      ),
-      news(
-        state,
-        "The league has made its signings",
-        `${freeAgents.length} players are still unsigned.`
-      ),
-      ...state.news,
-    ].slice(0, 50),
-  };
+  const summer =
+    state.phase === "free_agency"
+      ? { ...state, faMarket: state.faMarket ?? emptyFaMarket() }
+      : enterFreeAgency(state);
+  return runFaPeriod(summer);
 }
 
 /** New schedule, new cap, new draft class. Contracts were already ticked in free agency. */
@@ -335,6 +231,7 @@ export function startNextSeason(state: GmLeagueState): GmLeagueState {
     combineDone: false,
     tradeDeadlinePassed: false,
     incomingOffer: undefined,
+    faMarket: undefined,
     news: [
       news(
         { ...filled, season, day: 0 },

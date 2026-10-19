@@ -11,7 +11,7 @@ import { clamp } from "@/gm/engine/rng";
 /** 2024-25 cap, used to scale exception amounts with the year's cap. */
 const CAP_ANCHOR = 140.588;
 
-export function exceptionAmounts(settings: GmLeagueSettings) {
+export function exceptionAmounts(settings: Pick<GmLeagueSettings, "salaryCapM">) {
   const cap = settings.salaryCapM;
   return {
     nonTaxpayerMleM: roundM(cap * (12.822 / CAP_ANCHOR)),

@@ -226,15 +226,15 @@ export function GmGamePlan({ league }: { league: GmLeagueState }) {
         <header>
           <h2 className="text-[17px] font-bold tracking-tight">Your plan</h2>
           <p className="text-[13px] text-muted-foreground">
-            Draft is open. Scout the codenames, take your swing, then the
-            market opens.
+            Draft night is live. Watch picks, catch sleepers, trade up, then
+            take your swing.
           </p>
         </header>
         <ol className="flex flex-col gap-1">
           <StepRow
             n={1}
-            title="Scout and make your pick"
-            detail="Codenames stay up until the selection. The name drops on the pick."
+            title="Open the war room"
+            detail="Names stay on the card. Molds and builds stay with them."
             status="current"
             action={
               <Button onClick={() => router.push("/gm/draft")}>

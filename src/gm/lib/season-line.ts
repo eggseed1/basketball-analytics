@@ -6,7 +6,7 @@ import { P1_POINTS_PER_WIN } from "@/lib/drbl-public-labels";
 const FALLBACK_PACE = 99.2;
 
 type EntryPair = [number, number | null];
-const entryByNbaId = entryDrblTable as Record<string, EntryPair>;
+const entryByNbaId = entryDrblTable as unknown as Record<string, EntryPair>;
 
 export function war1FromRate(drbl100: number, possessions: number): number {
   return (drbl100 * possessions) / 100 / P1_POINTS_PER_WIN;

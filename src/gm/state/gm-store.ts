@@ -14,9 +14,18 @@ import { recordSimGame } from "@/gm/lib/season-line";
 import { ensurePlayerSheet } from "@/gm/engine/attributes";
 import { applyRookieRatings } from "@/gm/engine/rookie-ratings";
 import { applyRealBooks } from "@/gm/seed/real-books";
-import { moveBoard, orderedBoard } from "@/gm/engine/draft-room";
+import {
+  applyDraftNightTrade,
+  draftNightOffers,
+  ensureDraftOrder,
+  expandDraftOrder,
+  moveBoard,
+  orderedBoard,
+  pickOwnerAt,
+  type DraftNightOffer,
+} from "@/gm/engine/draft-room";
 import { userGamesPlayed } from "@/gm/lib/selectors";
-import { buildDigest, stepDay } from "@/gm/engine/pace";
+import { buildDigest, newInjuries, stepDay } from "@/gm/engine/pace";
 import { cupChampionNews, ensureNbaCup, gameCounts } from "@/gm/engine/cup";
 import { allStarChampionNews, ensureAllStar } from "@/gm/engine/allstar";
 import { stampSeasonAwards } from "@/gm/engine/awards";
@@ -30,6 +39,7 @@ import { applyTrade, evaluateTrade } from "@/gm/engine/trades";
 import { considerIncomingOffer, offerIsFair } from "@/gm/engine/offers";
 import {
   advanceDraftPastAi,
+  advanceOneDraftPick,
   finishDraftWithAi,
   rollGameInjuries,
   runDraftPick,
@@ -40,9 +50,13 @@ import {
   enterFreeAgency,
   noteTradeDeadline,
   runCpuFreeAgency,
-  signingAllowed,
   startNextSeason,
 } from "@/gm/engine/offseason";
+import {
+  advanceFaDay as advanceFaDayEngine,
+  resignOwnFreeAgent as resignOwnFreeAgentEngine,
+  userOfferFreeAgent,
+} from "@/gm/engine/free-agency";
 import {
   applyCombine,
   ensureProspectIdentities,
@@ -144,6 +158,11 @@ interface GmStore {
   ) => void;
   setPickProtection: (pickId: string, topN: number | null) => void;
   draftPlayer: (playerId: string) => void;
+  /** Sim the next CPU pick only. Stops when you are on the clock. */
+  simDraftPick: () => void;
+  /** Walk CPU picks until your next selection. */
+  simDraftToUser: () => void;
+  acceptDraftNightTrade: (offer: DraftNightOffer) => void;
   moveDraftBoard: (playerId: string, dir: "up" | "down" | "top") => void;
   resetDraftBoard: () => void;
   runCombine: () => void;
@@ -153,6 +172,12 @@ interface GmStore {
   runOffseason: () => void;
   openFreeAgency: () => void;
   runCpuSignings: () => void;
+  /** Advance one day on the free-agency clock (moratorium → open → fill). */
+  advanceFaDay: () => void;
+  /** Bird / early-Bird re-sign at the ask. */
+  resignOwnFreeAgent: (
+    playerId: string
+  ) => { ok: boolean; reason?: string; note?: string };
   setAutomation: (
     patch: Partial<import("@/gm/types").GmAutomation>
   ) => void;
@@ -160,7 +185,7 @@ interface GmStore {
     playerId: string,
     salaryM: number,
     years: number
-  ) => { ok: boolean; reason?: string; via?: string };
+  ) => { ok: boolean; reason?: string; via?: string; note?: string };
   renounceRights: (playerId: string) => void;
   waivePlayer: (playerId: string) => void;
   upgradeStaff: (kind: "scout" | "trainer") => void;
@@ -764,14 +789,37 @@ export const useGmStore = create<GmStore>()(
       draftPlayer: (playerId) => {
         const league = get().league;
         if (!league || league.phase !== "draft") return;
-        const order = league.lotteryOrder ?? [];
-        const idx = league.draftPickIndex ?? 0;
-        const onClock = order[idx % Math.max(1, order.length)];
-        if (onClock && onClock !== league.userTeamId) return;
-        let next = runDraftPick(league, league.userTeamId, playerId);
+        const sealed = ensureDraftOrder(league);
+        const onClock = pickOwnerAt(sealed);
+        if (onClock && onClock !== sealed.userTeamId) return;
+        let next = runDraftPick(sealed, sealed.userTeamId, playerId);
         next = advanceDraftPastAi(next);
         next = afterDraftProgress(next);
         set({ league: withUpdate(next) });
+      },
+
+      simDraftPick: () => {
+        const league = get().league;
+        if (!league || league.phase !== "draft") return;
+        let next = advanceOneDraftPick(league);
+        next = afterDraftProgress(next);
+        set({ league: withUpdate(next) });
+      },
+
+      simDraftToUser: () => {
+        const league = get().league;
+        if (!league || league.phase !== "draft") return;
+        let next = advanceDraftPastAi(league);
+        next = afterDraftProgress(next);
+        set({ league: withUpdate(next) });
+      },
+
+      acceptDraftNightTrade: (offer) => {
+        const league = get().league;
+        if (!league || league.phase !== "draft") return;
+        const live = draftNightOffers(league).some((row) => row.id === offer.id);
+        if (!live) return;
+        set({ league: withUpdate(applyDraftNightTrade(league, offer)) });
       },
 
       moveDraftBoard: (playerId, dir) => {
@@ -1136,6 +1184,7 @@ export const useGmStore = create<GmStore>()(
               });
             }
           } else if (currentRound === 4) {
+            const lotteryOrder = league.lotteryOrder ?? computeLotteryOrder(league);
             let drafted = withUpdate({
               ...league,
               phase: "draft" as const,
@@ -1144,21 +1193,24 @@ export const useGmStore = create<GmStore>()(
               boxScores,
               players,
               draftPickIndex: 0,
-              lotteryOrder: league.lotteryOrder ?? computeLotteryOrder(league),
+              lotteryOrder,
+              draftOrder: expandDraftOrder(lotteryOrder),
               news: [
                 {
                   id: uid("news"),
                   day: league.day,
                   season: league.season,
                   headline: "Champions crowned, draft is next",
-                  body: "The Finals are over. Lottery order is locked. Make your selection.",
+                  body: "The Finals are over. Lottery order is locked. Watch the board, trade up, or take your swing.",
                   tone: "good" as const,
                 },
                 ...league.news,
               ].slice(0, 50),
             });
-            drafted = advanceDraftPastAi(drafted);
-            drafted = afterDraftProgress(drafted);
+            if (automationOf(drafted).autoDraft) {
+              drafted = advanceDraftPastAi(drafted);
+              drafted = afterDraftProgress(drafted);
+            }
             set({ league: drafted });
             syncMyLeague(drafted);
             return;
@@ -1274,6 +1326,26 @@ export const useGmStore = create<GmStore>()(
         syncMyLeague(next);
       },
 
+      advanceFaDay: () => {
+        const league = get().league;
+        if (!league || league.phase !== "free_agency") return;
+        if (league.faMarket?.done) return;
+        const next = withUpdate(advanceFaDayEngine(league));
+        set({ league: next });
+        syncMyLeague(next);
+      },
+
+      resignOwnFreeAgent: (playerId) => {
+        const league = get().league;
+        if (!league) return { ok: false, reason: "No league" };
+        const result = resignOwnFreeAgentEngine(league, playerId);
+        if (!result.ok) return result;
+        const next = withUpdate(result.state);
+        set({ league: next });
+        syncMyLeague(next);
+        return { ok: true, note: result.note };
+      },
+
       setAutomation: (patch) => {
         const league = get().league;
         if (!league) return;
@@ -1288,45 +1360,17 @@ export const useGmStore = create<GmStore>()(
       signFreeAgent: (playerId, salaryM, years) => {
         const league = get().league;
         if (!league) return { ok: false, reason: "No league" };
-        const allowed = signingAllowed(league, playerId, salaryM, years);
-        if (!allowed.ok) return allowed;
-        const players = league.players.map((p) =>
-          p.id === playerId
-            ? {
-                ...p,
-                teamId: league.userTeamId,
-                rightsTeamId: null,
-                rightsKind: undefined,
-                lastSalaryM: undefined,
-                contract: {
-                  yearsRemaining: years,
-                  annualSalaryM: salaryM,
-                  birdRights:
-                    allowed.via === "bird"
-                      ? ("bird" as const)
-                      : allowed.via === "early_bird"
-                        ? ("early" as const)
-                        : ("none" as const),
-                  signedSeason: league.season,
-                  signedVia: allowed.via,
-                },
-              }
-            : p
-        );
-        const teams = league.teams.map((t) =>
-          t.id === league.userTeamId
-            ? { ...t, benchOrder: [...t.benchOrder, playerId] }
-            : t
-        );
-        set({
-          league: withUpdate({
-            ...league,
-            players,
-            teams,
-            freeAgents: league.freeAgents.filter((id) => id !== playerId),
-          }),
-        });
-        return { ok: true, via: allowed.via };
+        const result = userOfferFreeAgent(league, playerId, salaryM, years);
+        if (result.state) {
+          const next = withUpdate(result.state);
+          set({ league: next });
+          syncMyLeague(next);
+          if (!result.ok) return { ok: false, reason: result.reason };
+          const via = next.players.find((p) => p.id === playerId)?.contract?.signedVia;
+          return { ok: true, via, note: result.note };
+        }
+        if (!result.ok) return result;
+        return { ok: false, reason: "Offer failed." };
       },
 
       renounceRights: (playerId) => {

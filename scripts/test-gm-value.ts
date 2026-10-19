@@ -101,9 +101,16 @@ test("a bad team's pick projects earlier than a good team's pick", () => {
   const protectedPick = { ...badPick, id: "prot", protectionTopN: 4 };
   assert.ok(pickStars(league, protectedPick) < pickStars(league, badPick));
 
-  const even = player("mine", "bos", 80, 26, 20);
-  const match = player("theirs", "bad", 80, 26, 20);
+  // Seller dumps a vet center; buyer (or mid) can take him for a pick / young wing.
+  const even = player("mine", "bos", 76, 22, 8);
+  even.position = "SG";
+  const match = player("theirs", "bad", 81, 31, 22);
+  match.position = "C";
   league.players.push(even, match);
+  // Give BOS a center hole so the deal is about fit, not a peer swap.
+  for (const row of league.players) {
+    if (row.teamId === "bos" && row.position === "C") row.sheet = { ...row.sheet!, overall: 62 };
+  }
   assert.equal(offerDay(14, false), true);
   assert.equal(offerDay(11, false), false);
   const offered = considerIncomingOffer(league);

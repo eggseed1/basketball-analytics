@@ -43,7 +43,7 @@ const HUB_SECTIONS = [
     title: "Free agency",
     phase: "FREE_AGENCY",
     href: "/gm/free-agency",
-    blurb: "Open market and minimum deals.",
+    blurb: "Moratorium pitches, Bird re-signs, then open signing and fill.",
   },
   {
     id: "cap",
@@ -59,6 +59,7 @@ export function OffseasonHub() {
   const runOffseason = useGmStore((s) => s.runOffseason);
   const openFreeAgency = useGmStore((s) => s.openFreeAgency);
   const runCpuSignings = useGmStore((s) => s.runCpuSignings);
+  const advanceFaDay = useGmStore((s) => s.advanceFaDay);
   const setAutomation = useGmStore((s) => s.setAutomation);
   const myLeague = useMyLeagueStore((s) => s.myLeague);
   const simulation = useMyLeagueStore((s) => s.simulation);
@@ -128,8 +129,15 @@ export function OffseasonHub() {
           )}
           {league.phase === "free_agency" && (
             <>
+              <Button
+                variant="outline"
+                onClick={() => advanceFaDay()}
+                disabled={Boolean(league.faMarket?.done)}
+              >
+                Advance FA day
+              </Button>
               <Button variant="outline" onClick={() => runCpuSignings()}>
-                Let the other teams sign
+                Sim FA to quiet
               </Button>
               <Button onClick={() => runOffseason()}>Start next season</Button>
             </>
@@ -172,7 +180,7 @@ export function OffseasonHub() {
               setAutomation({ autoFreeAgency: event.target.checked })
             }
           />
-          Other teams sign when free agency opens
+          Run the FA clock when free agency opens
         </label>
         {league.tradeDeadlinePassed && league.phase === "regular" ? (
           <p className="text-[13px] text-muted-foreground">

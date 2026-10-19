@@ -69,23 +69,98 @@ function clockOf(elapsed: number): { period: number; clockSeconds: number; clock
   };
 }
 
-/** Feet from the attacked rim. x is across the lane, y is out toward half court. */
+const THREE_R = 23.75;
+const CORNER_X = 22;
+const CORNER_Y = Math.sqrt(THREE_R * THREE_R - CORNER_X * CORNER_X);
+
+function clamp(n: number, lo: number, hi: number): number {
+  return Math.min(hi, Math.max(lo, n));
+}
+
+/** Unit normal. Box-Muller so spot jitter is a cloud, not a grid. */
+function gauss(rng: () => number): number {
+  const u = Math.max(1e-9, rng());
+  const v = rng();
+  return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+}
+
+/**
+ * Feet from the attacked rim. x is across the lane, y is out toward half court.
+ * Threes follow the NBA arc (not a flat depth band). Twos scatter by zone
+ * instead of sitting on a few horizontal lines — a flat y band becomes a
+ * vertical column once the full-court chart maps depth to the long axis.
+ */
 function spot(three: boolean, rng: () => number): { x: number; y: number } {
   if (three) {
-    if (rng() < 0.22) {
+    // Corners are about a quarter of modern threes.
+    if (rng() < 0.26) {
       const dir = rng() < 0.5 ? -1 : 1;
-      return { x: dir * (22 + rng()), y: 3 + rng() * 4 };
+      const x = dir * (CORNER_X + 0.15 + rng() * 1.1 + gauss(rng) * 0.25);
+      const y = 0.6 + rng() * (CORNER_Y - 0.4) + gauss(rng) * 0.4;
+      return {
+        x: clamp(x, -24.6, 24.6),
+        y: clamp(y, 0.35, CORNER_Y + 1.1),
+      };
     }
-    return { x: (rng() - 0.5) * 30, y: 23.2 + rng() * 2.4 };
+    // Above the break: sample the arc, then push a little past the line.
+    const a0 = Math.atan2(CORNER_Y, CORNER_X);
+    const a1 = Math.PI - a0;
+    let t = rng();
+    const mix = rng();
+    if (mix < 0.32) t = 0.5 + (rng() - 0.5) * 0.28; // top of key
+    else if (mix < 0.72) t = rng() < 0.5 ? rng() * 0.32 : 0.68 + rng() * 0.32; // wings
+    const angle = a0 + t * (a1 - a0);
+    const deep = rng() < 0.14 ? rng() * 2.8 : 0;
+    const r = clamp(THREE_R + 0.4 + Math.abs(gauss(rng)) * 0.9 + deep, THREE_R + 0.2, 28.5);
+    return {
+      x: clamp(Math.cos(angle) * r + gauss(rng) * 0.65, -24.6, 24.6),
+      y: clamp(Math.sin(angle) * r + gauss(rng) * 0.55, CORNER_Y - 0.8, 31),
+    };
   }
+
   const roll = rng();
-  if (roll < 0.46) {
-    const angle = rng() * Math.PI;
-    const radius = 0.6 + rng() * 2.8;
-    return { x: Math.cos(angle) * radius, y: Math.abs(Math.sin(angle) * radius) + 0.5 };
+  // At the rim.
+  if (roll < 0.44) {
+    const angle = (rng() - 0.5) * Math.PI * 1.2;
+    const radius = Math.abs(gauss(rng)) * 1.45 + rng() * 1.25;
+    return {
+      x: clamp(Math.cos(angle) * radius + gauss(rng) * 0.35, -5.2, 5.2),
+      y: clamp(Math.abs(Math.sin(angle) * radius) + 0.25 + rng() * 0.9, 0.15, 5.8),
+    };
   }
-  if (roll < 0.74) return { x: (rng() - 0.5) * 12, y: 6 + rng() * 6 };
-  return { x: (rng() - 0.5) * 24, y: 15 + rng() * 6 };
+  // Paint and short mid.
+  if (roll < 0.72) {
+    const angle = rng() * Math.PI;
+    const radius = 4.2 + rng() * 7 + gauss(rng) * 0.7;
+    return {
+      x: clamp(Math.cos(angle) * radius * 0.9 + gauss(rng) * 0.9, -9.5, 9.5),
+      y: clamp(Math.sin(angle) * radius + 1.2 + gauss(rng) * 0.8, 1.8, 14.5),
+    };
+  }
+  // Elbows.
+  if (rng() < 0.38) {
+    const dir = rng() < 0.5 ? -1 : 1;
+    return {
+      x: clamp(dir * (3.5 + rng() * 6.5) + gauss(rng) * 0.9, -12, 12),
+      y: clamp(11.5 + rng() * 5.5 + gauss(rng) * 0.8, 8, 19),
+    };
+  }
+  // Wing / baseline mid.
+  if (rng() < 0.55) {
+    const dir = rng() < 0.5 ? -1 : 1;
+    return {
+      x: clamp(dir * (9 + rng() * 11) + gauss(rng) * 1.0, -21, 21),
+      y: clamp(3.5 + rng() * 12 + gauss(rng) * 0.9, 1.5, 18),
+    };
+  }
+  // Long two just inside the arc.
+  const a0 = Math.atan2(CORNER_Y, CORNER_X);
+  const angle = a0 + rng() * (Math.PI - 2 * a0);
+  const r = 15.5 + rng() * 6.8;
+  return {
+    x: clamp(Math.cos(angle) * r + gauss(rng) * 0.8, -20.5, 20.5),
+    y: clamp(Math.sin(angle) * r + gauss(rng) * 0.7, 5.5, THREE_R - 0.6),
+  };
 }
 
 export function boxToPlayByPlay(box: GmBoxScore): PlayByPlayEvent[] {
@@ -308,7 +383,7 @@ export function boxToPlayByPlay(box: GmBoxScore): PlayByPlayEvent[] {
 
     const shot = item.shot;
     const where = spot(shot.three, rng);
-    const dist = Math.max(1, Math.round(where.y + 4));
+    const dist = Math.max(1, Math.round(Math.hypot(where.x, where.y)));
     const verb = shot.made ? "makes" : "misses";
     const look = shot.three ? `${dist}-foot three pointer` : dist < 6 ? "layup" : `${dist}-foot jumper`;
     let description = `${shot.player.name} ${verb} a ${look}`;

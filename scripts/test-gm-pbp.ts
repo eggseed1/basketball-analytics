@@ -109,3 +109,69 @@ test("a GM box becomes a shot-chart feed with the same counting", () => {
   assert.equal(last?.away, 8);
   assert.ok(built.court.some((event) => event.three && event.kind === "make"));
 });
+
+test("shot spots follow the three-point arc instead of a flat depth band", () => {
+  const box: GmBoxScore = {
+    id: "box_spots",
+    gameId: "g2",
+    season: 2027,
+    day: 2,
+    homeTeamId: "bos",
+    awayTeamId: "nyk",
+    homeScore: 110,
+    awayScore: 104,
+    players: [
+      line({
+        playerId: "a",
+        playerName: "Home Wing",
+        teamId: "bos",
+        points: 40,
+        fgm: 15,
+        fga: 40,
+        tpm: 10,
+        tpa: 28,
+        ftm: 0,
+        fta: 0,
+      }),
+      line({
+        playerId: "b",
+        playerName: "Away Wing",
+        teamId: "nyk",
+        points: 36,
+        fgm: 12,
+        fga: 35,
+        tpm: 8,
+        tpa: 24,
+        ftm: 0,
+        fta: 0,
+      }),
+    ],
+  };
+  const events = boxToPlayByPlay(box).filter((event) => event.isFieldGoal && event.locX != null && event.locY != null);
+  const threes = events.filter((event) => event.actionType === "3pt");
+  const twos = events.filter((event) => event.actionType === "2pt");
+  assert.ok(threes.length >= 40);
+  assert.ok(twos.length >= 20);
+
+  const above = threes.filter((event) => (event.locY ?? 0) > 9);
+  const depths = above.map((event) => event.locY ?? 0);
+  const mean = depths.reduce((sum, n) => sum + n, 0) / depths.length;
+  const variance =
+    depths.reduce((sum, n) => sum + (n - mean) ** 2, 0) / Math.max(1, depths.length - 1);
+  // A flat y≈23.2 band had std under 1. The arc needs real depth spread.
+  assert.ok(Math.sqrt(variance) > 2.5, `above-break depth std ${Math.sqrt(variance)}`);
+
+  for (const event of threes) {
+    const r = Math.hypot(event.locX ?? 0, event.locY ?? 0);
+    assert.ok(r >= 21.5, `three too close to rim: ${r}`);
+  }
+
+  const rimX = twos
+    .filter((event) => Math.hypot(event.locX ?? 0, event.locY ?? 0) <= 5)
+    .map((event) => event.locX ?? 0);
+  assert.ok(rimX.length >= 5);
+  const rimMean = rimX.reduce((sum, n) => sum + n, 0) / rimX.length;
+  const rimVar =
+    rimX.reduce((sum, n) => sum + (n - rimMean) ** 2, 0) / Math.max(1, rimX.length - 1);
+  assert.ok(Math.sqrt(rimVar) > 0.7, `rim x spread ${Math.sqrt(rimVar)}`);
+});

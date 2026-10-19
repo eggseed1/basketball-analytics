@@ -216,8 +216,9 @@ export function GmPlayersTable({ mode }: { mode: "all" | "leaders" }) {
     const next = teamColorStyle(focusedTeam);
     const previousPrimary = root.style.getPropertyValue("--team-primary");
     const previousSecondary = root.style.getPropertyValue("--team-secondary");
-    root.style.setProperty("--team-primary", String(next["--team-primary"]));
-    root.style.setProperty("--team-secondary", String(next["--team-secondary"]));
+    const colors = next as Record<string, string>;
+    root.style.setProperty("--team-primary", String(colors["--team-primary"] ?? ""));
+    root.style.setProperty("--team-secondary", String(colors["--team-secondary"] ?? ""));
     return () => {
       root.style.setProperty("--team-primary", previousPrimary);
       root.style.setProperty("--team-secondary", previousSecondary);

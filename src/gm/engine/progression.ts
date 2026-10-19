@@ -1,10 +1,18 @@
 import type { GmLeagueState, GmNewsItem, GmPlayer } from "@/gm/types";
 import { createRng, clamp, uid } from "@/gm/engine/rng";
 import { progressSheet } from "@/gm/engine/attributes";
-import { aiSelectProspect, pickGrade } from "@/gm/engine/draft-room";
+import {
+  aiSelectProspect,
+  draftSlotCount,
+  ensureDraftOrder,
+  pickGrade,
+  pickOwnerAt,
+} from "@/gm/engine/draft-room";
 import { coachEffect } from "@/gm/engine/staff";
 import { regularSeasonComplete } from "@/gm/engine/schedule";
 import { advanceContractYear } from "@/gm/seed/real-books";
+
+export { aiSelectProspect, ensureDraftOrder, pickOwnerAt, draftSlotCount };
 
 const INJURY_TYPES = [
   "Ankle sprain",
@@ -203,20 +211,17 @@ export function offseasonJumpNote(before: GmPlayer[], after: GmPlayer[], league:
   return developmentNews(before, after, league.day, league.season, "Offseason jumps");
 }
 
-export { aiSelectProspect } from "@/gm/engine/draft-room";
-
 /** Run AI picks until the user's turn (or draft exhausted). */
 export function advanceDraftPastAi(state: GmLeagueState): GmLeagueState {
-  let next = { ...state };
-  const order = next.lotteryOrder ?? [];
+  let next = ensureDraftOrder({ ...state });
   let guard = 0;
   while (next.draftPool.length > 0 && guard < 60) {
     guard += 1;
     const idx = next.draftPickIndex ?? 0;
-    if (idx >= order.length * 2) {
+    if (idx >= draftSlotCount(next)) {
       return { ...next, phase: "draft" };
     }
-    const teamId = order[idx % order.length];
+    const teamId = pickOwnerAt(next, idx);
     if (!teamId) break;
     if (teamId === next.userTeamId) {
       return { ...next, phase: "draft" };
@@ -231,16 +236,31 @@ export function advanceDraftPastAi(state: GmLeagueState): GmLeagueState {
   };
 }
 
+/** One CPU selection. No-op when the user is on the clock. */
+export function advanceOneDraftPick(state: GmLeagueState): GmLeagueState {
+  const next = ensureDraftOrder(state);
+  const idx = next.draftPickIndex ?? 0;
+  if (!next.draftPool.length || idx >= draftSlotCount(next)) {
+    return { ...next, phase: "draft" };
+  }
+  const teamId = pickOwnerAt(next, idx);
+  if (!teamId || teamId === next.userTeamId) {
+    return { ...next, phase: "draft" };
+  }
+  const pickId = aiSelectProspect(next, teamId);
+  if (!pickId) return { ...next, phase: "draft" };
+  return { ...runDraftPick(next, teamId, pickId), phase: "draft" };
+}
+
 /** Complete the rest of the draft with AI for every remaining pick. */
 export function finishDraftWithAi(state: GmLeagueState): GmLeagueState {
-  let next = state;
+  let next = ensureDraftOrder(state);
   let guard = 0;
   while (next.draftPool.length > 0 && guard < 60) {
     guard += 1;
     const idx = next.draftPickIndex ?? 0;
-    const order = next.lotteryOrder ?? [];
-    if (!order.length || idx >= order.length * 2) break;
-    const teamId = order[idx % order.length];
+    if (idx >= draftSlotCount(next)) break;
+    const teamId = pickOwnerAt(next, idx);
     if (!teamId) break;
     const pickId = aiSelectProspect(next, teamId);
     if (!pickId) break;
@@ -312,12 +332,10 @@ export function runDraftPick(
       : t
   );
 
-  const revealHeadline = codename
-    ? `${team.abbr} selects ${codename}: it's ${trueName}`
-    : `${team.abbr} selects ${trueName}`;
+  const revealHeadline = `${team.abbr} selects ${trueName}`;
   const revealBody = codename
-    ? `Pick #${pickNum}: the board knew them as ${codename}. Identity confirmed: ${trueName} is on the roster.`
-    : `Pick #${pickNum} is officially on the roster.`;
+    ? `Pick #${pickNum}. Scout mold ${codename}. Build stays on the sheet.`
+    : `Pick #${pickNum} is on the roster.`;
   const grade =
     teamId === state.userTeamId ? ` ${pickGrade(state, playerId)}` : "";
 
@@ -327,6 +345,7 @@ export function runDraftPick(
     teams,
     draftPool: state.draftPool.filter((id) => id !== playerId),
     userDraftBoard: state.userDraftBoard?.filter((id) => id !== playerId),
+    draftOrder: state.draftOrder,
     draftPickIndex: (state.draftPickIndex ?? 0) + 1,
     news: [
       {

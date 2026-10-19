@@ -488,12 +488,24 @@ html [data-gm] .gm-leave {
 }
 
 html [data-gm] .gm-nav {
+  position: sticky;
+  /* Sit above the sticky site chrome so scroll never covers these links. */
+  top: 0;
+  z-index: calc(var(--z-nav, 40) + 1);
   display: flex;
   gap: 2px;
   overflow-x: auto;
-  padding: 4px;
+  margin: 0 -4px;
+  padding: 6px 4px;
   border-radius: 14px;
-  background: var(--gm-nav);
+  background: color-mix(in oklab, var(--gm-day, #e7edf3) 92%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 1px 0 var(--gm-nav);
+}
+
+html.dark [data-gm] .gm-nav {
+  background: color-mix(in oklab, var(--gm-day, #070b10) 92%, transparent);
 }
 
 html [data-gm] .gm-nav__link {

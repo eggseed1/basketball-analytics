@@ -170,6 +170,9 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
   const [menuOpenedAt, setMenuOpenedAt] = useState<string | null>(null);
   const active = useMemo(() => activePrimaryNav(pathname), [pathname]);
   const isMenuOpen = menuOpen && menuOpenedAt === pathname;
+  /** Franchise Lab has its own front-office nav. The arcade game strip sits on top of it when sticky and eats clicks. */
+  const hideDomainSubnav =
+    pathname === "/gm" || pathname.startsWith("/gm/");
   const destinationWash =
     pathname.startsWith("/teams/") ||
     pathname.startsWith("/players/") ||
@@ -271,7 +274,7 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
             </div>
           </div>
 
-          {active?.subnav?.length ? (
+          {active?.subnav?.length && !hideDomainSubnav ? (
             <div
               className="site-subnav-band -mb-[0.5px]"
               style={{

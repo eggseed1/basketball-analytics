@@ -346,7 +346,6 @@ export function coachingOf(team: GmTeam): GmCoaching {
     offense: coach?.offenseStyle ?? "balanced",
     defense: coach?.defenseStyle ?? "balanced",
     tempo: coach?.tempo ?? "normal",
-    playThrough: [null, null],
     ...team.coaching,
     playThrough: team.coaching?.playThrough ?? [null, null],
   };

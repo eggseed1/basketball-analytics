@@ -596,6 +596,29 @@ export interface GmAutomation {
   autoFreeAgency: boolean;
 }
 
+export type GmFaStage = "moratorium" | "open" | "fill";
+
+export type GmFaOffer = {
+  id: string;
+  playerId: string;
+  teamId: string;
+  salaryM: number;
+  years: number;
+  day: number;
+  kind: "interest" | "agreement" | "signed";
+  via?: GmSignVia;
+};
+
+/** MyNBA-style free agency desk: moratorium pitches, then open signing, then fill. */
+export type GmFaMarket = {
+  stage: GmFaStage;
+  day: number;
+  agreements: GmFaOffer[];
+  pending: GmFaOffer[];
+  recap: string[];
+  done?: boolean;
+};
+
 export interface GmLeagueState {
   version: 1;
   season: number; // ending year e.g. 2026 for 2025-26
@@ -606,6 +629,8 @@ export interface GmLeagueState {
   teams: GmTeam[];
   players: GmPlayer[];
   freeAgents: string[]; // player ids
+  /** Live free-agency market. Set when the summer opens. */
+  faMarket?: GmFaMarket;
   draftPool: string[];
   schedule: GmScheduleGame[];
   standings: Record<string, GmStandingsRow>;
@@ -621,7 +646,12 @@ export interface GmLeagueState {
   playIn?: GmPlayInBoard;
   /** Full first-round pick order (lottery + reverse playoff). */
   lotteryOrder?: string[];
-  /** Index into lotteryOrder for the current pick. */
+  /**
+   * Flat pick schedule for this draft (usually 60). When set, each index is one
+   * selection so draft-night trades can swap a single slot without moving both rounds.
+   */
+  draftOrder?: string[];
+  /** Index into draftOrder (or lotteryOrder) for the current pick. */
   draftPickIndex?: number;
   /** User's order for this class. Missing means the scout board. */
   userDraftBoard?: string[];
