@@ -1,3 +1,5 @@
+import { cache } from "react";
+
 import {
   getFilteredPlayerSeasonsCached,
   getPlayerSeasonCached,
@@ -201,35 +203,65 @@ export async function loadBundledPeerBoard(
   return withHustle.filter((row) => row.gamesPlayed >= 15);
 }
 
-export async function loadPlayerPercentileMetrics(
+type PercentileLoadOptions = {
+  /**
+   * fast — selected-season board only (hero LCP).
+   * full — prior + career peer boards + spread archive for cross-era comps.
+   */
+  mode?: PercentileLoadMode;
+  /** Load prior-season peers for YoY comps (full mode default). */
+  includePriorBoard?: boolean;
+  /** When set, skips a redundant identity resolve on the hot path. */
+  nbaId?: string | null;
+  espnId?: string | null;
+};
+
+/**
+ * Request-deduped so Percentile + Similar Suspense islands share one peer board
+ * instead of building it twice in the same Worker render.
+ */
+export function loadPlayerPercentileMetrics(
   playerId: string,
   season: string,
   career: PlayerSeason[],
   identityTeamKey?: string | null,
-  options?: {
-    /**
-     * fast — selected-season board only (hero LCP).
-     * full — prior + career peer boards + spread archive for cross-era comps.
-     */
-    mode?: PercentileLoadMode;
-    /** Load prior-season peers for YoY comps (full mode default). */
-    includePriorBoard?: boolean;
-    /** When set, skips a redundant identity resolve on the hot path. */
-    nbaId?: string | null;
-    espnId?: string | null;
-  }
+  options?: PercentileLoadOptions
+) {
+  return loadPlayerPercentileMetricsCached(
+    playerId,
+    season,
+    career,
+    identityTeamKey ?? null,
+    options?.mode ?? null,
+    options?.includePriorBoard ?? null,
+    options?.nbaId ?? null,
+    options?.espnId ?? null
+  );
+}
+
+const loadPlayerPercentileMetricsCached = cache(async function loadPlayerPercentileMetricsCached(
+  playerId: string,
+  season: string,
+  career: PlayerSeason[],
+  identityTeamKey: string | null,
+  modeOpt: PercentileLoadMode | null,
+  includePriorBoardOpt: boolean | null,
+  nbaIdOpt: string | null,
+  espnIdOpt: string | null
 ) {
   const constrained = isConstrainedServerRuntime();
   const preferBundled = preferBundledProductDataOnEdge();
-  // Slim edge always fast. On CF Workers (preferBundled), explicit full still
-  // runs — but peer fan-out stays thin (prior + EDGE_* archive) to avoid 1102.
-  const mode = constrained
-    ? "fast"
-    : (options?.mode ?? (preferBundled ? "fast" : "full"));
+  // Slim edge and CF Workers stay on fast. Explicit "full" on Workers used to
+  // fan out prior + archive boards and OOM the 128MB isolate (exceededMemory).
+  const mode =
+    constrained || preferBundled
+      ? "fast"
+      : (modeOpt ?? "full");
   const includePrior =
     !constrained &&
+    !preferBundled &&
     mode === "full" &&
-    options?.includePriorBoard !== false;
+    includePriorBoardOpt !== false;
   const statsCtx = resolvePlayerStatsSeason(career, season);
   const statsSeason = statsCtx.statsSeason;
   const priorSeason = shiftCanonicalSeason(statsSeason, -1);
@@ -348,8 +380,8 @@ export async function loadPlayerPercentileMetrics(
         return [s, rows] as const;
       }
     ),
-    options?.nbaId != null && options?.espnId != null
-      ? Promise.resolve({ nbaId: options.nbaId, espnId: options.espnId })
+    nbaIdOpt != null && espnIdOpt != null
+      ? Promise.resolve({ nbaId: nbaIdOpt, espnId: espnIdOpt })
       : resolvePlayerIdentityCached(playerId),
   ]);
 
@@ -369,8 +401,8 @@ export async function loadPlayerPercentileMetrics(
             isMultiTeamSeasonRow(row)
           : true)
     ) ?? careerForMetrics.find((row) => row.season === statsSeason);
-  const nbaId = options?.nbaId ?? identity.nbaId;
-  const espnId = options?.espnId ?? identity.espnId ?? null;
+  const nbaId = nbaIdOpt ?? identity.nbaId;
+  const espnId = espnIdOpt ?? identity.espnId ?? null;
   const peerRow =
     peers.find((row) => row.playerId === playerId) ??
     (espnId ? peers.find((row) => row.playerId === espnId) : undefined) ??
@@ -439,4 +471,4 @@ export async function loadPlayerPercentileMetrics(
     profileHistoricalComps,
     ...statsCtx,
   };
-}
+});

@@ -1,23 +1,104 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
 import { PlayerCompFuturesChartLazy as PlayerCompFuturesChart } from "@/components/charts/recharts-lazy";
 import { type } from "@/lib/design-system";
-import { loadCompFuturesBundle } from "@/lib/player-comp-futures";
+import {
+  COMP_METRICS,
+  type CompFutures,
+  type CompFuturesBundle,
+  type CompMetricId,
+} from "@/lib/player-comp-futures-shared";
 import type { PlayerSeason } from "@/data/types";
 import { cn } from "@/lib/utils";
 
+/**
+ * Client-fetched comps/futures. SSR used to call getBundledCompPool inside the
+ * player HTML path and tip Workers over the 128MB limit (exceededMemory).
+ */
 export function PlayerCompFuturesPanel({
   focal,
-  career,
   teamKey,
   espnId,
 }: {
   focal: PlayerSeason | null;
-  career: PlayerSeason[];
+  /** Kept for call-site compatibility; pool load no longer needs career SSR. */
+  career?: PlayerSeason[];
   teamKey?: string | null;
   espnId?: string | null;
 }) {
-  const bundle = loadCompFuturesBundle(focal, career, espnId);
-  if (!bundle) return null;
-  const first = bundle.items.find((item) => item.metricId === bundle.defaultId) ?? bundle.items[0]!;
+  const [bundle, setBundle] = useState<CompFuturesBundle | null>(null);
+  const [failed, setFailed] = useState(false);
+  const playerId = focal?.playerId;
+  const season = focal?.season;
+
+  useEffect(() => {
+    if (!playerId || !season) {
+      setBundle(null);
+      setFailed(false);
+      return;
+    }
+    let cancelled = false;
+    setBundle(null);
+    setFailed(false);
+
+    (async () => {
+      const params = new URLSearchParams({ season });
+      if (espnId) params.set("espnId", espnId);
+      for (const metric of COMP_METRICS) {
+        params.set("metric", metric.id);
+        try {
+          const res = await fetch(
+            `/api/players/${encodeURIComponent(playerId)}/comp-futures?${params}`
+          );
+          if (!res.ok) continue;
+          const body = (await res.json()) as { item?: CompFutures };
+          if (!body.item || cancelled) return;
+          setBundle({
+            defaultId: body.item.metricId,
+            items: [body.item],
+            availableMetrics: COMP_METRICS.map((m) => ({
+              id: m.id as CompMetricId,
+              label: m.label,
+            })),
+          });
+          return;
+        } catch {
+          // try next metric
+        }
+      }
+      if (!cancelled) setFailed(true);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [espnId, playerId, season]);
+
+  if (!playerId || !season) return null;
+  if (failed) return null;
+
+  if (!bundle) {
+    return (
+      <div className="flex flex-col gap-3 border-t border-border/60 pt-4">
+        <div>
+          <h3 className={cn(type.heading, "tracking-tight")}>Comps and futures</h3>
+          <p className="mt-1 text-[13px] leading-snug text-muted-foreground">
+            Loading same-age comps…
+          </p>
+        </div>
+        <div
+          className="loading-shimmer h-56 w-full rounded-lg"
+          aria-hidden
+        />
+      </div>
+    );
+  }
+
+  const first =
+    bundle.items.find((item) => item.metricId === bundle.defaultId) ??
+    bundle.items[0]!;
 
   return (
     <div className="flex flex-col gap-3 border-t border-border/60 pt-4">
@@ -29,7 +110,13 @@ export function PlayerCompFuturesPanel({
           on his mark and follows the weighted median of how those comps changed.
         </p>
       </div>
-      <PlayerCompFuturesChart bundle={bundle} teamKey={teamKey ?? focal?.teamId} />
+      <PlayerCompFuturesChart
+        bundle={bundle}
+        teamKey={teamKey ?? focal?.teamId}
+        playerId={playerId}
+        season={season}
+        espnId={espnId}
+      />
     </div>
   );
 }

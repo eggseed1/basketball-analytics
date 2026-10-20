@@ -53,7 +53,8 @@ export async function PlayerSimilarIsland({
       season,
       career,
       identityTeamKey,
-      { nbaId, espnId, mode: "full" }
+      // fast — one peer board. full + CompFutures SSR exceeded Worker memory.
+      { nbaId, espnId, mode: "fast" }
     );
     const statsCtx = resolvePlayerStatsSeason(career, season);
     statsSeason = loaded.statsSeason ?? statsCtx.statsSeason ?? season;
@@ -130,7 +131,6 @@ export async function PlayerSimilarIsland({
       ) : null}
       <PlayerCompFuturesPanel
         focal={futuresFocal}
-        career={career}
         teamKey={identityTeamKey}
         espnId={espnId}
       />
