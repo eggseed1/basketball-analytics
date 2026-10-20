@@ -108,7 +108,8 @@ export function priorSeasonStatsNotice(
 
 /**
  * Explore Players board default: keep the last completed season selected until
- * the new league year tips off (Oct 15). Upcoming season remains pickable.
+ * the new league year has a real tip window (through Oct 21). Upcoming season
+ * remains pickable in the season control.
  */
 export function defaultExplorePlayersSeason(
   availableSeasons: readonly string[],

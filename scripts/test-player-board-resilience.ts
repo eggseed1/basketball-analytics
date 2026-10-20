@@ -103,6 +103,29 @@ async function main() {
   assert.equal(unavailable.health.status, "provider_failure");
   assert.match(unavailable.health.message, /temporarily unavailable/i);
 
+  // Current season live miss with no cache → last completed season, not hard fail.
+  __resetPlayerBoardCacheForTests();
+  __setPlayerBoardLoaderForTests(async (filters) => {
+    if (filters.season === "2026-27") {
+      return { rows: [], error: espnError(403) };
+    }
+    if (filters.season === "2025-26") {
+      return {
+        rows: [
+          { ...fakeRow("10"), season: "2025-26" },
+          { ...fakeRow("11"), season: "2025-26" },
+        ],
+        error: null,
+      };
+    }
+    return { rows: [], error: null };
+  });
+  const tipGap = await getPlayerSeasonBoardSnapshot({ season: "2026-27" });
+  assert.equal(tipGap.usingPriorSeasonStats, true);
+  assert.equal(tipGap.statsSeason, "2025-26");
+  assert.equal(tipGap.rows.length, 2);
+  assert.ok(tipGap.warnings.some((w) => /hasn't started/i.test(w)));
+
   // Timeout + no cache
   __resetPlayerBoardCacheForTests();
   __setPlayerBoardLoaderForTests(async () => ({

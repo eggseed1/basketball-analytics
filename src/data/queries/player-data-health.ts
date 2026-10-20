@@ -25,6 +25,7 @@ import {
   priorSeasonStatsNotice,
   shouldUsePriorSeasonBoardStats,
 } from "@/lib/player-board-season";
+import { isCurrentNbaSeason } from "@/lib/nba-season-status";
 import { isPreseasonRosterSeason } from "@/data/providers/nba/espn-roster-client";
 
 export type PlayerBoardSource =
@@ -275,6 +276,36 @@ export async function getPlayerSeasonBoardSnapshot(
       console.warn(
         `[player-board] live board unavailable (${classifyProviderFailure(error).label}); using cached real board for ${statsSeason}`
       );
+    } else if (
+      !usingPriorSeasonStats &&
+      season.toUpperCase() !== "ALL" &&
+      (isPreseasonRosterSeason(season) || isCurrentNbaSeason(season))
+    ) {
+      // Tip-off gap: current year is selected but ESPN has no GP>0 board yet
+      // (or Workers timed out). Prefer last completed season over a hard fail.
+      const priorSeason = priorSeasonForStats(season);
+      const priorLoaded = await load({ season: priorSeason });
+      if (priorLoaded.error == null && priorLoaded.rows.length > 0) {
+        statsSeason = priorSeason;
+        usingPriorSeasonStats = true;
+        unfilteredRows = priorLoaded.rows;
+        rows = filterBoardRows(priorLoaded.rows, filters, {
+          requestSeason,
+          statsSeason,
+          usingPriorSeasonStats,
+        });
+        source = "live-espn";
+        warnings.push(priorSeasonStatsNotice(season, priorSeason));
+        console.warn(
+          `[player-board] live board unavailable for ${season} (${classifyProviderFailure(error).label}); showing ${priorSeason}`
+        );
+      } else {
+        source = "unavailable";
+        warnings.push(UNAVAILABLE_WARNING);
+        console.warn(
+          `[player-board] live board unavailable (${classifyProviderFailure(error).label}); no cached board for ${statsSeason}`
+        );
+      }
     } else {
       source = "unavailable";
       warnings.push(UNAVAILABLE_WARNING);

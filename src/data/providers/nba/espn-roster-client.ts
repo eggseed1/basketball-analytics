@@ -38,10 +38,10 @@ type EspnRosterResponse = {
  *
  * The league year flips July 1, but treating the *entire* current season as
  * preseason caused every board request to fan out across 30 ESPN rosters even
- * after games started. Keep the roster path to the actual offseason/pre-tip
- * window (July 1–Oct 14 of the league start year); from October 15 of that
- * year through June of the following calendar year, league-dash is the source
- * of truth.
+ * after games started. Keep the roster path through the offseason and the
+ * tip-off gap (July 1–Oct 21 of the league start year). NBA openers often land
+ * Oct 21–24; flipping on Oct 15 left Explore on a season ESPN cannot board yet.
+ * From October 22 onward, league-dash / byathlete is the source of truth.
  */
 export function isPreseasonRosterSeason(season: string, now = new Date()): boolean {
   const startYear = currentNbaStartYear(now);
@@ -54,7 +54,7 @@ export function isPreseasonRosterSeason(season: string, now = new Date()): boole
   }
   const month = now.getUTCMonth();
   const day = now.getUTCDate();
-  return month < 9 || (month === 9 && day < 15);
+  return month < 9 || (month === 9 && day < 22);
 }
 
 export async function fetchEspnTeamRosterPlayers(
