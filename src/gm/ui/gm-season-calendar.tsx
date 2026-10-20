@@ -8,6 +8,10 @@ import { TeamLogo } from "@/components/brand/team-logo";
 import type { GmLeagueState, GmScheduleGame } from "@/gm/types";
 import { seasonMarks, type CalendarMark } from "@/gm/engine/calendar-marks";
 import {
+  userInjuryMarks,
+  userOutsOnDate,
+} from "@/gm/engine/injury-schedule";
+import {
   formatTipDate,
   formatTipDateLong,
   monthKeyFromIso,
@@ -109,7 +113,12 @@ export function GmSeasonCalendar({
       ? monthKeyFromIso(userGames[0].gameDate)
       : `${league.season - 1}-10`);
 
-  const marks = useMemo(() => seasonMarks(league.schedule), [league.schedule]);
+  const marks = useMemo(() => {
+    const season = seasonMarks(league.schedule);
+    const injuries = userInjuryMarks(league);
+    // Injury marks win the day label when they share a date with a quiet holiday wash.
+    return [...season, ...injuries];
+  }, [league]);
   const marksByDate = useMemo(() => {
     const map = new Map<string, CalendarMark[]>();
     for (const mark of marks) {
@@ -359,8 +368,16 @@ export function GmSeasonCalendar({
           const past = Boolean(cursor && cell.iso < cursor);
           const weekend = idx % 7 >= 5;
           const dayMarks = marksByDate.get(cell.iso) ?? [];
-          const named = dayMarks.filter((mark) => mark.label);
+          const injuryMarks = dayMarks.filter((mark) => mark.kind === "injury");
+          const named = [
+            ...injuryMarks.filter((mark) => mark.label),
+            ...dayMarks.filter((mark) => mark.label && mark.kind !== "injury"),
+          ];
           const breakKind = dayMarks.find((mark) => mark.kind === "cup" || mark.kind === "break");
+          const outs = userOutsOnDate(league, cell.iso);
+          const outTitle = outs.length
+            ? outs.map((player) => `${player.name}: ${player.injury?.type ?? "out"}`).join(". ")
+            : "";
 
           const inner = (
             <div
@@ -377,10 +394,15 @@ export function GmSeasonCalendar({
                 breakKind && `is-${breakKind.kind}`,
                 named.length > 0 && "is-marked",
                 named[0] && `mark-${named[0].kind}`,
+                outs.length > 0 && !past && "has-out",
                 landed.has(cell.iso) && "is-landed"
               )}
               style={cellBackground ? { background: cellBackground } : undefined}
-              title={named.map((mark) => mark.title).join(". ") || undefined}
+              title={
+                [outTitle, ...named.map((mark) => mark.title)]
+                  .filter(Boolean)
+                  .join(". ") || undefined
+              }
             >
               <div className="flex items-start justify-between gap-1">
                 <span
@@ -419,9 +441,11 @@ export function GmSeasonCalendar({
               </div>
               {game && named.length ? (
                 <p className="gm-cal__mark">
-                  {named.map((mark) => (
-                    <span key={mark.label} className={`is-${mark.kind}`}>
-                      {mark.label}
+                  {named.slice(0, 2).map((mark) => (
+                    <span key={`${mark.kind}-${mark.label}`} className={`is-${mark.kind}`}>
+                      {mark.kind === "injury"
+                        ? `Back · ${mark.line || mark.label}`
+                        : mark.label}
                     </span>
                   ))}
                 </p>
@@ -439,15 +463,25 @@ export function GmSeasonCalendar({
                     </span>
                   )}
                 </div>
-              ) : (
+              ) : null}
+              {game && outs.length && !game.played ? (
+                <p className="gm-cal__out" title={outTitle}>
+                  {outs.length === 1
+                    ? `${outs[0]!.name.split(/\s+/).slice(-1)[0]} out`
+                    : `${outs.length} out`}
+                </p>
+              ) : null}
+              {!game ? (
                 <div className="gm-cal__off">
                   {named.length ? (
                     <span className={cn("gm-cal__break", `is-${named[0]!.kind}`)}>
-                      {named.map((mark) => mark.label).join(" ")}
+                      {named[0]!.kind === "injury"
+                        ? `${named[0]!.label} · ${named[0]!.line}`
+                        : named.map((mark) => mark.label).join(" ")}
                     </span>
                   ) : null}
                 </div>
-              )}
+              ) : null}
             </div>
           );
 
@@ -485,6 +519,9 @@ export function GmSeasonCalendar({
           </span>
           <span className="inline-flex items-center gap-1.5">
             <span className="size-2 rounded-full bg-orange-400" /> Deadline
+          </span>
+          <span className="inline-flex items-center gap-1.5">
+            <span className="size-2 rounded-full bg-rose-500" /> Injury / return
           </span>
           {!compact && path !== "/gm/schedule" ? (
             <Link

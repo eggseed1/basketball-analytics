@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useTranslations } from "next-intl";
 
 import { NBA_ATMOSPHERE, PageAtmosphere } from "@/components/brand/page-atmosphere";
 import { kitFor } from "@/components/one-shot/kit";
@@ -50,6 +51,7 @@ import { ageLabel, EYEBROW, ExpandButton } from "./ui";
 const subscribeNoop = () => () => {};
 
 export function OneShotGame() {
+  const t = useTranslations("ArcadeOneShot");
   const mounted = useSyncExternalStore(subscribeNoop, () => true, () => false);
   const wrapRef = useRef<HTMLDivElement>(null);
   const [expanded, setExpanded] = useState(false);
@@ -128,7 +130,7 @@ export function OneShotGame() {
             : "min-h-[calc(100dvh-var(--os-chrome,0px)-1.5rem)] scroll-mt-[calc(var(--os-chrome,0px)+0.75rem)] px-3 pb-2 sm:px-0 md:has-[[data-os-play]]:h-[calc(100dvh-var(--os-chrome,0px))] md:has-[[data-os-play]]:min-h-[540px] md:has-[[data-os-play]]:pb-2",
         )}
       >
-        {mounted ? <Game expanded={expanded} onExpand={toggleExpanded} /> : <p className="p-6 text-[13px] text-[var(--os-dim)]">Loading ONE SHOT…</p>}
+        {mounted ? <Game expanded={expanded} onExpand={toggleExpanded} /> : <p className="p-6 text-[13px] text-[var(--os-dim)]">{t("loading")}</p>}
       </div>
     </div>
   );

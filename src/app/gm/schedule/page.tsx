@@ -1,5 +1,7 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 import { GmShell } from "@/gm/ui/gm-shell";
 import { GmSeasonCalendar } from "@/gm/ui/gm-season-calendar";
 import { GmCupBoard } from "@/gm/ui/gm-cup";
@@ -17,24 +19,21 @@ export default function GmSchedulePage() {
 }
 
 function ScheduleBody() {
+  const t = useTranslations("GmUi");
   const league = useGmStore((s) => s.league);
   if (!league) return null;
 
   const postseason = league.phase === "play_in" || league.phase === "playoffs" || Boolean(league.playoffBracket?.length);
+  const playoffs = league.phase === "playoffs" || Boolean(league.playoffBracket?.length);
+  const pageKey = league.phase === "play_in" ? "PlayIn" : playoffs ? "Playoffs" : "Schedule";
 
   return (
     <div className="flex flex-col gap-4">
       <header>
         <h1 className="text-[28px] font-bold tracking-tight">
-          {league.phase === "play_in" ? "Play-in" : league.phase === "playoffs" || league.playoffBracket?.length ? "Playoffs" : "Schedule"}
+          {t(`page${pageKey}Title`)}
         </h1>
-        <p className="text-[16px] text-muted-foreground">
-          {league.phase === "play_in"
-            ? "The 7 seed hosts the 8. The 9 seed hosts the 10. The last game fills the 8 seed."
-            : league.phase === "playoffs" || league.playoffBracket?.length
-              ? "The bracket is the schedule. Simulate a night and the scores land on the series."
-              : "Real NBA tips for your franchise, with home and away marked on the calendar."}
-        </p>
+        <p className="text-[16px] text-muted-foreground">{t(`page${pageKey}Blurb`)}</p>
       </header>
       {league.phase === "play_in" && league.playIn ? <GmPlayInSchedule league={league} /> : null}
       {league.playoffBracket?.length ? <GmPlayoffBracket league={league} controls /> : null}

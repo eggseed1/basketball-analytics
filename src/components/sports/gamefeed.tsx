@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
 import type { CSSProperties, ReactNode } from "react";
 
 import { GlassSurface } from "@/components/brand/glass-surface";
@@ -23,6 +24,7 @@ import { buildGameMatchupTheme } from "@/lib/game-matchup-theme";
 import { gameSideBrandKey } from "@/lib/game-team-identity";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { nbaTodayIso } from "@/lib/nba-calendar-date";
+import { formatAppDate, formatAppDateTime } from "@/i18n/format-date";
 import { cn } from "@/lib/utils";
 import {
   segmentedItemActiveClassName,
@@ -73,16 +75,14 @@ function daysInMonth(year: number, month: number) {
   return new Date(Date.UTC(year, month, 0)).getUTCDate();
 }
 
-function monthLabel(monthKey: string) {
+function monthLabel(monthKey: string, locale: string) {
   const [y, m] = monthKey.split("-").map(Number);
-  return new Date(Date.UTC(y!, (m ?? 1) - 1, 1)).toLocaleDateString("en-US", {
-    month: "long",
-    year: "numeric",
+  return formatAppDate(new Date(Date.UTC(y!, (m ?? 1) - 1, 1)), locale, "monthLongYear", {
     timeZone: "UTC",
   });
 }
 
-function weekRangeLabel(weekStart: string, weekEnd: string) {
+function weekRangeLabel(weekStart: string, weekEnd: string, locale: string) {
   const start = new Date(`${weekStart}T12:00:00Z`);
   const end = new Date(`${weekEnd}T12:00:00Z`);
   const opts: Intl.DateTimeFormatOptions = {
@@ -90,8 +90,8 @@ function weekRangeLabel(weekStart: string, weekEnd: string) {
     day: "numeric",
     timeZone: "UTC",
   };
-  const left = start.toLocaleDateString("en-US", opts);
-  const right = end.toLocaleDateString("en-US", {
+  const left = formatAppDateTime(start, locale, opts);
+  const right = formatAppDateTime(end, locale, {
     ...opts,
     year: start.getUTCFullYear() === end.getUTCFullYear() ? undefined : "numeric",
   });
@@ -187,7 +187,8 @@ function WeekMatchupChip({ game }: { game: GameSummary }) {
     game.homeScore != null &&
     game.homeScore < game.awayScore;
   const timeZone = useViewerTimeZone();
-  const tip = splitTipLabel(tipLabel(game, timeZone));
+  const locale = useLocale();
+  const tip = splitTipLabel(tipLabel(game, timeZone, locale));
 
   const side = (key: string, label: string, end: boolean) => (
     <div
@@ -224,7 +225,7 @@ function WeekMatchupChip({ game }: { game: GameSummary }) {
             )}
           </span>
           <span className="text-[10px] leading-tight text-muted-foreground">
-            {showScores ? tipLabel(game, timeZone) : (tip.secondary ?? "")}
+            {showScores ? tipLabel(game, timeZone, locale) : (tip.secondary ?? "")}
           </span>
         </div>
         {side(gameSideBrandKey(game, "home"), home, true)}
@@ -233,7 +234,7 @@ function WeekMatchupChip({ game }: { game: GameSummary }) {
   );
 }
 
-function tipLabel(game: GameSummary, timeZone: string): string {
+function tipLabel(game: GameSummary, timeZone: string, locale?: string | null): string {
   if (isFinalStatus(game.status)) return "Final";
   if (isLiveLikeStatus(game.status)) return statusHeadline(game.status);
   if (
@@ -245,7 +246,9 @@ function tipLabel(game: GameSummary, timeZone: string): string {
     return statusHeadline(game.status);
   }
   const tbd = /\bTBD\b/i.test(game.statusDetail ?? "");
-  const local = tbd ? null : formatTipTime(game.tipOffAt, "clockZone", timeZone);
+  const local = tbd
+    ? null
+    : formatTipTime(game.tipOffAt, "clockZone", timeZone, locale);
   if (local) return local;
   if (game.statusDetail) {
     const tip = game.statusDetail.split(" - ").slice(1).join(" - ").trim();
@@ -277,27 +280,28 @@ function ViewTabs({
   monthKey: string;
   weekStart: string;
 }) {
+  const t = useTranslations("Scores");
   const tabs: { id: GamefeedView; label: string; href: string }[] = [
-    { id: "day", label: "Day", href: scoresHref({ view: "day" }) },
+    { id: "day", label: t("tabDay"), href: scoresHref({ view: "day" }) },
     {
       id: "week",
-      label: "Week",
+      label: t("tabWeek"),
       href: scoresHref({ view: "week", week: weekStart }),
     },
     {
       id: "month",
-      label: "Month",
+      label: t("tabMonth"),
       href: scoresHref({ view: "month", month: monthKey }),
     },
     {
       id: "list",
-      label: "Upcoming",
+      label: t("tabUpcoming"),
       href: scoresHref({ view: "list" }),
     },
   ];
 
   return (
-    <div className={segmentedTrackClassName} role="tablist" aria-label="Scores range">
+    <div className={segmentedTrackClassName} role="tablist" aria-label={t("tabListAria")}>
       {tabs.map((tab) => (
         <TransitionLink
           key={tab.id}
@@ -445,6 +449,8 @@ function WeekBoard({
   weekStart: string;
   games: GameSummary[];
 }) {
+  const t = useTranslations("Scores");
+  const locale = useLocale();
   const byDate = groupByDate(games);
   const todayIso = nbaTodayIso();
   const days = Array.from({ length: 7 }, (_, i) => addDaysIso(weekStart, i));
@@ -454,7 +460,7 @@ function WeekBoard({
       {days.map((iso, i) => {
         const dayGames = byDate.get(iso) ?? [];
         const isToday = iso === todayIso;
-        const label = new Date(`${iso}T12:00:00Z`).toLocaleDateString("en-US", {
+        const label = formatAppDateTime(`${iso}T12:00:00Z`, locale, {
           weekday: "short",
           month: "short",
           day: "numeric",
@@ -479,7 +485,7 @@ function WeekBoard({
               {label}
             </p>
             {dayGames.length === 0 ? (
-              <p className="text-[12px] text-muted-foreground">No games</p>
+              <p className="text-[12px] text-muted-foreground">{t("noGamesShort")}</p>
             ) : (
               <div className="flex flex-col gap-1.5">
                 {dayGames.map((g) => (
@@ -521,6 +527,8 @@ export function Gamefeed({
   upcomingHasMore?: boolean;
   feedSource?: "live-espn" | "cached-espn" | "unavailable";
 }) {
+  const t = useTranslations("Scores");
+  const locale = useLocale();
   const prevMonth = shiftMonthKey(monthKey, -1);
   const nextMonth = shiftMonthKey(monthKey, 1);
   const prevWeek = addDaysIso(weekStart, -7);
@@ -530,12 +538,12 @@ export function Gamefeed({
 
   const subtitle =
     view === "day"
-      ? `Live games, results and tip-off times · ${season}`
+      ? t("subtitleDay", { season })
       : view === "list"
-      ? `Upcoming tip-offs · ${season}`
-      : view === "week"
-        ? `Weekly slate · ${season}`
-        : `Monthly calendar · ${season}`;
+        ? t("subtitleList", { season })
+        : view === "week"
+          ? t("subtitleWeek", { season })
+          : t("subtitleMonth", { season });
 
   return (
     <QueryNavProvider className="gap-0">
@@ -544,7 +552,7 @@ export function Gamefeed({
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
               <h1 className="text-[28px] font-bold tracking-tight sm:text-[32px]">
-                Scores
+                {t("title")}
               </h1>
               <p className="mt-1 text-[14px] text-muted-foreground">{subtitle}</p>
             </div>
@@ -566,17 +574,17 @@ export function Gamefeed({
                 scroll={false}
                 className="sports-pill"
               >
-                Prev
+                {t("prev")}
               </TransitionLink>
               <p className="min-w-[9rem] flex-1 text-center text-[16px] font-bold tracking-tight sm:flex-none">
-                {monthLabel(monthKey)}
+                {monthLabel(monthKey, locale)}
               </p>
               <TransitionLink
                 href={scoresHref({ view: "month", month: nextMonth })}
                 scroll={false}
                 className="sports-pill"
               >
-                Next
+                {t("next")}
               </TransitionLink>
             </div>
           ) : null}
@@ -588,17 +596,17 @@ export function Gamefeed({
                 scroll={false}
                 className="sports-pill"
               >
-                Prev
+                {t("prev")}
               </TransitionLink>
               <p className="min-w-[9rem] text-center text-[16px] font-bold tracking-tight">
-                {weekRangeLabel(weekStart, weekEnd)}
+                {weekRangeLabel(weekStart, weekEnd, locale)}
               </p>
               <TransitionLink
                 href={scoresHref({ view: "week", week: nextWeek })}
                 scroll={false}
                 className="sports-pill"
               >
-                Next
+                {t("next")}
               </TransitionLink>
             </div>
           ) : null}
@@ -614,20 +622,21 @@ export function Gamefeed({
               </ScoreDelayScope>
               {monthGames.length === 0 ? (
                 <p className="rounded-md border border-dashed border-border px-4 py-8 text-center text-[14px] text-muted-foreground">
-                  No games on the scoreboard for {monthLabel(monthKey)}. Try{" "}
+                  {t("emptyMonthBefore", { month: monthLabel(monthKey, locale) })}
                   <TransitionLink
                     href={scoresHref({ view: "list" })}
                     scroll={false}
                     className="underline"
                   >
-                    List
-                  </TransitionLink>{" "}
-                  for upcoming tip-offs.
+                    {t("emptyMonthListLink")}
+                  </TransitionLink>
+                  {t("emptyMonthAfter")}
                 </p>
               ) : (
                 <p className="text-[12px] text-muted-foreground">
-                  {monthGames.length} game
-                  {monthGames.length === 1 ? "" : "s"} this month
+                  {monthGames.length === 1
+                    ? t("gamesThisMonthOne")
+                    : t("gamesThisMonthMany", { count: monthGames.length })}
                 </p>
               )}
             </>
@@ -640,20 +649,21 @@ export function Gamefeed({
                   <WeekBoard weekStart={weekStart} games={games} />
                   {games.length === 0 ? (
                     <p className="rounded-md border border-dashed border-border px-4 py-8 text-center text-[14px] text-muted-foreground">
-                      No games this week.{" "}
+                      {t("emptyWeekBefore")}
                       <TransitionLink
                         href={scoresHref({ view: "list" })}
                         scroll={false}
                         className="underline"
                       >
-                        See all upcoming
+                        {t("emptyWeekLink")}
                       </TransitionLink>
                       .
                     </p>
                   ) : (
                     <p className="text-[12px] text-muted-foreground">
-                      {games.length} game{games.length === 1 ? "" : "s"} this
-                      week · live scores refresh automatically
+                      {games.length === 1
+                        ? t("gamesThisWeekOne")
+                        : t("gamesThisWeekMany", { count: games.length })}
                     </p>
                   )}
                 </>

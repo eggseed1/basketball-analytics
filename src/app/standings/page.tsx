@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 
 import { HashAnchorScroll } from "@/components/continuity/hash-anchor-scroll";
 import { MotionReveal } from "@/components/continuity/motion-reveal";
@@ -62,14 +63,15 @@ async function ConferenceTables({
   season: string;
   conference: ConferenceFilter;
 }) {
+  const t = await getTranslations("Standings");
   let data;
   try {
     data = await getLeagueStandings(season);
   } catch {
     return (
       <EmptyState
-        title="Standings temporarily unavailable"
-        description="Try again shortly."
+        title={t("standingsUnavailable")}
+        description={t("tryAgainShortly")}
       />
     );
   }
@@ -80,8 +82,8 @@ async function ConferenceTables({
   if (!east.length && !west.length) {
     return (
       <EmptyState
-        title={`No standings for ${season}`}
-        description="Rows appear once the season schedule is live."
+        title={t("noStandingsFor", { season })}
+        description={t("scheduleNotLive")}
       />
     );
   }
@@ -89,16 +91,17 @@ async function ConferenceTables({
   return (
     <div className={cn("grid gap-4", !conference && "lg:grid-cols-2")}>
       {conference !== "West" ? (
-        <StandingsConferenceTable title="Eastern Conference" rows={east} />
+        <StandingsConferenceTable title={t("eastern")} rows={east} />
       ) : null}
       {conference !== "East" ? (
-        <StandingsConferenceTable title="Western Conference" rows={west} />
+        <StandingsConferenceTable title={t("western")} rows={west} />
       ) : null}
     </div>
   );
 }
 
 async function StandingsPriorSeasonNotice({ season }: { season: string }) {
+  const t = await getTranslations("Standings");
   let shown = season;
   try {
     shown = (await getLeagueStandings(season)).season;
@@ -114,12 +117,13 @@ async function StandingsPriorSeasonNotice({ season }: { season: string }) {
       )}
       role="status"
     >
-      Showing {shown} final standings because the {season} season has not started.
+      {t("priorSeasonNotice", { shown, season })}
     </p>
   );
 }
 
 async function BracketBody({ season }: { season: string }) {
+  const t = await getTranslations("Standings");
   const result = await withBudget(
     getPlayoffBracketModel(season).catch(() => null),
     edgeBudgetMs(),
@@ -130,7 +134,7 @@ async function BracketBody({ season }: { season: string }) {
   if (!bracket) {
     return (
       <div className="rounded-md border border-border bg-secondary/40 px-4 py-8 text-center text-[14px] text-muted-foreground">
-        Playoff bracket is temporarily unavailable for {season}.
+        {t("bracketUnavailable", { season })}
       </div>
     );
   }
@@ -150,6 +154,7 @@ async function TeamStatsBody({ season }: { season: string }) {
 export default async function StandingsPage({ searchParams }: PageProps) {
   await yieldForStreaming();
   const sp = await searchParams;
+  const t = await getTranslations("Standings");
 
   if (one(sp, "view") === "tracker") {
     redirect(standingsVisualizationsHref(one(sp, "season")));
@@ -167,10 +172,7 @@ export default async function StandingsPage({ searchParams }: PageProps) {
       <Suspense fallback={null}>
         <StandingsPriorSeasonNotice season={season} />
       </Suspense>
-      <PageHeader
-        title="Standings"
-        subtitle="Conference standings, playoff bracket, and team efficiency. Click a team to open its profile."
-      />
+      <PageHeader title={t("title")} subtitle={t("description")} />
 
       <Suspense fallback={<div className="h-12 animate-pulse rounded-xl bg-secondary" />}>
         <TeamSeasonToolbar seasons={seasons} defaultSeason={defaultSeason} />
@@ -189,7 +191,7 @@ export default async function StandingsPage({ searchParams }: PageProps) {
       </section>
 
       <section id="team-stats" className="flex scroll-mt-48 flex-col gap-3 pb-8">
-        <SectionHeader title="Team stats" />
+        <SectionHeader title={t("teamStats")} />
         <Suspense
           fallback={<div className="h-72 animate-pulse rounded-xl bg-secondary" aria-busy="true" />}
         >

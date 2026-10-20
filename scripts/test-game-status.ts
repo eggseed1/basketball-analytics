@@ -233,18 +233,28 @@ function main() {
     const noLoc = resolveWatchAvailability({
       broadcasts: mapped,
       locationLabel: null,
+      countryCode: null,
+      season: "2025-26",
     });
-    const lp = noLoc.find((r) => r.option.id === "nba-league-pass");
+    const lp = noLoc.find((r) => r.kind === "league_pass");
     assert.ok(lp);
     assert.equal(lp!.availability, "location_required");
 
     const withLoc = resolveWatchAvailability({
       broadcasts: mapped,
       locationLabel: "Boston, MA",
+      countryCode: "US",
+      season: "2025-26",
     });
-    const lp2 = withLoc.find((r) => r.option.id === "nba-league-pass");
+    const lp2 = withLoc.find((r) => r.kind === "league_pass");
     assert.equal(lp2!.availability, "blackout_possible");
     assert.match(lp2!.note, /blackout/i);
+    assert.ok(
+      mapped.every(
+        (row) =>
+          row.label !== "ESPN" || row.watchUrl === "https://www.espn.com/watch/"
+      )
+    );
   }
 
   // Empty broadcasts → no fabricated national TV

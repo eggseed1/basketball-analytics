@@ -1,5 +1,7 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useMemo } from "react";
 
@@ -55,20 +57,35 @@ function defaultsToBothEnds(view: VizView): boolean {
   return view === "race" || view === "impact" || view === "bpm" || view === "surplus";
 }
 
-const VIEWS: Array<{ id: VizView; label: string }> = [
-  { id: "race", label: "Race tracker" },
-  { id: "usage", label: "Usage vs efficiency" },
-  { id: "impact", label: "Usage vs impact" },
-  { id: "bpm", label: "Usage vs BPM" },
-  { id: "diet", label: "Shot diet" },
-  { id: "creation", label: "Creation" },
-  { id: "ft", label: "FT pressure" },
-  { id: "glass", label: "Glass work" },
-  { id: "defense", label: "Stocks" },
-  { id: "volume", label: "Scoring volume" },
-  { id: "surplus", label: "Contract surplus" },
-  { id: "payoff", label: "Salary played off" },
+const VIEW_IDS: VizView[] = [
+  "race",
+  "usage",
+  "impact",
+  "bpm",
+  "diet",
+  "creation",
+  "ft",
+  "glass",
+  "defense",
+  "volume",
+  "surplus",
+  "payoff",
 ];
+
+const VIEW_LABEL_KEYS: Record<VizView, "viewRace" | "viewUsage" | "viewImpact" | "viewBpm" | "viewDiet" | "viewCreation" | "viewFt" | "viewGlass" | "viewDefense" | "viewVolume" | "viewSurplus" | "viewPayoff"> = {
+  race: "viewRace",
+  usage: "viewUsage",
+  impact: "viewImpact",
+  bpm: "viewBpm",
+  diet: "viewDiet",
+  creation: "viewCreation",
+  ft: "viewFt",
+  glass: "viewGlass",
+  defense: "viewDefense",
+  volume: "viewVolume",
+  surplus: "viewSurplus",
+  payoff: "viewPayoff",
+};
 
 function parsePinIds(raw: string | null): string[] {
   if (!raw) return [];
@@ -94,11 +111,15 @@ function seasonYear(season: string) {
   }
 }
 
-function fieldSizeLabel(value: string, rankEnd: PlayerRaceRankEnd) {
-  if (value === "all") return "All players";
-  if (rankEnd === "low") return `Bottom ${value}`;
-  if (rankEnd === "both") return `Both ends · ${value}`;
-  return `Top ${value}`;
+function fieldSizeLabel(
+  value: string,
+  rankEnd: PlayerRaceRankEnd,
+  t: (key: "allPlayers" | "bottomN" | "bothEndsN" | "topN", values?: Record<string, string>) => string
+) {
+  if (value === "all") return t("allPlayers");
+  if (rankEnd === "low") return t("bottomN", { n: value });
+  if (rankEnd === "both") return t("bothEndsN", { n: value });
+  return t("topN", { n: value });
 }
 
 export function PlayerVisualizationsHubChrome({
@@ -113,6 +134,7 @@ export function PlayerVisualizationsHubChrome({
   /** Names for pins that arrive in the URL, before any search runs. */
   pinNames?: Record<string, string>;
 }) {
+  const t = useTranslations("Explore");
   const router = useRouter();
   const searchParams = useSearchParams();
   const pinLabels = pinNames ?? {};
@@ -197,14 +219,14 @@ export function PlayerVisualizationsHubChrome({
   };
 
   const fieldOptions = [
-    { value: "all", label: fieldSizeLabel("all", rankEnd) },
+    { value: "all", label: fieldSizeLabel("all", rankEnd, t) },
     ...PLAYER_RACE_TOP_N_OPTIONS.map((n) => ({
       value: String(n),
-      label: fieldSizeLabel(String(n), rankEnd),
+      label: fieldSizeLabel(String(n), rankEnd, t),
     })),
     ...(fieldSize !== "all" &&
     !PLAYER_RACE_TOP_N_OPTIONS.includes(fieldSize as (typeof PLAYER_RACE_TOP_N_OPTIONS)[number])
-      ? [{ value: String(fieldSize), label: fieldSizeLabel(String(fieldSize), rankEnd) }]
+      ? [{ value: String(fieldSize), label: fieldSizeLabel(String(fieldSize), rankEnd, t) }]
       : []),
   ];
   const minuteOptions = [
@@ -222,20 +244,20 @@ export function PlayerVisualizationsHubChrome({
   return (
     <FilterBar label="Visualization filters">
       <ChoiceTrack role="tablist" aria-label="Visualization" className="flex-wrap">
-        {VIEWS.map((item) => (
+        {VIEW_IDS.map((id) => (
           <ChoiceChip
-            key={item.id}
-            active={view === item.id}
+            key={id}
+            active={view === id}
             role="tab"
-            aria-selected={view === item.id}
+            aria-selected={view === id}
             onClick={() =>
               replaceParams({
-                view: item.id === "race" ? null : item.id,
-                ...(isScatterView(item.id) ? { metric: null } : {}),
+                view: id === "race" ? null : id,
+                ...(isScatterView(id) ? { metric: null } : {}),
               })
             }
           >
-            {item.label}
+            {t(VIEW_LABEL_KEYS[id])}
           </ChoiceChip>
         ))}
       </ChoiceTrack>

@@ -60,6 +60,7 @@ next-env.d.ts
 
 # Local scratch / large research intermediates (seals + summaries remain tracked)
 /.tmp/
+/reports/historical-lineup-yield/
 /reports/m18a/raw/
 /reports/m17a_1/import/import_ledger.jsonl
 /reports/m17a_1/07_raw_manifest.csv

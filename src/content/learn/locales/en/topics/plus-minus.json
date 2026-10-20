@@ -1,0 +1,33 @@
+{
+  "id": "plus_minus",
+  "slug": "plus-minus",
+  "name": "Plus/minus",
+  "shortName": "+/−",
+  "category": "basics",
+  "oneSentence": "Plus/minus is the team’s scoring margin while a player is on the floor.",
+  "whyItMatters": [
+    "Connects individual minutes to team results, with heavy teammate/opponent noise."
+  ],
+  "howToInterpret": [
+    "Positive means the team outscored opponents during those minutes.",
+    "Raw +/− is noisy; do not treat it as pure individual skill."
+  ],
+  "howDrblUses": [
+    "Box scores and Game Lab player lines when present."
+  ],
+  "caveats": [
+    "Strongly confounded by lineup and schedule."
+  ],
+  "relatedIds": [
+    "diff",
+    "net",
+    "game_lab",
+    "on_off"
+  ],
+  "seeInAction": [
+    {
+      "label": "Scores",
+      "href": "/scores"
+    }
+  ]
+}

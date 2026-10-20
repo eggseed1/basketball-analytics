@@ -8,6 +8,7 @@ import {
   useState,
 } from "react";
 import { Menu, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { NBA_ATMOSPHERE, PageAtmosphere } from "@/components/brand/page-atmosphere";
 import { DrblLogo } from "@/components/brand/drbl-logo";
@@ -27,6 +28,15 @@ import {
   type NavLink,
   type PrimaryNavItem,
 } from "@/components/sports/site-nav";
+
+function useNavLabel() {
+  const t = useTranslations("Nav");
+  return (item: { id?: string; label: string; labelKey?: string }) => {
+    if (item.labelKey && t.has(item.labelKey)) return t(item.labelKey);
+    if (item.id && t.has(item.id)) return t(item.id);
+    return item.label;
+  };
+}
 
 function queryLinkActive(link: NavLink, pathname: string, search: string): boolean {
   const [pathOnly, query] = link.href.split("?");
@@ -101,11 +111,14 @@ function DomainSubnavLinks({
   pathname: string;
   search: string;
 }) {
+  const navLabel = useNavLabel();
+  const t = useTranslations("Nav");
   if (!item.subnav?.length) return null;
+  const domainLabel = navLabel(item);
 
   return (
     <nav
-      aria-label={`${item.label} sections`}
+      aria-label={t("sections", { label: domainLabel })}
       className="site-subnav"
     >
       <div
@@ -127,7 +140,7 @@ function DomainSubnavLinks({
                   : "text-muted-foreground hover:text-foreground"
               )}
             >
-              {link.label}
+              {navLabel(link)}
               {active ? (
                 <span
                   aria-hidden
@@ -149,6 +162,7 @@ function PrimaryLink({
   tab: PrimaryNavItem;
   active: boolean;
 }) {
+  const navLabel = useNavLabel();
   return (
     <TransitionLink
       href={tab.href}
@@ -159,13 +173,16 @@ function PrimaryLink({
           : "text-muted-foreground hover:text-foreground"
       )}
     >
-      {tab.label}
+      {navLabel(tab)}
     </TransitionLink>
   );
 }
 
 export function SportsShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const tNav = useTranslations("Nav");
+  const tSettings = useTranslations("Settings");
+  const navLabel = useNavLabel();
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuOpenedAt, setMenuOpenedAt] = useState<string | null>(null);
   const active = useMemo(() => activePrimaryNav(pathname), [pathname]);
@@ -239,7 +256,7 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
                 </div>
                 <button
                   type="button"
-                  aria-label="Open menu"
+                  aria-label={tNav("openMenu")}
                   aria-expanded={isMenuOpen}
                   aria-controls="mobile-nav-menu"
                   onClick={toggleMenu}
@@ -251,9 +268,9 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
             </div>
 
             {/* Desktop / tablet: full ordered nav */}
-            <div className="site-desktop-nav hidden items-center gap-x-2 md:flex">
+            <div className="site-desktop-nav hidden min-w-0 items-center gap-x-2 md:flex">
               <nav
-                aria-label="Primary"
+                aria-label={tNav("primary")}
                 className="flex min-w-0 flex-1 items-center gap-0.5 overflow-x-auto lg:gap-1"
               >
                 {PRIMARY_NAV.filter((tab) => tab.id !== "arcade").map((tab) => (
@@ -304,14 +321,14 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
             id="mobile-nav-menu"
             role="dialog"
             aria-modal="true"
-            aria-label="Site menu"
+            aria-label={tNav("openMenu")}
             className="fixed inset-0 z-[60] flex flex-col bg-background pt-[env(safe-area-inset-top,0px)] pb-[env(safe-area-inset-bottom,0px)] md:hidden"
           >
             <div className="site-shell flex shrink-0 items-center justify-between gap-4 border-b border-border py-3">
               <DrblLogo />
               <button
                 type="button"
-                aria-label="Close menu"
+                aria-label={tNav("closeMenu")}
                 onClick={closeMenu}
                 className="flex size-9 shrink-0 items-center justify-center rounded-md text-foreground transition hover:bg-muted"
               >
@@ -320,7 +337,7 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
             </div>
 
             <nav
-              aria-label="Primary"
+              aria-label={tNav("primary")}
               className="site-shell flex min-h-0 min-w-0 flex-1 flex-col gap-1 overflow-y-auto py-4"
             >
               {PRIMARY_NAV.map((tab) => (
@@ -339,14 +356,14 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
                         : "text-foreground hover:bg-secondary/70"
                   )}
                 >
-                  {tab.label}
+                  {navLabel(tab)}
                 </TransitionLink>
               ))}
             </nav>
 
             <div className="site-shell flex shrink-0 items-center justify-between gap-3 border-t border-border py-4">
               <span className="text-[14px] font-semibold text-muted-foreground">
-                Settings
+                {tSettings("title")}
               </span>
               <SiteSettings />
             </div>

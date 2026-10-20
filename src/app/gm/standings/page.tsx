@@ -1,5 +1,7 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 import { TeamLogo } from "@/components/brand/team-logo";
 import { GmPlayoffBracket } from "@/gm/ui/gm-playoff-bracket";
 import { GmShell } from "@/gm/ui/gm-shell";
@@ -16,18 +18,23 @@ export default function GmStandingsPage() {
 }
 
 function StandingsBody() {
+  const t = useTranslations("GmUi");
   const league = useGmStore((s) => s.league);
   if (!league) return null;
 
   return (
     <div className="grid gap-6 lg:grid-cols-2">
+      <header className="lg:col-span-2">
+        <h1 className="text-[28px] font-bold tracking-tight">{t("pageStandingsTitle")}</h1>
+        <p className="text-[16px] text-muted-foreground">{t("pageStandingsBlurb")}</p>
+      </header>
       <ConfTable
-        title="Eastern Conference"
+        title={t("standingsEast")}
         rows={standingsTable(league, "East")}
         league={league}
       />
       <ConfTable
-        title="Western Conference"
+        title={t("standingsWest")}
         rows={standingsTable(league, "West")}
         league={league}
       />
@@ -49,6 +56,7 @@ function ConfTable({
   rows: ReturnType<typeof standingsTable>;
   league: NonNullable<ReturnType<typeof useGmStore.getState>["league"]>;
 }) {
+  const t = useTranslations("GmUi");
   return (
     <section>
       <h2 className="mb-2 font-bold tracking-tight text-xl tracking-wide">{title}</h2>
@@ -56,12 +64,12 @@ function ConfTable({
         <table className="w-full text-left text-sm">
           <thead className="border-b border-border bg-muted/40 text-xs text-muted-foreground">
             <tr>
-              <th className="px-3 py-2">#</th>
-              <th className="px-3 py-2">Team</th>
-              <th className="px-3 py-2">W</th>
-              <th className="px-3 py-2">L</th>
-              <th className="px-3 py-2">PCT</th>
-              <th className="px-3 py-2">Diff</th>
+              <th className="px-3 py-2">{t("colRank")}</th>
+              <th className="px-3 py-2">{t("colTeam")}</th>
+              <th className="px-3 py-2">{t("colW")}</th>
+              <th className="px-3 py-2">{t("colL")}</th>
+              <th className="px-3 py-2">{t("colPct")}</th>
+              <th className="px-3 py-2">{t("colDiff")}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">

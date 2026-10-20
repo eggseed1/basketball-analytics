@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getLocale, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
@@ -11,6 +12,7 @@ import { AppLink } from "@/components/ui/app-link";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { GlassSurface } from "@/components/brand/glass-surface";
+import { formatGameCalendarDate } from "@/i18n/format-date";
 import { canonicalSeasonFromStartYear } from "@/lib/nba-season-phase";
 import { insightMorphName } from "@/lib/finding-href";
 import { loadFinding } from "@/lib/load-finding";
@@ -27,13 +29,16 @@ function seasonForDate(iso: string): string {
   return canonicalSeasonFromStartYear(start);
 }
 
-function periodName(index: number, count: number): string {
-  if (index < 4) return `Q${index + 1}`;
-  if (count === 5) return "OT";
-  return `OT${index - 3}`;
+type FindingsT = Awaited<ReturnType<typeof getTranslations>>;
+
+function periodName(index: number, count: number, t: FindingsT): string {
+  if (index < 4) return t("periodQuarter", { n: index + 1 });
+  if (count === 5) return t("periodOvertime");
+  return t("periodOvertimeN", { n: index - 3 });
 }
 
-function LineScore({ game, season }: { game: RecentInsightGame; season: string }) {
+async function LineScore({ game, season }: { game: RecentInsightGame; season: string }) {
+  const t = await getTranslations("Findings");
   const away = game.away.periods;
   const home = game.home.periods;
   if (!away?.length || !home?.length || away.length !== home.length) return null;
@@ -41,13 +46,13 @@ function LineScore({ game, season }: { game: RecentInsightGame; season: string }
     <table className="w-full text-left text-[14px] tabular-nums">
       <thead>
         <tr className="border-b border-border/40 text-muted-foreground">
-          <th className="py-2 pr-3 font-semibold">Team</th>
+          <th className="py-2 pr-3 font-semibold">{t("team")}</th>
           {away.map((_, index) => (
             <th key={index} className="px-2 py-2 text-right font-semibold">
-              {periodName(index, away.length)}
+              {periodName(index, away.length, t)}
             </th>
           ))}
-          <th className="py-2 pl-3 text-right font-semibold">Final</th>
+          <th className="py-2 pl-3 text-right font-semibold">{t("final")}</th>
         </tr>
       </thead>
       <tbody>
@@ -78,7 +83,10 @@ function LineScore({ game, season }: { game: RecentInsightGame; season: string }
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { id } = await params;
   const insight = await loadFinding(id);
-  if (!insight) return { title: "Insight" };
+  if (!insight) {
+    const t = await getTranslations("Findings");
+    return { title: t("insightFallbackTitle") };
+  }
   return {
     title: insight.headline,
     description: insight.description,
@@ -93,7 +101,9 @@ export default async function FindingPage({ params }: PageProps) {
   return <FindingDetail insight={insight} />;
 }
 
-function FindingDetail({ insight }: { insight: RecentInsight }) {
+async function FindingDetail({ insight }: { insight: RecentInsight }) {
+  const t = await getTranslations("Findings");
+  const locale = await getLocale();
   const season = seasonForDate(insight.gameDate);
   const gameHref = insight.gameId ? `/games/${encodeURIComponent(insight.gameId)}` : null;
   const playerHref = insight.playerId
@@ -110,13 +120,7 @@ function FindingDetail({ insight }: { insight: RecentInsight }) {
   const scoreLabel = insight.game
     ? `${insight.game.away.abbr} ${insight.game.away.score}, ${insight.game.home.abbr} ${insight.game.home.score}`
     : null;
-  const dateLabel = new Date(`${insight.gameDate}T12:00:00Z`).toLocaleDateString("en-US", {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-    timeZone: "UTC",
-  });
+  const dateLabel = formatGameCalendarDate(insight.gameDate, locale, "fullDate") ?? insight.gameDate;
 
   return (
     <main className="site-shell flex flex-col gap-6 py-6 sm:py-8">
@@ -133,7 +137,7 @@ function FindingDetail({ insight }: { insight: RecentInsight }) {
                 backgroundColor: "color-mix(in srgb, currentColor 16%, transparent)",
               }}
             >
-              {insightCategoryLabel(insight.category)}
+              {insightCategoryLabel(insight.category, t)}
             </Badge>
             <span className="text-muted-foreground">{dateLabel}</span>
           </span>
@@ -144,7 +148,7 @@ function FindingDetail({ insight }: { insight: RecentInsight }) {
             name={insightMorphName(insight.id)}
             className={buttonVariants({ variant: "secondary", size: "sm" })}
           >
-            All insights
+            {t("backToFindings")}
           </InsightReturnLink>
         }
       >

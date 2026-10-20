@@ -1,0 +1,691 @@
+{
+  "measuredAt": "2026-10-20T13:26:09.138Z",
+  "base": "http://localhost:3001",
+  "note": "Lab Chromium. TBT not measured here. Not field CWV.",
+  "results": [
+    {
+      "profile": "desktop",
+      "route": "home",
+      "path": "/",
+      "n": 3,
+      "median": {
+        "fcp": 96,
+        "lcp": null,
+        "cls": 0,
+        "wall": 2769,
+        "js": 1238,
+        "css": 0,
+        "img": 190241
+      },
+      "range": {
+        "fcp": [
+          80,
+          140
+        ],
+        "lcp": [
+          null,
+          null
+        ]
+      },
+      "runs": [
+        {
+          "fcp": 140,
+          "lcp": null,
+          "cls": 0,
+          "wall": 2861,
+          "status": 200,
+          "js": 1238,
+          "css": 0,
+          "img": 190241
+        },
+        {
+          "fcp": 80,
+          "lcp": null,
+          "cls": 0,
+          "wall": 2769,
+          "status": 200,
+          "js": 1238,
+          "css": 0,
+          "img": 190241
+        },
+        {
+          "fcp": 96,
+          "lcp": null,
+          "cls": 0,
+          "wall": 2756,
+          "status": 200,
+          "js": 1238,
+          "css": 0,
+          "img": 190241
+        }
+      ]
+    },
+    {
+      "profile": "desktop",
+      "route": "standings",
+      "path": "/standings",
+      "n": 3,
+      "median": {
+        "fcp": 68,
+        "lcp": null,
+        "cls": 0,
+        "wall": 2712,
+        "js": 1238,
+        "css": 0,
+        "img": 44614
+      },
+      "range": {
+        "fcp": [
+          68,
+          72
+        ],
+        "lcp": [
+          null,
+          null
+        ]
+      },
+      "runs": [
+        {
+          "fcp": 68,
+          "lcp": null,
+          "cls": 0,
+          "wall": 2705,
+          "status": 200,
+          "js": 1238,
+          "css": 0,
+          "img": 44614
+        },
+        {
+          "fcp": 72,
+          "lcp": null,
+          "cls": 0,
+          "wall": 2759,
+          "status": 200,
+          "js": 1238,
+          "css": 0,
+          "img": 44614
+        },
+        {
+          "fcp": 68,
+          "lcp": null,
+          "cls": 0,
+          "wall": 2712,
+          "status": 200,
+          "js": 1238,
+          "css": 0,
+          "img": 44614
+        }
+      ]
+    },
+    {
+      "profile": "desktop",
+      "route": "players",
+      "path": "/explore/players",
+      "n": 3,
+      "median": {
+        "fcp": 188,
+        "lcp": null,
+        "cls": 0,
+        "wall": 3039,
+        "js": 1238,
+        "css": 0,
+        "img": 224961
+      },
+      "range": {
+        "fcp": [
+          188,
+          204
+        ],
+        "lcp": [
+          null,
+          null
+        ]
+      },
+      "runs": [
+        {
+          "fcp": 188,
+          "lcp": null,
+          "cls": 0,
+          "wall": 3039,
+          "status": 200,
+          "js": 1238,
+          "css": 0,
+          "img": 224961
+        },
+        {
+          "fcp": 204,
+          "lcp": null,
+          "cls": 0,
+          "wall": 3064,
+          "status": 200,
+          "js": 1238,
+          "css": 0,
+          "img": 224961
+        },
+        {
+          "fcp": 188,
+          "lcp": null,
+          "cls": 0,
+          "wall": 2964,
+          "status": 200,
+          "js": 1238,
+          "css": 0,
+          "img": 224961
+        }
+      ]
+    },
+    {
+      "profile": "desktop",
+      "route": "player-detail",
+      "path": "/players/1966",
+      "n": 3,
+      "median": {
+        "fcp": 64,
+        "lcp": null,
+        "cls": 0,
+        "wall": 7977,
+        "js": 1238,
+        "css": 0,
+        "img": 13013
+      },
+      "range": {
+        "fcp": [
+          48,
+          96
+        ],
+        "lcp": [
+          null,
+          null
+        ]
+      },
+      "runs": [
+        {
+          "fcp": 64,
+          "lcp": null,
+          "cls": 0,
+          "wall": 8310,
+          "status": 200,
+          "js": 1238,
+          "css": 0,
+          "img": 13013
+        },
+        {
+          "fcp": 96,
+          "lcp": null,
+          "cls": 0,
+          "wall": 7933,
+          "status": 200,
+          "js": 1238,
+          "css": 0,
+          "img": 13013
+        },
+        {
+          "fcp": 48,
+          "lcp": null,
+          "cls": 0,
+          "wall": 7977,
+          "status": 200,
+          "js": 1238,
+          "css": 0,
+          "img": 13013
+        }
+      ]
+    },
+    {
+      "profile": "desktop",
+      "route": "scores",
+      "path": "/scores",
+      "n": 3,
+      "median": {
+        "fcp": 92,
+        "lcp": null,
+        "cls": 0,
+        "wall": 2767,
+        "js": 484,
+        "css": 0,
+        "img": 78948
+      },
+      "range": {
+        "fcp": [
+          88,
+          292
+        ],
+        "lcp": [
+          null,
+          null
+        ]
+      },
+      "runs": [
+        {
+          "fcp": 292,
+          "lcp": null,
+          "cls": 0,
+          "wall": 2938,
+          "status": 200,
+          "js": 484,
+          "css": 0,
+          "img": 78948
+        },
+        {
+          "fcp": 88,
+          "lcp": null,
+          "cls": 0,
+          "wall": 2759,
+          "status": 200,
+          "js": 484,
+          "css": 0,
+          "img": 78948
+        },
+        {
+          "fcp": 92,
+          "lcp": null,
+          "cls": 0,
+          "wall": 2767,
+          "status": 200,
+          "js": 484,
+          "css": 0,
+          "img": 78948
+        }
+      ]
+    },
+    {
+      "profile": "desktop",
+      "route": "ask",
+      "path": "/ask",
+      "n": 3,
+      "median": {
+        "fcp": 84,
+        "lcp": null,
+        "cls": 0,
+        "wall": 2709,
+        "js": 484,
+        "css": 0,
+        "img": 0
+      },
+      "range": {
+        "fcp": [
+          68,
+          100
+        ],
+        "lcp": [
+          null,
+          null
+        ]
+      },
+      "runs": [
+        {
+          "fcp": 100,
+          "lcp": null,
+          "cls": 0,
+          "wall": 2735,
+          "status": 200,
+          "js": 484,
+          "css": 0,
+          "img": 0
+        },
+        {
+          "fcp": 84,
+          "lcp": null,
+          "cls": 0,
+          "wall": 2708,
+          "status": 200,
+          "js": 484,
+          "css": 0,
+          "img": 0
+        },
+        {
+          "fcp": 68,
+          "lcp": null,
+          "cls": 0,
+          "wall": 2709,
+          "status": 200,
+          "js": 484,
+          "css": 0,
+          "img": 0
+        }
+      ]
+    },
+    {
+      "profile": "mobile-slow4g",
+      "route": "home",
+      "path": "/",
+      "n": 3,
+      "median": {
+        "fcp": 2288,
+        "lcp": null,
+        "cls": 0,
+        "wall": 7097,
+        "js": 484,
+        "css": 0,
+        "img": 138674
+      },
+      "range": {
+        "fcp": [
+          2284,
+          2296
+        ],
+        "lcp": [
+          null,
+          null
+        ]
+      },
+      "runs": [
+        {
+          "fcp": 2288,
+          "lcp": null,
+          "cls": 0,
+          "wall": 7036,
+          "status": 200,
+          "js": 484,
+          "css": 0,
+          "img": 138674
+        },
+        {
+          "fcp": 2296,
+          "lcp": null,
+          "cls": 0,
+          "wall": 7097,
+          "status": 200,
+          "js": 484,
+          "css": 0,
+          "img": 138674
+        },
+        {
+          "fcp": 2284,
+          "lcp": null,
+          "cls": 0,
+          "wall": 7131,
+          "status": 200,
+          "js": 484,
+          "css": 0,
+          "img": 138674
+        }
+      ]
+    },
+    {
+      "profile": "mobile-slow4g",
+      "route": "standings",
+      "path": "/standings",
+      "n": 3,
+      "median": {
+        "fcp": 2080,
+        "lcp": null,
+        "cls": 0,
+        "wall": 4722,
+        "js": 484,
+        "css": 0,
+        "img": 44614
+      },
+      "range": {
+        "fcp": [
+          2040,
+          2104
+        ],
+        "lcp": [
+          null,
+          null
+        ]
+      },
+      "runs": [
+        {
+          "fcp": 2104,
+          "lcp": null,
+          "cls": 0,
+          "wall": 4729,
+          "status": 200,
+          "js": 484,
+          "css": 0,
+          "img": 44614
+        },
+        {
+          "fcp": 2080,
+          "lcp": null,
+          "cls": 0,
+          "wall": 4722,
+          "status": 200,
+          "js": 484,
+          "css": 0,
+          "img": 44614
+        },
+        {
+          "fcp": 2040,
+          "lcp": null,
+          "cls": 0,
+          "wall": 4648,
+          "status": 200,
+          "js": 484,
+          "css": 0,
+          "img": 44614
+        }
+      ]
+    },
+    {
+      "profile": "mobile-slow4g",
+      "route": "players",
+      "path": "/explore/players",
+      "n": 3,
+      "median": {
+        "fcp": 1920,
+        "lcp": null,
+        "cls": 0,
+        "wall": 5064,
+        "js": 484,
+        "css": 0,
+        "img": 159310
+      },
+      "range": {
+        "fcp": [
+          1916,
+          3268
+        ],
+        "lcp": [
+          null,
+          null
+        ]
+      },
+      "runs": [
+        {
+          "fcp": 3268,
+          "lcp": null,
+          "cls": 0,
+          "wall": 6317,
+          "status": 200,
+          "js": 484,
+          "css": 0,
+          "img": 224961
+        },
+        {
+          "fcp": 1920,
+          "lcp": null,
+          "cls": 0,
+          "wall": 4567,
+          "status": 200,
+          "js": 484,
+          "css": 0,
+          "img": 88212
+        },
+        {
+          "fcp": 1916,
+          "lcp": null,
+          "cls": 0,
+          "wall": 5064,
+          "status": 200,
+          "js": 484,
+          "css": 0,
+          "img": 159310
+        }
+      ]
+    },
+    {
+      "profile": "mobile-slow4g",
+      "route": "player-detail",
+      "path": "/players/1966",
+      "n": 3,
+      "median": {
+        "fcp": 2176,
+        "lcp": null,
+        "cls": 0,
+        "wall": 14673,
+        "js": 1238,
+        "css": 0,
+        "img": 13013
+      },
+      "range": {
+        "fcp": [
+          2176,
+          2180
+        ],
+        "lcp": [
+          null,
+          null
+        ]
+      },
+      "runs": [
+        {
+          "fcp": 2176,
+          "lcp": null,
+          "cls": 0,
+          "wall": 15046,
+          "status": 200,
+          "js": 1238,
+          "css": 0,
+          "img": 13013
+        },
+        {
+          "fcp": 2180,
+          "lcp": null,
+          "cls": 0,
+          "wall": 6468,
+          "status": 200,
+          "js": 1238,
+          "css": 0,
+          "img": 8972
+        },
+        {
+          "fcp": 2176,
+          "lcp": null,
+          "cls": 0,
+          "wall": 14673,
+          "status": 200,
+          "js": 1238,
+          "css": 0,
+          "img": 13013
+        }
+      ]
+    },
+    {
+      "profile": "mobile-slow4g",
+      "route": "scores",
+      "path": "/scores",
+      "n": 3,
+      "median": {
+        "fcp": 2100,
+        "lcp": null,
+        "cls": 0,
+        "wall": 4699,
+        "js": 484,
+        "css": 0,
+        "img": 78948
+      },
+      "range": {
+        "fcp": [
+          2088,
+          2100
+        ],
+        "lcp": [
+          null,
+          null
+        ]
+      },
+      "runs": [
+        {
+          "fcp": 2100,
+          "lcp": null,
+          "cls": 0,
+          "wall": 4699,
+          "status": 200,
+          "js": 484,
+          "css": 0,
+          "img": 78948
+        },
+        {
+          "fcp": 2088,
+          "lcp": null,
+          "cls": 0,
+          "wall": 4676,
+          "status": 200,
+          "js": 484,
+          "css": 0,
+          "img": 78948
+        },
+        {
+          "fcp": 2100,
+          "lcp": null,
+          "cls": 0,
+          "wall": 4701,
+          "status": 200,
+          "js": 484,
+          "css": 0,
+          "img": 78948
+        }
+      ]
+    },
+    {
+      "profile": "mobile-slow4g",
+      "route": "ask",
+      "path": "/ask",
+      "n": 3,
+      "median": {
+        "fcp": 1908,
+        "lcp": null,
+        "cls": 0,
+        "wall": 4483,
+        "js": 484,
+        "css": 0,
+        "img": 0
+      },
+      "range": {
+        "fcp": [
+          1908,
+          1912
+        ],
+        "lcp": [
+          null,
+          null
+        ]
+      },
+      "runs": [
+        {
+          "fcp": 1908,
+          "lcp": null,
+          "cls": 0,
+          "wall": 4489,
+          "status": 200,
+          "js": 484,
+          "css": 0,
+          "img": 0
+        },
+        {
+          "fcp": 1912,
+          "lcp": null,
+          "cls": 0,
+          "wall": 4483,
+          "status": 200,
+          "js": 484,
+          "css": 0,
+          "img": 0
+        },
+        {
+          "fcp": 1908,
+          "lcp": null,
+          "cls": 0,
+          "wall": 4477,
+          "status": 200,
+          "js": 484,
+          "css": 0,
+          "img": 0
+        }
+      ]
+    }
+  ]
+}

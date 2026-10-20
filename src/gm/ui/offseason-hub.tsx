@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useMyLeagueStore } from "@/gm/myleague/store";
 import { useGmStore } from "@/gm/state/gm-store";
 import { nextPlayablePhase } from "@/gm/myleague/phase";
@@ -10,51 +11,17 @@ import { userCap, userRecord } from "@/gm/lib/selectors";
 import { formatNumber } from "@/lib/format";
 
 const HUB_SECTIONS = [
-  {
-    id: "review",
-    title: "Season review",
-    phase: "SEASON_REVIEW",
-    href: "/gm",
-    blurb: "Record, awards, and FO briefings from the year just played.",
-  },
-  {
-    id: "roster",
-    title: "Roster decisions",
-    phase: "ROSTER_DECISIONS",
-    href: "/gm/roster",
-    blurb: "Options, waives, and extensions for the 15-man board.",
-  },
-  {
-    id: "staff",
-    title: "Staff",
-    phase: "STAFF_REVIEW",
-    href: "/gm/staff",
-    blurb: "Hire a director of scouting. Their eye + expertise set draft fog.",
-  },
-  {
-    id: "draft",
-    title: "Draft",
-    phase: "DRAFT",
-    href: "/gm/draft",
-    blurb: "Codenames, dossiers, and pick-night identity reveals.",
-  },
-  {
-    id: "fa",
-    title: "Free agency",
-    phase: "FREE_AGENCY",
-    href: "/gm/free-agency",
-    blurb: "Moratorium pitches, Bird re-signs, then open signing and fill.",
-  },
-  {
-    id: "cap",
-    title: "Cap & CBA",
-    phase: "ROSTER_DECISIONS",
-    href: "/gm/cap",
-    blurb: "Era salary cap, tax, and aprons from the CBA registry.",
-  },
+  { id: "review", key: "hubReview", phase: "SEASON_REVIEW", href: "/gm" },
+  { id: "roster", key: "hubRoster", phase: "ROSTER_DECISIONS", href: "/gm/roster" },
+  { id: "staff", key: "hubStaff", phase: "STAFF_REVIEW", href: "/gm/staff" },
+  { id: "draft", key: "hubDraft", phase: "DRAFT", href: "/gm/draft" },
+  { id: "awards", key: "hubAwards", phase: "SEASON_REVIEW", href: "/gm/awards" },
+  { id: "fa", key: "hubFa", phase: "FREE_AGENCY", href: "/gm/free-agency" },
+  { id: "cap", key: "hubCap", phase: "ROSTER_DECISIONS", href: "/gm/cap" },
 ] as const;
 
-export function OffseasonHub() {
+export function OffseasonHub({ embedded = false }: { embedded?: boolean }) {
+  const t = useTranslations("GmUi");
   const league = useGmStore((s) => s.league);
   const runOffseason = useGmStore((s) => s.runOffseason);
   const openFreeAgency = useGmStore((s) => s.openFreeAgency);
@@ -79,32 +46,31 @@ export function OffseasonHub() {
 
   return (
     <div className="flex flex-col gap-5">
-      <header className="flex flex-col gap-1">
-        <h1 className="text-[28px] font-bold tracking-tight">Offseason Hub</h1>
-        <p className="text-[15px] text-muted-foreground">
-          Playoffs, draft, free agency, then the next season. Each step waits
-          until you advance it.
-        </p>
-      </header>
+      {embedded ? null : (
+        <header className="flex flex-col gap-1">
+          <h1 className="text-[28px] font-bold tracking-tight">{t("pageOffseasonTitle")}</h1>
+          <p className="text-[15px] text-muted-foreground">{t("pageOffseasonBlurb")}</p>
+        </header>
+      )}
 
       <section className="grid gap-3 sm:grid-cols-2">
         <div className="sports-card p-4">
           <p className="text-[13px] font-semibold text-muted-foreground">
-            MyLeague phase
+            {t("hubPhaseLabel")}
           </p>
           <p className="mt-1 text-[20px] font-bold tracking-tight">
             {phase.replaceAll("_", " ")}
           </p>
           <p className="text-[13px] text-muted-foreground">
-            Next playable: {upcoming.replaceAll("_", " ")}
+            {t("hubNextPlayable", { phase: upcoming.replaceAll("_", " ") })}
           </p>
         </div>
         <div className="sports-card p-4">
           <p className="text-[13px] font-semibold text-muted-foreground">
-            Reality snapshot
+            {t("hubSnapshotLabel")}
           </p>
           <p className="mt-1 text-[20px] font-bold tracking-tight">
-            {snapCount} season{snapCount === 1 ? "" : "s"}
+            {t("hubSeasons", { count: snapCount })}
           </p>
           <p className="text-[13px] text-muted-foreground">
             {myLeague?.settings.realDataProviderId ?? "scaffold"} ·{" "}
@@ -114,18 +80,24 @@ export function OffseasonHub() {
       </section>
 
       <section className="sports-card flex flex-col gap-3 p-4">
-        <h2 className="text-[15px] font-bold">Club snapshot</h2>
+        <h2 className="text-[15px] font-bold">{t("hubClubSnapshot")}</h2>
         <p className="text-[15px] text-muted-foreground">
-          {record?.wins ?? 0}-{record?.losses ?? 0} · payroll $
-          {formatNumber(cap.payrollM, 1)}M / cap $
-          {formatNumber(league.settings.salaryCapM, 1)}M
+          {t("hubSnapshotLine", {
+            wins: record?.wins ?? 0,
+            losses: record?.losses ?? 0,
+            payroll: formatNumber(cap.payrollM, 1),
+            cap: formatNumber(league.settings.salaryCapM, 1),
+          })}
           {activeCap
-            ? ` · ${activeCap.label} cap $${formatNumber(activeCap.salaryCapM, 1)}M`
+            ? t("hubEraCap", {
+                label: activeCap.label,
+                cap: formatNumber(activeCap.salaryCapM, 1),
+              })
             : ""}
         </p>
         <div className="flex flex-wrap gap-2">
           {league.phase === "draft" && (
-            <Button onClick={() => openFreeAgency()}>Open free agency</Button>
+            <Button onClick={() => openFreeAgency()}>{t("hubOpenFa")}</Button>
           )}
           {league.phase === "free_agency" && (
             <>
@@ -134,34 +106,34 @@ export function OffseasonHub() {
                 onClick={() => advanceFaDay()}
                 disabled={Boolean(league.faMarket?.done)}
               >
-                Advance FA day
+                {t("hubAdvanceFa")}
               </Button>
               <Button variant="outline" onClick={() => runCpuSignings()}>
-                Sim FA to quiet
+                {t("hubSimFa")}
               </Button>
-              <Button onClick={() => runOffseason()}>Start next season</Button>
+              <Button onClick={() => runOffseason()}>{t("hubStartNext")}</Button>
             </>
           )}
           {league.phase === "offseason" && (
-            <Button onClick={() => runOffseason()}>Open free agency</Button>
+            <Button onClick={() => runOffseason()}>{t("hubOpenFa")}</Button>
           )}
           <Link
             href="/gm/draft"
             className="inline-flex h-8 items-center justify-center rounded-lg border border-border bg-background px-3 text-[13px] font-semibold"
           >
-            Draft board
+            {t("hubDraftBoard")}
           </Link>
           <Link
             href="/gm/free-agency"
             className="inline-flex h-8 items-center justify-center rounded-lg border border-border bg-background px-3 text-[13px] font-semibold"
           >
-            Free agency
+            {t("hubFreeAgency")}
           </Link>
         </div>
       </section>
 
       <section className="sports-card flex flex-col gap-3 p-4">
-        <h2 className="text-[15px] font-bold">Hands-off switches</h2>
+        <h2 className="text-[15px] font-bold">{t("hubSwitches")}</h2>
         <label className="flex items-center gap-2 text-[14px]">
           <input
             type="checkbox"
@@ -170,7 +142,7 @@ export function OffseasonHub() {
               setAutomation({ autoDraft: event.target.checked })
             }
           />
-          CPU makes your draft picks
+          {t("hubAutoDraft")}
         </label>
         <label className="flex items-center gap-2 text-[14px]">
           <input
@@ -180,17 +152,30 @@ export function OffseasonHub() {
               setAutomation({ autoFreeAgency: event.target.checked })
             }
           />
-          Run the FA clock when free agency opens
+          {t("hubAutoFa")}
         </label>
+        <label className="flex items-center gap-2 text-[14px]">
+          <input
+            type="checkbox"
+            checked={league.automation?.autoScout ?? false}
+            onChange={(event) =>
+              setAutomation({ autoScout: event.target.checked })
+            }
+          />
+          {t("hubAutoScout")}
+        </label>
+        <p className="text-[12px] text-muted-foreground">
+          {t("hubSwitchNote")}
+        </p>
         {league.tradeDeadlinePassed && league.phase === "regular" ? (
           <p className="text-[13px] text-muted-foreground">
-            The trade deadline has passed. Deals wait until the offseason.
+            {t("hubDeadline")}
           </p>
         ) : null}
       </section>
 
       <section className="flex flex-col gap-2">
-        <h2 className="text-[15px] font-bold">Hub desks</h2>
+        <h2 className="text-[15px] font-bold">{t("hubDesks")}</h2>
         <ul className="grid gap-2 sm:grid-cols-2">
           {HUB_SECTIONS.map((section) => (
             <li key={section.id}>
@@ -201,9 +186,9 @@ export function OffseasonHub() {
                 <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
                   {section.phase.replaceAll("_", " ")}
                 </span>
-                <span className="text-[16px] font-bold">{section.title}</span>
+                <span className="text-[16px] font-bold">{t(`${section.key}Title`)}</span>
                 <span className="text-[13px] text-muted-foreground">
-                  {section.blurb}
+                  {t(`${section.key}Blurb`)}
                 </span>
               </Link>
             </li>
@@ -212,18 +197,18 @@ export function OffseasonHub() {
       </section>
 
       <section className="sports-card p-4">
-        <h2 className="text-[15px] font-bold">Salary cap by year</h2>
+        <h2 className="text-[15px] font-bold">{t("hubCapByYear")}</h2>
         <p className="mt-1 text-[13px] text-muted-foreground">
-          Official cap / tax (and aprons when they exist) for each season.
+          {t("hubCapByYearBlurb")}
         </p>
         <div className="mt-3 overflow-x-auto">
           <table className="w-full min-w-[520px] text-left text-[13px]">
             <thead className="text-muted-foreground">
               <tr>
-                <th className="py-1 pr-3 font-semibold">Season</th>
-                <th className="py-1 pr-3 font-semibold">Cap</th>
-                <th className="py-1 pr-3 font-semibold">Tax</th>
-                <th className="py-1 font-semibold">Aprons</th>
+                <th className="py-1 pr-3 font-semibold">{t("hubColSeason")}</th>
+                <th className="py-1 pr-3 font-semibold">{t("hubColCap")}</th>
+                <th className="py-1 pr-3 font-semibold">{t("hubColTax")}</th>
+                <th className="py-1 font-semibold">{t("hubColAprons")}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-black/5">
@@ -239,7 +224,7 @@ export function OffseasonHub() {
                     >
                       <td className="py-2 pr-3">
                         {row.label}
-                        {active ? " · active" : ""}
+                        {active ? t("hubActive") : ""}
                       </td>
                       <td className="py-2 pr-3 tabular-nums">
                         ${formatNumber(row.salaryCapM, 1)}M

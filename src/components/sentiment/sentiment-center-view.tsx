@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { TeamLogo } from "@/components/brand/team-logo";
@@ -39,10 +40,12 @@ function MoverColumn({
   title,
   tone,
   rows,
+  fanLabel,
 }: {
   title: string;
   tone: "up" | "down";
   rows: SentimentMoverRow[];
+  fanLabel: (score: string) => string;
 }) {
   return (
     <div className="flex min-w-0 flex-col gap-1">
@@ -68,7 +71,7 @@ function MoverColumn({
                 </span>
                 <span className={cn(type.caption, "flex items-center gap-1 text-muted-foreground")}>
                   {row.teamKey ? <TeamLogo teamKey={row.teamKey} size="xs" /> : null}
-                  Fan {sentimentPct(row.fanScore)}
+                  {fanLabel(sentimentPct(row.fanScore))}
                 </span>
               </span>
               <span
@@ -89,13 +92,14 @@ function MoverColumn({
 }
 
 /** Week-over-week fan tone, under the disagreement board. */
-function SentimentWeekMovers({
+async function SentimentWeekMovers({
   players,
   className,
 }: {
   players: TrackedPlayerSentimentRow[];
   className?: string;
 }) {
+  const t = await getTranslations("Sentiment");
   const { risers, fallers } = computeSentimentMovers(
     players
       .filter((row) => row.fan && row.series?.fan && row.series.fan.length >= 2)
@@ -122,19 +126,33 @@ function SentimentWeekMovers({
           ) : null}
         </div>
         <p className={cn(type.bodySm, "text-muted-foreground")}>
-          Who warmed up or cooled off over the last 7 days. The number is the change in fan tone, in
-          percentage points.
+          {t("fanMoodWeekBlurb")}
         </p>
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
-        {risers.length ? <MoverColumn title="Warmer" tone="up" rows={risers} /> : null}
-        {fallers.length ? <MoverColumn title="Cooler" tone="down" rows={fallers} /> : null}
+        {risers.length ? (
+          <MoverColumn
+            title={t("warmer")}
+            tone="up"
+            rows={risers}
+            fanLabel={(score) => t("fanLabel", { score })}
+          />
+        ) : null}
+        {fallers.length ? (
+          <MoverColumn
+            title={t("cooler")}
+            tone="down"
+            rows={fallers}
+            fanLabel={(score) => t("fanLabel", { score })}
+          />
+        ) : null}
       </div>
     </section>
   );
 }
 
-function HeadlineToneLeaders({ players }: { players: TrackedPlayerSentimentRow[] }) {
+async function HeadlineToneLeaders({ players }: { players: TrackedPlayerSentimentRow[] }) {
+  const t = await getTranslations("Sentiment");
   const measured = players.filter((row) => row.media?.origin === "headlines");
   if (measured.length < 4) return null;
   const sorted = [...measured].sort((a, b) => b.media!.score - a.media!.score);
@@ -171,21 +189,20 @@ function HeadlineToneLeaders({ players }: { players: TrackedPlayerSentimentRow[]
     <section className="sports-card flex flex-col gap-3 p-4 sm:p-5">
       <div className="flex flex-col gap-1">
         <div className="flex flex-wrap items-center gap-2">
-          <h2 className={type.heading}>Headline tone</h2>
+          <h2 className={type.heading}>{t("headlineTone")}</h2>
           <LaneOriginTag lane={{ origin: "headlines", asOf, mentionVolume: 0 }} />
         </div>
         <p className={cn(type.bodySm, "text-muted-foreground")}>
-          Warmest and coolest coverage in the last 7 days, among players with 3+ headlines.
-          Score · headline count.
+          {t("headlineToneBlurb")}
         </p>
       </div>
-      {column("Warmest", warm)}
-      {column("Coolest", cool)}
+      {column(t("warmest"), warm)}
+      {column(t("coolest"), cool)}
     </section>
   );
 }
 
-export function SentimentCenterView({
+export async function SentimentCenterView({
   feed,
   players,
   teams,
@@ -198,26 +215,30 @@ export function SentimentCenterView({
   view: SentimentView;
   highlightTopic?: string;
 }) {
+  const t = await getTranslations("Sentiment");
   const { league } = feed;
+
+  const title =
+    view === "players"
+      ? t("titlePlayers")
+      : view === "teams"
+        ? t("titleTeams")
+        : view === "headlines"
+          ? t("titleHeadlines")
+          : view === "overrated"
+            ? t("titleOverrated")
+            : t("titleLeague");
+  const subtitle =
+    view === "overrated" ? t("subtitleOverrated") : t("subtitleDefault");
 
   return (
     <div key={view} data-motion-stack className="flex flex-col gap-8">
       <header className="flex flex-col gap-3">
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
-          {view === "players"
-            ? "Player sentiment"
-            : view === "teams"
-              ? "Team sentiment"
-              : view === "headlines"
-                ? "Headlines"
-                : view === "overrated"
-                  ? "Overrated watch"
-                  : "League sentiment board"}
+          {title}
         </h1>
         <p className={cn(type.bodySm, "max-w-2xl text-muted-foreground")}>
-          {view === "overrated"
-            ? "Who the talk runs ahead of or behind, measured against last season's production, and who gets called overrated or underrated by name."
-            : "How fans and media talk about players and teams. The two are shown side by side, never merged into one number."}
+          {subtitle}
         </p>
         <SentimentSourcesStrip sources={feed.sources} snapshotDate={feed.snapshotDate} />
       </header>
@@ -271,21 +292,21 @@ export function SentimentCenterView({
           />
 
           <p className={cn(type.caption, "text-muted-foreground")}>
-            More detail:{" "}
+            {t("moreDetail")}{" "}
             <Link href="/sentiment?view=overrated" className={textLinkClassName}>
-              who the talk runs ahead of
+              {t("linkOverrated")}
             </Link>
             ,{" "}
             <Link href="/sentiment?view=players" className={textLinkClassName}>
-              every player
+              {t("linkPlayers")}
             </Link>
             ,{" "}
             <Link href="/sentiment?view=teams" className={textLinkClassName}>
-              all 30 teams
+              {t("linkTeams")}
             </Link>
             , and{" "}
             <Link href="/sentiment?view=headlines" className={textLinkClassName}>
-              the latest headlines
+              {t("linkHeadlines")}
             </Link>
             .
           </p>

@@ -2,32 +2,34 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 import { cn } from "@/lib/utils";
 
 const LINKS = [
-  { href: "/gm", label: "Home" },
-  { href: "/gm/roster", label: "Roster" },
-  { href: "/gm/lineup", label: "Coaching" },
-  { href: "/gm/players", label: "Players" },
-  { href: "/gm/leaders", label: "Leaders" },
-  { href: "/gm/teams", label: "Teams" },
-  { href: "/gm/standings", label: "Standings" },
-  { href: "/gm/schedule", label: "Schedule" },
-  { href: "/gm/trade", label: "Trade" },
-  { href: "/gm/transactions", label: "Transactions" },
-  { href: "/gm/cap", label: "Salary" },
-  { href: "/gm/free-agency", label: "FA" },
-  { href: "/gm/draft", label: "Draft" },
-  { href: "/gm/medical", label: "Medical" },
-  { href: "/gm/staff", label: "Staff" },
-  { href: "/gm/offseason", label: "Offseason" },
-];
+  { href: "/gm", labelKey: "nav_home" },
+  { href: "/gm/roster", labelKey: "nav_roster" },
+  { href: "/gm/lineup", labelKey: "nav_coaching" },
+  { href: "/gm/players", labelKey: "nav_players" },
+  { href: "/gm/awards", labelKey: "nav_awards" },
+  { href: "/gm/teams", labelKey: "nav_teams" },
+  { href: "/gm/standings", labelKey: "nav_standings" },
+  { href: "/gm/schedule", labelKey: "nav_schedule" },
+  { href: "/gm/trade", labelKey: "nav_trade" },
+  { href: "/gm/transactions", labelKey: "nav_transactions" },
+  { href: "/gm/cap", labelKey: "nav_salary" },
+  { href: "/gm/free-agency", labelKey: "nav_fa" },
+  { href: "/gm/draft", labelKey: "nav_draft" },
+  { href: "/gm/medical", labelKey: "nav_medical" },
+  { href: "/gm/staff", labelKey: "nav_staff" },
+  { href: "/gm/offseason", labelKey: "nav_offseason" },
+] as const;
 
 export function GmNav() {
   const pathname = usePathname();
+  const t = useTranslations("Gm");
   return (
-    <nav aria-label="Front office" className="gm-nav">
+    <nav aria-label={t("nav_ariaLabel")} className="gm-nav">
       {LINKS.map((link) => {
         const active =
           link.href === "/gm"
@@ -39,7 +41,7 @@ export function GmNav() {
             href={link.href}
             className={cn("gm-nav__link", active && "is-active")}
           >
-            {link.label}
+            {t(link.labelKey)}
           </Link>
         );
       })}

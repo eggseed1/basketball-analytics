@@ -8,6 +8,7 @@ import type {
   GmDigestItem,
   GmLeagueState,
   GmPlayer,
+  GmScheduleGame,
   GmStandingsRow,
   GmTeam,
 } from "@/gm/types";
@@ -19,7 +20,8 @@ import { maxScheduleDay, regularSeasonComplete } from "@/gm/engine/schedule";
 import { applyGameToStandings } from "@/gm/engine/standings";
 import { noteTradeDeadline } from "@/gm/engine/offseason";
 import { recordSimGame } from "@/gm/lib/season-line";
-import { schemeHeadline } from "@/gm/engine/coaching";
+import { rebalanceForInjuryChanges, schemeHeadline } from "@/gm/engine/coaching";
+import { injuryReturnDate } from "@/gm/engine/injury-schedule";
 
 export function stepDay(league: GmLeagueState): {
   league: GmLeagueState;
@@ -43,6 +45,7 @@ export function stepDay(league: GmLeagueState): {
 
   let standings = { ...league.standings };
   let players = [...league.players];
+  const playersBeforeInjuries = players;
   let schedule = [...league.schedule];
   let boxScores = [...league.boxScores];
   const trainer =
@@ -95,7 +98,7 @@ export function stepDay(league: GmLeagueState): {
       return [cup, star].filter((item): item is NonNullable<typeof item> => Boolean(item));
     });
   const maxDay = maxScheduleDay(schedule);
-  const next = noteTradeDeadline({
+  let next = noteTradeDeadline({
     ...league,
     schedule,
     standings,
@@ -104,6 +107,7 @@ export function stepDay(league: GmLeagueState): {
     news: [...cupNews, ...league.news].slice(0, 50),
     day: Math.min(day + 1, maxDay + 1),
   });
+  next = rebalanceForInjuryChanges(next, playersBeforeInjuries);
   return {
     league: maybeGrowInSeason(ensureAllStar(ensureNbaCup(next))),
     seasonOver: regularSeasonComplete(schedule),
@@ -137,7 +141,13 @@ export function buildDigest(opts: {
   lossesBefore: number;
   winsAfter: number;
   lossesAfter: number;
-  injuries: Array<{ name: string; type: string; games: number; yours: boolean }>;
+  injuries: Array<{
+    name: string;
+    type: string;
+    games: number;
+    yours: boolean;
+    returnDate?: string | null;
+  }>;
   standings?: Record<string, GmStandingsRow>;
   teams?: GmTeam[];
 }): GmDigestItem[] {
@@ -234,7 +244,9 @@ export function buildDigest(opts: {
     items.push({
       tone: "bad",
       headline: `${hurt.name} is out`,
-      detail: `${hurt.type}. About ${hurt.games} games.`,
+      detail: hurt.returnDate
+        ? `${hurt.type}. About ${hurt.games} games · due back ${hurt.returnDate}.`
+        : `${hurt.type}. About ${hurt.games} games.`,
     });
   }
 
@@ -251,7 +263,9 @@ export function buildDigest(opts: {
 export function newInjuries(
   before: GmPlayer[],
   after: GmPlayer[],
-  userTeamId: string
+  userTeamId: string,
+  schedule?: GmScheduleGame[],
+  day?: number
 ) {
   const prev = new Map(before.map((p) => [p.id, p]));
   const found: Array<{
@@ -259,17 +273,23 @@ export function newInjuries(
     type: string;
     games: number;
     yours: boolean;
+    returnDate?: string | null;
   }> = [];
   for (const player of after) {
     const old = prev.get(player.id);
     if (!player.injury || old?.injury) continue;
     const star = player.ratings.impact >= 2 || player.teamId === userTeamId;
     if (!star) continue;
+    const returnDate =
+      schedule && day != null
+        ? injuryReturnDate(player, schedule, day)
+        : null;
     found.push({
       name: player.name,
       type: player.injury.type,
       games: player.injury.gamesRemaining,
       yours: player.teamId === userTeamId,
+      returnDate,
     });
   }
   return found.slice(0, 3);

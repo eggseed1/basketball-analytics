@@ -19,6 +19,12 @@ import {
 const EXTERNAL_SAMPLES = [
   "https://www.espn.com/nba/story/_/id/123",
   "https://www.nba.com/watch/league-pass",
+  "https://www.nba.com/watch",
+  "https://www.nba.com/news/how-to-watch-games-2025-26-season",
+  "https://www.peacocktv.com/sports/nba",
+  "https://www.primevideo.com/",
+  "https://www.sportsnet.ca/",
+  "https://www.skysports.com/nba",
   "http://www.nba.com/game",
   "//cdn.example.com/x",
   "mailto:press@example.com",

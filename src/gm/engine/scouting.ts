@@ -1,4 +1,5 @@
 import type {
+  GmDevTrait,
   GmLeagueState,
   GmPlayer,
   GmPosition,
@@ -9,6 +10,7 @@ import type {
   ScoutedRatings,
 } from "@/gm/types";
 import { playerSheet } from "@/gm/engine/attributes";
+import { playerDevTrait, traitLabel } from "@/gm/engine/dev-traits";
 import { clamp, createRng, pick, randInt } from "@/gm/engine/rng";
 import {
   archetypeLabel,
@@ -20,10 +22,167 @@ import type { GmScout } from "@/gm/seed/scouts";
 import {
   defaultTeamScout,
   effectiveScoutLevel,
+  ensureScoutKnack,
   expertiseLabel,
   generateScoutMarket,
   scoutMatchBonus,
 } from "@/gm/seed/scouts";
+import { scoutKnackPreferredFocus } from "@/gm/seed/staff-knacks";
+
+type CompTier = "elite" | "starter" | "fringe";
+
+/** Ordered tiers per mold. Ceiling picks from the high end; floor stays below. */
+const NBA_COMPS: Record<
+  ProspectArchetypeId,
+  Record<CompTier, string[]>
+> = {
+  splash: {
+    elite: ["Stephen Curry", "Klay Thompson", "Devin Booker"],
+    starter: ["Desmond Bane", "Buddy Hield", "Norman Powell"],
+    fringe: ["Duncan Robinson", "Grayson Allen", "Gary Harris"],
+  },
+  paint_beast: {
+    elite: ["Giannis Antetokounmpo", "Zion Williamson", "Bam Adebayo"],
+    starter: ["Aaron Gordon", "Jaren Jackson Jr.", "John Collins"],
+    fringe: ["Jabari Parker", "Kevon Looney", "Daniel Theis"],
+  },
+  rim_protector: {
+    elite: ["Rudy Gobert", "Anthony Davis", "Brook Lopez"],
+    starter: ["Myles Turner", "Jakob Poeltl", "Isaiah Hartenstein"],
+    fringe: ["Mo Bamba", "Jalen Duren", "Nick Richards"],
+  },
+  stretch_big: {
+    elite: ["Kristaps Porzingis", "Karl-Anthony Towns", "Lauri Markkanen"],
+    starter: ["Bobby Portis", "PJ Washington", "Naz Reid"],
+    fringe: ["Kelly Olynyk", "Maxi Kleber", "Dario Saric"],
+  },
+  floor_general: {
+    elite: ["Chris Paul", "Jrue Holiday", "Tyrese Haliburton"],
+    starter: ["Mike Conley", "Derrick White", "Immanuel Quickley"],
+    fringe: ["Cory Joseph", "Delon Wright", "Pat Connaughton"],
+  },
+  pass_first: {
+    elite: ["Nikola Jokic", "Trae Young", "Tyrese Haliburton"],
+    starter: ["Fred VanVleet", "Tyus Jones", "D'Angelo Russell"],
+    fringe: ["Facundo Campazzo", "Monte Morris", "T.J. McConnell"],
+  },
+  combo_guard: {
+    elite: ["James Harden", "Shai Gilgeous-Alexander", "Donovan Mitchell"],
+    starter: ["CJ McCollum", "Anfernee Simons", "Jordan Poole"],
+    fringe: ["Jordan Clarkson", "Malik Monk", "Bennedict Mathurin"],
+  },
+  iso_scorer: {
+    elite: ["Kevin Durant", "Kawhi Leonard", "Paul George"],
+    starter: ["Brandon Ingram", "Jerami Grant", "Michael Porter Jr."],
+    fringe: ["Bojan Bogdanovic", "Harrison Barnes", "Buddy Hield"],
+  },
+  two_way_wing: {
+    elite: ["Kawhi Leonard", "OG Anunoby", "Mikal Bridges"],
+    starter: ["Herbert Jones", "Dillon Brooks", "Ausar Thompson"],
+    fringe: ["Torrey Craig", "Kenrich Williams", "Josh Okogie"],
+  },
+  three_and_d: {
+    elite: ["OG Anunoby", "Derrick White", "Aaron Gordon"],
+    starter: ["Alex Caruso", "Lu Dort", "Donte DiVincenzo"],
+    fringe: ["Landry Shamet", "Gabe Vincent", "Nassir Little"],
+  },
+  athletic_freak: {
+    elite: ["Ja Morant", "Anthony Edwards", "Jaylen Brown"],
+    starter: ["Scottie Barnes", "Jalen Green", "Amen Thompson"],
+    fringe: ["Hamidou Diallo", "Thanasis Antetokounmpo", "Oshae Brissett"],
+  },
+  glue_guy: {
+    elite: ["Draymond Green", "Jrue Holiday", "Dillon Brooks"],
+    starter: ["Alex Caruso", "Marcus Smart", "Josh Hart"],
+    fringe: ["P.J. Tucker", "Patrick Beverley", "Kenrich Williams"],
+  },
+};
+
+const TIER_RANK: Record<CompTier, number> = { elite: 2, starter: 1, fringe: 0 };
+
+function lowerTier(tier: CompTier): CompTier {
+  if (tier === "elite") return "starter";
+  return "fringe";
+}
+
+/**
+ * Board + tools set the ceiling tier. High upside kids stay in elite/starter;
+ * fringe names never become a lottery ceiling.
+ */
+function ceilingTierForProspect(
+  boardIndex: number,
+  impact: number,
+  potential: number,
+  scoutLevel: number,
+  rng: () => number
+): CompTier {
+  const lottery = boardIndex <= 13;
+  const mid = boardIndex <= 29;
+  const tools = impact * 1.2 + potential * 0.55;
+  let tier: CompTier =
+    lottery || tools >= 9.5
+      ? "elite"
+      : mid || tools >= 6.5
+        ? "starter"
+        : tools >= 4.2
+          ? "starter"
+          : "fringe";
+  // Weak eyes can miss one tier down — never dump elite into fringe.
+  if (scoutLevel < 2.6 && rng() < 0.35 && tier !== "fringe") {
+    tier = lowerTier(tier);
+  }
+  return tier;
+}
+
+function pickCompPair(
+  mold: ProspectArchetypeId,
+  boardIndex: number,
+  player: GmPlayer,
+  scoutLevel: number,
+  rng: () => number
+): { ceiling: string; floor: string; ceilingTier: CompTier; floorTier: CompTier } {
+  const pool = NBA_COMPS[mold] ?? NBA_COMPS.glue_guy;
+  const wrongMold =
+    scoutLevel < 3 && rng() < 0.28
+      ? (Object.keys(NBA_COMPS) as ProspectArchetypeId[])[
+          randInt(rng, 0, Object.keys(NBA_COMPS).length - 1)
+        ]!
+      : mold;
+  const compPool = NBA_COMPS[wrongMold] ?? pool;
+  const ceilTier = ceilingTierForProspect(
+    boardIndex,
+    player.ratings.impact,
+    player.ratings.potential,
+    scoutLevel,
+    rng
+  );
+  // Prefer the high end within the tier (first names are the headline comps).
+  const ceilPool = compPool[ceilTier];
+  const ceilBias = Math.min(ceilPool.length - 1, Math.floor(rng() * rng() * ceilPool.length));
+  let ceiling = ceilPool[ceilBias] ?? ceilPool[0]!;
+
+  let floorTier: CompTier =
+    ceilTier === "elite" ? (rng() < 0.55 ? "starter" : "fringe") : "fringe";
+  if (TIER_RANK[floorTier] >= TIER_RANK[ceilTier]) {
+    floorTier = lowerTier(ceilTier);
+  }
+  const floorPool = compPool[floorTier];
+  let floor = pick(rng, floorPool);
+
+  if (scoutLevel < 1.6) {
+    ceiling = `Maybe ${ceiling}?`;
+    floor = "Tape is too thin";
+  } else if (scoutLevel < 2.2 && rng() < 0.25) {
+    ceiling = `Maybe ${ceiling}?`;
+  }
+
+  return { ceiling, floor, ceilingTier: ceilTier, floorTier };
+}
+
+/** Exposed for tests — fringe names that must not top a lottery ceiling. */
+export function fringeCompNames(mold: ProspectArchetypeId): string[] {
+  return [...(NBA_COMPS[mold] ?? NBA_COMPS.glue_guy).fringe];
+}
 
 const GRADE_SCALE: ScoutLetterGrade[] = [
   "F",
@@ -81,9 +240,10 @@ function focusLevel(
   baseLevel: number,
   scout: GmScout | null | undefined,
   position: GmPosition,
-  focus: GradeFocus
+  focus: GradeFocus,
+  player?: GmPlayer | null
 ): number {
-  const bonus = scoutMatchBonus(scout, position, focus);
+  const bonus = scoutMatchBonus(scout, position, focus, player);
   return clamp(baseLevel + bonus, 1, 5);
 }
 
@@ -160,7 +320,7 @@ export function buildScoutProfile(
     (player.scoutProfile?.archetypeId as ProspectArchetypeId | undefined) ??
     detectArchetype(player.ratings, position);
   const def = codenameDef(player.codename);
-  const overall = focusLevel(scoutLevel, scout, position, "overall");
+  const overall = focusLevel(scoutLevel, scout, position, "overall", player);
   const noise = (rng() - 0.5) * (28 - overall * 4);
 
   const trueGrades = {
@@ -188,51 +348,59 @@ export function buildScoutProfile(
     ),
   };
 
+  const mold = def?.archetype ?? archetype;
+  const { ceiling, floor } = pickCompPair(
+    mold,
+    boardIndex,
+    player,
+    overall,
+    rng
+  );
   const comps =
-    overall >= 3
-      ? (def?.comps ?? ["Board favorite", "Mystery upside"]).slice(0, 2)
-      : overall >= 2
-        ? (def?.comps ?? ["Mystery upside"]).slice(0, 1)
-        : overall >= 1 && def?.comps?.[0]
-          ? [`Maybe ${def.comps[0]}?`]
-          : ["Unclear, need more tape"];
+    overall >= 2
+      ? [`Ceiling ${ceiling}`, `Floor ${floor}`]
+      : overall >= 1
+        ? [`Ceiling ${ceiling}`]
+        : ["Unclear, need more tape"];
 
   const heightNoise = overall >= 4 ? 0 : randInt(rng, -2, 2);
   const weightNoise = overall >= 4 ? 0 : randInt(rng, -12, 12);
 
   return {
-    archetypeLabel: archetypeLabel(def?.archetype ?? archetype),
-    archetypeId: def?.archetype ?? archetype,
+    archetypeLabel: archetypeLabel(mold),
+    archetypeId: mold,
     comps,
+    compCeiling: overall >= 1 ? ceiling : null,
+    compFloor: overall >= 1.5 ? floor : null,
     grades: {
       athleticism: fogGrade(
         trueGrades.athleticism,
-        focusLevel(scoutLevel, scout, position, "athleticism"),
+        focusLevel(scoutLevel, scout, position, "athleticism", player),
         rng
       ),
       shooting: fogGrade(
         trueGrades.shooting,
-        focusLevel(scoutLevel, scout, position, "shooting"),
+        focusLevel(scoutLevel, scout, position, "shooting", player),
         rng
       ),
       creation: fogGrade(
         trueGrades.creation,
-        focusLevel(scoutLevel, scout, position, "creation"),
+        focusLevel(scoutLevel, scout, position, "creation", player),
         rng
       ),
       defense: fogGrade(
         trueGrades.defense,
-        focusLevel(scoutLevel, scout, position, "defense"),
+        focusLevel(scoutLevel, scout, position, "defense", player),
         rng
       ),
       feel: fogGrade(
         trueGrades.feel,
-        focusLevel(scoutLevel, scout, position, "feel"),
+        focusLevel(scoutLevel, scout, position, "feel", player),
         rng
       ),
       upside: fogGrade(
         trueGrades.upside,
-        focusLevel(scoutLevel, scout, position, "overall"),
+        focusLevel(scoutLevel, scout, position, "overall", player),
         rng
       ),
     },
@@ -246,7 +414,7 @@ export function buildScoutProfile(
         : overall >= 2 && rng() > 0.6
           ? "Limited medical; waiting on team workouts."
           : null,
-    summary: buildSummary(def?.flavor, def?.archetype ?? archetype, overall, rng),
+    summary: buildSummary(def?.flavor, mold, overall, rng),
     confidence: clamp(0.2 + overall * 0.16 + (rng() * 0.08 - 0.04), 0.15, 0.95),
     boardRankHint:
       overall >= 2
@@ -295,30 +463,32 @@ function scoutClarity(
   return clamp(eye + bonus, 1, 5.9);
 }
 
-const PATH_LABEL = {
-  boom: "Boom",
-  average: "Steady",
-  bust: "Bust risk",
-} as const;
-
 /**
- * Madden-style dev read. A sharp, matching scout sees the path.
- * A thin report stays sealed, or names the wrong lean.
+ * Madden-style trait read. On the draft board the trait stays sealed.
+ * Only an elite matching scout gets a whisper, and it can still be wrong.
  */
 export function trajectoryRead(
   player: GmPlayer,
   scout: GmScout | null | undefined
 ): string {
   const clarity = scoutClarity(player, scout);
-  if (!scout || clarity < 2.6) return "Trajectory is still sealed.";
-  const path = playerSheet(player).potential.path;
-  const rng = createRng(nameSeed(`${player.id}:path:${scout.id}`));
-  if (clarity < 4.4 && rng() < 0.4) {
-    const wrong =
-      path === "boom" ? "bust" : path === "bust" ? "boom" : rng() < 0.5 ? "boom" : "bust";
-    return PATH_LABEL[wrong];
+  if (!scout || clarity < 4.6) return "Dev trait sealed until the pick.";
+  const trait = playerDevTrait(player);
+  const rng = createRng(nameSeed(`${player.id}:trait:${scout.id}`));
+  // Even a great scout only gets a lean, and X-Factor almost never leaks.
+  if (trait === "xfactor") {
+    return rng() < 0.25 ? "Whisper: generational upside" : "Dev trait sealed until the pick.";
   }
-  return PATH_LABEL[path];
+  if (clarity < 5.2 && rng() < 0.45) {
+    const decoys: GmDevTrait[] = ["star", "normal", "superstar", "bust"];
+    return `Whisper: ${traitLabel(pick(rng, decoys))}`;
+  }
+  if (trait === "normal" || trait === "bust") {
+    return `Whisper: ${traitLabel(trait)}`;
+  }
+  return rng() < 0.55
+    ? `Whisper: ${traitLabel(trait)}`
+    : "Dev trait sealed until the pick.";
 }
 
 /** One combine for the class. Measurables and the medical file lock in. */
@@ -464,6 +634,115 @@ export function revealScouting(
 export function gradeSortValue(g: ScoutLetterGrade | null | undefined): number {
   if (!g) return -1;
   return GRADE_SCALE.indexOf(g);
+}
+
+const GRADE_FOCUSES = [
+  "athleticism",
+  "shooting",
+  "creation",
+  "defense",
+  "feel",
+  "upside",
+] as const;
+
+export type ScoutLookFocus = (typeof GRADE_FOCUSES)[number];
+
+/**
+ * Spend one scouting look on a fogged prospect: fill one blank grade,
+ * tighten uncertainty, and raise confidence. Does not reveal identity or trait.
+ */
+export function spendScoutingLook(
+  player: GmPlayer,
+  scout: GmScout | null | undefined,
+  focus?: ScoutLookFocus
+): GmPlayer {
+  const profile = player.scoutProfile;
+  if (!profile) return player;
+  const level = scout ? effectiveScoutLevel(scout) : 1;
+  const rng = createRng(
+    nameSeed(`${player.id}:look:${scout?.id ?? "none"}:${focus ?? "any"}`)
+  );
+  const blanks = GRADE_FOCUSES.filter((key) => profile.grades[key] == null);
+  const knack = scout ? ensureScoutKnack(scout).knack : undefined;
+  const preferred = scoutKnackPreferredFocus(knack, player);
+  const target =
+    focus && profile.grades[focus] == null
+      ? focus
+      : preferred && profile.grades[preferred] == null
+        ? preferred
+        : blanks.length
+          ? blanks[Math.floor(rng() * blanks.length)]!
+          : focus && GRADE_FOCUSES.includes(focus)
+            ? focus
+            : GRADE_FOCUSES[Math.floor(rng() * GRADE_FOCUSES.length)]!;
+
+  const noiseAmp = Math.max(0.08, 1.8 - level * 0.32);
+  const noise = (rng() - 0.5) * (18 - level * 2.5);
+  const trueByFocus: Record<ScoutLookFocus, number> = {
+    athleticism: (player.ratings.finishing + player.ratings.durability) / 2,
+    shooting: player.ratings.shooting,
+    creation: (player.ratings.playmaking + player.ratings.offense * 8) / 2,
+    defense: clamp(50 + player.ratings.defense * 8, 0, 100),
+    feel: (player.ratings.playmaking + player.ratings.rebounding) / 2,
+    upside: clamp((player.ratings.impact + 3) * 10 + player.ratings.potential * 6, 0, 100),
+  };
+  const focusLevelValue = focusLevel(
+    level,
+    scout,
+    player.position,
+    target === "upside" ? "overall" : target,
+    player
+  );
+  const revealed = fogGrade(
+    ratingToGrade(trueByFocus[target], noise),
+    focusLevelValue,
+    rng
+  );
+  const grade = revealed ?? ratingToGrade(trueByFocus[target], noise * 0.4);
+  const uncertainty = clamp(
+    (player.scouted.uncertainty ?? 0.8) - 0.12 - level * 0.03,
+    0.05,
+    1
+  );
+  return {
+    ...player,
+    scouted: {
+      ...player.scouted,
+      uncertainty,
+      impact:
+        player.scouted.impact == null && target === "upside"
+          ? Math.round((player.ratings.impact + (rng() - 0.5) * noiseAmp) * 100) / 100
+          : player.scouted.impact,
+    },
+    scoutProfile: {
+      ...profile,
+      grades: { ...profile.grades, [target]: grade },
+      confidence: clamp(profile.confidence + 0.06 + level * 0.015, 0.15, 0.97),
+      summary:
+        blanks.length > 0
+          ? `${profile.summary} Fresh look locked ${target}.`
+          : profile.summary,
+    },
+  };
+}
+
+/** How wrong a fogged grade is vs the true tool (0 = exact, higher = worse). */
+export function gradeCalibrationError(
+  player: GmPlayer,
+  focus: ScoutLookFocus
+): number | null {
+  const graded = player.scoutProfile?.grades[focus];
+  if (!graded) return null;
+  const trueByFocus: Record<ScoutLookFocus, number> = {
+    athleticism: (player.ratings.finishing + player.ratings.durability) / 2,
+    shooting: player.ratings.shooting,
+    creation: (player.ratings.playmaking + player.ratings.offense * 8) / 2,
+    defense: clamp(50 + player.ratings.defense * 8, 0, 100),
+    feel: (player.ratings.playmaking + player.ratings.rebounding) / 2,
+    upside: clamp((player.ratings.impact + 3) * 10 + player.ratings.potential * 6, 0, 100),
+  };
+  const trueGrade = ratingToGrade(trueByFocus[focus], 0);
+  return Math.abs(gradeSortValue(graded) - gradeSortValue(trueGrade));
 }
 
 /** Sort draft board by scouted upside (not true potential). */

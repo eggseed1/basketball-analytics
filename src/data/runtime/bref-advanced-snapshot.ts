@@ -6,7 +6,12 @@
  *
  * Keep transforms memoized — remapping ~650 players × N seasons per request
  * will trip Cloudflare 1102 CPU limits.
+ *
+ * server-only: season-tables JSON is ~9MB and must never enter a client bundle.
+ * Client-safe comps/futures types live in `@/lib/player-comp-futures-shared`.
  */
+import "server-only";
+
 import snapshot from "./season-tables-snapshot.json";
 import {
   lookupEspnIdByPlayerName,

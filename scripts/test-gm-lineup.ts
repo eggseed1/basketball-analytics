@@ -86,6 +86,38 @@ test("the center and the point guard start ahead of the extra wings", () => {
   assert.ok((minutes.sg1 ?? 0) > (minutes.sg3 ?? 0));
 });
 
+test("star wings stay on their best spot instead of sliding to PF", () => {
+  const thinFour = player("bench-pf", "PF", 14);
+  const george = {
+    ...player("pg13", "SG", 34),
+    secondaryPosition: "SF" as const,
+    heightIn: 80,
+    ratings: {
+      ...player("pg13", "SG", 34).ratings,
+      impact: 4.2,
+      shooting: 82,
+      playmaking: 70,
+      rebounding: 45,
+    },
+  };
+  const thin = [
+    player("pg", "PG", 28),
+    george,
+    player("sg2", "SG", 18),
+    player("sf1", "SF", 24),
+    thinFour,
+    player("c", "C", 26),
+  ];
+  const team = autoSetLineup(
+    { id: "bos", starters: { PG: null, SG: null, SF: null, PF: null, C: null } } as GmTeam,
+    thin
+  );
+  assert.equal(team.starters.SG, "pg13", "star SG starts at SG");
+  assert.equal(team.starters.PF, "bench-pf", "thin natural PF keeps the four");
+  assert.notEqual(team.starters.PF, "pg13");
+  assert.notEqual(team.starters.SF, "pg13");
+});
+
 test("a sub replaces the position that sat", () => {
   const rows = [
     { id: "pg", minutes: 32, starter: true, position: "PG" as const },

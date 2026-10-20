@@ -1,3 +1,4 @@
+import { formatAppDateTime } from "@/i18n/format-date";
 import type { RecentInsight } from "@/lib/recent-insights";
 
 export type ArchivedFinding = RecentInsight & {
@@ -59,10 +60,10 @@ export function groupFindingsByDate(
   return [...groups].map(([date, list]) => ({ date, findings: list }));
 }
 
-export function findingsDateHeading(iso: string): string {
+export function findingsDateHeading(iso: string, locale?: string | null): string {
   const d = new Date(`${iso}T12:00:00Z`);
   if (!Number.isFinite(d.getTime())) return iso;
-  return d.toLocaleDateString("en-US", {
+  return formatAppDateTime(d, locale, {
     weekday: "long",
     month: "long",
     day: "numeric",
@@ -91,14 +92,24 @@ function escapeXml(s: string): string {
 /** RSS 2.0 feed of archived findings, newest first. */
 export function findingsRss(
   findings: ArchivedFinding[],
-  opts: { siteUrl: string; title: string; limit?: number }
+  opts: {
+    siteUrl: string;
+    title: string;
+    limit?: number;
+    /** Channel description; defaults to English. */
+    description?: string;
+    /** RSS `<language>` tag; defaults to en-us. */
+    language?: string;
+    /** `<category>` text for preseason cards; defaults to "{season} preseason". */
+    preseasonLabel?: (season: string) => string;
+  }
 ): string {
   const items = [...findings]
     .sort(newestFirst)
     .slice(0, opts.limit ?? 50)
     .map((f) => {
       const link = `${opts.siteUrl}${findingPath(f)}`;
-      const kind = f.preseason ? `${f.season} preseason` : f.season;
+      const kind = f.preseason ? (opts.preseasonLabel?.(f.season) ?? `${f.season} preseason`) : f.season;
       const pubDate = new Date(f.addedAt);
       return [
         "    <item>",
@@ -124,8 +135,10 @@ export function findingsRss(
     `    <title>${escapeXml(opts.title)}</title>`,
     `    <link>${escapeXml(`${opts.siteUrl}/findings`)}</link>`,
     `    <atom:link href="${escapeXml(`${opts.siteUrl}/findings/feed.xml`)}" rel="self" type="application/rss+xml"/>`,
-    "    <description>What stood out in each night of NBA games, from box scores and play-by-play.</description>",
-    "    <language>en-us</language>",
+    `    <description>${escapeXml(
+      opts.description ?? "What stood out in each night of NBA games, from box scores and play-by-play."
+    )}</description>`,
+    `    <language>${escapeXml(opts.language ?? "en-us")}</language>`,
     newest ? `    <lastBuildDate>${new Date(newest).toUTCString()}</lastBuildDate>` : null,
     ...items,
     "  </channel>",

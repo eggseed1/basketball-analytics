@@ -94,11 +94,26 @@ const own = league.players.find((p) => p.teamId === "bos" && p.contract)!;
 for (const pack of findPlayerPackages(league, "bos", own.id)) {
   assert.notEqual(pack.partnerId, "bos");
   assert.equal(pack.youSend.some((asset) => asset.type === "player" && asset.id === own.id), true);
+  // Cash does not salary-match. Finder must not invent "player + money" packages.
+  const receiveHasCash = pack.youReceive.some((asset) => asset.type === "cash");
+  const receiveHasPlayer = pack.youReceive.some((asset) => asset.type === "player");
+  assert.equal(
+    receiveHasCash && receiveHasPlayer,
+    false,
+    "partner package should not pair a player with cash"
+  );
   const verdict = evaluateTrade(league, "bos", pack.partnerId, pack.youSend, pack.youReceive);
   assert.equal(verdict.ok, true, verdict.reason);
 }
 for (const pack of findPlayerPackages(league, "bos", partnerPlayer.id)) {
   assert.equal(pack.partnerId, "nyk");
+  const sendHasCash = pack.youSend.some((asset) => asset.type === "cash");
+  const sendHasPlayer = pack.youSend.some((asset) => asset.type === "player");
+  assert.equal(
+    sendHasCash && sendHasPlayer,
+    false,
+    "acquire package should not pair a player with cash"
+  );
   const verdict = evaluateTrade(league, "bos", "nyk", pack.youSend, pack.youReceive);
   assert.equal(verdict.ok, true, verdict.reason);
 }

@@ -341,13 +341,16 @@ export function ratingsForTier(
   position: GmPosition,
   rng: () => number
 ): GmRatings {
+  // Skill bands are draft-night raw, not finished NBA overalls. Superstars
+  // still clear the pack; depth stays in the 60s so long runs do not flood
+  // the league with 78+ rookies.
   const base = {
-    superstar: { impact: [4.2, 7.2], pot: [8, 10], skill: [70, 95] },
-    allstar: { impact: [2.4, 4.4], pot: [6.5, 8.5], skill: [60, 88] },
-    starter: { impact: [1.0, 2.6], pot: [4.5, 7], skill: [50, 82] },
-    rotation: { impact: [-0.2, 1.4], pot: [3, 5.5], skill: [40, 75] },
-    fringe: { impact: [-1.6, 0.6], pot: [1.5, 4], skill: [30, 68] },
-    depth: { impact: [-2.8, 0.2], pot: [0.5, 3], skill: [22, 58] },
+    superstar: { impact: [3.8, 6.2], pot: [8.5, 10], skill: [58, 80] },
+    allstar: { impact: [2.0, 3.8], pot: [7.0, 8.7], skill: [52, 74] },
+    starter: { impact: [0.6, 2.2], pot: [5.0, 7.1], skill: [46, 68] },
+    rotation: { impact: [-0.5, 1.1], pot: [3.0, 5.4], skill: [36, 60] },
+    fringe: { impact: [-1.8, 0.35], pot: [1.4, 3.8], skill: [28, 52] },
+    depth: { impact: [-2.8, -0.2], pot: [0.4, 2.8], skill: [20, 46] },
   }[tier];
 
   const impact =
@@ -445,19 +448,18 @@ const HEIGHT: Record<GmPosition, [number, number]> = {
   C: [81, 87],
 };
 
-function gauss(rng: () => number): number {
-  const u = Math.max(1e-9, rng());
-  const v = rng();
-  return Math.sqrt(-2 * Math.log(u)) * Math.cos(Math.PI * 2 * v);
-}
-
-/** Weights for ages 18 through 24, by the last pick in the band. */
+/**
+ * Draft-night ages 18–24 by slot (NBA-ish).
+ * Lottery leans 19–20 (one-and-dones / young internationals). Late first and
+ * seconds pull more juniors/seniors. Age 24 is rare.
+ * Index 0 = 18 … index 6 = 24.
+ */
 const AGE_BANDS: Array<{ through: number; weights: number[] }> = [
-  { through: 5, weights: [0.08, 0.48, 0.32, 0.1, 0.02, 0, 0] },
-  { through: 14, weights: [0.02, 0.28, 0.36, 0.24, 0.1, 0, 0] },
-  { through: 30, weights: [0.02, 0.1, 0.24, 0.32, 0.24, 0.08, 0] },
-  { through: 45, weights: [0, 0.04, 0.12, 0.26, 0.32, 0.2, 0.06] },
-  { through: 60, weights: [0, 0.02, 0.08, 0.18, 0.32, 0.28, 0.12] },
+  { through: 5, weights: [0.14, 0.48, 0.28, 0.08, 0.02, 0, 0] },
+  { through: 14, weights: [0.08, 0.34, 0.36, 0.16, 0.06, 0, 0] },
+  { through: 30, weights: [0.02, 0.14, 0.32, 0.32, 0.16, 0.04, 0] },
+  { through: 45, weights: [0, 0.06, 0.2, 0.3, 0.28, 0.14, 0.02] },
+  { through: 60, weights: [0, 0.03, 0.12, 0.26, 0.32, 0.22, 0.05] },
 ];
 
 function ageForSlot(slot: number, rng: () => number): number {
@@ -467,52 +469,90 @@ function ageForSlot(slot: number, rng: () => number): number {
     roll -= band.weights[i]!;
     if (roll <= 0) return 18 + i;
   }
-  return 22;
+  return 21;
 }
 
-/** What the league thinks this slot is worth, before the miss. */
-function consensusImpact(slot: number): number {
-  if (slot <= 5) return 0.55 - (slot - 1) * 0.16;
-  if (slot <= 14) return -0.15 - (slot - 5) * 0.08;
-  if (slot <= 30) return -0.95 - (slot - 14) * 0.02;
-  return -1.35 - (slot - 30) * 0.012;
-}
-
-function prospectRatings(
-  slot: number,
+/**
+ * Real-draft tradeoff: younger = higher ceiling + more bust variance;
+ * older = more NBA-ready now, lower upside, safer outcome band.
+ * Applied after the tier roll so board order still comes from talent tier.
+ */
+export function applyDraftAgeProfile(
+  ratings: GmRatings,
   age: number,
-  position: GmPosition,
   rng: () => number
-): { ratings: GmRatings; consensus: number; minutes: number } {
-  const consensus = Math.round(consensusImpact(slot) * 100) / 100;
-  const latent = gauss(rng);
-  const impact = clamp(
-    Math.round((consensus * 0.5 + latent * 1.05) * 100) / 100,
-    -3.2,
-    4.8
-  );
-  const youth = age <= 19 ? 1.4 : age === 20 ? 0.9 : age === 21 ? 0.4 : age === 22 ? 0 : -0.6;
-  const potential = clamp(4.6 + youth + latent * 1.05 + gauss(rng) * 0.45, 0.4, 9.6);
-  const mid = clamp(58 + impact * 7, 28, 88);
-  const skill = () => randInt(rng, Math.round(mid - 8), Math.round(mid + 8));
-  const big = position === "C" || position === "PF";
-  const guard = position === "PG" || position === "SG";
-  const minutes = clamp(Math.round(16 + Math.max(0, consensus) * 12 + Math.max(0, latent) * 4), 8, 32);
+): GmRatings {
+  const jitter = () => (rng() - 0.5) * 0.15;
+  let { impact, potential } = ratings;
+  let skillTilt = 0;
+
+  if (age <= 18) {
+    // Prep-to-pro / young international: huge range.
+    potential = potential + 1.15 + jitter();
+    impact = impact * 0.82 + jitter() * 0.4;
+    skillTilt = -6;
+  } else if (age === 19) {
+    potential = potential + 0.75 + jitter();
+    impact = impact * 0.88 + jitter() * 0.3;
+    skillTilt = -3;
+  } else if (age === 20) {
+    potential = potential + 0.35 + jitter();
+    impact = impact * 0.95 + jitter() * 0.25;
+    skillTilt = -1;
+  } else if (age === 21) {
+    potential = potential + jitter() * 0.5;
+    impact = impact * (1 + jitter() * 0.08);
+  } else if (age === 22) {
+    // Junior / older soph: more polished, less rocket fuel.
+    potential = potential - 0.55 + jitter();
+    impact = impact * 1.08 + Math.abs(jitter()) * 0.2;
+    skillTilt = 3;
+  } else if (age === 23) {
+    potential = potential - 1.05 + jitter();
+    impact = impact * 1.14 + Math.abs(jitter()) * 0.25;
+    skillTilt = 5;
+  } else {
+    // 24+: senior / older euro — floor raiser, not a jackpot ticket.
+    potential = potential - 1.55 + jitter();
+    impact = impact * 1.18 + Math.abs(jitter()) * 0.2;
+    skillTilt = 7;
+  }
+
+  const bump = (value: number) => clamp(Math.round(value + skillTilt), 15, 95);
+
   return {
-    consensus,
-    minutes,
-    ratings: {
-      impact,
-      offense: impact * 0.7 + (rng() - 0.5) * 0.8,
-      defense: impact * 0.55 + (rng() - 0.5) * 0.8,
-      shooting: clamp(skill() + (guard ? 5 : big ? -8 : 0), 18, 95),
-      finishing: clamp(skill() + (big ? 8 : 0), 20, 95),
-      playmaking: clamp(skill() + (guard ? 10 : big ? -10 : 0), 15, 95),
-      rebounding: clamp(skill() + (big ? 12 : -5), 15, 95),
-      durability: randInt(rng, 55, 95),
-      potential,
-    },
+    ...ratings,
+    impact: Math.round(clamp(impact, -3.5, 7.5) * 100) / 100,
+    offense: Math.round((impact * 0.7 + (rng() - 0.5) * 0.6) * 100) / 100,
+    defense: Math.round((impact * 0.55 + (rng() - 0.5) * 0.6) * 100) / 100,
+    potential: Math.round(clamp(potential, 0.2, 10) * 10) / 10,
+    shooting: bump(ratings.shooting),
+    finishing: bump(ratings.finishing),
+    playmaking: bump(ratings.playmaking),
+    rebounding: bump(ratings.rebounding),
   };
+}
+
+const TIER_RANK: Record<ProspectTier, number> = {
+  superstar: 0,
+  allstar: 1,
+  starter: 2,
+  rotation: 3,
+  fringe: 4,
+  depth: 5,
+};
+
+/** Consensus board value for a tier (used as the public pre-draft number). */
+function consensusForTier(tier: ProspectTier, rng: () => number): number {
+  const base = {
+    superstar: 1.6,
+    allstar: 0.7,
+    starter: 0.05,
+    rotation: -0.55,
+    fringe: -1.15,
+    depth: -1.7,
+  }[tier];
+  return Math.round((base + (rng() - 0.5) * 0.35) * 100) / 100;
 }
 
 /** Build a full realistic sealed draft class. */
@@ -533,14 +573,56 @@ export function createDraftClass(options: {
   const used = new Set<string>();
   const out: GmPlayer[] = [];
 
+  // Pyramid first, then board chaos: stars can slide, and a sleeper can climb.
+  const ranked = rollProspectTier(count, rng)
+    .map((tier, index) => {
+      let bump = 0;
+      const roll = rng();
+      // Risers.
+      if (tier === "rotation" && roll < 0.1) bump = -2.2;
+      else if (tier === "fringe" && roll < 0.06) bump = -2.4;
+      else if (tier === "starter" && roll < 0.22) bump = -1.1;
+      // Fallers — keeps pick 1 from being automatic and feeds late steals.
+      else if (tier === "superstar" && roll < 0.42) bump = 1.1 + rng() * 1.4;
+      else if (tier === "allstar" && roll < 0.28) bump = 1.4 + rng() * 1.8;
+      else if (tier === "starter" && roll < 0.2) bump = 1.8 + rng() * 1.5;
+      return {
+        tier,
+        index,
+        order: TIER_RANK[tier] + bump + (rng() - 0.5) * 1.35,
+      };
+    })
+    .sort((a, b) => a.order - b.order || a.index - b.index);
+
   for (let board = 0; board < count; board++) {
+    const tier = ranked[board]!.tier;
     const slot = Math.min(
       60,
       Math.max(1, Math.round((board * 59) / Math.max(1, count - 1)) + 1)
     );
     const position = pick(rng, POSITIONS);
-    const age = ageForSlot(slot, rng);
-    const { ratings, consensus, minutes } = prospectRatings(slot, age, position, rng);
+    let age = ageForSlot(slot, rng);
+    const pipeRoll = rng();
+    const pipeline: GmPlayer["pipeline"] =
+      pipeRoll < 0.14 ? "international" : pipeRoll < 0.2 ? "gleague" : "ncaa";
+    // Internationals skew younger (Wemby / Sarr path); NCAA seniors stay older.
+    if (pipeline === "international" && age >= 21 && rng() < 0.55) {
+      age = Math.max(18, age - 1);
+    }
+    if (pipeline === "ncaa" && age <= 19 && slot > 20 && rng() < 0.25) {
+      age = Math.min(23, age + 1);
+    }
+    const ratings = applyDraftAgeProfile(
+      ratingsForTier(tier, position, rng),
+      age,
+      rng
+    );
+    const consensus = consensusForTier(tier, rng);
+    const minutes = clamp(
+      Math.round(14 + Math.max(0, ratings.impact) * 3.2 + (tier === "superstar" ? 6 : 0)),
+      8,
+      34
+    );
     const [hLo, hHi] = HEIGHT[position];
     let raw: GmPlayer = {
       id: `prospect-${seasonEndYear}-${board}-${Math.floor(rng() * 1e9).toString(36)}`,
@@ -565,9 +647,20 @@ export function createDraftClass(options: {
       minutesPreference: minutes,
       draftYear: seasonEndYear,
       identityRevealed: false,
+      pipeline,
+      college:
+        pipeline === "international"
+          ? pick(rng, ["EuroLeague", "NBL Australia", "Adriatic League", "Spain ACB"])
+          : pipeline === "gleague"
+            ? "G League Ignite"
+            : undefined,
     };
     raw = assignProspectIdentity(raw, rng, used, {
-      eliteEligible: slot <= 5 || ratings.impact >= 3.4,
+      eliteEligible:
+        tier === "superstar" ||
+        tier === "allstar" ||
+        slot <= 5 ||
+        ratings.impact >= 3.4,
     });
     out.push(seal(raw, scoutLevel, board, rng));
   }

@@ -49,6 +49,9 @@ function mergeById(
       homeRecord: next.homeRecord ?? g.homeRecord,
       awayPeriodScores: next.awayPeriodScores ?? g.awayPeriodScores,
       homePeriodScores: next.homePeriodScores ?? g.homePeriodScores,
+      // Box shells often omit TV; live scoreboard carries it through tip and live.
+      broadcasts:
+        next.broadcasts?.length ? next.broadcasts : g.broadcasts,
     };
   });
 }

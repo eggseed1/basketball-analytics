@@ -1,15 +1,18 @@
 import { TeamLogo } from "@/components/brand/team-logo";
 import { AppLink } from "@/components/ui/app-link";
 import { SectionLink } from "@/components/ui/section-link";
+import { formatAppDateTime } from "@/i18n/format-date";
 import { type } from "@/lib/design-system";
 import type { HomeSeasonMoment, OpenerGame, SeasonChampion } from "@/lib/home-season-moment";
 import { standingsHref } from "@/lib/standings-routes";
 import { cn } from "@/lib/utils";
+import { useLocale } from "next-intl";
+import { getLocale } from "next-intl/server";
 
 const OPENER_GAMES_SHOWN = 6;
 
-function longDate(iso: string): string {
-  return new Date(`${iso}T12:00:00Z`).toLocaleDateString("en-US", {
+function longDate(iso: string, locale: string): string {
+  return formatAppDateTime(`${iso}T12:00:00Z`, locale, {
     weekday: "short",
     month: "short",
     day: "numeric",
@@ -85,6 +88,7 @@ function ChampionLine({ champion }: { champion: SeasonChampion }) {
 
 /** Lead card for the stretches with no regular-season games. */
 export function SeasonMomentCard({ moment }: { moment: HomeSeasonMoment }) {
+  const locale = useLocale();
   const { phase, marks, champion, daysToOpener, daysToPreseason } = moment;
   const season = marks.season;
 
@@ -129,9 +133,9 @@ export function SeasonMomentCard({ moment }: { moment: HomeSeasonMoment }) {
               The {season} season tips off {inDays(daysToOpener)}
             </h2>
             <p className={cn(type.bodySm, "text-muted-foreground")}>
-              Opening night is {longDate(marks.opener)}.
+              Opening night is {longDate(marks.opener, locale)}.
               {marks.preseasonStart && daysToPreseason != null && daysToPreseason > 0
-                ? ` Preseason starts ${longDate(marks.preseasonStart)}.`
+                ? ` Preseason starts ${longDate(marks.preseasonStart, locale)}.`
                 : ""}
             </p>
             <OpenerGames games={marks.openerGames} />
@@ -159,7 +163,7 @@ export function SeasonMomentCard({ moment }: { moment: HomeSeasonMoment }) {
         </span>
         {marks.opener && daysToOpener != null ? (
           <span className={cn(type.bodySm, "text-muted-foreground")}>
-            {longDate(marks.opener)}
+            {longDate(marks.opener, locale)}
           </span>
         ) : null}
         <span className={cn(type.caption, "text-muted-foreground")}>
@@ -173,19 +177,18 @@ export function SeasonMomentCard({ moment }: { moment: HomeSeasonMoment }) {
 }
 
 /** One-line status for in-season phases. */
-export function SeasonPhaseBar({ moment }: { moment: HomeSeasonMoment }) {
-  const { phase, marks, regularDaysLeft, regularWeek } = moment;
+export async function SeasonPhaseBar({ moment }: { moment: HomeSeasonMoment }) {
+  const locale = await getLocale();
+  const { phase, marks, regularDaysLeft } = moment;
   const season = marks.season;
   let label: string | null = null;
   let note: string | null = null;
 
-  if (phase === "opening-weeks") {
-    label = `${season} regular season · Week ${regularWeek}`;
-    note = "Early records and stats swing a lot on small samples.";
-  } else if (phase === "regular-season") {
-    label = `${season} regular season · Week ${regularWeek}`;
-    if (regularDaysLeft != null) note = `${regularDaysLeft} days left in the regular season.`;
-  } else if (phase === "stretch-run") {
+  // Opening weeks and regular season: week sits with "This Week's Games".
+  if (phase === "opening-weeks" || phase === "regular-season") {
+    return null;
+  }
+  if (phase === "stretch-run") {
     label = "Playoff race";
     note =
       regularDaysLeft != null
@@ -196,7 +199,7 @@ export function SeasonPhaseBar({ moment }: { moment: HomeSeasonMoment }) {
     note = "Seeds 7 to 10 play for the last two playoff spots in each conference.";
   } else if (phase === "playoffs") {
     label = `${season} playoffs`;
-    if (marks.playoffStart) note = `First round began ${longDate(marks.playoffStart)}.`;
+    if (marks.playoffStart) note = `First round began ${longDate(marks.playoffStart, locale)}.`;
   }
 
   if (!label) return null;

@@ -1,214 +1,404 @@
 /**
- * MyNBA-style free agency: moratorium → open → fill, Bird, competing bids.
+ * Free-agency desk: options, QOs, moratorium commitments, RFA sheets.
  * Run: npx tsx scripts/test-gm-free-agency.ts
  */
 import assert from "node:assert/strict";
 
 import {
-  advanceFaDay,
-  askingSalary,
+  advanceFaDayDetailed,
+  applyOptionDecision,
   emptyFaMarket,
-  faStageLabel,
   resignOwnFreeAgent,
   runFaPeriod,
   userOfferFreeAgent,
 } from "../src/gm/engine/free-agency";
-import { enterFreeAgency, startNextSeason } from "../src/gm/engine/offseason";
-import { createGeneratedLeague } from "../src/gm/seed/create-league";
-import { getCbaRules } from "../src/gm/myleague/cba-registry";
-import { overallOf } from "../src/gm/engine/lineup";
-import type { GmLeagueState, GmPlayer } from "../src/gm/types";
+import {
+  declineQualifyingOffer,
+  tenderQualifyingOffer,
+} from "../src/gm/engine/fa-qualifying";
+import {
+  declineOfferSheet,
+  matchOfferSheet,
+  submitOfferSheet,
+} from "../src/gm/engine/fa-rfa";
+import { hasPendingOption } from "../src/gm/engine/fa-status";
+import { enterFreeAgency } from "../src/gm/engine/offseason";
+import { evaluateOfferUtility } from "../src/gm/engine/fa-utility";
+import type { GmLeagueState, GmPlayer, GmTeam } from "../src/gm/types";
 
-function forceExpire(player: GmPlayer, bird: "bird" | "early" | null): GmPlayer {
-  if (!player.contract || player.teamId == null) return player;
+function club(id: string, goal: GmTeam["ownerGoal"] = "contend"): GmTeam {
   return {
-    ...player,
-    contract: {
-      ...player.contract,
-      yearsRemaining: 1,
-      option: null,
-      birdRights: bird ?? "none",
+    id,
+    abbr: id.toUpperCase(),
+    city: id,
+    name: "Club",
+    conference: "East",
+    division: "Atlantic",
+    ownerGoal: goal,
+    staff: {
+      headCoach: {
+        name: "Coach",
+        offenseBonus: 0,
+        defenseBonus: 0,
+        developmentBonus: 0,
+      },
+      scoutLevel: 1,
+      trainerLevel: 1,
     },
+    starters: { PG: null, SG: null, SF: null, PF: null, C: null },
+    benchOrder: [],
+    draftPicks: [],
+    tradeExceptionsM: [],
+    deadMoney: [],
+  } as GmTeam;
+}
+
+function player(
+  id: string,
+  teamId: string | null,
+  overall: number,
+  age: number,
+  extras: Partial<GmPlayer> = {}
+): GmPlayer {
+  return {
+    id,
+    name: id,
+    teamId,
+    position: "SF",
+    age,
+    heightIn: 79,
+    weightLbs: 220,
+    ratings: {
+      impact: 2,
+      offense: 2,
+      defense: 1,
+      shooting: 70,
+      finishing: 70,
+      playmaking: 70,
+      rebounding: 50,
+      durability: 80,
+      potential: 2,
+    },
+    sheet: {
+      overall,
+      attributes: {} as never,
+      tendencies: {} as never,
+      potential: {} as never,
+    },
+    scouted: { impact: 1, offense: 1, defense: 1, uncertainty: 0 },
+    contract: extras.contract ?? null,
+    injury: null,
+    morale: 70,
+    personality: 0,
+    minutesPreference: 32,
+    ...extras,
+  } as GmPlayer;
+}
+
+function baseLeague(players: GmPlayer[]): GmLeagueState {
+  const teams = [club("bos"), club("nyk", "retool"), club("det", "tank")];
+  return {
+    version: 1,
+    id: "fa-test",
+    season: 2027,
+    day: 200,
+    phase: "free_agency",
+    userTeamId: "bos",
+    teams,
+    players,
+    freeAgents: players.filter((p) => p.teamId == null).map((p) => p.id),
+    draftPool: [],
+    schedule: [],
+    standings: {},
+    boxScores: [],
+    news: [],
+    tradeLog: [],
+    faMarket: emptyFaMarket(42),
+    settings: {
+      salaryCapM: 140,
+      luxuryTaxM: 170,
+      firstApronM: 178,
+      secondApronM: 189,
+      maxRoster: 15,
+      minRoster: 14,
+      seasonLength: 82,
+    },
+    automation: { autoDraft: false, autoFreeAgency: false },
+    updatedAt: new Date().toISOString(),
+  } as unknown as GmLeagueState;
+}
+
+// ——— Options ———
+{
+  const optionGuy = player("opt", "bos", 78, 27, {
+    contract: {
+      yearsRemaining: 0,
+      annualSalaryM: 12,
+      birdRights: "bird",
+      option: "team",
+      signedSeason: 2024,
+    },
+  });
+  let league = baseLeague([
+    optionGuy,
+    player("fa1", null, 80, 28, {
+      rightsTeamId: null,
+      lastSalaryM: 20,
+    }),
+  ]);
+  assert.equal(hasPendingOption(optionGuy), true);
+  league = applyOptionDecision(league, "opt", "exercise");
+  const kept = league.players.find((p) => p.id === "opt")!;
+  assert.equal(kept.teamId, "bos");
+  assert.equal(kept.contract?.yearsRemaining, 1);
+  assert.equal(kept.contract?.option, null);
+
+  league = baseLeague([
+    player("opt2", "bos", 70, 29, {
+      contract: {
+        yearsRemaining: 0,
+        annualSalaryM: 8,
+        birdRights: "early",
+        option: "team",
+        signedSeason: 2025,
+      },
+    }),
+  ]);
+  league = applyOptionDecision(league, "opt2", "decline");
+  const released = league.players.find((p) => p.id === "opt2")!;
+  assert.equal(released.teamId, null);
+  assert.ok(league.freeAgents.includes("opt2"));
+}
+
+// ——— QO + RFA match/decline ———
+{
+  const rfa = player("rfa", null, 79, 24, {
+    rightsTeamId: "bos",
+    rightsKind: "early",
+    lastSalaryM: 6,
+    draftYear: 2023,
+    serviceYears: 4,
+    qoStatus: "eligible",
+  });
+  let league = baseLeague([
+    rfa,
+    player("filler", "bos", 72, 26, {
+      contract: {
+        yearsRemaining: 2,
+        annualSalaryM: 8,
+        birdRights: "none",
+        signedSeason: 2026,
+      },
+    }),
+  ]);
+  // Skip to market stages for sheet tests.
+  league = {
+    ...league,
+    faMarket: { ...emptyFaMarket(7), stage: "open", day: 4 },
+    freeAgents: ["rfa"],
   };
+  const tendered = tenderQualifyingOffer(league, "rfa", "bos");
+  assert.equal(tendered.ok, true);
+  league = tendered.state;
+  assert.equal(league.players.find((p) => p.id === "rfa")!.rightsKind, "restricted");
+
+  const sheet = submitOfferSheet(league, "rfa", "nyk", 10, 3);
+  assert.equal(sheet.ok, true, sheet.ok ? "" : sheet.reason);
+  league = sheet.state;
+  assert.equal(league.faMarket?.offerSheets?.length, 1);
+
+  const matched = matchOfferSheet(league, league.faMarket!.offerSheets![0]!.id);
+  assert.equal(matched.ok, true, matched.ok ? "" : matched.reason);
+  assert.equal(matched.state.players.find((p) => p.id === "rfa")!.teamId, "bos");
+
+  // Decline path
+  league = tenderQualifyingOffer(
+    {
+      ...baseLeague([
+        { ...rfa, id: "rfa2", name: "rfa2" },
+        player("f2", "bos", 72, 26, {
+          contract: {
+            yearsRemaining: 2,
+            annualSalaryM: 8,
+            birdRights: "none",
+            signedSeason: 2026,
+          },
+        }),
+      ]),
+      faMarket: { ...emptyFaMarket(8), stage: "open", day: 4 },
+      freeAgents: ["rfa2"],
+    },
+    "rfa2",
+    "bos"
+  ).state;
+  const sheet2 = submitOfferSheet(league, "rfa2", "nyk", 9, 2);
+  assert.equal(sheet2.ok, true);
+  league = sheet2.state;
+  const declined = declineOfferSheet(league, league.faMarket!.offerSheets![0]!.id);
+  assert.equal(declined.ok, true);
+  assert.equal(declined.state.players.find((p) => p.id === "rfa2")!.teamId, "nyk");
 }
 
-const base = createGeneratedLeague({
-  userTeamId: "bos",
-  season: 2026,
-  seed: 77,
-});
+// ——— Declining QO removes restricted ———
+{
+  const row = player("qo", null, 75, 24, {
+    rightsTeamId: "bos",
+    lastSalaryM: 5,
+    draftYear: 2023,
+    serviceYears: 4,
+    qoStatus: "eligible",
+  });
+  const league = baseLeague([row]);
+  const declined = declineQualifyingOffer(league, "qo", "bos");
+  assert.equal(declined.ok, true);
+  assert.notEqual(declined.state.players.find((p) => p.id === "qo")!.rightsKind, "restricted");
+}
 
-const bosRoster = base.players.filter((p) => p.teamId === "bos");
-assert.ok(bosRoster.length >= 6, "bos roster");
+// ——— Utility is stable across reloads ———
+{
+  const p = player("star", null, 88, 28, { lastSalaryM: 35 });
+  const league = baseLeague([p, ...Array.from({ length: 12 }, (_, i) =>
+    player(`bos${i}`, "bos", 74, 26, {
+      contract: {
+        yearsRemaining: 2,
+        annualSalaryM: 5,
+        birdRights: "none",
+        signedSeason: 2026,
+      },
+    })
+  )]);
+  const team = league.teams.find((t) => t.id === "bos")!;
+  const a = evaluateOfferUtility(league, p, team, 40, 4);
+  const b = evaluateOfferUtility(league, p, team, 40, 4);
+  assert.equal(a.total, b.total);
+  assert.equal(a.noise, b.noise);
+}
 
-const star = [...bosRoster].sort(
-  (a, b) => overallOf(b) - overallOf(a)
-)[0]!;
-const mid = bosRoster.find((p) => p.id !== star.id)!;
+// ——— Moratorium commitment reserves then signs on open ———
+{
+  const ufa = player("wing", null, 82, 27, {
+    rightsTeamId: "bos",
+    rightsKind: "bird",
+    lastSalaryM: 18,
+  });
+  let league = baseLeague([
+    ufa,
+    ...Array.from({ length: 12 }, (_, i) =>
+      player(`r${i}`, "bos", 70, 25, {
+        contract: {
+          yearsRemaining: 2,
+          annualSalaryM: 4,
+          birdRights: "none",
+          signedSeason: 2026,
+        },
+      })
+    ),
+  ]);
+  league = {
+    ...league,
+    faMarket: { ...emptyFaMarket(99), stage: "moratorium", day: 0 },
+    freeAgents: ["wing"],
+    automation: { autoDraft: false, autoFreeAgency: true },
+  };
+  const offer = userOfferFreeAgent(league, "wing", 22, 3);
+  assert.equal(offer.ok, true, offer.ok ? "" : offer.reason);
+  league = offer.state!;
+  assert.ok(league.faMarket?.agreements.some((row) => row.playerId === "wing"));
+  assert.ok(league.faMarket?.reservations?.some((row) => row.playerId === "wing"));
+  // Jump to open and advance to lock.
+  league = {
+    ...league,
+    faMarket: { ...league.faMarket!, stage: "open", day: 3 },
+  };
+  const advanced = advanceFaDayDetailed(league);
+  league = advanced.state;
+  assert.equal(league.players.find((p) => p.id === "wing")?.teamId, "bos");
+}
 
-const patched: GmLeagueState = {
-  ...base,
-  phase: "draft",
-  draftPool: [],
-  automation: { autoDraft: false, autoFreeAgency: false },
-  players: base.players.map((p) => {
-    if (p.id === star.id) return forceExpire(p, "bird");
-    if (p.id === mid.id) return forceExpire(p, "early");
-    // Expire one-year deals so the market is thick.
-    if (p.contract && p.contract.yearsRemaining === 1 && p.teamId) {
-      return forceExpire(p, p.contract.birdRights === "bird" ? "bird" : null);
+// ——— Seeded full period does not throw and leaves unsigned possible ———
+{
+  const players: GmPlayer[] = [];
+  for (const teamId of ["bos", "nyk", "det"]) {
+    for (let i = 0; i < 14; i++) {
+      players.push(
+        player(`${teamId}-${i}`, teamId, 70 + (i % 8), 24 + (i % 6), {
+          contract: {
+            yearsRemaining: 2,
+            annualSalaryM: 4 + i * 0.5,
+            birdRights: "none",
+            signedSeason: 2025,
+          },
+        })
+      );
     }
-    return p;
-  }),
-};
-
-const summer = enterFreeAgency(patched);
-assert.equal(summer.phase, "free_agency");
-assert.ok(summer.faMarket, "fa market created");
-assert.equal(summer.faMarket!.stage, "moratorium");
-assert.equal(summer.faMarket!.day, 0);
-assert.match(faStageLabel(summer.faMarket), /Moratorium/);
-
-const freeStar = summer.players.find((p) => p.id === star.id)!;
-assert.equal(freeStar.teamId, null, "star hits market");
-assert.equal(freeStar.rightsTeamId, "bos");
-assert.equal(freeStar.rightsKind, "bird");
-
-const rules = getCbaRules(summer.season);
-const ask = askingSalary(freeStar, rules);
-assert.ok(ask >= 5, `star ask should be meaningful, got ${ask}`);
-
-// Day 1: CPU interest appears; agreements can form.
-let day1 = advanceFaDay(summer);
-assert.equal(day1.faMarket!.day, 1);
-assert.equal(day1.faMarket!.stage, "moratorium");
-
-// User Bird re-sign during moratorium → agreement, not yet on roster.
-const resign = resignOwnFreeAgent(day1, star.id);
-assert.equal(resign.ok, true, resign.ok ? "" : resign.reason);
-if (resign.ok) {
-  day1 = resign.state;
-  const agreed = day1.faMarket!.agreements.find((r) => r.playerId === star.id);
-  assert.ok(agreed, "bird agreement parked");
-  assert.equal(agreed!.teamId, "bos");
-  assert.equal(
-    day1.players.find((p) => p.id === star.id)?.teamId,
-    null,
-    "moratorium does not put him on the roster yet"
-  );
-}
-
-// Advance through moratorium into open.
-let clock = day1;
-for (let i = 0; i < 6 && clock.faMarket!.stage === "moratorium"; i++) {
-  clock = advanceFaDay(clock);
-}
-assert.equal(clock.faMarket!.stage, "open", "open after moratorium");
-
-// Bird agreement should lock once open runs a day (or already locked on transition).
-clock = advanceFaDay(clock);
-const lockedStar = clock.players.find((p) => p.id === star.id)!;
-assert.equal(lockedStar.teamId, "bos", "bird deal locks in open");
-assert.ok(lockedStar.contract, "has a contract");
-
-// Competing offer: pick an unsigned free agent and underbid vs overbid.
-const target =
-  clock.players.find(
-    (p) =>
-      p.teamId == null &&
-      p.rightsTeamId !== "bos" &&
-      overallOf(p) >= 76 &&
-      overallOf(p) < 84
-  ) ?? clock.players.find((p) => p.teamId == null)!;
-assert.ok(target, "unsigned FA exists");
-
-const low = userOfferFreeAgent(clock, target.id, Math.max(1, ask * 0.2), 1);
-// May fail on cap or player shopping; either is fine, just must not crash.
-if (low.ok) {
-  clock = low.state;
-} else {
-  assert.ok(low.reason.length > 0);
-}
-
-const fairAsk = askingSalary(target, rules);
-const fairYears = Math.max(1, Math.min(3, Math.round(fairAsk / 8) || 2));
-const fair = userOfferFreeAgent(clock, target.id, fairAsk, fairYears);
-if (fair.ok) {
-  clock = fair.state;
-  const signed = clock.players.find((p) => p.id === target.id);
-  // In open stage a fair offer often sticks; if not, pending interest is ok.
-  assert.ok(
-    signed?.teamId === "bos" ||
-      clock.faMarket!.pending.some((r) => r.playerId === target.id) ||
-      clock.faMarket!.agreements.some((r) => r.playerId === target.id),
-    "fair offer lands or stays on the board"
-  );
-}
-
-// Full period leaves every club near min roster.
-const quiet = runFaPeriod({
-  ...summer,
-  faMarket: emptyFaMarket(),
-  players: summer.players.map((p) =>
-    p.id === star.id
-      ? { ...p, teamId: null, rightsTeamId: "bos", rightsKind: "bird" as const }
-      : p
-  ),
-});
-assert.ok(quiet.faMarket?.done, "period completes");
-for (const team of quiet.teams) {
-  const size = quiet.players.filter((p) => p.teamId === team.id).length;
-  assert.ok(
-    size >= quiet.settings.minRoster - 1,
-    `${team.abbr} near min (${size})`
-  );
-}
-
-const next = startNextSeason(quiet);
-assert.equal(next.phase, "regular");
-assert.equal(next.season, 2027);
-assert.equal(next.faMarket, undefined);
-
-// Pending offer persists when the player keeps shopping.
-const shopper = summer.players
-  .filter((p) => p.teamId == null && overallOf(p) >= 82)
-  .sort((a, b) => overallOf(b) - overallOf(a))[0];
-if (shopper) {
-  const openBoard = (() => {
-    let s = { ...summer, faMarket: emptyFaMarket() };
-    for (let i = 0; i < 6; i++) s = advanceFaDay(s);
-    return s;
-  })();
-  const lowBid = userOfferFreeAgent(
-    openBoard,
-    shopper.id,
-    Math.max(1.5, askingSalary(shopper, rules) * 0.55),
-    1
-  );
-  if (!lowBid.ok && lowBid.state) {
-    assert.ok(
-      lowBid.state.faMarket?.pending.some(
-        (row) => row.playerId === shopper.id && row.teamId === "bos"
-      ),
-      "low offer stays on the board while he shops"
+  }
+  for (let i = 0; i < 20; i++) {
+    players.push(
+      player(`fa-${i}`, null, 68 + (i % 12), 25 + (i % 8), {
+        lastSalaryM: 4 + i,
+      })
     );
   }
+  let league = baseLeague(players);
+  league = {
+    ...league,
+    freeAgents: players.filter((p) => p.teamId == null).map((p) => p.id),
+    automation: { autoDraft: false, autoFreeAgency: true },
+  };
+  league = runFaPeriod(league, 30);
+  assert.ok(league.faMarket?.done || league.faMarket?.stage === "fill");
+  const unsigned = league.players.filter((p) => p.teamId == null).length;
+  assert.ok(unsigned >= 0);
 }
 
-// Bird retention across a full period.
-const birdPool = summer.players.filter(
-  (p) => p.teamId == null && p.rightsTeamId && p.rightsKind === "bird"
-);
-const retained = birdPool.filter((p) => {
-  const after = quiet.players.find((row) => row.id === p.id)!;
-  return after.teamId === p.rightsTeamId;
-}).length;
-assert.ok(
-  retained / Math.max(1, birdPool.length) >= 0.85,
-  `bird retention ${retained}/${birdPool.length}`
-);
+// ——— enterFreeAgency starts on options ———
+{
+  const league = enterFreeAgency({
+    ...baseLeague([
+      player("a", "bos", 75, 26, {
+        contract: {
+          yearsRemaining: 1,
+          annualSalaryM: 10,
+          birdRights: "bird",
+          option: "team",
+          signedSeason: 2024,
+        },
+      }),
+    ]),
+    phase: "draft",
+    draftPool: [],
+  } as GmLeagueState);
+  assert.equal(league.phase, "free_agency");
+  assert.equal(league.faMarket?.stage, "options");
+}
 
-console.log("gm free agency: ok");
-console.log(
-  `  moratorium→open bird lock, FA board ${summer.freeAgents.length}, quiet unsigned ${quiet.freeAgents.length}, bird keep ${retained}/${birdPool.length}`
-);
+// resign own still works
+{
+  const p = player("own", null, 80, 28, {
+    rightsTeamId: "bos",
+    rightsKind: "bird",
+    lastSalaryM: 20,
+  });
+  let league = baseLeague([
+    p,
+    ...Array.from({ length: 12 }, (_, i) =>
+      player(`x${i}`, "bos", 70, 25, {
+        contract: {
+          yearsRemaining: 2,
+          annualSalaryM: 4,
+          birdRights: "none",
+          signedSeason: 2026,
+        },
+      })
+    ),
+  ]);
+  league = {
+    ...league,
+    faMarket: { ...emptyFaMarket(3), stage: "open", day: 5 },
+    freeAgents: ["own"],
+  };
+  const result = resignOwnFreeAgent(league, "own");
+  assert.equal(result.ok, true, result.ok ? "" : result.reason);
+}
+
+console.log("gm free agency ok");

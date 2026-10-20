@@ -1,6 +1,8 @@
+import { getTranslations } from "next-intl/server";
+
 import { formatOrdinal as ordinal } from "@/lib/format";
 
-export function PlayerNotYetPlayed({
+export async function PlayerNotYetPlayed({
   playerName,
   draftYear,
   overall,
@@ -9,20 +11,24 @@ export function PlayerNotYetPlayed({
   draftYear: number;
   overall: number;
 }) {
+  const t = await getTranslations("PlayerDetail");
   return (
     <section
       className="sports-card flex min-h-[12rem] flex-col justify-center gap-2 p-5 text-center"
-      aria-label="No NBA games yet"
+      aria-label={t("notYetTitle")}
     >
       <p className="text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
-        No NBA games yet
+        {t("notYetTitle")}
       </p>
       <p className="mx-auto max-w-md text-[15px] leading-relaxed text-foreground">
-        {playerName} was the {ordinal(overall)} pick in the {draftYear} NBA Draft and hasn&apos;t
-        played a regular-season or playoff game.
+        {t("notYetBody", {
+          name: playerName,
+          pick: ordinal(overall),
+          year: draftYear,
+        })}
       </p>
       <p className="mx-auto max-w-md text-[13px] leading-relaxed text-muted-foreground">
-        Percentiles, season stats and game logs fill in after his first game.
+        {t("notYetHint")}
       </p>
     </section>
   );

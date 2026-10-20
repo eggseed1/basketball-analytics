@@ -5,7 +5,14 @@
 import assert from "node:assert/strict";
 
 import { createGeneratedLeague } from "../src/gm/seed/create-league";
-import { considerIncomingOffer, offerDay } from "../src/gm/engine/offers";
+import {
+  considerIncomingOffer,
+  offerDay,
+  offerFingerprint,
+  recordDeclinedOffer,
+  tradeMarketHeat,
+} from "../src/gm/engine/offers";
+import { tradeDeadlineDay } from "../src/gm/engine/schedule";
 import { cpuDeadlineTrades } from "../src/gm/engine/trades";
 import {
   dealImprovesFit,
@@ -115,12 +122,23 @@ league = boostPos(league, "bos", "SG", 4);
 league = boostPos(league, "bos", "SF", 4);
 league = boostPos(league, "bos", "PF", 4);
 league = boostPos(league, "cha", "C", 10);
+const deadlineDay = Math.max(tradeDeadlineDay(league.schedule), 100);
+let offerCallDay: number | null = null;
+for (let day = deadlineDay - 1; day >= Math.floor(deadlineDay * 0.5); day -= 1) {
+  if (offerDay(day, false, deadlineDay)) {
+    offerCallDay = day;
+    break;
+  }
+}
+assert.ok(offerCallDay != null, "expected at least one natural offer day near the deadline");
 league = {
   ...league,
   phase: "regular",
-  day: 14,
+  day: offerCallDay!,
   tradeDeadlinePassed: false,
   incomingOffer: undefined,
+  declinedOffers: [],
+  lastOfferResolvedDay: undefined,
 };
 
 assert.equal(tradeStance(league, "bos"), "buy");
@@ -149,11 +167,43 @@ assert.equal(
   "peer SG swap is not a fit win"
 );
 
-assert.equal(offerDay(14, false), true);
+assert.ok(tradeMarketHeat(100, 110) > tradeMarketHeat(18, 110));
+assert.equal(offerDay(100, false, 110, 0.05), true);
+assert.equal(offerDay(5, false, 110), false);
+assert.equal(
+  offerDay(100, false, 110, 0.25),
+  false,
+  "deadline days stay rarer than a coin flip"
+);
 const offered = considerIncomingOffer(league);
 assert.ok(offered.incomingOffer, "CPU should call with a fit-based offer");
 
 const offer = offered.incomingOffer!;
+const declined = recordDeclinedOffer(offered, offer);
+assert.ok(declined.declinedOffers?.some((row) => row.key === offerFingerprint(offer.fromTeamId, offer.fromAssets, offer.toAssets)));
+assert.equal(declined.incomingOffer, undefined);
+const bounce = considerIncomingOffer({
+  ...declined,
+  day: declined.day + 1,
+  lastOfferResolvedDay: undefined,
+});
+assert.equal(
+  bounce.incomingOffer == null ||
+    bounce.incomingOffer.fromTeamId !== offer.fromTeamId ||
+    offerFingerprint(
+      bounce.incomingOffer.fromTeamId,
+      bounce.incomingOffer.fromAssets,
+      bounce.incomingOffer.toAssets
+    ) !== offerFingerprint(offer.fromTeamId, offer.fromAssets, offer.toAssets),
+  true,
+  "declined package must not bounce back the next day"
+);
+const gapBlocked = considerIncomingOffer({
+  ...declined,
+  day: declined.day + 2,
+  declinedOffers: [],
+});
+assert.equal(gapBlocked.incomingOffer, undefined, "global offer gap after a decline");
 const fromPlayers = offer.fromAssets
   .filter((a) => a.type === "player")
   .map((a) => league.players.find((p) => p.id === a.id)!)

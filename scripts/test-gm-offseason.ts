@@ -5,15 +5,20 @@
 import assert from "node:assert/strict";
 
 import {
+  cullUnsignedFreeAgents,
   enterFreeAgency,
   noteTradeDeadline,
   runCpuFreeAgency,
+  shouldRetireUnsigned,
   signingAllowed,
   startNextSeason,
 } from "../src/gm/engine/offseason";
 import { evaluateSigning, tradeSalaryLegal } from "../src/gm/engine/cap";
 import { createGeneratedLeague } from "../src/gm/seed/create-league";
-import { getCbaRules } from "../src/gm/myleague/cba-registry";
+import {
+  getCbaRules,
+  latestCapSeasonEndYear,
+} from "../src/gm/myleague/cba-registry";
 import type { GmPlayer } from "../src/gm/types";
 
 const league = createGeneratedLeague({
@@ -168,6 +173,8 @@ const deadline = noteTradeDeadline({
   ...league,
   day: 200,
   phase: "regular",
+  // Checkpoint was answered; the deadline can close.
+  seenCheckpoints: ["trade_deadline"],
 });
 assert.equal(deadline.tradeDeadlinePassed, true);
 const locked = noteTradeDeadline(deadline);
@@ -175,5 +182,42 @@ assert.equal(
   locked.news.filter((item) => item.headline.includes("deadline")).length,
   1
 );
+
+const lastOfficial = latestCapSeasonEndYear();
+const official = getCbaRules(lastOfficial);
+const projected = getCbaRules(lastOfficial + 4);
+assert.ok(
+  projected.salaryCapM > official.salaryCapM,
+  "cap should keep growing after the last official year"
+);
+assert.ok(
+  projected.luxuryTaxM > official.luxuryTaxM,
+  "tax line should track projected cap growth"
+);
+assert.ok(
+  (projected.firstApronM ?? 0) > (official.firstApronM ?? 0),
+  "aprons should track projected cap growth"
+);
+assert.ok(
+  projected.notes?.includes("Projected"),
+  "projected years should say so in the notes"
+);
+
+const fringe = withContract(bos[0]!, 0, null, -1);
+fringe.teamId = null;
+fringe.contract = null;
+fringe.age = 32;
+fringe.sheet = { ...fringe.sheet!, overall: 60 };
+assert.equal(shouldRetireUnsigned(fringe), true, "old fringe FA should retire");
+const starFa = withContract(bos[1]!, 0, null, 4);
+starFa.teamId = null;
+starFa.contract = null;
+starFa.age = 34;
+starFa.sheet = { ...starFa.sheet!, overall: 82 };
+assert.equal(shouldRetireUnsigned(starFa), false, "star FA can hang on");
+const culled = cullUnsignedFreeAgents([fringe, starFa, bos[2]!]);
+assert.ok(!culled.players.some((player) => player.id === fringe.id));
+assert.ok(culled.players.some((player) => player.id === starFa.id));
+assert.ok(culled.players.some((player) => player.id === bos[2]!.id));
 
 console.log("gm offseason: ok");

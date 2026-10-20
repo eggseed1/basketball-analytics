@@ -1,0 +1,80 @@
+[
+  {
+    "locale": "en",
+    "status": 200,
+    "lang": "en",
+    "htmlKb": 669.5,
+    "ok": true
+  },
+  {
+    "locale": "es",
+    "status": 200,
+    "lang": "es",
+    "htmlKb": 672.4,
+    "ok": true
+  },
+  {
+    "locale": "fr",
+    "status": 200,
+    "lang": "fr",
+    "htmlKb": 672.8,
+    "ok": true
+  },
+  {
+    "locale": "de",
+    "status": 200,
+    "lang": "de",
+    "htmlKb": 671.4,
+    "ok": true
+  },
+  {
+    "locale": "pt-BR",
+    "status": 200,
+    "lang": "pt-BR",
+    "htmlKb": 672.1,
+    "ok": true
+  },
+  {
+    "locale": "ko",
+    "status": 200,
+    "lang": "ko",
+    "htmlKb": 672.5,
+    "ok": true
+  },
+  {
+    "locale": "ja",
+    "status": 200,
+    "lang": "ja",
+    "htmlKb": 674.6,
+    "ok": true
+  },
+  {
+    "locale": "zh-Hans",
+    "status": 200,
+    "lang": "zh-Hans",
+    "htmlKb": 668.8,
+    "ok": true
+  },
+  {
+    "locale": "zh-Hant",
+    "status": 200,
+    "lang": "zh-Hant",
+    "htmlKb": 668.8,
+    "ok": true
+  },
+  {
+    "locale": "auto(ja)",
+    "status": 200,
+    "lang": "ja",
+    "htmlKb": 674.6,
+    "ok": true
+  },
+  {
+    "locale": "en-XA",
+    "status": 200,
+    "lang": "en",
+    "hasPseudo": false,
+    "htmlKb": 669.5,
+    "ok": true
+  }
+]

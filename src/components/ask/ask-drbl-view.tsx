@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import {
   FormEvent,
@@ -86,41 +87,44 @@ function askHrefWithContext(
   return `/ask?${params.toString()}`;
 }
 
-function statusMeta(status: AskDrblResult["status"]): {
+function statusMeta(
+  status: AskDrblResult["status"],
+  t: ReturnType<typeof useTranslations<"Ask">>
+): {
   title: string;
   className: string;
 } {
   switch (status) {
     case "ok":
-      return { title: "OK", className: "border-border bg-secondary/30" };
+      return { title: t("status_ok"), className: "border-border bg-secondary/30" };
     case "partial":
       return {
-        title: "Partially supported",
+        title: t("status_partial"),
         className: "border-amber-700/40 bg-amber-950/10",
       };
     case "ambiguous":
       return {
-        title: "Ambiguous",
+        title: t("status_ambiguous"),
         className: "border-border bg-secondary/50",
       };
     case "unsupported":
       return {
-        title: "Unsupported",
+        title: t("status_unsupported"),
         className: "border-border bg-secondary/40",
       };
     case "invalid":
       return {
-        title: "Invalid",
+        title: t("status_invalid"),
         className: "border-border bg-secondary/40",
       };
     case "no_result":
       return {
-        title: "No result",
+        title: t("status_no_result"),
         className: "border-border bg-secondary/40",
       };
     case "insufficient_data":
       return {
-        title: "Insufficient data",
+        title: t("status_insufficient_data"),
         className: "border-border bg-secondary/40",
       };
     default:
@@ -135,12 +139,13 @@ function AmbiguityPicker({
   result: AskDrblResult;
   askContext?: AskContext | null;
 }) {
+  const t = useTranslations("Ask");
   const groups = result.ast.ambiguous ?? [];
   if (!groups.length) return null;
   return (
     <div className="mt-4 flex flex-col gap-3">
       <h3 className="text-[16px] font-bold tracking-tight">
-        Which player did you mean?
+        {t("whichPlayer")}
       </h3>
       <ul className="flex flex-col gap-2">
         {groups.flatMap((a) =>
@@ -187,7 +192,7 @@ function AmbiguityPicker({
                 })}
                 className="shrink-0 text-[12px] font-semibold text-muted-foreground underline-offset-2 hover:underline"
               >
-                Continue <LinkCue />
+                {t("continue")} <LinkCue />
               </AppLink>
             </li>
           ))
@@ -198,12 +203,13 @@ function AmbiguityPicker({
 }
 
 function QueryPlanDisclosure({ result }: { result: AskDrblResult }) {
+  const t = useTranslations("Ask");
   const rows = result.queryPlan;
   if (!rows?.length) return null;
   return (
     <details className="sports-card px-4 py-3 sm:px-5">
       <summary className="cursor-pointer text-[14px] font-bold tracking-tight">
-        How did DRBL interpret this?
+        {t("interpretDisclosure")}
       </summary>
       <dl className="mt-3 grid gap-2 sm:grid-cols-2">
         {rows.map((row) => (
@@ -226,8 +232,9 @@ function StatusBanner({
   result: AskDrblResult;
   askContext?: AskContext | null;
 }) {
+  const t = useTranslations("Ask");
   if (result.status === "ok") return null;
-  const meta = statusMeta(result.status);
+  const meta = statusMeta(result.status, t);
   const statusConcept = conceptIdForAskStatus(result.status);
   return (
     <section className={cn("rounded-md border px-4 py-3", meta.className)}>
@@ -552,6 +559,7 @@ export function AskDrblView({
   exampleSeed?: string;
   askContext?: AskContext | null;
 }) {
+  const t = useTranslations("Ask");
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [mode, setMode] = useState<AskInputMode>(initialMode);
@@ -670,13 +678,11 @@ export function AskDrblView({
             conceptId="ask_drbl"
             labelClassName="font-bold tracking-tight"
           >
-            ASK DRBL
+            {t("title")}
           </MetricHelp>
         </h1>
         <p className="max-w-2xl text-[16px] text-muted-foreground">
-          {hasResult
-            ? "Ask another question, or refine with the structured builder."
-            : "Type a question or use the guided builder. Both run the same query engine. This is not a chatbot."}
+          {hasResult ? t("subtitleWithResult") : t("subtitleIdle")}
         </p>
       </header>
 
@@ -687,18 +693,17 @@ export function AskDrblView({
         >
           <div className="min-w-0">
             <p className="text-[12px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
-              Historical context
+              {t("historicalContext")}
             </p>
             <p className="text-[16px] font-bold tracking-tight">
               {askContext!.season}
               {askContext?.source === "time_machine"
-                ? " · Time Machine"
+                ? ` · ${t("timeMachine")}`
                 : ""}
             </p>
             {askContext?.date ? (
               <p className="text-[12px] text-muted-foreground">
-                Date on file: {askContext.date} (not applied to season-level
-                ASK)
+                {t("dateOnFile", { date: askContext.date })}
               </p>
             ) : null}
           </div>
@@ -708,7 +713,7 @@ export function AskDrblView({
                 href={historyBack}
                 className="text-[12px] font-semibold text-muted-foreground underline-offset-2 hover:underline"
               >
-                Back to {askContext!.season} Time Machine
+                {t("backToTimeMachine", { season: askContext!.season ?? "" })}
               </AppLink>
             ) : null}
             <button
@@ -716,20 +721,20 @@ export function AskDrblView({
               onClick={clearContext}
               className="rounded-md border border-border bg-background px-2.5 py-1 text-[12px] font-semibold"
             >
-              × Clear context
+              {t("clearContext")}
             </button>
           </div>
         </div>
       ) : null}
 
       <SegmentedControl
-        label="How to ask"
+        label={t("howToAsk")}
         className="gap-0 [&_p]:sr-only"
         size="sm"
         value={mode}
         options={[
-          { id: "natural", label: "Ask naturally" },
-          { id: "builder", label: "Build a query" },
+          { id: "natural", label: t("modeNatural") },
+          { id: "builder", label: t("modeBuilder") },
         ]}
         onChange={setMode}
       />
@@ -737,14 +742,14 @@ export function AskDrblView({
       {mode === "natural" ? (
         <form onSubmit={onSubmit} className="flex flex-col gap-2">
           <label className="sr-only" htmlFor="ask-drbl-input">
-            Ask DRBL
+            {t("inputLabel")}
           </label>
           <textarea
             id="ask-drbl-input"
             value={value}
             onChange={(e) => setValue(e.target.value)}
             rows={2}
-            placeholder="Ask a basketball analytics question…"
+            placeholder={t("placeholder")}
             className={askTextareaClassName}
           />
           <div className="flex flex-wrap items-center gap-2">
@@ -753,10 +758,10 @@ export function AskDrblView({
               disabled={pending || !value.trim()}
               className={askSubmitClassName}
             >
-              {pending ? "Running…" : hasResult ? "Ask another" : "Run query"}
+              {pending ? t("running") : hasResult ? t("askAnother") : t("runQuery")}
             </button>
             <p className="type-caption text-muted-foreground">
-              Results are shareable via the URL.
+              {t("shareableNote")}
             </p>
           </div>
         </form>
@@ -780,7 +785,7 @@ export function AskDrblView({
         >
           {pending ? (
             <p className="mb-2 text-[12px] font-semibold text-muted-foreground">
-              Updating…
+              {t("updating")}
             </p>
           ) : null}
           <AskResultBlock key={displayResult.rawQuery} result={displayResult} askContext={askContext} />
@@ -791,7 +796,7 @@ export function AskDrblView({
         <>
           <section className="flex flex-col gap-2">
             <h2 className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
-              Try asking
+              {t("tryAsking")}
             </h2>
             <ExamplesList examples={examples} onPick={submit} />
           </section>
@@ -808,14 +813,14 @@ export function AskDrblView({
         <section className="flex flex-col gap-2 border-t border-border pt-4">
           <div className="flex items-center justify-between gap-2">
             <h2 className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
-              Try another question
+              {t("tryAnother")}
             </h2>
             <button
               type="button"
               onClick={() => setExamplesOpen((v) => !v)}
               className="text-[12px] font-semibold text-muted-foreground underline-offset-2 hover:underline"
             >
-              {examplesOpen ? "Hide" : "Show examples"}
+              {examplesOpen ? t("hideExamples") : t("showExamples")}
             </button>
           </div>
           {examplesOpen ? (
@@ -846,18 +851,19 @@ function RecentSection({
   onClear: () => void;
   compact?: boolean;
 }) {
+  const t = useTranslations("Ask");
   return (
     <section className="flex flex-col gap-2">
       <div className="flex items-center justify-between gap-2">
         <h2 className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
-          Recent
+          {t("recent")}
         </h2>
         <button
           type="button"
           onClick={onClear}
           className="text-[12px] font-semibold text-muted-foreground underline-offset-2 hover:underline"
         >
-          Clear
+          {t("clear")}
         </button>
       </div>
       <ul className="flex flex-col gap-1.5">

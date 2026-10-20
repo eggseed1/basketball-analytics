@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { useTranslations } from "next-intl";
 
 import { ChoiceChip, ChoiceTrack } from "@/components/ui/choice-chip";
 import { cn } from "@/lib/utils";
@@ -18,6 +19,7 @@ export function LearnHeader({
   onDepth: (d: "plain" | "deep") => void;
   children?: ReactNode;
 }) {
+  const t = useTranslations("Learn");
   return (
     <header className="flex flex-col gap-3">
       <h1 className="text-[2rem] font-bold tracking-tight sm:text-[2.25rem]">
@@ -28,12 +30,12 @@ export function LearnHeader({
       </p>
       {children}
       {depth ? (
-        <ChoiceTrack role="group" aria-label="Explanation depth" className="w-fit">
+        <ChoiceTrack role="group" aria-label={t("depthAria")} className="w-fit">
           <DepthButton active={depth === "plain"} onClick={() => onDepth("plain")}>
-            Plain
+            {t("depthPlain")}
           </DepthButton>
           <DepthButton active={depth === "deep"} onClick={() => onDepth("deep")}>
-            Full depth
+            {t("depthFull")}
           </DepthButton>
         </ChoiceTrack>
       ) : null}
@@ -102,9 +104,10 @@ export function LearnBullets({
 }
 
 export function LearnFormula({ children }: { children: ReactNode }) {
+  const t = useTranslations("LearnPages");
   return (
     <div>
-      <h3 className="text-[15px] font-semibold">Formula</h3>
+      <h3 className="text-[15px] font-semibold">{t("formula")}</h3>
       <div className="mt-1.5 whitespace-pre-wrap rounded-xl bg-secondary/80 px-3 py-2 font-mono text-[14px] leading-snug">
         {children}
       </div>

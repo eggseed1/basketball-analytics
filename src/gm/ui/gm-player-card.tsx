@@ -10,7 +10,8 @@ import {
   ATTRIBUTE_LABEL,
   playerSheet,
 } from "@/gm/engine/attributes";
-import { scoutPotentialView } from "@/gm/engine/scouting";
+import { playerDevTrait, traitLabel } from "@/gm/engine/dev-traits";
+import { scoutPotentialView, trajectoryRead } from "@/gm/engine/scouting";
 import { rateLabel, shotLabel, simCountingLine } from "@/gm/lib/counting";
 import { valueForBoard } from "@/gm/lib/season-line";
 import { displayPlayerName, userTeam } from "@/gm/lib/selectors";
@@ -21,6 +22,7 @@ import { NBA_TEAM_META } from "@/data/providers/nba/nba-team-meta";
 import { DRBL_PUBLIC_RATE_LABEL, WAR1_LABEL, formatWar1 } from "@/lib/drbl-public-labels";
 import { UNAVAILABLE_STAT_LABEL, formatNumber } from "@/lib/format";
 import { resolveTeamBrand } from "@/lib/nba-brand";
+import { cn } from "@/lib/utils";
 
 const CLUB_BY_NAME = new Map(
   Object.values(NBA_TEAM_META).flatMap((team) => [
@@ -127,11 +129,14 @@ export function GmPlayerCard({
   const sim = simCountingLine(league, player.id);
   const value = valueForBoard(league, player);
   const sheet = playerSheet(player);
-  const scoutRead = scoutPotentialView(player, userTeam(league).staff.scout);
+  const scout = userTeam(league).staff.scout;
+  const scoutRead = scoutPotentialView(player, scout);
   const inDraft = league.draftPool.includes(player.id);
   const mine = userTeam(league);
   const onRoster = player.teamId === mine.id;
   const shownName = displayPlayerName(player);
+  const trait = inDraft ? null : playerDevTrait(player);
+  const profile = player.scoutProfile;
   const [career, setCareer] = useState<CareerRow[] | null>(null);
   const [careerNote, setCareerNote] = useState<string | null>(null);
   const [awards, setAwards] = useState<AwardChip[]>([]);
@@ -239,98 +244,165 @@ export function GmPlayerCard({
           ) : null}
         </div>
         <div className="gm-player__impact">
-          <p className="score-num">{sheet.overall}</p>
+          <p className="score-num">{inDraft ? "??" : sheet.overall}</p>
           <p>OVR</p>
-          <p>
-            {WAR1_LABEL} {formatWar1(value.war1, 1)}
-          </p>
-          <p>
-            {DRBL_PUBLIC_RATE_LABEL} {formatWar1(value.drbl100, 1)}
-          </p>
-          <p>
-            Scout {scoutRead.low}-{scoutRead.high}
-          </p>
+          {trait ? (
+            <p
+              className={cn(
+                trait === "xfactor" || trait === "superstar"
+                  ? "font-semibold text-amber-600 dark:text-amber-300"
+                  : undefined
+              )}
+            >
+              {traitLabel(trait)}
+            </p>
+          ) : inDraft ? (
+            <p>Trait sealed</p>
+          ) : null}
+          {!inDraft ? (
+            <>
+              <p>
+                {WAR1_LABEL} {formatWar1(value.war1, 1)}
+              </p>
+              <p>
+                {DRBL_PUBLIC_RATE_LABEL} {formatWar1(value.drbl100, 1)}
+              </p>
+            </>
+          ) : (
+            <p>
+              Ceiling {profile?.compCeiling ?? "Foggy"}
+            </p>
+          )}
           <p>
             {player.contract
               ? `$${formatNumber(player.contract.annualSalaryM, 1)}M · ${player.contract.yearsRemaining} yr`
-              : "No deal"}
+              : inDraft
+                ? "Undrafted"
+                : "No deal"}
           </p>
         </div>
       </section>
 
       <section className="sports-card p-4">
-        <h3 className="font-semibold">Ratings</h3>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Overall is the rating used across the league. The true ceiling stays
-          with the scouting staff.
-        </p>
-        <p className="mt-2 text-sm">
-          Scouted potential {scoutRead.low}-{scoutRead.high}. {scoutRead.comment}
-        </p>
-        {player.sheet?.potential ? (
-          <p className="mt-1 text-sm text-muted-foreground">
-            Peak years {player.sheet.potential.peakStart} to {player.sheet.potential.peakEnd}. The
-            summer is the big jump. January and the end of the season move the rating a step.
-          </p>
-        ) : null}
+        <h3 className="font-semibold">{inDraft ? "Scout report" : "Ratings"}</h3>
         {inDraft ? (
-          <p className="mt-2 text-sm text-muted-foreground">
-            Not in the league yet.{" "}
-            <Link href="/gm/draft" className="underline underline-offset-2">
-              Open the draft board
-            </Link>
-            .
-          </p>
-        ) : null}
-        <div className="mt-3 flex flex-col gap-3">
-          {ATTRIBUTE_GROUPS.map((group) => (
-            <div key={group.label}>
+          <>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Overall and the development trait unlock when the pick is in.
+              Grades below can be wrong depending on your scout.
+            </p>
+            <div className="mt-3 rounded-lg bg-secondary/70 px-3 py-2">
               <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                {group.label}
+                NBA comps
               </p>
-              <div className="mt-1 grid gap-1 sm:grid-cols-2">
-                {group.keys.map((key) => {
-                  const value = sheet.attributes[key];
-                  return (
-                    <div key={key} className="gm-attr">
-                      <span>{ATTRIBUTE_LABEL[key]}</span>
-                      <span className="gm-attr__track">
-                        <span style={{ width: `${value}%` }} />
-                      </span>
-                      <span className="tabular-nums">{value}</span>
-                    </div>
-                  );
-                })}
-              </div>
+              <p className="mt-1 text-sm font-semibold">
+                Ceiling {profile?.compCeiling ?? profile?.comps?.[0] ?? "Foggy"}
+              </p>
+              <p className="text-sm font-semibold">
+                Floor {profile?.compFloor ?? profile?.comps?.[1] ?? "Foggy"}
+              </p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {trajectoryRead(player, scout)}
+              </p>
             </div>
-          ))}
-        </div>
-        <h4 className="mt-4 font-semibold">Tendencies</h4>
-        <p className="mt-1 text-sm text-muted-foreground">
-          How often the player takes the action. The attribute is whether it works.
-        </p>
-        <div className="mt-2 grid gap-1 sm:grid-cols-2">
-          {(
-            [
-              ["Close", sheet.tendencies.shootClose],
-              ["Mid", sheet.tendencies.shootMid],
-              ["Three", sheet.tendencies.shootThree],
-              ["Drive", sheet.tendencies.drive],
-              ["Post", sheet.tendencies.postUp],
-              ["Pass", sheet.tendencies.dish],
-              ["Steal", sheet.tendencies.steal],
-              ["Block", sheet.tendencies.block],
-            ] as const
-          ).map(([label, value]) => (
-            <div key={label} className="gm-attr">
-              <span>{label}</span>
-              <span className="gm-attr__track">
-                <span style={{ width: `${value}%` }} />
-              </span>
-              <span className="tabular-nums">{value}</span>
+            <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
+              {(
+                [
+                  ["Athleticism", profile?.grades.athleticism],
+                  ["Shooting", profile?.grades.shooting],
+                  ["Creation", profile?.grades.creation],
+                  ["Defense", profile?.grades.defense],
+                  ["Feel", profile?.grades.feel],
+                  ["Upside", profile?.grades.upside],
+                ] as const
+              ).map(([label, grade]) => (
+                <div key={label} className="rounded-lg bg-secondary/70 px-2.5 py-1.5">
+                  <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+                    {label}
+                  </p>
+                  <p className="text-sm font-semibold tabular-nums">{grade ?? "?"}</p>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+            <p className="mt-3 text-sm text-muted-foreground">
+              Not in the league yet.{" "}
+              <Link href="/gm/draft" className="underline underline-offset-2">
+                Open the draft board
+              </Link>
+              .
+            </p>
+          </>
+        ) : (
+          <>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Overall is the rating used across the league. Development trait
+              drives how hard they grow.
+            </p>
+            <p className="mt-2 text-sm">
+              Scouted potential {scoutRead.low}-{scoutRead.high}. {scoutRead.comment}
+            </p>
+            {player.sheet?.potential ? (
+              <p className="mt-1 text-sm text-muted-foreground">
+                Peak years {player.sheet.potential.peakStart} to{" "}
+                {player.sheet.potential.peakEnd}. The summer is the big jump.
+                January and the end of the season move the rating a step.
+              </p>
+            ) : null}
+          </>
+        )}
+        {!inDraft ? (
+          <>
+            <div className="mt-3 flex flex-col gap-3">
+              {ATTRIBUTE_GROUPS.map((group) => (
+                <div key={group.label}>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    {group.label}
+                  </p>
+                  <div className="mt-1 grid gap-1 sm:grid-cols-2">
+                    {group.keys.map((key) => {
+                      const value = sheet.attributes[key];
+                      return (
+                        <div key={key} className="gm-attr">
+                          <span>{ATTRIBUTE_LABEL[key]}</span>
+                          <span className="gm-attr__track">
+                            <span style={{ width: `${value}%` }} />
+                          </span>
+                          <span className="tabular-nums">{value}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <h4 className="mt-4 font-semibold">Tendencies</h4>
+            <p className="mt-1 text-sm text-muted-foreground">
+              How often the player takes the action. The attribute is whether it works.
+            </p>
+            <div className="mt-2 grid gap-1 sm:grid-cols-2">
+              {(
+                [
+                  ["Close", sheet.tendencies.shootClose],
+                  ["Mid", sheet.tendencies.shootMid],
+                  ["Three", sheet.tendencies.shootThree],
+                  ["Drive", sheet.tendencies.drive],
+                  ["Post", sheet.tendencies.postUp],
+                  ["Pass", sheet.tendencies.dish],
+                  ["Steal", sheet.tendencies.steal],
+                  ["Block", sheet.tendencies.block],
+                ] as const
+              ).map(([label, value]) => (
+                <div key={label} className="gm-attr">
+                  <span>{label}</span>
+                  <span className="gm-attr__track">
+                    <span style={{ width: `${value}%` }} />
+                  </span>
+                  <span className="tabular-nums">{value}</span>
+                </div>
+              ))}
+            </div>
+          </>
+        ) : null}
       </section>
 
       <section className="sports-card p-4">

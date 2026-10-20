@@ -7,8 +7,9 @@ export function staffBillM(team: GmTeam): number {
   const associate = team.staff.associate?.salaryM ?? 0;
   const trainer = team.staff.trainer?.salaryM ?? 0;
   const scout = team.staff.scout?.salaryM ?? 0;
+  const developer = team.staff.developer?.salaryM ?? 0;
   const dead = (team.staff.dead ?? []).reduce((sum, row) => sum + row.annualM, 0);
-  return Math.round((coach + associate + trainer + scout + dead) * 10) / 10;
+  return Math.round((coach + associate + trainer + scout + developer + dead) * 10) / 10;
 }
 
 export function staffRoom(team: GmTeam, overTax: boolean): { billM: number; budgetM: number; roomM: number } {
@@ -30,7 +31,7 @@ export function hireQuote(
   team: GmTeam,
   overTax: boolean,
   next: { salaryM: number },
-  replace: "head" | "associate" | "trainer" | "scout"
+  replace: "head" | "associate" | "trainer" | "scout" | "developer"
 ): { ok: boolean; billM: number; budgetM: number; reason: string } {
   const budgetM = staffBudgetM(team, overTax);
   let bill = staffBillM(team);
@@ -44,6 +45,8 @@ export function hireQuote(
     if (buyout) bill += buyout.annualM;
   } else if (replace === "trainer") {
     bill -= team.staff.trainer?.salaryM ?? 0;
+  } else if (replace === "developer") {
+    bill -= team.staff.developer?.salaryM ?? 0;
   } else {
     bill -= team.staff.scout?.salaryM ?? 0;
   }

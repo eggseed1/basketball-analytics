@@ -1,11 +1,20 @@
+import { getTranslations } from "next-intl/server";
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 
-export const metadata: Metadata = {
-  alternates: { canonical: "/gm" },
-  title: "Franchise Lab",
-  description: "Basketball front-office GM simulation.",
-};
+import { RouteMessagesProvider } from "@/components/i18n/route-messages-provider";
 
-export default function GmLayout({ children }: { children: React.ReactNode }) {
-  return children;
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("GmUi");
+  return {
+    alternates: { canonical: "/gm" },
+    title: t("metaTitle"),
+    description: t("metaDescription"),
+  };
+}
+
+export default function GmLayout({ children }: { children: ReactNode }) {
+  return (
+    <RouteMessagesProvider extras={["GmUi"]}>{children}</RouteMessagesProvider>
+  );
 }

@@ -3,12 +3,46 @@ import type {
   GmDefense,
   GmOffense,
   GmPlayer,
+  GmRotationDepth,
   GmTeam,
   GmTempo,
 } from "@/gm/types";
-import { positionalMinuteTargets, rotationTarget, slotAccepts } from "@/gm/engine/lineup";
+import {
+  autoSetLineup,
+  clampRotationDepth,
+  DEFAULT_ROTATION_DEPTH,
+  positionalMinutePlan,
+  positionalMinuteTargets,
+  rotationQuality,
+  rotationTarget,
+  slotAccepts,
+} from "@/gm/engine/lineup";
 import type { GmPosition } from "@/gm/types";
 import { clamp } from "@/gm/engine/rng";
+
+export {
+  clampRotationDepth,
+  minutesPerPosition,
+  positionalMinutePlan,
+  resolveCoverSlot,
+  rotationQuality,
+  POSITION_MINUTE_TARGET,
+} from "@/gm/engine/lineup";
+
+export const ROTATION_DEPTH_OPTIONS: Array<{
+  id: GmRotationDepth;
+  label: string;
+  detail: string;
+}> = [
+  { id: 6, label: "6-man", detail: "Death lineup. One bench seat shares the scraps." },
+  { id: 7, label: "7-man", detail: "Starters eat the night. Thin bench." },
+  { id: 8, label: "8-man", detail: "Tight book. Five starters and three backups." },
+  { id: 9, label: "9-man", detail: "One extra body. A ninth eats short minutes." },
+  { id: 10, label: "10-man", detail: "Full dress. Minutes spread a little thinner." },
+  { id: 11, label: "11-man", detail: "Typical NBA night. Five starters and a deep bench." },
+  { id: 12, label: "12-man", detail: "Development night. Almost everyone touches the ball." },
+  { id: 13, label: "13-man", detail: "Everyone dresses. Stars still lead; crumbs for the end." },
+];
 
 export const OFFENSE_OPTIONS: Array<{ id: GmOffense; label: string; detail: string }> = [
   {
@@ -293,10 +327,12 @@ export function rotationChart(
 
 export function schemeHeadline(coaching?: GmCoaching): string | null {
   if (!coaching) return null;
+  const depth = clampRotationDepth(coaching.rotationDepth);
   const changed =
     coaching.offense !== "balanced" ||
     coaching.defense !== "balanced" ||
     coaching.tempo !== "normal" ||
+    depth !== DEFAULT_ROTATION_DEPTH ||
     !!coaching.playThrough[0] ||
     !!coaching.minutes;
   if (!changed) return null;
@@ -304,7 +340,8 @@ export function schemeHeadline(coaching?: GmCoaching): string | null {
   const defense = DEFENSE_OPTIONS.find((option) => option.id === coaching.defense)?.label ?? "Balanced";
   const tempo =
     coaching.tempo === "fast" ? "Fast " : coaching.tempo === "slow" ? "Slow " : "";
-  return `${tempo}${offense}, ${defense.toLowerCase()} defense`;
+  const depthBit = depth !== DEFAULT_ROTATION_DEPTH ? ` · ${depth}-man` : "";
+  return `${tempo}${offense}, ${defense.toLowerCase()} defense${depthBit}`;
 }
 
 /** The shift plan a team would send out tonight, from saved minutes or the default chart. */
@@ -321,12 +358,13 @@ export function shiftSnapshot(
     Object.values(team.starters).filter((id): id is string => !!id)
   );
   const targets = positionalMinuteTargets(roster, team.starters);
+  const cover = team.coaching?.coverSlot;
   const painted = rotationChart(
     roster.map((player) => ({
       id: player.id,
       minutes: saved ? (saved[player.id] ?? 0) : (targets[player.id] ?? rotationTarget(player)),
       starter: starterIds.has(player.id),
-      position: player.position,
+      position: cover?.[player.id] ?? player.position,
     })),
     coachingOf(team)
   );
@@ -348,6 +386,9 @@ export function coachingOf(team: GmTeam): GmCoaching {
     tempo: coach?.tempo ?? "normal",
     ...team.coaching,
     playThrough: team.coaching?.playThrough ?? [null, null],
+    rotationDepth: clampRotationDepth(
+      team.coaching?.rotationDepth ?? DEFAULT_ROTATION_DEPTH
+    ),
   };
 }
 
@@ -355,28 +396,131 @@ export function injured(player: GmPlayer): boolean {
   return !!player.injury && player.injury.gamesRemaining > 0;
 }
 
-/** Minutes that fall out of the shift chart. Injured players stay at 0. */
-export function suggestedMinutes(team: GmTeam, players: GmPlayer[]): Record<string, number> {
+/**
+ * Balanced minute totals by position (not the shift-chart rewrite).
+ * Injured players stay at 0. PaintShifts only visualizes when people play;
+ * it must not become the source of the 240-minute book.
+ */
+export function suggestedMinutePlan(
+  team: GmTeam,
+  players: GmPlayer[]
+): { minutes: Record<string, number>; coverSlot: Record<string, GmPosition> } {
   const roster = players.filter((player) => player.teamId === team.id);
-  const starterIds = new Set(
-    Object.values(team.starters).filter((id): id is string => !!id)
-  );
-  const targets = positionalMinuteTargets(
-    roster.filter((player) => !injured(player)),
-    team.starters
-  );
-  const painted = paintShifts({
-    coaching: team.coaching,
-    players: roster.map((player) => ({
-      id: player.id,
-      minutes: injured(player) ? 0 : (targets[player.id] ?? rotationTarget(player)),
-      starter: starterIds.has(player.id),
-      position: player.position,
-    })),
-  });
-  const out: Record<string, number> = {};
-  for (const row of painted) out[row.id] = row.minutes;
-  return out;
+  const healthy = roster.filter((player) => !injured(player));
+  const depth = clampRotationDepth(coachingOf(team).rotationDepth);
+  const plan = positionalMinutePlan(healthy, { starters: team.starters, depth });
+  const minutes: Record<string, number> = {};
+  for (const player of roster) {
+    minutes[player.id] = injured(player) ? 0 : (plan.minutes[player.id] ?? 0);
+  }
+  return { minutes, coverSlot: plan.coverSlot };
+}
+
+/** Minutes that fall out of the positional book. Injured players stay at 0. */
+export function suggestedMinutes(team: GmTeam, players: GmPlayer[]): Record<string, number> {
+  return suggestedMinutePlan(team, players).minutes;
+}
+
+/**
+ * Keep the current starters, rebuild a balanced 240-minute book by position.
+ * Returns minutes, cover slots, and a short read on how the room looks.
+ */
+export function autoBalanceRotation(
+  team: GmTeam,
+  players: GmPlayer[]
+): {
+  minutes: Record<string, number>;
+  coverSlot: Record<string, GmPosition>;
+  quality: number;
+} {
+  const plan = suggestedMinutePlan(team, players);
+  const roster = players.filter((player) => player.teamId === team.id);
+  return {
+    minutes: plan.minutes,
+    coverSlot: plan.coverSlot,
+    quality: rotationQuality(roster, plan.minutes, plan.coverSlot),
+  };
+}
+
+/**
+ * How much the current minutes book helps the sim.
+ * Balanced depth scores higher than five stars at 40.
+ */
+export function coachingBoost(team: GmTeam, players: GmPlayer[]): number {
+  const roster = players.filter((player) => player.teamId === team.id);
+  const minutes = team.coaching?.minutes ?? {};
+  if (!roster.length || Object.keys(minutes).length === 0) return 0.7;
+  return rotationQuality(roster, minutes, team.coaching?.coverSlot);
+}
+
+/** Full reset: auto lineup, then balanced minutes. */
+export function resetBalancedRotation(
+  team: GmTeam,
+  players: GmPlayer[]
+): { team: GmTeam; minutes: Record<string, number> } {
+  const lined = autoSetLineup(team, players);
+  const plan = suggestedMinutePlan(lined, players);
+  return {
+    team: {
+      ...lined,
+      coaching: {
+        ...coachingOf(lined),
+        minutes: plan.minutes,
+        coverSlot: plan.coverSlot,
+      },
+    },
+    minutes: plan.minutes,
+  };
+}
+
+/** Seed / league-wide pass: same book the coaching "Reset" button builds. */
+export function applyBalancedRotations<T extends { teams: GmTeam[]; players: GmPlayer[] }>(
+  league: T
+): T {
+  return {
+    ...league,
+    teams: league.teams.map(
+      (team) => resetBalancedRotation(team, league.players).team
+    ),
+  };
+}
+
+function outFlag(player: GmPlayer | undefined): boolean {
+  return Boolean(player?.injury && player.injury.gamesRemaining > 0);
+}
+
+/** Teams whose available roster changed because someone went out or came back. */
+export function teamsNeedingInjuryRebalance(
+  before: GmPlayer[],
+  after: GmPlayer[]
+): Set<string> {
+  const prev = new Map(before.map((player) => [player.id, player]));
+  const teams = new Set<string>();
+  for (const player of after) {
+    const old = prev.get(player.id);
+    if (outFlag(old) === outFlag(player)) continue;
+    if (player.teamId) teams.add(player.teamId);
+    if (old?.teamId) teams.add(old.teamId);
+  }
+  return teams;
+}
+
+/**
+ * Rebuild starters + balanced minutes for clubs that just lost or regained a body.
+ * Keeps injured players at 0 and puts them back in the book when they clear.
+ */
+export function rebalanceForInjuryChanges<
+  T extends { teams: GmTeam[]; players: GmPlayer[] },
+>(league: T, beforePlayers: GmPlayer[]): T {
+  const teamIds = teamsNeedingInjuryRebalance(beforePlayers, league.players);
+  if (!teamIds.size) return league;
+  return {
+    ...league,
+    teams: league.teams.map((team) => {
+      if (!teamIds.has(team.id)) return team;
+      return resetBalancedRotation(team, league.players).team;
+    }),
+  };
 }
 
 export type RateMods = {

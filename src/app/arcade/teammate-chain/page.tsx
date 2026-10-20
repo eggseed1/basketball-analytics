@@ -1,20 +1,26 @@
+import { getTranslations } from "next-intl/server";
+
 import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { TeammateChainGame } from "@/components/arcade/teammate-chain-game";
 import { PageHeader } from "@/components/layout/page-header";
 
-export const metadata = {
-  alternates: { canonical: "/arcade/teammate-chain" },
-  title: "Teammate Chain",
-  description: "Connect two NBA stars through the fewest shared teammates.",
-};
+export async function generateMetadata() {
+  const t = await getTranslations("ArcadeChain");
+  return {
+    alternates: { canonical: "/arcade/teammate-chain" },
+    title: t("metaTitle"),
+    description: t("metaDescription"),
+  };
+}
 
-export default function TeammateChainPage() {
+export default async function TeammateChainPage() {
+  const t = await getTranslations("ArcadeChain");
   return (
     <main data-motion-page className="site-shell flex flex-col gap-6 py-6 sm:py-8">
       <MotionReveal />
       <PageHeader
-        title="Teammate Chain"
-        subtitle="Get from one star to the other through players who were teammates. Fewer links is better."
+        title={t("title")}
+        subtitle={t("subtitle")}
       />
       <TeammateChainGame />
     </main>

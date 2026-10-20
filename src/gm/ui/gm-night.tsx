@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -16,7 +17,7 @@ import {
 } from "@/gm/engine/coaching";
 import { positionalMinuteTargets } from "@/gm/engine/lineup";
 import { displayPlayerName, nextUserGame, userPlayers, userTeam } from "@/gm/lib/selectors";
-import { formatTipDateLong } from "@/gm/seed/real-schedule";
+import { formatAppDateTime } from "@/i18n/format-date";
 import { useGmStore } from "@/gm/state/gm-store";
 import type { GmPlayer, GmPosition } from "@/gm/types";
 
@@ -51,18 +52,21 @@ function paint(players: GmPlayer[], starters: Record<GmPosition, string | null>,
     players.filter((player) => !injured(player)),
     starters
   );
+  const cover = coaching.coverSlot;
   return rotationChart(
     players.map((player) => ({
       id: player.id,
       minutes: injured(player) ? 0 : saved ? (saved[player.id] ?? 0) : (targets[player.id] ?? 0),
       starter: starterIds.has(player.id),
-      position: player.position,
+      position: cover?.[player.id] ?? player.position,
     })),
     coaching
   );
 }
 
 export function GmNight() {
+  const t = useTranslations("GmUi");
+  const locale = useLocale();
   const league = useGmStore((s) => s.league);
   const setCoaching = useGmStore((s) => s.setCoaching);
   const simulateNextGame = useGmStore((s) => s.simulateNextGame);
@@ -121,6 +125,16 @@ export function GmNight() {
       : next.homeTeamId
     : null;
 
+  const tipDate =
+    next?.gameDate && /^\d{4}-\d{2}-\d{2}$/.test(next.gameDate)
+      ? formatAppDateTime(`${next.gameDate}T12:00:00Z`, locale, {
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+          timeZone: "UTC",
+        })
+      : "";
+
   const tip = () => {
     if (dirty) {
       setCoaching({ minutes });
@@ -133,22 +147,23 @@ export function GmNight() {
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h2 className="text-xl font-bold tracking-tight">Tonight</h2>
+          <h2 className="text-xl font-bold tracking-tight">{t("pageNightTitle")}</h2>
           <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
             {next
-              ? `${next.homeTeamId === team.id ? "Home" : "Away"} against ${opponent?.toUpperCase()}${
-                  next.gameDate ? `, ${formatTipDateLong(next.gameDate)}` : ""
-                }. Each block is two minutes. Tap a lit block to sit that player. The next man steps in. Tap an empty block to send someone in, and the lightest minute load sits.`
-              : "No game left on the slate."}
+              ? `${t(
+                  `night${next.homeTeamId === team.id ? "Home" : "Away"}Vs${tipDate ? "Date" : ""}`,
+                  { opponent: opponent?.toUpperCase() ?? "", date: tipDate }
+                )} ${t("pageNightBlurb")}`
+              : t("nightNoGame")}
             {scheme ? ` ${scheme}.` : ""}
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
           <Button variant="outline" size="sm" onClick={() => setWalking((value) => !value)}>
-            {walking ? "Pause" : "Walk the shifts"}
+            {walking ? t("nightPause") : t("nightWalk")}
           </Button>
           <Button size="sm" disabled={!next} onClick={tip}>
-            Tip off
+            {t("nightTip")}
           </Button>
           <Button
             size="sm"
@@ -160,13 +175,17 @@ export function GmNight() {
               if (boxId) router.push(`/gm/game/${boxId}?watch=1`);
             }}
           >
-            Watch
+            {t("nightWatch")}
           </Button>
         </div>
       </div>
 
       <p className="text-sm font-semibold">
-        Q{quarter} · {clock}:00 · {onFloor.join(", ") || "No one on the floor"}
+        {t("nightFloor", {
+          quarter,
+          clock,
+          names: onFloor.join(", ") || t("nightNoOne"),
+        })}
       </p>
 
       <section className="sports-card flex flex-col gap-3 p-4">
@@ -193,7 +212,9 @@ export function GmNight() {
                   </Link>
                   <span>
                     {player.position}
-                    {out ? " · Out" : ` · ${row?.minutes ?? 0} min`}
+                    {out
+                      ? ` · ${t("nightOut")}`
+                      : ` · ${t("nightMinutes", { minutes: row?.minutes ?? 0 })}`}
                   </span>
                 </div>
                 <div className="gm-chart">
@@ -207,7 +228,11 @@ export function GmNight() {
                             key={offset}
                             type="button"
                             disabled={out}
-                            aria-label={`${displayPlayerName(player)} ${quarterLabel} block ${offset + 1}`}
+                            aria-label={t("nightBlockAria", {
+                              player: displayPlayerName(player),
+                              quarter: quarterLabel,
+                              block: offset + 1,
+                            })}
                             className={
                               lit
                                 ? index === slot
@@ -235,11 +260,9 @@ export function GmNight() {
           })}
         </ul>
         <p className="text-sm text-muted-foreground">
-          {dirty
-            ? "This plan is the one that tips off."
-            : "The chart is still the automatic rotation. A tap locks your version in."}{" "}
+          {dirty ? t("nightPlanLocked") : t("nightPlanAuto")}{" "}
           <Link href="/gm/lineup" className="font-semibold underline-offset-4 hover:underline">
-            Systems live on the coaching page.
+            {t("nightSystemsLink")}
           </Link>
         </p>
       </section>

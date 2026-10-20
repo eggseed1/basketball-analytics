@@ -1,10 +1,12 @@
+import { getTranslations } from "next-intl/server";
 import { DestinationLoadingFrame } from "@/components/continuity/destination-loading-frame";
 
-export default function Loading() {
+export default async function Loading() {
+  const t = await getTranslations("Explore");
   return (
     <DestinationLoadingFrame
-      title="Trade simulator"
-      subtitle="Salary-fit sketch and impact board."
+      title={t("tradeTitle")}
+      subtitle={t("tradeLoadingSubtitle")}
     />
   );
 }

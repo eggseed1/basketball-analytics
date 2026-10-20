@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
 
 import { AppLink } from "@/components/ui/app-link";
@@ -15,7 +16,7 @@ export function learnEyebrow(conceptId: string): string {
   return LEARN_CATEGORIES.find((c) => c.id === category)?.label ?? "Learn";
 }
 
-export function LearnPageFooter({
+export async function LearnPageFooter({
   conceptId,
   relatedIds,
   seeInAction,
@@ -24,6 +25,7 @@ export function LearnPageFooter({
   relatedIds?: string[];
   seeInAction?: Array<{ label: string; href: string }>;
 }) {
+  const t = await getTranslations("LearnPages");
   const concept = getLearnConcept(conceptId);
   const categoryLabel = learnEyebrow(conceptId);
   const selfHref = concept ? learnHrefFor(concept.id) : null;
@@ -48,21 +50,21 @@ export function LearnPageFooter({
   return (
     <footer className="mb-8 flex flex-col gap-5 border-t border-border pt-6">
       {related.length ? (
-        <FooterGroup title="Related concepts">
+        <FooterGroup title={t("relatedConcepts")}>
           {related.map((r) => (
             <Chip key={r.href} href={r.href} label={r.label} />
           ))}
         </FooterGroup>
       ) : null}
       {onSite.length ? (
-        <FooterGroup title="See it in DRBL">
+        <FooterGroup title={t("seeInDrbl")}>
           {onSite.map((a) => (
             <Chip key={a.href} href={a.href} label={a.label} cue />
           ))}
         </FooterGroup>
       ) : null}
       {sameCategory.length ? (
-        <FooterGroup title={`More in ${categoryLabel}`}>
+        <FooterGroup title={t("moreInCategory", { category: categoryLabel })}>
           {sameCategory.map((s) => (
             <Chip key={s.href} href={s.href} label={s.label} />
           ))}

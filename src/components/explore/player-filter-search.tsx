@@ -14,6 +14,7 @@ import { searchFieldClassName } from "@/components/ui/choice-chip";
 import { Input } from "@/components/ui/input";
 import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 type Hit = {
   id: string;
@@ -48,6 +49,7 @@ export function PlayerFilterSearch({
   value: string;
   onCommit: (player: string | null) => void;
 }) {
+  const t = useTranslations("Search");
   const listId = useId();
   const rootRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -299,8 +301,8 @@ export function PlayerFilterSearch({
             setActiveIndex((i) => Math.max(i - 1, 0));
           }
         }}
-        placeholder="Search player"
-        aria-label="Search player"
+        placeholder={t("playerPlaceholder")}
+        aria-label={t("playerPlaceholder")}
         autoComplete="off"
         className={searchFieldClassName}
       />

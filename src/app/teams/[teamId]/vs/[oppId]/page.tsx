@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 
 import {
@@ -46,12 +47,13 @@ function labelFor(canonicalId: string, seasonHint?: string | null): string {
 }
 
 export async function generateMetadata({ params }: PageProps) {
+  const t = await getTranslations("TeamDetail");
   const { teamId, oppId } = await params;
   const a = getCanonicalTeamById(teamId)?.abbr ?? teamId;
   const b = getCanonicalTeamById(oppId)?.abbr ?? oppId;
   return {
-    title: `${a} vs ${b} | Matchup history`,
-    description: `Matchup games between ${a} and ${b}.`,
+    title: t("vsMetaTitle", { a, b }),
+    description: t("vsMetaDescription", { a, b }),
   };
 }
 
@@ -59,6 +61,7 @@ export default async function TeamMatchupPage({
   params,
   searchParams,
 }: PageProps) {
+  const t = await getTranslations("TeamDetail");
   const { teamId, oppId } = await params;
   const sp = await searchParams;
   const page = parsePage(first(sp.gamesPage));
@@ -111,7 +114,7 @@ export default async function TeamMatchupPage({
             className="text-[13px] font-semibold text-muted-foreground"
             prefetch={false}
           >
-            ← {teamA?.abbr ?? "Team"}
+            {t("vsBackTeam", { abbr: teamA?.abbr ?? t("vsTeamFallback") })}
           </Link>
           <span className="mx-2 text-muted-foreground">·</span>
           <Link
@@ -119,50 +122,47 @@ export default async function TeamMatchupPage({
             className="text-[13px] font-semibold text-muted-foreground"
             prefetch={false}
           >
-            {teamB?.abbr ?? "Opponent"}
+            {teamB?.abbr ?? t("vsOpponentFallback")}
           </Link>
         </p>
 
         <header className="flex flex-col gap-2">
           <p className="text-[12px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
-            Franchise matchup · {summary.scope}
+            {t("vsEyebrow", { scope: summary.scope })}
           </p>
           <h1 className="text-[28px] font-bold tracking-tight sm:text-[32px]">
             {nameA} vs {nameB}
           </h1>
           <p className="max-w-2xl text-[15px] text-muted-foreground">
-            Game archive coverage starts in{" "}
-            {summary.scope.replace(/^Since /, "")}. Games are grouped by
-            franchise lineage, and each one shows the team names used at that
-            tip-off rather than today&apos;s successor brands.
+            {t("vsIntro", { since: summary.scope.replace(/^Since /, "") })}
           </p>
         </header>
 
         <section
           className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4"
-          aria-label="Matchup summary"
+          aria-label={t("vsSummaryAria")}
         >
-          <Stat label="Games" value={String(summary.games)} />
+          <Stat label={t("vsGames")} value={String(summary.games)} />
           <Stat
-            label={`${teamA?.abbr ?? "A"} wins`}
+            label={t("vsWins", { abbr: teamA?.abbr ?? "A" })}
             value={String(summary.winsA)}
           />
           <Stat
-            label={`${teamB?.abbr ?? "B"} wins`}
+            label={t("vsWins", { abbr: teamB?.abbr ?? "B" })}
             value={String(summary.winsB)}
           />
           <Stat
-            label="Playoffs / OT"
+            label={t("vsPlayoffsOt")}
             value={`${summary.playoffGames} / ${summary.otGames}`}
           />
         </section>
 
-        <nav className="flex flex-wrap gap-2 text-[13px]" aria-label="Season type">
+        <nav className="flex flex-wrap gap-2 text-[13px]" aria-label={t("vsSeasonTypeAria")}>
           {(
             [
-              ["ALL", "All"],
-              ["Regular Season", "Regular season"],
-              ["Playoffs", "Playoffs"],
+              ["ALL", t("vsAll")],
+              ["Regular Season", t("vsRegular")],
+              ["Playoffs", t("vsPlayoffs")],
             ] as const
           ).map(([st, label]) => (
             <Link
@@ -182,15 +182,19 @@ export default async function TeamMatchupPage({
 
         <section className="sports-card flex flex-col gap-3 p-4 sm:p-5">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <h2 className="text-[17px] font-bold tracking-tight">Games</h2>
+            <h2 className="text-[17px] font-bold tracking-tight">{t("vsGames")}</h2>
             <p className="text-[12px] text-muted-foreground">
-              {total.toLocaleString()} · page {result.page}/{pageCount} · ≤
-              {result.pageSize} rows
+              {t("vsGamesPageMeta", {
+                total: total.toLocaleString(),
+                page: result.page,
+                pageCount,
+                pageSize: result.pageSize,
+              })}
             </p>
           </div>
           {rows.length === 0 ? (
             <p className="text-[13px] text-muted-foreground">
-              No games in this filter.
+              {t("vsNoGames")}
             </p>
           ) : (
             <ul className="divide-y divide-border">
@@ -205,9 +209,9 @@ export default async function TeamMatchupPage({
                       {g.date}
                       <span className="ml-2 font-normal text-muted-foreground">
                         {g.awayTricode} @ {g.homeTricode}
-                        {g.ot ? " · OT" : ""}
+                        {g.ot ? ` · ${t("vsOt")}` : ""}
                         {g.seasonType.toLowerCase().includes("playoff")
-                          ? " · Playoffs"
+                          ? ` · ${t("vsPlayoffsTag")}`
                           : ""}
                       </span>
                     </span>
@@ -220,7 +224,7 @@ export default async function TeamMatchupPage({
             </ul>
           )}
           {pageCount > 1 ? (
-            <nav className="flex gap-3 text-[13px]" aria-label="Matchup pages">
+            <nav className="flex gap-3 text-[13px]" aria-label={t("vsPagesAria")}>
               {result.page > 1 ? (
                 <Link
                   href={matchupHref(summary.franchiseA, summary.franchiseB, {
@@ -230,7 +234,7 @@ export default async function TeamMatchupPage({
                   prefetch={false}
                   className="font-semibold underline-offset-2 hover:underline"
                 >
-                  ← Prev
+                  {t("vsPrev")}
                 </Link>
               ) : null}
               {result.page < pageCount ? (
@@ -242,7 +246,7 @@ export default async function TeamMatchupPage({
                   prefetch={false}
                   className="font-semibold underline-offset-2 hover:underline"
                 >
-                  Next <LinkCue />
+                  {t("vsNext")} <LinkCue />
                 </Link>
               ) : null}
             </nav>
@@ -251,7 +255,7 @@ export default async function TeamMatchupPage({
 
         {closest.length > 0 ? (
           <HighlightList
-            title="Closest on this page"
+            title={t("vsClosest")}
             rows={closest}
             detail={(g) =>
               `${Math.abs(g.homeScore - g.awayScore)} pt · ${g.awayTricode} ${g.awayScore}–${g.homeScore} ${g.homeTricode}`
@@ -260,7 +264,7 @@ export default async function TeamMatchupPage({
         ) : null}
         {largest.length > 0 ? (
           <HighlightList
-            title="Largest margins on this page"
+            title={t("vsLargestMargins")}
             rows={largest}
             detail={(g) =>
               `${Math.abs(g.homeScore - g.awayScore)} pt · ${g.awayTricode} ${g.awayScore}–${g.homeScore} ${g.homeTricode}`

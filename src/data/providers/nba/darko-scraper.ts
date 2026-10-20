@@ -7,12 +7,18 @@ import {
   CACHE_TTL_MS,
   isCurrentCanonicalSeason,
 } from "./cache-policy";
-import { brefSeasonYear } from "./bref-scraper";
+import {
+  EARLIEST_DARKO_SEASON_YEAR,
+  darkoSeasonYear,
+  isDarkoSeasonAvailable,
+} from "@/data/providers/nba/darko-season";
+
+export {
+  EARLIEST_DARKO_SEASON_YEAR,
+  isDarkoSeasonAvailable,
+} from "@/data/providers/nba/darko-season";
 
 const DEFAULT_TTL_MS = CACHE_TTL_MS.darkoCurrent;
-
-/** DARKO / darko.app season coverage starts with 1996-97. */
-export const EARLIEST_DARKO_SEASON_YEAR = 1997;
 
 export interface DarkoPlayerRow {
   /** stats.nba.com player id */
@@ -75,17 +81,7 @@ export function hydrateSvelteKitData(data: unknown[]): unknown {
   return hydrateIndex(0);
 }
 
-export function darkoSeasonYear(canonicalSeason: string): number {
-  return brefSeasonYear(canonicalSeason);
-}
-
-export function isDarkoSeasonAvailable(canonicalSeason: string): boolean {
-  try {
-    return darkoSeasonYear(canonicalSeason) >= EARLIEST_DARKO_SEASON_YEAR;
-  } catch {
-    return false;
-  }
-}
+export { darkoSeasonYear } from "@/data/providers/nba/darko-season";
 
 function darkoDataUrl(canonicalSeason: string): string {
   const base =

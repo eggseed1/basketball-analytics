@@ -1,0 +1,33 @@
+{
+  "id": "plus_minus",
+  "slug": "plus-minus",
+  "name": "Más/menos",
+  "shortName": "+/−",
+  "category": "basics",
+  "oneSentence": "El más/menos es el margen de anotación del equipo mientras un jugador está en la cancha.",
+  "whyItMatters": [
+    "Conecta los minutos individuales con los resultados del equipo, con mucho ruido por compañeros y rivales."
+  ],
+  "howToInterpret": [
+    "Un valor positivo significa que el equipo superó al rival durante esos minutos.",
+    "El +/− en bruto es ruidoso; no lo trates como habilidad individual pura."
+  ],
+  "howDrblUses": [
+    "Cajas de resultados y líneas de jugador de Game Lab cuando existen."
+  ],
+  "caveats": [
+    "Muy condicionado por la alineación y el calendario."
+  ],
+  "relatedIds": [
+    "diff",
+    "net",
+    "game_lab",
+    "on_off"
+  ],
+  "seeInAction": [
+    {
+      "label": "Marcadores",
+      "href": "/scores"
+    }
+  ]
+}

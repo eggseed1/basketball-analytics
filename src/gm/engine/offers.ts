@@ -2,12 +2,22 @@
  * Incoming trade offers. A team calls during the season, the sim stops,
  * and the user can change the package before answering.
  *
- * Offers are built from roster holes and surplus, not star-for-star swaps.
+ * Prefer juicy mutual-need swaps: each side sends surplus at a position the
+ * other club actually needs. Call volume follows a real calendar.
  */
 
-import type { GmIncomingOffer, GmLeagueState, GmPlayer, GmTradeAsset } from "@/gm/types";
-import { boardValue, evaluateTrade } from "@/gm/engine/trades";
+import type {
+  GmDeclinedOffer,
+  GmDraftPick,
+  GmIncomingOffer,
+  GmLeagueState,
+  GmPlayer,
+  GmPosition,
+  GmTradeAsset,
+} from "@/gm/types";
+import { evaluateTrade } from "@/gm/engine/trades";
 import { uid } from "@/gm/engine/rng";
+import { tradeDeadlineDay } from "@/gm/engine/schedule";
 import {
   formatStars,
   pickStars,
@@ -22,14 +32,111 @@ import {
   movablePlayers,
   needRank,
   rosterProfile,
+  surplusRank,
   targetsForBuyer,
   wantScore,
+  type RosterProfile,
 } from "@/gm/engine/roster-fit";
 
-export function offerDay(day: number, shopping: boolean): boolean {
-  if (day < 10) return false;
-  if (day % 14 === 0) return true;
-  return shopping && day % 7 === 0;
+/** Quiet stretch after any answer before another club can call. */
+const OFFER_GAP_DAYS = 7;
+/** Same caller stays away after a hard pass. */
+const TEAM_COOLDOWN_DAYS = 14;
+/** Exact package stays dead after a decline. */
+const PACKAGE_COOLDOWN_DAYS = 45;
+
+/**
+ * How hot the trade market is from tip-off (0) to the deadline (1).
+ * Mirrors the real NBA: almost nothing in October, then a ramp into February.
+ */
+export function tradeMarketHeat(day: number, deadlineDay: number): number {
+  if (day < 12 || deadlineDay <= 0 || day >= deadlineDay) return 0;
+  const p = day / deadlineDay;
+  if (p < 0.15) return 0.03;
+  if (p < 0.32) return 0.08;
+  if (p < 0.5) return 0.18;
+  if (p < 0.68) return 0.32;
+  if (p < 0.85) return 0.55;
+  return 0.85;
+}
+
+/** Daily chance an offer is considered. Pass `roll` (0–1) to make tests deterministic. */
+export function offerDay(
+  day: number,
+  shopping: boolean,
+  deadlineDay = 110,
+  roll?: number
+): boolean {
+  const heat = tradeMarketHeat(day, deadlineDay);
+  if (heat <= 0) return false;
+  // A few calls across the year, denser near the deadline — not every other night.
+  const chance = Math.min(0.2, heat * (shopping ? 0.16 : 0.09));
+  const t =
+    roll ??
+    (((((day * 2654435761) >>> 0) ^ ((deadlineDay * 1597334677) >>> 0)) >>> 0) %
+      10000) /
+      10000;
+  return t < chance;
+}
+
+function assetKey(asset: GmTradeAsset): string {
+  if (asset.type === "cash") return `cash:${asset.cashM ?? 0}`;
+  return `${asset.type}:${asset.id}`;
+}
+
+/** Stable id for a proposed package so declines can block repeats. */
+export function offerFingerprint(
+  fromTeamId: string,
+  fromAssets: GmTradeAsset[],
+  toAssets: GmTradeAsset[]
+): string {
+  const from = [...fromAssets].map(assetKey).sort().join(",");
+  const to = [...toAssets].map(assetKey).sort().join(",");
+  return `${fromTeamId}|${from}|${to}`;
+}
+
+function pruneDeclines(list: GmDeclinedOffer[] | undefined, day: number): GmDeclinedOffer[] {
+  return (list ?? []).filter((entry) => day - entry.day < PACKAGE_COOLDOWN_DAYS);
+}
+
+function isBlockedOffer(
+  league: GmLeagueState,
+  fromTeamId: string,
+  fromAssets: GmTradeAsset[],
+  toAssets: GmTradeAsset[]
+): boolean {
+  const day = league.day;
+  const declines = pruneDeclines(league.declinedOffers, day);
+  const key = offerFingerprint(fromTeamId, fromAssets, toAssets);
+  if (declines.some((entry) => entry.key === key)) return true;
+  // Same club just got waved off — give them two weeks.
+  if (
+    declines.some(
+      (entry) =>
+        entry.fromTeamId === fromTeamId && day - entry.day < TEAM_COOLDOWN_DAYS
+    )
+  ) {
+    return true;
+  }
+  return false;
+}
+
+/** Record a pass so that package (and caller) cools off. */
+export function recordDeclinedOffer(
+  league: GmLeagueState,
+  offer: GmIncomingOffer
+): GmLeagueState {
+  const key = offerFingerprint(offer.fromTeamId, offer.fromAssets, offer.toAssets);
+  const declinedOffers = [
+    { key, fromTeamId: offer.fromTeamId, day: league.day },
+    ...pruneDeclines(league.declinedOffers, league.day).filter((entry) => entry.key !== key),
+  ].slice(0, 40);
+  return {
+    ...league,
+    incomingOffer: undefined,
+    declinedOffers,
+    lastOfferResolvedDay: league.day,
+  };
 }
 
 function assetLabel(league: GmLeagueState, asset: GmTradeAsset): string {
@@ -53,11 +160,6 @@ function packageLabel(league: GmLeagueState, assets: GmTradeAsset[]): string {
   return assets.map((asset) => assetLabel(league, asset)).join(" and ");
 }
 
-function cpuCushion(league: GmLeagueState, teamId: string): number {
-  const stance = tradeStance(league, teamId);
-  return stance === "stay" ? 4 : 10;
-}
-
 function playersOf(league: GmLeagueState, assets: GmTradeAsset[]): GmPlayer[] {
   return assets
     .filter((asset) => asset.type === "player")
@@ -65,28 +167,41 @@ function playersOf(league: GmLeagueState, assets: GmTradeAsset[]): GmPlayer[] {
     .filter((player): player is GmPlayer => Boolean(player));
 }
 
-/** Both sides stay within a star of each other, and the deal is legal. */
+/**
+ * A live offer (or counter) both clubs would actually clear.
+ * Uses the same evaluateTrade bar as Propose — both directions — so we never
+ * surface a package the caller would reject if the user sent it back.
+ */
 export function offerIsFair(
   league: GmLeagueState,
   cpuId: string,
   userId: string,
   cpuAssets: GmTradeAsset[],
   userAssets: GmTradeAsset[]
-): { ok: boolean; reason?: string } {
+): { ok: boolean; reason?: string; fromValue?: number; toValue?: number } {
   if (!cpuAssets.length || !userAssets.length) {
     return { ok: false, reason: "Both sides need a piece." };
   }
-  const verdict = evaluateTrade(league, cpuId, userId, cpuAssets, userAssets);
-  if (!verdict.ok && !verdict.reason?.includes("not enough value")) {
-    return { ok: false, reason: verdict.reason };
+  // CPU → user: legal + the user gets enough on their board.
+  const userView = evaluateTrade(league, cpuId, userId, cpuAssets, userAssets);
+  if (!userView.ok) {
+    return { ok: false, reason: userView.reason };
   }
-  const sent = boardValue(league, cpuId, cpuAssets);
-  const received = boardValue(league, cpuId, userAssets);
-  if (sent - received > cpuCushion(league, cpuId)) {
-    const abbr = league.teams.find((team) => team.id === cpuId)?.abbr ?? "They";
-    return { ok: false, reason: `${abbr} will not give up that much.` };
+  // User → CPU: legal + the caller gets enough on their board.
+  // (Old code only checked "CPU does not overpay by cushion" and soft-ignored
+  // user-side value fails, so the sim offered deals Propose would reject.)
+  const cpuView = evaluateTrade(league, userId, cpuId, userAssets, cpuAssets);
+  if (!cpuView.ok) {
+    return {
+      ok: false,
+      reason: cpuView.reason ?? "They will not do that deal.",
+    };
   }
-  return { ok: true };
+  return {
+    ok: true,
+    fromValue: userView.fromValue,
+    toValue: userView.toValue,
+  };
 }
 
 function fitOk(
@@ -128,7 +243,89 @@ type Candidate = {
   cpuAssets: GmTradeAsset[];
   userAssets: GmTradeAsset[];
   score: number;
+  kind: "swap" | "buy" | "sell";
 };
+
+/** Stable shuffle so offer days do not always scan the same clubs first. */
+function shuffledTeams(league: GmLeagueState) {
+  const teams = league.teams.filter(
+    (team) => team.id !== league.userTeamId && !team.id.startsWith("as-")
+  );
+  const out = [...teams];
+  let seed = (league.day * 9973 + league.season * 131) >>> 0;
+  for (let i = out.length - 1; i > 0; i -= 1) {
+    seed = (seed * 1664525 + 1013904223) >>> 0;
+    const j = seed % (i + 1);
+    [out[i], out[j]] = [out[j]!, out[i]!];
+  }
+  return out;
+}
+
+/** Meaningful rotation piece — not a 12-minute end-of-bench body. */
+function isJuicyPiece(player: GmPlayer): boolean {
+  return overallOf(player) >= 75 || playerStars(player) >= 2.4;
+}
+
+/** Surplus the club can spare at a position the other side needs. */
+function surplusForNeed(
+  league: GmLeagueState,
+  giverId: string,
+  giverProfile: RosterProfile,
+  needPositions: GmPosition[],
+  opts?: { max?: number; minOverall?: number }
+): GmPlayer[] {
+  const needs = new Set(needPositions.slice(0, 3));
+  const min = opts?.minOverall ?? 74;
+  return movablePlayers(league, giverId, { max: 12, minOverall: min })
+    .filter((player) => {
+      if (!needs.has(player.position)) return false;
+      if (!isJuicyPiece(player)) return false;
+      // Prefer depth/surplus over ripping the giver's own top need.
+      const theirHole = needRank(giverProfile, player.position);
+      const deep = surplusRank(giverProfile, player.position);
+      if (theirHole <= 1 && deep > 1) return false;
+      return deep <= 2 || theirHole >= 2;
+    })
+    .sort(
+      (a, b) =>
+        surplusRank(giverProfile, a.position) - surplusRank(giverProfile, b.position) ||
+        overallOf(b) - overallOf(a)
+    )
+    .slice(0, opts?.max ?? 5);
+}
+
+function pickSweetener(
+  picks: GmDraftPick[],
+  league: GmLeagueState,
+  maxStars: number
+) {
+  return picks.find((pick) => pickStars(league, pick) <= maxStars) ?? null;
+}
+
+function offerNote(
+  league: GmLeagueState,
+  cpuId: string,
+  cpuAssets: GmTradeAsset[],
+  userAssets: GmTradeAsset[],
+  kind: Candidate["kind"]
+): string {
+  const city = league.teams.find((team) => team.id === cpuId)?.city ?? "A team";
+  const cpuPlayers = playersOf(league, cpuAssets);
+  const userPlayers = playersOf(league, userAssets);
+  const cpuPos = cpuPlayers.map((player) => player.position).join("/");
+  const userPos = userPlayers.map((player) => player.position).join("/");
+  const packageBit = `${packageLabel(league, cpuAssets)} for ${packageLabel(league, userAssets)}`;
+  if (kind === "swap" && cpuPos && userPos && cpuPos !== userPos) {
+    return `${city} wants ${userPos} help and will send ${cpuPos} depth: ${packageBit}.`;
+  }
+  if (kind === "buy" && userPlayers[0]) {
+    return `${city} is hunting ${userPlayers[0].position} help: ${packageBit}.`;
+  }
+  if (kind === "sell" && cpuPlayers[0]) {
+    return `${city} is shopping ${cpuPlayers[0].position} and wants your ${userPos || "package"}: ${packageBit}.`;
+  }
+  return `${city} sends ${packageBit}.`;
+}
 
 function candidates(league: GmLeagueState): GmIncomingOffer | null {
   const userId = league.userTeamId;
@@ -137,84 +334,162 @@ function candidates(league: GmLeagueState): GmIncomingOffer | null {
 
   const userProfile = rosterProfile(league, userId);
   const userStance = userProfile.stance;
+  const userNeeds = userProfile.needs.slice(0, 3);
   const userPicks = (userTeam.draftPicks ?? [])
     .filter((pick) => pick.season >= league.season)
     .sort((a, b) => pickStars(league, b) - pickStars(league, a));
 
-  const hits: Candidate[] = [];
+  const box: { best: Candidate | null } = { best: null };
+  let scanned = 0;
+  const TEAM_BUDGET = 18;
+  const GOOD_ENOUGH = 55;
 
   const keep = (
     cpuId: string,
     cpuAssets: GmTradeAsset[],
     userAssets: GmTradeAsset[],
-    motive: number
+    motive: number,
+    kind: Candidate["kind"]
   ) => {
+    if (isBlockedOffer(league, cpuId, cpuAssets, userAssets)) return;
     if (!fitOk(league, cpuId, userId, cpuAssets, userAssets)) return;
     const verdict = offerIsFair(league, cpuId, userId, cpuAssets, userAssets);
     if (!verdict.ok) return;
-    const scored = evaluateTrade(league, cpuId, userId, cpuAssets, userAssets);
-    if (!scored.ok && !scored.reason?.includes("not enough value")) return;
-    const cpuDelta = fitDelta(
-      league,
-      cpuId,
-      playersOf(league, userAssets),
-      playersOf(league, cpuAssets)
-    );
-    const userDelta = fitDelta(
-      league,
-      userId,
-      playersOf(league, cpuAssets),
-      playersOf(league, userAssets)
-    );
-    const gap = Math.abs(scored.fromValue - scored.toValue);
-    hits.push({
-      cpuId,
-      cpuAssets,
-      userAssets,
-      score: motive + cpuDelta + userDelta - gap * 0.35,
-    });
+    const fromValue = verdict.fromValue ?? 0;
+    const toValue = verdict.toValue ?? 0;
+    const cpuIncoming = playersOf(league, userAssets);
+    const userIncoming = playersOf(league, cpuAssets);
+    const cpuDelta = fitDelta(league, cpuId, cpuIncoming, playersOf(league, cpuAssets));
+    const userDelta = fitDelta(league, userId, userIncoming, playersOf(league, userAssets));
+    // Both clubs should feel a real roster bump on juicy offers.
+    if (kind === "swap" && (cpuDelta < 4 || userDelta < 4)) return;
+    const gap = Math.abs(fromValue - toValue);
+    const juice =
+      (kind === "swap" ? 28 : kind === "buy" ? 10 : 6) +
+      Math.min(24, Math.max(0, cpuDelta) + Math.max(0, userDelta)) * 0.35;
+    const score = motive + cpuDelta + userDelta + juice - gap * 0.3;
+    if (!box.best || score > box.best.score) {
+      box.best = { cpuId, cpuAssets, userAssets, score, kind };
+    }
   };
 
-  for (const team of league.teams) {
-    if (team.id === userId || team.id.startsWith("as-")) continue;
+  for (const team of shuffledTeams(league)) {
+    scanned += 1;
     const stance = tradeStance(league, team.id);
-    if (stance === "stay" && userStance === "stay") continue;
-
     const cpuProfile = rosterProfile(league, team.id);
+    const cpuNeeds = cpuProfile.needs.slice(0, 3);
     const cpuPicks = team.draftPicks
       .filter((pick) => pick.season >= league.season)
       .sort((a, b) => pickStars(league, b) - pickStars(league, a));
 
-    // --- Buyer CPU: take a player who fills their hole; pay with surplus + pick ---
-    if (stance === "buy") {
-      const targets = targetsForBuyer(league, team.id, userId).filter(
-        (player) => needRank(cpuProfile, player.position) <= 2
-      );
-      const filler = movablePlayers(league, team.id, { max: 8 }).filter((player) => {
-        const hole = needRank(cpuProfile, player.position);
-        return hole >= 2 || overallOf(player) < 78;
-      });
+    // --- Mutual need swap: each side fills the other's hole ---
+    const cpuOffers = surplusForNeed(league, team.id, cpuProfile, userNeeds, {
+      max: 5,
+      minOverall: 74,
+    });
+    const userOffers = surplusForNeed(league, userId, userProfile, cpuNeeds, {
+      max: 5,
+      minOverall: 74,
+    });
 
-      for (const wanted of targets.slice(0, 4)) {
-        // Prefer pick packages over lateral player swaps.
-        for (const pick of cpuPicks.slice(0, 3)) {
-          if (playerStars(wanted) - pickStars(league, pick) > 2.2) continue;
-          if (pickStars(league, pick) - playerStars(wanted) > 1.8) continue;
+    for (const theirs of cpuOffers) {
+      for (const ours of userOffers) {
+        if (theirs.position === ours.position) continue;
+        // Must actually plug a top need on the receiving side.
+        if (needRank(userProfile, theirs.position) > 2) continue;
+        if (needRank(cpuProfile, ours.position) > 2) continue;
+        const starGap = playerStars(theirs) - playerStars(ours);
+        if (Math.abs(starGap) > 2.2) continue;
+
+        // Straight swap when close.
+        if (Math.abs(starGap) <= 0.85) {
           keep(
             team.id,
-            [{ type: "pick", id: pick.id }],
-            [{ type: "player", id: wanted.id }],
-            28 + wantScore(cpuProfile, wanted)
+            [{ type: "player", id: theirs.id }],
+            [{ type: "player", id: ours.id }],
+            40 + wantScore(userProfile, theirs) + wantScore(cpuProfile, ours),
+            "swap"
           );
         }
-        for (const piece of filler.slice(0, 5)) {
-          if (piece.position === wanted.position && Math.abs(overallOf(piece) - overallOf(wanted)) <= 2) {
-            continue;
+
+        // CPU sweetens when asking for the better piece.
+        if (starGap < -0.4) {
+          const sweet = pickSweetener(cpuPicks, league, 2.6);
+          if (sweet) {
+            keep(
+              team.id,
+              [
+                { type: "player", id: theirs.id },
+                { type: "pick", id: sweet.id },
+              ],
+              [{ type: "player", id: ours.id }],
+              36 + wantScore(userProfile, theirs) + wantScore(cpuProfile, ours),
+              "swap"
+            );
           }
+        }
+
+        // User sweetens (CPU asks for pick too) when offering the better piece.
+        if (starGap > 0.45) {
+          const sweet = pickSweetener(userPicks, league, 2.6);
+          if (sweet) {
+            keep(
+              team.id,
+              [{ type: "player", id: theirs.id }],
+              [
+                { type: "player", id: ours.id },
+                { type: "pick", id: sweet.id },
+              ],
+              38 + wantScore(userProfile, theirs) + wantScore(cpuProfile, ours),
+              "swap"
+            );
+          }
+        }
+
+        // 2-for-1: CPU sends need-filler + spare for one of ours.
+        if (starGap < -0.2 && overallOf(ours) >= 78) {
+          const extra = cpuOffers.find(
+            (player) =>
+              player.id !== theirs.id &&
+              player.position !== ours.position &&
+              surplusRank(cpuProfile, player.position) <= 2
+          );
+          if (extra) {
+            keep(
+              team.id,
+              [
+                { type: "player", id: theirs.id },
+                { type: "player", id: extra.id },
+              ],
+              [{ type: "player", id: ours.id }],
+              34 + wantScore(cpuProfile, ours),
+              "swap"
+            );
+          }
+        }
+      }
+    }
+
+    // --- Buyer CPU: chase a need-filler with surplus + pick ---
+    if (stance === "buy" || stance === "stay") {
+      const targets = targetsForBuyer(league, team.id, userId)
+        .filter(
+          (player) =>
+            needRank(cpuProfile, player.position) <= 2 && isJuicyPiece(player)
+        )
+        .slice(0, 4);
+      const filler = surplusForNeed(league, team.id, cpuProfile, userNeeds, {
+        max: 4,
+        minOverall: 72,
+      }).filter((player) => needRank(cpuProfile, player.position) >= 2);
+
+      for (const wanted of targets) {
+        for (const piece of filler.slice(0, 4)) {
+          if (piece.position === wanted.position) continue;
           const gap = playerStars(wanted) - playerStars(piece);
-          if (gap < 0.25 || gap > 2) continue;
-          const sweetener = cpuPicks.find((pick) => pickStars(league, pick) <= 2.5);
-          if (sweetener && gap >= 0.75) {
+          if (gap < 0.2 || gap > 2.1) continue;
+          const sweetener = pickSweetener(cpuPicks, league, 2.7);
+          if (sweetener && gap >= 0.55) {
             keep(
               team.id,
               [
@@ -222,55 +497,65 @@ function candidates(league: GmLeagueState): GmIncomingOffer | null {
                 { type: "pick", id: sweetener.id },
               ],
               [{ type: "player", id: wanted.id }],
-              22 + wantScore(cpuProfile, wanted)
+              30 + wantScore(cpuProfile, wanted) + wantScore(userProfile, piece),
+              "buy"
             );
-          } else if (gap <= 1.1) {
+          } else if (gap <= 1.0 && needRank(userProfile, piece.position) <= 2) {
             keep(
               team.id,
               [{ type: "player", id: piece.id }],
               [{ type: "player", id: wanted.id }],
-              8 + wantScore(cpuProfile, wanted) - 10
+              24 + wantScore(cpuProfile, wanted) + wantScore(userProfile, piece),
+              "buy"
+            );
+          }
+        }
+        // Pick-only buys stay rare and only for real stars.
+        if (overallOf(wanted) >= 82) {
+          for (const pick of cpuPicks.slice(0, 1)) {
+            if (Math.abs(playerStars(wanted) - pickStars(league, pick)) > 1.5) continue;
+            keep(
+              team.id,
+              [{ type: "pick", id: pick.id }],
+              [{ type: "player", id: wanted.id }],
+              18 + wantScore(cpuProfile, wanted),
+              "buy"
             );
           }
         }
       }
     }
 
-    // --- Seller CPU: dump a vet / expiring for the user's young piece or pick ---
+    // --- Seller CPU: move a vet who fills the user's need ---
     if (stance === "sell") {
-      const shop = targetsForBuyer(league, userId, team.id).filter(
-        (player) =>
-          player.age >= 27 ||
-          (player.contract?.yearsRemaining ?? 99) <= 1 ||
-          overallOf(player) >= 80
-      );
-      const young = movablePlayers(league, userId, { max: 8 }).filter(
-        (player) => player.age <= 24 || needRank(userProfile, player.position) >= 2
-      );
+      const shop = targetsForBuyer(league, userId, team.id)
+        .filter(
+          (player) =>
+            needRank(userProfile, player.position) <= 2 &&
+            isJuicyPiece(player) &&
+            (player.age >= 27 ||
+              (player.contract?.yearsRemaining ?? 99) <= 1 ||
+              overallOf(player) >= 80)
+        )
+        .slice(0, 3);
+      const pay = surplusForNeed(league, userId, userProfile, cpuNeeds, {
+        max: 4,
+        minOverall: 72,
+      });
 
-      for (const vet of shop.slice(0, 4)) {
-        for (const pick of userPicks.slice(0, 4)) {
-          if (Math.abs(playerStars(vet) - pickStars(league, pick)) > 1.8) continue;
-          keep(
-            team.id,
-            [{ type: "player", id: vet.id }],
-            [{ type: "pick", id: pick.id }],
-            24 + (userStance === "buy" ? wantScore(userProfile, vet) : 10)
-          );
-        }
-        for (const kid of young.slice(0, 4)) {
-          if (kid.position === vet.position && Math.abs(overallOf(kid) - overallOf(vet)) <= 2) {
-            continue;
-          }
-          if (playerStars(kid) > playerStars(vet) + 0.75) continue;
+      for (const vet of shop) {
+        for (const kid of pay.slice(0, 3)) {
+          if (kid.position === vet.position) continue;
+          if (playerStars(kid) > playerStars(vet) + 0.9) continue;
           keep(
             team.id,
             [{ type: "player", id: vet.id }],
             [{ type: "player", id: kid.id }],
-            16 + wantScore(userProfile, vet)
+            28 + wantScore(userProfile, vet) + wantScore(cpuProfile, kid),
+            "sell"
           );
-          const sweetener = userPicks.find((pick) => pick.round === 2 || pickStars(league, pick) <= 2);
-          if (sweetener && playerStars(vet) >= playerStars(kid) + 0.5) {
+          const sweetener = pickSweetener(userPicks, league, 2.2);
+          if (sweetener && playerStars(vet) >= playerStars(kid) + 0.4) {
             keep(
               team.id,
               [{ type: "player", id: vet.id }],
@@ -278,37 +563,32 @@ function candidates(league: GmLeagueState): GmIncomingOffer | null {
                 { type: "player", id: kid.id },
                 { type: "pick", id: sweetener.id },
               ],
-              20 + wantScore(userProfile, vet)
+              32 + wantScore(userProfile, vet),
+              "sell"
             );
           }
         }
       }
     }
 
-    // --- User is buying: CPU sells a need-filler for surplus + pick ---
+    // --- User buying: CPU sells need-filler for surplus that helps them ---
     if (userStance === "buy" && stance !== "buy") {
-      const targets = targetsForBuyer(league, userId, team.id).filter(
-        (player) => needRank(userProfile, player.position) <= 2
-      );
-      const pay = movablePlayers(league, userId, { max: 8 }).filter((player) => {
-        const hole = needRank(userProfile, player.position);
-        return hole >= 2;
+      const targets = targetsForBuyer(league, userId, team.id)
+        .filter(
+          (player) =>
+            needRank(userProfile, player.position) <= 2 && isJuicyPiece(player)
+        )
+        .slice(0, 3);
+      const pay = surplusForNeed(league, userId, userProfile, cpuNeeds, {
+        max: 4,
+        minOverall: 72,
       });
-      for (const target of targets.slice(0, 3)) {
-        for (const pick of userPicks.slice(0, 3)) {
-          if (Math.abs(playerStars(target) - pickStars(league, pick)) > 1.8) continue;
-          keep(
-            team.id,
-            [{ type: "player", id: target.id }],
-            [{ type: "pick", id: pick.id }],
-            26 + wantScore(userProfile, target)
-          );
-        }
-        for (const piece of pay.slice(0, 4)) {
+      for (const target of targets) {
+        for (const piece of pay.slice(0, 3)) {
           if (piece.position === target.position) continue;
           const gap = playerStars(target) - playerStars(piece);
-          if (gap < 0.25 || gap > 2) continue;
-          const sweetener = userPicks.find((pick) => pickStars(league, pick) <= 2.5);
+          if (gap < 0.2 || gap > 2.1) continue;
+          const sweetener = pickSweetener(userPicks, league, 2.6);
           if (sweetener) {
             keep(
               team.id,
@@ -317,20 +597,29 @@ function candidates(league: GmLeagueState): GmIncomingOffer | null {
                 { type: "player", id: piece.id },
                 { type: "pick", id: sweetener.id },
               ],
-              24 + wantScore(userProfile, target)
+              30 + wantScore(userProfile, target) + wantScore(cpuProfile, piece),
+              "buy"
+            );
+          } else if (gap <= 1.0) {
+            keep(
+              team.id,
+              [{ type: "player", id: target.id }],
+              [{ type: "player", id: piece.id }],
+              24 + wantScore(userProfile, target) + wantScore(cpuProfile, piece),
+              "buy"
             );
           }
         }
       }
     }
+
+    if (box.best && box.best.score >= GOOD_ENOUGH && box.best.kind === "swap") break;
+    if (scanned >= TEAM_BUDGET && box.best) break;
   }
 
-  hits.sort((a, b) => b.score - a.score);
-  const chosen = hits[0];
+  const chosen = box.best;
   if (!chosen) return null;
 
-  const team = league.teams.find((entry) => entry.id === chosen.cpuId);
-  const note = `${team?.city ?? "A team"} sends ${packageLabel(league, chosen.cpuAssets)} for ${packageLabel(league, chosen.userAssets)}.`;
   return {
     id: uid("offer"),
     fromTeamId: chosen.cpuId,
@@ -338,14 +627,30 @@ function candidates(league: GmLeagueState): GmIncomingOffer | null {
     fromAssets: chosen.cpuAssets,
     toAssets: chosen.userAssets,
     day: league.day,
-    note,
+    note: offerNote(
+      league,
+      chosen.cpuId,
+      chosen.cpuAssets,
+      chosen.userAssets,
+      chosen.kind
+    ),
   };
 }
 
 export function considerIncomingOffer(league: GmLeagueState): GmLeagueState {
   if (league.phase !== "regular" || league.tradeDeadlinePassed || league.incomingOffer) return league;
+  if (
+    league.lastOfferResolvedDay != null &&
+    league.day - league.lastOfferResolvedDay < OFFER_GAP_DAYS
+  ) {
+    return league;
+  }
   const shopping = (league.teams.find((team) => team.id === league.userTeamId)?.tradeBlock ?? []).length > 0;
-  if (!offerDay(league.day, shopping)) return league;
+  // Toy / partial schedules can report a tiny deadline; keep a real-season floor.
+  const deadline = league.schedule?.length
+    ? Math.max(tradeDeadlineDay(league.schedule), 100)
+    : 110;
+  if (!offerDay(league.day, shopping, deadline)) return league;
   const offer = candidates(league);
   if (!offer) return league;
   const caller = league.teams.find((team) => team.id === offer.fromTeamId);

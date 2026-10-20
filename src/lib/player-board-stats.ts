@@ -87,7 +87,10 @@ export function boardStatValue(
   switch (key) {
     case "mpg":
       if (rate === "per100") return scaleCount(row.minutes, row, rate);
-      return finite(rate === "totals" ? row.minutes : row.mpg);
+      if (rate === "totals") return finite(row.minutes);
+      return finite(
+        row.mpg ?? (row.gamesPlayed > 0 ? row.minutes / row.gamesPlayed : null)
+      );
     case "assistToTurnover":
       return row.turnovers > 0 ? row.assists / row.turnovers : null;
     case "playerName":

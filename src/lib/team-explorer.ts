@@ -79,8 +79,8 @@ export function buildRotationLadder(
   const starters: PlayerSeason[] = [];
   const rest: PlayerSeason[] = [];
   for (const p of withMinutes) {
-    const startRate = p.gamesStarted / Math.max(1, p.gamesPlayed);
-    if (p.gamesPlayed >= minGames && startRate >= 0.5) {
+    const startRate = rotationStartRate(p);
+    if (p.gamesPlayed >= minGames && startRate != null && startRate >= 0.5) {
       starters.push(p);
     } else {
       rest.push(p);
@@ -106,9 +106,11 @@ export function rotationMinutesPct(
   return player.minutes / (teamGames * 48);
 }
 
-/** Games started ÷ games played. Null when GP is missing. */
+/** Games started ÷ games played. Null when GP or GS is missing. */
 export function rotationStartRate(player: PlayerSeason): number | null {
-  if (!(player.gamesPlayed > 0)) return null;
+  if (!(player.gamesPlayed > 0) || !Number.isFinite(player.gamesStarted)) {
+    return null;
+  }
   return player.gamesStarted / player.gamesPlayed;
 }
 

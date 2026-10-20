@@ -1,3 +1,4 @@
+import { getLocale, getTranslations } from "next-intl/server";
 import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -8,6 +9,7 @@ import { LearnPageFooter } from "@/components/learn/learn-page-footer";
 import { LearnTopicView } from "@/components/learn/learn-topic-view";
 import { StatGuideView } from "@/components/learn/stat-guide-view";
 import { AppLink } from "@/components/ui/app-link";
+import { isNonEnglishLocale, loadLocalizedLearnPage } from "@/content/learn/load-localized";
 import { listAllLearnSlugs, resolveLearnPage } from "@/content/learn/resolve";
 
 const CAREER_BAND_TOPICS = new Set(["peak_prime_longevity", "career_resume", "career_self_comparison"]);
@@ -22,8 +24,11 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const page = resolveLearnPage(slug);
-  if (!page || page.kind === "portal") return { title: "Learn" };
+  const resolved = resolveLearnPage(slug);
+  const t = await getTranslations("LearnPages");
+  if (!resolved || resolved.kind === "portal") return { title: t("metaFallback") };
+  const { page } = await loadLocalizedLearnPage(await getLocale(), resolved);
+  if (page.kind === "portal") return { title: t("metaFallback") };
   if (page.kind === "guide") {
     return { title: page.guide.shortName, description: page.guide.blurb };
   }
@@ -39,8 +44,13 @@ export default async function LearnStatPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const page = resolveLearnPage(slug);
-  if (!page || page.kind === "portal") notFound();
+  const resolved = resolveLearnPage(slug);
+  if (!resolved || resolved.kind === "portal") notFound();
+  const locale = await getLocale();
+  const { page, localized } = await loadLocalizedLearnPage(locale, resolved);
+  if (page.kind === "portal") notFound();
+  const t = await getTranslations("LearnPages");
+  const englishBody = !localized && isNonEnglishLocale(locale);
 
   const conceptId = page.kind === "guide" ? page.guide.id : page.topic.id;
 
@@ -52,8 +62,12 @@ export default async function LearnStatPage({
           href="/learn"
           className="text-[14px] font-semibold text-muted-foreground underline-offset-4 hover:underline"
         >
-          ← All terms
+          {t("backAllTerms")}
         </AppLink>
+
+        {englishBody ? (
+          <p className="text-[13px] text-muted-foreground">{t("bodyEnglishNote")}</p>
+        ) : null}
 
         {page.kind === "guide" ? (
           <StatGuideView

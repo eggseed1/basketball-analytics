@@ -1,5 +1,6 @@
 "use client";
 
+import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
@@ -8,17 +9,21 @@ import { GameLineupsPanel } from "@/components/games/game-lineups";
 import { MatchupWashCard } from "@/components/brand/team-wash-card";
 import { GameCountdown } from "@/components/sports/game-countdown";
 import {
-  broadcastHint,
   resolveSideBrand,
   sideShortName,
 } from "@/components/sports/game-score-card";
 import { GameStatusTag } from "@/components/sports/game-status-tag";
+import {
+  GameWatchLogos,
+  watchLogosForBroadcasts,
+} from "@/components/sports/game-watch-logos";
 import { LiveIndicator } from "@/components/sports/live-indicator";
 import { LocalTipTime } from "@/components/sports/local-tip-time";
 import { finalLabel, gameTypeBadge } from "@/components/sports/score-tile";
 import { useLiveGameRefresh } from "@/components/sports/use-live-scoreboard-refresh";
 import { ScoreDelayScope } from "@/components/sports/use-score-delay";
 import { TeamIdentity } from "@/components/teams/team-identity";
+import { formatAppDate } from "@/i18n/format-date";
 import type { Game, GameSummary } from "@/data/types";
 import { type } from "@/lib/design-system";
 import { parseTipOffMs } from "@/lib/game-countdown";
@@ -47,23 +52,18 @@ function toSummary(game: Game): GameSummary {
   };
 }
 
-function formatGameDate(game: Pick<Game, "gameDate" | "tipOffAt">): string | null {
-  const opts: Intl.DateTimeFormatOptions = {
-    weekday: "short",
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  };
+function formatGameDate(
+  game: Pick<Game, "gameDate" | "tipOffAt">,
+  locale: string
+): string | null {
   if (/^\d{4}-\d{2}-\d{2}$/.test(game.gameDate ?? "")) {
-    return new Date(`${game.gameDate}T12:00:00Z`).toLocaleDateString("en-US", {
-      ...opts,
+    return formatAppDate(`${game.gameDate}T12:00:00Z`, locale, "weekdayMonthDayYear", {
       timeZone: "UTC",
     });
   }
   const tipMs = parseTipOffMs(game.tipOffAt);
   if (tipMs == null) return null;
-  return new Date(tipMs).toLocaleDateString("en-US", {
-    ...opts,
+  return formatAppDate(tipMs, locale, "weekdayMonthDayYear", {
     timeZone: "America/New_York",
   });
 }
@@ -167,13 +167,14 @@ function BigScore({ value, muted, winner, side }: { value: number; muted: boolea
 }
 
 function PreTipCenter({ game }: { game: GameSummary }) {
+  const t = useTranslations("Games");
   const [now] = useState(() => Date.now());
   const tipMs = parseTipOffMs(game.tipOffAt);
   const soon = tipMs != null && tipMs > now && tipMs - now <= DAY_MS;
   return (
     <div className="flex flex-col items-center gap-1 text-center">
       <span className="text-[24px] font-bold leading-none tabular-nums sm:text-[32px]">
-        <LocalTipTime tipOffAt={game.tipOffAt} style="clock" fallback="Time TBD" nbaDate={game.gameDate} />
+        <LocalTipTime tipOffAt={game.tipOffAt} style="clock" fallback={t("timeTbd")} nbaDate={game.gameDate} />
       </span>
       {soon ? (
         <GameCountdown
@@ -217,6 +218,7 @@ function LineScore({
   game: GameSummary;
   brandPresentation: HistoricalBrandPresentation;
 }) {
+  const t = useTranslations("Games");
   const away = game.awayPeriodScores ?? [];
   const home = game.homePeriodScores ?? [];
   const n = Math.min(away.length, home.length);
@@ -232,11 +234,11 @@ function LineScore({
       className="board-scroll-host w-full overflow-x-auto"
     >
       <table className={cn(type.bodySm, "w-full")}>
-        <caption className="sr-only">Points by period</caption>
+        <caption className="sr-only">{t("pointsByPeriod")}</caption>
         <thead>
           <tr className={cn(type.micro, "font-bold uppercase tracking-[0.1em] text-muted-foreground")}>
             <th scope="col" className="py-1 pr-2 text-left font-bold">
-              <span className="sr-only">Team</span>
+              <span className="sr-only">{t("team")}</span>
             </th>
             {Array.from({ length: n }, (_, i) => (
               <th key={i} scope="col" className={cn(cell, "font-bold")}>
@@ -331,6 +333,8 @@ export function GameIdentityShell({
   arrivalLabel?: string | null;
   pendingAnalysis?: boolean;
 }) {
+  const t = useTranslations("Games");
+  const locale = useLocale();
   const validation = validateGamePresentation(game);
   const summary = toSummary(game);
   const { game: live, latest } = useLiveGameRefresh(summary, {
@@ -348,14 +352,13 @@ export function GameIdentityShell({
             "font-bold uppercase tracking-[0.12em] text-muted-foreground"
           )}
         >
-          {game.season || "Game"}
+          {game.season || t("gameFallback")}
         </p>
         <p className={cn(type.title, "font-semibold")}>
-          Game details incomplete
+          {t("incompleteTitle")}
         </p>
         <p className={cn(type.bodySm, "text-muted-foreground")}>
-          Team identity or final score could not be verified for this link.
-          Deep features are hidden until the game resolves.
+          {t("incompleteBody")}
         </p>
       </header>
     );
@@ -369,13 +372,16 @@ export function GameIdentityShell({
   const final = isFinalStatus(shown.status);
   const awayAhead = showScores && shown.awayScore > shown.homeScore;
   const homeAhead = showScores && shown.homeScore > shown.awayScore;
-  const badge = gameTypeBadge(shown) ?? "Regular season";
-  const dateLabel = formatGameDate(shown);
-  const watch = isPreTipStatus(shown.status) || isLiveLikeStatus(shown.status)
-    ? broadcastHint(shown)
-    : null;
-
-  const lineScore = showScores ? <LineScore game={shown} brandPresentation={brandPresentation} /> : null;
+  const badge = gameTypeBadge(shown) ?? t("regularSeason");
+  const dateLabel = formatGameDate(shown, locale);
+  const showWatch =
+    isPreTipStatus(shown.status) || isLiveLikeStatus(shown.status);
+  const watchLogos = showWatch
+    ? watchLogosForBroadcasts(shown.broadcasts, shown.season)
+    : [];
+  const lineScore = showScores ? (
+    <LineScore game={shown} brandPresentation={brandPresentation} />
+  ) : null;
 
   return (
     <ScoreDelayScope>
@@ -402,9 +408,12 @@ export function GameIdentityShell({
             </>
           ) : null}
         </p>
-        <div className="flex flex-wrap items-center gap-1.5">
-          {watch ? (
-            <span className={cn(type.caption, "text-muted-foreground")}>{watch}</span>
+        <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
+          {watchLogos.length > 0 ? (
+            <GameWatchLogos
+              broadcasts={shown.broadcasts}
+              season={shown.season}
+            />
           ) : null}
           <span
             className={cn(

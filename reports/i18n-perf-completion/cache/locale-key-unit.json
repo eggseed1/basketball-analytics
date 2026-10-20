@@ -1,0 +1,44 @@
+[
+  {
+    "name": "cookie-de-beats-accept-fr",
+    "a": "de",
+    "expect": "de",
+    "ok": true,
+    "note": "Unit isolation of localeCacheKeySegment; Worker PAGE_CACHE keys use page:{version}:{locale}:{path}"
+  },
+  {
+    "name": "accept-ja",
+    "a": "ja",
+    "expect": "ja",
+    "ok": true,
+    "note": "Unit isolation of localeCacheKeySegment; Worker PAGE_CACHE keys use page:{version}:{locale}:{path}"
+  },
+  {
+    "name": "force-en",
+    "a": "en",
+    "expect": "en",
+    "ok": true,
+    "note": "Unit isolation of localeCacheKeySegment; Worker PAGE_CACHE keys use page:{version}:{locale}:{path}"
+  },
+  {
+    "name": "en-XA-isolated",
+    "a": "en-XA",
+    "expect": "en-XA",
+    "ok": true,
+    "note": "Unit isolation of localeCacheKeySegment; Worker PAGE_CACHE keys use page:{version}:{locale}:{path}"
+  },
+  {
+    "name": "auto-zh-Hant",
+    "a": "zh-Hant",
+    "expect": "zh-Hant",
+    "ok": true,
+    "note": "Unit isolation of localeCacheKeySegment; Worker PAGE_CACHE keys use page:{version}:{locale}:{path}"
+  },
+  {
+    "name": "de-fr-distinct-keys",
+    "a": "page:v1:de:/standings",
+    "b": "page:v1:fr:/standings",
+    "ok": true,
+    "expect": "distinct"
+  }
+]

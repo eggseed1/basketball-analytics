@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 
 import { MotionReveal } from "@/components/continuity/motion-reveal";
@@ -72,24 +73,32 @@ function Picker({
   player,
   names,
   datalist,
+  labels,
 }: {
   teamId?: string;
   player?: string;
   names: Record<string, string>;
   datalist: string[];
+  labels: {
+    team: string;
+    player: string;
+    pickTeam: string;
+    playerPlaceholder: string;
+    show: string;
+  };
 }) {
   const teams = Object.entries(names).sort((a, b) => a[1].localeCompare(b[1]));
   return (
     <form action="/acquisitions" className="flex flex-wrap items-end gap-2">
       <label className={cn(type.caption, "flex flex-col gap-1 text-muted-foreground")}>
-        Team
+        {labels.team}
         <select
           name="team"
           defaultValue={teamId ?? ""}
           className="h-9 rounded-md border border-border bg-background px-2 text-sm text-foreground"
         >
           <option value="" disabled>
-            Pick a team
+            {labels.pickTeam}
           </option>
           {teams.map(([id, name]) => (
             <option key={id} value={id}>
@@ -99,12 +108,12 @@ function Picker({
         </select>
       </label>
       <label className={cn(type.caption, "flex min-w-48 flex-1 flex-col gap-1 text-muted-foreground")}>
-        Player
+        {labels.player}
         <input
           name="player"
           defaultValue={player ?? ""}
           list="acquisition-players"
-          placeholder="Any player who joined this team"
+          placeholder={labels.playerPlaceholder}
           className="h-9 rounded-md border border-border bg-background px-2 text-sm text-foreground"
         />
         <datalist id="acquisition-players">
@@ -114,7 +123,7 @@ function Picker({
         </datalist>
       </label>
       <button type="submit" className="h-9 rounded-md bg-foreground px-3 text-sm font-semibold text-background">
-        Show
+        {labels.show}
       </button>
     </form>
   );
@@ -130,6 +139,7 @@ function Section({ title, children, className }: { title: string; children: Reac
 }
 
 export default async function AcquisitionsPage({ searchParams }: PageProps) {
+  const t = await getTranslations("Acquisitions");
   const sp = await searchParams;
   const names = teamNicknames();
   const teamId = resolveTeamId(one(sp, "team"));
@@ -167,15 +177,29 @@ export default async function AcquisitionsPage({ searchParams }: PageProps) {
           </div>
         ) : (
           <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
-            {teamId ? `How the ${names[teamId]} built their roster` : "How did they get him?"}
+            {teamId
+              ? t("titleTeamRoster", { team: names[teamId] })
+              : t("titleHub")}
           </h1>
         )}
-        <Picker teamId={teamId} player={story?.player.label ?? player} names={names} datalist={datalist} />
+        <Picker
+          teamId={teamId}
+          player={story?.player.label ?? player}
+          names={names}
+          datalist={datalist}
+          labels={{
+            team: t("team"),
+            player: t("player"),
+            pickTeam: t("pickTeam"),
+            playerPlaceholder: t("playerPlaceholder"),
+            show: t("show"),
+          }}
+        />
       </header>
 
       {!teamId ? (
         <>
-          <Section title="Start with a trade">
+          <Section title={t("startWithTrade")}>
             <ul className="flex flex-wrap gap-2">
               {EXAMPLES.map((ex) => (
                 <li key={ex.label}>
@@ -190,7 +214,7 @@ export default async function AcquisitionsPage({ searchParams }: PageProps) {
               ))}
             </ul>
           </Section>
-          <Section title="Or pick a team">
+          <Section title={t("orPickTeam")}>
             <ul className="grid grid-cols-2 gap-1.5 sm:grid-cols-3 lg:grid-cols-5">
               {Object.entries(names)
                 .sort((a, b) => a[1].localeCompare(b[1]))
@@ -212,17 +236,23 @@ export default async function AcquisitionsPage({ searchParams }: PageProps) {
 
       {teamId && player && !story ? (
         <p className={cn(type.bodySm, "rounded-md border border-border/70 px-3 py-2 text-muted-foreground")}>
-          The transaction log has no arrival for <span className="font-semibold text-foreground">{player}</span> with the{" "}
-          {names[teamId]}. It covers 2000 onward, so earlier moves aren&apos;t here.
+          {t("noArrival", {
+            player,
+            team: names[teamId],
+          })}
         </p>
       ) : null}
 
       {story ? (
         <>
           {story.stints.length > 1 ? (
-            <nav aria-label="Stints" className="flex flex-wrap items-center gap-1.5">
+            <nav aria-label={t("stintsAria")} className="flex flex-wrap items-center gap-1.5">
               <span className={cn(type.caption, "text-muted-foreground")}>
-                {story.player.label} joined the {names[story.teamId]} {story.stints.length} times:
+                {t("stintsJoined", {
+                  player: story.player.label,
+                  team: names[story.teamId],
+                  count: story.stints.length,
+                })}
               </span>
               {story.stints.map((s) => {
                 const active = "date" in story.arrival && story.arrival.date === s.start;
@@ -238,7 +268,7 @@ export default async function AcquisitionsPage({ searchParams }: PageProps) {
                     )}
                   >
                     {s.start.slice(0, 4)}
-                    {s.end ? `–${s.end.slice(0, 4)}` : "–now"}
+                    {s.end ? `–${s.end.slice(0, 4)}` : t("stintNow")}
                   </Link>
                 );
               })}
@@ -246,28 +276,26 @@ export default async function AcquisitionsPage({ searchParams }: PageProps) {
           ) : null}
 
           {story.arrival.how === "trade" ? (
-            <Section title={`The trade · ${formatPlainDate(story.arrival.date)}`}>
+            <Section title={t("theTrade", { date: formatPlainDate(story.arrival.date) })}>
               <StoryDeal deal={story.arrival.deal} names={names} />
             </Section>
           ) : null}
 
-          <Section title={story.origins.length ? "The trail, both ways" : "Where it led"}>
+          <Section title={story.origins.length ? t("trailBothWays") : t("whereItLed")}>
             <AcquisitionTree story={story} names={names} />
             <p className={cn(type.caption, "text-muted-foreground")}>
-              {story.origins.length
-                ? "Left of the move: what the team gave up and how it got those pieces. Right: where he went next and what came back. Scroll sideways on long trails."
-                : "Each card is what he or a returning piece turned into. Scroll sideways on long trails."}
+              {story.origins.length ? t("trailHintBoth") : t("trailHintOne")}
             </p>
           </Section>
 
           <details className="group rounded-md border border-border/60 px-3 py-2">
-            <summary className={cn(type.bodySm, "cursor-pointer font-semibold")}>Read it as text</summary>
+            <summary className={cn(type.bodySm, "cursor-pointer font-semibold")}>{t("readAsText")}</summary>
             <div className="flex flex-col gap-4 pt-3">
-              <Section title="Where it led">
+              <Section title={t("whereItLed")}>
                 <WhereItLed story={story} names={names} />
               </Section>
               {story.origins.length ? (
-                <Section title="Where the outgoing pieces came from">
+                <Section title={t("outgoingOrigins")}>
                   <OutgoingOrigins story={story} names={names} />
                 </Section>
               ) : null}
@@ -276,14 +304,14 @@ export default async function AcquisitionsPage({ searchParams }: PageProps) {
 
           {story.truncated ? (
             <p className={cn(type.caption, "text-muted-foreground")}>
-              This trail runs long, so it stops after a few steps. Open any player above to keep following it.
+              {t("trailTruncated")}
             </p>
           ) : null}
         </>
       ) : null}
 
       {teamId && !story && rosterArrivals && (rosterArrivals.onRoster.length || rosterArrivals.notLogged.length) ? (
-        <Section title="On the roster now">
+        <Section title={t("onRosterNow")}>
           <RosterArrivals teamId={teamId} onRoster={rosterArrivals.onRoster} notLogged={rosterArrivals.notLogged} />
         </Section>
       ) : null}
@@ -291,7 +319,7 @@ export default async function AcquisitionsPage({ searchParams }: PageProps) {
       {teamId && !story && catalog.length ? (
         <details className="rounded-md border border-border/60 px-3 py-2">
           <summary className={cn(type.bodySm, "cursor-pointer font-semibold")}>
-            Every {names[teamId]} arrival in the log ({catalog.length})
+            {t("everyArrival", { team: names[teamId], count: catalog.length })}
           </summary>
           <div className="pt-3">
             <AcquisitionEntryList teamId={teamId} entries={catalog} />
@@ -302,9 +330,9 @@ export default async function AcquisitionsPage({ searchParams }: PageProps) {
       {teamId ? (
         <footer className={cn(type.caption, "flex flex-col gap-1 border-t border-border/50 pt-3 text-muted-foreground")}>
           <p>
-            Built from the NBA transaction log
-            {ledgerThrough ? `, 2000 through ${formatPlainDate(ledgerThrough)}` : " from 2000 on"}. Each step uses only
-            what the log says. When it skips a step, we leave that step blank. Draft slots come from NBA draft history and player bios.
+            {ledgerThrough
+              ? t("footerWithThrough", { date: formatPlainDate(ledgerThrough) })
+              : t("footerOpen")}
           </p>
         </footer>
       ) : null}

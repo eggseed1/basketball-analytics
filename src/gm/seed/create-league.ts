@@ -11,10 +11,14 @@ import { FRANCHISES, emptyStarters } from "@/gm/seed/franchises";
 import { createRng, pick, randInt, uid, clamp } from "@/gm/engine/rng";
 import { generateSchedule } from "@/gm/engine/schedule";
 import { emptyStandings } from "@/gm/engine/standings";
-import { autoSetLineup } from "@/gm/engine/lineup";
+import { applyBalancedRotations } from "@/gm/engine/coaching";
 import { coachForTeam, openCoachMarket, trainerForLevel } from "@/gm/seed/coaches";
 import { createDraftClass } from "@/gm/seed/prospect-identities";
 import { sealProspect } from "@/gm/engine/scouting";
+import {
+  defaultTeamDeveloper,
+  generateDeveloperMarket,
+} from "@/gm/seed/developers";
 import {
   defaultTeamScout,
   effectiveScoutLevel,
@@ -121,6 +125,7 @@ export function createGeneratedLeague(options?: {
 
   const teams: GmTeam[] = FRANCHISES.map((f, i) => {
     const scout = defaultTeamScout(seed + i * 31 + f.id.charCodeAt(0));
+    const developer = defaultTeamDeveloper(seed + i * 47 + f.id.charCodeAt(0) * 5);
     const trainerLevel = randInt(rng, 1, 5);
     return {
       ...f,
@@ -133,6 +138,7 @@ export function createGeneratedLeague(options?: {
         trainer: trainerForLevel(trainerLevel),
         dead: [],
         scout,
+        developer,
         scoutLevel: scout.eye,
         trainerLevel: trainerForLevel(trainerLevel).level,
       },
@@ -195,6 +201,7 @@ export function createGeneratedLeague(options?: {
   players.push(...prospects);
   const draftPool = prospects.map((p) => p.id);
   const scoutMarket = generateScoutMarket(seed + 777, 5);
+  const developerMarket = generateDeveloperMarket(seed + 991, 5);
 
   const state: GmLeagueState = {
     version: 1,
@@ -203,11 +210,17 @@ export function createGeneratedLeague(options?: {
     phase: "regular",
     userTeamId,
     settings: { ...DEFAULT_SETTINGS },
+    automation: {
+      autoDraft: false,
+      autoFreeAgency: true,
+      autoScout: false,
+    },
     teams,
     players,
     freeAgents: players.filter((p) => p.teamId === null && !draftPool.includes(p.id)).map((p) => p.id),
     draftPool,
     scoutMarket,
+    developerMarket,
     coachMarket: openCoachMarket(),
     staffBook: 1,
     schedule: [],
@@ -229,6 +242,5 @@ export function createGeneratedLeague(options?: {
   };
 
   state.schedule = generateSchedule(state.teams, season, seed);
-  state.teams = state.teams.map((t) => autoSetLineup(t, state.players));
-  return state;
+  return applyBalancedRotations(state);
 }

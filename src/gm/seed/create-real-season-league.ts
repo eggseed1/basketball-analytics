@@ -35,12 +35,18 @@ import {
 import { getCbaRules } from "@/gm/myleague/cba-registry";
 import { ESPN_PLAYER_SEASON_HORIZON_START } from "@/gm/myleague/constants";
 import type { PlayerSeason } from "@/data/types";
+import { applyBalancedRotations } from "@/gm/engine/coaching";
 
 export async function createRealSeasonLeague(options: {
   userTeamId: string;
   season?: string;
   seed?: number;
   provider?: SiteRealNBADataProvider;
+  /**
+   * When set, ratings come only from this season's counting stats (e.g. "2024-25"
+   * to forecast "2025-26"). Ignores same-season production for an out-of-sample test.
+   */
+  statsSeason?: string;
 }): Promise<{
   league: GmLeagueState;
   snapshot: HistoricalSeasonSnapshot;
@@ -49,7 +55,7 @@ export async function createRealSeasonLeague(options: {
   const requested = options.season ?? defaultGmCanonicalSeason();
   const provider = options.provider ?? createSiteRealNBADataProvider();
   const current = canonicalSeasonFromStartYear(currentNbaStartYear());
-  if (requested === current) {
+  if (requested === current || options.statsSeason) {
     return buildCurrentRosterLeague(provider, requested, options);
   }
   let lastError: unknown = null;
@@ -124,6 +130,7 @@ async function buildCurrentRosterLeague(
     userTeamId: string;
     season?: string;
     seed?: number;
+    statsSeason?: string;
   }
 ): Promise<{
   league: GmLeagueState;
@@ -131,10 +138,15 @@ async function buildCurrentRosterLeague(
   seasonCanonical: string;
 }> {
   const seasonEnd = canonicalToSeasonEnd(seasonCanonical);
-  const priorEnd = seasonEnd - 1;
+  const priorEnd = options.statsSeason
+    ? canonicalToSeasonEnd(options.statsSeason)
+    : seasonEnd - 1;
+  const priorOnly = Boolean(options.statsSeason);
   const [roster, sameSeason, prior] = await Promise.all([
     loadRosterShells(seasonCanonical),
-    provider.getPlayerSeasonRows(seasonEnd).catch(() => [] as PlayerSeason[]),
+    priorOnly
+      ? Promise.resolve([] as PlayerSeason[])
+      : provider.getPlayerSeasonRows(seasonEnd).catch(() => [] as PlayerSeason[]),
     provider.getPlayerSeasonRows(priorEnd).catch(() => [] as PlayerSeason[]),
   ]);
   if (roster.length < 300) {
@@ -158,11 +170,14 @@ async function buildCurrentRosterLeague(
     schedule: schedule.length >= 200 ? schedule : undefined,
     keepAssignedRoster: true,
   });
+  const statsLabel = priorOnly
+    ? `Ratings locked to ${options.statsSeason} production (out-of-sample forecast).`
+    : `Counting stats are from the previous season until ${seasonCanonical} games are played.`;
   league.news = [
     {
       ...league.news[0]!,
       headline: `${seasonCanonical} rosters loaded`,
-      body: `${roster.length} players on this year's teams. Counting stats are from the previous season until ${seasonCanonical} games are played. ${league.news[0]?.body ?? ""}`,
+      body: `${roster.length} players on this year's teams. ${statsLabel} ${league.news[0]?.body ?? ""}`,
     },
     ...league.news.slice(1),
   ];
@@ -174,7 +189,11 @@ async function buildCurrentRosterLeague(
       label: seasonCanonical,
     });
   }
-  return { league, snapshot, seasonCanonical };
+  return {
+    league: applyBalancedRotations(league),
+    snapshot,
+    seasonCanonical,
+  };
 }
 
 async function buildOneSeason(
@@ -230,5 +249,9 @@ async function buildOneSeason(
     schedule: schedule.length >= 200 ? schedule : undefined,
   });
 
-  return { league, snapshot, seasonCanonical };
+  return {
+    league: applyBalancedRotations(league),
+    snapshot,
+    seasonCanonical,
+  };
 }

@@ -32,7 +32,6 @@ import {
   filterPlayerBoardViewColumns,
   parsePlayerBoardRate,
   parsePlayerBoardViews,
-  playerBoardViewLabel,
   PLAYER_BOARD_CATEGORY_VIEWS,
   type PlayerBoardRate,
   type PlayerBoardView,
@@ -48,6 +47,7 @@ import {
   defaultPlayerSeasonSortDir,
   type PlayerSeasonSortKey,
 } from "@/lib/player-season-sort";
+import { usePlayerBoardI18n } from "@/components/explore/use-player-board-i18n";
 
 type SortKey = PlayerSeasonSortKey;
 
@@ -150,6 +150,7 @@ export function PlayerSeasonTable({
   seasonAwaitingGames = false,
 }: PlayerSeasonTableProps) {
   const { pending, replaceParams, searchParams } = useQueryNav();
+  const { t, viewLabel } = usePlayerBoardI18n();
   const [rows, setRows] = useState(players);
   const [loadedPage, setLoadedPage] = useState(1);
   const [hasMore, setHasMore] = useState(pageCount > 1 && players.length >= pageSize);
@@ -232,9 +233,10 @@ export function PlayerSeasonTable({
     () =>
       buildPlayerBoardGroups(
         parsePlayerBoardViews(viewParam),
-        new Set(emptyKey ? (emptyKey.split(",") as PlayerSeasonSortKey[]) : [])
+        new Set(emptyKey ? (emptyKey.split(",") as PlayerSeasonSortKey[]) : []),
+        viewLabel
       ),
-    [viewParam, emptyKey]
+    [viewParam, emptyKey, viewLabel]
   );
   // Always show category band headers — including a single category and the
   // partitioned "all stats" layout.
@@ -326,7 +328,7 @@ export function PlayerSeasonTable({
 
   return (
     <section
-      aria-label="Player table"
+      aria-label={t("tableRegion")}
       className="query-updating-content flex w-full min-w-0 max-w-full flex-col gap-3"
       data-pending={pending ? "true" : "false"}
     >
@@ -479,7 +481,7 @@ export function PlayerSeasonTable({
       {hasMore ? <div ref={sentinelRef} aria-hidden className="h-1" /> : null}
       {loadingMore ? (
         <p className="text-center text-[12px] text-muted-foreground">
-          Loading more players…
+          {t("loadingMore")}
         </p>
       ) : null}
       {loadError ? (
@@ -488,16 +490,15 @@ export function PlayerSeasonTable({
           onClick={() => void loadMore()}
           className="self-center rounded-md bg-secondary px-4 py-2 text-[14px] font-semibold hover:bg-secondary/80"
         >
-          Couldn’t load more. Try again
+          {t("loadMoreRetry")}
         </button>
       ) : null}
       {rows.length ? (
         <p className="text-[12px] text-muted-foreground">
-          Showing {rows.length} of {totalCount} player
-          {totalCount === 1 ? "" : "s"}
-          {hasMore ? " · more appear as you scroll" : ""}
+          {t("showing", { shown: rows.length, total: totalCount })}
+          {hasMore ? t("showingScrollHint") : ""}
           <span className="sr-only">
-            {pending ? " Updating results…" : ""}
+            {pending ? ` ${t("updatingResultsSr")}` : ""}
           </span>
         </p>
       ) : null}
@@ -631,25 +632,29 @@ type BoardGroup = {
 type EmptyColumns = ReadonlySet<PlayerSeasonSortKey>;
 
 /** Full union of category presets, bucketed under Impact / Profile / … bands. */
-function partitionAllColumnsIntoCategories(empty: EmptyColumns): BoardGroup[] {
+function partitionAllColumnsIntoCategories(
+  empty: EmptyColumns,
+  labelFor: (id: PlayerBoardView) => string
+): BoardGroup[] {
   return PLAYER_BOARD_CATEGORY_VIEWS.map((cat) => ({
     id: cat.id,
-    label: cat.label,
+    label: labelFor(cat.id),
     keys: filterPlayerBoardViewColumns(cat.id, empty),
   })).filter((group) => group.keys.length > 0);
 }
 
 function buildPlayerBoardGroups(
   views: PlayerBoardView[],
-  empty: EmptyColumns
+  empty: EmptyColumns,
+  labelFor: (id: PlayerBoardView) => string
 ): BoardGroup[] {
   if (views.length === 1 && views[0] === "all") {
-    return partitionAllColumnsIntoCategories(empty);
+    return partitionAllColumnsIntoCategories(empty, labelFor);
   }
   return views
     .map((id) => ({
       id,
-      label: playerBoardViewLabel(id),
+      label: labelFor(id),
       keys: filterPlayerBoardViewColumns(id, empty),
     }))
     .filter((group) => group.keys.length > 0);

@@ -1,6 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 import { GmPlayerCard } from "@/gm/ui/gm-player-card";
 import { GmShell } from "@/gm/ui/gm-shell";
@@ -19,13 +20,14 @@ export default function GmPlayerPage() {
 }
 
 function PlayerBody() {
+  const t = useTranslations("GmUi");
   const params = useParams<{ playerId: string }>();
   const league = useGmStore((s) => s.league);
   if (!league) return null;
   const playerId = decodeURIComponent(params.playerId ?? "");
   const player = league.players.find((entry) => entry.id === playerId);
   if (!player) {
-    return <p className="text-sm text-muted-foreground">That player is not in this league.</p>;
+    return <p className="text-sm text-muted-foreground">{t("gmPlayerMissing")}</p>;
   }
   return <GmPlayerCard league={league} player={player} />;
 }

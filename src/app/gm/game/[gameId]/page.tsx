@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Suspense, useMemo } from "react";
+import { useTranslations } from "next-intl";
 import { useParams, useSearchParams } from "next/navigation";
 import { GameShotChart } from "@/components/games/game-shot-chart";
 import { GmShell } from "@/gm/ui/gm-shell";
@@ -24,6 +25,7 @@ export default function GmGamePage() {
 }
 
 function GameBody() {
+  const t = useTranslations("GmUi");
   const params = useParams<{ gameId: string }>();
   const watch = useSearchParams().get("watch") === "1";
   const league = useGmStore((s) => s.league);
@@ -33,9 +35,9 @@ function GameBody() {
   if (!box) {
     return (
       <p className="text-muted-foreground">
-        Box score not found.{" "}
+        {t("gameNotFound")}{" "}
         <Link href="/gm/schedule" className="underline">
-          Back to schedule
+          {t("gameBackSchedule")}
         </Link>
       </p>
     );
@@ -62,16 +64,14 @@ function GameBody() {
     <section className="sports-card flex flex-col gap-3 p-4">
       <div className="flex flex-wrap items-end justify-between gap-2">
         <div>
-          <h3 className="font-semibold">Shot chart</h3>
+          <h3 className="font-semibold">{t("gameShotChart")}</h3>
           <p className="mt-1 text-sm text-muted-foreground">
-            {watch
-              ? "The game plays out on the court. Pause it, or run it at 2× or 4×. The box score is underneath."
-              : "Every field goal from this box, replayed on the court."}
+            {watch ? t("gameWatchNote") : t("gameReplayNote")}
           </p>
         </div>
         {watch ? null : (
           <Link href={`/gm/game/${box.id}?watch=1`} className="text-sm font-semibold underline-offset-4 hover:underline">
-            Watch again
+            {t("gameWatchAgain")}
           </Link>
         )}
       </div>
@@ -98,7 +98,7 @@ function GameBody() {
       <div className="sports-card flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
-            Step 3 · Results
+            {t("gameStepResults")}
           </p>
           <h2 className="text-[24px] font-bold tracking-tight">
             <ClubMark teamId={box.awayTeamId} label={box.awayTeamId.toUpperCase()} />
@@ -107,12 +107,17 @@ function GameBody() {
             {watch ? "" : ` ${box.homeScore}`}
           </h2>
           <p className="text-[14px] text-muted-foreground">
-            Day {box.day} · {box.season - 1}-{String(box.season).slice(-2)}
+            {t("gameDayLine", {
+              day: box.day,
+              season: `${box.season - 1}-${String(box.season).slice(-2)}`,
+            })}
           </p>
           {scheme && yours.length ? (
             <p className="mt-1 text-[14px] text-muted-foreground">
-              {scheme}. {threes} threes on {shots} shots.
-              {first ? ` ${first.playerName} scored ${first.points}.` : ""}
+              {t("gameSchemeLine", { scheme, threes, shots })}
+              {first
+                ? ` ${t("gameFirstScored", { player: first.playerName, points: first.points })}`
+                : ""}
             </p>
           ) : null}
         </div>
@@ -120,13 +125,15 @@ function GameBody() {
           href="/gm"
           className="inline-flex h-9 items-center justify-center rounded-lg bg-primary px-3 text-sm font-medium text-primary-foreground"
         >
-          Back to plan · next game
+          {t("gameBackToPlan")}
         </Link>
       </div>
   );
 
   return (
     <div className="flex flex-col gap-4">
+      <h1 className="sr-only">{t("pageGameTitle")}</h1>
+      <p className="sr-only">{t("pageGameBlurb")}</p>
       {watch ? chart : null}
       {header}
       {watch ? null : chart}
@@ -141,7 +148,7 @@ function GameBody() {
         href="/gm"
         className="text-center text-[14px] font-semibold underline-offset-4 hover:underline"
       >
-        Continue to your plan
+        {t("gameContinue")}
       </Link>
     </div>
   );
@@ -160,13 +167,14 @@ function ShiftPlan({
     ReturnType<typeof useGmStore.getState>["league"]
   >["boxScores"][number]["players"];
 }) {
+  const t = useTranslations("GmUi");
   if (!rows) return null;
   const minutes = new Map(played.map((line) => [line.playerId, line.minutes]));
   return (
     <section className="sports-card flex flex-col gap-3 p-4">
-      <h3 className="font-semibold">Shifts that tipped off</h3>
+      <h3 className="font-semibold">{t("gameShifts")}</h3>
       <p className="text-sm text-muted-foreground">
-        Lit blocks are the plan. The number is the minutes that came back in the box.
+        {t("gameShiftsNote")}
       </p>
       <div className="gm-rot gm-rot--night gm-rot--head" aria-hidden>
         <span />
@@ -183,7 +191,7 @@ function ShiftPlan({
           <li key={row.playerId} className="gm-rot gm-rot--night">
             <div className="gm-rot__name">
               <Link href={`/gm/player/${encodeURIComponent(row.playerId)}`}>{row.playerName}</Link>
-              <span className="tabular-nums">{formatNumber(minutes.get(row.playerId) ?? 0, 1)} min</span>
+              <span className="tabular-nums">{t("nightMinutes", { minutes: formatNumber(minutes.get(row.playerId) ?? 0, 1) })}</span>
             </div>
             <div className="gm-chart" aria-hidden>
               {QUARTERS.map((quarter, quarterIndex) => (
@@ -216,16 +224,17 @@ function TeamTable({
     ReturnType<typeof useGmStore.getState>["league"]
   >["boxScores"][number]["players"];
 }) {
+  const t = useTranslations("GmUi");
   return (
     <section className="gm-club-panel">
       <h3 className="mb-2 font-semibold">
-        <ClubMark teamId={teamId} label={`${teamId.toUpperCase()} box`} />
+        <ClubMark teamId={teamId} label={t("gameBoxLabel", { team: teamId.toUpperCase() })} />
       </h3>
       <div className="overflow-x-auto rounded-xl border border-border">
         <table className="w-full min-w-[900px] text-left text-sm">
           <thead className="border-b border-border bg-muted/40 text-xs text-muted-foreground">
             <tr>
-              <th className="px-2 py-2">Player</th>
+              <th className="px-2 py-2">{t("colPlayer")}</th>
               <th className="px-2 py-2">MIN</th>
               <th className="px-2 py-2">PTS</th>
               <th className="px-2 py-2">REB</th>

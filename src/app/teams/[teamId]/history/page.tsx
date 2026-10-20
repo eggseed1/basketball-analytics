@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 
 import { GlassSurface, GlassTintScaleProvider } from "@/components/brand/glass-surface";
@@ -54,20 +55,22 @@ async function resolveHistoryTeam(teamId: string, season: string) {
 
 export async function generateMetadata({ params, searchParams }: TeamHistoryPageProps) {
   await yieldForStreaming();
+  const t = await getTranslations("TeamDetail");
   const { teamId } = await params;
   const season = first((await searchParams).season) ?? canonicalSeasonFromStartYear(currentNbaStartYear());
   const team = await resolveHistoryTeam(teamId, season);
   return {
-    title: team ? `${team.fullName} history` : "Franchise history",
+    title: team ? t("historyMetaTitle", { name: team.fullName }) : t("historyMetaFallback"),
     alternates: { canonical: `/teams/${encodeURIComponent(team?.teamId ?? teamId)}/history` },
     description: team
-      ? `${team.fullName} titles, retired numbers, franchise timeline, season arc, and head-to-head records.`
+      ? t("historyMetaDescription", { name: team.fullName })
       : undefined,
   };
 }
 
 export default async function TeamHistoryPage({ params, searchParams }: TeamHistoryPageProps) {
   await yieldForStreaming();
+  const t = await getTranslations("TeamDetail");
   const { teamId } = await params;
   const sp = await searchParams;
   const seasonParam = first(sp.season);
@@ -116,7 +119,9 @@ export default async function TeamHistoryPage({ params, searchParams }: TeamHist
                 <h1 className={cn(type.display, "mt-0.5")}>{team.fullName}</h1>
                 {franchise ? (
                   <p className={cn(type.caption, "mt-1.5 text-muted-foreground")}>
-                    {titleCount} {titleCount === 1 ? "title" : "titles"} · since {franchise.firstSeason}
+                    {titleCount === 1
+                      ? t("titlesOne", { count: titleCount, season: franchise.firstSeason })
+                      : t("titlesMany", { count: titleCount, season: franchise.firstSeason })}
                   </p>
                 ) : null}
               </div>
@@ -129,7 +134,7 @@ export default async function TeamHistoryPage({ params, searchParams }: TeamHist
               franchiseToken={brand?.id}
             />
             <FranchiseTimeline canonicalTeamId={team.teamId} />
-            <Suspense fallback={<DestinationSectionSkeleton label="Loading Team Arc…" />}>
+            <Suspense fallback={<DestinationSectionSkeleton label={t("loadingTeamArc")} />}>
               <TeamArcIsland
                 teamRouteKey={teamId}
                 teamId={team.teamId}

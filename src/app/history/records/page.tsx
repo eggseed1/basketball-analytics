@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { RecordBookBoard } from "@/components/history/record-book";
 import { PageHeader } from "@/components/layout/page-header";
@@ -19,6 +20,7 @@ function first(value: string | string[] | undefined): string {
 }
 
 export default async function RecordBookPage({ searchParams }: PageProps) {
+  const t = await getTranslations("History");
   const params = await searchParams;
   const book = await getRecordBook();
   const through = book.throughDate ? formatRecordDate(book.throughDate) : null;
@@ -28,14 +30,20 @@ export default async function RecordBookPage({ searchParams }: PageProps) {
     <main data-motion-page className="site-shell flex flex-col gap-6 py-6 sm:py-8">
       <MotionReveal />
       <PageHeader
-        title="Record book"
+        title={t("recordBookTitle")}
         subtitle={
           ready
-            ? `NBA and BAA records from ${book.fromSeason} through ${book.throughSeason}${through ? `, with modern game logs through ${through}` : ""}.`
-            : "The book is still being counted."
+            ? t("recordBookSubtitleReady", {
+                from: book.fromSeason ?? "",
+                through: book.throughSeason ?? "",
+                logs: through
+                  ? t("recordBookLogs", { date: through })
+                  : "",
+              })
+            : t("recordBookCounting")
         }
         about={<p>{book.note}</p>}
-        aboutLabel="What is counted"
+        aboutLabel={t("whatIsCounted")}
       />
       {ready ? <RecordBookBoard book={book} view={first(params.view)} /> : null}
     </main>

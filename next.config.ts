@@ -1,7 +1,10 @@
 import type { NextConfig } from "next";
 import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
+import createNextIntlPlugin from "next-intl/plugin";
 
 initOpenNextCloudflareForDev();
+
+const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const nextConfig: NextConfig = {
   // Keep icon / chart trees out of shared server chunks where possible.
@@ -27,6 +30,13 @@ const nextConfig: NextConfig = {
           // frame-ancestors only; a script/style policy needs the inline theme boot script hashed first.
           { key: "Content-Security-Policy", value: "frame-ancestors 'self'" },
           { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), payment=(), usb=()" },
+          // Locale-sensitive HTML (cookie + Accept-Language). Next may still
+          // overwrite Vary with RSC fields; Worker PAGE_CACHE keys by locale.
+          {
+            key: "Vary",
+            value:
+              "Cookie, Accept-Language, RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Router-Segment-Prefetch",
+          },
         ],
       },
     ];
@@ -123,4 +133,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);

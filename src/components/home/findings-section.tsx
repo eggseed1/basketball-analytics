@@ -27,7 +27,10 @@ import { SectionLink } from "@/components/ui/section-link";
 import type { RecentInsight, RecentInsightGame } from "@/lib/recent-insights";
 import { findingHref, insightMorphName } from "@/lib/finding-href";
 import { surpriseRule } from "@/lib/recent-insights";
+import { formatGameCalendarDate } from "@/i18n/format-date";
 import { cn } from "@/lib/utils";
+import { useLocale, useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 
 export { AnalyticsDesk } from "@/components/home/analytics-desk";
 
@@ -36,15 +39,8 @@ function todayIsoDate(): string {
   return new Intl.DateTimeFormat("en-CA", { timeZone: "America/New_York" }).format(new Date());
 }
 
-function writtenDate(iso: string): string {
-  const d = new Date(`${iso}T12:00:00Z`);
-  if (!Number.isFinite(d.getTime())) return iso;
-  return d.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    timeZone: "UTC",
-  });
+function writtenDate(iso: string, locale: string): string {
+  return formatGameCalendarDate(iso, locale, "monthDayYear") ?? iso;
 }
 
 /**
@@ -124,13 +120,15 @@ function pairByHeight(items: RecentInsight[]): RecentInsight[] {
 }
 
 /** Homepage Recent Insights: cards from the latest completed games. */
-export function FindingsSection({
+export async function FindingsSection({
   insights,
   empty = false,
 }: {
   insights: RecentInsight[];
   empty?: boolean;
 }) {
+  const t = await getTranslations("Home");
+  const tCommon = await getTranslations("Common");
   const asOf = todayIsoDate();
   const stories = insights.filter((x) => x.focus !== "surprise");
   // Two columns, so an odd last card would leave a hole; drop it instead.
@@ -142,13 +140,11 @@ export function FindingsSection({
       className="sports-card flex flex-col gap-3 p-4 sm:p-[21px]"
     >
       <div className="flex items-center justify-between gap-3">
-        <h2 className="type-heading">Recent Insights</h2>
-        <SectionLink href="/findings">See all</SectionLink>
+        <h2 className="type-heading">{t("recentInsights")}</h2>
+        <SectionLink href="/findings">{tCommon("seeAll")}</SectionLink>
       </div>
       {empty ? (
-        <p className="type-caption text-muted-foreground">
-          No games in the latest window. Insights will update as new games are completed.
-        </p>
+        <p className="type-caption text-muted-foreground">{t("insightsEmpty")}</p>
       ) : null}
       {cards.length ? (
         <div data-motion-list className="grid min-w-0 items-stretch gap-4 sm:grid-cols-2">
@@ -162,6 +158,8 @@ export function FindingsSection({
 }
 
 type Hero = { value: string; label: string };
+
+type FindingsTranslator = ReturnType<typeof useTranslations>;
 
 function tsPct(pts: number, fga: number, fta: number): number | null {
   const denom = 2 * (fga + 0.44 * fta);
@@ -180,7 +178,12 @@ function q3Deficit(game: RecentInsightGame): number | null {
   return d > 0 ? d : null;
 }
 
-function heroFor(insight: RecentInsight): Hero | null {
+/**
+ * The card's big number and label. Labels the generator already wrote into
+ * `insight.hero` stay as archived; the ones built here follow the UI locale.
+ * Stat abbreviations (PTS, REB, AST, STL + BLK) stay literal.
+ */
+function heroFor(insight: RecentInsight, t: FindingsTranslator): Hero | null {
   if (insight.hero) return insight.hero;
   const { line, game, focus, trend } = insight;
   if (line) {
@@ -191,14 +194,14 @@ function heroFor(insight: RecentInsight): Hero | null {
         const rule = surpriseRule(stat);
         return {
           value: `+${Math.round(line[stat] - line.baseline[stat])}`,
-          label: `${rule.label} over avg`,
+          label: t("heroOverAvg", { label: rule.label }),
         };
       }
       case "points":
         return { value: String(line.points), label: "PTS" };
       case "efficiency": {
         const ts = tsPct(line.points, line.fga, line.fta);
-        return ts != null ? { value: `${(ts * 100).toFixed(1)}%`, label: "True shooting" } : null;
+        return ts != null ? { value: `${(ts * 100).toFixed(1)}%`, label: t("heroTrueShooting") } : null;
       }
       case "rebounds":
         return { value: String(line.rebounds), label: "REB" };
@@ -211,7 +214,7 @@ function heroFor(insight: RecentInsight): Hero | null {
       case "trend": {
         if (!trend?.length) return null;
         const avg = trend.reduce((s, p) => s + p.points, 0) / trend.length;
-        return { value: avg.toFixed(1), label: "PPG, last 5" };
+        return { value: avg.toFixed(1), label: t("heroPpgLast5") };
       }
     }
   }
@@ -219,56 +222,94 @@ function heroFor(insight: RecentInsight): Hero | null {
     const margin = Math.abs(game.home.score - game.away.score);
     switch (focus) {
       case "margin":
-        return { value: `+${margin}`, label: "Margin" };
+        return { value: `+${margin}`, label: t("heroMargin") };
       case "comeback": {
         const d = q3Deficit(game);
-        return d != null ? { value: `−${d}`, label: "After 3 quarters" } : null;
+        return d != null ? { value: `−${d}`, label: t("heroAfterThree") } : null;
       }
       case "clutch":
-        return { value: String(margin), label: "Point margin" };
+        return { value: String(margin), label: t("heroPointMargin") };
       case "combined":
-        return { value: String(game.home.score + game.away.score), label: "Combined points" };
+        return { value: String(game.home.score + game.away.score), label: t("heroCombinedPoints") };
       case "overtime":
-        return { value: "OT", label: "Extra period" };
+        return { value: "OT", label: t("heroExtraPeriod") };
     }
   }
   return null;
 }
 
 /** "DET 109, PHX 107 · W", the player's team first. */
-function playerScoreLabel(insight: RecentInsight): string {
+function playerScoreLabel(insight: RecentInsight, t: FindingsTranslator): string {
   const { line, game } = insight;
   if (!line) return insight.context;
-  if (!game) return `${line.teamAbbr} vs ${line.opponentAbbr}${line.result ? ` · ${line.result}` : ""}`;
+  if (!game) return `${t("playerVsOpponent", { team: line.teamAbbr, opponent: line.opponentAbbr })}${line.result ? ` · ${line.result}` : ""}`;
   const mine = game.home.teamId === insight.teamId ? game.home : game.away;
   const theirs = mine === game.home ? game.away : game.home;
   return `${mine.abbr} ${mine.score}, ${theirs.abbr} ${theirs.score}${line.result ? ` · ${line.result}` : ""}`;
 }
 
-function gameScoreLabel(game: RecentInsightGame): string {
-  return `Final: ${game.away.abbr} ${game.away.score}, ${game.home.abbr} ${game.home.score}`;
+function gameScoreLabel(game: RecentInsightGame, t: FindingsTranslator): string {
+  return t("gameScoreFinal", {
+    away: game.away.abbr,
+    awayScore: game.away.score,
+    home: game.home.abbr,
+    homeScore: game.home.score,
+  });
 }
 
 function ScoreLink({ href, label }: { href: string | null; label: string }) {
+  const t = useTranslations("Findings");
   if (!href) return <span>{label}</span>;
   return (
     <AppLink
       href={href}
       className="pointer-events-auto tabular-nums underline-offset-4 hover:text-foreground hover:underline"
-      title="Open box score"
+      title={t("openBoxScore")}
     >
       {label}
     </AppLink>
   );
 }
 
-export function insightCategoryLabel(category: string): string {
+/**
+ * Archived insights keep the English `category` string the generator wrote
+ * ("PLAYER · BIG NIGHT"). Only the tail is shown, and only the display is
+ * translated here, at render time, through `Findings.category.*`.
+ */
+const CATEGORY_MESSAGE_KEYS: Record<string, string> = {
+  "above his norm": "category.aboveHisNorm",
+  "big night": "category.bigNight",
+  scoring: "category.scoring",
+  playmaking: "category.playmaking",
+  rebounding: "category.rebounding",
+  defense: "category.defense",
+  efficiency: "category.efficiency",
+  offense: "category.offense",
+  margin: "category.margin",
+  clutch: "category.clutch",
+  pace: "category.pace",
+  comeback: "category.comeback",
+  run: "category.run",
+  seesaw: "category.seesaw",
+  "late winner": "category.lateWinner",
+  "biggest lead": "category.biggestLead",
+  takeover: "category.takeover",
+  "big quarter": "category.bigQuarter",
+  shooting: "category.shooting",
+  "last 5": "category.last5",
+  streak: "category.streak",
+};
+
+/** Pass the `Findings` translator to localize; without it the English tail is returned. */
+export function insightCategoryLabel(category: string, t?: FindingsTranslator): string {
   const tail = category.split("·")[1]?.trim() ?? category;
+  const messageKey = CATEGORY_MESSAGE_KEYS[tail.toLowerCase()];
+  if (t && messageKey && t.has(messageKey)) return t(messageKey);
   return tail.charAt(0) + tail.slice(1).toLowerCase();
 }
 
-function categoryLabel(insight: RecentInsight): string {
-  return insightCategoryLabel(insight.category);
+function categoryLabel(insight: RecentInsight, t: FindingsTranslator): string {
+  return insightCategoryLabel(insight.category, t);
 }
 
 /** Tag ink follows the category, the same color for every team. */
@@ -357,13 +398,15 @@ export function InsightFigure({ insight }: { insight: RecentInsight }) {
 
 /** `asOf` is unused. The card writes the game date. */
 export function InsightCard({ insight, asOf: _asOf }: { insight: RecentInsight; asOf: string | null }) {
-  const dateLabel = writtenDate(insight.gameDate);
+  const t = useTranslations("Findings");
+  const locale = useLocale();
+  const dateLabel = writtenDate(insight.gameDate, locale);
 
   const gameHref = insight.gameId ? `/games/${encodeURIComponent(insight.gameId)}` : null;
   const playerHref = insight.playerId ? `/players/${encodeURIComponent(insight.playerId)}` : null;
 
   const { line, game, focus } = insight;
-  const hero = heroFor(insight);
+  const hero = heroFor(insight, t);
   const accent = teamColor(insight.teamId ?? game?.home.teamId);
   const isPlayer = Boolean(line && insight.playerId);
   const cardHref = isPlayer ? playerHref : (gameHref ?? playerHref);
@@ -387,7 +430,7 @@ export function InsightCard({ insight, asOf: _asOf }: { insight: RecentInsight; 
               backgroundColor: "color-mix(in srgb, currentColor 16%, transparent)",
             }}
           >
-            {categoryLabel(insight)}
+            {categoryLabel(insight, t)}
           </Badge>
           <span className="text-muted-foreground">{dateLabel}</span>
         </div>
@@ -411,7 +454,7 @@ export function InsightCard({ insight, asOf: _asOf }: { insight: RecentInsight; 
                 </Link>
                 <p className="type-caption mt-0.5 flex items-center gap-1.5 text-muted-foreground">
                   {insight.teamId ? <TeamLogo teamKey={insight.teamId} size="2xs" /> : null}
-                  <ScoreLink href={gameHref} label={playerScoreLabel(insight)} />
+                  <ScoreLink href={gameHref} label={playerScoreLabel(insight, t)} />
                 </p>
               </div>
             </>
@@ -439,7 +482,7 @@ export function InsightCard({ insight, asOf: _asOf }: { insight: RecentInsight; 
                 <AppLink
                   href={gameHref}
                   className="pointer-events-auto ml-auto flex shrink-0 -space-x-2 rounded-full outline-offset-2 hover:opacity-70"
-                  aria-label={gameScoreLabel(game)}
+                  aria-label={gameScoreLabel(game, t)}
                 >
                   <TeamLogo teamKey={game.away.teamId} size="sm" />
                   <TeamLogo teamKey={game.home.teamId} size="sm" />
@@ -479,7 +522,7 @@ export function InsightCard({ insight, asOf: _asOf }: { insight: RecentInsight; 
             href={gameHref}
             className="type-caption pointer-events-auto -mt-0.5 self-end text-muted-foreground hover:text-foreground hover:underline"
           >
-            {gameScoreLabel(game)}
+            {gameScoreLabel(game, t)}
           </AppLink>
         ) : null}
 

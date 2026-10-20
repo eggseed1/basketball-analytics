@@ -25,6 +25,7 @@ import {
   sortExplorePlayerRows,
   toExplorePlayerBoardRow,
 } from "../src/data/queries/explore-players-board-pure";
+import { boardStatValue } from "../src/lib/player-board-stats";
 import { getAskCoverageGaps } from "../src/query-engine/coverage";
 import { HISTORICAL_IMPACT_METHODOLOGY_VERSION } from "../src/data/types/historical-impact";
 import type { PlayerSeason } from "../src/data/types";
@@ -159,7 +160,9 @@ async function main() {
     assert.equal(zeroish.blocks, 0);
     const slim = toExplorePlayerBoardRow(zeroish);
     assert.equal(slim.steals, 0);
-    assert.equal(slim.spg, 0);
+    // Per-game rates are omitted from the wire row and derived at read time.
+    assert.equal(slim.spg, undefined);
+    assert.equal(boardStatValue(slim, "spg", "totals"), 0);
   }
 
   // 3. Valid derived statistic remains derived when inputs exist

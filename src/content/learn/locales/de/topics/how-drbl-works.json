@@ -1,0 +1,59 @@
+{
+  "id": "how_drbl_works",
+  "slug": "how-drbl-works",
+  "name": "So funktioniert DRBL",
+  "shortName": "So funktioniert DRBL",
+  "category": "systems",
+  "oneSentence": "DRBL beobachtet, wie sich der erwartete Punktwert jedes Ballbesitzes verändert, schreibt Spielern Anteile gut, wenn das Play-by-Play es belegt, und macht daraus eine Rate (DRBL/100) und eine Saisonsumme (WAR1).",
+  "whyItMatters": [
+    "Spielerseiten beantworten „Wie gut?“, ohne das Modell zu erklären. Diese Seite ist für alle, die den Ballbesitz nachvollziehen wollen.",
+    "Formeln werden verständlicher, wenn die Basketball-Abfolge klar ist."
+  ],
+  "howToInterpret": [
+    "Ein Ballbesitz beginnt mit einem erwarteten Punktwert (was man in dieser Situation üblicherweise erzielt).",
+    "Würfe, Pässe, Ballverluste, Fouls und andere protokollierte Aktionen verschieben diese Erwartung nach oben oder unten.",
+    "Wenn das öffentliche Play-by-Play eine Veränderung eindeutig einem Spieler zuordnet, schreibt DRBL sie ihm gut.",
+    "Diese Gutschriften ergeben eine Play-by-Play-Rate und eine Saisonsumme über der R1-Basis.",
+    "DRBL/100 mischt diese Rate mit Werten aus dem Boxscore, die sich bei kleinen Stichproben schneller beruhigen."
+  ],
+  "howDrblUses": [
+    "Gutschriften werden an einer rollenbezogenen R1-Basis für erwartete Punkte gemessen.",
+    "DRBL/100 ist diese Rate, gemischt mit Boxscore-Werten, bei kleiner Stichprobe Richtung null gezogen und in späteren Spielen auf Punkte pro 100 skaliert.",
+    "WAR1 ist die Saisonsumme (R1-Punkte), umgerechnet in Siegeinheiten."
+  ],
+  "calculation": [
+    "Ballbesitz beginnt → erwarteter Punktwert wird festgelegt.",
+    "Aktionen passieren → der erwartete Wert ändert sich.",
+    "Beobachtbare Beiträge werden gutgeschrieben.",
+    "Ballbesitze summieren sich zu einer rohen Fähigkeitsrate.",
+    "Die Rate wird mit Boxscore-Werten gemischt, und kleine Stichproben werden Richtung null gezogen, damit das Rauschen zu Saisonbeginn nicht dominiert.",
+    "Der Saisonwert summiert sich als R1-Punkte → WAR1."
+  ],
+  "caveats": [
+    "Das öffentliche Play-by-Play sieht nicht jede Aktion ohne Ball und im Raum.",
+    "Eine Gutschrift beweist nicht: „Ersetzt man diesen Spieler, ändern sich die Siege um X.“",
+    "Die Diagnosewerte P / LN / B ergeben zusammen nicht DRBL/100."
+  ],
+  "relatedIds": [
+    "drbl",
+    "r1_win_eq",
+    "drbl_p",
+    "r1",
+    "drbl_validation",
+    "drbl_limitations"
+  ],
+  "seeInAction": [
+    {
+      "label": "DRBL-Überblick",
+      "href": "/learn/drbl"
+    },
+    {
+      "label": "Nach DRBL/100 erkunden",
+      "href": "/explore/players?sort=drbl100"
+    }
+  ],
+  "sources": [
+    "/learn/drbl",
+    "src/content/stats/drbl-guides.ts"
+  ]
+}

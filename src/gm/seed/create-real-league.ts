@@ -19,7 +19,12 @@ import { FRANCHISES, emptyStarters } from "@/gm/seed/franchises";
 import { createRng, clamp, pick, randInt, uid } from "@/gm/engine/rng";
 import { generateSchedule } from "@/gm/engine/schedule";
 import { emptyStandings } from "@/gm/engine/standings";
-import { autoSetLineup } from "@/gm/engine/lineup";
+import {
+  assignLeaguePositions,
+  POSITION_BOOK_VERSION,
+  withListedPositions,
+} from "@/gm/engine/lineup";
+import { applyBalancedRotations } from "@/gm/engine/coaching";
 import { coachForTeam, openCoachMarket, trainerForLevel } from "@/gm/seed/coaches";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import {
@@ -33,9 +38,16 @@ import { getBundledPlayerBio } from "@/data/runtime/player-bio-snapshot";
 import { createDraftClass } from "@/gm/seed/prospect-identities";
 import { sealProspect } from "@/gm/engine/scouting";
 import { buildSheet, type SheetStatHint } from "@/gm/engine/attributes";
-import { applyRookieRatings } from "@/gm/engine/rookie-ratings";
+import {
+  applyRookieRatings,
+  estimateActivePotential,
+} from "@/gm/engine/rookie-ratings";
 import { applyRealBooks } from "@/gm/seed/real-books";
 import { entryValueForNbaId } from "@/gm/lib/season-line";
+import {
+  defaultTeamDeveloper,
+  generateDeveloperMarket,
+} from "@/gm/seed/developers";
 import {
   defaultTeamScout,
   effectiveScoutLevel,
@@ -45,6 +57,7 @@ import {
   normalizePlayerName,
   salaryMapForSeason,
 } from "@/data/providers/salaries/salary-store";
+import { parsePlayerDraftInfo } from "@/lib/player-draft";
 import type { CBARules } from "@/gm/myleague/types";
 
 const POSITIONS: GmPosition[] = ["PG", "SG", "SF", "PF", "C"];
@@ -97,49 +110,113 @@ function finite(value: unknown): value is number {
 }
 
 /**
- * Points per 100 above average. DARKO when we have it.
- * Otherwise BPM. A raw net rating is already a point differential, not an
- * offensive rating near 110, so it is not shifted by 100.
+ * ESPN / thin feeds often fill missing advanced metrics with literal 0.
+ * Treat near-zero the same as missing so we can fall through to netRating
+ * or box-score proxies instead of stamping every star at impact 0.
  */
-function estimateImpact(row: PlayerSeason): number {
-  if (finite(row.darkoDpm)) return row.darkoDpm;
-  if (finite(row.dpm) && row.dpm !== 0) return row.dpm;
-  if (finite(row.raptor)) return row.raptor;
-  if (finite(row.bpm)) return Math.round(clamp(row.bpm, -8, 14) * 100) / 100;
-  const net = row.netRating;
-  if (finite(net)) {
-    const points = Math.abs(net) > 40 ? net - 110 : net;
-    return Math.round(clamp(points * 0.45, -8, 12) * 100) / 100;
-  }
-  if (!(row.minutes > 80) || !(row.gamesPlayed > 0)) return -1.2;
-  const mpg = row.minutes / row.gamesPlayed;
-  const usg = (row.usagePct || 0.18) * 100;
-  const rough = (usg - 18) * 0.04 + (mpg - 22) * 0.03;
-  return Math.round(clamp(rough, -3, 4) * 100) / 100;
+function usableMetric(value: unknown): value is number {
+  return finite(value) && Math.abs(value) > 1e-6;
 }
 
-function ratingsFromSeason(row: PlayerSeason): GmRatings {
+/**
+ * Points per 100 above average. DARKO when we have it.
+ * Otherwise BPM / RAPTOR / net. Thin samples without DARKO are shrunk toward
+ * replacement so an 11-game fluke cannot mint an 86 overall.
+ */
+function estimateImpact(row: PlayerSeason): number {
+  const minutes = Number.isFinite(row.minutes) ? row.minutes : 0;
+  const gp = Number.isFinite(row.gamesPlayed) ? row.gamesPlayed : 0;
+  const hasDarko = usableMetric(row.darkoDpm);
+
+  let raw: number | null = null;
+  if (usableMetric(row.darkoDpm)) raw = row.darkoDpm;
+  else if (usableMetric(row.dpm)) raw = row.dpm;
+  else if (usableMetric(row.raptor)) raw = row.raptor;
+  else if (usableMetric(row.bpm)) raw = clamp(row.bpm, -8, 14);
+  else {
+    const net = row.netRating;
+    if (finite(net) && gp > 0) {
+      // Team net alone mints +7 role players on juggernauts. Blend with box
+      // volume so stars climb and low-usage specialists stay grounded.
+      const points = Math.abs(net) > 40 ? net - 110 : net;
+      const mpg = minutes / gp;
+      const ppg = row.points / gp;
+      const apg = row.assists / gp;
+      const rpg = row.rebounds / gp;
+      const fromNet = points * 0.16;
+      const fromBox =
+        (ppg - 12) * 0.14 +
+        (apg - 3) * 0.22 +
+        (rpg - 5) * 0.05 +
+        (mpg - 24) * 0.05;
+      raw = clamp(fromNet + fromBox, -6, 10);
+    }
+  }
+
+  if (raw == null) {
+    if (!(minutes > 80) || gp < 1) return -1.2;
+    const mpg = minutes / gp;
+    const usg = (row.usagePct || 0.18) * 100;
+    const ppg = gp > 0 ? row.points / gp : 0;
+    const apg = gp > 0 ? row.assists / gp : 0;
+    // When advanced stats are blank, lean on usage + volume so stars are not
+    // stuck at replacement while role players float near zero.
+    raw = clamp(
+      (usg - 18) * 0.05 + (mpg - 22) * 0.04 + (ppg - 12) * 0.06 + (apg - 3) * 0.12,
+      -3,
+      6
+    );
+  }
+
+  // Trust DARKO even on shorter runs; shrink everything else hard under ~500 min.
+  if (!hasDarko) {
+    if (minutes < 200 || gp < 10) {
+      const trust =
+        Math.min(1, Math.max(0, minutes) / 450) *
+        Math.min(1, Math.max(0, gp) / 18);
+      raw = raw * trust + -0.6 * (1 - trust);
+    } else if (minutes < 700) {
+      const trust = 0.5 + 0.5 * ((minutes - 200) / 500);
+      raw = raw * trust;
+    }
+  } else if (minutes < 120 && gp < 8) {
+    const trust = 0.75 + 0.25 * (minutes / 120);
+    raw = raw * trust;
+  }
+
+  return Math.round(clamp(raw, -8, 12) * 100) / 100;
+}
+
+function ratingsFromSeason(
+  row: PlayerSeason,
+  opts?: { age?: number; draftPick?: number | null }
+): GmRatings {
   const impact = estimateImpact(row);
-  const offense = finite(row.darkoOff)
+  const offense = usableMetric(row.darkoOff)
     ? row.darkoOff
-    : finite(row.oDpm) && row.oDpm !== 0
+    : usableMetric(row.oDpm)
       ? row.oDpm
-      : finite(row.oRaptor)
+      : usableMetric(row.oRaptor)
         ? row.oRaptor
-        : finite(row.obpm)
+        : usableMetric(row.obpm)
           ? row.obpm
           : impact * 0.65;
-  const defense = finite(row.darkoDef)
+  const defense = usableMetric(row.darkoDef)
     ? row.darkoDef
-    : finite(row.dDpm) && row.dDpm !== 0
+    : usableMetric(row.dDpm)
       ? row.dDpm
-      : finite(row.dRaptor)
+      : usableMetric(row.dRaptor)
         ? row.dRaptor
-        : finite(row.dbpm)
+        : usableMetric(row.dbpm)
           ? row.dbpm
           : impact * 0.35;
   const ts = row.trueShootingPct || 0.55;
-  const usg = row.usagePct || 0.18;
+  const age =
+    opts?.age && opts.age > 0
+      ? opts.age
+      : typeof row.age === "number" && row.age > 0
+        ? Math.round(row.age)
+        : 26;
   return {
     impact: Math.round(impact * 100) / 100,
     offense: Math.round(clamp(offense, -8, 14) * 100) / 100,
@@ -157,7 +234,12 @@ function ratingsFromSeason(row: PlayerSeason): GmRatings {
       95
     ),
     durability: clamp(Math.round(55 + row.gamesPlayed * 0.4), 40, 95),
-    potential: clamp(impact + usg * 4, 0, 10),
+    potential: estimateActivePotential({
+      impact,
+      age,
+      usagePct: row.usagePct,
+      draftPick: opts?.draftPick,
+    }),
   };
 }
 
@@ -214,8 +296,18 @@ export function playerSeasonToGmPlayer(
   }
 ): GmPlayer {
   const position = mapPosition(row.position);
-  const ratings = ratingsFromSeason(row);
   const bio = getBundledPlayerBio(row.playerId);
+  const age =
+    typeof row.age === "number" && row.age > 0
+      ? Math.round(row.age)
+      : typeof bio?.age === "number" && bio.age > 0
+        ? bio.age
+        : 26;
+  const draft = parsePlayerDraftInfo(bio?.draftInfo);
+  const ratings = ratingsFromSeason(row, {
+    age,
+    draftPick: draft && !draft.undrafted ? draft.pick : null,
+  });
   const seasonStart = seasonEndYear - 1;
   const cap = opts?.cap ?? getCbaRules(seasonEndYear);
   const contract = teamId
@@ -251,12 +343,7 @@ export function playerSeasonToGmPlayer(
     name: row.playerName,
     teamId,
     position,
-    age:
-      typeof row.age === "number" && row.age > 0
-        ? Math.round(row.age)
-        : typeof bio?.age === "number" && bio.age > 0
-          ? bio.age
-          : 26,
+    age,
     heightIn:
       bio?.heightInches && bio.heightInches > 0
         ? bio.heightInches
@@ -285,7 +372,8 @@ export function playerSeasonToGmPlayer(
     raptor: row.raptor,
   };
   player.sheet = buildSheet(player, row.gamesPlayed > 0 ? hint : undefined);
-  return applyRookieRatings(player);
+  // ESPN only ships G/F/C → SG/SF/C. Split into five spots + secondary here.
+  return withListedPositions(applyRookieRatings(player));
 }
 
 export function buildLeagueFromPlayerSeasons(
@@ -331,6 +419,7 @@ export function buildLeagueFromPlayerSeasons(
 
   const teams: GmTeam[] = FRANCHISES.map((f, i) => {
     const scout = defaultTeamScout(seed + i * 41 + f.id.charCodeAt(0) * 3);
+    const developer = defaultTeamDeveloper(seed + i * 53 + f.id.charCodeAt(0) * 7);
     const trainer = trainerForLevel(randInt(rng, 2, 5));
     return {
       ...f,
@@ -343,6 +432,7 @@ export function buildLeagueFromPlayerSeasons(
         trainer,
         dead: [],
         scout,
+        developer,
         scoutLevel: scout.eye,
         trainerLevel: trainer.level,
       },
@@ -444,10 +534,12 @@ export function buildLeagueFromPlayerSeasons(
       sealProspect(player, scoutLevel, boardIndex, r, userScout),
   });
   players.push(...prospects);
+  const listedPlayers = assignLeaguePositions(players);
   const draftPool = prospects.map((p) => p.id);
   const scoutMarket = generateScoutMarket(seed + 1201, 5);
+  const developerMarket = generateDeveloperMarket(seed + 1403, 5);
 
-  const freeAgents = players
+  const freeAgents = listedPlayers
     .filter((p) => p.teamId === null && !draftPool.includes(p.id))
     .map((p) => p.id);
 
@@ -462,13 +554,20 @@ export function buildLeagueFromPlayerSeasons(
     phase: "regular",
     userTeamId,
     settings,
+    automation: {
+      autoDraft: false,
+      autoFreeAgency: true,
+      autoScout: false,
+    },
     teams,
-    players,
+    players: listedPlayers,
     freeAgents,
     draftPool,
     scoutMarket,
+    developerMarket,
     coachMarket: openCoachMarket(),
     staffBook: 1,
+    positionBook: POSITION_BOOK_VERSION,
     rosterBook: options.keepAssignedRoster ? 1 : undefined,
     schedule: realSchedule,
     standings: emptyStandings(teams),
@@ -490,8 +589,7 @@ export function buildLeagueFromPlayerSeasons(
     updatedAt: new Date().toISOString(),
   };
 
-  state.teams = state.teams.map((t) => autoSetLineup(t, state.players));
-  return applyRealBooks(state);
+  return applyRealBooks(applyBalancedRotations(state));
 }
 
 export function defaultGmCanonicalSeason(): string {

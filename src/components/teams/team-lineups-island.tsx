@@ -105,13 +105,13 @@ function RotationTable({
                 {p.position ?? "—"}
               </td>
               <td className="py-2 pr-3 text-right tabular-nums">
-                {p.gamesStarted}
+                {formatNumber(p.gamesStarted, 0)}
               </td>
               <td className="py-2 pr-3 text-right tabular-nums">
                 {startRate != null ? formatPct(startRate, 0) : "—"}
               </td>
               <td className="py-2 pr-3 text-right tabular-nums">
-                {p.gamesPlayed}
+                {formatNumber(p.gamesPlayed, 0)}
               </td>
               <td className="py-2 pr-3 text-right tabular-nums">
                 {formatNumber(mpgOf(p), 1)}

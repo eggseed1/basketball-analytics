@@ -1,0 +1,31 @@
+{
+  "id": "pace",
+  "slug": "pace",
+  "name": "Ritmo",
+  "shortName": "Ritmo",
+  "category": "basics",
+  "oneSentence": "El ritmo estima cuántas posesiones juega un equipo, una medida de lo rápido que fluye el partido.",
+  "whyItMatters": [
+    "Un ritmo más alto infla las estadísticas de conteo; las métricas de eficiencia ayudan a comparar entre velocidades distintas."
+  ],
+  "howToInterpret": [
+    "Más ritmo = más posesiones = más oportunidades de sumar estadísticas."
+  ],
+  "howDrblUses": [
+    "Se explica aquí como contexto. Game Lab no estima las posesiones de un partido suelto."
+  ],
+  "caveats": [
+    "No está disponible como campo propio de GameSummary para la evidencia de temporada."
+  ],
+  "relatedIds": [
+    "ortg",
+    "drtg",
+    "ts"
+  ],
+  "seeInAction": [
+    {
+      "label": "Aprende ORtg",
+      "href": "/learn/offensive-rating"
+    }
+  ]
+}

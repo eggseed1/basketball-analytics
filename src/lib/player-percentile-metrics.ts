@@ -19,10 +19,7 @@ import {
 export type { PercentileCategory } from "@/lib/player-stat-sheet-registry";
 
 export type MetricInterpretation =
-  | "higher_is_better"
-  | "lower_is_better"
-  | "descriptive"
-  | "role";
+  "higher_is_better" | "lower_is_better" | "descriptive" | "role";
 
 export type PercentileMetric = {
   id: string;
@@ -63,7 +60,7 @@ const PERCENTILE_TO_SHEET_ID: Record<string, SheetStatId> = {
 
 function resolvePercentileCategory(
   id: string,
-  fallback: string
+  fallback: string,
 ): PercentileCategory {
   const legacy =
     fallback === "counting"
@@ -82,7 +79,7 @@ function resolvePercentileCategory(
  * (a point in the early teens, then nothing until ~2021).
  */
 export function defaultPercentileMetricId(
-  metrics: Array<Pick<PercentileMetric, "id" | "profileHidden">>
+  metrics: Array<Pick<PercentileMetric, "id" | "profileHidden">>,
 ): string {
   const visible = metrics.filter((m) => !m.profileHidden);
   for (const id of ["darko", "r1WinEquivalents", "drbl100"] as const) {
@@ -96,12 +93,12 @@ export function defaultPercentileMetricId(
  * and comps hydrate via idle `/percentiles` fetch — keeps player HTML ~half size.
  */
 export function slimPercentileMetricsForSsr(
-  metrics: PercentileMetric[]
+  metrics: PercentileMetric[],
 ): PercentileMetric[] {
   if (!metrics.length) return metrics;
   const keepId = defaultPercentileMetricId(metrics);
   const impact = metrics.filter(
-    (metric) => metric.category === "impact" || metric.id === keepId
+    (metric) => metric.category === "impact" || metric.id === keepId,
   );
   const source = impact.length ? impact : metrics;
   return source.map((metric) => ({
@@ -151,7 +148,8 @@ export const ADVANCED_PERCENTILE_METRIC_IDS = new Set([
 export function isQualifiedPeer(row: PlayerSeason): boolean {
   return (
     row.gamesPlayed >= PLAYER_PERCENTILE_QUALIFY.minGames &&
-    row.minutes / Math.max(1, row.gamesPlayed) >= PLAYER_PERCENTILE_QUALIFY.minMpg
+    row.minutes / Math.max(1, row.gamesPlayed) >=
+      PLAYER_PERCENTILE_QUALIFY.minMpg
   );
 }
 
@@ -160,7 +158,7 @@ export function isQualifiedPeer(row: PlayerSeason): boolean {
  * Missing seasons are stored as 0 — do not chart those as real Net/DRtg.
  */
 function hasTrackedAdvancedRatings(
-  row: Pick<PlayerSeason, "offensiveRating" | "defensiveRating">
+  row: Pick<PlayerSeason, "offensiveRating" | "defensiveRating">,
 ): boolean {
   return (
     row.offensiveRating != null &&
@@ -172,26 +170,30 @@ function hasTrackedAdvancedRatings(
 
 /** Prefer live DARKO overlay; fall back to canonical dpm when non-zero. */
 function darkoImpact(
-  row: Pick<PlayerSeason, "darkoDpm" | "dpm">
+  row: Pick<PlayerSeason, "darkoDpm" | "dpm">,
 ): number | null {
-  if (row.darkoDpm != null && Number.isFinite(row.darkoDpm)) return row.darkoDpm;
-  if (row.dpm != null && Number.isFinite(row.dpm) && row.dpm !== 0) return row.dpm;
+  if (row.darkoDpm != null && Number.isFinite(row.darkoDpm))
+    return row.darkoDpm;
+  if (row.dpm != null && Number.isFinite(row.dpm) && row.dpm !== 0)
+    return row.dpm;
   return null;
 }
 
 function darkoOffense(
-  row: Pick<PlayerSeason, "darkoOff" | "oDpm">
+  row: Pick<PlayerSeason, "darkoOff" | "oDpm">,
 ): number | null {
-  if (row.darkoOff != null && Number.isFinite(row.darkoOff)) return row.darkoOff;
+  if (row.darkoOff != null && Number.isFinite(row.darkoOff))
+    return row.darkoOff;
   if (row.oDpm != null && Number.isFinite(row.oDpm) && row.oDpm !== 0)
     return row.oDpm;
   return null;
 }
 
 function darkoDefense(
-  row: Pick<PlayerSeason, "darkoDef" | "dDpm">
+  row: Pick<PlayerSeason, "darkoDef" | "dDpm">,
 ): number | null {
-  if (row.darkoDef != null && Number.isFinite(row.darkoDef)) return row.darkoDef;
+  if (row.darkoDef != null && Number.isFinite(row.darkoDef))
+    return row.darkoDef;
   if (row.dDpm != null && Number.isFinite(row.dDpm) && row.dDpm !== 0)
     return row.dDpm;
   return null;
@@ -220,7 +222,10 @@ export type PercentileMetricsOptions = {
    * Baked quantile cutoffs of a season's peer pool. Ranks career series
    * seasons whose peer board was not loaded for this request.
    */
-  seasonCutoffs?: (season: string, metricId: string) => readonly number[] | undefined;
+  seasonCutoffs?: (
+    season: string,
+    metricId: string,
+  ) => readonly number[] | undefined;
   /** Receives each metric's view-season peer pool (percentile pool bake). */
   onPool?: (metricId: string, values: readonly number[]) => void;
 };
@@ -233,11 +238,16 @@ export function percentileCutoffs(values: readonly number[]): number[] {
   const sorted = values.filter((v) => Number.isFinite(v)).sort((a, b) => a - b);
   if (sorted.length < 2) return [];
   const last = sorted.length - 1;
-  return Array.from({ length: 101 }, (_, k) => roundCutoff(sorted[Math.round((k * last) / 100)]!));
+  return Array.from({ length: 101 }, (_, k) =>
+    roundCutoff(sorted[Math.round((k * last) / 100)]!),
+  );
 }
 
 /** Share of the pool strictly below `value`, read off baked cutoffs (≈ percentileOf). */
-export function percentileFromCutoffs(raw: number, cutoffs: readonly number[]): number {
+export function percentileFromCutoffs(
+  raw: number,
+  cutoffs: readonly number[],
+): number {
   const last = cutoffs.length - 1;
   if (last < 1 || !Number.isFinite(raw)) return 50;
   const value = roundCutoff(raw);
@@ -270,7 +280,7 @@ export function buildPlayerPercentileMetrics(
   historicalPeers: PlayerSeason[],
   focalPlayerId: string,
   peersBySeason?: Map<string, PlayerSeason[]>,
-  options?: PercentileMetricsOptions
+  options?: PercentileMetricsOptions,
 ): PercentileMetric[] {
   // Old-era boards send 0 for stats nobody recorded yet; rank those as blank.
   const mask = (rows: PlayerSeason[]) => rows.map(maskUnrecordedEraStats);
@@ -281,9 +291,11 @@ export function buildPlayerPercentileMetrics(
     mask(historicalPeers),
     focalPlayerId,
     peersBySeason
-      ? new Map([...peersBySeason].map(([season, rows]) => [season, mask(rows)]))
+      ? new Map(
+          [...peersBySeason].map(([season, rows]) => [season, mask(rows)]),
+        )
       : undefined,
-    options
+    options,
   );
 }
 
@@ -294,7 +306,7 @@ function buildMaskedPercentileMetrics(
   historicalPeers: PlayerSeason[],
   focalPlayerId: string,
   peersBySeason?: Map<string, PlayerSeason[]>,
-  options?: PercentileMetricsOptions
+  options?: PercentileMetricsOptions,
 ): PercentileMetric[] {
   if (!seasonStats) return [];
   const light = Boolean(options?.light);
@@ -323,7 +335,7 @@ function buildMaskedPercentileMetrics(
 
   const peerValuesForSeason = (
     season: string,
-    pick: (row: PlayerSeason) => number | null | undefined
+    pick: (row: PlayerSeason) => number | null | undefined,
   ): number[] => {
     if (light && season !== seasonStats.season) return [];
     const seasonPeers = peersBySeason?.get(season);
@@ -341,7 +353,7 @@ function buildMaskedPercentileMetrics(
 
   const careerSeries = (
     pick: (row: PlayerSeason) => number | null | undefined,
-    options?: { rejectFlatOverlay?: boolean; invert?: boolean }
+    options?: { rejectFlatOverlay?: boolean; invert?: boolean },
   ): CareerPoint[] => {
     const bySeason = new Map<string, PlayerSeason>();
     for (const r of career) {
@@ -358,11 +370,7 @@ function buildMaskedPercentileMetrics(
         const values = peerValuesForSeason(r.season, pick);
         const rawPct = values.length ? percentileOf(v, values) : undefined;
         const percentile =
-          rawPct == null
-            ? undefined
-            : options?.invert
-              ? 100 - rawPct
-              : rawPct;
+          rawPct == null ? undefined : options?.invert ? 100 - rawPct : rawPct;
         const { color, abbr } = teamChartColor(r.teamId);
         return {
           season: r.season.slice(2),
@@ -416,6 +424,7 @@ function buildMaskedPercentileMetrics(
         interpretation === "lower_is_better");
 
     options?.onPool?.(opts.id, opts.values);
+    // Fast / edge hero skips peer boards; rank from baked cutoffs when the pool is empty.
     const viewCutoffs = seasonCutoffs?.(seasonStats.season, opts.id);
     if (!opts.values.length && !(viewCutoffs && viewCutoffs.length > 1)) {
       return;
@@ -474,84 +483,72 @@ function buildMaskedPercentileMetrics(
           (p) =>
             hasValidDrblEstimate(p) &&
             p.r1WinEquivalents != null &&
-            Number.isFinite(p.r1WinEquivalents)
+            Number.isFinite(p.r1WinEquivalents),
         )
         .map((p) => p.r1WinEquivalents as number);
-      if (winEqPool.length) {
-        push({
-          id: "r1WinEquivalents",
-          category: "impact",
-          label: "WAR1",
-          value: seasonStats.r1WinEquivalents,
-          values: winEqPool,
-          display: formatNumber(seasonStats.r1WinEquivalents, 1),
-          series: careerSeries((r) =>
-            r.r1WinEquivalents != null && Number.isFinite(r.r1WinEquivalents)
-              ? r.r1WinEquivalents
-              : null
-          ),
-          interpretation: "higher_is_better",
-        });
-      }
+      push({
+        id: "r1WinEquivalents",
+        category: "impact",
+        label: "WAR1",
+        value: seasonStats.r1WinEquivalents,
+        values: winEqPool,
+        display: formatNumber(seasonStats.r1WinEquivalents, 1),
+        series: careerSeries((r) =>
+          r.r1WinEquivalents != null && Number.isFinite(r.r1WinEquivalents)
+            ? r.r1WinEquivalents
+            : null,
+        ),
+        interpretation: "higher_is_better",
+      });
     }
     const drblPool = pool
       .filter(hasValidDrblEstimate)
       .map((p) => p.drbl100)
       .filter((n): n is number => Number.isFinite(n));
-    if (drblPool.length) {
-      push({
-        id: "drbl100",
-        category: "impact",
-        label: "DRBL/100",
-        value: seasonStats.drbl100,
-        values: drblPool,
-        display: formatNumber(seasonStats.drbl100, 1),
-        series: careerSeries(
-          (r) => (hasValidDrblEstimate(r) ? r.drbl100 : null),
-          { rejectFlatOverlay: true }
-        ),
-        interpretation: "higher_is_better",
-      });
-    }
+    push({
+      id: "drbl100",
+      category: "impact",
+      label: "DRBL/100",
+      value: seasonStats.drbl100,
+      values: drblPool,
+      display: formatNumber(seasonStats.drbl100, 1),
+      series: careerSeries(
+        (r) => (hasValidDrblEstimate(r) ? r.drbl100 : null),
+        { rejectFlatOverlay: true },
+      ),
+      interpretation: "higher_is_better",
+    });
     if (Number.isFinite(seasonStats.drblO)) {
       const oPool = pool
         .filter(hasValidDrblEstimate)
         .map((p) => p.drblO)
         .filter((n): n is number => Number.isFinite(n));
-      if (oPool.length) {
-        push({
-          id: "drblO",
-          category: "impact",
-          label: "DRBL-O",
-          value: seasonStats.drblO,
-          values: oPool,
-          display: formatNumber(seasonStats.drblO, 1),
-          series: careerSeries((r) =>
-            hasValidDrblEstimate(r) ? r.drblO : null
-          ),
-          interpretation: "higher_is_better",
-        });
-      }
+      push({
+        id: "drblO",
+        category: "impact",
+        label: "DRBL-O",
+        value: seasonStats.drblO,
+        values: oPool,
+        display: formatNumber(seasonStats.drblO, 1),
+        series: careerSeries((r) => (hasValidDrblEstimate(r) ? r.drblO : null)),
+        interpretation: "higher_is_better",
+      });
     }
     if (Number.isFinite(seasonStats.drblD)) {
       const dPool = pool
         .filter(hasValidDrblEstimate)
         .map((p) => p.drblD)
         .filter((n): n is number => Number.isFinite(n));
-      if (dPool.length) {
-        push({
-          id: "drblD",
-          category: "impact",
-          label: "DRBL-D",
-          value: seasonStats.drblD,
-          values: dPool,
-          display: formatNumber(seasonStats.drblD, 1),
-          series: careerSeries((r) =>
-            hasValidDrblEstimate(r) ? r.drblD : null
-          ),
-          interpretation: "higher_is_better",
-        });
-      }
+      push({
+        id: "drblD",
+        category: "impact",
+        label: "DRBL-D",
+        value: seasonStats.drblD,
+        values: dPool,
+        display: formatNumber(seasonStats.drblD, 1),
+        series: careerSeries((r) => (hasValidDrblEstimate(r) ? r.drblD : null)),
+        interpretation: "higher_is_better",
+      });
     }
     // Diagnostics live under Advanced — not first-view Value/Overview.
     if (Number.isFinite(seasonStats.drblP)) {
@@ -559,60 +556,50 @@ function buildMaskedPercentileMetrics(
         .filter(hasValidDrblEstimate)
         .map((p) => p.drblP)
         .filter((n): n is number => Number.isFinite(n));
-      if (pPool.length) {
-        push({
-          id: "drblP",
-          category: "impact",
-          label: "DRBL-P",
-          value: seasonStats.drblP,
-          values: pPool,
-          display: formatNumber(seasonStats.drblP, 1),
-          series: careerSeries((r) =>
-            hasValidDrblEstimate(r) ? r.drblP : null
-          ),
-          interpretation: "higher_is_better",
-        });
-      }
+      push({
+        id: "drblP",
+        category: "impact",
+        label: "DRBL-P",
+        value: seasonStats.drblP,
+        values: pPool,
+        display: formatNumber(seasonStats.drblP, 1),
+        series: careerSeries((r) => (hasValidDrblEstimate(r) ? r.drblP : null)),
+        interpretation: "higher_is_better",
+      });
     }
     if (Number.isFinite(seasonStats.drblLn)) {
       const lnPool = pool
         .filter(hasValidDrblEstimate)
         .map((p) => p.drblLn)
         .filter((n): n is number => Number.isFinite(n));
-      if (lnPool.length) {
-        push({
-          id: "drblLn",
-          category: "impact",
-          label: "DRBL-LN",
-          value: seasonStats.drblLn,
-          values: lnPool,
-          display: formatNumber(seasonStats.drblLn, 1),
-          series: careerSeries((r) =>
-            hasValidDrblEstimate(r) ? r.drblLn : null
-          ),
-          interpretation: "higher_is_better",
-        });
-      }
+      push({
+        id: "drblLn",
+        category: "impact",
+        label: "DRBL-LN",
+        value: seasonStats.drblLn,
+        values: lnPool,
+        display: formatNumber(seasonStats.drblLn, 1),
+        series: careerSeries((r) =>
+          hasValidDrblEstimate(r) ? r.drblLn : null,
+        ),
+        interpretation: "higher_is_better",
+      });
     }
     if (Number.isFinite(seasonStats.drblB)) {
       const bPool = pool
         .filter(hasValidDrblEstimate)
         .map((p) => p.drblB)
         .filter((n): n is number => Number.isFinite(n));
-      if (bPool.length) {
-        push({
-          id: "drblB",
-          category: "impact",
-          label: "DRBL-B",
-          value: seasonStats.drblB,
-          values: bPool,
-          display: formatNumber(seasonStats.drblB, 1),
-          series: careerSeries((r) =>
-            hasValidDrblEstimate(r) ? r.drblB : null
-          ),
-          interpretation: "higher_is_better",
-        });
-      }
+      push({
+        id: "drblB",
+        category: "impact",
+        label: "DRBL-B",
+        value: seasonStats.drblB,
+        values: bPool,
+        display: formatNumber(seasonStats.drblB, 1),
+        series: careerSeries((r) => (hasValidDrblEstimate(r) ? r.drblB : null)),
+        interpretation: "higher_is_better",
+      });
     }
   }
 
@@ -623,63 +610,57 @@ function buildMaskedPercentileMetrics(
       const darkoPool = pool
         .map(darkoImpact)
         .filter((n): n is number => n != null);
-      if (darkoPool.length) {
-        push({
-          id: "darko",
-          category: "impact",
-          label: "DARKO",
-          value: darkoValue,
-          values: darkoPool,
-          display: formatNumber(darkoValue, 2),
-          series: careerSeries(darkoImpact, { rejectFlatOverlay: true }),
-          interpretation: "higher_is_better",
-        });
-      }
+      push({
+        id: "darko",
+        category: "impact",
+        label: "DARKO",
+        value: darkoValue,
+        values: darkoPool,
+        display: formatNumber(darkoValue, 2),
+        series: careerSeries(darkoImpact, { rejectFlatOverlay: true }),
+        interpretation: "higher_is_better",
+      });
     }
   }
   if (seasonStats.raptor != null && Number.isFinite(seasonStats.raptor)) {
     const raptorPool = pool
       .map((p) => p.raptor)
       .filter((n): n is number => n != null && Number.isFinite(n));
-    if (raptorPool.length) {
-      push({
-        id: "raptor",
-        category: "impact",
-        label: "RAPTOR",
-        value: seasonStats.raptor,
-        values: raptorPool,
-        display: formatNumber(seasonStats.raptor, 2),
-        series: careerSeries(
-          (r) =>
-            r.raptor != null && Number.isFinite(r.raptor) ? r.raptor : null,
-          { rejectFlatOverlay: true }
-        ),
-        interpretation: "higher_is_better",
-      });
-    }
+    push({
+      id: "raptor",
+      category: "impact",
+      label: "RAPTOR",
+      value: seasonStats.raptor,
+      values: raptorPool,
+      display: formatNumber(seasonStats.raptor, 2),
+      series: careerSeries(
+        (r) =>
+          r.raptor != null && Number.isFinite(r.raptor) ? r.raptor : null,
+        { rejectFlatOverlay: true },
+      ),
+      interpretation: "higher_is_better",
+    });
   }
   if (seasonStats.winsAdded != null && Number.isFinite(seasonStats.winsAdded)) {
     const warPool = pool
       .map((p) => p.winsAdded)
       .filter((n): n is number => n != null && Number.isFinite(n));
-    if (warPool.length) {
-      push({
-        id: "winsAdded",
-        category: "impact",
-        label: "WAR",
-        value: seasonStats.winsAdded,
-        values: warPool,
-        display: formatNumber(seasonStats.winsAdded, 2),
-        series: careerSeries(
-          (r) =>
-            r.winsAdded != null && Number.isFinite(r.winsAdded)
-              ? r.winsAdded
-              : null,
-          { rejectFlatOverlay: true }
-        ),
-        interpretation: "higher_is_better",
-      });
-    }
+    push({
+      id: "winsAdded",
+      category: "impact",
+      label: "WAR",
+      value: seasonStats.winsAdded,
+      values: warPool,
+      display: formatNumber(seasonStats.winsAdded, 2),
+      series: careerSeries(
+        (r) =>
+          r.winsAdded != null && Number.isFinite(r.winsAdded)
+            ? r.winsAdded
+            : null,
+        { rejectFlatOverlay: true },
+      ),
+      interpretation: "higher_is_better",
+    });
   }
 
   // --- Offense (volume + creation) ---
@@ -794,7 +775,7 @@ function buildMaskedPercentileMetrics(
       display: formatPct(seasonStats.turnoverPct),
       series: careerSeries(
         (r) => (r.turnoverPct > 0 ? r.turnoverPct * 100 : null),
-        { invert: true }
+        { invert: true },
       ),
       invert: true,
       interpretation: "lower_is_better",
@@ -810,7 +791,7 @@ function buildMaskedPercentileMetrics(
       values: pool.map((p) => p.offensiveReboundPct).filter((n) => n > 0),
       display: formatPct(seasonStats.offensiveReboundPct),
       series: careerSeries((r) =>
-        r.offensiveReboundPct > 0 ? r.offensiveReboundPct * 100 : null
+        r.offensiveReboundPct > 0 ? r.offensiveReboundPct * 100 : null,
       ),
       interpretation: "higher_is_better",
     });
@@ -820,40 +801,32 @@ function buildMaskedPercentileMetrics(
     const owsPool = pool
       .map((p) => p.ows)
       .filter((n) => Number.isFinite(n) && n !== 0);
-    if (owsPool.length) {
-      push({
-        id: "ows",
-        category: "advanced",
-        label: "OWS",
-        value: seasonStats.ows,
-        values: owsPool,
-        display: formatNumber(seasonStats.ows, 1),
-        series: careerSeries((r) =>
-          Number.isFinite(r.ows) && r.ows !== 0 ? r.ows : null
-        ),
-        interpretation: "higher_is_better",
-      });
-    }
+    push({
+      id: "ows",
+      category: "advanced",
+      label: "OWS",
+      value: seasonStats.ows,
+      values: owsPool,
+      display: formatNumber(seasonStats.ows, 1),
+      series: careerSeries((r) =>
+        Number.isFinite(r.ows) && r.ows !== 0 ? r.ows : null,
+      ),
+      interpretation: "higher_is_better",
+    });
   }
 
   if (seasonStats.obpm !== 0 && Number.isFinite(seasonStats.obpm)) {
-    const obpmPool = pool
-      .map((p) => p.obpm)
-      .filter((n) => Number.isFinite(n));
-    if (obpmPool.length) {
-      push({
-        id: "obpm",
-        category: "advanced",
-        label: "OBPM",
-        value: seasonStats.obpm,
-        values: obpmPool,
-        display: formatNumber(seasonStats.obpm, 1),
-        series: careerSeries((r) =>
-          Number.isFinite(r.obpm) ? r.obpm : null
-        ),
-        interpretation: "higher_is_better",
-      });
-    }
+    const obpmPool = pool.map((p) => p.obpm).filter((n) => Number.isFinite(n));
+    push({
+      id: "obpm",
+      category: "advanced",
+      label: "OBPM",
+      value: seasonStats.obpm,
+      values: obpmPool,
+      display: formatNumber(seasonStats.obpm, 1),
+      series: careerSeries((r) => (Number.isFinite(r.obpm) ? r.obpm : null)),
+      interpretation: "higher_is_better",
+    });
   }
 
   if (seasonStats.darkoOff != null || darkoOffense(seasonStats) != null) {
@@ -862,36 +835,32 @@ function buildMaskedPercentileMetrics(
       const offPool = pool
         .map(darkoOffense)
         .filter((n): n is number => n != null);
-      if (offPool.length) {
-        push({
-          id: "darko-off",
-          category: "impact",
-          label: "DARKO-O",
-          value: darkoOffValue,
-          values: offPool,
-          display: formatNumber(darkoOffValue, 2),
-          series: careerSeries(darkoOffense, { rejectFlatOverlay: true }),
-          interpretation: "higher_is_better",
-        });
-      }
+      push({
+        id: "darko-off",
+        category: "impact",
+        label: "DARKO-O",
+        value: darkoOffValue,
+        values: offPool,
+        display: formatNumber(darkoOffValue, 2),
+        series: careerSeries(darkoOffense, { rejectFlatOverlay: true }),
+        interpretation: "higher_is_better",
+      });
     }
   }
   if (seasonStats.oRaptor != null) {
     const oPool = pool
       .map((p) => p.oRaptor)
       .filter((n): n is number => n != null && Number.isFinite(n));
-    if (oPool.length) {
-      push({
-        id: "oraptor",
-        category: "impact",
-        label: "O-RAPTOR",
-        value: seasonStats.oRaptor,
-        values: oPool,
-        display: formatNumber(seasonStats.oRaptor, 2),
-        series: careerSeries((r) => r.oRaptor, { rejectFlatOverlay: true }),
-        interpretation: "higher_is_better",
-      });
-    }
+    push({
+      id: "oraptor",
+      category: "impact",
+      label: "O-RAPTOR",
+      value: seasonStats.oRaptor,
+      values: oPool,
+      display: formatNumber(seasonStats.oRaptor, 2),
+      series: careerSeries((r) => r.oRaptor, { rejectFlatOverlay: true }),
+      interpretation: "higher_is_better",
+    });
   }
 
   // --- Shooting ---
@@ -908,7 +877,7 @@ function buildMaskedPercentileMetrics(
       series: careerSeries((r) =>
         r.trueShootingPct != null && r.trueShootingPct > 0
           ? r.trueShootingPct * 100
-          : null
+          : null,
       ),
       interpretation: "higher_is_better",
     });
@@ -929,7 +898,7 @@ function buildMaskedPercentileMetrics(
       series: careerSeries((r) =>
         r.effectiveFieldGoalPct != null && r.effectiveFieldGoalPct > 0
           ? r.effectiveFieldGoalPct * 100
-          : null
+          : null,
       ),
       interpretation: "higher_is_better",
     });
@@ -943,7 +912,7 @@ function buildMaskedPercentileMetrics(
       values: pool.map((p) => p.fieldGoalPct).filter((n) => n > 0),
       display: formatPct(seasonStats.fieldGoalPct),
       series: careerSeries((r) =>
-        r.fieldGoalPct > 0 ? r.fieldGoalPct * 100 : null
+        r.fieldGoalPct > 0 ? r.fieldGoalPct * 100 : null,
       ),
       interpretation: "higher_is_better",
     });
@@ -957,7 +926,7 @@ function buildMaskedPercentileMetrics(
       values: pool.map((p) => p.threePointPct).filter((n) => n > 0),
       display: formatPct(seasonStats.threePointPct),
       series: careerSeries((r) =>
-        r.threePointPct > 0 ? r.threePointPct * 100 : null
+        r.threePointPct > 0 ? r.threePointPct * 100 : null,
       ),
       interpretation: "higher_is_better",
     });
@@ -971,7 +940,7 @@ function buildMaskedPercentileMetrics(
       values: pool.map((p) => p.freeThrowPct).filter((n) => n > 0),
       display: formatPct(seasonStats.freeThrowPct),
       series: careerSeries((r) =>
-        r.freeThrowPct > 0 ? r.freeThrowPct * 100 : null
+        r.freeThrowPct > 0 ? r.freeThrowPct * 100 : null,
       ),
       interpretation: "higher_is_better",
     });
@@ -985,7 +954,7 @@ function buildMaskedPercentileMetrics(
       values: pool.map((p) => p.twoPointPct).filter((n) => n > 0),
       display: formatPct(seasonStats.twoPointPct),
       series: careerSeries((r) =>
-        r.twoPointPct > 0 ? r.twoPointPct * 100 : null
+        r.twoPointPct > 0 ? r.twoPointPct * 100 : null,
       ),
       interpretation: "higher_is_better",
     });
@@ -1032,12 +1001,11 @@ function buildMaskedPercentileMetrics(
       label: "2P",
       value: fg2m,
       values: pool.map(
-        (p) =>
-          perGame(p, "fieldGoalsMade") - perGame(p, "threePointersMade")
+        (p) => perGame(p, "fieldGoalsMade") - perGame(p, "threePointersMade"),
       ),
       display: `${formatNumber(fg2m, 1)} 2P`,
       series: careerSeries(
-        (r) => perGame(r, "fieldGoalsMade") - perGame(r, "threePointersMade")
+        (r) => perGame(r, "fieldGoalsMade") - perGame(r, "threePointersMade"),
       ),
       interpretation: "role",
       showPercentile: true,
@@ -1053,13 +1021,13 @@ function buildMaskedPercentileMetrics(
       values: pool.map(
         (p) =>
           perGame(p, "fieldGoalsAttempted") -
-          perGame(p, "threePointersAttempted")
+          perGame(p, "threePointersAttempted"),
       ),
       display: `${formatNumber(fg2a, 1)} 2PA`,
       series: careerSeries(
         (r) =>
           perGame(r, "fieldGoalsAttempted") -
-          perGame(r, "threePointersAttempted")
+          perGame(r, "threePointersAttempted"),
       ),
       interpretation: "role",
       showPercentile: true,
@@ -1091,7 +1059,7 @@ function buildMaskedPercentileMetrics(
       values: pool.map((p) => p.threePointAttemptRate).filter((n) => n > 0),
       display: formatPct(seasonStats.threePointAttemptRate),
       series: careerSeries((r) =>
-        r.threePointAttemptRate > 0 ? r.threePointAttemptRate * 100 : null
+        r.threePointAttemptRate > 0 ? r.threePointAttemptRate * 100 : null,
       ),
       interpretation: "role",
       showPercentile: true,
@@ -1107,7 +1075,7 @@ function buildMaskedPercentileMetrics(
       values: pool.map((p) => p.freeThrowRate).filter((n) => n > 0),
       display: formatNumber(seasonStats.freeThrowRate, 3),
       series: careerSeries((r) =>
-        r.freeThrowRate > 0 ? r.freeThrowRate : null
+        r.freeThrowRate > 0 ? r.freeThrowRate : null,
       ),
       interpretation: "higher_is_better",
     });
@@ -1164,20 +1132,18 @@ function buildMaskedPercentileMetrics(
     const sdvPool = pool
       .map((p) => p.sdv100)
       .filter((n) => Number.isFinite(n) && n !== 0);
-    if (sdvPool.length) {
-      push({
-        id: "sdv100",
-        category: "shooting",
-        label: "Shot-decision value",
-        value: seasonStats.sdv100,
-        values: sdvPool,
-        display: formatNumber(seasonStats.sdv100, 1),
-        series: careerSeries((r) =>
-          Number.isFinite(r.sdv100) && r.sdv100 !== 0 ? r.sdv100 : null
-        ),
-        interpretation: "higher_is_better",
-      });
-    }
+    push({
+      id: "sdv100",
+      category: "shooting",
+      label: "Shot-decision value",
+      value: seasonStats.sdv100,
+      values: sdvPool,
+      display: formatNumber(seasonStats.sdv100, 1),
+      series: careerSeries((r) =>
+        Number.isFinite(r.sdv100) && r.sdv100 !== 0 ? r.sdv100 : null,
+      ),
+      interpretation: "higher_is_better",
+    });
   }
   if (
     seasonStats.shotMaking100 !== 0 &&
@@ -1186,22 +1152,20 @@ function buildMaskedPercentileMetrics(
     const smPool = pool
       .map((p) => p.shotMaking100)
       .filter((n) => Number.isFinite(n) && n !== 0);
-    if (smPool.length) {
-      push({
-        id: "shotMaking100",
-        category: "shooting",
-        label: "Shot-making",
-        value: seasonStats.shotMaking100,
-        values: smPool,
-        display: formatNumber(seasonStats.shotMaking100, 1),
-        series: careerSeries((r) =>
-          Number.isFinite(r.shotMaking100) && r.shotMaking100 !== 0
-            ? r.shotMaking100
-            : null
-        ),
-        interpretation: "higher_is_better",
-      });
-    }
+    push({
+      id: "shotMaking100",
+      category: "shooting",
+      label: "Shot-making",
+      value: seasonStats.shotMaking100,
+      values: smPool,
+      display: formatNumber(seasonStats.shotMaking100, 1),
+      series: careerSeries((r) =>
+        Number.isFinite(r.shotMaking100) && r.shotMaking100 !== 0
+          ? r.shotMaking100
+          : null,
+      ),
+      interpretation: "higher_is_better",
+    });
   }
 
   // --- Defense ---
@@ -1275,7 +1239,7 @@ function buildMaskedPercentileMetrics(
       values: pool.map((p) => p.defensiveReboundPct).filter((n) => n > 0),
       display: formatPct(seasonStats.defensiveReboundPct),
       series: careerSeries((r) =>
-        r.defensiveReboundPct > 0 ? r.defensiveReboundPct * 100 : null
+        r.defensiveReboundPct > 0 ? r.defensiveReboundPct * 100 : null,
       ),
       interpretation: "higher_is_better",
     });
@@ -1295,7 +1259,12 @@ function buildMaskedPercentileMetrics(
     >;
     suffix: string;
   }> = [
-    { id: "hustleDefl", label: "Defl", key: "hustleDeflections", suffix: " defl" },
+    {
+      id: "hustleDefl",
+      label: "Defl",
+      key: "hustleDeflections",
+      suffix: " defl",
+    },
     {
       id: "hustleContest",
       label: "Contest",
@@ -1320,7 +1289,12 @@ function buildMaskedPercentileMetrics(
       key: "hustleLooseBallsRecovered",
       suffix: " loose",
     },
-    { id: "hustleBoxOut", label: "BoxOut", key: "hustleBoxOuts", suffix: " box" },
+    {
+      id: "hustleBoxOut",
+      label: "BoxOut",
+      key: "hustleBoxOuts",
+      suffix: " box",
+    },
   ];
 
   for (const metric of hustleMetrics) {
@@ -1346,38 +1320,32 @@ function buildMaskedPercentileMetrics(
     const dwsPool = pool
       .map((p) => p.dws)
       .filter((n) => Number.isFinite(n) && n !== 0);
-    if (dwsPool.length) {
-      push({
-        id: "dws",
-        category: "advanced",
-        label: "DWS",
-        value: seasonStats.dws,
-        values: dwsPool,
-        display: formatNumber(seasonStats.dws, 1),
-        series: careerSeries((r) =>
-          Number.isFinite(r.dws) && r.dws !== 0 ? r.dws : null
-        ),
-        interpretation: "higher_is_better",
-      });
-    }
+    push({
+      id: "dws",
+      category: "advanced",
+      label: "DWS",
+      value: seasonStats.dws,
+      values: dwsPool,
+      display: formatNumber(seasonStats.dws, 1),
+      series: careerSeries((r) =>
+        Number.isFinite(r.dws) && r.dws !== 0 ? r.dws : null,
+      ),
+      interpretation: "higher_is_better",
+    });
   }
 
   if (Number.isFinite(seasonStats.dbpm)) {
     const dbpmPool = pool.map((p) => p.dbpm).filter((n) => Number.isFinite(n));
-    if (dbpmPool.length) {
-      push({
-        id: "dbpm",
-        category: "advanced",
-        label: "DBPM",
-        value: seasonStats.dbpm,
-        values: dbpmPool,
-        display: formatNumber(seasonStats.dbpm, 1),
-        series: careerSeries((r) =>
-          Number.isFinite(r.dbpm) ? r.dbpm : null
-        ),
-        interpretation: "higher_is_better",
-      });
-    }
+    push({
+      id: "dbpm",
+      category: "advanced",
+      label: "DBPM",
+      value: seasonStats.dbpm,
+      values: dbpmPool,
+      display: formatNumber(seasonStats.dbpm, 1),
+      series: careerSeries((r) => (Number.isFinite(r.dbpm) ? r.dbpm : null)),
+      interpretation: "higher_is_better",
+    });
   }
   {
     const darkoDefValue = darkoDefense(seasonStats);
@@ -1385,36 +1353,32 @@ function buildMaskedPercentileMetrics(
       const defPool = pool
         .map(darkoDefense)
         .filter((n): n is number => n != null);
-      if (defPool.length) {
-        push({
-          id: "darko-def",
-          category: "impact",
-          label: "DARKO-D",
-          value: darkoDefValue,
-          values: defPool,
-          display: formatNumber(darkoDefValue, 2),
-          series: careerSeries(darkoDefense, { rejectFlatOverlay: true }),
-          interpretation: "higher_is_better",
-        });
-      }
+      push({
+        id: "darko-def",
+        category: "impact",
+        label: "DARKO-D",
+        value: darkoDefValue,
+        values: defPool,
+        display: formatNumber(darkoDefValue, 2),
+        series: careerSeries(darkoDefense, { rejectFlatOverlay: true }),
+        interpretation: "higher_is_better",
+      });
     }
   }
   if (seasonStats.dRaptor != null) {
     const dPool = pool
       .map((p) => p.dRaptor)
       .filter((n): n is number => n != null && Number.isFinite(n));
-    if (dPool.length) {
-      push({
-        id: "draptor",
-        category: "impact",
-        label: "D-RAPTOR",
-        value: seasonStats.dRaptor,
-        values: dPool,
-        display: formatNumber(seasonStats.dRaptor, 2),
-        series: careerSeries((r) => r.dRaptor, { rejectFlatOverlay: true }),
-        interpretation: "higher_is_better",
-      });
-    }
+    push({
+      id: "draptor",
+      category: "impact",
+      label: "D-RAPTOR",
+      value: seasonStats.dRaptor,
+      values: dPool,
+      display: formatNumber(seasonStats.dRaptor, 2),
+      series: careerSeries((r) => r.dRaptor, { rejectFlatOverlay: true }),
+      interpretation: "higher_is_better",
+    });
   }
 
   // --- Role / availability ---
@@ -1429,7 +1393,7 @@ function buildMaskedPercentileMetrics(
         .filter((n): n is number => n != null && n > 0),
       display: formatPct(seasonStats.usagePct),
       series: careerSeries((r) =>
-        r.usagePct != null && r.usagePct > 0 ? r.usagePct * 100 : null
+        r.usagePct != null && r.usagePct > 0 ? r.usagePct * 100 : null,
       ),
       interpretation: "role",
       showPercentile: true,
@@ -1496,7 +1460,7 @@ function buildMaskedPercentileMetrics(
           .map((p) => p.gamesStarted / p.gamesPlayed),
         display: formatPct(startRate, 0),
         series: careerSeries((r) =>
-          r.gamesPlayed > 0 ? (r.gamesStarted / r.gamesPlayed) * 100 : null
+          r.gamesPlayed > 0 ? (r.gamesStarted / r.gamesPlayed) * 100 : null,
         ),
         interpretation: "role",
         showPercentile: true,
@@ -1527,7 +1491,7 @@ function buildMaskedPercentileMetrics(
       values: pool.map((p) => p.reboundPct).filter((n) => n > 0),
       display: formatPct(seasonStats.reboundPct),
       series: careerSeries((r) =>
-        r.reboundPct > 0 ? r.reboundPct * 100 : null
+        r.reboundPct > 0 ? r.reboundPct * 100 : null,
       ),
       interpretation: "role",
       showPercentile: true,
@@ -1555,40 +1519,36 @@ function buildMaskedPercentileMetrics(
     const perPool = pool
       .map((p) => p.per)
       .filter((n) => Number.isFinite(n) && n !== 0);
-    if (perPool.length) {
-      push({
-        id: "per",
-        category: "advanced",
-        label: "PER",
-        value: seasonStats.per,
-        values: perPool,
-        display: formatNumber(seasonStats.per, 1),
-        series: careerSeries((r) =>
-          Number.isFinite(r.per) && r.per !== 0 ? r.per : null
-        ),
-        interpretation: "higher_is_better",
-      });
-    }
+    push({
+      id: "per",
+      category: "advanced",
+      label: "PER",
+      value: seasonStats.per,
+      values: perPool,
+      display: formatNumber(seasonStats.per, 1),
+      series: careerSeries((r) =>
+        Number.isFinite(r.per) && r.per !== 0 ? r.per : null,
+      ),
+      interpretation: "higher_is_better",
+    });
   }
 
   if (Number.isFinite(seasonStats.winShares) && seasonStats.winShares !== 0) {
     const wsPool = pool
       .map((p) => p.winShares)
       .filter((n) => Number.isFinite(n) && n !== 0);
-    if (wsPool.length) {
-      push({
-        id: "ws",
-        category: "advanced",
-        label: "WS",
-        value: seasonStats.winShares,
-        values: wsPool,
-        display: formatNumber(seasonStats.winShares, 1),
-        series: careerSeries((r) =>
-          Number.isFinite(r.winShares) && r.winShares !== 0 ? r.winShares : null
-        ),
-        interpretation: "higher_is_better",
-      });
-    }
+    push({
+      id: "ws",
+      category: "advanced",
+      label: "WS",
+      value: seasonStats.winShares,
+      values: wsPool,
+      display: formatNumber(seasonStats.winShares, 1),
+      series: careerSeries((r) =>
+        Number.isFinite(r.winShares) && r.winShares !== 0 ? r.winShares : null,
+      ),
+      interpretation: "higher_is_better",
+    });
   }
 
   if (
@@ -1598,81 +1558,70 @@ function buildMaskedPercentileMetrics(
     const ws48Pool = pool
       .map((p) => p.winSharesPer48)
       .filter((n) => Number.isFinite(n) && n !== 0);
-    if (ws48Pool.length) {
-      push({
-        id: "ws48",
-        category: "advanced",
-        label: "WS/48",
-        value: seasonStats.winSharesPer48,
-        values: ws48Pool,
-        display: formatNumber(seasonStats.winSharesPer48, 3),
-        series: careerSeries((r) =>
-          Number.isFinite(r.winSharesPer48) && r.winSharesPer48 !== 0
-            ? r.winSharesPer48
-            : null
-        ),
-        interpretation: "higher_is_better",
-      });
-    }
+    push({
+      id: "ws48",
+      category: "advanced",
+      label: "WS/48",
+      value: seasonStats.winSharesPer48,
+      values: ws48Pool,
+      display: formatNumber(seasonStats.winSharesPer48, 3),
+      series: careerSeries((r) =>
+        Number.isFinite(r.winSharesPer48) && r.winSharesPer48 !== 0
+          ? r.winSharesPer48
+          : null,
+      ),
+      interpretation: "higher_is_better",
+    });
   }
 
   if (Number.isFinite(seasonStats.bpm)) {
     const bpmPool = pool.map((p) => p.bpm).filter((n) => Number.isFinite(n));
-    if (bpmPool.length) {
-      push({
-        id: "bpm",
-        category: "advanced",
-        label: "BPM",
-        value: seasonStats.bpm,
-        values: bpmPool,
-        display: formatNumber(seasonStats.bpm, 1),
-        series: careerSeries((r) => (Number.isFinite(r.bpm) ? r.bpm : null)),
-        interpretation: "higher_is_better",
-      });
-    }
+    push({
+      id: "bpm",
+      category: "advanced",
+      label: "BPM",
+      value: seasonStats.bpm,
+      values: bpmPool,
+      display: formatNumber(seasonStats.bpm, 1),
+      series: careerSeries((r) => (Number.isFinite(r.bpm) ? r.bpm : null)),
+      interpretation: "higher_is_better",
+    });
   }
 
   if (Number.isFinite(seasonStats.vorp) && seasonStats.vorp !== 0) {
     const vorpPool = pool
       .map((p) => p.vorp)
       .filter((n) => Number.isFinite(n) && n !== 0);
-    if (vorpPool.length) {
-      push({
-        id: "vorp",
-        category: "impact",
-        label: "VORP",
-        value: seasonStats.vorp,
-        values: vorpPool,
-        display: formatNumber(seasonStats.vorp, 1),
-        series: careerSeries((r) =>
-          Number.isFinite(r.vorp) && r.vorp !== 0 ? r.vorp : null
-        ),
-        interpretation: "higher_is_better",
-      });
-    }
+    push({
+      id: "vorp",
+      category: "impact",
+      label: "VORP",
+      value: seasonStats.vorp,
+      values: vorpPool,
+      display: formatNumber(seasonStats.vorp, 1),
+      series: careerSeries((r) =>
+        Number.isFinite(r.vorp) && r.vorp !== 0 ? r.vorp : null,
+      ),
+      interpretation: "higher_is_better",
+    });
   }
 
   if (Number.isFinite(seasonStats.pie) && seasonStats.pie > 0) {
     const piePool = pool.map((p) => p.pie).filter((n) => n > 0);
-    if (piePool.length) {
-      push({
-        id: "pie",
-        category: "advanced",
-        label: "PIE",
-        value: seasonStats.pie,
-        values: piePool,
-        display: formatPct(seasonStats.pie),
-        series: careerSeries((r) => (r.pie > 0 ? r.pie * 100 : null)),
-        interpretation: "higher_is_better",
-      });
-    }
+    push({
+      id: "pie",
+      category: "advanced",
+      label: "PIE",
+      value: seasonStats.pie,
+      values: piePool,
+      display: formatPct(seasonStats.pie),
+      series: careerSeries((r) => (r.pie > 0 ? r.pie * 100 : null)),
+      interpretation: "higher_is_better",
+    });
   }
 
   // ORtg: include only when present (ESPN approx when derived). Missing stays missing.
-  if (
-    seasonStats.offensiveRating != null &&
-    seasonStats.offensiveRating > 0
-  ) {
+  if (seasonStats.offensiveRating != null && seasonStats.offensiveRating > 0) {
     push({
       id: "ortg",
       category: "advanced",
@@ -1685,7 +1634,7 @@ function buildMaskedPercentileMetrics(
       series: careerSeries((r) =>
         r.offensiveRating != null && r.offensiveRating > 0
           ? r.offensiveRating
-          : null
+          : null,
       ),
       interpretation: "higher_is_better",
     });
@@ -1714,7 +1663,7 @@ function buildMaskedPercentileMetrics(
           Number.isFinite(r.defensiveRating)
             ? r.defensiveRating
             : null,
-        { invert: true }
+        { invert: true },
       ),
       invert: true,
       interpretation: "lower_is_better",
@@ -1741,7 +1690,7 @@ function buildMaskedPercentileMetrics(
         r.netRating != null &&
         Number.isFinite(r.netRating)
           ? r.netRating
-          : null
+          : null,
       ),
       interpretation: "higher_is_better",
     });

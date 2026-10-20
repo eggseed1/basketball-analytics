@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { getTranslations } from "next-intl/server";
 
 import { GameScoringScatterLazy as GameScoringScatter } from "@/components/charts/recharts-lazy";
 import { ExploreGamesClientShell } from "@/components/explore/explore-games-client-shell";
@@ -33,6 +34,7 @@ interface ExploreGamesPageProps {
 export default async function ExploreGamesPage({
   searchParams,
 }: ExploreGamesPageProps) {
+  const t = await getTranslations("Explore");
   const params = await searchParams;
   const seasons = await getAvailableSeasons();
   const currentSeason = canonicalSeasonFromStartYear(currentNbaStartYear());
@@ -65,7 +67,7 @@ export default async function ExploreGamesPage({
   return (
     <main data-motion-page className="site-shell flex flex-1 flex-col gap-5 py-6 sm:py-8">
       <MotionReveal />
-      <PageHeader title="Explore" />
+      <PageHeader title={t("gamesTitle")} />
 
       <TeamCatalogFallbackNotice source={source} warnings={warnings} />
 
@@ -85,16 +87,17 @@ export default async function ExploreGamesPage({
         >
           {games.length === 0 ? (
             <p className="text-sm text-muted-foreground">
-              No games are stored for this season. Pick a later season from the
-              filters.
+              {t("gamesEmpty")}
             </p>
           ) : (
             <GameSeasonTable games={tableGames} />
           )}
           {truncated ? (
             <p className="text-[12px] text-muted-foreground">
-              Showing {tableGames.length} of {games.length} games. Narrow the
-              season or date filters for the full set.
+              {t("gamesShowing", {
+                shown: tableGames.length,
+                total: games.length,
+              })}
             </p>
           ) : null}
           <GameScoringScatter games={scatterGames} />

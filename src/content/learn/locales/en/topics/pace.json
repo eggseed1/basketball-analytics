@@ -1,0 +1,31 @@
+{
+  "id": "pace",
+  "slug": "pace",
+  "name": "Pace",
+  "shortName": "Pace",
+  "category": "basics",
+  "oneSentence": "Pace estimates how many possessions a team plays, a measure of how fast the game flows.",
+  "whyItMatters": [
+    "Faster pace inflates raw counting stats; efficiency metrics help compare across speeds."
+  ],
+  "howToInterpret": [
+    "Higher pace = more possessions = more counting-stat opportunities."
+  ],
+  "howDrblUses": [
+    "Explained here for context. Game Lab doesn't estimate possession counts for single games."
+  ],
+  "caveats": [
+    "Not available as a first-class GameSummary field for season evidence."
+  ],
+  "relatedIds": [
+    "ortg",
+    "drtg",
+    "ts"
+  ],
+  "seeInAction": [
+    {
+      "label": "Learn ORtg",
+      "href": "/learn/offensive-rating"
+    }
+  ]
+}

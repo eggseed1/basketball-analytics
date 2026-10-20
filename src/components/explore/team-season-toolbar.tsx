@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/select";
 import { espnYearFromCanonicalSeason } from "@/data/providers/nba/season";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 function ChipGroup({
   children,
@@ -60,6 +61,7 @@ export function TeamSeasonToolbar({
   seasons: string[];
   defaultSeason: string;
 }) {
+  const t = useTranslations("Standings");
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -117,7 +119,7 @@ export function TeamSeasonToolbar({
     >
       <form
         className="flex w-full min-w-0 max-w-full flex-col gap-2"
-        aria-label="Team board filters"
+        aria-label={t("filtersAria")}
         onSubmit={(e) => e.preventDefault()}
         data-pending={isPending ? "true" : "false"}
       >
@@ -125,7 +127,7 @@ export function TeamSeasonToolbar({
           <ChipGroup className="shrink-0">
             <button
               type="button"
-              aria-label="Older season"
+              aria-label={t("olderSeason")}
               disabled={!olderSeason}
               onClick={() =>
                 olderSeason && updateParams({ season: olderSeason })
@@ -146,7 +148,7 @@ export function TeamSeasonToolbar({
                   selectTriggerClass,
                   "min-w-[5.5rem] gap-1.5 sm:min-w-[6.5rem]"
                 )}
-                aria-label="Season"
+                aria-label={t("season")}
               >
                 <Calendar
                   className="size-3.5 text-muted-foreground"
@@ -168,7 +170,7 @@ export function TeamSeasonToolbar({
             </Select>
             <button
               type="button"
-              aria-label="Newer season"
+              aria-label={t("newerSeason")}
               disabled={!newerSeason}
               onClick={() =>
                 newerSeason && updateParams({ season: newerSeason })
@@ -179,20 +181,20 @@ export function TeamSeasonToolbar({
             </button>
           </ChipGroup>
 
-          <ChipGroup className="shrink-0" aria-label="Conference">
+          <ChipGroup className="shrink-0" aria-label={t("conferenceAria")}>
             {(
               [
-                ["ALL", "All"],
-                ["East", "East"],
-                ["West", "West"],
+                ["ALL", "all"],
+                ["East", "east"],
+                ["West", "west"],
               ] as const
-            ).map(([id, label]) => (
+            ).map(([id, key]) => (
               <Chip
                 key={id}
                 active={conference === id}
                 onClick={() => updateParams({ conference: id })}
               >
-                {label}
+                {t(key)}
               </Chip>
             ))}
           </ChipGroup>

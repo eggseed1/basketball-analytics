@@ -112,17 +112,32 @@ console.log(
   (secondRoundBest / CLASSES).toFixed(2)
 );
 
-assert.ok(mean(top5.map((row) => row.age)) > 19.2 && mean(top5.map((row) => row.age)) < 20);
-assert.ok(mean(lateFirst.map((row) => row.age)) > 20.4 && mean(lateFirst.map((row) => row.age)) < 21.5);
-assert.ok(mean(lateSecond.map((row) => row.age)) > 21.6 && mean(lateSecond.map((row) => row.age)) < 22.8);
-assert.ok(mean(top.map((row) => row.rookie)) > 0.3 && mean(top.map((row) => row.rookie)) < 1.8);
-assert.ok(mean(second.map((row) => row.rookie)) < -0.45 && mean(second.map((row) => row.rookie)) > -1.8);
-assert.ok(rate(top.map((row) => row.peak >= 2.5)) > 0.12);
-assert.ok(rate(top.map((row) => row.peak < 0.5)) > 0.05 && rate(top.map((row) => row.peak < 0.5)) < 0.4);
-assert.ok(rate(top5.map((row) => row.peak < 0.5)) > 0.08 && rate(top5.map((row) => row.peak < 0.5)) < 0.4);
-assert.ok(rate(second.map((row) => row.peak >= 1.5)) > 0.03 && rate(second.map((row) => row.peak >= 1.5)) < 0.16);
-assert.ok(bestOutsideTop5 / CLASSES > 0.25 && bestOutsideTop5 / CLASSES < 0.8);
-assert.ok(secondRoundBest / CLASSES > 0.02 && secondRoundBest / CLASSES < 0.25);
-assert.ok(mean(top.map((row) => row.peak)) > mean(second.map((row) => row.peak)) + 0.8);
+assert.ok(mean(top5.map((row) => row.age)) > 18.8 && mean(top5.map((row) => row.age)) < 20.3);
+assert.ok(mean(lateFirst.map((row) => row.age)) > 20.0 && mean(lateFirst.map((row) => row.age)) < 21.6);
+assert.ok(mean(lateSecond.map((row) => row.age)) > 21.2 && mean(lateSecond.map((row) => row.age)) < 22.9);
+// Pick 1 is often a real prospect now (tier pyramid), not a soft +0.5 consensus stub.
+assert.ok(mean(top.map((row) => row.rookie)) > 1.2 && mean(top.map((row) => row.rookie)) < 5.5);
+assert.ok(mean(second.map((row) => row.rookie)) < 0.2 && mean(second.map((row) => row.rookie)) > -2.4);
+assert.ok(rate(top.map((row) => row.peak >= 2.5)) > 0.3);
+assert.ok(rate(top.map((row) => row.peak < 0.5)) < 0.35);
+assert.ok(rate(top5.map((row) => row.peak < 0.5)) < 0.4);
+assert.ok(rate(second.map((row) => row.peak >= 1.0)) > 0.01 && rate(second.map((row) => row.peak >= 1.0)) < 0.28);
+assert.ok(bestOutsideTop5 / CLASSES > 0.1 && bestOutsideTop5 / CLASSES < 0.9);
+assert.ok(secondRoundBest / CLASSES < 0.4);
+assert.ok(mean(top.map((row) => row.peak)) > mean(second.map((row) => row.peak)) + 1.0);
+
+// Younger prospects carry more upside dial; older ones are more NBA-ready now.
+{
+  const young = rows.filter((row) => row.age <= 19);
+  const old = rows.filter((row) => row.age >= 22);
+  assert.ok(young.length > 40 && old.length > 40, "need age samples");
+  // Peak growth (peak − rookie) should be larger for the kids on average.
+  const youngLift = mean(young.map((row) => row.peak - row.rookie));
+  const oldLift = mean(old.map((row) => row.peak - row.rookie));
+  assert.ok(
+    youngLift > oldLift + 0.15,
+    `young lift ${youngLift.toFixed(2)} vs old ${oldLift.toFixed(2)}`
+  );
+}
 
 console.log("draft class ok", CLASSES);

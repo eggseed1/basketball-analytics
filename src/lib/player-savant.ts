@@ -2,7 +2,7 @@
 import type { PlayerSeason } from "@/data/types";
 import { formatNumber, formatPct } from "@/lib/format";
 import { perGame } from "@/data/providers/nba/compute-advanced";
-import { isDarkoSeasonAvailable } from "@/data/providers/nba/darko-scraper";
+import { isDarkoSeasonAvailable } from "@/data/providers/nba/darko-season";
 import { hasValidDrblEstimate } from "@/data/queries/percentiles";
 
 export interface SavantMetric {

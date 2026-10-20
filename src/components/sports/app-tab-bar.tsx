@@ -1,6 +1,7 @@
 "use client";
 
 import { CalendarDays, Ellipsis, Home, Shield, Users } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { GlassSurface } from "@/components/brand/glass-surface";
 import { TransitionLink } from "@/components/continuity/query-nav";
@@ -16,13 +17,6 @@ const ICONS = {
   teams: Shield,
 } as const;
 
-const TAB_LABEL: Record<(typeof PINNED)[number], string> = {
-  home: "Home",
-  games: "Games",
-  players: "Players",
-  teams: "Team",
-};
-
 /**
  * Bottom tab bar for the installed home-screen app.
  * Hidden in the browser; shown when html[data-standalone] is set.
@@ -36,6 +30,8 @@ export function AppTabBar({
   menuOpen: boolean;
   onMore: () => void;
 }) {
+  const t = useTranslations("Nav");
+  const tCommon = useTranslations("Common");
   const pinned = PINNED.map((id) => PRIMARY_NAV.find((item) => item.id === id)).filter(
     (item): item is PrimaryNavItem => Boolean(item)
   );
@@ -51,7 +47,7 @@ export function AppTabBar({
   return (
     <GlassSurface
       as="nav"
-      aria-label="App"
+      aria-label={t("primary")}
       effect="css"
       backdropBlur={20}
       className="app-tab-bar"
@@ -69,7 +65,7 @@ export function AppTabBar({
             className={itemClass(active)}
           >
             <Icon className="size-[22px]" strokeWidth={active ? 2.25 : 1.75} aria-hidden />
-            {TAB_LABEL[id]}
+            <span className="max-w-full truncate">{t.has(id) ? t(id) : item.label}</span>
           </TransitionLink>
         );
       })}
@@ -81,7 +77,7 @@ export function AppTabBar({
         className={itemClass(moreActive)}
       >
         <Ellipsis className="size-[22px]" strokeWidth={moreActive ? 2.25 : 1.75} aria-hidden />
-        More
+        <span className="max-w-full truncate">{tCommon("more")}</span>
       </button>
     </GlassSurface>
   );

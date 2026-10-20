@@ -269,13 +269,13 @@ const LAYOUTS: Record<HomeSeasonPhase, HomeLayout> = {
     bottom: [],
   },
   "opening-weeks": {
-    top: ["phase-bar", "calendar"],
+    top: ["calendar"],
     main: ["findings", "watchlist", "sentiment", "season-glance", "news"],
     side: ["standings", "above-norm", "injuries", "league-moves", "top-performers", "transactions"],
     bottom: ["hot-cold"],
   },
   "regular-season": {
-    top: ["phase-bar", "calendar"],
+    top: ["calendar"],
     main: ["findings", "watchlist", "sentiment", "season-glance", "news"],
     side: ["standings", "above-norm", "injuries", "league-moves", "top-performers", "transactions"],
     bottom: ["hot-cold"],

@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { getTranslations } from "next-intl/server";
 
 import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { SeasonNotStartedNotice } from "@/components/explore/season-not-started-notice";
@@ -73,12 +74,10 @@ async function loadBoard(
     sortDir,
     rate: parsePlayerBoardRate([searchParams.rate].flat()[0] ?? null),
     page: 1,
+    // Context pools are unused on this page (no row-context panel wired).
+    includeContext: false,
   });
   return { view, season };
-}
-
-function sortSubtitle(label: string): string {
-  return `Sorted by ${label}. Click any column header to re-rank.`;
 }
 
 /** The board falls back to its default sort when the asked-for column is empty. */
@@ -89,28 +88,38 @@ async function SortSubtitle({
   requested: PlayerSeasonSortKey;
   load: Promise<BoardLoad>;
 }) {
+  const t = await getTranslations("Players");
   const { view } = await load;
-  if (view.sortKey === requested) return sortSubtitle(boardColumnLabel(requested));
-  return `No ${boardColumnLabel(requested)} for this season, so the board is sorted by ${boardColumnLabel(view.sortKey)}.`;
+  const requestedLabel = boardColumnLabel(requested);
+  if (view.sortKey === requested) {
+    return t("sortedBy", { label: requestedLabel });
+  }
+  return t("sortFallbackNoColumn", {
+    requested: requestedLabel,
+    actual: boardColumnLabel(view.sortKey),
+  });
 }
 
 async function ExplorePlayersBoard({ load }: { load: Promise<BoardLoad> }) {
+  const t = await getTranslations("Players");
   const { view, season } = await load;
 
   if (view.totalCount === 0) {
+    const emptyMessage =
+      view.health.status === "provider_failure"
+        ? t("emptyProviderFailure")
+        : view.health.status === "sample_dataset"
+          ? t("emptySampleDataset")
+          : view.health.status === "season_unsupported"
+            ? t("emptySeasonUnsupported")
+            : view.health.status === "board_unavailable"
+              ? t("emptyBoardUnavailable")
+              : t("emptyNoRows");
     return (
       <div className="query-updating-content flex flex-col gap-3">
         <PlayerBoardHealthBanner health={view.health} />
         <section className="sports-card px-4 py-8 text-center text-[14px] text-muted-foreground">
-          {view.health.status === "provider_failure"
-            ? "Live player data is temporarily unavailable. Please try again shortly."
-            : view.health.status === "sample_dataset"
-              ? "This environment is using the local sample dataset."
-              : view.health.status === "season_unsupported"
-                ? "Player-season board data is unavailable for this season from the current provider."
-                : view.health.status === "board_unavailable"
-                  ? "Live player data could not be loaded for this season."
-                  : "No qualifying player-season rows found."}
+          {emptyMessage}
         </section>
       </div>
     );
@@ -143,6 +152,7 @@ export default async function ExplorePlayersPage({
   searchParams,
 }: ExplorePlayersPageProps) {
   const params = await searchParams;
+  const t = await getTranslations("Players");
   const [seasons, teamCatalog] = await Promise.all([
     getAvailableSeasons(),
     getTeamsCatalog(),
@@ -156,10 +166,14 @@ export default async function ExplorePlayersPage({
     <main data-motion-page className="site-shell flex min-w-0 max-w-full flex-1 flex-col gap-5 overflow-x-clip py-6 sm:py-8">
       <MotionReveal />
       <PageHeader
-        title="Players"
+        title={t("title")}
         subtitle={
           subtitleSort ? (
-            <Suspense fallback={sortSubtitle(boardColumnLabel(subtitleSort))}>
+            <Suspense
+              fallback={t("sortedBy", {
+                label: boardColumnLabel(subtitleSort),
+              })}
+            >
               <SortSubtitle requested={subtitleSort} load={load} />
             </Suspense>
           ) : undefined

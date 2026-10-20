@@ -2,10 +2,10 @@
 
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import { get, set, del } from "idb-keyval";
 import type {
   GmLeagueState,
   GmPosition,
+  GmRotationDepth,
   GmTradeAsset,
 } from "@/gm/types";
 import { createGeneratedLeague } from "@/gm/seed/create-league";
@@ -29,6 +29,7 @@ import { buildDigest, newInjuries, stepDay } from "@/gm/engine/pace";
 import { cupChampionNews, ensureNbaCup, gameCounts } from "@/gm/engine/cup";
 import { allStarChampionNews, ensureAllStar } from "@/gm/engine/allstar";
 import { stampSeasonAwards } from "@/gm/engine/awards";
+import { buildChampionResult } from "@/gm/engine/finals-mvp";
 import {
   adoptRealSchedule,
   regularSeasonComplete,
@@ -36,7 +37,25 @@ import {
   tradeDeadlineDay,
 } from "@/gm/engine/schedule";
 import { applyTrade, evaluateTrade } from "@/gm/engine/trades";
-import { considerIncomingOffer, offerIsFair } from "@/gm/engine/offers";
+import {
+  considerIncomingOffer,
+  offerIsFair,
+  recordDeclinedOffer,
+} from "@/gm/engine/offers";
+import {
+  considerTeamBuildingCheckpoint,
+  continuePastCheckpoint as continuePastCheckpointEngine,
+  isCalendarPaused,
+  isTeamBuildingPaused,
+  pauseForTeamBuilding as pauseForTeamBuildingEngine,
+  restoreSnoozedCheckpoint,
+} from "@/gm/engine/checkpoints";
+import {
+  applyScoutingFocus as applyScoutingFocusEngine,
+  autoScoutingFocus as autoScoutingFocusEngine,
+  considerScoutingFocus,
+  skipScoutingFocus as skipScoutingFocusEngine,
+} from "@/gm/engine/scouting-focus";
 import {
   advanceDraftPastAi,
   advanceOneDraftPick,
@@ -53,24 +72,49 @@ import {
   startNextSeason,
 } from "@/gm/engine/offseason";
 import {
-  advanceFaDay as advanceFaDayEngine,
+  advanceFaDayDetailed,
+  applyOptionDecision,
+  declineQualifyingOffer as declineQoEngine,
   resignOwnFreeAgent as resignOwnFreeAgentEngine,
+  tenderQualifyingOffer as tenderQoEngine,
+  toggleFaWatchlist,
   userOfferFreeAgent,
 } from "@/gm/engine/free-agency";
+import {
+  declineOfferSheet as declineSheetEngine,
+  matchOfferSheet as matchSheetEngine,
+} from "@/gm/engine/fa-rfa";
 import {
   applyCombine,
   ensureProspectIdentities,
   revealScouting,
   sealProspect,
+  spendScoutingLook,
   staffScoutContext,
 } from "@/gm/engine/scouting";
-import { generateScoutMarket } from "@/gm/seed/scouts";
-import { autoSetLineup } from "@/gm/engine/lineup";
+import { generateDeveloperMarket } from "@/gm/seed/developers";
+import { generateScoutMarket, ensureScoutKnack } from "@/gm/seed/scouts";
+import { devKnackLabel, scoutKnackLabel } from "@/gm/seed/staff-knacks";
+import {
+  assignLeaguePositions,
+  POSITION_BOOK_VERSION,
+  autoSetLineup,
+  reassignPosition,
+  setSecondaryPosition,
+  slotAccepts,
+} from "@/gm/engine/lineup";
 import { capStatus } from "@/gm/engine/cap";
 import { asAssociate, hireQuote, withAssociate, withHeadCoach } from "@/gm/engine/staff";
 import { installStaff, openCoachMarket, TRAINER_TIERS } from "@/gm/seed/coaches";
 import { claimOpeningRosters } from "@/gm/seed/opening-roster";
-import { coachingOf, shiftSnapshot, suggestedMinutes } from "@/gm/engine/coaching";
+import {
+  autoBalanceRotation as buildBalancedMinutes,
+  coachingOf,
+  rebalanceForInjuryChanges,
+  resetBalancedRotation,
+  shiftSnapshot,
+  suggestedMinutes,
+} from "@/gm/engine/coaching";
 import type { GmCoaching } from "@/gm/types";
 import { uid, clamp } from "@/gm/engine/rng";
 import {
@@ -91,35 +135,121 @@ import {
   teamName,
 } from "@/gm/engine/play-in";
 import { useMyLeagueStore } from "@/gm/myleague/store";
+import {
+  allocateNewSave,
+  createGmSlotStorage,
+  deleteSaveSlot,
+  parkActiveSave,
+  readLayerARaw,
+  readLayerBRaw,
+  readSaveIndex,
+  setActiveSaveId,
+  type GmSaveMeta,
+} from "@/gm/state/gm-saves";
+import { startYearFromCanonicalSeason } from "@/data/providers/historical/season-range";
 
-const idbStorage = {
-  getItem: async (name: string): Promise<string | null> => {
-    const value = await get<string>(name);
-    return value ?? null;
-  },
-  setItem: async (name: string, value: string): Promise<void> => {
-    await set(name, value);
-  },
-  removeItem: async (name: string): Promise<void> => {
-    await del(name);
-  },
-};
+/** Incoming offer → team-building date → monthly scouting focus. */
+function afterDayGates(league: GmLeagueState): GmLeagueState {
+  let next = considerIncomingOffer(league);
+  if (!next.incomingOffer) next = considerTeamBuildingCheckpoint(next);
+  if (!next.incomingOffer && !next.teamBuildingCheckpoint) {
+    next = considerScoutingFocus(next);
+  }
+  return next;
+}
+
+const idbStorage = createGmSlotStorage("a");
+
+/** Normalize a league blob after load (same pass as persist rehydrate). */
+export function normalizeLoadedLeague(league: GmLeagueState): GmLeagueState {
+  const next = adoptRealSchedule(ensureProspectIdentities(league));
+  const needsPositions = next.positionBook !== POSITION_BOOK_VERSION;
+  const sheeted = next.players.map((player) =>
+    ensurePlayerSheet(applyRookieRatings(player))
+  );
+  const players = needsPositions ? assignLeaguePositions(sheeted) : sheeted;
+  const lined =
+    next.lineupRoles === 1 && !needsPositions
+      ? next.teams
+      : next.teams.map((team) => {
+          const cleared = needsPositions
+            ? {
+                ...team,
+                coaching: team.coaching
+                  ? {
+                      ...coachingOf(team),
+                      minutes: undefined,
+                      coverSlot: undefined,
+                    }
+                  : team.coaching,
+              }
+            : team;
+          if (cleared.coaching?.minutes && next.lineupRoles === 1) {
+            return cleared;
+          }
+          return autoSetLineup(cleared, players);
+        });
+  const teams = next.staffBook === 1 ? lined : lined.map((team) => installStaff(team));
+  const seated = applyRealBooks(
+    ensureNbaCup(claimOpeningRosters({ ...next, players, teams }))
+  );
+  return {
+    ...seated,
+    automation: {
+      ...automationOf(seated),
+      autoScout: seated.automation?.autoScout === true,
+    },
+    lineupRoles: 1,
+    staffBook: 1,
+    rosterBook: 1,
+    positionBook: POSITION_BOOK_VERSION,
+    coachMarket: next.coachMarket?.length ? next.coachMarket : openCoachMarket(),
+  };
+}
 
 interface GmStore {
   league: GmLeagueState | null;
   hydrated: boolean;
   seeding: boolean;
   seedError: string | null;
+  /** Last FA desk note (offer result, advance block, etc.). */
+  lastFaNote: string | null;
+  /** IndexedDB franchise slots (newest first). */
+  saves: GmSaveMeta[];
+  activeSaveId: string | null;
   setHydrated: (v: boolean) => void;
-  /** Real NBA rosters (async). */
-  newLeague: (userTeamId?: string, season?: string) => Promise<void>;
+  refreshSaves: () => Promise<void>;
+  /**
+   * Real NBA rosters (async).
+   * From the hub, opens a new slot. With an active league (reload banners), replaces that slot.
+   */
+  newLeague: (
+    userTeamId?: string,
+    season?: string,
+    opts?: { replace?: boolean }
+  ) => Promise<void>;
   /** Synthetic fallback (offline / demo). */
-  newGeneratedLeague: (userTeamId?: string) => void;
+  newGeneratedLeague: (userTeamId?: string, opts?: { replace?: boolean }) => void;
+  /** Park the active save and return to My Teams (does not delete). */
+  leaveToHub: () => Promise<void>;
+  /** Resume a parked save. */
+  resumeSave: (id: string) => Promise<void>;
+  /** Permanently delete a save slot. */
+  deleteSave: (id: string) => Promise<void>;
+  /** @deprecated Prefer leaveToHub / deleteSave. */
   resetLeague: () => void;
   setStarter: (position: GmPosition, playerId: string | null) => void;
+  /** Relist a rostered player. Overall follows the new position weights. */
+  setPlayerPosition: (playerId: string, position: GmPosition) => void;
+  /** Alternate listing for rotation bars and out-of-position sim fit. */
+  setPlayerSecondary: (playerId: string, position: GmPosition | null) => void;
   autoLineup: () => void;
   setCoaching: (patch: Partial<GmCoaching>) => void;
   setRotationMinutes: (playerId: string, minutes: number) => void;
+  /** Set how many bodies get minutes, then rebuild the book. */
+  setRotationDepth: (depth: GmRotationDepth) => void;
+  /** Keep starters; rebuild a balanced 240 chart. */
+  autoBalanceRotation: () => void;
   resetRotation: () => void;
   simulateNextGame: () => string | null;
   simulateDay: () => void;
@@ -147,6 +277,19 @@ interface GmStore {
     toAssets: GmTradeAsset[]
   ) => { ok: boolean; reason?: string };
   declineIncomingOffer: () => void;
+  /** Stay on a team-building date and manage the roster / trades. */
+  pauseForTeamBuilding: () => void;
+  /** Clear the team-building pause and keep the calendar moving. */
+  continuePastCheckpoint: () => void;
+  /** Lock monthly scouting focus on up to three prospects. */
+  applyScoutingFocus: (
+    playerIds: string[],
+    positionFocus?: GmPosition | null
+  ) => void;
+  /** Let the hired scout assign this month's focuses. */
+  autoScoutingFocus: () => void;
+  /** Skip this month's scouting focus window. */
+  skipScoutingFocus: () => void;
   proposeTrade: (
     toTeamId: string,
     fromAssets: GmTradeAsset[],
@@ -162,17 +305,25 @@ interface GmStore {
   simDraftPick: () => void;
   /** Walk CPU picks until your next selection. */
   simDraftToUser: () => void;
+  /** Fill the rest of the board with CPU picks; stay on draft for the recap. */
+  finishDraftBoard: () => void;
   acceptDraftNightTrade: (offer: DraftNightOffer) => void;
   moveDraftBoard: (playerId: string, dir: "up" | "down" | "top") => void;
   resetDraftBoard: () => void;
   runCombine: () => void;
+  /** Fill one fogged grade on a draft prospect (does not reveal identity). */
+  scoutLook: (playerId: string) => void;
   advanceToPlayoffs: () => void;
+  /** Leave the awards night and open play-in / bracket on home. */
+  ackAwardsShow: () => void;
+  /** Leave the champion splash and open the draft desk. */
+  ackChampionSplash: () => void;
   simPlayoffDay: () => void;
   /** Draft still open: open free agency. Free agency: tip off the next year. */
   runOffseason: () => void;
   openFreeAgency: () => void;
   runCpuSignings: () => void;
-  /** Advance one day on the free-agency clock (moratorium → open → fill). */
+  /** Advance one day on the free-agency clock. */
   advanceFaDay: () => void;
   /** Bird / early-Bird re-sign at the ask. */
   resignOwnFreeAgent: (
@@ -186,6 +337,15 @@ interface GmStore {
     salaryM: number,
     years: number
   ) => { ok: boolean; reason?: string; via?: string; note?: string };
+  decideTeamOption: (
+    playerId: string,
+    decision: "exercise" | "decline"
+  ) => void;
+  tenderQualifyingOffer: (playerId: string) => void;
+  declineQualifyingOffer: (playerId: string) => void;
+  matchOfferSheet: (sheetId: string) => void;
+  declineOfferSheet: (sheetId: string) => void;
+  toggleFaWatchlist: (playerId: string) => void;
   renounceRights: (playerId: string) => void;
   waivePlayer: (playerId: string) => void;
   upgradeStaff: (kind: "scout" | "trainer") => void;
@@ -195,6 +355,9 @@ interface GmStore {
   hireScout: (scoutId: string) => void;
   /** Refresh the available scout market. */
   refreshScoutMarket: () => void;
+  /** Hire a player-development director from the market. */
+  hireDeveloper: (developerId: string) => void;
+  refreshDeveloperMarket: () => void;
 }
 
 function withUpdate(league: GmLeagueState): GmLeagueState {
@@ -214,11 +377,15 @@ function afterDraftProgress(league: GmLeagueState): GmLeagueState {
   ) {
     next = finishDraftWithAi(next);
   }
-  if (next.phase === "draft" && next.draftPool.length === 0) {
+  // Leave an empty board on draft so the recap page can show. Only jump
+  // straight into free agency when that automation switch is on.
+  if (
+    next.phase === "draft" &&
+    next.draftPool.length === 0 &&
+    automationOf(next).autoFreeAgency
+  ) {
     next = enterFreeAgency(next);
-    if (automationOf(next).autoFreeAgency) {
-      next = runCpuFreeAgency(next, { includeUser: false });
-    }
+    next = runCpuFreeAgency(next, { includeUser: false });
   }
   return next;
 }
@@ -243,14 +410,29 @@ export const useGmStore = create<GmStore>()(
   persist(
     (set, get) => ({
       league: null,
+      lastFaNote: null,
       simRun: null,
       hydrated: false,
       seeding: false,
       seedError: null,
+      saves: [],
+      activeSaveId: null,
       setHydrated: (v) => set({ hydrated: v }),
 
-      newLeague: async (userTeamId = "bos", season) => {
+      refreshSaves: async () => {
+        const index = await readSaveIndex();
+        set({ saves: index.saves, activeSaveId: index.activeId });
+      },
+
+      newLeague: async (userTeamId = "bos", season, opts) => {
+        const replace = opts?.replace ?? Boolean(get().league);
         set({ seeding: true, seedError: null });
+        if (!replace) {
+          const seasonEnd = season
+            ? startYearFromCanonicalSeason(season) + 1
+            : undefined;
+          await allocateNewSave({ userTeamId, season: seasonEnd });
+        }
         try {
           const res = await fetch("/api/gm/league", {
             method: "POST",
@@ -278,26 +460,106 @@ export const useGmStore = create<GmStore>()(
             },
             { snapshot: payload.snapshot }
           );
+          await get().refreshSaves();
         } catch (error) {
           const message =
             error instanceof Error ? error.message : "Failed to load real rosters";
           set({ seeding: false, seedError: message });
-          // Fallback so the user can still play.
+          // Fallback so the user can still play in the allocated slot.
           const league = createGeneratedLeague({ userTeamId });
           set({ league });
           useMyLeagueStore.getState().bootstrap(league);
+          await get().refreshSaves();
         }
       },
 
-      newGeneratedLeague: (userTeamId = "bos") => {
-        const league = createGeneratedLeague({ userTeamId });
-        set({ league, seedError: null });
-        useMyLeagueStore.getState().bootstrap(league);
+      newGeneratedLeague: (userTeamId = "bos", opts) => {
+        const replace = opts?.replace ?? Boolean(get().league);
+        void (async () => {
+          if (!replace) {
+            await allocateNewSave({ userTeamId });
+          }
+          const league = createGeneratedLeague({ userTeamId });
+          set({ league, seedError: null });
+          useMyLeagueStore.getState().bootstrap(league);
+          await get().refreshSaves();
+        })();
+      },
+
+      leaveToHub: async () => {
+        clearSimTimer();
+        set({ simRun: null });
+        await parkActiveSave();
+        useMyLeagueStore.getState().reset();
+        set({ league: null, seedError: null });
+        await get().refreshSaves();
+      },
+
+      resumeSave: async (id) => {
+        clearSimTimer();
+        set({ simRun: null, seeding: true, seedError: null });
+        try {
+          await setActiveSaveId(id);
+          const rawA = await readLayerARaw(id);
+          if (!rawA) throw new Error("Save data missing");
+          const parsed = JSON.parse(rawA) as {
+            state?: { league?: GmLeagueState | null };
+          };
+          const loaded = parsed.state?.league;
+          if (!loaded) throw new Error("Save has no league");
+          const league = normalizeLoadedLeague(loaded);
+          set({ league, seeding: false });
+
+          const rawB = await readLayerBRaw(id);
+          if (rawB) {
+            const layerB = JSON.parse(rawB) as {
+              state?: {
+                myLeague?: unknown;
+                historical?: unknown;
+                simulation?: unknown;
+                timeline?: unknown;
+                decisions?: unknown;
+              };
+            };
+            const b = layerB.state;
+            if (b?.myLeague && b.simulation && b.historical) {
+              useMyLeagueStore.setState({
+                myLeague: b.myLeague as never,
+                historical: b.historical as never,
+                simulation: b.simulation as never,
+                timeline: (b.timeline as never) ?? {},
+                decisions: (b.decisions as never) ?? {},
+                hydrated: true,
+              });
+            } else {
+              useMyLeagueStore.getState().bootstrap(league);
+            }
+          } else {
+            useMyLeagueStore.getState().bootstrap(league);
+          }
+          await get().refreshSaves();
+        } catch (error) {
+          const message =
+            error instanceof Error ? error.message : "Could not open save";
+          await parkActiveSave();
+          set({ league: null, seeding: false, seedError: message });
+          await get().refreshSaves();
+        }
+      },
+
+      deleteSave: async (id) => {
+        const deletingActive = get().activeSaveId === id;
+        await deleteSaveSlot(id);
+        if (deletingActive) {
+          clearSimTimer();
+          useMyLeagueStore.getState().reset();
+          set({ league: null, simRun: null, seedError: null });
+        }
+        await get().refreshSaves();
       },
 
       resetLeague: () => {
-        useMyLeagueStore.getState().reset();
-        set({ league: null, seedError: null });
+        void get().leaveToHub();
       },
 
       setStarter: (position, playerId) => {
@@ -310,9 +572,96 @@ export const useGmStore = create<GmStore>()(
           // demote previous starter to bench
           const prev = t.starters[position];
           if (prev && prev !== playerId) benchOrder = [prev, ...benchOrder];
-          return { ...t, starters, benchOrder };
+          const nextTeam = { ...t, starters, benchOrder };
+          // Keep cover slots aligned with the new starter map.
+          // Do not seed a minutes book here — persisting one turns on the
+          // coaching ORtg nudge for the user only, and CPU clubs stay at 1.0.
+          const book = buildBalancedMinutes(nextTeam, league.players);
+          const coverSlot = {
+            ...(t.coaching?.coverSlot ?? book.coverSlot),
+            ...(playerId ? { [playerId]: position } : {}),
+          };
+          return {
+            ...nextTeam,
+            coaching: {
+              ...coachingOf(t),
+              coverSlot,
+            },
+          };
         });
         set({ league: withUpdate({ ...league, teams }) });
+      },
+
+      setPlayerPosition: (playerId, position) => {
+        const league = get().league;
+        if (!league) return;
+        const players = league.players.map((player) => {
+          if (player.id !== playerId || player.teamId !== league.userTeamId) {
+            return player;
+          }
+          return reassignPosition(player, position);
+        });
+        const teams = league.teams.map((t) => {
+          if (t.id !== league.userTeamId) return t;
+          const starters = { ...t.starters };
+          // If he was starting a slot he can no longer cover, clear that slot.
+          for (const slot of Object.keys(starters) as Array<keyof typeof starters>) {
+            if (starters[slot] !== playerId) continue;
+            if (slot === position) continue;
+            // Keep the starter if the new primary or secondary can still cover.
+            const next = players.find((p) => p.id === playerId);
+            if (
+              next &&
+              (next.position === slot ||
+                next.secondaryPosition === slot ||
+                slotAccepts(slot, next.position))
+            ) {
+              continue;
+            }
+            starters[slot] = null;
+          }
+          // Prefer him in the matching starter hole when empty.
+          if (!starters[position]) starters[position] = playerId;
+          const nextTeam = { ...t, starters };
+          const book = buildBalancedMinutes(nextTeam, players);
+          return {
+            ...nextTeam,
+            coaching: {
+              ...coachingOf(t),
+              coverSlot: {
+                ...(t.coaching?.coverSlot ?? book.coverSlot),
+                [playerId]: position,
+              },
+            },
+          };
+        });
+        set({ league: withUpdate({ ...league, players, teams }) });
+      },
+
+      setPlayerSecondary: (playerId, position) => {
+        const league = get().league;
+        if (!league) return;
+        const players = league.players.map((player) => {
+          if (player.id !== playerId || player.teamId !== league.userTeamId) {
+            return player;
+          }
+          return setSecondaryPosition(player, position);
+        });
+        // Refresh cover so minutes bars and the sim see the new slide.
+        // Do not seed a minutes book — that turns on the coaching ORtg nudge
+        // for the user only.
+        const teams = league.teams.map((t) => {
+          if (t.id !== league.userTeamId) return t;
+          const book = buildBalancedMinutes(t, players);
+          return {
+            ...t,
+            coaching: {
+              ...coachingOf(t),
+              coverSlot: book.coverSlot,
+            },
+          };
+        });
+        set({ league: withUpdate({ ...league, players, teams }) });
       },
 
       autoLineup: () => {
@@ -347,12 +696,69 @@ export const useGmStore = create<GmStore>()(
         if (!league) return;
         const team = league.teams.find((entry) => entry.id === league.userTeamId);
         if (!team) return;
-        const base = team.coaching?.minutes ?? suggestedMinutes(team, league.players);
+        const book = buildBalancedMinutes(team, league.players);
+        const base = team.coaching?.minutes ?? book.minutes;
         const minutesPlan = {
           ...base,
           [playerId]: clamp(Math.round(minutes), 0, 40),
         };
-        get().setCoaching({ minutes: minutesPlan });
+        const player = league.players.find((entry) => entry.id === playerId);
+        const coverSlot = {
+          ...book.coverSlot,
+          ...(team.coaching?.coverSlot ?? {}),
+        };
+        if (player && (minutesPlan[playerId] ?? 0) > 0 && !coverSlot[playerId]) {
+          coverSlot[playerId] = player.position;
+        }
+        if ((minutesPlan[playerId] ?? 0) <= 0) delete coverSlot[playerId];
+        get().setCoaching({
+          minutes: minutesPlan,
+          coverSlot,
+        });
+      },
+
+      setRotationDepth: (depth) => {
+        const league = get().league;
+        if (!league) return;
+        const teams = league.teams.map((team) => {
+          if (team.id !== league.userTeamId) return team;
+          const next = {
+            ...team,
+            coaching: {
+              ...coachingOf(team),
+              rotationDepth: depth,
+            },
+          };
+          const { minutes, coverSlot } = buildBalancedMinutes(next, league.players);
+          return {
+            ...next,
+            coaching: {
+              ...coachingOf(next),
+              rotationDepth: depth,
+              minutes,
+              coverSlot,
+            },
+          };
+        });
+        set({ league: withUpdate({ ...league, teams }) });
+      },
+
+      autoBalanceRotation: () => {
+        const league = get().league;
+        if (!league) return;
+        const teams = league.teams.map((team) => {
+          if (team.id !== league.userTeamId) return team;
+          const { minutes, coverSlot } = buildBalancedMinutes(team, league.players);
+          return {
+            ...team,
+            coaching: {
+              ...coachingOf(team),
+              minutes,
+              coverSlot,
+            },
+          };
+        });
+        set({ league: withUpdate({ ...league, teams }) });
       },
 
       resetRotation: () => {
@@ -360,22 +766,24 @@ export const useGmStore = create<GmStore>()(
         if (!league) return;
         const teams = league.teams.map((team) => {
           if (team.id !== league.userTeamId) return team;
-          const lined = autoSetLineup(team, league.players);
-          return {
-            ...lined,
-            coaching: {
-              ...coachingOf(team),
-              minutes: suggestedMinutes(lined, league.players),
-            },
-          };
+          return resetBalancedRotation(team, league.players).team;
         });
         set({ league: withUpdate({ ...league, teams }) });
       },
 
       simulateNextGame: () => {
-        const league = get().league;
+        let league = get().league;
         if (!league || league.phase !== "regular") return null;
         if (!myLeagueAllowsSim(league)) return null;
+        if (league.checkpointSnooze) {
+          league = restoreSnoozedCheckpoint(league);
+          if (isTeamBuildingPaused(league)) {
+            set({ league: withUpdate(league) });
+            syncMyLeague(league);
+            return null;
+          }
+        }
+        if (league.incomingOffer || isCalendarPaused(league)) return null;
         const next = league.schedule.find(
           (g) =>
             !g.played &&
@@ -391,6 +799,7 @@ export const useGmStore = create<GmStore>()(
         let state = ensureNbaCup({ ...league });
         let standings = { ...state.standings };
         let players = [...state.players];
+        const playersBeforeInjuries = players;
         let schedule = [...state.schedule];
         let boxScores = [...state.boxScores];
         let news = [...state.news];
@@ -494,27 +903,57 @@ export const useGmStore = create<GmStore>()(
             news,
           })
         );
+        state = rebalanceForInjuryChanges(state, playersBeforeInjuries);
+        state = afterDayGates(state);
         set({ league: state });
         syncMyLeague(state);
-        if (regularSeasonComplete(schedule)) get().advanceToPlayoffs();
+        if (
+          regularSeasonComplete(schedule) &&
+          !isCalendarPaused(state) &&
+          !state.incomingOffer
+        ) {
+          get().advanceToPlayoffs();
+        }
         return userBoxId;
       },
 
       simulateDay: () => {
-        const league = get().league;
+        let league = get().league;
         if (!league || league.phase !== "regular") return;
         if (!myLeagueAllowsSim(league)) return;
+        if (league.checkpointSnooze) {
+          league = restoreSnoozedCheckpoint(league);
+          if (isTeamBuildingPaused(league)) {
+            set({ league: withUpdate(league) });
+            syncMyLeague(league);
+            get().stopAutoSim();
+            return;
+          }
+        }
+        if (league.incomingOffer || isCalendarPaused(league)) return;
         const stepped = stepDay(league);
-        const offered = considerIncomingOffer(stepped.league);
-        set({ league: withUpdate(offered) });
-        syncMyLeague(offered);
-        if (stepped.seasonOver) get().advanceToPlayoffs();
+        const next = afterDayGates(stepped.league);
+        set({ league: withUpdate(next) });
+        syncMyLeague(next);
+        if (isCalendarPaused(next) || next.incomingOffer) get().stopAutoSim();
+        if (stepped.seasonOver && !isCalendarPaused(next) && !next.incomingOffer) {
+          get().advanceToPlayoffs();
+        }
       },
 
       skipAhead: (kind) => {
         const start = get().league;
         if (!start || start.phase !== "regular") return;
         if (!myLeagueAllowsSim(start)) return;
+        if (start.incomingOffer || isCalendarPaused(start)) return;
+        if (start.checkpointSnooze) {
+          const restored = restoreSnoozedCheckpoint(start);
+          if (isTeamBuildingPaused(restored)) {
+            set({ league: withUpdate(restored) });
+            syncMyLeague(restored);
+            return;
+          }
+        }
         const played = (schedule: GmLeagueState["schedule"]) =>
           schedule.filter(
             (g) =>
@@ -552,10 +991,10 @@ export const useGmStore = create<GmStore>()(
             const big = box.players.some((p) => p.points >= 40);
             if (yours || big) notable.push(box);
           }
-          state = considerIncomingOffer(stepped.league);
+          state = afterDayGates(stepped.league);
           seasonOver = stepped.seasonOver;
           guard += 1;
-          if (state.incomingOffer) break;
+          if (state.incomingOffer || isCalendarPaused(state)) break;
           if (seasonOver) break;
         }
         const digest = buildDigest({
@@ -566,14 +1005,26 @@ export const useGmStore = create<GmStore>()(
           lossesBefore,
           winsAfter: state.standings[start.userTeamId]?.wins ?? winsBefore,
           lossesAfter: state.standings[start.userTeamId]?.losses ?? lossesBefore,
-          injuries: newInjuries(start.players, state.players, start.userTeamId),
+          injuries: newInjuries(
+            start.players,
+            state.players,
+            start.userTeamId,
+            state.schedule,
+            state.day
+          ),
           standings: state.standings,
           teams: state.teams,
         });
         const next = withUpdate({ ...state, digest });
         set({ league: next });
         syncMyLeague(next);
-        if (seasonOver) get().advanceToPlayoffs();
+        if (
+          seasonOver &&
+          !isCalendarPaused(next) &&
+          !next.incomingOffer
+        ) {
+          get().advanceToPlayoffs();
+        }
       },
 
       startAutoSim: (kind) => {
@@ -581,6 +1032,7 @@ export const useGmStore = create<GmStore>()(
         const start = get().league;
         if (!start || start.phase !== "regular") return;
         if (!myLeagueAllowsSim(start)) return;
+        if (start.incomingOffer || isCalendarPaused(start)) return;
         const startPlayed = userGamesPlayed(start);
         const deadlineDay = tradeDeadlineDay(start.schedule);
         set({
@@ -601,7 +1053,13 @@ export const useGmStore = create<GmStore>()(
         simTimer = setInterval(() => {
           const run = get().simRun;
           const league = get().league;
-          if (!run || !league || league.phase !== "regular" || league.incomingOffer) {
+          if (
+            !run ||
+            !league ||
+            league.phase !== "regular" ||
+            league.incomingOffer ||
+            isCalendarPaused(league)
+          ) {
             get().stopAutoSim();
             return;
           }
@@ -632,7 +1090,13 @@ export const useGmStore = create<GmStore>()(
             if (yours || big) notable.push(box);
           }
           set({ simRun: { ...still, notable } });
-          if (next.phase !== "regular" || next.incomingOffer) get().stopAutoSim();
+          if (
+            next.phase !== "regular" ||
+            next.incomingOffer ||
+            isCalendarPaused(next)
+          ) {
+            get().stopAutoSim();
+          }
         }, 480);
       },
 
@@ -666,7 +1130,14 @@ export const useGmStore = create<GmStore>()(
         while ((get().league?.day ?? 0) < targetDay && guard < 400) {
           get().simulateDay();
           guard += 1;
-          if (get().league?.phase !== "regular" || get().league?.incomingOffer) break;
+          const cur = get().league;
+          if (
+            cur?.phase !== "regular" ||
+            cur?.incomingOffer ||
+            (cur && isCalendarPaused(cur))
+          ) {
+            break;
+          }
         }
       },
 
@@ -676,7 +1147,8 @@ export const useGmStore = create<GmStore>()(
         while (get().league?.phase === "regular" && guard < 500) {
           get().simulateDay();
           guard += 1;
-          if (get().league?.incomingOffer) break;
+          const cur = get().league;
+          if (cur?.incomingOffer || (cur && isCalendarPaused(cur))) break;
         }
       },
 
@@ -690,7 +1162,11 @@ export const useGmStore = create<GmStore>()(
         const fair = offerIsFair(league, offer.fromTeamId, offer.toTeamId, fromAssets, toAssets);
         if (!fair.ok) return { ok: false, reason: fair.reason };
         const next = applyTrade(
-          { ...league, incomingOffer: undefined },
+          {
+            ...league,
+            incomingOffer: undefined,
+            lastOfferResolvedDay: league.day,
+          },
           {
             fromTeamId: offer.fromTeamId,
             toTeamId: offer.toTeamId,
@@ -708,21 +1184,81 @@ export const useGmStore = create<GmStore>()(
         const offer = league?.incomingOffer;
         if (!league || !offer) return;
         const caller = league.teams.find((team) => team.id === offer.fromTeamId);
+        const recorded = recordDeclinedOffer(league, offer);
         const next = withUpdate({
-          ...league,
-          incomingOffer: undefined,
+          ...recorded,
           news: [
             {
               id: uid("news"),
               day: league.day,
               season: league.season,
               headline: `You passed on ${caller?.city ?? "the"} offer`,
-              body: "They will call again later in the season.",
+              body: "That package is dead for a while. They will not bounce it back tomorrow.",
               tone: "info" as const,
             },
             ...league.news,
           ].slice(0, 50),
         });
+        set({ league: next });
+        syncMyLeague(next);
+      },
+
+      pauseForTeamBuilding: () => {
+        const league = get().league;
+        if (!league?.teamBuildingCheckpoint) return;
+        get().stopAutoSim();
+        const next = withUpdate(pauseForTeamBuildingEngine(league));
+        set({ league: next });
+        syncMyLeague(next);
+      },
+
+      continuePastCheckpoint: () => {
+        const league = get().league;
+        if (!league?.teamBuildingCheckpoint) return;
+        const kind = league.teamBuildingCheckpoint.kind;
+        get().stopAutoSim();
+        let next = continuePastCheckpointEngine(league);
+        if (
+          kind === "season_end" &&
+          next.phase === "regular" &&
+          regularSeasonComplete(next.schedule)
+        ) {
+          set({ league: withUpdate(next) });
+          syncMyLeague(next);
+          get().advanceToPlayoffs();
+          return;
+        }
+        next = considerScoutingFocus(next);
+        next = withUpdate(next);
+        set({ league: next });
+        syncMyLeague(next);
+      },
+
+      applyScoutingFocus: (playerIds, positionFocus = null) => {
+        const league = get().league;
+        if (!league?.scoutingFocusPrompt) return;
+        get().stopAutoSim();
+        const next = withUpdate(
+          applyScoutingFocusEngine(league, playerIds, positionFocus, "manual")
+        );
+        set({ league: next });
+        syncMyLeague(next);
+      },
+
+      autoScoutingFocus: () => {
+        const league = get().league;
+        if (!league?.scoutingFocusPrompt) return;
+        get().stopAutoSim();
+        const next = withUpdate(autoScoutingFocusEngine(league));
+        set({ league: next });
+        syncMyLeague(next);
+      },
+
+      skipScoutingFocus: () => {
+        const league = get().league;
+        if (!league?.scoutingFocusPrompt) return;
+        get().stopAutoSim();
+        const next = withUpdate(skipScoutingFocusEngine(league));
         set({ league: next });
         syncMyLeague(next);
       },
@@ -814,6 +1350,15 @@ export const useGmStore = create<GmStore>()(
         set({ league: withUpdate(next) });
       },
 
+      finishDraftBoard: () => {
+        const league = get().league;
+        if (!league || league.phase !== "draft") return;
+        let next =
+          league.draftPool.length > 0 ? finishDraftWithAi(league) : league;
+        next = afterDraftProgress(next);
+        set({ league: withUpdate(next) });
+      },
+
       acceptDraftNightTrade: (offer) => {
         const league = get().league;
         if (!league || league.phase !== "draft") return;
@@ -867,6 +1412,16 @@ export const useGmStore = create<GmStore>()(
         });
       },
 
+      scoutLook: (playerId) => {
+        const league = get().league;
+        if (!league?.draftPool.includes(playerId)) return;
+        const { scout } = staffScoutContext(league);
+        const players = league.players.map((player) =>
+          player.id === playerId ? spendScoutingLook(player, scout) : player
+        );
+        set({ league: withUpdate({ ...league, players }) });
+      },
+
       simPlayInNight: () => {
         const league = get().league;
         if (!league?.playIn || league.phase !== "play_in") return;
@@ -876,7 +1431,7 @@ export const useGmStore = create<GmStore>()(
         if (games.length === 0) return;
         const schedule = [...league.schedule];
         let boxScores = [...league.boxScores];
-        let players = [...league.players];
+        const players = [...league.players];
         const notes: string[] = [];
         for (const game of games) {
           const tip = {
@@ -973,7 +1528,20 @@ export const useGmStore = create<GmStore>()(
           current.phase === "free_agency"
         )
           return;
-        const league = current.phase === "regular" ? stampSeasonAwards(current) : current;
+        const stamped =
+          current.phase === "regular" ? stampSeasonAwards(current) : current;
+        const league = {
+          ...stamped,
+          homeFlow: {
+            ...stamped.homeFlow,
+            // Fresh awards night whenever we leave the regular season.
+            awardsSeen:
+              current.phase === "regular" ? false : stamped.homeFlow?.awardsSeen,
+            championSeen:
+              current.phase === "regular" ? false : stamped.homeFlow?.championSeen,
+          },
+          champion: current.phase === "regular" ? undefined : stamped.champion,
+        };
         if (league.phase !== "play_in") {
           const board = createPlayInBoard(league);
           if (board) {
@@ -1037,13 +1605,58 @@ export const useGmStore = create<GmStore>()(
         syncMyLeague(next);
       },
 
+      ackAwardsShow: () => {
+        const league = get().league;
+        if (!league) return;
+        const next = withUpdate({
+          ...league,
+          homeFlow: { ...league.homeFlow, awardsSeen: true },
+        });
+        set({ league: next });
+        syncMyLeague(next);
+      },
+
+      ackChampionSplash: () => {
+        const league = get().league;
+        if (!league?.champion) return;
+        const lotteryOrder = league.lotteryOrder ?? computeLotteryOrder(league);
+        let drafted = withUpdate({
+          ...league,
+          phase: "draft" as const,
+          homeFlow: { ...league.homeFlow, awardsSeen: true, championSeen: true },
+          draftPickIndex: 0,
+          lotteryOrder,
+          draftOrder: expandDraftOrder(lotteryOrder),
+          news: [
+            {
+              id: uid("news"),
+              day: league.day,
+              season: league.season,
+              headline: "Draft is next",
+              body: "The Finals are over. Lottery order is locked. Watch the board, trade up, or take your swing.",
+              tone: "good" as const,
+            },
+            ...league.news,
+          ].slice(0, 50),
+        });
+        if (automationOf(drafted).autoDraft) {
+          drafted = advanceDraftPastAi(drafted);
+          drafted = afterDraftProgress(drafted);
+        }
+        set({ league: drafted });
+        syncMyLeague(drafted);
+      },
+
       simPlayoffDay: () => {
         const league = get().league;
         if (!league?.playoffBracket) return;
+        // Finals splash waits on home before the draft desk opens.
+        if (league.champion && !league.homeFlow?.championSeen) return;
         const bracket = league.playoffBracket.map((s) => ({ ...s }));
         const schedule = [...league.schedule];
         let boxScores = [...league.boxScores];
         let players = league.players;
+        const playersBeforeInjuries = players;
 
         const openRound = Math.min(...bracket.filter((series) => !series.done).map((series) => series.round));
         const open = bracket.filter((series) => !series.done && series.round === openRound);
@@ -1184,48 +1797,61 @@ export const useGmStore = create<GmStore>()(
               });
             }
           } else if (currentRound === 4) {
-            const lotteryOrder = league.lotteryOrder ?? computeLotteryOrder(league);
-            let drafted = withUpdate({
+            const finals = bracket.find((series) => series.conf === "Finals");
+            const snapshot = {
               ...league,
-              phase: "draft" as const,
               playoffBracket: bracket,
               schedule,
               boxScores,
               players,
-              draftPickIndex: 0,
-              lotteryOrder,
-              draftOrder: expandDraftOrder(lotteryOrder),
-              news: [
-                {
-                  id: uid("news"),
-                  day: league.day,
-                  season: league.season,
-                  headline: "Champions crowned, draft is next",
-                  body: "The Finals are over. Lottery order is locked. Watch the board, trade up, or take your swing.",
-                  tone: "good" as const,
+            };
+            const champion = finals ? buildChampionResult(snapshot, finals) : null;
+            const crowned = rebalanceForInjuryChanges(
+              withUpdate({
+                ...snapshot,
+                champion: champion ?? undefined,
+                homeFlow: {
+                  ...league.homeFlow,
+                  awardsSeen: true,
+                  championSeen: false,
                 },
-                ...league.news,
-              ].slice(0, 50),
-            });
-            if (automationOf(drafted).autoDraft) {
-              drafted = advanceDraftPastAi(drafted);
-              drafted = afterDraftProgress(drafted);
-            }
-            set({ league: drafted });
-            syncMyLeague(drafted);
+                day: league.day + 1,
+                news: [
+                  {
+                    id: uid("news"),
+                    day: league.day,
+                    season: league.season,
+                    headline: champion
+                      ? `${(league.teams.find((team) => team.id === champion.teamId)?.abbr ?? "NBA").toUpperCase()} are champions`
+                      : "Champions crowned",
+                    body: champion
+                      ? `Finals MVP is locked. Open home for the splash, then the draft desk.`
+                      : "The Finals are over. Open home for the next step.",
+                    tone: "good" as const,
+                  },
+                  ...league.news,
+                ].slice(0, 50),
+              }),
+              playersBeforeInjuries
+            );
+            set({ league: crowned });
+            syncMyLeague(crowned);
             return;
           }
           void winners;
         }
 
-        const playoffState = withUpdate({
-          ...league,
-          playoffBracket: bracket,
-          schedule,
-          boxScores,
-          players,
-          day: league.day + 1,
-        });
+        const playoffState = rebalanceForInjuryChanges(
+          withUpdate({
+            ...league,
+            playoffBracket: bracket,
+            schedule,
+            boxScores,
+            players,
+            day: league.day + 1,
+          }),
+          playersBeforeInjuries
+        );
         set({ league: playoffState });
         syncMyLeague(playoffState);
       },
@@ -1259,7 +1885,13 @@ export const useGmStore = create<GmStore>()(
           lossesBefore: start.standings[start.userTeamId]?.losses ?? 0,
           winsAfter: end.standings[start.userTeamId]?.wins ?? 0,
           lossesAfter: end.standings[start.userTeamId]?.losses ?? 0,
-          injuries: newInjuries(start.players, end.players, start.userTeamId),
+          injuries: newInjuries(
+            start.players,
+            end.players,
+            start.userTeamId,
+            end.schedule,
+            end.day
+          ),
           standings: end.standings,
           teams: end.teams,
         });
@@ -1271,7 +1903,11 @@ export const useGmStore = create<GmStore>()(
         if (!start || start.phase !== "playoffs") return;
         let guard = 0;
         while (guard < 80 && get().league?.phase === "playoffs") {
+          const before = get().league;
+          if (before?.champion && !before.homeFlow?.championSeen) break;
           get().simPlayoffDay();
+          const after = get().league;
+          if (after?.champion && !after.homeFlow?.championSeen) break;
           guard += 1;
         }
         const end = get().league;
@@ -1285,7 +1921,13 @@ export const useGmStore = create<GmStore>()(
           lossesBefore: 0,
           winsAfter: 0,
           lossesAfter: 0,
-          injuries: newInjuries(start.players, end.players, start.userTeamId),
+          injuries: newInjuries(
+            start.players,
+            end.players,
+            start.userTeamId,
+            end.schedule,
+            end.day
+          ),
           standings: end.standings,
           teams: end.teams,
         });
@@ -1312,6 +1954,8 @@ export const useGmStore = create<GmStore>()(
         let next = enterFreeAgency(drafted);
         if (automationOf(next).autoFreeAgency) {
           next = runCpuFreeAgency(next, { includeUser: false });
+        } else {
+          next = considerTeamBuildingCheckpoint(next);
         }
         next = withUpdate(next);
         set({ league: next });
@@ -1321,16 +1965,104 @@ export const useGmStore = create<GmStore>()(
       runCpuSignings: () => {
         const league = get().league;
         if (!league) return;
+        if (isTeamBuildingPaused(league)) return;
         const next = withUpdate(runCpuFreeAgency(league, { includeUser: false }));
         set({ league: next });
         syncMyLeague(next);
       },
 
       advanceFaDay: () => {
-        const league = get().league;
+        let league = get().league;
         if (!league || league.phase !== "free_agency") return;
         if (league.faMarket?.done) return;
-        const next = withUpdate(advanceFaDayEngine(league));
+        if (league.checkpointSnooze) {
+          league = restoreSnoozedCheckpoint(league);
+          if (isTeamBuildingPaused(league)) {
+            set({ league: withUpdate(league) });
+            syncMyLeague(league);
+            return;
+          }
+        }
+        if (isTeamBuildingPaused(league)) return;
+        const result = advanceFaDayDetailed(league);
+        const next = withUpdate(result.state);
+        set({
+          league: next,
+          lastFaNote: result.blocked?.reason ?? null,
+        });
+        syncMyLeague(next);
+      },
+
+      decideTeamOption: (playerId, decision) => {
+        const league = get().league;
+        if (!league) return;
+        const next = withUpdate(applyOptionDecision(league, playerId, decision));
+        set({
+          league: next,
+          lastFaNote:
+            decision === "exercise"
+              ? "Team option exercised."
+              : "Team option declined.",
+        });
+        syncMyLeague(next);
+      },
+
+      tenderQualifyingOffer: (playerId) => {
+        const league = get().league;
+        if (!league) return;
+        const result = tenderQoEngine(league, playerId, league.userTeamId);
+        if (!result.ok) {
+          set({ lastFaNote: result.reason });
+          return;
+        }
+        const next = withUpdate(result.state);
+        set({ league: next, lastFaNote: "Qualifying offer tendered." });
+        syncMyLeague(next);
+      },
+
+      declineQualifyingOffer: (playerId) => {
+        const league = get().league;
+        if (!league) return;
+        const result = declineQoEngine(league, playerId, league.userTeamId);
+        if (!result.ok) {
+          set({ lastFaNote: result.reason });
+          return;
+        }
+        const next = withUpdate(result.state);
+        set({ league: next, lastFaNote: "Qualifying offer declined." });
+        syncMyLeague(next);
+      },
+
+      matchOfferSheet: (sheetId) => {
+        const league = get().league;
+        if (!league) return;
+        const result = matchSheetEngine(league, sheetId);
+        if (!result.ok) {
+          set({ lastFaNote: result.reason });
+          return;
+        }
+        const next = withUpdate(result.state);
+        set({ league: next, lastFaNote: result.note });
+        syncMyLeague(next);
+      },
+
+      declineOfferSheet: (sheetId) => {
+        const league = get().league;
+        if (!league) return;
+        const result = declineSheetEngine(league, sheetId);
+        if (!result.ok) {
+          set({ lastFaNote: result.reason });
+          return;
+        }
+        const next = withUpdate(result.state);
+        set({ league: next, lastFaNote: result.note });
+        syncMyLeague(next);
+      },
+
+      toggleFaWatchlist: (playerId) => {
+        const league = get().league;
+        if (!league) return;
+        const next = withUpdate(toggleFaWatchlist(league, playerId));
         set({ league: next });
         syncMyLeague(next);
       },
@@ -1339,9 +2071,12 @@ export const useGmStore = create<GmStore>()(
         const league = get().league;
         if (!league) return { ok: false, reason: "No league" };
         const result = resignOwnFreeAgentEngine(league, playerId);
-        if (!result.ok) return result;
+        if (!result.ok) {
+          set({ lastFaNote: result.reason });
+          return result;
+        }
         const next = withUpdate(result.state);
-        set({ league: next });
+        set({ league: next, lastFaNote: result.note });
         syncMyLeague(next);
         return { ok: true, note: result.note };
       },
@@ -1349,12 +2084,16 @@ export const useGmStore = create<GmStore>()(
       setAutomation: (patch) => {
         const league = get().league;
         if (!league) return;
-        set({
-          league: withUpdate({
-            ...league,
-            automation: { ...automationOf(league), ...patch },
-          }),
+        let next = withUpdate({
+          ...league,
+          automation: { ...automationOf(league), ...patch },
         });
+        // Turning auto scout on while a month is paused: resolve it now.
+        if (patch.autoScout === true && next.scoutingFocusPrompt) {
+          next = withUpdate(autoScoutingFocusEngine(next));
+        }
+        set({ league: next });
+        syncMyLeague(next);
       },
 
       signFreeAgent: (playerId, salaryM, years) => {
@@ -1363,19 +2102,27 @@ export const useGmStore = create<GmStore>()(
         const result = userOfferFreeAgent(league, playerId, salaryM, years);
         if (result.state) {
           const next = withUpdate(result.state);
-          set({ league: next });
+          set({
+            league: next,
+            lastFaNote: result.ok ? result.note : result.reason,
+          });
           syncMyLeague(next);
           if (!result.ok) return { ok: false, reason: result.reason };
           const via = next.players.find((p) => p.id === playerId)?.contract?.signedVia;
           return { ok: true, via, note: result.note };
         }
-        if (!result.ok) return result;
+        if (!result.ok) {
+          set({ lastFaNote: result.reason });
+          return result;
+        }
         return { ok: false, reason: "Offer failed." };
       },
 
       renounceRights: (playerId) => {
         const league = get().league;
         if (!league) return;
+        const player = league.players.find((p) => p.id === playerId);
+        const hold = player?.lastSalaryM ?? 0;
         const players = league.players.map((p) =>
           p.id === playerId && p.rightsTeamId === league.userTeamId
             ? {
@@ -1383,10 +2130,15 @@ export const useGmStore = create<GmStore>()(
                 rightsTeamId: null,
                 rightsKind: undefined,
                 lastSalaryM: undefined,
+                qoStatus: p.qoStatus === "tendered" ? ("declined" as const) : p.qoStatus,
+                qoAmountM: undefined,
               }
             : p
         );
-        set({ league: withUpdate({ ...league, players }) });
+        set({
+          league: withUpdate({ ...league, players }),
+          lastFaNote: `Renounced rights (cleared $${hold.toFixed(1)}M hold). You can still sign him later with cap room or an exception.`,
+        });
       },
 
       waivePlayer: (playerId) => {
@@ -1561,18 +2313,19 @@ export const useGmStore = create<GmStore>()(
         const market = league.scoutMarket ?? [];
         const hired = market.find((s) => s.id === scoutId);
         if (!hired) return;
+        const stamped = ensureScoutKnack(hired);
         const team = league.teams.find((entry) => entry.id === league.userTeamId);
         if (!team) return;
         const overTax = capStatus(team, league.players, league.settings, league.season).overTax;
-        if (!hireQuote(team, overTax, hired, "scout").ok) return;
+        if (!hireQuote(team, overTax, stamped, "scout").ok) return;
         const teams = league.teams.map((t) => {
           if (t.id !== league.userTeamId) return t;
           return {
             ...t,
             staff: {
               ...t.staff,
-              scout: hired,
-              scoutLevel: hired.eye,
+              scout: stamped,
+              scoutLevel: stamped.eye,
             },
           };
         });
@@ -1597,7 +2350,7 @@ export const useGmStore = create<GmStore>()(
                 day: league.day,
                 season: league.season,
                 headline: `Hired ${hired.name} as director of scouting`,
-                body: `${hired.yearsExperience} years · ${hired.expertise} specialist · eye ${hired.eye}/5. Draft fog re-rolled to their board.`,
+                body: `${stamped.yearsExperience} years · ${stamped.expertise} · ${scoutKnackLabel(stamped.knack)} · eye ${stamped.eye}/5. Draft fog re-rolled to their board.`,
                 tone: "info" as const,
               },
               ...league.news,
@@ -1619,6 +2372,60 @@ export const useGmStore = create<GmStore>()(
           }),
         });
       },
+
+      hireDeveloper: (developerId) => {
+        const league = get().league;
+        if (!league) return;
+        const market = league.developerMarket ?? [];
+        const hired = market.find((d) => d.id === developerId);
+        if (!hired) return;
+        const team = league.teams.find((entry) => entry.id === league.userTeamId);
+        if (!team) return;
+        const overTax = capStatus(team, league.players, league.settings, league.season).overTax;
+        if (!hireQuote(team, overTax, hired, "developer").ok) return;
+        const teams = league.teams.map((t) => {
+          if (t.id !== league.userTeamId) return t;
+          return {
+            ...t,
+            staff: {
+              ...t.staff,
+              developer: hired,
+            },
+          };
+        });
+        set({
+          league: withUpdate({
+            ...league,
+            teams,
+            developerMarket: market.filter((d) => d.id !== developerId),
+            news: [
+              {
+                id: uid("news"),
+                day: league.day,
+                season: league.season,
+                headline: `Hired ${hired.name} for player development`,
+                body: `${hired.yearsExperience} years · ${devKnackLabel(hired.knack)} · touch ${hired.touch}/5.`,
+                tone: "info" as const,
+              },
+              ...league.news,
+            ].slice(0, 50),
+          }),
+        });
+      },
+
+      refreshDeveloperMarket: () => {
+        const league = get().league;
+        if (!league) return;
+        set({
+          league: withUpdate({
+            ...league,
+            developerMarket: generateDeveloperMarket(
+              league.season * 7723 + league.day * 17 + (league.developerMarket?.length ?? 0),
+              5
+            ),
+          }),
+        });
+      },
     }),
     {
       name: "franchise-lab-gm",
@@ -1626,25 +2433,15 @@ export const useGmStore = create<GmStore>()(
       partialize: (s) => ({ league: s.league }),
       onRehydrateStorage: () => (state) => {
         if (state?.league) {
-          const league = adoptRealSchedule(ensureProspectIdentities(state.league));
-          const players = league.players.map((player) => ensurePlayerSheet(applyRookieRatings(player)));
-          const lined =
-            league.lineupRoles === 1
-              ? league.teams
-              : league.teams.map((team) =>
-                  team.coaching?.minutes ? team : autoSetLineup(team, players)
-                );
-          const teams = league.staffBook === 1 ? lined : lined.map((team) => installStaff(team));
-          const seated = applyRealBooks(ensureNbaCup(claimOpeningRosters({ ...league, players, teams })));
-          state.league = {
-            ...seated,
-            lineupRoles: 1,
-            staffBook: 1,
-            rosterBook: 1,
-            coachMarket: league.coachMarket?.length ? league.coachMarket : openCoachMarket(),
-          };
+          state.league = normalizeLoadedLeague(state.league);
         }
-        state?.setHydrated(true);
+        void (async () => {
+          try {
+            await state?.refreshSaves();
+          } finally {
+            state?.setHydrated(true);
+          }
+        })();
       },
     }
   )

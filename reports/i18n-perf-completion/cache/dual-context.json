@@ -1,0 +1,30 @@
+[
+  {
+    "order": "de then fr",
+    "langA": "de",
+    "langB": "fr",
+    "ok": true,
+    "layer": "next-start-local (not Cloudflare edge HIT/MISS)"
+  },
+  {
+    "order": "fr then de",
+    "langA": "fr",
+    "langB": "de",
+    "ok": true,
+    "layer": "next-start-local (not Cloudflare edge HIT/MISS)"
+  },
+  {
+    "order": "ja then en",
+    "langA": "ja",
+    "langB": "en",
+    "ok": true,
+    "layer": "next-start-local (not Cloudflare edge HIT/MISS)"
+  },
+  {
+    "order": "en then ja",
+    "langA": "en",
+    "langB": "ja",
+    "ok": true,
+    "layer": "next-start-local (not Cloudflare edge HIT/MISS)"
+  }
+]

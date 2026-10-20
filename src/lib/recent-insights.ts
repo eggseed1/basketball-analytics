@@ -6,6 +6,13 @@
 import { recordNoteFor, scopeFromGameType, type RecordBook } from "./record-book";
 import { pointsRun, recognizeMoment } from "./recent-insight-moments";
 
+/**
+ * i18n note: headlines, descriptions and `context` are English prose written
+ * here and stored as-is in the findings archive JSON. They are not
+ * machine-translated. Only the category tag shown on cards is localized, at
+ * render time, via `Findings.category.*` (see `insightCategoryLabel` in
+ * `components/home/findings-section.tsx`). Keep this union in sync with that map.
+ */
 export type RecentInsightCategory =
   | "PLAYER · ABOVE HIS NORM"
   | "PLAYER · BIG NIGHT"

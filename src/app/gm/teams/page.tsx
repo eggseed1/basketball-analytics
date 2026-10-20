@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 import { GmShell } from "@/gm/ui/gm-shell";
 import { ClubMark } from "@/gm/ui/club-mark";
@@ -20,6 +21,7 @@ export default function GmTeamsPage() {
 }
 
 function TeamsBody() {
+  const t = useTranslations("GmUi");
   const league = useGmStore((s) => s.league);
   if (!league) return null;
   const rows = sortedStandings(league.standings, undefined, league.teams);
@@ -27,18 +29,20 @@ function TeamsBody() {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h2 className="text-xl font-bold tracking-tight">Teams</h2>
+        <h2 className="text-xl font-bold tracking-tight">{t("pageTeamsTitle")}</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          All 30 clubs. Open a team to sort that roster on the players list.
+          {t("pageTeamsBlurb", { count: league.teams.length })}
         </p>
       </div>
       <div className="arena-panel overflow-x-auto">
         <table className="w-full min-w-[720px] text-left text-sm">
           <thead className="border-b border-border bg-muted/40 text-xs text-muted-foreground">
             <tr>
-              {["Team", "Conf", "W", "L", "Diff", "Payroll", "Best OVR"].map((label) => (
-                <th key={label} className="px-3 py-2 font-medium">
-                  {label}
+              {(
+                ["colTeam", "colConf", "colW", "colL", "colDiff", "colPayroll", "colBestOvr"] as const
+              ).map((key) => (
+                <th key={key} className="px-3 py-2 font-medium">
+                  {t(key)}
                 </th>
               ))}
             </tr>
@@ -61,7 +65,7 @@ function TeamsBody() {
                     <Link href={`/gm/players?team=${encodeURIComponent(team.id)}`}>
                       <ClubMark teamId={team.id} label={`${team.city} ${team.name}`} />
                     </Link>
-                    {team.id === league.userTeamId ? " · You" : ""}
+                    {team.id === league.userTeamId ? t("teamsYou") : ""}
                   </td>
                   <td className="px-3 py-2">{team.conference}</td>
                   <td className="px-3 py-2 tabular-nums">{row.wins}</td>

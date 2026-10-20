@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Suspense } from "react";
+import { getTranslations } from "next-intl/server";
 
 import {
   PlayerSeasonRankView,
@@ -18,11 +19,13 @@ import {
 } from "@/data/providers/historical/season-range";
 import { MotionReveal } from "@/components/continuity/motion-reveal";
 
-export const metadata = {
-  title: "Rank my seasons",
-  description:
-    "Rank multiple seasons of the same player using pairwise season comparisons.",
-};
+export async function generateMetadata() {
+  const t = await getTranslations("PlayerDetail");
+  return {
+    title: t("seasonRankMetaTitle"),
+    description: t("seasonRankMetaDescription"),
+  };
+}
 
 interface PageProps {
   params: Promise<{ playerId: string }>;
@@ -41,6 +44,7 @@ export default async function PlayerSeasonRankPage({
   params,
   searchParams,
 }: PageProps) {
+  const t = await getTranslations("PlayerDetail");
   const { playerId } = await params;
   const sp = await searchParams;
   const seasonsParam = one(sp, "seasons");
@@ -71,7 +75,7 @@ export default async function PlayerSeasonRankPage({
     try {
       loaded = await getPlayerSeasonRanking({ playerId, seasons: selected });
     } catch {
-      loadError = "Season ranking data is temporarily unavailable.";
+      loadError = t("seasonRankUnavailable");
     }
   }
 
@@ -83,7 +87,7 @@ export default async function PlayerSeasonRankPage({
           href={`/players/${playerId}`}
           className="text-[14px] font-semibold text-muted-foreground"
         >
-          ← Player
+          {t("backToPlayer")}
         </Link>
       </p>
 
@@ -109,7 +113,7 @@ export default async function PlayerSeasonRankPage({
         <PlayerSeasonRankView result={loaded.ranking} />
       ) : (
         <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[14px] text-muted-foreground">
-          Could not rank these seasons.
+          {t("seasonRankCouldNot")}
         </p>
       )}
     </main>

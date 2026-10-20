@@ -470,7 +470,7 @@ export function boxToPlayByPlay(box: GmBoxScore): PlayByPlayEvent[] {
 
 /** The box score can differ from made shots by a point or two. Fold that into the last baskets. */
 function settle(events: PlayByPlayEvent[], team: string, target: number) {
-  let scored = events.reduce((sum, event) => sum + (event.teamId === team ? event.points : 0), 0);
+  const scored = events.reduce((sum, event) => sum + (event.teamId === team ? event.points : 0), 0);
   let delta = target - scored;
   for (let i = events.length - 1; i >= 0 && delta !== 0; i--) {
     const event = events[i]!;

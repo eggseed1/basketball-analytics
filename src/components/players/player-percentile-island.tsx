@@ -3,6 +3,7 @@ import { PlayerPanelUnavailable } from "@/components/players/player-page-skeleto
 import type { GlassSurfaceHonor } from "@/components/brand/glass-surface";
 import type { PlayerSeason } from "@/data/types";
 import { loadPlayerPercentileMetrics } from "@/lib/player-percentile-load";
+import { slimPercentileMetricsForSsr } from "@/lib/player-percentile-metrics";
 import { resolvePlayerStatsSeason } from "@/lib/player-board-season";
 import { cardStintsForSeason } from "@/lib/player-team-context";
 
@@ -41,6 +42,8 @@ export async function PlayerPercentileIsland({
     const stintsBySeason = Object.fromEntries(
       seasonOptions.map((option) => [option, cardStintsForSeason(career, option)])
     );
+    // Default sparkline stays; other series hydrate via idle full upgrade.
+    const ssrMetrics = slimPercentileMetricsForSsr(metrics);
 
     return (
       <div className="flex flex-col gap-3">
@@ -52,7 +55,7 @@ export async function PlayerPercentileIsland({
           teamKey={teamKey}
           seasonTeams={seasonTeams}
           stintsBySeason={stintsBySeason}
-          metrics={metrics}
+          metrics={ssrMetrics}
           profileComps={profileComps}
           honor={honor}
         />

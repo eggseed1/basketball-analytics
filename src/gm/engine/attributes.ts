@@ -9,10 +9,16 @@ import type {
   GmTendencies,
 } from "@/gm/types";
 import { clamp, createRng } from "@/gm/engine/rng";
+import {
+  ensurePotentialTrait,
+  pathFromTrait,
+  rollDevTrait,
+  traitGrowthMul,
+} from "@/gm/engine/dev-traits";
 import entrySkillRates from "@/gm/seed/entry-skill-rates.json";
 
 /** Rebuild stored sheets when this changes. */
-export const SHEET_VERSION = 4;
+export const SHEET_VERSION = 6;
 
 export type SheetStatHint = {
   threeRate?: number;
@@ -241,14 +247,177 @@ export function categoryMeans(attributes: GmAttributes): number[] {
   ];
 }
 
+/** MyNBA Simple roster columns: INS MID 3PT INT D PER D PLAY REB ATHL IQ. */
+export const SIMPLE_CATS = [
+  { id: "ins", label: "INS", title: "Inside scoring" },
+  { id: "mid", label: "MID", title: "Mid-range" },
+  { id: "3pt", label: "3PT", title: "Three-point" },
+  { id: "intd", label: "INT D", title: "Interior defense" },
+  { id: "perd", label: "PER D", title: "Perimeter defense" },
+  { id: "play", label: "PLAY", title: "Playmaking" },
+  { id: "reb", label: "REB", title: "Rebounding" },
+  { id: "athl", label: "ATHL", title: "Athleticism" },
+  { id: "iq", label: "IQ", title: "Basketball IQ" },
+] as const;
+
+export type SimpleCatId = (typeof SIMPLE_CATS)[number]["id"];
+
+export function simpleCategoryMeans(attributes: GmAttributes): number[] {
+  return [
+    mean([
+      attributes.closeShot,
+      attributes.drivingLayup,
+      attributes.drivingDunk,
+      attributes.standingDunk,
+      attributes.postControl,
+    ]),
+    mean([attributes.midrange]),
+    mean([attributes.threePoint]),
+    mean([attributes.interiorDefense, attributes.block]),
+    mean([attributes.perimeterDefense, attributes.steal]),
+    mean([attributes.passAccuracy, attributes.ballHandle, attributes.speedWithBall]),
+    mean([attributes.offReb, attributes.defReb]),
+    mean([
+      attributes.speed,
+      attributes.agility,
+      attributes.strength,
+      attributes.vertical,
+      attributes.stamina,
+    ]),
+    mean([attributes.passAccuracy, attributes.freeThrow, attributes.steal]),
+  ];
+}
+
+const LETTER_GRADES = [
+  "F",
+  "D",
+  "C-",
+  "C",
+  "C+",
+  "B-",
+  "B",
+  "B+",
+  "A-",
+  "A",
+  "A+",
+] as const;
+
+export type LetterGrade = (typeof LETTER_GRADES)[number];
+
+/** Map a 25–99 rating onto the MyNBA letter board. */
+export function ratingToLetter(value: number): LetterGrade {
+  const v = clamp(value, 25, 99);
+  // 40 and under is F; 96+ is A+.
+  const t = (v - 40) / (96 - 40);
+  const idx = Math.round(clamp(t, 0, 1) * (LETTER_GRADES.length - 1));
+  return LETTER_GRADES[idx]!;
+}
+
+export function letterRank(grade: LetterGrade): number {
+  return LETTER_GRADES.indexOf(grade);
+}
+
+export type OverallExtras = {
+  /** Points/100 prior (DARKO / BPM). Spine of the number. */
+  impact?: number;
+  /** Site entry rate when we have it — lifts stars DARKO undersells. */
+  drbl100?: number | null;
+  /** Real counting — keeps 25+ ppg stars from sitting in the mid-70s. */
+  mpg?: number | null;
+  ppg?: number | null;
+  apg?: number | null;
+  rpg?: number | null;
+};
+
+/**
+ * Box-score floor for high-minute producers. DARKO alone left Curry/LeBron in
+ * the mid-70s while role bigs with better rates sat higher — bad for Franchise.
+ */
+export function productionOverallSpine(extras: {
+  mpg?: number | null;
+  ppg?: number | null;
+  apg?: number | null;
+  rpg?: number | null;
+}): number | null {
+  const mpg = extras.mpg;
+  const ppg = extras.ppg;
+  if (
+    mpg == null ||
+    ppg == null ||
+    !Number.isFinite(mpg) ||
+    !Number.isFinite(ppg) ||
+    mpg < 24 ||
+    ppg < 12
+  ) {
+    return null;
+  }
+  const apg = Number.isFinite(extras.apg) ? (extras.apg as number) : 0;
+  const rpg = Number.isFinite(extras.rpg) ? (extras.rpg as number) : 0;
+  // ~27/31/5 → ~87; ~21/33/7 → ~84; ~15/28/3 → ~77.
+  return clamp(
+    54 + ppg * 0.95 + Math.max(0, mpg - 24) * 0.45 + apg * 0.85 + rpg * 0.35,
+    68,
+    94
+  );
+}
+
+/**
+ * Overall is impact-first, attributes second.
+ * The old category blend alone ranked role bigs and tiny-sample flukes over
+ * consensus stars (Luka / Giannis / KD) whose sheets had one weak category.
+ */
 export function overallFromAttributes(
   position: GmPosition,
-  attributes: GmAttributes
+  attributes: GmAttributes,
+  extras?: OverallExtras | number
 ): number {
   const weights = POS_WEIGHT[position];
   const cats = categoryMeans(attributes);
-  const blended = cats.reduce((sum, cat, index) => sum + cat * weights[index]!, 0);
-  return clamp(Math.round(blended), 25, 99);
+  const attrBlend = cats.reduce(
+    (sum, cat, index) => sum + cat * weights[index]!,
+    0
+  );
+  const opts: OverallExtras =
+    typeof extras === "number" ? { impact: extras } : (extras ?? {});
+  const impact = Number.isFinite(opts.impact) ? (opts.impact as number) : null;
+  if (impact == null) {
+    return clamp(Math.round(attrBlend), 25, 99);
+  }
+
+  // ~71 + 3.2×impact → Jokic 7.3≈94, SGA 5.8≈90, starter 1.5≈76, fringe −1≈68.
+  let spine = clamp(71 + impact * 3.2, 42, 98);
+  const drbl = opts.drbl100;
+  // DRBL can lift stars DARKO undersells (Giannis). It must not turn
+  // elite-rate role bigs into top-15 cards on rate alone.
+  if (
+    typeof drbl === "number" &&
+    Number.isFinite(drbl) &&
+    drbl > 0.8 &&
+    (impact >= 3.2 || (impact >= 2.0 && drbl >= 3.6))
+  ) {
+    const drblSpine = clamp(68 + drbl * 5.8, 48, 98);
+    const lift = Math.min(3.5, Math.max(0, (drblSpine - spine) * 0.5));
+    spine += lift;
+  }
+
+  const production = productionOverallSpine(opts);
+  let productionLift = false;
+  if (production != null && production > spine) {
+    // Box score lifts DARKO-undersold stars, but caps the pull so a hot
+    // scoring stretch cannot vault past true impact giants.
+    const target = Math.min(production, spine + 9);
+    spine = spine * 0.35 + target * 0.65;
+    productionLift = true;
+  }
+
+  // Attributes only flavor the card (~±4). When box score already lifted the
+  // spine, weight them less so speed/reb decline cannot bury Curry/LeBron.
+  const attrWeight = productionLift ? 0.1 : 0.16;
+  return clamp(
+    Math.round(spine * (1 - attrWeight) + attrBlend * attrWeight),
+    25,
+    99
+  );
 }
 
 export const ATTRIBUTE_GROUPS: Array<{
@@ -386,7 +555,14 @@ export function buildSheet(player: GmPlayer, hint?: SheetStatHint): GmSheet {
     stamina: band(anchor - 4 + bump(((hint?.mpg ?? 24) - 28) * 0.6, 8) - ageTax * 0.4),
   };
 
-  const overall = overallFromAttributes(position, attributes);
+  const overall = overallFromAttributes(position, attributes, {
+    impact: ratings.impact,
+    drbl100: player.drbl100,
+    mpg: hint?.mpg,
+    ppg: hint?.ppg,
+    apg: hint?.apg,
+    rpg: hint?.rpg,
+  });
   const tendencies: GmTendencies = {
     shootClose: tend(big ? 62 : 38 + (100 - attributes.threePoint) * 0.15),
     shootMid: tend(48 + (attributes.midrange - 70) * 0.4),
@@ -404,13 +580,45 @@ export function buildSheet(player: GmPlayer, hint?: SheetStatHint): GmSheet {
   };
 
   const upside = clamp(ratings.potential, 0, 10);
+  // Peak is mostly about potential, not "years left * 2.2". The old formula
+  // handed 95–99 ceilings to half the draft and the league filled with stars.
+  // Cold current impact must not pin a high-upside kid's ceiling to "finished".
   const yearsLeft = Math.max(0, (big ? 26 : 24) - age);
-  const ceiling = band(
-    overall + yearsLeft * (age <= 22 ? 2.2 : 1.1) + upside * 1.1
+  const ceilingBase =
+    age <= 22 && upside >= 6.5 ? Math.max(overall, 74) : overall;
+  let ceilingRaw =
+    ceilingBase + upside * 1.35 + yearsLeft * (age <= 21 ? 0.7 : 0.4);
+  if (upside < 7 && ceilingRaw > 86) ceilingRaw = 86 + (ceilingRaw - 86) * 0.3;
+  if (upside < 8.3 && ceilingRaw > 90) ceilingRaw = 90 + (ceilingRaw - 90) * 0.35;
+  if (upside < 9.2 && ceilingRaw > 94) ceilingRaw = 94 + (ceilingRaw - 94) * 0.3;
+  const ceiling = band(Math.min(98, Math.max(overall, ceilingRaw)));
+  // Draft-age profile: kids keep a soft floor (bust risk); seniors sit closer
+  // to what they already are (sure things with less rocket fuel).
+  const draftKid = Boolean(player.draftYear) && age <= 23;
+  const floorGap =
+    age <= 19 ? 8 : age <= 20 ? 7 : age <= 21 ? 5 : age <= 23 ? 3 : age >= 29 ? 2 : 4;
+  const floor = band(
+    Math.min(overall, overall - floorGap - (10 - upside) * (draftKid && age <= 20 ? 0.55 : 0.35))
   );
-  const floor = band(Math.min(overall, overall - (age <= 23 ? 6 : 3) - (10 - upside) * 0.4));
-  let boom = clamp(Math.round(16 + upside * 3.5 + (age <= 22 ? 14 : 0)), 8, 65);
-  let bust = clamp(Math.round(26 - upside * 1.6 + (age >= 29 ? 12 : 0)), 8, 55);
+  let boom = clamp(
+    Math.round(
+      14 +
+        upside * 3.2 +
+        (age <= 18 ? 18 : age <= 19 ? 14 : age <= 20 ? 10 : age <= 21 ? 4 : age >= 23 ? -6 : 0)
+    ),
+    6,
+    65
+  );
+  let bust = clamp(
+    Math.round(
+      22 -
+        upside * 1.15 +
+        (age <= 18 ? 16 : age <= 19 ? 12 : age <= 20 ? 8 : age >= 23 && age <= 25 ? -8 : 0) +
+        (age >= 29 ? 12 : 0)
+    ),
+    6,
+    55
+  );
   let average = 100 - boom - bust;
   if (average < 10) {
     const scale = 90 / (boom + bust);
@@ -418,9 +626,26 @@ export function buildSheet(player: GmPlayer, hint?: SheetStatHint): GmSheet {
     bust = Math.round(bust * scale);
     average = 100 - boom - bust;
   }
-  const roll = rng();
-  const path: GmDevPath =
-    roll < boom / 100 ? "boom" : roll < (boom + average) / 100 ? "average" : "bust";
+  const trait = rollDevTrait(
+    player,
+    overall,
+    ratings.potential,
+    rng
+  );
+  const path: GmDevPath = pathFromTrait(trait);
+  // Keep the probability bands aligned with the trait so old UI still reads.
+  if (trait === "xfactor" || trait === "superstar") {
+    boom = Math.max(boom, trait === "xfactor" ? 55 : 42);
+    bust = Math.min(bust, 12);
+    average = 100 - boom - bust;
+  } else if (trait === "star") {
+    boom = Math.max(boom, 28);
+    average = 100 - boom - bust;
+  } else if (trait === "bust") {
+    bust = Math.max(bust, 40);
+    boom = Math.min(boom, 12);
+    average = 100 - boom - bust;
+  }
   const peakStart = age <= 23 ? (big ? 26 : 24) : Math.min(age, 29);
   const peakEnd = peakStart + (ratings.durability >= 80 ? 8 : 6);
   const potential: GmPotential = {
@@ -430,6 +655,7 @@ export function buildSheet(player: GmPlayer, hint?: SheetStatHint): GmSheet {
     average,
     bust,
     path,
+    trait,
     peakStart,
     peakEnd,
   };
@@ -485,7 +711,13 @@ export function sheetHint(player: GmPlayer, hint?: SheetStatHint): SheetStatHint
 
 export function playerSheet(player: GmPlayer, hint?: SheetStatHint): GmSheet {
   const resolved = sheetHint(player, hint);
-  if (player.sheet?.version === SHEET_VERSION) return player.sheet;
+  if (player.sheet?.version === SHEET_VERSION) {
+    // Reconcile trait floors (production / discourse) without rebuilding ratings.
+    return {
+      ...player.sheet,
+      potential: ensurePotentialTrait(player.sheet.potential, player),
+    };
+  }
   return buildSheet(player, resolved);
 }
 
@@ -529,7 +761,15 @@ function agingBase(age: number): number {
 /** One offseason. Age on the player is the age they just turned. */
 export function progressSheet(
   player: GmPlayer,
-  opts?: { coach?: number; minutes?: number; pace?: "season" | "summer"; form?: number; playoffGames?: number }
+  opts?: {
+    coach?: number;
+    minutes?: number;
+    pace?: "season" | "summer";
+    form?: number;
+    playoffGames?: number;
+    /** PD director growth multiplier (1 = neutral). */
+    devStaff?: number;
+  }
 ): GmPlayer {
   const sheet = player.sheet ?? buildSheet(player);
   const { potential } = sheet;
@@ -537,26 +777,55 @@ export function progressSheet(
   const big = player.position === "C" || player.position === "PF";
   const minutes = opts?.minutes ?? player.minutesPreference ?? 24;
   const coach = opts?.coach ?? 0;
+  const devStaff = opts?.devStaff ?? 1;
   const rng = createRng(hashId(player.id) + age * 997);
   let delta = agingBase(big ? age - 1 : age);
+  const traitMul = traitGrowthMul(potential.trait);
   if (delta > 0) {
-    const pathMul = potential.path === "boom" ? 2.1 : potential.path === "bust" ? 0.25 : 1;
+    const pathMul = potential.path === "boom" ? 1.85 : potential.path === "bust" ? 0.25 : 1;
     const minuteMul = clamp(minutes / 26, 0.55, 1.15);
     const coachMul = 1 + clamp(coach, 0, 1.5) * 0.08;
     const work = player.personality > 15 ? 1.08 : player.personality < -15 ? 0.92 : 1;
-    delta *= pathMul * minuteMul * coachMul * work;
+    delta *= pathMul * traitMul * minuteMul * coachMul * work * clamp(devStaff, 0.85, 1.25);
     if (potential.path === "bust") delta *= 0.5;
+    // Slow down once a player has already grabbed most of their realistic peak.
+    // Stops mid-tier books from all drifting into the 80s over a long save.
+    const span = Math.max(6, potential.ceiling - potential.floor);
+    const progress = (sheet.overall - potential.floor) / span;
+    if (progress > 0.55) delta *= clamp(1.15 - progress, 0.25, 1);
+    if (
+      sheet.overall >= 78 &&
+      (potential.trait === "normal" || potential.trait === "bust")
+    ) {
+      delta *= 0.4;
+    }
   } else {
     const pathMul = potential.path === "boom" ? 0.7 : potential.path === "bust" ? 1.3 : 1;
     const durable =
       player.ratings.durability >= 80 ? 0.8 : player.ratings.durability < 55 ? 1.25 : 1;
-    delta *= pathMul * durable;
+    // Elite traits hang onto their prime longer.
+    const declineMul =
+      potential.trait === "xfactor" || potential.trait === "superstar" ? 0.78 : 1;
+    // Ordinary players fall a bit faster so the league mean does not creep up.
+    const roleDecline =
+      potential.trait === "normal" || potential.trait === "bust" ? 1.12 : 1;
+    // PD knack < 1 softens decline (vet whisperer); > 1 is unused on the way down.
+    delta *= pathMul * durable * declineMul * roleDecline * clamp(devStaff, 0.8, 1.05);
   }
-  if (potential.path === "boom" && age >= 25 && age <= 28) delta += 0.05;
+  if (
+    (potential.path === "boom" ||
+      potential.trait === "star" ||
+      potential.trait === "superstar" ||
+      potential.trait === "xfactor") &&
+    age >= 25 &&
+    age <= 28
+  ) {
+    delta += potential.trait === "xfactor" ? 0.08 : potential.trait === "superstar" ? 0.06 : 0.04;
+  }
   delta += (rng() - 0.5) * 0.08;
   if (delta > 0 && sheet.overall >= potential.ceiling) delta = 0;
   if (delta > 0 && potential.path === "bust" && sheet.overall <= potential.floor + 1) delta = 0;
-  delta = clamp(delta, -0.7, 0.55);
+  delta = clamp(delta, -0.7, 0.5);
   if (opts?.pace === "season") {
     delta = delta > 0 ? delta * 0.32 : delta * 0.12;
     delta += clamp(opts?.form ?? 0, -0.04, 0.06);
@@ -572,9 +841,9 @@ export function progressSheet(
         : delta <= -0.08
           ? -1
           : 0
-      : delta >= 0.18
+      : delta >= 0.22
         ? 2
-        : delta >= 0.08
+        : delta >= 0.09
           ? 1
           : delta <= -0.4
             ? -3
@@ -595,21 +864,38 @@ export function progressSheet(
       );
     }
   }
-  const overall = overallFromAttributes(player.position, attributes);
   const offenseShare = delta > 0 ? 0.62 : 0.45;
+  // Impact tracks development, but at a damped rate so long saves do not
+  // turn every rotation guy into a +1.5 board name.
+  const impactDelta = delta * (delta > 0 ? 0.45 : 0.7);
+  const nextImpact = clamp(
+    Math.round((player.ratings.impact + impactDelta) * 100) / 100,
+    -4,
+    10
+  );
+  const overall = overallFromAttributes(player.position, attributes, {
+    impact: nextImpact,
+    drbl100: player.drbl100,
+  });
   return {
     ...player,
-    sheet: { ...sheet, overall, attributes },
+    sheet: {
+      ...sheet,
+      overall,
+      attributes,
+      priorOverall: sheet.overall,
+      priorSimple: simpleCategoryMeans(sheet.attributes),
+    },
     ratings: {
       ...player.ratings,
-      impact: clamp(Math.round((player.ratings.impact + delta) * 100) / 100, -4, 10),
+      impact: nextImpact,
       offense: clamp(
-        Math.round((player.ratings.offense + delta * offenseShare) * 100) / 100,
+        Math.round((player.ratings.offense + impactDelta * offenseShare) * 100) / 100,
         -5,
         12
       ),
       defense: clamp(
-        Math.round((player.ratings.defense + delta * (1 - offenseShare)) * 100) / 100,
+        Math.round((player.ratings.defense + impactDelta * (1 - offenseShare)) * 100) / 100,
         -5,
         10
       ),

@@ -143,7 +143,7 @@ export function RotationMinutesTreemap({
               data-viz-mark
               data-motion-dot
               data-tip={t.p.playerName}
-              data-tip-sub={`${ROLE_LABEL[t.role]} · ${formatNumber(mpg, 1)} MPG · ${t.p.gamesStarted}/${t.p.gamesPlayed} started${usg}`}
+              data-tip-sub={`${ROLE_LABEL[t.role]} · ${formatNumber(mpg, 1)} MPG · ${formatNumber(t.p.gamesStarted, 0)}/${formatNumber(t.p.gamesPlayed, 0)} started${usg}`}
               aria-label={`${t.p.playerName}, ${formatPct(share, 0)} of minutes`}
               className="absolute flex flex-col justify-between overflow-hidden rounded-[6px] p-1.5 sm:p-2"
               style={

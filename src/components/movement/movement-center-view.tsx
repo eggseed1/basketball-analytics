@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
 import { MovementClusterCard } from "@/components/movement/movement-cluster-card";
 import { MoreInfo } from "@/components/ui/more-info";
@@ -18,7 +19,7 @@ function formatDay(iso: string | null | undefined): string | null {
   return d.toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
 }
 
-export function MovementCenterView({
+export async function MovementCenterView({
   feed,
   meta,
   highlightPlayerIds,
@@ -29,6 +30,7 @@ export function MovementCenterView({
   highlightPlayerIds?: string[];
   filtered?: boolean;
 }) {
+  const t = await getTranslations("Movement");
   const presentation = resolveMovementPresentation();
   const byRecent = (a: MovementFeedItem, b: MovementFeedItem) =>
     b.cluster.lastMeaningfulAt.localeCompare(a.cluster.lastMeaningfulAt);
@@ -80,11 +82,14 @@ export function MovementCenterView({
           {presentation.seasonalLabel}
         </h1>
         <p className={cn(type.bodySm, "max-w-2xl text-muted-foreground")}>
-          {presentation.tagline}. Moves that are already official live on the{" "}
-          <Link href="/offseason" className="font-semibold underline">
-            transactions page
-          </Link>
-          .
+          {presentation.tagline}.{" "}
+          {t.rich("officialMovesNote", {
+            link: (chunks) => (
+              <Link href="/offseason" className="font-semibold underline">
+                {chunks}
+              </Link>
+            ),
+          })}
         </p>
         <p className={cn(type.caption, "max-w-3xl text-muted-foreground")}>{meta.disclaimer}</p>
         {(meta.headlinesScanned != null && meta.feeds?.length) || ledgerDay ? (
@@ -104,7 +109,7 @@ export function MovementCenterView({
         {filtered ? (
           <p className={type.caption}>
             <Link href="/movement" className="font-semibold underline">
-              Show all stories
+              {t("showAll")}
             </Link>
           </p>
         ) : null}
@@ -112,16 +117,14 @@ export function MovementCenterView({
 
       <section className="flex flex-col gap-3">
         <div className="flex flex-col gap-0.5">
-          <h2 className={cn(type.bodySm, "font-bold")}>Open stories</h2>
+          <h2 className={cn(type.bodySm, "font-bold")}>{t("openStories")}</h2>
           <p className={cn(type.caption, "text-muted-foreground")}>
-            Trade and contract reporting that has not shown up in the transaction log yet.
+            {t("openStoriesBlurb")}
           </p>
         </div>
         {activeFeed.length === 0 ? (
           <p className={cn(type.bodySm, "text-muted-foreground")}>
-            {filtered
-              ? "No open trade or contract stories for this player in the headlines we track."
-              : "No open trade or contract stories in the headlines we track right now."}
+            {filtered ? t("emptyOpenFiltered") : t("emptyOpen")}
           </p>
         ) : (
           renderFeed(activeFeed)
@@ -131,10 +134,11 @@ export function MovementCenterView({
       {resolvedFeed.length > 0 ? (
         <section className="flex flex-col gap-3">
           <div className="flex flex-col gap-0.5">
-            <h2 className={cn(type.bodySm, "font-bold")}>Completed moves</h2>
+            <h2 className={cn(type.bodySm, "font-bold")}>{t("completedMoves")}</h2>
             <p className={cn(type.caption, "text-muted-foreground")}>
-              {windowDay ? `Trades in the transaction log since ${windowDay}` : "Trades in the transaction log"}
-              , plus reported stories that turned into a logged move.
+              {windowDay
+                ? t("completedMovesSince", { date: windowDay })
+                : t("completedMovesBlurb")}
             </p>
           </div>
           {renderFeed(resolvedFeed)}
@@ -144,10 +148,9 @@ export function MovementCenterView({
       {fellThroughFeed.length > 0 ? (
         <section className="flex flex-col gap-3">
           <div className="flex flex-col gap-0.5">
-            <h2 className={cn(type.bodySm, "font-bold")}>Fell through</h2>
+            <h2 className={cn(type.bodySm, "font-bold")}>{t("fellThrough")}</h2>
             <p className={cn(type.caption, "text-muted-foreground")}>
-              Stories where the player moved to a team the reports didn&apos;t name, or the trade
-              deadline passed with no deal. The reporting may still have been accurate when it ran.
+              {t("fellThroughBlurb")}
             </p>
           </div>
           {renderFeed(fellThroughFeed)}

@@ -1,5 +1,8 @@
+import { useLocale } from "next-intl";
+
 import { TeamLogo } from "@/components/brand/team-logo";
 import { NewSinceTag } from "@/components/home/new-since-tag";
+import { formatAppDate } from "@/i18n/format-date";
 import { type LeagueMove, type LeagueMoveKind } from "@/lib/league-moves";
 
 const KIND: Record<LeagueMoveKind, { label: string; color: string }> = {
@@ -9,16 +12,13 @@ const KIND: Record<LeagueMoveKind, { label: string; color: string }> = {
   league: { label: "League", color: "#c2552d" },
 };
 
-function shortDate(ms: number): string {
-  return new Date(ms).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    timeZone: "America/New_York",
-  });
+function shortDate(ms: number, locale: string): string {
+  return formatAppDate(ms, locale, "monthDay", { timeZone: "America/New_York" });
 }
 
 /** Sidebar list of front office, coaching, ownership and league headlines. */
 export function LeagueMovesPanel({ moves }: { moves: LeagueMove[] }) {
+  const locale = useLocale();
   if (!moves.length) return null;
   return (
     <section aria-labelledby="league-moves-title" className="sports-card flex flex-col gap-2 p-4">
@@ -54,7 +54,7 @@ export function LeagueMovesPanel({ moves }: { moves: LeagueMove[] }) {
                   {m.title}
                 </a>
                 <span className="type-caption text-muted-foreground">
-                  {shortDate(m.publishedMs)}
+                  {shortDate(m.publishedMs, locale)}
                   {m.publication ? ` · ${m.publication}` : ""}
                 </span>
               </div>

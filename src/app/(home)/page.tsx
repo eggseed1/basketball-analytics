@@ -59,8 +59,14 @@ export const metadata = {
 // modules arrive one by one, and the worker page cache shares the result.
 export const dynamic = "force-dynamic";
 
-async function HomeCalendar({ season }: { season: string }) {
-  return <WeekGameCalendar season={season} />;
+async function HomeCalendar({
+  season,
+  week,
+}: {
+  season: string;
+  week?: number | null;
+}) {
+  return <WeekGameCalendar season={season} week={week} />;
 }
 
 function HomeNews() {
@@ -201,7 +207,7 @@ function renderModule(id: HomeModuleId, moment: HomeSeasonMoment, season: string
     case "calendar":
       return (
         <Streamed key={id} id={id}>
-          <HomeCalendar season={season} />
+          <HomeCalendar season={season} week={moment.regularWeek} />
         </Streamed>
       );
     case "bracket":

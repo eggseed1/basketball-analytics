@@ -15,8 +15,13 @@ import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { PlayerIdentity } from "@/components/players/player-identity";
 import { TeamIdentity } from "@/components/teams/team-identity";
-import { useWatchlistStatus, WatchlistItemStatus } from "@/components/home/watchlist-item-status";
+import {
+  useWatchlistStatus,
+  WatchlistExpandCue,
+  WatchlistItemStatus,
+} from "@/components/home/watchlist-item-status";
 import { ESPN_TEAM_META } from "@/data/providers/nba/team-meta";
+import type { WatchStatus } from "@/lib/watchlist-status";
 import { TEAM_BRANDS } from "@/lib/nba-brand";
 import { cn } from "@/lib/utils";
 
@@ -143,80 +148,30 @@ export function WatchlistPanel() {
           </span>
           <div className="flex flex-col items-center gap-1 text-center">
             <p className="text-[14px] font-semibold">
-              Add favorite players or team
+              Follow players and teams
             </p>
             <p className="text-[12px] text-muted-foreground">
-              Search the league and pin names to your home desk.
+              Pin names, then open a card for games, form, and injuries.
             </p>
           </div>
         </button>
       ) : (
         <ul className="grid gap-2 @xl:grid-cols-2">
           {items.map((item) => (
-            <li
+            <WatchlistPin
               key={itemKey(item)}
-              data-motion="chip"
-              className="flex flex-col gap-1 rounded-md bg-secondary/50 px-3 py-2"
-            >
-              <div className="flex items-center gap-2">
-                {item.kind === "player" ? (
-                  <PlayerIdentity
-                    playerId={item.id}
-                    name={item.name}
-                    teamKey={item.teamKey}
-                    variant="compact"
-                    className="min-w-0 flex-1"
-                    nameClassName="w-full gap-2"
-                  >
-                    <span className="relative inline-flex shrink-0">
-                      <PlayerHeadshot
-                        playerId={item.id}
-                        name={item.name}
-                        teamKey={item.teamKey}
-                        size="xs"
-                      />
-                      {item.teamKey ? (
-                        <span className="absolute -right-1 -bottom-1 rounded-full bg-background p-px ring-1 ring-border">
-                          <TeamLogo teamKey={item.teamKey} size="2xs" />
-                        </span>
-                      ) : null}
-                    </span>
-                    <span className="min-w-0 flex-1 truncate type-body-sm font-semibold underline decoration-foreground/40 underline-offset-2">
-                      {item.name}
-                    </span>
-                  </PlayerIdentity>
-                ) : (
-                  <TeamIdentity
-                    teamKey={item.teamKey ?? item.id}
-                    label={item.name}
-                    className="min-w-0 flex-1"
-                    nameClassName="w-full gap-2"
-                  >
-                    <TeamLogo teamKey={item.teamKey ?? item.id} size="xs" />
-                    <span className="min-w-0 flex-1 truncate type-body-sm font-semibold underline decoration-foreground/40 underline-offset-2">
-                      {item.name}
-                    </span>
-                  </TeamIdentity>
-                )}
-                <button
-                  type="button"
-                  onClick={() => remove(item)}
-                  className="rounded-md p-1 text-muted-foreground hover:bg-background hover:text-foreground"
-                  aria-label={`Remove ${item.name}`}
-                >
-                  <X className="size-3.5" />
-                </button>
-              </div>
-              {status ? (
-                <WatchlistItemStatus status={status.byKey.get(itemKey(item))} fetchedAt={status.fetchedAt} />
-              ) : null}
-            </li>
+              item={item}
+              status={status?.byKey.get(itemKey(item))}
+              fetchedAt={status?.fetchedAt ?? Date.now()}
+              onRemove={() => remove(item)}
+            />
           ))}
           <li>
             <button
               type="button"
               onClick={() => setOpen(true)}
-              className="flex w-full items-center justify-center gap-1.5 rounded-md border border-dashed border-border px-3 py-2 text-[12px] font-semibold text-muted-foreground hover:bg-secondary/40 hover:text-foreground"
+              data-motion="chip"
+              className="flex w-full items-center justify-center gap-1.5 rounded-md border border-dashed border-border px-3 py-2.5 text-[12px] font-semibold text-muted-foreground hover:bg-secondary/40 hover:text-foreground"
             >
               <Plus className="size-3.5" aria-hidden />
               Add more
@@ -240,6 +195,95 @@ export function WatchlistPanel() {
         }
       />
     </section>
+  );
+}
+
+function WatchlistPin({
+  item,
+  status,
+  fetchedAt,
+  onRemove,
+}: {
+  item: WatchlistItem;
+  status: WatchStatus | undefined;
+  fetchedAt: number;
+  onRemove: () => void;
+}) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <li data-motion="chip" className="min-w-0">
+      <details
+        className="group rounded-md bg-secondary/50 transition-[background-color,box-shadow] open:bg-secondary/70"
+        open={open}
+        onToggle={(event) => {
+          setOpen((event.currentTarget as HTMLDetailsElement).open);
+        }}
+      >
+        <summary className="flex cursor-pointer list-none items-start gap-2 px-3 py-2.5 [&::-webkit-details-marker]:hidden">
+          <div className="flex min-w-0 flex-1 flex-col gap-1">
+            <div className="flex min-w-0 items-center gap-2">
+              {item.kind === "player" ? (
+                <PlayerIdentity
+                  playerId={item.id}
+                  name={item.name}
+                  teamKey={item.teamKey}
+                  variant="compact"
+                  className="min-w-0 flex-1"
+                  nameClassName="w-full gap-2"
+                >
+                  <span className="relative inline-flex shrink-0">
+                    <PlayerHeadshot
+                      playerId={item.id}
+                      name={item.name}
+                      teamKey={item.teamKey}
+                      size="xs"
+                    />
+                    {item.teamKey ? (
+                      <span className="absolute -right-1 -bottom-1 rounded-full bg-background p-px ring-1 ring-border">
+                        <TeamLogo teamKey={item.teamKey} size="2xs" />
+                      </span>
+                    ) : null}
+                  </span>
+                  <span className="min-w-0 flex-1 truncate type-body-sm font-semibold underline decoration-foreground/40 underline-offset-2">
+                    {item.name}
+                  </span>
+                </PlayerIdentity>
+              ) : (
+                <TeamIdentity
+                  teamKey={item.teamKey ?? item.id}
+                  label={item.name}
+                  className="min-w-0 flex-1"
+                  nameClassName="w-full gap-2"
+                >
+                  <TeamLogo teamKey={item.teamKey ?? item.id} size="xs" />
+                  <span className="min-w-0 flex-1 truncate type-body-sm font-semibold underline decoration-foreground/40 underline-offset-2">
+                    {item.name}
+                  </span>
+                </TeamIdentity>
+              )}
+              <WatchlistExpandCue open={open} />
+            </div>
+            <WatchlistItemStatus status={status} fetchedAt={fetchedAt} open={false} />
+          </div>
+          <button
+            type="button"
+            onClick={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              onRemove();
+            }}
+            className="mt-0.5 rounded-md p-1 text-muted-foreground transition-colors hover:bg-background hover:text-foreground"
+            aria-label={`Remove ${item.name}`}
+          >
+            <X className="size-3.5" />
+          </button>
+        </summary>
+        <div className="border-t border-border/40 px-2.5 pb-2.5">
+          <WatchlistItemStatus status={status} fetchedAt={fetchedAt} open />
+        </div>
+      </details>
+    </li>
   );
 }
 

@@ -271,7 +271,7 @@ function shellFromGame(
   };
 }
 
-/** ESPN box payloads can omit the date, tip time and records the schedule snapshot has. */
+/** ESPN box payloads can omit the date, tip time, records, and TV windows. */
 function withSnapshotFacts(shell: GameShell, snap: Game | null): GameShell {
   if (!snap) return shell;
   const g = shell.game;
@@ -288,6 +288,42 @@ function withSnapshotFacts(shell: GameShell, snap: Game | null): GameShell {
       broadcasts: g.broadcasts?.length ? g.broadcasts : snap.broadcasts,
     },
   };
+}
+
+/**
+ * Box / summary payloads often omit broadcasts that the scoreboard has.
+ * Fill from historical/schedule, then same-day scoreboard (live windows).
+ */
+async function withBroadcastFallback(shell: GameShell): Promise<GameShell> {
+  if (shell.game.broadcasts?.length) return shell;
+  try {
+    const scheduled = await getHistoricalGame(shell.game.id);
+    if (scheduled?.broadcasts?.length) {
+      return {
+        ...shell,
+        game: { ...shell.game, broadcasts: scheduled.broadcasts },
+      };
+    }
+  } catch {
+    // soft-fail — try scoreboard next
+  }
+  const date = shell.game.gameDate?.trim();
+  if (date) {
+    try {
+      const { getScoreboardDateFeed } = await import("./scoreboard-feed");
+      const feed = await getScoreboardDateFeed({ date });
+      const row = feed.data.find((g) => g.id === shell.game.id);
+      if (row?.broadcasts?.length) {
+        return {
+          ...shell,
+          game: { ...shell.game, broadcasts: row.broadcasts },
+        };
+      }
+    } catch {
+      // soft-fail — Streaming on still shows regional partners when present
+    }
+  }
+  return shell;
 }
 
 function acceptShell(shell: GameShell | null): GameShell | null {
@@ -329,8 +365,10 @@ export async function getGameShell(gameId: string): Promise<GameShell | null> {
       );
       const box = await fetchEspnCdnGameBoxScore(id);
       const shell = box?.game ? acceptShell(shellFromBox(box)) : null;
-      if (shell?.hasBoxScore) return withSnapshotFacts(shell, fromSnapshot);
-      if (shell && !fromSnapshot) return shell;
+      if (shell?.hasBoxScore) {
+        return withBroadcastFallback(withSnapshotFacts(shell, fromSnapshot));
+      }
+      if (shell && !fromSnapshot) return withBroadcastFallback(shell);
     } catch {
       // soft-fail
     }
@@ -341,15 +379,17 @@ export async function getGameShell(gameId: string): Promise<GameShell | null> {
         retries: 1,
       });
       const shell = box?.game ? acceptShell(shellFromBox(box)) : null;
-      if (shell?.hasBoxScore) return withSnapshotFacts(shell, fromSnapshot);
-      if (shell && !fromSnapshot) return shell;
+      if (shell?.hasBoxScore) {
+        return withBroadcastFallback(withSnapshotFacts(shell, fromSnapshot));
+      }
+      if (shell && !fromSnapshot) return withBroadcastFallback(shell);
     } catch {
       // soft-fail to snapshot / provider
     }
 
     if (fromSnapshot) {
       const shell = acceptShell(shellFromGame(fromSnapshot, "runtime-snapshot"));
-      if (shell) return shell;
+      if (shell) return withBroadcastFallback(shell);
     }
 
     try {
@@ -357,7 +397,7 @@ export async function getGameShell(gameId: string): Promise<GameShell | null> {
       const shell = fromProvider
         ? acceptShell(shellFromGame(fromProvider, "provider"))
         : null;
-      if (shell) return shell;
+      if (shell) return withBroadcastFallback(shell);
     } catch {
       // network
     }

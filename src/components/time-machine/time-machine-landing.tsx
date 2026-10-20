@@ -1,5 +1,7 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -223,6 +225,7 @@ export function TimeMachineLanding({
   seasons: string[];
   landmarkGames?: LandmarkGameCard[];
 }) {
+  const t = useTranslations("History");
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const listId = useId();
@@ -353,21 +356,21 @@ export function TimeMachineLanding({
         <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:items-end">
           <header>
             <h1 className="type-title-1 text-balance">
-              Enter the NBA Time Machine
+              {t("enterTitle")}
             </h1>
             <p className="mt-2 max-w-md type-body-sm text-muted-foreground">
-              Pick a season to see its standings, leaders and games on any day.
+              {t("enterSubtitle")}
             </p>
           </header>
 
           <div className="flex flex-col gap-3" aria-live="polite">
             <LedReadout
-              label="Destination"
+              label={t("destination")}
               meta={`${dialEra.name} · ${backLabel}`}
               value={dialSeason}
               large
             />
-            <LedReadout label="Present" value={presentSeason} />
+            <LedReadout label={t("present")} value={presentSeason} />
           </div>
         </div>
 
@@ -395,7 +398,7 @@ export function TimeMachineLanding({
                 max={ascending.length - 1}
                 step={1}
                 value={dialIndex}
-                aria-label="Scrub through seasons"
+                aria-label={t("scrubSeasonsAria")}
                 aria-valuetext={dialSeason}
                 onChange={(e) => {
                   const next = ascending[Number(e.target.value)];
@@ -600,7 +603,7 @@ export function TimeMachineLanding({
 
       <section className="mx-auto w-full max-w-5xl">
         <SectionTitle
-          title="Record book"
+          title={t("recordBookTitle")}
           note="Single games, seasons, careers, and team marks back to the 1946-47 BAA season."
         />
         <Link

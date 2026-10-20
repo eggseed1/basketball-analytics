@@ -1,0 +1,33 @@
+{
+  "id": "plus_minus",
+  "slug": "plus-minus",
+  "name": "Plus/Minus",
+  "shortName": "+/−",
+  "category": "basics",
+  "oneSentence": "Plus/Minus ist die Punktedifferenz des Teams, solange ein Spieler auf dem Feld steht.",
+  "whyItMatters": [
+    "Verbindet einzelne Einsatzminuten mit Teamergebnissen, mit viel Rauschen durch Mit- und Gegenspieler."
+  ],
+  "howToInterpret": [
+    "Positiv heißt, das Team hat in diesen Minuten mehr Punkte erzielt als der Gegner.",
+    "Das rohe +/− ist verrauscht; es ist kein reines Maß für individuelles Können."
+  ],
+  "howDrblUses": [
+    "Boxscores und Spielerzeilen in Game Lab, sofern vorhanden."
+  ],
+  "caveats": [
+    "Stark von Aufstellung und Spielplan beeinflusst."
+  ],
+  "relatedIds": [
+    "diff",
+    "net",
+    "game_lab",
+    "on_off"
+  ],
+  "seeInAction": [
+    {
+      "label": "Ergebnisse",
+      "href": "/scores"
+    }
+  ]
+}

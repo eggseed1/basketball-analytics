@@ -1,0 +1,59 @@
+{
+  "id": "how_drbl_works",
+  "slug": "how-drbl-works",
+  "name": "Cómo funciona DRBL",
+  "shortName": "Cómo funciona DRBL",
+  "category": "systems",
+  "oneSentence": "DRBL observa cómo cambia el valor de anotación esperado de cada posesión, acredita a los jugadores cuando el play-by-play lo respalda y lo convierte en una tasa (DRBL/100) y un total de temporada (WAR1).",
+  "whyItMatters": [
+    "Las páginas de jugador responden «¿qué tan bueno es?» sin explicar el modelo. Esta página es para quien quiere la historia de la posesión.",
+    "Las fórmulas se entienden mejor cuando la secuencia de baloncesto ya está clara."
+  ],
+  "howToInterpret": [
+    "Una posesión empieza con un valor de anotación esperado (lo que normalmente se obtiene en esa situación).",
+    "Tiros, pases, pérdidas, faltas y otras acciones registradas suben o bajan esa expectativa.",
+    "Cuando el play-by-play público vincula con claridad un cambio a un jugador, DRBL se lo acredita.",
+    "Esos créditos forman una tasa por play-by-play y una acumulación de temporada sobre la base R1.",
+    "DRBL/100 mezcla esa tasa con valoraciones construidas a partir de la caja de resultados, que se estabilizan más rápido con pocas muestras."
+  ],
+  "howDrblUses": [
+    "Los créditos se miden frente a una base de puntos esperados R1 ajustada al rol.",
+    "DRBL/100 es esa tasa mezclada con valoraciones de la caja de resultados, acercada a cero cuando la muestra es pequeña y escalada a puntos por 100 en partidos posteriores.",
+    "WAR1 es el total de temporada (puntos R1) convertido a unidades en forma de victorias."
+  ],
+  "calculation": [
+    "Empieza la posesión → se fija el valor de anotación esperado.",
+    "Ocurren acciones → el valor esperado cambia.",
+    "Se atribuye crédito por las contribuciones observables.",
+    "Las posesiones se acumulan en una tasa de habilidad bruta.",
+    "La tasa se mezcla con valoraciones de la caja de resultados y las muestras pequeñas se acercan a cero para que el ruido de inicio de temporada no domine.",
+    "El valor de temporada se acumula como puntos R1 → WAR1."
+  ],
+  "caveats": [
+    "El play-by-play público no ve todas las acciones sin balón ni espaciales.",
+    "El crédito no equivale a demostrar que «si reemplazas a este jugador, las victorias cambian en X».",
+    "Los diagnósticos P / LN / B no suman DRBL/100."
+  ],
+  "relatedIds": [
+    "drbl",
+    "r1_win_eq",
+    "drbl_p",
+    "r1",
+    "drbl_validation",
+    "drbl_limitations"
+  ],
+  "seeInAction": [
+    {
+      "label": "Resumen de DRBL",
+      "href": "/learn/drbl"
+    },
+    {
+      "label": "Explorar por DRBL/100",
+      "href": "/explore/players?sort=drbl100"
+    }
+  ],
+  "sources": [
+    "/learn/drbl",
+    "src/content/stats/drbl-guides.ts"
+  ]
+}

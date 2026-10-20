@@ -1,5 +1,7 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 import { useRouter } from "next/navigation";
 import {
   useEffect,
@@ -122,6 +124,7 @@ function PlayerSearchField({
   onSeasonChange: (season: string) => void;
   hideLabel?: boolean;
 }) {
+  const t = useTranslations("Compare");
   const listId = useId();
   const inputId = useId();
   const seasonId = useId();
@@ -463,7 +466,7 @@ function PlayerSearchField({
                 setActiveIndex((i) => Math.max(i - 1, 0));
               }
             }}
-            placeholder="Any player, active or retired"
+            placeholder={t("playerPlaceholder")}
             aria-label={label}
             autoComplete="off"
             className={cn(

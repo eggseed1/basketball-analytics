@@ -1,10 +1,18 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 import { GmShell } from "@/gm/ui/gm-shell";
 import { useGmStore } from "@/gm/state/gm-store";
 import { userCap, userTeam } from "@/gm/lib/selectors";
 import { Button } from "@/components/ui/button";
-import { expertiseLabel } from "@/gm/seed/scouts";
+import { ensureScoutKnack, expertiseLabel } from "@/gm/seed/scouts";
+import {
+  devKnackBlurb,
+  devKnackLabel,
+  scoutKnackBlurb,
+  scoutKnackLabel,
+} from "@/gm/seed/staff-knacks";
 import { TRAINER_TIERS, payLabel, trainerLabel, yearsLabel } from "@/gm/seed/coaches";
 import { asAssociate, hireQuote, staffBillM, staffRoom } from "@/gm/engine/staff";
 import type { GmHeadCoach } from "@/gm/types";
@@ -22,19 +30,25 @@ function money(coach: GmHeadCoach): string {
 }
 
 function StaffBody() {
+  const t = useTranslations("GmUi");
   const league = useGmStore((s) => s.league);
   const upgradeStaff = useGmStore((s) => s.upgradeStaff);
   const hireScout = useGmStore((s) => s.hireScout);
   const refreshScoutMarket = useGmStore((s) => s.refreshScoutMarket);
+  const hireDeveloper = useGmStore((s) => s.hireDeveloper);
+  const refreshDeveloperMarket = useGmStore((s) => s.refreshDeveloperMarket);
   const hireCoach = useGmStore((s) => s.hireCoach);
   const setTrainer = useGmStore((s) => s.setTrainer);
+  const setAutomation = useGmStore((s) => s.setAutomation);
   if (!league) return null;
   const team = userTeam(league);
   const cap = userCap(league);
   const coach = team.staff.headCoach;
   const associate = team.staff.associate;
-  const scout = team.staff.scout;
+  const scout = team.staff.scout ? ensureScoutKnack(team.staff.scout) : null;
+  const developer = team.staff.developer ?? null;
   const market = league.scoutMarket ?? [];
+  const developerMarket = league.developerMarket ?? [];
   const coaches = league.coachMarket ?? [];
   const room = staffRoom(team, cap.overTax);
   const dead = team.staff.dead ?? [];
@@ -51,7 +65,7 @@ function StaffBody() {
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h2 className="text-lg font-semibold">Staff</h2>
+          <h2 className="text-lg font-semibold">{t("staffTitle")}</h2>
           <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
             Coaches, scouts and trainers are paid by the owner. None of it counts on the cap.
             A tax bill leaves less room. Letting a coach go with years left means paying 80% of what remains.
@@ -180,10 +194,14 @@ function StaffBody() {
                 <>
                   <p className="mt-1 font-semibold">{scout.name}</p>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    {scout.yearsExperience} years · {expertiseLabel(scout.expertise)} · Eye {scout.eye}/5 · $
+                    {scout.yearsExperience} years · {expertiseLabel(scout.expertise)} ·{" "}
+                    {scoutKnackLabel(scout.knack)} · Eye {scout.eye}/5 · $
                     {scout.salaryM.toFixed(1)}M
                   </p>
-                  <p className="mt-2 text-sm text-muted-foreground">{scout.bio}</p>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    {scoutKnackBlurb(scout.knack)}
+                  </p>
+                  <p className="mt-1 text-sm text-muted-foreground">{scout.bio}</p>
                 </>
               ) : (
                 <p className="mt-2 text-sm text-muted-foreground">No director hired. Draft fog stays heavy.</p>
@@ -195,6 +213,25 @@ function StaffBody() {
               </Button>
             ) : null}
           </div>
+          <label className="mt-3 flex items-start gap-2 text-sm">
+            <input
+              type="checkbox"
+              className="mt-0.5"
+              checked={league.automation?.autoScout ?? false}
+              disabled={!scout}
+              onChange={(event) =>
+                setAutomation({ autoScout: event.target.checked })
+              }
+            />
+            <span>
+              <span className="font-medium">Auto scout</span>
+              <span className="mt-0.5 block text-muted-foreground">
+                {scout
+                  ? `Off by default. Opt in and ${scout.name.split(" ")[0]} handles monthly focus. Your picks still dig deeper.`
+                  : "Hire a director first."}
+              </span>
+            </span>
+          </label>
           <div className="mt-4 border-t border-border pt-3">
             <div className="mb-2 flex items-center justify-between gap-2">
               <p className="text-sm font-medium">Available hires</p>
@@ -202,19 +239,34 @@ function StaffBody() {
                 Refresh market
               </Button>
             </div>
-            <ul className="grid gap-2">
+            <ul className="grid gap-2" data-motion-list>
               {market.map((s) => {
-                const quote = hireQuote(team, cap.overTax, s, "scout");
+                const withKnack = ensureScoutKnack(s);
+                const quote = hireQuote(team, cap.overTax, withKnack, "scout");
                 return (
-                  <li key={s.id} className="rounded-lg border border-border p-3">
-                    <p className="text-sm font-semibold">{s.name}</p>
+                  <li
+                    key={s.id}
+                    data-motion="card"
+                    className="rounded-lg border border-border p-3"
+                  >
+                    <p className="text-sm font-semibold">{withKnack.name}</p>
                     <p className="mt-0.5 text-sm text-muted-foreground">
-                      {s.yearsExperience} yrs · {expertiseLabel(s.expertise)} · Eye {s.eye}/5 · ${s.salaryM.toFixed(1)}M
+                      {withKnack.yearsExperience} yrs · {expertiseLabel(withKnack.expertise)} ·{" "}
+                      {scoutKnackLabel(withKnack.knack)} · Eye {withKnack.eye}/5 · $
+                      {withKnack.salaryM.toFixed(1)}M
                     </p>
-                    <Button className="mt-2" size="sm" disabled={scout?.id === s.id || !quote.ok} onClick={() => hireScout(s.id)}>
+                    <p className="mt-1 text-[12px] text-muted-foreground">
+                      {scoutKnackBlurb(withKnack.knack)}
+                    </p>
+                    <Button
+                      className="mt-2"
+                      size="sm"
+                      disabled={scout?.id === withKnack.id || !quote.ok}
+                      onClick={() => hireScout(withKnack.id)}
+                    >
                       Hire
                     </Button>
-                    {!quote.ok && scout?.id !== s.id ? (
+                    {!quote.ok && scout?.id !== withKnack.id ? (
                       <p className="mt-2 text-sm text-muted-foreground">{quote.reason}</p>
                     ) : null}
                   </li>
@@ -224,6 +276,70 @@ function StaffBody() {
           </div>
         </article>
       </div>
+
+      <article className="sports-card rounded-xl border border-border p-4" data-motion="card">
+        <div className="flex flex-wrap items-start justify-between gap-2">
+          <div>
+            <h3 className="font-medium">Player development</h3>
+            {developer ? (
+              <>
+                <p className="mt-1 font-semibold">{developer.name}</p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {developer.yearsExperience} years · {devKnackLabel(developer.knack)} · Touch{" "}
+                  {developer.touch}/5 · ${developer.salaryM.toFixed(1)}M
+                </p>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  {devKnackBlurb(developer.knack)}
+                </p>
+              </>
+            ) : (
+              <p className="mt-2 text-sm text-muted-foreground">
+                No PD director. Growth follows the head coach only.
+              </p>
+            )}
+          </div>
+        </div>
+        <div className="mt-4 border-t border-border pt-3">
+          <div className="mb-2 flex items-center justify-between gap-2">
+            <p className="text-sm font-medium">Available hires</p>
+            <Button size="sm" variant="ghost" onClick={() => refreshDeveloperMarket()}>
+              Refresh market
+            </Button>
+          </div>
+          <ul className="grid gap-2 sm:grid-cols-2" data-motion-list>
+            {developerMarket.map((d) => {
+              const quote = hireQuote(team, cap.overTax, d, "developer");
+              return (
+                <li
+                  key={d.id}
+                  data-motion="card"
+                  className="rounded-lg border border-border p-3"
+                >
+                  <p className="text-sm font-semibold">{d.name}</p>
+                  <p className="mt-0.5 text-sm text-muted-foreground">
+                    {d.yearsExperience} yrs · {devKnackLabel(d.knack)} · Touch {d.touch}/5 · $
+                    {d.salaryM.toFixed(1)}M
+                  </p>
+                  <p className="mt-1 text-[12px] text-muted-foreground">
+                    {devKnackBlurb(d.knack)}
+                  </p>
+                  <Button
+                    className="mt-2"
+                    size="sm"
+                    disabled={developer?.id === d.id || !quote.ok}
+                    onClick={() => hireDeveloper(d.id)}
+                  >
+                    Hire
+                  </Button>
+                  {!quote.ok && developer?.id !== d.id ? (
+                    <p className="mt-2 text-sm text-muted-foreground">{quote.reason}</p>
+                  ) : null}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      </article>
     </div>
   );
 }

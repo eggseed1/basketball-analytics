@@ -1,4 +1,5 @@
 import { Suspense, type ReactNode } from "react";
+import { getLocale, getTranslations } from "next-intl/server";
 import { GameLabView } from "@/components/games/game-lab-view";
 import { GameIdentityShell } from "@/components/games/game-identity-shell";
 import { GamePreTipBoard } from "@/components/games/game-pre-tip-board";
@@ -32,10 +33,26 @@ import { yieldForStreaming } from "@/lib/stream-yield";
 import { shareImageMetadata } from "@/lib/share-images";
 import { JsonLd } from "@/components/seo/json-ld";
 import { absoluteUrl } from "@/lib/site-url";
+import { formatGameCalendarDate } from "@/i18n/format-date";
 
 interface GamePageProps { params: Promise<{ gameId: string }>; searchParams: Promise<Record<string, string | string[] | undefined>>; }
-function gameDateLabel(isoDate: string | undefined): string | null { if (!isoDate || !/^\d{4}-\d{2}-\d{2}$/.test(isoDate)) return null; return new Date(`${isoDate}T12:00:00Z`).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" }); }
-export async function generateMetadata({ params }: GamePageProps) { await yieldForStreaming(); const { gameId } = await params; const shell = await getGameShellCached(gameId); if (!shell) return { title: "Game" }; const away = shell.game.awayTeamAbbr ?? shell.game.awayTeamId; const home = shell.game.homeTeamAbbr ?? shell.game.homeTeamId; const awayName = shell.game.awayTeamName ?? away; const homeName = shell.game.homeTeamName ?? home; const date = gameDateLabel(shell.game.gameDate); return { title: `${awayName} vs. ${homeName} Box Score${date ? ` (${date})` : ""}`, description: `${awayName} at ${homeName}${date ? ` on ${date}` : ""}: box score, player stats and impact.`, alternates: { canonical: `/games/${encodeURIComponent(gameId)}` }, ...shareImageMetadata("games", gameId, `${away} @ ${home}`) }; }
+export async function generateMetadata({ params }: GamePageProps) {
+  await yieldForStreaming();
+  const { gameId } = await params;
+  const [t, locale, shell] = await Promise.all([getTranslations("Games"), getLocale(), getGameShellCached(gameId)]);
+  if (!shell) return { title: t("metaFallbackTitle") };
+  const away = shell.game.awayTeamAbbr ?? shell.game.awayTeamId;
+  const home = shell.game.homeTeamAbbr ?? shell.game.homeTeamId;
+  const awayName = shell.game.awayTeamName ?? away;
+  const homeName = shell.game.homeTeamName ?? home;
+  const date = formatGameCalendarDate(shell.game.gameDate, locale);
+  return {
+    title: date ? t("metaTitleDated", { away: awayName, home: homeName, date }) : t("metaTitle", { away: awayName, home: homeName }),
+    description: date ? t("metaDescriptionDated", { away: awayName, home: homeName, date }) : t("metaDescription", { away: awayName, home: homeName }),
+    alternates: { canonical: `/games/${encodeURIComponent(gameId)}` },
+    ...shareImageMetadata("games", gameId, `${away} @ ${home}`),
+  };
+}
 /** Team color stays a hint on cards, close to the neutral home page cards. */
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 
@@ -47,7 +64,10 @@ async function GameLabDeepBody({ gameId, hidePeriodTable, asOfMs }: { gameId: st
     null
   );
   const payload = result.value;
-  if (!payload) return <p className="text-[13px] text-muted-foreground">Deep Game Lab analysis is temporarily unavailable for this game.</p>;
+  if (!payload) {
+    const t = await getTranslations("Games");
+    return <p className="text-[13px] text-muted-foreground">{t("labUnavailable")}</p>;
+  }
   const shell = await getGameShellCached(gameId);
   const pregameMargin = shell ? runtimePregameMargin(shell.game) : undefined;
   const view = <GameLabView analysis={payload.analysis} players={payload.players} events={payload.events} pbpSource={payload.pbpSource} officialTeamStats={payload.officialTeamStats} pregameMargin={pregameMargin} omitHero hidePeriodTable={hidePeriodTable} rebuiltFromPlays={payload.asOf === "cut"} />;
@@ -58,7 +78,10 @@ async function HistoricalDeepBody({ gameId, seasonHint, homeLabel, awayLabel }: 
   const historyArtifact = getHistoricalProductGame(gameId, seasonHint);
   const shots = await loadRawArchiveShotEventsAsync(gameId);
   if (historyArtifact) return <HistoricalGameExperience artifact={{ ...historyArtifact, teamGames: [] as Record<string, unknown>[] }} shots={shots} homeLabel={homeLabel} awayLabel={awayLabel} />;
-  if (shots.length > 0) return <p className="text-[13px] text-muted-foreground">Historical summary not precomputed for this game; box / Game Lab below still load when available.</p>;
+  if (shots.length > 0) {
+    const t = await getTranslations("Games");
+    return <p className="text-[13px] text-muted-foreground">{t("historicalSummaryMissing")}</p>;
+  }
   return null;
 }
 
@@ -66,6 +89,10 @@ export default async function GamePage({ params, searchParams }: GamePageProps) 
   await yieldForStreaming();
   const { gameId } = await params;
   const sp = await searchParams;
+  const [t, locale] = await Promise.all([
+    getTranslations("Games"),
+    getLocale(),
+  ]);
   const arrival = parseSeasonEvidenceArrival(sp);
   const shell = await getGameShellCached(gameId);
   const fromHistory = first(sp.from) === "history";
@@ -88,23 +115,23 @@ export default async function GamePage({ params, searchParams }: GamePageProps) 
   const tabParam = first(sp.tab);
   const tab: GameTab = tabParam === "preview" || tabParam === "game" ? tabParam : defaultTab;
   const tabOptions: Array<{ id: GameTab; label: string }> = preTip
-    ? [{ id: "preview", label: "Preview" }, { id: "game", label: "Box score & plays" }]
-    : [{ id: "game", label: "Game" }, { id: "preview", label: "Preview" }];
+    ? [{ id: "preview", label: t("tabPreview") }, { id: "game", label: t("tabBoxScorePlays") }]
+    : [{ id: "game", label: t("tabGame") }, { id: "preview", label: t("tabPreview") }];
   const showGame = presentation.canRenderDeepFeatures && tab === "game";
   const renderedAt = new Date().getTime();
   const risky = needsScoreMask(shell.game, renderedAt);
   const delaySeconds = showGame && risky ? parseScoreDelay((await cookies()).get(SCORE_DELAY_COOKIE)?.value) : 0;
   const asOfMs = delaySeconds ? renderedAt - delaySeconds * 1000 : undefined;
   const holdIfCut = (node: ReactNode) => (asOfMs != null ? <DelayedGameSection risky>{node}</DelayedGameSection> : node);
-  const gameDate = gameDateLabel(shell.game.gameDate);
+  const gameDate = formatGameCalendarDate(shell.game.gameDate, locale);
   const awayName = shell.game.awayTeamName ?? shell.game.awayTeamAbbr ?? shell.game.awayTeamId;
   const homeName = shell.game.homeTeamName ?? shell.game.homeTeamAbbr ?? shell.game.homeTeamId;
   const body = <main data-motion-page className="site-shell flex flex-1 flex-col gap-5 py-5 sm:gap-6 sm:py-7">
-    <h1 className="sr-only">{`${awayName} vs. ${homeName}${gameDate ? `, ${gameDate}` : ""}`}</h1>
+    <h1 className="sr-only">{gameDate ? t("srTitleDated", { away: awayName, home: homeName, date: gameDate }) : t("srTitle", { away: awayName, home: homeName })}</h1>
     <JsonLd data={{
       "@context": "https://schema.org",
       "@type": "SportsEvent",
-      name: `${awayName} at ${homeName}`,
+      name: t("matchupAt", { away: awayName, home: homeName }),
       sport: "Basketball",
       url: absoluteUrl(`/games/${encodeURIComponent(gameId)}`),
       ...(shell.game.gameDate ? { startDate: shell.game.gameDate } : {}),
@@ -114,23 +141,23 @@ export default async function GamePage({ params, searchParams }: GamePageProps) 
     <MotionReveal />
     <GameIdentityShell game={shell.game} brandPresentation={brandPresentation} arrivalLabel={arrival?.label} />
     {presentation.canRenderDeepFeatures ? <GameTabs gameId={gameId} active={tab} options={tabOptions} defaultTab={defaultTab} query={sp} /> : null}
-    {presentation.canRenderDeepFeatures && tab === "preview" ? <Suspense fallback={<DestinationSectionSkeleton label="Loading game preview…" />}><GamePreviewSection game={shell.game} /></Suspense> : null}
+    {presentation.canRenderDeepFeatures && tab === "preview" ? <Suspense fallback={<DestinationSectionSkeleton label={t("loadingPreview")} />}><GamePreviewSection game={shell.game} /></Suspense> : null}
     {!presentation.canRenderDeepFeatures ? <GameUnavailablePanel gameId={gameId} backHref={backHref} /> : null}
     {showGame ? (
       <DelayedGameSection risky={risky && asOfMs == null} cutDelay={delaySeconds}>
       {preTip ? <GamePreTipBoard game={shell.game} /> : <>
-      {asOfMs == null ? <Suspense fallback={<DestinationSectionSkeleton label="Loading Game Flow & shots…" />}><HistoricalDeepBody gameId={gameId} seasonHint={seasonHint} homeLabel={shell.game.homeTeamAbbr ?? "Home"} awayLabel={shell.game.awayTeamAbbr ?? "Away"} /></Suspense> : null}
-      <Suspense fallback={<DestinationSectionSkeleton label="Loading Game Lab analysis…" />}><GameLabDeepBody gameId={gameId} arrival={arrival} hidePeriodTable={heroHasLineScore} asOfMs={asOfMs} /></Suspense>
+      {asOfMs == null ? <Suspense fallback={<DestinationSectionSkeleton label={t("loadingFlow")} />}><HistoricalDeepBody gameId={gameId} seasonHint={seasonHint} homeLabel={shell.game.homeTeamAbbr ?? t("homeFallback")} awayLabel={shell.game.awayTeamAbbr ?? t("awayFallback")} /></Suspense> : null}
+      <Suspense fallback={<DestinationSectionSkeleton label={t("loadingLab")} />}><GameLabDeepBody gameId={gameId} arrival={arrival} hidePeriodTable={heroHasLineScore} asOfMs={asOfMs} /></Suspense>
       <details className="group sports-card overflow-hidden">
         <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3.5 sm:px-5 [&::-webkit-details-marker]:hidden">
           <span className="flex flex-col">
-            <span className="text-[17px] font-bold tracking-tight">Possession Explorer</span>
-            <span className="text-[13px] text-muted-foreground">Every possession rebuilt from play-by-play, with filters by quarter, team and result.</span>
+            <span className="text-[17px] font-bold tracking-tight">{t("possessionTitle")}</span>
+            <span className="text-[13px] text-muted-foreground">{t("possessionBlurb")}</span>
           </span>
           <span aria-hidden className="text-[18px] text-muted-foreground transition-transform group-open:rotate-180">⌄</span>
         </summary>
         <div className="border-t border-border/60 p-3 sm:p-4">
-          {holdIfCut(<Suspense fallback={<DestinationSectionSkeleton label="Loading Possession Explorer…" />}><PossessionExplorerIsland gameId={gameId} awayTeamKey={shell.game.awayTeamId} homeTeamKey={shell.game.homeTeamId} /></Suspense>)}
+          {holdIfCut(<Suspense fallback={<DestinationSectionSkeleton label={t("loadingPossession")} />}><PossessionExplorerIsland gameId={gameId} awayTeamKey={shell.game.awayTeamId} homeTeamKey={shell.game.homeTeamId} /></Suspense>)}
         </div>
       </details>
       </>}

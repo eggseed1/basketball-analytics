@@ -10,11 +10,30 @@
  * Critical rule: completed/post + 0–0 does **not** become `final` unless an
  * explicit STATUS_FINAL (with real scores) is present.
  *
- * ## Watch data
- * Structured `broadcasts` / `geoBroadcasts` from ESPN scoreboard events are
- * mapped in `mapEspnBroadcasts`. No pirate streams. League Pass is always
- * shown with blackout caveats — this repo does **not** implement a blackout
- * entitlement API.
+ * ## Watch logos
+ * UI: `GameWatchLogos` in the game identity header / lineup center on
+ * `/games/[gameId]`. One small mark per network family; click opens the
+ * official destination. The old full “Streaming on” card is gone.
+ *
+ * ### Per-game networks
+ * ESPN `broadcasts` / `geoBroadcasts` → `mapEspnBroadcasts` (`src/lib/game-watch.ts`).
+ * National labels (ESPN, ABC, NBC, Peacock, Prime Video, …) get official
+ * `watchUrl`s from `officialWatchUrlForLabel` (`src/lib/nba-streaming.ts`).
+ * Local RSN names stay link-less (no invented affiliate URLs).
+ * Dedupe uses `broadcastNetworkKey` so NBC / Peacock / “NBC / Peacock” share
+ * one chip.
+ *
+ * ### Geography helpers
+ * `streamingRegionForCountry` and League Pass blocked countries remain for
+ * any future regional UI. The compact logo row only shows networks listed
+ * on this game.
+ *
+ * ### Season auto-update
+ * - Game listings refresh with the ESPN schedule feed (same as scores).
+ * - Media-deal era flips with the game season string via
+ *   `streamingEraForSeason` (2025-26+ = Disney / NBCU / Amazon).
+ * - “How to watch this season” links to NBA.com’s living guide
+ *   (`NBA_HOW_TO_WATCH_2025`), which the league updates during the year.
  *
  * ## Legal / licensing notes (not legal advice)
  * - Broadcast names come from the same ESPN feed already used for scores.
@@ -29,7 +48,7 @@
  * Client: one timer via `useLiveScoreboardRefresh` / `LiveScoreboardScope`
  *   - live: 20s · halftime: 45s · scheduled: 120s · final: stop
  *   - hidden tab ×3 · failure backoff · visibility wake with force bypass
- * Watch metadata is NOT refreshed on the live score cadence.
+ * Watch metadata rides along with schedule/shell fetches, not the 20s live tick.
  *
  * ## Future PBP / DRBL Wins Above R1
  * Correct live status + tipOffAt + period/clock form the substrate for:

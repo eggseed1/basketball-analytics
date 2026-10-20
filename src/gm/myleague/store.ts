@@ -2,12 +2,11 @@
 
 /**
  * MyLeague Layer B persist store - Reality + Simulation scaffolding.
- * Franchise Lab Layer A remains in `useGmStore` (`franchise-lab-gm`).
+ * Franchise Lab Layer A remains in `useGmStore` (per-save IndexedDB slots).
  */
 
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import { get, set, del } from "idb-keyval";
 import type { GmLeagueState } from "@/gm/types";
 import type {
   DecisionLog,
@@ -28,19 +27,9 @@ import {
   type SimGateResult,
 } from "@/gm/myleague/controller";
 import type { PendingDecision } from "@/gm/myleague/types";
+import { createGmSlotStorage } from "@/gm/state/gm-saves";
 
-const idbStorage = {
-  getItem: async (name: string): Promise<string | null> => {
-    const value = await get<string>(name);
-    return value ?? null;
-  },
-  setItem: async (name: string, value: string): Promise<void> => {
-    await set(name, value);
-  },
-  removeItem: async (name: string): Promise<void> => {
-    await del(name);
-  },
-};
+const idbStorage = createGmSlotStorage("b");
 
 interface MyLeagueStore {
   myLeague: MyLeague | null;

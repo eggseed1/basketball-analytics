@@ -1,5 +1,7 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
 
@@ -59,6 +61,7 @@ function TeamSearchField({
   onPick: (hit: Hit) => void;
   hideLabel?: boolean;
 }) {
+  const t = useTranslations("Compare");
   const teams = currentTeamChoices();
   return (
     <div className="flex flex-col gap-1.5">
@@ -69,7 +72,7 @@ function TeamSearchField({
         variant="field"
         value={selectedId ?? ""}
         teams={teams}
-        placeholder="Pick a team"
+        placeholder={t("pickTeam")}
         onChange={(id) => {
           const team = teams.find((row) => row.id === id);
           onPick(team ? { id: team.id, name: team.fullName } : { id: "", name: "" });
@@ -128,6 +131,7 @@ function SeasonField({
   seasons: string[];
   onChange: (value: string) => void;
 }) {
+  const t = useTranslations("Compare");
   const [query, setQuery] = useState("");
   const searchRef = useRef<HTMLInputElement>(null);
   const choices = [...new Set(value ? [value, ...seasons] : seasons)].sort((a, b) =>
@@ -165,7 +169,7 @@ function SeasonField({
             "h-auto min-w-0 flex-1 justify-between rounded-none border-0 bg-transparent px-0 py-0 font-semibold shadow-none"
           )}
         >
-          <SelectValue placeholder="Pick a season">{value || "Pick a season"}</SelectValue>
+          <SelectValue placeholder={t("pickSeason")}>{value || t("pickSeason")}</SelectValue>
         </SelectTrigger>
         <SelectContent
           align="start"
@@ -183,8 +187,8 @@ function SeasonField({
                   event.stopPropagation();
                   if (event.key === "Enter") event.preventDefault();
                 }}
-                placeholder="Search seasons"
-                aria-label="Search seasons"
+                placeholder={t("searchSeasons")}
+                aria-label={t("searchSeasons")}
                 className="h-8 w-full rounded-md bg-transparent px-2 text-sm outline-none placeholder:text-muted-foreground"
               />
             </div>
@@ -228,6 +232,7 @@ export function TeamComparePicker({
   selectedSeasons?: string[];
   seasonChoices?: string[];
 }) {
+  const t = useTranslations("Compare");
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [mode, setMode] = useState<"compare" | "rank">(intent);
@@ -373,7 +378,7 @@ export function TeamComparePicker({
       }}
     >
       <QueryUpdatingChrome pending={pending} />
-      <ChoiceTrack aria-label="Team compare" className="self-center">
+      <ChoiceTrack aria-label={t("teamCompareAria")} className="self-center">
         <ChoiceChip active={!ranking} onClick={() => chooseMode("compare")}>
           Compare
         </ChoiceChip>
@@ -398,7 +403,7 @@ export function TeamComparePicker({
             }}
           />
           {availableSeasons.length > 0 ? (
-            <ChoiceTrack className="flex-wrap" aria-label="Seasons to rank">
+            <ChoiceTrack className="flex-wrap" aria-label={t("seasonsToRankAria")}>
               {[...availableSeasons]
                 .sort((x, y) => y.localeCompare(x))
                 .map((season) => (

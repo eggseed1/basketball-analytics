@@ -2,6 +2,7 @@
 
 import { ArrowDown, ArrowUp, Check, X } from "lucide-react";
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { useTranslations } from "next-intl";
 
 import {
   HIGHER_LOWER_STATS,
@@ -77,6 +78,7 @@ export function HigherLowerGame() {
 }
 
 function HigherLowerBoard({ league }: { league: ArcadeLeague }) {
+  const t = useTranslations("ArcadeHL");
   const [round, setRound] = useState<Round | null>(null);
   const [outcome, setOutcome] = useState<Outcome>(null);
   const [streak, setStreak] = useState(0);
@@ -143,15 +145,15 @@ function HigherLowerBoard({ league }: { league: ArcadeLeague }) {
           style={{ right: -30, bottom: -30, "--orb-color": "#0a84ff" } as CSSProperties}
         />
         <div className="flex flex-col gap-1">
-          <h2 className={type.heading}>Spin for a stat</h2>
+          <h2 className={type.heading}>{t("spinTitle")}</h2>
           <p className={cn(type.bodySm, "text-muted-foreground")}>
-            The reel picks what you compare all run long.
+            {t("spinBlurb")}
           </p>
         </div>
         <SlotMachine reels={reels} spinId={spinId} spinning={spinning} cellHeight={60} className="w-full max-w-sm" />
         <SpinButton spinning={spinning} onClick={spin} className="w-full max-w-sm" />
         {best != null ? (
-          <p className={cn(type.caption, "text-muted-foreground")}>Best streak: {best}</p>
+          <p className={cn(type.caption, "text-muted-foreground")}>{t("bestStreak", { best })}</p>
         ) : null}
       </section>
     );
@@ -163,7 +165,7 @@ function HigherLowerBoard({ league }: { league: ArcadeLeague }) {
       <div className="sports-card flex flex-wrap items-center justify-between gap-3 px-4 py-3">
         <div className="min-w-0">
           <p className={cn(type.caption, "font-semibold uppercase tracking-wide text-muted-foreground")}>
-            Stat
+            {t("stat")}
           </p>
           <p className={cn(type.body, "font-semibold")}>{stat.label}</p>
           <p className={cn(type.caption, "text-muted-foreground")}>{stat.blurb}</p>
@@ -171,11 +173,11 @@ function HigherLowerBoard({ league }: { league: ArcadeLeague }) {
         <div className="flex items-center gap-5 text-center">
           <div>
             <p className="score-num text-[2rem] leading-none">{streak}</p>
-            <p className={cn(type.caption, "text-muted-foreground")}>Streak</p>
+            <p className={cn(type.caption, "text-muted-foreground")}>{t("streak")}</p>
           </div>
           <div>
             <p className="score-num text-[2rem] leading-none text-muted-foreground">{best ?? 0}</p>
-            <p className={cn(type.caption, "text-muted-foreground")}>Best</p>
+            <p className={cn(type.caption, "text-muted-foreground")}>{t("best")}</p>
           </div>
         </div>
         {streak > 0 ? (
@@ -209,10 +211,10 @@ function HigherLowerBoard({ league }: { league: ArcadeLeague }) {
           {outcome == null ? (
             <div className="grid grid-cols-2 gap-2">
               <GuessButton onClick={() => guess("higher")} icon={<ArrowUp className="size-4" strokeWidth={3} />}>
-                Higher
+                {t("higher")}
               </GuessButton>
               <GuessButton onClick={() => guess("lower")} icon={<ArrowDown className="size-4" strokeWidth={3} />} quiet>
-                Lower
+                {t("lower")}
               </GuessButton>
             </div>
           ) : null}
@@ -222,11 +224,11 @@ function HigherLowerBoard({ league }: { league: ArcadeLeague }) {
       {over ? (
         <div className="sports-card arcade-pop flex flex-col items-center gap-3 px-4 py-5 text-center">
           <p className={type.heading}>
-            {streak === 0 ? "No streak this time" : `Streak over at ${streak}`}
+            {streak === 0 ? t("noStreak") : t("streakOver", { streak })}
           </p>
           <div className="flex flex-wrap justify-center gap-2">
             <Button size="lg" onClick={() => start(stat)}>
-              Same stat again
+              {t("sameStat")}
             </Button>
             <Button
               size="lg"
@@ -237,7 +239,7 @@ function HigherLowerBoard({ league }: { league: ArcadeLeague }) {
                 setReels(IDLE_REEL);
               }}
             >
-              Spin a new stat
+              {t("spinNew")}
             </Button>
           </div>
         </div>
@@ -289,6 +291,7 @@ export function SeasonCard({
   tone?: "right" | "wrong" | null;
   children?: ReactNode;
 }) {
+  const t = useTranslations("ArcadeHL");
   const player = league.players[row.pid];
   const value = stat.value(row);
   const counted = useCountUp(value, revealed && tone != null);
@@ -324,7 +327,7 @@ export function SeasonCard({
             "absolute right-3 top-3 flex size-7 items-center justify-center rounded-full text-white",
             tone === "right" ? "bg-[var(--chart-3)]" : "bg-destructive"
           )}
-          aria-label={tone === "right" ? "Correct" : "Wrong"}
+          aria-label={tone === "right" ? t("correct") : t("wrong")}
         >
           {tone === "right" ? <Check className="size-4" strokeWidth={3} /> : <X className="size-4" strokeWidth={3} />}
         </span>

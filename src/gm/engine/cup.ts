@@ -530,7 +530,7 @@ export function ensureNbaCup(league: GmLeagueState): GmLeagueState {
   const season = league.season;
   const groups = league.cupGroups ?? GROUPS;
   const prior = league.priorWins;
-  let schedule = tagGroupGames(league.schedule, season, groups);
+  const schedule = tagGroupGames(league.schedule, season, groups);
   const grouped = schedule.filter((game) => game.cup === "group");
   if (!grouped.length || grouped.some((game) => !game.played)) {
     return schedule === league.schedule ? league : { ...league, schedule };

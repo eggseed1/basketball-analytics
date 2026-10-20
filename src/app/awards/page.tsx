@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { AwardTrophyIcon } from "@/components/awards/award-trophy-icon";
 import { TransitionLink } from "@/components/continuity/query-nav";
@@ -14,50 +15,47 @@ export const metadata = {
     "NBA award history: championships, MVP, Finals MVP, DPOY, and more.",
 };
 
-const GROUPS: Array<{
-  title: string;
-  blurb: string;
+const GROUP_DEFS: Array<{
+  titleKey: "groupTeam" | "groupIndividual" | "groupAllLeague" | "groupLegacy";
+  blurbKey:
+    | "groupTeamBlurb"
+    | "groupIndividualBlurb"
+    | "groupAllLeagueBlurb"
+    | "groupLegacyBlurb";
   slugs: string[];
 }> = [
+  { titleKey: "groupTeam", blurbKey: "groupTeamBlurb", slugs: ["championships"] },
   {
-    title: "Team hardware",
-    blurb: "The championship trophy.",
-    slugs: ["championships"],
-  },
-  {
-    title: "Individual awards",
-    blurb: "Season and Finals MVPs, defense, and rookies.",
+    titleKey: "groupIndividual",
+    blurbKey: "groupIndividualBlurb",
     slugs: ["mvp", "finals-mvp", "dpoy", "roy"],
   },
   {
-    title: "All-league & All-Star",
-    blurb: "Team selections and the midseason All-Star Game.",
+    titleKey: "groupAllLeague",
+    blurbKey: "groupAllLeagueBlurb",
     slugs: ["all-nba", "all-defense", "all-star"],
   },
-  {
-    title: "Legacy",
-    blurb: "Naismith Memorial Hall of Fame.",
-    slugs: ["hall-of-fame"],
-  },
+  { titleKey: "groupLegacy", blurbKey: "groupLegacyBlurb", slugs: ["hall-of-fame"] },
 ];
 
-export default function AwardsIndexPage() {
+export default async function AwardsIndexPage() {
+  const t = await getTranslations("Awards");
   const bySlug = new Map(AWARD_DEFINITIONS.map((a) => [a.slug, a]));
 
   return (
     <main data-motion-page className="site-shell flex flex-col gap-8 py-6 sm:py-8">
       <MotionReveal />
       <PageHeader
-        title="Trophy case"
-        subtitle="League award history. Open a trophy to see its winners, dynasties and eras."
+        title={t("title")}
+        subtitle={t("subtitle")}
       />
 
-      {GROUPS.map((group) => (
-        <section key={group.title} className="flex flex-col gap-3">
+      {GROUP_DEFS.map((group) => (
+        <section key={group.titleKey} className="flex flex-col gap-3">
           <div>
-            <h2 className={cn(type.heading)}>{group.title}</h2>
+            <h2 className={cn(type.heading)}>{t(group.titleKey)}</h2>
             <p className={cn(type.caption, "mt-0.5 text-muted-foreground")}>
-              {group.blurb}
+              {t(group.blurbKey)}
             </p>
           </div>
           <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -111,7 +109,7 @@ export default function AwardsIndexPage() {
                       >
                         {summary.countLabel}
                         {summary.latestSeason
-                          ? ` · latest ${summary.latestSeason}`
+                          ? ` · ${t("latestSeason", { season: summary.latestSeason })}`
                           : ""}
                       </span>
                       <span

@@ -208,6 +208,41 @@ function epochFor(seasonEndYear: SeasonYear): CbaEpoch {
   return matches[matches.length - 1] ?? EPOCHS[EPOCHS.length - 1]!;
 }
 
+/** Soft BRI/TV growth after the last official year on file. Tapers toward ~4.5%. */
+const PROJECTED_CAP_GROWTH = 0.07;
+const PROJECTED_CAP_GROWTH_FLOOR = 0.045;
+const PROJECTED_GROWTH_TAPER_YEARS = 5;
+
+function roundCap(n: number): number {
+  return Math.round(n * 1000) / 1000;
+}
+
+/**
+ * Grow cap, tax, and aprons together from the last official row.
+ * Keeps the 2027-era relationships intact instead of freezing the economy.
+ */
+function projectCapRow(base: CapRow, yearsAhead: number): CapRow {
+  if (yearsAhead <= 0) return base;
+  let growthMul = 1;
+  for (let year = 1; year <= yearsAhead; year += 1) {
+    const t = Math.min(1, (year - 1) / PROJECTED_GROWTH_TAPER_YEARS);
+    const growth =
+      PROJECTED_CAP_GROWTH * (1 - t) + PROJECTED_CAP_GROWTH_FLOOR * t;
+    growthMul *= 1 + growth;
+  }
+  const salaryCapM = roundCap(base.salaryCapM * growthMul);
+  return {
+    salaryCapM,
+    luxuryTaxM: roundCap(base.luxuryTaxM * growthMul),
+    firstApronM:
+      base.firstApronM != null ? roundCap(base.firstApronM * growthMul) : undefined,
+    secondApronM:
+      base.secondApronM != null ? roundCap(base.secondApronM * growthMul) : undefined,
+    minSalaryM: roundCap((base.minSalaryM ?? Math.max(0.5, base.salaryCapM * 0.008)) * growthMul),
+    maxSalaryM: roundCap(salaryCapM * 0.35),
+  };
+}
+
 function nearestCapRow(seasonEndYear: SeasonYear): CapRow | null {
   const table = loadCapTable();
   if (table[String(seasonEndYear)]) return table[String(seasonEndYear)]!;
@@ -217,8 +252,9 @@ function nearestCapRow(seasonEndYear: SeasonYear): CapRow | null {
     .sort((a, b) => a - b);
   if (!years.length) return null;
   if (seasonEndYear < years[0]!) return table[String(years[0])]!;
-  if (seasonEndYear > years[years.length - 1]!) {
-    return table[String(years[years.length - 1])]!;
+  const lastYear = years[years.length - 1]!;
+  if (seasonEndYear > lastYear) {
+    return projectCapRow(table[String(lastYear)]!, seasonEndYear - lastYear);
   }
   // interpolate between neighbors
   let lo = years[0]!;
@@ -233,7 +269,7 @@ function nearestCapRow(seasonEndYear: SeasonYear): CapRow | null {
   const a = table[String(lo)]!;
   const b = table[String(hi)]!;
   const t = hi === lo ? 0 : (seasonEndYear - lo) / (hi - lo);
-  const mix = (x: number, y: number) => Math.round((x + (y - x) * t) * 1000) / 1000;
+  const mix = (x: number, y: number) => roundCap(x + (y - x) * t);
   return {
     salaryCapM: mix(a.salaryCapM, b.salaryCapM),
     luxuryTaxM: mix(a.luxuryTaxM, b.luxuryTaxM),
@@ -254,6 +290,8 @@ function nearestCapRow(seasonEndYear: SeasonYear): CapRow | null {
 export function getCbaRules(seasonEndYear: SeasonYear): CBARules {
   const epoch = epochFor(seasonEndYear);
   const caps = nearestCapRow(seasonEndYear);
+  const lastOfficial = latestCapSeasonEndYearFromTable();
+  const projected = seasonEndYear > lastOfficial;
   const salaryCapM = caps?.salaryCapM ?? epoch.rules.salaryCapM ?? 0;
   const luxuryTaxM = caps?.luxuryTaxM ?? epoch.rules.luxuryTaxM ?? 0;
   const minSalaryM =
@@ -280,8 +318,9 @@ export function getCbaRules(seasonEndYear: SeasonYear): CBARules {
     twoWayContracts: epoch.rules.twoWayContracts ?? false,
     draftRounds: epoch.rules.draftRounds ?? 2,
     lotteryModel: epoch.rules.lotteryModel ?? "weighted_pre2019",
-    notes:
-      caps != null
+    notes: projected
+      ? `Projected TV/cap growth past ${lastOfficial} + ${epoch.rules.notes ?? "era rules"}`
+      : caps != null
         ? `Year-accurate cap table + ${epoch.rules.notes ?? "era rules"}`
         : epoch.rules.notes,
   };
@@ -312,13 +351,17 @@ export function listCbaEpochs(): Array<{
   });
 }
 
-/** Latest season end year with a cap row on file. */
-export function latestCapSeasonEndYear(): number {
+function latestCapSeasonEndYearFromTable(): number {
   return Math.max(
     ...Object.keys(loadCapTable())
       .map(Number)
       .filter((y) => Number.isFinite(y))
   );
+}
+
+/** Latest season end year with an official (non-projected) cap row on file. */
+export function latestCapSeasonEndYear(): number {
+  return latestCapSeasonEndYearFromTable();
 }
 
 /** Year-by-year cap rows for UI / debugging. */

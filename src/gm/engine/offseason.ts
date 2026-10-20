@@ -30,6 +30,7 @@ export function automationOf(league: GmLeagueState): GmAutomation {
   return {
     autoDraft: league.automation?.autoDraft ?? false,
     autoFreeAgency: league.automation?.autoFreeAgency ?? true,
+    autoScout: league.automation?.autoScout ?? false,
   };
 }
 
@@ -65,23 +66,18 @@ function news(
   };
 }
 
-/** One year comes off the deal. Team options on useful players are picked up. Stars decline player options. */
-function resolveExpiredDeal(player: GmPlayer): GmPlayer {
+/**
+ * After the contract year ticks, players with an unresolved option stay on
+ * the roster for the options desk. Everyone else with no years left hits FA
+ * with Bird/early rights when applicable.
+ */
+function releaseExpiredWithoutOption(player: GmPlayer): GmPlayer {
   const contract = player.contract;
   if (!contract || player.teamId == null) return player;
   if (contract.yearsRemaining > 0) return player;
-
-  if (contract.option === "team" && overallOf(player) >= 76) {
-    return {
-      ...player,
-      contract: { ...contract, yearsRemaining: 1, option: null },
-    };
-  }
-  if (contract.option === "player" && overallOf(player) < 81) {
-    return {
-      ...player,
-      contract: { ...contract, yearsRemaining: 1, option: null },
-    };
+  if (contract.option === "team" || contract.option === "player") {
+    // Leave for the options stage.
+    return player;
   }
   const rights =
     contract.birdRights === "bird" || contract.birdRights === "early"
@@ -108,6 +104,77 @@ function restoreRookieYear(player: GmPlayer, draftSeason: number): GmPlayer {
   };
 }
 
+/** Soft ceiling on unsigned bodies so the market does not grow forever. */
+const MAX_UNSIGNED_FREE_AGENTS = 180;
+
+/**
+ * Aging fringe free agents leave the game. Stars hang around longer.
+ * Keep enough mid-20s minimum guys around so rosters still fill.
+ */
+export function shouldRetireUnsigned(player: GmPlayer): boolean {
+  if (player.teamId != null) return false;
+  const ovr = overallOf(player);
+  const age = player.age;
+  if (ovr >= 80) return age >= 40;
+  if (ovr >= 76) return age >= 37;
+  if (ovr >= 72) return age >= 35;
+  if (ovr >= 68) return age >= 34;
+  if (ovr >= 64) return age >= 32;
+  if (ovr >= 60) return age >= 30;
+  return age >= 28;
+}
+
+/** Only the clearly finished careers — used before FA so depth can still sign. */
+export function shouldRetireBeforeMarket(player: GmPlayer): boolean {
+  if (player.teamId != null) return false;
+  const ovr = overallOf(player);
+  const age = player.age;
+  if (ovr >= 78) return age >= 39;
+  if (ovr >= 72) return age >= 36;
+  return age >= 34 && ovr < 70;
+}
+
+/**
+ * Drop retired / surplus unsigned free agents from the player list.
+ * Keeps rostered players untouched.
+ */
+export function cullUnsignedFreeAgents(
+  players: GmPlayer[],
+  opts?: { soft?: boolean }
+): {
+  players: GmPlayer[];
+  retired: GmPlayer[];
+} {
+  const retire = opts?.soft ? shouldRetireBeforeMarket : shouldRetireUnsigned;
+  const retired: GmPlayer[] = [];
+  let kept = players.filter((player) => {
+    if (!retire(player)) return true;
+    retired.push(player);
+    return false;
+  });
+
+  // Soft cap only on the post-market pass so FA still has bodies to sign.
+  if (!opts?.soft) {
+    const unsigned = kept.filter((player) => player.teamId == null);
+    if (unsigned.length > MAX_UNSIGNED_FREE_AGENTS) {
+      const dropCount = unsigned.length - MAX_UNSIGNED_FREE_AGENTS;
+      const weakest = [...unsigned].sort((a, b) => {
+        const score = (player: GmPlayer) =>
+          overallOf(player) * 2 - Math.max(0, player.age - 24);
+        return score(a) - score(b);
+      });
+      const drop = new Set(weakest.slice(0, dropCount).map((player) => player.id));
+      kept = kept.filter((player) => {
+        if (!drop.has(player.id)) return true;
+        retired.push(player);
+        return false;
+      });
+    }
+  }
+
+  return { players: kept, retired };
+}
+
 /**
  * Finish a draft that is already over, age the league once, and open the market.
  * Safe to call when the phase is already free agency.
@@ -120,32 +187,54 @@ export function enterFreeAgency(state: GmLeagueState): GmLeagueState {
   const coachByTeam = Object.fromEntries(
     drafted.teams.map((team) => [team.id, coachEffect(team).development])
   );
+  const developerByTeam = Object.fromEntries(
+    drafted.teams.map((team) => [
+      team.id,
+      team.staff.developer
+        ? { knack: team.staff.developer.knack, touch: team.staff.developer.touch }
+        : null,
+    ])
+  );
   const aged = developPlayers(
     drafted.players,
     true,
     coachByTeam,
-    playoffGamesByPlayer(drafted)
-  ).map((player) => restoreRookieYear(resolveExpiredDeal(player), drafted.season));
-  const jumps = offseasonJumpNote(drafted.players, aged, drafted);
-  const freeAgents = aged
+    playoffGamesByPlayer(drafted),
+    developerByTeam
+  ).map((player) =>
+    restoreRookieYear(releaseExpiredWithoutOption(player), drafted.season)
+  );
+  // Light pass only — leave the cheap veterans on the market for roster fill.
+  const { players: culled, retired } = cullUnsignedFreeAgents(aged, { soft: true });
+  const jumps = offseasonJumpNote(drafted.players, culled, drafted);
+  const freeAgents = culled
     .filter((player) => player.teamId == null)
     .map((player) => player.id);
   const released = freeAgents.length;
+  const retirementNote =
+    retired.length > 0
+      ? news(
+          drafted,
+          "Careers end",
+          `${retired.length} unsigned player${retired.length === 1 ? "" : "s"} left the game instead of hanging on the market.`
+        )
+      : null;
 
   return {
     ...drafted,
     phase: "free_agency",
-    players: aged,
+    players: culled,
     freeAgents,
     draftPool: [],
-    faMarket: emptyFaMarket(),
-    teams: drafted.teams.map((team) => ageStaff(autoSetLineup(team, aged))),
+    faMarket: emptyFaMarket(drafted.season * 7919 + drafted.day),
+    teams: drafted.teams.map((team) => ageStaff(autoSetLineup(team, culled))),
     news: [
       news(
         drafted,
-        "The moratorium is open",
-        `${released} players hit the market. Pitch deals now. Signings lock when the window opens. Team options on useful players were picked up. Stars declined player options.`
+        "Offseason desk opens",
+        `${released} players are already unsigned. Resolve contract options and qualifying offers first; the moratorium follows.`
       ),
+      ...(retirementNote ? [retirementNote] : []),
       ...(jumps ? [jumps] : []),
       ...drafted.news,
     ].slice(0, 50),
@@ -173,6 +262,12 @@ export function startNextSeason(state: GmLeagueState): GmLeagueState {
   const summer =
     state.phase === "free_agency" ? state : enterFreeAgency(state);
   const filled = runCpuFreeAgency(summer, { includeUser: false });
+  // Anyone still unsigned after the market closes gets one more retirement pass
+  // so undrafted leftovers and ignored vets do not pile up year after year.
+  const { players: thinned } = cullUnsignedFreeAgents(filled.players);
+  const openIds = new Set(
+    thinned.filter((player) => player.teamId == null).map((player) => player.id)
+  );
   const season = filled.season + 1;
   const settings = settingsForSeason(season, filled.settings);
   const fresh = createGeneratedLeague({
@@ -186,8 +281,8 @@ export function startNextSeason(state: GmLeagueState): GmLeagueState {
     .filter((player) => fresh.draftPool.includes(player.id))
     .map((player, index) => sealProspect(player, userLevel, index, rng, userScout));
   const carried = advanceBirdRights(
-    filled.players.filter(
-      (player) => player.teamId != null || filled.freeAgents.includes(player.id)
+    thinned.filter(
+      (player) => player.teamId != null || openIds.has(player.id)
     ),
     season
   ).map((player) => ({
@@ -231,6 +326,14 @@ export function startNextSeason(state: GmLeagueState): GmLeagueState {
     combineDone: false,
     tradeDeadlinePassed: false,
     incomingOffer: undefined,
+    declinedOffers: [],
+    lastOfferResolvedDay: undefined,
+    teamBuildingCheckpoint: undefined,
+    seenCheckpoints: [],
+    checkpointSnooze: undefined,
+    scoutingFocusPrompt: undefined,
+    scoutingFocus: undefined,
+    seenScoutingMonths: [],
     faMarket: undefined,
     news: [
       news(
@@ -247,6 +350,9 @@ export function noteTradeDeadline(league: GmLeagueState): GmLeagueState {
   if (league.tradeDeadlinePassed || league.phase !== "regular") return league;
   const deadline = tradeDeadlineDay(league.schedule);
   if (league.day < deadline) return league;
+  // Wait until the user has answered the team-building pause.
+  if (league.teamBuildingCheckpoint?.kind === "trade_deadline") return league;
+  if (!(league.seenCheckpoints ?? []).includes("trade_deadline")) return league;
   const traded = cpuDeadlineTrades(league);
   const deals = traded.tradeLog.length - league.tradeLog.length;
   const closed =

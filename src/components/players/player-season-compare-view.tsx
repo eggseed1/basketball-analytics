@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
 
 import type {
   PlayerSeasonComparison,
@@ -135,6 +136,7 @@ export function SeasonComparePicker({
   seasonA?: string;
   seasonB?: string;
 }) {
+  const t = useTranslations("PlayerDetail");
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [a, setA] = useState(seasonA ?? seasons[seasons.length - 1] ?? "");
@@ -154,7 +156,7 @@ export function SeasonComparePicker({
   if (seasons.length < 2) {
     return (
       <p className="text-[14px] text-muted-foreground">
-        Need at least two career seasons to compare.
+        {t("compareNeedTwo")}
       </p>
     );
   }
@@ -162,7 +164,7 @@ export function SeasonComparePicker({
   return (
     <div className="flex flex-wrap items-end gap-3">
       <label className="flex flex-col gap-1 text-[12px] font-semibold text-muted-foreground">
-        First season
+        {t("compareFirstSeason")}
         <select
           className="rounded-md border border-border bg-background px-3 py-2 text-[14px] font-semibold text-foreground"
           value={a}
@@ -176,10 +178,10 @@ export function SeasonComparePicker({
         </select>
       </label>
       <span className="pb-2 text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
-        vs
+        {t("compareVs")}
       </span>
       <label className="flex flex-col gap-1 text-[12px] font-semibold text-muted-foreground">
-        Second season
+        {t("compareSecondSeason")}
         <select
           className="rounded-md border border-border bg-background px-3 py-2 text-[14px] font-semibold text-foreground"
           value={b}
@@ -198,7 +200,7 @@ export function SeasonComparePicker({
         disabled={pending || !a || !b || a === b}
         className="rounded-md bg-foreground px-4 py-2 text-[14px] font-bold text-background disabled:opacity-50"
       >
-        {pending ? "Loading…" : "Compare"}
+        {pending ? t("compareLoading") : t("compareButton")}
       </button>
     </div>
   );

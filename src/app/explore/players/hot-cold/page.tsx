@@ -1,7 +1,9 @@
+import { getLocale, getTranslations } from "next-intl/server";
 import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { HotColdColumns } from "@/components/explore/hot-cold-board";
 import { PageHeader } from "@/components/layout/page-header";
 import { SegmentedLinks } from "@/components/ui/segmented-links";
+import { formatGameCalendarDate } from "@/i18n/format-date";
 import {
   STAT_DETECTIVE_METRICS,
   isStatDetectiveMetricId,
@@ -30,13 +32,8 @@ function one(value: string | string[] | undefined): string | undefined {
   return Array.isArray(value) ? value[0] : value;
 }
 
-function formatDate(iso: string): string {
-  return new Date(`${iso}T12:00:00Z`).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    timeZone: "UTC",
-  });
+function formatDate(iso: string, locale: string): string {
+  return formatGameCalendarDate(iso, locale, "monthDayYear") ?? iso;
 }
 
 export default async function HotColdPage({
@@ -44,6 +41,8 @@ export default async function HotColdPage({
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
+  const t = await getTranslations("Explore");
+  const locale = await getLocale();
   const params = await searchParams;
   const rawWindow = one(params.window);
   const rawMetric = one(params.metric);
@@ -60,35 +59,34 @@ export default async function HotColdPage({
     <main data-motion-page className="site-shell flex flex-col gap-6 py-6 sm:py-8">
       <MotionReveal />
       <PageHeader
-        title="Hot & Cold"
-        subtitle={
-          season
-            ? "Players running well above or below their own usual numbers over a recent stretch of games. Each player is measured against himself, not the league."
-            : "No game logs are loaded for a comparison yet."
-        }
+        title={t("hotColdTitle")}
+        subtitle={season ? t("hotColdSubtitle") : t("hotColdEmpty")}
         meta={
           season ? (
             <span className={cn(type.bodySm, "text-foreground")}>
-              {season} regular season
-              {throughDate ? `, games through ${formatDate(throughDate)}` : ""}
+              {throughDate
+                ? t("hotColdMetaThrough", {
+                    season,
+                    date: formatDate(throughDate, locale),
+                  })
+                : t("hotColdMeta", { season })}
             </span>
           ) : null
         }
         about={
           season ? (
             <p>
-              Players need 20 games and 18 minutes a game on both sides of the comparison.
-              Playoffs are left out, and players with thin samples stay off the board.{" "}
+              {t("hotColdAbout")}{" "}
               {metricMeta.honesty}
             </p>
           ) : null
         }
-        aboutLabel="How this works"
+        aboutLabel={t("howThisWorks")}
       />
 
       <div className="flex flex-wrap items-center gap-3">
         <SegmentedLinks
-          label="Stat"
+          label={t("statLabel")}
           value={metric}
           options={METRIC_ORDER.map((id) => ({
             id,
@@ -97,7 +95,7 @@ export default async function HotColdPage({
           }))}
         />
         <SegmentedLinks
-          label="Games compared"
+          label={t("gamesCompared")}
           value={active.id}
           options={windows.map((window) => ({
             id: window.id,

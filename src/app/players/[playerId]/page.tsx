@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 
 import { PageAtmosphere } from "@/components/brand/page-atmosphere";
@@ -209,6 +210,7 @@ function uniqueEspnIdForBrefName(
 
 export async function generateMetadata({ params }: PlayerPageProps) {
   await yieldForStreaming();
+  const t = await getTranslations("PlayerDetail");
   const { playerId: rawId } = await params;
   const playerId = resolvePublicPlayerId(rawId);
   const [player, identity] = await Promise.all([
@@ -223,12 +225,18 @@ export async function generateMetadata({ params }: PlayerPageProps) {
   const canonicalId =
     identity?.espnId ?? uniqueEspnIdForBrefName(playerId, displayName) ?? playerId;
   return {
-    title: displayName ? `${displayName} Stats and Advanced Metrics` : "Player",
+    title: displayName
+      ? t("metaStatsTitle", { name: displayName })
+      : t("metaPlayerFallback"),
     alternates: { canonical: `/players/${encodeURIComponent(canonicalId)}` },
     description: displayName
       ? `${displayName} stats by season, game log, shot chart, on/off splits, DRBL impact rating and contract.`
       : undefined,
-    ...shareImageMetadata("players", canonicalId, displayName ?? "Player"),
+    ...shareImageMetadata(
+      "players",
+      canonicalId,
+      displayName ?? t("metaPlayerFallback")
+    ),
   };
 }
 
@@ -242,6 +250,7 @@ export default async function PlayerPage({
   searchParams,
 }: PlayerPageProps) {
   await yieldForStreaming();
+  const t = await getTranslations("PlayerDetail");
   const { playerId: rawId } = await params;
   const sp = await searchParams;
   // Resolve legacy bref: peer-board ids to ESPN athlete ids (no redirect required).
@@ -394,7 +403,7 @@ export default async function PlayerPage({
           ? multiTeamSeasonLabel(primaryTeam, career)
           : seasonTeamCtx.displayLabel ??
             (primaryTeam && !brandableTeamKey(primaryTeam.teamId)
-              ? "Team unavailable"
+              ? t("teamUnavailable")
               : null);
   const lastCareerSeason =
     masterPlayer?.lastSeason ??
@@ -642,7 +651,7 @@ export default async function PlayerPage({
 
         {view === "sentiment" ? (
           <Suspense
-            fallback={<PlayerBoardSkeleton label="Loading sentiment…" />}
+            fallback={<PlayerBoardSkeleton label={t("loadingSentiment")} />}
           >
             <PlayerSentimentTabIslandDeferred
               playerId={playerId}
@@ -656,7 +665,7 @@ export default async function PlayerPage({
 
         {view === "games" ? (
           <Suspense
-            fallback={<PlayerBoardSkeleton label="Loading game log…" />}
+            fallback={<PlayerBoardSkeleton label={t("loadingGameLog")} />}
           >
             <PlayerGamesIslandDeferred
               playerId={playerId}
@@ -670,7 +679,7 @@ export default async function PlayerPage({
         {view === "overview" || view === "career" ? (
           (slimWorker || notYetPlayed) && view === "overview" ? null : (
             <Suspense
-              fallback={<PlayerBoardSkeleton label="Loading career…" />}
+              fallback={<PlayerBoardSkeleton label={t("loadingCareer")} />}
             >
               <PlayerCareerIsland
                 playerId={playerId}
@@ -689,7 +698,7 @@ export default async function PlayerPage({
         {view === "career" && !slimWorker ? (
           <Suspense
             fallback={
-              <PlayerBoardSkeleton label="Loading career analysis…" />
+              <PlayerBoardSkeleton label={t("loadingCareerAnalysis")} />
             }
           >
             <PlayerCareerAnalysisIslandDeferred
@@ -704,7 +713,7 @@ export default async function PlayerPage({
 
         {view === "overview" && !notYetPlayed ? (
           <Suspense
-            fallback={<PlayerBoardSkeleton label="Loading statistics…" />}
+            fallback={<PlayerBoardSkeleton label={t("loadingStatistics")} />}
           >
             <div className="flex flex-col gap-3">
               <PlayerStatsIsland
@@ -747,7 +756,7 @@ export default async function PlayerPage({
 
         {view === "overview" ? (
           <Suspense
-            fallback={<PlayerBoardSkeleton label="Loading similar players…" />}
+            fallback={<PlayerBoardSkeleton label={t("loadingSimilar")} />}
           >
             <PlayerSimilarIsland
               playerId={playerId}
@@ -765,15 +774,14 @@ export default async function PlayerPage({
           <section
             id="ask"
             className="scroll-mt-16 flex flex-col gap-3"
-            aria-label="Ask DRBL"
+            aria-label={t("askAria")}
           >
             <div>
               <h2 className="text-[20px] font-bold tracking-tight">
-                Ask DRBL about {displayName}
+                {t("askTitle", { name: displayName })}
               </h2>
               <p className="text-[14px] text-muted-foreground">
-                Prefills supported peak, rank, season-board, and compare queries
-                only.
+                {t("askHint")}
               </p>
             </div>
             <div className="sports-card p-4 sm:p-5">
@@ -790,7 +798,7 @@ export default async function PlayerPage({
 
         {view === "shooting" ? (
           <Suspense
-            fallback={<PlayerBoardSkeleton label="Loading shot chart…" />}
+            fallback={<PlayerBoardSkeleton label={t("loadingShotChart")} />}
           >
             <PlayerVisualizationsIslandDeferred
               playerId={playerId}
@@ -808,7 +816,7 @@ export default async function PlayerPage({
         ) : null}
 
         {view === "onoff" ? (
-          <Suspense fallback={<PlayerBoardSkeleton label="Loading on/off…" />}>
+          <Suspense fallback={<PlayerBoardSkeleton label={t("loadingOnOff")} />}>
             <GlassSurface effect="css" className="p-4 sm:p-6" honor={honor}>
               <PlayerOnOffIsland
                 playerId={playerId}
@@ -822,7 +830,7 @@ export default async function PlayerPage({
 
         {view === "splits" || view === "advanced" || view === "highs" ? (
           <Suspense
-            fallback={<PlayerBoardSkeleton label="Loading deep stats…" />}
+            fallback={<PlayerBoardSkeleton label={t("loadingDeepStats")} />}
           >
             <GlassSurface effect="css" className="p-1 sm:p-2" honor={honor}>
               <PlayerStatDepthIslandDeferred

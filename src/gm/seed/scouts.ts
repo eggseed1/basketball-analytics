@@ -1,5 +1,11 @@
-import type { GmPosition } from "@/gm/types";
+import type { GmPlayer, GmPosition } from "@/gm/types";
 import { pick, randInt, clamp, createRng, uid } from "@/gm/engine/rng";
+import {
+  defaultKnackForExpertise,
+  scoutKnackMatchBonus,
+  type ScoutKnackId,
+  SCOUT_KNACKS,
+} from "@/gm/seed/staff-knacks";
 
 export type ScoutExpertise =
   | "guards"
@@ -16,11 +22,18 @@ export interface GmScout {
   /** Years on the road / in rooms. */
   yearsExperience: number;
   expertise: ScoutExpertise;
+  /** Signature passive — the spike you hire for. */
+  knack?: ScoutKnackId;
   /** 1-5 eye for talent (drives fog). */
   eye: number;
   /** Soft salary cost for hiring UI. */
   salaryM: number;
   bio: string;
+}
+
+export function ensureScoutKnack(scout: GmScout): GmScout {
+  if (scout.knack && SCOUT_KNACKS[scout.knack]) return scout;
+  return { ...scout, knack: defaultKnackForExpertise(scout.expertise) };
 }
 
 const EXPERTISE_LABEL: Record<ScoutExpertise, string> = {
@@ -81,20 +94,27 @@ export function makeScout(rng: () => number, force?: Partial<GmScout>): GmScout 
   const expertise = force?.expertise ?? pick(rng, [
     "guards", "wings", "bigs", "defense", "offense", "international", "general",
   ] as ScoutExpertise[]);
+  const knack =
+    force?.knack ??
+    (rng() < 0.72
+      ? defaultKnackForExpertise(expertise)
+      : pick(rng, Object.keys(SCOUT_KNACKS) as ScoutKnackId[]));
   const years = force?.yearsExperience ?? randInt(rng, 3, 28);
   const eye = force?.eye ?? clamp(
     Math.round(1 + years / 7 + (rng() - 0.35) * 2),
     1,
     5
   );
+  const knackBlurb = SCOUT_KNACKS[knack]?.blurb;
   return {
     id: force?.id ?? uid("scout"),
     name: force?.name ?? `${pick(rng, FIRST)} ${pick(rng, LAST)}`,
     yearsExperience: years,
     expertise,
+    knack,
     eye,
     salaryM: force?.salaryM ?? Math.round((0.4 + eye * 0.35 + years * 0.02) * 10) / 10,
-    bio: force?.bio ?? pick(rng, BIOS[expertise]),
+    bio: force?.bio ?? `${pick(rng, BIOS[expertise])} ${knackBlurb}`,
   };
 }
 
@@ -128,17 +148,19 @@ export function defaultTeamScout(seed: number): GmScout {
 export function scoutMatchBonus(
   scout: GmScout | undefined | null,
   position: GmPosition,
-  focus: "overall" | "offense" | "defense" | "shooting" | "creation" | "athleticism" | "feel"
+  focus: "overall" | "offense" | "defense" | "shooting" | "creation" | "athleticism" | "feel",
+  player?: GmPlayer | null
 ): number {
   if (!scout) return 0;
+  const withKnack = ensureScoutKnack(scout);
   let bonus = 0;
-  const exp = scout.expertise;
+  const exp = withKnack.expertise;
   if (exp === "general") bonus += 0.15;
-  if (exp === "guards" && (position === "PG" || position === "SG")) bonus += 0.55;
+  if (exp === "guards" && (position === "PG" || position === "SG")) bonus += 0.4;
   if (exp === "wings" && (position === "SF" || position === "SG" || position === "PF"))
-    bonus += 0.5;
-  if (exp === "bigs" && (position === "PF" || position === "C")) bonus += 0.55;
-  if (exp === "defense" && (focus === "defense" || focus === "overall")) bonus += 0.45;
+    bonus += 0.35;
+  if (exp === "bigs" && (position === "PF" || position === "C")) bonus += 0.4;
+  if (exp === "defense" && (focus === "defense" || focus === "overall")) bonus += 0.3;
   if (
     exp === "offense" &&
     (focus === "offense" ||
@@ -146,11 +168,14 @@ export function scoutMatchBonus(
       focus === "creation" ||
       focus === "overall")
   ) {
-    bonus += 0.45;
+    bonus += 0.3;
   }
-  if (exp === "international") bonus += 0.2;
+  if (exp === "international") bonus += 0.12;
+  if (player) {
+    bonus += scoutKnackMatchBonus(withKnack.knack, player, focus);
+  }
   // Experience steadies the eye
-  bonus += clamp(scout.yearsExperience / 40, 0, 0.35);
+  bonus += clamp(withKnack.yearsExperience / 40, 0, 0.35);
   return bonus;
 }
 

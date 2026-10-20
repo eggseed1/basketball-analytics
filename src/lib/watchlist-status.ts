@@ -50,12 +50,31 @@ export type WatchInjury = {
   returnDate: string | null;
 };
 
+export type WatchStanding = {
+  conference: "East" | "West";
+  rank: number;
+  wins: number;
+  losses: number;
+  streak: string | null;
+  lastTen: string | null;
+  differential: number | null;
+};
+
+/** One expandable insight row inside a watchlist pin. */
+export type WatchInsight = {
+  id: string;
+  text: string;
+  tone?: "neutral" | "alert" | "positive" | "caution";
+  href?: string | null;
+};
+
 export type WatchTeamStatus = {
   kind: "team";
   id: string;
   last: WatchGame | null;
   live: WatchGame | null;
   next: WatchGame | null;
+  standing: WatchStanding | null;
 };
 
 export type WatchPlayerStatus = {
@@ -210,6 +229,144 @@ export function trendText(t: WatchScoringTrend): string {
 export function drblText(d: WatchDrbl): string {
   const now = `DRBL/100 ${signed1(d.value)} in ${d.season}`;
   return d.prior ? `${now}, ${signed1(d.prior.value)} in ${d.prior.season}` : now;
+}
+
+/** "3rd in West · 4-2 · W2". */
+export function standingText(s: WatchStanding): string {
+  const ord =
+    s.rank === 1 ? "1st" : s.rank === 2 ? "2nd" : s.rank === 3 ? "3rd" : `${s.rank}th`;
+  const parts = [`${ord} in ${s.conference}`, `${s.wins}-${s.losses}`];
+  if (s.streak) parts.push(s.streak);
+  return parts.join(" · ");
+}
+
+function insightToneForResult(g: WatchGame): WatchInsight["tone"] {
+  if (g.teamScore == null || g.opponentScore == null) return "neutral";
+  if (g.teamScore > g.opponentScore) return "positive";
+  if (g.teamScore < g.opponentScore) return "caution";
+  return "neutral";
+}
+
+function insightToneForTrend(t: WatchScoringTrend): WatchInsight["tone"] {
+  const delta = t.recentPpg - t.seasonPpg;
+  if (delta >= 2) return "positive";
+  if (delta <= -2) return "caution";
+  return "neutral";
+}
+
+/**
+ * Collapsed one-liner for a pin. Prefer the most urgent signal.
+ */
+export function watchlistHeadline(status: WatchStatus): string {
+  if (status.kind === "player" && status.injury?.status === "out") {
+    return status.injury.injury
+      ? `Out · ${status.injury.injury}`
+      : `Out · ${status.injury.statusLabel}`;
+  }
+  if (status.live) return `Live ${opponentText(status.live)}`;
+  if (status.kind === "player" && status.injury?.status === "day-to-day") {
+    return status.injury.injury
+      ? `Day-to-day · ${status.injury.injury}`
+      : "Day-to-day";
+  }
+  if (status.last) {
+    const result = resultText(status.last);
+    if (status.kind === "player" && status.line && status.line.gameId === status.last.gameId) {
+      const line = playerLineText(status.line);
+      return result ? `${line} · ${result}` : line;
+    }
+    if (result) return result;
+  }
+  if (status.kind === "team" && status.standing) return standingText(status.standing);
+  if (status.next) return `Next ${opponentText(status.next)}`;
+  return "No recent games yet";
+}
+
+/**
+ * Expanded insight rows for a pin. Games link to `/games/{id}` when present.
+ */
+export function watchlistInsights(status: WatchStatus): WatchInsight[] {
+  const out: WatchInsight[] = [];
+
+  if (status.kind === "player" && status.injury) {
+    out.push({
+      id: "injury",
+      text: status.injury.injury
+        ? `${status.injury.statusLabel}: ${status.injury.injury}`
+        : status.injury.statusLabel,
+      tone: status.injury.status === "out" ? "alert" : "caution",
+    });
+  }
+
+  if (status.live) {
+    out.push({
+      id: "live",
+      text: `Live ${opponentText(status.live)}`,
+      tone: "alert",
+      href: `/games/${status.live.gameId}`,
+    });
+  }
+
+  if (status.last && !status.live) {
+    const result = resultText(status.last);
+    const line =
+      status.kind === "player" && status.line?.gameId === status.last.gameId
+        ? playerLineText(status.line)
+        : null;
+    out.push({
+      id: "last",
+      text: line && result ? `Last: ${line} · ${result}` : result ? `Last: ${result}` : "Last game logged",
+      tone: insightToneForResult(status.last),
+      href: `/games/${status.last.gameId}`,
+    });
+  }
+
+  if (status.next && !status.live) {
+    out.push({
+      id: "next",
+      text: `Up next ${opponentText(status.next)}`,
+      tone: "neutral",
+      href: `/games/${status.next.gameId}`,
+    });
+  }
+
+  if (status.kind === "team" && status.standing) {
+    const s = status.standing;
+    const bits = [standingText(s)];
+    if (s.lastTen) bits.push(`L10 ${s.lastTen}`);
+    if (s.differential != null && Number.isFinite(s.differential)) {
+      bits.push(`${s.differential > 0 ? "+" : ""}${s.differential.toFixed(1)} diff`);
+    }
+    out.push({
+      id: "standing",
+      text: bits.join(" · "),
+      tone: s.rank <= 6 ? "positive" : s.rank >= 11 ? "caution" : "neutral",
+      href: "/standings",
+    });
+  }
+
+  if (status.kind === "player" && status.trend) {
+    out.push({
+      id: "trend",
+      text: trendText(status.trend),
+      tone: insightToneForTrend(status.trend),
+    });
+  }
+
+  if (status.kind === "player" && status.drbl) {
+    out.push({
+      id: "drbl",
+      text: drblText(status.drbl),
+      tone: status.drbl.value >= 1 ? "positive" : status.drbl.value <= -1 ? "caution" : "neutral",
+      href: `/players/${encodeURIComponent(status.id)}`,
+    });
+  }
+
+  if (!out.length) {
+    out.push({ id: "empty", text: "Nothing new on the board yet.", tone: "neutral" });
+  }
+
+  return out;
 }
 
 /** Comma-separated ids from a query param, deduped and capped. */

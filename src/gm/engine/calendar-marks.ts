@@ -7,7 +7,8 @@ export type CalendarMarkKind =
   | "cup"
   | "deadline"
   | "break"
-  | "finale";
+  | "finale"
+  | "injury";
 
 export type CalendarMark = {
   iso: string;

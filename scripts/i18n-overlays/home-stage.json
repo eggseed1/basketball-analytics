@@ -1,0 +1,25 @@
+{
+  "en": {
+    "GmUi": {
+      "homeAwardsBlurb": "{season} ballot is locked. Flip through the winners, then open the bracket.",
+      "homeAwardsContinue": "Continue to postseason",
+      "homeAwardsEyebrow": "Award night",
+      "homeAwardsNext": "Next",
+      "homeAwardsPrev": "Previous",
+      "homeAwardsTeam": "First team",
+      "homeAwardsTitle": "Season awards",
+      "homeAwardsWinner": "Winner",
+      "homeAwardsYours": "your club",
+      "homeChampionContinue": "Continue to draft",
+      "homeChampionCore": "Core",
+      "homeChampionEyebrow": "{season} champions",
+      "homeChampionFmvp": "Finals MVP",
+      "homeChampionMissing": "The Finals are over, but the splash is missing. Continue to the draft desk.",
+      "homeChampionSubtitle": "Won the Finals {score}",
+      "homeChampionTitle": "Champions",
+      "homeChampionYours": "Your franchise.",
+      "homePlayoffsBlurb": "The bracket is the schedule. Sim a game, a round, or the whole run.",
+      "homeSummerBlurb": "Draft, free agency, and the next tip live here until you start the new year."
+    }
+  }
+}

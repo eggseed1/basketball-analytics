@@ -20,99 +20,25 @@ import {
 } from "@/data/providers/nba/bref-player-page";
 import { formatNumber, formatOrdinal, formatPct } from "@/lib/format";
 import { teamChartColor } from "@/lib/nba-brand";
+import {
+  LUKA_COHORT_RULE,
+  type LukaBrefProfile,
+  type LukaHeroCard,
+  type LukaLedgerRow,
+  type LukaPercentileRow,
+  type LukaTab,
+  type LukaTrendPoint,
+} from "@/data/queries/luka-bref-profile-types";
 
-export const LUKA_COHORT_RULE =
-  "Qualified: 20+ games or 500+ minutes, same season and season type, combined-season grain.";
-
-export type LukaTab = "overview" | "trends" | "shooting" | "all-stats";
-
-export type LukaHeroCard = {
-  key: string;
-  label: string;
-  display: string;
-  unit: string;
-  definition: string;
-  percentile: number | null;
-  rank: number | null;
-  cohortSize: number | null;
-  deltaDisplay: string | null;
-  qualified: boolean;
-  percentilesOnStint: boolean;
-};
-
-export type LukaPercentileRow = {
-  id: string;
-  group: string;
-  label: string;
-  display: string;
-  percentile: number;
-  fillPercentile: number;
-  rank: number;
-  cohortSize: number;
-  lowerIsBetter: boolean;
-};
-
-export type LukaLedgerRow = {
-  season: string;
-  teamAbbr: string;
-  combined: boolean;
-  gamesPlayed: number | null;
-  gamesStarted: number | null;
-  minutes: number | null;
-  points: number | null;
-  rebounds: number | null;
-  assists: number | null;
-  fieldGoalPct: number | null;
-  threePointPct: number | null;
-  freeThrowPct: number | null;
-  trueShootingPct: number | null;
-  effectiveFieldGoalPct: number | null;
-  usagePct: number | null;
-  turnoverPct: number | null;
-  per: number | null;
-  bpm: number | null;
-  vorp: number | null;
-  winShares: number | null;
-};
-
-export type LukaTrendPoint = {
-  season: string;
-  value: number;
-  teamId: string;
-  teamAbbr: string;
-  color: string;
-};
-
-export type LukaBrefProfile = {
-  espnId: string;
-  nbaId: string;
-  displayName: string;
-  bio: BrefPlayerPage["bio"];
-  scrapedAt: string;
-  season: string;
-  seasonType: BrefSeasonType;
-  team: string;
-  rate: BrefRateMode;
-  tab: LukaTab;
-  seasons: string[];
-  teamOptions: string[];
-  viewingLine: string;
-  currentLine: string;
-  viewingAge: number | null;
-  viewingPosition: string | null;
-  rateUnit: string;
-  hero: LukaHeroCard[];
-  percentileRows: LukaPercentileRow[] | null;
-  percentileBlockedReason: string | null;
-  trends: {
-    pts: LukaTrendPoint[];
-    ts: LukaTrendPoint[];
-    usg: LukaTrendPoint[];
-    bpm: LukaTrendPoint[];
-  };
-  ledger: LukaLedgerRow[];
-  emptyPlayoffs: boolean;
-};
+export {
+  LUKA_COHORT_RULE,
+  type LukaBrefProfile,
+  type LukaHeroCard,
+  type LukaLedgerRow,
+  type LukaPercentileRow,
+  type LukaTab,
+  type LukaTrendPoint,
+} from "@/data/queries/luka-bref-profile-types";
 
 const TABS: LukaTab[] = ["overview", "trends", "shooting", "all-stats"];
 const RATES: BrefRateMode[] = ["perGame", "totals", "per36", "per100"];

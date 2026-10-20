@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
 
 import type {
   PlayerSeasonRanking,
@@ -87,6 +88,7 @@ export function SeasonRankPicker({
   careerSeasons: string[];
   selected: string[];
 }) {
+  const t = useTranslations("PlayerDetail");
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [picked, setPicked] = useState<string[]>(selected);
@@ -116,11 +118,14 @@ export function SeasonRankPicker({
       <div className="flex flex-wrap items-end justify-between gap-2">
         <div>
           <h2 className="text-[16px] font-bold tracking-tight">
-            Selected seasons
+            {t("rankSelectedTitle")}
           </h2>
           <p className="text-[12px] text-muted-foreground">
-            Pick {PLAYER_SEASON_RANK_MIN}-{PLAYER_SEASON_RANK_MAX} regular-season
-            years ({picked.length} selected).
+            {t("rankSelectedHint", {
+              min: PLAYER_SEASON_RANK_MIN,
+              max: PLAYER_SEASON_RANK_MAX,
+              count: picked.length,
+            })}
           </p>
         </div>
         <button
@@ -130,7 +135,7 @@ export function SeasonRankPicker({
           data-motion="chip"
           className="rounded-md bg-foreground px-4 py-2 text-[14px] font-bold text-background transition-colors hover:bg-foreground/85 disabled:opacity-50"
         >
-          {pending ? "Ranking…" : "Rank seasons"}
+          {pending ? t("rankingPending") : t("rankButton")}
         </button>
       </div>
       <div className="flex flex-wrap gap-2">

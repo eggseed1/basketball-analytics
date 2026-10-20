@@ -4,6 +4,7 @@
  * the viewer's zone after hydration (see `LocalTipTime`).
  */
 
+import { intlLocale } from "@/i18n/format-date";
 import { parseTipOffMs } from "@/lib/game-countdown";
 
 export const LEAGUE_TIME_ZONE = "America/New_York";
@@ -41,12 +42,16 @@ const OPTIONS: Record<TipTimeStyle, Intl.DateTimeFormatOptions> = {
 export function formatTipTime(
   tipOffAt: string | null | undefined,
   style: TipTimeStyle,
-  timeZone: string = LEAGUE_TIME_ZONE
+  timeZone: string = LEAGUE_TIME_ZONE,
+  locale?: string | null
 ): string | null {
   const ms = parseTipOffMs(tipOffAt);
   if (ms == null) return null;
   try {
-    return new Intl.DateTimeFormat("en-US", { ...OPTIONS[style], timeZone }).format(new Date(ms));
+    return new Intl.DateTimeFormat(intlLocale(locale), {
+      ...OPTIONS[style],
+      timeZone,
+    }).format(new Date(ms));
   } catch {
     return null;
   }
@@ -66,11 +71,15 @@ export function tipCalendarDate(tipOffAt: string | null | undefined, timeZone: s
  */
 export function scheduleTimeLabel(
   row: { tipOffAt: string | null; timeLabel: string | null; date?: string },
-  timeZone: string
+  timeZone: string,
+  locale?: string | null
 ): string | null {
-  const clock = formatTipTime(row.tipOffAt, "clockZone", timeZone);
+  const clock = formatTipTime(row.tipOffAt, "clockZone", timeZone, locale);
   if (!clock) return row.timeLabel;
   const localDay = tipCalendarDate(row.tipOffAt, timeZone);
   if (!row.date || !localDay || localDay === row.date.slice(0, 10)) return clock;
-  return `${clock} (${new Intl.DateTimeFormat("en-US", { weekday: "short", timeZone }).format(new Date(row.tipOffAt!))})`;
+  return `${clock} (${new Intl.DateTimeFormat(intlLocale(locale), {
+    weekday: "short",
+    timeZone,
+  }).format(new Date(row.tipOffAt!))})`;
 }

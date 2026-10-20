@@ -193,6 +193,30 @@ export function evaluateTrade(
   }
   const fromCash = cashIn(fromAssets);
   const toCash = cashIn(toAssets);
+  // Cash is a separate yearly limit (≈5.15% of cap). It never counts as
+  // trade salary. Second-apron teams cannot send cash at all.
+  const fromPayroll = teamPayrollM(
+    fromTeamId,
+    state.players,
+    fromTeam.deadMoney ?? []
+  );
+  const toPayroll = teamPayrollM(toTeamId, state.players, toTeam.deadMoney ?? []);
+  if (fromCash > 0 && fromPayroll >= state.settings.secondApronM) {
+    return {
+      ok: false,
+      reason: `${fromTeam.abbr} is over the second apron and cannot send cash.`,
+      fromValue: 0,
+      toValue: 0,
+    };
+  }
+  if (toCash > 0 && toPayroll >= state.settings.secondApronM) {
+    return {
+      ok: false,
+      reason: `${toTeam.abbr} is over the second apron and cannot send cash.`,
+      fromValue: 0,
+      toValue: 0,
+    };
+  }
   if (fromCash > teamCashM(fromTeam, state.settings) + 0.05) {
     return {
       ok: false,
@@ -377,7 +401,14 @@ function packageShape(assets: GmTradeAsset[]): string {
   return `${players}p${picks}k${cash}`;
 }
 
-/** Players, picks, and cash one club can put in a package. */
+/**
+ * Players and picks a club can put in a package.
+ *
+ * NBA cash considerations do not count toward salary matching. Real deals
+ * balance contracts with other contracts (and sweeten with picks). Cash is
+ * only a small consideration or a pick sweetener — never "player + money"
+ * as the way to make a trade fair or legal.
+ */
 function clubBundles(state: GmLeagueState, teamId: string): GmTradeAsset[][] {
   const team = state.teams.find((entry) => entry.id === teamId);
   if (!team) return [];
@@ -389,7 +420,11 @@ function clubBundles(state: GmLeagueState, teamId: string): GmTradeAsset[][] {
   const picks = [...team.draftPicks]
     .sort((a, b) => a.season - b.season || a.round - b.round)
     .slice(0, 8);
-  const limit = Math.min(cashLimitM(state.settings), teamCashM(team, state.settings));
+  const payroll = teamPayrollM(teamId, state.players, team.deadMoney ?? []);
+  const canSendCash = payroll < state.settings.secondApronM;
+  const limit = canSendCash
+    ? Math.min(cashLimitM(state.settings), teamCashM(team, state.settings))
+    : 0;
   const cashChoices = [Math.min(3, limit), limit].filter(
     (amount, index, list) => amount > 0 && list.indexOf(amount) === index
   );
@@ -403,12 +438,6 @@ function clubBundles(state: GmLeagueState, teamId: string): GmTradeAsset[][] {
         { type: "pick", id: pick.id },
       ]);
     }
-    for (const amount of cashChoices) {
-      bundles.push([
-        { type: "player", id: player.id },
-        { type: "cash", id: `cash-${amount}`, cashM: amount },
-      ]);
-    }
   }
   for (let i = 0; i < Math.min(players.length, 6); i += 1) {
     for (let j = i + 1; j < Math.min(players.length, 6); j += 1) {
@@ -418,7 +447,35 @@ function clubBundles(state: GmLeagueState, teamId: string): GmTradeAsset[][] {
       ]);
     }
   }
+  for (let i = 0; i < Math.min(picks.length, 5); i += 1) {
+    for (let j = i + 1; j < Math.min(picks.length, 5); j += 1) {
+      bundles.push([
+        { type: "pick", id: picks[i]!.id },
+        { type: "pick", id: picks[j]!.id },
+      ]);
+    }
+  }
+  // Cash alone (minimum consideration) or with a pick — not with a player.
+  for (const amount of cashChoices) {
+    bundles.push([{ type: "cash", id: `cash-${amount}`, cashM: amount }]);
+  }
+  for (const pick of picks.slice(0, 4)) {
+    for (const amount of cashChoices) {
+      bundles.push([
+        { type: "pick", id: pick.id },
+        { type: "cash", id: `cash-${amount}`, cashM: amount },
+      ]);
+    }
+  }
   return bundles;
+}
+
+function packageHasCash(assets: GmTradeAsset[]): boolean {
+  return assets.some((asset) => asset.type === "cash");
+}
+
+function packageHasPlayer(assets: GmTradeAsset[]): boolean {
+  return assets.some((asset) => asset.type === "player");
 }
 
 /** Cheapest fair way for `fromTeamId` to land `targetPlayerId` from `toTeamId`. */
@@ -440,6 +497,8 @@ function packagesToAcquire(
   const incoming: GmTradeAsset[] = [{ type: "player", id: targetPlayerId }];
   const bestByShape = new Map<string, { assets: GmTradeAsset[]; value: number }>();
   for (const outgoing of clubBundles(state, fromTeamId)) {
+    // Never propose player + cash as the path to land a contract.
+    if (packageHasCash(outgoing) && packageHasPlayer(outgoing)) continue;
     const verdict = evaluateTrade(state, fromTeamId, toTeamId, outgoing, incoming);
     if (!verdict.ok) continue;
     const shape = packageShape(outgoing);
@@ -449,7 +508,13 @@ function packagesToAcquire(
     }
   }
   return [...bestByShape.values()]
-    .sort((a, b) => a.value - b.value)
+    .sort((a, b) => {
+      // Prefer salary/pick packages over cash-only sweeteners.
+      const aCash = packageHasCash(a.assets) ? 1 : 0;
+      const bCash = packageHasCash(b.assets) ? 1 : 0;
+      if (aCash !== bCash) return aCash - bCash;
+      return a.value - b.value;
+    })
     .slice(0, 4)
     .map((entry) => ({
       partnerId: toTeamId,
@@ -488,18 +553,41 @@ export function findPlayerPackages(
   };
   const offered: GmTradeAsset[] = [{ type: "player", id: player.id }];
   const hits: PlayerPackage[] = [];
-  for (const club of shopping.teams) {
-    if (club.id === userTeamId || club.id.startsWith("as-")) continue;
+  const clubs = shopping.teams.filter(
+    (club) => club.id !== userTeamId && !club.id.startsWith("as-")
+  );
+  for (const club of clubs) {
     let best: GmTradeAsset[] | null = null;
     let bestValue = -1;
+    let bestUsesCash = true;
     for (const bundle of clubBundles(shopping, club.id)) {
+      if (packageHasCash(bundle) && packageHasPlayer(bundle)) continue;
       const verdict = evaluateTrade(shopping, userTeamId, club.id, offered, bundle);
-      if (!verdict.ok || verdict.toValue <= bestValue) continue;
-      bestValue = verdict.toValue;
-      best = bundle;
+      if (!verdict.ok) continue;
+      const usesCash = packageHasCash(bundle);
+      if (!best) {
+        best = bundle;
+        bestValue = verdict.toValue;
+        bestUsesCash = usesCash;
+        continue;
+      }
+      // Prefer contracts and picks over cash. Cash never salary-matches.
+      if (bestUsesCash && !usesCash) {
+        best = bundle;
+        bestValue = verdict.toValue;
+        bestUsesCash = false;
+        continue;
+      }
+      if (!bestUsesCash && usesCash) continue;
+      if (verdict.toValue > bestValue) {
+        best = bundle;
+        bestValue = verdict.toValue;
+      }
     }
     if (best) {
       hits.push({ partnerId: club.id, youSend: offered, youReceive: best });
+      // Eight partners is enough for the desk; stop hammering every club.
+      if (hits.length >= 8) break;
     }
   }
   hits.sort(
@@ -554,9 +642,22 @@ function fairOutgoing(
   const incoming: GmTradeAsset[] = [{ type: "player", id: target.id }];
   const tries: GmTradeAsset[][] = [];
 
-  for (const pick of picks.slice(0, 4)) {
+  // Sellers prefer futures. Lead with pick-heavy packages before peer swaps.
+  for (const pick of picks.slice(0, 5)) {
     tries.push([{ type: "pick", id: pick.id }]);
   }
+  for (let i = 0; i < Math.min(picks.length, 4); i += 1) {
+    for (let j = i + 1; j < Math.min(picks.length, 4); j += 1) {
+      tries.push([
+        { type: "pick", id: picks[i]!.id },
+        { type: "pick", id: picks[j]!.id },
+      ]);
+    }
+  }
+  const onBlock = new Set(
+    state.teams.find((team) => team.id === sellerId)?.tradeBlock ?? []
+  );
+  const blockBonus = onBlock.has(target.id) ? 14 : 0;
   for (const piece of surplus.slice(0, 6)) {
     const gap = playerStars(target) - playerStars(piece);
     if (gap < 0.25 || gap > 2.2) continue;
@@ -599,17 +700,54 @@ function fairOutgoing(
       if (!(sellerGetsFutures && sellerDelta >= -18 && buyerDelta >= 6)) continue;
     }
     const buyerDelta = fitDelta(state, buyerId, [target], outPlayers);
+    const pickCount = outgoing.filter((asset) => asset.type === "pick").length;
     const score =
       buyerDelta +
       wantScore(buyerProfile, target) -
       Math.abs(verdict.fromValue - verdict.toValue) * 0.4 +
-      (outgoing.some((asset) => asset.type === "pick") ? 8 : 0);
+      pickCount * 7 +
+      blockBonus;
     if (score > bestScore) {
       bestScore = score;
       best = outgoing;
     }
   }
   return best;
+}
+
+/**
+ * Sellers put soft contracts and aging surplus on the block.
+ * Buyers keep the list empty. Called before deadline sweeps.
+ */
+export function refreshTradeBlocks(state: GmLeagueState): GmLeagueState {
+  return {
+    ...state,
+    teams: state.teams.map((team) => {
+      if (team.id.startsWith("as-")) return team;
+      const stance = tradeStance(state, team.id);
+      if (stance === "buy") {
+        return { ...team, tradeBlock: [] };
+      }
+      const movable = movablePlayers(state, team.id, { max: 6 })
+        .filter((player) => {
+          if (stance === "sell") {
+            return (
+              player.age >= 27 ||
+              (player.contract?.yearsRemaining ?? 99) <= 2 ||
+              overallOf(player) < 76
+            );
+          }
+          // Stay: only clear surplus / expiring.
+          return (
+            ((player.contract?.yearsRemaining ?? 99) <= 1 && overallOf(player) < 80) ||
+            needRank(rosterProfile(state, team.id), player.position) >= 3
+          );
+        })
+        .slice(0, stance === "sell" ? 4 : 2)
+        .map((player) => player.id);
+      return { ...team, tradeBlock: movable };
+    }),
+  };
 }
 
 function deadlineCandidates(state: GmLeagueState): DeadlinePackage[] {
@@ -657,7 +795,7 @@ function deadlineCandidates(state: GmLeagueState): DeadlinePackage[] {
  * The user's roster is left alone. Each deal still has to clear evaluateTrade.
  */
 export function cpuDeadlineTrades(state: GmLeagueState): GmLeagueState {
-  let next = state;
+  let next = refreshTradeBlocks(state);
   const used = new Set<string>();
   let deals = 0;
 

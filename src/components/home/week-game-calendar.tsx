@@ -9,7 +9,14 @@ type StripGame = GameSummary & {
 };
 
 /** Horizontal week strip - this week's games, or upcoming previews when quiet. */
-export async function WeekGameCalendar({ season }: { season: string }) {
+export async function WeekGameCalendar({
+  season,
+  week,
+}: {
+  season: string;
+  /** NBA regular-season week number, shown next to the heading. */
+  week?: number | null;
+}) {
   let mode: "week" | "upcoming" = "week";
   let games: StripGame[] = [];
   let source: "live-espn" | "cached-espn" | "unavailable" | undefined;
@@ -29,7 +36,12 @@ export async function WeekGameCalendar({ season }: { season: string }) {
   return (
     <div className="flex flex-col gap-2">
       <ScoreboardFeedNotice source={source} warnings={warnings} />
-      <WeekGameCalendarClient season={season} mode={mode} games={games} />
+      <WeekGameCalendarClient
+        season={season}
+        mode={mode}
+        games={games}
+        week={week}
+      />
     </div>
   );
 }

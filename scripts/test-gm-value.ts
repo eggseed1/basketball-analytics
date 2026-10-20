@@ -1,9 +1,21 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { considerIncomingOffer, offerDay, offerIsFair } from "../src/gm/engine/offers";
+import {
+  considerIncomingOffer,
+  offerDay,
+  offerIsFair,
+  tradeMarketHeat,
+} from "../src/gm/engine/offers";
 import { evaluateTrade } from "../src/gm/engine/trades";
-import { contractSurplusM, pickStars, playerStars, projectedSlot, tradeStance } from "../src/gm/engine/value";
+import {
+  contractSurplusM,
+  draftSlotTradePoints,
+  pickStars,
+  playerStars,
+  projectedSlot,
+  tradeStance,
+} from "../src/gm/engine/value";
 import type { GmLeagueState, GmPlayer, GmTeam } from "../src/gm/types";
 
 function player(id: string, teamId: string, overall: number, age: number, salary = 12): GmPlayer {
@@ -56,6 +68,19 @@ function team(id: string, goal: "contend" | "tank" = "contend"): GmTeam {
   } as GmTeam;
 }
 
+test("draft slot curve prices #1 far above the rest of the lottery", () => {
+  const one = draftSlotTradePoints(1);
+  const two = draftSlotTradePoints(2);
+  const ten = draftSlotTradePoints(10);
+  const thirty = draftSlotTradePoints(30);
+  assert.ok(one / two >= 1.8, `#1 should be ~2× #2 (got ${one}/${two})`);
+  assert.ok(one / ten >= 5, `#1 should be ≥5× #10 (got ${one}/${ten})`);
+  assert.ok(one / thirty >= 15, `#1 should dwarf a late first (got ${one}/${thirty})`);
+  assert.ok(two > draftSlotTradePoints(5));
+  assert.ok(draftSlotTradePoints(5) > ten);
+  assert.ok(ten > draftSlotTradePoints(20));
+});
+
 test("stars follow overall and age, and the contract is a separate surplus", () => {
   const star = player("star", "bos", 92, 24, 35);
   const prospect = player("kid", "bos", 78, 20, 8);
@@ -88,7 +113,7 @@ test("a bad team's pick projects earlier than a good team's pick", () => {
       bos: { teamId: "bos", wins: 26, losses: 26, confWins: 0, confLosses: 0, pointsFor: 0, pointsAgainst: 0 },
     },
     phase: "regular",
-    day: 14,
+    day: 100,
     news: [],
     draftPool: [],
     tradeLog: [],
@@ -111,31 +136,65 @@ test("a bad team's pick projects earlier than a good team's pick", () => {
   for (const row of league.players) {
     if (row.teamId === "bos" && row.position === "C") row.sheet = { ...row.sheet!, overall: 62 };
   }
-  assert.equal(offerDay(14, false), true);
-  assert.equal(offerDay(11, false), false);
+  assert.equal(offerDay(5, false, 110), false);
+  assert.ok(tradeMarketHeat(100, 110) > tradeMarketHeat(18, 110));
+  assert.equal(offerDay(100, false, 110, 0.05), true);
+  assert.equal(offerDay(18, false, 110, 0.95), false);
   const offered = considerIncomingOffer(league);
   assert.ok(offered.incomingOffer, "a fair offer should be waiting");
+  const incoming = offered.incomingOffer!;
   assert.equal(
     offerIsFair(
       league,
-      offered.incomingOffer.fromTeamId,
+      incoming.fromTeamId,
       "bos",
-      offered.incomingOffer.fromAssets,
-      offered.incomingOffer.toAssets
+      incoming.fromAssets,
+      incoming.toAssets
     ).ok,
     true
   );
-  assert.equal(considerIncomingOffer(offered).incomingOffer?.id, offered.incomingOffer.id);
+  // Same package must clear Propose in both directions (no one-way soft passes).
+  assert.equal(
+    evaluateTrade(
+      league,
+      incoming.fromTeamId,
+      "bos",
+      incoming.fromAssets,
+      incoming.toAssets
+    ).ok,
+    true,
+    "caller → user must clear evaluateTrade"
+  );
+  assert.equal(
+    evaluateTrade(
+      league,
+      "bos",
+      incoming.fromTeamId,
+      incoming.toAssets,
+      incoming.fromAssets
+    ).ok,
+    true,
+    "user → caller must clear evaluateTrade"
+  );
+  assert.equal(considerIncomingOffer(offered).incomingOffer?.id, incoming.id);
   assert.equal(tradeStance(league, "good"), "buy");
   assert.equal(tradeStance(league, "bad"), "sell");
 
   const vet = player("old", "bad", 74, 36, 30);
-  const late = { id: "late", season: 2027, round: 2, originalTeamId: "good", ownerTeamId: "good" };
+  // Contender first a year out — enough for a seller dumping a washed vet,
+  // still short for a club that is staying put.
+  const late = {
+    id: "late",
+    season: 2028,
+    round: 1,
+    originalTeamId: "good",
+    ownerTeamId: "bos",
+  };
   const seller = {
     ...league,
     players: [...league.players, vet],
     teams: league.teams.map((entry) =>
-      entry.id === "good" ? { ...entry, draftPicks: [...entry.draftPicks, late] } : entry
+      entry.id === "bos" ? { ...entry, draftPicks: [...entry.draftPicks, late] } : entry
     ),
   };
   const stayClub = { ...team("mid"), ownerGoal: "retool" as const };

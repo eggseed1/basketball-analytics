@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 
 import { cn } from "@/lib/utils";
 
@@ -9,28 +10,33 @@ export type PlayerPageSection = {
   label: string;
 };
 
-const DEFAULT_SECTIONS: PlayerPageSection[] = [
-  { id: "overview", label: "Overview" },
-  { id: "career", label: "Career" },
-  { id: "seasons", label: "Seasons" },
-  { id: "context", label: "Context" },
-  { id: "games", label: "Games" },
-  { id: "ask", label: "Ask" },
-];
-
 /**
  * Lightweight in-page nav for the unified career explorer.
  * Four primary stops + Ask — not a tabbed dashboard.
  */
 export function PlayerPageNav({
-  sections = DEFAULT_SECTIONS,
+  sections,
 }: {
   sections?: PlayerPageSection[];
 }) {
-  const [active, setActive] = useState(sections[0]?.id ?? "overview");
+  const t = useTranslations("PlayerDetail");
+  const resolved = useMemo(
+    () =>
+      sections ??
+      ([
+        { id: "overview", label: t("sectionOverview") },
+        { id: "career", label: t("sectionCareer") },
+        { id: "seasons", label: t("sectionSeasons") },
+        { id: "context", label: t("sectionContext") },
+        { id: "games", label: t("sectionGames") },
+        { id: "ask", label: t("sectionAsk") },
+      ] satisfies PlayerPageSection[]),
+    [sections, t]
+  );
+  const [active, setActive] = useState(resolved[0]?.id ?? "overview");
 
   useEffect(() => {
-    const nodes = sections
+    const nodes = resolved
       .map((s) => document.getElementById(s.id))
       .filter((el): el is HTMLElement => el != null);
     if (!nodes.length) return;
@@ -48,15 +54,15 @@ export function PlayerPageNav({
 
     for (const node of nodes) observer.observe(node);
     return () => observer.disconnect();
-  }, [sections]);
+  }, [resolved]);
 
   return (
     <nav
-      aria-label="Player page sections"
+      aria-label={t("sectionsAria")}
       className="sticky top-0 z-20 -mx-1 min-w-0 border-b border-border/80 bg-background/90 px-1 py-2 backdrop-blur-md"
     >
       <ul className="flex gap-1 touch-scroll-x pb-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {sections.map((section) => {
+        {resolved.map((section) => {
           const isActive = active === section.id;
           return (
             <li key={section.id} className="shrink-0">

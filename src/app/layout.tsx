@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getMessages, getTranslations } from "next-intl/server";
 
 import { BouncingBasketball } from "@/components/brand/bouncing-basketball";
 import { OwnerThemeProvider } from "@/components/design-system/theme-provider";
@@ -9,6 +11,8 @@ import { SmoothScroll } from "@/components/smooth-scroll";
 import { ChartHoverTip } from "@/components/charts/chart-hover-tip";
 import { ScrollHoverGuard } from "@/components/continuity/scroll-hover-guard";
 import { SortableTables } from "@/components/continuity/sortable-tables";
+import { pickClientMessages } from "@/i18n/client-messages";
+import { htmlLang } from "@/i18n/config";
 import { APP_BOOT_SCRIPT } from "@/lib/app-boot";
 import { APPLE_STARTUP_SCREENS, appleStartupHref } from "@/lib/apple-startup";
 import { OWNER_THEME_BOOT_SCRIPT } from "@/lib/owner-theme";
@@ -18,12 +22,16 @@ import { SITE_NAME, SITE_URL } from "@/lib/site-url";
 import "./globals.css";
 const geistSans = Geist({
   variable: "--font-sans",
-  subsets: ["latin"],
+  subsets: ["latin", "latin-ext"],
+  display: "swap",
+  adjustFontFallback: true,
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
-  subsets: ["latin"],
+  subsets: ["latin", "latin-ext"],
+  display: "swap",
+  adjustFontFallback: true,
 });
 
 const SITE_DESCRIPTION =
@@ -77,14 +85,19 @@ export const viewport: Viewport = {
   ],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: ReactNode;
 }) {
+  const locale = await getLocale();
+  const allMessages = await getMessages();
+  const clientMessages = pickClientMessages(allMessages);
+  const t = await getTranslations("Common");
+
   return (
     <html
-      lang="en"
+      lang={htmlLang(locale)}
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable}`}
     >
@@ -130,25 +143,29 @@ export default function RootLayout({
           <div className="bb-meter" />
         </div>
         <script id="app-boot-script" dangerouslySetInnerHTML={{ __html: APP_BOOT_SCRIPT }} />
-        <OwnerThemeProvider>
-          <SmoothScroll />
-          <ChartHoverTip />
-          <ScrollHoverGuard />
-          <SortableTables />
-          <a
-            href="#main-content"
-            className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-foreground focus:px-3 focus:py-2 focus:text-background"
-          >
-            Skip to content
-          </a>
-          <div
-            id="main-content"
-            data-sortable-tables
-            className="flex min-h-dvh min-w-0 flex-col overflow-x-clip"
-          >
-            <SportsShell>{children}</SportsShell>
-          </div>
-        </OwnerThemeProvider>
+        {/* Server Components still receive full catalogs via getTranslations.
+            Client provider gets only namespaces used by useTranslations. */}
+        <NextIntlClientProvider locale={locale} messages={clientMessages}>
+          <OwnerThemeProvider>
+            <SmoothScroll />
+            <ChartHoverTip />
+            <ScrollHoverGuard />
+            <SortableTables />
+            <a
+              href="#main-content"
+              className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-foreground focus:px-3 focus:py-2 focus:text-background"
+            >
+              {t("skipToContent")}
+            </a>
+            <div
+              id="main-content"
+              data-sortable-tables
+              className="flex min-h-dvh min-w-0 flex-col overflow-x-clip"
+            >
+              <SportsShell>{children}</SportsShell>
+            </div>
+          </OwnerThemeProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

@@ -1,0 +1,31 @@
+{
+  "id": "pace",
+  "slug": "pace",
+  "name": "Tempo",
+  "shortName": "Tempo",
+  "category": "basics",
+  "oneSentence": "Das Tempo schätzt, wie viele Ballbesitze ein Team spielt, und zeigt damit, wie schnell das Spiel läuft.",
+  "whyItMatters": [
+    "Höheres Tempo bläht rohe Zählstatistiken auf; Effizienzwerte helfen, Teams mit unterschiedlicher Geschwindigkeit zu vergleichen."
+  ],
+  "howToInterpret": [
+    "Höheres Tempo = mehr Ballbesitze = mehr Gelegenheiten für Zählstatistiken."
+  ],
+  "howDrblUses": [
+    "Hier als Kontext erklärt. Game Lab schätzt keine Ballbesitze für einzelne Spiele."
+  ],
+  "caveats": [
+    "Nicht als eigenes GameSummary-Feld für die Saisonbelege verfügbar."
+  ],
+  "relatedIds": [
+    "ortg",
+    "drtg",
+    "ts"
+  ],
+  "seeInAction": [
+    {
+      "label": "ORtg lernen",
+      "href": "/learn/offensive-rating"
+    }
+  ]
+}

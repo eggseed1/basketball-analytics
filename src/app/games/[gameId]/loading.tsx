@@ -1,10 +1,13 @@
+import { getTranslations } from "next-intl/server";
+
 import { DestinationLoadingFrame } from "@/components/continuity/destination-loading-frame";
 
-export default function Loading() {
+export default async function Loading() {
+  const t = await getTranslations("Games");
   return (
     <DestinationLoadingFrame
-      title="Game Lab"
-      subtitle="Matchup identity and score load first. Deeper analysis follows."
+      title={t("loadingTitle")}
+      subtitle={t("loadingSubtitle")}
     />
   );
 }

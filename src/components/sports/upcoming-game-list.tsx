@@ -1,10 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useLocale } from "next-intl";
 
 import { GameMatchupRow } from "@/components/sports/game-score-card";
 import { LiveScoreboardScope } from "@/components/sports/live-scoreboard-scope";
 import type { GameSummary } from "@/data/types";
+import { formatAppDateTime } from "@/i18n/format-date";
 import { isLiveLikeStatus } from "@/lib/game-status";
 import { upcomingCursorFromGames } from "@/lib/upcoming-cursor";
 
@@ -26,8 +28,8 @@ function groupByDate(games: GameSummary[]) {
   return map;
 }
 
-function dayHeading(iso: string) {
-  return new Date(`${iso}T12:00:00Z`).toLocaleDateString("en-US", {
+function dayHeading(iso: string, locale: string) {
+  return formatAppDateTime(`${iso}T12:00:00Z`, locale, {
     weekday: "long",
     month: "short",
     day: "numeric",
@@ -64,6 +66,7 @@ function ListBoard({
   games: GameSummary[];
   source?: "live-espn" | "cached-espn" | "unavailable";
 }) {
+  const locale = useLocale();
   const live = games.filter((g) => isLiveLikeStatus(g.status));
   const upcoming = games.filter((g) => !isLiveLikeStatus(g.status));
   const byDate = groupByDate(upcoming);
@@ -103,7 +106,7 @@ function ListBoard({
         {dates.map((iso) => (
           <div key={iso} className="flex flex-col gap-1.5">
             <h3 className="text-[12px] font-bold tracking-tight text-muted-foreground">
-              {dayHeading(iso)}
+              {dayHeading(iso, locale)}
             </h3>
             <div className="flex flex-col gap-1">
               {(byDate.get(iso) ?? []).map((game, i) => (

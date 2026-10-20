@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import type { ArcadePlayer } from "@/arcade/league";
@@ -46,19 +47,19 @@ export function PlayerAvatar({ player, className }: { player: ArcadePlayer; clas
 }
 
 export function ArcadeLoading({ failed, onRetry }: { failed: boolean; onRetry: () => void }) {
+  const t = useTranslations("Arcade");
+  const tCommon = useTranslations("Common");
   return (
     <div className="sports-card flex min-h-48 flex-col items-center justify-center gap-3 p-6 text-center">
       {failed ? (
         <>
-          <p className={cn(type.bodySm, "text-muted-foreground")}>
-            The player data did not load.
-          </p>
+          <p className={cn(type.bodySm, "text-muted-foreground")}>{t("loadFailed")}</p>
           <Button variant="outline" onClick={onRetry}>
-            Try again
+            {tCommon("retry")}
           </Button>
         </>
       ) : (
-        <p className={cn(type.bodySm, "text-muted-foreground")}>Loading 30 seasons of players…</p>
+        <p className={cn(type.bodySm, "text-muted-foreground")}>{t("loadingSeasons")}</p>
       )}
     </div>
   );

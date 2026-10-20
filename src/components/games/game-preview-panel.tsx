@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
 import { useMemo, useRef, useState, type CSSProperties } from "react";
 
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
@@ -15,6 +16,7 @@ import type {
 } from "@/data/queries/game-preview";
 import { useChartTheme } from "@/lib/chart-theme";
 import { type } from "@/lib/design-system";
+import { formatAppDate } from "@/i18n/format-date";
 import { formatOrdinal } from "@/lib/format";
 import { distinctTeamColors } from "@/lib/nba-brand";
 import { cn } from "@/lib/utils";
@@ -23,18 +25,20 @@ const SIDES: PreviewSide[] = ["away", "home"];
 
 const PLAYER_ROWS: Array<{
   id: PreviewPlayerStatId;
-  label: string;
+  /** Games message key for spelled-out stat names; abbreviations stay literal. */
+  labelKey?: string;
+  label?: string;
   format: (v: number) => string;
 }> = [
-  { id: "ppg", label: "Points", format: (v) => v.toFixed(1) },
-  { id: "rpg", label: "Rebounds", format: (v) => v.toFixed(1) },
-  { id: "apg", label: "Assists", format: (v) => v.toFixed(1) },
-  { id: "spg", label: "Steals", format: (v) => v.toFixed(1) },
-  { id: "bpg", label: "Blocks", format: (v) => v.toFixed(1) },
+  { id: "ppg", labelKey: "rowPoints", format: (v) => v.toFixed(1) },
+  { id: "rpg", labelKey: "rowRebounds", format: (v) => v.toFixed(1) },
+  { id: "apg", labelKey: "rowAssists", format: (v) => v.toFixed(1) },
+  { id: "spg", labelKey: "rowSteals", format: (v) => v.toFixed(1) },
+  { id: "bpg", labelKey: "rowBlocks", format: (v) => v.toFixed(1) },
   { id: "asttov", label: "AST/TO", format: (v) => v.toFixed(2) },
-  { id: "ts", label: "True shooting", format: pct1 },
-  { id: "fg3", label: "3-point %", format: pct1 },
-  { id: "usg", label: "Usage", format: pct1 },
+  { id: "ts", labelKey: "rowTrueShooting", format: pct1 },
+  { id: "fg3", labelKey: "rowThreePointPct", format: pct1 },
+  { id: "usg", labelKey: "rowUsage", format: pct1 },
   { id: "drbl100", label: "DRBL/100", format: signed1 },
   { id: "bpm", label: "BPM", format: signed1 },
   { id: "darko", label: "DARKO", format: signed1 },
@@ -76,18 +80,15 @@ function topScorer(list: PreviewPlayer[]): string | null {
   return best?.id ?? null;
 }
 
-function formatMeetingDate(iso: string) {
+function formatMeetingDate(iso: string, locale: string) {
   const d = new Date(`${iso}T12:00:00Z`);
   if (Number.isNaN(d.getTime())) return iso;
-  return d.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    timeZone: "UTC",
-  });
+  return formatAppDate(d, locale, "monthDayYear", { timeZone: "UTC" });
 }
 
 export function GamePreviewPanel({ data }: { data: GamePreviewData }) {
+  const t = useTranslations("Games");
+  const locale = useLocale();
   const { surface } = useChartTheme();
   const colors = useMemo(() => {
     const palette = distinctTeamColors(
@@ -117,16 +118,16 @@ export function GamePreviewPanel({ data }: { data: GamePreviewData }) {
   };
 
   const seasonNote = data.usesPriorSeason
-    ? `Numbers are from the ${data.statsSeason} regular season. ${data.gameSeason} averages take over once both teams have played 10 games.`
-    : `${data.statsSeason} regular season averages.`;
+    ? t("seasonNotePrior", { statsSeason: data.statsSeason, gameSeason: data.gameSeason })
+    : t("seasonNote", { statsSeason: data.statsSeason });
 
   return (
     <div className="flex flex-col gap-5 sm:gap-6">
       <section className="sports-card flex flex-col gap-4 p-4 sm:p-5">
         <div className="flex flex-col gap-1">
-          <h2 className={type.heading}>Team matchup</h2>
+          <h2 className={type.heading}>{t("teamMatchup")}</h2>
           <p className={cn(type.bodySm, "text-muted-foreground")}>
-            {seasonNote} The small numbers are league ranks out of 30.
+            {seasonNote} {t("rankNote")}
           </p>
         </div>
         <TeamHeader data={data} />
@@ -138,7 +139,7 @@ export function GamePreviewPanel({ data }: { data: GamePreviewData }) {
           </div>
         ) : (
           <p className={cn(type.bodySm, "text-muted-foreground")}>
-            Team season stats for {data.statsSeason} are not available yet.
+            {t("teamStatsUnavailable", { statsSeason: data.statsSeason })}
           </p>
         )}
       </section>
@@ -148,12 +149,9 @@ export function GamePreviewPanel({ data }: { data: GamePreviewData }) {
         className="sports-card flex scroll-mt-20 flex-col gap-4 p-4 sm:p-5"
       >
         <div className="flex flex-col gap-1">
-          <h2 className={type.heading}>Player matchup</h2>
+          <h2 className={type.heading}>{t("playerMatchup")}</h2>
           <p className={cn(type.bodySm, "text-muted-foreground")}>
-            Pick a player from each side. Bubbles are league percentiles among{" "}
-            {data.peerCount} players with 20+ games and 15+ minutes a game in{" "}
-            {data.statsSeason}. Higher is better on every row. AST/TO counts turnovers against
-            assists, so a playmaker isn&apos;t punished for handling the ball more.
+            {t("playerMatchupBlurb", { peerCount: data.peerCount, statsSeason: data.statsSeason })}
           </p>
         </div>
         <div className="grid grid-cols-2 gap-3 sm:gap-6">
@@ -174,7 +172,7 @@ export function GamePreviewPanel({ data }: { data: GamePreviewData }) {
               <PlayerRow
                 key={row.id}
                 index={i}
-                label={row.label}
+                label={row.labelKey ? t(row.labelKey as never) : (row.label ?? "")}
                 format={row.format}
                 away={picked.away?.stats[row.id] ?? null}
                 home={picked.home?.stats[row.id] ?? null}
@@ -183,18 +181,18 @@ export function GamePreviewPanel({ data }: { data: GamePreviewData }) {
           </div>
         ) : (
           <p className={cn(type.bodySm, "text-muted-foreground")}>
-            No player stats for {data.statsSeason} on either roster.
+            {t("noPlayerStats", { statsSeason: data.statsSeason })}
           </p>
         )}
       </section>
 
       <section className="sports-card flex flex-col gap-4 p-4 sm:p-5">
         <div className="flex flex-col gap-1">
-          <h2 className={type.heading}>Rotations</h2>
+          <h2 className={type.heading}>{t("rotations")}</h2>
           <p className={cn(type.bodySm, "text-muted-foreground")}>
             {data.rosterIsCurrent
-              ? `Current rosters with ${data.statsSeason} per-game averages, so some lines came with other teams. Tap a player to compare.`
-              : `${data.statsSeason} per-game averages, most minutes first. Tap a player to compare.`}
+              ? t("rotationsCurrent", { statsSeason: data.statsSeason })
+              : t("rotationsPast", { statsSeason: data.statsSeason })}
           </p>
         </div>
         <div className="grid gap-5 lg:grid-cols-2">
@@ -212,7 +210,7 @@ export function GamePreviewPanel({ data }: { data: GamePreviewData }) {
       </section>
 
       <section className="sports-card flex flex-col gap-3 p-4 sm:p-5">
-        <h2 className={type.heading}>Recent meetings</h2>
+        <h2 className={type.heading}>{t("recentMeetings")}</h2>
         {data.meetings.length ? (
           <ul className="flex flex-col divide-y divide-border/60">
             {data.meetings.map((m) => {
@@ -224,10 +222,10 @@ export function GamePreviewPanel({ data }: { data: GamePreviewData }) {
                     className="flex items-center justify-between gap-3 py-2.5 text-[14px] transition-colors hover:text-foreground"
                   >
                     <span className="text-muted-foreground tabular-nums">
-                      {formatMeetingDate(m.date)}
+                      {formatMeetingDate(m.date, locale)}
                       {m.gameType !== "regular" ? (
                         <span className="ml-2 rounded-full bg-secondary px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide">
-                          {m.gameType === "playoff" ? "Playoffs" : "Play-in"}
+                          {m.gameType === "playoff" ? t("playoffsTag") : t("playInTag")}
                         </span>
                       ) : null}
                     </span>
@@ -247,8 +245,10 @@ export function GamePreviewPanel({ data }: { data: GamePreviewData }) {
           </ul>
         ) : (
           <p className={cn(type.bodySm, "text-muted-foreground")}>
-            No regular season or playoff meetings on file for {data.gameSeason} or{" "}
-            {data.statsSeason === data.gameSeason ? "last season" : data.statsSeason}.
+            {t("noMeetings", {
+              gameSeason: data.gameSeason,
+              otherSeason: data.statsSeason === data.gameSeason ? t("lastSeason") : data.statsSeason,
+            })}
           </p>
         )}
       </section>
@@ -257,6 +257,7 @@ export function GamePreviewPanel({ data }: { data: GamePreviewData }) {
 }
 
 function TeamHeader({ data }: { data: GamePreviewData }) {
+  const t = useTranslations("Games");
   const block = (side: PreviewSide) => {
     const team = data.teams[side];
     return (
@@ -274,7 +275,7 @@ function TeamHeader({ data }: { data: GamePreviewData }) {
           <p className="text-[12px] text-muted-foreground tabular-nums">
             {team.record ?? "—"}
             {team.record ? (
-              <span className="hidden sm:inline"> in {data.statsSeason}</span>
+              <span className="hidden sm:inline"> {t("inSeason", { season: data.statsSeason })}</span>
             ) : null}
           </p>
         </div>
@@ -285,7 +286,7 @@ function TeamHeader({ data }: { data: GamePreviewData }) {
     <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
       {block("away")}
       <span className="px-2 text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
-        vs
+        {t("versus")}
       </span>
       {block("home")}
     </div>
@@ -385,6 +386,7 @@ function PlayerPicker({
   player: PreviewPlayer | null;
   onChange: (id: string) => void;
 }) {
+  const t = useTranslations("Games");
   const team = data.teams[side];
   const list = data.players[side];
   return (
@@ -426,19 +428,19 @@ function PlayerPicker({
           ) : null}
           {player?.statTeam ? (
             <p className="text-[11.5px] text-muted-foreground">
-              Played for {player.statTeam} in {data.statsSeason}
+              {t("playedFor", { team: player.statTeam, season: data.statsSeason })}
             </p>
           ) : null}
           {player && !player.qualified ? (
             <p className="text-[11.5px] font-semibold text-[var(--accent-warning)]">
-              Small sample
+              {t("smallSample")}
             </p>
           ) : null}
         </div>
       </div>
       {list.length ? (
         <select
-          aria-label={`${team.abbr} player`}
+          aria-label={t("playerSelectAria", { team: team.abbr })}
           value={value ?? ""}
           onChange={(e) => onChange(e.target.value)}
           className="w-full max-w-[16rem] truncate rounded-[var(--radius-md)] border border-border bg-card px-2.5 py-1.5 text-[13px] font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
@@ -450,7 +452,7 @@ function PlayerPicker({
           ))}
         </select>
       ) : (
-        <p className="text-[12px] text-muted-foreground">No {data.statsSeason} stats on this roster.</p>
+        <p className="text-[12px] text-muted-foreground">{t("noRosterStats", { season: data.statsSeason })}</p>
       )}
     </div>
   );
@@ -554,6 +556,7 @@ function RotationTable({
   selectedId: string | null;
   onPick: (id: string) => void;
 }) {
+  const t = useTranslations("Games");
   const team = data.teams[side];
   const list = data.players[side];
   const missing = data.noStats[side];
@@ -570,7 +573,7 @@ function RotationTable({
           <table className="w-full min-w-[30rem] border-collapse text-[12.5px] sm:text-[13px]">
             <thead>
               <tr className="border-b border-border/70 text-[10.5px] uppercase tracking-wide text-muted-foreground">
-                <th className="px-1.5 py-1.5 text-left font-semibold">Player</th>
+                <th className="px-1.5 py-1.5 text-left font-semibold">{t("playerColumn")}</th>
                 <th className="px-1.5 py-1.5 text-right font-semibold">GP</th>
                 <th className="px-1.5 py-1.5 text-right font-semibold">MIN</th>
                 <th className="px-1.5 py-1.5 text-right font-semibold">PTS</th>
@@ -616,11 +619,11 @@ function RotationTable({
           </table>
         </div>
       ) : (
-        <p className="text-[13px] text-muted-foreground">No {data.statsSeason} player stats for this roster.</p>
+        <p className="text-[13px] text-muted-foreground">{t("noRosterPlayerStats", { season: data.statsSeason })}</p>
       )}
       {missing.length ? (
         <p className="text-[12px] text-muted-foreground">
-          No {data.statsSeason} NBA stats on file: {missing.join(", ")}.
+          {t("noStatsOnFile", { season: data.statsSeason, players: missing.join(", ") })}
         </p>
       ) : null}
     </div>

@@ -1,3 +1,4 @@
+import { getLocale, getTranslations } from "next-intl/server";
 import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -5,7 +6,7 @@ import type { Metadata } from "next";
 import { LearnPageFooter } from "@/components/learn/learn-page-footer";
 import { StatGuideView } from "@/components/learn/stat-guide-view";
 import { AppLink } from "@/components/ui/app-link";
-import { getStatGuide } from "@/content/stats/guides";
+import { isNonEnglishLocale, loadLocalizedGuide } from "@/content/learn/load-localized";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/learn/drbl/war1" },
@@ -14,9 +15,12 @@ export const metadata: Metadata = {
     "The season value a player accumulated: DRBL/100 times playing time, in wins above an average player. This is not classic WAR.",
 };
 
-export default function LearnWar1Page() {
-  const guide = getStatGuide("war1");
-  if (!guide) notFound();
+export default async function LearnWar1Page() {
+  const locale = await getLocale();
+  const loaded = await loadLocalizedGuide(locale, "war1");
+  if (!loaded) notFound();
+  const guide = loaded.content;
+  const t = await getTranslations("LearnPages");
 
   return (
     <main data-motion-page className="site-shell flex flex-col gap-8 py-6 sm:py-8">
@@ -26,8 +30,12 @@ export default function LearnWar1Page() {
           href="/learn/drbl"
           className="text-[14px] font-semibold text-muted-foreground underline-offset-4 hover:underline"
         >
-          ← What is DRBL?
+          {t("backWhatIsDrbl")}
         </AppLink>
+
+        {!loaded.localized && isNonEnglishLocale(locale) ? (
+          <p className="text-[13px] text-muted-foreground">{t("bodyEnglishNote")}</p>
+        ) : null}
 
         <StatGuideView guide={guide} />
 

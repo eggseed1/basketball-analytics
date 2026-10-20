@@ -1,18 +1,21 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { ChevronDown } from "lucide-react";
+import { useLocale } from "next-intl";
 
 import { LocalTipTime } from "@/components/sports/local-tip-time";
 import { useScoreDelaySeconds } from "@/components/sports/use-score-delay";
 import { AppLink } from "@/components/ui/app-link";
+import { formatGameCalendarDate } from "@/i18n/format-date";
 import { needsScoreMask } from "@/lib/score-delay";
 import {
-  drblText,
   opponentText,
-  playerLineText,
   resultText,
-  trendText,
+  watchlistHeadline,
+  watchlistInsights,
   type WatchGame,
+  type WatchInsight,
   type WatchStatus,
 } from "@/lib/watchlist-status";
 import { cn } from "@/lib/utils";
@@ -69,72 +72,84 @@ export function useWatchlistStatus(items: readonly Pinned[], ready: boolean): Wa
   return state;
 }
 
-function shortDate(iso: string): string {
-  return new Date(`${iso}T12:00:00Z`).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    timeZone: "UTC",
-  });
+function shortDate(iso: string, locale: string): string {
+  return formatGameCalendarDate(iso, locale, "monthDay") ?? iso;
 }
 
-const INJURY_STYLE = {
-  out: "bg-[color-mix(in_oklab,#d93f3f_14%,transparent)] text-[#b42828] dark:text-[#ff8a8a]",
-  "day-to-day": "bg-[color-mix(in_oklab,#e3a008_16%,transparent)] text-[#8a5a00] dark:text-[#f5c451]",
-  other: "bg-secondary text-muted-foreground",
+const TONE_CLASS = {
+  neutral: "text-muted-foreground",
+  alert: "text-[#b42828] dark:text-[#ff8a8a]",
+  positive: "text-[color:var(--accent-positive)]",
+  caution: "text-[#8a5a00] dark:text-[#f5c451]",
 } as const;
 
 const WEEK_MS = 6 * 24 * 60 * 60 * 1000;
 
-function GameLink({ game, children }: { game: WatchGame; children: React.ReactNode }) {
-  return (
-    <AppLink href={`/games/${game.gameId}`} className="min-w-0 truncate underline-offset-2 hover:text-foreground hover:underline">
-      {children}
-    </AppLink>
-  );
-}
-
-function LastLine({
-  game,
-  line,
-  masked,
+function InsightRow({
+  insight,
+  fetchedAt,
+  nextGame,
 }: {
-  game: WatchGame;
-  line: string | null;
-  masked: boolean;
+  insight: WatchInsight;
+  fetchedAt: number;
+  nextGame?: WatchGame | null;
 }) {
-  const result = masked ? `Final ${opponentText(game)}, score delayed` : resultText(game);
-  const when = `${shortDate(game.date)}${game.gameType === "preseason" ? " preseason" : ""}`;
+  const locale = useLocale();
+  const tone = insight.tone ?? "neutral";
+  const body =
+    insight.id === "next" && nextGame ? (
+      <>
+        Up next {opponentText(nextGame)},{" "}
+        <LocalTipTime
+          tipOffAt={nextGame.tipOffAt}
+          style={
+            nextGame.tipOffAt &&
+            Number.isFinite(Date.parse(nextGame.tipOffAt)) &&
+            Date.parse(nextGame.tipOffAt) - fetchedAt < WEEK_MS
+              ? "dayClockZone"
+              : "date"
+          }
+          nbaDate={nextGame.date}
+          fallback={shortDate(nextGame.date, locale)}
+        />
+        {nextGame.gameType === "preseason" ? " (preseason)" : ""}
+      </>
+    ) : (
+      insight.text
+    );
+
+  const className = cn(
+    "block min-w-0 truncate rounded-md px-1.5 py-1 text-[12px] leading-snug transition-colors",
+    TONE_CLASS[tone],
+    insight.href && "hover:bg-background/70 hover:underline"
+  );
+
+  if (insight.href) {
+    return (
+      <AppLink href={insight.href} className={className} data-motion="row">
+        {body}
+      </AppLink>
+    );
+  }
+
   return (
-    <GameLink game={game}>
-      {when}: {line && !masked ? `${line} · ` : ""}
-      {result}
-    </GameLink>
+    <span className={className} data-motion="row">
+      {body}
+    </span>
   );
 }
 
-function NextLine({ game, fetchedAt }: { game: WatchGame; fetchedAt: number }) {
-  const tip = game.tipOffAt ? Date.parse(game.tipOffAt) : Number.NaN;
-  const soon = Number.isFinite(tip) && tip - fetchedAt < WEEK_MS;
-  return (
-    <GameLink game={game}>
-      Next {opponentText(game)},{" "}
-      <LocalTipTime
-        tipOffAt={game.tipOffAt}
-        style={soon ? "dayClockZone" : "date"}
-        nbaDate={soon ? game.date : null}
-        fallback={shortDate(game.date)}
-      />
-      {game.gameType === "preseason" ? " (preseason)" : ""}
-    </GameLink>
-  );
-}
-
+/**
+ * Expandable status for one pin. Collapsed = headline; open = full insight list.
+ */
 export function WatchlistItemStatus({
   status,
   fetchedAt,
+  open,
 }: {
   status: WatchStatus | undefined;
   fetchedAt: number;
+  open?: boolean;
 }) {
   const delaySeconds = useScoreDelaySeconds();
   const endedAt = status?.last?.endedAt ?? null;
@@ -146,53 +161,81 @@ export function WatchlistItemStatus({
     return () => window.clearTimeout(timer);
   }, [shownAt]);
 
-  if (!status) return null;
-  const player = status.kind === "player" ? status : null;
+  if (!status) {
+    return (
+      <p className="truncate text-[12px] text-muted-foreground">Checking the board…</p>
+    );
+  }
+
   const last = status.last;
-  // With the buzzer time known, the game reads as live until the viewer's delay
-  // has passed it; without it, a recent final stays hidden behind a note.
   const stillLive = shownAt != null && revealed !== shownAt && fetchedAt < shownAt;
   const masked =
     last != null &&
     delaySeconds > 0 &&
     endedAt == null &&
     needsScoreMask({ status: "final", tipOffAt: last.tipOffAt ?? undefined }, fetchedAt);
-  const liveGame = status.live ?? (stillLive ? last : null);
-  const line = player?.line && player.line.gameId === last?.gameId ? playerLineText(player.line) : null;
-  const notes = [player?.trend ? trendText(player.trend) : null, player?.drbl ? drblText(player.drbl) : null].filter(
-    (n): n is string => n != null
-  );
-  const empty = !status.live && !last && !status.next;
+
+  let display: WatchStatus = status;
+  if (stillLive && last && !status.live) {
+    display = { ...status, live: last };
+  } else if (masked && last) {
+    display = {
+      ...status,
+      last: { ...last, teamScore: null, opponentScore: null },
+    };
+  }
+
+  const headline = masked && last
+    ? `Final ${opponentText(last)}, score delayed`
+    : watchlistHeadline(display);
+  const insights = watchlistInsights(display);
+
+  if (!open) {
+    return (
+      <p
+        className={cn(
+          "min-w-0 truncate text-[12px] leading-snug",
+          display.live || (display.kind === "player" && display.injury?.status === "out")
+            ? "font-medium text-foreground"
+            : "text-muted-foreground"
+        )}
+      >
+        {headline}
+      </p>
+    );
+  }
 
   return (
-    <div className="flex min-w-0 flex-col gap-0.5 text-[12px] leading-snug text-muted-foreground">
-      {player?.injury ? (
-        <span className="flex min-w-0 items-center gap-1.5">
-          <span
-            className={cn(
-              "shrink-0 rounded-full px-2 py-0.5 text-[11px] font-semibold leading-none",
-              INJURY_STYLE[player.injury.status]
-            )}
-          >
-            {player.injury.status === "day-to-day" ? "Day-to-day" : player.injury.statusLabel}
-          </span>
-          {player.injury.injury ? <span className="truncate">{player.injury.injury}</span> : null}
-        </span>
-      ) : null}
-      {liveGame ? (
-        <GameLink game={liveGame}>
-          <span className="font-semibold text-foreground">Live</span> {opponentText(liveGame)}
-        </GameLink>
-      ) : last ? (
-        <LastLine game={last} line={line} masked={masked} />
-      ) : null}
-      {status.next && !status.live ? <NextLine game={status.next} fetchedAt={fetchedAt} /> : null}
-      {empty ? <span>No games on the schedule yet.</span> : null}
-      {notes.map((n) => (
-        <span key={n} className="truncate">
-          {n}
-        </span>
+    <ul className="flex min-w-0 flex-col gap-0.5 pt-1">
+      {insights.map((insight) => (
+        <li key={insight.id}>
+          <InsightRow
+            insight={insight}
+            fetchedAt={fetchedAt}
+            nextGame={insight.id === "next" ? display.next : null}
+          />
+        </li>
       ))}
-    </div>
+      {display.last && resultText(display.last) && display.kind === "team" && display.last.record ? (
+        <li>
+          <span className="block px-1.5 py-1 text-[12px] text-muted-foreground" data-motion="row">
+            Record {display.last.record}
+          </span>
+        </li>
+      ) : null}
+    </ul>
+  );
+}
+
+/** Chevron used by the pin summary. */
+export function WatchlistExpandCue({ open }: { open: boolean }) {
+  return (
+    <ChevronDown
+      aria-hidden
+      className={cn(
+        "size-3.5 shrink-0 text-muted-foreground transition-transform duration-200",
+        open && "rotate-180"
+      )}
+    />
   );
 }

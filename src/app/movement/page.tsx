@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { MovementCenterView } from "@/components/movement/movement-center-view";
 import { MovementClusterCard } from "@/components/movement/movement-cluster-card";
@@ -30,6 +31,7 @@ function one(
 }
 
 export default async function MovementCenterPage({ searchParams }: PageProps) {
+  const t = await getTranslations("Movement");
   const sp = await searchParams;
   const clusterId = one(sp, "cluster");
   const playerId = one(sp, "player");
@@ -39,7 +41,7 @@ export default async function MovementCenterPage({ searchParams }: PageProps) {
     return (
       <main data-motion-page className="site-shell py-8">
         <MotionReveal />
-        <p className="text-muted-foreground">Movement Center snapshot unavailable.</p>
+        <p className="text-muted-foreground">{t("unavailable")}</p>
       </main>
     );
   }
@@ -52,7 +54,7 @@ export default async function MovementCenterPage({ searchParams }: PageProps) {
         <MotionReveal />
         <p className={type.caption}>
           <Link href="/movement" className="font-semibold underline">
-            ← Movement Center
+            {t("backToCenter")}
           </Link>
         </p>
         <MovementClusterCard

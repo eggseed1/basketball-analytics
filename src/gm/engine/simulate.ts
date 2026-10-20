@@ -8,6 +8,7 @@ import type {
 import { createRng, clamp, uid } from "@/gm/engine/rng";
 import {
   freeThrowMakeRateFromRating,
+  playerSheet,
   threeMakeRateFromRating,
   twoMakeRateFromRating,
 } from "@/gm/engine/attributes";
@@ -16,11 +17,19 @@ import {
   extraFt,
   modsForTeam,
   paceWish,
-  paintShifts,
   usageBoost,
   type RateMods,
 } from "@/gm/engine/coaching";
-import { overallOf, positionalMinuteTargets, rotationTarget } from "@/gm/engine/lineup";
+import {
+  clampAndRespread,
+  clampRotationDepth,
+  maxMinutesForDepth,
+  minuteLoadMul,
+  overallOf,
+  positionFit,
+  positionalMinuteTargets,
+  rotationTarget,
+} from "@/gm/engine/lineup";
 import { allStarSquadTeam } from "@/gm/engine/allstar";
 import { coachEffect } from "@/gm/engine/staff";
 import { gapBefore } from "@/gm/engine/schedule";
@@ -127,8 +136,17 @@ function teamStrength(team: GmTeam, players: GmPlayer[]) {
   const avgOff = finiteMean(lu.map((player) => player.ratings.offense), 0);
   const avgDef = finiteMean(lu.map((player) => player.ratings.defense), 0);
   const avgPlay = finiteMean(lu.map((player) => player.ratings.playmaking), 48);
-  const off = clamp(112 + avgOff * 1.15 + coach.offense, 95, 130);
-  const def = clamp(112 - avgDef * 1.15 - coach.defense, 95, 130);
+  // Cover seat vs natural listing. OOP depth charts cost a few points.
+  const cover = team.coaching?.coverSlot;
+  const fit = finiteMean(
+    lu.map((player) =>
+      positionFit(player, cover?.[player.id] ?? player.position)
+    ),
+    1
+  );
+  const fitTax = (1 - fit) * 4.5;
+  const off = clamp(112 + avgOff * 1.15 + coach.offense - fitTax, 95, 130);
+  const def = clamp(112 - avgDef * 1.15 - coach.defense + fitTax * 0.7, 95, 130);
   const pace = clamp(99.2 + (avgPlay - 48) * 0.04, 96.5, 102.5);
   return { off, def, pace };
 }
@@ -143,7 +161,9 @@ function possessionValue(players: GmPlayer[], key: "offense" | "defense"): numbe
   const targets = positionalMinuteTargets(players);
   for (const player of players) {
     const rating = player.ratings[key];
-    const weight = Math.max(0, targets[player.id] ?? rotationTarget(player));
+    const planned = Math.max(0, targets[player.id] ?? rotationTarget(player));
+    const stamina = playerSheet(player).attributes.stamina ?? 70;
+    const weight = planned * minuteLoadMul(planned, stamina);
     if (!Number.isFinite(rating) || weight <= 0) continue;
     sum += rating * weight;
     minutes += weight;
@@ -166,7 +186,8 @@ function fitScore(lines: GmBoxPlayerLine[], target: number) {
   if (!lines.length || !(target > 0)) return;
   const raw = lines.reduce((sum, line) => sum + line.points, 0);
   if (raw < 1) return;
-  const scale = clamp(target / raw, 0.72, 1.28);
+  // Short targets need a deeper cut than a full-game box.
+  const scale = clamp(target / raw, target < 60 ? 0.42 : 0.72, 1.28);
   const top = Math.max(...lines.map((line) => line.points), 1);
   const give = lines.map((line) => 1.45 - 0.75 * (line.points / top));
   const weight = lines.reduce((sum, line, index) => sum + line.points * give[index]!, 0) / raw;
@@ -247,8 +268,18 @@ export function simulateGame(
   const homeDef = possessionValue(homeGroup, "defense");
   const awayOff = possessionValue(awayGroup, "offense");
   const awayDef = possessionValue(awayGroup, "defense");
-  const homeOrt = 114.0 + (homeOff - awayDef) * 0.55;
-  const awayOrt = 114.0 + (awayOff - homeDef) * 0.55;
+  const coverTax = (club: GmTeam, group: GmPlayer[]) => {
+    const cover = club.coaching?.coverSlot;
+    const fit = finiteMean(
+      group.map((player) =>
+        positionFit(player, cover?.[player.id] ?? player.position)
+      ),
+      1
+    );
+    return (1 - fit) * 7;
+  };
+  const homeOrt = 114.0 + (homeOff - awayDef) * 0.55 - coverTax(home, homeGroup);
+  const awayOrt = 114.0 + (awayOff - homeDef) * 0.55 - coverTax(away, awayGroup);
   const scoreFloor = span === 1 ? 86 : 18;
   const scoreCeil = span === 1 ? 148 : 48;
   const homeTarget = clamp(
@@ -297,6 +328,12 @@ export function simulateGame(
   if (!awayLines.length) awayScore = Math.round(awayTarget);
   if (!homeLines.length && span === 1) homeScore = clamp(homeScore, 78, 155);
   if (!awayLines.length && span === 1) awayScore = clamp(awayScore, 78, 155);
+  // Short exhibitions (All-Star quarters) can overshoot after fitScore's
+  // 0.72 floor — clamp to the span band so boxes stay quarter-sized.
+  if (span < 1) {
+    homeScore = clamp(homeScore, scoreFloor, scoreCeil);
+    awayScore = clamp(awayScore, scoreFloor, scoreCeil);
+  }
   if (homeScore === awayScore) {
     const lines = rng() > 0.5 ? homeLines : awayLines;
     const leader = lines.reduce(
@@ -468,32 +505,45 @@ function assignMinutes(
   rng: () => number,
   plan?: Record<string, number>
 ): number[] {
-  if (plan) {
-    const wants = lineup.map((player) =>
-      clamp((plan[player.id] ?? 0) * (0.97 + rng() * 0.06), 0, 42)
-    );
-    const sum = wants.reduce((total, minutes) => total + minutes, 0);
-    if (sum > 240) {
-      const scale = 240 / sum;
-      return wants.map((minutes) => minutes * scale);
-    }
-    return wants;
-  }
-  const starterIds = new Set(
-    Object.values(team.starters).filter((id): id is string => !!id)
+  const cap = maxMinutesForDepth(
+    team.coaching?.rotationDepth ?? clampRotationDepth(lineup.length)
   );
+  if (plan) {
+    const raw: Record<string, number> = {};
+    for (const player of lineup) {
+      raw[player.id] = clamp(
+        (plan[player.id] ?? 0) * (0.97 + rng() * 0.06),
+        0,
+        cap
+      );
+    }
+    const sum = Object.values(raw).reduce((total, minutes) => total + minutes, 0);
+    const scaled =
+      sum > 240
+        ? Object.fromEntries(
+            Object.entries(raw).map(([id, minutes]) => [id, minutes * (240 / sum)])
+          )
+        : raw;
+    const capped = clampAndRespread(scaled, cap);
+    return lineup.map((player) => capped[player.id] ?? 0);
+  }
+  // Box minutes come from the positional book. paintShifts is UI-only —
+  // using it here created true 48s when thin benches put starters back on.
   const targets = positionalMinuteTargets(lineup, team.starters);
-  const painted = paintShifts({
-    coaching: team.coaching,
-    players: lineup.map((player) => ({
-      id: player.id,
-      minutes: targets[player.id] ?? rotationTarget(player),
-      starter: starterIds.has(player.id),
-      position: player.position,
-    })),
-  });
-  const byId = new Map(painted.map((row) => [row.id, row.minutes]));
-  return lineup.map((player) => byId.get(player.id) ?? 0);
+  const raw: Record<string, number> = {};
+  for (const player of lineup) {
+    const base = targets[player.id] ?? rotationTarget(player);
+    raw[player.id] = clamp(base * (0.96 + rng() * 0.08), 0, cap);
+  }
+  const sum = Object.values(raw).reduce((total, minutes) => total + minutes, 0);
+  const scaled =
+    sum > 1
+      ? Object.fromEntries(
+          Object.entries(raw).map(([id, minutes]) => [id, minutes * (240 / sum)])
+        )
+      : raw;
+  const capped = clampAndRespread(scaled, cap);
+  return lineup.map((player) => capped[player.id] ?? 0);
 }
 
 /** Poisson draw. Rounding a normal up from zero was inflating steals, blocks, and free throws. */

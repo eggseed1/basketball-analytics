@@ -13,6 +13,7 @@ import type {
 import { brandWashColor, buildGameMatchupTheme } from "@/lib/game-matchup-theme";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 /**
  * Vertical rhythm: every first-round track is the same height so R1 / Semis / CF
@@ -31,28 +32,31 @@ const CARD_MIN = "6.25rem";
 const LINE_W = "1rem";
 const GAP_W = "0.5rem";
 
-function modeCopy(model: PlayoffBracketModel): {
+function modeCopy(
+  model: PlayoffBracketModel,
+  t: (key: string, values?: Record<string, string>) => string
+): {
   title: string;
   detail: string;
 } {
   if (model.mode === "complete") {
     return {
-      title: `${model.season} bracket`,
-      detail: "Results from completed postseason games.",
+      title: t("bracket", { season: model.season }),
+      detail: t("bracketNote"),
     };
   }
   if (model.mode === "postseason") {
     return {
-      title: `${model.season} bracket`,
-      detail: "Updates as postseason games are recorded.",
+      title: t("bracket", { season: model.season }),
+      detail: t("bracketPostseasonLive"),
     };
   }
   return {
-    title: `${model.season} projection`,
+    title: t("bracketProjection", { season: model.season }),
     detail:
       model.source === "standings"
-        ? "First-round matchups from current standings. Later rounds open until the postseason."
-        : "Seeded from the team board until standings populate.",
+        ? t("bracketFromStandings")
+        : t("bracketSeeded"),
   };
 }
 
@@ -301,7 +305,8 @@ function conferenceColumns(bracket: ConferenceBracket, side: "west" | "east"): C
 }
 
 export function PlayoffBracket({ model }: { model: PlayoffBracketModel }) {
-  const copy = modeCopy(model);
+  const t = useTranslations("Standings");
+  const copy = modeCopy(model, t);
   const west = conferenceColumns(model.west, "west");
   const east = conferenceColumns(model.east, "east");
   const finals: Column = {
@@ -325,7 +330,7 @@ export function PlayoffBracket({ model }: { model: PlayoffBracketModel }) {
         <h2 className="text-[16px] font-bold tracking-tight sm:text-[18px]">{copy.title}</h2>
         <p className="mt-0.5 text-[11px] leading-snug text-muted-foreground">
           {copy.detail}
-          <span className="sm:hidden"> Swipe sideways to see the whole bracket.</span>
+          <span className="sm:hidden"> {t("bracketSwipeHint")}</span>
         </p>
       </div>
 
@@ -360,19 +365,20 @@ const SKELETON_TEXT = "rounded bg-secondary text-transparent";
 
 /** Same footprint as {@link PlayoffBracket} at every width, so streaming it in doesn't move the page. */
 export function PlayoffBracketSkeleton() {
+  const t = useTranslations("Standings");
   return (
     <section
       data-skeleton
       className="sports-card flex flex-col gap-3 p-3 sm:p-4"
       aria-busy="true"
-      aria-label="Loading playoff bracket"
+      aria-label={t("loadingBracket")}
     >
       <div aria-hidden className="animate-pulse">
         <h2 className="text-[16px] font-bold tracking-tight sm:text-[18px]">
-          <span className={SKELETON_TEXT}>2025-26 bracket</span>
+          <span className={SKELETON_TEXT}>{t("bracket", { season: "2025-26" })}</span>
         </h2>
         <p className="mt-0.5 text-[11px] leading-snug">
-          <span className={SKELETON_TEXT}>Results from completed postseason games.</span>
+          <span className={SKELETON_TEXT}>{t("bracketNote")}</span>
         </p>
       </div>
       <div data-bracket-fit className="-mx-3 overflow-hidden px-3 sm:-mx-4 sm:px-4">

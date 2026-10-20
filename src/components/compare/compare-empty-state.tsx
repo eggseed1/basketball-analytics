@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import type { CSSProperties } from "react";
 
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
@@ -74,7 +75,8 @@ function lastName(name: string) {
 }
 
 /** Decorative sketches of the three main visuals. Not data. */
-export function CompareEmptyState() {
+export async function CompareEmptyState() {
+  const t = await getTranslations("Compare");
   return (
     <div className="flex flex-col gap-6">
       <section aria-labelledby="featured-matchups">
@@ -83,10 +85,10 @@ export function CompareEmptyState() {
             id="featured-matchups"
             className={cn(type.bodySm, "font-bold tracking-tight")}
           >
-            Try a matchup
+            {t("tryMatchup")}
           </h2>
           <p className={cn(type.caption, "text-muted-foreground")}>
-            Or search any two players above
+            {t("orSearch")}
           </p>
         </div>
         <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -133,7 +135,7 @@ export function CompareEmptyState() {
                         "block font-semibold uppercase tracking-[0.12em] text-muted-foreground"
                       )}
                     >
-                      vs
+                      {t("vs")}
                     </span>
                     <span className="block truncate">{lastName(m.b.name)}</span>
                   </p>
@@ -143,7 +145,7 @@ export function CompareEmptyState() {
                       "mt-1 truncate text-muted-foreground"
                     )}
                   >
-                    {m.season ? `${m.season} season` : "Career averages"}
+                    {m.season ? t("seasonSuffix", { season: m.season }) : t("careerAverages")}
                   </p>
                 </div>
                 <PlayerHeadshot

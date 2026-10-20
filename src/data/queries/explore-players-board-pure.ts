@@ -58,13 +58,14 @@ export type ExplorePlayerBoardRow = {
   r1Points?: number | null;
   /** null/omitted when DRBL overlay absent - never coerce missing to 0. */
   r1WinEquivalents?: number | null;
-  mpg: number;
-  ppg: number;
-  rpg: number;
-  apg: number;
-  spg: number;
-  bpg: number;
-  tov: number;
+  /** Derived from totals ÷ GP in boardStatValue when omitted from the wire payload. */
+  mpg?: number;
+  ppg?: number;
+  rpg?: number;
+  apg?: number;
+  spg?: number;
+  bpg?: number;
+  tov?: number;
   age?: number;
   twoPointPct?: number;
   turnoverPct?: number;
@@ -141,11 +142,6 @@ const SHEET_BACKED_FIELDS = [
   readonly [keyof ExplorePlayerBoardRow, SheetStatId]
 >;
 
-function perGame(total: number, gp: number): number {
-  if (!gp) return 0;
-  return total / gp;
-}
-
 export function toExplorePlayerBoardRow(p: PlayerSeason): ExplorePlayerBoardRow {
   const gp = p.gamesPlayed || 0;
   const row: ExplorePlayerBoardRow = {
@@ -167,13 +163,8 @@ export function toExplorePlayerBoardRow(p: PlayerSeason): ExplorePlayerBoardRow 
     fieldGoalPct: p.fieldGoalPct,
     threePointPct: p.threePointPct,
     freeThrowPct: p.freeThrowPct,
-    mpg: perGame(p.minutes, gp),
-    ppg: perGame(p.points, gp),
-    rpg: perGame(p.rebounds, gp),
-    apg: perGame(p.assists, gp),
-    spg: perGame(p.steals, gp),
-    bpg: perGame(p.blocks, gp),
-    tov: perGame(p.turnovers, gp),
+    // Per-game rates are derived in boardStatValue from totals + GP — omit
+    // from the wire payload so RSC / API pages stay smaller.
   };
   if (p.trueShootingPct != null) row.trueShootingPct = p.trueShootingPct;
   if (p.effectiveFieldGoalPct != null) {
@@ -196,7 +187,7 @@ export function toExplorePlayerBoardRow(p: PlayerSeason): ExplorePlayerBoardRow 
   if (p.bpm != null && Number.isFinite(p.bpm)) row.bpm = p.bpm;
   if (p.age != null && p.age > 0) row.age = p.age;
   const media = getPlayerMedia([p.playerId]).get(p.playerId);
-  row.portraitUrl = media?.sourceUrl ?? null;
+  if (media?.sourceUrl) row.portraitUrl = media.sourceUrl;
   if (p.twoPointPct) row.twoPointPct = p.twoPointPct;
   if (p.turnoverPct) row.turnoverPct = p.turnoverPct;
   row.threePointersAttempted = p.threePointersAttempted;

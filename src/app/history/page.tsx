@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { getTranslations } from "next-intl/server";
 
 import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { HistoryClientShell } from "@/components/time-machine/history-client-shell";
@@ -29,12 +30,14 @@ import { parseHistorySearchParams } from "@/themes/history-url";
 
 export const dynamic = "force-dynamic";
 
-export const metadata = {
-  alternates: { canonical: "/history" },
-  title: "NBA Time Machine",
-  description:
-    "NBA history by season: snapshots, landmark eras, Finals closes, and teams and players as they were in each era.",
-};
+export async function generateMetadata() {
+  const t = await getTranslations("History");
+  return {
+    alternates: { canonical: "/history" },
+    title: t("enterTitle"),
+    description: t("enterSubtitle"),
+  };
+}
 
 interface HistoryPageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>;

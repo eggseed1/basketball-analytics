@@ -1,5 +1,7 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 import { GmShell } from "@/gm/ui/gm-shell";
 import { playerById, teamById } from "@/gm/lib/selectors";
 import { useGmStore } from "@/gm/state/gm-store";
@@ -14,15 +16,18 @@ export default function GmTransactionsPage() {
   );
 }
 
-function assetLabel(league: GmLeagueState, asset: GmTradeAsset): string {
+type GmT = ReturnType<typeof useTranslations<"GmUi">>;
+
+function assetLabel(league: GmLeagueState, asset: GmTradeAsset, t: GmT): string {
   if (asset.type === "cash") {
-    return asset.cashM != null ? `$${formatNumber(asset.cashM, 1)}M` : "Cash";
+    return asset.cashM != null ? `$${formatNumber(asset.cashM, 1)}M` : t("txCash");
   }
   if (asset.type === "pick") return asset.id;
-  return playerById(league, asset.id)?.name ?? "Player";
+  return playerById(league, asset.id)?.name ?? t("txPlayer");
 }
 
 function TransactionsBody() {
+  const t = useTranslations("GmUi");
   const league = useGmStore((s) => s.league);
   if (!league) return null;
   const trades = [...league.tradeLog].reverse();
@@ -34,15 +39,13 @@ function TransactionsBody() {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h2 className="text-xl font-bold tracking-tight">Transactions</h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Trades you have offered, and the wire for signings and deals around the league.
-        </p>
+        <h2 className="text-xl font-bold tracking-tight">{t("pageTransactionsTitle")}</h2>
+        <p className="mt-1 text-sm text-muted-foreground">{t("pageTransactionsBlurb")}</p>
       </div>
       <section className="sports-card p-4">
-        <h3 className="font-semibold">Trade machine</h3>
+        <h3 className="font-semibold">{t("txTradeMachine")}</h3>
         {trades.length === 0 ? (
-          <p className="mt-2 text-sm text-muted-foreground">No offers yet this save.</p>
+          <p className="mt-2 text-sm text-muted-foreground">{t("txNoOffers")}</p>
         ) : (
           <ul className="mt-3 flex flex-col gap-3">
             {trades.map((trade) => {
@@ -51,12 +54,21 @@ function TransactionsBody() {
               return (
                 <li key={trade.id} className="text-sm">
                   <p className="font-medium">
-                    {from?.abbr ?? "Team"} sends {to?.abbr ?? "Team"} · {trade.status}
+                    {t("txSends", {
+                      from: from?.abbr ?? t("txTeam"),
+                      to: to?.abbr ?? t("txTeam"),
+                      status: trade.status,
+                    })}
                   </p>
                   <p className="text-muted-foreground">
-                    {trade.fromAssets.map((asset) => assetLabel(league, asset)).join(", ") || "Nothing"}
-                    {" for "}
-                    {trade.toAssets.map((asset) => assetLabel(league, asset)).join(", ") || "nothing"}
+                    {t("txTradeLine", {
+                      give:
+                        trade.fromAssets.map((asset) => assetLabel(league, asset, t)).join(", ") ||
+                        t("txNothingCap"),
+                      get:
+                        trade.toAssets.map((asset) => assetLabel(league, asset, t)).join(", ") ||
+                        t("txNothing"),
+                    })}
                   </p>
                 </li>
               );
@@ -65,10 +77,10 @@ function TransactionsBody() {
         )}
       </section>
       <section className="sports-card p-4">
-        <h3 className="font-semibold">Wire</h3>
+        <h3 className="font-semibold">{t("txWire")}</h3>
         {wires.length === 0 ? (
           <p className="mt-2 text-sm text-muted-foreground">
-            Signings and trades land here once the league starts moving.
+            {t("txWireEmpty")}
           </p>
         ) : (
           <ul className="mt-3 flex flex-col gap-2">
@@ -76,7 +88,7 @@ function TransactionsBody() {
               <li key={item.id} className="text-sm">
                 <p className="font-medium">{item.headline}</p>
                 <p className="text-muted-foreground">
-                  Day {item.day}. {item.body}
+                  {t("txWireDay", { day: item.day, body: item.body })}
                 </p>
               </li>
             ))}

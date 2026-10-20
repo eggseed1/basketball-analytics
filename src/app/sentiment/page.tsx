@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import { MotionReveal } from "@/components/continuity/motion-reveal";
 import {
   SentimentCenterView,
@@ -34,6 +35,7 @@ function parseView(value: string | undefined): SentimentView {
 }
 
 export default async function SentimentPage({ searchParams }: PageProps) {
+  const t = await getTranslations("Sentiment");
   const sp = await searchParams;
   const topic = one(sp, "topic");
   const view = topic
@@ -48,7 +50,7 @@ export default async function SentimentPage({ searchParams }: PageProps) {
       <main data-motion-page className="site-shell py-8">
         <MotionReveal />
         <p className={cn(type.bodySm, "text-muted-foreground")}>
-          Sentiment snapshot unavailable.
+          {t("unavailable")}
         </p>
       </main>
     );

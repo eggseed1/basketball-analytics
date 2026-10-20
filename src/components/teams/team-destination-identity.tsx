@@ -1,3 +1,5 @@
+import { getTranslations } from "next-intl/server";
+
 import { GlassSurface } from "@/components/brand/glass-surface";
 import { HistoricalTeamMark } from "@/components/brand/historical-team-mark";
 import { TeamLogo } from "@/components/brand/team-logo";
@@ -26,18 +28,23 @@ export type TeamSnapshotStat = {
   tipSub?: string;
 };
 
+type TeamCopy = {
+  (key: string, values?: Record<string, string | number | Date>): string;
+};
+
 function buildSnapshotCells(input: {
   boardAvailable: boolean;
   standings: TeamStandingsDisplay;
   snapshotStats: TeamSnapshotStat[];
+  t: TeamCopy;
 }): TeamSnapshotStat[] {
-  const { boardAvailable, standings, snapshotStats } = input;
+  const { boardAvailable, standings, snapshotStats, t } = input;
   if (!boardAvailable) {
     return [
       {
-        label: "Board",
+        label: t("snapBoard"),
         value: "—",
-        hint: "Identity from team-era map",
+        hint: t("snapBoardHint"),
       },
     ];
   }
@@ -53,68 +60,86 @@ function buildSnapshotCells(input: {
 
   const recordCell: TeamSnapshotStat = standing
     ? {
-        label: "Record",
+        label: t("snapRecord"),
         value: `${standing.wins}-${standing.losses}`,
         hint:
           standing.winPct != null
             ? formatPct(standing.winPct, 0)
             : undefined,
-        tip: `${formatOrdinal(standing.rank)} in the ${standing.conference}`,
+        tip: t("tipConferenceRank", {
+          rank: formatOrdinal(standing.rank),
+          conference: standing.conference,
+        }),
         tipSub:
           [
-            standing.streak ? `Streak ${standing.streak}` : null,
-            standing.lastTen ? `L10 ${standing.lastTen}` : null,
+            standing.streak ? t("streak", { streak: standing.streak }) : null,
+            standing.lastTen ? t("lastTen", { record: standing.lastTen }) : null,
           ]
             .filter(Boolean)
             .join(" · ") || undefined,
       }
     : seasonAwaitingGames && priorSeasonStanding
       ? {
-          label: `${priorSeasonLabel ?? "Last season"} record`,
+          label: t("snapPriorRecord", {
+            season: priorSeasonLabel ?? "—",
+          }),
           value: `${priorSeasonStanding.wins}-${priorSeasonStanding.losses}`,
-          hint: "Final. This season hasn't started",
+          hint: t("snapPriorFinal"),
         }
       : seasonAwaitingGames
         ? {
-            label: "Record",
+            label: t("snapRecord"),
             value: "—",
-            hint: "Season hasn't started",
+            hint: t("snapSeasonNotStarted"),
           }
         : {
-            label: "Record",
+            label: t("snapRecord"),
             value: "—",
-            hint: "Standings unavailable for this season",
+            hint: t("snapRecordUnavailable"),
           };
 
   const divisionCell: TeamSnapshotStat = divisionStanding
     ? {
-        label: "Division rank",
+        label: t("snapDivisionRank"),
         value: formatOrdinal(divisionStanding.rank),
-        hint: `${divisionStanding.division} · ${divisionStanding.of} teams`,
-        tip: `${formatOrdinal(divisionStanding.rank)} of ${divisionStanding.of} in the ${divisionStanding.division}`,
+        hint: t("snapDivisionHint", {
+          division: divisionStanding.division,
+          count: divisionStanding.of,
+        }),
+        tip: t("tipDivisionRank", {
+          rank: formatOrdinal(divisionStanding.rank),
+          of: divisionStanding.of,
+          division: divisionStanding.division,
+        }),
       }
     : seasonAwaitingGames && divisionMeta
       ? {
-          label: "Division",
+          label: t("snapDivision"),
           value: divisionMeta.division,
-          hint: `${divisionMeta.conference} · ${divisionMeta.divisionSize} teams`,
+          hint: t("snapDivisionHint", {
+            division: divisionMeta.conference,
+            count: divisionMeta.divisionSize,
+          }),
         }
       : standing
         ? {
-            label: "Division rank",
+            label: t("snapDivisionRank"),
             value: formatOrdinal(standing.rank),
-            hint: `${standing.conference} conference`,
+            hint: t("snapConferenceHint", { conference: standing.conference }),
           }
         : divisionMeta
           ? {
-              label: "Division",
+              label: t("snapDivision"),
               value: divisionMeta.division,
-              hint: `${divisionMeta.conference} · ${divisionMeta.divisionSize} teams`,
+              hint: t("snapDivisionHint", {
+                division: divisionMeta.conference,
+                count: divisionMeta.divisionSize,
+              }),
             }
           : {
-              label: "Division rank",
+              label: t("snapDivisionRank"),
               value: "—",
-              hint: "Division metadata unavailable",
+              hint: t("snapDivisionMetaUnavailable"),
             };
 
   const stats =
@@ -126,7 +151,7 @@ function buildSnapshotCells(input: {
 /**
  * Stable team identity frame — name, mark, glass snapshot, season dropdown.
  */
-export function TeamDestinationIdentity({
+export async function TeamDestinationIdentity({
   teamId,
   team,
   season,
@@ -162,6 +187,7 @@ export function TeamDestinationIdentity({
   franchise?: FranchiseHistory | null;
   historyHref: string;
 }) {
+  const t = await getTranslations("TeamDetail");
   const displayName =
     useHistoricalMark && historicalBrand?.displayName
       ? historicalBrand.displayName
@@ -184,6 +210,7 @@ export function TeamDestinationIdentity({
     boardAvailable,
     standings: standingsContext,
     snapshotStats,
+    t,
   });
 
   const headerDivision =
@@ -191,11 +218,13 @@ export function TeamDestinationIdentity({
     standingsContext.divisionMeta?.division ??
     null;
 
+  const titleCount = franchise?.championships.length ?? 0;
+
   return (
     <section
       id="overview"
       className="scroll-mt-16 flex flex-col gap-4"
-      aria-label="Overview"
+      aria-label={t("ariaOverview")}
     >
       <GlassSurface
         as="header"
@@ -241,56 +270,70 @@ export function TeamDestinationIdentity({
                   )}
                 >
                   <span>
-                    {franchise.championships.length}{" "}
-                    {franchise.championships.length === 1 ? "title" : "titles"} · since{" "}
-                    {franchise.firstSeason}
+                    {titleCount === 1
+                      ? t("titlesOne", {
+                          count: titleCount,
+                          season: franchise.firstSeason,
+                        })
+                      : t("titlesMany", {
+                          count: titleCount,
+                          season: franchise.firstSeason,
+                        })}
                   </span>
                   <LinkCue />
                 </TransitionLink>
               ) : null}
               {standing ? (
                 <p className={cn(type.caption, "mt-1.5 text-muted-foreground")}>
-                  {standing.streak ? `Streak ${standing.streak}` : null}
-                  {standing.lastTen ? ` · L10 ${standing.lastTen}` : null}
+                  {standing.streak
+                    ? t("streak", { streak: standing.streak })
+                    : null}
+                  {standing.lastTen
+                    ? ` · ${t("lastTen", { record: standing.lastTen })}`
+                    : null}
                   {" · "}
                   <TransitionLink
                     href="/standings"
                     className="font-semibold underline-offset-2 hover:underline"
                   >
-                    Standings
+                    {t("standings")}
                   </TransitionLink>
                   {" · "}
                   <TransitionLink
                     href={standingsVisualizationsHref(season)}
                     className="font-semibold underline-offset-2 hover:underline"
                   >
-                    Tracker <LinkCue />
+                    {t("tracker")} <LinkCue />
                   </TransitionLink>
                 </p>
               ) : standingsContext.seasonAwaitingGames ? (
                 <p className={cn(type.caption, "mt-1.5 text-muted-foreground")}>
-                  {season} hasn&apos;t started
+                  {t("seasonNotStarted", { season })}
                   {standingsContext.priorSeasonStanding
-                    ? ` · ${standingsContext.priorSeasonLabel} final ${standingsContext.priorSeasonStanding.wins}-${standingsContext.priorSeasonStanding.losses}`
+                    ? ` · ${t("priorFinalRecord", {
+                        season: standingsContext.priorSeasonLabel ?? "—",
+                        wins: standingsContext.priorSeasonStanding.wins,
+                        losses: standingsContext.priorSeasonStanding.losses,
+                      })}`
                     : ""}
                   {" · "}
                   <TransitionLink
                     href="/standings"
                     className="font-semibold underline-offset-2 hover:underline"
                   >
-                    Standings
+                    {t("standings")}
                   </TransitionLink>
                   {" · "}
                   <TransitionLink
                     href={standingsVisualizationsHref(season)}
                     className="font-semibold underline-offset-2 hover:underline"
                   >
-                    Tracker <LinkCue />
+                    {t("tracker")} <LinkCue />
                   </TransitionLink>
                 </p>
               ) : (
                 <p className={cn(type.caption, "mt-1.5 text-muted-foreground")}>
-                  Standings populate when regular-season results are available.
+                  {t("standingsPopulate")}
                 </p>
               )}
             </div>

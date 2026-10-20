@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
+import { useTranslations } from "next-intl";
 
 import { GamePreviewPanel } from "@/components/games/game-preview-panel";
 import { withBudget } from "@/data/queries/budget";
@@ -21,9 +23,10 @@ export async function GamePreviewSection({ game }: { game: Game }) {
     null
   );
   if (!result.value) {
+    const t = await getTranslations("Games");
     return (
       <p className="text-[13px] text-muted-foreground">
-        The preview is unavailable for this game right now.
+        {t("previewUnavailable")}
       </p>
     );
   }
@@ -43,6 +46,7 @@ export function GameTabs({
   defaultTab: GameTab;
   query: Record<string, string | string[] | undefined>;
 }) {
+  const t = useTranslations("Games");
   const hrefFor = (id: GameTab) => {
     const params = new URLSearchParams();
     for (const [key, value] of Object.entries(query)) {
@@ -55,7 +59,7 @@ export function GameTabs({
   };
   return (
     <nav
-      aria-label="Game sections"
+      aria-label={t("tabsAria")}
       className={cn(segmentedTrackClassName, "touch-scroll-x")}
     >
       {options.map((opt) => {

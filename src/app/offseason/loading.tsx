@@ -1,11 +1,13 @@
+import { getTranslations } from "next-intl/server";
 import { DestinationLoadingFrame } from "@/components/continuity/destination-loading-frame";
 
-export default function Loading() {
+export default async function Loading() {
+  const t = await getTranslations("Offseason");
   return (
     <DestinationLoadingFrame
-      title="NBA transactions"
+      title={t("loadingTitle")}
       className="py-5 sm:py-7"
-      subtitle="Loading the transaction log."
+      subtitle={t("loadingSubtitle")}
     />
   );
 }

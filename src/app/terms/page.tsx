@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import { MotionReveal } from "@/components/continuity/motion-reveal";
 import Link from "next/link";
 import type { ReactNode } from "react";
@@ -7,11 +8,14 @@ import { type } from "@/lib/design-system";
 import { SITE_CONTACT_URL } from "@/lib/site-url";
 import { cn } from "@/lib/utils";
 
-export const metadata = {
-  alternates: { canonical: "/terms" },
-  title: "Terms",
-  description: "The ground rules for using this site and what its numbers can and can't tell you.",
-};
+export async function generateMetadata() {
+  const t = await getTranslations("Legal");
+  return {
+    alternates: { canonical: "/terms" },
+    title: t("termsMetaTitle"),
+    description: t("termsMetaDescription"),
+  };
+}
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
@@ -22,16 +26,16 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
   );
 }
 
-export default function TermsPage() {
+export default async function TermsPage() {
+  const t = await getTranslations("Legal");
   return (
     <main data-motion-page className="site-shell flex flex-col gap-8 py-6 sm:py-8">
       <MotionReveal />
       <PageHeader
-        title="Terms of use"
-        subtitle="Updated October 16, 2026. Using the site means you accept these terms."
+        title={t("termsTitle")}
+        subtitle={t("termsSubtitle")}
       />
-
-      <Section title="Using the site">
+      <Section title={t("termsUsingTitle")}>
         <p>
           The site is free and non-commercial, for personal and informational use. If you want to
           scrape the site or download its data in bulk,{" "}
@@ -43,7 +47,7 @@ export default function TermsPage() {
         </p>
       </Section>
 
-      <Section title="Accuracy">
+      <Section title={t("termsAccuracyTitle")}>
         <p>
           Stats, ratings and estimates here are computed automatically. They can be wrong, late or
           incomplete, and models like DRBL are estimates with real uncertainty. When a value is
@@ -56,7 +60,7 @@ export default function TermsPage() {
         </p>
       </Section>
 
-      <Section title="Trademarks">
+      <Section title={t("termsTrademarksTitle")}>
         <p>
           This site is not affiliated with or endorsed by the NBA, any of its teams or any player.
           Team names, logos and player images belong to their owners and appear only to identify the
@@ -68,7 +72,7 @@ export default function TermsPage() {
         </p>
       </Section>
 
-      <Section title="Fan sentiment">
+      <Section title={t("termsSentimentTitle")}>
         <p>
           The <Link href="/sentiment" className="underline underline-offset-2">sentiment pages</Link>{" "}
           show averages of public fan writing. They reflect what fans wrote, not our views, and a
@@ -78,7 +82,7 @@ export default function TermsPage() {
         </p>
       </Section>
 
-      <Section title="Sharing">
+      <Section title={t("termsSharingTitle")}>
         <p>
           You&apos;re welcome to quote numbers and share charts from the site. You must credit DRBL
           and link back to the site, and to the page you took them from when there is one. A mention
@@ -86,7 +90,7 @@ export default function TermsPage() {
         </p>
       </Section>
 
-      <Section title="Availability and liability">
+      <Section title={t("termsLiabilityTitle")}>
         <p>
           The site is provided as is, with no warranty of any kind. Features and numbers can change,
           and the site can go offline at any time. We are not liable for losses that come from using
@@ -94,7 +98,7 @@ export default function TermsPage() {
         </p>
       </Section>
 
-      <Section title="Contact and removal requests">
+      <Section title={t("termsContactTitle")}>
         <p>
           Questions, corrections and removal requests from rights holders go to the{" "}
           <a href={SITE_CONTACT_URL} className="underline underline-offset-2" target="_blank" rel="noreferrer">

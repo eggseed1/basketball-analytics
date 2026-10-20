@@ -32,7 +32,7 @@ Layer A only). Draft/awards/transaction feeds still stubbed on the provider.
 - Free agency signing, waives
 - Scouting fog, staff upgrades, injuries + medical report
 - Aging / development between seasons
-- Saves in IndexedDB (`franchise-lab-gm` + `franchise-lab-myleague`)
+- Saves in IndexedDB (multiple slots via `franchise-lab-saves`; each save has Layer A/B keys)
 
 ## Play
 

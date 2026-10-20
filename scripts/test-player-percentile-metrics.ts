@@ -54,6 +54,10 @@ function row(
     oRaptor: partial.oRaptor,
     dRaptor: partial.dRaptor,
     winsAdded: partial.winsAdded,
+    vorp: partial.vorp,
+    bpm: partial.bpm,
+    obpm: partial.obpm,
+    dbpm: partial.dbpm,
     hustleDeflections: partial.hustleDeflections,
     hustleContestedShots: partial.hustleContestedShots,
     hustleScreenAssists: partial.hustleScreenAssists,
@@ -365,6 +369,53 @@ function main() {
   assert.ok(fastSeries?.find((p) => p.fullSeason === "2024-25")?.percentile != null);
   assert.ok(Math.abs((fastSeries?.find((p) => p.fullSeason === "2018-19")?.percentile ?? -1) - 40) <= 3);
   assert.equal(fastSeries?.find((p) => p.fullSeason === "2017-18")?.percentile, undefined);
+
+  // Cutoff-only hero (empty peers): Impact must still publish via baked cutoffs.
+  // Regression for the fast SSR path that skips materializing ~650 peer rows.
+  const impactFocal = row({
+    playerId: "focal",
+    playerName: "Focal",
+    darkoDpm: 2.4,
+    darkoOff: 1.8,
+    darkoDef: 0.6,
+    vorp: 4.2,
+    bpm: 6.1,
+  });
+  const impactCutoffs = percentileCutoffs(
+    Array.from({ length: 101 }, (_, i) => -5 + i * 0.1)
+  );
+  const impactOnly = buildPlayerPercentileMetrics(
+    impactFocal,
+    [impactFocal],
+    [],
+    [],
+    "focal",
+    undefined,
+    {
+      light: true,
+      seasonCutoffs: (season, id) =>
+        season === "2024-25" &&
+        (id === "darko" ||
+          id === "darko-off" ||
+          id === "darko-def" ||
+          id === "vorp" ||
+          id === "bpm" ||
+          id === "pts")
+          ? impactCutoffs
+          : undefined,
+    }
+  );
+  const impactIds = new Set(
+    impactOnly.filter((m) => m.category === "impact").map((m) => m.id)
+  );
+  assert.ok(impactIds.has("darko"), "DARKO ranks from cutoffs with empty peers");
+  assert.ok(impactIds.has("darko-off"), "DARKO-O ranks from cutoffs with empty peers");
+  assert.ok(impactIds.has("darko-def"), "DARKO-D ranks from cutoffs with empty peers");
+  assert.ok(impactIds.has("vorp"), "VORP ranks from cutoffs with empty peers");
+  assert.ok(
+    impactOnly.some((m) => m.id === "pts"),
+    "counting metrics still publish alongside cutoff Impact"
+  );
 
   console.log("test-player-percentile-metrics: ok");
 }

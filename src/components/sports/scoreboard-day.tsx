@@ -1,5 +1,6 @@
 "use client";
 
+import { useLocale, useTranslations } from "next-intl";
 import { TransitionLink } from "@/components/continuity/query-nav";
 import { LiveScoreboardScope } from "@/components/sports/live-scoreboard-scope";
 import { ScoreTile } from "@/components/sports/score-tile";
@@ -10,6 +11,7 @@ import {
   formatIsoDay as formatDay,
   relativeDayLabel,
   scoresDayHref,
+  shiftIsoDay,
 } from "@/lib/scoreboard-days";
 import { cn } from "@/lib/utils";
 
@@ -35,16 +37,30 @@ function tipSort(a: GameSummary, b: GameSummary): number {
   return ta.localeCompare(tb) || a.id.localeCompare(b.id);
 }
 
+function dayLabelForScores(
+  iso: string,
+  today: string,
+  t: ReturnType<typeof useTranslations<"Scores">>,
+  locale: string
+): string {
+  if (iso === today) return t("today");
+  if (iso === shiftIsoDay(today, -1)) return t("yesterday");
+  if (iso === shiftIsoDay(today, 1)) return t("tomorrow");
+  return relativeDayLabel(iso, today, locale);
+}
+
 function DateStrip({ data }: { data: ScoreboardDayData }) {
+  const t = useTranslations("Scores");
+  const locale = useLocale();
   const arrow =
     "glass-pill grid size-9 shrink-0 place-items-center rounded-md text-[18px] font-semibold text-muted-foreground hover:text-foreground";
   return (
-    <nav aria-label="Pick a day" className="flex items-center gap-1.5">
+    <nav aria-label={t("pickDayAria")} className="flex items-center gap-1.5">
       <TransitionLink
         href={scoresDayHref(data.prevWeekDate, data.today)}
         scroll={false}
         className={arrow}
-        aria-label="Previous week"
+        aria-label={t("prevWeekAria")}
       >
         ‹
       </TransitionLink>
@@ -67,15 +83,17 @@ function DateStrip({ data }: { data: ScoreboardDayData }) {
               )}
             >
               <span className="text-[10px] font-bold uppercase tracking-[0.12em] sm:text-[11px]">
-                {isToday ? "Today" : formatDay(day.date, { weekday: "short" })}
+                {isToday ? t("today") : formatDay(day.date, { weekday: "short" }, locale)}
               </span>
               <span className="text-[18px] font-bold leading-none tabular-nums sm:text-[20px]">
-                {formatDay(day.date, { day: "numeric" })}
+                {formatDay(day.date, { day: "numeric" }, locale)}
               </span>
               <span className="hidden text-[11px] tabular-nums sm:block">
                 {day.count === 0
-                  ? "No games"
-                  : `${day.count} game${day.count === 1 ? "" : "s"}`}
+                  ? t("noGamesShort")
+                  : day.count === 1
+                    ? t("gameCountOne")
+                    : t("gameCountMany", { count: day.count })}
               </span>
               <span
                 aria-hidden
@@ -92,7 +110,7 @@ function DateStrip({ data }: { data: ScoreboardDayData }) {
         href={scoresDayHref(data.nextWeekDate, data.today)}
         scroll={false}
         className={arrow}
-        aria-label="Next week"
+        aria-label={t("nextWeekAria")}
       >
         ›
       </TransitionLink>
@@ -142,10 +160,6 @@ function TileGrid({ games }: { games: GameSummary[] }) {
   );
 }
 
-function countLabel(n: number) {
-  return `${n} game${n === 1 ? "" : "s"}`;
-}
-
 export function ScoreboardDay({
   data,
   season,
@@ -153,9 +167,16 @@ export function ScoreboardDay({
   data: ScoreboardDayData;
   season: string;
 }) {
+  const t = useTranslations("Scores");
+  const locale = useLocale();
   const dayIds = new Set(data.games.map((g) => g.id));
   const initial = [...data.games, ...(data.recent?.games ?? [])];
-  const dayLabel = relativeDayLabel(data.date, data.today);
+  const dayLabel = dayLabelForScores(data.date, data.today, t, locale);
+  const isToday = data.date === data.today;
+
+  function countLabel(n: number) {
+    return n === 1 ? t("gameCountOne") : t("gameCountMany", { count: n });
+  }
 
   return (
     <div className="flex flex-col gap-5">
@@ -167,7 +188,7 @@ export function ScoreboardDay({
             scroll={false}
             className={cn(type.caption, "font-semibold text-muted-foreground underline-offset-4 hover:text-foreground hover:underline")}
           >
-            Back to today
+            {t("backToToday")}
           </TransitionLink>
         </div>
       ) : null}
@@ -183,12 +204,15 @@ export function ScoreboardDay({
             day.length === 0
               ? undefined
               : finals > 0 && finals < rest.length
-                ? `${countLabel(day.length)} · ${finals} final`
+                ? t("finalsMeta", {
+                    total: countLabel(day.length),
+                    finals: String(finals),
+                  })
                 : countLabel(day.length);
           return (
             <>
               {live.length ? (
-                <Section title="Live now" meta={countLabel(live.length)} live>
+                <Section title={t("liveNow")} meta={countLabel(live.length)} live>
                   <TileGrid games={live} />
                 </Section>
               ) : null}
@@ -196,7 +220,9 @@ export function ScoreboardDay({
               <Section
                 title={
                   live.length && rest.length
-                    ? `More ${dayLabel === "Today" ? "today" : `on ${dayLabel}`}`
+                    ? isToday
+                      ? t("moreToday")
+                      : t("moreOnDay", { day: dayLabel })
                     : dayLabel
                 }
                 meta={meta}
@@ -206,7 +232,9 @@ export function ScoreboardDay({
                 ) : live.length ? null : (
                   <div className="rounded-md border border-dashed border-border px-4 py-8 text-center">
                     <p className={cn(type.body, "text-muted-foreground")}>
-                      No games {dayLabel === "Today" ? "today" : `on ${dayLabel}`}.
+                      {isToday
+                        ? t("noGamesToday")
+                        : t("noGamesOnDay", { day: dayLabel })}
                     </p>
                     {data.nextGameDate ? (
                       <TransitionLink
@@ -214,7 +242,14 @@ export function ScoreboardDay({
                         scroll={false}
                         className={cn(type.bodySm, "mt-1 inline-block font-semibold underline underline-offset-4")}
                       >
-                        Next games: {relativeDayLabel(data.nextGameDate, data.today)}
+                        {t("nextGames", {
+                          label: dayLabelForScores(
+                            data.nextGameDate,
+                            data.today,
+                            t,
+                            locale
+                          ),
+                        })}
                       </TransitionLink>
                     ) : null}
                   </div>
@@ -223,8 +258,8 @@ export function ScoreboardDay({
 
               {data.recent && recent.length ? (
                 <Section
-                  title="Latest results"
-                  meta={relativeDayLabel(data.recent.date, data.today)}
+                  title={t("latestResults")}
+                  meta={dayLabelForScores(data.recent.date, data.today, t, locale)}
                 >
                   <TileGrid games={recent} />
                 </Section>
@@ -232,7 +267,7 @@ export function ScoreboardDay({
 
               {data.stale ? (
                 <p className={cn(type.caption, "text-muted-foreground")}>
-                  Live scores are unavailable right now, so this shows the saved schedule.
+                  {t("staleNote")}
                 </p>
               ) : null}
             </>

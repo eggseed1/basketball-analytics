@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
 import {
   PlayerSeasonCompareView,
@@ -10,11 +11,13 @@ import { getPlayerCareerSeasonsCached } from "@/data/queries/request-cache";
 import { dedupeCareerSeasons } from "@/analytics/career-resume";
 import { MotionReveal } from "@/components/continuity/motion-reveal";
 
-export const metadata = {
-  title: "Season compare",
-  description:
-    "Compare seasons of the same player on production, efficiency, and more.",
-};
+export async function generateMetadata() {
+  const t = await getTranslations("PlayerDetail");
+  return {
+    title: t("seasonCompareMetaTitle"),
+    description: t("seasonCompareMetaDescription"),
+  };
+}
 
 interface PageProps {
   params: Promise<{ playerId: string }>;
@@ -33,6 +36,7 @@ export default async function PlayerSeasonComparePage({
   params,
   searchParams,
 }: PageProps) {
+  const t = await getTranslations("PlayerDetail");
   const { playerId } = await params;
   const sp = await searchParams;
   const seasonA = one(sp, "a");
@@ -55,7 +59,7 @@ export default async function PlayerSeasonComparePage({
         seasonB,
       });
     } catch {
-      loadError = "Season comparison data is temporarily unavailable.";
+      loadError = t("seasonCompareUnavailable");
     }
   }
 
@@ -67,7 +71,7 @@ export default async function PlayerSeasonComparePage({
           href={`/players/${playerId}`}
           className="text-[14px] font-semibold text-muted-foreground"
         >
-          ← Player
+          {t("backToPlayer")}
         </Link>
       </p>
 
@@ -84,7 +88,7 @@ export default async function PlayerSeasonComparePage({
 
       {!seasonA || !seasonB ? (
         <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[14px] text-muted-foreground">
-          Pick two seasons to compare versions of this player.
+          {t("seasonComparePick")}
         </p>
       ) : loadError ? (
         <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[14px] text-muted-foreground">
@@ -98,7 +102,7 @@ export default async function PlayerSeasonComparePage({
         <PlayerSeasonCompareView result={loaded.comparison} />
       ) : (
         <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[14px] text-muted-foreground">
-          Could not build this season comparison.
+          {t("seasonCompareCouldNot")}
         </p>
       )}
     </main>

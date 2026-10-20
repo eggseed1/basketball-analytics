@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 
 import { MotionReveal } from "@/components/continuity/motion-reveal";
@@ -10,11 +11,14 @@ import { collectPhotoCredits } from "@/lib/photo-credits";
 import { SITE_CONTACT_URL } from "@/lib/site-url";
 import { cn } from "@/lib/utils";
 
-export const metadata = {
-  alternates: { canonical: "/sources" },
-  title: "Sources and credits",
-  description: "Where the site's numbers, headlines and photos come from, with photo licenses.",
-};
+export async function generateMetadata() {
+  const t = await getTranslations("Legal");
+  return {
+    alternates: { canonical: "/sources" },
+    title: t("sourcesMetaTitle"),
+    description: t("sourcesMetaDescription"),
+  };
+}
 
 const linkClass = "underline underline-offset-2 hover:text-foreground";
 
@@ -74,7 +78,8 @@ const DATA_SOURCES: { name: ReactNode; uses: string }[] = [
   },
 ];
 
-export default function SourcesPage() {
+export default async function SourcesPage() {
+  const t = await getTranslations("Legal");
   const credits = collectPhotoCredits([
     ...Object.values(legendPortraits.portraits as Record<string, string>),
     ...Object.values(portraitFallbacks.portraits as Record<string, string>),
@@ -84,22 +89,21 @@ export default function SourcesPage() {
     <main data-motion-page className="site-shell flex flex-col gap-8 py-6 sm:py-8">
       <MotionReveal />
       <PageHeader
-        title="Sources and credits"
-        subtitle="The site computes its own numbers from public data. These are the places that data comes from."
+        title={t("sourcesTitle")}
+        subtitle={t("sourcesSubtitle")}
       />
 
-      <Section title="Who made the site">
+      <Section title={t("sourcesWhoTitle")}>
         <p>
-          Mason Anapolle and Hannah Park made this site and designed it. Mason Anapolle created the
-          original statistics, including DRBL and WAR1. The{" "}
+          {t("sourcesWhoP1Before")}
           <Link href="/about" className={linkClass}>
-            about page
-          </Link>{" "}
-          says more.
+            {t("sourcesAboutLink")}
+          </Link>
+          {t("sourcesWhoP1After")}
         </p>
       </Section>
 
-      <Section title="Data">
+      <Section title={t("sourcesDataTitle")}>
         <ul className="flex flex-col gap-2">
           {DATA_SOURCES.map((s, i) => (
             <li key={i}>
@@ -107,33 +111,23 @@ export default function SourcesPage() {
             </li>
           ))}
         </ul>
-        <p>
-          The sources don&apos;t endorse this site, and numbers here can differ from theirs when the site
-          computes them differently.
-        </p>
+        <p>{t("sourcesDataFooter")}</p>
+        <p className="text-[13px]">{t("sourcesDataUsesGap")}</p>
       </Section>
 
-      <Section title="Logos and headshots">
-        <p>
-          Team logos and most player headshots load from ESPN&apos;s and NBA.com&apos;s image servers. They
-          belong to the NBA, its teams and the photographers, and appear only to show which team or player
-          a page is about.
-        </p>
+      <Section title={t("sourcesLogosTitle")}>
+        <p>{t("sourcesLogosP1")}</p>
       </Section>
 
-      <Section id="photo-credits" title="Photo credits">
-        <p>
-          Some player photos, mostly of older players, come from Wikimedia Commons under the licenses
-          listed below. The site crops each one to a circle and sometimes shows it over a blurred copy of
-          itself. Those changes are ours, not the photographers&apos;.
-        </p>
+      <Section id="photo-credits" title={t("sourcesPhotosTitle")}>
+        <p>{t("sourcesPhotosP1")}</p>
         <div className="overflow-x-auto">
           <table className="w-full min-w-[32rem] text-left">
             <thead className={cn(type.caption, "uppercase tracking-wide")}>
               <tr className="border-b border-border">
-                <th className="py-1.5 pr-3 font-semibold">Photo</th>
-                <th className="py-1.5 pr-3 font-semibold">By</th>
-                <th className="py-1.5 font-semibold">License</th>
+                <th className="py-1.5 pr-3 font-semibold">{t("sourcesColPhoto")}</th>
+                <th className="py-1.5 pr-3 font-semibold">{t("sourcesColBy")}</th>
+                <th className="py-1.5 font-semibold">{t("sourcesColLicense")}</th>
               </tr>
             </thead>
             <tbody>
@@ -153,10 +147,11 @@ export default function SourcesPage() {
         </div>
       </Section>
 
-      <Section title="Corrections and removal">
+      <Section title={t("sourcesCorrectionsTitle")}>
         <p>
-          If something here is credited wrong, or you own something and want it removed,{" "}
-          <Ext href={SITE_CONTACT_URL}>open a request</Ext> and we&apos;ll fix or remove it.
+          {t("sourcesCorrectionsP1Before")}
+          <Ext href={SITE_CONTACT_URL}>{t("sourcesOpenRequest")}</Ext>
+          {t("sourcesCorrectionsP1After")}
         </p>
       </Section>
     </main>

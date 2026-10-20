@@ -1,12 +1,15 @@
 "use client";
 
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { LogOut, Maximize2, Minimize2 } from "lucide-react";
 
 import { TeamLogo } from "@/components/brand/team-logo";
 import { useGmStore } from "@/gm/state/gm-store";
 import { useMyLeagueStore } from "@/gm/myleague/store";
+import { GmCheckpointBanner } from "@/gm/ui/gm-checkpoint-banner";
+import { GmIncomingOfferBanner } from "@/gm/ui/gm-incoming-offer-banner";
+import { GmScoutingFocusBanner } from "@/gm/ui/gm-scouting-focus-banner";
 import { GmNav } from "@/gm/ui/gm-nav";
 import { FRANCHISES } from "@/gm/seed/franchises";
 import { resolveTeamBrand } from "@/lib/nba-brand";
@@ -20,19 +23,6 @@ import {
 import { ESPN_PLAYER_SEASON_HORIZON_START } from "@/gm/myleague/constants";
 import { MotionReveal } from "@/components/continuity/motion-reveal";
 import "./gm-stage.css";
-
-const PHASE_LABEL: Record<string, string> = {
-  preseason: "Preseason",
-  regular: "Regular season",
-  play_in: "Play-in",
-  playoffs: "Playoffs",
-  draft: "Draft night",
-  free_agency: "Free agency",
-  offseason: "Offseason",
-};
-
-const GM_FICTION_NOTE =
-  "Rosters start from real players, but ratings, injuries, trades and signings here are simulated and say nothing about the real players.";
 
 type FullscreenNode = HTMLElement & {
   webkitRequestFullscreen?: () => void;
@@ -83,6 +73,20 @@ async function toggleFullscreen(
   }
 }
 
+function formatSaveWhen(iso: string): string {
+  const time = Date.parse(iso);
+  if (!Number.isFinite(time)) return iso.slice(0, 10);
+  try {
+    return new Intl.DateTimeFormat(undefined, {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    }).format(new Date(time));
+  } catch {
+    return iso.slice(0, 10);
+  }
+}
+
 export function GmShell({
   children,
   accentTeamId,
@@ -91,14 +95,19 @@ export function GmShell({
   /** When the screen is about another club, the desk uses their colors. */
   accentTeamId?: string | null;
 }) {
+  const t = useTranslations("GmUi");
   const league = useGmStore((s) => s.league);
   const hydrated = useGmStore((s) => s.hydrated);
   const seeding = useGmStore((s) => s.seeding);
   const seedError = useGmStore((s) => s.seedError);
+  const saves = useGmStore((s) => s.saves);
   const setHydrated = useGmStore((s) => s.setHydrated);
+  const refreshSaves = useGmStore((s) => s.refreshSaves);
   const newLeague = useGmStore((s) => s.newLeague);
   const newGeneratedLeague = useGmStore((s) => s.newGeneratedLeague);
-  const resetLeague = useGmStore((s) => s.resetLeague);
+  const leaveToHub = useGmStore((s) => s.leaveToHub);
+  const resumeSave = useGmStore((s) => s.resumeSave);
+  const deleteSave = useGmStore((s) => s.deleteSave);
   const mlHydrated = useMyLeagueStore((s) => s.hydrated);
   const ensureBootstrapped = useMyLeagueStore((s) => s.ensureBootstrapped);
   const [season, setSeason] = useState(
@@ -129,7 +138,8 @@ export function GmShell({
       const t = setTimeout(() => setHydrated(true), 50);
       return () => clearTimeout(t);
     }
-  }, [hydrated, setHydrated]);
+    void refreshSaves();
+  }, [hydrated, setHydrated, refreshSaves]);
 
   useEffect(() => {
     if (!hydrated || !mlHydrated || !league) return;
@@ -149,7 +159,7 @@ export function GmShell({
     return (
       <main data-gm data-motion-page className="site-shell flex flex-1 flex-col gap-4 py-8">
         <MotionReveal />
-        <p className="text-muted-foreground">Loading front office…</p>
+        <p className="text-muted-foreground">{t("loadingOffice")}</p>
       </main>
     );
   }
@@ -160,7 +170,6 @@ export function GmShell({
     for (let y = currentStart; y >= ESPN_PLAYER_SEASON_HORIZON_START; y -= 1) {
       seasonOptions.push(canonicalSeasonFromStartYear(y));
     }
-    // Decade anchors first in the select via optgroup-like ordering: keep full list.
 
     return (
       <main
@@ -170,22 +179,84 @@ export function GmShell({
       >
         <MotionReveal />
         <p className="gm-disclaimer">
-          Franchise Lab is a simulated front office. {GM_FICTION_NOTE}
+          {t("startDisclaimer", { note: t("fictionNote") })}
         </p>
         <div>
           <h1 className="text-[28px] font-bold tracking-tight sm:text-[32px]">
-            My Teams
+            {t("myTeams")}
           </h1>
           <p className="mt-1 max-w-2xl text-[15px] text-muted-foreground">
-            Real NBA rosters (with DARKO/RAPTOR) from{" "}
-            {ESPN_PLAYER_SEASON_HORIZON_START} onward, with era CBA caps. RAPTOR
-            only exists through 2021-22.
+            {t("myTeamsBlurb", { year: ESPN_PLAYER_SEASON_HORIZON_START })}
           </p>
         </div>
 
+        {saves.length > 0 ? (
+          <section className="flex flex-col gap-3">
+            <h2 className="text-[15px] font-semibold tracking-tight">
+              {t("continueSaves")}
+            </h2>
+            <ul className="flex flex-col gap-2">
+              {saves.map((save) => {
+                const phaseKey = `phase_${save.phase}` as
+                  | "phase_preseason"
+                  | "phase_regular"
+                  | "phase_play_in"
+                  | "phase_playoffs"
+                  | "phase_draft"
+                  | "phase_free_agency"
+                  | "phase_offseason";
+                const phaseLabel = t.has(phaseKey) ? t(phaseKey) : save.phase;
+                return (
+                  <li
+                    key={save.id}
+                    className="sports-card flex flex-wrap items-center gap-3 px-3 py-3"
+                    style={teamColorStyle(save.userTeamId)}
+                  >
+                    <TeamLogo teamKey={save.userTeamId} size="sm" />
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-[14px] font-semibold">{save.label}</p>
+                      <p className="text-[12px] text-muted-foreground">
+                        {phaseLabel}
+                        {" · "}
+                        {t("saveUpdated", { when: formatSaveWhen(save.updatedAt) })}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      className="gm-nav__link is-active"
+                      disabled={seeding}
+                      onClick={() => void resumeSave(save.id)}
+                    >
+                      {t("continueSave")}
+                    </button>
+                    <button
+                      type="button"
+                      className="gm-nav__link"
+                      disabled={seeding}
+                      onClick={() => {
+                        if (
+                          typeof window !== "undefined" &&
+                          window.confirm(t("deleteSaveConfirm", { label: save.label }))
+                        ) {
+                          void deleteSave(save.id);
+                        }
+                      }}
+                    >
+                      {t("deleteSave")}
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        ) : null}
+
         <div className="flex flex-wrap items-center gap-2">
+          <h2 className="mr-2 text-[15px] font-semibold tracking-tight">
+            {t("newFranchise")}
+          </h2>
           <label className="text-[13px] font-semibold text-muted-foreground">
-            Season
+            {t("season")}
           </label>
           <select
             value={season}
@@ -203,14 +274,13 @@ export function GmShell({
 
         {seeding ? (
           <div className="sports-card px-4 py-6 text-center text-[15px] text-muted-foreground">
-            Loading real players for {season}…
+            {t("loadingPlayers", { season })}
           </div>
         ) : null}
 
         {seedError ? (
           <div className="sports-card px-4 py-3 text-[13px] text-muted-foreground">
-            Live seed issue: {seedError}. Falling back to a generated league if
-            a team was selected.
+            {t("seedIssue", { error: seedError })}
           </div>
         ) : null}
 
@@ -249,7 +319,7 @@ export function GmShell({
           onClick={() => newGeneratedLeague("bos")}
           className="self-start text-[13px] font-semibold text-muted-foreground underline-offset-4 hover:underline"
         >
-          Use generated demo league instead
+          {t("generatedDemo")}
         </button>
       </main>
     );
@@ -257,7 +327,15 @@ export function GmShell({
 
   const team = userTeam(league);
   const record = userRecord(league);
-  const phaseLabel = PHASE_LABEL[league.phase] ?? league.phase;
+  const phaseKey = `phase_${league.phase}` as
+    | "phase_preseason"
+    | "phase_regular"
+    | "phase_play_in"
+    | "phase_playoffs"
+    | "phase_draft"
+    | "phase_free_agency"
+    | "phase_offseason";
+  const phaseLabel = t.has(phaseKey) ? t(phaseKey) : league.phase;
 
   return (
     <main
@@ -281,7 +359,7 @@ export function GmShell({
             <span>
               {league.season - 1}-{String(league.season).slice(-2)}
             </span>
-            <span>Day {league.day}</span>
+            <span>{t("day", { day: league.day })}</span>
           </p>
         </div>
         <p className="gm-mast__record score-num">
@@ -291,8 +369,8 @@ export function GmShell({
           <button
             type="button"
             className="gm-mast__tool"
-            aria-label={full ? "Exit fullscreen" : "Fullscreen"}
-            title={full ? "Exit fullscreen" : "Fullscreen"}
+            aria-label={full ? t("exitFullscreen") : t("fullscreen")}
+            title={full ? t("exitFullscreen") : t("fullscreen")}
             onClick={() => {
               void toggleFullscreen(deskRef.current, full, setFull);
             }}
@@ -302,14 +380,14 @@ export function GmShell({
           <button
             type="button"
             className="gm-mast__tool"
-            aria-label="Leave league"
-            title="Leave league"
+            aria-label={t("leaveLeague")}
+            title={t("leaveLeague")}
             onClick={() => {
               if (
                 typeof window !== "undefined" &&
-                window.confirm("Leave this league and pick a new team?")
+                window.confirm(t("leaveConfirm"))
               ) {
-                resetLeague();
+                void leaveToHub();
               }
             }}
           >
@@ -317,14 +395,14 @@ export function GmShell({
           </button>
         </div>
       </header>
-      <p className="gm-disclaimer">{GM_FICTION_NOTE}</p>
+      <p className="gm-disclaimer">{t("fictionNote")}</p>
       {league.season >= currentNbaStartYear() + 1 ? null : (
         <div className="sports-card flex flex-wrap items-center justify-between gap-3 p-4">
           <p className="text-sm">
-            This save still has {league.season - 1}-
-            {String(league.season).slice(-2)} teams. Load{" "}
-            {canonicalSeasonFromStartYear(currentNbaStartYear())} rosters so
-            players are on this year's clubs.
+            {t("loadCurrentRosters", {
+              old: `${league.season - 1}-${String(league.season).slice(-2)}`,
+              season: canonicalSeasonFromStartYear(currentNbaStartYear()),
+            })}
           </p>
           <button
             type="button"
@@ -333,22 +411,22 @@ export function GmShell({
             onClick={() =>
               void newLeague(
                 league.userTeamId,
-                canonicalSeasonFromStartYear(currentNbaStartYear())
+                canonicalSeasonFromStartYear(currentNbaStartYear()),
+                { replace: true }
               )
             }
           >
             {seeding
-              ? "Loading rosters…"
-              : `Load ${canonicalSeasonFromStartYear(currentNbaStartYear())} rosters`}
+              ? t("loadingRosters")
+              : t("loadCurrentButton", {
+                  season: canonicalSeasonFromStartYear(currentNbaStartYear()),
+                })}
           </button>
         </div>
       )}
       {leagueHasRealPlayers(league) ? null : (
         <div className="sports-card flex flex-wrap items-center justify-between gap-3 p-4">
-          <p className="text-sm">
-            This save uses generated players. Load real NBA rosters for real
-            names, season averages, and career logs.
-          </p>
+          <p className="text-sm">{t("loadRealNote")}</p>
           <button
             type="button"
             className="gm-nav__link is-active"
@@ -356,27 +434,20 @@ export function GmShell({
             onClick={() =>
               void newLeague(
                 league.userTeamId,
-                canonicalSeasonFromStartYear(currentNbaStartYear())
+                canonicalSeasonFromStartYear(currentNbaStartYear()),
+                { replace: true }
               )
             }
           >
-            {seeding ? "Loading rosters…" : "Load real NBA rosters"}
+            {seeding ? t("loadingRosters") : t("loadRealButton")}
           </button>
         </div>
       )}
       {seedError ? <p className="text-sm text-red-300">{seedError}</p> : null}
       <GmNav />
-      {league.incomingOffer ? (
-        <Link
-          href="/gm/trade"
-          className="rounded-xl border border-amber-500/50 bg-amber-500/10 px-4 py-3 text-sm"
-        >
-          <span className="font-semibold">
-            {league.teams.find((team) => team.id === league.incomingOffer?.fromTeamId)?.city ?? "A team"} sent a trade offer.
-          </span>{" "}
-          The sim is paused until you review it. You can change the pieces before you answer.
-        </Link>
-      ) : null}
+      <GmCheckpointBanner />
+      <GmScoutingFocusBanner />
+      <GmIncomingOfferBanner />
       <div data-motion-stack className="pb-8">
         {children}
       </div>

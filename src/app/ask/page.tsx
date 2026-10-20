@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 
 import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { AskDrblView } from "@/components/ask/ask-drbl-view";
@@ -11,9 +12,6 @@ import {
 } from "@/query-engine/ask-builder";
 import { parseAskContextFromSearchParams } from "@/query-engine/ask-context";
 import { daySeed } from "@/query-engine/ask-examples";
-
-const ASK_DESCRIPTION =
-  "Natural-language basketball analytics: structured queries over trusted DRBL data.";
 
 interface AskPageProps {
   searchParams: Promise<{
@@ -65,9 +63,16 @@ function clip(text: string, max: number): string {
 }
 
 export async function generateMetadata({ searchParams }: AskPageProps): Promise<Metadata> {
+  const t = await getTranslations("Ask");
   const { q, playerId, teamId, askContext } = resolveAskRequest(await searchParams);
   const base: Metadata = { alternates: { canonical: "/ask" } };
-  if (!q) return { ...base, title: "Ask DRBL", description: ASK_DESCRIPTION };
+  if (!q) {
+    return {
+      ...base,
+      title: t("metaTitle"),
+      description: t("metaDescription"),
+    };
+  }
   const result = await getAskDrblAnswer(q, { playerId, teamId, context: askContext }).catch(() => null);
   const answered = result && (result.status === "ok" || result.status === "partial") && result.headline;
   const answer = answered
@@ -78,7 +83,7 @@ export async function generateMetadata({ searchParams }: AskPageProps): Promise<
   return {
     ...base,
     title: { absolute: `${clip(q, 80)} | Ask DRBL` },
-    description: answer ? clip(answer, 200) : ASK_DESCRIPTION,
+    description: answer ? clip(answer, 200) : t("metaDescription"),
   };
 }
 

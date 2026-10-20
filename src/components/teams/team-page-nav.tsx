@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 
 import { cn } from "@/lib/utils";
 
@@ -9,30 +10,35 @@ export type TeamPageSection = {
   label: string;
 };
 
-const DEFAULT_SECTIONS: TeamPageSection[] = [
-  { id: "overview", label: "Overview" },
-  { id: "performance", label: "Performance" },
-  { id: "identity", label: "Identity" },
-  { id: "arc", label: "Arc" },
-  { id: "roster", label: "Roster" },
-  { id: "games", label: "Games" },
-  { id: "evidence", label: "Evidence" },
-  { id: "transactions", label: "Transactions" },
-  { id: "ask", label: "Ask" },
-];
-
 /**
  * Lightweight sticky in-page nav for Team Intelligence V2.
  */
 export function TeamPageNav({
-  sections = DEFAULT_SECTIONS,
+  sections,
 }: {
   sections?: TeamPageSection[];
 }) {
-  const [active, setActive] = useState(sections[0]?.id ?? "overview");
+  const t = useTranslations("TeamDetail");
+  const resolved = useMemo(
+    () =>
+      sections ??
+      ([
+        { id: "overview", label: t("sectionOverview") },
+        { id: "performance", label: t("sectionPerformance") },
+        { id: "identity", label: t("sectionIdentity") },
+        { id: "arc", label: t("sectionArc") },
+        { id: "roster", label: t("sectionRoster") },
+        { id: "games", label: t("sectionGames") },
+        { id: "evidence", label: t("sectionEvidence") },
+        { id: "transactions", label: t("sectionTransactions") },
+        { id: "ask", label: t("sectionAsk") },
+      ] satisfies TeamPageSection[]),
+    [sections, t]
+  );
+  const [active, setActive] = useState(resolved[0]?.id ?? "overview");
 
   useEffect(() => {
-    const nodes = sections
+    const nodes = resolved
       .map((s) => document.getElementById(s.id))
       .filter((el): el is HTMLElement => el != null);
     if (!nodes.length) return;
@@ -50,12 +56,12 @@ export function TeamPageNav({
 
     for (const node of nodes) observer.observe(node);
     return () => observer.disconnect();
-  }, [sections]);
+  }, [resolved]);
 
   return (
-    <nav aria-label="Team page sections" className="min-w-0">
+    <nav aria-label={t("sectionsAria")} className="min-w-0">
       <ul className="flex justify-end gap-1 touch-scroll-x pb-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {sections.map((section) => {
+        {resolved.map((section) => {
           const isActive = active === section.id;
           return (
             <li key={section.id} className="shrink-0">

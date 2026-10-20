@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
 
 import { MotionReveal } from "@/components/continuity/motion-reveal";
@@ -7,11 +8,14 @@ import { type } from "@/lib/design-system";
 import { SITE_CONTACT_URL } from "@/lib/site-url";
 import { cn } from "@/lib/utils";
 
-export const metadata = {
-  alternates: { canonical: "/privacy" },
-  title: "Privacy",
-  description: "What this site stores about visitors and what it keeps from public posts it reads.",
-};
+export async function generateMetadata() {
+  const t = await getTranslations("Legal");
+  return {
+    alternates: { canonical: "/privacy" },
+    title: t("privacyMetaTitle"),
+    description: t("privacyMetaDescription"),
+  };
+}
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
@@ -22,16 +26,17 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
   );
 }
 
-export default function PrivacyPage() {
+export default async function PrivacyPage() {
+  const t = await getTranslations("Legal");
   return (
     <main data-motion-page className="site-shell flex flex-col gap-8 py-6 sm:py-8">
       <MotionReveal />
       <PageHeader
-        title="Privacy"
-        subtitle="Updated October 19, 2026. This is a free, non-commercial NBA stats site with no accounts and no ads."
+        title={t("privacyTitle")}
+        subtitle={t("privacySubtitle")}
       />
 
-      <Section title="What we collect about you">
+      <Section title={t("privacyCollectTitle")}>
         <p>
           We don&apos;t collect personal information. The site has no sign-in, no analytics or
           tracking scripts, no ad networks and no cookies of its own. Questions you type into Ask
@@ -81,7 +86,7 @@ export default function PrivacyPage() {
         </p>
       </Section>
 
-      <Section title="Images from other sites">
+      <Section title={t("privacyImagesTitle")}>
         <p>
           Player headshots and team logos load straight from ESPN, NBA.com and Wikimedia Commons. Your browser requests each image from that site, so the site sees
           your IP address and browser the same way it would if you visited it, and its own privacy
@@ -90,7 +95,7 @@ export default function PrivacyPage() {
         </p>
       </Section>
 
-      <Section title="Public posts we read for fan sentiment">
+      <Section title={t("privacySentimentTitle")}>
         <p>
           The <Link href="/sentiment" className="underline underline-offset-2">sentiment pages</Link>{" "}
           score the tone of public fan writing about players and teams. A word list scores each item
@@ -153,7 +158,7 @@ export default function PrivacyPage() {
         </p>
       </Section>
 
-      <Section title="Credits">
+      <Section title={t("privacyCreditsTitle")}>
         <p>
           Data sources, photo credits and licenses are listed on the{" "}
           <Link href="/sources" className="underline underline-offset-2">
@@ -163,7 +168,7 @@ export default function PrivacyPage() {
         </p>
       </Section>
 
-      <Section title="Contact">
+      <Section title={t("privacyContactTitle")}>
         <p>
           Questions or deletion requests go to the{" "}
           <a href={SITE_CONTACT_URL} className="underline underline-offset-2" target="_blank" rel="noreferrer">

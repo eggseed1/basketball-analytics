@@ -1,0 +1,1209 @@
+{
+  "base": "http://localhost:3001",
+  "startedAt": "2026-10-20T12:50:24.954Z",
+  "cacheKeys": [
+    {
+      "name": "cookie-de-beats-accept-fr",
+      "a": "de",
+      "expect": "de",
+      "ok": true,
+      "note": "Unit isolation of localeCacheKeySegment; Worker PAGE_CACHE keys use page:{version}:{locale}:{path}"
+    },
+    {
+      "name": "accept-ja",
+      "a": "ja",
+      "expect": "ja",
+      "ok": true,
+      "note": "Unit isolation of localeCacheKeySegment; Worker PAGE_CACHE keys use page:{version}:{locale}:{path}"
+    },
+    {
+      "name": "force-en",
+      "a": "en",
+      "expect": "en",
+      "ok": true,
+      "note": "Unit isolation of localeCacheKeySegment; Worker PAGE_CACHE keys use page:{version}:{locale}:{path}"
+    },
+    {
+      "name": "en-XA-isolated",
+      "a": "en-XA",
+      "expect": "en-XA",
+      "ok": true,
+      "note": "Unit isolation of localeCacheKeySegment; Worker PAGE_CACHE keys use page:{version}:{locale}:{path}"
+    },
+    {
+      "name": "auto-zh-Hant",
+      "a": "zh-Hant",
+      "expect": "zh-Hant",
+      "ok": true,
+      "note": "Unit isolation of localeCacheKeySegment; Worker PAGE_CACHE keys use page:{version}:{locale}:{path}"
+    },
+    {
+      "name": "de-fr-distinct-keys",
+      "a": "page:v1:de:/standings",
+      "b": "page:v1:fr:/standings",
+      "ok": true,
+      "expect": "distinct"
+    }
+  ],
+  "localeSmoke": [
+    {
+      "locale": "en",
+      "status": 200,
+      "lang": "en",
+      "htmlKb": 669.5,
+      "ok": true
+    },
+    {
+      "locale": "es",
+      "status": 200,
+      "lang": "es",
+      "htmlKb": 672.4,
+      "ok": true
+    },
+    {
+      "locale": "fr",
+      "status": 200,
+      "lang": "fr",
+      "htmlKb": 672.8,
+      "ok": true
+    },
+    {
+      "locale": "de",
+      "status": 200,
+      "lang": "de",
+      "htmlKb": 671.4,
+      "ok": true
+    },
+    {
+      "locale": "pt-BR",
+      "status": 200,
+      "lang": "pt-BR",
+      "htmlKb": 672.1,
+      "ok": true
+    },
+    {
+      "locale": "ko",
+      "status": 200,
+      "lang": "ko",
+      "htmlKb": 672.5,
+      "ok": true
+    },
+    {
+      "locale": "ja",
+      "status": 200,
+      "lang": "ja",
+      "htmlKb": 674.6,
+      "ok": true
+    },
+    {
+      "locale": "zh-Hans",
+      "status": 200,
+      "lang": "zh-Hans",
+      "htmlKb": 668.8,
+      "ok": true
+    },
+    {
+      "locale": "zh-Hant",
+      "status": 200,
+      "lang": "zh-Hant",
+      "htmlKb": 668.8,
+      "ok": true
+    },
+    {
+      "locale": "auto(ja)",
+      "status": 200,
+      "lang": "ja",
+      "htmlKb": 674.6,
+      "ok": true
+    },
+    {
+      "locale": "en-XA",
+      "status": 200,
+      "lang": "en",
+      "hasPseudo": false,
+      "htmlKb": 669.5,
+      "ok": true
+    }
+  ],
+  "htmlSizes": [
+    {
+      "path": "/",
+      "status": 200,
+      "medianMs": 66,
+      "rangeMs": [
+        62,
+        79
+      ],
+      "htmlKb": 669.5
+    },
+    {
+      "path": "/scores",
+      "status": 200,
+      "medianMs": 21,
+      "rangeMs": [
+        16,
+        72
+      ],
+      "htmlKb": 143.7
+    },
+    {
+      "path": "/standings",
+      "status": 200,
+      "medianMs": 44,
+      "rangeMs": [
+        39,
+        55
+      ],
+      "htmlKb": 378.6
+    },
+    {
+      "path": "/explore/players",
+      "status": 200,
+      "medianMs": 44,
+      "rangeMs": [
+        42,
+        86
+      ],
+      "htmlKb": 1025.9
+    },
+    {
+      "path": "/players/1966",
+      "status": 200,
+      "medianMs": 195,
+      "rangeMs": [
+        192,
+        988
+      ],
+      "htmlKb": 916.4
+    },
+    {
+      "path": "/teams/13",
+      "status": 200,
+      "medianMs": 65,
+      "rangeMs": [
+        63,
+        93
+      ],
+      "htmlKb": 482.7
+    },
+    {
+      "path": "/compare",
+      "status": 200,
+      "medianMs": 10,
+      "rangeMs": [
+        9,
+        15
+      ],
+      "htmlKb": 125.4
+    },
+    {
+      "path": "/learn",
+      "status": 200,
+      "medianMs": 11,
+      "rangeMs": [
+        11,
+        14
+      ],
+      "htmlKb": 183.7
+    },
+    {
+      "path": "/learn/pace",
+      "status": 200,
+      "medianMs": 9,
+      "rangeMs": [
+        8,
+        13
+      ],
+      "htmlKb": 89.2
+    },
+    {
+      "path": "/findings",
+      "status": 200,
+      "medianMs": 26,
+      "rangeMs": [
+        26,
+        419
+      ],
+      "htmlKb": 480.3
+    },
+    {
+      "path": "/ask",
+      "status": 200,
+      "medianMs": 9,
+      "rangeMs": [
+        8,
+        23
+      ],
+      "htmlKb": 87.9
+    },
+    {
+      "path": "/arcade",
+      "status": 200,
+      "medianMs": 14,
+      "rangeMs": [
+        11,
+        15
+      ],
+      "htmlKb": 125.9
+    },
+    {
+      "path": "/gm",
+      "status": 200,
+      "medianMs": 10,
+      "rangeMs": [
+        9,
+        29
+      ],
+      "htmlKb": 91.6
+    },
+    {
+      "path": "/explore/games",
+      "status": 200,
+      "medianMs": 21,
+      "rangeMs": [
+        19,
+        26
+      ],
+      "htmlKb": 306.9
+    }
+  ],
+  "dualContext": [
+    {
+      "order": "de then fr",
+      "langA": "de",
+      "langB": "fr",
+      "ok": true,
+      "layer": "next-start-local (not Cloudflare edge HIT/MISS)"
+    },
+    {
+      "order": "fr then de",
+      "langA": "fr",
+      "langB": "de",
+      "ok": true,
+      "layer": "next-start-local (not Cloudflare edge HIT/MISS)"
+    },
+    {
+      "order": "ja then en",
+      "langA": "ja",
+      "langB": "en",
+      "ok": true,
+      "layer": "next-start-local (not Cloudflare edge HIT/MISS)"
+    },
+    {
+      "order": "en then ja",
+      "langA": "en",
+      "langB": "ja",
+      "ok": true,
+      "layer": "next-start-local (not Cloudflare edge HIT/MISS)"
+    }
+  ],
+  "screenshots": [
+    {
+      "engine": "chromium",
+      "profile": "desktop",
+      "route": "home",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/chromium/desktop/home.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "chromium",
+      "profile": "desktop",
+      "route": "scores",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/chromium/desktop/scores.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "chromium",
+      "profile": "desktop",
+      "route": "standings",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/chromium/desktop/standings.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "chromium",
+      "profile": "desktop",
+      "route": "players",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/chromium/desktop/players.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "chromium",
+      "profile": "desktop",
+      "route": "player-detail",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/chromium/desktop/player-detail.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "chromium",
+      "profile": "desktop",
+      "route": "team-detail",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/chromium/desktop/team-detail.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "chromium",
+      "profile": "desktop",
+      "route": "compare",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/chromium/desktop/compare.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "chromium",
+      "profile": "desktop",
+      "route": "learn",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/chromium/desktop/learn.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "chromium",
+      "profile": "desktop",
+      "route": "learn-topic",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/chromium/desktop/learn-topic.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "chromium",
+      "profile": "desktop",
+      "route": "findings",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/chromium/desktop/findings.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "chromium",
+      "profile": "desktop",
+      "route": "ask",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/chromium/desktop/ask.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "chromium",
+      "profile": "desktop",
+      "route": "arcade",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/chromium/desktop/arcade.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "chromium",
+      "profile": "desktop",
+      "route": "gm",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/chromium/desktop/gm.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "chromium",
+      "profile": "desktop",
+      "route": "games-explore",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/chromium/desktop/games-explore.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "chromium",
+      "profile": "tablet",
+      "route": "home",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/chromium/tablet/home.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "chromium",
+      "profile": "tablet",
+      "route": "scores",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/chromium/tablet/scores.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "chromium",
+      "profile": "tablet",
+      "route": "standings",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/chromium/tablet/standings.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "chromium",
+      "profile": "tablet",
+      "route": "players",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/chromium/tablet/players.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "chromium",
+      "profile": "tablet",
+      "route": "player-detail",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/chromium/tablet/player-detail.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "chromium",
+      "profile": "tablet",
+      "route": "team-detail",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/chromium/tablet/team-detail.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "chromium",
+      "profile": "tablet",
+      "route": "compare",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/chromium/tablet/compare.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "chromium",
+      "profile": "tablet",
+      "route": "learn",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/chromium/tablet/learn.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "chromium",
+      "profile": "tablet",
+      "route": "learn-topic",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/chromium/tablet/learn-topic.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "chromium",
+      "profile": "tablet",
+      "route": "findings",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/chromium/tablet/findings.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "chromium",
+      "profile": "tablet",
+      "route": "ask",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/chromium/tablet/ask.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "chromium",
+      "profile": "tablet",
+      "route": "arcade",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/chromium/tablet/arcade.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "chromium",
+      "profile": "tablet",
+      "route": "gm",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/chromium/tablet/gm.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "chromium",
+      "profile": "tablet",
+      "route": "games-explore",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/chromium/tablet/games-explore.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "chromium",
+      "profile": "phone",
+      "route": "home",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/chromium/phone/home.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "chromium",
+      "profile": "phone",
+      "route": "scores",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/chromium/phone/scores.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "chromium",
+      "profile": "phone",
+      "route": "standings",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/chromium/phone/standings.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "chromium",
+      "profile": "phone",
+      "route": "players",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/chromium/phone/players.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "chromium",
+      "profile": "phone",
+      "route": "player-detail",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/chromium/phone/player-detail.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "chromium",
+      "profile": "phone",
+      "route": "team-detail",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/chromium/phone/team-detail.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "chromium",
+      "profile": "phone",
+      "route": "compare",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/chromium/phone/compare.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "chromium",
+      "profile": "phone",
+      "route": "learn",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/chromium/phone/learn.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "chromium",
+      "profile": "phone",
+      "route": "learn-topic",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/chromium/phone/learn-topic.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "chromium",
+      "profile": "phone",
+      "route": "findings",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/chromium/phone/findings.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "chromium",
+      "profile": "phone",
+      "route": "ask",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/chromium/phone/ask.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "chromium",
+      "profile": "phone",
+      "route": "arcade",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/chromium/phone/arcade.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "chromium",
+      "profile": "phone",
+      "route": "gm",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/chromium/phone/gm.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "chromium",
+      "profile": "phone",
+      "route": "games-explore",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/chromium/phone/games-explore.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "kind": "locale",
+      "locale": "de",
+      "route": "home",
+      "file": "reports/i18n-perf-completion/screenshots/locales/de/home.png",
+      "lang": "de",
+      "ok": true
+    },
+    {
+      "kind": "locale",
+      "locale": "de",
+      "route": "standings",
+      "file": "reports/i18n-perf-completion/screenshots/locales/de/standings.png",
+      "lang": "de",
+      "ok": true
+    },
+    {
+      "kind": "locale",
+      "locale": "de",
+      "route": "players",
+      "file": "reports/i18n-perf-completion/screenshots/locales/de/players.png",
+      "lang": "de",
+      "ok": true
+    },
+    {
+      "kind": "locale",
+      "locale": "de",
+      "route": "learn-topic",
+      "file": "reports/i18n-perf-completion/screenshots/locales/de/learn-topic.png",
+      "lang": "de",
+      "ok": true
+    },
+    {
+      "kind": "locale",
+      "locale": "ko",
+      "route": "home",
+      "file": "reports/i18n-perf-completion/screenshots/locales/ko/home.png",
+      "lang": "ko",
+      "ok": true
+    },
+    {
+      "kind": "locale",
+      "locale": "ko",
+      "route": "standings",
+      "file": "reports/i18n-perf-completion/screenshots/locales/ko/standings.png",
+      "lang": "ko",
+      "ok": true
+    },
+    {
+      "kind": "locale",
+      "locale": "ko",
+      "route": "players",
+      "file": "reports/i18n-perf-completion/screenshots/locales/ko/players.png",
+      "lang": "ko",
+      "ok": true
+    },
+    {
+      "kind": "locale",
+      "locale": "ko",
+      "route": "learn-topic",
+      "file": "reports/i18n-perf-completion/screenshots/locales/ko/learn-topic.png",
+      "lang": "ko",
+      "ok": true
+    },
+    {
+      "kind": "locale",
+      "locale": "ja",
+      "route": "home",
+      "file": "reports/i18n-perf-completion/screenshots/locales/ja/home.png",
+      "lang": "ja",
+      "ok": true
+    },
+    {
+      "kind": "locale",
+      "locale": "ja",
+      "route": "standings",
+      "file": "reports/i18n-perf-completion/screenshots/locales/ja/standings.png",
+      "lang": "ja",
+      "ok": true
+    },
+    {
+      "kind": "locale",
+      "locale": "ja",
+      "route": "players",
+      "file": "reports/i18n-perf-completion/screenshots/locales/ja/players.png",
+      "lang": "ja",
+      "ok": true
+    },
+    {
+      "kind": "locale",
+      "locale": "ja",
+      "route": "learn-topic",
+      "file": "reports/i18n-perf-completion/screenshots/locales/ja/learn-topic.png",
+      "lang": "ja",
+      "ok": true
+    },
+    {
+      "kind": "locale",
+      "locale": "zh-Hans",
+      "route": "home",
+      "file": "reports/i18n-perf-completion/screenshots/locales/zh-Hans/home.png",
+      "lang": "zh-Hans",
+      "ok": true
+    },
+    {
+      "kind": "locale",
+      "locale": "zh-Hans",
+      "route": "standings",
+      "file": "reports/i18n-perf-completion/screenshots/locales/zh-Hans/standings.png",
+      "lang": "zh-Hans",
+      "ok": true
+    },
+    {
+      "kind": "locale",
+      "locale": "zh-Hans",
+      "route": "players",
+      "file": "reports/i18n-perf-completion/screenshots/locales/zh-Hans/players.png",
+      "lang": "zh-Hans",
+      "ok": true
+    },
+    {
+      "kind": "locale",
+      "locale": "zh-Hans",
+      "route": "learn-topic",
+      "file": "reports/i18n-perf-completion/screenshots/locales/zh-Hans/learn-topic.png",
+      "lang": "zh-Hans",
+      "ok": true
+    },
+    {
+      "kind": "locale",
+      "locale": "en-XA",
+      "route": "home",
+      "file": "reports/i18n-perf-completion/screenshots/locales/en-XA/home.png",
+      "lang": "en",
+      "ok": true
+    },
+    {
+      "kind": "locale",
+      "locale": "en-XA",
+      "route": "standings",
+      "file": "reports/i18n-perf-completion/screenshots/locales/en-XA/standings.png",
+      "lang": "en",
+      "ok": true
+    },
+    {
+      "kind": "locale",
+      "locale": "en-XA",
+      "route": "players",
+      "file": "reports/i18n-perf-completion/screenshots/locales/en-XA/players.png",
+      "lang": "en",
+      "ok": true
+    },
+    {
+      "kind": "locale",
+      "locale": "en-XA",
+      "route": "learn-topic",
+      "file": "reports/i18n-perf-completion/screenshots/locales/en-XA/learn-topic.png",
+      "lang": "en",
+      "ok": true
+    },
+    {
+      "engine": "firefox",
+      "error": "TimeoutError: browserType.launch: Timeout 180000ms exceeded.\nCall log:\n  - <launching> /Users/bombe/Library/Caches/ms-playwright/firefox-1538/firefox/Nightly.app/Contents/MacOS/firefox -no-remote -headless -profile /var/folders/cx/_jcl_h054k51xb698jt645pc0000gn/T/playwright_firefoxdev_profile-uyI6i0 -juggler-pipe -silent\n  - <launched> pid=66053\n  - [pid=66053][err] *** You are running in headless mode.\n  - [pid=66053][err] sandbox_extension_issue_file_to_process failed for /Users/bombe/Library/Caches/ms-playwright/firefox-1538/firefox/Nightly.app/Contents/MacOS/plugin-container.app: 1 (Operation not permitted)\n  - [pid=66053][out] Crash Annotation GraphicsCriticalError: |[0][GFX1-]: RenderCompositorSWGL failed mapping default framebuffer, no dt (t=2.46975) [GFX1-]: RenderCompositorSWGL failed mapping default framebuffer, no dt\n"
+    },
+    {
+      "engine": "webkit",
+      "profile": "desktop",
+      "route": "home",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/webkit/desktop/home.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "webkit",
+      "profile": "desktop",
+      "route": "scores",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/webkit/desktop/scores.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "webkit",
+      "profile": "desktop",
+      "route": "standings",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/webkit/desktop/standings.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "webkit",
+      "profile": "desktop",
+      "route": "players",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/webkit/desktop/players.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "webkit",
+      "profile": "desktop",
+      "route": "player-detail",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/webkit/desktop/player-detail.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "webkit",
+      "profile": "desktop",
+      "route": "team-detail",
+      "ok": false,
+      "error": "Error: page.goto: Navigation to \"http://localhost:3001/teams/13\" is interrupted by another navigation to \"http://localhost:3001/players/1966\"\nCall log:\n  - navigating to \"http://localhost:3001/teams/13\", waiting until \"domcontentloaded\"\n"
+    },
+    {
+      "engine": "webkit",
+      "profile": "desktop",
+      "route": "compare",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/webkit/desktop/compare.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "webkit",
+      "profile": "desktop",
+      "route": "learn",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/webkit/desktop/learn.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "webkit",
+      "profile": "desktop",
+      "route": "learn-topic",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/webkit/desktop/learn-topic.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "webkit",
+      "profile": "desktop",
+      "route": "findings",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/webkit/desktop/findings.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "webkit",
+      "profile": "desktop",
+      "route": "ask",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/webkit/desktop/ask.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "webkit",
+      "profile": "desktop",
+      "route": "arcade",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/webkit/desktop/arcade.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "webkit",
+      "profile": "desktop",
+      "route": "gm",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/webkit/desktop/gm.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "webkit",
+      "profile": "desktop",
+      "route": "games-explore",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/webkit/desktop/games-explore.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "webkit",
+      "profile": "tablet",
+      "route": "home",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/webkit/tablet/home.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "webkit",
+      "profile": "tablet",
+      "route": "scores",
+      "ok": false,
+      "error": "Error: page.goto: Navigation to \"http://localhost:3001/scores\" is interrupted by another navigation to \"http://localhost:3001/\"\nCall log:\n  - navigating to \"http://localhost:3001/scores\", waiting until \"domcontentloaded\"\n"
+    },
+    {
+      "engine": "webkit",
+      "profile": "tablet",
+      "route": "standings",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/webkit/tablet/standings.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "webkit",
+      "profile": "tablet",
+      "route": "players",
+      "ok": false,
+      "error": "Error: page.goto: Navigation to \"http://localhost:3001/explore/players\" is interrupted by another navigation to \"http://localhost:3001/standings\"\nCall log:\n  - navigating to \"http://localhost:3001/explore/players\", waiting until \"domcontentloaded\"\n"
+    },
+    {
+      "engine": "webkit",
+      "profile": "tablet",
+      "route": "player-detail",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/webkit/tablet/player-detail.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "webkit",
+      "profile": "tablet",
+      "route": "team-detail",
+      "ok": false,
+      "error": "Error: page.goto: Navigation to \"http://localhost:3001/teams/13\" is interrupted by another navigation to \"http://localhost:3001/players/1966\"\nCall log:\n  - navigating to \"http://localhost:3001/teams/13\", waiting until \"domcontentloaded\"\n"
+    },
+    {
+      "engine": "webkit",
+      "profile": "tablet",
+      "route": "compare",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/webkit/tablet/compare.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "webkit",
+      "profile": "tablet",
+      "route": "learn",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/webkit/tablet/learn.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "webkit",
+      "profile": "tablet",
+      "route": "learn-topic",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/webkit/tablet/learn-topic.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "webkit",
+      "profile": "tablet",
+      "route": "findings",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/webkit/tablet/findings.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "webkit",
+      "profile": "tablet",
+      "route": "ask",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/webkit/tablet/ask.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "webkit",
+      "profile": "tablet",
+      "route": "arcade",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/webkit/tablet/arcade.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "webkit",
+      "profile": "tablet",
+      "route": "gm",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/webkit/tablet/gm.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "webkit",
+      "profile": "tablet",
+      "route": "games-explore",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/webkit/tablet/games-explore.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "webkit",
+      "profile": "phone",
+      "route": "home",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/webkit/phone/home.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "webkit",
+      "profile": "phone",
+      "route": "scores",
+      "ok": false,
+      "error": "Error: page.goto: Navigation to \"http://localhost:3001/scores\" is interrupted by another navigation to \"http://localhost:3001/\"\nCall log:\n  - navigating to \"http://localhost:3001/scores\", waiting until \"domcontentloaded\"\n"
+    },
+    {
+      "engine": "webkit",
+      "profile": "phone",
+      "route": "standings",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/webkit/phone/standings.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "webkit",
+      "profile": "phone",
+      "route": "players",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/webkit/phone/players.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "webkit",
+      "profile": "phone",
+      "route": "player-detail",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/webkit/phone/player-detail.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "webkit",
+      "profile": "phone",
+      "route": "team-detail",
+      "ok": false,
+      "error": "TimeoutError: page.goto: Timeout 90000ms exceeded.\nCall log:\n  - navigating to \"http://localhost:3001/teams/13\", waiting until \"domcontentloaded\"\n"
+    },
+    {
+      "engine": "webkit",
+      "profile": "phone",
+      "route": "compare",
+      "ok": false,
+      "error": "TimeoutError: page.screenshot: Timeout 30000ms exceeded.\nCall log:\n  - taking page screenshot\n  - waiting for fonts to load...\n"
+    },
+    {
+      "engine": "webkit",
+      "profile": "phone",
+      "route": "learn",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/webkit/phone/learn.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "webkit",
+      "profile": "phone",
+      "route": "learn-topic",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/webkit/phone/learn-topic.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "webkit",
+      "profile": "phone",
+      "route": "findings",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/webkit/phone/findings.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "webkit",
+      "profile": "phone",
+      "route": "ask",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/webkit/phone/ask.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "webkit",
+      "profile": "phone",
+      "route": "arcade",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/webkit/phone/arcade.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "webkit",
+      "profile": "phone",
+      "route": "gm",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/webkit/phone/gm.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    },
+    {
+      "engine": "webkit",
+      "profile": "phone",
+      "route": "games-explore",
+      "status": 200,
+      "file": "reports/i18n-perf-completion/screenshots/devices/webkit/phone/games-explore.png",
+      "ok": true,
+      "note": "Emulated viewport — not a physical device"
+    }
+  ],
+  "finishedAt": "2026-10-20T13:18:51.530Z"
+}

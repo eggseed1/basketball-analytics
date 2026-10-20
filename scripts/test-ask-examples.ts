@@ -222,13 +222,13 @@ const CLASS_TO_OPS: Record<string, string[]> = {
   );
   const view = fs.readFileSync(viewPath, "utf8");
   const resultIdx = view.indexOf("{hasResult && displayResult ?");
-  const examplesAfterIdx = view.indexOf("Try another question");
-  const examplesBeforeIdx = view.indexOf("Try asking");
+  const examplesAfterIdx = view.indexOf('t("tryAnother")');
+  const examplesBeforeIdx = view.indexOf('t("tryAsking")');
   assert.ok(resultIdx > 0, "result block uses displayResult (stale-safe)");
   assert.ok(examplesBeforeIdx > 0);
   assert.ok(examplesAfterIdx > resultIdx, "post-query examples below result");
   assert.ok(view.includes('id="result"'));
-  assert.ok(view.includes("Explore further"));
+  assert.ok(view.includes("Explore further") || view.includes('t("exploreFurther")'));
   assert.ok(view.includes("staleResult"), "keeps prior ASK result while pending");
 }
 

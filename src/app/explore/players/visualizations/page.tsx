@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { getTranslations } from "next-intl/server";
 
 import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { LeaguePlayerScatterIsland } from "@/components/explore/league-player-scatter-island";
@@ -164,12 +165,14 @@ export default async function PlayerVisualizationsPage({
         ? `${season} · ${fieldBlurb}${minutesBlurb} · ${scatterMeta.blurb} Use the side leaders list or a team highlight, and click a point to open their page.`
         : `${season} player race · ${fieldBlurb} by ${metricLabel}${minutesBlurb}. Rate stats show season levels; counting and season totals accumulate over time. Pick a team to highlight the roster.`;
 
+  const t = await getTranslations("Explore");
+
   return (
     <main data-motion-page className="site-shell flex flex-1 flex-col gap-5 py-6 sm:py-8">
       <MotionReveal />
       <PageHeader
-        title="Visualizations"
-        subtitle={subtitle}
+        title={t("vizTitle")}
+        subtitle={view === "surplus" ? t("vizSurplusSubtitle") : subtitle}
       />
 
       <Suspense fallback={null}>

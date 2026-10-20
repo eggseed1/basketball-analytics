@@ -8,6 +8,7 @@ import { LiveScoreboardScope } from "@/components/sports/live-scoreboard-scope";
 import type { GameSummary } from "@/data/types";
 import { parseTipOffMs } from "@/lib/game-countdown";
 import type { GameStatusKind } from "@/lib/game-status";
+import { useTranslations } from "next-intl";
 type StripGame = GameSummary & {
   awayStarters: Array<{ id: string; name: string }>;
   homeStarters: Array<{ id: string; name: string }>;
@@ -75,26 +76,36 @@ export function WeekGameCalendarClient({
   season,
   mode,
   games: initialGames,
+  week,
 }: {
   season: string;
   mode: "week" | "upcoming";
   games: StripGame[];
+  week?: number | null;
 }) {
+  const t = useTranslations("Home");
+  const tCommon = useTranslations("Common");
+  const showWeek = mode === "week" && week != null && week > 0;
   return (
     <section className="flex min-w-0 flex-col gap-3">
       <div className="flex min-w-0 items-center justify-between gap-2">
-        <h2 className="type-heading min-w-0">
-          {mode === "week" ? "This week's games" : "Upcoming games"}
+        <h2 className="type-heading flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-0.5">
+          <span>{mode === "week" ? t("weekGames") : t("upcomingGames")}</span>
+          {showWeek ? (
+            <span className="type-caption font-medium text-muted-foreground">
+              {t("weekNumber", { week })}
+            </span>
+          ) : null}
         </h2>
         <SectionLink href="/scores?view=week">
-          <span className="sm:hidden">Schedule</span>
-          <span className="hidden sm:inline">See all schedule</span>
+          <span className="sm:hidden">{t("scheduleShort")}</span>
+          <span className="hidden sm:inline">{tCommon("seeAllSchedule")}</span>
         </SectionLink>
       </div>
 
       {initialGames.length === 0 ? (
         <div className="type-body-sm rounded-md border border-dashed border-border px-4 py-10 text-center text-muted-foreground">
-          No upcoming games on the scoreboard yet.
+          {t("noUpcomingGames")}
         </div>
       ) : (
         <LiveScoreboardScope games={initialGames} season={season}>

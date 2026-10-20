@@ -1,5 +1,6 @@
 "use client";
 
+import { useLocale } from "next-intl";
 import { useSyncExternalStore, type ReactNode } from "react";
 
 import { formatTipTime, LEAGUE_TIME_ZONE, tipCalendarDate, type TipTimeStyle } from "@/lib/tip-time";
@@ -30,13 +31,14 @@ export function LocalTipTime({
   nbaDate?: string | null;
   className?: string;
 }) {
+  const locale = useLocale();
   const timeZone = useViewerTimeZone();
-  const clock = formatTipTime(tipOffAt, style, timeZone);
+  const clock = formatTipTime(tipOffAt, style, timeZone, locale);
   if (!clock) return <>{fallback}</>;
   const localDay = nbaDate ? tipCalendarDate(tipOffAt, timeZone) : null;
   const text =
     localDay && localDay !== nbaDate!.slice(0, 10)
-      ? `${clock} (${formatTipTime(tipOffAt, "date", timeZone)!.split(",")[0]})`
+      ? `${clock} (${formatTipTime(tipOffAt, "date", timeZone, locale)!.split(",")[0]})`
       : clock;
   return (
     <time dateTime={tipOffAt ?? undefined} className={className}>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 import { GmBooks } from "@/gm/ui/gm-books";
 import { GmShell } from "@/gm/ui/gm-shell";
@@ -19,6 +20,7 @@ export default function GmCapPage() {
 }
 
 function CapBody() {
+  const t = useTranslations("GmUi");
   const league = useGmStore((s) => s.league);
   const renounceRights = useGmStore((s) => s.renounceRights);
   const [teamId, setTeamId] = useState<string | null>(null);
@@ -34,9 +36,12 @@ function CapBody() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-end justify-between gap-3">
-        <h2 className="text-lg font-semibold">Salary and assets · {team.abbr}</h2>
+        <div>
+          <h2 className="text-lg font-semibold">{t("pageCapTitle", { team: team.abbr })}</h2>
+          <p className="mt-1 text-sm text-muted-foreground">{t("pageCapBlurb")}</p>
+        </div>
         <label className="flex flex-col gap-1 text-sm">
-          Club
+          {t("capClub")}
           <select
             className="rounded-md border border-border bg-background px-2 py-2"
             value={team.id}
@@ -55,68 +60,69 @@ function CapBody() {
         team={team}
         summary={
           <>
-      <h2 className="sr-only">Cap sheet · {team.abbr}</h2>
+      <h2 className="sr-only">{t("capSheet", { team: team.abbr })}</h2>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <Stat label="Payroll" value={`$${formatNumber(cap.payrollM, 1)}M`} />
+        <Stat label={t("capPayroll")} value={`$${formatNumber(cap.payrollM, 1)}M`} />
         <Stat
-          label="Cap room"
+          label={t("capRoom")}
           value={`$${formatNumber(cap.capRoomM, 1)}M`}
         />
         <Stat
-          label="Luxury tax line"
+          label={t("capTaxLine")}
           value={`$${formatNumber(league.settings.luxuryTaxM, 1)}M`}
         />
         <Stat
-          label="Roster"
+          label={t("capRoster")}
           value={`${cap.rosterSize} / ${league.settings.maxRoster}`}
         />
       </div>
       <ul className="text-sm text-muted-foreground">
-        <li>{cap.overCap ? "Over the salary cap." : "Under the salary cap."}</li>
+        <li>{cap.overCap ? t("capOverCap") : t("capUnderCap")}</li>
+        <li>{cap.overTax ? t("capIntoTax") : t("capBelowTax")}</li>
+        <li>{cap.overFirstApron ? t("capFirstApron") : t("capBelowFirstApron")}</li>
+        <li>{cap.overSecondApron ? t("capSecondApron") : t("capBelowSecondApron")}</li>
+        <li>{cap.rosterLegal ? t("capRosterLegal") : t("capRosterIllegal")}</li>
         <li>
-          {cap.overTax
-            ? "Into the luxury tax."
-            : "Below the luxury tax threshold."}
+          {t(cap.baeAvailable ? "capMleOpen" : "capMleUsed", {
+            mle: formatNumber(cap.mleRemainingM, 1),
+            mleMax: formatNumber(cap.nonTaxpayerMleM, 1),
+            taxMle: formatNumber(cap.taxpayerMleRemainingM, 1),
+            bae: formatNumber(cap.biAnnualM, 1),
+            min: formatNumber(cap.minimumM, 1),
+          })}
         </li>
         <li>
-          {cap.overFirstApron
-            ? "First apron restrictions apply."
-            : "Below first apron."}
+          {t("capHolds", {
+            holds: formatNumber(cap.holdsM, 1),
+            dead: formatNumber(cap.deadMoneyM, 1),
+          })}
         </li>
         <li>
-          {cap.overSecondApron
-            ? "Second apron: hard limits."
-            : "Below second apron."}
-        </li>
-        <li>
-          Roster {cap.rosterLegal ? "is legal." : "is short or over the limit."}
-        </li>
-        <li>
-          {`Mid-level left $${formatNumber(cap.mleRemainingM, 1)}M of $${formatNumber(cap.nonTaxpayerMleM, 1)}M. Taxpayer mid-level left $${formatNumber(cap.taxpayerMleRemainingM, 1)}M. Bi-annual $${formatNumber(cap.biAnnualM, 1)}M${cap.baeAvailable ? " is open." : " is used."} Minimum $${formatNumber(cap.minimumM, 1)}M.`}
-        </li>
-        <li>
-          {`Cap holds $${formatNumber(cap.holdsM, 1)}M. Dead money $${formatNumber(cap.deadMoneyM, 1)}M.`}
-        </li>
-        <li>
-          {`Staff $${formatNumber(staffBillM(team), 1)}M of a $${formatNumber(staffBudgetM(team, cap.overTax), 1)}M owner budget. Coaches are not a cap charge.`}
+          {t("capStaff", {
+            staff: formatNumber(staffBillM(team), 1),
+            budget: formatNumber(staffBudgetM(team, cap.overTax), 1),
+          })}
         </li>
       </ul>
       {holds.length > 0 ? (
         <div className="flex flex-col gap-2">
-          <h3 className="text-sm font-semibold">Bird rights on the market</h3>
+          <h3 className="text-sm font-semibold">{t("capBirdTitle")}</h3>
           <ul className="flex flex-col gap-1 text-sm">
             {holds.map((player) => (
               <li key={player.id} className="flex items-center justify-between gap-3">
                 <span>
-                  {player.name} · {player.rightsKind} · hold $
-                  {formatNumber(player.lastSalaryM ?? 0, 1)}M
+                  {t("capHoldLine", {
+                    name: player.name,
+                    kind: player.rightsKind ?? "",
+                    amount: formatNumber(player.lastSalaryM ?? 0, 1),
+                  })}
                 </span>
                 <button
                   type="button"
                   className="text-[13px] font-semibold underline-offset-4 hover:underline"
                   onClick={() => renounceRights(player.id)}
                 >
-                  Renounce
+                  {t("capRenounce")}
                 </button>
               </li>
             ))}
@@ -127,8 +133,11 @@ function CapBody() {
         <ul className="text-sm text-muted-foreground">
           {(team.deadMoney ?? []).map((row) => (
             <li key={row.id}>
-              {row.label}: ${formatNumber(row.annualM, 1)}M for {row.yearsLeft}{" "}
-              year{row.yearsLeft === 1 ? "" : "s"}
+              {t("capDeadMoneyRow", {
+                label: row.label,
+                amount: formatNumber(row.annualM, 1),
+                years: row.yearsLeft,
+              })}
             </li>
           ))}
         </ul>
@@ -137,10 +146,10 @@ function CapBody() {
         <table className="w-full text-left text-sm">
           <thead className="border-b border-border bg-muted/40 text-xs text-muted-foreground">
             <tr>
-              <th className="px-3 py-2">Player</th>
-              <th className="px-3 py-2">Salary</th>
-              <th className="px-3 py-2">Years</th>
-              <th className="px-3 py-2">Bird</th>
+              <th className="px-3 py-2">{t("colPlayer")}</th>
+              <th className="px-3 py-2">{t("capColSalary")}</th>
+              <th className="px-3 py-2">{t("capColYears")}</th>
+              <th className="px-3 py-2">{t("capColBird")}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">

@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 
 import { buildPlayerComparison } from "@/analytics";
 import type { PlayerComparisonResult } from "@/analytics";
@@ -360,23 +361,30 @@ function resolveTeamCompareSeason(preferred: string): string {
 function CompareModeSwitch({
   mode,
   teamsHref = "/compare?mode=teams",
+  label,
+  playersLabel,
+  teamsLabel,
 }: {
   mode: "players" | "teams";
   teamsHref?: string;
+  label: string;
+  playersLabel: string;
+  teamsLabel: string;
 }) {
   return (
     <SegmentedLinks
-      label="Compare"
+      label={label}
       value={mode}
       options={[
-        { id: "players", label: "Players", href: "/compare" },
-        { id: "teams", label: "Teams", href: teamsHref },
+        { id: "players", label: playersLabel, href: "/compare" },
+        { id: "teams", label: teamsLabel, href: teamsHref },
       ]}
     />
   );
 }
 
 export default async function ComparePage({ searchParams }: ComparePageProps) {
+  const t = await getTranslations("Compare");
   const sp = await searchParams;
   const modeParam = one(sp, "mode");
   const teamA = one(sp, "teamA");
@@ -429,10 +437,16 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
         <main data-motion-page className="site-shell flex flex-col gap-5 py-5 sm:py-7">
           <MotionReveal />
           <PageHeader
-            title="Compare"
-            subtitle="Rank a franchise’s seasons head to head, with no opaque team score."
+            title={t("title")}
+            subtitle={t("subtitleRank")}
           >
-            <CompareModeSwitch mode="teams" teamsHref={rankHref} />
+            <CompareModeSwitch
+              mode="teams"
+              teamsHref={rankHref}
+              label={t("modeAria")}
+              playersLabel={t("players")}
+              teamsLabel={t("teams")}
+            />
           </PageHeader>
 
           <Suspense
@@ -474,7 +488,7 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
                 <TeamRankWithEvidence ranking={loaded.ranking} />
               ) : (
                 <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[14px] text-muted-foreground">
-                  Could not rank those team seasons.
+                  {t("couldNotRank")}
                 </p>
               )}
         </main>
@@ -505,10 +519,15 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
       <main data-motion-page className="site-shell flex flex-col gap-5 py-5 sm:py-7">
         <MotionReveal />
         <PageHeader
-          title="Compare"
-          subtitle="Compare team seasons or two teams on transparent board metrics."
+          title={t("title")}
+          subtitle={t("subtitleTeams")}
         >
-          <CompareModeSwitch mode="teams" />
+          <CompareModeSwitch
+            mode="teams"
+            label={t("modeAria")}
+            playersLabel={t("players")}
+            teamsLabel={t("teams")}
+          />
         </PageHeader>
 
         <Suspense
@@ -536,7 +555,7 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
           <TeamCompareWithEvidence comparison={loaded.comparison} />
         ) : (
           <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[14px] text-muted-foreground">
-            Could not build a team comparison for these inputs.
+            {t("couldNotBuildTeam")}
           </p>
         )}
       </main>
@@ -766,10 +785,15 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
     <main data-motion-page className="site-shell flex flex-col gap-5 py-5 sm:py-7">
       <MotionReveal />
       <PageHeader
-        title="Compare"
-        subtitle="Search any player (active or retired). Default is career average. Switch either side to a single season for year-true percentiles."
+        title={t("title")}
+        subtitle={t("subtitlePlayers")}
       >
-        <CompareModeSwitch mode="players" />
+        <CompareModeSwitch
+          mode="players"
+          label={t("modeAria")}
+          playersLabel={t("players")}
+          teamsLabel={t("teams")}
+        />
       </PageHeader>
 
       <Suspense fallback={<div className="h-24 animate-pulse rounded-xl bg-secondary" />}>
@@ -794,10 +818,16 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
             "rounded-md border border-dashed border-border px-4 py-10 text-center text-muted-foreground"
           )}
         >
-          Could not load {aNameParam || "Player A"}
-          {isCareerCompareKey(seasonA) ? " (career)" : ` (${seasonA})`} and/or{" "}
-          {bNameParam || "Player B"}
-          {isCareerCompareKey(seasonB) ? " (career)" : ` (${seasonB})`}.
+          {t("couldNotLoad", {
+            aName: aNameParam || t("playerAFallback"),
+            aSeason: isCareerCompareKey(seasonA)
+              ? t("careerParen")
+              : t("seasonParen", { season: seasonA }),
+            bName: bNameParam || t("playerBFallback"),
+            bSeason: isCareerCompareKey(seasonB)
+              ? t("careerParen")
+              : t("seasonParen", { season: seasonB }),
+          })}
         </p>
       ) : (
         <PlayerCompareView

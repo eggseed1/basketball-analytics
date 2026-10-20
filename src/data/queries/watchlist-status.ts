@@ -19,6 +19,7 @@ import {
   type WatchGame,
   type WatchInjury,
   type WatchPlayerStatus,
+  type WatchStanding,
   type WatchStatus,
   type WatchTeamStatus,
 } from "@/lib/watchlist-status";
@@ -84,6 +85,30 @@ async function injuriesById(): Promise<Map<string, WatchInjury>> {
   return map;
 }
 
+async function standingsByTeamId(season: string): Promise<Map<string, WatchStanding>> {
+  const { getLeagueStandings } = await import("./standings");
+  const { value } = await withBudget(
+    getLeagueStandings(season).catch(() => null),
+    FEED_BUDGET_MS,
+    null
+  );
+  const map = new Map<string, WatchStanding>();
+  for (const conf of value?.conferences ?? []) {
+    for (const row of conf.rows) {
+      map.set(row.teamId, {
+        conference: row.conference,
+        rank: row.rank,
+        wins: row.wins,
+        losses: row.losses,
+        streak: row.streak || null,
+        lastTen: row.lastTen || null,
+        differential: Number.isFinite(row.differential) ? row.differential : null,
+      });
+    }
+  }
+  return map;
+}
+
 function drblFor(espnId: string, season: string): WatchDrbl | null {
   const nbaId = getBundledPlayerIdAliasIndex().byEspn.get(espnId)?.nbaPlayerId ?? espnId;
   const pick = (s: string) => {
@@ -139,10 +164,14 @@ export async function getWatchlistStatus(options: {
   teams: string[];
 }): Promise<{ season: string; items: WatchStatus[]; generatedAt: string }> {
   const season = canonicalSeasonFromStartYear(currentNbaStartYear());
-  const [games, injuries, logs] = await Promise.all([
-    options.players.length || options.teams.length ? scheduleWindow() : Promise.resolve([] as Game[]),
+  const needSchedule = options.players.length > 0 || options.teams.length > 0;
+  const [games, injuries, logs, standings] = await Promise.all([
+    needSchedule ? scheduleWindow() : Promise.resolve([] as Game[]),
     options.players.length ? injuriesById() : Promise.resolve(new Map<string, WatchInjury>()),
     Promise.all(options.players.map((id) => gameLog(id, season))),
+    options.teams.length
+      ? standingsByTeamId(season)
+      : Promise.resolve(new Map<string, WatchStanding>()),
   ]);
 
   const playerTeams = options.players.map((id) => getBundledCurrentRosterEntry(id)?.teamId ?? null);
@@ -163,6 +192,7 @@ export async function getWatchlistStatus(options: {
     kind: "team",
     id,
     ...windowFor(id),
+    standing: standings.get(id) ?? null,
   }));
 
   const players: WatchPlayerStatus[] = options.players.map((id, i) => {

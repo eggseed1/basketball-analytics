@@ -235,3 +235,139 @@ test("awards follow the season, not the loudest line on a bad team", () => {
   assert.match(stamped.news[0]!.body, /Star/);
   assert.equal(stampSeasonAwards(stamped), stamped);
 });
+
+test("mid-season races stay stable when the same leaders keep producing", () => {
+  const star = player("star", "Star", "good", {
+    seasonLine: line({ gp: 40, pts: 40 * 28, reb: 40 * 8, ast: 40 * 7, min: 40 * 34 }),
+    ratings: {
+      impact: 6,
+      offense: 6,
+      defense: 1,
+      shooting: 80,
+      finishing: 80,
+      playmaking: 80,
+      rebounding: 60,
+      durability: 80,
+      potential: 2,
+    },
+    sheet: { overall: 90, attributes: {} as never, tendencies: {} as never, potential: {} as never },
+  });
+  const stopper = player("stop", "Stopper", "good", {
+    position: "C",
+    seasonLine: line({
+      gp: 40,
+      pts: 40 * 12,
+      reb: 40 * 12,
+      blk: 40 * 2.4,
+      min: 40 * 33,
+    }),
+    ratings: {
+      impact: 3,
+      offense: 0,
+      defense: 6,
+      shooting: 40,
+      finishing: 70,
+      playmaking: 40,
+      rebounding: 90,
+      durability: 85,
+      potential: 1,
+    },
+    sheet: { overall: 84, attributes: {} as never, tendencies: {} as never, potential: {} as never },
+  });
+  const filler = ["a", "b", "c"].map((id) =>
+    player(id, id, "good", {
+      sheet: { overall: 78, attributes: {} as never, tendencies: {} as never, potential: {} as never },
+      seasonLine: line({ gp: 40, pts: 40 * 12, min: 40 * 28 }),
+    })
+  );
+  const early = league(
+    [star, stopper, ...filler],
+    [team("good", "Winner", ["star", "stop", "a", "b", "c"], [])],
+    {
+      good: {
+        teamId: "good",
+        wins: 28,
+        losses: 12,
+        confWins: 14,
+        confLosses: 6,
+        pointsFor: 40 * 118,
+        pointsAgainst: 40 * 108,
+      },
+    }
+  );
+  early.day = 90;
+  const midLeaders = awardRaces(early);
+  const mvpEarly = midLeaders.find((race) => race.id === "mvp")!.candidates[0]!.id;
+  const dpoyEarly = midLeaders.find((race) => race.id === "dpoy")!.candidates[0]!.id;
+
+  // Same production, more games — race tops should not flip on sample size alone.
+  star.seasonLine = line({ gp: 55, pts: 55 * 28, reb: 55 * 8, ast: 55 * 7, min: 55 * 34 });
+  stopper.seasonLine = line({
+    gp: 55,
+    pts: 55 * 12,
+    reb: 55 * 12,
+    blk: 55 * 2.4,
+    min: 55 * 33,
+  });
+  early.day = 130;
+  early.standings.good = {
+    teamId: "good",
+    wins: 38,
+    losses: 17,
+    confWins: 20,
+    confLosses: 8,
+    pointsFor: 55 * 118,
+    pointsAgainst: 55 * 108,
+  };
+  const later = awardRaces(early);
+  assert.equal(later.find((race) => race.id === "mvp")!.candidates[0]!.id, mvpEarly);
+  assert.equal(later.find((race) => race.id === "dpoy")!.candidates[0]!.id, dpoyEarly);
+});
+
+test("majors expose vote points and share so races can show a gap", () => {
+  const star = player("star", "Star", "good", {
+    seasonLine: line({ gp: 60, pts: 60 * 30, reb: 60 * 9, ast: 60 * 8, min: 60 * 35 }),
+    ratings: {
+      impact: 7,
+      offense: 7,
+      defense: 1,
+      shooting: 82,
+      finishing: 82,
+      playmaking: 82,
+      rebounding: 65,
+      durability: 85,
+      potential: 2,
+    },
+    sheet: { overall: 92, attributes: {} as never, tendencies: {} as never, potential: {} as never },
+  });
+  const next = player("next", "Next", "good", {
+    seasonLine: line({ gp: 60, pts: 60 * 24, reb: 60 * 6, ast: 60 * 6, min: 60 * 33 }),
+    sheet: { overall: 84, attributes: {} as never, tendencies: {} as never, potential: {} as never },
+  });
+  const filler = ["a", "b", "c"].map((id) =>
+    player(id, id, "good", {
+      sheet: { overall: 76, attributes: {} as never, tendencies: {} as never, potential: {} as never },
+      seasonLine: line({ gp: 55, pts: 55 * 12, min: 55 * 26 }),
+    })
+  );
+  const state = league(
+    [star, next, ...filler],
+    [team("good", "Winner", ["star", "next", "a", "b", "c"], [])],
+    {
+      good: {
+        teamId: "good",
+        wins: 45,
+        losses: 15,
+        confWins: 22,
+        confLosses: 8,
+        pointsFor: 60 * 118,
+        pointsAgainst: 60 * 108,
+      },
+    }
+  );
+  const mvp = awardRaces(state).find((race) => race.id === "mvp")!;
+  assert.equal(mvp.candidates[0]!.votes, 10);
+  assert.equal(mvp.candidates[0]!.share, 1);
+  assert.ok((mvp.candidates[1]?.share ?? 1) < 1);
+  assert.ok(mvp.candidates.length >= 2);
+});

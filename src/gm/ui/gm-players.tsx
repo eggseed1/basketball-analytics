@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { playerSheet } from "@/gm/engine/attributes";
@@ -83,7 +84,8 @@ function valueNum(value: number | null | undefined): string {
   return formatWar1(value, 1);
 }
 
-export function GmPlayersTable({ mode }: { mode: "all" | "leaders" }) {
+export function GmPlayersTable() {
+  const t = useTranslations("GmUi");
   const league = useGmStore((s) => s.league);
   const params = useSearchParams();
   const initialTeam = params.get("team") ?? "ALL";
@@ -108,8 +110,6 @@ export function GmPlayersTable({ mode }: { mode: "all" | "leaders" }) {
         return { player, sheet, rates, value, club: clubName(league, player), scouted };
       })
       .filter((row) => {
-        if (mode === "leaders" && !row.player.teamId) return false;
-        if (mode === "leaders" && row.value.war1 == null && !row.rates) return false;
         if (q && !row.player.name.toLowerCase().includes(q)) return false;
         if (pos !== "ALL" && row.player.position !== pos) return false;
         if (team === "FA" && row.club !== "FA") return false;
@@ -118,10 +118,11 @@ export function GmPlayersTable({ mode }: { mode: "all" | "leaders" }) {
         }
         return true;
       });
-  }, [league, mode, pos, query, team]);
+  }, [league, pos, query, team]);
 
   const sorted = useMemo(() => {
-    const sign = dir === "asc" ? 1 : -1;
+    // ↓ / desc = high values first; ↑ / asc = low values first.
+    const highFirst = dir === "desc";
     const missingLast = sort === "war1" || sort === "drbl";
     const value = (row: (typeof rows)[number]): number | string | null => {
       switch (sort) {
@@ -165,24 +166,33 @@ export function GmPlayersTable({ mode }: { mode: "all" | "leaders" }) {
       if (missingLast) {
         const aMissing = typeof av !== "number" || !Number.isFinite(av);
         const bMissing = typeof bv !== "number" || !Number.isFinite(bv);
-        if (aMissing && bMissing) return b.sheet.overall - a.sheet.overall;
+        if (aMissing && bMissing) {
+          return highFirst
+            ? b.sheet.overall - a.sheet.overall
+            : a.sheet.overall - b.sheet.overall;
+        }
         if (aMissing) return 1;
         if (bMissing) return -1;
       }
       if (typeof av === "string" || typeof bv === "string") {
-        return String(av).localeCompare(String(bv)) * sign;
+        const cmp = String(av).localeCompare(String(bv));
+        return highFirst ? -cmp : cmp;
       }
-      if (av == null || bv == null) return b.sheet.overall - a.sheet.overall;
-      if (av !== bv) return (av - bv) * sign;
-      return b.sheet.overall - a.sheet.overall;
+      if (av == null || bv == null) {
+        return highFirst
+          ? b.sheet.overall - a.sheet.overall
+          : a.sheet.overall - b.sheet.overall;
+      }
+      if (av !== bv) return highFirst ? bv - av : av - bv;
+      return highFirst
+        ? b.sheet.overall - a.sheet.overall
+        : a.sheet.overall - b.sheet.overall;
     });
   }, [dir, rows, sort]);
 
   if (!league) return null;
   const hasSim = seasonHasGames(league);
-  const statNote = hasSim
-    ? "WAR1 is their DRBL/100 times possessions played in this save. Counting stats follow those games."
-    : "No games yet this save. WAR1, DRBL/100, and the counting columns are the season they entered with.";
+  const statNote = hasSim ? t("playersStatNoteSim") : t("playersStatNoteNoSim");
 
   function toggleSort(key: SortKey) {
     if (sort === key) {
@@ -233,12 +243,10 @@ export function GmPlayersTable({ mode }: { mode: "all" | "leaders" }) {
       <div>
         <h2 className="flex items-center gap-2 text-xl font-bold tracking-tight">
           {focusedTeam ? <TeamLogo teamKey={focusedTeam} size="sm" /> : null}
-          {mode === "leaders" ? "League leaders" : `Players (${sorted.length})`}
+          {t("pagePlayersTitle", { count: sorted.length })}
         </h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          {mode === "leaders"
-            ? `Ranked across every club. ${statNote}`
-            : `Players already in the league, plus free agents. Prospects stay on the draft board. ${statNote} Scout is a range, not the true ceiling.`}
+          {t("pagePlayersBlurb", { note: statNote })}
         </p>
       </div>
       <div className="flex flex-wrap items-center gap-2">
@@ -275,10 +283,13 @@ export function GmPlayersTable({ mode }: { mode: "all" | "leaders" }) {
         ))}
       </div>
       <div className={focusedTeam ? "gm-club-panel overflow-x-auto" : "arena-panel overflow-x-auto"}>
-        <table className="w-full min-w-[1080px] text-left text-sm">
+        <table
+          className="w-full min-w-[1080px] text-left text-sm"
+          data-no-table-sort
+        >
           <thead className="border-b border-border bg-muted/40 text-xs text-muted-foreground">
             <tr>
-              {mode === "leaders" ? <th className="px-3 py-2">#</th> : null}
+              <th className="px-3 py-2">#</th>
               <th className="px-3 py-2">
                 <SortButton label="Player" active={sort === "name"} dir={dir} onClick={() => toggleSort("name")} />
               </th>
@@ -307,9 +318,7 @@ export function GmPlayersTable({ mode }: { mode: "all" | "leaders" }) {
                 className={row.player.teamId ? "gm-club-row" : undefined}
                 style={row.player.teamId ? teamColorStyle(row.player.teamId) : undefined}
               >
-                {mode === "leaders" ? (
-                  <td className="px-3 py-2 tabular-nums">{index + 1}</td>
-                ) : null}
+                <td className="px-3 py-2 tabular-nums">{index + 1}</td>
                 <td className="px-3 py-2">
                   <span className="inline-flex items-center gap-2 font-medium">
                     <PlayerHeadshot
@@ -351,7 +360,7 @@ export function GmPlayersTable({ mode }: { mode: "all" | "leaders" }) {
         </table>
       </div>
       {sorted.length === 0 ? (
-        <p className="text-sm text-muted-foreground">No players match that filter.</p>
+        <p className="text-sm text-muted-foreground">{t("leadersEmpty")}</p>
       ) : null}
     </div>
   );
@@ -369,9 +378,21 @@ function SortButton({
   onClick: () => void;
 }) {
   return (
-    <button type="button" onClick={onClick} className="font-medium">
+    <button
+      type="button"
+      onClick={onClick}
+      className="font-medium"
+      aria-sort={active ? (dir === "asc" ? "ascending" : "descending") : "none"}
+      title={
+        active
+          ? dir === "desc"
+            ? "Highest first. Click for lowest first."
+            : "Lowest first. Click for highest first."
+          : `Sort by ${label}`
+      }
+    >
       {label}
-      {active ? (dir === "asc" ? " ↑" : " ↓") : ""}
+      {active ? (dir === "desc" ? " ↓" : " ↑") : ""}
     </button>
   );
 }

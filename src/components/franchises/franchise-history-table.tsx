@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import { ArrowDown, ArrowUp } from "lucide-react";
 
 import { TeamLogo } from "@/components/brand/team-logo";
@@ -58,6 +59,7 @@ export function FranchiseHistoryTable({
 }: {
   franchises: FranchiseHistory[];
 }) {
+  const t = useTranslations("Franchises");
   const [sortKey, setSortKey] = useState<SortKey>("titles");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const [conf, setConf] = useState<"all" | "East" | "West">("all");
@@ -95,13 +97,13 @@ export function FranchiseHistoryTable({
     label: string;
     align: "left" | "right";
   }> = [
-    { key: "name", label: "Franchise", align: "left" },
-    { key: "titles", label: "Titles", align: "right" },
-    { key: "finals", label: "Finals", align: "right" },
-    { key: "playoffApps", label: "Playoff apps", align: "right" },
-    { key: "rsWins", label: "RS W", align: "right" },
-    { key: "rsPct", label: "RS %", align: "right" },
-    { key: "founded", label: "First season", align: "left" },
+    { key: "name", label: t("colFranchise"), align: "left" },
+    { key: "titles", label: t("colTitles"), align: "right" },
+    { key: "finals", label: t("colFinals"), align: "right" },
+    { key: "playoffApps", label: t("colPlayoffs"), align: "right" },
+    { key: "rsWins", label: t("colWins"), align: "right" },
+    { key: "rsPct", label: t("colPct"), align: "right" },
+    { key: "founded", label: t("colFounded"), align: "left" },
   ];
 
   return (
@@ -109,7 +111,7 @@ export function FranchiseHistoryTable({
       <ChoiceTrack>
         {(["all", "East", "West"] as const).map((c) => (
           <ChoiceChip key={c} active={conf === c} onClick={() => setConf(c)}>
-            {c === "all" ? "All franchises" : c}
+            {c === "all" ? t("all") : c === "East" ? t("east") : t("west")}
           </ChoiceChip>
         ))}
       </ChoiceTrack>

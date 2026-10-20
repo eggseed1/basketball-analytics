@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 
 import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { AwardHistoryBoard } from "@/components/awards/award-history-board";
@@ -43,6 +44,7 @@ export default async function AwardHistoryPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  const t = await getTranslations("Awards");
   const award = getAwardBySlug(slug);
   if (!award) notFound();
 
@@ -52,14 +54,14 @@ export default async function AwardHistoryPage({
   const dynastyUnit = awardDynastyUnitLabel(slug);
   const seasonColumnLabel =
     award.slug === "all-star"
-      ? "Selections"
+      ? t("colSelections")
       : award.slug === "hall-of-fame"
-        ? "Year"
-        : "Season";
+        ? t("colYear")
+        : t("colSeason");
   const winnerColumnLabel =
     award.slug === "all-nba" || award.slug === "all-defense"
-      ? "Selection"
-      : "Winner";
+      ? t("colSelection")
+      : t("colWinner");
 
   return (
     <main data-motion-page className="site-shell flex flex-col gap-6 py-6 sm:py-8">
@@ -71,7 +73,7 @@ export default async function AwardHistoryPage({
           "font-semibold text-muted-foreground underline-offset-4 hover:underline"
         )}
       >
-        ← All awards
+        {t("allAwards")}
       </TransitionLink>
 
       <header className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:gap-4">
@@ -92,9 +94,7 @@ export default async function AwardHistoryPage({
           <h1 className={type.title1}>{award.title}</h1>
           <p className={cn(type.body, "mt-1 max-w-2xl text-muted-foreground")}>
             {award.blurb}
-            {award.slug === "hall-of-fame"
-              ? " Player-category inductees by induction year. Linked when we have a site player id."
-              : ""}
+            {award.slug === "hall-of-fame" ? t("hofExtra") : ""}
           </p>
         </div>
       </header>

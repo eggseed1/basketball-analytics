@@ -109,6 +109,11 @@
       "count": 2
     }
   },
+  "src/components/compare/team-compare-view.tsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 2
+    }
+  },
   "src/components/design-system/theme-provider.tsx": {
     "react-hooks/set-state-in-effect": {
       "count": 1
@@ -170,11 +175,19 @@
     }
   },
   "src/components/home/watchlist-panel.tsx": {
+    "react-hooks/purity": {
+      "count": 1
+    },
     "react-hooks/set-state-in-effect": {
       "count": 2
     }
   },
   "src/components/layout/global-player-search.tsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/components/one-shot/end-report.tsx": {
     "react-hooks/set-state-in-effect": {
       "count": 1
     }
@@ -199,6 +212,11 @@
       "count": 1
     }
   },
+  "src/components/players/player-comp-futures-panel.tsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
   "src/components/players/player-games-island.tsx": {
     "react-hooks/error-boundaries": {
       "count": 7
@@ -211,12 +229,17 @@
   },
   "src/components/players/player-percentile-panel.tsx": {
     "react-hooks/set-state-in-effect": {
-      "count": 3
+      "count": 4
     }
   },
   "src/components/players/player-sentiment-tab-island.tsx": {
     "react-hooks/error-boundaries": {
       "count": 4
+    }
+  },
+  "src/components/players/player-similar-client.tsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 1
     }
   },
   "src/components/players/player-stats-island.tsx": {
@@ -235,6 +258,11 @@
     }
   },
   "src/components/sports/game-watch-options.tsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/components/sports/language-select.tsx": {
     "react-hooks/set-state-in-effect": {
       "count": 1
     }
@@ -269,7 +297,50 @@
       "count": 1
     }
   },
+  "src/gm/ui/gm-draft-night.tsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 3
+    }
+  },
+  "src/gm/ui/gm-draft-reveal.tsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/gm/ui/gm-night.tsx": {
+    "react-hooks/preserve-manual-memoization": {
+      "count": 1
+    },
+    "react-hooks/set-state-in-effect": {
+      "count": 2
+    }
+  },
+  "src/gm/ui/gm-player-card.tsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/gm/ui/gm-players.tsx": {
+    "react-hooks/rules-of-hooks": {
+      "count": 1
+    }
+  },
+  "src/gm/ui/gm-roster.tsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/gm/ui/gm-scouting-focus-banner.tsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 2
+    }
+  },
   "src/gm/ui/gm-season-calendar.tsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/gm/ui/gm-shell.tsx": {
     "react-hooks/set-state-in-effect": {
       "count": 1
     }

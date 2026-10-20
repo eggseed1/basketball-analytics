@@ -1,10 +1,12 @@
+import { getTranslations } from "next-intl/server";
 import { DestinationLoadingFrame } from "@/components/continuity/destination-loading-frame";
 
-export default function Loading() {
+export default async function Loading() {
+  const t = await getTranslations("Compare");
   return (
     <DestinationLoadingFrame
-      title="Compare"
-      subtitle="Compare sides load without blanking the site shell."
+      title={t("title")}
+      subtitle={t("loadingSubtitle")}
     />
   );
 }

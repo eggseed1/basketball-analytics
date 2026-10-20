@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, type ReactNode } from "react";
+import { useTranslations } from "next-intl";
 
 import { cn } from "@/lib/utils";
 
@@ -28,13 +29,14 @@ export function SpinButton({
   spinning,
   onClick,
   className,
-  children = "Spin",
+  children,
 }: {
   spinning: boolean;
   onClick: () => void;
   className?: string;
   children?: ReactNode;
 }) {
+  const t = useTranslations("Arcade");
   return (
     <button
       type="button"
@@ -45,7 +47,7 @@ export function SpinButton({
         className
       )}
     >
-      {spinning ? "Spinning…" : children}
+      {spinning ? t("spinning") : (children ?? t("spin"))}
     </button>
   );
 }

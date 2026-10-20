@@ -31,16 +31,11 @@ import {
 import { espnYearFromCanonicalSeason } from "@/data/providers/nba/season";
 import { listDraftClassYears, groupDraftClassYearsByDecade } from "@/lib/draft-class";
 import { cn } from "@/lib/utils";
+import { usePlayerBoardI18n } from "@/components/explore/use-player-board-i18n";
 
 const POSITIONS: Position[] = ["PG", "SG", "SF", "PF", "C"];
 
-const MIN_MINUTES_OPTIONS = [
-  { value: "0", label: "Any min" },
-  { value: "500", label: "500+ min" },
-  { value: "1000", label: "1,000+ min" },
-  { value: "1500", label: "1,500+ min" },
-  { value: "2000", label: "2,000+ min" },
-];
+const MIN_MINUTES_VALUES = ["0", "500", "1000", "1500", "2000"] as const;
 
 function ChipGroup({
   children,
@@ -93,6 +88,25 @@ export function PlayerFilterToolbar({
   defaultSeason,
 }: PlayerFilterToolbarProps) {
   const { pending, replaceParams, searchParams } = useQueryNav();
+  const { t, tCommon, tStandings, viewLabel, rateLabel } = usePlayerBoardI18n();
+
+  const minMinutesOptions = useMemo(
+    () =>
+      MIN_MINUTES_VALUES.map((value) => ({
+        value,
+        label:
+          value === "0"
+            ? t("anyMin")
+            : value === "500"
+              ? t("min500")
+              : value === "1000"
+                ? t("min1000")
+                : value === "1500"
+                  ? t("min1500")
+                  : t("min2000"),
+      })),
+    [t]
+  );
 
   const season = searchParams.get("season") ?? defaultSeason;
   const team = searchParams.get("team") ?? "ALL";
@@ -227,7 +241,7 @@ export function PlayerFilterToolbar({
     >
     <form
       className="flex w-full min-w-0 max-w-full flex-col gap-2"
-      aria-label="Player filters"
+      aria-label={t("filtersAria")}
       onSubmit={(event) => {
         event.preventDefault();
       }}
@@ -237,7 +251,7 @@ export function PlayerFilterToolbar({
         <ChipGroup>
           <button
             type="button"
-            aria-label="Older season"
+            aria-label={tStandings("olderSeason")}
             disabled={!olderSeason}
             onClick={() => olderSeason && updateParams({ season: olderSeason })}
             className="flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-foreground/10 hover:text-foreground disabled:opacity-40"
@@ -256,13 +270,13 @@ export function PlayerFilterToolbar({
                 selectTriggerClass,
                 "min-w-[5.5rem] gap-1.5 sm:min-w-[6.5rem]"
               )}
-              aria-label="Season"
+              aria-label={tStandings("season")}
             >
               <Calendar className="size-3.5 text-muted-foreground" aria-hidden />
               <SelectValue>{seasonYear}</SelectValue>
             </SelectTrigger>
             <SelectContent align="start" side="bottom" alignItemWithTrigger={false}>
-              <SelectItem value="ALL">All seasons</SelectItem>
+              <SelectItem value="ALL">{t("allSeasons")}</SelectItem>
               {seasons.map((s) => (
                 <SelectItem key={s} value={s}>
                   {s}
@@ -272,7 +286,7 @@ export function PlayerFilterToolbar({
           </Select>
           <button
             type="button"
-            aria-label="Newer season"
+            aria-label={tStandings("newerSeason")}
             disabled={!newerSeason}
             onClick={() => newerSeason && updateParams({ season: newerSeason })}
             className="flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-foreground/10 hover:text-foreground disabled:opacity-40"
@@ -284,7 +298,7 @@ export function PlayerFilterToolbar({
         <ChipGroup>
           <button
             type="button"
-            aria-label="Older draft class"
+            aria-label={t("olderDraftClass")}
             disabled={!olderDraftClass}
             onClick={() =>
               olderDraftClass && updateParams({ draftClass: olderDraftClass })
@@ -302,7 +316,7 @@ export function PlayerFilterToolbar({
             <SelectTrigger
               id="filter-draft-class"
               className={cn(selectTriggerClass, "min-w-[6.5rem] gap-1.5")}
-              aria-label="Draft class"
+              aria-label={t("draftClass")}
             >
               <Shirt
                 className="size-3.5 text-muted-foreground"
@@ -310,14 +324,14 @@ export function PlayerFilterToolbar({
               />
               <SelectValue>
                 {draftClassValue === "ALL"
-                  ? "All"
+                  ? tCommon("all")
                   : draftClassValue === "undrafted"
-                    ? "UDFA"
+                    ? t("udfa")
                     : draftClassValue}
               </SelectValue>
             </SelectTrigger>
             <SelectContent align="start" side="bottom" alignItemWithTrigger={false}>
-              <SelectItem value="ALL">All classes</SelectItem>
+              <SelectItem value="ALL">{t("allClasses")}</SelectItem>
               {draftClassDecades.map((group) => (
                 <SelectGroup key={group.decade}>
                   <SelectLabel className={type.caption}>{`${group.decade}s`}</SelectLabel>
@@ -328,12 +342,12 @@ export function PlayerFilterToolbar({
                   ))}
                 </SelectGroup>
               ))}
-              <SelectItem value="undrafted">Undrafted</SelectItem>
+              <SelectItem value="undrafted">{t("undrafted")}</SelectItem>
             </SelectContent>
           </Select>
           <button
             type="button"
-            aria-label="Newer draft class"
+            aria-label={t("newerDraftClass")}
             disabled={!newerDraftClass}
             onClick={() =>
               newerDraftClass && updateParams({ draftClass: newerDraftClass })
@@ -345,13 +359,13 @@ export function PlayerFilterToolbar({
         </ChipGroup>
 
         <ChipGroup>
-          <Chip active>Regular</Chip>
-          <Chip disabled>Playoffs</Chip>
+          <Chip active>{t("regular")}</Chip>
+          <Chip disabled>{t("playoffs")}</Chip>
         </ChipGroup>
       </div>
 
       <div className="flex w-full min-w-0 flex-wrap items-center gap-2">
-        <ChipGroup aria-label="Conference">
+        <ChipGroup aria-label={t("conferenceAria")}>
           {(["East", "West"] as const).map((conf) => (
             <Chip
               key={conf}
@@ -371,7 +385,7 @@ export function PlayerFilterToolbar({
                 updateParams(patch);
               }}
             >
-              {conf}
+              {conf === "East" ? t("east") : t("west")}
             </Chip>
           ))}
         </ChipGroup>
@@ -380,7 +394,7 @@ export function PlayerFilterToolbar({
           id="filter-team"
           value={team}
           teams={teamChoices}
-          empty={{ value: "ALL", label: "All teams" }}
+          empty={{ value: "ALL", label: t("allTeams") }}
           onChange={(value) => {
             const patch: Record<string, string | null> = { team: value };
             if (value !== "ALL" && conference) {
@@ -415,15 +429,15 @@ export function PlayerFilterToolbar({
             <SelectTrigger
               id="filter-minutes"
               className={cn(selectTriggerClass, "min-w-[7.25rem]")}
-              aria-label="Minimum minutes"
+              aria-label={t("minimumMinutes")}
             >
-              <SelectValue placeholder="Minutes">
-                {MIN_MINUTES_OPTIONS.find((o) => o.value === minimumMinutes)
-                  ?.label ?? "Any min"}
+              <SelectValue placeholder={t("minutesPlaceholder")}>
+                {minMinutesOptions.find((o) => o.value === minimumMinutes)
+                  ?.label ?? t("anyMin")}
               </SelectValue>
             </SelectTrigger>
             <SelectContent align="start" side="bottom" alignItemWithTrigger={false}>
-              {MIN_MINUTES_OPTIONS.map((opt) => (
+              {minMinutesOptions.map((opt) => (
                 <SelectItem key={opt.value} value={opt.value}>
                   {opt.label}
                 </SelectItem>
@@ -442,7 +456,7 @@ export function PlayerFilterToolbar({
       </div>
 
       <div className="flex w-full min-w-0 flex-col gap-2 border-t border-border/40 pt-2 sm:flex-row sm:items-center sm:justify-between">
-        <ChipGroup scrollable aria-label="Stat categories">
+        <ChipGroup scrollable aria-label={t("statCategoriesAria")}>
           {PLAYER_BOARD_VIEWS.map((item) => (
             <Chip
               key={item.id}
@@ -459,7 +473,7 @@ export function PlayerFilterToolbar({
                 })
               }
             >
-              <span className="whitespace-nowrap">{item.label}</span>
+              <span className="whitespace-nowrap">{viewLabel(item.id)}</span>
             </Chip>
           ))}
         </ChipGroup>
@@ -470,14 +484,14 @@ export function PlayerFilterToolbar({
               active={rate === item.id}
               onClick={() => updateParams({ rate: item.id })}
             >
-              <span className="whitespace-nowrap">{item.label}</span>
+              <span className="whitespace-nowrap">{rateLabel(item.id)}</span>
             </Chip>
           ))}
         </ChipGroup>
       </div>
 
       <p className="sr-only" aria-live="polite">
-        {pending ? "Updating player results…" : "Player results updated."}
+        {pending ? t("updatingResults") : t("resultsUpdated")}
       </p>
     </form>
     </GlassSurface>

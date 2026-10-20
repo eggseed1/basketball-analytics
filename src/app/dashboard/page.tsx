@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import { MotionReveal } from "@/components/continuity/motion-reveal";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -14,11 +15,13 @@ import { LinkCue } from "@/components/ui/link-cue";
 
 export const revalidate = 60;
 
-export const metadata = {
-  title: "Dashboard",
-  description:
-    "Contour/Quiver-style multi-board dashboard with chart-to-chart filtering.",
-};
+export async function generateMetadata() {
+  const t = await getTranslations("Dashboard");
+  return {
+    title: t("metaTitle"),
+    description: t("metaDescription"),
+  };
+}
 
 /**
  * P17.1 classification: SECONDARY_LAB / DEFER_DRBL (INTENTIONALLY_DEFERRED).
@@ -34,6 +37,7 @@ const DASHBOARD_MIN_MINUTES = 500;
 export default async function DashboardPage({
   searchParams,
 }: DashboardPageProps) {
+  const t = await getTranslations("Dashboard");
   const sp = await searchParams;
   // Instant - no league fetch.
   const seasons = await getAvailableSeasons();
@@ -45,22 +49,17 @@ export default async function DashboardPage({
       <MotionReveal />
       <header className="flex flex-col gap-3 border-b border-border pb-4 lg:flex-row lg:items-end lg:justify-between">
         <div className="flex flex-col gap-1">
-          <p className="text-sm text-muted-foreground">
-            Secondary lab · Contour / Quiver-style boards · intentionally
-            without DRBL / DARKO impact hierarchy
-          </p>
-          <h1 className="text-3xl font-semibold tracking-tight">Dashboard</h1>
+          <p className="text-sm text-muted-foreground">{t("eyebrow")}</p>
+          <h1 className="text-3xl font-semibold tracking-tight">{t("title")}</h1>
           <p className="max-w-2xl text-sm text-muted-foreground">
-            Histograms, categorical bars, and scatters with chart-to-chart
-            filtering. Click bars to keep matching players across every board.
-            Prefer{" "}
+            {t("subtitleBefore")}
             <Link
               href="/explore/players"
               className="font-semibold underline-offset-4 hover:underline"
             >
-              Explore players
-            </Link>{" "}
-            for DRBL / WAR1 / RAPTOR season boards.
+              {t("subtitleLink")}
+            </Link>
+            {t("subtitleAfter")}
           </p>
           <AutoRefresh />
         </div>
@@ -72,7 +71,7 @@ export default async function DashboardPage({
             href={`/explore/players?season=${season}`}
             className="text-sm text-muted-foreground underline-offset-4 hover:underline"
           >
-            Open explore table <LinkCue />
+            {t("openExplore")} <LinkCue />
           </Link>
         </div>
       </header>

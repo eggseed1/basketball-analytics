@@ -1,6 +1,7 @@
 import type { GmLeagueState, GmNewsItem, GmPlayer } from "@/gm/types";
 import { createRng, clamp, uid } from "@/gm/engine/rng";
-import { progressSheet } from "@/gm/engine/attributes";
+import { ensurePlayerSheet, playerSheet, progressSheet } from "@/gm/engine/attributes";
+import { ensurePotentialTrait, playerDevTrait, traitLabel } from "@/gm/engine/dev-traits";
 import {
   aiSelectProspect,
   draftSlotCount,
@@ -11,6 +12,7 @@ import {
 import { coachEffect } from "@/gm/engine/staff";
 import { regularSeasonComplete } from "@/gm/engine/schedule";
 import { advanceContractYear } from "@/gm/seed/real-books";
+import { devKnackGrowthMul } from "@/gm/seed/staff-knacks";
 
 export { aiSelectProspect, ensureDraftOrder, pickOwnerAt, draftSlotCount };
 
@@ -43,17 +45,28 @@ export function tickInjuries(
 export function rollGameInjuries(
   state: GmLeagueState,
   participatingIds: string[],
-  seed: number
+  seed: number,
+  nightMinutes?: Record<string, number>
 ): GmPlayer[] {
   const rng = createRng(seed);
   return state.players.map((p) => {
     if (!participatingIds.includes(p.id) || p.injury) return p;
     const team = state.teams.find((t) => t.id === p.teamId);
     const trainer = team?.staff.trainerLevel ?? 1;
+    const mpg =
+      nightMinutes?.[p.id] ??
+      (p.seasonLine && p.seasonLine.gp > 0
+        ? p.seasonLine.min / p.seasonLine.gp
+        : p.minutesPreference);
+    // Heavy nights load the risk; deep rotations keep guys healthier.
+    const load = mpg <= 28 ? 0.85 : mpg <= 34 ? 1 : mpg <= 38 ? 1.25 : mpg <= 42 ? 1.55 : 1.9;
     const risk =
-      (0.035 * (100 - p.ratings.durability)) / 100 / (0.7 + trainer * 0.15);
+      ((0.035 * (100 - p.ratings.durability)) / 100 / (0.7 + trainer * 0.15)) * load;
     if (rng() > risk) return p;
-    const games = Math.max(1, Math.round((rng() * 12 + 1) * (1.2 - trainer * 0.1)));
+    const games = Math.max(
+      1,
+      Math.round((rng() * 12 + 1) * (1.2 - trainer * 0.1) * (mpg >= 40 ? 1.15 : 1))
+    );
     return {
       ...p,
       injury: {
@@ -69,21 +82,38 @@ export function developPlayers(
   players: GmPlayer[],
   seasonAgeBump = true,
   coachByTeam?: Record<string, number>,
-  playoffGames?: Record<string, number>
+  playoffGames?: Record<string, number>,
+  developerByTeam?: Record<string, { knack: import("@/gm/seed/staff-knacks").DevKnackId; touch: number } | null>
 ): GmPlayer[] {
   return players.map((p) => {
     const age = seasonAgeBump ? p.age + 1 : p.age;
     const coach = p.teamId ? coachByTeam?.[p.teamId] : 0;
-    const grown = progressSheet(
-      { ...p, age },
-      { coach, minutes: p.minutesPreference, pace: "summer", playoffGames: playoffGames?.[p.id] ?? 0 }
-    );
+    const aged = { ...p, age };
+    const developer = p.teamId ? developerByTeam?.[p.teamId] : null;
+    const growing = agingBaseHint(age, p.position === "C" || p.position === "PF");
+    const touch = developer ? 1 + (developer.touch - 3) * 0.02 : 1;
+    const knackMul = developer
+      ? devKnackGrowthMul(developer.knack, aged, growing) * touch
+      : 1;
+    const grown = progressSheet(aged, {
+      coach,
+      minutes: p.minutesPreference,
+      pace: "summer",
+      playoffGames: playoffGames?.[p.id] ?? 0,
+      devStaff: knackMul,
+    });
     return {
       ...grown,
       age,
       contract: p.contract ? advanceContractYear(p.contract) : null,
     };
   });
+}
+
+/** Positive agingBase ≈ still growing. Mirrors attributes.agingBase sign without importing private. */
+function agingBaseHint(age: number, big: boolean): boolean {
+  const a = big ? age - 1 : age;
+  return a <= 27;
 }
 
 function formBump(player: GmPlayer): number {
@@ -142,11 +172,18 @@ function growOnce(league: GmLeagueState, pace: "season"): { players: GmPlayer[];
       player.seasonLine && player.seasonLine.gp >= 8
         ? player.seasonLine.min / player.seasonLine.gp
         : player.minutesPreference;
+    const developer = league.teams.find((t) => t.id === player.teamId)?.staff.developer;
+    const growing = true;
+    const touch = developer ? 1 + (developer.touch - 3) * 0.02 : 1;
+    const knackMul = developer
+      ? devKnackGrowthMul(developer.knack, player, growing) * touch
+      : 1;
     return progressSheet(player, {
       pace,
       coach: coachByTeam[player.teamId] ?? 0,
       minutes,
       form: formBump(player),
+      devStaff: knackMul,
     });
   });
   return {
@@ -303,16 +340,23 @@ export function runDraftPick(
   const drafted = players.find((p) => p.id === playerId);
   const pickNum = (state.draftPickIndex ?? 0) + 1;
   const rookieSal = clamp(12 - pickNum * 0.25, 1.5, 12);
-  const fixed = players.map((p) =>
-    p.id === playerId && p.contract
+  const fixed = players.map((p) => {
+    if (p.id !== playerId || !p.contract) return p;
+    const stamped = ensurePlayerSheet(p);
+    const sheet = stamped.sheet
       ? {
-          ...p,
-          contract: { ...p.contract, annualSalaryM: rookieSal },
-          draftPick: pickNum,
-          draftYear: state.season,
+          ...stamped.sheet,
+          potential: ensurePotentialTrait(stamped.sheet.potential, stamped),
         }
-      : p
-  );
+      : stamped.sheet;
+    return {
+      ...stamped,
+      sheet,
+      contract: { ...p.contract, annualSalaryM: rookieSal },
+      draftPick: pickNum,
+      draftYear: state.season,
+    };
+  });
 
   const team = state.teams.find((t) => t.id === teamId)!;
   const teams = state.teams.map((t) =>
@@ -332,10 +376,20 @@ export function runDraftPick(
       : t
   );
 
-  const revealHeadline = `${team.abbr} selects ${trueName}`;
+  const sheet = drafted ? playerSheet(drafted) : null;
+  const trait = drafted ? playerDevTrait(drafted) : "normal";
+  const ovr = sheet?.overall;
+  const ovrBit = ovr != null ? ` Overall ${ovr}.` : "";
+  const traitBit = ` Dev trait: ${traitLabel(trait)}.`;
+  const revealHeadline =
+    trait === "xfactor"
+      ? `${team.abbr} hits on an X-Factor: ${trueName}`
+      : trait === "superstar"
+        ? `${team.abbr} lands a Superstar: ${trueName}`
+        : `${team.abbr} selects ${trueName}`;
   const revealBody = codename
-    ? `Pick #${pickNum}. Scout mold ${codename}. Build stays on the sheet.`
-    : `Pick #${pickNum} is on the roster.`;
+    ? `Pick #${pickNum}. Scout mold ${codename}.${ovrBit}${traitBit}`
+    : `Pick #${pickNum}.${ovrBit}${traitBit}`;
   const grade =
     teamId === state.userTeamId ? ` ${pickGrade(state, playerId)}` : "";
 

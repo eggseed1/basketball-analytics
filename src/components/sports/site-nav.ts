@@ -10,7 +10,10 @@ import { STANDINGS_VISUALIZATIONS_PATH } from "@/lib/standings-routes";
 
 export type NavLink = {
   href: string;
+  /** English fallback / tests. UI prefers `labelKey` via next-intl. */
   label: string;
+  /** Key under messages Nav.* (e.g. sub_scores). */
+  labelKey?: string;
   /** Match active state for this link (exact path / query aware when needed). */
   match?: (pathname: string) => boolean;
 };
@@ -18,6 +21,7 @@ export type NavLink = {
 export type PrimaryNavItem = {
   id: string;
   href: string;
+  /** English fallback / tests. UI prefers Nav.{id} via next-intl. */
   label: string;
   /** Emphasize in the bar (Ask DRBL). */
   prominent?: boolean;
@@ -45,16 +49,19 @@ export const PRIMARY_NAV: PrimaryNavItem[] = [
       {
         href: "/scores",
         label: "Scores",
+        labelKey: "sub_scores",
         match: (p) => p === "/scores" || p.startsWith("/scores/"),
       },
       {
         href: "/scores?view=week",
         label: "Schedule",
+        labelKey: "sub_schedule",
         match: (p) => p === "/scores" || p.startsWith("/scores/"),
       },
       {
         href: "/explore/games",
         label: "Explore",
+        labelKey: "sub_gamesExplore",
         match: (p) => p.startsWith("/explore/games"),
       },
     ],
@@ -69,6 +76,7 @@ export const PRIMARY_NAV: PrimaryNavItem[] = [
       {
         href: "/explore/players",
         label: "Board",
+        labelKey: "sub_board",
         match: (p) =>
           p.startsWith("/explore/players") &&
           !p.startsWith("/explore/players/race") &&
@@ -78,11 +86,13 @@ export const PRIMARY_NAV: PrimaryNavItem[] = [
       {
         href: "/explore/players/hot-cold",
         label: "Hot & Cold",
+        labelKey: "sub_hotCold",
         match: (p) => p.startsWith("/explore/players/hot-cold"),
       },
       {
         href: "/explore/players/visualizations",
         label: "Visualizations",
+        labelKey: "sub_visualizations",
         match: (p) =>
           p.startsWith("/explore/players/visualizations") ||
           p.startsWith("/explore/players/race"),
@@ -103,6 +113,7 @@ export const PRIMARY_NAV: PrimaryNavItem[] = [
       {
         href: "/standings",
         label: "Standings",
+        labelKey: "sub_standings",
         match: (p) =>
           (p.startsWith("/standings") && !p.startsWith(STANDINGS_VISUALIZATIONS_PATH)) ||
           p.startsWith("/teams/") ||
@@ -111,6 +122,7 @@ export const PRIMARY_NAV: PrimaryNavItem[] = [
       {
         href: STANDINGS_VISUALIZATIONS_PATH,
         label: "Visualizations",
+        labelKey: "sub_visualizations",
         match: (p) => p.startsWith(STANDINGS_VISUALIZATIONS_PATH),
       },
     ],
@@ -127,11 +139,15 @@ export const PRIMARY_NAV: PrimaryNavItem[] = [
     label: "Sentiment",
     match: (p) => p.startsWith("/sentiment"),
     subnav: [
-      { href: "/sentiment", label: "League board" },
-      { href: "/sentiment?view=players", label: "Players" },
-      { href: "/sentiment?view=teams", label: "Teams" },
-      { href: "/sentiment?view=headlines", label: "Headlines" },
-      { href: "/sentiment?view=overrated", label: "Overrated watch" },
+      { href: "/sentiment", label: "League board", labelKey: "sub_leagueBoard" },
+      { href: "/sentiment?view=players", label: "Players", labelKey: "sub_players" },
+      { href: "/sentiment?view=teams", label: "Teams", labelKey: "sub_teams" },
+      { href: "/sentiment?view=headlines", label: "Headlines", labelKey: "sub_headlines" },
+      {
+        href: "/sentiment?view=overrated",
+        label: "Overrated watch",
+        labelKey: "sub_overrated",
+      },
     ],
   },
   {
@@ -147,21 +163,25 @@ export const PRIMARY_NAV: PrimaryNavItem[] = [
       {
         href: "/offseason",
         label: "Transaction log",
+        labelKey: "sub_transactionLog",
         match: (p) => p.startsWith("/offseason"),
       },
       {
         href: "/movement",
         label: "Movement Center",
+        labelKey: "sub_movement",
         match: (p) => p.startsWith("/movement"),
       },
       {
         href: "/acquisitions",
         label: "How They Got Him",
+        labelKey: "sub_acquisitions",
         match: (p) => p.startsWith("/acquisitions"),
       },
       {
         href: "/explore/teams/trade",
         label: "Trade simulator",
+        labelKey: "sub_tradeSim",
         match: (p) => p.startsWith("/explore/teams/trade"),
       },
     ],
@@ -188,11 +208,13 @@ export const PRIMARY_NAV: PrimaryNavItem[] = [
       {
         href: "/history",
         label: "Time Machine",
+        labelKey: "sub_timeMachine",
         match: (p) => p.startsWith("/history"),
       },
       {
         href: "/awards",
         label: "Awards",
+        labelKey: "sub_awards",
         match: (p) => p.startsWith("/awards"),
       },
     ],
@@ -203,21 +225,48 @@ export const PRIMARY_NAV: PrimaryNavItem[] = [
     label: "Arcade",
     match: (p) => p.startsWith("/arcade") || p === "/gm" || p.startsWith("/gm/"),
     subnav: [
-      { href: "/arcade", label: "All games", match: (p) => p === "/arcade" },
-      { href: "/arcade/daily", label: "Daily", match: (p) => p.startsWith("/arcade/daily") },
+      {
+        href: "/arcade",
+        label: "All games",
+        labelKey: "sub_allGames",
+        match: (p) => p === "/arcade",
+      },
+      {
+        href: "/arcade/daily",
+        label: "Daily",
+        labelKey: "sub_daily",
+        match: (p) => p.startsWith("/arcade/daily"),
+      },
       {
         href: "/arcade/higher-or-lower",
         label: "Higher or Lower",
+        labelKey: "sub_higherLower",
         match: (p) => p.startsWith("/arcade/higher-or-lower"),
       },
-      { href: "/arcade/zero-82", label: "0–82", match: (p) => p.startsWith("/arcade/zero-82") },
+      {
+        href: "/arcade/zero-82",
+        label: "0–82",
+        labelKey: "sub_zero82",
+        match: (p) => p.startsWith("/arcade/zero-82"),
+      },
       {
         href: "/arcade/teammate-chain",
         label: "Teammate Chain",
+        labelKey: "sub_teammateChain",
         match: (p) => p.startsWith("/arcade/teammate-chain"),
       },
-      { href: "/arcade/one-shot", label: "ONE SHOT", match: (p) => p.startsWith("/arcade/one-shot") },
-      { href: "/gm", label: "GM Lab", match: (p) => p === "/gm" || p.startsWith("/gm/") },
+      {
+        href: "/arcade/one-shot",
+        label: "ONE SHOT",
+        labelKey: "sub_oneShot",
+        match: (p) => p.startsWith("/arcade/one-shot"),
+      },
+      {
+        href: "/gm",
+        label: "GM Lab",
+        labelKey: "sub_gmLab",
+        match: (p) => p === "/gm" || p.startsWith("/gm/"),
+      },
     ],
   },
 ];

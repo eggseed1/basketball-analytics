@@ -1,4 +1,5 @@
 import { Suspense, type ReactNode } from "react";
+import { getTranslations } from "next-intl/server";
 
 import {
   GlassSurface,
@@ -49,19 +50,43 @@ function seasonDeltaTip(
   season: string,
   value: number | null,
   prior: { season: string; value: number | null } | null,
+  copy: {
+    tipOldestSeason: string;
+    tipNoStat: (v: { label: string; season: string }) => string;
+    tipVsPrior: (v: {
+      sign: string;
+      delta: string;
+      unit: string;
+      season: string;
+    }) => string;
+    tipPtsUnit: string;
+    tipSeasonStat: (v: {
+      value: string;
+      label: string;
+      season: string;
+    }) => string;
+  },
   percent = false
 ) {
   if (value == null) return {};
   const shown = percent ? formatPct(value) : formatNumber(value, 1);
-  let sub = "Oldest season shown";
+  let sub = copy.tipOldestSeason;
   if (prior?.value != null) {
     const delta = percent ? (value - prior.value) * 100 : value - prior.value;
     const sign = delta > 0 ? "+" : delta < 0 ? "−" : "±";
-    sub = `${sign}${formatNumber(Math.abs(delta), 1)}${percent ? " pts" : ""} vs ${prior.season}`;
+    sub = copy.tipVsPrior({
+      sign,
+      delta: formatNumber(Math.abs(delta), 1),
+      unit: percent ? copy.tipPtsUnit : "",
+      season: prior.season,
+    });
   } else if (prior) {
-    sub = `No ${label} for ${prior.season}`;
+    sub = copy.tipNoStat({ label, season: prior.season });
   }
-  return { "data-tip": `${shown} ${label} in ${season}`, "data-tip-sub": sub };
+  return {
+    "data-tip": copy.tipSeasonStat({ value: shown, label, season }),
+    "data-tip-sub": sub,
+  };
 }
 
 export type PlayerDestinationIdentityProps = {
@@ -100,7 +125,7 @@ export type PlayerDestinationIdentityProps = {
   hero?: ReactNode;
 };
 
-export function PlayerDestinationIdentity({
+export async function PlayerDestinationIdentity({
   playerId,
   espnId,
   nbaId,
@@ -134,6 +159,23 @@ export function PlayerDestinationIdentity({
   children,
   hero,
 }: PlayerDestinationIdentityProps) {
+  const t = await getTranslations("PlayerDetail");
+  const tipCopy = {
+    tipOldestSeason: t("tipOldestSeason"),
+    tipNoStat: (v: { label: string; season: string }) => t("tipNoStat", v),
+    tipVsPrior: (v: {
+      sign: string;
+      delta: string;
+      unit: string;
+      season: string;
+    }) => t("tipVsPrior", v),
+    tipPtsUnit: t("tipPtsUnit"),
+    tipSeasonStat: (v: {
+      value: string;
+      label: string;
+      season: string;
+    }) => t("tipSeasonStat", v),
+  };
   const modernBrand = resolveTeamBrand(teamKey);
   const wash = brandAtmosphereColors(
     historicalBrand?.palette?.primary ?? modernBrand?.primary,
@@ -168,7 +210,7 @@ export function PlayerDestinationIdentity({
       <section
         id="overview"
         className="scroll-mt-16 flex flex-col gap-4"
-        aria-label="Overview"
+        aria-label={t("sectionOverview")}
       >
         <div
           className={cn(
@@ -231,7 +273,7 @@ export function PlayerDestinationIdentity({
                           "mt-0.5 justify-center",
                           !useTwoColumnLayout && "sm:justify-start"
                         )}
-                        aria-label="Career teams"
+                        aria-label={t("careerTeamsAria")}
                       />
                     ) : seasonStints.length > 1 ? (
                       <PlayerTeamPositionLine
@@ -322,12 +364,12 @@ export function PlayerDestinationIdentity({
                       "mb-2 font-semibold uppercase tracking-wide text-muted-foreground"
                     )}
                   >
-                    Per game average
+                    {t("perGameAverage")}
                   </p>
                   <table className="w-full text-left">
                     <thead className={cn(type.caption, "uppercase tracking-wide text-muted-foreground")}>
                       <tr>
-                        <th className="pb-1 pr-2 font-semibold">Season</th>
+                        <th className="pb-1 pr-2 font-semibold">{t("season")}</th>
                         <th className="px-1.5 pb-1 text-right font-semibold">PPG</th>
                         <th className="px-1.5 pb-1 text-right font-semibold">APG</th>
                         <th className="px-1.5 pb-1 text-right font-semibold">RPG</th>
@@ -349,6 +391,7 @@ export function PlayerDestinationIdentity({
                             row.season,
                             pick(row),
                             older ? { season: older.season, value: pick(older) } : null,
+                            tipCopy,
                             percent
                           );
                         return (

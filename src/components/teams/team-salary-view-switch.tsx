@@ -25,11 +25,13 @@ export function TeamSalaryViewSwitch({
   active,
   note,
   children,
+  ariaLabel = "Salary and assets views",
 }: {
   items: TeamSalaryViewItem[];
   active: TeamSalaryView;
   note?: ReactNode;
   children: ReactNode;
+  ariaLabel?: string;
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -40,7 +42,7 @@ export function TeamSalaryViewSwitch({
   return (
     <>
       <div className="flex flex-col gap-2">
-        <nav className="flex flex-wrap gap-1.5" aria-label="Salary and assets views">
+        <nav className="flex flex-wrap gap-1.5" aria-label={ariaLabel}>
           {items.map((item) => (
             <Link
               key={item.id}

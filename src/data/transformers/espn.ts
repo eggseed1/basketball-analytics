@@ -444,6 +444,7 @@ export function transformEspnScheduleEvent(
   const broadcasts = mapEspnBroadcasts({
     broadcasts: competition.broadcasts,
     geoBroadcasts: competition.geoBroadcasts,
+    season,
   });
   const period =
     typeof competition.status?.period === "number"

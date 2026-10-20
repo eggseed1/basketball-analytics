@@ -1,3 +1,5 @@
+import { getTranslations } from "next-intl/server";
+
 import { MotionReveal } from "@/components/continuity/motion-reveal";
 import {
   Gamefeed,
@@ -25,11 +27,14 @@ import type { Game, GameSummary } from "@/data/types";
 import { isPreTipStatus } from "@/lib/game-status";
 import { nbaTodayIso } from "@/lib/nba-calendar-date";
 
-export const metadata = {
-  alternates: { canonical: "/scores" },
-  title: "NBA scores and schedule",
-  description: "Live NBA scores, recent results, weekly and monthly schedules, and upcoming tip-offs.",
-};
+export async function generateMetadata() {
+  const t = await getTranslations("Scores");
+  return {
+    alternates: { canonical: "/scores" },
+    title: t("metaTitle"),
+    description: t("metaDescription"),
+  };
+}
 
 const LIST_PAGE_SIZE = 60;
 

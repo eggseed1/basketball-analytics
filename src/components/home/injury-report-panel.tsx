@@ -1,9 +1,11 @@
 import Link from "next/link";
+import { useLocale } from "next-intl";
 
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { NewSinceTag } from "@/components/home/new-since-tag";
 import { SectionLink } from "@/components/ui/section-link";
+import { formatGameCalendarDate } from "@/i18n/format-date";
 import type { InjuryEntry, InjuryStatus } from "@/lib/injury-report";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { cn } from "@/lib/utils";
@@ -29,12 +31,8 @@ function StatusPill({ entry }: { entry: InjuryEntry }) {
   );
 }
 
-function shortDate(iso: string): string {
-  return new Date(`${iso}T12:00:00Z`).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    timeZone: "UTC",
-  });
+function shortDate(iso: string, locale: string): string {
+  return formatGameCalendarDate(iso, locale, "monthDay") ?? iso;
 }
 
 /** A status or injury change counts as a new listing. */
@@ -47,8 +45,9 @@ function teamOf(entry: InjuryEntry): string | null {
 }
 
 function Row({ entry, today }: { entry: InjuryEntry; today: string }) {
+  const locale = useLocale();
   const team = teamOf(entry);
-  const back = entry.returnDate && entry.returnDate >= today ? shortDate(entry.returnDate) : null;
+  const back = entry.returnDate && entry.returnDate >= today ? shortDate(entry.returnDate, locale) : null;
   return (
     <li data-motion="row" className="flex items-center gap-3 py-2.5">
       <PlayerHeadshot

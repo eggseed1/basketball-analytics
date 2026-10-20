@@ -1,5 +1,7 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 import { type } from "@/lib/design-system";
 import { formatBirthLine } from "@/lib/player-age";
 import { usePlayerViewSeason } from "@/components/players/player-view-season";
@@ -32,6 +34,7 @@ export function PlayerIdentityVitals({
   college?: string | null;
   className?: string;
 }) {
+  const t = useTranslations("PlayerDetail");
   const viewSeason = usePlayerViewSeason(season);
   const birthLine = formatBirthLine(birthDate, viewSeason);
   const collegeLabel = college?.trim() || null;
@@ -62,7 +65,9 @@ export function PlayerIdentityVitals({
         <p className="flex flex-wrap items-center justify-center gap-x-2 gap-y-0.5 sm:justify-start">
           {birthLine ? <span>{birthLine}</span> : null}
           {birthLine && collegeLabel ? <Dot /> : null}
-          {collegeLabel ? <span>Pre-NBA: {collegeLabel}</span> : null}
+          {collegeLabel ? (
+            <span>{t("preNba", { school: collegeLabel })}</span>
+          ) : null}
         </p>
       ) : null}
     </div>

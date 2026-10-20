@@ -1,10 +1,12 @@
+import { getTranslations } from "next-intl/server";
 import { DestinationLoadingFrame } from "@/components/continuity/destination-loading-frame";
 
-export default function Loading() {
+export default async function Loading() {
+  const t = await getTranslations("Awards");
   return (
     <DestinationLoadingFrame
-      title="Trophy case"
-      subtitle="Award winners and history."
+      title={t("title")}
+      subtitle={t("loadingSubtitle")}
     />
   );
 }

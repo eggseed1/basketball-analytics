@@ -1,5 +1,7 @@
 
+import { getLocale, getTranslations } from "next-intl/server";
 import { MotionReveal } from "@/components/continuity/motion-reveal";
+import { formatAppDateTime } from "@/i18n/format-date";
 import {
   OffseasonFilters,
   TimelineFeedByMonth,
@@ -70,8 +72,8 @@ function feedPageHref(options: {
   }).toString()}`;
 }
 
-function longDate(iso: string): string {
-  return new Date(`${iso}T12:00:00Z`).toLocaleDateString("en-US", {
+function longDate(iso: string, locale: string): string {
+  return formatAppDateTime(`${iso}T12:00:00Z`, locale, {
     month: "long",
     day: "numeric",
     year: "numeric",
@@ -103,6 +105,8 @@ function collectEventsForResolution(options: {
 }
 
 export default async function OffseasonPage({ searchParams }: PageProps) {
+  const t = await getTranslations("Offseason");
+  const locale = await getLocale();
   const sp = await searchParams;
   // Use cached index (do not force-rebuild on every page view).
   const years = await listAvailableOffseasonYears();
@@ -184,39 +188,49 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
       <MotionReveal />
       <header className="flex flex-col gap-2">
         <h1 className="text-[28px] font-bold tracking-tight sm:text-[32px]">
-          {window.upcomingSeason} NBA transactions
+          {t("title", { season: window.upcomingSeason })}
         </h1>
         <p className="type-caption max-w-2xl text-muted-foreground">
-          Every move recorded from {longDate(window.startDate)}{" "}
-          {ongoing ? "through today" : `to ${longDate(window.endDate)}`}: the draft and free
-          agency, then trades, signings and waivers through the {window.upcomingSeason} season.
+          {ongoing
+            ? t("subtitleOngoing", {
+                start: longDate(window.startDate, locale),
+                season: window.upcomingSeason,
+              })
+            : t("subtitleClosed", {
+                start: longDate(window.startDate, locale),
+                end: longDate(window.endDate, locale),
+                season: window.upcomingSeason,
+              })}
         </p>
       </header>
 
       <section className="sports-card grid gap-3 px-4 py-4 sm:grid-cols-3 sm:px-5">
         <div>
           <p className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
-            {window.upcomingSeason} {ongoing ? "so far" : "total"}
+            {t("seasonStat", {
+              season: window.upcomingSeason,
+              phase: ongoing ? t("soFar") : t("total"),
+            })}
           </p>
           <p className="mt-1 text-[24px] font-bold tabular-nums tracking-tight">
             {pulse.eventCount}
           </p>
-          <p className="text-[12px] text-muted-foreground">transaction events</p>
+          <p className="text-[12px] text-muted-foreground">{t("transactionEvents")}</p>
         </div>
         <div>
           <p className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
-            This week
+            {t("thisWeek")}
           </p>
           <p className="mt-1 text-[24px] font-bold tabular-nums tracking-tight">
             {pulse.eventsThisWeek}
           </p>
           <p className="text-[12px] text-muted-foreground">
-            events · {pulse.teamsThisWeek} teams
+            {t("eventsTeams", { teams: pulse.teamsThisWeek })}
           </p>
         </div>
         <div>
           <p className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
-            Most active
+            {t("mostActive")}
           </p>
           {pulse.mostActiveTeam ? (
             <>
@@ -227,11 +241,11 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
                 )?.abbr ?? pulse.mostActiveTeam.teamAbbr}
               </p>
               <p className="text-[12px] text-muted-foreground">
-                {pulse.mostActiveTeam.eventCount} events
+                {t("eventsCount", { count: pulse.mostActiveTeam.eventCount })}
               </p>
             </>
           ) : (
-            <p className="mt-1 text-[14px] text-muted-foreground">No events yet</p>
+            <p className="mt-1 text-[14px] text-muted-foreground">{t("noEventsYet")}</p>
           )}
         </div>
       </section>
@@ -253,13 +267,15 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
               href={`/teams/${encodeURIComponent(teamId)}`}
               className="text-[13px] font-semibold text-primary hover:underline"
             >
-              Open team page
+              {t("openTeamPage")}
             </TransitionLink>
             <TransitionLink
               href={`/acquisitions?team=${encodeURIComponent(teamId)}`}
               className="text-[13px] font-semibold text-primary hover:underline"
             >
-              How they got each {resolveTeamBrand(teamId)?.abbr ?? "team"} player
+              {t("howTheyGotEach", {
+                abbr: resolveTeamBrand(teamId)?.abbr ?? "team",
+              })}
             </TransitionLink>
           </div>
         ) : null}
@@ -268,7 +284,7 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
           {detailBundle ? (
             <section className="flex flex-col gap-2">
               <h2 className="text-[16px] font-bold tracking-tight">
-                Event detail
+                {t("eventDetail")}
               </h2>
               <TransactionEventDetail
                 event={detailBundle.event}
@@ -299,7 +315,7 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
                     scroll={false}
                     className="sports-pill"
                   >
-                    Previous
+                    {t("previous")}
                   </TransitionLink>
                 ) : null}
                 {timeline.feedPage < timeline.feedPageCount ? (
@@ -315,7 +331,7 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
                     scroll={false}
                     className="sports-pill"
                   >
-                    Next
+                    {t("next")}
                   </TransitionLink>
                 ) : null}
               </div>
@@ -326,14 +342,17 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
 
       <section className="sports-card px-4 py-4 text-[12px] leading-relaxed text-muted-foreground sm:px-5">
         <h2 className="text-[14px] font-bold text-foreground">
-          Archive coverage
+          {t("archiveCoverage")}
         </h2>
         <p className="mt-2">
-          {coverage.sourceEventCount.toLocaleString()} notes ·{" "}
-          {coverage.relatedClusterCount.toLocaleString()} related clusters ·{" "}
-          {coverage.structuredTransactionCount} structured transactions ·{" "}
-          {coverage.ownershipEdgeCount} ownership edges ·{" "}
-          {coverage.earliestDate} → {coverage.latestDate}
+          {t("archiveStats", {
+            notes: coverage.sourceEventCount.toLocaleString(),
+            clusters: coverage.relatedClusterCount.toLocaleString(),
+            structured: coverage.structuredTransactionCount,
+            edges: coverage.ownershipEdgeCount,
+            earliest: coverage.earliestDate ?? "—",
+            latest: coverage.latestDate ?? "—",
+          })}
         </p>
         <ul className="mt-2 list-disc space-y-1 pl-4">
           {coverage.notes.map((n) => (
@@ -341,13 +360,13 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
           ))}
         </ul>
         <p className="mt-2">
-          Example source-text labels include{" "}
-          {(
-            ["trade", "signing", "waive", "draft"] as TransactionType[]
-          )
-            .map((c) => sourceTextCategoryLabel(c))
-            .join(", ")}
-          .
+          {t("exampleLabels", {
+            labels: (
+              ["trade", "signing", "waive", "draft"] as TransactionType[]
+            )
+              .map((c) => sourceTextCategoryLabel(c))
+              .join(", "),
+          })}
         </p>
       </section>
     </main>

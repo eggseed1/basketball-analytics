@@ -6,7 +6,11 @@ import assert from "node:assert/strict";
 
 import { buildSheet, playerSheet, progressSheet } from "../src/gm/engine/attributes";
 import { maybeGrowInSeason } from "../src/gm/engine/progression";
-import { applyRookieRatings, rookieOverall } from "../src/gm/engine/rookie-ratings";
+import {
+  applyRookieRatings,
+  estimateActivePotential,
+  rookieOverall,
+} from "../src/gm/engine/rookie-ratings";
 import { scoutPotentialView } from "../src/gm/engine/scouting";
 import { makeScout } from "../src/gm/seed/scouts";
 import { createGeneratedLeague } from "../src/gm/seed/create-league";
@@ -128,9 +132,10 @@ const earlyDrop = yearDelta(33, "average");
 const lateDrop = yearDelta(36, "average");
 const bigDrop = yearDelta(31, "average", "C");
 const wingDrop = yearDelta(31, "average", "SG");
-assert.ok(youngAvg > 0.1 && youngAvg < 0.3, `age 21 average ${youngAvg}`);
-assert.ok(youngBoom > youngAvg + 0.1, `boom ${youngBoom} avg ${youngAvg}`);
-assert.ok(youngBust < 0.1, `bust ${youngBust}`);
+// Impact tracks development at a damped rate so long saves stay balanced.
+assert.ok(youngAvg > 0.04 && youngAvg < 0.2, `age 21 average ${youngAvg}`);
+assert.ok(youngBoom > youngAvg + 0.015, `boom ${youngBoom} avg ${youngAvg}`);
+assert.ok(youngBust < 0.08, `bust ${youngBust}`);
 assert.ok(peak > -0.08 && peak < 0.1, `age 28 ${peak}`);
 assert.ok(earlyDrop < -0.15 && earlyDrop > -0.5, `age 33 ${earlyDrop}`);
 assert.ok(lateDrop < earlyDrop, `age 36 ${lateDrop} vs 33 ${earlyDrop}`);
@@ -165,10 +170,10 @@ for (let year = 0; year < 6; year++) {
   classOf = classOf.map((player) => progressSheet({ ...player, age: player.age + 1 }, { minutes: 24, coach: 0.4 }));
 }
 const classGain = mean(classOf.map((player) => player.ratings.impact)) - 0.4;
-assert.ok(classGain > 0.55 && classGain < 1.7, `six-year class gain ${classGain}`);
+assert.ok(classGain > 0.2 && classGain < 1.2, `six-year class gain ${classGain}`);
 const boomGain = mean(classOf.slice(0, 12).map((player) => player.ratings.impact)) - 0.4;
 const bustGain = mean(classOf.slice(28).map((player) => player.ratings.impact)) - 0.4;
-assert.ok(boomGain > bustGain + 0.8, `boom ${boomGain} bust ${bustGain}`);
+assert.ok(boomGain > bustGain + 0.35, `boom ${boomGain} bust ${bustGain}`);
 
 const glass = playerSheet({
   ...base,
@@ -261,7 +266,51 @@ const veteran = applyRookieRatings({
   nbaSeason: { ...base.nbaSeason!, gp: 70, min: 2400, season: "2025-26" },
   sheet: { ...sheet, version: 4, overall: 86 },
 });
-assert.equal(veteran.sheet!.overall, 86);
+  assert.equal(veteran.sheet!.overall, 86);
+
+// Cold Darko on a late first-round kid must not wipe potential / stamp finished.
+const hugoPotential = estimateActivePotential({
+  impact: -2.1,
+  age: 20,
+  usagePct: 0.14,
+  draftPick: 28,
+});
+assert.ok(hugoPotential >= 6.5, `hugo potential ${hugoPotential}`);
+const hugoLike = applyRookieRatings({
+  ...base,
+  id: "1642864",
+  name: "Hugo González",
+  age: 20,
+  position: "SG",
+  draftLabel: "2025: Rd 1, Pk 28 (BOS)",
+  nbaPlayerId: "1642864",
+  nbaSeason: {
+    season: "2025-26",
+    team: "BOS",
+    gp: 74,
+    min: 1084,
+    pts: 400,
+    reb: 200,
+    ast: 80,
+    stl: 40,
+    blk: 30,
+    tov: 50,
+    fgm: 150,
+    fga: 320,
+    tpm: 40,
+    tpa: 140,
+    ftm: 60,
+    fta: 80,
+  },
+  ratings: { ...base.ratings, impact: -2.1, potential: 0, offense: -1.9, defense: -0.2 },
+  sheet: { ...sheet, version: 4, overall: 70, potential: { ...sheet.potential, ceiling: 74, trait: "bust" } },
+});
+assert.ok(hugoLike.ratings.potential >= 6.5, `hugo sheet pot ${hugoLike.ratings.potential}`);
+assert.ok(
+  hugoLike.sheet!.potential.ceiling >= 80,
+  `hugo ceiling ${hugoLike.sheet!.potential.ceiling}`
+);
+assert.notEqual(hugoLike.sheet!.potential.trait, "bust");
 
 const seasonStep = progressSheet(
   {

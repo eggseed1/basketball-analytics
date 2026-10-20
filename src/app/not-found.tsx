@@ -1,40 +1,42 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { MotionReveal } from "@/components/continuity/motion-reveal";
 
-export const metadata: Metadata = {
-  title: "Page not found",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("Errors");
+  return { title: t("notFoundMetaTitle") };
+}
 
-const SECTIONS = [
-  { href: "/scores", label: "Scores" },
-  { href: "/explore/players", label: "Players" },
-  { href: "/standings", label: "Teams" },
-];
+export default async function NotFound() {
+  const t = await getTranslations("Errors");
+  const sections = [
+    { href: "/scores", label: t("scores") },
+    { href: "/explore/players", label: t("players") },
+    { href: "/standings", label: t("teams") },
+  ];
 
-export default function NotFound() {
   return (
     <main data-motion-page className="site-shell flex min-h-[60vh] flex-1 items-center py-8">
       <MotionReveal />
       <section className="w-full rounded-lg border border-border bg-background/70 p-5 shadow-sm sm:p-7">
         <p className="text-[12px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-          404
+          {t("notFoundCode")}
         </p>
         <h1 className="mt-2 text-2xl font-bold tracking-tight">
-          We couldn&apos;t find that page.
+          {t("notFoundTitle")}
         </h1>
         <p className="mt-2 max-w-2xl text-[14px] leading-relaxed text-muted-foreground">
-          The link may be old, or the player, team, or game ID in it may be wrong.
-          Search from the bar above or pick a section below.
+          {t("notFoundHint")}
         </p>
         <div data-motion-list className="mt-5 flex flex-wrap gap-3">
           <Link
             href="/"
             className="rounded-md border border-foreground bg-foreground px-4 py-2 text-[13px] font-semibold text-background"
           >
-            Go home
+            {t("goHome")}
           </Link>
-          {SECTIONS.map((s) => (
+          {sections.map((s) => (
             <Link
               key={s.href}
               href={s.href}

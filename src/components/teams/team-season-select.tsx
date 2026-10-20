@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 import { type } from "@/lib/design-system";
 import {
@@ -20,6 +21,7 @@ export function TeamSeasonSelect({
   seasons: string[];
   hrefOpts?: TeamPageHrefOpts;
 }) {
+  const t = useTranslations("TeamDetail");
   const router = useRouter();
   const options = [...new Set([season, ...seasons])]
     .filter(Boolean)
@@ -33,7 +35,7 @@ export function TeamSeasonSelect({
           "font-semibold uppercase tracking-wide text-muted-foreground"
         )}
       >
-        Season
+        {t("season")}
       </span>
       <select
         className={cn(
@@ -42,7 +44,7 @@ export function TeamSeasonSelect({
           "focus-visible:ring-2 focus-visible:ring-ring"
         )}
         value={season}
-        aria-label="Season"
+        aria-label={t("season")}
         onChange={(e) => {
           const next = e.target.value;
           const href = hrefOpts

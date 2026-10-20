@@ -2,6 +2,7 @@
 
 import { ArrowDown, ArrowUp, Check, Copy, Share2, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 
 import {
   DAILY_ROUNDS,
@@ -50,6 +51,7 @@ export function DailyGame() {
 }
 
 function DailyBoard({ league }: { league: ArcadeLeague }) {
+  const t = useTranslations("ArcadeDaily");
   const [date] = useState(() => nbaTodayIso());
   const [puzzle] = useState(() => dailyPuzzle(league, date));
   const [record, setRecord] = useState<DailyRecord>(() => dailyRecordFor(readRecord(), date));
@@ -79,21 +81,21 @@ function DailyBoard({ league }: { league: ArcadeLeague }) {
       <div className="sports-card flex flex-wrap items-center justify-between gap-3 px-4 py-3">
         <div className="min-w-0">
           <p className={cn(type.caption, "font-semibold uppercase tracking-wide text-muted-foreground")}>
-            Daily #{puzzle.number} · {puzzle.stat.label}
+            {t("dailyNumber", { number: puzzle.number, stat: puzzle.stat.label })}
           </p>
           <p className={cn(type.caption, "text-muted-foreground")}>{puzzle.stat.blurb}</p>
         </div>
         <div className="flex items-center gap-5 text-center">
           <div>
             <p className="score-num text-[2rem] leading-none">{results.filter(Boolean).length}</p>
-            <p className={cn(type.caption, "text-muted-foreground")}>Right</p>
+            <p className={cn(type.caption, "text-muted-foreground")}>{t("right")}</p>
           </div>
           <div>
             <p className="score-num text-[2rem] leading-none text-muted-foreground">{record.streak}</p>
-            <p className={cn(type.caption, "text-muted-foreground")}>Day streak</p>
+            <p className={cn(type.caption, "text-muted-foreground")}>{t("dayStreak")}</p>
           </div>
         </div>
-        <ol className="flex w-full gap-1" aria-label="Rounds">
+        <ol className="flex w-full gap-1" aria-label={t("roundsAria")}>
           {Array.from({ length: DAILY_ROUNDS }, (_, i) => (
             <li
               key={i}
@@ -140,6 +142,7 @@ function RoundBoard({
   outcome: boolean | null;
   onGuess: (g: Guess) => void;
 }) {
+  const t = useTranslations("ArcadeDaily");
   const shown = puzzle.rows[round]!;
   const hidden = puzzle.rows[round + 1]!;
   return (
@@ -161,10 +164,10 @@ function RoundBoard({
         {outcome == null ? (
           <div className="grid grid-cols-2 gap-2">
             <GuessButton onClick={() => onGuess("higher")} icon={<ArrowUp className="size-4" strokeWidth={3} />}>
-              Higher
+              {t("higher")}
             </GuessButton>
             <GuessButton onClick={() => onGuess("lower")} icon={<ArrowDown className="size-4" strokeWidth={3} />} quiet>
-              Lower
+              {t("lower")}
             </GuessButton>
           </div>
         ) : null}
@@ -199,6 +202,7 @@ function DailySummary({
   record: DailyRecord;
   results: boolean[];
 }) {
+  const t = useTranslations("ArcadeDaily");
   const [copied, setCopied] = useState(false);
   const [countdown, setCountdown] = useState<string | null>(null);
   const score = results.filter(Boolean).length;
@@ -238,15 +242,15 @@ function DailySummary({
           {score}/{DAILY_ROUNDS}
         </p>
         <p className={type.heading}>
-          {score === DAILY_ROUNDS ? "Perfect day" : score >= 7 ? "Good read" : "Tough one today"}
+          {score === DAILY_ROUNDS ? t("perfectDay") : score >= 7 ? t("goodRead") : t("toughToday")}
         </p>
         <p className={cn(type.bodySm, "text-muted-foreground")}>
-          {record.streak > 1 ? `${record.streak} days in a row. ` : ""}
-          {countdown ? `Next puzzle in ${countdown}.` : null}
+          {record.streak > 1 ? t("streakDays", { count: record.streak }) : ""}
+          {countdown ? t("nextPuzzle", { countdown }) : null}
         </p>
         <Button size="lg" onClick={share} className="gap-2">
           {copied ? <Copy className="size-4" /> : <Share2 className="size-4" />}
-          {copied ? "Copied" : "Share result"}
+          {copied ? t("copied") : t("shareResult")}
         </Button>
       </div>
 
@@ -261,7 +265,7 @@ function DailySummary({
                   "flex size-6 shrink-0 items-center justify-center rounded-full text-white",
                   ok ? "bg-[var(--chart-3)]" : "bg-destructive"
                 )}
-                aria-label={ok ? "Right" : "Wrong"}
+                aria-label={ok ? t("right") : t("wrong")}
               >
                 {ok ? <Check className="size-3.5" strokeWidth={3} /> : <X className="size-3.5" strokeWidth={3} />}
               </span>

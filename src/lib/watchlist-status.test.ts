@@ -12,7 +12,12 @@ import {
   playerLineText,
   resultText,
   scoringTrend,
+  standingText,
   teamGameWindow,
+  watchlistHeadline,
+  watchlistInsights,
+  type WatchPlayerStatus,
+  type WatchTeamStatus,
 } from "@/lib/watchlist-status";
 
 function game(over: Partial<Game> & Pick<Game, "id" | "gameDate">): Game {
@@ -119,4 +124,58 @@ test("ids are validated, deduped and capped", () => {
   assert.deepEqual(parseWatchIds("7, 7,abc,../x,13"), ["7", "abc", "13"]);
   assert.equal(parseWatchIds(Array.from({ length: 20 }, (_, i) => i).join(",")).length, 12);
   assert.deepEqual(parseWatchIds(null), []);
+});
+
+test("standing and insight headlines surface the urgent signal", () => {
+  assert.equal(
+    standingText({
+      conference: "West",
+      rank: 3,
+      wins: 4,
+      losses: 2,
+      streak: "W2",
+      lastTen: "4-2",
+      differential: 5.1,
+    }),
+    "3rd in West · 4-2 · W2"
+  );
+
+  const player: WatchPlayerStatus = {
+    kind: "player",
+    id: "1",
+    teamId: "7",
+    last: null,
+    live: null,
+    next: null,
+    line: null,
+    trend: null,
+    drbl: null,
+    injury: {
+      status: "out",
+      statusLabel: "Out",
+      injury: "knee",
+      returnDate: null,
+    },
+  };
+  assert.equal(watchlistHeadline(player), "Out · knee");
+  assert.ok(watchlistInsights(player).some((i) => i.id === "injury" && i.tone === "alert"));
+
+  const team: WatchTeamStatus = {
+    kind: "team",
+    id: "7",
+    last: null,
+    live: null,
+    next: null,
+    standing: {
+      conference: "West",
+      rank: 2,
+      wins: 5,
+      losses: 1,
+      streak: "W3",
+      lastTen: "5-1",
+      differential: 8,
+    },
+  };
+  assert.match(watchlistHeadline(team), /2nd in West/);
+  assert.ok(watchlistInsights(team).some((i) => i.id === "standing" && i.href === "/standings"));
 });

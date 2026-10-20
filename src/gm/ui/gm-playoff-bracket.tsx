@@ -48,12 +48,12 @@ export function GmPlayoffBracket({
         </div>
         {controls && live ? (
           <div className="flex flex-wrap gap-2">
-            <Button onClick={() => simPlayoffDay()}>Sim tonight</Button>
+            <Button onClick={() => simPlayoffDay()}>Sim game</Button>
             <Button variant="outline" onClick={() => finishPlayoffRound()}>
-              Finish the round
+              Sim series / round
             </Button>
             <Button variant="outline" onClick={() => simRestOfPlayoffs()}>
-              Sim to the draft
+              Sim whole playoffs
             </Button>
           </div>
         ) : null}

@@ -57,7 +57,12 @@ export type ProspectArchetypeId =
 export interface ScoutProfile {
   archetypeLabel: string;
   archetypeId: ProspectArchetypeId;
+  /** Style whispers. Prefer ceiling/floor when set. */
   comps: string[];
+  /** 2K-style upper-bound NBA comp (can be wrong if the scout is weak). */
+  compCeiling?: string | null;
+  /** 2K-style lower-bound NBA comp. */
+  compFloor?: string | null;
   grades: {
     athleticism: ScoutLetterGrade | null;
     shooting: ScoutLetterGrade | null;
@@ -200,6 +205,17 @@ export interface GmTendencies {
 
 export type GmDevPath = "boom" | "average" | "bust";
 
+/**
+ * Madden-style development trait. Hidden on the draft board until the pick
+ * is in. X-Factor and Superstar are rare and grow hard.
+ */
+export type GmDevTrait =
+  | "xfactor"
+  | "superstar"
+  | "star"
+  | "normal"
+  | "bust";
+
 export interface GmPotential {
   floor: number;
   ceiling: number;
@@ -208,6 +224,8 @@ export interface GmPotential {
   bust: number;
   /** Rolled once. Boom chases the ceiling, bust stays near the floor. */
   path: GmDevPath;
+  /** Madden-style trait. Drives growth rate. Hidden until drafted / rostered. */
+  trait?: GmDevTrait;
   peakStart: number;
   peakEnd: number;
 }
@@ -219,6 +237,13 @@ export interface GmSheet {
   attributes: GmAttributes;
   tendencies: GmTendencies;
   potential: GmPotential;
+  /** Overall before the last progression tick. Used for roster arrows. */
+  priorOverall?: number;
+  /**
+   * Simple-view category means before the last progression tick
+   * (INS, MID, 3PT, INT D, PER D, PLAY, REB, ATHL, IQ).
+   */
+  priorSimple?: number[];
 }
 
 export interface GmPlayer {
@@ -234,6 +259,8 @@ export interface GmPlayer {
   identityRevealed?: boolean;
   teamId: string | null; // null = free agent / draft pool
   position: GmPosition;
+  /** Alternate listing for rotation bars. Inferred when blank. */
+  secondaryPosition?: GmPosition | null;
   age: number;
   heightIn: number;
   weightLbs: number;
@@ -251,11 +278,16 @@ export interface GmPlayer {
   /** Pre-draft league grade. The room drafts off this. The true rating can disagree. */
   consensus?: number;
   draftPick?: number;
-  /** Team that still holds Bird rights after the player hits the market. */
+  /** Team that still holds Bird / restricted / draft rights after the player hits the market. */
   rightsTeamId?: string | null;
-  rightsKind?: "early" | "bird";
+  rightsKind?: "early" | "bird" | "restricted" | "exclusive_draft";
   /** Previous salary, used as the cap hold and the early-Bird ceiling. */
   lastSalaryM?: number;
+  /** Qualifying-offer state for restricted free agency. */
+  qoStatus?: GmQoStatus;
+  qoAmountM?: number;
+  /** Years of NBA service for RFA / max-salary bands (estimated when missing). */
+  serviceYears?: number;
   nbaPlayerId?: string;
   /** Real NBA season the player entered this save with. Totals, not averages. */
   nbaSeason?: GmCountingLine;
@@ -280,6 +312,8 @@ export interface GmPlayer {
   jersey?: string;
   darko?: number;
   raptor?: number;
+  /** Prospect / player pathway for scout knacks. */
+  pipeline?: "ncaa" | "international" | "gleague";
 }
 
 export interface GmHeadCoach {
@@ -325,6 +359,8 @@ export interface GmStaff {
   scoutLevel: number;
   /** Hired director of scouting - drives draft fog & expertise. */
   scout?: import("@/gm/seed/scouts").GmScout | null;
+  /** Player-development director — knack boosts growth for matching groups. */
+  developer?: import("@/gm/seed/developers").GmDeveloper | null;
   trainerLevel: number; // reduces injury severity
   trainer?: GmTrainerDeal;
 }
@@ -378,14 +414,27 @@ export type GmDefense =
 
 export type GmTempo = "slow" | "normal" | "fast";
 
+/** How many healthy bodies get minutes on a normal night. */
+export type GmRotationDepth = 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13;
+
 export interface GmCoaching {
   offense: GmOffense;
   defense: GmDefense;
   tempo: GmTempo;
   /** First option, then second. */
   playThrough: [string | null, string | null];
+  /**
+   * Bodies in the minute book (6–13). Auto-balance deals 240 across this many
+   * and zeros the rest. Default 8.
+   */
+  rotationDepth?: GmRotationDepth;
   /** Planned minutes per player. Set when the user edits the rotation. */
   minutes?: Record<string, number>;
+  /**
+   * Spot each player is staffing in the minute book.
+   * Lets a SG covering SF count on the SF bar instead of flooding SG.
+   */
+  coverSlot?: Partial<Record<string, GmPosition>>;
 }
 
 export interface GmDraftPick {
@@ -517,6 +566,53 @@ export interface GmIncomingOffer {
   note: string;
 }
 
+/** Calendar pause on a trade deadline, break, or free-agency open. */
+export type GmTeamBuildingCheckpointKind =
+  | "trade_deadline"
+  | "all_star_break"
+  | "season_end"
+  | "free_agency";
+
+export interface GmTeamBuildingCheckpoint {
+  id: string;
+  kind: GmTeamBuildingCheckpointKind;
+  day: number;
+  title: string;
+  body: string;
+  primaryHref: string;
+  primaryLabel: string;
+  secondaryHref?: string;
+  secondaryLabel?: string;
+}
+
+/** Madden-style monthly prompt: put eyes on a few prospects. */
+export interface GmScoutingFocusPrompt {
+  id: string;
+  /** YYYY-MM */
+  monthKey: string;
+  day: number;
+  title: string;
+  body: string;
+  /** How many prospects can be focused (usually 3). */
+  slots: number;
+  /** Suggested ids from the draft pool. */
+  suggestedPlayerIds: string[];
+}
+
+export interface GmScoutingFocus {
+  monthKey: string;
+  playerIds: string[];
+  positionFocus: GmPosition | null;
+}
+
+/** Remembers rejected packages so the same call does not bounce back next day. */
+export interface GmDeclinedOffer {
+  /** Stable package key (caller + both asset lists). */
+  key: string;
+  fromTeamId: string;
+  day: number;
+}
+
 export interface GmTradeProposal {
   id: string;
   fromTeamId: string;
@@ -538,6 +634,12 @@ export interface GmAwardCandidate {
   name: string;
   teamId: string;
   detail: string;
+  /** Internal ballot score used for ranking. */
+  score?: number;
+  /** Score relative to the race leader (1 = tied for first). */
+  share?: number;
+  /** Pseudo vote points (10-7-5-3-1) for majors. */
+  votes?: number;
 }
 
 export interface GmAwardRace {
@@ -557,6 +659,8 @@ export interface GmAwardRace {
     | "all-rook-2";
   title: string;
   candidates: GmAwardCandidate[];
+  /** Short race note (tight race, runaway, etc.). */
+  note?: string;
 }
 
 export interface GmNewsItem {
@@ -594,9 +698,38 @@ export interface GmAutomation {
   autoDraft: boolean;
   /** Other teams sign as soon as free agency opens. */
   autoFreeAgency: boolean;
+  /**
+   * Hired scout assigns monthly focus without pausing.
+   * Manual focus still digs deeper when you do it yourself.
+   */
+  autoScout?: boolean;
 }
 
-export type GmFaStage = "moratorium" | "open" | "fill";
+/**
+ * Offseason desk stages. Options and qualifying offers run before the
+ * moratorium; open/fill are the signing window. Lengths are game ticks.
+ */
+export type GmFaStage =
+  | "options"
+  | "qualifying_offers"
+  | "rights"
+  | "moratorium"
+  | "open"
+  | "fill";
+
+export type GmFaOfferKind =
+  | "interest"
+  | "pending"
+  | "counter"
+  | "agreement"
+  | "offer_sheet"
+  | "awaiting_match"
+  | "ready"
+  | "signed"
+  | "rejected"
+  | "withdrawn"
+  | "expired"
+  | "invalidated";
 
 export type GmFaOffer = {
   id: string;
@@ -605,19 +738,136 @@ export type GmFaOffer = {
   salaryM: number;
   years: number;
   day: number;
-  kind: "interest" | "agreement" | "signed";
+  kind: GmFaOfferKind;
   via?: GmSignVia;
+  /** Player/team option on the final year, when the editor supports it. */
+  option?: "player" | "team" | null;
+  /** Agent/player response text from the last evaluation. */
+  responseNote?: string;
+  /** Utility breakdown snapshot for explanations (0–100 components). */
+  utility?: GmFaUtilityBreakdown;
+  /** Mutually exclusive alternative group; committing one invalidates siblings. */
+  altGroup?: string;
+  /** Revision number; identical reloads do not reseed decisions. */
+  revision?: number;
 };
 
-/** MyNBA-style free agency desk: moratorium pitches, then open signing, then fill. */
+export type GmFaUtilityBreakdown = {
+  total: number;
+  money: number;
+  winning: number;
+  role: number;
+  continuity: number;
+  fit: number;
+  noise: number;
+};
+
+export type GmFaReservation = {
+  id: string;
+  teamId: string;
+  playerId: string;
+  salaryM: number;
+  via: GmSignVia;
+  offerId: string;
+  kind: "agreement" | "offer_sheet" | "match_hold";
+};
+
+export type GmFaOfferSheet = {
+  id: string;
+  playerId: string;
+  offeringTeamId: string;
+  rightsTeamId: string;
+  salaryM: number;
+  years: number;
+  via: GmSignVia;
+  /** Absolute market day when the match window closes. */
+  matchDeadlineDay: number;
+  status: "pending_match" | "matched" | "declined" | "expired";
+  offerId: string;
+};
+
+export type GmFaDecisionKind =
+  | "team_option"
+  | "player_option_result"
+  | "qualifying_offer"
+  | "rfa_match"
+  | "ready_agreement"
+  | "counter"
+  | "lost_target";
+
+export type GmFaDecision = {
+  id: string;
+  kind: GmFaDecisionKind;
+  playerId: string;
+  teamId?: string;
+  headline: string;
+  detail: string;
+  deadlineDay?: number;
+  read?: boolean;
+  payload?: Record<string, string | number | boolean | null>;
+};
+
+export type GmFaMarketConfig = {
+  moratoriumTicks: number;
+  openTicks: number;
+  fillTicks: number;
+  /** Days the incumbent has to match an offer sheet after it posts. */
+  rfaMatchTicks: number;
+};
+
+/** Free-agency desk: options → QO → rights → moratorium → open → fill. */
 export type GmFaMarket = {
   stage: GmFaStage;
+  /** Absolute tick since the summer desk opened. */
   day: number;
   agreements: GmFaOffer[];
   pending: GmFaOffer[];
   recap: string[];
   done?: boolean;
+  config?: GmFaMarketConfig;
+  watchlist?: string[];
+  reservations?: GmFaReservation[];
+  offerSheets?: GmFaOfferSheet[];
+  decisions?: GmFaDecision[];
+  /** Seed for preference noise; stable across reloads. */
+  seed?: number;
+  /** Last tick's recap lines (daily board). */
+  dayRecap?: string[];
 };
+
+/** Employment vs rights vs negotiation — derived helpers use these labels. */
+export type GmEmploymentStatus =
+  | "contracted"
+  | "unsigned"
+  | "on_waivers"
+  | "retired"
+  | "unavailable";
+
+export type GmRightsStatus =
+  | "unrestricted"
+  | "restricted"
+  | "exclusive_draft"
+  | "bird"
+  | "early_bird"
+  | "none";
+
+export type GmNegotiationStatus =
+  | "available"
+  | "negotiating"
+  | "awaiting_response"
+  | "committed"
+  | "offer_sheet_pending"
+  | "signed"
+  | "pending_option";
+
+/** Qualifying-offer bookkeeping on a player entering the market. */
+export type GmQoStatus =
+  | "ineligible"
+  | "eligible"
+  | "tendered"
+  | "accepted"
+  | "declined"
+  | "expired";
 
 export interface GmLeagueState {
   version: 1;
@@ -641,6 +891,28 @@ export interface GmLeagueState {
   tradeLog: GmTradeProposal[];
   /** A live offer from another team. Sim pauses while this is set. */
   incomingOffer?: GmIncomingOffer;
+  /** Packages the user already waved off this season. */
+  declinedOffers?: GmDeclinedOffer[];
+  /** Last day an incoming offer was answered (accept or decline). */
+  lastOfferResolvedDay?: number;
+  /**
+   * Pause on a team-building date (deadline, break, FA open).
+   * Sim stays stopped until the user continues or snoozes to manage the roster.
+   */
+  teamBuildingCheckpoint?: GmTeamBuildingCheckpoint;
+  /** Checkpoint ids the user already continued past this season. */
+  seenCheckpoints?: string[];
+  /**
+   * User chose to stay and manage after a checkpoint. Simming again re-opens
+   * the same pause until they continue.
+   */
+  checkpointSnooze?: string;
+  /** Monthly scouting focus prompt. Sim pauses until set or skipped. */
+  scoutingFocusPrompt?: GmScoutingFocusPrompt;
+  /** Active focus for the current calendar month. */
+  scoutingFocus?: GmScoutingFocus;
+  /** YYYY-MM keys already answered this season. */
+  seenScoutingMonths?: string[];
   playoffBracket?: GmPlayoffSeries[];
   /** 7–10 play-in. Present only while that tournament is live. */
   playIn?: GmPlayInBoard;
@@ -664,12 +936,16 @@ export interface GmLeagueState {
   automation?: GmAutomation;
   /** Available directors of scouting to hire (user market). */
   scoutMarket?: import("@/gm/seed/scouts").GmScout[];
+  /** Available player-development directors to hire. */
+  developerMarket?: import("@/gm/seed/developers").GmDeveloper[];
   /** Head coaches between jobs. */
   coachMarket?: GmHeadCoach[];
   /** Real coach contracts have been written onto this save. */
   staffBook?: number;
   /** Current-roster players have been put back on their teams. */
   rosterBook?: number;
+  /** ESPN G/F/C shells split into PG/SG/SF/PF/C with sibling secondaries. */
+  positionBook?: number;
   /** Published contracts and future picks have been written onto this save. */
   booksBook?: number;
   /** In-season development already applied for this year. */
@@ -688,6 +964,22 @@ export interface GmLeagueState {
   awards?: {
     season: number;
     races: GmAwardRace[];
+  };
+  /**
+   * Home page progression through postseason and summer.
+   * Awards and the champion splash wait for an explicit Next.
+   */
+  homeFlow?: {
+    awardsSeen?: boolean;
+    championSeen?: boolean;
+  };
+  /** Written when the Finals end, before the draft desk opens. */
+  champion?: {
+    season: number;
+    teamId: string;
+    finalsMvpId: string;
+    wins: number;
+    losses: number;
   };
   createdAt: string;
   updatedAt: string;

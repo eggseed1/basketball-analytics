@@ -1,0 +1,59 @@
+{
+  "id": "how_drbl_works",
+  "slug": "how-drbl-works",
+  "name": "How DRBL works",
+  "shortName": "How DRBL works",
+  "category": "systems",
+  "oneSentence": "DRBL watches each possession’s expected scoring value change, credits players when the play-by-play supports it, then turns that into a rate (DRBL/100) and a season total (WAR1).",
+  "whyItMatters": [
+    "Player pages answer “how good?” without teaching the model. This page is for fans who want the possession story.",
+    "Formulas make more sense after the basketball sequence is clear."
+  ],
+  "howToInterpret": [
+    "A possession starts with an expected scoring value (what you’d typically get from that situation).",
+    "Shots, passes, turnovers, fouls, and other logged actions move that expectation up or down.",
+    "When the public play-by-play clearly ties a change to a player, DRBL credits them.",
+    "Those credits build a play-by-play rate and a season pile-up above the R1 baseline.",
+    "DRBL/100 blends that rate with ratings built from the box score, which settle down faster in small samples."
+  ],
+  "howDrblUses": [
+    "Credits are measured against a role-matched R1 expected-points baseline.",
+    "DRBL/100 is that rate blended with box-score ratings, pulled toward zero when the sample is small, and scaled to points per 100 in later games.",
+    "WAR1 is the season total (R1 Points) converted into win-style units."
+  ],
+  "calculation": [
+    "Possession begins → expected scoring value is set.",
+    "Actions occur → expected value changes.",
+    "Credit is attributed for observable contributions.",
+    "Possessions accumulate into a raw ability rate.",
+    "The rate is blended with box-score ratings, and small samples are pulled toward zero so early-season noise doesn’t dominate.",
+    "Season value accumulates as R1 Points → WAR1."
+  ],
+  "caveats": [
+    "Public play-by-play does not see every off-ball or spatial action.",
+    "Credit is not the same as proving “replace this player and wins change by X.”",
+    "Diagnostics P / LN / B do not add up to DRBL/100."
+  ],
+  "relatedIds": [
+    "drbl",
+    "r1_win_eq",
+    "drbl_p",
+    "r1",
+    "drbl_validation",
+    "drbl_limitations"
+  ],
+  "seeInAction": [
+    {
+      "label": "DRBL overview",
+      "href": "/learn/drbl"
+    },
+    {
+      "label": "Explore by DRBL/100",
+      "href": "/explore/players?sort=drbl100"
+    }
+  ],
+  "sources": [
+    "/learn/drbl",
+    "src/content/stats/drbl-guides.ts"
+  ]
+}

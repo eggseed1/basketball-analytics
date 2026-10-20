@@ -193,23 +193,23 @@ export function GmGamePlan({ league }: { league: GmLeagueState }) {
         <header>
           <h2 className="text-[17px] font-bold tracking-tight">Your plan</h2>
           <p className="text-[13px] text-muted-foreground">
-            Playoffs: advance one day of series games at a time.
+            The bracket is the schedule. Sim a game, finish a round, or run the whole thing.
           </p>
         </header>
         <ol className="flex flex-col gap-1">
           <StepRow
             n={1}
-            title="Play the next playoff games"
-            detail="Simulates today’s series tips, then come back for the next day."
+            title="Advance the bracket"
+            detail="Game by game, series by series, or straight through to the champion splash."
             status="current"
             action={
               <div className="flex flex-wrap gap-2">
-                <Button onClick={() => simPlayoffDay()}>Tonight</Button>
+                <Button onClick={() => simPlayoffDay()}>Sim game</Button>
                 <Button variant="outline" onClick={() => finishPlayoffRound()}>
-                  Finish the round
+                  Sim series / round
                 </Button>
                 <Button variant="outline" onClick={() => simRestOfPlayoffs()}>
-                  Sim to the draft
+                  Sim whole playoffs
                 </Button>
               </div>
             }
@@ -221,38 +221,50 @@ export function GmGamePlan({ league }: { league: GmLeagueState }) {
   }
 
   if (league.phase === "draft") {
+    const draftDone =
+      !league.draftPool.length ||
+      (league.draftPickIndex ?? 0) >= (league.draftOrder?.length ?? 60);
     return (
       <section className="sports-card flex flex-col gap-4 p-4">
         <header>
           <h2 className="text-[17px] font-bold tracking-tight">Your plan</h2>
           <p className="text-[13px] text-muted-foreground">
-            Draft night is live. Watch picks, catch sleepers, trade up, then
-            take your swing.
+            {draftDone
+              ? "The draft is in the books. Review your class, then open free agency."
+              : "Draft night is live. Watch picks, catch sleepers, trade up, then take your swing."}
           </p>
         </header>
         <ol className="flex flex-col gap-1">
           <StepRow
             n={1}
-            title="Open the war room"
-            detail="Names stay on the card. Molds and builds stay with them."
+            title={draftDone ? "Review the draft" : "Open the war room"}
+            detail={
+              draftDone
+                ? "Your picks and the full board, in order."
+                : "Names stay on the card. Molds and builds stay with them."
+            }
             status="current"
             action={
               <Button onClick={() => router.push("/gm/draft")}>
-                Open war room
+                {draftDone ? "Draft results" : "Open war room"}
               </Button>
             }
           />
           <StepRow
             n={2}
             title="Open free agency"
-            detail="Finishes the rest of the board with CPU picks, then expires deals."
+            detail={
+              draftDone
+                ? "Expires deals and opens the market."
+                : "Finishes the rest of the board with CPU picks, then expires deals."
+            }
             status="upcoming"
             action={
               <Button variant="outline" onClick={() => openFreeAgency()}>
                 Open free agency
               </Button>
             }
-            />
+          />
         </ol>
         <Digest digest={league.digest} />
       </section>
@@ -260,19 +272,31 @@ export function GmGamePlan({ league }: { league: GmLeagueState }) {
   }
 
   if (league.phase === "free_agency") {
+    const stage = league.faMarket?.stage ?? "options";
+    const stageDetail =
+      stage === "options"
+        ? "Resolve team options. Player options resolve when you advance."
+        : stage === "qualifying_offers"
+          ? "Tender or decline qualifying offers on your RFAs."
+          : stage === "rights"
+            ? "Review Bird holds and renounce only what you mean to clear."
+            : stage === "moratorium"
+              ? "Pitch and lock commitments. Signings finalize when the window opens."
+              : `${league.freeAgents.length} players are unsigned. Room, Bird rights, and the mid-level are what let a deal through.`;
     return (
       <section className="sports-card flex flex-col gap-4 p-4">
         <header>
           <h2 className="text-[17px] font-bold tracking-tight">Your plan</h2>
           <p className="text-[13px] text-muted-foreground">
-            Free agency. Sign who you can under the cap, then tip the next year.
+            Free agency desk. Options and QOs first, then the market, then tip
+            the next year.
           </p>
         </header>
         <ol className="flex flex-col gap-1">
           <StepRow
             n={1}
             title="Work the market"
-            detail={`${league.freeAgents.length} players are unsigned. Room, Bird rights, and the mid-level are what let a deal through.`}
+            detail={stageDetail}
             status="current"
             action={
               <Button onClick={() => router.push("/gm/free-agency")}>

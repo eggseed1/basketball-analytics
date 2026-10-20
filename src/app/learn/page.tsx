@@ -1,16 +1,21 @@
+import { getTranslations } from "next-intl/server";
+
 import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { LearnIndexClient } from "@/components/learn/learn-index-client";
 import { PageHeader } from "@/components/layout/page-header";
 import { learnHrefFor, listLearnConcepts } from "@/content/learn/registry";
 
-export const metadata = {
-  alternates: { canonical: "/learn" },
-  title: "Learn NBA advanced stats",
-  description:
-    "DRBL glossary: the stats, labels, and methods a casual fan needs to read the site.",
-};
+export async function generateMetadata() {
+  const t = await getTranslations("Learn");
+  return {
+    alternates: { canonical: "/learn" },
+    title: t("metaTitle"),
+    description: t("metaDescription"),
+  };
+}
 
-export default function LearnIndexPage() {
+export default async function LearnIndexPage() {
+  const t = await getTranslations("Learn");
   const concepts = listLearnConcepts()
     .filter((c) => c.learnSlug || c.showTooltip)
     .map((c) => ({ ...c, href: learnHrefFor(c.id) }));
@@ -18,10 +23,7 @@ export default function LearnIndexPage() {
   return (
     <main data-motion-page className="site-shell flex flex-col gap-6 py-6 sm:py-8">
       <MotionReveal />
-      <PageHeader
-        title="Understand every number"
-        subtitle="Every stat, label and method the site uses, grouped by topic."
-      />
+      <PageHeader title={t("hubTitle")} subtitle={t("hubSubtitle")} />
 
       <LearnIndexClient concepts={concepts} />
     </main>

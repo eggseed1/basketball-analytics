@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { useTranslations } from "next-intl";
 
 import { playerLabel, type ArcadeLeague } from "@/arcade/league";
 import { teamName } from "@/arcade/teams";
@@ -74,6 +75,7 @@ function idleReels(): SlotReel[] {
 }
 
 function Zero82Board({ league }: { league: ArcadeLeague }) {
+  const t = useTranslations("ArcadeZero");
   const teamSeasons = useMemo(() => zero82TeamSeasons(league), [league]);
   const seasons = useMemo(() => [...new Set(teamSeasons.map((ts) => ts.season))], [teamSeasons]);
   const [mode, setMode] = useState<Mode>("worst");
@@ -150,16 +152,16 @@ function Zero82Board({ league }: { league: ArcadeLeague }) {
     <section className="flex flex-col gap-4">
       <div className="sports-card flex flex-wrap items-end justify-between gap-3 px-4 py-3">
         <SegmentedControl
-          label="Goal"
+          label={t("goal")}
           value={mode}
           onChange={(id) => reset(id)}
           options={[
-            { id: "worst", label: "Worst team (0–82)" },
-            { id: "best", label: "Best team (82–0)" },
+            { id: "worst", label: t("worstTeam") },
+            { id: "best", label: t("bestTeam") },
           ]}
         />
         <p className={cn(type.caption, "text-muted-foreground")}>
-          {best != null ? `Your best: ${best}–${82 - best}` : `Aim for ${goal}`}
+          {best != null ? t("yourBest", { record: `${best}–${82 - best}` }) : t("aimFor", { goal })}
         </p>
       </div>
 
@@ -173,10 +175,10 @@ function Zero82Board({ league }: { league: ArcadeLeague }) {
           <div className="flex flex-col gap-3">
             <div className="flex items-baseline justify-between gap-2">
               <p className={cn(type.caption, "font-semibold uppercase tracking-wide text-muted-foreground")}>
-                Pick {5 - openSlots.length + 1} of 5
+                {t("pickOf", { n: 5 - openSlots.length + 1 })}
               </p>
               <p className={cn(type.caption, "text-muted-foreground")}>
-                Open: {openSlots.join(", ")}
+                {t("openSlots", { slots: openSlots.join(", ") })}
               </p>
             </div>
             <SlotMachine reels={reels} spinId={spinId} spinning={spinning} cellHeight={CELL} />
@@ -192,7 +194,7 @@ function Zero82Board({ league }: { league: ArcadeLeague }) {
                     spin();
                   }}
                 >
-                  Skip team ({skips} left)
+                  {t("skipTeam", { skips })}
                 </Button>
               ) : (
                 <SpinButton spinning={spinning} onClick={spin} className="flex-1" />
@@ -215,7 +217,10 @@ function Zero82Board({ league }: { league: ArcadeLeague }) {
                     {team.season} {teamName(team.team)}
                   </h2>
                   <span className={cn(type.caption, "ml-auto shrink-0 text-muted-foreground")}>
-                    {offers.filter((o) => !o.blocked).length} of {offers.length} fit
+                    {t("offersFit", {
+                      fit: offers.filter((o) => !o.blocked).length,
+                      total: offers.length,
+                    })}
                   </span>
                 </div>
                 <ul className="flex flex-col gap-1.5">
@@ -236,8 +241,10 @@ function Zero82Board({ league }: { league: ArcadeLeague }) {
             ) : null}
 
             <p className={cn(type.caption, "text-muted-foreground")}>
-              Each team shows its rotation players (at least {ZERO_82_MIN_MINUTES} minutes and{" "}
-              {ZERO_82_MIN_GAMES} games). A player fills only his listed position.
+              {t("rotationNote", {
+                minutes: ZERO_82_MIN_MINUTES,
+                games: ZERO_82_MIN_GAMES,
+              })}
             </p>
           </div>
         )}
@@ -261,6 +268,7 @@ function OfferButton({
   onPick: () => void;
   onHover: (on: boolean) => void;
 }) {
+  const t = useTranslations("ArcadeZero");
   const { row, blocked } = offer;
   const player = league.players[row.pid];
   const mpg = row.gp ? row.mp / row.gp : null;
@@ -270,7 +278,12 @@ function OfferButton({
     row.ast != null ? `${row.ast.toFixed(1)} AST` : null,
     mpg != null ? `${mpg.toFixed(1)} MIN` : null,
   ].filter(Boolean);
-  const reason = blocked === "on-team" ? "On your team" : blocked === "slot-filled" ? `${row.pos} filled` : null;
+  const reason =
+    blocked === "on-team"
+      ? t("onYourTeam")
+      : blocked === "slot-filled"
+        ? t("slotFilled", { pos: row.pos ?? "" })
+        : null;
   return (
     <button
       type="button"
@@ -307,7 +320,7 @@ function OfferButton({
         </span>
       ) : (
         <span className="shrink-0 text-[12px] font-semibold text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
-          Sign
+          {t("sign")}
         </span>
       )}
     </button>
@@ -323,11 +336,12 @@ function ResultCard({
   record: { wins: number; losses: number; net: number };
   onReplay: () => void;
 }) {
+  const t = useTranslations("ArcadeZero");
   const perfect = mode === "worst" ? record.wins === 0 : record.wins === 82;
   return (
     <div className="sports-card arcade-pop flex flex-col items-center gap-3 px-4 py-5 text-center">
       <p className={cn(type.caption, "font-semibold uppercase tracking-wide text-muted-foreground")}>
-        Projected record
+        {t("projectedRecord")}
       </p>
       <p className="score-num text-[3.5rem] leading-none">
         {record.wins}–{record.losses}
@@ -335,7 +349,7 @@ function ResultCard({
       <div
         className="flex h-2.5 w-full max-w-sm overflow-hidden rounded-full bg-foreground/[0.08]"
         role="img"
-        aria-label={`${record.wins} wins, ${record.losses} losses`}
+        aria-label={t("winsLossesAria", { wins: record.wins, losses: record.losses })}
       >
         <span className="h-full bg-[var(--chart-3)]" style={{ width: `${(record.wins / 82) * 100}%` }} />
         <span className="h-full bg-destructive/70" style={{ width: `${(record.losses / 82) * 100}%` }} />
@@ -343,18 +357,21 @@ function ResultCard({
       <p className={cn(type.bodySm, "text-muted-foreground")}>
         {perfect
           ? mode === "worst"
-            ? "A winless season. That is hard to do."
-            : "Undefeated. That is hard to do."
-          : `Net rating ${record.net > 0 ? "+" : ""}${record.net.toFixed(1)}`}
+            ? t("winless")
+            : t("undefeated")
+          : t("netRating", {
+              net: `${record.net > 0 ? "+" : ""}${record.net.toFixed(1)}`,
+            })}
       </p>
       <Button size="lg" onClick={onReplay}>
-        Play again
+        {t("playAgain")}
       </Button>
       <p className={cn(type.caption, "max-w-prose text-muted-foreground")}>
-        Each starter plays {STARTER_MINUTES} minutes at his Box Plus/Minus for that season. A
-        replacement-level bench ({BENCH_BPM} BPM) covers the other minutes, and each point of net
-        rating is worth {WINS_PER_POINT} wins over 82 games. BPM compares a player to the league
-        average of his own season, so eras mix fairly.
+        {t("methodNote", {
+          minutes: STARTER_MINUTES,
+          bpm: BENCH_BPM,
+          wins: WINS_PER_POINT,
+        })}
       </p>
     </div>
   );

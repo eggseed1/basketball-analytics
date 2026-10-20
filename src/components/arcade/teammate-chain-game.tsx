@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, type CSSProperties } from "react";
+import { useTranslations } from "next-intl";
 
 import { playerLabel, type ArcadeLeague } from "@/arcade/league";
 import {
@@ -37,6 +38,7 @@ export function TeammateChainGame() {
 }
 
 function ChainBoard({ league }: { league: ArcadeLeague }) {
+  const t = useTranslations("ArcadeChain");
   const graph = useMemo(() => buildTeammateGraph(league), [league]);
   const stars = useMemo(() => chainStars(league), [league]);
   const years = useMemo(() => {
@@ -78,7 +80,7 @@ function ChainBoard({ league }: { league: ArcadeLeague }) {
     setQuery("");
     if (!areTeammates(graph, last, pid)) {
       setMessage(
-        `${playerLabel(league, last)} and ${playerLabel(league, pid)} were never on the same team in the same season.`
+        t("notTeammates", { a: playerLabel(league, last), b: playerLabel(league, pid) })
       );
       return;
     }
@@ -104,7 +106,7 @@ function ChainBoard({ league }: { league: ArcadeLeague }) {
           style={{ right: -40, bottom: -50, "--orb-color": "#bf5af2" } as CSSProperties}
         />
         <div className="grid grid-cols-[6.5rem_minmax(0,1fr)_6.5rem] items-start gap-1 sm:grid-cols-[10rem_minmax(0,1fr)_10rem]">
-          <Endpoint league={league} pid={puzzle.from} label="Start" years={years.get(puzzle.from)} />
+          <Endpoint league={league} pid={puzzle.from} label={t("start")} years={years.get(puzzle.from)} />
           <div className="mt-5 flex items-center gap-1.5 sm:mt-7" aria-hidden>
             {Array.from({ length: par }, (_, i) => (
               <span key={i} className="flex flex-1 items-center gap-1.5">
@@ -123,15 +125,15 @@ function ChainBoard({ league }: { league: ArcadeLeague }) {
             ))}
             <span className={cn("h-0.5 flex-1 rounded-full", status !== "playing" ? "bg-foreground" : "bg-foreground/15")} />
           </div>
-          <Endpoint league={league} pid={puzzle.to} label="Reach" years={years.get(puzzle.to)} />
+          <Endpoint league={league} pid={puzzle.to} label={t("reach")} years={years.get(puzzle.to)} />
         </div>
         <p className={cn(type.caption, "text-center text-muted-foreground")}>
-          Shortest possible: {par} {par === 1 ? "player" : "players"} in between
+          {par === 1 ? t("shortestOne", { count: par }) : t("shortestMany", { count: par })}
         </p>
       </div>
 
       <div className="sports-card flex flex-col gap-3 px-4 py-4">
-        <h2 className={type.heading}>Your chain</h2>
+        <h2 className={type.heading}>{t("yourChain")}</h2>
         <ChainList
           league={league}
           graph={graph}
@@ -142,13 +144,13 @@ function ChainBoard({ league }: { league: ArcadeLeague }) {
         {status === "playing" ? (
           <div className="relative flex flex-col gap-2">
             <label className={cn(type.caption, "font-semibold text-muted-foreground")} htmlFor="chain-input">
-              Add a teammate of {playerLabel(league, last)}
+              {t("addTeammate", { name: playerLabel(league, last) })}
             </label>
             <Input
               id="chain-input"
               value={query}
               autoComplete="off"
-              placeholder="Type a player's name"
+              placeholder={t("placeholder")}
               onChange={(event) => setQuery(event.target.value)}
               onKeyDown={(event) => {
                 if (event.key === "Enter" && matches[0]) add(matches[0].id);
@@ -189,10 +191,10 @@ function ChainBoard({ league }: { league: ArcadeLeague }) {
                   setMessage(null);
                 }}
               >
-                Undo
+                {t("undo")}
               </Button>
               <Button variant="ghost" onClick={() => setStatus("revealed")}>
-                Show the answer
+                {t("showAnswer")}
               </Button>
             </div>
           </div>
@@ -200,22 +202,19 @@ function ChainBoard({ league }: { league: ArcadeLeague }) {
           <div className="flex flex-col items-start gap-3 border-t border-border/70 pt-3">
             <p className={type.bodySm}>
               {status === "revealed"
-                ? `One shortest chain, with ${par} in between.`
+                ? t("revealed", { par })
                 : between <= par
-                  ? `Solved with ${between} in between. That matches the shortest chain.`
-                  : `Solved with ${between} in between. The shortest chain needs ${par}.`}
+                  ? t("solvedPar", { between })
+                  : t("solvedLonger", { between, par })}
             </p>
             <Button size="lg" onClick={newPuzzle}>
-              New puzzle
+              {t("newPuzzle")}
             </Button>
           </div>
         )}
       </div>
 
-      <p className={cn(type.caption, "text-muted-foreground")}>
-        Teammates means on the same team in the same season, from 1996-97 on. A player traded
-        midseason counts for every team he played for that year.
-      </p>
+      <p className={cn(type.caption, "text-muted-foreground")}>{t("rulesNote")}</p>
     </section>
   );
 }

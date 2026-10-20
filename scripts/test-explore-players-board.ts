@@ -66,7 +66,7 @@ function fakeSeason(
 }
 
 function main() {
-  assert.equal(EXPLORE_PLAYERS_PAGE_SIZE, 100);
+  assert.equal(EXPLORE_PLAYERS_PAGE_SIZE, 50);
   assert.equal(parseExplorePlayersPage(undefined), 1);
   assert.equal(parseExplorePlayersPage("3"), 3);
   assert.equal(parseExplorePlayersPage("0"), 1);
@@ -127,7 +127,9 @@ function main() {
 
   const slim = board.map(toExplorePlayerBoardRow);
   assert.equal("winsAdded" in slim[0]!, false);
-  assert.ok(slim[0]!.ppg > 0);
+  // Per-game rates are derived at read time, not stored on the row.
+  assert.equal("ppg" in slim[0]!, false);
+  assert.ok((boardStatValue(slim[0]!, "ppg", "perGame") ?? 0) > 0);
   assert.equal(slim[0]!.defensiveRating, 108);
   assert.equal(slim[0]!.offensiveRating, 110);
   assert.equal(slim[0]!.netRating, 2);

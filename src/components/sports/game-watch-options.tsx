@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { AppLink } from "@/components/ui/app-link";
 import type { GameBroadcastOption } from "@/lib/game-status";
@@ -8,107 +8,182 @@ import {
   resolveWatchAvailability,
   type ResolvedWatchRow,
 } from "@/lib/game-watch";
+import {
+  STREAMING_COUNTRY_OPTIONS,
+  streamingRegionForCountry,
+} from "@/lib/nba-streaming";
 import { cn } from "@/lib/utils";
 
+const COUNTRY_KEY = "drbl-watch-country-v1";
 const LOCATION_KEY = "drbl-watch-location-v1";
 
-function loadLocation(): string {
+function loadStored(key: string): string {
   if (typeof window === "undefined") return "";
   try {
-    return window.localStorage.getItem(LOCATION_KEY) ?? "";
+    return window.localStorage.getItem(key) ?? "";
   } catch {
     return "";
   }
 }
 
-function saveLocation(value: string) {
+function saveStored(key: string, value: string) {
   if (typeof window === "undefined") return;
   try {
-    if (value.trim()) window.localStorage.setItem(LOCATION_KEY, value.trim());
-    else window.localStorage.removeItem(LOCATION_KEY);
+    if (value.trim()) window.localStorage.setItem(key, value.trim());
+    else window.localStorage.removeItem(key);
   } catch {
     // ignore
   }
 }
 
+function availabilityLabel(row: ResolvedWatchRow): string {
+  switch (row.availability) {
+    case "available":
+      return "Open";
+    case "subscription":
+      return "Subscribe";
+    case "blackout_possible":
+      return "Blackouts possible";
+    case "location_required":
+      return "Set location";
+    case "unavailable":
+      return "Not available";
+    default:
+      return "Check";
+  }
+}
+
 /**
- * Legal where-to-watch panel. Never invents pirate streams.
- * Location is optional; League Pass is never promised without blackout caveats.
+ * Legal "Streaming on" panel. Geo-aware regional partners + ESPN game listings.
+ * Never invents pirate streams.
  */
 export function GameWatchOptions({
   broadcasts = [],
+  season,
+  initialCountry,
   compact,
   className,
 }: {
   broadcasts?: GameBroadcastOption[];
+  /** Canonical season (e.g. 2025-26) so partner URLs follow the media deal era. */
+  season?: string | null;
+  /** ISO country from edge geo headers when available. */
+  initialCountry?: string | null;
   compact?: boolean;
   className?: string;
 }) {
+  const [country, setCountry] = useState(initialCountry?.toUpperCase() ?? "");
   const [location, setLocation] = useState("");
   const [editing, setEditing] = useState(false);
-  const [draft, setDraft] = useState("");
+  const [draftCountry, setDraftCountry] = useState(country || "US");
+  const [draftLocation, setDraftLocation] = useState("");
 
   useEffect(() => {
-    const saved = loadLocation();
-    setLocation(saved);
-    setDraft(saved);
-  }, []);
+    const savedCountry = loadStored(COUNTRY_KEY);
+    const savedLocation = loadStored(LOCATION_KEY);
+    const nextCountry = savedCountry || initialCountry?.toUpperCase() || "";
+    setCountry(nextCountry);
+    setDraftCountry(nextCountry || "US");
+    setLocation(savedLocation);
+    setDraftLocation(savedLocation);
+  }, [initialCountry]);
 
-  const rows: ResolvedWatchRow[] = resolveWatchAvailability({
-    broadcasts,
-    locationLabel: location || null,
-  });
+  const region = useMemo(
+    () => streamingRegionForCountry(country === "OTHER" ? null : country || null),
+    [country]
+  );
 
-  // If provider gave nothing, still show League Pass caveat + empty state.
-  const hasProviderBroadcasts = broadcasts.length > 0;
+  const rows: ResolvedWatchRow[] = useMemo(
+    () =>
+      resolveWatchAvailability({
+        broadcasts,
+        countryCode: country || null,
+        locationLabel: location || null,
+        season,
+      }),
+    [broadcasts, country, location, season]
+  );
+
+  const hasProviderBroadcasts = broadcasts.some((b) => b.medium !== "radio");
+  const titlePlace = country
+    ? STREAMING_COUNTRY_OPTIONS.find((o) => o.code === country)?.label ??
+      region.label
+    : null;
 
   return (
-    <div className={cn("flex flex-col gap-2", className)}>
+    <section
+      className={cn(
+        "sports-card flex flex-col gap-3 p-4 sm:p-5",
+        className
+      )}
+      aria-labelledby="streaming-on-heading"
+    >
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h3
-          className={cn(
-            "font-bold tracking-tight",
-            compact ? "text-[12px] uppercase tracking-wide text-muted-foreground" : "text-[14px]"
-          )}
-        >
-          {location
-            ? `Where to watch in ${location}`
-            : "Where to watch"}
-        </h3>
+        <div>
+          <h2
+            id="streaming-on-heading"
+            className={cn(
+              "font-bold tracking-tight",
+              compact ? "text-[13px] uppercase tracking-wide text-muted-foreground" : "text-[17px]"
+            )}
+          >
+            {titlePlace ? `Streaming on · ${titlePlace}` : "Streaming on"}
+          </h2>
+          <p className="mt-0.5 text-[13px] text-muted-foreground">
+            Official destinations for this game. Partners change by country, and
+            the listed networks update with the schedule.
+          </p>
+        </div>
         <button
           type="button"
           className="text-[12px] font-semibold text-muted-foreground underline-offset-2 hover:underline"
           onClick={() => setEditing((v) => !v)}
         >
-          {location ? "Change location" : "Set location"}
+          {country || location ? "Change location" : "Set location"}
         </button>
       </div>
 
       {editing ? (
         <form
-          className="flex flex-wrap items-center gap-2"
+          className="flex flex-col gap-2 rounded-md border border-border/70 bg-background/60 p-3 sm:flex-row sm:flex-wrap sm:items-end"
           onSubmit={(e) => {
             e.preventDefault();
-            const next = draft.trim();
-            saveLocation(next);
-            setLocation(next);
+            const nextCountry = draftCountry.trim().toUpperCase();
+            const nextLocation = draftLocation.trim();
+            saveStored(COUNTRY_KEY, nextCountry === "OTHER" ? "OTHER" : nextCountry);
+            saveStored(LOCATION_KEY, nextLocation);
+            setCountry(nextCountry);
+            setLocation(nextLocation);
             setEditing(false);
           }}
         >
-          <label className="sr-only" htmlFor="watch-location">
-            Watch location (city or ZIP)
+          <label className="flex min-w-[10rem] flex-1 flex-col gap-1 text-[12px] font-semibold text-muted-foreground">
+            Country
+            <select
+              value={draftCountry || "US"}
+              onChange={(e) => setDraftCountry(e.target.value)}
+              className="rounded-md border border-border bg-background px-2 py-1.5 text-[14px] font-medium text-foreground"
+            >
+              {STREAMING_COUNTRY_OPTIONS.map((opt) => (
+                <option key={opt.code} value={opt.code}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
           </label>
-          <input
-            id="watch-location"
-            value={draft}
-            onChange={(e) => setDraft(e.target.value)}
-            placeholder="City or ZIP (e.g. Boston, MA)"
-            className="min-w-[12rem] flex-1 rounded-md border border-border bg-background px-2 py-1.5 text-[14px]"
-            autoComplete="postal-code"
-          />
+          <label className="flex min-w-[12rem] flex-[2] flex-col gap-1 text-[12px] font-semibold text-muted-foreground">
+            City or ZIP (optional)
+            <input
+              value={draftLocation}
+              onChange={(e) => setDraftLocation(e.target.value)}
+              placeholder="e.g. Boston, MA"
+              className="rounded-md border border-border bg-background px-2 py-1.5 text-[14px] font-medium text-foreground"
+              autoComplete="postal-code"
+            />
+          </label>
           <button
             type="submit"
-            className="rounded-md bg-foreground px-2.5 py-1.5 text-[12px] font-bold text-background"
+            className="rounded-md bg-foreground px-3 py-1.5 text-[12px] font-bold text-background"
           >
             Save
           </button>
@@ -116,16 +191,16 @@ export function GameWatchOptions({
       ) : null}
 
       {!hasProviderBroadcasts ? (
-        <p className="text-[12px] text-muted-foreground">
-          Broadcast assignment not yet available from the provider for this
-          game.
+        <p className="text-[13px] text-muted-foreground">
+          This game’s TV assignment is not in the feed yet. Regional partners
+          and League Pass are still listed for your location.
         </p>
       ) : null}
 
       <ul className="flex flex-col gap-2">
         {rows.map((row) => (
           <li
-            key={row.option.id}
+            key={`${row.kind}-${row.option.id}`}
             className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border/70 frost-surface px-2.5 py-2"
           >
             <div className="min-w-0">
@@ -137,24 +212,27 @@ export function GameWatchOptions({
                 href={row.option.watchUrl}
                 className="shrink-0 text-[12px] font-semibold underline-offset-2 hover:underline"
               >
-                {row.availability === "blackout_possible" ||
-                row.availability === "location_required"
-                  ? "Check availability →"
-                  : "Watch →"}
+                {row.kind === "guide"
+                  ? "Open →"
+                  : row.availability === "blackout_possible" ||
+                      row.availability === "location_required"
+                    ? "Check →"
+                    : "Watch →"}
               </AppLink>
-            ) : row.availability === "available" ? (
+            ) : (
               <span className="shrink-0 text-[12px] font-semibold text-muted-foreground">
-                On {row.option.label}
+                {availabilityLabel(row)}
               </span>
-            ) : null}
+            )}
           </li>
         ))}
       </ul>
 
-      <p className="text-[10px] text-muted-foreground">
-        Legal destinations only. League Pass is subject to local and national
-        blackouts. Availability is not a blackout API verdict.
+      <p className="text-[11px] text-muted-foreground">
+        Legal destinations only. Blackouts and entitlements are decided by the
+        rights holder, not this page. Game networks refresh from the live
+        schedule; country partners follow the current media cycle.
       </p>
-    </div>
+    </section>
   );
 }

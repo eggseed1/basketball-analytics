@@ -27,6 +27,7 @@ import {
 import { mapGmPhaseToMyLeague } from "@/gm/myleague/phase";
 import { uid } from "@/gm/engine/rng";
 import { currentNbaStartYear } from "@/lib/nba-season-phase";
+import { activeLayerARef } from "@/gm/state/gm-saves";
 
 export const DEFAULT_MYLEAGUE_SETTINGS: MyLeagueSettings = {
   mode: "alternate_history",
@@ -101,7 +102,7 @@ export function createMyLeagueBundle(
     parentSnapshotId: snapshot.id,
     branchPoint,
     mode: settings.mode,
-    leagueStateRef: "franchise-lab-gm",
+    leagueStateRef: activeLayerARef(),
     currentSeason: league.season,
     phase: mapGmPhaseToMyLeague(league.phase),
     day: league.day,

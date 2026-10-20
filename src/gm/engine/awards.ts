@@ -13,7 +13,9 @@ import type {
   GmTeam,
 } from "@/gm/types";
 import { overallOf } from "@/gm/engine/lineup";
-import { uid } from "@/gm/engine/rng";
+import { clamp, uid } from "@/gm/engine/rng";
+
+const VOTE_POINTS = [10, 7, 5, 3, 1] as const;
 
 const TITLES: Record<GmAwardRace["id"], string> = {
   mvp: "MVP",
@@ -142,14 +144,57 @@ function teamName(league: GmLeagueState, teamId: string): string {
   return team ? `${team.city} ${team.name}` : teamId.toUpperCase();
 }
 
-function ranked(
-  rows: Array<{ id: string; name: string; teamId: string; detail: string; score: number }>
-): GmAwardRace["candidates"] {
-  return rows
-    .filter((row) => Number.isFinite(row.score))
+type RankRow = {
+  id: string;
+  name: string;
+  teamId: string;
+  detail: string;
+  score: number;
+};
+
+function raceNote(top: RankRow[]): string | undefined {
+  if (top.length < 2) return undefined;
+  const lead = top[0]!.score;
+  const second = top[1]!.score;
+  if (!(lead > 0)) return undefined;
+  const gap = (lead - second) / lead;
+  if (gap < 0.04) return "Dead heat at the top";
+  if (gap < 0.1) return "Tight race";
+  if (gap > 0.28) return "Runaway favorite";
+  return undefined;
+}
+
+function ranked(rows: RankRow[]): {
+  candidates: GmAwardRace["candidates"];
+  note?: string;
+} {
+  const top = rows
+    .filter((row) => Number.isFinite(row.score) && row.score > Number.NEGATIVE_INFINITY)
     .sort((a, b) => b.score - a.score || a.name.localeCompare(b.name))
-    .slice(0, 5)
-    .map(({ id, name, teamId, detail }) => ({ id, name, teamId, detail }));
+    .slice(0, 5);
+  const leader = top[0]?.score ?? 0;
+  return {
+    note: raceNote(top),
+    candidates: top.map((row, index) => ({
+      id: row.id,
+      name: row.name,
+      teamId: row.teamId,
+      detail: row.detail,
+      score: Math.round(row.score * 100) / 100,
+      share: leader > 0 ? clamp(row.score / leader, 0, 1) : 0,
+      votes: VOTE_POINTS[index],
+    })),
+  };
+}
+
+/** Games played by the busiest team — used for mid-season race copy. */
+export function awardSeasonProgress(league: GmLeagueState): {
+  played: number;
+  full: number;
+  ready: boolean;
+} {
+  const played = seasonGames(league);
+  return { played, full: 82, ready: played >= 1 && playerPool(league).length > 0 };
 }
 
 function playerPool(league: GmLeagueState): Array<{ player: GmPlayer; line: GmCountingLine }> {
@@ -173,6 +218,15 @@ function expectedWins(league: GmLeagueState, team: GmTeam): number {
   return Math.max(18, Math.min(68, 41 + (average - 76) * 2.4));
 }
 
+function teamDefenseMul(league: GmLeagueState, teamId: string | null): number {
+  const row = teamId ? league.standings[teamId] : undefined;
+  const games = (row?.wins ?? 0) + (row?.losses ?? 0);
+  if (!row || games < 1) return 1;
+  const paa = row.pointsAgainst / games;
+  // League-ish 112; stingier defenses lift DPOY / All-Defense candidates.
+  return clamp(1.12 - (paa - 110) / 45, 0.78, 1.18);
+}
+
 export function awardRaces(league: GmLeagueState): GmAwardRace[] {
   const played = seasonGames(league);
   const pool = playerPool(league);
@@ -186,10 +240,16 @@ export function awardRaces(league: GmLeagueState): GmAwardRace[] {
   const mvp = ranked(
     pool.map(({ player, line }) => {
       const record = recordOf(league, player.teamId);
+      const impact = Number.isFinite(player.ratings.impact)
+        ? clamp(player.ratings.impact / 7, 0, 0.22)
+        : 0;
+      const marginMul = 1 + clamp(record.margin / 22, -0.08, 0.12);
       const score =
         boxScoreValue(line) *
         gamesWeight(line.gp, played) *
-        (0.42 + winWeight(record.wins));
+        (0.4 + winWeight(record.wins)) *
+        (0.92 + impact) *
+        marginMul;
       return {
         id: player.id,
         name: player.name,
@@ -207,7 +267,13 @@ export function awardRaces(league: GmLeagueState): GmAwardRace[] {
       const skill = Number.isFinite(player.ratings.defense) ? player.ratings.defense : 0;
       const glass = Number.isFinite(player.ratings.rebounding) ? player.ratings.rebounding / 40 : 0;
       const minutesOk = mpg >= 24 ? 1 : mpg / 24;
-      const score = (stocks * 7 + skill * 2.2 + glass) * gamesWeight(line.gp, played) * minutesOk;
+      const record = recordOf(league, player.teamId);
+      const score =
+        (stocks * 7 + skill * 2.2 + glass) *
+        gamesWeight(line.gp, played) *
+        minutesOk *
+        teamDefenseMul(league, player.teamId) *
+        (0.78 + 0.22 * winWeight(record.wins));
       return {
         id: player.id,
         name: player.name,
@@ -224,7 +290,9 @@ export function awardRaces(league: GmLeagueState): GmAwardRace[] {
       .map(({ player, line }) => {
         const record = recordOf(league, player.teamId);
         const score =
-          boxScoreValue(line) * gamesWeight(line.gp, played) * (0.82 + 0.18 * winWeight(record.wins));
+          boxScoreValue(line) *
+          gamesWeight(line.gp, played) *
+          (0.8 + 0.2 * winWeight(record.wins));
         return {
           id: player.id,
           name: player.name,
@@ -239,19 +307,26 @@ export function awardRaces(league: GmLeagueState): GmAwardRace[] {
     pool
       .filter(({ line }) => {
         const starts = line.gs ?? 0;
-        if (starts * 2 >= line.gp) return false;
+        if (line.gp < 1) return false;
+        if (starts / line.gp >= 0.5) return false;
         const mpg = per(line.min, line.gp);
         return mpg >= 16 && mpg <= 32;
       })
       .map(({ player, line }) => {
         const record = recordOf(league, player.teamId);
+        const starts = line.gs ?? 0;
         const score =
-          boxScoreValue(line) * gamesWeight(line.gp, played) * (0.62 + 0.38 * winWeight(record.wins));
+          boxScoreValue(line) *
+          gamesWeight(line.gp, played) *
+          (0.58 + 0.42 * winWeight(record.wins));
         return {
           id: player.id,
           name: player.name,
           teamId: player.teamId!,
-          detail: countingDetail(line, `${per(line.min, line.gp).toFixed(1)} minutes`),
+          detail: countingDetail(
+            line,
+            `${per(line.min, line.gp).toFixed(1)} mpg · ${starts} starts`
+          ),
           score,
         };
       })
@@ -268,16 +343,20 @@ export function awardRaces(league: GmLeagueState): GmAwardRace[] {
         const prior = (player.priorLine ?? player.nbaSeason)!;
         const jump = boxScoreValue(line) - boxScoreValue(prior);
         const minutes = per(line.min, line.gp) - per(prior.min, prior.gp);
-        const age =
-          player.age <= 27 ? 1.12 : player.age <= 30 ? 0.92 : 0.62;
+        const age = player.age <= 27 ? 1.12 : player.age <= 30 ? 0.92 : 0.62;
+        const score =
+          (jump + Math.max(0, minutes) * 0.12) * age * gamesWeight(line.gp, played);
+        const jumpLabel =
+          jump >= 0 ? `+${jump.toFixed(1)} vs last year` : `${jump.toFixed(1)} vs last year`;
         return {
           id: player.id,
           name: player.name,
           teamId: player.teamId!,
-          detail: countingDetail(line),
-          score: (jump + Math.max(0, minutes) * 0.12) * age * gamesWeight(line.gp, played),
+          detail: `${countingDetail(line)} · ${jumpLabel}`,
+          score,
         };
       })
+      .filter((row) => row.score > 0.35)
   );
 
   const coty = ranked(
@@ -289,15 +368,40 @@ export function awardRaces(league: GmLeagueState): GmAwardRace[] {
         id: `coach:${team.id}`,
         name: coach || "Head coach",
         teamId: team.id,
-        detail: `${record.wins}-${record.losses}, ${record.margin >= 0 ? "+" : ""}${record.margin.toFixed(1)} a game`,
-        score: record.wins + record.losses < 1 || !coach ? Number.NEGATIVE_INFINITY : surprise + record.wins * 0.08,
+        detail: `${record.wins}-${record.losses}, ${record.margin >= 0 ? "+" : ""}${record.margin.toFixed(1)} a game · expected ${expectedWins(league, team).toFixed(0)}`,
+        score:
+          record.wins + record.losses < 1 || !coach
+            ? Number.NEGATIVE_INFINITY
+            : surprise + record.wins * 0.08 + clamp(record.margin, -6, 8) * 0.15,
       };
     })
   );
 
-  const floor = played >= 75 ? Math.round(played * (65 / 82)) : Math.max(8, Math.round(played * 0.45));
+  const floor =
+    played >= 75 ? Math.round(played * (65 / 82)) : Math.max(8, Math.round(played * 0.45));
   const ballot = (rows: BallotRow[]) => rows.filter((row) => row.gp >= floor);
   const offense = ballot(
+    pool.map(({ player, line }) => {
+      const record = recordOf(league, player.teamId);
+      const impact = Number.isFinite(player.ratings.impact)
+        ? clamp(player.ratings.impact / 8, 0, 0.18)
+        : 0;
+      return {
+        id: player.id,
+        name: player.name,
+        teamId: player.teamId!,
+        position: player.position,
+        gp: line.gp,
+        detail: countingDetail(line),
+        score:
+          boxScoreValue(line) *
+          gamesWeight(line.gp, played) *
+          (0.48 + 0.52 * winWeight(record.wins)) *
+          (0.94 + impact),
+      };
+    })
+  );
+  const defense = ballot(
     pool.map(({ player, line }) => {
       const record = recordOf(league, player.teamId);
       return {
@@ -306,24 +410,15 @@ export function awardRaces(league: GmLeagueState): GmAwardRace[] {
         teamId: player.teamId!,
         position: player.position,
         gp: line.gp,
-        detail: countingDetail(line),
-        score: boxScoreValue(line) * gamesWeight(line.gp, played) * (0.5 + 0.5 * winWeight(record.wins)),
+        detail: defenseDetail(line),
+        score:
+          ((line.min > 0 ? ((line.stl + line.blk) / line.min) * 36 : 0) * 7 +
+            (Number.isFinite(player.ratings.defense) ? player.ratings.defense : 0) * 2.2) *
+          gamesWeight(line.gp, played) *
+          teamDefenseMul(league, player.teamId) *
+          (0.85 + 0.15 * winWeight(record.wins)),
       };
     })
-  );
-  const defense = ballot(
-    pool.map(({ player, line }) => ({
-      id: player.id,
-      name: player.name,
-      teamId: player.teamId!,
-      position: player.position,
-      gp: line.gp,
-      detail: defenseDetail(line),
-      score:
-        ((line.min > 0 ? ((line.stl + line.blk) / line.min) * 36 : 0) * 7 +
-          (Number.isFinite(player.ratings.defense) ? player.ratings.defense : 0) * 2.2) *
-        gamesWeight(line.gp, played),
-    }))
   );
   const rookies = offense.filter(({ id }) => {
     const player = pool.find((row) => row.player.id === id)?.player;
@@ -331,12 +426,12 @@ export function awardRaces(league: GmLeagueState): GmAwardRace[] {
   });
 
   return [
-    { id: "mvp", title: TITLES.mvp, candidates: mvp },
-    { id: "dpoy", title: TITLES.dpoy, candidates: dpoy },
-    { id: "roy", title: TITLES.roy, candidates: roy },
-    { id: "smoy", title: TITLES.smoy, candidates: smoy },
-    { id: "mip", title: TITLES.mip, candidates: mip },
-    { id: "coty", title: TITLES.coty, candidates: coty },
+    { id: "mvp", title: TITLES.mvp, candidates: mvp.candidates, note: mvp.note },
+    { id: "dpoy", title: TITLES.dpoy, candidates: dpoy.candidates, note: dpoy.note },
+    { id: "roy", title: TITLES.roy, candidates: roy.candidates, note: roy.note },
+    { id: "smoy", title: TITLES.smoy, candidates: smoy.candidates, note: smoy.note },
+    { id: "mip", title: TITLES.mip, candidates: mip.candidates, note: mip.note },
+    { id: "coty", title: TITLES.coty, candidates: coty.candidates, note: coty.note },
     ...namedTeams("all-nba", offense),
     ...namedTeams("all-def", defense).slice(0, 2),
     ...namedTeams("all-rook", rookies).slice(0, 2),
@@ -390,6 +485,7 @@ function namedTeams(prefix: "all-nba" | "all-def" | "all-rook", rows: BallotRow[
     if (team.length < 5) break;
     for (const row of team) used.add(row.id);
     const id = `${prefix}-${index + 1}` as GmAwardRace["id"];
+    const leader = team[0]?.score ?? 0;
     races.push({
       id,
       title: TITLES[id],
@@ -398,6 +494,8 @@ function namedTeams(prefix: "all-nba" | "all-def" | "all-rook", rows: BallotRow[
         name: row.name,
         teamId: row.teamId,
         detail: `${spotOf(row.position) === "G" ? "Guard" : spotOf(row.position) === "C" ? "Center" : "Forward"}. ${row.detail}`,
+        score: Math.round(row.score * 100) / 100,
+        share: leader > 0 ? clamp(row.score / leader, 0, 1) : 0,
       })),
     });
   }

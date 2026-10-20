@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { getTranslations } from "next-intl/server";
 
 import { DestinationSectionSkeleton } from "@/components/continuity/destination-loading-frame";
 import { TeamAssetsIsland } from "@/components/teams/team-assets-island";
@@ -28,6 +29,7 @@ async function TeamContractsIsland({
   teamId: string;
   season: string;
 }) {
+  const t = await getTranslations("TeamDetail");
   const franchiseId = resolveFrontOfficeFranchiseId(teamId);
   const contracts = franchiseId ? getTeamContracts(franchiseId) : null;
   const slice = franchiseId ? await resolveTeamFrontOfficeSlice(franchiseId) : null;
@@ -47,18 +49,12 @@ async function TeamContractsIsland({
   if (slice) return <TeamPayrollView data={buildTeamPayrollPresentation(slice)} />;
   return (
     <p className={cn(type.bodySm, "text-muted-foreground")}>
-      No validated payroll is published for this franchise.
+      {t("noPayroll")}
     </p>
   );
 }
 
-const LOADING_LABELS: Record<TeamSalaryView, string> = {
-  summary: "Loading salary…",
-  contracts: "Loading contracts…",
-  picks: "Loading draft picks…",
-};
-
-export function TeamSalaryAssetsTab({
+export async function TeamSalaryAssetsTab({
   routeTeamId,
   teamId,
   espnTeamId,
@@ -74,22 +70,38 @@ export function TeamSalaryAssetsTab({
   season: string;
   view: TeamSalaryView;
 }) {
+  const t = await getTranslations("TeamDetail");
   const frontOfficeSeason = getCurrentFrontOfficeSeason();
+
+  const viewLabels: Record<TeamSalaryView, string> = {
+    summary: t("salarySummary"),
+    contracts: t("salaryContracts"),
+    picks: t("salaryPicks"),
+  };
+  const loadingLabels: Record<TeamSalaryView, string> = {
+    summary: t("loadingSalary"),
+    contracts: t("loadingContracts"),
+    picks: t("loadingPicks"),
+  };
 
   return (
     <div data-motion-stack className="flex flex-col gap-6">
       <TeamSalaryViewSwitch
         active={view}
+        ariaLabel={t("salaryViewAria")}
         items={TEAM_SALARY_VIEWS.map((item) => ({
-          ...item,
+          id: item.id,
+          label: viewLabels[item.id],
           href: teamSalaryHref(routeTeamId, item.id, season),
-          loadingLabel: LOADING_LABELS[item.id],
+          loadingLabel: loadingLabels[item.id],
         }))}
         note={
           season !== frontOfficeSeason ? (
             <p className={cn(type.caption, "text-muted-foreground")}>
-              Salary and draft picks are the franchise&apos;s current {frontOfficeSeason} books. They don&apos;t change
-              with the {season} season picked above.
+              {t("salarySeasonNote", {
+                booksSeason: frontOfficeSeason,
+                season,
+              })}
             </p>
           ) : null
         }
@@ -101,6 +113,10 @@ export function TeamSalaryAssetsTab({
           abbreviation={abbreviation}
           season={season}
           view={view}
+          loadingSalary={t("loadingSalary")}
+          loadingContracts={t("loadingContracts")}
+          loadingPicks={t("loadingPicks")}
+          loadingCapAssets={t("loadingCapAssets")}
         />
       </TeamSalaryViewSwitch>
     </div>
@@ -114,6 +130,10 @@ function SalaryViewContent({
   abbreviation,
   season,
   view,
+  loadingSalary,
+  loadingContracts,
+  loadingPicks,
+  loadingCapAssets,
 }: {
   routeTeamId: string;
   teamId: string;
@@ -121,29 +141,33 @@ function SalaryViewContent({
   abbreviation: string;
   season: string;
   view: TeamSalaryView;
+  loadingSalary: string;
+  loadingContracts: string;
+  loadingPicks: string;
+  loadingCapAssets: string;
 }) {
   return (
     <>
       {view === "summary" ? (
         <>
-          <Suspense fallback={<DestinationSectionSkeleton label="Loading salary…" />}>
+          <Suspense fallback={<DestinationSectionSkeleton label={loadingSalary} />}>
             <TeamFrontOfficeIsland teamId={teamId} />
           </Suspense>
-          <Suspense fallback={<DestinationSectionSkeleton label="Loading cap and assets…" />}>
+          <Suspense fallback={<DestinationSectionSkeleton label={loadingCapAssets} />}>
             <TeamAssetsIsland teamId={espnTeamId} abbreviation={abbreviation} view="summary" />
           </Suspense>
         </>
       ) : null}
 
       {view === "contracts" ? (
-        <Suspense fallback={<DestinationSectionSkeleton label="Loading contracts…" />}>
+        <Suspense fallback={<DestinationSectionSkeleton label={loadingContracts} />}>
           <TeamContractsIsland routeTeamId={routeTeamId} teamId={teamId} season={season} />
         </Suspense>
       ) : null}
 
       {view === "picks" ? (
         <>
-          <Suspense fallback={<DestinationSectionSkeleton label="Loading draft picks…" />}>
+          <Suspense fallback={<DestinationSectionSkeleton label={loadingPicks} />}>
             <TeamAssetsIsland teamId={espnTeamId} abbreviation={abbreviation} view="picks" />
           </Suspense>
           <TeamDraftHistorySection teamId={espnTeamId} />

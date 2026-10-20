@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { TradeSimulator } from "@/components/trade/trade-simulator";
 import { PageHeader } from "@/components/layout/page-header";
@@ -15,6 +16,7 @@ export default async function TradeSimulatorPage({
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
+  const t = await getTranslations("Explore");
   const params = await searchParams;
   const board = loadTradeSimulatorBoard();
   const one = (key: string) => {
@@ -31,10 +33,13 @@ export default async function TradeSimulatorPage({
     <main data-motion-page className="site-shell flex flex-col gap-6 py-6 sm:py-8">
       <MotionReveal />
       <PageHeader
-        title="Trade simulator"
-        subtitle={`Current rosters and payroll, scored with ${
-          board && board.statsSeason !== board.season ? `${board.statsSeason} ` : ""
-        }DRBL. A salary-match sketch, not a legality ruling.`}
+        title={t("tradeTitle")}
+        subtitle={t("tradeSubtitle", {
+          seasonPrefix:
+            board && board.statsSeason !== board.season
+              ? t("tradeSubtitleSeason", { season: board.statsSeason })
+              : "",
+        })}
       />
       {board ? (
         <TradeSimulator
@@ -46,7 +51,7 @@ export default async function TradeSimulatorPage({
         />
       ) : (
         <p className="text-[14px] text-muted-foreground">
-          No payroll snapshot is loaded, so the simulator has nothing to swap.
+          {t("tradeEmpty")}
         </p>
       )}
     </main>

@@ -23,7 +23,7 @@ import {
   type LukaLedgerRow,
   type LukaPercentileRow,
   type LukaTab,
-} from "@/data/queries/luka-bref-profile";
+} from "@/data/queries/luka-bref-profile-types";
 import type { LukaShotMap } from "@/data/queries/luka-shots";
 import { type } from "@/lib/design-system";
 import { formatNumber, formatOrdinal, formatPct } from "@/lib/format";

@@ -1,0 +1,142 @@
+[
+  {
+    "path": "/",
+    "status": 200,
+    "medianMs": 66,
+    "rangeMs": [
+      62,
+      79
+    ],
+    "htmlKb": 669.5
+  },
+  {
+    "path": "/scores",
+    "status": 200,
+    "medianMs": 21,
+    "rangeMs": [
+      16,
+      72
+    ],
+    "htmlKb": 143.7
+  },
+  {
+    "path": "/standings",
+    "status": 200,
+    "medianMs": 44,
+    "rangeMs": [
+      39,
+      55
+    ],
+    "htmlKb": 378.6
+  },
+  {
+    "path": "/explore/players",
+    "status": 200,
+    "medianMs": 44,
+    "rangeMs": [
+      42,
+      86
+    ],
+    "htmlKb": 1025.9
+  },
+  {
+    "path": "/players/1966",
+    "status": 200,
+    "medianMs": 195,
+    "rangeMs": [
+      192,
+      988
+    ],
+    "htmlKb": 916.4
+  },
+  {
+    "path": "/teams/13",
+    "status": 200,
+    "medianMs": 65,
+    "rangeMs": [
+      63,
+      93
+    ],
+    "htmlKb": 482.7
+  },
+  {
+    "path": "/compare",
+    "status": 200,
+    "medianMs": 10,
+    "rangeMs": [
+      9,
+      15
+    ],
+    "htmlKb": 125.4
+  },
+  {
+    "path": "/learn",
+    "status": 200,
+    "medianMs": 11,
+    "rangeMs": [
+      11,
+      14
+    ],
+    "htmlKb": 183.7
+  },
+  {
+    "path": "/learn/pace",
+    "status": 200,
+    "medianMs": 9,
+    "rangeMs": [
+      8,
+      13
+    ],
+    "htmlKb": 89.2
+  },
+  {
+    "path": "/findings",
+    "status": 200,
+    "medianMs": 26,
+    "rangeMs": [
+      26,
+      419
+    ],
+    "htmlKb": 480.3
+  },
+  {
+    "path": "/ask",
+    "status": 200,
+    "medianMs": 9,
+    "rangeMs": [
+      8,
+      23
+    ],
+    "htmlKb": 87.9
+  },
+  {
+    "path": "/arcade",
+    "status": 200,
+    "medianMs": 14,
+    "rangeMs": [
+      11,
+      15
+    ],
+    "htmlKb": 125.9
+  },
+  {
+    "path": "/gm",
+    "status": 200,
+    "medianMs": 10,
+    "rangeMs": [
+      9,
+      29
+    ],
+    "htmlKb": 91.6
+  },
+  {
+    "path": "/explore/games",
+    "status": 200,
+    "medianMs": 21,
+    "rangeMs": [
+      19,
+      26
+    ],
+    "htmlKb": 306.9
+  }
+]

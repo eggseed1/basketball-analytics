@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import { MotionReveal } from "@/components/continuity/motion-reveal";
 import type { CSSProperties, ReactNode } from "react";
 
@@ -13,68 +14,109 @@ import { PageHeader } from "@/components/layout/page-header";
 import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 
-export const metadata = {
-  alternates: { canonical: "/arcade" },
-  title: "Basketball arcade games",
-  description: "Basketball games: the daily Higher or Lower, Higher or Lower, 0–82, Teammate Chain, ONE SHOT and the GM Lab.",
-};
+export async function generateMetadata() {
+  const t = await getTranslations("Arcade");
+  return {
+    alternates: { canonical: "/arcade" },
+    title: t("metaTitle"),
+    description: t("metaDescription"),
+  };
+}
 
-const GAMES = [
+const RECOMMENDED = [
+  {
+    href: "/arcade/one-shot",
+    titleKey: "gameOneShotTitle",
+    blurbKey: "gameOneShotBlurb",
+    metaKey: "gameOneShotMeta",
+    art: <OneShotArt />,
+    tints: ["#48b9ab", "#df668c"],
+  },
+  {
+    href: "/gm",
+    titleKey: "gmFranchiseTitle",
+    blurbKey: "gmFranchiseBlurb",
+    metaKey: "gmFranchiseMeta",
+    art: <GmLabArt />,
+    tints: ["#30d158", "#64d2ff"],
+  },
+] as const;
+
+const MORE_GAMES = [
   {
     href: "/arcade/daily",
-    title: "Daily Higher or Lower",
-    blurb: "Ten calls on one stat, the same ten for everyone. Come back tomorrow for a new set and keep your day streak.",
-    meta: "New puzzle every day · share your score",
+    titleKey: "gameDailyTitle",
+    blurbKey: "gameDailyBlurb",
+    metaKey: "gameDailyMeta",
     art: <HigherLowerArt />,
     tints: ["#30d158", "#0a84ff"],
   },
   {
     href: "/arcade/higher-or-lower",
-    title: "Higher or Lower",
-    blurb: "Spin for a stat, then guess whether the next player's season beats the last one. Build a streak.",
-    meta: "VORP · DARKO · points · rebounds · assists",
+    titleKey: "gameHigherLowerTitle",
+    blurbKey: "gameHigherLowerBlurb",
+    metaKey: "gameHigherLowerMeta",
     art: <HigherLowerArt />,
     tints: ["#ff9f0a", "#0a84ff"],
   },
   {
     href: "/arcade/zero-82",
-    title: "0–82",
-    blurb: "Spin a team, take one of its players, fill all five positions. Build the worst team you can, or flip it and chase 82–0.",
-    meta: "Projected record from Box Plus/Minus",
+    titleKey: "gameZero82Title",
+    blurbKey: "gameZero82Blurb",
+    metaKey: "gameZero82Meta",
     art: <Zero82Art />,
     tints: ["#d9a066", "#ff375f"],
   },
   {
     href: "/arcade/teammate-chain",
-    title: "Teammate Chain",
-    blurb: "Connect two stars through the fewest shared teammates.",
-    meta: "Every roster from 1996-97 on",
+    titleKey: "gameTeammateChainTitle",
+    blurbKey: "gameTeammateChainBlurb",
+    metaKey: "gameTeammateChainMeta",
     art: <TeammateChainArt />,
     tints: ["#0a84ff", "#bf5af2"],
   },
-  {
-    href: "/arcade/one-shot",
-    title: "ONE SHOT",
-    blurb: "Be born anywhere in the world and try to reach the NBA. Grow up, pick your focus, take or turn down offers, make one regular-season game.",
-    meta: "Life sim · every country · fictional players",
-    art: <OneShotArt />,
-    tints: ["#48b9ab", "#df668c"],
-  },
-];
+] as const;
 
-export default function ArcadePage() {
+function resolveGames(
+  defs: typeof RECOMMENDED | typeof MORE_GAMES,
+  t: Awaited<ReturnType<typeof getTranslations<"Arcade">>>
+) {
+  return defs.map((game) => ({
+    href: game.href,
+    title: t(game.titleKey),
+    blurb: t(game.blurbKey),
+    meta: t(game.metaKey),
+    art: game.art,
+    tints: [...game.tints],
+  }));
+}
+
+export default async function ArcadePage() {
+  const t = await getTranslations("Arcade");
+  const recommended = resolveGames(RECOMMENDED, t);
+  const more = resolveGames(MORE_GAMES, t);
+
   return (
     <main data-motion-page className="site-shell flex flex-col gap-8 py-6 sm:py-8">
       <MotionReveal />
-      <PageHeader
-        title="Games"
-        subtitle="Basketball games, most of them built on 30 seasons of real player stats."
-      />
+      <PageHeader title={t("hubTitle")} subtitle={t("hubSubtitle")} />
 
-      <section className="flex flex-col gap-3">
-        <h2 className={type.heading}>Play</h2>
-        <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {GAMES.map((game, i) => (
+      <section
+        className={cn(
+          "flex flex-col gap-3 rounded-xl border border-border/80",
+          "bg-foreground/[0.02] p-3 sm:p-4"
+        )}
+      >
+        <h2
+          className={cn(
+            type.micro,
+            "font-bold uppercase tracking-[0.12em] text-muted-foreground"
+          )}
+        >
+          {t("sectionRecommended")}
+        </h2>
+        <ul className="grid gap-3 sm:grid-cols-2">
+          {recommended.map((game, i) => (
             <li key={game.href}>
               <ArcadeCard {...game} index={i} />
             </li>
@@ -83,24 +125,13 @@ export default function ArcadePage() {
       </section>
 
       <section className="flex flex-col gap-3">
-        <div>
-          <h2 className={type.heading}>GM Lab</h2>
-          <p className={cn(type.caption, "mt-0.5 text-muted-foreground")}>
-            Run a franchise through a simulated season. Still a work in progress.
-          </p>
-        </div>
+        <h2 className={type.heading}>{t("sectionPlay")}</h2>
         <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          <li>
-            <ArcadeCard
-              href="/gm"
-              title="Franchise Lab"
-              blurb="Set the roster, make trades, manage the cap and play out the schedule."
-              meta="Unfinished"
-              art={<GmLabArt />}
-              tints={["#30d158", "#64d2ff"]}
-              index={GAMES.length}
-            />
-          </li>
+          {more.map((game, i) => (
+            <li key={game.href}>
+              <ArcadeCard {...game} index={recommended.length + i} />
+            </li>
+          ))}
         </ul>
       </section>
     </main>

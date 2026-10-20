@@ -1,21 +1,27 @@
+import { getTranslations } from "next-intl/server";
+
 import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { PageHeader } from "@/components/layout/page-header";
 import { OneShotGame } from "@/components/one-shot/one-shot-game";
 
-export const metadata = {
-  alternates: { canonical: "/arcade/one-shot" },
-  title: "ONE SHOT",
-  description: "Be born anywhere in the world and try to reach the NBA. A basketball life sim with fictional players and real league structures.",
-};
+export async function generateMetadata() {
+  const t = await getTranslations("ArcadeOneShot");
+  return {
+    alternates: { canonical: "/arcade/one-shot" },
+    title: t("metaTitle"),
+    description: t("metaDescription"),
+  };
+}
 
-export default function OneShotPage() {
+export default async function OneShotPage() {
+  const t = await getTranslations("ArcadeOneShot");
   return (
     <main data-motion-page className="flex flex-col gap-5 py-6 sm:py-8 [&:has([data-os-play])_[data-os-page-intro]]:sr-only">
       <MotionReveal />
       <div data-os-page-intro className="site-shell">
         <PageHeader
-          title="ONE SHOT"
-          subtitle="One life, from birth to the NBA or somewhere short of it. Set the focus, take the offers, play the games."
+          title={t("title")}
+          subtitle={t("subtitle")}
         />
       </div>
       <OneShotGame />

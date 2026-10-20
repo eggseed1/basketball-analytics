@@ -12,13 +12,18 @@ import {
   ensureDraftOrder,
   expandDraftOrder,
   fallingProspects,
+  isDraftComplete,
   pickOwnerAt,
+  shouldShowDraftResults,
+  userDraftPicks,
 } from "../src/gm/engine/draft-room";
 import {
   advanceOneDraftPick,
+  finishDraftWithAi,
   runDraftPick,
 } from "../src/gm/engine/progression";
 import { createRng } from "../src/gm/engine/rng";
+import { sealProspect } from "../src/gm/engine/scouting";
 import { createDraftClass } from "../src/gm/seed/prospect-identities";
 import { displayPlayerName, displayPlayerSubtitle } from "../src/gm/lib/selectors";
 import type { GmLeagueState, GmPlayer, GmTeam } from "../src/gm/types";
@@ -38,6 +43,20 @@ function club(id: string, abbr: string): GmTeam {
         id: `pick-${id}-fut`,
         season: 2028,
         round: 1,
+        originalTeamId: id,
+        ownerTeamId: id,
+      },
+      {
+        id: `pick-${id}-fut2`,
+        season: 2029,
+        round: 1,
+        originalTeamId: id,
+        ownerTeamId: id,
+      },
+      {
+        id: `pick-${id}-2nd`,
+        season: 2028,
+        round: 2,
         originalTeamId: id,
         ownerTeamId: id,
       },
@@ -79,7 +98,8 @@ const klass = createDraftClass({
   seasonEndYear: 2027,
   scoutLevel: 4,
   rng,
-  seal: (player) => player,
+  seal: (player, scoutLevel, boardIndex, roll) =>
+    sealProspect(player, scoutLevel, boardIndex, roll),
 });
 
 for (const player of klass) {
@@ -125,12 +145,74 @@ state = ensureDraftOrder({
 const offers = draftNightOffers(state);
 assert.ok(offers.some((offer) => offer.direction === "up"), "expected a trade-up call");
 const up = offers.find((offer) => offer.direction === "up")!;
+assert.ok(up.youSend.length >= 2, "trade-up to #1 must attach future picks");
+assert.ok(
+  up.youSend.some((line) => line.includes("#2 tonight")),
+  `youSend should name tonight's slot: ${up.youSend.join(" | ")}`
+);
+assert.ok(
+  up.youGet.some((line) => line.includes("#1 tonight")),
+  `youGet should name #1: ${up.youGet.join(" | ")}`
+);
+assert.ok(
+  up.youSendPoints >= up.youGetPoints * 0.9,
+  "package must nearly cover #1 value"
+);
+assert.ok(up.upSweetenerIds.length >= 1, "sweeteners required to buy #1");
 const traded = applyDraftNightTrade(state, up);
 assert.equal(traded.draftOrder?.[0], "bos");
 assert.equal(traded.draftOrder?.[1], "det");
+assert.ok(
+  traded.news[0]?.body.includes("Sweeteners:") || up.upSweetenerIds.length === 0,
+  "news should list futures moved"
+);
+
+// Holding #1: partners must overpay with tonight's later slot + futures.
+const onClock = draftNightOffers({
+  ...state,
+  draftOrder: ["bos", "det", "cha", "was", "bos", "det", "cha", "was"],
+  draftPickIndex: 0,
+  userTeamId: "bos",
+});
+assert.ok(onClock.length >= 1, "expected clubs to call for #1");
+for (const offer of onClock) {
+  assert.equal(offer.direction, "down");
+  assert.ok(offer.youSend.some((line) => line.includes("#1 tonight")));
+  assert.ok(offer.youGet.length >= 2, "selling #1 returns laterslot + futures");
+  assert.ok(offer.youGetPoints + 0.5 >= offer.youSendPoints * 0.9);
+}
+
+// Fog: board profiles hide true OVR; comps + grades are what you draft on.
+const fogged = traded.players.find((p) => p.id === traded.draftPool[0]!);
+assert.ok(fogged?.scoutProfile?.grades);
+assert.ok(
+  fogged?.scoutProfile?.compCeiling || fogged?.scoutProfile?.comps?.length,
+  "expected ceiling/floor comps on the dossier"
+);
 
 const picked = runDraftPick(traded, "bos", traded.draftPool[0]!);
-assert.match(picked.news[0]!.headline, /selects /);
+assert.match(picked.news[0]!.headline, /selects |lands a Superstar|hits on an X-Factor/);
+assert.match(picked.news[0]!.body, /Overall \d+|Dev trait:/);
 assert.ok(!picked.news[0]!.headline.includes("it's"));
+const drafted = picked.players.find((p) => p.draftPick === 1);
+assert.ok(drafted?.sheet?.potential?.trait, "trait stamps on pick");
+
+// Finish a clean board: recap helpers see every pick in order.
+const finished = finishDraftWithAi(leagueFromClass(klass));
+assert.equal(isDraftComplete(finished), true);
+assert.equal(shouldShowDraftResults(finished), true);
+const fullLog = draftPickLog(finished);
+assert.equal(fullLog.length, 8, "four teams × two rounds");
+assert.ok(
+  fullLog.every((row, i) => row.pick === i + 1),
+  "picks listed 1…N in draft order"
+);
+const mine = userDraftPicks(finished);
+assert.ok(mine.length >= 1, "user should have selections");
+assert.ok(mine.every((row) => row.teamId === "bos"));
+// After free agency starts, the recap still shows this class.
+const summer = { ...finished, phase: "free_agency" as const, draftPool: [] as string[] };
+assert.equal(shouldShowDraftResults(summer), true);
+assert.equal(isDraftComplete(summer), false);
 
 console.log("draft night ok", displayPlayerName(klass[0]!), draftPickLog(after)[0]?.pick);
