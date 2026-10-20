@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
   Area,
   CartesianGrid,
@@ -22,11 +22,13 @@ import { chartSemantic, useChartTheme } from "@/lib/chart-theme";
 import {
   formatCompValue,
   formatSimilarity,
+  type CompFutures,
   type CompFuturesBundle,
   type CompFuturesPoint,
   type CompFuturesRow,
+  type CompMetricId,
   type CompSlot,
-} from "@/lib/player-comp-futures";
+} from "@/lib/player-comp-futures-shared";
 import { playerSeasonChipHref } from "@/lib/player-destination";
 import { cn } from "@/lib/utils";
 
@@ -109,19 +111,66 @@ function slotNote(slot: CompSlot | undefined): string {
 
 export function PlayerCompFuturesChart({
   bundle,
+  playerId,
+  season,
+  espnId,
 }: {
   bundle: CompFuturesBundle;
   teamKey?: string | null;
+  playerId?: string | null;
+  season?: string | null;
+  espnId?: string | null;
 }) {
   const theme = useChartTheme();
   const [metricId, setMetricId] = useState(bundle.defaultId);
+  const [items, setItems] = useState(bundle.items);
+  const [loadingMetric, setLoadingMetric] = useState<CompMetricId | null>(null);
   const [hoverId, setHoverId] = useState<string | null>(null);
   const [pinnedId, setPinnedId] = useState<string | null>(null);
-  const data = bundle.items.find((item) => item.metricId === metricId) ?? bundle.items[0]!;
+  const chips =
+    bundle.availableMetrics ??
+    items.map((item) => ({ id: item.metricId, label: item.metricLabel }));
+  const data =
+    items.find((item) => item.metricId === metricId) ?? items[0]!;
   const activeId = hoverId ?? pinnedId;
   const highlighted = data.fan.find((row) => row.playerId === activeId) ?? null;
   const bandOuter = theme.isDark ? 0.16 : 0.12;
   const bandInner = theme.isDark ? 0.34 : 0.24;
+
+  const selectMetric = useCallback(
+    async (nextId: CompMetricId) => {
+      setHoverId(null);
+      setPinnedId(null);
+      if (items.some((item) => item.metricId === nextId)) {
+        setMetricId(nextId);
+        return;
+      }
+      if (!playerId || !season) return;
+      setLoadingMetric(nextId);
+      try {
+        const params = new URLSearchParams({
+          season,
+          metric: nextId,
+        });
+        if (espnId) params.set("espnId", espnId);
+        const res = await fetch(
+          `/api/players/${encodeURIComponent(playerId)}/comp-futures?${params}`
+        );
+        if (!res.ok) return;
+        const body = (await res.json()) as { item?: CompFutures };
+        if (!body.item) return;
+        setItems((prev) =>
+          prev.some((item) => item.metricId === body.item!.metricId)
+            ? prev
+            : [...prev, body.item!]
+        );
+        setMetricId(nextId);
+      } finally {
+        setLoadingMetric(null);
+      }
+    },
+    [espnId, items, playerId, season]
+  );
 
   const sparkScale = useMemo(() => {
     const values = data.table.flatMap((row) =>
@@ -166,25 +215,24 @@ export function PlayerCompFuturesChart({
     <div className="flex flex-col gap-5 lg:grid lg:grid-cols-[minmax(0,1.2fr)_minmax(18rem,0.9fr)] lg:items-start">
       <div className="min-w-0">
         <div className="flex flex-wrap gap-1.5">
-          {bundle.items.map((item) => (
+          {chips.map((chip) => (
             <button
-              key={item.metricId}
+              key={chip.id}
               type="button"
-              aria-pressed={item.metricId === data.metricId}
+              aria-pressed={chip.id === metricId}
+              aria-busy={loadingMetric === chip.id}
               onClick={() => {
-                setMetricId(item.metricId);
-                setHoverId(null);
-                setPinnedId(null);
+                void selectMetric(chip.id);
               }}
               className={cn(
                 type.caption,
                 "glass-pill rounded-md px-2.5 py-1 font-semibold transition-colors",
-                item.metricId === data.metricId
+                chip.id === metricId || loadingMetric === chip.id
                   ? "glass-pill-active"
                   : "text-muted-foreground hover:text-foreground"
               )}
             >
-              {item.metricLabel}
+              {chip.label}
             </button>
           ))}
         </div>
