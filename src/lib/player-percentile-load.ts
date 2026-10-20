@@ -211,6 +211,11 @@ type PercentileLoadOptions = {
   mode?: PercentileLoadMode;
   /** Load prior-season peers for YoY comps (full mode default). */
   includePriorBoard?: boolean;
+  /**
+   * Load one peer board + profile comps even when mode is forced fast
+   * (Similar strip / API). Skips the cutoff-only hero shortcut.
+   */
+  includeComps?: boolean;
   /** When set, skips a redundant identity resolve on the hot path. */
   nbaId?: string | null;
   espnId?: string | null;
@@ -234,6 +239,7 @@ export function loadPlayerPercentileMetrics(
     identityTeamKey ?? null,
     options?.mode ?? null,
     options?.includePriorBoard ?? null,
+    options?.includeComps === true,
     options?.nbaId ?? null,
     options?.espnId ?? null
   );
@@ -246,13 +252,13 @@ const loadPlayerPercentileMetricsCached = cache(async function loadPlayerPercent
   identityTeamKey: string | null,
   modeOpt: PercentileLoadMode | null,
   includePriorBoardOpt: boolean | null,
+  includeComps: boolean,
   nbaIdOpt: string | null,
   espnIdOpt: string | null
 ) {
   const constrained = isConstrainedServerRuntime();
   const preferBundled = preferBundledProductDataOnEdge();
-  // Slim edge and CF Workers stay on fast. Explicit "full" on Workers used to
-  // fan out prior + archive boards and OOM the 128MB isolate (exceededMemory).
+  // Slim / CF HTML stays on fast (includeComps still uses one peer board below).
   const mode =
     constrained || preferBundled
       ? "fast"
@@ -345,6 +351,17 @@ const loadPlayerPercentileMetricsCached = cache(async function loadPlayerPercent
     .then((m) => m.bundledSeasonCutoffs)
     .catch(() => undefined);
 
+  // Fast hero: rank from baked cutoffs when present — skip materializing ~650
+  // peer rows (and DRBL/DARKO overlays) on the HTML critical path.
+  const cutoffHero =
+    !includeComps &&
+    mode === "fast" &&
+    Boolean(
+      seasonCutoffs?.(statsSeason, "darko")?.length ||
+        seasonCutoffs?.(statsSeason, "bpm")?.length ||
+        seasonCutoffs?.(statsSeason, "drbl100")?.length
+    );
+
   const [
     seasonRaw,
     peers,
@@ -357,29 +374,35 @@ const loadPlayerPercentileMetricsCached = cache(async function loadPlayerPercent
     careerHasSeason || constrained || (preferBundled && mode === "fast")
       ? Promise.resolve(null)
       : getPlayerSeasonCached(playerId, season, statsSeason),
-    loadPeers(statsSeason),
-    includePrior
+    cutoffHero ? Promise.resolve([] as PlayerSeason[]) : loadPeers(statsSeason),
+    includePrior && !cutoffHero
       ? loadPeers(priorSeason)
       : Promise.resolve([] as PlayerSeason[]),
     enrichCareer,
-    mapWithConcurrency(
-      extraCareerSeasons,
-      preferBundled ? EDGE_PEER_LOAD_CONCURRENCY : extraCareerSeasons.length || 1,
-      async (s) => {
-        const rows = await loadPeers(s);
-        return [s, rows] as const;
-      }
-    ),
-    mapWithConcurrency(
-      historicalCompSeasons,
-      preferBundled
-        ? EDGE_PEER_LOAD_CONCURRENCY
-        : historicalCompSeasons.length || 1,
-      async (s) => {
-        const rows = await loadPeers(s, { archive: true });
-        return [s, rows] as const;
-      }
-    ),
+    cutoffHero
+      ? Promise.resolve([] as Array<readonly [string, PlayerSeason[]]>)
+      : mapWithConcurrency(
+          extraCareerSeasons,
+          preferBundled
+            ? EDGE_PEER_LOAD_CONCURRENCY
+            : extraCareerSeasons.length || 1,
+          async (s) => {
+            const rows = await loadPeers(s);
+            return [s, rows] as const;
+          }
+        ),
+    cutoffHero
+      ? Promise.resolve([] as Array<readonly [string, PlayerSeason[]]>)
+      : mapWithConcurrency(
+          historicalCompSeasons,
+          preferBundled
+            ? EDGE_PEER_LOAD_CONCURRENCY
+            : historicalCompSeasons.length || 1,
+          async (s) => {
+            const rows = await loadPeers(s, { archive: true });
+            return [s, rows] as const;
+          }
+        ),
     nbaIdOpt != null && espnIdOpt != null
       ? Promise.resolve({ nbaId: nbaIdOpt, espnId: espnIdOpt })
       : resolvePlayerIdentityCached(playerId),
@@ -427,14 +450,15 @@ const loadPlayerPercentileMetricsCached = cache(async function loadPlayerPercent
     { light: mode === "fast", seasonCutoffs }
   );
 
-  const profileComps = seasonStats
-    ? findSimilarProfile({
-        focal: seasonStats,
-        rows: peers,
-        focalIds: [playerId, espnId, nbaId],
-        limit: 4,
-      })
-    : [];
+  const profileComps =
+    seasonStats && peers.length >= 8
+      ? findSimilarProfile({
+          focal: seasonStats,
+          rows: peers,
+          focalIds: [playerId, espnId, nbaId],
+          limit: 4,
+        })
+      : [];
 
   const historicalProfileRows: PlayerSeason[] = [];
   if (mode !== "fast" && seasonStats) {

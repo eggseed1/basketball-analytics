@@ -91,6 +91,28 @@ export function defaultPercentileMetricId(
   return visible[0]?.id ?? metrics[0]?.id ?? "";
 }
 
+/**
+ * SSR ships Impact rails only (plus the default sparkline). Other categories
+ * and comps hydrate via idle `/percentiles` fetch — keeps player HTML ~half size.
+ */
+export function slimPercentileMetricsForSsr(
+  metrics: PercentileMetric[]
+): PercentileMetric[] {
+  if (!metrics.length) return metrics;
+  const keepId = defaultPercentileMetricId(metrics);
+  const impact = metrics.filter(
+    (metric) => metric.category === "impact" || metric.id === keepId
+  );
+  const source = impact.length ? impact : metrics;
+  return source.map((metric) => ({
+    ...metric,
+    series:
+      metric.id === keepId && metric.series?.length ? metric.series : undefined,
+    leagueComps: [],
+    historicalComps: [],
+  }));
+}
+
 function percentileOf(value: number, pool: number[]): number {
   const known = pool.filter((v) => Number.isFinite(v));
   if (!known.length || !Number.isFinite(value)) return 50;
@@ -379,7 +401,7 @@ function buildMaskedPercentileMetrics(
     showGrade?: boolean;
     profileHidden?: boolean;
   }) => {
-    if (!Number.isFinite(opts.value) || opts.values.length === 0) return;
+    if (!Number.isFinite(opts.value)) return;
 
     const category = resolvePercentileCategory(opts.id, opts.category);
     const interpretation = opts.interpretation;
@@ -394,7 +416,13 @@ function buildMaskedPercentileMetrics(
         interpretation === "lower_is_better");
 
     options?.onPool?.(opts.id, opts.values);
-    const raw = percentileOf(opts.value, opts.values);
+    const viewCutoffs = seasonCutoffs?.(seasonStats.season, opts.id);
+    if (!opts.values.length && !(viewCutoffs && viewCutoffs.length > 1)) {
+      return;
+    }
+    const raw = opts.values.length
+      ? percentileOf(opts.value, opts.values)
+      : percentileFromCutoffs(opts.value, viewCutoffs!);
     const percentile = opts.invert ? 100 - raw : raw;
     const series = seasonCutoffs
       ? opts.series.map((point) => {

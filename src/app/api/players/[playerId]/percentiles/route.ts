@@ -22,6 +22,9 @@ export async function GET(
     const modeParam = url.searchParams.get("mode");
     const mode: PercentileLoadMode =
       modeParam === "fast" ? "fast" : "full";
+    const includeComps =
+      url.searchParams.get("comps") === "1" ||
+      url.searchParams.get("comps") === "true";
     const career = await getPlayerCareerSeasonsCached(playerId);
     if (career.length === 0) {
       return jsonError(new Error("Player not found"), 404);
@@ -44,6 +47,7 @@ export async function GET(
       identityTeamKey,
       {
         mode,
+        includeComps,
         nbaId: identity?.nbaId ?? null,
         espnId: identity?.espnId ?? null,
       }

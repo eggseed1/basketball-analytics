@@ -1255,10 +1255,13 @@ export function PlayerPercentilePanel({
     setBusy(false);
   }, [metrics, playerId, profileComps, season, seasons, teamKey, trackedSeason]);
 
-  // SSR ships fast metrics; upgrade sparklines, YoY peers and comps when idle.
+  // SSR ships Impact rails only (no comps). Idle-fill the rest of the sheet.
   // No run-once ref: Strict Mode's cleanup would cancel the only scheduled call.
+  const ssrIsPartial =
+    !ssrHasComps ||
+    !metrics.some((m) => m.category === "shooting" || m.category === "profile");
   useEffect(() => {
-    if (ssrHasComps) return;
+    if (!ssrIsPartial) return;
     let cancelled = false;
     const targetSeason = trackedSeason;
     const hydrate = () => {
@@ -1277,7 +1280,7 @@ export function PlayerPercentilePanel({
       cancelled = true;
       window.clearTimeout(timeoutId);
     };
-  }, [ssrHasComps, trackedSeason, upgradeToFull]);
+  }, [ssrIsPartial, trackedSeason, upgradeToFull]);
 
   const urlSeason = queryNav?.searchParams.get("season");
 
@@ -1408,10 +1411,20 @@ export function PlayerPercentilePanel({
   const selectMetric = useCallback(
     (id: string) => {
       setActiveId(id);
-      const category = viewMetrics.find((m) => m.id === id)?.category;
+      const metric = viewMetrics.find((m) => m.id === id);
+      const category = metric?.category;
       if (category) setOpenCategory(category);
+      // SSR may omit non-default series; refill via fast fetch if needed.
+      if (metric && !(metric.series && metric.series.length > 1)) {
+        void fetchPercentiles(playerId, viewSeason, "fast").then((json) => {
+          if (!json?.metrics.length || desiredSeason.current !== viewSeason) {
+            return;
+          }
+          applyCached(viewSeason, json);
+        });
+      }
     },
-    [viewMetrics]
+    [applyCached, playerId, viewMetrics, viewSeason]
   );
 
   // Ensure sparklines + comps are loaded when opening the full view.
