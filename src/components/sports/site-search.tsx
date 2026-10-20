@@ -10,7 +10,6 @@ import {
   useState,
 } from "react";
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
 import { createPortal } from "react-dom";
 import { Search } from "lucide-react";
 
@@ -139,7 +138,6 @@ function exploreHref(term: string): string {
 }
 
 export function SiteSearch() {
-  const t = useTranslations("Search");
   const router = useRouter();
   const routeTransition = useRouteTransitionOptional();
   const pending = Boolean(routeTransition?.pending);
@@ -303,7 +301,7 @@ export function SiteSearch() {
     >
       <div ref={rootRef} className="relative min-w-0 flex-1">
         <label className="sr-only" htmlFor="site-search">
-          {t("ariaLabel")}
+          Search players and teams
         </label>
         <div className="site-search-field flex min-w-0 items-center gap-2 rounded-md px-3 py-2">
           <Search className="size-4 shrink-0 text-muted-foreground" aria-hidden />
@@ -341,7 +339,7 @@ export function SiteSearch() {
                 setActiveIndex((i) => Math.max(i - 1, 0));
               }
             }}
-            placeholder={t("placeholder")}
+            placeholder="Search players / teams"
             autoComplete="off"
             className="min-w-0 flex-1 bg-transparent text-base outline-none placeholder:text-muted-foreground md:text-[14px]"
           />
