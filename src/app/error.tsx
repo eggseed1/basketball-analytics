@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { MotionReveal } from "@/components/continuity/motion-reveal";
+import { useTranslations } from "next-intl";
 import { useEffect } from "react";
 
 import { hardReload, useStaleClientRecovery } from "@/lib/stale-client-error";
@@ -13,28 +13,27 @@ export default function AppRouteError({
   error: Error & { digest?: string };
   retry: () => void;
 }) {
+  const t = useTranslations("Errors");
   const stale = useStaleClientRecovery(error);
   useEffect(() => {
     console.error("[app-route] render failed", error);
   }, [error]);
 
   return (
-    <main data-motion-page className="site-shell flex min-h-[60vh] flex-1 items-center py-8">
-      <MotionReveal />
+    <main data-motion-static className="site-shell flex min-h-[60vh] flex-1 items-center py-8">
       <section className="w-full rounded-lg border border-border bg-background/70 p-5 shadow-sm sm:p-7">
         <p className="text-[12px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-          Page interrupted
+          {t("pageInterrupted")}
         </p>
         <h1 className="mt-2 text-2xl font-bold tracking-tight">
-          This page could not finish loading.
+          {t("couldNotLoad")}
         </h1>
         <p className="mt-2 max-w-2xl text-[14px] leading-relaxed text-muted-foreground">
-          A data source or route component failed. Retry without losing the URL,
-          or return to the home page.
+          {t("loadHint")}
         </p>
         {error.digest ? (
           <p className="mt-3 font-mono text-[11px] text-muted-foreground">
-            Reference: {error.digest}
+            {t("reference", { digest: error.digest })}
           </p>
         ) : null}
         <div data-motion-list className="mt-5 flex flex-wrap gap-3">
@@ -43,13 +42,13 @@ export default function AppRouteError({
             onClick={stale ? hardReload : retry}
             className="rounded-md border border-foreground bg-foreground px-4 py-2 text-[13px] font-semibold text-background"
           >
-            Retry page
+            {t("retryPage")}
           </button>
           <Link
             href="/"
             className="rounded-md border border-border px-4 py-2 text-[13px] font-semibold hover:bg-muted"
           >
-            Go home
+            {t("goHome")}
           </Link>
         </div>
       </section>

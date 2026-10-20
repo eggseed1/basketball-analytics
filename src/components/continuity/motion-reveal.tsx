@@ -206,10 +206,19 @@ export function MotionReveal() {
           if (!initial) settle.push(...entryTransitions(el));
           continue;
         }
+        // Still inside a hidden Suspense slot (or otherwise not shown): leave
+        // unmarked so a later reveal can run the entry. Marking them seen here
+        // left whole routes at opacity 0 after $RC swapped loading → page.
+        if (!el.checkVisibility()) continue;
         seen.add(el);
-        // Hidden elements get their @starting-style entry when they are shown.
         // [data-motion-still] keeps its mount entry but is never held for scroll.
-        if (el.closest("[data-motion-still]") || !el.checkVisibility() || (initial && el.getBoundingClientRect().top <= fold) || clippedOut(el, cache)) continue;
+        if (
+          el.closest("[data-motion-still]") ||
+          (initial && el.getBoundingClientRect().top <= fold) ||
+          clippedOut(el, cache)
+        ) {
+          continue;
+        }
         const entry = POSES.find(([selector]) => el.matches(selector));
         if (!entry) continue;
         const style = getComputedStyle(el);
@@ -233,9 +242,30 @@ export function MotionReveal() {
     scan([root], true);
     mo.observe(root, { childList: true, subtree: true });
 
+    // Streamed routes park the real page in <div hidden id="S:…"> until $RC
+    // runs. That is an attribute flip, not a childList mutation, so re-scan
+    // when hidden ancestors clear.
+    let revealFrame = 0;
+    const revealMo = new MutationObserver(() => {
+      if (!root.isConnected) return;
+      if (!revealFrame) {
+        revealFrame = requestAnimationFrame(() => {
+          revealFrame = 0;
+          scan([root], false);
+        });
+      }
+    });
+    revealMo.observe(document.documentElement, {
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["hidden"],
+    });
+
     return () => {
       cancelAnimationFrame(frame);
+      cancelAnimationFrame(revealFrame);
       mo.disconnect();
+      revealMo.disconnect();
       io.disconnect();
       for (const list of waiting.values()) for (const animation of list) animation.cancel();
     };

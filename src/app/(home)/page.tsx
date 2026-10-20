@@ -10,6 +10,7 @@ import { Suspense, type ReactNode } from "react";
 
 import { AnalyticsDesk } from "@/components/home/analytics-desk";
 import { MotionReveal } from "@/components/continuity/motion-reveal";
+import { HomeLoadingWatchdog } from "@/components/home/home-loading-watchdog";
 import { SectionLink } from "@/components/ui/section-link";
 import { HotColdColumns } from "@/components/explore/hot-cold-board";
 import { AboveNormPanel } from "@/components/home/above-norm-panel";
@@ -299,6 +300,7 @@ export default async function HomePage() {
       <JsonLd data={WEBSITE_JSON_LD} />
       <h1 className="sr-only">DRBL Analytics: NBA stats and basketball analytics</h1>
       <MotionReveal />
+      <HomeLoadingWatchdog />
       {layout.top.map(render)}
 
       <div className="home-columns grid min-w-0 grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_21.25rem] xl:grid-cols-[minmax(0,1fr)_23rem]">

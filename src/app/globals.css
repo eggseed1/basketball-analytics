@@ -3469,7 +3469,8 @@ svg [data-motion-dot] {
   }
 }
 
-/* Home warm-up card: sits over the skeleton, never takes clicks or layout. */
+/* Home warm-up card: sits over the skeleton, never takes clicks or layout.
+   Fade it out after a few seconds so a stuck Suspense shell is not a blank page. */
 .home-warmup {
   position: fixed;
   inset: 0;
@@ -3479,6 +3480,18 @@ svg [data-motion-dot] {
   justify-content: center;
   padding: 24px;
   pointer-events: none;
+  animation: home-warmup-overlay 5s ease forwards;
+}
+
+@keyframes home-warmup-overlay {
+  0%,
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
 }
 
 .home-warmup__card {
