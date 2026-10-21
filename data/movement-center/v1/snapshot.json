@@ -5,10 +5,10 @@
     "season": "2026-27",
     "snapshotDate": "2026-10-21",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-10-21T13:13:36.231Z",
-    "rosterPlayerCount": 445,
-    "headlinesScanned": 5028,
-    "latestHeadlineAt": "2026-10-21T13:11:56.000Z",
+    "builtAt": "2026-10-21T13:39:14.460Z",
+    "rosterPlayerCount": 450,
+    "headlinesScanned": 5078,
+    "latestHeadlineAt": "2026-10-21T13:29:33.000Z",
     "latestTransactionDate": "2026-10-19",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -1432,6 +1432,7 @@
       "headline": "Jaden McDaniels: reported extension with the Timberwolves",
       "primaryClaimId": "mv-2eb064ec1b237825",
       "claimIds": [
+        "mv-f6c0aed13e2ec5d7",
         "mv-01fd49b59a94ce32",
         "mv-10c8d2ea094eb89d",
         "mv-2eb064ec1b237825",
@@ -1439,7 +1440,7 @@
       ],
       "evidenceClass": "reported",
       "state": "completed",
-      "firstSeenAt": "2026-10-20T05:03:07.000Z",
+      "firstSeenAt": "2026-10-20T03:13:50.000Z",
       "lastMeaningfulAt": "2026-10-19T12:00:00.000Z",
       "linkedPlayerIds": [
         "4431671"
@@ -6928,6 +6929,27 @@
       ],
       "teamIds": [
         "30"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "offer"
+    },
+    {
+      "id": "mv-f6c0aed13e2ec5d7",
+      "clusterId": "mv-contract-4431671-20261020",
+      "summary": "Jaden McDaniels Agrees $40 Million Contract Extension With Minnesota Timberwolves: Is It An Overpay?",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-20T03:13:50.000Z",
+      "sourceId": "outlet:fadeaway-world",
+      "sourceLabel": "Fadeaway World",
+      "sourceUrl": "https://fadeawayworld.net/nba/minnesota-timberwolves/jaden-mcdaniels-agrees-40-million-contract-extension-with-minnesota-timberwolves-is-it-an-overpay",
+      "playerIds": [
+        "4431671"
+      ],
+      "teamIds": [
+        "16"
       ],
       "isOriginal": false,
       "negotiationSpecificity": "offer"
