@@ -184,7 +184,7 @@ export async function SeasonPhaseBar({ moment }: { moment: HomeSeasonMoment }) {
   let label: string | null = null;
   let note: string | null = null;
 
-  // Opening weeks and regular season: week sits with "This Week's Games".
+  // Opening weeks and regular season: no phase bar (calendar heading covers it).
   if (phase === "opening-weeks" || phase === "regular-season") {
     return null;
   }

@@ -238,7 +238,8 @@ export type HomeModuleId =
   | "watchlist"
   | "sentiment"
   | "season-glance"
-  | "news";
+  | "news"
+  | "contract-showcase";
 
 export type HomeLayout = {
   /** Full width, in order, above the two-column grid. */
@@ -270,31 +271,31 @@ const LAYOUTS: Record<HomeSeasonPhase, HomeLayout> = {
   },
   "opening-weeks": {
     top: ["calendar"],
-    main: ["findings", "sentiment", "hot-cold", "news"],
+    main: ["findings", "sentiment", "hot-cold", "news", "contract-showcase"],
     side: ["watchlist", "standings", "above-norm", "injuries", "league-moves", "top-performers", "transactions"],
     bottom: [],
   },
   "regular-season": {
     top: ["calendar"],
-    main: ["findings", "sentiment", "hot-cold", "news"],
+    main: ["findings", "sentiment", "hot-cold", "news", "contract-showcase"],
     side: ["watchlist", "standings", "above-norm", "injuries", "league-moves", "top-performers", "transactions"],
     bottom: [],
   },
   "stretch-run": {
     top: ["phase-bar", "calendar"],
-    main: ["standings-race", "findings", "news", "hot-cold"],
+    main: ["standings-race", "findings", "news", "hot-cold", "contract-showcase"],
     side: ["watchlist", "above-norm", "injuries", "league-moves", "top-performers", "sentiment", "transactions"],
     bottom: [],
   },
   "play-in": {
     top: ["phase-bar", "calendar", "bracket"],
-    main: ["findings", "news", "sentiment", "hot-cold"],
+    main: ["findings", "news", "sentiment", "hot-cold", "contract-showcase"],
     side: ["watchlist", "standings", "above-norm", "injuries", "league-moves", "top-performers", "transactions"],
     bottom: [],
   },
   playoffs: {
     top: ["phase-bar", "calendar", "bracket"],
-    main: ["findings", "news", "sentiment", "hot-cold"],
+    main: ["findings", "news", "sentiment", "hot-cold", "contract-showcase"],
     side: ["watchlist", "above-norm", "injuries", "league-moves", "top-performers", "transactions"],
     bottom: [],
   },

@@ -50,7 +50,9 @@ import {
   type LaneBuildOptions,
   type ScoredIngestItem,
 } from "@/sentiment/ingest-aggregate";
+import { getBundledPlayerIdAliasIndex } from "@/data/runtime/player-id-aliases-snapshot";
 import { loadIngestRoster } from "@/sentiment/ingest-roster";
+import { sentimentPlayerLabel } from "@/sentiment/player-label";
 import {
   fanPostCutoffDay,
   readIngestItems,
@@ -774,6 +776,7 @@ export async function buildSentimentSnapshot(
   const fanOpts = laneOptions("fans", fanFloor);
 
   const ingestRoster = new Map(loadIngestRoster().map((row) => [row.playerId, row]));
+  const aliases = getBundledPlayerIdAliasIndex();
   const profileById = new Map<string, PlayerSentimentProfile>();
   for (const profile of profiles) {
     for (const id of profile.playerIds) profileById.set(id, profile);
@@ -785,9 +788,13 @@ export async function buildSentimentSnapshot(
     const existing = profileById.get(playerId);
     const rosterRow = rosterIndex.byId.get(playerId);
     const ingestRow = ingestRoster.get(playerId);
+    const aliasName =
+      aliases.byEspn.get(playerId)?.playerName ??
+      aliases.byNba.get(playerId)?.playerName;
     const base: PlayerSentimentProfile = existing ?? {
       playerIds: [playerId],
-      displayName: rosterRow?.playerName ?? ingestRow?.name ?? playerId,
+      displayName:
+        rosterRow?.playerName ?? ingestRow?.name ?? aliasName ?? playerId,
       teamKey: rosterRow?.teamId ?? ingestRow?.teamId,
       window: `${ingestConfig.windowDays}d`,
       provenance: "ingest",
@@ -908,7 +915,15 @@ export async function buildSentimentSnapshot(
   const beforeFloor = uniqueProfiles.size;
   profiles = [...uniqueProfiles.values()]
     .map((profile) => keepMeasuredLanes(profile))
-    .filter((profile): profile is PlayerSentimentProfile => profile != null);
+    .filter((profile): profile is PlayerSentimentProfile => profile != null)
+    .map((profile) => {
+      const primary = profile.playerIds[0];
+      if (!primary) return profile;
+      const displayName = sentimentPlayerLabel(primary, profile.displayName);
+      return displayName === profile.displayName
+        ? profile
+        : { ...profile, displayName };
+    });
   const droppedBelowFloor = beforeFloor - profiles.length;
 
   profiles = attachPerformance(

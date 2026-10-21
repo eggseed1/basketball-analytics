@@ -25,8 +25,9 @@ const currentStart =
   now.getUTCMonth() >= 6 ? now.getUTCFullYear() : now.getUTCFullYear() - 1;
 /** Align with BRef window so DARKO percentiles aren't truncated to 2021+. */
 const IMPACT_SEASON_WINDOW = Number(process.env.IMPACT_SEASON_WINDOW || 30);
+/** Include the live league year so Cloudflare gets current-season DARKO. */
 const SEASONS = Array.from({ length: IMPACT_SEASON_WINDOW }, (_, i) => {
-  const start = currentStart - 1 - i;
+  const start = currentStart - i;
   return `${start}-${String((start + 1) % 100).padStart(2, "0")}`;
 });
 

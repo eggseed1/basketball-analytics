@@ -214,6 +214,8 @@ jobs:
             public/runtime/arcade/league-seasons.json \
             src/data/runtime/findings-archive.json \
             data/ops/step-health.json \
+            data/ops/seasonal-upkeep.json \
+            src/data/runtime/hustle-overlay-snapshot.json \
             src/data/runtime/play-type-snapshot.json \
             src/data/runtime/on-off-snapshot.json \
             src/data/runtime/team-game-box-snapshot.json \

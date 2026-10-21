@@ -11,11 +11,11 @@ import { type } from "@/lib/design-system";
 import { formatNumber, formatOrdinal } from "@/lib/format";
 import { useChartTheme } from "@/lib/chart-theme";
 import {
-  ROSTER_WINS_LINE_SEASONS,
   ROSTER_WINS_LINE_TEAMS,
   ROSTER_WINS_PER_82_INTERCEPT,
   ROSTER_WINS_PER_82_SLOPE,
   displayedRosterWar1,
+  rosterWinsLineSeasonsLabel,
   type RosterWarPlayer,
   type RosterWarSquad,
 } from "@/lib/team-roster-war1";
@@ -164,7 +164,7 @@ export function TeamRosterWar1Panel({
       </div>
 
       <p className={cn(type.bodySm, "text-muted-foreground")}>
-        {`Wins per 82 = ${formatNumber(ROSTER_WINS_PER_82_INTERCEPT, 1)} + ${formatNumber(ROSTER_WINS_PER_82_SLOPE, 2)} × roster WAR1, from ${ROSTER_WINS_LINE_TEAMS} team seasons, ${ROSTER_WINS_LINE_SEASONS}.`}
+        {`Wins per 82 = ${formatNumber(ROSTER_WINS_PER_82_INTERCEPT, 1)} + ${formatNumber(ROSTER_WINS_PER_82_SLOPE, 2)} × roster WAR1, from ${ROSTER_WINS_LINE_TEAMS} team seasons, ${rosterWinsLineSeasonsLabel()}.`}
         {finished && record ? ` The ${pageSquad.fullName} won ${record.wins} games.` : ""}
         {currentRoster && ratedSeason !== season ? ` Uses ${ratedSeason} WAR1 for this roster.` : ""}
         {partial

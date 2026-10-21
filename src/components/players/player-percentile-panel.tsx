@@ -41,8 +41,12 @@ import { type } from "@/lib/design-system";
 import { seasonOnTrack } from "@/lib/player-board-season";
 import { BoardPlayerName } from "@/lib/board-compact-name";
 import { brandAtmosphereColors } from "@/lib/game-matchup-theme";
-import { CareerTeamTrendChartLazy as CareerTeamTrendChart } from "@/components/charts/recharts-lazy";
+import {
+  CareerTeamTrendChartLazy as CareerTeamTrendChart,
+  preloadPlayerPageCharts,
+} from "@/components/charts/recharts-lazy";
 import type { CareerSeriesPoint } from "@/components/players/career-team-trend-chart";
+import { warmComparisonsFetches } from "@/lib/player-comparisons-fetch";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { useChartTheme } from "@/lib/chart-theme";
 import type { StatComp } from "@/lib/player-stat-comps";
@@ -192,6 +196,12 @@ function useCompactPercentileLayout(el: HTMLElement | null) {
   return compact;
 }
 
+/** Savant-style diagonal hatch for not-yet-qualified Impact bars. */
+const NOT_QUALIFIED_HATCH: CSSProperties = {
+  backgroundImage:
+    "repeating-linear-gradient(-45deg, color-mix(in oklch, var(--muted-foreground) 28%, transparent) 0 3px, color-mix(in oklch, var(--muted-foreground) 10%, transparent) 3px 7px)",
+};
+
 function MetricRow({
   metric,
   selected,
@@ -204,6 +214,7 @@ function MetricRow({
   /** Compact layout: selected row can dismiss the chart panel. */
   collapseHint?: boolean;
 }) {
+  const notQualified = metric.qualified === false;
   const pct = Math.max(0, Math.min(100, metric.percentile));
   const fill = percentileSavantColor(pct, "auto");
 
@@ -214,9 +225,11 @@ function MetricRow({
         ? "Role context"
         : null;
 
-  const baseLabel = metric.showPercentile
-    ? `${metric.label}, ${Math.round(metric.percentile)}th percentile, ${metric.display}`
-    : `${metric.label}, ${metric.display}`;
+  const baseLabel = notQualified
+    ? `${metric.label}, not qualified yet`
+    : metric.showPercentile
+      ? `${metric.label}, ${Math.round(metric.percentile)}th percentile, ${metric.display}`
+      : `${metric.label}, ${metric.display}`;
 
   return (
     <button
@@ -224,6 +237,7 @@ function MetricRow({
       onClick={onSelect}
       aria-pressed={selected}
       data-hover-item
+      data-qualified={notQualified ? "false" : "true"}
       aria-label={
         selected && collapseHint
           ? `${baseLabel}. Collapse chart`
@@ -232,11 +246,16 @@ function MetricRow({
       className={cn(
         RANK_GRID,
         "w-full whitespace-nowrap px-4 py-1.5 text-left transition-colors",
-        selected ? "bg-foreground/8" : "hover:bg-foreground/5"
+        selected ? "bg-foreground/8" : "hover:bg-foreground/5",
+        notQualified && "opacity-90"
       )}
     >
       <span
-        className={cn(type.bodySm, "min-w-0 truncate text-left font-semibold")}
+        className={cn(
+          type.bodySm,
+          "min-w-0 truncate text-left font-semibold",
+          notQualified && "text-muted-foreground"
+        )}
         onClick={(event) => event.stopPropagation()}
       >
         <StatTooltip nestable stat={metric.id} className="whitespace-nowrap">
@@ -244,7 +263,33 @@ function MetricRow({
         </StatTooltip>
       </span>
       <span className="relative flex h-7 w-full min-w-0 items-center overflow-hidden">
-        {metric.showPercentile ? (
+        {notQualified ? (
+          <>
+            <span
+              className="absolute inset-y-[8px] rounded-full bg-foreground/[0.06]"
+              aria-hidden
+              style={{ left: TRACK_INSET_PX, right: TRACK_INSET_PX }}
+            />
+            <span
+              className="absolute inset-y-[8px] rounded-full"
+              aria-hidden
+              style={{
+                left: TRACK_INSET_PX,
+                right: TRACK_INSET_PX,
+                ...NOT_QUALIFIED_HATCH,
+              }}
+            />
+            <span
+              className={cn(
+                type.caption,
+                "pointer-events-none absolute inset-0 z-[1] flex items-center justify-center font-bold uppercase tracking-[0.12em] text-muted-foreground"
+              )}
+              aria-hidden
+            >
+              Not qualified
+            </span>
+          </>
+        ) : metric.showPercentile ? (
           <>
             {([0, 50, 100] as const).map((mark) => (
               <span
@@ -290,7 +335,8 @@ function MetricRow({
       <span
         className={cn(
           type.bodySm,
-          "shrink-0 text-right font-semibold tabular-nums"
+          "shrink-0 text-right font-semibold tabular-nums",
+          notQualified && "text-muted-foreground"
         )}
       >
         {metric.display}
@@ -547,6 +593,7 @@ function CompComparePanel({
   inline = false,
   chartHeight: chartHeightProp,
   visibleCompRows,
+  maxOtherComps,
   compsPending = false,
 }: {
   metric: PercentileMetric | undefined;
@@ -561,6 +608,8 @@ function CompComparePanel({
   inline?: boolean;
   chartHeight?: number;
   visibleCompRows?: number;
+  /** Cap other-player comps (overview hero uses 1 closest). */
+  maxOtherComps?: number;
   /** Comps arrive with the full payload; until then don't claim there are none. */
   compsPending?: boolean;
 }) {
@@ -575,8 +624,22 @@ function CompComparePanel({
     );
   }
 
-  const comps =
+  if (metric.qualified === false) {
+    return (
+      <div className={cn("flex min-h-0 flex-col gap-2", inline ? "py-2" : "")}>
+        {!inline ? <h2 className={type.heading}>{metric.label}</h2> : null}
+        <p className={cn(type.bodySm, "text-muted-foreground")}>
+          Not qualified yet. {metric.label} rankings publish once enough of the
+          season is in and the impact estimate is ready.
+        </p>
+      </div>
+    );
+  }
+
+  const rawComps =
     mode === "league" ? metric.leagueComps : metric.historicalComps;
+  const comps =
+    maxOtherComps != null ? rawComps.slice(0, maxOtherComps) : rawComps;
   const baseRows = [
     {
       playerId,
@@ -665,8 +728,11 @@ function CompComparePanel({
       <div className="flex min-h-0 flex-col gap-1.5">
         <div className="flex flex-col gap-1.5">
           <p className={cn(type.caption, "font-semibold text-foreground")}>
-            Closest {metric.label}{" "}
-            {mode === "history" ? "in other seasons" : "this season"}
+            {maxOtherComps === 1
+              ? `Closest ${metric.label} match`
+              : `Closest ${metric.label} ${
+                  mode === "history" ? "in other seasons" : "this season"
+                }`}
           </p>
           <div className="flex flex-wrap gap-1">
             {(
@@ -749,6 +815,7 @@ function PercentileHeatTile({
   selected: boolean;
   onSelect: () => void;
 }) {
+  const notQualified = metric.qualified === false;
   const pct = Math.max(0, Math.min(100, metric.percentile));
   const fill = metric.showPercentile
     ? percentileSavantColor(pct, "auto")
@@ -760,6 +827,7 @@ function PercentileHeatTile({
       onClick={onSelect}
       aria-pressed={selected}
       data-hover-item
+      data-qualified={notQualified ? "false" : "true"}
       style={{ "--i": index } as CSSProperties}
       className={cn(
         "flex flex-col gap-1.5 rounded-md border px-2.5 py-2 text-left transition-colors",
@@ -769,7 +837,13 @@ function PercentileHeatTile({
       )}
     >
       <span className="flex items-baseline justify-between gap-2">
-        <span className={cn(type.caption, "font-semibold text-foreground")}>
+        <span
+          className={cn(
+            type.caption,
+            "font-semibold",
+            notQualified ? "text-muted-foreground" : "text-foreground"
+          )}
+        >
           {metric.label}
         </span>
         <span className={cn(type.caption, "tabular-nums text-muted-foreground")}>
@@ -780,21 +854,31 @@ function PercentileHeatTile({
         <span
           data-motion-bar="x"
           className="absolute inset-y-0 left-0 rounded-full"
-          style={{
-            width: metric.showPercentile ? `${pct}%` : "100%",
-            backgroundColor: fill,
-          }}
+          style={
+            notQualified
+              ? { width: "100%", ...NOT_QUALIFIED_HATCH }
+              : {
+                  width: metric.showPercentile ? `${pct}%` : "100%",
+                  backgroundColor: fill,
+                }
+          }
         />
       </span>
       <span className="flex items-center justify-between gap-2">
         <span
           className={cn(type.caption, "font-bold tabular-nums")}
-          style={{ color: metric.showPercentile ? fill : undefined }}
+          style={{
+            color: notQualified
+              ? undefined
+              : metric.showPercentile
+                ? fill
+                : undefined,
+          }}
         >
-          {metric.showPercentile ? `${Math.round(pct)}` : "—"}
+          {notQualified ? "NQ" : metric.showPercentile ? `${Math.round(pct)}` : "—"}
         </span>
         <span className={cn(type.caption, "text-muted-foreground")}>
-          {metric.showPercentile ? "pct" : "n/a"}
+          {notQualified ? "early" : metric.showPercentile ? "pct" : "n/a"}
         </span>
       </span>
     </button>
@@ -1356,11 +1440,14 @@ export function PlayerPercentilePanel({
     setBusy(false);
   }, [metrics, playerId, profileComps, season, seasons, teamKey, trackedSeason]);
 
-  // SSR may omit comps / sparklines. Idle-fill those via mode=full.
+  // SSR may omit comps / sparklines. Fill series ASAP (hero chart); comps can wait a beat.
   // No run-once ref: Strict Mode's cleanup would cancel the only scheduled call.
-  const ssrIsPartial =
-    !ssrHasComps ||
-    !metrics.some((m) => (m.series?.length ?? 0) > 1);
+  const ssrMissingSeries = !metrics.some((m) => (m.series?.length ?? 0) > 1);
+  const ssrIsPartial = !ssrHasComps || ssrMissingSeries;
+  useEffect(() => {
+    preloadPlayerPageCharts();
+    warmComparisonsFetches({ playerId, season: trackedSeason });
+  }, [playerId, trackedSeason]);
   useEffect(() => {
     if (!ssrIsPartial) return;
     let cancelled = false;
@@ -1369,6 +1456,13 @@ export function PlayerPercentilePanel({
       if (cancelled || desiredSeason.current !== targetSeason) return;
       upgradeToFull(targetSeason);
     };
+    // Hero sparkline is above the fold — don't park it behind idle.
+    if (ssrMissingSeries) {
+      hydrate();
+      return () => {
+        cancelled = true;
+      };
+    }
     if (typeof requestIdleCallback === "function") {
       const idleId = requestIdleCallback(hydrate);
       return () => {
@@ -1381,7 +1475,7 @@ export function PlayerPercentilePanel({
       cancelled = true;
       window.clearTimeout(timeoutId);
     };
-  }, [ssrIsPartial, trackedSeason, upgradeToFull]);
+  }, [ssrIsPartial, ssrMissingSeries, trackedSeason, upgradeToFull]);
 
   const urlSeason = queryNav?.searchParams.get("season");
 
@@ -1827,6 +1921,8 @@ export function PlayerPercentilePanel({
                         viewSeason={viewSeason}
                         seasons={timeline}
                         onSeasonSelect={commitSeason}
+                        maxOtherComps={1}
+                        visibleCompRows={2}
                         compsPending={fullPending}
                       />
                     </div>

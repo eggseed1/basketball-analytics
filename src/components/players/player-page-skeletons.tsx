@@ -3,15 +3,21 @@
  * so hard refresh and streaming islands do not teleport the page.
  */
 
+import type { ComponentPropsWithoutRef } from "react";
+
 import { LoadingTopBar } from "@/components/continuity/destination-loading-frame";
 import { LoadingBarSignal } from "@/components/continuity/viewport-loading-bar";
 import { cn } from "@/lib/utils";
 
-function Pulse({ className }: { className?: string }) {
+function Pulse({
+  className,
+  ...rest
+}: { className?: string } & ComponentPropsWithoutRef<"div">) {
   return (
     <div
       className={cn("loading-shimmer rounded-xl", className)}
       aria-hidden
+      {...rest}
     />
   );
 }
@@ -52,6 +58,7 @@ export function PlayerPercentileSkeleton({
 }) {
   return (
     <div
+      data-skeleton
       className="flex min-h-[28rem] flex-col gap-3"
       aria-busy="true"
       aria-live="polite"
@@ -69,12 +76,16 @@ export function PlayerPercentileSkeleton({
 /** Statistics / Career / Games boards. */
 export function PlayerBoardSkeleton({
   label = "Loading…",
+  minHeightClassName = "min-h-[22rem]",
 }: {
   label?: string;
+  /** Override when the live section is shorter (overview Style, etc.). */
+  minHeightClassName?: string;
 }) {
   return (
     <div
-      className="flex min-h-[22rem] flex-col gap-3"
+      data-skeleton
+      className={cn("flex flex-col gap-3", minHeightClassName)}
       aria-busy="true"
       aria-live="polite"
     >
@@ -83,7 +94,105 @@ export function PlayerBoardSkeleton({
         {label}
       </p>
       <Pulse className="h-10 rounded-md" />
-      <Pulse className="min-h-[18rem] flex-1 rounded-md" />
+      <Pulse className="min-h-[12rem] flex-1 rounded-md" />
+      <p className="sr-only">{label}</p>
+    </div>
+  );
+}
+
+/** Overview Career stats board (chart + category table). */
+export function PlayerOverviewCareerSkeleton({
+  label = "Loading career…",
+}: {
+  label?: string;
+}) {
+  return (
+    <div
+      data-skeleton
+      className="flex min-h-[32rem] flex-col gap-3"
+      aria-busy="true"
+      aria-live="polite"
+    >
+      <LoadingBarSignal />
+      <Pulse className="h-7 w-36 rounded-md" />
+      <Pulse className="h-8 w-full max-w-sm rounded-md" />
+      <Pulse className="h-10 w-full max-w-md rounded-md" />
+      <Pulse className="h-[16rem] rounded-md" />
+      <Pulse className="h-8 w-full max-w-lg rounded-md" />
+      <Pulse className="h-48 w-full rounded-md" />
+      <p className="sr-only">{label}</p>
+    </div>
+  );
+}
+
+/** Overview Style (compact). */
+export function PlayerOverviewStyleSkeleton({
+  label = "Loading style…",
+}: {
+  label?: string;
+}) {
+  return (
+    <div
+      data-skeleton
+      className="flex min-h-[14rem] flex-col gap-3"
+      aria-busy="true"
+      aria-live="polite"
+    >
+      <Pulse className="h-7 w-24 rounded-md" />
+      <Pulse className="h-4 w-64 max-w-full rounded-md opacity-70" />
+      <Pulse className="h-8 w-48 rounded-md" />
+      <div className="grid gap-3 sm:grid-cols-2">
+        <Pulse className="h-20 rounded-md" />
+        <Pulse className="h-20 rounded-md" />
+      </div>
+      <p className="sr-only">{label}</p>
+    </div>
+  );
+}
+
+/** Overview contract summary, or Salary tab body while streaming. */
+export function PlayerOverviewContractSkeleton({
+  label = "Loading contract…",
+}: {
+  label?: string;
+}) {
+  const salaryTab = /salary/i.test(label);
+  return (
+    <div
+      data-skeleton
+      className={cn(
+        "flex flex-col gap-3",
+        salaryTab ? "min-h-[32rem]" : "min-h-[12rem]"
+      )}
+      aria-busy="true"
+      aria-live="polite"
+    >
+      <Pulse className="h-7 w-36 rounded-md" />
+      <Pulse className="h-4 w-56 max-w-full rounded-md opacity-70" />
+      <Pulse className={cn("rounded-md", salaryTab ? "h-40" : "h-28")} />
+      {salaryTab ? <Pulse className="h-56 rounded-md" /> : null}
+      <p className="sr-only">{label}</p>
+    </div>
+  );
+}
+
+/** Single Comparisons block (Style / Impact / Trajectory). */
+export function PlayerOverviewSimilarSkeleton({
+  label = "Loading comparisons…",
+}: {
+  label?: string;
+}) {
+  return (
+    <div
+      data-skeleton
+      className="flex min-h-[18rem] flex-col gap-3"
+      aria-busy="true"
+      aria-live="polite"
+    >
+      <Pulse className="h-7 w-40 rounded-md" />
+      <Pulse className="h-4 w-80 max-w-full rounded-md opacity-70" />
+      <Pulse className="h-8 w-64 max-w-full rounded-md" />
+      <Pulse className="h-48 rounded-md" />
       <p className="sr-only">{label}</p>
     </div>
   );
@@ -95,7 +204,12 @@ export function PlayerIdentitySlotSkeleton({
 }: {
   className?: string;
 }) {
-  return <Pulse className={cn("h-12 w-full rounded-md", className)} />;
+  return (
+    <Pulse
+      data-skeleton
+      className={cn("h-12 w-full rounded-md", className)}
+    />
+  );
 }
 
 /**

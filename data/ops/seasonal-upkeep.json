@@ -1,0 +1,13 @@
+{
+  "generatedAt": "2026-10-21T03:08:30.613Z",
+  "season": "2026-27",
+  "phase": "regular",
+  "tipDate": "2026-10-20",
+  "items": [
+    {
+      "id": "gm-seed",
+      "severity": "info",
+      "detail": "GM Lab seeds under src/gm/seed stay year-locked; reseed after the draft / media day when the sim should match the new league year"
+    }
+  ]
+}

@@ -263,9 +263,11 @@ const loadPlayerPercentileMetricsCached = cache(async function loadPlayerPercent
       : constrained || preferBundled
         ? "fast"
         : "full";
+  // Prior board also loads when comps are requested on the fast path so Impact
+  // can fall back to last season / historical lookalikes.
   const includePrior =
     !constrained &&
-    mode === "full" &&
+    (mode === "full" || includeComps) &&
     includePriorBoardOpt !== false;
   const statsCtx = resolvePlayerStatsSeason(career, season);
   const statsSeason = statsCtx.statsSeason;
@@ -463,7 +465,11 @@ const loadPlayerPercentileMetricsCached = cache(async function loadPlayerPercent
     priorBoard,
     playerId,
     peersBySeason,
-    { light: mode === "fast", seasonCutoffs }
+    {
+      // Fast hero skips comps; comps=1 must still compute lookalikes.
+      light: mode === "fast" && !includeComps,
+      seasonCutoffs,
+    }
   );
 
   const profileComps =
@@ -477,7 +483,7 @@ const loadPlayerPercentileMetricsCached = cache(async function loadPlayerPercent
       : [];
 
   const historicalProfileRows: PlayerSeason[] = [];
-  if (mode !== "fast" && seasonStats) {
+  if ((mode !== "fast" || includeComps) && seasonStats) {
     const seen = new Set<string>();
     const add = (rows: PlayerSeason[]) => {
       for (const row of rows) {

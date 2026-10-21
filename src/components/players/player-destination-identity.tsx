@@ -14,7 +14,6 @@ import { PlayerDepthNav } from "@/components/players/player-depth-nav";
 import { PlayerIdentityVitals } from "@/components/players/player-identity-vitals";
 import { PlayerTeamPositionLine } from "@/components/players/player-team-position-line";
 import { PlayerUpcomingGamesFromSnapshot } from "@/components/players/player-upcoming-games-island";
-import { PlayerViewSeasonProvider } from "@/components/players/player-view-season";
 import { TeamIdentity } from "@/components/teams/team-identity";
 import type { PlayerSeason } from "@/data/types";
 import type { PlayerCardStint } from "@/lib/player-team-context";
@@ -142,7 +141,7 @@ export async function PlayerDestinationIdentity({
   portraitUrl = null,
   historicalBrand,
   useHistoricalBranding = false,
-  seasonOptions,
+  seasonOptions: _seasonOptions,
   recentSeasons = [],
   fromHistory = false,
   themeMode = "historical",
@@ -198,14 +197,12 @@ export async function PlayerDestinationIdentity({
     ) : null);
 
   return (
-    <PlayerViewSeasonProvider
-      initialSeason={season}
-      seasonOptions={seasonOptions}
-    >
+    <>
       {children ? <div className="min-w-0 empty:hidden">{children}</div> : null}
 
       <section
         id="overview"
+        data-motion-eager
         className="scroll-mt-16 flex flex-col gap-4"
         aria-label={t("sectionOverview")}
       >
@@ -346,7 +343,9 @@ export async function PlayerDestinationIdentity({
 
             {frontOffice}
 
-            {recentSeasons.length > 0 ? (
+            {/* Season context lives on the percentile hero slider. Keep this
+                per-game strip only when there is no hero (e.g. unplayed). */}
+            {recentSeasons.length > 0 && !hero ? (
               <GlassSurface
                 accentColor={wash?.colorA}
                 accentColorB={wash?.colorB}
@@ -475,6 +474,6 @@ export async function PlayerDestinationIdentity({
           themeMode={themeMode}
         />
       </section>
-    </PlayerViewSeasonProvider>
+    </>
   );
 }

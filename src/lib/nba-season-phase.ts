@@ -1,8 +1,10 @@
 /**
  * NBA calendar phase for product refresh cadence (UTC heuristics).
  *
- * League / roster year flips Jul 1. Tip-off is mid-October; Finals end by late June.
- * Daily player-visualization rebuilds run in regular + playoffs only.
+ * League / roster year flips Jul 1. Node nightly scripts use the schedule tip
+ * via `scripts/lib/nba-season-phase.mjs`. This module stays free of the game
+ * snapshot so client imports (draft years, etc.) stay light; soft Oct 15 gate
+ * matches the script fallback when the tip date is unknown.
  */
 
 export type NbaSeasonPhase = "offseason" | "regular" | "playoffs";
@@ -35,24 +37,20 @@ export function canonicalSeasonFromStartYear(startYear: number): string {
 }
 
 /**
- * Opening tip window starts mid-October; playoffs mid-April through June.
- * Exact tip dates move yearly — this is intentionally a soft gate so the
- * first weeks of the season still refresh once games are underway.
+ * Soft calendar gate for in-app callers. Nightly refresh uses the bundled
+ * schedule opener in `scripts/lib/nba-season-phase.mjs` instead.
  */
 export function nbaSeasonPhase(now = new Date()): NbaSeasonPhase {
   const month = now.getUTCMonth(); // 0 = Jan
   const day = now.getUTCDate();
 
-  // Jul–Sep, and Oct 1–14: offseason for daily viz refresh.
   if (month >= 6 && month <= 8) return "offseason";
   if (month === 9 && day < 15) return "offseason";
 
-  // Oct 15 – Apr 14: regular season.
   if (month === 9 || month === 10 || month === 11) return "regular";
   if (month >= 0 && month <= 2) return "regular";
   if (month === 3 && day < 15) return "regular";
 
-  // Apr 15 – Jun 30: playoffs / Finals.
   if (month === 3 || month === 4 || month === 5) return "playoffs";
 
   return "offseason";
@@ -80,7 +78,6 @@ export function dailyGameLogMinGp(now = new Date()): number {
 
   const month = now.getUTCMonth();
   const day = now.getUTCDate();
-  // Opening month(s): keep everyone with a log.
   if (month === 9 || month === 10) return 1;
   if (month === 11 && day < 15) return 3;
   if (month === 11 || month === 0) return 5;

@@ -29,7 +29,7 @@ function rate(n: number | null | undefined): number | null {
   return n != null && Number.isFinite(n) && n > 0 ? n : null;
 }
 
-function toBoardRows(career: PlayerSeason[]): CareerBoardRow[] {
+export function toCareerBoardRows(career: PlayerSeason[]): CareerBoardRow[] {
   return dedupeCareerSeasons(career).map((row) => {
     const gp = row.gamesPlayed;
     const apg = perGame(row.assists, gp);
@@ -112,8 +112,10 @@ export async function PlayerCareerIsland({
   teamKey,
   fromHistory = false,
   themeMode = "historical",
-  chart = "seasons",
+  chart = "games",
   hideTitle = false,
+  initialMetric,
+  showFilters = true,
 }: {
   playerId: string;
   season: string;
@@ -125,6 +127,8 @@ export async function PlayerCareerIsland({
   themeMode?: ThemeMode;
   chart?: "seasons" | "games";
   hideTitle?: boolean;
+  initialMetric?: "darko" | "war1" | "ppg" | "apg" | "rpg" | "ts" | "usg";
+  showFilters?: boolean;
 }) {
   try {
     const source =
@@ -143,14 +147,18 @@ export async function PlayerCareerIsland({
           row.offensiveRating
       );
     });
-    const rows = toBoardRows(filtered);
+    const rows = toCareerBoardRows(filtered);
     const seasons = rows.map((row) => row.season);
     const compare = pickCompare(seasons, season, compareSeason);
     const recent = [...rows].sort((a, b) => b.season.localeCompare(a.season));
-    const gameLogs =
-      chart === "games"
-        ? await loadCareerGameLogs(playerId, recent.map((row) => row.season))
-        : [];
+    // Always load game logs so Overview/Career can flip Games ↔ Seasons.
+    const gameLogs = await loadCareerGameLogs(
+      playerId,
+      recent.map((row) => row.season)
+    ).catch(() => []);
+    const preferDarko =
+      initialMetric ??
+      (rows.some((row) => row.darko != null) ? "darko" : undefined);
 
     return (
       <PlayerCareerBoard
@@ -165,10 +173,12 @@ export async function PlayerCareerIsland({
         gameLogs={gameLogs}
         chart={chart}
         hideTitle={hideTitle}
+        initialMetric={preferDarko}
+        showFilters={showFilters}
       />
     );
   } catch {
-    const rows = toBoardRows(career);
+    const rows = toCareerBoardRows(career);
     return (
       <PlayerCareerBoard
         playerId={playerId}
@@ -181,6 +191,7 @@ export async function PlayerCareerIsland({
         themeMode={themeMode}
         chart={chart}
         hideTitle={hideTitle}
+        showFilters={showFilters}
       />
     );
   }

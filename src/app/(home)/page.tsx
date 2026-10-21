@@ -20,6 +20,7 @@ import { LeagueMovesPanel } from "@/components/home/league-moves-panel";
 import { SeasonPulsePanel } from "@/components/home/season-pulse-panel";
 import { HomeStandingsPanel } from "@/components/home/home-standings-panel";
 import { HomeModuleFrame, HomeModuleSkeleton } from "@/components/home/home-module-skeleton";
+import { ContractShowcasePanel } from "@/components/home/contract-showcase-panel";
 import { SentimentMoversPanel } from "@/components/home/sentiment-movers-panel";
 import { TopPerformersPanel } from "@/components/home/top-performers-panel";
 import { SeasonMomentCard, SeasonPhaseBar } from "@/components/home/season-moment";
@@ -71,19 +72,16 @@ export const dynamic = "force-dynamic";
 
 async function HomeCalendar({
   season,
-  week,
   enrichSchedule,
 }: {
   season: string;
-  week?: number | null;
   /** When the bundled slate is thin, wait on live October inside this stream. */
   enrichSchedule?: boolean;
 }) {
   if (enrichSchedule) {
-    const moment = await getHomeSeasonMoment();
-    return <WeekGameCalendar season={season} week={moment.regularWeek} />;
+    await getHomeSeasonMoment();
   }
-  return <WeekGameCalendar season={season} week={week} />;
+  return <WeekGameCalendar season={season} />;
 }
 
 async function HomeSeasonMomentLive() {
@@ -249,11 +247,7 @@ function renderModule(
     case "calendar":
       return (
         <Streamed key={id} id={id}>
-          <HomeCalendar
-            season={season}
-            week={moment.regularWeek}
-            enrichSchedule={enrichSchedule}
-          />
+          <HomeCalendar season={season} enrichSchedule={enrichSchedule} />
         </Streamed>
       );
     case "bracket":
@@ -313,7 +307,17 @@ function renderModule(
     case "transactions":
       return (
         <Streamed key={id} id={id}>
-          <OffseasonPulsePanel limit={offseason ? 8 : 5} />
+          <OffseasonPulsePanel
+            limit={offseason ? 8 : 5}
+            season={moment.season}
+            tippedOff={
+              moment.phase === "opening-weeks" ||
+              moment.phase === "regular-season" ||
+              moment.phase === "stretch-run" ||
+              moment.phase === "play-in" ||
+              moment.phase === "playoffs"
+            }
+          />
         </Streamed>
       );
     case "watchlist":
@@ -328,6 +332,12 @@ function renderModule(
       return <SeasonPulsePanel key={id} />;
     case "news":
       return <HomeNews key={id} />;
+    case "contract-showcase":
+      return (
+        <Streamed key={id} id={id}>
+          <ContractShowcasePanel />
+        </Streamed>
+      );
   }
 }
 

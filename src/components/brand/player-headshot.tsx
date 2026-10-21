@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import { cdnImageProps } from "@/lib/cdn-image";
 import { cn } from "@/lib/utils";
 import { faceCropBox, parsePortraitPhoto } from "@/lib/portrait-photo";
+import { brandKeyForUi } from "@/data/identity/team-map";
 import {
   playerHeadshotCandidates,
   resolveTeamBrand,
@@ -79,7 +80,7 @@ export function PlayerHeadshot({
   const index = failed.list === candidates ? failed.index : 0;
 
   const candidate = candidates[index];
-  const brand = resolveTeamBrand(teamKey);
+  const brand = resolveTeamBrand(brandKeyForUi(teamKey));
   const px = PX[size];
 
   if (!candidate) {

@@ -100,7 +100,7 @@ export async function PlayerRoleIsland({
       title={t("styleTitle")}
       description={t("styleHint", { season: role.season })}
     >
-      <PlayerStyleStory model={model} accent={accent} />
+      <PlayerStyleStory model={model} accent={accent} compact />
     </SectionFrame>
   );
 }

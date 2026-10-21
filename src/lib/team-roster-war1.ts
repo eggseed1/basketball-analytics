@@ -2,12 +2,24 @@
  * Roster WAR1 for a team page.
  * Sums published player WAR1 by the DRBL team assignment (one season row, one team).
  * The win line is the Learn page team check, not a refit and not a forecast:
- * wins per 82 ≈ 40.2 + 1.31 × roster Σ WAR1, 180 team-seasons, 2020-21 through 2025-26.
+ * wins per 82 ≈ 40.2 + 1.31 × roster Σ WAR1, 180 team-seasons from 2020-21
+ * through the prior league year.
  */
+
+import {
+  canonicalSeasonFromStartYear,
+  currentNbaStartYear,
+} from "@/data/providers/historical/season-range";
 
 export const ROSTER_WINS_PER_82_INTERCEPT = 40.2;
 export const ROSTER_WINS_PER_82_SLOPE = 1.31;
-export const ROSTER_WINS_LINE_SEASONS = "2020-21 through 2025-26";
+/** Prior completed league year rolls forward each July 1. */
+export function rosterWinsLineSeasonsLabel(now = new Date()): string {
+  const through = canonicalSeasonFromStartYear(currentNbaStartYear(now) - 1);
+  return `2020-21 through ${through}`;
+}
+/** @deprecated Prefer `rosterWinsLineSeasonsLabel()`. */
+export const ROSTER_WINS_LINE_SEASONS = rosterWinsLineSeasonsLabel();
 export const ROSTER_WINS_LINE_TEAMS = 180;
 
 export type RosterWarSourceRow = {

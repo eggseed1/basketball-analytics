@@ -3,6 +3,7 @@
  * Used so search + player identity match sentiment after offseason moves.
  */
 import snapshot from "./current-roster-snapshot.json";
+import nbaEspnIds from "./nba-espn-player-ids.json";
 
 export type BundledCurrentRosterEntry = {
   teamId: string;
@@ -27,13 +28,18 @@ const data = snapshot as unknown as RosterFile;
 const players =
   data?.players && typeof data.players === "object" ? data.players : {};
 
-export function getBundledCurrentRosterEntry(
-  playerId: string | null | undefined
-): BundledCurrentRosterEntry | null {
-  const key = String(playerId ?? "").trim();
-  if (!key) return null;
-  const row = players[key];
-  if (!row?.teamId) return null;
+const nbaToEspn =
+  nbaEspnIds &&
+  typeof nbaEspnIds === "object" &&
+  "ids" in nbaEspnIds &&
+  nbaEspnIds.ids &&
+  typeof nbaEspnIds.ids === "object"
+    ? (nbaEspnIds.ids as Record<string, string>)
+    : {};
+
+function entryFromRow(
+  row: BundledCurrentRosterEntry
+): BundledCurrentRosterEntry {
   return {
     teamId: String(row.teamId),
     teamAbbr: String(row.teamAbbr ?? row.teamId),
@@ -42,6 +48,22 @@ export function getBundledCurrentRosterEntry(
     ...(row.pos ? { pos: String(row.pos) } : {}),
     ...(row.dob ? { dob: String(row.dob) } : {}),
   };
+}
+
+export function getBundledCurrentRosterEntry(
+  playerId: string | null | undefined
+): BundledCurrentRosterEntry | null {
+  const key = String(playerId ?? "").trim();
+  if (!key) return null;
+  const direct = players[key];
+  if (direct?.teamId) return entryFromRow(direct);
+  // Impact feeds / DRBL use NBA person ids; roster bundle is ESPN-keyed.
+  const espn = nbaToEspn[key]?.trim();
+  if (espn) {
+    const viaEspn = players[espn];
+    if (viaEspn?.teamId) return entryFromRow(viaEspn);
+  }
+  return null;
 }
 
 export function getBundledCurrentTeamId(

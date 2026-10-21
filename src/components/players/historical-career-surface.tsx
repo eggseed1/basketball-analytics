@@ -28,22 +28,52 @@ function perGame(
   return (value / gamesPlayed).toFixed(1);
 }
 
+function CareerTotals({ career }: { career: HistoryCareerSummary }) {
+  return (
+    <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <Stat label="Points" value={String(career.points)} />
+      <Stat label="Rebounds" value={String(career.rebounds)} />
+      <Stat label="Assists" value={String(career.assists)} />
+      <Stat label="Teams" value={String(career.teams.length)} />
+    </dl>
+  );
+}
+
 /**
  * Compact historical career surface from precomputed product artifacts.
  * DRBL/WAR1 only where scientifically supported (2020-21+); else —.
- * Header outside; season table uses dense-board glass; total tiles are atomic.
+ * `totals` is for Overview summary; `full` keeps the season click-through list.
  */
 export function HistoricalCareerSurface({
   career,
   seasons,
   playerId,
   viewingSeason,
+  mode = "full",
 }: {
   career: HistoryCareerSummary;
   seasons: HistoryPlayerSeason[];
   playerId: string;
   viewingSeason?: string;
+  mode?: "totals" | "full";
 }) {
+  if (mode === "totals") {
+    return (
+      <div className="flex flex-col gap-2">
+        <p
+          className={cn(
+            type.caption,
+            "font-semibold uppercase tracking-wide text-muted-foreground"
+          )}
+        >
+          Career totals · {career.firstSeason} → {career.lastSeason} ·{" "}
+          {career.seasons} seasons · {career.games} games
+        </p>
+        <CareerTotals career={career} />
+      </div>
+    );
+  }
+
   return (
     <SectionFrame
       id="historical-career"
@@ -51,12 +81,7 @@ export function HistoricalCareerSurface({
       title="Career totals"
       description={`${career.firstSeason} → ${career.lastSeason} · ${career.seasons} seasons · ${career.games} games`}
     >
-      <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <Stat label="Points" value={String(career.points)} />
-        <Stat label="Rebounds" value={String(career.rebounds)} />
-        <Stat label="Assists" value={String(career.assists)} />
-        <Stat label="Teams" value={String(career.teams.length)} />
-      </dl>
+      <CareerTotals career={career} />
 
       <div className="sports-card sports-card-subtle overflow-hidden">
         <p

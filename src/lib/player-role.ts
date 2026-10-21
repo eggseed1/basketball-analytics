@@ -368,15 +368,19 @@ export function buildRoleMix(
   ranked: Array<{ id: Exclude<PlayerRoleId, "unclear">; score: number }>,
   limit = 4
 ): PlayerRoleMixEntry[] {
-  const positive = ranked
-    .filter((row) => row.score > 0.35)
-    .slice(0, Math.max(1, limit));
-  if (!positive.length) return [];
+  const positive = ranked.filter((row) => row.score > 0.35);
+  // Keep a runner-up even when it sits under the soft threshold so Style
+  // affinity always has a neighbor for a clear primary role.
+  let picked = positive.slice(0, Math.max(1, limit));
+  if (picked.length < 2 && ranked.length >= 2) {
+    picked = ranked.filter((row) => row.score > 0).slice(0, 2);
+  }
+  if (!picked.length) return [];
   // Temperature keeps a clear leader without flattening close seconds.
   const temp = 1.35;
-  const exps = positive.map((row) => Math.exp(row.score / temp));
+  const exps = picked.map((row) => Math.exp(row.score / temp));
   const sum = exps.reduce((a, b) => a + b, 0) || 1;
-  return positive.map((row, i) => ({
+  return picked.map((row, i) => ({
     id: row.id,
     phrase: PLAYER_ROLE_PHRASES[row.id],
     score: row.score,

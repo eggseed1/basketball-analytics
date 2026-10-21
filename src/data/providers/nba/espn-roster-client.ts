@@ -39,7 +39,8 @@ type EspnRosterResponse = {
  *
  * The league year flips July 1. Keep the ESPN roster path through the
  * offseason and the tip-off gap. Flip to league-dash / byathlete once the
- * bundled schedule opener has arrived (fallback: Oct 22 when unknown).
+ * bundled schedule opener has arrived (stay on roster through October when
+ * the tip date is still unknown).
  */
 export function isPreseasonRosterSeason(season: string, now = new Date()): boolean {
   const startYear = currentNbaStartYear(now);
@@ -54,9 +55,10 @@ export function isPreseasonRosterSeason(season: string, now = new Date()): boole
   const month = now.getUTCMonth();
   if (month < 9) return true;
   if (month > 9) return false;
-  // October: schedule opener wins; fall back to Oct 22 when tip date unknown.
+  // October: schedule opener wins. When tip is unknown, stay on the roster
+  // path for the whole month instead of flipping on a fixed day.
   if (leagueRegularSeasonHasOpened(leagueSeason, now)) return false;
-  return now.getUTCDate() < 22;
+  return month === 9;
 }
 
 export async function fetchEspnTeamRosterPlayers(

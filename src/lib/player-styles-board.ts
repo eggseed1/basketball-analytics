@@ -83,8 +83,8 @@ export const getPlayerStylesDirectory = cache(
         position: row.position ?? null,
         gamesPlayed: row.gamesPlayed,
         minutes: row.minutes,
-        usagePct: row.usagePct,
-        assistPct: row.assistPct,
+        usagePct: row.usagePct ?? null,
+        assistPct: row.assistPct ?? null,
         threePointAttemptRate: row.threePointAttemptRate,
         role,
       });

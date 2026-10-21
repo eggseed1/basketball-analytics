@@ -45,6 +45,7 @@ const HEIGHT: Record<HomeModuleId, string> = {
   sentiment: "h-[660px] lg:h-[368px]",
   "season-glance": "h-[2315px] lg:h-[1320px]",
   news: "h-[715px] lg:h-[596px]",
+  "contract-showcase": "h-[420px] lg:h-[400px]",
 };
 
 function Bar({ className }: { className?: string }) {

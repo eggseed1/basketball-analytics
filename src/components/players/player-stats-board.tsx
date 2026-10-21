@@ -194,14 +194,16 @@ export function PlayerStatsBoard({
   const kindLabel =
     seasonType === "playoffs" ? "Playoffs" : "Regular season";
 
+  const Shell = hideTitle ? "div" : "section";
+
   return (
-    <section
-      id="statistics"
+    <Shell
+      id={hideTitle ? undefined : "statistics"}
       className={cn(
         "flex flex-col",
         hideTitle ? "gap-3" : "scroll-mt-16 gap-4"
       )}
-      aria-label="Statistics"
+      aria-label={hideTitle ? undefined : "Statistics"}
     >
       {hideTitle ? null : <h2 className={type.heading}>Statistics</h2>}
 
@@ -284,34 +286,10 @@ export function PlayerStatsBoard({
                       </div>
                     </th>
                     <th
-                      rowSpan={2}
-                      className="board-sticky-head-cell px-2 py-2 align-bottom text-right font-semibold"
+                      colSpan={5}
+                      className="board-sticky-head-cell h-7 px-2 py-1.5 text-center font-semibold"
                     >
-                      Age
-                    </th>
-                    <th
-                      rowSpan={2}
-                      className="board-sticky-head-cell px-2 py-2 align-bottom text-right font-semibold"
-                    >
-                      Tm
-                    </th>
-                    <th
-                      rowSpan={2}
-                      className="board-sticky-head-cell px-2 py-2 align-bottom text-left font-semibold"
-                    >
-                      Pos
-                    </th>
-                    <th
-                      rowSpan={2}
-                      className="board-sticky-head-cell px-2 py-2 align-bottom text-right font-semibold"
-                    >
-                      G
-                    </th>
-                    <th
-                      rowSpan={2}
-                      className="board-sticky-head-cell px-2 py-2 align-bottom text-right font-semibold"
-                    >
-                      GS
+                      Info
                     </th>
                     {groups.map((group) => (
                       <th
@@ -324,6 +302,21 @@ export function PlayerStatsBoard({
                     ))}
                   </tr>
                   <tr>
+                    <th className="board-sticky-head-cell px-2 py-2 text-right font-semibold">
+                      Age
+                    </th>
+                    <th className="board-sticky-head-cell px-2 py-2 text-right font-semibold">
+                      Tm
+                    </th>
+                    <th className="board-sticky-head-cell px-2 py-2 text-left font-semibold">
+                      Pos
+                    </th>
+                    <th className="board-sticky-head-cell px-2 py-2 text-right font-semibold">
+                      G
+                    </th>
+                    <th className="board-sticky-head-cell px-2 py-2 text-right font-semibold">
+                      GS
+                    </th>
                     {groups.flatMap((group) =>
                       group.cols.map((col, ki) => (
                         <th
@@ -467,6 +460,6 @@ export function PlayerStatsBoard({
           </p>
         </>
       )}
-    </section>
+    </Shell>
   );
 }

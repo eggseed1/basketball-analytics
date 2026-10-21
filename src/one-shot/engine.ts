@@ -72,7 +72,8 @@ import {
 } from "./types";
 import { adultHeights, country, maybeLeague, PLAYABLE_COUNTRIES, WORLD_VERSION } from "./world";
 
-export const SNAPSHOT_YEAR = 2026;
+/** Birth-year baseline for generated players; rolls with the calendar year. */
+export const SNAPSHOT_YEAR = new Date().getUTCFullYear();
 
 const LOCALITY_WEIGHTS: Record<string, [number, number, number, number]> = {
   HIC: [25, 40, 25, 10],

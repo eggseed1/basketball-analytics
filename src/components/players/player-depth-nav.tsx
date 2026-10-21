@@ -22,6 +22,7 @@ const TAB_LABEL_KEY: Record<PlayerPageView, string> = {
   overview: "tabOverview",
   games: "tabGames",
   career: "tabCareer",
+  salary: "tabSalary",
   splits: "tabSplits",
   shooting: "tabShooting",
   advanced: "tabAdvanced",
@@ -56,6 +57,7 @@ export function PlayerDepthNav({
       role="tablist"
       aria-label={t("tabsAria")}
       data-motion-tabs="stats"
+      data-motion-static
       className="flex flex-nowrap items-end gap-x-2 overflow-x-auto border-b-[0.5px] border-foreground/20 px-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
     >
       {tabs.map((tab) => {

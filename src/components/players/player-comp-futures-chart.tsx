@@ -114,12 +114,15 @@ export function PlayerCompFuturesChart({
   playerId,
   season,
   espnId,
+  compact = false,
 }: {
   bundle: CompFuturesBundle;
   teamKey?: string | null;
   playerId?: string | null;
   season?: string | null;
   espnId?: string | null;
+  /** Overview Trajectory: rank line + chart only. Method notes stay off. */
+  compact?: boolean;
 }) {
   const theme = useChartTheme();
   const [metricId, setMetricId] = useState(bundle.defaultId);
@@ -237,13 +240,19 @@ export function PlayerCompFuturesChart({
           ))}
         </div>
         <p className={cn(type.bodySm, "mt-3 text-muted-foreground")}>
-          {formatCompValue(data.focalValue, data.digits)} {data.metricLabel} at age {data.focalAge} in{" "}
-          {data.focalSeason} ranks{" "}
+          {formatCompValue(data.focalValue, data.digits)} {data.metricLabel} at age{" "}
+          {data.focalAge} ({data.focalSeason}) ranks{" "}
           <span className="font-semibold text-foreground">
             {data.rank} of {data.poolSize}
           </span>{" "}
-          age-{data.focalAge} seasons with 10 or more games. {data.metricLabel} is {data.unit}, and{" "}
-          {data.baseline}. {data.versionNote}. Coverage {data.coverageStart} through {data.coverageEnd}.
+          same-age seasons.
+          {!compact ? (
+            <>
+              {" "}
+              {data.metricLabel} is {data.unit}, and {data.baseline}. {data.versionNote}.
+              Coverage {data.coverageStart} through {data.coverageEnd}.
+            </>
+          ) : null}
         </p>
         <div className="mt-3 h-[240px] w-full sm:h-[280px]">
           <ResponsiveContainer width="100%" height="100%">
@@ -287,25 +296,26 @@ export function PlayerCompFuturesChart({
                       ) : null}
                       {point.offset > 0 && point.p50 != null ? (
                         <p className="text-[12px]">
-                          From his mark: {formatCompValue(point.p50, data.digits)}, the median
-                          change across {point.ratingCount} comps
+                          Median path: {formatCompValue(point.p50, data.digits)}
+                          {!compact ? ` · ${point.ratingCount} comps` : null}
                         </p>
                       ) : null}
-                      {point.offset > 0 && point.suppressed ? (
+                      {!compact && point.offset > 0 && point.suppressed ? (
                         <p className="text-[12px] text-muted-foreground">
-                          Range hidden. {point.ratingCount} qualifying ratings, and this view needs{" "}
-                          8.
+                          Range hidden. {point.ratingCount} qualifying ratings, and this view
+                          needs 8.
                         </p>
                       ) : null}
-                      {point.offset > 0 && point.participation != null ? (
+                      {!compact && point.offset > 0 && point.participation != null ? (
                         <p className="text-[12px] text-muted-foreground">
                           Played 10+ games: {Math.round(point.participation * 100)}% (
                           {point.playedCount} of {point.observedCount} comps in seasons on file)
                         </p>
                       ) : null}
-                      {point.offset > 0 && point.participation == null ? (
+                      {!compact && point.offset > 0 && point.participation == null ? (
                         <p className="text-[12px] text-muted-foreground">
-                          This season is outside the archive, so it is left out of the share who played.
+                          This season is outside the archive, so it is left out of the share who
+                          played.
                         </p>
                       ) : null}
                       {highlighted && point.offset >= 0 ? (
@@ -390,51 +400,74 @@ export function PlayerCompFuturesChart({
             </ComposedChart>
           </ResponsiveContainer>
         </div>
-        <div
-          className="grid text-center text-[10px] leading-tight text-muted-foreground"
-          style={{
-            gridTemplateColumns: `repeat(${data.points.length}, minmax(0, 1fr))`,
-            paddingLeft: 36,
-            paddingRight: 12,
-          }}
-        >
-          {data.points.map((point) => (
-            <div key={point.age} title={point.season ?? undefined}>
-              {point.offset > 0 && point.participation != null
-                ? `${Math.round(point.participation * 100)}%`
-                : ""}
+        {!compact ? (
+          <>
+            <div
+              className="grid text-center text-[10px] leading-tight text-muted-foreground"
+              style={{
+                gridTemplateColumns: `repeat(${data.points.length}, minmax(0, 1fr))`,
+                paddingLeft: 36,
+                paddingRight: 12,
+              }}
+            >
+              {data.points.map((point) => (
+                <div key={point.age} title={point.season ?? undefined}>
+                  {point.offset > 0 && point.participation != null
+                    ? `${Math.round(point.participation * 100)}%`
+                    : ""}
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-        <p className="mt-1 text-[11px] text-muted-foreground">
-          Percents under the future ages are the historical share of comps with 10 or more games
-          that season. Seasons not in the archive are left blank.
-        </p>
+            <p className="mt-1 text-[11px] text-muted-foreground">
+              Percents under the future ages are the historical share of comps with 10 or more
+              games that season. Seasons not in the archive are left blank.
+            </p>
+          </>
+        ) : null}
         <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-muted-foreground">
           <li className="flex items-center gap-1.5">
             <span className="inline-block h-0.5 w-4 rounded-sm" style={{ background: HISTORY }} />
             {data.focalName}
           </li>
           <li className="flex items-center gap-1.5">
-            <span className="inline-block h-0.5 w-4 rounded-sm" style={{ background: COMP, opacity: 0.7 }} />
-            {data.fanCount} comp paths
+            <span
+              className="inline-block h-0.5 w-4 rounded-sm"
+              style={{ background: COMP, opacity: 0.7 }}
+            />
+            {data.fanCount} comps
           </li>
           <li className="flex items-center gap-1.5">
-            <span className="inline-block h-px w-4 border-t border-dashed" style={{ borderColor: MEDIAN }} />
-            Median change from his mark
+            <span
+              className="inline-block h-px w-4 border-t border-dashed"
+              style={{ borderColor: MEDIAN }}
+            />
+            Median path
           </li>
-          <li className="flex items-center gap-1.5">
-            <span className="inline-block h-2 w-4 rounded-sm" style={{ background: BAND, opacity: bandInner }} />
-            Middle half of those changes
-          </li>
-          <li className="flex items-center gap-1.5">
-            <span className="inline-block h-2 w-4 rounded-sm" style={{ background: BAND, opacity: bandOuter }} />
-            Outer range of those changes
-          </li>
-          <li className="flex items-center gap-1.5">
-            <span className="inline-block h-0.5 w-4 rounded-sm" style={{ background: HIGHLIGHT }} />
-            Highlighted comp
-          </li>
+          {!compact ? (
+            <>
+              <li className="flex items-center gap-1.5">
+                <span
+                  className="inline-block h-2 w-4 rounded-sm"
+                  style={{ background: BAND, opacity: bandInner }}
+                />
+                Middle half
+              </li>
+              <li className="flex items-center gap-1.5">
+                <span
+                  className="inline-block h-2 w-4 rounded-sm"
+                  style={{ background: BAND, opacity: bandOuter }}
+                />
+                Outer range
+              </li>
+              <li className="flex items-center gap-1.5">
+                <span
+                  className="inline-block h-0.5 w-4 rounded-sm"
+                  style={{ background: HIGHLIGHT }}
+                />
+                Highlighted comp
+              </li>
+            </>
+          ) : null}
         </ul>
       </div>
       <div className="min-w-0 overflow-x-auto">
@@ -464,17 +497,19 @@ export function PlayerCompFuturesChart({
             ))}
           </tbody>
         </table>
-        <p className="mt-3 text-[11px] leading-snug text-muted-foreground">
-          One anchor season per player, within {data.ageWindow} year of age {data.focalAge}. The
-          sparkline is that season and the next five calendar seasons, on one scale. A gap is a
-          missing season, not 0. An open dot is a season under 10 games. Hover, focus, or click a
-          row to hold that path. The dashed line and the bands start at his last season and add
-          the weighted change among comps with 10 or more games and a rating. The gray lines stay
-          on those comps&apos; actual ratings. Similarity is 100 times e to the minus distance. In
-          a check of past DRBL seasons, a normal closest match scored about 28, and a top-fifth
-          season&apos;s closest match scored about 22. A score near 8 means the pool has no twin
-          for that season. The bar uses that score as it is.
-        </p>
+        {!compact ? (
+          <p className="mt-3 text-[11px] leading-snug text-muted-foreground">
+            One anchor season per player, within {data.ageWindow} year of age {data.focalAge}. The
+            sparkline is that season and the next five calendar seasons, on one scale. A gap is a
+            missing season, not 0. An open dot is a season under 10 games. Hover, focus, or click a
+            row to hold that path. The dashed line and the bands start at his last season and add
+            the weighted change among comps with 10 or more games and a rating. The gray lines stay
+            on those comps&apos; actual ratings. Similarity is 100 times e to the minus distance. In
+            a check of past DRBL seasons, a normal closest match scored about 28, and a top-fifth
+            season&apos;s closest match scored about 22. A score near 8 means the pool has no twin
+            for that season. The bar uses that score as it is.
+          </p>
+        ) : null}
       </div>
     </div>
   );

@@ -34,10 +34,23 @@ export type StreamingRegion = {
 /** NBA.com guide pages that the league updates for each season. */
 export const NBA_WATCH_HUB = "https://www.nba.com/watch";
 export const NBA_LEAGUE_PASS = "https://www.nba.com/watch/league-pass";
+/** @deprecated Prefer `howToWatchUrlForSeason` — URL follows the season string. */
 export const NBA_HOW_TO_WATCH_2025 =
   "https://www.nba.com/news/how-to-watch-games-2025-26-season";
 export const NBA_LEAGUE_PASS_GLOBAL =
   "https://support.watch.nba.com/hc/en-us/articles/115000586473-Global-NBA-League-Pass-Availability";
+
+/** NBA.com how-to-watch article for a canonical season (2025-26 media era). */
+export function nbaHowToWatchArticleUrl(season: string): string {
+  try {
+    const start = startYearFromCanonicalSeason(season);
+    if (start < 2025) return NBA_WATCH_HUB;
+    const endTwo = String((start + 1) % 100).padStart(2, "0");
+    return `https://www.nba.com/news/how-to-watch-games-${start}-${endTwo}-season`;
+  } catch {
+    return NBA_WATCH_HUB;
+  }
+}
 
 /** Countries where League Pass is not sold (NBA Help Center). */
 export const LEAGUE_PASS_BLOCKED = new Set([
@@ -667,9 +680,11 @@ export function streamingRegionForCountry(country?: string | null): StreamingReg
 }
 
 export function howToWatchUrlForSeason(season?: string | null): string {
-  return streamingEraForSeason(season) === "2025-media"
-    ? NBA_HOW_TO_WATCH_2025
-    : NBA_WATCH_HUB;
+  if (streamingEraForSeason(season) !== "2025-media") return NBA_WATCH_HUB;
+  const canonical =
+    season?.trim() ||
+    `${currentNbaStartYear()}-${String((currentNbaStartYear() + 1) % 100).padStart(2, "0")}`;
+  return nbaHowToWatchArticleUrl(canonical);
 }
 
 /** Common country picker options (ISO code → label). */

@@ -20,6 +20,7 @@ const FIXTURES = [
 const VIEWS = [
   "overview",
   "career",
+  "salary",
   "games",
   "splits",
   "shooting",

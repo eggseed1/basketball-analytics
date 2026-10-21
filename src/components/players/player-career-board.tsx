@@ -1,12 +1,14 @@
 "use client";
 
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 
 import { GlassSurface } from "@/components/brand/glass-surface";
 import {
   CareerTeamTrendChartLazy as CareerTeamTrendChart,
   TalentYearChartLazy as TalentYearChart,
 } from "@/components/charts/recharts-lazy";
+import { CareerChartFilterWipe } from "@/components/players/career-chart-filter-wipe";
+import { useQueryNavOptional } from "@/components/continuity/query-nav";
 import { buildTalentSeries } from "@/lib/player-talent-trend";
 import type { CareerSeriesPoint } from "@/components/players/career-team-trend-chart";
 import type { CompactPlayerGameLogRow } from "@/data/history/player-game-log";
@@ -20,8 +22,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 import { TextLink } from "@/components/ui/text-link";
-import { type } from "@/lib/design-system";
+import { space, type } from "@/lib/design-system";
 import { formatNumber, formatPct } from "@/lib/format";
 import { brandAtmosphereColors } from "@/lib/game-matchup-theme";
 import { resolveTeamBrand, teamChartColor } from "@/lib/nba-brand";
@@ -336,8 +339,10 @@ export function PlayerCareerBoard({
   fromHistory = false,
   themeMode = "historical",
   gameLogs = [],
-  chart = "seasons",
+  chart = "games",
   hideTitle = false,
+  initialMetric,
+  showFilters = true,
 }: {
   playerId: string;
   season: string;
@@ -348,18 +353,33 @@ export function PlayerCareerBoard({
   fromHistory?: boolean;
   themeMode?: ThemeMode;
   gameLogs?: CompactPlayerGameLogRow[];
-  /** Games is the career-page dot chart. Overview keeps the season line. */
+  /** Games = per-game dots + season markers. Seasons = season averages only. */
   chart?: "seasons" | "games";
-  /** Overview pairs this with Statistics under one Career stats heading. */
+  /** Hide the Career stats heading when nested under another section. */
   hideTitle?: boolean;
+  /** Prefer this chart metric when present (e.g. DARKO on Overview). */
+  initialMetric?: MetricId;
+  /** Regular / Playoffs / chart mode chips. */
+  showFilters?: boolean;
 }) {
-  const [metric, setMetric] = useState<MetricId>(() => defaultCareerMetric(rows));
+  const queryNav = useQueryNavOptional();
+  const [metric, setMetric] = useState<MetricId>(
+    () => initialMetric ?? defaultCareerMetric(rows)
+  );
+  const [chartMode, setChartMode] = useState<"seasons" | "games">(chart);
+  useEffect(() => {
+    setChartMode(chart);
+  }, [chart]);
   const primary = useMemo(
     () =>
       PRIMARY.filter(
-        (m) => m.category !== "impact" || rows.some((row) => metricValue(row, m.id) != null)
+        (m) =>
+          m.id === "darko" ||
+          m.id === metric ||
+          m.category !== "impact" ||
+          rows.some((row) => metricValue(row, m.id) != null)
       ),
-    [rows]
+    [metric, rows]
   );
   const [tableCat, setTableCat] = useState<TableCategory | "all">("profile");
   const wash = brandAtmosphereColors(
@@ -370,8 +390,11 @@ export function PlayerCareerBoard({
     METRICS.find((item) => item.id === metric) ?? METRICS[0]!;
   const points = seriesFor(rows, selected);
   const talentKind = IMPACT_GAME_METRICS.has(selected.id) ? "impact" : "box";
+  const canShowGames = gameLogs.length > 0;
+  const activeChart =
+    chartMode === "games" && canShowGames ? "games" : "seasons";
   const talent = useMemo(() => {
-    if (chart !== "games") return null;
+    if (activeChart !== "games") return null;
     const bySeason = new Map<string, CompactPlayerGameLogRow[]>();
     for (const game of gameLogs) {
       const list = bySeason.get(game.season) ?? [];
@@ -397,7 +420,7 @@ export function PlayerCareerBoard({
         ];
       });
     return buildTalentSeries({ kind: talentKind, seasons });
-  }, [chart, gameLogs, points, selected.id, talentKind]);
+  }, [activeChart, gameLogs, points, selected.id, talentKind]);
   const newestFirst = useMemo(
     () => [...rows].sort((a, b) => b.season.localeCompare(a.season)),
     [rows]
@@ -417,8 +440,116 @@ export function PlayerCareerBoard({
   const kindLabel =
     seasonType === "playoffs" ? "Playoffs" : "Regular season";
 
-  const body = (
-    <>
+  function setSeasonType(next: PlayerSeasonKind) {
+    queryNav?.replaceParams({
+      seasonType: next === "playoffs" ? "playoffs" : null,
+    });
+  }
+
+  const Shell = hideTitle ? "div" : "section";
+
+  return (
+    <Shell
+      id={hideTitle ? undefined : "career"}
+      data-slot={hideTitle ? undefined : "section-frame"}
+      className={cn(
+        "flex flex-col gap-4",
+        !hideTitle && "scroll-mt-16"
+      )}
+      aria-label={hideTitle ? undefined : "Career stats"}
+    >
+      {hideTitle ? null : <h2 className={type.heading}>Career stats</h2>}
+
+      {showFilters || rows.length > 0 ? (
+        <div
+          className={cn("flex flex-wrap items-center gap-x-3 gap-y-2")}
+          data-motion-static
+          role="group"
+          aria-label="Career chart filters"
+        >
+          {showFilters ? (
+            <>
+              <SegmentedControl
+                size="sm"
+                value={seasonType === "playoffs" ? "playoffs" : "regular"}
+                options={[
+                  { id: "regular", label: "Regular" },
+                  { id: "playoffs", label: "Playoffs" },
+                ]}
+                onChange={(id) => setSeasonType(id)}
+              />
+              {canShowGames ? (
+                <SegmentedControl
+                  size="sm"
+                  value={activeChart}
+                  options={[
+                    { id: "games", label: "Games" },
+                    { id: "seasons", label: "Seasons" },
+                  ]}
+                  onChange={(id) => setChartMode(id)}
+                />
+              ) : null}
+            </>
+          ) : null}
+          {showFilters && rows.length > 0 ? (
+            <span
+              className="hidden h-5 w-px shrink-0 bg-border/40 sm:block"
+              aria-hidden
+            />
+          ) : null}
+          {rows.length > 0 ? (
+            <div
+              className={cn("flex flex-wrap items-center", space[1_5])}
+              role="group"
+              aria-label="Chart metric"
+            >
+              {primary.map((item) => (
+                <GlassChip
+                  key={item.id}
+                  active={item.id === metric}
+                  onClick={() => setMetric(item.id)}
+                >
+                  {item.label}
+                </GlassChip>
+              ))}
+              <Select
+                value={MORE.some((m) => m.id === metric) ? metric : undefined}
+                onValueChange={(v) => {
+                  if (v) setMetric(v as MetricId);
+                }}
+              >
+                <SelectTrigger
+                  className={cn(
+                    type.caption,
+                    "glass-pill h-7 min-w-[9.5rem] rounded-md border-white/40 px-2.5 font-semibold",
+                    MORE.some((m) => m.id === metric) && "glass-pill-active"
+                  )}
+                  aria-label="More chart metrics"
+                >
+                  <SelectValue placeholder="More stats…" />
+                </SelectTrigger>
+                <SelectContent align="start" className="max-h-72">
+                  {TABLE_CATEGORIES.filter((c) => c.id !== "all").map((cat) => {
+                    const items = MORE.filter((m) => m.category === cat.id);
+                    if (!items.length) return null;
+                    return (
+                      <SelectGroup key={cat.id}>
+                        <SelectLabel>{cat.label}</SelectLabel>
+                        {items.map((item) => (
+                          <SelectItem key={item.id} value={item.id}>
+                            {item.label}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    );
+                  })}
+                </SelectContent>
+              </Select>
+            </div>
+          ) : null}
+        </div>
+      ) : null}
+
       {rows.length === 0 ? (
         <p className={cn(type.bodySm, "text-muted-foreground")}>
           {seasonType === "playoffs"
@@ -427,111 +558,51 @@ export function PlayerCareerBoard({
         </p>
       ) : (
         <>
-          <div className="flex flex-wrap items-center gap-1.5">
-            {primary.map((item) => (
-              <GlassChip
-                key={item.id}
-                active={item.id === metric}
-                onClick={() => setMetric(item.id)}
-              >
-                {item.label}
-              </GlassChip>
-            ))}
-            <Select
-              value={MORE.some((m) => m.id === metric) ? metric : undefined}
-              onValueChange={(v) => {
-                if (v) setMetric(v as MetricId);
-              }}
-            >
-              <SelectTrigger
-                className={cn(
-                  type.caption,
-                  "glass-pill h-7 min-w-[9.5rem] rounded-md border-white/40 px-2.5 font-semibold",
-                  MORE.some((m) => m.id === metric) && "glass-pill-active"
-                )}
-                aria-label="More chart metrics"
-              >
-                <SelectValue placeholder="More stats…" />
-              </SelectTrigger>
-              <SelectContent align="start" className="max-h-72">
-                {TABLE_CATEGORIES.filter((c) => c.id !== "all").map((cat) => {
-                  const items = MORE.filter((m) => m.category === cat.id);
-                  if (!items.length) return null;
-                  return (
-                    <SelectGroup key={cat.id}>
-                      <SelectLabel>{cat.label}</SelectLabel>
-                      {items.map((item) => (
-                        <SelectItem key={item.id} value={item.id}>
-                          {item.label}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  );
-                })}
-              </SelectContent>
-            </Select>
-          </div>
-
           <GlassSurface
             variant="subtle"
             effect="css"
             accentColor={wash?.colorA}
             accentColorB={wash?.colorB}
-            className={cn(
-              "flex flex-col p-4 sm:p-5",
-              hideTitle ? "gap-2" : "gap-3"
-            )}
+            className="flex flex-col gap-3 p-4 sm:p-5"
           >
-            {talent ? (
-              <>
+            <CareerChartFilterWipe
+              transitionKey={`${seasonType}|${activeChart}|${selected.id}|${talentKind}`}
+            >
+              {talent ? (
                 <TalentYearChart
                   dots={talent.dots}
                   line={talent.line}
                   kind={talentKind}
-                  height={hideTitle ? 220 : 260}
+                  height={260}
                 />
-                {!hideTitle ? (
-                  <p className={cn(type.caption, "text-muted-foreground")}>
-                    {talentKind === "impact"
-                      ? `Small dots are games. Large dots are each season's published ${selected.label}, and the line runs through them. Plus-minus is blank in these logs.`
-                      : "Small dots are games. Large dots are the season average, and the line runs through them."}
-                  </p>
-                ) : null}
-              </>
-            ) : points.length > 0 ? (
-              <CareerTeamTrendChart
-                points={points}
-                height={hideTitle ? 220 : 200}
-                drawKey={selected.id}
-              />
-            ) : (
+              ) : points.length > 0 ? (
+                <CareerTeamTrendChart
+                  points={points}
+                  height={220}
+                  drawKey={selected.id}
+                />
+              ) : (
+                <p className={cn(type.caption, "text-muted-foreground")}>
+                  {selected.label} is not published for these seasons.
+                </p>
+              )}
+            </CareerChartFilterWipe>
+            {talent ? (
               <p className={cn(type.caption, "text-muted-foreground")}>
-                {selected.label} is not published for these seasons.
+                {talentKind === "impact"
+                  ? `Small dots are games. Large dots are each season's published ${selected.label}, and the line runs through them. Plus-minus is blank in these logs.`
+                  : "Small dots are games. Large dots are the season average, and the line runs through them."}
               </p>
-            )}
+            ) : null}
           </GlassSurface>
-        </>
-      )}
-    </>
-  );
 
-  if (hideTitle) {
-    return <div className="flex flex-col gap-3">{body}</div>;
-  }
-
-  return (
-    <section
-      id="career"
-      className="scroll-mt-16 flex flex-col gap-4"
-      aria-label="Career stats"
-    >
-      <h2 className={type.heading}>Career stats</h2>
-      {body}
-
-      {/* Season table on Overview (line chart) and Career (game-dot chart). */}
-      {rows.length > 0 ? (
-        <div className="flex flex-col gap-3">
-          <div className="flex flex-wrap gap-1.5" role="tablist" aria-label="Table categories">
+          <div className="flex flex-col gap-3">
+          <div
+            className="flex flex-wrap gap-1.5"
+            role="tablist"
+            aria-label="Table categories"
+            data-motion-static
+          >
             {TABLE_CATEGORIES.map((cat) => (
               <GlassChip
                 key={cat.id}
@@ -634,8 +705,9 @@ export function PlayerCareerBoard({
             Showing {kindLabel.toLowerCase()} · {tableCols.length} columns.
             Switch category or scroll sideways for more.
           </p>
-        </div>
-      ) : null}
-    </section>
+          </div>
+        </>
+      )}
+    </Shell>
   );
 }

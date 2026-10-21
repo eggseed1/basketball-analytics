@@ -37,13 +37,22 @@ export function PlayerSalaryPayoff({
   const waiting = payoffWaiting(picked);
   if (waiting) {
     return (
-      <div className="sports-card flex flex-col gap-2 p-4 sm:p-5" aria-labelledby="salary-payoff-title">
+      <div
+        id="salary-payoff"
+        className="sports-card flex flex-col gap-2 p-4 sm:p-5"
+        data-motion="card"
+        aria-labelledby="salary-payoff-title"
+      >
         <h3 id="salary-payoff-title" className={type.heading}>
           Salary played off · {waiting.season}
         </h3>
         <SalaryPayoffWaiting
           waiting={waiting}
-          previousHref={waiting.previous ? `/players/${playerId}?season=${waiting.previous}#contract` : null}
+          previousHref={
+            waiting.previous
+              ? `/players/${encodeURIComponent(playerId)}?season=${encodeURIComponent(waiting.previous)}&view=salary#salary-payoff`
+              : null
+          }
         />
       </div>
     );
@@ -59,7 +68,12 @@ export function PlayerSalaryPayoff({
   const leftOut = payoffLeftOutNote(meta);
 
   return (
-    <div className="sports-card flex flex-col gap-3 p-4 sm:p-5" aria-labelledby="salary-payoff-title">
+    <div
+      id="salary-payoff"
+      className="sports-card flex flex-col gap-3 p-4 sm:p-5"
+      data-motion="card"
+      aria-labelledby="salary-payoff-title"
+    >
       <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-1">
         <div>
           <h3 id="salary-payoff-title" className={type.heading}>

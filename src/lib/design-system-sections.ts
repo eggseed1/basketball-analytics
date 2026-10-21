@@ -161,11 +161,11 @@ export const playerOverviewBottomModules = [
     note: "Money line + surplus tiles; no full value chart on overview.",
   },
   {
-    id: "similar",
+    id: "comparisons",
     density: "overview" as const,
     surface: "open-or-light-interactive" as const,
     titlePlacement: "outside" as const,
-    note: "One lookalike strip (profile). Comps/futures charts stay off overview.",
+    note: "One Comparisons block with Style / Impact / Trajectory sub-toggles. Hero keeps a single closest comp chip.",
   },
   {
     id: "ask",
@@ -185,9 +185,10 @@ export const playerOverviewBottomModules = [
 
 /** Modules that must not reappear as full boards on overview. */
 export const playerOverviewForbiddenFullModules = [
-  "career-season-chart",
   "season-stats-board",
   "historical-career-table",
-  "comps-futures-chart",
+  "duplicate-comp-surfaces",
   "full-percentile-sheet",
+  "contract-value-chart",
+  "salary-played-off",
 ] as const;

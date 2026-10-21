@@ -132,35 +132,12 @@ export default async function RootLayout({
           id="score-delay-boot"
           dangerouslySetInnerHTML={{ __html: SCORE_DELAY_BOOT_SCRIPT }}
         />
-        <div
-          id="app-boot"
-          aria-hidden="true"
-          style={{
-            position: "fixed",
-            inset: 0,
-            zIndex: 80,
-            display: "none",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 18,
-            background: "#f2f2f7",
-            transition: "opacity 0.4s ease",
-          }}
-        >
+        {/* Styles live in APP_BOOT_CRITICAL_CSS. Boot scripts toggle
+            html.booting / #app-boot.is-hiding only — no inline style writes
+            before hydrate (that caused style-attribute mismatches). */}
+        <div id="app-boot" aria-hidden="true" suppressHydrationWarning>
           <BouncingBasketball size={88} />
-          <p
-            data-boot-word=""
-            style={{
-              margin: 0,
-              fontSize: 28,
-              fontWeight: 700,
-              letterSpacing: "-0.04em",
-              lineHeight: 1,
-              color: "#1d1d1f",
-              fontFamily: "var(--font-sans), system-ui, sans-serif",
-            }}
-          >
+          <p data-boot-word="" suppressHydrationWarning>
             DRBL
           </p>
           <div className="bb-meter" />

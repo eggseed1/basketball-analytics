@@ -3055,6 +3055,29 @@ svg [data-motion-dot] {
   content: none;
 }
 
+/* Comparisons panes: first paint uses page motion (`ready`). Tab flips remount
+   with `swap` and get a short entry beat. */
+[data-comparisons-pane] {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-comparisons-pane="swap"] {
+    transition:
+      opacity 300ms ease,
+      translate 380ms var(--motion-ease);
+  }
+
+  @starting-style {
+    [data-comparisons-pane="swap"] {
+      opacity: 0;
+      translate: 0 10px;
+    }
+  }
+}
+
 [data-motion-page] :is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li, tbody > tr, [data-frozen-row]) {
   --n: 12;
 }
@@ -3081,6 +3104,7 @@ svg [data-motion-dot] {
 
   [data-motion-page] > :not(.hof-page-frame, [data-motion-stack], [data-skeleton], [data-motion-static], .arcade-pop, :has(.sports-card, .glass-surface, .glass-card, .frost-surface, .frost-surface-soft, .frost-surface-muted)),
   [data-motion-page] :is(.hof-page-frame__inner, [data-motion-stack]):not([data-motion-static]) > :not([data-motion-stack], [data-skeleton], [data-motion-static], .arcade-pop, :has(.sports-card, .glass-surface, .glass-card, .frost-surface, .frost-surface-soft, .frost-surface-muted)),
+  [data-motion-page] [data-slot="section-frame"]:not([data-motion-static], [data-motion-eager]),
   [data-motion-page] :is(.sports-card, .glass-surface, .glass-card):not(a, [data-skeleton], [data-motion-tile], [data-motion-static], [data-motion-static] *, .arcade-pop, :is(.sports-card, .glass-surface, .glass-card) *) {
     transition:
       opacity 420ms ease,
@@ -3207,13 +3231,21 @@ svg [data-motion-dot] {
     transition: clip-path 1100ms cubic-bezier(0.3, 0.7, 0.2, 1) 100ms;
   }
 
+  /* Career filter wipe owns clip-path — kill page @starting-style on these. */
+  [data-motion-page] [data-career-chart] :is(.recharts-line, .recharts-area, [data-motion-wipe]) {
+    clip-path: none;
+    transition: none;
+  }
+
   [data-motion-page] .recharts-bar-rectangle {
     transform-box: fill-box;
     transform-origin: bottom;
     transition: scale 640ms var(--motion-ease) 120ms;
   }
 
-  [data-motion-page] :is(.recharts-line-dots > *, .recharts-scatter-symbol) {
+  /* Season / series dots on the line — not dense scatter (game mist).
+     data-motion-static: chart owns its own LTR pop (career-dot-draw). */
+  [data-motion-page] .recharts-line-dots > *:not([data-motion-static]) {
     transform-box: fill-box;
     transform-origin: center;
     transition: scale 380ms cubic-bezier(0.34, 1.56, 0.64, 1) 500ms;
@@ -3222,6 +3254,7 @@ svg [data-motion-dot] {
   @starting-style {
     [data-motion-page] > :not(.hof-page-frame, [data-motion-stack], [data-skeleton], [data-motion-static], .arcade-pop, :has(.sports-card, .glass-surface, .glass-card, .frost-surface, .frost-surface-soft, .frost-surface-muted)),
     [data-motion-page] :is(.hof-page-frame__inner, [data-motion-stack]):not([data-motion-static]) > :not([data-motion-stack], [data-skeleton], [data-motion-static], .arcade-pop, :has(.sports-card, .glass-surface, .glass-card, .frost-surface, .frost-surface-soft, .frost-surface-muted)),
+    [data-motion-page] [data-slot="section-frame"]:not([data-motion-static], [data-motion-eager]),
     [data-motion-page] :is(.sports-card, .glass-surface, .glass-card):not(a, [data-skeleton], [data-motion-tile], [data-motion-static], [data-motion-static] *, .arcade-pop, :is(.sports-card, .glass-surface, .glass-card) *) {
       opacity: 0;
       translate: 0 14px;
@@ -3276,6 +3309,10 @@ svg [data-motion-dot] {
       clip-path: inset(-50% 150% -50% -50%);
     }
 
+    [data-motion-page] [data-career-chart] :is(.recharts-line, .recharts-area, [data-motion-wipe]) {
+      clip-path: none;
+    }
+
     [data-motion-page] [data-motion-shape] {
       opacity: 0;
       scale: 0.4;
@@ -3286,7 +3323,7 @@ svg [data-motion-dot] {
       scale: 1 0;
     }
 
-    [data-motion-page] :is(.recharts-line-dots > *, .recharts-scatter-symbol) {
+    [data-motion-page] .recharts-line-dots > *:not([data-motion-static]) {
       scale: 0;
     }
   }

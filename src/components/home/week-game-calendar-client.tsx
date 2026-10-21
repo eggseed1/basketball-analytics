@@ -76,26 +76,18 @@ export function WeekGameCalendarClient({
   season,
   mode,
   games: initialGames,
-  week,
 }: {
   season: string;
   mode: "week" | "upcoming";
   games: StripGame[];
-  week?: number | null;
 }) {
   const t = useTranslations("Home");
   const tCommon = useTranslations("Common");
-  const showWeek = mode === "week" && week != null && week > 0;
   return (
     <section className="flex min-w-0 flex-col gap-3">
       <div className="flex min-w-0 items-center justify-between gap-2">
         <h2 className="type-heading flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-0.5">
           <span>{mode === "week" ? t("weekGames") : t("upcomingGames")}</span>
-          {showWeek ? (
-            <span className="type-caption glass-pill rounded-md px-2 py-0.5 font-semibold text-foreground">
-              {t("weekNumber", { week })}
-            </span>
-          ) : null}
         </h2>
         <SectionLink href="/scores?view=week">
           <span className="sm:hidden">{t("scheduleShort")}</span>

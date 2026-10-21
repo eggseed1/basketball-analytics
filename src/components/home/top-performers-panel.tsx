@@ -76,11 +76,13 @@ function teamIdentityFromLoose(
   raw?: string | null
 ): { teamKey?: string; teamLabel?: string } {
   if (!raw?.trim()) return {};
-  // Reject raw long provider numerics here - parent should already normalize.
-  if (/^\d{6,}$/.test(raw.trim())) return {};
-  const brand = resolveTeamBrand(raw);
-  if (brand) return { teamKey: brand.espnTeamId, teamLabel: brand.abbr };
-  const resolved = resolveCanonicalTeam(raw);
+  const token = raw.trim();
+  // Short tokens / names go through brand first; long NBA Stats ids skip brand.
+  if (!/^\d{6,}$/.test(token)) {
+    const brand = resolveTeamBrand(token);
+    if (brand) return { teamKey: brand.espnTeamId, teamLabel: brand.abbr };
+  }
+  const resolved = resolveCanonicalTeam(token);
   if (resolved.status === "resolved") {
     return {
       teamKey: resolved.team.canonicalTeamId,
@@ -265,14 +267,23 @@ export function TopPerformersPanel({
       const key = normalizePlayerName(p.playerName);
       const season = seasonByName.get(key);
       const fromDarko = teamIdentityFromLoose(p.teamAbbr ?? p.teamName);
+      const fromDarkoId = teamIdentityFromLoose(p.teamId);
       const nbaKey = String(p.nbaPlayerId ?? "").trim();
       upsert({
         key,
         id: p.profileId,
         nbaId: p.nbaPlayerId,
         name: p.playerName,
-        teamKey: season?.teamKey ?? fromDarko.teamKey,
-        teamLabel: season?.teamLabel ?? fromDarko.teamLabel,
+        teamKey:
+          p.teamKey ??
+          season?.teamKey ??
+          fromDarko.teamKey ??
+          fromDarkoId.teamKey,
+        teamLabel:
+          p.teamAbbr ??
+          season?.teamLabel ??
+          fromDarko.teamLabel ??
+          fromDarkoId.teamLabel,
         war1:
           war1ByName.get(key) ??
           (nbaKey ? war1ByNbaId.get(nbaKey) ?? null : null),
@@ -290,14 +301,23 @@ export function TopPerformersPanel({
       const key = normalizePlayerName(p.playerName);
       const season = seasonByName.get(key);
       const fromRaptorTeam = teamIdentityFromLoose(p.teamAbbr ?? p.teamName);
+      const fromRaptorId = teamIdentityFromLoose(p.teamId);
       const nbaKey = String(p.nbaPlayerId ?? "").trim();
       upsert({
         key,
         id: p.profileId,
         nbaId: p.nbaPlayerId,
         name: p.playerName,
-        teamKey: season?.teamKey ?? fromRaptorTeam.teamKey,
-        teamLabel: season?.teamLabel ?? fromRaptorTeam.teamLabel,
+        teamKey:
+          p.teamKey ??
+          season?.teamKey ??
+          fromRaptorTeam.teamKey ??
+          fromRaptorId.teamKey,
+        teamLabel:
+          p.teamAbbr ??
+          season?.teamLabel ??
+          fromRaptorTeam.teamLabel ??
+          fromRaptorId.teamLabel,
         war1:
           war1ByName.get(key) ??
           (nbaKey ? war1ByNbaId.get(nbaKey) ?? null : null),

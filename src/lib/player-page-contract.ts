@@ -18,6 +18,7 @@ export type PlayerPageView =
   | "overview"
   | "sentiment"
   | "career"
+  | "salary"
   | "games"
   | "splits"
   | "shooting"
@@ -51,6 +52,8 @@ export function parsePlayerPageView(
   if (
     v === "sentiment" ||
     v === "career" ||
+    v === "salary" ||
+    v === "contract" ||
     v === "games" ||
     v === "splits" ||
     v === "shooting" ||
@@ -58,7 +61,8 @@ export function parsePlayerPageView(
     v === "onoff" ||
     v === "highs"
   ) {
-    return v;
+    // Legacy ?view=contract bookmarks land on Salary.
+    return v === "contract" ? "salary" : v;
   }
   return "overview";
 }
@@ -121,6 +125,7 @@ export function playerPageNavViews(
   if (caps.onOff) out.push({ id: "onoff", label: "On/Off" });
   if (caps.gameHighs) out.push({ id: "highs", label: "Game Highs" });
   if (caps.sentiment) out.push({ id: "sentiment", label: "Sentiment" });
+  out.push({ id: "salary", label: "Salary" });
   return out;
 }
 

@@ -174,12 +174,40 @@ const BY_CANONICAL = new Map(
 const BY_ABBR = new Map(CANONICAL_TEAMS.map((t) => [t.abbr.toUpperCase(), t]));
 const BY_BRAND_ID = new Map(CANONICAL_TEAMS.map((t) => [t.brandId, t]));
 const BY_PROVIDER = new Map<ProviderTeamKey, CanonicalTeam>();
+/** Lowercased display / city+nick / feed aliases → canonical team. */
+const BY_FULL_NAME = new Map<string, CanonicalTeam>();
 
 for (const team of CANONICAL_TEAMS) {
   for (const [provider, id] of Object.entries(team.providerIds)) {
     if (!id) continue;
     BY_PROVIDER.set(providerTeamKey(provider, id), team);
   }
+
+  BY_FULL_NAME.set(team.displayName.toLowerCase(), team);
+  const nick = NICKNAMES[team.abbr];
+  if (nick) BY_FULL_NAME.set(nick.toLowerCase(), team);
+  const meta = ESPN_TEAM_META[team.canonicalTeamId];
+  if (meta?.city && nick) {
+    const city = meta.city.trim();
+    // Skip when ESPN's "city" is already the full mark (e.g. LAC → "LA Clippers").
+    if (!city.toLowerCase().includes(nick.toLowerCase())) {
+      BY_FULL_NAME.set(`${city} ${nick}`.toLowerCase(), team);
+    }
+  }
+}
+
+// Impact feeds (DARKO) and some scrapers use full city forms that diverge from
+// product displayName ("LA Clippers" vs "Los Angeles Clippers").
+for (const [alias, abbr] of [
+  ["los angeles clippers", "LAC"],
+  ["la clippers", "LAC"],
+  ["la lakers", "LAL"],
+  ["los angeles lakers", "LAL"],
+  ["portland trailblazers", "POR"],
+  ["trailblazers", "POR"],
+] as const) {
+  const team = BY_ABBR.get(abbr);
+  if (team) BY_FULL_NAME.set(alias, team);
 }
 
 export function providerTeamKey(
@@ -317,16 +345,8 @@ export function resolveCanonicalTeam(
     if (team) return { status: "resolved", team };
   }
 
-  // Display name / nickname (deterministic exact match only).
-  for (const team of CANONICAL_TEAMS) {
-    if (team.displayName.toLowerCase() === lower) {
-      return { status: "resolved", team };
-    }
-    const nick = NICKNAMES[team.abbr];
-    if (nick && nick.toLowerCase() === lower) {
-      return { status: "resolved", team };
-    }
-  }
+  const byName = BY_FULL_NAME.get(lower);
+  if (byName) return { status: "resolved", team: byName };
 
   return {
     status: "unresolved",
@@ -366,6 +386,19 @@ export function listCrossProviderNumericCollisions(): Array<{
     out.push({ providerTeamId: id, espn, bdl });
   }
   return out;
+}
+
+/**
+ * Token safe for TeamLogo / resolveTeamBrand: prefer ESPN canonical id.
+ * Full city+nick names ("Los Angeles Clippers") and feed aliases resolve first
+ * so we never pass a long display string into logo URL builders.
+ */
+export function brandKeyForUi(teamKey?: string | null): string | undefined {
+  const raw = teamKey?.toString().trim();
+  if (!raw) return undefined;
+  const resolved = resolveCanonicalTeam(raw);
+  if (resolved.status === "resolved") return resolved.team.canonicalTeamId;
+  return raw;
 }
 
 /** Schedule-source helper: which provider owns typical historical cache rows. */

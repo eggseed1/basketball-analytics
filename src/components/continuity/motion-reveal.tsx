@@ -15,10 +15,39 @@ const STATIC = "[data-motion-static], [data-motion-static] *, .arcade-pop";
 const SECTION = [
   `[data-motion-page] > :not(.hof-page-frame, [data-motion-stack], [data-skeleton], ${STATIC}, :has(${FROST}))`,
   `:is(.hof-page-frame__inner, [data-motion-stack]):not([data-motion-static]) > :not([data-motion-stack], [data-skeleton], ${STATIC}, :has(${FROST}))`,
+  // Overview / subtab SectionFrame shells — hold whole blocks for scroll even
+  // when a frosted chart lives inside (the frost still fades itself).
+  `[data-slot="section-frame"]:not(${STATIC})`,
   `:is(${CARD}):not(a, [data-skeleton], [data-motion-tile], ${STATIC}, [data-motion-static] *, :is(${CARD}) *)`,
 ].join(", ");
+/**
+ * First paint: anything that intersects the viewport (plus a small lead) plays
+ * with CSS @starting-style. A 0.55 band left the lower first screen blank until
+ * IntersectionObserver fired, which felt broken on load across engines.
+ */
+const EAGER_LEAD_PX = 80;
 const LIST = `:is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li):not(${STATIC}, :has(${FROST})), [data-motion-item]:not(${STATIC})`;
 const FROST_ROW = "tbody > tr:has(> .board-sticky-frost)";
+/** Own entry beat — nested page motion would double-fade these. */
+const OWN_ENTRY =
+  "[data-motion-still], [data-motion-eager], [data-comparisons-pane]";
+/**
+ * Chart draws (LTR line wipe, bar grow, dots). Never finish these early —
+ * settling them under a hero/section shell was killing the load animation
+ * that production (drbl.io) still shows.
+ */
+const CHART_ENTRY = [
+  "[data-motion-bar]",
+  "[data-motion-dot]",
+  "[data-motion-mark]",
+  "[data-motion-line]",
+  "[data-motion-shape]",
+  "[data-motion-wipe]",
+  ".recharts-line",
+  ".recharts-area",
+  ".recharts-bar-rectangle",
+  ".recharts-line-dots > *:not([data-motion-static])",
+].join(", ");
 
 /** Start poses, matched in order. They mirror the @starting-style rules in globals.css. */
 const POSES: Array<[selector: string, pose: Pose]> = [
@@ -32,7 +61,9 @@ const POSES: Array<[selector: string, pose: Pose]> = [
   ['[data-motion-bar="x"]', () => ({ scale: "0 1" })],
   ['[data-motion-bar="y"], .recharts-bar-rectangle', () => ({ scale: "1 0" })],
   ["[data-motion-mark]", (_, s) => ({ left: s.getPropertyValue("--mark-from").trim() || "0%" })],
-  ["[data-motion-dot], .recharts-line-dots > *, .recharts-scatter-symbol", () => ({ scale: 0 })],
+  // Line dots only — dense scatter (game mist) stays put.
+  // data-motion-static: chart-owned LTR pop (career-dot-draw).
+  ["[data-motion-dot], .recharts-line-dots > *:not([data-motion-static])", () => ({ scale: 0 })],
   ["[data-motion-line]", () => ({ strokeDashoffset: 1 })],
   [".recharts-line, .recharts-area, [data-motion-wipe]", () => ({ clipPath: "inset(-50% 150% -50% -50%)" })],
   ["[data-motion-shape]", () => ({ opacity: 0, scale: 0.4, rotate: "-30deg" })],
@@ -64,6 +95,24 @@ function timing(style: CSSStyleDeclaration): KeyframeAnimationOptions {
     easing: easings[pick]?.trim() || "ease",
     fill: "backwards",
   };
+}
+
+function isShown(el: Element): boolean {
+  if (typeof el.checkVisibility === "function") {
+    try {
+      // Opacity must stay off: @starting-style leaves opacity 0, and treating
+      // that as hidden skipped holds forever on some WebKit builds.
+      return el.checkVisibility({
+        checkOpacity: false,
+        checkVisibilityCSS: true,
+        contentVisibilityAuto: true,
+      });
+    } catch {
+      return el.checkVisibility();
+    }
+  }
+  const style = getComputedStyle(el);
+  return style.display !== "none" && style.visibility !== "hidden";
 }
 
 /**
@@ -105,17 +154,26 @@ export function MotionReveal() {
           const animations = waiting.get(entry.target) ?? [];
           const batchDelay = Math.min(k, BATCH_MAX_STEPS) * BATCH_STEP_MS;
           const chart = animations.length > 1 && !(entry.target instanceof HTMLTableRowElement);
+          // Section shells fade first; nested line wipes wait so the LTR draw
+          // isn't spent while the block is still opacity 0.
+          const sectionProxy =
+            entry.target instanceof Element &&
+            entry.target.matches('[data-slot="section-frame"]');
           for (const animation of animations) {
+            const target = (animation.effect as KeyframeEffect | null)?.target;
+            const isChart =
+              target instanceof Element && target.matches(CHART_ENTRY);
             const delay = Number(animation.effect?.getTiming().delay ?? 0);
-            const own = chart ? delay : Math.min(delay, MAX_DELAY_MS);
-            animation.effect?.updateTiming({ delay: own + batchDelay });
+            const own = chart || isChart ? delay : Math.min(delay, MAX_DELAY_MS);
+            const chartLead = sectionProxy && isChart ? 280 : 0;
+            animation.effect?.updateTiming({ delay: own + batchDelay + chartLead });
             animation.play();
           }
           waiting.delete(entry.target);
           io.unobserve(entry.target);
         }
       },
-      { rootMargin: "0px 0px 64px 0px" },
+      { rootMargin: `0px 0px ${EAGER_LEAD_PX}px 0px`, threshold: 0 },
     );
 
     // Start poses that collapse to zero size or full clip never intersect,
@@ -127,10 +185,14 @@ export function MotionReveal() {
           ? (el.parentElement ?? el)
           : el;
 
-    const hold = (el: Element, pose: Keyframe, options: KeyframeAnimationOptions) => {
+    const hold = (
+      el: Element,
+      pose: Keyframe,
+      options: KeyframeAnimationOptions,
+      proxy = proxyFor(el)
+    ) => {
       const animation = el.animate([{ ...pose, offset: 0 }], options);
       animation.pause();
-      const proxy = proxyFor(el);
       const list = waiting.get(proxy);
       if (list) list.push(animation);
       else {
@@ -189,44 +251,93 @@ export function MotionReveal() {
     };
     // All reads first, then all writes: each animate() dirties style, and a
     // read after it would force a fresh style and layout pass per element.
-    // On first paint the CSS stagger already runs in order above the fold.
-    // Later content (streamed, appended, filtered) is held even in view, so a
-    // batch of new rows staggers from its own top, not from row 40's slot. A
-    // node React only moved (a sort) gets @starting-style again, so its entry
-    // is finished at once.
+    // Viewport + lead: CSS @starting-style (page fade-up + LTR line wipe).
+    // Below the fold: hold until scroll. Nested cards under a section shell are
+    // finished so they don't double-fade; chart draws are left alone (or held
+    // with the shell) so lines still wipe left → right like production.
     const scan = (from: Element[], initial: boolean) => {
-      const fold = window.innerHeight;
+      const fold = window.innerHeight + EAGER_LEAD_PX;
       const cache = new Map<Element, Clip | null>();
-      const plan: Array<[Element, Keyframe, KeyframeAnimationOptions]> = [];
+      const plan: Array<
+        [Element, Keyframe, KeyframeAnimationOptions, Element | undefined]
+      > = [];
       const settle: Animation[] = [];
       let transitions: Map<Element, Animation[]> | undefined;
       const entryTransitions = (el: Element) => (transitions ??= transitionsByTarget()).get(el) ?? [];
+      const planEntry = (el: Element) => {
+        const entry = POSES.find(([selector]) => el.matches(selector));
+        if (!entry) return null;
+        const style = getComputedStyle(el);
+        return [el, entry[1](el, style), timing(style)] as const;
+      };
       for (const el of candidates(from)) {
         if (seen.has(el)) {
-          if (!initial) settle.push(...entryTransitions(el));
+          if (!initial && !el.matches(CHART_ENTRY)) {
+            settle.push(...entryTransitions(el));
+          }
           continue;
         }
         // Still inside a hidden Suspense slot (or otherwise not shown): leave
         // unmarked so a later reveal can run the entry. Marking them seen here
         // left whole routes at opacity 0 after $RC swapped loading → page.
-        if (!el.checkVisibility()) continue;
-        seen.add(el);
-        // [data-motion-still] keeps its mount entry but is never held for scroll.
-        if (
-          el.closest("[data-motion-still]") ||
-          (initial && el.getBoundingClientRect().top <= fold) ||
-          clippedOut(el, cache)
-        ) {
+        if (!isShown(el)) continue;
+        // Own draw clocks (career line dots) — don't stack a second scale hold.
+        if (el.matches(STATIC) || el.closest("[data-motion-static]")) {
+          seen.add(el);
           continue;
         }
-        const entry = POSES.find(([selector]) => el.matches(selector));
-        if (!entry) continue;
-        const style = getComputedStyle(el);
-        plan.push([el, entry[1](el, style), timing(style)]);
+        // Career filter wipe owns clip-path; page holds jittered metric switches.
+        if (el.closest("[data-career-chart]")) {
+          seen.add(el);
+          continue;
+        }
+        seen.add(el);
+
+        const chart = el.matches(CHART_ENTRY);
+
+        // Own-entry shells (hero, comparison pane) — CSS entry on the shell.
+        // Nested layout fades are finished; chart wipes keep running.
+        const own = el.closest(OWN_ENTRY);
+        if (own) {
+          if (own !== el && !chart) settle.push(...entryTransitions(el));
+          continue;
+        }
+
+        // Section frames fade as one block. Nested cards/rows finish so they
+        // do not stack another fade. Chart draws hold with the section when
+        // it is below the fold, or play with CSS when the section is eager.
+        const frameEl = el.closest('[data-slot="section-frame"]');
+        if (frameEl && frameEl !== el) {
+          if (chart) {
+            const frameTop = frameEl.getBoundingClientRect().top;
+            if (frameTop <= fold || clippedOut(el, cache)) continue;
+            const planned = planEntry(el);
+            if (planned) {
+              settle.push(...entryTransitions(el));
+              plan.push([...planned, frameEl]);
+            }
+          } else {
+            settle.push(...entryTransitions(el));
+          }
+          continue;
+        }
+
+        const top = el.getBoundingClientRect().top;
+        // Eager: on-screen (and slightly below) play CSS. Clipped horizontal
+        // scroller cells are left alone so sideways scroll does not pop rows.
+        if (top <= fold || clippedOut(el, cache)) {
+          continue;
+        }
+
+        const planned = planEntry(el);
+        if (!planned) continue;
         settle.push(...entryTransitions(el));
+        plan.push([...planned, undefined]);
       }
       for (const transition of settle) transition.finish();
-      for (const [el, pose, options] of plan) hold(el, pose, options);
+      for (const [el, pose, options, proxy] of plan) {
+        hold(el, pose, options, proxy);
+      }
     };
     const flush = () => {
       frame = 0;
@@ -261,12 +372,30 @@ export function MotionReveal() {
       attributeFilter: ["hidden"],
     });
 
+    // Resize / rotate can move held nodes into view without an IO delivery on
+    // some mobile WebViews — nudge any waiting proxy that is already on screen.
+    const onViewport = () => {
+      const edge = window.innerHeight + EAGER_LEAD_PX;
+      for (const [proxy, animations] of waiting) {
+        if (!proxy.isConnected) continue;
+        const top = proxy.getBoundingClientRect().top;
+        if (top > edge) continue;
+        for (const animation of animations) animation.play();
+        waiting.delete(proxy);
+        io.unobserve(proxy);
+      }
+    };
+    window.addEventListener("resize", onViewport, { passive: true });
+    window.addEventListener("orientationchange", onViewport, { passive: true });
+
     return () => {
       cancelAnimationFrame(frame);
       cancelAnimationFrame(revealFrame);
       mo.disconnect();
       revealMo.disconnect();
       io.disconnect();
+      window.removeEventListener("resize", onViewport);
+      window.removeEventListener("orientationchange", onViewport);
       for (const list of waiting.values()) for (const animation of list) animation.cancel();
     };
   }, []);

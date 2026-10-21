@@ -466,6 +466,32 @@ function main() {
     (hustleCutoffOnly.find((m) => m.id === "hustleDefl")?.percentile ?? -1) > 0
   );
 
+  // Early season without DRBL: Impact still lists WAR1 / DRBL slots as not qualified.
+  const early = row({
+    playerId: "early",
+    playerName: "Early Season",
+    season: "2026-27",
+    gamesPlayed: 3,
+    minutes: 96,
+    darkoDpm: 2.1,
+  });
+  const earlyMetrics = buildPlayerPercentileMetrics(
+    early,
+    [early],
+    [early],
+    [],
+    "early"
+  );
+  const earlyWar1 = earlyMetrics.find((m) => m.id === "r1WinEquivalents");
+  const earlyDrbl = earlyMetrics.find((m) => m.id === "drbl100");
+  assert.equal(earlyWar1?.qualified, false);
+  assert.equal(earlyWar1?.showPercentile, false);
+  assert.equal(earlyDrbl?.qualified, false);
+  assert.ok(
+    earlyMetrics.some((m) => m.id === "darko" && m.qualified !== false),
+    "DARKO stays live when the overlay is present"
+  );
+
   console.log("test-player-percentile-metrics: ok");
 }
 

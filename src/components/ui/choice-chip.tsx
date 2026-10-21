@@ -53,6 +53,7 @@ export function ChoiceChip({
   children,
   disabled,
   className,
+  role,
   ...rest
 }: {
   active?: boolean;
@@ -61,11 +62,14 @@ export function ChoiceChip({
   disabled?: boolean;
   className?: string;
 } & Omit<HTMLAttributes<HTMLButtonElement>, "children" | "className" | "onClick">) {
+  const isTab = role === "tab";
   return (
     <button
       type="button"
+      role={role}
       disabled={disabled}
-      aria-pressed={active}
+      aria-pressed={isTab ? undefined : active}
+      aria-selected={isTab ? active : undefined}
       onClick={onClick}
       className={cn(choiceChipClassName(active, disabled), className)}
       {...rest}

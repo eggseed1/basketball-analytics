@@ -158,7 +158,7 @@ export async function getExplorePlayersBoardView(options: {
   const sortKey =
     requested ??
     (earlySeasonBoard
-      ? "points"
+      ? "ppg"
       : hasDrbl
         ? "r1WinEquivalents"
         : hasDarko

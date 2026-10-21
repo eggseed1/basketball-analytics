@@ -1,0 +1,21 @@
+{
+  "en": {
+    "PlayerDetail": {
+      "tabSalary": "Salary",
+      "statTrendTitle": "Career stats",
+      "statTrendHint": "Season chart, filters, and the full category table. Analysis stays on Career.",
+      "loadingSalary": "Loading salary…",
+      "salaryEmpty": "No current contract on file for this player.",
+      "salaryEmptyHint": "Waived deals and some two-ways stay off the baked payroll snapshot.",
+      "salaryYearTitle": "This season’s money",
+      "salaryCta": "Full salary and played off",
+      "loadingContract": "Loading contract…",
+      "goDeeperTitle": "Go deeper",
+      "goDeeperHint": "Full boards, logs, and charts live on their own tabs.",
+      "goDeeperCareer": "Career stats",
+      "goDeeperGames": "Game logs",
+      "goDeeperAdvanced": "Advanced",
+      "goDeeperShooting": "Shooting"
+    }
+  }
+}

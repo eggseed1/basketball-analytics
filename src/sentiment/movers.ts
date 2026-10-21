@@ -2,6 +2,7 @@ import type {
   PlayerSentimentProfile,
   SentimentMoverRow,
 } from "@/sentiment/curated-types";
+import { sentimentPlayerLabel } from "@/sentiment/player-label";
 
 export function fanSentimentDelta(
   profile: PlayerSentimentProfile,
@@ -24,7 +25,7 @@ export function toSentimentMoverRow(
   if (!playerId || !profile.fan) return null;
   return {
     playerId,
-    displayName: profile.displayName ?? playerId,
+    displayName: sentimentPlayerLabel(playerId, profile.displayName),
     teamKey: profile.teamKey,
     fanScore: profile.fan.score,
     delta,

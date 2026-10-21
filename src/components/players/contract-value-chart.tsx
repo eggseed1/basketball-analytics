@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type CSSProperties } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 
 import { type } from "@/lib/design-system";
 import { formatUsdCompact } from "@/lib/format-money";
@@ -38,8 +38,28 @@ const SURPLUS_TONE = (d: number) =>
  * One row per season: surplus as a diverging bar, paid and worth as plain numbers.
  * Options can make surplus differ from worth − salary, so the bar follows surplus.
  */
-export function ContractValueChart({ years }: { years: ContractValueChartYear[] }) {
-  const [selected, setSelected] = useState(years[0]?.season ?? null);
+export function ContractValueChart({
+  years,
+  initialSeason,
+}: {
+  years: ContractValueChartYear[];
+  /** Prefer this season when present (Salary tab follows the page season). */
+  initialSeason?: string | null;
+}) {
+  const [selected, setSelected] = useState(
+    () =>
+      (initialSeason && years.some((y) => y.season === initialSeason)
+        ? initialSeason
+        : years[0]?.season) ?? null
+  );
+
+  const seasonKey = years.map((y) => y.season).join("|");
+  useEffect(() => {
+    if (initialSeason && seasonKey.split("|").includes(initialSeason)) {
+      setSelected(initialSeason);
+    }
+  }, [initialSeason, seasonKey]);
+
   if (!years.length) return null;
 
   const max = Math.max(...years.map((y) => Math.abs(y.surplus)), 1);

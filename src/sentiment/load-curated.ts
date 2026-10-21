@@ -8,11 +8,16 @@ import type {
   PlayerSentimentProfile,
   SentimentCuratedSnapshot,
   SentimentMoodSeries,
+  SentimentMoverRow,
   SentimentSeriesPoint,
   SentimentWindowId,
   TeamSentimentProfile,
   TrackedPlayerSentimentRow,
 } from "@/sentiment/curated-types";
+import {
+  isRawPlayerIdLabel,
+  sentimentPlayerLabel,
+} from "@/sentiment/player-label";
 
 export type {
   LeagueSentimentFeed,
@@ -21,11 +26,71 @@ export type {
 } from "@/sentiment/curated-types";
 export { SENTIMENT_WINDOW_OPTIONS } from "@/sentiment/curated-types";
 
+function hydrateMoverRow(row: SentimentMoverRow): SentimentMoverRow {
+  const displayName = sentimentPlayerLabel(row.playerId, row.displayName);
+  return displayName === row.displayName ? row : { ...row, displayName };
+}
+
+/** Fill raw-id display names from the ESPN↔NBA alias table (off-roster ingest). */
+function hydrateSentimentDisplayNames(
+  snapshot: SentimentCuratedSnapshot
+): SentimentCuratedSnapshot {
+  let touched = false;
+  const players = snapshot.players.map((row) => {
+    const primary = row.playerIds[0];
+    if (!primary || !isRawPlayerIdLabel(row.displayName, row.playerIds)) {
+      return row;
+    }
+    const displayName = sentimentPlayerLabel(primary, row.displayName);
+    if (displayName === row.displayName) return row;
+    touched = true;
+    return { ...row, displayName };
+  });
+
+  const movers = snapshot.meta.movers;
+  let nextMovers = movers;
+  if (movers) {
+    const risers = movers.risers.map(hydrateMoverRow);
+    const fallers = movers.fallers.map(hydrateMoverRow);
+    if (
+      risers.some((row, i) => row !== movers.risers[i]) ||
+      fallers.some((row, i) => row !== movers.fallers[i])
+    ) {
+      touched = true;
+      nextMovers = { ...movers, risers, fallers };
+    }
+  }
+
+  const divergences = snapshot.meta.divergences;
+  let nextDivergences = divergences;
+  if (divergences?.rows?.length) {
+    const rows = divergences.rows.map((row) => {
+      const displayName = sentimentPlayerLabel(row.playerId, row.displayName);
+      return displayName === row.displayName ? row : { ...row, displayName };
+    });
+    if (rows.some((row, i) => row !== divergences.rows[i])) {
+      touched = true;
+      nextDivergences = { ...divergences, rows };
+    }
+  }
+
+  if (!touched) return snapshot;
+  return {
+    ...snapshot,
+    players,
+    meta: {
+      ...snapshot.meta,
+      ...(nextMovers ? { movers: nextMovers } : {}),
+      ...(nextDivergences ? { divergences: nextDivergences } : {}),
+    },
+  };
+}
+
 export const loadSentimentSnapshot = cache((): SentimentCuratedSnapshot | null => {
   // Cloudflare Workers: static import only — node:fs is empty on CF.
   const snapshot = bundledSentiment as unknown as SentimentCuratedSnapshot;
   if (!snapshot?.meta || !Array.isArray(snapshot.players)) return null;
-  return snapshot;
+  return hydrateSentimentDisplayNames(snapshot);
 });
 
 export function getPlayerSentimentProfile(

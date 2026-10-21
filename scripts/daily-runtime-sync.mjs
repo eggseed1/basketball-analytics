@@ -16,7 +16,12 @@
  * blogs, Bluesky, YouTube), the
  * Movement Center, BRef payrolls, front-office slices, the asset ledger and
  * team leadership (owners, executives, coaches).
- * Offseason (before ~Oct 15 / after Finals): only those unless FORCE_DAILY=1.
+ * Offseason (before the bundled schedule tip / after Finals): only those
+ * unless FORCE_DAILY=1. Tip date comes from game-snapshot when present.
+ *
+ * stats.nba.com bakes (season-tables, hustle, awards, franchise history) stay
+ * on the home runner: scripts/local/stats-nba-refresh.sh — GHA/Cloudflare IPs
+ * are blocked. That runner uses the same tip-aware phase gate.
  *
  *   node scripts/daily-runtime-sync.mjs
  *   FORCE_DAILY=1 node scripts/daily-runtime-sync.mjs
@@ -263,7 +268,7 @@ const TRANSACTION_STEPS = [
     args: ["scripts/build-runtime-transactions-snapshot.mjs"],
   },
 ];
-const SOFT_FAIL = new Set(["team-game-box", "drbl-recompute", "drbl-guide", "on-off-pbp", "on-off-playoffs", "season-shots", "hot-cold", "recent-insights", "percentile-pools", "salary-payoff", ...TRANSACTION_STEPS.map((s) => s.label)]);
+const SOFT_FAIL = new Set(["team-game-box", "drbl-recompute", "drbl-guide", "on-off-pbp", "on-off-playoffs", "season-shots", "hot-cold", "recent-insights", "percentile-pools", "salary-payoff", "seasonal-upkeep", ...TRANSACTION_STEPS.map((s) => s.label)]);
 
 async function runTransactionSteps() {
   const failed = [];
@@ -284,7 +289,7 @@ async function runTransactionSteps() {
 async function main() {
   const started = Date.now();
   log(
-    `phase=${info.phase} season=${info.season} force=${FORCE ? "1" : "0"} minGp=${minGp}`
+    `phase=${info.phase} season=${info.season} tip=${info.tipDate ?? "unknown"} force=${FORCE ? "1" : "0"} minGp=${minGp}`
   );
 
   if (!info.shouldRefreshPlayerViz && !FORCE) {
@@ -293,6 +298,17 @@ async function main() {
     const transactionsFailed = await runTransactionSteps();
     const movement = await runMovementSteps();
     const org = await runOrgSteps();
+    try {
+      await run("node", ["scripts/check-seasonal-upkeep.mjs"]);
+      noteStep("seasonal-upkeep", true);
+    } catch (error) {
+      noteStep("seasonal-upkeep", false);
+      log(
+        `soft-fail seasonal-upkeep: ${
+          error instanceof Error ? error.message : String(error)
+        }`
+      );
+    }
     const report = {
       ok: true,
       skipped: false,
@@ -302,6 +318,7 @@ async function main() {
       softFailed: [transactionsFailed, movement.failed, ...org.failed].filter(Boolean),
       phase: info.phase,
       season: info.season,
+      tipDate: info.tipDate ?? null,
       shouldDeploy: true,
       generatedAt: now.toISOString(),
       durationMs: Date.now() - started,
@@ -372,6 +389,7 @@ async function main() {
       args: ["tsx", "scripts/build-drbl-guide.ts"],
     },
     {
+      // Includes the live league year so CF ships current-season DARKO.
       label: "impact-overlay",
       cmd: "node",
       args: ["scripts/build-runtime-impact-snapshot.mjs"],
@@ -381,6 +399,12 @@ async function main() {
       label: "percentile-pools",
       cmd: "npx",
       args: ["tsx", "--conditions=react-server", "scripts/build-runtime-percentile-pools.ts"],
+    },
+    {
+      // Notes for hand-maintained yearly catalogs (HOF, GM seeds). Soft-fail.
+      label: "seasonal-upkeep",
+      cmd: "node",
+      args: ["scripts/check-seasonal-upkeep.mjs"],
     },
     {
       label: "current-roster",

@@ -4,6 +4,7 @@
  */
 
 import type { PlayerSeason } from "@/data/types";
+import { historySeasonSupportsDrbl } from "@/data/history/player-career-types";
 import { hasValidDrblEstimate } from "@/data/queries/percentiles";
 import { hustlePerGame } from "@/data/transformers/hustle-stats";
 import { maskUnrecordedEraStats } from "@/data/transformers/stat-eras";
@@ -44,6 +45,12 @@ export type PercentileMetric = {
   interpretation: MetricInterpretation;
   showPercentile: boolean;
   showGrade: boolean;
+  /**
+   * False when the Impact slot is shown but ranking is not ready yet
+   * (early season / no published estimate). UI uses Savant-style hatching.
+   * Omit or true when the metric is live.
+   */
+  qualified?: boolean;
   /** Present for left-rail snapshot; omit from Analytical Profile lists. */
   profileHidden?: boolean;
 };
@@ -79,13 +86,52 @@ function resolvePercentileCategory(
  * (a point in the early teens, then nothing until ~2021).
  */
 export function defaultPercentileMetricId(
-  metrics: Array<Pick<PercentileMetric, "id" | "profileHidden">>,
+  metrics: Array<
+    Pick<PercentileMetric, "id" | "profileHidden" | "qualified">
+  >,
 ): string {
-  const visible = metrics.filter((m) => !m.profileHidden);
+  const visible = metrics.filter(
+    (m) => !m.profileHidden && m.qualified !== false
+  );
   for (const id of ["darko", "r1WinEquivalents", "drbl100"] as const) {
     if (visible.some((m) => m.id === id)) return id;
   }
   return visible[0]?.id ?? metrics[0]?.id ?? "";
+}
+
+/**
+ * Impact rows that should still appear (hatched) when the season supports
+ * DRBL/WAR1 but the estimate is not published yet — early season Savant style.
+ */
+export const IMPACT_EARLY_PLACEHOLDER_SLOTS: ReadonlyArray<{
+  id: string;
+  label: string;
+}> = [
+  { id: "r1WinEquivalents", label: "WAR1" },
+  { id: "drbl100", label: "DRBL/100" },
+  { id: "drblO", label: "DRBL-O" },
+  { id: "drblD", label: "DRBL-D" },
+  { id: "vorp", label: "VORP" },
+];
+
+function notQualifiedImpactMetric(
+  slot: (typeof IMPACT_EARLY_PLACEHOLDER_SLOTS)[number]
+): PercentileMetric {
+  return {
+    id: slot.id,
+    category: "impact",
+    label: slot.label,
+    percentile: 0,
+    display: "—",
+    // JSON-safe sentinel; UI keys off `qualified: false`, not the value.
+    value: 0,
+    leagueComps: [],
+    historicalComps: [],
+    interpretation: "higher_is_better",
+    showPercentile: false,
+    showGrade: false,
+    qualified: false,
+  };
 }
 
 /**
@@ -465,6 +511,7 @@ function buildMaskedPercentileMetrics(
       interpretation,
       showPercentile,
       showGrade,
+      qualified: true,
       profileHidden: opts.profileHidden,
     });
   };
@@ -1693,6 +1740,17 @@ function buildMaskedPercentileMetrics(
       ),
       interpretation: "higher_is_better",
     });
+  }
+
+  // Early season / unpublished DRBL: keep Impact slots visible as hatched
+  // "not qualified" rows so the board layout matches a finished season.
+  if (historySeasonSupportsDrbl(seasonStats.season)) {
+    const present = new Set(metrics.map((m) => m.id));
+    for (const slot of IMPACT_EARLY_PLACEHOLDER_SLOTS) {
+      if (present.has(slot.id)) continue;
+      metrics.push(notQualifiedImpactMetric(slot));
+      present.add(slot.id);
+    }
   }
 
   return metrics;

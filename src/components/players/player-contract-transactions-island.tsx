@@ -11,6 +11,8 @@ import { contractValueModel, getContractValue } from "@/data/runtime/contract-va
 import { brandAtmosphereColors } from "@/lib/game-matchup-theme";
 import type { HistoricalTeamBrand } from "@/lib/historical-team-brand";
 import { resolveTeamBrand } from "@/lib/nba-brand";
+import { type } from "@/lib/design-system";
+import { cn } from "@/lib/utils";
 
 async function loadArrival(
   teamKey: string | null | undefined,
@@ -70,13 +72,17 @@ export async function PlayerArrivalIsland({
   );
 }
 
-/** Contract years with the surplus estimate; its own section in the main column. */
+/**
+ * Contract / salary island.
+ * Overview: surplus tiles + deep link. Salary tab: contract years vs cap, surplus, played off.
+ */
 export async function PlayerContractSectionIsland({
   playerId,
   playerName,
   teamKey,
   nbaId,
   season,
+  variant = "full",
 }: {
   playerId: string;
   playerName: string;
@@ -84,33 +90,69 @@ export async function PlayerContractSectionIsland({
   nbaId?: string | null;
   /** Season picked in the URL, if any. */
   season?: string | null;
+  variant?: "summary" | "full";
 }) {
   let contract: Awaited<ReturnType<typeof getPlayerContractSnapshot>>;
   try {
     contract = await getPlayerContractSnapshot(playerId, teamKey, playerName);
   } catch (error) {
-    // Optional section. A salary snapshot outage must never reject the
-    // player page's streamed RSC response.
     console.error("[player-contract] optional section failed", {
       playerId,
       teamKey,
       error: error instanceof Error ? error.message : String(error),
     });
+    if (variant === "full") {
+      return (
+        <section
+          id="salary"
+          className="scroll-mt-16 flex flex-col gap-2"
+          aria-label="Salary"
+        >
+          <h2 className={type.heading}>Salary</h2>
+          <p className={cn(type.bodySm, "text-muted-foreground")}>
+            Contract data is temporarily unavailable.
+          </p>
+        </section>
+      );
+    }
     return null;
   }
-  if (!contract) return null;
+  if (!contract) {
+    if (variant === "full") {
+      return (
+        <section
+          id="salary"
+          className="scroll-mt-16 flex flex-col gap-2"
+          aria-label="Salary"
+        >
+          <h2 className={type.heading}>Salary</h2>
+          <p className={cn(type.bodySm, "text-muted-foreground")}>
+            No current contract on file for this player.
+          </p>
+          <p className={cn(type.caption, "text-muted-foreground")}>
+            Waived deals and some two-ways stay off the baked payroll snapshot.
+          </p>
+        </section>
+      );
+    }
+    return null;
+  }
   return (
     <PlayerContractTransactions
       playerId={playerId}
       contract={contract}
       value={getContractValue(contract.franchiseId, contract.brefId)}
       model={contractValueModel()}
+      season={season}
+      variant={variant}
     >
-      <PlayerSalaryPayoff
-        nbaId={nbaId ?? (/^\d+$/.test(playerId) ? playerId : null)}
-        playerId={playerId}
-        season={season}
-      />
+      {variant === "full" ? (
+        <PlayerSalaryPayoff
+          nbaId={nbaId ?? (/^\d+$/.test(playerId) ? playerId : null)}
+          playerId={playerId}
+          season={season}
+        />
+      ) : null}
     </PlayerContractTransactions>
   );
 }

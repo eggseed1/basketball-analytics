@@ -75,7 +75,7 @@ export function ImpactLeaders({ leaders }: { leaders: HomeDarkoLeader[] }) {
                 playerId={p.profileId}
                 name={p.playerName}
                 nbaId={p.nbaPlayerId}
-                teamKey={p.teamAbbr ?? p.teamName}
+                teamKey={p.teamKey ?? p.teamAbbr ?? p.teamId ?? p.teamName}
                 teamLabel={p.teamAbbr ?? p.teamName}
                 className="min-w-0 flex-1"
                 nameClassName="w-full gap-3 no-underline hover:no-underline"
@@ -84,7 +84,7 @@ export function ImpactLeaders({ leaders }: { leaders: HomeDarkoLeader[] }) {
                   playerId={p.profileId}
                   nbaId={p.nbaPlayerId}
                   name={p.playerName}
-                  teamKey={p.teamAbbr ?? p.teamName}
+                  teamKey={p.teamKey ?? p.teamAbbr ?? p.teamId ?? p.teamName}
                   size="sm"
                 />
                 <div className="min-w-0 flex-1 pt-1">
@@ -92,8 +92,11 @@ export function ImpactLeaders({ leaders }: { leaders: HomeDarkoLeader[] }) {
                     <p className={cn(type.body, "min-w-0 font-semibold")}>
                       <BoardPlayerName name={p.playerName} />
                     </p>
-                    {p.teamAbbr || p.teamName ? (
-                      <TeamLogo teamKey={p.teamAbbr ?? p.teamName} size="xs" />
+                    {p.teamKey || p.teamAbbr || p.teamId || p.teamName ? (
+                      <TeamLogo
+                        teamKey={p.teamKey ?? p.teamAbbr ?? p.teamId ?? p.teamName}
+                        size="xs"
+                      />
                     ) : null}
                   </div>
                 </div>
@@ -161,8 +164,8 @@ function EfficiencyCard({
             <PlayerIdentity
               playerId={p.playerId}
               name={p.playerName}
-              teamKey={p.teamName}
-              teamLabel={p.teamName}
+              teamKey={p.teamId || p.teamAbbreviation || p.teamName}
+              teamLabel={p.teamAbbreviation ?? p.teamName}
               variant="compact"
               className="min-w-0 flex-1"
               nameClassName="w-full gap-2 no-underline hover:underline"

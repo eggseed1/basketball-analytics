@@ -107,6 +107,35 @@ export function capHistory(fromEndYear = 2011, projectYears = 4): CapHistoryPoin
   return known;
 }
 
+/** Cap dollars for each listed season (grows past the last published figure). */
+export function capsForSeasons(
+  seasons: string[]
+): Map<string, { cap: number; projected: boolean }> {
+  const unique = [...new Set(seasons.filter(Boolean))].sort();
+  if (!unique.length) return new Map();
+  const lastWanted = unique[unique.length - 1]!;
+  const lastEnd = Number(lastWanted.slice(0, 4)) + 1;
+  const history = capHistory(2001, Math.max(4, lastEnd - new Date().getFullYear() + 6));
+  const bySeason = new Map(history.map((p) => [p.season, p]));
+  const growth = contractValueModel().capGrowth;
+  let last = history[history.length - 1]!;
+  while (last.season < lastWanted) {
+    const end = Number(last.season.slice(0, 4)) + 2;
+    last = {
+      season: seasonFromEndYear(end),
+      cap: Math.round(last.cap * (1 + growth)),
+      projected: true,
+    };
+    bySeason.set(last.season, last);
+  }
+  const out = new Map<string, { cap: number; projected: boolean }>();
+  for (const season of unique) {
+    const hit = bySeason.get(season);
+    if (hit) out.set(season, { cap: hit.cap, projected: hit.projected });
+  }
+  return out;
+}
+
 export type ContractCellKind = "guaranteed" | "player" | "team" | "partial";
 export type ContractExample = {
   name: string;

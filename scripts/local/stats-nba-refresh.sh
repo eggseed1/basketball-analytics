@@ -22,6 +22,8 @@ FILES=(
   src/data/runtime/league-pace.json
   src/data/runtime/season-tables-snapshot.json
   src/data/runtime/nba-espn-player-ids.json
+  src/data/runtime/historical-team-season-records.json
+  data/ops/seasonal-upkeep.json
 )
 
 log() { echo "[stats-nba-refresh] $(date -u +%Y-%m-%dT%H:%M:%SZ) $*"; }
@@ -56,9 +58,12 @@ if [ "$REFRESH" = "1" ] || [ "${FORCE:-0}" = "1" ]; then
   else
     log "season totals failed; keeping the last bake"
   fi
+  "$VENV/bin/python" scripts/build-historical-team-season-records.py || log "historical team records failed; keeping the last bake"
 else
   log "no games in this phase; skipping the nightly bakes"
 fi
+
+node scripts/check-seasonal-upkeep.mjs || log "seasonal upkeep check failed"
 
 git add -- "${FILES[@]}"
 if git diff --cached --quiet; then

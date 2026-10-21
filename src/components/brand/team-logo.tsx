@@ -8,6 +8,7 @@ import type {
   HistoricalLogoSource,
   HistoricalTeamBrandPalette,
 } from "@/lib/historical-team-brand";
+import { brandKeyForUi } from "@/data/identity/team-map";
 import { resolveTeamBrand, teamLogoUrl } from "@/lib/nba-brand";
 
 type Size = "2xs" | "xs" | "sm" | "md" | "lg" | "xl";
@@ -48,12 +49,15 @@ export function TeamLogo({
   logoPalette?: HistoricalTeamBrandPalette | null;
 }) {
   const [failed, setFailed] = useState(false);
-  const brand = resolveTeamBrand(teamKey);
+  const resolvedKey = brandKeyForUi(teamKey);
+  const brand = resolveTeamBrand(resolvedKey);
   const forceText = isTextMarkSource(logoSource) || logoUrl === null;
   const src = forceText
     ? undefined
     : logoUrl ??
-      (logoSource === "historical_verified" ? undefined : teamLogoUrl(teamKey));
+      (logoSource === "historical_verified"
+        ? undefined
+        : teamLogoUrl(resolvedKey));
   const px = PX[size];
   // Never use raw provider numeric ids (e.g. NBA Stats 1610612760 → "161") as marks.
   const rawKey = teamKey?.toString().trim() ?? "";

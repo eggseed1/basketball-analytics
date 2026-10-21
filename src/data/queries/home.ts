@@ -29,6 +29,7 @@ import {
   getCanonicalTeamFromProvider,
   resolveCanonicalTeam,
 } from "@/data/identity/team-map";
+import { getBundledCurrentRosterEntry } from "@/data/runtime/current-roster-snapshot";
 
 /** Resolve a product team key (ESPN id / abbr) for logos — never raw NBA Stats ids. */
 function productTeamKeyFromProviderTeamId(
@@ -76,6 +77,54 @@ function productTeamKeyFromSeason(
   return {};
 }
 
+/**
+ * Prefer live roster franchise (offseason moves), then season board, then the
+ * impact feed's team id / abbr / name. Full names like "Los Angeles Clippers"
+ * often fail brand lookup — always try provider team id first.
+ */
+function productTeamForHomeLeader(opts: {
+  profileId?: string | null;
+  nbaPlayerId?: string | null;
+  season?: PlayerSeason | null;
+  providerTeamId?: string | null;
+  teamAbbr?: string | null;
+  teamName?: string | null;
+}): { teamKey?: string; teamAbbr?: string } {
+  for (const id of [opts.profileId, opts.nbaPlayerId]) {
+    const roster = getBundledCurrentRosterEntry(id);
+    if (!roster?.teamId) continue;
+    const fromRoster = productTeamKeyFromProviderTeamId(roster.teamId);
+    if (fromRoster.teamKey) {
+      return {
+        teamKey: fromRoster.teamKey,
+        teamAbbr: roster.teamAbbr || fromRoster.teamAbbr,
+      };
+    }
+  }
+
+  const fromSeason = productTeamKeyFromSeason(opts.season);
+  if (fromSeason.teamKey) return fromSeason;
+
+  const fromProvider = productTeamKeyFromProviderTeamId(opts.providerTeamId);
+  if (fromProvider.teamKey) return fromProvider;
+
+  for (const raw of [opts.teamAbbr, opts.teamName]) {
+    const token = String(raw ?? "").trim();
+    if (!token) continue;
+    const resolved = resolveCanonicalTeam(token);
+    if (resolved.status === "resolved") {
+      return {
+        teamKey: resolved.team.canonicalTeamId,
+        teamAbbr: resolved.team.abbr,
+      };
+    }
+  }
+
+  if (fromSeason.teamAbbr) return { teamAbbr: fromSeason.teamAbbr };
+  if (opts.teamAbbr?.trim()) return { teamAbbr: opts.teamAbbr.trim() };
+  return {};
+}
+
 /** Re-export schedule types for analytics home game list compatibility. */
 export type {
   ScheduleGame,
@@ -86,6 +135,8 @@ export type {
 export type HomeDarkoLeader = DarkoRating & {
   /** Prefer for `/players/[id]` and headshots. */
   profileId: string;
+  /** Canonical ESPN product team id for logos / routes. */
+  teamKey?: string;
   /** Companion season rates for Top Performers overview. */
   trueShootingPct?: number | null;
   usagePct?: number | null;
@@ -93,6 +144,7 @@ export type HomeDarkoLeader = DarkoRating & {
 
 export type HomeRaptorLeader = RaptorRating & {
   profileId: string;
+  teamKey?: string;
   trueShootingPct?: number | null;
   usagePct?: number | null;
 };
@@ -165,7 +217,7 @@ export type HomeAnalytics = {
 
 const HOME_CACHE_TTL_MS = 1000 * 60 * 5;
 /** Bump when leader team identity / companion-stat contract changes. */
-const HOME_CACHE_VERSION = 16;
+const HOME_CACHE_VERSION = 18;
 const ESPN_SEASONS_BUDGET_MS = 2500;
 const DRBL_BUDGET_MS = 2000;
 /** In-flight dedupe so concurrent Suspense islands share one load. */
@@ -207,13 +259,18 @@ function espnIdByName(seasons: PlayerSeason[]): Map<string, string> {
 
 function withProfileId<T extends { playerName: string; playerId: string; nbaPlayerId?: string }>(
   row: T,
-  byName: Map<string, string>
+  byName: Map<string, string>,
+  aliasByNba?: Map<string, { espnPlayerId?: string | null }>
 ): T & { profileId: string } {
-  const espnId = byName.get(normalizePlayerName(row.playerName));
+  const espnFromBoard = byName.get(normalizePlayerName(row.playerName));
+  const nbaId = String(row.nbaPlayerId || row.playerId || "").trim();
+  const espnFromAlias = nbaId
+    ? aliasByNba?.get(nbaId)?.espnPlayerId?.trim() || undefined
+    : undefined;
   return {
     ...row,
     // Links prefer ESPN athlete ids; headshots use nbaPlayerId via NBA CDN.
-    profileId: espnId ?? row.nbaPlayerId ?? row.playerId,
+    profileId: espnFromAlias || espnFromBoard || nbaId || row.playerId,
   };
 }
 
@@ -357,35 +414,20 @@ async function loadHomeAnalytics(): Promise<HomeAnalytics> {
     .sort((a, b) => b.impact - a.impact)
     .slice(0, 20)
     .map((row) => {
-      const base = withProfileId(row, byName);
-      const season = seasonByName.get(normalizePlayerName(row.playerName));
-      const team = productTeamKeyFromSeason(season);
-      return {
-        ...base,
-        teamAbbr: base.teamAbbr ?? team.teamAbbr ?? season?.teamAbbreviation,
-        teamName: base.teamName ?? season?.teamName,
-        trueShootingPct:
-          season?.trueShootingPct != null && season.trueShootingPct > 0
-            ? season.trueShootingPct
-            : null,
-        usagePct:
-          season?.usagePct != null && season.usagePct > 0
-            ? season.usagePct
-            : null,
-      };
-    });
-
-  const raptorLeaders = [...raptor]
-    .filter((row) => Number.isFinite(row.impact))
-    .sort((a, b) => b.impact - a.impact)
-    .slice(0, 20)
-    .map((row) => {
-      const base = withProfileId(row, byName);
+      const base = withProfileId(row, byName, aliasIndex.byNba);
       const seasonRow = seasonByName.get(normalizePlayerName(row.playerName));
-      const team = productTeamKeyFromSeason(seasonRow);
+      const team = productTeamForHomeLeader({
+        profileId: base.profileId,
+        nbaPlayerId: base.nbaPlayerId ?? row.playerId,
+        season: seasonRow,
+        providerTeamId: row.teamId,
+        teamAbbr: row.teamAbbr,
+        teamName: row.teamName,
+      });
       return {
         ...base,
-        teamAbbr: base.teamAbbr ?? team.teamAbbr ?? seasonRow?.teamAbbreviation,
+        teamKey: team.teamKey,
+        teamAbbr: team.teamAbbr ?? base.teamAbbr ?? seasonRow?.teamAbbreviation,
         teamName: base.teamName ?? seasonRow?.teamName,
         trueShootingPct:
           seasonRow?.trueShootingPct != null && seasonRow.trueShootingPct > 0
@@ -398,19 +440,71 @@ async function loadHomeAnalytics(): Promise<HomeAnalytics> {
       };
     });
 
+  const raptorLeaders = [...raptor]
+    .filter((row) => Number.isFinite(row.impact))
+    .sort((a, b) => b.impact - a.impact)
+    .slice(0, 20)
+    .map((row) => {
+      const base = withProfileId(row, byName, aliasIndex.byNba);
+      const seasonRow = seasonByName.get(normalizePlayerName(row.playerName));
+      const team = productTeamForHomeLeader({
+        profileId: base.profileId,
+        nbaPlayerId: base.nbaPlayerId ?? row.playerId,
+        season: seasonRow,
+        providerTeamId: row.teamId,
+        teamAbbr: row.teamAbbr,
+        teamName: row.teamName,
+      });
+      return {
+        ...base,
+        teamKey: team.teamKey,
+        teamAbbr: team.teamAbbr ?? base.teamAbbr ?? seasonRow?.teamAbbreviation,
+        teamName: base.teamName ?? seasonRow?.teamName,
+        trueShootingPct:
+          seasonRow?.trueShootingPct != null && seasonRow.trueShootingPct > 0
+            ? seasonRow.trueShootingPct
+            : null,
+        usagePct:
+          seasonRow?.usagePct != null && seasonRow.usagePct > 0
+            ? seasonRow.usagePct
+            : null,
+      };
+    });
+
+  function withRosterTeam(row: PlayerSeason): PlayerSeason {
+    const alias = aliasIndex.byNba.get(String(row.playerId).trim());
+    const team = productTeamForHomeLeader({
+      profileId: alias?.espnPlayerId ?? row.playerId,
+      nbaPlayerId: alias?.nbaPlayerId ?? row.playerId,
+      season: row,
+      providerTeamId: row.teamId,
+      teamAbbr: row.teamAbbreviation,
+      teamName: row.teamName,
+    });
+    if (!team.teamKey && !team.teamAbbr) return row;
+    return {
+      ...row,
+      teamId: team.teamKey ?? row.teamId,
+      teamAbbreviation: team.teamAbbr ?? row.teamAbbreviation,
+      teamName: team.teamAbbr ?? row.teamName,
+    };
+  }
+
   const tsLeaders = [...efficiencyPool]
     .sort(
       (a, b) =>
         (b.trueShootingPct ?? -Infinity) - (a.trueShootingPct ?? -Infinity)
     )
-    .slice(0, 15);
+    .slice(0, 15)
+    .map(withRosterTeam);
   const usageStars = [...qualified]
     .filter((p) => p.usagePct != null && p.usagePct >= 0.24)
     .sort(
       (a, b) =>
         (b.trueShootingPct ?? -Infinity) - (a.trueShootingPct ?? -Infinity)
     )
-    .slice(0, 15);
+    .slice(0, 15)
+    .map(withRosterTeam);
 
   const drblLeaders: HomeDrblLeader[] = [];
   if (drblSeasonOk && drblRows.length) {
@@ -447,8 +541,12 @@ async function loadHomeAnalytics(): Promise<HomeAnalytics> {
       // Alias ESPN id is a navigation crosswalk, not a model join.
       const profileId = alias?.espnPlayerId ?? espnFromName ?? nbaId;
       const season = seasonByName.get(nameKey);
-      const fromSeason = productTeamKeyFromSeason(season);
-      const fromDrbl = productTeamKeyFromProviderTeamId(row.teamId);
+      const team = productTeamForHomeLeader({
+        profileId,
+        nbaPlayerId: nbaId,
+        season,
+        providerTeamId: row.teamId,
+      });
       const ts =
         season?.trueShootingPct != null && season.trueShootingPct > 0
           ? season.trueShootingPct
@@ -462,8 +560,8 @@ async function loadHomeAnalytics(): Promise<HomeAnalytics> {
         playerName: displayName,
         profileId,
         nbaPlayerId: nbaId,
-        teamKey: fromSeason.teamKey ?? fromDrbl.teamKey,
-        teamAbbr: fromSeason.teamAbbr ?? fromDrbl.teamAbbr,
+        teamKey: team.teamKey,
+        teamAbbr: team.teamAbbr,
         drbl100: row.drbl100,
         r1Points:
           row.r1Points != null && Number.isFinite(row.r1Points)
@@ -491,7 +589,15 @@ async function loadHomeAnalytics(): Promise<HomeAnalytics> {
   for (const key of nameKeys) {
     const season = seasonByName.get(key);
     if (!season) continue;
-    const team = productTeamKeyFromSeason(season);
+    const alias = aliasIndex.byNba.get(String(season.playerId).trim());
+    const team = productTeamForHomeLeader({
+      profileId: alias?.espnPlayerId ?? season.playerId,
+      nbaPlayerId: alias?.nbaPlayerId ?? season.playerId,
+      season,
+      providerTeamId: season.teamId,
+      teamAbbr: season.teamAbbreviation,
+      teamName: season.teamName,
+    });
     performerSeasons.push({
       playerId: season.playerId,
       playerName: season.playerName,

@@ -149,7 +149,7 @@ function SurplusRow({
   const emphasized = pinned || teamHighlighted;
   const name = row.playerId ? (
     <Link
-      href={`/players/${row.playerId}#contract`}
+      href={`/players/${row.playerId}?view=salary`}
       className={cn(type.bodySm, "block truncate font-semibold text-foreground underline-offset-2 hover:underline")}
     >
       {row.name}

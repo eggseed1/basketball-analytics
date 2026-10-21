@@ -4,12 +4,26 @@ import { TeamIdentity } from "@/components/teams/team-identity";
 import { SectionLink } from "@/components/ui/section-link";
 import { listTransactionEvents } from "@/data/queries/offseason-tracker";
 import { resolvePlayersForTransactionEvents } from "@/data/queries/transaction-player-resolve";
+import { currentOffseasonLabelYear } from "@/data/providers/transactions/offseason-window";
 import { resolveTeamBrand } from "@/lib/nba-brand";
+import { type } from "@/lib/design-system";
 
 /**
  * Compact Home module - recent ESPN archive events, same query as Transactions.
+ * After tip-off the title uses the league season (e.g. 2026-27), matching
+ * Top performers; the archive link stays on /offseason for that label year.
  */
-export async function OffseasonPulsePanel({ limit = 5 }: { limit?: number } = {}) {
+export async function OffseasonPulsePanel({
+  limit = 5,
+  season,
+  tippedOff = false,
+}: {
+  limit?: number;
+  /** League season label, e.g. 2026-27. */
+  season?: string;
+  /** True once the regular-season opener has arrived. */
+  tippedOff?: boolean;
+} = {}) {
   const page = await listTransactionEvents({}, { page: 1, pageSize: limit }).catch(
     () => null
   );
@@ -19,11 +33,23 @@ export async function OffseasonPulsePanel({ limit = 5 }: { limit?: number } = {}
     () => new Map()
   );
 
+  const labelYear = currentOffseasonLabelYear();
+  const title =
+    tippedOff && season
+      ? `${season} transactions`
+      : season
+        ? `Recent ${season} transactions`
+        : "Recent NBA Transactions";
+  const archiveHref = `/offseason?year=${encodeURIComponent(String(labelYear))}`;
+
   return (
-    <section className="sports-card flex flex-col gap-3 p-4">
+    <section
+      aria-label={title}
+      className="sports-card flex flex-col gap-3 p-4"
+    >
       <div className="flex items-center justify-between gap-2">
-        <h2 className="type-heading">Recent NBA Transactions</h2>
-        <SectionLink href="/offseason">See all transactions</SectionLink>
+        <h2 className={type.heading}>{title}</h2>
+        <SectionLink href={archiveHref}>See all transactions</SectionLink>
       </div>
       <ul className="flex flex-col divide-y divide-border/40">
         {events.map((event) => {

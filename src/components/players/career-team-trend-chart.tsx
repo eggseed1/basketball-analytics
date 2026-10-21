@@ -1,6 +1,15 @@
 "use client";
 
-import { useCallback, useId, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 import {
   CartesianGrid,
   ComposedChart,
@@ -20,6 +29,7 @@ import {
   rechartsFrostWrapperStyle,
 } from "@/components/brand/frost-recharts-tooltip";
 import { TeamLogo } from "@/components/brand/team-logo";
+import { useCareerChartReveal } from "@/components/players/career-chart-filter-wipe";
 import { type } from "@/lib/design-system";
 import { useChartTheme } from "@/lib/chart-theme";
 import { distinctTeamColors } from "@/lib/nba-brand";
@@ -159,48 +169,306 @@ export function buildSavantSegmentedChart(points: CareerSeriesPoint[]): {
   };
 }
 
-const DRAW_MS = 650;
-const DRAW_EASING = "cubic-bezier(0.33, 1, 0.68, 1)";
+const DRAW_MS = 720;
+const DRAW_EASING = "cubic-bezier(0.22, 1, 0.36, 1)";
+
+/** Hold a stroke fully undrawn (no flash of a complete line before WAAPI). */
+function holdStrokeUndrawn(path: SVGPathElement): number {
+  const length = path.getTotalLength();
+  if (!(length > 0)) return 0;
+  path.style.strokeDasharray = `${length} ${length}`;
+  path.style.strokeDashoffset = `${length}`;
+  // Kill any in-flight WAAPI so the hold is not overwritten.
+  for (const a of path.getAnimations()) a.cancel();
+  return length;
+}
+
+function clearStrokeDash(path: SVGPathElement) {
+  path.style.strokeDasharray = "";
+  path.style.strokeDashoffset = "";
+}
 
 /**
- * One draw-in per stat switch, shared by the stroke and the dots. Recharts
- * remounts both when the data changes, so the clock lives with the chart and
- * remounted pieces pick up mid-draw instead of starting over.
+ * One draw-in per run, shared by the stroke and the dots. Progress is pinned
+ * to the document timeline so Recharts path remounts continue the same fill
+ * instead of restarting from empty.
  */
 class DrawClock {
   private drawnRun = 0;
   private clockRun = 0;
-  private startedAt = 0;
+  /** `Animation.startTime` on the document timeline for the active run. */
+  private timelineStart: number | null = null;
+  /** performance.now() anchor — used until timelineStart is assigned. */
+  private anchorPerf = 0;
   private animation: Animation | null = null;
+  /** Last path node we drew — Recharts often replaces the DOM mid-run. */
+  private path: SVGPathElement | null = null;
 
-  elapsed(run: number): number {
-    const now = performance.now();
-    if (this.clockRun !== run) {
-      this.clockRun = run;
-      this.startedAt = now;
-    }
-    return now - this.startedAt;
+  /** True once this run has begun drawing. */
+  started(run: number): boolean {
+    return this.clockRun === run && this.anchorPerf > 0;
   }
 
-  /** Draws `path` in for `run`, or follows a reshape while that run is still drawing. */
-  draw(path: SVGPathElement, run: number): void {
-    const inFlight = this.drawnRun === run && this.animation?.playState === "running";
-    if (run <= this.drawnRun && !inFlight) return;
+  /** Ms since this run started. 0 if not started. */
+  elapsed(run: number): number {
+    if (this.clockRun !== run || this.anchorPerf <= 0) return 0;
+    if (this.timelineStart != null) {
+      const now = document.timeline?.currentTime;
+      if (typeof now === "number") return Math.max(0, now - this.timelineStart);
+    }
+    return Math.max(0, performance.now() - this.anchorPerf);
+  }
+
+  /**
+   * Draws `path` in for `run`, or follows a reshape / DOM remount while that
+   * run is still drawing. Pass `fromStart` only after the path geometry has
+   * settled — ignored once the run is already on the timeline.
+   */
+  draw(
+    path: SVGPathElement,
+    run: number,
+    opts?: { fromStart?: boolean }
+  ): void {
+    if (run < this.drawnRun) return;
+    const samePath = this.path === path;
+    const inFlight =
+      samePath &&
+      this.drawnRun === run &&
+      this.animation?.playState === "running";
+    if (run === this.drawnRun && samePath && !inFlight && !opts?.fromStart) {
+      return;
+    }
+
+    const fresh = this.clockRun !== run;
+    if (fresh) {
+      this.clockRun = run;
+      this.timelineStart = null;
+      this.anchorPerf = performance.now();
+    }
     this.drawnRun = run;
+    this.path = path;
+
     const elapsed = this.elapsed(run);
-    if (elapsed >= DRAW_MS) return;
+    if (!fresh && elapsed >= DRAW_MS) {
+      clearStrokeDash(path);
+      return;
+    }
+
     const length = path.getTotalLength();
+    if (!(length > 0)) return;
     const dash = `${length} ${length}`;
+    // Dash before any cancel so a replaced node never paints fully.
+    path.style.strokeDasharray = dash;
+    path.style.strokeDashoffset = `${length}`;
     this.animation?.cancel();
-    this.animation = path.animate(
+    const anim = path.animate(
       [
         { strokeDasharray: dash, strokeDashoffset: length },
         { strokeDasharray: dash, strokeDashoffset: 0 },
       ],
-      { duration: DRAW_MS, easing: DRAW_EASING }
+      {
+        duration: DRAW_MS,
+        easing: DRAW_EASING,
+        fill: "forwards",
+      }
     );
-    this.animation.currentTime = elapsed;
+    if (!fresh) {
+      if (this.timelineStart != null) {
+        anim.startTime = this.timelineStart;
+      } else {
+        anim.currentTime = elapsed;
+      }
+    } else {
+      requestAnimationFrame(() => {
+        if (this.animation === anim && typeof anim.startTime === "number") {
+          this.timelineStart = anim.startTime;
+        }
+      });
+    }
+    this.animation = anim;
+    const done = () => {
+      if (this.animation !== anim) return;
+      clearStrokeDash(path);
+    };
+    void anim.finished.then(done).catch(done);
   }
+}
+
+const PLOT_CLIP_SEL = [
+  ".recharts-cartesian-grid",
+  ".recharts-reference-line",
+  ".recharts-line",
+  ".recharts-area",
+  ".recharts-scatter",
+  ".recharts-career-monotone-stroke",
+].join(", ");
+/** Hidden — plot reads empty (same closed pose as the page LTR wipe). */
+const PLOT_CLIP_CLOSED = "inset(-50% 150% -50% -50%)";
+const PLOT_CLIP_OPEN = "inset(-50% -50% -50% -50%)";
+
+/**
+ * Reveal the plot left → right via clip-path. Survives Recharts path remounts
+ * (stroke-dash restarts when the node is replaced; clip does not).
+ */
+function armPlotClipReveal(opts: {
+  root: HTMLElement;
+  isCancelled: () => boolean;
+  onDone?: () => void;
+}): void {
+  const { root, isCancelled, onDone } = opts;
+  let started = false;
+  let settle = 0;
+  let timelineStart: number | null = null;
+  let doneTimer: number | null = null;
+
+  const nodes = () =>
+    [...root.querySelectorAll<HTMLElement | SVGElement>(PLOT_CLIP_SEL)];
+
+  const holdClosed = () => {
+    for (const el of nodes()) {
+      for (const a of el.getAnimations()) a.cancel();
+      el.style.clipPath = PLOT_CLIP_CLOSED;
+    }
+  };
+
+  const attach = (el: HTMLElement | SVGElement) => {
+    if (
+      el
+        .getAnimations()
+        .some((a) => a.playState === "running" || a.playState === "finished")
+    ) {
+      return;
+    }
+    el.style.clipPath = PLOT_CLIP_CLOSED;
+    const anim = el.animate(
+      [{ clipPath: PLOT_CLIP_CLOSED }, { clipPath: PLOT_CLIP_OPEN }],
+      {
+        duration: DRAW_MS,
+        easing: DRAW_EASING,
+        fill: "forwards",
+      }
+    );
+    if (timelineStart != null) {
+      anim.startTime = timelineStart;
+    } else if (typeof anim.startTime === "number") {
+      timelineStart = anim.startTime;
+    } else {
+      requestAnimationFrame(() => {
+        if (typeof anim.startTime === "number") {
+          timelineStart = anim.startTime;
+        }
+      });
+    }
+  };
+
+  const finish = () => {
+    if (isCancelled()) return;
+    for (const el of nodes()) {
+      for (const a of el.getAnimations()) a.cancel();
+      el.style.clipPath = "";
+    }
+    onDone?.();
+  };
+
+  const boot = () => {
+    if (isCancelled()) return;
+    const list = nodes();
+    if (list.length === 0) {
+      requestAnimationFrame(boot);
+      return;
+    }
+    holdClosed();
+    if (settle++ < 2) {
+      requestAnimationFrame(boot);
+      return;
+    }
+    if (started) return;
+    started = true;
+    for (const el of list) attach(el);
+    doneTimer = window.setTimeout(finish, DRAW_MS + 40);
+  };
+
+  holdClosed();
+  const mo = new MutationObserver(() => {
+    if (isCancelled()) return;
+    if (!started) {
+      holdClosed();
+      return;
+    }
+    for (const el of nodes()) attach(el);
+  });
+  mo.observe(root, { childList: true, subtree: true });
+  boot();
+
+  // Caller cleanup should cancel; expose via returned disposer pattern by
+  // listening to isCancelled on a short poll for disconnect.
+  const watch = () => {
+    if (isCancelled()) {
+      mo.disconnect();
+      if (doneTimer != null) window.clearTimeout(doneTimer);
+      return;
+    }
+    requestAnimationFrame(watch);
+  };
+  requestAnimationFrame(watch);
+}
+
+/** Wait until the stroke path geometry settles, then draw from empty → full. */
+function armStrokeDraw(opts: {
+  getPath: () => SVGPathElement | null;
+  drawClock: DrawClock;
+  drawRun: number;
+  isCancelled: () => boolean;
+}): void {
+  const { getPath, drawClock, drawRun, isCancelled } = opts;
+  let waiting = 0;
+  let stable = 0;
+  let lastPath: SVGPathElement | null = null;
+  let lastLen = -1;
+  // Effect re-entry (Strict Mode / deps) must not re-hold a run already drawing.
+  let committed = drawClock.started(drawRun);
+  let follow = 0;
+
+  const frame = () => {
+    if (isCancelled()) return;
+    const path = getPath();
+    if (!path) {
+      if (waiting++ < 120) requestAnimationFrame(frame);
+      return;
+    }
+    const length = path.getTotalLength();
+    if (!(length > 0)) {
+      if (waiting++ < 120) requestAnimationFrame(frame);
+      return;
+    }
+
+    if (committed) {
+      if (path !== lastPath || Math.abs(length - lastLen) > 0.5) {
+        lastPath = path;
+        lastLen = length;
+        // Recharts often replaces the node mid-draw; resume same clock.
+        drawClock.draw(path, drawRun);
+      }
+    } else {
+      holdStrokeUndrawn(path);
+      if (path === lastPath && Math.abs(length - lastLen) < 0.5) {
+        stable += 1;
+      } else {
+        stable = 0;
+        lastPath = path;
+        lastLen = length;
+      }
+      if (stable < 3) {
+        if (waiting++ < 120) requestAnimationFrame(frame);
+        return;
+      }
+      committed = true;
+      drawClock.draw(path, drawRun, { fromStart: true });
+    }
+
+    if (follow++ < 90) requestAnimationFrame(frame);
+  };
+  frame();
 }
 
 function prefersReducedMotion(): boolean {
@@ -229,22 +497,38 @@ export function CareerMonotoneStroke(props: {
       Number.isFinite(p.y)
   );
   const groupRef = useRef<SVGGElement>(null);
-  const lastShape = useRef<string | null>(null);
   const shape = points.map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" ");
   const drawRun = props.drawRun ?? 0;
   const drawClock = props.drawClock;
 
-  // Recharts can hand over the new points a render or two after the stat
-  // switch (the axis domain settles last), so the draw starts when the path
-  // itself changes. Refreshes of the same stat move the path without a
-  // pending run and stay still.
+  // drawRun < 0: painted (clip reveal owns motion). 0: hold empty.
+  // >0: stroke-dash draw (legacy path; Talent/Career charts use clip).
   useLayoutEffect(() => {
-    const changed = shape !== lastShape.current;
-    lastShape.current = shape;
-    if (!changed || !drawClock || drawRun === 0) return;
-    const path = groupRef.current?.querySelector("path");
-    if (!path || prefersReducedMotion()) return;
-    drawClock.draw(path, drawRun);
+    const getPath = () =>
+      groupRef.current?.querySelector("path") ?? null;
+    if (prefersReducedMotion() || drawRun < 0) {
+      const path = getPath();
+      if (path) clearStrokeDash(path);
+      return;
+    }
+    if (!drawClock) return;
+
+    if (drawRun === 0) {
+      const path = getPath();
+      if (path) holdStrokeUndrawn(path);
+      return;
+    }
+
+    let cancelled = false;
+    armStrokeDraw({
+      getPath,
+      drawClock,
+      drawRun,
+      isCancelled: () => cancelled,
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [shape, drawRun, drawClock]);
 
   if (points.length < 2 || props.strokeStops.length === 0) return null;
@@ -299,7 +583,14 @@ function DotDrawIn({
   drawClock?: DrawClock;
   children: ReactNode;
 }) {
-  if (!run || delay == null || !drawClock) return <>{children}</>;
+  // Empty until the stroke draw is armed.
+  if (run == null || run === 0) {
+    return <g opacity={0}>{children}</g>;
+  }
+  // run < 0: show settled (no pop).
+  if (run < 0 || delay == null || !drawClock) {
+    return <>{children}</>;
+  }
   return (
     <DotDrawInGroup key={run} run={run} delay={delay} drawClock={drawClock}>
       {children}
@@ -320,12 +611,30 @@ function DotDrawInGroup({
 }) {
   const ref = useRef<SVGGElement>(null);
   useLayoutEffect(() => {
-    if (!ref.current) return;
-    const elapsed = drawClock.elapsed(run);
-    ref.current.style.animationDelay = `${Math.round(delay - elapsed)}ms`;
+    const el = ref.current;
+    if (!el) return;
+    let cancelled = false;
+    const sync = () => {
+      if (cancelled || !ref.current) return;
+      if (!drawClock.started(run)) {
+        ref.current.style.opacity = "0";
+        ref.current.style.animation = "none";
+        requestAnimationFrame(sync);
+        return;
+      }
+      const elapsed = drawClock.elapsed(run);
+      ref.current.style.opacity = "";
+      ref.current.style.animation = "";
+      ref.current.classList.add("career-dot-draw");
+      ref.current.style.animationDelay = `${Math.round(delay - elapsed)}ms`;
+    };
+    sync();
+    return () => {
+      cancelled = true;
+    };
   }, [run, delay, drawClock]);
   return (
-    <g ref={ref} className="career-dot-draw">
+    <g ref={ref} className="career-dot-draw" style={{ opacity: 0 }}>
       {children}
     </g>
   );
@@ -511,13 +820,95 @@ export function CareerTeamTrendChart({
   drawKey?: string;
 }) {
   const chartTheme = useChartTheme();
+  const wrapRef = useRef<HTMLDivElement>(null);
   const [seenDrawKey, setSeenDrawKey] = useState(drawKey);
+  // 0 = empty (clipped). >0 = LTR clip reveal.
   const [drawRun, setDrawRun] = useState(0);
-  const [drawClock] = useState(() => new DrawClock());
+  const enteredRef = useRef(false);
   if (drawKey !== seenDrawKey) {
     setSeenDrawKey(drawKey);
-    setDrawRun((run) => run + 1);
+    enteredRef.current = false;
+    setDrawRun(0);
   }
+
+  useEffect(() => {
+    if (enteredRef.current) return;
+    const root = wrapRef.current;
+    if (!root) return;
+
+    const enter = () => {
+      if (enteredRef.current) return;
+      enteredRef.current = true;
+      setDrawRun((run) => (run <= 0 ? 1 : run + 1));
+    };
+
+    if (prefersReducedMotion()) {
+      enter();
+      return;
+    }
+
+    const rect = root.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.bottom > 0) {
+      enter();
+      return;
+    }
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        io.disconnect();
+        enter();
+      },
+      { threshold: 0.05, rootMargin: "0px 0px 40px 0px" }
+    );
+    io.observe(root);
+    return () => io.disconnect();
+  }, [drawKey]);
+
+  useLayoutEffect(() => {
+    const root = wrapRef.current;
+    if (!root || prefersReducedMotion()) return;
+    if (drawRun !== 0) return;
+    let cancelled = false;
+    const hold = () => {
+      if (cancelled) return;
+      for (const el of root.querySelectorAll<HTMLElement | SVGElement>(
+        PLOT_CLIP_SEL
+      )) {
+        el.style.clipPath = PLOT_CLIP_CLOSED;
+      }
+    };
+    hold();
+    const mo = new MutationObserver(hold);
+    mo.observe(root, { childList: true, subtree: true });
+    return () => {
+      cancelled = true;
+      mo.disconnect();
+    };
+  }, [drawRun]);
+
+  useLayoutEffect(() => {
+    const root = wrapRef.current;
+    if (!root) return;
+    if (prefersReducedMotion()) {
+      for (const el of root.querySelectorAll<HTMLElement | SVGElement>(
+        PLOT_CLIP_SEL
+      )) {
+        el.style.clipPath = "";
+      }
+      return;
+    }
+    if (drawRun <= 0) return;
+    let cancelled = false;
+    armPlotClipReveal({
+      root,
+      isCancelled: () => cancelled,
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [drawRun]);
+
   const palette = useMemo(
     () => distinctTeamColors(points.map((p) => p.teamId), chartTheme.surface),
     [points, chartTheme.surface]
@@ -596,13 +987,7 @@ export function CareerTeamTrendChart({
 
   const useSavantDots = hasPercentileColors;
 
-  // The stroke eases out (cubic), so it reaches point i at 1 - (1 - f)^(1/3)
-  // of the draw; each dot pops in as the line gets to it.
-  const dotDelay = (index: number) => {
-    const f = data.length > 1 ? index / (data.length - 1) : 0;
-    return DRAW_MS * (1 - Math.cbrt(1 - f));
-  };
-
+  // Clip reveal owns empty → full; dots stay painted underneath.
   const renderDot = (props: {
     cx?: number;
     cy?: number;
@@ -617,9 +1002,7 @@ export function CareerTeamTrendChart({
         payload={props.payload}
         selectedSeason={selectedSeason}
         onSelect={onSeasonSelect ? handleSelect : undefined}
-        drawRun={drawRun}
-        drawDelay={props.index != null ? dotDelay(props.index) : undefined}
-        drawClock={drawClock}
+        drawRun={-1}
       />
     );
   };
@@ -648,7 +1031,7 @@ export function CareerTeamTrendChart({
     showLegend && !useSavantDots && visibleLegend.length > 1;
 
   return (
-    <div className={cn("flex min-w-0 flex-col", className)}>
+    <div ref={wrapRef} className={cn("flex min-w-0 flex-col", className)}>
       {/*
         Explicit px height on ResponsiveContainer (not %). Percentage height
         can resolve against a taller ancestor and paint the SVG over siblings
@@ -665,12 +1048,21 @@ export function CareerTeamTrendChart({
           >
             <XAxis
               dataKey="season"
-              tick={{ fontSize: 12 }}
+              tick={(props) => (
+                <CareerAxisTick {...props} axis="x" fontSize={12} />
+              )}
               tickLine={false}
               axisLine={false}
             />
             <YAxis
-              tick={{ fontSize: 12 }}
+              tick={(props) => (
+                <CareerAxisTick
+                  {...props}
+                  axis="y"
+                  fontSize={12}
+                  formatter={formatCareerChartNumber}
+                />
+              )}
               tickLine={false}
               axisLine={false}
               width={36}
@@ -703,8 +1095,7 @@ export function CareerTeamTrendChart({
                   strokeWidth={shapeProps.strokeWidth}
                   gradientId={strokeGradId}
                   strokeStops={strokeStops}
-                  drawRun={drawRun}
-                  drawClock={drawClock}
+                  drawRun={-1}
                 />
               )}
               dot={renderDot}
@@ -756,6 +1147,215 @@ function yearAxisTicks(min: number, max: number): number[] {
   return ticks;
 }
 
+const AXIS_TICK_EASE = "cubic-bezier(0.33, 1, 0.68, 1)";
+
+/**
+ * Axis marks stay visible across filter wipes (plot-only clip). When the scale
+ * changes, each tick eases into its new position / label.
+ */
+function CareerAxisTick({
+  x = 0,
+  y = 0,
+  payload,
+  textAnchor = "middle",
+  index = 0,
+  axis,
+  formatter,
+  fontSize = 11,
+}: {
+  /** Recharts may pass string coordinates; coerce for SVG. */
+  x?: number | string;
+  y?: number | string;
+  payload?: { value?: string | number };
+  textAnchor?: "start" | "middle" | "end" | "inherit";
+  index?: number;
+  axis: "x" | "y";
+  formatter?: (value: number) => string;
+  fontSize?: number;
+}) {
+  const xNum = typeof x === "number" ? x : Number(x) || 0;
+  const yNum = typeof y === "number" ? y : Number(y) || 0;
+  const reveal = useCareerChartReveal();
+  const ref = useRef<SVGGElement>(null);
+  const primed = useRef(false);
+  const prevKey = useRef<string | null>(null);
+  const raw = payload?.value;
+  const label =
+    typeof raw === "number"
+      ? formatter
+        ? formatter(raw)
+        : String(raw)
+      : raw != null
+        ? String(raw)
+        : "";
+  const markKey = `${label}|${Math.round(xNum)}|${Math.round(yNum)}`;
+
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const rest = () => {
+      el.style.opacity = "1";
+      el.style.transform = `translate(${xNum}px, ${yNum}px)`;
+    };
+
+    // First paint: show immediately. Line/dot draw owns scroll entry motion.
+    if (!primed.current) {
+      primed.current = true;
+      prevKey.current = markKey;
+      rest();
+      return;
+    }
+
+    // Same mark after a parent re-render — keep it put.
+    if (prevKey.current === markKey && reveal !== "swap") {
+      rest();
+      return;
+    }
+    const scaleSwap = reveal === "swap" || prevKey.current !== markKey;
+    prevKey.current = markKey;
+
+    if (!scaleSwap || prefersReducedMotion()) {
+      rest();
+      return;
+    }
+
+    const fromX = axis === "y" ? xNum - 8 : xNum;
+    const fromY = axis === "x" ? yNum + 8 : yNum;
+    const delay = Math.min(index, 10) * 30;
+    for (const a of el.getAnimations()) a.cancel();
+    const anim = el.animate(
+      [
+        { opacity: 0, transform: `translate(${fromX}px, ${fromY}px)` },
+        { opacity: 1, transform: `translate(${xNum}px, ${yNum}px)` },
+      ],
+      {
+        duration: 440,
+        delay,
+        easing: AXIS_TICK_EASE,
+        fill: "forwards",
+      }
+    );
+    void anim.finished
+      .then(() => {
+        try {
+          anim.commitStyles();
+        } catch {
+          /* ignore */
+        }
+        anim.cancel();
+        rest();
+      })
+      .catch(() => rest());
+
+    return () => {
+      anim.cancel();
+      rest();
+    };
+  }, [xNum, yNum, label, markKey, axis, index, reveal]);
+
+  return (
+    <g
+      ref={ref}
+      style={{ opacity: 1, transform: `translate(${xNum}px, ${yNum}px)` }}
+    >
+      <text
+        x={0}
+        y={0}
+        dy={axis === "x" ? 12 : 4}
+        textAnchor={textAnchor}
+        fill="var(--muted-foreground)"
+        fontSize={fontSize}
+      >
+        {label}
+      </text>
+    </g>
+  );
+}
+
+type TalentSeasonPoint = { year: number; value: number; season?: string };
+
+function TalentChartTooltip({
+  active,
+  payload,
+}: {
+  active?: boolean;
+  payload?: Array<{
+    dataKey?: string | number;
+    value?: number | string;
+    payload?: TalentSeasonPoint;
+  }>;
+}) {
+  if (!active || !payload?.length) return null;
+  const row =
+    payload.find((item) => item.payload?.season)?.payload ??
+    payload.find((item) => item.payload != null)?.payload;
+  if (!row || !Number.isFinite(row.value)) return null;
+  const label = row.season ?? String(Math.round(row.year));
+  return (
+    <FrostRechartsTooltip active={active} className="w-max max-w-[12rem]">
+      <p className={cn(type.caption, "font-semibold text-foreground")}>
+        {label}
+      </p>
+      <p
+        className={cn(
+          type.caption,
+          "mt-0.5 tabular-nums text-muted-foreground"
+        )}
+      >
+        {formatCareerChartNumber(row.value)}
+      </p>
+    </FrostRechartsTooltip>
+  );
+}
+
+function TalentSeasonDot({
+  cx,
+  cy,
+  fill,
+  ring,
+  active = false,
+  drawRun,
+  drawDelay,
+  drawClock,
+}: {
+  cx?: number;
+  cy?: number;
+  fill: string;
+  ring: string;
+  active?: boolean;
+  drawRun?: number;
+  drawDelay?: number;
+  drawClock?: DrawClock;
+}) {
+  if (cx == null || cy == null || !Number.isFinite(cx)) return <g />;
+  const r = active ? 7 : 5.5;
+  const mark = (
+    <circle
+      cx={cx}
+      cy={cy}
+      r={r}
+      fill={fill}
+      stroke={ring}
+      strokeWidth={active ? 2.5 : 2}
+    />
+  );
+  return (
+    <g data-motion-static>
+      <circle cx={cx} cy={cy} r={14} fill="transparent" stroke="none" />
+      {!drawRun ? (
+        <g opacity={0}>{mark}</g>
+      ) : drawRun < 0 ? (
+        mark
+      ) : (
+        <DotDrawIn run={drawRun} delay={drawDelay ?? 0} drawClock={drawClock}>
+          {mark}
+        </DotDrawIn>
+      )}
+    </g>
+  );
+}
+
 /** Career page: small dots are games, large dots are seasons, the line runs through the seasons. */
 export function TalentYearChart({
   dots,
@@ -764,11 +1364,97 @@ export function TalentYearChart({
   height = 260,
 }: {
   dots: Array<{ year: number; value: number }>;
-  line: Array<{ year: number; value: number; season?: string }>;
+  line: TalentSeasonPoint[];
   kind: "impact" | "box";
   height?: number;
 }) {
   const theme = useChartTheme();
+  const wrapRef = useRef<HTMLDivElement>(null);
+  // 0 = empty (clipped). >0 = LTR clip reveal in progress / done.
+  const [drawRun, setDrawRun] = useState(0);
+  const enteredRef = useRef(false);
+
+  // Arm once when in view. Filter wipe remounts this component empty.
+  useEffect(() => {
+    if (enteredRef.current) return;
+    const root = wrapRef.current;
+    if (!root) return;
+
+    const enter = () => {
+      if (enteredRef.current) return;
+      enteredRef.current = true;
+      setDrawRun(1);
+    };
+
+    if (prefersReducedMotion()) {
+      enter();
+      return;
+    }
+
+    const rect = root.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.bottom > 0) {
+      enter();
+      return;
+    }
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        io.disconnect();
+        enter();
+      },
+      { threshold: 0.05, rootMargin: "0px 0px 40px 0px" }
+    );
+    io.observe(root);
+    return () => io.disconnect();
+  }, []);
+
+  // Empty while waiting: clip the plot shut so nothing flashes full.
+  useLayoutEffect(() => {
+    const root = wrapRef.current;
+    if (!root || prefersReducedMotion()) return;
+    if (drawRun !== 0) return;
+    let cancelled = false;
+    const hold = () => {
+      if (cancelled) return;
+      for (const el of root.querySelectorAll<HTMLElement | SVGElement>(
+        PLOT_CLIP_SEL
+      )) {
+        el.style.clipPath = PLOT_CLIP_CLOSED;
+      }
+    };
+    hold();
+    const mo = new MutationObserver(hold);
+    mo.observe(root, { childList: true, subtree: true });
+    return () => {
+      cancelled = true;
+      mo.disconnect();
+    };
+  }, [drawRun]);
+
+  // Armed: smooth empty → full via clip (path remounts cannot restart it).
+  useLayoutEffect(() => {
+    const root = wrapRef.current;
+    if (!root) return;
+    if (prefersReducedMotion()) {
+      for (const el of root.querySelectorAll<HTMLElement | SVGElement>(
+        PLOT_CLIP_SEL
+      )) {
+        el.style.clipPath = "";
+      }
+      return;
+    }
+    if (drawRun <= 0) return;
+    let cancelled = false;
+    armPlotClipReveal({
+      root,
+      isCancelled: () => cancelled,
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [drawRun]);
+
   const years = [...dots, ...line].map((point) => point.year);
   const xMin = Math.floor(Math.min(...years));
   const xMax = Math.ceil(Math.max(...years));
@@ -782,7 +1468,12 @@ export function TalentYearChart({
   const dotRadius = kind === "impact" ? 1.35 : 1.05;
   const ring = theme.isDark ? "#0b1220" : "#ffffff";
   return (
-    <div className="relative w-full min-w-0 shrink-0" style={{ height }}>
+    <div
+      ref={wrapRef}
+      data-motion-static
+      className="relative w-full min-w-0 shrink-0"
+      style={{ height }}
+    >
       <ResponsiveContainer width="100%" height={height}>
         <ComposedChart margin={{ top: 8, right: 12, left: 0, bottom: 4 }}>
           <CartesianGrid
@@ -797,12 +1488,18 @@ export function TalentYearChart({
             domain={[xMin - 0.15, xMax + 0.15]}
             ticks={yearAxisTicks(xMin, xMax)}
             tickFormatter={(value: number) => String(value)}
-            tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
+            tick={(props) => <CareerAxisTick {...props} axis="x" />}
             tickLine={false}
             axisLine={false}
           />
           <YAxis
-            tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
+            tick={(props) => (
+              <CareerAxisTick
+                {...props}
+                axis="y"
+                formatter={formatCareerChartNumber}
+              />
+            )}
             tickLine={false}
             axisLine={false}
             width={32}
@@ -816,25 +1513,36 @@ export function TalentYearChart({
             strokeOpacity={0.35}
             strokeDasharray="4 4"
           />
+          <Tooltip
+            cursor={{ stroke: "var(--border)", strokeWidth: 1 }}
+            wrapperStyle={rechartsFrostWrapperStyle}
+            content={<TalentChartTooltip />}
+          />
           <Scatter
             data={dots}
             dataKey="value"
             tooltipType="none"
             isAnimationActive={false}
             legendType="none"
-            shape={(props: { cx?: number; cy?: number }) => {
+            shape={(props: {
+              cx?: number;
+              cy?: number;
+            }) => {
               if (props.cx == null || props.cy == null || !Number.isFinite(props.cx)) {
                 return <g />;
               }
+              // Clip reveal owns empty → full; marks stay painted underneath.
               return (
-                <circle
-                  cx={props.cx}
-                  cy={props.cy}
-                  r={dotRadius}
-                  fill={dotFill}
-                  fillOpacity={dotOpacity}
-                  pointerEvents="none"
-                />
+                <g data-motion-static>
+                  <circle
+                    cx={props.cx}
+                    cy={props.cy}
+                    r={dotRadius}
+                    fill={dotFill}
+                    fillOpacity={dotOpacity}
+                    pointerEvents="none"
+                  />
+                </g>
               );
             }}
           />
@@ -844,51 +1552,25 @@ export function TalentYearChart({
             dataKey="value"
             stroke={lineStroke}
             strokeWidth={2}
-            dot={false}
-            activeDot={false}
-            tooltipType="none"
-            style={{ pointerEvents: "none" }}
             isAnimationActive={false}
-          />
-          <Scatter
-            data={line}
-            name="season"
-            dataKey="value"
-            tooltipType="none"
-            isAnimationActive={false}
-            legendType="none"
-            shape={(props: {
-              cx?: number;
-              cy?: number;
-              payload?: { season?: string; value?: number };
-            }) => {
-              if (props.cx == null || props.cy == null || !Number.isFinite(props.cx)) {
-                return <g />;
-              }
-              const value = props.payload?.value;
-              const season = props.payload?.season;
-              const label =
-                value != null && Number.isFinite(value)
-                  ? formatCareerChartNumber(value)
-                  : null;
-              return (
-                <g
-                  data-tip={season || label || undefined}
-                  data-tip-sub={season && label ? label : undefined}
-                >
-                  <circle cx={props.cx} cy={props.cy} r={12} fill="transparent" />
-                  <circle
-                    data-tip-anchor=""
-                    cx={props.cx}
-                    cy={props.cy}
-                    r={5.5}
-                    fill={lineStroke}
-                    stroke={ring}
-                    strokeWidth={2}
-                  />
-                </g>
-              );
-            }}
+            dot={(props: { cx?: number; cy?: number }) => (
+              <TalentSeasonDot
+                cx={props.cx}
+                cy={props.cy}
+                fill={lineStroke}
+                ring={ring}
+                drawRun={-1}
+              />
+            )}
+            activeDot={(props: { cx?: number; cy?: number }) => (
+              <TalentSeasonDot
+                cx={props.cx}
+                cy={props.cy}
+                fill={lineStroke}
+                ring={ring}
+                active
+              />
+            )}
           />
         </ComposedChart>
       </ResponsiveContainer>

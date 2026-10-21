@@ -1,6 +1,7 @@
 import { isCareerQualifyingSeason, peakCareerSeason } from "@/analytics";
 import type { PlayerSeason } from "@/data/types";
 import { hasValidDrblEstimate } from "@/data/queries/percentiles";
+import { isPreseasonRosterSeason } from "@/data/providers/nba/espn-roster-client";
 import {
   cardStintsForSeason,
   isMultiTeamSeasonRow,
@@ -25,6 +26,8 @@ export function resolvePlayerSeason(
     preferPeakWhenHistorical?: boolean;
     nowSeason?: string;
     isActive?: boolean | null;
+    /** Clock for tip / preseason gates (tests). */
+    now?: Date;
   }
 ): string {
   if (seasonParam) return seasonParam;
@@ -35,12 +38,12 @@ export function resolvePlayerSeason(
     ]),
   ].sort((a, b) => b.localeCompare(a));
   const latest = seasons[0];
+  const clock = options?.now ?? new Date();
   const nowSeason =
     options?.nowSeason ??
-    canonicalSeasonFromStartYear(currentNbaStartYear());
+    canonicalSeasonFromStartYear(currentNbaStartYear(clock));
 
-  // Prefer the latest season with real games — skip empty preseason stubs
-  // (e.g. 2026-27 roster row with 0 GP) so percentiles / stats default correctly.
+  // Prefer the latest season with real games when skipping empty stubs.
   const withGames = career
     .filter((row) => row.gamesPlayed > 0)
     .map((row) => row.season);
@@ -64,7 +67,16 @@ export function resolvePlayerSeason(
     }
   }
 
-  return latestWithGames ?? latest ?? nowSeason;
+  // Pre-tip roster window: skip empty current-year stubs (0 GP) so percentiles
+  // still land on last year's completed board — same gate as Explore.
+  if (isPreseasonRosterSeason(nowSeason, clock)) {
+    return latestWithGames ?? latest ?? nowSeason;
+  }
+
+  // After tip-off: current league year (Explore parity). Historical careers
+  // already returned a peak above; everyone else — including prior-year last
+  // GP with no 2026-27 stub yet — stays on the open season.
+  return nowSeason;
 }
 
 /**

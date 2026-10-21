@@ -23,8 +23,7 @@ import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { PlayerPercentileIsland } from "@/components/players/player-percentile-island";
 import { PlayerNotYetPlayed } from "@/components/players/player-not-yet-played";
 import { unplayedDrafteeFor } from "@/data/runtime/draftee-search";
-import { PlayerRoleIsland } from "@/components/players/player-role-island";
-import { PlayerSimilarIsland } from "@/components/players/player-similar-island";
+import { PlayerComparisonsBoard } from "@/components/players/player-comparisons-board";
 import {
   PlayerCareerAnalysisIslandDeferred,
   PlayerGamesIslandDeferred,
@@ -35,9 +34,12 @@ import {
 import {
   PlayerBoardSkeleton,
   PlayerIdentitySlotSkeleton,
+  PlayerOverviewCareerSkeleton,
+  PlayerOverviewContractSkeleton,
   PlayerPercentileSkeleton,
 } from "@/components/players/player-page-skeletons";
-import { PlayerStatsIsland } from "@/components/players/player-stats-island";
+import { PlayerOverviewCareerSection } from "@/components/players/player-overview-career-section";
+import { PlayerViewSeasonProvider } from "@/components/players/player-view-season";
 import { EraThemeScope } from "@/components/time-machine/era-theme-scope";
 import { assessProductionProviderGuard } from "@/data/diagnostics/production-provider-guard";
 import {
@@ -99,6 +101,7 @@ import {
   canonicalSeasonFromStartYear,
   currentNbaStartYear,
 } from "@/data/providers/historical/season-range";
+import { isPreseasonRosterSeason } from "@/data/providers/nba/espn-roster-client";
 import { slimEdgeProductEnabled } from "@/data/providers/nba/runtime-policy";
 import { PlayerAccoladesIsland } from "@/components/players/player-accolades-island";
 import {
@@ -320,9 +323,11 @@ export default async function PlayerPage({
       ...universeSeasons.map((s) => s.season),
     ]),
   ];
+  const nowSeason = canonicalSeasonFromStartYear(currentNbaStartYear());
   const season = resolvePlayerSeason(career, seasonParam, historySeasonIds, {
     preferPeakWhenHistorical: true,
     isActive: masterPlayer?.isActive,
+    nowSeason,
   });
   const statsCtx = resolvePlayerStatsSeason(career, season);
   // Baked draft list says he hasn't played, and no career row disagrees. An
@@ -340,6 +345,11 @@ export default async function PlayerPage({
     }
     return best?.season ?? null;
   })();
+  // Keep the open league year (and the resolved selection) on the slider even
+  // at 0 GP — otherwise seasonOnTrack snaps Explore deep links 2026-27→2025-26.
+  const keepCurrentOnTrack =
+    !isPreseasonRosterSeason(nowSeason) ||
+    career.some((row) => row.season === nowSeason);
   const seasonOptions = [
     ...new Set([
       ...career
@@ -356,9 +366,10 @@ export default async function PlayerPage({
         )
         .map((row) => row.season),
       ...historySeasonIds,
+      ...(keepCurrentOnTrack ? [nowSeason] : []),
+      season,
     ]),
   ].sort((a, b) => b.localeCompare(a));
-  const nowSeason = canonicalSeasonFromStartYear(currentNbaStartYear());
   const seasonTeams = buildSeasonTeamsMap(career);
   const seasonTeamCtx = resolveSelectedSeasonTeamContext(career, season);
   const primaryTeam = seasonTeamCtx.row;
@@ -635,20 +646,6 @@ export default async function PlayerPage({
           <PlayerCareerDataGuardBanner guard={careerDataGuard} />
         </PlayerDestinationIdentity>
 
-        {view === "overview" && !slimWorker && !notYetPlayed ? (
-          <Suspense fallback={<PlayerBoardSkeleton label={t("styleTitle")} />}>
-            <PlayerRoleIsland
-              career={career}
-              requestSeason={season}
-              position={bioPosition}
-              playerId={playerId}
-              nbaId={identity?.nbaId}
-              espnId={identity?.espnId}
-              accent={atmosphere?.colorA}
-            />
-          </Suspense>
-        ) : null}
-
         {view === "sentiment" ? (
           <Suspense
             fallback={<PlayerBoardSkeleton label={t("loadingSentiment")} />}
@@ -676,23 +673,39 @@ export default async function PlayerPage({
           </Suspense>
         ) : null}
 
-        {view === "overview" || view === "career" ? (
-          (slimWorker || notYetPlayed) && view === "overview" ? null : (
-            <Suspense
-              fallback={<PlayerBoardSkeleton label={t("loadingCareer")} />}
-            >
-              <PlayerCareerIsland
-                playerId={playerId}
-                season={season}
-                seasonType={seasonType}
-                career={career}
-                teamKey={teamKey}
-                fromHistory={fromHistory}
-                themeMode={themeMode}
-                chart={view === "career" ? "games" : "seasons"}
-              />
-            </Suspense>
-          )
+        {view === "overview" && !(slimWorker || notYetPlayed) ? (
+          <Suspense
+            fallback={
+              <PlayerOverviewCareerSkeleton label={t("loadingCareer")} />
+            }
+          >
+            <PlayerOverviewCareerSection
+              playerId={playerId}
+              season={season}
+              seasonType={seasonType}
+              career={career}
+              teamKey={teamKey}
+              fromHistory={fromHistory}
+              themeMode={themeMode}
+            />
+          </Suspense>
+        ) : null}
+
+        {view === "career" ? (
+          <Suspense
+            fallback={<PlayerBoardSkeleton label={t("loadingCareer")} />}
+          >
+            <PlayerCareerIsland
+              playerId={playerId}
+              season={season}
+              seasonType={seasonType}
+              career={career}
+              teamKey={teamKey}
+              fromHistory={fromHistory}
+              themeMode={themeMode}
+              chart="games"
+            />
+          </Suspense>
         ) : null}
 
         {view === "career" && !slimWorker ? (
@@ -711,68 +724,67 @@ export default async function PlayerPage({
           </Suspense>
         ) : null}
 
-        {view === "overview" && !notYetPlayed ? (
-          <Suspense
-            fallback={<PlayerBoardSkeleton label={t("loadingStatistics")} />}
-          >
-            <div className="flex flex-col gap-3">
-              <PlayerStatsIsland
-                playerId={playerId}
-                season={season}
-                statsSeason={statsCtx.statsSeason}
-                seasonType={seasonType}
-                career={career}
-                teamKey={teamKey}
-                fromHistory={fromHistory}
-                themeMode={themeMode === "modern" ? "modern" : "historical"}
-                honor={honor}
-              />
-            </div>
-          </Suspense>
-        ) : null}
-
         {view === "overview" && !slimWorker ? (
-          <Suspense fallback={null}>
+          <Suspense
+            fallback={
+              <PlayerOverviewContractSkeleton label={t("loadingContract")} />
+            }
+          >
             <PlayerContractSectionIsland
               playerId={playerId}
               playerName={displayName}
               teamKey={teamKey}
               nbaId={identity?.nbaId}
               season={seasonParam}
+              variant="summary"
             />
           </Suspense>
         ) : null}
 
-        {careerSeasonsForTable.length > 0 &&
-        historyCareer &&
-        (view === "overview" || view === "career") ? (
+        {view === "salary" && !slimWorker ? (
+          <Suspense
+            fallback={
+              <PlayerOverviewContractSkeleton label={t("loadingSalary")} />
+            }
+          >
+            <PlayerContractSectionIsland
+              playerId={playerId}
+              playerName={displayName}
+              teamKey={teamKey}
+              nbaId={identity?.nbaId}
+              season={seasonParam}
+              variant="full"
+            />
+          </Suspense>
+        ) : null}
+
+        {view === "career" &&
+        careerSeasonsForTable.length > 0 &&
+        historyCareer ? (
           <HistoricalCareerSurface
             career={historyCareer}
             seasons={careerSeasonsForTable}
             playerId={playerId}
             viewingSeason={season}
+            mode="full"
           />
         ) : null}
 
-        {view === "overview" ? (
-          <Suspense
-            fallback={<PlayerBoardSkeleton label={t("loadingSimilar")} />}
-          >
-            <PlayerSimilarIsland
-              playerId={playerId}
-              season={statsCtx.statsSeason}
-              career={career}
-              identityTeamKey={teamKey}
-              nbaId={identity?.nbaId}
-              espnId={identity?.espnId}
-              honor={honor}
-            />
-          </Suspense>
+        {view === "overview" && career.length > 0 ? (
+          <PlayerComparisonsBoard
+            playerId={playerId}
+            season={season}
+            career={career}
+            teamKey={teamKey}
+            espnId={identity?.espnId}
+            position={bioPosition}
+          />
         ) : null}
 
         {view === "overview" && !slimWorker && !notYetPlayed ? (
           <section
             id="ask"
+            data-slot="section-frame"
             className="scroll-mt-16 flex flex-col gap-3"
             aria-label={t("askAria")}
           >
@@ -878,7 +890,18 @@ export default async function PlayerPage({
         />
         <MotionReveal />
         <GlassTintScaleProvider scale={PLAYER_CARD_TINT_SCALE}>
-          {mainContent}
+          <PlayerViewSeasonProvider
+            initialSeason={season}
+            seasonOptions={seasonOptions}
+          >
+            {/* Stack so overview sections hold for scroll reveal; hero stays eager. */}
+            <div
+              data-motion-stack
+              className="flex flex-col gap-4 sm:gap-5"
+            >
+              {mainContent}
+            </div>
+          </PlayerViewSeasonProvider>
         </GlassTintScaleProvider>
       </main>
     </DestinationClientShell>
