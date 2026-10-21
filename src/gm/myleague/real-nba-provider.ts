@@ -239,6 +239,57 @@ function countingRows(rows: PlayerSeason[]): number {
   ).length;
 }
 
+function darkoRows(rows: PlayerSeason[]): number {
+  return rows.filter(
+    (row) => row.darkoDpm != null && Number.isFinite(row.darkoDpm)
+  ).length;
+}
+
+/**
+ * Franchise Lab overalls key off DARKO + entry-drbl (NBA Stats ids).
+ * ESPN athlete ids without DARKO inflate box-score impact and miss DRBL.
+ * Prefer the same bundled board + overlays Explore uses; remap ESPN → NBA.
+ */
+async function finalizeFranchiseBoard(
+  rows: PlayerSeason[],
+  canonical: string
+): Promise<PlayerSeason[]> {
+  let out = rows;
+  if (darkoRows(out) < 50) {
+    try {
+      const { overlayImpactRatingsForPeers } = await import(
+        "@/data/queries/players"
+      );
+      out = await overlayImpactRatingsForPeers(out, canonical);
+    } catch {
+      /* keep raw rows */
+    }
+  }
+  try {
+    const { getPlayerIdAliasIndex } = await import(
+      "@/data/identity/player-identity"
+    );
+    const { isProductionApprovedPlayerAlias } = await import(
+      "@/data/providers/impact/player-id-aliases"
+    );
+    const index = await getPlayerIdAliasIndex();
+    out = out.map((row) => {
+      const alias = index.byEspn.get(row.playerId);
+      if (
+        alias?.nbaPlayerId &&
+        isProductionApprovedPlayerAlias(alias) &&
+        alias.nbaPlayerId !== row.playerId
+      ) {
+        return { ...row, playerId: alias.nbaPlayerId };
+      }
+      return row;
+    });
+  } catch {
+    /* keep provider ids */
+  }
+  return out;
+}
+
 async function loadPlayerSeasonBoard(canonical: string): Promise<PlayerSeason[]> {
   let historical: PlayerSeason[] = [];
   try {
@@ -246,34 +297,49 @@ async function loadPlayerSeasonBoard(canonical: string): Promise<PlayerSeason[]>
   } catch {
     historical = [];
   }
-  if (countingRows(historical) >= 50) return historical;
+  // Localhost stats.nba board: counting + DARKO already on NBA ids.
+  if (countingRows(historical) >= 50 && darkoRows(historical) >= 50) {
+    return historical;
+  }
+  if (countingRows(historical) >= 50) {
+    return finalizeFranchiseBoard(historical, canonical);
+  }
 
+  // Workers: do not take live ESPN first — it ships ESPN ids and no DARKO,
+  // so Franchise Lab overalls diverge from localhost. Same order as Explore.
   try {
-    const { getDataProvider } = await import("@/data/providers");
-    const live = await getDataProvider().getPlayerSeasons(canonical);
-    if (countingRows(live) >= 50) return live;
+    const { getBundledBrefPeerBoard } = await import(
+      "@/data/runtime/bref-advanced-snapshot"
+    );
+    const { isBundledPeerBoardReady } = await import(
+      "@/lib/player-board-season"
+    );
+    const bundled = getBundledBrefPeerBoard(canonical);
+    if (isBundledPeerBoardReady(canonical, bundled.length)) {
+      return finalizeFranchiseBoard(bundled, canonical);
+    }
   } catch {
-    /* try registry / bundled boards below */
+    /* try getPlayersBySeason / live below */
   }
 
   try {
     const { getPlayersBySeason } = await import("@/data/queries/players");
     const board = await getPlayersBySeason(canonical);
-    if (countingRows(board) >= 50) return board;
+    if (countingRows(board) >= 50) {
+      return finalizeFranchiseBoard(board, canonical);
+    }
   } catch {
-    /* try static season tables below */
+    /* try live ESPN last */
   }
 
-  // Cloudflare Workers: season-tables snapshot (same board Explore uses when
-  // live stats.nba / ESPN boards are empty). No upstream; always available.
   try {
-    const { getBundledBrefPeerBoard } = await import(
-      "@/data/runtime/bref-advanced-snapshot"
-    );
-    const bundled = getBundledBrefPeerBoard(canonical);
-    if (countingRows(bundled) >= 50) return bundled;
+    const { getDataProvider } = await import("@/data/providers");
+    const live = await getDataProvider().getPlayerSeasons(canonical);
+    if (countingRows(live) >= 50) {
+      return finalizeFranchiseBoard(live, canonical);
+    }
   } catch {
-    /* keep whatever historical returned */
+    /* keep historical */
   }
 
   return historical;
