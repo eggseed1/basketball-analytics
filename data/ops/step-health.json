@@ -1,8 +1,4 @@
 {
   "_comment": "Nightly steps that are soft-failing, and since when. Written by scripts/daily-runtime-sync.mjs; scripts/check-step-health.mjs alerts after 72h.",
-  "failing": {
-    "retired-jerseys": {
-      "since": "2026-10-21T15:19:00.726Z"
-    }
-  }
+  "failing": {}
 }
