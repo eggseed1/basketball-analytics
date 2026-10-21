@@ -11,3 +11,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 # User-facing copy
 
 When writing or editing text users see (page subtitles, captions, empty states, metric descriptions, ASK DRBL notes), follow `.cursor/skills/humanizer/SKILL.md`. No em dashes joining clauses. Keep honesty disclaimers such as "blank, not 0" or "not a legality ruling"; state them plainly. A lone "—" as a missing-value placeholder is correct and stays.
+
+# Section surfaces
+
+When adding or redesigning page sections (backgrounds, headers inside vs outside glass, overview vs subtabs), follow `.cursor/rules/section-surfaces.mdc` and `src/lib/design-system-sections.ts`. Prefer `SectionFrame` from `@/components/layout/section-frame`.

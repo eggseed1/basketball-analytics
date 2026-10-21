@@ -1,0 +1,83 @@
+---
+description: When to use section backgrounds, where headers sit, and how subtab pages compose
+globs: src/components/**/*.{tsx,ts},src/app/**/*.{tsx,ts},src/lib/design-system*.ts
+alwaysApply: false
+---
+
+# Section surfaces, headers, and subtabs
+
+Canonical tokens and helpers: `src/lib/design-system-sections.ts`.
+Prefer `SectionFrame` from `@/components/layout/section-frame` for new sections.
+Visual examples: Design System lab → "Section surfaces".
+
+## Decision: section background or open canvas?
+
+**Open canvas (default).** The page atmosphere is the background. Do not wrap a whole section (title + body) in glass.
+
+Use a **surface** (`GlassSurface`, `sports-card`, `Surface` glass/subtle) only when at least one is true:
+
+1. **Interactive cluster** — controls the user changes (Ask chips, filters, segmented modes tied to loaded data).
+2. **Dense board / chart** — tables, season boards, shot maps that need frost to separate from wash.
+3. **Sticky chrome** — headers that float over scrolling content.
+4. **Identity module** — compact column cards (Arrival, upcoming slate) that sit beside the hero, not as page sections. Style is a full overview section, not an identity card.
+5. **Atomic tiles** — small metric cells (surplus, worth) get tile-level glass; the section around them stays open.
+
+**Never** put glass on:
+
+- Page section wrappers that only group title + body
+- Narrative prose or short descriptions
+- "Go deeper" / see-also link rows
+- Thin story or status tiles meant to sit on atmosphere (see game story)
+- Headers, captions, or meta lines by themselves
+
+## Decision: header outside or inside the surface?
+
+**Outside (default for page sections).**
+
+```
+<section>                     ← open, scroll-mt, gap-3|4
+  <SectionHeader />           ← h2 + description on canvas
+  <surface or open body />
+</section>
+```
+
+- Use `SectionHeader` / `type.heading` for page section titles.
+- Description uses `type.bodySm` + `text-muted-foreground`.
+- Actions (SectionLink, TextLink) sit in the header row, not inside the glass unless they are board chrome.
+
+**Inside only when the glass is the whole module** (identity column):
+
+- No page-level `h2`. Use `type.caption` uppercase label (e.g. upcoming slate).
+- Body copy and chips live in the same card.
+- Do not also put an outer `SectionHeader` above that card.
+
+**Boards with their own title:** prefer `hideTitle` + external `SectionHeader` so subtabs and overview share one title pattern.
+
+## Subtab pages (`?view=…`)
+
+Subtabs are full destinations, not overview clones.
+
+| Role | Pattern |
+|------|---------|
+| Primary body | One main board/chart; header outside; board may be glass |
+| Secondary | Another section below with the same header-outside rule |
+| Overview leftovers | Do not re-embed full Career + Stats + Historical + dual comps on Overview |
+| Cross-links | Open-canvas "Go deeper" with TextLinks / SectionLinks to other views |
+
+Spacing: `gap-8` (`space.section`) between major sections; `gap-3`–`gap-4` inside a section.
+
+## Overview vs deep tabs (player page)
+
+**Overview (deployed / current):** identity chrome (Arrival, Style card, schedule, percentile hero) plus Career chart, Stats board, full Contract, Historical table, Similar + comps/futures, Ask.
+
+Proposed lean Overview discrepancies are tracked in chat / product notes, not as the live composition until explicitly shipped.
+
+**Career / Advanced / Games / …** own the full boards, charts, and historical tables. Overview links into them; it does not duplicate them.
+
+## Checklist before shipping a section
+
+1. Is there a page `h2`? If yes, it sits on the canvas, not inside glass.
+2. Does the body need glass for interaction or density? If no, leave it open.
+3. Am I wrapping title + body in one card? Split them.
+4. Is this overview repeating a subtab? Cut or link.
+5. User-facing copy follows humanizer (no em-dash clause joins).
