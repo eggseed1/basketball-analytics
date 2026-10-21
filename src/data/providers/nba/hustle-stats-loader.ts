@@ -96,11 +96,19 @@ export function peekHustleSeason(season: string): HustlePlayerRow[] | null {
 export async function fetchHustleSeason(season: string): Promise<HustlePlayerRow[]> {
   if (!isHustleStatsSeason(season)) return [];
 
-  if (preferBundledProductDataOnEdge()) {
-    return loadBundledHustleSeason(season);
-  }
+  const bundled = await loadBundledHustleSeason(season);
 
-  return sharedGetOrSet(
+  // Cloudflare Workers: stay on the baked snapshot (no stats.nba fan-out).
+  if (preferBundledProductDataOnEdge()) return bundled;
+
+  const cached = peekHustleSeason(season);
+  if (cached?.length) return cached;
+
+  // Live refresh into cache — do not block the first paint. Percentile hero
+  // enrichment wraps this in a short soft budget; waiting on stats.nba first
+  // left Hustle tabs empty ("No rankings in this category…") whenever the
+  // network lagged, even though the bundle already has the season.
+  void sharedGetOrSet(
     `hustle:totals:${season}`,
     {
       ttlMs: seasonStatsTtlMs(season),
@@ -109,9 +117,20 @@ export async function fetchHustleSeason(season: string): Promise<HustlePlayerRow
     },
     async () => {
       const live = await loadHustleSeasonUncached(season).catch(() => []);
-      if (live.length) return live;
-      return loadBundledHustleSeason(season);
+      return live.length ? live : bundled;
     }
+  ).catch(() => {});
+
+  if (bundled.length) return bundled;
+
+  return sharedGetOrSet(
+    `hustle:totals:${season}`,
+    {
+      ttlMs: seasonStatsTtlMs(season),
+      staleMs: seasonStatsStaleMs(season),
+      tags: ["hustle", `hustle:totals:${season}`],
+    },
+    async () => loadHustleSeasonUncached(season).catch(() => [])
   );
 }
 

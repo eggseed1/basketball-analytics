@@ -6,6 +6,13 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useDelayedPlays } from "@/components/sports/use-score-delay";
 import type { PlayByPlayEvent } from "@/data/types";
 import { isLiveLikeStatus, type GameStatusKind } from "@/lib/game-status";
+import {
+  countTaggedPlays,
+  PLAY_FILTERS,
+  playEventMatchesFilter,
+  tagPlayContexts,
+  type PlayFilterId,
+} from "@/lib/games/play-filters";
 import { resolveRefreshIntervalMs } from "@/lib/live-refresh-policy";
 import { cn } from "@/lib/utils";
 
@@ -142,11 +149,20 @@ export function GamePlayByPlayPanel({
   }, [events]);
 
   const [period, setPeriod] = useState<number | "all">("all");
+  const [playFilter, setPlayFilter] = useState<PlayFilterId | null>(null);
+
+  const playTags = useMemo(
+    () => tagPlayContexts(events, homeTricode, awayTricode),
+    [events, homeTricode, awayTricode]
+  );
 
   const visible = useMemo(() => {
-    if (period === "all") return events;
-    return events.filter((e) => e.period === period);
-  }, [events, period]);
+    return events.filter((e) => {
+      if (period !== "all" && e.period !== period) return false;
+      if (!playEventMatchesFilter(e, playFilter, playTags)) return false;
+      return true;
+    });
+  }, [events, period, playFilter, playTags]);
 
   if (events.length === 0) {
     return (
@@ -170,7 +186,11 @@ export function GamePlayByPlayPanel({
             Play-by-play
           </h2>
           <p className="text-sm text-muted-foreground">
-            {events.length.toLocaleString()} events
+            {visible.length.toLocaleString()}
+            {playFilter || period !== "all"
+              ? ` of ${events.length.toLocaleString()}`
+              : ""}{" "}
+            events
             {live ? " · live" : null}
           </p>
         </div>
@@ -195,60 +215,85 @@ export function GamePlayByPlayPanel({
         </div>
       </div>
 
+      <div
+        className="flex flex-wrap gap-1.5"
+        role="group"
+        aria-label="Scoring context"
+      >
+        {PLAY_FILTERS.map((f) => {
+          const active = playFilter === f.id;
+          const n = countTaggedPlays(playTags, f.id);
+          return (
+            <PeriodChip
+              key={f.id}
+              active={active}
+              onClick={() => setPlayFilter((cur) => (cur === f.id ? null : f.id))}
+              label={`${f.label} ${n}`}
+            />
+          );
+        })}
+      </div>
+
       <div className="max-h-[32rem] overflow-auto rounded-xl border border-border">
-        <table className="w-full min-w-[40rem] border-collapse text-sm">
-          <thead className="sticky top-0 z-10 bg-background">
-            <tr className="border-b border-border text-left text-xs text-muted-foreground">
-              <th className="px-3 py-2 font-medium">Q</th>
-              <th className="px-3 py-2 font-medium">Clock</th>
-              <th className="px-3 py-2 font-medium">Team</th>
-              <th className="px-3 py-2 font-medium">Play</th>
-              <th className="px-3 py-2 text-right font-medium">{awayTricode}</th>
-              <th className="px-3 py-2 text-right font-medium">{homeTricode}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {visible.map((event) => (
-              <tr
-                key={event.id}
-                data-fresh={live && !firstIds.has(event.id) ? "" : undefined}
-                className={cn(
-                  "border-b border-border/70 last:border-0",
-                  event.points > 0 && "bg-muted/40"
-                )}
-              >
-                <td className="px-3 py-1.5 tabular-nums text-muted-foreground">
-                  {periodLabel(event.period)}
-                </td>
-                <td className="px-3 py-1.5 tabular-nums text-muted-foreground">
-                  {event.clock}
-                </td>
-                <td className="px-3 py-1.5 font-mono text-xs uppercase text-muted-foreground">
-                  {event.teamTricode ?? "—"}
-                </td>
-                <td
+        {visible.length === 0 ? (
+          <p className="px-4 py-6 text-sm text-muted-foreground">
+            No plays match these filters.
+          </p>
+        ) : (
+          <table className="w-full min-w-[40rem] border-collapse text-sm">
+            <thead className="sticky top-0 z-10 bg-background">
+              <tr className="border-b border-border text-left text-xs text-muted-foreground">
+                <th className="px-3 py-2 font-medium">Q</th>
+                <th className="px-3 py-2 font-medium">Clock</th>
+                <th className="px-3 py-2 font-medium">Team</th>
+                <th className="px-3 py-2 font-medium">Play</th>
+                <th className="px-3 py-2 text-right font-medium">{awayTricode}</th>
+                <th className="px-3 py-2 text-right font-medium">{homeTricode}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {visible.map((event) => (
+                <tr
+                  key={event.id}
+                  data-fresh={live && !firstIds.has(event.id) ? "" : undefined}
                   className={cn(
-                    "px-3 py-1.5",
-                    event.points > 0
-                      ? "text-foreground"
-                      : event.shotResult === "Missed" ||
-                          event.actionType === "turnover"
-                        ? "text-muted-foreground"
-                        : "text-foreground"
+                    "border-b border-border/70 last:border-0",
+                    event.points > 0 && "bg-muted/40"
                   )}
                 >
-                  <PlayDescription event={event} />
-                </td>
-                <td className="px-3 py-1.5 text-right tabular-nums">
-                  {event.scoreAway}
-                </td>
-                <td className="px-3 py-1.5 text-right tabular-nums">
-                  {event.scoreHome}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                  <td className="px-3 py-1.5 tabular-nums text-muted-foreground">
+                    {periodLabel(event.period)}
+                  </td>
+                  <td className="px-3 py-1.5 tabular-nums text-muted-foreground">
+                    {event.clock}
+                  </td>
+                  <td className="px-3 py-1.5 font-mono text-xs uppercase text-muted-foreground">
+                    {event.teamTricode ?? "—"}
+                  </td>
+                  <td
+                    className={cn(
+                      "px-3 py-1.5",
+                      event.points > 0
+                        ? "text-foreground"
+                        : event.shotResult === "Missed" ||
+                            event.actionType === "turnover"
+                          ? "text-muted-foreground"
+                          : "text-foreground"
+                    )}
+                  >
+                    <PlayDescription event={event} />
+                  </td>
+                  <td className="px-3 py-1.5 text-right tabular-nums">
+                    {event.scoreAway}
+                  </td>
+                  <td className="px-3 py-1.5 text-right tabular-nums">
+                    {event.scoreHome}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </section>
   );
