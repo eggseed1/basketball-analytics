@@ -55,9 +55,9 @@ export default async function LearnStatPage({
   const conceptId = page.kind === "guide" ? page.guide.id : page.topic.id;
 
   return (
-    <main data-motion-page className="site-shell flex flex-col gap-8 py-6 sm:py-8">
+    <main data-motion-page className="site-shell flex flex-col gap-4 pb-6 sm:gap-5 sm:pb-8">
       <MotionReveal />
-      <div data-motion-stack className="site-prose flex w-full flex-col gap-8 lg:mx-0 lg:max-w-4xl">
+      <div data-motion-stack className="site-prose flex w-full flex-col gap-4 lg:mx-0 lg:max-w-4xl sm:gap-5">
         <AppLink
           href="/learn"
           className="text-[14px] font-semibold text-muted-foreground underline-offset-4 hover:underline"

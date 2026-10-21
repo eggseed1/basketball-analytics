@@ -5,7 +5,6 @@ import type {
   GameTeamTotals,
   GameWinningFactor,
 } from "@/analytics/game-lab";
-import { GlassSurface } from "@/components/brand/glass-surface";
 import { MatchupWashCard } from "@/components/brand/team-wash-card";
 import { MoreInfo } from "@/components/ui/more-info";
 import { type } from "@/lib/design-system";
@@ -42,8 +41,7 @@ function StoryTile({
   index: number;
 }) {
   return (
-    <GlassSurface
-      effect="css"
+    <div
       data-motion-tile=""
       data-stat-tile=""
       style={{ "--i": index } as CSSProperties}
@@ -71,7 +69,7 @@ function StoryTile({
           <span className="truncate">{sub}</span>
         </span>
       ) : null}
-    </GlassSurface>
+    </div>
   );
 }
 

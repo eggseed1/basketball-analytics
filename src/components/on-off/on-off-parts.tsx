@@ -100,36 +100,54 @@ export function Dumbbell({
   min,
   max,
   color,
+  higherIsBetter = true,
 }: {
   on: number;
   off: number;
   min: number;
   max: number;
   color: string;
+  /** Colors the connector by whether on is better than off. */
+  higherIsBetter?: boolean;
 }) {
   const pos = (v: number) => `${((v - min) / (max - min)) * 100}%`;
   const left = Math.min(on, off);
   const right = Math.max(on, off);
+  const onBetter = on === off ? null : on > off === higherIsBetter;
+  const bridge =
+    onBetter == null
+      ? "color-mix(in oklab, var(--foreground) 22%, transparent)"
+      : onBetter
+        ? "color-mix(in oklab, var(--data-positive) 55%, transparent)"
+        : "color-mix(in oklab, var(--data-negative) 55%, transparent)";
   return (
     <div className="relative h-5" aria-hidden>
       <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-foreground/10" />
       <div
         data-motion-bar="x"
-        className="absolute top-1/2 h-1 -translate-y-1/2 rounded-full bg-foreground/20"
+        className="absolute top-1/2 h-1.5 -translate-y-1/2 rounded-full"
         style={{
           left: pos(left),
           width: `calc(${pos(right)} - ${pos(left)})`,
+          background: bridge,
           transformOrigin: on >= off ? "left" : "right",
         }}
       />
       <span
-        className="absolute top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-muted-foreground/60 bg-background"
+        className="absolute top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-muted-foreground/70 bg-background"
         style={{ left: pos(off) }}
       />
       <span
         data-motion-mark
         className="absolute top-1/2 size-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full ring-2 ring-background"
-        style={{ left: pos(on), background: color, "--mark-from": pos(off) } as CSSProperties}
+        style={
+          {
+            left: pos(on),
+            background: color,
+            boxShadow: `0 0 0 3px color-mix(in oklab, ${color} 28%, transparent)`,
+            "--mark-from": pos(off),
+          } as CSSProperties
+        }
       />
     </div>
   );

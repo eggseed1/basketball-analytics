@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 import { PlayerCompFuturesChartLazy as PlayerCompFuturesChart } from "@/components/charts/recharts-lazy";
-import { type } from "@/lib/design-system";
+import { SectionFrame } from "@/components/layout/section-frame";
 import {
   COMP_METRICS,
   type CompFutures,
@@ -11,7 +11,6 @@ import {
   type CompMetricId,
 } from "@/lib/player-comp-futures-shared";
 import type { PlayerSeason } from "@/data/types";
-import { cn } from "@/lib/utils";
 
 /**
  * Client-fetched comps/futures. SSR used to call getBundledCompPool inside the
@@ -81,18 +80,14 @@ export function PlayerCompFuturesPanel({
 
   if (!bundle) {
     return (
-      <div className="flex flex-col gap-3 border-t border-border/60 pt-4">
-        <div>
-          <h3 className={cn(type.heading, "tracking-tight")}>Comps and futures</h3>
-          <p className="mt-1 text-[13px] leading-snug text-muted-foreground">
-            Loading same-age comps…
-          </p>
-        </div>
-        <div
-          className="loading-shimmer h-56 w-full rounded-lg"
-          aria-hidden
-        />
-      </div>
+      <SectionFrame
+        id="comps-futures"
+        density="supporting"
+        title="Comps and futures"
+        description="Loading same-age comps…"
+      >
+        <div className="loading-shimmer h-56 w-full rounded-lg" aria-hidden />
+      </SectionFrame>
     );
   }
 
@@ -101,15 +96,12 @@ export function PlayerCompFuturesPanel({
     bundle.items[0]!;
 
   return (
-    <div className="flex flex-col gap-3 border-t border-border/60 pt-4">
-      <div>
-        <h3 className={cn(type.heading, "tracking-tight")}>Comps and futures</h3>
-        <p className="mt-1 text-[13px] leading-snug text-muted-foreground">
-          {first.focalName}&apos;s line runs through {first.focalSeason}. After that
-          age, each faint line is a comp&apos;s actual rating. The dashed line starts
-          on his mark and follows the weighted median of how those comps changed.
-        </p>
-      </div>
+    <SectionFrame
+      id="comps-futures"
+      density="supporting"
+      title="Comps and futures"
+      description={`${first.focalName}'s line runs through ${first.focalSeason}. After that age, each faint line is a comp's actual rating. The dashed line starts on his mark and follows the weighted median of how those comps changed.`}
+    >
       <PlayerCompFuturesChart
         bundle={bundle}
         teamKey={teamKey ?? focal?.teamId}
@@ -117,6 +109,6 @@ export function PlayerCompFuturesPanel({
         season={season}
         espnId={espnId}
       />
-    </div>
+    </SectionFrame>
   );
 }

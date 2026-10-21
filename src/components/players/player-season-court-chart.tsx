@@ -72,7 +72,10 @@ export function PlayerSeasonCourtChart({
 
   return (
     <div className="flex flex-col gap-3">
-      <GlassSurface effect="css" className="glass-text-scrim px-3 py-2">
+      <GlassSurface
+        variant="subtle"
+        effect="css"
+      className="glass-text-scrim px-3 py-2">
         <p className={cn(type.caption, "font-semibold text-foreground")}>
           {playerName ? `${playerName} · ` : ""}
           Season shot chart

@@ -6,6 +6,8 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
 
+import { GlassSurface } from "@/components/brand/glass-surface";
+import { boardType, type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 
 function fmt(n: number, digits = 1): string {
@@ -69,7 +71,7 @@ export function PlayerSparkTrend({
 }) {
   if (!points.length) {
     return (
-      <figure className="rounded-md border border-border p-3">
+      <figure className="sports-card sports-card-subtle p-3">
         <figcaption className="text-[13px] font-semibold">{title}</figcaption>
         <p className="mt-1 text-[12px] text-muted-foreground">{question}</p>
         <p className="mt-3 text-[12px] text-muted-foreground">No data.</p>
@@ -98,11 +100,7 @@ export function PlayerSparkTrend({
       : null;
 
   return (
-    <figure
-     
-      className="rounded-md border border-border p-3"
-      aria-label={title}
-    >
+    <figure className="sports-card sports-card-subtle p-3" aria-label={title}>
       <figcaption className="text-[13px] font-semibold">{title}</figcaption>
       <p className="mt-0.5 text-[12px] text-muted-foreground">{question}</p>
       <svg
@@ -191,7 +189,7 @@ export function PlayerBarDistribution({
 }) {
   const peak = Math.max(1, ...bins.map((b) => b.count));
   return (
-    <figure className="rounded-md border border-border p-3">
+    <figure className="sports-card sports-card-subtle p-3">
       <figcaption className="text-[13px] font-semibold">{title}</figcaption>
       <p className="mt-0.5 text-[12px] text-muted-foreground">{question}</p>
       <ul data-hover-group className="mt-3 flex h-[120px] items-end gap-1" role="img" aria-label={title}>
@@ -238,6 +236,15 @@ export function PlayerBarDistribution({
   );
 }
 
+/** Soft rank color for Advanced strips and impact markers. */
+export function percentileAccent(p: number | null): string {
+  if (p == null || !Number.isFinite(p)) return "var(--muted-foreground)";
+  if (p >= 75) return "var(--data-positive)";
+  if (p >= 50) return "var(--chart-1)";
+  if (p >= 25) return "var(--chart-4)";
+  return "var(--data-negative)";
+}
+
 export function PlayerPercentileStrip({
   title,
   rows,
@@ -251,15 +258,16 @@ export function PlayerPercentileStrip({
   }>;
 }) {
   return (
-    <figure className="rounded-md border border-border p-3">
-      <figcaption className="text-[13px] font-semibold">{title}</figcaption>
+    <figure className="sports-card sports-card-subtle glass-text-scrim w-full p-3 sm:p-4">
+      <figcaption className="text-[15px] font-bold tracking-tight">{title}</figcaption>
       <p className="mt-0.5 text-[12px] text-muted-foreground">
-        Marker = league percentile in the same season (qualified peers).
+        League percentile among qualified peers this season.
       </p>
       <ul data-hover-group className="mt-3 flex flex-col gap-3">
         {rows.map((r) => {
           const p = r.percentile;
           const left = p == null ? null : Math.max(2, Math.min(98, p));
+          const accent = percentileAccent(p);
           return (
             <li
               key={r.label}
@@ -270,7 +278,7 @@ export function PlayerPercentileStrip({
             >
               <span className="text-[12px] font-medium">{r.label}</span>
               <div
-                className="relative h-2 rounded-full bg-muted"
+                className="relative h-2.5 overflow-hidden rounded-full bg-foreground/[0.08]"
                 role="img"
                 aria-label={
                   p == null
@@ -279,12 +287,26 @@ export function PlayerPercentileStrip({
                 }
               >
                 {left != null ? (
-                  <span
-                    data-motion-mark
-                    data-tip-anchor
-                    className="absolute top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-foreground"
-                    style={{ left: `${left}%`, "--mark-from": "2%" } as CSSProperties}
-                  />
+                  <>
+                    <span
+                      data-motion-bar="x"
+                      className="absolute inset-y-0 left-0 rounded-full"
+                      style={{
+                        width: `${left}%`,
+                        background: `color-mix(in oklab, ${accent} 42%, transparent)`,
+                      }}
+                    />
+                    <span
+                      data-motion-mark
+                      data-tip-anchor
+                      className="absolute top-1/2 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full ring-2 ring-background"
+                      style={{
+                        left: `${left}%`,
+                        background: accent,
+                        "--mark-from": "2%",
+                      } as CSSProperties}
+                    />
+                  </>
                 ) : (
                   <span className="absolute inset-0 flex items-center justify-center text-[9px] text-muted-foreground">
                     n/a
@@ -294,7 +316,10 @@ export function PlayerPercentileStrip({
               <span className="text-right text-[12px] tabular-nums">
                 {r.valueLabel}
                 {p != null ? (
-                  <span className="ml-1 text-[10px] text-muted-foreground">
+                  <span
+                    className="ml-1 text-[10px] font-semibold"
+                    style={{ color: accent }}
+                  >
                     {p}
                   </span>
                 ) : null}
@@ -322,61 +347,85 @@ export function PlayerSplitDeltaMatrix({
   metrics: string[];
 }) {
   return (
-    <figure className="rounded-md border border-border p-3">
-      <figcaption className="text-[13px] font-semibold">{title}</figcaption>
-      <p className="mt-0.5 text-[12px] text-muted-foreground">
-        Difference vs season baseline (per game / rate). Sample size shown.
-      </p>
-      <div className="mt-3 overflow-x-auto">
-        <table className="w-full min-w-[32rem] text-left text-[12px]">
-          <thead className="border-b border-border text-[10px] uppercase text-muted-foreground">
-            <tr>
-              <th className="px-2 py-1.5">Split</th>
-              <th className="px-2 py-1.5 text-right">G</th>
-              <th className="px-2 py-1.5 text-right">MIN</th>
-              {metrics.map((m) => (
-                <th key={m} className="px-2 py-1.5 text-right">
-                  {m}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-border">
-            {rows.map((r) => (
-              <tr key={r.label}>
-                <td className="px-2 py-1.5 font-semibold">{r.label}</td>
-                <td className="px-2 py-1.5 text-right tabular-nums">{r.games}</td>
-                <td className="px-2 py-1.5 text-right tabular-nums">
-                  {fmt(r.minutes, 0)}
-                </td>
-                {metrics.map((m) => {
-                  const d = r.deltas[m];
-                  const isPct = m.includes("%");
-                  const label =
-                    d == null
-                      ? "—"
-                      : `${d > 0 ? "+" : ""}${(isPct ? d * 100 : d).toFixed(
-                          isPct ? 1 : 1
-                        )}${isPct ? "pp" : ""}`;
-                  return (
-                    <td
-                      key={m}
-                      className={cn(
-                        "px-2 py-1.5 text-right tabular-nums",
-                        d != null && d > 0 && "text-positive",
-                        d != null && d < 0 && "text-negative"
-                      )}
-                    >
-                      {label}
-                    </td>
-                  );
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+    <div className="flex flex-col gap-3">
+      <div>
+        <h3 className={type.title}>{title}</h3>
+        <p className={cn(type.caption, "text-muted-foreground")}>
+          Difference vs season baseline (per game / rate). Sample size shown.
+        </p>
       </div>
-    </figure>
+      <GlassSurface variant="subtle" effect="css" className="p-4 sm:p-5">
+        <div className="board-scroll-host overflow-x-auto">
+          <table className="w-full min-w-[640px] text-left">
+            <thead
+              className={cn(
+                boardType.head,
+                "border-b border-border font-semibold uppercase tracking-wide text-muted-foreground"
+              )}
+            >
+              <tr>
+                <th className="px-3 py-2">Split</th>
+                <th className="px-2 py-2 text-right">G</th>
+                <th className="px-2 py-2 text-right">MIN</th>
+                {metrics.map((m) => (
+                  <th key={m} className="px-2 py-2 text-right">
+                    {m}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border/40">
+              {rows.map((r) => (
+                <tr key={r.label}>
+                  <td className={cn(boardType.cell, "px-3 py-2 font-semibold")}>
+                    {r.label}
+                  </td>
+                  <td
+                    className={cn(
+                      boardType.cell,
+                      "px-2 py-2 text-right tabular-nums"
+                    )}
+                  >
+                    {r.games}
+                  </td>
+                  <td
+                    className={cn(
+                      boardType.cell,
+                      "px-2 py-2 text-right tabular-nums"
+                    )}
+                  >
+                    {fmt(r.minutes, 0)}
+                  </td>
+                  {metrics.map((m) => {
+                    const d = r.deltas[m];
+                    const isPct = m.includes("%");
+                    const label =
+                      d == null
+                        ? "—"
+                        : `${d > 0 ? "+" : ""}${(isPct ? d * 100 : d).toFixed(1)}${
+                            isPct ? "pp" : ""
+                          }`;
+                    return (
+                      <td
+                        key={m}
+                        className={cn(
+                          boardType.cell,
+                          "px-2 py-2 text-right tabular-nums",
+                          d != null && d > 0 && "text-positive",
+                          d != null && d < 0 && "text-negative"
+                        )}
+                      >
+                        {label}
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </GlassSurface>
+    </div>
   );
 }
 
@@ -391,7 +440,7 @@ export function PlayerOpponentDeltaBars({
 }) {
   const maxAbs = Math.max(0.01, ...rows.map((r) => Math.abs(r.delta)));
   return (
-    <figure className="rounded-md border border-border p-3">
+    <figure className="sports-card sports-card-subtle p-3">
       <figcaption className="text-[13px] font-semibold">{title}</figcaption>
       <p className="mt-0.5 text-[12px] text-muted-foreground">
         {metricLabel} vs season average · sorted best → worst · G shown
@@ -449,7 +498,7 @@ export function PlayerShotProfileBars({
   }>;
 }) {
   return (
-    <figure className="rounded-md border border-border p-3">
+    <figure className="sports-card sports-card-subtle p-3">
       <figcaption className="text-[13px] font-semibold">{title}</figcaption>
       <p className="mt-0.5 text-[12px] text-muted-foreground">
         How often (bar) and how well (dot), with a league baseline marker when available.
@@ -517,6 +566,7 @@ export function PlayerImpactMarker({
   bins,
   range,
   value,
+  copy,
 }: {
   title: string;
   valueLabel: string;
@@ -526,6 +576,8 @@ export function PlayerImpactMarker({
   range?: { min: number; max: number; digits?: number };
   /** Player value; with `range` the marker sits on the bins' value axis. */
   value?: number | null;
+  /** One line under the title. Defaults to league-distribution copy. */
+  copy?: string;
 }) {
   const binLabel = (i: number) => {
     if (!range) return null;
@@ -540,40 +592,71 @@ export function PlayerImpactMarker({
       : percentile == null
         ? null
         : Math.max(0, Math.min(100, percentile));
+  const accent = percentileAccent(percentile);
+  const markerBin =
+    marker == null || !bins.length
+      ? -1
+      : Math.min(bins.length - 1, Math.floor((marker / 100) * bins.length));
   return (
-    <figure className="rounded-md border border-border p-3">
-      <figcaption className="text-[13px] font-semibold">{title}</figcaption>
+    <figure className="sports-card sports-card-subtle glass-text-scrim p-3 sm:p-4">
+      <figcaption className="text-[15px] font-bold tracking-tight">{title}</figcaption>
       <p className="mt-0.5 text-[12px] text-muted-foreground">
-        League distribution with player marker (same-season qualified peers).
+        {copy ?? "League distribution with player marker (same-season peers)."}
       </p>
-      <p className="mt-2 text-[20px] font-bold tabular-nums">{valueLabel}</p>
+      <p
+        className="mt-2 text-[22px] font-bold tabular-nums tracking-tight"
+        style={{ color: percentile != null ? accent : undefined }}
+      >
+        {valueLabel}
+      </p>
       {percentile != null ? (
-        <p className="text-[12px] text-muted-foreground">{percentile}th percentile</p>
+        <p className="text-[12px] font-semibold" style={{ color: accent }}>
+          {percentile}th percentile
+        </p>
       ) : null}
       <div className="relative mt-3 h-[72px]">
         <ul data-hover-group className="flex h-full items-end gap-0.5" role="img" aria-label={title}>
-          {bins.map((c, i) => (
-            <li
-              key={i}
-              data-hover-item
-              data-tip={binLabel(i) ?? undefined}
-              data-tip-sub={binLabel(i) ? `${c} ${c === 1 ? "player" : "players"}` : undefined}
-              className="flex h-full flex-1 items-end"
-            >
-              <span
-                data-motion-bar="y"
-                data-tip-anchor
-                className="block w-full rounded-t-sm bg-muted-foreground/40"
-                style={{ height: `${(c / max) * 100}%`, "--i": Math.min(i, 30) } as CSSProperties}
-              />
-            </li>
-          ))}
+          {bins.map((c, i) => {
+            const near = markerBin >= 0 && Math.abs(i - markerBin) <= 1;
+            const fill = near
+              ? accent
+              : i / bins.length >= 0.66
+                ? "var(--chart-1)"
+                : i / bins.length >= 0.33
+                  ? "var(--chart-4)"
+                  : "var(--muted-foreground)";
+            return (
+              <li
+                key={i}
+                data-hover-item
+                data-tip={binLabel(i) ?? undefined}
+                data-tip-sub={binLabel(i) ? `${c} ${c === 1 ? "player" : "players"}` : undefined}
+                className="flex h-full flex-1 items-end"
+              >
+                <span
+                  data-motion-bar="y"
+                  data-tip-anchor
+                  className="block w-full rounded-t-sm"
+                  style={{
+                    height: `${(c / max) * 100}%`,
+                    background: `color-mix(in oklab, ${fill} ${near ? 78 : 38}%, transparent)`,
+                    "--i": Math.min(i, 30),
+                  } as CSSProperties}
+                />
+              </li>
+            );
+          })}
         </ul>
         {marker != null ? (
           <div
             data-motion-mark
-            className="pointer-events-none absolute bottom-0 top-0 w-0.5 bg-foreground"
-            style={{ left: `${marker}%`, "--mark-from": "0%" } as CSSProperties}
+            className="pointer-events-none absolute bottom-0 top-0 w-0.5"
+            style={{
+              left: `${marker}%`,
+              background: accent,
+              boxShadow: `0 0 0 2px color-mix(in oklab, ${accent} 35%, transparent)`,
+              "--mark-from": "0%",
+            } as CSSProperties}
             aria-hidden
           />
         ) : null}
@@ -597,8 +680,8 @@ export function PlayerContextScatter({
 }) {
   if (points.length < 2) {
     return (
-      <figure className="rounded-md border border-border p-3">
-        <figcaption className="text-[13px] font-semibold">{title}</figcaption>
+      <figure className="sports-card sports-card-subtle glass-text-scrim p-3 sm:p-4">
+        <figcaption className="text-[15px] font-bold tracking-tight">{title}</figcaption>
         <p className="mt-1 text-[12px] text-muted-foreground">
           Insufficient league context for scatter.
         </p>
@@ -615,8 +698,8 @@ export function PlayerContextScatter({
   const h = 220;
   const pad = 28;
   return (
-    <figure className="rounded-md border border-border p-3">
-      <figcaption className="text-[13px] font-semibold">{title}</figcaption>
+    <figure className="sports-card sports-card-subtle glass-text-scrim p-3 sm:p-4">
+      <figcaption className="text-[15px] font-bold tracking-tight">{title}</figcaption>
       <p className="mt-0.5 text-[12px] text-muted-foreground">{question}</p>
       <svg
         viewBox={`0 0 ${w} ${h}`}
@@ -656,11 +739,11 @@ export function PlayerContextScatter({
               data-tip-sub={`${fmt(p.x)} ${xLabel} · ${fmt(p.y <= 1 ? p.y * 100 : p.y)} ${yLabel}`}
               cx={cx}
               cy={cy}
-              r={p.highlight ? 5 : 2.5}
-              fill="currentColor"
-              fillOpacity={p.highlight ? 1 : 0.35}
-              stroke="transparent"
-              strokeWidth={8}
+              r={p.highlight ? 5.5 : 2.5}
+              fill={p.highlight ? "var(--chart-1)" : "var(--chart-5)"}
+              fillOpacity={p.highlight ? 1 : 0.45}
+              stroke={p.highlight ? "var(--background)" : "transparent"}
+              strokeWidth={p.highlight ? 2 : 8}
             />
           );
         })}
@@ -693,7 +776,7 @@ export function PlayerCareerArcChart({
   }>;
   if (!usable.length) {
     return (
-      <figure className="rounded-md border border-border p-3">
+      <figure className="sports-card sports-card-subtle p-3">
         <figcaption className="text-[13px] font-semibold">{title}</figcaption>
         <p className="mt-1 text-[12px] text-muted-foreground">No arc data.</p>
       </figure>
@@ -717,7 +800,7 @@ export function PlayerCareerArcChart({
   const column = (w - pad * 2) / Math.max(1, usable.length - 1);
 
   return (
-    <figure className="rounded-md border border-border p-3">
+    <figure className="sports-card sports-card-subtle p-3">
       <figcaption className="text-[13px] font-semibold">{title}</figcaption>
       <p className="mt-0.5 text-[12px] text-muted-foreground">
         How did this player evolve? Team labels mark franchise changes.
@@ -773,31 +856,78 @@ export function PlayerGameHighTimeline({
     value: string;
     date: string;
     href: string;
+    result?: string;
+    tied?: number;
   }>;
 }) {
+  const featured = events.slice(0, 3);
+  const rest = events.slice(3);
+
   return (
-    <figure className="rounded-md border border-border p-3">
-      <figcaption className="text-[13px] font-semibold">{title}</figcaption>
-      <p className="mt-0.5 text-[12px] text-muted-foreground">
-        Biggest nights by category. Open the game for flow, shots, and PBP.
+    <div className="flex flex-col gap-3" aria-label={title}>
+      <p className="text-[12px] text-muted-foreground">
+        Biggest nights by category. Open a tile for the game board.
       </p>
-      <ol data-hover-group className="relative mt-4 space-y-3 border-l border-border pl-4">
-        {events.map((e, i) => (
-          <li key={e.label + e.date} data-motion-item data-hover-item style={{ "--i": i } as CSSProperties} className="relative">
-            <span data-motion-dot className="absolute -left-[1.15rem] top-1.5 h-2.5 w-2.5 rounded-full bg-foreground" />
+      <div
+        data-hover-group
+        className="grid grid-cols-2 gap-2 sm:grid-cols-3"
+      >
+        {featured.map((e, i) => (
+          <Link
+            key={e.label + e.date}
+            href={e.href}
+            prefetch={false}
+            data-motion-item
+            data-hover-item
+            data-stat-tile
+            style={{ "--i": i } as CSSProperties}
+            className="sports-card sports-card-subtle flex flex-col gap-1.5 p-3 transition-[transform,box-shadow] hover:-translate-y-0.5"
+          >
+            <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+              {e.label}
+            </span>
+            <span className="text-[28px] font-bold tabular-nums leading-none tracking-tight sm:text-[32px]">
+              {e.value}
+            </span>
+            <span className="text-[12px] text-muted-foreground">{e.date}</span>
+            {e.result ? (
+              <span className="text-[11px] font-medium tabular-nums text-foreground/80">
+                {e.result}
+                {e.tied && e.tied > 0 ? ` · ${e.tied + 1} tied` : ""}
+              </span>
+            ) : null}
+          </Link>
+        ))}
+      </div>
+      {rest.length > 0 ? (
+        <div
+          data-hover-group
+          className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6"
+        >
+          {rest.map((e, i) => (
             <Link
+              key={e.label + e.date}
               href={e.href}
               prefetch={false}
-              className="flex flex-wrap items-baseline justify-between gap-2 text-[13px] hover:underline"
+              data-motion-item
+              data-hover-item
+              data-stat-tile
+              style={{ "--i": i + 3 } as CSSProperties}
+              className="sports-card sports-card-subtle flex flex-col gap-1 p-2.5 transition-[transform,box-shadow] hover:-translate-y-0.5"
             >
-              <span className="font-semibold">
-                {e.label} {e.value}
+              <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+                {e.label}
               </span>
-              <span className="text-muted-foreground">{e.date}</span>
+              <span className="text-[22px] font-bold tabular-nums leading-none tracking-tight">
+                {e.value}
+              </span>
+              <span className="truncate text-[11px] text-muted-foreground">
+                {e.date}
+              </span>
             </Link>
-          </li>
-        ))}
-      </ol>
-    </figure>
+          ))}
+        </div>
+      ) : null}
+    </div>
   );
 }

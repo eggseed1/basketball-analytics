@@ -15,7 +15,7 @@ export function HomeModuleFrame({
   return (
     <div
       data-home-module={id}
-      className={cn("min-w-0", id === "watchlist" && "order-first lg:order-none")}
+      className="min-w-0"
     >
       {children}
     </div>
@@ -39,9 +39,9 @@ const HEIGHT: Record<HomeModuleId, string> = {
   injuries: "h-[576px] lg:h-[586px]",
   "league-moves": "h-[803px] lg:h-[813px]",
   "top-performers": "h-[668px] lg:h-[678px]",
-  "hot-cold": "h-40",
+  "hot-cold": "h-[412px]",
   transactions: "h-[266px] lg:h-[238px]",
-  watchlist: "h-[214px] lg:h-[224px]",
+  watchlist: "h-[120px] lg:h-[132px]",
   sentiment: "h-[660px] lg:h-[368px]",
   "season-glance": "h-[2315px] lg:h-[1320px]",
   news: "h-[715px] lg:h-[596px]",

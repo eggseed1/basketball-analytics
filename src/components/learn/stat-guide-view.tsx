@@ -26,7 +26,7 @@ export function StatGuideView({
     guide.slug === "drbl-100" || guide.slug === "war1";
 
   return (
-    <div data-motion-stack className="flex flex-col gap-6">
+    <div data-motion-stack className="flex flex-col gap-4">
       <LearnHeader
         title={guide.name}
         lead={guide.blurb}

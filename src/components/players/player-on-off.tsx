@@ -85,7 +85,10 @@ export function PlayerOnOffCard({
   const small = main.on.minutes < SMALL_SAMPLE_MINUTES || main.off.minutes < SMALL_SAMPLE_MINUTES;
 
   return (
-    <GlassSurface effect="css" className="flex flex-col gap-4 p-4 sm:p-5">
+    <GlassSurface
+      variant="subtle"
+      effect="css"
+      className="flex flex-col gap-4 p-4 sm:p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <h2 className={type.heading}>On/off</h2>

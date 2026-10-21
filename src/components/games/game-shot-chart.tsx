@@ -23,6 +23,13 @@ import {
   type SideTally,
   type StatTick,
 } from "@/lib/games/court-events";
+import {
+  courtEventMatchesFilter,
+  countTaggedPlays,
+  PLAY_FILTERS,
+  tagPlayContexts,
+  type PlayFilterId,
+} from "@/lib/games/play-filters";
 import { elapsedGameSeconds, isLiveLikeStatus, type GameStatusKind } from "@/lib/game-status";
 import { cn } from "@/lib/utils";
 
@@ -280,6 +287,10 @@ export function GameShotChart({
     () => buildCourtEvents(events, homeLabel, awayLabel),
     [events, homeLabel, awayLabel]
   );
+  const playTags = useMemo(
+    () => tagPlayContexts(events, homeLabel, awayLabel),
+    [events, homeLabel, awayLabel]
+  );
   const located = court.filter((c) => c.kind === "make" || c.kind === "miss").length;
   const maxPeriod = Math.max(4, ...marks.map((m) => m.period));
   const endT = Math.max(periodStart(maxPeriod + 1), ...marks.map((m) => m.t));
@@ -300,6 +311,7 @@ export function GameShotChart({
   const [quarter, setQuarter] = useState<number | null>(null);
   const [player, setPlayer] = useState<string | null>(null);
   const [zone, setZone] = useState<ShotZone | null>(null);
+  const [playFilter, setPlayFilter] = useState<PlayFilterId | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
   const introDone = useRef(live);
   const playhead = useRef(0);
@@ -415,10 +427,19 @@ export function GameShotChart({
   const at = cutoff ?? nowT;
   const inQuarter = (period: number) => quarter == null || period === quarter;
   const pool = court.filter((c) => (cutoff == null || c.t <= cutoff) && inQuarter(c.period));
+  const matchesPlayFilter = (c: CourtEvent) =>
+    courtEventMatchesFilter(c, playFilter, playTags);
   const shown =
     mode === "shots"
-      ? pool.filter((c) => isShotBy(c) && (!zone || shotZone(c) === zone))
-      : pool.filter((c) => layersOf(c).some((l) => layers.has(l)));
+      ? pool.filter(
+          (c) =>
+            isShotBy(c) &&
+            (!zone || shotZone(c) === zone) &&
+            matchesPlayFilter(c)
+        )
+      : pool.filter(
+          (c) => layersOf(c).some((l) => layers.has(l)) && matchesPlayFilter(c)
+        );
   const latest = shown.at(-1) ?? null;
   let mark: ScoreMark | null = null;
   for (const m of marks) {
@@ -430,7 +451,8 @@ export function GameShotChart({
   const subjectTally = player ? playerTally(ticks, cutoff, player, keepTick) : null;
   const focus = hover ?? pinned;
   const ticker = focus ?? (playing || cutoff != null ? latest : null);
-  const filtersOn = quarter != null || player != null || side != null || zone != null;
+  const filtersOn =
+    quarter != null || player != null || side != null || zone != null || playFilter != null;
 
   const layerCount = (layer: Layer) => pool.filter((c) => layersOf(c).includes(layer)).length;
 
@@ -517,6 +539,7 @@ export function GameShotChart({
     setPlayer(null);
     setSide(null);
     setZone(null);
+    setPlayFilter(null);
     setPinned(null);
   };
 
@@ -736,6 +759,32 @@ export function GameShotChart({
         >
           Game chart
         </Chip>
+      </div>
+
+      <div
+        role="group"
+        aria-label="Scoring context"
+        className="flex flex-wrap items-center gap-1.5"
+      >
+        {PLAY_FILTERS.map((f) => {
+          const active = playFilter === f.id;
+          const n = countTaggedPlays(playTags, f.id);
+          return (
+            <Chip
+              key={f.id}
+              active={active}
+              onClick={() => {
+                setPlayFilter((cur) => (cur === f.id ? null : f.id));
+                // Zone table is the fine split; clear it when a context chip is on.
+                if (!active) setZone(null);
+              }}
+              className={n === 0 && !active ? "opacity-50" : undefined}
+            >
+              {f.label}
+              <span className="ml-1 font-normal text-muted-foreground">{n}</span>
+            </Chip>
+          );
+        })}
       </div>
 
       <div className="grid grid-cols-[1fr_auto_1fr] items-end gap-3">
@@ -1045,10 +1094,13 @@ export function GameShotChart({
                       <button
                         type="button"
                         aria-pressed={active}
-                        onClick={() => setZone((z) => (z === row.id ? null : row.id))}
+                        onClick={() => {
+                          setZone((z) => (z === row.id ? null : row.id));
+                          setPlayFilter(null);
+                        }}
                         className={cn(
                           "w-full py-1.5 text-left underline-offset-2 hover:underline",
-                          zone && !active && "text-muted-foreground"
+                          (zone || playFilter) && !active && "text-muted-foreground"
                         )}
                       >
                         {row.label}
@@ -1110,8 +1162,8 @@ export function GameShotChart({
       <p className={cn(type.micro, "text-muted-foreground")}>
         {mode === "game"
           ? "Spots are as logged in the play-by-play, drawn on a half court from the basket being attacked. Rebounds have no spot of their own, so the dot inside each miss shows who got the ball. Free throws have no spot and only show at each line as a running count. "
-          : `Zones use located attempts only${located < fga ? `, ${located} of ${fga} this game` : ""}. Tap a zone to show just those shots. `}
-        Counts come from play-by-play and can differ slightly from the official box score, for example on heaves or stat corrections made after the game.
+          : `Zones use located attempts only${located < fga ? `, ${located} of ${fga} this game` : ""}. Tap a zone or a scoring chip to narrow the chart. `}
+        Paint is rim plus the paint. Fast break follows transition wording in the play log ("running"). Second chance and off turnovers follow the possession after an offensive rebound or turnover. Last 5 sec is the game clock. Counts come from play-by-play and can differ slightly from the official box score.
       </p>
     </div>
   );

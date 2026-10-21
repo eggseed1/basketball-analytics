@@ -313,7 +313,12 @@ export async function PlayerVisualizationsIsland({
           className="scroll-mt-16 flex flex-col gap-4"
           aria-label="Shooting"
         >
-          <GlassSurface effect="css" className="px-3 py-2">
+          <h2 className={type.heading}>Shooting</h2>
+          <GlassSurface
+            variant="subtle"
+            effect="css"
+            className="px-3 py-2"
+          >
             <p className={cn(type.caption, "font-semibold text-foreground")}>
               Season shot chart · {season}
             </p>
@@ -371,8 +376,13 @@ export async function PlayerVisualizationsIsland({
         className="scroll-mt-16 flex flex-col gap-4"
         aria-label="Shooting"
       >
+        <h2 className={type.heading}>Shooting</h2>
         {coverageLabel ? (
-          <GlassSurface effect="css" className="px-3 py-2">
+          <GlassSurface
+            variant="subtle"
+            effect="css"
+            className="px-3 py-2"
+          >
             <p className={cn(type.caption, "font-semibold text-foreground")}>
               Season shot chart · {season}
             </p>
@@ -397,7 +407,12 @@ export async function PlayerVisualizationsIsland({
     );
   } catch {
     return (
-      <section id="shooting" className="scroll-mt-16 flex flex-col gap-4">
+      <section
+        id="shooting"
+        className="scroll-mt-16 flex flex-col gap-4"
+        aria-label="Shooting"
+      >
+        <h2 className={type.heading}>Shooting</h2>
         <UsageEfficiencyBlock
           playerId={playerId}
           season={season}

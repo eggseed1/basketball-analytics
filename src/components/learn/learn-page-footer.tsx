@@ -48,7 +48,7 @@ export async function LearnPageFooter({
   if (!related.length && !onSite.length && !sameCategory.length) return null;
 
   return (
-    <footer className="mb-8 flex flex-col gap-5 border-t border-border pt-6">
+    <footer className="mb-2 flex flex-col gap-3 border-t border-border pt-4">
       {related.length ? (
         <FooterGroup title={t("relatedConcepts")}>
           {related.map((r) => (

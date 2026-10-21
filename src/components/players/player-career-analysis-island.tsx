@@ -86,6 +86,7 @@ export async function PlayerCareerAnalysisIsland({
       />
 
       <GlassSurface
+        variant="subtle"
         effect="css"
         accentColor={wash?.colorA}
         accentColorB={wash?.colorB}

@@ -29,7 +29,7 @@ export function LearnTopicView({
     sources.length > 0;
 
   return (
-    <div data-motion-stack className="flex flex-col gap-6">
+    <div data-motion-stack className="flex flex-col gap-4">
       <LearnHeader
         title={topic.name}
         lead={topic.oneSentence}

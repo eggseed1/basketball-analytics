@@ -68,7 +68,7 @@ export function LearnCard({
   children: ReactNode;
 }) {
   return (
-    <section className="sports-card flex flex-col gap-5 p-4 sm:p-5">
+    <section className="sports-card flex flex-col gap-4 p-4 sm:p-5">
       {title ? <h2 className="text-[18px] font-bold">{title}</h2> : null}
       {children}
     </section>

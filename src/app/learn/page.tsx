@@ -21,7 +21,7 @@ export default async function LearnIndexPage() {
     .map((c) => ({ ...c, href: learnHrefFor(c.id) }));
 
   return (
-    <main data-motion-page className="site-shell flex flex-col gap-6 py-6 sm:py-8">
+    <main data-motion-page className="site-shell flex flex-col gap-4 pb-6 sm:gap-5 sm:pb-8">
       <MotionReveal />
       <PageHeader title={t("hubTitle")} subtitle={t("hubSubtitle")} />
 

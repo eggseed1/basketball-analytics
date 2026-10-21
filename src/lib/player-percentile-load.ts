@@ -57,10 +57,10 @@ async function enrichCareerForFastHero(
     "@/data/providers/nba/runtime-policy"
   );
 
-  // Bundled DRBL is cheap (~300KB) and required for WAR1 / DRBL percentile
-  // defaults. It is a local lookup, so it runs without a soft budget.
+  // Bundled DRBL / hustle are local lookups required for Impact + Hustle tabs
+  // on the cutoffHero path (peers=[]). Soft budgets race them and left Hustle
+  // empty ("No rankings in this category…") even when the overlay was warm.
   const impactBudget = preferBundledProductDataOnEdge() ? 1_200 : 1_500;
-  const hustleBudget = preferBundledProductDataOnEdge() ? 800 : 1_200;
   const bundledImpact = attachBundledBrefDarkoRaptor(playerId, career).catch(
     () => career
   );
@@ -78,11 +78,8 @@ async function enrichCareerForFastHero(
             fallback
           ).then((r) => r.value)
         ),
-    withBudget(
-      attachHustleToPlayerSeasons(playerId, career).catch(() => career),
-      hustleBudget,
-      career
-    ).then((r) => r.value),
+    // Bundled-first fetch returns immediately; never soft-budget this on hero.
+    attachHustleToPlayerSeasons(playerId, career).catch(() => career),
   ]);
   return career.map((row, index) => {
     let next = row;
@@ -258,14 +255,16 @@ const loadPlayerPercentileMetricsCached = cache(async function loadPlayerPercent
 ) {
   const constrained = isConstrainedServerRuntime();
   const preferBundled = preferBundledProductDataOnEdge();
-  // Slim / CF HTML stays on fast (includeComps still uses one peer board below).
-  const mode =
-    constrained || preferBundled
-      ? "fast"
-      : (modeOpt ?? "full");
+  // Honor explicit fast/full (client idle upgrade). Default SSR stays fast on
+  // constrained / prefer-bundled so the hero path stays cutoff-only.
+  const mode: PercentileLoadMode =
+    modeOpt === "full" || modeOpt === "fast"
+      ? modeOpt
+      : constrained || preferBundled
+        ? "fast"
+        : "full";
   const includePrior =
     !constrained &&
-    !preferBundled &&
     mode === "full" &&
     includePriorBoardOpt !== false;
   const statsCtx = resolvePlayerStatsSeason(career, season);
@@ -334,12 +333,17 @@ const loadPlayerPercentileMetricsCached = cache(async function loadPlayerPercent
         .catch(() => [] as PlayerSeason[]);
       return board.filter((row) => row.gamesPlayed >= 15);
     }
-    if (mode === "fast" || preferBundled) {
+    // Constrained full upgrades also prefer bundled boards — live ESPN/NBA
+    // peer scans routinely time out on Vercel and left category tabs empty.
+    if (mode === "fast" || preferBundled || constrained) {
       try {
         const bundled = await loadBundledPeerBoard(peerSeason, opts);
         if (bundled) return bundled;
       } catch {
         /* fall through */
+      }
+      if (constrained && mode === "full") {
+        return [] as PlayerSeason[];
       }
     }
     return getFilteredPlayerSeasonsCached(peerSeason, 15).catch(
@@ -347,9 +351,21 @@ const loadPlayerPercentileMetricsCached = cache(async function loadPlayerPercent
     );
   };
 
-  const seasonCutoffs = await import("@/data/runtime/percentile-pools-snapshot")
+  const bundledCutoffs = await import(
+    "@/data/runtime/percentile-pools-snapshot"
+  )
     .then((m) => m.bundledSeasonCutoffs)
     .catch(() => undefined);
+  // Early in a new season the cutoff snapshot may not exist yet — rank against
+  // the prior campaign's pool so Impact chips paint on the fast path.
+  const priorCutoffSeason = shiftCanonicalSeason(statsSeason, -1);
+  const seasonCutoffs = bundledCutoffs
+    ? (season: string, metricId: string) =>
+        bundledCutoffs(season, metricId) ??
+        (season === statsSeason
+          ? bundledCutoffs(priorCutoffSeason, metricId)
+          : undefined)
+    : undefined;
 
   // Fast hero: rank from baked cutoffs when present — skip materializing ~650
   // peer rows (and DRBL/DARKO overlays) on the HTML critical path.

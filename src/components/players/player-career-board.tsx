@@ -337,6 +337,7 @@ export function PlayerCareerBoard({
   themeMode = "historical",
   gameLogs = [],
   chart = "seasons",
+  hideTitle = false,
 }: {
   playerId: string;
   season: string;
@@ -349,6 +350,8 @@ export function PlayerCareerBoard({
   gameLogs?: CompactPlayerGameLogRow[];
   /** Games is the career-page dot chart. Overview keeps the season line. */
   chart?: "seasons" | "games";
+  /** Overview pairs this with Statistics under one Career stats heading. */
+  hideTitle?: boolean;
 }) {
   const [metric, setMetric] = useState<MetricId>(() => defaultCareerMetric(rows));
   const primary = useMemo(
@@ -414,96 +417,118 @@ export function PlayerCareerBoard({
   const kindLabel =
     seasonType === "playoffs" ? "Playoffs" : "Regular season";
 
-  return (
-    <section
-      id="career"
-      className="scroll-mt-16 flex flex-col gap-4"
-      aria-label={chart === "games" ? "Career stats" : "Season stats"}
-    >
-      <GlassSurface
-        effect="css"
-        accentColor={wash?.colorA}
-        accentColorB={wash?.colorB}
-        className="flex flex-col gap-4 p-4 sm:p-5"
-      >
-        {rows.length === 0 ? (
-          <p className={cn(type.bodySm, "text-muted-foreground")}>
-            {seasonType === "playoffs"
-              ? "No playoff seasons in this career."
-              : "No career seasons available."}
-          </p>
-        ) : (
-          <>
-            <div className="flex flex-wrap items-center gap-1.5">
-              {primary.map((item) => (
-                <GlassChip
-                  key={item.id}
-                  active={item.id === metric}
-                  onClick={() => setMetric(item.id)}
-                >
-                  {item.label}
-                </GlassChip>
-              ))}
-              <Select
-                value={MORE.some((m) => m.id === metric) ? metric : undefined}
-                onValueChange={(v) => {
-                  if (v) setMetric(v as MetricId);
-                }}
+  const body = (
+    <>
+      {rows.length === 0 ? (
+        <p className={cn(type.bodySm, "text-muted-foreground")}>
+          {seasonType === "playoffs"
+            ? "No playoff seasons in this career."
+            : "No career seasons available."}
+        </p>
+      ) : (
+        <>
+          <div className="flex flex-wrap items-center gap-1.5">
+            {primary.map((item) => (
+              <GlassChip
+                key={item.id}
+                active={item.id === metric}
+                onClick={() => setMetric(item.id)}
               >
-                <SelectTrigger
-                  className={cn(
-                    type.caption,
-                    "glass-pill h-7 min-w-[9.5rem] rounded-md border-white/40 px-2.5 font-semibold",
-                    MORE.some((m) => m.id === metric) && "glass-pill-active"
-                  )}
-                  aria-label="More chart metrics"
-                >
-                  <SelectValue placeholder="More stats…" />
-                </SelectTrigger>
-                <SelectContent align="start" className="max-h-72">
-                  {TABLE_CATEGORIES.filter((c) => c.id !== "all").map((cat) => {
-                    const items = MORE.filter((m) => m.category === cat.id);
-                    if (!items.length) return null;
-                    return (
-                      <SelectGroup key={cat.id}>
-                        <SelectLabel>{cat.label}</SelectLabel>
-                        {items.map((item) => (
-                          <SelectItem key={item.id} value={item.id}>
-                            {item.label}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    );
-                  })}
-                </SelectContent>
-              </Select>
-            </div>
+                {item.label}
+              </GlassChip>
+            ))}
+            <Select
+              value={MORE.some((m) => m.id === metric) ? metric : undefined}
+              onValueChange={(v) => {
+                if (v) setMetric(v as MetricId);
+              }}
+            >
+              <SelectTrigger
+                className={cn(
+                  type.caption,
+                  "glass-pill h-7 min-w-[9.5rem] rounded-md border-white/40 px-2.5 font-semibold",
+                  MORE.some((m) => m.id === metric) && "glass-pill-active"
+                )}
+                aria-label="More chart metrics"
+              >
+                <SelectValue placeholder="More stats…" />
+              </SelectTrigger>
+              <SelectContent align="start" className="max-h-72">
+                {TABLE_CATEGORIES.filter((c) => c.id !== "all").map((cat) => {
+                  const items = MORE.filter((m) => m.category === cat.id);
+                  if (!items.length) return null;
+                  return (
+                    <SelectGroup key={cat.id}>
+                      <SelectLabel>{cat.label}</SelectLabel>
+                      {items.map((item) => (
+                        <SelectItem key={item.id} value={item.id}>
+                          {item.label}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  );
+                })}
+              </SelectContent>
+            </Select>
+          </div>
 
+          <GlassSurface
+            variant="subtle"
+            effect="css"
+            accentColor={wash?.colorA}
+            accentColorB={wash?.colorB}
+            className={cn(
+              "flex flex-col p-4 sm:p-5",
+              hideTitle ? "gap-2" : "gap-3"
+            )}
+          >
             {talent ? (
               <>
                 <TalentYearChart
                   dots={talent.dots}
                   line={talent.line}
                   kind={talentKind}
-                  height={260}
+                  height={hideTitle ? 220 : 260}
                 />
-                <p className={cn(type.caption, "text-muted-foreground")}>
-                  {talentKind === "impact"
-                    ? `Small dots are games. Large dots are each season's published ${selected.label}, and the line runs through them. Plus-minus is blank in these logs.`
-                    : "Small dots are games. Large dots are the season average, and the line runs through them."}
-                </p>
+                {!hideTitle ? (
+                  <p className={cn(type.caption, "text-muted-foreground")}>
+                    {talentKind === "impact"
+                      ? `Small dots are games. Large dots are each season's published ${selected.label}, and the line runs through them. Plus-minus is blank in these logs.`
+                      : "Small dots are games. Large dots are the season average, and the line runs through them."}
+                  </p>
+                ) : null}
               </>
             ) : points.length > 0 ? (
-              <CareerTeamTrendChart points={points} height={200} drawKey={selected.id} />
+              <CareerTeamTrendChart
+                points={points}
+                height={hideTitle ? 220 : 200}
+                drawKey={selected.id}
+              />
             ) : (
               <p className={cn(type.caption, "text-muted-foreground")}>
                 {selected.label} is not published for these seasons.
               </p>
             )}
-          </>
-        )}
-      </GlassSurface>
+          </GlassSurface>
+        </>
+      )}
+    </>
+  );
 
+  if (hideTitle) {
+    return <div className="flex flex-col gap-3">{body}</div>;
+  }
+
+  return (
+    <section
+      id="career"
+      className="scroll-mt-16 flex flex-col gap-4"
+      aria-label="Career stats"
+    >
+      <h2 className={type.heading}>Career stats</h2>
+      {body}
+
+      {/* Season table on Overview (line chart) and Career (game-dot chart). */}
       {rows.length > 0 ? (
         <div className="flex flex-col gap-3">
           <div className="flex flex-wrap gap-1.5" role="tablist" aria-label="Table categories">
@@ -518,7 +543,7 @@ export function PlayerCareerBoard({
             ))}
           </div>
 
-          <div className="sports-card overflow-x-auto">
+          <div className="sports-card sports-card-subtle overflow-x-auto">
             <table className="w-full text-left">
               <thead className="border-b border-border/40 bg-secondary/50">
                 <tr>

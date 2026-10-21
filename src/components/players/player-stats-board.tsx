@@ -53,6 +53,9 @@ const RATE_MODES: Array<{ id: RateMode; label: string }> = [
 const SEASON_COL_WIDTH = "4.75rem";
 const SEASON_COL_CLASS =
   "board-sticky-frost sticky left-0 z-10 box-border p-0";
+/** Header corner: stick to top + left so rows blur under both rails. */
+const SEASON_HEAD_CLASS =
+  "board-sticky-frost sticky left-0 top-0 z-40 box-border p-0 align-bottom font-semibold";
 const SEASON_COL_STYLE = {
   width: SEASON_COL_WIDTH,
   minWidth: SEASON_COL_WIDTH,
@@ -141,6 +144,7 @@ export function PlayerStatsBoard({
   fromHistory = false,
   themeMode = "historical",
   honor,
+  hideTitle = false,
 }: {
   playerId: string;
   season: string;
@@ -151,6 +155,8 @@ export function PlayerStatsBoard({
   fromHistory?: boolean;
   themeMode?: ThemeMode;
   honor?: GlassSurfaceHonor;
+  /** Overview pairs this under Career stats; drop the duplicate heading. */
+  hideTitle?: boolean;
 }) {
   const queryNav = useQueryNavOptional();
   const [mode, setMode] = useState<RateMode>("perGame");
@@ -191,82 +197,84 @@ export function PlayerStatsBoard({
   return (
     <section
       id="statistics"
-      className="scroll-mt-16 flex flex-col gap-4"
+      className={cn(
+        "flex flex-col",
+        hideTitle ? "gap-3" : "scroll-mt-16 gap-4"
+      )}
       aria-label="Statistics"
     >
-      <GlassSurface
-        effect="css"
-        accentColor={wash?.colorA}
-        accentColorB={wash?.colorB}
-        className="flex flex-col gap-4 p-4 sm:p-5"
-        honor={honor}
-      >
-        <h2 className={type.heading}>Statistics</h2>
+      {hideTitle ? null : <h2 className={type.heading}>Statistics</h2>}
 
-        <div className="flex flex-col gap-2.5">
-          <FilterRow label="Season type">
+      <div className="flex flex-col gap-2.5">
+        <FilterRow label="Season type">
+          <GlassChip
+            active={seasonType === "regular"}
+            onClick={() => setSeasonType("regular")}
+          >
+            Regular
+          </GlassChip>
+          <GlassChip
+            active={seasonType === "playoffs"}
+            onClick={() => setSeasonType("playoffs")}
+          >
+            Playoffs
+          </GlassChip>
+        </FilterRow>
+        <FilterRow label="Rate">
+          {RATE_MODES.map((item) => (
             <GlassChip
-              active={seasonType === "regular"}
-              onClick={() => setSeasonType("regular")}
+              key={item.id}
+              active={mode === item.id}
+              onClick={() => setMode(item.id)}
             >
-              Regular
+              {item.label}
             </GlassChip>
+          ))}
+        </FilterRow>
+        <FilterRow label="Columns">
+          {categories.map((item) => (
             <GlassChip
-              active={seasonType === "playoffs"}
-              onClick={() => setSeasonType("playoffs")}
+              key={item.id}
+              active={category === item.id}
+              onClick={() => setCategory(item.id)}
             >
-              Playoffs
+              {item.label}
             </GlassChip>
-          </FilterRow>
-          <FilterRow label="Rate">
-            {RATE_MODES.map((item) => (
-              <GlassChip
-                key={item.id}
-                active={mode === item.id}
-                onClick={() => setMode(item.id)}
-              >
-                {item.label}
-              </GlassChip>
-            ))}
-          </FilterRow>
-          <FilterRow label="Columns">
-            {categories.map((item) => (
-              <GlassChip
-                key={item.id}
-                active={category === item.id}
-                onClick={() => setCategory(item.id)}
-              >
-                {item.label}
-              </GlassChip>
-            ))}
-          </FilterRow>
-        </div>
+          ))}
+        </FilterRow>
+      </div>
 
-        {newestFirst.length === 0 ? (
-          <p className={cn(type.bodySm, "text-muted-foreground")}>
-            No {kindLabel.toLowerCase()} seasons available.
-          </p>
-        ) : (
-          <>
-            <div className="sports-card board-scroll-host -mx-1 overflow-x-auto rounded-md px-1">
-              <table className="w-max min-w-full border-collapse text-left">
+      {newestFirst.length === 0 ? (
+        <p className={cn(type.bodySm, "text-muted-foreground")}>
+          No {kindLabel.toLowerCase()} seasons available.
+        </p>
+      ) : (
+        <>
+          <GlassSurface
+            variant="subtle"
+            effect="css"
+            accentColor={wash?.colorA}
+            accentColorB={wash?.colorB}
+            className="p-4 sm:p-5"
+            honor={honor}
+          >
+            {/* Own scrollport so sticky header/season glass can sample rows. */}
+            <div className="board-scroll-host max-h-[min(70vh,36rem)] overflow-auto overscroll-contain">
+              <table className="w-max min-w-full border-separate border-spacing-0 text-left">
                 <colgroup>
                   <col style={SEASON_COL_STYLE} />
                 </colgroup>
                 <thead
                   className={cn(
                     type.caption,
-                    "uppercase tracking-wide text-muted-foreground"
+                    "board-sticky-head sticky top-0 z-30 uppercase tracking-wide text-muted-foreground"
                   )}
                 >
-                  <tr className="border-b border-border/60">
+                  <tr>
                     <th
                       rowSpan={2}
                       style={SEASON_COL_STYLE}
-                      className={cn(
-                        SEASON_COL_CLASS,
-                        "z-20 align-bottom font-semibold"
-                      )}
+                      className={SEASON_HEAD_CLASS}
                     >
                       <div
                         className="box-border overflow-hidden py-2 pr-3"
@@ -277,31 +285,31 @@ export function PlayerStatsBoard({
                     </th>
                     <th
                       rowSpan={2}
-                      className="px-2 py-2 align-bottom text-right font-semibold"
+                      className="board-sticky-head-cell px-2 py-2 align-bottom text-right font-semibold"
                     >
                       Age
                     </th>
                     <th
                       rowSpan={2}
-                      className="px-2 py-2 align-bottom text-right font-semibold"
+                      className="board-sticky-head-cell px-2 py-2 align-bottom text-right font-semibold"
                     >
                       Tm
                     </th>
                     <th
                       rowSpan={2}
-                      className="px-2 py-2 align-bottom text-left font-semibold"
+                      className="board-sticky-head-cell px-2 py-2 align-bottom text-left font-semibold"
                     >
                       Pos
                     </th>
                     <th
                       rowSpan={2}
-                      className="px-2 py-2 align-bottom text-right font-semibold"
+                      className="board-sticky-head-cell px-2 py-2 align-bottom text-right font-semibold"
                     >
                       G
                     </th>
                     <th
                       rowSpan={2}
-                      className="px-2 py-2 align-bottom text-right font-semibold"
+                      className="board-sticky-head-cell px-2 py-2 align-bottom text-right font-semibold"
                     >
                       GS
                     </th>
@@ -309,19 +317,19 @@ export function PlayerStatsBoard({
                       <th
                         key={group.id}
                         colSpan={group.cols.length}
-                        className="h-7 border-l border-border/40 px-2 py-1.5 text-center font-semibold"
+                        className="board-sticky-head-cell h-7 border-l border-border/40 px-2 py-1.5 text-center font-semibold"
                       >
                         {group.label}
                       </th>
                     ))}
                   </tr>
-                  <tr className="border-b border-border/60">
+                  <tr>
                     {groups.flatMap((group) =>
                       group.cols.map((col, ki) => (
                         <th
                           key={col.id}
                           className={cn(
-                            "whitespace-nowrap px-2 py-2 text-right font-semibold",
+                            "board-sticky-head-cell whitespace-nowrap px-2 py-2 text-right font-semibold",
                             ki === 0 && "border-l border-border/40"
                           )}
                         >
@@ -447,17 +455,18 @@ export function PlayerStatsBoard({
                 </tbody>
               </table>
             </div>
-            <p className={cn(type.caption, "text-muted-foreground")}>
-              {kindLabel} · {mode === "perGame"
-                ? "per game"
-                : mode === "totals"
-                  ? "season totals"
-                  : "per 100 possessions (estimated)"}{" "}
-              · {cols.length} columns
-            </p>
-          </>
-        )}
-      </GlassSurface>
+          </GlassSurface>
+          <p className={cn(type.caption, "text-muted-foreground")}>
+            {kindLabel} ·{" "}
+            {mode === "perGame"
+              ? "per game"
+              : mode === "totals"
+                ? "season totals"
+                : "per 100 possessions (estimated)"}{" "}
+            · {cols.length} columns
+          </p>
+        </>
+      )}
     </section>
   );
 }

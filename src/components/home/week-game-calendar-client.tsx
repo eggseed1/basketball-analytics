@@ -92,7 +92,7 @@ export function WeekGameCalendarClient({
         <h2 className="type-heading flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-0.5">
           <span>{mode === "week" ? t("weekGames") : t("upcomingGames")}</span>
           {showWeek ? (
-            <span className="type-caption font-medium text-muted-foreground">
+            <span className="type-caption glass-pill rounded-md px-2 py-0.5 font-semibold text-foreground">
               {t("weekNumber", { week })}
             </span>
           ) : null}

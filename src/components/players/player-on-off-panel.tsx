@@ -63,70 +63,155 @@ function Summary({
   const { row } = d;
   const { cmp } = row;
   const range = rangeLabel(cmp.netDiff, cmp.netDiffSe);
-  const stat = (label: string, value: string, tone?: string, hint?: string) => (
-    <div className="flex min-w-0 flex-col gap-0.5">
-      <p className={cn(type.micro, "font-semibold uppercase tracking-[0.1em] text-muted-foreground")}>{label}</p>
-      <p className={cn("text-lg font-bold tabular-nums", tone)}>{value}</p>
-      {hint ? <p className={cn(type.caption, "text-muted-foreground")}>{hint}</p> : null}
-    </div>
-  );
+  const tileClass =
+    "sports-card sports-card-subtle glass-text-scrim flex min-w-0 flex-col gap-1.5 p-3";
+  const rankHint =
+    row.netDiffPercentile != null
+      ? `${percentileLabel(row.netDiffPercentile)} percentile in the league`
+      : phase === "playoffs"
+        ? "No league rank for playoff samples"
+        : view === "clutch"
+          ? "No league rank for clutch samples"
+          : "League rank needs 2,000 possessions";
+
+  const swingWash =
+    cmp.netDiff == null || !Number.isFinite(cmp.netDiff) || Math.abs(cmp.netDiff) < 0.05
+      ? undefined
+      : cmp.netDiff > 0
+        ? "color-mix(in oklab, var(--data-positive) 16%, transparent)"
+        : "color-mix(in oklab, var(--data-negative) 16%, transparent)";
+
+  const stats: Array<{
+    label: string;
+    value: string;
+    tone?: string;
+    hint?: string;
+    wash?: string;
+  }> = [
+    {
+      label: "On net",
+      value: fmtSigned(cmp.on.net),
+      tone: toneClass(cmp.on.net),
+      wash:
+        cmp.on.net != null && Math.abs(cmp.on.net) >= 0.05
+          ? `color-mix(in oklab, ${cmp.on.net > 0 ? "var(--data-positive)" : "var(--data-negative)"} 12%, transparent)`
+          : undefined,
+    },
+    {
+      label: "Off net",
+      value: fmtSigned(cmp.off.net),
+      tone: toneClass(cmp.off.net),
+      wash:
+        cmp.off.net != null && Math.abs(cmp.off.net) >= 0.05
+          ? `color-mix(in oklab, ${cmp.off.net > 0 ? "var(--data-positive)" : "var(--data-negative)"} 12%, transparent)`
+          : undefined,
+    },
+    {
+      label: "Luck-adjusted",
+      value: fmtSigned(cmp.netLuckAdjDiff),
+      tone: toneClass(cmp.netLuckAdjDiff),
+      hint: "Opponent 3P% and FT% at league average",
+      wash:
+        cmp.netLuckAdjDiff != null && Math.abs(cmp.netLuckAdjDiff) >= 0.05
+          ? `color-mix(in oklab, ${cmp.netLuckAdjDiff > 0 ? "var(--data-positive)" : "var(--data-negative)"} 12%, transparent)`
+          : undefined,
+    },
+    {
+      label: "On the floor",
+      value: fmtPct(row.onShare, 0),
+      hint: `${fmtCount(row.minutes)} min, ${fmtCount(row.poss)} poss`,
+      wash: "color-mix(in oklab, var(--chart-1) 12%, transparent)",
+    },
+  ];
+
   return (
-    <div className="grid gap-5 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] sm:items-center">
-      <div className="flex flex-col gap-1">
-        <p className={cn(type.micro, "font-semibold uppercase tracking-[0.1em] text-muted-foreground")}>
-          On/off swing
-        </p>
-        <p className={cn("text-4xl font-bold tabular-nums", toneClass(cmp.netDiff))}>{fmtSigned(cmp.netDiff)}</p>
-        <p className={cn(type.caption, "text-muted-foreground")}>
-          {range ? `95% range ${range}` : "Range unavailable"}
-        </p>
-        <div className="mt-1 flex flex-wrap items-center gap-2">
-          {row.netDiffPercentile != null ? (
-            <span className={cn(type.caption, "font-semibold")}>
-              {percentileLabel(row.netDiffPercentile)} percentile in the league
-            </span>
-          ) : (
-            <span className={cn(type.caption, "text-muted-foreground")}>
-              {phase === "playoffs"
-                ? "No league rank for playoff samples"
-                : view === "clutch"
-                  ? "No league rank for clutch samples"
-                  : "League rank needs 2,000 possessions"}
-            </span>
-          )}
-          {row.smallSample ? <SmallSampleTag /> : null}
+    <div className="flex flex-col gap-4">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-6 lg:gap-4">
+        <div
+          className={cn(tileClass, "col-span-2 justify-between")}
+          style={swingWash ? { background: swingWash } : undefined}
+        >
+          <div className="flex flex-col gap-1">
+            <p
+              className={cn(
+                type.micro,
+                "font-semibold uppercase tracking-[0.1em] text-muted-foreground"
+              )}
+            >
+              On/off swing
+            </p>
+            <p
+              className={cn(
+                "text-[32px] font-bold tabular-nums leading-none tracking-tight sm:text-4xl",
+                toneClass(cmp.netDiff)
+              )}
+            >
+              {fmtSigned(cmp.netDiff)}
+            </p>
+          </div>
+          <div className="flex flex-col gap-1">
+            <p className={cn(type.caption, "text-muted-foreground")}>
+              {range ? `95% range ${range}` : "Range unavailable"}
+            </p>
+            <div className="flex flex-wrap items-center gap-2">
+              <span
+                className={cn(
+                  type.caption,
+                  row.netDiffPercentile != null
+                    ? "font-semibold"
+                    : "text-muted-foreground"
+                )}
+              >
+                {rankHint}
+              </span>
+              {row.smallSample ? <SmallSampleTag /> : null}
+            </div>
+          </div>
         </div>
+        {stats.map((s) => (
+          <div
+            key={s.label}
+            className={tileClass}
+            style={s.wash ? { background: s.wash } : undefined}
+          >
+            <p
+              className={cn(
+                type.micro,
+                "font-semibold uppercase tracking-[0.1em] text-muted-foreground"
+              )}
+            >
+              {s.label}
+            </p>
+            <p
+              className={cn(
+                "text-[22px] font-bold tabular-nums leading-none tracking-tight",
+                s.tone
+              )}
+            >
+              {s.value}
+            </p>
+            {s.hint ? (
+              <p className={cn(type.caption, "text-muted-foreground")}>{s.hint}</p>
+            ) : null}
+          </div>
+        ))}
       </div>
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        {stat("On net", fmtSigned(cmp.on.net), toneClass(cmp.on.net))}
-        {stat("Off net", fmtSigned(cmp.off.net), toneClass(cmp.off.net))}
-        {stat(
-          "Luck-adjusted",
-          fmtSigned(cmp.netLuckAdjDiff),
-          toneClass(cmp.netLuckAdjDiff),
-          "Opponent 3P% and FT% at league average"
-        )}
-        {stat(
-          "On the floor",
-          fmtPct(row.onShare, 0),
-          undefined,
-          `${fmtCount(row.minutes)} min, ${fmtCount(row.poss)} poss`
-        )}
-      </div>
-      <p className={cn(type.bodySm, "text-muted-foreground sm:col-span-2")}>
+      <p className={cn(type.bodySm, "max-w-prose text-muted-foreground")}>
         {cmp.netDiff != null
           ? `The team was ${Math.abs(cmp.netDiff).toFixed(1)} points per 100 possessions ${
               cmp.netDiff < 0 ? "worse" : "better"
             } with ${shortName(playerName)} on the floor. `
           : null}
-        {row.smallSample ? "That comes from a small sample, so trust the range more than the swing. " : null}
+        {row.smallSample
+          ? "That comes from a small sample, so trust the range more than the swing. "
+          : null}
         {row.quality.teammatesOn != null && row.quality.opponentsOn != null ? (
           <>
             His teammates averaged {fmtRatingDelta(row.quality.teammatesOn)} DRBL/100 with him on
             the floor, against {fmtRatingDelta(row.quality.teammatesOff)} for the lineups that
-            played while he sat. Opponents averaged {fmtRatingDelta(row.quality.opponentsOn)} against
-            him and {fmtRatingDelta(row.quality.opponentsOff)} otherwise. Stronger teammates lift
-            the on number and stronger opponents pull it down.
+            played while he sat. Opponents averaged {fmtRatingDelta(row.quality.opponentsOn)}{" "}
+            against him and {fmtRatingDelta(row.quality.opponentsOff)} otherwise. Stronger
+            teammates lift the on number and stronger opponents pull it down.
           </>
         ) : (
           <>
@@ -191,7 +276,14 @@ function RatingRows({ d, color }: { d: PlayerOnOffDetail; color: string }) {
               </div>
               <div className="order-3 col-span-2 sm:order-none sm:col-span-1">
                 {r.on != null && r.off != null ? (
-                  <Dumbbell on={r.on} off={r.off} min={r.range[0]} max={r.range[1]} color={color} />
+                  <Dumbbell
+                    on={r.on}
+                    off={r.off}
+                    min={r.range[0]}
+                    max={r.range[1]}
+                    color={color}
+                    higherIsBetter={r.higherIsBetter}
+                  />
                 ) : null}
               </div>
               <div className="flex items-baseline justify-end gap-2 text-[13px] tabular-nums">
@@ -225,11 +317,11 @@ const td = "px-2 py-1.5 text-right tabular-nums whitespace-nowrap";
 
 function FactorTable({ title, side, defense }: { title: string; side: SideDetail; defense: boolean }) {
   return (
-    <div className="min-w-0">
-      <h4 className="mb-1 text-[13px] font-semibold">{title}</h4>
+    <div className="sports-card sports-card-subtle glass-text-scrim min-w-0 p-3">
+      <h4 className="mb-2 text-[13px] font-semibold">{title}</h4>
       <table className="w-full text-[13px]">
         <thead>
-          <tr className="border-b border-border">
+          <tr className="border-b border-border/60">
             <th className={cn(th, "text-left")}>Factor</th>
             <th className={th}>On</th>
             <th className={th}>Off</th>
@@ -241,6 +333,17 @@ function FactorTable({ title, side, defense }: { title: string; side: SideDetail
             const on = side.on[f.key];
             const off = side.off[f.key];
             const diff = on != null && off != null ? on - off : null;
+            const goodDir = f.offenseHigherIsBetter !== defense;
+            const good =
+              diff != null &&
+              Number.isFinite(diff) &&
+              Math.abs(diff) >= 0.0005 &&
+              diff > 0 === goodDir;
+            const bad =
+              diff != null &&
+              Number.isFinite(diff) &&
+              Math.abs(diff) >= 0.0005 &&
+              diff > 0 !== goodDir;
             return (
               <tr key={f.key} className="border-b border-border/60 last:border-0">
                 <td className={cn(td, "text-left")}>{f.label}</td>
@@ -249,9 +352,22 @@ function FactorTable({ title, side, defense }: { title: string; side: SideDetail
                 <td
                   className={cn(
                     td,
-                    "font-semibold",
-                    toneClass(diff == null ? null : diff * 100, f.offenseHigherIsBetter !== defense)
+                    "rounded-sm font-semibold",
+                    toneClass(diff == null ? null : diff * 100, goodDir)
                   )}
+                  style={
+                    good
+                      ? {
+                          background:
+                            "color-mix(in oklab, var(--data-positive) 14%, transparent)",
+                        }
+                      : bad
+                        ? {
+                            background:
+                              "color-mix(in oklab, var(--data-negative) 14%, transparent)",
+                          }
+                        : undefined
+                  }
                 >
                   {fmtSignedPts(diff)}
                 </td>
@@ -266,8 +382,8 @@ function FactorTable({ title, side, defense }: { title: string; side: SideDetail
 
 function ShotTable({ title, side }: { title: string; side: SideDetail }) {
   return (
-    <div className="min-w-0">
-      <h4 className="mb-1 text-[13px] font-semibold">{title}</h4>
+    <div className="sports-card sports-card-subtle glass-text-scrim min-w-0 p-3">
+      <h4 className="mb-2 text-[13px] font-semibold">{title}</h4>
       <table className="w-full text-[13px]">
         <thead>
           <tr className="border-b border-border">
@@ -516,10 +632,10 @@ export function PlayerOnOffPanel({
   };
 
   return (
-    <section id="onoff" className="scroll-mt-16 flex flex-col gap-8" aria-label="On/off">
-      <div className="flex flex-wrap items-end justify-between gap-3">
+    <section id="onoff" className="scroll-mt-16 flex flex-col gap-5 sm:gap-6" aria-label="On/off">
+      <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="min-w-0">
-          <h2 className="text-[20px] font-bold tracking-tight">
+          <h2 className={type.heading}>
             <MetricHelp conceptId="on_off">On/off</MetricHelp>
           </h2>
           <p className={cn(type.bodySm, "mt-1 max-w-prose text-muted-foreground")}>
@@ -552,12 +668,21 @@ export function PlayerOnOffPanel({
       <Summary d={d} playerName={playerName} view={view} phase={activePhase} />
 
       <div className="flex flex-col gap-3">
-        <h3 className={type.heading}>Ratings on and off</h3>
+        <h3
+          className={cn(type.heading, "border-l-[3px] border-[var(--chart-1)] pl-2.5")}
+        >
+          Ratings on and off
+        </h3>
         <RatingRows d={d} color={stint.color} />
       </div>
 
       <div className="flex flex-col gap-3">
-        <h3 className={type.heading}>Swing over the {activePhase === "playoffs" ? "playoffs" : "season"}</h3>
+        <h3
+          className={cn(type.heading, "border-l-[3px] pl-2.5")}
+          style={{ borderColor: stint.color }}
+        >
+          Swing over the {activePhase === "playoffs" ? "playoffs" : "season"}
+        </h3>
         {view === "clutch" || usingFallback ? (
           <p className={cn(type.bodySm, "text-muted-foreground")}>
             No game-by-game line for clutch, since most games have a few clutch possessions or
@@ -574,7 +699,9 @@ export function PlayerOnOffPanel({
 
       {history.length > 1 ? (
         <div className="flex flex-col gap-3">
-          <h3 className={type.heading}>Season by season</h3>
+          <h3 className={cn(type.heading, "border-l-[3px] border-[var(--chart-5)] pl-2.5")}>
+            Season by season
+          </h3>
           <OnOffSeasonTable
             rows={history}
             view={view}
@@ -586,8 +713,10 @@ export function PlayerOnOffPanel({
       ) : null}
 
       <div className="flex flex-col gap-3">
-        <h3 className={type.heading}>Four factors</h3>
-        <div className="grid gap-6 md:grid-cols-2">
+        <h3 className={cn(type.heading, "border-l-[3px] border-[var(--chart-3)] pl-2.5")}>
+          Four factors
+        </h3>
+        <div className="grid gap-3 md:grid-cols-2 md:gap-4">
           <FactorTable title={`${stint.teamAbbr} offense`} side={d.offense} defense={false} />
           <FactorTable title="Opponent offense" side={d.defense} defense />
         </div>
@@ -598,8 +727,10 @@ export function PlayerOnOffPanel({
       </div>
 
       <div className="flex flex-col gap-3">
-        <h3 className={type.heading}>Shot profile</h3>
-        <div className="grid gap-6 md:grid-cols-2">
+        <h3 className={cn(type.heading, "border-l-[3px] border-[var(--chart-4)] pl-2.5")}>
+          Shot profile
+        </h3>
+        <div className="grid gap-3 md:grid-cols-2 md:gap-4">
           <ShotTable title={`${stint.teamAbbr} shots`} side={d.offense} />
           <ShotTable title="Opponent shots" side={d.defense} />
         </div>
@@ -610,7 +741,9 @@ export function PlayerOnOffPanel({
       </div>
 
       <div className="flex flex-col gap-3">
-        <h3 className={type.heading}>With and without teammates</h3>
+        <h3 className={cn(type.heading, "border-l-[3px] border-[var(--data-positive)] pl-2.5")}>
+          With and without teammates
+        </h3>
         <p className={cn(type.bodySm, "max-w-prose text-muted-foreground")}>
           Team net rating in each combination of the two on or off the floor. Green is better, red is
           worse, and a dashed cell has under {THIN_PAIR_POSS} possessions. The teammates he shared the most
@@ -620,7 +753,9 @@ export function PlayerOnOffPanel({
       </div>
 
       <div className="flex flex-col gap-3">
-        <h3 className={type.heading}>Who takes his minutes</h3>
+        <h3 className={cn(type.heading, "border-l-[3px] border-[var(--chart-1)] pl-2.5")}>
+          Who takes his minutes
+        </h3>
         <p className={cn(type.bodySm, "max-w-prose text-muted-foreground")}>
           Teammates who play a bigger share of the floor when {shortName(playerName)} sits. Their
           play shapes his off number, so a strong backup shrinks his swing.
@@ -629,7 +764,9 @@ export function PlayerOnOffPanel({
       </div>
 
       <div className="flex flex-col gap-3">
-        <h3 className={type.heading}>His most-used lineups</h3>
+        <h3 className={cn(type.heading, "border-l-[3px] border-foreground/40 pl-2.5")}>
+          His most-used lineups
+        </h3>
         <Lineups d={d} />
       </div>
 

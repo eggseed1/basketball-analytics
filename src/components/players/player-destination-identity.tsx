@@ -116,8 +116,6 @@ export type PlayerDestinationIdentityProps = {
   caps: PlayerPageCapabilities;
   seasonType?: PlayerSeasonKind;
   accolades?: ReactNode;
-  /** Scout-phrase role — rendered below identity/percentiles in overview, not in the name box. */
-  role?: ReactNode;
   upcomingSchedule?: ReactNode;
   frontOffice?: ReactNode;
   honor?: GlassSurfaceHonor;
@@ -152,7 +150,6 @@ export async function PlayerDestinationIdentity({
   caps,
   seasonType = "regular",
   accolades = null,
-  role = null,
   upcomingSchedule = null,
   frontOffice = null,
   honor,
@@ -463,17 +460,6 @@ export async function PlayerDestinationIdentity({
               </GlassSurface>
             ) : null}
 
-            {view === "overview" && role ? (
-              <GlassSurface
-                accentColor={wash?.colorA}
-                accentColorB={wash?.colorB}
-                className="relative w-full min-w-0 p-0"
-                effect="css"
-                honor={honor}
-              >
-                <div className="relative z-[1] w-full px-3 py-2.5">{role}</div>
-              </GlassSurface>
-            ) : null}
           </div>
 
           {hero ? <div className="min-h-0 min-w-0">{hero}</div> : null}

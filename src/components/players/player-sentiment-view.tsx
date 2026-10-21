@@ -73,6 +73,7 @@ export function PlayerSentimentView({
 
       <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1.2fr)_minmax(14rem,18rem)]">
         <GlassSurface
+          variant="subtle"
           accentColor={wash?.colorA}
           accentColorB={wash?.colorB}
           className="flex min-w-0 flex-col gap-4 p-4"
@@ -186,6 +187,7 @@ export function PlayerSentimentView({
         </GlassSurface>
 
         <GlassSurface
+          variant="subtle"
           accentColor={wash?.colorA}
           accentColorB={wash?.colorB}
           className="min-w-0 p-4"
@@ -208,6 +210,7 @@ export function PlayerSentimentView({
 
       {gamesSlot ? (
         <GlassSurface
+          variant="subtle"
           accentColor={wash?.colorA}
           accentColorB={wash?.colorB}
           className="min-w-0 p-4"

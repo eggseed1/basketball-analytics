@@ -47,12 +47,12 @@ export function PlayerIdentityVitals({
     <div
       className={cn(
         type.caption,
-        "mt-0.5 flex flex-col items-center gap-0.5 text-muted-foreground",
+        "mt-0.5 flex flex-col items-center gap-0.5 text-center text-muted-foreground",
         className
       )}
     >
       {physical.length ? (
-        <p className="flex flex-wrap items-center justify-center gap-x-2 gap-y-0.5 sm:justify-start">
+        <p className="flex flex-wrap items-center justify-center gap-x-2 gap-y-0.5">
           {physical.map((bit, i) => (
             <span key={bit} className="inline-flex items-center gap-2">
               {i > 0 ? <Dot /> : null}
@@ -62,7 +62,7 @@ export function PlayerIdentityVitals({
         </p>
       ) : null}
       {hasBirth || collegeLabel ? (
-        <p className="flex flex-wrap items-center justify-center gap-x-2 gap-y-0.5 sm:justify-start">
+        <p className="flex flex-wrap items-center justify-center gap-x-2 gap-y-0.5">
           {birthLine ? <span>{birthLine}</span> : null}
           {birthLine && collegeLabel ? <Dot /> : null}
           {collegeLabel ? (

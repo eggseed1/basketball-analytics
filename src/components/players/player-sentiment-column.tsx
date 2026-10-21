@@ -86,6 +86,7 @@ export function PlayerSentimentColumn({
 
   return (
     <GlassSurface
+      variant="subtle"
       accentColor={wash?.colorA}
       accentColorB={wash?.colorB}
       className="relative min-w-0 p-0"

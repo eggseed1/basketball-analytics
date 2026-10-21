@@ -417,6 +417,55 @@ function main() {
     "counting metrics still publish alongside cutoff Impact"
   );
 
+  // Cutoff-only hero: Hustle must publish from baked cutoffs (not peer pool).
+  // Regression — hustle used to `continue` when values=[] before push().
+  const hustleCutoffFocal = row({
+    playerId: "hustle",
+    playerName: "Hustle Star",
+    hustleDeflections: 177,
+    hustleContestedShots: 389,
+    hustleScreenAssists: 220,
+    hustleChargesDrawn: 2,
+    hustleLooseBallsRecovered: 40,
+    hustleBoxOuts: 147,
+  });
+  const hustleCutoffs = percentileCutoffs(
+    Array.from({ length: 101 }, (_, i) => 0.2 + i * 0.05)
+  );
+  const hustleCutoffOnly = buildPlayerPercentileMetrics(
+    hustleCutoffFocal,
+    [hustleCutoffFocal],
+    [],
+    [],
+    "hustle",
+    undefined,
+    {
+      light: true,
+      seasonCutoffs: (season, id) =>
+        season === "2024-25" && id.startsWith("hustle")
+          ? hustleCutoffs
+          : undefined,
+    }
+  );
+  const hustleCutoffIds = hustleCutoffOnly
+    .filter((m) => m.category === "hustle")
+    .map((m) => m.id);
+  assert.deepEqual(
+    hustleCutoffIds.sort(),
+    [
+      "hustleBoxOut",
+      "hustleChrg",
+      "hustleContest",
+      "hustleDefl",
+      "hustleLoose",
+      "hustleScrAst",
+    ],
+    "hustle ranks from cutoffs with empty peers"
+  );
+  assert.ok(
+    (hustleCutoffOnly.find((m) => m.id === "hustleDefl")?.percentile ?? -1) > 0
+  );
+
   console.log("test-player-percentile-metrics: ok");
 }
 

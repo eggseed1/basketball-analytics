@@ -17,6 +17,7 @@ export async function PlayerStatsIsland({
   fromHistory = false,
   themeMode = "historical",
   honor,
+  hideTitle = false,
 }: {
   playerId: string;
   season: string;
@@ -27,6 +28,7 @@ export async function PlayerStatsIsland({
   fromHistory?: boolean;
   themeMode?: ThemeMode;
   honor?: GlassSurfaceHonor;
+  hideTitle?: boolean;
 }) {
   try {
     const source =
@@ -58,6 +60,7 @@ export async function PlayerStatsIsland({
         fromHistory={fromHistory}
         themeMode={themeMode}
         honor={honor}
+        hideTitle={hideTitle}
       />
     );
   } catch {
@@ -72,6 +75,7 @@ export async function PlayerStatsIsland({
         fromHistory={fromHistory}
         themeMode={themeMode}
         honor={honor}
+        hideTitle={hideTitle}
       />
     );
   }

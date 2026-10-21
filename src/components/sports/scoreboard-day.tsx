@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { TransitionLink } from "@/components/continuity/query-nav";
 import { LiveScoreboardScope } from "@/components/sports/live-scoreboard-scope";
@@ -52,8 +53,19 @@ function dayLabelForScores(
 function DateStrip({ data }: { data: ScoreboardDayData }) {
   const t = useTranslations("Scores");
   const locale = useLocale();
+  const stripRef = useRef<HTMLDivElement>(null);
   const arrow =
     "glass-pill grid size-9 shrink-0 place-items-center rounded-md text-[18px] font-semibold text-muted-foreground hover:text-foreground";
+
+  useEffect(() => {
+    const strip = stripRef.current;
+    if (!strip) return;
+    const active = strip.querySelector<HTMLElement>("[aria-current='date']");
+    if (!active) return;
+    const left = active.offsetLeft - strip.clientWidth / 2 + active.offsetWidth / 2;
+    strip.scrollTo({ left: Math.max(0, left), behavior: "auto" });
+  }, [data.date]);
+
   return (
     <nav aria-label={t("pickDayAria")} className="flex items-center gap-1.5">
       <TransitionLink
@@ -64,7 +76,18 @@ function DateStrip({ data }: { data: ScoreboardDayData }) {
       >
         ‹
       </TransitionLink>
-      <div className="grid min-w-0 flex-1 grid-cols-7 gap-1">
+      {/*
+        Phone widths cannot fit seven labeled day pills without crushing the
+        date numerals. Scroll the strip on small screens; grid from sm up.
+      */}
+      <div
+        ref={stripRef}
+        className={cn(
+          "flex min-w-0 flex-1 gap-1.5 overflow-x-auto overscroll-x-contain",
+          "[scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+          "sm:grid sm:grid-cols-7 sm:gap-1 sm:overflow-visible"
+        )}
+      >
         {data.strip.map((day) => {
           const active = day.date === data.date;
           const isToday = day.date === data.today;
@@ -75,17 +98,18 @@ function DateStrip({ data }: { data: ScoreboardDayData }) {
               scroll={false}
               aria-current={active ? "date" : undefined}
               className={cn(
-                "glass-pill flex min-w-0 flex-col items-center gap-0.5 rounded-md px-1 py-1.5 text-center transition-colors",
+                "glass-pill flex shrink-0 flex-col items-center gap-0.5 rounded-md px-2.5 py-1.5 text-center transition-colors",
+                "min-w-[3.25rem] sm:min-w-0 sm:px-1",
                 active
                   ? "glass-pill-active text-foreground"
                   : "text-muted-foreground hover:text-foreground",
                 day.count === 0 && !active && "opacity-60"
               )}
             >
-              <span className="text-[10px] font-bold uppercase tracking-[0.12em] sm:text-[11px]">
+              <span className="text-[10px] font-bold uppercase tracking-wide sm:text-[11px] sm:tracking-[0.12em]">
                 {isToday ? t("today") : formatDay(day.date, { weekday: "short" }, locale)}
               </span>
-              <span className="text-[18px] font-bold leading-none tabular-nums sm:text-[20px]">
+              <span className="text-[20px] font-bold leading-none tabular-nums">
                 {formatDay(day.date, { day: "numeric" }, locale)}
               </span>
               <span className="hidden text-[11px] tabular-nums sm:block">

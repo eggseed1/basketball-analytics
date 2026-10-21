@@ -408,6 +408,7 @@ export async function PlayerCoreIsland({
             ] as const
           ).map((m) => (
             <GlassSurface
+              variant="subtle"
               key={m.label}
               effect="css"
               className="px-3 py-3"
@@ -426,7 +427,7 @@ export async function PlayerCoreIsland({
 
       <div className="grid items-start gap-4 lg:grid-cols-12">
         <aside className="flex flex-col gap-4 lg:col-span-4">
-          <div className="sports-card overflow-hidden px-4 py-5">
+          <div className="sports-card sports-card-subtle overflow-hidden px-4 py-5">
             <div className="glass-text-scrim -mx-2 rounded-md px-2 py-1">
             {resumeBits.length ? (
               <p className="text-[13px] font-medium leading-snug text-foreground">

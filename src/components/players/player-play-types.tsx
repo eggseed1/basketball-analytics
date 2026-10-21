@@ -36,7 +36,10 @@ export function PlayerPlayTypesCard({
   const bar = teamColorAuto(teamKey);
   const maxFreq = Math.max(...data.rows.map((r) => r.frequency), 0.01);
   return (
-    <GlassSurface effect="css" className="flex flex-col gap-4 p-4 sm:p-5">
+    <GlassSurface
+      variant="subtle"
+      effect="css"
+      className="flex flex-col gap-4 p-4 sm:p-5">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div className="min-w-0">
           <h2 className={type.heading}>Play types</h2>

@@ -18,63 +18,54 @@ export type ContractValueChartYear = {
   terms?: string | null;
 };
 
-const STEPS = [5e6, 10e6, 20e6, 25e6, 50e6, 100e6];
 /** Surplus this small reads as even. */
 const EVEN = 50_000;
-function gridStep(max: number): number {
-  return STEPS.find((s) => max / s <= 4) ?? STEPS[STEPS.length - 1]!;
-}
 
 function signedUsd(dollars: number): string {
-  if (Math.abs(dollars) < EVEN) return "$0.0M";
+  if (Math.abs(dollars) < EVEN) return "$0";
   const text = formatUsdCompact(Math.abs(dollars));
   return dollars > 0 ? `+${text}` : `-${text}`;
 }
 
-function sign(d: number): -1 | 0 | 1 {
-  return Math.abs(d) < EVEN ? 0 : d > 0 ? 1 : -1;
-}
-
 const SURPLUS_TONE = (d: number) =>
-  sign(d) === 0 ? "text-muted-foreground" : d > 0 ? "text-[var(--chart-3)]" : "text-destructive";
+  Math.abs(d) < EVEN
+    ? "text-muted-foreground"
+    : d > 0
+      ? "text-[var(--chart-3)]"
+      : "text-destructive";
 
-/** Paid vs worth, one row per contract season, with the gap between them filled in. */
-type Series = "salary" | "worth" | "range" | "gap";
-
+/**
+ * One row per season: surplus as a diverging bar, paid and worth as plain numbers.
+ * Options can make surplus differ from worth − salary, so the bar follows surplus.
+ */
 export function ContractValueChart({ years }: { years: ContractValueChartYear[] }) {
   const [selected, setSelected] = useState(years[0]?.season ?? null);
-  const [series, setSeries] = useState<Series | null>(null);
-  const ring = (key: Series, color: string) =>
-    series === key ? `0 0 0 3px color-mix(in oklab, ${color} 35%, transparent)` : undefined;
-  const legendClass = (key: Series) =>
-    cn(
-      "inline-flex cursor-default items-center gap-1.5 transition-colors duration-150",
-      series === key && "font-medium text-foreground"
-    );
   if (!years.length) return null;
 
-  const top = Math.max(...years.map((y) => Math.max(y.worthHigh, y.salary)));
-  const step = gridStep(top);
-  const max = Math.ceil((top * 1.04) / step) * step;
-  const pct = (d: number) => (Math.max(0, Math.min(d, max)) / max) * 100;
-  const ticks: number[] = [];
-  for (let v = 0; v <= max; v += step) ticks.push(v);
+  const max = Math.max(...years.map((y) => Math.abs(y.surplus)), 1);
+  const width = (dollars: number) => `${(Math.abs(dollars) / max) * 50}%`;
   const active = years.find((y) => y.season === selected) ?? years[0]!;
 
   return (
     <div className="flex flex-col gap-3">
-      <div data-hover-group className="flex flex-col">
+      <div
+        className={cn(
+          type.micro,
+          "grid grid-cols-[5.5rem_minmax(0,1fr)_4.5rem] items-center gap-3 px-0.5 font-semibold uppercase tracking-wide text-muted-foreground sm:grid-cols-[6.5rem_minmax(0,1fr)_4.75rem_4.75rem_4.75rem]"
+        )}
+      >
+        <span>Season</span>
+        <span aria-hidden />
+        <span className="hidden text-right sm:block">Worth</span>
+        <span className="hidden text-right sm:block">Paid</span>
+        <span className="text-right">Surplus</span>
+      </div>
+
+      <div data-hover-group className="flex flex-col gap-1.5">
         {years.map((y, i) => {
           const isActive = y.season === active.season;
-          const lo = Math.min(y.salary, y.worth);
-          const hi = Math.max(y.salary, y.worth);
-          // Options can flip who keeps the upside, so the gap only takes a color when it agrees with the surplus.
-          const agrees = sign(y.worth - y.salary) === sign(y.surplus);
-          const gapColor = !agrees || sign(y.surplus) === 0
-            ? "var(--muted-foreground)"
-            : y.surplus > 0
-              ? "var(--chart-3)"
-              : "var(--destructive)";
+          const positive = y.surplus > EVEN;
+          const negative = y.surplus < -EVEN;
           return (
             <button
               key={y.season}
@@ -85,66 +76,65 @@ export function ContractValueChart({ years }: { years: ContractValueChartYear[] 
               onMouseEnter={() => setSelected(y.season)}
               onFocus={() => setSelected(y.season)}
               aria-pressed={isActive}
-              aria-label={`${y.season}: salary ${formatUsdCompact(y.salary)}, estimated worth ${formatUsdCompact(y.worth)}, likely ${formatUsdCompact(y.worthLow)} to ${formatUsdCompact(y.worthHigh)}, surplus ${signedUsd(y.surplus)}`}
+              aria-label={`${y.season}: paid ${formatUsdCompact(y.salary)}, worth ${formatUsdCompact(y.worth)}, surplus ${signedUsd(y.surplus)}`}
               className={cn(
-                "grid grid-cols-[4.25rem_1fr_4.75rem] items-center gap-3 rounded-lg px-2 py-1.5 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                isActive ? "bg-foreground/[0.05]" : "hover:bg-foreground/[0.03]"
+                "grid grid-cols-[5.5rem_minmax(0,1fr)_4.5rem] items-center gap-3 rounded-[11px] px-2 py-2 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:grid-cols-[6.5rem_minmax(0,1fr)_4.75rem_4.75rem_4.75rem]",
+                isActive ? "bg-foreground/[0.06]" : "hover:bg-foreground/[0.03]"
               )}
             >
-              <span className="flex min-w-0 flex-col">
+              <span className="min-w-0">
                 <span
                   className={cn(
                     type.bodySm,
-                    "tabular-nums",
+                    "block tabular-nums",
                     isActive ? "font-semibold text-foreground" : "text-muted-foreground"
                   )}
                 >
                   {y.season}
                 </span>
                 {y.terms ? (
-                  <span className={cn(type.micro, "truncate text-muted-foreground")}>{y.terms}</span>
+                  <span className={cn(type.micro, "block truncate text-muted-foreground")}>
+                    {y.terms}
+                  </span>
                 ) : null}
+                <span className={cn(type.micro, "mt-0.5 block tabular-nums text-muted-foreground sm:hidden")}>
+                  Worth {formatUsdCompact(y.worth)} · Paid {formatUsdCompact(y.salary)}
+                </span>
               </span>
-              <span aria-hidden className="relative h-7">
-                <span className="absolute inset-x-0 top-1/2 h-px bg-border/70" />
-                <span
-                  data-motion-bar="x"
-                  className="absolute top-1/2 h-2.5 -translate-y-1/2 rounded-full bg-[var(--chart-3)]/15"
-                  style={{
-                    left: `${pct(y.worthLow)}%`,
-                    width: `${pct(y.worthHigh) - pct(y.worthLow)}%`,
-                    boxShadow: ring("range", "var(--chart-3)"),
-                    background: series === "range" ? "color-mix(in oklab, var(--chart-3) 32%, transparent)" : undefined,
-                  }}
-                />
-                <span
-                  data-motion-bar="x"
-                  className="absolute top-1/2 h-1.5 -translate-y-1/2 rounded-full"
-                  style={{
-                    transformOrigin: y.worth >= y.salary ? "left" : "right",
-                    left: `${pct(lo)}%`,
-                    width: `${pct(hi) - pct(lo)}%`,
-                    background: gapColor,
-                    opacity: series === "gap" ? 1 : agrees ? 0.85 : 0.4,
-                    boxShadow: ring("gap", gapColor),
-                  }}
-                />
-                <span
-                  data-motion-dot
-                  className="absolute top-1/2 h-5 w-[3px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-foreground"
-                  style={{ left: `${pct(y.salary)}%`, boxShadow: ring("salary", "var(--foreground)") }}
-                />
-                <span
-                  data-motion-mark
-                  className="absolute top-1/2 size-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-[var(--card)] bg-[var(--chart-3)]"
-                  style={
-                    {
-                      left: `${pct(y.worth)}%`,
-                      "--mark-from": `${pct(y.salary)}%`,
-                      boxShadow: ring("worth", "var(--chart-3)"),
-                    } as CSSProperties
-                  }
-                />
+
+              <span className="relative h-5 rounded-full bg-foreground/[0.05]" aria-hidden>
+                <span className="absolute inset-y-0 left-1/2 w-px bg-foreground/30" />
+                {positive || negative ? (
+                  <span
+                    data-motion-bar="x"
+                    className={cn(
+                      "absolute top-1/2 h-2.5 -translate-y-1/2 rounded-full",
+                      positive
+                        ? "left-1/2 bg-[var(--chart-3)]"
+                        : "right-1/2 bg-destructive"
+                    )}
+                    style={{ width: width(y.surplus) }}
+                  />
+                ) : (
+                  <span className="absolute left-1/2 top-1/2 size-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-muted-foreground" />
+                )}
+              </span>
+
+              <span
+                className={cn(
+                  type.caption,
+                  "hidden text-right tabular-nums text-muted-foreground sm:block"
+                )}
+              >
+                {formatUsdCompact(y.worth)}
+              </span>
+              <span
+                className={cn(
+                  type.caption,
+                  "hidden text-right tabular-nums text-muted-foreground sm:block"
+                )}
+              >
+                {formatUsdCompact(y.salary)}
               </span>
               <span
                 className={cn(
@@ -158,65 +148,8 @@ export function ContractValueChart({ years }: { years: ContractValueChartYear[] 
             </button>
           );
         })}
-
-        <div className="grid grid-cols-[4.25rem_1fr_4.75rem] gap-3 px-2 pt-1">
-          <span />
-          <span aria-hidden className={cn(type.micro, "relative h-4 text-muted-foreground")}>
-            {ticks.map((v, i) => (
-              <span
-                key={v}
-                className={cn(
-                  "absolute tabular-nums",
-                  i === 0 ? "" : i === ticks.length - 1 ? "-translate-x-full" : "-translate-x-1/2",
-                  ticks.length > 3 && i % 2 === 1 && "max-sm:hidden"
-                )}
-                style={{ left: `${pct(v)}%` }}
-              >
-                {v === 0 ? "$0" : formatUsdCompact(v).replace(".0M", "M")}
-              </span>
-            ))}
-          </span>
-          <span className={cn(type.micro, "text-right text-muted-foreground")}>Surplus</span>
-        </div>
       </div>
 
-      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 rounded-lg bg-foreground/[0.04] px-3 py-2" aria-live="polite">
-        <span className={cn(type.bodySm, "font-semibold tabular-nums")}>{active.season}</span>
-        <span className={cn(type.bodySm, "tabular-nums")}>
-          Paid {formatUsdCompact(active.salary)}, worth about {formatUsdCompact(active.worth)} (likely{" "}
-          {formatUsdCompact(active.worthLow)} to {formatUsdCompact(active.worthHigh)})
-        </span>
-        {active.note ? <span className={cn(type.caption, "text-muted-foreground")}>{active.note}</span> : null}
-        {Math.abs(active.surplus - (active.worth - active.salary)) > 500_000 ? (
-          <span className={cn(type.caption, "basis-full text-muted-foreground")}>
-            Surplus here isn&apos;t simply worth minus salary, because the option or guarantee terms decide who
-            keeps the upside.
-          </span>
-        ) : null}
-      </div>
-
-      <ul
-        className={cn(type.caption, "flex flex-wrap gap-x-4 gap-y-1 text-muted-foreground")}
-        onMouseLeave={() => setSeries(null)}
-      >
-        <li className={legendClass("salary")} onMouseEnter={() => setSeries("salary")}>
-          <span aria-hidden className="h-3.5 w-[3px] rounded-full bg-foreground" />
-          Salary
-        </li>
-        <li className={legendClass("worth")} onMouseEnter={() => setSeries("worth")}>
-          <span aria-hidden className="size-2.5 rounded-full bg-[var(--chart-3)]" />
-          Estimated worth
-        </li>
-        <li className={legendClass("range")} onMouseEnter={() => setSeries("range")}>
-          <span aria-hidden className="h-2 w-4 rounded-full bg-[var(--chart-3)]/15" />
-          Likely range (80%)
-        </li>
-        <li className={legendClass("gap")} onMouseEnter={() => setSeries("gap")}>
-          <span aria-hidden className="h-1.5 w-4 rounded-full bg-[var(--chart-3)]" />
-          <span aria-hidden className="-ml-1 h-1.5 w-4 rounded-full bg-[var(--destructive)]" />
-          Surplus
-        </li>
-      </ul>
     </div>
   );
 }

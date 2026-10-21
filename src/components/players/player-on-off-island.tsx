@@ -54,7 +54,7 @@ export async function PlayerOnOffIsland({
     const seasons = await getOnOffSeasons();
     return (
       <section id="onoff" className="scroll-mt-16 flex flex-col gap-2" aria-label="On/off">
-        <h2 className="text-[20px] font-bold tracking-tight">On/off</h2>
+        <h2 className={type.heading}>On/off</h2>
         <p className={cn(type.bodySm, "max-w-prose text-muted-foreground")}>
           {seasons.includes(season)
             ? `No regular-season possessions for ${playerName} in ${season}.`

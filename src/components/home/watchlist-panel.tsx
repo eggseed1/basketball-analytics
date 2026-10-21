@@ -17,12 +17,13 @@ import { PlayerIdentity } from "@/components/players/player-identity";
 import { TeamIdentity } from "@/components/teams/team-identity";
 import {
   useWatchlistStatus,
-  WatchlistExpandCue,
   WatchlistItemStatus,
 } from "@/components/home/watchlist-item-status";
+import { WatchlistPinSummary } from "@/components/home/watchlist-summary-cards";
 import { ESPN_TEAM_META } from "@/data/providers/nba/team-meta";
 import type { WatchStatus } from "@/lib/watchlist-status";
 import { TEAM_BRANDS } from "@/lib/nba-brand";
+import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 
 const STORAGE_KEY = "ba-watchlist-v1";
@@ -76,7 +77,7 @@ const ALL_TEAMS: SearchHit[] = Object.values(TEAM_BRANDS)
   .sort((a, b) => a.name.localeCompare(b.name));
 
 /** Local favorites - players or teams, with add modal. */
-export function WatchlistPanel() {
+export function WatchlistPanel({ compact = false }: { compact?: boolean }) {
   const [items, setItems] = useState<WatchlistItem[]>([]);
   const [ready, setReady] = useState(false);
   const [open, setOpen] = useState(false);
@@ -121,14 +122,17 @@ export function WatchlistPanel() {
 
   return (
     <section
-      className="@container sports-card flex flex-col gap-3 p-4 sm:p-[21px]"
+      className={cn(
+        "sports-card flex flex-col",
+        compact ? "gap-2 p-3" : "@container gap-3 p-4 sm:p-[21px]"
+      )}
     >
       <div className="flex items-center justify-between gap-2">
-        <h2 className="type-heading">Watchlist</h2>
+        <h2 className={compact ? type.title3 : "type-heading"}>Watchlist</h2>
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="sports-pill"
+          className={cn("sports-pill", compact && "h-7 px-2.5 text-[12px]")}
         >
           <Plus className="size-3.5" aria-hidden />
           Add
@@ -136,27 +140,53 @@ export function WatchlistPanel() {
       </div>
 
       {!ready ? (
-        <div className="type-body-sm flex min-h-[132px] items-center justify-center text-muted-foreground">Loading…</div>
+        <div
+          className={cn(
+            type.bodySm,
+            "flex items-center justify-center text-muted-foreground",
+            compact ? "min-h-10" : "min-h-[132px]"
+          )}
+        >
+          Loading…
+        </div>
       ) : items.length === 0 ? (
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="flex flex-col items-center justify-center gap-2 rounded-xl px-4 py-4 text-center transition-colors hover:bg-secondary/50"
+          className={cn(
+            "flex items-center text-left transition-colors hover:bg-secondary/50",
+            compact
+              ? "gap-2 rounded-md px-2 py-2"
+              : "flex-col justify-center gap-2 rounded-xl px-4 py-4 text-center"
+          )}
         >
-          <span data-motion-pop className="flex size-10 items-center justify-center rounded-full bg-foreground/[0.045] text-foreground">
-            <Plus className="size-5" aria-hidden />
+          <span
+            data-motion-pop
+            className={cn(
+              "flex shrink-0 items-center justify-center rounded-full bg-foreground/[0.045] text-foreground",
+              compact ? "size-7" : "size-10"
+            )}
+          >
+            <Plus className={compact ? "size-3.5" : "size-5"} aria-hidden />
           </span>
-          <div className="flex flex-col items-center gap-1 text-center">
-            <p className="text-[14px] font-semibold">
-              Follow players and teams
-            </p>
-            <p className="text-[12px] text-muted-foreground">
-              Pin names, then open a card for games, form, and injuries.
+          <div
+            className={cn(
+              "flex min-w-0 flex-col gap-0.5",
+              !compact && "items-center text-center"
+            )}
+          >
+            <p className={cn(compact ? type.caption : "text-[14px]", "font-semibold")}>
+              Add players or teams to your watchlist
             </p>
           </div>
         </button>
       ) : (
-        <ul className="grid gap-2 @xl:grid-cols-2">
+        <ul
+          className={cn(
+            "grid gap-1.5",
+            !compact && "gap-2 @xl:grid-cols-2"
+          )}
+        >
           {items.map((item) => (
             <WatchlistPin
               key={itemKey(item)}
@@ -164,6 +194,7 @@ export function WatchlistPanel() {
               status={status?.byKey.get(itemKey(item))}
               fetchedAt={status?.fetchedAt ?? Date.now()}
               onRemove={() => remove(item)}
+              compact={compact}
             />
           ))}
           <li>
@@ -171,7 +202,12 @@ export function WatchlistPanel() {
               type="button"
               onClick={() => setOpen(true)}
               data-motion="chip"
-              className="flex w-full items-center justify-center gap-1.5 rounded-md border border-dashed border-border px-3 py-2.5 text-[12px] font-semibold text-muted-foreground hover:bg-secondary/40 hover:text-foreground"
+              className={cn(
+                "flex w-full items-center justify-center gap-1.5 rounded-md border border-dashed border-border font-semibold text-muted-foreground hover:bg-secondary/40 hover:text-foreground",
+                compact
+                  ? "px-2 py-1.5 text-[11px]"
+                  : "px-3 py-2.5 text-[12px]"
+              )}
             >
               <Plus className="size-3.5" aria-hidden />
               Add more
@@ -203,86 +239,76 @@ function WatchlistPin({
   status,
   fetchedAt,
   onRemove,
+  compact = false,
 }: {
   item: WatchlistItem;
   status: WatchStatus | undefined;
   fetchedAt: number;
   onRemove: () => void;
+  compact?: boolean;
 }) {
-  const [open, setOpen] = useState(false);
-
   return (
-    <li data-motion="chip" className="min-w-0">
-      <details
-        className="group rounded-md bg-secondary/50 transition-[background-color,box-shadow] open:bg-secondary/70"
-        open={open}
-        onToggle={(event) => {
-          setOpen((event.currentTarget as HTMLDetailsElement).open);
-        }}
-      >
-        <summary className="flex cursor-pointer list-none items-start gap-2 px-3 py-2.5 [&::-webkit-details-marker]:hidden">
-          <div className="flex min-w-0 flex-1 flex-col gap-1">
-            <div className="flex min-w-0 items-center gap-2">
-              {item.kind === "player" ? (
-                <PlayerIdentity
-                  playerId={item.id}
-                  name={item.name}
-                  teamKey={item.teamKey}
-                  variant="compact"
-                  className="min-w-0 flex-1"
-                  nameClassName="w-full gap-2"
-                >
-                  <span className="relative inline-flex shrink-0">
-                    <PlayerHeadshot
-                      playerId={item.id}
-                      name={item.name}
-                      teamKey={item.teamKey}
-                      size="xs"
-                    />
-                    {item.teamKey ? (
-                      <span className="absolute -right-1 -bottom-1 rounded-full bg-background p-px ring-1 ring-border">
-                        <TeamLogo teamKey={item.teamKey} size="2xs" />
-                      </span>
-                    ) : null}
-                  </span>
-                  <span className="min-w-0 flex-1 truncate type-body-sm font-semibold underline decoration-foreground/40 underline-offset-2">
-                    {item.name}
-                  </span>
-                </PlayerIdentity>
-              ) : (
-                <TeamIdentity
-                  teamKey={item.teamKey ?? item.id}
-                  label={item.name}
-                  className="min-w-0 flex-1"
-                  nameClassName="w-full gap-2"
-                >
-                  <TeamLogo teamKey={item.teamKey ?? item.id} size="xs" />
-                  <span className="min-w-0 flex-1 truncate type-body-sm font-semibold underline decoration-foreground/40 underline-offset-2">
-                    {item.name}
-                  </span>
-                </TeamIdentity>
-              )}
-              <WatchlistExpandCue open={open} />
-            </div>
-            <WatchlistItemStatus status={status} fetchedAt={fetchedAt} open={false} />
-          </div>
-          <button
-            type="button"
-            onClick={(event) => {
-              event.preventDefault();
-              event.stopPropagation();
-              onRemove();
-            }}
-            className="mt-0.5 rounded-md p-1 text-muted-foreground transition-colors hover:bg-background hover:text-foreground"
-            aria-label={`Remove ${item.name}`}
+    <li
+      data-motion="chip"
+      className={cn(
+        "flex min-w-0 flex-col rounded-md bg-secondary/50",
+        compact ? "gap-0.5 px-2 py-1.5" : "gap-2 px-3 py-2.5"
+      )}
+    >
+      <div className="flex min-w-0 items-center gap-2">
+        {item.kind === "player" ? (
+          <PlayerIdentity
+            playerId={item.id}
+            name={item.name}
+            teamKey={item.teamKey}
+            variant="compact"
+            className="min-w-0 flex-1"
+            nameClassName="w-full gap-2"
           >
-            <X className="size-3.5" />
-          </button>
-        </summary>
-        <div className="border-t border-border/40 px-2.5 pb-2.5">
-          <WatchlistItemStatus status={status} fetchedAt={fetchedAt} open />
-        </div>
-      </details>
+            <span className="relative inline-flex shrink-0">
+              <PlayerHeadshot
+                playerId={item.id}
+                name={item.name}
+                teamKey={item.teamKey}
+                size="xs"
+              />
+              {item.teamKey ? (
+                <span className="absolute -right-1 -bottom-1 rounded-full bg-background p-px ring-1 ring-border">
+                  <TeamLogo teamKey={item.teamKey} size="2xs" />
+                </span>
+              ) : null}
+            </span>
+            <span className="min-w-0 flex-1 truncate type-body-sm font-semibold underline decoration-foreground/40 underline-offset-2">
+              {item.name}
+            </span>
+          </PlayerIdentity>
+        ) : (
+          <TeamIdentity
+            teamKey={item.teamKey ?? item.id}
+            label={item.name}
+            className="min-w-0 flex-1"
+            nameClassName="w-full gap-2"
+          >
+            <TeamLogo teamKey={item.teamKey ?? item.id} size="xs" />
+            <span className="min-w-0 flex-1 truncate type-body-sm font-semibold underline decoration-foreground/40 underline-offset-2">
+              {item.name}
+            </span>
+          </TeamIdentity>
+        )}
+        <button
+          type="button"
+          onClick={onRemove}
+          className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-background hover:text-foreground"
+          aria-label={`Remove ${item.name}`}
+        >
+          <X className="size-3.5" />
+        </button>
+      </div>
+      {compact ? (
+        <WatchlistItemStatus status={status} fetchedAt={fetchedAt} />
+      ) : (
+        <WatchlistPinSummary status={status} fetchedAt={fetchedAt} />
+      )}
     </li>
   );
 }

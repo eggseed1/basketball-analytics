@@ -89,9 +89,9 @@ export type TeamRateMode =
 export const TEAM_PAGE_TABS: Array<{ id: TeamPageTab; label: string }> = [
   { id: "overview", label: "Overview" },
   { id: "players", label: "Players" },
+  { id: "games", label: "Games" },
   { id: "offense", label: "Offense & Defense" },
   { id: "onoff", label: "On/Off" },
-  { id: "games", label: "Games" },
   { id: "splits", label: "Splits" },
   { id: "playoffs", label: "Playoffs" },
   { id: "organization", label: "Organization" },

@@ -229,8 +229,11 @@ export function PlayerShotMapView({
 
   if (map.emptyReason) {
     return (
-      <GlassSurface effect="css" className="flex flex-col gap-2 p-4 sm:p-5">
-        <h2 className={type.heading}>Shot map</h2>
+      <GlassSurface
+        variant="subtle"
+        effect="css"
+      className="flex flex-col gap-2 p-4 sm:p-5">
+        <h3 className={type.title}>Shot map</h3>
         <p className={cn(type.bodySm, "text-muted-foreground")}>{map.emptyReason}</p>
         <p className={cn(type.caption, "text-muted-foreground")}>
           Source: {map.source}. Pick another season, or switch between Regular and Playoffs above.
@@ -244,10 +247,13 @@ export function PlayerShotMapView({
 
   return (
     <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(17rem,21rem)]">
-      <GlassSurface effect="css" className="flex flex-col gap-4 p-4 sm:p-5">
+      <GlassSurface
+        variant="subtle"
+        effect="css"
+      className="flex flex-col gap-4 p-4 sm:p-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="min-w-0">
-            <h2 className={type.heading}>Shot map</h2>
+            <h3 className={type.title}>Shot map</h3>
             <p className={cn(type.caption, "mt-1 text-muted-foreground")}>
               {map.season} · {map.seasonType === "playoffs" ? "Playoffs" : "Regular season"} ·{" "}
               {map.team}
@@ -387,9 +393,12 @@ export function PlayerShotMapView({
         {seasonChips}
       </GlassSurface>
 
-      <GlassSurface effect="css" className="flex flex-col gap-3 p-4 sm:p-5">
+      <GlassSurface
+        variant="subtle"
+        effect="css"
+      className="flex flex-col gap-3 p-4 sm:p-5">
         <div>
-          <h2 className={type.heading}>Shot zones</h2>
+          <h3 className={type.title}>Shot zones</h3>
           <p className={cn(type.caption, "mt-1 text-muted-foreground")}>
             Bars show the share of attempts.
             {hasLeague ? " FG% is colored against the league average in that zone." : ""}

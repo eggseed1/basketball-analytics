@@ -42,7 +42,6 @@ import { getFranchiseHistory } from "@/data/queries/franchises";
 import { getTeamSeasonBoardCached } from "@/data/queries/request-cache";
 import { formatOrdinal } from "@/lib/format";
 import { isSeasonAwaitingFirstGame } from "@/lib/nba-season-status";
-import { playerBoardAwaitingTip } from "@/lib/player-board-tip";
 import { resolveHistoricalTeamBrand } from "@/lib/historical-team-brand";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { brandAtmosphereColors } from "@/lib/game-matchup-theme";
@@ -156,9 +155,7 @@ export default async function TeamProfilePage({
   // so identity can paint without a second 2.5s budget race.
   const seasonBoard = await getTeamSeasonBoardCached(season);
   const league = seasonBoard.rows;
-  const seasonAwaitingGames =
-    isSeasonAwaitingFirstGame(season, league) ||
-    playerBoardAwaitingTip(season, league);
+  const seasonAwaitingGames = isSeasonAwaitingFirstGame(season, league);
 
   const [priorBoard, exploreSeasons] = await Promise.all([
     seasonAwaitingGames

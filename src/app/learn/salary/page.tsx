@@ -113,9 +113,9 @@ export default function LearnSalaryPage() {
   const totalAcquired = picks.teams.reduce((s, t) => s + t.acquired, 0);
 
   return (
-    <main data-motion-page className="site-shell flex flex-col gap-8 py-6 sm:py-8">
+    <main data-motion-page className="site-shell flex flex-col gap-4 pb-6 sm:gap-5 sm:pb-8">
       <MotionReveal />
-      <div data-motion-stack className="flex w-full flex-col gap-6 lg:max-w-5xl">
+      <div data-motion-stack className="flex w-full flex-col gap-4 lg:max-w-5xl sm:gap-5">
         <Link href="/learn" className="text-[14px] font-semibold text-muted-foreground underline-offset-4 hover:underline">
           ← Learn
         </Link>

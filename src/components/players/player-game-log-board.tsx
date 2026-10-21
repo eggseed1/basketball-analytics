@@ -221,6 +221,7 @@ export function PlayerGameLogBoard({
         </p>
       ) : (
         <GlassSurface
+          variant="subtle"
           effect="css"
           accentColor={accentColor}
           accentColorB={accentColorB}

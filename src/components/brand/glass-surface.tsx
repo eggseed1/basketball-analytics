@@ -100,19 +100,39 @@ export function GlassSurface({
     return base;
   };
 
+  // Hall of Fame: same glass material as everyone else, plus --hof-gold-ring.
+  const hof = honor === "hof";
+  const withHofRing = (shadow: string | undefined) =>
+    hof
+      ? shadow
+        ? `${shadow}, var(--hof-gold-ring)`
+        : "var(--hof-gold-ring)"
+      : shadow;
+
   if (effect === "css") {
     const solid = surface === "solid";
     const rimColors = a
       ? ({ "--rim-away": a, "--rim-home": b ?? a } as CSSProperties)
       : undefined;
+    const baseShadow = solid
+      ? undefined
+      : subtle
+        ? "var(--material-subtle-shadow)"
+        : "var(--glass-edge-shadow)";
+    const baseBorder = solid
+      ? undefined
+      : subtle
+        ? "1px solid var(--material-subtle-border)"
+        : "var(--glass-edge-border)";
     return createElement(
       as,
       {
         ...rest,
         "data-lit-team": a ? "" : undefined,
+        "data-hof": hof ? "" : undefined,
         className: cn(
           "glass-surface rounded-[var(--card-radius)]",
-          honor === "hof" && HOF_OUTLINE_CLASS,
+          hof && HOF_OUTLINE_CLASS,
           className
         ),
         style: {
@@ -128,16 +148,8 @@ export function GlassSurface({
             : subtle
               ? "saturate(140%) blur(var(--material-subtle-blur))"
               : `saturate(150%) blur(${backdropBlur}px)`,
-          border: solid
-            ? undefined
-            : subtle
-              ? "1px solid var(--material-subtle-border)"
-              : "var(--glass-edge-border)",
-          boxShadow: solid
-            ? undefined
-            : subtle
-              ? "var(--material-subtle-shadow)"
-              : "var(--glass-edge-shadow)",
+          border: baseBorder,
+          boxShadow: withHofRing(baseShadow),
           ...rimColors,
           ...style,
         },
@@ -159,14 +171,15 @@ export function GlassSurface({
       turbulenceBaseFrequency={0.008}
       turbulenceSeed={1}
       tintColor={liquidTint}
+      data-hof={hof ? "" : undefined}
       className={cn(
         "glass-surface rounded-[var(--card-radius)]",
-        honor === "hof" && HOF_OUTLINE_CLASS,
+        hof && HOF_OUTLINE_CLASS,
         className
       )}
       style={{
         overflow: overflowVisible ? "visible" : "hidden",
-        boxShadow: liquidInset,
+        boxShadow: withHofRing(liquidInset),
         ...style,
       }}
       {...rest}

@@ -262,13 +262,7 @@ export async function TeamDestinationIdentity({
               </p>
               <h1 className={cn(type.display, "mt-0.5")}>{displayName}</h1>
               {franchise ? (
-                <TransitionLink
-                  href={historyHref}
-                  className={cn(
-                    type.caption,
-                    "mt-1 inline-flex items-center gap-1 text-muted-foreground hover:text-foreground"
-                  )}
-                >
+                <p className={cn(type.caption, "mt-1.5 text-muted-foreground")}>
                   <span>
                     {titleCount === 1
                       ? t("titlesOne", {
@@ -280,8 +274,15 @@ export async function TeamDestinationIdentity({
                           season: franchise.firstSeason,
                         })}
                   </span>
-                  <LinkCue />
-                </TransitionLink>
+                  <span className="text-muted-foreground/50"> · </span>
+                  <TransitionLink
+                    href={historyHref}
+                    className="inline-flex items-center gap-1 font-semibold underline-offset-2 hover:text-foreground hover:underline"
+                  >
+                    {t("historyPill")}
+                    <LinkCue />
+                  </TransitionLink>
+                </p>
               ) : null}
               {standing ? (
                 <p className={cn(type.caption, "mt-1.5 text-muted-foreground")}>

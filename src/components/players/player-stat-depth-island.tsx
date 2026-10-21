@@ -65,7 +65,10 @@ import {
 import { mergePlayerSeasonStats } from "@/lib/player-destination";
 import { slimEdgeProductEnabled } from "@/data/providers/nba/runtime-policy";
 import { statTipProps } from "@/lib/stat-glossary";
+import { GlassSurface } from "@/components/brand/glass-surface";
 import { LinkCue } from "@/components/ui/link-cue";
+import { boardType, type } from "@/lib/design-system";
+import { cn } from "@/lib/utils";
 
 function pct(n: number | null): string {
   if (n == null) return "—";
@@ -358,10 +361,8 @@ async function CareerView({
   return (
     <section id="career-table" className="scroll-mt-16 flex flex-col gap-4">
       <div>
-        <h2 className="text-[17px] font-bold tracking-tight">
-          Career season stats
-        </h2>
-        <p className="text-[13px] text-muted-foreground">
+        <h2 className={type.heading}>Career season stats</h2>
+        <p className={cn(type.bodySm, "text-muted-foreground")}>
           Full reference · Season / Age / Team · Per game · Totals · Per 36
         </p>
       </div>
@@ -453,7 +454,7 @@ async function GamesView({
   return (
     <section id="game-log" className="scroll-mt-16 flex flex-col gap-4">
       <div>
-        <h2 className="text-[17px] font-bold tracking-tight">Game log</h2>
+        <h2 className={type.heading}>Game log</h2>
         <p className="text-[13px] text-muted-foreground">
           {season} · {log.total} appearances · filters update trend, form,
           distribution, and table together
@@ -595,16 +596,20 @@ async function SplitsView({
   const oppSorted = [...oppDeltas].sort((a, b) => b.delta - a.delta);
 
   return (
-    <section id="splits" className="scroll-mt-16 flex flex-col gap-4">
+    <section
+      id="splits"
+      className="scroll-mt-16 flex flex-col gap-4"
+      aria-label="Splits"
+    >
       <div>
-        <h2 className="text-[17px] font-bold tracking-tight">Splits</h2>
-        <p className="text-[13px] text-muted-foreground">
+        <h2 className={type.heading}>Splits</h2>
+        <p className={cn(type.bodySm, "text-muted-foreground")}>
           Under which conditions does this player change? Rates from Σ/Σ.
         </p>
       </div>
 
       {splits.seasonBaseline.games === 0 ? (
-        <p className="text-[13px] text-muted-foreground">
+        <p className={cn(type.bodySm, "text-muted-foreground")}>
           No games available to split for {season}.
         </p>
       ) : (
@@ -630,10 +635,12 @@ async function SplitsView({
             metricLabel="PTS per game"
           />
           <details open={splits.byOpponent.length <= 15}>
-            <summary className="cursor-pointer text-[13px] font-semibold">
+            <summary
+              className={cn(type.bodySm, "cursor-pointer font-semibold")}
+            >
               All opponents ({splits.byOpponent.length})
             </summary>
-            <div className="mt-2">
+            <div className="mt-3">
               <SplitTable
                 title="Opponent"
                 rows={splits.byOpponent.map(withSplitRates)}
@@ -641,7 +648,7 @@ async function SplitsView({
             </div>
           </details>
 
-          <p className="text-[12px] text-muted-foreground">
+          <p className={cn(type.caption, "text-muted-foreground")}>
             Conservation: Home+Away, Wins+Losses, and Starter+Bench each equal
             the season game universe when those fields are complete.
           </p>
@@ -797,12 +804,14 @@ async function ShootingView({
       : slices;
 
   return (
-    <section id="shooting" className="scroll-mt-16 flex flex-col gap-4">
-      <div className="sports-card glass-text-scrim p-4">
-        <h2 className="type-title text-[17px] font-bold tracking-tight">
-          Shooting
-        </h2>
-        <p className="text-[13px] text-muted-foreground">
+    <section
+      id="shooting"
+      className="scroll-mt-16 flex flex-col gap-4"
+      aria-label="Shooting"
+    >
+      <div>
+        <h2 className={type.heading}>Shooting</h2>
+        <p className={cn(type.bodySm, "text-muted-foreground")}>
           Traditional core always · Hannah-style season court when coordinates
           indexed · no synthetic coordinates
         </p>
@@ -873,7 +882,7 @@ async function ShootingView({
               ).toFixed(1)}%)`}
             />
           ) : (
-            <div className="sports-card glass-text-scrim px-3 py-2 text-[12px] text-muted-foreground">
+            <div className="sports-card sports-card-subtle glass-text-scrim px-3 py-2 text-[12px] text-muted-foreground">
               Season court chart unavailable for {season} (no precomputed
               player-season shot index). Traditional shooting above remains
               complete. Open a game for per-game CourtShotChart when that game
@@ -1113,32 +1122,45 @@ async function AdvancedView({
   );
 
   return (
-    <section id="advanced" className="scroll-mt-16 flex flex-col gap-4">
+    <section
+      id="advanced"
+      className="scroll-mt-16 flex flex-col gap-4 sm:gap-5"
+    >
       <div>
-        <h2 className="text-[17px] font-bold tracking-tight">Advanced</h2>
-        <p className="text-[13px] text-muted-foreground">
+        <h2 className={type.heading}>Advanced</h2>
+        <p className={cn(type.bodySm, "text-muted-foreground")}>
           Impact, efficiency, and role context. Validated metrics only.
         </p>
       </div>
 
-      <div data-motion-list className="grid gap-3 lg:grid-cols-2">
-        {caps.advancedDrbl ? (
+      {!caps.advancedDrbl ? (
+        <p className={cn(type.bodySm, "text-muted-foreground")}>
+          DRBL/100 and WAR1 cover 2018-19 and later. Earlier seasons stay blank,
+          not 0.
+        </p>
+      ) : (
+        <div
+          data-motion-list
+          className="grid grid-cols-1 gap-3 lg:grid-cols-2"
+        >
           <PlayerImpactMarker
-            title="DRBL/100: how good?"
-            valueLabel={drblOk ? formatNumber(merged!.drbl100, 1) : "unavailable"}
+            title="DRBL/100"
+            copy="Points per 100 vs an average player."
+            valueLabel={
+              drblOk ? formatNumber(merged!.drbl100, 1) : "unavailable"
+            }
             percentile={byKey.get("drbl100")?.percentile ?? null}
             bins={drblBins}
-            range={drblValues.length ? { min: drblValues[0]!, max: drblValues[drblValues.length - 1]! } : undefined}
+            range={
+              drblValues.length
+                ? { min: drblValues[0]!, max: drblValues[drblValues.length - 1]! }
+                : undefined
+            }
             value={drblOk ? merged!.drbl100 : null}
           />
-        ) : (
-          <div className="rounded-md border border-border px-3 py-2 text-[13px] text-muted-foreground">
-            DRBL/100 available 2018-19+ only (never shown as 0 for earlier eras).
-          </div>
-        )}
-        {caps.advancedDrbl ? (
           <PlayerImpactMarker
-            title="WAR1: how much?"
+            title="WAR1"
+            copy="Season value from rating and minutes."
             valueLabel={
               drblOk && merged?.r1WinEquivalents != null
                 ? formatNumber(merged.r1WinEquivalents, 1)
@@ -1146,41 +1168,89 @@ async function AdvancedView({
             }
             percentile={byKey.get("r1WinEquivalents")?.percentile ?? null}
             bins={warBins}
-            range={warValues.length ? { min: warValues[0]!, max: warValues[warValues.length - 1]! } : undefined}
+            range={
+              warValues.length
+                ? { min: warValues[0]!, max: warValues[warValues.length - 1]! }
+                : undefined
+            }
             value={drblOk ? merged?.r1WinEquivalents : null}
           />
-        ) : (
-          <div className="rounded-md border border-border px-3 py-2 text-[13px] text-muted-foreground">
-            WAR1 follows the same 2018-19+ support window as DRBL/100.
-          </div>
-        )}
-      </div>
+        </div>
+      )}
 
-      <PlayerPercentileStrip title="Impact context" rows={impactRows} />
-      <PlayerPercentileStrip title="Efficiency percentiles" rows={efficiencyRows} />
+      <div className="flex w-full flex-col gap-3">
+        <PlayerPercentileStrip title="Impact context" rows={impactRows} />
+        <PlayerPercentileStrip
+          title="Efficiency percentiles"
+          rows={efficiencyRows}
+        />
+      </div>
 
       <PlayerContextScatter
         title="Volume vs efficiency"
-        question="Where does this player sit on PTS/G vs TS% among qualified peers?"
+        question="PTS/G vs TS% among qualified peers."
         points={scatter}
         xLabel="PTS / G"
         yLabel="TS%"
       />
 
       <section className="flex flex-col gap-2">
-        <h3 className="text-[14px] font-bold">Box defensive events</h3>
-        <p className="text-[12px] text-muted-foreground">
-          Box defensive events do not represent total defensive value.
-        </p>
+        <div>
+          <h3 className="text-[15px] font-bold tracking-tight">
+            Box defensive events
+          </h3>
+          <p className={cn(type.caption, "text-muted-foreground")}>
+            Box events do not represent total defensive value.
+          </p>
+        </div>
         {merged ? (
-          <dl data-motion-list data-hover-group className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-            <Mini label="STL" value={formatNumber(merged.steals / Math.max(1, merged.gamesPlayed), 1)} />
-            <Mini label="BLK" value={formatNumber(merged.blocks / Math.max(1, merged.gamesPlayed), 1)} />
-            <Mini label="DRB" value={merged.defensiveRebounds != null ? formatNumber(merged.defensiveRebounds / Math.max(1, merged.gamesPlayed), 1) : "—"} />
-            <Mini label="PF" value={formatNumber(merged.personalFouls / Math.max(1, merged.gamesPlayed), 1)} />
+          <dl
+            data-motion-list
+            data-hover-group
+            className="grid grid-cols-2 gap-2 sm:grid-cols-4"
+          >
+            <Mini
+              label="STL"
+              value={formatNumber(
+                merged.steals / Math.max(1, merged.gamesPlayed),
+                1
+              )}
+              tint="var(--chart-1)"
+            />
+            <Mini
+              label="BLK"
+              value={formatNumber(
+                merged.blocks / Math.max(1, merged.gamesPlayed),
+                1
+              )}
+              tint="var(--chart-5)"
+            />
+            <Mini
+              label="DRB"
+              value={
+                merged.defensiveRebounds != null
+                  ? formatNumber(
+                      merged.defensiveRebounds /
+                        Math.max(1, merged.gamesPlayed),
+                      1
+                    )
+                  : "—"
+              }
+              tint="var(--chart-3)"
+            />
+            <Mini
+              label="PF"
+              value={formatNumber(
+                merged.personalFouls / Math.max(1, merged.gamesPlayed),
+                1
+              )}
+              tint="var(--chart-4)"
+            />
           </dl>
         ) : (
-          <p className="text-[13px] text-muted-foreground">Season board unavailable.</p>
+          <p className={cn(type.bodySm, "text-muted-foreground")}>
+            Season board unavailable.
+          </p>
         )}
       </section>
 
@@ -1198,7 +1268,7 @@ async function AdvancedView({
         </ul>
       </details>
 
-      <p className="text-[12px]">
+      <p className={cn(type.caption)}>
         <TransitionLink
           href="/learn"
           prefetch={false}
@@ -1227,119 +1297,112 @@ async function HighsView({
       h.key === "minutesNum" ? h.value.toFixed(1) : String(h.value),
     date: `${h.date} vs ${h.opponentAbbr}`,
     href: `/games/${encodeURIComponent(h.gameId)}?season=${encodeURIComponent(h.season)}`,
+    result: h.result,
+    tied: h.tied,
   }));
 
   return (
     <section id="highs" className="scroll-mt-16 flex flex-col gap-4">
       <div>
-        <h2 className="text-[17px] font-bold tracking-tight">Game highs</h2>
-        <p className="text-[13px] text-muted-foreground">{scopeLabel}</p>
+        <h2 className={type.heading}>Game highs</h2>
+        <p className={cn(type.bodySm, "text-muted-foreground")}>{scopeLabel}</p>
       </div>
 
       {highs.length === 0 ? (
-        <p className="text-[13px] text-muted-foreground">
+        <p className={cn(type.bodySm, "text-muted-foreground")}>
           No game highs available yet for this player.
         </p>
       ) : (
         <>
-          <PlayerGameHighTimeline
-            title="Season-high timeline"
-            events={timeline}
-          />
-          <div className="overflow-x-auto rounded-md border border-border">
-            <table className="w-full min-w-[36rem] text-left text-[12px]">
-              <thead className="border-b border-border bg-secondary/50 text-[10px] font-semibold uppercase text-muted-foreground">
-                <tr>
-                  <th className="px-3 py-2">Stat</th>
-                  <th className="px-2 py-2 text-right">High</th>
-                  <th className="px-2 py-2">Date</th>
-                  <th className="px-2 py-2">Opp</th>
-                  <th className="px-2 py-2">Result</th>
-                  <th className="px-2 py-2 text-right">MIN</th>
-                  <th className="px-2 py-2">Line</th>
-                  <th className="px-2 py-2">Ties</th>
-                  <th className="px-2 py-2" />
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {highs.map((h) => (
-                  <tr key={`tbl-${h.key}`}>
-                    <td className="px-3 py-2 font-semibold">{h.label}</td>
-                    <td className="px-2 py-2 text-right tabular-nums font-bold">
-                      {h.key === "minutesNum" ? h.value.toFixed(1) : h.value}
-                    </td>
-                    <td className="px-2 py-2 tabular-nums">{h.date}</td>
-                    <td className="px-2 py-2">{h.opponentAbbr}</td>
-                    <td className="px-2 py-2">{h.result}</td>
-                    <td className="px-2 py-2 text-right tabular-nums">
-                      {h.minutesNum.toFixed(1)}
-                    </td>
-                    <td className="px-2 py-2 text-muted-foreground">{h.line}</td>
-                    <td className="px-2 py-2 tabular-nums">
-                      {h.tied > 0 ? `${h.tied + 1} tied` : "—"}
-                    </td>
-                    <td className="px-2 py-2">
-                      <TransitionLink
-                        href={`/games/${encodeURIComponent(h.gameId)}?season=${encodeURIComponent(h.season)}`}
-                        prefetch={false}
-                        className="font-semibold underline-offset-2 hover:underline"
-                      >
-                        Game <LinkCue />
-                      </TransitionLink>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <ul data-motion-list className="divide-y divide-border rounded-md border border-border">
-            {highs.map((h) => (
-              <li key={h.key} className="flex flex-col gap-1 px-3 py-2.5 text-[13px]">
-                <div className="flex flex-wrap items-baseline justify-between gap-2">
-                  <span className="font-semibold">{h.label}</span>
-                  <span className="tabular-nums font-bold">
-                    {h.key === "minutesNum" ? h.value.toFixed(1) : h.value}
-                    {h.tied > 0 ? (
-                      <span className="ml-1 text-[11px] font-normal text-muted-foreground">
-                        ({h.tied + 1} games tied)
-                      </span>
-                    ) : null}
-                  </span>
-                </div>
-                <p className="text-[12px] text-muted-foreground">
-                  {h.date} · vs {h.opponentAbbr} · {h.result} ·{" "}
-                  {h.minutesNum.toFixed(1)} MIN · {h.line}
-                </p>
-                <TransitionLink
-                  href={`/games/${encodeURIComponent(h.gameId)}?season=${encodeURIComponent(h.season)}`}
-                  prefetch={false}
-                  className="text-[12px] font-semibold underline-offset-2 hover:underline"
+          <PlayerGameHighTimeline title="Career high" events={timeline} />
+          <GlassSurface
+            effect="css"
+            variant="subtle"
+            className="p-4 sm:p-5"
+          >
+            <div className="board-scroll-host overflow-x-auto">
+              <table className="w-full min-w-[640px] text-left">
+                <thead
+                  className={cn(
+                    boardType.head,
+                    "border-b border-border font-semibold uppercase tracking-wide text-muted-foreground"
+                  )}
                 >
-                  Open game <LinkCue />
-                </TransitionLink>
-                {h.tied > 0 ? (
-                  <details className="text-[12px]">
-                    <summary className="cursor-pointer text-muted-foreground">
-                      Explore tied games
-                    </summary>
-                    <ul className="mt-1 space-y-0.5">
-                      {h.tiedGames.map((g) => (
-                        <li key={g.gameId}>
-                          <TransitionLink
-                            href={`/games/${encodeURIComponent(g.gameId)}?season=${encodeURIComponent(g.season)}`}
-                            prefetch={false}
-                            className="underline-offset-2 hover:underline"
-                          >
-                            {g.date}
-                          </TransitionLink>
-                        </li>
-                      ))}
-                    </ul>
-                  </details>
-                ) : null}
-              </li>
-            ))}
-          </ul>
+                  <tr>
+                    <th className="px-3 py-2">Stat</th>
+                    <th className="px-2 py-2 text-right">High</th>
+                    <th className="px-2 py-2">Date</th>
+                    <th className="px-2 py-2">Opp</th>
+                    <th className="px-2 py-2">Result</th>
+                    <th className="px-2 py-2 text-right">MIN</th>
+                    <th className="px-2 py-2">Line</th>
+                    <th className="px-2 py-2">Ties</th>
+                    <th className="px-2 py-2" />
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border/40">
+                  {highs.map((h) => (
+                    <tr key={`tbl-${h.key}`}>
+                      <td
+                        className={cn(boardType.cell, "px-3 py-2 font-semibold")}
+                      >
+                        {h.label}
+                      </td>
+                      <td
+                        className={cn(
+                          boardType.cell,
+                          "px-2 py-2 text-right tabular-nums font-bold"
+                        )}
+                      >
+                        {h.key === "minutesNum" ? h.value.toFixed(1) : h.value}
+                      </td>
+                      <td
+                        className={cn(boardType.cell, "px-2 py-2 tabular-nums")}
+                      >
+                        {h.date}
+                      </td>
+                      <td className={cn(boardType.cell, "px-2 py-2")}>
+                        {h.opponentAbbr}
+                      </td>
+                      <td className={cn(boardType.cell, "px-2 py-2")}>
+                        {h.result}
+                      </td>
+                      <td
+                        className={cn(
+                          boardType.cell,
+                          "px-2 py-2 text-right tabular-nums"
+                        )}
+                      >
+                        {h.minutesNum.toFixed(1)}
+                      </td>
+                      <td
+                        className={cn(
+                          boardType.cell,
+                          "px-2 py-2 text-muted-foreground"
+                        )}
+                      >
+                        {h.line}
+                      </td>
+                      <td
+                        className={cn(boardType.cell, "px-2 py-2 tabular-nums")}
+                      >
+                        {h.tied > 0 ? `${h.tied + 1} tied` : "—"}
+                      </td>
+                      <td className={cn(boardType.cell, "px-2 py-2")}>
+                        <TransitionLink
+                          href={`/games/${encodeURIComponent(h.gameId)}?season=${encodeURIComponent(h.season)}`}
+                          prefetch={false}
+                          className="font-semibold underline-offset-2 hover:underline"
+                        >
+                          Game <LinkCue />
+                        </TransitionLink>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </GlassSurface>
         </>
       )}
     </section>
@@ -1487,7 +1550,7 @@ function EraUnavailable({
 }) {
   return (
     <section className="scroll-mt-16 flex flex-col gap-2">
-      <h2 className="text-[17px] font-bold tracking-tight">{title}</h2>
+      <h2 className={type.heading}>{title}</h2>
       <p className="text-[13px] text-muted-foreground">
         Not available for {season}. {detail}
       </p>
@@ -1499,13 +1562,28 @@ function Mini({
   label,
   value,
   help,
+  tint,
 }: {
   label: string;
   value: string;
   help?: string;
+  /** Soft wash for Advanced defensive tiles. */
+  tint?: string;
 }) {
   return (
-    <div data-stat-tile data-hover-item {...(help ? {} : statTipProps(label))} className="rounded-md border border-border px-3 py-2">
+    <div
+      data-stat-tile
+      data-hover-item
+      {...(help ? {} : statTipProps(label))}
+      className="sports-card sports-card-subtle glass-text-scrim px-3 py-2.5"
+      style={
+        tint
+          ? {
+              background: `color-mix(in oklab, ${tint} 14%, transparent)`,
+            }
+          : undefined
+      }
+    >
       <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
         {help ? (
           <MetricHelp conceptId={help as "efg"}>{label}</MetricHelp>
@@ -1513,7 +1591,12 @@ function Mini({
           label
         )}
       </p>
-      <p className="mt-1 text-[16px] font-bold tabular-nums">{value}</p>
+      <p
+        className="mt-1 text-[16px] font-bold tabular-nums"
+        style={tint ? { color: tint } : undefined}
+      >
+        {value}
+      </p>
     </div>
   );
 }
@@ -1540,66 +1623,132 @@ function SplitTable({
 }) {
   if (!rows.length) return null;
   return (
-    <div>
-      <h3 className="mb-2 text-[14px] font-bold">{title}</h3>
-      <div className="overflow-x-auto rounded-md border border-border">
-        <table className="w-full min-w-[40rem] text-left text-[12px]">
-          <thead className="border-b border-border bg-secondary/50 text-[10px] font-semibold uppercase text-muted-foreground">
-            <tr>
-              <th className="px-3 py-2">{title}</th>
-              <th className="px-2 py-2 text-right">G</th>
-              <th className="px-2 py-2 text-right">MIN</th>
-              <th className="px-2 py-2 text-right">PTS</th>
-              <th className="px-2 py-2 text-right">REB</th>
-              <th className="px-2 py-2 text-right">AST</th>
-              <th className="px-2 py-2 text-right">FG%</th>
-              <th className="px-2 py-2 text-right">3P%</th>
-              <th className="px-2 py-2 text-right">FT%</th>
-              <th className="px-2 py-2 text-right">TS%</th>
-              <th className="px-2 py-2 text-right">eFG%</th>
-              <th className="px-2 py-2 text-right">TOV</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-border">
-            {rows.map((r) => (
-              <tr key={r.label}>
-                <td className="px-3 py-2 font-semibold">{r.label}</td>
-                <td className="px-2 py-2 text-right tabular-nums">{r.games}</td>
-                <td className="px-2 py-2 text-right tabular-nums">
-                  {r.minutes.toFixed(0)}
-                </td>
-                <td className="px-2 py-2 text-right tabular-nums">
-                  {r.ptsPerG.toFixed(1)}
-                </td>
-                <td className="px-2 py-2 text-right tabular-nums">
-                  {r.rebPerG.toFixed(1)}
-                </td>
-                <td className="px-2 py-2 text-right tabular-nums">
-                  {r.astPerG.toFixed(1)}
-                </td>
-                <td className="px-2 py-2 text-right tabular-nums">
-                  {pct(r.fgPct)}
-                </td>
-                <td className="px-2 py-2 text-right tabular-nums">
-                  {pct(r.threePct)}
-                </td>
-                <td className="px-2 py-2 text-right tabular-nums">
-                  {pct(r.ftPct)}
-                </td>
-                <td className="px-2 py-2 text-right tabular-nums">
-                  {pct(r.ts)}
-                </td>
-                <td className="px-2 py-2 text-right tabular-nums">
-                  {pct(r.efg)}
-                </td>
-                <td className="px-2 py-2 text-right tabular-nums">
-                  {r.tovPerG.toFixed(1)}
-                </td>
+    <div className="flex flex-col gap-3">
+      <h3 className={type.title}>{title}</h3>
+      <GlassSurface variant="subtle" effect="css" className="p-4 sm:p-5">
+        <div className="board-scroll-host overflow-x-auto">
+          <table className="w-full min-w-[640px] text-left">
+            <thead
+              className={cn(
+                boardType.head,
+                "border-b border-border font-semibold uppercase tracking-wide text-muted-foreground"
+              )}
+            >
+              <tr>
+                <th className="px-3 py-2">Split</th>
+                <th className="px-2 py-2 text-right">G</th>
+                <th className="px-2 py-2 text-right">MIN</th>
+                <th className="px-2 py-2 text-right">PTS</th>
+                <th className="px-2 py-2 text-right">REB</th>
+                <th className="px-2 py-2 text-right">AST</th>
+                <th className="px-2 py-2 text-right">FG%</th>
+                <th className="px-2 py-2 text-right">3P%</th>
+                <th className="px-2 py-2 text-right">FT%</th>
+                <th className="px-2 py-2 text-right">TS%</th>
+                <th className="px-2 py-2 text-right">eFG%</th>
+                <th className="px-2 py-2 text-right">TOV</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody className="divide-y divide-border/40">
+              {rows.map((r) => (
+                <tr key={r.label}>
+                  <td className={cn(boardType.cell, "px-3 py-2 font-semibold")}>
+                    {r.label}
+                  </td>
+                  <td
+                    className={cn(
+                      boardType.cell,
+                      "px-2 py-2 text-right tabular-nums"
+                    )}
+                  >
+                    {r.games}
+                  </td>
+                  <td
+                    className={cn(
+                      boardType.cell,
+                      "px-2 py-2 text-right tabular-nums"
+                    )}
+                  >
+                    {r.minutes.toFixed(0)}
+                  </td>
+                  <td
+                    className={cn(
+                      boardType.cell,
+                      "px-2 py-2 text-right tabular-nums"
+                    )}
+                  >
+                    {r.ptsPerG.toFixed(1)}
+                  </td>
+                  <td
+                    className={cn(
+                      boardType.cell,
+                      "px-2 py-2 text-right tabular-nums"
+                    )}
+                  >
+                    {r.rebPerG.toFixed(1)}
+                  </td>
+                  <td
+                    className={cn(
+                      boardType.cell,
+                      "px-2 py-2 text-right tabular-nums"
+                    )}
+                  >
+                    {r.astPerG.toFixed(1)}
+                  </td>
+                  <td
+                    className={cn(
+                      boardType.cell,
+                      "px-2 py-2 text-right tabular-nums"
+                    )}
+                  >
+                    {pct(r.fgPct)}
+                  </td>
+                  <td
+                    className={cn(
+                      boardType.cell,
+                      "px-2 py-2 text-right tabular-nums"
+                    )}
+                  >
+                    {pct(r.threePct)}
+                  </td>
+                  <td
+                    className={cn(
+                      boardType.cell,
+                      "px-2 py-2 text-right tabular-nums"
+                    )}
+                  >
+                    {pct(r.ftPct)}
+                  </td>
+                  <td
+                    className={cn(
+                      boardType.cell,
+                      "px-2 py-2 text-right tabular-nums"
+                    )}
+                  >
+                    {pct(r.ts)}
+                  </td>
+                  <td
+                    className={cn(
+                      boardType.cell,
+                      "px-2 py-2 text-right tabular-nums"
+                    )}
+                  >
+                    {pct(r.efg)}
+                  </td>
+                  <td
+                    className={cn(
+                      boardType.cell,
+                      "px-2 py-2 text-right tabular-nums"
+                    )}
+                  >
+                    {r.tovPerG.toFixed(1)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </GlassSurface>
     </div>
   );
 }

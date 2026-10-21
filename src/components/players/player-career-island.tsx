@@ -113,6 +113,7 @@ export async function PlayerCareerIsland({
   fromHistory = false,
   themeMode = "historical",
   chart = "seasons",
+  hideTitle = false,
 }: {
   playerId: string;
   season: string;
@@ -123,6 +124,7 @@ export async function PlayerCareerIsland({
   fromHistory?: boolean;
   themeMode?: ThemeMode;
   chart?: "seasons" | "games";
+  hideTitle?: boolean;
 }) {
   try {
     const source =
@@ -162,6 +164,7 @@ export async function PlayerCareerIsland({
         themeMode={themeMode}
         gameLogs={gameLogs}
         chart={chart}
+        hideTitle={hideTitle}
       />
     );
   } catch {
@@ -177,6 +180,7 @@ export async function PlayerCareerIsland({
         fromHistory={fromHistory}
         themeMode={themeMode}
         chart={chart}
+        hideTitle={hideTitle}
       />
     );
   }

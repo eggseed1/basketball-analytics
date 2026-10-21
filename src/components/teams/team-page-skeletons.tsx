@@ -39,11 +39,11 @@ export function TeamPageLoadingFrame() {
         </div>
       </div>
 
-      <div className="flex flex-nowrap items-center gap-x-2 overflow-hidden border-b-2 border-foreground/70 px-1 py-2">
+      <div className="flex flex-nowrap items-end gap-x-2 overflow-hidden border-b-[0.5px] border-foreground/20 px-1">
         {TEAM_PAGE_TABS.map((tab) => (
           <span
             key={tab.id}
-            className="shrink-0 px-2 py-1 text-[14px] leading-5 font-bold tracking-tight text-muted-foreground/60"
+            className="shrink-0 whitespace-nowrap px-2 py-2 text-[14px] leading-5 font-bold tracking-tight text-muted-foreground/60"
           >
             {tab.label}
           </span>

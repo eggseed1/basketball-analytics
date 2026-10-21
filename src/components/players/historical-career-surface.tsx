@@ -1,13 +1,17 @@
 "use client";
 
 import { TransitionLink } from "@/components/continuity/query-nav";
+import { SectionFrame } from "@/components/layout/section-frame";
 
 import type {
   HistoryCareerSummary,
   HistoryPlayerSeason,
 } from "@/data/history/player-career-types";
 import { historySeasonSupportsDrbl } from "@/data/history/player-career-types";
+import { sectionAtomicTileClassName } from "@/lib/design-system-sections";
+import { type } from "@/lib/design-system";
 import { playerHref } from "@/lib/player-page-contract";
+import { cn } from "@/lib/utils";
 
 function perGame(
   value: number | null | undefined,
@@ -27,6 +31,7 @@ function perGame(
 /**
  * Compact historical career surface from precomputed product artifacts.
  * DRBL/WAR1 only where scientifically supported (2020-21+); else —.
+ * Header outside; season table uses dense-board glass; total tiles are atomic.
  */
 export function HistoricalCareerSurface({
   career,
@@ -40,15 +45,12 @@ export function HistoricalCareerSurface({
   viewingSeason?: string;
 }) {
   return (
-    <section className="flex flex-col gap-4" aria-label="Historical career">
-      <div>
-        <h2 className="text-[17px] font-bold tracking-tight">Career</h2>
-        <p className="text-[13px] text-muted-foreground">
-          {career.firstSeason} → {career.lastSeason} · {career.seasons} seasons ·{" "}
-          {career.games} games
-        </p>
-      </div>
-
+    <SectionFrame
+      id="historical-career"
+      density="supporting"
+      title="Career totals"
+      description={`${career.firstSeason} → ${career.lastSeason} · ${career.seasons} seasons · ${career.games} games`}
+    >
       <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <Stat label="Points" value={String(career.points)} />
         <Stat label="Rebounds" value={String(career.rebounds)} />
@@ -56,11 +58,16 @@ export function HistoricalCareerSurface({
         <Stat label="Teams" value={String(career.teams.length)} />
       </dl>
 
-      <div className="sports-card overflow-hidden">
-        <p className="border-b border-border px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+      <div className="sports-card sports-card-subtle overflow-hidden">
+        <p
+          className={cn(
+            type.micro,
+            "border-b border-border/40 px-3 py-2 font-semibold uppercase tracking-wide text-muted-foreground"
+          )}
+        >
           Seasons
         </p>
-        <ul className="divide-y divide-border sm:hidden">
+        <ul className="divide-y divide-border/40 sm:hidden">
           {seasons.map((s) => (
             <li key={s.season}>
               <TransitionLink
@@ -69,14 +76,20 @@ export function HistoricalCareerSurface({
                 prefetch={false}
                 className="block px-3 py-3 hover:bg-secondary/40"
               >
-                <p className="text-[14px] font-semibold">
+                <p className={cn(type.bodySm, "font-semibold")}>
                   {s.season}
                   {s.teamIds.length > 1 ? " · multi-team" : ""}
                   {viewingSeason === s.season ? " · Viewing" : ""}
                 </p>
-                <p className="mt-1 text-[12px] tabular-nums text-muted-foreground">
+                <p
+                  className={cn(
+                    type.caption,
+                    "mt-1 tabular-nums text-muted-foreground"
+                  )}
+                >
                   {s.gp} GP · {perGame(s.points, s.gp)} PTS ·{" "}
-                  {perGame(s.rebounds, s.gp)} REB · {perGame(s.assists, s.gp)} AST
+                  {perGame(s.rebounds, s.gp)} REB · {perGame(s.assists, s.gp)}{" "}
+                  AST
                 </p>
               </TransitionLink>
             </li>
@@ -85,7 +98,12 @@ export function HistoricalCareerSurface({
         <div className="hidden overflow-x-auto sm:block">
           <table className="w-full min-w-[36rem] text-left text-[13px]">
             <thead>
-              <tr className="text-[11px] uppercase tracking-wide text-muted-foreground">
+              <tr
+                className={cn(
+                  type.micro,
+                  "uppercase tracking-wide text-muted-foreground"
+                )}
+              >
                 <th className="px-3 py-2 font-semibold">Season</th>
                 <th className="px-3 py-2 font-semibold">GP</th>
                 <th className="px-3 py-2 font-semibold">PTS</th>
@@ -153,21 +171,25 @@ export function HistoricalCareerSurface({
           </table>
         </div>
       </div>
-      <p className="text-[12px] text-muted-foreground">
-        Open the Career tab for the full statistical table. No career DRBL or
-        career WAR1 before the supported era.
+      <p className={cn(type.caption, "text-muted-foreground")}>
+        Season DRBL and WAR1 stay blank before the supported era, not 0.
       </p>
-    </section>
+    </SectionFrame>
   );
 }
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="sports-card p-3">
-      <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+    <div className={sectionAtomicTileClassName}>
+      <dt
+        className={cn(
+          type.micro,
+          "font-semibold uppercase tracking-wide text-muted-foreground"
+        )}
+      >
         {label}
-      </p>
-      <p className="mt-1 text-[18px] font-bold tabular-nums">{value}</p>
+      </dt>
+      <dd className={cn(type.title, "font-bold tabular-nums")}>{value}</dd>
     </div>
   );
 }

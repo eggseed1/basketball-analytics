@@ -173,14 +173,36 @@ function formatDelta(delta: number, value: number) {
   return `${sign}${mag}`;
 }
 
+/** Container breakpoint matching `@min-[44rem]` chart+list split. */
+const PERCENTILE_SPLIT_PX = 44 * 16;
+
+function useCompactPercentileLayout(el: HTMLElement | null) {
+  const [compact, setCompact] = useState(true);
+  useEffect(() => {
+    if (!el) return;
+    const update = () => {
+      setCompact(el.clientWidth < PERCENTILE_SPLIT_PX);
+    };
+    update();
+    if (typeof ResizeObserver === "undefined") return;
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [el]);
+  return compact;
+}
+
 function MetricRow({
   metric,
   selected,
   onSelect,
+  collapseHint = false,
 }: {
   metric: PercentileMetric;
   selected: boolean;
   onSelect: () => void;
+  /** Compact layout: selected row can dismiss the chart panel. */
+  collapseHint?: boolean;
 }) {
   const pct = Math.max(0, Math.min(100, metric.percentile));
   const fill = percentileSavantColor(pct, "auto");
@@ -192,6 +214,10 @@ function MetricRow({
         ? "Role context"
         : null;
 
+  const baseLabel = metric.showPercentile
+    ? `${metric.label}, ${Math.round(metric.percentile)}th percentile, ${metric.display}`
+    : `${metric.label}, ${metric.display}`;
+
   return (
     <button
       type="button"
@@ -199,9 +225,9 @@ function MetricRow({
       aria-pressed={selected}
       data-hover-item
       aria-label={
-        metric.showPercentile
-          ? `${metric.label}, ${Math.round(metric.percentile)}th percentile, ${metric.display}`
-          : `${metric.label}, ${metric.display}`
+        selected && collapseHint
+          ? `${baseLabel}. Collapse chart`
+          : baseLabel
       }
       className={cn(
         RANK_GRID,
@@ -639,7 +665,8 @@ function CompComparePanel({
       <div className="flex min-h-0 flex-col gap-1.5">
         <div className="flex flex-col gap-1.5">
           <p className={cn(type.caption, "font-semibold text-foreground")}>
-            Closest {metric.label} this season
+            Closest {metric.label}{" "}
+            {mode === "history" ? "in other seasons" : "this season"}
           </p>
           <div className="flex flex-wrap gap-1">
             {(
@@ -668,21 +695,19 @@ function CompComparePanel({
         </div>
 
         {rows.length <= 1 ? (
-          <p
-            className={cn(type.bodySm, "text-muted-foreground")}
-            style={{
-              minHeight: `calc(${compRowCount} * 3.5rem + ${compRowCount - 1} * 0.25rem)`,
-            }}
-          >
+          <p className={cn(type.bodySm, "text-muted-foreground")}>
             {compsPending
               ? "Finding similar players…"
-              : `No close comps found for this stat${mode === "history" ? " across other seasons" : " in the league"}.`}
+              : mode === "history"
+                ? "No close matches in other seasons for this stat."
+                : "No close matches in this season for this stat."}
           </p>
         ) : (
           <ul
             data-hover-group
             className="flex min-h-0 flex-col gap-1 overflow-y-auto overscroll-contain pr-1"
             style={{
+              // Only the populated list reserves row slots — empty copy stays one line.
               height: `calc(${compRowCount} * 3.5rem + ${compRowCount - 1} * 0.25rem)`,
             }}
           >
@@ -797,8 +822,8 @@ function PercentileExpandDialog({
   playerId,
   viewTeamKey,
   stints,
-  hustleEmptyCopy,
   compsPending,
+  categoryEmptyCopy,
 }: {
   open: boolean;
   onClose: () => void;
@@ -826,7 +851,9 @@ function PercentileExpandDialog({
   playerId: string;
   viewTeamKey?: string;
   stints?: PlayerCardStint[];
-  hustleEmptyCopy: string;
+  categoryEmptyCopy: (
+    section: { id: PercentileCategory; label: string }
+  ) => string;
 }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const titleId = useId();
@@ -944,9 +971,7 @@ function PercentileExpandDialog({
                           "py-4 text-muted-foreground"
                         )}
                       >
-                        {section.id === "hustle"
-                          ? hustleEmptyCopy
-                          : "No rankings in this category for this season."}
+                        {categoryEmptyCopy(section)}
                       </p>
                     ) : (
                     <ul>
@@ -1019,6 +1044,54 @@ function hasComps(metrics: PercentileMetric[]): boolean {
   return metrics.some(
     (m) => m.leagueComps.length > 0 || m.historicalComps.length > 0
   );
+}
+
+function categoryCount(metrics: PercentileMetric[]): number {
+  return new Set(metrics.map((m) => m.category)).size;
+}
+
+/**
+ * Merge percentile payloads so a later `fast` response cannot wipe categories /
+ * comps already loaded by `full` (that used to collapse the tablist to a few chips).
+ */
+function mergePercentileMetrics(
+  prev: PercentileMetric[],
+  incoming: PercentileMetric[]
+): PercentileMetric[] {
+  if (!incoming.length) return prev;
+  if (!prev.length) return incoming;
+
+  const byId = new Map<string, PercentileMetric>();
+  for (const m of prev) byId.set(m.id, m);
+
+  for (const m of incoming) {
+    const old = byId.get(m.id);
+    if (!old) {
+      byId.set(m.id, m);
+      continue;
+    }
+    byId.set(m.id, {
+      ...old,
+      ...m,
+      series:
+        (m.series?.length ?? 0) >= (old.series?.length ?? 0)
+          ? m.series
+          : old.series,
+      leagueComps: m.leagueComps.length ? m.leagueComps : old.leagueComps,
+      historicalComps: m.historicalComps.length
+        ? m.historicalComps
+        : old.historicalComps,
+    });
+  }
+
+  // Light / cutoff payloads only cover a few categories — keep the rest.
+  if (categoryCount(incoming) < categoryCount(prev)) {
+    for (const m of prev) {
+      if (!incoming.some((row) => row.id === m.id)) byId.set(m.id, m);
+    }
+  }
+
+  return [...byId.values()];
 }
 
 function cacheKey(playerId: string, season: string) {
@@ -1174,9 +1247,19 @@ export function PlayerPercentilePanel({
 
   const applyCached = useCallback(
     (nextSeason: string, next: SeasonMetricsCache) => {
-      writeCache(playerId, nextSeason, next);
       setViewSeason(nextSeason);
-      setViewMetrics(next.metrics);
+      setViewMetrics((prev) => {
+        const merged =
+          desiredSeason.current === nextSeason
+            ? mergePercentileMetrics(prev, next.metrics)
+            : next.metrics;
+        writeCache(playerId, nextSeason, {
+          metrics: merged,
+          teamKey: next.teamKey,
+          profileComps: next.profileComps,
+        });
+        return merged;
+      });
       setViewTeamKey(next.teamKey);
     },
     [playerId]
@@ -1243,23 +1326,41 @@ export function PlayerPercentilePanel({
   );
 
   useEffect(() => {
-    if (metrics.length > 0) {
-      writeCache(playerId, trackedSeason, { metrics, teamKey, profileComps });
-    }
     if (trackedSeason !== desiredSeason.current) return;
     setViewSeason(trackedSeason);
     if (metrics.length > 0) {
-      setViewMetrics(metrics);
+      setViewMetrics((prev) => {
+        // Never replace a richer client/cache payload with a slimmer SSR prop
+        // (Strict Mode remount / sibling Suspense used to wipe non-Impact tabs).
+        const merged =
+          categoryCount(prev) > categoryCount(metrics)
+            ? mergePercentileMetrics(metrics, prev)
+            : mergePercentileMetrics(prev, metrics);
+        const cached = readCache(playerId, trackedSeason);
+        const best =
+          cached && categoryCount(cached.metrics) > categoryCount(merged)
+            ? mergePercentileMetrics(merged, cached.metrics)
+            : merged;
+        writeCache(playerId, trackedSeason, {
+          metrics: best,
+          teamKey: teamKey || cached?.teamKey,
+          profileComps:
+            profileComps.length > 0
+              ? profileComps
+              : cached?.profileComps ?? profileComps,
+        });
+        return best;
+      });
       setViewTeamKey(teamKey);
     }
     setBusy(false);
   }, [metrics, playerId, profileComps, season, seasons, teamKey, trackedSeason]);
 
-  // SSR ships Impact rails only (no comps). Idle-fill the rest of the sheet.
+  // SSR may omit comps / sparklines. Idle-fill those via mode=full.
   // No run-once ref: Strict Mode's cleanup would cancel the only scheduled call.
   const ssrIsPartial =
     !ssrHasComps ||
-    !metrics.some((m) => m.category === "shooting" || m.category === "profile");
+    !metrics.some((m) => (m.series?.length ?? 0) > 1);
   useEffect(() => {
     if (!ssrIsPartial) return;
     let cancelled = false;
@@ -1348,49 +1449,27 @@ export function PlayerPercentilePanel({
     [loadSeason, setViewSeasonShared, viewSeason]
   );
 
-  const categories = useMemo(
-    () =>
-      CATEGORY_META.filter((c) =>
-        viewMetrics.some((m) => m.category === c.id && !m.profileHidden)
-      ),
-    [viewMetrics]
-  );
-
   const listed = useMemo(
     () => viewMetrics.filter((m) => !m.profileHidden),
     [viewMetrics]
   );
 
-  const grouped = useMemo(() => {
-    const sections = categories
-      .map((c) => ({
+  /**
+   * Always render every category chip so the tablist does not jump when a
+   * thin payload is missing a category (hustle pre-2015-16, thin seasons).
+   */
+  const grouped = useMemo(
+    () =>
+      CATEGORY_META.map((c) => ({
         ...c,
         metrics: listed
           .filter((m) => m.category === c.id)
           .sort(
             (a, b) => sheetStatOrderIndex(a.id) - sheetStatOrderIndex(b.id)
           ),
-      }))
-      .filter((c) => c.metrics.length > 0);
-
-    const hasHustle = sections.some((s) => s.id === "hustle");
-    if (!hasHustle && listed.length > 0) {
-      const hustleMeta = CATEGORY_META.find((c) => c.id === "hustle");
-      if (hustleMeta) {
-        const order = PERCENTILE_CATEGORY_ORDER.indexOf("hustle");
-        let insertAt = sections.length;
-        for (let i = 0; i < sections.length; i++) {
-          const sectionOrder = PERCENTILE_CATEGORY_ORDER.indexOf(sections[i]!.id);
-          if (sectionOrder > order) {
-            insertAt = i;
-            break;
-          }
-        }
-        sections.splice(insertAt, 0, { ...hustleMeta, metrics: [] });
-      }
-    }
-    return sections;
-  }, [categories, listed]);
+      })),
+    [listed]
+  );
 
   const hustleEmptyCopy = useMemo(() => {
     if (isHustleStatsSeason(viewSeason)) {
@@ -1399,6 +1478,21 @@ export function PlayerPercentilePanel({
     return "Hustle tracking starts in 2015-16. Earlier seasons have no hustle percentiles.";
   }, [viewSeason]);
 
+  const categoryEmptyCopy = useCallback(
+    (section: { id: PercentileCategory; label: string }) => {
+      if (section.id === "hustle") return hustleEmptyCopy;
+      if (fullPending || busy) {
+        return `Loading ${section.label.toLowerCase()} rankings…`;
+      }
+      // Other tabs populated → this category genuinely has no peer ranks.
+      if (listed.some((m) => m.category !== section.id)) {
+        return `No ${section.label.toLowerCase()} rankings for this season.`;
+      }
+      return "No rankings in this category for this season.";
+    },
+    [busy, fullPending, hustleEmptyCopy, listed]
+  );
+
   const [activeId, setActiveId] = useState(() =>
     defaultPercentileMetricId(viewMetrics)
   );
@@ -1406,11 +1500,25 @@ export function PlayerPercentilePanel({
     "impact"
   );
   const [expanded, setExpanded] = useState(false);
+  /** Chart/comps panel; toggleable when the list+chart stack (phone / tablet). */
+  const [detailOpen, setDetailOpen] = useState(true);
+  const [layoutEl, setLayoutEl] = useState<HTMLDivElement | null>(null);
+  const compactLayout = useCompactPercentileLayout(layoutEl);
   const accent = chartTheme.teamColor(viewTeamKey).color;
+
+  useEffect(() => {
+    if (!compactLayout) setDetailOpen(true);
+  }, [compactLayout]);
 
   const selectMetric = useCallback(
     (id: string) => {
+      // Stacked layout: tap the open row again to collapse the chart panel.
+      if (compactLayout && id === activeId && detailOpen) {
+        setDetailOpen(false);
+        return;
+      }
       setActiveId(id);
+      setDetailOpen(true);
       const metric = viewMetrics.find((m) => m.id === id);
       const category = metric?.category;
       if (category) setOpenCategory(category);
@@ -1424,7 +1532,15 @@ export function PlayerPercentilePanel({
         });
       }
     },
-    [applyCached, playerId, viewMetrics, viewSeason]
+    [
+      activeId,
+      applyCached,
+      compactLayout,
+      detailOpen,
+      playerId,
+      viewMetrics,
+      viewSeason,
+    ]
   );
 
   // Ensure sparklines + comps are loaded when opening the full view.
@@ -1456,7 +1572,10 @@ export function PlayerPercentilePanel({
         id === "impact"
           ? defaultPercentileMetricId(section.metrics)
           : section.metrics[0]?.id;
-      if (preferred) setActiveId(preferred);
+      if (preferred) {
+        setActiveId(preferred);
+        setDetailOpen(true);
+      }
     },
     [grouped, openCategory]
   );
@@ -1468,6 +1587,9 @@ export function PlayerPercentilePanel({
       viewMetrics[0],
     [viewMetrics, activeId, listed]
   );
+
+  const showMetricDetail =
+    Boolean(active) && (detailOpen || !compactLayout);
 
   const wash = brandAtmosphereColors(
     resolveTeamBrand(viewTeamKey)?.primary,
@@ -1486,6 +1608,7 @@ export function PlayerPercentilePanel({
 
   return (
     <GlassSurface
+      variant="subtle"
       effect="css"
       accentColor={wash?.colorA}
       accentColorB={wash?.colorB}
@@ -1533,54 +1656,50 @@ export function PlayerPercentilePanel({
         </div>
       ) : null}
 
-      {!viewMetrics.length ? (
-        busy ? (
-          <p className={cn(type.bodySm, "py-8 text-center text-muted-foreground")}>
-            Loading {viewSeason} percentiles…
-          </p>
-        ) : (
-          <SeasonUnavailable
-            season={viewSeason}
-            playerName={playerName}
-            failed={loadFailed}
-            onRetry={() => loadSeason(viewSeason)}
-            className="py-8"
-          />
-        )
-      ) : grouped.length === 0 ? (
-        <p
-          className={cn(
-            type.bodySm,
-            "py-6 text-center text-muted-foreground"
-          )}
-        >
-          No verified advanced rates for this season. Missing ratings stay
-          unavailable and are never fabricated.
-        </p>
+      {!viewMetrics.length && !busy ? (
+        <SeasonUnavailable
+          season={viewSeason}
+          playerName={playerName}
+          failed={loadFailed}
+          onRetry={() => loadSeason(viewSeason)}
+          className="py-8"
+        />
       ) : (
         <div className="flex min-h-0 flex-col gap-4">
+          {/* Always mount every category chip so season switches never flash a thin tablist. */}
           <div
             role="tablist"
             aria-label="Percentile categories"
+            data-category-count={CATEGORY_META.length}
             className="flex flex-wrap items-center gap-x-2 gap-y-2 border-b-2 border-foreground/70 px-1 py-2"
           >
-            {grouped.map((section) => {
-              const Icon = section.icon;
-              const selected = section.id === openSection?.id;
+            {CATEGORY_META.map((tab) => {
+              const section =
+                grouped.find((s) => s.id === tab.id) ?? {
+                  ...tab,
+                  metrics: [] as PercentileMetric[],
+                };
+              const Icon = tab.icon;
+              const selected = tab.id === openSection?.id;
+              const empty = section.metrics.length === 0;
               return (
                 <button
-                  key={section.id}
+                  key={tab.id}
                   type="button"
                   role="tab"
                   aria-selected={selected}
-                  id={`pct-tab-${section.id}`}
-                  onClick={() => selectCategory(section.id)}
+                  id={`pct-tab-${tab.id}`}
+                  onClick={() => selectCategory(tab.id)}
+                  disabled={busy && !viewMetrics.length}
                   className={cn(
                     type.bodySm,
                     "inline-flex items-center gap-1 px-2 py-1 font-bold tracking-tight",
                     selected
                       ? "text-foreground"
-                      : "text-muted-foreground hover:text-foreground"
+                      : empty
+                        ? "text-muted-foreground/70 hover:text-muted-foreground"
+                        : "text-muted-foreground hover:text-foreground",
+                    busy && !viewMetrics.length && "opacity-80"
                   )}
                 >
                   <Icon
@@ -1588,110 +1707,142 @@ export function PlayerPercentilePanel({
                     strokeWidth={2.25}
                     aria-hidden
                   />
-                  {section.label}
+                  {tab.label}
                 </button>
               );
             })}
           </div>
 
-          <div className="@container">
-          <div
-            className={cn(
-              "grid items-start gap-4",
-              // Sized off the card, not the viewport: the panel sits in a
-              // narrow column on wide screens and the bars collapsed there.
-              "@min-[44rem]:grid-cols-[minmax(26rem,1fr)_minmax(16rem,20rem)]"
-            )}
-          >
-            <div className="relative min-w-0 overflow-hidden">
-              {grouped.map((section) => {
-                const selected = section.id === openSection?.id;
-                return (
-                  <section
-                    key={section.id}
-                    role="tabpanel"
-                    aria-labelledby={`pct-tab-${section.id}`}
-                    hidden={!selected}
-                  >
-                    <ScaleLegend />
-                    {section.metrics.length === 0 ? (
-                      <p
-                        className={cn(
-                          type.bodySm,
-                          "py-4 text-muted-foreground"
-                        )}
-                      >
-                        {section.id === "hustle"
-                          ? hustleEmptyCopy
-                          : "No rankings in this category for this season."}
-                      </p>
-                    ) : (
-                        <ul key={viewSeason}>
-                          {section.metrics.map((m, i) => {
-                            const isActive = selected && active?.id === m.id;
-                            return (
-                              <li
-                                key={m.id}
-                                style={{ "--i": i } as CSSProperties}
-                                className={cn(
-                                  !isActive &&
-                                    i < section.metrics.length - 1 &&
-                                    "border-b border-dashed border-border/80"
-                                )}
-                              >
-                                <MetricRow
-                                  metric={m}
-                                  selected={isActive}
-                                  onSelect={() => selectMetric(m.id)}
-                                />
-                              </li>
-                            );
-                          })}
-                        </ul>
-                    )}
-                  </section>
-                );
-              })}
-            </div>
-
-            {active ? (
-              <aside
-                className="min-w-0 self-start overflow-hidden @min-[44rem]:sticky @min-[44rem]:top-4"
-                aria-label="Metric chart and comparisons"
+          {viewMetrics.length > 0 && listed.length === 0 ? (
+            <p
+              className={cn(
+                type.bodySm,
+                "py-6 text-center text-muted-foreground"
+              )}
+            >
+              No verified advanced rates for this season. Missing ratings stay
+              unavailable and are never fabricated.
+            </p>
+          ) : (
+            <div className="@container">
+              <div
+                ref={setLayoutEl}
+                className={cn(
+                  "grid items-start gap-4",
+                  // Sized off the card, not the viewport: the panel sits in a
+                  // narrow column on wide screens and the bars collapsed there.
+                  "@min-[44rem]:grid-cols-[minmax(26rem,1fr)_minmax(16rem,20rem)]"
+                )}
               >
-                <div
-                  className="min-w-0 overflow-hidden rounded-md border border-border/60 frost-surface-muted p-3"
-                  style={{ borderLeftColor: accent, borderLeftWidth: 2 }}
-                >
-                  <div className="mb-2 flex flex-col gap-0.5 border-b border-border/50 pb-2">
-                    <span className={cn(type.caption, "font-semibold text-foreground")}>
-                      {active.label}
-                    </span>
-                    <span className={cn(type.caption, "text-muted-foreground")}>
-                      Chart & similar players
-                    </span>
-                  </div>
-                  <CompComparePanel
-                    inline
-                    metric={active}
-                    playerId={playerId}
-                    playerName={playerName}
-                    teamKey={viewTeamKey}
-                    stints={stintsBySeason?.[viewSeason]}
-                    viewSeason={viewSeason}
-                    seasons={timeline}
-                    onSeasonSelect={commitSeason}
-                    compsPending={fullPending}
-                  />
+                <div className="relative min-w-0 overflow-hidden">
+                  {grouped.map((section) => {
+                    const selected = section.id === openSection?.id;
+                    return (
+                      <section
+                        key={section.id}
+                        role="tabpanel"
+                        aria-labelledby={`pct-tab-${section.id}`}
+                        hidden={!selected}
+                      >
+                        <ScaleLegend />
+                        {section.metrics.length === 0 ? (
+                          <p
+                            className={cn(
+                              type.bodySm,
+                              "py-4 text-muted-foreground"
+                            )}
+                          >
+                            {categoryEmptyCopy(section)}
+                          </p>
+                        ) : (
+                          <ul key={viewSeason}>
+                            {section.metrics.map((m, i) => {
+                              const isActive =
+                                selected &&
+                                active?.id === m.id &&
+                                showMetricDetail;
+                              return (
+                                <li
+                                  key={m.id}
+                                  style={{ "--i": i } as CSSProperties}
+                                  className={cn(
+                                    !isActive &&
+                                      i < section.metrics.length - 1 &&
+                                      "border-b border-dashed border-border/80"
+                                  )}
+                                >
+                                  <MetricRow
+                                    metric={m}
+                                    selected={isActive}
+                                    collapseHint={
+                                      compactLayout && showMetricDetail
+                                    }
+                                    onSelect={() => selectMetric(m.id)}
+                                  />
+                                </li>
+                              );
+                            })}
+                          </ul>
+                        )}
+                      </section>
+                    );
+                  })}
                 </div>
-              </aside>
-            ) : (
-              <p className={cn(type.caption, "text-muted-foreground")}>
-                Select a ranking to compare.
-              </p>
-            )}
-          </div>
-          </div>
+
+                {showMetricDetail && active ? (
+                  <aside
+                    className="min-w-0 self-start overflow-hidden @min-[44rem]:sticky @min-[44rem]:top-4"
+                    aria-label="Metric chart and comparisons"
+                  >
+                    <div
+                      className="min-w-0 overflow-hidden rounded-md border border-border/60 frost-surface-muted p-3"
+                      style={{
+                        borderLeftColor: accent,
+                        borderLeftWidth: 2,
+                      }}
+                    >
+                      <div className="mb-2 flex flex-col gap-0.5 border-b border-border/50 pb-2">
+                        <span
+                          className={cn(
+                            type.caption,
+                            "font-semibold text-foreground"
+                          )}
+                        >
+                          {active.label}
+                        </span>
+                        <span
+                          className={cn(type.caption, "text-muted-foreground")}
+                        >
+                          Chart & similar players
+                          {compactLayout ? " · tap again to close" : ""}
+                        </span>
+                      </div>
+                      <CompComparePanel
+                        inline
+                        metric={active}
+                        playerId={playerId}
+                        playerName={playerName}
+                        teamKey={viewTeamKey}
+                        stints={stintsBySeason?.[viewSeason]}
+                        viewSeason={viewSeason}
+                        seasons={timeline}
+                        onSeasonSelect={commitSeason}
+                        compsPending={fullPending}
+                      />
+                    </div>
+                  </aside>
+                ) : compactLayout ? (
+                  <p className={cn(type.caption, "text-muted-foreground")}>
+                    Tap a ranking to open its chart.
+                  </p>
+                ) : (
+                  <p className={cn(type.caption, "text-muted-foreground")}>
+                    Select a ranking to compare.
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -1716,8 +1867,8 @@ export function PlayerPercentilePanel({
         playerId={playerId}
         viewTeamKey={viewTeamKey}
         stints={stintsBySeason?.[viewSeason]}
-        hustleEmptyCopy={hustleEmptyCopy}
         compsPending={fullPending}
+        categoryEmptyCopy={categoryEmptyCopy}
       />
     </GlassSurface>
   );

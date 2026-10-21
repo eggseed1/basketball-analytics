@@ -716,7 +716,7 @@ export function CareerTeamTrendChart({
       </div>
       {showFranchiseLegend ? (
         <ul
-          className="mt-2 flex shrink-0 flex-wrap gap-x-3 gap-y-1"
+          className="mt-1 flex shrink-0 flex-wrap gap-x-3 gap-y-1 border-t border-border/40 pt-2"
           aria-label="Franchise colors"
         >
           {visibleLegend.map((t) => (

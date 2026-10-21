@@ -49,6 +49,7 @@ export function PlayerContextStrip({
   focalPlayerId,
   season,
   compareHref,
+  variant = "full",
 }: {
   modes: SimilarPlayerMode[];
   /** Prefer this mode when present (usually Profile). */
@@ -57,7 +58,9 @@ export function PlayerContextStrip({
   focalPlayerId: string;
   season: string;
   compareHref: string;
+  variant?: "overview" | "full";
 }) {
+  const overview = variant === "overview";
   const available = useMemo(
     () =>
       modes.filter(
@@ -83,12 +86,14 @@ export function PlayerContextStrip({
     );
   }
 
-  const league = active.leagueComps.slice(0, 4);
-  const historical = active.historicalComps.slice(0, 4);
+  const league = active.leagueComps.slice(0, overview ? 3 : 4);
+  const historical = overview
+    ? []
+    : active.historicalComps.slice(0, 4);
 
   return (
     <div className="flex flex-col gap-4">
-      {available.length > 1 ? (
+      {!overview && available.length > 1 ? (
         <SegmentedControl
           label="Similar-player metric"
           className="gap-0 [&_p]:sr-only"
@@ -103,7 +108,9 @@ export function PlayerContextStrip({
         <CompList
           title={
             active.id === "profile"
-              ? "Closest profiles this season"
+              ? overview
+                ? "Closest this season"
+                : "Closest profiles this season"
               : `Similar this season · ${active.label}`
           }
           comps={league}
@@ -131,7 +138,12 @@ export function PlayerContextStrip({
         </p>
       ) : null}
       <p className="text-[13px] leading-snug text-muted-foreground">
-        {active.id === "profile" ? (
+        {overview ? (
+          <>
+            Profile distance averages percentile gaps on impact, shooting,
+            usage, and creation rates when present.{" "}
+          </>
+        ) : active.id === "profile" ? (
           <>
             Profile distance is the average percentile gap across impact, true
             shooting, usage, assist rate, rebound rate, and DRBL O/D when

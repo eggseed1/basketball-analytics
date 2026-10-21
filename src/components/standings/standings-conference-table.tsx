@@ -28,7 +28,6 @@ export function StandingsConferenceTable({
   bare?: boolean;
 }) {
   const table = (
-      <div className="overflow-x-auto">
         <table
           className={cn(
             "w-full table-fixed text-left",
@@ -212,15 +211,14 @@ export function StandingsConferenceTable({
             })}
           </tbody>
         </table>
-      </div>
   );
-  if (bare) return table;
+  if (bare) {
+    return <div className="overflow-x-auto">{table}</div>;
+  }
   return (
-    <section className="sports-card overflow-hidden">
-      <div className="border-b border-border/40 px-3 py-2 text-[14px] font-bold tracking-tight">
-        {title}
-      </div>
-      {table}
+    <section className="flex min-w-0 flex-col gap-2">
+      <h2 className="type-heading px-0.5">{title}</h2>
+      <div className="sports-card overflow-x-auto">{table}</div>
     </section>
   );
 }

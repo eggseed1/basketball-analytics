@@ -89,19 +89,17 @@ export function defaultPercentileMetricId(
 }
 
 /**
- * SSR ships Impact rails only (plus the default sparkline). Other categories
- * and comps hydrate via idle `/percentiles` fetch — keeps player HTML ~half size.
+ * SSR keeps every category chip populated (fast/cutoff ranks are cheap) but
+ * drops comps and non-default sparklines. Idle `/percentiles?mode=full` fills
+ * those in — stripping whole categories made Profile/Shooting/Defense/Advanced
+ * flash "No rankings…" whenever the upgrade lagged or stayed on forced-fast.
  */
 export function slimPercentileMetricsForSsr(
   metrics: PercentileMetric[],
 ): PercentileMetric[] {
   if (!metrics.length) return metrics;
   const keepId = defaultPercentileMetricId(metrics);
-  const impact = metrics.filter(
-    (metric) => metric.category === "impact" || metric.id === keepId,
-  );
-  const source = impact.length ? impact : metrics;
-  return source.map((metric) => ({
+  return metrics.map((metric) => ({
     ...metric,
     series:
       metric.id === keepId && metric.series?.length ? metric.series : undefined,
@@ -1303,7 +1301,8 @@ function buildMaskedPercentileMetrics(
     const values = pool
       .map((p) => hustlePerGame(p, metric.key))
       .filter((n): n is number => n != null);
-    if (!values.length) continue;
+    // Fast/cutoffHero skips peer boards (pool=[]). Do not drop hustle here —
+    // push() ranks from baked seasonCutoffs when values are empty.
     push({
       id: metric.id,
       category: "hustle",

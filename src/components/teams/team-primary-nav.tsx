@@ -41,8 +41,8 @@ export function TeamPrimaryNav({
     <div
       role="tablist"
       aria-label={t("tabsAria")}
-      data-motion-tabs
-      className="flex flex-nowrap items-center gap-x-2 gap-y-2 overflow-x-auto border-b-2 border-foreground/70 px-1 py-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      data-motion-tabs="stats"
+      className="flex flex-nowrap items-end gap-x-2 overflow-x-auto border-b-[0.5px] border-foreground/20 px-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
     >
       {TEAM_PAGE_TABS.map((item) => {
         const selected = item.id === tab;
@@ -55,7 +55,7 @@ export function TeamPrimaryNav({
             scroll={false}
             className={cn(
               type.bodySm,
-              "shrink-0 px-2 py-1 font-bold tracking-tight",
+              "shrink-0 whitespace-nowrap px-2 py-2 font-bold tracking-tight",
               selected
                 ? "text-foreground"
                 : "text-muted-foreground hover:text-foreground"

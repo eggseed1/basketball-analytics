@@ -47,7 +47,7 @@ export function LearnIndexClient({
   }, [filtered]);
 
   return (
-    <div data-motion-stack data-motion-static className="flex flex-col gap-6">
+    <div data-motion-stack data-motion-static className="flex flex-col gap-4">
       <FilterBar label="Learn terms">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <ChoiceTrack className="w-full max-w-md">
@@ -77,11 +77,11 @@ export function LearnIndexClient({
       </FilterBar>
 
       {filtered.length === 0 ? (
-        <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[14px] text-muted-foreground">
+        <p className="rounded-md border border-dashed border-border px-4 py-6 text-center text-[14px] text-muted-foreground">
           No terms match that search.
         </p>
       ) : (
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="grid gap-4 lg:grid-cols-2">
           {LEARN_CATEGORIES.filter((c) => cat === "all" || cat === c.id).map(
             (meta) => {
               const items = byCat.get(meta.id) ?? [];

@@ -4,7 +4,6 @@ import { getLeagueStandings } from "@/data/queries/standings";
 import type { TeamSeasonStats } from "@/data/types";
 import type { LeagueStandings, StandingRow } from "@/data/types/standings";
 import { isSeasonAwaitingFirstGame } from "@/lib/nba-season-status";
-import { playerBoardAwaitingTip } from "@/lib/player-board-tip";
 import { shiftCanonicalSeason } from "@/lib/player-stat-comps";
 import type { TeamBrand } from "@/lib/nba-brand";
 import {
@@ -58,9 +57,7 @@ export async function resolveTeamStandingsDisplay(input: {
   boardRows: readonly TeamSeasonStats[];
 }): Promise<TeamStandingsDisplay> {
   const { season, currentSeason, team, brand, boardRows } = input;
-  const seasonAwaitingGames =
-    isSeasonAwaitingFirstGame(season, boardRows) ||
-    playerBoardAwaitingTip(season, boardRows);
+  const seasonAwaitingGames = isSeasonAwaitingFirstGame(season, boardRows);
   const divisionMeta = resolveTeamDivisionMeta(brand, team.teamId);
 
   // getLeagueStandings serves the prior season's final table before tip-off;

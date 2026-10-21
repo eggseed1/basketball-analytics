@@ -15,6 +15,7 @@ import {
   StatValue,
 } from "@/components/stats/metric-display";
 import { PageHeader, SectionHeader } from "@/components/layout/page-header";
+import { SectionFrame } from "@/components/layout/section-frame";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { BackLink, SectionLink } from "@/components/ui/section-link";
@@ -24,7 +25,14 @@ import { SegmentedControl } from "@/components/ui/segmented-control";
 import { Surface } from "@/components/ui/surface";
 import { TextLink } from "@/components/ui/text-link";
 import { useOwnerTheme } from "@/components/design-system/theme-provider";
-import { boardType, material, shell, subtleGlassStyle, type } from "@/lib/design-system";
+import {
+  boardType,
+  material,
+  sectionAtomicTileClassName,
+  shell,
+  subtleGlassStyle,
+  type,
+} from "@/lib/design-system";
 import type { ColorScheme, SurfaceStyle } from "@/lib/owner-theme";
 import { cn } from "@/lib/utils";
 
@@ -34,6 +42,7 @@ const SECTIONS = [
   { id: "colors", label: "Colors" },
   { id: "spacing", label: "Spacing" },
   { id: "materials", label: "Glass materials" },
+  { id: "section-surfaces", label: "Section surfaces" },
   { id: "radii-shadows", label: "Radii & shadows" },
   { id: "buttons", label: "Buttons" },
   { id: "links", label: "Links" },
@@ -340,6 +349,93 @@ export function DesignSystemLab() {
                 <p className={cn(type.caption, "text-muted-foreground")}>{usage}</p>
               </div>
             ))}
+          </div>
+        </LabSection>
+
+        <LabSection
+          id="section-surfaces"
+          title="Section surfaces"
+          description="Open canvas by default. Glass on the body only when interactive or dense. Page titles stay outside the surface. See design-system-sections.ts and section-surfaces rule."
+        >
+          <div className="flex flex-col gap-8">
+            <SectionFrame
+              density="overview"
+              title="Header outside, open body"
+              description="Narrative, link rows, and thin summaries sit on the page atmosphere. No sports-card around the section."
+            >
+              <p className={cn(type.bodySm, "text-muted-foreground")}>
+                Go deeper links and overview summaries use this shape.
+              </p>
+              <div className="flex flex-wrap gap-x-4 gap-y-2">
+                <TextLink href="#section-surfaces" className={type.bodySm}>
+                  Career stats
+                </TextLink>
+                <TextLink href="#section-surfaces" className={type.bodySm}>
+                  Advanced
+                </TextLink>
+              </div>
+            </SectionFrame>
+
+            <SectionFrame
+              density="overview"
+              title="Header outside, glass body"
+              description="Ask chips, filters, and other control clusters. Title on canvas; surface wraps only the interactive body."
+              bodySurface
+            >
+              <div className="flex flex-wrap gap-2">
+                <Badge>Peak season</Badge>
+                <Badge variant="neutral">Rank</Badge>
+                <Badge variant="neutral">Compare</Badge>
+              </div>
+            </SectionFrame>
+
+            <SectionFrame
+              density="overview"
+              title="Header outside, atomic tiles"
+              description="Contract surplus cells and similar metric tiles. Section stays open; each tile may use glass."
+            >
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                {["Surplus", "Worth", "Paid", "Rank"].map((label) => (
+                  <div key={label} className={sectionAtomicTileClassName}>
+                    <p
+                      className={cn(
+                        type.micro,
+                        "font-semibold uppercase tracking-wide text-muted-foreground"
+                      )}
+                    >
+                      {label}
+                    </p>
+                    <p className={cn(type.title, "font-bold tabular-nums")}>12.4M</p>
+                  </div>
+                ))}
+              </div>
+            </SectionFrame>
+
+            <SectionFrame
+              title="Style"
+              description="2025-26 role shape from usage, shot diet, and size. Not a skill rank."
+              density="overview"
+            >
+              <div className="flex flex-col gap-1.5">
+                <p className={cn(type.heading, "tracking-tight")}>
+                  Creator · pull-up diet
+                </p>
+                <p className={cn(type.bodySm, "text-muted-foreground")}>
+                  Full overview section: h2 on the canvas, open body. Not an identity
+                  column card.
+                </p>
+              </div>
+            </SectionFrame>
+
+            <div className="flex flex-col gap-2">
+              <SectionHeader title="Subtab destination" description="One primary board owns the view. Supporting sections stack below with the same header-outside rule. Overview must not re-embed full Career + Stats + historical tables." />
+              <Surface variant="glass" padding="md">
+                <p className={cn(type.bodySm, "text-muted-foreground")}>
+                  Dense board / chart surface (placeholder). Prefer hideTitle on the
+                  board and this SectionHeader outside.
+                </p>
+              </Surface>
+            </div>
           </div>
         </LabSection>
 
