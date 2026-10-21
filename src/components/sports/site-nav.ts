@@ -81,13 +81,20 @@ export const PRIMARY_NAV: PrimaryNavItem[] = [
           p.startsWith("/explore/players") &&
           !p.startsWith("/explore/players/race") &&
           !p.startsWith("/explore/players/visualizations") &&
-          !p.startsWith("/explore/players/hot-cold"),
+          !p.startsWith("/explore/players/hot-cold") &&
+          !p.startsWith("/explore/players/styles"),
       },
       {
         href: "/explore/players/hot-cold",
         label: "Hot & Cold",
         labelKey: "sub_hotCold",
         match: (p) => p.startsWith("/explore/players/hot-cold"),
+      },
+      {
+        href: "/explore/players/styles",
+        label: "Styles",
+        labelKey: "sub_styles",
+        match: (p) => p.startsWith("/explore/players/styles"),
       },
       {
         href: "/explore/players/visualizations",
@@ -107,8 +114,7 @@ export const PRIMARY_NAV: PrimaryNavItem[] = [
       (p.startsWith("/explore/teams") && !p.startsWith("/explore/teams/trade")) ||
       p.startsWith("/teams/") ||
       p.startsWith("/standings") ||
-      p.startsWith("/explore/bracket") ||
-      p.startsWith("/franchises"),
+      p.startsWith("/explore/bracket"),
     subnav: [
       {
         href: "/standings",
@@ -116,8 +122,7 @@ export const PRIMARY_NAV: PrimaryNavItem[] = [
         labelKey: "sub_standings",
         match: (p) =>
           (p.startsWith("/standings") && !p.startsWith(STANDINGS_VISUALIZATIONS_PATH)) ||
-          p.startsWith("/teams/") ||
-          p.startsWith("/franchises"),
+          p.startsWith("/teams/"),
       },
       {
         href: STANDINGS_VISUALIZATIONS_PATH,
@@ -203,13 +208,20 @@ export const PRIMARY_NAV: PrimaryNavItem[] = [
     id: "history",
     href: "/history",
     label: "History",
-    match: (p) => p.startsWith("/history") || p.startsWith("/awards"),
+    match: (p) =>
+      p.startsWith("/history") || p.startsWith("/awards") || p.startsWith("/franchises"),
     subnav: [
       {
         href: "/history",
         label: "Time Machine",
         labelKey: "sub_timeMachine",
         match: (p) => p.startsWith("/history"),
+      },
+      {
+        href: "/franchises",
+        label: "Franchise History",
+        labelKey: "sub_franchiseHistory",
+        match: (p) => p.startsWith("/franchises"),
       },
       {
         href: "/awards",

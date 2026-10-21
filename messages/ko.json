@@ -59,7 +59,9 @@
     "sub_zero82": "0–82",
     "sub_teammateChain": "팀메이트 체인",
     "sub_oneShot": "ONE SHOT",
-    "sub_gmLab": "GM Lab"
+    "sub_gmLab": "GM Lab",
+    "sub_franchiseHistory": "프랜차이즈 역사",
+    "sub_styles": "Styles"
   },
   "Search": {
     "placeholder": "선수 / 팀 검색",
@@ -86,8 +88,8 @@
     "language": "언어",
     "languageLabel": "표시 언어",
     "automatic": "자동",
-    "automaticHint": "지원하는 경우 브라우저 언어를 사용합니다. 아니면 영어입니다.",
-    "languageHint": "선택 사항은 이 기기에 저장됩니다. 통계·단위·팀 데이터는 바뀌지 않습니다."
+    "automaticHint": "지원하는 경우 시스템 언어를 따릅니다(English, Español, Français, Deutsch, Português, 한국어, 日本語, 中文). 없으면 영어. 선수·팀 이름은 게시된 그대로 둡니다.",
+    "languageHint": "이 기기에 저장됩니다. 통계와 단위는 그대로입니다. 선수·팀 이름은 번역하지 않습니다."
   },
   "Footer": {
     "disclaimer": "NBA 또는 소속 팀과 제휴·보증 관계가 없습니다. 팀 이름, 로고, 선수 이미지는 각 소유자에게 있습니다.",
@@ -384,7 +386,8 @@
     "vsGamesPageMeta": "{total} · {page}/{pageCount}페이지 · ≤{pageSize}행",
     "vsEyebrow": "프랜차이즈 맞대결 · {scope}",
     "vsIntro": "경기 아카이브는 {since}부터입니다. 경기는 프랜차이즈 계보로 묶이며, 각 경기는 오늘 후속 브랜드가 아니라 그 팁오프 때의 팀명을 보여 줍니다.",
-    "vsWins": "{abbr} 승"
+    "vsWins": "{abbr} 승",
+    "historyPill": "역사"
   },
   "Ask": {
     "metaTitle": "Ask DRBL",
@@ -891,7 +894,14 @@
     "allPlayers": "모든 선수",
     "bottomN": "하단 {n}",
     "bothEndsN": "양끝 · {n}",
-    "topN": "상위 {n}"
+    "topN": "상위 {n}",
+    "stylesTitle": "Player styles",
+    "stylesSubtitle": "Players grouped by how they are used: creation load, shot diet, and size shell. Not a ranking of skill.",
+    "stylesMeta": "{season} · {count} players with a clear style",
+    "stylesAbout": "Styles come from usage, assist rate, three-point attempt rate, and free-throw rate on the season board. Players need 20 games and about 16 minutes a night. Impact ratings are left out on purpose.",
+    "stylesAll": "All styles",
+    "stylesSeasonLabel": "Season",
+    "stylesFilterLabel": "Style filter"
   },
   "Errors": {
     "pageInterrupted": "페이지 중단됨",

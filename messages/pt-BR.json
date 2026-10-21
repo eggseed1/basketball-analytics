@@ -59,7 +59,9 @@
     "sub_zero82": "0–82",
     "sub_teammateChain": "Cadeia de companheiros",
     "sub_oneShot": "ONE SHOT",
-    "sub_gmLab": "GM Lab"
+    "sub_gmLab": "GM Lab",
+    "sub_franchiseHistory": "História das franquias",
+    "sub_styles": "Styles"
   },
   "Search": {
     "placeholder": "Buscar jogadores / times",
@@ -86,8 +88,8 @@
     "language": "Idioma",
     "languageLabel": "Idioma da interface",
     "automatic": "Automático",
-    "automaticHint": "Usa o idioma do navegador quando suportamos. Caso contrário, inglês.",
-    "languageHint": "Sua escolha fica neste dispositivo. Não muda stats, unidades ou dados de times."
+    "automaticHint": "Segue o idioma do sistema quando suportamos (English, Español, Français, Deutsch, Português, 한국어, 日本語, 中文). Senão, inglês. Nomes de jogadores e times ficam como publicados.",
+    "languageHint": "Salvo neste dispositivo. Estatísticas e unidades não mudam. Nomes de jogadores e times nunca são traduzidos."
   },
   "Footer": {
     "disclaimer": "Não afiliado nem endossado pela NBA ou por qualquer de seus times. Nomes, logos e imagens de jogadores pertencem aos seus donos.",
@@ -384,7 +386,8 @@
     "vsGamesPageMeta": "{total} · pág. {page}/{pageCount} · ≤{pageSize} linhas",
     "vsEyebrow": "Confronto de franquias · {scope}",
     "vsIntro": "O arquivo de jogos começa em {since}. Os jogos são agrupados por linhagem da franquia e cada um mostra os nomes usados naquele tip-off, não as marcas de hoje.",
-    "vsWins": "Vitórias de {abbr}"
+    "vsWins": "Vitórias de {abbr}",
+    "historyPill": "História"
   },
   "Ask": {
     "metaTitle": "Ask DRBL",
@@ -891,7 +894,14 @@
     "allPlayers": "Todos os jogadores",
     "bottomN": "Fundo {n}",
     "bothEndsN": "Ambos os lados · {n}",
-    "topN": "Top {n}"
+    "topN": "Top {n}",
+    "stylesTitle": "Player styles",
+    "stylesSubtitle": "Players grouped by how they are used: creation load, shot diet, and size shell. Not a ranking of skill.",
+    "stylesMeta": "{season} · {count} players with a clear style",
+    "stylesAbout": "Styles come from usage, assist rate, three-point attempt rate, and free-throw rate on the season board. Players need 20 games and about 16 minutes a night. Impact ratings are left out on purpose.",
+    "stylesAll": "All styles",
+    "stylesSeasonLabel": "Season",
+    "stylesFilterLabel": "Style filter"
   },
   "Errors": {
     "pageInterrupted": "Página interrompida",

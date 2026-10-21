@@ -59,7 +59,9 @@
     "sub_zero82": "0–82",
     "sub_teammateChain": "队友链",
     "sub_oneShot": "ONE SHOT",
-    "sub_gmLab": "GM Lab"
+    "sub_gmLab": "GM Lab",
+    "sub_franchiseHistory": "球队历史",
+    "sub_styles": "Styles"
   },
   "Search": {
     "placeholder": "搜索球员 / 球队",
@@ -86,8 +88,8 @@
     "language": "语言",
     "languageLabel": "界面语言",
     "automatic": "自动",
-    "automaticHint": "在支持时使用浏览器语言，否则使用英语。",
-    "languageHint": "选择保存在本设备。不会改变统计、单位或球队数据。"
+    "automaticHint": "在支持时跟随系统语言（English, Español, Français, Deutsch, Português, 한국어, 日本語, 中文）。否则为英语。球员与球队名称保持原文。",
+    "languageHint": "保存在本设备。数据与单位不变。球员与球队名称永不翻译。"
   },
   "Footer": {
     "disclaimer": "与 NBA 或其任何球队无关联或背书关系。球队名称、标识与球员图片归其所有者所有。",
@@ -384,7 +386,8 @@
     "vsGamesPageMeta": "{total} · 第 {page}/{pageCount} 页 · ≤{pageSize} 行",
     "vsEyebrow": "球队交锋 · {scope}",
     "vsIntro": "比赛档案自 {since} 起。比赛按球队谱系分组，每场显示开球时的队名，而非如今的继任品牌。",
-    "vsWins": "{abbr} 胜场"
+    "vsWins": "{abbr} 胜场",
+    "historyPill": "历史"
   },
   "Ask": {
     "metaTitle": "Ask DRBL",
@@ -891,7 +894,14 @@
     "allPlayers": "所有球员",
     "bottomN": "底部{n}",
     "bothEndsN": "双端 · {n}",
-    "topN": "前 {n}"
+    "topN": "前 {n}",
+    "stylesTitle": "Player styles",
+    "stylesSubtitle": "Players grouped by how they are used: creation load, shot diet, and size shell. Not a ranking of skill.",
+    "stylesMeta": "{season} · {count} players with a clear style",
+    "stylesAbout": "Styles come from usage, assist rate, three-point attempt rate, and free-throw rate on the season board. Players need 20 games and about 16 minutes a night. Impact ratings are left out on purpose.",
+    "stylesAll": "All styles",
+    "stylesSeasonLabel": "Season",
+    "stylesFilterLabel": "Style filter"
   },
   "Errors": {
     "pageInterrupted": "页面中断",

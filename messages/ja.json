@@ -59,7 +59,9 @@
     "sub_zero82": "0–82",
     "sub_teammateChain": "チームメートチェーン",
     "sub_oneShot": "ONE SHOT",
-    "sub_gmLab": "GM Lab"
+    "sub_gmLab": "GM Lab",
+    "sub_franchiseHistory": "フランチャイズ史",
+    "sub_styles": "Styles"
   },
   "Search": {
     "placeholder": "選手 / チームを検索",
@@ -86,8 +88,8 @@
     "language": "言語",
     "languageLabel": "表示言語",
     "automatic": "自動",
-    "automaticHint": "対応している場合はブラウザの言語を使います。なければ英語です。",
-    "languageHint": "選択はこの端末に保存されます。数値・単位・チームデータは変わりません。"
+    "automaticHint": "対応している場合はシステムの言語に合わせます（English, Español, Français, Deutsch, Português, 한국어, 日本語, 中文）。なければ英語。選手名・チーム名は公開どおりのままです。",
+    "languageHint": "この端末に保存されます。スタッツや単位は変わりません。選手名・チーム名は翻訳しません。"
   },
   "Footer": {
     "disclaimer": "NBAおよび各チームとは提携・後援関係にありません。チーム名・ロゴ・選手画像は各権利者に帰属します。",
@@ -384,7 +386,8 @@
     "vsGamesPageMeta": "{total} · {page}/{pageCount}ページ · ≤{pageSize}行",
     "vsEyebrow": "フランチャイズ対戦 · {scope}",
     "vsIntro": "試合アーカイブは{since}から。試合はフランチャイズ系統でまとめ、各試合は現在の後継ブランドではなく、そのティップオフ時のチーム名を示します。",
-    "vsWins": "{abbr}の勝ち"
+    "vsWins": "{abbr}の勝ち",
+    "historyPill": "歴史"
   },
   "Ask": {
     "metaTitle": "Ask DRBL",
@@ -891,7 +894,14 @@
     "allPlayers": "全選手",
     "bottomN": "下位 {n}",
     "bothEndsN": "両端 · {n}",
-    "topN": "上位 {n}"
+    "topN": "上位 {n}",
+    "stylesTitle": "Player styles",
+    "stylesSubtitle": "Players grouped by how they are used: creation load, shot diet, and size shell. Not a ranking of skill.",
+    "stylesMeta": "{season} · {count} players with a clear style",
+    "stylesAbout": "Styles come from usage, assist rate, three-point attempt rate, and free-throw rate on the season board. Players need 20 games and about 16 minutes a night. Impact ratings are left out on purpose.",
+    "stylesAll": "All styles",
+    "stylesSeasonLabel": "Season",
+    "stylesFilterLabel": "Style filter"
   },
   "Errors": {
     "pageInterrupted": "ページが中断されました",

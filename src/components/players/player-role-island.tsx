@@ -1,12 +1,14 @@
-import { PlayerRoleLine } from "@/components/players/player-role-line";
+import { SectionFrame } from "@/components/layout/section-frame";
+import { PlayerStyleStory } from "@/components/players/player-style-story";
 import type { PlayerSeason } from "@/data/types";
 import { resolvePlayerStatsSeason } from "@/lib/player-board-season";
 import { assignPlayerRole } from "@/lib/player-role";
+import { buildStyleStoryModel } from "@/lib/player-style-story";
+import { getTranslations } from "next-intl/server";
 
 /**
- * Resolves scout-phrase role for the stats season (offseason fallback aware).
- * Shot-zone diet enrichment is skipped on the critical path so overview paints
- * without waiting on the shot index.
+ * Full-width Style story for Overview.
+ * Shot-zone diet enrichment stays off the critical path (3PAr / FTR fallback).
  */
 export async function PlayerRoleIsland({
   career,
@@ -15,7 +17,7 @@ export async function PlayerRoleIsland({
   playerId,
   nbaId,
   espnId,
-  className,
+  accent,
 }: {
   career: PlayerSeason[];
   requestSeason: string;
@@ -23,8 +25,11 @@ export async function PlayerRoleIsland({
   playerId: string;
   nbaId?: string | null;
   espnId?: string | null;
+  /** Optional team accent for the creation-map focus dot. */
+  accent?: string;
   className?: string;
 }) {
+  const t = await getTranslations("PlayerDetail");
   const { statsSeason } = resolvePlayerStatsSeason(career, requestSeason);
   const row =
     career.find(
@@ -34,22 +39,22 @@ export async function PlayerRoleIsland({
   if (!row) return null;
 
   let rowForRole = row;
+  let peerBoard: PlayerSeason[] = [];
 
-  // Career rows can lack USG/AST% until BRef overlay — pull from bundled board.
-  if (row.usagePct == null || !Number.isFinite(row.usagePct)) {
-    try {
-      const { getBundledBrefPeerBoard } = await import(
-        "@/data/runtime/bref-advanced-snapshot"
-      );
-      const board = getBundledBrefPeerBoard(statsSeason);
+  try {
+    const { getBundledBrefPeerBoard } = await import(
+      "@/data/runtime/bref-advanced-snapshot"
+    );
+    peerBoard = getBundledBrefPeerBoard(statsSeason);
+    if (row.usagePct == null || !Number.isFinite(row.usagePct)) {
       const ids = new Set(
         [playerId, nbaId, espnId]
           .map((id) => String(id ?? "").trim())
           .filter(Boolean)
       );
       const hit =
-        board.find((r) => ids.has(r.playerId)) ??
-        board.find(
+        peerBoard.find((r) => ids.has(r.playerId)) ??
+        peerBoard.find(
           (r) =>
             r.playerName.trim().toLowerCase() ===
             row.playerName.trim().toLowerCase()
@@ -66,11 +71,12 @@ export async function PlayerRoleIsland({
           stealPct: hit.stealPct || row.stealPct,
           blockPct: hit.blockPct || row.blockPct,
           trueShootingPct: hit.trueShootingPct ?? row.trueShootingPct,
+          freeThrowRate: hit.freeThrowRate ?? row.freeThrowRate,
         };
       }
-    } catch {
-      /* keep career row */
     }
+  } catch {
+    /* keep career row */
   }
 
   const role = assignPlayerRole({
@@ -80,5 +86,21 @@ export async function PlayerRoleIsland({
   });
   if (!role || role.id === "unclear") return null;
 
-  return <PlayerRoleLine role={role} className={className} />;
+  const model = buildStyleStoryModel({
+    role,
+    row: rowForRole,
+    peerBoard,
+    playerId,
+  });
+
+  return (
+    <SectionFrame
+      id="style"
+      density="overview"
+      title={t("styleTitle")}
+      description={t("styleHint", { season: role.season })}
+    >
+      <PlayerStyleStory model={model} accent={accent} />
+    </SectionFrame>
+  );
 }

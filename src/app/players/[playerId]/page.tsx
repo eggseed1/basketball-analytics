@@ -9,7 +9,10 @@ import { getOnOffSeasons } from "@/data/queries/on-off";
 import { shareImageMetadata } from "@/lib/share-images";
 import { JsonLd } from "@/components/seo/json-ld";
 import { absoluteUrl } from "@/lib/site-url";
-import { GlassSurface, GlassTintScaleProvider } from "@/components/brand/glass-surface";
+import {
+  GlassSurface,
+  GlassTintScaleProvider,
+} from "@/components/brand/glass-surface";
 import { DestinationClientShell } from "@/components/continuity/destination-client-shell";
 import { HistoricalCareerSurface } from "@/components/players/historical-career-surface";
 import { PlayerAskLinks } from "@/components/players/player-ask-links";
@@ -60,10 +63,7 @@ import {
 } from "@/data/runtime/current-roster-snapshot";
 import { resolveHistoricalTeamBrand } from "@/lib/historical-team-brand";
 import { brandAtmosphereColors } from "@/lib/game-matchup-theme";
-import {
-  HOF_PAGE_FRAME_CLASS,
-  isHallOfFamePlayerId,
-} from "@/lib/hall-of-fame-style";
+import { isHallOfFamePlayerId } from "@/lib/hall-of-fame-style";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { resolvePlayerStatsSeason } from "@/lib/player-board-season";
 import {
@@ -564,20 +564,6 @@ export default async function PlayerPage({
           caps={caps}
           seasonType={seasonType}
           honor={honor}
-          role={
-            slimWorker ? null : (
-              <Suspense fallback={<PlayerIdentitySlotSkeleton />}>
-                <PlayerRoleIsland
-                  career={career}
-                  requestSeason={season}
-                  position={bioPosition}
-                  playerId={playerId}
-                  nbaId={identity?.nbaId}
-                  espnId={identity?.espnId}
-                />
-              </Suspense>
-            )
-          }
           accolades={
             slimWorker ? null : (
               <Suspense fallback={<PlayerIdentitySlotSkeleton />}>
@@ -623,31 +609,45 @@ export default async function PlayerPage({
                 overall={notYetPlayed.overall}
               />
             ) : (
-            <Suspense
-              fallback={
-                <div className="col-span-1 min-h-[28rem]">
-                  <PlayerPercentileSkeleton />
-                </div>
-              }
-            >
-              <PlayerPercentileIsland
-                playerId={playerId}
-                displayName={displayName}
-                season={season}
-                career={career}
-                seasonOptions={seasonOptions}
-                seasonTeams={seasonTeams}
-                identityTeamKey={teamKey}
-                nbaId={identity?.nbaId}
-                espnId={identity?.espnId}
-                honor={honor}
-              />
-            </Suspense>
+              <Suspense
+                fallback={
+                  <div className="col-span-1 min-h-[28rem]">
+                    <PlayerPercentileSkeleton />
+                  </div>
+                }
+              >
+                <PlayerPercentileIsland
+                  playerId={playerId}
+                  displayName={displayName}
+                  season={season}
+                  career={career}
+                  seasonOptions={seasonOptions}
+                  seasonTeams={seasonTeams}
+                  identityTeamKey={teamKey}
+                  nbaId={identity?.nbaId}
+                  espnId={identity?.espnId}
+                  honor={honor}
+                />
+              </Suspense>
             )
           }
         >
           <PlayerCareerDataGuardBanner guard={careerDataGuard} />
         </PlayerDestinationIdentity>
+
+        {view === "overview" && !slimWorker && !notYetPlayed ? (
+          <Suspense fallback={<PlayerBoardSkeleton label={t("styleTitle")} />}>
+            <PlayerRoleIsland
+              career={career}
+              requestSeason={season}
+              position={bioPosition}
+              playerId={playerId}
+              nbaId={identity?.nbaId}
+              espnId={identity?.espnId}
+              accent={atmosphere?.colorA}
+            />
+          </Suspense>
+        ) : null}
 
         {view === "sentiment" ? (
           <Suspense
@@ -817,14 +817,12 @@ export default async function PlayerPage({
 
         {view === "onoff" ? (
           <Suspense fallback={<PlayerBoardSkeleton label={t("loadingOnOff")} />}>
-            <GlassSurface effect="css" className="p-4 sm:p-6" honor={honor}>
-              <PlayerOnOffIsland
-                playerId={playerId}
-                nbaIds={[identity?.nbaId, /^\d+$/.test(playerId) ? playerId : null]}
-                season={statsCtx.statsSeason}
-                playerName={displayName}
-              />
-            </GlassSurface>
+            <PlayerOnOffIsland
+              playerId={playerId}
+              nbaIds={[identity?.nbaId, /^\d+$/.test(playerId) ? playerId : null]}
+              season={statsCtx.statsSeason}
+              playerName={displayName}
+            />
           </Suspense>
         ) : null}
 
@@ -832,26 +830,24 @@ export default async function PlayerPage({
           <Suspense
             fallback={<PlayerBoardSkeleton label={t("loadingDeepStats")} />}
           >
-            <GlassSurface effect="css" className="p-1 sm:p-2" honor={honor}>
-              <PlayerStatDepthIslandDeferred
-                playerId={playerId}
-                season={statsCtx.statsSeason}
-                view={view}
-                page={gamesPage}
-                statMode={statMode}
-                gameLogMode={gameLogMode}
-                filter={filter}
-                historySeasons={careerSeasonsForTable}
-                career={career}
-                careerFirstSeason={
-                  historyCareer?.firstSeason ??
-                  masterPlayer?.firstSeason ??
-                  seasonOptions.at(-1)
-                }
-                fromHistory={fromHistory}
-                themeMode={themeMode === "modern" ? "modern" : "historical"}
-              />
-            </GlassSurface>
+            <PlayerStatDepthIslandDeferred
+              playerId={playerId}
+              season={statsCtx.statsSeason}
+              view={view}
+              page={gamesPage}
+              statMode={statMode}
+              gameLogMode={gameLogMode}
+              filter={filter}
+              historySeasons={careerSeasonsForTable}
+              career={career}
+              careerFirstSeason={
+                historyCareer?.firstSeason ??
+                masterPlayer?.firstSeason ??
+                seasonOptions.at(-1)
+              }
+              fromHistory={fromHistory}
+              themeMode={themeMode === "modern" ? "modern" : "historical"}
+            />
           </Suspense>
         ) : null}
     </>
@@ -882,15 +878,7 @@ export default async function PlayerPage({
         />
         <MotionReveal />
         <GlassTintScaleProvider scale={PLAYER_CARD_TINT_SCALE}>
-          {honor === "hof" ? (
-            <div className={HOF_PAGE_FRAME_CLASS}>
-              <div className="hof-page-frame__inner flex flex-col gap-4 p-3 sm:gap-5 sm:p-4">
-                {mainContent}
-              </div>
-            </div>
-          ) : (
-            mainContent
-          )}
+          {mainContent}
         </GlassTintScaleProvider>
       </main>
     </DestinationClientShell>

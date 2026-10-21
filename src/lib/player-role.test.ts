@@ -7,6 +7,7 @@ import test from "node:test";
 import type { PlayerSeason } from "@/data/types";
 import {
   assignPlayerRole,
+  buildRoleMix,
   resolveRoleShell,
   resolveShotDiet,
 } from "@/lib/player-role";
@@ -199,4 +200,32 @@ test("does not use impact fields — high DRBL still spacer when shape says so",
     } as Partial<PlayerSeason>),
   });
   assert.equal(spacer?.id, "catch_and_shoot_spacer");
+});
+
+test("connector prefers pass share over raw usage", () => {
+  const connector = assignPlayerRole({
+    row: base({
+      position: "SG",
+      usagePct: 0.15,
+      assistPct: 0.22,
+      turnoverPct: 0.1,
+      threePointAttemptRate: 0.32,
+    }),
+  });
+  assert.equal(connector?.id, "connector");
+});
+
+test("creation big keeps engine label", () => {
+  const jokic = assignPlayerRole({
+    row: base({
+      position: "C",
+      usagePct: 0.3,
+      assistPct: 0.45,
+      reboundPct: 0.18,
+      threePointAttemptRate: 0.2,
+    }),
+  });
+  assert.equal(jokic?.shell, "big");
+  assert.equal(jokic?.id, "half_court_engine");
+  assert.ok(jokic?.blurb.includes("creation") || jokic?.blurb.includes("Creates") || jokic?.blurb.includes("Starts"));
 });

@@ -27,6 +27,22 @@ export type LearnCategoryMeta = {
 
 export const LEARN_CATEGORIES: LearnCategoryMeta[] = [
   {
+    id: "proprietary",
+    label: "Proprietary stats",
+    description:
+      "Original DRBL numbers built from play-by-play and the box score. They show who is playing at a high level and who delivered the most season value.",
+    guide: {
+      href: "/learn/drbl",
+      label: "The DRBL guide",
+      blurb: "How DRBL/100 is built and tested against real final scores, how WAR1 and DRBL-O/D differ from it, and where the site uses it.",
+    },
+  },
+  {
+    id: "systems",
+    label: "DRBL systems",
+    description: "How DRBL ranks seasons, resumes, and games.",
+  },
+  {
     id: "basics",
     label: "Basketball basics",
     description: "Core counting stats and scoreboard ideas.",
@@ -50,22 +66,6 @@ export const LEARN_CATEGORIES: LearnCategoryMeta[] = [
     id: "impact",
     label: "Impact models",
     description: "Third-party plus-minus style estimates (DARKO, RAPTOR).",
-  },
-  {
-    id: "proprietary",
-    label: "Proprietary stats",
-    description:
-      "Original DRBL numbers built from play-by-play and the box score. They show who is playing at a high level and who delivered the most season value.",
-    guide: {
-      href: "/learn/drbl",
-      label: "The DRBL guide",
-      blurb: "How DRBL/100 is built and tested against real final scores, how WAR1 and DRBL-O/D differ from it, and where the site uses it.",
-    },
-  },
-  {
-    id: "systems",
-    label: "DRBL systems",
-    description: "How DRBL ranks seasons, resumes, and games.",
   },
   {
     id: "status",

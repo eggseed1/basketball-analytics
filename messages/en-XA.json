@@ -59,7 +59,9 @@
     "sub_zero82": "【0–82】···",
     "sub_teammateChain": "【Teammate Chain】···",
     "sub_oneShot": "【ONE SHOT】···",
-    "sub_gmLab": "【GM Lab】···"
+    "sub_gmLab": "【GM Lab】···",
+    "sub_franchiseHistory": "【Franchise History】 ···",
+    "sub_styles": "Styles"
   },
   "Search": {
     "placeholder": "【Search players / teams】···",
@@ -86,8 +88,8 @@
     "language": "【Language】···",
     "languageLabel": "【Display language】···",
     "automatic": "【Automatic】···",
-    "automaticHint": "【Uses your browser language when we support it. Falls back to English.】···",
-    "languageHint": "【Your choice stays on this device. It does not change stats, units, or team data.】···"
+    "automaticHint": "【Matches your system language when we support it (English, Español, Français, Deutsch, Português, 한국어, 日本語, 中文). Falls back to English. Player and team names stay as published.】 ···",
+    "languageHint": "【Saved on this device. Stats and units stay the same. Player and team names are never translated.】 ···"
   },
   "Footer": {
     "disclaimer": "【Not affiliated with or endorsed by the NBA or any of its teams. Team names, logos and player images belong to their owners.】···",
@@ -237,6 +239,24 @@
     "askTitle": "【Ask DRBL about 】···{name}",
     "askHint": "【Prefills supported peak, rank, season-board, and compare queries only.】···",
     "askAria": "【Ask DRBL】···",
+    "styleTitle": "【Style】···",
+    "styleHint": "【{season} role shape from usage, shot diet, and size. Not a skill rank.】···",
+    "styleAllStyles": "【All styles】···",
+    "verdictTitle": "【Season verdict】···",
+    "verdictHint": "【Where he stands in {season}.】···",
+    "rankSnapshotTitle": "【Rank snapshot】···",
+    "rankSnapshotHint": "【Top category marks in {season}. Full board is on Advanced.】···",
+    "rankSnapshotCta": "【Full rankings】···",
+    "nowTitle": "【Now】···",
+    "nowHint": "【Recent form, next tip, and status.】···",
+    "nowFormLabel": "【Last {games} games】···",
+    "nowNextLabel": "【Next game】···",
+    "nowLiveLabel": "【Live】···",
+    "nowStatusLabel": "【Status】···",
+    "nowAvailable": "【Available】···",
+    "nowNoGame": "【No upcoming game on the slate】···",
+    "nowGamesCta": "【Game Logs】···",
+    "nowSentimentCta": "【Sentiment by game】···",
     "sectionsAria": "【Player page sections】···",
     "sectionOverview": "【Overview】···",
     "sectionCareer": "【Career】···",
@@ -381,7 +401,8 @@
     "vsGamesPageMeta": "{total}【 · page 】···{page}【/】···{pageCount}【 · ≤】···{pageSize}【 rows】···",
     "vsEyebrow": "【Franchise matchup · 】···{scope}",
     "vsIntro": "【Game archive coverage starts in 】···{since}【. Games are grouped by franchise lineage, and each one shows the team names used at that tip-off rather than today's successor brands.】···",
-    "vsWins": "{abbr}【 wins】···"
+    "vsWins": "{abbr}【 wins】···",
+    "historyPill": "【History】 ···"
   },
   "Ask": {
     "metaTitle": "【Ask DRBL】···",
@@ -888,7 +909,14 @@
     "allPlayers": "【All players】···",
     "bottomN": "【Bottom 】···{n}",
     "bothEndsN": "【Both ends · 】···{n}",
-    "topN": "【Top 】···{n}"
+    "topN": "【Top 】···{n}",
+    "stylesTitle": "Player styles",
+    "stylesSubtitle": "Players grouped by how they are used: creation load, shot diet, and size shell. Not a ranking of skill.",
+    "stylesMeta": "{season} · {count} players with a clear style",
+    "stylesAbout": "Styles come from usage, assist rate, three-point attempt rate, and free-throw rate on the season board. Players need 20 games and about 16 minutes a night. Impact ratings are left out on purpose.",
+    "stylesAll": "All styles",
+    "stylesSeasonLabel": "Season",
+    "stylesFilterLabel": "Style filter"
   },
   "Errors": {
     "pageInterrupted": "【Page interrupted】···",
