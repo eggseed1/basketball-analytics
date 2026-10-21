@@ -1,8 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { boxToPlayByPlay } from "../src/gm/engine/play-by-play";
+import { boxToPlayByPlay, linesAtCutoff } from "../src/gm/engine/play-by-play";
 import { buildCourtEvents } from "../src/lib/games/court-events";
+import { tagPlayContexts } from "../src/lib/games/play-filters";
 import type { GmBoxScore } from "../src/gm/types";
 
 function line(
@@ -174,4 +175,80 @@ test("shot spots follow the three-point arc instead of a flat depth band", () =>
   const rimVar =
     rimX.reduce((sum, n) => sum + (n - rimMean) ** 2, 0) / Math.max(1, rimX.length - 1);
   assert.ok(Math.sqrt(rimVar) > 0.7, `rim x spread ${Math.sqrt(rimVar)}`);
+});
+
+test("GM tape tags fast breaks and ticks box lines with the cutoff", () => {
+  const box: GmBoxScore = {
+    id: "box_break",
+    gameId: "g3",
+    season: 2027,
+    day: 3,
+    homeTeamId: "bos",
+    awayTeamId: "det",
+    homeScore: 24,
+    awayScore: 20,
+    players: [
+      line({
+        playerId: "tatum",
+        playerName: "Jayson Tatum",
+        teamId: "bos",
+        points: 14,
+        fgm: 5,
+        fga: 10,
+        tpm: 2,
+        tpa: 5,
+        ftm: 2,
+        fta: 2,
+        assists: 2,
+        rebounds: 4,
+        steals: 3,
+        blocks: 0,
+        turnovers: 1,
+      }),
+      line({
+        playerId: "white",
+        playerName: "Derrick White",
+        teamId: "bos",
+        points: 10,
+        fgm: 4,
+        fga: 8,
+        tpm: 1,
+        tpa: 3,
+        assists: 3,
+        rebounds: 2,
+        steals: 1,
+        turnovers: 2,
+      }),
+      line({
+        playerId: "cade",
+        playerName: "Cade Cunningham",
+        teamId: "det",
+        points: 20,
+        fgm: 7,
+        fga: 14,
+        tpm: 2,
+        tpa: 6,
+        ftm: 4,
+        fta: 4,
+        assists: 4,
+        rebounds: 3,
+        steals: 2,
+        turnovers: 4,
+      }),
+    ],
+  };
+  const events = boxToPlayByPlay(box);
+  const running = events.filter((e) => /\brunning\b/i.test(e.description ?? ""));
+  assert.ok(running.length >= 1, `expected running FGs, got ${running.length}`);
+  const tags = tagPlayContexts(events, "BOS", "DET");
+  let fast = 0;
+  for (const set of tags.values()) if (set.has("fastBreak")) fast += 1;
+  assert.ok(fast >= 1, `fastBreak tags ${fast}`);
+
+  const mid = linesAtCutoff(box, events, 720);
+  const end = linesAtCutoff(box, events, null);
+  const midPts = mid.reduce((s, p) => s + p.points, 0);
+  const endPts = end.reduce((s, p) => s + p.points, 0);
+  assert.ok(midPts < endPts, `mid ${midPts} should trail final ${endPts}`);
+  assert.equal(endPts, box.homeScore + box.awayScore);
 });

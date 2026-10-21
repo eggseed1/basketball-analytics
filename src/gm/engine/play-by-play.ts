@@ -1,6 +1,7 @@
 import type { PlayByPlayEvent } from "@/data/types/play-by-play";
 import type { GmBoxPlayerLine, GmBoxScore } from "@/gm/types";
 import { createRng } from "@/gm/engine/rng";
+import { elapsedSeconds } from "@/lib/games/court-events";
 
 /**
  * A simulated play-by-play for a finished GM box, in the same shape the game
@@ -318,6 +319,10 @@ export function boxToPlayByPlay(box: GmBoxScore): PlayByPlayEvent[] {
     return list[Math.floor(rng() * list.length)] ?? null;
   };
 
+  /** Side that just won the ball in transition (steal / DREB). Next FG can be "running". */
+  let breakFor: Side | null = null;
+  let breakKind: "steal" | "dreb" | null = null;
+
   for (const item of items) {
     if (item.kind === "tov") {
       const stolen = item.steal;
@@ -338,6 +343,13 @@ export function boxToPlayByPlay(box: GmBoxScore): PlayByPlayEvent[] {
         locX: (rng() - 0.5) * 16,
         locY: 28 + rng() * 8,
       });
+      if (stolen) {
+        breakFor = stolen.side;
+        breakKind = "steal";
+      } else {
+        breakFor = null;
+        breakKind = null;
+      }
       continue;
     }
     if (item.kind === "ft") {
@@ -382,11 +394,27 @@ export function boxToPlayByPlay(box: GmBoxScore): PlayByPlayEvent[] {
     }
 
     const shot = item.shot;
-    const where = spot(shot.three, rng);
+    const running =
+      breakFor === shot.player.side &&
+      rng() < (breakKind === "steal" ? 0.72 : breakKind === "dreb" ? 0.4 : 0);
+    breakFor = null;
+    breakKind = null;
+    // Transition looks live near the rim more often than a set jumper.
+    let where = spot(shot.three, rng);
+    if (running && !shot.three && rng() < 0.7) {
+      where = {
+        x: clamp(gauss(rng) * 2.2, -5, 5),
+        y: clamp(1.2 + Math.abs(gauss(rng)) * 1.8, 0.5, 6),
+      };
+    }
     const dist = Math.max(1, Math.round(Math.hypot(where.x, where.y)));
     const verb = shot.made ? "makes" : "misses";
-    const look = shot.three ? `${dist}-foot three pointer` : dist < 6 ? "layup" : `${dist}-foot jumper`;
-    let description = `${shot.player.name} ${verb} a ${look}`;
+    const look = shot.three
+      ? `${dist}-foot three pointer`
+      : dist < 6
+        ? "layup"
+        : `${dist}-foot jumper`;
+    let description = `${shot.player.name} ${verb} a ${running ? "running " : ""}${look}`;
     if (shot.assist) description += ` (${shot.assist.name} assists)`;
     if (shot.block) description += ` (${shot.block.name} blocks)`;
     push({
@@ -423,6 +451,13 @@ export function boxToPlayByPlay(box: GmBoxScore): PlayByPlayEvent[] {
           locX: null,
           locY: null,
         });
+        if (offensive) {
+          breakFor = null;
+          breakKind = null;
+        } else {
+          breakFor = board.side;
+          breakKind = "dreb";
+        }
       }
     }
   }
@@ -484,4 +519,124 @@ function settle(events: PlayByPlayEvent[], team: string, target: number) {
       delta += take;
     }
   }
+}
+
+const REGULATION_SECONDS = 2880;
+
+/**
+ * Box lines as of a replay cutoff (game seconds). `null` returns the finished box.
+ * Counting stats come from the PBP tape; minutes scale with clock.
+ */
+export function linesAtCutoff(
+  box: GmBoxScore,
+  events: PlayByPlayEvent[],
+  cutoff: number | null
+): GmBoxPlayerLine[] {
+  if (cutoff == null) return box.players.map((line) => ({ ...line }));
+
+  type Acc = {
+    points: number;
+    assists: number;
+    rebounds: number;
+    steals: number;
+    blocks: number;
+    turnovers: number;
+    fgm: number;
+    fga: number;
+    tpm: number;
+    tpa: number;
+    ftm: number;
+    fta: number;
+  };
+  const empty = (): Acc => ({
+    points: 0,
+    assists: 0,
+    rebounds: 0,
+    steals: 0,
+    blocks: 0,
+    turnovers: 0,
+    fgm: 0,
+    fga: 0,
+    tpm: 0,
+    tpa: 0,
+    ftm: 0,
+    fta: 0,
+  });
+  const byId = new Map<string, Acc>();
+  for (const line of box.players) byId.set(line.playerId, empty());
+
+  for (const event of events) {
+    const t = elapsedSeconds(event.period, event.clockSeconds);
+    if (t > cutoff) continue;
+    const id = event.playerId;
+    if (!id) continue;
+    const acc = byId.get(id) ?? empty();
+    byId.set(id, acc);
+
+    if (event.actionType === "turnover") {
+      acc.turnovers += 1;
+      if (event.secondPlayerId && /\bsteals\b/i.test(event.description ?? "")) {
+        const stl = byId.get(event.secondPlayerId) ?? empty();
+        byId.set(event.secondPlayerId, stl);
+        stl.steals += 1;
+      }
+      continue;
+    }
+    if (event.actionType === "rebound") {
+      acc.rebounds += 1;
+      continue;
+    }
+    if (event.actionType === "freethrow") {
+      acc.fta += 1;
+      if (event.shotResult === "Made") {
+        acc.ftm += 1;
+        acc.points += event.points || 1;
+      }
+      continue;
+    }
+    if (event.isFieldGoal) {
+      acc.fga += 1;
+      if (event.actionType === "3pt") acc.tpa += 1;
+      if (event.shotResult === "Made") {
+        acc.fgm += 1;
+        if (event.actionType === "3pt") acc.tpm += 1;
+        acc.points += event.points || (event.actionType === "3pt" ? 3 : 2);
+        if (event.secondPlayerId && /\bassists\b/i.test(event.description ?? "")) {
+          const a = byId.get(event.secondPlayerId) ?? empty();
+          byId.set(event.secondPlayerId, a);
+          a.assists += 1;
+        }
+      } else if (event.secondPlayerId && /\bblocks\b/i.test(event.description ?? "")) {
+        const b = byId.get(event.secondPlayerId) ?? empty();
+        byId.set(event.secondPlayerId, b);
+        b.blocks += 1;
+      }
+    }
+  }
+
+  const frac = Math.min(1, Math.max(0, cutoff / REGULATION_SECONDS));
+  return box.players.map((line) => {
+    const acc = byId.get(line.playerId) ?? empty();
+    const den = 2 * (acc.fga + 0.44 * acc.fta);
+    return {
+      ...line,
+      minutes: Math.round(line.minutes * frac * 10) / 10,
+      points: acc.points,
+      assists: acc.assists,
+      rebounds: acc.rebounds,
+      steals: acc.steals,
+      blocks: acc.blocks,
+      turnovers: acc.turnovers,
+      fgm: acc.fgm,
+      fga: acc.fga,
+      tpm: acc.tpm,
+      tpa: acc.tpa,
+      ftm: acc.ftm,
+      fta: acc.fta,
+      trueShootingPct: den > 0 ? acc.points / den : 0,
+      usagePct: 0,
+      gameScore: 0,
+      plusMinus: 0,
+    };
+  });
 }

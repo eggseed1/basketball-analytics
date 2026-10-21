@@ -18,6 +18,8 @@ import {
 } from "@/gm/engine/attributes";
 import { traitLabel } from "@/gm/engine/dev-traits";
 import { formatHeight, scoutPotentialView } from "@/gm/engine/scouting";
+import { perGame, rateLabel, shotLabel } from "@/gm/lib/counting";
+import { countingForBoard, seasonHasGames } from "@/gm/lib/season-line";
 import { displayPlayerName, userPlayers, userTeam } from "@/gm/lib/selectors";
 import {
   archetypeLabel,
@@ -25,10 +27,11 @@ import {
 } from "@/gm/seed/prospect-identities";
 import { useGmStore } from "@/gm/state/gm-store";
 import type { GmLeagueState, GmPlayer, GmPosition } from "@/gm/types";
-import { formatNumber } from "@/lib/format";
+import { UNAVAILABLE_STAT_LABEL, formatNumber } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
-type RosterView = "simple" | "detailed" | "tendency";
+type RosterView = "simple" | "detailed" | "tendency" | "stats";
+type StatsMode = "perGame" | "totals";
 
 const SECONDARY: Record<GmPosition, GmPosition[]> = {
   PG: ["SG"],
@@ -159,6 +162,7 @@ export function GmRosterBoard({ league }: { league: GmLeagueState }) {
 
   const [selectedId, setSelectedId] = useState<string | null>(players[0]?.id ?? null);
   const [view, setView] = useState<RosterView>("simple");
+  const [statsMode, setStatsMode] = useState<StatsMode>("perGame");
 
   useEffect(() => {
     if (!players.some((player) => player.id === selectedId)) {
@@ -167,6 +171,7 @@ export function GmRosterBoard({ league }: { league: GmLeagueState }) {
   }, [players, selectedId]);
 
   const selected = players.find((player) => player.id === selectedId) ?? players[0] ?? null;
+  const simStarted = seasonHasGames(league);
 
   return (
     <div className="gm-roster flex flex-col gap-3">
@@ -181,25 +186,53 @@ export function GmRosterBoard({ league }: { league: GmLeagueState }) {
         <p className="text-sm text-muted-foreground">No players on the roster.</p>
       )}
 
-      <div className="gm-roster__tabs" role="tablist" aria-label="Roster views">
-        {(
-          [
-            ["simple", "Simple"],
-            ["detailed", "Detailed"],
-            ["tendency", "Tendency"],
-          ] as const
-        ).map(([id, label]) => (
-          <button
-            key={id}
-            type="button"
-            role="tab"
-            aria-selected={view === id}
-            className={cn("gm-roster__tab", view === id && "is-active")}
-            onClick={() => setView(id)}
+      <div className="flex flex-wrap items-center gap-2">
+        <div className="gm-roster__tabs" role="tablist" aria-label="Roster views">
+          {(
+            [
+              ["simple", "Simple"],
+              ["detailed", "Detailed"],
+              ["tendency", "Tendency"],
+              ["stats", "Stats"],
+            ] as const
+          ).map(([id, label]) => (
+            <button
+              key={id}
+              type="button"
+              role="tab"
+              aria-selected={view === id}
+              className={cn("gm-roster__tab", view === id && "is-active")}
+              onClick={() => setView(id)}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+        {view === "stats" ? (
+          <div
+            className="gm-roster__tabs"
+            role="tablist"
+            aria-label="Stat display"
           >
-            {label}
-          </button>
-        ))}
+            {(
+              [
+                ["perGame", "Per game"],
+                ["totals", "Totals"],
+              ] as const
+            ).map(([id, label]) => (
+              <button
+                key={id}
+                type="button"
+                role="tab"
+                aria-selected={statsMode === id}
+                className={cn("gm-roster__tab", statsMode === id && "is-active")}
+                onClick={() => setStatsMode(id)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        ) : null}
       </div>
 
       <div className="gm-club-panel gm-roster__panel overflow-x-auto">
@@ -225,12 +258,23 @@ export function GmRosterBoard({ league }: { league: GmLeagueState }) {
             onSelect={setSelectedId}
           />
         ) : null}
+        {view === "stats" ? (
+          <StatsTable
+            league={league}
+            players={players}
+            selectedId={selected?.id ?? null}
+            onSelect={setSelectedId}
+            mode={statsMode}
+          />
+        ) : null}
       </div>
 
       <p className="text-sm text-muted-foreground">
-        Select a row for the header card. Simple uses letter grades A+ through
-        F. Arrows mark the last progression tick. The name opens the full
-        player card.
+        {view === "stats"
+          ? simStarted
+            ? "Counting from games in this save. Switch Per game / Totals above."
+            : "Entry-season lines until tip-off. Switch Per game / Totals above."
+          : "Select a row for the header card. Simple uses letter grades A+ through F. Arrows mark the last progression tick."}
       </p>
     </div>
   );
@@ -536,6 +580,120 @@ function TendencyTable({
                   {sheet.tendencies[key]}
                 </td>
               ))}
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  );
+}
+
+function countCell(
+  total: number,
+  gp: number,
+  mode: StatsMode,
+  digits = 1
+): string {
+  if (mode === "totals") {
+    if (!Number.isFinite(total) || gp < 1) return UNAVAILABLE_STAT_LABEL;
+    return formatNumber(total, total >= 100 ? 0 : digits);
+  }
+  return rateLabel(total, gp, digits);
+}
+
+function StatsTable({
+  league,
+  players,
+  selectedId,
+  onSelect,
+  mode,
+}: {
+  league: GmLeagueState;
+  players: GmPlayer[];
+  selectedId: string | null;
+  onSelect: (id: string) => void;
+  mode: StatsMode;
+}) {
+  const ranked = [...players].sort((a, b) => {
+    const la = countingForBoard(league, a);
+    const lb = countingForBoard(league, b);
+    const pa = la ? (perGame(la.pts, la.gp) ?? -1) : -1;
+    const pb = lb ? (perGame(lb.pts, lb.gp) ?? -1) : -1;
+    return pb - pa;
+  });
+
+  return (
+    <table className="gm-roster__table w-full min-w-[960px] text-left text-sm">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Pos</th>
+          <th>GP</th>
+          <th>MIN</th>
+          <th>PTS</th>
+          <th>REB</th>
+          <th>AST</th>
+          <th>STL</th>
+          <th>BLK</th>
+          <th>TOV</th>
+          <th>FG%</th>
+          <th>3P%</th>
+          <th>FT%</th>
+        </tr>
+      </thead>
+      <tbody>
+        {ranked.map((player) => {
+          const line = countingForBoard(league, player);
+          const gp = line?.gp ?? 0;
+          return (
+            <tr
+              key={player.id}
+              className={cn(selectedId === player.id && "is-selected")}
+              onClick={() => onSelect(player.id)}
+            >
+              <td>
+                <button
+                  type="button"
+                  className="gm-roster__name-btn"
+                  onClick={() => onSelect(player.id)}
+                >
+                  {shortName(displayPlayerName(player))}
+                </button>
+              </td>
+              <td>{player.position}</td>
+              <td className="tabular-nums">
+                {line ? String(line.gp) : UNAVAILABLE_STAT_LABEL}
+              </td>
+              <td className="tabular-nums">
+                {line ? countCell(line.min, gp, mode) : UNAVAILABLE_STAT_LABEL}
+              </td>
+              <td className="tabular-nums">
+                {line ? countCell(line.pts, gp, mode) : UNAVAILABLE_STAT_LABEL}
+              </td>
+              <td className="tabular-nums">
+                {line ? countCell(line.reb, gp, mode) : UNAVAILABLE_STAT_LABEL}
+              </td>
+              <td className="tabular-nums">
+                {line ? countCell(line.ast, gp, mode) : UNAVAILABLE_STAT_LABEL}
+              </td>
+              <td className="tabular-nums">
+                {line ? countCell(line.stl, gp, mode) : UNAVAILABLE_STAT_LABEL}
+              </td>
+              <td className="tabular-nums">
+                {line ? countCell(line.blk, gp, mode) : UNAVAILABLE_STAT_LABEL}
+              </td>
+              <td className="tabular-nums">
+                {line ? countCell(line.tov, gp, mode) : UNAVAILABLE_STAT_LABEL}
+              </td>
+              <td className="tabular-nums">
+                {line ? shotLabel(line.fgm, line.fga) : UNAVAILABLE_STAT_LABEL}
+              </td>
+              <td className="tabular-nums">
+                {line ? shotLabel(line.tpm, line.tpa) : UNAVAILABLE_STAT_LABEL}
+              </td>
+              <td className="tabular-nums">
+                {line ? shotLabel(line.ftm, line.fta) : UNAVAILABLE_STAT_LABEL}
+              </td>
             </tr>
           );
         })}

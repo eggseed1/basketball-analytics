@@ -31,72 +31,98 @@ import { scoutKnackPreferredFocus } from "@/gm/seed/staff-knacks";
 
 type CompTier = "elite" | "starter" | "fringe";
 
-/** Ordered tiers per mold. Ceiling picks from the high end; floor stays below. */
+/**
+ * Ordered tiers per mold. Ceiling prefers the front of each list.
+ * Elite leads with legends / all-timers, then modern stars — never cross
+ * position families (no Jokic on a pass-first guard board).
+ */
 const NBA_COMPS: Record<
   ProspectArchetypeId,
   Record<CompTier, string[]>
 > = {
   splash: {
-    elite: ["Stephen Curry", "Klay Thompson", "Devin Booker"],
-    starter: ["Desmond Bane", "Buddy Hield", "Norman Powell"],
+    elite: ["Stephen Curry", "Ray Allen", "Reggie Miller", "Klay Thompson"],
+    starter: ["Devin Booker", "Desmond Bane", "Buddy Hield", "Norman Powell"],
     fringe: ["Duncan Robinson", "Grayson Allen", "Gary Harris"],
   },
   paint_beast: {
-    elite: ["Giannis Antetokounmpo", "Zion Williamson", "Bam Adebayo"],
-    starter: ["Aaron Gordon", "Jaren Jackson Jr.", "John Collins"],
-    fringe: ["Jabari Parker", "Kevon Looney", "Daniel Theis"],
+    elite: ["Shaquille O'Neal", "Charles Barkley", "Giannis Antetokounmpo", "Karl Malone"],
+    starter: ["Zion Williamson", "Bam Adebayo", "Aaron Gordon", "Jaren Jackson Jr."],
+    fringe: ["John Collins", "Kevon Looney", "Daniel Theis"],
   },
   rim_protector: {
-    elite: ["Rudy Gobert", "Anthony Davis", "Brook Lopez"],
-    starter: ["Myles Turner", "Jakob Poeltl", "Isaiah Hartenstein"],
-    fringe: ["Mo Bamba", "Jalen Duren", "Nick Richards"],
+    elite: ["Hakeem Olajuwon", "Dikembe Mutombo", "David Robinson", "Ben Wallace"],
+    starter: ["Rudy Gobert", "Anthony Davis", "Brook Lopez", "Myles Turner"],
+    fringe: ["Jakob Poeltl", "Mo Bamba", "Nick Richards"],
   },
   stretch_big: {
-    elite: ["Kristaps Porzingis", "Karl-Anthony Towns", "Lauri Markkanen"],
-    starter: ["Bobby Portis", "PJ Washington", "Naz Reid"],
+    elite: ["Dirk Nowitzki", "Nikola Jokic", "Kevin Love", "Karl-Anthony Towns"],
+    starter: ["Kristaps Porzingis", "Lauri Markkanen", "Bobby Portis", "Naz Reid"],
     fringe: ["Kelly Olynyk", "Maxi Kleber", "Dario Saric"],
   },
   floor_general: {
-    elite: ["Chris Paul", "Jrue Holiday", "Tyrese Haliburton"],
-    starter: ["Mike Conley", "Derrick White", "Immanuel Quickley"],
-    fringe: ["Cory Joseph", "Delon Wright", "Pat Connaughton"],
+    elite: ["Magic Johnson", "John Stockton", "Isiah Thomas", "Steve Nash"],
+    starter: ["Chris Paul", "Jason Kidd", "Tyrese Haliburton", "Jrue Holiday"],
+    fringe: ["Mike Conley", "Derrick White", "Immanuel Quickley"],
   },
   pass_first: {
-    elite: ["Nikola Jokic", "Trae Young", "Tyrese Haliburton"],
-    starter: ["Fred VanVleet", "Tyus Jones", "D'Angelo Russell"],
-    fringe: ["Facundo Campazzo", "Monte Morris", "T.J. McConnell"],
+    elite: ["Magic Johnson", "John Stockton", "Steve Nash", "Jason Kidd"],
+    starter: ["Chris Paul", "Trae Young", "Tyrese Haliburton", "Rajon Rondo"],
+    fringe: ["Tyus Jones", "Monte Morris", "T.J. McConnell"],
   },
   combo_guard: {
-    elite: ["James Harden", "Shai Gilgeous-Alexander", "Donovan Mitchell"],
-    starter: ["CJ McCollum", "Anfernee Simons", "Jordan Poole"],
-    fringe: ["Jordan Clarkson", "Malik Monk", "Bennedict Mathurin"],
+    elite: ["Allen Iverson", "Dwyane Wade", "Tracy McGrady", "Penny Hardaway"],
+    starter: ["James Harden", "Shai Gilgeous-Alexander", "Donovan Mitchell", "CJ McCollum"],
+    fringe: ["Anfernee Simons", "Jordan Poole", "Malik Monk"],
   },
   iso_scorer: {
-    elite: ["Kevin Durant", "Kawhi Leonard", "Paul George"],
-    starter: ["Brandon Ingram", "Jerami Grant", "Michael Porter Jr."],
-    fringe: ["Bojan Bogdanovic", "Harrison Barnes", "Buddy Hield"],
+    elite: ["Michael Jordan", "Kobe Bryant", "Larry Bird", "Kevin Durant"],
+    starter: ["Kawhi Leonard", "Paul George", "Brandon Ingram", "Carmelo Anthony"],
+    fringe: ["Jerami Grant", "Michael Porter Jr.", "Harrison Barnes"],
   },
   two_way_wing: {
-    elite: ["Kawhi Leonard", "OG Anunoby", "Mikal Bridges"],
-    starter: ["Herbert Jones", "Dillon Brooks", "Ausar Thompson"],
-    fringe: ["Torrey Craig", "Kenrich Williams", "Josh Okogie"],
+    elite: ["Scottie Pippen", "Kawhi Leonard", "Andre Iguodala", "Ron Artest"],
+    starter: ["OG Anunoby", "Mikal Bridges", "Herbert Jones", "Dillon Brooks"],
+    fringe: ["Ausar Thompson", "Torrey Craig", "Josh Okogie"],
   },
   three_and_d: {
-    elite: ["OG Anunoby", "Derrick White", "Aaron Gordon"],
-    starter: ["Alex Caruso", "Lu Dort", "Donte DiVincenzo"],
-    fringe: ["Landry Shamet", "Gabe Vincent", "Nassir Little"],
+    elite: ["Bruce Bowen", "Robert Horry", "Kawhi Leonard", "Andre Iguodala"],
+    starter: ["OG Anunoby", "Derrick White", "Alex Caruso", "Lu Dort"],
+    fringe: ["Donte DiVincenzo", "Landry Shamet", "Gabe Vincent"],
   },
   athletic_freak: {
-    elite: ["Ja Morant", "Anthony Edwards", "Jaylen Brown"],
-    starter: ["Scottie Barnes", "Jalen Green", "Amen Thompson"],
-    fringe: ["Hamidou Diallo", "Thanasis Antetokounmpo", "Oshae Brissett"],
+    elite: ["Michael Jordan", "Dominique Wilkins", "Vince Carter", "Julius Erving"],
+    starter: ["Ja Morant", "Anthony Edwards", "Jaylen Brown", "Scottie Barnes"],
+    fringe: ["Jalen Green", "Amen Thompson", "Hamidou Diallo"],
   },
   glue_guy: {
-    elite: ["Draymond Green", "Jrue Holiday", "Dillon Brooks"],
-    starter: ["Alex Caruso", "Marcus Smart", "Josh Hart"],
+    elite: ["Dennis Rodman", "Draymond Green", "Tony Allen", "Manu Ginobili"],
+    starter: ["Jrue Holiday", "Alex Caruso", "Marcus Smart", "Josh Hart"],
     fringe: ["P.J. Tucker", "Patrick Beverley", "Kenrich Williams"],
   },
 };
+
+/** Molds a scout may "miss into" — stay inside the same position family. */
+const MOLD_POSITIONS: Record<ProspectArchetypeId, GmPosition[]> = {
+  splash: ["PG", "SG", "SF"],
+  paint_beast: ["PF", "C"],
+  rim_protector: ["C", "PF"],
+  stretch_big: ["PF", "C"],
+  floor_general: ["PG"],
+  pass_first: ["PG", "SG"],
+  combo_guard: ["PG", "SG"],
+  iso_scorer: ["SG", "SF", "PF"],
+  two_way_wing: ["SG", "SF", "PF"],
+  three_and_d: ["SG", "SF", "PF"],
+  athletic_freak: ["PG", "SG", "SF", "PF", "C"],
+  glue_guy: ["PG", "SG", "SF", "PF", "C"],
+};
+
+function moldsForPosition(position: GmPosition): ProspectArchetypeId[] {
+  return (Object.keys(MOLD_POSITIONS) as ProspectArchetypeId[]).filter((id) =>
+    MOLD_POSITIONS[id].includes(position)
+  );
+}
 
 const TIER_RANK: Record<CompTier, number> = { elite: 2, starter: 1, fringe: 0 };
 
@@ -142,13 +168,16 @@ function pickCompPair(
   rng: () => number
 ): { ceiling: string; floor: string; ceilingTier: CompTier; floorTier: CompTier } {
   const pool = NBA_COMPS[mold] ?? NBA_COMPS.glue_guy;
-  const wrongMold =
-    scoutLevel < 3 && rng() < 0.28
-      ? (Object.keys(NBA_COMPS) as ProspectArchetypeId[])[
-          randInt(rng, 0, Object.keys(NBA_COMPS).length - 1)
-        ]!
-      : mold;
-  const compPool = NBA_COMPS[wrongMold] ?? pool;
+  // Weak scouts can miss the mold, but never into a different position family
+  // (that is how PGs used to draw Jokic / paint-beast ceilings).
+  let activeMold = mold;
+  if (scoutLevel < 3 && rng() < 0.28) {
+    const fits = moldsForPosition(player.position).filter((id) => id !== mold);
+    if (fits.length > 0) {
+      activeMold = fits[randInt(rng, 0, fits.length - 1)]!;
+    }
+  }
+  const compPool = NBA_COMPS[activeMold] ?? pool;
   const ceilTier = ceilingTierForProspect(
     boardIndex,
     player.ratings.impact,
@@ -182,6 +211,11 @@ function pickCompPair(
 /** Exposed for tests — fringe names that must not top a lottery ceiling. */
 export function fringeCompNames(mold: ProspectArchetypeId): string[] {
   return [...(NBA_COMPS[mold] ?? NBA_COMPS.glue_guy).fringe];
+}
+
+/** Exposed for tests — elite ceiling pool (legends first). */
+export function eliteCompNames(mold: ProspectArchetypeId): string[] {
+  return [...(NBA_COMPS[mold] ?? NBA_COMPS.glue_guy).elite];
 }
 
 const GRADE_SCALE: ScoutLetterGrade[] = [

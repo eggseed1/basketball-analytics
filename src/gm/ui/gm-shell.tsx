@@ -123,15 +123,54 @@ export function GmShell({
       setFull(true);
     }
     const onChange = () => {
+      // Browser Fullscreen API drops on tab switches and when GmShell remounts
+      // between nav links (each page owns its own desk). Keep the desk-cover
+      // preference; only the minimize control clears it.
       if (document.fullscreenElement) return;
-      if (window.sessionStorage.getItem("gm-full") !== "1") return;
-      window.sessionStorage.removeItem("gm-full");
+      if (window.sessionStorage.getItem("gm-full") === "1") {
+        document.documentElement.dataset.gmFull = "1";
+        setFull(true);
+        return;
+      }
       delete document.documentElement.dataset.gmFull;
       setFull(false);
     };
     document.addEventListener("fullscreenchange", onChange);
     return () => document.removeEventListener("fullscreenchange", onChange);
   }, []);
+
+  const hasLeague = Boolean(league);
+
+  // After a soft nav remount or returning to the tab, put the new desk back
+  // into the Fullscreen API when the user still wants immersive mode.
+  useEffect(() => {
+    if (!full || !hasLeague) return;
+    const el = deskRef.current;
+    if (!el) return;
+
+    let cancelled = false;
+    const tryEnter = () => {
+      if (cancelled || document.visibilityState !== "visible") return;
+      if (document.fullscreenElement === el) return;
+      if (document.fullscreenElement) return;
+      void enterFullscreen(el).catch(() => {
+        void document.documentElement
+          .requestFullscreen({ navigationUI: "hide" })
+          .catch(() => undefined);
+      });
+    };
+
+    const timer = window.setTimeout(tryEnter, 40);
+    const onVis = () => {
+      if (document.visibilityState === "visible") tryEnter();
+    };
+    document.addEventListener("visibilitychange", onVis);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+      document.removeEventListener("visibilitychange", onVis);
+    };
+  }, [full, hasLeague]);
 
   useEffect(() => {
     if (!hydrated) {

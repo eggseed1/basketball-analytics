@@ -31,6 +31,7 @@ import {
 import { offerIsFair } from "@/gm/engine/offers";
 import { playerSheet } from "@/gm/engine/attributes";
 import { scoutPotentialView } from "@/gm/engine/scouting";
+import { entrySeasonIsCurrentSaveYear } from "@/gm/lib/career-overlay";
 import { rateLabel, shotLabel, simCountingLine } from "@/gm/lib/counting";
 import { valueForBoard } from "@/gm/lib/season-line";
 import { DRBL_PUBLIC_RATE_LABEL, WAR1_LABEL, formatWar1 } from "@/lib/drbl-public-labels";
@@ -236,8 +237,11 @@ function TradePlayerPeek({
   const value = valueForBoard(league, player);
   const sim = simCountingLine(league, player.id);
   const nba = player.nbaSeason;
-  const gp = sim?.gp ?? nba?.gp ?? 0;
-  const line = sim ?? nba;
+  // Don't show real NBA counting for the year this save is already playing.
+  const entryOk =
+    nba && !entrySeasonIsCurrentSaveYear(nba, league.season) ? nba : null;
+  const line = sim ?? entryOk;
+  const gp = line?.gp ?? 0;
 
   return (
     <aside className="rounded-xl border border-border bg-card p-4">

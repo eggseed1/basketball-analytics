@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
@@ -12,6 +12,11 @@ import {
 } from "@/gm/engine/attributes";
 import { playerDevTrait, traitLabel } from "@/gm/engine/dev-traits";
 import { scoutPotentialView, trajectoryRead } from "@/gm/engine/scouting";
+import {
+  entrySeasonIsCurrentSaveYear,
+  overlaySimCareerSeasons,
+  type GmCareerSeasonRow,
+} from "@/gm/lib/career-overlay";
 import { rateLabel, shotLabel, simCountingLine } from "@/gm/lib/counting";
 import { valueForBoard } from "@/gm/lib/season-line";
 import { displayPlayerName, userTeam } from "@/gm/lib/selectors";
@@ -40,28 +45,7 @@ function clubKey(abbreviation?: string, name?: string): string | undefined {
   return CLUB_BY_NAME.get(named);
 }
 
-type CareerRow = {
-  season?: string;
-  teamAbbreviation?: string;
-  teamName?: string;
-  gamesPlayed?: number;
-  minutes?: number;
-  points?: number;
-  rebounds?: number;
-  assists?: number;
-  steals?: number;
-  blocks?: number;
-  fieldGoalsMade?: number;
-  fieldGoalsAttempted?: number;
-  threePointersMade?: number;
-  threePointersAttempted?: number;
-  freeThrowsMade?: number;
-  freeThrowsAttempted?: number;
-  trueShootingPct?: number;
-  per?: number;
-  winShares?: number;
-  bpm?: number;
-};
+type CareerRow = GmCareerSeasonRow;
 
 type AwardChip = { label: string; count: number; seasons: string[] };
 
@@ -137,22 +121,34 @@ export function GmPlayerCard({
   const shownName = displayPlayerName(player);
   const trait = inDraft ? null : playerDevTrait(player);
   const profile = player.scoutProfile;
-  const [career, setCareer] = useState<CareerRow[] | null>(null);
+  const [careerApi, setCareerApi] = useState<CareerRow[] | null>(null);
   const [careerNote, setCareerNote] = useState<string | null>(null);
   const [awards, setAwards] = useState<AwardChip[]>([]);
   const games = league.boxScores.filter((box) =>
     box.players.some((line) => line.playerId === player.id)
   );
+  const showEntrySeason =
+    Boolean(player.nbaSeason) &&
+    !entrySeasonIsCurrentSaveYear(player.nbaSeason, league.season);
+
+  const career = useMemo(() => {
+    if (!player.nbaPlayerId) {
+      // Generated players: still show sim / prior lines as their career.
+      return overlaySimCareerSeasons([], league, player);
+    }
+    if (careerApi == null) return null;
+    return overlaySimCareerSeasons(careerApi, league, player);
+  }, [careerApi, league, player]);
 
   useEffect(() => {
     const id = player.nbaPlayerId;
     if (!id) {
-      setCareer(null);
-      setCareerNote("Generated player. No NBA career is on file.");
+      setCareerApi([]);
+      setCareerNote(null);
       return;
     }
     let cancelled = false;
-    setCareer(null);
+    setCareerApi(null);
     setCareerNote(null);
     fetch(`/api/gm/accolades/${encodeURIComponent(id)}`)
       .then(async (res) => {
@@ -173,17 +169,20 @@ export function GmPlayerCard({
       .then((payload) => {
         if (cancelled) return;
         const seasons = payload.data?.seasons ?? [];
-        const rows = seasons
-          .filter((row) => row.season && (row.gamesPlayed ?? 0) > 0)
-          .sort((a, b) => String(b.season).localeCompare(String(a.season)));
-        setCareer(rows);
+        const rows = seasons.filter(
+          (row) => row.season && (row.gamesPlayed ?? 0) > 0
+        );
+        setCareerApi(rows);
         if (rows.length === 0) {
-          setCareerNote("No season log came back for this player.");
+          setCareerNote("No NBA season log on file. This save still fills the current year.");
         }
       })
       .catch(() => {
         if (!cancelled) {
-          setCareerNote("Career log did not load. The season they entered with is still above.");
+          setCareerApi([]);
+          setCareerNote(
+            "NBA career log did not load. Years played in this save still show below."
+          );
         }
       });
     return () => {
@@ -408,7 +407,8 @@ export function GmPlayerCard({
       <section className="sports-card p-4">
         <h3 className="font-semibold">This save</h3>
         <p className="mt-1 text-sm text-muted-foreground">
-          Games already played in this franchise. Averages update as you sim.
+          {WAR1_LABEL} {formatWar1(value.war1, 1)} · {DRBL_PUBLIC_RATE_LABEL}{" "}
+          {formatWar1(value.drbl100, 1)}. Averages update as you sim.
         </p>
         {sim ? (
           <LineTable line={sim} />
@@ -460,22 +460,12 @@ export function GmPlayerCard({
         ) : null}
       </section>
 
-      {sim ? (
-        <section className="sports-card p-4">
-          <h3 className="font-semibold">This save</h3>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {WAR1_LABEL} {formatWar1(value.war1, 1)} · {DRBL_PUBLIC_RATE_LABEL}{" "}
-            {formatWar1(value.drbl100, 1)}. Counting totals from games played here.
-          </p>
-          <LineTable line={sim} />
-        </section>
-      ) : null}
-
-      {player.nbaSeason ? (
+      {showEntrySeason && player.nbaSeason ? (
         <section className="sports-card p-4">
           <h3 className="font-semibold">NBA season they entered with</h3>
           <p className="mt-1 text-sm text-muted-foreground">
-            {player.nbaSeason.season} · {player.nbaSeason.team}. Real counting stats, before this save.
+            {player.nbaSeason.season} · {player.nbaSeason.team}. Real counting from before
+            this save.
           </p>
           <LineTable line={player.nbaSeason} />
         </section>
@@ -484,7 +474,8 @@ export function GmPlayerCard({
       <section className="sports-card p-4">
         <h3 className="font-semibold">Career</h3>
         <p className="mt-1 text-sm text-muted-foreground">
-          Year by year from the NBA record. Per game.
+          Per game. The year you are simming uses this save&apos;s counting line, not the
+          real NBA season.
         </p>
         {careerNote ? <p className="mt-3 text-sm text-muted-foreground">{careerNote}</p> : null}
         {career == null && !careerNote ? (
@@ -510,11 +501,18 @@ export function GmPlayerCard({
                   const club = clubKey(row.teamAbbreviation, row.teamName);
                   return (
                     <tr
-                      key={`${row.season}-${row.teamAbbreviation ?? row.teamName}`}
+                      key={`${row.season}-${row.teamAbbreviation ?? row.teamName}-${row.fromSim ? "sim" : "nba"}`}
                       className={club ? "gm-club-row" : undefined}
                       style={club ? teamColorStyle(club) : undefined}
                     >
-                      <td className="px-2 py-1.5">{row.season}</td>
+                      <td className="px-2 py-1.5">
+                        {row.season}
+                        {row.fromSim ? (
+                          <span className="ml-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                            sim
+                          </span>
+                        ) : null}
+                      </td>
                       <td className="px-2 py-1.5">
                         <ClubMark
                           teamId={club}
@@ -545,6 +543,11 @@ export function GmPlayerCard({
               </tbody>
             </table>
           </div>
+        ) : null}
+        {career && career.length === 0 && !careerNote ? (
+          <p className="mt-3 text-sm text-muted-foreground">
+            No seasons on file yet. Lines appear here after tip-off in this save.
+          </p>
         ) : null}
       </section>
     </div>

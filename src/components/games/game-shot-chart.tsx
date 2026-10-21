@@ -252,6 +252,14 @@ function pct(made: number, attempts: number): string {
  * "Game chart" adds every other play the feed places on the floor. Final
  * games replay once when scrolled into view; live games poll for new plays.
  */
+export type ShotChartReplayProgress = {
+  /** Elapsed game seconds shown; `null` means the full tape. */
+  cutoff: number | null;
+  playing: boolean;
+  homeScore: number;
+  awayScore: number;
+};
+
 export function GameShotChart({
   gameId,
   status,
@@ -263,6 +271,8 @@ export function GameShotChart({
   homeTeamKey,
   awayTeamKey,
   players = [],
+  autoPlay = false,
+  onReplayProgress,
 }: {
   gameId: string;
   status: string;
@@ -275,6 +285,10 @@ export function GameShotChart({
   awayTeamKey?: string;
   /** Box score roster, used to name players on markers and in the player filter. */
   players?: ShotChartPlayer[];
+  /** Start the final-game replay as soon as the chart mounts (skip scroll-into-view). */
+  autoPlay?: boolean;
+  /** Live score / cutoff for parent UIs (Franchise Lab box ticking with the chart). */
+  onReplayProgress?: (progress: ShotChartReplayProgress) => void;
 }) {
   const live = isLiveLikeStatus(status as GameStatusKind);
   // The route re-renders with fresh plays while live, and this chart also polls;
@@ -322,26 +336,35 @@ export function GameShotChart({
   };
 
   useEffect(() => {
+    if (introDone.current || live) return;
+    const startReplay = () => {
+      if (introDone.current) return;
+      introDone.current = true;
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        setCutoff(null);
+        return;
+      }
+      playhead.current = 0;
+      setCutoff(0);
+      setPlaying(true);
+    };
+    if (autoPlay) {
+      startReplay();
+      return;
+    }
     const el = rootRef.current;
-    if (!el || introDone.current) return;
+    if (!el) return;
     const io = new IntersectionObserver(
       ([entry]) => {
-        if (!entry?.isIntersecting || introDone.current) return;
-        introDone.current = true;
+        if (!entry?.isIntersecting) return;
         io.disconnect();
-        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-          setCutoff(null);
-        } else {
-          playhead.current = 0;
-          setCutoff(0);
-          setPlaying(true);
-        }
+        startReplay();
       },
       { threshold: 0.35 }
     );
     io.observe(el);
     return () => io.disconnect();
-  }, []);
+  }, [autoPlay, live]);
 
   useEffect(() => {
     if (!playing) return;
@@ -441,11 +464,31 @@ export function GameShotChart({
     if (m.t <= at) mark = m;
     else break;
   }
+  const finalMark = marks.at(-1) ?? null;
   const keepTick = (k: StatTick) => inQuarter(k.period);
   const tally = tallyAt(ticks, cutoff, keepTick);
   const subjectTally = player ? playerTally(ticks, cutoff, player, keepTick) : null;
   const focus = hover ?? pinned;
   const ticker = focus ?? (playing || cutoff != null ? latest : null);
+
+  useEffect(() => {
+    if (!onReplayProgress) return;
+    const full = cutoff == null && !playing;
+    onReplayProgress({
+      cutoff,
+      playing,
+      homeScore: full ? (finalMark?.home ?? mark?.home ?? 0) : (mark?.home ?? 0),
+      awayScore: full ? (finalMark?.away ?? mark?.away ?? 0) : (mark?.away ?? 0),
+    });
+  }, [
+    onReplayProgress,
+    cutoff,
+    playing,
+    mark?.home,
+    mark?.away,
+    finalMark?.home,
+    finalMark?.away,
+  ]);
   const filtersOn =
     quarter != null || player != null || side != null || zone != null || playFilter != null;
 

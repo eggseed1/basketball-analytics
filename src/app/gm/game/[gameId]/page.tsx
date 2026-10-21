@@ -1,16 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import { Suspense, useMemo } from "react";
+import { Suspense, useCallback, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useParams, useSearchParams } from "next/navigation";
-import { GameShotChart } from "@/components/games/game-shot-chart";
+import {
+  GameShotChart,
+  type ShotChartReplayProgress,
+} from "@/components/games/game-shot-chart";
 import { GmShell } from "@/gm/ui/gm-shell";
 import { ClubMark } from "@/gm/ui/club-mark";
 import { teamColorStyle } from "@/gm/ui/team-colors";
 import { schemeHeadline } from "@/gm/engine/coaching";
-import { boxToPlayByPlay } from "@/gm/engine/play-by-play";
+import { boxToPlayByPlay, linesAtCutoff } from "@/gm/engine/play-by-play";
 import { useGmStore } from "@/gm/state/gm-store";
+import type { GmBoxPlayerLine } from "@/gm/types";
 import { formatNumber, formatPct } from "@/lib/format";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 
@@ -31,8 +35,21 @@ function GameBody() {
   const league = useGmStore((s) => s.league);
   const box = league?.boxScores.find((b) => b.id === params.gameId) ?? null;
   const tape = useMemo(() => (box ? boxToPlayByPlay(box) : []), [box]);
+  const [progress, setProgress] = useState<ShotChartReplayProgress | null>(null);
+  const onReplayProgress = useCallback((next: ShotChartReplayProgress) => {
+    setProgress(next);
+  }, []);
+
+  const liveBox = useMemo(() => {
+    if (!box) return null;
+    if (!progress || (progress.cutoff == null && !progress.playing)) {
+      return box.players;
+    }
+    return linesAtCutoff(box, tape, progress.cutoff);
+  }, [box, tape, progress]);
+
   if (!league) return null;
-  if (!box) {
+  if (!box || !liveBox) {
     return (
       <p className="text-muted-foreground">
         {t("gameNotFound")}{" "}
@@ -43,17 +60,21 @@ function GameBody() {
     );
   }
 
-  const away = box.players
+  const ticking = Boolean(progress?.playing || progress?.cutoff != null);
+  const awayScore = ticking ? (progress?.awayScore ?? 0) : box.awayScore;
+  const homeScore = ticking ? (progress?.homeScore ?? 0) : box.homeScore;
+
+  const away = liveBox
     .filter((p) => p.teamId === box.awayTeamId)
-    .sort((a, b) => b.gameScore - a.gameScore);
-  const home = box.players
+    .sort((a, b) => b.points - a.points || b.gameScore - a.gameScore);
+  const home = liveBox
     .filter((p) => p.teamId === box.homeTeamId)
-    .sort((a, b) => b.gameScore - a.gameScore);
+    .sort((a, b) => b.points - a.points || b.gameScore - a.gameScore);
   const user = league.teams.find((team) => team.id === league.userTeamId);
   const scheme = schemeHeadline(user?.coaching);
   const yours =
     user && (box.homeTeamId === user.id || box.awayTeamId === user.id)
-      ? box.players.filter((line) => line.teamId === user.id)
+      ? liveBox.filter((line) => line.teamId === user.id)
       : [];
   const threes = yours.reduce((sum, line) => sum + line.tpa, 0);
   const shots = yours.reduce((sum, line) => sum + line.fga, 0);
@@ -85,6 +106,8 @@ function GameBody() {
         awayColor={awayBrand?.primary ?? "#c8102e"}
         homeTeamKey={box.homeTeamId}
         awayTeamKey={box.awayTeamId}
+        autoPlay={watch}
+        onReplayProgress={onReplayProgress}
         players={box.players.map((line) => ({
           playerId: line.playerId,
           name: line.playerName,
@@ -100,11 +123,11 @@ function GameBody() {
           <p className="text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
             {t("gameStepResults")}
           </p>
-          <h2 className="text-[24px] font-bold tracking-tight">
+          <h2 className="text-[24px] font-bold tracking-tight tabular-nums">
             <ClubMark teamId={box.awayTeamId} label={box.awayTeamId.toUpperCase()} />
-            {watch ? " @ " : ` ${box.awayScore} @ `}
+            {` ${awayScore} @ `}
             <ClubMark teamId={box.homeTeamId} label={box.homeTeamId.toUpperCase()} />
-            {watch ? "" : ` ${box.homeScore}`}
+            {` ${homeScore}`}
           </h2>
           <p className="text-[14px] text-muted-foreground">
             {t("gameDayLine", {
@@ -112,7 +135,7 @@ function GameBody() {
               season: `${box.season - 1}-${String(box.season).slice(-2)}`,
             })}
           </p>
-          {scheme && yours.length ? (
+          {scheme && yours.length && !ticking ? (
             <p className="mt-1 text-[14px] text-muted-foreground">
               {t("gameSchemeLine", { scheme, threes, shots })}
               {first
@@ -139,10 +162,10 @@ function GameBody() {
       {watch ? null : chart}
       {box.shiftPlan && box.shiftPlan.length > 0 ? <ShiftPlan rows={box.shiftPlan} played={yours} /> : null}
       <div style={teamColorStyle(box.awayTeamId)}>
-        <TeamTable teamId={box.awayTeamId} rows={away} />
+        <TeamTable teamId={box.awayTeamId} rows={away} live={ticking} />
       </div>
       <div style={teamColorStyle(box.homeTeamId)}>
-        <TeamTable teamId={box.homeTeamId} rows={home} />
+        <TeamTable teamId={box.homeTeamId} rows={home} live={ticking} />
       </div>
       <Link
         href="/gm"
@@ -163,9 +186,7 @@ function ShiftPlan({
   rows: NonNullable<
     ReturnType<typeof useGmStore.getState>["league"]
   >["boxScores"][number]["shiftPlan"];
-  played: NonNullable<
-    ReturnType<typeof useGmStore.getState>["league"]
-  >["boxScores"][number]["players"];
+  played: GmBoxPlayerLine[];
 }) {
   const t = useTranslations("GmUi");
   if (!rows) return null;
@@ -218,11 +239,11 @@ function ShiftPlan({
 function TeamTable({
   teamId,
   rows,
+  live,
 }: {
   teamId: string;
-  rows: NonNullable<
-    ReturnType<typeof useGmStore.getState>["league"]
-  >["boxScores"][number]["players"];
+  rows: GmBoxPlayerLine[];
+  live: boolean;
 }) {
   const t = useTranslations("GmUi");
   return (
@@ -264,17 +285,18 @@ function TeamTable({
                   {p.tpm}-{p.tpa}
                 </td>
                 <td className="px-2 py-1.5 tabular-nums">
-                  {formatPct(p.trueShootingPct)}
+                  {live && p.fga + p.fta === 0 ? "—" : formatPct(p.trueShootingPct)}
                 </td>
                 <td className="px-2 py-1.5 tabular-nums">
-                  {formatPct(p.usagePct)}
+                  {live ? "—" : formatPct(p.usagePct)}
                 </td>
                 <td className="px-2 py-1.5 tabular-nums">
-                  {formatNumber(p.gameScore, 1)}
+                  {live ? "—" : formatNumber(p.gameScore, 1)}
                 </td>
                 <td className="px-2 py-1.5 tabular-nums">
-                  {p.plusMinus > 0 ? "+" : ""}
-                  {p.plusMinus}
+                  {live
+                    ? "—"
+                    : `${p.plusMinus > 0 ? "+" : ""}${p.plusMinus}`}
                 </td>
               </tr>
             ))}

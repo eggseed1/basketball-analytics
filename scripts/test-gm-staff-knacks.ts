@@ -3,7 +3,12 @@
  */
 import assert from "node:assert/strict";
 import { createGeneratedLeague } from "../src/gm/seed/create-league";
-import { buildScoutProfile, fringeCompNames, spendScoutingLook } from "../src/gm/engine/scouting";
+import {
+  buildScoutProfile,
+  eliteCompNames,
+  fringeCompNames,
+  spendScoutingLook,
+} from "../src/gm/engine/scouting";
 import { makeScout } from "../src/gm/seed/scouts";
 import { createRng } from "../src/gm/engine/rng";
 import {
@@ -36,6 +41,46 @@ function main() {
     assert.ok(
       !fringe.includes(bare) && !fringe.some((name) => ceiling.includes(name) && !ceiling.startsWith("Maybe")),
       `lottery ceiling should not be fringe: got ${ceiling} for ${profile.archetypeId}`
+    );
+  }
+
+  // Guard molds: legends on the board, no center comps (Jokic was in pass_first).
+  for (const mold of ["pass_first", "floor_general", "combo_guard"] as const) {
+    const elite = eliteCompNames(mold);
+    assert.ok(
+      !elite.includes("Nikola Jokic"),
+      `${mold} elite must not include Jokic`
+    );
+    assert.ok(
+      elite.some((n) =>
+        /Magic Johnson|John Stockton|Steve Nash|Jason Kidd|Isiah Thomas|Allen Iverson|Dwyane Wade|Penny Hardaway/.test(
+          n
+        )
+      ),
+      `${mold} elite should lead with guard legends: ${elite.join(", ")}`
+    );
+  }
+
+  // Weak-scout noise on a PG never draws big-only comps.
+  const pg =
+    league.players.find((p) => league.draftPool.includes(p.id) && p.position === "PG") ??
+    top;
+  const bigOnly = /Jokic|Olajuwon|Mutombo|Shaquille|Barkley|Nowitzki|Gobert|Porzingis|Towns/;
+  for (let i = 0; i < 80; i++) {
+    const rng = createRng(5000 + i);
+    const scout = makeScout(rng, { eye: 1, expertise: "general" });
+    const profile = buildScoutProfile(
+      { ...pg, position: "PG", scoutProfile: undefined },
+      1.5,
+      20,
+      rng,
+      scout
+    );
+    const ceil = profile.compCeiling ?? "";
+    const floor = profile.compFloor ?? "";
+    assert.ok(
+      !bigOnly.test(ceil) && !bigOnly.test(floor),
+      `PG comps must stay guards/wings, got ceiling=${ceil} floor=${floor}`
     );
   }
 
