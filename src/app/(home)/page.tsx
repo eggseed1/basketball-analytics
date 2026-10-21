@@ -24,33 +24,43 @@ import { SentimentMoversPanel } from "@/components/home/sentiment-movers-panel";
 import { TopPerformersPanel } from "@/components/home/top-performers-panel";
 import { SeasonMomentCard, SeasonPhaseBar } from "@/components/home/season-moment";
 import { PlayoffBracket } from "@/components/explore/playoff-bracket";
-import { getHomeSeasonMoment } from "@/data/queries/home-season-moment";
+import {
+  getHomeSeasonMoment,
+  getHomeSeasonMomentSync,
+  homeSeasonMomentNeedsLiveEnrichment,
+  homeShellPhase,
+} from "@/data/queries/home-season-moment";
 import {
   homeLayoutForPhase,
   type HomeModuleId,
   type HomeSeasonMoment,
 } from "@/lib/home-season-moment";
 import { yieldForStreaming } from "@/lib/stream-yield";
-import { SITE_NAME, SITE_URL } from "@/lib/site-url";
 import { JsonLd } from "@/components/seo/json-ld";
-
-const WEBSITE_JSON_LD = {
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  name: SITE_NAME,
-  alternateName: ["DRBL Analytics", "drbl.io", "DRBL Basketball"],
-  url: `${SITE_URL}/`,
-  description:
-    "NBA scores, standings, player and team stats, DRBL impact ratings, contract value, on/off splits and fan sentiment.",
-};
+import {
+  organizationJsonLd,
+  SITE_DESCRIPTION,
+  SITE_HOME_TITLE,
+  SITE_KEYWORDS,
+  websiteJsonLd,
+} from "@/lib/site-seo";
 
 export const metadata = {
-  title: { absolute: "DRBL Analytics: NBA Stats and Advanced Metrics" },
-  description:
-    "NBA scores, standings, player and team stats, DRBL impact ratings, contract value, on/off splits and fan sentiment.",
+  title: { absolute: SITE_HOME_TITLE },
+  description: SITE_DESCRIPTION,
+  keywords: [...SITE_KEYWORDS],
   alternates: {
     canonical: "/",
     types: { "application/rss+xml": [{ url: "/findings/feed.xml", title: "DRBL findings" }] },
+  },
+  openGraph: {
+    title: SITE_HOME_TITLE,
+    description: SITE_DESCRIPTION,
+    url: "/",
+  },
+  twitter: {
+    title: SITE_HOME_TITLE,
+    description: SITE_DESCRIPTION,
   },
 };
 
@@ -62,11 +72,28 @@ export const dynamic = "force-dynamic";
 async function HomeCalendar({
   season,
   week,
+  enrichSchedule,
 }: {
   season: string;
   week?: number | null;
+  /** When the bundled slate is thin, wait on live October inside this stream. */
+  enrichSchedule?: boolean;
 }) {
+  if (enrichSchedule) {
+    const moment = await getHomeSeasonMoment();
+    return <WeekGameCalendar season={season} week={moment.regularWeek} />;
+  }
   return <WeekGameCalendar season={season} week={week} />;
+}
+
+async function HomeSeasonMomentLive() {
+  const moment = await getHomeSeasonMoment();
+  return <SeasonMomentCard moment={moment} />;
+}
+
+async function HomeSeasonPhaseBarLive() {
+  const moment = await getHomeSeasonMoment();
+  return <SeasonPhaseBar moment={moment} />;
 }
 
 function HomeNews() {
@@ -121,35 +148,31 @@ async function HomeHotCold() {
   );
 }
 
-const LIVE_INSIGHTS_BUDGET_MS = 5000;
-
 async function HomeFindings() {
-  const { getLiveRecentInsights } = await import("@/data/queries/recent-insights-live");
-  const live = await Promise.race([
-    getLiveRecentInsights(),
-    new Promise<null>((resolve) => setTimeout(() => resolve(null), LIVE_INSIGHTS_BUDGET_MS)),
-  ]);
+  const { getLiveRecentInsights } = await import(
+    "@/data/queries/recent-insights-live"
+  );
+  const live = await getLiveRecentInsights();
   if (live) {
-    return (
-      <FindingsSection insights={live.insights} />
-    );
+    return <FindingsSection insights={live.insights} />;
   }
 
-  const { getBundledRecentInsights } = await import("@/data/runtime/recent-insights-snapshot");
-  const insights = getBundledRecentInsights();
-  return (
-    <FindingsSection insights={insights} empty={insights.length === 0} />
+  const { getBundledRecentInsights } = await import(
+    "@/data/runtime/recent-insights-snapshot"
   );
+  const insights = getBundledRecentInsights();
+  return <FindingsSection insights={insights} empty={insights.length === 0} />;
 }
 
 async function HomeAboveNorm() {
-  const { getLiveRecentInsights } = await import("@/data/queries/recent-insights-live");
-  const live = await Promise.race([
-    getLiveRecentInsights(),
-    new Promise<null>((resolve) => setTimeout(() => resolve(null), LIVE_INSIGHTS_BUDGET_MS)),
-  ]);
+  const { getLiveRecentInsights } = await import(
+    "@/data/queries/recent-insights-live"
+  );
+  const live = await getLiveRecentInsights();
   if (live) return <AboveNormPanel nights={live.aboveNorm} />;
-  const { getBundledAboveNorm } = await import("@/data/runtime/recent-insights-snapshot");
+  const { getBundledAboveNorm } = await import(
+    "@/data/runtime/recent-insights-snapshot"
+  );
   return <AboveNormPanel nights={getBundledAboveNorm()} />;
 }
 
@@ -197,17 +220,40 @@ function Streamed({ id, children }: { id: HomeModuleId; children: ReactNode }) {
   );
 }
 
-function renderModule(id: HomeModuleId, moment: HomeSeasonMoment, season: string) {
+function renderModule(
+  id: HomeModuleId,
+  moment: HomeSeasonMoment,
+  season: string,
+  enrichSchedule: boolean
+) {
   const offseason = moment.phase === "draft-free-agency" || moment.phase === "offseason";
   switch (id) {
     case "moment":
+      if (enrichSchedule) {
+        return (
+          <Streamed key={id} id={id}>
+            <HomeSeasonMomentLive />
+          </Streamed>
+        );
+      }
       return <SeasonMomentCard key={id} moment={moment} />;
     case "phase-bar":
+      if (enrichSchedule) {
+        return (
+          <Streamed key={id} id={id}>
+            <HomeSeasonPhaseBarLive />
+          </Streamed>
+        );
+      }
       return <SeasonPhaseBar key={id} moment={moment} />;
     case "calendar":
       return (
         <Streamed key={id} id={id}>
-          <HomeCalendar season={season} week={moment.regularWeek} />
+          <HomeCalendar
+            season={season}
+            week={moment.regularWeek}
+            enrichSchedule={enrichSchedule}
+          />
         </Streamed>
       );
     case "bracket":
@@ -271,7 +317,7 @@ function renderModule(id: HomeModuleId, moment: HomeSeasonMoment, season: string
         </Streamed>
       );
     case "watchlist":
-      return <WatchlistPanel key={id} />;
+      return <WatchlistPanel key={id} compact />;
     case "sentiment":
       return (
         <Streamed key={id} id={id}>
@@ -288,11 +334,18 @@ function renderModule(id: HomeModuleId, moment: HomeSeasonMoment, season: string
 export default async function HomePage() {
   await yieldForStreaming();
   const season = canonicalSeasonFromStartYear(currentNbaStartYear());
-  const moment = await getHomeSeasonMoment();
-  const layout = homeLayoutForPhase(moment.phase);
+  // Snapshot only — never await ESPN before the module grid. Thin-schedule
+  // enrichment runs inside streamed moment/calendar modules.
+  const momentSync = getHomeSeasonMomentSync();
+  const enrichSchedule = homeSeasonMomentNeedsLiveEnrichment(momentSync);
+  const phase = homeShellPhase(momentSync);
+  const moment: HomeSeasonMoment = enrichSchedule
+    ? { ...momentSync, phase }
+    : momentSync;
+  const layout = homeLayoutForPhase(phase);
   const render = (id: HomeModuleId) => (
     <HomeModuleFrame key={id} id={id}>
-      {renderModule(id, moment, season)}
+      {renderModule(id, moment, season, enrichSchedule)}
     </HomeModuleFrame>
   );
 
@@ -301,10 +354,13 @@ export default async function HomePage() {
       data-motion-page
       data-home-stack
       className="site-shell flex flex-col gap-5 py-5 sm:py-7"
-      data-season-phase={moment.phase}
+      data-season-phase={phase}
     >
-      <JsonLd data={WEBSITE_JSON_LD} />
-      <h1 className="sr-only">DRBL Analytics: NBA stats and basketball analytics</h1>
+      <JsonLd data={websiteJsonLd()} />
+      <JsonLd data={organizationJsonLd()} />
+      <h1 className="sr-only">
+        DRBL: NBA advanced stats, DRBL/100, WAR1, and basketball analytics
+      </h1>
       <MotionReveal />
       <HomeLoadingWatchdog />
       {layout.top.map(render)}

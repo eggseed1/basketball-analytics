@@ -1,5 +1,7 @@
 import "server-only";
 
+import { cache } from "react";
+
 import { sharedGetOrSet } from "@/data/cache/shared-ttl-cache";
 import {
   canonicalSeasonFromStartYear,
@@ -285,17 +287,22 @@ async function buildDays(season: string): Promise<{
  * Homepage Recent Insights from the latest completed games, rebuilt from live
  * scoreboard and box score data every few minutes. Null when the current
  * season has no finals yet or the feeds are down; callers fall back to the
- * bundled snapshot.
+ * bundled snapshot. React.cache so home Findings + Above Norm share one fetch.
  */
-export async function getLiveRecentInsights(): Promise<LiveRecentInsights | null> {
-  const season = canonicalSeasonFromStartYear(currentNbaStartYear());
-  try {
-    return await sharedGetOrSet(
-      `recent-insights-live:v13:${season}`,
-      { ttlMs: CACHE_TTL_MS, staleMs: CACHE_STALE_MS, tags: ["recent-insights-live"] },
-      () => buildLive(season)
-    );
-  } catch {
-    return null;
+export const getLiveRecentInsights = cache(
+  async (): Promise<LiveRecentInsights | null> => {
+    const season = canonicalSeasonFromStartYear(currentNbaStartYear());
+    try {
+      return await sharedGetOrSet(
+        `recent-insights-live:v13:${season}`,
+        { ttlMs: CACHE_TTL_MS, staleMs: CACHE_STALE_MS, tags: ["recent-insights-live"] },
+        () => buildLive(season)
+      );
+    } catch {
+      return null;
+    }
   }
-}
+);
+
+/** Alias used by the home page modules. */
+export const getHomeLiveRecentInsights = getLiveRecentInsights;

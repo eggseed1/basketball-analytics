@@ -126,3 +126,20 @@ export const zIndex = {
   toast: "z-[var(--z-toast)]",
   command: "z-[var(--z-command)]",
 } as const;
+
+/** Section backgrounds, title placement, overview vs subtab composition. */
+export {
+  decideSectionSurface,
+  pageSectionStackClassName,
+  playerOverviewBottomModules,
+  playerOverviewForbiddenFullModules,
+  sectionAtomicTileClassName,
+  sectionBodySurfaceClassName,
+  sectionBodySurfaceStyle,
+  sectionNavRowClassName,
+  sectionShellClassName,
+  type PageSectionDensity,
+  type SectionSurfaceDecision,
+  type SectionSurfaceReason,
+  type SectionTitlePlacement,
+} from "@/lib/design-system-sections";
