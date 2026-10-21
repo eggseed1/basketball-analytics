@@ -1,5 +1,8 @@
 name: Daily player-viz runtime refresh
 
+# Nightly data sync (+ deploy). For a code-only ship, use deploy-site.yml
+# instead — this workflow always runs the full runtime sync.
+#
 # Rebuilds Cloudflare-baked snapshots for race tracker + league scatters
 # once the NBA tip-off window opens (mid-Oct through Finals). Offseason runs
 # still refresh ESPN transactions, which continue through waivers and signings.

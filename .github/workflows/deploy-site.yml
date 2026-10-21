@@ -1,0 +1,71 @@
+name: Deploy site
+
+# Code-only ship to Cloudflare. Bakes whatever is already on the branch —
+# no daily sync, DRBL refit, Playwright, or data commits.
+# Nightly data + deploy stays on daily-runtime-refresh.yml.
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-site
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    permissions:
+      contents: read
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Build OpenNext bundle
+        run: npx opennextjs-cloudflare build
+
+      - name: Deploy to Cloudflare
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "::error title=Missing deploy token::The CLOUDFLARE_API_TOKEN repo secret is empty. Set it under Settings → Secrets and variables → Actions."
+            exit 1
+          fi
+          set -o pipefail
+          npx opennextjs-cloudflare deploy 2>&1 | tee /tmp/deploy.log
+
+      - name: Check Worker size
+        if: always()
+        run: |
+          [ -f /tmp/deploy.log ] || exit 0
+          kib=$(grep -oE 'Total Upload: [0-9.]+ KiB' /tmp/deploy.log | head -1 | grep -oE '[0-9.]+' || true)
+          [ -n "$kib" ] || exit 0
+          echo "Worker upload: ${kib} KiB of 65536 KiB"
+          if awk -v k="$kib" 'BEGIN { exit !(k > 64512) }'; then
+            echo "::error title=Worker bundle near the 64 MiB limit::Upload is ${kib} KiB; Cloudflare rejects uploads above 65536 KiB. Move large bundled JSON to static assets or R2."
+            exit 1
+          fi
+          if awk -v k="$kib" 'BEGIN { exit !(k > 61440) }'; then
+            echo "::warning title=Worker bundle size::Upload is ${kib} KiB (soft ceiling 61440 KiB). Still under Cloudflare's 65536 KiB hard limit."
+          fi
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "### Deploy site (code only)" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "- ref: \`${{ github.sha }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- no daily sync / data refresh" >> "$GITHUB_STEP_SUMMARY"

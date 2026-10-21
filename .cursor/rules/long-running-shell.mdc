@@ -5,11 +5,12 @@ alwaysApply: true
 
 # Long-running shell commands
 
-A blocking Shell call shows "waiting for shell" in the chat for its whole duration. Deploy runs take about 20 minutes and R2 uploads about 40, so never block on them.
+A blocking Shell call shows "waiting for shell" in the chat for its whole duration. Code deploys take about 3–5 minutes; nightly sync+deploy about 15–20. R2 uploads about 40. Never block on them.
 
 - Keep `block_until_ms` at 120000 or less. If a command can run longer, start it with `block_until_ms: 0` and redirect output to a log in `/tmp/tm/`.
 - Check progress with short reads of that log or the terminal file, or an AwaitShell of at most 120000 ms. Between checks, do other work or end the turn and tell the user what is still running.
-- Deploy: trigger with `gh workflow run daily-runtime-refresh.yml -f force=false -f deploy=true`, then **always** start `gh run watch <id> --interval 30 --exit-status > /tmp/tm/watch-<id>.log 2>&1` with `block_until_ms: 0`. Never block the chat on `gh run watch` or on a long AwaitShell waiting for the whole deploy. End the turn after the watch is running; check later with `gh run view <id> --json status,conclusion` or a short log read.
+- Code deploy (default when the user says deploy): `gh workflow run deploy-site.yml --ref main`, then **always** start `gh run watch <id> --interval 30 --exit-status > /tmp/tm/watch-<id>.log 2>&1` with `block_until_ms: 0`. Never use `daily-runtime-refresh.yml` for a code ship — that is the nightly data sync. Only trigger daily-runtime-refresh when the user asks for a data refresh / nightly sync.
+- Never block the chat on `gh run watch` or on a long AwaitShell waiting for the whole deploy. End the turn after the watch is running; check later with `gh run view <id> --json status,conclusion` or a short log read.
 - R2 uploads (`scripts/upload-player-*-r2.mjs`): always run in the background. They sleep about 5 minutes between batches of 1,000 files.
 - Reuse the dev server on :3000 when it responds (`curl -s -o /dev/null -w "%{http_code}" localhost:3000`). Don't start a second one.
 - Close Playwright browsers in `finally` so headless Chromium doesn't pile up between checks.
