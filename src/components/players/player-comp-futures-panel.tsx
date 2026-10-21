@@ -10,13 +10,15 @@ import { SectionFrame } from "@/components/layout/section-frame";
 import {
   fetchCompFuturesBundle,
   peekCompFuturesBundle,
+  seedCompFuturesBundle,
 } from "@/lib/player-comparisons-fetch";
 import type { CompFuturesBundle } from "@/lib/player-comp-futures-shared";
 import type { PlayerSeason } from "@/data/types";
 
 /**
  * Client-fetched comps/futures. Shared cache lets Comparisons warm Trajectory
- * while Style is on screen, so the first flip can paint ready.
+ * while Style is on screen, so the first flip can paint ready. SSR can pass
+ * `initialBundle` so the default metric paints with the page.
  */
 export function PlayerCompFuturesPanel({
   focal,
@@ -24,6 +26,7 @@ export function PlayerCompFuturesPanel({
   season: seasonProp,
   teamKey,
   espnId,
+  initialBundle = null,
   embedded = false,
 }: {
   focal?: PlayerSeason | null;
@@ -32,6 +35,7 @@ export function PlayerCompFuturesPanel({
   career?: PlayerSeason[];
   teamKey?: string | null;
   espnId?: string | null;
+  initialBundle?: CompFuturesBundle | null;
   embedded?: boolean;
 }) {
   const playerId = playerIdProp ?? focal?.playerId;
@@ -39,11 +43,13 @@ export function PlayerCompFuturesPanel({
 
   const [bundle, setBundle] = useState<CompFuturesBundle | null>(() => {
     if (!playerId || !season) return null;
+    if (initialBundle) return initialBundle;
     const peeked = peekCompFuturesBundle({ playerId, season, espnId });
     return peeked === undefined ? null : peeked;
   });
   const [failed, setFailed] = useState(() => {
     if (!playerId || !season) return false;
+    if (initialBundle) return false;
     return peekCompFuturesBundle({ playerId, season, espnId }) === null;
   });
 
@@ -54,6 +60,12 @@ export function PlayerCompFuturesPanel({
   useEffect(() => {
     if (!playerId || !season) {
       setBundle(null);
+      setFailed(false);
+      return;
+    }
+    if (initialBundle) {
+      seedCompFuturesBundle({ playerId, season, espnId }, initialBundle);
+      setBundle(initialBundle);
       setFailed(false);
       return;
     }
@@ -74,7 +86,7 @@ export function PlayerCompFuturesPanel({
     return () => {
       cancelled = true;
     };
-  }, [espnId, playerId, season]);
+  }, [espnId, initialBundle, playerId, season]);
 
   if (!playerId || !season) {
     if (embedded) {

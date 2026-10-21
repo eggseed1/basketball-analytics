@@ -19,8 +19,10 @@ export function playerSurplusRankingHref(playerId?: string | null): string {
 
 export type PlayerSurplusRow = {
   brefId: string;
-  /** Our player page id, when the contract matches one. */
+  /** Our player page id, when the contract matches one (usually ESPN). */
   playerId: string | null;
+  /** NBA.com person id for cdn.nba.com headshots, when known. */
+  nbaId: string | null;
   name: string;
   teamId: string;
   /** Uppercase brand abbr, the same key the viz team highlight uses. */

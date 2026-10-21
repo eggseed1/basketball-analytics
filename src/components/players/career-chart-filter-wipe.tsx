@@ -9,7 +9,8 @@ import {
   type ReactNode,
 } from "react";
 
-const OUT_MS = 280;
+/** Filter wipe-out — was 280ms when chart draw was 720ms. */
+const OUT_MS = Math.round((1500 * 280) / 720);
 const EASE = "cubic-bezier(0.33, 1, 0.68, 1)";
 /** Fully open — four values so WAAPI never normalizes to a different form mid-run. */
 const OPEN = "inset(-50% -50% -50% -50%)";

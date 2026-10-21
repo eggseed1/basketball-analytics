@@ -35,7 +35,10 @@ export type ContractShowcaseSurplusTile = {
   key: string;
   href: string | null;
   name: string;
+  /** Player page id (usually ESPN). */
   playerId: string | null;
+  /** NBA.com person id for headshots. */
+  nbaId: string | null;
   teamKey: string;
   teamId: string;
   surplus: number;
@@ -108,6 +111,7 @@ export function buildContractShowcase(opts: {
   const surplusByNba = new Map<string, PlayerSurplusRow>();
   const surplusByName = new Map<string, PlayerSurplusRow>();
   for (const row of opts.surplusRows) {
+    if (row.nbaId) surplusByNba.set(row.nbaId, row);
     if (row.playerId) surplusByNba.set(row.playerId, row);
     surplusByName.set(normalizePlayerName(row.name), row);
   }
@@ -135,6 +139,7 @@ export function buildContractShowcase(opts: {
   );
   const surplus = opts.surplusRows.slice(0, SHOWCASE_LIMIT).map((row) => {
     const pay =
+      (row.nbaId ? payoffByNba.get(row.nbaId) : null) ??
       (row.playerId ? payoffByNba.get(row.playerId) : null) ??
       payoffByName.get(normalizePlayerName(row.name));
     return {
@@ -144,6 +149,7 @@ export function buildContractShowcase(opts: {
         : null,
       name: row.name,
       playerId: row.playerId,
+      nbaId: row.nbaId,
       teamKey: row.teamKey,
       teamId: row.teamId,
       surplus: row.surplus,

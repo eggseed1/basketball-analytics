@@ -18,7 +18,11 @@ import { SectionFrame } from "@/components/layout/section-frame";
 import type { PlayerSeason } from "@/data/types";
 import { brandAtmosphereColors } from "@/lib/game-matchup-theme";
 import { resolveTeamBrand } from "@/lib/nba-brand";
-import { warmComparisonsFetches } from "@/lib/player-comparisons-fetch";
+import {
+  seedCompFuturesBundle,
+  warmComparisonsFetches,
+} from "@/lib/player-comparisons-fetch";
+import type { CompFuturesBundle } from "@/lib/player-comp-futures-shared";
 import {
   assignPlayerRole,
   playerRoleDietLabel,
@@ -49,6 +53,7 @@ export function PlayerComparisonsBoard({
   espnId,
   teamKey,
   position,
+  trajectoryBundle = null,
 }: {
   playerId: string;
   season: string;
@@ -56,10 +61,13 @@ export function PlayerComparisonsBoard({
   espnId?: string | null;
   teamKey?: string | null;
   position?: string | null;
+  /** SSR primary Trajectory payload — paints without a client round trip. */
+  trajectoryBundle?: CompFuturesBundle | null;
 }) {
   const t = useTranslations("PlayerDetail");
   const viewSeason = usePlayerViewSeason(season);
   const focalCompareId = espnId || playerId;
+  const seededTrajectory = useRef(false);
 
   const seasonRow = useMemo(() => {
     return (
@@ -106,13 +114,23 @@ export function PlayerComparisonsBoard({
   }, [viewSeason]);
 
   useEffect(() => {
+    let skipTrajectory = false;
+    if (trajectoryBundle && viewSeason === season && !seededTrajectory.current) {
+      seedCompFuturesBundle(
+        { playerId, season: viewSeason, espnId },
+        trajectoryBundle
+      );
+      seededTrajectory.current = true;
+      skipTrajectory = true;
+    }
     // Start immediately — idle deferral left Trajectory waiting up to ~1s.
     warmComparisonsFetches({
       playerId,
       season: viewSeason,
       espnId,
+      skipTrajectory,
     });
-  }, [espnId, playerId, viewSeason]);
+  }, [espnId, playerId, season, trajectoryBundle, viewSeason]);
 
   const compareHref = `/compare?a=${encodeURIComponent(focalCompareId)}&season=${encodeURIComponent(viewSeason)}`;
   const paneTeamKey = seasonRow?.teamId ?? teamKey ?? null;
@@ -187,6 +205,9 @@ export function PlayerComparisonsBoard({
               focal={seasonRow}
               teamKey={paneTeamKey}
               espnId={espnId}
+              initialBundle={
+                viewSeason === season ? trajectoryBundle : null
+              }
               embedded
             />
           ) : null}

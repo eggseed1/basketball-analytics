@@ -20,6 +20,7 @@ import {
   type TeamSurplusTotals,
 } from "@/lib/contract-surplus";
 import { listCanonicalTeams } from "@/data/identity/team-map";
+import { getBundledPlayerIdAliasIndex } from "@/data/runtime/player-id-aliases-snapshot";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { conferenceForEspnTeamId } from "@/lib/team-viz";
 
@@ -32,6 +33,7 @@ function playerIdFromHref(href: string | undefined): string | null {
 }
 
 export const getPlayerSurplusRows = cache((): PlayerSurplusRow[] => {
+  const aliases = getBundledPlayerIdAliasIndex();
   const contractsByTeam = new Map<string, ReturnType<typeof getTeamContracts>>();
   const contractsFor = (teamId: string) => {
     if (!contractsByTeam.has(teamId)) contractsByTeam.set(teamId, getTeamContracts(teamId));
@@ -41,9 +43,17 @@ export const getPlayerSurplusRows = cache((): PlayerSurplusRow[] => {
     .map((entry) => {
       const contracts = contractsFor(entry.teamId);
       const name = contracts?.rows.find((r) => r.brefId === entry.brefId)?.name ?? entry.brefId;
+      const playerId = playerIdFromHref(contracts?.hrefs[entry.brefId]);
+      const fromBref = aliases.byBref?.get(entry.brefId);
+      const fromEspn = playerId ? aliases.byEspn.get(playerId) : undefined;
+      const nbaId =
+        fromBref?.nbaPlayerId ??
+        fromEspn?.nbaPlayerId ??
+        (playerId && aliases.byNba.has(playerId) ? playerId : null);
       return {
         brefId: entry.brefId,
-        playerId: playerIdFromHref(contracts?.hrefs[entry.brefId]),
+        playerId,
+        nbaId,
         name,
         teamId: entry.teamId,
         teamKey: teamKeyFor(entry.teamId),

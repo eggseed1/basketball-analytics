@@ -104,6 +104,19 @@ export function fetchSimilarModes(options: {
   return pending;
 }
 
+export function seedCompFuturesBundle(
+  options: {
+    playerId: string;
+    season: string;
+    espnId?: string | null;
+  },
+  bundle: CompFuturesBundle | null
+) {
+  const key = cacheKey(options.playerId, options.season, options.espnId);
+  futuresReady.set(key, bundle);
+  futuresPending.delete(key);
+}
+
 export function fetchCompFuturesBundle(options: {
   playerId: string;
   season: string;
@@ -117,30 +130,36 @@ export function fetchCompFuturesBundle(options: {
   if (hit) return hit;
 
   const pending = (async () => {
-    const params = new URLSearchParams({ season: options.season });
+    // One round trip: server picks the first available metric (primaryOnly).
+    // The old path probed COMP_METRICS sequentially and often burned 2–3
+    // failed requests before DARKO on early-season boards.
+    const params = new URLSearchParams({
+      season: options.season,
+      primary: "1",
+    });
     if (options.espnId) params.set("espnId", options.espnId);
-    for (const metric of COMP_METRICS) {
-      params.set("metric", metric.id);
-      try {
-        const res = await fetch(
-          `/api/players/${encodeURIComponent(options.playerId)}/comp-futures?${params}`
-        );
-        if (!res.ok) continue;
-        const body = (await res.json()) as { item?: CompFutures };
-        if (!body.item) continue;
-        return {
-          defaultId: body.item.metricId,
-          items: [body.item],
-          availableMetrics: COMP_METRICS.map((m) => ({
-            id: m.id as CompMetricId,
-            label: m.label,
-          })),
-        } satisfies CompFuturesBundle;
-      } catch {
-        // try next metric
-      }
+    try {
+      const res = await fetch(
+        `/api/players/${encodeURIComponent(options.playerId)}/comp-futures?${params}`
+      );
+      if (!res.ok) return null;
+      const body = (await res.json()) as {
+        bundle?: CompFuturesBundle;
+        item?: CompFutures;
+      };
+      if (body.bundle?.items?.length) return body.bundle;
+      if (!body.item) return null;
+      return {
+        defaultId: body.item.metricId,
+        items: [body.item],
+        availableMetrics: COMP_METRICS.map((m) => ({
+          id: m.id as CompMetricId,
+          label: m.label,
+        })),
+      } satisfies CompFuturesBundle;
+    } catch {
+      return null;
     }
-    return null;
   })().then((body) => {
     futuresReady.set(key, body);
     futuresPending.delete(key);
@@ -156,7 +175,11 @@ export function warmComparisonsFetches(options: {
   playerId: string;
   season: string;
   espnId?: string | null;
+  /** Skip Trajectory when SSR already seeded the cache. */
+  skipTrajectory?: boolean;
 }) {
+  if (!options.skipTrajectory) {
+    void fetchCompFuturesBundle(options);
+  }
   void fetchSimilarModes(options);
-  void fetchCompFuturesBundle(options);
 }

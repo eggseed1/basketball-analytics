@@ -169,8 +169,17 @@ export function buildSavantSegmentedChart(points: CareerSeriesPoint[]): {
   };
 }
 
-const DRAW_MS = 720;
-const DRAW_EASING = "cubic-bezier(0.22, 1, 0.36, 1)";
+/**
+ * Left→right plot reveal (TalentYearChart clip + season stroke draw).
+ * Sibling timings below stay locked to this pace (originally 720ms).
+ */
+const DRAW_MS = 1500;
+const DRAW_EASING = "cubic-bezier(0.33, 1, 0.68, 1)";
+/** Was +40ms at DRAW_MS=720. */
+const DRAW_SETTLE_MS = Math.round((DRAW_MS * 40) / 720);
+/** Axis tick glide — was 440ms / 30ms step at DRAW_MS=720. */
+const AXIS_TICK_MS = Math.round((DRAW_MS * 440) / 720);
+const AXIS_TICK_STAGGER_MS = Math.round((DRAW_MS * 30) / 720);
 
 /** Hold a stroke fully undrawn (no flash of a complete line before WAAPI). */
 function holdStrokeUndrawn(path: SVGPathElement): number {
@@ -385,7 +394,7 @@ function armPlotClipReveal(opts: {
     if (started) return;
     started = true;
     for (const el of list) attach(el);
-    doneTimer = window.setTimeout(finish, DRAW_MS + 40);
+    doneTimer = window.setTimeout(finish, DRAW_MS + DRAW_SETTLE_MS);
   };
 
   holdClosed();
@@ -1222,7 +1231,7 @@ function CareerAxisTick({
 
     const fromX = axis === "y" ? xNum - 8 : xNum;
     const fromY = axis === "x" ? yNum + 8 : yNum;
-    const delay = Math.min(index, 10) * 30;
+    const delay = Math.min(index, 10) * AXIS_TICK_STAGGER_MS;
     for (const a of el.getAnimations()) a.cancel();
     const anim = el.animate(
       [
@@ -1230,7 +1239,7 @@ function CareerAxisTick({
         { opacity: 1, transform: `translate(${xNum}px, ${yNum}px)` },
       ],
       {
-        duration: 440,
+        duration: AXIS_TICK_MS,
         delay,
         easing: AXIS_TICK_EASE,
         fill: "forwards",

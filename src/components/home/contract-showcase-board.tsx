@@ -137,7 +137,8 @@ function SurplusRow({ row }: { row: ContractShowcaseSurplusTile }) {
     >
       <PlayerHeadshot
         playerId={row.playerId}
-        nbaId={row.playerId}
+        espnId={row.playerId}
+        nbaId={row.nbaId}
         name={row.name}
         teamKey={row.teamKey || row.teamId}
         size="sm"
