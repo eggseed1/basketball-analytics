@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DRBL Live</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="extension-popup">
+  <div class="app">
+    <header class="header">
+      <a href="https://drbl.io" target="_blank" rel="noopener noreferrer" class="brand" title="Open DRBL">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" fill="none"><path class="arc-outer" d="M10 6.5c7.2 0 13 5.8 13 13" stroke-width="2.4" stroke-linecap="round"/><path class="arc-inner" d="M10 11c4.7 0 8.5 3.8 8.5 8.5" stroke-width="1.7" stroke-linecap="round"/><path class="spine" d="M10 6.5v13" stroke-width="2.4" stroke-linecap="round"/><circle class="ball" cx="22.5" cy="19.2" r="2.35"/></svg>
+        </span>
+        <span class="brand-name"><strong>DRBL</strong><small>ANALYTICS</small></span>
+      </a>
+      <div class="header-actions"><span class="feed-indicator" id="feed-indicator" title="Not connected"><span class="status-dot"></span><span id="feed-label">Connecting</span></span><button class="icon-button" id="refresh" title="Refresh live scores" aria-label="Refresh live scores">↻</button><a class="icon-button settings-icon" href="options.html" target="_blank" title="Settings" aria-label="Settings">⚙</a></div>
+    </header>
+    <main>
+      <div class="heading"><div><h1>Scores</h1><p class="subtitle">NBA scores, straight from DRBL.</p></div><a href="https://drbl.io/scores" target="_blank" rel="noopener noreferrer" class="site-link">All scores ↗</a></div>
+      <div class="filterbar" role="group" aria-label="Game filters"><button class="filter active" data-filter="all" aria-pressed="true">All games</button><button class="filter" data-filter="live" aria-pressed="false">Live <span class="count" id="live-count">0</span></button><button class="filter" data-filter="favorites" aria-pressed="false">★ Favorites</button></div>
+      <div class="feedback" id="feedback" hidden role="status"></div>
+      <section class="score-section" id="live-section" hidden><div class="section-heading"><h2><span class="live-dot"></span> Live now</h2><span id="live-meta"></span></div><div class="game-list" id="live-games"></div></section>
+      <section class="score-section" id="today-section" hidden><div class="section-heading"><h2>Today</h2><span id="today-meta"></span></div><div class="game-list" id="today-games"></div></section>
+      <section class="score-section" id="upcoming-section" hidden><div class="section-heading"><h2>Up next</h2><span id="upcoming-meta"></span></div><div class="game-list" id="upcoming-games"></div></section>
+      <div class="empty-state" id="empty-state" hidden><strong id="empty-title">No games found</strong><span id="empty-text"></span><button id="open-settings" class="secondary-button">Choose favorite teams</button></div>
+    </main>
+    <footer><span id="updated">Waiting for first sync</span><span class="footer-links"><a href="https://drbl.io" target="_blank" rel="noopener noreferrer">drbl.io ↗</a><a href="options.html" target="_blank">Settings</a></span></footer>
+  </div>
+  <script src="shared.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
