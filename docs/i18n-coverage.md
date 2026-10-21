@@ -134,4 +134,4 @@ PERF_BASE=http://localhost:3001 node scripts/perf-lab-focused.mjs reports/i18n-p
 | Settings → English / `DRBL_LOCALE=en` | Browser English |
 | Clear cookie → Automatic | Accept-Language (not English-only) |
 | `DRBL_FORCE_LOCALE=en` | Deploy-wide English |
-| Do not delete `src/proxy.ts` | Locale Vary + i18n wiring |
+| Do not delete `src/middleware.ts` | Locale Vary + i18n wiring |

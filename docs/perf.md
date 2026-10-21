@@ -126,4 +126,4 @@ ls -lhS .next/static/chunks/*.js | head
 
 **Pass 2:** `EXPLORE_PLAYERS_PAGE_SIZE`, board row wire shape, `slimPercentileMetricsForSsr`, comps `primaryOnly` + `/api/players/[playerId]/comp-futures`.
 
-Do **not** remove `src/proxy.ts` or locale cache-key worker changes as part of perf rollback.
+Do **not** remove `src/middleware.ts` or locale cache-key worker changes as part of perf rollback.

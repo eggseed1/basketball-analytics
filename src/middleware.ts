@@ -4,12 +4,15 @@ import { NextResponse } from "next/server";
 /**
  * Locale is cookie + Accept-Language driven (no URL prefix).
  *
+ * Keep the legacy `middleware.ts` + Edge runtime name: Next 16 `proxy.ts` is
+ * Node middleware, and `@opennextjs/cloudflare` still rejects that at build.
+ *
  * Note: Next.js App Router may overwrite `Vary` set here with its RSC router
  * fields (known regression vs middleware Vary merge). Cloudflare PAGE_CACHE in
  * worker.ts therefore keys HTML by resolved locale. We still set Vary and an
- * explicit marker so any layer that preserves proxy headers stays honest.
+ * explicit marker so any layer that preserves middleware headers stays honest.
  */
-export function proxy(request: NextRequest) {
+export function middleware(request: NextRequest) {
   const response = NextResponse.next();
   const accept = request.headers.get("accept") ?? "";
   if (accept.includes("text/html") || accept.includes("*/*")) {
@@ -27,6 +30,7 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
+  runtime: "experimental-edge",
   matcher: [
     /*
      * Skip static assets and Next internals.
