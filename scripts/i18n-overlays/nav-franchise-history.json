@@ -1,0 +1,17 @@
+{
+  "en": {
+    "Nav": {
+      "sub_franchiseHistory": "Franchise History"
+    }
+  },
+  "locales": {
+    "es": { "Nav": { "sub_franchiseHistory": "Historia de franquicias" } },
+    "fr": { "Nav": { "sub_franchiseHistory": "Histoire des franchises" } },
+    "de": { "Nav": { "sub_franchiseHistory": "Franchise-Geschichte" } },
+    "pt-BR": { "Nav": { "sub_franchiseHistory": "História das franquias" } },
+    "ko": { "Nav": { "sub_franchiseHistory": "프랜차이즈 역사" } },
+    "ja": { "Nav": { "sub_franchiseHistory": "フランチャイズ史" } },
+    "zh-Hans": { "Nav": { "sub_franchiseHistory": "球队历史" } },
+    "zh-Hant": { "Nav": { "sub_franchiseHistory": "球隊歷史" } }
+  }
+}

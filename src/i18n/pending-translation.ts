@@ -5,6 +5,13 @@
  * has a real translation.
  */
 export const PENDING_TRANSLATION_KEYS: ReadonlySet<string> = new Set([
+  "Explore.stylesAbout",
+  "Explore.stylesAll",
+  "Explore.stylesFilterLabel",
+  "Explore.stylesMeta",
+  "Explore.stylesSeasonLabel",
+  "Explore.stylesSubtitle",
+  "Explore.stylesTitle",
   "Gm.nav_leaders",
   "GmUi.capBelowFirstApron",
   "GmUi.capBelowSecondApron",
@@ -246,4 +253,5 @@ export const PENDING_TRANSLATION_KEYS: ReadonlySet<string> = new Set([
   "LearnPages.whatItDoesnt",
   "LearnPages.whatItTeaches",
   "LearnPages.whyItMatters",
+  "Nav.sub_styles",
 ]);

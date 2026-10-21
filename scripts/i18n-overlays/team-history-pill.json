@@ -1,0 +1,17 @@
+{
+  "en": {
+    "TeamDetail": {
+      "historyPill": "History"
+    }
+  },
+  "locales": {
+    "es": { "TeamDetail": { "historyPill": "Historia" } },
+    "fr": { "TeamDetail": { "historyPill": "Histoire" } },
+    "de": { "TeamDetail": { "historyPill": "Geschichte" } },
+    "pt-BR": { "TeamDetail": { "historyPill": "História" } },
+    "ko": { "TeamDetail": { "historyPill": "역사" } },
+    "ja": { "TeamDetail": { "historyPill": "歴史" } },
+    "zh-Hans": { "TeamDetail": { "historyPill": "历史" } },
+    "zh-Hant": { "TeamDetail": { "historyPill": "歷史" } }
+  }
+}

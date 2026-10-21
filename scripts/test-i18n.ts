@@ -180,22 +180,29 @@ assert.equal(merged.Nav.games, "Games");
 assert.equal(merged.Common.all, "All");
 
 // Explicit preference must win over Accept-Language (documented contract).
+// Automatic: non-English Accept-Language wins; otherwise nav hint; else default.
 function resolveLikeRequest(
   cookie: string | undefined,
   accept: string | null,
-  force?: string | null
+  force?: string | null,
+  navHint?: string | null
 ): string {
   if (force && isAppLocale(force)) return force;
   if (cookie === PSEUDO_LOCALE) return PSEUDO_LOCALE;
   if (isLocalePreference(cookie) && cookie !== LOCALE_AUTO && isAppLocale(cookie)) {
     return cookie;
   }
-  return resolveFromAcceptLanguage(accept);
+  const fromAccept = resolveFromAcceptLanguage(accept);
+  if (fromAccept !== DEFAULT_LOCALE) return fromAccept;
+  if (isAppLocale(navHint)) return navHint;
+  return fromAccept;
 }
 assert.equal(resolveLikeRequest("de", "fr,en;q=0.8"), "de");
 assert.equal(resolveLikeRequest("auto", "fr,en;q=0.8"), "fr");
 assert.equal(resolveLikeRequest(undefined, "ko"), "ko");
 assert.equal(resolveLikeRequest("auto", "xx"), DEFAULT_LOCALE);
+assert.equal(resolveLikeRequest("auto", "en", null, "ko"), "ko");
+assert.equal(resolveLikeRequest("auto", "fr", null, "ko"), "fr");
 assert.equal(resolveLikeRequest("de", "fr", "en"), "en");
 assert.equal(resolveLikeRequest("en-XA", "fr", "en"), "en");
 
@@ -232,6 +239,17 @@ assert.equal(
     })
   ),
   "en-XA"
+);
+assert.equal(
+  localeCacheKeySegment(
+    new Request("https://example.com/", {
+      headers: {
+        cookie: "DRBL_LOCALE=auto; DRBL_LOCALE_NAV=ko",
+        "accept-language": "en",
+      },
+    })
+  ),
+  "ko"
 );
 
 async function checkLearnLocales(): Promise<number> {

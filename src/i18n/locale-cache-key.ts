@@ -1,6 +1,6 @@
 /**
  * Locale segment for edge HTML cache keys.
- * Must stay aligned with request locale resolution (cookie + Accept-Language).
+ * Must stay aligned with request locale resolution (cookie + Accept-Language + nav hint).
  * Kept dependency-free so the Cloudflare worker entry can import it.
  */
 
@@ -17,6 +17,8 @@ const APP_LOCALES = new Set([
 ]);
 
 const LOCALE_COOKIE = "DRBL_LOCALE";
+const LOCALE_NAV_COOKIE = "DRBL_LOCALE_NAV";
+const DEFAULT_LOCALE = "en";
 
 function normalizeTag(tag: string): string {
   const raw = tag.trim().replace(/_/g, "-");
@@ -38,27 +40,37 @@ function normalizeTag(tag: string): string {
   return raw;
 }
 
-function parseCookieLocale(cookieHeader: string | null): string | null {
+function cookieValue(cookieHeader: string | null, name: string): string | null {
   if (!cookieHeader) return null;
   const match = cookieHeader
     .split(";")
     .map((part) => part.trim())
-    .find((part) => part.startsWith(`${LOCALE_COOKIE}=`));
+    .find((part) => part.startsWith(`${name}=`));
   if (!match) return null;
   try {
-    const value = decodeURIComponent(match.slice(LOCALE_COOKIE.length + 1));
-    if (value === "auto") return null;
-    // Pseudolocale and unknown values must not share the English cache bucket.
-    if (value === "en-XA") return "en-XA";
-    if (APP_LOCALES.has(value)) return value;
-    return null;
+    return decodeURIComponent(match.slice(name.length + 1));
   } catch {
     return null;
   }
 }
 
+function parseCookieLocale(cookieHeader: string | null): string | null {
+  const value = cookieValue(cookieHeader, LOCALE_COOKIE);
+  if (!value || value === "auto") return null;
+  // Pseudolocale and unknown values must not share the English cache bucket.
+  if (value === "en-XA") return "en-XA";
+  if (APP_LOCALES.has(value)) return value;
+  return null;
+}
+
+function parseNavHint(cookieHeader: string | null): string | null {
+  const value = cookieValue(cookieHeader, LOCALE_NAV_COOKIE);
+  if (value && APP_LOCALES.has(value)) return value;
+  return null;
+}
+
 function parseAcceptLanguage(header: string | null): string {
-  if (!header?.trim()) return "en";
+  if (!header?.trim()) return DEFAULT_LOCALE;
   const parts = header.split(",").map((part) => {
     const [tag, ...params] = part.trim().split(";");
     let q = 1;
@@ -76,12 +88,12 @@ function parseAcceptLanguage(header: string | null): string {
     const normalized = normalizeTag(tag);
     if (APP_LOCALES.has(normalized)) return normalized;
   }
-  return "en";
+  return DEFAULT_LOCALE;
 }
 
 /**
  * Stable cache-key locale for HTML responses.
- * Explicit cookie wins; otherwise Accept-Language → implemented locale; default en.
+ * Explicit cookie wins; otherwise Accept-Language (non-English), then system nav hint.
  * Force-English env is applied by callers that have access to process/env bindings.
  */
 export function localeCacheKeySegment(
@@ -91,10 +103,17 @@ export function localeCacheKeySegment(
   const forced = options?.forceLocale?.trim();
   if (forced && APP_LOCALES.has(forced)) return forced;
 
-  const fromCookie = parseCookieLocale(request.headers.get("cookie"));
+  const cookieHeader = request.headers.get("cookie");
+  const fromCookie = parseCookieLocale(cookieHeader);
   if (fromCookie) return fromCookie;
 
-  return parseAcceptLanguage(request.headers.get("accept-language"));
+  const fromAccept = parseAcceptLanguage(request.headers.get("accept-language"));
+  if (fromAccept !== DEFAULT_LOCALE) return fromAccept;
+
+  const nav = parseNavHint(cookieHeader);
+  if (nav) return nav;
+
+  return fromAccept;
 }
 
-export { APP_LOCALES as LOCALE_CACHE_LOCALES, LOCALE_COOKIE };
+export { APP_LOCALES as LOCALE_CACHE_LOCALES, LOCALE_COOKIE, LOCALE_NAV_COOKIE };

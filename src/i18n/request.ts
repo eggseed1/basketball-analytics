@@ -6,6 +6,7 @@ import {
   FORCE_LOCALE_ENV,
   LOCALE_AUTO,
   LOCALE_COOKIE,
+  LOCALE_NAV_COOKIE,
   PSEUDO_LOCALE,
   isAppLocale,
   isLocalePreference,
@@ -22,7 +23,8 @@ function forcedLocale(): string | null {
 
 function resolveLocale(
   cookieValue: string | undefined,
-  acceptLanguage: string | null
+  acceptLanguage: string | null,
+  navHint: string | undefined
 ): string {
   const forced = forcedLocale();
   if (forced) return forced;
@@ -39,9 +41,13 @@ function resolveLocale(
     return preference;
   }
 
-  // Automatic (or missing / invalid cookie): browser preferences.
-  const resolved = resolveFromAcceptLanguage(acceptLanguage);
-  return resolved === PSEUDO_LOCALE ? DEFAULT_LOCALE : resolved;
+  // Automatic (or missing / invalid cookie): Accept-Language, then system hint.
+  const fromAccept = resolveFromAcceptLanguage(acceptLanguage);
+  if (fromAccept !== PSEUDO_LOCALE && fromAccept !== DEFAULT_LOCALE) {
+    return fromAccept;
+  }
+  if (isAppLocale(navHint)) return navHint;
+  return fromAccept === PSEUDO_LOCALE ? DEFAULT_LOCALE : fromAccept;
 }
 
 export default getRequestConfig(async () => {
@@ -49,7 +55,8 @@ export default getRequestConfig(async () => {
   const hdrs = await headers();
   const locale = resolveLocale(
     store.get(LOCALE_COOKIE)?.value,
-    hdrs.get("accept-language")
+    hdrs.get("accept-language"),
+    store.get(LOCALE_NAV_COOKIE)?.value
   );
 
   let messages;

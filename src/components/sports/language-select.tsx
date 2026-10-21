@@ -8,18 +8,23 @@ import {
   LOCALE_AUTO,
   LOCALE_NATIVE_NAMES,
   LOCALES,
+  type AppLocale,
   type LocalePreference,
   isAppLocale,
 } from "@/i18n/config";
 import {
+  clearLocaleNavCookie,
   readLocalePreferenceCookie,
+  writeLocaleNavCookie,
   writeLocalePreferenceCookie,
 } from "@/i18n/cookie";
+import { resolveFromNavigator } from "@/i18n/match";
 import { cn } from "@/lib/utils";
 
 /**
  * Compact language control for Settings.
- * Automatic restores Accept-Language / navigator matching on the next request.
+ * Automatic restores Accept-Language / system matching on the next request.
+ * Player and team names stay in their published form in every language.
  */
 export function LanguageSelect() {
   const t = useTranslations("Settings");
@@ -42,6 +47,12 @@ export function LanguageSelect() {
       next === LOCALE_AUTO || isAppLocale(next) ? (next as LocalePreference) : LOCALE_AUTO;
     setPreference(value);
     writeLocalePreferenceCookie(value);
+    if (value === LOCALE_AUTO) {
+      const nav = resolveFromNavigator();
+      if (isAppLocale(nav)) writeLocaleNavCookie(nav as AppLocale);
+    } else {
+      clearLocaleNavCookie();
+    }
     // Hard navigation so RSC payload + document language stay aligned with the
     // cookie. Soft refresh can leave a stale locale on client islands.
     startTransition(() => {

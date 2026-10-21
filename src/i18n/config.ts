@@ -4,7 +4,13 @@
  */
 
 export const LOCALE_COOKIE = "DRBL_LOCALE";
-/** Cookie value meaning “follow browser / Accept-Language”. */
+/**
+ * Optional navigator hint written by the client when preference is Automatic.
+ * Used when Accept-Language is missing or only falls back to English.
+ * Never overrides an explicit language choice in `DRBL_LOCALE`.
+ */
+export const LOCALE_NAV_COOKIE = "DRBL_LOCALE_NAV";
+/** Cookie value meaning “follow browser / Accept-Language / system hint”. */
 export const LOCALE_AUTO = "auto";
 
 /**

@@ -1,0 +1,58 @@
+{
+  "en": {
+    "Settings": {
+      "automaticHint": "Matches your system language when we support it (English, Español, Français, Deutsch, Português, 한국어, 日本語, 中文). Falls back to English. Player and team names stay as published.",
+      "languageHint": "Saved on this device. Stats and units stay the same. Player and team names are never translated."
+    }
+  },
+  "locales": {
+    "es": {
+      "Settings": {
+        "automaticHint": "Usa el idioma del sistema cuando lo admitimos (English, Español, Français, Deutsch, Português, 한국어, 日本語, 中文). Si no, inglés. Los nombres de jugadores y equipos se quedan como están publicados.",
+        "languageHint": "Se guarda en este dispositivo. Las estadísticas y las unidades no cambian. Los nombres de jugadores y equipos no se traducen."
+      }
+    },
+    "ko": {
+      "Settings": {
+        "automaticHint": "지원하는 경우 시스템 언어를 따릅니다(English, Español, Français, Deutsch, Português, 한국어, 日本語, 中文). 없으면 영어. 선수·팀 이름은 게시된 그대로 둡니다.",
+        "languageHint": "이 기기에 저장됩니다. 통계와 단위는 그대로입니다. 선수·팀 이름은 번역하지 않습니다."
+      }
+    },
+    "fr": {
+      "Settings": {
+        "automaticHint": "Suit la langue du système quand elle est prise en charge (English, Español, Français, Deutsch, Português, 한국어, 日本語, 中文). Sinon, anglais. Les noms de joueurs et d’équipes restent tels quels.",
+        "languageHint": "Enregistré sur cet appareil. Stats et unités inchangées. Les noms de joueurs et d’équipes ne sont jamais traduits."
+      }
+    },
+    "de": {
+      "Settings": {
+        "automaticHint": "Folgt der Systemsprache, wenn wir sie unterstützen (English, Español, Français, Deutsch, Português, 한국어, 日本語, 中文). Sonst Englisch. Spieler- und Teamnamen bleiben unverändert.",
+        "languageHint": "Wird auf diesem Gerät gespeichert. Stats und Einheiten bleiben gleich. Spieler- und Teamnamen werden nie übersetzt."
+      }
+    },
+    "ja": {
+      "Settings": {
+        "automaticHint": "対応している場合はシステムの言語に合わせます（English, Español, Français, Deutsch, Português, 한국어, 日本語, 中文）。なければ英語。選手名・チーム名は公開どおりのままです。",
+        "languageHint": "この端末に保存されます。スタッツや単位は変わりません。選手名・チーム名は翻訳しません。"
+      }
+    },
+    "zh-Hans": {
+      "Settings": {
+        "automaticHint": "在支持时跟随系统语言（English, Español, Français, Deutsch, Português, 한국어, 日本語, 中文）。否则为英语。球员与球队名称保持原文。",
+        "languageHint": "保存在本设备。数据与单位不变。球员与球队名称永不翻译。"
+      }
+    },
+    "zh-Hant": {
+      "Settings": {
+        "automaticHint": "支援時跟隨系統語言（English, Español, Français, Deutsch, Português, 한국어, 日本語, 中文）。否則為英語。球員與球隊名稱保持原文。",
+        "languageHint": "儲存在此裝置。數據與單位不變。球員與球隊名稱永不翻譯。"
+      }
+    },
+    "pt-BR": {
+      "Settings": {
+        "automaticHint": "Segue o idioma do sistema quando suportamos (English, Español, Français, Deutsch, Português, 한국어, 日本語, 中文). Senão, inglês. Nomes de jogadores e times ficam como publicados.",
+        "languageHint": "Salvo neste dispositivo. Estatísticas e unidades não mudam. Nomes de jogadores e times nunca são traduzidos."
+      }
+    }
+  }
+}
