@@ -1,8 +1,8 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-19",
-    "retrievedAt": "2026-10-19T05:21:25.453Z",
+    "snapshotDate": "2026-10-21",
+    "retrievedAt": "2026-10-21T13:30:18.724Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
@@ -11,7 +11,7 @@
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "a32845889e2890d74b6b2cc96149a6bbfda1045325f421ed184208a02e36ff14",
+    "sourceHash": "d2e877c678cfae7b7411fe896b71fba2753ab8d869bb976637b25f7b107e5d8f",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -398,52 +398,6 @@
           "href": "/players/1642853"
         },
         {
-          "playerId": "1642886",
-          "playerName": "Koby Brea",
-          "age": null,
-          "contractId": "cy-1642886-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1642886-2026",
-              "playerId": "1642886",
-              "franchiseId": "21",
-              "season": "2026-27",
-              "salary": 1366314,
-              "capHit": 1366314,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "salary-index-carry-forward"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1642886"
-        },
-        {
-          "playerId": "1643047",
-          "playerName": "CJ Huntley",
-          "age": null,
-          "contractId": "cy-1643047-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1643047-2026",
-              "playerId": "1643047",
-              "franchiseId": "21",
-              "season": "2026-27",
-              "salary": 1366314,
-              "capHit": 1366314,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "salary-index-carry-forward"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1643047"
-        },
-        {
           "playerId": "1630311",
           "playerName": "Pat Spencer",
           "age": null,
@@ -465,18 +419,41 @@
           ],
           "guaranteedTotal": null,
           "href": "/players/1630311"
+        },
+        {
+          "playerId": "1631166",
+          "playerName": "Drew Timme",
+          "age": null,
+          "contractId": "cy-1631166-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1631166-2026",
+              "playerId": "1631166",
+              "franchiseId": "21",
+              "season": "2026-27",
+              "salary": null,
+              "capHit": null,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "espn-roster-no-salary"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1631166"
         }
       ],
       "futureCommitments": [
         {
           "season": "2026-27",
-          "totalSalaryDollars": 195391143,
-          "playersUnderContract": 18
+          "totalSalaryDollars": 192658515,
+          "playersUnderContract": 16
         }
       ],
-      "playerSalaryCommitments": 195391143,
-      "playersWithSalary": 18,
-      "playersWithoutSalary": 0
+      "playerSalaryCommitments": 192658515,
+      "playersWithSalary": 16,
+      "playersWithoutSalary": 1
     },
     "draftAssets": {
       "franchiseId": "21",

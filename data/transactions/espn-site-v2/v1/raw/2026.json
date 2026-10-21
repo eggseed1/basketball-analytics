@@ -2,9 +2,108 @@
   "source": "espn-site-v2-transactions",
   "datasetVersion": "1.0",
   "espnCalendarYear": 2026,
-  "fetchedAt": "2026-10-19T05:08:59.611Z",
-  "apiCount": 414,
+  "fetchedAt": "2026-10-21T13:12:20.752Z",
+  "apiCount": 423,
   "rows": [
+    {
+      "date": "2026-10-19T07:00Z",
+      "description": "Signed G Brandon Miller to a multiyear contract extension.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2026-10-19T07:00Z",
+      "description": "Waived G Walter Clayton Jr. and G Micah Peavy.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2026-10-19T07:00Z",
+      "description": "Re-signed G Cason Wallace to a rookie-scale contract extension.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2026-10-19T07:00Z",
+      "description": "Waived G Adam Flagler.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2026-10-19T07:00Z",
+      "description": "Signed F Oso Ighodaro to a multiyear contract extension. Claimed F Drew Timme off waivers. Converted C Duop Reath's contract to a two-way contract. Waived F CJ Huntley and G Koby Brea.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2026-10-19T07:00Z",
+      "description": "Waived G Kevin Porter Jr.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2026-10-19T07:00Z",
+      "description": "Waived F Dalton Knecht.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2026-10-19T07:00Z",
+      "description": "Waived Sean Pedulla. Converted Fs Oscar Tshiebwe and Julian Phillips's contract to two-way contracts.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2026-10-19T07:00Z",
+      "description": "Waived F Dwight Powell.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
     {
       "date": "2026-10-17T07:00Z",
       "description": "Waived Gs. Jarkel Joiner and Latrell Wrightsell.",

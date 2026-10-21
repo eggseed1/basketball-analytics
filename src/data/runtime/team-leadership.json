@@ -1,11 +1,11 @@
 {
-  "retrievedAt": "2026-10-19",
+  "retrievedAt": "2026-10-21",
   "teams": [
     {
       "teamId": "1",
       "abbr": "ATL",
       "displayName": "Atlanta Hawks",
-      "checkedAt": "2026-10-19",
+      "checkedAt": "2026-10-21",
       "owners": [
         {
           "name": "Tony Ressler",
@@ -27,7 +27,7 @@
       ],
       "headCoach": {
         "name": "Quin Snyder",
-        "espnExperienceYears": 10,
+        "espnExperienceYears": 12,
         "wiki": "https://en.wikipedia.org/wiki/Quin_Snyder"
       },
       "affiliate": {
@@ -48,7 +48,7 @@
       "teamId": "17",
       "abbr": "BKN",
       "displayName": "Brooklyn Nets",
-      "checkedAt": "2026-10-19",
+      "checkedAt": "2026-10-21",
       "owners": [
         {
           "name": "Joseph Tsai",
@@ -69,7 +69,7 @@
       ],
       "headCoach": {
         "name": "Jordi Fernández",
-        "espnExperienceYears": null,
+        "espnExperienceYears": 2,
         "wiki": "https://en.wikipedia.org/wiki/Jordi_Fern%C3%A1ndez"
       },
       "affiliate": {
@@ -90,7 +90,7 @@
       "teamId": "2",
       "abbr": "BOS",
       "displayName": "Boston Celtics",
-      "checkedAt": "2026-10-19",
+      "checkedAt": "2026-10-21",
       "owners": [
         {
           "name": "William Chisholm",
@@ -142,7 +142,7 @@
       "teamId": "30",
       "abbr": "CHA",
       "displayName": "Charlotte Hornets",
-      "checkedAt": "2026-10-19",
+      "checkedAt": "2026-10-21",
       "owners": [
         {
           "name": "Gabe Plotkin & Rick Schnall",
@@ -168,7 +168,7 @@
       ],
       "headCoach": {
         "name": "Charles Lee",
-        "espnExperienceYears": null,
+        "espnExperienceYears": 2,
         "wiki": "https://en.wikipedia.org/wiki/Charles_Lee_(basketball)"
       },
       "affiliate": {
@@ -189,7 +189,7 @@
       "teamId": "4",
       "abbr": "CHI",
       "displayName": "Chicago Bulls",
-      "checkedAt": "2026-10-19",
+      "checkedAt": "2026-10-21",
       "owners": [
         {
           "name": "Jerry Reinsdorf",
@@ -234,7 +234,7 @@
       "teamId": "5",
       "abbr": "CLE",
       "displayName": "Cleveland Cavaliers",
-      "checkedAt": "2026-10-19",
+      "checkedAt": "2026-10-21",
       "owners": [
         {
           "name": "Dan Gilbert",
@@ -275,7 +275,7 @@
       ],
       "headCoach": {
         "name": "Kenny Atkinson",
-        "espnExperienceYears": 4,
+        "espnExperienceYears": 6,
         "wiki": "https://en.wikipedia.org/wiki/Kenny_Atkinson"
       },
       "affiliate": {
@@ -296,7 +296,7 @@
       "teamId": "6",
       "abbr": "DAL",
       "displayName": "Dallas Mavericks",
-      "checkedAt": "2026-10-19",
+      "checkedAt": "2026-10-21",
       "owners": [
         {
           "name": "Miriam Adelson and Patrick Dumont",
@@ -353,7 +353,7 @@
       "teamId": "7",
       "abbr": "DEN",
       "displayName": "Denver Nuggets",
-      "checkedAt": "2026-10-19",
+      "checkedAt": "2026-10-21",
       "owners": [
         {
           "name": "Kroenke Sports & Entertainment",
@@ -379,7 +379,7 @@
       ],
       "headCoach": {
         "name": "David Adelman",
-        "espnExperienceYears": null,
+        "espnExperienceYears": 2,
         "wiki": "https://en.wikipedia.org/wiki/David_Adelman_(basketball)"
       },
       "affiliate": {
@@ -400,7 +400,7 @@
       "teamId": "8",
       "abbr": "DET",
       "displayName": "Detroit Pistons",
-      "checkedAt": "2026-10-19",
+      "checkedAt": "2026-10-21",
       "owners": [
         {
           "name": "Tom Gores",
@@ -421,7 +421,7 @@
       ],
       "headCoach": {
         "name": "J. B. Bickerstaff",
-        "espnExperienceYears": 8,
+        "espnExperienceYears": 10,
         "wiki": "https://en.wikipedia.org/wiki/J._B._Bickerstaff"
       },
       "affiliate": {
@@ -442,7 +442,7 @@
       "teamId": "9",
       "abbr": "GS",
       "displayName": "Golden State Warriors",
-      "checkedAt": "2026-10-19",
+      "checkedAt": "2026-10-21",
       "owners": [
         {
           "name": "Joe Lacob",
@@ -469,7 +469,7 @@
       ],
       "headCoach": {
         "name": "Steve Kerr",
-        "espnExperienceYears": 10,
+        "espnExperienceYears": 12,
         "wiki": "https://en.wikipedia.org/wiki/Steve_Kerr"
       },
       "affiliate": {
@@ -490,7 +490,7 @@
       "teamId": "10",
       "abbr": "HOU",
       "displayName": "Houston Rockets",
-      "checkedAt": "2026-10-19",
+      "checkedAt": "2026-10-21",
       "owners": [
         {
           "name": "Tilman Fertitta",
@@ -511,7 +511,7 @@
       ],
       "headCoach": {
         "name": "Ime Udoka",
-        "espnExperienceYears": 2,
+        "espnExperienceYears": 4,
         "wiki": "https://en.wikipedia.org/wiki/Ime_Udoka"
       },
       "affiliate": {
@@ -532,7 +532,7 @@
       "teamId": "11",
       "abbr": "IND",
       "displayName": "Indiana Pacers",
-      "checkedAt": "2026-10-19",
+      "checkedAt": "2026-10-21",
       "owners": [
         {
           "name": "Herb Simon",
@@ -554,7 +554,7 @@
       ],
       "headCoach": {
         "name": "Rick Carlisle",
-        "espnExperienceYears": 22,
+        "espnExperienceYears": 24,
         "wiki": "https://en.wikipedia.org/wiki/Rick_Carlisle"
       },
       "affiliate": {
@@ -575,7 +575,7 @@
       "teamId": "12",
       "abbr": "LAC",
       "displayName": "LA Clippers",
-      "checkedAt": "2026-10-19",
+      "checkedAt": "2026-10-21",
       "owners": [
         {
           "name": "Steve Ballmer",
@@ -605,7 +605,7 @@
       ],
       "headCoach": {
         "name": "Tyronn Lue",
-        "espnExperienceYears": 8,
+        "espnExperienceYears": 10,
         "wiki": "https://en.wikipedia.org/wiki/Tyronn_Lue"
       },
       "affiliate": {
@@ -626,7 +626,7 @@
       "teamId": "13",
       "abbr": "LAL",
       "displayName": "Los Angeles Lakers",
-      "checkedAt": "2026-10-19",
+      "checkedAt": "2026-10-21",
       "owners": [
         {
           "name": "Mark Walter",
@@ -649,7 +649,7 @@
       ],
       "headCoach": {
         "name": "JJ Redick",
-        "espnExperienceYears": 1,
+        "espnExperienceYears": 2,
         "wiki": "https://en.wikipedia.org/wiki/JJ_Redick"
       },
       "affiliate": {
@@ -670,7 +670,7 @@
       "teamId": "29",
       "abbr": "MEM",
       "displayName": "Memphis Grizzlies",
-      "checkedAt": "2026-10-19",
+      "checkedAt": "2026-10-21",
       "owners": [
         {
           "name": "Memphis Basketball, LLC",
@@ -693,7 +693,7 @@
       ],
       "headCoach": {
         "name": "Tuomas Iisalo",
-        "espnExperienceYears": null,
+        "espnExperienceYears": 2,
         "wiki": "https://en.wikipedia.org/wiki/Tuomas_Iisalo"
       },
       "affiliate": {
@@ -714,7 +714,7 @@
       "teamId": "14",
       "abbr": "MIA",
       "displayName": "Miami Heat",
-      "checkedAt": "2026-10-19",
+      "checkedAt": "2026-10-21",
       "owners": [
         {
           "name": "Micky Arison",
@@ -741,7 +741,7 @@
       ],
       "headCoach": {
         "name": "Erik Spoelstra",
-        "espnExperienceYears": 16,
+        "espnExperienceYears": 18,
         "wiki": "https://en.wikipedia.org/wiki/Erik_Spoelstra"
       },
       "affiliate": {
@@ -762,7 +762,7 @@
       "teamId": "15",
       "abbr": "MIL",
       "displayName": "Milwaukee Bucks",
-      "checkedAt": "2026-10-19",
+      "checkedAt": "2026-10-21",
       "owners": [
         {
           "name": "Wes Edens, Jimmy Haslam, Jamie Dinan, Mike Fascitelli",
@@ -804,7 +804,7 @@
       "teamId": "16",
       "abbr": "MIN",
       "displayName": "Minnesota Timberwolves",
-      "checkedAt": "2026-10-19",
+      "checkedAt": "2026-10-21",
       "owners": [
         {
           "name": "Alex Rodriguez, Marc Lore, Marc Stad",
@@ -829,7 +829,7 @@
       ],
       "headCoach": {
         "name": "Chris Finch",
-        "espnExperienceYears": 4,
+        "espnExperienceYears": 6,
         "wiki": "https://en.wikipedia.org/wiki/Chris_Finch"
       },
       "affiliate": {
@@ -850,7 +850,7 @@
       "teamId": "3",
       "abbr": "NO",
       "displayName": "New Orleans Pelicans",
-      "checkedAt": "2026-10-19",
+      "checkedAt": "2026-10-21",
       "owners": [
         {
           "name": "Gayle Benson",
@@ -867,7 +867,7 @@
       "generalManager": [],
       "headCoach": {
         "name": "Jamahl Mosley",
-        "espnExperienceYears": 3,
+        "espnExperienceYears": 5,
         "wiki": "https://en.wikipedia.org/wiki/Jamahl_Mosley"
       },
       "affiliate": {
@@ -888,7 +888,7 @@
       "teamId": "18",
       "abbr": "NY",
       "displayName": "New York Knicks",
-      "checkedAt": "2026-10-19",
+      "checkedAt": "2026-10-21",
       "owners": [
         {
           "name": "Madison Square Garden Sports",
@@ -911,7 +911,7 @@
       ],
       "headCoach": {
         "name": "Mike Brown",
-        "espnExperienceYears": null,
+        "espnExperienceYears": 12,
         "wiki": "https://en.wikipedia.org/wiki/Mike_Brown_(basketball%2C_born_1970)"
       },
       "affiliate": {
@@ -932,7 +932,7 @@
       "teamId": "25",
       "abbr": "OKC",
       "displayName": "Oklahoma City Thunder",
-      "checkedAt": "2026-10-19",
+      "checkedAt": "2026-10-21",
       "owners": [
         {
           "name": "Professional Basketball Club LLC",
@@ -950,7 +950,7 @@
       ],
       "headCoach": {
         "name": "Mark Daigneault",
-        "espnExperienceYears": 4,
+        "espnExperienceYears": 6,
         "wiki": "https://en.wikipedia.org/wiki/Mark_Daigneault"
       },
       "affiliate": {
@@ -971,7 +971,7 @@
       "teamId": "19",
       "abbr": "ORL",
       "displayName": "Orlando Magic",
-      "checkedAt": "2026-10-19",
+      "checkedAt": "2026-10-21",
       "owners": [
         {
           "name": "RDV Sports, Inc.",
@@ -999,7 +999,7 @@
       ],
       "headCoach": {
         "name": "Sean Sweeney",
-        "espnExperienceYears": null,
+        "espnExperienceYears": 0,
         "wiki": "https://en.wikipedia.org/wiki/Sean_Sweeney_(basketball)"
       },
       "affiliate": {
@@ -1020,7 +1020,7 @@
       "teamId": "20",
       "abbr": "PHI",
       "displayName": "Philadelphia 76ers",
-      "checkedAt": "2026-10-19",
+      "checkedAt": "2026-10-21",
       "owners": [
         {
           "name": "Harris Blitzer Sports & Entertainment",
@@ -1047,7 +1047,7 @@
       ],
       "headCoach": {
         "name": "Nick Nurse",
-        "espnExperienceYears": 6,
+        "espnExperienceYears": 8,
         "wiki": "https://en.wikipedia.org/wiki/Nick_Nurse"
       },
       "affiliate": {
@@ -1068,7 +1068,7 @@
       "teamId": "21",
       "abbr": "PHX",
       "displayName": "Phoenix Suns",
-      "checkedAt": "2026-10-19",
+      "checkedAt": "2026-10-21",
       "owners": [
         {
           "name": "Mat and Justin Ishbia",
@@ -1094,7 +1094,7 @@
       ],
       "headCoach": {
         "name": "Jordan Ott",
-        "espnExperienceYears": null,
+        "espnExperienceYears": 1,
         "wiki": "https://en.wikipedia.org/wiki/Jordan_Ott"
       },
       "affiliate": {
@@ -1115,7 +1115,7 @@
       "teamId": "22",
       "abbr": "POR",
       "displayName": "Portland Trail Blazers",
-      "checkedAt": "2026-10-19",
+      "checkedAt": "2026-10-21",
       "owners": [
         {
           "name": "Tom Dundon",
@@ -1136,7 +1136,7 @@
       ],
       "headCoach": {
         "name": "Micah Nori",
-        "espnExperienceYears": null,
+        "espnExperienceYears": 0,
         "wiki": "https://en.wikipedia.org/wiki/Micah_Nori"
       },
       "affiliate": {
@@ -1157,7 +1157,7 @@
       "teamId": "24",
       "abbr": "SA",
       "displayName": "San Antonio Spurs",
-      "checkedAt": "2026-10-19",
+      "checkedAt": "2026-10-21",
       "owners": [
         {
           "name": "Spurs Sports & Entertainment",
@@ -1185,7 +1185,7 @@
       ],
       "headCoach": {
         "name": "Mitch Johnson",
-        "espnExperienceYears": 1,
+        "espnExperienceYears": 2,
         "wiki": "https://en.wikipedia.org/wiki/Mitch_Johnson"
       },
       "affiliate": {
@@ -1206,7 +1206,7 @@
       "teamId": "23",
       "abbr": "SAC",
       "displayName": "Sacramento Kings",
-      "checkedAt": "2026-10-19",
+      "checkedAt": "2026-10-21",
       "owners": [
         {
           "name": "Vivek Ranadivé",
@@ -1227,7 +1227,7 @@
       ],
       "headCoach": {
         "name": "Doug Christie",
-        "espnExperienceYears": null,
+        "espnExperienceYears": 2,
         "wiki": "https://en.wikipedia.org/wiki/Doug_Christie"
       },
       "affiliate": {
@@ -1248,7 +1248,7 @@
       "teamId": "28",
       "abbr": "TOR",
       "displayName": "Toronto Raptors",
-      "checkedAt": "2026-10-19",
+      "checkedAt": "2026-10-21",
       "owners": [
         {
           "name": "Maple Leaf Sports & Entertainment",
@@ -1269,7 +1269,7 @@
       ],
       "headCoach": {
         "name": "Darko Rajaković",
-        "espnExperienceYears": 0,
+        "espnExperienceYears": 3,
         "wiki": "https://en.wikipedia.org/wiki/Darko_Rajakovi%C4%87"
       },
       "affiliate": {
@@ -1290,7 +1290,7 @@
       "teamId": "26",
       "abbr": "UTAH",
       "displayName": "Utah Jazz",
-      "checkedAt": "2026-10-19",
+      "checkedAt": "2026-10-21",
       "owners": [
         {
           "name": "Ryan Smith",
@@ -1322,7 +1322,7 @@
       ],
       "headCoach": {
         "name": "Will Hardy",
-        "espnExperienceYears": 2,
+        "espnExperienceYears": 4,
         "wiki": "https://en.wikipedia.org/wiki/Will_Hardy"
       },
       "affiliate": {
@@ -1343,7 +1343,7 @@
       "teamId": "27",
       "abbr": "WSH",
       "displayName": "Washington Wizards",
-      "checkedAt": "2026-10-19",
+      "checkedAt": "2026-10-21",
       "owners": [
         {
           "name": "Monumental Sports & Entertainment",
@@ -1366,7 +1366,7 @@
       ],
       "headCoach": {
         "name": "Brian Keefe",
-        "espnExperienceYears": 0,
+        "espnExperienceYears": 3,
         "wiki": "https://en.wikipedia.org/wiki/Brian_Keefe"
       },
       "affiliate": {

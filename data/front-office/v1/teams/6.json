@@ -1,8 +1,8 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-19",
-    "retrievedAt": "2026-10-19T05:21:25.453Z",
+    "snapshotDate": "2026-10-21",
+    "retrievedAt": "2026-10-21T13:30:18.724Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
@@ -11,7 +11,7 @@
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "a32845889e2890d74b6b2cc96149a6bbfda1045325f421ed184208a02e36ff14",
+    "sourceHash": "d2e877c678cfae7b7411fe896b71fba2753ab8d869bb976637b25f7b107e5d8f",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -352,29 +352,6 @@
           "href": "/players/1631204"
         },
         {
-          "playerId": "203939",
-          "playerName": "Dwight Powell",
-          "age": null,
-          "contractId": "cy-203939-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-203939-2026",
-              "playerId": "203939",
-              "franchiseId": "6",
-              "season": "2026-27",
-              "salary": 4000000,
-              "capHit": 4000000,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "salary-index-carry-forward"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/203939"
-        },
-        {
           "playerId": "1643547",
           "playerName": "Sergio de Larrea",
           "age": null,
@@ -470,12 +447,12 @@
       "futureCommitments": [
         {
           "season": "2026-27",
-          "totalSalaryDollars": 186724281,
-          "playersUnderContract": 17
+          "totalSalaryDollars": 182724281,
+          "playersUnderContract": 16
         }
       ],
-      "playerSalaryCommitments": 186724281,
-      "playersWithSalary": 17,
+      "playerSalaryCommitments": 182724281,
+      "playersWithSalary": 16,
       "playersWithoutSalary": 1
     },
     "draftAssets": {
