@@ -253,13 +253,25 @@ async function loadPlayerSeasonBoard(canonical: string): Promise<PlayerSeason[]>
     const live = await getDataProvider().getPlayerSeasons(canonical);
     if (countingRows(live) >= 50) return live;
   } catch {
-    /* try registry board below */
+    /* try registry / bundled boards below */
   }
 
   try {
     const { getPlayersBySeason } = await import("@/data/queries/players");
     const board = await getPlayersBySeason(canonical);
     if (countingRows(board) >= 50) return board;
+  } catch {
+    /* try static season tables below */
+  }
+
+  // Cloudflare Workers: season-tables snapshot (same board Explore uses when
+  // live stats.nba / ESPN boards are empty). No upstream; always available.
+  try {
+    const { getBundledBrefPeerBoard } = await import(
+      "@/data/runtime/bref-advanced-snapshot"
+    );
+    const bundled = getBundledBrefPeerBoard(canonical);
+    if (countingRows(bundled) >= 50) return bundled;
   } catch {
     /* keep whatever historical returned */
   }
