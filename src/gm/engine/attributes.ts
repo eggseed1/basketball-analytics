@@ -18,7 +18,7 @@ import {
 import entrySkillRates from "@/gm/seed/entry-skill-rates.json";
 
 /** Rebuild stored sheets when this changes. */
-export const SHEET_VERSION = 6;
+export const SHEET_VERSION = 7;
 
 export type SheetStatHint = {
   threeRate?: number;
@@ -353,11 +353,11 @@ export function productionOverallSpine(extras: {
   }
   const apg = Number.isFinite(extras.apg) ? (extras.apg as number) : 0;
   const rpg = Number.isFinite(extras.rpg) ? (extras.rpg as number) : 0;
-  // ~27/31/5 → ~87; ~21/33/7 → ~84; ~15/28/3 → ~77.
+  // ~27/34/6 → ~91; ~21/33/7 → ~86; ~15/28/3 → ~78.
   return clamp(
-    54 + ppg * 0.95 + Math.max(0, mpg - 24) * 0.45 + apg * 0.85 + rpg * 0.35,
+    55 + ppg * 1.05 + Math.max(0, mpg - 24) * 0.5 + apg * 0.9 + rpg * 0.4,
     68,
-    94
+    96
   );
 }
 
@@ -384,29 +384,31 @@ export function overallFromAttributes(
     return clamp(Math.round(attrBlend), 25, 99);
   }
 
-  // ~71 + 3.2×impact → Jokic 7.3≈94, SGA 5.8≈90, starter 1.5≈76, fringe −1≈68.
-  let spine = clamp(71 + impact * 3.2, 42, 98);
+  // ~72 + 3.45×impact → Jokic 7.3≈97, Tatum 5.1≈90, SGA 5.8≈92,
+  // solid starter 1.5≈77, fringe −1≈69. Tracks the public DARKO board.
+  let spine = clamp(72 + impact * 3.45, 42, 98);
   const drbl = opts.drbl100;
-  // DRBL can lift stars DARKO undersells (Giannis). It must not turn
-  // elite-rate role bigs into top-15 cards on rate alone.
-  if (
-    typeof drbl === "number" &&
-    Number.isFinite(drbl) &&
-    drbl > 0.8 &&
-    (impact >= 3.2 || (impact >= 2.0 && drbl >= 3.6))
-  ) {
-    const drblSpine = clamp(68 + drbl * 5.8, 48, 98);
-    const lift = Math.min(3.5, Math.max(0, (drblSpine - spine) * 0.5));
-    spine += lift;
+  // DRBL lifts stars DARKO undersells (and patches a bad season DARKO row).
+  // Role bigs with elite rate alone still need impact or production to climb.
+  if (typeof drbl === "number" && Number.isFinite(drbl) && drbl > 1.0) {
+    const drblSpine = clamp(69 + drbl * 6.0, 48, 98);
+    if (impact >= 2.5 || (impact >= 1.2 && drbl >= 2.8) || drbl >= 3.5) {
+      const lift = Math.min(4.5, Math.max(0, (drblSpine - spine) * 0.55));
+      spine += lift;
+    } else if (impact < 1.2 && drbl >= 1.4) {
+      // Soft floor when DARKO is near zero but entry DRBL says starter+.
+      spine = Math.max(spine, spine * 0.55 + drblSpine * 0.45);
+    }
   }
 
   const production = productionOverallSpine(opts);
   let productionLift = false;
   if (production != null && production > spine) {
-    // Box score lifts DARKO-undersold stars, but caps the pull so a hot
-    // scoring stretch cannot vault past true impact giants.
-    const target = Math.min(production, spine + 9);
-    spine = spine * 0.35 + target * 0.65;
+    // Box score lifts DARKO-undersold stars. Allow a bigger pull when impact
+    // is near replacement but the counting line is clearly a star (Cade '25).
+    const maxLift = impact < 1.0 ? 17 : impact < 2.2 ? 13 : 10;
+    const target = Math.min(production, spine + maxLift);
+    spine = spine * 0.3 + target * 0.7;
     productionLift = true;
   }
 
@@ -469,7 +471,8 @@ export const ATTRIBUTE_LABEL: Record<keyof GmAttributes, string> = {
 export function buildSheet(player: GmPlayer, hint?: SheetStatHint): GmSheet {
   const rng = createRng(hashId(player.id));
   const { ratings, position, age } = player;
-  const anchor = clamp(76 + ratings.impact * 2.35, 50, 99);
+  // Attribute floor tracks DARKO so shotmaking / defense cards match the OVR.
+  const anchor = clamp(74 + ratings.impact * 2.7, 48, 99);
   const big = position === "C" || position === "PF";
   const guard = position === "PG" || position === "SG";
   const size = big ? 1 : guard ? -1 : 0;

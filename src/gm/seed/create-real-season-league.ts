@@ -101,7 +101,22 @@ function indexByName(rows: PlayerSeason[]): Map<string, PlayerSeason> {
   return map;
 }
 
-/** Current teams from the roster list. Counting stats stay on last year's line. */
+/**
+ * Pick the richest counting sample for ratings. Preferring "current" with 1 GP
+ * (or an injury-shortened year) sank stars — Tatum looked like a mid-70s card
+ * while DARKO / last year's board still had him as a top-10 wing.
+ */
+function pickRatingSeasonRow(
+  current: PlayerSeason | undefined,
+  prior: PlayerSeason | undefined
+): PlayerSeason | undefined {
+  if (current && prior) {
+    return current.minutes >= prior.minutes ? current : prior;
+  }
+  return current ?? prior;
+}
+
+/** Current teams from the roster list. Ratings use the fullest season line. */
 function placeOnCurrentRoster(
   roster: PlayerSeason[],
   sameSeason: PlayerSeason[],
@@ -111,7 +126,10 @@ function placeOnCurrentRoster(
   const priorByName = indexByName(prior.filter((row) => row.gamesPlayed > 0));
   return roster.map((slot) => {
     const key = normalizePlayerName(slot.playerName);
-    const stats = currentByName.get(key) ?? priorByName.get(key);
+    const stats = pickRatingSeasonRow(
+      currentByName.get(key),
+      priorByName.get(key)
+    );
     if (!stats) return slot;
     return {
       ...stats,
@@ -180,7 +198,7 @@ async function buildCurrentRosterLeague(
   });
   const statsLabel = priorOnly
     ? `Ratings locked to ${options.statsSeason} production (out-of-sample forecast).`
-    : `Counting stats are from the previous season until ${seasonCanonical} games are played.`;
+    : `Ratings use each player's fullest recent season line (not a one-game ${seasonCanonical} fluke).`;
   league.news = [
     {
       ...league.news[0]!,

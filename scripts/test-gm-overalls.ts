@@ -11,7 +11,7 @@ import { createRealSeasonLeague } from "../src/gm/seed/create-real-season-league
 async function main() {
   const { league } = await createRealSeasonLeague({ userTeamId: "bos" });
 
-  assert.equal(SHEET_VERSION, 6);
+  assert.equal(SHEET_VERSION, 7);
 
   const ranked = league.players
     .filter((p) => p.teamId)
@@ -24,6 +24,7 @@ async function main() {
 
   const top10 = ranked.slice(0, 10).map((r) => r.name);
   const top15 = new Set(ranked.slice(0, 15).map((r) => r.name));
+  const top20 = new Set(ranked.slice(0, 20).map((r) => r.name));
 
   for (const name of [
     "Nikola Jokic",
@@ -39,7 +40,7 @@ async function main() {
   }
 
   assert.equal(ranked[0]?.name, "Nikola Jokic");
-  assert.ok((ranked[0]?.ovr ?? 0) >= 90, `Jokic ovr ${ranked[0]?.ovr}`);
+  assert.ok((ranked[0]?.ovr ?? 0) >= 92, `Jokic ovr ${ranked[0]?.ovr}`);
 
   const byName = new Map(ranked.map((r) => [r.name, r]));
   const curry = byName.get("Stephen Curry");
@@ -53,6 +54,19 @@ async function main() {
   assert.ok(
     (lebron?.ovr ?? 0) >= 80,
     `LeBron ovr ${lebron?.ovr} should clear 80`
+  );
+  const tatum = byName.get("Jayson Tatum");
+  assert.ok(tatum, "Tatum on roster");
+  assert.ok(
+    (tatum?.ovr ?? 0) >= 88,
+    `Tatum ovr ${tatum?.ovr} should clear 88 (DARKO / full prior season)`
+  );
+  assert.ok(
+    top20.has("Jayson Tatum"),
+    `Tatum should be top 20, got: ${ranked
+      .slice(0, 20)
+      .map((r) => `${r.name}:${r.ovr}`)
+      .join(", ")}`
   );
 
   const djg = ranked.find((r) => r.name === "David Jones Garcia");
@@ -70,6 +84,7 @@ async function main() {
   console.log("overalls ok", {
     top10,
     jokic: ranked[0]?.ovr,
+    tatum: tatum?.ovr,
     curry: curry?.ovr,
     lebron: lebron?.ovr,
     sheet: SHEET_VERSION,

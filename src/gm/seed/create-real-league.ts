@@ -168,7 +168,8 @@ function estimateImpact(row: PlayerSeason): number {
     );
   }
 
-  // Trust DARKO even on shorter runs; shrink everything else hard under ~500 min.
+  // DARKO is a season projection — trust it even when the counting line on
+  // this row is thin (injury, early tip). Shrink only non-DARKO proxies.
   if (!hasDarko) {
     if (minutes < 200 || gp < 10) {
       const trust =
@@ -179,9 +180,6 @@ function estimateImpact(row: PlayerSeason): number {
       const trust = 0.5 + 0.5 * ((minutes - 200) / 500);
       raw = raw * trust;
     }
-  } else if (minutes < 120 && gp < 8) {
-    const trust = 0.75 + 0.25 * (minutes / 120);
-    raw = raw * trust;
   }
 
   return Math.round(clamp(raw, -8, 12) * 100) / 100;
