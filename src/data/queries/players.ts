@@ -1336,15 +1336,30 @@ export async function getFilteredPlayerSeasonsDetailed(
   ) {
     try {
       const { withBudget } = await import("@/data/queries/budget");
+      const { longUpstreamBudgetsEnabled } = await import(
+        "@/data/providers/nba/runtime-policy"
+      );
+      const { leagueRegularSeasonHasOpened } = await import(
+        "@/lib/nba-season-status"
+      );
+      // Opening week: ESPN may reject as stale, then box-score board needs
+      // headroom beyond the slim edge budget.
+      const budgetMs =
+        longUpstreamBudgetsEnabled() ||
+        leagueRegularSeasonHasOpened(filters.season)
+          ? 25_000
+          : 3_500;
       const live = await withBudget(
         getDataProvider().getPlayerSeasons(filters.season),
-        (await import("@/data/providers/nba/runtime-policy"))
-          .longUpstreamBudgetsEnabled()
-          ? 25_000
-          : 3_500,
+        budgetMs,
         [] as PlayerSeason[]
       );
       seasons = live.value;
+      if (live.timedOut && seasons.length === 0) {
+        error = new Error(
+          `player_board_budget_exceeded_${budgetMs}ms:${filters.season}`
+        );
+      }
     } catch (e) {
       error = e;
       seasons = [];

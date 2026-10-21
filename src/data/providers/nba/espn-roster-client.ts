@@ -16,6 +16,7 @@ import {
   bundledCurrentRosterMeta,
   listBundledEspnRosterEntries,
 } from "@/data/runtime/current-roster-snapshot";
+import { leagueRegularSeasonHasOpened } from "@/lib/nba-season-status";
 
 const SITE_API = "https://site.api.espn.com";
 
@@ -34,18 +35,16 @@ type EspnRosterResponse = {
 };
 
 /**
- * Current league year before regular-season stats exist on NBA Stats.
+ * Current league year before regular-season tip-off.
  *
- * The league year flips July 1, but treating the *entire* current season as
- * preseason caused every board request to fan out across 30 ESPN rosters even
- * after games started. Keep the roster path through the offseason and the
- * tip-off gap (July 1–Oct 21 of the league start year). NBA openers often land
- * Oct 21–24; flipping on Oct 15 left Explore on a season ESPN cannot board yet.
- * From October 22 onward, league-dash / byathlete is the source of truth.
+ * The league year flips July 1. Keep the ESPN roster path through the
+ * offseason and the tip-off gap. Flip to league-dash / byathlete once the
+ * bundled schedule opener has arrived (fallback: Oct 22 when unknown).
  */
 export function isPreseasonRosterSeason(season: string, now = new Date()): boolean {
   const startYear = currentNbaStartYear(now);
-  if (season !== canonicalSeasonFromStartYear(startYear)) {
+  const leagueSeason = canonicalSeasonFromStartYear(startYear);
+  if (season !== leagueSeason) {
     return false;
   }
   // Jan–Jun fall in the end calendar year of the same league season — not pre-tip.
@@ -53,8 +52,11 @@ export function isPreseasonRosterSeason(season: string, now = new Date()): boole
     return false;
   }
   const month = now.getUTCMonth();
-  const day = now.getUTCDate();
-  return month < 9 || (month === 9 && day < 22);
+  if (month < 9) return true;
+  if (month > 9) return false;
+  // October: schedule opener wins; fall back to Oct 22 when tip date unknown.
+  if (leagueRegularSeasonHasOpened(leagueSeason, now)) return false;
+  return now.getUTCDate() < 22;
 }
 
 export async function fetchEspnTeamRosterPlayers(

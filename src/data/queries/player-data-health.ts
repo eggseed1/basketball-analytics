@@ -25,7 +25,6 @@ import {
   priorSeasonStatsNotice,
   shouldUsePriorSeasonBoardStats,
 } from "@/lib/player-board-season";
-import { isCurrentNbaSeason } from "@/lib/nba-season-status";
 import { isPreseasonRosterSeason } from "@/data/providers/nba/espn-roster-client";
 
 export type PlayerBoardSource =
@@ -279,10 +278,11 @@ export async function getPlayerSeasonBoardSnapshot(
     } else if (
       !usingPriorSeasonStats &&
       season.toUpperCase() !== "ALL" &&
-      (isPreseasonRosterSeason(season) || isCurrentNbaSeason(season))
+      isPreseasonRosterSeason(season)
     ) {
-      // Tip-off gap: current year is selected but ESPN has no GP>0 board yet
-      // (or Workers timed out). Prefer last completed season over a hard fail.
+      // Pre-tip only: current year selected but no board yet. Prefer last
+      // completed season over a hard fail. After tip, keep the miss visible so
+      // early box-score / live boards are not swapped for last year's GP.
       const priorSeason = priorSeasonForStats(season);
       const priorLoaded = await load({ season: priorSeason });
       if (priorLoaded.error == null && priorLoaded.rows.length > 0) {

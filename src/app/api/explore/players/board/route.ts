@@ -8,8 +8,8 @@ import {
   canonicalSeasonFromStartYear,
   currentNbaStartYear,
 } from "@/data/providers/historical/season-range";
-import { DEFAULT_PLAYER_MINIMUM_MINUTES } from "@/data/types";
 import { parsePlayerBoardRate } from "@/lib/explore-players-display";
+import { defaultExploreMinimumMinutes } from "@/lib/player-board-season";
 import { parsePlayerSeasonSortKey } from "@/lib/player-season-sort";
 import { filtersFromSearchParams } from "@/lib/search-params";
 
@@ -24,11 +24,15 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const params = Object.fromEntries(searchParams.entries());
     const defaultSeason = canonicalSeasonFromStartYear(currentNbaStartYear());
+    const season =
+      params.season?.toUpperCase() === "ALL"
+        ? "ALL"
+        : params.season ?? defaultSeason;
     const filters = filtersFromSearchParams({
       ...params,
-      season: params.season?.toUpperCase() === "ALL" ? "ALL" : params.season ?? defaultSeason,
+      season,
       minimumMinutes:
-        params.minimumMinutes ?? String(DEFAULT_PLAYER_MINIMUM_MINUTES),
+        params.minimumMinutes ?? String(defaultExploreMinimumMinutes(season)),
     });
     const sortKey = parsePlayerSeasonSortKey(params.sort);
     const sortDir = sortKey

@@ -18,7 +18,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { Position, Team } from "@/data/types";
-import { DEFAULT_PLAYER_MINIMUM_MINUTES } from "@/data/types";
 import { type } from "@/lib/design-system";
 import {
   PLAYER_BOARD_RATES,
@@ -30,6 +29,7 @@ import {
 } from "@/lib/explore-players-display";
 import { espnYearFromCanonicalSeason } from "@/data/providers/nba/season";
 import { listDraftClassYears, groupDraftClassYearsByDecade } from "@/lib/draft-class";
+import { defaultExploreMinimumMinutes } from "@/lib/player-board-season";
 import { cn } from "@/lib/utils";
 import { usePlayerBoardI18n } from "@/components/explore/use-player-board-i18n";
 
@@ -109,6 +109,7 @@ export function PlayerFilterToolbar({
   );
 
   const season = searchParams.get("season") ?? defaultSeason;
+  const defaultMinMinutes = String(defaultExploreMinimumMinutes(season));
   const team = searchParams.get("team") ?? "ALL";
   const conferenceParam = searchParams.get("conference")?.toLowerCase();
   const conference =
@@ -119,8 +120,7 @@ export function PlayerFilterToolbar({
         : undefined;
   const position = (searchParams.get("position") as Position | "ALL") ?? "ALL";
   const minimumMinutes =
-    searchParams.get("minimumMinutes") ??
-    String(DEFAULT_PLAYER_MINIMUM_MINUTES);
+    searchParams.get("minimumMinutes") ?? defaultMinMinutes;
   const playerQuery = searchParams.get("player") ?? "";
   const views = parsePlayerBoardViews(searchParams.get("view"));
   const rate = parsePlayerBoardRate(searchParams.get("rate"));
@@ -161,8 +161,7 @@ export function PlayerFilterToolbar({
     for (const [key, value] of Object.entries(normalized)) {
       if (
         (value === "ALL" && key !== "season") ||
-        (key === "minimumMinutes" &&
-          value === String(DEFAULT_PLAYER_MINIMUM_MINUTES)) ||
+        (key === "minimumMinutes" && value === defaultMinMinutes) ||
         (key === "view" && value === "all") ||
         (key === "rate" && value === "perGame")
       ) {

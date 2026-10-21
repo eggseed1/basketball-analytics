@@ -31,6 +31,7 @@ import {
   espnYearFromCanonicalSeason,
   isModernLeagueDashSeason,
 } from "./season";
+import { playerBoardAwaitingTip } from "@/lib/player-board-tip";
 
 const SITE_WEB = "https://site.web.api.espn.com";
 const BOARD_TTL_MS = 1000 * 60 * 15;
@@ -43,6 +44,15 @@ type ByAthleteResponse = {
   pagination?: { pages?: number; page?: number };
   athletes?: EspnAthleteStatsRow[];
   categories?: EspnStatCategorySchema[];
+  /** Season ESPN actually served (often lags the URL `season=` early in a campaign). */
+  requestedSeason?: {
+    year?: number;
+    displayName?: string;
+  };
+  currentSeason?: {
+    year?: number;
+    displayName?: string;
+  };
 };
 
 type ByTeamResponse = {
@@ -80,6 +90,26 @@ function remember<T>(
   });
   cache.set(key, pending);
   return pending;
+}
+
+/** ESPN often keeps serving last year's board when `season=` is the new year. */
+function assertEspnBoardSeason(
+  payload: ByAthleteResponse,
+  season: string,
+  year: number
+): void {
+  const servedYear = payload.requestedSeason?.year;
+  const servedName = payload.requestedSeason?.displayName?.trim();
+  if (servedYear != null && servedYear !== year) {
+    throw new Error(
+      `ESPN player board season mismatch for ${season}: requested ${year}, served ${servedYear}`
+    );
+  }
+  if (servedName && servedName !== season) {
+    throw new Error(
+      `ESPN player board season mismatch for ${season}: served ${servedName}`
+    );
+  }
 }
 
 function playerFromSeason(row: PlayerSeason): Player {
@@ -279,15 +309,153 @@ export class ResilientNBADataProvider extends StatsNbaDataProvider {
           const espnRows = await this.loadEspnBoard(target);
           return overlayNbaBoardSupplements(this, espnRows, target);
         } catch (espnError) {
+          let best: PlayerSeason[] = [];
           try {
-            return await super.getPlayerSeasons(target);
+            const nbaRows = await super.getPlayerSeasons(target);
+            if (
+              nbaRows.length > 0 &&
+              !playerBoardAwaitingTip(target, nbaRows)
+            ) {
+              best = nbaRows;
+            }
           } catch {
-            throw espnError;
+            /* try box-score board below */
           }
+          const early = await this.loadEarlySeasonBoardFromBoxScores(
+            target
+          ).catch(() => [] as PlayerSeason[]);
+          if (early.length > best.length) best = early;
+          if (best.length > 0) {
+            // Opening week: league-dash / boxes only cover tippers — fill
+            // the rest of the league from roster shells (GP=0).
+            return this.mergeBoardOntoRosterShells(target, best);
+          }
+          throw espnError;
         }
       })
     );
     return chunks.flat();
+  }
+
+  /** Left-join live counting rows onto bundled/live roster shells. */
+  private async mergeBoardOntoRosterShells(
+    season: string,
+    liveRows: PlayerSeason[]
+  ): Promise<PlayerSeason[]> {
+    if (liveRows.length >= MIN_COMPLETE_BOARD_ROWS) return liveRows;
+    const {
+      bundledRosterSeasonRows,
+      fetchEspnLeagueRosterPlayers,
+    } = await import("@/data/providers/nba/espn-roster-client");
+    let roster: PlayerSeason[] = [];
+    try {
+      roster = bundledRosterSeasonRows(season);
+      if (!roster.length) {
+        roster = await fetchEspnLeagueRosterPlayers(season);
+      }
+    } catch {
+      return liveRows;
+    }
+    if (!roster.length) return liveRows;
+
+    const aliases = await getPlayerIdAliasIndex().catch(() => ({
+      byEspn: new Map<string, { espnPlayerId: string; nbaPlayerId: string }>(),
+      byNba: new Map<string, { espnPlayerId: string; nbaPlayerId: string }>(),
+    }));
+
+    // Roster shells are ESPN ids; NBA league-dash rows are NBA ids.
+    const byEspnId = new Map<string, PlayerSeason>();
+    for (const row of liveRows) {
+      const espnId =
+        aliases.byNba.get(row.playerId)?.espnPlayerId ??
+        (aliases.byEspn.has(row.playerId) ? row.playerId : null) ??
+        row.playerId;
+      byEspnId.set(espnId, { ...row, playerId: espnId });
+    }
+
+    const merged = roster.map((shell) => {
+      const live = byEspnId.get(shell.playerId);
+      if (!live) return shell;
+      byEspnId.delete(shell.playerId);
+      // Live counting must win: shell GP/MIN are explicit 0s and would
+      // otherwise overwrite opener box totals in mergePlayerSeasonRows.
+      return mergePlayerSeasonRows(live, shell);
+    });
+    for (const leftover of byEspnId.values()) merged.push(leftover);
+    return merged;
+  }
+
+  /**
+   * Week-1 fallback when ESPN's league board still serves last year and
+   * stats.nba is empty/unreachable: sum box scores for RS games through today.
+   */
+  private async loadEarlySeasonBoardFromBoxScores(
+    season: string
+  ): Promise<PlayerSeason[]> {
+    const { getRuntimeSnapshotGames } = await import(
+      "@/data/runtime/game-snapshot"
+    );
+    const { nbaTodayIso } = await import("@/lib/nba-calendar-date");
+    const { fetchEspnCdnGameBoxScore } = await import(
+      "@/data/providers/nba/espn-cdn-game-client"
+    );
+    const { aggregatePlayerSeasonFromGames } = await import(
+      "@/data/transformers/espn-career"
+    );
+
+    const today = nbaTodayIso();
+    const slate = getRuntimeSnapshotGames(season).filter(
+      (game) =>
+        (game.gameType ?? "regular") === "regular" &&
+        game.gameDate <= today &&
+        Boolean(game.id)
+    );
+    // Prefer finals / in-progress so we don't burn the budget on still-scheduled tips.
+    const ranked = [...slate].sort((a, b) => {
+      const rank = (status: string | undefined) =>
+        status === "final" || status === "in" || status === "live"
+          ? 0
+          : status === "scheduled"
+            ? 2
+            : 1;
+      const byStatus = rank(a.status) - rank(b.status);
+      if (byStatus !== 0) return byStatus;
+      return a.gameDate.localeCompare(b.gameDate);
+    });
+    const gameIds = [...new Set(ranked.map((game) => game.id!))].slice(0, 40);
+
+    if (!gameIds.length) return [];
+
+    const boxes = await Promise.all(
+      gameIds.map((id) =>
+        fetchEspnCdnGameBoxScore(id, season).catch(() => null)
+      )
+    );
+
+    const byPlayer = new Map<string, import("@/data/types").PlayerGame[]>();
+    for (const box of boxes) {
+      if (!box?.players?.length) continue;
+      // Skip preseason / empty finals that never tipped.
+      const played = box.players.filter(
+        (row) => row.minutes > 0 && !row.didNotPlay
+      );
+      if (!played.length) continue;
+      for (const row of played) {
+        if (row.season && row.season !== season) continue;
+        const list = byPlayer.get(row.playerId) ?? [];
+        list.push(row);
+        byPlayer.set(row.playerId, list);
+      }
+    }
+
+    const fromBoxes: PlayerSeason[] = [];
+    for (const games of byPlayer.values()) {
+      const name = games[0]?.playerName?.trim() || games[0]!.playerId;
+      const teamName = games[0]!.teamId;
+      const seasonRow = aggregatePlayerSeasonFromGames(games, name, teamName);
+      if (seasonRow && seasonRow.gamesPlayed > 0) fromBoxes.push(seasonRow);
+    }
+    return fromBoxes;
   }
 
   async getPlayerSeason(
@@ -312,6 +480,23 @@ export class ResilientNBADataProvider extends StatsNbaDataProvider {
           ? mergePlayerSeasonRows(fromCareer, fromBoard)
           : fromCareer ?? fromBoard;
       if (merged && nbaRow) merged = mergePlayerSeasonRows(merged, nbaRow);
+      if (merged && merged.gamesPlayed > 0) return merged;
+      if (nbaRow && nbaRow.gamesPlayed > 0) {
+        return {
+          ...nbaRow,
+          playerId: ids.espnId,
+        };
+      }
+
+      // Opening week: league board stale / empty — build from game log.
+      const fromLog = await this.seasonFromEspnGameLog(
+        ids.espnId,
+        season
+      ).catch(() => null);
+      if (fromLog) {
+        if (merged) return mergePlayerSeasonRows(merged, fromLog);
+        return fromLog;
+      }
       if (merged) return merged;
       if (nbaRow) {
         return {
@@ -323,6 +508,25 @@ export class ResilientNBADataProvider extends StatsNbaDataProvider {
 
     if (!ids.nbaId) return null;
     return super.getPlayerSeason(ids.nbaId, season).catch(() => null);
+  }
+
+  private async seasonFromEspnGameLog(
+    espnId: string,
+    season: string
+  ): Promise<PlayerSeason | null> {
+    const { aggregatePlayerSeasonFromGames } = await import(
+      "@/data/transformers/espn-career"
+    );
+    const games = await this.getPlayerGameLog(espnId, season);
+    const played = games.filter(
+      (game) =>
+        (game.seasonType ?? "regular") === "regular" &&
+        game.minutes > 0 &&
+        !game.didNotPlay
+    );
+    if (!played.length) return null;
+    const name = played[0]?.playerName?.trim() || espnId;
+    return aggregatePlayerSeasonFromGames(played, name, played[0]!.teamId);
   }
 
   async getPlayerCareerSeasons(playerId: string): Promise<PlayerSeason[]> {
@@ -450,9 +654,10 @@ export class ResilientNBADataProvider extends StatsNbaDataProvider {
   }
 
   private loadEspnBoard(season: string): Promise<PlayerSeason[]> {
-    return remember(this.espnBoardCache, season, () =>
+    return remember(this.espnBoardCache, `v3:${season}`, () =>
       sharedGetOrSet(
-        `espn-board:${season}`,
+        // v3: reject ESPN's early-season fallback that still serves last year.
+        `espn-board:v3:${season}`,
         {
           ttlMs: BOARD_TTL_MS,
           staleMs: BOARD_TTL_MS * 2,
@@ -467,6 +672,37 @@ export class ResilientNBADataProvider extends StatsNbaDataProvider {
               retries: 1,
             }),
           ]);
+
+          assertEspnBoardSeason(first, season, year);
+
+          const firstSchema = first.categories ?? [];
+          const firstPageRows = (first.athletes ?? [])
+            .filter((row) => row.athlete?.id && row.athlete.teamId)
+            .map((row) =>
+              transformCompleteEspnPlayerSeason(
+                row,
+                season,
+                teamTotals,
+                firstSchema
+              )
+            )
+            .filter(
+              (row) => Number.isFinite(row.gamesPlayed) && row.gamesPlayed > 0
+            );
+
+          // Opening week: reject leftover 60–80 GP boards before paging the rest.
+          if (
+            firstPageRows.length > 0 &&
+            playerBoardAwaitingTip(season, firstPageRows)
+          ) {
+            const maxGp = firstPageRows.reduce(
+              (max, row) => Math.max(max, row.gamesPlayed || 0),
+              0
+            );
+            throw new Error(
+              `ESPN player board stale for ${season}: max GP ${maxGp}`
+            );
+          }
 
           const pages = Math.max(
             1,
@@ -514,6 +750,17 @@ export class ResilientNBADataProvider extends StatsNbaDataProvider {
               `ESPN player board incomplete for ${season}: ${rows.length} rows`
             );
           }
+
+          if (playerBoardAwaitingTip(season, rows)) {
+            const maxGp = rows.reduce(
+              (max, row) => Math.max(max, row.gamesPlayed || 0),
+              0
+            );
+            throw new Error(
+              `ESPN player board stale for ${season}: max GP ${maxGp}`
+            );
+          }
+
           return rows;
         }
       )

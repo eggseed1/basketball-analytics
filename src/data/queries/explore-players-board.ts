@@ -20,8 +20,11 @@ import {
   defaultPlayerSeasonSortDir,
   type PlayerSeasonSortKey,
 } from "@/lib/player-season-sort";
-import { isSeasonAwaitingFirstGame } from "@/lib/nba-season-status";
-import { playerBoardAwaitingTip } from "@/lib/player-board-tip";
+import {
+  isCurrentNbaSeason,
+  isSeasonAwaitingFirstGame,
+  leagueRegularSeasonHasOpened,
+} from "@/lib/nba-season-status";
 import {
   type ExplorePlayerBoardRow,
   sortExplorePlayerRows,
@@ -145,9 +148,22 @@ export async function getExplorePlayersBoardView(options: {
     options.sortKey && !emptyColumns.includes(options.sortKey)
       ? options.sortKey
       : undefined;
+  // Opening weeks: prefer counting totals so tippers surface above GP=0 shells.
+  const earlySeasonBoard =
+    Boolean(options.filters.season) &&
+    isCurrentNbaSeason(options.filters.season!) &&
+    leagueRegularSeasonHasOpened(options.filters.season!) &&
+    !board.rows.some((row) => row.gamesPlayed >= 10);
   // Prefer WAR1 for registry seasons when present; else DARKO; else PPG.
   const sortKey =
-    requested ?? (hasDrbl ? "r1WinEquivalents" : hasDarko ? "darkoDpm" : "ppg");
+    requested ??
+    (earlySeasonBoard
+      ? "points"
+      : hasDrbl
+        ? "r1WinEquivalents"
+        : hasDarko
+          ? "darkoDpm"
+          : "ppg");
   const sortDir =
     (requested ? options.sortDir : undefined) ??
     defaultPlayerSeasonSortDir(sortKey);
@@ -175,10 +191,10 @@ export async function getExplorePlayersBoardView(options: {
     : null;
 
   const season = options.filters.season ?? "";
-  const seasonAwaitingGames =
-    board.usingPriorSeasonStats ||
-    isSeasonAwaitingFirstGame(season, board.rows) ||
-    playerBoardAwaitingTip(season, board.rows);
+  // Placeholders / "hasn't started" follow the calendar tip only. Prior-season
+  // stats (pre-tip) use PriorSeasonStatsNotice via usingPriorSeasonStats; do not
+  // blank real early-season GP after opening night.
+  const seasonAwaitingGames = isSeasonAwaitingFirstGame(season, board.rows);
 
   return {
     rows,

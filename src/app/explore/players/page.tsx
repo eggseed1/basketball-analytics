@@ -19,15 +19,17 @@ import {
 } from "@/data/queries/explore-players-board";
 import { parsePlayerBoardRate } from "@/lib/explore-players-display";
 import { boardColumnLabel } from "@/lib/player-board-stats";
-import { defaultExplorePlayersSeason } from "@/lib/player-board-season";
+import {
+  defaultExploreMinimumMinutes,
+  defaultExplorePlayersSeason,
+} from "@/lib/player-board-season";
 import { filtersFromSearchParams, isAllSeasonsParam } from "@/lib/search-params";
-import { DEFAULT_PLAYER_MINIMUM_MINUTES } from "@/data/types";
 
 export const metadata = {
   alternates: { canonical: "/explore/players" },
-  title: "NBA player stats leaderboard",
+  title: "NBA advanced stats leaderboard",
   description:
-    "NBA player leaderboard with seasons from 1960 to present. DRBL/100 and WAR1 for registry seasons.",
+    "NBA advanced stats leaderboard on DRBL: DRBL/100, WAR1, efficiency, and counting stats from 1960 to the current season.",
 };
 
 interface ExplorePlayersPageProps {
@@ -52,13 +54,21 @@ async function loadBoard(
   searchParams: Record<string, string | string[] | undefined>,
   defaultSeason: string
 ): Promise<BoardLoad> {
+  const seasonForMinutes = isAllSeasonsParam(searchParams.season)
+    ? "ALL"
+    : String(
+        (Array.isArray(searchParams.season)
+          ? searchParams.season[0]
+          : searchParams.season) ?? defaultSeason
+      );
   const filters = filtersFromSearchParams({
     ...searchParams,
     season: isAllSeasonsParam(searchParams.season)
       ? "ALL"
       : searchParams.season ?? defaultSeason,
     minimumMinutes:
-      searchParams.minimumMinutes ?? String(DEFAULT_PLAYER_MINIMUM_MINUTES),
+      searchParams.minimumMinutes ??
+      String(defaultExploreMinimumMinutes(seasonForMinutes)),
   });
   const season = isAllSeasonsParam(filters.season)
     ? "ALL"
