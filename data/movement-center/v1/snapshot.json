@@ -5,10 +5,10 @@
     "season": "2026-27",
     "snapshotDate": "2026-10-21",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-10-21T14:06:32.722Z",
+    "builtAt": "2026-10-21T14:53:58.112Z",
     "rosterPlayerCount": 450,
-    "headlinesScanned": 5100,
-    "latestHeadlineAt": "2026-10-21T14:04:06.000Z",
+    "headlinesScanned": 5133,
+    "latestHeadlineAt": "2026-10-21T14:52:58.000Z",
     "latestTransactionDate": "2026-10-19",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -1150,17 +1150,18 @@
     {
       "id": "mv-trade-4432816-20261013",
       "headline": "LaMelo Ball, Julius Randle and others: trade talk",
-      "primaryClaimId": "mv-a73cea72acb9c5ff",
+      "primaryClaimId": "mv-ead2ce4e4bc0e1ee",
       "claimIds": [
         "mv-9d063012845160d0",
         "mv-bed5ef87d7e300f5",
         "mv-b6352aec0c6a4ad5",
-        "mv-a73cea72acb9c5ff"
+        "mv-a73cea72acb9c5ff",
+        "mv-ead2ce4e4bc0e1ee"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-13T01:41:37.000Z",
-      "lastMeaningfulAt": "2026-10-13T12:00:00.000Z",
+      "lastMeaningfulAt": "2026-10-21T14:09:56.000Z",
       "linkedPlayerIds": [
         "4432816",
         "3064514",
@@ -7074,6 +7075,26 @@
       ],
       "teamIds": [],
       "isOriginal": false
+    },
+    {
+      "id": "mv-ead2ce4e4bc0e1ee",
+      "clusterId": "mv-trade-4432816-20261013",
+      "summary": "What will new-look Wolves look like? By trading for LaMelo Ball, Minnesota swapped 'moodiness for giddiness'",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-21T14:09:56.000Z",
+      "sourceId": "outlet:cbs-sports",
+      "sourceLabel": "CBS Sports",
+      "sourceUrl": "https://www.cbssports.com/nba/news/new-look-wolves-lamelo-ball-trade/",
+      "playerIds": [
+        "4432816"
+      ],
+      "teamIds": [
+        "16"
+      ],
+      "isOriginal": true
     },
     {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",
