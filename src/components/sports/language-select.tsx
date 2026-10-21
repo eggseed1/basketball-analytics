@@ -23,7 +23,7 @@ import { cn } from "@/lib/utils";
 
 /**
  * Compact language control for Settings.
- * Automatic restores Accept-Language / system matching on the next request.
+ * Default is English. Automatic opts into Accept-Language / system matching.
  * Player and team names stay in their published form in every language.
  */
 export function LanguageSelect() {
@@ -31,7 +31,7 @@ export function LanguageSelect() {
   const activeLocale = useLocale();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
-  const [preference, setPreference] = useState<LocalePreference>(LOCALE_AUTO);
+  const [preference, setPreference] = useState<LocalePreference>("en");
 
   useEffect(() => {
     const stored = readLocalePreferenceCookie();
@@ -39,7 +39,7 @@ export function LanguageSelect() {
       setPreference(stored);
       return;
     }
-    setPreference(LOCALE_AUTO);
+    setPreference("en");
   }, [activeLocale]);
 
   function onChange(next: string) {

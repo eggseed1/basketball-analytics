@@ -10,13 +10,16 @@ export const LOCALE_COOKIE = "DRBL_LOCALE";
  * Never overrides an explicit language choice in `DRBL_LOCALE`.
  */
 export const LOCALE_NAV_COOKIE = "DRBL_LOCALE_NAV";
-/** Cookie value meaning “follow browser / Accept-Language / system hint”. */
+/**
+ * Cookie value meaning “follow browser / Accept-Language / system hint”.
+ * Opt-in only — a missing cookie uses English (`DEFAULT_LOCALE`), not Automatic.
+ */
 export const LOCALE_AUTO = "auto";
 
 /**
  * Deploy/runtime override that forces a single UI locale and ignores cookie +
  * Accept-Language. Set to an implemented locale (usually `en`) for English-only
- * rollback. Unset restores normal detection (not English — that requires `en`).
+ * rollback. Unset restores cookie resolution (missing cookie = English).
  * Read from process.env.DRBL_FORCE_LOCALE (Next) or env.DRBL_FORCE_LOCALE (Worker).
  */
 export const FORCE_LOCALE_ENV = "DRBL_FORCE_LOCALE";

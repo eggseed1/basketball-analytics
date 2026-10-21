@@ -25,7 +25,7 @@ import {
 } from "@/lib/games/court-events";
 import {
   courtEventMatchesFilter,
-  countTaggedPlays,
+  countCourtFilterMatches,
   PLAY_FILTERS,
   tagPlayContexts,
   type PlayFilterId,
@@ -427,19 +427,14 @@ export function GameShotChart({
   const at = cutoff ?? nowT;
   const inQuarter = (period: number) => quarter == null || period === quarter;
   const pool = court.filter((c) => (cutoff == null || c.t <= cutoff) && inQuarter(c.period));
+  /** Spots the chips / chart share before a scoring-context filter is applied. */
+  const chartPool =
+    mode === "shots"
+      ? pool.filter((c) => isShotBy(c) && (!zone || shotZone(c) === zone))
+      : pool.filter((c) => layersOf(c).some((l) => layers.has(l)));
   const matchesPlayFilter = (c: CourtEvent) =>
     courtEventMatchesFilter(c, playFilter, playTags);
-  const shown =
-    mode === "shots"
-      ? pool.filter(
-          (c) =>
-            isShotBy(c) &&
-            (!zone || shotZone(c) === zone) &&
-            matchesPlayFilter(c)
-        )
-      : pool.filter(
-          (c) => layersOf(c).some((l) => layers.has(l)) && matchesPlayFilter(c)
-        );
+  const shown = chartPool.filter(matchesPlayFilter);
   const latest = shown.at(-1) ?? null;
   let mark: ScoreMark | null = null;
   for (const m of marks) {
@@ -768,7 +763,8 @@ export function GameShotChart({
       >
         {PLAY_FILTERS.map((f) => {
           const active = playFilter === f.id;
-          const n = countTaggedPlays(playTags, f.id);
+          // Same spots as the dots, through the replay cutoff (ticks up as plays land).
+          const n = countCourtFilterMatches(chartPool, f.id, playTags);
           return (
             <Chip
               key={f.id}
@@ -1163,7 +1159,7 @@ export function GameShotChart({
         {mode === "game"
           ? "Spots are as logged in the play-by-play, drawn on a half court from the basket being attacked. Rebounds have no spot of their own, so the dot inside each miss shows who got the ball. Free throws have no spot and only show at each line as a running count. "
           : `Zones use located attempts only${located < fga ? `, ${located} of ${fga} this game` : ""}. Tap a zone or a scoring chip to narrow the chart. `}
-        Paint is rim plus the paint. Fast break follows transition wording in the play log ("running"). Second chance and off turnovers follow the possession after an offensive rebound or turnover. Last 5 sec is the game clock. Counts come from play-by-play and can differ slightly from the official box score.
+        Paint is rim plus the paint. Fast break follows transition wording in the play log ("running"). Second chance and off turnovers follow the possession after an offensive rebound or turnover. Last 5 sec is the game clock. Chip counts match the dots on the chart, including through the replay.
       </p>
     </div>
   );

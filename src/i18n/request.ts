@@ -9,7 +9,6 @@ import {
   LOCALE_NAV_COOKIE,
   PSEUDO_LOCALE,
   isAppLocale,
-  isLocalePreference,
 } from "@/i18n/config";
 import { resolveFromAcceptLanguage } from "@/i18n/match";
 import { loadMessages } from "@/i18n/messages";
@@ -29,25 +28,31 @@ function resolveLocale(
   const forced = forcedLocale();
   if (forced) return forced;
 
-  const preference = isLocalePreference(cookieValue) ? cookieValue : LOCALE_AUTO;
-
   // Pseudolocale is never honored in production, even if someone sets the cookie.
   if (cookieValue === PSEUDO_LOCALE) {
     if (process.env.NODE_ENV !== "production") return PSEUDO_LOCALE;
-    // Fall through to automatic / Accept-Language rather than treating as English cookie.
   }
 
-  if (preference !== LOCALE_AUTO && isAppLocale(preference)) {
-    return preference;
+  // Explicit language choice (not Automatic).
+  if (
+    cookieValue &&
+    cookieValue !== LOCALE_AUTO &&
+    isAppLocale(cookieValue)
+  ) {
+    return cookieValue;
   }
 
-  // Automatic (or missing / invalid cookie): Accept-Language, then system hint.
-  const fromAccept = resolveFromAcceptLanguage(acceptLanguage);
-  if (fromAccept !== PSEUDO_LOCALE && fromAccept !== DEFAULT_LOCALE) {
-    return fromAccept;
+  // Automatic only when the user picks it — missing cookie stays English.
+  if (cookieValue === LOCALE_AUTO) {
+    const fromAccept = resolveFromAcceptLanguage(acceptLanguage);
+    if (fromAccept !== PSEUDO_LOCALE && fromAccept !== DEFAULT_LOCALE) {
+      return fromAccept;
+    }
+    if (isAppLocale(navHint)) return navHint;
+    return fromAccept === PSEUDO_LOCALE ? DEFAULT_LOCALE : fromAccept;
   }
-  if (isAppLocale(navHint)) return navHint;
-  return fromAccept === PSEUDO_LOCALE ? DEFAULT_LOCALE : fromAccept;
+
+  return DEFAULT_LOCALE;
 }
 
 export default getRequestConfig(async () => {

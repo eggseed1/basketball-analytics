@@ -1,4 +1,4 @@
-import { getPlayerCareerSeasons } from "@/data/queries";
+import { getPlayerCareerSeasonsCached } from "@/data/queries";
 import { jsonError, jsonOk } from "@/app/api/_lib/http";
 
 /** Season-by-season stats for one player (career). */
@@ -8,7 +8,7 @@ export async function GET(
 ) {
   try {
     const { playerId } = await context.params;
-    const data = await getPlayerCareerSeasons(playerId);
+    const data = await getPlayerCareerSeasonsCached(playerId);
     return jsonOk({
       playerId,
       count: data.length,

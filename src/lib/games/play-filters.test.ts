@@ -2,7 +2,9 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 
 import type { PlayByPlayEvent } from "@/data/types/play-by-play";
+import { buildCourtEvents } from "@/lib/games/court-events";
 import {
+  countCourtFilterMatches,
   countTaggedPlays,
   playEventMatchesFilter,
   tagPlayContexts,
@@ -158,4 +160,57 @@ test("tags last 5 seconds from the game clock", () => {
   ];
   const tags = tagPlayContexts(events, "HOM", "AWY");
   assert.equal(tags.get("buzzer")?.has("lastSecond"), true);
+});
+
+test("chart chip counts match located spots, not free throws or unlocated threes", () => {
+  const events = [
+    play({
+      id: "paint",
+      description: "A makes layup",
+      isFieldGoal: true,
+      shotResult: "Made",
+      points: 2,
+      locX: 0,
+      locY: 2,
+      clockSeconds: 500,
+    }),
+    play({
+      id: "ft",
+      description: "A makes free throw 1 of 2",
+      actionType: "freethrow",
+      shotResult: "Made",
+      points: 1,
+      clockSeconds: 400,
+    }),
+    play({
+      id: "air",
+      description: "A makes 25-foot three point jumper",
+      isFieldGoal: true,
+      shotResult: "Made",
+      actionType: "3pt",
+      points: 3,
+      clockSeconds: 300,
+      // no loc — tagged as a three in the log, no chart spot
+    }),
+    play({
+      id: "late",
+      description: "A makes running layup",
+      isFieldGoal: true,
+      shotResult: "Made",
+      points: 2,
+      locX: 1,
+      locY: 1,
+      clockSeconds: 100,
+    }),
+  ];
+  const tags = tagPlayContexts(events, "HOM", "AWY");
+  const { court } = buildCourtEvents(events, "HOM", "AWY");
+  const shots = court.filter((c) => c.kind === "make" || c.kind === "miss");
+  assert.equal(countTaggedPlays(tags, "three"), 1);
+  assert.equal(countCourtFilterMatches(shots, "paint", tags), 2);
+  assert.equal(countCourtFilterMatches(shots, "three", tags), 0);
+  assert.equal(countCourtFilterMatches(shots, "fastBreak", tags), 1);
+  const early = shots.filter((c) => c.t <= shots[0]!.t);
+  assert.equal(countCourtFilterMatches(early, "paint", tags), 1);
+  assert.equal(countCourtFilterMatches(early, "fastBreak", tags), 0);
 });

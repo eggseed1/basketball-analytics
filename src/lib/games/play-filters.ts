@@ -188,3 +188,16 @@ export function countTaggedPlays(
   }
   return n;
 }
+
+/** How many chart spots match a scoring-context chip (same rules as the dots). */
+export function countCourtFilterMatches(
+  events: readonly CourtEvent[],
+  filter: PlayFilterId,
+  tags: ReadonlyMap<string, ReadonlySet<PlayFilterId>>
+): number {
+  let n = 0;
+  for (const event of events) {
+    if (courtEventMatchesFilter(event, filter, tags)) n++;
+  }
+  return n;
+}

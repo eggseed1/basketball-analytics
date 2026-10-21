@@ -13,8 +13,8 @@ import { getPlayerHistoricalImpact } from "@/data/queries/historical-impact";
 import {
   attachDrblToPlayerSeasons,
   getPlayer,
-  getPlayerCareerSeasons,
 } from "@/data/queries/players";
+import { getPlayerCareerSeasonsCached } from "@/data/queries/request-cache";
 import { getTeamSeasonStats } from "@/data/queries/team-seasons";
 import { dedupeCareerSeasons } from "@/analytics/career-resume";
 import type { PlayerSeason } from "@/data/types";
@@ -101,7 +101,9 @@ export async function getPlayerSeasonComparison(options: {
 
   const [player, careerRaw] = await Promise.all([
     getPlayer(options.playerId).catch(() => null),
-    getPlayerCareerSeasons(options.playerId).catch(() => [] as PlayerSeason[]),
+    getPlayerCareerSeasonsCached(options.playerId).catch(
+      () => [] as PlayerSeason[]
+    ),
   ]);
 
   const career = dedupeCareerSeasons(careerRaw);

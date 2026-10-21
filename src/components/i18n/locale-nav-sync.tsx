@@ -29,7 +29,9 @@ export function LocaleNavSync() {
 
   useEffect(() => {
     const preference = readLocalePreferenceCookie();
-    if (preference && preference !== LOCALE_AUTO) return;
+    // Only follow the device language when Settings is set to Automatic.
+    // Missing cookie means English (site default), not browser matching.
+    if (preference !== LOCALE_AUTO) return;
 
     const resolved = resolveFromNavigator();
     if (!isAppLocale(resolved)) return;

@@ -180,7 +180,7 @@ assert.equal(merged.Nav.games, "Games");
 assert.equal(merged.Common.all, "All");
 
 // Explicit preference must win over Accept-Language (documented contract).
-// Automatic: non-English Accept-Language wins; otherwise nav hint; else default.
+// Missing cookie → English. Automatic: non-English Accept-Language, else nav hint.
 function resolveLikeRequest(
   cookie: string | undefined,
   accept: string | null,
@@ -192,6 +192,7 @@ function resolveLikeRequest(
   if (isLocalePreference(cookie) && cookie !== LOCALE_AUTO && isAppLocale(cookie)) {
     return cookie;
   }
+  if (cookie !== LOCALE_AUTO) return DEFAULT_LOCALE;
   const fromAccept = resolveFromAcceptLanguage(accept);
   if (fromAccept !== DEFAULT_LOCALE) return fromAccept;
   if (isAppLocale(navHint)) return navHint;
@@ -199,7 +200,7 @@ function resolveLikeRequest(
 }
 assert.equal(resolveLikeRequest("de", "fr,en;q=0.8"), "de");
 assert.equal(resolveLikeRequest("auto", "fr,en;q=0.8"), "fr");
-assert.equal(resolveLikeRequest(undefined, "ko"), "ko");
+assert.equal(resolveLikeRequest(undefined, "ko"), DEFAULT_LOCALE);
 assert.equal(resolveLikeRequest("auto", "xx"), DEFAULT_LOCALE);
 assert.equal(resolveLikeRequest("auto", "en", null, "ko"), "ko");
 assert.equal(resolveLikeRequest("auto", "fr", null, "ko"), "fr");
@@ -219,6 +220,14 @@ assert.equal(
   localeCacheKeySegment(
     new Request("https://example.com/", {
       headers: { "accept-language": "ja,en;q=0.8" },
+    })
+  ),
+  DEFAULT_LOCALE
+);
+assert.equal(
+  localeCacheKeySegment(
+    new Request("https://example.com/", {
+      headers: { cookie: "DRBL_LOCALE=auto", "accept-language": "ja,en;q=0.8" },
     })
   ),
   "ja"

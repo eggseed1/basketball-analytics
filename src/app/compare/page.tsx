@@ -41,7 +41,7 @@ import { PageHeader } from "@/components/layout/page-header";
 import { SegmentedLinks } from "@/components/ui/segmented-links";
 import {
   getFilteredPlayerSeasons,
-  getPlayerCareerSeasons,
+  getPlayerCareerSeasonsCached,
   getPlayerSeason,
   getTeamSeasonComparison,
   getTeamSeasonEvidence,
@@ -329,7 +329,7 @@ async function loadSeasonRow(
 
   if (fromPeers) return { ...fromPeers, playerId };
 
-  const career = await getPlayerCareerSeasons(playerId).catch(
+  const career = await getPlayerCareerSeasonsCached(playerId).catch(
     () => [] as PlayerSeason[]
   );
   const fromCareer = career.find(
@@ -617,7 +617,7 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
       context: CompareSideContext;
     }> => {
       if (isCareerCompareKey(seasonKey)) {
-        const career = await getPlayerCareerSeasons(playerId).catch(
+        const career = await getPlayerCareerSeasonsCached(playerId).catch(
           () => [] as PlayerSeason[]
         );
         const careerRow = (seasons: PlayerSeason[]) => {
@@ -654,7 +654,7 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
       }
       const [peers, career] = await Promise.all([
         loadPeersForSeason(seasonKey),
-        getPlayerCareerSeasons(playerId).catch(() => [] as PlayerSeason[]),
+        getPlayerCareerSeasonsCached(playerId).catch(() => [] as PlayerSeason[]),
       ]);
       const loaded = await loadSeasonRow(playerId, seasonKey, peers);
       const row = loaded

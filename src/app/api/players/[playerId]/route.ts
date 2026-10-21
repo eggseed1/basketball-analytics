@@ -1,6 +1,6 @@
 import {
   getPlayer,
-  getPlayerCareerSeasons,
+  getPlayerCareerSeasonsCached,
 } from "@/data/queries";
 import { jsonError, jsonOk } from "@/app/api/_lib/http";
 
@@ -13,7 +13,7 @@ export async function GET(
     const { playerId } = await context.params;
     const [player, seasons] = await Promise.all([
       getPlayer(playerId),
-      getPlayerCareerSeasons(playerId),
+      getPlayerCareerSeasonsCached(playerId),
     ]);
 
     if (!player && seasons.length === 0) {

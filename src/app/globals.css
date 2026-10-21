@@ -1840,6 +1840,10 @@ html.booting #app-boot {
   [data-home-stack] [data-home-module="standings-race"] {
     order: 12;
   }
+  /* Missing order defaults to 0 and pins the block under the calendar. */
+  [data-home-stack] [data-home-module="contract-showcase"] {
+    order: 13;
+  }
 }
 
 html[data-standalone] .app-tab-bar {

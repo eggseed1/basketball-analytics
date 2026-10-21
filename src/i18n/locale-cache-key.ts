@@ -1,6 +1,7 @@
 /**
  * Locale segment for edge HTML cache keys.
- * Must stay aligned with request locale resolution (cookie + Accept-Language + nav hint).
+ * Must stay aligned with request locale resolution: explicit cookie, else English;
+ * Accept-Language / nav hint only when the cookie is `auto`.
  * Kept dependency-free so the Cloudflare worker entry can import it.
  */
 
@@ -63,6 +64,10 @@ function parseCookieLocale(cookieHeader: string | null): string | null {
   return null;
 }
 
+function cookieIsAutomatic(cookieHeader: string | null): boolean {
+  return cookieValue(cookieHeader, LOCALE_COOKIE) === "auto";
+}
+
 function parseNavHint(cookieHeader: string | null): string | null {
   const value = cookieValue(cookieHeader, LOCALE_NAV_COOKIE);
   if (value && APP_LOCALES.has(value)) return value;
@@ -93,8 +98,8 @@ function parseAcceptLanguage(header: string | null): string {
 
 /**
  * Stable cache-key locale for HTML responses.
- * Explicit cookie wins; otherwise Accept-Language (non-English), then system nav hint.
- * Force-English env is applied by callers that have access to process/env bindings.
+ * Explicit cookie wins. Missing cookie is English. `auto` negotiates Accept-Language
+ * then the system nav hint. Force env is applied by callers with process/env bindings.
  */
 export function localeCacheKeySegment(
   request: Request,
@@ -106,6 +111,8 @@ export function localeCacheKeySegment(
   const cookieHeader = request.headers.get("cookie");
   const fromCookie = parseCookieLocale(cookieHeader);
   if (fromCookie) return fromCookie;
+
+  if (!cookieIsAutomatic(cookieHeader)) return DEFAULT_LOCALE;
 
   const fromAccept = parseAcceptLanguage(request.headers.get("accept-language"));
   if (fromAccept !== DEFAULT_LOCALE) return fromAccept;

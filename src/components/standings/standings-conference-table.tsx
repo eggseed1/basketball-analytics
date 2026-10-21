@@ -213,12 +213,18 @@ export function StandingsConferenceTable({
         </table>
   );
   if (bare) {
-    return <div className="overflow-x-auto">{table}</div>;
+    return (
+      <div className="overflow-x-auto" data-no-scroll-fade>
+        {table}
+      </div>
+    );
   }
   return (
     <section className="flex min-w-0 flex-col gap-2">
       <h2 className="type-heading px-0.5">{title}</h2>
-      <div className="sports-card overflow-x-auto">{table}</div>
+      <div className="sports-card overflow-x-auto" data-no-scroll-fade>
+        {table}
+      </div>
     </section>
   );
 }
