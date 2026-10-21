@@ -283,8 +283,8 @@ export async function getPlayerSeasonBoardSnapshot(
       (isPreseasonRosterSeason(season) || isCurrentNbaSeason(season))
     ) {
       // Current league year with no usable board: prefer last completed season
-      // over a hard fail. Cloudflare cannot reach ESPN; until season-tables
-      // includes this year the bundled peer board is empty and live times out.
+      // over a hard fail. Cloudflare cannot reach ESPN; until the home stats
+      // runner bakes season-tables for the new year, live times out.
       const priorSeason = priorSeasonForStats(season);
       const priorLoaded = await load({ season: priorSeason });
       if (priorLoaded.error == null && priorLoaded.rows.length > 0) {

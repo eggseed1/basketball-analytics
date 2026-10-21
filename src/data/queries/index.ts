@@ -17,6 +17,7 @@ export {
   getFilteredPlayerSeasons,
   getFilteredPlayerSeasonsDetailed,
   resolveExploreBoardSeason,
+  listExploreBoardReadySeasons,
   getAvailableSeasons,
   getDrblAvailableSeasons,
   isTeamRosterBoardSupported,

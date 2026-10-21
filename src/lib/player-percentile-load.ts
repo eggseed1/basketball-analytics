@@ -189,8 +189,9 @@ export async function loadBundledPeerBoard(
     overlayDrblRatingsForPeers,
     overlayHustleRatingsForPeers,
   } = await import("@/data/queries/players");
+  const { isBundledPeerBoardReady } = await import("@/lib/player-board-season");
   const bundled = getBundledBrefPeerBoard(peerSeason);
-  if (bundled.length < 100) return null;
+  if (!isBundledPeerBoardReady(peerSeason, bundled.length)) return null;
   const withImpact = await overlayImpactRatingsForPeers(bundled, peerSeason);
   const withDrbl = await overlayDrblRatingsForPeers(withImpact, peerSeason);
   if (opts?.archive) {

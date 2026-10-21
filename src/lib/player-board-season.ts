@@ -17,6 +17,29 @@ import { shiftCanonicalSeason } from "@/lib/player-stat-comps";
 /** ~3 weeks: 500 season minutes still excludes almost everyone. */
 const EARLY_SEASON_MINUTES_WINDOW_DAYS = 21;
 
+/**
+ * Full baked peer board (finished / mid-season). Below this, Explore prefers
+ * another season unless the current year is in its opening-week thin bake.
+ */
+export const BUNDLED_PEER_BOARD_FULL_MIN = 100;
+
+/**
+ * True when a bundled season-tables peer board can power Explore without a
+ * live ESPN crawl. Opening week may only have dozens of rows; that still beats
+ * a Cloudflare provider failure on every future tip-off.
+ */
+export function isBundledPeerBoardReady(
+  season: string,
+  rowCount: number,
+  now = new Date()
+): boolean {
+  if (rowCount >= BUNDLED_PEER_BOARD_FULL_MIN) return true;
+  if (rowCount <= 0) return false;
+  return (
+    isCurrentNbaSeason(season, now) && leagueRegularSeasonHasOpened(season, now)
+  );
+}
+
 export type PlayerStatsSeasonContext = {
   /** Season selected in URL / filters */
   requestSeason: string;
@@ -129,17 +152,31 @@ export function priorSeasonBoardCatchUpNotice(
 
 /**
  * Explore Players board default: keep the last completed season selected until
- * regular-season tip. After the opener, default to the current league year.
+ * regular-season tip. After the opener, default to the current league year only
+ * when a baked peer board is ready — otherwise every future tip-off would open
+ * on an empty Cloudflare board until season-tables catch up.
  * Upcoming season remains pickable in the season control before tip.
  */
 export function defaultExplorePlayersSeason(
   availableSeasons: readonly string[],
-  now = new Date()
+  now = new Date(),
+  options?: {
+    /** Seasons with a usable bundled peer board (from season-tables). */
+    boardReadySeasons?: readonly string[];
+  }
 ): string {
   const leagueSeason = canonicalSeasonFromStartYear(currentNbaStartYear(now));
+  const prior = priorSeasonForStats(leagueSeason);
   if (isPreseasonRosterSeason(leagueSeason, now)) {
-    const prior = priorSeasonForStats(leagueSeason);
     if (availableSeasons.includes(prior)) return prior;
+  }
+  const ready = options?.boardReadySeasons;
+  if (
+    ready &&
+    !ready.includes(leagueSeason) &&
+    availableSeasons.includes(prior)
+  ) {
+    return prior;
   }
   if (availableSeasons.includes(leagueSeason)) return leagueSeason;
   return availableSeasons[0] ?? leagueSeason;

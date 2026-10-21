@@ -4,7 +4,10 @@ import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { PlayerStylesBoard } from "@/components/explore/player-styles-board";
 import { PageHeader } from "@/components/layout/page-header";
 import { SegmentedLinks } from "@/components/ui/segmented-links";
-import { getAvailableSeasons } from "@/data/queries";
+import {
+  getAvailableSeasons,
+  listExploreBoardReadySeasons,
+} from "@/data/queries";
 import { defaultExplorePlayersSeason } from "@/lib/player-board-season";
 import {
   isAssignedPlayerRoleId,
@@ -34,8 +37,13 @@ export default async function PlayerStylesPage({
 }) {
   const t = await getTranslations("Explore");
   const params = await searchParams;
-  const seasons = await getAvailableSeasons();
-  const defaultSeason = defaultExplorePlayersSeason(seasons);
+  const [seasons, boardReadySeasons] = await Promise.all([
+    getAvailableSeasons(),
+    listExploreBoardReadySeasons(),
+  ]);
+  const defaultSeason = defaultExplorePlayersSeason(seasons, new Date(), {
+    boardReadySeasons,
+  });
   const seasonParam = one(params.season)?.trim();
   const season =
     seasonParam && seasons.includes(seasonParam) ? seasonParam : defaultSeason;

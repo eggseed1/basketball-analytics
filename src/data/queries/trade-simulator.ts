@@ -14,6 +14,7 @@ import {
 import type { LeagueCapSeason } from "@/data/types/front-office";
 import type { PlayerSeason } from "@/data/types";
 import { shiftCanonicalSeason } from "@/lib/player-stat-comps";
+import { isBundledPeerBoardReady } from "@/lib/player-board-season";
 import { normalizePlayerName } from "@/lib/player-name";
 import type { TradeSimPlayer, TradeSimTeam } from "@/lib/trade-simulator";
 
@@ -60,7 +61,7 @@ export function resolveTradeStatsSeason(rosterSeason: string): string {
     if (drbl.some((row) => row.drbl100 != null && Number.isFinite(row.drbl100))) {
       return season;
     }
-    if (getBundledBrefPeerBoard(season).length >= 100) {
+    if (isBundledPeerBoardReady(season, getBundledBrefPeerBoard(season).length)) {
       return season;
     }
   }

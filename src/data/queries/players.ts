@@ -976,9 +976,9 @@ export async function getFilteredPlayerSeasons(
 }
 
 /**
- * Prefer a season that exists in the bundled BRef peer board (≥100 rows).
- * On Cloudflare, current calendar season (e.g. 2026-27) is often empty —
- * fall back to prior / latest baked board so explore + compare stay usable.
+ * Prefer a season that exists in the bundled peer board.
+ * On Cloudflare, the new league year is often empty until the home stats
+ * runner bakes season-tables — fall back to prior / latest ready board.
  */
 export async function resolveExploreBoardSeason(
   preferred: string
@@ -987,24 +987,44 @@ export async function resolveExploreBoardSeason(
   if (process.env.VERCEL === "1") return preferredKey;
 
   try {
+    const { isBundledPeerBoardReady } = await import(
+      "@/lib/player-board-season"
+    );
     const { getBundledBrefPeerBoard, brefAdvancedSnapshotMeta } = await import(
       "@/data/runtime/bref-advanced-snapshot"
     );
-    if (preferredKey && getBundledBrefPeerBoard(preferredKey).length >= 100) {
-      return preferredKey;
-    }
+    const ready = (season: string) =>
+      isBundledPeerBoardReady(season, getBundledBrefPeerBoard(season).length);
+    if (preferredKey && ready(preferredKey)) return preferredKey;
     const prior = shiftCanonicalSeason(preferredKey, -1);
-    if (getBundledBrefPeerBoard(prior).length >= 100) return prior;
+    if (ready(prior)) return prior;
     const seasons = [...brefAdvancedSnapshotMeta().seasons].sort((a, b) =>
       b.localeCompare(a)
     );
     for (const season of seasons) {
-      if (getBundledBrefPeerBoard(season).length >= 100) return season;
+      if (ready(season)) return season;
     }
   } catch {
     /* keep preferred */
   }
   return preferredKey;
+}
+
+/** Seasons whose baked peer board can power Explore without live ESPN. */
+export async function listExploreBoardReadySeasons(): Promise<string[]> {
+  try {
+    const { isBundledPeerBoardReady } = await import(
+      "@/lib/player-board-season"
+    );
+    const { listBundledBrefSeasons, getBundledBrefPeerBoard } = await import(
+      "@/data/runtime/bref-advanced-snapshot"
+    );
+    return listBundledBrefSeasons().filter((season) =>
+      isBundledPeerBoardReady(season, getBundledBrefPeerBoard(season).length)
+    );
+  } catch {
+    return [];
+  }
 }
 
 async function loadExploreAllSeasonsBoard(
@@ -1211,7 +1231,10 @@ export async function getFilteredPlayerSeasonsDetailed(
         "@/data/runtime/bref-advanced-snapshot"
       );
       const bundled = getBundledBrefPeerBoard(filters.season);
-      if (bundled.length >= 100) {
+      const { isBundledPeerBoardReady } = await import(
+        "@/lib/player-board-season"
+      );
+      if (isBundledPeerBoardReady(filters.season, bundled.length)) {
         let rows = await overlayImpactRatings(bundled, filters.season);
         if (isDrblSeason(filters.season)) {
           const drblRows = await fetchDrblSeason(filters.season).catch(() => []);

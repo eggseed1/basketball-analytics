@@ -53,10 +53,21 @@ if [ "$REFRESH" = "1" ] || [ "${FORCE:-0}" = "1" ]; then
   node scripts/build-runtime-hustle-snapshot.mjs || log "hustle failed; keeping the last bake"
   "$VENV/bin/python" scripts/build-runtime-playtype-onoff-snapshot.py "$SEASON" || log "play types failed; keeping the last bake"
   # Totals cache outside the clone; the first run fills every season since 1996-97.
+  # After every tip-off this must land $SEASON in season-tables so Cloudflare
+  # Explore can serve a peer board without ESPN (same path every future year).
   if "$VENV/bin/python" scripts/build-nba-season-totals.py "$SEASON"; then
     npx --yes tsx@4 scripts/build-season-tables.ts || log "season tables failed; keeping the last bake"
   else
     log "season totals failed; keeping the last bake"
+  fi
+  if ! node --input-type=module -e "
+    import fs from 'node:fs';
+    const t = JSON.parse(fs.readFileSync('src/data/runtime/season-tables-snapshot.json','utf8'));
+    const n = t?.seasons?.['$SEASON']?.advanced?.length ?? 0;
+    if (!n) { console.error('[stats-nba-refresh] $SEASON still missing from season-tables after bake'); process.exit(1); }
+    console.log('[stats-nba-refresh] season-tables $SEASON rows=' + n);
+  "; then
+    log "season-tables still missing $SEASON; Explore will keep prior-year boards until this lands"
   fi
   "$VENV/bin/python" scripts/build-historical-team-season-records.py || log "historical team records failed; keeping the last bake"
 else

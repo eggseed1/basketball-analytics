@@ -79,6 +79,25 @@ async function main() {
     detail: `GM Lab seeds under ${path.relative(ROOT, gmSched)} stay year-locked; reseed after the draft / media day when the sim should match the new league year`,
   });
 
+  // Cloudflare Explore boards need season-tables for the live league year.
+  // stats.nba.com only reaches the home runner — flag when tip has passed and
+  // the bake is still missing so every future opener is caught the same way.
+  if (info.shouldRefreshPlayerViz && info.tipDate) {
+    const tables = await readJson(
+      path.join(ROOT, "src/data/runtime/season-tables-snapshot.json"),
+      null
+    );
+    const live = tables?.seasons?.[info.season];
+    const advancedRows = Array.isArray(live?.advanced) ? live.advanced.length : 0;
+    if (!live || advancedRows === 0) {
+      items.push({
+        id: "season-tables-live",
+        severity: "warn",
+        detail: `${info.season} is open (tip ${info.tipDate}) but season-tables has no rows; run scripts/local/stats-nba-refresh.sh on the home stats runner`,
+      });
+    }
+  }
+
   const report = {
     generatedAt: now.toISOString(),
     season: info.season,

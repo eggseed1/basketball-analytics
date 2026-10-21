@@ -12,7 +12,11 @@ import {
   type PlayerSeasonSortKey,
 } from "@/lib/player-season-sort";
 import { PlayerSeasonTable } from "@/components/explore/player-season-table";
-import { getAvailableSeasons, getTeamsCatalog } from "@/data/queries";
+import {
+  getAvailableSeasons,
+  getTeamsCatalog,
+  listExploreBoardReadySeasons,
+} from "@/data/queries";
 import {
   getExplorePlayersBoardView,
   parseExplorePlayersSortDir,
@@ -163,11 +167,14 @@ export default async function ExplorePlayersPage({
 }: ExplorePlayersPageProps) {
   const params = await searchParams;
   const t = await getTranslations("Players");
-  const [seasons, teamCatalog] = await Promise.all([
+  const [seasons, teamCatalog, boardReadySeasons] = await Promise.all([
     getAvailableSeasons(),
     getTeamsCatalog(),
+    listExploreBoardReadySeasons(),
   ]);
-  const defaultSeason = defaultExplorePlayersSeason(seasons);
+  const defaultSeason = defaultExplorePlayersSeason(seasons, new Date(), {
+    boardReadySeasons,
+  });
   const { teams, source, warnings } = teamCatalog;
   const subtitleSort = parsePlayerSeasonSortKey(params.sort);
   const load = loadBoard(params, defaultSeason);
