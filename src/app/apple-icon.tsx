@@ -1,5 +1,7 @@
 import { ImageResponse } from "next/og";
 
+import { DRBL_ICON_BG, DrblIconMarkSvg } from "@/lib/drbl-icon-mark";
+
 export const size = { width: 180, height: 180 };
 export const contentType = "image/png";
 
@@ -14,15 +16,10 @@ export default function AppleIcon() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "#111114",
+          background: DRBL_ICON_BG,
         }}
       >
-        <svg width="112" height="112" viewBox="0 0 32 32" fill="none">
-          <path d="M10 6.5c7.2 0 13 5.8 13 13" stroke="#7aa2ff" strokeWidth="2.4" strokeLinecap="round" />
-          <path d="M10 11c4.7 0 8.5 3.8 8.5 8.5" stroke="#d6e2ff" strokeWidth="1.7" strokeLinecap="round" />
-          <path d="M10 6.5v13" stroke="#f4f4f5" strokeWidth="2.4" strokeLinecap="round" />
-          <circle cx="22.5" cy="19.2" r="2.35" fill="#C8102E" />
-        </svg>
+        <DrblIconMarkSvg size={148} />
       </div>
     ),
     { ...size }
