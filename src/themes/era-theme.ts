@@ -215,6 +215,44 @@ export function shiftIsoDate(iso: string, days: number): string {
   return dt.toISOString().slice(0, 10);
 }
 
+/** Monday–Sunday UTC week containing `iso` (YYYY-MM-DD). */
+export function weekBoundsContaining(iso: string): { start: string; end: string } {
+  const [y, m, d] = iso.split("-").map(Number);
+  const dt = new Date(Date.UTC(y!, m! - 1, d!));
+  const dow = dt.getUTCDay(); // 0 Sun … 6 Sat
+  const toMonday = dow === 0 ? -6 : 1 - dow;
+  const start = shiftIsoDate(iso, toMonday);
+  return { start, end: shiftIsoDate(start, 6) };
+}
+
+/**
+ * 1-based week index within a season calendar (Oct–Jun bounds).
+ * Week 1 is the Monday-week that contains the season start date.
+ */
+export function seasonWeekNumber(season: string, isoInWeek: string): number {
+  const { start: seasonStart } = seasonDateBounds(season);
+  const firstMonday = weekBoundsContaining(seasonStart).start;
+  const weekMonday = weekBoundsContaining(isoInWeek).start;
+  const ms =
+    Date.parse(`${weekMonday}T12:00:00Z`) -
+    Date.parse(`${firstMonday}T12:00:00Z`);
+  if (!Number.isFinite(ms)) return 1;
+  return Math.max(1, Math.floor(ms / (7 * 24 * 60 * 60 * 1000)) + 1);
+}
+
+/** Clamp a week window into a season calendar; returns null if no overlap. */
+export function clampWeekToSeason(
+  weekStart: string,
+  weekEnd: string,
+  season: string
+): { start: string; end: string } | null {
+  const { start: seasonStart, end: seasonEnd } = seasonDateBounds(season);
+  const start = weekStart < seasonStart ? seasonStart : weekStart;
+  const end = weekEnd > seasonEnd ? seasonEnd : weekEnd;
+  if (start > end) return null;
+  return { start, end };
+}
+
 export function adjacentSeason(
   season: string,
   delta: -1 | 1,

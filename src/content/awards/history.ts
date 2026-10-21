@@ -9,7 +9,8 @@ import {
   allStarCareerHistoryFromSnapshot,
   awardHistoryFromSnapshotDescription,
 } from "@/content/awards/history-from-snapshot";
-import { teamHistoryHref } from "@/lib/team-identity";
+import { teamEraDisplay } from "@/data/identity/team-era";
+import { normalizeTeamParam, teamHistoryHref } from "@/lib/team-identity";
 
 export type AwardHistoryRow = {
   /** Canonical season "YYYY-YY" when applicable; calendar year for titles. */
@@ -28,10 +29,14 @@ export function listChampionshipHistory(): AwardHistoryRow[] {
     for (const year of f.championships) {
       const start = year - 1;
       const season = `${start}-${String(year % 100).padStart(2, "0")}`;
+      const team = normalizeTeamParam(f.abbr);
+      const eraName = team
+        ? teamEraDisplay(team.canonicalTeamId, season).displayName
+        : `${f.city} ${f.name}`;
       rows.push({
         season,
-        winner: `${f.city} ${f.name}`,
-        href: teamHistoryHref(f.abbr),
+        winner: eraName,
+        href: teamHistoryHref(f.abbr, season),
         note: String(year),
       });
     }
@@ -163,17 +168,17 @@ export const FINALS_MVP_HISTORY: AwardHistoryRow[] = [
   { season: "1981-82", winner: "Magic Johnson" },
   { season: "1980-81", winner: "Cedric Maxwell" },
   { season: "1979-80", winner: "Magic Johnson" },
-  { season: "1978-79", winner: "Dennis Johnson" },
-  { season: "1977-78", winner: "Wes Unseld" },
-  { season: "1976-77", winner: "Bill Walton" },
+  { season: "1978-79", winner: "Dennis Johnson", href: "/players/77141" },
+  { season: "1977-78", winner: "Wes Unseld", href: "/players/78392" },
+  { season: "1976-77", winner: "Bill Walton", href: "/players/78450" },
   { season: "1975-76", winner: "Jo Jo White" },
-  { season: "1974-75", winner: "Rick Barry" },
-  { season: "1973-74", winner: "John Havlicek" },
-  { season: "1972-73", winner: "Willis Reed" },
-  { season: "1971-72", winner: "Wilt Chamberlain" },
-  { season: "1970-71", winner: "Lew Alcindor" },
-  { season: "1969-70", winner: "Willis Reed" },
-  { season: "1968-69", winner: "Jerry West" },
+  { season: "1974-75", winner: "Rick Barry", href: "/players/600013" },
+  { season: "1973-74", winner: "John Havlicek", href: "/players/76970" },
+  { season: "1972-73", winner: "Willis Reed", href: "/players/77929" },
+  { season: "1971-72", winner: "Wilt Chamberlain", href: "/players/76375" },
+  { season: "1970-71", winner: "Lew Alcindor", href: "/players/76003" },
+  { season: "1969-70", winner: "Willis Reed", href: "/players/77929" },
+  { season: "1968-69", winner: "Jerry West", href: "/players/78497" },
 ];
 
 export const DPOY_HISTORY: AwardHistoryRow[] = [

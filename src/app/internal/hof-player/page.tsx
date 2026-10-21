@@ -15,7 +15,6 @@ import { getPlayerPortraitUrl } from "@/data/media/get-player-media";
 import { resolvePlayerIdentityCached } from "@/data/identity/player-identity-cache";
 import { getPlayerCareerSeasonsCached, getPlayerCached } from "@/data/queries/request-cache";
 import { brandAtmosphereColors } from "@/lib/game-matchup-theme";
-import { HOF_PAGE_FRAME_CLASS } from "@/lib/hall-of-fame-style";
 import { firstUsablePlayerDisplayName } from "@/lib/player-display-name";
 import {
   buildSeasonTeamsMap,
@@ -125,85 +124,77 @@ export default async function HofPlayerExamplePage({ searchParams }: PageProps) 
       <main data-motion-page className="relative z-[1] flex flex-1 flex-col gap-4 sm:gap-5">
         <MotionReveal />
         <p className={cn(type.caption, "font-semibold uppercase tracking-wide text-muted-foreground")}>
-          Internal example · Hall of Fame golden outline
+          Internal example · Hall of Fame glass (subtle gold)
         </p>
 
-        <div className={HOF_PAGE_FRAME_CLASS}>
-          <div className="hof-page-frame__inner flex flex-col gap-4 p-3 sm:gap-5 sm:p-4">
-            <PlayerDestinationIdentity
-              playerId={playerId}
-              espnId={identity.espnId}
-              nbaId={identity.nbaId}
-              displayName={displayName}
-              season={season}
-              teamKey={teamKey}
-              teamName={teamLabel}
-              position={bioPosition}
-              seasonStints={seasonStintsWithPosition}
-              heightLabel={heightLabel}
-              weightLabel={weightLabel}
-              birthDate={player?.birthDate ?? null}
-              college={player?.college ?? null}
-              portraitUrl={portraitUrl}
-              seasonOptions={seasonOptions}
-              recentSeasons={recentSeasons}
-              view="overview"
-              caps={caps}
-              honor={honor}
-              accolades={
-                <Suspense fallback={null}>
-                  <PlayerAccoladesIsland
-                    playerId={playerId}
-                    teamKey={teamKey}
-                    honor={honor}
-                  />
-                </Suspense>
-              }
-              frontOffice={
-                <Suspense fallback={null}>
-                  <PlayerArrivalIsland
-                    playerId={playerId}
-                    playerName={displayName}
-                    teamKey={teamKey}
-                    honor={honor}
-                  />
-                </Suspense>
-              }
-              hero={
-                <Suspense
-                  fallback={
-                    <DestinationSectionSkeleton label="Loading percentile ranking…" />
-                  }
-                >
-                  <PlayerPercentileIsland
-                    playerId={playerId}
-                    displayName={displayName}
-                    season={season}
-                    career={career}
-                    seasonOptions={seasonOptions}
-                    seasonTeams={seasonTeams}
-                    identityTeamKey={teamKey}
-                    honor={honor}
-                    nbaId={identity.nbaId}
-                  />
-                </Suspense>
-              }
-            />
-
-            <Suspense
-              fallback={<DestinationSectionSkeleton label="Loading statistics…" />}
-            >
-              <PlayerStatsIsland
+        <PlayerDestinationIdentity
+          playerId={playerId}
+          espnId={identity.espnId}
+          nbaId={identity.nbaId}
+          displayName={displayName}
+          season={season}
+          teamKey={teamKey}
+          teamName={teamLabel}
+          position={bioPosition}
+          seasonStints={seasonStintsWithPosition}
+          heightLabel={heightLabel}
+          weightLabel={weightLabel}
+          birthDate={player?.birthDate ?? null}
+          college={player?.college ?? null}
+          portraitUrl={portraitUrl}
+          seasonOptions={seasonOptions}
+          recentSeasons={recentSeasons}
+          view="overview"
+          caps={caps}
+          honor={honor}
+          accolades={
+            <Suspense fallback={null}>
+              <PlayerAccoladesIsland
                 playerId={playerId}
-                season={season}
-                seasonType="regular"
-                career={career}
                 teamKey={teamKey}
-                honor={honor}
               />
             </Suspense>
-          </div>
-        </div>
+          }
+          frontOffice={
+            <Suspense fallback={null}>
+              <PlayerArrivalIsland
+                playerId={playerId}
+                playerName={displayName}
+                teamKey={teamKey}
+              />
+            </Suspense>
+          }
+          hero={
+            <Suspense
+              fallback={
+                <DestinationSectionSkeleton label="Loading percentile ranking…" />
+              }
+            >
+              <PlayerPercentileIsland
+                playerId={playerId}
+                displayName={displayName}
+                season={season}
+                career={career}
+                seasonOptions={seasonOptions}
+                seasonTeams={seasonTeams}
+                identityTeamKey={teamKey}
+                nbaId={identity.nbaId}
+              />
+            </Suspense>
+          }
+        />
+
+        <Suspense
+          fallback={<DestinationSectionSkeleton label="Loading statistics…" />}
+        >
+          <PlayerStatsIsland
+            playerId={playerId}
+            season={season}
+            seasonType="regular"
+            career={career}
+            teamKey={teamKey}
+          />
+        </Suspense>
       </main>
     </DestinationClientShell>
   );

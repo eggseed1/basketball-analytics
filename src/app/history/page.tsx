@@ -1,27 +1,34 @@
-import { Suspense } from "react";
+import { Suspense, type ReactNode } from "react";
 import { getTranslations } from "next-intl/server";
 
 import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { HistoryClientShell } from "@/components/time-machine/history-client-shell";
 import {
-  DateExplorer,
   SeasonExplorer,
+  WeekExplorer,
 } from "@/components/time-machine/time-machine-controls";
 import { TimeMachineLanding } from "@/components/time-machine/time-machine-landing";
 import { TimeMachineSnapshot } from "@/components/time-machine/time-machine-snapshot";
 import { getAvailableSeasons } from "@/data/queries";
 import {
-  getHistoricalGamesForDate,
+  getHistoricalGamesForWeek,
   getHistoricalLeadersBundle,
   getHistoricalTeamSnapshot,
-  getHistoricalTransactionsForDate,
+  getHistoricalTransactionsForWeek,
   resolveTimeMachineDate,
 } from "@/data/queries/time-machine";
+import { getDraftClassPlayers } from "@/data/providers/nba/draft-history";
+import {
+  awardsForSeason,
+  draftYearForSeason,
+} from "@/lib/history/season-highlights";
 import {
   adjacentSeason,
   clampDateToSeason,
+  clampWeekToSeason,
   seasonDateBounds,
   shiftIsoDate,
+  weekBoundsContaining,
   type ThemeMode,
 } from "@/themes/era-theme";
 import { resolveLandmarkGames } from "@/content/history/landmark-games";
@@ -61,18 +68,35 @@ async function HistorySnapshotLoader({
   date,
   themeMode,
   landmarkGames,
+  weekControls,
 }: {
   season: string;
   date: string;
   themeMode: ThemeMode;
   landmarkGames: ReturnType<typeof resolveLandmarkGames>;
+  weekControls: ReactNode;
 }) {
-  const [gamesResult, teamSnap, leaders, tx] = await Promise.all([
-    getHistoricalGamesForDate(season, date),
+  const draftYear = draftYearForSeason(season);
+  const [gamesResult, teamSnap, leaders, draftRaw] = await Promise.all([
+    getHistoricalGamesForWeek(season, date),
     getHistoricalTeamSnapshot(season),
     getHistoricalLeadersBundle(season),
-    getHistoricalTransactionsForDate(date),
+    draftYear != null
+      ? getDraftClassPlayers([draftYear]).catch(() => [])
+      : Promise.resolve([]),
   ]);
+
+  const tx = await getHistoricalTransactionsForWeek(
+    gamesResult.weekStart,
+    gamesResult.weekEnd
+  );
+
+  const draftPicks = [...draftRaw]
+    .sort(
+      (a, b) =>
+        (a.overallPick || a.pick || 999) - (b.overallPick || b.pick || 999)
+    )
+    .slice(0, 10);
 
   return (
     <div className="query-updating-content">
@@ -82,6 +106,8 @@ async function HistorySnapshotLoader({
         theme={themeMode}
         games={gamesResult.games}
         gamesWarning={gamesResult.warning}
+        weekStart={gamesResult.weekStart}
+        weekEnd={gamesResult.weekEnd}
         standings={{
           east: teamSnap.standings.east,
           west: teamSnap.standings.west,
@@ -92,13 +118,16 @@ async function HistorySnapshotLoader({
         leadersRpg={leaders.rpg}
         leadersApg={leaders.apg}
         leadersDrbl={leaders.drbl}
-        leadersDrblNote={leaders.drblNote}
         leadersWarning={leaders.warning}
         teams={teamSnap.directory}
         teamsWarning={teamSnap.directoryWarning}
         events={tx.events}
         eventsWarning={tx.warning}
         landmarkGames={landmarkGames}
+        awards={awardsForSeason(season)}
+        draftYear={draftYear}
+        draftPicks={draftPicks}
+        weekControls={weekControls}
       />
     </div>
   );
@@ -125,15 +154,32 @@ export default async function HistoryPage({ searchParams }: HistoryPageProps) {
 
   const date = await resolveTimeMachineDate(season, parsed.date);
   const { start: seasonStart, end: seasonEnd } = seasonDateBounds(season);
-  const prevDateCandidate = shiftIsoDate(date, -1);
-  const nextDateCandidate = shiftIsoDate(date, 1);
-  const prevDate =
-    prevDateCandidate >= seasonStart
-      ? clampDateToSeason(prevDateCandidate, season)
+  const week = weekBoundsContaining(date);
+  const clampedWeek =
+    clampWeekToSeason(week.start, week.end, season) ?? {
+      start: date,
+      end: date,
+    };
+
+  const prevWeekCandidate = shiftIsoDate(week.start, -7);
+  const nextWeekCandidate = shiftIsoDate(week.start, 7);
+  const prevWeekClamped = clampWeekToSeason(
+    weekBoundsContaining(prevWeekCandidate).start,
+    weekBoundsContaining(prevWeekCandidate).end,
+    season
+  );
+  const nextWeekClamped = clampWeekToSeason(
+    weekBoundsContaining(nextWeekCandidate).start,
+    weekBoundsContaining(nextWeekCandidate).end,
+    season
+  );
+  const prevWeekAnchor =
+    prevWeekCandidate >= seasonStart && prevWeekClamped
+      ? clampDateToSeason(prevWeekCandidate, season)
       : null;
-  const nextDate =
-    nextDateCandidate <= seasonEnd
-      ? clampDateToSeason(nextDateCandidate, season)
+  const nextWeekAnchor =
+    nextWeekCandidate <= seasonEnd && nextWeekClamped
+      ? clampDateToSeason(nextWeekCandidate, season)
       : null;
 
   const prevSeason = adjacentSeason(season, -1, seasons);
@@ -144,13 +190,6 @@ export default async function HistoryPage({ searchParams }: HistoryPageProps) {
       <MotionReveal />
       <HistoryClientShell>
         <header className="flex flex-col gap-4">
-          <div>
-            <h1 className="text-[28px] font-bold tracking-tight sm:text-[32px]">
-              {season}
-            </h1>
-            <p className="mt-1 text-[14px] text-muted-foreground">{date}</p>
-          </div>
-
           <Suspense fallback={null}>
             <SeasonExplorer
               season={season}
@@ -161,16 +200,6 @@ export default async function HistoryPage({ searchParams }: HistoryPageProps) {
               date={date}
             />
           </Suspense>
-
-          <Suspense fallback={null}>
-            <DateExplorer
-              season={season}
-              date={date}
-              prevDate={prevDate}
-              nextDate={nextDate}
-              theme={themeMode}
-            />
-          </Suspense>
         </header>
 
         <Suspense fallback={<SnapshotSkeleton />}>
@@ -179,6 +208,16 @@ export default async function HistoryPage({ searchParams }: HistoryPageProps) {
             date={date}
             themeMode={themeMode}
             landmarkGames={landmarkGames.filter((game) => game.season === season)}
+            weekControls={
+              <WeekExplorer
+                season={season}
+                weekStart={clampedWeek.start}
+                weekEnd={clampedWeek.end}
+                prevWeekAnchor={prevWeekAnchor}
+                nextWeekAnchor={nextWeekAnchor}
+                theme={themeMode}
+              />
+            }
           />
         </Suspense>
       </HistoryClientShell>

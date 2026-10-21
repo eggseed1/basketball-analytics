@@ -8,7 +8,8 @@ import {
   useQueryNavOptional,
 } from "@/components/continuity/query-nav";
 import { historyHref } from "@/themes/history-url";
-import type { ThemeMode } from "@/themes/era-theme";
+import { seasonWeekNumber, type ThemeMode } from "@/themes/era-theme";
+import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 import { LinkCue } from "@/components/ui/link-cue";
 
@@ -45,56 +46,87 @@ export function SeasonExplorer({
     <nav
       aria-label="Season explorer"
       className={cn(
-        "relative flex flex-wrap items-center justify-between gap-3",
+        "relative flex flex-wrap items-center gap-3",
         pending && "opacity-80"
       )}
       data-updating={pending ? "true" : "false"}
     >
-      <div className="flex min-w-0 flex-1 items-center gap-2">
-        {prevSeason ? (
-          <TransitionLink
-            href={historyHref({ ...base, season: prevSeason, date: undefined })}
-            className="sports-pill shrink-0 text-[14px]"
-            prefetch={false}
-          >
-            <LinkCue direction="back" />
-            {prevSeason}
-          </TransitionLink>
-        ) : (
-          <span className="sports-pill inline-flex shrink-0 items-center text-[14px] opacity-40">
-            <LinkCue direction="back" />
-          </span>
-        )}
-
-        <label className="sr-only" htmlFor="tm-season">
-          Season
-        </label>
-        <select
-          id="tm-season"
-          value={season}
-          onChange={onSelect}
-          className="min-w-0 flex-1 rounded-md border border-border bg-card px-3 py-2 text-[16px] font-semibold tm-heading outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-3 gap-y-2">
+        <h1
+          className={cn(
+            type.heading,
+            "tm-heading shrink-0 tabular-nums tracking-tight"
+          )}
         >
-          {seasons.map((s) => (
-            <option key={s} value={s}>
-              {s}
-            </option>
-          ))}
-        </select>
+          {season}
+        </h1>
 
-        {nextSeason ? (
-          <TransitionLink
-            href={historyHref({ ...base, season: nextSeason, date: undefined })}
-            className="sports-pill shrink-0 text-[14px]"
-            prefetch={false}
+        <label className="inline-flex items-center gap-2">
+          <span
+            className={cn(
+              type.caption,
+              "font-semibold uppercase tracking-wide text-muted-foreground"
+            )}
           >
-            {nextSeason} <LinkCue />
-          </TransitionLink>
-        ) : (
-          <span className="sports-pill inline-flex shrink-0 items-center text-[14px] opacity-40">
-            <LinkCue />
+            Season
           </span>
-        )}
+          <select
+            id="tm-season"
+            value={season}
+            onChange={onSelect}
+            aria-label="Season"
+            className={cn(
+              type.caption,
+              "glass-pill h-8 min-w-[7.5rem] cursor-pointer rounded-md border-0 px-2.5 font-semibold tabular-nums text-foreground outline-none",
+              "focus-visible:ring-2 focus-visible:ring-ring"
+            )}
+          >
+            {seasons.map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <div className="flex items-center gap-2">
+          {prevSeason ? (
+            <TransitionLink
+              href={historyHref({
+                ...base,
+                season: prevSeason,
+                date: undefined,
+              })}
+              className="sports-pill inline-flex shrink-0 items-center text-[14px]"
+              prefetch={false}
+            >
+              <LinkCue direction="back" />
+              <span className="hidden sm:inline">{prevSeason}</span>
+            </TransitionLink>
+          ) : (
+            <span className="sports-pill inline-flex shrink-0 items-center text-[14px] opacity-40">
+              <LinkCue direction="back" />
+            </span>
+          )}
+
+          {nextSeason ? (
+            <TransitionLink
+              href={historyHref({
+                ...base,
+                season: nextSeason,
+                date: undefined,
+              })}
+              className="sports-pill inline-flex shrink-0 items-center text-[14px]"
+              prefetch={false}
+            >
+              <span className="hidden sm:inline">{nextSeason}</span> <LinkCue />
+            </TransitionLink>
+          ) : (
+            <span className="sports-pill inline-flex shrink-0 items-center text-[14px] opacity-40">
+              <LinkCue />
+            </span>
+          )}
+        </div>
       </div>
     </nav>
   );
@@ -172,6 +204,82 @@ export function DateExplorer({
         </TransitionLink>
       ) : (
         <span className="sports-pill text-[14px] opacity-40">Next day <LinkCue /></span>
+      )}
+    </nav>
+  );
+}
+
+export function WeekExplorer({
+  season,
+  weekStart,
+  weekEnd,
+  prevWeekAnchor,
+  nextWeekAnchor,
+  theme,
+}: {
+  season: string;
+  weekStart: string;
+  weekEnd: string;
+  prevWeekAnchor: string | null;
+  nextWeekAnchor: string | null;
+  theme: ThemeMode;
+}) {
+  const pending = Boolean(useQueryNavOptional()?.pending);
+  const weekNumber = seasonWeekNumber(season, weekStart);
+  const rangeLabel =
+    weekStart === weekEnd ? weekStart : `${weekStart} – ${weekEnd}`;
+
+  return (
+    <nav
+      aria-label="Week explorer"
+      className={cn(
+        "flex flex-wrap items-center gap-2",
+        pending && "opacity-80"
+      )}
+      data-updating={pending ? "true" : "false"}
+    >
+      {prevWeekAnchor ? (
+        <TransitionLink
+          href={historyHref({ season, theme, date: prevWeekAnchor })}
+          className="sports-pill text-[14px]"
+          prefetch={false}
+        >
+          <LinkCue direction="back" />
+          Prev week
+        </TransitionLink>
+      ) : (
+        <span className="sports-pill inline-flex items-center gap-0.5 text-[14px] opacity-40">
+          <LinkCue direction="back" />
+          Prev week
+        </span>
+      )}
+
+      <div className="flex flex-col gap-0.5 rounded-md border border-border bg-card px-3 py-1.5">
+        <p className={cn(type.bodySm, "font-semibold tabular-nums")}>
+          Week {weekNumber}
+        </p>
+        <p
+          className={cn(
+            type.caption,
+            "tabular-nums text-muted-foreground"
+          )}
+        >
+          {rangeLabel}
+        </p>
+      </div>
+
+      {nextWeekAnchor ? (
+        <TransitionLink
+          href={historyHref({ season, theme, date: nextWeekAnchor })}
+          className="sports-pill text-[14px]"
+          prefetch={false}
+        >
+          Next week <LinkCue />
+        </TransitionLink>
+      ) : (
+        <span className="sports-pill text-[14px] opacity-40">
+          Next week <LinkCue />
+        </span>
       )}
     </nav>
   );

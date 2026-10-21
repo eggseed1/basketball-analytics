@@ -157,45 +157,6 @@ function startYearOr(season: string, fallback: number): number {
   }
 }
 
-function LedReadout({
-  label,
-  meta,
-  value,
-  large,
-}: {
-  label: string;
-  meta?: string;
-  value: string;
-  large?: boolean;
-}) {
-  return (
-    <div className="flex min-w-0 flex-col gap-1.5">
-      <div className="flex items-center justify-between gap-2 type-caption text-muted-foreground">
-        <span className="font-semibold">{label}</span>
-        {meta ? <span className="truncate">{meta}</span> : null}
-      </div>
-      <div
-        className={cn(
-          "tm-led grid overflow-hidden rounded-[8px] font-bold leading-none tabular-nums tracking-tight",
-          large
-            ? "px-4 py-3 text-[32px] sm:text-[40px]"
-            : "px-4 py-2.5 text-[20px] sm:text-[22px]"
-        )}
-      >
-        <span aria-hidden className="tm-led-ghost col-start-1 row-start-1">
-          8888-88
-        </span>
-        <span
-          key={value}
-          className="tm-led-digits tm-flip col-start-1 row-start-1"
-        >
-          {value}
-        </span>
-      </div>
-    </div>
-  );
-}
-
 function SectionTitle({ title, note }: { title: string; note?: string }) {
   return (
     <div className="text-center">
@@ -324,12 +285,6 @@ export function TimeMachineLanding({
   const dialSeason = pickedSeason ?? initial;
   const dialIndex = Math.max(ascending.indexOf(dialSeason), 0);
   const dialEra = resolveEraThemeForSeason(dialSeason);
-  const seasonsBack =
-    startYearOr(presentSeason, 0) - startYearOr(dialSeason, 0);
-  const backLabel =
-    seasonsBack <= 0
-      ? "This season"
-      : `${seasonsBack} season${seasonsBack === 1 ? "" : "s"} back`;
 
   const eraSpans = useMemo(
     () =>
@@ -353,28 +308,22 @@ export function TimeMachineLanding({
     <main data-motion-page className="site-shell flex flex-1 flex-col gap-12 py-8 sm:py-12">
       <MotionReveal />
       <section className="sports-card relative z-[2] mx-auto w-full max-w-4xl p-4 sm:p-5">
-        <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:items-end">
-          <header>
-            <h1 className="type-title-1 text-balance">
-              {t("enterTitle")}
-            </h1>
-            <p className="mt-2 max-w-md type-body-sm text-muted-foreground">
-              {t("enterSubtitle")}
-            </p>
-          </header>
+        <header>
+          <h1 className="type-title-1 text-balance">{t("enterTitle")}</h1>
+          <p className="mt-2 max-w-md type-body-sm text-muted-foreground">
+            {t("enterSubtitle")}
+          </p>
+          <p
+            className="mt-2 type-caption font-medium text-muted-foreground"
+            aria-live="polite"
+          >
+            {dialEra.name}
+            <span className="text-muted-foreground/50"> · </span>
+            <span className="tabular-nums">{dialSeason}</span>
+          </p>
+        </header>
 
-          <div className="flex flex-col gap-3" aria-live="polite">
-            <LedReadout
-              label={t("destination")}
-              meta={`${dialEra.name} · ${backLabel}`}
-              value={dialSeason}
-              large
-            />
-            <LedReadout label={t("present")} value={presentSeason} />
-          </div>
-        </div>
-
-        <div className="mt-8">
+        <div className="mt-6">
           <div className="relative h-3">
             <div
               aria-hidden
@@ -587,7 +536,11 @@ export function TimeMachineLanding({
             <button
               type="submit"
               disabled={pending}
-              className="inline-flex h-12 shrink-0 items-center justify-center gap-1.5 rounded-[8px] bg-primary px-5 type-body-sm font-semibold text-primary-foreground transition hover:bg-primary/80 active:translate-y-px disabled:opacity-60 sm:px-6"
+              className={cn(
+                "sports-pill inline-flex h-12 shrink-0 items-center justify-center gap-1.5 px-5 text-[14px] font-semibold",
+                "bg-foreground text-background hover:bg-foreground/90",
+                "disabled:opacity-60 sm:px-6"
+              )}
             >
               {pending ? "Traveling…" : "Travel"}
               {pending ? null : <LinkCue />}
@@ -604,7 +557,7 @@ export function TimeMachineLanding({
       <section className="mx-auto w-full max-w-5xl">
         <SectionTitle
           title={t("recordBookTitle")}
-          note="Single games, seasons, careers, and team marks back to the 1946-47 BAA season."
+          note="Single-game, season, career, and team marks back to 1946-47."
         />
         <Link
           href="/history/records"
@@ -612,10 +565,51 @@ export function TimeMachineLanding({
         >
           <span className="text-[16px] font-bold tracking-tight">Open the record book</span>
           <span className="text-[13px] leading-relaxed text-muted-foreground">
-            Points, rebounds, assists, threes, streaks, and the rare lines. Lists that stop in 1996-97 say so.
+            Points, rebounds, assists, threes, and streaks. Lists that end in 1996-97 say so.
           </span>
         </Link>
       </section>
+
+      {landmarkGames.length ? (
+        <section className="mx-auto w-full max-w-5xl">
+          <SectionTitle
+            title="Landmark games"
+            note="Finals closes in the schedule archive."
+          />
+          <ul className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {landmarkGames.map((game) => (
+              <li
+                key={game.id}
+                className="sports-card relative flex flex-col gap-2 p-4 text-left transition-transform duration-200 hover:-translate-y-1"
+              >
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                  {game.date}
+                </p>
+                <Link
+                  href={game.gameHref}
+                  className="text-[15px] font-bold tracking-tight after:absolute after:inset-0 after:rounded-[inherit]"
+                >
+                  {game.title}
+                </Link>
+                <p
+                  className="tm-led self-start rounded-[8px] px-3 py-1.5 type-title font-bold tabular-nums tracking-tight"
+                >
+                  <span className="tm-led-digits">{game.scoreLine}</span>
+                </p>
+                <p className="text-[13px] leading-relaxed text-muted-foreground">
+                  {game.blurb}
+                </p>
+                <Link
+                  href={game.historyHref}
+                  className="relative z-[1] mt-auto pt-1 text-[12px] font-semibold text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
+                >
+                  Open that date <LinkCue />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
 
       {landmarks.length ? (
         <section className="mx-auto w-full max-w-5xl">
@@ -668,59 +662,18 @@ export function TimeMachineLanding({
         </section>
       ) : null}
 
-      {landmarkGames.length ? (
-        <section className="mx-auto w-full max-w-5xl">
-          <SectionTitle
-            title="Landmark games"
-            note="Finals closes that match the schedule archive. Missing scores stay off this list."
-          />
-          <ul className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {landmarkGames.map((game) => (
-              <li
-                key={game.id}
-                className="sports-card relative flex flex-col gap-2 p-4 text-left transition-transform duration-200 hover:-translate-y-1"
-              >
-                <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-                  {game.date}
-                </p>
-                <Link
-                  href={game.gameHref}
-                  className="text-[15px] font-bold tracking-tight after:absolute after:inset-0 after:rounded-[inherit]"
-                >
-                  {game.title}
-                </Link>
-                <p
-                  className="tm-led self-start rounded-[8px] px-3 py-1.5 type-title font-bold tabular-nums tracking-tight"
-                >
-                  <span className="tm-led-digits">{game.scoreLine}</span>
-                </p>
-                <p className="text-[13px] leading-relaxed text-muted-foreground">
-                  {game.blurb}
-                </p>
-                <Link
-                  href={game.historyHref}
-                  className="relative z-[1] mt-auto pt-1 text-[12px] font-semibold text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
-                >
-                  Open that date <LinkCue />
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
-      ) : null}
-
       <section className="mx-auto w-full max-w-4xl">
         <SectionTitle
           title="Keep exploring"
-          note={`From ${archiveSeason} into boards, franchises and the trophy case.`}
+          note={`Boards, franchises, and the trophy case from ${archiveSeason}.`}
         />
         <ul className="mt-5 flex flex-wrap justify-center gap-2">
           {[
-            { href: `/history/${encodeURIComponent(archiveSeason)}`, label: `Season games · ${archiveSeason}` },
+            { href: `/history/${encodeURIComponent(archiveSeason)}`, label: `Season archive · ${archiveSeason}` },
             { href: `/explore/players?season=${encodeURIComponent(archiveSeason)}`, label: `Players board · ${archiveSeason}` },
             { href: standingsHref(archiveSeason, "team-stats"), label: `Teams · ${archiveSeason}` },
+            { href: "/franchises", label: "Franchise History" },
             { href: "/awards", label: "Trophy case" },
-            { href: "/franchises", label: "Franchises" },
           ].map((link) => (
             <li key={link.href}>
               <Link

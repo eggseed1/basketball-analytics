@@ -3,21 +3,31 @@
  */
 
 import { teamEraDisplay, resolveTeamEra } from "@/data/identity/team-era";
-import { listCanonicalTeams } from "@/data/identity/team-map";
+import {
+  getCanonicalTeamFromProvider,
+  resolveCanonicalTeam,
+} from "@/data/identity/team-map";
+import { getDataProvider } from "@/data/providers";
 import { getFilteredGames } from "@/data/queries/games";
 import { getPlayerSeasonBoardSnapshot } from "@/data/queries/player-data-health";
-import { getTeamSeasonStats } from "@/data/queries/team-seasons";
+import {
+  getTeamSeasonStats,
+  isTeamSeasonBoardSupported,
+} from "@/data/queries/team-seasons";
 import { listTransactionEvents } from "@/data/queries/offseason-tracker";
 import { fetchDrblSeason } from "@/data/providers/nba/drbl-loader";
 import { nbaTeamAbbr } from "@/data/providers/nba/nba-team-meta";
 import { isDrblSeason } from "@/data/drbl/season-registry";
+import { FRANCHISE_HISTORIES } from "@/data/franchises/history";
+import { getBundledHistoricalTeamSeasonRecords } from "@/data/history/historical-team-season-records";
 import { hasValidatedDrblEstimate } from "@/data/queries/percentiles";
 import {
   getPlayerIdAliasIndex,
 } from "@/data/identity/player-identity";
 import type { GameSummary } from "@/data/types";
 import type { NbaTransactionEvent } from "@/data/types/transaction-event";
-import type { TeamSeasonStats } from "@/data/types/team-season";
+import type { TeamSeason, TeamSeasonStats } from "@/data/types/team-season";
+import { startYearFromCanonicalSeason } from "@/data/providers/historical/season-range";
 import {
   resolveHistoricalTeamBrand,
   type HistoricalLogoSource,
@@ -25,9 +35,11 @@ import {
 } from "@/lib/historical-team-brand";
 import {
   clampDateToSeason,
+  clampWeekToSeason,
   mapCalendarDayOntoSeason,
   nbaCalendarMonthDay,
   seasonDateBounds,
+  weekBoundsContaining,
 } from "@/themes/era-theme";
 
 export type HistoricalTeamDirectoryRow = {
@@ -36,6 +48,10 @@ export type HistoricalTeamDirectoryRow = {
   displayName: string;
   conference?: "East" | "West";
   avgDiff?: number;
+  /** Regular-season W-L when standings (not ESPN board) are the source. */
+  wins?: number;
+  losses?: number;
+  winPct?: number;
   fromEra: boolean;
   /** Resolved logo URL when verified historical or safe current; null = text mark. */
   logoUrl: string | null;
@@ -92,7 +108,28 @@ export async function getHistoricalTeamDirectory(
     /* fall through */
   }
 
+  const nbaDirectory = await loadNbaHistoricalTeamDirectory(season);
+  if (nbaDirectory.length > 0) {
+    return {
+      teams: [...nbaDirectory].sort((a, b) =>
+        a.displayName.localeCompare(b.displayName)
+      ),
+      source: "season-board",
+    };
+  }
+
   return eraFallbackDirectory(season);
+}
+
+function franchiseActiveInSeason(firstSeason: string, season: string): boolean {
+  try {
+    return (
+      startYearFromCanonicalSeason(firstSeason) <=
+      startYearFromCanonicalSeason(season)
+    );
+  } catch {
+    return false;
+  }
 }
 
 function eraFallbackDirectory(season: string): {
@@ -100,27 +137,38 @@ function eraFallbackDirectory(season: string): {
   source: "era-fallback" | "unavailable";
   warning?: string;
 } {
-  // Graceful degradation: only franchises with an era covering this season.
-  // Continuous franchises without relocation eras need the season board.
+  // Prefer the franchise book so continuous clubs (BOS, LAL, …) appear even
+  // without an explicit relocation-era row.
   const teams: HistoricalTeamDirectoryRow[] = [];
-  for (const t of listCanonicalTeams()) {
-    const era = resolveTeamEra(t.canonicalTeamId, season);
-    if (!era) continue;
-    const brand = resolveHistoricalTeamBrand(
-      t.canonicalTeamId,
-      season,
-      "era"
-    );
+  const seen = new Set<string>();
+
+  for (const f of FRANCHISE_HISTORIES) {
+    if (!franchiseActiveInSeason(f.firstSeason, season)) continue;
+    // Expansion clubs that start later than this season are already skipped;
+    // skip modern-only clubs that did not exist yet via firstSeason.
+    const resolved = resolveCanonicalTeam(f.abbr);
+    if (resolved.status !== "resolved") continue;
+    const id = resolved.team.canonicalTeamId;
+    if (seen.has(id)) continue;
+    seen.add(id);
+    const era = resolveTeamEra(id, season);
+    const display = teamEraDisplay(id, season, {
+      abbr: era?.abbr ?? f.abbr,
+      displayName: era?.displayName ?? `${f.city} ${f.name}`,
+    });
+    const brand = resolveHistoricalTeamBrand(id, season, "era");
     teams.push({
-      canonicalTeamId: t.canonicalTeamId,
-      abbr: era.abbr,
-      displayName: era.displayName,
-      fromEra: true,
+      canonicalTeamId: id,
+      abbr: display.abbr,
+      displayName: display.displayName,
+      conference: f.conference,
+      fromEra: Boolean(era),
       logoUrl: brand?.logoUrl ?? null,
       logoSource: brand?.source ?? "text_fallback",
       palette: brand?.palette ?? null,
     });
   }
+
   teams.sort((a, b) => a.displayName.localeCompare(b.displayName));
   if (teams.length === 0) {
     return {
@@ -133,8 +181,132 @@ function eraFallbackDirectory(season: string): {
     teams,
     source: "era-fallback",
     warning:
-      "Season team board unavailable; showing relocation-era franchises only (incomplete).",
+      "Season team board still loading. Directory lists the franchises active that year.",
   };
+}
+
+function directoryFromNbaTeamSeason(
+  row: TeamSeason,
+  season: string
+): HistoricalTeamDirectoryRow | null {
+  const byNba = getCanonicalTeamFromProvider("nba", row.teamId);
+  const byAbbr = resolveCanonicalTeam(row.teamAbbreviation);
+  const team =
+    byNba ?? (byAbbr.status === "resolved" ? byAbbr.team : null);
+  if (!team) return null;
+
+  const display = teamEraDisplay(team.canonicalTeamId, season, {
+    abbr: row.teamAbbreviation || team.abbr,
+    displayName: row.teamName || team.displayName,
+  });
+  const brand = resolveHistoricalTeamBrand(team.canonicalTeamId, season, "era");
+  const conf =
+    row.conference === "East" || row.conference === "West"
+      ? row.conference
+      : undefined;
+  return {
+    canonicalTeamId: team.canonicalTeamId,
+    abbr: display.abbr,
+    displayName: display.displayName,
+    conference: conf,
+    avgDiff: Number.isFinite(row.plusMinus) ? row.plusMinus : undefined,
+    wins: row.wins,
+    losses: row.losses,
+    winPct: row.winPct,
+    fromEra: display.fromEra,
+    logoUrl: brand?.logoUrl ?? null,
+    logoSource: brand?.source ?? "text_fallback",
+    palette: brand?.palette ?? null,
+    gamesPlayed: row.gamesPlayed,
+    ppg: row.pointsPerGame || undefined,
+    rpg: row.reboundsPerGame || undefined,
+    apg: row.assistsPerGame || undefined,
+    spg: row.stealsPerGame || undefined,
+    bpg: row.blocksPerGame || undefined,
+    topg: row.turnoversPerGame || undefined,
+    fieldGoalPct: row.fieldGoalPct || undefined,
+    threePointPct: row.threePointPct || undefined,
+    freeThrowPct: row.freeThrowPct || undefined,
+    effectiveFieldGoalPct: row.effectiveFieldGoalPct || undefined,
+    trueShootingPct: row.trueShootingPct || undefined,
+  };
+}
+
+function franchiseConference(
+  canonicalTeamId: string,
+  abbr: string
+): "East" | "West" | undefined {
+  for (const f of FRANCHISE_HISTORIES) {
+    if (f.abbr.toUpperCase() === abbr.toUpperCase()) return f.conference;
+    const r = resolveCanonicalTeam(f.abbr);
+    if (
+      r.status === "resolved" &&
+      r.team.canonicalTeamId === canonicalTeamId
+    ) {
+      return f.conference;
+    }
+  }
+  return undefined;
+}
+
+function directoryFromBundledRecord(
+  row: ReturnType<typeof getBundledHistoricalTeamSeasonRecords>[number],
+  season: string
+): HistoricalTeamDirectoryRow | null {
+  const resolved = resolveCanonicalTeam(row.brefAbbr);
+  if (resolved.status !== "resolved") return null;
+  const team = resolved.team;
+  const display = teamEraDisplay(team.canonicalTeamId, season, {
+    abbr: row.brefAbbr,
+    displayName: row.displayName || team.displayName,
+  });
+  const brand = resolveHistoricalTeamBrand(team.canonicalTeamId, season, "era");
+  const gamesPlayed = row.wins + row.losses;
+  const winPct = gamesPlayed > 0 ? row.wins / gamesPlayed : 0;
+  const conf =
+    row.conference === "East" || row.conference === "West"
+      ? row.conference
+      : franchiseConference(team.canonicalTeamId, display.abbr);
+  return {
+    canonicalTeamId: team.canonicalTeamId,
+    abbr: display.abbr,
+    displayName: display.displayName,
+    conference: conf,
+    wins: row.wins,
+    losses: row.losses,
+    winPct,
+    gamesPlayed,
+    fromEra: display.fromEra,
+    logoUrl: brand?.logoUrl ?? null,
+    logoSource: brand?.source ?? "text_fallback",
+    palette: brand?.palette ?? null,
+  };
+}
+
+/**
+ * Pre-ESPN board seasons: live NBA Stats when allowed, else bundled BRef W-L.
+ */
+async function loadNbaHistoricalTeamDirectory(
+  season: string
+): Promise<HistoricalTeamDirectoryRow[]> {
+  if (isTeamSeasonBoardSupported(season)) return [];
+
+  try {
+    const provider = getDataProvider();
+    if (provider.getTeamSeasons) {
+      const rows = await provider.getTeamSeasons(season);
+      const mapped = rows
+        .map((row) => directoryFromNbaTeamSeason(row, season))
+        .filter((row): row is HistoricalTeamDirectoryRow => row != null);
+      if (mapped.length > 0) return mapped;
+    }
+  } catch {
+    /* fall through to bundle */
+  }
+
+  return getBundledHistoricalTeamSeasonRecords(season)
+    .map((row) => directoryFromBundledRecord(row, season))
+    .filter((row): row is HistoricalTeamDirectoryRow => row != null);
 }
 
 function directoryFromBoardRow(
@@ -276,11 +448,8 @@ export async function getHistoricalLeadersBundle(
     };
 
     if (!isDrblSeason(season)) {
-      return {
-        ...base,
-        drbl: [],
-        drblNote: `DRBL/100 is not published for ${season} (registry seasons only).`,
-      };
+      // Pre-registry seasons: counting leaders only; awards/draft fill the gap on the page.
+      return { ...base, drbl: [] };
     }
 
     const [drblRows, aliases] = await Promise.all([
@@ -332,6 +501,23 @@ export async function getHistoricalLeadersBundle(
   }
 }
 
+function sortDirectoryForStandings(
+  rows: HistoricalTeamDirectoryRow[]
+): HistoricalTeamDirectoryRow[] {
+  return [...rows].sort((a, b) => {
+    const aw = a.winPct;
+    const bw = b.winPct;
+    if (aw != null && bw != null && Number.isFinite(aw) && Number.isFinite(bw)) {
+      if (bw !== aw) return bw - aw;
+    } else if (aw != null && Number.isFinite(aw)) {
+      return -1;
+    } else if (bw != null && Number.isFinite(bw)) {
+      return 1;
+    }
+    return (b.avgDiff ?? 0) - (a.avgDiff ?? 0);
+  });
+}
+
 /**
  * One team-board load → directory + standings proxy.
  */
@@ -352,9 +538,7 @@ export async function getHistoricalTeamSnapshot(season: string): Promise<{
       const directory = board
         .map((row) => directoryFromBoardRow(row, season))
         .sort((a, b) => a.displayName.localeCompare(b.displayName));
-      const byDiff = [...directory].sort(
-        (a, b) => (b.avgDiff ?? 0) - (a.avgDiff ?? 0)
-      );
+      const byDiff = sortDirectoryForStandings(directory);
       return {
         directory,
         directorySource: "season-board",
@@ -369,14 +553,32 @@ export async function getHistoricalTeamSnapshot(season: string): Promise<{
     /* fall through */
   }
 
+  // Pre-ESPN board seasons: NBA Stats standings + player rollups.
+  const nbaDirectory = await loadNbaHistoricalTeamDirectory(season);
+  if (nbaDirectory.length > 0) {
+    const directory = [...nbaDirectory].sort((a, b) =>
+      a.displayName.localeCompare(b.displayName)
+    );
+    const byRecord = sortDirectoryForStandings(directory);
+    return {
+      directory,
+      directorySource: "season-board",
+      standings: {
+        east: byRecord.filter((r) => r.conference === "East"),
+        west: byRecord.filter((r) => r.conference === "West"),
+        available: true,
+      },
+    };
+  }
+
   const fallback = eraFallbackDirectory(season);
   return {
     directory: fallback.teams,
     directorySource: fallback.source,
     directoryWarning: fallback.warning,
     standings: {
-      east: [],
-      west: [],
+      east: fallback.teams.filter((r) => r.conference === "East"),
+      west: fallback.teams.filter((r) => r.conference === "West"),
       available: false,
       warning:
         fallback.warning ??
@@ -421,6 +623,71 @@ export async function getHistoricalGamesForDate(
       games: [],
       date: clamped,
       warning: "Games unavailable for this date.",
+    };
+  }
+}
+
+/** Monday–Sunday slate (clamped to season bounds) around `date`. */
+export async function getHistoricalGamesForWeek(
+  season: string,
+  date: string
+): Promise<{
+  games: GameSummary[];
+  weekStart: string;
+  weekEnd: string;
+  warning?: string;
+}> {
+  const anchored = clampDateToSeason(date, season);
+  const raw = weekBoundsContaining(anchored);
+  const clamped = clampWeekToSeason(raw.start, raw.end, season);
+  if (!clamped) {
+    return {
+      games: [],
+      weekStart: anchored,
+      weekEnd: anchored,
+      warning: "No week window inside this season.",
+    };
+  }
+  const load = async () => {
+    const games = await getFilteredGames({
+      season,
+      dateRange: { start: clamped.start, end: clamped.end },
+    });
+    return {
+      games,
+      weekStart: clamped.start,
+      weekEnd: clamped.end,
+    };
+  };
+  try {
+    const result = await Promise.race([
+      load(),
+      new Promise<{
+        games: GameSummary[];
+        weekStart: string;
+        weekEnd: string;
+        warning: string;
+      }>((resolve) =>
+        setTimeout(
+          () =>
+            resolve({
+              games: [],
+              weekStart: clamped.start,
+              weekEnd: clamped.end,
+              warning:
+                "Games for this week are still loading from the historical provider. Try again shortly, or open the season games board.",
+            }),
+          10000
+        )
+      ),
+    ]);
+    return result;
+  } catch {
+    return {
+      games: [],
+      weekStart: clamped.start,
+      weekEnd: clamped.end,
+      warning: "Games unavailable for this week.",
     };
   }
 }
@@ -498,7 +765,25 @@ export async function getHistoricalTransactionsForDate(
   }
 }
 
-/** Season standings proxy: team board sorted by avgDiff (when available). */
+export async function getHistoricalTransactionsForWeek(
+  weekStart: string,
+  weekEnd: string
+): Promise<{ events: NbaTransactionEvent[]; warning?: string }> {
+  try {
+    const page = await listTransactionEvents(
+      { dateFrom: weekStart, dateTo: weekEnd },
+      { page: 1, pageSize: 40, force: false }
+    );
+    return { events: page.events };
+  } catch {
+    return {
+      events: [],
+      warning: "Transaction archive unavailable for this week.",
+    };
+  }
+}
+
+/** Season standings proxy: team board / NBA historical standings when available. */
 export async function getHistoricalStandingsProxy(
   season: string
 ): Promise<{
@@ -507,30 +792,11 @@ export async function getHistoricalStandingsProxy(
   available: boolean;
   warning?: string;
 }> {
-  try {
-    const board = await getTeamSeasonStats(season);
-    if (board.length === 0) {
-      return {
-        east: [],
-        west: [],
-        available: false,
-        warning: "Standings require season team board coverage.",
-      };
-    }
-    const rows = board
-      .map((r) => directoryFromBoardRow(r, season))
-      .sort((a, b) => (b.avgDiff ?? 0) - (a.avgDiff ?? 0));
-    return {
-      east: rows.filter((r) => r.conference === "East"),
-      west: rows.filter((r) => r.conference === "West"),
-      available: true,
-    };
-  } catch {
-    return {
-      east: [],
-      west: [],
-      available: false,
-      warning: "Standings unavailable for this season.",
-    };
-  }
+  const snap = await getHistoricalTeamSnapshot(season);
+  return {
+    east: snap.standings.east,
+    west: snap.standings.west,
+    available: snap.standings.available,
+    warning: snap.standings.warning,
+  };
 }

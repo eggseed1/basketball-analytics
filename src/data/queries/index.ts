@@ -208,7 +208,9 @@ export {
   getHistoricalLeadersBundle,
   getHistoricalTeamSnapshot,
   getHistoricalGamesForDate,
+  getHistoricalGamesForWeek,
   getHistoricalTransactionsForDate,
+  getHistoricalTransactionsForWeek,
   getHistoricalStandingsProxy,
   resolveTimeMachineDate,
 } from "./time-machine";

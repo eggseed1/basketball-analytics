@@ -22,7 +22,6 @@ import { type } from "@/lib/design-system";
 import { brandAtmosphereColors } from "@/lib/game-matchup-theme";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { isSeasonAwaitingFirstGame } from "@/lib/nba-season-status";
-import { playerBoardAwaitingTip } from "@/lib/player-board-tip";
 import { shiftCanonicalSeason } from "@/lib/player-stat-comps";
 import { resolveTeamIdentityFallback } from "@/lib/team-destination";
 import { resolveTeamFromBoard } from "@/lib/team-explorer";
@@ -82,9 +81,7 @@ export default async function TeamHistoryPage({ params, searchParams }: TeamHist
   const team = await resolveHistoryTeam(teamId, season);
   if (!team) notFound();
 
-  const priorBoard =
-    isSeasonAwaitingFirstGame(season, team.board) ||
-    playerBoardAwaitingTip(season, team.board)
+  const priorBoard = isSeasonAwaitingFirstGame(season, team.board)
     ? []
     : (await getTeamSeasonBoardCached(priorSeason)).rows;
   const brand = resolveTeamBrand(team.abbreviation);
