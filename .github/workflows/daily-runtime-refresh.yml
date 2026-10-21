@@ -49,6 +49,10 @@ on:
         description: "Deploy to Cloudflare after sync"
         type: boolean
         default: true
+      commit_season:
+        description: "Also commit in-season snapshot bakes (game/standings/DRBL/impact/etc.)"
+        type: boolean
+        default: false
 
 concurrency:
   group: daily-runtime-refresh
@@ -220,9 +224,10 @@ jobs:
             src/data/runtime/on-off-snapshot.json \
             src/data/runtime/team-game-box-snapshot.json \
             public/runtime/on-off
-          # In-season bakes, weekly and after the Finals, so offseason deploys
-          # (which skip these bakes) still ship the finished season.
-          if [ "${{ steps.sync.outputs.commit_season }}" = "true" ]; then
+          # In-season bakes, Mondays and after the Finals by default, so
+          # offseason deploys still ship the finished season. workflow_dispatch
+          # can force a mid-week season commit via commit_season=true.
+          if [ "${{ steps.sync.outputs.commit_season }}" = "true" ] || [ "${{ github.event.inputs.commit_season }}" = "true" ]; then
             git add -- \
               src/data/runtime/game-snapshot.json \
               src/data/runtime/season-tables-snapshot.json \
@@ -245,11 +250,22 @@ jobs:
             exit 0
           fi
           git commit -m "Nightly data refresh [skip ci]"
+          # Leftover dirty trees (e.g. season bakes when commit_season=false)
+          # block pull --rebase; stash them so the nightly commit can push,
+          # then restore for the OpenNext deploy that follows.
+          git stash push -u -m "daily-refresh: unstaged bake leftovers" || true
+          pushed=0
           for attempt in 1 2 3; do
-            git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
+            if git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}"; then
+              pushed=1
+              break
+            fi
             sleep $((attempt * 10))
           done
-          echo "::warning::Could not push the data refresh; the deploy still uses it."
+          git stash pop || true
+          if [ "$pushed" != "1" ]; then
+            echo "::warning::Could not push the data refresh; the deploy still uses it."
+          fi
 
       # Past seasons' game logs, shot charts and game files are served from R2,
       # and CI only bakes the current season, so the finished season is copied
