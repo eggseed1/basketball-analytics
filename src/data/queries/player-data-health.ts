@@ -21,11 +21,13 @@ import { scopeRowsToCurrentTeam } from "./current-team-scope";
 import { applyPlayerSeasonFilters } from "./filter-utils";
 import { getFilteredPlayerSeasonsDetailed } from "./players";
 import {
+  priorSeasonBoardCatchUpNotice,
   priorSeasonForStats,
   priorSeasonStatsNotice,
   shouldUsePriorSeasonBoardStats,
 } from "@/lib/player-board-season";
 import { isPreseasonRosterSeason } from "@/data/providers/nba/espn-roster-client";
+import { isCurrentNbaSeason } from "@/lib/nba-season-status";
 
 export type PlayerBoardSource =
   | "live-espn"
@@ -278,11 +280,11 @@ export async function getPlayerSeasonBoardSnapshot(
     } else if (
       !usingPriorSeasonStats &&
       season.toUpperCase() !== "ALL" &&
-      isPreseasonRosterSeason(season)
+      (isPreseasonRosterSeason(season) || isCurrentNbaSeason(season))
     ) {
-      // Pre-tip only: current year selected but no board yet. Prefer last
-      // completed season over a hard fail. After tip, keep the miss visible so
-      // early box-score / live boards are not swapped for last year's GP.
+      // Current league year with no usable board: prefer last completed season
+      // over a hard fail. Cloudflare cannot reach ESPN; until season-tables
+      // includes this year the bundled peer board is empty and live times out.
       const priorSeason = priorSeasonForStats(season);
       const priorLoaded = await load({ season: priorSeason });
       if (priorLoaded.error == null && priorLoaded.rows.length > 0) {
@@ -295,7 +297,11 @@ export async function getPlayerSeasonBoardSnapshot(
           usingPriorSeasonStats,
         });
         source = "live-espn";
-        warnings.push(priorSeasonStatsNotice(season, priorSeason));
+        warnings.push(
+          isPreseasonRosterSeason(season)
+            ? priorSeasonStatsNotice(season, priorSeason)
+            : priorSeasonBoardCatchUpNotice(season, priorSeason)
+        );
         console.warn(
           `[player-board] live board unavailable for ${season} (${classifyProviderFailure(error).label}); showing ${priorSeason}`
         );

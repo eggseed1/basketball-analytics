@@ -119,6 +119,14 @@ export function priorSeasonStatsNotice(
   return `${requestSeason} hasn't started. Showing ${statsSeason} stats until regular-season games are played.`;
 }
 
+/** Live/bundled board miss after tip — keep Explore usable with last year's rows. */
+export function priorSeasonBoardCatchUpNotice(
+  requestSeason: string,
+  statsSeason: string
+): string {
+  return `${requestSeason} board is still catching up. Showing ${statsSeason} for now.`;
+}
+
 /**
  * Explore Players board default: keep the last completed season selected until
  * regular-season tip. After the opener, default to the current league year.

@@ -124,7 +124,11 @@ async function main() {
   assert.equal(tipGap.usingPriorSeasonStats, true);
   assert.equal(tipGap.statsSeason, "2025-26");
   assert.equal(tipGap.rows.length, 2);
-  assert.ok(tipGap.warnings.some((w) => /hasn't started/i.test(w)));
+  assert.ok(
+    tipGap.warnings.some(
+      (w) => /hasn't started|still catching up/i.test(w)
+    )
+  );
 
   // Timeout + no cache
   __resetPlayerBoardCacheForTests();
