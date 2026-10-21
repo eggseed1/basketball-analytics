@@ -52,11 +52,17 @@ export class SiteRealNBADataProvider implements RealNBADataProvider {
     return makeProvenance(season, this.id, quality);
   }
 
+  /**
+   * Prefer the historical (stats.nba) board when it has real counting lines —
+   * that is what localhost Franchise Lab seeds from. On Cloudflare Workers,
+   * stats.nba often returns empty, so fall through to the same resilient /
+   * bundled player board the rest of the product uses.
+   */
   private async loadStats(season: SeasonYear): Promise<PlayerSeason[]> {
     const existing = this.statsCache.get(season);
     if (existing) return existing;
     const canonical = seasonEndToCanonical(season);
-    const promise = getHistoricalPlayerSeasons(canonical);
+    const promise = loadPlayerSeasonBoard(canonical);
     this.statsCache.set(season, promise);
     return promise;
   }
@@ -222,4 +228,41 @@ export class SiteRealNBADataProvider implements RealNBADataProvider {
 
 export function createSiteRealNBADataProvider(): SiteRealNBADataProvider {
   return new SiteRealNBADataProvider();
+}
+
+function countingRows(rows: PlayerSeason[]): number {
+  return rows.filter(
+    (row) =>
+      row.gamesPlayed > 0 &&
+      Number.isFinite(row.assists) &&
+      Number.isFinite(row.rebounds)
+  ).length;
+}
+
+async function loadPlayerSeasonBoard(canonical: string): Promise<PlayerSeason[]> {
+  let historical: PlayerSeason[] = [];
+  try {
+    historical = await getHistoricalPlayerSeasons(canonical);
+  } catch {
+    historical = [];
+  }
+  if (countingRows(historical) >= 50) return historical;
+
+  try {
+    const { getDataProvider } = await import("@/data/providers");
+    const live = await getDataProvider().getPlayerSeasons(canonical);
+    if (countingRows(live) >= 50) return live;
+  } catch {
+    /* try registry board below */
+  }
+
+  try {
+    const { getPlayersBySeason } = await import("@/data/queries/players");
+    const board = await getPlayersBySeason(canonical);
+    if (countingRows(board) >= 50) return board;
+  } catch {
+    /* keep whatever historical returned */
+  }
+
+  return historical;
 }

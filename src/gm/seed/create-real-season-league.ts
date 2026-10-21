@@ -31,6 +31,7 @@ import {
   SiteRealNBADataProvider,
   canonicalToSeasonEnd,
   createSiteRealNBADataProvider,
+  seasonEndToCanonical,
 } from "@/gm/myleague/real-nba-provider";
 import { getCbaRules } from "@/gm/myleague/cba-registry";
 import { ESPN_PLAYER_SEASON_HORIZON_START } from "@/gm/myleague/constants";
@@ -152,6 +153,13 @@ async function buildCurrentRosterLeague(
   if (roster.length < 300) {
     throw new Error(
       `${seasonCanonical} roster list is short (${roster.length}). Refusing to use last year's teams.`
+    );
+  }
+  const priorWithStats = prior.filter((row) => row.gamesPlayed > 0);
+  if (priorWithStats.length < 50) {
+    throw new Error(
+      `Franchise Lab needs prior-season counting stats to rate the ${seasonCanonical} roster ` +
+        `(only ${priorWithStats.length} rows for ${seasonEndToCanonical(priorEnd)}).`
     );
   }
   const rows = placeOnCurrentRoster(roster, sameSeason, prior);
