@@ -33,3 +33,19 @@ test("each child sitemap is unique https://drbl.io URLs in a urlset", () => {
   }
   assert.ok(seen.size > 1000);
 });
+
+test("pages sitemap includes brand and advanced-stats hubs", () => {
+  const locs = new Set(sitemapUrls("pages").map((u) => u.loc));
+  for (const path of [
+    "/",
+    "/explore/players",
+    "/explore/players/styles",
+    "/learn",
+    "/learn/drbl",
+    "/learn/drbl/war1",
+    "/ask",
+    "/about",
+  ]) {
+    assert.ok(locs.has(`https://drbl.io${path}`), `missing ${path}`);
+  }
+});

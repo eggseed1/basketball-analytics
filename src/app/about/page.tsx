@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 export async function generateMetadata() {
   const t = await getTranslations("Legal");
   return {
+    alternates: { canonical: "/about" },
     title: t("aboutMetaTitle"),
     description: t("aboutMetaDescription"),
   };

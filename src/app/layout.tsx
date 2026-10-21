@@ -12,11 +12,21 @@ import { ChartHoverTip } from "@/components/charts/chart-hover-tip";
 import { ScrollHoverGuard } from "@/components/continuity/scroll-hover-guard";
 import { SortableTables } from "@/components/continuity/sortable-tables";
 import { pickClientMessages } from "@/i18n/client-messages";
+import { LocaleNavSync } from "@/components/i18n/locale-nav-sync";
 import { htmlLang } from "@/i18n/config";
-import { APP_BOOT_SCRIPT } from "@/lib/app-boot";
+import {
+  APP_BOOT_CRITICAL_CSS,
+  APP_BOOT_HEAD_SCRIPT,
+  APP_BOOT_SCRIPT,
+} from "@/lib/app-boot";
 import { APPLE_STARTUP_SCREENS, appleStartupHref } from "@/lib/apple-startup";
 import { OWNER_THEME_BOOT_SCRIPT } from "@/lib/owner-theme";
 import { SCORE_DELAY_BOOT_SCRIPT } from "@/lib/score-delay";
+import {
+  SITE_DESCRIPTION,
+  SITE_KEYWORDS,
+  SITE_TITLE_DEFAULT,
+} from "@/lib/site-seo";
 import { SITE_NAME, SITE_URL } from "@/lib/site-url";
 
 import "./globals.css";
@@ -34,16 +44,14 @@ const geistMono = Geist_Mono({
   adjustFontFallback: true,
 });
 
-const SITE_DESCRIPTION =
-  "NBA scores, shot charts, impact and efficiency stats, and fan sentiment.";
-
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME} Analytics: NBA Stats and Advanced Metrics`,
+    default: SITE_TITLE_DEFAULT,
     template: `%s | ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
+  keywords: [...SITE_KEYWORDS],
   applicationName: "DRBL",
   appleWebApp: {
     capable: true,
@@ -68,9 +76,13 @@ export const metadata: Metadata = {
     type: "website",
     siteName: SITE_NAME,
     locale: "en_US",
+    title: SITE_TITLE_DEFAULT,
+    description: SITE_DESCRIPTION,
   },
   twitter: {
     card: "summary_large_image",
+    title: SITE_TITLE_DEFAULT,
+    description: SITE_DESCRIPTION,
   },
 };
 
@@ -102,11 +114,19 @@ export default async function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable}`}
     >
       <body className="min-h-dvh min-w-0 overflow-x-clip bg-background font-sans text-base text-foreground">
-        {/* Plain <script> so it runs before first paint; next/script's
-            beforeInteractive holds inline code until the runtime loads. */}
+        {/* Plain <script>/<style> so standalone splash paints before first
+            frame; next/script beforeInteractive waits on the runtime. */}
         <script
           id="owner-theme-boot"
           dangerouslySetInnerHTML={{ __html: OWNER_THEME_BOOT_SCRIPT }}
+        />
+        <style
+          id="app-boot-critical"
+          dangerouslySetInnerHTML={{ __html: APP_BOOT_CRITICAL_CSS }}
+        />
+        <script
+          id="app-boot-head"
+          dangerouslySetInnerHTML={{ __html: APP_BOOT_HEAD_SCRIPT }}
         />
         <script
           id="score-delay-boot"
@@ -119,8 +139,11 @@ export default async function RootLayout({
             position: "fixed",
             inset: 0,
             zIndex: 80,
+            display: "none",
+            flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
+            gap: 18,
             background: "#f2f2f7",
             transition: "opacity 0.4s ease",
           }}
@@ -147,6 +170,7 @@ export default async function RootLayout({
             Client provider gets only namespaces used by useTranslations. */}
         <NextIntlClientProvider locale={locale} messages={clientMessages}>
           <OwnerThemeProvider>
+            <LocaleNavSync />
             <SmoothScroll />
             <ChartHoverTip />
             <ScrollHoverGuard />

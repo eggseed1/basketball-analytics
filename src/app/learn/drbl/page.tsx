@@ -27,9 +27,9 @@ import { BOX_PRIOR_CONFIG } from "../../../../drbl/models/box-prior";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/learn/drbl" },
-  title: "DRBL guide",
+  title: "What is DRBL? NBA advanced stats guide",
   description:
-    "How DRBL/100 rates players from play-by-play and the box score, how it was tested against real final scores, and the numbers built on it: WAR1, DRBL-O, DRBL-D and contract surplus.",
+    "DRBL/100 is an NBA advanced impact rating from play-by-play and the box score. How it was tested against final scores, plus WAR1, DRBL-O, DRBL-D, and contract surplus.",
 };
 
 const CONTENTS = [
@@ -129,9 +129,9 @@ export default function LearnDrblPage() {
   const lastSeason = coverage.at(-1);
 
   return (
-    <main data-motion-page className="site-shell flex flex-col gap-8 py-6 sm:py-8">
+    <main data-motion-page className="site-shell flex flex-col gap-4 pb-6 sm:gap-5 sm:pb-8">
       <MotionReveal />
-      <div data-motion-stack className="flex w-full flex-col gap-6 lg:max-w-5xl">
+      <div data-motion-stack className="flex w-full flex-col gap-4 lg:max-w-5xl sm:gap-5">
         <Link href="/learn" className="text-[14px] font-semibold text-muted-foreground underline-offset-4 hover:underline">
           ← Learn
         </Link>
@@ -564,7 +564,7 @@ DRBL/100 = c × N / (N + ${sampleK}) × blend`}
           }
         />
 
-        <section className="flex flex-col gap-5">
+        <section className="flex flex-col gap-3">
           <h2 className="text-[18px] font-bold">Go deeper</h2>
           {DEEPER.map((group) => (
             <div key={group.title} className="flex flex-col gap-2">

@@ -24,7 +24,8 @@ export const dynamic = "force-dynamic";
 export const metadata = {
   alternates: { canonical: "/explore/games" },
   title: "NBA game archive",
-  description: "NBA games from 1960 to present with score cards and filters.",
+  description:
+    "NBA games from 1960 to present on DRBL, with scores, filters, and links into advanced stats and box scores.",
 };
 
 interface ExploreGamesPageProps {

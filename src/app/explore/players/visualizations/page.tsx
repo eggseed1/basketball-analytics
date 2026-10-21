@@ -43,9 +43,10 @@ import {
 import { parseVizRankEnd } from "@/lib/viz-field-filter";
 
 export const metadata = {
-  title: "Player visualizations",
+  alternates: { canonical: "/explore/players/visualizations" },
+  title: "NBA advanced stats visualizations",
   description:
-    "NBA player race charts, league scatters for usage, impact, shot diet, creation, FT pressure, glass, and scoring volume, and contract surplus rankings, and how much of each salary players have played off.",
+    "DRBL charts for NBA advanced stats: player races, usage and impact scatters, shot diet, creation, and contract surplus.",
 };
 
 interface PageProps {

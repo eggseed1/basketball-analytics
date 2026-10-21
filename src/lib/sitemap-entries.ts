@@ -27,6 +27,7 @@ const SECTION_PATHS = [
   "/explore/games",
   "/explore/players",
   "/explore/players/hot-cold",
+  "/explore/players/styles",
   "/explore/players/visualizations",
   "/explore/players/race",
   "/explore/teams/trade",

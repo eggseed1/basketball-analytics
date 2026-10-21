@@ -10,9 +10,9 @@ import { isNonEnglishLocale, loadLocalizedGuide } from "@/content/learn/load-loc
 
 export const metadata: Metadata = {
   alternates: { canonical: "/learn/drbl/war1" },
-  title: "WAR1",
+  title: "WAR1: DRBL wins above average",
   description:
-    "The season value a player accumulated: DRBL/100 times playing time, in wins above an average player. This is not classic WAR.",
+    "WAR1 is DRBL season value: DRBL/100 times playing time, in wins above an average player. Part of DRBL NBA advanced stats. This is not classic WAR.",
 };
 
 export default async function LearnWar1Page() {
@@ -23,9 +23,9 @@ export default async function LearnWar1Page() {
   const t = await getTranslations("LearnPages");
 
   return (
-    <main data-motion-page className="site-shell flex flex-col gap-8 py-6 sm:py-8">
+    <main data-motion-page className="site-shell flex flex-col gap-4 pb-6 sm:gap-5 sm:pb-8">
       <MotionReveal />
-      <div data-motion-stack className="site-prose flex w-full flex-col gap-8 lg:mx-0 lg:max-w-4xl">
+      <div data-motion-stack className="site-prose flex w-full flex-col gap-4 lg:mx-0 lg:max-w-4xl sm:gap-5">
         <AppLink
           href="/learn/drbl"
           className="text-[14px] font-semibold text-muted-foreground underline-offset-4 hover:underline"

@@ -20,9 +20,9 @@ import { cn } from "@/lib/utils";
 
 export const metadata = {
   alternates: { canonical: "/explore/players/hot-cold" },
-  title: "Hot & Cold",
+  title: "NBA hot and cold streaks",
   description:
-    "NBA players running well above or below their own usual points, true shooting, or rebounds over a recent stretch of games. Each player is measured against himself, not the league.",
+    "DRBL tracks NBA players running above or below their own usual points, true shooting, or rebounds over a recent stretch. Each player is measured against himself, not the league.",
 };
 
 const METRIC_ORDER = ["ppg", "ts", "rpg"] as const;
