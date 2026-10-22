@@ -113,34 +113,26 @@ export function estimateSeasonPossessions(row: TeamSeasonStats): number | null {
   return poss > 0 ? poss : null;
 }
 
+/** Points per possession from board totals (ESPN team board has no ORtg). */
 export function seasonPointsPerPossession(row: TeamSeasonStats): number | null {
-  if (finite(row.offensiveRating) && row.offensiveRating > 0) {
-    return row.offensiveRating / 100;
-  }
   const poss = estimateSeasonPossessions(row);
   if (poss == null || !(row.points > 0)) return null;
   return row.points / poss;
 }
 
+/** Possessions per game from board totals (ESPN team board has no pace). */
 export function seasonPace(row: TeamSeasonStats): number | null {
-  if (finite(row.pace) && row.pace > 0) return row.pace;
   const poss = estimateSeasonPossessions(row);
   if (poss == null || !(row.gamesPlayed > 0)) return null;
   return poss / row.gamesPlayed;
 }
 
 export function seasonOffensiveRating(row: TeamSeasonStats): number | null {
-  if (finite(row.offensiveRating) && row.offensiveRating > 0) {
-    return row.offensiveRating;
-  }
   const ppp = seasonPointsPerPossession(row);
   return ppp != null ? ppp * 100 : null;
 }
 
 export function seasonDefensiveRating(row: TeamSeasonStats): number | null {
-  if (finite(row.defensiveRating) && row.defensiveRating > 0) {
-    return row.defensiveRating;
-  }
   const poss = estimateSeasonPossessions(row);
   if (poss == null || !(row.oppPpg > 0) || !(row.gamesPlayed > 0)) return null;
   return (100 * row.oppPpg * row.gamesPlayed) / poss;
