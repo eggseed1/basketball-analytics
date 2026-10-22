@@ -33,7 +33,6 @@ import {
 } from "@/components/players/player-page-deferred-islands";
 import {
   PlayerBoardSkeleton,
-  PlayerOverviewCareerSkeleton,
   PlayerOverviewContractSkeleton,
   PlayerPercentileSkeleton,
 } from "@/components/players/player-page-skeletons";
@@ -553,6 +552,30 @@ export default async function PlayerPage({
         }),
       ]);
 
+  // Overview career + contract used the same Suspense+skeleton trap as identity.
+  const [overviewCareerNode, overviewContractNode] =
+    view === "overview" && !(slimWorker || notYetPlayed)
+      ? await Promise.all([
+          PlayerOverviewCareerSection({
+            playerId,
+            season,
+            seasonType,
+            career,
+            teamKey,
+            fromHistory,
+            themeMode,
+          }),
+          PlayerContractSectionIsland({
+            playerId,
+            playerName: displayName,
+            teamKey,
+            nbaId: identity?.nbaId,
+            season: seasonParam,
+            variant: "summary",
+          }),
+        ])
+      : [null, null];
+
   const careerSeasonsForTable =
     historySeasons.length > 0 ? historySeasons : universeSeasons;
 
@@ -665,23 +688,9 @@ export default async function PlayerPage({
           </Suspense>
         ) : null}
 
-        {view === "overview" && !(slimWorker || notYetPlayed) ? (
-          <Suspense
-            fallback={
-              <PlayerOverviewCareerSkeleton label={t("loadingCareer")} />
-            }
-          >
-            <PlayerOverviewCareerSection
-              playerId={playerId}
-              season={season}
-              seasonType={seasonType}
-              career={career}
-              teamKey={teamKey}
-              fromHistory={fromHistory}
-              themeMode={themeMode}
-            />
-          </Suspense>
-        ) : null}
+        {view === "overview" && !(slimWorker || notYetPlayed)
+          ? overviewCareerNode
+          : null}
 
         {view === "career" ? (
           <Suspense
@@ -716,22 +725,7 @@ export default async function PlayerPage({
           </Suspense>
         ) : null}
 
-        {view === "overview" && !slimWorker ? (
-          <Suspense
-            fallback={
-              <PlayerOverviewContractSkeleton label={t("loadingContract")} />
-            }
-          >
-            <PlayerContractSectionIsland
-              playerId={playerId}
-              playerName={displayName}
-              teamKey={teamKey}
-              nbaId={identity?.nbaId}
-              season={seasonParam}
-              variant="summary"
-            />
-          </Suspense>
-        ) : null}
+        {view === "overview" && !slimWorker ? overviewContractNode : null}
 
         {view === "salary" && !slimWorker ? (
           <Suspense
