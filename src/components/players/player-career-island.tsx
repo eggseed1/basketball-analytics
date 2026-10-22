@@ -29,13 +29,22 @@ function rate(n: number | null | undefined): number | null {
   return n != null && Number.isFinite(n) && n > 0 ? n : null;
 }
 
+/** Drop null metric fields — RSC still ships `"raptor":null` otherwise. */
+function omitNullMetrics(row: CareerBoardRow): CareerBoardRow {
+  const out: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(row)) {
+    if (value !== null) out[key] = value;
+  }
+  return out as CareerBoardRow;
+}
+
 export function toCareerBoardRows(career: PlayerSeason[]): CareerBoardRow[] {
   return dedupeCareerSeasons(career).map((row) => {
     const gp = row.gamesPlayed;
     const apg = perGame(row.assists, gp);
     const tpg = perGame(row.turnovers, gp);
     const drbl = hasValidDrblEstimate(row);
-    return {
+    return omitNullMetrics({
       season: row.season,
       teamId: row.teamId,
       teamAbbr: isMultiTeamSeasonRow(row)
@@ -92,7 +101,7 @@ export function toCareerBoardRows(career: PlayerSeason[]): CareerBoardRow[] {
       drbl100: drbl ? finiteNum(row.drbl100) : null,
       drblO: drbl ? finiteNum(row.drblO) : null,
       drblD: drbl ? finiteNum(row.drblD) : null,
-    };
+    });
   });
 }
 
