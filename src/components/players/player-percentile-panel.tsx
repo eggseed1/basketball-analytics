@@ -615,15 +615,22 @@ function CompComparePanel({
   compsPending?: boolean;
 }) {
   const chartTheme = useChartTheme();
-  const [mode, setMode] = useState<"league" | "history">("league");
-  // Early-season boards often have historical comps first — don't sit on
-  // "Finding similar…" for an empty This-season list once hist peers exist.
-  useEffect(() => {
-    if (!metric) return;
-    const league = metric.leagueComps?.length ?? 0;
-    const hist = metric.historicalComps?.length ?? 0;
-    if (league === 0 && hist > 0) setMode("history");
-  }, [metric]);
+  // Early-season boards often have historical comps first — prefer Other
+  // seasons when This season is empty, until the user picks a mode.
+  const metricKey = metric?.id ?? "";
+  const autoMode: "league" | "history" =
+    (metric?.leagueComps?.length ?? 0) === 0 &&
+    (metric?.historicalComps?.length ?? 0) > 0
+      ? "history"
+      : "league";
+  const [userMode, setUserMode] = useState<{
+    key: string;
+    mode: "league" | "history";
+  } | null>(null);
+  const mode =
+    userMode?.key === metricKey ? userMode.mode : autoMode;
+  const setMode = (next: "league" | "history") =>
+    setUserMode({ key: metricKey, mode: next });
   const handleChartSeason = useCallback(
     (raw: string) => {
       let next = raw;
@@ -1514,16 +1521,17 @@ export function PlayerPercentilePanel({
     [seasons]
   );
 
+  /* eslint-disable react-hooks/set-state-in-effect -- URL season drives slider + fetch */
   useEffect(() => {
     // Ignore URL-driven reloads we already handled via shallow replace / commit.
     if (!urlSeason) return;
     const next = seasonOnTrack(timeline, urlSeason);
     if (next === desiredSeason.current) return;
     desiredSeason.current = next;
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- URL season drives the slider
     setViewSeason(next);
     if (timeline.includes(urlSeason)) loadSeason(next);
   }, [loadSeason, timeline, urlSeason]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   useEffect(() => {
     let cancelled = false;
