@@ -60,12 +60,14 @@ const REPLAYED_HEADERS = [
   "referrer-policy", "x-content-type-options", "x-frame-options",
   "strict-transport-security",
 ];
-// Streamed server errors, notFound() and redirects inside a 200 stream.
+// Streamed server errors and redirects inside a 200 stream.
 // next/dynamic ssr:false also emits a digest, which is not an error.
+// Nested notFound() (404) is common on otherwise-good player HTML (slot digests);
+// only treat hard failures as uncacheable so PAGE_CACHE / Cache API can HIT.
 // Pages flag a degraded render (a known player whose career didn't load) with data-page-cache="skip".
 const UNCACHEABLE_MARKERS = [
   /data-dgst="(?!BAILOUT_TO_CLIENT_SIDE_RENDERING")/,
-  /NEXT_HTTP_ERROR_FALLBACK/,
+  /NEXT_HTTP_ERROR_FALLBACK;(?:500|403)/,
   /NEXT_REDIRECT/,
   /data-page-cache="skip"/,
 ];
