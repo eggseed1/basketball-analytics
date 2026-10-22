@@ -326,34 +326,26 @@ async function fallbackGameShell(gameId: string): Promise<GameShell | null> {
   return null;
 }
 
-async function boundedPrimaryGameShell(gameId: string): Promise<GameShell | null> {
-  const primary = await withBudget(
-    getGameShellUncached(gameId).catch(() => null),
-    9_000,
-    null as GameShell | null
-  );
-  return primary.value;
-}
-
-async function boundedFallbackGameShell(gameId: string): Promise<GameShell | null> {
-  const fallback = await withBudget(
-    fallbackGameShell(gameId),
-    7_000,
-    null as GameShell | null
-  );
-  return fallback.value;
-}
-
 /**
  * Host-independent game loading contract: always give the complete provider the
  * first chance to resolve identity + box depth, then use CDN fallbacks. This is
  * the same ordering Cursor/local uses, so Vercel cannot silently downgrade a
  * completed game to a scoreboard-only shell before Game Lab mounts.
+ *
+ * One wall-clock budget for primary+fallback (not 9s+7s). Stacked budgets let
+ * route loading.tsx outlive the Worker HTML stream and freeze on "Loading Game Lab".
  */
 export const getGameShellCached = cache(async (gameId: string) => {
-  const primary = await boundedPrimaryGameShell(gameId);
-  if (primary) return primary;
-  return boundedFallbackGameShell(gameId);
+  const result = await withBudget(
+    (async () => {
+      const primary = await getGameShellUncached(gameId).catch(() => null);
+      if (primary) return primary;
+      return fallbackGameShell(gameId);
+    })(),
+    runtimeTimeoutMs(10_000, 8_000),
+    null as GameShell | null
+  );
+  return result.value;
 });
 
 export const getHomeAnalyticsCached = cache(() => getHomeAnalyticsUncached());

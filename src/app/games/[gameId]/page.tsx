@@ -57,7 +57,9 @@ export async function generateMetadata({ params }: GamePageProps) {
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 
 async function GameLabDeepBody({ gameId, hidePeriodTable, asOfMs }: { gameId: string; arrival: ReturnType<typeof parseSeasonEvidenceArrival>; hidePeriodTable: boolean; asOfMs?: number }) {
-  const labBudgetMs = longUpstreamBudgetsEnabled() ? 25_000 : 10_000;
+  // Keep under the Worker HTML stream window. 25s left Suspense fallbacks frozen
+  // in the closed response ("Loading Game Lab analysis…") with no replacement chunk.
+  const labBudgetMs = longUpstreamBudgetsEnabled() ? 10_000 : 6_000;
   const result = await withBudget(
     getGameAnalysis(gameId, asOfMs != null ? { asOfMs } : undefined).catch(() => null),
     labBudgetMs,

@@ -74,10 +74,13 @@ async function main() {
   requireHealthy(gameRoute, game);
   for (const marker of [
     "Box score, Game Lab, and possession analysis will appear when detailed game data is available.",
-    "Game unavailable",
     "Loading game from ESPN",
   ]) {
     if (game.body.includes(marker)) throw new Error(`Game Lab regressed to fallback: ${marker}`);
+  }
+  // "Game unavailable" also lives in i18n JSON — only fail on the rendered heading.
+  if (/<h1[^>]*>\s*Game unavailable/i.test(game.body)) {
+    throw new Error("Game Lab regressed to fallback: Game unavailable");
   }
   if (!game.body.includes("Game flow")) {
     throw new Error("Game Lab flow is missing from completed game");
