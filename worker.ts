@@ -4,6 +4,13 @@
 import { default as handler } from "./.open-next/worker.js";
 
 import { localeCacheKeySegment } from "./src/i18n/locale-cache-key";
+import {
+  edgeHtmlCacheEnabled,
+  htmlCacheControlHeader,
+  htmlCachePolicyForPath,
+  isCdnHtmlPath,
+  type PageHtmlCachePolicy,
+} from "./src/lib/page-html-cache-policy";
 
 type RateLimitBinding = {
   limit(options: { key: string }): Promise<{ success: boolean }>;
@@ -20,6 +27,11 @@ type WorkerEnv = Record<string, unknown> & {
   CF_VERSION_METADATA?: { id?: string };
   /** Optional deploy override: force English (or another implemented locale) for all HTML. */
   DRBL_FORCE_LOCALE?: string;
+  /**
+   * Kill switch for Cloudflare Cache API + public s-maxage on daily HTML.
+   * Unset/true = on; "0" / "false" / "off" = KV-only with private no-store.
+   */
+  DRBL_EDGE_HTML_CACHE?: string;
 };
 
 type WorkerContext = { waitUntil(promise: Promise<unknown>): void };
@@ -28,19 +40,10 @@ type OpenNextHandler = {
   fetch(request: Request, env: WorkerEnv, ctx: WorkerContext): Promise<Response>;
 };
 
-type CachePolicy = { fresh: number; stale: number };
+type CachePolicy = PageHtmlCachePolicy;
 
-// Seconds a cached page is served as-is, then how much longer it may be served
-// while a background render replaces it. HTML is locale-sensitive (cookie +
-// Accept-Language), so cache keys include the resolved locale segment.
-const LIVE_POLICY: CachePolicy = { fresh: 60, stale: 10 * 60 };
-/** Homepage is the coldest path after deploy; fewer re-renders = fewer OOMs. */
-const HOME_POLICY: CachePolicy = { fresh: 5 * 60, stale: 30 * 60 };
-const DAILY_POLICY: CachePolicy = { fresh: 15 * 60, stale: 6 * 60 * 60 };
 const PAGE_CACHE_MAX_BYTES = 5 * 1024 * 1024;
 const UNCACHED_PATH = /^\/(?:api|internal|_next)(?:\/|$)|\.[a-z0-9]+$/i;
-const LIVE_PATH = /^\/(?:scores|dashboard|explore\/games|games\/[^/]+)$/;
-const HOME_PATH = /^\/$/;
 // Query params pages read that are safe to key on. Any other param could change
 // the HTML in ways the key can't see, so those requests skip the cache.
 const CACHEABLE_PARAMS = new Set([
@@ -68,7 +71,12 @@ function isUncacheableHtml(html: string): boolean {
   return UNCACHEABLE_MARKERS.some((marker) => marker.test(html));
 }
 
-type PageCacheEntry = { key: string; policy: CachePolicy };
+type PageCacheEntry = {
+  key: string;
+  policy: CachePolicy;
+  pathname: string;
+  cdn: boolean;
+};
 
 function pageCacheEntry(request: Request, env: WorkerEnv): PageCacheEntry | null {
   if (request.method !== "GET" || !env.PAGE_CACHE) return null;
@@ -86,15 +94,42 @@ function pageCacheEntry(request: Request, env: WorkerEnv): PageCacheEntry | null
   });
   const key = `page:${version}:${locale}:${url.pathname}${query ? `?${query}` : ""}`;
   if (key.length > 480) return null;
-  const policy = HOME_PATH.test(url.pathname)
-    ? HOME_POLICY
-    : LIVE_PATH.test(url.pathname)
-      ? LIVE_POLICY
-      : DAILY_POLICY;
-  return { key, policy };
+  const cdn =
+    edgeHtmlCacheEnabled(
+      typeof env.DRBL_EDGE_HTML_CACHE === "string" ? env.DRBL_EDGE_HTML_CACHE : undefined
+    ) && isCdnHtmlPath(url.pathname);
+  return {
+    key,
+    policy: htmlCachePolicyForPath(url.pathname),
+    pathname: url.pathname,
+    cdn,
+  };
 }
 
-function cachedResponse(raw: string, policy: CachePolicy): { response: Response; stale: boolean } | null {
+/** Synthetic request so Cache API keys match KV (locale + version + path), not raw Cookie. */
+function edgeCacheKeyRequest(entry: PageCacheEntry): Request {
+  return new Request(`https://drbl-page-cache.internal/${encodeURIComponent(entry.key)}`, {
+    method: "GET",
+    headers: { accept: "text/html" },
+  });
+}
+
+function applyHtmlCacheHeaders(
+  headers: Headers,
+  entry: PageCacheEntry,
+  state: "HIT" | "STALE" | "MISS" | "EDGE"
+): void {
+  headers.set(
+    "cache-control",
+    htmlCacheControlHeader(entry.pathname, entry.policy, { cdnEnabled: entry.cdn })
+  );
+  headers.set("x-page-cache", state);
+}
+
+function cachedResponse(
+  raw: string,
+  entry: PageCacheEntry
+): { response: Response; stale: boolean } | null {
   const newline = raw.indexOf("\n");
   if (newline < 0) return null;
   try {
@@ -103,12 +138,11 @@ function cachedResponse(raw: string, policy: CachePolicy): { response: Response;
       headers: Record<string, string>;
     };
     const age = Math.max(0, Math.round((Date.now() - meta.at) / 1000));
-    if (age >= policy.fresh + policy.stale) return null;
-    const stale = age >= policy.fresh;
+    if (age >= entry.policy.fresh + entry.policy.stale) return null;
+    const stale = age >= entry.policy.fresh;
     const headers = new Headers(meta.headers);
-    headers.set("cache-control", "private, no-cache, no-store, max-age=0, must-revalidate");
     headers.set("age", String(age));
-    headers.set("x-page-cache", stale ? "STALE" : "HIT");
+    applyHtmlCacheHeaders(headers, entry, stale ? "STALE" : "HIT");
     return { response: new Response(raw.slice(newline + 1), { status: 200, headers }), stale };
   } catch {
     return null;
@@ -127,7 +161,7 @@ function isCacheableResponse(response: Response): response is Response & { body:
 
 async function storePage(
   env: WorkerEnv,
-  { key, policy }: PageCacheEntry,
+  entry: PageCacheEntry,
   headers: Headers,
   body: ReadableStream<Uint8Array>
 ): Promise<void> {
@@ -140,9 +174,20 @@ async function storePage(
     if (value) replayed[name] = value;
   }
   const meta = JSON.stringify({ at: Date.now(), headers: replayed });
-  await env.PAGE_CACHE!.put(key, `${meta}\n${html}`, {
-    expirationTtl: policy.fresh + policy.stale,
+  await env.PAGE_CACHE!.put(entry.key, `${meta}\n${html}`, {
+    expirationTtl: entry.policy.fresh + entry.policy.stale,
   });
+
+  if (!entry.cdn) return;
+  try {
+    const edgeHeaders = new Headers(replayed);
+    applyHtmlCacheHeaders(edgeHeaders, entry, "HIT");
+    // Cache API stores by our synthetic key; TTL follows Cache-Control s-maxage.
+    const edgeResponse = new Response(html, { status: 200, headers: edgeHeaders });
+    await caches.default.put(edgeCacheKeyRequest(entry), edgeResponse);
+  } catch {
+    // Cache API can throw in some runtimes; KV alone is still enough.
+  }
 }
 
 // Keys this isolate is already re-rendering, so a burst of stale hits starts one render.
@@ -160,17 +205,52 @@ async function refreshPage(request: Request, env: WorkerEnv, ctx: WorkerContext,
   }
 }
 
+async function matchEdgeCache(entry: PageCacheEntry): Promise<Response | null> {
+  if (!entry.cdn) return null;
+  try {
+    const matched = await caches.default.match(edgeCacheKeyRequest(entry));
+    if (!matched) return null;
+    const headers = new Headers(matched.headers);
+    applyHtmlCacheHeaders(headers, entry, "EDGE");
+    return new Response(matched.body, { status: matched.status, headers });
+  } catch {
+    return null;
+  }
+}
+
 async function servePage(
   request: Request,
   env: WorkerEnv,
   ctx: WorkerContext,
   entry: PageCacheEntry
 ): Promise<Response> {
+  const edgeHit = await matchEdgeCache(entry);
+  if (edgeHit) return edgeHit;
+
   const raw = await env.PAGE_CACHE!.get(entry.key, "text").catch(() => null);
-  const cached = raw ? cachedResponse(raw, entry.policy) : null;
+  const cached = raw ? cachedResponse(raw, entry) : null;
   if (cached) {
     if (cached.stale) {
       ctx.waitUntil(refreshPage(new Request(request), env, ctx, entry).catch(() => undefined));
+    } else if (entry.cdn) {
+      // Promote KV HIT into colo Cache API so the next request skips KV.
+      ctx.waitUntil(
+        (async () => {
+          try {
+            const headers = new Headers(cached.response.headers);
+            applyHtmlCacheHeaders(headers, entry, "HIT");
+            await caches.default.put(
+              edgeCacheKeyRequest(entry),
+              new Response(await cached.response.clone().text(), {
+                status: 200,
+                headers,
+              })
+            );
+          } catch {
+            /* ignore */
+          }
+        })()
+      );
     }
     return cached.response;
   }
@@ -180,7 +260,7 @@ async function servePage(
   const [toClient, toCache] = response.body.tee();
   ctx.waitUntil(storePage(env, entry, response.headers, toCache).catch(() => undefined));
   const headers = new Headers(response.headers);
-  headers.set("x-page-cache", "MISS");
+  applyHtmlCacheHeaders(headers, entry, "MISS");
   return new Response(toClient, { status: response.status, headers });
 }
 
