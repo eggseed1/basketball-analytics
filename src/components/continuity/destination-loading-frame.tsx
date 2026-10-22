@@ -50,8 +50,6 @@ export function DestinationLoadingFrame({
       )}
       aria-busy="true"
       aria-live="polite"
-      // Never let route loading.tsx poison Worker PAGE_CACHE / Cache API.
-      data-page-cache="skip"
     >
       <LoadingTopBar />
       <PageHeader
@@ -78,13 +76,7 @@ export function DestinationSectionSkeleton({
   label?: string;
 }) {
   return (
-    <div
-      className="flex flex-col gap-3"
-      aria-busy="true"
-      aria-live="polite"
-      // Unresolved Suspense islands must not be stored as finished HTML.
-      data-page-cache="skip"
-    >
+    <div className="flex flex-col gap-3" aria-busy="true" aria-live="polite">
       <LoadingBarSignal />
       <LoadingStatus>{label}</LoadingStatus>
       <SkeletonBlock className="h-36" />
