@@ -1,5 +1,7 @@
 "use client";
 
+import { useMemo } from "react";
+
 import { useOwnerTheme } from "@/components/design-system/theme-provider";
 import {
   teamBrandBarColor,
@@ -77,25 +79,31 @@ export function useChartTheme() {
   const { resolvedDark } = useOwnerTheme();
   const surface: ChartSurface = resolvedDark ? "dark" : "light";
 
-  return {
-    isDark: resolvedDark,
-    surface,
-    semantic: chartSemantic,
-    teamColor: (teamId?: string | null) => teamChartColor(teamId, { surface }),
-    /** For charts with many franchises at once (league scatters, standings, races). */
-    leagueTeamColor: (teamId?: string | null) =>
-      teamLeagueChartColor(teamId, { surface }),
-    teamBarColor: (teamId?: string | null) =>
-      teamBrandBarColor(teamId, { surface }),
-    teamTint: (teamId?: string | null, opacity?: number) =>
-      teamBrandTint(teamId, opacity, { surface }),
-    /** Separable shades of one franchise for part-of-whole charts. */
-    teamPalette: (teamId: string | null | undefined, count: number) =>
-      teamChartPalette(teamId, count, { surface }),
-    lineOpacity: (emphasis: ChartLineEmphasis) =>
-      chartLineStrokeOpacity(emphasis, resolvedDark),
-    referenceOpacity: () => chartReferenceStrokeOpacity(resolvedDark),
-    gridOpacity: () => chartGridStrokeOpacity(resolvedDark),
-    periodLineOpacity: () => chartPeriodLineOpacity(resolvedDark),
-  };
+  // Stable identity across renders — chart useMemo/useCallback deps that list
+  // `chartTheme` otherwise churn every paint, Recharts Redux notifies in a
+  // loop, and the player route hits React #185 (max update depth).
+  return useMemo(
+    () => ({
+      isDark: resolvedDark,
+      surface,
+      semantic: chartSemantic,
+      teamColor: (teamId?: string | null) => teamChartColor(teamId, { surface }),
+      /** For charts with many franchises at once (league scatters, standings, races). */
+      leagueTeamColor: (teamId?: string | null) =>
+        teamLeagueChartColor(teamId, { surface }),
+      teamBarColor: (teamId?: string | null) =>
+        teamBrandBarColor(teamId, { surface }),
+      teamTint: (teamId?: string | null, opacity?: number) =>
+        teamBrandTint(teamId, opacity, { surface }),
+      /** Separable shades of one franchise for part-of-whole charts. */
+      teamPalette: (teamId: string | null | undefined, count: number) =>
+        teamChartPalette(teamId, count, { surface }),
+      lineOpacity: (emphasis: ChartLineEmphasis) =>
+        chartLineStrokeOpacity(emphasis, resolvedDark),
+      referenceOpacity: () => chartReferenceStrokeOpacity(resolvedDark),
+      gridOpacity: () => chartGridStrokeOpacity(resolvedDark),
+      periodLineOpacity: () => chartPeriodLineOpacity(resolvedDark),
+    }),
+    [resolvedDark, surface]
+  );
 }

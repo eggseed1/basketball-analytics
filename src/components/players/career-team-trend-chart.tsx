@@ -832,18 +832,19 @@ export function CareerTeamTrendChart({
 }) {
   const chartTheme = useChartTheme();
   const wrapRef = useRef<HTMLDivElement>(null);
-  const [seenDrawKey, setSeenDrawKey] = useState(drawKey);
   // 0 = empty (clipped). >0 = LTR clip reveal.
   const [drawRun, setDrawRun] = useState(0);
   const enteredRef = useRef(false);
-  if (drawKey !== seenDrawKey) {
-    setSeenDrawKey(drawKey);
+
+  useEffect(() => {
+    // Stat filter change: reset and draw in again (effect, not render-time setState).
     enteredRef.current = false;
     setDrawRun(0);
-  }
+  }, [drawKey]);
 
   useEffect(() => {
     if (enteredRef.current) return;
+    if (drawRun !== 0) return;
     const root = wrapRef.current;
     if (!root) return;
 
@@ -874,7 +875,7 @@ export function CareerTeamTrendChart({
     );
     io.observe(root);
     return () => io.disconnect();
-  }, [drawKey]);
+  }, [drawKey, drawRun]);
 
   useLayoutEffect(() => {
     const root = wrapRef.current;
