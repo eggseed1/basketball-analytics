@@ -614,6 +614,21 @@ function CompComparePanel({
 }) {
   const chartTheme = useChartTheme();
   const [mode, setMode] = useState<"league" | "history">("league");
+  const handleChartSeason = useCallback(
+    (raw: string) => {
+      let next = raw;
+      if (!seasons.includes(raw)) {
+        const short =
+          raw.length <= 5 && raw.includes("-") ? raw : raw.slice(2);
+        next =
+          seasons.find(
+            (s) => s === raw || s.slice(2) === short || s.endsWith(short)
+          ) ?? raw;
+      }
+      if (next && seasons.includes(next)) onSeasonSelect(next);
+    },
+    [onSeasonSelect, seasons]
+  );
 
   if (!metric) {
     return (
@@ -666,22 +681,6 @@ function CompComparePanel({
   const focalColor = chartTheme.teamColor(teamKey).color;
 
   const hasSeries = Boolean(metric.series && metric.series.length > 1);
-
-  const handleChartSeason = useCallback(
-    (raw: string) => {
-      let next = raw;
-      if (!seasons.includes(raw)) {
-        const short =
-          raw.length <= 5 && raw.includes("-") ? raw : raw.slice(2);
-        next =
-          seasons.find(
-            (s) => s === raw || s.slice(2) === short || s.endsWith(short)
-          ) ?? raw;
-      }
-      if (next && seasons.includes(next)) onSeasonSelect(next);
-    },
-    [onSeasonSelect, seasons]
-  );
 
   const chartHeight = chartHeightProp ?? (inline ? 140 : 180);
   const compRowCount = visibleCompRows ?? VISIBLE_COMP_ROWS;
