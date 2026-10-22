@@ -616,6 +616,14 @@ function CompComparePanel({
 }) {
   const chartTheme = useChartTheme();
   const [mode, setMode] = useState<"league" | "history">("league");
+  // Early-season boards often have historical comps first — don't sit on
+  // "Finding similar…" for an empty This-season list once hist peers exist.
+  useEffect(() => {
+    if (!metric) return;
+    const league = metric.leagueComps?.length ?? 0;
+    const hist = metric.historicalComps?.length ?? 0;
+    if (league === 0 && hist > 0) setMode("history");
+  }, [metric]);
   const handleChartSeason = useCallback(
     (raw: string) => {
       let next = raw;
@@ -1372,12 +1380,12 @@ export function PlayerPercentilePanel({
         .catch(() => null)
         .then((full) => {
           window.clearTimeout(watchdog);
+          // Clear pending immediately — do not park it behind startTransition,
+          // or "Finding similar players…" can stick while the main thread is busy.
           if (desiredSeason.current === target && full?.metrics.length) {
             startTransition(() => {
               applyCached(target, full);
-              clear();
             });
-            return;
           }
           clear();
         });

@@ -4,8 +4,10 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 
 import { GlassSurface } from "@/components/brand/glass-surface";
 import {
-  CareerTeamTrendChartLazy as CareerTeamTrendChart,
-  TalentYearChartLazy as TalentYearChart,
+  CareerTeamTrendChart,
+  TalentYearChart,
+} from "@/components/players/career-team-trend-chart";
+import {
   preloadPlayerPageCharts,
   whenPlayerPageChartsReady,
 } from "@/components/charts/recharts-lazy";

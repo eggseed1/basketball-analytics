@@ -2,10 +2,8 @@
 
 import { useEffect, useState } from "react";
 
-import {
-  PlayerCompFuturesChartLazy as PlayerCompFuturesChart,
-  preloadPlayerPageCharts,
-} from "@/components/charts/recharts-lazy";
+import { PlayerCompFuturesChart } from "@/components/players/player-comp-futures-chart";
+import { preloadPlayerPageCharts } from "@/components/charts/recharts-lazy";
 import { SectionFrame } from "@/components/layout/section-frame";
 import {
   fetchCompFuturesBundle,
