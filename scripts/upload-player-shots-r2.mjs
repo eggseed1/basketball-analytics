@@ -1,7 +1,8 @@
 /**
- * Upload the local shot chart bake to R2 so CI deploys serve shot maps.
- * stats.nba.com blocks GitHub runners, so only a machine that can run
- * `npm run shots:sync` can produce public/runtime/player-shots.
+ * Upload the local shot chart bake to R2 so Workers can serve shot maps when
+ * Static Assets miss (code-only deploys wipe gitignored public/runtime trees).
+ * Current-season charts come from scripts/build-season-shots-from-pbp.ts
+ * (NBA CDN). Full history still needs `npm run shots:sync` off the runner.
  *
  * Keys mirror the static asset paths: {season}/{nbaPlayerId}.json
  *
