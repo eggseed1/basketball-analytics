@@ -34,7 +34,6 @@ import {
 import {
   PlayerBoardSkeleton,
   PlayerOverviewContractSkeleton,
-  PlayerPercentileSkeleton,
 } from "@/components/players/player-page-skeletons";
 import { PlayerOverviewCareerSection } from "@/components/players/player-overview-career-section";
 import { PlayerViewSeasonProvider } from "@/components/players/player-view-season";
@@ -525,23 +524,34 @@ export default async function PlayerPage({
   // Slim edge (explicit SLIM_EDGE_PRODUCT=1 only) — paid Workers run the full page.
   const slimWorker = slimEdgeProductEnabled();
 
-  // Resolve identity extras before paint. Suspense + h-12 fallbacks stick forever
-  // when the Worker HTML stream cuts mid-flight; first HTML must already have
-  // content or null (islands use withBudget so this stays bounded).
-  const [accoladesNode, upcomingScheduleNode, frontOfficeNode] = slimWorker
-    ? [null, null, null]
-    : await Promise.all([
-        PlayerAccoladesIsland({
+  // One parallel batch before paint: identity + overview boards + percentile
+  // hero. Sequential awaits stacked cold TTFB; Suspense skeletons stick when
+  // the Worker stream cuts mid-flight.
+  const overviewPaint =
+    view === "overview" && !(slimWorker || notYetPlayed);
+  const [
+    accoladesNode,
+    upcomingScheduleNode,
+    frontOfficeNode,
+    overviewCareerNode,
+    overviewContractNode,
+    percentileHeroNode,
+  ] = await Promise.all([
+    slimWorker
+      ? Promise.resolve(null)
+      : PlayerAccoladesIsland({
           playerId,
           playerName: displayName === playerId ? null : displayName,
           teamKey,
           historicalBrand,
           honor,
         }),
-        scheduleTeamKey
-          ? PlayerUpcomingGamesFromSnapshot({ scheduleTeamKey })
-          : Promise.resolve(null),
-        PlayerArrivalIsland({
+    !slimWorker && scheduleTeamKey
+      ? PlayerUpcomingGamesFromSnapshot({ scheduleTeamKey })
+      : Promise.resolve(null),
+    slimWorker
+      ? Promise.resolve(null)
+      : PlayerArrivalIsland({
           playerId,
           espnId: identity?.espnId,
           nbaId: identity?.nbaId,
@@ -550,31 +560,42 @@ export default async function PlayerPage({
           historicalBrand,
           honor,
         }),
-      ]);
-
-  // Overview career + contract used the same Suspense+skeleton trap as identity.
-  const [overviewCareerNode, overviewContractNode] =
-    view === "overview" && !(slimWorker || notYetPlayed)
-      ? await Promise.all([
-          PlayerOverviewCareerSection({
-            playerId,
-            season,
-            seasonType,
-            career,
-            teamKey,
-            fromHistory,
-            themeMode,
-          }),
-          PlayerContractSectionIsland({
-            playerId,
-            playerName: displayName,
-            teamKey,
-            nbaId: identity?.nbaId,
-            season: seasonParam,
-            variant: "summary",
-          }),
-        ])
-      : [null, null];
+    overviewPaint
+      ? PlayerOverviewCareerSection({
+          playerId,
+          season,
+          seasonType,
+          career,
+          teamKey,
+          fromHistory,
+          themeMode,
+        })
+      : Promise.resolve(null),
+    overviewPaint
+      ? PlayerContractSectionIsland({
+          playerId,
+          playerName: displayName,
+          teamKey,
+          nbaId: identity?.nbaId,
+          season: seasonParam,
+          variant: "summary",
+        })
+      : Promise.resolve(null),
+    !notYetPlayed
+      ? PlayerPercentileIsland({
+          playerId,
+          displayName,
+          season,
+          career,
+          seasonOptions,
+          seasonTeams,
+          identityTeamKey: teamKey,
+          nbaId: identity?.nbaId,
+          espnId: identity?.espnId,
+          honor,
+        })
+      : Promise.resolve(null),
+  ]);
 
   const careerSeasonsForTable =
     historySeasons.length > 0 ? historySeasons : universeSeasons;
@@ -635,26 +656,7 @@ export default async function PlayerPage({
                 overall={notYetPlayed.overall}
               />
             ) : (
-              <Suspense
-                fallback={
-                  <div className="col-span-1 min-h-[28rem]">
-                    <PlayerPercentileSkeleton />
-                  </div>
-                }
-              >
-                <PlayerPercentileIsland
-                  playerId={playerId}
-                  displayName={displayName}
-                  season={season}
-                  career={career}
-                  seasonOptions={seasonOptions}
-                  seasonTeams={seasonTeams}
-                  identityTeamKey={teamKey}
-                  nbaId={identity?.nbaId}
-                  espnId={identity?.espnId}
-                  honor={honor}
-                />
-              </Suspense>
+              percentileHeroNode
             )
           }
         >
@@ -760,7 +762,6 @@ export default async function PlayerPage({
           <PlayerComparisonsBoard
             playerId={playerId}
             season={season}
-            career={career}
             teamKey={teamKey}
             espnId={identity?.espnId}
             position={bioPosition}

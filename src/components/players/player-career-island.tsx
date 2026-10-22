@@ -125,6 +125,11 @@ export async function PlayerCareerIsland({
   hideTitle = false,
   initialMetric,
   showFilters = true,
+  /**
+   * Overview critical path: skip the ~4s advanced enrich. Bundled career
+   * already carries DARKO/basic cols for the chart; Career tab keeps `"full"`.
+   */
+  enrich = "full",
 }: {
   playerId: string;
   season: string;
@@ -138,14 +143,17 @@ export async function PlayerCareerIsland({
   hideTitle?: boolean;
   initialMetric?: "darko" | "war1" | "ppg" | "apg" | "rpg" | "ts" | "usg";
   showFilters?: boolean;
+  enrich?: "full" | "fast";
 }) {
   try {
     const source =
       seasonType === "playoffs"
         ? await getPlayerPlayoffCareerSeasons(playerId).catch(() => career)
-        : await enrichPlayerCareerAdvancedCached(playerId, career).catch(
-            () => career
-          );
+        : enrich === "fast"
+          ? career
+          : await enrichPlayerCareerAdvancedCached(playerId, career).catch(
+              () => career
+            );
     const filtered = source.filter((row) => {
       if (row.gamesPlayed > 0) return true;
       return Boolean(

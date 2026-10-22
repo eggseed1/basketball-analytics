@@ -47,6 +47,7 @@ export async function PlayerOverviewCareerSection({
         fromHistory={fromHistory}
         themeMode={themeMode}
         chart="games"
+        enrich="fast"
       />
       <TextLink
         href={careerHref}
