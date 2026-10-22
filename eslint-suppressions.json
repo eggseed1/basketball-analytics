@@ -149,11 +149,6 @@
       "count": 1
     }
   },
-  "src/components/games/runtime-game-fallback.tsx": {
-    "@typescript-eslint/no-explicit-any": {
-      "count": 7
-    }
-  },
   "src/components/history/historical-game-surface.tsx": {
     "react-hooks/immutability": {
       "count": 1
@@ -225,11 +220,6 @@
   "src/components/players/player-percentile-island.tsx": {
     "react-hooks/error-boundaries": {
       "count": 2
-    }
-  },
-  "src/components/players/player-percentile-panel.tsx": {
-    "react-hooks/set-state-in-effect": {
-      "count": 1
     }
   },
   "src/components/players/player-sentiment-tab-island.tsx": {
