@@ -361,41 +361,71 @@ export async function getGameShell(gameId: string): Promise<GameShell | null> {
   // Hard-cap CDN so a hung package cannot burn the ~12s Worker HTML window and
   // leave loading.tsx as the final document.
   if (looksLikeEspnEventId(id)) {
+    const snapshotShell = fromSnapshot
+      ? acceptShell(shellFromGame(fromSnapshot, "runtime-snapshot"))
+      : null;
+
     try {
       const { fetchEspnCdnGameBoxScore } = await import(
         "@/data/providers/nba/espn-cdn-game-client"
       );
-      const box = await fetchEspnCdnGameBoxScore(id, undefined, {
-        timeoutMs: 4_000,
-        maxUrls: 1,
-      });
-      const shell = box?.game ? acceptShell(shellFromBox(box)) : null;
+      const cdnPromise = fetchEspnCdnGameBoxScore(id, undefined, {
+        // Stay under the shared shell budget; allow a second package if /game is thin.
+        timeoutMs: 3_500,
+        maxUrls: 2,
+      }).then((box) => (box?.game ? acceptShell(shellFromBox(box)) : null));
+
+      // If a runtime snapshot exists, do not wait the full CDN window for identity —
+      // paint the page, then deeper islands can enrich from CDN/PBP.
+      const shell = snapshotShell
+        ? await Promise.race([
+            cdnPromise,
+            new Promise<GameShell | null>((resolve) => {
+              setTimeout(() => resolve(snapshotShell), 1_200);
+            }),
+          ])
+        : await cdnPromise;
+
       if (shell?.hasBoxScore) {
         return withBroadcastFallback(withSnapshotFacts(shell, fromSnapshot));
+      }
+      if (shell?.hasBoxScore === false && shell === snapshotShell) {
+        // Snapshot won the race — still prefer a CDN box if it lands quickly.
+        const cdnShell = await Promise.race([
+          cdnPromise,
+          new Promise<null>((resolve) => setTimeout(() => resolve(null), 2_500)),
+        ]);
+        if (cdnShell?.hasBoxScore) {
+          return withBroadcastFallback(withSnapshotFacts(cdnShell, fromSnapshot));
+        }
+        return withBroadcastFallback(snapshotShell);
       }
       if (shell && !fromSnapshot) return withBroadcastFallback(shell);
     } catch {
       // soft-fail
     }
 
-    // Snapshot before site.api — identity in <1ms beats another 2s hang on CF.
-    if (fromSnapshot) {
-      const shell = acceptShell(shellFromGame(fromSnapshot, "runtime-snapshot"));
-      if (shell) return withBroadcastFallback(shell);
-    }
+    if (snapshotShell) return withBroadcastFallback(snapshotShell);
 
-    try {
-      const box = await fetchEspnEventBoxScore(id, {
-        timeoutMs: 2_000,
-        retries: 0,
-      });
-      const shell = box?.game ? acceptShell(shellFromBox(box)) : null;
-      if (shell?.hasBoxScore) {
-        return withBroadcastFallback(withSnapshotFacts(shell, fromSnapshot));
+    // site.api.espn.com is routinely 403 from Cloudflare Workers — skip it there
+    // so a CDN miss still leaves time for provider/snapshot within the shell budget.
+    const { isCloudflareWorkersProduction } = await import(
+      "@/data/providers/nba/runtime-policy"
+    );
+    if (!isCloudflareWorkersProduction()) {
+      try {
+        const box = await fetchEspnEventBoxScore(id, {
+          timeoutMs: 2_000,
+          retries: 0,
+        });
+        const shell = box?.game ? acceptShell(shellFromBox(box)) : null;
+        if (shell?.hasBoxScore) {
+          return withBroadcastFallback(withSnapshotFacts(shell, fromSnapshot));
+        }
+        if (shell && !fromSnapshot) return withBroadcastFallback(shell);
+      } catch {
+        // soft-fail to provider
       }
-      if (shell && !fromSnapshot) return withBroadcastFallback(shell);
-    } catch {
-      // soft-fail to provider
     }
 
     try {

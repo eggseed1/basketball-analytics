@@ -335,9 +335,10 @@ async function fallbackGameShell(gameId: string): Promise<GameShell | null> {
  * the same ordering Cursor/local uses, so Vercel cannot silently downgrade a
  * completed game to a scoreboard-only shell before Game Lab mounts.
  *
- * Keep this under ~5s. Cold probes showed a ~12s Worker HTML cliff: a 10s shell
+ * Keep this under ~7s. Cold probes showed a ~12s Worker HTML cliff: a 10s shell
  * budget left almost no time to flush RuntimeGameFallback / Game Lab RSC, so the
- * document ended as loading.tsx (~103KB) with a truncated flight payload.
+ * document ended as loading.tsx (~103KB) with a truncated flight payload. A 5s
+ * budget was too tight when ESPN CDN jittered and skipped the runtime snapshot.
  */
 export const getGameShellCached = cache(async (gameId: string) => {
   const result = await withBudget(
@@ -346,7 +347,7 @@ export const getGameShellCached = cache(async (gameId: string) => {
       if (primary) return primary;
       return fallbackGameShell(gameId);
     })(),
-    runtimeTimeoutMs(5_000, 4_000),
+    runtimeTimeoutMs(7_000, 5_000),
     null as GameShell | null
   );
   return result.value;

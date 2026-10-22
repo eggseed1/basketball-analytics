@@ -139,17 +139,24 @@ async function fetchEspnCdnGameSummaryUncached(
     (longUpstreamBudgetsEnabled() ? 15_000 : 8_000);
 
   // Prefer the smaller playbyplay package when Game Lab needs events.
+  // Shell identity: try boxscore before the heavier /game package.
   const urls = options?.preferPlays
     ? [
         `${CDN_BASE}/playbyplay?xhr=1&gameId=${encodeURIComponent(id)}`,
         `${CDN_BASE}/game?xhr=1&gameId=${encodeURIComponent(id)}`,
         `${CDN_BASE}/boxscore?xhr=1&gameId=${encodeURIComponent(id)}`,
       ]
-    : [
-        `${CDN_BASE}/game?xhr=1&gameId=${encodeURIComponent(id)}`,
-        `${CDN_BASE}/playbyplay?xhr=1&gameId=${encodeURIComponent(id)}`,
-        `${CDN_BASE}/boxscore?xhr=1&gameId=${encodeURIComponent(id)}`,
-      ];
+    : options?.maxUrls != null
+      ? [
+          `${CDN_BASE}/boxscore?xhr=1&gameId=${encodeURIComponent(id)}`,
+          `${CDN_BASE}/game?xhr=1&gameId=${encodeURIComponent(id)}`,
+          `${CDN_BASE}/playbyplay?xhr=1&gameId=${encodeURIComponent(id)}`,
+        ]
+      : [
+          `${CDN_BASE}/game?xhr=1&gameId=${encodeURIComponent(id)}`,
+          `${CDN_BASE}/playbyplay?xhr=1&gameId=${encodeURIComponent(id)}`,
+          `${CDN_BASE}/boxscore?xhr=1&gameId=${encodeURIComponent(id)}`,
+        ];
   const limited =
     typeof options?.maxUrls === "number" && options.maxUrls > 0
       ? urls.slice(0, options.maxUrls)
