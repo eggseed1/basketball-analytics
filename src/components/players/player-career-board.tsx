@@ -370,6 +370,52 @@ export function PlayerCareerBoard({
   useEffect(() => {
     setChartMode(chart);
   }, [chart]);
+  /** SSR may omit logs; hydrate from the compact career-game-logs API. */
+  const [hydratedLogs, setHydratedLogs] = useState<
+    CompactPlayerGameLogRow[] | null
+  >(null);
+  const seasonKey = useMemo(
+    () =>
+      [...new Set(rows.map((row) => row.season).filter(Boolean))]
+        .sort((a, b) => b.localeCompare(a))
+        .join(","),
+    [rows]
+  );
+  useEffect(() => {
+    if (gameLogs.length > 0) {
+      setHydratedLogs(null);
+      return;
+    }
+    if (!seasonKey) {
+      setHydratedLogs([]);
+      return;
+    }
+    let cancelled = false;
+    const qs = encodeURIComponent(seasonKey);
+    fetch(
+      `/api/players/${encodeURIComponent(playerId)}/career-game-logs?seasons=${qs}`
+    )
+      .then(async (res) => {
+        if (!res.ok) throw new Error(`career-game-logs ${res.status}`);
+        return res.json() as Promise<{ games?: CompactPlayerGameLogRow[] }>;
+      })
+      .then((json) => {
+        if (cancelled) return;
+        setHydratedLogs(Array.isArray(json.games) ? json.games : []);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setHydratedLogs([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [gameLogs.length, playerId, seasonKey]);
+
+  const effectiveLogs =
+    gameLogs.length > 0 ? gameLogs : (hydratedLogs ?? []);
+  const logsPending = gameLogs.length === 0 && hydratedLogs === null;
+
   const primary = useMemo(
     () =>
       PRIMARY.filter(
@@ -390,13 +436,13 @@ export function PlayerCareerBoard({
     METRICS.find((item) => item.id === metric) ?? METRICS[0]!;
   const points = seriesFor(rows, selected);
   const talentKind = IMPACT_GAME_METRICS.has(selected.id) ? "impact" : "box";
-  const canShowGames = gameLogs.length > 0;
+  const canShowGames = effectiveLogs.length > 0 || logsPending;
   const activeChart =
-    chartMode === "games" && canShowGames ? "games" : "seasons";
+    chartMode === "games" && effectiveLogs.length > 0 ? "games" : "seasons";
   const talent = useMemo(() => {
     if (activeChart !== "games") return null;
     const bySeason = new Map<string, CompactPlayerGameLogRow[]>();
-    for (const game of gameLogs) {
+    for (const game of effectiveLogs) {
       const list = bySeason.get(game.season) ?? [];
       list.push(game);
       bySeason.set(game.season, list);
@@ -424,7 +470,7 @@ export function PlayerCareerBoard({
         ];
       });
     return buildTalentSeries({ kind: talentKind, seasons });
-  }, [activeChart, gameLogs, points, selected.id, talentKind]);
+  }, [activeChart, effectiveLogs, points, selected.id, talentKind]);
   const newestFirst = useMemo(
     () => [...rows].sort((a, b) => b.season.localeCompare(a.season)),
     [rows]
@@ -487,7 +533,10 @@ export function PlayerCareerBoard({
                   size="sm"
                   value={activeChart}
                   options={[
-                    { id: "games", label: "Games" },
+                    {
+                      id: "games",
+                      label: logsPending ? "Games…" : "Games",
+                    },
                     { id: "seasons", label: "Seasons" },
                   ]}
                   onChange={(id) => setChartMode(id)}

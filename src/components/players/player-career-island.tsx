@@ -150,16 +150,12 @@ export async function PlayerCareerIsland({
     const rows = toCareerBoardRows(filtered);
     const seasons = rows.map((row) => row.season);
     const compare = pickCompare(seasons, season, compareSeason);
-    const recent = [...rows].sort((a, b) => b.season.localeCompare(a.season));
-    // Always load game logs so Overview/Career can flip Games ↔ Seasons.
-    const gameLogs = await loadCareerGameLogs(
-      playerId,
-      recent.map((row) => row.season)
-    ).catch(() => []);
     const preferDarko =
       initialMetric ??
       (rows.some((row) => row.darko != null) ? "darko" : undefined);
 
+    // Game dots hydrate on the client — embedding full career logs here used to
+    // add ~200–300KB to the player-page RSC payload (500+ games for long careers).
     return (
       <PlayerCareerBoard
         playerId={playerId}
@@ -170,7 +166,6 @@ export async function PlayerCareerIsland({
         teamKey={teamKey}
         fromHistory={fromHistory}
         themeMode={themeMode}
-        gameLogs={gameLogs}
         chart={chart}
         hideTitle={hideTitle}
         initialMetric={preferDarko}
@@ -197,21 +192,3 @@ export async function PlayerCareerIsland({
   }
 }
 
-async function loadCareerGameLogs(playerId: string, seasons: string[]) {
-  const [{ resolvePlayerSeasonGameLog }, { resolveNbaIdForDrbl }] =
-    await Promise.all([
-      import("@/data/runtime/player-game-logs-store"),
-      import("@/data/identity/player-identity"),
-    ]);
-  const nbaId = await resolveNbaIdForDrbl(playerId).catch(() => null);
-  const logs = await Promise.all(
-    seasons.map((season) =>
-      resolvePlayerSeasonGameLog({
-        season,
-        playerId,
-        nbaId,
-      }).catch(() => [])
-    )
-  );
-  return logs.flat();
-}
