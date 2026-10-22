@@ -5,10 +5,13 @@ import { default as handler } from "./.open-next/worker.js";
 
 import { localeCacheKeySegment } from "./src/i18n/locale-cache-key";
 import {
+  DAILY_HTML_POLICY,
   edgeHtmlCacheEnabled,
   htmlCacheControlHeader,
   htmlCachePolicyForPath,
+  htmlHasGameFinalMarker,
   isCdnHtmlPath,
+  isGameHtmlPath,
   type PageHtmlCachePolicy,
 } from "./src/lib/page-html-cache-policy";
 
@@ -195,6 +198,35 @@ function isCacheableResponse(response: Response): response is Response & { body:
   );
 }
 
+function edgeEligibleEntry(
+  entry: PageCacheEntry,
+  html: string
+): { eligible: boolean; policy: CachePolicy } {
+  if (entry.cdn) return { eligible: true, policy: entry.policy };
+  // Finished games: path stays off the path-based CDN allowlist (live HTML must
+  // stay private), but finals with the page marker may use Cache API + s-maxage.
+  if (isGameHtmlPath(entry.pathname) && htmlHasGameFinalMarker(html)) {
+    return { eligible: true, policy: DAILY_HTML_POLICY };
+  }
+  return { eligible: false, policy: entry.policy };
+}
+
+async function putEdgeHtml(
+  entry: PageCacheEntry,
+  html: string,
+  replayed: Record<string, string>,
+  policy: CachePolicy
+): Promise<void> {
+  const edgeHeaders = new Headers(replayed);
+  edgeHeaders.set(
+    "cache-control",
+    htmlCacheControlHeader(entry.pathname, policy, { cdnEnabled: true })
+  );
+  edgeHeaders.set("x-page-cache", "HIT");
+  const edgeResponse = new Response(html, { status: 200, headers: edgeHeaders });
+  await edgeCache().put(edgeCacheKeyRequest(entry), edgeResponse);
+}
+
 async function storePage(
   env: WorkerEnv,
   entry: PageCacheEntry,
@@ -209,18 +241,16 @@ async function storePage(
     const value = headers.get(name);
     if (value) replayed[name] = value;
   }
+  const edge = edgeEligibleEntry(entry, html);
+  const kvPolicy = edge.eligible && isGameHtmlPath(entry.pathname) ? edge.policy : entry.policy;
   const meta = JSON.stringify({ at: Date.now(), headers: replayed });
   await env.PAGE_CACHE!.put(entry.key, `${meta}\n${html}`, {
-    expirationTtl: entry.policy.fresh + entry.policy.stale,
+    expirationTtl: kvPolicy.fresh + kvPolicy.stale,
   });
 
-  if (!entry.cdn) return;
+  if (!edge.eligible) return;
   try {
-    const edgeHeaders = new Headers(replayed);
-    applyHtmlCacheHeaders(edgeHeaders, entry, "HIT");
-    // Cache API stores by our synthetic key; TTL follows Cache-Control s-maxage.
-    const edgeResponse = new Response(html, { status: 200, headers: edgeHeaders });
-    await edgeCache().put(edgeCacheKeyRequest(entry), edgeResponse);
+    await putEdgeHtml(entry, html, replayed, edge.policy);
   } catch {
     // Cache API can throw in some runtimes; KV alone is still enough.
   }
@@ -242,13 +272,26 @@ async function refreshPage(request: Request, env: WorkerEnv, ctx: WorkerContext,
 }
 
 async function matchEdgeCache(entry: PageCacheEntry): Promise<Response | null> {
-  if (!entry.cdn) return null;
+  // Path-based CDN pages always check Cache API. Game finals may also be there
+  // even though isCdnHtmlPath(games) is false (live games must stay private).
+  if (!entry.cdn && !isGameHtmlPath(entry.pathname)) return null;
   try {
     const matched = await edgeCache().match(edgeCacheKeyRequest(entry));
     if (!matched) return null;
+    const html = await matched.clone().text();
+    if (isUncacheableHtml(html, entry.pathname)) return null;
+    if (isGameHtmlPath(entry.pathname) && !htmlHasGameFinalMarker(html)) return null;
     const headers = new Headers(matched.headers);
-    applyHtmlCacheHeaders(headers, entry, "EDGE");
-    return new Response(matched.body, { status: matched.status, headers });
+    const policy =
+      isGameHtmlPath(entry.pathname) && htmlHasGameFinalMarker(html)
+        ? DAILY_HTML_POLICY
+        : entry.policy;
+    headers.set(
+      "cache-control",
+      htmlCacheControlHeader(entry.pathname, policy, { cdnEnabled: true })
+    );
+    headers.set("x-page-cache", "EDGE");
+    return new Response(html, { status: matched.status, headers });
   } catch {
     return null;
   }
@@ -268,20 +311,19 @@ async function servePage(
   if (cached) {
     if (cached.stale) {
       ctx.waitUntil(refreshPage(new Request(request), env, ctx, entry).catch(() => undefined));
-    } else if (entry.cdn) {
+    } else {
       // Promote KV HIT into colo Cache API so the next request skips KV.
       ctx.waitUntil(
         (async () => {
           try {
-            const headers = new Headers(cached.response.headers);
-            applyHtmlCacheHeaders(headers, entry, "HIT");
-            await edgeCache().put(
-              edgeCacheKeyRequest(entry),
-              new Response(await cached.response.clone().text(), {
-                status: 200,
-                headers,
-              })
-            );
+            const html = await cached.response.clone().text();
+            const edge = edgeEligibleEntry(entry, html);
+            if (!edge.eligible) return;
+            const replayed: Record<string, string> = {};
+            cached.response.headers.forEach((value, name) => {
+              if (REPLAYED_HEADERS.includes(name)) replayed[name] = value;
+            });
+            await putEdgeHtml(entry, html, replayed, edge.policy);
           } catch {
             /* ignore */
           }

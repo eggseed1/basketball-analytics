@@ -13,6 +13,7 @@ import { GameRosterBoard } from "@/components/games/game-roster-board";
 import { GameShotChart, type ShotChartPlayer } from "@/components/games/game-shot-chart";
 import { GameStoryStrip, GameTeamComparison } from "@/components/games/game-story";
 import { GameTopPerformers } from "@/components/games/game-top-performers";
+import { useGamePlayByPlay } from "@/components/games/use-game-play-by-play";
 import { GamePlayByPlayPanel } from "@/components/game/game-play-by-play";
 import type { PlayByPlayEvent, PlayerGame } from "@/data/types";
 import { type } from "@/lib/design-system";
@@ -112,8 +113,8 @@ function FlowTabChip({
 export function GameLabView({
   analysis,
   players,
-  events = [],
-  pbpSource,
+  events: initialEvents = [],
+  pbpSource: initialPbpSource,
   officialTeamStats = null,
   pregameMargin,
   hidePeriodTable = false,
@@ -121,6 +122,10 @@ export function GameLabView({
 }: {
   analysis: GameAnalysisSummary;
   players: PlayerGame[];
+  /**
+   * Prefer empty on the server so RSC/Flight HTML stays small. The client loads
+   * full play-by-play from `/api/games/.../play-by-play` after paint.
+   */
   events?: PlayByPlayEvent[];
   pbpSource?: string;
   officialTeamStats?: { home: OfficialTeamStats; away: OfficialTeamStats } | null;
@@ -145,6 +150,16 @@ export function GameLabView({
     palette.get(homeKey) || chartTheme.teamBarColor(homeKey) || matchup.homeWash;
   const [flowTab, setFlowTab] = useState<FlowTab>("margin");
   const final = analysis.status === "final";
+  const live = isLiveLikeStatus(analysis.status as GameStatusKind);
+  const {
+    events,
+    source: fetchedSource,
+    loading: eventsLoading,
+  } = useGamePlayByPlay(analysis.gameId, {
+    live,
+    initial: initialEvents,
+  });
+  const pbpSource = fetchedSource ?? initialPbpSource;
 
   const homePlayers = players
     .filter((p) => p.teamId === homeKey || p.isHome)
@@ -220,16 +235,20 @@ export function GameLabView({
           ) : null}
         </div>
       )}
-      <GameLiveInsights
-        events={events}
-        players={players}
-        labels={{ away: outcome.awayLabel, home: outcome.homeLabel }}
-        colors={colors}
-        teamKeys={{ away: awayKey, home: homeKey }}
-        season={analysis.season}
-        status={analysis.status}
-        official={officialTeamStats}
-      />
+      {eventsLoading && events.length === 0 ? (
+        <p className={cn(type.bodySm, "text-muted-foreground")}>Loading live insights…</p>
+      ) : (
+        <GameLiveInsights
+          events={events}
+          players={players}
+          labels={{ away: outcome.awayLabel, home: outcome.homeLabel }}
+          colors={colors}
+          teamKeys={{ away: awayKey, home: homeKey }}
+          season={analysis.season}
+          status={analysis.status}
+          official={officialTeamStats}
+        />
+      )}
       <MatchupWashCard
         awayTeamKey={awayKey}
         homeTeamKey={homeKey}
@@ -359,7 +378,7 @@ export function GameLabView({
         )}
       </MatchupWashCard>
 
-      {events.some((e) => e.isFieldGoal) ? (
+      {eventsLoading || events.some((e) => e.isFieldGoal) ? (
         <MatchupWashCard
           awayTeamKey={awayKey}
           homeTeamKey={homeKey}
@@ -374,18 +393,22 @@ export function GameLabView({
               {outcome.awayLabel} attacks the left basket and {outcome.homeLabel} the right.
             </p>
           </div>
-          <GameShotChart
-            gameId={analysis.gameId}
-            status={analysis.status}
-            events={events}
-            homeLabel={outcome.homeLabel}
-            awayLabel={outcome.awayLabel}
-            homeColor={homeColor}
-            awayColor={awayColor}
-            homeTeamKey={homeKey}
-            awayTeamKey={awayKey}
-            players={shotChartPlayers}
-          />
+          {eventsLoading && events.length === 0 ? (
+            <p className={cn(type.bodySm, "text-muted-foreground")}>Loading shots…</p>
+          ) : (
+            <GameShotChart
+              gameId={analysis.gameId}
+              status={analysis.status}
+              events={events}
+              homeLabel={outcome.homeLabel}
+              awayLabel={outcome.awayLabel}
+              homeColor={homeColor}
+              awayColor={awayColor}
+              homeTeamKey={homeKey}
+              awayTeamKey={awayKey}
+              players={shotChartPlayers}
+            />
+          )}
         </MatchupWashCard>
       ) : null}
 
@@ -438,6 +461,11 @@ export function GameLabView({
           source={pbpSource}
           gameId={analysis.gameId}
           status={analysis.status}
+          emptyText={
+            eventsLoading
+              ? "Loading play-by-play…"
+              : "No play-by-play available for this game."
+          }
         />
       </MatchupWashCard>
     </div>

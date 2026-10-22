@@ -34,12 +34,19 @@ export const DAILY_HTML_POLICY: PageHtmlCachePolicy = {
 export const LIVE_HTML_PATH =
   /^\/(?:scores|dashboard|explore\/games|games\/[^/]+)$/;
 
+/** Single-game lab pages. Finals may EDGE-cache; live stays private (see worker). */
+export const GAME_HTML_PATH = /^\/games\/[^/]+$/;
+
+/** Marker the game page emits when status is final (Worker gates EDGE on this). */
+export const GAME_FINAL_HTML_MARKER = 'data-html-cache="game-final"';
+
 export const HOME_HTML_PATH = /^\/$/;
 
 /**
  * Path prefixes safe for Cloudflare Cache API + public s-maxage.
  * Everything else may still use Worker KV PAGE_CACHE with private no-store.
- * Live paths (scores / game lab) are excluded in isCdnHtmlPath.
+ * Live paths (scores / live game lab) are excluded in isCdnHtmlPath.
+ * Finished games are promoted to EDGE in the Worker when the final marker is present.
  */
 const CDN_HTML_PREFIXES = [
   "/players",
@@ -58,6 +65,14 @@ const CDN_HTML_PREFIXES = [
 
 export function isLiveHtmlPath(pathname: string): boolean {
   return LIVE_HTML_PATH.test(pathname);
+}
+
+export function isGameHtmlPath(pathname: string): boolean {
+  return GAME_HTML_PATH.test(pathname);
+}
+
+export function htmlHasGameFinalMarker(html: string): boolean {
+  return html.includes(GAME_FINAL_HTML_MARKER);
 }
 
 export function isCdnHtmlPath(pathname: string): boolean {
@@ -83,13 +98,18 @@ export function htmlCachePolicyForPath(pathname: string): PageHtmlCachePolicy {
  * - CDN-eligible: public s-maxage so caches.default (and CF cache) may store.
  *   max-age=0 keeps browsers revalidating with the Worker.
  * - Live / non-CDN: private no-store (today's behavior).
+ * - `cdnEnabled: true` forces public (Worker EDGE for finished games).
+ * - `cdnEnabled: false` forces private.
  */
 export function htmlCacheControlHeader(
   pathname: string,
   policy: PageHtmlCachePolicy,
   options?: { cdnEnabled?: boolean }
 ): string {
-  const cdn = options?.cdnEnabled !== false && isCdnHtmlPath(pathname);
+  if (options?.cdnEnabled === false) {
+    return "private, no-cache, no-store, max-age=0, must-revalidate";
+  }
+  const cdn = options?.cdnEnabled === true || isCdnHtmlPath(pathname);
   if (!cdn) {
     return "private, no-cache, no-store, max-age=0, must-revalidate";
   }

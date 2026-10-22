@@ -7,7 +7,9 @@ import {
   edgeHtmlCacheEnabled,
   htmlCacheControlHeader,
   htmlCachePolicyForPath,
+  htmlHasGameFinalMarker,
   isCdnHtmlPath,
+  isGameHtmlPath,
   isLiveHtmlPath,
 } from "./page-html-cache-policy";
 
@@ -16,9 +18,16 @@ describe("page-html-cache-policy", () => {
     assert.equal(isLiveHtmlPath("/scores"), true);
     assert.equal(isLiveHtmlPath("/games/401909834"), true);
     assert.equal(isLiveHtmlPath("/explore/games"), true);
+    assert.equal(isGameHtmlPath("/games/401909834"), true);
+    assert.equal(isGameHtmlPath("/scores"), false);
     assert.equal(isCdnHtmlPath("/scores"), false);
     assert.equal(isCdnHtmlPath("/games/401909834"), false);
     assert.equal(isCdnHtmlPath("/explore/games"), false);
+  });
+
+  it("detects the final-game HTML marker for Worker EDGE promotion", () => {
+    assert.equal(htmlHasGameFinalMarker('<span hidden data-html-cache="game-final" />'), true);
+    assert.equal(htmlHasGameFinalMarker("<main>live game</main>"), false);
   });
 
   it("allows daily player/team/board HTML on the CDN path", () => {
@@ -71,6 +80,10 @@ describe("page-html-cache-policy", () => {
     assert.equal(
       htmlCacheControlHeader("/players/1", daily, { cdnEnabled: false }),
       "private, no-cache, no-store, max-age=0, must-revalidate"
+    );
+    assert.match(
+      htmlCacheControlHeader("/games/401909834", daily, { cdnEnabled: true }),
+      /^public, max-age=0, s-maxage=900, stale-while-revalidate=/
     );
   });
 

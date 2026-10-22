@@ -4,7 +4,7 @@ import { GameLabView } from "@/components/games/game-lab-view";
 import { GameIdentityShell } from "@/components/games/game-identity-shell";
 import { GamePreTipBoard } from "@/components/games/game-pre-tip-board";
 import { GamePreviewSection, GameTabs, type GameTab } from "@/components/games/game-preview-section";
-import { PossessionExplorerIsland } from "@/components/games/possession-explorer-island";
+import { PossessionExplorerSection } from "@/components/games/possession-explorer-section";
 import { DelayedGameSection } from "@/components/games/delayed-game-section";
 import { cookies } from "next/headers";
 import { needsScoreMask, parseScoreDelay, SCORE_DELAY_COOKIE } from "@/lib/score-delay";
@@ -27,6 +27,7 @@ import { getGameShellCached } from "@/data/queries/request-cache";
 import { runtimePregameMargin } from "@/data/runtime/pregame-margin";
 import { withBudget } from "@/data/queries/budget";
 import { validateGamePresentation } from "@/lib/game-presentation";
+import { isFinalStatus } from "@/lib/game-status";
 import { longUpstreamBudgetsEnabled } from "@/data/providers/nba/runtime-policy";
 import { parseThemeMode, resolveActiveEraTheme } from "@/themes/era-theme";
 import { yieldForStreaming } from "@/lib/stream-yield";
@@ -72,7 +73,20 @@ async function GameLabDeepBody({ gameId, hidePeriodTable, asOfMs }: { gameId: st
   }
   const shell = await getGameShellCached(gameId);
   const pregameMargin = shell ? runtimePregameMargin(shell.game) : undefined;
-  const view = <GameLabView analysis={payload.analysis} players={payload.players} events={payload.events} pbpSource={payload.pbpSource} officialTeamStats={payload.officialTeamStats} pregameMargin={pregameMargin} omitHero hidePeriodTable={hidePeriodTable} rebuiltFromPlays={payload.asOf === "cut"} />;
+  // Omit events from RSC/Flight — client loads PBP after paint (~0.5MB+ HTML saved).
+  const view = (
+    <GameLabView
+      analysis={payload.analysis}
+      players={payload.players}
+      events={[]}
+      pbpSource={payload.pbpSource}
+      officialTeamStats={payload.officialTeamStats}
+      pregameMargin={pregameMargin}
+      omitHero
+      hidePeriodTable={hidePeriodTable}
+      rebuiltFromPlays={payload.asOf === "cut"}
+    />
+  );
   return payload.asOf === "unavailable" ? <DelayedGameSection risky>{view}</DelayedGameSection> : view;
 }
 
@@ -129,6 +143,7 @@ export default async function GamePage({ params, searchParams }: GamePageProps) 
   const awayName = shell.game.awayTeamName ?? shell.game.awayTeamAbbr ?? shell.game.awayTeamId;
   const homeName = shell.game.homeTeamName ?? shell.game.homeTeamAbbr ?? shell.game.homeTeamId;
   const body = <main data-motion-page className="site-shell flex flex-1 flex-col gap-5 py-5 sm:gap-6 sm:py-7">
+    {isFinalStatus(status) ? <span hidden data-html-cache="game-final" /> : null}
     <h1 className="sr-only">{gameDate ? t("srTitleDated", { away: awayName, home: homeName, date: gameDate }) : t("srTitle", { away: awayName, home: homeName })}</h1>
     <JsonLd data={{
       "@context": "https://schema.org",
@@ -150,18 +165,15 @@ export default async function GamePage({ params, searchParams }: GamePageProps) 
       {preTip ? <GamePreTipBoard game={shell.game} /> : <>
       {asOfMs == null ? <Suspense fallback={<DestinationSectionSkeleton label={t("loadingFlow")} />}><HistoricalDeepBody gameId={gameId} seasonHint={seasonHint} homeLabel={shell.game.homeTeamAbbr ?? t("homeFallback")} awayLabel={shell.game.awayTeamAbbr ?? t("awayFallback")} /></Suspense> : null}
       <Suspense fallback={<DestinationSectionSkeleton label={t("loadingLab")} />}><GameLabDeepBody gameId={gameId} arrival={arrival} hidePeriodTable={heroHasLineScore} asOfMs={asOfMs} /></Suspense>
-      <details className="group sports-card overflow-hidden">
-        <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3.5 sm:px-5 [&::-webkit-details-marker]:hidden">
-          <span className="flex flex-col">
-            <span className="text-[17px] font-bold tracking-tight">{t("possessionTitle")}</span>
-            <span className="text-[13px] text-muted-foreground">{t("possessionBlurb")}</span>
-          </span>
-          <span aria-hidden className="text-[18px] text-muted-foreground transition-transform group-open:rotate-180">⌄</span>
-        </summary>
-        <div className="border-t border-border/60 p-3 sm:p-4">
-          {holdIfCut(<Suspense fallback={<DestinationSectionSkeleton label={t("loadingPossession")} />}><PossessionExplorerIsland gameId={gameId} awayTeamKey={shell.game.awayTeamId} homeTeamKey={shell.game.homeTeamId} /></Suspense>)}
-        </div>
-      </details>
+      {holdIfCut(
+        <PossessionExplorerSection
+          gameId={gameId}
+          awayTeamKey={shell.game.awayTeamId}
+          homeTeamKey={shell.game.homeTeamId}
+          title={t("possessionTitle")}
+          blurb={t("possessionBlurb")}
+        />
+      )}
       </>}
       </DelayedGameSection>
     ) : null}
