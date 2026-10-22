@@ -1476,10 +1476,13 @@ export function PlayerPercentilePanel({
   }, [metrics, playerId, profileComps, season, seasons, teamKey, trackedSeason]);
   /* eslint-enable react-hooks/set-state-in-effect */
 
-  // SSR may omit comps / sparklines. Fill series ASAP (hero chart); comps can wait a beat.
+  // SSR ships Impact-only + may omit comps / non-default sparklines. Upgrade
+  // immediately so other category tabs don't flash empty after paint.
   // No run-once ref: Strict Mode's cleanup would cancel the only scheduled call.
   const ssrMissingSeries = !metrics.some((m) => (m.series?.length ?? 0) > 1);
-  const ssrIsPartial = !ssrHasComps || ssrMissingSeries;
+  const ssrImpactOnly =
+    metrics.length > 0 && metrics.every((m) => m.category === "impact");
+  const ssrIsPartial = !ssrHasComps || ssrMissingSeries || ssrImpactOnly;
   useEffect(() => {
     preloadPlayerPageCharts();
   }, []);
@@ -1491,28 +1494,11 @@ export function PlayerPercentilePanel({
       if (cancelled || desiredSeason.current !== targetSeason) return;
       upgradeToFull(targetSeason);
     };
-    // Hero sparkline is above the fold — don't park it behind idle.
-    if (ssrMissingSeries) {
-      hydrate();
-      return () => {
-        cancelled = true;
-      };
-    }
-    // Comps can wait briefly, but never forever: a busy main thread (recharts
-    // chunks, career logs) can starve requestIdleCallback with no timeout.
-    if (typeof requestIdleCallback === "function") {
-      const idleId = requestIdleCallback(hydrate, { timeout: 1_200 });
-      return () => {
-        cancelled = true;
-        cancelIdleCallback(idleId);
-      };
-    }
-    const timeoutId = window.setTimeout(hydrate, 120);
+    hydrate();
     return () => {
       cancelled = true;
-      window.clearTimeout(timeoutId);
     };
-  }, [ssrIsPartial, ssrMissingSeries, trackedSeason, upgradeToFull]);
+  }, [ssrIsPartial, trackedSeason, upgradeToFull]);
 
   const urlSeason = queryNav?.searchParams.get("season");
 

@@ -278,20 +278,27 @@ async function matchEdgeCache(entry: PageCacheEntry): Promise<Response | null> {
   try {
     const matched = await edgeCache().match(edgeCacheKeyRequest(entry));
     if (!matched) return null;
-    const html = await matched.clone().text();
-    if (isUncacheableHtml(html, entry.pathname)) return null;
-    if (isGameHtmlPath(entry.pathname) && !htmlHasGameFinalMarker(html)) return null;
+
+    // Finished games: must verify the final marker before serving. Buffering is
+    // OK — finals are smaller after PBP left Flight. Daily CDN pages stream.
+    if (isGameHtmlPath(entry.pathname)) {
+      const html = await matched.text();
+      if (isUncacheableHtml(html, entry.pathname)) return null;
+      if (!htmlHasGameFinalMarker(html)) return null;
+      const headers = new Headers(matched.headers);
+      headers.set(
+        "cache-control",
+        htmlCacheControlHeader(entry.pathname, DAILY_HTML_POLICY, {
+          cdnEnabled: true,
+        })
+      );
+      headers.set("x-page-cache", "EDGE");
+      return new Response(html, { status: matched.status, headers });
+    }
+
     const headers = new Headers(matched.headers);
-    const policy =
-      isGameHtmlPath(entry.pathname) && htmlHasGameFinalMarker(html)
-        ? DAILY_HTML_POLICY
-        : entry.policy;
-    headers.set(
-      "cache-control",
-      htmlCacheControlHeader(entry.pathname, policy, { cdnEnabled: true })
-    );
-    headers.set("x-page-cache", "EDGE");
-    return new Response(html, { status: matched.status, headers });
+    applyHtmlCacheHeaders(headers, entry, "EDGE");
+    return new Response(matched.body, { status: matched.status, headers });
   } catch {
     return null;
   }

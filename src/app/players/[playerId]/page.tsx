@@ -510,23 +510,12 @@ export default async function PlayerPage({
     ? resolveActiveEraTheme(season, themeMode)
     : null;
 
-  const onOffSeasons = await getOnOffSeasons();
-  const caps = playerPageCapabilities({
-    selectedSeason: season,
-    careerFirstSeason:
-      historyCareer?.firstSeason ??
-      masterPlayer?.firstSeason ??
-      seasonOptions.at(-1),
-    showSentiment: showLiveIntelligence,
-    hasOnOff: onOffSeasons.includes(statsCtx.statsSeason),
-  });
-
   // Slim edge (explicit SLIM_EDGE_PRODUCT=1 only) — paid Workers run the full page.
   const slimWorker = slimEdgeProductEnabled();
 
   // One parallel batch before paint: identity + overview boards + percentile
-  // hero. Sequential awaits stacked cold TTFB; Suspense skeletons stick when
-  // the Worker stream cuts mid-flight.
+  // hero + on/off season list. Sequential awaits stacked cold TTFB; Suspense
+  // skeletons stick when the Worker stream cuts mid-flight.
   const overviewPaint =
     view === "overview" && !(slimWorker || notYetPlayed);
   const [
@@ -536,6 +525,7 @@ export default async function PlayerPage({
     overviewCareerNode,
     overviewContractNode,
     percentileHeroNode,
+    onOffSeasons,
   ] = await Promise.all([
     slimWorker
       ? Promise.resolve(null)
@@ -595,7 +585,18 @@ export default async function PlayerPage({
           honor,
         })
       : Promise.resolve(null),
+    getOnOffSeasons(),
   ]);
+
+  const caps = playerPageCapabilities({
+    selectedSeason: season,
+    careerFirstSeason:
+      historyCareer?.firstSeason ??
+      masterPlayer?.firstSeason ??
+      seasonOptions.at(-1),
+    showSentiment: showLiveIntelligence,
+    hasOnOff: onOffSeasons.includes(statsCtx.statsSeason),
+  });
 
   const careerSeasonsForTable =
     historySeasons.length > 0 ? historySeasons : universeSeasons;

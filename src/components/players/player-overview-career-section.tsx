@@ -46,7 +46,7 @@ export async function PlayerOverviewCareerSection({
         teamKey={teamKey}
         fromHistory={fromHistory}
         themeMode={themeMode}
-        chart="games"
+        chart="seasons"
         enrich="fast"
       />
       <TextLink

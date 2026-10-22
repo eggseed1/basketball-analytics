@@ -495,7 +495,7 @@ function main() {
     "DARKO stays live when the overlay is present"
   );
 
-  // SSR slim: drop comps keys, non-default series, and default flags
+  // SSR slim: Impact-only, drop comps keys / non-default series / default flags
   // (RSC turns undefined into $undefined).
   const withSeries: PercentileMetric[] = earlyMetrics.map((m, i) => ({
     ...m,
@@ -517,13 +517,45 @@ function main() {
   withSeries.push({
     ...withSeries[0]!,
     id: "hidden-test",
+    category: "impact",
     profileHidden: true,
     qualified: false,
     series: undefined,
   });
+  withSeries.push({
+    id: "pts",
+    category: "profile",
+    label: "PTS",
+    percentile: 90,
+    display: "30.1",
+    value: 30.1,
+    leagueComps: [],
+    historicalComps: [],
+    interpretation: "higher_is_better",
+    showPercentile: true,
+    showGrade: true,
+    series: [
+      {
+        season: "25-26",
+        value: 30.1,
+        percentile: 90,
+        teamId: "13",
+        teamAbbr: "LAL",
+        color: "#552583",
+      },
+    ],
+  });
   const slimmed = slimPercentileMetricsForSsr(withSeries);
   const keepId = defaultPercentileMetricId(withSeries);
-  assert.equal(slimmed.length, withSeries.length);
+  assert.ok(
+    slimmed.every((m) => m.category === "impact" || m.id === keepId),
+    "SSR keeps Impact (+ default) only"
+  );
+  assert.equal(
+    slimmed.some((m) => m.id === "pts"),
+    false,
+    "non-Impact profile rows leave SSR"
+  );
   for (const m of slimmed) {
     assert.equal("leagueComps" in m, false, `${m.id} should omit leagueComps`);
     assert.equal(
