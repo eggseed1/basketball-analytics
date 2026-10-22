@@ -77,7 +77,7 @@ async function fetchEspnEventBoxScore(
     summary = await espnFetchJson<EspnSummaryResponse>(url, {
       ttlMs: CACHE_TTL_MS.boxScore ?? 1000 * 60 * 5,
       retries: fetchOptions?.retries ?? 1,
-      // Cloudflare Workers: keep under getGameShellCached's ~5s budget.
+      // Cloudflare Workers: keep under getGameShellCached's ~7s budget.
       timeoutMs: fetchOptions?.timeoutMs ?? 2_500,
     });
   } catch (error) {
