@@ -150,7 +150,15 @@ export async function PlayerCareerIsland({
       seasonType === "playoffs"
         ? await getPlayerPlayoffCareerSeasons(playerId).catch(() => career)
         : enrich === "fast"
-          ? career
+          ? await (async () => {
+              // Local bundled DARKO/RAPTOR only — no stats.nba advanced crawl.
+              const { attachBundledBrefDarkoRaptor } = await import(
+                "@/data/queries/players"
+              );
+              return attachBundledBrefDarkoRaptor(playerId, career).catch(
+                () => career
+              );
+            })()
           : await enrichPlayerCareerAdvancedCached(playerId, career).catch(
               () => career
             );
