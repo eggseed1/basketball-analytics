@@ -1,7 +1,9 @@
 name: Deploy site
 
-# Code-only ship to Cloudflare. Bakes whatever is already on the branch —
-# no daily sync, DRBL refit, Playwright, or data commits.
+# Code ship to Cloudflare. No daily sync / DRBL refit / data commits.
+# Still rebakes the current season's player game logs: that tree is
+# gitignored, and OpenNext replaces Worker assets on every deploy — a
+# bare ship would wipe Game Logs until the next nightly refresh.
 # Nightly data + deploy stays on daily-runtime-refresh.yml.
 
 on:
@@ -14,7 +16,7 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-24.04
-    timeout-minutes: 25
+    timeout-minutes: 35
     permissions:
       contents: read
     env:
@@ -31,6 +33,24 @@ jobs:
 
       - name: Install
         run: npm ci
+
+      - name: Bake current-season player game logs
+        run: |
+          set -euo pipefail
+          SEASON=$(node --input-type=module -e "
+            import { nbaSeasonPhaseInfo } from './scripts/lib/nba-season-phase.mjs';
+            console.log(nbaSeasonPhaseInfo().season);
+          ")
+          MIN_GP=$(node --input-type=module -e "
+            import { dailyGameLogMinGp } from './scripts/lib/nba-season-phase.mjs';
+            console.log(dailyGameLogMinGp());
+          ")
+          echo "Baking player game logs for ${SEASON} (minGp=${MIN_GP})"
+          FORCE=1 \
+            GAMELOG_SEASONS="${SEASON}" \
+            GAMELOG_MIN_GP="${MIN_GP}" \
+            GAMELOG_CONCURRENCY="${GAMELOG_CONCURRENCY:-8}" \
+            node scripts/build-runtime-player-game-logs.mjs
 
       - name: Build OpenNext bundle
         run: npx opennextjs-cloudflare build
@@ -65,7 +85,8 @@ jobs:
       - name: Summary
         if: always()
         run: |
-          echo "### Deploy site (code only)" >> "$GITHUB_STEP_SUMMARY"
+          echo "### Deploy site (code ship)" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "- ref: \`${{ github.sha }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- no daily sync / data refresh" >> "$GITHUB_STEP_SUMMARY"
+          echo "- rebakes current-season player game logs into Worker assets" >> "$GITHUB_STEP_SUMMARY"
