@@ -141,9 +141,9 @@ function notQualifiedImpactMetric(
  * those in — stripping whole categories made Profile/Shooting/Defense/Advanced
  * flash "No rankings…" whenever the upgrade lagged or stayed on forced-fast.
  *
- * Empty comps / unused series are omitted (not `[]` / `undefined`) so they
- * don't bloat the RSC payload — React flight serializes `undefined` as
- * `$undefined`, which still costs a key per metric.
+ * Empty comps / unused series / default flags are omitted (not `[]` /
+ * `undefined`) so they don't bloat the RSC payload — React flight serializes
+ * `undefined` as `$undefined`, which still costs a key per metric.
  */
 export function slimPercentileMetricsForSsr(
   metrics: PercentileMetric[],
@@ -155,12 +155,18 @@ export function slimPercentileMetricsForSsr(
       leagueComps: _l,
       historicalComps: _h,
       series: _s,
+      profileHidden: _ph,
+      qualified: _q,
       ...rest
     } = metric;
+    const next: PercentileMetric = { ...rest };
     if (metric.id === keepId && metric.series?.length) {
-      return { ...rest, series: metric.series };
+      next.series = metric.series;
     }
-    return rest;
+    // Only emit flags when they change UI defaults (omit ≡ live / not hidden).
+    if (metric.profileHidden === true) next.profileHidden = true;
+    if (metric.qualified === false) next.qualified = false;
+    return next;
   });
 }
 

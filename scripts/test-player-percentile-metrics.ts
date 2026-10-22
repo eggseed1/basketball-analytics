@@ -495,11 +495,13 @@ function main() {
     "DARKO stays live when the overlay is present"
   );
 
-  // SSR slim: drop comps keys and non-default series (RSC turns undefined into $undefined).
+  // SSR slim: drop comps keys, non-default series, and default flags
+  // (RSC turns undefined into $undefined).
   const withSeries: PercentileMetric[] = earlyMetrics.map((m, i) => ({
     ...m,
     leagueComps: [],
     historicalComps: [],
+    profileHidden: undefined,
     series: [
       {
         season: "25-26",
@@ -512,6 +514,13 @@ function main() {
       },
     ],
   }));
+  withSeries.push({
+    ...withSeries[0]!,
+    id: "hidden-test",
+    profileHidden: true,
+    qualified: false,
+    series: undefined,
+  });
   const slimmed = slimPercentileMetricsForSsr(withSeries);
   const keepId = defaultPercentileMetricId(withSeries);
   assert.equal(slimmed.length, withSeries.length);
@@ -526,6 +535,23 @@ function main() {
       assert.ok(m.series?.length, "default metric keeps series");
     } else {
       assert.equal("series" in m, false, `${m.id} should omit series`);
+    }
+    if (m.id === "hidden-test") {
+      assert.equal(m.profileHidden, true);
+      assert.equal(m.qualified, false);
+    } else {
+      assert.equal(
+        "profileHidden" in m,
+        false,
+        `${m.id} should omit default profileHidden`
+      );
+      if (m.qualified !== false) {
+        assert.equal(
+          "qualified" in m,
+          false,
+          `${m.id} should omit live qualified flag`
+        );
+      }
     }
   }
 
