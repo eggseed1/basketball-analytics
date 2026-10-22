@@ -3,15 +3,54 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
+function pickSummary(value: unknown, depth = 0): any | null {
+  if (!value || depth > 6) return null;
+  if (typeof value !== "object") return null;
+  const rec = value as Record<string, unknown>;
+  const header = rec.header as { competitions?: unknown[] } | undefined;
+  if (header && Array.isArray(header.competitions) && header.competitions.length > 0) {
+    return rec;
+  }
+  for (const key of ["gamepackageJSON", "gamepackage", "content", "page"]) {
+    if (key in rec) {
+      const found = pickSummary(rec[key], depth + 1);
+      if (found) return found;
+    }
+  }
+  return null;
+}
+
+async function fetchBrowserGameSummary(
+  gameId: string,
+  signal: AbortSignal
+): Promise<any> {
+  const cdn = await fetch(
+    `https://cdn.espn.com/core/nba/game?xhr=1&gameId=${encodeURIComponent(gameId)}`,
+    { signal }
+  );
+  if (cdn.ok) {
+    const wrapped = await cdn.json();
+    const summary = pickSummary(wrapped);
+    if (summary) return summary;
+  }
+  const site = await fetch(
+    `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=${encodeURIComponent(gameId)}`,
+    { signal }
+  );
+  if (!site.ok) throw new Error(String(site.status));
+  return site.json();
+}
+
 export function RuntimeGameFallback({ gameId }: { gameId: string }) {
   const [data, setData] = useState<any>(null);
   const [failed, setFailed] = useState(false);
   useEffect(() => {
     const controller = new AbortController();
-    fetch(`https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=${encodeURIComponent(gameId)}`, { signal: controller.signal })
-      .then((r) => { if (!r.ok) throw new Error(String(r.status)); return r.json(); })
+    fetchBrowserGameSummary(gameId, controller.signal)
       .then(setData)
-      .catch((e) => { if (e?.name !== "AbortError") setFailed(true); });
+      .catch((e) => {
+        if (e?.name !== "AbortError") setFailed(true);
+      });
     return () => controller.abort();
   }, [gameId]);
   if (failed) return <div className="sports-card flex flex-col gap-3 p-6"><h1 className="text-[20px] font-semibold">Game unavailable</h1><p className="text-[14px] text-muted-foreground">The server and browser game feeds are both unavailable right now.</p><Link href="/scores" className="font-semibold underline-offset-4 hover:underline">Back to scores</Link></div>;
