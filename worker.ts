@@ -72,10 +72,35 @@ const UNCACHEABLE_MARKERS = [
   /data-page-cache="skip"/,
 ];
 
-/** Truncated streams leave the loading shell up and poison PAGE_CACHE. */
-function isUncacheableHtml(html: string): boolean {
+/**
+ * Truncated streams leave the loading shell up and poison PAGE_CACHE.
+ * Also reject route loading.tsx documents that finished without deep content
+ * (seen as STALE ~100KB Game Lab pages stuck on "Loading Game Lab…").
+ */
+function isUncacheableHtml(html: string, pathname?: string): boolean {
   if (!/<\/html>/i.test(html)) return true;
-  return UNCACHEABLE_MARKERS.some((marker) => marker.test(html));
+  if (UNCACHEABLE_MARKERS.some((marker) => marker.test(html))) return true;
+
+  // Game Lab: DestinationLoadingFrame subtitle without finished lab headings.
+  if (pathname && /^\/games\/[^/]+$/.test(pathname)) {
+    const loadingShell =
+      /Matchup identity and score load first/i.test(html) &&
+      !/type-heading">(?:Game flow|Team comparison|Box score|Top performers)/i.test(
+        html
+      );
+    if (loadingShell) return true;
+  }
+
+  // Player page: loading skeleton only (no identity heading in the document).
+  if (pathname && /^\/players\/[^/]+$/.test(pathname)) {
+    const loadingOnly =
+      /Loading player…/i.test(html) &&
+      !/data-motion-page/i.test(html) &&
+      html.length < 200_000;
+    if (loadingOnly) return true;
+  }
+
+  return false;
 }
 
 type PageCacheEntry = {
@@ -147,11 +172,14 @@ function cachedResponse(
     };
     const age = Math.max(0, Math.round((Date.now() - meta.at) / 1000));
     if (age >= entry.policy.fresh + entry.policy.stale) return null;
+    const html = raw.slice(newline + 1);
+    // Drop poisoned loading shells so the next request re-renders.
+    if (isUncacheableHtml(html, entry.pathname)) return null;
     const stale = age >= entry.policy.fresh;
     const headers = new Headers(meta.headers);
     headers.set("age", String(age));
     applyHtmlCacheHeaders(headers, entry, stale ? "STALE" : "HIT");
-    return { response: new Response(raw.slice(newline + 1), { status: 200, headers }), stale };
+    return { response: new Response(html, { status: 200, headers }), stale };
   } catch {
     return null;
   }
@@ -175,7 +203,7 @@ async function storePage(
 ): Promise<void> {
   const html = await new Response(body).text();
   if (html.length > PAGE_CACHE_MAX_BYTES) return;
-  if (isUncacheableHtml(html)) return;
+  if (isUncacheableHtml(html, entry.pathname)) return;
   const replayed: Record<string, string> = {};
   for (const name of REPLAYED_HEADERS) {
     const value = headers.get(name);
