@@ -1,4 +1,5 @@
 import { PlayerUpcomingGames } from "@/components/players/player-upcoming-games";
+import { withBudget } from "@/data/queries/budget";
 import { getPlayerCareerSeasonsCached } from "@/data/queries";
 import { upcomingScheduleSeason } from "@/data/providers/nba/scoreboard-client";
 import { toGameSummary } from "@/data/queries/filter-utils";
@@ -52,7 +53,11 @@ export async function PlayerUpcomingGamesFromSnapshot({
   if (!team) return null;
 
   const brand = resolveTeamBrand(scheduleTeamKey);
-  const games = await upcomingGamesForTeam(scheduleTeamKey, season);
+  const { value: games } = await withBudget(
+    upcomingGamesForTeam(scheduleTeamKey, season),
+    3_000,
+    [] as GameSummary[]
+  );
   return (
     <PlayerUpcomingGames
       season={season}

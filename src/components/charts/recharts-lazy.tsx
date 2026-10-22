@@ -30,16 +30,40 @@ const pulseFutures = (
 /** Client-only chart shells — keep recharts out of the Cloudflare Worker SSR graph. */
 
 /** Shared import promises so overview/comparisons can start the chunk early. */
-const careerTeamTrendChartModule = () =>
-  import("@/components/players/career-team-trend-chart");
-const playerCompFuturesChartModule = () =>
-  import("@/components/players/player-comp-futures-chart");
+let careerTeamTrendChartPromise: Promise<
+  typeof import("@/components/players/career-team-trend-chart")
+> | null = null;
+let playerCompFuturesChartPromise: Promise<
+  typeof import("@/components/players/player-comp-futures-chart")
+> | null = null;
+
+const careerTeamTrendChartModule = () => {
+  careerTeamTrendChartPromise ??= import(
+    "@/components/players/career-team-trend-chart"
+  );
+  return careerTeamTrendChartPromise;
+};
+const playerCompFuturesChartModule = () => {
+  playerCompFuturesChartPromise ??= import(
+    "@/components/players/player-comp-futures-chart"
+  );
+  return playerCompFuturesChartPromise;
+};
 
 /** Kick hero/overview chart chunks as soon as any lazy chart shell loads. */
 export function preloadPlayerPageCharts() {
   if (typeof window === "undefined") return;
   void careerTeamTrendChartModule();
   void playerCompFuturesChartModule();
+}
+
+/** Await before mounting TalentYearChart so Games mode does not stick on shimmer. */
+export function whenPlayerPageChartsReady(): Promise<void> {
+  if (typeof window === "undefined") return Promise.resolve();
+  return Promise.all([
+    careerTeamTrendChartModule(),
+    playerCompFuturesChartModule(),
+  ]).then(() => undefined);
 }
 
 if (typeof window !== "undefined") {

@@ -774,6 +774,7 @@ export default async function PlayerPage({
           <PlayerComparisonsBoard
             playerId={playerId}
             season={season}
+            career={career}
             teamKey={teamKey}
             espnId={identity?.espnId}
             position={bioPosition}

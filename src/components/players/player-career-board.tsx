@@ -6,6 +6,8 @@ import { GlassSurface } from "@/components/brand/glass-surface";
 import {
   CareerTeamTrendChartLazy as CareerTeamTrendChart,
   TalentYearChartLazy as TalentYearChart,
+  preloadPlayerPageCharts,
+  whenPlayerPageChartsReady,
 } from "@/components/charts/recharts-lazy";
 import { CareerChartFilterWipe } from "@/components/players/career-chart-filter-wipe";
 import { useQueryNavOptional } from "@/components/continuity/query-nav";
@@ -382,18 +384,26 @@ export function PlayerCareerBoard({
     [rows]
   );
   useEffect(() => {
+    preloadPlayerPageCharts();
+  }, []);
+
+  useEffect(() => {
     // Prefer SSR logs when present; skip clearing hydrate state (avoids sync setState).
     if (gameLogs.length > 0 || !seasonKey) return;
     let cancelled = false;
     const qs = encodeURIComponent(seasonKey);
-    fetch(
-      `/api/players/${encodeURIComponent(playerId)}/career-game-logs?seasons=${qs}`
-    )
-      .then(async (res) => {
+    // Load chart chunks before flipping Games mode — swapping to TalentYearChart
+    // while its dynamic() import is still cold left the h-64 shimmer stuck.
+    void Promise.all([
+      fetch(
+        `/api/players/${encodeURIComponent(playerId)}/career-game-logs?seasons=${qs}`
+      ).then(async (res) => {
         if (!res.ok) throw new Error(`career-game-logs ${res.status}`);
         return res.json() as Promise<{ games?: CompactPlayerGameLogRow[] }>;
-      })
-      .then((json) => {
+      }),
+      whenPlayerPageChartsReady(),
+    ])
+      .then(([json]) => {
         if (cancelled) return;
         setHydratedLogs(Array.isArray(json.games) ? json.games : []);
       })

@@ -5,6 +5,7 @@ import {
 } from "@/components/brand/glass-surface";
 import { PlayerContractTransactions } from "@/components/players/player-contract-transactions";
 import { PlayerSalaryPayoff } from "@/components/players/player-salary-payoff";
+import { withBudget } from "@/data/queries/budget";
 import { getPlayerArrival, teamNicknames } from "@/data/queries/acquisition-paths";
 import { getPlayerContractSnapshot } from "@/data/queries/player-front-office";
 import { contractValueModel, getContractValue } from "@/data/runtime/contract-value";
@@ -43,7 +44,11 @@ export async function PlayerArrivalIsland({
   historicalBrand?: HistoricalTeamBrand | null;
   honor?: GlassSurfaceHonor;
 }) {
-  const arrival = await loadArrival(teamKey, [espnId, playerId, nbaId], playerName);
+  const { value: arrival } = await withBudget(
+    loadArrival(teamKey, [espnId, playerId, nbaId], playerName),
+    4_000,
+    null
+  );
   if (!arrival) return null;
 
   const modernBrand = resolveTeamBrand(teamKey);

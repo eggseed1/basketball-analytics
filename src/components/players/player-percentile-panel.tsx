@@ -1220,8 +1220,11 @@ async function requestPercentiles(
   season: string,
   mode: "fast" | "full"
 ): Promise<SeasonMetricsCache | null> {
+  const params = new URLSearchParams({ season, mode });
+  // Full mode needs comps for Closest match; fast stays light unless asked.
+  if (mode === "full") params.set("comps", "1");
   const res = await fetch(
-    `/api/players/${encodeURIComponent(playerId)}/percentiles?season=${encodeURIComponent(season)}&mode=${mode}`
+    `/api/players/${encodeURIComponent(playerId)}/percentiles?${params}`
   );
   if (!res.ok) return null;
   const json = (await res.json()) as SeasonMetricsCache & { season?: string };
@@ -1356,15 +1359,27 @@ export function PlayerPercentilePanel({
   const upgradeToFull = useCallback(
     (target: string) => {
       setFullPending(true);
+      let settled = false;
+      const clear = () => {
+        if (settled) return;
+        settled = true;
+        setFullPending(false);
+      };
+      // Hard stop so a hung /api/players/.../percentiles cannot leave the
+      // Closest match panel on "Finding similar players…" indefinitely.
+      const watchdog = window.setTimeout(clear, 12_000);
       void fetchPercentiles(playerId, target, "full")
         .catch(() => null)
         .then((full) => {
-          if (desiredSeason.current !== target) return;
-          // This lands while the reader may be scrolling, so the render yields.
-          startTransition(() => {
-            if (full?.metrics.length) applyCached(target, full);
-            setFullPending(false);
-          });
+          window.clearTimeout(watchdog);
+          if (desiredSeason.current === target && full?.metrics.length) {
+            startTransition(() => {
+              applyCached(target, full);
+              clear();
+            });
+            return;
+          }
+          clear();
         });
     },
     [applyCached, playerId]
@@ -1468,8 +1483,10 @@ export function PlayerPercentilePanel({
         cancelled = true;
       };
     }
+    // Comps can wait briefly, but never forever: a busy main thread (recharts
+    // chunks, career logs) can starve requestIdleCallback with no timeout.
     if (typeof requestIdleCallback === "function") {
-      const idleId = requestIdleCallback(hydrate);
+      const idleId = requestIdleCallback(hydrate, { timeout: 1_200 });
       return () => {
         cancelled = true;
         cancelIdleCallback(idleId);
