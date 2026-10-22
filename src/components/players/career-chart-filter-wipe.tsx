@@ -153,15 +153,12 @@ export function CareerChartFilterWipe({
   const genRef = useRef(0);
   const [shownKey, setShownKey] = useState(transitionKey);
   const [shown, setShown] = useState(children);
+  // Keep latest children/key for the wipe-out apply() without syncing into
+  // state on every parent render (that + Recharts churn hit React #185).
   pendingRef.current = children;
   latestKeyRef.current = transitionKey;
 
-  // Keep live children in sync when the key has not changed (no wipe).
-  useEffect(() => {
-    if (transitionKey === shownKeyRef.current) {
-      setShown(children);
-    }
-  }, [children, transitionKey]);
+  const live = transitionKey === shownKey;
 
   useEffect(() => {
     if (transitionKey === shownKeyRef.current) return;
@@ -214,7 +211,7 @@ export function CareerChartFilterWipe({
       <CareerChartRevealContext.Provider value="entry">
         {/* Remount on each filter key so draw state always starts empty. */}
         <div key={shownKey} className="w-full min-w-0">
-          {shown}
+          {live ? children : shown}
         </div>
       </CareerChartRevealContext.Provider>
     </div>

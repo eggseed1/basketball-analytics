@@ -832,19 +832,13 @@ export function CareerTeamTrendChart({
 }) {
   const chartTheme = useChartTheme();
   const wrapRef = useRef<HTMLDivElement>(null);
-  // 0 = empty (clipped). >0 = LTR clip reveal.
+  // 0 = empty (clipped). >0 = LTR clip reveal. Remount (key=drawKey) to replay.
   const [drawRun, setDrawRun] = useState(0);
   const enteredRef = useRef(false);
-
-  useEffect(() => {
-    // Stat filter change: reset and draw in again (effect, not render-time setState).
-    enteredRef.current = false;
-    setDrawRun(0);
-  }, [drawKey]);
+  void drawKey;
 
   useEffect(() => {
     if (enteredRef.current) return;
-    if (drawRun !== 0) return;
     const root = wrapRef.current;
     if (!root) return;
 
@@ -875,7 +869,7 @@ export function CareerTeamTrendChart({
     );
     io.observe(root);
     return () => io.disconnect();
-  }, [drawKey, drawRun]);
+  }, []);
 
   useLayoutEffect(() => {
     const root = wrapRef.current;
@@ -975,8 +969,12 @@ export function CareerTeamTrendChart({
     return buildTeamSegmentedChart(themedPlotPoints);
   }, [plotPoints, themedPlotPoints, hasPercentileColors]);
 
-  const franchiseLegend = legend.filter(
-    (t) => t.teamId !== "TOT" && t.teamId !== "2TM" && t.teamAbbr !== "-"
+  const franchiseLegend = useMemo(
+    () =>
+      legend.filter(
+        (t) => t.teamId !== "TOT" && t.teamId !== "2TM" && t.teamAbbr !== "-"
+      ),
+    [legend]
   );
 
   const visibleLegend = useMemo(
@@ -988,51 +986,101 @@ export function CareerTeamTrendChart({
     [teamColor, franchiseLegend]
   );
 
-  const handleSelect = (row: ChartRow) => {
-    if (!onSeasonSelect) return;
-    const season = row.fullSeason ?? row.season;
-    onSeasonSelect(season);
-  };
+  const handleSelect = useCallback(
+    (row: ChartRow) => {
+      if (!onSeasonSelect) return;
+      const season = row.fullSeason ?? row.season;
+      onSeasonSelect(season);
+    },
+    [onSeasonSelect]
+  );
 
   const useSavantDots = hasPercentileColors;
+  const canSelect = Boolean(onSeasonSelect);
 
-  // Clip reveal owns empty → full; dots stay painted underneath.
-  const renderDot = (props: {
-    cx?: number;
-    cy?: number;
-    payload?: ChartRow;
+  // Stable Recharts render props — new function identities every paint make
+  // Recharts Redux notify in a loop (React #185 on the player route).
+  const renderDot = useCallback(
+    (props: {
+      cx?: number;
+      cy?: number;
+      payload?: ChartRow;
+      index?: number;
+    }) => {
+      const Dot = useSavantDots ? SavantDot : TeamDot;
+      return (
+        <Dot
+          cx={props.cx}
+          cy={props.cy}
+          payload={props.payload}
+          selectedSeason={selectedSeason}
+          onSelect={canSelect ? handleSelect : undefined}
+          drawRun={-1}
+        />
+      );
+    },
+    [useSavantDots, selectedSeason, canSelect, handleSelect]
+  );
+
+  const renderActiveDot = useCallback(
+    (props: {
+      cx?: number;
+      cy?: number;
+      payload?: ChartRow;
+    }) => {
+      const Dot = useSavantDots ? SavantDot : TeamDot;
+      return (
+        <Dot
+          cx={props.cx}
+          cy={props.cy}
+          payload={props.payload}
+          selectedSeason={selectedSeason}
+          onSelect={canSelect ? handleSelect : undefined}
+          active
+        />
+      );
+    },
+    [useSavantDots, selectedSeason, canSelect, handleSelect]
+  );
+
+  const renderXTick = useCallback((props: {
+    x?: number | string;
+    y?: number | string;
+    payload?: { value?: string | number };
+    textAnchor?: "start" | "middle" | "end" | "inherit";
     index?: number;
-  }) => {
-    const Dot = useSavantDots ? SavantDot : TeamDot;
-    return (
-      <Dot
-        cx={props.cx}
-        cy={props.cy}
-        payload={props.payload}
-        selectedSeason={selectedSeason}
-        onSelect={onSeasonSelect ? handleSelect : undefined}
+  }) => <CareerAxisTick {...props} axis="x" fontSize={12} />, []);
+
+  const renderYTick = useCallback((props: {
+    x?: number | string;
+    y?: number | string;
+    payload?: { value?: string | number };
+    textAnchor?: "start" | "middle" | "end" | "inherit";
+    index?: number;
+  }) => (
+    <CareerAxisTick
+      {...props}
+      axis="y"
+      fontSize={12}
+      formatter={formatCareerChartNumber}
+    />
+  ), []);
+
+  const renderStroke = useCallback(
+    (shapeProps: {
+      points?: ReadonlyArray<{ x?: number | null; y?: number | null }>;
+      strokeWidth?: number | string;
+    }) => (
+      <CareerMonotoneStroke
+        points={shapeProps.points}
+        strokeWidth={shapeProps.strokeWidth}
+        gradientId={strokeGradId}
+        strokeStops={strokeStops}
         drawRun={-1}
       />
-    );
-  };
-
-  const renderActiveDot = (props: {
-    cx?: number;
-    cy?: number;
-    payload?: ChartRow;
-  }) => {
-    const Dot = useSavantDots ? SavantDot : TeamDot;
-    return (
-      <Dot
-        cx={props.cx}
-        cy={props.cy}
-        payload={props.payload}
-        selectedSeason={selectedSeason}
-        onSelect={onSeasonSelect ? handleSelect : undefined}
-        active
-      />
-    );
-  };
+    ),
+    [strokeGradId, strokeStops]
+  );
 
   if (data.length < 2) return null;
 
@@ -1057,21 +1105,12 @@ export function CareerTeamTrendChart({
           >
             <XAxis
               dataKey="season"
-              tick={(props) => (
-                <CareerAxisTick {...props} axis="x" fontSize={12} />
-              )}
+              tick={renderXTick}
               tickLine={false}
               axisLine={false}
             />
             <YAxis
-              tick={(props) => (
-                <CareerAxisTick
-                  {...props}
-                  axis="y"
-                  fontSize={12}
-                  formatter={formatCareerChartNumber}
-                />
-              )}
+              tick={renderYTick}
               tickLine={false}
               axisLine={false}
               width={36}
@@ -1098,15 +1137,7 @@ export function CareerTeamTrendChart({
               dataKey="value"
               stroke={`url(#${strokeGradId})`}
               strokeWidth={2.5}
-              shape={(shapeProps) => (
-                <CareerMonotoneStroke
-                  points={shapeProps.points}
-                  strokeWidth={shapeProps.strokeWidth}
-                  gradientId={strokeGradId}
-                  strokeStops={strokeStops}
-                  drawRun={-1}
-                />
-              )}
+              shape={renderStroke}
               dot={renderDot}
               activeDot={renderActiveDot}
               isAnimationActive={false}

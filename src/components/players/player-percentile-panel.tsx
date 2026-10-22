@@ -667,20 +667,21 @@ function CompComparePanel({
 
   const hasSeries = Boolean(metric.series && metric.series.length > 1);
 
-  const resolveSeason = (raw: string) => {
-    if (seasons.includes(raw)) return raw;
-    const short =
-      raw.length <= 5 && raw.includes("-") ? raw : raw.slice(2);
-    return (
-      seasons.find((s) => s === raw || s.slice(2) === short || s.endsWith(short)) ??
-      raw
-    );
-  };
-
-  const handleChartSeason = (raw: string) => {
-    const next = resolveSeason(raw);
-    if (next && seasons.includes(next)) onSeasonSelect(next);
-  };
+  const handleChartSeason = useCallback(
+    (raw: string) => {
+      let next = raw;
+      if (!seasons.includes(raw)) {
+        const short =
+          raw.length <= 5 && raw.includes("-") ? raw : raw.slice(2);
+        next =
+          seasons.find(
+            (s) => s === raw || s.slice(2) === short || s.endsWith(short)
+          ) ?? raw;
+      }
+      if (next && seasons.includes(next)) onSeasonSelect(next);
+    },
+    [onSeasonSelect, seasons]
+  );
 
   const chartHeight = chartHeightProp ?? (inline ? 140 : 180);
   const compRowCount = visibleCompRows ?? VISIBLE_COMP_ROWS;
@@ -697,6 +698,7 @@ function CompComparePanel({
       <div className="min-w-0 shrink-0">
         {hasSeries ? (
           <CareerTeamTrendChart
+            key={metric.id}
             points={metric.series!}
             height={chartHeight}
             savantScale
