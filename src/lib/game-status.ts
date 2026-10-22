@@ -4,6 +4,8 @@
  * Mapping docs: docs/game-status-and-watch.md
  */
 
+import { parseTipOffMs } from "@/lib/game-countdown";
+
 export type GameStatusKind =
   | "scheduled"
   | "pregame"
@@ -160,6 +162,26 @@ export function isPreTipStatus(status: GameStatusKind | undefined): boolean {
     status === "delayed" ||
     status == null
   );
+}
+
+/**
+ * Whether the game page should show the empty pre-tip board instead of Game Lab.
+ * A stale schedule snapshot can keep `scheduled` after tip-off; scores, period, or
+ * a passed tip time mean the lab (box + plays) should mount.
+ */
+export function isPreTipPresentation(game: {
+  status?: GameStatusKind;
+  tipOffAt?: string | null;
+  period?: number | null;
+  homeScore?: number | null;
+  awayScore?: number | null;
+}): boolean {
+  if (!isPreTipStatus(game.status)) return false;
+  if ((game.period ?? 0) > 0) return false;
+  if ((game.homeScore ?? 0) + (game.awayScore ?? 0) > 0) return false;
+  const tip = parseTipOffMs(game.tipOffAt);
+  if (tip != null && tip <= Date.now()) return false;
+  return true;
 }
 
 export function isFinalStatus(status: GameStatusKind | undefined): boolean {

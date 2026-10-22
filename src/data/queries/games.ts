@@ -364,6 +364,13 @@ export async function getGameShell(gameId: string): Promise<GameShell | null> {
     const snapshotShell = fromSnapshot
       ? acceptShell(shellFromGame(fromSnapshot, "runtime-snapshot"))
       : null;
+    const snapshotTipPassed =
+      snapshotShell != null &&
+      isPreTipStatus(snapshotShell.game.status) &&
+      (() => {
+        const tip = parseTipOffMs(snapshotShell.game.tipOffAt);
+        return tip != null && tip <= Date.now();
+      })();
 
     try {
       const { fetchEspnCdnGameBoxScore } = await import(
@@ -375,28 +382,49 @@ export async function getGameShell(gameId: string): Promise<GameShell | null> {
         maxUrls: 2,
       }).then((box) => (box?.game ? acceptShell(shellFromBox(box)) : null));
 
-      // If a runtime snapshot exists, do not wait the full CDN window for identity —
-      // paint the page, then deeper islands can enrich from CDN/PBP.
+      // Pre-tip snapshots may paint quickly. After tip-off, wait longer for live CDN
+      // so we do not mount the empty pre-tip board over a game already underway.
+      const snapshotRaceMs = snapshotTipPassed ? 4_000 : 1_200;
       const shell = snapshotShell
         ? await Promise.race([
             cdnPromise,
             new Promise<GameShell | null>((resolve) => {
-              setTimeout(() => resolve(snapshotShell), 1_200);
+              setTimeout(() => resolve(snapshotShell), snapshotRaceMs);
             }),
           ])
         : await cdnPromise;
 
+      const preferCdn = (cdn: GameShell | null, snap: GameShell) =>
+        Boolean(
+          cdn &&
+            (cdn.hasBoxScore ||
+              compareGameProgress(cdn.game, snap.game) > 0)
+        );
+
       if (shell?.hasBoxScore) {
         return withBroadcastFallback(withSnapshotFacts(shell, fromSnapshot));
       }
+      if (shell && shell !== snapshotShell) {
+        // Live scoreboard from CDN beats a scheduled snapshot even without a full box.
+        if (
+          snapshotShell &&
+          compareGameProgress(shell.game, snapshotShell.game) > 0
+        ) {
+          return withBroadcastFallback(withSnapshotFacts(shell, fromSnapshot));
+        }
+        if (!fromSnapshot) return withBroadcastFallback(shell);
+      }
       if (shell?.hasBoxScore === false && shell === snapshotShell) {
-        // Snapshot won the race — still prefer a CDN box if it lands quickly.
+        // Snapshot won the race — still prefer a CDN box / live status if it lands.
+        const cdnWaitMs = snapshotTipPassed ? 4_000 : 2_500;
         const cdnShell = await Promise.race([
           cdnPromise,
-          new Promise<null>((resolve) => setTimeout(() => resolve(null), 2_500)),
+          new Promise<null>((resolve) => setTimeout(() => resolve(null), cdnWaitMs)),
         ]);
-        if (cdnShell?.hasBoxScore) {
-          return withBroadcastFallback(withSnapshotFacts(cdnShell, fromSnapshot));
+        if (preferCdn(cdnShell, snapshotShell)) {
+          return withBroadcastFallback(
+            withSnapshotFacts(cdnShell!, fromSnapshot)
+          );
         }
         return withBroadcastFallback(snapshotShell);
       }

@@ -27,7 +27,11 @@ import { getGameShellCached } from "@/data/queries/request-cache";
 import { runtimePregameMargin } from "@/data/runtime/pregame-margin";
 import { withBudget } from "@/data/queries/budget";
 import { validateGamePresentation } from "@/lib/game-presentation";
-import { isFinalStatus, type GameStatusKind } from "@/lib/game-status";
+import {
+  isFinalStatus,
+  isPreTipPresentation,
+  type GameStatusKind,
+} from "@/lib/game-status";
 import { longUpstreamBudgetsEnabled } from "@/data/providers/nba/runtime-policy";
 import { parseThemeMode, resolveActiveEraTheme } from "@/themes/era-theme";
 import { yieldForStreaming } from "@/lib/stream-yield";
@@ -128,7 +132,8 @@ export default async function GamePage({ params, searchParams }: GamePageProps) 
   const seasonHint = seasonParam ?? shell.game.season;
   const backHref = fromHistory ? `/history/${encodeURIComponent(seasonHint)}` : "/explore/games";
   const status = shell.game.status;
-  const preTip = status === "scheduled" || status === "pregame" || status === "delayed";
+  // Stale schedule shells can stay "scheduled" after tip-off; still open Game Lab.
+  const preTip = isPreTipPresentation(shell.game);
   const heroHasLineScore = Math.min(shell.game.homePeriodScores?.length ?? 0, shell.game.awayPeriodScores?.length ?? 0) > 0;
   const defaultTab: GameTab = preTip ? "preview" : "game";
   const tabParam = first(sp.tab);
