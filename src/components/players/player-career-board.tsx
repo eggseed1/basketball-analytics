@@ -367,9 +367,11 @@ export function PlayerCareerBoard({
     () => initialMetric ?? defaultCareerMetric(rows)
   );
   const [chartMode, setChartMode] = useState<"seasons" | "games">(chart);
-  useEffect(() => {
+  const [chartProp, setChartProp] = useState(chart);
+  if (chart !== chartProp) {
+    setChartProp(chart);
     setChartMode(chart);
-  }, [chart]);
+  }
   /** SSR may omit logs; hydrate from the compact career-game-logs API. */
   const [hydratedLogs, setHydratedLogs] = useState<
     CompactPlayerGameLogRow[] | null
@@ -382,14 +384,8 @@ export function PlayerCareerBoard({
     [rows]
   );
   useEffect(() => {
-    if (gameLogs.length > 0) {
-      setHydratedLogs(null);
-      return;
-    }
-    if (!seasonKey) {
-      setHydratedLogs([]);
-      return;
-    }
+    // Prefer SSR logs when present; skip clearing hydrate state (avoids sync setState).
+    if (gameLogs.length > 0 || !seasonKey) return;
     let cancelled = false;
     const qs = encodeURIComponent(seasonKey);
     fetch(
@@ -413,8 +409,13 @@ export function PlayerCareerBoard({
   }, [gameLogs.length, playerId, seasonKey]);
 
   const effectiveLogs =
-    gameLogs.length > 0 ? gameLogs : (hydratedLogs ?? []);
-  const logsPending = gameLogs.length === 0 && hydratedLogs === null;
+    gameLogs.length > 0
+      ? gameLogs
+      : !seasonKey
+        ? []
+        : (hydratedLogs ?? []);
+  const logsPending =
+    gameLogs.length === 0 && Boolean(seasonKey) && hydratedLogs === null;
 
   const primary = useMemo(
     () =>

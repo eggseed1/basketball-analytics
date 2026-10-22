@@ -77,10 +77,8 @@ export function PlayerComparisonsBoard({
   );
 
   useEffect(() => {
-    if (careerProp && careerProp.length > 0) {
-      setFetchedCareer(null);
-      return;
-    }
+    // Prefer SSR career when present; skip clearing fetch state (avoids sync setState).
+    if (careerProp && careerProp.length > 0) return;
     let cancelled = false;
     fetch(`/api/players/${encodeURIComponent(playerId)}/seasons`)
       .then(async (res) => {

@@ -141,8 +141,9 @@ function notQualifiedImpactMetric(
  * those in — stripping whole categories made Profile/Shooting/Defense/Advanced
  * flash "No rankings…" whenever the upgrade lagged or stayed on forced-fast.
  *
- * Empty comps are omitted (not `[]`) so they don't bloat the RSC payload —
- * 50+ metrics × two empty arrays was pure wire weight.
+ * Empty comps / unused series are omitted (not `[]` / `undefined`) so they
+ * don't bloat the RSC payload — React flight serializes `undefined` as
+ * `$undefined`, which still costs a key per metric.
  */
 export function slimPercentileMetricsForSsr(
   metrics: PercentileMetric[],
@@ -150,13 +151,16 @@ export function slimPercentileMetricsForSsr(
   if (!metrics.length) return metrics;
   const keepId = defaultPercentileMetricId(metrics);
   return metrics.map((metric) => {
-    const series =
-      metric.id === keepId && metric.series?.length ? metric.series : undefined;
-    const { leagueComps: _l, historicalComps: _h, ...rest } = metric;
-    return {
-      ...rest,
-      series,
-    };
+    const {
+      leagueComps: _l,
+      historicalComps: _h,
+      series: _s,
+      ...rest
+    } = metric;
+    if (metric.id === keepId && metric.series?.length) {
+      return { ...rest, series: metric.series };
+    }
+    return rest;
   });
 }
 

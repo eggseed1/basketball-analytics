@@ -56,7 +56,7 @@ export async function PlayerPercentileIsland({
           seasonTeams={seasonTeams}
           stintsBySeason={stintsBySeason}
           metrics={ssrMetrics}
-          profileComps={profileComps}
+          profileComps={profileComps.length ? profileComps : undefined}
           honor={honor}
         />
       </div>

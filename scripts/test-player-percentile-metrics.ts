@@ -7,9 +7,12 @@ import assert from "node:assert/strict";
 import {
   ADVANCED_PERCENTILE_METRIC_IDS,
   buildPlayerPercentileMetrics,
+  defaultPercentileMetricId,
   isQualifiedPeer,
   percentileCutoffs,
   percentileFromCutoffs,
+  slimPercentileMetricsForSsr,
+  type PercentileMetric,
 } from "../src/lib/player-percentile-metrics";
 import {
   SHEET_STAT_BY_ID,
@@ -491,6 +494,40 @@ function main() {
     earlyMetrics.some((m) => m.id === "darko" && m.qualified !== false),
     "DARKO stays live when the overlay is present"
   );
+
+  // SSR slim: drop comps keys and non-default series (RSC turns undefined into $undefined).
+  const withSeries: PercentileMetric[] = earlyMetrics.map((m, i) => ({
+    ...m,
+    leagueComps: [],
+    historicalComps: [],
+    series: [
+      {
+        season: "25-26",
+        fullSeason: "2025-26",
+        value: 1 + i,
+        percentile: 50,
+        teamId: "13",
+        teamAbbr: "LAL",
+        color: "#552583",
+      },
+    ],
+  }));
+  const slimmed = slimPercentileMetricsForSsr(withSeries);
+  const keepId = defaultPercentileMetricId(withSeries);
+  assert.equal(slimmed.length, withSeries.length);
+  for (const m of slimmed) {
+    assert.equal("leagueComps" in m, false, `${m.id} should omit leagueComps`);
+    assert.equal(
+      "historicalComps" in m,
+      false,
+      `${m.id} should omit historicalComps`
+    );
+    if (m.id === keepId) {
+      assert.ok(m.series?.length, "default metric keeps series");
+    } else {
+      assert.equal("series" in m, false, `${m.id} should omit series`);
+    }
+  }
 
   console.log("test-player-percentile-metrics: ok");
 }
