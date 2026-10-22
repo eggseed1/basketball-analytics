@@ -555,6 +555,34 @@ function main() {
     }
   }
 
+  const rounded = slimPercentileMetricsForSsr([
+    {
+      id: "darko",
+      category: "impact",
+      label: "DARKO",
+      percentile: 98.46564885496183,
+      display: "4.82",
+      value: 4.821234,
+      series: [
+        {
+          season: "25-26",
+          value: 1.23456,
+          percentile: 88.71428571428571,
+          teamId: "13",
+          teamAbbr: "LAL",
+          color: "#552583",
+        },
+      ],
+      interpretation: "higher_is_better",
+      showPercentile: true,
+      showGrade: true,
+    },
+  ]);
+  assert.equal(rounded[0]!.percentile, 98.5);
+  assert.equal(rounded[0]!.value, 4.821);
+  assert.equal(rounded[0]!.series![0]!.percentile, 88.7);
+  assert.equal(rounded[0]!.series![0]!.value, 1.235);
+
   console.log("test-player-percentile-metrics: ok");
 }
 

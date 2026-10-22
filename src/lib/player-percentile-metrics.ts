@@ -145,6 +145,14 @@ function notQualifiedImpactMetric(
  * `undefined`) so they don't bloat the RSC payload — React flight serializes
  * `undefined` as `$undefined`, which still costs a key per metric.
  */
+function roundSsrPct(n: number): number {
+  return Math.round(n * 10) / 10;
+}
+
+function roundSsrValue(n: number): number {
+  return Math.round(n * 1000) / 1000;
+}
+
 export function slimPercentileMetricsForSsr(
   metrics: PercentileMetric[],
 ): PercentileMetric[] {
@@ -159,9 +167,19 @@ export function slimPercentileMetricsForSsr(
       qualified: _q,
       ...rest
     } = metric;
-    const next: PercentileMetric = { ...rest };
+    const next: PercentileMetric = {
+      ...rest,
+      percentile: roundSsrPct(metric.percentile),
+      value: roundSsrValue(metric.value),
+    };
     if (metric.id === keepId && metric.series?.length) {
-      next.series = metric.series;
+      next.series = metric.series.map((point) => ({
+        ...point,
+        value: roundSsrValue(point.value),
+        ...(point.percentile != null
+          ? { percentile: roundSsrPct(point.percentile) }
+          : {}),
+      }));
     }
     // Only emit flags when they change UI defaults (omit ≡ live / not hidden).
     if (metric.profileHidden === true) next.profileHidden = true;
