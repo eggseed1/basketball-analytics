@@ -64,7 +64,7 @@ function clip(text: string, max: number): string {
 
 export async function generateMetadata({ searchParams }: AskPageProps): Promise<Metadata> {
   const t = await getTranslations("Ask");
-  const { q, playerId, teamId, askContext } = resolveAskRequest(await searchParams);
+  const { q } = resolveAskRequest(await searchParams);
   const base: Metadata = { alternates: { canonical: "/ask" } };
   if (!q) {
     return {
@@ -73,17 +73,12 @@ export async function generateMetadata({ searchParams }: AskPageProps): Promise<
       description: t("metaDescription"),
     };
   }
-  const result = await getAskDrblAnswer(q, { playerId, teamId, context: askContext }).catch(() => null);
-  const answered = result && (result.status === "ok" || result.status === "partial") && result.headline;
-  const answer = answered
-    ? result.valueDisplay
-      ? `${result.headline}: ${result.valueDisplay}`
-      : result.headline!
-    : null;
+  // Skip the query engine in metadata. Shared React.cache still left crawler
+  // storms of `?q=` URLs stacking isolate memory until homepage renders failed.
   return {
     ...base,
     title: { absolute: `${clip(q, 80)} | Ask DRBL` },
-    description: answer ? clip(answer, 200) : t("metaDescription"),
+    description: t("metaDescription"),
   };
 }
 

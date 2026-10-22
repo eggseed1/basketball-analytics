@@ -8,6 +8,11 @@
  *
  * Outside the Next runtime (tsx scripts, tests) falls back to memory only.
  * Never relies on gitignored disk under `data/cache` / `data/drbl`.
+ *
+ * On Cloudflare Workers the process Map is per-isolate and shared across
+ * concurrent requests. Expired entries must be dropped or the isolate grows
+ * until it hits the 128 MB limit and mid-stream pages fail ("could not finish
+ * loading").
  */
 
 type MemoryEntry<T> = {
@@ -20,6 +25,12 @@ type MemoryEntry<T> = {
 const memory = new Map<string, MemoryEntry<unknown>>();
 const inflight = new Map<string, Promise<unknown>>();
 
+/** Hard cap so one warm isolate cannot retain unbounded player/game payloads. */
+const MAX_MEMORY_ENTRIES = 80;
+/** Opportunistic sweep cadence (every N remember/get calls). */
+const PRUNE_EVERY = 16;
+let opsSincePrune = 0;
+
 export type SharedCacheOptions = {
   /** Fresh TTL in ms (also drives Next revalidate seconds). */
   ttlMs: number;
@@ -31,6 +42,27 @@ export type SharedCacheOptions = {
 
 function revalidateSeconds(ttlMs: number): number {
   return Math.max(60, Math.floor(ttlMs / 1000));
+}
+
+function pruneMemory(now = Date.now()): void {
+  for (const [key, entry] of memory) {
+    if (entry.staleUntil <= now) memory.delete(key);
+  }
+  if (memory.size <= MAX_MEMORY_ENTRIES) return;
+  const ranked = [...memory.entries()].sort(
+    (a, b) => a[1].freshUntil - b[1].freshUntil
+  );
+  const drop = ranked.length - MAX_MEMORY_ENTRIES;
+  for (let i = 0; i < drop; i++) {
+    memory.delete(ranked[i]![0]);
+  }
+}
+
+function touchMemory(): void {
+  opsSincePrune += 1;
+  if (opsSincePrune < PRUNE_EVERY) return;
+  opsSincePrune = 0;
+  pruneMemory();
 }
 
 async function nextDataCacheGetOrSet<T>(
@@ -75,6 +107,7 @@ function remember<T>(
     freshUntil: now + ttlMs,
     staleUntil: now + ttlMs + staleMs,
   });
+  touchMemory();
   return value;
 }
 
@@ -118,6 +151,7 @@ export async function sharedGetOrSet<T>(
   options: SharedCacheOptions,
   factory: () => Promise<T>
 ): Promise<T> {
+  touchMemory();
   const now = Date.now();
   const hit = memory.get(key) as MemoryEntry<T> | undefined;
 
@@ -138,6 +172,7 @@ export async function sharedGetOrSet<T>(
     return hit.value;
   }
 
+  if (hit) memory.delete(key);
   return loadAndRemember(key, options, factory);
 }
 
@@ -173,7 +208,10 @@ export async function sharedWriteThrough<T>(
 export function sharedPeek<T>(key: string): T | null {
   const hit = memory.get(key) as MemoryEntry<T> | undefined;
   if (!hit) return null;
-  if (Date.now() > hit.staleUntil) return null;
+  if (Date.now() > hit.staleUntil) {
+    memory.delete(key);
+    return null;
+  }
   return hit.value;
 }
 
@@ -194,6 +232,12 @@ export function sharedClearPrefix(prefix: string): void {
 export function sharedClear(): void {
   memory.clear();
   inflight.clear();
+}
+
+/** Test / diagnostics: current L1 entry count after an opportunistic prune. */
+export function sharedMemorySize(): number {
+  pruneMemory();
+  return memory.size;
 }
 
 /** Stable cache key helper. */
