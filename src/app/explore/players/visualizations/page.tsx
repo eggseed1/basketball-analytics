@@ -27,6 +27,7 @@ import {
 } from "@/data/providers/historical/season-range";
 import { leagueScatterDefaultRankEnd, leagueScatterMeta } from "@/lib/league-player-scatter";
 import {
+  defaultExploreMinimumMinutes,
   defaultExplorePlayersSeason,
   priorSeasonForStats,
 } from "@/lib/player-board-season";
@@ -133,8 +134,15 @@ export default async function PlayerVisualizationsPage({
   const payoffRankEnd = parseVizRankEnd(one(sp, "end"), "both");
   const payoffSeason =
     seasonParam && /^\d{4}-\d{2}$/.test(seasonParam) ? seasonParam : currentPayoffSeason();
-  const raceMinMinutes = parsePlayerRaceMinMinutes(one(sp, "minmp"));
-  const scatterMinMinutes = parseVizScatterMinMinutes(one(sp, "minmp"));
+  // Early current seasons have nobody at 500 MP yet; mirror the board's soft floor.
+  const raceMinMinutes =
+    one(sp, "minmp") != null && one(sp, "minmp") !== ""
+      ? parsePlayerRaceMinMinutes(one(sp, "minmp"))
+      : defaultExploreMinimumMinutes(season);
+  const scatterMinMinutes =
+    one(sp, "minmp") != null && one(sp, "minmp") !== ""
+      ? parseVizScatterMinMinutes(one(sp, "minmp"))
+      : defaultExploreMinimumMinutes(season);
   const pin = one(sp, "pin") ?? "";
   const team = one(sp, "team") ?? "";
 
