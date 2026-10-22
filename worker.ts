@@ -57,6 +57,8 @@ const UNCACHED_PATH = /^\/(?:api|internal|_next)(?:\/|$)|\.[a-z0-9]+$/i;
 const CACHEABLE_PARAMS = new Set([
   "season", "view", "seasonType", "page", "stat", "filter", "mode",
   "tab", "rate", "arc", "gamesPage", "sort", "dir", "from", "theme",
+  // Scores day/week/month shells (list pagination `after`/`afterId` stay uncached).
+  "date", "month", "week",
 ]);
 const REPLAYED_HEADERS = [
   "content-type", "link", "vary", "content-security-policy", "permissions-policy",

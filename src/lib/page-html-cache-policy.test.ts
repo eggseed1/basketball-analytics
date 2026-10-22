@@ -11,18 +11,28 @@ import {
   isCdnHtmlPath,
   isGameHtmlPath,
   isLiveHtmlPath,
+  isScoresHtmlPath,
 } from "./page-html-cache-policy";
 
 describe("page-html-cache-policy", () => {
   it("marks live surfaces and keeps them off the CDN allowlist", () => {
-    assert.equal(isLiveHtmlPath("/scores"), true);
+    assert.equal(isLiveHtmlPath("/scores"), false);
+    assert.equal(isScoresHtmlPath("/scores"), true);
     assert.equal(isLiveHtmlPath("/games/401909834"), true);
     assert.equal(isLiveHtmlPath("/explore/games"), true);
     assert.equal(isGameHtmlPath("/games/401909834"), true);
     assert.equal(isGameHtmlPath("/scores"), false);
-    assert.equal(isCdnHtmlPath("/scores"), false);
     assert.equal(isCdnHtmlPath("/games/401909834"), false);
     assert.equal(isCdnHtmlPath("/explore/games"), false);
+  });
+
+  it("allows the scores shell on a short public CDN TTL", () => {
+    assert.equal(isCdnHtmlPath("/scores"), true);
+    assert.equal(htmlCachePolicyForPath("/scores").fresh, LIVE_HTML_POLICY.fresh);
+    assert.match(
+      htmlCacheControlHeader("/scores", LIVE_HTML_POLICY),
+      /^public, max-age=0, s-maxage=60, stale-while-revalidate=/
+    );
   });
 
   it("detects the final-game HTML marker for Worker EDGE promotion", () => {
@@ -72,10 +82,6 @@ describe("page-html-cache-policy", () => {
     assert.match(
       htmlCacheControlHeader("/players/1", daily),
       /^public, max-age=0, s-maxage=900, stale-while-revalidate=/
-    );
-    assert.equal(
-      htmlCacheControlHeader("/scores", LIVE_HTML_POLICY),
-      "private, no-cache, no-store, max-age=0, must-revalidate"
     );
     assert.equal(
       htmlCacheControlHeader("/players/1", daily, { cdnEnabled: false }),

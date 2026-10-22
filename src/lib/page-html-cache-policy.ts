@@ -30,9 +30,15 @@ export const DAILY_HTML_POLICY: PageHtmlCachePolicy = {
   stale: 6 * 60 * 60,
 };
 
-/** Scores, live game lab, and other high-churn HTML. */
+/**
+ * Live / high-churn HTML that stays private (client polls APIs for freshness).
+ * `/scores` is separate: short public CDN is OK because Gamefeed refreshes live.
+ */
 export const LIVE_HTML_PATH =
-  /^\/(?:scores|dashboard|explore\/games|games\/[^/]+)$/;
+  /^\/(?:dashboard|explore\/games|games\/[^/]+)$/;
+
+/** Scoreboard shell — EDGE with LIVE_HTML_POLICY (60s); tiles poll `/api/scores/live`. */
+export const SCORES_HTML_PATH = /^\/scores\/?$/;
 
 /** Single-game lab pages. Finals may EDGE-cache; live stays private (see worker). */
 export const GAME_HTML_PATH = /^\/games\/[^/]+$/;
@@ -45,7 +51,7 @@ export const HOME_HTML_PATH = /^\/$/;
 /**
  * Path prefixes safe for Cloudflare Cache API + public s-maxage.
  * Everything else may still use Worker KV PAGE_CACHE with private no-store.
- * Live paths (scores / live game lab) are excluded in isCdnHtmlPath.
+ * Live game lab / explore/games stay off the CDN path.
  * Finished games are promoted to EDGE in the Worker when the final marker is present.
  */
 const CDN_HTML_PREFIXES = [
@@ -67,6 +73,10 @@ export function isLiveHtmlPath(pathname: string): boolean {
   return LIVE_HTML_PATH.test(pathname);
 }
 
+export function isScoresHtmlPath(pathname: string): boolean {
+  return SCORES_HTML_PATH.test(pathname);
+}
+
 export function isGameHtmlPath(pathname: string): boolean {
   return GAME_HTML_PATH.test(pathname);
 }
@@ -76,6 +86,7 @@ export function htmlHasGameFinalMarker(html: string): boolean {
 }
 
 export function isCdnHtmlPath(pathname: string): boolean {
+  if (isScoresHtmlPath(pathname)) return true;
   if (isLiveHtmlPath(pathname)) return false;
   if (pathname === "/" || pathname === "/ask" || pathname === "/ask/") return true;
   // explore/games is live (scoreboard-ish); other explore boards are daily.
@@ -89,7 +100,9 @@ export function isCdnHtmlPath(pathname: string): boolean {
 
 export function htmlCachePolicyForPath(pathname: string): PageHtmlCachePolicy {
   if (HOME_HTML_PATH.test(pathname)) return HOME_HTML_POLICY;
-  if (isLiveHtmlPath(pathname)) return LIVE_HTML_POLICY;
+  if (isScoresHtmlPath(pathname) || isLiveHtmlPath(pathname)) {
+    return LIVE_HTML_POLICY;
+  }
   return DAILY_HTML_POLICY;
 }
 

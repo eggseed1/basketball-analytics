@@ -105,14 +105,35 @@ async function HomeStandings({ season }: { season: string }) {
 
 async function HomeTopPerformers() {
   const data = await getHomeAnalyticsCached();
+  const byName = new Map(
+    data.performerSeasons.map((row) => [row.playerName.toLowerCase(), row])
+  );
+  const slim = (
+    rows: typeof data.tsLeaders
+  ): typeof data.performerSeasons =>
+    rows.map((row) => {
+      const hit = byName.get(row.playerName.toLowerCase());
+      return {
+        playerId: row.playerId,
+        playerName: row.playerName,
+        teamKey: hit?.teamKey,
+        teamAbbr: hit?.teamAbbr ?? row.teamAbbreviation ?? undefined,
+        trueShootingPct:
+          row.trueShootingPct != null && row.trueShootingPct > 0
+            ? row.trueShootingPct
+            : null,
+        usagePct:
+          row.usagePct != null && row.usagePct > 0 ? row.usagePct : null,
+      };
+    });
   return (
     <TopPerformersPanel
       season={data.season}
       drblLeaders={data.drblLeaders}
       darkoLeaders={data.darkoLeaders}
       raptorLeaders={data.raptorLeaders}
-      tsLeaders={data.tsLeaders}
-      usageStars={data.usageStars}
+      tsLeaders={slim(data.tsLeaders)}
+      usageStars={slim(data.usageStars)}
       performerSeasons={data.performerSeasons}
       drblOverlayOk={data.drblOverlayOk}
       drblFallbackNote={data.drblFallbackNote}
