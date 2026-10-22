@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DRBL Live settings preview</title>
+  <link rel="stylesheet" href="../style.css">
+  <style>
+    html, body { width: 1280px; height: 800px; overflow: hidden; margin: 0; }
+    body {
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(90% 70% at 12% 0%, rgb(29 66 138 / 0.12), transparent 55%),
+        #e8eaf0;
+    }
+    .sheet {
+      width: 720px;
+      max-height: 740px;
+      overflow: hidden;
+      border-radius: 18px;
+      box-shadow: 0 24px 64px rgb(0 0 0 / 0.16);
+      border: 1px solid rgb(0 0 0 / 0.08);
+      background: var(--background);
+      padding: 8px 0 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="sheet options-page">
+    <header class="header">
+      <a class="brand" href="#">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" fill="none"><path class="arc-outer" d="M10 6.5c7.2 0 13 5.8 13 13" stroke-width="2.4" stroke-linecap="round"/><path class="arc-inner" d="M10 11c4.7 0 8.5 3.8 8.5 8.5" stroke-width="1.7" stroke-linecap="round"/><path class="spine" d="M10 6.5v13" stroke-width="2.4" stroke-linecap="round"/><circle class="ball" cx="22.5" cy="19.2" r="2.35"/></svg>
+        </span>
+        <span class="brand-name"><strong>DRBL</strong><small>ANALYTICS</small></span>
+      </a>
+      <span class="site-link">Open scores ↗</span>
+    </header>
+    <div class="settings-body" style="padding-left:22px;padding-right:22px">
+      <h1 class="settings-title">Settings</h1>
+      <p class="settings-subtitle">Favorites, theme, and final-score alerts.</p>
+      <section class="setting-card">
+        <h2>Favorite teams</h2>
+        <p>Pinned in the popup. Final alerts only fire for these teams.</p>
+        <div class="team-picker" id="picker"></div>
+      </section>
+      <section class="setting-card">
+        <h2>Appearance</h2>
+        <div class="setting-row"><label>Color theme</label><select><option>Match device</option></select></div>
+      </section>
+      <section class="setting-card">
+        <h2>Updates</h2>
+        <label class="toggle-line"><input type="checkbox" checked disabled> Notify when a favorite team's game ends</label>
+        <label class="toggle-line"><input type="checkbox" checked disabled> Show scores in the popup</label>
+      </section>
+    </div>
+  </div>
+  <script>
+    const teams = ['ATL','BOS','BKN','CHA','CHI','CLE','DAL','DEN','DET','GSW','HOU','IND','LAC','LAL','MEM','MIA'];
+    const fav = new Set(['BOS','LAL','NYK']);
+    const picker = document.getElementById('picker');
+    for (const t of teams) {
+      const b = document.createElement('button');
+      b.className = 'team-choice';
+      b.textContent = t;
+      b.setAttribute('aria-pressed', String(fav.has(t)));
+      picker.append(b);
+    }
+  </script>
+</body>
+</html>

@@ -1174,7 +1174,8 @@
     "sourcesCorrectionsP1After": " et nous le corrigions ou le supprimons.",
     "sourcesOpenRequest": "ouvrir une demande",
     "sourcesAboutLink": "page d'informations",
-    "sourcesDataUsesGap": "Les \"utilisations\" par source sur la liste des sources restent en anglais pour l'instant (copie spécifique au fournisseur et rédigée par le site)."
+    "sourcesDataUsesGap": "Les \"utilisations\" par source sur la liste des sources restent en anglais pour l'instant (copie spécifique au fournisseur et rédigée par le site).",
+    "privacyExtensionTitle": "Extension Chrome DRBL Live"
   },
   "GmUi": {
     "metaTitle": "Franchise Lab",

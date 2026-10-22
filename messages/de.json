@@ -1174,7 +1174,8 @@
     "sourcesCorrectionsP1After": " und wir werden es korrigieren oder entfernen.",
     "sourcesOpenRequest": "Eine Anfrage öffnen",
     "sourcesAboutLink": "Über Seite",
-    "sourcesDataUsesGap": "Die Quellen-Seiten-„Verwendungen“-Blöcke bleiben für den Moment nur auf Englisch (Hersteller-spezifische, von der Seite erstellte Kopie)."
+    "sourcesDataUsesGap": "Die Quellen-Seiten-„Verwendungen“-Blöcke bleiben für den Moment nur auf Englisch (Hersteller-spezifische, von der Seite erstellte Kopie).",
+    "privacyExtensionTitle": "DRBL Live Chrome-Erweiterung"
   },
   "GmUi": {
     "metaTitle": "Franchise Lab",

@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DRBL Live preview</title>
+  <link rel="stylesheet" href="../style.css">
+  <style>
+    html, body { width: 1280px; height: 800px; overflow: hidden; }
+    body {
+      display: grid;
+      place-items: center;
+      margin: 0;
+      background:
+        radial-gradient(90% 70% at 12% 0%, rgb(29 66 138 / 0.14), transparent 55%),
+        radial-gradient(70% 60% at 100% 10%, rgb(200 16 46 / 0.1), transparent 50%),
+        #e8eaf0;
+    }
+    .frame {
+      width: 388px;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 24px 64px rgb(0 0 0 / 0.18), 0 2px 8px rgb(0 0 0 / 0.08);
+      border: 1px solid rgb(0 0 0 / 0.08);
+      background: var(--background);
+    }
+    body.dark-shot {
+      background:
+        radial-gradient(90% 70% at 12% 0%, rgb(61 148 255 / 0.16), transparent 55%),
+        radial-gradient(70% 60% at 100% 10%, rgb(255 90 79 / 0.12), transparent 50%),
+        #0a0b0f;
+    }
+  </style>
+</head>
+<body>
+  <div class="frame extension-popup">
+    <div class="app">
+      <header class="header">
+        <a class="brand" href="#">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 32 32" fill="none"><path class="arc-outer" d="M10 6.5c7.2 0 13 5.8 13 13" stroke-width="2.4" stroke-linecap="round"/><path class="arc-inner" d="M10 11c4.7 0 8.5 3.8 8.5 8.5" stroke-width="1.7" stroke-linecap="round"/><path class="spine" d="M10 6.5v13" stroke-width="2.4" stroke-linecap="round"/><circle class="ball" cx="22.5" cy="19.2" r="2.35"/></svg>
+          </span>
+          <span class="brand-name"><strong>DRBL</strong><small>ANALYTICS</small></span>
+        </a>
+        <div class="header-actions">
+          <span class="feed-indicator"><span class="status-dot"></span><span>Connected</span></span>
+          <span class="icon-button" aria-hidden="true">↻</span>
+          <span class="icon-button settings-icon" aria-hidden="true">⚙</span>
+        </div>
+      </header>
+      <main>
+        <div class="heading">
+          <div>
+            <h1>Scores</h1>
+            <p class="subtitle">Live and upcoming NBA games from drbl.io.</p>
+          </div>
+          <span class="site-link">All scores ↗</span>
+        </div>
+        <div class="filterbar">
+          <button class="filter">All</button>
+          <button class="filter active">Live <span class="count">2</span></button>
+          <button class="filter">Favorites</button>
+        </div>
+        <section class="score-section">
+          <div class="section-heading"><h2><span class="live-dot"></span> Live</h2><span>2 games</span></div>
+          <div class="game-list" id="games"></div>
+        </section>
+      </main>
+      <footer>
+        <span>Updated 8:42 PM</span>
+        <span class="footer-links"><span>drbl.io ↗</span><span>Settings</span></span>
+      </footer>
+    </div>
+  </div>
+  <script>
+    const COLORS = {BOS:'#007a33',LAL:'#552583',NYK:'#006bb6',MIA:'#98002e',GSW:'#1d428a',DEN:'#0e2240'};
+    const games = [
+      {away:'BOS',home:'LAL',awayScore:98,homeScore:101,status:'Q4 · 3:12',live:true,awayRec:'4-1',homeRec:'3-2'},
+      {away:'NYK',home:'MIA',awayScore:87,homeScore:84,status:'Q3 · 7:44',live:true,awayRec:'5-0',homeRec:'2-3'},
+    ];
+    const list = document.getElementById('games');
+    for (const g of games) {
+      const card = document.createElement('article');
+      card.className = 'sports-card is-live';
+      const orbs = document.createElement('span');
+      orbs.className = 'strip-orbs';
+      orbs.innerHTML = `<span class="strip-orb" style="left:-48px;top:2px;--orb-color:${COLORS[g.away]};--orb-strength:0.8"></span><span class="strip-orb strip-orb--b" style="right:-48px;bottom:-12px;--orb-color:${COLORS[g.home]};--orb-strength:0.8"></span>`;
+      const body = document.createElement('div');
+      body.className = 'card-body';
+      body.innerHTML = `
+        <div class="card-header"><span class="game-status live-text"><span class="live-dot"></span><span>${g.status}</span></span><span class="favorite-button selected">★</span></div>
+        <div class="team-rows">
+          <span class="team-mark" style="--team-color:${COLORS[g.away]}">${g.away}</span>
+          <span class="team-identity"><span class="team-name">${g.away}</span><span class="record">${g.awayRec}</span></span>
+          <span class="score-cell"><span class="team-score ${g.awayScore>g.homeScore?'leading':''}">${g.awayScore}</span><span class="win-marker is-hidden"></span></span>
+          <span class="team-mark" style="--team-color:${COLORS[g.home]}">${g.home}</span>
+          <span class="team-identity"><span class="team-name">${g.home}</span><span class="record">${g.homeRec}</span></span>
+          <span class="score-cell"><span class="team-score ${g.homeScore>g.awayScore?'leading':''}">${g.homeScore}</span><span class="win-marker is-hidden"></span></span>
+        </div>`;
+      card.append(orbs, body);
+      list.append(card);
+    }
+    const params = new URLSearchParams(location.search);
+    if (params.get('theme') === 'dark') {
+      document.documentElement.dataset.theme = 'dark';
+      document.documentElement.classList.add('dark');
+      document.body.classList.add('dark-shot');
+    }
+  </script>
+</body>
+</html>

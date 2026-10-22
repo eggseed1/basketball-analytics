@@ -1174,7 +1174,8 @@
     "sourcesCorrectionsP1After": "와 함께 고치거나 삭제하겠습니다.",
     "sourcesOpenRequest": "요청 열기",
     "sourcesAboutLink": "사이트에 대한 페이지 열기",
-    "sourcesDataUsesGap": "데이터 원천 목록의 각 출처별 \"사용\" 블록은 현재 영어로 유지됩니다 (벤더별 사이트 제작된 복사본)."
+    "sourcesDataUsesGap": "데이터 원천 목록의 각 출처별 \"사용\" 블록은 현재 영어로 유지됩니다 (벤더별 사이트 제작된 복사본).",
+    "privacyExtensionTitle": "DRBL Live Chrome 확장 프로그램"
   },
   "GmUi": {
     "metaTitle": "Franchise Lab",

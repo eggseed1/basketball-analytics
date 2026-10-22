@@ -1171,7 +1171,8 @@
     "sourcesCorrectionsP1After": "【 and we'll fix or remove it.】···",
     "sourcesOpenRequest": "【open a request】···",
     "sourcesAboutLink": "【about page】···",
-    "sourcesDataUsesGap": "【Per-source “uses” blurbs on the sources list stay English for now (vendor-specific site-authored copy).】···"
+    "sourcesDataUsesGap": "【Per-source “uses” blurbs on the sources list stay English for now (vendor-specific site-authored copy).】···",
+    "privacyExtensionTitle": "【DRBL Live Chrome extension】···"
   },
   "GmUi": {
     "metaTitle": "【Franchise Lab】···",

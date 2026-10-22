@@ -1174,7 +1174,8 @@
     "sourcesCorrectionsP1After": " して修正または削除します。",
     "sourcesOpenRequest": "リクエストを開く",
     "sourcesAboutLink": "アバウトページ",
-    "sourcesDataUsesGap": "ソースリストの各ソースごとの「使用」ブランチは今後も英語で続きます (ベンダー固有のサイト作成コピー)。"
+    "sourcesDataUsesGap": "ソースリストの各ソースごとの「使用」ブランチは今後も英語で続きます (ベンダー固有のサイト作成コピー)。",
+    "privacyExtensionTitle": "DRBL Live Chrome 拡張機能"
   },
   "GmUi": {
     "metaTitle": "Franchise Lab",

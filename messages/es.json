@@ -1174,7 +1174,8 @@
     "sourcesCorrectionsP1After": "___PH1___",
     "sourcesOpenRequest": "abre una solicitud",
     "sourcesAboutLink": "página acerca de",
-    "sourcesDataUsesGap": "Los subtítulos de uso por fuente en la lista de fuentes permanecen en inglés por ahora (copias de sitio autorizadas específicas de proveedores)."
+    "sourcesDataUsesGap": "Los subtítulos de uso por fuente en la lista de fuentes permanecen en inglés por ahora (copias de sitio autorizadas específicas de proveedores).",
+    "privacyExtensionTitle": "Extensión de Chrome DRBL Live"
   },
   "GmUi": {
     "metaTitle": "Franchise Lab",

@@ -158,6 +158,38 @@ export default async function PrivacyPage() {
         </p>
       </Section>
 
+      <Section title={t("privacyExtensionTitle")}>
+        <p>
+          The DRBL Live Chrome extension is an optional companion. It talks only to{" "}
+          <a href="https://drbl.io" className="underline underline-offset-2">
+            drbl.io
+          </a>{" "}
+          over HTTPS, using the same public scoreboard endpoints as the Scores page (
+          <code className="text-foreground">/api/scores/live</code> and{" "}
+          <code className="text-foreground">/api/scores/upcoming</code>). It does not scrape other
+          sites, read other tabs, or collect browsing history.
+        </p>
+        <p>What stays on your device (Chrome extension storage):</p>
+        <ul className="flex list-disc flex-col gap-1 pl-5">
+          <li>Favorite team abbreviations you pick</li>
+          <li>Theme preference and whether scores are shown in the popup</li>
+          <li>Whether final-game notifications are on</li>
+          <li>A short cache of recent scoreboard rows so the popup can open offline for a moment</li>
+          <li>Ids of games that already triggered a final alert, so the same final is not notified twice</li>
+        </ul>
+        <p>
+          That data never leaves your browser for DRBL accounts or analytics. There is no extension
+          sign-in. Desktop notifications are created by Chrome on your machine when a favorite
+          team&apos;s live game becomes final and you have notifications enabled. Removing the
+          extension or clearing extension data deletes the local store.
+        </p>
+        <p>
+          The extension&apos;s host permission is limited to{" "}
+          <code className="text-foreground">https://drbl.io/*</code>. Cloudflare may still apply the
+          same short-lived rate limits described above when the extension refreshes scores.
+        </p>
+      </Section>
+
       <Section title={t("privacyCreditsTitle")}>
         <p>
           Data sources, photo credits and licenses are listed on the{" "}

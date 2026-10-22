@@ -1174,7 +1174,8 @@
     "sourcesCorrectionsP1After": "联系我们，我们会修复或删除它。",
     "sourcesOpenRequest": "打开一个请求",
     "sourcesAboutLink": "关于页面",
-    "sourcesDataUsesGap": "数据来源列表中的“使用”小条目暂时只提供英文版（供应商特定的站点自定义文本）。"
+    "sourcesDataUsesGap": "数据来源列表中的“使用”小条目暂时只提供英文版（供应商特定的站点自定义文本）。",
+    "privacyExtensionTitle": "DRBL Live Chrome 扩展"
   },
   "GmUi": {
     "metaTitle": "Franchise Lab",

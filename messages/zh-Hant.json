@@ -1174,7 +1174,8 @@
     "sourcesCorrectionsP1After": " 我們會修正或刪除它。",
     "sourcesOpenRequest": "關於頁面",
     "sourcesAboutLink": "來源列表上的每個來源的“使用”小摘要目前僅限英文（供應商特定的站內文本）。",
-    "sourcesDataUsesGap": "資料來源列表中的每個來源的“使用”小段目前僅提供英文 (供應商特定的網站作者文本)。"
+    "sourcesDataUsesGap": "資料來源列表中的每個來源的“使用”小段目前僅提供英文 (供應商特定的網站作者文本)。",
+    "privacyExtensionTitle": "DRBL Live Chrome 擴充功能"
   },
   "GmUi": {
     "metaTitle": "Franchise Lab",
