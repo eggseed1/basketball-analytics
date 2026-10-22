@@ -77,7 +77,7 @@ async function fetchEspnEventBoxScore(
     summary = await espnFetchJson<EspnSummaryResponse>(url, {
       ttlMs: CACHE_TTL_MS.boxScore ?? 1000 * 60 * 5,
       retries: fetchOptions?.retries ?? 1,
-      // Cloudflare Workers: keep under getGameShellCached's ~10s budget.
+      // Cloudflare Workers: keep under getGameShellCached's ~5s budget.
       timeoutMs: fetchOptions?.timeoutMs ?? 2_500,
     });
   } catch (error) {
@@ -358,12 +358,17 @@ export async function getGameShell(gameId: string): Promise<GameShell | null> {
 
   // ESPN event ids: prefer cdn.espn.com box (site.api is 403 from CF Workers),
   // then schedule snapshot so scores still render when box is unavailable.
+  // Hard-cap CDN so a hung package cannot burn the ~12s Worker HTML window and
+  // leave loading.tsx as the final document.
   if (looksLikeEspnEventId(id)) {
     try {
       const { fetchEspnCdnGameBoxScore } = await import(
         "@/data/providers/nba/espn-cdn-game-client"
       );
-      const box = await fetchEspnCdnGameBoxScore(id);
+      const box = await fetchEspnCdnGameBoxScore(id, undefined, {
+        timeoutMs: 4_000,
+        maxUrls: 1,
+      });
       const shell = box?.game ? acceptShell(shellFromBox(box)) : null;
       if (shell?.hasBoxScore) {
         return withBroadcastFallback(withSnapshotFacts(shell, fromSnapshot));
@@ -373,10 +378,16 @@ export async function getGameShell(gameId: string): Promise<GameShell | null> {
       // soft-fail
     }
 
+    // Snapshot before site.api — identity in <1ms beats another 2s hang on CF.
+    if (fromSnapshot) {
+      const shell = acceptShell(shellFromGame(fromSnapshot, "runtime-snapshot"));
+      if (shell) return withBroadcastFallback(shell);
+    }
+
     try {
       const box = await fetchEspnEventBoxScore(id, {
         timeoutMs: 2_000,
-        retries: 1,
+        retries: 0,
       });
       const shell = box?.game ? acceptShell(shellFromBox(box)) : null;
       if (shell?.hasBoxScore) {
@@ -384,12 +395,7 @@ export async function getGameShell(gameId: string): Promise<GameShell | null> {
       }
       if (shell && !fromSnapshot) return withBroadcastFallback(shell);
     } catch {
-      // soft-fail to snapshot / provider
-    }
-
-    if (fromSnapshot) {
-      const shell = acceptShell(shellFromGame(fromSnapshot, "runtime-snapshot"));
-      if (shell) return withBroadcastFallback(shell);
+      // soft-fail to provider
     }
 
     try {

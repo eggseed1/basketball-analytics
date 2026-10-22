@@ -312,7 +312,10 @@ function shellFromFallbackGame(game: Game): GameShell {
 
 async function fallbackGameShell(gameId: string): Promise<GameShell | null> {
   if (looksLikeEspnEventId(gameId)) {
-    const box = await fetchEspnCdnGameBoxScore(gameId).catch(() => null);
+    const box = await fetchEspnCdnGameBoxScore(gameId, undefined, {
+      timeoutMs: 3_000,
+      maxUrls: 1,
+    }).catch(() => null);
     return box?.game ? shellFromFallbackBox(box) : null;
   }
 
@@ -332,8 +335,9 @@ async function fallbackGameShell(gameId: string): Promise<GameShell | null> {
  * the same ordering Cursor/local uses, so Vercel cannot silently downgrade a
  * completed game to a scoreboard-only shell before Game Lab mounts.
  *
- * One wall-clock budget for primary+fallback (not 9s+7s). Stacked budgets let
- * route loading.tsx outlive the Worker HTML stream and freeze on "Loading Game Lab".
+ * Keep this under ~5s. Cold probes showed a ~12s Worker HTML cliff: a 10s shell
+ * budget left almost no time to flush RuntimeGameFallback / Game Lab RSC, so the
+ * document ended as loading.tsx (~103KB) with a truncated flight payload.
  */
 export const getGameShellCached = cache(async (gameId: string) => {
   const result = await withBudget(
@@ -342,7 +346,7 @@ export const getGameShellCached = cache(async (gameId: string) => {
       if (primary) return primary;
       return fallbackGameShell(gameId);
     })(),
-    runtimeTimeoutMs(10_000, 8_000),
+    runtimeTimeoutMs(5_000, 4_000),
     null as GameShell | null
   );
   return result.value;
