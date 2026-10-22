@@ -9,6 +9,7 @@ import {
   useMemo,
   useRef,
   useState,
+  useSyncExternalStore,
   type CSSProperties,
   type ReactNode,
 } from "react";
@@ -386,11 +387,12 @@ function CompMarkTip({
   const [coords, setCoords] = useState<{ top: number; left: number } | null>(
     null
   );
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  // Client-only portal host (false on SSR, true after hydrate).
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  );
 
   useLayoutEffect(() => {
     if (!open || !triggerRef.current) {
@@ -1410,6 +1412,8 @@ export function PlayerPercentilePanel({
     [applyCached, playerId, upgradeToFull]
   );
 
+  /* Sync SSR/tracked season + metrics into local view (prop→state). */
+  /* eslint-disable react-hooks/set-state-in-effect -- intentional prop→state sync */
   useEffect(() => {
     if (trackedSeason !== desiredSeason.current) return;
     setViewSeason(trackedSeason);
@@ -1440,6 +1444,7 @@ export function PlayerPercentilePanel({
     }
     setBusy(false);
   }, [metrics, playerId, profileComps, season, seasons, teamKey, trackedSeason]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   // SSR may omit comps / sparklines. Fill series ASAP (hero chart); comps can wait a beat.
   // No run-once ref: Strict Mode's cleanup would cancel the only scheduled call.
@@ -1490,6 +1495,7 @@ export function PlayerPercentilePanel({
     const next = seasonOnTrack(timeline, urlSeason);
     if (next === desiredSeason.current) return;
     desiredSeason.current = next;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- URL season drives the slider
     setViewSeason(next);
     if (timeline.includes(urlSeason)) loadSeason(next);
   }, [loadSeason, timeline, urlSeason]);
@@ -1601,7 +1607,10 @@ export function PlayerPercentilePanel({
   const accent = chartTheme.teamColor(viewTeamKey).color;
 
   useEffect(() => {
-    if (!compactLayout) setDetailOpen(true);
+    if (!compactLayout) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- expand detail when leaving compact
+      setDetailOpen(true);
+    }
   }, [compactLayout]);
 
   const selectMetric = useCallback(
@@ -1650,6 +1659,7 @@ export function PlayerPercentilePanel({
   useEffect(() => {
     if (!viewMetrics.length) return;
     if (viewMetrics.some((m) => m.id === activeId && !m.profileHidden)) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- drop hidden/stale metric ids
     setActiveId(defaultPercentileMetricId(viewMetrics));
   }, [viewMetrics, activeId]);
 

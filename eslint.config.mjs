@@ -15,6 +15,9 @@ const eslintConfig = defineConfig([
     // OpenNext / wrangler build output.
     ".open-next/**",
     ".wrangler/**",
+    // Chrome extension Node tests use require() by design.
+    "**/*.cjs",
+    "extension/**/tests/**",
   ]),
 ]);
 
