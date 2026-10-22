@@ -19,6 +19,23 @@ export default function AppRouteError({
     console.error("[app-route] render failed", error);
   }, [error]);
 
+  // Isolate OOM mid-stream often succeeds on a fresh Worker. One guarded reload
+  // for the homepage recovers without making the user click Retry.
+  useEffect(() => {
+    if (stale) return;
+    if (typeof window === "undefined") return;
+    if (window.location.pathname !== "/") return;
+    try {
+      const key = "drbl:home-oom-retry";
+      const at = Number(sessionStorage.getItem(key) || 0);
+      if (Number.isFinite(at) && Date.now() - at < 30_000) return;
+      sessionStorage.setItem(key, String(Date.now()));
+    } catch {
+      return;
+    }
+    hardReload();
+  }, [stale]);
+
   return (
     <main data-motion-static className="site-shell flex min-h-[60vh] flex-1 items-center py-8">
       <section className="w-full rounded-lg border border-border bg-background/70 p-5 shadow-sm sm:p-7">

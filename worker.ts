@@ -34,10 +34,13 @@ type CachePolicy = { fresh: number; stale: number };
 // while a background render replaces it. HTML is locale-sensitive (cookie +
 // Accept-Language), so cache keys include the resolved locale segment.
 const LIVE_POLICY: CachePolicy = { fresh: 60, stale: 10 * 60 };
+/** Homepage is the coldest path after deploy; fewer re-renders = fewer OOMs. */
+const HOME_POLICY: CachePolicy = { fresh: 5 * 60, stale: 30 * 60 };
 const DAILY_POLICY: CachePolicy = { fresh: 15 * 60, stale: 6 * 60 * 60 };
 const PAGE_CACHE_MAX_BYTES = 5 * 1024 * 1024;
 const UNCACHED_PATH = /^\/(?:api|internal|_next)(?:\/|$)|\.[a-z0-9]+$/i;
-const LIVE_PATH = /^\/(?:scores|dashboard|explore\/games|games\/[^/]+)?$/;
+const LIVE_PATH = /^\/(?:scores|dashboard|explore\/games|games\/[^/]+)$/;
+const HOME_PATH = /^\/$/;
 // Query params pages read that are safe to key on. Any other param could change
 // the HTML in ways the key can't see, so those requests skip the cache.
 const CACHEABLE_PARAMS = new Set([
@@ -83,7 +86,12 @@ function pageCacheEntry(request: Request, env: WorkerEnv): PageCacheEntry | null
   });
   const key = `page:${version}:${locale}:${url.pathname}${query ? `?${query}` : ""}`;
   if (key.length > 480) return null;
-  return { key, policy: LIVE_PATH.test(url.pathname) ? LIVE_POLICY : DAILY_POLICY };
+  const policy = HOME_PATH.test(url.pathname)
+    ? HOME_POLICY
+    : LIVE_PATH.test(url.pathname)
+      ? LIVE_POLICY
+      : DAILY_POLICY;
+  return { key, policy };
 }
 
 function cachedResponse(raw: string, policy: CachePolicy): { response: Response; stale: boolean } | null {
@@ -201,9 +209,16 @@ const worker = {
     const { pathname } = url;
     // Internal subrequests (service binding, cache revalidation) carry no client IP.
     const ip = request.headers.get("cf-connecting-ip");
-    if (pathname.startsWith("/api/") && ip && env.API_RATE_LIMITER) {
-      const { success } = await env.API_RATE_LIMITER.limit({ key: `api:${ip}` });
-      if (!success) return tooManyRequests();
+    if (ip && env.API_RATE_LIMITER) {
+      // Ask deep-links (`?q=`) SSR the full query engine and were the top isolate
+      // OOM source; rate them with /api so crawler storms cannot tip the homepage.
+      const askQuery = pathname === "/ask" && url.searchParams.has("q");
+      if (pathname.startsWith("/api/") || askQuery) {
+        const { success } = await env.API_RATE_LIMITER.limit({
+          key: `${askQuery ? "ask" : "api"}:${ip}`,
+        });
+        if (!success) return tooManyRequests();
+      }
     }
     const cacheEntry = pageCacheEntry(request, env);
     if (cacheEntry) return servePage(request, env, ctx, cacheEntry);
