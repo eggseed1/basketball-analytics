@@ -33,7 +33,6 @@ import {
 } from "@/components/players/player-page-deferred-islands";
 import {
   PlayerBoardSkeleton,
-  PlayerIdentitySlotSkeleton,
   PlayerOverviewCareerSkeleton,
   PlayerOverviewContractSkeleton,
   PlayerPercentileSkeleton,
@@ -527,6 +526,33 @@ export default async function PlayerPage({
   // Slim edge (explicit SLIM_EDGE_PRODUCT=1 only) — paid Workers run the full page.
   const slimWorker = slimEdgeProductEnabled();
 
+  // Resolve identity extras before paint. Suspense + h-12 fallbacks stick forever
+  // when the Worker HTML stream cuts mid-flight; first HTML must already have
+  // content or null (islands use withBudget so this stays bounded).
+  const [accoladesNode, upcomingScheduleNode, frontOfficeNode] = slimWorker
+    ? [null, null, null]
+    : await Promise.all([
+        PlayerAccoladesIsland({
+          playerId,
+          playerName: displayName === playerId ? null : displayName,
+          teamKey,
+          historicalBrand,
+          honor,
+        }),
+        scheduleTeamKey
+          ? PlayerUpcomingGamesFromSnapshot({ scheduleTeamKey })
+          : Promise.resolve(null),
+        PlayerArrivalIsland({
+          playerId,
+          espnId: identity?.espnId,
+          nbaId: identity?.nbaId,
+          playerName: displayName,
+          teamKey,
+          historicalBrand,
+          honor,
+        }),
+      ]);
+
   const careerSeasonsForTable =
     historySeasons.length > 0 ? historySeasons : universeSeasons;
 
@@ -575,43 +601,9 @@ export default async function PlayerPage({
           caps={caps}
           seasonType={seasonType}
           honor={honor}
-          accolades={
-            slimWorker ? null : (
-              <Suspense fallback={<PlayerIdentitySlotSkeleton />}>
-                <PlayerAccoladesIsland
-                  playerId={playerId}
-                  playerName={displayName === playerId ? null : displayName}
-                  teamKey={teamKey}
-                  historicalBrand={historicalBrand}
-                  honor={honor}
-                />
-              </Suspense>
-            )
-          }
-          upcomingSchedule={
-            !slimWorker && scheduleTeamKey ? (
-              <Suspense fallback={<PlayerIdentitySlotSkeleton />}>
-                <PlayerUpcomingGamesFromSnapshot
-                  scheduleTeamKey={scheduleTeamKey}
-                />
-              </Suspense>
-            ) : null
-          }
-          frontOffice={
-            slimWorker ? null : (
-              <Suspense fallback={<PlayerIdentitySlotSkeleton />}>
-                <PlayerArrivalIsland
-                  playerId={playerId}
-                  espnId={identity?.espnId}
-                  nbaId={identity?.nbaId}
-                  playerName={displayName}
-                  teamKey={teamKey}
-                  historicalBrand={historicalBrand}
-                  honor={honor}
-                />
-              </Suspense>
-            )
-          }
+          accolades={accoladesNode}
+          upcomingSchedule={upcomingScheduleNode}
+          frontOffice={frontOfficeNode}
           hero={
             notYetPlayed ? (
               <PlayerNotYetPlayed
