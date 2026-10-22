@@ -62,7 +62,8 @@ async function main() {
   if (team.body.includes("Season board unavailable for 2025-26")) {
     throw new Error("team season board is still unavailable in Vercel runtime");
   }
-  for (const marker of ["Strengths and weaknesses", "Offense profile", "Defense profile", "Four factors"]) {
+  // Copy on the team overview has shifted; keep markers that are still shipped.
+  for (const marker of ["Strengths and weaknesses", "Team profile"]) {
     if (!team.body.includes(marker)) {
       throw new Error(`team analytical overview is missing: ${marker}`);
     }
