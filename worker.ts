@@ -40,6 +40,11 @@ type OpenNextHandler = {
   fetch(request: Request, env: WorkerEnv, ctx: WorkerContext): Promise<Response>;
 };
 
+/** Cloudflare Workers expose caches.default; DOM CacheStorage typings omit it. */
+function edgeCache(): Cache {
+  return (caches as unknown as { default: Cache }).default;
+}
+
 type CachePolicy = PageHtmlCachePolicy;
 
 const PAGE_CACHE_MAX_BYTES = 5 * 1024 * 1024;
@@ -184,7 +189,7 @@ async function storePage(
     applyHtmlCacheHeaders(edgeHeaders, entry, "HIT");
     // Cache API stores by our synthetic key; TTL follows Cache-Control s-maxage.
     const edgeResponse = new Response(html, { status: 200, headers: edgeHeaders });
-    await caches.default.put(edgeCacheKeyRequest(entry), edgeResponse);
+    await edgeCache().put(edgeCacheKeyRequest(entry), edgeResponse);
   } catch {
     // Cache API can throw in some runtimes; KV alone is still enough.
   }
@@ -208,7 +213,7 @@ async function refreshPage(request: Request, env: WorkerEnv, ctx: WorkerContext,
 async function matchEdgeCache(entry: PageCacheEntry): Promise<Response | null> {
   if (!entry.cdn) return null;
   try {
-    const matched = await caches.default.match(edgeCacheKeyRequest(entry));
+    const matched = await edgeCache().match(edgeCacheKeyRequest(entry));
     if (!matched) return null;
     const headers = new Headers(matched.headers);
     applyHtmlCacheHeaders(headers, entry, "EDGE");
@@ -239,7 +244,7 @@ async function servePage(
           try {
             const headers = new Headers(cached.response.headers);
             applyHtmlCacheHeaders(headers, entry, "HIT");
-            await caches.default.put(
+            await edgeCache().put(
               edgeCacheKeyRequest(entry),
               new Response(await cached.response.clone().text(), {
                 status: 200,
