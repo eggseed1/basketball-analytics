@@ -40,8 +40,9 @@ export type PercentileMetric = {
     teamAbbr: string;
     color: string;
   }>;
-  leagueComps: import("@/lib/player-stat-comps").StatComp[];
-  historicalComps: import("@/lib/player-stat-comps").StatComp[];
+  /** Omitted on SSR slim payloads so Flight does not serialize empty arrays. */
+  leagueComps?: import("@/lib/player-stat-comps").StatComp[];
+  historicalComps?: import("@/lib/player-stat-comps").StatComp[];
   interpretation: MetricInterpretation;
   showPercentile: boolean;
   showGrade: boolean;
@@ -139,19 +140,24 @@ function notQualifiedImpactMetric(
  * drops comps and non-default sparklines. Idle `/percentiles?mode=full` fills
  * those in — stripping whole categories made Profile/Shooting/Defense/Advanced
  * flash "No rankings…" whenever the upgrade lagged or stayed on forced-fast.
+ *
+ * Empty comps are omitted (not `[]`) so they don't bloat the RSC payload —
+ * 50+ metrics × two empty arrays was pure wire weight.
  */
 export function slimPercentileMetricsForSsr(
   metrics: PercentileMetric[],
 ): PercentileMetric[] {
   if (!metrics.length) return metrics;
   const keepId = defaultPercentileMetricId(metrics);
-  return metrics.map((metric) => ({
-    ...metric,
-    series:
-      metric.id === keepId && metric.series?.length ? metric.series : undefined,
-    leagueComps: [],
-    historicalComps: [],
-  }));
+  return metrics.map((metric) => {
+    const series =
+      metric.id === keepId && metric.series?.length ? metric.series : undefined;
+    const { leagueComps: _l, historicalComps: _h, ...rest } = metric;
+    return {
+      ...rest,
+      series,
+    };
+  });
 }
 
 function percentileOf(value: number, pool: number[]): number {

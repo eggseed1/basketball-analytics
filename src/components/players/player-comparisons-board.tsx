@@ -49,7 +49,7 @@ const TABS: Array<{ id: CompTab; label: string }> = [
 export function PlayerComparisonsBoard({
   playerId,
   season,
-  career,
+  career: careerProp,
   espnId,
   teamKey,
   position,
@@ -57,17 +57,50 @@ export function PlayerComparisonsBoard({
 }: {
   playerId: string;
   season: string;
-  career: PlayerSeason[];
+  /**
+   * Optional SSR career. Prefer omitting on overview — the board loads
+   * `/api/players/.../seasons` so the RSC payload stays small.
+   */
+  career?: PlayerSeason[] | null;
   espnId?: string | null;
   teamKey?: string | null;
   position?: string | null;
-  /** SSR primary Trajectory payload — paints without a client round trip. */
+  /** Optional SSR Trajectory seed. Prefer omitting; client warms on scroll. */
   trajectoryBundle?: CompFuturesBundle | null;
 }) {
   const t = useTranslations("PlayerDetail");
   const viewSeason = usePlayerViewSeason(season);
   const focalCompareId = espnId || playerId;
   const seededTrajectory = useRef(false);
+  const [fetchedCareer, setFetchedCareer] = useState<PlayerSeason[] | null>(
+    null
+  );
+
+  useEffect(() => {
+    if (careerProp && careerProp.length > 0) {
+      setFetchedCareer(null);
+      return;
+    }
+    let cancelled = false;
+    fetch(`/api/players/${encodeURIComponent(playerId)}/seasons`)
+      .then(async (res) => {
+        if (!res.ok) throw new Error(`seasons ${res.status}`);
+        return res.json() as Promise<{ data?: PlayerSeason[] }>;
+      })
+      .then((json) => {
+        if (cancelled) return;
+        setFetchedCareer(Array.isArray(json.data) ? json.data : []);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setFetchedCareer([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [careerProp, playerId]);
+
+  const career = careerProp?.length ? careerProp : (fetchedCareer ?? []);
 
   const seasonRow = useMemo(() => {
     return (
@@ -153,6 +186,7 @@ export function PlayerComparisonsBoard({
 
   const compareHref = `/compare?a=${encodeURIComponent(focalCompareId)}&season=${encodeURIComponent(viewSeason)}`;
   const paneTeamKey = seasonRow?.teamId ?? teamKey ?? null;
+  const careerLoading = !careerProp?.length && fetchedCareer === null;
 
   const selectTab = (next: CompTab) => {
     if (next === tab) return;
@@ -198,7 +232,13 @@ export function PlayerComparisonsBoard({
           data-comparisons-pane={animateSwap ? "swap" : "ready"}
           className="flex min-h-[8rem] flex-col gap-3"
         >
-          {tab === "style" ? (
+          {careerLoading ? (
+            <p className={cn(type.bodySm, "text-muted-foreground")}>
+              Loading comparisons…
+            </p>
+          ) : null}
+
+          {!careerLoading && tab === "style" ? (
             <StylePane
               role={role}
               seasonRow={seasonRow}
@@ -208,7 +248,7 @@ export function PlayerComparisonsBoard({
             />
           ) : null}
 
-          {tab === "impact" ? (
+          {!careerLoading && tab === "impact" ? (
             <PlayerSimilarClient
               playerId={playerId}
               season={viewSeason}
@@ -218,7 +258,7 @@ export function PlayerComparisonsBoard({
             />
           ) : null}
 
-          {tab === "trajectory" ? (
+          {!careerLoading && tab === "trajectory" ? (
             <PlayerCompFuturesPanel
               playerId={playerId}
               season={viewSeason}

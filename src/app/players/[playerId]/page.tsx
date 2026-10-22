@@ -24,7 +24,6 @@ import { PlayerPercentileIsland } from "@/components/players/player-percentile-i
 import { PlayerNotYetPlayed } from "@/components/players/player-not-yet-played";
 import { unplayedDrafteeFor } from "@/data/runtime/draftee-search";
 import { PlayerComparisonsBoard } from "@/components/players/player-comparisons-board";
-import { loadCompFuturesBundle } from "@/lib/player-comp-futures";
 import {
   PlayerCareerAnalysisIslandDeferred,
   PlayerGamesIslandDeferred,
@@ -531,20 +530,6 @@ export default async function PlayerPage({
   const careerSeasonsForTable =
     historySeasons.length > 0 ? historySeasons : universeSeasons;
 
-  // Primary Trajectory metric with the page — avoids sequential client probes
-  // when early-season DRBL/WAR1 are empty and DARKO is the first hit.
-  const trajectoryBundle =
-    view === "overview" && career.length > 0
-      ? loadCompFuturesBundle(
-          career.find((row) => row.season === season) ??
-            career[career.length - 1] ??
-            null,
-          career,
-          identity?.espnId,
-          { primaryOnly: true }
-        )
-      : null;
-
   const palette =
     useHistoricalBranding && historicalBrand?.palette
       ? historicalBrand.palette
@@ -789,11 +774,9 @@ export default async function PlayerPage({
           <PlayerComparisonsBoard
             playerId={playerId}
             season={season}
-            career={career}
             teamKey={teamKey}
             espnId={identity?.espnId}
             position={bioPosition}
-            trajectoryBundle={trajectoryBundle}
           />
         ) : null}
 

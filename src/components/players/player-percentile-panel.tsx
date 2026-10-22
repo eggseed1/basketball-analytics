@@ -636,7 +636,7 @@ function CompComparePanel({
   }
 
   const rawComps =
-    mode === "league" ? metric.leagueComps : metric.historicalComps;
+    (mode === "league" ? metric.leagueComps : metric.historicalComps) ?? [];
   const comps =
     maxOtherComps != null ? rawComps.slice(0, maxOtherComps) : rawComps;
   const baseRows = [
@@ -1125,7 +1125,8 @@ function PercentileExpandDialog({
 
 function hasComps(metrics: PercentileMetric[]): boolean {
   return metrics.some(
-    (m) => m.leagueComps.length > 0 || m.historicalComps.length > 0
+    (m) =>
+      (m.leagueComps?.length ?? 0) > 0 || (m.historicalComps?.length ?? 0) > 0
   );
 }
 
@@ -1160,8 +1161,8 @@ function mergePercentileMetrics(
         (m.series?.length ?? 0) >= (old.series?.length ?? 0)
           ? m.series
           : old.series,
-      leagueComps: m.leagueComps.length ? m.leagueComps : old.leagueComps,
-      historicalComps: m.historicalComps.length
+      leagueComps: m.leagueComps?.length ? m.leagueComps : old.leagueComps,
+      historicalComps: m.historicalComps?.length
         ? m.historicalComps
         : old.historicalComps,
     });
