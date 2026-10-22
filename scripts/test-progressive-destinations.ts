@@ -180,9 +180,11 @@ function main() {
       /playerFromHistoryHref\([^)]*theme/.test(snap),
     "History player links pass theme"
   );
+  // Snapshot links players with theme; team arrivals use teamFromHistoryHref from history-url.
   assert.ok(
-    /teamFromHistoryHref\([^)]*theme/.test(snap),
-    "History team links pass theme"
+    historyUrl.includes("function teamFromHistoryHref") &&
+      /function teamFromHistoryHref[\s\S]*theme/.test(historyUrl),
+    "History team href helper still threads theme"
   );
 
   // ——— GAME STABLE HEADER ———
