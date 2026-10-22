@@ -316,9 +316,24 @@ jobs:
             echo "::warning::Could not push the data refresh; the deploy still uses it."
           fi
 
-      # Past seasons' game logs, shot charts and game files are served from R2,
-      # and CI only bakes the current season, so the finished season is copied
-      # there after the Finals (June 25-30) before offseason deploys stop baking it.
+      # Current season is also mirrored to R2 every night so a code-only
+      # deploy-site that somehow skips the gamelog bake still has a fallback
+      # (player-game-logs-store reads R2 when the season isn't in ASSETS).
+      - name: Mirror current-season game logs to R2
+        if: steps.sync.outputs.should_deploy == 'true'
+        continue-on-error: true
+        timeout-minutes: 25
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          SEASONS: ${{ steps.sync.outputs.season }}
+        run: node scripts/upload-player-game-logs-r2.mjs
+
+      # Past seasons' shot charts and game files are served from R2, and CI
+      # only bakes the current season, so the finished season is copied there
+      # after the Finals (June 25-30) before offseason deploys stop baking it.
+      # Game logs for the closing season are already mirrored above; this step
+      # still re-uploads them with shots + the game archive.
       - name: Archive season game logs, shots and games to R2
         if: steps.sync.outputs.archive_season == 'true'
         continue-on-error: true
