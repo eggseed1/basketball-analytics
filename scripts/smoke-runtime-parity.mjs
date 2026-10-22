@@ -38,8 +38,15 @@ async function waitForServer() {
 
 function requireHealthy(route, result) {
   if (result.status !== 200) throw new Error(`${route} returned ${result.status}`);
-  for (const marker of ["Internal Server Error", "Application interrupted", "This page could not finish loading"]) {
+  // Match rendered error UI only — i18n dictionaries embed the same phrases in JSON.
+  for (const marker of ["Internal Server Error", "Application interrupted"]) {
     if (result.body.includes(marker)) throw new Error(`${route} rendered ${marker}`);
+  }
+  if (
+    /<h1[^>]*>\s*This page could not finish loading\./i.test(result.body) ||
+    /<h1[^>]*>\s*Player data did not finish loading\./i.test(result.body)
+  ) {
+    throw new Error(`${route} rendered an error-boundary heading`);
   }
 }
 

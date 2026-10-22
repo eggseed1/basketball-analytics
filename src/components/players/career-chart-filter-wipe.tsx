@@ -4,6 +4,7 @@ import {
   createContext,
   useContext,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
   type ReactNode,
@@ -153,12 +154,14 @@ export function CareerChartFilterWipe({
   const genRef = useRef(0);
   const [shownKey, setShownKey] = useState(transitionKey);
   const [shown, setShown] = useState(children);
-  // Keep latest children/key for the wipe-out apply() without syncing into
-  // state on every parent render (that + Recharts churn hit React #185).
-  pendingRef.current = children;
-  latestKeyRef.current = transitionKey;
-
   const live = transitionKey === shownKey;
+
+  // Latest children/key for wipe apply() — layout effect, not render-time refs
+  // (eslint react-hooks/refs) and not setState-on-every-children (React #185).
+  useLayoutEffect(() => {
+    pendingRef.current = children;
+    latestKeyRef.current = transitionKey;
+  }, [children, transitionKey]);
 
   useEffect(() => {
     if (transitionKey === shownKeyRef.current) return;
