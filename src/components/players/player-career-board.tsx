@@ -367,11 +367,12 @@ export function PlayerCareerBoard({
     () => initialMetric ?? defaultCareerMetric(rows)
   );
   const [chartMode, setChartMode] = useState<"seasons" | "games">(chart);
-  const [chartProp, setChartProp] = useState(chart);
-  if (chart !== chartProp) {
-    setChartProp(chart);
+  // Keep local toggle in sync when the server/parent chart prop changes.
+  // Do not mirror props with setState-during-render — that hit React #185
+  // (max update depth) on the player route in production.
+  useEffect(() => {
     setChartMode(chart);
-  }
+  }, [chart]);
   /** SSR may omit logs; hydrate from the compact career-game-logs API. */
   const [hydratedLogs, setHydratedLogs] = useState<
     CompactPlayerGameLogRow[] | null
