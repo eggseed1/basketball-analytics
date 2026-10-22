@@ -27,7 +27,7 @@ import { getGameShellCached } from "@/data/queries/request-cache";
 import { runtimePregameMargin } from "@/data/runtime/pregame-margin";
 import { withBudget } from "@/data/queries/budget";
 import { validateGamePresentation } from "@/lib/game-presentation";
-import { isFinalStatus } from "@/lib/game-status";
+import { isFinalStatus, type GameStatusKind } from "@/lib/game-status";
 import { longUpstreamBudgetsEnabled } from "@/data/providers/nba/runtime-policy";
 import { parseThemeMode, resolveActiveEraTheme } from "@/themes/era-theme";
 import { yieldForStreaming } from "@/lib/stream-yield";
@@ -73,12 +73,15 @@ async function GameLabDeepBody({ gameId, hidePeriodTable, asOfMs }: { gameId: st
   }
   const shell = await getGameShellCached(gameId);
   const pregameMargin = shell ? runtimePregameMargin(shell.game) : undefined;
-  // Omit events from RSC/Flight — client loads PBP after paint (~0.5MB+ HTML saved).
+  // Finals: omit PBP from Flight (~0.5MB HTML) and hydrate client-side.
+  // Live (and score-delay cuts): keep events in SSR so box/plays/shots paint now.
+  const status = payload.analysis.status as GameStatusKind | undefined;
+  const embedEvents = !isFinalStatus(status) || payload.asOf === "cut";
   const view = (
     <GameLabView
       analysis={payload.analysis}
       players={payload.players}
-      events={[]}
+      events={embedEvents ? payload.events : []}
       pbpSource={payload.pbpSource}
       officialTeamStats={payload.officialTeamStats}
       pregameMargin={pregameMargin}

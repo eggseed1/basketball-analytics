@@ -15,6 +15,7 @@ import { GameStoryStrip, GameTeamComparison } from "@/components/games/game-stor
 import { GameTopPerformers } from "@/components/games/game-top-performers";
 import { useGamePlayByPlay } from "@/components/games/use-game-play-by-play";
 import { GamePlayByPlayPanel } from "@/components/game/game-play-by-play";
+import { useDelayedPlays } from "@/components/sports/use-score-delay";
 import type { PlayByPlayEvent, PlayerGame } from "@/data/types";
 import { type } from "@/lib/design-system";
 import type { OfficialTeamStats } from "@/lib/games/official-team-stats";
@@ -152,13 +153,15 @@ export function GameLabView({
   const final = analysis.status === "final";
   const live = isLiveLikeStatus(analysis.status as GameStatusKind);
   const {
-    events,
+    events: fetchedEvents,
     source: fetchedSource,
     loading: eventsLoading,
   } = useGamePlayByPlay(analysis.gameId, {
     live,
     initial: initialEvents,
   });
+  // Honor the viewer's score delay for insights / shots / flow hover, not only the PBP table.
+  const events = useDelayedPlays(fetchedEvents) ?? fetchedEvents;
   const pbpSource = fetchedSource ?? initialPbpSource;
 
   const homePlayers = players

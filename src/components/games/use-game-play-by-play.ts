@@ -45,6 +45,11 @@ export function useGamePlayByPlay(
 
   useEffect(() => {
     if (!gameId) return;
+    // Finals with empty SSR need an immediate fetch. Live games already have
+    // SSR events — poll in the background so first paint is not a blank lab.
+    const needsImmediate = initial.length === 0;
+    if (!needsImmediate && !live) return;
+
     let cancelled = false;
     let timer: ReturnType<typeof setTimeout> | null = null;
 
@@ -53,16 +58,17 @@ export function useGamePlayByPlay(
         const next = await fetchPlayByPlay(gameId);
         if (cancelled) return;
         if (!next) {
-          setFailed(true);
+          if (needsImmediate) setFailed(true);
           return;
         }
         setPolled((prev) => {
-          if (prev && next.events.length < prev.events.length) return prev;
+          const baseline = prev?.events.length ?? initial.length;
+          if (next.events.length < baseline) return prev;
           return next;
         });
         setFailed(false);
       } catch {
-        if (!cancelled) setFailed(true);
+        if (!cancelled && needsImmediate) setFailed(true);
       }
     };
 
@@ -79,15 +85,22 @@ export function useGamePlayByPlay(
       }, interval);
     };
 
-    void poll().then(() => {
-      if (live) schedule();
-    });
+    if (needsImmediate) {
+      void poll().then(() => {
+        if (live) schedule();
+      });
+    } else {
+      // Live with SSR plays: first poll after a beat so paint stays snappy.
+      timer = setTimeout(() => {
+        void poll().then(schedule);
+      }, 2_000);
+    }
 
     return () => {
       cancelled = true;
       if (timer) clearTimeout(timer);
     };
-  }, [gameId, live]);
+  }, [gameId, live, initial.length]);
 
   const events =
     polled && polled.events.length >= initial.length ? polled.events : initial;
