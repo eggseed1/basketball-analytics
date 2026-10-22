@@ -1643,6 +1643,108 @@ export function TalentYearChart({
   const ring = theme.isDark ? "#0b1220" : "#ffffff";
   const showLegend = legend.length > 1;
 
+  const renderXTick = useCallback(
+    (props: {
+      x?: number | string;
+      y?: number | string;
+      payload?: { value?: string | number };
+      textAnchor?: "start" | "middle" | "end" | "inherit";
+      index?: number;
+    }) => <CareerAxisTick {...props} axis="x" />,
+    []
+  );
+  const renderYTick = useCallback(
+    (props: {
+      x?: number | string;
+      y?: number | string;
+      payload?: { value?: string | number };
+      textAnchor?: "start" | "middle" | "end" | "inherit";
+      index?: number;
+    }) => (
+      <CareerAxisTick
+        {...props}
+        axis="y"
+        formatter={formatCareerChartNumber}
+      />
+    ),
+    []
+  );
+  const renderGameDot = useCallback(
+    (props: {
+      cx?: number;
+      cy?: number;
+      payload?: TalentGamePoint;
+    }) => {
+      if (
+        props.cx == null ||
+        props.cy == null ||
+        !Number.isFinite(props.cx)
+      ) {
+        return <g />;
+      }
+      return (
+        <g data-motion-static>
+          <circle
+            cx={props.cx}
+            cy={props.cy}
+            r={dotRadius}
+            fill={props.payload?.color ?? fallbackDot}
+            fillOpacity={dotOpacity}
+            pointerEvents="none"
+          />
+        </g>
+      );
+    },
+    [dotOpacity, dotRadius, fallbackDot]
+  );
+  const renderStroke = useCallback(
+    (shapeProps: {
+      points?: ReadonlyArray<{ x?: number | null; y?: number | null }>;
+      strokeWidth?: number | string;
+    }) => (
+      <CareerMonotoneStroke
+        points={shapeProps.points}
+        strokeWidth={shapeProps.strokeWidth}
+        gradientId={strokeGradId}
+        strokeStops={strokeStops}
+        drawRun={-1}
+      />
+    ),
+    [strokeGradId, strokeStops]
+  );
+  const renderSeasonDot = useCallback(
+    (props: {
+      cx?: number;
+      cy?: number;
+      payload?: TalentSeasonPoint;
+    }) => (
+      <TalentSeasonDot
+        cx={props.cx}
+        cy={props.cy}
+        fill={props.payload?.color ?? fallbackStroke}
+        ring={ring}
+        drawRun={-1}
+      />
+    ),
+    [fallbackStroke, ring]
+  );
+  const renderActiveSeasonDot = useCallback(
+    (props: {
+      cx?: number;
+      cy?: number;
+      payload?: TalentSeasonPoint;
+    }) => (
+      <TalentSeasonDot
+        cx={props.cx}
+        cy={props.cy}
+        fill={props.payload?.color ?? fallbackStroke}
+        ring={ring}
+        active
+      />
+    ),
+    [fallbackStroke, ring]
+  );
+
   return (
     <div ref={wrapRef} className="flex min-w-0 flex-col" data-motion-static>
       <div
@@ -1663,18 +1765,12 @@ export function TalentYearChart({
               domain={[xMin - 0.15, xMax + 0.15]}
               ticks={yearAxisTicks(xMin, xMax)}
               tickFormatter={(value: number) => String(value)}
-              tick={(props) => <CareerAxisTick {...props} axis="x" />}
+              tick={renderXTick}
               tickLine={false}
               axisLine={false}
             />
             <YAxis
-              tick={(props) => (
-                <CareerAxisTick
-                  {...props}
-                  axis="y"
-                  formatter={formatCareerChartNumber}
-                />
-              )}
+              tick={renderYTick}
               tickLine={false}
               axisLine={false}
               width={32}
@@ -1699,32 +1795,7 @@ export function TalentYearChart({
               tooltipType="none"
               isAnimationActive={false}
               legendType="none"
-              shape={(props: {
-                cx?: number;
-                cy?: number;
-                payload?: TalentGamePoint;
-              }) => {
-                if (
-                  props.cx == null ||
-                  props.cy == null ||
-                  !Number.isFinite(props.cx)
-                ) {
-                  return <g />;
-                }
-                // Clip reveal owns empty → full; marks stay painted underneath.
-                return (
-                  <g data-motion-static>
-                    <circle
-                      cx={props.cx}
-                      cy={props.cy}
-                      r={dotRadius}
-                      fill={props.payload?.color ?? fallbackDot}
-                      fillOpacity={dotOpacity}
-                      pointerEvents="none"
-                    />
-                  </g>
-                );
-              }}
+              shape={renderGameDot}
             />
             <Line
               data={coloredLine}
@@ -1733,41 +1804,9 @@ export function TalentYearChart({
               stroke={`url(#${strokeGradId})`}
               strokeWidth={2}
               isAnimationActive={false}
-              shape={(shapeProps) => (
-                <CareerMonotoneStroke
-                  points={shapeProps.points}
-                  strokeWidth={shapeProps.strokeWidth}
-                  gradientId={strokeGradId}
-                  strokeStops={strokeStops}
-                  drawRun={-1}
-                />
-              )}
-              dot={(props: {
-                cx?: number;
-                cy?: number;
-                payload?: TalentSeasonPoint;
-              }) => (
-                <TalentSeasonDot
-                  cx={props.cx}
-                  cy={props.cy}
-                  fill={props.payload?.color ?? fallbackStroke}
-                  ring={ring}
-                  drawRun={-1}
-                />
-              )}
-              activeDot={(props: {
-                cx?: number;
-                cy?: number;
-                payload?: TalentSeasonPoint;
-              }) => (
-                <TalentSeasonDot
-                  cx={props.cx}
-                  cy={props.cy}
-                  fill={props.payload?.color ?? fallbackStroke}
-                  ring={ring}
-                  active
-                />
-              )}
+              shape={renderStroke}
+              dot={renderSeasonDot}
+              activeDot={renderActiveSeasonDot}
             />
           </ComposedChart>
         </ResponsiveContainer>

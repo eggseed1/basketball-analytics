@@ -85,8 +85,9 @@ type PageCacheEntry = {
 
 function pageCacheEntry(request: Request, env: WorkerEnv): PageCacheEntry | null {
   if (request.method !== "GET" || !env.PAGE_CACHE) return null;
-  const version = env.CF_VERSION_METADATA?.id;
-  if (!version) return null;
+  // Version metadata should always be present with wrangler version_metadata;
+  // fall back so a missing id does not disable the whole HTML cache path.
+  const version = env.CF_VERSION_METADATA?.id?.trim() || "nov";
   if (request.headers.has("rsc") || request.headers.has("next-router-prefetch")) return null;
   const url = new URL(request.url);
   if (UNCACHED_PATH.test(url.pathname)) return null;
@@ -307,7 +308,27 @@ const worker = {
     }
     const cacheEntry = pageCacheEntry(request, env);
     if (cacheEntry) return servePage(request, env, ctx, cacheEntry);
-    return (handler as OpenNextHandler).fetch(request, env, ctx);
+    const response = await (handler as OpenNextHandler).fetch(request, env, ctx);
+    // Surface why HTML skipped Worker PAGE_CACHE / Cache API (no set-cookie path).
+    if (
+      request.method === "GET" &&
+      (response.headers.get("content-type") ?? "").startsWith("text/html")
+    ) {
+      const headers = new Headers(response.headers);
+      const reason = !env.PAGE_CACHE
+        ? "no-kv"
+        : !env.CF_VERSION_METADATA?.id
+          ? "no-version"
+          : request.headers.has("rsc") || request.headers.has("next-router-prefetch")
+            ? "rsc"
+            : UNCACHED_PATH.test(pathname)
+              ? "path"
+              : "params-or-key";
+      headers.set("x-page-cache", "SKIP");
+      headers.set("x-page-cache-skip", reason);
+      return new Response(response.body, { status: response.status, headers });
+    }
+    return response;
   },
 };
 
