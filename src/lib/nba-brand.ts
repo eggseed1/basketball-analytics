@@ -676,6 +676,34 @@ function oklabDistance(a: string, b: string): number {
   return Math.hypot(l1 - l2, a1 - a2, b1 - b2);
 }
 
+/**
+ * Halfway between two chart colors in OKLab. Used for career marks that sit
+ * on a team-change season (DAL → DAL/LAL → LAL) so the dot matches the
+ * stroke gradient midpoint between the two franchises.
+ */
+export function midpointChartColor(a: string, b: string): string {
+  const x = hexToOklch(a);
+  const y = hexToOklch(b);
+  if (!x && !y) return a;
+  if (!x) return b;
+  if (!y) return a;
+  const toLab = (c: Oklch) => [
+    c.l,
+    c.c * Math.cos((c.h * Math.PI) / 180),
+    c.c * Math.sin((c.h * Math.PI) / 180),
+  ] as const;
+  const [l1, a1, b1] = toLab(x);
+  const [l2, a2, b2] = toLab(y);
+  const L = (l1 + l2) / 2;
+  const A = (a1 + a2) / 2;
+  const B = (b1 + b2) / 2;
+  return oklchToHex({
+    l: L,
+    c: Math.hypot(A, B),
+    h: (Math.atan2(B, A) * 180) / Math.PI,
+  });
+}
+
 /** Below this OKLab distance two franchise colors read as the same team. */
 const DISTINCT_TEAM_MIN_DELTA = 0.12;
 

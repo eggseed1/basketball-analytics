@@ -410,11 +410,15 @@ export function PlayerCareerBoard({
           {
             season: point.fullSeason,
             value: point.value,
+            teamId: point.teamId,
+            teamAbbr: point.teamAbbr,
             games: games.map((game) => ({
               date: game.date,
               minutes: game.minutesNum,
               box: gameDotValue(selected.id, game),
               boxScore: gameBoxScore(game),
+              teamId: game.teamNbaId,
+              teamAbbr: game.teamAbbr,
             })),
           },
         ];

@@ -32,7 +32,7 @@ import { TeamLogo } from "@/components/brand/team-logo";
 import { useCareerChartReveal } from "@/components/players/career-chart-filter-wipe";
 import { type } from "@/lib/design-system";
 import { useChartTheme } from "@/lib/chart-theme";
-import { distinctTeamColors } from "@/lib/nba-brand";
+import { distinctTeamColors, midpointChartColor } from "@/lib/nba-brand";
 import { formatNumber } from "@/lib/format";
 import { percentileSavantColor } from "@/lib/player-grade";
 import { cn } from "@/lib/utils";
@@ -307,6 +307,8 @@ const PLOT_CLIP_SEL = [
   ".recharts-cartesian-grid",
   ".recharts-reference-line",
   ".recharts-line",
+  // Recharts parks dots in a separate z-index layer — not under .recharts-line.
+  ".recharts-line-dots",
   ".recharts-area",
   ".recharts-scatter",
   ".recharts-career-monotone-stroke",
@@ -953,10 +955,7 @@ export function CareerTeamTrendChart({
 
   const themedPlotPoints = useMemo((): CareerSeriesPoint[] => {
     if (hasPercentileColors) return plotPoints;
-    return plotPoints.map((point) => ({
-      ...point,
-      color: teamColor(point.teamId),
-    }));
+    return colorSeasonMarksWithHandoffs(plotPoints, teamColor);
   }, [teamColor, hasPercentileColors, plotPoints]);
 
   const strokeGradId = `career-stroke-${useId().replace(/:/g, "")}`;
@@ -1282,7 +1281,67 @@ function CareerAxisTick({
   );
 }
 
-type TalentSeasonPoint = { year: number; value: number; season?: string };
+type TalentSeasonPoint = {
+  year: number;
+  value: number;
+  season?: string;
+  teamId?: string;
+  teamAbbr?: string;
+  color?: string;
+};
+
+type TalentGamePoint = {
+  year: number;
+  value: number;
+  teamId?: string;
+  teamAbbr?: string;
+  color?: string;
+};
+
+/** Trade / multi-team season rows sit between two franchise colors on the line. */
+function isTeamHandoffSeason(point: {
+  teamId?: string;
+  teamAbbr?: string;
+}): boolean {
+  if (!point.teamId && !point.teamAbbr) return false;
+  if (point.teamId === "TOT" || point.teamId === "2TM") return true;
+  return (point.teamAbbr ?? "").includes("/");
+}
+
+/**
+ * Season marks: solid franchise color, or the gradient midpoint when the
+ * season is a handoff between two clubs (matches the stroke blend).
+ */
+function colorSeasonMarksWithHandoffs<
+  T extends { teamId?: string; teamAbbr?: string },
+>(points: T[], colorFor: (teamId?: string) => string): Array<T & { color: string }> {
+  return points.map((point, index) => {
+    const base = colorFor(point.teamId);
+    if (!isTeamHandoffSeason(point)) {
+      return { ...point, color: base };
+    }
+    let left: string | null = null;
+    let right: string | null = null;
+    for (let i = index - 1; i >= 0; i--) {
+      const neighbor = points[i]!;
+      if (isTeamHandoffSeason(neighbor)) continue;
+      if (!neighbor.teamId) continue;
+      left = colorFor(neighbor.teamId);
+      break;
+    }
+    for (let i = index + 1; i < points.length; i++) {
+      const neighbor = points[i]!;
+      if (isTeamHandoffSeason(neighbor)) continue;
+      if (!neighbor.teamId) continue;
+      right = colorFor(neighbor.teamId);
+      break;
+    }
+    if (left && right) {
+      return { ...point, color: midpointChartColor(left, right) };
+    }
+    return { ...point, color: left ?? right ?? base };
+  });
+}
 
 function TalentChartTooltip({
   active,
@@ -1372,7 +1431,7 @@ export function TalentYearChart({
   kind,
   height = 260,
 }: {
-  dots: Array<{ year: number; value: number }>;
+  dots: TalentGamePoint[];
   line: TalentSeasonPoint[];
   kind: "impact" | "box";
   height?: number;
@@ -1382,6 +1441,82 @@ export function TalentYearChart({
   // 0 = empty (clipped). >0 = LTR clip reveal in progress / done.
   const [drawRun, setDrawRun] = useState(0);
   const enteredRef = useRef(false);
+  const strokeGradId = `talent-stroke-${useId().replace(/:/g, "")}`;
+  const fallbackStroke = theme.isDark ? "#60a5fa" : "#2f6fed";
+  const fallbackDot = theme.isDark ? "#93c5fd" : "#8eb8e6";
+
+  const teamIds = useMemo(() => {
+    const ids: string[] = [];
+    for (const point of line) {
+      if (point.teamId) ids.push(point.teamId);
+    }
+    for (const point of dots) {
+      if (point.teamId) ids.push(point.teamId);
+    }
+    return ids;
+  }, [dots, line]);
+
+  const palette = useMemo(
+    () => distinctTeamColors(teamIds, theme.surface),
+    [teamIds, theme.surface]
+  );
+
+  const colorFor = useCallback(
+    (teamId?: string) =>
+      (teamId && palette.get(teamId)) ||
+      (teamId ? theme.teamColor(teamId).color : fallbackStroke),
+    [fallbackStroke, palette, theme]
+  );
+
+  const coloredDots = useMemo(
+    (): TalentGamePoint[] =>
+      dots.map((point) => ({
+        ...point,
+        color: colorFor(point.teamId),
+      })),
+    [colorFor, dots]
+  );
+
+  const coloredLine = useMemo(
+    (): TalentSeasonPoint[] => colorSeasonMarksWithHandoffs(line, colorFor),
+    [colorFor, line]
+  );
+
+  const strokeStops = useMemo(() => {
+    if (coloredLine.length === 0) {
+      return [{ offset: "0%", color: fallbackStroke }];
+    }
+    if (coloredLine.length === 1) {
+      return [{ offset: "0%", color: coloredLine[0]!.color ?? fallbackStroke }];
+    }
+    const last = coloredLine.length - 1;
+    return coloredLine.map((point, i) => ({
+      offset: `${((i / last) * 100).toFixed(4)}%`,
+      color: point.color ?? fallbackStroke,
+    }));
+  }, [coloredLine, fallbackStroke]);
+
+  const legend = useMemo(() => {
+    const out: Array<{
+      teamId: string;
+      teamAbbr: string;
+      color: string;
+      handoff?: boolean;
+    }> = [];
+    const seen = new Set<string>();
+    for (const point of [...coloredLine, ...coloredDots]) {
+      if (!point.teamId || seen.has(point.teamId)) continue;
+      seen.add(point.teamId);
+      const handoff = isTeamHandoffSeason(point);
+      out.push({
+        teamId: point.teamId,
+        teamAbbr: point.teamAbbr ?? point.teamId,
+        color: point.color ?? colorFor(point.teamId),
+        handoff,
+      });
+    }
+    return out;
+  }, [colorFor, coloredDots, coloredLine]);
 
   // Arm once when in view. Filter wipe remounts this component empty.
   useEffect(() => {
@@ -1464,125 +1599,170 @@ export function TalentYearChart({
     };
   }, [drawRun]);
 
-  const years = [...dots, ...line].map((point) => point.year);
+  const years = [...coloredDots, ...coloredLine].map((point) => point.year);
   const xMin = Math.floor(Math.min(...years));
   const xMax = Math.ceil(Math.max(...years));
-  const values = [...dots, ...line].map((point) => point.value);
+  const values = [...coloredDots, ...coloredLine].map((point) => point.value);
   const yMin = Math.min(...values);
   const yMax = Math.max(...values);
   const yPad = Math.max(0.35, (yMax - yMin) * 0.12);
-  const dotFill = theme.isDark ? "#93c5fd" : "#8eb8e6";
-  const lineStroke = theme.isDark ? "#60a5fa" : "#2f6fed";
   const dotOpacity = kind === "impact" ? 0.32 : 0.18;
   const dotRadius = kind === "impact" ? 1.35 : 1.05;
   const ring = theme.isDark ? "#0b1220" : "#ffffff";
+  const showLegend = legend.length > 1;
+
   return (
-    <div
-      ref={wrapRef}
-      data-motion-static
-      className="relative w-full min-w-0 shrink-0"
-      style={{ height }}
-    >
-      <ResponsiveContainer width="100%" height={height}>
-        <ComposedChart margin={{ top: 8, right: 12, left: 0, bottom: 4 }}>
-          <CartesianGrid
-            vertical={false}
-            stroke="currentColor"
-            strokeOpacity={theme.isDark ? 0.14 : 0.08}
-            strokeDasharray="1 4"
-          />
-          <XAxis
-            dataKey="year"
-            type="number"
-            domain={[xMin - 0.15, xMax + 0.15]}
-            ticks={yearAxisTicks(xMin, xMax)}
-            tickFormatter={(value: number) => String(value)}
-            tick={(props) => <CareerAxisTick {...props} axis="x" />}
-            tickLine={false}
-            axisLine={false}
-          />
-          <YAxis
-            tick={(props) => (
-              <CareerAxisTick
-                {...props}
-                axis="y"
-                formatter={formatCareerChartNumber}
+    <div ref={wrapRef} className="flex min-w-0 flex-col" data-motion-static>
+      <div
+        className="relative w-full min-w-0 shrink-0"
+        style={{ height }}
+      >
+        <ResponsiveContainer width="100%" height={height}>
+          <ComposedChart margin={{ top: 8, right: 12, left: 0, bottom: 4 }}>
+            <CartesianGrid
+              vertical={false}
+              stroke="currentColor"
+              strokeOpacity={theme.isDark ? 0.14 : 0.08}
+              strokeDasharray="1 4"
+            />
+            <XAxis
+              dataKey="year"
+              type="number"
+              domain={[xMin - 0.15, xMax + 0.15]}
+              ticks={yearAxisTicks(xMin, xMax)}
+              tickFormatter={(value: number) => String(value)}
+              tick={(props) => <CareerAxisTick {...props} axis="x" />}
+              tickLine={false}
+              axisLine={false}
+            />
+            <YAxis
+              tick={(props) => (
+                <CareerAxisTick
+                  {...props}
+                  axis="y"
+                  formatter={formatCareerChartNumber}
+                />
+              )}
+              tickLine={false}
+              axisLine={false}
+              width={32}
+              domain={[yMin - yPad, yMax + yPad]}
+              ticks={valueAxisTicks(yMin - yPad, yMax + yPad)}
+              tickFormatter={formatCareerChartNumber}
+            />
+            <ReferenceLine
+              y={0}
+              stroke="currentColor"
+              strokeOpacity={0.35}
+              strokeDasharray="4 4"
+            />
+            <Tooltip
+              cursor={{ stroke: "var(--border)", strokeWidth: 1 }}
+              wrapperStyle={rechartsFrostWrapperStyle}
+              content={<TalentChartTooltip />}
+            />
+            <Scatter
+              data={coloredDots}
+              dataKey="value"
+              tooltipType="none"
+              isAnimationActive={false}
+              legendType="none"
+              shape={(props: {
+                cx?: number;
+                cy?: number;
+                payload?: TalentGamePoint;
+              }) => {
+                if (
+                  props.cx == null ||
+                  props.cy == null ||
+                  !Number.isFinite(props.cx)
+                ) {
+                  return <g />;
+                }
+                // Clip reveal owns empty → full; marks stay painted underneath.
+                return (
+                  <g data-motion-static>
+                    <circle
+                      cx={props.cx}
+                      cy={props.cy}
+                      r={dotRadius}
+                      fill={props.payload?.color ?? fallbackDot}
+                      fillOpacity={dotOpacity}
+                      pointerEvents="none"
+                    />
+                  </g>
+                );
+              }}
+            />
+            <Line
+              data={coloredLine}
+              type="monotone"
+              dataKey="value"
+              stroke={`url(#${strokeGradId})`}
+              strokeWidth={2}
+              isAnimationActive={false}
+              shape={(shapeProps) => (
+                <CareerMonotoneStroke
+                  points={shapeProps.points}
+                  strokeWidth={shapeProps.strokeWidth}
+                  gradientId={strokeGradId}
+                  strokeStops={strokeStops}
+                  drawRun={-1}
+                />
+              )}
+              dot={(props: {
+                cx?: number;
+                cy?: number;
+                payload?: TalentSeasonPoint;
+              }) => (
+                <TalentSeasonDot
+                  cx={props.cx}
+                  cy={props.cy}
+                  fill={props.payload?.color ?? fallbackStroke}
+                  ring={ring}
+                  drawRun={-1}
+                />
+              )}
+              activeDot={(props: {
+                cx?: number;
+                cy?: number;
+                payload?: TalentSeasonPoint;
+              }) => (
+                <TalentSeasonDot
+                  cx={props.cx}
+                  cy={props.cy}
+                  fill={props.payload?.color ?? fallbackStroke}
+                  ring={ring}
+                  active
+                />
+              )}
+            />
+          </ComposedChart>
+        </ResponsiveContainer>
+      </div>
+      {showLegend ? (
+        <ul
+          className="mt-1 flex shrink-0 flex-wrap gap-x-3 gap-y-1 border-t border-border/40 pt-2"
+          aria-label="Franchise colors"
+        >
+          {legend.map((entry) => (
+            <li
+              key={entry.teamId}
+              className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-muted-foreground"
+            >
+              <span
+                className="inline-block size-2.5 shrink-0 rounded-full"
+                style={{ backgroundColor: entry.color }}
+                aria-hidden
               />
-            )}
-            tickLine={false}
-            axisLine={false}
-            width={32}
-            domain={[yMin - yPad, yMax + yPad]}
-            ticks={valueAxisTicks(yMin - yPad, yMax + yPad)}
-            tickFormatter={formatCareerChartNumber}
-          />
-          <ReferenceLine
-            y={0}
-            stroke="currentColor"
-            strokeOpacity={0.35}
-            strokeDasharray="4 4"
-          />
-          <Tooltip
-            cursor={{ stroke: "var(--border)", strokeWidth: 1 }}
-            wrapperStyle={rechartsFrostWrapperStyle}
-            content={<TalentChartTooltip />}
-          />
-          <Scatter
-            data={dots}
-            dataKey="value"
-            tooltipType="none"
-            isAnimationActive={false}
-            legendType="none"
-            shape={(props: {
-              cx?: number;
-              cy?: number;
-            }) => {
-              if (props.cx == null || props.cy == null || !Number.isFinite(props.cx)) {
-                return <g />;
-              }
-              // Clip reveal owns empty → full; marks stay painted underneath.
-              return (
-                <g data-motion-static>
-                  <circle
-                    cx={props.cx}
-                    cy={props.cy}
-                    r={dotRadius}
-                    fill={dotFill}
-                    fillOpacity={dotOpacity}
-                    pointerEvents="none"
-                  />
-                </g>
-              );
-            }}
-          />
-          <Line
-            data={line}
-            type="monotone"
-            dataKey="value"
-            stroke={lineStroke}
-            strokeWidth={2}
-            isAnimationActive={false}
-            dot={(props: { cx?: number; cy?: number }) => (
-              <TalentSeasonDot
-                cx={props.cx}
-                cy={props.cy}
-                fill={lineStroke}
-                ring={ring}
-                drawRun={-1}
-              />
-            )}
-            activeDot={(props: { cx?: number; cy?: number }) => (
-              <TalentSeasonDot
-                cx={props.cx}
-                cy={props.cy}
-                fill={lineStroke}
-                ring={ring}
-                active
-              />
-            )}
-          />
-        </ComposedChart>
-      </ResponsiveContainer>
+              {entry.handoff ? null : (
+                <TeamLogo teamKey={entry.teamId} size="2xs" />
+              )}
+              {entry.teamAbbr}
+            </li>
+          ))}
+        </ul>
+      ) : null}
     </div>
   );
 }

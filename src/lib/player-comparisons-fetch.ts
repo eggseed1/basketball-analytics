@@ -170,7 +170,7 @@ export function fetchCompFuturesBundle(options: {
   return pending;
 }
 
-/** Warm Impact + Trajectory data (safe to call from Overview before scroll). */
+/** Warm Impact + Trajectory data (call when Comparisons is near the viewport). */
 export function warmComparisonsFetches(options: {
   playerId: string;
   season: string;

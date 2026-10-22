@@ -404,7 +404,8 @@ export const TEAM_VIZ_SCATTERS: Partial<Record<TeamVizView, TeamVizScatterSpec>>
   },
   possessions: {
     title: "Possession battle",
-    blurb: "Teams that protect the ball and crash the offensive glass get extra shots. Right means fewer turnovers.",
+    blurb:
+      "Teams that protect the ball and crash the offensive glass get extra shots. Right means fewer turnovers. For points per possession and possessions per game, open a team page scorecard.",
     x: { label: "Turnover % (lower is better)", value: (r) => r.box?.tovPct ?? null, format: pct, invert: true },
     y: { label: "Offensive rebound %", value: (r) => r.box?.orebPct ?? null, format: pct },
     needsBox: true,

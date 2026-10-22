@@ -15,13 +15,17 @@ import {
   buildRightNow,
   DROUGHT_MIN_SECONDS,
   foulTroubleThreshold,
+  ptsPerForcedTov,
+  ptsPerOreb,
   RUN_MIN,
+  sharedGamePossessions,
   type GameMoment,
   type PlayerLine,
   type PossessionBattle,
   type QuarterStandouts,
   type RightNow,
 } from "@/lib/games/live-insights";
+import { formatNumber } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 type Side = "home" | "away";
@@ -134,7 +138,19 @@ function QuarterStandoutsCard({
   );
 }
 
-function PossessionBattleCard({
+type BattleRow = {
+  id: string;
+  label: string;
+  away: number;
+  home: number;
+  displayAway?: string;
+  displayHome?: string;
+  /** When true, bar max ignores null-style blanks (displayed as —). */
+  blankAway?: boolean;
+  blankHome?: boolean;
+};
+
+function ExtraChancesCard({
   battle,
   labels,
   colors,
@@ -157,29 +173,63 @@ function PossessionBattleCard({
     return away != null && home != null ? { away, home } : null;
   };
   const offTurnovers = both((s) => s.pointsOffTurnovers);
-  const paint = both((s) => s.pointsInPaint);
-  const fastBreak = both((s) => s.fastBreakPoints);
-  const rows: { id: string; label: string; away: number; home: number; lowerIsBetter?: boolean }[] = [
+  const ptsOffTovAway = offTurnovers?.away ?? battle.away.pointsOffTurnovers;
+  const ptsOffTovHome = offTurnovers?.home ?? battle.home.pointsOffTurnovers;
+  const poss = sharedGamePossessions(battle);
+  const pppAway = poss > 0 ? battle.away.points / poss : null;
+  const pppHome = poss > 0 ? battle.home.points / poss : null;
+  const rateOrebAway = ptsPerOreb(battle.away);
+  const rateOrebHome = ptsPerOreb(battle.home);
+  const rateTovAway = ptsPerForcedTov(ptsOffTovAway, battle.home.tov);
+  const rateTovHome = ptsPerForcedTov(ptsOffTovHome, battle.away.tov);
+
+  const rateRow = (
+    id: string,
+    label: string,
+    away: number | null,
+    home: number | null,
+    digits: number
+  ): BattleRow => ({
+    id,
+    label,
+    away: away ?? 0,
+    home: home ?? 0,
+    blankAway: away == null,
+    blankHome: home == null,
+    displayAway: away == null ? "—" : formatNumber(away, digits),
+    displayHome: home == null ? "—" : formatNumber(home, digits),
+  });
+
+  const rows: BattleRow[] = [
     { id: "extra", label: "Extra chances", away: battle.away.extraChances, home: battle.home.extraChances },
     { id: "oreb", label: "Offensive rebounds", away: battle.away.oreb, home: battle.home.oreb },
-    { id: "tov", label: "Turnovers", away: battle.away.tov, home: battle.home.tov, lowerIsBetter: true },
-    { id: "fga", label: "Shot attempts", away: battle.away.fga, home: battle.home.fga },
-    { id: "fta", label: "Free throw attempts", away: battle.away.fta, home: battle.home.fta },
-    { id: "second", label: "Second-chance points", away: battle.away.secondChancePoints, home: battle.home.secondChancePoints },
+    {
+      id: "forced",
+      label: "Turnovers forced",
+      away: battle.home.tov,
+      home: battle.away.tov,
+    },
+    {
+      id: "second",
+      label: "Second-chance points",
+      away: battle.away.secondChancePoints,
+      home: battle.home.secondChancePoints,
+    },
+    rateRow("pts-oreb", "Pts per offensive rebound", rateOrebAway, rateOrebHome, 2),
     {
       id: "offtov",
       label: "Points off turnovers",
-      away: offTurnovers?.away ?? battle.away.pointsOffTurnovers,
-      home: offTurnovers?.home ?? battle.home.pointsOffTurnovers,
+      away: ptsOffTovAway,
+      home: ptsOffTovHome,
     },
-    ...(paint ? [{ id: "paint", label: "Points in the paint", ...paint }] : []),
-    ...(fastBreak ? [{ id: "fastbreak", label: "Fast-break points", ...fastBreak }] : []),
+    rateRow("pts-forced", "Pts per turnover forced", rateTovAway, rateTovHome, 2),
+    ...(pppAway != null && pppHome != null
+      ? [rateRow("ppp", "Points per possession", pppAway, pppHome, 2)]
+      : []),
   ];
-  const officialRows = [
-    offTurnovers ? "points off turnovers" : null,
-    paint ? "points in the paint" : null,
-    fastBreak ? "fast-break points" : null,
-  ].filter((v): v is string => v != null);
+  const officialRows = [offTurnovers ? "points off turnovers" : null].filter(
+    (v): v is string => v != null
+  );
   const sideLabel = (s: Side) => labels[s];
 
   return (
@@ -191,9 +241,10 @@ function PossessionBattleCard({
     >
       <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-2">
         <div>
-          <h2 className={type.heading}>Possession battle</h2>
+          <h2 className={type.heading}>Extra chances</h2>
           <p className={cn(type.caption, "mt-0.5 text-muted-foreground")}>
-            Extra chances are offensive rebounds plus the other side&apos;s turnovers.
+            Offensive rebounds plus the other side&apos;s turnovers, and how those trips were
+            cashed.
           </p>
         </div>
         <span
@@ -214,16 +265,24 @@ function PossessionBattleCard({
         </span>
       </div>
 
+      {poss > 0 ? (
+        <p className={cn(type.caption, "tabular-nums text-muted-foreground")}>
+          Pace · ~{formatNumber(poss, 1)} possessions (shared)
+        </p>
+      ) : null}
+
       <ul className="flex flex-col gap-3">
         {rows.map((row, i) => {
+          const awayVal = row.blankAway ? null : row.away;
+          const homeVal = row.blankHome ? null : row.home;
           const better: Side | null =
-            row.away === row.home
+            awayVal == null || homeVal == null || awayVal === homeVal
               ? null
-              : (row.lowerIsBetter ? row.away < row.home : row.away > row.home)
+              : awayVal > homeVal
                 ? "away"
                 : "home";
           const emph = (s: Side) => (better == null ? "even" : better === s ? "edge" : "trail");
-          const max = Math.max(row.away, row.home);
+          const max = Math.max(awayVal ?? 0, homeVal ?? 0, 1e-9);
           return (
             <li
               key={row.id}
@@ -231,22 +290,37 @@ function PossessionBattleCard({
               data-motion="row"
               style={{ "--i": i } as CSSProperties}
               className="grid grid-cols-[3.5rem_minmax(0,1fr)_3.5rem] items-center gap-x-2"
-              aria-label={`${row.label}: ${labels.away} ${row.away}, ${labels.home} ${row.home}`}
+              aria-label={`${row.label}: ${labels.away} ${row.displayAway ?? row.away}, ${labels.home} ${row.displayHome ?? row.home}`}
             >
-              <SideValue display={String(row.away)} strong={better === "away"} align="start" />
+              <SideValue
+                display={row.displayAway ?? String(row.away)}
+                strong={better === "away"}
+                align="start"
+              />
               <div className="flex min-w-0 flex-col items-center gap-1">
-                <span className={cn(type.caption, "truncate font-semibold")}>
-                  {row.label}
-                  {row.lowerIsBetter ? (
-                    <span className="font-normal text-muted-foreground"> · fewer is better</span>
-                  ) : null}
-                </span>
+                <span className={cn(type.caption, "truncate font-semibold")}>{row.label}</span>
                 <div className="flex w-full gap-0.5">
-                  <HalfBar value={row.away} max={max} color={colors.away} emphasis={emph("away")} side="away" />
-                  <HalfBar value={row.home} max={max} color={colors.home} emphasis={emph("home")} side="home" />
+                  <HalfBar
+                    value={awayVal ?? 0}
+                    max={max}
+                    color={colors.away}
+                    emphasis={awayVal == null ? "even" : emph("away")}
+                    side="away"
+                  />
+                  <HalfBar
+                    value={homeVal ?? 0}
+                    max={max}
+                    color={colors.home}
+                    emphasis={homeVal == null ? "even" : emph("home")}
+                    side="home"
+                  />
                 </div>
               </div>
-              <SideValue display={String(row.home)} strong={better === "home"} align="end" />
+              <SideValue
+                display={row.displayHome ?? String(row.home)}
+                strong={better === "home"}
+                align="end"
+              />
             </li>
           );
         })}
@@ -283,9 +357,13 @@ function PossessionBattleCard({
 
       <MoreInfo>
         <p>
-          Second-chance points are scored after an offensive rebound, before the other team gets the
-          ball. Points off turnovers are scored on the possession after the other team turns it
-          over. Team rebounds move the ball but don&apos;t count as rebounds.{" "}
+          Extra chances are player offensive rebounds plus the other side&apos;s turnovers. Pts per
+          offensive rebound and pts per turnover forced divide those points by the matching count;
+          blank means zero counted chances of that kind (a team offensive rebound can still create
+          second-chance points). Pace is the Basketball-Reference possession estimate averaged for
+          both teams. PPP is each side&apos;s points on that shared total. Second-chance points come
+          after an offensive rebound; points off turnovers come on the next trip after a turnover.
+          Team rebounds keep possession but aren&apos;t rebound totals.{" "}
           {officialRows.length
             ? `The official box score supplies ${listJoin(officialRows)}. Everything else comes from play-by-play and can differ slightly from the official box score.`
             : PBP_NOTE}
@@ -469,7 +547,7 @@ export function GameLiveInsights({
     ) : null}
     <div className="grid gap-5 lg:grid-cols-2">
       {insights.battle ? (
-        <PossessionBattleCard
+        <ExtraChancesCard
           battle={insights.battle}
           labels={labels}
           colors={colors}

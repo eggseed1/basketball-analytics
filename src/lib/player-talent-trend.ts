@@ -4,9 +4,21 @@
  * published rate for impact stats and the mean of the games for box stats.
  */
 
-export type TalentSample = { year: number; game: number; value: number };
+export type TalentSample = {
+  year: number;
+  game: number;
+  value: number;
+  teamId?: string;
+  teamAbbr?: string;
+};
 
-export type TalentSeasonMark = { year: number; value: number; season?: string };
+export type TalentSeasonMark = {
+  year: number;
+  value: number;
+  season?: string;
+  teamId?: string;
+  teamAbbr?: string;
+};
 
 export type TalentGame = {
   date: string;
@@ -14,6 +26,8 @@ export type TalentGame = {
   box?: number | null;
   /** Per-36 box score. Impact dots are this, recentered on the season rate. */
   boxScore?: number | null;
+  teamId?: string;
+  teamAbbr?: string;
 };
 
 /** A 10-point game-score gap moves the dot by about half a point. */
@@ -49,9 +63,32 @@ function ease(progress: number): number {
   return t * t * (3 - 2 * t);
 }
 
+function seasonTeam(
+  season: { teamId?: string; teamAbbr?: string; games: TalentGame[] }
+): { teamId?: string; teamAbbr?: string } {
+  if (season.teamId) {
+    return { teamId: season.teamId, teamAbbr: season.teamAbbr };
+  }
+  // Mid-season trades: use the last game's club (matches seasons-board TOT rows
+  // when the season point already carries the primary / total team).
+  for (let i = season.games.length - 1; i >= 0; i--) {
+    const game = season.games[i]!;
+    if (game.teamId) {
+      return { teamId: game.teamId, teamAbbr: game.teamAbbr };
+    }
+  }
+  return {};
+}
+
 export function buildTalentSeries(options: {
   kind: "impact" | "box";
-  seasons: Array<{ value: number; season?: string; games: TalentGame[] }>;
+  seasons: Array<{
+    value: number;
+    season?: string;
+    teamId?: string;
+    teamAbbr?: string;
+    games: TalentGame[];
+  }>;
 }): { dots: TalentSample[]; line: TalentSeasonMark[] } | null {
   const dots: TalentSample[] = [];
   const line: TalentSeasonMark[] = [];
@@ -67,6 +104,7 @@ export function buildTalentSeries(options: {
       carried = season.value;
       continue;
     }
+    const team = seasonTeam({ ...season, games });
 
     if (options.kind === "impact") {
       const start = carried ?? 0;
@@ -93,17 +131,39 @@ export function buildTalentSeries(options: {
           );
           value += residual * BOX_RESIDUAL_SCALE;
         }
-        dots.push({ year, game: dots.length + 1, value });
+        dots.push({
+          year,
+          game: dots.length + 1,
+          value,
+          teamId: game.teamId ?? team.teamId,
+          teamAbbr: game.teamAbbr ?? team.teamAbbr,
+        });
       });
-      line.push({ year: anchor, value: season.value, season: season.season });
+      line.push({
+        year: anchor,
+        value: season.value,
+        season: season.season,
+        teamId: team.teamId,
+        teamAbbr: team.teamAbbr,
+      });
     } else {
       const boxes: number[] = [];
-      const recorded: Array<{ year: number; value: number }> = [];
+      const recorded: Array<{
+        year: number;
+        value: number;
+        teamId?: string;
+        teamAbbr?: string;
+      }> = [];
       for (const game of games) {
         if (game.box == null || !Number.isFinite(game.box)) continue;
         const year = fractionalSeasonYear(game.date)!;
         boxes.push(game.box);
-        recorded.push({ year, value: game.box });
+        recorded.push({
+          year,
+          value: game.box,
+          teamId: game.teamId ?? team.teamId,
+          teamAbbr: game.teamAbbr ?? team.teamAbbr,
+        });
       }
       // A whole season of zeros against a real season rate is a missing log,
       // not a player who never recorded the stat.
@@ -117,6 +177,8 @@ export function buildTalentSeries(options: {
             year: point.year,
             game: dots.length + 1,
             value: point.value,
+            teamId: point.teamId,
+            teamAbbr: point.teamAbbr,
           });
         }
       }
@@ -124,7 +186,13 @@ export function buildTalentSeries(options: {
         !missingLog && boxes.length
           ? boxes.reduce((sum, value) => sum + value, 0) / boxes.length
           : season.value;
-      line.push({ year: anchor, value: average, season: season.season });
+      line.push({
+        year: anchor,
+        value: average,
+        season: season.season,
+        teamId: team.teamId,
+        teamAbbr: team.teamAbbr,
+      });
     }
     carried = season.value;
   }

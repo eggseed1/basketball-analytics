@@ -480,6 +480,32 @@ function PossessionExplorerAvailable({
   const otPeriods = model.periodOptions.filter((p) => p > 4);
   const regulation = model.periodOptions.filter((p) => p >= 1 && p <= 4);
 
+  const possessionTotals = useMemo(() => {
+    const { details, officialComparison, suppressAggregateMetrics } = model.quality;
+    const preferOfficial =
+      !suppressAggregateMetrics &&
+      (officialComparison === "matched" || officialComparison === "within_tolerance") &&
+      details.officialHome != null &&
+      details.officialAway != null;
+    const home = preferOfficial ? details.officialHome! : details.derivedHome;
+    const away = preferOfficial ? details.officialAway! : details.derivedAway;
+    if (home == null || away == null || home <= 0 || away <= 0) return null;
+    let homePts = 0;
+    let awayPts = 0;
+    for (const row of model.rows) {
+      if (row.offenseSide === "home") homePts += row.points;
+      else awayPts += row.points;
+    }
+    const source = preferOfficial ? "NBA box" : "play-by-play";
+    return {
+      home,
+      away,
+      homePpp: homePts / home,
+      awayPpp: awayPts / away,
+      source,
+    };
+  }, [model]);
+
   return (
     <section
       aria-labelledby="possession-explorer-heading"
@@ -493,6 +519,40 @@ function PossessionExplorerAvailable({
           Possession sequences reconstructed from official play-by-play.
         </p>
       </div>
+
+      {possessionTotals ? (
+        <div
+          className={cn(
+            type.caption,
+            "grid gap-2 rounded-md border border-border/60 bg-background/70 px-3 py-2.5 sm:grid-cols-2"
+          )}
+        >
+          <p className="tabular-nums">
+            <span className="font-semibold text-foreground">
+              {model.teams.away.abbreviation}
+            </span>
+            <span className="text-muted-foreground">
+              {" "}
+              {possessionTotals.away.toFixed(0)} possessions ·{" "}
+              {possessionTotals.awayPpp.toFixed(2)} pts/poss
+            </span>
+          </p>
+          <p className="tabular-nums sm:text-right">
+            <span className="font-semibold text-foreground">
+              {model.teams.home.abbreviation}
+            </span>
+            <span className="text-muted-foreground">
+              {" "}
+              {possessionTotals.home.toFixed(0)} possessions ·{" "}
+              {possessionTotals.homePpp.toFixed(2)} pts/poss
+            </span>
+          </p>
+          <p className="text-[11px] text-muted-foreground sm:col-span-2">
+            Team totals from {possessionTotals.source}. Each side&apos;s own offensive
+            possessions; points per possession is points scored on those trips.
+          </p>
+        </div>
+      ) : null}
 
       <QualityNotices model={model} />
       <DataDetailsDisclosure model={model} />

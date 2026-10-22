@@ -57,7 +57,10 @@ export function formatMetricDelta(key: string, delta: number): string {
   const sign = delta > 0 ? "+" : delta < 0 ? "-" : "";
   const abs = Math.abs(delta);
   if (RATE_KEYS.has(key)) return `${sign}${(abs * 100).toFixed(1)} pts`;
-  return `${sign}${formatNumber(abs, key === "asttov" ? 2 : 1)}`;
+  return `${sign}${formatNumber(
+    abs,
+    key === "ppp" || key === "pap" || key === "prevented" ? 3 : key === "asttov" ? 2 : 1
+  )}`;
 }
 
 function missing(
@@ -88,6 +91,67 @@ function missing(
 export function ftRate(row: TeamSeasonStats): number | null {
   if (row.fieldGoalsAttempted <= 0) return null;
   return row.freeThrowsAttempted / row.fieldGoalsAttempted;
+}
+
+/**
+ * Season possession estimate from board totals when advanced pace/ORtg
+ * aren't on the ESPN team board. Uses ORB% for the glass share term.
+ */
+export function estimateSeasonPossessions(row: TeamSeasonStats): number | null {
+  if (!(row.fieldGoalsAttempted > 0) || !(row.gamesPlayed > 0)) return null;
+  if (!(row.points > 0) || !(row.turnovers >= 0)) return null;
+  const misses = Math.max(0, row.fieldGoalsAttempted - row.fieldGoalsMade);
+  const orbPct =
+    finite(row.offensiveReboundPct) && row.offensiveReboundPct > 0
+      ? row.offensiveReboundPct
+      : 0.27;
+  const poss =
+    row.fieldGoalsAttempted +
+    0.4 * (row.freeThrowsAttempted || 0) -
+    1.07 * orbPct * misses +
+    row.turnovers;
+  return poss > 0 ? poss : null;
+}
+
+export function seasonPointsPerPossession(row: TeamSeasonStats): number | null {
+  if (finite(row.offensiveRating) && row.offensiveRating > 0) {
+    return row.offensiveRating / 100;
+  }
+  const poss = estimateSeasonPossessions(row);
+  if (poss == null || !(row.points > 0)) return null;
+  return row.points / poss;
+}
+
+export function seasonPace(row: TeamSeasonStats): number | null {
+  if (finite(row.pace) && row.pace > 0) return row.pace;
+  const poss = estimateSeasonPossessions(row);
+  if (poss == null || !(row.gamesPlayed > 0)) return null;
+  return poss / row.gamesPlayed;
+}
+
+export function seasonOffensiveRating(row: TeamSeasonStats): number | null {
+  if (finite(row.offensiveRating) && row.offensiveRating > 0) {
+    return row.offensiveRating;
+  }
+  const ppp = seasonPointsPerPossession(row);
+  return ppp != null ? ppp * 100 : null;
+}
+
+export function seasonDefensiveRating(row: TeamSeasonStats): number | null {
+  if (finite(row.defensiveRating) && row.defensiveRating > 0) {
+    return row.defensiveRating;
+  }
+  const poss = estimateSeasonPossessions(row);
+  if (poss == null || !(row.oppPpg > 0) || !(row.gamesPlayed > 0)) return null;
+  return (100 * row.oppPpg * row.gamesPlayed) / poss;
+}
+
+/** Opponent points per team possession — defensive mirror of offensive PPP. */
+export function seasonPointsAllowedPerPossession(
+  row: TeamSeasonStats
+): number | null {
+  const drtg = seasonDefensiveRating(row);
+  return drtg != null ? drtg / 100 : null;
 }
 
 /** One team's value for a board metric key, as pooled for league ranks. */
@@ -234,14 +298,181 @@ export function buildTeamRankedMetrics(options: {
         })()
       : missing("ftr", "Free-throw rate", "factors", "No FTA/FGA on this row.");
 
+  const fromEstimate = (
+    key: string,
+    label: string,
+    group: RankedMetric["group"],
+    value: number | null,
+    poolPick: (row: TeamSeasonStats) => number | null,
+    format: (v: number) => string,
+    invert = false,
+    estimateNote = "Estimated from season board counting (possessions ≈ FGA + 0.4·FTA − ORB share of misses + TOV)."
+  ): RankedMetric => {
+    if (value == null) {
+      return missing(key, label, group, "Not enough counting to estimate.");
+    }
+    const pool = league.map(poolPick).filter((v): v is number => finite(v));
+    if (pool.length < 2) {
+      return {
+        key,
+        label,
+        formattedValue: format(value),
+        value,
+        rank: null,
+        rankDenominator: null,
+        percentile: null,
+        leagueAverage: null,
+        differenceFromAverage: null,
+        previousFormatted: null,
+        direction: invert ? "lower" : "higher",
+        sample: team.gamesPlayed,
+        source: estimateNote,
+        missingReason: null,
+        group,
+      };
+    }
+    const ranked = rankPool(value, pool, invert);
+    const priorValue = prior ? poolPick(prior) : null;
+    return {
+      key,
+      label,
+      formattedValue: format(value),
+      value,
+      rank: ranked.rank,
+      rankDenominator: n,
+      percentile: ranked.percentile,
+      leagueAverage: ranked.avg,
+      differenceFromAverage: value - ranked.avg,
+      previousFormatted:
+        priorValue != null
+          ? `${formatMetricDelta(key, value - priorValue)} vs last season`
+          : null,
+      direction: invert ? "lower" : "higher",
+      sample: team.gamesPlayed,
+      source: estimateNote,
+      missingReason: null,
+      group,
+    };
+  };
+
+  const ortgValue = seasonOffensiveRating(team);
+  const drtgValue = seasonDefensiveRating(team);
+  const paceValue = seasonPace(team);
+  const pppValue = seasonPointsPerPossession(team);
+  const papValue = seasonPointsAllowedPerPossession(team);
+  const possValue = estimateSeasonPossessions(team);
+  const possPerGame =
+    possValue != null && team.gamesPlayed > 0 ? possValue / team.gamesPlayed : null;
+
+  const papPool = league
+    .map(seasonPointsAllowedPerPossession)
+    .filter((v): v is number => finite(v));
+  const leaguePapAvg =
+    papPool.length > 0
+      ? papPool.reduce((a, b) => a + b, 0) / papPool.length
+      : null;
+  // Positive = stingier than league average (points the defense "prevents" per trip).
+  const preventedValue =
+    papValue != null && leaguePapAvg != null ? leaguePapAvg - papValue : null;
+  const priorPap = prior ? seasonPointsAllowedPerPossession(prior) : null;
+
+  const preventedMetric: RankedMetric =
+    preventedValue == null || leaguePapAvg == null
+      ? missing(
+          "prevented",
+          "Pts prevented / poss",
+          "defense",
+          "Needs a league points-allowed sample."
+        )
+      : (() => {
+          const pool = league
+            .map((row) => {
+              const pap = seasonPointsAllowedPerPossession(row);
+              return pap != null ? leaguePapAvg - pap : null;
+            })
+            .filter((v): v is number => finite(v));
+          const ranked = rankPool(preventedValue, pool, false);
+          return {
+            key: "prevented",
+            label: "Pts prevented / poss",
+            formattedValue: formatNumber(preventedValue, 3),
+            value: preventedValue,
+            rank: ranked.rank,
+            rankDenominator: n,
+            percentile: ranked.percentile,
+            leagueAverage: 0,
+            differenceFromAverage: preventedValue,
+            previousFormatted:
+              priorPap != null && papValue != null
+                ? `${formatMetricDelta("pap", papValue - priorPap)} allowed vs last season`
+                : null,
+            direction: "higher" as const,
+            sample: team.gamesPlayed,
+            source:
+              "League-average points allowed per possession minus this team's rate. Above zero is stingier than average.",
+            missingReason: null,
+            group: "defense" as const,
+          };
+        })();
+
   return [
     record,
     fromTrait("diff", "scorecard"),
     fromTrait("ts", "scorecard"),
     fromTrait("opp", "scorecard"),
-    missing("ortg", "Offensive rating", "scorecard", notOnBoard),
-    missing("drtg", "Defensive rating", "scorecard", notOnBoard),
-    missing("pace", "Pace", "scorecard", notOnBoard),
+    fromEstimate(
+      "ortg",
+      "Offensive rating",
+      "scorecard",
+      ortgValue,
+      seasonOffensiveRating,
+      (v) => formatNumber(v, 1)
+    ),
+    fromEstimate(
+      "drtg",
+      "Defensive rating",
+      "scorecard",
+      drtgValue,
+      seasonDefensiveRating,
+      (v) => formatNumber(v, 1),
+      true
+    ),
+    fromEstimate(
+      "pace",
+      "Pace",
+      "scorecard",
+      paceValue,
+      seasonPace,
+      (v) => formatNumber(v, 1)
+    ),
+    fromEstimate(
+      "ppp",
+      "Pts scored / poss",
+      "scorecard",
+      pppValue,
+      seasonPointsPerPossession,
+      (v) => formatNumber(v, 3)
+    ),
+    fromEstimate(
+      "pap",
+      "Pts allowed / poss",
+      "scorecard",
+      papValue,
+      seasonPointsAllowedPerPossession,
+      (v) => formatNumber(v, 3),
+      true
+    ),
+    fromEstimate(
+      "poss",
+      "Possessions / game",
+      "scorecard",
+      possPerGame,
+      (row) => {
+        const p = estimateSeasonPossessions(row);
+        return p != null && row.gamesPlayed > 0 ? p / row.gamesPlayed : null;
+      },
+      (v) => formatNumber(v, 1)
+    ),
     missing("srs", "SRS", "scorecard", notOnBoard),
     fromTrait("efg", "offense"),
     fromTrait("fg3", "offense"),
@@ -251,6 +482,16 @@ export function buildTeamRankedMetrics(options: {
     // `topg` is the team's own giveaways (ball security), not turnovers forced.
     fromTrait("tov", "offense"),
     fromTrait("opp", "defense"),
+    fromEstimate(
+      "pap",
+      "Pts allowed / poss",
+      "defense",
+      papValue,
+      seasonPointsAllowedPerPossession,
+      (v) => formatNumber(v, 3),
+      true
+    ),
+    preventedMetric,
     fromTrait("stl", "defense"),
     fromTrait("blk", "defense"),
     fromTrait("efg", "factors"),

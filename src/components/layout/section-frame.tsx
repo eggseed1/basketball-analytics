@@ -29,6 +29,11 @@ export type SectionFrameProps = {
    */
   bodySurface?: boolean;
   density?: PageSectionDensity;
+  /**
+   * Hold entry motion until the section intersects the viewport (no eager
+   * first-paint band). Use for Overview blocks that should wait for scroll.
+   */
+  holdUntilScroll?: boolean;
   className?: string;
   bodyClassName?: string;
   children: ReactNode;
@@ -49,6 +54,7 @@ export function SectionFrame({
   titlePlacement = "outside",
   bodySurface = false,
   density = "supporting",
+  holdUntilScroll = false,
   className,
   bodyClassName,
   children,
@@ -82,6 +88,7 @@ export function SectionFrame({
       data-density={density}
       data-title-placement={titlePlacement}
       data-body-surface={bodySurface ? "true" : "false"}
+      data-motion-scroll={holdUntilScroll ? "" : undefined}
       className={cn(sectionShellClassName, className)}
       aria-label={label}
     >

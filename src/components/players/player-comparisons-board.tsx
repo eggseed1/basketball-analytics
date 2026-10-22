@@ -43,8 +43,8 @@ const TABS: Array<{ id: CompTab; label: string }> = [
 ];
 
 /**
- * Overview Comparisons: Style paints ready with the page; Impact / Trajectory
- * warm in the background and animate on flip.
+ * Overview Comparisons: entry motion and Impact / Trajectory warm wait until
+ * the section is near the viewport. Tab flips animate on the pane.
  */
 export function PlayerComparisonsBoard({
   playerId,
@@ -123,13 +123,32 @@ export function PlayerComparisonsBoard({
       seededTrajectory.current = true;
       skipTrajectory = true;
     }
-    // Start immediately — idle deferral left Trajectory waiting up to ~1s.
-    warmComparisonsFetches({
-      playerId,
-      season: viewSeason,
-      espnId,
-      skipTrajectory,
-    });
+
+    const target = document.getElementById("comparisons");
+    const warm = () => {
+      warmComparisonsFetches({
+        playerId,
+        season: viewSeason,
+        espnId,
+        skipTrajectory,
+      });
+    };
+
+    // Warm when the section is near the fold — not on first paint above it.
+    if (!target) {
+      warm();
+      return;
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        warm();
+        io.disconnect();
+      },
+      { rootMargin: "240px 0px", threshold: 0 }
+    );
+    io.observe(target);
+    return () => io.disconnect();
   }, [espnId, playerId, season, trajectoryBundle, viewSeason]);
 
   const compareHref = `/compare?a=${encodeURIComponent(focalCompareId)}&season=${encodeURIComponent(viewSeason)}`;
@@ -145,6 +164,7 @@ export function PlayerComparisonsBoard({
     <SectionFrame
       id="comparisons"
       density="overview"
+      holdUntilScroll
       title={t("comparisonsTitle")}
       description={`${t("comparisonsHint")} · ${viewSeason}`}
     >

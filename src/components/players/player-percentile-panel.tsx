@@ -46,7 +46,6 @@ import {
   preloadPlayerPageCharts,
 } from "@/components/charts/recharts-lazy";
 import type { CareerSeriesPoint } from "@/components/players/career-team-trend-chart";
-import { warmComparisonsFetches } from "@/lib/player-comparisons-fetch";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { useChartTheme } from "@/lib/chart-theme";
 import type { StatComp } from "@/lib/player-stat-comps";
@@ -1446,8 +1445,7 @@ export function PlayerPercentilePanel({
   const ssrIsPartial = !ssrHasComps || ssrMissingSeries;
   useEffect(() => {
     preloadPlayerPageCharts();
-    warmComparisonsFetches({ playerId, season: trackedSeason });
-  }, [playerId, trackedSeason]);
+  }, []);
   useEffect(() => {
     if (!ssrIsPartial) return;
     let cancelled = false;

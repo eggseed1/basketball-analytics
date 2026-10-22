@@ -1,7 +1,11 @@
 /**
- * Quarter standouts and the possession battle, built only from play-by-play
+ * Quarter standouts and extra-chance battle stats, built only from play-by-play
  * that has already happened. A quarter counts as finished when the feed logs
  * its "End of" marker or the game is final; anything else is "so far".
+ *
+ * Team possessions are nearly equal by design; the asymmetric count is extra
+ * chances (OREB + opponent turnovers). Shared possession totals are pace /
+ * PPP context, not a side-by-side battle.
  */
 
 import type { PlayByPlayEvent } from "@/data/types/play-by-play";
@@ -44,6 +48,9 @@ export interface SideBattle {
   stl: number;
   fga: number;
   fta: number;
+  fgm: number;
+  /** Points this side scored (from play-by-play). */
+  points: number;
   /** Own offensive rebounds plus opponent turnovers. */
   extraChances: number;
   secondChancePoints: number;
@@ -56,6 +63,55 @@ export interface PossessionBattle {
   /** Positive favors home: (home extra chances) - (away extra chances). */
   net: number;
   byPeriod: { period: number; label: string; finished: boolean; net: number }[];
+}
+
+/**
+ * Basketball-Reference team possession estimate for one side, using the other
+ * side's defensive rebounds for the glass share.
+ */
+export function estimateSidePossessions(
+  own: Pick<SideBattle, "fga" | "fta" | "fgm" | "oreb" | "tov">,
+  oppDreb: number
+): number {
+  const glass = own.oreb + oppDreb;
+  const orebShare = glass > 0 ? own.oreb / glass : 0;
+  const misses = Math.max(0, own.fga - own.fgm);
+  return own.fga + 0.4 * own.fta - 1.07 * orebShare * misses + own.tov;
+}
+
+/** Average of both sides' estimates — the usual game possession total per team. */
+export function estimateGamePossessions(battle: PossessionBattle): {
+  home: number;
+  away: number;
+} {
+  const homeEst = estimateSidePossessions(battle.home, battle.away.dreb);
+  const awayEst = estimateSidePossessions(battle.away, battle.home.dreb);
+  const avg = (homeEst + awayEst) / 2;
+  return { home: avg, away: avg };
+}
+
+/** Shared game possession total (both sides use the same estimate). */
+export function sharedGamePossessions(battle: PossessionBattle): number {
+  return estimateGamePossessions(battle).home;
+}
+
+/**
+ * Second-chance points per player offensive rebound. Null when there were no
+ * counted OREBs (team offensive rebounds can still create second-chance points).
+ */
+export function ptsPerOreb(side: Pick<SideBattle, "secondChancePoints" | "oreb">): number | null {
+  return side.oreb > 0 ? side.secondChancePoints / side.oreb : null;
+}
+
+/**
+ * Points off turnovers per opponent turnover (forced TO). Null when the other
+ * side has not turned it over.
+ */
+export function ptsPerForcedTov(
+  pointsOffTurnovers: number,
+  opponentTurnovers: number
+): number | null {
+  return opponentTurnovers > 0 ? pointsOffTurnovers / opponentTurnovers : null;
 }
 
 export interface LiveInsights {
@@ -148,6 +204,8 @@ const emptyBattle = (): SideBattle => ({
   stl: 0,
   fga: 0,
   fta: 0,
+  fgm: 0,
+  points: 0,
   extraChances: 0,
   secondChancePoints: 0,
   pointsOffTurnovers: 0,
@@ -212,6 +270,7 @@ export function buildLiveInsights(
   const score = (side: Side, period: number, points: number) => {
     if (points <= 0) return;
     periodBucket(period).pts[side] += points;
+    battle[side].points += points;
     if (secondChance[side]) battle[side].secondChancePoints += points;
     if (offTurnover[side]) battle[side].pointsOffTurnovers += points;
   };
@@ -239,6 +298,7 @@ export function buildLiveInsights(
       clear(opp);
       const made = e.shotResult === "Made";
       battle[side].fga++;
+      if (made) battle[side].fgm++;
       const me = lineFor(e.period, side, e.playerId, e.playerName);
       if (me) {
         me.fga++;

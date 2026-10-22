@@ -1,7 +1,14 @@
 import assert from "node:assert/strict";
 
 import type { PlayByPlayEvent } from "@/data/types/play-by-play";
-import { buildLiveInsights, buildRightNow, foulTroubleThreshold } from "@/lib/games/live-insights";
+import {
+  buildLiveInsights,
+  buildRightNow,
+  foulTroubleThreshold,
+  ptsPerForcedTov,
+  ptsPerOreb,
+  sharedGamePossessions,
+} from "@/lib/games/live-insights";
 import {
   WIN_PROB_PARAMS,
   buildWinProbabilitySeries,
@@ -93,6 +100,11 @@ assert.equal(r.battle.away.stl, 1);
 assert.equal(r.battle.away.extraChances, 2, "1 OREB + 1 opponent turnover");
 assert.equal(r.battle.home.extraChances, 1);
 assert.equal(r.battle.net, -1);
+assert.equal(ptsPerOreb(r.battle.away), 2, "2 second-chance pts / 1 OREB");
+assert.equal(ptsPerOreb(r.battle.home), null, "team OREB second-chance pts have no player OREB denom");
+assert.equal(ptsPerForcedTov(r.battle.away.pointsOffTurnovers, r.battle.home.tov), 3);
+assert.equal(ptsPerForcedTov(r.battle.home.pointsOffTurnovers, r.battle.away.tov), 0);
+assert.ok(sharedGamePossessions(r.battle) > 0);
 
 assert.equal(r.quarters.length, 2);
 assert.equal(r.quarters[0]!.finished, true, "Q1 has an end marker");

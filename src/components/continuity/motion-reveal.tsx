@@ -29,8 +29,12 @@ const EAGER_LEAD_PX = 80;
 const LIST = `:is([data-motion-list] > *, :is(ul, ol):not(nav *, [role]) > li):not(${STATIC}, :has(${FROST})), [data-motion-item]:not(${STATIC})`;
 const FROST_ROW = "tbody > tr:has(> .board-sticky-frost)";
 /** Own entry beat — nested page motion would double-fade these. */
-const OWN_ENTRY =
-  "[data-motion-still], [data-motion-eager], [data-comparisons-pane]";
+const OWN_ENTRY = "[data-motion-still], [data-motion-eager]";
+/**
+ * Force scroll hold even when the block sits in the eager band (viewport +
+ * lead). Used for Overview Comparisons so Style/Impact do not fire on load.
+ */
+const SCROLL_HOLD = "[data-motion-scroll]";
 /**
  * Chart draws (LTR line wipe, bar grow, dots). Never finish these early —
  * settling them under a hero/section shell was killing the load animation
@@ -294,9 +298,10 @@ export function MotionReveal() {
         seen.add(el);
 
         const chart = el.matches(CHART_ENTRY);
+        const scrollHold = !!el.closest(SCROLL_HOLD);
 
-        // Own-entry shells (hero, comparison pane) — CSS entry on the shell.
-        // Nested layout fades are finished; chart wipes keep running.
+        // Own-entry shells (hero) — CSS entry on the shell. Nested layout
+        // fades are finished; chart wipes keep running.
         const own = el.closest(OWN_ENTRY);
         if (own) {
           if (own !== el && !chart) settle.push(...entryTransitions(el));
@@ -305,12 +310,19 @@ export function MotionReveal() {
 
         // Section frames fade as one block. Nested cards/rows finish so they
         // do not stack another fade. Chart draws hold with the section when
-        // it is below the fold, or play with CSS when the section is eager.
+        // it is below the fold (or marked scroll-hold), or play with CSS when
+        // the section is eager.
         const frameEl = el.closest('[data-slot="section-frame"]');
         if (frameEl && frameEl !== el) {
           if (chart) {
             const frameTop = frameEl.getBoundingClientRect().top;
-            if (frameTop <= fold || clippedOut(el, cache)) continue;
+            const frameScrollHold = frameEl.matches(SCROLL_HOLD);
+            if (
+              (!frameScrollHold && frameTop <= fold) ||
+              clippedOut(el, cache)
+            ) {
+              continue;
+            }
             const planned = planEntry(el);
             if (planned) {
               settle.push(...entryTransitions(el));
@@ -323,9 +335,10 @@ export function MotionReveal() {
         }
 
         const top = el.getBoundingClientRect().top;
-        // Eager: on-screen (and slightly below) play CSS. Clipped horizontal
-        // scroller cells are left alone so sideways scroll does not pop rows.
-        if (top <= fold || clippedOut(el, cache)) {
+        // Eager: on-screen (and slightly below) play CSS. Scroll-hold blocks
+        // always wait for IntersectionObserver. Clipped horizontal scroller
+        // cells are left alone so sideways scroll does not pop rows.
+        if ((!scrollHold && top <= fold) || clippedOut(el, cache)) {
           continue;
         }
 

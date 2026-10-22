@@ -25,6 +25,8 @@ const PLOT_SEL = [
   ".recharts-cartesian-grid",
   ".recharts-reference-line",
   ".recharts-line",
+  // Recharts parks dots in a separate z-index layer — not under .recharts-line.
+  ".recharts-line-dots",
   ".recharts-area",
   ".recharts-scatter",
   ".recharts-career-monotone-stroke",
@@ -56,44 +58,65 @@ function plotNodes(root: HTMLElement): PlotEl[] {
   return [...root.querySelectorAll<PlotEl>(PLOT_SEL)];
 }
 
+/** Freeze in-flight WAAPI onto inline style; leave the clip where it is. */
+function commitAnimations(nodes: PlotEl[]) {
+  for (const el of nodes) {
+    for (const a of el.getAnimations()) {
+      try {
+        a.commitStyles();
+      } catch {
+        /* ignore */
+      }
+      a.cancel();
+    }
+  }
+}
+
+/** Commit in-flight WAAPI onto style, then pin `clip`. Never snaps to OPEN. */
 function cancelKeepingAll(nodes: PlotEl[], clip: string) {
+  commitAnimations(nodes);
   for (const el of nodes) {
-    el.style.clipPath = clip;
-    for (const a of el.getAnimations()) {
-      try {
-        a.commitStyles();
-      } catch {
-        /* ignore */
-      }
-      a.cancel();
-    }
     el.style.clipPath = clip;
   }
 }
 
-function clearClip(nodes: PlotEl[]) {
-  for (const el of nodes) {
-    for (const a of el.getAnimations()) {
-      try {
-        a.commitStyles();
-      } catch {
-        /* ignore */
-      }
-      a.cancel();
-    }
-    el.style.clipPath = "";
-  }
+/** Visual clip right now — mid-wipe / mid-reveal stay put instead of flashing open. */
+function clipNow(el: PlotEl): string {
+  const inline = el.style.clipPath.trim();
+  const computed = getComputedStyle(el).clipPath.trim();
+  const raw =
+    inline ||
+    (computed && computed !== "none" ? computed : "");
+  // Fully painted plot (no clip) or a collapsed single-value inset — wipe from open.
+  if (!raw || raw === "inset(-50%)") return OPEN;
+  return raw;
 }
 
-function animateClip(
-  nodes: PlotEl[],
-  from: string,
-  to: string,
-  duration: number
-): Animation[] {
+function isClosedClip(clip: string): boolean {
+  return clip.includes("150%");
+}
+
+/** Wipe out from wherever the plot is — not from a forced full-open snap. */
+function animateClipOut(nodes: PlotEl[], duration: number): Animation[] {
   return nodes.map((el) => {
+    for (const a of el.getAnimations()) {
+      try {
+        a.commitStyles();
+      } catch {
+        /* ignore */
+      }
+      a.cancel();
+    }
+    const from = clipNow(el);
     el.style.clipPath = from;
-    return el.animate([{ clipPath: from }, { clipPath: to }], {
+    if (isClosedClip(from)) {
+      el.style.clipPath = CLOSED;
+      return el.animate([{ clipPath: CLOSED }, { clipPath: CLOSED }], {
+        duration: 0,
+        fill: "forwards",
+      });
+    }
+    return el.animate([{ clipPath: from }, { clipPath: CLOSED }], {
       duration,
       easing: EASE,
       fill: "forwards",
@@ -158,26 +181,24 @@ export function CareerChartFilterWipe({
     }
 
     const outNodes = plotNodes(root);
-    cancelKeepingAll(outNodes, OPEN);
-    const outAnims = animateClip(outNodes, OPEN, CLOSED, OUT_MS);
+    const outAnims = animateClipOut(outNodes, OUT_MS);
 
     void (async () => {
       await finishedAll(outAnims);
       if (gen !== genRef.current) return;
 
-      // Swap under a closed clip, then drop the clip so the remounted chart
-      // can start empty and draw. Do not wipe-in a finished painting.
+      // Swap under a closed clip and leave it closed. The remounted chart's
+      // draw-in opens it. clearClip() here used to flash a full plot between
+      // wipe-out and the next reveal.
       cancelKeepingAll(plotNodes(root), CLOSED);
       apply(latestKeyRef.current);
-
-      await new Promise<void>((r) => requestAnimationFrame(() => r()));
-      if (gen !== genRef.current) return;
-      clearClip(plotNodes(wrapRef.current ?? root));
     })();
 
     return () => {
       genRef.current += 1;
-      if (wrapRef.current) clearClip(plotNodes(wrapRef.current));
+      // Freeze mid-wipe / mid-reveal in place. Snapping CLOSED here skipped the
+      // wipe-out; clearing the clip flashed a full plot before the next wipe.
+      if (wrapRef.current) commitAnimations(plotNodes(wrapRef.current));
     };
   }, [transitionKey]);
 
