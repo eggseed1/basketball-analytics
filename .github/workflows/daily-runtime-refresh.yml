@@ -35,11 +35,17 @@ name: Daily player-viz runtime refresh
 
 on:
   schedule:
-    # ~7:15 America/New_York during EST; after most overnight finals settle.
-    # Off the top of the hour, where GitHub drops the most scheduled runs.
+    # Spaced so a dropped GitHub cron still leaves another shot the same morning.
+    # Times are UTC; comments are America/New_York during EDT (UTC-4).
+    #
+    # After West Coast finals settle (~6:37am ET). Prefer this for overnight
+    # box scores so boards aren't stuck waiting on the mid-morning primary.
+    - cron: "37 10 * * *"
+    # Primary mid-morning (~8:17am ET).
     - cron: "17 12 * * *"
-    # Backups for days GitHub skips the run or no runner picks it up. The
-    # guard job turns them into no-ops once a run has succeeded that UTC day.
+    # Short-gap backup if GitHub dropped the primary (~9:47am ET).
+    - cron: "47 13 * * *"
+    # Midday / late backups (~12:17pm / 4:17pm ET).
     - cron: "17 16 * * *"
     - cron: "17 20 * * *"
   workflow_dispatch:
@@ -70,22 +76,62 @@ jobs:
     outputs:
       skip: ${{ steps.check.outputs.skip }}
     steps:
-      - name: Skip scheduled backups after a successful run today
+      # Only skip when a real refresh job already finished today after the
+      # post-finals cutoff. Guard-only "success" no-ops and early pre-tip syncs
+      # must not block later crons (that left last night's games stale).
+      - name: Skip scheduled backups after a post-finals refresh today
         id: check
         env:
           GH_TOKEN: ${{ github.token }}
+          # 08:00 UTC ≈ 4am ET. West Coast finals are usually in by then.
+          POST_FINALS_UTC_HOUR: "8"
         run: |
           if [ "${{ github.event_name }}" != "schedule" ]; then
             echo "skip=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
+
           today=$(date -u +%F)
-          count=$(gh api "repos/${{ github.repository }}/actions/workflows/daily-runtime-refresh.yml/runs?status=success&created=${today}&per_page=1" --jq '.total_count')
-          echo "successful runs on ${today} (UTC): ${count}"
-          if [ "${count}" -gt 0 ]; then
+          repo="${{ github.repository }}"
+          cutoff_hour="${POST_FINALS_UTC_HOUR}"
+          echo "looking for refresh success on ${today} UTC at/after ${cutoff_hour}:00Z"
+
+          mapfile -t run_ids < <(
+            gh api "repos/${repo}/actions/workflows/daily-runtime-refresh.yml/runs?status=success&created=${today}&per_page=30" \
+              --jq '.workflow_runs[].id'
+          )
+          echo "candidate successful workflow runs: ${#run_ids[@]}"
+
+          found=""
+          for id in "${run_ids[@]}"; do
+            [ -n "$id" ] || continue
+            # Exclude this in-flight run if it somehow appears.
+            if [ "$id" = "${{ github.run_id }}" ]; then
+              continue
+            fi
+            completed=$(
+              gh api "repos/${repo}/actions/runs/${id}/jobs?per_page=20" \
+                --jq '[.jobs[] | select(.name == "refresh" and .conclusion == "success") | .completed_at] | first // empty'
+            )
+            if [ -z "$completed" ]; then
+              echo "run ${id}: no successful refresh job (guard-only or failed refresh)"
+              continue
+            fi
+            hour=$(date -u -d "$completed" +%H 2>/dev/null || date -u -j -f "%Y-%m-%dT%H:%M:%SZ" "$completed" +%H)
+            echo "run ${id}: refresh completed ${completed} (hour=${hour}Z)"
+            if [ "$hour" -ge "$cutoff_hour" ]; then
+              found="$id"
+              break
+            fi
+            echo "run ${id}: before post-finals cutoff — not enough to skip later crons"
+          done
+
+          if [ -n "$found" ]; then
             echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "skipping: refresh already succeeded post-finals in run ${found}"
           else
             echo "skip=false" >> "$GITHUB_OUTPUT"
+            echo "running: no post-finals refresh success yet today"
           fi
 
   refresh:
