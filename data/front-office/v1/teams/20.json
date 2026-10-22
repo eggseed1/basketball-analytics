@@ -1,8 +1,8 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-21",
-    "retrievedAt": "2026-10-21T16:03:38.725Z",
+    "snapshotDate": "2026-10-22",
+    "retrievedAt": "2026-10-22T12:54:15.411Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
@@ -11,7 +11,7 @@
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "d2e877c678cfae7b7411fe896b71fba2753ab8d869bb976637b25f7b107e5d8f",
+    "sourceHash": "5efefd69ba7071e13dcdbbea68b9bbbb37f1ed25728b69983e39e3ef67828b31",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -237,15 +237,15 @@
           "href": "/players/2544"
         },
         {
-          "playerId": "4873090",
+          "playerId": "1642889",
           "playerName": "Labaron Philon Jr.",
           "age": null,
-          "contractId": "cy-4873090-2026",
+          "contractId": "cy-1642889-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-4873090-2026",
-              "playerId": "4873090",
+              "contractId": "cy-1642889-2026",
+              "playerId": "1642889",
               "franchiseId": "20",
               "season": "2026-27",
               "salary": 3597120,
@@ -257,7 +257,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/4873090"
+          "href": "/players/1642889"
         },
         {
           "playerId": "1631230",

@@ -3,13 +3,13 @@
     "methodologyVersion": "movement-m1-0.2+movement-rules-v2",
     "status": "NEWS_INGEST_M1",
     "season": "2026-27",
-    "snapshotDate": "2026-10-21",
+    "snapshotDate": "2026-10-22",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-10-21T15:58:51.770Z",
-    "rosterPlayerCount": 450,
-    "headlinesScanned": 5177,
-    "latestHeadlineAt": "2026-10-21T15:51:43.000Z",
-    "latestTransactionDate": "2026-10-19",
+    "builtAt": "2026-10-22T12:44:41.064Z",
+    "rosterPlayerCount": 452,
+    "headlinesScanned": 5569,
+    "latestHeadlineAt": "2026-10-22T12:41:13.000Z",
+    "latestTransactionDate": "2026-10-21",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
       "Basketball News",
@@ -44,7 +44,7 @@
     },
     "outlet:cbs-sports": {
       "label": "CBS Sports",
-      "credibility": 16
+      "credibility": 12
     },
     "outlet:larry-brown-sports": {
       "label": "Larry Brown Sports",
@@ -148,7 +148,7 @@
     },
     "outlet:fadeaway-world": {
       "label": "Fadeaway World",
-      "credibility": 12
+      "credibility": 16
     },
     "outlet:sporting-news": {
       "label": "Sporting News",
@@ -168,11 +168,11 @@
     },
     "outlet:hoops-rumors": {
       "label": "Hoops Rumors",
-      "credibility": 16
+      "credibility": 12
     },
     "outlet:essentiallysports": {
       "label": "EssentiallySports",
-      "credibility": 16
+      "credibility": 12
     },
     "reporter:brian-windhorst": {
       "label": "Brian Windhorst (ESPN)",
@@ -476,28 +476,45 @@
     {
       "id": "mv-trade-3062679-20260926",
       "headline": "Josh Hart, Karl-Anthony Towns and others: trade talk",
-      "primaryClaimId": "mv-c7126afbd6cc9211",
+      "primaryClaimId": "mv-48acff7ee287be31",
       "claimIds": [
         "mv-ab48d038f12b4a20",
         "mv-268aa6f823567f77",
         "mv-16c64cf12c0ffcaa",
         "mv-47978b5263ca5efd",
         "mv-c7126afbd6cc9211",
-        "mv-73f6a092f8aa6e51"
+        "mv-73f6a092f8aa6e51",
+        "mv-5879ad0c5754fbc0",
+        "mv-d5f7580a11a92f8a",
+        "mv-39491e2d6f6e2f2b",
+        "mv-5c016c9e71b337b2",
+        "mv-c0a3d7ff49d1931e",
+        "mv-2d0cdb03f0790720",
+        "mv-c42ab76fdd40c898",
+        "mv-a8de4ca3f0b58963",
+        "mv-45f4ede3d6dad9d8",
+        "mv-8307e3b6261ca9a2",
+        "mv-9da8e0a7f4dbd941",
+        "mv-48acff7ee287be31",
+        "mv-02067a54b54385f8",
+        "mv-cc10d92cf978bee0"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-09-26T13:03:20.000Z",
-      "lastMeaningfulAt": "2026-10-08T20:53:30.000Z",
+      "lastMeaningfulAt": "2026-10-22T11:45:00.000Z",
       "linkedPlayerIds": [
         "3062679",
         "3136195",
-        "3102531"
+        "3102531",
+        "3975",
+        "6589"
       ],
       "linkedTeamIds": [
         "18",
         "9",
-        "13"
+        "13",
+        "15"
       ]
     },
     {
@@ -987,19 +1004,21 @@
     {
       "id": "mv-trade-3059318-20261009",
       "headline": "Joel Embiid: trade talk",
-      "primaryClaimId": "mv-7c74180313e08719",
+      "primaryClaimId": "mv-3cadcd5577f0d00b",
       "claimIds": [
-        "mv-7c74180313e08719"
+        "mv-7c74180313e08719",
+        "mv-3cadcd5577f0d00b"
       ],
       "evidenceClass": "reported",
-      "state": "denied",
+      "state": "unresolved",
       "firstSeenAt": "2026-10-09T18:53:50.000Z",
-      "lastMeaningfulAt": "2026-10-09T18:53:50.000Z",
+      "lastMeaningfulAt": "2026-10-21T21:28:49.000Z",
       "linkedPlayerIds": [
         "3059318"
       ],
       "linkedTeamIds": [
-        "20"
+        "20",
+        "18"
       ]
     },
     {
@@ -1257,8 +1276,8 @@
       ]
     },
     {
-      "id": "mv-trade-5105550-20261016",
-      "headline": "GG Jackson and Ja'Kobe Walter: trade talk",
+      "id": "mv-trade-4896372-20261016",
+      "headline": "Walter Clayton Jr., GG Jackson and others: trade talk",
       "primaryClaimId": "mv-dc80a248b46d1d4a",
       "claimIds": [
         "mv-dc80a248b46d1d4a"
@@ -1268,11 +1287,13 @@
       "firstSeenAt": "2026-10-16T07:25:03.000Z",
       "lastMeaningfulAt": "2026-10-16T07:25:03.000Z",
       "linkedPlayerIds": [
+        "4896372",
         "5105550",
         "4684272"
       ],
       "linkedTeamIds": [
         "29",
+        "6",
         "28"
       ]
     },
@@ -1448,6 +1469,62 @@
       ],
       "linkedTeamIds": [
         "16"
+      ]
+    },
+    {
+      "id": "mv-contract-4397233-20261020",
+      "headline": "Pete Nance: contract future with the Bucks",
+      "primaryClaimId": "mv-1b6214d53b23662f",
+      "claimIds": [
+        "mv-1b6214d53b23662f"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-10-20T04:56:29.000Z",
+      "lastMeaningfulAt": "2026-10-20T04:56:29.000Z",
+      "linkedPlayerIds": [
+        "4397233"
+      ],
+      "linkedTeamIds": [
+        "15"
+      ]
+    },
+    {
+      "id": "mv-trade-3917376-20261021",
+      "headline": "Jaylen Brown and Jayson Tatum: trade talk",
+      "primaryClaimId": "mv-2f0d84624ccb4107",
+      "claimIds": [
+        "mv-2f0d84624ccb4107"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-10-21T16:52:29.000Z",
+      "lastMeaningfulAt": "2026-10-21T16:52:29.000Z",
+      "linkedPlayerIds": [
+        "3917376",
+        "4065648"
+      ],
+      "linkedTeamIds": [
+        "2",
+        "20"
+      ]
+    },
+    {
+      "id": "mv-trade-3975-20261022",
+      "headline": "Stephen Curry: trade talk",
+      "primaryClaimId": "mv-a31ebc1f8e10f075",
+      "claimIds": [
+        "mv-a31ebc1f8e10f075"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-10-22T00:12:23.000Z",
+      "lastMeaningfulAt": "2026-10-22T00:12:23.000Z",
+      "linkedPlayerIds": [
+        "3975"
+      ],
+      "linkedTeamIds": [
+        "9"
       ]
     },
     {
@@ -6408,7 +6485,7 @@
     },
     {
       "id": "mv-dc80a248b46d1d4a",
-      "clusterId": "mv-trade-5105550-20261016",
+      "clusterId": "mv-trade-4896372-20261016",
       "summary": "Grizzlies exploring trade market for GG Jackson II and Walter Clayton Jr.",
       "claimType": "trade_interest",
       "evidenceClass": "reported",
@@ -6420,6 +6497,7 @@
       "reporterLabel": "Jake Fischer",
       "sourceUrl": "https://www.talkbasket.net/224887-grizzlies-exploring-trade-market-for-gg-jackson-ii-and-walter-clayton-jr",
       "playerIds": [
+        "4896372",
         "5105550",
         "4684272"
       ],
@@ -6956,6 +7034,27 @@
       "negotiationSpecificity": "offer"
     },
     {
+      "id": "mv-1b6214d53b23662f",
+      "clusterId": "mv-contract-4397233-20261020",
+      "summary": "Bucks re-sign Pete Nance",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-20T04:56:29.000Z",
+      "sourceId": "reporter:marc-stein",
+      "sourceLabel": "TalkBasket, citing Marc Stein (The Stein Line)",
+      "reporterLabel": "Marc Stein",
+      "sourceUrl": "https://www.talkbasket.net/225053-bucks-re-sign-pete-nance",
+      "playerIds": [
+        "4397233"
+      ],
+      "teamIds": [
+        "15"
+      ],
+      "isOriginal": false
+    },
+    {
       "id": "mv-01fd49b59a94ce32",
       "clusterId": "mv-contract-4431671-20261020",
       "summary": "Jaden McDaniels pens $40 million extension with Timberwolves",
@@ -7077,6 +7176,27 @@
       "isOriginal": false
     },
     {
+      "id": "mv-5879ad0c5754fbc0",
+      "clusterId": "mv-trade-3062679-20260926",
+      "summary": "Warriors reportedly exploring Kristaps Porziņģis trade as he deals with illness",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-21T11:32:08.000Z",
+      "sourceId": "reporter:shams-charania",
+      "sourceLabel": "NBC Sports Bay Area, citing Shams Charania (ESPN)",
+      "reporterLabel": "Shams Charania",
+      "sourceUrl": "https://www.nbcsportsbayarea.com/nba/golden-state-warriors/report-kristaps-porzingis-trade-illness/1972876/",
+      "playerIds": [
+        "3102531"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false
+    },
+    {
       "id": "mv-ead2ce4e4bc0e1ee",
       "clusterId": "mv-trade-4432816-20261013",
       "summary": "What will new-look Wolves look like? By trading for LaMelo Ball, Minnesota swapped 'moodiness for giddiness'",
@@ -7095,6 +7215,336 @@
         "16"
       ],
       "isOriginal": true
+    },
+    {
+      "id": "mv-2f0d84624ccb4107",
+      "clusterId": "mv-trade-3917376-20261021",
+      "summary": "Stephen A. Smith Calls Out Jayson Tatum For Not Stopping Celtics From Trading Jaylen Brown",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-21T16:52:29.000Z",
+      "sourceId": "outlet:fadeaway-world",
+      "sourceLabel": "Fadeaway World",
+      "sourceUrl": "https://fadeawayworld.net/nba/boston-celtics/stephen-a-smith-calls-out-jayson-tatum-for-not-stopping-celtics-from-trading-jaylen-brown",
+      "playerIds": [
+        "3917376",
+        "4065648"
+      ],
+      "teamIds": [
+        "2"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-d5f7580a11a92f8a",
+      "clusterId": "mv-trade-3062679-20260926",
+      "summary": "Warriors reportedly contacted Bucks about Kristaps Porziņģis trade amid illness",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-21T18:10:10.000Z",
+      "sourceId": "reporter:shams-charania",
+      "sourceLabel": "NBC Sports Bay Area, citing Shams Charania (ESPN)",
+      "reporterLabel": "Shams Charania, Sam Amick",
+      "sourceUrl": "https://www.nbcsportsbayarea.com/nba/golden-state-warriors/kristaps-porzingis-trade-rumors-bucks/1972982/",
+      "playerIds": [
+        "3102531"
+      ],
+      "teamIds": [
+        "9",
+        "15"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-39491e2d6f6e2f2b",
+      "clusterId": "mv-trade-3062679-20260926",
+      "summary": "Warriors Exploring Trade Market For Kristaps Porzingis",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-21T18:22:16.000Z",
+      "sourceId": "outlet:realgm",
+      "sourceLabel": "RealGM",
+      "sourceUrl": "https://basketball.realgm.com/wiretap/287814/Warriors-Exploring-Trade-Market-For-Kristaps-Porzingis",
+      "playerIds": [
+        "3102531"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-5c016c9e71b337b2",
+      "clusterId": "mv-trade-3062679-20260926",
+      "summary": "Kristaps Porzingis Reportedly Considering Retirement As Warriors Explore Trade Options",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-21T19:08:49.000Z",
+      "sourceId": "outlet:fadeaway-world",
+      "sourceLabel": "Fadeaway World",
+      "sourceUrl": "https://fadeawayworld.net/nba-trade-rumors/golden-state-warriors/kristaps-porzingis-reportedly-considering-retirement-as-warriors-explore-trade-options",
+      "playerIds": [
+        "3102531"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-c0a3d7ff49d1931e",
+      "clusterId": "mv-trade-3062679-20260926",
+      "summary": "Warriors Exploring Trade Avenues For Kristaps Porzingis",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-21T20:57:42.000Z",
+      "sourceId": "outlet:hoops-rumors",
+      "sourceLabel": "Hoops Rumors",
+      "sourceUrl": "https://www.hoopsrumors.com/2026/10/warriors-exploring-trade-avenues-for-kristaps-porzingis.html",
+      "playerIds": [
+        "3102531"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-2d0cdb03f0790720",
+      "clusterId": "mv-trade-3062679-20260926",
+      "summary": "Golden State Warriors Respond to Kristaps Porzingis Trade Rumors",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-21T20:57:52.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/golden-state-warriors/warriors-respond-kristaps-porzingis-trade-rumors/",
+      "playerIds": [
+        "3102531"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-c42ab76fdd40c898",
+      "clusterId": "mv-trade-3062679-20260926",
+      "summary": "Warriors respond to Kristaps Porzingis trade reports, confirm indefinite absence from team",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-21T21:04:32.000Z",
+      "sourceId": "outlet:clutchpoints",
+      "sourceLabel": "ClutchPoints",
+      "sourceUrl": "https://clutchpoints.com/nba/golden-state-warriors/warriors-news-dubs-respond-kristaps-porzingis-trade-reports-indefinite-absence",
+      "playerIds": [
+        "3102531"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-a8de4ca3f0b58963",
+      "clusterId": "mv-trade-3062679-20260926",
+      "summary": "Warriors exploring Kristaps Porziņģis trades as absence continues: Source",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-21T21:10:08.000Z",
+      "sourceId": "outlet:the-athletic",
+      "sourceLabel": "The Athletic",
+      "sourceUrl": "https://www.nytimes.com/athletic/7711863/2026/10/21/kristaps-porzingis-trade-nba-warriors-illness/",
+      "playerIds": [
+        "3102531"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-45f4ede3d6dad9d8",
+      "clusterId": "mv-trade-3062679-20260926",
+      "summary": "Warriors issue statement on Kristaps Porzingis amid retirement rumblings, trade talks",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-21T21:12:07.000Z",
+      "sourceId": "reporter:shams-charania",
+      "sourceLabel": "Larry Brown Sports, citing Shams Charania (ESPN)",
+      "reporterLabel": "Shams Charania",
+      "sourceUrl": "https://larrybrownsports.com/basketball/warriors-statement-kristaps-porzingis-retirement-rumblings-trade-talks/775216",
+      "playerIds": [
+        "3102531"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "active_talks"
+    },
+    {
+      "id": "mv-8307e3b6261ca9a2",
+      "clusterId": "mv-trade-3062679-20260926",
+      "summary": "Warriors exploring trades for Kristaps Porziņģis, who is contemplating future amid health issues, per report",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-21T21:14:48.000Z",
+      "sourceId": "outlet:cbs-sports",
+      "sourceLabel": "CBS Sports",
+      "sourceUrl": "https://www.cbssports.com/nba/news/warriors-trades-kristaps-porzingis-contemplating-future-health-issues/",
+      "playerIds": [
+        "3102531"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-3cadcd5577f0d00b",
+      "clusterId": "mv-trade-3059318-20261009",
+      "summary": "What Joel Embiid said about perpetual target on 76ers’ back after ruining Knicks’ Ring Night",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-21T21:28:49.000Z",
+      "sourceId": "outlet:clutchpoints",
+      "sourceLabel": "ClutchPoints",
+      "sourceUrl": "https://clutchpoints.com/nba/philadelphia-76ers/76ers-news-what-joel-embiid-said-perpetual-target-back-ruining-knicks-ring-night",
+      "playerIds": [
+        "3059318"
+      ],
+      "teamIds": [
+        "18",
+        "20"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-a31ebc1f8e10f075",
+      "clusterId": "mv-trade-3975-20261022",
+      "summary": "Steve Kerr Confirms Warriors Will Not Trade Their Future For Steph Curry",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-22T00:12:23.000Z",
+      "sourceId": "outlet:fadeaway-world",
+      "sourceLabel": "Fadeaway World",
+      "sourceUrl": "https://fadeawayworld.net/nba/golden-state-warriors/steve-kerr-confirms-warriors-will-not-trade-their-future-for-steph-curry",
+      "playerIds": [
+        "3975"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-9da8e0a7f4dbd941",
+      "clusterId": "mv-trade-3062679-20260926",
+      "summary": "When Is Kristaps Porzingis Coming Back? Warriors Announce Health Update As Trade Rumors Swirl",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-22T00:52:43.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/golden-state-warriors/when-is-kristaps-porzingis-coming-back-warriors-announce-update-trade-rumors/",
+      "playerIds": [
+        "3102531"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-48acff7ee287be31",
+      "clusterId": "mv-trade-3062679-20260926",
+      "summary": "Warriors Get Warning on ‘Tricky’ Kristaps Porzingis Trade",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-22T01:03:19.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/golden-state-warriors/warning-on-tricky-kristaps-porzingis-trade/",
+      "playerIds": [
+        "3102531"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-02067a54b54385f8",
+      "clusterId": "mv-trade-3062679-20260926",
+      "summary": "Warriors Start Trade Talks for Kristaps Porzingis as His Mystery Health Issue Finally Confirmed by NBA Insider",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-22T02:52:09.000Z",
+      "sourceId": "reporter:shams-charania",
+      "sourceLabel": "Basketball News, citing Shams Charania (ESPN)",
+      "reporterLabel": "Shams Charania",
+      "sourceUrl": "https://www.basketballnews.com/news/basketballnews-nba-active-news-warriors-start-trade-talks-for-kristaps-porzingis-as-his-mystery-health-issue-finally-confirmed-by-nba-insider/",
+      "playerIds": [
+        "3102531"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "active_talks"
+    },
+    {
+      "id": "mv-cc10d92cf978bee0",
+      "clusterId": "mv-trade-3062679-20260926",
+      "summary": "Stephen Curry, Draymond Green Ready to Move Past Kristaps Porzingis Amid Reports on Warriors Looking to Trade Him",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-22T11:45:00.000Z",
+      "sourceId": "outlet:essentiallysports",
+      "sourceLabel": "EssentiallySports",
+      "sourceUrl": "https://www.essentiallysports.com/nba-active-basketball-news-stephen-curry-draymond-green-ready-to-move-past-kristaps-porzingis-amid-reports-on-warriors-looking-to-trade-him/",
+      "playerIds": [
+        "3975",
+        "6589",
+        "3102531"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false
     },
     {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",
