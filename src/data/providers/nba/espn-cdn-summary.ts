@@ -119,27 +119,51 @@ async function fetchCdnPayload(url: string, timeoutMs: number): Promise<unknown>
   return response.json();
 }
 
+export type EspnCdnSummaryOptions = {
+  preferPlays?: boolean;
+  /** Per-URL AbortSignal timeout. Defaults 15s (Workers) / 8s. */
+  timeoutMs?: number;
+  /**
+   * Cap sequential CDN package attempts. Shell identity only needs one good
+   * package; Game Lab PBP can try all three. Default: all URLs.
+   */
+  maxUrls?: number;
+};
+
 async function fetchEspnCdnGameSummaryUncached(
   id: string,
-  options?: { preferPlays?: boolean }
+  options?: EspnCdnSummaryOptions
 ): Promise<EspnSummaryResponse | null> {
-  const timeoutMs = longUpstreamBudgetsEnabled() ? 15_000 : 8_000;
+  const timeoutMs =
+    options?.timeoutMs ??
+    (longUpstreamBudgetsEnabled() ? 15_000 : 8_000);
 
   // Prefer the smaller playbyplay package when Game Lab needs events.
+  // Shell identity: try boxscore before the heavier /game package.
   const urls = options?.preferPlays
     ? [
         `${CDN_BASE}/playbyplay?xhr=1&gameId=${encodeURIComponent(id)}`,
         `${CDN_BASE}/game?xhr=1&gameId=${encodeURIComponent(id)}`,
         `${CDN_BASE}/boxscore?xhr=1&gameId=${encodeURIComponent(id)}`,
       ]
-    : [
-        `${CDN_BASE}/game?xhr=1&gameId=${encodeURIComponent(id)}`,
-        `${CDN_BASE}/playbyplay?xhr=1&gameId=${encodeURIComponent(id)}`,
-        `${CDN_BASE}/boxscore?xhr=1&gameId=${encodeURIComponent(id)}`,
-      ];
+    : options?.maxUrls != null
+      ? [
+          `${CDN_BASE}/boxscore?xhr=1&gameId=${encodeURIComponent(id)}`,
+          `${CDN_BASE}/game?xhr=1&gameId=${encodeURIComponent(id)}`,
+          `${CDN_BASE}/playbyplay?xhr=1&gameId=${encodeURIComponent(id)}`,
+        ]
+      : [
+          `${CDN_BASE}/game?xhr=1&gameId=${encodeURIComponent(id)}`,
+          `${CDN_BASE}/playbyplay?xhr=1&gameId=${encodeURIComponent(id)}`,
+          `${CDN_BASE}/boxscore?xhr=1&gameId=${encodeURIComponent(id)}`,
+        ];
+  const limited =
+    typeof options?.maxUrls === "number" && options.maxUrls > 0
+      ? urls.slice(0, options.maxUrls)
+      : urls;
 
   let best: EspnSummaryResponse | null = null;
-  for (const url of urls) {
+  for (const url of limited) {
     try {
       const payload = await fetchCdnPayload(url, timeoutMs);
       const summary = findEspnCdnSummary(payload);
@@ -159,10 +183,13 @@ async function fetchEspnCdnGameSummaryUncached(
  *
  * Concurrent callers (box + PBP + shell) share one in-flight fetch and a short
  * recent cache so Game Lab does not stampede ESPN CDN.
+ *
+ * Shell callers should pass a short `timeoutMs` + `maxUrls: 1` so a hung CDN
+ * cannot outlive the Worker HTML stream window (~12s) and freeze loading.tsx.
  */
 export async function fetchEspnCdnGameSummary(
   gameId: string,
-  options?: { preferPlays?: boolean }
+  options?: EspnCdnSummaryOptions
 ): Promise<EspnSummaryResponse | null> {
   const id = String(gameId ?? "").trim();
   if (!/^40\d{6,}$/.test(id)) return null;
@@ -174,7 +201,13 @@ export async function fetchEspnCdnGameSummary(
     }
   }
 
-  const pending = inflight.get(id);
+  // Shell-tight budgets must not reuse a long preferPlays inflight (up to 3×15s).
+  const coalesceKey =
+    options?.timeoutMs != null || options?.maxUrls != null
+      ? `${id}:shell`
+      : id;
+
+  const pending = inflight.get(coalesceKey);
   if (pending) return pending;
 
   const request = fetchEspnCdnGameSummaryUncached(id, options)
@@ -186,8 +219,8 @@ export async function fetchEspnCdnGameSummary(
       return value;
     })
     .finally(() => {
-      inflight.delete(id);
+      inflight.delete(coalesceKey);
     });
-  inflight.set(id, request);
+  inflight.set(coalesceKey, request);
   return request;
 }

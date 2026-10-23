@@ -1,10 +1,11 @@
 /**
- * Bundled DARKO + RAPTOR overlays for Cloudflare Workers (no live scrape / fs).
+ * DARKO + RAPTOR overlays for Cloudflare Workers.
+ * Lives under public/runtime (ASSETS) so the ~1.3MB JSON stays off the
+ * Worker isolate; Node reads the same file from disk.
  *
  * DARKO row: [nbaId, name, dpm, oDpm, dDpm]
  * RAPTOR row: [playerId, name, raptor, oRaptor, dRaptor, war]
  */
-import snapshot from "./impact-overlay-snapshot.json";
 import type { DarkoRating, RaptorRating } from "@/data/types";
 import { normalizePlayerName } from "@/lib/player-name";
 
@@ -35,15 +36,95 @@ type ImpactOverlayFile = {
   lebron?: Record<string, RaptorSlimRow[]>;
 };
 
-const data = snapshot as unknown as ImpactOverlayFile;
-const darkoSeasons =
-  data?.darko && typeof data.darko === "object" ? data.darko : {};
-const raptorSeasons =
-  (data?.raptor && typeof data.raptor === "object" ? data.raptor : null) ??
-  (data?.lebron && typeof data.lebron === "object" ? data.lebron : {});
+type AssetsFetcher = {
+  fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>;
+};
+
+const ASSET_PATH = "/runtime/impact-overlay-snapshot.json";
+
+type ImpactIndex = {
+  version: number;
+  generatedAt: string | null;
+  darko: Record<string, DarkoSlimRow[]>;
+  raptor: Record<string, RaptorSlimRow[]>;
+};
+
+let cachedIndex: ImpactIndex | null | undefined;
+let darkoSeasons: Record<string, DarkoSlimRow[]> = {};
+let raptorSeasons: Record<string, RaptorSlimRow[]> = {};
 
 const darkoCache = new Map<string, DarkoRating[]>();
 const raptorCache = new Map<string, RaptorRating[]>();
+
+function cloudflareAssets(): AssetsFetcher | null {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { getCloudflareContext } = require("@opennextjs/cloudflare") as {
+      getCloudflareContext: () => { env?: { ASSETS?: AssetsFetcher } };
+    };
+    return getCloudflareContext()?.env?.ASSETS ?? null;
+  } catch {
+    return null;
+  }
+}
+
+function loadFromPublicDir(): ImpactOverlayFile | null {
+  try {
+    if (process.env.NEXT_RUNTIME === "edge") return null;
+    // eslint-disable-next-line no-eval
+    const req = eval("require") as NodeRequire;
+    const fs = req("node:fs") as typeof import("node:fs");
+    const path = req("node:path") as typeof import("node:path");
+    const file = path.join(
+      process.cwd(),
+      "public",
+      "runtime",
+      "impact-overlay-snapshot.json"
+    );
+    if (!fs.existsSync(file)) return null;
+    return JSON.parse(fs.readFileSync(file, "utf8")) as ImpactOverlayFile;
+  } catch {
+    return null;
+  }
+}
+
+async function loadFromAssets(): Promise<ImpactOverlayFile | null> {
+  try {
+    const assets = cloudflareAssets();
+    if (!assets) return null;
+    const response = await assets.fetch(`https://assets.local${ASSET_PATH}`);
+    if (!response.ok) return null;
+    return (await response.json()) as ImpactOverlayFile;
+  } catch {
+    return null;
+  }
+}
+
+export async function ensureImpactOverlay(): Promise<boolean> {
+  if (cachedIndex !== undefined) {
+    return cachedIndex != null;
+  }
+  const fromDisk = loadFromPublicDir();
+  const file = fromDisk ?? (await loadFromAssets());
+  if (!file) {
+    cachedIndex = null;
+    darkoSeasons = {};
+    raptorSeasons = {};
+    return false;
+  }
+  darkoSeasons =
+    file.darko && typeof file.darko === "object" ? file.darko : {};
+  raptorSeasons =
+    (file.raptor && typeof file.raptor === "object" ? file.raptor : null) ??
+    (file.lebron && typeof file.lebron === "object" ? file.lebron : {});
+  cachedIndex = {
+    version: file.version ?? 0,
+    generatedAt: file.generatedAt ?? null,
+    darko: darkoSeasons,
+    raptor: raptorSeasons,
+  };
+  return true;
+}
 
 function toDarkoRating(season: string, row: DarkoSlimRow): DarkoRating {
   const [nbaId, playerName, impact, offensive, defensive] = row;
@@ -74,15 +155,20 @@ function toRaptorRating(season: string, row: RaptorSlimRow): RaptorRating {
   };
 }
 
-export function bundledDarkoSeasonIds(): string[] {
+export async function bundledDarkoSeasonIds(): Promise<string[]> {
+  await ensureImpactOverlay();
   return Object.keys(darkoSeasons);
 }
 
-export function bundledRaptorSeasonIds(): string[] {
+export async function bundledRaptorSeasonIds(): Promise<string[]> {
+  await ensureImpactOverlay();
   return Object.keys(raptorSeasons);
 }
 
-export function getBundledDarkoSeason(season: string): DarkoRating[] {
+export async function getBundledDarkoSeason(
+  season: string
+): Promise<DarkoRating[]> {
+  await ensureImpactOverlay();
   const key = String(season ?? "").trim();
   if (!key) return [];
   const cached = darkoCache.get(key);
@@ -94,7 +180,10 @@ export function getBundledDarkoSeason(season: string): DarkoRating[] {
   return rows;
 }
 
-export function getBundledRaptorSeason(season: string): RaptorRating[] {
+export async function getBundledRaptorSeason(
+  season: string
+): Promise<RaptorRating[]> {
+  await ensureImpactOverlay();
   const key = String(season ?? "").trim();
   if (!key) return [];
   const cached = raptorCache.get(key);
@@ -110,14 +199,15 @@ export function getBundledRaptorSeason(season: string): RaptorRating[] {
  * Single-player DARKO lookup without materializing the full season array.
  * Career enrich on long careers used to index every season → CF 1102 risk.
  */
-export function findBundledDarkoPlayer(
+export async function findBundledDarkoPlayer(
   season: string,
   opts: {
     nbaId?: string | null;
     playerId?: string | null;
     playerName?: string | null;
   }
-): DarkoRating | null {
+): Promise<DarkoRating | null> {
+  await ensureImpactOverlay();
   const key = String(season ?? "").trim();
   if (!key) return null;
   const rows = darkoSeasons[key] ?? [];
@@ -146,14 +236,15 @@ export function findBundledDarkoPlayer(
 }
 
 /** Single-player RAPTOR lookup without materializing the full season array. */
-export function findBundledRaptorPlayer(
+export async function findBundledRaptorPlayer(
   season: string,
   opts: {
     nbaId?: string | null;
     playerId?: string | null;
     playerName?: string | null;
   }
-): RaptorRating | null {
+): Promise<RaptorRating | null> {
+  await ensureImpactOverlay();
   const key = String(season ?? "").trim();
   if (!key) return null;
   const rows = raptorSeasons[key] ?? [];
@@ -181,29 +272,34 @@ export function findBundledRaptorPlayer(
   return nameHit ? toRaptorRating(key, nameHit) : null;
 }
 
-export function listBundledDarkoSeasons(): string[] {
+export async function listBundledDarkoSeasons(): Promise<string[]> {
+  await ensureImpactOverlay();
   return Object.keys(darkoSeasons).sort((a, b) => a.localeCompare(b));
 }
 
-export function listBundledRaptorSeasons(): string[] {
+export async function listBundledRaptorSeasons(): Promise<string[]> {
+  await ensureImpactOverlay();
   return Object.keys(raptorSeasons).sort((a, b) => a.localeCompare(b));
 }
 
-export function isBundledDarkoSeason(season: string): boolean {
+export async function isBundledDarkoSeason(season: string): Promise<boolean> {
+  await ensureImpactOverlay();
   const key = String(season ?? "").trim();
   return Boolean(key && (darkoSeasons[key]?.length ?? 0) > 0);
 }
 
-export function isBundledRaptorSeason(season: string): boolean {
+export async function isBundledRaptorSeason(season: string): Promise<boolean> {
+  await ensureImpactOverlay();
   const key = String(season ?? "").trim();
   return Boolean(key && (raptorSeasons[key]?.length ?? 0) > 0);
 }
 
-export function bundledImpactOverlayMeta() {
+export async function bundledImpactOverlayMeta() {
+  await ensureImpactOverlay();
   return {
-    version: data.version ?? 0,
-    generatedAt: data.generatedAt ?? null,
-    darkoSeasons: listBundledDarkoSeasons(),
-    raptorSeasons: listBundledRaptorSeasons(),
+    version: cachedIndex?.version ?? 0,
+    generatedAt: cachedIndex?.generatedAt ?? null,
+    darkoSeasons: await listBundledDarkoSeasons(),
+    raptorSeasons: await listBundledRaptorSeasons(),
   };
 }

@@ -1,6 +1,7 @@
 /**
  * Salary paid off, baked by scripts/build-salary-payoff.ts. One reading per
  * night for the live season; finished seasons are paced by minutes.
+ * Lives under public/runtime (ASSETS) so the ~176KB JSON stays off the Worker.
  */
 import { loadPlayerIdAliases } from "@/data/providers/impact/player-id-aliases";
 import {
@@ -18,9 +19,88 @@ import {
   type PayoffSnapshotFile,
 } from "@/lib/salary-payoff";
 
-import snapshot from "./salary-payoff-snapshot.json";
+type AssetsFetcher = {
+  fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>;
+};
 
-const data = snapshot as unknown as PayoffSnapshotFile;
+const ASSET_PATH = "/runtime/salary-payoff-snapshot.json";
+
+let data: PayoffSnapshotFile | null | undefined;
+
+function cloudflareAssets(): AssetsFetcher | null {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { getCloudflareContext } = require("@opennextjs/cloudflare") as {
+      getCloudflareContext: () => { env?: { ASSETS?: AssetsFetcher } };
+    };
+    return getCloudflareContext()?.env?.ASSETS ?? null;
+  } catch {
+    return null;
+  }
+}
+
+function loadFromPublicDir(): PayoffSnapshotFile | null {
+  try {
+    if (process.env.NEXT_RUNTIME === "edge") return null;
+    // eslint-disable-next-line no-eval
+    const req = eval("require") as NodeRequire;
+    const fs = req("node:fs") as typeof import("node:fs");
+    const path = req("node:path") as typeof import("node:path");
+    const file = path.join(
+      process.cwd(),
+      "public",
+      "runtime",
+      "salary-payoff-snapshot.json"
+    );
+    if (!fs.existsSync(file)) return null;
+    return JSON.parse(fs.readFileSync(file, "utf8")) as PayoffSnapshotFile;
+  } catch {
+    return null;
+  }
+}
+
+async function loadFromAssets(): Promise<PayoffSnapshotFile | null> {
+  try {
+    const assets = cloudflareAssets();
+    if (!assets) return null;
+    const response = await assets.fetch(`https://assets.local${ASSET_PATH}`);
+    if (!response.ok) return null;
+    return (await response.json()) as PayoffSnapshotFile;
+  } catch {
+    return null;
+  }
+}
+
+function apply(file: PayoffSnapshotFile | null): boolean {
+  data = file;
+  clearPayoffSummaries();
+  return file != null;
+}
+
+function tryPrimeFromDisk(): void {
+  if (data !== undefined) return;
+  const file = loadFromPublicDir();
+  if (file) apply(file);
+}
+
+export async function ensureSalaryPayoff(): Promise<boolean> {
+  if (data !== undefined) return data != null;
+  const fromDisk = loadFromPublicDir();
+  if (fromDisk) return apply(fromDisk);
+  return apply(await loadFromAssets());
+}
+
+function requireData(): PayoffSnapshotFile {
+  tryPrimeFromDisk();
+  return (
+    data ?? {
+      version: 1,
+      generatedAt: "",
+      seasons: {},
+      openers: {},
+    }
+  );
+}
 
 export type PayoffSeasonMeta = Pick<
   PayoffSeasonFile,
@@ -44,7 +124,7 @@ export type PayoffSummary = PayoffSeries & {
 
 /** Seasons with readings, newest first. */
 export function payoffSeasons(): string[] {
-  return Object.keys(data.seasons).sort().reverse();
+  return Object.keys(requireData().seasons).sort().reverse();
 }
 
 /** The league year we're in; it rolls over July 1, before opening night. */
@@ -67,10 +147,12 @@ export type PayoffWaiting = {
 
 /** This league year before its first reading: show a note, never last season's lines. */
 export function payoffWaiting(season: string): PayoffWaiting | null {
-  if (season !== currentPayoffSeason() || data.seasons[season]?.dates.length) return null;
+  const snap = requireData();
+  if (season !== currentPayoffSeason() || snap.seasons[season]?.dates.length)
+    return null;
   return {
     season,
-    opener: data.openers?.[season] ?? null,
+    opener: snap.openers?.[season] ?? null,
     previous: payoffSeasons().find((s) => s < season) ?? null,
   };
 }
@@ -94,16 +176,29 @@ function meta(season: string, file: PayoffSeasonFile): PayoffSeasonMeta {
 
 const summaries = new Map<string, PayoffSummary[]>();
 
+function clearPayoffSummaries(): void {
+  summaries.clear();
+}
+
 function seasonSummaries(season: string): PayoffSummary[] {
   const cached = summaries.get(season);
   if (cached) return cached;
-  const file = data.seasons[season];
+  const file = requireData().seasons[season];
   if (!file) return [];
   const rows = Object.keys(file.players)
     .map((key) => payoffSeries(file, key))
     .filter((s): s is PayoffSeries => s != null)
-    .map((s) => ({ ...s, paidOff: paidOffDate(s, file.dates), projected: projectedPct(s, file), rank: 0 }))
-    .sort((a, b) => (b.pct.at(-1) ?? 0) - (a.pct.at(-1) ?? 0) || a.name.localeCompare(b.name));
+    .map((s) => ({
+      ...s,
+      paidOff: paidOffDate(s, file.dates),
+      projected: projectedPct(s, file),
+      rank: 0,
+    }))
+    .sort(
+      (a, b) =>
+        (b.pct.at(-1) ?? 0) - (a.pct.at(-1) ?? 0) ||
+        a.name.localeCompare(b.name)
+    );
   rows.forEach((row, i) => {
     row.rank = i + 1;
   });
@@ -112,9 +207,11 @@ function seasonSummaries(season: string): PayoffSummary[] {
 }
 
 /** Exactly this season (this league year by default), or null when it has no lines. */
-export function getPayoffSeason(season?: string | null): { meta: PayoffSeasonMeta; players: PayoffSummary[] } | null {
+export function getPayoffSeason(
+  season?: string | null
+): { meta: PayoffSeasonMeta; players: PayoffSummary[] } | null {
   const key = season ?? currentPayoffSeason();
-  const file = data.seasons[key];
+  const file = requireData().seasons[key];
   if (!file?.dates.length) return null;
   return { meta: meta(key, file), players: seasonSummaries(key) };
 }

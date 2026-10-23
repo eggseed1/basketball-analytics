@@ -9,8 +9,10 @@ import { cn } from "@/lib/utils";
 
 /** Fan and media tone plus unresolved movement reporting for one franchise. */
 export async function TeamSentimentTab({ teamId }: { teamId: string }) {
-  const board = getTeamSentimentBoard(teamId);
-  const movement = await getTeamMovementFeed(teamId, { activeOnly: true }).catch(() => null);
+  const [board, movement] = await Promise.all([
+    getTeamSentimentBoard(teamId),
+    getTeamMovementFeed(teamId, { activeOnly: true }).catch(() => null),
+  ]);
   if (!board && !movement?.length) {
     return (
       <section className="flex flex-col gap-1" aria-label="Sentiment">

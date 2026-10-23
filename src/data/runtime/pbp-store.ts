@@ -3,14 +3,10 @@
  * Per-game payloads live in public/runtime/play-by-play/{gameId}.json. That
  * folder is gitignored and CI doesn't rebake it, so Workers fall back to the
  * GAME_ARCHIVE R2 bucket (play-by-play/{gameId}.json).
+ * The ~20KB index lives under public/runtime (ASSETS) too.
  */
-import { existsSync, readFileSync } from "node:fs";
-import path from "node:path";
-
 import type { RawPlayByPlayPayload } from "@/data/providers/nba/play-by-play-client";
 import { readArchivedPlayByPlay } from "@/data/runtime/game-archive-store";
-
-import index from "./pbp-index.json";
 
 type AssetsFetcher = {
   fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>;
@@ -35,8 +31,10 @@ type BakedPbpFile = {
   eventCount?: number;
 };
 
-const meta = index as PbpIndex;
-const bakedIds = new Set(Object.keys(meta.games ?? {}));
+const INDEX_ASSET_PATH = "/runtime/pbp-index.json";
+
+let meta: PbpIndex | null | undefined;
+let bakedIds = new Set<string>();
 
 function cloudflareAssets(): AssetsFetcher | null {
   try {
@@ -51,6 +49,57 @@ function cloudflareAssets(): AssetsFetcher | null {
   } catch {
     return null;
   }
+}
+
+function loadIndexFromPublicDir(): PbpIndex | null {
+  try {
+    if (process.env.NEXT_RUNTIME === "edge") return null;
+    // eslint-disable-next-line no-eval
+    const req = eval("require") as NodeRequire;
+    const fs = req("node:fs") as typeof import("node:fs");
+    const path = req("node:path") as typeof import("node:path");
+    const file = path.join(
+      process.cwd(),
+      "public",
+      "runtime",
+      "pbp-index.json"
+    );
+    if (!fs.existsSync(file)) return null;
+    return JSON.parse(fs.readFileSync(file, "utf8")) as PbpIndex;
+  } catch {
+    return null;
+  }
+}
+
+async function loadIndexFromAssets(): Promise<PbpIndex | null> {
+  try {
+    const assets = cloudflareAssets();
+    if (!assets) return null;
+    const response = await assets.fetch(`https://assets.local${INDEX_ASSET_PATH}`);
+    if (!response.ok) return null;
+    return (await response.json()) as PbpIndex;
+  } catch {
+    return null;
+  }
+}
+
+function applyIndex(file: PbpIndex | null): boolean {
+  meta = file;
+  bakedIds = new Set(Object.keys(file?.games ?? {}));
+  return file != null;
+}
+
+function tryPrimeIndexFromDisk(): void {
+  if (meta !== undefined) return;
+  const file = loadIndexFromPublicDir();
+  if (file) applyIndex(file);
+}
+
+export async function ensurePbpIndex(): Promise<boolean> {
+  if (meta !== undefined) return meta != null;
+  const fromDisk = loadIndexFromPublicDir();
+  if (fromDisk) return applyIndex(fromDisk);
+  return applyIndex(await loadIndexFromAssets());
 }
 
 function hasActions(raw: unknown): boolean {
@@ -75,6 +124,11 @@ function toPayload(file: BakedPbpFile): RawPlayByPlayPayload | null {
 
 function loadFromPublicDir(gameId: string): RawPlayByPlayPayload | null {
   try {
+    if (process.env.NEXT_RUNTIME === "edge") return null;
+    // eslint-disable-next-line no-eval
+    const req = eval("require") as NodeRequire;
+    const fs = req("node:fs") as typeof import("node:fs");
+    const path = req("node:path") as typeof import("node:path");
     const p = path.join(
       process.cwd(),
       "public",
@@ -82,8 +136,8 @@ function loadFromPublicDir(gameId: string): RawPlayByPlayPayload | null {
       "play-by-play",
       `${gameId}.json`
     );
-    if (!existsSync(p)) return null;
-    const json = JSON.parse(readFileSync(p, "utf8")) as BakedPbpFile;
+    if (!fs.existsSync(p)) return null;
+    const json = JSON.parse(fs.readFileSync(p, "utf8")) as BakedPbpFile;
     return toPayload(json);
   } catch {
     return null;
@@ -105,20 +159,22 @@ async function fetchPbpAsset(gameId: string): Promise<RawPlayByPlayPayload | nul
 }
 
 function resolveBakedRouteId(gameId: string): string | null {
+  tryPrimeIndexFromDisk();
   const id = String(gameId ?? "").trim();
   if (!id) return null;
   if (bakedIds.has(id)) return id;
-  for (const [espnId, row] of Object.entries(meta.games ?? {})) {
+  for (const [espnId, row] of Object.entries(meta?.games ?? {})) {
     if (row.nbaGameId === id) return espnId;
   }
   return null;
 }
 
 export function pbpIndexMeta() {
+  tryPrimeIndexFromDisk();
   return {
-    generatedAt: meta.generatedAt,
-    gameCount: meta.gameCount,
-    verifyGameId: meta.verifyGameId,
+    generatedAt: meta?.generatedAt ?? null,
+    gameCount: meta?.gameCount ?? 0,
+    verifyGameId: meta?.verifyGameId ?? "",
   };
 }
 
@@ -130,6 +186,7 @@ export function isBakedPlayByPlayGame(gameId: string): boolean {
 export async function loadBakedPlayByPlay(
   gameId: string
 ): Promise<RawPlayByPlayPayload | null> {
+  await ensurePbpIndex();
   const routeId = resolveBakedRouteId(gameId);
   if (!routeId) return null;
 

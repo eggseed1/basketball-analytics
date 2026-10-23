@@ -1,15 +1,19 @@
 import { getLocale, getTranslations } from "next-intl/server";
 
-import archive from "@/data/runtime/findings-archive.json";
+import {
+  ensureFindingsArchive,
+  getFindingsArchive,
+} from "@/data/runtime/findings-archive-snapshot";
 import { intlLocale } from "@/i18n/format-date";
-import { findingsRss, type FindingsArchive } from "@/lib/findings-archive";
+import { findingsRss } from "@/lib/findings-archive";
 import { SITE_URL } from "@/lib/site-url";
 
 export async function GET() {
   const locale = await getLocale();
   const t = await getTranslations("Findings");
+  await ensureFindingsArchive();
   const language = intlLocale(locale);
-  const body = findingsRss((archive as FindingsArchive).findings, {
+  const body = findingsRss(getFindingsArchive().findings, {
     siteUrl: SITE_URL,
     title: t("rssTitle"),
     description: t("rssDescription"),

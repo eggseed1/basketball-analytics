@@ -5,7 +5,7 @@
  *
  *   npx tsx --require ./scripts/lib/stub-server-only.cjs scripts/build-findings-archive.ts
  */
-import { readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 import { getLiveRecentInsights } from "@/data/queries/recent-insights-live";
@@ -14,6 +14,7 @@ import type { RecentInsight } from "@/lib/recent-insights";
 
 const ROOT = process.cwd();
 const ARCHIVE = path.join(ROOT, "src/data/runtime/findings-archive.json");
+const ARCHIVE_PUBLIC = path.join(ROOT, "public/runtime/findings-archive.json");
 const SNAPSHOT = path.join(ROOT, "src/data/runtime/recent-insights-snapshot.json");
 
 async function main() {
@@ -52,8 +53,11 @@ async function main() {
     return;
   }
   const next: FindingsArchive = { updatedAt: now, findings };
-  await writeFile(ARCHIVE, `${JSON.stringify(next)}\n`);
-  console.log(`[findings-archive] ${added} new, ${findings.length} total`);
+  const body = `${JSON.stringify(next)}\n`;
+  await writeFile(ARCHIVE, body);
+  await mkdir(path.dirname(ARCHIVE_PUBLIC), { recursive: true });
+  await writeFile(ARCHIVE_PUBLIC, body);
+  console.log(`[findings-archive] ${added} new, ${findings.length} total → public/runtime`);
 }
 
 main()

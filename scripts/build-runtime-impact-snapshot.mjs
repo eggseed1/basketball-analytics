@@ -454,9 +454,18 @@ const payload = {
   raptor,
 };
 
+const body = JSON.stringify(payload);
+const OUT_PUBLIC = path.join(
+  ROOT,
+  "public",
+  "runtime",
+  "impact-overlay-snapshot.json"
+);
 await fs.mkdir(path.dirname(OUT), { recursive: true });
-await fs.writeFile(OUT, JSON.stringify(payload));
-const gz = gzipSync(Buffer.from(JSON.stringify(payload))).length;
+await fs.mkdir(path.dirname(OUT_PUBLIC), { recursive: true });
+await fs.writeFile(OUT, body);
+await fs.writeFile(OUT_PUBLIC, body);
+const gz = gzipSync(Buffer.from(body)).length;
 console.log(
-  `[impact-snapshot] wrote → ${OUT} (gzip ~${gz} bytes, darko seasons=${Object.keys(darko).length}, raptor seasons=${Object.keys(raptor).length})`
+  `[impact-snapshot] wrote → ${OUT_PUBLIC} (gzip ~${gz} bytes, darko seasons=${Object.keys(darko).length}, raptor seasons=${Object.keys(raptor).length}; src mirror ${OUT})`
 );

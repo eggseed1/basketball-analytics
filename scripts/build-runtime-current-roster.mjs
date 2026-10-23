@@ -16,6 +16,12 @@ const OUT = path.join(
   "runtime",
   "current-roster-snapshot.json"
 );
+const OUT_PUBLIC = path.join(
+  ROOT,
+  "public",
+  "runtime",
+  "current-roster-snapshot.json"
+);
 const SENTIMENT = path.join(
   ROOT,
   "src",
@@ -163,11 +169,14 @@ async function main() {
     players: byPlayerId,
   };
 
+  const body = JSON.stringify(payload);
   await fs.mkdir(path.dirname(OUT), { recursive: true });
-  await fs.writeFile(OUT, JSON.stringify(payload));
-  const gz = gzipSync(Buffer.from(JSON.stringify(payload))).length;
+  await fs.writeFile(OUT, body);
+  await fs.mkdir(path.dirname(OUT_PUBLIC), { recursive: true });
+  await fs.writeFile(OUT_PUBLIC, body);
+  const gz = gzipSync(Buffer.from(body)).length;
   console.log(
-    `[current-roster] wrote ${OUT} players=${payload.playerCount} teamsOk=${teamsOk} gzip~${gz}`
+    `[current-roster] wrote ${OUT_PUBLIC} players=${payload.playerCount} teamsOk=${teamsOk} gzip~${gz} (src mirror ${OUT})`
   );
 }
 

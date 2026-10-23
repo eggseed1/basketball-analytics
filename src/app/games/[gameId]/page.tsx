@@ -4,7 +4,7 @@ import { GameLabView } from "@/components/games/game-lab-view";
 import { GameIdentityShell } from "@/components/games/game-identity-shell";
 import { GamePreTipBoard } from "@/components/games/game-pre-tip-board";
 import { GamePreviewSection, GameTabs, type GameTab } from "@/components/games/game-preview-section";
-import { PossessionExplorerIsland } from "@/components/games/possession-explorer-island";
+import { PossessionExplorerSection } from "@/components/games/possession-explorer-section";
 import { DelayedGameSection } from "@/components/games/delayed-game-section";
 import { cookies } from "next/headers";
 import { needsScoreMask, parseScoreDelay, SCORE_DELAY_COOKIE } from "@/lib/score-delay";
@@ -27,6 +27,11 @@ import { getGameShellCached } from "@/data/queries/request-cache";
 import { runtimePregameMargin } from "@/data/runtime/pregame-margin";
 import { withBudget } from "@/data/queries/budget";
 import { validateGamePresentation } from "@/lib/game-presentation";
+import {
+  isFinalStatus,
+  isPreTipPresentation,
+  type GameStatusKind,
+} from "@/lib/game-status";
 import { longUpstreamBudgetsEnabled } from "@/data/providers/nba/runtime-policy";
 import { parseThemeMode, resolveActiveEraTheme } from "@/themes/era-theme";
 import { yieldForStreaming } from "@/lib/stream-yield";
@@ -57,7 +62,9 @@ export async function generateMetadata({ params }: GamePageProps) {
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 
 async function GameLabDeepBody({ gameId, hidePeriodTable, asOfMs }: { gameId: string; arrival: ReturnType<typeof parseSeasonEvidenceArrival>; hidePeriodTable: boolean; asOfMs?: number }) {
-  const labBudgetMs = longUpstreamBudgetsEnabled() ? 25_000 : 10_000;
+  // Keep under the Worker HTML stream window. 25s left Suspense fallbacks frozen
+  // in the closed response ("Loading Game Lab analysis…") with no replacement chunk.
+  const labBudgetMs = longUpstreamBudgetsEnabled() ? 10_000 : 6_000;
   const result = await withBudget(
     getGameAnalysis(gameId, asOfMs != null ? { asOfMs } : undefined).catch(() => null),
     labBudgetMs,
@@ -70,7 +77,23 @@ async function GameLabDeepBody({ gameId, hidePeriodTable, asOfMs }: { gameId: st
   }
   const shell = await getGameShellCached(gameId);
   const pregameMargin = shell ? runtimePregameMargin(shell.game) : undefined;
-  const view = <GameLabView analysis={payload.analysis} players={payload.players} events={payload.events} pbpSource={payload.pbpSource} officialTeamStats={payload.officialTeamStats} pregameMargin={pregameMargin} omitHero hidePeriodTable={hidePeriodTable} rebuiltFromPlays={payload.asOf === "cut"} />;
+  // Finals: omit PBP from Flight (~0.5MB HTML) and hydrate client-side.
+  // Live (and score-delay cuts): keep events in SSR so box/plays/shots paint now.
+  const status = payload.analysis.status as GameStatusKind | undefined;
+  const embedEvents = !isFinalStatus(status) || payload.asOf === "cut";
+  const view = (
+    <GameLabView
+      analysis={payload.analysis}
+      players={payload.players}
+      events={embedEvents ? payload.events : []}
+      pbpSource={payload.pbpSource}
+      officialTeamStats={payload.officialTeamStats}
+      pregameMargin={pregameMargin}
+      omitHero
+      hidePeriodTable={hidePeriodTable}
+      rebuiltFromPlays={payload.asOf === "cut"}
+    />
+  );
   return payload.asOf === "unavailable" ? <DelayedGameSection risky>{view}</DelayedGameSection> : view;
 }
 
@@ -109,7 +132,8 @@ export default async function GamePage({ params, searchParams }: GamePageProps) 
   const seasonHint = seasonParam ?? shell.game.season;
   const backHref = fromHistory ? `/history/${encodeURIComponent(seasonHint)}` : "/explore/games";
   const status = shell.game.status;
-  const preTip = status === "scheduled" || status === "pregame" || status === "delayed";
+  // Stale schedule shells can stay "scheduled" after tip-off; still open Game Lab.
+  const preTip = isPreTipPresentation(shell.game);
   const heroHasLineScore = Math.min(shell.game.homePeriodScores?.length ?? 0, shell.game.awayPeriodScores?.length ?? 0) > 0;
   const defaultTab: GameTab = preTip ? "preview" : "game";
   const tabParam = first(sp.tab);
@@ -127,6 +151,7 @@ export default async function GamePage({ params, searchParams }: GamePageProps) 
   const awayName = shell.game.awayTeamName ?? shell.game.awayTeamAbbr ?? shell.game.awayTeamId;
   const homeName = shell.game.homeTeamName ?? shell.game.homeTeamAbbr ?? shell.game.homeTeamId;
   const body = <main data-motion-page className="site-shell flex flex-1 flex-col gap-5 py-5 sm:gap-6 sm:py-7">
+    {isFinalStatus(status) ? <span hidden data-html-cache="game-final" /> : null}
     <h1 className="sr-only">{gameDate ? t("srTitleDated", { away: awayName, home: homeName, date: gameDate }) : t("srTitle", { away: awayName, home: homeName })}</h1>
     <JsonLd data={{
       "@context": "https://schema.org",
@@ -148,18 +173,15 @@ export default async function GamePage({ params, searchParams }: GamePageProps) 
       {preTip ? <GamePreTipBoard game={shell.game} /> : <>
       {asOfMs == null ? <Suspense fallback={<DestinationSectionSkeleton label={t("loadingFlow")} />}><HistoricalDeepBody gameId={gameId} seasonHint={seasonHint} homeLabel={shell.game.homeTeamAbbr ?? t("homeFallback")} awayLabel={shell.game.awayTeamAbbr ?? t("awayFallback")} /></Suspense> : null}
       <Suspense fallback={<DestinationSectionSkeleton label={t("loadingLab")} />}><GameLabDeepBody gameId={gameId} arrival={arrival} hidePeriodTable={heroHasLineScore} asOfMs={asOfMs} /></Suspense>
-      <details className="group sports-card overflow-hidden">
-        <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3.5 sm:px-5 [&::-webkit-details-marker]:hidden">
-          <span className="flex flex-col">
-            <span className="text-[17px] font-bold tracking-tight">{t("possessionTitle")}</span>
-            <span className="text-[13px] text-muted-foreground">{t("possessionBlurb")}</span>
-          </span>
-          <span aria-hidden className="text-[18px] text-muted-foreground transition-transform group-open:rotate-180">⌄</span>
-        </summary>
-        <div className="border-t border-border/60 p-3 sm:p-4">
-          {holdIfCut(<Suspense fallback={<DestinationSectionSkeleton label={t("loadingPossession")} />}><PossessionExplorerIsland gameId={gameId} awayTeamKey={shell.game.awayTeamId} homeTeamKey={shell.game.homeTeamId} /></Suspense>)}
-        </div>
-      </details>
+      {holdIfCut(
+        <PossessionExplorerSection
+          gameId={gameId}
+          awayTeamKey={shell.game.awayTeamId}
+          homeTeamKey={shell.game.homeTeamId}
+          title={t("possessionTitle")}
+          blurb={t("possessionBlurb")}
+        />
+      )}
       </>}
       </DelayedGameSection>
     ) : null}

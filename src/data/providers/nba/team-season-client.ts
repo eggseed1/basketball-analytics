@@ -188,10 +188,12 @@ export function mapEspnByTeamPayload(
   });
 }
 
-function fromRuntimeSnapshot(season: string): TeamSeasonStats[] | null {
+async function fromRuntimeSnapshot(
+  season: string
+): Promise<TeamSeasonStats[] | null> {
   const cached = mappedBoardCache.get(season);
   if (cached) return cached;
-  const payload = getRuntimeTeamBoardPayload(season);
+  const payload = await getRuntimeTeamBoardPayload(season);
   if (!payload) return null;
   const rows = mapEspnByTeamPayload(season, payload as ByTeamResponse);
   if (!rows.length) return null;
@@ -205,7 +207,7 @@ export async function fetchTeamSeasonStats(
   season: string
 ): Promise<TeamSeasonStats[]> {
   if (preferBundledProductDataOnEdge()) {
-    const snap = fromRuntimeSnapshot(season);
+    const snap = await fromRuntimeSnapshot(season);
     if (snap && boardHasMeasuredGames(snap)) return snap;
     // CF: never live-fetch by-team boards (uncancellable ESPN hangs → blank explore).
     return snap ?? [];
@@ -237,12 +239,12 @@ export async function fetchTeamSeasonStats(
     }
     // Live returned an empty/zero board (common CF timeout stub path) —
     // prefer a measured build-time snapshot when available.
-    const snap = fromRuntimeSnapshot(season);
+    const snap = await fromRuntimeSnapshot(season);
     if (snap && boardHasMeasuredGames(snap)) return snap;
     if (live.length > 0) return live;
   }
 
-  const snap = fromRuntimeSnapshot(season);
+  const snap = await fromRuntimeSnapshot(season);
   if (snap) return snap;
 
   // Last resort: paint the 30-team shell so destinations still resolve.

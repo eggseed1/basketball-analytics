@@ -13,6 +13,12 @@ import { gzipSync } from "node:zlib";
 const ROOT = process.cwd();
 const PRECOMPUTED = path.join(ROOT, "src", "data", "drbl", "precomputed");
 const OUT = path.join(ROOT, "src", "data", "runtime", "drbl-overlay-snapshot.json");
+const OUT_PUBLIC = path.join(
+  ROOT,
+  "public",
+  "runtime",
+  "drbl-overlay-snapshot.json"
+);
 const PUBLISHED_OUT = path.join(
   ROOT,
   "src",
@@ -120,11 +126,14 @@ const payload = {
   seasons,
 };
 
+const body = JSON.stringify(payload);
 await fs.mkdir(path.dirname(OUT), { recursive: true });
-await fs.writeFile(OUT, JSON.stringify(payload));
-const gz = gzipSync(Buffer.from(JSON.stringify(payload))).length;
+await fs.mkdir(path.dirname(OUT_PUBLIC), { recursive: true });
+await fs.writeFile(OUT, body);
+await fs.writeFile(OUT_PUBLIC, body);
+const gz = gzipSync(Buffer.from(body)).length;
 console.log(
-  `[drbl-overlay] wrote ${Object.keys(seasons).length} seasons → ${OUT} (gzip ~${gz} bytes)`
+  `[drbl-overlay] wrote ${Object.keys(seasons).length} seasons → ${OUT_PUBLIC} (gzip ~${gz} bytes; src mirror ${OUT})`
 );
 
 const publishedPayload = {

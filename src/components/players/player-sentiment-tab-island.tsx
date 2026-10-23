@@ -28,7 +28,7 @@ export async function PlayerSentimentTabIsland({
     const [sentimentProfile, snapshot, movementBundle, currentSeasonTeamKey] =
       await Promise.all([
         getPlayerSentimentBundle(playerId).catch(() => null),
-        Promise.resolve(loadSentimentSnapshot()),
+        loadSentimentSnapshot(),
         constrained
           ? Promise.resolve(null)
           : import("@/data/queries/movement-center.server")

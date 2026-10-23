@@ -93,7 +93,10 @@
 	"vars": {
 		"DATA_PROVIDER": "nba",
 		// Workers Paid: restore full product (no free-tier UI/data stripping).
-		"FULL_EDGE_PRODUCT": "1"
+		"FULL_EDGE_PRODUCT": "1",
+		// Cloudflare Cache API + public s-maxage for daily HTML (player/team/boards).
+		// Set to "0" to fall back to KV-only private no-store without a redeploy of logic.
+		"DRBL_EDGE_HTML_CACHE": "1"
 	},
 	// Paid plan default is 30s; raise so player islands / live enrich finish.
 	"limits": {

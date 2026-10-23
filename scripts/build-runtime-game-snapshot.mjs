@@ -2,22 +2,34 @@ import fs from "node:fs/promises";
 import path from "node:path";
 
 const OUT = path.join(process.cwd(), "src/data/runtime/game-snapshot.json");
+const OUT_TIPS = path.join(
+  process.cwd(),
+  "src/data/runtime/first-regular-season-tips.json"
+);
+const OUT_FULL = path.join(
+  process.cwd(),
+  "src/data/runtime/game-snapshot-full.json"
+);
 const ESPN = "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard";
 const now = new Date();
 const currentStartYear = now.getUTCMonth() >= 6 ? now.getUTCFullYear() : now.getUTCFullYear() - 1;
-// Six league years of schedules for team Games/Splits/Playoffs tabs on CF.
-const seasons = [
-  currentStartYear - 5,
-  currentStartYear - 4,
-  currentStartYear - 3,
-  currentStartYear - 2,
-  currentStartYear - 1,
-  currentStartYear,
-];
-
+// Fetch up to six league years into game-snapshot-full.json (Node tests / local).
+// Worker-inlined game-snapshot.json stays at GAME_SNAPSHOT_LITE_SEASONS (default 2).
 function canonicalSeason(startYear) {
   return `${startYear}-${String((startYear + 1) % 100).padStart(2, "0")}`;
 }
+
+const seasonSpan = Number(process.env.GAME_SNAPSHOT_SEASONS ?? 6);
+const span = Number.isFinite(seasonSpan) && seasonSpan > 0 ? Math.min(6, seasonSpan) : 6;
+const seasons = Array.from({ length: span }, (_, i) => currentStartYear - (span - 1 - i));
+const liteSpanRaw = Number(process.env.GAME_SNAPSHOT_LITE_SEASONS ?? 2);
+const liteSpan =
+  Number.isFinite(liteSpanRaw) && liteSpanRaw > 0 ? Math.min(span, liteSpanRaw) : 2;
+const liteSeasonSet = new Set(
+  Array.from({ length: liteSpan }, (_, i) =>
+    canonicalSeason(currentStartYear - (liteSpan - 1 - i))
+  )
+);
 
 function monthsForSeason(startYear) {
   return [10, 11, 12].map((m) => `${startYear}${String(m).padStart(2, "0")}`).concat(
@@ -218,15 +230,19 @@ async function main() {
     );
   }
 
-  // Three league years (Workers Paid size budget) for team/history + Game Lab PBP.
+  const generatedAt = new Date().toISOString();
+  const seasonLabels = seasons.map(canonicalSeason);
+  const liteGames = games.filter((g) => liteSeasonSet.has(g.season));
+  const liteSeasons = seasonLabels.filter((s) => liteSeasonSet.has(s));
+
   await fs.mkdir(path.dirname(OUT), { recursive: true });
   await fs.writeFile(
-    OUT,
+    OUT_FULL,
     JSON.stringify(
       {
-        generatedAt: new Date().toISOString(),
+        generatedAt,
         source: "espn-build-snapshot",
-        seasons: seasons.map(canonicalSeason),
+        seasons: seasonLabels,
         games,
       },
       null,
@@ -234,8 +250,73 @@ async function main() {
     ) + "\n",
     "utf8"
   );
+  // Lite snapshot: public/runtime (ASSETS) + src mirror for scripts.
+  const liteBody =
+    JSON.stringify(
+      {
+        generatedAt,
+        source: "espn-build-snapshot",
+        seasons: liteSeasons,
+        games: liteGames,
+      },
+      null,
+      2
+    ) + "\n";
+  const OUT_PUBLIC = path.join(
+    process.cwd(),
+    "public",
+    "runtime",
+    "game-snapshot.json"
+  );
+  await fs.mkdir(path.dirname(OUT_PUBLIC), { recursive: true });
+  await fs.writeFile(OUT, liteBody);
+  await fs.writeFile(OUT_PUBLIC, liteBody);
+  // Older seasons for Worker Static Assets (team tabs / brackets).
+  const seasonsDir = path.join(
+    process.cwd(),
+    "public",
+    "runtime",
+    "game-seasons"
+  );
+  await fs.mkdir(seasonsDir, { recursive: true });
+  for (const season of seasonLabels) {
+    if (liteSeasonSet.has(season)) continue;
+    const seasonGames = games.filter((g) => g.season === season);
+    await fs.writeFile(
+      path.join(seasonsDir, `${season}.json`),
+      JSON.stringify({
+        season,
+        generatedAt,
+        games: seasonGames,
+      }) + "\n",
+      "utf8"
+    );
+  }
+
+  const tips = {};
+  for (const game of games) {
+    if ((game.gameType ?? "regular") !== "regular" || !game.gameDate) continue;
+    const season = String(game.season ?? "");
+    const d = String(game.gameDate).slice(0, 10);
+    if (!season || !/^\d{4}-\d{2}-\d{2}$/.test(d)) continue;
+    if (!tips[season] || d < tips[season]) tips[season] = d;
+  }
+  await fs.writeFile(
+    OUT_TIPS,
+    JSON.stringify(
+      {
+        generatedAt,
+        source: "espn-build-snapshot",
+        tips,
+      },
+      null,
+      2
+    ) + "\n",
+    "utf8"
+  );
+
   console.log(
-    `[runtime-snapshot] wrote ${games.length} games (${completedSeason}: ${completedCount}, ${previousSeason}: ${previousCount}, ${upcomingSeason}: ${upcomingCount}) to ${OUT}`
+    `[runtime-snapshot] wrote full ${games.length} games → ${OUT_FULL}; lite ${liteGames.length} (${liteSeasons.join(",")}) → ${OUT}; tips ${Object.keys(tips).length} → ${OUT_TIPS}`
   );
 }
 

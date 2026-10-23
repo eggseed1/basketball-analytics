@@ -19,8 +19,8 @@ function urlBlock(entry: SitemapUrl): string {
   return `<url>\n<loc>${xmlEscape(entry.loc)}</loc>${lastmod}\n</url>`;
 }
 
-export function urlsetXml(kind: SitemapKind): string {
-  const urls = sitemapUrls(kind);
+export async function urlsetXml(kind: SitemapKind): Promise<string> {
+  const urls = await sitemapUrls(kind);
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="${NS}">\n${urls.map(urlBlock).join("\n")}\n</urlset>\n`;
 }
 

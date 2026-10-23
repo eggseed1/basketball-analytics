@@ -9,8 +9,12 @@ import {
 import { PlayerOnOffCard } from "@/components/players/player-on-off";
 import { PlayerPlayTypesCard } from "@/components/players/player-play-types";
 import { PlayerShotMapView } from "@/components/players/player-shot-map";
-import { getPlayerOnOff } from "@/data/runtime/on-off-snapshot";
 import {
+  ensureOnOffSnapshot,
+  getPlayerOnOff,
+} from "@/data/runtime/on-off-snapshot";
+import {
+  ensurePlayTypeSnapshot,
   getLeagueShotZones,
   getPlayerPlayTypes,
 } from "@/data/runtime/play-type-snapshot";
@@ -48,6 +52,7 @@ async function PlayTypesBlock({
   teamKey?: string | null;
 }) {
   const identity = await resolvePlayerIdentityCached(playerId).catch(() => null);
+  await ensurePlayTypeSnapshot();
   const data = getPlayerPlayTypes(season, [identity?.nbaId, nbaId, playerId]);
   if (!data) return null;
   return (
@@ -71,6 +76,7 @@ async function OnOffBlock({
   teamKey?: string | null;
 }) {
   const identity = await resolvePlayerIdentityCached(playerId).catch(() => null);
+  await ensureOnOffSnapshot();
   const stints = getPlayerOnOff(season, [identity?.nbaId, nbaId, playerId]);
   if (!stints.length) return null;
   return (
@@ -304,54 +310,56 @@ export async function PlayerVisualizationsIsland({
     </>
   );
 
-  try {
-    // Slim edge only (SLIM_EDGE_PRODUCT=1). Paid Workers load shot charts.
-    if (slimEdgeProductEnabled()) {
-      return (
-        <section
-          id="shooting"
-          className="scroll-mt-16 flex flex-col gap-4"
-          aria-label="Shooting"
+  // Slim edge only (SLIM_EDGE_PRODUCT=1). Paid Workers load shot charts.
+  if (slimEdgeProductEnabled()) {
+    return (
+      <section
+        id="shooting"
+        className="scroll-mt-16 flex flex-col gap-4"
+        aria-label="Shooting"
+      >
+        <h2 className={type.heading}>Shooting</h2>
+        <GlassSurface
+          variant="subtle"
+          effect="css"
+          className="px-3 py-2"
         >
-          <h2 className={type.heading}>Shooting</h2>
-          <GlassSurface
-            variant="subtle"
-            effect="css"
-            className="px-3 py-2"
-          >
-            <p className={cn(type.caption, "font-semibold text-foreground")}>
-              Season shot chart · {season}
-            </p>
-            <p className={cn(type.caption, "text-muted-foreground")}>
-              Shot chart detail is temporarily limited on this edge. Overview
-              and career stats remain available.
-            </p>
-          </GlassSurface>
-          <UsageEfficiencyBlock
-            playerId={playerId}
-            season={season}
-            seasons={seasons}
-            teamKey={teamKey}
-          />
-          {extras}
-        </section>
-      );
-    }
+          <p className={cn(type.caption, "font-semibold text-foreground")}>
+            Season shot chart · {season}
+          </p>
+          <p className={cn(type.caption, "text-muted-foreground")}>
+            Shot chart detail is temporarily limited on this edge. Overview
+            and career stats remain available.
+          </p>
+        </GlassSurface>
+        <UsageEfficiencyBlock
+          playerId={playerId}
+          season={season}
+          seasons={seasons}
+          teamKey={teamKey}
+        />
+        {extras}
+      </section>
+    );
+  }
 
+  let map: PlayerShotMap | null = null;
+  let coverageLabel: string | null = null;
+  const playTypesReady = ensurePlayTypeSnapshot();
+  try {
     const index = await resolvePlayerSeasonShotIndex({
       playerId,
       nbaId,
       season,
     });
     const label = teamLabel || teamKey || "NBA";
-    const coverageLabel =
+    coverageLabel =
       index && index.coordinateShots > 0 && index.coverage < 0.99
         ? `The map shows ${index.coordinateShots.toLocaleString("en-US")} of ${index.boxFga.toLocaleString(
             "en-US"
           )} field goal attempts (${(index.coverage * 100).toFixed(0)}%). The rest have no court location.`
         : null;
 
-    let map: PlayerShotMap;
     if (index && index.coordinateShots > 0) {
       map = playerSeasonShotIndexToMap({
         index,
@@ -369,43 +377,11 @@ export async function PlayerVisualizationsIsland({
         teamLabel: label,
       });
     }
-
-    return (
-      <section
-        id="shooting"
-        className="scroll-mt-16 flex flex-col gap-4"
-        aria-label="Shooting"
-      >
-        <h2 className={type.heading}>Shooting</h2>
-        {coverageLabel ? (
-          <GlassSurface
-            variant="subtle"
-            effect="css"
-            className="px-3 py-2"
-          >
-            <p className={cn(type.caption, "font-semibold text-foreground")}>
-              Season shot chart · {season}
-            </p>
-            <p className={cn(type.caption, "text-muted-foreground")}>
-              {coverageLabel}
-            </p>
-          </GlassSurface>
-        ) : null}
-        <PlayerShotMapView
-          map={map}
-          seasons={seasons}
-          leagueZones={getLeagueShotZones(map.season)}
-        />
-        <UsageEfficiencyBlock
-          playerId={playerId}
-          season={season}
-          seasons={[]}
-          teamKey={teamKey}
-        />
-        {extras}
-      </section>
-    );
   } catch {
+    map = null;
+  }
+
+  if (!map) {
     return (
       <section
         id="shooting"
@@ -426,4 +402,41 @@ export async function PlayerVisualizationsIsland({
       </section>
     );
   }
+
+  await playTypesReady;
+  return (
+    <section
+      id="shooting"
+      className="scroll-mt-16 flex flex-col gap-4"
+      aria-label="Shooting"
+    >
+      <h2 className={type.heading}>Shooting</h2>
+      {coverageLabel ? (
+        <GlassSurface
+          variant="subtle"
+          effect="css"
+          className="px-3 py-2"
+        >
+          <p className={cn(type.caption, "font-semibold text-foreground")}>
+            Season shot chart · {season}
+          </p>
+          <p className={cn(type.caption, "text-muted-foreground")}>
+            {coverageLabel}
+          </p>
+        </GlassSurface>
+      ) : null}
+      <PlayerShotMapView
+        map={map}
+        seasons={seasons}
+        leagueZones={getLeagueShotZones(map.season)}
+      />
+      <UsageEfficiencyBlock
+        playerId={playerId}
+        season={season}
+        seasons={[]}
+        teamKey={teamKey}
+      />
+      {extras}
+    </section>
+  );
 }

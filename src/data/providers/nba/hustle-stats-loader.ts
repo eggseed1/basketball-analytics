@@ -31,9 +31,10 @@ function parseRows(
 }
 
 async function loadBundledHustleSeason(season: string): Promise<HustlePlayerRow[]> {
-  const { getBundledHustleSeason } = await import(
+  const { ensureHustleOverlay, getBundledHustleSeason } = await import(
     "@/data/runtime/hustle-overlay-snapshot"
   );
+  await ensureHustleOverlay();
   return getBundledHustleSeason(season).map((row) => ({
     playerId: row.playerId,
     playerName: "",

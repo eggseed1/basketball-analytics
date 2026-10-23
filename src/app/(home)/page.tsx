@@ -1,43 +1,20 @@
-import { WatchlistPanel } from "@/components/home/watchlist-panel";
-import { WeekGameCalendar } from "@/components/home/week-game-calendar";
-import { OffseasonPulsePanel } from "@/components/home/offseason-pulse-panel";
-import { getHomeAnalyticsCached } from "@/data/queries/request-cache";
-import {
-  canonicalSeasonFromStartYear,
-  currentNbaStartYear,
-} from "@/data/providers/historical/season-range";
 import { Suspense, type ReactNode } from "react";
 
+import { WatchlistPanel } from "@/components/home/watchlist-panel";
 import { AnalyticsDesk } from "@/components/home/analytics-desk";
 import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { HomeLoadingWatchdog } from "@/components/home/home-loading-watchdog";
 import { SectionLink } from "@/components/ui/section-link";
-import { HotColdColumns } from "@/components/explore/hot-cold-board";
-import { AboveNormPanel } from "@/components/home/above-norm-panel";
-import { FindingsSection } from "@/components/home/findings-section";
-import { InjuryReportPanel } from "@/components/home/injury-report-panel";
-import { LeagueMovesPanel } from "@/components/home/league-moves-panel";
-import { SeasonPulsePanel } from "@/components/home/season-pulse-panel";
-import { HomeStandingsPanel } from "@/components/home/home-standings-panel";
 import { HomeModuleFrame, HomeModuleSkeleton } from "@/components/home/home-module-skeleton";
-import { ContractShowcasePanel } from "@/components/home/contract-showcase-panel";
-import { SentimentMoversPanel } from "@/components/home/sentiment-movers-panel";
-import { TopPerformersPanel } from "@/components/home/top-performers-panel";
 import { SeasonMomentCard, SeasonPhaseBar } from "@/components/home/season-moment";
-import { PlayoffBracket } from "@/components/explore/playoff-bracket";
-import {
-  getHomeSeasonMoment,
-  getHomeSeasonMomentSync,
-  homeSeasonMomentNeedsLiveEnrichment,
-  homeShellPhase,
-} from "@/data/queries/home-season-moment";
+import { JsonLd } from "@/components/seo/json-ld";
+import { getHomeShellBootstrap } from "@/data/queries/home-season-moment-shell";
 import {
   homeLayoutForPhase,
   type HomeModuleId,
   type HomeSeasonMoment,
 } from "@/lib/home-season-moment";
 import { yieldForStreaming } from "@/lib/stream-yield";
-import { JsonLd } from "@/components/seo/json-ld";
 import {
   organizationJsonLd,
   SITE_DESCRIPTION,
@@ -70,26 +47,25 @@ export const metadata = {
 // modules arrive one by one, and the worker page cache shares the result.
 export const dynamic = "force-dynamic";
 
-async function HomeCalendar({
-  season,
-  enrichSchedule,
-}: {
-  season: string;
-  /** When the bundled slate is thin, wait on live October inside this stream. */
-  enrichSchedule?: boolean;
-}) {
-  if (enrichSchedule) {
-    await getHomeSeasonMoment();
-  }
+async function HomeCalendar({ season }: { season: string }) {
+  const { WeekGameCalendar } = await import(
+    "@/components/home/week-game-calendar"
+  );
   return <WeekGameCalendar season={season} />;
 }
 
 async function HomeSeasonMomentLive() {
+  const { getHomeSeasonMoment } = await import(
+    "@/data/queries/home-season-moment"
+  );
   const moment = await getHomeSeasonMoment();
   return <SeasonMomentCard moment={moment} />;
 }
 
 async function HomeSeasonPhaseBarLive() {
+  const { getHomeSeasonMoment } = await import(
+    "@/data/queries/home-season-moment"
+  );
   const moment = await getHomeSeasonMoment();
   return <SeasonPhaseBar moment={moment} />;
 }
@@ -99,20 +75,54 @@ function HomeNews() {
   return <AnalyticsDesk articles={[]} embedded />;
 }
 
-async function HomeStandings({ season }: { season: string }) {
-  return <HomeStandingsPanel season={season} />;
+async function HomeStandings({
+  season,
+  race = false,
+}: {
+  season: string;
+  race?: boolean;
+}) {
+  const { HomeStandingsPanel } = await import(
+    "@/components/home/home-standings-panel"
+  );
+  return <HomeStandingsPanel season={season} race={race} />;
 }
 
 async function HomeTopPerformers() {
-  const data = await getHomeAnalyticsCached();
+  const [{ getHomeAnalytics }, { TopPerformersPanel }] = await Promise.all([
+    import("@/data/queries/home"),
+    import("@/components/home/top-performers-panel"),
+  ]);
+  const data = await getHomeAnalytics();
+  const byName = new Map(
+    data.performerSeasons.map((row) => [row.playerName.toLowerCase(), row])
+  );
+  const slim = (
+    rows: typeof data.tsLeaders
+  ): typeof data.performerSeasons =>
+    rows.map((row) => {
+      const hit = byName.get(row.playerName.toLowerCase());
+      return {
+        playerId: row.playerId,
+        playerName: row.playerName,
+        teamKey: hit?.teamKey,
+        teamAbbr: hit?.teamAbbr ?? row.teamAbbreviation ?? undefined,
+        trueShootingPct:
+          row.trueShootingPct != null && row.trueShootingPct > 0
+            ? row.trueShootingPct
+            : null,
+        usagePct:
+          row.usagePct != null && row.usagePct > 0 ? row.usagePct : null,
+      };
+    });
   return (
     <TopPerformersPanel
       season={data.season}
       drblLeaders={data.drblLeaders}
       darkoLeaders={data.darkoLeaders}
       raptorLeaders={data.raptorLeaders}
-      tsLeaders={data.tsLeaders}
-      usageStars={data.usageStars}
+      tsLeaders={slim(data.tsLeaders)}
+      usageStars={slim(data.usageStars)}
       performerSeasons={data.performerSeasons}
       drblOverlayOk={data.drblOverlayOk}
       drblFallbackNote={data.drblFallbackNote}
@@ -121,9 +131,13 @@ async function HomeTopPerformers() {
 }
 
 async function HomeHotCold() {
-  const { statDetectiveSeason, statDetectiveWindow } = await import(
-    "@/data/runtime/stat-detective-windows"
-  );
+  const [
+    { statDetectiveSeason, statDetectiveWindow },
+    { HotColdColumns },
+  ] = await Promise.all([
+    import("@/data/runtime/stat-detective-windows"),
+    import("@/components/explore/hot-cold-board"),
+  ]);
   const season = statDetectiveSeason();
   const window = statDetectiveWindow("last5");
   if (!season || !window.risers.length) return null;
@@ -147,9 +161,10 @@ async function HomeHotCold() {
 }
 
 async function HomeFindings() {
-  const { getLiveRecentInsights } = await import(
-    "@/data/queries/recent-insights-live"
-  );
+  const [{ getLiveRecentInsights }, { FindingsSection }] = await Promise.all([
+    import("@/data/queries/recent-insights-live"),
+    import("@/components/home/findings-section"),
+  ]);
   const live = await getLiveRecentInsights();
   if (live) {
     return <FindingsSection insights={live.insights} />;
@@ -163,9 +178,10 @@ async function HomeFindings() {
 }
 
 async function HomeAboveNorm() {
-  const { getLiveRecentInsights } = await import(
-    "@/data/queries/recent-insights-live"
-  );
+  const [{ getLiveRecentInsights }, { AboveNormPanel }] = await Promise.all([
+    import("@/data/queries/recent-insights-live"),
+    import("@/components/home/above-norm-panel"),
+  ]);
   const live = await getLiveRecentInsights();
   if (live) return <AboveNormPanel nights={live.aboveNorm} />;
   const { getBundledAboveNorm } = await import(
@@ -177,8 +193,15 @@ async function HomeAboveNorm() {
 const SIDEBAR_FEED_BUDGET_MS = 4_500;
 
 async function HomeInjuries() {
-  const { getInjuryReport } = await import("@/data/queries/injury-report");
-  const { withBudget } = await import("@/data/queries/budget");
+  const [
+    { getInjuryReport },
+    { withBudget },
+    { InjuryReportPanel },
+  ] = await Promise.all([
+    import("@/data/queries/injury-report"),
+    import("@/data/queries/budget"),
+    import("@/components/home/injury-report-panel"),
+  ]);
   const { value } = await withBudget(getInjuryReport(), SIDEBAR_FEED_BUDGET_MS, null);
   if (!value) return null;
   const today = new Intl.DateTimeFormat("en-CA", { timeZone: "America/New_York" }).format(new Date());
@@ -186,8 +209,15 @@ async function HomeInjuries() {
 }
 
 async function HomeLeagueMoves() {
-  const { getLeagueMoves } = await import("@/data/queries/league-moves");
-  const { withBudget } = await import("@/data/queries/budget");
+  const [
+    { getLeagueMoves },
+    { withBudget },
+    { LeagueMovesPanel },
+  ] = await Promise.all([
+    import("@/data/queries/league-moves"),
+    import("@/data/queries/budget"),
+    import("@/components/home/league-moves-panel"),
+  ]);
   const { value } = await withBudget(getLeagueMoves(), SIDEBAR_FEED_BUDGET_MS, []);
   return <LeagueMovesPanel moves={value} />;
 }
@@ -195,8 +225,15 @@ async function HomeLeagueMoves() {
 const BRACKET_BUDGET_MS = 2_500;
 
 async function HomeBracket({ season }: { season: string }) {
-  const { getPlayoffBracketModel } = await import("@/data/queries/playoff-bracket");
-  const { withBudget } = await import("@/data/queries/budget");
+  const [
+    { getPlayoffBracketModel },
+    { withBudget },
+    { PlayoffBracket },
+  ] = await Promise.all([
+    import("@/data/queries/playoff-bracket"),
+    import("@/data/queries/budget"),
+    import("@/components/explore/playoff-bracket"),
+  ]);
   const { value } = await withBudget(
     getPlayoffBracketModel(season).catch(() => null),
     BRACKET_BUDGET_MS,
@@ -204,6 +241,44 @@ async function HomeBracket({ season }: { season: string }) {
   );
   if (!value?.model) return null;
   return <PlayoffBracket model={value.model} />;
+}
+
+async function HomeTransactions({
+  limit,
+  season,
+  tippedOff,
+}: {
+  limit: number;
+  season: string;
+  tippedOff: boolean;
+}) {
+  const { OffseasonPulsePanel } = await import(
+    "@/components/home/offseason-pulse-panel"
+  );
+  return (
+    <OffseasonPulsePanel limit={limit} season={season} tippedOff={tippedOff} />
+  );
+}
+
+async function HomeSentiment() {
+  const { SentimentMoversPanel } = await import(
+    "@/components/home/sentiment-movers-panel"
+  );
+  return <SentimentMoversPanel />;
+}
+
+async function HomeContractShowcase() {
+  const { ContractShowcasePanel } = await import(
+    "@/components/home/contract-showcase-panel"
+  );
+  return <ContractShowcasePanel />;
+}
+
+async function HomeSeasonGlance() {
+  const { SeasonPulsePanel } = await import(
+    "@/components/home/season-pulse-panel"
+  );
+  return <SeasonPulsePanel />;
 }
 
 /**
@@ -221,33 +296,27 @@ function Streamed({ id, children }: { id: HomeModuleId; children: ReactNode }) {
 function renderModule(
   id: HomeModuleId,
   moment: HomeSeasonMoment,
-  season: string,
-  enrichSchedule: boolean
+  season: string
 ) {
   const offseason = moment.phase === "draft-free-agency" || moment.phase === "offseason";
   switch (id) {
     case "moment":
-      if (enrichSchedule) {
-        return (
-          <Streamed key={id} id={id}>
-            <HomeSeasonMomentLive />
-          </Streamed>
-        );
-      }
-      return <SeasonMomentCard key={id} moment={moment} />;
+      // Always stream — shell moment has empty marks (no game-snapshot on TTFB).
+      return (
+        <Streamed key={id} id={id}>
+          <HomeSeasonMomentLive />
+        </Streamed>
+      );
     case "phase-bar":
-      if (enrichSchedule) {
-        return (
-          <Streamed key={id} id={id}>
-            <HomeSeasonPhaseBarLive />
-          </Streamed>
-        );
-      }
-      return <SeasonPhaseBar key={id} moment={moment} />;
+      return (
+        <Streamed key={id} id={id}>
+          <HomeSeasonPhaseBarLive />
+        </Streamed>
+      );
     case "calendar":
       return (
         <Streamed key={id} id={id}>
-          <HomeCalendar season={season} enrichSchedule={enrichSchedule} />
+          <HomeCalendar season={season} />
         </Streamed>
       );
     case "bracket":
@@ -265,7 +334,7 @@ function renderModule(
     case "standings-race":
       return (
         <Streamed key={id} id={id}>
-          <HomeStandingsPanel season={season} race />
+          <HomeStandings season={season} race />
         </Streamed>
       );
     case "findings":
@@ -307,7 +376,7 @@ function renderModule(
     case "transactions":
       return (
         <Streamed key={id} id={id}>
-          <OffseasonPulsePanel
+          <HomeTransactions
             limit={offseason ? 8 : 5}
             season={moment.season}
             tippedOff={
@@ -325,17 +394,21 @@ function renderModule(
     case "sentiment":
       return (
         <Streamed key={id} id={id}>
-          <SentimentMoversPanel />
+          <HomeSentiment />
         </Streamed>
       );
     case "season-glance":
-      return <SeasonPulsePanel key={id} />;
+      return (
+        <Streamed key={id} id={id}>
+          <HomeSeasonGlance />
+        </Streamed>
+      );
     case "news":
       return <HomeNews key={id} />;
     case "contract-showcase":
       return (
         <Streamed key={id} id={id}>
-          <ContractShowcasePanel />
+          <HomeContractShowcase />
         </Streamed>
       );
   }
@@ -343,19 +416,13 @@ function renderModule(
 
 export default async function HomePage() {
   await yieldForStreaming();
-  const season = canonicalSeasonFromStartYear(currentNbaStartYear());
-  // Snapshot only — never await ESPN before the module grid. Thin-schedule
-  // enrichment runs inside streamed moment/calendar modules.
-  const momentSync = getHomeSeasonMomentSync();
-  const enrichSchedule = homeSeasonMomentNeedsLiveEnrichment(momentSync);
-  const phase = homeShellPhase(momentSync);
-  const moment: HomeSeasonMoment = enrichSchedule
-    ? { ...momentSync, phase }
-    : momentSync;
+  // Calendar phase only — never touch game-snapshot.json on the shell path.
+  // Schedule marks / opener copy stream in via Suspense modules.
+  const { season, phase, moment } = getHomeShellBootstrap();
   const layout = homeLayoutForPhase(phase);
   const render = (id: HomeModuleId) => (
     <HomeModuleFrame key={id} id={id}>
-      {renderModule(id, moment, season, enrichSchedule)}
+      {renderModule(id, moment, season)}
     </HomeModuleFrame>
   );
 

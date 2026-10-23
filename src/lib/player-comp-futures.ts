@@ -719,14 +719,25 @@ function profileFromPool(
   };
 }
 
-export function loadCompFutures(
+export async function loadCompFutures(
   focal: PlayerSeason | null | undefined,
   career: PlayerSeason[],
   espnId: string | null | undefined,
   metricId: CompMetricId
-): CompFutures | null {
+): Promise<CompFutures | null> {
   if (!focal) return null;
-  const pool = getBundledCompPool();
+  if (
+    metricId === "drbl100" ||
+    metricId === "drblO" ||
+    metricId === "drblD" ||
+    metricId === "war1"
+  ) {
+    const { ensureDrblOverlay } = await import(
+      "@/data/runtime/drbl-overlay-snapshot"
+    );
+    await ensureDrblOverlay();
+  }
+  const pool = await getBundledCompPool();
   const ids = [espnId, focal.playerId].map((id) => String(id ?? "").trim()).filter(Boolean);
   const pooled =
     pool.find((row) => ids.includes(row.playerId) && row.season === focal.season) ??
@@ -767,16 +778,16 @@ export function loadCompFutures(
   });
 }
 
-export function loadCompFuturesBundle(
+export async function loadCompFuturesBundle(
   focal: PlayerSeason | null | undefined,
   career: PlayerSeason[],
   espnId?: string | null,
   options?: { primaryOnly?: boolean }
-): CompFuturesBundle | null {
+): Promise<CompFuturesBundle | null> {
   if (options?.primaryOnly) {
     // One metric only — computing every COMP_METRICS entry used to spike Worker RAM.
     for (const metric of COMP_METRICS) {
-      const primary = loadCompFutures(focal, career, espnId, metric.id);
+      const primary = await loadCompFutures(focal, career, espnId, metric.id);
       if (!primary) continue;
       return {
         defaultId: primary.metricId,
@@ -791,7 +802,7 @@ export function loadCompFuturesBundle(
   }
   const available: CompFutures[] = [];
   for (const metric of COMP_METRICS) {
-    const data = loadCompFutures(focal, career, espnId, metric.id);
+    const data = await loadCompFutures(focal, career, espnId, metric.id);
     if (data) available.push(data);
   }
   if (!available.length) return null;

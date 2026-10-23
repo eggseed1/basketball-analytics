@@ -25,11 +25,11 @@ export type TeamSentimentBoard = {
 };
 
 export const getTeamSentimentBoard = cache(
-  (teamId: string): TeamSentimentBoard | null => {
-    const snapshot = loadSentimentSnapshot();
+  async (teamId: string): Promise<TeamSentimentBoard | null> => {
+    const snapshot = await loadSentimentSnapshot();
     if (!snapshot) return null;
-    const players = listTeamSentimentPlayers(teamId);
-    const teamProfile = getTeamSentimentProfile(teamId);
+    const players = await listTeamSentimentPlayers(teamId);
+    const teamProfile = await getTeamSentimentProfile(teamId);
     if (!players.length && !teamProfile) return null;
     return {
       teamId,
@@ -47,6 +47,6 @@ export const getTeamSentimentBoard = cache(
   }
 );
 
-export function getSentimentBuildHealth() {
+export async function getSentimentBuildHealth() {
   return getSentimentSnapshotHealth();
 }

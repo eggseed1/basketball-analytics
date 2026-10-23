@@ -17,13 +17,13 @@ import {
 import type { TrackedPlayerSentimentRow } from "@/sentiment/curated-types";
 
 export const getLeagueSentimentBoard = cache(async () => {
-  const feed = getLeagueSentimentFeed();
+  const feed = await getLeagueSentimentFeed();
   const players = await listRosterSentimentRows();
   return { feed, players };
 });
 
 async function listRosterSentimentRows(): Promise<TrackedPlayerSentimentRow[]> {
-  const snapshot = loadSentimentSnapshot();
+  const snapshot = await loadSentimentSnapshot();
   const season =
     snapshot?.meta.season ??
     canonicalSeasonFromStartYear(currentNbaStartYear());

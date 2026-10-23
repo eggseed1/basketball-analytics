@@ -29,13 +29,22 @@ function rate(n: number | null | undefined): number | null {
   return n != null && Number.isFinite(n) && n > 0 ? n : null;
 }
 
+/** Drop null metric fields — RSC still ships `"raptor":null` otherwise. */
+function omitNullMetrics(row: CareerBoardRow): CareerBoardRow {
+  const out: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(row)) {
+    if (value !== null) out[key] = value;
+  }
+  return out as CareerBoardRow;
+}
+
 export function toCareerBoardRows(career: PlayerSeason[]): CareerBoardRow[] {
   return dedupeCareerSeasons(career).map((row) => {
     const gp = row.gamesPlayed;
     const apg = perGame(row.assists, gp);
     const tpg = perGame(row.turnovers, gp);
     const drbl = hasValidDrblEstimate(row);
-    return {
+    return omitNullMetrics({
       season: row.season,
       teamId: row.teamId,
       teamAbbr: isMultiTeamSeasonRow(row)
@@ -92,7 +101,7 @@ export function toCareerBoardRows(career: PlayerSeason[]): CareerBoardRow[] {
       drbl100: drbl ? finiteNum(row.drbl100) : null,
       drblO: drbl ? finiteNum(row.drblO) : null,
       drblD: drbl ? finiteNum(row.drblD) : null,
-    };
+    });
   });
 }
 
@@ -116,6 +125,11 @@ export async function PlayerCareerIsland({
   hideTitle = false,
   initialMetric,
   showFilters = true,
+  /**
+   * Overview critical path: skip the ~4s advanced enrich. Bundled career
+   * already carries DARKO/basic cols for the chart; Career tab keeps `"full"`.
+   */
+  enrich = "full",
 }: {
   playerId: string;
   season: string;
@@ -129,14 +143,25 @@ export async function PlayerCareerIsland({
   hideTitle?: boolean;
   initialMetric?: "darko" | "war1" | "ppg" | "apg" | "rpg" | "ts" | "usg";
   showFilters?: boolean;
+  enrich?: "full" | "fast";
 }) {
   try {
     const source =
       seasonType === "playoffs"
         ? await getPlayerPlayoffCareerSeasons(playerId).catch(() => career)
-        : await enrichPlayerCareerAdvancedCached(playerId, career).catch(
-            () => career
-          );
+        : enrich === "fast"
+          ? await (async () => {
+              // Local bundled DARKO/RAPTOR only — no stats.nba advanced crawl.
+              const { attachBundledBrefDarkoRaptor } = await import(
+                "@/data/queries/players"
+              );
+              return attachBundledBrefDarkoRaptor(playerId, career).catch(
+                () => career
+              );
+            })()
+          : await enrichPlayerCareerAdvancedCached(playerId, career).catch(
+              () => career
+            );
     const filtered = source.filter((row) => {
       if (row.gamesPlayed > 0) return true;
       return Boolean(
@@ -150,16 +175,12 @@ export async function PlayerCareerIsland({
     const rows = toCareerBoardRows(filtered);
     const seasons = rows.map((row) => row.season);
     const compare = pickCompare(seasons, season, compareSeason);
-    const recent = [...rows].sort((a, b) => b.season.localeCompare(a.season));
-    // Always load game logs so Overview/Career can flip Games ↔ Seasons.
-    const gameLogs = await loadCareerGameLogs(
-      playerId,
-      recent.map((row) => row.season)
-    ).catch(() => []);
     const preferDarko =
       initialMetric ??
       (rows.some((row) => row.darko != null) ? "darko" : undefined);
 
+    // Game dots hydrate on the client — embedding full career logs here used to
+    // add ~200–300KB to the player-page RSC payload (500+ games for long careers).
     return (
       <PlayerCareerBoard
         playerId={playerId}
@@ -170,7 +191,6 @@ export async function PlayerCareerIsland({
         teamKey={teamKey}
         fromHistory={fromHistory}
         themeMode={themeMode}
-        gameLogs={gameLogs}
         chart={chart}
         hideTitle={hideTitle}
         initialMetric={preferDarko}
@@ -197,21 +217,3 @@ export async function PlayerCareerIsland({
   }
 }
 
-async function loadCareerGameLogs(playerId: string, seasons: string[]) {
-  const [{ resolvePlayerSeasonGameLog }, { resolveNbaIdForDrbl }] =
-    await Promise.all([
-      import("@/data/runtime/player-game-logs-store"),
-      import("@/data/identity/player-identity"),
-    ]);
-  const nbaId = await resolveNbaIdForDrbl(playerId).catch(() => null);
-  const logs = await Promise.all(
-    seasons.map((season) =>
-      resolvePlayerSeasonGameLog({
-        season,
-        playerId,
-        nbaId,
-      }).catch(() => [])
-    )
-  );
-  return logs.flat();
-}

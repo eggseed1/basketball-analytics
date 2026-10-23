@@ -93,9 +93,9 @@ type BaselineLookup = (playerId: string) => PlayerBaseline | null;
 async function loadBaselines(season: string): Promise<BaselineLookup> {
   const { getBundledBrefPeerBoard } = await import("@/data/runtime/bref-advanced-snapshot");
   const prior = priorSeasonForStats(season);
-  const index = (s: string) => {
+  const index = async (s: string) => {
     const map = new Map<string, PlayerBaseline>();
-    for (const row of getBundledBrefPeerBoard(s)) {
+    for (const row of await getBundledBrefPeerBoard(s)) {
       const gp = row.gamesPlayed;
       if (!/^\d+$/.test(row.playerId) || !(gp > 0)) continue;
       map.set(row.playerId, {
@@ -110,8 +110,11 @@ async function loadBaselines(season: string): Promise<BaselineLookup> {
     }
     return map;
   };
-  const current = index(season);
-  const previous = prior !== season ? index(prior) : new Map<string, PlayerBaseline>();
+  const current = await index(season);
+  const previous =
+    prior !== season
+      ? await index(prior)
+      : new Map<string, PlayerBaseline>();
   return (id) => {
     const now = current.get(id);
     if (now && now.games >= 20) return now;

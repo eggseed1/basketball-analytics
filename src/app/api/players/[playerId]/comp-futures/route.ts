@@ -40,7 +40,7 @@ export async function GET(
       null;
 
     if (primaryOnly) {
-      const bundle = loadCompFuturesBundle(focal, career, espnId, {
+      const bundle = await loadCompFuturesBundle(focal, career, espnId, {
         primaryOnly: true,
       });
       if (!bundle) {
@@ -55,7 +55,7 @@ export async function GET(
     if (!metricId) {
       return jsonError(new Error("Unknown metric"), 400);
     }
-    const item = loadCompFutures(focal, career, espnId, metricId);
+    const item = await loadCompFutures(focal, career, espnId, metricId);
     if (!item) {
       return jsonError(new Error("Metric unavailable"), 404);
     }

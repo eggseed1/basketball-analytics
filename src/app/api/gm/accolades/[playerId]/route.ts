@@ -9,6 +9,10 @@ export async function GET(
 ) {
   try {
     const { playerId } = await context.params;
+    const { ensurePlayerAwards } = await import(
+      "@/data/runtime/player-awards-snapshot"
+    );
+    await ensurePlayerAwards();
     const badges = summarizePlayerAccolades(getBundledPlayerAwardsRaw(playerId));
     return jsonOk({
       playerId,

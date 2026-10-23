@@ -12,6 +12,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 
 const OUT = path.join(process.cwd(), "src/data/runtime/bref-team-contracts-snapshot.json");
+const OUT_PUBLIC = path.join(process.cwd(), "public/runtime/bref-team-contracts-snapshot.json");
 /** BRef blocks clients above ~20 requests/minute. */
 const DELAY_MS = Number(process.env.BREF_DELAY_MS || 3200);
 const FRESH_MS = 20 * 60 * 60 * 1000;
@@ -239,8 +240,13 @@ async function main() {
     source: "basketball-reference.com/contracts",
     teams,
   };
-  await fs.writeFile(OUT, `${JSON.stringify(out)}\n`);
-  console.log(`[bref-team-contracts] wrote ${ok}/30 teams → ${path.relative(process.cwd(), OUT)}`);
+  const body = `${JSON.stringify(out)}\n`;
+  await fs.writeFile(OUT, body);
+  await fs.mkdir(path.dirname(OUT_PUBLIC), { recursive: true });
+  await fs.writeFile(OUT_PUBLIC, body);
+  console.log(
+    `[bref-team-contracts] wrote ${ok}/30 teams → ${path.relative(process.cwd(), OUT_PUBLIC)} (src mirror ${path.relative(process.cwd(), OUT)})`
+  );
 }
 
 export { parseDraftRights, parsePayroll };

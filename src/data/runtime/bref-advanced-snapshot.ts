@@ -1,18 +1,16 @@
 /**
- * Bundled season tables (per-game and advanced) built from NBA Stats totals by
- * scripts/build-season-tables.ts. Rows keep the slim Basketball-Reference-style
- * shape the site was built on; ortg/drtg are NBA's on-court team ratings.
- * Loaded on the module graph for Cloudflare Workers (no node:fs).
+ * Season tables (per-game and advanced) from NBA Stats totals
+ * (scripts/build-season-tables.ts). Lives under public/runtime (ASSETS) so the
+ * ~9MB JSON stays off the Worker isolate; Node reads the same file from disk.
  *
  * Keep transforms memoized — remapping ~650 players × N seasons per request
  * will trip Cloudflare 1102 CPU limits.
  *
- * server-only: season-tables JSON is ~9MB and must never enter a client bundle.
+ * server-only: must never enter a client bundle.
  * Client-safe comps/futures types live in `@/lib/player-comp-futures-shared`.
  */
 import "server-only";
 
-import snapshot from "./season-tables-snapshot.json";
 import {
   lookupEspnIdByPlayerName,
   lookupPlayerNameByEspnId,
@@ -31,6 +29,12 @@ import {
   getBundledDarkoSeason,
   getBundledRaptorSeason,
 } from "./impact-overlay-snapshot";
+
+type AssetsFetcher = {
+  fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>;
+};
+
+const ASSET_PATH = "/runtime/season-tables-snapshot.json";
 
 type SlimAdvanced = {
   n: string;
@@ -137,9 +141,80 @@ export type BundledBrefAdvancedRow = {
   netRating?: number;
 };
 
-const data = snapshot as SnapshotFile;
-const seasons =
-  data?.seasons && typeof data.seasons === "object" ? data.seasons : {};
+type SeasonTablesIndex = {
+  version: number;
+  generatedAt: string | null;
+  seasons: SnapshotFile["seasons"];
+};
+
+let cachedIndex: SeasonTablesIndex | null | undefined;
+let seasons: SnapshotFile["seasons"] = {};
+
+function cloudflareAssets(): AssetsFetcher | null {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { getCloudflareContext } = require("@opennextjs/cloudflare") as {
+      getCloudflareContext: () => { env?: { ASSETS?: AssetsFetcher } };
+    };
+    return getCloudflareContext()?.env?.ASSETS ?? null;
+  } catch {
+    return null;
+  }
+}
+
+function loadFromPublicDir(): SnapshotFile | null {
+  try {
+    if (process.env.NEXT_RUNTIME === "edge") return null;
+    // eslint-disable-next-line no-eval
+    const req = eval("require") as NodeRequire;
+    const fs = req("node:fs") as typeof import("node:fs");
+    const pathMod = req("node:path") as typeof import("node:path");
+    const file = pathMod.join(
+      process.cwd(),
+      "public",
+      "runtime",
+      "season-tables-snapshot.json"
+    );
+    if (!fs.existsSync(file)) return null;
+    return JSON.parse(fs.readFileSync(file, "utf8")) as SnapshotFile;
+  } catch {
+    return null;
+  }
+}
+
+async function loadFromAssets(): Promise<SnapshotFile | null> {
+  try {
+    const assets = cloudflareAssets();
+    if (!assets) return null;
+    const response = await assets.fetch(`https://assets.local${ASSET_PATH}`);
+    if (!response.ok) return null;
+    return (await response.json()) as SnapshotFile;
+  } catch {
+    return null;
+  }
+}
+
+/** Load season-tables once (ASSETS on CF, public/runtime on Node). */
+export async function ensureSeasonTables(): Promise<boolean> {
+  await import("./espn-name-index").then((m) => m.ensureEspnNameIndex()).catch(() => undefined);
+  if (cachedIndex !== undefined) {
+    return cachedIndex != null && Object.keys(seasons).length > 0;
+  }
+  const fromDisk = loadFromPublicDir();
+  const file = fromDisk ?? (await loadFromAssets());
+  if (!file?.seasons || typeof file.seasons !== "object") {
+    cachedIndex = null;
+    seasons = {};
+    return false;
+  }
+  seasons = file.seasons;
+  cachedIndex = {
+    version: file.version ?? 0,
+    generatedAt: file.generatedAt ?? null,
+    seasons,
+  };
+  return Object.keys(seasons).length > 0;
+}
 
 const peerBoardCache = new Map<string, PlayerSeason[]>();
 const advancedSeasonCache = new Map<string, BundledBrefAdvancedRow[]>();
@@ -198,9 +273,10 @@ function perGameForSeason(canonicalSeason: string): SlimPerGame[] {
   return rows;
 }
 
-export function getBundledBrefAdvancedSeason(
+export async function getBundledBrefAdvancedSeason(
   canonicalSeason: string
-): BundledBrefAdvancedRow[] | null {
+): Promise<BundledBrefAdvancedRow[] | null> {
+  await ensureSeasonTables();
   const hit = advancedSeasonCache.get(canonicalSeason);
   if (hit) return hit;
   const raw = advancedForSeason(canonicalSeason);
@@ -244,9 +320,9 @@ export function getBundledBrefAdvancedSeason(
 }
 
 /** Slim usage and shooting rows for league-wide charts (memoized source). */
-export function getBundledBrefUsageRows(
+export async function getBundledBrefUsageRows(
   canonicalSeason: string
-): Array<{
+): Promise<Array<{
   n: string;
   t: string;
   e?: string;
@@ -258,7 +334,8 @@ export function getBundledBrefUsageRows(
   astPct?: number;
   tovPct?: number;
   tm?: string[];
-}> {
+}>> {
+  await ensureSeasonTables();
   return advancedForSeason(canonicalSeason).map((r) => ({
     n: r.n,
     t: r.t,
@@ -275,11 +352,12 @@ export function getBundledBrefUsageRows(
 }
 
 /** Find one player in a season without materializing the full peer board. */
-export function findBundledBrefPlayer(
+export async function findBundledBrefPlayer(
   canonicalSeason: string,
   playerName: string,
   teamAbbr?: string | null
-): SlimAdvanced | null {
+): Promise<SlimAdvanced | null> {
+  await ensureSeasonTables();
   const rows = advancedForSeason(canonicalSeason);
   if (!rows.length) return null;
   const want = normalizeEspnLookupName(playerName);
@@ -295,7 +373,8 @@ export function findBundledBrefPlayer(
 }
 
 /** Synthetic peer board when ESPN/NBA Stats boards are empty on CF. */
-export function getBundledBrefPeerBoard(canonicalSeason: string): PlayerSeason[] {
+export async function getBundledBrefPeerBoard(canonicalSeason: string): Promise<PlayerSeason[]> {
+  await ensureSeasonTables();
   const cached = peerBoardCache.get(canonicalSeason);
   if (cached) return cached;
 
@@ -485,26 +564,20 @@ function toPeerSeasonRow(
   } as PlayerSeason;
 }
 
-/**
- * Multi-season career rows from the bundled BRef snapshot (Cloudflare fallback
- * when ESPN athlete career hangs / history disk is empty).
- */
-const careerByEspnIdCache = new Map<string, PlayerSeason[]>();
-const careerByNameCache = new Map<string, PlayerSeason[]>();
-
 type CareerSlimHit = {
   season: string;
   adv: SlimAdvanced;
   pg?: SlimPerGame;
 };
 
-/** One-time index: espnId / normalized name → season hits (avoids O(seasons×players) per request). */
+/** One-time index for comps pool only (explore still owns season-tables). */
 let careerSlimIndex: {
   byEspn: Map<string, CareerSlimHit[]>;
   byName: Map<string, CareerSlimHit[]>;
 } | null = null;
 
-function ensureCareerSlimIndex() {
+async function ensureCareerSlimIndex() {
+  await ensureSeasonTables();
   if (careerSlimIndex) return careerSlimIndex;
   const byEspn = new Map<string, CareerSlimHit[]>();
   const byName = new Map<string, CareerSlimHit[]>();
@@ -533,6 +606,9 @@ function ensureCareerSlimIndex() {
   careerSlimIndex = { byEspn, byName };
   return careerSlimIndex;
 }
+
+/** Player careers live in player-career-bref-snapshot (keeps /players off season-tables). */
+export { getBundledBrefCareerForPlayer } from "./player-career-bref-snapshot";
 
 export type BundledCompPoolRow = {
   playerId: string;
@@ -573,9 +649,11 @@ let bundledCompPool: BundledCompPoolRow[] | null = null;
  * One slim row per ESPN id × season for same-age comps. Built from the
  * already-walked career index so player pages do not rematerialize peer boards.
  */
-export function getBundledCompPool(): BundledCompPoolRow[] {
+export async function getBundledCompPool(): Promise<BundledCompPoolRow[]> {
   if (bundledCompPool) return bundledCompPool;
-  const index = ensureCareerSlimIndex();
+  const { ensurePlayerBio } = await import("./player-bio-snapshot");
+  await ensurePlayerBio();
+  const index = await ensureCareerSlimIndex();
   const idByName = new Map<string, string>();
   for (const [nameKey, hits] of index.byName) {
     const espnId = hits.find((hit) => hit.adv.e)?.adv.e;
@@ -634,6 +712,10 @@ export function getBundledCompPool(): BundledCompPoolRow[] {
       });
     }
   }
+  const { ensureDrblOverlay } = await import(
+    "@/data/runtime/drbl-overlay-snapshot"
+  );
+  await ensureDrblOverlay();
   const drblSeasons = bundledDrblOverlayMeta().seasons ?? [];
   for (const season of drblSeasons) {
     for (const row of getBundledDrblSeason(season)) {
@@ -650,8 +732,8 @@ export function getBundledCompPool(): BundledCompPoolRow[] {
       hit.drblD = row.drblD != null && Number.isFinite(row.drblD) ? row.drblD : null;
     }
   }
-  for (const season of bundledDarkoSeasonIds()) {
-    for (const row of getBundledDarkoSeason(season)) {
+  for (const season of await bundledDarkoSeasonIds()) {
+    for (const row of await getBundledDarkoSeason(season)) {
       const espnId = lookupEspnIdByPlayerName(row.playerName);
       if (!espnId) continue;
       const hit = best.get(`${espnId}|${season}`);
@@ -663,8 +745,8 @@ export function getBundledCompPool(): BundledCompPoolRow[] {
         row.defensive != null && Number.isFinite(row.defensive) ? row.defensive : null;
     }
   }
-  for (const season of bundledRaptorSeasonIds()) {
-    for (const row of getBundledRaptorSeason(season)) {
+  for (const season of await bundledRaptorSeasonIds()) {
+    for (const row of await getBundledRaptorSeason(season)) {
       const espnId = lookupEspnIdByPlayerName(row.playerName);
       if (!espnId) continue;
       const hit = best.get(`${espnId}|${season}`);
@@ -725,79 +807,30 @@ export function compPositionCode(pos: string | undefined): number | null {
   return positionCode(pos);
 }
 
-function hitsToCareerRows(
-  hits: CareerSlimHit[],
-  playerId: string
-): PlayerSeason[] {
-  const bySeason = new Map<string, CareerSlimHit>();
-  for (const hit of hits) {
-    const prev = bySeason.get(hit.season);
-    if (
-      !prev ||
-      hit.adv.gp > prev.adv.gp ||
-      (hit.adv.gp === prev.adv.gp && hit.adv.mp > prev.adv.mp)
-    ) {
-      bySeason.set(hit.season, hit);
-    }
-  }
-  return [...bySeason.entries()]
-    .sort(([a], [b]) => b.localeCompare(a))
-    .map(([, hit]) => {
-      const row = toPeerSeasonRow(hit.adv, hit.pg, hit.season);
-      return { ...row, playerId: playerId || row.playerId };
-    });
-}
-
-export function getBundledBrefCareerForPlayer(options: {
-  playerId?: string | null;
-  playerName?: string | null;
-}): PlayerSeason[] {
-  const wantId = String(options.playerId ?? "").trim();
-  const wantName = options.playerName
-    ? normalizeEspnLookupName(options.playerName)
-    : "";
-  const idNameHint = wantId
-    ? normalizeEspnLookupName(lookupPlayerNameByEspnId(wantId) ?? "")
-    : "";
-  const nameTarget = wantName || idNameHint;
-
-  if (wantId) {
-    const cached = careerByEspnIdCache.get(wantId);
-    if (cached) return cached;
-  } else if (nameTarget) {
-    const cached = careerByNameCache.get(nameTarget);
-    if (cached) return cached;
-  } else {
-    return [];
-  }
-
-  const index = ensureCareerSlimIndex();
-  let hits: CareerSlimHit[] = [];
-  if (wantId) {
-    hits = index.byEspn.get(wantId) ?? [];
-  }
-  if (!hits.length && nameTarget) {
-    hits = index.byName.get(nameTarget) ?? [];
-  }
-
-  const out = hitsToCareerRows(hits, wantId);
-
-  if (wantId) careerByEspnIdCache.set(wantId, out);
-  if (nameTarget) careerByNameCache.set(nameTarget, out);
-  return out;
-}
-
-export function brefAdvancedSnapshotMeta() {
+export async function brefAdvancedSnapshotMeta() {
+  await ensureSeasonTables();
   return {
-    version: data.version ?? 0,
-    generatedAt: data.generatedAt ?? null,
+    version: cachedIndex?.version ?? 0,
+    generatedAt: cachedIndex?.generatedAt ?? null,
     seasons: Object.keys(seasons),
   };
 }
 
 /** Canonical seasons present in the bundled BRef snapshot (newest first). */
-export function listBundledBrefSeasons(): string[] {
+export async function listBundledBrefSeasons(): Promise<string[]> {
+  await ensureSeasonTables();
   return Object.keys(seasons).sort((a, b) => b.localeCompare(a));
+}
+
+/**
+ * Slim advanced row count for a season — readiness checks without building the
+ * fat PlayerSeason peer board (~650 rows × N seasons on Explore cold MISS).
+ */
+export async function getBundledBrefAdvancedRowCount(
+  canonicalSeason: string
+): Promise<number> {
+  await ensureSeasonTables();
+  return advancedForSeason(canonicalSeason).length;
 }
 
 export type BundledBrefSearchRow = {
@@ -815,7 +848,8 @@ let bundledSearchIndex: BundledBrefSearchRow[] | null = null;
  * One lightweight cross-season name index for header search.
  * Avoids materializing ~650 fat PlayerSeason rows × N seasons (CF 1102).
  */
-export function getBundledBrefSearchIndex(): BundledBrefSearchRow[] {
+export async function getBundledBrefSearchIndex(): Promise<BundledBrefSearchRow[]> {
+  await ensureSeasonTables();
   if (bundledSearchIndex) return bundledSearchIndex;
 
   const byKey = new Map<string, BundledBrefSearchRow>();
@@ -856,9 +890,10 @@ export function getBundledBrefSearchIndex(): BundledBrefSearchRow[] {
 }
 
 /** Slim current-season rows for search (no full peer-board materialization). */
-export function getBundledBrefSeasonSearchRows(
+export async function getBundledBrefSeasonSearchRows(
   canonicalSeason: string
-): BundledBrefSearchRow[] {
+): Promise<BundledBrefSearchRow[]> {
+  await ensureSeasonTables();
   const key = String(canonicalSeason ?? "").trim();
   if (!key) return [];
   const advanced = advancedForSeason(key);

@@ -162,7 +162,8 @@ export function PlayerFilterToolbar({
       if (
         (value === "ALL" && key !== "season") ||
         (key === "minimumMinutes" && value === defaultMinMinutes) ||
-        (key === "view" && value === "all") ||
+        // Default board is Impact (omit from URL); All stays as view=all.
+        (key === "view" && value === "impact") ||
         (key === "rate" && value === "perGame")
       ) {
         normalized[key] = null;

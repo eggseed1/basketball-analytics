@@ -1,5 +1,6 @@
 import { PlayerAccolades } from "@/components/players/player-accolades";
 import { PlayerRetiredJerseys } from "@/components/players/player-retired-jerseys";
+import { withBudget } from "@/data/queries/budget";
 import { getPlayerAccolades } from "@/data/queries/player-awards";
 import { getPlayerRetiredJerseys } from "@/data/queries/player-retired-jerseys";
 import type { GlassSurfaceHonor } from "@/components/brand/glass-surface";
@@ -16,10 +17,19 @@ export async function PlayerAccoladesIsland({
   historicalBrand?: HistoricalTeamBrand | null;
   honor?: GlassSurfaceHonor;
 }) {
-  const [badges, jerseys] = await Promise.all([
-    getPlayerAccolades(playerId).catch(() => []),
-    getPlayerRetiredJerseys(playerId, playerName).catch(() => []),
-  ]);
+  const { value } = await withBudget(
+    Promise.all([
+      getPlayerAccolades(playerId).catch(() => [] as Awaited<
+        ReturnType<typeof getPlayerAccolades>
+      >),
+      getPlayerRetiredJerseys(playerId, playerName).catch(() => [] as Awaited<
+        ReturnType<typeof getPlayerRetiredJerseys>
+      >),
+    ]),
+    4_000,
+    [[], []] as const
+  );
+  const [badges, jerseys] = value;
   if (!badges.length && !jerseys.length) return null;
 
   return (

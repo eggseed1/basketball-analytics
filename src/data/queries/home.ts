@@ -294,13 +294,13 @@ async function loadHomeAnalytics(): Promise<HomeAnalytics> {
     const { getBundledBrefPeerBoard } = await import(
       "@/data/runtime/bref-advanced-snapshot"
     );
-    seasons = getBundledBrefPeerBoard(initialSeason);
+    seasons = await getBundledBrefPeerBoard(initialSeason);
     if (
       seasons.length === 0 ||
       shouldUsePriorSeasonBoardStats(calendarSeason, seasons)
     ) {
       const prior = priorSeasonForStats(calendarSeason);
-      const priorRows = getBundledBrefPeerBoard(prior);
+      const priorRows = await getBundledBrefPeerBoard(prior);
       if (priorRows.length > 0) {
         season = prior;
         seasons = priorRows;
@@ -635,6 +635,9 @@ async function loadHomeAnalytics(): Promise<HomeAnalytics> {
 }
 
 export async function getHomeAnalytics(): Promise<HomeAnalytics> {
+  await import("@/data/runtime/current-roster-snapshot").then((m) =>
+    m.ensureCurrentRoster()
+  );
   if (homeInflight) return homeInflight;
   homeInflight = sharedGetOrSet(
     `home:analytics:v${HOME_CACHE_VERSION}`,

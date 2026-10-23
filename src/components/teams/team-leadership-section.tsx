@@ -1,6 +1,7 @@
 import type { CSSProperties, ReactNode } from "react";
 
 import {
+  ensureTeamLeadership,
   getTeamLeadership,
   teamLeadershipRetrievedAt,
   type LeadershipPerson,
@@ -74,7 +75,7 @@ function formatRetrieved(iso: string): string {
 }
 
 /** Owners, executives, head coach, arena and G League affiliate for the franchise today. */
-export function TeamLeadershipSection({
+export async function TeamLeadershipSection({
   teamId,
   teamKey,
   teamName,
@@ -87,6 +88,7 @@ export function TeamLeadershipSection({
   season: string;
   currentSeason: string;
 }) {
+  await ensureTeamLeadership();
   const org = getTeamLeadership(teamId);
   const retrievedAt = org?.checkedAt ?? teamLeadershipRetrievedAt();
 

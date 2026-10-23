@@ -1,10 +1,11 @@
 /**
- * Bundled NBA Synergy play types (offense) and league shot-zone averages.
+ * NBA Synergy play types (offense) and league shot-zone averages.
+ * Lives under public/runtime (ASSETS) so the ~136KB JSON stays off the
+ * Worker isolate; Node reads the same file from disk.
  *
  * Built by scripts/build-runtime-playtype-onoff-snapshot.py.
  * Row: [nbaId, totalPoss, poss0, pts0, poss1, pts1, ...] in `playTypes` order.
  */
-import snapshot from "./play-type-snapshot.json";
 import type { LeagueShotZones } from "@/lib/player-shot-map";
 
 type PlayTypeFile = {
@@ -15,8 +16,14 @@ type PlayTypeFile = {
   leagueShotZones?: Record<string, LeagueShotZones>;
 };
 
-const data = snapshot as unknown as PlayTypeFile;
-const playTypes = data.playTypes ?? [];
+type AssetsFetcher = {
+  fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>;
+};
+
+const ASSET_PATH = "/runtime/play-type-snapshot.json";
+
+let data: PlayTypeFile | null | undefined;
+let playTypes: string[] = [];
 
 export const PLAY_TYPE_LABELS: Record<string, string> = {
   Isolation: "Isolation",
@@ -64,9 +71,74 @@ type SeasonIndex = {
 
 const indexCache = new Map<string, SeasonIndex | null>();
 
+function cloudflareAssets(): AssetsFetcher | null {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { getCloudflareContext } = require("@opennextjs/cloudflare") as {
+      getCloudflareContext: () => { env?: { ASSETS?: AssetsFetcher } };
+    };
+    return getCloudflareContext()?.env?.ASSETS ?? null;
+  } catch {
+    return null;
+  }
+}
+
+function loadFromPublicDir(): PlayTypeFile | null {
+  try {
+    if (process.env.NEXT_RUNTIME === "edge") return null;
+    // eslint-disable-next-line no-eval
+    const req = eval("require") as NodeRequire;
+    const fs = req("node:fs") as typeof import("node:fs");
+    const path = req("node:path") as typeof import("node:path");
+    const file = path.join(
+      process.cwd(),
+      "public",
+      "runtime",
+      "play-type-snapshot.json"
+    );
+    if (!fs.existsSync(file)) return null;
+    return JSON.parse(fs.readFileSync(file, "utf8")) as PlayTypeFile;
+  } catch {
+    return null;
+  }
+}
+
+async function loadFromAssets(): Promise<PlayTypeFile | null> {
+  try {
+    const assets = cloudflareAssets();
+    if (!assets) return null;
+    const response = await assets.fetch(`https://assets.local${ASSET_PATH}`);
+    if (!response.ok) return null;
+    return (await response.json()) as PlayTypeFile;
+  } catch {
+    return null;
+  }
+}
+
+function apply(file: PlayTypeFile | null): boolean {
+  data = file;
+  playTypes = file?.playTypes ?? [];
+  indexCache.clear();
+  return file != null;
+}
+
+function tryPrimeFromDisk(): void {
+  if (data !== undefined) return;
+  const file = loadFromPublicDir();
+  if (file) apply(file);
+}
+
+export async function ensurePlayTypeSnapshot(): Promise<boolean> {
+  if (data !== undefined) return data != null;
+  const fromDisk = loadFromPublicDir();
+  if (fromDisk) return apply(fromDisk);
+  return apply(await loadFromAssets());
+}
+
 function seasonIndex(season: string): SeasonIndex | null {
+  tryPrimeFromDisk();
   if (indexCache.has(season)) return indexCache.get(season) ?? null;
-  const rows = data.seasons?.[season];
+  const rows = data?.seasons?.[season];
   if (!rows?.length) {
     indexCache.set(season, null);
     return null;
@@ -118,7 +190,10 @@ export function getPlayerPlayTypes(
     .find(Boolean);
   if (!row) return null;
   const total = Number(row[1]) || 0;
-  const tracked = playTypes.reduce((sum, _, i) => sum + (Number(row[2 + 2 * i]) || 0), 0);
+  const tracked = playTypes.reduce(
+    (sum, _, i) => sum + (Number(row[2 + 2 * i]) || 0),
+    0
+  );
   const denominator = Math.max(total, tracked);
   if (denominator <= 0) return null;
   const rows = playTypes
@@ -149,11 +224,13 @@ export function getPlayerPlayTypes(
 export function getPlayTypeSeasonRows(
   season: string
 ): { playTypes: string[]; rows: Array<Array<string | number>> } | null {
-  const rows = data.seasons?.[season];
+  tryPrimeFromDisk();
+  const rows = data?.seasons?.[season];
   return rows?.length ? { playTypes, rows } : null;
 }
 
 export function getLeagueShotZones(season: string): LeagueShotZones | null {
-  const zones = data.leagueShotZones?.[season];
+  tryPrimeFromDisk();
+  const zones = data?.leagueShotZones?.[season];
   return zones && Object.keys(zones).length ? zones : null;
 }

@@ -10,6 +10,12 @@ import { gzipSync } from "node:zlib";
 
 const ROOT = process.cwd();
 const OUT = path.join(ROOT, "src", "data", "runtime", "player-bio-snapshot.json");
+const OUT_PUBLIC = path.join(
+  ROOT,
+  "public",
+  "runtime",
+  "player-bio-snapshot.json"
+);
 const ALIASES = path.join(ROOT, "data", "impact", "player-id-aliases.json");
 const LEGEND_ALIASES = path.join(
   ROOT,
@@ -433,16 +439,20 @@ async function main() {
     .readFile(OUT, "utf8")
     .then((raw) => JSON.parse(raw).players ?? null)
     .catch(() => null);
+  const body = JSON.stringify(payload);
+  await fs.mkdir(path.dirname(OUT_PUBLIC), { recursive: true });
   if (prior && JSON.stringify(prior) === JSON.stringify(byId)) {
+    await fs.copyFile(OUT, OUT_PUBLIC).catch(() => fs.writeFile(OUT_PUBLIC, body));
     console.log(`[player-bio] unchanged ids=${payload.playerCount} (was ${priorCount}); kept ${OUT}`);
     return;
   }
 
   await fs.mkdir(path.dirname(OUT), { recursive: true });
-  await fs.writeFile(OUT, JSON.stringify(payload));
-  const gz = gzipSync(Buffer.from(JSON.stringify(payload))).length;
+  await fs.writeFile(OUT, body);
+  await fs.writeFile(OUT_PUBLIC, body);
+  const gz = gzipSync(Buffer.from(body)).length;
   console.log(
-    `[player-bio] wrote ${OUT} ids=${payload.playerCount} gzip~${gz}`
+    `[player-bio] wrote ${OUT_PUBLIC} ids=${payload.playerCount} gzip~${gz} (src mirror ${OUT})`
   );
 }
 

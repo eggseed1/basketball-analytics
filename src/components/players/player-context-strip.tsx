@@ -64,7 +64,9 @@ export function PlayerContextStrip({
   const available = useMemo(
     () =>
       modes.filter(
-        (m) => m.leagueComps.length > 0 || m.historicalComps.length > 0
+        (m) =>
+          (m.leagueComps?.length ?? 0) > 0 ||
+          (m.historicalComps?.length ?? 0) > 0
       ),
     [modes]
   );

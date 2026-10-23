@@ -9,6 +9,7 @@ import {
   useMemo,
   useRef,
   useState,
+  useSyncExternalStore,
   type CSSProperties,
   type ReactNode,
 } from "react";
@@ -386,11 +387,12 @@ function CompMarkTip({
   const [coords, setCoords] = useState<{ top: number; left: number } | null>(
     null
   );
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  // Client-only portal host (false on SSR, true after hydrate).
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  );
 
   useLayoutEffect(() => {
     if (!open || !triggerRef.current) {
@@ -613,7 +615,37 @@ function CompComparePanel({
   compsPending?: boolean;
 }) {
   const chartTheme = useChartTheme();
-  const [mode, setMode] = useState<"league" | "history">("league");
+  // Early-season boards often have historical comps first — prefer Other
+  // seasons when This season is empty, until the user picks a mode.
+  const metricKey = metric?.id ?? "";
+  const autoMode: "league" | "history" =
+    (metric?.leagueComps?.length ?? 0) === 0 &&
+    (metric?.historicalComps?.length ?? 0) > 0
+      ? "history"
+      : "league";
+  const [userMode, setUserMode] = useState<{
+    key: string;
+    mode: "league" | "history";
+  } | null>(null);
+  const mode =
+    userMode?.key === metricKey ? userMode.mode : autoMode;
+  const setMode = (next: "league" | "history") =>
+    setUserMode({ key: metricKey, mode: next });
+  const handleChartSeason = useCallback(
+    (raw: string) => {
+      let next = raw;
+      if (!seasons.includes(raw)) {
+        const short =
+          raw.length <= 5 && raw.includes("-") ? raw : raw.slice(2);
+        next =
+          seasons.find(
+            (s) => s === raw || s.slice(2) === short || s.endsWith(short)
+          ) ?? raw;
+      }
+      if (next && seasons.includes(next)) onSeasonSelect(next);
+    },
+    [onSeasonSelect, seasons]
+  );
 
   if (!metric) {
     return (
@@ -636,7 +668,7 @@ function CompComparePanel({
   }
 
   const rawComps =
-    mode === "league" ? metric.leagueComps : metric.historicalComps;
+    (mode === "league" ? metric.leagueComps : metric.historicalComps) ?? [];
   const comps =
     maxOtherComps != null ? rawComps.slice(0, maxOtherComps) : rawComps;
   const baseRows = [
@@ -667,21 +699,6 @@ function CompComparePanel({
 
   const hasSeries = Boolean(metric.series && metric.series.length > 1);
 
-  const resolveSeason = (raw: string) => {
-    if (seasons.includes(raw)) return raw;
-    const short =
-      raw.length <= 5 && raw.includes("-") ? raw : raw.slice(2);
-    return (
-      seasons.find((s) => s === raw || s.slice(2) === short || s.endsWith(short)) ??
-      raw
-    );
-  };
-
-  const handleChartSeason = (raw: string) => {
-    const next = resolveSeason(raw);
-    if (next && seasons.includes(next)) onSeasonSelect(next);
-  };
-
   const chartHeight = chartHeightProp ?? (inline ? 140 : 180);
   const compRowCount = visibleCompRows ?? VISIBLE_COMP_ROWS;
 
@@ -697,6 +714,7 @@ function CompComparePanel({
       <div className="min-w-0 shrink-0">
         {hasSeries ? (
           <CareerTeamTrendChart
+            key={metric.id}
             points={metric.series!}
             height={chartHeight}
             savantScale
@@ -1125,7 +1143,8 @@ function PercentileExpandDialog({
 
 function hasComps(metrics: PercentileMetric[]): boolean {
   return metrics.some(
-    (m) => m.leagueComps.length > 0 || m.historicalComps.length > 0
+    (m) =>
+      (m.leagueComps?.length ?? 0) > 0 || (m.historicalComps?.length ?? 0) > 0
   );
 }
 
@@ -1160,8 +1179,8 @@ function mergePercentileMetrics(
         (m.series?.length ?? 0) >= (old.series?.length ?? 0)
           ? m.series
           : old.series,
-      leagueComps: m.leagueComps.length ? m.leagueComps : old.leagueComps,
-      historicalComps: m.historicalComps.length
+      leagueComps: m.leagueComps?.length ? m.leagueComps : old.leagueComps,
+      historicalComps: m.historicalComps?.length
         ? m.historicalComps
         : old.historicalComps,
     });
@@ -1216,8 +1235,11 @@ async function requestPercentiles(
   season: string,
   mode: "fast" | "full"
 ): Promise<SeasonMetricsCache | null> {
+  const params = new URLSearchParams({ season, mode });
+  // Full mode needs comps for Closest match; fast stays light unless asked.
+  if (mode === "full") params.set("comps", "1");
   const res = await fetch(
-    `/api/players/${encodeURIComponent(playerId)}/percentiles?season=${encodeURIComponent(season)}&mode=${mode}`
+    `/api/players/${encodeURIComponent(playerId)}/percentiles?${params}`
   );
   if (!res.ok) return null;
   const json = (await res.json()) as SeasonMetricsCache & { season?: string };
@@ -1352,15 +1374,27 @@ export function PlayerPercentilePanel({
   const upgradeToFull = useCallback(
     (target: string) => {
       setFullPending(true);
+      let settled = false;
+      const clear = () => {
+        if (settled) return;
+        settled = true;
+        setFullPending(false);
+      };
+      // Hard stop so a hung /api/players/.../percentiles cannot leave the
+      // Closest match panel on "Finding similar players…" indefinitely.
+      const watchdog = window.setTimeout(clear, 12_000);
       void fetchPercentiles(playerId, target, "full")
         .catch(() => null)
         .then((full) => {
-          if (desiredSeason.current !== target) return;
-          // This lands while the reader may be scrolling, so the render yields.
-          startTransition(() => {
-            if (full?.metrics.length) applyCached(target, full);
-            setFullPending(false);
-          });
+          window.clearTimeout(watchdog);
+          // Clear pending immediately — do not park it behind startTransition,
+          // or "Finding similar players…" can stick while the main thread is busy.
+          if (desiredSeason.current === target && full?.metrics.length) {
+            startTransition(() => {
+              applyCached(target, full);
+            });
+          }
+          clear();
         });
     },
     [applyCached, playerId]
@@ -1408,6 +1442,8 @@ export function PlayerPercentilePanel({
     [applyCached, playerId, upgradeToFull]
   );
 
+  /* Sync SSR/tracked season + metrics into local view (prop→state). */
+  /* eslint-disable react-hooks/set-state-in-effect -- intentional prop→state sync */
   useEffect(() => {
     if (trackedSeason !== desiredSeason.current) return;
     setViewSeason(trackedSeason);
@@ -1438,11 +1474,15 @@ export function PlayerPercentilePanel({
     }
     setBusy(false);
   }, [metrics, playerId, profileComps, season, seasons, teamKey, trackedSeason]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
-  // SSR may omit comps / sparklines. Fill series ASAP (hero chart); comps can wait a beat.
+  // SSR ships Impact-only + may omit comps / non-default sparklines. Upgrade
+  // immediately so other category tabs don't flash empty after paint.
   // No run-once ref: Strict Mode's cleanup would cancel the only scheduled call.
   const ssrMissingSeries = !metrics.some((m) => (m.series?.length ?? 0) > 1);
-  const ssrIsPartial = !ssrHasComps || ssrMissingSeries;
+  const ssrImpactOnly =
+    metrics.length > 0 && metrics.every((m) => m.category === "impact");
+  const ssrIsPartial = !ssrHasComps || ssrMissingSeries || ssrImpactOnly;
   useEffect(() => {
     preloadPlayerPageCharts();
   }, []);
@@ -1454,26 +1494,11 @@ export function PlayerPercentilePanel({
       if (cancelled || desiredSeason.current !== targetSeason) return;
       upgradeToFull(targetSeason);
     };
-    // Hero sparkline is above the fold — don't park it behind idle.
-    if (ssrMissingSeries) {
-      hydrate();
-      return () => {
-        cancelled = true;
-      };
-    }
-    if (typeof requestIdleCallback === "function") {
-      const idleId = requestIdleCallback(hydrate);
-      return () => {
-        cancelled = true;
-        cancelIdleCallback(idleId);
-      };
-    }
-    const timeoutId = window.setTimeout(hydrate, 120);
+    hydrate();
     return () => {
       cancelled = true;
-      window.clearTimeout(timeoutId);
     };
-  }, [ssrIsPartial, ssrMissingSeries, trackedSeason, upgradeToFull]);
+  }, [ssrIsPartial, trackedSeason, upgradeToFull]);
 
   const urlSeason = queryNav?.searchParams.get("season");
 
@@ -1482,6 +1507,7 @@ export function PlayerPercentilePanel({
     [seasons]
   );
 
+  /* eslint-disable react-hooks/set-state-in-effect -- URL season drives slider + fetch */
   useEffect(() => {
     // Ignore URL-driven reloads we already handled via shallow replace / commit.
     if (!urlSeason) return;
@@ -1491,6 +1517,7 @@ export function PlayerPercentilePanel({
     setViewSeason(next);
     if (timeline.includes(urlSeason)) loadSeason(next);
   }, [loadSeason, timeline, urlSeason]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   useEffect(() => {
     let cancelled = false;
@@ -1599,7 +1626,10 @@ export function PlayerPercentilePanel({
   const accent = chartTheme.teamColor(viewTeamKey).color;
 
   useEffect(() => {
-    if (!compactLayout) setDetailOpen(true);
+    if (!compactLayout) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- expand detail when leaving compact
+      setDetailOpen(true);
+    }
   }, [compactLayout]);
 
   const selectMetric = useCallback(
@@ -1648,6 +1678,7 @@ export function PlayerPercentilePanel({
   useEffect(() => {
     if (!viewMetrics.length) return;
     if (viewMetrics.some((m) => m.id === activeId && !m.profileHidden)) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- drop hidden/stale metric ids
     setActiveId(defaultPercentileMetricId(viewMetrics));
   }, [viewMetrics, activeId]);
 

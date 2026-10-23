@@ -123,6 +123,7 @@ let dealCache: { byBref: Map<string, Deal>; byName: Map<string, Deal[]> } | null
 
 function warHistories(): Map<string, SeasonLine[]> {
   if (historyCache) return historyCache;
+  // Callers must await ensureDrblOverlay() first on Workers; Node loads via public/.
   const histories = new Map<string, SeasonLine[]>();
   for (const season of bundledDrblOverlayMeta().seasons) {
     for (const row of getBundledDrblSeason(season)) {

@@ -15,6 +15,12 @@ const OUT = path.join(
   "runtime",
   "front-office-snapshot.json"
 );
+const OUT_PUBLIC = path.join(
+  ROOT,
+  "public",
+  "runtime",
+  "front-office-snapshot.json"
+);
 
 const manifest = JSON.parse(
   await fs.readFile(path.join(SRC, "manifest.json"), "utf8")
@@ -35,9 +41,12 @@ const payload = {
   teams,
 };
 
+const body = JSON.stringify(payload);
 await fs.mkdir(path.dirname(OUT), { recursive: true });
-await fs.writeFile(OUT, JSON.stringify(payload));
-const gz = gzipSync(Buffer.from(JSON.stringify(payload))).length;
+await fs.mkdir(path.dirname(OUT_PUBLIC), { recursive: true });
+await fs.writeFile(OUT, body);
+await fs.writeFile(OUT_PUBLIC, body);
+const gz = gzipSync(Buffer.from(body)).length;
 console.log(
-  `[front-office-snapshot] ${Object.keys(teams).length} teams → ${OUT} (gzip ${gz} B)`
+  `[front-office-snapshot] ${Object.keys(teams).length} teams → ${OUT_PUBLIC} (gzip ${gz} B; src mirror ${OUT})`
 );

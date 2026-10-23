@@ -1,6 +1,6 @@
 /**
- * Copy curated sentiment snapshot onto the Worker module graph (no node:fs at runtime).
- * Prefer `npm run sentiment:build` which dual-writes; this is the deploy-time safety net.
+ * Copy curated sentiment into public/runtime (ASSETS) and keep a src/ copy
+ * for scripts that still read the repo path. Prefer `npm run sentiment:build`.
  */
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -15,6 +15,12 @@ const OUT = path.join(
   "runtime",
   "sentiment-snapshot.json"
 );
+const OUT_PUBLIC = path.join(
+  ROOT,
+  "public",
+  "runtime",
+  "sentiment-snapshot.json"
+);
 
 const raw = await fs.readFile(SRC, "utf8");
 const data = JSON.parse(raw);
@@ -22,9 +28,12 @@ if (!data?.meta || !Array.isArray(data.players)) {
   throw new Error("sentiment snapshot missing meta/players");
 }
 
+const body = `${JSON.stringify(data, null, 2)}\n`;
 await fs.mkdir(path.dirname(OUT), { recursive: true });
-await fs.writeFile(OUT, `${JSON.stringify(data, null, 2)}\n`);
+await fs.mkdir(path.dirname(OUT_PUBLIC), { recursive: true });
+await fs.writeFile(OUT, body);
+await fs.writeFile(OUT_PUBLIC, body);
 const gz = gzipSync(Buffer.from(JSON.stringify(data))).length;
 console.log(
-  `[sentiment-snapshot] ${data.players.length} players · season=${data.meta.season} → ${OUT} (gzip ${gz} B)`
+  `[sentiment-snapshot] ${data.players.length} players · season=${data.meta.season} → ${OUT_PUBLIC} (gzip ${gz} B; src mirror ${OUT})`
 );

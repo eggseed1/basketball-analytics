@@ -4,8 +4,12 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 
 import { GlassSurface } from "@/components/brand/glass-surface";
 import {
-  CareerTeamTrendChartLazy as CareerTeamTrendChart,
-  TalentYearChartLazy as TalentYearChart,
+  CareerTeamTrendChart,
+  TalentYearChart,
+} from "@/components/players/career-team-trend-chart";
+import {
+  preloadPlayerPageCharts,
+  whenPlayerPageChartsReady,
 } from "@/components/charts/recharts-lazy";
 import { CareerChartFilterWipe } from "@/components/players/career-chart-filter-wipe";
 import { useQueryNavOptional } from "@/components/continuity/query-nav";
@@ -366,10 +370,63 @@ export function PlayerCareerBoard({
   const [metric, setMetric] = useState<MetricId>(
     () => initialMetric ?? defaultCareerMetric(rows)
   );
+  // Local Games/Seasons toggle. Initialized from the prop; callers that need a
+  // hard reset should remount (key=). Do not sync via setState-during-render
+  // (React #185 max update depth) or a syncing effect (eslint + cascade).
   const [chartMode, setChartMode] = useState<"seasons" | "games">(chart);
+  /** SSR may omit logs; hydrate from the compact career-game-logs API. */
+  const [hydratedLogs, setHydratedLogs] = useState<
+    CompactPlayerGameLogRow[] | null
+  >(null);
+  const seasonKey = useMemo(
+    () =>
+      [...new Set(rows.map((row) => row.season).filter(Boolean))]
+        .sort((a, b) => b.localeCompare(a))
+        .join(","),
+    [rows]
+  );
   useEffect(() => {
-    setChartMode(chart);
-  }, [chart]);
+    preloadPlayerPageCharts();
+  }, []);
+
+  useEffect(() => {
+    // Prefer SSR logs when present; skip clearing hydrate state (avoids sync setState).
+    if (gameLogs.length > 0 || !seasonKey) return;
+    let cancelled = false;
+    const qs = encodeURIComponent(seasonKey);
+    // Load chart chunks before flipping Games mode — swapping to TalentYearChart
+    // while its dynamic() import is still cold left the h-64 shimmer stuck.
+    void Promise.all([
+      fetch(
+        `/api/players/${encodeURIComponent(playerId)}/career-game-logs?seasons=${qs}`
+      ).then(async (res) => {
+        if (!res.ok) throw new Error(`career-game-logs ${res.status}`);
+        return res.json() as Promise<{ games?: CompactPlayerGameLogRow[] }>;
+      }),
+      whenPlayerPageChartsReady(),
+    ])
+      .then(([json]) => {
+        if (cancelled) return;
+        setHydratedLogs(Array.isArray(json.games) ? json.games : []);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setHydratedLogs([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [gameLogs.length, playerId, seasonKey]);
+
+  const effectiveLogs =
+    gameLogs.length > 0
+      ? gameLogs
+      : !seasonKey
+        ? []
+        : (hydratedLogs ?? []);
+  const logsPending =
+    gameLogs.length === 0 && Boolean(seasonKey) && hydratedLogs === null;
+
   const primary = useMemo(
     () =>
       PRIMARY.filter(
@@ -390,13 +447,13 @@ export function PlayerCareerBoard({
     METRICS.find((item) => item.id === metric) ?? METRICS[0]!;
   const points = seriesFor(rows, selected);
   const talentKind = IMPACT_GAME_METRICS.has(selected.id) ? "impact" : "box";
-  const canShowGames = gameLogs.length > 0;
+  const canShowGames = effectiveLogs.length > 0 || logsPending;
   const activeChart =
-    chartMode === "games" && canShowGames ? "games" : "seasons";
+    chartMode === "games" && effectiveLogs.length > 0 ? "games" : "seasons";
   const talent = useMemo(() => {
     if (activeChart !== "games") return null;
     const bySeason = new Map<string, CompactPlayerGameLogRow[]>();
-    for (const game of gameLogs) {
+    for (const game of effectiveLogs) {
       const list = bySeason.get(game.season) ?? [];
       list.push(game);
       bySeason.set(game.season, list);
@@ -424,7 +481,7 @@ export function PlayerCareerBoard({
         ];
       });
     return buildTalentSeries({ kind: talentKind, seasons });
-  }, [activeChart, gameLogs, points, selected.id, talentKind]);
+  }, [activeChart, effectiveLogs, points, selected.id, talentKind]);
   const newestFirst = useMemo(
     () => [...rows].sort((a, b) => b.season.localeCompare(a.season)),
     [rows]
@@ -487,7 +544,10 @@ export function PlayerCareerBoard({
                   size="sm"
                   value={activeChart}
                   options={[
-                    { id: "games", label: "Games" },
+                    {
+                      id: "games",
+                      label: logsPending ? "Games…" : "Games",
+                    },
                     { id: "seasons", label: "Seasons" },
                   ]}
                   onChange={(id) => setChartMode(id)}

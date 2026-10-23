@@ -23,6 +23,7 @@ import {
   startOfWeekSundayIso,
   upcomingScheduleSeason,
 } from "@/data/providers/nba/scoreboard-client";
+import { defaultScoreboardMonthKey } from "@/data/providers/nba/scoreboard-calendar";
 import {
   canonicalSeasonFromStartYear,
   currentNbaStartYear,
@@ -53,6 +54,7 @@ import { parseTipOffMs } from "@/lib/game-countdown";
 import {
   compareGameProgress,
   isFinalStatus,
+  isLiveLikeStatus,
   isPreTipStatus,
 } from "@/lib/game-status";
 
@@ -71,21 +73,33 @@ async function fetchEspnEventBoxScore(
   gameId: string,
   fetchOptions?: { timeoutMs?: number; retries?: number }
 ): Promise<GameBoxScore | null> {
-  const url = `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=${encodeURIComponent(gameId)}`;
-  let summary: EspnSummaryResponse;
-  try {
-    summary = await espnFetchJson<EspnSummaryResponse>(url, {
-      ttlMs: CACHE_TTL_MS.boxScore ?? 1000 * 60 * 5,
-      retries: fetchOptions?.retries ?? 1,
-      // Cloudflare Workers: keep under getGameShellCached's ~9s budget.
-      timeoutMs: fetchOptions?.timeoutMs ?? 2_500,
-    });
-  } catch (error) {
-    const msg = error instanceof Error ? error.message : String(error);
-    // ESPN 404 → invalid / unknown event (semantic miss).
-    if (/\(404\)/.test(msg)) return null;
-    // Network / 5xx — do not classify as not-found at this layer.
-    throw error;
+  // site.web.api is reachable from CF Workers; site.api often 403s there.
+  const urls = [
+    `https://site.web.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=${encodeURIComponent(gameId)}`,
+    `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=${encodeURIComponent(gameId)}`,
+  ];
+  let summary: EspnSummaryResponse | null = null;
+  let lastError: unknown;
+  for (const url of urls) {
+    try {
+      summary = await espnFetchJson<EspnSummaryResponse>(url, {
+        ttlMs: CACHE_TTL_MS.boxScore ?? 1000 * 60 * 5,
+        retries: fetchOptions?.retries ?? 0,
+        // Cloudflare Workers: keep under getGameShellCached's ~7s budget.
+        timeoutMs: fetchOptions?.timeoutMs ?? 2_500,
+      });
+      break;
+    } catch (error) {
+      lastError = error;
+      const msg = error instanceof Error ? error.message : String(error);
+      // ESPN 404 → invalid / unknown event (semantic miss).
+      if (/\(404\)/.test(msg)) return null;
+      // try next host
+    }
+  }
+  if (!summary) {
+    if (lastError) throw lastError;
+    return null;
   }
 
   const endYear = summary.header?.season?.year;
@@ -296,12 +310,21 @@ function withSnapshotFacts(shell: GameShell, snap: Game | null): GameShell {
  */
 async function withBroadcastFallback(shell: GameShell): Promise<GameShell> {
   if (shell.game.broadcasts?.length) return shell;
+  // Finished games do not need TV windows on first paint — getHistoricalGame can
+  // take ~10s on Workers and was wiping settled snapshot shells past the HTML cliff.
+  if (isFinalStatus(shell.game.status)) return shell;
+
+  const { withBudget } = await import("@/data/queries/budget");
   try {
-    const scheduled = await getHistoricalGame(shell.game.id);
-    if (scheduled?.broadcasts?.length) {
+    const scheduled = await withBudget(
+      getHistoricalGame(shell.game.id),
+      600,
+      null
+    );
+    if (scheduled.value?.broadcasts?.length) {
       return {
         ...shell,
-        game: { ...shell.game, broadcasts: scheduled.broadcasts },
+        game: { ...shell.game, broadcasts: scheduled.value.broadcasts },
       };
     }
   } catch {
@@ -311,8 +334,12 @@ async function withBroadcastFallback(shell: GameShell): Promise<GameShell> {
   if (date) {
     try {
       const { getScoreboardDateFeed } = await import("./scoreboard-feed");
-      const feed = await getScoreboardDateFeed({ date });
-      const row = feed.data.find((g) => g.id === shell.game.id);
+      const feed = await withBudget(
+        getScoreboardDateFeed({ date }),
+        600,
+        null
+      );
+      const row = feed.value?.data.find((g) => g.id === shell.game.id);
       if (row?.broadcasts?.length) {
         return {
           ...shell,
@@ -358,25 +385,129 @@ export async function getGameShell(gameId: string): Promise<GameShell | null> {
 
   // ESPN event ids: prefer cdn.espn.com box (site.api is 403 from CF Workers),
   // then schedule snapshot so scores still render when box is unavailable.
+  // Hard-cap CDN so a hung package cannot burn the ~12s Worker HTML window and
+  // leave loading.tsx as the final document.
   if (looksLikeEspnEventId(id)) {
+    const snapshotShell = fromSnapshot
+      ? acceptShell(shellFromGame(fromSnapshot, "runtime-snapshot"))
+      : null;
+    const snapshotTipPassed =
+      snapshotShell != null &&
+      isPreTipStatus(snapshotShell.game.status) &&
+      (() => {
+        const tip = parseTipOffMs(snapshotShell.game.tipOffAt);
+        return tip != null && tip <= Date.now();
+      })();
+    // Settled snapshot rows already have scores — return them before any CDN
+    // await so a hung package cannot miss the Worker HTML window.
+    if (
+      snapshotShell &&
+      (isFinalStatus(snapshotShell.game.status) ||
+        isLiveLikeStatus(snapshotShell.game.status)) &&
+      ((snapshotShell.game.homeScore ?? 0) > 0 ||
+        (snapshotShell.game.awayScore ?? 0) > 0 ||
+        (snapshotShell.game.period ?? 0) > 0)
+    ) {
+      return withBroadcastFallback(snapshotShell);
+    }
+
     try {
       const { fetchEspnCdnGameBoxScore } = await import(
         "@/data/providers/nba/espn-cdn-game-client"
       );
-      const box = await fetchEspnCdnGameBoxScore(id);
-      const shell = box?.game ? acceptShell(shellFromBox(box)) : null;
+      const cdnPromise = fetchEspnCdnGameBoxScore(id, undefined, {
+        // One package only — two sequential 3.5s attempts exceed the shell budget
+        // and leave RuntimeGameFallback as the document.
+        timeoutMs: 2_500,
+        maxUrls: 1,
+      }).then((box) => (box?.game ? acceptShell(shellFromBox(box)) : null));
+
+      // Start archive lookup in parallel — same row as /api/games/[id].
+      const historicalPromise = getHistoricalGame(id)
+        .then((game) =>
+          game ? acceptShell(shellFromGame(game, "historical")) : null
+        )
+        .catch(() => null);
+
+      // Pre-tip snapshots may paint quickly. After tip-off, wait longer for live CDN
+      // so we do not mount the empty pre-tip board over a game already underway.
+      const snapshotRaceMs = snapshotTipPassed ? 4_000 : 1_200;
+      let shell: GameShell | null;
+      if (snapshotShell) {
+        shell = await Promise.race([
+          cdnPromise,
+          new Promise<GameShell | null>((resolve) => {
+            setTimeout(() => resolve(snapshotShell), snapshotRaceMs);
+          }),
+        ]);
+      } else {
+        // Do not let a CDN miss (null) win a race against historical — that
+        // stranded finals as RuntimeGameFallback whenever the package timed out.
+        const cdnShell = await Promise.race([
+          cdnPromise,
+          new Promise<null>((resolve) => setTimeout(() => resolve(null), 2_000)),
+        ]);
+        shell =
+          cdnShell ??
+          (await Promise.race([
+            historicalPromise,
+            cdnPromise,
+            new Promise<null>((resolve) =>
+              setTimeout(() => resolve(null), 1_500)
+            ),
+          ]));
+      }
+
+      const preferCdn = (cdn: GameShell | null, snap: GameShell) =>
+        Boolean(
+          cdn &&
+            (cdn.hasBoxScore ||
+              compareGameProgress(cdn.game, snap.game) > 0)
+        );
+
       if (shell?.hasBoxScore) {
         return withBroadcastFallback(withSnapshotFacts(shell, fromSnapshot));
+      }
+      if (shell && shell !== snapshotShell) {
+        // Live scoreboard from CDN beats a scheduled snapshot even without a full box.
+        if (
+          snapshotShell &&
+          compareGameProgress(shell.game, snapshotShell.game) > 0
+        ) {
+          return withBroadcastFallback(withSnapshotFacts(shell, fromSnapshot));
+        }
+        if (!fromSnapshot) return withBroadcastFallback(shell);
+      }
+      if (shell?.hasBoxScore === false && shell === snapshotShell) {
+        // Snapshot won — briefly wait for a CDN box, but do not burn the shell
+        // budget on finals/live rows that already have scores.
+        const settled =
+          isFinalStatus(shell.game.status) ||
+          isLiveLikeStatus(shell.game.status);
+        const cdnWaitMs = snapshotTipPassed ? 4_000 : settled ? 800 : 2_500;
+        const cdnShell = await Promise.race([
+          cdnPromise,
+          new Promise<null>((resolve) => setTimeout(() => resolve(null), cdnWaitMs)),
+        ]);
+        if (preferCdn(cdnShell, snapshotShell)) {
+          return withBroadcastFallback(
+            withSnapshotFacts(cdnShell!, fromSnapshot)
+          );
+        }
+        return withBroadcastFallback(snapshotShell);
       }
       if (shell && !fromSnapshot) return withBroadcastFallback(shell);
     } catch {
       // soft-fail
     }
 
+    if (snapshotShell) return withBroadcastFallback(snapshotShell);
+
+    // site.web.api works on Workers; site.api is tried second and often 403s on CF.
     try {
       const box = await fetchEspnEventBoxScore(id, {
         timeoutMs: 2_000,
-        retries: 1,
+        retries: 0,
       });
       const shell = box?.game ? acceptShell(shellFromBox(box)) : null;
       if (shell?.hasBoxScore) {
@@ -384,12 +515,7 @@ export async function getGameShell(gameId: string): Promise<GameShell | null> {
       }
       if (shell && !fromSnapshot) return withBroadcastFallback(shell);
     } catch {
-      // soft-fail to snapshot / provider
-    }
-
-    if (fromSnapshot) {
-      const shell = acceptShell(shellFromGame(fromSnapshot, "runtime-snapshot"));
-      if (shell) return withBroadcastFallback(shell);
+      // soft-fail to provider
     }
 
     try {
@@ -400,6 +526,18 @@ export async function getGameShell(gameId: string): Promise<GameShell | null> {
       if (shell) return withBroadcastFallback(shell);
     } catch {
       // network
+    }
+
+    // Archive / schedule row — same source as /api/games/[id]. CDN can miss on
+    // Workers while historical still has a final scoreboard shell.
+    try {
+      const historical = await getHistoricalGame(id);
+      const shell = historical
+        ? acceptShell(shellFromGame(historical, "historical"))
+        : null;
+      if (shell) return withBroadcastFallback(shell);
+    } catch {
+      // soft-fail
     }
     return null;
   }
@@ -514,10 +652,10 @@ export async function getFilteredGames(
   // Date-scoped Time Machine: try bundled ESPN schedule before remote crawls.
   if (season && hasDateWindow) {
     try {
-      const { getRuntimeSnapshotGames } = await import(
-        "@/data/runtime/game-snapshot"
+      const { getRuntimeSnapshotGamesAsync } = await import(
+        "@/data/runtime/game-snapshot-archive"
       );
-      const snap = getRuntimeSnapshotGames(season);
+      const snap = await getRuntimeSnapshotGamesAsync(season);
       if (snap.length > 0) {
         const filtered = applyGameFilters(snap, filters);
         if (filtered.length > 0) return filtered;
@@ -590,10 +728,10 @@ export async function getSeasonGamesArchive(
   // Workers production: bundled schedule is authoritative — skip live crawls.
   if (preferBundledProductDataOnEdge()) {
     try {
-      const { getRuntimeSnapshotGames } = await import(
-        "@/data/runtime/game-snapshot"
+      const { getRuntimeSnapshotGamesAsync } = await import(
+        "@/data/runtime/game-snapshot-archive"
       );
-      const snap = getRuntimeSnapshotGames(season);
+      const snap = await getRuntimeSnapshotGamesAsync(season);
       if (snap.length > 0) {
         return { games: snap, source: "espn" };
       }
@@ -604,10 +742,10 @@ export async function getSeasonGamesArchive(
 
   // Bundled ESPN schedule (Cloudflare-safe) before live month crawls.
   try {
-    const { getRuntimeSnapshotGames } = await import(
-      "@/data/runtime/game-snapshot"
+    const { getRuntimeSnapshotGamesAsync } = await import(
+      "@/data/runtime/game-snapshot-archive"
     );
-    const snap = getRuntimeSnapshotGames(season);
+    const snap = await getRuntimeSnapshotGamesAsync(season);
     if (snap.length > 0 && isAdequateSeasonGamesCache(season, snap.length)) {
       return { games: snap, source: "espn" };
     }
@@ -636,10 +774,10 @@ export async function getSeasonGamesArchive(
     }
     // Partial snapshot still better than empty for team/history surfaces.
     try {
-      const { getRuntimeSnapshotGames } = await import(
-        "@/data/runtime/game-snapshot"
+      const { getRuntimeSnapshotGamesAsync } = await import(
+        "@/data/runtime/game-snapshot-archive"
       );
-      const snap = getRuntimeSnapshotGames(season);
+      const snap = await getRuntimeSnapshotGamesAsync(season);
       if (snap.length > 0) {
         return { games: snap, source: "espn" };
       }
@@ -869,24 +1007,7 @@ export async function getHomeWeekStripSummaries(
   };
 }
 
-/** Default calendar month for a season (current month if in-season, else next opener). */
-export function defaultScoreboardMonthKey(season?: string): string {
-  const resolved =
-    season ?? canonicalSeasonFromStartYear(currentNbaStartYear());
-  const endYear = espnYearFromCanonicalSeason(resolved);
-  const startYear = endYear - 1;
-  const now = new Date();
-  const current = monthKeyFromDate(now);
-  const [cy, cm] = current.split("-").map(Number);
-  // NBA season roughly Oct (startYear) → June (endYear).
-  const inSeason =
-    (cy === startYear && (cm ?? 0) >= 10) ||
-    (cy === endYear && (cm ?? 0) <= 6);
-  if (inSeason) return current;
-  // Offseason: jump to the next October slate (preseason / opener).
-  if ((cm ?? 0) >= 7) return `${cy}-10`;
-  return `${endYear}-10`;
-}
+export { defaultScoreboardMonthKey };
 
 export async function getScoreboardMonthSummaries(options: {
   monthKey?: string;
@@ -965,7 +1086,9 @@ export async function getUpcomingGameSummaries(
 
   // Cloudflare / cold hosts: live ESPN soft-fails with empty process cache.
   // Fall back to the build-time snapshot so team/player upcoming never blanks.
-  const { getRuntimeSnapshotGames } = await import("@/data/runtime/game-snapshot");
+  const { getRuntimeSnapshotGamesAsync } = await import(
+    "@/data/runtime/game-snapshot-archive"
+  );
   const { upcomingScheduleSeason } = await import(
     "@/data/providers/nba/scoreboard-client"
   );
@@ -974,7 +1097,7 @@ export async function getUpcomingGameSummaries(
   const { nbaTodayIso } = await import("@/lib/nba-calendar-date");
   const today = options.fromDate ?? nbaTodayIso();
   const limit = options.limit ?? 40;
-  let pool = getRuntimeSnapshotGames(season)
+  let pool = (await getRuntimeSnapshotGamesAsync(season))
     .filter(
       (game) =>
         game.gameDate >= today &&

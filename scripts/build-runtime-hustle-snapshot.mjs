@@ -11,6 +11,12 @@ import { nbaSeasonPhaseInfo } from "./lib/nba-season-phase.mjs";
 
 const ROOT = process.cwd();
 const OUT = path.join(ROOT, "src", "data", "runtime", "hustle-overlay-snapshot.json");
+const OUT_PUBLIC = path.join(
+  ROOT,
+  "public",
+  "runtime",
+  "hustle-overlay-snapshot.json"
+);
 
 /** Hustle tracking starts usable in 2020-21; runs through the current season. */
 const FIRST_START_YEAR = 2020;
@@ -167,9 +173,12 @@ const payload = {
   seasons,
 };
 
+const body = JSON.stringify(payload);
 await fs.mkdir(path.dirname(OUT), { recursive: true });
-await fs.writeFile(OUT, JSON.stringify(payload));
-const gz = gzipSync(Buffer.from(JSON.stringify(payload))).length;
+await fs.mkdir(path.dirname(OUT_PUBLIC), { recursive: true });
+await fs.writeFile(OUT, body);
+await fs.writeFile(OUT_PUBLIC, body);
+const gz = gzipSync(Buffer.from(body)).length;
 console.log(
-  `[hustle-snapshot] wrote → ${OUT} (gzip ~${gz} bytes, seasons=${Object.keys(seasons).length})`
+  `[hustle-snapshot] wrote → ${OUT_PUBLIC} (gzip ~${gz} bytes, seasons=${Object.keys(seasons).length}; src mirror ${OUT})`
 );

@@ -238,10 +238,10 @@ export async function loadTransactionArchive(
 
   if (!base) {
     try {
-      const { getBundledTransactionArchive } = await import(
+      const { loadBundledTransactionArchive } = await import(
         "@/data/runtime/transactions-snapshot"
       );
-      const bundled = getBundledTransactionArchive();
+      const bundled = await loadBundledTransactionArchive();
       if (bundled?.transactions?.length) base = bundled;
     } catch {
       // no bundled snapshot

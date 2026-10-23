@@ -14,7 +14,7 @@ and keeps every other player's rows from the previous bake, so it needs a
 previous --full bake. `slugs` (NBA id -> Basketball-Reference slug) is carried
 over unchanged from the previous file; legend routing still depends on it.
 
-Writes src/data/runtime/player-awards-snapshot.json only when it changed.
+Writes public/runtime/player-awards-snapshot.json (+ src mirror) only when it changed.
 """
 
 import gzip
@@ -28,6 +28,7 @@ from curl_cffi import requests
 
 ROOT = os.getcwd()
 OUT = os.path.join(ROOT, "src", "data", "runtime", "player-awards-snapshot.json")
+OUT_PUBLIC = os.path.join(ROOT, "public", "runtime", "player-awards-snapshot.json")
 SOURCE = "stats.nba.com/playerawards"
 
 HEADERS = {
@@ -202,10 +203,14 @@ def main():
     text = json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
     with open(OUT, "w", encoding="utf8") as fh:
         fh.write(text)
+    os.makedirs(os.path.dirname(OUT_PUBLIC), exist_ok=True)
+    with open(OUT_PUBLIC, "w", encoding="utf8") as fh:
+        fh.write(text)
     gz = len(gzip.compress(text.encode("utf8")))
     print(
         f"[player-awards] wrote {len(players)} players from {len(targets)} fetched "
-        f"({len(failed)} failed, kept prior rows), {len(text)} bytes, gzip ~{gz}"
+        f"({len(failed)} failed, kept prior rows), {len(text)} bytes, gzip ~{gz} "
+        f"→ {OUT_PUBLIC} (src mirror {OUT})"
     )
     return 0
 

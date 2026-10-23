@@ -6,7 +6,13 @@ import {
   resolveTeamFrontOfficeSlice,
 } from "@/data/front-office/load-team-front-office";
 import { getTeamContracts, getTeamFuturePicks } from "@/data/queries/team-contracts";
-import { getTeamContractValue } from "@/data/runtime/contract-value";
+import {
+  ensureContractValue,
+  getTeamContractValue,
+} from "@/data/runtime/contract-value";
+import { ensureBrefTeamContracts } from "@/data/runtime/bref-team-contracts";
+import { ensurePlayerIdAliases } from "@/data/runtime/player-id-aliases-snapshot";
+import { ensurePlayerSearch } from "@/data/runtime/player-search-snapshot";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { PayrollSalaryStack } from "@/components/teams/viz/payroll-salary-stack";
 import { VizCard } from "@/components/teams/viz/viz-kit";
@@ -16,6 +22,16 @@ export async function TeamFrontOfficeIsland({ teamId }: { teamId: string }) {
   if (!franchiseId) return null;
 
   const frontOfficeSeason = getCurrentFrontOfficeSeason();
+
+  await Promise.all([
+    ensureBrefTeamContracts(),
+    ensureContractValue(),
+    ensurePlayerIdAliases(),
+    ensurePlayerSearch(),
+    import("@/data/runtime/future-picks-snapshot").then((m) =>
+      m.ensureFuturePicks()
+    ),
+  ]);
 
   const slice = await resolveTeamFrontOfficeSlice(franchiseId, frontOfficeSeason);
   if (!slice) {

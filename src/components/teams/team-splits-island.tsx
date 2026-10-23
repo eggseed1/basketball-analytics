@@ -129,6 +129,10 @@ export async function TeamSplitsIsland({
   teamKey?: string;
 }) {
   const gamesHref = teamPageHref(teamId, { season, tab: "games" });
+  const { ensureRuntimeSnapshotSeason } = await import(
+    "@/data/runtime/game-snapshot-archive"
+  );
+  await ensureRuntimeSnapshotSeason(season);
 
   if (!hasTeamSnapshotGames(teamId, season)) {
     return (

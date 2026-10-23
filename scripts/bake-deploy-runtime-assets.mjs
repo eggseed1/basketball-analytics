@@ -62,6 +62,50 @@ run("node", ["scripts/build-runtime-player-game-logs.mjs"], {
 
 run("npx", ["tsx", "scripts/build-season-shots-from-pbp.ts", "--season", season]);
 
+// Default Explore first page — cold MISS skips season-tables + overlays.
+run("npx", ["tsx", "scripts/build-explore-players-first-page.ts"], {
+  DATA_PROVIDER: "nba",
+});
+
+// Player careers extract — keeps /players off the 9MB season-tables module.
+run("node", ["scripts/build-player-career-bref-snapshot.mjs"]);
+
+// Large runtime JSON as Static Assets (keeps MiB off Worker upload).
+run("node", [
+  "-e",
+  [
+    "const fs=require('fs');const p=require('path');",
+    "const files=[",
+    "'transactions-snapshot.json',",
+    "'contract-value-snapshot.json',",
+    "'salary-payoff-snapshot.json',",
+    "'bref-team-contracts-snapshot.json',",
+    "'player-id-aliases-snapshot.json',",
+    "'player-awards-snapshot.json',",
+    "'draft-year-snapshot.json',",
+    "'draft-history-snapshot.json',",
+    "'historical-team-season-records.json',",
+    "'standings-snapshot.json',",
+    "'current-roster-snapshot.json',",
+    "'future-picks-snapshot.json',",
+    "'findings-archive.json',",
+    "'team-leadership.json',",
+    "'explore-players-first-page.json',",
+    "'drbl-guide-snapshot.json',",
+    "'espn-name-index.json',",
+    "'pbp-index.json',",
+    "];",
+    "for (const name of files) {",
+    "const src=p.join('src/data/runtime',name);",
+    "const dest=p.join('public/runtime',name);",
+    "if (!fs.existsSync(src)) { console.warn('[bake-deploy-assets] skip missing', name); continue; }",
+    "fs.mkdirSync(p.dirname(dest),{recursive:true});",
+    "fs.copyFileSync(src,dest);",
+    "console.log('[bake-deploy-assets] copied', name, '→ public/runtime');",
+    "}",
+  ].join(""),
+]);
+
 const logDir = path.join(ROOT, "public/runtime/player-game-logs", season);
 const shotDir = path.join(ROOT, "public/runtime/player-shots", season);
 const logCount = countJson(logDir);

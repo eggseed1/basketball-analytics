@@ -16,6 +16,7 @@ const ROOT = process.cwd();
 const SNAPSHOT = path.join(ROOT, "src", "data", "runtime", "game-snapshot.json");
 const OUT_ROOT = path.join(ROOT, "public", "runtime", "play-by-play");
 const INDEX_OUT = path.join(ROOT, "src", "data", "runtime", "pbp-index.json");
+const INDEX_PUBLIC = path.join(ROOT, "public", "runtime", "pbp-index.json");
 
 const FORCE = process.env.FORCE === "1";
 const CONCURRENCY = Number(process.env.PBP_CONCURRENCY || 8);
@@ -317,8 +318,11 @@ const index = {
   games,
 };
 
-await fs.writeFile(INDEX_OUT, JSON.stringify(index, null, 2));
+const indexBody = JSON.stringify(index, null, 2);
+await fs.writeFile(INDEX_OUT, indexBody);
+await fs.mkdir(path.dirname(INDEX_PUBLIC), { recursive: true });
+await fs.writeFile(INDEX_PUBLIC, indexBody);
 
 console.log(
-  `[pbp-bake] done baked=${baked} skipped=${skipped} failed=${failed} index=${index.gameCount} verify=${verifyGameId}`
+  `[pbp-bake] done baked=${baked} skipped=${skipped} failed=${failed} index=${index.gameCount} verify=${verifyGameId} → ${INDEX_PUBLIC}`
 );

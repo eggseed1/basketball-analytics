@@ -382,12 +382,16 @@ export async function getGameAnalysis(
 
   const orientedGame = alignGameWithPbpHomeAway(game, playByPlay);
 
-  const [homeLabels, awayLabels, seasonBoard, teamBoard] = await Promise.all([
-    resolveSideLabels(orientedGame, "home"),
-    resolveSideLabels(orientedGame, "away"),
-    seasonBoardPromise,
-    teamBoardPromise,
-  ]);
+  // Season peer board enriches box context; do not let a cold board block Lab.
+  const peerBoardBudgetMs = longUpstreamBudgetsEnabled() ? 1_500 : 800;
+  const [homeLabels, awayLabels, seasonBoardTimed, teamBoard] =
+    await Promise.all([
+      resolveSideLabels(orientedGame, "home"),
+      resolveSideLabels(orientedGame, "away"),
+      withBudget(seasonBoardPromise, peerBoardBudgetMs, [] as PlayerSeason[]),
+      teamBoardPromise,
+    ]);
+  const seasonBoard = seasonBoardTimed.value;
 
   const seasonByPlayerId = new Map<string, PlayerSeason>();
   for (const row of seasonBoard) {

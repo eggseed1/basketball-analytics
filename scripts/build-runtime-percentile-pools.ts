@@ -6,9 +6,9 @@
  * season against the same boards the API uses (bundled BRef + DARKO + DRBL +
  * hustle overlays) and keeps 101 quantile cutoffs per metric.
  *
- * Writes src/data/runtime/percentile-pools-snapshot.json.
+ * Writes public/runtime/percentile-pools-snapshot.json (+ src mirror).
  */
-import { readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
 // Bundled overlays, same as Cloudflare Workers production.
@@ -81,6 +81,10 @@ async function main() {
   );
 
   const file = path.join(process.cwd(), "src/data/runtime/percentile-pools-snapshot.json");
+  const publicFile = path.join(
+    process.cwd(),
+    "public/runtime/percentile-pools-snapshot.json"
+  );
   let merged = seasons;
   if (only.length > 0) {
     const existing = JSON.parse(readFileSync(file, "utf8")) as {
@@ -88,11 +92,17 @@ async function main() {
     };
     merged = { ...(existing.seasons ?? {}), ...seasons };
   }
-  writeFileSync(
-    file,
-    JSON.stringify({ version: 1, generatedAt: new Date().toISOString(), seasons: merged })
+  const body = JSON.stringify({
+    version: 1,
+    generatedAt: new Date().toISOString(),
+    seasons: merged,
+  });
+  writeFileSync(file, body);
+  mkdirSync(path.dirname(publicFile), { recursive: true });
+  writeFileSync(publicFile, body);
+  console.log(
+    `wrote ${path.relative(process.cwd(), publicFile)} (src mirror ${path.relative(process.cwd(), file)})`
   );
-  console.log(`wrote ${path.relative(process.cwd(), file)}`);
 }
 
 main().catch((error) => {

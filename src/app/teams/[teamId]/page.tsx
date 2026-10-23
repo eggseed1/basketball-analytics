@@ -1,47 +1,20 @@
-import { Suspense } from "react";
+import { Suspense, type ComponentProps } from "react";
 import { getTranslations } from "next-intl/server";
 import { notFound, redirect } from "next/navigation";
 
-import { analyzeTeamProfile } from "@/analytics";
-import { StatDisclosure } from "@/components/analytics/stat-disclosure";
 import { PageAtmosphere } from "@/components/brand/page-atmosphere";
 import { DestinationClientShell } from "@/components/continuity/destination-client-shell";
 import { DestinationSectionSkeleton } from "@/components/continuity/destination-loading-frame";
 import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { GlassTintScaleProvider } from "@/components/brand/glass-surface";
 import { TeamDestinationIdentity } from "@/components/teams/team-destination-identity";
-import { TeamEvidenceIsland } from "@/components/teams/team-evidence-island";
-import { TeamGamesIsland } from "@/components/teams/team-games-island";
-import { TeamHustleIsland } from "@/components/teams/team-hustle-island";
-import { TeamLeadershipSection } from "@/components/teams/team-leadership-section";
-import { TeamLineupsIsland } from "@/components/teams/team-lineups-island";
-import { TeamOnOffIsland } from "@/components/teams/team-on-off-island";
-import { TeamOffenseIsland } from "@/components/teams/team-offense-island";
-import { TeamPlayoffsIsland } from "@/components/teams/team-playoffs-island";
-import { TeamSplitsIsland } from "@/components/teams/team-splits-island";
-import { TeamOpeningNight } from "@/components/teams/overview/team-opening-night";
-import { TeamRosterWar1Island } from "@/components/teams/overview/team-roster-war1-island";
-import { TeamOverviewVisuals } from "@/components/teams/overview/team-overview-visuals";
-import { TeamSeasonRecapIsland } from "@/components/teams/overview/team-season-recap-island";
-import { StatsRankGrid } from "@/components/teams/viz/stats-rank-grid";
 import { TeamPrimaryNav } from "@/components/teams/team-primary-nav";
-import { TeamRosterIsland } from "@/components/teams/team-roster-island";
-import { TeamRosterBuiltIsland } from "@/components/teams/team-roster-built-island";
-import { TeamSalaryAssetsTab } from "@/components/teams/team-salary-assets-tab";
-import { TeamSentimentTab } from "@/components/teams/team-sentiment-tab";
-import { TeamRosterSourcesSection } from "@/components/teams/team-roster-sources-section";
-import { TeamScheduleIsland } from "@/components/teams/team-schedule-island";
-import { TeamTransactionsIsland } from "@/components/teams/team-transactions-island";
 import { EraThemeScope } from "@/components/time-machine/era-theme-scope";
 import {
   canonicalSeasonFromStartYear,
   currentNbaStartYear,
 } from "@/data/providers/historical/season-range";
-import { getTeamExploreSeasons } from "@/data/queries";
 import { getFranchiseHistory } from "@/data/queries/franchises";
-import { getTeamSeasonBoardCached } from "@/data/queries/request-cache";
-import { formatOrdinal } from "@/lib/format";
-import { isSeasonAwaitingFirstGame } from "@/lib/nba-season-status";
 import { resolveHistoricalTeamBrand } from "@/lib/historical-team-brand";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { brandAtmosphereColors } from "@/lib/game-matchup-theme";
@@ -49,25 +22,13 @@ import { shiftCanonicalSeason } from "@/lib/player-stat-comps";
 import {
   parseTeamPageTab,
   parseTeamRateMode,
-  parseTeamSalaryView,
   parseTeamSeasonKind,
   resolveTeamIdentityFallback,
   teamFranchiseHistoryHref,
   type TeamPageHrefOpts,
 } from "@/lib/team-destination";
-import { buildTeamRankedMetrics, formatMetricDelta, leagueRankOf } from "@/lib/team-page-metrics";
-import { nbaTodayIso } from "@/lib/nba-calendar-date";
-import { buildScheduleFacts } from "@/lib/team-overview-data";
-import {
-  enrichTraitsWithPrior,
-  formatTraitPriorDelta,
-  groupTraitsForPerformance,
-  resolveTeamFromBoard,
-  transactionTeamFilterId,
-} from "@/lib/team-explorer";
 import {
   resolveTeamDivisionMeta,
-  resolveTeamStandingsDisplay,
 } from "@/lib/team-standings-context";
 import {
   resolveActiveEraTheme,
@@ -96,12 +57,10 @@ export async function generateMetadata({ params, searchParams }: TeamPageProps) 
   const seasonParam = Array.isArray(sp.season) ? sp.season[0] : sp.season;
   const season =
     seasonParam ?? canonicalSeasonFromStartYear(currentNbaStartYear());
-  const board = await getTeamSeasonBoardCached(season);
-  const boardTeam = resolveTeamFromBoard(board.rows, teamId);
-  const fallback = boardTeam ? null : resolveTeamIdentityFallback(teamId, season, "era");
-  const fullName = boardTeam?.fullName ?? fallback?.fullName;
-  // Abbreviations and slugs (TOR, raptors) render the same page as the canonical id.
-  const canonicalTeamId = boardTeam?.teamId ?? fallback?.teamId ?? teamId;
+  // Identity only — keep team-board-snapshot (~1.5MB) off metadata cold path.
+  const identity = resolveTeamIdentityFallback(teamId, season, "era");
+  const fullName = identity?.fullName;
+  const canonicalTeamId = identity?.teamId ?? teamId;
   const pastSeason =
     seasonParam && seasonParam !== canonicalSeasonFromStartYear(currentNbaStartYear())
       ? `?season=${encodeURIComponent(seasonParam)}`
@@ -126,6 +85,14 @@ export async function generateMetadata({ params, searchParams }: TeamPageProps) 
  * Progressive team destination: identity + core board paint first;
  * arc / evidence / roster / games / transactions / assets stream as islands.
  */
+
+async function TeamPageWithBoardLazy(
+  props: ComponentProps<typeof import("./team-page-with-board").TeamPageWithBoard>
+) {
+  const { TeamPageWithBoard } = await import("./team-page-with-board");
+  return <TeamPageWithBoard {...props} />;
+}
+
 export default async function TeamProfilePage({
   params,
   searchParams,
@@ -151,40 +118,46 @@ export default async function TeamProfilePage({
   const brandPresentation =
     applyEraTheme && themeMode !== "modern" ? "era" : "modern_surface";
 
-  // Season board first — skip prior-season ESPN pull during preseason/offseason
-  // so identity can paint without a second 2.5s budget race.
-  const seasonBoard = await getTeamSeasonBoardCached(season);
-  const league = seasonBoard.rows;
-  const seasonAwaitingGames = isSeasonAwaitingFirstGame(season, league);
+  // Sync brand only — never touch team-board-snapshot before first byte.
+  const identityFallback = resolveTeamIdentityFallback(
+    teamId,
+    season,
+    brandPresentation
+  );
+  if (!identityFallback) notFound();
 
-  const [priorBoard, exploreSeasons] = await Promise.all([
-    seasonAwaitingGames
-      ? Promise.resolve({
-          rows: [] as typeof seasonBoard.rows,
-          status: "preseason" as const,
-        })
-      : getTeamSeasonBoardCached(priorSeason),
-    getTeamExploreSeasons().catch(() => [currentSeason, priorSeason]),
-  ]);
-
-  const priorLeague = priorBoard.rows;
-
-  const boardTeam = resolveTeamFromBoard(league, teamId);
-
-  const identityFallback = !boardTeam
-    ? resolveTeamIdentityFallback(teamId, season, brandPresentation)
-    : null;
-  if (!boardTeam && !identityFallback) notFound();
-
-  const boardAvailable = Boolean(boardTeam);
-  const identityTeam = boardTeam ?? {
-    abbreviation: identityFallback!.abbreviation,
-    fullName: identityFallback!.fullName,
-    conference: identityFallback!.conference,
+  const modernBrand = resolveTeamBrand(identityFallback.abbreviation);
+  const historicalBrand =
+    identityFallback.historicalBrand ??
+    resolveHistoricalTeamBrand(
+      identityFallback.teamId,
+      season,
+      brandPresentation
+    );
+  const useHistoricalMark =
+    applyEraTheme && themeMode !== "modern"
+      ? true
+      : Boolean(historicalBrand?.isHistorical);
+  const hrefOpts: TeamPageHrefOpts = {
+    season,
+    tab,
+    seasonType,
+    rate,
+    fromHistory,
+    themeMode: themeMode === "modern" ? "modern" : "historical",
+  };
+  const seasonOptions = [...new Set([season, priorSeason, currentSeason])]
+    .filter(Boolean)
+    .sort((a, b) => b.localeCompare(a));
+  const franchise = modernBrand ? getFranchiseHistory(modernBrand.id) : null;
+  const identityTeam = {
+    abbreviation: identityFallback.abbreviation,
+    fullName: identityFallback.fullName,
+    conference: identityFallback.conference,
     ppg: Number.NaN,
     avgDiff: Number.NaN,
     trueShootingPct: undefined,
-    teamId: identityFallback!.teamId,
+    teamId: identityFallback.teamId,
     season,
     gamesPlayed: 0,
     oppPpg: Number.NaN,
@@ -208,146 +181,19 @@ export default async function TeamProfilePage({
     assists: 0,
     turnovers: 0,
   };
-
-  const prior = boardTeam
-    ? priorLeague.find((t) => t.teamId === boardTeam.teamId) ??
-      priorLeague.find(
-        (t) =>
-          t.abbreviation.toLowerCase() ===
-          boardTeam.abbreviation.toLowerCase()
-      ) ??
-      null
-    : null;
-
-  const modernBrand = resolveTeamBrand(identityTeam.abbreviation);
-  const standingsContext = boardTeam
-    ? await resolveTeamStandingsDisplay({
-        season,
-        currentSeason,
-        team: boardTeam,
-        brand: modernBrand,
-        boardRows: league,
-      })
-    : {
-        standing: null,
-        divisionStanding: null,
-        divisionMeta: resolveTeamDivisionMeta(
-          modernBrand,
-          identityFallback?.teamId ?? teamId
-        ),
-        priorSeasonStanding: null,
-        priorSeasonLabel: null,
-        seasonAwaitingGames,
-        standingsEmpty: false,
-      };
-
-  const analysis =
-    boardTeam && !seasonAwaitingGames
-      ? analyzeTeamProfile({ team: boardTeam, league, prior })
-      : null;
-  const traits = analysis
-    ? enrichTraitsWithPrior(analysis.traits, boardTeam!, prior)
-    : [];
-  const historicalBrand =
-    identityFallback?.historicalBrand ??
-    resolveHistoricalTeamBrand(
-      identityTeam.teamId ?? boardTeam?.teamId ?? teamId,
-      season,
-      brandPresentation
-    );
-  const useHistoricalMark =
-    applyEraTheme && themeMode !== "modern"
-      ? true
-      : Boolean(historicalBrand?.isHistorical);
-  const resolvedTeamId =
-    boardTeam?.teamId ?? identityFallback!.teamId;
-  const txTeamId = boardTeam
-    ? transactionTeamFilterId(boardTeam, modernBrand)
-    : identityFallback!.teamId;
-  const askTeamId = modernBrand?.espnTeamId ?? resolvedTeamId;
-
-  const standing = standingsContext.standing;
-  const divisionStanding = standingsContext.divisionStanding;
-
-  const grouped = groupTraitsForPerformance(traits);
-  const ranked =
-    boardTeam && !seasonAwaitingGames
-      ? buildTeamRankedMetrics({
-          team: boardTeam,
-          league,
-          prior,
-          standing,
-          traits,
-        })
-      : [];
-  const scorecard = ranked.filter((m) => m.group === "scorecard");
-  const offenseMetrics = ranked.filter((m) => m.group === "offense");
-  const defenseMetrics = ranked.filter((m) => m.group === "defense");
-  const factorMetrics = ranked.filter((m) => m.group === "factors");
-  const boardMetrics = [...scorecard, ...offenseMetrics, ...defenseMetrics, ...factorMetrics];
-  const hrefOpts: TeamPageHrefOpts = {
-    season,
-    tab,
-    seasonType,
-    rate,
-    fromHistory,
-    themeMode: themeMode === "modern" ? "modern" : "historical",
+  const seasonAwaitingGamesGuess = season === currentSeason;
+  const standingsContext = {
+    standing: null,
+    divisionStanding: null,
+    divisionMeta: resolveTeamDivisionMeta(
+      modernBrand,
+      identityFallback.teamId
+    ),
+    priorSeasonStanding: null,
+    priorSeasonLabel: null,
+    seasonAwaitingGames: seasonAwaitingGamesGuess,
+    standingsEmpty: false,
   };
-
-  const franchise = modernBrand ? getFranchiseHistory(modernBrand.id) : null;
-  const franchiseFirstSeason = franchise?.firstSeason;
-  const seasonOptions = [
-    ...new Set([
-      season,
-      ...exploreSeasons,
-      priorSeason,
-      currentSeason,
-    ]),
-  ]
-    .filter(Boolean)
-    .filter(
-      (s) =>
-        s === season ||
-        !franchiseFirstSeason ||
-        s.localeCompare(franchiseFirstSeason) >= 0
-    )
-    .sort((a, b) => b.localeCompare(a));
-
-  const snapshotStats = seasonAwaitingGames
-    ? []
-    : scorecard
-        .filter(
-          (m) =>
-            m.key !== "record" &&
-            !m.missingReason &&
-            m.rank != null &&
-            m.rankDenominator != null
-        )
-        .slice(0, 4)
-        .map((m) => ({
-          label: m.label,
-          value: formatOrdinal(m.rank!),
-          hint: m.formattedValue,
-          tip: `${formatOrdinal(m.rank!)} of ${m.rankDenominator} in ${m.label.toLowerCase()}`,
-          tipSub: [
-            m.differenceFromAverage != null && Number.isFinite(m.differenceFromAverage)
-              ? `${formatMetricDelta(m.key, m.differenceFromAverage)} vs league average`
-              : null,
-            m.previousFormatted,
-          ]
-            .filter(Boolean)
-            .join(" · ") || undefined,
-        }));
-
-  const displayName =
-    useHistoricalMark && historicalBrand?.displayName
-      ? historicalBrand.displayName
-      : identityTeam.fullName;
-
-  const eraTheme = applyEraTheme
-    ? resolveActiveEraTheme(season, themeMode)
-    : null;
-
   const atmosphere = brandAtmosphereColors(
     useHistoricalMark && historicalBrand?.palette
       ? historicalBrand.palette.primary
@@ -355,6 +201,33 @@ export default async function TeamProfilePage({
     useHistoricalMark && historicalBrand?.palette
       ? historicalBrand.palette.secondary
       : modernBrand?.secondary
+  );
+  const eraTheme = applyEraTheme
+    ? resolveActiveEraTheme(season, themeMode)
+    : null;
+
+  const brandFallback = (
+    <>
+      <TeamDestinationIdentity
+        teamId={teamId}
+        team={identityTeam}
+        season={season}
+        seasonOptions={seasonOptions}
+        standing={null}
+        divisionStanding={null}
+        standingsContext={standingsContext}
+        snapshotStats={[]}
+        modernBrand={modernBrand}
+        historicalBrand={historicalBrand}
+        useHistoricalMark={useHistoricalMark}
+        boardAvailable={false}
+        hrefOpts={hrefOpts}
+        franchise={franchise}
+        historyHref={teamFranchiseHistoryHref(teamId, seasonParam)}
+      />
+      <TeamPrimaryNav teamId={teamId} tab={tab} hrefOpts={hrefOpts} />
+      <DestinationSectionSkeleton label={t("loadingTeamArc")} />
+    </>
   );
 
   const body = (
@@ -364,358 +237,49 @@ export default async function TeamProfilePage({
         colorB={atmosphere?.colorB}
       />
       <GlassTintScaleProvider scale={TEAM_CARD_TINT_SCALE}>
-      <main data-motion-page className="site-shell relative z-[1] flex flex-col gap-4 py-5 sm:gap-5 sm:py-7">
-        <JsonLd
-          data={{
-            "@context": "https://schema.org",
-            "@type": "SportsTeam",
-            name: identityTeam.fullName,
-            sport: "Basketball",
-            url: absoluteUrl(`/teams/${encodeURIComponent(identityTeam.teamId)}`),
-            memberOf: { "@type": "SportsOrganization", name: "National Basketball Association" },
-          }}
-        />
-        <MotionReveal />
-        <TeamDestinationIdentity
-          teamId={teamId}
-          team={identityTeam}
-          season={season}
-          seasonOptions={seasonOptions}
-          standing={standing}
-          divisionStanding={divisionStanding}
-          standingsContext={standingsContext}
-          snapshotStats={snapshotStats}
-          modernBrand={modernBrand}
-          historicalBrand={historicalBrand}
-          useHistoricalMark={useHistoricalMark}
-          boardAvailable={boardAvailable}
-          hrefOpts={hrefOpts}
-          franchise={franchise}
-          historyHref={teamFranchiseHistoryHref(teamId, seasonParam)}
-        />
-
-        <TeamPrimaryNav
-          teamId={teamId}
-          tab={tab}
-          hrefOpts={hrefOpts}
-        />
-
-        {tab === "overview" ? (
-          seasonAwaitingGames ? (
-            <div data-motion-stack className="flex flex-col gap-4">
-              <TeamOpeningNight
-                facts={buildScheduleFacts(resolvedTeamId, season, nbaTodayIso())}
-                season={season}
-                teamId={teamId}
-                teamName={displayName}
-              />
-              <Suspense
-                fallback={<DestinationSectionSkeleton label={t("loadingPriorReview", { season: priorSeason })} />}
-              >
-                <TeamSeasonRecapIsland routeTeamId={teamId} season={priorSeason} />
-              </Suspense>
-              <Suspense
-                fallback={<DestinationSectionSkeleton label={t("loadingRosterWar1")} />}
-              >
-                <TeamRosterWar1Island
-                  season={season}
-                  teamKey={identityTeam.abbreviation}
-                  gamesPlayed={null}
-                  record={null}
-                />
-              </Suspense>
-            </div>
-          ) : boardAvailable && analysis ? (
-            <TeamOverviewVisuals
-              team={boardTeam!}
-              league={league}
-              ranked={ranked}
-              traits={traits}
-              howTheyWin={analysis.howTheyWin}
-              season={season}
-              record={
-                standing && standing.wins + standing.losses > 0
-                  ? { wins: standing.wins, losses: standing.losses }
-                  : null
-              }
-            />
-          ) : (
-            <section
-              id="performance"
-              className="scroll-mt-16 flex flex-col gap-3"
-              aria-label={t("ariaOverview")}
-            >
-              <h2 className="text-[20px] font-bold tracking-tight">
-                {t("howGoodTitle")}
-              </h2>
-              <p className="text-[14px] text-muted-foreground">
-                {t("boardUnavailable", { season })}
-              </p>
-            </section>
-          )
-        ) : null}
-
-        {tab === "players" ? (
-          <Suspense
-            fallback={<DestinationSectionSkeleton label={t("loadingRoster")} />}
-          >
-            <TeamRosterIsland
-              teamId={resolvedTeamId}
-              season={season}
-              sortParam={Array.isArray(sp.sort) ? sp.sort[0] : sp.sort}
-              sortDirParam={Array.isArray(sp.dir) ? sp.dir[0] : sp.dir}
-            />
-          </Suspense>
-        ) : null}
-
-        {tab === "players" ? (
-          <Suspense
-            fallback={<DestinationSectionSkeleton label={t("loadingRotation")} />}
-          >
-            <TeamLineupsIsland
-              teamId={resolvedTeamId}
-              season={season}
-              teamKey={identityTeam.abbreviation}
-            />
-          </Suspense>
-        ) : null}
-
-        {tab === "players" && season === currentSeason && askTeamId ? (
-          <Suspense fallback={null}>
-            <TeamRosterBuiltIsland espnTeamId={askTeamId} />
-          </Suspense>
-        ) : null}
-
-        {tab === "offense" ? (
-          boardAvailable && !seasonAwaitingGames ? (
-            <Suspense
-              fallback={<DestinationSectionSkeleton label={t("loadingOffense")} />}
-            >
-              <TeamOffenseIsland
-                teamId={resolvedTeamId}
-                season={season}
-                teamKey={identityTeam.abbreviation}
-                team={boardTeam!}
-                offenseMetrics={offenseMetrics}
-                leagueTs={scorecard.find((m) => m.key === "ts")?.leagueAverage ?? null}
-              />
-            </Suspense>
-          ) : (
-            <section id="offense" className="scroll-mt-16" aria-label={t("ariaOffense")}>
-              <p className="text-[14px] text-muted-foreground">
-                {t("offenseUnavailable", { season })}
-              </p>
-            </section>
-          )
-        ) : null}
-
-        {tab === "offense" ? (
-          <Suspense
-            fallback={<DestinationSectionSkeleton label={t("loadingHustle")} />}
-          >
-            <TeamHustleIsland
-              teamId={resolvedTeamId}
-              season={season}
-              teamKey={identityTeam.abbreviation}
-              team={boardTeam ?? null}
-              defenseMetrics={defenseMetrics}
-            />
-          </Suspense>
-        ) : null}
-
-        {tab === "onoff" ? (
-          <Suspense
-            fallback={<DestinationSectionSkeleton label={t("loadingOnOff")} />}
-          >
-            <TeamOnOffIsland
-              teamId={resolvedTeamId}
-              season={season}
-              teamKey={identityTeam.abbreviation}
-            />
-          </Suspense>
-        ) : null}
-
-        {tab === "games" ? (
-          <Suspense
-            fallback={<DestinationSectionSkeleton label={t("loadingGames")} />}
-          >
-            <TeamGamesIsland
-              team={identityTeam}
-              brand={modernBrand}
-              season={season}
-              schedule={
-                <TeamScheduleIsland teamId={resolvedTeamId} season={season} teamKey={identityTeam.abbreviation} />
-              }
-            />
-          </Suspense>
-        ) : null}
-
-        {tab === "splits" ? (
-          <Suspense
-            fallback={<DestinationSectionSkeleton label={t("loadingSplits")} />}
-          >
-            <TeamSplitsIsland teamId={resolvedTeamId} season={season} teamKey={identityTeam.abbreviation} />
-          </Suspense>
-        ) : null}
-
-        {tab === "playoffs" ? (
-          <Suspense
-            fallback={<DestinationSectionSkeleton label={t("loadingPlayoffs")} />}
-          >
-            <TeamPlayoffsIsland teamId={resolvedTeamId} season={season} teamKey={identityTeam.abbreviation} />
-          </Suspense>
-        ) : null}
-
-        {tab === "organization" ? (
-          <div data-motion-stack className="flex flex-col gap-8">
-            <TeamLeadershipSection
-              teamId={askTeamId}
-              teamKey={identityTeam.abbreviation}
-              teamName={displayName}
-              season={season}
-              currentSeason={currentSeason}
-            />
-            {season === currentSeason ? (
-              <Suspense fallback={<DestinationSectionSkeleton label={t("loadingRosterMoves")} />}>
-                <TeamRosterSourcesSection teamId={askTeamId} teamKey={identityTeam.abbreviation} />
-              </Suspense>
-            ) : null}
-            <Suspense
-              fallback={
-                <DestinationSectionSkeleton label={t("loadingTransactions")} />
-              }
-            >
-              <TeamTransactionsIsland teamFilterId={txTeamId} />
-            </Suspense>
-          </div>
-        ) : null}
-
-        {tab === "sentiment" ? (
-          <Suspense fallback={<DestinationSectionSkeleton label={t("loadingSentiment")} />}>
-            <TeamSentimentTab teamId={resolvedTeamId} />
-          </Suspense>
-        ) : null}
-
-        {tab === "payroll" ? (
-          <TeamSalaryAssetsTab
-            routeTeamId={teamId}
-            teamId={resolvedTeamId}
-            espnTeamId={askTeamId}
-            abbreviation={identityTeam.abbreviation}
-            season={season}
-            view={parseTeamSalaryView(Array.isArray(sp.view) ? sp.view[0] : sp.view)}
+        <main
+          data-motion-page
+          className="site-shell relative z-[1] flex flex-col gap-4 py-5 sm:gap-5 sm:py-7"
+        >
+          <JsonLd
+            data={{
+              "@context": "https://schema.org",
+              "@type": "SportsTeam",
+              name: identityTeam.fullName,
+              sport: "Basketball",
+              url: absoluteUrl(
+                `/teams/${encodeURIComponent(identityTeam.teamId)}`
+              ),
+              memberOf: {
+                "@type": "SportsOrganization",
+                name: "National Basketball Association",
+              },
+            }}
           />
-        ) : null}
-
-        {tab === "stats" ? (
-          <div className="flex flex-col gap-4">
-            {boardAvailable && analysis && !seasonAwaitingGames ? (
-              <section
-                id="all-stats"
-                className="scroll-mt-16 flex flex-col gap-4"
-                aria-label={t("ariaAllStats")}
-              >
-                <div>
-                  <h2 className="text-[20px] font-bold tracking-tight">
-                    {t("allStatsTitle")}
-                  </h2>
-                  <p className="text-[14px] text-muted-foreground">
-                    {t("allStatsHint", { rate })}
-                  </p>
-                </div>
-                <StatsRankGrid
-                  season={season}
-                  teamKey={identityTeam.abbreviation}
-                  rows={boardMetrics
-                    .filter(
-                      (m, i) =>
-                        !m.missingReason &&
-                        boardMetrics.findIndex((x) => x.key === m.key) === i
-                    )
-                    .map((metric) => ({
-                      metric,
-                      prior:
-                        metric.key === "record"
-                          ? null
-                          : leagueRankOf(metric.key, prior, priorLeague),
-                    }))}
-                  missingLabels={[
-                    ...new Set(
-                      boardMetrics
-                        .filter((m) => m.missingReason && m.key !== "record")
-                        .map((m) => m.label)
-                    ),
-                  ]}
-                />
-                <TraitGroup title={t("traitOverall")} traits={grouped.overall} />
-                <TraitGroup
-                  title={t("traitEfficiency")}
-                  traits={grouped.efficiency}
-                />
-                <TraitGroup title={t("traitOffense")} traits={grouped.offense} />
-                <TraitGroup title={t("traitDefense")} traits={grouped.defense} />
-              </section>
-            ) : null}
-            <Suspense
-              fallback={
-                <DestinationSectionSkeleton label={t("loadingSeasonEvidence")} />
-              }
-            >
-              <TeamEvidenceIsland
-                teamId={askTeamId}
-                season={season}
-                abbreviation={identityTeam.abbreviation}
-                fullName={displayName}
-              />
-            </Suspense>
-          </div>
-        ) : null}
-      </main>
+          <MotionReveal />
+          <Suspense fallback={brandFallback}>
+            <TeamPageWithBoardLazy
+              teamId={teamId}
+              sp={sp}
+              seasonParam={seasonParam}
+              season={season}
+              priorSeason={priorSeason}
+              currentSeason={currentSeason}
+              tab={tab}
+              seasonType={seasonType}
+              rate={rate}
+              fromHistory={fromHistory}
+              themeMode={themeMode}
+              applyEraTheme={applyEraTheme}
+              brandPresentation={brandPresentation}
+              identityFallback={identityFallback}
+            />
+          </Suspense>
+        </main>
       </GlassTintScaleProvider>
     </DestinationClientShell>
   );
 
   if (!eraTheme) return body;
   return <EraThemeScope theme={eraTheme}>{body}</EraThemeScope>;
-}
-
-function TraitGroup({
-  title,
-  traits,
-}: {
-  title: string;
-  traits: ReturnType<typeof enrichTraitsWithPrior>;
-}) {
-  if (!traits.length) return null;
-  return (
-    <div className="flex flex-col gap-2">
-      <h3 className="text-[14px] font-bold uppercase tracking-wide text-muted-foreground">
-        {title}
-      </h3>
-      <div data-hover-group className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {traits.map((trait) => (
-          <div key={trait.id} data-stat-tile data-hover-item className="sports-card px-4 py-4">
-            <StatDisclosure
-              label={trait.label}
-              context={trait.context}
-              conceptId={
-                trait.id === "3par"
-                  ? "three_par"
-                  : trait.id === "asttov"
-                    ? "ast_to"
-                    : trait.id === "opp"
-                      ? "opp_ppg"
-                      : trait.id
-              }
-            />
-            {trait.context.vsPrior != null ? (
-              <p className="mt-2 text-[12px] text-muted-foreground">
-                {formatTraitPriorDelta(trait.id, trait.context.vsPrior)}
-              </p>
-            ) : null}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
 }

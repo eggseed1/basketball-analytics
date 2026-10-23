@@ -304,6 +304,10 @@ async function loadNbaHistoricalTeamDirectory(
     /* fall through to bundle */
   }
 
+  const { ensureHistoricalTeamSeasonRecords } = await import(
+    "@/data/history/historical-team-season-records"
+  );
+  await ensureHistoricalTeamSeasonRecords();
   return getBundledHistoricalTeamSeasonRecords(season)
     .map((row) => directoryFromBundledRecord(row, season))
     .filter((row): row is HistoricalTeamDirectoryRow => row != null);

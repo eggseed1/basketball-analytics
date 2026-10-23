@@ -32,12 +32,12 @@ export const ROOT_CLIENT_MESSAGE_NAMESPACES = [
   "Explore",
   "PlayerDetail",
   "TeamDetail",
-  "Gm",
 ] as const;
 
 /** Full audit list including route-scoped packs (`/games/[gameId]`, `/findings`, arcade, GM). */
 export const CLIENT_MESSAGE_NAMESPACES = [
   ...ROOT_CLIENT_MESSAGE_NAMESPACES,
+  "Gm",
   "GmUi",
   "Arcade",
   "ArcadeDaily",

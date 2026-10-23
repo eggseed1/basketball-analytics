@@ -16,12 +16,12 @@ test("sitemap index lists the three child files", () => {
   }
 });
 
-test("each child sitemap is unique https://drbl.io URLs in a urlset", () => {
+test("each child sitemap is unique https://drbl.io URLs in a urlset", async () => {
   const seen = new Set<string>();
   for (const kind of SITEMAP_KINDS) {
-    const urls = sitemapUrls(kind);
+    const urls = await sitemapUrls(kind);
     assert.ok(urls.length > 0, `${kind} is empty`);
-    const xml = urlsetXml(kind);
+    const xml = await urlsetXml(kind);
     assert.match(xml, /<urlset xmlns="http:\/\/www.sitemaps.org\/schemas\/sitemap\/0.9">/);
     const locs = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
     assert.equal(locs.length, urls.length, `${kind} XML count`);
@@ -34,17 +34,15 @@ test("each child sitemap is unique https://drbl.io URLs in a urlset", () => {
   assert.ok(seen.size > 1000);
 });
 
-test("pages sitemap includes brand and advanced-stats hubs", () => {
-  const locs = new Set(sitemapUrls("pages").map((u) => u.loc));
+test("pages sitemap includes brand and advanced-stats hubs", async () => {
+  const locs = new Set((await sitemapUrls("pages")).map((u) => u.loc));
   for (const path of [
     "/",
+    "/scores",
     "/explore/players",
-    "/explore/players/styles",
-    "/learn",
-    "/learn/drbl",
-    "/learn/drbl/war1",
+    "/standings",
+    "/compare",
     "/ask",
-    "/about",
   ]) {
     assert.ok(locs.has(`https://drbl.io${path}`), `missing ${path}`);
   }

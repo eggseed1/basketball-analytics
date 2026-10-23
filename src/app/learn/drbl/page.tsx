@@ -99,7 +99,11 @@ function keep(possessions: number): string {
   return `${Math.round((possessions / (possessions + boxForwardWeights.playerShrinkK)) * 100)}%`;
 }
 
-export default function LearnDrblPage() {
+export default async function LearnDrblPage() {
+  await Promise.all([
+    import("@/data/runtime/contract-value").then((m) => m.ensureContractValue()),
+    import("@/data/runtime/drbl-guide").then((m) => m.ensureDrblGuide()),
+  ]);
   const guide = drblGuide();
   const { distribution: spread, leaders, movers, scatter, carryover, outcome, coverage } = guide;
   const sampleK = boxForwardWeights.playerShrinkK;

@@ -7,9 +7,12 @@ import assert from "node:assert/strict";
 import {
   ADVANCED_PERCENTILE_METRIC_IDS,
   buildPlayerPercentileMetrics,
+  defaultPercentileMetricId,
   isQualifiedPeer,
   percentileCutoffs,
   percentileFromCutoffs,
+  slimPercentileMetricsForSsr,
+  type PercentileMetric,
 } from "../src/lib/player-percentile-metrics";
 import {
   SHEET_STAT_BY_ID,
@@ -491,6 +494,126 @@ function main() {
     earlyMetrics.some((m) => m.id === "darko" && m.qualified !== false),
     "DARKO stays live when the overlay is present"
   );
+
+  // SSR slim: Impact-only, drop comps keys / non-default series / default flags
+  // (RSC turns undefined into $undefined).
+  const withSeries: PercentileMetric[] = earlyMetrics.map((m, i) => ({
+    ...m,
+    leagueComps: [],
+    historicalComps: [],
+    profileHidden: undefined,
+    series: [
+      {
+        season: "25-26",
+        fullSeason: "2025-26",
+        value: 1 + i,
+        percentile: 50,
+        teamId: "13",
+        teamAbbr: "LAL",
+        color: "#552583",
+      },
+    ],
+  }));
+  withSeries.push({
+    ...withSeries[0]!,
+    id: "hidden-test",
+    category: "impact",
+    profileHidden: true,
+    qualified: false,
+    series: undefined,
+  });
+  withSeries.push({
+    id: "pts",
+    category: "profile",
+    label: "PTS",
+    percentile: 90,
+    display: "30.1",
+    value: 30.1,
+    leagueComps: [],
+    historicalComps: [],
+    interpretation: "higher_is_better",
+    showPercentile: true,
+    showGrade: true,
+    series: [
+      {
+        season: "25-26",
+        value: 30.1,
+        percentile: 90,
+        teamId: "13",
+        teamAbbr: "LAL",
+        color: "#552583",
+      },
+    ],
+  });
+  const slimmed = slimPercentileMetricsForSsr(withSeries);
+  const keepId = defaultPercentileMetricId(withSeries);
+  assert.ok(
+    slimmed.every((m) => m.category === "impact" || m.id === keepId),
+    "SSR keeps Impact (+ default) only"
+  );
+  assert.equal(
+    slimmed.some((m) => m.id === "pts"),
+    false,
+    "non-Impact profile rows leave SSR"
+  );
+  for (const m of slimmed) {
+    assert.equal("leagueComps" in m, false, `${m.id} should omit leagueComps`);
+    assert.equal(
+      "historicalComps" in m,
+      false,
+      `${m.id} should omit historicalComps`
+    );
+    if (m.id === keepId) {
+      assert.ok(m.series?.length, "default metric keeps series");
+    } else {
+      assert.equal("series" in m, false, `${m.id} should omit series`);
+    }
+    if (m.id === "hidden-test") {
+      assert.equal(m.profileHidden, true);
+      assert.equal(m.qualified, false);
+    } else {
+      assert.equal(
+        "profileHidden" in m,
+        false,
+        `${m.id} should omit default profileHidden`
+      );
+      if (m.qualified !== false) {
+        assert.equal(
+          "qualified" in m,
+          false,
+          `${m.id} should omit live qualified flag`
+        );
+      }
+    }
+  }
+
+  const rounded = slimPercentileMetricsForSsr([
+    {
+      id: "darko",
+      category: "impact",
+      label: "DARKO",
+      percentile: 98.46564885496183,
+      display: "4.82",
+      value: 4.821234,
+      series: [
+        {
+          season: "25-26",
+          value: 1.23456,
+          percentile: 88.71428571428571,
+          teamId: "13",
+          teamAbbr: "LAL",
+          color: "#552583",
+        },
+      ],
+      interpretation: "higher_is_better",
+      showPercentile: true,
+      showGrade: true,
+    },
+  ]);
+  assert.equal(rounded[0]!.percentile, 98.5);
+  assert.equal(rounded[0]!.value, 4.821);
+  assert.equal(rounded[0]!.series![0]!.percentile, 88.7);
+  assert.equal(rounded[0]!.series![0]!.value, 1.235);
 
   console.log("test-player-percentile-metrics: ok");
 }

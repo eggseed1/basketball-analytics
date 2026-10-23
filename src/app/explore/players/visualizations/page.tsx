@@ -19,7 +19,6 @@ import {
   payoffPinIds,
   payoffSeasonOptions,
 } from "@/data/runtime/salary-payoff";
-import { listExploreBoardReadySeasons } from "@/data/queries";
 import { getPlayerRaceTrackerSeasonOptions } from "@/data/queries/player-race-tracker";
 import {
   canonicalSeasonFromStartYear,
@@ -27,6 +26,7 @@ import {
 } from "@/data/providers/historical/season-range";
 import { leagueScatterDefaultRankEnd, leagueScatterMeta } from "@/lib/league-player-scatter";
 import {
+  defaultExploreMinimumMinutes,
   defaultExplorePlayersSeason,
   priorSeasonForStats,
 } from "@/lib/player-board-season";
@@ -96,19 +96,29 @@ function parseVizFieldSize(
 export default async function PlayerVisualizationsPage({
   searchParams,
 }: PageProps) {
+  await Promise.all([
+    import("@/data/runtime/salary-payoff").then((m) => m.ensureSalaryPayoff()),
+    import("@/data/runtime/contract-value").then((m) =>
+      m.ensureContractValue()
+    ),
+    import("@/data/runtime/bref-team-contracts").then((m) =>
+      m.ensureBrefTeamContracts()
+    ),
+    import("@/data/runtime/player-id-aliases-snapshot").then((m) =>
+      m.ensurePlayerIdAliases()
+    ),
+  ]);
   const sp = await searchParams;
   const view = parseView(one(sp, "view"));
   const currentSeason = canonicalSeasonFromStartYear(currentNbaStartYear());
   const seasonParam = one(sp, "season");
-  // Prefer the URL season immediately — don't block the shell on the logs manifest.
-  const boardReadySeasons = await listExploreBoardReadySeasons();
+  // Prefer the URL season immediately — don't block the shell on season-tables.
   const season =
     seasonParam && /^\d{4}-\d{2}$/.test(seasonParam)
       ? seasonParam
       : defaultExplorePlayersSeason(
           [currentSeason, priorSeasonForStats(currentSeason)],
-          new Date(),
-          { boardReadySeasons }
+          new Date()
         );
   const metric = parsePlayerRaceMetric(one(sp, "metric"));
   const metricLabel = playerRaceMetricLabel(metric).toLowerCase();
@@ -133,8 +143,15 @@ export default async function PlayerVisualizationsPage({
   const payoffRankEnd = parseVizRankEnd(one(sp, "end"), "both");
   const payoffSeason =
     seasonParam && /^\d{4}-\d{2}$/.test(seasonParam) ? seasonParam : currentPayoffSeason();
-  const raceMinMinutes = parsePlayerRaceMinMinutes(one(sp, "minmp"));
-  const scatterMinMinutes = parseVizScatterMinMinutes(one(sp, "minmp"));
+  // Early current seasons have nobody at 500 MP yet; mirror the board's soft floor.
+  const raceMinMinutes =
+    one(sp, "minmp") != null && one(sp, "minmp") !== ""
+      ? parsePlayerRaceMinMinutes(one(sp, "minmp"))
+      : defaultExploreMinimumMinutes(season);
+  const scatterMinMinutes =
+    one(sp, "minmp") != null && one(sp, "minmp") !== ""
+      ? parseVizScatterMinMinutes(one(sp, "minmp"))
+      : defaultExploreMinimumMinutes(season);
   const pin = one(sp, "pin") ?? "";
   const team = one(sp, "team") ?? "";
 

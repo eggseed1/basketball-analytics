@@ -81,10 +81,10 @@ async function loadBracketStandings(
   }
 
   try {
-    const { getRuntimeSnapshotGames } = await import(
-      "@/data/runtime/game-snapshot"
+    const { getRuntimeSnapshotGamesAsync } = await import(
+      "@/data/runtime/game-snapshot-archive"
     );
-    const seasonGames = getRuntimeSnapshotGames(season);
+    const seasonGames = await getRuntimeSnapshotGamesAsync(season);
     const fromArchive = computeStandingsFromGameArchive(season, seasonGames);
     if (fromArchive && standingsHaveResults(fromArchive)) {
       return withPlayoffSeeds(fromArchive);

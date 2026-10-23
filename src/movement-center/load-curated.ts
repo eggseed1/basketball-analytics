@@ -3,8 +3,14 @@ import "server-only";
 import { cache } from "react";
 
 import { fetchLiveEspnTransactionRows } from "@/data/providers/transactions/transaction-live-enrich";
-import { getRuntimeMovementSnapshot } from "@/data/runtime/movement-snapshot";
-import { getPlayerSearchIndex } from "@/data/runtime/player-search-snapshot";
+import {
+  ensureMovementSnapshot,
+  getRuntimeMovementSnapshot,
+} from "@/data/runtime/movement-snapshot";
+import {
+  ensurePlayerSearch,
+  getPlayerSearchIndex,
+} from "@/data/runtime/player-search-snapshot";
 import { resolveOpenStoriesWithLedger } from "@/movement-center/live-resolve";
 import type {
   MovementCuratedSnapshot,
@@ -43,7 +49,8 @@ function readLocalSnapshot(): MovementCuratedSnapshot | null {
   }
 }
 
-function readSnapshot(): MovementCuratedSnapshot | null {
+async function readSnapshot(): Promise<MovementCuratedSnapshot | null> {
+  await Promise.all([ensureMovementSnapshot(), ensurePlayerSearch()]);
   return getRuntimeMovementSnapshot() ?? readLocalSnapshot();
 }
 
@@ -81,7 +88,7 @@ async function withLiveLedger(
 
 export const loadMovementSnapshot = cache(
   async (): Promise<MovementCuratedSnapshot | null> => {
-    const snapshot = readSnapshot();
+    const snapshot = await readSnapshot();
     return snapshot ? withLiveLedger(snapshot) : null;
   }
 );

@@ -187,12 +187,12 @@ export async function PlayerCoreIsland({
   const similarModes = SIMILAR_MODE_ORDER.map((id) => {
     const m = metrics.find((row) => row.id === id);
     if (!m) return null;
-    if (!m.leagueComps.length && !m.historicalComps.length) return null;
+    if (!(m.leagueComps?.length || m.historicalComps?.length)) return null;
     return {
       id: m.id,
       label: m.label,
-      leagueComps: m.leagueComps,
-      historicalComps: m.historicalComps,
+      leagueComps: m.leagueComps ?? [],
+      historicalComps: m.historicalComps ?? [],
     };
   }).filter((m): m is NonNullable<typeof m> => Boolean(m));
 
@@ -229,13 +229,14 @@ export async function PlayerCoreIsland({
   if (
     headlineMetric &&
     !similarModes.some((m) => m.id === headlineMetric.id) &&
-    (headlineMetric.leagueComps.length || headlineMetric.historicalComps.length)
+    (headlineMetric.leagueComps?.length ||
+      headlineMetric.historicalComps?.length)
   ) {
     similarModes.unshift({
       id: headlineMetric.id,
       label: headlineMetric.label,
-      leagueComps: headlineMetric.leagueComps,
-      historicalComps: headlineMetric.historicalComps,
+      leagueComps: headlineMetric.leagueComps ?? [],
+      historicalComps: headlineMetric.historicalComps ?? [],
     });
   }
 

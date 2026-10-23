@@ -34,8 +34,10 @@ const cases: Array<[string, string]> = [
   ["/offseason?year=2025", "Transactions"],
   ["/learn", "Learn"],
   ["/learn/true-shooting", "Learn"],
-  ["/franchises", "Teams"],
-  ["/franchises/bos", "Teams"],
+  ["/franchises", "History"],
+  ["/franchises/bos", "History"],
+  ["/history", "History"],
+  ["/awards", "History"],
   ["/teams/13/history", "Teams"],
   ["/arcade", "Arcade"],
   ["/arcade/zero-82", "Arcade"],
@@ -82,12 +84,20 @@ const teamsSubnavFor = (p: string) =>
 for (const [path, expected] of [
   ["/standings", ["Standings"]],
   ["/teams/2", ["Standings"]],
-  ["/franchises/bos", ["Standings"]],
   ["/teams/13/history", ["Standings"]],
   ["/standings/visualizations", ["Visualizations"]],
+  // Franchises live under History now, not Teams.
+  ["/franchises/bos", []],
 ] as const) {
   assert.deepEqual(teamsSubnavFor(path), expected, `${path} teams subnav`);
 }
+
+const history = PRIMARY_NAV.find((n) => n.id === "history");
+assert.ok(history?.subnav?.length);
+const historySubnavFor = (p: string) =>
+  history.subnav!.filter((s) => s.match?.(p)).map((s) => s.label);
+assert.deepEqual(historySubnavFor("/franchises/bos"), ["Franchise History"]);
+assert.deepEqual(historySubnavFor("/history/1996-97"), ["Time Machine"]);
 
 assert.equal(
   PRIMARY_NAV.find((n) => n.id === "standings"),
@@ -99,7 +109,7 @@ const players = PRIMARY_NAV.find((n) => n.id === "players");
 assert.ok(players?.subnav?.length);
 assert.deepEqual(
   players.subnav.map((s) => s.label),
-  ["Board", "Hot & Cold", "Visualizations"]
+  ["Board", "Hot & Cold", "Styles", "Visualizations"]
 );
 
 // Deep features must not be top-level.

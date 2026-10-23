@@ -21,6 +21,13 @@ function seasonFromSummary(
   return seasonHint ?? canonicalSeasonFromStartYear(new Date().getUTCFullYear() - 1);
 }
 
+export type EspnCdnBoxOptions = {
+  /** Per-URL AbortSignal timeout for the CDN summary fetch. */
+  timeoutMs?: number;
+  /** Cap sequential CDN package attempts (shell should use 1). */
+  maxUrls?: number;
+};
+
 /**
  * Independent CDN fallback for ESPN event ids (40xxxxxxx). `site.api.espn.com`
  * can be unreachable from some Vercel egress ranges while cdn.espn.com remains
@@ -28,9 +35,13 @@ function seasonFromSummary(
  */
 export async function fetchEspnCdnGameBoxScore(
   gameId: string,
-  seasonHint?: string
+  seasonHint?: string,
+  options?: EspnCdnBoxOptions
 ): Promise<GameBoxScore | null> {
-  const summary = await fetchEspnCdnGameSummary(gameId);
+  const summary = await fetchEspnCdnGameSummary(gameId, {
+    timeoutMs: options?.timeoutMs,
+    maxUrls: options?.maxUrls,
+  });
   if (!summary) return null;
   const transformed = transformEspnBoxScore(
     summary,

@@ -69,6 +69,37 @@ jobs:
             echo "::warning title=Worker bundle size::Upload is ${kib} KiB (soft ceiling 61440 KiB). Still under Cloudflare's 65536 KiB hard limit."
           fi
 
+      - name: Warm edge HTML cache
+        # Best-effort: GitHub runner IPs are often challenged by Cloudflare (403).
+        # Never fails the ship. A browser UA + Accept helps when Bot Fight is soft.
+        continue-on-error: true
+        run: |
+          set +e
+          BASE="https://drbl.io"
+          UA="Mozilla/5.0 (compatible; DRBL-deploy-warm/1.0; +https://drbl.io)"
+          paths="/ /scores /standings /explore/players /players/3975 /players/1966 /games/401914126"
+          echo "### Warm pass 1 (MISS → KV/EDGE)" >> "$GITHUB_STEP_SUMMARY"
+          blocked=0
+          for path in $paths; do
+            out=$(curl -sS -A "$UA" -H "Accept: text/html" -o /dev/null -w "%{http_code} ttfb=%{time_starttransfer}s size=%{size_download}" --max-time 90 "${BASE}${path}" 2>&1)
+            code=$(printf '%s' "$out" | awk '{print $1}')
+            echo "- \`${path}\`: ${out}" >> "$GITHUB_STEP_SUMMARY"
+            echo "warm1 ${path}: ${out}"
+            [ "$code" = "403" ] || [ "$code" = "429" ] && blocked=1
+          done
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "### Warm pass 2 (promote / verify)" >> "$GITHUB_STEP_SUMMARY"
+          for path in / /scores /players/3975 /games/401914126; do
+            headers=$(curl -sS -A "$UA" -H "Accept: text/html" -D - -o /dev/null --max-time 60 "${BASE}${path}" 2>&1)
+            cache=$(printf '%s\n' "$headers" | grep -i '^x-page-cache:' | tr -d '\r' | head -1)
+            echo "- \`${path}\`: ${cache:-no x-page-cache}" >> "$GITHUB_STEP_SUMMARY"
+            echo "warm2 ${path}: ${cache:-none}"
+          done
+          if [ "$blocked" = "1" ]; then
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "Note: Cloudflare returned 403/429 from the Actions runner. Edge warm may need a WAF exception or a manual/local curl." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
       - name: Summary
         if: always()
         run: |

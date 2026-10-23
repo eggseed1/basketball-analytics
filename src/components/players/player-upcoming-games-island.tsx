@@ -1,4 +1,5 @@
 import { PlayerUpcomingGames } from "@/components/players/player-upcoming-games";
+import { withBudget } from "@/data/queries/budget";
 import { getPlayerCareerSeasonsCached } from "@/data/queries";
 import { upcomingScheduleSeason } from "@/data/providers/nba/scoreboard-client";
 import { toGameSummary } from "@/data/queries/filter-utils";
@@ -13,16 +14,16 @@ async function upcomingGamesForTeam(
   scheduleTeamKey: string,
   season = upcomingScheduleSeason()
 ): Promise<GameSummary[]> {
-  // Dynamic import keeps the ~6.7MB game-snapshot JSON off the player-page
-  // module graph until this Suspense island runs (CF 1102 mitigation).
-  const { getRuntimeSnapshotGames } = await import(
-    "@/data/runtime/game-snapshot"
+  // Dynamic import keeps schedule JSON off the player-page module graph
+  // until this Suspense island runs (CF 1102 mitigation).
+  const { getRuntimeSnapshotGamesAsync } = await import(
+    "@/data/runtime/game-snapshot-archive"
   );
   const today = nbaTodayIso();
   const team = teamSeasonStub(scheduleTeamKey, season);
   const brand = resolveTeamBrand(scheduleTeamKey);
   if (!team) return [];
-  return getRuntimeSnapshotGames(season)
+  return (await getRuntimeSnapshotGamesAsync(season))
     .filter(
       (game) =>
         game.gameDate >= today &&
@@ -52,7 +53,11 @@ export async function PlayerUpcomingGamesFromSnapshot({
   if (!team) return null;
 
   const brand = resolveTeamBrand(scheduleTeamKey);
-  const games = await upcomingGamesForTeam(scheduleTeamKey, season);
+  const { value: games } = await withBudget(
+    upcomingGamesForTeam(scheduleTeamKey, season),
+    3_000,
+    [] as GameSummary[]
+  );
   return (
     <PlayerUpcomingGames
       season={season}

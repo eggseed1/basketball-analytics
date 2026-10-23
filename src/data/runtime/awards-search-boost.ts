@@ -1,14 +1,11 @@
 /**
  * Award-winner name boost for Cloudflare player search.
  * Puts Kobe Bryant / Kareem / etc. ahead of same-first-name modern players.
+ *
+ * Legend seed stays on the module graph; awards names/slugs load from ASSETS.
  */
-import awardsFile from "./player-awards-snapshot.json";
 import legendFile from "./legend-player-aliases.json";
-
-type AwardsFile = {
-  names?: Record<string, string>;
-  slugs?: Record<string, string>;
-};
+import { getBundledPlayerAwardsNameMaps } from "./player-awards-snapshot";
 
 type LegendRow = {
   espnPlayerId?: string;
@@ -26,12 +23,6 @@ function normalizeName(value: string): string {
     .trim();
 }
 
-const awards = awardsFile as AwardsFile;
-const awardNames =
-  awards.names && typeof awards.names === "object" ? awards.names : {};
-const awardSlugs =
-  awards.slugs && typeof awards.slugs === "object" ? awards.slugs : {};
-
 const legendRows = Array.isArray(
   (legendFile as { aliases?: LegendRow[] })?.aliases
 )
@@ -39,15 +30,24 @@ const legendRows = Array.isArray(
   : [];
 
 /** Normalized display name → preferred player route id. */
-export const AWARD_WINNER_NAME_TO_ID: Map<string, string> = (() => {
-  const map = new Map<string, string>();
+export const AWARD_WINNER_NAME_TO_ID: Map<string, string> = new Map();
+
+export const AWARD_WINNER_NAMES: Set<string> = new Set();
+
+let primed = false;
+
+function primeAwardWinnerMaps(): void {
+  if (primed) return;
+  primed = true;
+  const { names: awardNames, slugs: awardSlugs } =
+    getBundledPlayerAwardsNameMaps();
   for (const [nbaId, nameRaw] of Object.entries(awardNames)) {
     const name = normalizeName(nameRaw);
-    if (!name || map.has(name)) continue;
+    if (!name || AWARD_WINNER_NAME_TO_ID.has(name)) continue;
     const slug = String(awardSlugs[nbaId] ?? "")
       .trim()
       .toLowerCase();
-    map.set(name, slug ? `bref:${slug}` : nbaId);
+    AWARD_WINNER_NAME_TO_ID.set(name, slug ? `bref:${slug}` : nbaId);
   }
   for (const row of legendRows) {
     const name = normalizeName(row.playerName ?? "");
@@ -55,17 +55,25 @@ export const AWARD_WINNER_NAME_TO_ID: Map<string, string> = (() => {
       .trim()
       .toLowerCase();
     const espn = String(row.espnPlayerId ?? "").trim();
-    if (!name || map.has(name)) continue;
-    map.set(name, slug ? `bref:${slug}` : espn || String(row.nbaPlayerId ?? ""));
+    if (!name || AWARD_WINNER_NAME_TO_ID.has(name)) continue;
+    AWARD_WINNER_NAME_TO_ID.set(
+      name,
+      slug ? `bref:${slug}` : espn || String(row.nbaPlayerId ?? "")
+    );
   }
-  return map;
-})();
+  for (const key of AWARD_WINNER_NAME_TO_ID.keys()) {
+    AWARD_WINNER_NAMES.add(key);
+  }
+}
 
-export const AWARD_WINNER_NAMES: Set<string> = new Set(
-  AWARD_WINNER_NAME_TO_ID.keys()
-);
+export async function ensureAwardWinnerSearchBoost(): Promise<void> {
+  const { ensurePlayerAwards } = await import("./player-awards-snapshot");
+  await ensurePlayerAwards();
+  primeAwardWinnerMaps();
+}
 
 export function isAwardWinnerPlayerName(name: string): boolean {
+  primeAwardWinnerMaps();
   return AWARD_WINNER_NAMES.has(normalizeName(name));
 }
 
@@ -76,6 +84,7 @@ export function awardWinnerSortRank(name: string): number {
 
 /** Full-name query → preferred route id from award/legend map. */
 export function awardWinnerIdForQuery(q: string): string | null {
+  primeAwardWinnerMaps();
   const key = normalizeName(q);
   if (!key || !key.includes(" ")) return null;
   return AWARD_WINNER_NAME_TO_ID.get(key) ?? null;

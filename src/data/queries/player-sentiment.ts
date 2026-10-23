@@ -10,5 +10,5 @@ export const getPlayerSentimentBundle = cache(async (playerId: string) => {
   const ids = new Set<string>([playerId]);
   if (identity.nbaId) ids.add(identity.nbaId);
   if (identity.espnId) ids.add(identity.espnId);
-  return getPlayerSentimentProfile(ids);
+  return await getPlayerSentimentProfile(ids);
 });

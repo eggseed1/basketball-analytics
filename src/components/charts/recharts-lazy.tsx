@@ -30,20 +30,51 @@ const pulseFutures = (
 /** Client-only chart shells — keep recharts out of the Cloudflare Worker SSR graph. */
 
 /** Shared import promises so overview/comparisons can start the chunk early. */
-const careerTeamTrendChartModule = () =>
-  import("@/components/players/career-team-trend-chart");
-const playerCompFuturesChartModule = () =>
-  import("@/components/players/player-comp-futures-chart");
+let careerTeamTrendChartPromise: Promise<
+  typeof import("@/components/players/career-team-trend-chart")
+> | null = null;
+let playerCompFuturesChartPromise: Promise<
+  typeof import("@/components/players/player-comp-futures-chart")
+> | null = null;
 
-/** Kick hero/overview chart chunks as soon as any lazy chart shell loads. */
+const careerTeamTrendChartModule = () => {
+  careerTeamTrendChartPromise ??= import(
+    "@/components/players/career-team-trend-chart"
+  );
+  return careerTeamTrendChartPromise;
+};
+const playerCompFuturesChartModule = () => {
+  playerCompFuturesChartPromise ??= import(
+    "@/components/players/player-comp-futures-chart"
+  );
+  return playerCompFuturesChartPromise;
+};
+
+/**
+ * Warm hero/overview chart chunks after first paint. Call from career /
+ * comparisons / percentile islands — do not import this module for side-effect
+ * preload (that pulls recharts during unrelated client hydration).
+ */
 export function preloadPlayerPageCharts() {
   if (typeof window === "undefined") return;
-  void careerTeamTrendChartModule();
-  void playerCompFuturesChartModule();
+  const kick = () => {
+    void careerTeamTrendChartModule();
+    void playerCompFuturesChartModule();
+  };
+  if (typeof requestIdleCallback === "function") {
+    requestIdleCallback(() => kick(), { timeout: 2_500 });
+  } else {
+    setTimeout(kick, 1);
+  }
 }
 
-if (typeof window !== "undefined") {
-  preloadPlayerPageCharts();
+/** Await before mounting TalentYearChart so Games mode does not stick on shimmer. */
+export function whenPlayerPageChartsReady(): Promise<void> {
+  if (typeof window === "undefined") return Promise.resolve();
+  return Promise.all([
+    careerTeamTrendChartModule(),
+    playerCompFuturesChartModule(),
+  ]).then(() => undefined);
 }
 
 export const GameScoringScatterLazy = dynamic(

@@ -54,7 +54,10 @@ import {
 } from "@/data/providers/historical/season-range";
 import { preferBundledProductDataOnEdge } from "@/data/providers/nba/runtime-policy";
 import { hasRuntimeTeamBoard, runtimeTeamBoardMeta } from "@/data/runtime/team-board-snapshot";
-import { getPlayerSearchIndex } from "@/data/runtime/player-search-snapshot";
+import {
+  ensurePlayerSearch,
+  getPlayerSearchIndex,
+} from "@/data/runtime/player-search-snapshot";
 import { shareImageMetadata } from "@/lib/share-images";
 import { getPlayerPortraitUrl } from "@/data/media/get-player-media";
 import {
@@ -94,6 +97,7 @@ function indexedPlayerName(id: string | undefined): string | null {
 
 export async function generateMetadata({ searchParams }: ComparePageProps): Promise<Metadata> {
   const sp = await searchParams;
+  await ensurePlayerSearch();
   const aId = one(sp, "a");
   const bId = one(sp, "b");
   const aName = indexedPlayerName(aId);
@@ -345,15 +349,15 @@ async function loadPeersForSeason(season: string): Promise<PlayerSeason[]> {
   }).catch(() => [] as PlayerSeason[]);
 }
 
-function resolveTeamCompareSeason(preferred: string): string {
+async function resolveTeamCompareSeason(preferred: string): Promise<string> {
   const key = String(preferred ?? "").trim();
-  if (key && hasRuntimeTeamBoard(key)) return key;
+  if (key && (await hasRuntimeTeamBoard(key))) return key;
   const prior = shiftCanonicalSeason(key || "2025-26", -1);
-  if (hasRuntimeTeamBoard(prior)) return prior;
+  if (await hasRuntimeTeamBoard(prior)) return prior;
   // Latest baked team board (desc).
   for (let y = currentNbaStartYear(); y >= 2020; y -= 1) {
     const season = canonicalSeasonFromStartYear(y);
-    if (hasRuntimeTeamBoard(season)) return season;
+    if (await hasRuntimeTeamBoard(season)) return season;
   }
   return key || canonicalSeasonFromStartYear(currentNbaStartYear() - 1);
 }
@@ -495,25 +499,27 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
       );
     }
 
-    const seasonA = resolveTeamCompareSeason(
+    const seasonA = await resolveTeamCompareSeason(
       one(sp, "seasonA") ?? one(sp, "season") ?? currentSeason
     );
-    const seasonB = resolveTeamCompareSeason(
+    const seasonB = await resolveTeamCompareSeason(
       one(sp, "seasonB") ??
         (teamA && teamB && teamA === teamB
           ? shiftCanonicalSeason(seasonA, -1)
           : (one(sp, "season") ?? seasonA))
     );
 
-    const loaded =
+    const [loaded, boardMeta] = await Promise.all([
       teamA && teamB
-        ? await getTeamSeasonComparison({
+        ? getTeamSeasonComparison({
             teamA,
             teamB,
             seasonA,
             seasonB,
           })
-        : { comparison: null, error: null };
+        : Promise.resolve({ comparison: null, error: null }),
+      runtimeTeamBoardMeta(),
+    ]);
 
     return (
       <main data-motion-page className="site-shell flex flex-col gap-5 py-5 sm:py-7">
@@ -543,7 +549,7 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
             teamBName={loaded.comparison?.sideB.fullName}
             seasonA={loaded.comparison?.sideA.season ?? seasonA}
             seasonB={loaded.comparison?.sideB.season ?? seasonB}
-            seasonChoices={runtimeTeamBoardMeta().seasons}
+            seasonChoices={boardMeta.seasons}
           />
         </Suspense>
 

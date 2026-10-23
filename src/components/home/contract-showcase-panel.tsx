@@ -3,9 +3,11 @@ import { SectionLink } from "@/components/ui/section-link";
 import { getPlayerSurplusRows } from "@/data/queries/contract-surplus";
 import {
   currentPayoffSeason,
+  ensureSalaryPayoff,
   getPayoffSeason,
   payoffWaiting,
 } from "@/data/runtime/salary-payoff";
+import { ensureContractValue } from "@/data/runtime/contract-value";
 import { PLAYER_SURPLUS_RANKING_PATH } from "@/lib/contract-surplus";
 import { buildContractShowcase } from "@/lib/home-contract-showcase";
 import { shortDate } from "@/lib/salary-payoff";
@@ -18,7 +20,8 @@ const PAYOFF_HREF = "/explore/players/visualizations?view=payoff";
  * League salary-played-off + surplus showcase for the homepage main column.
  * Matches other home desk cards: one sports-card, header inside, list body.
  */
-export function ContractShowcasePanel() {
+export async function ContractShowcasePanel() {
+  await Promise.all([ensureSalaryPayoff(), ensureContractValue()]);
   const leagueSeason = currentPayoffSeason();
   const waiting = payoffWaiting(leagueSeason);
   const season =

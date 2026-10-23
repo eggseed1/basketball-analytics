@@ -48,6 +48,17 @@ export default async function AwardHistoryPage({
   const award = getAwardBySlug(slug);
   if (!award) notFound();
 
+  await Promise.all([
+    import("@/data/runtime/player-awards-snapshot").then((m) =>
+      m.ensurePlayerAwards()
+    ),
+    import("@/data/runtime/player-id-aliases-snapshot").then((m) =>
+      m.ensurePlayerIdAliases()
+    ),
+    import("@/data/runtime/legend-nba-to-bref").then((m) =>
+      m.ensureLegendNbaToBref()
+    ),
+  ]);
   const rows = getAwardHistory(slug);
   const hasYearList = rows.length > 0;
   const dynastyBars = buildAwardDynastyBars(rows);

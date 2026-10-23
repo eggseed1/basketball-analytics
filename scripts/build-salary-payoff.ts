@@ -13,7 +13,7 @@
  * Readings live in data/salary-payoff/nightly/<season>/<date>.json, one small
  * file a night: [NBA id, NBA team id, possessions, WAR1 ×100] per player.
  * The live season is rebuilt from all of them, priced like the contract model.
- * Writes src/data/runtime/salary-payoff-snapshot.json.
+ * Writes public/runtime/salary-payoff-snapshot.json (+ src mirror).
  */
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
@@ -322,4 +322,9 @@ for (const season of new Set(games.filter((g) => g.gameType === "regular").map((
   if (range) openers[season] = range.opener;
 }
 const out: PayoffSnapshotFile = { version: 1, generatedAt: new Date().toISOString(), seasons, openers };
-writeFileSync(OUT, `${JSON.stringify(out)}\n`);
+const body = `${JSON.stringify(out)}\n`;
+writeFileSync(OUT, body);
+const publicOut = path.join(root, "public/runtime/salary-payoff-snapshot.json");
+mkdirSync(path.dirname(publicOut), { recursive: true });
+writeFileSync(publicOut, body);
+log(`wrote ${path.relative(root, publicOut)} (src mirror ${path.relative(root, OUT)})`);

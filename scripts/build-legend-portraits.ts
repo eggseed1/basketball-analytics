@@ -340,21 +340,27 @@ async function main() {
     const url = commons.get(slug);
     if (url) portraits[`bref:${slug}`] = url;
   }
-  await fs.writeFile(
-    OUT,
+  const body =
     JSON.stringify(
       {
         version: "drbl-legend-portraits-v1",
         updatedAt: new Date().toISOString(),
         note: "Playing-days photos for pre-1996-97 players. Checked before the main registry.",
         count: Object.keys(portraits).length,
-        portraits: Object.fromEntries(Object.entries(portraits).sort(([a], [b]) => a.localeCompare(b))),
+        portraits: Object.fromEntries(
+          Object.entries(portraits).sort(([a], [b]) => a.localeCompare(b))
+        ),
       },
       null,
       1
-    ) + "\n"
+    ) + "\n";
+  await fs.writeFile(OUT, body);
+  const publicOut = path.join(ROOT, "public/runtime/legend-portraits.json");
+  await fs.mkdir(path.dirname(publicOut), { recursive: true });
+  await fs.writeFile(publicOut, body);
+  console.log(
+    `wrote ${Object.keys(portraits).length} → ${path.relative(ROOT, publicOut)} (src mirror ${path.relative(ROOT, OUT)})`
   );
-  console.log(`wrote ${Object.keys(portraits).length} → ${path.relative(ROOT, OUT)}`);
 }
 
 main().catch((err) => {

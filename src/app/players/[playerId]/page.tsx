@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { PageAtmosphere } from "@/components/brand/page-atmosphere";
 import { PriorSeasonStatsNotice } from "@/components/explore/season-not-started-notice";
 import { PlayerOnOffIsland } from "@/components/players/player-on-off-island";
-import { getOnOffSeasons } from "@/data/queries/on-off";
+import { seasonHasOnOff } from "@/lib/on-off/types";
 import { shareImageMetadata } from "@/lib/share-images";
 import { JsonLd } from "@/components/seo/json-ld";
 import { absoluteUrl } from "@/lib/site-url";
@@ -24,7 +24,6 @@ import { PlayerPercentileIsland } from "@/components/players/player-percentile-i
 import { PlayerNotYetPlayed } from "@/components/players/player-not-yet-played";
 import { unplayedDrafteeFor } from "@/data/runtime/draftee-search";
 import { PlayerComparisonsBoard } from "@/components/players/player-comparisons-board";
-import { loadCompFuturesBundle } from "@/lib/player-comp-futures";
 import {
   PlayerCareerAnalysisIslandDeferred,
   PlayerGamesIslandDeferred,
@@ -34,8 +33,6 @@ import {
 } from "@/components/players/player-page-deferred-islands";
 import {
   PlayerBoardSkeleton,
-  PlayerIdentitySlotSkeleton,
-  PlayerOverviewCareerSkeleton,
   PlayerOverviewContractSkeleton,
   PlayerPercentileSkeleton,
 } from "@/components/players/player-page-skeletons";
@@ -57,6 +54,7 @@ import { remapLegendNbaIdToBref, resolveLegacyNbaPersonId } from "@/data/runtime
 import { awardWinnerIdForQuery } from "@/data/runtime/awards-search-boost";
 import { parseBrefPlayerSlug } from "@/data/providers/nba/bref-career-from-page";
 import {
+  ensurePlayerSearch,
   findPlayerSearchRowByName,
   getPlayerSearchIndex,
 } from "@/data/runtime/player-search-snapshot";
@@ -216,18 +214,14 @@ export async function generateMetadata({ params }: PlayerPageProps) {
   await yieldForStreaming();
   const t = await getTranslations("PlayerDetail");
   const { playerId: rawId } = await params;
+  // Metadata only needs the name index — skip portrait ASSETS on this path.
+  await ensurePlayerSearch();
   const playerId = resolvePublicPlayerId(rawId);
-  const [player, identity] = await Promise.all([
-    getPlayerCached(playerId),
-    resolvePlayerIdentityCached(playerId).catch(() => null),
-  ]);
-  const displayName = firstUsablePlayerDisplayName(
-    identity?.displayName,
-    player?.fullName
-  );
-  // NBA ids, bref: ids and name slugs all render this page; the sitemap lists ESPN ids.
+  // Sync search/roster only — live getPlayerCached blocked metadata on cold MISS.
+  const searchHit = getPlayerSearchIndex().find((r) => r.id === playerId);
+  const displayName = firstUsablePlayerDisplayName(searchHit?.name);
   const canonicalId =
-    identity?.espnId ?? uniqueEspnIdForBrefName(playerId, displayName) ?? playerId;
+    uniqueEspnIdForBrefName(playerId, displayName) ?? playerId;
   return {
     title: displayName
       ? t("metaStatsTitle", { name: displayName })
@@ -257,6 +251,24 @@ export default async function PlayerPage({
   const t = await getTranslations("PlayerDetail");
   const { playerId: rawId } = await params;
   const sp = await searchParams;
+  // Kick portrait ASSETS early; await only when identity needs the URL so
+  // career / identity work overlaps the three map fetches.
+  const portraitsReady = import("@/data/media/portrait-lookup-store").then(
+    (m) => m.ensurePortraitMaps()
+  );
+  const legendReady = import("@/data/runtime/legend-nba-to-bref").then((m) =>
+    m.ensureLegendNbaToBref()
+  );
+  await Promise.all([
+    ensurePlayerSearch(),
+    legendReady,
+    import("@/data/runtime/current-roster-snapshot").then((m) =>
+      m.ensureCurrentRoster()
+    ),
+    import("@/data/runtime/espn-name-index").then((m) =>
+      m.ensureEspnNameIndex()
+    ),
+  ]);
   // Resolve legacy bref: peer-board ids to ESPN athlete ids (no redirect required).
   const playerId = resolvePublicPlayerId(rawId);
   const seasonParam = one(sp, "season");
@@ -498,6 +510,7 @@ export default async function PlayerPage({
     .map((s) => primaryTeamForSeason(career, s))
     .filter((row): row is NonNullable<typeof row> => row != null);
 
+  await portraitsReady;
   const portraitUrl = getPlayerPortraitUrl(rawId) ??
     getPlayerPortraitUrl(playerId) ??
     (identity?.nbaId ? getPlayerPortraitUrl(identity.nbaId) : null) ??
@@ -514,7 +527,61 @@ export default async function PlayerPage({
     ? resolveActiveEraTheme(season, themeMode)
     : null;
 
-  const onOffSeasons = await getOnOffSeasons();
+  // Slim edge (explicit SLIM_EDGE_PRODUCT=1 only) — paid Workers run the full page.
+  const slimWorker = slimEdgeProductEnabled();
+
+  // Identity chrome paints first; percentile hero streams (tall skeleton holds
+  // layout). Awaiting the hero blocked cold MISS TTFB on pools + enrich.
+  const percentileHeroNode = !notYetPlayed ? (
+    <Suspense fallback={<PlayerPercentileSkeleton />}>
+      <PlayerPercentileIsland
+        playerId={playerId}
+        displayName={displayName}
+        season={season}
+        career={career}
+        seasonOptions={seasonOptions}
+        seasonTeams={seasonTeams}
+        identityTeamKey={teamKey}
+        nbaId={identity?.nbaId}
+        espnId={identity?.espnId}
+        honor={honor}
+      />
+    </Suspense>
+  ) : null;
+
+  const accoladesNode = slimWorker ? null : (
+    <Suspense fallback={null}>
+      <PlayerAccoladesIsland
+        playerId={playerId}
+        playerName={displayName === playerId ? null : displayName}
+        teamKey={teamKey}
+        historicalBrand={historicalBrand}
+        honor={honor}
+      />
+    </Suspense>
+  );
+
+  const upcomingScheduleNode =
+    !slimWorker && scheduleTeamKey ? (
+      <Suspense fallback={null}>
+        <PlayerUpcomingGamesFromSnapshot scheduleTeamKey={scheduleTeamKey} />
+      </Suspense>
+    ) : null;
+
+  const frontOfficeNode = slimWorker ? null : (
+    <Suspense fallback={null}>
+      <PlayerArrivalIsland
+        playerId={playerId}
+        espnId={identity?.espnId}
+        nbaId={identity?.nbaId}
+        playerName={displayName}
+        teamKey={teamKey}
+        historicalBrand={historicalBrand}
+        honor={honor}
+      />
+    </Suspense>
+  );
+
   const caps = playerPageCapabilities({
     selectedSeason: season,
     careerFirstSeason:
@@ -522,28 +589,11 @@ export default async function PlayerPage({
       masterPlayer?.firstSeason ??
       seasonOptions.at(-1),
     showSentiment: showLiveIntelligence,
-    hasOnOff: onOffSeasons.includes(statsCtx.statsSeason),
+    hasOnOff: seasonHasOnOff(statsCtx.statsSeason),
   });
-
-  // Slim edge (explicit SLIM_EDGE_PRODUCT=1 only) — paid Workers run the full page.
-  const slimWorker = slimEdgeProductEnabled();
 
   const careerSeasonsForTable =
     historySeasons.length > 0 ? historySeasons : universeSeasons;
-
-  // Primary Trajectory metric with the page — avoids sequential client probes
-  // when early-season DRBL/WAR1 are empty and DARKO is the first hit.
-  const trajectoryBundle =
-    view === "overview" && career.length > 0
-      ? loadCompFuturesBundle(
-          career.find((row) => row.season === season) ??
-            career[career.length - 1] ??
-            null,
-          career,
-          identity?.espnId,
-          { primaryOnly: true }
-        )
-      : null;
 
   const palette =
     useHistoricalBranding && historicalBrand?.palette
@@ -590,43 +640,9 @@ export default async function PlayerPage({
           caps={caps}
           seasonType={seasonType}
           honor={honor}
-          accolades={
-            slimWorker ? null : (
-              <Suspense fallback={<PlayerIdentitySlotSkeleton />}>
-                <PlayerAccoladesIsland
-                  playerId={playerId}
-                  playerName={displayName === playerId ? null : displayName}
-                  teamKey={teamKey}
-                  historicalBrand={historicalBrand}
-                  honor={honor}
-                />
-              </Suspense>
-            )
-          }
-          upcomingSchedule={
-            !slimWorker && scheduleTeamKey ? (
-              <Suspense fallback={<PlayerIdentitySlotSkeleton />}>
-                <PlayerUpcomingGamesFromSnapshot
-                  scheduleTeamKey={scheduleTeamKey}
-                />
-              </Suspense>
-            ) : null
-          }
-          frontOffice={
-            slimWorker ? null : (
-              <Suspense fallback={<PlayerIdentitySlotSkeleton />}>
-                <PlayerArrivalIsland
-                  playerId={playerId}
-                  espnId={identity?.espnId}
-                  nbaId={identity?.nbaId}
-                  playerName={displayName}
-                  teamKey={teamKey}
-                  historicalBrand={historicalBrand}
-                  honor={honor}
-                />
-              </Suspense>
-            )
-          }
+          accolades={accoladesNode}
+          upcomingSchedule={upcomingScheduleNode}
+          frontOffice={frontOfficeNode}
           hero={
             notYetPlayed ? (
               <PlayerNotYetPlayed
@@ -635,26 +651,7 @@ export default async function PlayerPage({
                 overall={notYetPlayed.overall}
               />
             ) : (
-              <Suspense
-                fallback={
-                  <div className="col-span-1 min-h-[28rem]">
-                    <PlayerPercentileSkeleton />
-                  </div>
-                }
-              >
-                <PlayerPercentileIsland
-                  playerId={playerId}
-                  displayName={displayName}
-                  season={season}
-                  career={career}
-                  seasonOptions={seasonOptions}
-                  seasonTeams={seasonTeams}
-                  identityTeamKey={teamKey}
-                  nbaId={identity?.nbaId}
-                  espnId={identity?.espnId}
-                  honor={honor}
-                />
-              </Suspense>
+              percentileHeroNode
             )
           }
         >
@@ -690,9 +687,7 @@ export default async function PlayerPage({
 
         {view === "overview" && !(slimWorker || notYetPlayed) ? (
           <Suspense
-            fallback={
-              <PlayerOverviewCareerSkeleton label={t("loadingCareer")} />
-            }
+            fallback={<PlayerBoardSkeleton label={t("loadingCareer")} />}
           >
             <PlayerOverviewCareerSection
               playerId={playerId}
@@ -742,7 +737,7 @@ export default async function PlayerPage({
         {view === "overview" && !slimWorker ? (
           <Suspense
             fallback={
-              <PlayerOverviewContractSkeleton label={t("loadingContract")} />
+              <PlayerOverviewContractSkeleton label={t("loadingSalary")} />
             }
           >
             <PlayerContractSectionIsland
@@ -789,11 +784,9 @@ export default async function PlayerPage({
           <PlayerComparisonsBoard
             playerId={playerId}
             season={season}
-            career={career}
             teamKey={teamKey}
             espnId={identity?.espnId}
             position={bioPosition}
-            trajectoryBundle={trajectoryBundle}
           />
         ) : null}
 

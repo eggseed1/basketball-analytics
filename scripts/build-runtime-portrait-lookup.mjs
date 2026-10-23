@@ -497,7 +497,11 @@ const payload = {
   count: Object.keys(portraits).length,
 };
 
-await fs.writeFile(OUT, JSON.stringify(payload));
+const body = JSON.stringify(payload);
+await fs.writeFile(OUT, body);
+const publicOut = path.join(ROOT, "public", "runtime", "portrait-lookup.json");
+await fs.mkdir(path.dirname(publicOut), { recursive: true });
+await fs.writeFile(publicOut, body);
 for (const mirror of [
   path.join(
     ROOT,
@@ -518,7 +522,7 @@ for (const mirror of [
 ]) {
   try {
     await fs.mkdir(path.dirname(mirror), { recursive: true });
-    await fs.writeFile(mirror, JSON.stringify(payload));
+    await fs.writeFile(mirror, body);
   } catch {
     /* optional */
   }

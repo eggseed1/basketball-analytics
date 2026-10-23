@@ -96,13 +96,18 @@ try {
       if (!byName[key]) byName[key] = String(row.espnPlayerId);
     }
   }
+  const body = JSON.stringify({
+    version: 1,
+    generatedAt: new Date().toISOString(),
+    byName,
+  });
   const dest = path.join(RUNTIME, "espn-name-index.json");
-  await fs.writeFile(
-    dest,
-    JSON.stringify({ version: 1, generatedAt: new Date().toISOString(), byName })
-  );
+  const destPublic = path.join(ROOT, "public", "runtime", "espn-name-index.json");
+  await fs.writeFile(dest, body);
+  await fs.mkdir(path.dirname(destPublic), { recursive: true });
+  await fs.writeFile(destPublic, body);
   console.log(
-    `[cf-assets] espn-name-index → ${dest} (${Object.keys(byName).length} keys)`
+    `[cf-assets] espn-name-index → ${destPublic} (${Object.keys(byName).length} keys; src mirror ${dest})`
   );
 } catch (error) {
   console.warn(
@@ -261,8 +266,16 @@ try {
       players,
     })
   );
+  const searchPublic = path.join(
+    ROOT,
+    "public",
+    "runtime",
+    "player-search-snapshot.json"
+  );
+  await fs.mkdir(path.dirname(searchPublic), { recursive: true });
+  await fs.copyFile(searchDest, searchPublic);
   console.log(
-    `[cf-assets] player-search-snapshot → ${searchDest} (${players.length} players, +${allEraAdded} all-era)`
+    `[cf-assets] player-search-snapshot → ${searchPublic} (${players.length} players, +${allEraAdded} all-era; src mirror ${searchDest})`
   );
 } catch (error) {
   console.warn(
@@ -290,15 +303,18 @@ try {
   } catch {
     /* optional */
   }
-  await fs.writeFile(
-    dest,
-    JSON.stringify({
-      ...raw,
-      aliases,
-      legendMergedAt: new Date().toISOString(),
-    })
+  const body = JSON.stringify({
+    ...raw,
+    aliases,
+    legendMergedAt: new Date().toISOString(),
+  });
+  await fs.writeFile(dest, body);
+  const destPublic = path.join(ROOT, "public", "runtime", "player-id-aliases-snapshot.json");
+  await fs.mkdir(path.dirname(destPublic), { recursive: true });
+  await fs.writeFile(destPublic, body);
+  console.log(
+    `[cf-assets] player-id-aliases → ${destPublic} (${aliases.length} rows; src mirror ${dest})`
   );
-  console.log(`[cf-assets] player-id-aliases → ${dest} (${aliases.length} rows)`);
 } catch (error) {
   console.warn(
     `[cf-assets] player-id-aliases skipped: ${

@@ -32,6 +32,7 @@ import { SITE_NAME, SITE_URL } from "@/lib/site-url";
 import "./globals.css";
 const geistSans = Geist({
   variable: "--font-sans",
+  // latin-ext covers accented locales in the shell; mono stays latin-only.
   subsets: ["latin", "latin-ext"],
   display: "swap",
   adjustFontFallback: true,
@@ -39,7 +40,7 @@ const geistSans = Geist({
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
-  subsets: ["latin", "latin-ext"],
+  subsets: ["latin"],
   display: "swap",
   adjustFontFallback: true,
 });

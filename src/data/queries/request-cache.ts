@@ -56,12 +56,13 @@ export const getPlayerCached = cache(async (playerId: string) => {
   // Cloudflare: serve deploy-baked vitals instead of live ESPN / stats.nba /
   // draft-history on the player shell (those fetches trip Error 1102).
   if (preferBundledProductDataOnEdge()) {
-    const { getBundledPlayerBio } = await import(
+    const { ensurePlayerBio, getBundledPlayerBio } = await import(
       "@/data/runtime/player-bio-snapshot"
     );
     const identity = await resolvePlayerIdentityCached(playerId).catch(
       () => null
     );
+    await ensurePlayerBio();
     const bundled = getBundledPlayerBio(playerId, [
       identity?.nbaId,
       identity?.espnId,
@@ -312,7 +313,14 @@ function shellFromFallbackGame(game: Game): GameShell {
 
 async function fallbackGameShell(gameId: string): Promise<GameShell | null> {
   if (looksLikeEspnEventId(gameId)) {
-    const box = await fetchEspnCdnGameBoxScore(gameId).catch(() => null);
+    const { getHistoricalGame } = await import("@/data/queries/historical");
+    // Archive first — CDN packages often hang on Workers past the fallback budget.
+    const historical = await getHistoricalGame(gameId).catch(() => null);
+    if (historical) return shellFromFallbackGame(historical);
+    const box = await fetchEspnCdnGameBoxScore(gameId, undefined, {
+      timeoutMs: 3_000,
+      maxUrls: 1,
+    }).catch(() => null);
     return box?.game ? shellFromFallbackBox(box) : null;
   }
 
@@ -326,34 +334,37 @@ async function fallbackGameShell(gameId: string): Promise<GameShell | null> {
   return null;
 }
 
-async function boundedPrimaryGameShell(gameId: string): Promise<GameShell | null> {
-  const primary = await withBudget(
-    getGameShellUncached(gameId).catch(() => null),
-    9_000,
-    null as GameShell | null
-  );
-  return primary.value;
-}
-
-async function boundedFallbackGameShell(gameId: string): Promise<GameShell | null> {
-  const fallback = await withBudget(
-    fallbackGameShell(gameId),
-    7_000,
-    null as GameShell | null
-  );
-  return fallback.value;
-}
-
 /**
  * Host-independent game loading contract: always give the complete provider the
  * first chance to resolve identity + box depth, then use CDN fallbacks. This is
  * the same ordering Cursor/local uses, so Vercel cannot silently downgrade a
  * completed game to a scoreboard-only shell before Game Lab mounts.
+ *
+ * Keep this under ~7s. Cold probes showed a ~12s Worker HTML cliff: a 10s shell
+ * budget left almost no time to flush RuntimeGameFallback / Game Lab RSC, so the
+ * document ended as loading.tsx (~103KB) with a truncated flight payload. A 5s
+ * budget was too tight when ESPN CDN jittered and skipped the runtime snapshot.
  */
 export const getGameShellCached = cache(async (gameId: string) => {
-  const primary = await boundedPrimaryGameShell(gameId);
-  if (primary) return primary;
-  return boundedFallbackGameShell(gameId);
+  // Reserve time for the CDN fallback so a slow primary miss cannot burn the
+  // whole budget and leave loading.tsx / RuntimeGameFallback as the document.
+  const totalMs = runtimeTimeoutMs(7_000, 5_500);
+  const fallbackReserveMs = 2_200;
+  const primaryMs = Math.max(2_500, totalMs - fallbackReserveMs);
+
+  const primary = await withBudget(
+    getGameShellUncached(gameId).catch(() => null),
+    primaryMs,
+    null as GameShell | null
+  );
+  if (primary.value) return primary.value;
+
+  const fallback = await withBudget(
+    fallbackGameShell(gameId),
+    fallbackReserveMs,
+    null as GameShell | null
+  );
+  return fallback.value;
 });
 
 export const getHomeAnalyticsCached = cache(() => getHomeAnalyticsUncached());

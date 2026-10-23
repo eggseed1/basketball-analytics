@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type CSSProperties } from "react";
+import { useState, type CSSProperties } from "react";
 
 import { type } from "@/lib/design-system";
 import { formatUsdCompact } from "@/lib/format-money";
@@ -53,12 +53,14 @@ export function ContractValueChart({
         : years[0]?.season) ?? null
   );
 
-  const seasonKey = years.map((y) => y.season).join("|");
-  useEffect(() => {
-    if (initialSeason && seasonKey.split("|").includes(initialSeason)) {
+  // Sync from the page season without an effect (avoids setState-in-effect).
+  const [prevInitialSeason, setPrevInitialSeason] = useState(initialSeason);
+  if (initialSeason !== prevInitialSeason) {
+    setPrevInitialSeason(initialSeason);
+    if (initialSeason && years.some((y) => y.season === initialSeason)) {
       setSelected(initialSeason);
     }
-  }, [initialSeason, seasonKey]);
+  }
 
   if (!years.length) return null;
 

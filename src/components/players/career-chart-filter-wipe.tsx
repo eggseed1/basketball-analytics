@@ -4,6 +4,7 @@ import {
   createContext,
   useContext,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
   type ReactNode,
@@ -153,14 +154,13 @@ export function CareerChartFilterWipe({
   const genRef = useRef(0);
   const [shownKey, setShownKey] = useState(transitionKey);
   const [shown, setShown] = useState(children);
-  pendingRef.current = children;
-  latestKeyRef.current = transitionKey;
+  const live = transitionKey === shownKey;
 
-  // Keep live children in sync when the key has not changed (no wipe).
-  useEffect(() => {
-    if (transitionKey === shownKeyRef.current) {
-      setShown(children);
-    }
+  // Latest children/key for wipe apply() — layout effect, not render-time refs
+  // (eslint react-hooks/refs) and not setState-on-every-children (React #185).
+  useLayoutEffect(() => {
+    pendingRef.current = children;
+    latestKeyRef.current = transitionKey;
   }, [children, transitionKey]);
 
   useEffect(() => {
@@ -214,7 +214,7 @@ export function CareerChartFilterWipe({
       <CareerChartRevealContext.Provider value="entry">
         {/* Remount on each filter key so draw state always starts empty. */}
         <div key={shownKey} className="w-full min-w-0">
-          {shown}
+          {live ? children : shown}
         </div>
       </CareerChartRevealContext.Provider>
     </div>

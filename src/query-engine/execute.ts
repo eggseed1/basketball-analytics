@@ -281,7 +281,7 @@ async function execSeasonStat(ast: BasketballQueryAst): Promise<AskDrblResult> {
     return emptyResult(ast, "invalid", ["Missing player, season, or metric."]);
   }
 
-  const availability = metricSeasonAvailability(metricId, season);
+  const availability = await metricSeasonAvailability(metricId, season);
   if (!availability.ok) {
     return {
       ...emptyResult(ast, "no_result", [availability.message]),

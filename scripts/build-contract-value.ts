@@ -7,9 +7,9 @@
  * past DRBL/100; realized worth and price per win use WAR1. Then values each
  * contract year.
  *
- * Writes src/data/runtime/contract-value-snapshot.json.
+ * Writes public/runtime/contract-value-snapshot.json (+ src mirror).
  */
-import { writeFileSync } from "node:fs";
+import { mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
 import {
@@ -265,7 +265,14 @@ const out = {
   },
   players,
 };
-writeFileSync(path.join(root, "src/data/runtime/contract-value-snapshot.json"), JSON.stringify(out));
+{
+  const body = JSON.stringify(out);
+  const srcOut = path.join(root, "src/data/runtime/contract-value-snapshot.json");
+  const publicOut = path.join(root, "public/runtime/contract-value-snapshot.json");
+  writeFileSync(srcOut, body);
+  mkdirSync(path.dirname(publicOut), { recursive: true });
+  writeFileSync(publicOut, body);
+}
 
 const fmt = (n: number) => `${n < 0 ? "-" : ""}$${(Math.abs(n) / 1e6).toFixed(1)}M`;
 console.log(

@@ -2,6 +2,17 @@ import type { LeagueRates, OnOffSplit, OnOffView } from "@/lib/on-off/metrics";
 
 export const ON_OFF_FILE_VERSION = 5;
 
+/**
+ * Oldest season with baked possession on/off files. String-compare works for
+ * YYYY-YY ids. Keep aligned with scripts/build-runtime-onoff + manifest.json —
+ * used for nav caps without an EDGE fetch of the manifest.
+ */
+export const ON_OFF_SEASON_START = "2022-23";
+
+export function seasonHasOnOff(season: string): boolean {
+  return /^\d{4}-\d{2}$/.test(season) && season >= ON_OFF_SEASON_START;
+}
+
 export type OnOffPhase = "regular" | "playoffs";
 export const ON_OFF_PHASES: readonly OnOffPhase[] = ["regular", "playoffs"];
 
