@@ -37,9 +37,7 @@ import {
   canonicalSeasonFromStartYear,
   currentNbaStartYear,
 } from "@/data/providers/historical/season-range";
-import { getTeamExploreSeasons } from "@/data/queries";
 import { getFranchiseHistory } from "@/data/queries/franchises";
-import { getTeamSeasonBoardCached } from "@/data/queries/request-cache";
 import { formatOrdinal } from "@/lib/format";
 import { isSeasonAwaitingFirstGame } from "@/lib/nba-season-status";
 import { resolveHistoricalTeamBrand } from "@/lib/historical-team-brand";
@@ -151,30 +149,35 @@ export default async function TeamProfilePage({
   const brandPresentation =
     applyEraTheme && themeMode !== "modern" ? "era" : "modern_surface";
 
-  // Season board first — skip prior-season ESPN pull during preseason/offseason
-  // so identity can paint without a second 2.5s budget race.
+  // Brand identity is sync — resolve it before touching the ~1.5MB team board
+  // so unknown ids 404 without loading the snapshot.
+  const identityFallbackEarly = resolveTeamIdentityFallback(
+    teamId,
+    season,
+    brandPresentation
+  );
+
+  // Dynamic import keeps request-cache / team-board-snapshot off the page
+  // module graph until this point.
+  const { getTeamSeasonBoardCached } = await import(
+    "@/data/queries/request-cache"
+  );
+
+  // Season board only on the critical path — skip prior-season board and
+  // explore-season fan-out before first paint (prior loads below when needed).
   const seasonBoard = await getTeamSeasonBoardCached(season);
   const league = seasonBoard.rows;
   const seasonAwaitingGames = isSeasonAwaitingFirstGame(season, league);
 
-  const [priorBoard, exploreSeasons] = await Promise.all([
-    seasonAwaitingGames
-      ? Promise.resolve({
-          rows: [] as typeof seasonBoard.rows,
-          status: "preseason" as const,
-        })
-      : getTeamSeasonBoardCached(priorSeason),
-    getTeamExploreSeasons().catch(() => [currentSeason, priorSeason]),
-  ]);
-
-  const priorLeague = priorBoard.rows;
-
   const boardTeam = resolveTeamFromBoard(league, teamId);
 
-  const identityFallback = !boardTeam
-    ? resolveTeamIdentityFallback(teamId, season, brandPresentation)
-    : null;
+  const identityFallback = boardTeam
+    ? null
+    : identityFallbackEarly;
   if (!boardTeam && !identityFallback) notFound();
+
+  // Season picker options without awaiting explore season lists.
+  const exploreSeasons = [currentSeason, priorSeason, season];
 
   const boardAvailable = Boolean(boardTeam);
   const identityTeam = boardTeam ?? {
@@ -209,6 +212,38 @@ export default async function TeamProfilePage({
     turnovers: 0,
   };
 
+  const modernBrand = resolveTeamBrand(identityTeam.abbreviation);
+
+  // Prior board + standings in parallel after season board — not serial.
+  // Skip prior entirely while the season is still awaiting tip-off.
+  const [priorLeague, standingsContext] = await Promise.all([
+    seasonAwaitingGames || !boardTeam
+      ? Promise.resolve([] as typeof seasonBoard.rows)
+      : getTeamSeasonBoardCached(priorSeason)
+          .then((b) => b.rows)
+          .catch(() => [] as typeof seasonBoard.rows),
+    boardTeam
+      ? resolveTeamStandingsDisplay({
+          season,
+          currentSeason,
+          team: boardTeam,
+          brand: modernBrand,
+          boardRows: league,
+        })
+      : Promise.resolve({
+          standing: null,
+          divisionStanding: null,
+          divisionMeta: resolveTeamDivisionMeta(
+            modernBrand,
+            identityFallback?.teamId ?? teamId
+          ),
+          priorSeasonStanding: null,
+          priorSeasonLabel: null,
+          seasonAwaitingGames,
+          standingsEmpty: false,
+        }),
+  ]);
+
   const prior = boardTeam
     ? priorLeague.find((t) => t.teamId === boardTeam.teamId) ??
       priorLeague.find(
@@ -218,28 +253,6 @@ export default async function TeamProfilePage({
       ) ??
       null
     : null;
-
-  const modernBrand = resolveTeamBrand(identityTeam.abbreviation);
-  const standingsContext = boardTeam
-    ? await resolveTeamStandingsDisplay({
-        season,
-        currentSeason,
-        team: boardTeam,
-        brand: modernBrand,
-        boardRows: league,
-      })
-    : {
-        standing: null,
-        divisionStanding: null,
-        divisionMeta: resolveTeamDivisionMeta(
-          modernBrand,
-          identityFallback?.teamId ?? teamId
-        ),
-        priorSeasonStanding: null,
-        priorSeasonLabel: null,
-        seasonAwaitingGames,
-        standingsEmpty: false,
-      };
 
   const analysis =
     boardTeam && !seasonAwaitingGames
