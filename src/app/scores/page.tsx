@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
 
 import { MotionReveal } from "@/components/continuity/motion-reveal";
@@ -124,15 +125,15 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
   const upcomingGames =
     view === "list" ? summaries(upcomingPool.slice(0, LIST_PAGE_SIZE)) : [];
 
-  const day = view === "day" ? await loadDayView(dateParam(one(sp, "date")) ?? today, today) : null;
-  const daySeason = day ? seasonForDate(day.date) : scheduleSeason;
+  const dayDate = dateParam(one(sp, "date")) ?? today;
+  const daySeason = view === "day" ? seasonForDate(dayDate) : scheduleSeason;
 
   return (
     <main data-motion-page className="site-shell flex flex-col gap-5 py-5 sm:gap-6 sm:py-7">
       <MotionReveal />
       <Gamefeed
         view={view}
-        season={view === "day" ? daySeason : scheduleSeason}
+        season={daySeason}
         monthKey={monthKey}
         weekStart={weekStart}
         weekEnd={weekEnd}
@@ -141,10 +142,34 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
         upcomingGames={upcomingGames}
         upcomingHasMore={upcomingHasMore}
       >
-        {day ? <ScoreboardDay data={day} season={daySeason} /> : null}
+        {view === "day" ? (
+          <Suspense
+            fallback={
+              <div
+                className="sports-card h-[22rem] animate-pulse bg-secondary/60"
+                aria-hidden
+              />
+            }
+          >
+            <ScoresDaySlot date={dayDate} today={today} season={daySeason} />
+          </Suspense>
+        ) : null}
       </Gamefeed>
     </main>
   );
+}
+
+async function ScoresDaySlot({
+  date,
+  today,
+  season,
+}: {
+  date: string;
+  today: string;
+  season: string;
+}) {
+  const day = await loadDayView(date, today);
+  return <ScoreboardDay data={day} season={season} />;
 }
 
 const NOT_PLAYED = new Set<Game["status"]>(["postponed", "cancelled"]);
@@ -192,20 +217,36 @@ async function loadDayView(date: string, today: string): Promise<ScoreboardDayDa
     if (PLAYABLE.has(game.status)) counts.set(game.gameDate, (counts.get(game.gameDate) ?? 0) + 1);
   }
 
+  // Bound the recent/next walk (±4 months) — never scan the full ~1.5MB window.
+  const lookFrom = addDaysIso(date, -120);
+  const lookTo = addDaysIso(date, 120);
   let recentDate: string | null = null;
   let nextGameDate: string | null = null;
-  for (const game of getRuntimeSnapshotWindow({})) {
+  for (const game of getRuntimeSnapshotWindow({
+    fromDate: lookFrom,
+    toDate: lookTo,
+  })) {
     if (!PLAYABLE.has(game.status)) continue;
-    if (game.gameDate < date && (!recentDate || game.gameDate > recentDate)) recentDate = game.gameDate;
-    if (game.gameDate > date && (!nextGameDate || game.gameDate < nextGameDate)) nextGameDate = game.gameDate;
+    if (game.gameDate < date && (!recentDate || game.gameDate > recentDate)) {
+      recentDate = game.gameDate;
+    }
+    if (game.gameDate > date && (!nextGameDate || game.gameDate < nextGameDate)) {
+      nextGameDate = game.gameDate;
+    }
   }
-  // Only today's slate gets the previous day's results underneath.
+  // Only today's slate gets the previous day's results underneath — snapshot
+  // only so cold MISS does not pay a second 3.5s ESPN day feed.
   const wantRecent = date === today && recentDate != null;
 
-  const [selected, recent] = await Promise.all([
-    gamesForDate(date, today),
-    wantRecent ? gamesForDate(recentDate!, today) : Promise.resolve(null),
-  ]);
+  const selected = await gamesForDate(date, today);
+  const recentGames = wantRecent
+    ? summaries(
+        getRuntimeSnapshotWindow({
+          fromDate: recentDate!,
+          toDate: recentDate!,
+        })
+      ).filter((g) => PLAYABLE.has(g.status))
+    : null;
   counts.set(date, selected.games.length);
 
   return {
@@ -219,8 +260,8 @@ async function loadDayView(date: string, today: string): Promise<ScoreboardDayDa
     nextWeekDate: addDaysIso(date, 7),
     games: selected.games,
     recent:
-      recent && recentDate
-        ? { date: recentDate, games: recent.games.filter((g) => PLAYABLE.has(g.status)) }
+      recentGames && recentDate
+        ? { date: recentDate, games: recentGames }
         : null,
     nextGameDate: selected.games.length ? null : nextGameDate,
     stale: selected.stale,

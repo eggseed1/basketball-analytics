@@ -990,11 +990,12 @@ export async function resolveExploreBoardSeason(
     const { isBundledPeerBoardReady } = await import(
       "@/lib/player-board-season"
     );
-    const { getBundledBrefPeerBoard, brefAdvancedSnapshotMeta } = await import(
-      "@/data/runtime/bref-advanced-snapshot"
-    );
+    const {
+      getBundledBrefAdvancedRowCount,
+      brefAdvancedSnapshotMeta,
+    } = await import("@/data/runtime/bref-advanced-snapshot");
     const ready = (season: string) =>
-      isBundledPeerBoardReady(season, getBundledBrefPeerBoard(season).length);
+      isBundledPeerBoardReady(season, getBundledBrefAdvancedRowCount(season));
     if (preferredKey && ready(preferredKey)) return preferredKey;
     const prior = shiftCanonicalSeason(preferredKey, -1);
     if (ready(prior)) return prior;
@@ -1016,11 +1017,13 @@ export async function listExploreBoardReadySeasons(): Promise<string[]> {
     const { isBundledPeerBoardReady } = await import(
       "@/lib/player-board-season"
     );
-    const { listBundledBrefSeasons, getBundledBrefPeerBoard } = await import(
-      "@/data/runtime/bref-advanced-snapshot"
-    );
+    const {
+      listBundledBrefSeasons,
+      getBundledBrefAdvancedRowCount,
+    } = await import("@/data/runtime/bref-advanced-snapshot");
+    // Count slim advanced rows — never materialize full peer boards here.
     return listBundledBrefSeasons().filter((season) =>
-      isBundledPeerBoardReady(season, getBundledBrefPeerBoard(season).length)
+      isBundledPeerBoardReady(season, getBundledBrefAdvancedRowCount(season))
     );
   } catch {
     return [];

@@ -800,6 +800,16 @@ export function listBundledBrefSeasons(): string[] {
   return Object.keys(seasons).sort((a, b) => b.localeCompare(a));
 }
 
+/**
+ * Slim advanced row count for a season — readiness checks without building the
+ * fat PlayerSeason peer board (~650 rows × N seasons on Explore cold MISS).
+ */
+export function getBundledBrefAdvancedRowCount(
+  canonicalSeason: string
+): number {
+  return advancedForSeason(canonicalSeason).length;
+}
+
 export type BundledBrefSearchRow = {
   id: string;
   name: string;

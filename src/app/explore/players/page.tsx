@@ -14,8 +14,8 @@ import {
 import { PlayerSeasonTable } from "@/components/explore/player-season-table";
 import {
   getAvailableSeasons,
-  getTeamsCatalog,
   listExploreBoardReadySeasons,
+  teamsFromCanonicalIdentity,
 } from "@/data/queries";
 import {
   getExplorePlayersBoardView,
@@ -173,15 +173,16 @@ export default async function ExplorePlayersPage({
 }: ExplorePlayersPageProps) {
   const params = await searchParams;
   const t = await getTranslations("Players");
-  const [seasons, teamCatalog, boardReadySeasons] = await Promise.all([
+  // Sync team filters + slim board-ready counts — never await live ESPN catalog
+  // or materialize ~31 peer boards before the shell / board Suspense can start.
+  const [seasons, boardReadySeasons] = await Promise.all([
     getAvailableSeasons(),
-    getTeamsCatalog(),
     listExploreBoardReadySeasons(),
   ]);
+  const teams = teamsFromCanonicalIdentity();
   const defaultSeason = defaultExplorePlayersSeason(seasons, new Date(), {
     boardReadySeasons,
   });
-  const { teams, source, warnings } = teamCatalog;
   const subtitleSort = parsePlayerSeasonSortKey(params.sort);
   const load = loadBoard(params, defaultSeason);
 
@@ -203,7 +204,7 @@ export default async function ExplorePlayersPage({
         }
       />
 
-      <TeamCatalogFallbackNotice source={source} warnings={warnings} />
+      <TeamCatalogFallbackNotice source="canonical-fallback" warnings={[]} />
 
       <Suspense
         fallback={
