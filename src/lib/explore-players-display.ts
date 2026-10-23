@@ -61,10 +61,10 @@ function normalizeViewId(part: string): string {
 }
 
 /**
- * First paint default — Impact columns only (All is still one click away).
- * Keeps Explore HTML ~80–120KB smaller than shipping every sheet column.
+ * First paint default — full sheet (All). Narrower Impact / Profile / …
+ * chips still strip columns when selected.
  */
-export const DEFAULT_PLAYER_BOARD_VIEWS: PlayerBoardView[] = ["impact"];
+export const DEFAULT_PLAYER_BOARD_VIEWS: PlayerBoardView[] = ["all"];
 
 export function parsePlayerBoardViews(value: string | null): PlayerBoardView[] {
   if (!value) return [...DEFAULT_PLAYER_BOARD_VIEWS];
