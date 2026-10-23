@@ -4,6 +4,7 @@ import { describe, it } from "node:test";
 import {
   DAILY_HTML_POLICY,
   LIVE_HTML_POLICY,
+  edgeCacheStorageControlHeader,
   edgeHtmlCacheEnabled,
   htmlCacheControlHeader,
   htmlCachePolicyForPath,
@@ -90,6 +91,13 @@ describe("page-html-cache-policy", () => {
     assert.match(
       htmlCacheControlHeader("/games/401909834", daily, { cdnEnabled: true }),
       /^public, max-age=0, s-maxage=900, stale-while-revalidate=/
+    );
+  });
+
+  it("stores Cache API entries with a real max-age (not client max-age=0)", () => {
+    assert.equal(
+      edgeCacheStorageControlHeader(DAILY_HTML_POLICY),
+      `public, max-age=${DAILY_HTML_POLICY.fresh}`
     );
   });
 

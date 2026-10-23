@@ -6,6 +6,7 @@ import { default as handler } from "./.open-next/worker.js";
 import { localeCacheKeySegment } from "./src/i18n/locale-cache-key";
 import {
   DAILY_HTML_POLICY,
+  edgeCacheStorageControlHeader,
   edgeHtmlCacheEnabled,
   htmlCacheControlHeader,
   htmlCachePolicyForPath,
@@ -220,11 +221,9 @@ async function putEdgeHtml(
   policy: CachePolicy
 ): Promise<void> {
   const edgeHeaders = new Headers(replayed);
-  edgeHeaders.set(
-    "cache-control",
-    htmlCacheControlHeader(entry.pathname, policy, { cdnEnabled: true })
-  );
-  edgeHeaders.set("x-page-cache", "HIT");
+  // Storage TTL for caches.default — not the browser-facing max-age=0 header.
+  edgeHeaders.set("cache-control", edgeCacheStorageControlHeader(policy));
+  edgeHeaders.set("x-page-cache", "EDGE");
   const edgeResponse = new Response(html, { status: 200, headers: edgeHeaders });
   await edgeCache().put(edgeCacheKeyRequest(entry), edgeResponse);
 }
@@ -320,25 +319,25 @@ async function servePage(
   if (cached) {
     if (cached.stale) {
       ctx.waitUntil(refreshPage(new Request(request), env, ctx, entry).catch(() => undefined));
-    } else {
-      // Promote KV HIT into colo Cache API so the next request skips KV.
-      ctx.waitUntil(
-        (async () => {
-          try {
-            const html = await cached.response.clone().text();
-            const edge = edgeEligibleEntry(entry, html);
-            if (!edge.eligible) return;
-            const replayed: Record<string, string> = {};
-            cached.response.headers.forEach((value, name) => {
-              if (REPLAYED_HEADERS.includes(name)) replayed[name] = value;
-            });
-            await putEdgeHtml(entry, html, replayed, edge.policy);
-          } catch {
-            /* ignore */
-          }
-        })()
-      );
     }
+    // Promote every KV HIT/STALE into colo Cache API so the next request skips
+    // the slow KV read (~1s for large HTML) and serves EDGE (~60ms).
+    ctx.waitUntil(
+      (async () => {
+        try {
+          const html = await cached.response.clone().text();
+          const edge = edgeEligibleEntry(entry, html);
+          if (!edge.eligible) return;
+          const replayed: Record<string, string> = {};
+          cached.response.headers.forEach((value, name) => {
+            if (REPLAYED_HEADERS.includes(name)) replayed[name] = value;
+          });
+          await putEdgeHtml(entry, html, replayed, edge.policy);
+        } catch {
+          /* ignore */
+        }
+      })()
+    );
     return cached.response;
   }
 

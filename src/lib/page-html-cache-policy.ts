@@ -129,6 +129,19 @@ export function htmlCacheControlHeader(
   return `public, max-age=0, s-maxage=${policy.fresh}, stale-while-revalidate=${policy.stale}`;
 }
 
+/**
+ * Cache-Control for `caches.default.put` only.
+ * Client responses keep max-age=0 (see htmlCacheControlHeader). Putting that
+ * same header into the Cache API makes colo storage expire immediately, so KV
+ * HIT (~1s+) keeps winning over EDGE (~60ms). Store with a real max-age equal
+ * to the policy fresh window; rewrite headers on matchEdgeCache serve.
+ */
+export function edgeCacheStorageControlHeader(
+  policy: PageHtmlCachePolicy
+): string {
+  return `public, max-age=${policy.fresh}`;
+}
+
 /** Env kill switch: unset/empty/"1"/"true"/"on" → enabled; "0"/"false"/"off" → disabled. */
 export function edgeHtmlCacheEnabled(
   envValue: string | undefined | null
