@@ -2,7 +2,6 @@ import "server-only";
 
 import { cache } from "react";
 
-import bundledSentiment from "@/data/runtime/sentiment-snapshot.json";
 import type {
   LeagueSentimentFeed,
   PlayerSentimentProfile,
@@ -25,6 +24,59 @@ export type {
   TrackedPlayerSentimentRow,
 } from "@/sentiment/curated-types";
 export { SENTIMENT_WINDOW_OPTIONS } from "@/sentiment/curated-types";
+
+type AssetsFetcher = {
+  fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>;
+};
+
+const ASSET_PATH = "/runtime/sentiment-snapshot.json";
+
+let cachedSnapshot: SentimentCuratedSnapshot | null | undefined;
+
+function cloudflareAssets(): AssetsFetcher | null {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { getCloudflareContext } = require("@opennextjs/cloudflare") as {
+      getCloudflareContext: () => { env?: { ASSETS?: AssetsFetcher } };
+    };
+    return getCloudflareContext()?.env?.ASSETS ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/** Node-only disk read — keep `node:fs` off the webpack graph. */
+function loadFromPublicDir(): SentimentCuratedSnapshot | null {
+  try {
+    if (process.env.NEXT_RUNTIME === "edge") return null;
+    // eslint-disable-next-line no-eval
+    const req = eval("require") as NodeRequire;
+    const fs = req("node:fs") as typeof import("node:fs");
+    const path = req("node:path") as typeof import("node:path");
+    const file = path.join(
+      process.cwd(),
+      "public",
+      "runtime",
+      "sentiment-snapshot.json"
+    );
+    if (!fs.existsSync(file)) return null;
+    return JSON.parse(fs.readFileSync(file, "utf8")) as SentimentCuratedSnapshot;
+  } catch {
+    return null;
+  }
+}
+
+async function loadFromAssets(): Promise<SentimentCuratedSnapshot | null> {
+  try {
+    const assets = cloudflareAssets();
+    if (!assets) return null;
+    const response = await assets.fetch(`https://assets.local${ASSET_PATH}`);
+    if (!response.ok) return null;
+    return (await response.json()) as SentimentCuratedSnapshot;
+  } catch {
+    return null;
+  }
+}
 
 function hydrateMoverRow(row: SentimentMoverRow): SentimentMoverRow {
   const displayName = sentimentPlayerLabel(row.playerId, row.displayName);
@@ -86,17 +138,35 @@ function hydrateSentimentDisplayNames(
   };
 }
 
-export const loadSentimentSnapshot = cache((): SentimentCuratedSnapshot | null => {
-  // Cloudflare Workers: static import only — node:fs is empty on CF.
-  const snapshot = bundledSentiment as unknown as SentimentCuratedSnapshot;
-  if (!snapshot?.meta || !Array.isArray(snapshot.players)) return null;
-  return hydrateSentimentDisplayNames(snapshot);
-});
+/**
+ * Curated sentiment snapshot from ASSETS (CF) or public/runtime (Node).
+ * Not Worker-bundled — keeps ~1.8MB off the isolate upload.
+ */
+export const loadSentimentSnapshot = cache(
+  async (): Promise<SentimentCuratedSnapshot | null> => {
+    if (cachedSnapshot !== undefined) return cachedSnapshot;
 
-export function getPlayerSentimentProfile(
+    const fromDisk = loadFromPublicDir();
+    if (fromDisk?.meta && Array.isArray(fromDisk.players)) {
+      cachedSnapshot = hydrateSentimentDisplayNames(fromDisk);
+      return cachedSnapshot;
+    }
+
+    const fromAssets = await loadFromAssets();
+    if (fromAssets?.meta && Array.isArray(fromAssets.players)) {
+      cachedSnapshot = hydrateSentimentDisplayNames(fromAssets);
+      return cachedSnapshot;
+    }
+
+    cachedSnapshot = null;
+    return null;
+  }
+);
+
+export async function getPlayerSentimentProfile(
   playerIds: Set<string>
-): (PlayerSentimentProfile & { disclaimer: string }) | null {
-  const snapshot = loadSentimentSnapshot();
+): Promise<(PlayerSentimentProfile & { disclaimer: string }) | null> {
+  const snapshot = await loadSentimentSnapshot();
   if (!snapshot || playerIds.size === 0) return null;
   const hit = snapshot.players.find((row) =>
     row.playerIds.some((id) => playerIds.has(id))
@@ -145,26 +215,30 @@ export function resolveLeagueMoodLanes(
   };
 }
 
-export const getLeagueSentimentFeed = cache((): LeagueSentimentFeed | null => {
-  const snapshot = loadSentimentSnapshot();
-  if (!snapshot?.league) return null;
-  return {
-    season: snapshot.meta.season,
-    disclaimer: snapshot.meta.disclaimer,
-    status: snapshot.meta.status,
-    snapshotDate: snapshot.meta.snapshotDate ?? null,
-    sources: snapshot.meta.sources ?? null,
-    league: snapshot.league,
-    moodSeriesByWindow: resolveLeagueMoodSeriesByWindow(snapshot.league),
-    moodLanes: resolveLeagueMoodLanes(snapshot.league),
-    divergences: snapshot.meta.divergences?.rows ?? [],
-    topicHeat: snapshot.meta.topicHeat ?? [],
-    topicHeatOrigin: snapshot.meta.topicHeatOrigin ?? "headlines",
-  };
-});
+export const getLeagueSentimentFeed = cache(
+  async (): Promise<LeagueSentimentFeed | null> => {
+    const snapshot = await loadSentimentSnapshot();
+    if (!snapshot?.league) return null;
+    return {
+      season: snapshot.meta.season,
+      disclaimer: snapshot.meta.disclaimer,
+      status: snapshot.meta.status,
+      snapshotDate: snapshot.meta.snapshotDate ?? null,
+      sources: snapshot.meta.sources ?? null,
+      league: snapshot.league,
+      moodSeriesByWindow: resolveLeagueMoodSeriesByWindow(snapshot.league),
+      moodLanes: resolveLeagueMoodLanes(snapshot.league),
+      divergences: snapshot.meta.divergences?.rows ?? [],
+      topicHeat: snapshot.meta.topicHeat ?? [],
+      topicHeatOrigin: snapshot.meta.topicHeatOrigin ?? "headlines",
+    };
+  }
+);
 
-export function listTrackedPlayerSentiment(): TrackedPlayerSentimentRow[] {
-  const snapshot = loadSentimentSnapshot();
+export async function listTrackedPlayerSentiment(): Promise<
+  TrackedPlayerSentimentRow[]
+> {
+  const snapshot = await loadSentimentSnapshot();
   if (!snapshot) return [];
   const rows: TrackedPlayerSentimentRow[] = [];
   for (const row of snapshot.players) {
@@ -189,20 +263,20 @@ export function listTrackedPlayerSentiment(): TrackedPlayerSentimentRow[] {
 }
 
 /** Players in the sentiment snapshot linked to a franchise (ESPN team id). */
-export function listTeamSentimentPlayers(
+export async function listTeamSentimentPlayers(
   teamId: string
-): TrackedPlayerSentimentRow[] {
+): Promise<TrackedPlayerSentimentRow[]> {
   const id = String(teamId ?? "").trim();
   if (!id) return [];
-  return listTrackedPlayerSentiment().filter(
+  return (await listTrackedPlayerSentiment()).filter(
     (row) => row.teamKey != null && String(row.teamKey) === id
   );
 }
 
-export function getTeamSentimentProfile(
+export async function getTeamSentimentProfile(
   teamId: string
-): (TeamSentimentProfile & { disclaimer: string }) | null {
-  const snapshot = loadSentimentSnapshot();
+): Promise<(TeamSentimentProfile & { disclaimer: string }) | null> {
+  const snapshot = await loadSentimentSnapshot();
   if (!snapshot?.teams?.length) return null;
   const id = String(teamId ?? "").trim();
   if (!id) return null;
@@ -215,12 +289,14 @@ export function getTeamSentimentProfile(
   return { ...hit, disclaimer: snapshot.meta.disclaimer };
 }
 
-export function listTeamSentimentProfiles(): TeamSentimentProfile[] {
-  const snapshot = loadSentimentSnapshot();
+export async function listTeamSentimentProfiles(): Promise<
+  TeamSentimentProfile[]
+> {
+  const snapshot = await loadSentimentSnapshot();
   return snapshot?.teams ?? [];
 }
 
-export function getSentimentSnapshotHealth(): {
+export async function getSentimentSnapshotHealth(): Promise<{
   available: boolean;
   season: string | null;
   status: string | null;
@@ -232,8 +308,8 @@ export function getSentimentSnapshotHealth(): {
   topics: number;
   byProvenance: Record<string, number>;
   teamSources: Record<string, number>;
-} {
-  const snapshot = loadSentimentSnapshot();
+}> {
+  const snapshot = await loadSentimentSnapshot();
   if (!snapshot) {
     return {
       available: false,

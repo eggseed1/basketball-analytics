@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+import { Suspense, type ComponentProps } from "react";
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 
@@ -6,22 +6,13 @@ import { analyzeTeamProfile } from "@/analytics";
 import { StatDisclosure } from "@/components/analytics/stat-disclosure";
 import { DestinationSectionSkeleton } from "@/components/continuity/destination-loading-frame";
 import { TeamDestinationIdentity } from "@/components/teams/team-destination-identity";
-import { TeamEvidenceIsland } from "@/components/teams/team-evidence-island";
-import { TeamHustleIsland } from "@/components/teams/team-hustle-island";
 import { TeamLeadershipSection } from "@/components/teams/team-leadership-section";
-import { TeamLineupsIsland } from "@/components/teams/team-lineups-island";
-import { TeamOnOffIsland } from "@/components/teams/team-on-off-island";
-import { TeamOffenseIsland } from "@/components/teams/team-offense-island";
-import { TeamPlayoffsIsland } from "@/components/teams/team-playoffs-island";
-import { TeamSplitsIsland } from "@/components/teams/team-splits-island";
 import { TeamOpeningNightIsland } from "@/components/teams/overview/team-opening-night-island";
 import { TeamRosterWar1Island } from "@/components/teams/overview/team-roster-war1-island";
 import { TeamOverviewVisuals } from "@/components/teams/overview/team-overview-visuals";
 import { TeamSeasonRecapIsland } from "@/components/teams/overview/team-season-recap-island";
 import { StatsRankGrid } from "@/components/teams/viz/stats-rank-grid";
 import { TeamPrimaryNav } from "@/components/teams/team-primary-nav";
-import { TeamRosterIsland } from "@/components/teams/team-roster-island";
-import { TeamRosterBuiltIsland } from "@/components/teams/team-roster-built-island";
 import { TeamSalaryAssetsTab } from "@/components/teams/team-salary-assets-tab";
 import { TeamRosterSourcesSection } from "@/components/teams/team-roster-sources-section";
 import { getFranchiseHistory } from "@/data/queries/franchises";
@@ -94,6 +85,102 @@ async function TeamTransactionsIslandLazy({
     "@/components/teams/team-transactions-island"
   );
   return <TeamTransactionsIsland teamFilterId={teamFilterId} />;
+}
+
+async function TeamSplitsIslandLazy(props: {
+  teamId: string;
+  season: string;
+  teamKey: string;
+}) {
+  const { TeamSplitsIsland } = await import(
+    "@/components/teams/team-splits-island"
+  );
+  return <TeamSplitsIsland {...props} />;
+}
+
+async function TeamPlayoffsIslandLazy(props: {
+  teamId: string;
+  season: string;
+  teamKey: string;
+}) {
+  const { TeamPlayoffsIsland } = await import(
+    "@/components/teams/team-playoffs-island"
+  );
+  return <TeamPlayoffsIsland {...props} />;
+}
+
+async function TeamRosterIslandLazy(props: {
+  teamId: string;
+  season: string;
+  sortParam?: string;
+  sortDirParam?: string;
+}) {
+  const { TeamRosterIsland } = await import(
+    "@/components/teams/team-roster-island"
+  );
+  return <TeamRosterIsland {...props} />;
+}
+
+async function TeamLineupsIslandLazy(props: {
+  teamId: string;
+  season: string;
+  teamKey: string;
+}) {
+  const { TeamLineupsIsland } = await import(
+    "@/components/teams/team-lineups-island"
+  );
+  return <TeamLineupsIsland {...props} />;
+}
+
+async function TeamRosterBuiltIslandLazy(props: { espnTeamId: string }) {
+  const { TeamRosterBuiltIsland } = await import(
+    "@/components/teams/team-roster-built-island"
+  );
+  return <TeamRosterBuiltIsland {...props} />;
+}
+
+async function TeamOffenseIslandLazy(
+  props: ComponentProps<
+    typeof import("@/components/teams/team-offense-island").TeamOffenseIsland
+  >
+) {
+  const { TeamOffenseIsland } = await import(
+    "@/components/teams/team-offense-island"
+  );
+  return <TeamOffenseIsland {...props} />;
+}
+
+async function TeamHustleIslandLazy(
+  props: ComponentProps<
+    typeof import("@/components/teams/team-hustle-island").TeamHustleIsland
+  >
+) {
+  const { TeamHustleIsland } = await import(
+    "@/components/teams/team-hustle-island"
+  );
+  return <TeamHustleIsland {...props} />;
+}
+
+async function TeamOnOffIslandLazy(props: {
+  teamId: string;
+  season: string;
+  teamKey: string;
+}) {
+  const { TeamOnOffIsland } = await import(
+    "@/components/teams/team-on-off-island"
+  );
+  return <TeamOnOffIsland {...props} />;
+}
+
+async function TeamEvidenceIslandLazy(
+  props: ComponentProps<
+    typeof import("@/components/teams/team-evidence-island").TeamEvidenceIsland
+  >
+) {
+  const { TeamEvidenceIsland } = await import(
+    "@/components/teams/team-evidence-island"
+  );
+  return <TeamEvidenceIsland {...props} />;
 }
 
 export async function TeamPageWithBoard({
@@ -416,7 +503,7 @@ export async function TeamPageWithBoard({
           <Suspense
             fallback={<DestinationSectionSkeleton label={t("loadingRoster")} />}
           >
-            <TeamRosterIsland
+            <TeamRosterIslandLazy
               teamId={resolvedTeamId}
               season={season}
               sortParam={Array.isArray(sp.sort) ? sp.sort[0] : sp.sort}
@@ -429,7 +516,7 @@ export async function TeamPageWithBoard({
           <Suspense
             fallback={<DestinationSectionSkeleton label={t("loadingRotation")} />}
           >
-            <TeamLineupsIsland
+            <TeamLineupsIslandLazy
               teamId={resolvedTeamId}
               season={season}
               teamKey={identityTeam.abbreviation}
@@ -439,7 +526,7 @@ export async function TeamPageWithBoard({
 
         {tab === "players" && season === currentSeason && askTeamId ? (
           <Suspense fallback={null}>
-            <TeamRosterBuiltIsland espnTeamId={askTeamId} />
+            <TeamRosterBuiltIslandLazy espnTeamId={askTeamId} />
           </Suspense>
         ) : null}
 
@@ -448,7 +535,7 @@ export async function TeamPageWithBoard({
             <Suspense
               fallback={<DestinationSectionSkeleton label={t("loadingOffense")} />}
             >
-              <TeamOffenseIsland
+              <TeamOffenseIslandLazy
                 teamId={resolvedTeamId}
                 season={season}
                 teamKey={identityTeam.abbreviation}
@@ -470,7 +557,7 @@ export async function TeamPageWithBoard({
           <Suspense
             fallback={<DestinationSectionSkeleton label={t("loadingHustle")} />}
           >
-            <TeamHustleIsland
+            <TeamHustleIslandLazy
               teamId={resolvedTeamId}
               season={season}
               teamKey={identityTeam.abbreviation}
@@ -484,7 +571,7 @@ export async function TeamPageWithBoard({
           <Suspense
             fallback={<DestinationSectionSkeleton label={t("loadingOnOff")} />}
           >
-            <TeamOnOffIsland
+            <TeamOnOffIslandLazy
               teamId={resolvedTeamId}
               season={season}
               teamKey={identityTeam.abbreviation}
@@ -510,7 +597,7 @@ export async function TeamPageWithBoard({
           <Suspense
             fallback={<DestinationSectionSkeleton label={t("loadingSplits")} />}
           >
-            <TeamSplitsIsland teamId={resolvedTeamId} season={season} teamKey={identityTeam.abbreviation} />
+            <TeamSplitsIslandLazy teamId={resolvedTeamId} season={season} teamKey={identityTeam.abbreviation} />
           </Suspense>
         ) : null}
 
@@ -518,7 +605,7 @@ export async function TeamPageWithBoard({
           <Suspense
             fallback={<DestinationSectionSkeleton label={t("loadingPlayoffs")} />}
           >
-            <TeamPlayoffsIsland teamId={resolvedTeamId} season={season} teamKey={identityTeam.abbreviation} />
+            <TeamPlayoffsIslandLazy teamId={resolvedTeamId} season={season} teamKey={identityTeam.abbreviation} />
           </Suspense>
         ) : null}
 
@@ -617,7 +704,7 @@ export async function TeamPageWithBoard({
                 <DestinationSectionSkeleton label={t("loadingSeasonEvidence")} />
               }
             >
-              <TeamEvidenceIsland
+              <TeamEvidenceIslandLazy
                 teamId={askTeamId}
                 season={season}
                 abbreviation={identityTeam.abbreviation}

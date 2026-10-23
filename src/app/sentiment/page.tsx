@@ -62,7 +62,7 @@ export default async function SentimentPage({ searchParams }: PageProps) {
       <SentimentCenterView
         feed={feed}
         players={players}
-        teams={listTeamSentimentProfiles()}
+        teams={await listTeamSentimentProfiles()}
         view={view}
         highlightTopic={topic}
       />
