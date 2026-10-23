@@ -100,9 +100,18 @@ const payload = {
   seasons,
 };
 
+const body = JSON.stringify(payload);
+const OUT_PUBLIC = path.join(
+  process.cwd(),
+  "public",
+  "runtime",
+  "team-board-snapshot.json"
+);
 await fs.mkdir(path.dirname(OUT), { recursive: true });
-await fs.writeFile(OUT, JSON.stringify(payload));
-const gz = gzipSync(Buffer.from(JSON.stringify(payload))).length;
+await fs.mkdir(path.dirname(OUT_PUBLIC), { recursive: true });
+await fs.writeFile(OUT, body);
+await fs.writeFile(OUT_PUBLIC, body);
+const gz = gzipSync(Buffer.from(body)).length;
 console.log(
-  `[team-board-snapshot] wrote ${Object.keys(seasons).length} seasons → ${OUT} (gzip ${gz} B)`
+  `[team-board-snapshot] wrote ${Object.keys(seasons).length} seasons → ${OUT_PUBLIC} (gzip ${gz} B; src mirror ${OUT})`
 );
