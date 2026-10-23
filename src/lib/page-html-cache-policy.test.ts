@@ -74,7 +74,7 @@ describe("page-html-cache-policy", () => {
   });
 
   it("picks policies by path class", () => {
-    assert.equal(htmlCachePolicyForPath("/").fresh, 5 * 60);
+    assert.equal(htmlCachePolicyForPath("/").fresh, 15 * 60);
     assert.equal(htmlCachePolicyForPath("/scores").fresh, SCORES_HTML_POLICY.fresh);
     assert.equal(htmlCachePolicyForPath("/players/1").fresh, DAILY_HTML_POLICY.fresh);
   });

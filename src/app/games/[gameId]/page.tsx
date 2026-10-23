@@ -39,6 +39,7 @@ import { shareImageMetadata } from "@/lib/share-images";
 import { JsonLd } from "@/components/seo/json-ld";
 import { absoluteUrl } from "@/lib/site-url";
 import { formatGameCalendarDate } from "@/i18n/format-date";
+import { slimGameAnalysisForFlight } from "@/lib/slim-game-analysis-for-flight";
 
 interface GamePageProps { params: Promise<{ gameId: string }>; searchParams: Promise<Record<string, string | string[] | undefined>>; }
 export async function generateMetadata({ params }: GamePageProps) {
@@ -80,10 +81,15 @@ async function GameLabDeepBody({ gameId, hidePeriodTable, asOfMs }: { gameId: st
   // Finals: omit PBP from Flight (~0.5MB HTML) and hydrate client-side.
   // Live (and score-delay cuts): keep events in SSR so box/plays/shots paint now.
   const status = payload.analysis.status as GameStatusKind | undefined;
-  const embedEvents = !isFinalStatus(status) || payload.asOf === "cut";
+  const isFinal = isFinalStatus(status);
+  const embedEvents = !isFinal || payload.asOf === "cut";
+  // Finals also downsample the score timeline + drop unused analysis blobs.
+  const analysis = slimGameAnalysisForFlight(payload.analysis, {
+    downsampleTimeline: isFinal && payload.asOf !== "cut",
+  });
   const view = (
     <GameLabView
-      analysis={payload.analysis}
+      analysis={analysis}
       players={payload.players}
       events={embedEvents ? payload.events : []}
       pbpSource={payload.pbpSource}
@@ -151,7 +157,10 @@ export default async function GamePage({ params, searchParams }: GamePageProps) 
   const awayName = shell.game.awayTeamName ?? shell.game.awayTeamAbbr ?? shell.game.awayTeamId;
   const homeName = shell.game.homeTeamName ?? shell.game.homeTeamAbbr ?? shell.game.homeTeamId;
   const body = <main data-motion-page className="site-shell flex flex-1 flex-col gap-5 py-5 sm:gap-6 sm:py-7">
-    {isFinalStatus(status) ? <span hidden data-html-cache="game-final" /> : null}
+    {/* Delay-cut HTML stays private — never promote personalized cuts to EDGE. */}
+    {isFinalStatus(status) && asOfMs == null ? (
+      <span hidden data-html-cache="game-final" />
+    ) : null}
     <h1 className="sr-only">{gameDate ? t("srTitleDated", { away: awayName, home: homeName, date: gameDate }) : t("srTitle", { away: awayName, home: homeName })}</h1>
     <JsonLd data={{
       "@context": "https://schema.org",

@@ -28,9 +28,13 @@ export const SCORES_HTML_POLICY: PageHtmlCachePolicy = {
   stale: 10 * 60,
 };
 
-/** Homepage is the coldest path after deploy; fewer re-renders = fewer OOMs. */
+/**
+ * Homepage is the coldest path after deploy; fewer re-renders = fewer OOMs.
+ * Match daily fresh window so colo EDGE (~100ms) wins over KV HIT (~1.5s+)
+ * for longer between background refreshes.
+ */
 export const HOME_HTML_POLICY: PageHtmlCachePolicy = {
-  fresh: 5 * 60,
+  fresh: 15 * 60,
   stale: 30 * 60,
 };
 
