@@ -5,7 +5,7 @@ import { useState, type CSSProperties } from "react";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { useChartTheme } from "@/lib/chart-theme";
 import { type } from "@/lib/design-system";
-import { formatNumber, formatOrdinal } from "@/lib/format";
+import { cssPct, formatNumber, formatOrdinal } from "@/lib/format";
 import {
   formatStripValue,
   type LadderRow,
@@ -101,7 +101,7 @@ export function NetLadder({
                   style={{
                     transformOrigin: r.net >= 0 ? "bottom" : "top",
                     background: own ? accent : on ? (r.net >= 0 ? WIN : LOSS) : r.net >= 0 ? WIN_SOFT : LOSS_SOFT,
-                    height: `${Math.max(1.5, h)}%`,
+                    height: cssPct(Math.max(1.5, h), { unit: "percent" }),
                     ...(r.net >= 0 ? { bottom: "50%" } : { top: "50%" }),
                     boxShadow: own ? `0 0 0 2px var(--background), 0 0 0 3.5px ${accent}` : undefined,
                   }}
@@ -153,7 +153,7 @@ export function LeagueStrips({
           const span = hi - lo || 1;
           const pos = (v: number) => {
             const t = (v - lo) / span;
-            return `${(s.lowerIsBetter ? 1 - t : t) * 100}%`;
+            return cssPct(s.lowerIsBetter ? 1 - t : t);
           };
           return (
             <li

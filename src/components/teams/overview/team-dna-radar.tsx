@@ -4,7 +4,7 @@ import { useState, type CSSProperties } from "react";
 
 import { useChartTheme } from "@/lib/chart-theme";
 import { type } from "@/lib/design-system";
-import { formatOrdinal } from "@/lib/format";
+import { cssPct, formatOrdinal } from "@/lib/format";
 import { percentileSavantColor, percentileSavantForeground } from "@/lib/player-grade";
 import type { DnaAxis } from "@/lib/team-overview-types";
 import { cn } from "@/lib/utils";
@@ -145,7 +145,7 @@ export function TeamDnaRadar({ axes, teamKey, season }: { axes: DnaAxis[]; teamK
               <div
                 data-motion-bar="x"
                 className="h-full rounded-full"
-                style={{ width: `${Math.max(3, focus.percentile)}%`, background: percentileSavantColor(focus.percentile, "auto") }}
+                style={{ width: cssPct(Math.max(3, focus.percentile), { unit: "percent" }), background: percentileSavantColor(focus.percentile, "auto") }}
               />
             </div>
             <p className={cn(type.caption, "mt-1 text-muted-foreground")}>

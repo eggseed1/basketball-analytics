@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 
+import { cssPct } from "@/lib/format";
 import {
   downsampleInsightFlowPath,
   type InsightMoment,
@@ -359,7 +360,7 @@ function SplitBar({
       <span className="font-semibold text-muted-foreground">{label}</span>
       <div className="h-2 overflow-hidden rounded-full bg-secondary">
         {pct != null ? (
-          <div data-motion-bar="x" className="h-full rounded-full" style={{ width: `${pct * 100}%`, background: color }} />
+          <div data-motion-bar="x" className="h-full rounded-full" style={{ width: cssPct(pct), background: color }} />
         ) : null}
       </div>
       <span className="text-right tabular-nums">
@@ -487,7 +488,7 @@ export function InsightPointsMix({
           <div
             aria-hidden
             className="absolute inset-y-0 flex flex-col items-center"
-            style={{ left: pct1(avg / scale), transform: "translateX(-50%)" }}
+            style={{ left: cssPct(avg / scale), transform: "translateX(-50%)" }}
           >
             <span className="text-[10px] font-semibold whitespace-nowrap text-muted-foreground">
               Season {avg.toFixed(1)}
@@ -501,7 +502,7 @@ export function InsightPointsMix({
               <div
                 key={p.label}
                 className="flex items-center justify-center text-[12px] font-bold tabular-nums"
-                style={{ width: pct1(p.pts / scale), background: color, opacity: p.opacity, color: ink }}
+                style={{ width: cssPct(p.pts / scale), background: color, opacity: p.opacity, color: ink }}
               >
                 {p.opacity > 0.6 && p.pts / scale > 0.1 ? p.pts : ""}
               </div>
@@ -652,7 +653,7 @@ export function InsightTrendBars({
         <span
           aria-hidden
           className="absolute inset-x-0 border-t border-dashed border-foreground/40"
-          style={{ bottom: `${(avg / max) * 100}%` }}
+          style={{ bottom: cssPct(avg / max) }}
         />
         {points.map((p, i) => (
           <div key={p.gameDate} className="flex flex-1 flex-col items-center justify-end" style={{ height: "100%" }}>
@@ -660,7 +661,7 @@ export function InsightTrendBars({
             <div
               data-motion-bar="y"
               className="w-full rounded-t-sm"
-              style={{ "--i": i, height: `${(p.points / max) * 80}%`, background: color } as CSSProperties}
+              style={{ "--i": i, height: cssPct((p.points / max) * 0.8), background: color } as CSSProperties}
             />
           </div>
         ))}
@@ -710,12 +711,12 @@ export function InsightVsNorm({
               <span className="relative h-3.5 rounded-[4px] bg-secondary">
                 <span
                   className="absolute inset-y-0 left-0 rounded-[4px]"
-                  style={{ width: pct1(row.v / scale), background: color, opacity: on ? 1 : 0.3 }}
+                  style={{ width: cssPct(row.v / scale), background: color, opacity: on ? 1 : 0.3 }}
                 />
                 <span
                   aria-hidden
                   className="absolute -inset-y-1 w-0.5 rounded-full bg-foreground/75"
-                  style={{ left: pct1(row.avg / scale) }}
+                  style={{ left: cssPct(row.avg / scale) }}
                 />
               </span>
               <span className="text-right text-[11px] tabular-nums text-muted-foreground">
@@ -749,7 +750,7 @@ export function InsightMomentChart({ moment, color }: { moment: InsightMoment; c
           data-tip-sub={`${pct}% of his team's points. The rest of the team scored ${team - points}.`}
           tabIndex={0}
         >
-          <div className="h-full rounded-full" style={{ width: `${pct}%`, background: color }} />
+          <div className="h-full rounded-full" style={{ width: cssPct(pct, { unit: "percent" }), background: color }} />
         </div>
         <figcaption className="flex justify-between text-[11px] text-muted-foreground">
           <span className="font-semibold tabular-nums text-foreground">{points} pts</span>
@@ -867,9 +868,9 @@ function MomentMeter({ mark: m, color }: { mark: MomentMark; color: string }) {
     >
       <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">{m.label}</span>
       <span className="relative h-2 rounded-full bg-foreground/10">
-        <span className="absolute inset-y-0 left-0 rounded-full" style={{ width: pct1(Math.min(1, fill)), background: color }} />
+        <span className="absolute inset-y-0 left-0 rounded-full" style={{ width: cssPct(Math.min(1, fill)), background: color }} />
         {tickAt != null ? (
-          <span aria-hidden className="absolute inset-y-[-3px] w-px bg-foreground" style={{ left: pct1(Math.min(1, tickAt)) }} />
+          <span aria-hidden className="absolute inset-y-[-3px] w-px bg-foreground" style={{ left: cssPct(Math.min(1, tickAt)) }} />
         ) : null}
       </span>
       <span className="text-[12px] font-black tabular-nums">{m.of != null ? `${m.value}/${m.of}` : m.value}</span>
@@ -935,10 +936,6 @@ function svgN(n: number): string {
   return String(Math.round(n));
 }
 
-/** One-decimal CSS % — avoids `58.82352941176471%` flight bloat on meters. */
-function pct1(fraction: number): string {
-  return `${Math.round(fraction * 1000) / 10}%`;
-}
 
 /**
  * Score margin after every scoring play, shaded in the leading team's color,
@@ -1147,7 +1144,7 @@ export function InsightContributorBars({
             <span
               data-motion-bar="x"
               className="block h-full rounded-full"
-              style={{ "--i": i, width: `${(item.value / max) * 100}%`, background: color } as CSSProperties}
+              style={{ "--i": i, width: cssPct(item.value / max), background: color } as CSSProperties}
             />
           </span>
           <span className="text-right font-bold tabular-nums">{item.value}</span>

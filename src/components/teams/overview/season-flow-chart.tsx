@@ -24,6 +24,10 @@ const WIN_TEXT = "var(--accent-positive)";
 const LOSS = "var(--data-negative)";
 const LOSS_TEXT = "var(--accent-negative)";
 
+function svgN(n: number): string {
+  return String(Math.round(n));
+}
+
 function useElementWidth<T extends HTMLElement>(fallback: number) {
   const ref = useRef<T>(null);
   const [width, setWidth] = useState(fallback);
@@ -99,10 +103,14 @@ export function SeasonFlowChart({
   const postPhases = new Set(postStart >= 0 ? games.slice(postStart).map((g) => g.phase) : []);
   const postLabel = postPhases.has("playoff") ? (postPhases.has("play-in") ? "POSTSEASON" : "PLAYOFFS") : "PLAY-IN";
   const postBandW = postStart >= 0 ? innerW - step * postStart : 0;
-  const rollingPath = games.map((g, i) => `${i ? "L" : "M"}${xAt(i).toFixed(1)},${yAt(g.rolling).toFixed(1)}`).join("");
-  const ouLine = games.map((g, i) => `${i ? "L" : "M"}${xAt(i).toFixed(1)},${yAt(g.overUnder).toFixed(1)}`).join("");
+  const rollingPath = games
+    .map((g, i) => `${i ? "L" : "M"}${svgN(xAt(i))},${svgN(yAt(g.rolling))}`)
+    .join("");
+  const ouLine = games
+    .map((g, i) => `${i ? "L" : "M"}${svgN(xAt(i))},${svgN(yAt(g.overUnder))}`)
+    .join("");
   const ouArea = games.length
-    ? `${ouLine}L${xAt(games.length - 1).toFixed(1)},${yAt(0).toFixed(1)}L${xAt(0).toFixed(1)},${yAt(0).toFixed(1)}Z`
+    ? `${ouLine}L${svgN(xAt(games.length - 1))},${svgN(yAt(0))}L${svgN(xAt(0))},${svgN(yAt(0))}Z`
     : "";
 
   const active = pinned ?? hover;

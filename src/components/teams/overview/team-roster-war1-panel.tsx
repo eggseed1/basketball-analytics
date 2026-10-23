@@ -8,7 +8,7 @@ import { MetricHelp } from "@/components/learn/metric-help";
 import { P1_POINTS_PER_WIN, WAR1_LEARN_HREF } from "@/lib/drbl-public-labels";
 import { SectionLink } from "@/components/ui/section-link";
 import { type } from "@/lib/design-system";
-import { formatNumber, formatOrdinal } from "@/lib/format";
+import { cssPct, formatNumber, formatOrdinal } from "@/lib/format";
 import { useChartTheme } from "@/lib/chart-theme";
 import {
   ROSTER_WINS_LINE_TEAMS,
@@ -246,7 +246,9 @@ function PlayerBars({
                     ...({ "--i": Math.min(index, 12) } as CSSProperties),
                     transformOrigin: player.war1 >= 0 ? "left" : "right",
                     background: player.war1 >= 0 ? WIN : LOSS,
-                    width: `${Math.max(player.war1 === 0 ? 0 : 0.8, width)}%`,
+                    width: cssPct(Math.max(player.war1 === 0 ? 0 : 0.8, width), {
+                      unit: "percent",
+                    }),
                     left: player.war1 >= 0 ? "50%" : undefined,
                     right: player.war1 < 0 ? "50%" : undefined,
                   }}
@@ -340,7 +342,7 @@ function LeagueLadder({
                   style={{
                     transformOrigin: squad.war1 >= 0 ? "bottom" : "top",
                     background: own ? accent : squad.war1 >= 0 ? WIN_SOFT : LOSS_SOFT,
-                    height: `${Math.max(1.5, h)}%`,
+                    height: cssPct(Math.max(1.5, h), { unit: "percent" }),
                     ...(squad.war1 >= 0 ? { bottom: "50%" } : { top: "50%" }),
                     boxShadow: own ? `0 0 0 2px var(--background), 0 0 0 3.5px ${accent}` : undefined,
                   }}

@@ -2,7 +2,7 @@ import type { CSSProperties } from "react";
 
 import type { AnalyticalFinding } from "@/analytics";
 import { type } from "@/lib/design-system";
-import { formatNumber, formatOrdinal, formatPct } from "@/lib/format";
+import { cssPct, formatNumber, formatOrdinal, formatPct } from "@/lib/format";
 import { percentileSavantColor } from "@/lib/player-grade";
 import type { QuarterRow, SplitsBundle, TraitBar } from "@/lib/team-overview-data";
 import type { TeamSplitBucket } from "@/lib/team-snapshot-games";
@@ -69,7 +69,7 @@ export function QuarterProfile({ rows, games, season }: { rows: QuarterRow[]; ga
                     ...({ "--i": i * 2 } as CSSProperties),
                     transformOrigin: r.net >= 0 ? "left" : "right",
                     background: r.net >= 0 ? WIN : LOSS,
-                    width: `${Math.max(0.8, w)}%`,
+                    width: cssPct(Math.max(0.8, w), { unit: "percent" }),
                     ...(r.net >= 0 ? { left: "50%" } : { right: "50%" }),
                   }}
                 />
@@ -160,7 +160,7 @@ export function SplitsPanel({ splits, season }: { splits: SplitsBundle; season: 
                       data-motion-bar="y"
                       data-tip-anchor
                       className="w-full rounded-md"
-                      style={{ height: `${Math.max(3, pct * 100)}%`, background: pct >= 0.5 ? WIN : LOSS, "--i": i * 2 } as CSSProperties}
+                      style={{ height: cssPct(Math.max(0.03, pct)), background: pct >= 0.5 ? WIN : LOSS, "--i": i * 2 } as CSSProperties}
                     />
                     <span className="absolute inset-x-0 top-1/2 border-t border-dashed border-foreground/30" aria-hidden />
                   </span>
@@ -191,7 +191,7 @@ function TraitRow({ t }: { t: TraitBar }) {
         <div
           data-motion-bar="x"
           className="h-full rounded-full"
-          style={{ width: `${Math.max(3, t.percentile)}%`, background: percentileSavantColor(t.percentile, "auto") }}
+          style={{ width: cssPct(Math.max(3, t.percentile), { unit: "percent" }), background: percentileSavantColor(t.percentile, "auto") }}
         />
       </div>
     </li>
