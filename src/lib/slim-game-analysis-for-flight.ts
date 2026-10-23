@@ -63,8 +63,7 @@ export function slimGameAnalysisForFlight(
   let timeline = analysis.flow.timeline;
   if (options?.downsampleTimeline) {
     timeline = downsampleScoreTimelineForFlight(timeline).map((p) => {
-      // Hover play text comes from client PBP; names in Flight are redundant.
-      if (p.scorerName == null) return p;
+      // Hover play text comes from client PBP; drop null/string names from Flight.
       const { scorerName: _, ...rest } = p;
       return rest;
     });
