@@ -291,6 +291,20 @@ function withSnapshotFacts(shell: GameShell, snap: Game | null): GameShell {
 }
 
 /**
+ * Keep a provider shell when it is at least as far along as the schedule
+ * snapshot. A scheduled snapshot must not replace an in-progress CDN row that
+ * still has empty player minutes.
+ */
+function preferLiveShellOverSnapshot(
+  shell: GameShell,
+  snap: Game | null
+): boolean {
+  if (!snap) return true;
+  if (shell.hasBoxScore || shell.hasPeriodScores) return true;
+  return compareGameProgress(shell.game, snap) >= 0;
+}
+
+/**
  * Box / summary payloads often omit broadcasts that the scoreboard has.
  * Fill from historical/schedule, then same-day scoreboard (live windows).
  */
@@ -358,6 +372,8 @@ export async function getGameShell(gameId: string): Promise<GameShell | null> {
 
   // ESPN event ids: prefer cdn.espn.com box (site.api is 403 from CF Workers),
   // then schedule snapshot so scores still render when box is unavailable.
+  // Never let a build-time schedule snapshot win over a live CDN/summary shell
+  // (tip-off window often has status/score before player minutes → hasBoxScore).
   if (looksLikeEspnEventId(id)) {
     try {
       const { fetchEspnCdnGameBoxScore } = await import(
@@ -365,10 +381,9 @@ export async function getGameShell(gameId: string): Promise<GameShell | null> {
       );
       const box = await fetchEspnCdnGameBoxScore(id);
       const shell = box?.game ? acceptShell(shellFromBox(box)) : null;
-      if (shell?.hasBoxScore) {
+      if (shell && preferLiveShellOverSnapshot(shell, fromSnapshot)) {
         return withBroadcastFallback(withSnapshotFacts(shell, fromSnapshot));
       }
-      if (shell && !fromSnapshot) return withBroadcastFallback(shell);
     } catch {
       // soft-fail
     }
@@ -379,10 +394,9 @@ export async function getGameShell(gameId: string): Promise<GameShell | null> {
         retries: 1,
       });
       const shell = box?.game ? acceptShell(shellFromBox(box)) : null;
-      if (shell?.hasBoxScore) {
+      if (shell && preferLiveShellOverSnapshot(shell, fromSnapshot)) {
         return withBroadcastFallback(withSnapshotFacts(shell, fromSnapshot));
       }
-      if (shell && !fromSnapshot) return withBroadcastFallback(shell);
     } catch {
       // soft-fail to snapshot / provider
     }
@@ -1015,31 +1029,42 @@ async function preferFresherSummary(game: GameSummary): Promise<GameSummary> {
     const tip = parseTipOffMs(game.tipOffAt);
     if (tip == null || tip > Date.now()) return game;
   }
+  let fresh: Game | null = null;
   try {
-    const summary = await espnFetchJson<EspnSummaryResponse>(
-      `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=${encodeURIComponent(game.id)}`,
-      { ttlMs: LIVE_SUMMARY_TTL_MS, retries: 0, timeoutMs: 2_000 }
+    const { fetchEspnCdnGameBoxScore } = await import(
+      "@/data/providers/nba/espn-cdn-game-client"
     );
-    const fresh = transformEspnBoxScore(summary, game.season)?.game;
-    if (!fresh || compareGameProgress(fresh, game) <= 0) return game;
-    return {
-      ...game,
-      status: fresh.status,
-      period: fresh.period ?? game.period,
-      displayClock: fresh.displayClock ?? game.displayClock,
-      statusDetail: fresh.statusDetail ?? game.statusDetail,
-      homeScore: fresh.homeScore,
-      awayScore: fresh.awayScore,
-      totalPoints: fresh.homeScore + fresh.awayScore,
-      margin: fresh.homeScore - fresh.awayScore,
-      absMargin: Math.abs(fresh.homeScore - fresh.awayScore),
-      homePeriodScores: fresh.homePeriodScores ?? game.homePeriodScores,
-      awayPeriodScores: fresh.awayPeriodScores ?? game.awayPeriodScores,
-      retrievedAt: new Date().toISOString(),
-    };
+    fresh = (await fetchEspnCdnGameBoxScore(game.id, game.season))?.game ?? null;
   } catch {
-    return game;
+    fresh = null;
   }
+  if (!fresh) {
+    try {
+      const summary = await espnFetchJson<EspnSummaryResponse>(
+        `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=${encodeURIComponent(game.id)}`,
+        { ttlMs: LIVE_SUMMARY_TTL_MS, retries: 0, timeoutMs: 2_000 }
+      );
+      fresh = transformEspnBoxScore(summary, game.season)?.game ?? null;
+    } catch {
+      return game;
+    }
+  }
+  if (!fresh || compareGameProgress(fresh, game) <= 0) return game;
+  return {
+    ...game,
+    status: fresh.status,
+    period: fresh.period ?? game.period,
+    displayClock: fresh.displayClock ?? game.displayClock,
+    statusDetail: fresh.statusDetail ?? game.statusDetail,
+    homeScore: fresh.homeScore,
+    awayScore: fresh.awayScore,
+    totalPoints: fresh.homeScore + fresh.awayScore,
+    margin: fresh.homeScore - fresh.awayScore,
+    absMargin: Math.abs(fresh.homeScore - fresh.awayScore),
+    homePeriodScores: fresh.homePeriodScores ?? game.homePeriodScores,
+    awayPeriodScores: fresh.awayPeriodScores ?? game.awayPeriodScores,
+    retrievedAt: new Date().toISOString(),
+  };
 }
 
 /**

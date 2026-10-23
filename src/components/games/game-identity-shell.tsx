@@ -290,6 +290,9 @@ function LineScore({
 }
 
 const LIVE_BOX_SCORE_REFRESH_MS = 20_000;
+/** After tip, keep asking the server briefly so a stale pre-tip shell drops. */
+const TIP_OFF_CATCHUP_MS = 4_000;
+const TIP_OFF_CATCHUP_TRIES = 5;
 
 /**
  * The header polls scores on its own; box score and team tables are server
@@ -301,10 +304,23 @@ function useLiveBoxScoreRefresh(status: GameSummary["status"]) {
   const final = isFinalStatus(status);
   const wasLive = useRef(liveNow);
   const wasPreTip = useRef(isPreTipStatus(status));
+  const catchupRef = useRef<number | null>(null);
 
   useEffect(() => {
-    if ((wasLive.current && final) || (wasPreTip.current && (liveNow || final))) {
+    const tippedIn = wasPreTip.current && (liveNow || final);
+    const justFinal = wasLive.current && final;
+    if (tippedIn || justFinal) {
       router.refresh();
+    }
+    if (tippedIn && liveNow && catchupRef.current == null) {
+      let tries = 0;
+      catchupRef.current = window.setInterval(() => {
+        if (document.visibilityState === "visible") router.refresh();
+        if (++tries >= TIP_OFF_CATCHUP_TRIES && catchupRef.current != null) {
+          window.clearInterval(catchupRef.current);
+          catchupRef.current = null;
+        }
+      }, TIP_OFF_CATCHUP_MS);
     }
     wasLive.current = liveNow;
     wasPreTip.current = isPreTipStatus(status);
@@ -315,7 +331,13 @@ function useLiveBoxScoreRefresh(status: GameSummary["status"]) {
     const id = window.setInterval(() => {
       if (document.visibilityState === "visible") router.refresh();
     }, LIVE_BOX_SCORE_REFRESH_MS);
-    return () => window.clearInterval(id);
+    return () => {
+      window.clearInterval(id);
+      if (catchupRef.current != null) {
+        window.clearInterval(catchupRef.current);
+        catchupRef.current = null;
+      }
+    };
   }, [liveNow, router]);
 }
 
