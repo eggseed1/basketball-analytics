@@ -12,15 +12,8 @@ import {
   type PlayerSeasonSortKey,
 } from "@/lib/player-season-sort";
 import { PlayerSeasonTable } from "@/components/explore/player-season-table";
-import {
-  getAvailableSeasons,
-  listExploreBoardReadySeasons,
-  teamsFromCanonicalIdentity,
-} from "@/data/queries";
-import {
-  getExplorePlayersBoardView,
-  parseExplorePlayersSortDir,
-} from "@/data/queries/explore-players-board";
+import { teamsFromCanonicalIdentity } from "@/data/queries/teams-catalog";
+import { listCanonicalSeasons } from "@/data/providers/historical/season-range";
 import {
   parsePlayerBoardRate,
   parsePlayerBoardViews,
@@ -53,7 +46,11 @@ function TableSkeleton() {
 }
 
 type BoardLoad = {
-  view: Awaited<ReturnType<typeof getExplorePlayersBoardView>>;
+  view: Awaited<
+    ReturnType<
+      typeof import("@/data/queries/explore-players-board").getExplorePlayersBoardView
+    >
+  >;
   season: string;
 };
 
@@ -61,6 +58,8 @@ async function loadBoard(
   searchParams: Record<string, string | string[] | undefined>,
   defaultSeason: string
 ): Promise<BoardLoad> {
+  const { getExplorePlayersBoardView, parseExplorePlayersSortDir } =
+    await import("@/data/queries/explore-players-board");
   const seasonForMinutes = isAllSeasonsParam(searchParams.season)
     ? "ALL"
     : String(
@@ -173,16 +172,11 @@ export default async function ExplorePlayersPage({
 }: ExplorePlayersPageProps) {
   const params = await searchParams;
   const t = await getTranslations("Players");
-  // Sync team filters + slim board-ready counts — never await live ESPN catalog
-  // or materialize ~31 peer boards before the shell / board Suspense can start.
-  const [seasons, boardReadySeasons] = await Promise.all([
-    getAvailableSeasons(),
-    listExploreBoardReadySeasons(),
-  ]);
+  // Sync shell only — never touch season-tables / board-ready (pulls ~9MB JSON)
+  // before header + Suspense can flush. Board load resolves the season itself.
+  const seasons = [...listCanonicalSeasons()].reverse();
   const teams = teamsFromCanonicalIdentity();
-  const defaultSeason = defaultExplorePlayersSeason(seasons, new Date(), {
-    boardReadySeasons,
-  });
+  const defaultSeason = defaultExplorePlayersSeason(seasons, new Date());
   const subtitleSort = parsePlayerSeasonSortKey(params.sort);
   const load = loadBoard(params, defaultSeason);
 
@@ -206,28 +200,19 @@ export default async function ExplorePlayersPage({
 
       <TeamCatalogFallbackNotice source="canonical-fallback" warnings={[]} />
 
-      <Suspense
-        fallback={
-          <div className="flex flex-col gap-5">
-            <div className="h-20 animate-pulse rounded-md bg-secondary" />
-            <TableSkeleton />
-          </div>
-        }
+      <ExplorePlayersClientShell
+        seasons={seasons}
+        teams={teams}
+        defaultSeason={defaultSeason}
       >
-        <ExplorePlayersClientShell
-          seasons={seasons}
-          teams={teams}
-          defaultSeason={defaultSeason}
-        >
-          {/*
-            No remount key: during startTransition navigations React keeps the
-            already-revealed board visible instead of flashing the skeleton.
-          */}
-          <Suspense fallback={<TableSkeleton />}>
-            <ExplorePlayersBoard load={load} />
-          </Suspense>
-        </ExplorePlayersClientShell>
-      </Suspense>
+        {/*
+          No remount key: during startTransition navigations React keeps the
+          already-revealed board visible instead of flashing the skeleton.
+        */}
+        <Suspense fallback={<TableSkeleton />}>
+          <ExplorePlayersBoard load={load} />
+        </Suspense>
+      </ExplorePlayersClientShell>
     </main>
   );
 }

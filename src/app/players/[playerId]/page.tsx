@@ -34,6 +34,7 @@ import {
 import {
   PlayerBoardSkeleton,
   PlayerOverviewContractSkeleton,
+  PlayerPercentileSkeleton,
 } from "@/components/players/player-page-skeletons";
 import { PlayerOverviewCareerSection } from "@/components/players/player-overview-career-section";
 import { PlayerViewSeasonProvider } from "@/components/players/player-view-season";
@@ -513,23 +514,24 @@ export default async function PlayerPage({
   // Slim edge (explicit SLIM_EDGE_PRODUCT=1 only) — paid Workers run the full page.
   const slimWorker = slimEdgeProductEnabled();
 
-  // Paint critical: percentile hero only (LCP). Accolades / arrival / upcoming
-  // used to share this await and pulled multi-MB transaction + game snapshots
-  // onto cold MISS TTFB; they stream into identity slots via Suspense.
-  const percentileHeroNode = !notYetPlayed
-    ? await PlayerPercentileIsland({
-        playerId,
-        displayName,
-        season,
-        career,
-        seasonOptions,
-        seasonTeams,
-        identityTeamKey: teamKey,
-        nbaId: identity?.nbaId,
-        espnId: identity?.espnId,
-        honor,
-      })
-    : null;
+  // Identity chrome paints first; percentile hero streams (tall skeleton holds
+  // layout). Awaiting the hero blocked cold MISS TTFB on pools + enrich.
+  const percentileHeroNode = !notYetPlayed ? (
+    <Suspense fallback={<PlayerPercentileSkeleton />}>
+      <PlayerPercentileIsland
+        playerId={playerId}
+        displayName={displayName}
+        season={season}
+        career={career}
+        seasonOptions={seasonOptions}
+        seasonTeams={seasonTeams}
+        identityTeamKey={teamKey}
+        nbaId={identity?.nbaId}
+        espnId={identity?.espnId}
+        honor={honor}
+      />
+    </Suspense>
+  ) : null;
 
   const accoladesNode = slimWorker ? null : (
     <Suspense fallback={null}>
