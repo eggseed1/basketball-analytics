@@ -94,27 +94,22 @@ async function HomeTopPerformers() {
     import("@/components/home/top-performers-panel"),
   ]);
   const data = await getHomeAnalytics();
-  const byName = new Map(
-    data.performerSeasons.map((row) => [row.playerName.toLowerCase(), row])
-  );
+  // DRBL/DARKO/RAPTOR leaders already carry TS%/USG + team — do not also
+  // serialize the duplicate performerSeasons union into Flight (~dozens of rows).
   const slim = (
     rows: typeof data.tsLeaders
   ): typeof data.performerSeasons =>
-    rows.map((row) => {
-      const hit = byName.get(row.playerName.toLowerCase());
-      return {
-        playerId: row.playerId,
-        playerName: row.playerName,
-        teamKey: hit?.teamKey,
-        teamAbbr: hit?.teamAbbr ?? row.teamAbbreviation ?? undefined,
-        trueShootingPct:
-          row.trueShootingPct != null && row.trueShootingPct > 0
-            ? row.trueShootingPct
-            : null,
-        usagePct:
-          row.usagePct != null && row.usagePct > 0 ? row.usagePct : null,
-      };
-    });
+    rows.map((row) => ({
+      playerId: row.playerId,
+      playerName: row.playerName,
+      teamAbbr: row.teamAbbreviation ?? undefined,
+      trueShootingPct:
+        row.trueShootingPct != null && row.trueShootingPct > 0
+          ? row.trueShootingPct
+          : null,
+      usagePct:
+        row.usagePct != null && row.usagePct > 0 ? row.usagePct : null,
+    }));
   return (
     <TopPerformersPanel
       season={data.season}
@@ -123,7 +118,6 @@ async function HomeTopPerformers() {
       raptorLeaders={data.raptorLeaders}
       tsLeaders={slim(data.tsLeaders)}
       usageStars={slim(data.usageStars)}
-      performerSeasons={data.performerSeasons}
       drblOverlayOk={data.drblOverlayOk}
       drblFallbackNote={data.drblFallbackNote}
     />

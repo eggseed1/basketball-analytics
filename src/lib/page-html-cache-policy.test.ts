@@ -3,6 +3,7 @@ import { describe, it } from "node:test";
 
 import {
   DAILY_HTML_POLICY,
+  HOME_HTML_POLICY,
   LIVE_HTML_POLICY,
   SCORES_HTML_POLICY,
   edgeCacheStorageControlHeader,
@@ -95,10 +96,14 @@ describe("page-html-cache-policy", () => {
     );
   });
 
-  it("stores Cache API entries with a real max-age (not client max-age=0)", () => {
+  it("stores Cache API entries for fresh+stale (EDGE SWR, not client max-age=0)", () => {
     assert.equal(
       edgeCacheStorageControlHeader(DAILY_HTML_POLICY),
-      `public, max-age=${DAILY_HTML_POLICY.fresh}`
+      `public, max-age=${DAILY_HTML_POLICY.fresh + DAILY_HTML_POLICY.stale}`
+    );
+    assert.equal(
+      edgeCacheStorageControlHeader(HOME_HTML_POLICY),
+      `public, max-age=${HOME_HTML_POLICY.fresh + HOME_HTML_POLICY.stale}`
     );
   });
 

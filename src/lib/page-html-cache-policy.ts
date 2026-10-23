@@ -145,13 +145,16 @@ export function htmlCacheControlHeader(
  * Cache-Control for `caches.default.put` only.
  * Client responses keep max-age=0 (see htmlCacheControlHeader). Putting that
  * same header into the Cache API makes colo storage expire immediately, so KV
- * HIT (~1s+) keeps winning over EDGE (~60ms). Store with a real max-age equal
- * to the policy fresh window; rewrite headers on matchEdgeCache serve.
+ * HIT (~1s+) keeps winning over EDGE (~60ms).
+ *
+ * Store for fresh+stale so colo can keep serving while the Worker background-
+ * refreshes after `fresh` (same SWR idea as KV). matchEdgeCache rewrites the
+ * client-facing Cache-Control; Age / x-drbl-cached-at drives stale refresh.
  */
 export function edgeCacheStorageControlHeader(
   policy: PageHtmlCachePolicy
 ): string {
-  return `public, max-age=${policy.fresh}`;
+  return `public, max-age=${policy.fresh + policy.stale}`;
 }
 
 /** Env kill switch: unset/empty/"1"/"true"/"on" → enabled; "0"/"false"/"off" → disabled. */

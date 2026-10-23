@@ -69,6 +69,21 @@ export function slimGameAnalysisForFlight(
     });
   }
 
+  // Story strip only needs advantage counts + winningFactorsRule / hasTeamTotals.
+  const advantageStub = (n: number) =>
+    Array.from({ length: n }, (_, i) => ({
+      id: `s${i}`,
+      label: "",
+      edge: "home" as const,
+      homeValue: 0,
+      awayValue: 0,
+      delta: 0,
+      deltaDisplay: "",
+      homeDisplay: "",
+      awayDisplay: "",
+      strength: 0,
+    }));
+
   return {
     ...analysis,
     // UI never reads these on GameLabView (box tables / highlights are unused).
@@ -79,9 +94,19 @@ export function slimGameAnalysisForFlight(
       byPlayerId: {},
       teams: [],
     },
+    whatChanged: [],
+    heroMetrics: [],
+    teamContext: [],
+    homeAdvantages: advantageStub(analysis.homeAdvantages.length),
+    awayAdvantages: advantageStub(analysis.awayAdvantages.length),
+    coverage: {
+      ...analysis.coverage,
+      notes: [],
+    },
     flow: {
       ...analysis.flow,
       timeline,
+      notes: [],
     },
   };
 }

@@ -221,6 +221,8 @@ async function putEdgeHtml(
   // Storage TTL for caches.default — not the browser-facing max-age=0 header.
   edgeHeaders.set("cache-control", edgeCacheStorageControlHeader(policy));
   edgeHeaders.set("x-page-cache", "EDGE");
+  // Reliable Age for SWR refresh (Cache API Age is not always present).
+  edgeHeaders.set("x-drbl-cached-at", String(Date.now()));
   const edgeResponse = new Response(html, { status: 200, headers: edgeHeaders });
   await edgeCache().put(edgeCacheKeyRequest(entry), edgeResponse);
 }
@@ -269,13 +271,35 @@ async function refreshPage(request: Request, env: WorkerEnv, ctx: WorkerContext,
   }
 }
 
-async function matchEdgeCache(entry: PageCacheEntry): Promise<Response | null> {
+function edgeStoredAgeSeconds(headers: Headers): number {
+  const cachedAt = Number(headers.get("x-drbl-cached-at") ?? "");
+  if (Number.isFinite(cachedAt) && cachedAt > 0) {
+    return Math.max(0, Math.round((Date.now() - cachedAt) / 1000));
+  }
+  const age = Number(headers.get("age") ?? "");
+  return Number.isFinite(age) && age >= 0 ? age : 0;
+}
+
+/** Policy used when this path was put into Cache API (game finals use daily). */
+function edgeStoragePolicy(entry: PageCacheEntry): CachePolicy {
+  if (isGameHtmlPath(entry.pathname)) return DAILY_HTML_POLICY;
+  return entry.policy;
+}
+
+async function matchEdgeCache(
+  entry: PageCacheEntry
+): Promise<{ response: Response; stale: boolean } | null> {
   // Path-based CDN pages always check Cache API. Game finals may also be there
   // even though isCdnHtmlPath(games) is false (live games must stay private).
   if (!entry.cdn && !isGameHtmlPath(entry.pathname)) return null;
   try {
     const matched = await edgeCache().match(edgeCacheKeyRequest(entry));
     if (!matched) return null;
+
+    const storagePolicy = edgeStoragePolicy(entry);
+    const age = edgeStoredAgeSeconds(matched.headers);
+    if (age >= storagePolicy.fresh + storagePolicy.stale) return null;
+    const stale = age >= storagePolicy.fresh;
 
     // Finished games: must verify the final marker before serving. Buffering is
     // OK — finals are smaller after PBP left Flight. Daily CDN pages stream.
@@ -290,13 +314,21 @@ async function matchEdgeCache(entry: PageCacheEntry): Promise<Response | null> {
           cdnEnabled: true,
         })
       );
-      headers.set("x-page-cache", "EDGE");
-      return new Response(html, { status: matched.status, headers });
+      headers.set("x-page-cache", stale ? "STALE" : "EDGE");
+      headers.set("age", String(age));
+      return {
+        response: new Response(html, { status: matched.status, headers }),
+        stale,
+      };
     }
 
     const headers = new Headers(matched.headers);
-    applyHtmlCacheHeaders(headers, entry, "EDGE");
-    return new Response(matched.body, { status: matched.status, headers });
+    applyHtmlCacheHeaders(headers, entry, stale ? "STALE" : "EDGE");
+    headers.set("age", String(age));
+    return {
+      response: new Response(matched.body, { status: matched.status, headers }),
+      stale,
+    };
   } catch {
     return null;
   }
@@ -309,7 +341,15 @@ async function servePage(
   entry: PageCacheEntry
 ): Promise<Response> {
   const edgeHit = await matchEdgeCache(entry);
-  if (edgeHit) return edgeHit;
+  if (edgeHit) {
+    // Colo SWR: keep serving past fresh while one isolate re-renders.
+    if (edgeHit.stale) {
+      ctx.waitUntil(
+        refreshPage(new Request(request), env, ctx, entry).catch(() => undefined)
+      );
+    }
+    return edgeHit.response;
+  }
 
   const raw = await env.PAGE_CACHE!.get(entry.key, "arrayBuffer").catch(() => null);
   const cached = raw ? await cachedResponse(raw, entry) : null;
