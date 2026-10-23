@@ -96,6 +96,18 @@ function parseVizFieldSize(
 export default async function PlayerVisualizationsPage({
   searchParams,
 }: PageProps) {
+  await Promise.all([
+    import("@/data/runtime/salary-payoff").then((m) => m.ensureSalaryPayoff()),
+    import("@/data/runtime/contract-value").then((m) =>
+      m.ensureContractValue()
+    ),
+    import("@/data/runtime/bref-team-contracts").then((m) =>
+      m.ensureBrefTeamContracts()
+    ),
+    import("@/data/runtime/player-id-aliases-snapshot").then((m) =>
+      m.ensurePlayerIdAliases()
+    ),
+  ]);
   const sp = await searchParams;
   const view = parseView(one(sp, "view"));
   const currentSeason = canonicalSeasonFromStartYear(currentNbaStartYear());

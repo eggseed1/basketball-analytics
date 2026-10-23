@@ -1,29 +1,21 @@
 /**
  * Build award history pages from the baked player-awards snapshot
  * (All-NBA / All-Defense season selections + All-Star career counts).
+ * Snapshot lives under public/runtime (ASSETS); call ensurePlayerAwards first
+ * on Cloudflare.
  */
 
 import type { AwardHistoryRow } from "@/content/awards/history";
 import { getBundledPlayerIdAliasIndex } from "@/data/runtime/player-id-aliases-snapshot";
 import { remapLegendNbaIdToBref } from "@/data/runtime/legend-nba-to-bref";
-import snapshot from "@/data/runtime/player-awards-snapshot.json";
-
-type AwardsFile = {
-  players?: Record<string, Array<[string, string] | [string, string, string]>>;
-  names?: Record<string, string>;
-  slugs?: Record<string, string>;
-};
-
-const data = snapshot as unknown as AwardsFile;
-const players =
-  data.players && typeof data.players === "object" ? data.players : {};
-const bakedNames =
-  data.names && typeof data.names === "object" ? data.names : {};
-const bakedSlugs =
-  data.slugs && typeof data.slugs === "object" ? data.slugs : {};
+import {
+  getBundledPlayerAwardsNameMaps,
+  getBundledPlayerAwardsPlayers,
+} from "@/data/runtime/player-awards-snapshot";
 
 function displayNameForNbaId(nbaId: string): string {
-  const baked = bakedNames[nbaId]?.trim();
+  const { names } = getBundledPlayerAwardsNameMaps();
+  const baked = names[nbaId]?.trim();
   if (baked) return baked;
   const alias = getBundledPlayerIdAliasIndex().byNba.get(nbaId);
   if (alias?.playerName?.trim()) return alias.playerName.trim();
@@ -36,7 +28,8 @@ function hrefForNbaId(nbaId: string): string {
   const alias = getBundledPlayerIdAliasIndex().byNba.get(nbaId);
   const espn = alias?.espnPlayerId?.trim();
   if (espn) return `/players/${espn}`;
-  const slug = bakedSlugs[nbaId]?.trim();
+  const { slugs } = getBundledPlayerAwardsNameMaps();
+  const slug = slugs[nbaId]?.trim();
   if (slug) return `/players/bref:${slug}`;
   return `/players/${nbaId}`;
 }
@@ -45,6 +38,7 @@ function hrefForNbaId(nbaId: string): string {
 export function awardHistoryFromSnapshotDescription(
   description: string
 ): AwardHistoryRow[] {
+  const players = getBundledPlayerAwardsPlayers();
   const rows: AwardHistoryRow[] = [];
   for (const [nbaId, awards] of Object.entries(players)) {
     for (const row of awards) {
@@ -78,6 +72,7 @@ export function awardHistoryFromSnapshotDescription(
 
 /** All-Star pages: career selection counts. */
 export function allStarCareerHistoryFromSnapshot(): AwardHistoryRow[] {
+  const players = getBundledPlayerAwardsPlayers();
   const counts = new Map<string, number>();
   for (const [nbaId, awards] of Object.entries(players)) {
     let n = 0;

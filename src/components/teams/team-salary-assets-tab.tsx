@@ -31,6 +31,18 @@ async function TeamContractsIsland({
 }) {
   const t = await getTranslations("TeamDetail");
   const franchiseId = resolveFrontOfficeFranchiseId(teamId);
+  await Promise.all([
+    import("@/data/runtime/bref-team-contracts").then((m) =>
+      m.ensureBrefTeamContracts()
+    ),
+    import("@/data/runtime/contract-value").then((m) =>
+      m.ensureContractValue()
+    ),
+    import("@/data/runtime/salary-payoff").then((m) => m.ensureSalaryPayoff()),
+    import("@/data/runtime/player-id-aliases-snapshot").then((m) =>
+      m.ensurePlayerIdAliases()
+    ),
+  ]);
   const contracts = franchiseId ? getTeamContracts(franchiseId) : null;
   const slice = franchiseId ? await resolveTeamFrontOfficeSlice(franchiseId) : null;
   if (franchiseId && contracts) {

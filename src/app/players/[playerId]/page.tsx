@@ -256,7 +256,10 @@ export default async function PlayerPage({
   const portraitsReady = import("@/data/media/portrait-lookup-store").then(
     (m) => m.ensurePortraitMaps()
   );
-  await ensurePlayerSearch();
+  const legendReady = import("@/data/runtime/legend-nba-to-bref").then((m) =>
+    m.ensureLegendNbaToBref()
+  );
+  await Promise.all([ensurePlayerSearch(), legendReady]);
   // Resolve legacy bref: peer-board ids to ESPN athlete ids (no redirect required).
   const playerId = resolvePublicPlayerId(rawId);
   const seasonParam = one(sp, "season");

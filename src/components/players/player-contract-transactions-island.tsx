@@ -97,6 +97,18 @@ export async function PlayerContractSectionIsland({
   season?: string | null;
   variant?: "summary" | "full";
 }) {
+  await Promise.all([
+    import("@/data/runtime/bref-team-contracts").then((m) =>
+      m.ensureBrefTeamContracts()
+    ),
+    import("@/data/runtime/contract-value").then((m) =>
+      m.ensureContractValue()
+    ),
+    import("@/data/runtime/salary-payoff").then((m) => m.ensureSalaryPayoff()),
+    import("@/data/runtime/player-id-aliases-snapshot").then((m) =>
+      m.ensurePlayerIdAliases()
+    ),
+  ]);
   let contract: Awaited<ReturnType<typeof getPlayerContractSnapshot>>;
   try {
     contract = await getPlayerContractSnapshot(playerId, teamKey, playerName);

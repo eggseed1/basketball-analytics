@@ -25,6 +25,14 @@ export type { PlayerAccoladeBadge };
 export const getPlayerAccolades = cache(async function getPlayerAccolades(
   playerId: string
 ): Promise<PlayerAccoladeBadge[]> {
+  await Promise.all([
+    import("@/data/runtime/player-awards-snapshot").then((m) =>
+      m.ensurePlayerAwards()
+    ),
+    import("@/data/runtime/legend-nba-to-bref").then((m) =>
+      m.ensureLegendNbaToBref()
+    ),
+  ]);
   const identity = await resolvePlayerIdentityCached(playerId);
   const aliases = await getPlayerIdAliasIndex().catch(() => null);
   const alias =

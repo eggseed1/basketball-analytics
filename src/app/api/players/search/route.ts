@@ -585,6 +585,9 @@ export async function GET(request: Request) {
     import("@/data/media/portrait-lookup-store").then((m) =>
       m.ensurePortraitMaps()
     ),
+    import("@/data/runtime/awards-search-boost").then((m) =>
+      m.ensureAwardWinnerSearchBoost()
+    ),
   ]);
 
   try {

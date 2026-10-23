@@ -70,10 +70,28 @@ run("npx", ["tsx", "scripts/build-explore-players-first-page.ts"], {
 // Player careers extract — keeps /players off the 9MB season-tables module.
 run("node", ["scripts/build-player-career-bref-snapshot.mjs"]);
 
-// Transactions archive as Static Assets (keeps 3.7MB JSON off Worker upload).
+// Large runtime JSON as Static Assets (keeps MiB off Worker upload).
 run("node", [
   "-e",
-  "const fs=require('fs');const p=require('path');const src=p.join('src/data/runtime/transactions-snapshot.json');const dest=p.join('public/runtime/transactions-snapshot.json');fs.mkdirSync(p.dirname(dest),{recursive:true});fs.copyFileSync(src,dest);console.log('[bake-deploy-assets] copied transactions-snapshot → public/runtime');",
+  [
+    "const fs=require('fs');const p=require('path');",
+    "const files=[",
+    "'transactions-snapshot.json',",
+    "'contract-value-snapshot.json',",
+    "'salary-payoff-snapshot.json',",
+    "'bref-team-contracts-snapshot.json',",
+    "'player-id-aliases-snapshot.json',",
+    "'player-awards-snapshot.json',",
+    "];",
+    "for (const name of files) {",
+    "const src=p.join('src/data/runtime',name);",
+    "const dest=p.join('public/runtime',name);",
+    "if (!fs.existsSync(src)) { console.warn('[bake-deploy-assets] skip missing', name); continue; }",
+    "fs.mkdirSync(p.dirname(dest),{recursive:true});",
+    "fs.copyFileSync(src,dest);",
+    "console.log('[bake-deploy-assets] copied', name, '→ public/runtime');",
+    "}",
+  ].join(""),
 ]);
 
 const logDir = path.join(ROOT, "public/runtime/player-game-logs", season);

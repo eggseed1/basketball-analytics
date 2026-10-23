@@ -298,15 +298,18 @@ try {
   } catch {
     /* optional */
   }
-  await fs.writeFile(
-    dest,
-    JSON.stringify({
-      ...raw,
-      aliases,
-      legendMergedAt: new Date().toISOString(),
-    })
+  const body = JSON.stringify({
+    ...raw,
+    aliases,
+    legendMergedAt: new Date().toISOString(),
+  });
+  await fs.writeFile(dest, body);
+  const destPublic = path.join(ROOT, "public", "runtime", "player-id-aliases-snapshot.json");
+  await fs.mkdir(path.dirname(destPublic), { recursive: true });
+  await fs.writeFile(destPublic, body);
+  console.log(
+    `[cf-assets] player-id-aliases → ${destPublic} (${aliases.length} rows; src mirror ${dest})`
   );
-  console.log(`[cf-assets] player-id-aliases → ${dest} (${aliases.length} rows)`);
 } catch (error) {
   console.warn(
     `[cf-assets] player-id-aliases skipped: ${

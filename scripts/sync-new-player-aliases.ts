@@ -10,9 +10,11 @@
  * Writes (only when something new matched):
  * - data/impact/player-id-aliases.json
  * - src/data/runtime/player-id-aliases-snapshot.json
+ * - public/runtime/player-id-aliases-snapshot.json
  *
  * Run: npx tsx scripts/sync-new-player-aliases.ts [--dry-run]
  */
+import { mkdir } from "node:fs/promises";
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 
@@ -21,6 +23,7 @@ import { normalizePlayerName } from "../src/lib/player-name";
 const ROOT = process.cwd();
 const IMPACT = path.join(ROOT, "data/impact/player-id-aliases.json");
 const SNAPSHOT = path.join(ROOT, "src/data/runtime/player-id-aliases-snapshot.json");
+const SNAPSHOT_PUBLIC = path.join(ROOT, "public/runtime/player-id-aliases-snapshot.json");
 const PLAYER_INDEX = "https://cdn.nba.com/static/json/staticData/playerIndex.json";
 const ESPN_ROSTER = (teamId: number) =>
   `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams/${teamId}/roster`;
@@ -183,7 +186,10 @@ async function main() {
   impact.aliases = [...(impact.aliases ?? []), ...added];
   await writeFile(IMPACT, `${JSON.stringify(impact, null, 2)}\n`, "utf8");
   snapshot.aliases = [...(snapshot.aliases ?? []), ...added];
-  await writeFile(SNAPSHOT, JSON.stringify(snapshot), "utf8");
+  const body = JSON.stringify(snapshot);
+  await writeFile(SNAPSHOT, body, "utf8");
+  await mkdir(path.dirname(SNAPSHOT_PUBLIC), { recursive: true });
+  await writeFile(SNAPSHOT_PUBLIC, body, "utf8");
 }
 
 main().catch((error) => {

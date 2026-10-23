@@ -1,9 +1,8 @@
 /**
  * Baked contract surplus estimates, keyed by ESPN team id and BRef player id.
  * Written by scripts/build-contract-value.ts.
+ * Lives under public/runtime (ASSETS) so the ~140KB JSON stays off the Worker.
  */
-import snapshot from "./contract-value-snapshot.json";
-
 type YearRow = [string, number, number, number, number, number, number, number, 0 | 1];
 
 type ValuedRow = {
@@ -60,7 +59,101 @@ type SnapshotFile = {
   players: Record<string, ValuedRow | MissingRow>;
 };
 
-const data = snapshot as unknown as SnapshotFile;
+type AssetsFetcher = {
+  fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>;
+};
+
+const ASSET_PATH = "/runtime/contract-value-snapshot.json";
+
+let data: SnapshotFile | null | undefined;
+
+function cloudflareAssets(): AssetsFetcher | null {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { getCloudflareContext } = require("@opennextjs/cloudflare") as {
+      getCloudflareContext: () => { env?: { ASSETS?: AssetsFetcher } };
+    };
+    return getCloudflareContext()?.env?.ASSETS ?? null;
+  } catch {
+    return null;
+  }
+}
+
+function loadFromPublicDir(): SnapshotFile | null {
+  try {
+    if (process.env.NEXT_RUNTIME === "edge") return null;
+    // eslint-disable-next-line no-eval
+    const req = eval("require") as NodeRequire;
+    const fs = req("node:fs") as typeof import("node:fs");
+    const path = req("node:path") as typeof import("node:path");
+    const file = path.join(
+      process.cwd(),
+      "public",
+      "runtime",
+      "contract-value-snapshot.json"
+    );
+    if (!fs.existsSync(file)) return null;
+    return JSON.parse(fs.readFileSync(file, "utf8")) as SnapshotFile;
+  } catch {
+    return null;
+  }
+}
+
+async function loadFromAssets(): Promise<SnapshotFile | null> {
+  try {
+    const assets = cloudflareAssets();
+    if (!assets) return null;
+    const response = await assets.fetch(`https://assets.local${ASSET_PATH}`);
+    if (!response.ok) return null;
+    return (await response.json()) as SnapshotFile;
+  } catch {
+    return null;
+  }
+}
+
+function apply(file: SnapshotFile | null): boolean {
+  data = file;
+  clearTeamValuesCache();
+  return file != null;
+}
+
+function tryPrimeFromDisk(): void {
+  if (data !== undefined) return;
+  const file = loadFromPublicDir();
+  if (file) apply(file);
+}
+
+export async function ensureContractValue(): Promise<boolean> {
+  if (data !== undefined) return data != null;
+  const fromDisk = loadFromPublicDir();
+  if (fromDisk) return apply(fromDisk);
+  return apply(await loadFromAssets());
+}
+
+function requireData(): SnapshotFile {
+  tryPrimeFromDisk();
+  if (!data) {
+    return {
+      generatedAt: "",
+      model: {
+        lastSeason: "",
+        capSeason: "",
+        capSeasonCap: 0,
+        pricePerWinShare: 0,
+        priceSeasons: [],
+        replacementMaxShare: 0,
+        capGrowth: 0,
+        capKnownThrough: "",
+        contracts: 0,
+        weights: [],
+        backtest: [],
+        outOfSample: { fitThrough: [], checkedThrough: "", byHorizon: [] },
+      },
+      players: {},
+    };
+  }
+  return data;
+}
 
 export type ContractValueYear = {
   season: string;
@@ -90,7 +183,7 @@ export type ContractValueView =
   | { kind: "missing"; reason: ContractValueGap };
 
 export function contractValueModel(): ContractValueModel {
-  return data.model;
+  return requireData().model;
 }
 
 export type TeamContractValuePlayer = {
@@ -117,9 +210,13 @@ export type TeamContractValue = {
 
 let teamValues: Map<string, TeamContractValue> | null = null;
 
+function clearTeamValuesCache(): void {
+  teamValues = null;
+}
+
 function buildTeamValues(): Map<string, TeamContractValue> {
   const byTeam = new Map<string, TeamContractValue>();
-  for (const [key, row] of Object.entries(data.players)) {
+  for (const [key, row] of Object.entries(requireData().players)) {
     const brefId = key.slice(key.indexOf(":") + 1);
     let team = byTeam.get(row.team);
     if (!team) {
@@ -173,7 +270,7 @@ export type ContractValueEntry = {
 /** Every valued contract in the league. Contracts we couldn't value are left out. */
 export function listContractValues(): ContractValueEntry[] {
   const out: ContractValueEntry[] = [];
-  for (const [key, row] of Object.entries(data.players)) {
+  for (const [key, row] of Object.entries(requireData().players)) {
     if ("reason" in row) continue;
     out.push({
       teamId: row.team,
@@ -193,12 +290,13 @@ export function listContractValues(): ContractValueEntry[] {
 /** Contracts left out of every surplus ranking, by reason. */
 export function contractValueGaps(): Record<ContractValueGap, number> {
   const counts: Record<ContractValueGap, number> = { "no-drbl": 0, thin: 0, waived: 0 };
-  for (const row of Object.values(data.players)) if ("reason" in row) counts[row.reason] += 1;
+  for (const row of Object.values(requireData().players))
+    if ("reason" in row) counts[row.reason] += 1;
   return counts;
 }
 
 export function getContractValue(teamId: string, brefId: string): ContractValueView | null {
-  const row = data.players[`${teamId}:${brefId}`];
+  const row = requireData().players[`${teamId}:${brefId}`];
   if (!row) return null;
   if ("reason" in row) return { kind: "missing", reason: row.reason };
   return {
