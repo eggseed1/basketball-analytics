@@ -214,17 +214,11 @@ export async function generateMetadata({ params }: PlayerPageProps) {
   const t = await getTranslations("PlayerDetail");
   const { playerId: rawId } = await params;
   const playerId = resolvePublicPlayerId(rawId);
-  const [player, identity] = await Promise.all([
-    getPlayerCached(playerId),
-    resolvePlayerIdentityCached(playerId).catch(() => null),
-  ]);
-  const displayName = firstUsablePlayerDisplayName(
-    identity?.displayName,
-    player?.fullName
-  );
-  // NBA ids, bref: ids and name slugs all render this page; the sitemap lists ESPN ids.
+  // Sync search/roster only — live getPlayerCached blocked metadata on cold MISS.
+  const searchHit = getPlayerSearchIndex().find((r) => r.id === playerId);
+  const displayName = firstUsablePlayerDisplayName(searchHit?.name);
   const canonicalId =
-    identity?.espnId ?? uniqueEspnIdForBrefName(playerId, displayName) ?? playerId;
+    uniqueEspnIdForBrefName(playerId, displayName) ?? playerId;
   return {
     title: displayName
       ? t("metaStatsTitle", { name: displayName })
