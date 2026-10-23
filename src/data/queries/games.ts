@@ -406,23 +406,31 @@ export async function getGameShell(gameId: string): Promise<GameShell | null> {
       // Pre-tip snapshots may paint quickly. After tip-off, wait longer for live CDN
       // so we do not mount the empty pre-tip board over a game already underway.
       const snapshotRaceMs = snapshotTipPassed ? 4_000 : 1_200;
-      const shell = snapshotShell
-        ? await Promise.race([
+      let shell: GameShell | null;
+      if (snapshotShell) {
+        shell = await Promise.race([
+          cdnPromise,
+          new Promise<GameShell | null>((resolve) => {
+            setTimeout(() => resolve(snapshotShell), snapshotRaceMs);
+          }),
+        ]);
+      } else {
+        // Do not let a CDN miss (null) win a race against historical — that
+        // stranded finals as RuntimeGameFallback whenever the package timed out.
+        const cdnShell = await Promise.race([
+          cdnPromise,
+          new Promise<null>((resolve) => setTimeout(() => resolve(null), 2_000)),
+        ]);
+        shell =
+          cdnShell ??
+          (await Promise.race([
+            historicalPromise,
             cdnPromise,
-            new Promise<GameShell | null>((resolve) => {
-              setTimeout(() => resolve(snapshotShell), snapshotRaceMs);
-            }),
-          ])
-        : await Promise.race([
-            cdnPromise,
-            // If CDN is slow, take the archive scoreboard after 1.5s instead of
-            // burning the whole shell budget and stranding RuntimeGameFallback.
-            new Promise<GameShell | null>((resolve) => {
-              setTimeout(() => {
-                void historicalPromise.then(resolve);
-              }, 1_500);
-            }),
-          ]);
+            new Promise<null>((resolve) =>
+              setTimeout(() => resolve(null), 1_500)
+            ),
+          ]));
+      }
 
       const preferCdn = (cdn: GameShell | null, snap: GameShell) =>
         Boolean(
