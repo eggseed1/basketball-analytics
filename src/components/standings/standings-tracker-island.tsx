@@ -18,7 +18,7 @@ async function StandingsTrackerBody({ season, embedded, conference }: TrackerPro
   try {
     const [payload, seasonOptions] = await Promise.all([
       getStandingsTrackerPayload(season),
-      Promise.resolve(getStandingsTrackerSeasonOptions()),
+      getStandingsTrackerSeasonOptions(),
     ]);
 
     return (

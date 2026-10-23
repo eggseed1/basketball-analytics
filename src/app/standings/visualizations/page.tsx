@@ -145,7 +145,7 @@ async function GameBasedBody({ view, season }: { view: TeamVizView; season: stri
 
 export default async function TeamVisualizationsPage({ searchParams }: PageProps) {
   const sp = await searchParams;
-  const seasonOptions = getStandingsTrackerSeasonOptions();
+  const seasonOptions = await getStandingsTrackerSeasonOptions();
   const season = resolveStandingsSeason(seasonOptions, sp.season);
   const view = parseTeamVizView(one(sp, "view"));
   const conference = parseTeamVizConference(one(sp, "conf"));

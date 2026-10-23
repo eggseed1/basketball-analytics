@@ -2,15 +2,17 @@ import "server-only";
 
 import { cache } from "react";
 
-import { getRuntimeSnapshotGames } from "@/data/runtime/game-snapshot";
+import {
+  ensureGameSnapshotLite,
+  getRuntimeSnapshotGames,
+  runtimeGameSnapshotMeta,
+} from "@/data/runtime/game-snapshot";
 import { getRuntimeStandings } from "@/data/runtime/standings-snapshot";
 import { computeStandingsFromGameArchive } from "@/lib/standings-from-games";
 import {
   buildStandingsTrackerTeams,
   type StandingsTrackerTeam,
 } from "@/lib/standings-tracker";
-
-import snapshotMeta from "@/data/runtime/game-snapshot.json";
 
 export type StandingsTrackerPayload = {
   season: string;
@@ -21,10 +23,12 @@ export type StandingsTrackerPayload = {
 };
 
 /**
- * Cloudflare-safe season list — static import only (no node:fs / live ESPN).
+ * Cloudflare-safe season list from the game-snapshot ASSETS meta
+ * (no static JSON import — that re-bundled the 1.4MB lite file into the Worker).
  */
-export function getStandingsTrackerSeasonOptions(): string[] {
-  const seasons = (snapshotMeta as { seasons?: string[] }).seasons;
+export async function getStandingsTrackerSeasonOptions(): Promise<string[]> {
+  await ensureGameSnapshotLite();
+  const seasons = runtimeGameSnapshotMeta().liteSeasons;
   if (Array.isArray(seasons) && seasons.length) {
     return [...seasons].sort((a, b) => b.localeCompare(a));
   }
@@ -37,6 +41,7 @@ export function getStandingsTrackerSeasonOptions(): string[] {
  */
 export const getStandingsTrackerPayload = cache(
   async (season: string): Promise<StandingsTrackerPayload> => {
+    await ensureGameSnapshotLite();
     const games = getRuntimeSnapshotGames(season);
     const standings =
       getRuntimeStandings(season) ??
