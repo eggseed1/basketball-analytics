@@ -99,6 +99,8 @@ type CareerIndex = {
 };
 
 let cachedIndex: CareerIndex | null | undefined;
+/** Dedupes concurrent first loads; null miss is not sticky (retry next request). */
+let careerIndexInflight: Promise<CareerIndex | null> | null = null;
 
 function cloudflareAssets(): AssetsFetcher | null {
   try {
@@ -154,19 +156,27 @@ function indexFromFile(data: SnapshotFile): CareerIndex {
 }
 
 async function ensureCareerIndex(): Promise<CareerIndex | null> {
-  if (cachedIndex !== undefined) return cachedIndex;
-  const fromDisk = loadFromPublicDir();
-  if (fromDisk) {
-    cachedIndex = indexFromFile(fromDisk);
-    return cachedIndex;
-  }
-  const fromAssets = await loadFromAssets();
-  if (fromAssets) {
-    cachedIndex = indexFromFile(fromAssets);
-    return cachedIndex;
-  }
-  cachedIndex = null;
-  return null;
+  if (cachedIndex != null) return cachedIndex;
+  if (careerIndexInflight) return careerIndexInflight;
+  careerIndexInflight = (async () => {
+    try {
+      const fromDisk = loadFromPublicDir();
+      if (fromDisk) {
+        cachedIndex = indexFromFile(fromDisk);
+        return cachedIndex;
+      }
+      const fromAssets = await loadFromAssets();
+      if (fromAssets) {
+        cachedIndex = indexFromFile(fromAssets);
+        return cachedIndex;
+      }
+      // Transient ASSETS miss — leave unset so the next request retries.
+      return null;
+    } finally {
+      careerIndexInflight = null;
+    }
+  })();
+  return careerIndexInflight;
 }
 
 function pctAsFraction(value: number): number {

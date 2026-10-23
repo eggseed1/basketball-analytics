@@ -1230,7 +1230,7 @@ function fetchPercentiles(
   return request;
 }
 
-async function requestPercentiles(
+async function requestPercentilesOnce(
   playerId: string,
   season: string,
   mode: "fast" | "full"
@@ -1258,6 +1258,30 @@ async function requestPercentiles(
     writeCache(playerId, season, payload);
   }
   return payload;
+}
+
+/**
+ * Cold Worker isolates sometimes 404 when the career ASSETS bake is still
+ * loading past the edge budget — retry a couple times before "Couldn't load".
+ */
+async function requestPercentiles(
+  playerId: string,
+  season: string,
+  mode: "fast" | "full"
+): Promise<SeasonMetricsCache | null> {
+  const maxAttempts = 3;
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    try {
+      const payload = await requestPercentilesOnce(playerId, season, mode);
+      if (payload) return payload;
+    } catch {
+      /* network blip — retry */
+    }
+    if (attempt < maxAttempts - 1) {
+      await new Promise((r) => window.setTimeout(r, 250 * (attempt + 1)));
+    }
+  }
+  return null;
 }
 
 function SeasonUnavailable({

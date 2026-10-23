@@ -149,6 +149,8 @@ type SeasonTablesIndex = {
 
 let cachedIndex: SeasonTablesIndex | null | undefined;
 let seasons: SnapshotFile["seasons"] = {};
+/** Dedupes concurrent first loads; null miss is not sticky (retry next request). */
+let seasonTablesInflight: Promise<boolean> | null = null;
 
 function cloudflareAssets(): AssetsFetcher | null {
   try {
@@ -197,23 +199,28 @@ async function loadFromAssets(): Promise<SnapshotFile | null> {
 /** Load season-tables once (ASSETS on CF, public/runtime on Node). */
 export async function ensureSeasonTables(): Promise<boolean> {
   await import("./espn-name-index").then((m) => m.ensureEspnNameIndex()).catch(() => undefined);
-  if (cachedIndex !== undefined) {
-    return cachedIndex != null && Object.keys(seasons).length > 0;
-  }
-  const fromDisk = loadFromPublicDir();
-  const file = fromDisk ?? (await loadFromAssets());
-  if (!file?.seasons || typeof file.seasons !== "object") {
-    cachedIndex = null;
-    seasons = {};
-    return false;
-  }
-  seasons = file.seasons;
-  cachedIndex = {
-    version: file.version ?? 0,
-    generatedAt: file.generatedAt ?? null,
-    seasons,
-  };
-  return Object.keys(seasons).length > 0;
+  if (cachedIndex != null && Object.keys(seasons).length > 0) return true;
+  if (seasonTablesInflight) return seasonTablesInflight;
+  seasonTablesInflight = (async () => {
+    try {
+      const fromDisk = loadFromPublicDir();
+      const file = fromDisk ?? (await loadFromAssets());
+      if (!file?.seasons || typeof file.seasons !== "object") {
+        // Transient ASSETS miss — leave unset so the next request retries.
+        return false;
+      }
+      seasons = file.seasons;
+      cachedIndex = {
+        version: file.version ?? 0,
+        generatedAt: file.generatedAt ?? null,
+        seasons,
+      };
+      return Object.keys(seasons).length > 0;
+    } finally {
+      seasonTablesInflight = null;
+    }
+  })();
+  return seasonTablesInflight;
 }
 
 const peerBoardCache = new Map<string, PlayerSeason[]>();

@@ -52,6 +52,8 @@ type ImpactIndex = {
 let cachedIndex: ImpactIndex | null | undefined;
 let darkoSeasons: Record<string, DarkoSlimRow[]> = {};
 let raptorSeasons: Record<string, RaptorSlimRow[]> = {};
+/** Dedupes concurrent first loads; null miss is not sticky (retry next request). */
+let impactOverlayInflight: Promise<boolean> | null = null;
 
 const darkoCache = new Map<string, DarkoRating[]>();
 const raptorCache = new Map<string, RaptorRating[]>();
@@ -101,29 +103,33 @@ async function loadFromAssets(): Promise<ImpactOverlayFile | null> {
 }
 
 export async function ensureImpactOverlay(): Promise<boolean> {
-  if (cachedIndex !== undefined) {
-    return cachedIndex != null;
-  }
-  const fromDisk = loadFromPublicDir();
-  const file = fromDisk ?? (await loadFromAssets());
-  if (!file) {
-    cachedIndex = null;
-    darkoSeasons = {};
-    raptorSeasons = {};
-    return false;
-  }
-  darkoSeasons =
-    file.darko && typeof file.darko === "object" ? file.darko : {};
-  raptorSeasons =
-    (file.raptor && typeof file.raptor === "object" ? file.raptor : null) ??
-    (file.lebron && typeof file.lebron === "object" ? file.lebron : {});
-  cachedIndex = {
-    version: file.version ?? 0,
-    generatedAt: file.generatedAt ?? null,
-    darko: darkoSeasons,
-    raptor: raptorSeasons,
-  };
-  return true;
+  if (cachedIndex != null) return true;
+  if (impactOverlayInflight) return impactOverlayInflight;
+  impactOverlayInflight = (async () => {
+    try {
+      const fromDisk = loadFromPublicDir();
+      const file = fromDisk ?? (await loadFromAssets());
+      if (!file) {
+        // Transient ASSETS miss — leave unset so the next request retries.
+        return false;
+      }
+      darkoSeasons =
+        file.darko && typeof file.darko === "object" ? file.darko : {};
+      raptorSeasons =
+        (file.raptor && typeof file.raptor === "object" ? file.raptor : null) ??
+        (file.lebron && typeof file.lebron === "object" ? file.lebron : {});
+      cachedIndex = {
+        version: file.version ?? 0,
+        generatedAt: file.generatedAt ?? null,
+        darko: darkoSeasons,
+        raptor: raptorSeasons,
+      };
+      return true;
+    } finally {
+      impactOverlayInflight = null;
+    }
+  })();
+  return impactOverlayInflight;
 }
 
 function toDarkoRating(season: string, row: DarkoSlimRow): DarkoRating {

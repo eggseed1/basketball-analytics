@@ -27,7 +27,9 @@ export async function GET(
       url.searchParams.get("comps") === "true";
     const career = await getPlayerCareerSeasonsCached(playerId);
     if (career.length === 0) {
-      return jsonError(new Error("Player not found"), 404);
+      // Empty career is usually a cold ASSETS / budget miss, not a missing
+      // player — 503 so the client retries instead of "Couldn't load".
+      return jsonError(new Error("Career board still loading"), 503);
     }
     const season = resolvePlayerSeason(career, seasonParam);
     const identityTeamKey = lastCardStint(

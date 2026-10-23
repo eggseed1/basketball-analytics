@@ -212,12 +212,15 @@ export const getPlayerCareerSeasonsCached = cache(async (playerId: string) => {
   const budgetMs = preferBundledProductDataOnEdge()
     ? 1_200
     : runtimeTimeoutMs(7_000, 3_400);
-  const result = await withBudget(
-    getPlayerCriticalCareerSeasons(playerId),
-    budgetMs,
-    [] as PlayerSeason[]
-  );
+  // Share one promise so a budget miss can still await the cold ASSETS career
+  // bake (2.9MB) instead of 404ing /api/players/.../percentiles mid-slider.
+  const careerPromise = getPlayerCriticalCareerSeasons(playerId);
+  const result = await withBudget(careerPromise, budgetMs, [] as PlayerSeason[]);
   if (result.value.length > 0) return result.value;
+  if (result.timedOut) {
+    const slow = await careerPromise.catch(() => [] as PlayerSeason[]);
+    if (slow.length > 0) return slow;
+  }
   // Legend careers are static assets; a cold fetch can outlast the budget, so read them unbudgeted.
   const { loadCareerFromBrefSlug, parseBrefPlayerSlug } = await import(
     "@/data/providers/nba/bref-career-from-page"

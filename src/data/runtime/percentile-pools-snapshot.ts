@@ -21,6 +21,8 @@ type AssetsFetcher = {
 const ASSET_PATH = "/runtime/percentile-pools-snapshot.json";
 
 let pools: PercentilePoolsSnapshot | null | undefined;
+/** Dedupes concurrent first loads; null miss is not sticky (retry next request). */
+let poolsInflight: Promise<boolean> | null = null;
 
 function cloudflareAssets(): AssetsFetcher | null {
   try {
@@ -67,10 +69,23 @@ async function loadFromAssets(): Promise<PercentilePoolsSnapshot | null> {
 }
 
 export async function ensurePercentilePools(): Promise<boolean> {
-  if (pools !== undefined) return pools != null;
-  const fromDisk = loadFromPublicDir();
-  pools = fromDisk ?? (await loadFromAssets());
-  return pools != null;
+  if (pools != null) return true;
+  if (poolsInflight) return poolsInflight;
+  poolsInflight = (async () => {
+    try {
+      const fromDisk = loadFromPublicDir();
+      const loaded = fromDisk ?? (await loadFromAssets());
+      if (loaded) {
+        pools = loaded;
+        return true;
+      }
+      // Transient ASSETS miss — leave `pools` unset so the next request retries.
+      return false;
+    } finally {
+      poolsInflight = null;
+    }
+  })();
+  return poolsInflight;
 }
 
 export function bundledSeasonCutoffs(
