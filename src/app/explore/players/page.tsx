@@ -58,8 +58,6 @@ async function loadBoard(
   searchParams: Record<string, string | string[] | undefined>,
   defaultSeason: string
 ): Promise<BoardLoad> {
-  const { getExplorePlayersBoardView, parseExplorePlayersSortDir } =
-    await import("@/data/queries/explore-players-board");
   const seasonForMinutes = isAllSeasonsParam(searchParams.season)
     ? "ALL"
     : String(
@@ -80,6 +78,31 @@ async function loadBoard(
     ? "ALL"
     : filters.season ?? defaultSeason;
   const sortKey = parsePlayerSeasonSortKey(searchParams.sort);
+  const rate = parsePlayerBoardRate([searchParams.rate].flat()[0] ?? null);
+  const boardViews = parsePlayerBoardViews(
+    [searchParams.view].flat()[0] ?? null
+  );
+
+  // Hit the 35KB first-page bake before importing the board query module
+  // (pulls players.ts + season-tables). Cold default /explore/players stays thin.
+  const {
+    getExplorePlayersFirstPageSnapshot,
+    matchesExplorePlayersFirstPage,
+  } = await import("@/data/runtime/explore-players-first-page");
+  const bakeOpts = {
+    filters,
+    sortKey,
+    rate,
+    boardViews,
+    page: 1 as const,
+  };
+  if (matchesExplorePlayersFirstPage(bakeOpts)) {
+    const baked = getExplorePlayersFirstPageSnapshot();
+    if (baked) return { view: baked.view as BoardLoad["view"], season };
+  }
+
+  const { getExplorePlayersBoardView, parseExplorePlayersSortDir } =
+    await import("@/data/queries/explore-players-board");
   const sortDir = sortKey
     ? parseExplorePlayersSortDir(searchParams.dir, sortKey)
     : undefined;
@@ -88,10 +111,8 @@ async function loadBoard(
     filters,
     sortKey,
     sortDir,
-    rate: parsePlayerBoardRate([searchParams.rate].flat()[0] ?? null),
-    boardViews: parsePlayerBoardViews(
-      [searchParams.view].flat()[0] ?? null
-    ),
+    rate,
+    boardViews,
     page: 1,
     // Context pools are unused on this page (no row-context panel wired).
     includeContext: false,

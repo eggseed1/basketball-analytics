@@ -18,10 +18,6 @@ import {
   startOfWeekSundayIso,
   upcomingScheduleSeason,
 } from "@/data/queries";
-import {
-  getRuntimeSnapshotGames,
-  getRuntimeSnapshotWindow,
-} from "@/data/runtime/game-snapshot";
 import { toGameSummary } from "@/data/queries/filter-utils";
 import { canonicalSeasonFromStartYear } from "@/data/providers/historical/season-range";
 import type { Game, GameSummary } from "@/data/types";
@@ -68,6 +64,13 @@ function sorted(games: Game[], direction: "asc" | "desc" = "asc"): Game[] {
   });
 }
 
+async function loadScheduleSeason(season: string): Promise<Game[]> {
+  const { getRuntimeSnapshotGames } = await import(
+    "@/data/runtime/game-snapshot"
+  );
+  return getRuntimeSnapshotGames(season);
+}
+
 export default async function ScoresPage({ searchParams }: ScoresPageProps) {
   const sp = await searchParams;
   const scheduleSeason = upcomingScheduleSeason();
@@ -91,39 +94,46 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
   const afterTip = one(sp, "after");
   const afterId = one(sp, "afterId");
 
-  const schedule = getRuntimeSnapshotGames(scheduleSeason);
-  const monthGames =
-    view === "month"
-      ? summaries(sorted(schedule.filter((game) => game.gameDate.startsWith(monthKey))))
-      : [];
-  const weekGames =
-    view === "week"
-      ? summaries(
-          sorted(
-            schedule.filter(
-              (game) => game.gameDate >= weekStart && game.gameDate <= weekEnd
-            )
+  // Default day view keeps the 1.4MB game-snapshot off the shell module graph
+  // (same idea as the home calendar-only shell). Month/week/list pay once here.
+  let monthGames: GameSummary[] = [];
+  let weekGames: GameSummary[] = [];
+  let upcomingGames: GameSummary[] = [];
+  let upcomingHasMore = false;
+
+  if (view === "month" || view === "week" || view === "list") {
+    const schedule = await loadScheduleSeason(scheduleSeason);
+    if (view === "month") {
+      monthGames = summaries(
+        sorted(schedule.filter((game) => game.gameDate.startsWith(monthKey)))
+      );
+    } else if (view === "week") {
+      weekGames = summaries(
+        sorted(
+          schedule.filter(
+            (game) => game.gameDate >= weekStart && game.gameDate <= weekEnd
           )
         )
-      : [];
-
-  let upcomingPool = schedule.filter(
-    (game) =>
-      game.gameDate >= today &&
-      (isPreTipStatus(game.status) || game.status === "in_progress")
-  );
-  if (afterTip) {
-    upcomingPool = upcomingPool.filter((game) => {
-      const tip = game.tipOffAt ?? `${game.gameDate}T00:00:00Z`;
-      if (tip > afterTip) return true;
-      if (tip < afterTip) return false;
-      return afterId ? game.id > afterId : false;
-    });
+      );
+    } else {
+      let upcomingPool = schedule.filter(
+        (game) =>
+          game.gameDate >= today &&
+          (isPreTipStatus(game.status) || game.status === "in_progress")
+      );
+      if (afterTip) {
+        upcomingPool = upcomingPool.filter((game) => {
+          const tip = game.tipOffAt ?? `${game.gameDate}T00:00:00Z`;
+          if (tip > afterTip) return true;
+          if (tip < afterTip) return false;
+          return afterId ? game.id > afterId : false;
+        });
+      }
+      upcomingPool = sorted(upcomingPool);
+      upcomingHasMore = upcomingPool.length > LIST_PAGE_SIZE;
+      upcomingGames = summaries(upcomingPool.slice(0, LIST_PAGE_SIZE));
+    }
   }
-  upcomingPool = sorted(upcomingPool);
-  const upcomingHasMore = upcomingPool.length > LIST_PAGE_SIZE;
-  const upcomingGames =
-    view === "list" ? summaries(upcomingPool.slice(0, LIST_PAGE_SIZE)) : [];
 
   const dayDate = dateParam(one(sp, "date")) ?? today;
   const daySeason = view === "day" ? seasonForDate(dayDate) : scheduleSeason;
@@ -196,6 +206,9 @@ async function gamesForDate(
   date: string,
   today: string
 ): Promise<{ games: GameSummary[]; stale: boolean }> {
+  const { getRuntimeSnapshotWindow } = await import(
+    "@/data/runtime/game-snapshot"
+  );
   const snapshot = getRuntimeSnapshotWindow({ fromDate: date, toDate: date });
   if (Math.abs(daysBetween(date, today)) > LIVE_FETCH_WINDOW_DAYS) {
     return { games: summaries(snapshot), stale: false };
@@ -210,6 +223,9 @@ async function gamesForDate(
 }
 
 async function loadDayView(date: string, today: string): Promise<ScoreboardDayData> {
+  const { getRuntimeSnapshotWindow } = await import(
+    "@/data/runtime/game-snapshot"
+  );
   const stripStart = addDaysIso(date, -3);
   const stripEnd = addDaysIso(stripStart, 6);
   const counts = new Map<string, number>();

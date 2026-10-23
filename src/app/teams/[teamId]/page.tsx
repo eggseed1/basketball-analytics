@@ -30,7 +30,6 @@ import {
 import {
   resolveTeamDivisionMeta,
 } from "@/lib/team-standings-context";
-import { resolveTeamFromBoard } from "@/lib/team-explorer";
 import {
   resolveActiveEraTheme,
 } from "@/themes/era-theme";
@@ -58,15 +57,10 @@ export async function generateMetadata({ params, searchParams }: TeamPageProps) 
   const seasonParam = Array.isArray(sp.season) ? sp.season[0] : sp.season;
   const season =
     seasonParam ?? canonicalSeasonFromStartYear(currentNbaStartYear());
-  const { getTeamSeasonBoardCached } = await import(
-    "@/data/queries/request-cache"
-  );
-  const board = await getTeamSeasonBoardCached(season);
-  const boardTeam = resolveTeamFromBoard(board.rows, teamId);
-  const fallback = boardTeam ? null : resolveTeamIdentityFallback(teamId, season, "era");
-  const fullName = boardTeam?.fullName ?? fallback?.fullName;
-  // Abbreviations and slugs (TOR, raptors) render the same page as the canonical id.
-  const canonicalTeamId = boardTeam?.teamId ?? fallback?.teamId ?? teamId;
+  // Identity only — keep team-board-snapshot (~1.5MB) off metadata cold path.
+  const identity = resolveTeamIdentityFallback(teamId, season, "era");
+  const fullName = identity?.fullName;
+  const canonicalTeamId = identity?.teamId ?? teamId;
   const pastSeason =
     seasonParam && seasonParam !== canonicalSeasonFromStartYear(currentNbaStartYear())
       ? `?season=${encodeURIComponent(seasonParam)}`
