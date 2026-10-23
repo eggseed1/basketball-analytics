@@ -20,6 +20,10 @@ export async function TeamOverviewSeasonFlow({
   teamKey: string;
   season: string;
 }) {
+  const { ensureGameSnapshotLite } = await import(
+    "@/data/runtime/game-snapshot"
+  );
+  await ensureGameSnapshotLite();
   const { buildSeasonHighlights, buildSeasonTrajectory } = await import(
     "@/lib/team-overview-data"
   );
@@ -46,6 +50,10 @@ export async function TeamOverviewGameGrid({
   teamKey: string;
   season: string;
 }) {
+  const { ensureGameSnapshotLite } = await import(
+    "@/data/runtime/game-snapshot"
+  );
+  await ensureGameSnapshotLite();
   const { buildQuarterProfile, buildSplitsBundle } = await import(
     "@/lib/team-overview-data"
   );

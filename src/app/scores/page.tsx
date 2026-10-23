@@ -64,10 +64,10 @@ function sorted(games: Game[], direction: "asc" | "desc" = "asc"): Game[] {
 }
 
 async function loadScheduleSeason(season: string): Promise<Game[]> {
-  const { getRuntimeSnapshotGames } = await import(
-    "@/data/runtime/game-snapshot"
+  const { getRuntimeSnapshotGamesAsync } = await import(
+    "@/data/runtime/game-snapshot-archive"
   );
-  return getRuntimeSnapshotGames(season);
+  return getRuntimeSnapshotGamesAsync(season);
 }
 
 export default async function ScoresPage({ searchParams }: ScoresPageProps) {

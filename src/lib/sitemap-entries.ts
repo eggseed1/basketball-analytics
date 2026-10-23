@@ -1,7 +1,6 @@
 import { AWARD_DEFINITIONS } from "@/content/awards/catalog";
 import { listDiscoverableLearnSlugs } from "@/content/learn/resolve";
 import rosterSnapshot from "@/data/runtime/current-roster-snapshot.json";
-import gameSnapshot from "@/data/runtime/game-snapshot.json";
 import { getPlayerSearchIndex } from "@/data/runtime/player-search-snapshot";
 import { absoluteUrl } from "@/lib/site-url";
 
@@ -15,10 +14,6 @@ export type SitemapUrl = {
 
 type RosterFile = {
   players?: Record<string, { teamId?: string }>;
-};
-
-type GameSnapshotFile = {
-  games?: Array<{ id?: string; gameDate?: string; statusDetail?: string }>;
 };
 
 const SECTION_PATHS = [
@@ -67,7 +62,7 @@ function lastmodDate(value: string): string | undefined {
   return /^\d{4}-\d{2}-\d{2}$/.test(day) ? day : undefined;
 }
 
-export function sitemapUrls(kind: SitemapKind): SitemapUrl[] {
+export async function sitemapUrls(kind: SitemapKind): Promise<SitemapUrl[]> {
   if (kind === "pages") {
     const roster = rosterSnapshot as unknown as RosterFile;
     const teamIds = [
@@ -100,8 +95,12 @@ export function sitemapUrls(kind: SitemapKind): SitemapUrl[] {
     ];
   }
 
-  const finishedGames = ((gameSnapshot as GameSnapshotFile).games ?? []).filter(
-    (g) => g.id && /^Final/.test(g.statusDetail ?? "")
+  const { ensureGameSnapshotLite, getRuntimeSnapshotGames } = await import(
+    "@/data/runtime/game-snapshot"
+  );
+  await ensureGameSnapshotLite();
+  const finishedGames = getRuntimeSnapshotGames().filter(
+    (g) => g.id && /^Final/.test(String(g.statusDetail ?? ""))
   );
   return finishedGames.map((g) => ({
     loc: absoluteUrl(`/games/${g.id}`),

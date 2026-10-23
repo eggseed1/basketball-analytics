@@ -250,9 +250,8 @@ async function main() {
     ) + "\n",
     "utf8"
   );
-  // Worker module graph — current + prior only.
-  await fs.writeFile(
-    OUT,
+  // Lite snapshot: public/runtime (ASSETS) + src mirror for scripts.
+  const liteBody =
     JSON.stringify(
       {
         generatedAt,
@@ -262,9 +261,16 @@ async function main() {
       },
       null,
       2
-    ) + "\n",
-    "utf8"
+    ) + "\n";
+  const OUT_PUBLIC = path.join(
+    process.cwd(),
+    "public",
+    "runtime",
+    "game-snapshot.json"
   );
+  await fs.mkdir(path.dirname(OUT_PUBLIC), { recursive: true });
+  await fs.writeFile(OUT, liteBody);
+  await fs.writeFile(OUT_PUBLIC, liteBody);
   // Older seasons for Worker Static Assets (team tabs / brackets).
   const seasonsDir = path.join(
     process.cwd(),

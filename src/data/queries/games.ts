@@ -652,10 +652,10 @@ export async function getFilteredGames(
   // Date-scoped Time Machine: try bundled ESPN schedule before remote crawls.
   if (season && hasDateWindow) {
     try {
-      const { getRuntimeSnapshotGames } = await import(
-        "@/data/runtime/game-snapshot"
+      const { getRuntimeSnapshotGamesAsync } = await import(
+        "@/data/runtime/game-snapshot-archive"
       );
-      const snap = getRuntimeSnapshotGames(season);
+      const snap = await getRuntimeSnapshotGamesAsync(season);
       if (snap.length > 0) {
         const filtered = applyGameFilters(snap, filters);
         if (filtered.length > 0) return filtered;
@@ -728,10 +728,10 @@ export async function getSeasonGamesArchive(
   // Workers production: bundled schedule is authoritative — skip live crawls.
   if (preferBundledProductDataOnEdge()) {
     try {
-      const { getRuntimeSnapshotGames } = await import(
-        "@/data/runtime/game-snapshot"
+      const { getRuntimeSnapshotGamesAsync } = await import(
+        "@/data/runtime/game-snapshot-archive"
       );
-      const snap = getRuntimeSnapshotGames(season);
+      const snap = await getRuntimeSnapshotGamesAsync(season);
       if (snap.length > 0) {
         return { games: snap, source: "espn" };
       }
@@ -742,10 +742,10 @@ export async function getSeasonGamesArchive(
 
   // Bundled ESPN schedule (Cloudflare-safe) before live month crawls.
   try {
-    const { getRuntimeSnapshotGames } = await import(
-      "@/data/runtime/game-snapshot"
+    const { getRuntimeSnapshotGamesAsync } = await import(
+      "@/data/runtime/game-snapshot-archive"
     );
-    const snap = getRuntimeSnapshotGames(season);
+    const snap = await getRuntimeSnapshotGamesAsync(season);
     if (snap.length > 0 && isAdequateSeasonGamesCache(season, snap.length)) {
       return { games: snap, source: "espn" };
     }
@@ -774,10 +774,10 @@ export async function getSeasonGamesArchive(
     }
     // Partial snapshot still better than empty for team/history surfaces.
     try {
-      const { getRuntimeSnapshotGames } = await import(
-        "@/data/runtime/game-snapshot"
+      const { getRuntimeSnapshotGamesAsync } = await import(
+        "@/data/runtime/game-snapshot-archive"
       );
-      const snap = getRuntimeSnapshotGames(season);
+      const snap = await getRuntimeSnapshotGamesAsync(season);
       if (snap.length > 0) {
         return { games: snap, source: "espn" };
       }
@@ -1086,7 +1086,9 @@ export async function getUpcomingGameSummaries(
 
   // Cloudflare / cold hosts: live ESPN soft-fails with empty process cache.
   // Fall back to the build-time snapshot so team/player upcoming never blanks.
-  const { getRuntimeSnapshotGames } = await import("@/data/runtime/game-snapshot");
+  const { getRuntimeSnapshotGamesAsync } = await import(
+    "@/data/runtime/game-snapshot-archive"
+  );
   const { upcomingScheduleSeason } = await import(
     "@/data/providers/nba/scoreboard-client"
   );
@@ -1095,7 +1097,7 @@ export async function getUpcomingGameSummaries(
   const { nbaTodayIso } = await import("@/lib/nba-calendar-date");
   const today = options.fromDate ?? nbaTodayIso();
   const limit = options.limit ?? 40;
-  let pool = getRuntimeSnapshotGames(season)
+  let pool = (await getRuntimeSnapshotGamesAsync(season))
     .filter(
       (game) =>
         game.gameDate >= today &&

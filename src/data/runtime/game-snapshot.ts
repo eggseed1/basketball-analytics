@@ -1,5 +1,10 @@
-import snapshot from "./game-snapshot.json";
-
+/**
+ * Build-time ESPN schedule snapshot (current + prior season).
+ * Lives under public/runtime (ASSETS) so the ~1.4MB lite JSON stays off the
+ * Worker isolate; Node can also merge game-snapshot-full.json for tests.
+ *
+ * Older seasons: public/runtime/game-seasons/{season}.json via game-snapshot-archive.
+ */
 import type { Game } from "@/data/types";
 
 export type RuntimeGameSnapshot = {
@@ -9,18 +14,66 @@ export type RuntimeGameSnapshot = {
   games: Game[];
 };
 
-/**
- * Build-time ESPN schedule snapshot.
- *
- * IMPORTANT (Cloudflare Workers / OpenNext): do NOT load the full archive via
- * `node:fs` on the Worker. Workers' virtual FS is ephemeral, so keep the
- * current+prior season JSON on the module graph (≈100 KiB gzip).
- *
- * Older seasons live in `game-snapshot-full.json` and are merged only on Node
- * (tests, local `next dev`) so team/history fixtures keep working without
- * bloating the Worker bundle.
- */
-const lite = snapshot as RuntimeGameSnapshot;
+type AssetsFetcher = {
+  fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>;
+};
+
+const ASSET_PATH = "/runtime/game-snapshot.json";
+
+let primed = false;
+let liteSeasons: string[] = [];
+let generatedAt: string | null = null;
+let source = "espn-build-snapshot";
+let usingNodeArchive = false;
+
+const byId = new Map<string, Game>();
+const bySeason = new Map<string, Game[]>();
+const playoffsBySeason = new Map<string, Game[]>();
+let allGames: Game[] = [];
+
+function cloudflareAssets(): AssetsFetcher | null {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { getCloudflareContext } = require("@opennextjs/cloudflare") as {
+      getCloudflareContext: () => { env?: { ASSETS?: AssetsFetcher } };
+    };
+    return getCloudflareContext()?.env?.ASSETS ?? null;
+  } catch {
+    return null;
+  }
+}
+
+function loadLiteFromPublicDir(): RuntimeGameSnapshot | null {
+  try {
+    if (process.env.NEXT_RUNTIME === "edge") return null;
+    // eslint-disable-next-line no-eval
+    const req = eval("require") as NodeRequire;
+    const fs = req("node:fs") as typeof import("node:fs");
+    const path = req("node:path") as typeof import("node:path");
+    const file = path.join(
+      process.cwd(),
+      "public",
+      "runtime",
+      "game-snapshot.json"
+    );
+    if (!fs.existsSync(file)) return null;
+    return JSON.parse(fs.readFileSync(file, "utf8")) as RuntimeGameSnapshot;
+  } catch {
+    return null;
+  }
+}
+
+async function loadLiteFromAssets(): Promise<RuntimeGameSnapshot | null> {
+  try {
+    const assets = cloudflareAssets();
+    if (!assets) return null;
+    const response = await assets.fetch(`https://assets.local${ASSET_PATH}`);
+    if (!response.ok) return null;
+    return (await response.json()) as RuntimeGameSnapshot;
+  } catch {
+    return null;
+  }
+}
 
 function loadNodeArchiveGames(): Game[] | null {
   try {
@@ -28,7 +81,6 @@ function loadNodeArchiveGames(): Game[] | null {
     if (typeof (globalThis as { EdgeRuntime?: string }).EdgeRuntime === "string") {
       return null;
     }
-    // Keep `node:fs` off the OpenNext/webpack graph (UnhandledSchemeError).
     // eslint-disable-next-line no-eval
     const req = eval("require") as NodeRequire;
     const fs = req("node:fs") as typeof import("node:fs");
@@ -45,46 +97,60 @@ function loadNodeArchiveGames(): Game[] | null {
   }
 }
 
-const archiveGames = loadNodeArchiveGames();
-const data: RuntimeGameSnapshot = archiveGames
-  ? {
-      generatedAt: lite.generatedAt,
-      source: lite.source,
-      seasons: [
-        ...new Set([
-          ...(lite.seasons ?? []),
-          ...archiveGames.map((g) => String(g.season ?? "")).filter(Boolean),
-        ]),
-      ].sort(),
-      games: archiveGames,
+function indexGames(games: Game[]): void {
+  byId.clear();
+  bySeason.clear();
+  playoffsBySeason.clear();
+  allGames = games;
+  for (const game of games) {
+    byId.set(String(game.id), game);
+    const season = String(game.season ?? "");
+    if (!season) continue;
+    const list = bySeason.get(season);
+    if (list) list.push(game);
+    else bySeason.set(season, [game]);
+    if (game.gameType === "playoff" || game.gameType === "play-in") {
+      const po = playoffsBySeason.get(season);
+      if (po) po.push(game);
+      else playoffsBySeason.set(season, [game]);
     }
-  : lite;
-
-const games = Array.isArray(data.games) ? data.games : [];
-const byId = new Map(games.map((game) => [String(game.id), game] as const));
-const bySeason = new Map<string, Game[]>();
-const playoffsBySeason = new Map<string, Game[]>();
-
-for (const game of games) {
-  const season = String(game.season ?? "");
-  if (!season) continue;
-  const list = bySeason.get(season);
-  if (list) list.push(game);
-  else bySeason.set(season, [game]);
-  if (game.gameType === "playoff" || game.gameType === "play-in") {
-    const po = playoffsBySeason.get(season);
-    if (po) po.push(game);
-    else playoffsBySeason.set(season, [game]);
   }
+}
+
+/** Load lite (+ Node full archive when present) once. */
+export async function ensureGameSnapshotLite(): Promise<void> {
+  if (primed) return;
+
+  const fromDisk = loadLiteFromPublicDir();
+  const lite = fromDisk ?? (await loadLiteFromAssets());
+  const archiveGames = loadNodeArchiveGames();
+
+  if (archiveGames?.length) {
+    usingNodeArchive = true;
+    generatedAt = lite?.generatedAt ?? null;
+    source = lite?.source ?? source;
+    liteSeasons = lite?.seasons ?? [];
+    indexGames(archiveGames);
+  } else if (lite && Array.isArray(lite.games)) {
+    generatedAt = lite.generatedAt ?? null;
+    source = lite.source ?? source;
+    liteSeasons = lite.seasons ?? [];
+    indexGames(lite.games);
+  } else {
+    indexGames([]);
+  }
+
+  primed = true;
 }
 
 export function runtimeGameSnapshotMeta() {
   return {
-    generatedAt: data.generatedAt,
-    source: data.source,
-    gameCount: games.length,
-    liteSeasons: lite.seasons ?? [],
-    usingNodeArchive: Boolean(archiveGames),
+    generatedAt,
+    source,
+    gameCount: allGames.length,
+    liteSeasons,
+    usingNodeArchive,
+    primed,
   };
 }
 
@@ -93,7 +159,7 @@ export function getRuntimeSnapshotGame(gameId: string): Game | null {
 }
 
 export function getRuntimeSnapshotGames(season?: string): Game[] {
-  if (!season) return games;
+  if (!season) return allGames;
   return bySeason.get(season) ?? [];
 }
 
@@ -113,6 +179,7 @@ export function primeRuntimeSnapshotSeason(season: string, seasonGames: Game[]):
   bySeason.set(key, seasonGames);
   for (const game of seasonGames) {
     byId.set(String(game.id), game);
+    allGames.push(game);
     if (game.gameType === "playoff" || game.gameType === "play-in") {
       const po = playoffsBySeason.get(key);
       if (po) po.push(game);
@@ -130,7 +197,7 @@ export function getRuntimeSnapshotWindow(options: {
   const statuses = options.status
     ? new Set(Array.isArray(options.status) ? options.status : [options.status])
     : null;
-  return games.filter((game) => {
+  return allGames.filter((game) => {
     if (options.season && game.season !== options.season) return false;
     if (options.fromDate && game.gameDate < options.fromDate) return false;
     if (options.toDate && game.gameDate > options.toDate) return false;

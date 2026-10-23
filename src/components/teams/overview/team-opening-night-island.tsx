@@ -14,6 +14,10 @@ export async function TeamOpeningNightIsland({
   season: string;
   teamName: string;
 }) {
+  const { ensureGameSnapshotLite } = await import(
+    "@/data/runtime/game-snapshot"
+  );
+  await ensureGameSnapshotLite();
   const { buildScheduleFacts } = await import("@/lib/team-overview-data");
   return (
     <TeamOpeningNight

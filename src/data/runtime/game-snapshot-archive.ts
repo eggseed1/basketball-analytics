@@ -1,10 +1,11 @@
 /**
- * Older schedule seasons for Cloudflare Workers.
- * Current+prior stay inlined in game-snapshot.json; prior years ship as
- * Static Assets under /runtime/game-seasons/{season}.json.
+ * Schedule seasons for Cloudflare Workers.
+ * Lite snapshot (current+prior) lives at /runtime/game-snapshot.json;
+ * older years ship under /runtime/game-seasons/{season}.json.
  */
 import type { Game } from "@/data/types";
 import {
+  ensureGameSnapshotLite,
   getRuntimeSnapshotGames,
   primeRuntimeSnapshotSeason,
 } from "@/data/runtime/game-snapshot";
@@ -77,6 +78,7 @@ async function loadFromAssets(season: string): Promise<Game[] | null> {
 export async function getRuntimeSnapshotGamesAsync(
   season?: string
 ): Promise<Game[]> {
+  await ensureGameSnapshotLite();
   if (!season) return getRuntimeSnapshotGames();
   const inline = getRuntimeSnapshotGames(season);
   if (inline.length > 0) return inline;

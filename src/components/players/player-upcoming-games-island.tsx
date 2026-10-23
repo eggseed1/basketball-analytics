@@ -14,16 +14,16 @@ async function upcomingGamesForTeam(
   scheduleTeamKey: string,
   season = upcomingScheduleSeason()
 ): Promise<GameSummary[]> {
-  // Dynamic import keeps the ~6.7MB game-snapshot JSON off the player-page
-  // module graph until this Suspense island runs (CF 1102 mitigation).
-  const { getRuntimeSnapshotGames } = await import(
-    "@/data/runtime/game-snapshot"
+  // Dynamic import keeps schedule JSON off the player-page module graph
+  // until this Suspense island runs (CF 1102 mitigation).
+  const { getRuntimeSnapshotGamesAsync } = await import(
+    "@/data/runtime/game-snapshot-archive"
   );
   const today = nbaTodayIso();
   const team = teamSeasonStub(scheduleTeamKey, season);
   const brand = resolveTeamBrand(scheduleTeamKey);
   if (!team) return [];
-  return getRuntimeSnapshotGames(season)
+  return (await getRuntimeSnapshotGamesAsync(season))
     .filter(
       (game) =>
         game.gameDate >= today &&
