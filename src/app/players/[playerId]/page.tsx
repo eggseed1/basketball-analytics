@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { PageAtmosphere } from "@/components/brand/page-atmosphere";
 import { PriorSeasonStatsNotice } from "@/components/explore/season-not-started-notice";
 import { PlayerOnOffIsland } from "@/components/players/player-on-off-island";
-import { getOnOffSeasons } from "@/data/queries/on-off";
+import { seasonHasOnOff } from "@/lib/on-off/types";
 import { shareImageMetadata } from "@/lib/share-images";
 import { JsonLd } from "@/components/seo/json-ld";
 import { absoluteUrl } from "@/lib/site-url";
@@ -513,19 +513,14 @@ export default async function PlayerPage({
   // Slim edge (explicit SLIM_EDGE_PRODUCT=1 only) — paid Workers run the full page.
   const slimWorker = slimEdgeProductEnabled();
 
-  // One parallel batch before paint: identity + overview boards + percentile
-  // hero + on/off season list. Sequential awaits stacked cold TTFB; Suspense
-  // skeletons stick when the Worker stream cuts mid-flight.
-  const overviewPaint =
-    view === "overview" && !(slimWorker || notYetPlayed);
+  // Paint batch: identity-adjacent boards + percentile hero only. Career,
+  // contract, and on/off season list used to share this Promise.all and
+  // stacked cold MISS TTFB; those stream in via Suspense / sync season floor.
   const [
     accoladesNode,
     upcomingScheduleNode,
     frontOfficeNode,
-    overviewCareerNode,
-    overviewContractNode,
     percentileHeroNode,
-    onOffSeasons,
   ] = await Promise.all([
     slimWorker
       ? Promise.resolve(null)
@@ -550,27 +545,6 @@ export default async function PlayerPage({
           historicalBrand,
           honor,
         }),
-    overviewPaint
-      ? PlayerOverviewCareerSection({
-          playerId,
-          season,
-          seasonType,
-          career,
-          teamKey,
-          fromHistory,
-          themeMode,
-        })
-      : Promise.resolve(null),
-    overviewPaint
-      ? PlayerContractSectionIsland({
-          playerId,
-          playerName: displayName,
-          teamKey,
-          nbaId: identity?.nbaId,
-          season: seasonParam,
-          variant: "summary",
-        })
-      : Promise.resolve(null),
     !notYetPlayed
       ? PlayerPercentileIsland({
           playerId,
@@ -585,7 +559,6 @@ export default async function PlayerPage({
           honor,
         })
       : Promise.resolve(null),
-    getOnOffSeasons(),
   ]);
 
   const caps = playerPageCapabilities({
@@ -595,7 +568,7 @@ export default async function PlayerPage({
       masterPlayer?.firstSeason ??
       seasonOptions.at(-1),
     showSentiment: showLiveIntelligence,
-    hasOnOff: onOffSeasons.includes(statsCtx.statsSeason),
+    hasOnOff: seasonHasOnOff(statsCtx.statsSeason),
   });
 
   const careerSeasonsForTable =
@@ -691,9 +664,21 @@ export default async function PlayerPage({
           </Suspense>
         ) : null}
 
-        {view === "overview" && !(slimWorker || notYetPlayed)
-          ? overviewCareerNode
-          : null}
+        {view === "overview" && !(slimWorker || notYetPlayed) ? (
+          <Suspense
+            fallback={<PlayerBoardSkeleton label={t("loadingCareer")} />}
+          >
+            <PlayerOverviewCareerSection
+              playerId={playerId}
+              season={season}
+              seasonType={seasonType}
+              career={career}
+              teamKey={teamKey}
+              fromHistory={fromHistory}
+              themeMode={themeMode}
+            />
+          </Suspense>
+        ) : null}
 
         {view === "career" ? (
           <Suspense
@@ -728,7 +713,22 @@ export default async function PlayerPage({
           </Suspense>
         ) : null}
 
-        {view === "overview" && !slimWorker ? overviewContractNode : null}
+        {view === "overview" && !slimWorker ? (
+          <Suspense
+            fallback={
+              <PlayerOverviewContractSkeleton label={t("loadingSalary")} />
+            }
+          >
+            <PlayerContractSectionIsland
+              playerId={playerId}
+              playerName={displayName}
+              teamKey={teamKey}
+              nbaId={identity?.nbaId}
+              season={seasonParam}
+              variant="summary"
+            />
+          </Suspense>
+        ) : null}
 
         {view === "salary" && !slimWorker ? (
           <Suspense
