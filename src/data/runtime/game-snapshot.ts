@@ -12,14 +12,53 @@ export type RuntimeGameSnapshot = {
 /**
  * Build-time ESPN schedule snapshot.
  *
- * IMPORTANT (Cloudflare Workers / OpenNext): do NOT load this via `node:fs`.
- * Workers' virtual FS is ephemeral and does not mount OpenNext traced files, so
- * `readFileSync(process.cwd()/...)` silently returns empty and empties Scores /
- * Upcoming / player schedule surfaces. Keep the JSON on the module graph so it
- * is inlined into the Worker script (≈100 KiB gzip for current+prior season).
- * Do not grow this past ~2 seasons without moving older years off the module graph.
+ * IMPORTANT (Cloudflare Workers / OpenNext): do NOT load the full archive via
+ * `node:fs` on the Worker. Workers' virtual FS is ephemeral, so keep the
+ * current+prior season JSON on the module graph (≈100 KiB gzip).
+ *
+ * Older seasons live in `game-snapshot-full.json` and are merged only on Node
+ * (tests, local `next dev`) so team/history fixtures keep working without
+ * bloating the Worker bundle.
  */
-const data = snapshot as RuntimeGameSnapshot;
+const lite = snapshot as RuntimeGameSnapshot;
+
+function loadNodeArchiveGames(): Game[] | null {
+  try {
+    if (process.env.NEXT_RUNTIME === "edge") return null;
+    if (typeof (globalThis as { EdgeRuntime?: string }).EdgeRuntime === "string") {
+      return null;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const fs = require("node:fs") as typeof import("node:fs");
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const path = require("node:path") as typeof import("node:path");
+    const file = path.join(
+      process.cwd(),
+      "src/data/runtime/game-snapshot-full.json"
+    );
+    if (!fs.existsSync(file)) return null;
+    const parsed = JSON.parse(fs.readFileSync(file, "utf8")) as RuntimeGameSnapshot;
+    return Array.isArray(parsed.games) ? parsed.games : null;
+  } catch {
+    return null;
+  }
+}
+
+const archiveGames = loadNodeArchiveGames();
+const data: RuntimeGameSnapshot = archiveGames
+  ? {
+      generatedAt: lite.generatedAt,
+      source: lite.source,
+      seasons: [
+        ...new Set([
+          ...(lite.seasons ?? []),
+          ...archiveGames.map((g) => String(g.season ?? "")).filter(Boolean),
+        ]),
+      ].sort(),
+      games: archiveGames,
+    }
+  : lite;
+
 const games = Array.isArray(data.games) ? data.games : [];
 const byId = new Map(games.map((game) => [String(game.id), game] as const));
 const bySeason = new Map<string, Game[]>();
@@ -43,6 +82,8 @@ export function runtimeGameSnapshotMeta() {
     generatedAt: data.generatedAt,
     source: data.source,
     gameCount: games.length,
+    liteSeasons: lite.seasons ?? [],
+    usingNodeArchive: Boolean(archiveGames),
   };
 }
 

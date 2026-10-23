@@ -2,19 +2,30 @@ import fs from "node:fs/promises";
 import path from "node:path";
 
 const OUT = path.join(process.cwd(), "src/data/runtime/game-snapshot.json");
+const OUT_FULL = path.join(
+  process.cwd(),
+  "src/data/runtime/game-snapshot-full.json"
+);
 const ESPN = "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard";
 const now = new Date();
 const currentStartYear = now.getUTCMonth() >= 6 ? now.getUTCFullYear() : now.getUTCFullYear() - 1;
-// Keep the Worker-inlined snapshot small (~100KB gzip). Six seasons (~7MB)
-// blew cold game shells past the HTML cliff when the module graph was huge.
-// Older seasons still resolve via archive / ESPN for team history tabs.
-const seasonSpan = Number(process.env.GAME_SNAPSHOT_SEASONS ?? 2);
-const span = Number.isFinite(seasonSpan) && seasonSpan > 0 ? Math.min(6, seasonSpan) : 2;
-const seasons = Array.from({ length: span }, (_, i) => currentStartYear - (span - 1 - i));
-
+// Fetch up to six league years into game-snapshot-full.json (Node tests / local).
+// Worker-inlined game-snapshot.json stays at GAME_SNAPSHOT_LITE_SEASONS (default 2).
 function canonicalSeason(startYear) {
   return `${startYear}-${String((startYear + 1) % 100).padStart(2, "0")}`;
 }
+
+const seasonSpan = Number(process.env.GAME_SNAPSHOT_SEASONS ?? 6);
+const span = Number.isFinite(seasonSpan) && seasonSpan > 0 ? Math.min(6, seasonSpan) : 6;
+const seasons = Array.from({ length: span }, (_, i) => currentStartYear - (span - 1 - i));
+const liteSpanRaw = Number(process.env.GAME_SNAPSHOT_LITE_SEASONS ?? 2);
+const liteSpan =
+  Number.isFinite(liteSpanRaw) && liteSpanRaw > 0 ? Math.min(span, liteSpanRaw) : 2;
+const liteSeasonSet = new Set(
+  Array.from({ length: liteSpan }, (_, i) =>
+    canonicalSeason(currentStartYear - (liteSpan - 1 - i))
+  )
+);
 
 function monthsForSeason(startYear) {
   return [10, 11, 12].map((m) => `${startYear}${String(m).padStart(2, "0")}`).concat(
@@ -215,15 +226,19 @@ async function main() {
     );
   }
 
-  // Three league years (Workers Paid size budget) for team/history + Game Lab PBP.
+  const generatedAt = new Date().toISOString();
+  const seasonLabels = seasons.map(canonicalSeason);
+  const liteGames = games.filter((g) => liteSeasonSet.has(g.season));
+  const liteSeasons = seasonLabels.filter((s) => liteSeasonSet.has(s));
+
   await fs.mkdir(path.dirname(OUT), { recursive: true });
   await fs.writeFile(
-    OUT,
+    OUT_FULL,
     JSON.stringify(
       {
-        generatedAt: new Date().toISOString(),
+        generatedAt,
         source: "espn-build-snapshot",
-        seasons: seasons.map(canonicalSeason),
+        seasons: seasonLabels,
         games,
       },
       null,
@@ -231,8 +246,23 @@ async function main() {
     ) + "\n",
     "utf8"
   );
+  // Worker module graph — current + prior only.
+  await fs.writeFile(
+    OUT,
+    JSON.stringify(
+      {
+        generatedAt,
+        source: "espn-build-snapshot",
+        seasons: liteSeasons,
+        games: liteGames,
+      },
+      null,
+      2
+    ) + "\n",
+    "utf8"
+  );
   console.log(
-    `[runtime-snapshot] wrote ${games.length} games (${completedSeason}: ${completedCount}, ${previousSeason}: ${previousCount}, ${upcomingSeason}: ${upcomingCount}) to ${OUT}`
+    `[runtime-snapshot] wrote full ${games.length} games → ${OUT_FULL}; lite ${liteGames.length} (${liteSeasons.join(",")}) → ${OUT}`
   );
 }
 
