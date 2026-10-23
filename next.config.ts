@@ -114,7 +114,6 @@ const nextConfig: NextConfig = {
     "/*": [
       "./src/data/drbl/precomputed/**/*",
       "./src/data/media/portrait-lookup.json",
-      "./src/data/runtime/asset-ledger-snapshot.json",
       "./src/data/runtime/game-snapshot.json",
       "./data/cba/**/*",
       "./data/front-office/v1/**/*",

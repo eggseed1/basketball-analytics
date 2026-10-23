@@ -385,7 +385,10 @@ const loadPlayerPercentileMetricsCached = cache(async function loadPlayerPercent
   const bundledCutoffs = await import(
     "@/data/runtime/percentile-pools-snapshot"
   )
-    .then((m) => m.bundledSeasonCutoffs)
+    .then(async (m) => {
+      await m.ensurePercentilePools();
+      return m.bundledSeasonCutoffs;
+    })
     .catch(() => undefined);
   // Early in a new season the cutoff snapshot may not exist yet — rank against
   // the prior campaign's pool so Impact chips paint on the fast path.

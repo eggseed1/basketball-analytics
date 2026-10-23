@@ -117,7 +117,7 @@ export async function loadAssetLedger(
       const { getBundledAssetLedger } = await import(
         "@/data/runtime/asset-ledger-snapshot"
       );
-      const bundled = getBundledAssetLedger();
+      const bundled = await getBundledAssetLedger();
       if (bundled?.manifest) {
         if (!options.cwd) cached = bundled;
         return bundled;
@@ -183,6 +183,9 @@ export function getTeamDraftPicksFromLedger(
 
 export function clearAssetLedgerCache(): void {
   cached = null;
+  void import("@/data/runtime/asset-ledger-snapshot")
+    .then((m) => m.clearBundledAssetLedgerCache?.())
+    .catch(() => undefined);
 }
 
 export { normalizeDraftPick, toTeamDraftPickAssets };

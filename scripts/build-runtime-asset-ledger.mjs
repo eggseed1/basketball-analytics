@@ -7,6 +7,7 @@ import path from "node:path";
 const ROOT = process.cwd();
 const SRC = path.join(ROOT, "data", "asset-ledger", "v1");
 const OUT = path.join(ROOT, "src", "data", "runtime", "asset-ledger-snapshot.json");
+const OUT_PUBLIC = path.join(ROOT, "public", "runtime", "asset-ledger-snapshot.json");
 
 function parseJsonl(text) {
   const out = [];
@@ -71,8 +72,11 @@ const payload = {
   teamDraftPickAssets: toTeamDraftPickAssets(draftPicks),
 };
 
+const body = JSON.stringify(payload);
 await fs.mkdir(path.dirname(OUT), { recursive: true });
-await fs.writeFile(OUT, JSON.stringify(payload));
+await fs.mkdir(path.dirname(OUT_PUBLIC), { recursive: true });
+await fs.writeFile(OUT, body);
+await fs.writeFile(OUT_PUBLIC, body);
 console.log(
-  `[asset-ledger-snapshot] txs=${structuredTransactions.length} edges=${ownershipEdges.length} contracts=${contracts.length} → ${OUT}`
+  `[asset-ledger-snapshot] txs=${structuredTransactions.length} edges=${ownershipEdges.length} contracts=${contracts.length} → ${OUT_PUBLIC} (src mirror ${OUT})`
 );

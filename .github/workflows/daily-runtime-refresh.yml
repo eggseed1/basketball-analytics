@@ -249,6 +249,7 @@ jobs:
             src/data/runtime/front-office-snapshot.json \
             data/asset-ledger/v1 \
             src/data/runtime/asset-ledger-snapshot.json \
+            public/runtime/asset-ledger-snapshot.json \
             src/data/runtime/team-leadership.json \
             src/data/runtime/player-awards-snapshot.json \
             data/draft-picks/spotrac/v1 \
@@ -290,6 +291,7 @@ jobs:
               src/data/runtime/impact-overlay-snapshot.json \
               src/data/runtime/explore-players-first-page.json \
               src/data/runtime/percentile-pools-snapshot.json \
+              public/runtime/percentile-pools-snapshot.json \
               src/data/runtime/player-search-snapshot.json \
               src/data/runtime/espn-name-index.json \
               src/data/runtime/stat-detective-windows.json \
