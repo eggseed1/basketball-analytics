@@ -142,6 +142,8 @@ jobs:
     timeout-minutes: 300
     permissions:
       contents: write
+      # Read deploy-site history so we never rebuild main over a newer code ship.
+      actions: read
     env:
       DATA_PROVIDER: nba
       FULL_EDGE_PRODUCT: "1"
@@ -399,6 +401,57 @@ jobs:
             src/data/runtime/drbl-published-seasons.json
             src/data/runtime/drbl-overlay-snapshot.json
           if-no-files-found: ignore
+
+      # Code ships via deploy-site.yml (often from a feature branch). This nightly
+      # job checks out main for data sync/commits. Rebuilding OpenNext from main
+      # would wipe that Worker. When the latest successful deploy-site SHA is not
+      # already contained in this checkout, build/deploy from that SHA and overlay
+      # the freshly synced runtime assets so data still updates.
+      - name: Align Worker tree with latest code ship
+        id: worker_tree
+        if: >-
+          steps.sync.outputs.should_deploy == 'true' &&
+          (github.event_name != 'workflow_dispatch' || inputs.deploy)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          SHIP_SHA=$(gh run list --workflow=deploy-site.yml --status success --limit 1 \
+            --json headSha,headBranch,databaseId,createdAt \
+            --jq '.[0].headSha // empty')
+          SHIP_BRANCH=$(gh run list --workflow=deploy-site.yml --status success --limit 1 \
+            --json headBranch --jq '.[0].headBranch // empty')
+          if [ -z "$SHIP_SHA" ]; then
+            echo "mode=checkout" >> "$GITHUB_OUTPUT"
+            echo "No prior deploy-site success; deploying this checkout as-is."
+            exit 0
+          fi
+          if git merge-base --is-ancestor "$SHIP_SHA" HEAD 2>/dev/null; then
+            echo "mode=checkout" >> "$GITHUB_OUTPUT"
+            echo "Latest deploy-site ${SHIP_SHA:0:8} ($SHIP_BRANCH) is contained in HEAD; deploying this checkout."
+            exit 0
+          fi
+          echo "Latest deploy-site ${SHIP_SHA:0:8} ($SHIP_BRANCH) is NOT in this checkout — preserving that Worker code and overlaying nightly assets."
+          mkdir -p /tmp/tm
+          tar -czf /tmp/tm/nightly-runtime-overlay.tgz \
+            --ignore-failed-read \
+            public/runtime \
+            src/data/runtime \
+            src/data/drbl/precomputed \
+            data/sentiment \
+            data/movement-center \
+            data/transactions \
+            data/asset-ledger 2>/dev/null || \
+          tar -czf /tmp/tm/nightly-runtime-overlay.tgz public/runtime
+          git fetch origin "$SHIP_SHA" --depth=1
+          git checkout --force "$SHIP_SHA"
+          tar -xzf /tmp/tm/nightly-runtime-overlay.tgz
+          echo "mode=ship-sha" >> "$GITHUB_OUTPUT"
+          echo "ship_sha=$SHIP_SHA" >> "$GITHUB_OUTPUT"
+          echo "ship_branch=$SHIP_BRANCH" >> "$GITHUB_OUTPUT"
+          echo "### Worker tree" >> "$GITHUB_STEP_SUMMARY"
+          echo "- deploy-site SHA preserved: \`${SHIP_SHA}\` (\`${SHIP_BRANCH}\`)" >> "$GITHUB_STEP_SUMMARY"
+          echo "- nightly runtime assets overlaid onto that tree before OpenNext build" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Share images
         if: >-
