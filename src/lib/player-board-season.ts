@@ -187,6 +187,25 @@ export function defaultExplorePlayersSeason(
 }
 
 /**
+ * Home top-performers TS%/USG pools. Mid-season keeps the classic 15-game
+ * floor; before the league has 15 games on the board, anyone with real
+ * minutes qualifies so opener-week rates are not blanked.
+ */
+export function qualifyHomeLeaderRows(
+  rows: readonly PlayerSeason[],
+  minMpg = 18
+): PlayerSeason[] {
+  const played = rows.filter((p) => (p.gamesPlayed ?? 0) > 0);
+  const maxGp = played.reduce((m, p) => Math.max(m, p.gamesPlayed || 0), 0);
+  const minGp = maxGp >= 15 ? 15 : 1;
+  return played.filter(
+    (p) =>
+      p.gamesPlayed >= minGp &&
+      p.minutes / Math.max(1, p.gamesPlayed) >= minMpg
+  );
+}
+
+/**
  * Qualifying minutes for Explore. The usual 500 floor hides every opener
  * line in week 1 — drop to 0 until the campaign has had time to accumulate.
  */

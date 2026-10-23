@@ -373,18 +373,22 @@ export function TopPerformersPanel({
       });
     }
 
-    const list = [...byKey.values()];
-    list.sort((a, b) => {
-      const pick = (row: OverviewRow) => {
-        if (sort === "ts") return row.ts;
-        if (sort === "usage") return row.usg;
-        if (sort === "war1") return row.war1;
-        if (sort === "drbl") return row.drbl;
-        if (sort === "raptor") return row.raptor;
-        return row.darko;
-      };
-      return (pick(b) ?? -Infinity) - (pick(a) ?? -Infinity);
-    });
+    const pick = (row: OverviewRow) => {
+      if (sort === "ts") return row.ts;
+      if (sort === "usage") return row.usg;
+      if (sort === "war1") return row.war1;
+      if (sort === "drbl") return row.drbl;
+      if (sort === "raptor") return row.raptor;
+      return row.darko;
+    };
+    // When sorting by a rate, drop rows that never got that rate — do not
+    // show DARKO/RAPTOR names with a blank "—" cell.
+    const list = [...byKey.values()]
+      .filter((row) => {
+        const value = pick(row);
+        return value != null && Number.isFinite(value);
+      })
+      .sort((a, b) => (pick(b) ?? -Infinity) - (pick(a) ?? -Infinity));
 
     return list.slice(0, 10).map((row, i) => ({ ...row, rank: i + 1 }));
   }, [

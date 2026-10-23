@@ -22,6 +22,7 @@ import { hasValidatedDrblEstimate } from "@/data/queries/percentiles";
 import { normalizePlayerName } from "@/lib/player-name";
 import {
   priorSeasonForStats,
+  qualifyHomeLeaderRows,
   shouldUsePriorSeasonBoardStats,
 } from "@/lib/player-board-season";
 import { isPreseasonRosterSeason } from "@/data/providers/nba/espn-roster-client";
@@ -217,17 +218,11 @@ export type HomeAnalytics = {
 
 const HOME_CACHE_TTL_MS = 1000 * 60 * 5;
 /** Bump when leader team identity / companion-stat contract changes. */
-const HOME_CACHE_VERSION = 18;
+const HOME_CACHE_VERSION = 19;
 const ESPN_SEASONS_BUDGET_MS = 2500;
 const DRBL_BUDGET_MS = 2000;
 /** In-flight dedupe so concurrent Suspense islands share one load. */
 let homeInflight: Promise<HomeAnalytics> | null = null;
-
-function qualify(rows: PlayerSeason[], minMpg = 18): PlayerSeason[] {
-  return rows.filter(
-    (p) => p.gamesPlayed >= 15 && p.minutes / p.gamesPlayed >= minMpg
-  );
-}
 
 function withTimeout<T>(
   promise: Promise<T>,
@@ -407,8 +402,8 @@ async function loadHomeAnalytics(): Promise<HomeAnalytics> {
     const prev = darkoByName.get(key);
     if (prev == null || row.impact > prev) darkoByName.set(key, row.impact);
   }
-  const qualified = qualify(seasons, 18);
-  const efficiencyPool = qualify(seasons, 24);
+  const qualified = qualifyHomeLeaderRows(seasons, 18);
+  const efficiencyPool = qualifyHomeLeaderRows(seasons, 24);
 
   const darkoLeaders = [...darko]
     .sort((a, b) => b.impact - a.impact)
