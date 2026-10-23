@@ -273,6 +273,7 @@ jobs:
             src/data/runtime/play-type-snapshot.json \
             src/data/runtime/on-off-snapshot.json \
             src/data/runtime/team-game-box-snapshot.json \
+            public/runtime/team-game-box-snapshot.json \
             public/runtime/on-off
           # In-season bakes, Mondays and after the Finals by default, so
           # offseason deploys still ship the finished season. workflow_dispatch

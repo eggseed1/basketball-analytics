@@ -252,10 +252,15 @@ export async function TeamGamesIsland({
 }) {
   const currentSeason = canonicalSeasonFromStartYear(currentNbaStartYear());
   const useProductIndex = hasHistoryTeamGameIndex(season);
-  const { ensureRuntimeSnapshotSeason } = await import(
-    "@/data/runtime/game-snapshot-archive"
-  );
-  await ensureRuntimeSnapshotSeason(season);
+  const [{ ensureRuntimeSnapshotSeason }, { ensureTeamGameBox }] =
+    await Promise.all([
+      import("@/data/runtime/game-snapshot-archive"),
+      import("@/data/runtime/team-game-box-snapshot"),
+    ]);
+  await Promise.all([
+    ensureRuntimeSnapshotSeason(season),
+    ensureTeamGameBox(),
+  ]);
 
   if (hasTeamSnapshotGames(team.teamId, season)) {
     const rows = scheduleLogRows(team.teamId, season);

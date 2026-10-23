@@ -10,7 +10,7 @@
  * Run: npx tsx scripts/build-team-game-box-snapshot.ts
  *      npx tsx scripts/build-team-game-box-snapshot.ts --season 2026-27 --fetch
  */
-import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 import { resolveTeamBrand } from "../src/lib/nba-brand";
@@ -23,6 +23,13 @@ import {
 const ROOT = join(__dirname, "..");
 const RAW = join(ROOT, "data", "drbl", "raw", "games");
 const OUT = join(ROOT, "src", "data", "runtime", "team-game-box-snapshot.json");
+const OUT_PUBLIC = join(ROOT, "public", "runtime", "team-game-box-snapshot.json");
+
+function writeSnapshot(body: string): void {
+  writeFileSync(OUT, body);
+  mkdirSync(join(ROOT, "public", "runtime"), { recursive: true });
+  writeFileSync(OUT_PUBLIC, body);
+}
 const SCHEDULE_URL = "https://cdn.nba.com/static/json/staticData/scheduleLeagueV2.json";
 const boxUrl = (gameId: string) => `https://cdn.nba.com/static/json/liveData/boxscore/boxscore_${gameId}.json`;
 const HEADERS = {
@@ -218,14 +225,14 @@ async function main() {
       console.log(`team box totals ${seasonArg}: nothing new (${known} already stored, ${skipped} unavailable)`);
       return;
     }
-    writeFileSync(OUT, `${JSON.stringify(merge(existing, collected))}\n`);
+    writeSnapshot(`${JSON.stringify(merge(existing, collected))}\n`);
     console.log(`team box totals ${seasonArg}: +${games} games (${known} already stored, ${skipped} unavailable)`);
     return;
   }
 
   const { collected, games, skipped } = fromArchive();
   if (seasonArg) for (const season of [...collected.keys()]) if (season !== seasonArg) collected.delete(season);
-  writeFileSync(OUT, `${JSON.stringify(merge(existing, collected))}\n`);
+  writeSnapshot(`${JSON.stringify(merge(existing, collected))}\n`);
   console.log(`team box totals: ${games} archived games, ${skipped} skipped, seasons ${[...collected.keys()].join(", ")}`);
 }
 
