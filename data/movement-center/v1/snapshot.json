@@ -3,12 +3,12 @@
     "methodologyVersion": "movement-m1-0.2+movement-rules-v2",
     "status": "NEWS_INGEST_M1",
     "season": "2026-27",
-    "snapshotDate": "2026-10-22",
+    "snapshotDate": "2026-10-23",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-10-22T12:44:41.064Z",
-    "rosterPlayerCount": 452,
-    "headlinesScanned": 5569,
-    "latestHeadlineAt": "2026-10-22T12:41:13.000Z",
+    "builtAt": "2026-10-23T15:28:57.626Z",
+    "rosterPlayerCount": 479,
+    "headlinesScanned": 6037,
+    "latestHeadlineAt": "2026-10-23T15:27:25.000Z",
     "latestTransactionDate": "2026-10-21",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -168,11 +168,11 @@
     },
     "outlet:hoops-rumors": {
       "label": "Hoops Rumors",
-      "credibility": 12
+      "credibility": 16
     },
     "outlet:essentiallysports": {
       "label": "EssentiallySports",
-      "credibility": 12
+      "credibility": 16
     },
     "reporter:brian-windhorst": {
       "label": "Brian Windhorst (ESPN)",
@@ -965,21 +965,23 @@
     },
     {
       "id": "mv-contract-1966-20261007",
-      "headline": "LeBron James: contract future with the 76ers",
-      "primaryClaimId": "mv-a36f084b9186ad77",
+      "headline": "LeBron James: free agency",
+      "primaryClaimId": "mv-2b5e16a1633a991c",
       "claimIds": [
         "mv-a36f084b9186ad77",
-        "mv-b445abf46f915252"
+        "mv-b445abf46f915252",
+        "mv-2b5e16a1633a991c"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-07T13:34:49.000Z",
-      "lastMeaningfulAt": "2026-10-07T13:34:49.000Z",
+      "lastMeaningfulAt": "2026-10-23T12:57:48.000Z",
       "linkedPlayerIds": [
         "1966"
       ],
       "linkedTeamIds": [
-        "20"
+        "20",
+        "5"
       ]
     },
     {
@@ -1492,14 +1494,16 @@
     {
       "id": "mv-trade-3917376-20261021",
       "headline": "Jaylen Brown and Jayson Tatum: trade talk",
-      "primaryClaimId": "mv-2f0d84624ccb4107",
+      "primaryClaimId": "mv-309507bc3255656e",
       "claimIds": [
-        "mv-2f0d84624ccb4107"
+        "mv-2f0d84624ccb4107",
+        "mv-bd26cacf446be7b2",
+        "mv-309507bc3255656e"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-21T16:52:29.000Z",
-      "lastMeaningfulAt": "2026-10-21T16:52:29.000Z",
+      "lastMeaningfulAt": "2026-10-23T11:30:00.000Z",
       "linkedPlayerIds": [
         "3917376",
         "4065648"
@@ -7545,6 +7549,70 @@
         "9"
       ],
       "isOriginal": false
+    },
+    {
+      "id": "mv-bd26cacf446be7b2",
+      "clusterId": "mv-trade-3917376-20261021",
+      "summary": "Celtics’ Jayson Tatum Reveals Shocking Moment He Learned of Jaylen Brown Trade",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-22T23:56:37.000Z",
+      "sourceId": "reporter:shams-charania",
+      "sourceLabel": "Heavy, citing Shams Charania (ESPN)",
+      "reporterLabel": "Shams Charania",
+      "sourceUrl": "https://heavy.com/sports/nba/boston-celtics/celtics-jayson-tatum-jaylen-brown-trade-reaction/",
+      "playerIds": [
+        "3917376",
+        "4065648"
+      ],
+      "teamIds": [
+        "2"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-309507bc3255656e",
+      "clusterId": "mv-trade-3917376-20261021",
+      "summary": "Jaylen Brown Calls Out Jayson Tatum After Celtics Star Claims He Was ‘Caught Off Guard’ by Celitcs-76ers Trade",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-23T11:30:00.000Z",
+      "sourceId": "outlet:essentiallysports",
+      "sourceLabel": "EssentiallySports",
+      "sourceUrl": "https://www.essentiallysports.com/nba-active-basketball-news-jaylen-brown-calls-out-jayson-tatum-after-celtics-star-claims-he-was-caught-off-guard-by-celitcs-76ers-trade/",
+      "playerIds": [
+        "3917376",
+        "4065648"
+      ],
+      "teamIds": [
+        "2",
+        "20"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-2b5e16a1633a991c",
+      "clusterId": "mv-contract-1966-20261007",
+      "summary": "LeBron James: Cavaliers Were In ‘Consideration’ During Free Agency",
+      "claimType": "free_agent_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-23T12:57:48.000Z",
+      "sourceId": "outlet:hoops-rumors",
+      "sourceLabel": "Hoops Rumors",
+      "sourceUrl": "https://www.hoopsrumors.com/2026/10/lebron-james-cavaliers-were-in-consideration-during-free-agency.html",
+      "playerIds": [
+        "1966"
+      ],
+      "teamIds": [
+        "5"
+      ],
+      "isOriginal": true
     },
     {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",

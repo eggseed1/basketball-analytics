@@ -1,8 +1,8 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-22",
-    "retrievedAt": "2026-10-22T12:54:15.411Z",
+    "snapshotDate": "2026-10-23",
+    "retrievedAt": "2026-10-23T15:38:35.594Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
@@ -11,7 +11,7 @@
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "5efefd69ba7071e13dcdbbea68b9bbbb37f1ed25728b69983e39e3ef67828b31",
+    "sourceHash": "ca574babbdaaafb1246defdf3e26990fdafda44f55ae851ac4e801431b550ade",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -260,29 +260,6 @@
           "href": "/players/1626209"
         },
         {
-          "playerId": "1641772",
-          "playerName": "Nae'Qwan Tomlin",
-          "age": null,
-          "contractId": "cy-1641772-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1641772-2026",
-              "playerId": "1641772",
-              "franchiseId": "5",
-              "season": "2026-27",
-              "salary": 2411090,
-              "capHit": 2411090,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "salary-index"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1641772"
-        },
-        {
           "playerId": "1641854",
           "playerName": "Craig Porter Jr.",
           "age": null,
@@ -352,29 +329,6 @@
           "href": "/players/1642434"
         },
         {
-          "playerId": "1631215",
-          "playerName": "Khalifa Diop",
-          "age": null,
-          "contractId": "cy-1631215-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1631215-2026",
-              "playerId": "1631215",
-              "franchiseId": "5",
-              "season": "2026-27",
-              "salary": 1357763,
-              "capHit": 1357763,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "salary-index"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1631215"
-        },
-        {
           "playerId": "1643509",
           "playerName": "Meleek Thomas",
           "age": null,
@@ -419,41 +373,18 @@
           ],
           "guaranteedTotal": null,
           "href": "/players/1642400"
-        },
-        {
-          "playerId": "1643640",
-          "playerName": "Ernest Udeh Jr.",
-          "age": null,
-          "contractId": "cy-1643640-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1643640-2026",
-              "playerId": "1643640",
-              "franchiseId": "5",
-              "season": "2026-27",
-              "salary": null,
-              "capHit": null,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "espn-roster-no-salary"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1643640"
         }
       ],
       "futureCommitments": [
         {
           "season": "2026-27",
-          "totalSalaryDollars": 208092160,
-          "playersUnderContract": 15
+          "totalSalaryDollars": 204323307,
+          "playersUnderContract": 13
         }
       ],
-      "playerSalaryCommitments": 208092160,
-      "playersWithSalary": 15,
-      "playersWithoutSalary": 2
+      "playerSalaryCommitments": 204323307,
+      "playersWithSalary": 13,
+      "playersWithoutSalary": 1
     },
     "draftAssets": {
       "franchiseId": "5",
