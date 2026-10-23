@@ -3660,13 +3660,14 @@ svg [data-motion-dot] {
   contain-intrinsic-size: auto 6.25rem;
 }
 
-/* Game shot chart: makes pop with a ripple, misses drop in and settle. */
+/* Game shot chart: markers sit in a translate(cx,cy) group at the origin.
+   Animate with scale only — CSS px translates + fill-box drift off the spot. */
 .shot-make,
 .shot-miss,
 .shot-ripple,
 .shot-latest {
-  transform-box: fill-box;
-  transform-origin: center;
+  transform-box: view-box;
+  transform-origin: 0 0;
 }
 
 .shot-make {
@@ -3713,21 +3714,18 @@ svg [data-motion-dot] {
 
 @keyframes shot-miss {
   0% {
-    transform: translateY(-1.5px) scale(1.9);
+    transform: scale(1.9);
     opacity: 0;
   }
   45% {
-    transform: translateY(0) scale(0.85);
+    transform: scale(0.85);
     opacity: 1;
   }
   70% {
-    transform: translateX(0.6px) scale(1.05);
-  }
-  85% {
-    transform: translateX(-0.4px) scale(1);
+    transform: scale(1.05);
   }
   100% {
-    transform: none;
+    transform: scale(1);
   }
 }
 
