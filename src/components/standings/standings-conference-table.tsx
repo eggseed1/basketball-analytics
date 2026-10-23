@@ -2,10 +2,25 @@
 
 import { TeamLogo } from "@/components/brand/team-logo";
 import { TeamIdentity } from "@/components/teams/team-identity";
-import type { StandingRow } from "@/data/types";
 import { formatNumber } from "@/lib/format";
 import { textLinkClassName, type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
+
+/** Full standings page rows, or slim home/compact rows. */
+export type StandingRowView = {
+  teamId: string;
+  abbreviation: string;
+  displayName?: string;
+  rank: number;
+  wins: number;
+  losses: number;
+  winPct: number;
+  differential: number;
+  gamesBehind?: number;
+  ppg?: number;
+  oppPpg?: number;
+  streak?: string;
+};
 
 const thBase =
   "py-2 font-semibold text-[12px] uppercase tracking-[0.08em] text-muted-foreground";
@@ -23,7 +38,7 @@ export function StandingsConferenceTable({
   bare = false,
 }: {
   title: string;
-  rows: StandingRow[];
+  rows: StandingRowView[];
   /** Fewer columns for homepage. */
   compact?: boolean;
   /** Dashed rules under the last playoff seed (6) and last play-in seed (10). */
@@ -133,9 +148,9 @@ export function StandingsConferenceTable({
                               textLinkClassName,
                               "hidden min-w-0 truncate sm:block"
                             )}
-                            title={row.displayName}
+                            title={row.displayName ?? row.abbreviation}
                           >
-                            {row.displayName}
+                            {row.displayName ?? row.abbreviation}
                           </span>
                         </>
                       )}
@@ -147,9 +162,9 @@ export function StandingsConferenceTable({
                   {!compact ? (
                     <>
                       <td className={tdNumMuted}>
-                        {row.gamesBehind <= 0
+                        {(row.gamesBehind ?? 0) <= 0
                           ? "-"
-                          : formatNumber(row.gamesBehind, 1)}
+                          : formatNumber(row.gamesBehind ?? 0, 1)}
                       </td>
                       <td
                         className={cn(
@@ -165,11 +180,13 @@ export function StandingsConferenceTable({
                         {row.differential > 0 ? "+" : ""}
                         {formatNumber(row.differential, 1)}
                       </td>
-                      <td className={tdNum}>{formatNumber(row.ppg, 1)}</td>
-                      <td className={tdNumMuted}>
-                        {formatNumber(row.oppPpg, 1)}
+                      <td className={tdNum}>
+                        {formatNumber(row.ppg ?? 0, 1)}
                       </td>
-                      <td className={tdNumEnd}>{row.streak}</td>
+                      <td className={tdNumMuted}>
+                        {formatNumber(row.oppPpg ?? 0, 1)}
+                      </td>
+                      <td className={tdNumEnd}>{row.streak ?? "—"}</td>
                     </>
                   ) : (
                     <td
