@@ -105,6 +105,13 @@ function isUncacheableHtml(html: string, pathname?: string): boolean {
         html
       );
     if (loadingShell) return true;
+    // Final with no roster / team totals — do not poison EDGE (CDN timeout).
+    if (
+      /Box score roster lines are not available for this game/i.test(html) ||
+      /Team box totals aren.?t available for this game/i.test(html)
+    ) {
+      return true;
+    }
   }
 
   // Player page: loading skeleton only (no identity heading in the document).

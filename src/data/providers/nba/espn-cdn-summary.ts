@@ -34,6 +34,28 @@ function playCount(summary: EspnSummaryResponse | null): number {
   return Array.isArray(plays) ? plays.length : 0;
 }
 
+/** Athletes listed on the ESPN boxscore (CDN play packages sometimes omit this). */
+function boxAthleteCount(summary: EspnSummaryResponse | null): number {
+  if (!summary) return 0;
+  const players = (
+    summary as {
+      boxscore?: {
+        players?: Array<{
+          statistics?: Array<{ athletes?: unknown[] }>;
+        }>;
+      };
+    }
+  ).boxscore?.players;
+  if (!Array.isArray(players)) return 0;
+  let n = 0;
+  for (const block of players) {
+    for (const stats of block.statistics ?? []) {
+      n += Array.isArray(stats.athletes) ? stats.athletes.length : 0;
+    }
+  }
+  return n;
+}
+
 /**
  * ESPN's CDN wrapper has changed shape over time (`content`, `gamepackageJSON`,
  * nested page modules). Find the actual site-summary object without coupling the
@@ -168,7 +190,21 @@ async function fetchEspnCdnGameSummaryUncached(
       const payload = await fetchCdnPayload(url, timeoutMs);
       const summary = findEspnCdnSummary(payload);
       if (!summary) continue;
-      if (playCount(summary) > 0) return summary;
+      const plays = playCount(summary);
+      const boxers = boxAthleteCount(summary);
+      // Prefer a package that has both plays and box athletes when available.
+      if (plays > 0 && boxers > 0) return summary;
+      if (plays > 0) {
+        // Keep looking for a boxscore package (preferPlays hits /playbyplay first).
+        if (!best || playCount(best) < plays || boxAthleteCount(best) < boxers) {
+          best = summary;
+        }
+        continue;
+      }
+      if (boxers > 0 && (!best || boxAthleteCount(best) === 0)) {
+        best = summary;
+        continue;
+      }
       if (!best) best = summary;
     } catch {
       // try next URL
@@ -196,7 +232,16 @@ export async function fetchEspnCdnGameSummary(
 
   const cached = recent.get(id);
   if (cached && cached.expiresAt > Date.now()) {
-    if (!options?.preferPlays || playCount(cached.value) > 0) {
+    const plays = playCount(cached.value);
+    const boxers = boxAthleteCount(cached.value);
+    if (options?.preferPlays) {
+      // PBP callers accept plays-only; box callers must not reuse that cache.
+      if (plays > 0) return cached.value;
+    } else if (boxers > 0) {
+      return cached.value;
+    } else if (plays > 0 && boxers === 0) {
+      // Stale plays-only entry — fall through and fetch a boxscore package.
+    } else if (plays > 0) {
       return cached.value;
     }
   }

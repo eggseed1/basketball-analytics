@@ -151,6 +151,39 @@ function inferEspnAction(textRaw: unknown, scoreValueRaw: unknown) {
   return "unknown";
 }
 
+/** CDN play rows often ship athlete ids only; boxscore rows carry display names. */
+function athleteNamesFromEspnBoxscore(root: {
+  boxscore?: {
+    players?: Array<{
+      statistics?: Array<{
+        athletes?: Array<{
+          athlete?: {
+            id?: string | number;
+            displayName?: string;
+            shortName?: string;
+          };
+        }>;
+      }>;
+    }>;
+  };
+}): Map<string, string> {
+  const names = new Map<string, string>();
+  for (const block of root.boxscore?.players ?? []) {
+    for (const stats of block.statistics ?? []) {
+      for (const row of stats.athletes ?? []) {
+        const id = row.athlete?.id;
+        if (id == null) continue;
+        const name =
+          row.athlete?.displayName?.trim() ||
+          row.athlete?.shortName?.trim() ||
+          "";
+        if (name) names.set(String(id), name);
+      }
+    }
+  }
+  return names;
+}
+
 /** Convert ESPN summary `plays` into the canonical NBA-action-shaped envelope. */
 export function normalizeEspnSummary(raw: unknown): unknown {
   const root = raw as {
@@ -182,6 +215,19 @@ export function normalizeEspnSummary(raw: unknown): unknown {
         competitors?: Array<{ team?: { id?: string | number; abbreviation?: string } }>;
       }>;
     };
+    boxscore?: {
+      players?: Array<{
+        statistics?: Array<{
+          athletes?: Array<{
+            athlete?: {
+              id?: string | number;
+              displayName?: string;
+              shortName?: string;
+            };
+          }>;
+        }>;
+      }>;
+    };
   };
   const plays = Array.isArray(root.plays) ? root.plays : [];
   // ESPN plays usually carry only `team.id`; the header names both sides.
@@ -191,6 +237,9 @@ export function normalizeEspnSummary(raw: unknown): unknown {
       tricodeById.set(String(c.team.id), c.team.abbreviation);
     }
   }
+  // CDN play participants are often `{ athlete: { id } }` with no name. The same
+  // package's boxscore lists displayName — join so Game Lab never shows raw ids.
+  const nameByAthleteId = athleteNamesFromEspnBoxscore(root);
   const actions = plays.map((play, index) => {
     const text = String(play.text ?? "");
     const attempted = Number(play.pointsAttempted ?? 0);
@@ -236,7 +285,12 @@ export function normalizeEspnSummary(raw: unknown): unknown {
         play.team?.abbreviation ?? tricodeById.get(String(play.team?.id ?? "")) ?? ""
       ),
       personId: Number(participant?.id ?? 0) || 0,
-      playerName: participant?.displayName ?? participant?.shortName ?? "",
+      playerName:
+        participant?.displayName?.trim() ||
+        participant?.shortName?.trim() ||
+        (participant?.id != null
+          ? nameByAthleteId.get(String(participant.id)) ?? ""
+          : ""),
       secondPersonId: Number(second?.id ?? 0) || 0,
       scoreHome: Number(play.homeScore ?? 0) || 0,
       scoreAway: Number(play.awayScore ?? 0) || 0,

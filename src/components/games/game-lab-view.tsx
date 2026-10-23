@@ -1,8 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
-import type { GameAnalysisSummary } from "@/analytics/game-lab";
+import {
+  sumTeamTotals,
+  type GameAnalysisSummary,
+} from "@/analytics/game-lab";
 import { MatchupWashCard } from "@/components/brand/team-wash-card";
 import {
   GameMarginFlowChart,
@@ -13,6 +16,7 @@ import { GameRosterBoard } from "@/components/games/game-roster-board";
 import { GameShotChart, type ShotChartPlayer } from "@/components/games/game-shot-chart";
 import { GameStoryStrip, GameTeamComparison } from "@/components/games/game-story";
 import { GameTopPerformers } from "@/components/games/game-top-performers";
+import { useGameBoxScore } from "@/components/games/use-game-box-score";
 import { useGamePlayByPlay } from "@/components/games/use-game-play-by-play";
 import { GamePlayByPlayPanel } from "@/components/game/game-play-by-play";
 import { useDelayedPlays } from "@/components/sports/use-score-delay";
@@ -164,10 +168,50 @@ export function GameLabView({
   const events = useDelayedPlays(fetchedEvents) ?? fetchedEvents;
   const pbpSource = fetchedSource ?? initialPbpSource;
 
-  const homePlayers = players
+  // SSR sometimes ships a final with no roster (CDN budget / poisoned EDGE cache).
+  const { players: fetchedBoxPlayers, loading: boxLoading } = useGameBoxScore(
+    analysis.gameId,
+    { enabled: players.length === 0 && (final || live), initialPlayers: players }
+  );
+  const rosterPlayers =
+    fetchedBoxPlayers.length > 0 ? fetchedBoxPlayers : players;
+
+  const comparisonAnalysis = useMemo(() => {
+    if (analysis.coverage.hasTeamTotals || rosterPlayers.length === 0) {
+      return analysis;
+    }
+    const away = sumTeamTotals(
+      rosterPlayers,
+      awayKey,
+      "away",
+      outcome.awayLabel
+    );
+    const home = sumTeamTotals(
+      rosterPlayers,
+      homeKey,
+      "home",
+      outcome.homeLabel
+    );
+    if (!away || !home) return analysis;
+    return {
+      ...analysis,
+      away,
+      home,
+      coverage: { ...analysis.coverage, hasTeamTotals: true },
+    };
+  }, [
+    analysis,
+    rosterPlayers,
+    awayKey,
+    homeKey,
+    outcome.awayLabel,
+    outcome.homeLabel,
+  ]);
+
+  const homePlayers = rosterPlayers
     .filter((p) => p.teamId === homeKey || p.isHome)
     .sort((a, b) => (b.minutes || 0) - (a.minutes || 0));
-  const awayPlayers = players
+  const awayPlayers = rosterPlayers
     .filter((p) => p.teamId === awayKey || (!p.isHome && p.teamId !== homeKey))
     .sort((a, b) => (b.minutes || 0) - (a.minutes || 0));
 
@@ -180,17 +224,18 @@ export function GameLabView({
   // The live feed sometimes lists players with minutes but no counting stats
   // while the score keeps moving. Those zeros are missing data, not real lines.
   const statsPending =
-    !final &&
-    outcome.homeScore + outcome.awayScore > 0 &&
-    players.length > 0 &&
-    players.every(
-      (p) =>
-        !p.points &&
-        !p.fieldGoalsAttempted &&
-        !p.freeThrowsAttempted &&
-        !p.rebounds &&
-        !p.assists
-    );
+    (!final &&
+      outcome.homeScore + outcome.awayScore > 0 &&
+      rosterPlayers.length > 0 &&
+      rosterPlayers.every(
+        (p) =>
+          !p.points &&
+          !p.fieldGoalsAttempted &&
+          !p.freeThrowsAttempted &&
+          !p.rebounds &&
+          !p.assists
+      )) ||
+    (boxLoading && rosterPlayers.length === 0);
   const pbpLagNote = playByPlayLagNote(analysis, events);
   const shotChartPlayers: ShotChartPlayer[] = [
     ...awayPlayers.map((p) => ({ playerId: p.playerId, name: p.playerName ?? null, side: "away" as const })),
@@ -220,10 +265,10 @@ export function GameLabView({
         </MatchupWashCard>
       ) : (
         <div className="grid gap-5 lg:grid-cols-5">
-          <div className={players.length ? "lg:col-span-3" : "lg:col-span-5"}>
-            <GameTeamComparison analysis={analysis} colors={colors} />
+          <div className={rosterPlayers.length ? "lg:col-span-3" : "lg:col-span-5"}>
+            <GameTeamComparison analysis={comparisonAnalysis} colors={colors} />
           </div>
-          {players.length ? (
+          {rosterPlayers.length ? (
             <div className="lg:col-span-2">
               <GameTopPerformers
                 awayLabel={outcome.awayLabel}
@@ -243,7 +288,7 @@ export function GameLabView({
       ) : (
         <GameLiveInsights
           events={events}
-          players={players}
+          players={rosterPlayers}
           labels={{ away: outcome.awayLabel, home: outcome.homeLabel }}
           colors={colors}
           teamKeys={{ away: awayKey, home: homeKey }}
@@ -435,9 +480,11 @@ export function GameLabView({
             </p>
           ) : null}
         </div>
-        {players.length === 0 ? (
+        {rosterPlayers.length === 0 ? (
           <p className={cn(type.bodySm, "text-muted-foreground")}>
-            Box score roster lines are not available for this game.
+            {boxLoading
+              ? "Loading box score…"
+              : "Box score roster lines are not available for this game."}
           </p>
         ) : (
           <GameRosterBoard

@@ -87,18 +87,25 @@ async function GameLabDeepBody({ gameId, hidePeriodTable, asOfMs }: { gameId: st
   const analysis = slimGameAnalysisForFlight(payload.analysis, {
     downsampleTimeline: isFinal && payload.asOf !== "cut",
   });
+  const missingBox =
+    isFinal &&
+    payload.asOf !== "cut" &&
+    !(payload.players?.length > 0);
   const view = (
-    <GameLabView
-      analysis={analysis}
-      players={payload.players}
-      events={embedEvents ? payload.events : []}
-      pbpSource={payload.pbpSource}
-      officialTeamStats={payload.officialTeamStats}
-      pregameMargin={pregameMargin}
-      omitHero
-      hidePeriodTable={hidePeriodTable}
-      rebuiltFromPlays={payload.asOf === "cut"}
-    />
+    <>
+      {missingBox ? <span hidden data-page-cache="skip" /> : null}
+      <GameLabView
+        analysis={analysis}
+        players={payload.players}
+        events={embedEvents ? payload.events : []}
+        pbpSource={payload.pbpSource}
+        officialTeamStats={payload.officialTeamStats}
+        pregameMargin={pregameMargin}
+        omitHero
+        hidePeriodTable={hidePeriodTable}
+        rebuiltFromPlays={payload.asOf === "cut"}
+      />
+    </>
   );
   return payload.asOf === "unavailable" ? <DelayedGameSection risky>{view}</DelayedGameSection> : view;
 }
