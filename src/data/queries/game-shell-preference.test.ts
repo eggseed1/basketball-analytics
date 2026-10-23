@@ -29,7 +29,7 @@ test("keeps in-progress CDN shell over scheduled snapshot without box minutes", 
       hasPeriodScores: false,
       game: { status: "in_progress", period: 1, displayClock: "11:40" },
     },
-    { status: "scheduled", period: null, displayClock: null }
+    { status: "scheduled", period: undefined, displayClock: undefined }
   );
   assert.equal(keep, true);
 });
@@ -41,7 +41,7 @@ test("keeps shell when it already has player lines", () => {
       hasPeriodScores: false,
       game: { status: "in_progress", period: 1, displayClock: "9:00" },
     },
-    { status: "scheduled", period: null, displayClock: null }
+    { status: "scheduled", period: undefined, displayClock: undefined }
   );
   assert.equal(keep, true);
 });
@@ -51,9 +51,9 @@ test("keeps CDN shell when progress matches the snapshot", () => {
     {
       hasBoxScore: false,
       hasPeriodScores: false,
-      game: { status: "scheduled", period: null, displayClock: null },
+      game: { status: "scheduled", period: undefined, displayClock: undefined },
     },
-    { status: "scheduled", period: null, displayClock: null }
+    { status: "scheduled", period: undefined, displayClock: undefined }
   );
   assert.equal(keep, true);
 });
@@ -63,7 +63,7 @@ test("drops a lagging shell when the snapshot is further along", () => {
     {
       hasBoxScore: false,
       hasPeriodScores: false,
-      game: { status: "scheduled", period: null, displayClock: null },
+      game: { status: "scheduled", period: undefined, displayClock: undefined },
     },
     { status: "final", period: 4, displayClock: "0:00" }
   );
