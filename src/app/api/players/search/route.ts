@@ -587,6 +587,9 @@ export async function GET(request: Request) {
   await Promise.all([
     ensurePlayerSearch(),
     ensureUnplayedDraftees(),
+    import("@/data/runtime/current-roster-snapshot").then((m) =>
+      m.ensureCurrentRoster()
+    ),
     import("@/data/media/portrait-lookup-store").then((m) =>
       m.ensurePortraitMaps()
     ),

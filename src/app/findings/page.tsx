@@ -4,8 +4,11 @@ import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { FindingsArchiveView, type FindingsNight } from "@/components/home/findings-archive-view";
 import { PageHeader } from "@/components/layout/page-header";
 import { buttonVariants } from "@/components/ui/button";
-import archive from "@/data/runtime/findings-archive.json";
-import { groupFindingsByDate, type FindingsArchive } from "@/lib/findings-archive";
+import {
+  ensureFindingsArchive,
+  getFindingsArchive,
+} from "@/data/runtime/findings-archive-snapshot";
+import { groupFindingsByDate } from "@/lib/findings-archive";
 
 export async function generateMetadata() {
   const t = await getTranslations("Findings");
@@ -23,7 +26,8 @@ type Day = FindingsNight;
 
 export default async function FindingsPage() {
   const t = await getTranslations("Findings");
-  const saved = groupFindingsByDate((archive as FindingsArchive).findings);
+  await ensureFindingsArchive();
+  const saved = groupFindingsByDate(getFindingsArchive().findings);
   const days: Day[] = saved.map((group) => ({
     date: group.date,
     preseason: group.findings[0]?.preseason ?? false,

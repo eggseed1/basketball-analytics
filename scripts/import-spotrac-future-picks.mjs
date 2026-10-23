@@ -20,6 +20,7 @@ import path from "node:path";
 
 const RAW = path.join(process.cwd(), "data/draft-picks/spotrac/v1/future-picks-raw.json");
 const OUT = path.join(process.cwd(), "src/data/runtime/future-picks-snapshot.json");
+const OUT_PUBLIC = path.join(process.cwd(), "public/runtime/future-picks-snapshot.json");
 
 const EXTRACTOR = `JSON.stringify([...document.querySelectorAll('table')].map((t) => { let year = null; const rows = []; for (const r of t.querySelectorAll('tr')) { const h = r.querySelector('h2'); if (h) { year = h.textContent.trim(); continue; } const img = r.querySelector('td img'); const cell = r.querySelector('td[colspan]'); const bar = cell && cell.querySelector('div'); if (!img || !bar) continue; const divs = [...cell.children].filter((d) => d.tagName === 'DIV'); rows.push({ year, img: img.getAttribute('src').split('/').pop(), bar: bar.textContent.trim().replace(/\\s+/g, ' '), arrow: !!bar.querySelector('.fa-arrow-right-long'), swap: !!bar.querySelector('.fa-refresh'), terms: divs.slice(1).map((d) => d.textContent.trim().replace(/\\s+/g, ' ')).filter(Boolean).join(' ') }); } return { rows }; }))`;
 
@@ -142,8 +143,13 @@ async function main() {
   if (count < priorCount * MIN_SHARE_OF_PRIOR) {
     throw new Error(`only ${count} pick rows against ${priorCount} last time; keeping the last snapshot`);
   }
-  await fs.writeFile(OUT, `${JSON.stringify(out)}\n`);
-  console.log(`[spotrac-future-picks] ${Object.keys(teams).length} teams, ${count} pick rows → ${path.relative(process.cwd(), OUT)}`);
+  const body = `${JSON.stringify(out)}\n`;
+  await fs.writeFile(OUT, body);
+  await fs.mkdir(path.dirname(OUT_PUBLIC), { recursive: true });
+  await fs.writeFile(OUT_PUBLIC, body);
+  console.log(
+    `[spotrac-future-picks] ${Object.keys(teams).length} teams, ${count} pick rows → ${path.relative(process.cwd(), OUT_PUBLIC)} (src mirror ${path.relative(process.cwd(), OUT)})`
+  );
 }
 
 main().catch((error) => {

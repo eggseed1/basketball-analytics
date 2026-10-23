@@ -59,10 +59,12 @@ async function loadBoard(
   defaultSeason: string
 ): Promise<BoardLoad> {
   const {
+    ensureExplorePlayersFirstPage,
     explorePlayersFirstPageMeta,
     getExplorePlayersFirstPageSnapshot,
     matchesExplorePlayersFirstPage,
   } = await import("@/data/runtime/explore-players-first-page");
+  await ensureExplorePlayersFirstPage();
   const bakeKey = explorePlayersFirstPageMeta().key;
 
   const seasonForMinutes = isAllSeasonsParam(searchParams.season)

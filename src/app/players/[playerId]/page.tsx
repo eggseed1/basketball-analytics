@@ -259,7 +259,13 @@ export default async function PlayerPage({
   const legendReady = import("@/data/runtime/legend-nba-to-bref").then((m) =>
     m.ensureLegendNbaToBref()
   );
-  await Promise.all([ensurePlayerSearch(), legendReady]);
+  await Promise.all([
+    ensurePlayerSearch(),
+    legendReady,
+    import("@/data/runtime/current-roster-snapshot").then((m) =>
+      m.ensureCurrentRoster()
+    ),
+  ]);
   // Resolve legacy bref: peer-board ids to ESPN athlete ids (no redirect required).
   const playerId = resolvePublicPlayerId(rawId);
   const seasonParam = one(sp, "season");

@@ -1,8 +1,8 @@
 /**
  * Baked default Explore Players first page for Cloudflare cold MISS.
  * Avoids season-tables + overlay work when the request matches the bake key.
+ * Lives under public/runtime (ASSETS) so the ~35KB JSON stays off the Worker.
  */
-import snapshot from "./explore-players-first-page.json";
 import type { BasketballFilters } from "@/data/types";
 import type { PlayerBoardRate, PlayerBoardView } from "@/lib/explore-players-display";
 import type { PlayerSeasonSortKey } from "@/lib/player-season-sort";
@@ -34,12 +34,80 @@ type SnapshotFile = {
   };
 };
 
-const data = snapshot as SnapshotFile;
+type AssetsFetcher = {
+  fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>;
+};
+
+const ASSET_PATH = "/runtime/explore-players-first-page.json";
+
+let data: SnapshotFile | null | undefined;
+
+function cloudflareAssets(): AssetsFetcher | null {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { getCloudflareContext } = require("@opennextjs/cloudflare") as {
+      getCloudflareContext: () => { env?: { ASSETS?: AssetsFetcher } };
+    };
+    return getCloudflareContext()?.env?.ASSETS ?? null;
+  } catch {
+    return null;
+  }
+}
+
+function loadFromPublicDir(): SnapshotFile | null {
+  try {
+    if (process.env.NEXT_RUNTIME === "edge") return null;
+    // eslint-disable-next-line no-eval
+    const req = eval("require") as NodeRequire;
+    const fs = req("node:fs") as typeof import("node:fs");
+    const path = req("node:path") as typeof import("node:path");
+    const file = path.join(
+      process.cwd(),
+      "public",
+      "runtime",
+      "explore-players-first-page.json"
+    );
+    if (!fs.existsSync(file)) return null;
+    return JSON.parse(fs.readFileSync(file, "utf8")) as SnapshotFile;
+  } catch {
+    return null;
+  }
+}
+
+async function loadFromAssets(): Promise<SnapshotFile | null> {
+  try {
+    const assets = cloudflareAssets();
+    if (!assets) return null;
+    const response = await assets.fetch(`https://assets.local${ASSET_PATH}`);
+    if (!response.ok) return null;
+    return (await response.json()) as SnapshotFile;
+  } catch {
+    return null;
+  }
+}
+
+function tryPrimeFromDisk(): void {
+  if (data !== undefined) return;
+  const file = loadFromPublicDir();
+  if (file) data = file;
+}
+
+export async function ensureExplorePlayersFirstPage(): Promise<boolean> {
+  if (data !== undefined) return data != null;
+  const fromDisk = loadFromPublicDir();
+  if (fromDisk) {
+    data = fromDisk;
+    return true;
+  }
+  data = await loadFromAssets();
+  return data != null;
+}
 
 export function explorePlayersFirstPageMeta() {
+  tryPrimeFromDisk();
   return {
-    generatedAt: data.generatedAt ?? null,
-    key: data.key,
+    generatedAt: data?.generatedAt ?? null,
+    key: data?.key,
   };
 }
 
@@ -47,6 +115,7 @@ export function getExplorePlayersFirstPageSnapshot(): {
   key: ExplorePlayersFirstPageKey;
   view: SnapshotFile["view"];
 } | null {
+  tryPrimeFromDisk();
   if (!data?.key?.season || !data?.view || !Array.isArray(data.view.rows)) {
     return null;
   }

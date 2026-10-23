@@ -163,6 +163,9 @@ async function getEngine() {
     import("@/data/runtime/player-bio-snapshot").then((m) =>
       m.ensurePlayerBio()
     ),
+    import("@/data/runtime/current-roster-snapshot").then((m) =>
+      m.ensureCurrentRoster()
+    ),
   ]);
   const index = await buildTransactionEventIndex();
   if (cached?.builtAt === index.builtAt) return cached;

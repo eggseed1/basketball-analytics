@@ -1,8 +1,10 @@
 import "server-only";
 
-import archive from "@/data/runtime/findings-archive.json";
+import {
+  ensureFindingsArchive,
+  getFindingsArchive,
+} from "@/data/runtime/findings-archive-snapshot";
 import { getBundledRecentInsights } from "@/data/runtime/recent-insights-snapshot";
-import type { FindingsArchive } from "@/lib/findings-archive";
 import type { RecentInsight } from "@/lib/recent-insights";
 
 function byId(insights: RecentInsight[] | undefined, id: string): RecentInsight | null {
@@ -12,8 +14,9 @@ function byId(insights: RecentInsight[] | undefined, id: string): RecentInsight 
 /** The card the home grid is showing, then older nights, then the saved copy. */
 export async function loadFinding(id: string): Promise<RecentInsight | null> {
   const decoded = decodeURIComponent(id);
+  await ensureFindingsArchive();
   const saved =
-    (archive as FindingsArchive).findings.find((finding) => finding.id === decoded) ?? null;
+    getFindingsArchive().findings.find((finding) => finding.id === decoded) ?? null;
   const bundled = byId(getBundledRecentInsights(), decoded);
   try {
     const { getLiveRecentInsights, getRecentInsightDays } = await import(

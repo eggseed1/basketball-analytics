@@ -174,12 +174,14 @@ export async function getExplorePlayersBoardView(options: {
   /** Skip percentile pools - used for infinite-scroll page fetches. */
   includeContext?: boolean;
 }): Promise<ExplorePlayersBoardView> {
-  if (
-    process.env.SKIP_EXPLORE_FIRST_PAGE !== "1" &&
-    matchesExplorePlayersFirstPage(options)
-  ) {
-    const baked = getExplorePlayersFirstPageSnapshot();
-    if (baked) return baked.view as ExplorePlayersBoardView;
+  if (process.env.SKIP_EXPLORE_FIRST_PAGE !== "1") {
+    await import("@/data/runtime/explore-players-first-page").then((m) =>
+      m.ensureExplorePlayersFirstPage()
+    );
+    if (matchesExplorePlayersFirstPage(options)) {
+      const baked = getExplorePlayersFirstPageSnapshot();
+      if (baked) return baked.view as ExplorePlayersBoardView;
+    }
   }
 
   const requestedSort = options.sortKey;

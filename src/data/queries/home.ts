@@ -635,6 +635,9 @@ async function loadHomeAnalytics(): Promise<HomeAnalytics> {
 }
 
 export async function getHomeAnalytics(): Promise<HomeAnalytics> {
+  await import("@/data/runtime/current-roster-snapshot").then((m) =>
+    m.ensureCurrentRoster()
+  );
   if (homeInflight) return homeInflight;
   homeInflight = sharedGetOrSet(
     `home:analytics:v${HOME_CACHE_VERSION}`,

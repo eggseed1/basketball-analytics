@@ -100,9 +100,10 @@ function keep(possessions: number): string {
 }
 
 export default async function LearnDrblPage() {
-  await import("@/data/runtime/contract-value").then((m) =>
-    m.ensureContractValue()
-  );
+  await Promise.all([
+    import("@/data/runtime/contract-value").then((m) => m.ensureContractValue()),
+    import("@/data/runtime/drbl-guide").then((m) => m.ensureDrblGuide()),
+  ]);
   const guide = drblGuide();
   const { distribution: spread, leaders, movers, scatter, carryover, outcome, coverage } = guide;
   const sampleK = boxForwardWeights.playerShrinkK;

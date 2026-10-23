@@ -14,7 +14,7 @@
  *
  *   npx tsx scripts/build-team-leadership.ts
  */
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
 import type { LeadershipPerson, TeamLeadership } from "../src/data/runtime/team-leadership";
@@ -24,6 +24,7 @@ const WIKI_API = "https://en.wikipedia.org/w/api.php";
 const USER_AGENT = "drbl.io team leadership builder (https://drbl.io)";
 const WIKI_DELAY_MS = 1500;
 const OUT = path.join(process.cwd(), "src/data/runtime/team-leadership.json");
+const OUT_PUBLIC = path.join(process.cwd(), "public/runtime/team-leadership.json");
 
 const WIKI_TITLE_OVERRIDES: Record<string, string> = {
   "LA Clippers": "Los Angeles Clippers",
@@ -283,9 +284,12 @@ async function main() {
   if (!out.length) throw new Error("No teams built; not writing");
 
   out.sort((a, b) => a.abbr.localeCompare(b.abbr));
-  writeFileSync(OUT, `${JSON.stringify({ retrievedAt: today, teams: out }, null, 2)}\n`);
+  const body = `${JSON.stringify({ retrievedAt: today, teams: out }, null, 2)}\n`;
+  writeFileSync(OUT, body);
+  mkdirSync(path.dirname(OUT_PUBLIC), { recursive: true });
+  writeFileSync(OUT_PUBLIC, body);
   console.log(
-    `Wrote ${out.length} teams to ${path.relative(process.cwd(), OUT)}: ${teamsChanged} changed, ${kept} kept from the previous run`
+    `Wrote ${out.length} teams to ${path.relative(process.cwd(), OUT_PUBLIC)}: ${teamsChanged} changed, ${kept} kept from the previous run (src mirror ${path.relative(process.cwd(), OUT)})`
   );
 }
 

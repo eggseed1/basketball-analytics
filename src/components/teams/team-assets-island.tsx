@@ -32,6 +32,9 @@ export async function TeamAssetsIsland({
     import("@/data/runtime/player-id-aliases-snapshot").then((m) =>
       m.ensurePlayerIdAliases()
     ),
+    import("@/data/runtime/future-picks-snapshot").then((m) =>
+      m.ensureFuturePicks()
+    ),
   ]);
   const frontOffice = franchiseId
     ? await resolveTeamFrontOfficeSlice(franchiseId, frontOfficeSeason)

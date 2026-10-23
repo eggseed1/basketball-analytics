@@ -7,7 +7,7 @@
  *
  * Run: npx tsx scripts/build-drbl-guide.ts
  */
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
 import { listDrblSeasons } from "../src/data/drbl/season-registry";
@@ -215,7 +215,14 @@ const out = {
   outcome: { generatedAt: outcome.generatedAt, tests },
   contractBasis,
 };
-writeFileSync(path.join(root, "src/data/runtime/drbl-guide-snapshot.json"), JSON.stringify(out));
+{
+  const body = JSON.stringify(out);
+  const srcOut = path.join(root, "src/data/runtime/drbl-guide-snapshot.json");
+  const publicOut = path.join(root, "public/runtime/drbl-guide-snapshot.json");
+  writeFileSync(srcOut, body);
+  mkdirSync(path.dirname(publicOut), { recursive: true });
+  writeFileSync(publicOut, body);
+}
 console.log(
   `drbl-guide: season=${latest.season} regulars=${regulars.length} sd=${distribution.weightedSd} pairs=${pairs.length} tests=${tests.length}`
 );

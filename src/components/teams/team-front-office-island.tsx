@@ -28,6 +28,9 @@ export async function TeamFrontOfficeIsland({ teamId }: { teamId: string }) {
     ensureContractValue(),
     ensurePlayerIdAliases(),
     ensurePlayerSearch(),
+    import("@/data/runtime/future-picks-snapshot").then((m) =>
+      m.ensureFuturePicks()
+    ),
   ]);
 
   const slice = await resolveTeamFrontOfficeSlice(franchiseId, frontOfficeSeason);

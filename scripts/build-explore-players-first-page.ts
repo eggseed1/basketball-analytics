@@ -3,7 +3,7 @@
  *
  *   DATA_PROVIDER=nba npx tsx scripts/build-explore-players-first-page.ts
  */
-import { writeFileSync } from "node:fs";
+import { mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
 import {
@@ -73,13 +73,20 @@ async function main() {
     view,
   };
 
+  const body = `${JSON.stringify(out)}\n`;
   const dest = path.join(
     process.cwd(),
     "src/data/runtime/explore-players-first-page.json"
   );
-  writeFileSync(dest, `${JSON.stringify(out)}\n`);
+  const publicDest = path.join(
+    process.cwd(),
+    "public/runtime/explore-players-first-page.json"
+  );
+  writeFileSync(dest, body);
+  mkdirSync(path.dirname(publicDest), { recursive: true });
+  writeFileSync(publicDest, body);
   console.log(
-    `[explore-first-page] wrote ${dest} rows=${view.rows.length} total=${view.totalCount} sort=${view.sortKey}`
+    `[explore-first-page] wrote ${publicDest} rows=${view.rows.length} total=${view.totalCount} sort=${view.sortKey} (src mirror ${dest})`
   );
 }
 
