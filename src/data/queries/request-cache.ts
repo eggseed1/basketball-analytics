@@ -341,16 +341,25 @@ async function fallbackGameShell(gameId: string): Promise<GameShell | null> {
  * budget was too tight when ESPN CDN jittered and skipped the runtime snapshot.
  */
 export const getGameShellCached = cache(async (gameId: string) => {
-  const result = await withBudget(
-    (async () => {
-      const primary = await getGameShellUncached(gameId).catch(() => null);
-      if (primary) return primary;
-      return fallbackGameShell(gameId);
-    })(),
-    runtimeTimeoutMs(7_000, 5_000),
+  // Reserve time for the CDN fallback so a slow primary miss cannot burn the
+  // whole budget and leave loading.tsx / RuntimeGameFallback as the document.
+  const totalMs = runtimeTimeoutMs(7_000, 5_500);
+  const fallbackReserveMs = 2_200;
+  const primaryMs = Math.max(2_500, totalMs - fallbackReserveMs);
+
+  const primary = await withBudget(
+    getGameShellUncached(gameId).catch(() => null),
+    primaryMs,
     null as GameShell | null
   );
-  return result.value;
+  if (primary.value) return primary.value;
+
+  const fallback = await withBudget(
+    fallbackGameShell(gameId),
+    fallbackReserveMs,
+    null as GameShell | null
+  );
+  return fallback.value;
 });
 
 export const getHomeAnalyticsCached = cache(() => getHomeAnalyticsUncached());

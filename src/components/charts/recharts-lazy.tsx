@@ -50,11 +50,22 @@ const playerCompFuturesChartModule = () => {
   return playerCompFuturesChartPromise;
 };
 
-/** Kick hero/overview chart chunks as soon as any lazy chart shell loads. */
+/**
+ * Warm hero/overview chart chunks after first paint. Call from career /
+ * comparisons / percentile islands — do not import this module for side-effect
+ * preload (that pulls recharts during unrelated client hydration).
+ */
 export function preloadPlayerPageCharts() {
   if (typeof window === "undefined") return;
-  void careerTeamTrendChartModule();
-  void playerCompFuturesChartModule();
+  const kick = () => {
+    void careerTeamTrendChartModule();
+    void playerCompFuturesChartModule();
+  };
+  if (typeof requestIdleCallback === "function") {
+    requestIdleCallback(() => kick(), { timeout: 2_500 });
+  } else {
+    setTimeout(kick, 1);
+  }
 }
 
 /** Await before mounting TalentYearChart so Games mode does not stick on shimmer. */
@@ -64,10 +75,6 @@ export function whenPlayerPageChartsReady(): Promise<void> {
     careerTeamTrendChartModule(),
     playerCompFuturesChartModule(),
   ]).then(() => undefined);
-}
-
-if (typeof window !== "undefined") {
-  preloadPlayerPageCharts();
 }
 
 export const GameScoringScatterLazy = dynamic(

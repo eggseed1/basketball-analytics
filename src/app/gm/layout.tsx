@@ -15,6 +15,8 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function GmLayout({ children }: { children: ReactNode }) {
   return (
-    <RouteMessagesProvider extras={["GmUi"]}>{children}</RouteMessagesProvider>
+    <RouteMessagesProvider extras={["Gm", "GmUi"]}>
+      {children}
+    </RouteMessagesProvider>
   );
 }
