@@ -177,14 +177,14 @@ function addExploreColumnFields(
 }
 
 /**
- * Drop unused board fields for the active view chips. "all" keeps the full row.
+ * Drop unused board fields for the active view chips. "all" still uses the
+ * column keep-set so wire/RSC payloads omit non-column extras (age, r1Points…).
  */
 export function slimExplorePlayerBoardRow(
   row: ExplorePlayerBoardRow,
   views: readonly PlayerBoardView[],
   sortKey?: PlayerSeasonSortKey
 ): ExplorePlayerBoardRow {
-  if (views.includes("all")) return row;
   const keep = new Set<string>(EXPLORE_ROW_CORE_KEYS);
   for (const view of views) {
     for (const key of PLAYER_BOARD_VIEW_COLUMNS[view]) {
@@ -362,15 +362,21 @@ const TEXT_SORT_KEYS = new Set<PlayerSeasonSortKey>([
   "position",
 ]);
 
+type SortableBoardRow = {
+  playerName: string;
+  teamName?: string | null;
+  position?: string | null;
+} & Parameters<typeof boardStatValue>[0];
+
 /** Missing values sort last in both directions; they never count as 0. */
 function sortValue(
-  row: ExplorePlayerBoardRow,
+  row: SortableBoardRow,
   key: PlayerSeasonSortKey,
   sortDir: "asc" | "desc",
   rate: PlayerBoardRate
 ): string | number {
   if (TEXT_SORT_KEYS.has(key)) {
-    const v = row[key as keyof ExplorePlayerBoardRow];
+    const v = (row as Record<string, unknown>)[key];
     return typeof v === "string" ? v : "";
   }
   const v = boardStatValue(row, key, rate);
@@ -382,12 +388,12 @@ function sortValue(
   return v;
 }
 
-export function sortExplorePlayerRows(
-  rows: ExplorePlayerBoardRow[],
+export function sortExplorePlayerRows<T extends SortableBoardRow>(
+  rows: T[],
   sortKey: PlayerSeasonSortKey,
   sortDir: "asc" | "desc",
   rate: PlayerBoardRate = "perGame"
-): ExplorePlayerBoardRow[] {
+): T[] {
   return [...rows].sort((a, b) => {
     const av = sortValue(a, sortKey, sortDir, rate);
     const bv = sortValue(b, sortKey, sortDir, rate);

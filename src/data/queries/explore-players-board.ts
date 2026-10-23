@@ -43,7 +43,7 @@ export {
 } from "@/data/queries/explore-players-board-pure";
 
 /** First paint window; infinite scroll loads the rest. Budget ≤50 (p18perf). */
-export const EXPLORE_PLAYERS_PAGE_SIZE = 50;
+export const EXPLORE_PLAYERS_PAGE_SIZE = 25;
 
 export type ExplorePlayersBoardView = {
   rows: ExplorePlayerBoardRow[];
@@ -83,9 +83,12 @@ export function parseExplorePlayersPage(
 }
 
 function attachRelativeTrueShooting(
-  rows: ExplorePlayerBoardRow[]
+  rows: ExplorePlayerBoardRow[],
+  /** Full board for league-mean TS (page window alone would bias the mean). */
+  meanSource?: Array<{ trueShootingPct?: number | null }>
 ): ExplorePlayerBoardRow[] {
-  const ts = rows
+  const pool = meanSource ?? rows;
+  const ts = pool
     .map((row) => row.trueShootingPct)
     .filter((n): n is number => n != null && Number.isFinite(n) && n > 0);
   if (!ts.length) return rows;
@@ -110,7 +113,9 @@ function serializeContextPools(
 }
 
 /** All-zero counts are unpublished history (pre-1973 steals), not real zeros. */
-function emptyBoardColumns(rows: ExplorePlayerBoardRow[]): PlayerSeasonSortKey[] {
+function emptyBoardColumns(
+  rows: Array<Parameters<typeof boardStatValue>[0]>
+): PlayerSeasonSortKey[] {
   return PLAYER_BOARD_VIEW_COLUMNS.all.filter(
     (key) =>
       !rows.some((row) => {
@@ -130,26 +135,17 @@ export async function getExplorePlayersBoardView(options: {
   rate?: PlayerBoardRate;
   page?: number;
   pageSize?: number;
-  /** Active column chips — defaults to Impact for a smaller first HTML. */
+  /** Active column chips — defaults to All. */
   boardViews?: PlayerBoardView[];
   /** Skip percentile pools - used for infinite-scroll page fetches. */
   includeContext?: boolean;
 }): Promise<ExplorePlayersBoardView> {
   const board = await getPlayerSeasonBoardSnapshot(options.filters);
   const hasDarko = board.rows.some((p) => p.darkoDpm != null);
-  const hasRaptor = board.rows.some((p) => p.raptor != null);
   const hasDrbl = board.rows.some((p) => hasValidDrblEstimate(p));
-  const hasHustle = board.rows.some(
-    (p) =>
-      p.hustleDeflections != null ||
-      p.hustleContestedShots != null ||
-      p.hustleScreenAssists != null ||
-      p.hustleChargesDrawn != null ||
-      p.hustleLooseBallsRecovered != null ||
-      p.hustleBoxOuts != null
-  );
-  const mapped = board.rows.map(toExplorePlayerBoardRow);
-  const emptyColumns = emptyBoardColumns(mapped);
+  // Empty-column scan + sort on PlayerSeason — avoid mapping ~650 fat board
+  // rows (and portrait lookups) before the page window.
+  const emptyColumns = emptyBoardColumns(board.rows);
   const requested =
     options.sortKey && !emptyColumns.includes(options.sortKey)
       ? options.sortKey
@@ -175,14 +171,13 @@ export async function getExplorePlayersBoardView(options: {
     defaultPlayerSeasonSortDir(sortKey);
   const pageSize = options.pageSize ?? EXPLORE_PLAYERS_PAGE_SIZE;
 
-  const withRelativeTs = attachRelativeTrueShooting(mapped);
-  const sorted = sortExplorePlayerRows(
-    withRelativeTs,
+  const sortedSeasons = sortExplorePlayerRows(
+    board.rows,
     sortKey,
     sortDir,
     options.rate
   );
-  const totalCount = sorted.length;
+  const totalCount = sortedSeasons.length;
   const pageCount = Math.max(1, Math.ceil(totalCount / pageSize) || 1);
   const page = Math.min(
     Math.max(1, options.page ?? 1),
@@ -192,14 +187,29 @@ export async function getExplorePlayersBoardView(options: {
   const boardViews = options.boardViews?.length
     ? options.boardViews
     : DEFAULT_PLAYER_BOARD_VIEWS;
-  const rows = sorted
-    .slice(start, start + pageSize)
-    .map((row) => slimExplorePlayerBoardRow(row, boardViews, sortKey));
+  const pageSeasons = sortedSeasons.slice(start, start + pageSize);
+  const mappedPage = attachRelativeTrueShooting(
+    pageSeasons.map(toExplorePlayerBoardRow),
+    board.rows
+  );
+  const rows = mappedPage.map((row) =>
+    slimExplorePlayerBoardRow(row, boardViews, sortKey)
+  );
 
   const includeContext = options.includeContext !== false;
   const contextIndex = includeContext
     ? buildLeaderboardContextIndex(board.rows, sortKey)
     : null;
+  const hasRaptor = board.rows.some((p) => p.raptor != null);
+  const hasHustle = board.rows.some(
+    (p) =>
+      p.hustleDeflections != null ||
+      p.hustleContestedShots != null ||
+      p.hustleScreenAssists != null ||
+      p.hustleChargesDrawn != null ||
+      p.hustleLooseBallsRecovered != null ||
+      p.hustleBoxOuts != null
+  );
 
   const season = options.filters.season ?? "";
   // Placeholders / "hasn't started" follow the calendar tip only. Prior-season

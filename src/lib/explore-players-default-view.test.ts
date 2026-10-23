@@ -47,13 +47,17 @@ describe("explore players default view", () => {
     assert.equal(serializePlayerBoardViews(["impact"]), "impact");
   });
 
-  it("slims impact rows and keeps full rows for All", () => {
+  it("slims impact rows and keeps All column fields", () => {
     const row = baseRow();
     const slim = slimExplorePlayerBoardRow(row, ["impact"], "r1WinEquivalents");
     assert.equal(slim.darkoDpm, 2.1);
     assert.equal(slim.r1WinEquivalents, 3.2);
     assert.equal(slim.usagePct, undefined);
     assert.equal(slim.hustleDeflections, undefined);
-    assert.equal(slimExplorePlayerBoardRow(row, ["all"]).usagePct, 0.28);
+    const all = slimExplorePlayerBoardRow(row, ["all"]);
+    assert.equal(all.usagePct, 0.28);
+    assert.equal(all.hustleDeflections, 12);
+    // Non-column extras stay off the All wire payload.
+    assert.equal(all.age, undefined);
   });
 });
