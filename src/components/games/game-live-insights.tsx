@@ -18,9 +18,9 @@ import {
   ptsPerForcedTov,
   ptsPerOreb,
   RUN_MIN,
-  sharedGamePossessions,
   type GameMoment,
   type PlayerLine,
+  type PlayPossessionCounts,
   type PossessionBattle,
   type QuarterStandouts,
   type RightNow,
@@ -160,6 +160,7 @@ function ExtraChancesCard({
   live,
   teamKeys,
   official,
+  possessions,
   shotPace,
 }: {
   battle: PossessionBattle;
@@ -168,6 +169,7 @@ function ExtraChancesCard({
   live: boolean;
   teamKeys: { away: string; home: string };
   official: { home: OfficialTeamStats; away: OfficialTeamStats } | null;
+  possessions: PlayPossessionCounts | null;
   shotPace: ShotPace | null;
 }) {
   const leader: Side | null = battle.net > 0 ? "home" : battle.net < 0 ? "away" : null;
@@ -180,9 +182,10 @@ function ExtraChancesCard({
   const offTurnovers = both((s) => s.pointsOffTurnovers);
   const ptsOffTovAway = offTurnovers?.away ?? battle.away.pointsOffTurnovers;
   const ptsOffTovHome = offTurnovers?.home ?? battle.home.pointsOffTurnovers;
-  const poss = sharedGamePossessions(battle);
-  const pppAway = poss > 0 ? battle.away.points / poss : null;
-  const pppHome = poss > 0 ? battle.home.points / poss : null;
+  const pppAway =
+    possessions && possessions.away > 0 ? battle.away.points / possessions.away : null;
+  const pppHome =
+    possessions && possessions.home > 0 ? battle.home.points / possessions.home : null;
   const rateOrebAway = ptsPerOreb(battle.away);
   const rateOrebHome = ptsPerOreb(battle.home);
   const rateTovAway = ptsPerForcedTov(ptsOffTovAway, battle.home.tov);
@@ -245,7 +248,13 @@ function ExtraChancesCard({
   );
   const sideLabel = (s: Side) => labels[s];
   const paceParts: string[] = [];
-  if (poss > 0) paceParts.push(`~${formatNumber(poss, 1)} possessions (shared)`);
+  if (possessions && possessions.shared > 0) {
+    paceParts.push(
+      possessions.home === possessions.away
+        ? `${possessions.shared} possessions`
+        : `${possessions.away}–${possessions.home} possessions (${labels.away}–${labels.home})`
+    );
+  }
   if (shotPace?.averageSeconds != null) {
     paceParts.push(`${formatNumber(shotPace.averageSeconds, 1)} sec avg to first shot`);
   }
@@ -383,12 +392,12 @@ function ExtraChancesCard({
           offensive rebound divides second-chance points by every offensive rebound that opened a
           trip, player or team; the Offensive rebounds row stays player-only like the box score.
           Pts per turnover forced divides those points by turnovers forced; blank means zero counted
-          chances of that kind. Pace possessions use the Basketball-Reference estimate averaged for
-          both teams. Sec to first shot is game-clock time from the start of a possession until that
-          side&apos;s first field-goal attempt; lower is faster, and trips that never shoot are left
-          out. PPP is each side&apos;s points on the shared possession total. Second-chance points
-          come after an offensive rebound; points off turnovers come on the next trip after a
-          turnover.{" "}
+          chances of that kind. Possessions are completed trips counted from play-by-play (make,
+          turnover, defensive rebound, or last free throw), not a fractional estimate. Sec to first
+          shot is game-clock time from the start of a possession until that side&apos;s first
+          field-goal attempt; lower is faster, and trips that never shoot are left out. PPP is each
+          side&apos;s points on its own possession count. Second-chance points come after an
+          offensive rebound; points off turnovers come on the next trip after a turnover.{" "}
           {officialRows.length
             ? `The official box score supplies ${listJoin(officialRows)}. Everything else comes from play-by-play and can differ slightly from the official box score.`
             : PBP_NOTE}
@@ -579,6 +588,7 @@ export function GameLiveInsights({
           live={!final}
           teamKeys={teamKeys}
           official={official}
+          possessions={insights.possessions}
           shotPace={insights.shotPace}
         />
       ) : null}

@@ -4,14 +4,20 @@
  * its "End of" marker or the game is final; anything else is "so far".
  *
  * Team possessions are nearly equal by design; the asymmetric count is extra
- * chances (OREB + opponent turnovers). Shared possession totals are pace /
- * PPP context, not a side-by-side battle.
+ * chances (OREB + opponent turnovers). Possession totals for pace / PPP come
+ * from completed play-by-play trips (integers), not a fractional estimate.
  */
 
 import type { PlayByPlayEvent } from "@/data/types/play-by-play";
 
 import { elapsedSeconds, periodName, teamSides, type Side } from "./court-events";
+import {
+  countPlayPossessions,
+  type PlayPossessionCounts,
+} from "./play-possessions";
 import { computeShotPace, type ShotPace } from "./shot-pace";
+
+export type { PlayPossessionCounts };
 
 const other = (s: Side): Side => (s === "home" ? "away" : "home");
 
@@ -98,7 +104,7 @@ export function estimateGamePossessions(battle: PossessionBattle): {
   return { home: avg, away: avg };
 }
 
-/** Shared game possession total (both sides use the same estimate). */
+/** BRef estimate when only a battle tally is available — prefer PBP counts. */
 export function sharedGamePossessions(battle: PossessionBattle): number {
   return estimateGamePossessions(battle).home;
 }
@@ -129,6 +135,8 @@ export function ptsPerForcedTov(
 export interface LiveInsights {
   quarters: QuarterStandouts[];
   battle: PossessionBattle | null;
+  /** Completed possessions from play-by-play (integers). */
+  possessions: PlayPossessionCounts | null;
   /** Avg game-clock seconds to first FGA; null when battle or samples missing. */
   shotPace: ShotPace | null;
 }
@@ -414,9 +422,10 @@ export function buildLiveInsights(
     };
   });
 
-  if (!sawStat) return { quarters, battle: null, shotPace: null };
+  if (!sawStat) return { quarters, battle: null, possessions: null, shotPace: null };
   battle.home.extraChances = battle.home.oreb + battle.away.tov;
   battle.away.extraChances = battle.away.oreb + battle.home.tov;
+  const possessions = countPlayPossessions(events, homeLabel, awayLabel);
   const shotPace = computeShotPace(events, homeLabel, awayLabel);
   return {
     quarters,
@@ -428,6 +437,7 @@ export function buildLiveInsights(
         return { period: p, label: periodName(p), finished: isFinished(p), net: c.home - c.away };
       }),
     },
+    possessions: possessions.shared > 0 ? possessions : null,
     shotPace: shotPace.samples > 0 ? shotPace : null,
   };
 }
