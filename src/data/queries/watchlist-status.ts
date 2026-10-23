@@ -165,6 +165,9 @@ export async function getWatchlistStatus(options: {
 }): Promise<{ season: string; items: WatchStatus[]; generatedAt: string }> {
   const season = canonicalSeasonFromStartYear(currentNbaStartYear());
   const needSchedule = options.players.length > 0 || options.teams.length > 0;
+  const { ensureDrblOverlay } = await import(
+    "@/data/runtime/drbl-overlay-snapshot"
+  );
   const [games, injuries, logs, standings] = await Promise.all([
     needSchedule ? scheduleWindow() : Promise.resolve([] as Game[]),
     options.players.length ? injuriesById() : Promise.resolve(new Map<string, WatchInjury>()),
@@ -172,6 +175,7 @@ export async function getWatchlistStatus(options: {
     options.teams.length
       ? standingsByTeamId(season)
       : Promise.resolve(new Map<string, WatchStanding>()),
+    options.players.length ? ensureDrblOverlay() : Promise.resolve(false),
   ]);
 
   const playerTeams = options.players.map((id) => getBundledCurrentRosterEntry(id)?.teamId ?? null);

@@ -58,6 +58,10 @@ export async function resolveTradeStatsSeason(
     shiftCanonicalSeason(rosterSeason, -1),
     shiftCanonicalSeason(rosterSeason, -2),
   ];
+  const { ensureDrblOverlay } = await import(
+    "@/data/runtime/drbl-overlay-snapshot"
+  );
+  await ensureDrblOverlay();
   for (const season of candidates) {
     const drbl = getBundledDrblSeason(season);
     if (drbl.some((row) => row.drbl100 != null && Number.isFinite(row.drbl100))) {
@@ -143,6 +147,10 @@ export async function loadTradeSimulatorBoard(): Promise<TradeSimulatorBoard | n
   const season = rosterMeta.season || foSeason;
   const statsSeason = await resolveTradeStatsSeason(season);
 
+  const { ensureDrblOverlay } = await import(
+    "@/data/runtime/drbl-overlay-snapshot"
+  );
+  await ensureDrblOverlay();
   const drblByNba = new Map(
     getBundledDrblSeason(statsSeason).map((row) => [row.playerId, row] as const)
   );

@@ -726,6 +726,17 @@ export async function loadCompFutures(
   metricId: CompMetricId
 ): Promise<CompFutures | null> {
   if (!focal) return null;
+  if (
+    metricId === "drbl100" ||
+    metricId === "drblO" ||
+    metricId === "drblD" ||
+    metricId === "war1"
+  ) {
+    const { ensureDrblOverlay } = await import(
+      "@/data/runtime/drbl-overlay-snapshot"
+    );
+    await ensureDrblOverlay();
+  }
   const pool = await getBundledCompPool();
   const ids = [espnId, focal.playerId].map((id) => String(id ?? "").trim()).filter(Boolean);
   const pooled =

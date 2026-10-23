@@ -382,6 +382,10 @@ export async function rankPlayerRaceCandidates(
   const byKey = new Map<string, RaceCandidate & { gamesPlayed: number }>();
 
   if (metric === "war1" || metric === "r1Points" || metric === "drbl100") {
+    const { ensureDrblOverlay } = await import(
+      "@/data/runtime/drbl-overlay-snapshot"
+    );
+    await ensureDrblOverlay();
     const rows = getBundledDrblSeason(season);
     for (const row of rows) {
       const nbaId = String(row.playerId ?? "").trim();

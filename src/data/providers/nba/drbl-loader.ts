@@ -58,9 +58,10 @@ async function readPrecomputed(
 
   // Bundled overlay first (Cloudflare Workers / any host without disk mounts).
   try {
-    const { getBundledDrblSeason } = await import(
+    const { ensureDrblOverlay, getBundledDrblSeason } = await import(
       "@/data/runtime/drbl-overlay-snapshot"
     );
+    await ensureDrblOverlay();
     const bundled = getBundledDrblSeason(season);
     if (bundled.length > 0) {
       const artifact = withAccentedNames({

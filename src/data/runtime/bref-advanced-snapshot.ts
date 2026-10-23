@@ -709,6 +709,10 @@ export async function getBundledCompPool(): Promise<BundledCompPoolRow[]> {
       });
     }
   }
+  const { ensureDrblOverlay } = await import(
+    "@/data/runtime/drbl-overlay-snapshot"
+  );
+  await ensureDrblOverlay();
   const drblSeasons = bundledDrblOverlayMeta().seasons ?? [];
   for (const season of drblSeasons) {
     for (const row of getBundledDrblSeason(season)) {
