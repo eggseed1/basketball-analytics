@@ -152,13 +152,204 @@ export default async function TeamProfilePage({
   const brandPresentation =
     applyEraTheme && themeMode !== "modern" ? "era" : "modern_surface";
 
-  // Brand identity is sync — resolve it before touching the ~1.5MB team board
-  // so unknown ids 404 without loading the snapshot.
-  const identityFallbackEarly = resolveTeamIdentityFallback(
+  // Sync brand only — never touch team-board-snapshot before first byte.
+  const identityFallback = resolveTeamIdentityFallback(
     teamId,
     season,
     brandPresentation
   );
+  if (!identityFallback) notFound();
+
+  const modernBrand = resolveTeamBrand(identityFallback.abbreviation);
+  const historicalBrand =
+    identityFallback.historicalBrand ??
+    resolveHistoricalTeamBrand(
+      identityFallback.teamId,
+      season,
+      brandPresentation
+    );
+  const useHistoricalMark =
+    applyEraTheme && themeMode !== "modern"
+      ? true
+      : Boolean(historicalBrand?.isHistorical);
+  const hrefOpts: TeamPageHrefOpts = {
+    season,
+    tab,
+    seasonType,
+    rate,
+    fromHistory,
+    themeMode: themeMode === "modern" ? "modern" : "historical",
+  };
+  const seasonOptions = [...new Set([season, priorSeason, currentSeason])]
+    .filter(Boolean)
+    .sort((a, b) => b.localeCompare(a));
+  const franchise = modernBrand ? getFranchiseHistory(modernBrand.id) : null;
+  const identityTeam = {
+    abbreviation: identityFallback.abbreviation,
+    fullName: identityFallback.fullName,
+    conference: identityFallback.conference,
+    ppg: Number.NaN,
+    avgDiff: Number.NaN,
+    trueShootingPct: undefined,
+    teamId: identityFallback.teamId,
+    season,
+    gamesPlayed: 0,
+    oppPpg: Number.NaN,
+    rpg: Number.NaN,
+    apg: Number.NaN,
+    spg: Number.NaN,
+    bpg: Number.NaN,
+    topg: Number.NaN,
+    fieldGoalPct: Number.NaN,
+    threePointPct: Number.NaN,
+    freeThrowPct: Number.NaN,
+    assistToTurnover: Number.NaN,
+    offensiveReboundPct: Number.NaN,
+    points: 0,
+    fieldGoalsMade: 0,
+    fieldGoalsAttempted: 0,
+    threePointersMade: 0,
+    threePointersAttempted: 0,
+    freeThrowsMade: 0,
+    freeThrowsAttempted: 0,
+    assists: 0,
+    turnovers: 0,
+  };
+  const seasonAwaitingGamesGuess = season === currentSeason;
+  const standingsContext = {
+    standing: null,
+    divisionStanding: null,
+    divisionMeta: resolveTeamDivisionMeta(
+      modernBrand,
+      identityFallback.teamId
+    ),
+    priorSeasonStanding: null,
+    priorSeasonLabel: null,
+    seasonAwaitingGames: seasonAwaitingGamesGuess,
+    standingsEmpty: false,
+  };
+  const atmosphere = brandAtmosphereColors(
+    useHistoricalMark && historicalBrand?.palette
+      ? historicalBrand.palette.primary
+      : modernBrand?.primary,
+    useHistoricalMark && historicalBrand?.palette
+      ? historicalBrand.palette.secondary
+      : modernBrand?.secondary
+  );
+  const eraTheme = applyEraTheme
+    ? resolveActiveEraTheme(season, themeMode)
+    : null;
+
+  const brandFallback = (
+    <>
+      <TeamDestinationIdentity
+        teamId={teamId}
+        team={identityTeam}
+        season={season}
+        seasonOptions={seasonOptions}
+        standing={null}
+        divisionStanding={null}
+        standingsContext={standingsContext}
+        snapshotStats={[]}
+        modernBrand={modernBrand}
+        historicalBrand={historicalBrand}
+        useHistoricalMark={useHistoricalMark}
+        boardAvailable={false}
+        hrefOpts={hrefOpts}
+        franchise={franchise}
+        historyHref={teamFranchiseHistoryHref(teamId, seasonParam)}
+      />
+      <TeamPrimaryNav teamId={teamId} tab={tab} hrefOpts={hrefOpts} />
+      <DestinationSectionSkeleton label={t("loadingTeamArc")} />
+    </>
+  );
+
+  const body = (
+    <DestinationClientShell>
+      <PageAtmosphere
+        colorA={atmosphere?.colorA}
+        colorB={atmosphere?.colorB}
+      />
+      <GlassTintScaleProvider scale={TEAM_CARD_TINT_SCALE}>
+        <main
+          data-motion-page
+          className="site-shell relative z-[1] flex flex-col gap-4 py-5 sm:gap-5 sm:py-7"
+        >
+          <JsonLd
+            data={{
+              "@context": "https://schema.org",
+              "@type": "SportsTeam",
+              name: identityTeam.fullName,
+              sport: "Basketball",
+              url: absoluteUrl(
+                `/teams/${encodeURIComponent(identityTeam.teamId)}`
+              ),
+              memberOf: {
+                "@type": "SportsOrganization",
+                name: "National Basketball Association",
+              },
+            }}
+          />
+          <MotionReveal />
+          <Suspense fallback={brandFallback}>
+            <TeamPageWithBoard
+              teamId={teamId}
+              sp={sp}
+              seasonParam={seasonParam}
+              season={season}
+              priorSeason={priorSeason}
+              currentSeason={currentSeason}
+              tab={tab}
+              seasonType={seasonType}
+              rate={rate}
+              fromHistory={fromHistory}
+              themeMode={themeMode}
+              applyEraTheme={applyEraTheme}
+              brandPresentation={brandPresentation}
+              identityFallback={identityFallback}
+            />
+          </Suspense>
+        </main>
+      </GlassTintScaleProvider>
+    </DestinationClientShell>
+  );
+
+  if (!eraTheme) return body;
+  return <EraThemeScope theme={eraTheme}>{body}</EraThemeScope>;
+}
+
+async function TeamPageWithBoard({
+  teamId,
+  sp,
+  seasonParam,
+  season,
+  priorSeason,
+  currentSeason,
+  tab,
+  seasonType,
+  rate,
+  fromHistory,
+  themeMode,
+  applyEraTheme,
+  brandPresentation,
+  identityFallback,
+}: {
+  teamId: string;
+  sp: Record<string, string | string[] | undefined>;
+  seasonParam: string | undefined;
+  season: string;
+  priorSeason: string;
+  currentSeason: string;
+  tab: ReturnType<typeof parseTeamPageTab>;
+  seasonType: ReturnType<typeof parseTeamSeasonKind>;
+  rate: ReturnType<typeof parseTeamRateMode>;
+  fromHistory: boolean;
+  themeMode: "modern" | "historical" | string;
+  applyEraTheme: boolean;
+  brandPresentation: "era" | "modern_surface";
+  identityFallback: NonNullable<ReturnType<typeof resolveTeamIdentityFallback>>;
+}) {
+  const t = await getTranslations("TeamDetail");
 
   // Dynamic import keeps request-cache / team-board-snapshot off the page
   // module graph until this point.
@@ -174,9 +365,7 @@ export default async function TeamProfilePage({
 
   const boardTeam = resolveTeamFromBoard(league, teamId);
 
-  const identityFallback = boardTeam
-    ? null
-    : identityFallbackEarly;
+  // Parent already resolved canonical identity; board may still upgrade the row.
   if (!boardTeam && !identityFallback) notFound();
 
   // Season picker options without awaiting explore season lists.
@@ -360,38 +549,9 @@ export default async function TeamProfilePage({
       ? historicalBrand.displayName
       : identityTeam.fullName;
 
-  const eraTheme = applyEraTheme
-    ? resolveActiveEraTheme(season, themeMode)
-    : null;
 
-  const atmosphere = brandAtmosphereColors(
-    useHistoricalMark && historicalBrand?.palette
-      ? historicalBrand.palette.primary
-      : modernBrand?.primary,
-    useHistoricalMark && historicalBrand?.palette
-      ? historicalBrand.palette.secondary
-      : modernBrand?.secondary
-  );
-
-  const body = (
-    <DestinationClientShell>
-      <PageAtmosphere
-        colorA={atmosphere?.colorA}
-        colorB={atmosphere?.colorB}
-      />
-      <GlassTintScaleProvider scale={TEAM_CARD_TINT_SCALE}>
-      <main data-motion-page className="site-shell relative z-[1] flex flex-col gap-4 py-5 sm:gap-5 sm:py-7">
-        <JsonLd
-          data={{
-            "@context": "https://schema.org",
-            "@type": "SportsTeam",
-            name: identityTeam.fullName,
-            sport: "Basketball",
-            url: absoluteUrl(`/teams/${encodeURIComponent(identityTeam.teamId)}`),
-            memberOf: { "@type": "SportsOrganization", name: "National Basketball Association" },
-          }}
-        />
-        <MotionReveal />
+  return (
+    <>
         <TeamDestinationIdentity
           teamId={teamId}
           team={identityTeam}
@@ -686,14 +846,11 @@ export default async function TeamProfilePage({
             </Suspense>
           </div>
         ) : null}
-      </main>
-      </GlassTintScaleProvider>
-    </DestinationClientShell>
-  );
 
-  if (!eraTheme) return body;
-  return <EraThemeScope theme={eraTheme}>{body}</EraThemeScope>;
+    </>
+  );
 }
+
 
 function TraitGroup({
   title,
