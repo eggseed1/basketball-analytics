@@ -192,8 +192,8 @@ export function InsightLeadWorm({
   const x = (i: number) => padX + (i * (W - padX - padRight)) / (series.length - 1);
   const y = (m: number) => top + ((hi - m) / (hi - lo || 1)) * (bottom - top);
   const mid = y(0);
-  const line = series.map((m, i) => `${i ? "L" : "M"}${x(i).toFixed(1)},${y(m).toFixed(1)}`).join(" ");
-  const area = `${line} L${x(series.length - 1).toFixed(1)},${mid} L${x(0).toFixed(1)},${mid} Z`;
+  const line = series.map((m, i) => `${i ? "L" : "M"}${svgN(x(i))},${svgN(y(m))}`).join(" ");
+  const area = `${line} L${svgN(x(series.length - 1))},${svgN(mid)} L${svgN(x(0))},${svgN(mid)} Z`;
   const clipId = `lead-${game.away.abbr}-${game.home.abbr}-${game.home.score}-${game.away.score}`;
 
   const homeMax = Math.max(...margins);
@@ -487,7 +487,7 @@ export function InsightPointsMix({
           <div
             aria-hidden
             className="absolute inset-y-0 flex flex-col items-center"
-            style={{ left: `${(avg / scale) * 100}%`, transform: "translateX(-50%)" }}
+            style={{ left: pct1(avg / scale), transform: "translateX(-50%)" }}
           >
             <span className="text-[10px] font-semibold whitespace-nowrap text-muted-foreground">
               Season {avg.toFixed(1)}
@@ -501,7 +501,7 @@ export function InsightPointsMix({
               <div
                 key={p.label}
                 className="flex items-center justify-center text-[12px] font-bold tabular-nums"
-                style={{ width: `${(p.pts / scale) * 100}%`, background: color, opacity: p.opacity, color: ink }}
+                style={{ width: pct1(p.pts / scale), background: color, opacity: p.opacity, color: ink }}
               >
                 {p.opacity > 0.6 && p.pts / scale > 0.1 ? p.pts : ""}
               </div>
@@ -710,12 +710,12 @@ export function InsightVsNorm({
               <span className="relative h-3.5 rounded-[4px] bg-secondary">
                 <span
                   className="absolute inset-y-0 left-0 rounded-[4px]"
-                  style={{ width: `${(row.v / scale) * 100}%`, background: color, opacity: on ? 1 : 0.3 }}
+                  style={{ width: pct1(row.v / scale), background: color, opacity: on ? 1 : 0.3 }}
                 />
                 <span
                   aria-hidden
                   className="absolute -inset-y-1 w-0.5 rounded-full bg-foreground/75"
-                  style={{ left: `${(row.avg / scale) * 100}%` }}
+                  style={{ left: pct1(row.avg / scale) }}
                 />
               </span>
               <span className="text-right text-[11px] tabular-nums text-muted-foreground">
@@ -867,9 +867,9 @@ function MomentMeter({ mark: m, color }: { mark: MomentMark; color: string }) {
     >
       <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">{m.label}</span>
       <span className="relative h-2 rounded-full bg-foreground/10">
-        <span className="absolute inset-y-0 left-0 rounded-full" style={{ width: `${Math.min(100, fill * 100)}%`, background: color }} />
+        <span className="absolute inset-y-0 left-0 rounded-full" style={{ width: pct1(Math.min(1, fill)), background: color }} />
         {tickAt != null ? (
-          <span aria-hidden className="absolute inset-y-[-3px] w-px bg-foreground" style={{ left: `${Math.min(100, tickAt * 100)}%` }} />
+          <span aria-hidden className="absolute inset-y-[-3px] w-px bg-foreground" style={{ left: pct1(Math.min(1, tickAt)) }} />
         ) : null}
       </span>
       <span className="text-[12px] font-black tabular-nums">{m.of != null ? `${m.value}/${m.of}` : m.value}</span>
@@ -935,6 +935,11 @@ function svgN(n: number): string {
   return String(Math.round(n));
 }
 
+/** One-decimal CSS % — avoids `58.82352941176471%` flight bloat on meters. */
+function pct1(fraction: number): string {
+  return `${Math.round(fraction * 1000) / 10}%`;
+}
+
 /**
  * Score margin after every scoring play, shaded in the leading team's color,
  * with the moment the card is about marked on it.
@@ -951,7 +956,7 @@ export function InsightFlowChart({ game }: { game: RecentInsightGame }) {
         ? [flow.mark.t]
         : [];
   // Snapshots may already be capped; still downsample in case of a live full path.
-  const path = downsampleInsightFlowPath(flow.path, 96, keepTimes);
+  const path = downsampleInsightFlowPath(flow.path, 64, keepTimes);
   const margins = path.map(([, m]) => m);
   const reach = Math.max(8, ...margins.map((m) => Math.abs(m)));
   const hi = Math.max(...margins, 0) > 0 ? reach : 4;
