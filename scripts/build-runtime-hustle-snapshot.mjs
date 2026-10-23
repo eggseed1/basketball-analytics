@@ -120,9 +120,16 @@ async function fetchHustleSeason(season) {
   });
   const url = `https://stats.nba.com/stats/leaguehustlestatsplayer?${params}`;
   let lastError;
+  // stats.nba.com often stalls from Actions IPs; never hang the deploy bake.
+  const FETCH_MS = 20_000;
   for (let attempt = 0; attempt < 3; attempt++) {
+    const ac = new AbortController();
+    const timer = setTimeout(() => ac.abort(), FETCH_MS);
     try {
-      const response = await fetch(url, { headers: NBA_HEADERS });
+      const response = await fetch(url, {
+        headers: NBA_HEADERS,
+        signal: ac.signal,
+      });
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
       }
@@ -139,8 +146,13 @@ async function fetchHustleSeason(season) {
       });
       return rows.map(slimRow).filter(Boolean);
     } catch (error) {
-      lastError = error;
+      lastError =
+        error instanceof Error && error.name === "AbortError"
+          ? new Error(`timeout ${FETCH_MS}ms`)
+          : error;
       await new Promise((r) => setTimeout(r, 600 * (attempt + 1)));
+    } finally {
+      clearTimeout(timer);
     }
   }
   throw lastError;
@@ -151,7 +163,8 @@ const prior = await fs
   .then((raw) => JSON.parse(raw).seasons ?? {})
   .catch(() => ({}));
 const seasons = {};
-for (const season of SEASONS) {
+// Newest first so the live season refreshes even if older NBA calls stall out.
+for (const season of [...SEASONS].reverse()) {
   try {
     seasons[season] = await fetchHustleSeason(season);
     console.log(
