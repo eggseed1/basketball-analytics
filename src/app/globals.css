@@ -924,6 +924,33 @@ html:not([data-surface="glass"]) .board-scroll-frame > .board-scroll-host {
   }
 }
 
+/*
+  Board numeric cells: short class in HTML. Explore was ~184KB of duplicated
+  Tailwind on every td; padding/type live here instead.
+*/
+.board-scroll-frame td.board-stat {
+  padding: 0.5rem;
+  text-align: right;
+  vertical-align: middle;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
+  line-height: 1rem;
+}
+
+.board-scroll-frame td.board-stat-group-start {
+  border-left: 1px solid color-mix(in oklab, var(--border) 40%, transparent);
+}
+
+@media (max-width: 639.98px) {
+  .board-scroll-frame td.board-stat {
+    /* Mobile padding comes from [data-slot="table-cell"] above; keep type via --board-font. */
+    padding: var(--board-pad-y) var(--board-pad-x);
+    font-size: var(--board-font);
+    line-height: 1.15;
+  }
+}
+
 
 /* Transparent sticky spacer under the glass rail.
    Table auto-layout ignores width on empty <td> — pin via an inner slot. */

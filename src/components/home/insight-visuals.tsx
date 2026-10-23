@@ -1,13 +1,14 @@
 import type { CSSProperties } from "react";
 
-import type {
-  InsightMoment,
-  MomentMark,
-  RecentInsightFocus,
-  RecentInsightGame,
-  RecentInsightStatLine,
-  RecentInsightTrendPoint,
-  SurpriseStat,
+import {
+  downsampleInsightFlowPath,
+  type InsightMoment,
+  type MomentMark,
+  type RecentInsightFocus,
+  type RecentInsightGame,
+  type RecentInsightStatLine,
+  type RecentInsightTrendPoint,
+  type SurpriseStat,
 } from "@/lib/recent-insights";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { cn } from "@/lib/utils";
@@ -929,6 +930,11 @@ function flowPeriodStart(period: number): number {
   return period <= 4 ? (period - 1) * 720 : 2880 + (period - 5) * 300;
 }
 
+/** Integer SVG coords — subpixels don't read at chart size and cut path bytes. */
+function svgN(n: number): string {
+  return String(Math.round(n));
+}
+
 /**
  * Score margin after every scoring play, shaded in the leading team's color,
  * with the moment the card is about marked on it.
@@ -938,7 +944,15 @@ export function InsightFlowChart({ game }: { game: RecentInsightGame }) {
   if (!flow || flow.path.length < 2) return null;
   const colors = gameColors(game);
   const total = flowSeconds(flow.periods);
-  const margins = flow.path.map(([, m]) => m);
+  const keepTimes =
+    flow.mark?.kind === "span"
+      ? [flow.mark.t0, flow.mark.t1]
+      : flow.mark
+        ? [flow.mark.t]
+        : [];
+  // Snapshots may already be capped; still downsample in case of a live full path.
+  const path = downsampleInsightFlowPath(flow.path, 96, keepTimes);
+  const margins = path.map(([, m]) => m);
   const reach = Math.max(8, ...margins.map((m) => Math.abs(m)));
   const hi = Math.max(...margins, 0) > 0 ? reach : 4;
   const lo = Math.min(...margins, 0) < 0 ? -reach : -4;
@@ -952,10 +966,10 @@ export function InsightFlowChart({ game }: { game: RecentInsightGame }) {
   const x = (t: number) => padX + (Math.min(t, total) / total) * (W - padX - padRight);
   const y = (m: number) => top + ((hi - m) / (hi - lo || 1)) * (bottom - top);
   const mid = y(0);
-  let line = `M${x(0).toFixed(1)},${mid.toFixed(1)}`;
-  for (const [t, m] of flow.path.slice(1)) line += ` H${x(t).toFixed(1)} V${y(m).toFixed(1)}`;
-  line += ` H${x(total).toFixed(1)}`;
-  const area = `${line} V${mid.toFixed(1)} H${x(0).toFixed(1)} Z`;
+  let line = `M${svgN(x(0))},${svgN(mid)}`;
+  for (const [t, m] of path.slice(1)) line += ` H${svgN(x(t))} V${svgN(y(m))}`;
+  line += ` H${svgN(x(total))}`;
+  const area = `${line} V${svgN(mid)} H${svgN(x(0))} Z`;
   const clipId = `flow-${game.away.abbr}-${game.home.abbr}-${game.away.score}-${game.home.score}`;
   const final = margins.at(-1) ?? 0;
   const finalColor = final > 0 ? colors.home : final < 0 ? colors.away : "var(--muted-foreground)";

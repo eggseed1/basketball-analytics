@@ -93,14 +93,25 @@ function TableHead({ className, ...props }: React.ComponentProps<"th">) {
   )
 }
 
-function TableCell({ className, ...props }: React.ComponentProps<"td">) {
+function TableCell({
+  className,
+  bare = false,
+  ...props
+}: React.ComponentProps<"td"> & {
+  /** Skip the long shadcn defaults — for dense boards that style via CSS. */
+  bare?: boolean;
+}) {
   return (
     <td
       data-slot="table-cell"
-      className={cn(
-        "p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0",
-        className
-      )}
+      className={
+        bare
+          ? className
+          : cn(
+              "p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0",
+              className
+            )
+      }
       {...props}
     />
   )

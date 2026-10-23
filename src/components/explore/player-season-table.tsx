@@ -783,10 +783,10 @@ function StatCell({
 }) {
   return (
     <TableCell
+      bare
       className={cn(
-        "board-stat text-right tabular-nums",
-        boardType.cell,
-        groupedStart && "border-l border-border/40",
+        "board-stat",
+        groupedStart && "board-stat-group-start",
         seasonAwaitingGames && "text-muted-foreground"
       )}
     >
