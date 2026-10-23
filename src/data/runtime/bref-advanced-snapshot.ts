@@ -196,6 +196,7 @@ async function loadFromAssets(): Promise<SnapshotFile | null> {
 
 /** Load season-tables once (ASSETS on CF, public/runtime on Node). */
 export async function ensureSeasonTables(): Promise<boolean> {
+  await import("./espn-name-index").then((m) => m.ensureEspnNameIndex()).catch(() => undefined);
   if (cachedIndex !== undefined) {
     return cachedIndex != null && Object.keys(seasons).length > 0;
   }

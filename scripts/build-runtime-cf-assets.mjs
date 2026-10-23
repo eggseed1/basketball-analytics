@@ -96,13 +96,18 @@ try {
       if (!byName[key]) byName[key] = String(row.espnPlayerId);
     }
   }
+  const body = JSON.stringify({
+    version: 1,
+    generatedAt: new Date().toISOString(),
+    byName,
+  });
   const dest = path.join(RUNTIME, "espn-name-index.json");
-  await fs.writeFile(
-    dest,
-    JSON.stringify({ version: 1, generatedAt: new Date().toISOString(), byName })
-  );
+  const destPublic = path.join(ROOT, "public", "runtime", "espn-name-index.json");
+  await fs.writeFile(dest, body);
+  await fs.mkdir(path.dirname(destPublic), { recursive: true });
+  await fs.writeFile(destPublic, body);
   console.log(
-    `[cf-assets] espn-name-index → ${dest} (${Object.keys(byName).length} keys)`
+    `[cf-assets] espn-name-index → ${destPublic} (${Object.keys(byName).length} keys; src mirror ${dest})`
   );
 } catch (error) {
   console.warn(

@@ -1,7 +1,5 @@
 import { AWARD_DEFINITIONS } from "@/content/awards/catalog";
 import { listDiscoverableLearnSlugs } from "@/content/learn/resolve";
-import rosterSnapshot from "@/data/runtime/current-roster-snapshot.json";
-import { getPlayerSearchIndex } from "@/data/runtime/player-search-snapshot";
 import { absoluteUrl } from "@/lib/site-url";
 
 export const SITEMAP_KINDS = ["pages", "players", "games"] as const;
@@ -10,10 +8,6 @@ export type SitemapKind = (typeof SITEMAP_KINDS)[number];
 export type SitemapUrl = {
   loc: string;
   lastmod?: string;
-};
-
-type RosterFile = {
-  players?: Record<string, { teamId?: string }>;
 };
 
 const SECTION_PATHS = [
@@ -64,10 +58,14 @@ function lastmodDate(value: string): string | undefined {
 
 export async function sitemapUrls(kind: SitemapKind): Promise<SitemapUrl[]> {
   if (kind === "pages") {
-    const roster = rosterSnapshot as unknown as RosterFile;
+    const { ensureCurrentRoster, getBundledCurrentRosterPlayers } = await import(
+      "@/data/runtime/current-roster-snapshot"
+    );
+    await ensureCurrentRoster();
+    const rosterPlayers = getBundledCurrentRosterPlayers();
     const teamIds = [
       ...new Set(
-        Object.values(roster.players ?? {})
+        Object.values(rosterPlayers)
           .map((p) => p.teamId)
           .filter(Boolean)
       ),
@@ -82,12 +80,15 @@ export async function sitemapUrls(kind: SitemapKind): Promise<SitemapUrl[]> {
   }
 
   if (kind === "players") {
-    const { ensurePlayerSearch } = await import(
-      "@/data/runtime/player-search-snapshot"
-    );
-    await ensurePlayerSearch();
-    const roster = rosterSnapshot as unknown as RosterFile;
-    const rosterPlayers = roster.players ?? {};
+    const [
+      { ensureCurrentRoster, getBundledCurrentRosterPlayers },
+      { ensurePlayerSearch, getPlayerSearchIndex },
+    ] = await Promise.all([
+      import("@/data/runtime/current-roster-snapshot"),
+      import("@/data/runtime/player-search-snapshot"),
+    ]);
+    await Promise.all([ensureCurrentRoster(), ensurePlayerSearch()]);
+    const rosterPlayers = getBundledCurrentRosterPlayers();
     const currentIds = Object.keys(rosterPlayers);
     const currentSet = new Set(currentIds);
     const formerIds = getPlayerSearchIndex()

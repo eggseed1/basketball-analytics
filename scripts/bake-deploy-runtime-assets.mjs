@@ -92,6 +92,8 @@ run("node", [
     "'team-leadership.json',",
     "'explore-players-first-page.json',",
     "'drbl-guide-snapshot.json',",
+    "'espn-name-index.json',",
+    "'pbp-index.json',",
     "];",
     "for (const name of files) {",
     "const src=p.join('src/data/runtime',name);",

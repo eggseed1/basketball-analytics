@@ -265,6 +265,9 @@ export default async function PlayerPage({
     import("@/data/runtime/current-roster-snapshot").then((m) =>
       m.ensureCurrentRoster()
     ),
+    import("@/data/runtime/espn-name-index").then((m) =>
+      m.ensureEspnNameIndex()
+    ),
   ]);
   // Resolve legacy bref: peer-board ids to ESPN athlete ids (no redirect required).
   const playerId = resolvePublicPlayerId(rawId);

@@ -196,3 +196,12 @@ export function bundledCurrentRosterMeta() {
     playerCount: Object.keys(players).length,
   };
 }
+
+/** All ESPN-keyed roster rows (for sitemaps / bulk scans). */
+export function getBundledCurrentRosterPlayers(): Record<
+  string,
+  BundledCurrentRosterEntry
+> {
+  tryPrimeFromDisk();
+  return players;
+}
