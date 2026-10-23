@@ -24,6 +24,8 @@ from curl_cffi import requests
 ROOT = os.getcwd()
 PLAY_OUT = os.path.join(ROOT, "src", "data", "runtime", "play-type-snapshot.json")
 ONOFF_OUT = os.path.join(ROOT, "src", "data", "runtime", "on-off-snapshot.json")
+PLAY_PUBLIC = os.path.join(ROOT, "public", "runtime", "play-type-snapshot.json")
+ONOFF_PUBLIC = os.path.join(ROOT, "public", "runtime", "on-off-snapshot.json")
 
 DEFAULT_SEASONS = ["2022-23", "2023-24", "2024-25", "2025-26"]
 
@@ -265,12 +267,18 @@ def load(path):
         return {}
 
 
-def write(path, payload, label):
+def write(path, payload, label, public_path=None):
     body = json.dumps(payload, separators=(",", ":"))
+    os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w") as fh:
         fh.write(body)
+    if public_path:
+        os.makedirs(os.path.dirname(public_path), exist_ok=True)
+        with open(public_path, "w") as fh:
+            fh.write(body)
     size = len(gzip.compress(body.encode()))
-    print(f"[{label}] wrote {path} (gzip ~{size} bytes, seasons={list(payload['seasons'])})")
+    dest = public_path or path
+    print(f"[{label}] wrote {dest} (gzip ~{size} bytes, seasons={list(payload['seasons'])})")
 
 
 def main():
@@ -321,6 +329,7 @@ def main():
             "leagueShotZones": {s: league_zones[s] for s in keep if s in league_zones},
         },
         "play-types",
+        PLAY_PUBLIC,
     )
     write(
         ONOFF_OUT,
@@ -330,6 +339,7 @@ def main():
             "seasons": {s: onoff_seasons[s] for s in keep if s in onoff_seasons},
         },
         "on-off",
+        ONOFF_PUBLIC,
     )
 
 

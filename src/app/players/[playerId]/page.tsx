@@ -214,12 +214,8 @@ export async function generateMetadata({ params }: PlayerPageProps) {
   await yieldForStreaming();
   const t = await getTranslations("PlayerDetail");
   const { playerId: rawId } = await params;
-  await Promise.all([
-    ensurePlayerSearch(),
-    import("@/data/media/portrait-lookup-store").then((m) =>
-      m.ensurePortraitMaps()
-    ),
-  ]);
+  // Metadata only needs the name index — skip portrait ASSETS on this path.
+  await ensurePlayerSearch();
   const playerId = resolvePublicPlayerId(rawId);
   // Sync search/roster only — live getPlayerCached blocked metadata on cold MISS.
   const searchHit = getPlayerSearchIndex().find((r) => r.id === playerId);
@@ -255,12 +251,12 @@ export default async function PlayerPage({
   const t = await getTranslations("PlayerDetail");
   const { playerId: rawId } = await params;
   const sp = await searchParams;
-  await Promise.all([
-    ensurePlayerSearch(),
-    import("@/data/media/portrait-lookup-store").then((m) =>
-      m.ensurePortraitMaps()
-    ),
-  ]);
+  // Kick portrait ASSETS early; await only when identity needs the URL so
+  // career / identity work overlaps the three map fetches.
+  const portraitsReady = import("@/data/media/portrait-lookup-store").then(
+    (m) => m.ensurePortraitMaps()
+  );
+  await ensurePlayerSearch();
   // Resolve legacy bref: peer-board ids to ESPN athlete ids (no redirect required).
   const playerId = resolvePublicPlayerId(rawId);
   const seasonParam = one(sp, "season");
@@ -502,6 +498,7 @@ export default async function PlayerPage({
     .map((s) => primaryTeamForSeason(career, s))
     .filter((row): row is NonNullable<typeof row> => row != null);
 
+  await portraitsReady;
   const portraitUrl = getPlayerPortraitUrl(rawId) ??
     getPlayerPortraitUrl(playerId) ??
     (identity?.nbaId ? getPlayerPortraitUrl(identity.nbaId) : null) ??

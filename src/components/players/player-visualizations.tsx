@@ -9,8 +9,12 @@ import {
 import { PlayerOnOffCard } from "@/components/players/player-on-off";
 import { PlayerPlayTypesCard } from "@/components/players/player-play-types";
 import { PlayerShotMapView } from "@/components/players/player-shot-map";
-import { getPlayerOnOff } from "@/data/runtime/on-off-snapshot";
 import {
+  ensureOnOffSnapshot,
+  getPlayerOnOff,
+} from "@/data/runtime/on-off-snapshot";
+import {
+  ensurePlayTypeSnapshot,
   getLeagueShotZones,
   getPlayerPlayTypes,
 } from "@/data/runtime/play-type-snapshot";
@@ -48,6 +52,7 @@ async function PlayTypesBlock({
   teamKey?: string | null;
 }) {
   const identity = await resolvePlayerIdentityCached(playerId).catch(() => null);
+  await ensurePlayTypeSnapshot();
   const data = getPlayerPlayTypes(season, [identity?.nbaId, nbaId, playerId]);
   if (!data) return null;
   return (
@@ -71,6 +76,7 @@ async function OnOffBlock({
   teamKey?: string | null;
 }) {
   const identity = await resolvePlayerIdentityCached(playerId).catch(() => null);
+  await ensureOnOffSnapshot();
   const stints = getPlayerOnOff(season, [identity?.nbaId, nbaId, playerId]);
   if (!stints.length) return null;
   return (
@@ -339,6 +345,7 @@ export async function PlayerVisualizationsIsland({
 
   let map: PlayerShotMap | null = null;
   let coverageLabel: string | null = null;
+  const playTypesReady = ensurePlayTypeSnapshot();
   try {
     const index = await resolvePlayerSeasonShotIndex({
       playerId,
@@ -396,6 +403,7 @@ export async function PlayerVisualizationsIsland({
     );
   }
 
+  await playTypesReady;
   return (
     <section
       id="shooting"
