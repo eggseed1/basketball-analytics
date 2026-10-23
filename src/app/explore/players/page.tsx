@@ -58,6 +58,13 @@ async function loadBoard(
   searchParams: Record<string, string | string[] | undefined>,
   defaultSeason: string
 ): Promise<BoardLoad> {
+  const {
+    explorePlayersFirstPageMeta,
+    getExplorePlayersFirstPageSnapshot,
+    matchesExplorePlayersFirstPage,
+  } = await import("@/data/runtime/explore-players-first-page");
+  const bakeKey = explorePlayersFirstPageMeta().key;
+
   const seasonForMinutes = isAllSeasonsParam(searchParams.season)
     ? "ALL"
     : String(
@@ -65,14 +72,17 @@ async function loadBoard(
           ? searchParams.season[0]
           : searchParams.season) ?? defaultSeason
       );
+  const defaultMinutes =
+    bakeKey?.season === seasonForMinutes && bakeKey.minimumMinutes != null
+      ? bakeKey.minimumMinutes
+      : defaultExploreMinimumMinutes(seasonForMinutes);
   const filters = filtersFromSearchParams({
     ...searchParams,
     season: isAllSeasonsParam(searchParams.season)
       ? "ALL"
       : searchParams.season ?? defaultSeason,
     minimumMinutes:
-      searchParams.minimumMinutes ??
-      String(defaultExploreMinimumMinutes(seasonForMinutes)),
+      searchParams.minimumMinutes ?? String(defaultMinutes),
   });
   const season = isAllSeasonsParam(filters.season)
     ? "ALL"
@@ -85,10 +95,6 @@ async function loadBoard(
 
   // Hit the 35KB first-page bake before importing the board query module
   // (pulls players.ts + season-tables). Cold default /explore/players stays thin.
-  const {
-    getExplorePlayersFirstPageSnapshot,
-    matchesExplorePlayersFirstPage,
-  } = await import("@/data/runtime/explore-players-first-page");
   const bakeOpts = {
     filters,
     sortKey,
@@ -194,10 +200,16 @@ export default async function ExplorePlayersPage({
   const params = await searchParams;
   const t = await getTranslations("Players");
   // Sync shell only — never touch season-tables / board-ready (pulls ~9MB JSON)
-  // before header + Suspense can flush. Board load resolves the season itself.
+  // before header + Suspense can flush. Prefer the baked first-page season so
+  // cold /explore/players hits the 35KB snapshot instead of a live board miss.
   const seasons = [...listCanonicalSeasons()].reverse();
   const teams = teamsFromCanonicalIdentity();
-  const defaultSeason = defaultExplorePlayersSeason(seasons, new Date());
+  const { explorePlayersFirstPageMeta } = await import(
+    "@/data/runtime/explore-players-first-page"
+  );
+  const bakedSeason = explorePlayersFirstPageMeta().key?.season?.trim();
+  const defaultSeason =
+    bakedSeason || defaultExplorePlayersSeason(seasons, new Date());
   const subtitleSort = parsePlayerSeasonSortKey(params.sort);
   const load = loadBoard(params, defaultSeason);
 
