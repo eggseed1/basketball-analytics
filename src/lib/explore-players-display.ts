@@ -60,8 +60,8 @@ function normalizeViewId(part: string): string {
   }
 }
 
-/** First paint default — Impact matches WAR1/DARKO sort and keeps HTML small. */
-export const DEFAULT_PLAYER_BOARD_VIEWS: PlayerBoardView[] = ["impact"];
+/** First paint default — full board (All). */
+export const DEFAULT_PLAYER_BOARD_VIEWS: PlayerBoardView[] = ["all"];
 
 export function parsePlayerBoardViews(value: string | null): PlayerBoardView[] {
   if (!value) return [...DEFAULT_PLAYER_BOARD_VIEWS];
