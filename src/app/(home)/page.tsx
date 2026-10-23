@@ -103,40 +103,17 @@ async function HomeHotCold() {
 }
 
 async function HomeFindings() {
-  const [
-    { getLiveRecentInsights },
-    { FindingsSection },
-    { stripInsightFlowsForHome },
-  ] = await Promise.all([
-    import("@/data/queries/recent-insights-live"),
-    import("@/components/home/findings-section"),
-    import("@/lib/home-insights-slim"),
-  ]);
-  const live = await getLiveRecentInsights();
-  if (live) {
-    return (
-      <FindingsSection insights={stripInsightFlowsForHome(live.insights)} />
-    );
-  }
-
-  const { getBundledRecentInsights } = await import(
-    "@/data/runtime/recent-insights-snapshot"
+  const { HomeFindingsClient } = await import(
+    "@/components/home/home-findings-client"
   );
-  const insights = stripInsightFlowsForHome(getBundledRecentInsights());
-  return <FindingsSection insights={insights} empty={insights.length === 0} />;
+  return <HomeFindingsClient />;
 }
 
 async function HomeAboveNorm() {
-  const [{ getLiveRecentInsights }, { AboveNormPanel }] = await Promise.all([
-    import("@/data/queries/recent-insights-live"),
-    import("@/components/home/above-norm-panel"),
-  ]);
-  const live = await getLiveRecentInsights();
-  if (live) return <AboveNormPanel nights={live.aboveNorm} />;
-  const { getBundledAboveNorm } = await import(
-    "@/data/runtime/recent-insights-snapshot"
+  const { HomeAboveNormClient } = await import(
+    "@/components/home/home-above-norm-client"
   );
-  return <AboveNormPanel nights={getBundledAboveNorm()} />;
+  return <HomeAboveNormClient />;
 }
 
 const SIDEBAR_FEED_BUDGET_MS = 4_500;

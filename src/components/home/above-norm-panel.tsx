@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
