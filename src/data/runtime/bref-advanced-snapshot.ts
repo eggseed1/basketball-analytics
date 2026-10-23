@@ -201,26 +201,27 @@ export async function ensureSeasonTables(): Promise<boolean> {
   await import("./espn-name-index").then((m) => m.ensureEspnNameIndex()).catch(() => undefined);
   if (cachedIndex != null && Object.keys(seasons).length > 0) return true;
   if (seasonTablesInflight) return seasonTablesInflight;
-  seasonTablesInflight = (async () => {
-    try {
-      const fromDisk = loadFromPublicDir();
-      const file = fromDisk ?? (await loadFromAssets());
-      if (!file?.seasons || typeof file.seasons !== "object") {
-        // Transient ASSETS miss — leave unset so the next request retries.
-        return false;
-      }
-      seasons = file.seasons;
-      cachedIndex = {
-        version: file.version ?? 0,
-        generatedAt: file.generatedAt ?? null,
-        seasons,
-      };
-      return Object.keys(seasons).length > 0;
-    } finally {
-      seasonTablesInflight = null;
+  // See percentile-pools-snapshot: clear via promise.finally after assign.
+  const pending = (async () => {
+    const fromDisk = loadFromPublicDir();
+    const file = fromDisk ?? (await loadFromAssets());
+    if (!file?.seasons || typeof file.seasons !== "object") {
+      // Transient ASSETS miss — leave unset so the next request retries.
+      return false;
     }
+    seasons = file.seasons;
+    cachedIndex = {
+      version: file.version ?? 0,
+      generatedAt: file.generatedAt ?? null,
+      seasons,
+    };
+    return Object.keys(seasons).length > 0;
   })();
-  return seasonTablesInflight;
+  seasonTablesInflight = pending;
+  void pending.finally(() => {
+    if (seasonTablesInflight === pending) seasonTablesInflight = null;
+  });
+  return pending;
 }
 
 const peerBoardCache = new Map<string, PlayerSeason[]>();

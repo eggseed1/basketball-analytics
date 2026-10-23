@@ -105,31 +105,32 @@ async function loadFromAssets(): Promise<ImpactOverlayFile | null> {
 export async function ensureImpactOverlay(): Promise<boolean> {
   if (cachedIndex != null) return true;
   if (impactOverlayInflight) return impactOverlayInflight;
-  impactOverlayInflight = (async () => {
-    try {
-      const fromDisk = loadFromPublicDir();
-      const file = fromDisk ?? (await loadFromAssets());
-      if (!file) {
-        // Transient ASSETS miss — leave unset so the next request retries.
-        return false;
-      }
-      darkoSeasons =
-        file.darko && typeof file.darko === "object" ? file.darko : {};
-      raptorSeasons =
-        (file.raptor && typeof file.raptor === "object" ? file.raptor : null) ??
-        (file.lebron && typeof file.lebron === "object" ? file.lebron : {});
-      cachedIndex = {
-        version: file.version ?? 0,
-        generatedAt: file.generatedAt ?? null,
-        darko: darkoSeasons,
-        raptor: raptorSeasons,
-      };
-      return true;
-    } finally {
-      impactOverlayInflight = null;
+  // See percentile-pools-snapshot: clear via promise.finally after assign.
+  const pending = (async () => {
+    const fromDisk = loadFromPublicDir();
+    const file = fromDisk ?? (await loadFromAssets());
+    if (!file) {
+      // Transient ASSETS miss — leave unset so the next request retries.
+      return false;
     }
+    darkoSeasons =
+      file.darko && typeof file.darko === "object" ? file.darko : {};
+    raptorSeasons =
+      (file.raptor && typeof file.raptor === "object" ? file.raptor : null) ??
+      (file.lebron && typeof file.lebron === "object" ? file.lebron : {});
+    cachedIndex = {
+      version: file.version ?? 0,
+      generatedAt: file.generatedAt ?? null,
+      darko: darkoSeasons,
+      raptor: raptorSeasons,
+    };
+    return true;
   })();
-  return impactOverlayInflight;
+  impactOverlayInflight = pending;
+  void pending.finally(() => {
+    if (impactOverlayInflight === pending) impactOverlayInflight = null;
+  });
+  return pending;
 }
 
 function toDarkoRating(season: string, row: DarkoSlimRow): DarkoRating {

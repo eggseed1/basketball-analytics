@@ -577,19 +577,13 @@ export function transformEspnBoxScore(
 
   const synthetic: EspnScheduleEvent = {
     id: String(summary.header?.id ?? ""),
-    date: undefined,
+    // Prefer gameInfo.date when the header schedule stamp is missing.
+    date: (summary as { gameInfo?: { date?: string } }).gameInfo?.date,
     season: summary.header?.season,
     competitions: summary.header?.competitions,
   };
 
-  // Prefer date from competitors' side if present later; callers may patch.
-  const game = transformEspnScheduleEvent(
-    {
-      ...synthetic,
-      date: (summary as { gameInfo?: { date?: string } }).gameInfo?.date,
-    },
-    season
-  );
+  const game = transformEspnScheduleEvent(synthetic, season);
   if (!game || !game.id) return null;
 
   const players: PlayerGame[] = [];

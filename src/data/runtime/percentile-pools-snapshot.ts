@@ -71,21 +71,24 @@ async function loadFromAssets(): Promise<PercentilePoolsSnapshot | null> {
 export async function ensurePercentilePools(): Promise<boolean> {
   if (pools != null) return true;
   if (poolsInflight) return poolsInflight;
-  poolsInflight = (async () => {
-    try {
-      const fromDisk = loadFromPublicDir();
-      const loaded = fromDisk ?? (await loadFromAssets());
-      if (loaded) {
-        pools = loaded;
-        return true;
-      }
-      // Transient ASSETS miss — leave `pools` unset so the next request retries.
-      return false;
-    } finally {
-      poolsInflight = null;
+  // Clear inflight in promise.finally AFTER this assignment. An async IIFE's
+  // own `finally` runs before the outer `inflight = …` completes when the body
+  // has no await, which would leave a settled miss stuck forever.
+  const pending = (async () => {
+    const fromDisk = loadFromPublicDir();
+    const loaded = fromDisk ?? (await loadFromAssets());
+    if (loaded) {
+      pools = loaded;
+      return true;
     }
+    // Transient ASSETS miss — leave `pools` unset so the next request retries.
+    return false;
   })();
-  return poolsInflight;
+  poolsInflight = pending;
+  void pending.finally(() => {
+    if (poolsInflight === pending) poolsInflight = null;
+  });
+  return pending;
 }
 
 export function bundledSeasonCutoffs(

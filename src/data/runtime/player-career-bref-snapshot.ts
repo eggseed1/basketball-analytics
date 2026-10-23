@@ -158,25 +158,26 @@ function indexFromFile(data: SnapshotFile): CareerIndex {
 async function ensureCareerIndex(): Promise<CareerIndex | null> {
   if (cachedIndex != null) return cachedIndex;
   if (careerIndexInflight) return careerIndexInflight;
-  careerIndexInflight = (async () => {
-    try {
-      const fromDisk = loadFromPublicDir();
-      if (fromDisk) {
-        cachedIndex = indexFromFile(fromDisk);
-        return cachedIndex;
-      }
-      const fromAssets = await loadFromAssets();
-      if (fromAssets) {
-        cachedIndex = indexFromFile(fromAssets);
-        return cachedIndex;
-      }
-      // Transient ASSETS miss — leave unset so the next request retries.
-      return null;
-    } finally {
-      careerIndexInflight = null;
+  // See percentile-pools-snapshot: clear via promise.finally after assign.
+  const pending = (async () => {
+    const fromDisk = loadFromPublicDir();
+    if (fromDisk) {
+      cachedIndex = indexFromFile(fromDisk);
+      return cachedIndex;
     }
+    const fromAssets = await loadFromAssets();
+    if (fromAssets) {
+      cachedIndex = indexFromFile(fromAssets);
+      return cachedIndex;
+    }
+    // Transient ASSETS miss — leave unset so the next request retries.
+    return null;
   })();
-  return careerIndexInflight;
+  careerIndexInflight = pending;
+  void pending.finally(() => {
+    if (careerIndexInflight === pending) careerIndexInflight = null;
+  });
+  return pending;
 }
 
 function pctAsFraction(value: number): number {
