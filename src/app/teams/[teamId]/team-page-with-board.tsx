@@ -17,7 +17,10 @@ import { TeamSalaryAssetsTab } from "@/components/teams/team-salary-assets-tab";
 import { TeamRosterSourcesSection } from "@/components/teams/team-roster-sources-section";
 import { getFranchiseHistory } from "@/data/queries/franchises";
 import { formatOrdinal } from "@/lib/format";
-import { isSeasonAwaitingFirstGame } from "@/lib/nba-season-status";
+import {
+  isSeasonAwaitingFirstGame,
+  isTeamAwaitingFirstGame,
+} from "@/lib/nba-season-status";
 import { resolveHistoricalTeamBrand } from "@/lib/historical-team-brand";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import {
@@ -229,6 +232,9 @@ export async function TeamPageWithBoard({
   const seasonAwaitingGames = isSeasonAwaitingFirstGame(season, league);
 
   const boardTeam = resolveTeamFromBoard(league, teamId);
+  // League tip can pass while ESPN still omits 0-GP clubs (CLE/DEN early).
+  const teamAwaitingGames = isTeamAwaitingFirstGame(season, boardTeam);
+  const showPreTipOverview = seasonAwaitingGames || teamAwaitingGames;
 
   // Parent already resolved canonical identity; board may still upgrade the row.
   if (!boardTeam && !identityFallback) notFound();
@@ -236,7 +242,8 @@ export async function TeamPageWithBoard({
   // Season picker options without awaiting explore season lists.
   const exploreSeasons = [currentSeason, priorSeason, season];
 
-  const boardAvailable = Boolean(boardTeam);
+  // Shell rows (GP=0 pad) resolve identity but are not a measured board yet.
+  const boardAvailable = Boolean(boardTeam) && !teamAwaitingGames;
   const identityTeam = boardTeam ?? {
     abbreviation: identityFallback!.abbreviation,
     fullName: identityFallback!.fullName,
@@ -272,14 +279,14 @@ export async function TeamPageWithBoard({
   const modernBrand = resolveTeamBrand(identityTeam.abbreviation);
 
   // Prior board + standings in parallel after season board — not serial.
-  // Skip prior entirely while the season is still awaiting tip-off.
+  // Skip prior while this club (or the league) is still awaiting tip-off.
   const [priorLeague, standingsContext] = await Promise.all([
-    seasonAwaitingGames || !boardTeam
+    showPreTipOverview
       ? Promise.resolve([] as typeof seasonBoard.rows)
       : getTeamSeasonBoardCached(priorSeason)
           .then((b) => b.rows)
           .catch(() => [] as typeof seasonBoard.rows),
-    boardTeam
+    boardTeam && !teamAwaitingGames
       ? resolveTeamStandingsDisplay({
           season,
           currentSeason,
@@ -296,7 +303,7 @@ export async function TeamPageWithBoard({
           ),
           priorSeasonStanding: null,
           priorSeasonLabel: null,
-          seasonAwaitingGames,
+          seasonAwaitingGames: showPreTipOverview,
           standingsEmpty: false,
         }),
   ]);
@@ -312,7 +319,7 @@ export async function TeamPageWithBoard({
     : null;
 
   const analysis =
-    boardTeam && !seasonAwaitingGames
+    boardTeam && !showPreTipOverview
       ? analyzeTeamProfile({ team: boardTeam, league, prior })
       : null;
   const traits = analysis
@@ -341,7 +348,7 @@ export async function TeamPageWithBoard({
 
   const grouped = groupTraitsForPerformance(traits);
   const ranked =
-    boardTeam && !seasonAwaitingGames
+    boardTeam && !showPreTipOverview
       ? buildTeamRankedMetrics({
           team: boardTeam,
           league,
@@ -383,7 +390,7 @@ export async function TeamPageWithBoard({
     )
     .sort((a, b) => b.localeCompare(a));
 
-  const snapshotStats = seasonAwaitingGames
+  const snapshotStats = showPreTipOverview
     ? []
     : scorecard
         .filter(
@@ -442,7 +449,7 @@ export async function TeamPageWithBoard({
         />
 
         {tab === "overview" ? (
-          seasonAwaitingGames ? (
+          showPreTipOverview ? (
             <div data-motion-stack className="flex flex-col gap-4">
               <Suspense
                 fallback={<DestinationSectionSkeleton label={t("loadingGames")} />}
@@ -531,7 +538,7 @@ export async function TeamPageWithBoard({
         ) : null}
 
         {tab === "offense" ? (
-          boardAvailable && !seasonAwaitingGames ? (
+          boardAvailable && !showPreTipOverview ? (
             <Suspense
               fallback={<DestinationSectionSkeleton label={t("loadingOffense")} />}
             >
@@ -652,7 +659,7 @@ export async function TeamPageWithBoard({
 
         {tab === "stats" ? (
           <div className="flex flex-col gap-4">
-            {boardAvailable && analysis && !seasonAwaitingGames ? (
+            {boardAvailable && analysis && !showPreTipOverview ? (
               <section
                 id="all-stats"
                 className="scroll-mt-16 flex flex-col gap-4"

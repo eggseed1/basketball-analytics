@@ -14,6 +14,10 @@ import {
   overlayImpactRatingsForPeers,
 } from "@/data/queries/players";
 import { hasValidDrblEstimate } from "@/data/queries/percentiles";
+import {
+  isRaptorSeasonAvailable,
+  RAPTOR_BOARD_COLUMNS,
+} from "@/data/providers/impact/raptor-season";
 import { isDarkoSeasonAvailable } from "@/data/providers/nba/darko-season";
 import { isHustleStatsSeason } from "@/data/providers/nba/season";
 import type { BasketballFilters, PlayerSeason } from "@/data/types";
@@ -59,11 +63,68 @@ const HUSTLE_SORT_KEYS = new Set<PlayerSeasonSortKey>(
   PLAYER_BOARD_VIEW_COLUMNS.hustle
 );
 
+const DARKO_BOARD_COLUMNS = [
+  "darkoDpm",
+  "darkoOff",
+  "darkoDef",
+] as const satisfies readonly PlayerSeasonSortKey[];
+
 /** Columns filled only by deferred page overlays — keep visible on cold path. */
 const DEFERRED_OVERLAY_COLUMNS = new Set<PlayerSeasonSortKey>([
   ...IMPACT_OVERLAY_SORT_KEYS,
   ...HUSTLE_SORT_KEYS,
 ]);
+
+/** Mixed / blank season pickers still show overlay columns when any year can have them. */
+function seasonMayHaveOverlay(
+  season: string,
+  available: (canonical: string) => boolean
+): boolean {
+  const key = String(season ?? "").trim();
+  if (!key || key.toUpperCase() === "ALL") return true;
+  return available(key);
+}
+
+function mergeEmptyColumns(
+  base: PlayerSeasonSortKey[],
+  ...extras: Array<Iterable<PlayerSeasonSortKey>>
+): PlayerSeasonSortKey[] {
+  const out = new Set(base);
+  for (const extra of extras) {
+    for (const key of extra) out.add(key);
+  }
+  return [...out];
+}
+
+/** Overlay families with no source for this season → always hide. */
+function unavailableOverlayColumns(
+  statsSeason: string
+): PlayerSeasonSortKey[] {
+  const hide: PlayerSeasonSortKey[] = [];
+  if (!seasonMayHaveOverlay(statsSeason, isDarkoSeasonAvailable)) {
+    hide.push(...DARKO_BOARD_COLUMNS);
+  }
+  if (!seasonMayHaveOverlay(statsSeason, isRaptorSeasonAvailable)) {
+    hide.push(...RAPTOR_BOARD_COLUMNS);
+  }
+  if (!seasonMayHaveOverlay(statsSeason, isHustleStatsSeason)) {
+    hide.push(...PLAYER_BOARD_VIEW_COLUMNS.hustle);
+  }
+  return hide;
+}
+
+/** Deferred columns that are still blank after page overlays attached. */
+function emptyDeferredOverlayColumns(
+  rows: Array<Parameters<typeof boardStatValue>[0]>
+): PlayerSeasonSortKey[] {
+  return [...DEFERRED_OVERLAY_COLUMNS].filter(
+    (key) =>
+      !rows.some((row) => {
+        const v = boardStatValue(row, key, "totals");
+        return v != null && v !== 0;
+      })
+  );
+}
 
 export type { ExplorePlayerBoardRow } from "@/data/queries/explore-players-board-pure";
 export {
@@ -180,7 +241,30 @@ export async function getExplorePlayersBoardView(options: {
     );
     if (matchesExplorePlayersFirstPage(options)) {
       const baked = getExplorePlayersFirstPageSnapshot();
-      if (baked) return baked.view as ExplorePlayersBoardView;
+      if (baked) {
+        const view = baked.view as ExplorePlayersBoardView;
+        const season = view.statsSeason || options.filters.season || "";
+        // Season coverage + whatever stayed blank on the baked page rows
+        // (RAPTOR after 2021-22, missing hustle bake, etc.).
+        const emptyColumns = mergeEmptyColumns(
+          view.emptyColumns ?? [],
+          unavailableOverlayColumns(season),
+          emptyDeferredOverlayColumns(view.rows)
+        );
+        const empty = new Set(emptyColumns);
+        const raptorGone = RAPTOR_BOARD_COLUMNS.every((k) => empty.has(k));
+        const darkoGone = DARKO_BOARD_COLUMNS.every((k) => empty.has(k));
+        const hustleGone = PLAYER_BOARD_VIEW_COLUMNS.hustle.every((k) =>
+          empty.has(k)
+        );
+        return {
+          ...view,
+          hasRaptor: Boolean(view.hasRaptor) && !raptorGone,
+          hasDarko: Boolean(view.hasDarko) && !darkoGone,
+          hasHustle: Boolean(view.hasHustle) && !hustleGone,
+          emptyColumns,
+        };
+      }
     }
   }
 
@@ -198,10 +282,14 @@ export async function getExplorePlayersBoardView(options: {
   const hasDrbl = board.rows.some((p) => hasValidDrblEstimate(p));
   const hasDarkoOnBoard = board.rows.some((p) => p.darkoDpm != null);
   // Empty-column scan + sort on PlayerSeason — avoid mapping ~650 fat board
-  // rows (and portrait lookups) before the page window. Deferred overlay
-  // columns stay visible even when the cold board has not attached them yet.
-  const emptyColumns = emptyBoardColumns(board.rows).filter(
-    (key) => peerOverlays === "full" || !DEFERRED_OVERLAY_COLUMNS.has(key)
+  // rows (and portrait lookups) before the page window. Deferred DARKO /
+  // RAPTOR / hustle stay visible until page overlays attach; seasons with no
+  // source for a family hide those columns immediately.
+  let emptyColumns = mergeEmptyColumns(
+    emptyBoardColumns(board.rows).filter(
+      (key) => peerOverlays === "full" || !DEFERRED_OVERLAY_COLUMNS.has(key)
+    ),
+    unavailableOverlayColumns(statsSeason)
   );
   const requested =
     requestedSort && !emptyColumns.includes(requestedSort)
@@ -273,6 +361,12 @@ export async function getExplorePlayersBoardView(options: {
         statsSeason
       );
     }
+    // Drop deferred headers that stayed blank after overlays (missing bake,
+    // coverage gap, or thin sample) instead of leaving empty SORT columns.
+    emptyColumns = mergeEmptyColumns(
+      emptyColumns,
+      emptyDeferredOverlayColumns([...sortBoard, ...pageSeasons])
+    );
   }
   const mappedPage = attachRelativeTrueShooting(
     pageSeasons.map(toExplorePlayerBoardRow),
@@ -287,15 +381,17 @@ export async function getExplorePlayersBoardView(options: {
     ? buildLeaderboardContextIndex(sortBoard, sortKey)
     : null;
   const hasDarko =
-    sortBoard.some((p) => p.darkoDpm != null) ||
-    pageSeasons.some((p) => p.darkoDpm != null) ||
-    isDarkoSeasonAvailable(statsSeason);
+    seasonMayHaveOverlay(statsSeason, isDarkoSeasonAvailable) &&
+    (sortBoard.some((p) => p.darkoDpm != null) ||
+      pageSeasons.some((p) => p.darkoDpm != null) ||
+      isDarkoSeasonAvailable(statsSeason));
   const hasRaptor =
-    sortBoard.some((p) => p.raptor != null) ||
-    pageSeasons.some((p) => p.raptor != null);
+    seasonMayHaveOverlay(statsSeason, isRaptorSeasonAvailable) &&
+    (sortBoard.some((p) => p.raptor != null) ||
+      pageSeasons.some((p) => p.raptor != null));
   const hasHustle =
-    isHustleStatsSeason(statsSeason) ||
-    sortBoard.some(
+    seasonMayHaveOverlay(statsSeason, isHustleStatsSeason) &&
+    (sortBoard.some(
       (p) =>
         p.hustleDeflections != null ||
         p.hustleContestedShots != null ||
@@ -303,7 +399,16 @@ export async function getExplorePlayersBoardView(options: {
         p.hustleChargesDrawn != null ||
         p.hustleLooseBallsRecovered != null ||
         p.hustleBoxOuts != null
-    );
+    ) ||
+      pageSeasons.some(
+        (p) =>
+          p.hustleDeflections != null ||
+          p.hustleContestedShots != null ||
+          p.hustleScreenAssists != null ||
+          p.hustleChargesDrawn != null ||
+          p.hustleLooseBallsRecovered != null ||
+          p.hustleBoxOuts != null
+      ));
 
   const season = options.filters.season ?? "";
   // Placeholders / "hasn't started" follow the calendar tip only. Prior-season

@@ -80,6 +80,17 @@ function preseasonTeamBoard(season: string): TeamSeasonStats[] {
   });
 }
 
+/** ESPN by-team often omits clubs with 0 GP early; destinations still need a row. */
+function ensureCompleteTeamBoard(
+  season: string,
+  rows: TeamSeasonStats[]
+): TeamSeasonStats[] {
+  if (rows.length === 0) return preseasonTeamBoard(season);
+  const have = new Set(rows.map((r) => r.teamId));
+  const missing = preseasonTeamBoard(season).filter((r) => !have.has(r.teamId));
+  return missing.length ? [...rows, ...missing] : rows;
+}
+
 function boardHasMeasuredGames(rows: TeamSeasonStats[]): boolean {
   return rows.some(
     (row) => Number.isFinite(row.gamesPlayed) && row.gamesPlayed > 0
@@ -203,14 +214,46 @@ async function fromRuntimeSnapshot(
 
 const mappedBoardCache = new Map<string, TeamSeasonStats[]>();
 
+/** Measured board that still omits clubs (early ESPN lag) is not authoritative. */
+function boardLooksComplete(rows: TeamSeasonStats[]): boolean {
+  return rows.length >= 30 && boardHasMeasuredGames(rows);
+}
+
 export async function fetchTeamSeasonStats(
   season: string
 ): Promise<TeamSeasonStats[]> {
   if (preferBundledProductDataOnEdge()) {
     const snap = await fromRuntimeSnapshot(season);
-    if (snap && boardHasMeasuredGames(snap)) return snap;
-    // CF: never live-fetch by-team boards (uncancellable ESPN hangs → blank explore).
-    return snap ?? [];
+    // Incomplete measured snaps (e.g. 28/30 after tip) are stale ESPN lag —
+    // prefer a short live pull for the current year rather than 0-GP shells.
+    if (snap && boardLooksComplete(snap)) {
+      return snap;
+    }
+    if (snap && boardHasMeasuredGames(snap) && snap.length < 30) {
+      try {
+        const year = espnYearFromCanonicalSeason(season);
+        const url =
+          `${SITE_WEB}/apis/common/v3/sports/basketball/nba/statistics/byteam` +
+          `?region=us&lang=en&contentorigin=espn&season=${year}&seasontype=2`;
+        const timeoutMs = runtimeTimeoutMs(4_000, 2_000);
+        const payload = await espnFetchJson<ByTeamResponse>(url, {
+          ttlMs: 1000 * 60 * 15,
+          retries: 0,
+          timeoutMs,
+          signal: AbortSignal.timeout(timeoutMs),
+        });
+        const live = mapEspnByTeamPayload(season, payload);
+        if (boardLooksComplete(live)) return live;
+        if (live.length > snap.length && boardHasMeasuredGames(live)) {
+          return ensureCompleteTeamBoard(season, live);
+        }
+      } catch {
+        /* keep snap */
+      }
+      return ensureCompleteTeamBoard(season, snap);
+    }
+    // CF: avoid long ESPN hangs on empty/preseason boards.
+    return ensureCompleteTeamBoard(season, snap ?? []);
   }
 
   const year = espnYearFromCanonicalSeason(season);
@@ -235,17 +278,19 @@ export async function fetchTeamSeasonStats(
   if (payload) {
     const live = mapEspnByTeamPayload(season, payload);
     if (live.length > 0 && boardHasMeasuredGames(live)) {
-      return live;
+      return ensureCompleteTeamBoard(season, live);
     }
     // Live returned an empty/zero board (common CF timeout stub path) —
     // prefer a measured build-time snapshot when available.
     const snap = await fromRuntimeSnapshot(season);
-    if (snap && boardHasMeasuredGames(snap)) return snap;
-    if (live.length > 0) return live;
+    if (snap && boardHasMeasuredGames(snap)) {
+      return ensureCompleteTeamBoard(season, snap);
+    }
+    if (live.length > 0) return ensureCompleteTeamBoard(season, live);
   }
 
   const snap = await fromRuntimeSnapshot(season);
-  if (snap) return snap;
+  if (snap) return ensureCompleteTeamBoard(season, snap);
 
   // Last resort: paint the 30-team shell so destinations still resolve.
   return preseasonTeamBoard(season);

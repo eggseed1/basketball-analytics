@@ -269,6 +269,37 @@ export async function getPlayerSeasonBoardSnapshot(
     }
   }
 
+  // Current year has league games, but this team is still absent from the
+  // peer board (0 GP / ESPN lag). Team destinations borrow prior-season
+  // lines remapped to today's roster — same path as pre-tip scoping.
+  if (
+    error == null &&
+    !usingPriorSeasonStats &&
+    filters.team &&
+    rows.length === 0 &&
+    season &&
+    season.toUpperCase() !== "ALL" &&
+    isCurrentNbaSeason(season) &&
+    applyPlayerSeasonFilters(unfilteredRows, {
+      season: statsSeason,
+      team: filters.team,
+    }).length === 0
+  ) {
+    const priorSeason = priorSeasonForStats(season);
+    const priorLoaded = await load({ season: priorSeason });
+    if (priorLoaded.error == null && priorLoaded.rows.length > 0) {
+      statsSeason = priorSeason;
+      usingPriorSeasonStats = true;
+      unfilteredRows = priorLoaded.rows;
+      rows = filterBoardRows(priorLoaded.rows, filters, {
+        requestSeason,
+        statsSeason,
+        usingPriorSeasonStats,
+      });
+      warnings.push(priorSeasonStatsNotice(season, priorSeason));
+    }
+  }
+
   // Live miss → process-local last-good real board for this season.
   // Only activate on provider failure - not on a successful empty filter result.
   if (error != null && season) {

@@ -52,3 +52,19 @@ export function isSeasonAwaitingFirstGame(
   if (!isCurrentNbaSeason(season, now)) return false;
   return !leagueRegularSeasonHasOpened(season, now);
 }
+
+/**
+ * This club has no measured games yet on the current year board (missing row
+ * or GP=0). League may already be open — ESPN by-team often omits 0-GP teams.
+ */
+export function isTeamAwaitingFirstGame(
+  season: string,
+  team: { gamesPlayed: number } | null | undefined,
+  now = new Date()
+): boolean {
+  if (!isCurrentNbaSeason(season, now)) return false;
+  if (isSeasonAwaitingFirstGame(season, [], now)) return true;
+  if (!team) return true;
+  const gp = team.gamesPlayed;
+  return !Number.isFinite(gp) || gp <= 0;
+}

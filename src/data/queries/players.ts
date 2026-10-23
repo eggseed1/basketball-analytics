@@ -473,6 +473,51 @@ async function loadEspnTeamRoster(
   // Cloudflare. The baked BRef board is season-true, so it wins whenever it exists.
   const bundled = await fromBundledBref();
   if (bundled) return bundled;
+
+  // Early current year: team may be missing from this season's bake while the
+  // prior board still has their lines. Remap via today's roster snapshot.
+  const { isCurrentNbaSeason } = await import("@/lib/nba-season-status");
+  const { priorSeasonForStats } = await import("@/lib/player-board-season");
+  if (isCurrentNbaSeason(season)) {
+    try {
+      const { getBundledBrefPeerBoard } = await import(
+        "@/data/runtime/bref-advanced-snapshot"
+      );
+      const { scopeRowsToCurrentTeam } = await import(
+        "@/data/queries/current-team-scope"
+      );
+      const prior = priorSeasonForStats(season);
+      const priorBoard = await getBundledBrefPeerBoard(prior);
+      if (priorBoard.length >= 50) {
+        let rows = await overlayImpactRatings(priorBoard, prior);
+        if (isDrblSeason(prior)) {
+          const drblRows = await fetchDrblSeason(prior).catch(() => []);
+          rows = await overlayDrblRows(rows, drblRows);
+        }
+        if (isHustleStatsSeason(prior)) {
+          rows = await overlayHustleRows(rows, prior);
+        }
+        const scoped = scopeRowsToCurrentTeam(rows, canonicalTeamId, season);
+        if (scoped?.length) {
+          const players = applyPlayerSeasonFilters(scoped, {
+            ...filters,
+            season: prior,
+            team: undefined,
+          });
+          if (players.length) {
+            return {
+              boardCount: priorBoard.length,
+              players,
+              omitsMidSeasonMoves: true,
+            };
+          }
+        }
+      }
+    } catch {
+      // fall through
+    }
+  }
+
   if (preferBundledProductDataOnEdge()) {
     return { boardCount: 0, players: [] };
   }
