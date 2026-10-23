@@ -2,6 +2,10 @@ import fs from "node:fs/promises";
 import path from "node:path";
 
 const OUT = path.join(process.cwd(), "src/data/runtime/game-snapshot.json");
+const OUT_TIPS = path.join(
+  process.cwd(),
+  "src/data/runtime/first-regular-season-tips.json"
+);
 const OUT_FULL = path.join(
   process.cwd(),
   "src/data/runtime/game-snapshot-full.json"
@@ -283,8 +287,30 @@ async function main() {
     );
   }
 
+  const tips = {};
+  for (const game of games) {
+    if ((game.gameType ?? "regular") !== "regular" || !game.gameDate) continue;
+    const season = String(game.season ?? "");
+    const d = String(game.gameDate).slice(0, 10);
+    if (!season || !/^\d{4}-\d{2}-\d{2}$/.test(d)) continue;
+    if (!tips[season] || d < tips[season]) tips[season] = d;
+  }
+  await fs.writeFile(
+    OUT_TIPS,
+    JSON.stringify(
+      {
+        generatedAt,
+        source: "espn-build-snapshot",
+        tips,
+      },
+      null,
+      2
+    ) + "\n",
+    "utf8"
+  );
+
   console.log(
-    `[runtime-snapshot] wrote full ${games.length} games → ${OUT_FULL}; lite ${liteGames.length} (${liteSeasons.join(",")}) → ${OUT}`
+    `[runtime-snapshot] wrote full ${games.length} games → ${OUT_FULL}; lite ${liteGames.length} (${liteSeasons.join(",")}) → ${OUT}; tips ${Object.keys(tips).length} → ${OUT_TIPS}`
   );
 }
 

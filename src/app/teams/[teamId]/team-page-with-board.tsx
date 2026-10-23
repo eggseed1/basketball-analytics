@@ -7,7 +7,6 @@ import { StatDisclosure } from "@/components/analytics/stat-disclosure";
 import { DestinationSectionSkeleton } from "@/components/continuity/destination-loading-frame";
 import { TeamDestinationIdentity } from "@/components/teams/team-destination-identity";
 import { TeamEvidenceIsland } from "@/components/teams/team-evidence-island";
-import { TeamGamesIsland } from "@/components/teams/team-games-island";
 import { TeamHustleIsland } from "@/components/teams/team-hustle-island";
 import { TeamLeadershipSection } from "@/components/teams/team-leadership-section";
 import { TeamLineupsIsland } from "@/components/teams/team-lineups-island";
@@ -15,7 +14,7 @@ import { TeamOnOffIsland } from "@/components/teams/team-on-off-island";
 import { TeamOffenseIsland } from "@/components/teams/team-offense-island";
 import { TeamPlayoffsIsland } from "@/components/teams/team-playoffs-island";
 import { TeamSplitsIsland } from "@/components/teams/team-splits-island";
-import { TeamOpeningNight } from "@/components/teams/overview/team-opening-night";
+import { TeamOpeningNightIsland } from "@/components/teams/overview/team-opening-night-island";
 import { TeamRosterWar1Island } from "@/components/teams/overview/team-roster-war1-island";
 import { TeamOverviewVisuals } from "@/components/teams/overview/team-overview-visuals";
 import { TeamSeasonRecapIsland } from "@/components/teams/overview/team-season-recap-island";
@@ -24,10 +23,7 @@ import { TeamPrimaryNav } from "@/components/teams/team-primary-nav";
 import { TeamRosterIsland } from "@/components/teams/team-roster-island";
 import { TeamRosterBuiltIsland } from "@/components/teams/team-roster-built-island";
 import { TeamSalaryAssetsTab } from "@/components/teams/team-salary-assets-tab";
-import { TeamSentimentTab } from "@/components/teams/team-sentiment-tab";
 import { TeamRosterSourcesSection } from "@/components/teams/team-roster-sources-section";
-import { TeamScheduleIsland } from "@/components/teams/team-schedule-island";
-import { TeamTransactionsIsland } from "@/components/teams/team-transactions-island";
 import { getFranchiseHistory } from "@/data/queries/franchises";
 import { formatOrdinal } from "@/lib/format";
 import { isSeasonAwaitingFirstGame } from "@/lib/nba-season-status";
@@ -43,8 +39,6 @@ import {
   type TeamPageHrefOpts,
 } from "@/lib/team-destination";
 import { buildTeamRankedMetrics, formatMetricDelta, leagueRankOf } from "@/lib/team-page-metrics";
-import { nbaTodayIso } from "@/lib/nba-calendar-date";
-import { buildScheduleFacts } from "@/lib/team-overview-data";
 import {
   enrichTraitsWithPrior,
   formatTraitPriorDelta,
@@ -56,6 +50,51 @@ import {
   resolveTeamDivisionMeta,
   resolveTeamStandingsDisplay,
 } from "@/lib/team-standings-context";
+
+async function TeamGamesTab(props: {
+  team: import("@/data/types").TeamSeasonStats;
+  brand: import("@/lib/nba-brand").TeamBrand | null | undefined;
+  season: string;
+  scheduleTeamId: string;
+  teamKey: string;
+}) {
+  const [{ TeamGamesIsland }, { TeamScheduleIsland }] = await Promise.all([
+    import("@/components/teams/team-games-island"),
+    import("@/components/teams/team-schedule-island"),
+  ]);
+  return (
+    <TeamGamesIsland
+      team={props.team}
+      brand={props.brand}
+      season={props.season}
+      schedule={
+        <TeamScheduleIsland
+          teamId={props.scheduleTeamId}
+          season={props.season}
+          teamKey={props.teamKey}
+        />
+      }
+    />
+  );
+}
+
+async function TeamSentimentTabLazy({ teamId }: { teamId: string }) {
+  const { TeamSentimentTab } = await import(
+    "@/components/teams/team-sentiment-tab"
+  );
+  return <TeamSentimentTab teamId={teamId} />;
+}
+
+async function TeamTransactionsIslandLazy({
+  teamFilterId,
+}: {
+  teamFilterId: string;
+}) {
+  const { TeamTransactionsIsland } = await import(
+    "@/components/teams/team-transactions-island"
+  );
+  return <TeamTransactionsIsland teamFilterId={teamFilterId} />;
+}
 
 export async function TeamPageWithBoard({
   teamId,
@@ -318,12 +357,15 @@ export async function TeamPageWithBoard({
         {tab === "overview" ? (
           seasonAwaitingGames ? (
             <div data-motion-stack className="flex flex-col gap-4">
-              <TeamOpeningNight
-                facts={buildScheduleFacts(resolvedTeamId, season, nbaTodayIso())}
-                season={season}
-                teamId={teamId}
-                teamName={displayName}
-              />
+              <Suspense
+                fallback={<DestinationSectionSkeleton label={t("loadingGames")} />}
+              >
+                <TeamOpeningNightIsland
+                  teamId={resolvedTeamId}
+                  season={season}
+                  teamName={displayName}
+                />
+              </Suspense>
               <Suspense
                 fallback={<DestinationSectionSkeleton label={t("loadingPriorReview", { season: priorSeason })} />}
               >
@@ -454,13 +496,12 @@ export async function TeamPageWithBoard({
           <Suspense
             fallback={<DestinationSectionSkeleton label={t("loadingGames")} />}
           >
-            <TeamGamesIsland
+            <TeamGamesTab
               team={identityTeam}
               brand={modernBrand}
               season={season}
-              schedule={
-                <TeamScheduleIsland teamId={resolvedTeamId} season={season} teamKey={identityTeam.abbreviation} />
-              }
+              scheduleTeamId={resolvedTeamId}
+              teamKey={identityTeam.abbreviation}
             />
           </Suspense>
         ) : null}
@@ -500,14 +541,14 @@ export async function TeamPageWithBoard({
                 <DestinationSectionSkeleton label={t("loadingTransactions")} />
               }
             >
-              <TeamTransactionsIsland teamFilterId={txTeamId} />
+              <TeamTransactionsIslandLazy teamFilterId={txTeamId} />
             </Suspense>
           </div>
         ) : null}
 
         {tab === "sentiment" ? (
           <Suspense fallback={<DestinationSectionSkeleton label={t("loadingSentiment")} />}>
-            <TeamSentimentTab teamId={resolvedTeamId} />
+            <TeamSentimentTabLazy teamId={resolvedTeamId} />
           </Suspense>
         ) : null}
 

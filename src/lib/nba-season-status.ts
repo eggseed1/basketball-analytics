@@ -2,8 +2,14 @@ import {
   canonicalSeasonFromStartYear,
   currentNbaStartYear,
 } from "@/data/providers/historical/season-range";
-import { getRuntimeSnapshotGames } from "@/data/runtime/game-snapshot";
+import tipDates from "@/data/runtime/first-regular-season-tips.json";
 import { nbaTodayIso } from "@/lib/nba-calendar-date";
+
+type TipFile = {
+  tips?: Record<string, string>;
+};
+
+const tips = (tipDates as TipFile).tips ?? {};
 
 export function isCurrentNbaSeason(season: string, now = new Date()): boolean {
   return season === canonicalSeasonFromStartYear(currentNbaStartYear(now));
@@ -13,14 +19,13 @@ export function isCurrentNbaSeason(season: string, now = new Date()): boolean {
  * First regular-season tip date on the bundled schedule, or null when unknown.
  * Used to flip "preseason roster" defaults the night the league opens —
  * not a fixed calendar day that drifts relative to the real opener.
+ *
+ * Tip dates live in a tiny JSON extracted from game-snapshot so season-status
+ * checks do not pull the 1.4MB schedule into every board route.
  */
 export function firstRegularSeasonTipDate(season: string): string | null {
-  const dates = getRuntimeSnapshotGames(season)
-    .filter((game) => (game.gameType ?? "regular") === "regular")
-    .map((game) => game.gameDate)
-    .filter(Boolean)
-    .sort();
-  return dates[0] ?? null;
+  const tip = tips[season];
+  return tip && /^\d{4}-\d{2}-\d{2}$/.test(tip) ? tip : null;
 }
 
 /** True once today's league calendar day is on or after the RS opener. */
