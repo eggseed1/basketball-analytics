@@ -1,7 +1,4 @@
-import { TransitionLink } from "@/components/continuity/query-nav";
-import { PlayerSeasonTable } from "@/components/explore/player-season-table";
-import { currentRosterPlayersMissing } from "@/data/queries/current-team-scope";
-import { getExplorePlayersBoardView } from "@/data/queries/explore-players-board";
+import { TeamRosterBoardClient } from "@/components/teams/team-roster-board-client";
 import { getTeamRosterCached } from "@/data/queries/request-cache";
 import { type } from "@/lib/design-system";
 import { formatNumber } from "@/lib/format";
@@ -15,6 +12,7 @@ import {
   parsePlayerSeasonSortKey,
   type PlayerSeasonSortKey,
 } from "@/lib/player-season-sort";
+import { isPreseasonRosterSeason } from "@/data/providers/nba/espn-roster-client";
 import { cn } from "@/lib/utils";
 
 export async function TeamRosterIsland({
@@ -35,35 +33,18 @@ export async function TeamRosterIsland({
       ? sortDirParam
       : defaultPlayerSeasonSortDir(requestedSort);
 
-  const [view, roster] = await Promise.all([
-    getExplorePlayersBoardView({
-      filters: {
-        season,
-        team: teamId,
-        minimumMinutes: 0,
-        minimumGames: 0,
-      },
-      sortKey: requestedSort as PlayerSeasonSortKey,
-      sortDir: requestedDir,
-      page: 1,
-      pageSize: 60,
-      includeContext: false,
-    }),
-    getTeamRosterCached(teamId, season, 0),
-  ]);
-  const preseason = view.usingPriorSeasonStats;
-  const noPriorRow = preseason
-    ? currentRosterPlayersMissing(
-        teamId,
-        season,
-        view.rows.map((row) => row.playerId)
-      )
-    : null;
+  // Roster summary stays SSR; the explore board table loads client-side.
+  const roster = await getTeamRosterCached(teamId, season, 0);
+  const preseasonCopy = isPreseasonRosterSeason(season);
   const players = roster.status === "ok" ? roster.players : [];
   const buckets = buildRosterBuckets(players);
   const ladder = buildRotationLadder(players);
   const withMinutes = players.filter((p) => p.minutes > 0);
   const minutesLeader = buckets.rotation[0];
+  const rosterPeople = players.map((p) => ({
+    playerId: p.playerId,
+    name: p.playerName,
+  }));
 
   return (
     <div className="flex flex-col gap-6">
@@ -77,10 +58,10 @@ export async function TeamRosterIsland({
             Roster board
           </h2>
           <p className={cn(type.bodySm, "text-muted-foreground")}>
-            {preseason
+            {preseasonCopy
               ? `${season} roster as listed today. Players who changed teams this offseason show up with their new team. Stats stay blank until games are played.`
               : `${season} roster with the same columns as Explore Players, scoped to this team.`}
-            {!preseason && roster.omitsMidSeasonMoves
+            {!preseasonCopy && roster.omitsMidSeasonMoves
               ? ` ${MID_SEASON_MOVES_NOTE}`
               : null}
           </p>
@@ -130,40 +111,13 @@ export async function TeamRosterIsland({
           </div>
         ) : null}
 
-        {view.totalCount === 0 ? (
-          <p className={cn(type.bodySm, "text-muted-foreground")}>
-            {roster.warning ?? `No roster rows available for ${season}.`}
-          </p>
-        ) : (
-          <PlayerSeasonTable
-            players={view.rows}
-            season={season}
-            totalCount={view.totalCount}
-            pageSize={view.pageSize}
-            pageCount={1}
-            sortKey={view.sortKey}
-            sortDir={view.sortDir}
-            emptyColumns={view.emptyColumns}
-            seasonAwaitingGames={view.seasonAwaitingGames}
-          />
-        )}
-        {noPriorRow?.length ? (
-          <p className={cn(type.bodySm, "text-muted-foreground")}>
-            Also on the roster, with no {view.statsSeason} NBA stats:{" "}
-            {noPriorRow.map((p, i) => (
-              <span key={p.playerId}>
-                {i ? ", " : null}
-                <TransitionLink
-                  href={`/players/${p.playerId}`}
-                  className="font-medium text-foreground underline-offset-2 hover:underline"
-                >
-                  {p.name}
-                </TransitionLink>
-              </span>
-            ))}
-            .
-          </p>
-        ) : null}
+        <TeamRosterBoardClient
+          teamId={teamId}
+          season={season}
+          sortKey={requestedSort as PlayerSeasonSortKey}
+          sortDir={requestedDir}
+          rosterPeople={rosterPeople}
+        />
       </section>
     </div>
   );

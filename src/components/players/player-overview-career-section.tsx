@@ -1,6 +1,5 @@
-import { PlayerCareerIsland } from "@/components/players/player-career-island";
+import { PlayerOverviewCareerClient } from "@/components/players/player-overview-career-client";
 import { TextLink } from "@/components/ui/text-link";
-import type { PlayerSeason } from "@/data/types";
 import { type } from "@/lib/design-system";
 import { type PlayerSeasonKind } from "@/lib/player-destination";
 import { playerHref } from "@/lib/player-page-contract";
@@ -8,14 +7,13 @@ import { cn } from "@/lib/utils";
 import type { ThemeMode } from "@/themes/era-theme";
 
 /**
- * Overview Career stats: same board as the Career tab (game dots, category
- * table, Regular / Playoffs / chart filters), plus a link to analysis.
+ * Overview Career stats: same board as the Career tab, loaded client-side so
+ * season rows stay out of first HTML. Link to full career analysis below.
  */
-export async function PlayerOverviewCareerSection({
+export function PlayerOverviewCareerSection({
   playerId,
   season,
   seasonType,
-  career,
   teamKey,
   fromHistory = false,
   themeMode = "historical",
@@ -23,7 +21,8 @@ export async function PlayerOverviewCareerSection({
   playerId: string;
   season: string;
   seasonType: PlayerSeasonKind;
-  career: PlayerSeason[];
+  /** @deprecated Unused — overview fetches `/api/players/.../seasons`. */
+  career?: unknown;
   teamKey?: string | null;
   fromHistory?: boolean;
   themeMode?: ThemeMode;
@@ -38,16 +37,13 @@ export async function PlayerOverviewCareerSection({
 
   return (
     <div className="flex flex-col gap-3">
-      <PlayerCareerIsland
+      <PlayerOverviewCareerClient
         playerId={playerId}
         season={season}
         seasonType={seasonType}
-        career={career}
         teamKey={teamKey}
         fromHistory={fromHistory}
         themeMode={themeMode}
-        chart="seasons"
-        enrich="fast"
       />
       <TextLink
         href={careerHref}

@@ -693,7 +693,6 @@ export default async function PlayerPage({
               playerId={playerId}
               season={season}
               seasonType={seasonType}
-              career={career}
               teamKey={teamKey}
               fromHistory={fromHistory}
               themeMode={themeMode}

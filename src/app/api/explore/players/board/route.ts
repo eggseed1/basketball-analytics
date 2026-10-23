@@ -42,6 +42,11 @@ export async function GET(request: Request) {
       ? parseExplorePlayersSortDir(params.dir, sortKey)
       : undefined;
     const page = parseExplorePlayersPage(params.page);
+    const pageSizeRaw = Number.parseInt(params.pageSize ?? "", 10);
+    const pageSize =
+      Number.isFinite(pageSizeRaw) && pageSizeRaw > 0
+        ? Math.min(pageSizeRaw, 100)
+        : undefined;
 
     const view = await getExplorePlayersBoardView({
       filters,
@@ -50,6 +55,7 @@ export async function GET(request: Request) {
       rate: parsePlayerBoardRate(params.rate ?? null),
       boardViews: parsePlayerBoardViews(params.view ?? null),
       page,
+      pageSize,
       includeContext: false,
     });
 
@@ -59,6 +65,12 @@ export async function GET(request: Request) {
       pageCount: view.pageCount,
       pageSize: view.pageSize,
       totalCount: view.totalCount,
+      emptyColumns: view.emptyColumns,
+      seasonAwaitingGames: view.seasonAwaitingGames,
+      statsSeason: view.statsSeason,
+      usingPriorSeasonStats: view.usingPriorSeasonStats,
+      sortKey: view.sortKey,
+      sortDir: view.sortDir,
     });
   } catch (error) {
     return jsonError(error);
