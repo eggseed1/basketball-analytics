@@ -8,16 +8,7 @@ import { SectionLink } from "@/components/ui/section-link";
 import { HomeModuleFrame, HomeModuleSkeleton } from "@/components/home/home-module-skeleton";
 import { SeasonMomentCard, SeasonPhaseBar } from "@/components/home/season-moment";
 import { JsonLd } from "@/components/seo/json-ld";
-import {
-  canonicalSeasonFromStartYear,
-  currentNbaStartYear,
-} from "@/data/providers/historical/season-range";
-import {
-  getHomeSeasonMoment,
-  getHomeSeasonMomentSync,
-  homeSeasonMomentNeedsLiveEnrichment,
-  homeShellPhase,
-} from "@/data/queries/home-season-moment";
+import { getHomeShellBootstrap } from "@/data/queries/home-season-moment-shell";
 import {
   homeLayoutForPhase,
   type HomeModuleId,
@@ -31,12 +22,6 @@ import {
   SITE_KEYWORDS,
   websiteJsonLd,
 } from "@/lib/site-seo";
-
-/**
- * Heavy panels / data graphs are dynamic-imported inside streamed modules so
- * cold `/` TTFB does not eval sentiment (~1.8MB), request-cache, contracts,
- * or season-tables before the shell can flush.
- */
 
 export const metadata = {
   title: { absolute: SITE_HOME_TITLE },
@@ -62,17 +47,7 @@ export const metadata = {
 // modules arrive one by one, and the worker page cache shares the result.
 export const dynamic = "force-dynamic";
 
-async function HomeCalendar({
-  season,
-  enrichSchedule,
-}: {
-  season: string;
-  /** When the bundled slate is thin, wait on live October inside this stream. */
-  enrichSchedule?: boolean;
-}) {
-  if (enrichSchedule) {
-    await getHomeSeasonMoment();
-  }
+async function HomeCalendar({ season }: { season: string }) {
   const { WeekGameCalendar } = await import(
     "@/components/home/week-game-calendar"
   );
@@ -80,11 +55,17 @@ async function HomeCalendar({
 }
 
 async function HomeSeasonMomentLive() {
+  const { getHomeSeasonMoment } = await import(
+    "@/data/queries/home-season-moment"
+  );
   const moment = await getHomeSeasonMoment();
   return <SeasonMomentCard moment={moment} />;
 }
 
 async function HomeSeasonPhaseBarLive() {
+  const { getHomeSeasonMoment } = await import(
+    "@/data/queries/home-season-moment"
+  );
   const moment = await getHomeSeasonMoment();
   return <SeasonPhaseBar moment={moment} />;
 }
@@ -315,33 +296,27 @@ function Streamed({ id, children }: { id: HomeModuleId; children: ReactNode }) {
 function renderModule(
   id: HomeModuleId,
   moment: HomeSeasonMoment,
-  season: string,
-  enrichSchedule: boolean
+  season: string
 ) {
   const offseason = moment.phase === "draft-free-agency" || moment.phase === "offseason";
   switch (id) {
     case "moment":
-      if (enrichSchedule) {
-        return (
-          <Streamed key={id} id={id}>
-            <HomeSeasonMomentLive />
-          </Streamed>
-        );
-      }
-      return <SeasonMomentCard key={id} moment={moment} />;
+      // Always stream — shell moment has empty marks (no game-snapshot on TTFB).
+      return (
+        <Streamed key={id} id={id}>
+          <HomeSeasonMomentLive />
+        </Streamed>
+      );
     case "phase-bar":
-      if (enrichSchedule) {
-        return (
-          <Streamed key={id} id={id}>
-            <HomeSeasonPhaseBarLive />
-          </Streamed>
-        );
-      }
-      return <SeasonPhaseBar key={id} moment={moment} />;
+      return (
+        <Streamed key={id} id={id}>
+          <HomeSeasonPhaseBarLive />
+        </Streamed>
+      );
     case "calendar":
       return (
         <Streamed key={id} id={id}>
-          <HomeCalendar season={season} enrichSchedule={enrichSchedule} />
+          <HomeCalendar season={season} />
         </Streamed>
       );
     case "bracket":
@@ -441,19 +416,13 @@ function renderModule(
 
 export default async function HomePage() {
   await yieldForStreaming();
-  const season = canonicalSeasonFromStartYear(currentNbaStartYear());
-  // Snapshot only — never await ESPN before the module grid. Thin-schedule
-  // enrichment runs inside streamed moment/calendar modules.
-  const momentSync = getHomeSeasonMomentSync();
-  const enrichSchedule = homeSeasonMomentNeedsLiveEnrichment(momentSync);
-  const phase = homeShellPhase(momentSync);
-  const moment: HomeSeasonMoment = enrichSchedule
-    ? { ...momentSync, phase }
-    : momentSync;
+  // Calendar phase only — never touch game-snapshot.json on the shell path.
+  // Schedule marks / opener copy stream in via Suspense modules.
+  const { season, phase, moment } = getHomeShellBootstrap();
   const layout = homeLayoutForPhase(phase);
   const render = (id: HomeModuleId) => (
     <HomeModuleFrame key={id} id={id}>
-      {renderModule(id, moment, season, enrichSchedule)}
+      {renderModule(id, moment, season)}
     </HomeModuleFrame>
   );
 
