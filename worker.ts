@@ -33,13 +33,16 @@ type CachePolicy = { fresh: number; stale: number };
 // Seconds a cached page is served as-is, then how much longer it may be served
 // while a background render replaces it. HTML is locale-sensitive (cookie +
 // Accept-Language), so cache keys include the resolved locale segment.
-const LIVE_POLICY: CachePolicy = { fresh: 60, stale: 10 * 60 };
+const LIVE_BOARD_POLICY: CachePolicy = { fresh: 60, stale: 10 * 60 };
+/** Game detail flips preview → lab at tip; long stale HTML kept the pre-tip board up. */
+const LIVE_GAME_POLICY: CachePolicy = { fresh: 8, stale: 20 };
 /** Homepage is the coldest path after deploy; fewer re-renders = fewer OOMs. */
 const HOME_POLICY: CachePolicy = { fresh: 5 * 60, stale: 30 * 60 };
 const DAILY_POLICY: CachePolicy = { fresh: 15 * 60, stale: 6 * 60 * 60 };
 const PAGE_CACHE_MAX_BYTES = 5 * 1024 * 1024;
 const UNCACHED_PATH = /^\/(?:api|internal|_next)(?:\/|$)|\.[a-z0-9]+$/i;
-const LIVE_PATH = /^\/(?:scores|dashboard|explore\/games|games\/[^/]+)$/;
+const LIVE_BOARD_PATH = /^\/(?:scores|dashboard|explore\/games)$/;
+const LIVE_GAME_PATH = /^\/games\/[^/]+$/;
 const HOME_PATH = /^\/$/;
 // Query params pages read that are safe to key on. Any other param could change
 // the HTML in ways the key can't see, so those requests skip the cache.
@@ -88,9 +91,11 @@ function pageCacheEntry(request: Request, env: WorkerEnv): PageCacheEntry | null
   if (key.length > 480) return null;
   const policy = HOME_PATH.test(url.pathname)
     ? HOME_POLICY
-    : LIVE_PATH.test(url.pathname)
-      ? LIVE_POLICY
-      : DAILY_POLICY;
+    : LIVE_GAME_PATH.test(url.pathname)
+      ? LIVE_GAME_POLICY
+      : LIVE_BOARD_PATH.test(url.pathname)
+        ? LIVE_BOARD_POLICY
+        : DAILY_POLICY;
   return { key, policy };
 }
 
