@@ -331,7 +331,10 @@ function gameDotValue(
 
 const thBase =
   "py-2 font-semibold text-[12px] uppercase tracking-[0.08em] text-muted-foreground";
-const tdBase = "type-caption py-2 tabular-nums";
+/** Short class — styles in globals.css (.career-td*). */
+const tdBase = "career-td";
+const tdNum = "career-td career-td-num";
+const tdNumEnd = "career-td career-td-num career-td-num-end";
 
 export function PlayerCareerBoard({
   playerId,
@@ -741,20 +744,14 @@ export function PlayerCareerBoard({
                           {row.season}
                         </TextLink>
                       </td>
-                      <td className={cn(tdBase, "px-2 text-right")}>
-                        {row.teamAbbr || "-"}
-                      </td>
-                      <td className={cn(tdBase, "px-2 text-right")}>
-                        {formatNumber(row.gamesPlayed)}
-                      </td>
+                      <td className={tdNum}>{row.teamAbbr || "-"}</td>
+                      <td className={tdNum}>{formatNumber(row.gamesPlayed)}</td>
                       {tableCols.map((col, index) => (
                         <td
                           key={col.id}
-                          className={cn(
-                            tdBase,
-                            "px-2 text-right",
-                            index === tableCols.length - 1 && "pr-4"
-                          )}
+                          className={
+                            index === tableCols.length - 1 ? tdNumEnd : tdNum
+                          }
                         >
                           {formatCell(row, col)}
                         </td>

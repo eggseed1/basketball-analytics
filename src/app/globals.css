@@ -1456,6 +1456,23 @@ html:not([data-surface="glass"]) .color-scheme-switch {
   line-height: 14px;
 }
 
+/* Player career board numeric cells — short HTML class vs repeating Tailwind. */
+.career-td {
+  font-size: 12px;
+  line-height: 14px;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  font-variant-numeric: tabular-nums;
+}
+.career-td-num {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  text-align: right;
+}
+.career-td-num-end {
+  padding-right: 1rem;
+}
+
 /* A px font size does not reset line-height, so 11px notes were inheriting the
    24px body leading. Skip anything that already sets its own leading. */
 :where(:not([class*="leading-"]):is(

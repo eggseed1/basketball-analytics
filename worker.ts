@@ -15,14 +15,19 @@ import {
   isGameHtmlPath,
   type PageHtmlCachePolicy,
 } from "./src/lib/page-html-cache-policy";
+import { decodePageHtmlKv, encodePageHtmlKv } from "./src/lib/page-html-kv-codec";
 
 type RateLimitBinding = {
   limit(options: { key: string }): Promise<{ success: boolean }>;
 };
 
 type PageCacheBinding = {
-  get(key: string, type: "text"): Promise<string | null>;
-  put(key: string, value: string, options: { expirationTtl: number }): Promise<void>;
+  get(key: string, type: "arrayBuffer"): Promise<ArrayBuffer | null>;
+  put(
+    key: string,
+    value: ArrayBuffer | string,
+    options: { expirationTtl: number }
+  ): Promise<void>;
 };
 
 type WorkerEnv = Record<string, unknown> & {
@@ -165,30 +170,22 @@ function applyHtmlCacheHeaders(
   headers.set("x-page-cache", state);
 }
 
-function cachedResponse(
-  raw: string,
+async function cachedResponse(
+  raw: ArrayBuffer,
   entry: PageCacheEntry
-): { response: Response; stale: boolean } | null {
-  const newline = raw.indexOf("\n");
-  if (newline < 0) return null;
-  try {
-    const meta = JSON.parse(raw.slice(0, newline)) as {
-      at: number;
-      headers: Record<string, string>;
-    };
-    const age = Math.max(0, Math.round((Date.now() - meta.at) / 1000));
-    if (age >= entry.policy.fresh + entry.policy.stale) return null;
-    const html = raw.slice(newline + 1);
-    // Drop poisoned loading shells so the next request re-renders.
-    if (isUncacheableHtml(html, entry.pathname)) return null;
-    const stale = age >= entry.policy.fresh;
-    const headers = new Headers(meta.headers);
-    headers.set("age", String(age));
-    applyHtmlCacheHeaders(headers, entry, stale ? "STALE" : "HIT");
-    return { response: new Response(html, { status: 200, headers }), stale };
-  } catch {
-    return null;
-  }
+): Promise<{ response: Response; stale: boolean } | null> {
+  const decoded = await decodePageHtmlKv(raw);
+  if (!decoded) return null;
+  const age = Math.max(0, Math.round((Date.now() - decoded.meta.at) / 1000));
+  if (age >= entry.policy.fresh + entry.policy.stale) return null;
+  const { html } = decoded;
+  // Drop poisoned loading shells so the next request re-renders.
+  if (isUncacheableHtml(html, entry.pathname)) return null;
+  const stale = age >= entry.policy.fresh;
+  const headers = new Headers(decoded.meta.headers);
+  headers.set("age", String(age));
+  applyHtmlCacheHeaders(headers, entry, stale ? "STALE" : "HIT");
+  return { response: new Response(html, { status: 200, headers }), stale };
 }
 
 function isCacheableResponse(response: Response): response is Response & { body: ReadableStream<Uint8Array> } {
@@ -244,8 +241,8 @@ async function storePage(
   }
   const edge = edgeEligibleEntry(entry, html);
   const kvPolicy = edge.eligible && isGameHtmlPath(entry.pathname) ? edge.policy : entry.policy;
-  const meta = JSON.stringify({ at: Date.now(), headers: replayed });
-  await env.PAGE_CACHE!.put(entry.key, `${meta}\n${html}`, {
+  const packed = await encodePageHtmlKv({ at: Date.now(), headers: replayed }, html);
+  await env.PAGE_CACHE!.put(entry.key, packed, {
     expirationTtl: kvPolicy.fresh + kvPolicy.stale,
   });
 
@@ -314,8 +311,8 @@ async function servePage(
   const edgeHit = await matchEdgeCache(entry);
   if (edgeHit) return edgeHit;
 
-  const raw = await env.PAGE_CACHE!.get(entry.key, "text").catch(() => null);
-  const cached = raw ? cachedResponse(raw, entry) : null;
+  const raw = await env.PAGE_CACHE!.get(entry.key, "arrayBuffer").catch(() => null);
+  const cached = raw ? await cachedResponse(raw, entry) : null;
   if (cached) {
     if (cached.stale) {
       ctx.waitUntil(refreshPage(new Request(request), env, ctx, entry).catch(() => undefined));
