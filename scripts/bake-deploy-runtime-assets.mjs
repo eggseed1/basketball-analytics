@@ -67,6 +67,9 @@ run("npx", ["tsx", "scripts/build-explore-players-first-page.ts"], {
   DATA_PROVIDER: "nba",
 });
 
+// Player careers extract — keeps /players off the 9MB season-tables module.
+run("node", ["scripts/build-player-career-bref-snapshot.mjs"]);
+
 const logDir = path.join(ROOT, "public/runtime/player-game-logs", season);
 const shotDir = path.join(ROOT, "public/runtime/player-shots", season);
 const logCount = countJson(logDir);

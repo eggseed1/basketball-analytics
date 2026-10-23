@@ -10,6 +10,7 @@
  * teams in the order played, as the site's readers expect. ESPN ids come from
  * src/data/runtime/nba-espn-player-ids.json, which this script extends.
  */
+import { spawnSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -246,3 +247,15 @@ writeFileSync(
 const rows = Object.values(seasons).reduce((s, x) => s + x.advanced.length, 0);
 const withEspn = Object.values(seasons).reduce((s, x) => s + x.advanced.filter((r) => r.e).length, 0);
 console.log(`season tables: ${Object.keys(seasons).length} seasons, ${rows} player-seasons, ${withEspn} with ESPN ids`);
+
+// Player destinations read careers from a slim extract (not the 9MB peer board).
+{
+  const baked = spawnSync(
+    process.execPath,
+    ["scripts/build-player-career-bref-snapshot.mjs"],
+    { cwd: ROOT, stdio: "inherit" }
+  );
+  if (baked.status !== 0) {
+    console.warn("player-career-bref snapshot bake failed; keeping prior file");
+  }
+}

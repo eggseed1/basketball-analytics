@@ -1073,7 +1073,7 @@ async function loadExploreAllSeasonsBoard(
         "@/data/runtime/player-search-snapshot"
       );
       const { getBundledBrefCareerForPlayer } = await import(
-        "@/data/runtime/bref-advanced-snapshot"
+        "@/data/runtime/player-career-bref-snapshot"
       );
       const q = needle.toLowerCase();
       const hits = getPlayerSearchIndex()

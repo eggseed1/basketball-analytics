@@ -485,20 +485,13 @@ function toPeerSeasonRow(
   } as PlayerSeason;
 }
 
-/**
- * Multi-season career rows from the bundled BRef snapshot (Cloudflare fallback
- * when ESPN athlete career hangs / history disk is empty).
- */
-const careerByEspnIdCache = new Map<string, PlayerSeason[]>();
-const careerByNameCache = new Map<string, PlayerSeason[]>();
-
 type CareerSlimHit = {
   season: string;
   adv: SlimAdvanced;
   pg?: SlimPerGame;
 };
 
-/** One-time index: espnId / normalized name → season hits (avoids O(seasons×players) per request). */
+/** One-time index for comps pool only (explore still owns season-tables). */
 let careerSlimIndex: {
   byEspn: Map<string, CareerSlimHit[]>;
   byName: Map<string, CareerSlimHit[]>;
@@ -533,6 +526,9 @@ function ensureCareerSlimIndex() {
   careerSlimIndex = { byEspn, byName };
   return careerSlimIndex;
 }
+
+/** Player careers live in player-career-bref-snapshot (keeps /players off season-tables). */
+export { getBundledBrefCareerForPlayer } from "./player-career-bref-snapshot";
 
 export type BundledCompPoolRow = {
   playerId: string;
@@ -723,68 +719,6 @@ function positionCode(pos: string | undefined): number | null {
 
 export function compPositionCode(pos: string | undefined): number | null {
   return positionCode(pos);
-}
-
-function hitsToCareerRows(
-  hits: CareerSlimHit[],
-  playerId: string
-): PlayerSeason[] {
-  const bySeason = new Map<string, CareerSlimHit>();
-  for (const hit of hits) {
-    const prev = bySeason.get(hit.season);
-    if (
-      !prev ||
-      hit.adv.gp > prev.adv.gp ||
-      (hit.adv.gp === prev.adv.gp && hit.adv.mp > prev.adv.mp)
-    ) {
-      bySeason.set(hit.season, hit);
-    }
-  }
-  return [...bySeason.entries()]
-    .sort(([a], [b]) => b.localeCompare(a))
-    .map(([, hit]) => {
-      const row = toPeerSeasonRow(hit.adv, hit.pg, hit.season);
-      return { ...row, playerId: playerId || row.playerId };
-    });
-}
-
-export function getBundledBrefCareerForPlayer(options: {
-  playerId?: string | null;
-  playerName?: string | null;
-}): PlayerSeason[] {
-  const wantId = String(options.playerId ?? "").trim();
-  const wantName = options.playerName
-    ? normalizeEspnLookupName(options.playerName)
-    : "";
-  const idNameHint = wantId
-    ? normalizeEspnLookupName(lookupPlayerNameByEspnId(wantId) ?? "")
-    : "";
-  const nameTarget = wantName || idNameHint;
-
-  if (wantId) {
-    const cached = careerByEspnIdCache.get(wantId);
-    if (cached) return cached;
-  } else if (nameTarget) {
-    const cached = careerByNameCache.get(nameTarget);
-    if (cached) return cached;
-  } else {
-    return [];
-  }
-
-  const index = ensureCareerSlimIndex();
-  let hits: CareerSlimHit[] = [];
-  if (wantId) {
-    hits = index.byEspn.get(wantId) ?? [];
-  }
-  if (!hits.length && nameTarget) {
-    hits = index.byName.get(nameTarget) ?? [];
-  }
-
-  const out = hitsToCareerRows(hits, wantId);
-
-  if (wantId) careerByEspnIdCache.set(wantId, out);
-  if (nameTarget) careerByNameCache.set(nameTarget, out);
-  return out;
 }
 
 export function brefAdvancedSnapshotMeta() {

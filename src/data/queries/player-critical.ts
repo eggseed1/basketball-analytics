@@ -20,7 +20,7 @@ import {
   runtimeTimeoutMs,
   slimEdgeProductEnabled,
 } from "@/data/providers/nba/runtime-policy";
-import { getBundledBrefCareerForPlayer } from "@/data/runtime/bref-advanced-snapshot";
+import { getBundledBrefCareerForPlayer } from "@/data/runtime/player-career-bref-snapshot";
 import {
   bundledCurrentRosterIsFresh,
   resolveBundledCurrentTeamId,
