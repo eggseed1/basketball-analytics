@@ -53,6 +53,7 @@ import { parseTipOffMs } from "@/lib/game-countdown";
 import {
   compareGameProgress,
   isFinalStatus,
+  isLiveLikeStatus,
   isPreTipStatus,
 } from "@/lib/game-status";
 
@@ -71,21 +72,33 @@ async function fetchEspnEventBoxScore(
   gameId: string,
   fetchOptions?: { timeoutMs?: number; retries?: number }
 ): Promise<GameBoxScore | null> {
-  const url = `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=${encodeURIComponent(gameId)}`;
-  let summary: EspnSummaryResponse;
-  try {
-    summary = await espnFetchJson<EspnSummaryResponse>(url, {
-      ttlMs: CACHE_TTL_MS.boxScore ?? 1000 * 60 * 5,
-      retries: fetchOptions?.retries ?? 1,
-      // Cloudflare Workers: keep under getGameShellCached's ~7s budget.
-      timeoutMs: fetchOptions?.timeoutMs ?? 2_500,
-    });
-  } catch (error) {
-    const msg = error instanceof Error ? error.message : String(error);
-    // ESPN 404 → invalid / unknown event (semantic miss).
-    if (/\(404\)/.test(msg)) return null;
-    // Network / 5xx — do not classify as not-found at this layer.
-    throw error;
+  // site.web.api is reachable from CF Workers; site.api often 403s there.
+  const urls = [
+    `https://site.web.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=${encodeURIComponent(gameId)}`,
+    `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=${encodeURIComponent(gameId)}`,
+  ];
+  let summary: EspnSummaryResponse | null = null;
+  let lastError: unknown;
+  for (const url of urls) {
+    try {
+      summary = await espnFetchJson<EspnSummaryResponse>(url, {
+        ttlMs: CACHE_TTL_MS.boxScore ?? 1000 * 60 * 5,
+        retries: fetchOptions?.retries ?? 0,
+        // Cloudflare Workers: keep under getGameShellCached's ~7s budget.
+        timeoutMs: fetchOptions?.timeoutMs ?? 2_500,
+      });
+      break;
+    } catch (error) {
+      lastError = error;
+      const msg = error instanceof Error ? error.message : String(error);
+      // ESPN 404 → invalid / unknown event (semantic miss).
+      if (/\(404\)/.test(msg)) return null;
+      // try next host
+    }
+  }
+  if (!summary) {
+    if (lastError) throw lastError;
+    return null;
   }
 
   const endYear = summary.header?.season?.year;
@@ -377,9 +390,10 @@ export async function getGameShell(gameId: string): Promise<GameShell | null> {
         "@/data/providers/nba/espn-cdn-game-client"
       );
       const cdnPromise = fetchEspnCdnGameBoxScore(id, undefined, {
-        // Stay under the shared shell budget; allow a second package if /game is thin.
-        timeoutMs: 3_500,
-        maxUrls: 2,
+        // One package only — two sequential 3.5s attempts exceed the shell budget
+        // and leave RuntimeGameFallback as the document.
+        timeoutMs: 2_500,
+        maxUrls: 1,
       }).then((box) => (box?.game ? acceptShell(shellFromBox(box)) : null));
 
       // Start archive lookup in parallel — same row as /api/games/[id].
@@ -431,8 +445,12 @@ export async function getGameShell(gameId: string): Promise<GameShell | null> {
         if (!fromSnapshot) return withBroadcastFallback(shell);
       }
       if (shell?.hasBoxScore === false && shell === snapshotShell) {
-        // Snapshot won the race — still prefer a CDN box / live status if it lands.
-        const cdnWaitMs = snapshotTipPassed ? 4_000 : 2_500;
+        // Snapshot won — briefly wait for a CDN box, but do not burn the shell
+        // budget on finals/live rows that already have scores.
+        const settled =
+          isFinalStatus(shell.game.status) ||
+          isLiveLikeStatus(shell.game.status);
+        const cdnWaitMs = snapshotTipPassed ? 4_000 : settled ? 800 : 2_500;
         const cdnShell = await Promise.race([
           cdnPromise,
           new Promise<null>((resolve) => setTimeout(() => resolve(null), cdnWaitMs)),
@@ -451,25 +469,19 @@ export async function getGameShell(gameId: string): Promise<GameShell | null> {
 
     if (snapshotShell) return withBroadcastFallback(snapshotShell);
 
-    // site.api.espn.com is routinely 403 from Cloudflare Workers — skip it there
-    // so a CDN miss still leaves time for provider/snapshot within the shell budget.
-    const { isCloudflareWorkersProduction } = await import(
-      "@/data/providers/nba/runtime-policy"
-    );
-    if (!isCloudflareWorkersProduction()) {
-      try {
-        const box = await fetchEspnEventBoxScore(id, {
-          timeoutMs: 2_000,
-          retries: 0,
-        });
-        const shell = box?.game ? acceptShell(shellFromBox(box)) : null;
-        if (shell?.hasBoxScore) {
-          return withBroadcastFallback(withSnapshotFacts(shell, fromSnapshot));
-        }
-        if (shell && !fromSnapshot) return withBroadcastFallback(shell);
-      } catch {
-        // soft-fail to provider
+    // site.web.api works on Workers; site.api is tried second and often 403s on CF.
+    try {
+      const box = await fetchEspnEventBoxScore(id, {
+        timeoutMs: 2_000,
+        retries: 0,
+      });
+      const shell = box?.game ? acceptShell(shellFromBox(box)) : null;
+      if (shell?.hasBoxScore) {
+        return withBroadcastFallback(withSnapshotFacts(shell, fromSnapshot));
       }
+      if (shell && !fromSnapshot) return withBroadcastFallback(shell);
+    } catch {
+      // soft-fail to provider
     }
 
     try {
