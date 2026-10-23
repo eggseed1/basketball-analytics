@@ -16,7 +16,8 @@ export type RuntimeGameSnapshot = {
  * Workers' virtual FS is ephemeral and does not mount OpenNext traced files, so
  * `readFileSync(process.cwd()/...)` silently returns empty and empties Scores /
  * Upcoming / player schedule surfaces. Keep the JSON on the module graph so it
- * is inlined into the Worker script (≈100 KiB gzip).
+ * is inlined into the Worker script (≈100 KiB gzip for current+prior season).
+ * Do not grow this past ~2 seasons without moving older years off the module graph.
  */
 const data = snapshot as RuntimeGameSnapshot;
 const games = Array.isArray(data.games) ? data.games : [];

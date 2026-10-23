@@ -384,6 +384,18 @@ export async function getGameShell(gameId: string): Promise<GameShell | null> {
         const tip = parseTipOffMs(snapshotShell.game.tipOffAt);
         return tip != null && tip <= Date.now();
       })();
+    // Settled snapshot rows already have scores — return them before any CDN
+    // await so a hung package cannot miss the Worker HTML window.
+    if (
+      snapshotShell &&
+      (isFinalStatus(snapshotShell.game.status) ||
+        isLiveLikeStatus(snapshotShell.game.status)) &&
+      ((snapshotShell.game.homeScore ?? 0) > 0 ||
+        (snapshotShell.game.awayScore ?? 0) > 0 ||
+        (snapshotShell.game.period ?? 0) > 0)
+    ) {
+      return withBroadcastFallback(snapshotShell);
+    }
 
     try {
       const { fetchEspnCdnGameBoxScore } = await import(

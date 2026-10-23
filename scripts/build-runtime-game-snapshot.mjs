@@ -5,15 +5,12 @@ const OUT = path.join(process.cwd(), "src/data/runtime/game-snapshot.json");
 const ESPN = "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard";
 const now = new Date();
 const currentStartYear = now.getUTCMonth() >= 6 ? now.getUTCFullYear() : now.getUTCFullYear() - 1;
-// Six league years of schedules for team Games/Splits/Playoffs tabs on CF.
-const seasons = [
-  currentStartYear - 5,
-  currentStartYear - 4,
-  currentStartYear - 3,
-  currentStartYear - 2,
-  currentStartYear - 1,
-  currentStartYear,
-];
+// Keep the Worker-inlined snapshot small (~100KB gzip). Six seasons (~7MB)
+// blew cold game shells past the HTML cliff when the module graph was huge.
+// Older seasons still resolve via archive / ESPN for team history tabs.
+const seasonSpan = Number(process.env.GAME_SNAPSHOT_SEASONS ?? 2);
+const span = Number.isFinite(seasonSpan) && seasonSpan > 0 ? Math.min(6, seasonSpan) : 2;
+const seasons = Array.from({ length: span }, (_, i) => currentStartYear - (span - 1 - i));
 
 function canonicalSeason(startYear) {
   return `${startYear}-${String((startYear + 1) % 100).padStart(2, "0")}`;
