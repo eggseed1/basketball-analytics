@@ -441,7 +441,7 @@ export function PlayerCareerBoard({
       ),
     [metric, rows]
   );
-  const [tableCat, setTableCat] = useState<TableCategory | "all">("profile");
+  const [tableCat, setTableCat] = useState<TableCategory | "all">("all");
   const wash = brandAtmosphereColors(
     resolveTeamBrand(teamKey)?.primary,
     resolveTeamBrand(teamKey)?.secondary
