@@ -23,6 +23,7 @@ import {
   startOfWeekSundayIso,
   upcomingScheduleSeason,
 } from "@/data/providers/nba/scoreboard-client";
+import { defaultScoreboardMonthKey } from "@/data/providers/nba/scoreboard-calendar";
 import {
   canonicalSeasonFromStartYear,
   currentNbaStartYear,
@@ -1006,24 +1007,7 @@ export async function getHomeWeekStripSummaries(
   };
 }
 
-/** Default calendar month for a season (current month if in-season, else next opener). */
-export function defaultScoreboardMonthKey(season?: string): string {
-  const resolved =
-    season ?? canonicalSeasonFromStartYear(currentNbaStartYear());
-  const endYear = espnYearFromCanonicalSeason(resolved);
-  const startYear = endYear - 1;
-  const now = new Date();
-  const current = monthKeyFromDate(now);
-  const [cy, cm] = current.split("-").map(Number);
-  // NBA season roughly Oct (startYear) → June (endYear).
-  const inSeason =
-    (cy === startYear && (cm ?? 0) >= 10) ||
-    (cy === endYear && (cm ?? 0) <= 6);
-  if (inSeason) return current;
-  // Offseason: jump to the next October slate (preseason / opener).
-  if ((cm ?? 0) >= 7) return `${cy}-10`;
-  return `${endYear}-10`;
-}
+export { defaultScoreboardMonthKey };
 
 export async function getScoreboardMonthSummaries(options: {
   monthKey?: string;

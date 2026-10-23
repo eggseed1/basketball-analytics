@@ -11,14 +11,13 @@ import {
   type ScoreboardDayData,
 } from "@/components/sports/scoreboard-day";
 import { withBudget } from "@/data/queries/budget";
-import { getScoreboardDateFeed } from "@/data/queries/scoreboard-feed";
+import { toGameSummary } from "@/data/queries/filter-utils";
 import {
   addDaysIso,
   defaultScoreboardMonthKey,
   startOfWeekSundayIso,
   upcomingScheduleSeason,
-} from "@/data/queries";
-import { toGameSummary } from "@/data/queries/filter-utils";
+} from "@/data/providers/nba/scoreboard-calendar";
 import { canonicalSeasonFromStartYear } from "@/data/providers/historical/season-range";
 import type { Game, GameSummary } from "@/data/types";
 import { isPreTipStatus } from "@/lib/game-status";
@@ -213,6 +212,9 @@ async function gamesForDate(
   if (Math.abs(daysBetween(date, today)) > LIVE_FETCH_WINDOW_DAYS) {
     return { games: summaries(snapshot), stale: false };
   }
+  const { getScoreboardDateFeed } = await import(
+    "@/data/queries/scoreboard-feed"
+  );
   const { value: feed } = await withBudget(getScoreboardDateFeed({ date }), 3500, null);
   const byId = new Map<string, GameSummary>(summaries(snapshot).map((g) => [g.id, g]));
   for (const game of feed?.data ?? []) byId.set(game.id, game);

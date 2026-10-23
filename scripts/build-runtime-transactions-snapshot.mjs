@@ -140,7 +140,16 @@ const payload = {
 
 await fs.mkdir(path.dirname(OUT), { recursive: true });
 await fs.writeFile(OUT, JSON.stringify(payload));
+// Static Assets path — Worker loads via ASSETS, not the isolate module graph.
+const ASSETS_OUT = path.join(
+  ROOT,
+  "public",
+  "runtime",
+  "transactions-snapshot.json"
+);
+await fs.mkdir(path.dirname(ASSETS_OUT), { recursive: true });
+await fs.writeFile(ASSETS_OUT, JSON.stringify(payload));
 const gz = gzipSync(Buffer.from(JSON.stringify(payload))).length;
 console.log(
-  `[transactions-snapshot] wrote ${events.length} events → ${OUT} (gzip ~${gz} bytes)`
+  `[transactions-snapshot] wrote ${events.length} events → ${OUT} + ${ASSETS_OUT} (gzip ~${gz} bytes)`
 );

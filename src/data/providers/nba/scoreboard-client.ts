@@ -15,8 +15,26 @@ import {
   type EspnScheduleEvent,
 } from "@/data/transformers/espn";
 import { LIVE_SCOREBOARD_TTL_MS } from "@/lib/live-refresh-policy";
-import { getRuntimeSnapshotGames } from "@/data/runtime/game-snapshot";
 import { nbaTodayIso } from "@/lib/nba-calendar-date";
+import {
+  addDaysIso,
+  espnMonthParam,
+  monthKeyFromDate,
+  seasonMonthBounds,
+  shiftMonthKey,
+  startOfWeekSundayIso,
+  upcomingScheduleSeason,
+} from "@/data/providers/nba/scoreboard-calendar";
+
+export {
+  addDaysIso,
+  espnMonthParam,
+  monthKeyFromDate,
+  seasonMonthBounds,
+  shiftMonthKey,
+  startOfWeekSundayIso,
+  upcomingScheduleSeason,
+} from "@/data/providers/nba/scoreboard-calendar";
 
 const SITE_API = "https://site.api.espn.com";
 /** Scoreboard months are large payloads — give Vercel more than identity TTLs. */
@@ -29,48 +47,6 @@ const SEASON_MONTH_CONCURRENCY = isVercelRuntime() ? 3 : 4;
 type ScoreboardResponse = {
   events?: EspnScheduleEvent[];
 };
-
-/**
- * Season that owns the next tip-offs — same Jul 1 flip as roster/cap surfaces.
- */
-export function upcomingScheduleSeason(now = new Date()): string {
-  return canonicalSeasonFromStartYear(currentNbaStartYear(now));
-}
-
-/** `2026-06` → `202606` for ESPN scoreboard. */
-export function espnMonthParam(monthKey: string): string {
-  const m = /^(\d{4})-(\d{2})$/.exec(monthKey.trim());
-  if (!m) throw new Error(`Invalid month key "${monthKey}". Use YYYY-MM.`);
-  return `${m[1]}${m[2]}`;
-}
-
-export function monthKeyFromDate(d = new Date()): string {
-  const y = d.getUTCFullYear();
-  const mo = String(d.getUTCMonth() + 1).padStart(2, "0");
-  return `${y}-${mo}`;
-}
-
-/** Shift YYYY-MM by delta months. */
-export function shiftMonthKey(monthKey: string, delta: number): string {
-  const [ys, ms] = monthKey.split("-");
-  const y = Number(ys);
-  const m = Number(ms);
-  const idx = y * 12 + (m - 1) + delta;
-  const ny = Math.floor(idx / 12);
-  const nm = (idx % 12) + 1;
-  return `${ny}-${String(nm).padStart(2, "0")}`;
-}
-
-export function seasonMonthBounds(season: string): {
-  firstMonth: string;
-  lastMonth: string;
-} {
-  const endYear = espnYearFromCanonicalSeason(season);
-  return {
-    firstMonth: `${endYear - 1}-10`,
-    lastMonth: `${endYear}-06`,
-  };
-}
 
 function listSeasonMonthKeys(
   season: string,
@@ -312,7 +288,7 @@ export async function fetchHomeWeekStrip(options: {
 }> {
   const limit = options.limit ?? 10;
   const now = options.now ?? new Date();
-  const snapshot = homeStripFromRuntimeSnapshot({ limit, now });
+  const snapshot = await homeStripFromRuntimeSnapshot({ limit, now });
   if (snapshot.games.length) return snapshot;
 
   // Snapshot miss (unexpected): last-ditch live ESPN months.
@@ -403,10 +379,10 @@ export async function fetchHomeWeekStrip(options: {
 }
 
 /** Bundled schedule snapshot — no upstream (Cloudflare-safe). */
-function homeStripFromRuntimeSnapshot(options: {
+async function homeStripFromRuntimeSnapshot(options: {
   limit: number;
   now: Date;
-}): { mode: "week" | "upcoming"; games: Game[] } {
+}): Promise<{ mode: "week" | "upcoming"; games: Game[] }> {
   const limit = options.limit;
   const now = options.now;
   const season = upcomingScheduleSeason(now);
@@ -414,6 +390,9 @@ function homeStripFromRuntimeSnapshot(options: {
   const weekStart = startOfWeekSunday(now);
   const weekStartIso = toIsoDate(weekStart);
   const weekEndIso = toIsoDate(addDays(weekStart, 6));
+  const { getRuntimeSnapshotGames } = await import(
+    "@/data/runtime/game-snapshot"
+  );
   const pool = getRuntimeSnapshotGames(season);
 
   const weekGames = pool
@@ -459,24 +438,6 @@ function addDays(d: Date, n: number): Date {
 
 function toIsoDate(d: Date): string {
   return d.toISOString().slice(0, 10);
-}
-
-/** Sunday (UTC) of the week containing `d` or an ISO date. */
-export function startOfWeekSundayIso(input: Date | string = new Date()): string {
-  const d =
-    typeof input === "string"
-      ? new Date(`${input.slice(0, 10)}T12:00:00Z`)
-      : new Date(
-          Date.UTC(input.getUTCFullYear(), input.getUTCMonth(), input.getUTCDate())
-        );
-  d.setUTCDate(d.getUTCDate() - d.getUTCDay());
-  return toIsoDate(d);
-}
-
-export function addDaysIso(isoDate: string, n: number): string {
-  const d = new Date(`${isoDate.slice(0, 10)}T12:00:00Z`);
-  d.setUTCDate(d.getUTCDate() + n);
-  return toIsoDate(d);
 }
 
 /** All games (final / live / scheduled) for a Sun–Sat week via ESPN months. */
