@@ -1473,6 +1473,66 @@ html:not([data-surface="glass"]) .color-scheme-switch {
   padding-right: 1rem;
 }
 
+/* Standings conference + team-season boards — short cell classes. */
+.standings-td {
+  font-size: 12px;
+  line-height: 14px;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  font-variant-numeric: tabular-nums;
+}
+.standings-td-num {
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+  text-align: right;
+}
+.standings-td-num-end {
+  padding-left: 0.25rem;
+  padding-right: 0.75rem;
+  text-align: right;
+}
+.standings-td-muted {
+  color: var(--muted-foreground);
+}
+.standings-td-rank {
+  padding-left: 0.75rem;
+  padding-right: 0.25rem;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1rem;
+  color: var(--muted-foreground);
+}
+
+.team-season-td {
+  padding: 0.5rem;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.team-season-td-sticky {
+  position: sticky;
+  left: 0;
+  z-index: 10;
+  background: var(--card);
+}
+.team-season-td-num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Team overview league-context strip dots (was ~112-char Tailwind × 200). */
+.team-league-dot {
+  position: absolute;
+  top: 50%;
+  width: 0.625rem;
+  height: 0.625rem;
+  transform: translate(-50%, -50%);
+  border-radius: 9999px;
+  background: color-mix(in oklab, var(--foreground) 25%, transparent);
+}
+.team-league-dot:hover {
+  background: color-mix(in oklab, var(--foreground) 60%, transparent);
+}
+
 /* A px font size does not reset line-height, so 11px notes were inheriting the
    24px body leading. Skip anything that already sets its own leading. */
 :where(:not([class*="leading-"]):is(

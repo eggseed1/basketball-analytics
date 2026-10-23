@@ -176,7 +176,8 @@ export function TeamSeasonTable({ teams }: { teams: TeamSeasonStats[] }) {
                       return (
                         <TableCell
                           key={col.key}
-                          className="sticky left-0 z-10 bg-card"
+                          bare
+                          className="team-season-td team-season-td-sticky"
                         >
                           <TeamIdentity
                             teamKey={row.teamId}
@@ -206,7 +207,8 @@ export function TeamSeasonTable({ teams }: { teams: TeamSeasonStats[] }) {
                     return (
                       <TableCell
                         key={col.key}
-                        className={cn("text-right tabular-nums", tone)}
+                        bare
+                        className={cn("team-season-td team-season-td-num", tone)}
                       >
                         {formatCell(row, col.key)}
                       </TableCell>

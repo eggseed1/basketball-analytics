@@ -180,7 +180,7 @@ export function LeagueStrips({
                     data-hover-point
                     data-tip={p.abbr}
                     data-tip-sub={formatStripValue(s.format, p.value)}
-                    className="absolute top-1/2 size-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-foreground/25 hover:bg-foreground/60"
+                    className="team-league-dot"
                     style={{ left: pos(p.value), "--i": i } as CSSProperties}
                   />
                 ))}

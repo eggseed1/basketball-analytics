@@ -9,7 +9,11 @@ import { cn } from "@/lib/utils";
 
 const thBase =
   "py-2 font-semibold text-[12px] uppercase tracking-[0.08em] text-muted-foreground";
-const tdBase = "type-caption py-2 tabular-nums";
+/** Short classes — styles in globals.css (.standings-td*). */
+const tdNum = "standings-td standings-td-num";
+const tdNumMuted = "standings-td standings-td-num standings-td-muted";
+const tdNumEnd = "standings-td standings-td-num standings-td-num-end";
+const tdRank = "standings-td standings-td-rank";
 
 export function StandingsConferenceTable({
   title,
@@ -98,14 +102,7 @@ export function StandingsConferenceTable({
                       "border-b-2 border-dashed border-b-foreground/35"
                   )}
                 >
-                  <td
-                    className={cn(
-                      tdBase,
-                      "pl-3 pr-1 text-[12px] font-bold leading-4 text-muted-foreground"
-                    )}
-                  >
-                    {row.rank}
-                  </td>
+                  <td className={tdRank}>{row.rank}</td>
                   <td className="min-w-[4.5rem] py-2 pl-2 pr-2 sm:min-w-[11.5rem]">
                     <TeamIdentity
                       teamKey={row.teamId}
@@ -144,27 +141,20 @@ export function StandingsConferenceTable({
                       )}
                     </TeamIdentity>
                   </td>
-                  <td className={cn(tdBase, "px-1 text-right")}>{row.wins}</td>
-                  <td className={cn(tdBase, "px-1 text-right")}>{row.losses}</td>
-                  <td className={cn(tdBase, "px-1 text-right")}>
-                    {formatNumber(row.winPct, 3)}
-                  </td>
+                  <td className={tdNum}>{row.wins}</td>
+                  <td className={tdNum}>{row.losses}</td>
+                  <td className={tdNum}>{formatNumber(row.winPct, 3)}</td>
                   {!compact ? (
                     <>
-                      <td
-                        className={cn(
-                          tdBase,
-                          "px-1 text-right text-muted-foreground"
-                        )}
-                      >
+                      <td className={tdNumMuted}>
                         {row.gamesBehind <= 0
                           ? "-"
                           : formatNumber(row.gamesBehind, 1)}
                       </td>
                       <td
                         className={cn(
-                          tdBase,
-                          "px-1 text-right font-medium",
+                          tdNum,
+                          "font-medium",
                           row.differential > 0
                             ? "text-delta-up"
                             : row.differential < 0
@@ -175,26 +165,17 @@ export function StandingsConferenceTable({
                         {row.differential > 0 ? "+" : ""}
                         {formatNumber(row.differential, 1)}
                       </td>
-                      <td className={cn(tdBase, "px-1 text-right")}>
-                        {formatNumber(row.ppg, 1)}
-                      </td>
-                      <td
-                        className={cn(
-                          tdBase,
-                          "px-1 text-right text-muted-foreground"
-                        )}
-                      >
+                      <td className={tdNum}>{formatNumber(row.ppg, 1)}</td>
+                      <td className={tdNumMuted}>
                         {formatNumber(row.oppPpg, 1)}
                       </td>
-                      <td className={cn(tdBase, "pl-1 pr-3 text-right")}>
-                        {row.streak}
-                      </td>
+                      <td className={tdNumEnd}>{row.streak}</td>
                     </>
                   ) : (
                     <td
                       className={cn(
-                        tdBase,
-                        "pl-1 pr-3 text-right font-medium",
+                        tdNumEnd,
+                        "font-medium",
                         row.differential > 0
                           ? "text-delta-up"
                           : row.differential < 0
