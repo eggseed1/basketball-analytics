@@ -309,12 +309,21 @@ function withSnapshotFacts(shell: GameShell, snap: Game | null): GameShell {
  */
 async function withBroadcastFallback(shell: GameShell): Promise<GameShell> {
   if (shell.game.broadcasts?.length) return shell;
+  // Finished games do not need TV windows on first paint — getHistoricalGame can
+  // take ~10s on Workers and was wiping settled snapshot shells past the HTML cliff.
+  if (isFinalStatus(shell.game.status)) return shell;
+
+  const { withBudget } = await import("@/data/queries/budget");
   try {
-    const scheduled = await getHistoricalGame(shell.game.id);
-    if (scheduled?.broadcasts?.length) {
+    const scheduled = await withBudget(
+      getHistoricalGame(shell.game.id),
+      600,
+      null
+    );
+    if (scheduled.value?.broadcasts?.length) {
       return {
         ...shell,
-        game: { ...shell.game, broadcasts: scheduled.broadcasts },
+        game: { ...shell.game, broadcasts: scheduled.value.broadcasts },
       };
     }
   } catch {
@@ -324,8 +333,12 @@ async function withBroadcastFallback(shell: GameShell): Promise<GameShell> {
   if (date) {
     try {
       const { getScoreboardDateFeed } = await import("./scoreboard-feed");
-      const feed = await getScoreboardDateFeed({ date });
-      const row = feed.data.find((g) => g.id === shell.game.id);
+      const feed = await withBudget(
+        getScoreboardDateFeed({ date }),
+        600,
+        null
+      );
+      const row = feed.value?.data.find((g) => g.id === shell.game.id);
       if (row?.broadcasts?.length) {
         return {
           ...shell,
