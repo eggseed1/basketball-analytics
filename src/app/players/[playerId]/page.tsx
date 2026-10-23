@@ -513,53 +513,56 @@ export default async function PlayerPage({
   // Slim edge (explicit SLIM_EDGE_PRODUCT=1 only) — paid Workers run the full page.
   const slimWorker = slimEdgeProductEnabled();
 
-  // Paint batch: identity-adjacent boards + percentile hero only. Career,
-  // contract, and on/off season list used to share this Promise.all and
-  // stacked cold MISS TTFB; those stream in via Suspense / sync season floor.
-  const [
-    accoladesNode,
-    upcomingScheduleNode,
-    frontOfficeNode,
-    percentileHeroNode,
-  ] = await Promise.all([
-    slimWorker
-      ? Promise.resolve(null)
-      : PlayerAccoladesIsland({
-          playerId,
-          playerName: displayName === playerId ? null : displayName,
-          teamKey,
-          historicalBrand,
-          honor,
-        }),
-    !slimWorker && scheduleTeamKey
-      ? PlayerUpcomingGamesFromSnapshot({ scheduleTeamKey })
-      : Promise.resolve(null),
-    slimWorker
-      ? Promise.resolve(null)
-      : PlayerArrivalIsland({
-          playerId,
-          espnId: identity?.espnId,
-          nbaId: identity?.nbaId,
-          playerName: displayName,
-          teamKey,
-          historicalBrand,
-          honor,
-        }),
-    !notYetPlayed
-      ? PlayerPercentileIsland({
-          playerId,
-          displayName,
-          season,
-          career,
-          seasonOptions,
-          seasonTeams,
-          identityTeamKey: teamKey,
-          nbaId: identity?.nbaId,
-          espnId: identity?.espnId,
-          honor,
-        })
-      : Promise.resolve(null),
-  ]);
+  // Paint critical: percentile hero only (LCP). Accolades / arrival / upcoming
+  // used to share this await and pulled multi-MB transaction + game snapshots
+  // onto cold MISS TTFB; they stream into identity slots via Suspense.
+  const percentileHeroNode = !notYetPlayed
+    ? await PlayerPercentileIsland({
+        playerId,
+        displayName,
+        season,
+        career,
+        seasonOptions,
+        seasonTeams,
+        identityTeamKey: teamKey,
+        nbaId: identity?.nbaId,
+        espnId: identity?.espnId,
+        honor,
+      })
+    : null;
+
+  const accoladesNode = slimWorker ? null : (
+    <Suspense fallback={null}>
+      <PlayerAccoladesIsland
+        playerId={playerId}
+        playerName={displayName === playerId ? null : displayName}
+        teamKey={teamKey}
+        historicalBrand={historicalBrand}
+        honor={honor}
+      />
+    </Suspense>
+  );
+
+  const upcomingScheduleNode =
+    !slimWorker && scheduleTeamKey ? (
+      <Suspense fallback={null}>
+        <PlayerUpcomingGamesFromSnapshot scheduleTeamKey={scheduleTeamKey} />
+      </Suspense>
+    ) : null;
+
+  const frontOfficeNode = slimWorker ? null : (
+    <Suspense fallback={null}>
+      <PlayerArrivalIsland
+        playerId={playerId}
+        espnId={identity?.espnId}
+        nbaId={identity?.nbaId}
+        playerName={displayName}
+        teamKey={teamKey}
+        historicalBrand={historicalBrand}
+        honor={honor}
+      />
+    </Suspense>
+  );
 
   const caps = playerPageCapabilities({
     selectedSeason: season,

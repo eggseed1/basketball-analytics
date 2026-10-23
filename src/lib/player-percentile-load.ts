@@ -40,10 +40,14 @@ export type PercentileLoadMode = "fast" | "full";
 /**
  * Hero-path enrich: DRBL + bundled BRef/DARKO/RAPTOR only — no stats.nba YoY.
  * Stats / Career islands still run the full shared enricher.
+ *
+ * Fast SSR can pass `focusSeasons` (viewed + prior) so cold MISS does not
+ * fan out DRBL/hustle across a long career; client `full` upgrade fills the rest.
  */
 async function enrichCareerForFastHero(
   playerId: string,
-  career: PlayerSeason[]
+  career: PlayerSeason[],
+  opts?: { focusSeasons?: string[]; skipHustle?: boolean }
 ): Promise<PlayerSeason[]> {
   const { withBudget } = await import("@/data/queries/budget");
   const {
@@ -57,31 +61,44 @@ async function enrichCareerForFastHero(
     "@/data/providers/nba/runtime-policy"
   );
 
+  const focus = opts?.focusSeasons?.length
+    ? new Set(opts.focusSeasons)
+    : null;
+  const target = focus
+    ? career.filter((row) => focus.has(row.season))
+    : career;
+  if (!target.length) return career;
+
   // Bundled DRBL / hustle are local lookups required for Impact + Hustle tabs
   // on the cutoffHero path (peers=[]). Soft budgets race them and left Hustle
   // empty ("No rankings in this category…") even when the overlay was warm.
   const impactBudget = preferBundledProductDataOnEdge() ? 1_200 : 1_500;
-  const bundledImpact = attachBundledBrefDarkoRaptor(playerId, career).catch(
-    () => career
+  const bundledImpact = attachBundledBrefDarkoRaptor(playerId, target).catch(
+    () => target
   );
 
   const [withDrbl, withImpact, withHustle] = await Promise.all([
-    attachDrblToPlayerSeasons(playerId, career).catch(() => career),
+    attachDrblToPlayerSeasons(playerId, target).catch(() => target),
     preferBundledProductDataOnEdge()
       ? bundledImpact
       : bundledImpact.then((fallback) =>
           withBudget(
-            attachBrefDarkoRaptorToPlayerSeasons(playerId, career).catch(
+            attachBrefDarkoRaptorToPlayerSeasons(playerId, target).catch(
               () => fallback
             ),
             impactBudget,
             fallback
           ).then((r) => r.value)
         ),
-    // Bundled-first fetch returns immediately; never soft-budget this on hero.
-    attachHustleToPlayerSeasons(playerId, career).catch(() => career),
+    opts?.skipHustle
+      ? Promise.resolve(target)
+      : // Bundled-first fetch returns immediately; never soft-budget this on hero.
+        attachHustleToPlayerSeasons(playerId, target).catch(() => target),
   ]);
-  return career.map((row, index) => {
+
+  const byKey = new Map<string, PlayerSeason>();
+  for (let index = 0; index < target.length; index++) {
+    const row = target[index]!;
     let next = row;
     if (withDrbl[index]) next = mergeOverlaySeasonFields(next, withDrbl[index]!);
     if (withImpact[index]) {
@@ -90,7 +107,12 @@ async function enrichCareerForFastHero(
     if (withHustle[index]) {
       next = mergeOverlaySeasonFields(next, withHustle[index]!);
     }
-    return next;
+    byKey.set(`${row.season}|${row.teamId ?? ""}|${row.playerId}`, next);
+  }
+
+  return career.map((row) => {
+    const key = `${row.season}|${row.teamId ?? ""}|${row.playerId}`;
+    return byKey.get(key) ?? row;
   });
 }
 
@@ -323,7 +345,13 @@ const loadPlayerPercentileMetricsCached = cache(async function loadPlayerPercent
 
   const enrichCareer =
     mode === "fast" || preferBundled
-      ? enrichCareerForFastHero(playerId, career).catch(() => career)
+      ? enrichCareerForFastHero(playerId, career, {
+          // Fast SSR: only the viewed (+ prior) seasons need Impact chips.
+          // Long careers otherwise fan DRBL/hustle across 6–8 seasons on MISS.
+          focusSeasons:
+            mode === "fast" ? [statsSeason, priorSeason] : undefined,
+          skipHustle: mode === "fast",
+        }).catch(() => career)
       : enrichPlayerCareerAdvancedCached(playerId, career).catch(() => career);
 
   const loadPeers = async (
