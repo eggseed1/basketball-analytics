@@ -56,12 +56,13 @@ export const getPlayerCached = cache(async (playerId: string) => {
   // Cloudflare: serve deploy-baked vitals instead of live ESPN / stats.nba /
   // draft-history on the player shell (those fetches trip Error 1102).
   if (preferBundledProductDataOnEdge()) {
-    const { getBundledPlayerBio } = await import(
+    const { ensurePlayerBio, getBundledPlayerBio } = await import(
       "@/data/runtime/player-bio-snapshot"
     );
     const identity = await resolvePlayerIdentityCached(playerId).catch(
       () => null
     );
+    await ensurePlayerBio();
     const bundled = getBundledPlayerBio(playerId, [
       identity?.nbaId,
       identity?.espnId,

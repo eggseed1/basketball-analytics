@@ -650,6 +650,8 @@ let bundledCompPool: BundledCompPoolRow[] | null = null;
  */
 export async function getBundledCompPool(): Promise<BundledCompPoolRow[]> {
   if (bundledCompPool) return bundledCompPool;
+  const { ensurePlayerBio } = await import("./player-bio-snapshot");
+  await ensurePlayerBio();
   const index = await ensureCareerSlimIndex();
   const idByName = new Map<string, string>();
   for (const [nameKey, hits] of index.byName) {

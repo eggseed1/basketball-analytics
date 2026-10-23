@@ -235,6 +235,7 @@ jobs:
             public/runtime/sentiment-history \
             data/movement-center/v1/snapshot.json \
             src/data/runtime/movement-snapshot.json \
+            public/runtime/movement-snapshot.json \
             data/transactions/espn-site-v2/v1 \
             data/transactions/nba-player-movement/v1 \
             data/transactions/espn-draft/v1 \
@@ -256,6 +257,7 @@ jobs:
             data/draft-picks/spotrac/v1 \
             src/data/runtime/future-picks-snapshot.json \
             src/data/runtime/player-bio-snapshot.json \
+            public/runtime/player-bio-snapshot.json \
             src/data/runtime/draft-year-snapshot.json \
             src/data/franchises/verified-records.json \
             data/impact/player-id-aliases.json \
