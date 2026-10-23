@@ -218,11 +218,20 @@ export type HomeAnalytics = {
 
 const HOME_CACHE_TTL_MS = 1000 * 60 * 5;
 /** Bump when leader team identity / companion-stat contract changes. */
-const HOME_CACHE_VERSION = 19;
+const HOME_CACHE_VERSION = 20;
 const ESPN_SEASONS_BUDGET_MS = 2500;
 const DRBL_BUDGET_MS = 2000;
 /** In-flight dedupe so concurrent Suspense islands share one load. */
 let homeInflight: Promise<HomeAnalytics> | null = null;
+
+function boardHasEfficiencyRates(rows: readonly PlayerSeason[]): boolean {
+  return rows.some(
+    (row) =>
+      (row.gamesPlayed ?? 0) > 0 &&
+      row.trueShootingPct != null &&
+      row.trueShootingPct > 0
+  );
+}
 
 function withTimeout<T>(
   promise: Promise<T>,
@@ -368,6 +377,18 @@ async function loadHomeAnalytics(): Promise<HomeAnalytics> {
         season = prior;
         seasons = priorRows;
       }
+    }
+  }
+
+  // FULL_EDGE ESPN soft-timeouts often return [] while season-tables already
+  // has opener-week TS%/USG. Prefer that bake over blank home chips.
+  if (!boardHasEfficiencyRates(seasons)) {
+    const { getBundledBrefPeerBoard } = await import(
+      "@/data/runtime/bref-advanced-snapshot"
+    );
+    const bundled = await getBundledBrefPeerBoard(season);
+    if (boardHasEfficiencyRates(bundled)) {
+      seasons = bundled;
     }
   }
 
