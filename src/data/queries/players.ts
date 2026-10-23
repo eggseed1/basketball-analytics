@@ -1087,7 +1087,7 @@ async function loadExploreAllSeasonsBoard(
 
       for (const hit of hits) {
         if (seen.has(hit.id) || seenNames.has(hit.nameLower)) continue;
-        const career = getBundledBrefCareerForPlayer({
+        const career = await getBundledBrefCareerForPlayer({
           playerId: hit.id,
           playerName: hit.name,
         });

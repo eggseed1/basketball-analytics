@@ -275,17 +275,18 @@ function mergeCareerSeasonFields(
   return merged as unknown as PlayerSeason;
 }
 
-function bundledCareerRows(
+async function bundledCareerRows(
   routePlayerId: string,
   identity: { espnId?: string | null; displayName?: string | null } | null
-): PlayerSeason[] {
+): Promise<PlayerSeason[]> {
   // Name-shaped search ids (`bref:michael jordan`) must look up by name —
   // the BRef bundle is keyed by ESPN id or normalized player name, not bref:…
   const brefNameHint = displayNameFromBrefRouteId(routePlayerId);
-  return getBundledBrefCareerForPlayer({
+  const rows = await getBundledBrefCareerForPlayer({
     playerId: identity?.espnId ?? routePlayerId,
     playerName: identity?.displayName ?? brefNameHint,
-  }).map((row) => ({ ...row, playerId: routePlayerId }));
+  });
+  return rows.map((row) => ({ ...row, playerId: routePlayerId }));
 }
 
 /**
@@ -570,7 +571,7 @@ async function loadCriticalCareerSeasons(
       if (history.length > 0) {
         return finalize(history, null);
       }
-      const fromBundle = bundledCareerRows(playerId, identity);
+      const fromBundle = await bundledCareerRows(playerId, identity);
       if (fromBundle.length > 0) {
         let rows = fromBundle;
         try {
@@ -596,7 +597,7 @@ async function loadCriticalCareerSeasons(
     // full careers. Racing ESPN anyway (even with a short budget) leaves the
     // uncancellable fetch burning isolate CPU and made season switches feel
     // multi-second — skip live when the bundle already covers the career.
-    const fromBundle = bundledCareerRows(playerId, identity);
+    const fromBundle = await bundledCareerRows(playerId, identity);
     const base = unionCareerBySeason(history, fromBundle);
     if (preferBundled && base.length > 0) {
       // Bundle window truncates pre-1997 legends — try full BRef page when
@@ -640,7 +641,7 @@ async function loadCriticalCareerSeasons(
   }
 
   const live = await loadLive();
-  const fromBundle = bundledCareerRows(playerId, identity);
+  const fromBundle = await bundledCareerRows(playerId, identity);
   const merged = unionCareerBySeason(
     live.rows,
     unionCareerBySeason(history, fromBundle)
