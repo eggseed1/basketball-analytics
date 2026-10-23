@@ -21,17 +21,17 @@ async function scoringIndex(): Promise<(id: string) => { ppg: number; season: st
   const { getBundledBrefPeerBoard } = await import("@/data/runtime/bref-advanced-snapshot");
   const season = canonicalSeasonFromStartYear(currentNbaStartYear());
   const prior = priorSeasonForStats(season);
-  const index = (s: string) => {
+  const index = async (s: string) => {
     const map = new Map<string, { ppg: number; season: string; games: number }>();
-    for (const row of getBundledBrefPeerBoard(s)) {
+    for (const row of await getBundledBrefPeerBoard(s)) {
       if (row.gamesPlayed > 0) {
         map.set(row.playerId, { ppg: row.points / row.gamesPlayed, season: s, games: row.gamesPlayed });
       }
     }
     return map;
   };
-  const current = index(season);
-  const previous = prior !== season ? index(prior) : new Map();
+  const current = await index(season);
+  const previous = prior !== season ? await index(prior) : new Map();
   return (id) => {
     const now = current.get(id);
     if (now && now.games >= MIN_GAMES) return now;

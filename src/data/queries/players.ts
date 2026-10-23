@@ -446,7 +446,7 @@ async function loadEspnTeamRoster(
       const { getBundledBrefPeerBoard } = await import(
         "@/data/runtime/bref-advanced-snapshot"
       );
-      const bundled = getBundledBrefPeerBoard(season);
+      const bundled = await getBundledBrefPeerBoard(season);
       if (bundled.length < 50) return null;
       let rows = await overlayImpactRatings(bundled, season);
       if (isDrblSeason(season)) {
@@ -994,16 +994,19 @@ export async function resolveExploreBoardSeason(
       getBundledBrefAdvancedRowCount,
       brefAdvancedSnapshotMeta,
     } = await import("@/data/runtime/bref-advanced-snapshot");
-    const ready = (season: string) =>
-      isBundledPeerBoardReady(season, getBundledBrefAdvancedRowCount(season));
-    if (preferredKey && ready(preferredKey)) return preferredKey;
+    const ready = async (season: string) =>
+      isBundledPeerBoardReady(
+        season,
+        await getBundledBrefAdvancedRowCount(season)
+      );
+    if (preferredKey && (await ready(preferredKey))) return preferredKey;
     const prior = shiftCanonicalSeason(preferredKey, -1);
-    if (ready(prior)) return prior;
-    const seasons = [...brefAdvancedSnapshotMeta().seasons].sort((a, b) =>
-      b.localeCompare(a)
+    if (await ready(prior)) return prior;
+    const seasons = [...(await brefAdvancedSnapshotMeta()).seasons].sort(
+      (a, b) => b.localeCompare(a)
     );
     for (const season of seasons) {
-      if (ready(season)) return season;
+      if (await ready(season)) return season;
     }
   } catch {
     /* keep preferred */
@@ -1022,9 +1025,19 @@ export async function listExploreBoardReadySeasons(): Promise<string[]> {
       getBundledBrefAdvancedRowCount,
     } = await import("@/data/runtime/bref-advanced-snapshot");
     // Count slim advanced rows — never materialize full peer boards here.
-    return listBundledBrefSeasons().filter((season) =>
-      isBundledPeerBoardReady(season, getBundledBrefAdvancedRowCount(season))
-    );
+    const seasons = await listBundledBrefSeasons();
+    const ready: string[] = [];
+    for (const season of seasons) {
+      if (
+        isBundledPeerBoardReady(
+          season,
+          await getBundledBrefAdvancedRowCount(season)
+        )
+      ) {
+        ready.push(season);
+      }
+    }
+    return ready;
   } catch {
     return [];
   }
@@ -1268,7 +1281,7 @@ export async function getFilteredPlayerSeasonsDetailed(
       const { getBundledBrefPeerBoard } = await import(
         "@/data/runtime/bref-advanced-snapshot"
       );
-      const bundled = getBundledBrefPeerBoard(filters.season);
+      const bundled = await getBundledBrefPeerBoard(filters.season);
       const { isBundledPeerBoardReady } = await import(
         "@/lib/player-board-season"
       );
@@ -1372,7 +1385,7 @@ export async function getFilteredPlayerSeasonsDetailed(
       const { getBundledBrefPeerBoard } = await import(
         "@/data/runtime/bref-advanced-snapshot"
       );
-      const bundled = getBundledBrefPeerBoard(filters.season);
+      const bundled = await getBundledBrefPeerBoard(filters.season);
       if (bundled.length) {
         seasons = bundled;
       }
@@ -1425,7 +1438,7 @@ export async function getFilteredPlayerSeasonsDetailed(
       const { getBundledBrefPeerBoard } = await import(
         "@/data/runtime/bref-advanced-snapshot"
       );
-      const bundled = getBundledBrefPeerBoard(filters.season);
+      const bundled = await getBundledBrefPeerBoard(filters.season);
       if (bundled.length) {
         seasons = bundled;
         error = null;
@@ -1859,12 +1872,13 @@ export async function attachBundledBrefDarkoRaptor(
   } = await import("@/data/runtime/impact-overlay-snapshot");
   const nbaId = await resolveNbaIdForDrbl(playerId).catch(() => null);
 
-  return rows.map((row) => {
+  const out: PlayerSeason[] = [];
+  for (const row of rows) {
     let next = row;
     const present = (v: number | null | undefined) =>
       typeof v === "number" && Number.isFinite(v) && v !== 0;
     if (!(present(row.per) || present(row.winShares) || present(row.vorp))) {
-      const bref = findBundledBrefPlayer(
+      const bref = await findBundledBrefPlayer(
         row.season,
         row.playerName,
         row.teamAbbreviation
@@ -1926,8 +1940,9 @@ export async function attachBundledBrefDarkoRaptor(
         winsAdded: raptor.winsAdded ?? next.winsAdded,
       };
     }
-    return next;
-  });
+    out.push(next);
+  }
+  return out;
 }
 
 /**

@@ -45,7 +45,7 @@ export async function PlayerRoleIsland({
     const { getBundledBrefPeerBoard } = await import(
       "@/data/runtime/bref-advanced-snapshot"
     );
-    peerBoard = getBundledBrefPeerBoard(statsSeason);
+    peerBoard = await getBundledBrefPeerBoard(statsSeason);
     if (row.usagePct == null || !Number.isFinite(row.usagePct)) {
       const ids = new Set(
         [playerId, nbaId, espnId]

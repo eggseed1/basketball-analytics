@@ -212,7 +212,7 @@ export async function loadBundledPeerBoard(
     overlayHustleRatingsForPeers,
   } = await import("@/data/queries/players");
   const { isBundledPeerBoardReady } = await import("@/lib/player-board-season");
-  const bundled = getBundledBrefPeerBoard(peerSeason);
+  const bundled = await getBundledBrefPeerBoard(peerSeason);
   if (!isBundledPeerBoardReady(peerSeason, bundled.length)) return null;
   const withImpact = await overlayImpactRatingsForPeers(bundled, peerSeason);
   const withDrbl = await overlayDrblRatingsForPeers(withImpact, peerSeason);
@@ -325,7 +325,7 @@ const loadPlayerPercentileMetricsCached = cache(async function loadPlayerPercent
         "@/data/runtime/bref-advanced-snapshot"
       );
       historicalCompSeasons = pickSpreadSeasons(
-        listBundledBrefSeasons(),
+        await listBundledBrefSeasons(),
         preferBundled
           ? EDGE_HISTORICAL_COMP_SEASONS
           : MAX_HISTORICAL_COMP_SEASONS,

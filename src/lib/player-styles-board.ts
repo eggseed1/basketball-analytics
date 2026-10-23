@@ -58,7 +58,7 @@ function collapsePrimaryRows(rows: PlayerSeason[]): PlayerSeason[] {
 
 export const getPlayerStylesDirectory = cache(
   async (season: string): Promise<StyleDirectoryGroup[]> => {
-    const board = getBundledBrefPeerBoard(season);
+    const board = await getBundledBrefPeerBoard(season);
     const primaries = collapsePrimaryRows(board);
     const buckets = new Map<
       Exclude<PlayerRoleId, "unclear">,

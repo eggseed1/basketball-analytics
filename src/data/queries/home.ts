@@ -294,13 +294,13 @@ async function loadHomeAnalytics(): Promise<HomeAnalytics> {
     const { getBundledBrefPeerBoard } = await import(
       "@/data/runtime/bref-advanced-snapshot"
     );
-    seasons = getBundledBrefPeerBoard(initialSeason);
+    seasons = await getBundledBrefPeerBoard(initialSeason);
     if (
       seasons.length === 0 ||
       shouldUsePriorSeasonBoardStats(calendarSeason, seasons)
     ) {
       const prior = priorSeasonForStats(calendarSeason);
-      const priorRows = getBundledBrefPeerBoard(prior);
+      const priorRows = await getBundledBrefPeerBoard(prior);
       if (priorRows.length > 0) {
         season = prior;
         seasons = priorRows;

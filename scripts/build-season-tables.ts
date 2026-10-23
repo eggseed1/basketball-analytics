@@ -20,6 +20,10 @@ import { listedPositionNumber, seasonMetrics, type Stint, type StintMetrics, typ
 const ROOT = process.cwd();
 const CACHE = (process.env.DRBL_SEASON_TOTALS_DIR ?? "~/.cache/drbl-season-totals/v1").replace(/^~/, os.homedir());
 const OUT = path.join(ROOT, "src/data/runtime/season-tables-snapshot.json");
+const OUT_PUBLIC = path.join(
+  ROOT,
+  "public/runtime/season-tables-snapshot.json"
+);
 const IDS = path.join(ROOT, "src/data/runtime/nba-espn-player-ids.json");
 type SeasonFile = {
   season: string;
@@ -236,17 +240,23 @@ for (const data of seasonFiles) {
   seasons[data.season] = { advanced, perGame };
 }
 
-writeFileSync(
-  OUT,
-  JSON.stringify({ version: 1, generatedAt: new Date().toISOString(), source: "stats.nba.com", seasons }),
-);
+const body = JSON.stringify({
+  version: 1,
+  generatedAt: new Date().toISOString(),
+  source: "stats.nba.com",
+  seasons,
+});
+writeFileSync(OUT, body);
+writeFileSync(OUT_PUBLIC, body);
 writeFileSync(
   IDS,
   `${JSON.stringify({ note: "NBA person id to ESPN athlete id", ids: Object.fromEntries(Object.entries(ids).sort(([a], [b]) => Number(a) - Number(b))) }, null, 0)}\n`,
 );
 const rows = Object.values(seasons).reduce((s, x) => s + x.advanced.length, 0);
 const withEspn = Object.values(seasons).reduce((s, x) => s + x.advanced.filter((r) => r.e).length, 0);
-console.log(`season tables: ${Object.keys(seasons).length} seasons, ${rows} player-seasons, ${withEspn} with ESPN ids`);
+console.log(
+  `season tables: ${Object.keys(seasons).length} seasons, ${rows} player-seasons, ${withEspn} with ESPN ids → ${OUT_PUBLIC}`
+);
 
 // Player destinations read careers from a slim extract (not the 9MB peer board).
 {
