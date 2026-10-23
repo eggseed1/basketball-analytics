@@ -28,10 +28,11 @@ function loadNodeArchiveGames(): Game[] | null {
     if (typeof (globalThis as { EdgeRuntime?: string }).EdgeRuntime === "string") {
       return null;
     }
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const fs = require("node:fs") as typeof import("node:fs");
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const path = require("node:path") as typeof import("node:path");
+    // Keep `node:fs` off the OpenNext/webpack graph (UnhandledSchemeError).
+    // eslint-disable-next-line no-eval
+    const req = eval("require") as NodeRequire;
+    const fs = req("node:fs") as typeof import("node:fs");
+    const path = req("node:path") as typeof import("node:path");
     const file = path.join(
       process.cwd(),
       "src/data/runtime/game-snapshot-full.json"

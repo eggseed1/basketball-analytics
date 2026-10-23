@@ -3,9 +3,6 @@
  * Current+prior stay inlined in game-snapshot.json; prior years ship as
  * Static Assets under /runtime/game-seasons/{season}.json.
  */
-import { existsSync, readFileSync } from "node:fs";
-import path from "node:path";
-
 import type { Game } from "@/data/types";
 import {
   getRuntimeSnapshotGames,
@@ -35,8 +32,14 @@ function cloudflareAssets(): AssetsFetcher | null {
   }
 }
 
+/** Node-only disk read — keep `node:fs` off the webpack graph. */
 function loadFromPublicDir(season: string): Game[] | null {
   try {
+    if (process.env.NEXT_RUNTIME === "edge") return null;
+    // eslint-disable-next-line no-eval
+    const req = eval("require") as NodeRequire;
+    const fs = req("node:fs") as typeof import("node:fs");
+    const path = req("node:path") as typeof import("node:path");
     const file = path.join(
       process.cwd(),
       "public",
@@ -44,8 +47,8 @@ function loadFromPublicDir(season: string): Game[] | null {
       "game-seasons",
       `${season}.json`
     );
-    if (!existsSync(file)) return null;
-    const parsed = JSON.parse(readFileSync(file, "utf8")) as SeasonFile;
+    if (!fs.existsSync(file)) return null;
+    const parsed = JSON.parse(fs.readFileSync(file, "utf8")) as SeasonFile;
     return Array.isArray(parsed.games) ? parsed.games : null;
   } catch {
     return null;
