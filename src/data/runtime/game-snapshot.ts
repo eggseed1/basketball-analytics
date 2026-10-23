@@ -101,6 +101,25 @@ export function getRuntimeSnapshotPlayoffGames(season: string): Game[] {
   return playoffsBySeason.get(season) ?? [];
 }
 
+/**
+ * Merge an ASSETS/disk archive season into the in-memory indexes so existing
+ * sync helpers (team tabs, standings-from-games) can read older years on Workers.
+ */
+export function primeRuntimeSnapshotSeason(season: string, seasonGames: Game[]): void {
+  const key = String(season ?? "").trim();
+  if (!key || !seasonGames.length) return;
+  if ((bySeason.get(key)?.length ?? 0) > 0) return;
+  bySeason.set(key, seasonGames);
+  for (const game of seasonGames) {
+    byId.set(String(game.id), game);
+    if (game.gameType === "playoff" || game.gameType === "play-in") {
+      const po = playoffsBySeason.get(key);
+      if (po) po.push(game);
+      else playoffsBySeason.set(key, [game]);
+    }
+  }
+}
+
 export function getRuntimeSnapshotWindow(options: {
   season?: string;
   fromDate?: string;

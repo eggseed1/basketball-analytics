@@ -261,6 +261,28 @@ async function main() {
     ) + "\n",
     "utf8"
   );
+  // Older seasons for Worker Static Assets (team tabs / brackets).
+  const seasonsDir = path.join(
+    process.cwd(),
+    "public",
+    "runtime",
+    "game-seasons"
+  );
+  await fs.mkdir(seasonsDir, { recursive: true });
+  for (const season of seasonLabels) {
+    if (liteSeasonSet.has(season)) continue;
+    const seasonGames = games.filter((g) => g.season === season);
+    await fs.writeFile(
+      path.join(seasonsDir, `${season}.json`),
+      JSON.stringify({
+        season,
+        generatedAt,
+        games: seasonGames,
+      }) + "\n",
+      "utf8"
+    );
+  }
+
   console.log(
     `[runtime-snapshot] wrote full ${games.length} games → ${OUT_FULL}; lite ${liteGames.length} (${liteSeasons.join(",")}) → ${OUT}`
   );

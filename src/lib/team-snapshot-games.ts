@@ -2,6 +2,7 @@ import { toGameSummary } from "@/data/queries/filter-utils";
 import type { CompactTeamGameRow } from "@/data/history/team-matchup-index";
 import { TEAM_GAMES_PAGE_SIZE } from "@/data/history/team-matchup-index";
 import { getRuntimeSnapshotGames } from "@/data/runtime/game-snapshot";
+import { getRuntimeSnapshotGamesAsync } from "@/data/runtime/game-snapshot-archive";
 import type { Game, GameSummary } from "@/data/types";
 
 export type TeamSplitBucket = {
@@ -36,16 +37,15 @@ function gameTypes(
   return new Set(Array.isArray(gameType) ? gameType : [gameType]);
 }
 
-/** Completed + scheduled games for a team from the build-time schedule snapshot. */
-export function teamSnapshotGames(
+function filterTeamGames(
+  seasonGames: Game[],
   teamId: string,
-  season: string,
   options?: { gameType?: Game["gameType"] | Game["gameType"][] }
 ): GameSummary[] {
   const tid = String(teamId ?? "").trim();
-  if (!tid || !season) return [];
+  if (!tid) return [];
   const types = gameTypes(options?.gameType);
-  return getRuntimeSnapshotGames(season)
+  return seasonGames
     .filter((game) => {
       if (game.homeTeamId !== tid && game.awayTeamId !== tid) return false;
       if (types && !types.has(game.gameType)) return false;
@@ -53,6 +53,27 @@ export function teamSnapshotGames(
     })
     .map(toGameSummary)
     .sort((a, b) => b.gameDate.localeCompare(a.gameDate));
+}
+
+/** Completed + scheduled games for a team from the build-time schedule snapshot. */
+export function teamSnapshotGames(
+  teamId: string,
+  season: string,
+  options?: { gameType?: Game["gameType"] | Game["gameType"][] }
+): GameSummary[] {
+  if (!String(teamId ?? "").trim() || !season) return [];
+  return filterTeamGames(getRuntimeSnapshotGames(season), teamId, options);
+}
+
+/** Same as teamSnapshotGames, but loads older seasons from ASSETS on Workers. */
+export async function teamSnapshotGamesAsync(
+  teamId: string,
+  season: string,
+  options?: { gameType?: Game["gameType"] | Game["gameType"][] }
+): Promise<GameSummary[]> {
+  if (!String(teamId ?? "").trim() || !season) return [];
+  const seasonGames = await getRuntimeSnapshotGamesAsync(season);
+  return filterTeamGames(seasonGames, teamId, options);
 }
 
 /** Regular-season games that count in the standings (no NBA Cup Championship). */

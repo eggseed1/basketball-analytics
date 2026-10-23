@@ -75,6 +75,10 @@ export async function TeamPlayoffsIsland({
   season: string;
   teamKey?: string;
 }) {
+  const { ensureRuntimeSnapshotSeason } = await import(
+    "@/data/runtime/game-snapshot-archive"
+  );
+  await ensureRuntimeSnapshotSeason(season);
   const { model, standings } = await getPlayoffBracketModel(season);
   const seed = findStandingSeed(teamId, standings);
   const totals = postseasonTotals(teamId, season);
