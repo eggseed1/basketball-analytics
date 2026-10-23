@@ -19,13 +19,15 @@ export function LiveFreshness({
   retrievedAt?: string | null;
   className?: string;
 }) {
-  const [now, setNow] = useState(() => Date.now());
+  const [now, setNow] = useState<number | null>(null);
 
   useEffect(() => {
+    setNow(Date.now());
     const id = window.setInterval(() => setNow(Date.now()), 5_000);
     return () => window.clearInterval(id);
   }, []);
 
+  if (now == null) return null;
   const label = formatFreshnessLabel(retrievedAt, now);
   if (!label) return null;
   const band: FreshnessBand = freshnessBand(retrievedAt, now);

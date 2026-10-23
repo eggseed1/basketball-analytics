@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useState, type CSSProperties, type ReactNode } from "react";
+import { memo, useEffect, useState, type CSSProperties, type ReactNode } from "react";
 
 import { GlassSurface } from "@/components/brand/glass-surface";
 import { finalWinner, MatchupOrbs, STRIP_CARD_STYLE } from "@/components/brand/matchup-orbs";
@@ -79,9 +79,15 @@ function StatusLine({ game }: { game: GameSummary }) {
 }
 
 function PreTipStatus({ tipOffAt, nbaDate }: { tipOffAt?: string | null; nbaDate?: string | null }) {
-  const [now] = useState(() => Date.now());
+  // Defer Date.now() until after mount — SSR vs client clocks disagree and
+  // toggling GameCountdown caused React #418 hydration text mismatches.
+  const [now, setNow] = useState<number | null>(null);
+  useEffect(() => {
+    setNow(Date.now());
+  }, []);
   const tipMs = parseTipOffMs(tipOffAt);
-  const soon = tipMs != null && tipMs > now && tipMs - now <= DAY_MS;
+  const soon =
+    now != null && tipMs != null && tipMs > now && tipMs - now <= DAY_MS;
   return (
     <span className="inline-flex items-baseline gap-2">
       <span className="font-semibold tabular-nums">

@@ -1,0 +1,399 @@
+{
+  "base": "https://basketball-analytics.drbl-analytics.workers.dev",
+  "measuredAt": "2026-10-23T18:41:05.994Z",
+  "pass": 26,
+  "fail": 2,
+  "results": [
+    {
+      "id": "desktop:home",
+      "ok": true,
+      "status": 200,
+      "ms": 4068,
+      "htmlCache": "EDGE",
+      "expectOk": true,
+      "consoleErrors": [
+        "Failed to load resource: net::ERR_HTTP2_PROTOCOL_ERROR",
+        "Failed to load resource: net::ERR_HTTP2_PROTOCOL_ERROR",
+        "Failed to load resource: net::ERR_HTTP2_PROTOCOL_ERROR",
+        "Failed to load resource: net::ERR_HTTP2_PROTOCOL_ERROR",
+        "Failed to load resource: net::ERR_HTTP2_PROTOCOL_ERROR"
+      ],
+      "pageErrors": [],
+      "failedReqs": [],
+      "title": "DRBL: NBA Advanced Stats | Impact, Efficiency, Scores"
+    },
+    {
+      "id": "desktop:scores",
+      "ok": false,
+      "status": 200,
+      "ms": 3696,
+      "htmlCache": "EDGE",
+      "expectOk": true,
+      "consoleErrors": [],
+      "pageErrors": [
+        "Error: Minified React error #418; visit https://react.dev/errors/418?args[]=text&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "failedReqs": [],
+      "title": "NBA scores and schedule | DRBL"
+    },
+    {
+      "id": "desktop:standings",
+      "ok": true,
+      "status": 200,
+      "ms": 2724,
+      "htmlCache": "EDGE",
+      "expectOk": true,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedReqs": [],
+      "title": "NBA standings | DRBL"
+    },
+    {
+      "id": "desktop:explore",
+      "ok": true,
+      "status": 200,
+      "ms": 2773,
+      "htmlCache": "EDGE",
+      "expectOk": true,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedReqs": [],
+      "title": "NBA advanced stats leaderboard | DRBL"
+    },
+    {
+      "id": "desktop:hot-cold",
+      "ok": true,
+      "status": 200,
+      "ms": 3219,
+      "htmlCache": "MISS",
+      "expectOk": true,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedReqs": [],
+      "title": "NBA hot and cold streaks | DRBL"
+    },
+    {
+      "id": "desktop:viz",
+      "ok": true,
+      "status": 200,
+      "ms": 5076,
+      "htmlCache": "MISS",
+      "expectOk": true,
+      "consoleErrors": [
+        "Failed to load resource: net::ERR_HTTP2_PROTOCOL_ERROR",
+        "Failed to load resource: net::ERR_HTTP2_PROTOCOL_ERROR",
+        "Failed to load resource: net::ERR_HTTP2_PROTOCOL_ERROR",
+        "Failed to load resource: net::ERR_HTTP2_PROTOCOL_ERROR",
+        "Failed to load resource: net::ERR_HTTP2_PROTOCOL_ERROR"
+      ],
+      "pageErrors": [],
+      "failedReqs": [],
+      "title": "NBA advanced stats visualizations | DRBL"
+    },
+    {
+      "id": "desktop:trade",
+      "ok": true,
+      "status": 200,
+      "ms": 4621,
+      "htmlCache": "MISS",
+      "expectOk": true,
+      "consoleErrors": [
+        "Failed to load resource: net::ERR_HTTP2_PROTOCOL_ERROR",
+        "Failed to load resource: net::ERR_HTTP2_PROTOCOL_ERROR",
+        "Failed to load resource: net::ERR_HTTP2_PROTOCOL_ERROR",
+        "Failed to load resource: net::ERR_HTTP2_PROTOCOL_ERROR",
+        "Failed to load resource: net::ERR_HTTP2_PROTOCOL_ERROR"
+      ],
+      "pageErrors": [],
+      "failedReqs": [],
+      "title": "NBA trade simulator | DRBL"
+    },
+    {
+      "id": "desktop:player",
+      "ok": true,
+      "status": 200,
+      "ms": 2691,
+      "htmlCache": "EDGE",
+      "expectOk": true,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedReqs": [],
+      "title": "Jayson Tatum Stats and Advanced Metrics | DRBL"
+    },
+    {
+      "id": "desktop:player-season",
+      "ok": true,
+      "status": 200,
+      "ms": 6053,
+      "htmlCache": "MISS",
+      "expectOk": true,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedReqs": [],
+      "title": "Jayson Tatum Stats and Advanced Metrics | DRBL"
+    },
+    {
+      "id": "desktop:team",
+      "ok": true,
+      "status": 200,
+      "ms": 5552,
+      "htmlCache": "MISS",
+      "expectOk": true,
+      "consoleErrors": [
+        "Failed to load resource: net::ERR_HTTP2_PROTOCOL_ERROR",
+        "Failed to load resource: net::ERR_HTTP2_PROTOCOL_ERROR",
+        "Failed to load resource: net::ERR_HTTP2_PROTOCOL_ERROR",
+        "Failed to load resource: net::ERR_HTTP2_PROTOCOL_ERROR",
+        "Failed to load resource: net::ERR_HTTP2_PROTOCOL_ERROR"
+      ],
+      "pageErrors": [],
+      "failedReqs": [],
+      "title": "Boston Celtics 2026-27: Roster, Stats and Payroll | DRBL"
+    },
+    {
+      "id": "desktop:compare",
+      "ok": true,
+      "status": 200,
+      "ms": 2748,
+      "htmlCache": "EDGE",
+      "expectOk": true,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: net::ERR_HTTP2_PROTOCOL_ERROR"
+      ],
+      "pageErrors": [],
+      "failedReqs": [],
+      "title": "Compare NBA Players and Teams | DRBL"
+    },
+    {
+      "id": "desktop:ask",
+      "ok": true,
+      "status": 200,
+      "ms": 2763,
+      "htmlCache": "EDGE",
+      "expectOk": true,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedReqs": [],
+      "title": "Ask DRBL: NBA advanced stats Q&A | DRBL"
+    },
+    {
+      "id": "desktop:learn",
+      "ok": true,
+      "status": 200,
+      "ms": 2727,
+      "htmlCache": "EDGE",
+      "expectOk": true,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedReqs": [],
+      "title": "Learn NBA advanced stats | DRBL"
+    },
+    {
+      "id": "desktop:sentiment",
+      "ok": true,
+      "status": 200,
+      "ms": 2832,
+      "htmlCache": "HIT",
+      "expectOk": true,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedReqs": [],
+      "title": "NBA fan sentiment | DRBL"
+    },
+    {
+      "id": "desktop:offseason",
+      "ok": true,
+      "status": 200,
+      "ms": 2839,
+      "htmlCache": "HIT",
+      "expectOk": true,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedReqs": [],
+      "title": "NBA transactions | DRBL"
+    },
+    {
+      "id": "desktop:movement",
+      "ok": true,
+      "status": 200,
+      "ms": 3650,
+      "htmlCache": "MISS",
+      "expectOk": true,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedReqs": [],
+      "title": "Movement Center | DRBL"
+    },
+    {
+      "id": "desktop:history",
+      "ok": true,
+      "status": 200,
+      "ms": 2620,
+      "htmlCache": "EDGE",
+      "expectOk": true,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedReqs": [],
+      "title": "Enter the NBA Time Machine | DRBL"
+    },
+    {
+      "id": "desktop:arcade",
+      "ok": true,
+      "status": 200,
+      "ms": 2779,
+      "htmlCache": "HIT",
+      "expectOk": true,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedReqs": [],
+      "title": "Basketball arcade games | DRBL"
+    },
+    {
+      "id": "desktop:gm",
+      "ok": true,
+      "status": 200,
+      "ms": 2791,
+      "htmlCache": "HIT",
+      "expectOk": true,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedReqs": [],
+      "title": "Franchise Lab | DRBL"
+    },
+    {
+      "id": "desktop:awards",
+      "ok": true,
+      "status": 200,
+      "ms": 3383,
+      "htmlCache": "MISS",
+      "expectOk": true,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedReqs": [],
+      "title": "NBA awards history | DRBL"
+    },
+    {
+      "id": "desktop:findings",
+      "ok": true,
+      "status": 200,
+      "ms": 6022,
+      "htmlCache": "MISS",
+      "expectOk": true,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedReqs": [],
+      "title": "Recent Insights | DRBL"
+    },
+    {
+      "id": "desktop:about",
+      "ok": true,
+      "status": 200,
+      "ms": 3368,
+      "htmlCache": "MISS",
+      "expectOk": true,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedReqs": [],
+      "title": "About DRBL | DRBL"
+    },
+    {
+      "id": "mobile:home",
+      "ok": true,
+      "status": 200,
+      "ms": 2695,
+      "htmlCache": "EDGE",
+      "expectOk": true,
+      "consoleErrors": [
+        "Failed to load resource: net::ERR_HTTP2_PROTOCOL_ERROR",
+        "Failed to load resource: net::ERR_HTTP2_PROTOCOL_ERROR",
+        "Failed to load resource: net::ERR_HTTP2_PROTOCOL_ERROR",
+        "Failed to load resource: net::ERR_HTTP2_PROTOCOL_ERROR",
+        "Failed to load resource: net::ERR_HTTP2_PROTOCOL_ERROR"
+      ],
+      "pageErrors": [],
+      "failedReqs": [],
+      "title": "DRBL: NBA Advanced Stats | Impact, Efficiency, Scores"
+    },
+    {
+      "id": "mobile:scores",
+      "ok": false,
+      "status": 200,
+      "ms": 2625,
+      "htmlCache": "EDGE",
+      "expectOk": true,
+      "consoleErrors": [],
+      "pageErrors": [
+        "Error: Minified React error #418; visit https://react.dev/errors/418?args[]=text&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "failedReqs": [],
+      "title": "NBA scores and schedule | DRBL"
+    },
+    {
+      "id": "mobile:explore",
+      "ok": true,
+      "status": 200,
+      "ms": 3660,
+      "htmlCache": "EDGE",
+      "expectOk": true,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedReqs": [],
+      "title": "NBA advanced stats leaderboard | DRBL"
+    },
+    {
+      "id": "mobile:player",
+      "ok": true,
+      "status": 200,
+      "ms": 2835,
+      "htmlCache": "EDGE",
+      "expectOk": true,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedReqs": [],
+      "title": "Jayson Tatum Stats and Advanced Metrics | DRBL"
+    },
+    {
+      "id": "flow:player-season-switch",
+      "ok": true,
+      "failedLoad": false,
+      "hasRanks": true,
+      "errors": []
+    },
+    {
+      "id": "flow:home-deferred-apis",
+      "ok": true,
+      "apiHits": [
+        {
+          "url": "https://basketball-analytics.drbl-analytics.workers.dev/api/home/standings?season=2026-27",
+          "status": 200
+        },
+        {
+          "url": "https://basketball-analytics.drbl-analytics.workers.dev/api/home/week-strip?season=2026-27",
+          "status": 200
+        },
+        {
+          "url": "https://basketball-analytics.drbl-analytics.workers.dev/api/home/hot-cold",
+          "status": 200
+        },
+        {
+          "url": "https://basketball-analytics.drbl-analytics.workers.dev/api/home/insights",
+          "status": 200
+        },
+        {
+          "url": "https://basketball-analytics.drbl-analytics.workers.dev/api/home/insights",
+          "status": 200
+        },
+        {
+          "url": "https://basketball-analytics.drbl-analytics.workers.dev/api/home/insights",
+          "status": 200
+        },
+        {
+          "url": "https://basketball-analytics.drbl-analytics.workers.dev/api/home/performers",
+          "status": 200
+        }
+      ]
+    }
+  ]
+}

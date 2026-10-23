@@ -27,12 +27,20 @@ export function GameCountdown({
   variant?: "stack" | "line";
 }) {
   const rootRef = useRef<HTMLSpanElement>(null);
-  const [now, setNow] = useState(() => Date.now());
+  // null until mount so SSR HTML matches the first client pass (no clock skew).
+  const [now, setNow] = useState<number | null>(null);
   const [visible, setVisible] = useState(true);
   const timeZone = useViewerTimeZone();
-  const result: CountdownResult = formatGameCountdown(tipOffAt, now, timeZone);
+
+  useEffect(() => {
+    setNow(Date.now());
+  }, []);
+
+  const result: CountdownResult | null =
+    now == null ? null : formatGameCountdown(tipOffAt, now, timeZone);
   const needsTick =
     Boolean(tipOffAt) &&
+    result != null &&
     result.phase !== "invalid" &&
     result.msRemaining > 0 &&
     result.msRemaining <= 24 * HOUR_MS;
@@ -48,7 +56,7 @@ export function GameCountdown({
     return () => io.disconnect();
   }, [needsTick]);
 
-  const tickFast = needsTick && result.msRemaining < HOUR_MS;
+  const tickFast = Boolean(needsTick && result && result.msRemaining < HOUR_MS);
 
   useEffect(() => {
     if (!needsTick || !visible) return;
@@ -56,6 +64,16 @@ export function GameCountdown({
     const id = window.setInterval(() => setNow(Date.now()), intervalMs);
     return () => window.clearInterval(id);
   }, [needsTick, visible, tickFast]);
+
+  if (now == null || result == null) {
+    return (
+      <span
+        ref={rootRef}
+        className={cn("text-[12px] text-muted-foreground", className)}
+        aria-hidden
+      />
+    );
+  }
 
   if (result.phase === "invalid") {
     return (

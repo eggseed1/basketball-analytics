@@ -1,0 +1,482 @@
+{
+  "base": "https://basketball-analytics.drbl-analytics.workers.dev",
+  "measuredAt": "2026-10-23T18:39:15.768Z",
+  "pass": 31,
+  "fail": 0,
+  "results": [
+    {
+      "id": "api-search-tatum",
+      "ok": true,
+      "status": 200,
+      "ms": 254,
+      "bytes": 248,
+      "headers": {
+        "content-type": "application/json",
+        "content-encoding": "br"
+      },
+      "detail": "ok",
+      "url": "https://basketball-analytics.drbl-analytics.workers.dev/api/players/search?q=tatum",
+      "at": "2026-10-23T18:38:57.652Z"
+    },
+    {
+      "id": "api-percentiles-current",
+      "ok": true,
+      "status": 200,
+      "ms": 252,
+      "bytes": 76656,
+      "headers": {
+        "content-type": "application/json",
+        "content-encoding": "br"
+      },
+      "detail": "ok",
+      "url": "https://basketball-analytics.drbl-analytics.workers.dev/api/players/4065648/percentiles?season=2025-26&mode=fast",
+      "at": "2026-10-23T18:38:57.906Z"
+    },
+    {
+      "id": "api-percentiles-2024-25",
+      "ok": true,
+      "status": 200,
+      "ms": 58,
+      "bytes": 76824,
+      "headers": {
+        "content-type": "application/json",
+        "content-encoding": "br"
+      },
+      "detail": "ok",
+      "url": "https://basketball-analytics.drbl-analytics.workers.dev/api/players/4065648/percentiles?season=2024-25&mode=fast",
+      "at": "2026-10-23T18:38:57.965Z"
+    },
+    {
+      "id": "api-percentiles-2023-24",
+      "ok": true,
+      "status": 200,
+      "ms": 53,
+      "bytes": 76748,
+      "headers": {
+        "content-type": "application/json",
+        "content-encoding": "br"
+      },
+      "detail": "ok",
+      "url": "https://basketball-analytics.drbl-analytics.workers.dev/api/players/4065648/percentiles?season=2023-24&mode=fast",
+      "at": "2026-10-23T18:38:58.018Z"
+    },
+    {
+      "id": "api-percentiles-2022-23",
+      "ok": true,
+      "status": 200,
+      "ms": 39,
+      "bytes": 76748,
+      "headers": {
+        "content-type": "application/json",
+        "content-encoding": "br"
+      },
+      "detail": "ok",
+      "url": "https://basketball-analytics.drbl-analytics.workers.dev/api/players/4065648/percentiles?season=2022-23&mode=fast",
+      "at": "2026-10-23T18:38:58.057Z"
+    },
+    {
+      "id": "api-percentiles-2017-18",
+      "ok": true,
+      "status": 200,
+      "ms": 88,
+      "bytes": 72834,
+      "headers": {
+        "content-type": "application/json",
+        "content-encoding": "br"
+      },
+      "detail": "ok",
+      "url": "https://basketball-analytics.drbl-analytics.workers.dev/api/players/4065648/percentiles?season=2017-18&mode=fast",
+      "at": "2026-10-23T18:38:58.146Z"
+    },
+    {
+      "id": "api-home-standings",
+      "ok": true,
+      "status": 200,
+      "ms": 61,
+      "bytes": 2919,
+      "headers": {
+        "cache-control": "public, max-age=0, s-maxage=120, stale-while-revalidate=1800",
+        "content-type": "application/json",
+        "content-encoding": "br"
+      },
+      "detail": "ok",
+      "url": "https://basketball-analytics.drbl-analytics.workers.dev/api/home/standings",
+      "at": "2026-10-23T18:38:58.207Z"
+    },
+    {
+      "id": "api-home-performers",
+      "ok": true,
+      "status": 200,
+      "ms": 2628,
+      "bytes": 2812,
+      "headers": {
+        "cache-control": "public, max-age=0, s-maxage=120, stale-while-revalidate=1800",
+        "content-type": "application/json",
+        "content-encoding": "br"
+      },
+      "detail": "ok",
+      "url": "https://basketball-analytics.drbl-analytics.workers.dev/api/home/performers",
+      "at": "2026-10-23T18:39:00.835Z"
+    },
+    {
+      "id": "api-home-week-strip",
+      "ok": true,
+      "status": 200,
+      "ms": 117,
+      "bytes": 13836,
+      "headers": {
+        "cache-control": "public, max-age=0, s-maxage=30, stale-while-revalidate=120",
+        "content-type": "application/json",
+        "content-encoding": "br"
+      },
+      "detail": "ok",
+      "url": "https://basketball-analytics.drbl-analytics.workers.dev/api/home/week-strip",
+      "at": "2026-10-23T18:39:00.953Z"
+    },
+    {
+      "id": "api-home-hot-cold",
+      "ok": true,
+      "status": 200,
+      "ms": 22,
+      "bytes": 58,
+      "headers": {
+        "cache-control": "public, max-age=0, s-maxage=120, stale-while-revalidate=1800",
+        "content-type": "application/json",
+        "content-encoding": "br"
+      },
+      "detail": "ok",
+      "url": "https://basketball-analytics.drbl-analytics.workers.dev/api/home/hot-cold",
+      "at": "2026-10-23T18:39:00.975Z"
+    },
+    {
+      "id": "api-home-insights",
+      "ok": true,
+      "status": 200,
+      "ms": 1007,
+      "bytes": 3024,
+      "headers": {
+        "cache-control": "public, max-age=0, s-maxage=120, stale-while-revalidate=1800",
+        "content-type": "application/json",
+        "content-encoding": "br"
+      },
+      "detail": "ok",
+      "url": "https://basketball-analytics.drbl-analytics.workers.dev/api/home/insights",
+      "at": "2026-10-23T18:39:01.983Z"
+    },
+    {
+      "id": "api-standings-team-stats",
+      "ok": true,
+      "status": 200,
+      "ms": 66,
+      "bytes": 18816,
+      "headers": {
+        "cache-control": "public, max-age=0, s-maxage=300, stale-while-revalidate=3600",
+        "content-type": "application/json",
+        "content-encoding": "br"
+      },
+      "detail": "ok",
+      "url": "https://basketball-analytics.drbl-analytics.workers.dev/api/standings/team-stats",
+      "at": "2026-10-23T18:39:02.049Z"
+    },
+    {
+      "id": "api-explore-board",
+      "ok": true,
+      "status": 200,
+      "ms": 376,
+      "bytes": 11689,
+      "headers": {
+        "content-type": "application/json",
+        "content-encoding": "br"
+      },
+      "detail": "ok",
+      "url": "https://basketball-analytics.drbl-analytics.workers.dev/api/explore/players/board?season=2025-26",
+      "at": "2026-10-23T18:39:02.425Z"
+    },
+    {
+      "id": "api-scores-live",
+      "ok": true,
+      "status": 200,
+      "ms": 916,
+      "bytes": 10531,
+      "headers": {
+        "content-type": "application/json",
+        "content-encoding": "br"
+      },
+      "detail": "ok",
+      "url": "https://basketball-analytics.drbl-analytics.workers.dev/api/scores/live",
+      "at": "2026-10-23T18:39:03.341Z"
+    },
+    {
+      "id": "html-home",
+      "ok": true,
+      "status": 200,
+      "ms": 723,
+      "bytes": 236868,
+      "headers": {
+        "x-page-cache": "EDGE",
+        "cache-control": "public, max-age=0, s-maxage=900, stale-while-revalidate=1800",
+        "content-type": "text/html; charset=utf-8",
+        "content-encoding": "br",
+        "cf-cache-status": "HIT",
+        "age": "21"
+      },
+      "detail": "ok 236868B",
+      "url": "https://basketball-analytics.drbl-analytics.workers.dev/",
+      "at": "2026-10-23T18:39:04.064Z"
+    },
+    {
+      "id": "html-explore",
+      "ok": true,
+      "status": 200,
+      "ms": 694,
+      "bytes": 215742,
+      "headers": {
+        "x-page-cache": "EDGE",
+        "cache-control": "public, max-age=0, s-maxage=900, stale-while-revalidate=21600",
+        "content-type": "text/html; charset=utf-8",
+        "content-encoding": "br",
+        "cf-cache-status": "HIT",
+        "age": "22"
+      },
+      "detail": "ok 215742B",
+      "url": "https://basketball-analytics.drbl-analytics.workers.dev/explore/players",
+      "at": "2026-10-23T18:39:04.759Z"
+    },
+    {
+      "id": "html-player",
+      "ok": true,
+      "status": 200,
+      "ms": 663,
+      "bytes": 264723,
+      "headers": {
+        "x-page-cache": "EDGE",
+        "cache-control": "public, max-age=0, s-maxage=900, stale-while-revalidate=21600",
+        "content-type": "text/html; charset=utf-8",
+        "content-encoding": "br",
+        "cf-cache-status": "HIT",
+        "age": "18"
+      },
+      "detail": "ok 264723B",
+      "url": "https://basketball-analytics.drbl-analytics.workers.dev/players/4065648",
+      "at": "2026-10-23T18:39:05.422Z"
+    },
+    {
+      "id": "html-standings",
+      "ok": true,
+      "status": 200,
+      "ms": 34,
+      "bytes": 222337,
+      "headers": {
+        "x-page-cache": "EDGE",
+        "cache-control": "public, max-age=0, s-maxage=900, stale-while-revalidate=21600",
+        "content-type": "text/html; charset=utf-8",
+        "content-encoding": "br",
+        "cf-cache-status": "HIT",
+        "age": "16"
+      },
+      "detail": "ok 222337B",
+      "url": "https://basketball-analytics.drbl-analytics.workers.dev/standings",
+      "at": "2026-10-23T18:39:05.457Z"
+    },
+    {
+      "id": "html-scores",
+      "ok": true,
+      "status": 200,
+      "ms": 186,
+      "bytes": 142838,
+      "headers": {
+        "x-page-cache": "HIT",
+        "cache-control": "public, max-age=0, s-maxage=120, stale-while-revalidate=600",
+        "content-type": "text/html; charset=utf-8",
+        "content-encoding": "br",
+        "age": "92"
+      },
+      "detail": "ok 142838B",
+      "url": "https://basketball-analytics.drbl-analytics.workers.dev/scores",
+      "at": "2026-10-23T18:39:05.644Z"
+    },
+    {
+      "id": "html-compare",
+      "ok": true,
+      "status": 200,
+      "ms": 622,
+      "bytes": 133580,
+      "headers": {
+        "x-page-cache": "MISS",
+        "cache-control": "public, max-age=0, s-maxage=900, stale-while-revalidate=21600",
+        "content-type": "text/html; charset=utf-8",
+        "content-encoding": "br"
+      },
+      "detail": "ok 133580B",
+      "url": "https://basketball-analytics.drbl-analytics.workers.dev/compare",
+      "at": "2026-10-23T18:39:06.266Z"
+    },
+    {
+      "id": "html-ask",
+      "ok": true,
+      "status": 200,
+      "ms": 195,
+      "bytes": 96205,
+      "headers": {
+        "x-page-cache": "MISS",
+        "cache-control": "public, max-age=0, s-maxage=900, stale-while-revalidate=21600",
+        "content-type": "text/html; charset=utf-8",
+        "content-encoding": "br"
+      },
+      "detail": "ok 96205B",
+      "url": "https://basketball-analytics.drbl-analytics.workers.dev/ask",
+      "at": "2026-10-23T18:39:06.461Z"
+    },
+    {
+      "id": "html-learn",
+      "ok": true,
+      "status": 200,
+      "ms": 678,
+      "bytes": 193557,
+      "headers": {
+        "x-page-cache": "MISS",
+        "cache-control": "public, max-age=0, s-maxage=900, stale-while-revalidate=21600",
+        "content-type": "text/html; charset=utf-8",
+        "content-encoding": "br"
+      },
+      "detail": "ok 193557B",
+      "url": "https://basketball-analytics.drbl-analytics.workers.dev/learn",
+      "at": "2026-10-23T18:39:07.139Z"
+    },
+    {
+      "id": "html-sentiment",
+      "ok": true,
+      "status": 200,
+      "ms": 406,
+      "bytes": 645516,
+      "headers": {
+        "x-page-cache": "MISS",
+        "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+        "content-type": "text/html; charset=utf-8",
+        "content-encoding": "br"
+      },
+      "detail": "ok 645516B",
+      "url": "https://basketball-analytics.drbl-analytics.workers.dev/sentiment",
+      "at": "2026-10-23T18:39:07.546Z"
+    },
+    {
+      "id": "html-offseason",
+      "ok": true,
+      "status": 200,
+      "ms": 1769,
+      "bytes": 298258,
+      "headers": {
+        "x-page-cache": "MISS",
+        "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+        "content-type": "text/html; charset=utf-8",
+        "content-encoding": "br"
+      },
+      "detail": "ok 298258B",
+      "url": "https://basketball-analytics.drbl-analytics.workers.dev/offseason",
+      "at": "2026-10-23T18:39:09.315Z"
+    },
+    {
+      "id": "html-arcade",
+      "ok": true,
+      "status": 200,
+      "ms": 186,
+      "bytes": 133942,
+      "headers": {
+        "x-page-cache": "MISS",
+        "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+        "content-type": "text/html; charset=utf-8",
+        "content-encoding": "br"
+      },
+      "detail": "ok 133942B",
+      "url": "https://basketball-analytics.drbl-analytics.workers.dev/arcade",
+      "at": "2026-10-23T18:39:09.502Z"
+    },
+    {
+      "id": "html-gm",
+      "ok": true,
+      "status": 200,
+      "ms": 188,
+      "bytes": 101480,
+      "headers": {
+        "x-page-cache": "MISS",
+        "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+        "content-type": "text/html; charset=utf-8",
+        "content-encoding": "br"
+      },
+      "detail": "ok 101480B",
+      "url": "https://basketball-analytics.drbl-analytics.workers.dev/gm",
+      "at": "2026-10-23T18:39:09.690Z"
+    },
+    {
+      "id": "html-history",
+      "ok": true,
+      "status": 200,
+      "ms": 634,
+      "bytes": 115432,
+      "headers": {
+        "x-page-cache": "MISS",
+        "cache-control": "public, max-age=0, s-maxage=900, stale-while-revalidate=21600",
+        "content-type": "text/html; charset=utf-8",
+        "content-encoding": "br"
+      },
+      "detail": "ok 115432B",
+      "url": "https://basketball-analytics.drbl-analytics.workers.dev/history",
+      "at": "2026-10-23T18:39:10.324Z"
+    },
+    {
+      "id": "html-privacy",
+      "ok": true,
+      "status": 200,
+      "ms": 169,
+      "bytes": 102607,
+      "headers": {
+        "x-page-cache": "MISS",
+        "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+        "content-type": "text/html; charset=utf-8",
+        "content-encoding": "br"
+      },
+      "detail": "ok 102607B",
+      "url": "https://basketball-analytics.drbl-analytics.workers.dev/privacy",
+      "at": "2026-10-23T18:39:10.494Z"
+    },
+    {
+      "id": "html-404",
+      "ok": true,
+      "status": 404,
+      "ms": 145,
+      "bytes": 87861,
+      "detail": "ok not-found",
+      "url": "https://basketball-analytics.drbl-analytics.workers.dev/this-route-should-404-xyz",
+      "at": "2026-10-23T18:39:10.639Z"
+    },
+    {
+      "id": "locale-cookie-isolation",
+      "ok": true,
+      "detail": "de=de en=en deCache=MISS enCache=EDGE",
+      "at": "2026-10-23T18:39:15.581Z"
+    },
+    {
+      "id": "cache-uncacheable-param",
+      "ok": true,
+      "detail": "clean=EDGE weird=SKIP (weird should often SKIP/MISS)",
+      "headers": {
+        "clean": {
+          "x-page-cache": "EDGE",
+          "cache-control": "public, max-age=0, s-maxage=900, stale-while-revalidate=21600",
+          "content-type": "text/html; charset=utf-8",
+          "content-encoding": "br",
+          "cf-cache-status": "HIT",
+          "age": "26"
+        },
+        "weird": {
+          "x-page-cache": "SKIP",
+          "x-page-cache-skip": "params-or-key",
+          "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+          "content-type": "text/html; charset=utf-8",
+          "content-encoding": "br"
+        }
+      },
+      "at": "2026-10-23T18:39:15.767Z"
+    }
+  ]
+}
