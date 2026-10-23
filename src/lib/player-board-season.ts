@@ -171,8 +171,12 @@ export function defaultExplorePlayersSeason(
     if (availableSeasons.includes(prior)) return prior;
   }
   const ready = options?.boardReadySeasons;
+  // Only fall back when readiness was actually computed and the current year
+  // is missing. An empty list (bake import failure) must not pin Explore on
+  // last season after tip — that hid 2026-27 hustle behind a 2025-26 first page.
   if (
     ready &&
+    ready.length > 0 &&
     !ready.includes(leagueSeason) &&
     availableSeasons.includes(prior)
   ) {

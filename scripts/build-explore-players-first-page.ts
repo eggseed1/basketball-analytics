@@ -18,17 +18,36 @@ import {
   isBundledPeerBoardReady,
 } from "../src/lib/player-board-season";
 
-async function boardReadySeasons(): Promise<string[]> {
+/**
+ * Count peer-board rows from the on-disk season-tables snapshot without
+ * importing the server-only BRef module (tsx scripts cannot load it).
+ */
+function seasonTablesPeerRowCount(season: string): number {
   try {
-    const { getBundledBrefPeerBoard } = await import(
-      "../src/data/runtime/bref-advanced-snapshot"
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const fs = require("node:fs") as typeof import("node:fs");
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const path = require("node:path") as typeof import("node:path");
+    const file = path.join(
+      process.cwd(),
+      "src/data/runtime/season-tables-snapshot.json"
     );
-    return listCanonicalSeasons().filter((season) =>
-      isBundledPeerBoardReady(season, getBundledBrefPeerBoard(season).length)
-    );
+    if (!fs.existsSync(file)) return 0;
+    const raw = JSON.parse(fs.readFileSync(file, "utf8")) as {
+      seasons?: Record<string, { advanced?: unknown[]; perGame?: unknown[] }>;
+    };
+    const block = raw.seasons?.[season];
+    if (!block) return 0;
+    return Math.max(block.advanced?.length ?? 0, block.perGame?.length ?? 0);
   } catch {
-    return [];
+    return 0;
   }
+}
+
+function boardReadySeasons(): string[] {
+  return listCanonicalSeasons().filter((season) =>
+    isBundledPeerBoardReady(season, seasonTablesPeerRowCount(season))
+  );
 }
 
 async function main() {
@@ -36,14 +55,14 @@ async function main() {
   process.env.SKIP_EXPLORE_FIRST_PAGE = "1";
 
   const available = listCanonicalSeasons();
-  const ready = await boardReadySeasons();
+  const ready = boardReadySeasons();
   const season = defaultExplorePlayersSeason(available, new Date(), {
     boardReadySeasons: ready,
   });
   const minimumMinutes = defaultExploreMinimumMinutes(season);
 
   console.log(
-    `[explore-first-page] baking season=${season} minMinutes=${minimumMinutes}`
+    `[explore-first-page] baking season=${season} minMinutes=${minimumMinutes} ready=${ready.slice(0, 5).join(",")}${ready.length > 5 ? "…" : ""}`
   );
 
   const view = await getExplorePlayersBoardView({

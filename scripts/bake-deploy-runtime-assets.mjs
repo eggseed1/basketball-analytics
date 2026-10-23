@@ -62,6 +62,9 @@ run("node", ["scripts/build-runtime-player-game-logs.mjs"], {
 
 run("npx", ["tsx", "scripts/build-season-shots-from-pbp.ts", "--season", season]);
 
+// NBA hustle tracking (stats.nba.com) — Explore / player hustle tabs on CF.
+run("node", ["scripts/build-runtime-hustle-snapshot.mjs"]);
+
 // Default Explore first page — cold MISS skips season-tables + overlays.
 run("npx", ["tsx", "scripts/build-explore-players-first-page.ts"], {
   DATA_PROVIDER: "nba",
@@ -91,6 +94,7 @@ run("node", [
     "'findings-archive.json',",
     "'team-leadership.json',",
     "'explore-players-first-page.json',",
+    "'hustle-overlay-snapshot.json',",
     "'drbl-guide-snapshot.json',",
     "'espn-name-index.json',",
     "'pbp-index.json',",

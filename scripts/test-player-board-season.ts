@@ -30,6 +30,12 @@ assert.equal(
   }),
   "2026-27"
 );
+// Empty readiness (import failure) must not pin post-tip Explore on prior year.
+assert.equal(
+  defaultExplorePlayersSeason(seasons, tipOpened, { boardReadySeasons: [] }),
+  "2026-27"
+);
+assert.equal(defaultExplorePlayersSeason(seasons, tipOpened), "2026-27");
 assert.equal(defaultExplorePlayersSeason(seasons, preTip), "2025-26");
 assert.match(
   priorSeasonBoardCatchUpNotice("2027-28", "2026-27"),
