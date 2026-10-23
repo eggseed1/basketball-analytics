@@ -208,8 +208,8 @@ async function loadImpactOverlaysForSeason(
     getBundledRaptorSeason,
   } = await import("@/data/runtime/impact-overlay-snapshot");
 
-  let darko = getBundledDarkoSeason(boardSeason);
-  let raptor = getBundledRaptorSeason(boardSeason);
+  let darko = await getBundledDarkoSeason(boardSeason);
+  let raptor = await getBundledRaptorSeason(boardSeason);
 
   const { preferBundledProductDataOnEdge } = await import(
     "@/data/providers/nba/runtime-policy"
@@ -1907,7 +1907,7 @@ export async function attachBundledBrefDarkoRaptor(
       }
     }
 
-    const darko = findBundledDarkoPlayer(row.season, {
+    const darko = await findBundledDarkoPlayer(row.season, {
       nbaId,
       playerId,
       playerName: row.playerName,
@@ -1926,7 +1926,7 @@ export async function attachBundledBrefDarkoRaptor(
       };
     }
 
-    const raptor = findBundledRaptorPlayer(row.season, {
+    const raptor = await findBundledRaptorPlayer(row.season, {
       nbaId,
       playerId,
       playerName: row.playerName,

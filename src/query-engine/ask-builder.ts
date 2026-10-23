@@ -8,7 +8,6 @@ import {
   metricById,
 } from "./metrics";
 import type { AskMetricDef, AskMetricId, QueryOperation } from "./types";
-import { metricSeasonAvailability } from "./coverage";
 import {
   canonicalSeasonFromStartYear,
   currentNbaStartYear,
@@ -380,8 +379,12 @@ export function validateAskBuilderState(
     errors.push("Choose a metric.");
   }
   if (opt.needsMetric && state.metricId && state.season) {
-    const avail = metricSeasonAvailability(state.metricId, state.season);
-    if (!avail.ok) errors.push(avail.message);
+    // Sync form validation: RAPTOR ends 2021-22. Live bake checks run in execute.
+    if (state.metricId === "raptor" && state.season > "2021-22") {
+      errors.push(
+        `Verified season-true RAPTOR data is not available for ${state.season}. RAPTOR coverage ends after 2021-22.`
+      );
+    }
   }
   if (
     state.operation === "team_season_compare" &&

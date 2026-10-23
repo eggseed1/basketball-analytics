@@ -725,8 +725,8 @@ export async function getBundledCompPool(): Promise<BundledCompPoolRow[]> {
       hit.drblD = row.drblD != null && Number.isFinite(row.drblD) ? row.drblD : null;
     }
   }
-  for (const season of bundledDarkoSeasonIds()) {
-    for (const row of getBundledDarkoSeason(season)) {
+  for (const season of await bundledDarkoSeasonIds()) {
+    for (const row of await getBundledDarkoSeason(season)) {
       const espnId = lookupEspnIdByPlayerName(row.playerName);
       if (!espnId) continue;
       const hit = best.get(`${espnId}|${season}`);
@@ -738,8 +738,8 @@ export async function getBundledCompPool(): Promise<BundledCompPoolRow[]> {
         row.defensive != null && Number.isFinite(row.defensive) ? row.defensive : null;
     }
   }
-  for (const season of bundledRaptorSeasonIds()) {
-    for (const row of getBundledRaptorSeason(season)) {
+  for (const season of await bundledRaptorSeasonIds()) {
+    for (const row of await getBundledRaptorSeason(season)) {
       const espnId = lookupEspnIdByPlayerName(row.playerName);
       if (!espnId) continue;
       const hit = best.get(`${espnId}|${season}`);

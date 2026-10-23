@@ -419,7 +419,7 @@ export async function rankPlayerRaceCandidates(
   }
 
   if (metric === "darkoDpm") {
-    const rows = getBundledDarkoSeason(season);
+    const rows = await getBundledDarkoSeason(season);
     for (const row of rows) {
       const nbaId = row.nbaPlayerId ? String(row.nbaPlayerId) : null;
       const name = String(row.playerName ?? "").trim();

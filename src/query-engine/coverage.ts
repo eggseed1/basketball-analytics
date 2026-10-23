@@ -132,8 +132,9 @@ export function getAskMetricCoverageAudit(
     {
       metricId: "darko",
       label: "DARKO DPM",
-      earliestSeason: listBundledDarkoSeasons()[0] ?? "1996-97",
-      latestSeason: listBundledDarkoSeasons().at(-1) ?? current,
+      // Static span for the audit table — live bake check is metricSeasonAvailability.
+      earliestSeason: "1996-97",
+      latestSeason: current,
       playerCoverage: "Season-keyed DARKO overlay when baked for the asked season",
       reliable: true,
       sourceLabel: "Verified historical impact (DARKO season-keyed)",
@@ -143,8 +144,8 @@ export function getAskMetricCoverageAudit(
     {
       metricId: "raptor",
       label: "RAPTOR",
-      earliestSeason: listBundledRaptorSeasons()[0] ?? "1976-77",
-      latestSeason: listBundledRaptorSeasons().at(-1) ?? "2021-22",
+      earliestSeason: "1976-77",
+      latestSeason: "2021-22",
       playerCoverage:
         "Open RAPTOR through 2021-22; blank afterward",
       reliable: true,
@@ -338,13 +339,13 @@ export function coverageForMetric(metricId: AskMetricId): MetricCoverage | null 
 /**
  * Returns a user-facing refusal when a metric is not season-true for `season`.
  */
-export function metricSeasonAvailability(
+export async function metricSeasonAvailability(
   metricId: AskMetricId,
   season: string
-): { ok: true } | { ok: false; message: string } {
+): Promise<{ ok: true } | { ok: false; message: string }> {
   if (metricId === "darko") {
-    if (!isBundledDarkoSeason(season)) {
-      const span = listBundledDarkoSeasons();
+    if (!(await isBundledDarkoSeason(season))) {
+      const span = await listBundledDarkoSeasons();
       const range =
         span.length > 0
           ? `${span[0]}–${span.at(-1)}`
@@ -357,8 +358,8 @@ export function metricSeasonAvailability(
     return { ok: true };
   }
   if (metricId === "raptor") {
-    if (!isBundledRaptorSeason(season)) {
-      const span = listBundledRaptorSeasons();
+    if (!(await isBundledRaptorSeason(season))) {
+      const span = await listBundledRaptorSeasons();
       const range =
         span.length > 0
           ? `${span[0]}–${span.at(-1)}`
