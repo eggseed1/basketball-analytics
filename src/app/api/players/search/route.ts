@@ -23,7 +23,11 @@ import {
   awardWinnerSortRank,
 } from "@/data/runtime/awards-search-boost";
 import { getBundledCurrentRosterEntry } from "@/data/runtime/current-roster-snapshot";
-import { unplayedDraftees, type UnplayedDraftee } from "@/data/runtime/draftee-search";
+import {
+  ensureUnplayedDraftees,
+  unplayedDraftees,
+  type UnplayedDraftee,
+} from "@/data/runtime/draftee-search";
 import { normalizePlayerName } from "@/lib/player-name";
 import { shiftCanonicalSeason } from "@/lib/player-stat-comps";
 import { resolveTeamBrand } from "@/lib/nba-brand";
@@ -582,6 +586,7 @@ export async function GET(request: Request) {
 
   await Promise.all([
     ensurePlayerSearch(),
+    ensureUnplayedDraftees(),
     import("@/data/media/portrait-lookup-store").then((m) =>
       m.ensurePortraitMaps()
     ),

@@ -5,7 +5,10 @@ import { getPlayerIdAliasIndex } from "@/data/identity/player-identity";
 import { isProductionApprovedPlayerAlias } from "@/data/providers/impact/player-id-aliases";
 import { awardWinnerSortRank } from "@/data/runtime/awards-search-boost";
 import { getPlayerSearchIndex } from "@/data/runtime/player-search-snapshot";
-import { unplayedDraftees } from "@/data/runtime/draftee-search";
+import {
+  ensureUnplayedDraftees,
+  unplayedDraftees,
+} from "@/data/runtime/draftee-search";
 
 const SITE_WEB = "https://site.web.api.espn.com";
 
@@ -80,6 +83,16 @@ export async function GET(request: Request) {
     if (q.length < 2) {
       return jsonOk({ query: q, count: 0, data: [] as WatchlistSearchHit[] });
     }
+
+    await Promise.all([
+      import("@/data/runtime/player-search-snapshot").then((m) =>
+        m.ensurePlayerSearch()
+      ),
+      ensureUnplayedDraftees(),
+      import("@/data/runtime/awards-search-boost").then((m) =>
+        m.ensureAwardWinnerSearchBoost()
+      ),
+    ]);
 
     const hits: WatchlistSearchHit[] = [];
     // Seasons played, for baked-index rows only; breaks ties like Ed vs George Mikan.

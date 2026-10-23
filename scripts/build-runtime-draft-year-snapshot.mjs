@@ -9,6 +9,7 @@ import path from "node:path";
 
 const ROOT = process.cwd();
 const OUT = path.join(ROOT, "src", "data", "runtime", "draft-year-snapshot.json");
+const OUT_PUBLIC = path.join(ROOT, "public", "runtime", "draft-year-snapshot.json");
 const ALIASES = path.join(ROOT, "data", "impact", "player-id-aliases.json");
 const BIO = path.join(ROOT, "src", "data", "runtime", "player-bio-snapshot.json");
 
@@ -131,9 +132,12 @@ async function main() {
     return;
   }
 
+  const body = `${JSON.stringify(payload)}\n`;
   await fs.mkdir(path.dirname(OUT), { recursive: true });
-  await fs.writeFile(OUT, `${JSON.stringify(payload)}\n`, "utf8");
-  console.log(`wrote ${OUT} (${payload.count} keys)`);
+  await fs.writeFile(OUT, body, "utf8");
+  await fs.mkdir(path.dirname(OUT_PUBLIC), { recursive: true });
+  await fs.writeFile(OUT_PUBLIC, body, "utf8");
+  console.log(`wrote ${OUT_PUBLIC} (${payload.count} keys; src mirror ${OUT})`);
 }
 
 main().catch((err) => {

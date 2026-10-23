@@ -26,6 +26,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "src" / "data" / "runtime" / "historical-team-season-records.json"
+OUT_PUBLIC = ROOT / "public" / "runtime" / "historical-team-season-records.json"
 # ESPN team board starts at 2001-02; bundle everything earlier.
 DEFAULT_END_START_YEAR = 2000  # last season bundled: 2000-01
 DEFAULT_START_START_YEAR = 1946  # 1946-47 BAA
@@ -179,9 +180,12 @@ def main() -> int:
         "latestSeason": canonical_season(args.to_year),
         "seasons": dict(sorted(seasons.items())),
     }
+    text = json.dumps(payload, ensure_ascii=False, indent=2) + "\n"
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(f"[write] {OUT} ({len(payload['seasons'])} seasons)")
+    OUT.write_text(text, encoding="utf-8")
+    OUT_PUBLIC.parent.mkdir(parents=True, exist_ok=True)
+    OUT_PUBLIC.write_text(text, encoding="utf-8")
+    print(f"[write] {OUT_PUBLIC} ({len(payload['seasons'])} seasons; src mirror {OUT})")
     if failures:
         print(f"[warn] {len(failures)} failures")
         for line in failures[:12]:

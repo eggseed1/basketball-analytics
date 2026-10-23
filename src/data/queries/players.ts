@@ -1185,9 +1185,10 @@ async function loadExploreAllSeasonsBoard(
 async function attachDraftYears(rows: PlayerSeason[]): Promise<PlayerSeason[]> {
   if (!rows.length) return rows;
   try {
-    const { getBundledDraftYearMap } = await import(
+    const { ensureDraftYearSnapshot, getBundledDraftYearMap } = await import(
       "@/data/runtime/draft-year-snapshot"
     );
+    await ensureDraftYearSnapshot();
     const bundled = getBundledDraftYearMap();
     if (bundled.size > 0) {
       return overlayDraftYears(rows, bundled);

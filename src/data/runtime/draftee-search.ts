@@ -8,7 +8,11 @@
  * draft-night bake links, else the one baked bio with the same name and a
  * birth year that fits the draft, else keeps its NBA id (both route to a page).
  */
-import { bundledDraftPicks, type BundledDraftPick } from "./draft-history-snapshot";
+import {
+  bundledDraftPicks,
+  ensureDraftHistorySnapshot,
+  type BundledDraftPick,
+} from "./draft-history-snapshot";
 import { draftNightPicks } from "./draft-night-snapshot";
 import { bundledPlayerBioEntries } from "./player-bio-snapshot";
 import { getBundledPlayerIdAliasIndex } from "./player-id-aliases-snapshot";
@@ -32,6 +36,15 @@ let cached: UnplayedDraftee[] | null = null;
 function startYear(season: string | undefined): number | null {
   const y = Number.parseInt(String(season ?? ""), 10);
   return Number.isFinite(y) ? y : null;
+}
+
+export async function ensureUnplayedDraftees(): Promise<void> {
+  await Promise.all([
+    ensureDraftHistorySnapshot(),
+    import("./player-bio-snapshot").then((m) => m.ensurePlayerBio()),
+    import("./player-id-aliases-snapshot").then((m) => m.ensurePlayerIdAliases()),
+    import("./player-search-snapshot").then((m) => m.ensurePlayerSearch()),
+  ]);
 }
 
 export function unplayedDraftees(): UnplayedDraftee[] {

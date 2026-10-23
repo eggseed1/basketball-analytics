@@ -217,6 +217,9 @@ async function fetchLeagueStandingsUnchecked(
   season: string
 ): Promise<LeagueStandings> {
   if (preferBundledProductDataOnEdge()) {
+    await import("@/data/runtime/standings-snapshot").then((m) =>
+      m.ensureStandingsSnapshot()
+    );
     const bundled = standingsFromRuntimeBundle(season);
     if (bundled && rowCount(bundled) > 0) return bundled;
     const fromArchive = standingsFromGameArchive(season);

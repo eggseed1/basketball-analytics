@@ -14,6 +14,7 @@ const OUT = path.join(
   "runtime",
   "standings-snapshot.json"
 );
+const OUT_PUBLIC = path.join(ROOT, "public", "runtime", "standings-snapshot.json");
 const CDN = "https://cdn.espn.com/core/nba/standings";
 const SITE = "https://site.api.espn.com/apis/v2/sports/basketball/nba/standings";
 
@@ -192,9 +193,12 @@ const payload = {
   seasons,
 };
 
+const body = JSON.stringify(payload);
 await fs.mkdir(path.dirname(OUT), { recursive: true });
-await fs.writeFile(OUT, JSON.stringify(payload));
-const gz = gzipSync(Buffer.from(JSON.stringify(payload))).length;
+await fs.writeFile(OUT, body);
+await fs.mkdir(path.dirname(OUT_PUBLIC), { recursive: true });
+await fs.writeFile(OUT_PUBLIC, body);
+const gz = gzipSync(Buffer.from(body)).length;
 console.log(
-  `[standings-snapshot] wrote ${Object.keys(seasons).length} seasons → ${OUT} (gzip ${gz} B)`
+  `[standings-snapshot] wrote ${Object.keys(seasons).length} seasons → ${OUT_PUBLIC} (gzip ${gz} B; src mirror ${OUT})`
 );

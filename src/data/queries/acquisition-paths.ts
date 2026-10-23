@@ -153,6 +153,17 @@ function draftedBy(teamId: string, year: number, round: number): DraftCandidate[
 let cached: { builtAt: string; engine: AcquisitionEngine; ledgerThrough: string | null } | null = null;
 
 async function getEngine() {
+  await Promise.all([
+    import("@/data/runtime/draft-history-snapshot").then((m) =>
+      m.ensureDraftHistorySnapshot()
+    ),
+    import("@/data/runtime/player-search-snapshot").then((m) =>
+      m.ensurePlayerSearch()
+    ),
+    import("@/data/runtime/player-bio-snapshot").then((m) =>
+      m.ensurePlayerBio()
+    ),
+  ]);
   const index = await buildTransactionEventIndex();
   if (cached?.builtAt === index.builtAt) return cached;
   const events = index.events
