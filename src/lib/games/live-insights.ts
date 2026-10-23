@@ -43,7 +43,14 @@ export interface QuarterStandouts {
 }
 
 export interface SideBattle {
+  /** Player offensive rebounds (box-score style; excludes team OREBs). */
   oreb: number;
+  /**
+   * Offensive rebounds that open a second chance — player + team. Used as the
+   * denominator for pts per offensive rebound so team-board tips don't inflate
+   * the rate past what one trip can score.
+   */
+  orebChances: number;
   dreb: number;
   tov: number;
   stl: number;
@@ -52,7 +59,7 @@ export interface SideBattle {
   fgm: number;
   /** Points this side scored (from play-by-play). */
   points: number;
-  /** Own offensive rebounds plus opponent turnovers. */
+  /** Own player offensive rebounds plus opponent turnovers. */
   extraChances: number;
   secondChancePoints: number;
   pointsOffTurnovers: number;
@@ -97,11 +104,15 @@ export function sharedGamePossessions(battle: PossessionBattle): number {
 }
 
 /**
- * Second-chance points per player offensive rebound. Null when there were no
- * counted OREBs (team offensive rebounds can still create second-chance points).
+ * Second-chance points per offensive rebound chance (player + team). Null when
+ * there were no OREB chances. Using only player OREBs in the denominator let a
+ * team board tip plus one player OREB print rates like 4.0.
  */
-export function ptsPerOreb(side: Pick<SideBattle, "secondChancePoints" | "oreb">): number | null {
-  return side.oreb > 0 ? side.secondChancePoints / side.oreb : null;
+export function ptsPerOreb(
+  side: Pick<SideBattle, "secondChancePoints" | "orebChances" | "oreb">
+): number | null {
+  const chances = side.orebChances > 0 ? side.orebChances : side.oreb;
+  return chances > 0 ? side.secondChancePoints / chances : null;
 }
 
 /**
@@ -202,6 +213,7 @@ const emptyLine = (playerId: string, name: string): PlayerLine => ({
 
 const emptyBattle = (): SideBattle => ({
   oreb: 0,
+  orebChances: 0,
   dreb: 0,
   tov: 0,
   stl: 0,
@@ -345,8 +357,10 @@ export function buildLiveInsights(
     if (/\brebound\b/i.test(d)) {
       sawStat = true;
       const offensive = /\boffensive\b/i.test(d);
-      if (offensive) secondChance[side] = true;
-      else clear(opp);
+      if (offensive) {
+        secondChance[side] = true;
+        battle[side].orebChances++;
+      } else clear(opp);
       // Team rebounds move the ball but aren't in box score rebound totals.
       if (/\bteam rebound\b/i.test(d)) continue;
       if (offensive) {
