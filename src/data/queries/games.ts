@@ -465,6 +465,18 @@ export async function getGameShell(gameId: string): Promise<GameShell | null> {
     } catch {
       // network
     }
+
+    // Archive / schedule row — same source as /api/games/[id]. CDN can miss on
+    // Workers while historical still has a final scoreboard shell.
+    try {
+      const historical = await getHistoricalGame(id);
+      const shell = historical
+        ? acceptShell(shellFromGame(historical, "historical"))
+        : null;
+      if (shell) return withBroadcastFallback(shell);
+    } catch {
+      // soft-fail
+    }
     return null;
   }
 

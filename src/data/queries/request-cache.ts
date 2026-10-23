@@ -316,7 +316,10 @@ async function fallbackGameShell(gameId: string): Promise<GameShell | null> {
       timeoutMs: 3_000,
       maxUrls: 1,
     }).catch(() => null);
-    return box?.game ? shellFromFallbackBox(box) : null;
+    if (box?.game) return shellFromFallbackBox(box);
+    const { getHistoricalGame } = await import("@/data/queries/historical");
+    const historical = await getHistoricalGame(gameId).catch(() => null);
+    return historical ? shellFromFallbackGame(historical) : null;
   }
 
   if (looksLikeNbaStatsGameId(gameId)) {
