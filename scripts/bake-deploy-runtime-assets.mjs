@@ -65,7 +65,9 @@ run("npx", ["tsx", "scripts/build-season-shots-from-pbp.ts", "--season", season]
 // NBA hustle tracking (stats.nba.com) — Explore / player hustle tabs on CF.
 // Non-fatal: committed snapshot already has the season; refresh when NBA answers.
 try {
-  run("node", ["scripts/build-runtime-hustle-snapshot.mjs"]);
+  run("node", ["scripts/build-runtime-hustle-snapshot.mjs"], {
+    HUSTLE_SEASONS: "current",
+  });
 } catch (error) {
   console.warn(
     `[bake-deploy-assets] hustle refresh skipped: ${

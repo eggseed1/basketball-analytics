@@ -20,13 +20,21 @@ const OUT_PUBLIC = path.join(
 
 /** Hustle tracking starts usable in 2020-21; runs through the current season. */
 const FIRST_START_YEAR = 2020;
-const SEASONS = Array.from(
+const ALL_SEASONS = Array.from(
   { length: nbaSeasonPhaseInfo(new Date()).startYear - FIRST_START_YEAR + 1 },
   (_, i) => {
     const start = FIRST_START_YEAR + i;
     return `${start}-${String((start + 1) % 100).padStart(2, "0")}`;
   }
 );
+/**
+ * HUSTLE_SEASONS=current → only refresh the live year (deploy bake).
+ * Otherwise refresh every season (nightly / manual).
+ */
+const SEASONS =
+  process.env.HUSTLE_SEASONS === "current"
+    ? [ALL_SEASONS[ALL_SEASONS.length - 1]].filter(Boolean)
+    : ALL_SEASONS;
 
 const NBA_HEADERS = {
   Accept: "application/json, text/plain, */*",
@@ -162,7 +170,8 @@ const prior = await fs
   .readFile(OUT, "utf8")
   .then((raw) => JSON.parse(raw).seasons ?? {})
   .catch(() => ({}));
-const seasons = {};
+// Start from prior so HUSTLE_SEASONS=current keeps historical overlays.
+const seasons = { ...prior };
 // Newest first so the live season refreshes even if older NBA calls stall out.
 for (const season of [...SEASONS].reverse()) {
   try {
