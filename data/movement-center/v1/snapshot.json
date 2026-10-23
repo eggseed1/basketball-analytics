@@ -5,10 +5,10 @@
     "season": "2026-27",
     "snapshotDate": "2026-10-23",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-10-23T15:28:57.626Z",
-    "rosterPlayerCount": 479,
-    "headlinesScanned": 6037,
-    "latestHeadlineAt": "2026-10-23T15:27:25.000Z",
+    "builtAt": "2026-10-23T17:20:20.914Z",
+    "rosterPlayerCount": 480,
+    "headlinesScanned": 6069,
+    "latestHeadlineAt": "2026-10-23T17:09:15.000Z",
     "latestTransactionDate": "2026-10-21",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -181,6 +181,10 @@
     "outlet:basketball-news": {
       "label": "Basketball News",
       "credibility": 16
+    },
+    "outlet:marca": {
+      "label": "Marca",
+      "credibility": 12
     },
     "reporter:bobby-marks": {
       "label": "Bobby Marks (ESPN)",
@@ -797,20 +801,41 @@
     },
     {
       "id": "mv-trade-6589-20261005",
-      "headline": "Draymond Green and Mark Williams: trade talk",
-      "primaryClaimId": "mv-ac71e037974744a0",
+      "headline": "Draymond Green, Mark Williams and others: trade talk",
+      "primaryClaimId": "mv-1078d8da46ce0418",
       "claimIds": [
-        "mv-ac71e037974744a0"
+        "mv-ac71e037974744a0",
+        "mv-d2a9f6adeed1b232",
+        "mv-9a555206cc4a7ca7",
+        "mv-74c51c9e2709e583",
+        "mv-81705535ee965e52",
+        "mv-914c7606dd1f0f3a",
+        "mv-ba7514895146b34a",
+        "mv-cf9f4a7c23eedb58",
+        "mv-1078d8da46ce0418",
+        "mv-353343f40da3ed93",
+        "mv-671e10b7ccb0ec57",
+        "mv-952e6db94b7fbfb6",
+        "mv-212d63247eb469a4",
+        "mv-9fe27d68f69b738c",
+        "mv-64710e24816191f1"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-05T07:47:20.000Z",
-      "lastMeaningfulAt": "2026-10-05T07:47:20.000Z",
+      "lastMeaningfulAt": "2026-10-22T22:45:01.000Z",
       "linkedPlayerIds": [
         "6589",
-        "4701232"
+        "4701232",
+        "4897943",
+        "4278077",
+        "4277922"
       ],
       "linkedTeamIds": [
+        "13",
+        "15",
+        "14",
+        "18",
         "9",
         "21"
       ]
@@ -1242,24 +1267,6 @@
       ]
     },
     {
-      "id": "mv-trade-4278077-20261013",
-      "headline": "Jarred Vanderbilt: trade talk",
-      "primaryClaimId": "mv-81705535ee965e52",
-      "claimIds": [
-        "mv-81705535ee965e52"
-      ],
-      "evidenceClass": "rumored",
-      "state": "unresolved",
-      "firstSeenAt": "2026-10-13T23:53:52.000Z",
-      "lastMeaningfulAt": "2026-10-13T23:53:52.000Z",
-      "linkedPlayerIds": [
-        "4278077"
-      ],
-      "linkedTeamIds": [
-        "13"
-      ]
-    },
-    {
       "id": "mv-contract-3102531-20261014",
       "headline": "Kristaps Porziņģis: free agency",
       "primaryClaimId": "mv-dab3945f667dc615",
@@ -1316,25 +1323,6 @@
       "linkedTeamIds": [
         "20",
         "6"
-      ]
-    },
-    {
-      "id": "mv-trade-4277922-20261016",
-      "headline": "Jericho Sims: trade talk",
-      "primaryClaimId": "mv-914c7606dd1f0f3a",
-      "claimIds": [
-        "mv-914c7606dd1f0f3a"
-      ],
-      "evidenceClass": "reported",
-      "state": "unresolved",
-      "firstSeenAt": "2026-10-16T07:44:17.000Z",
-      "lastMeaningfulAt": "2026-10-16T07:44:17.000Z",
-      "linkedPlayerIds": [
-        "4277922"
-      ],
-      "linkedTeamIds": [
-        "13",
-        "15"
       ]
     },
     {
@@ -1529,6 +1517,26 @@
       ],
       "linkedTeamIds": [
         "9"
+      ]
+    },
+    {
+      "id": "mv-contract-4897943-20261022",
+      "headline": "Dalton Knecht: free agency",
+      "primaryClaimId": "mv-1bf1c9ed9ead2db5",
+      "claimIds": [
+        "mv-3c01ac40c692884c",
+        "mv-1bf1c9ed9ead2db5"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-10-22T23:15:00.000Z",
+      "lastMeaningfulAt": "2026-10-23T05:22:40.000Z",
+      "linkedPlayerIds": [
+        "4897943"
+      ],
+      "linkedTeamIds": [
+        "18",
+        "16"
       ]
     },
     {
@@ -4109,9 +4117,30 @@
       "sourceUrl": "https://www.talkbasket.net/224339-draymond-green-the-mark-williams-trade-ultimately-ruined-dalton-knecht",
       "playerIds": [
         "6589",
-        "4701232"
+        "4701232",
+        "4897943"
       ],
       "teamIds": [],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-d2a9f6adeed1b232",
+      "clusterId": "mv-trade-6589-20261005",
+      "summary": "Lakers Proposed to Trade Dalton Knecht for ‘True Pro’ NBA Champion",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-05T11:48:56.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/los-angeles-lakers/lakers-trade-dalton-knecht-pat/",
+      "playerIds": [
+        "4897943"
+      ],
+      "teamIds": [
+        "13"
+      ],
       "isOriginal": true
     },
     {
@@ -4608,6 +4637,26 @@
       ],
       "teamIds": [],
       "isOriginal": false
+    },
+    {
+      "id": "mv-9a555206cc4a7ca7",
+      "clusterId": "mv-trade-6589-20261005",
+      "summary": "Dalton Knecht Dealt ‘Painful’ Trade, Roster Cut News After Lakers Preseason Game",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-06T19:09:44.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/los-angeles-lakers/dalton-knecht-painful-trade-roster-cut-news-preseason-game/",
+      "playerIds": [
+        "4897943"
+      ],
+      "teamIds": [
+        "13"
+      ],
+      "isOriginal": true
     },
     {
       "id": "mv-8afc140afe6c1878",
@@ -6263,6 +6312,27 @@
       "negotiationSpecificity": "offer"
     },
     {
+      "id": "mv-74c51c9e2709e583",
+      "clusterId": "mv-trade-6589-20261005",
+      "summary": "Lakers eye more roster changes with Dalton Knecht and a $48 million standout linked to potential exits",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-13T20:15:11.000Z",
+      "sourceId": "outlet:marca",
+      "sourceLabel": "Marca",
+      "sourceUrl": "https://www.marca.com/en/basketball/nba/los-angeles-lakers/2026/10/13/lakers-eye-more-roster-changes-with-dalton-knecht-and-48-million-standout-linked-to-potential-exits.html",
+      "playerIds": [
+        "4897943"
+      ],
+      "teamIds": [
+        "13"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "contact"
+    },
+    {
       "id": "mv-e9726a8e390f2b21",
       "clusterId": "mv-contract-4066354-20261013",
       "summary": "Payton Pritchard, Celtics agree to 2-year, $44.2 million contract extension: Sources",
@@ -6348,7 +6418,7 @@
     },
     {
       "id": "mv-81705535ee965e52",
-      "clusterId": "mv-trade-4278077-20261013",
+      "clusterId": "mv-trade-6589-20261005",
       "summary": "Jarred Vanderbilt And Dalton Knecht Are On The Trade Block As Lakers Explore Potential Deals",
       "claimType": "trade_interest",
       "evidenceClass": "rumored",
@@ -6359,7 +6429,8 @@
       "sourceLabel": "Fadeaway World",
       "sourceUrl": "https://fadeawayworld.net/nba-trade-rumors/los-angeles-lakers/jarred-vanderbilt-and-dalton-knecht-are-on-the-trade-block-as-lakers-explore-potential-deals",
       "playerIds": [
-        "4278077"
+        "4278077",
+        "4897943"
       ],
       "teamIds": [
         "13"
@@ -6533,7 +6604,7 @@
     },
     {
       "id": "mv-914c7606dd1f0f3a",
-      "clusterId": "mv-trade-4277922-20261016",
+      "clusterId": "mv-trade-6589-20261005",
       "summary": "Lakers and Bucks discuss Dalton Knecht-Jericho Sims swap",
       "claimType": "trade_interest",
       "evidenceClass": "reported",
@@ -6545,7 +6616,8 @@
       "reporterLabel": "Jake Fischer",
       "sourceUrl": "https://www.talkbasket.net/224889-lakers-and-bucks-discuss-dalton-knecht-jericho-sims-swap",
       "playerIds": [
-        "4277922"
+        "4277922",
+        "4897943"
       ],
       "teamIds": [
         "13",
@@ -6597,6 +6669,29 @@
       "negotiationSpecificity": "offer"
     },
     {
+      "id": "mv-ba7514895146b34a",
+      "clusterId": "mv-trade-6589-20261005",
+      "summary": "Lakers Insider Reveals Potential Holdup in Dalton Knecht-Bucks Trade Talks",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-16T22:16:54.000Z",
+      "sourceId": "reporter:jovan-buha",
+      "sourceLabel": "Heavy, citing Jovan Buha (The Athletic)",
+      "reporterLabel": "Jovan Buha",
+      "sourceUrl": "https://heavy.com/sports/nba/los-angeles-lakers/lakers-dalton-knecht-bucks-trade-holdup/",
+      "playerIds": [
+        "4897943"
+      ],
+      "teamIds": [
+        "13",
+        "15"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "active_talks"
+    },
+    {
       "id": "mv-9364f915c0677378",
       "clusterId": "mv-trade-4871141-20261016",
       "summary": "76ers Linked to 2 Rival Centers After Ariel Hukporti’s Season-Ending Injury",
@@ -6617,6 +6712,91 @@
       "isOriginal": false
     },
     {
+      "id": "mv-cf9f4a7c23eedb58",
+      "clusterId": "mv-trade-6589-20261005",
+      "summary": "Lakers Make Major New Move in Dalton Knecht Trade Talks to Land 6’10” Center",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-16T23:23:13.000Z",
+      "sourceId": "reporter:jake-fischer",
+      "sourceLabel": "Heavy, citing Jake Fischer (The Stein Line)",
+      "reporterLabel": "Jake Fischer",
+      "sourceUrl": "https://heavy.com/sports/nba/los-angeles-lakers/lakers-dalton-knecht-trade-talks-center/",
+      "playerIds": [
+        "4897943"
+      ],
+      "teamIds": [
+        "13"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "active_talks"
+    },
+    {
+      "id": "mv-1078d8da46ce0418",
+      "clusterId": "mv-trade-6589-20261005",
+      "summary": "JJ Redick Gets Real On Dalton Knecht’s ‘Tough’ Reality Amid Rampant Lakers Trade Rumors",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-17T03:16:48.000Z",
+      "sourceId": "outlet:fadeaway-world",
+      "sourceLabel": "Fadeaway World",
+      "sourceUrl": "https://fadeawayworld.net/nba/los-angeles-lakers/jj-redick-gets-real-on-dalton-knechts-tough-reality-amid-rampant-lakers-trade-rumors",
+      "playerIds": [
+        "4897943"
+      ],
+      "teamIds": [
+        "13"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-353343f40da3ed93",
+      "clusterId": "mv-trade-6589-20261005",
+      "summary": "Lakers Expect To Cut Ties Or Trade Dalton Knecht Today: Report",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-17T14:36:25.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/los-angeles-lakers/cut-ties-trade-dalton-knecht-today-report/",
+      "playerIds": [
+        "4897943"
+      ],
+      "teamIds": [
+        "13"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-671e10b7ccb0ec57",
+      "clusterId": "mv-trade-6589-20261005",
+      "summary": "Lakers Get Major Trade News on $27M Center as Dalton Knecht Talks Heat Up",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-17T23:14:37.000Z",
+      "sourceId": "reporter:brett-siegel",
+      "sourceLabel": "Heavy, citing Brett Siegel (ClutchPoints)",
+      "reporterLabel": "Brett Siegel",
+      "sourceUrl": "https://heavy.com/sports/nba/los-angeles-lakers/lakers-27m-center-knecht-trade-news/",
+      "playerIds": [
+        "4897943"
+      ],
+      "teamIds": [
+        "13",
+        "14"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "active_talks"
+    },
+    {
       "id": "mv-9444aa65f45be3e6",
       "clusterId": "mv-contract-4601023-20261018",
       "summary": "Suns, Oso Ighodaro Discussing Contract Extension",
@@ -6634,6 +6814,26 @@
       ],
       "teamIds": [
         "21"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-952e6db94b7fbfb6",
+      "clusterId": "mv-trade-6589-20261005",
+      "summary": "JJ Redick Addresses Dalton Knecht Trade Rumors Before Lakers Cut Ties",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-18T16:21:54.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/los-angeles-lakers/jj-redick-dalton-knecht-trade-rumors-lakers-cut-ties/",
+      "playerIds": [
+        "4897943"
+      ],
+      "teamIds": [
+        "13"
       ],
       "isOriginal": false
     },
@@ -6675,6 +6875,26 @@
       "teamIds": [
         "9",
         "19"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-212d63247eb469a4",
+      "clusterId": "mv-trade-6589-20261005",
+      "summary": "Lakers’ Dalton Knecht Breaks Silence on Trade Rumors Amid Roster Deadline",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-18T19:16:25.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/los-angeles-lakers/lakers-dalton-knecht-breaks-silence-on-trade-rumors-amid-roster-deadline/",
+      "playerIds": [
+        "4897943"
+      ],
+      "teamIds": [
+        "13"
       ],
       "isOriginal": false
     },
@@ -7447,6 +7667,26 @@
       "isOriginal": true
     },
     {
+      "id": "mv-9fe27d68f69b738c",
+      "clusterId": "mv-trade-6589-20261005",
+      "summary": "Dalton Knecht Linked to Lakers’ Western Conference Rival After Major Injury",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-22T00:01:45.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/los-angeles-lakers/lakers-dalton-knecht-kings-ben-simmons-injury/",
+      "playerIds": [
+        "4897943"
+      ],
+      "teamIds": [
+        "13"
+      ],
+      "isOriginal": false
+    },
+    {
       "id": "mv-a31ebc1f8e10f075",
       "clusterId": "mv-trade-3975-20261022",
       "summary": "Steve Kerr Confirms Warriors Will Not Trade Their Future For Steph Curry",
@@ -7551,6 +7791,49 @@
       "isOriginal": false
     },
     {
+      "id": "mv-64710e24816191f1",
+      "clusterId": "mv-trade-6589-20261005",
+      "summary": "Knicks Reportedly Interested In Dalton Knecht",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-22T22:45:01.000Z",
+      "sourceId": "reporter:ian-begley",
+      "sourceLabel": "Hoops Rumors, citing Ian Begley (SNY)",
+      "reporterLabel": "Ian Begley, Jake Fischer",
+      "sourceUrl": "https://www.hoopsrumors.com/2026/10/knicks-reportedly-interested-in-dalton-knecht.html",
+      "playerIds": [
+        "4897943"
+      ],
+      "teamIds": [
+        "18"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "contact"
+    },
+    {
+      "id": "mv-3c01ac40c692884c",
+      "clusterId": "mv-contract-4897943-20261022",
+      "summary": "Knicks among teams interested in free agent forward Dalton Knecht",
+      "claimType": "free_agent_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-22T23:15:00.000Z",
+      "sourceId": "outlet:yahoo-sports",
+      "sourceLabel": "Yahoo Sports",
+      "sourceUrl": "https://sports.yahoo.com/articles/knicks-among-teams-interested-free-231500596.html",
+      "playerIds": [
+        "4897943"
+      ],
+      "teamIds": [
+        "18"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "contact"
+    },
+    {
       "id": "mv-bd26cacf446be7b2",
       "clusterId": "mv-trade-3917376-20261021",
       "summary": "Celtics’ Jayson Tatum Reveals Shocking Moment He Learned of Jaylen Brown Trade",
@@ -7571,6 +7854,28 @@
         "2"
       ],
       "isOriginal": false
+    },
+    {
+      "id": "mv-1bf1c9ed9ead2db5",
+      "clusterId": "mv-contract-4897943-20261022",
+      "summary": "Dalton Knecht Drawing Interest From Knicks, Wolves",
+      "claimType": "free_agent_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-23T05:22:40.000Z",
+      "sourceId": "outlet:realgm",
+      "sourceLabel": "RealGM",
+      "sourceUrl": "https://basketball.realgm.com/wiretap/287840/Dalton-Knecht-Drawing-Interest-From-Knicks-Wolves",
+      "playerIds": [
+        "4897943"
+      ],
+      "teamIds": [
+        "16",
+        "18"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "contact"
     },
     {
       "id": "mv-309507bc3255656e",

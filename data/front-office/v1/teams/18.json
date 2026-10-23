@@ -2,7 +2,7 @@
   "meta": {
     "methodologyVersion": "p18c2-1.0",
     "snapshotDate": "2026-10-23",
-    "retrievedAt": "2026-10-23T15:38:35.594Z",
+    "retrievedAt": "2026-10-23T17:25:29.715Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
@@ -11,7 +11,7 @@
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "ca574babbdaaafb1246defdf3e26990fdafda44f55ae851ac4e801431b550ade",
+    "sourceHash": "d2e877c678cfae7b7411fe896b71fba2753ab8d869bb976637b25f7b107e5d8f",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -212,6 +212,29 @@
           ],
           "guaranteedTotal": null,
           "href": "/players/1630631"
+        },
+        {
+          "playerId": "1642261",
+          "playerName": "Dalton Knecht",
+          "age": null,
+          "contractId": "cy-1642261-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1642261-2026",
+              "playerId": "1642261",
+              "franchiseId": "18",
+              "season": "2026-27",
+              "salary": 4201080,
+              "capHit": 4201080,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "salary-index"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1642261"
         },
         {
           "playerId": "1630540",
@@ -447,12 +470,12 @@
       "futureCommitments": [
         {
           "season": "2026-27",
-          "totalSalaryDollars": 221764491,
-          "playersUnderContract": 15
+          "totalSalaryDollars": 225965571,
+          "playersUnderContract": 16
         }
       ],
-      "playerSalaryCommitments": 221764491,
-      "playersWithSalary": 15,
+      "playerSalaryCommitments": 225965571,
+      "playersWithSalary": 16,
       "playersWithoutSalary": 2
     },
     "draftAssets": {
