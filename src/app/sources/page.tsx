@@ -4,8 +4,10 @@ import Link from "next/link";
 
 import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { PageHeader } from "@/components/layout/page-header";
-import legendPortraits from "@/data/media/legend-portraits.json";
-import portraitFallbacks from "@/data/media/portrait-fallbacks.json";
+import {
+  allCreditPortraitUrls,
+  ensurePortraitMaps,
+} from "@/data/media/portrait-lookup-store";
 import { type } from "@/lib/design-system";
 import { collectPhotoCredits } from "@/lib/photo-credits";
 import { SITE_CONTACT_URL } from "@/lib/site-url";
@@ -80,10 +82,8 @@ const DATA_SOURCES: { name: ReactNode; uses: string }[] = [
 
 export default async function SourcesPage() {
   const t = await getTranslations("Legal");
-  const credits = collectPhotoCredits([
-    ...Object.values(legendPortraits.portraits as Record<string, string>),
-    ...Object.values(portraitFallbacks.portraits as Record<string, string>),
-  ]);
+  await ensurePortraitMaps();
+  const credits = collectPhotoCredits(allCreditPortraitUrls());
 
   return (
     <main data-motion-page className="site-shell flex flex-col gap-8 py-6 sm:py-8">

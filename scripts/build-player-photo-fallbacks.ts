@@ -380,8 +380,7 @@ async function main() {
       .sort(([a], [b]) => a.localeCompare(b))
       .map(([route, f]) => [route, f.url])
   );
-  await fs.writeFile(
-    OUT,
+  const body =
     JSON.stringify(
       {
         version: "drbl-portrait-fallbacks-v1",
@@ -392,10 +391,15 @@ async function main() {
       },
       null,
       1
-    ) + "\n"
-  );
+    ) + "\n";
+  await fs.writeFile(OUT, body);
+  const publicOut = path.join(ROOT, "public/runtime/portrait-fallbacks.json");
+  await fs.mkdir(path.dirname(publicOut), { recursive: true });
+  await fs.writeFile(publicOut, body);
   console.log(tally);
-  console.log(`wrote ${Object.keys(portraits).length} fallbacks → ${path.relative(ROOT, OUT)}`);
+  console.log(
+    `wrote ${Object.keys(portraits).length} fallbacks → ${path.relative(ROOT, publicOut)} (src mirror ${path.relative(ROOT, OUT)})`
+  );
 }
 
 main().catch((err) => {

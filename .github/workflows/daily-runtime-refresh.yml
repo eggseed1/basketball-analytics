@@ -261,6 +261,9 @@ jobs:
             data/impact/player-id-aliases.json \
             src/data/runtime/player-id-aliases-snapshot.json \
             src/data/media/portrait-lookup.json \
+            public/runtime/portrait-lookup.json \
+            public/runtime/portrait-fallbacks.json \
+            public/runtime/legend-portraits.json \
             data/salaries/player-salaries-bref-archive.csv \
             data/cba/league-cap-seasons.json \
             data/cba/salary-cap-by-year.json \

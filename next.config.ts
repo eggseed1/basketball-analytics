@@ -113,7 +113,6 @@ const nextConfig: NextConfig = {
     // calls, so make the production server output self-contained on deploy.
     "/*": [
       "./src/data/drbl/precomputed/**/*",
-      "./src/data/media/portrait-lookup.json",
       "./data/cba/**/*",
       "./data/front-office/v1/**/*",
       "./data/impact/**/*",

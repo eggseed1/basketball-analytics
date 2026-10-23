@@ -580,7 +580,12 @@ export async function GET(request: Request) {
     return NextResponse.json({ results: [], season });
   }
 
-  await ensurePlayerSearch();
+  await Promise.all([
+    ensurePlayerSearch(),
+    import("@/data/media/portrait-lookup-store").then((m) =>
+      m.ensurePortraitMaps()
+    ),
+  ]);
 
   try {
     if (scope === "all" || scope === "career" || scope === "master") {
