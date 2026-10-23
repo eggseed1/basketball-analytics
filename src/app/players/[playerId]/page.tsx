@@ -54,6 +54,7 @@ import { remapLegendNbaIdToBref, resolveLegacyNbaPersonId } from "@/data/runtime
 import { awardWinnerIdForQuery } from "@/data/runtime/awards-search-boost";
 import { parseBrefPlayerSlug } from "@/data/providers/nba/bref-career-from-page";
 import {
+  ensurePlayerSearch,
   findPlayerSearchRowByName,
   getPlayerSearchIndex,
 } from "@/data/runtime/player-search-snapshot";
@@ -213,6 +214,7 @@ export async function generateMetadata({ params }: PlayerPageProps) {
   await yieldForStreaming();
   const t = await getTranslations("PlayerDetail");
   const { playerId: rawId } = await params;
+  await ensurePlayerSearch();
   const playerId = resolvePublicPlayerId(rawId);
   // Sync search/roster only — live getPlayerCached blocked metadata on cold MISS.
   const searchHit = getPlayerSearchIndex().find((r) => r.id === playerId);
@@ -248,6 +250,7 @@ export default async function PlayerPage({
   const t = await getTranslations("PlayerDetail");
   const { playerId: rawId } = await params;
   const sp = await searchParams;
+  await ensurePlayerSearch();
   // Resolve legacy bref: peer-board ids to ESPN athlete ids (no redirect required).
   const playerId = resolvePublicPlayerId(rawId);
   const seasonParam = one(sp, "season");

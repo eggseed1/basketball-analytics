@@ -14,6 +14,7 @@ import { lookupApprovedPortraitUrl } from "@/data/media/portrait-lookup-store";
 import { nbaTeamAbbr } from "@/data/providers/nba/nba-team-meta";
 import { defaultCanonicalSeasons } from "@/data/providers/nba/season";
 import {
+  ensurePlayerSearch,
   getPlayerSearchIndex,
   getPlayerSearchIndexForSeason,
 } from "@/data/runtime/player-search-snapshot";
@@ -578,6 +579,8 @@ export async function GET(request: Request) {
   if (q.length < 1) {
     return NextResponse.json({ results: [], season });
   }
+
+  await ensurePlayerSearch();
 
   try {
     if (scope === "all" || scope === "career" || scope === "master") {

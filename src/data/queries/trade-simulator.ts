@@ -137,6 +137,10 @@ function currentFranchiseIdForPlayer(
 }
 
 export async function loadTradeSimulatorBoard(): Promise<TradeSimulatorBoard | null> {
+  const { ensureFrontOffice } = await import(
+    "@/data/runtime/front-office-snapshot"
+  );
+  await ensureFrontOffice();
   const slices = listRuntimeFrontOfficeFranchiseIds()
     .map((id) => loadTeamFrontOfficeSlice(id))
     .filter((slice) => slice != null);

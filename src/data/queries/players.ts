@@ -1082,12 +1082,13 @@ async function loadExploreAllSeasonsBoard(
   // Cloudflare: slim search index + BRef career (never landmark ESPN fan-out).
   if (process.env.VERCEL !== "1") {
     try {
-      const { getPlayerSearchIndex } = await import(
+      const { ensurePlayerSearch, getPlayerSearchIndex } = await import(
         "@/data/runtime/player-search-snapshot"
       );
       const { getBundledBrefCareerForPlayer } = await import(
         "@/data/runtime/player-career-bref-snapshot"
       );
+      await ensurePlayerSearch();
       const q = needle.toLowerCase();
       const hits = getPlayerSearchIndex()
         .filter(

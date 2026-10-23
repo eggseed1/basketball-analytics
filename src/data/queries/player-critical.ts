@@ -534,9 +534,10 @@ async function loadCriticalCareerSeasons(
         null;
       if (nameHint) {
         try {
-          const { getPlayerSearchIndex } = await import(
+          const { ensurePlayerSearch, getPlayerSearchIndex } = await import(
             "@/data/runtime/player-search-snapshot"
           );
+          await ensurePlayerSearch();
           const want = nameHint
             .normalize("NFD")
             .replace(/[\u0300-\u036f]/g, "")

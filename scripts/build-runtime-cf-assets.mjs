@@ -261,8 +261,16 @@ try {
       players,
     })
   );
+  const searchPublic = path.join(
+    ROOT,
+    "public",
+    "runtime",
+    "player-search-snapshot.json"
+  );
+  await fs.mkdir(path.dirname(searchPublic), { recursive: true });
+  await fs.copyFile(searchDest, searchPublic);
   console.log(
-    `[cf-assets] player-search-snapshot → ${searchDest} (${players.length} players, +${allEraAdded} all-era)`
+    `[cf-assets] player-search-snapshot → ${searchPublic} (${players.length} players, +${allEraAdded} all-era; src mirror ${searchDest})`
   );
 } catch (error) {
   console.warn(

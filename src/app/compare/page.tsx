@@ -54,7 +54,10 @@ import {
 } from "@/data/providers/historical/season-range";
 import { preferBundledProductDataOnEdge } from "@/data/providers/nba/runtime-policy";
 import { hasRuntimeTeamBoard, runtimeTeamBoardMeta } from "@/data/runtime/team-board-snapshot";
-import { getPlayerSearchIndex } from "@/data/runtime/player-search-snapshot";
+import {
+  ensurePlayerSearch,
+  getPlayerSearchIndex,
+} from "@/data/runtime/player-search-snapshot";
 import { shareImageMetadata } from "@/lib/share-images";
 import { getPlayerPortraitUrl } from "@/data/media/get-player-media";
 import {
@@ -94,6 +97,7 @@ function indexedPlayerName(id: string | undefined): string | null {
 
 export async function generateMetadata({ searchParams }: ComparePageProps): Promise<Metadata> {
   const sp = await searchParams;
+  await ensurePlayerSearch();
   const aId = one(sp, "a");
   const bId = one(sp, "b");
   const aName = indexedPlayerName(aId);

@@ -82,6 +82,10 @@ export async function sitemapUrls(kind: SitemapKind): Promise<SitemapUrl[]> {
   }
 
   if (kind === "players") {
+    const { ensurePlayerSearch } = await import(
+      "@/data/runtime/player-search-snapshot"
+    );
+    await ensurePlayerSearch();
     const roster = rosterSnapshot as unknown as RosterFile;
     const rosterPlayers = roster.players ?? {};
     const currentIds = Object.keys(rosterPlayers);
