@@ -16,7 +16,11 @@ import {
   usagePct,
 } from "@/data/providers/nba/compute-advanced";
 import { enrichBoxScoreAdvanced } from "@/data/providers/nba/enrich-box-score";
-import { normalizeEspnStatusType } from "@/lib/game-status";
+import {
+  clockFromStatusDetail,
+  normalizeDisplayClock,
+  normalizeEspnStatusType,
+} from "@/lib/game-status";
 import { mapEspnBroadcasts } from "@/lib/game-watch";
 import { nbaCalendarDate } from "@/lib/nba-calendar-date";
 import { normalizeGameTeamSide, applyHistoricalTeamEraToGame } from "@/lib/game-team-identity";
@@ -450,7 +454,10 @@ export function transformEspnScheduleEvent(
     typeof competition.status?.period === "number"
       ? competition.status.period
       : undefined;
-  const displayClock = competition.status?.displayClock?.trim() || undefined;
+  const displayClock =
+    normalizeDisplayClock(competition.status?.displayClock) ||
+    clockFromStatusDetail(statusDetail) ||
+    undefined;
 
   // ESPN season.type: 1 preseason · 2 regular · 3 postseason · 5 play-in.
   const espnSeasonType = event.season?.type;

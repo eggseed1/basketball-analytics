@@ -5,7 +5,10 @@ import {
   applyHistoricalTeamEraToGame,
   normalizeGameTeamSide,
 } from "@/lib/game-team-identity";
-import type { GameStatusKind } from "@/lib/game-status";
+import {
+  normalizeDisplayClock,
+  type GameStatusKind,
+} from "@/lib/game-status";
 
 const NBA_CDN = "https://cdn.nba.com/static/json";
 const SCHEDULE_URLS = [
@@ -170,7 +173,7 @@ export function transformNbaCdnGame(
   const homePeriodScores = periodScores(raw.homeTeam);
   const awayPeriodScores = periodScores(raw.awayTeam);
   const period = Number(raw.period);
-  const clock = String(raw.gameClock ?? "").trim();
+  const clock = normalizeDisplayClock(String(raw.gameClock ?? "")) ?? undefined;
   const tipOffAt = isoTipOff(raw);
 
   return applyHistoricalTeamEraToGame({

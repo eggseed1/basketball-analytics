@@ -182,8 +182,38 @@ function progressStage(status: GameStatusKind | undefined): number {
   return 0;
 }
 
-function clockSeconds(clock: string | null | undefined): number | null {
+/** NBA CDN clocks look like `PT7M35.00S`; ESPN uses `7:35` / `0.0`. */
+export function normalizeDisplayClock(
+  clock: string | null | undefined
+): string | null {
   const text = clock?.trim() ?? "";
+  if (!text) return null;
+  if (text === "0.0") return "0:00";
+  const pt = /^PT(?:(\d+)M)?(?:(\d+(?:\.\d+)?)S)?$/i.exec(text);
+  if (pt) {
+    const minutes = Number(pt[1] ?? 0);
+    const seconds = Math.floor(Number(pt[2] ?? 0));
+    if (!Number.isFinite(minutes) || !Number.isFinite(seconds)) return null;
+    return `${minutes}:${String(Math.max(0, seconds)).padStart(2, "0")}`;
+  }
+  return text;
+}
+
+/** ESPN shortDetail often carries the clock when `displayClock` is empty: `7:35 - 2nd`. */
+export function clockFromStatusDetail(
+  detail: string | null | undefined
+): string | null {
+  const text = detail?.trim() ?? "";
+  if (!text) return null;
+  const leading = /^(\d{1,2}:\d{2}(?:\.\d+)?)\s*-/.exec(text);
+  if (leading) return leading[1]!;
+  const trailing = /-\s*(\d{1,2}:\d{2}(?:\.\d+)?)\s*$/.exec(text);
+  if (trailing) return trailing[1]!;
+  return null;
+}
+
+function clockSeconds(clock: string | null | undefined): number | null {
+  const text = normalizeDisplayClock(clock) ?? clock?.trim() ?? "";
   const mmss = /^(\d{1,2}):(\d{2})(?:\.\d+)?$/.exec(text);
   if (mmss) return Number(mmss[1]) * 60 + Number(mmss[2]);
   const secs = /^(\d{1,2}(?:\.\d+)?)$/.exec(text);
@@ -282,7 +312,9 @@ export function periodClockLabel(options: {
   const { status, period, displayClock, statusDetail } = options;
   if (status === "halftime") return "Halftime";
   if (status === "period_break") {
-    if (period != null && period > 0) return `End of Q${period}`;
+    if (period != null && period > 0) {
+      return period <= 4 ? `End of Q${period}` : `End of OT${period - 4}`;
+    }
     return "Between periods";
   }
   if (isLiveLikeStatus(status)) {
@@ -292,12 +324,19 @@ export function periodClockLabel(options: {
         : period <= 4
           ? `Q${period}`
           : `OT${period - 4}`;
-    const clock = displayClock?.trim();
-    if (periodLabel && clock && clock !== "0.0" && clock !== "0:00") {
-      return `${periodLabel} · ${clock}`;
+    const clock =
+      normalizeDisplayClock(displayClock) ?? clockFromStatusDetail(statusDetail);
+    if (periodLabel && clock) return `${periodLabel} · ${clock}`;
+    if (periodLabel && period != null) {
+      const detail = statusDetail?.trim() ?? "";
+      if (/^end of\b/i.test(detail)) {
+        return period <= 4 ? `End of Q${period}` : `End of OT${period - 4}`;
+      }
+      return periodLabel;
     }
     if (periodLabel) return periodLabel;
     if (clock) return clock;
+    if (statusDetail?.trim()) return statusDetail.trim();
   }
   if (statusDetail?.trim()) {
     // Prefer short live detail when no structured clock.

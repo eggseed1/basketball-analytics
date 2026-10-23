@@ -6,10 +6,13 @@ import assert from "node:assert/strict";
 
 import { formatGameCountdown } from "../src/lib/game-countdown";
 import {
+  clockFromStatusDetail,
   isFinalStatus,
   isLiveLikeStatus,
   isPreTipStatus,
+  normalizeDisplayClock,
   normalizeEspnStatusType,
+  periodClockLabel,
   shouldDisplayScores,
   statusHeadline,
 } from "../src/lib/game-status";
@@ -261,6 +264,53 @@ function main() {
   {
     const mapped = mapEspnBroadcasts({});
     assert.equal(mapped.length, 0);
+  }
+
+  // Live period + clock: never show bare "Q2" when a clock is available.
+  {
+    assert.equal(normalizeDisplayClock("0.0"), "0:00");
+    assert.equal(normalizeDisplayClock("PT7M35.00S"), "7:35");
+    assert.equal(clockFromStatusDetail("7:35 - 2nd"), "7:35");
+    assert.equal(
+      periodClockLabel({
+        status: "in_progress",
+        period: 2,
+        displayClock: "7:35",
+      }),
+      "Q2 · 7:35"
+    );
+    assert.equal(
+      periodClockLabel({
+        status: "in_progress",
+        period: 2,
+        displayClock: "0.0",
+      }),
+      "Q2 · 0:00"
+    );
+    assert.equal(
+      periodClockLabel({
+        status: "in_progress",
+        period: 4,
+        displayClock: null,
+        statusDetail: "3:12 - 4th",
+      }),
+      "Q4 · 3:12"
+    );
+    assert.equal(
+      periodClockLabel({
+        status: "in_progress",
+        period: 2,
+        displayClock: "PT06M09.00S",
+      }),
+      "Q2 · 6:09"
+    );
+    assert.equal(
+      periodClockLabel({
+        status: "period_break",
+        period: 1,
+      }),
+      "End of Q1"
+    );
   }
 
   console.log("test-game-status: all assertions passed");
