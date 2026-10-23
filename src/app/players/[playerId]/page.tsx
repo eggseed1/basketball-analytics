@@ -1,11 +1,8 @@
 import { Suspense, type ComponentProps } from "react";
 import { getTranslations } from "next-intl/server";
-import { notFound } from "next/navigation";
 
 import { PageAtmosphere } from "@/components/brand/page-atmosphere";
-import {
-  GlassTintScaleProvider,
-} from "@/components/brand/glass-surface";
+import { GlassTintScaleProvider } from "@/components/brand/glass-surface";
 import { DestinationClientShell } from "@/components/continuity/destination-client-shell";
 import { MotionReveal } from "@/components/continuity/motion-reveal";
 import {
@@ -134,8 +131,9 @@ async function PlayerPageWithCareerLazy(
 }
 
 /**
- * Stream a light identity shell before career/season-tables work.
- * Career-backed body loads inside Suspense (same pattern as team brand → board).
+ * Sync identity shell only (search + roster snapshots). Never await career or
+ * live player/identity fetches here — those stay inside Suspense with the
+ * career body (same idea as team brand → board).
  */
 export default async function PlayerPage({
   params,
@@ -146,58 +144,21 @@ export default async function PlayerPage({
   const { playerId: rawId } = await params;
   const playerId = resolvePublicPlayerId(rawId);
 
-  // Identity only — career stays inside the Suspense child.
-  const [player, identity] = await Promise.all([
-    getPlayerCached(playerId),
-    resolvePlayerIdentityCached(playerId).catch(() => null),
-  ]);
-  const searchHit =
-    getPlayerSearchIndex().find((r) => r.id === playerId) ??
-    (identity?.espnId
-      ? getPlayerSearchIndex().find((r) => r.id === identity.espnId)
-      : undefined);
-  const draftee = unplayedDrafteeFor(
-    playerId,
-    identity?.espnId,
-    identity?.nbaId
-  );
-  if (
-    !player &&
-    !identity?.displayName &&
-    !searchHit &&
-    !draftee
-  ) {
-    notFound();
-  }
-
+  // Sync lookups only. Career body owns notFound after live/career resolves.
+  const searchHit = getPlayerSearchIndex().find((r) => r.id === playerId);
+  const draftee = unplayedDrafteeFor(playerId);
   const displayName =
-    firstUsablePlayerDisplayName(
-      identity?.displayName,
-      player?.fullName,
-      searchHit?.name,
-      draftee?.name
-    ) ?? playerId;
-  const rosterTeamId = resolveBundledCurrentTeamId(
-    identity?.espnId,
-    playerId,
-    identity?.nbaId
-  );
+    firstUsablePlayerDisplayName(searchHit?.name, draftee?.name) ?? playerId;
+  const rosterTeamId = resolveBundledCurrentTeamId(playerId);
   const teamKey =
-    brandableTeamKey(player?.currentTeamId) ??
     brandableTeamKey(rosterTeamId) ??
-    brandableTeamKey(
-      getBundledCurrentRosterEntry(identity?.espnId)?.teamId ??
-        getBundledCurrentRosterEntry(playerId)?.teamId
-    );
+    brandableTeamKey(getBundledCurrentRosterEntry(playerId)?.teamId);
   const brand = resolveTeamBrand(teamKey);
   const atmosphere = brandAtmosphereColors(brand?.primary, brand?.secondary);
   const canonicalId =
-    identity?.espnId ?? uniqueEspnIdForBrefName(playerId, displayName) ?? playerId;
+    uniqueEspnIdForBrefName(playerId, displayName) ?? playerId;
   const portraitUrl =
-    getPlayerPortraitUrl(rawId) ??
-    getPlayerPortraitUrl(playerId) ??
-    (identity?.nbaId ? getPlayerPortraitUrl(identity.nbaId) : null) ??
-    (identity?.espnId ? getPlayerPortraitUrl(identity.espnId) : null);
+    getPlayerPortraitUrl(rawId) ?? getPlayerPortraitUrl(playerId);
 
   const shellFallback = (
     <>
