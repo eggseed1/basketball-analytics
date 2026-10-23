@@ -106,6 +106,10 @@ assert.equal(ptsPerOreb(r.battle.away), 2, "2 second-chance pts / 1 OREB chance"
 assert.equal(ptsPerOreb(r.battle.home), 2, "2 second-chance pts / 1 team OREB chance");
 assert.equal(ptsPerForcedTov(r.battle.away.pointsOffTurnovers, r.battle.home.tov), 3);
 assert.equal(ptsPerForcedTov(r.battle.home.pointsOffTurnovers, r.battle.away.tov), 0);
+assert.ok(r.possessions);
+assert.ok(Number.isInteger(r.possessions.home));
+assert.ok(Number.isInteger(r.possessions.away));
+assert.ok(r.possessions.shared > 0);
 assert.ok(sharedGamePossessions(r.battle) > 0);
 
 assert.equal(r.quarters.length, 2);
