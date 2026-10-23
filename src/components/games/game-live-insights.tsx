@@ -25,6 +25,7 @@ import {
   type QuarterStandouts,
   type RightNow,
 } from "@/lib/games/live-insights";
+import type { ShotPace } from "@/lib/games/shot-pace";
 import { formatNumber } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
@@ -148,6 +149,8 @@ type BattleRow = {
   /** When true, bar max ignores null-style blanks (displayed as —). */
   blankAway?: boolean;
   blankHome?: boolean;
+  /** When true, the lower value is the edge (e.g. seconds to first shot). */
+  preferLower?: boolean;
 };
 
 function ExtraChancesCard({
@@ -157,6 +160,7 @@ function ExtraChancesCard({
   live,
   teamKeys,
   official,
+  shotPace,
 }: {
   battle: PossessionBattle;
   labels: Labels;
@@ -164,6 +168,7 @@ function ExtraChancesCard({
   live: boolean;
   teamKeys: { away: string; home: string };
   official: { home: OfficialTeamStats; away: OfficialTeamStats } | null;
+  shotPace: ShotPace | null;
 }) {
   const leader: Side | null = battle.net > 0 ? "home" : battle.net < 0 ? "away" : null;
   const both = (pick: (s: OfficialTeamStats) => number | null) => {
@@ -226,11 +231,24 @@ function ExtraChancesCard({
     ...(pppAway != null && pppHome != null
       ? [rateRow("ppp", "Points per possession", pppAway, pppHome, 2)]
       : []),
+    ...(shotPace?.away != null && shotPace.home != null
+      ? [
+          {
+            ...rateRow("to-shot", "Sec to first shot", shotPace.away, shotPace.home, 1),
+            preferLower: true,
+          } satisfies BattleRow,
+        ]
+      : []),
   ];
   const officialRows = [offTurnovers ? "points off turnovers" : null].filter(
     (v): v is string => v != null
   );
   const sideLabel = (s: Side) => labels[s];
+  const paceParts: string[] = [];
+  if (poss > 0) paceParts.push(`~${formatNumber(poss, 1)} possessions (shared)`);
+  if (shotPace?.averageSeconds != null) {
+    paceParts.push(`${formatNumber(shotPace.averageSeconds, 1)} sec avg to first shot`);
+  }
 
   return (
     <MatchupWashCard
@@ -265,9 +283,9 @@ function ExtraChancesCard({
         </span>
       </div>
 
-      {poss > 0 ? (
+      {paceParts.length ? (
         <p className={cn(type.caption, "tabular-nums text-muted-foreground")}>
-          Pace · ~{formatNumber(poss, 1)} possessions (shared)
+          Pace · {paceParts.join(" · ")}
         </p>
       ) : null}
 
@@ -278,9 +296,13 @@ function ExtraChancesCard({
           const better: Side | null =
             awayVal == null || homeVal == null || awayVal === homeVal
               ? null
-              : awayVal > homeVal
-                ? "away"
-                : "home";
+              : row.preferLower
+                ? awayVal < homeVal
+                  ? "away"
+                  : "home"
+                : awayVal > homeVal
+                  ? "away"
+                  : "home";
           const emph = (s: Side) => (better == null ? "even" : better === s ? "edge" : "trail");
           const max = Math.max(awayVal ?? 0, homeVal ?? 0, 1e-9);
           return (
@@ -360,10 +382,12 @@ function ExtraChancesCard({
           Extra chances are player offensive rebounds plus the other side&apos;s turnovers. Pts per
           offensive rebound and pts per turnover forced divide those points by the matching count;
           blank means zero counted chances of that kind (a team offensive rebound can still create
-          second-chance points). Pace is the Basketball-Reference possession estimate averaged for
-          both teams. PPP is each side&apos;s points on that shared total. Second-chance points come
-          after an offensive rebound; points off turnovers come on the next trip after a turnover.
-          Team rebounds keep possession but aren&apos;t rebound totals.{" "}
+          second-chance points). Pace possessions use the Basketball-Reference estimate averaged for
+          both teams. Sec to first shot is game-clock time from the start of a possession until that
+          side&apos;s first field-goal attempt; lower is faster, and trips that never shoot are left
+          out. PPP is each side&apos;s points on the shared possession total. Second-chance points
+          come after an offensive rebound; points off turnovers come on the next trip after a
+          turnover. Team rebounds keep possession but aren&apos;t rebound totals.{" "}
           {officialRows.length
             ? `The official box score supplies ${listJoin(officialRows)}. Everything else comes from play-by-play and can differ slightly from the official box score.`
             : PBP_NOTE}
@@ -554,6 +578,7 @@ export function GameLiveInsights({
           live={!final}
           teamKeys={teamKeys}
           official={official}
+          shotPace={insights.shotPace}
         />
       ) : null}
       {hasQuarters ? (

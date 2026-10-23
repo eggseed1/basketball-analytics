@@ -11,6 +11,7 @@
 import type { PlayByPlayEvent } from "@/data/types/play-by-play";
 
 import { elapsedSeconds, periodName, teamSides, type Side } from "./court-events";
+import { computeShotPace, type ShotPace } from "./shot-pace";
 
 const other = (s: Side): Side => (s === "home" ? "away" : "home");
 
@@ -117,6 +118,8 @@ export function ptsPerForcedTov(
 export interface LiveInsights {
   quarters: QuarterStandouts[];
   battle: PossessionBattle | null;
+  /** Avg game-clock seconds to first FGA; null when battle or samples missing. */
+  shotPace: ShotPace | null;
 }
 
 export interface GameMoment {
@@ -397,9 +400,10 @@ export function buildLiveInsights(
     };
   });
 
-  if (!sawStat) return { quarters, battle: null };
+  if (!sawStat) return { quarters, battle: null, shotPace: null };
   battle.home.extraChances = battle.home.oreb + battle.away.tov;
   battle.away.extraChances = battle.away.oreb + battle.home.tov;
+  const shotPace = computeShotPace(events, homeLabel, awayLabel);
   return {
     quarters,
     battle: {
@@ -410,5 +414,6 @@ export function buildLiveInsights(
         return { period: p, label: periodName(p), finished: isFinished(p), net: c.home - c.away };
       }),
     },
+    shotPace: shotPace.samples > 0 ? shotPace : null,
   };
 }
