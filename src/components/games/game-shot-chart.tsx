@@ -638,17 +638,19 @@ export function GameShotChart({
     const grow = isFocus ? 1.5 : 1;
     const bg = "var(--background)";
     const own = mode === "game" ? new Set(layersOf(c).filter((l) => layers.has(l))) : null;
+    // Draw at the origin inside a translate group so CSS scale animations
+    // stay centered on the spot (not the SVG viewBox origin).
     let body: ReactNode;
     if (c.kind === "make") {
       const full = !own || own.has("makes");
       const ring = own != null && layers.has("assists") && c.assisted;
       body = (
         <>
-          <circle cx={cx} cy={cy} r={0.8} fill={color} className="shot-ripple" />
+          <circle cx={0} cy={0} r={0.8} fill={color} className="shot-ripple" />
           {ring ? (
             <circle
-              cx={cx}
-              cy={cy}
+              cx={0}
+              cy={0}
               r={1.35 * grow}
               fill="none"
               stroke={color}
@@ -657,8 +659,8 @@ export function GameShotChart({
             />
           ) : null}
           <circle
-            cx={cx}
-            cy={cy}
+            cx={0}
+            cy={0}
             r={(full ? 0.8 : 0.5) * grow}
             fill={color}
             stroke={bg}
@@ -674,8 +676,8 @@ export function GameShotChart({
       body = (
         <g className="shot-miss">
           <circle
-            cx={cx}
-            cy={cy}
+            cx={0}
+            cy={0}
             r={0.65 * grow}
             fill="none"
             stroke={color}
@@ -683,23 +685,23 @@ export function GameShotChart({
             strokeOpacity={isFocus ? 1 : strong ? 0.6 : 0.3}
           />
           {rebound ? (
-            <circle cx={cx} cy={cy} r={(own?.has("rebounds") ? 0.38 : 0.3) * grow} fill={colorOf(rebound.side)} />
+            <circle cx={0} cy={0} r={(own?.has("rebounds") ? 0.38 : 0.3) * grow} fill={colorOf(rebound.side)} />
           ) : null}
           {blocked ? (
-            <Cross cx={cx} cy={cy} r={0.75 * grow} fill="none" stroke={colorOf(blocked)} strokeWidth={0.3} />
+            <Cross cx={0} cy={0} r={0.75 * grow} fill="none" stroke={colorOf(blocked)} strokeWidth={0.3} />
           ) : null}
         </g>
       );
     } else if (c.kind === "steal") {
-      body = <Diamond cx={cx} cy={cy} r={0.95 * grow} fill={color} stroke={bg} strokeWidth={0.2} className="shot-miss" />;
+      body = <Diamond cx={0} cy={0} r={0.95 * grow} fill={color} stroke={bg} strokeWidth={0.2} className="shot-miss" />;
     } else if (c.kind === "turnover") {
-      body = <Triangle cx={cx} cy={cy} r={0.85 * grow} fill="none" stroke={color} strokeWidth={0.26} className="shot-miss" />;
+      body = <Triangle cx={0} cy={0} r={0.85 * grow} fill="none" stroke={color} strokeWidth={0.26} className="shot-miss" />;
     } else {
       const s = 1.4 * grow;
       body = (
         <rect
-          x={cx - s / 2}
-          y={cy - s / 2}
+          x={-s / 2}
+          y={-s / 2}
           width={s}
           height={s}
           fill="none"
@@ -712,6 +714,7 @@ export function GameShotChart({
     return (
       <g
         key={c.id}
+        transform={`translate(${cx} ${cy})`}
         className="cursor-pointer"
         onPointerEnter={() => setHover(c)}
         onClick={(e) => {
@@ -720,7 +723,7 @@ export function GameShotChart({
         }}
       >
         {body}
-        <circle cx={cx} cy={cy} r={1.8} fill="transparent" />
+        <circle cx={0} cy={0} r={1.8} fill="transparent" />
       </g>
     );
   };
@@ -993,16 +996,21 @@ export function GameShotChart({
           {shown.map(renderEvent)}
 
           {latest && (playing || cutoff != null) ? (
-            <circle
+            <g
               key={`latest-${latest.id}`}
-              cx={toCourt(latest).cx}
-              cy={toCourt(latest).cy}
-              r={2}
-              fill="none"
-              stroke={colorOf(latest.side)}
-              strokeWidth={0.25}
-              className="shot-latest pointer-events-none"
-            />
+              transform={`translate(${toCourt(latest).cx} ${toCourt(latest).cy})`}
+              className="pointer-events-none"
+            >
+              <circle
+                cx={0}
+                cy={0}
+                r={2}
+                fill="none"
+                stroke={colorOf(latest.side)}
+                strokeWidth={0.25}
+                className="shot-latest"
+              />
+            </g>
           ) : null}
 
           {shown.length === 0 && filtersOn && cutoff == null ? (
@@ -1202,7 +1210,7 @@ export function GameShotChart({
         {mode === "game"
           ? "Spots are as logged in the play-by-play, drawn on a half court from the basket being attacked. Rebounds have no spot of their own, so the dot inside each miss shows who got the ball. Free throws have no spot and only show at each line as a running count. "
           : `Zones use located attempts only${located < fga ? `, ${located} of ${fga} this game` : ""}. Tap a zone or a scoring chip to narrow the chart. `}
-        Paint is rim plus the paint. Fast break follows transition wording in the play log ("running"). Second chance and off turnovers follow the possession after an offensive rebound or turnover. Last 5 sec is the game clock. Chip counts match the dots on the chart, including through the replay.
+        Paint is rim plus the paint. Fast break is transition finishes in the play log (running layup/dunk/tip, or “fast break”), not every “running” jumper. Second chance and off turnovers follow the possession after an offensive rebound or turnover. Last 5 sec is the game clock. Chip counts match the dots on the chart, including through the replay.
       </p>
     </div>
   );
