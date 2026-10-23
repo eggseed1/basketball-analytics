@@ -4,7 +4,6 @@ import { WatchlistPanel } from "@/components/home/watchlist-panel";
 import { AnalyticsDesk } from "@/components/home/analytics-desk";
 import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { HomeLoadingWatchdog } from "@/components/home/home-loading-watchdog";
-import { SectionLink } from "@/components/ui/section-link";
 import { HomeModuleFrame, HomeModuleSkeleton } from "@/components/home/home-module-skeleton";
 import { SeasonMomentCard, SeasonPhaseBar } from "@/components/home/season-moment";
 import { JsonLd } from "@/components/seo/json-ld";
@@ -89,122 +88,41 @@ async function HomeStandings({
 }
 
 async function HomeTopPerformers() {
-  const [{ getHomeAnalytics }, { TopPerformersPanel }] = await Promise.all([
-    import("@/data/queries/home"),
-    import("@/components/home/top-performers-panel"),
-  ]);
-  const data = await getHomeAnalytics();
-  // Panel shows 10 rows — keep a little headroom for cross-metric joins, and
-  // strip DARKO/RAPTOR extras (boxImpact, projectedMinutes, …) from Flight.
-  const LEADER_CAP = 12;
-  const rate = (n: number | null | undefined) =>
-    n != null && Number.isFinite(n) && n > 0 ? Math.round(n * 1000) / 1000 : null;
-  const slim = (
-    rows: typeof data.tsLeaders
-  ): typeof data.performerSeasons =>
-    rows.slice(0, LEADER_CAP).map((row) => ({
-      playerId: row.playerId,
-      playerName: row.playerName,
-      teamAbbr: row.teamAbbreviation ?? undefined,
-      trueShootingPct: rate(row.trueShootingPct),
-      usagePct: rate(row.usagePct),
-    }));
-  const darkoLeaders = data.darkoLeaders.slice(0, LEADER_CAP).map((p) => ({
-    profileId: p.profileId,
-    nbaPlayerId: p.nbaPlayerId,
-    playerName: p.playerName,
-    impact: Math.round(p.impact * 100) / 100,
-    teamKey: p.teamKey,
-    teamAbbr: p.teamAbbr,
-    teamId: p.teamId,
-    teamName: p.teamName,
-    trueShootingPct: rate(p.trueShootingPct),
-    usagePct: rate(p.usagePct),
-  }));
-  const raptorLeaders = data.raptorLeaders.slice(0, LEADER_CAP).map((p) => ({
-    profileId: p.profileId,
-    nbaPlayerId: p.nbaPlayerId,
-    playerName: p.playerName,
-    impact: Math.round(p.impact * 100) / 100,
-    teamKey: p.teamKey,
-    teamAbbr: p.teamAbbr,
-    teamId: p.teamId,
-    teamName: p.teamName,
-    trueShootingPct: rate(p.trueShootingPct),
-    usagePct: rate(p.usagePct),
-  }));
-  const drblLeaders = data.drblLeaders.slice(0, LEADER_CAP).map((p) => ({
-    playerId: p.playerId,
-    playerName: p.playerName,
-    profileId: p.profileId,
-    nbaPlayerId: p.nbaPlayerId,
-    teamKey: p.teamKey,
-    teamAbbr: p.teamAbbr,
-    drbl100: Math.round(p.drbl100 * 100) / 100,
-    r1Points: p.r1Points,
-    war1: p.war1 != null ? Math.round(p.war1 * 100) / 100 : null,
-    darko: p.darko != null ? Math.round(p.darko * 100) / 100 : null,
-    trueShootingPct: rate(p.trueShootingPct),
-    usagePct: rate(p.usagePct),
-  }));
-  return (
-    <TopPerformersPanel
-      season={data.season}
-      drblLeaders={drblLeaders}
-      darkoLeaders={darkoLeaders as typeof data.darkoLeaders}
-      raptorLeaders={raptorLeaders as typeof data.raptorLeaders}
-      tsLeaders={slim(data.tsLeaders)}
-      usageStars={slim(data.usageStars)}
-      drblOverlayOk={data.drblOverlayOk}
-      drblFallbackNote={data.drblFallbackNote}
-    />
+  // Client-fetched — leader arrays used to dominate home Flight.
+  const { HomeTopPerformersClient } = await import(
+    "@/components/home/home-top-performers-client"
   );
+  return <HomeTopPerformersClient />;
 }
 
 async function HomeHotCold() {
-  const [
-    { statDetectiveSeason, statDetectiveWindow },
-    { HotColdColumns },
-  ] = await Promise.all([
-    import("@/data/runtime/stat-detective-windows"),
-    import("@/components/explore/hot-cold-board"),
-  ]);
-  const season = statDetectiveSeason();
-  const window = statDetectiveWindow("last5");
-  if (!season || !window.risers.length) return null;
-  return (
-    <section className="sports-card flex flex-col gap-3 p-4">
-      <div className="flex flex-wrap items-end justify-between gap-2">
-        <div>
-          <h2 className="type-title">Hot & Cold</h2>
-          <p className="type-caption text-muted-foreground">
-            Scoring over the last 5 games of {season} against each
-            player&apos;s own season average. Rows read season avg → last 5.
-          </p>
-        </div>
-        <SectionLink href="/explore/players/hot-cold" className="pt-0.5">
-          Open Hot &amp; Cold
-        </SectionLink>
-      </div>
-      <HotColdColumns risers={window.risers} fallers={window.fallers} limit={4} />
-    </section>
+  const { HomeHotColdClient } = await import(
+    "@/components/home/home-hot-cold-client"
   );
+  return <HomeHotColdClient />;
 }
 
 async function HomeFindings() {
-  const [{ getLiveRecentInsights }, { FindingsSection }] = await Promise.all([
+  const [
+    { getLiveRecentInsights },
+    { FindingsSection },
+    { stripInsightFlowsForHome },
+  ] = await Promise.all([
     import("@/data/queries/recent-insights-live"),
     import("@/components/home/findings-section"),
+    import("@/lib/home-insights-slim"),
   ]);
   const live = await getLiveRecentInsights();
   if (live) {
-    return <FindingsSection insights={live.insights} />;
+    return (
+      <FindingsSection insights={stripInsightFlowsForHome(live.insights)} />
+    );
   }
 
   const { getBundledRecentInsights } = await import(
     "@/data/runtime/recent-insights-snapshot"
   );
-  const insights = getBundledRecentInsights();
+  const insights = stripInsightFlowsForHome(getBundledRecentInsights());
   return <FindingsSection insights={insights} empty={insights.length === 0} />;
 }
 
