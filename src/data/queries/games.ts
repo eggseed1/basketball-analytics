@@ -382,6 +382,13 @@ export async function getGameShell(gameId: string): Promise<GameShell | null> {
         maxUrls: 2,
       }).then((box) => (box?.game ? acceptShell(shellFromBox(box)) : null));
 
+      // Start archive lookup in parallel — same row as /api/games/[id].
+      const historicalPromise = getHistoricalGame(id)
+        .then((game) =>
+          game ? acceptShell(shellFromGame(game, "historical")) : null
+        )
+        .catch(() => null);
+
       // Pre-tip snapshots may paint quickly. After tip-off, wait longer for live CDN
       // so we do not mount the empty pre-tip board over a game already underway.
       const snapshotRaceMs = snapshotTipPassed ? 4_000 : 1_200;
@@ -392,7 +399,16 @@ export async function getGameShell(gameId: string): Promise<GameShell | null> {
               setTimeout(() => resolve(snapshotShell), snapshotRaceMs);
             }),
           ])
-        : await cdnPromise;
+        : await Promise.race([
+            cdnPromise,
+            // If CDN is slow, take the archive scoreboard after 1.5s instead of
+            // burning the whole shell budget and stranding RuntimeGameFallback.
+            new Promise<GameShell | null>((resolve) => {
+              setTimeout(() => {
+                void historicalPromise.then(resolve);
+              }, 1_500);
+            }),
+          ]);
 
       const preferCdn = (cdn: GameShell | null, snap: GameShell) =>
         Boolean(

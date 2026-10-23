@@ -312,14 +312,15 @@ function shellFromFallbackGame(game: Game): GameShell {
 
 async function fallbackGameShell(gameId: string): Promise<GameShell | null> {
   if (looksLikeEspnEventId(gameId)) {
+    const { getHistoricalGame } = await import("@/data/queries/historical");
+    // Archive first — CDN packages often hang on Workers past the fallback budget.
+    const historical = await getHistoricalGame(gameId).catch(() => null);
+    if (historical) return shellFromFallbackGame(historical);
     const box = await fetchEspnCdnGameBoxScore(gameId, undefined, {
       timeoutMs: 3_000,
       maxUrls: 1,
     }).catch(() => null);
-    if (box?.game) return shellFromFallbackBox(box);
-    const { getHistoricalGame } = await import("@/data/queries/historical");
-    const historical = await getHistoricalGame(gameId).catch(() => null);
-    return historical ? shellFromFallbackGame(historical) : null;
+    return box?.game ? shellFromFallbackBox(box) : null;
   }
 
   if (looksLikeNbaStatsGameId(gameId)) {
