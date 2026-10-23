@@ -19,7 +19,10 @@ import { classifyProviderFailure } from "@/data/diagnostics/provider-failure";
 import { describeProvider } from "@/data/diagnostics/provider-meta";
 import { scopeRowsToCurrentTeam } from "./current-team-scope";
 import { applyPlayerSeasonFilters } from "./filter-utils";
-import { getFilteredPlayerSeasonsDetailed } from "./players";
+import {
+  getFilteredPlayerSeasonsDetailed,
+  type PlayerSeasonBoardLoadOptions,
+} from "./players";
 import {
   priorSeasonBoardCatchUpNotice,
   priorSeasonForStats,
@@ -121,14 +124,21 @@ function hasNarrowingFilters(filters: BasketballFilters): boolean {
  * Load filtered player-season rows once and attach board health + source.
  */
 export async function getPlayerSeasonBoardSnapshot(
-  filters: BasketballFilters = {}
+  filters: BasketballFilters = {},
+  options?: PlayerSeasonBoardLoadOptions
 ): Promise<PlayerSeasonBoardSnapshot> {
   const provider = getDataProvider();
   const season = filters.season ?? "";
   const requestSeason = season;
   let statsSeason = season;
   let usingPriorSeasonStats = false;
-  const load = boardLoaderOverride ?? getFilteredPlayerSeasonsDetailed;
+  const peerOverlays = options?.peerOverlays ?? "full";
+  // Incomplete overlay boards must not poison the process last-good cache.
+  const seedCache = peerOverlays === "full";
+  const load = (next: BasketballFilters) =>
+    boardLoaderOverride
+      ? boardLoaderOverride(next)
+      : getFilteredPlayerSeasonsDetailed(next, { peerOverlays });
 
   // During the known pre-tip window, the current league year only has roster
   // shells (GP=0). Go straight to the completed season board instead of first
@@ -225,7 +235,7 @@ export async function getPlayerSeasonBoardSnapshot(
     season &&
     season.toUpperCase() !== "ALL"
   ) {
-    seedLastGood(statsSeason, unfilteredRows);
+    if (seedCache) seedLastGood(statsSeason, unfilteredRows);
     rows = filterBoardRows(unfilteredRows, filters, {
       requestSeason,
       statsSeason,

@@ -1205,9 +1205,44 @@ async function filterPlayerSeasonsWithDraft(
   return applyPlayerSeasonFilters(withDraft, filters);
 }
 
+/**
+ * Peer-board overlay budget for explore cold path.
+ * - full: DARKO/RAPTOR + DRBL + hustle on every row (default)
+ * - drbl-only: DRBL on the full board for WAR1 sort; callers attach
+ *   impact/hustle on the page window afterward
+ */
+export type PeerBoardOverlayMode = "full" | "drbl-only";
+
+export type PlayerSeasonBoardLoadOptions = {
+  peerOverlays?: PeerBoardOverlayMode;
+};
+
+async function applyPeerBoardOverlays(
+  seasons: PlayerSeason[],
+  season: string,
+  mode: PeerBoardOverlayMode
+): Promise<PlayerSeason[]> {
+  if (!seasons.length) return seasons;
+  let rows = seasons;
+  if (mode === "full") {
+    rows = await overlayImpactRatings(rows, season);
+  }
+  if (isDrblSeason(season)) {
+    const drblRows = await fetchDrblSeason(season).catch(() => []);
+    rows = await overlayDrblRows(rows, drblRows);
+  }
+  if (mode === "full" && isHustleStatsSeason(season)) {
+    rows = await overlayHustleRows(rows, season);
+  }
+  return rows;
+}
+
 export async function getFilteredPlayerSeasonsDetailed(
-  filters: BasketballFilters = {}
+  filters: BasketballFilters = {},
+  options?: PlayerSeasonBoardLoadOptions
 ): Promise<{ rows: PlayerSeason[]; error: unknown | null }> {
+  const peerOverlays = options?.peerOverlays ?? "full";
+
   // All seasons: current board + career matches for the player name search.
   if (String(filters.season ?? "").trim().toUpperCase() === "ALL") {
     return loadExploreAllSeasonsBoard(filters);
@@ -1238,14 +1273,11 @@ export async function getFilteredPlayerSeasonsDetailed(
         "@/lib/player-board-season"
       );
       if (isBundledPeerBoardReady(filters.season, bundled.length)) {
-        let rows = await overlayImpactRatings(bundled, filters.season);
-        if (isDrblSeason(filters.season)) {
-          const drblRows = await fetchDrblSeason(filters.season).catch(() => []);
-          rows = await overlayDrblRows(rows, drblRows);
-        }
-        if (isHustleStatsSeason(filters.season)) {
-          rows = await overlayHustleRows(rows, filters.season);
-        }
+        const rows = await applyPeerBoardOverlays(
+          bundled,
+          filters.season,
+          peerOverlays
+        );
         return {
           rows: await filterPlayerSeasonsWithDraft(rows, filters),
           error: null,
@@ -1288,16 +1320,11 @@ export async function getFilteredPlayerSeasonsDetailed(
     }
 
     seasons = leftJoinPlayerUniverse(universe, overlay);
-
-    seasons = await overlayImpactRatings(seasons, filters.season);
-
-    if (isDrblSeason(filters.season)) {
-      const drblRows = await fetchDrblSeason(filters.season).catch(() => []);
-      seasons = await overlayDrblRows(seasons, drblRows);
-    }
-    if (isHustleStatsSeason(filters.season)) {
-      seasons = await overlayHustleRows(seasons, filters.season);
-    }
+    seasons = await applyPeerBoardOverlays(
+      seasons,
+      filters.season,
+      peerOverlays
+    );
 
     return {
       rows: await filterPlayerSeasonsWithDraft(seasons, filters),
@@ -1440,14 +1467,11 @@ export async function getFilteredPlayerSeasonsDetailed(
 
   // Canonical DRBL + impact overlays for explore board rows.
   if (seasons.length > 0 && filters.season) {
-    seasons = await overlayImpactRatings(seasons, filters.season);
-    if (isDrblSeason(filters.season)) {
-      const drblRows = await fetchDrblSeason(filters.season).catch(() => []);
-      seasons = await overlayDrblRows(seasons, drblRows);
-    }
-    if (isHustleStatsSeason(filters.season)) {
-      seasons = await overlayHustleRows(seasons, filters.season);
-    }
+    seasons = await applyPeerBoardOverlays(
+      seasons,
+      filters.season,
+      peerOverlays
+    );
   }
 
   return {

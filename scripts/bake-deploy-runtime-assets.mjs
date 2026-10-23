@@ -62,6 +62,11 @@ run("node", ["scripts/build-runtime-player-game-logs.mjs"], {
 
 run("npx", ["tsx", "scripts/build-season-shots-from-pbp.ts", "--season", season]);
 
+// Default Explore first page — cold MISS skips season-tables + overlays.
+run("npx", ["tsx", "scripts/build-explore-players-first-page.ts"], {
+  DATA_PROVIDER: "nba",
+});
+
 const logDir = path.join(ROOT, "public/runtime/player-game-logs", season);
 const shotDir = path.join(ROOT, "public/runtime/player-shots", season);
 const logCount = countJson(logDir);
