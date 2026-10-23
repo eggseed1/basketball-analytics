@@ -380,14 +380,15 @@ function ExtraChancesCard({
       <MoreInfo>
         <p>
           Extra chances are player offensive rebounds plus the other side&apos;s turnovers. Pts per
-          offensive rebound and pts per turnover forced divide those points by the matching count;
-          blank means zero counted chances of that kind (a team offensive rebound can still create
-          second-chance points). Pace possessions use the Basketball-Reference estimate averaged for
+          offensive rebound divides second-chance points by every offensive rebound that opened a
+          trip, player or team; the Offensive rebounds row stays player-only like the box score.
+          Pts per turnover forced divides those points by turnovers forced; blank means zero counted
+          chances of that kind. Pace possessions use the Basketball-Reference estimate averaged for
           both teams. Sec to first shot is game-clock time from the start of a possession until that
           side&apos;s first field-goal attempt; lower is faster, and trips that never shoot are left
           out. PPP is each side&apos;s points on the shared possession total. Second-chance points
           come after an offensive rebound; points off turnovers come on the next trip after a
-          turnover. Team rebounds keep possession but aren&apos;t rebound totals.{" "}
+          turnover.{" "}
           {officialRows.length
             ? `The official box score supplies ${listJoin(officialRows)}. Everything else comes from play-by-play and can differ slightly from the official box score.`
             : PBP_NOTE}
