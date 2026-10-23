@@ -3,6 +3,7 @@
  * Shared by box score, play-by-play, and ESPN→NBA game id crosswalk.
  */
 import type { EspnSummaryResponse } from "@/data/transformers/espn";
+import { ESPN_FETCH_USER_AGENT } from "@/data/providers/nba/espn-client";
 import { longUpstreamBudgetsEnabled } from "@/data/providers/nba/runtime-policy";
 
 const CDN_BASE = "https://cdn.espn.com/core/nba";
@@ -127,11 +128,12 @@ export function findEspnCdnSummary(
 }
 
 async function fetchCdnPayload(url: string, timeoutMs: number): Promise<unknown> {
+  // Same curl UA as espnFetchJson — browser UAs get Akamai 403 from CF Workers
+  // in ~50ms, which made preferBox look like a permanent miss after F4 isolation.
   const response = await fetch(url, {
     headers: {
       Accept: "application/json, text/plain, */*",
-      "User-Agent":
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/120 Safari/537.36",
+      "User-Agent": ESPN_FETCH_USER_AGENT,
     },
     signal: AbortSignal.timeout(timeoutMs),
   });
@@ -143,6 +145,11 @@ async function fetchCdnPayload(url: string, timeoutMs: number): Promise<unknown>
 
 export type EspnCdnSummaryOptions = {
   preferPlays?: boolean;
+  /**
+   * Prefer the dedicated /boxscore package first (box API + Game Lab roster).
+   * Must not share an in-flight preferPlays fetch that can settle plays-only.
+   */
+  preferBox?: boolean;
   /** Per-URL AbortSignal timeout. Defaults 15s (Workers) / 8s. */
   timeoutMs?: number;
   /**
@@ -152,6 +159,35 @@ export type EspnCdnSummaryOptions = {
   maxUrls?: number;
 };
 
+/** Exported for unit tests (URL order + coalesce isolation). */
+export function cdnPackageUrls(
+  id: string,
+  options?: EspnCdnSummaryOptions
+): string[] {
+  const enc = encodeURIComponent(id);
+  const playbyplay = `${CDN_BASE}/playbyplay?xhr=1&gameId=${enc}`;
+  const game = `${CDN_BASE}/game?xhr=1&gameId=${enc}`;
+  const boxscore = `${CDN_BASE}/boxscore?xhr=1&gameId=${enc}`;
+  // Prefer the smaller playbyplay package when Game Lab needs events.
+  // Box callers and shell (maxUrls) try boxscore before the heavier /game package.
+  if (options?.preferPlays) return [playbyplay, game, boxscore];
+  if (options?.preferBox || options?.maxUrls != null) {
+    return [boxscore, game, playbyplay];
+  }
+  return [game, playbyplay, boxscore];
+}
+
+/** Exported for unit tests (box vs plays inflight isolation). */
+export function coalesceKeyFor(id: string, options?: EspnCdnSummaryOptions): string {
+  // Shell-tight budgets must not reuse a long preferPlays inflight (up to 3×15s).
+  if (options?.timeoutMs != null || options?.maxUrls != null) return `${id}:shell`;
+  // Box and PBP must not share one promise: preferPlays can settle plays-only
+  // after timeouts and leave the box caller with a null transform.
+  if (options?.preferPlays) return `${id}:plays`;
+  if (options?.preferBox) return `${id}:box`;
+  return id;
+}
+
 async function fetchEspnCdnGameSummaryUncached(
   id: string,
   options?: EspnCdnSummaryOptions
@@ -160,25 +196,7 @@ async function fetchEspnCdnGameSummaryUncached(
     options?.timeoutMs ??
     (longUpstreamBudgetsEnabled() ? 15_000 : 8_000);
 
-  // Prefer the smaller playbyplay package when Game Lab needs events.
-  // Shell identity: try boxscore before the heavier /game package.
-  const urls = options?.preferPlays
-    ? [
-        `${CDN_BASE}/playbyplay?xhr=1&gameId=${encodeURIComponent(id)}`,
-        `${CDN_BASE}/game?xhr=1&gameId=${encodeURIComponent(id)}`,
-        `${CDN_BASE}/boxscore?xhr=1&gameId=${encodeURIComponent(id)}`,
-      ]
-    : options?.maxUrls != null
-      ? [
-          `${CDN_BASE}/boxscore?xhr=1&gameId=${encodeURIComponent(id)}`,
-          `${CDN_BASE}/game?xhr=1&gameId=${encodeURIComponent(id)}`,
-          `${CDN_BASE}/playbyplay?xhr=1&gameId=${encodeURIComponent(id)}`,
-        ]
-      : [
-          `${CDN_BASE}/game?xhr=1&gameId=${encodeURIComponent(id)}`,
-          `${CDN_BASE}/playbyplay?xhr=1&gameId=${encodeURIComponent(id)}`,
-          `${CDN_BASE}/boxscore?xhr=1&gameId=${encodeURIComponent(id)}`,
-        ];
+  const urls = cdnPackageUrls(id, options);
   const limited =
     typeof options?.maxUrls === "number" && options.maxUrls > 0
       ? urls.slice(0, options.maxUrls)
@@ -194,6 +212,8 @@ async function fetchEspnCdnGameSummaryUncached(
       const boxers = boxAthleteCount(summary);
       // Prefer a package that has both plays and box athletes when available.
       if (plays > 0 && boxers > 0) return summary;
+      // Box-primary callers can stop once athletes are present.
+      if (options?.preferBox && boxers > 0) return summary;
       if (plays > 0) {
         // Keep looking for a boxscore package (preferPlays hits /playbyplay first).
         if (!best || playCount(best) < plays || boxAthleteCount(best) < boxers) {
@@ -241,23 +261,21 @@ export async function fetchEspnCdnGameSummary(
       return cached.value;
     } else if (plays > 0 && boxers === 0) {
       // Stale plays-only entry — fall through and fetch a boxscore package.
-    } else if (plays > 0) {
-      return cached.value;
     }
   }
 
-  // Shell-tight budgets must not reuse a long preferPlays inflight (up to 3×15s).
-  const coalesceKey =
-    options?.timeoutMs != null || options?.maxUrls != null
-      ? `${id}:shell`
-      : id;
+  const coalesceKey = coalesceKeyFor(id, options);
 
   const pending = inflight.get(coalesceKey);
   if (pending) return pending;
 
   const request = fetchEspnCdnGameSummaryUncached(id, options)
     .then((value) => {
-      if (value && playCount(value) > 0) {
+      // Only memo packages that include box athletes. Caching plays-only here
+      // used to win the recent map after preferPlays / shell maxUrls:1 and made
+      // concurrent box API calls fall through into a second flaky fetch — or,
+      // worse, share the same inflight and settle without athletes.
+      if (value && boxAthleteCount(value) > 0) {
         const ttl = isLiveSummary(value) ? RECENT_LIVE_TTL_MS : RECENT_TTL_MS;
         recent.set(id, { value, expiresAt: Date.now() + ttl });
       }
@@ -268,4 +286,10 @@ export async function fetchEspnCdnGameSummary(
     });
   inflight.set(coalesceKey, request);
   return request;
+}
+
+/** Test-only: clear in-memory CDN memo so fixture races start clean. */
+export function __resetEspnCdnSummaryCacheForTests(): void {
+  inflight.clear();
+  recent.clear();
 }

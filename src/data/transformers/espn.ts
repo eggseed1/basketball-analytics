@@ -569,9 +569,10 @@ function boxPair(stats: Map<string, string>, ...keys: string[]): [number, number
 }
 
 export function transformEspnBoxScore(
-  summary: EspnSummaryResponse,
+  summary: EspnSummaryResponse | null | undefined,
   season: string
 ): { game: Game; players: PlayerGame[] } | null {
+  if (!summary) return null;
   const competition = summary.header?.competitions?.[0];
   if (!competition) return null;
 

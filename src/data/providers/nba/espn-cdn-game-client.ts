@@ -38,9 +38,13 @@ export async function fetchEspnCdnGameBoxScore(
   seasonHint?: string,
   options?: EspnCdnBoxOptions
 ): Promise<GameBoxScore | null> {
+  // preferBox whenever this helper is used for roster athletes. Shell callers
+  // pass maxUrls/timeoutMs for budget but still need the /boxscore package —
+  // coalescing with preferPlays must stay disabled via coalesceKeyFor(:box|:shell).
   const summary = await fetchEspnCdnGameSummary(gameId, {
     timeoutMs: options?.timeoutMs,
     maxUrls: options?.maxUrls,
+    preferBox: true,
   });
   if (!summary) return null;
   const transformed = transformEspnBoxScore(
