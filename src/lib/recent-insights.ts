@@ -409,7 +409,7 @@ function gameOf(g: SlateGameInput, mark?: RecentInsightFlowMark): RecentInsightG
       ? {
           flow: {
             // Cap vertices so insight snapshots / RSC HTML stay small; charts
-            // are ~340px wide so ~64 points is visually enough.
+            // are ~340px wide so ~36 points is visually enough.
             path: downsampleInsightFlowPath(
               [
                 [0, 0],
@@ -418,7 +418,7 @@ function gameOf(g: SlateGameInput, mark?: RecentInsightFlowMark): RecentInsightG
                   p.home - p.away,
                 ]),
               ],
-              64,
+              36,
               mark?.kind === "span"
                 ? [mark.t0, mark.t1]
                 : mark

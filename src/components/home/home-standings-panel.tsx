@@ -1,7 +1,31 @@
 import { HomeStandingsBoard } from "@/components/home/home-standings-board";
 import { isPreseasonRosterSeason } from "@/data/providers/nba/espn-roster-client";
 import { getLeagueStandings } from "@/data/queries";
+import type { StandingRow } from "@/data/types";
 import { shiftCanonicalSeason } from "@/lib/player-stat-comps";
+
+/** Compact homepage table only reads these fields — drop the rest from Flight. */
+function slimHomeStandingRow(row: StandingRow): StandingRow {
+  return {
+    teamId: row.teamId,
+    abbreviation: row.abbreviation,
+    displayName: row.displayName,
+    conference: row.conference,
+    rank: row.rank,
+    wins: row.wins,
+    losses: row.losses,
+    winPct: Math.round(row.winPct * 1000) / 1000,
+    gamesBehind: 0,
+    differential: Math.round(row.differential * 10) / 10,
+    ppg: 0,
+    oppPpg: 0,
+    streak: "",
+    homeRecord: "",
+    roadRecord: "",
+    lastTen: "",
+    playoffSeed: null,
+  };
+}
 
 export async function HomeStandingsPanel({
   season,
@@ -44,8 +68,8 @@ export async function HomeStandingsPanel({
     return (
       <HomeStandingsBoard
         season={displaySeason}
-        east={east.slice(0, shown)}
-        west={west.slice(0, shown)}
+        east={east.slice(0, shown).map(slimHomeStandingRow)}
+        west={west.slice(0, shown).map(slimHomeStandingRow)}
         race={race && displaySeason === season}
       />
     );

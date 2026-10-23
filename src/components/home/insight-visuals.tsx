@@ -953,7 +953,7 @@ export function InsightFlowChart({ game }: { game: RecentInsightGame }) {
         ? [flow.mark.t]
         : [];
   // Snapshots may already be capped; still downsample in case of a live full path.
-  const path = downsampleInsightFlowPath(flow.path, 64, keepTimes);
+  const path = downsampleInsightFlowPath(flow.path, 36, keepTimes);
   const margins = path.map(([, m]) => m);
   const reach = Math.max(8, ...margins.map((m) => Math.abs(m)));
   const hi = Math.max(...margins, 0) > 0 ? reach : 4;

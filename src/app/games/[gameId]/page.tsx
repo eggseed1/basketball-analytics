@@ -9,7 +9,7 @@ import { DelayedGameSection } from "@/components/games/delayed-game-section";
 import { cookies } from "next/headers";
 import { needsScoreMask, parseScoreDelay, SCORE_DELAY_COOKIE } from "@/lib/score-delay";
 import { RuntimeGameFallback } from "@/components/games/runtime-game-fallback";
-import { HistoricalGameExperience } from "@/components/history/historical-game-experience";
+import { HistoricalGameExperienceLoader } from "@/components/history/historical-game-experience-loader";
 import { GameUnavailablePanel } from "@/components/games/game-unavailable";
 import { DestinationSectionSkeleton } from "@/components/continuity/destination-loading-frame";
 import { MotionReveal } from "@/components/continuity/motion-reveal";
@@ -22,7 +22,6 @@ import { gameSideBrandKey } from "@/lib/game-team-identity";
 import { parseSeasonEvidenceArrival } from "@/analytics/game-season-context";
 import { getGameAnalysis } from "@/data/queries";
 import { getHistoricalProductGame } from "@/data/history/product";
-import { loadRawArchiveShotEventsAsync } from "@/data/history/raw-archive-shots";
 import { getGameShellCached } from "@/data/queries/request-cache";
 import { runtimePregameMargin } from "@/data/runtime/pregame-margin";
 import { withBudget } from "@/data/queries/budget";
@@ -40,6 +39,7 @@ import { JsonLd } from "@/components/seo/json-ld";
 import { absoluteUrl } from "@/lib/site-url";
 import { formatGameCalendarDate } from "@/i18n/format-date";
 import { slimGameAnalysisForFlight } from "@/lib/slim-game-analysis-for-flight";
+import { isCurrentNbaSeason } from "@/lib/nba-season-status";
 
 interface GamePageProps { params: Promise<{ gameId: string }>; searchParams: Promise<Record<string, string | string[] | undefined>>; }
 export async function generateMetadata({ params }: GamePageProps) {
@@ -105,13 +105,18 @@ async function GameLabDeepBody({ gameId, hidePeriodTable, asOfMs }: { gameId: st
 
 async function HistoricalDeepBody({ gameId, seasonHint, homeLabel, awayLabel }: { gameId: string; seasonHint?: string; homeLabel: string; awayLabel: string }) {
   const historyArtifact = getHistoricalProductGame(gameId, seasonHint);
-  const shots = await loadRawArchiveShotEventsAsync(gameId);
-  if (historyArtifact) return <HistoricalGameExperience artifact={{ ...historyArtifact, teamGames: [] as Record<string, unknown>[] }} shots={shots} homeLabel={homeLabel} awayLabel={awayLabel} />;
-  if (shots.length > 0) {
-    const t = await getTranslations("Games");
-    return <p className="text-[13px] text-muted-foreground">{t("historicalSummaryMissing")}</p>;
-  }
-  return null;
+  if (!historyArtifact) return null;
+  const t = await getTranslations("Games");
+  // Shots load client-side — keeps archive PBP shot arrays out of first HTML.
+  return (
+    <HistoricalGameExperienceLoader
+      gameId={gameId}
+      artifact={historyArtifact}
+      homeLabel={homeLabel}
+      awayLabel={awayLabel}
+      missingSummary={t("historicalSummaryMissing")}
+    />
+  );
 }
 
 export default async function GamePage({ params, searchParams }: GamePageProps) {
@@ -180,7 +185,19 @@ export default async function GamePage({ params, searchParams }: GamePageProps) 
     {showGame ? (
       <DelayedGameSection risky={risky && asOfMs == null} cutDelay={delaySeconds}>
       {preTip ? <GamePreTipBoard game={shell.game} /> : <>
-      {asOfMs == null ? <Suspense fallback={<DestinationSectionSkeleton label={t("loadingFlow")} />}><HistoricalDeepBody gameId={gameId} seasonHint={seasonHint} homeLabel={shell.game.homeTeamAbbr ?? t("homeFallback")} awayLabel={shell.game.awayTeamAbbr ?? t("awayFallback")} /></Suspense> : null}
+      {/* Archive Game Flow/shots only for history entry or prior seasons — current
+          RS games use Game Lab PBP and do not need the historical island in HTML. */}
+      {asOfMs == null &&
+      (fromHistory || !isCurrentNbaSeason(shell.game.season)) ? (
+        <Suspense fallback={<DestinationSectionSkeleton label={t("loadingFlow")} />}>
+          <HistoricalDeepBody
+            gameId={gameId}
+            seasonHint={seasonHint}
+            homeLabel={shell.game.homeTeamAbbr ?? t("homeFallback")}
+            awayLabel={shell.game.awayTeamAbbr ?? t("awayFallback")}
+          />
+        </Suspense>
+      ) : null}
       <Suspense fallback={<DestinationSectionSkeleton label={t("loadingLab")} />}><GameLabDeepBody gameId={gameId} arrival={arrival} hidePeriodTable={heroHasLineScore} asOfMs={asOfMs} /></Suspense>
       {holdIfCut(
         <PossessionExplorerSection
