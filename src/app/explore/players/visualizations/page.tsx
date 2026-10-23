@@ -19,7 +19,6 @@ import {
   payoffPinIds,
   payoffSeasonOptions,
 } from "@/data/runtime/salary-payoff";
-import { listExploreBoardReadySeasons } from "@/data/queries";
 import { getPlayerRaceTrackerSeasonOptions } from "@/data/queries/player-race-tracker";
 import {
   canonicalSeasonFromStartYear,
@@ -101,15 +100,13 @@ export default async function PlayerVisualizationsPage({
   const view = parseView(one(sp, "view"));
   const currentSeason = canonicalSeasonFromStartYear(currentNbaStartYear());
   const seasonParam = one(sp, "season");
-  // Prefer the URL season immediately — don't block the shell on the logs manifest.
-  const boardReadySeasons = await listExploreBoardReadySeasons();
+  // Prefer the URL season immediately — don't block the shell on season-tables.
   const season =
     seasonParam && /^\d{4}-\d{2}$/.test(seasonParam)
       ? seasonParam
       : defaultExplorePlayersSeason(
           [currentSeason, priorSeasonForStats(currentSeason)],
-          new Date(),
-          { boardReadySeasons }
+          new Date()
         );
   const metric = parsePlayerRaceMetric(one(sp, "metric"));
   const metricLabel = playerRaceMetricLabel(metric).toLowerCase();
