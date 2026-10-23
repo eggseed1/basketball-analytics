@@ -8,7 +8,10 @@ import {
   canonicalSeasonFromStartYear,
   currentNbaStartYear,
 } from "@/data/providers/historical/season-range";
-import { parsePlayerBoardRate } from "@/lib/explore-players-display";
+import {
+  parsePlayerBoardRate,
+  parsePlayerBoardViews,
+} from "@/lib/explore-players-display";
 import { defaultExploreMinimumMinutes } from "@/lib/player-board-season";
 import { parsePlayerSeasonSortKey } from "@/lib/player-season-sort";
 import { filtersFromSearchParams } from "@/lib/search-params";
@@ -45,6 +48,7 @@ export async function GET(request: Request) {
       sortKey,
       sortDir,
       rate: parsePlayerBoardRate(params.rate ?? null),
+      boardViews: parsePlayerBoardViews(params.view ?? null),
       page,
       includeContext: false,
     });

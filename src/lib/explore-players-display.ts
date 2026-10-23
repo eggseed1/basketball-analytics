@@ -60,8 +60,11 @@ function normalizeViewId(part: string): string {
   }
 }
 
+/** First paint default — Impact matches WAR1/DARKO sort and keeps HTML small. */
+export const DEFAULT_PLAYER_BOARD_VIEWS: PlayerBoardView[] = ["impact"];
+
 export function parsePlayerBoardViews(value: string | null): PlayerBoardView[] {
-  if (!value) return ["all"];
+  if (!value) return [...DEFAULT_PLAYER_BOARD_VIEWS];
   const selected = new Set(
     value
       .split(",")
@@ -69,17 +72,22 @@ export function parsePlayerBoardViews(value: string | null): PlayerBoardView[] {
       .filter((part): part is PlayerBoardView => VIEWS.has(part))
   );
   const ordered = VIEW_IDS.filter((id) => selected.has(id));
-  return ordered.length ? ordered : ["all"];
+  return ordered.length ? ordered : [...DEFAULT_PLAYER_BOARD_VIEWS];
 }
 
 export function parsePlayerBoardView(value: string | null): PlayerBoardView {
-  return parsePlayerBoardViews(value)[0] ?? "all";
+  return parsePlayerBoardViews(value)[0] ?? DEFAULT_PLAYER_BOARD_VIEWS[0]!;
 }
 
 export function serializePlayerBoardViews(
   views: PlayerBoardView[]
 ): string | null {
-  if (views.length === 1 && views[0] === "all") return null;
+  if (
+    views.length === 1 &&
+    views[0] === DEFAULT_PLAYER_BOARD_VIEWS[0]
+  ) {
+    return null;
+  }
   return views.join(",");
 }
 

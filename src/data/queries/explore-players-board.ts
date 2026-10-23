@@ -12,8 +12,10 @@ import { getPlayerSeasonBoardSnapshot } from "@/data/queries/player-data-health"
 import { hasValidDrblEstimate } from "@/data/queries/percentiles";
 import type { BasketballFilters } from "@/data/types";
 import {
+  DEFAULT_PLAYER_BOARD_VIEWS,
   PLAYER_BOARD_VIEW_COLUMNS,
   type PlayerBoardRate,
+  type PlayerBoardView,
 } from "@/lib/explore-players-display";
 import { boardStatValue } from "@/lib/player-board-stats";
 import {
@@ -27,6 +29,7 @@ import {
 } from "@/lib/nba-season-status";
 import {
   type ExplorePlayerBoardRow,
+  slimExplorePlayerBoardRow,
   sortExplorePlayerRows,
   toExplorePlayerBoardRow,
 } from "@/data/queries/explore-players-board-pure";
@@ -34,6 +37,7 @@ import {
 export type { ExplorePlayerBoardRow } from "@/data/queries/explore-players-board-pure";
 export {
   parseExplorePlayersSortDir,
+  slimExplorePlayerBoardRow,
   sortExplorePlayerRows,
   toExplorePlayerBoardRow,
 } from "@/data/queries/explore-players-board-pure";
@@ -126,6 +130,8 @@ export async function getExplorePlayersBoardView(options: {
   rate?: PlayerBoardRate;
   page?: number;
   pageSize?: number;
+  /** Active column chips — defaults to Impact for a smaller first HTML. */
+  boardViews?: PlayerBoardView[];
   /** Skip percentile pools - used for infinite-scroll page fetches. */
   includeContext?: boolean;
 }): Promise<ExplorePlayersBoardView> {
@@ -183,7 +189,12 @@ export async function getExplorePlayersBoardView(options: {
     pageCount
   );
   const start = (page - 1) * pageSize;
-  const rows = sorted.slice(start, start + pageSize);
+  const boardViews = options.boardViews?.length
+    ? options.boardViews
+    : DEFAULT_PLAYER_BOARD_VIEWS;
+  const rows = sorted
+    .slice(start, start + pageSize)
+    .map((row) => slimExplorePlayerBoardRow(row, boardViews, sortKey));
 
   const includeContext = options.includeContext !== false;
   const contextIndex = includeContext

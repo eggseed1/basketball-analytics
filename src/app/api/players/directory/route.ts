@@ -51,6 +51,8 @@ export async function GET(request: Request) {
     sortDir,
     page,
     pageSize,
+    // Directory consumers expect the full board row, not Impact-only SSR slim.
+    boardViews: ["all"],
   });
 
   const registryTotal = hasPlayerUniverseSeason(season)

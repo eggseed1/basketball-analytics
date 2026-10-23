@@ -21,7 +21,10 @@ import {
   getExplorePlayersBoardView,
   parseExplorePlayersSortDir,
 } from "@/data/queries/explore-players-board";
-import { parsePlayerBoardRate } from "@/lib/explore-players-display";
+import {
+  parsePlayerBoardRate,
+  parsePlayerBoardViews,
+} from "@/lib/explore-players-display";
 import { boardColumnLabel } from "@/lib/player-board-stats";
 import {
   defaultExploreMinimumMinutes,
@@ -87,6 +90,9 @@ async function loadBoard(
     sortKey,
     sortDir,
     rate: parsePlayerBoardRate([searchParams.rate].flat()[0] ?? null),
+    boardViews: parsePlayerBoardViews(
+      [searchParams.view].flat()[0] ?? null
+    ),
     page: 1,
     // Context pools are unused on this page (no row-context panel wired).
     includeContext: false,
