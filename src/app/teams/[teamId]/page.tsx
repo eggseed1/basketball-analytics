@@ -94,6 +94,9 @@ export async function generateMetadata({ params, searchParams }: TeamPageProps) 
   const seasonParam = Array.isArray(sp.season) ? sp.season[0] : sp.season;
   const season =
     seasonParam ?? canonicalSeasonFromStartYear(currentNbaStartYear());
+  const { getTeamSeasonBoardCached } = await import(
+    "@/data/queries/request-cache"
+  );
   const board = await getTeamSeasonBoardCached(season);
   const boardTeam = resolveTeamFromBoard(board.rows, teamId);
   const fallback = boardTeam ? null : resolveTeamIdentityFallback(teamId, season, "era");
