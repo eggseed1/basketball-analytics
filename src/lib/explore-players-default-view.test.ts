@@ -39,12 +39,12 @@ function baseRow(): ExplorePlayerBoardRow {
 }
 
 describe("explore players default view", () => {
-  it("defaults to All when view is omitted", () => {
-    assert.deepEqual(parsePlayerBoardViews(null), ["all"]);
-    assert.deepEqual(parsePlayerBoardViews(""), ["all"]);
+  it("defaults to Impact when view is omitted", () => {
+    assert.deepEqual(parsePlayerBoardViews(null), ["impact"]);
+    assert.deepEqual(parsePlayerBoardViews(""), ["impact"]);
     assert.deepEqual(parsePlayerBoardViews(null), DEFAULT_PLAYER_BOARD_VIEWS);
-    assert.equal(serializePlayerBoardViews(["all"]), null);
-    assert.equal(serializePlayerBoardViews(["impact"]), "impact");
+    assert.equal(serializePlayerBoardViews(["impact"]), null);
+    assert.equal(serializePlayerBoardViews(["all"]), "all");
   });
 
   it("slims impact rows and keeps All column fields", () => {

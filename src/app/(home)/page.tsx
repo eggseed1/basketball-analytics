@@ -94,28 +94,65 @@ async function HomeTopPerformers() {
     import("@/components/home/top-performers-panel"),
   ]);
   const data = await getHomeAnalytics();
-  // DRBL/DARKO/RAPTOR leaders already carry TS%/USG + team — do not also
-  // serialize the duplicate performerSeasons union into Flight (~dozens of rows).
+  // Panel shows 10 rows — keep a little headroom for cross-metric joins, and
+  // strip DARKO/RAPTOR extras (boxImpact, projectedMinutes, …) from Flight.
+  const LEADER_CAP = 12;
+  const rate = (n: number | null | undefined) =>
+    n != null && Number.isFinite(n) && n > 0 ? Math.round(n * 1000) / 1000 : null;
   const slim = (
     rows: typeof data.tsLeaders
   ): typeof data.performerSeasons =>
-    rows.map((row) => ({
+    rows.slice(0, LEADER_CAP).map((row) => ({
       playerId: row.playerId,
       playerName: row.playerName,
       teamAbbr: row.teamAbbreviation ?? undefined,
-      trueShootingPct:
-        row.trueShootingPct != null && row.trueShootingPct > 0
-          ? row.trueShootingPct
-          : null,
-      usagePct:
-        row.usagePct != null && row.usagePct > 0 ? row.usagePct : null,
+      trueShootingPct: rate(row.trueShootingPct),
+      usagePct: rate(row.usagePct),
     }));
+  const darkoLeaders = data.darkoLeaders.slice(0, LEADER_CAP).map((p) => ({
+    profileId: p.profileId,
+    nbaPlayerId: p.nbaPlayerId,
+    playerName: p.playerName,
+    impact: Math.round(p.impact * 100) / 100,
+    teamKey: p.teamKey,
+    teamAbbr: p.teamAbbr,
+    teamId: p.teamId,
+    teamName: p.teamName,
+    trueShootingPct: rate(p.trueShootingPct),
+    usagePct: rate(p.usagePct),
+  }));
+  const raptorLeaders = data.raptorLeaders.slice(0, LEADER_CAP).map((p) => ({
+    profileId: p.profileId,
+    nbaPlayerId: p.nbaPlayerId,
+    playerName: p.playerName,
+    impact: Math.round(p.impact * 100) / 100,
+    teamKey: p.teamKey,
+    teamAbbr: p.teamAbbr,
+    teamId: p.teamId,
+    teamName: p.teamName,
+    trueShootingPct: rate(p.trueShootingPct),
+    usagePct: rate(p.usagePct),
+  }));
+  const drblLeaders = data.drblLeaders.slice(0, LEADER_CAP).map((p) => ({
+    playerId: p.playerId,
+    playerName: p.playerName,
+    profileId: p.profileId,
+    nbaPlayerId: p.nbaPlayerId,
+    teamKey: p.teamKey,
+    teamAbbr: p.teamAbbr,
+    drbl100: Math.round(p.drbl100 * 100) / 100,
+    r1Points: p.r1Points,
+    war1: p.war1 != null ? Math.round(p.war1 * 100) / 100 : null,
+    darko: p.darko != null ? Math.round(p.darko * 100) / 100 : null,
+    trueShootingPct: rate(p.trueShootingPct),
+    usagePct: rate(p.usagePct),
+  }));
   return (
     <TopPerformersPanel
       season={data.season}
-      drblLeaders={data.drblLeaders}
-      darkoLeaders={data.darkoLeaders}
-      raptorLeaders={data.raptorLeaders}
+      drblLeaders={drblLeaders}
+      darkoLeaders={darkoLeaders as typeof data.darkoLeaders}
+      raptorLeaders={raptorLeaders as typeof data.raptorLeaders}
       tsLeaders={slim(data.tsLeaders)}
       usageStars={slim(data.usageStars)}
       drblOverlayOk={data.drblOverlayOk}

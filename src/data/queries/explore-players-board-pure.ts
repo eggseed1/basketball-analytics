@@ -193,6 +193,13 @@ export function slimExplorePlayerBoardRow(
   }
   if (sortKey) addExploreColumnFields(keep, sortKey);
 
+  const roundWire = (value: unknown): unknown => {
+    if (typeof value !== "number" || !Number.isFinite(value)) return value;
+    // Percents / rates stay readable; avoid long floats in Flight/HTML.
+    if (Math.abs(value) <= 1) return Math.round(value * 1000) / 1000;
+    return Math.round(value * 100) / 100;
+  };
+
   const out = {
     playerId: row.playerId,
     playerName: row.playerName,
@@ -200,17 +207,18 @@ export function slimExplorePlayerBoardRow(
     teamName: row.teamName,
     season: row.season,
     gamesPlayed: row.gamesPlayed,
-    minutes: row.minutes,
-    points: row.points,
-    assists: row.assists,
-    rebounds: row.rebounds,
-    steals: row.steals,
-    blocks: row.blocks,
-    turnovers: row.turnovers,
-    fieldGoalPct: row.fieldGoalPct,
-    threePointPct: row.threePointPct,
-    freeThrowPct: row.freeThrowPct,
+    minutes: roundWire(row.minutes) as number,
+    points: roundWire(row.points) as number,
+    assists: roundWire(row.assists) as number,
+    rebounds: roundWire(row.rebounds) as number,
+    steals: roundWire(row.steals) as number,
+    blocks: roundWire(row.blocks) as number,
+    turnovers: roundWire(row.turnovers) as number,
+    fieldGoalPct: roundWire(row.fieldGoalPct) as number,
+    threePointPct: roundWire(row.threePointPct) as number,
+    freeThrowPct: roundWire(row.freeThrowPct) as number,
   } as ExplorePlayerBoardRow;
+  if (row.teamAbbreviation) out.teamAbbreviation = row.teamAbbreviation;
 
   for (const key of keep) {
     if (
@@ -218,6 +226,7 @@ export function slimExplorePlayerBoardRow(
       key === "playerName" ||
       key === "teamId" ||
       key === "teamName" ||
+      key === "teamAbbreviation" ||
       key === "season" ||
       key === "gamesPlayed" ||
       key === "minutes" ||
@@ -235,9 +244,11 @@ export function slimExplorePlayerBoardRow(
     }
     const value = row[key as keyof ExplorePlayerBoardRow];
     if (value !== undefined) {
-      (out as Record<string, unknown>)[key] = value;
+      (out as Record<string, unknown>)[key] = roundWire(value);
     }
   }
+  // Headshots resolve from playerId on the client — skip portrait URLs on the wire.
+  delete (out as { portraitUrl?: string }).portraitUrl;
   return out;
 }
 

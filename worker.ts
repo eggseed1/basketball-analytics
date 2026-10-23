@@ -65,6 +65,11 @@ const CACHEABLE_PARAMS = new Set([
   "tab", "rate", "arc", "gamesPage", "sort", "dir", "from", "theme",
   // Scores day/week/month shells (list pagination `after`/`afterId` stay uncached).
   "date", "month", "week",
+  // Explore board filters (pages read these; keep HTML cacheable).
+  "minimumMinutes", "minimumGames", "team", "position", "player",
+  // Compare deep-links.
+  "a", "b", "an", "bn", "teamA", "teamB", "teamId", "seasonA", "seasonB",
+  "seasons", "era", "basis",
 ]);
 const REPLAYED_HEADERS = [
   "content-type", "link", "vary", "content-security-policy", "permissions-policy",
