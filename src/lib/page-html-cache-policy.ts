@@ -19,6 +19,15 @@ export const LIVE_HTML_POLICY: PageHtmlCachePolicy = {
   stale: 10 * 60,
 };
 
+/**
+ * Scoreboard shell only — tiles poll `/api/scores/live`, so HTML can stay
+ * EDGE a bit longer than other live surfaces and avoid frequent cold MISS.
+ */
+export const SCORES_HTML_POLICY: PageHtmlCachePolicy = {
+  fresh: 2 * 60,
+  stale: 10 * 60,
+};
+
 /** Homepage is the coldest path after deploy; fewer re-renders = fewer OOMs. */
 export const HOME_HTML_POLICY: PageHtmlCachePolicy = {
   fresh: 5 * 60,
@@ -100,9 +109,8 @@ export function isCdnHtmlPath(pathname: string): boolean {
 
 export function htmlCachePolicyForPath(pathname: string): PageHtmlCachePolicy {
   if (HOME_HTML_PATH.test(pathname)) return HOME_HTML_POLICY;
-  if (isScoresHtmlPath(pathname) || isLiveHtmlPath(pathname)) {
-    return LIVE_HTML_POLICY;
-  }
+  if (isScoresHtmlPath(pathname)) return SCORES_HTML_POLICY;
+  if (isLiveHtmlPath(pathname)) return LIVE_HTML_POLICY;
   return DAILY_HTML_POLICY;
 }
 

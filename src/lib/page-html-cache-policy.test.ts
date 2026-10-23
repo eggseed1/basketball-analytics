@@ -4,6 +4,7 @@ import { describe, it } from "node:test";
 import {
   DAILY_HTML_POLICY,
   LIVE_HTML_POLICY,
+  SCORES_HTML_POLICY,
   edgeCacheStorageControlHeader,
   edgeHtmlCacheEnabled,
   htmlCacheControlHeader,
@@ -29,10 +30,10 @@ describe("page-html-cache-policy", () => {
 
   it("allows the scores shell on a short public CDN TTL", () => {
     assert.equal(isCdnHtmlPath("/scores"), true);
-    assert.equal(htmlCachePolicyForPath("/scores").fresh, LIVE_HTML_POLICY.fresh);
+    assert.equal(htmlCachePolicyForPath("/scores").fresh, SCORES_HTML_POLICY.fresh);
     assert.match(
-      htmlCacheControlHeader("/scores", LIVE_HTML_POLICY),
-      /^public, max-age=0, s-maxage=60, stale-while-revalidate=/
+      htmlCacheControlHeader("/scores", SCORES_HTML_POLICY),
+      /^public, max-age=0, s-maxage=120, stale-while-revalidate=/
     );
   });
 
@@ -74,7 +75,7 @@ describe("page-html-cache-policy", () => {
 
   it("picks policies by path class", () => {
     assert.equal(htmlCachePolicyForPath("/").fresh, 5 * 60);
-    assert.equal(htmlCachePolicyForPath("/scores").fresh, LIVE_HTML_POLICY.fresh);
+    assert.equal(htmlCachePolicyForPath("/scores").fresh, SCORES_HTML_POLICY.fresh);
     assert.equal(htmlCachePolicyForPath("/players/1").fresh, DAILY_HTML_POLICY.fresh);
   });
 
