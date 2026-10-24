@@ -2,7 +2,22 @@
 
 import { TeamLogo } from "@/components/brand/team-logo";
 import { TeamIdentity } from "@/components/teams/team-identity";
-import type { StandingRow } from "@/data/types";
+/** Full standings page rows, or slim home/compact rows. */
+export type StandingRowView = {
+  teamId: string;
+  abbreviation: string;
+  displayName?: string;
+  rank: number;
+  wins: number;
+  losses: number;
+  winPct: number;
+  differential: number;
+  gamesBehind?: number;
+  ppg?: number;
+  oppPpg?: number;
+  streak?: string;
+};
+
 import { formatNumber } from "@/lib/format";
 import { textLinkClassName, type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
@@ -19,7 +34,7 @@ export function StandingsConferenceTable({
   bare = false,
 }: {
   title: string;
-  rows: StandingRow[];
+  rows: StandingRowView[];
   /** Fewer columns for homepage. */
   compact?: boolean;
   /** Dashed rules under the last playoff seed (6) and last play-in seed (10). */
@@ -109,7 +124,7 @@ export function StandingsConferenceTable({
                   <td className="min-w-[4.5rem] py-2 pl-2 pr-2 sm:min-w-[11.5rem]">
                     <TeamIdentity
                       teamKey={row.teamId}
-                      label={compact ? row.abbreviation : row.displayName}
+                      label={compact ? row.abbreviation : (row.displayName ?? row.abbreviation)}
                       nameClassName="flex min-w-0 max-w-full items-center gap-2 whitespace-nowrap no-underline hover:no-underline"
                     >
                       <span className="shrink-0">
@@ -136,9 +151,9 @@ export function StandingsConferenceTable({
                               textLinkClassName,
                               "hidden min-w-0 truncate sm:block"
                             )}
-                            title={row.displayName}
+                            title={row.displayName ?? row.abbreviation}
                           >
-                            {row.displayName}
+                            {row.displayName ?? row.abbreviation}
                           </span>
                         </>
                       )}
@@ -157,9 +172,9 @@ export function StandingsConferenceTable({
                           "px-1 text-right text-muted-foreground"
                         )}
                       >
-                        {row.gamesBehind <= 0
+                        {(row.gamesBehind ?? 0) <= 0
                           ? "-"
-                          : formatNumber(row.gamesBehind, 1)}
+                          : formatNumber(row.gamesBehind ?? 0, 1)}
                       </td>
                       <td
                         className={cn(
@@ -176,7 +191,7 @@ export function StandingsConferenceTable({
                         {formatNumber(row.differential, 1)}
                       </td>
                       <td className={cn(tdBase, "px-1 text-right")}>
-                        {formatNumber(row.ppg, 1)}
+                        {formatNumber(row.ppg ?? 0, 1)}
                       </td>
                       <td
                         className={cn(
@@ -184,10 +199,10 @@ export function StandingsConferenceTable({
                           "px-1 text-right text-muted-foreground"
                         )}
                       >
-                        {formatNumber(row.oppPpg, 1)}
+                        {formatNumber(row.oppPpg ?? 0, 1)}
                       </td>
                       <td className={cn(tdBase, "pl-1 pr-3 text-right")}>
-                        {row.streak}
+                        {row.streak ?? "—"}
                       </td>
                     </>
                   ) : (
