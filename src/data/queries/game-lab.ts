@@ -247,21 +247,9 @@ async function hydrateFromEspnCdn(
     return { box: null, playByPlay: null };
   }
 
-  // site.api is usually a few plays ahead of cdn.espn.com during live games.
-  let summary: Awaited<ReturnType<typeof fetchEspnCdnGameSummary>> = null;
-  try {
-    const { espnFetchJson } = await import("@/data/providers/nba/espn-client");
-    summary = await espnFetchJson(
-      `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=${encodeURIComponent(gameId)}`,
-      { ttlMs: 5_000, retries: 0, timeoutMs: 3_000 }
-    );
-  } catch {
-    summary = null;
-  }
-  const sitePlays = (summary as { plays?: unknown[] } | null)?.plays;
-  if (!summary || !Array.isArray(sitePlays) || sitePlays.length === 0) {
-    summary = await fetchEspnCdnGameSummary(gameId, { preferPlays: true });
-  }
+  // CDN first on Workers (site.api often 403s / burns the hydrate budget).
+  // The lab client polls /api/.../play-by-play for the fresher site.api feed.
+  const summary = await fetchEspnCdnGameSummary(gameId, { preferPlays: true });
   if (!summary) return { box: null, playByPlay: null };
   const boxTeams = (summary as { boxscore?: { teams?: Parameters<typeof parseOfficialTeamStats>[0] } })
     .boxscore?.teams;

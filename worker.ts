@@ -35,11 +35,11 @@ type CachePolicy = { fresh: number; stale: number };
 // Accept-Language), so cache keys include the resolved locale segment.
 const LIVE_BOARD_POLICY: CachePolicy = { fresh: 60, stale: 10 * 60 };
 /**
- * Game detail flips preview → lab at tip, so keep `fresh` short. KV rejects
- * expirationTtl under 60s, and a too-short total made every /games/* request a
- * cold SSR (~10–15s) with x-page-cache always MISS.
+ * Same cadence as live boards. Tip-off flip is handled by client route refresh
+ * (RSC, uncached) plus prefer-live shell; a short HTML TTL forced cold ~14s
+ * SSR every minute. KV still requires expirationTtl ≥ 60s.
  */
-const LIVE_GAME_POLICY: CachePolicy = { fresh: 8, stale: 52 };
+const LIVE_GAME_POLICY: CachePolicy = { fresh: 60, stale: 10 * 60 };
 /** Homepage is the coldest path after deploy; fewer re-renders = fewer OOMs. */
 const HOME_POLICY: CachePolicy = { fresh: 5 * 60, stale: 30 * 60 };
 const DAILY_POLICY: CachePolicy = { fresh: 15 * 60, stale: 6 * 60 * 60 };
