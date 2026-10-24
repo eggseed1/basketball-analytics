@@ -255,8 +255,14 @@ function ExtraChancesCard({
         : `${possessions.away}–${possessions.home} possessions (${labels.away}–${labels.home})`
     );
   }
-  if (shotPace?.averageSeconds != null) {
-    paceParts.push(`${formatNumber(shotPace.averageSeconds, 1)} sec avg to first shot`);
+  if (shotPace?.away != null && shotPace.home != null) {
+    const awaySec = formatNumber(shotPace.away, 1);
+    const homeSec = formatNumber(shotPace.home, 1);
+    paceParts.push(
+      awaySec === homeSec
+        ? `${awaySec} sec to first shot`
+        : `${awaySec}–${homeSec} sec to first shot (${labels.away}–${labels.home})`
+    );
   }
 
   return (
@@ -394,8 +400,9 @@ function ExtraChancesCard({
           Pts per turnover forced divides those points by turnovers forced; blank means zero counted
           chances of that kind. Possessions are completed trips counted from play-by-play (make,
           turnover, defensive rebound, or last free throw), not a fractional estimate. Sec to first
-          shot is game-clock time from the start of a possession until that side&apos;s first
-          field-goal attempt; lower is faster, and trips that never shoot are left out. PPP is each
+          shot compares each side&apos;s average game-clock time from the start of a possession
+          until its first field-goal attempt; lower is faster, and trips that never shoot are left
+          out. PPP is each
           side&apos;s points on its own possession count. Second-chance points come after an
           offensive rebound; points off turnovers come on the next trip after a turnover.{" "}
           {officialRows.length
