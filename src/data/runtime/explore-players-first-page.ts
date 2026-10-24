@@ -118,13 +118,18 @@ export function explorePlayersFirstPageMeta() {
 export function getExplorePlayersFirstPageSnapshot(): {
   key: ExplorePlayersFirstPageKey;
   view: SnapshotFile["view"];
+  generatedAt: string | null;
 } | null {
   tryPrimeFromDisk();
   if (!data?.key?.season || !data?.view || !Array.isArray(data.view.rows)) {
     return null;
   }
   if (data.view.rows.length === 0) return null;
-  return { key: data.key, view: data.view };
+  return {
+    key: data.key,
+    view: data.view,
+    generatedAt: data.generatedAt ?? null,
+  };
 }
 
 function sameViews(
@@ -179,5 +184,24 @@ export function matchesExplorePlayersFirstPage(options: {
   }
   if ((options.rate ?? key.rate) !== key.rate) return false;
   if (!sameViews(options.boardViews, key.boardViews)) return false;
+  // Season-tables refresh on the home runner; first-page is a separate bake.
+  // Tiny meta file avoids loading the 9MB tables JSON on the cold hit path.
+  const tablesAt = readSeasonTablesGeneratedAt();
+  const bakeAt = baked.generatedAt;
+  if (tablesAt && bakeAt && Date.parse(tablesAt) > Date.parse(bakeAt)) {
+    return false;
+  }
   return true;
+}
+
+function readSeasonTablesGeneratedAt(): string | null {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const meta = require("./season-tables-meta.json") as {
+      generatedAt?: string;
+    };
+    return meta.generatedAt ?? null;
+  } catch {
+    return null;
+  }
 }

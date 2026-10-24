@@ -32,6 +32,32 @@ jobs:
       - name: Install
         run: npm ci
 
+      # Feature-branch / code-only ships must not regress the Explore board.
+      # Season tables + first-page land on main from the home stats runner
+      # ([skip ci]); without this sync, a branch deploy freezes yesterday's GP.
+      - name: Sync Explore board snapshots from main
+        run: |
+          set -euo pipefail
+          git fetch origin main --depth=1
+          git checkout origin/main -- \
+            src/data/runtime/season-tables-snapshot.json \
+            src/data/runtime/nba-espn-player-ids.json \
+            src/data/runtime/season-tables-meta.json \
+            public/runtime/season-tables-meta.json \
+            2>/dev/null || true
+          if [ ! -f src/data/runtime/season-tables-meta.json ] && [ -f src/data/runtime/season-tables-snapshot.json ]; then
+            node --input-type=module -e "
+              import fs from 'node:fs';
+              const t = JSON.parse(fs.readFileSync('src/data/runtime/season-tables-snapshot.json','utf8'));
+              const body = JSON.stringify({ generatedAt: t.generatedAt ?? null, source: t.source ?? 'stats.nba.com' }) + '\n';
+              fs.writeFileSync('src/data/runtime/season-tables-meta.json', body);
+              fs.mkdirSync('public/runtime', { recursive: true });
+              fs.writeFileSync('public/runtime/season-tables-meta.json', body);
+            "
+          fi
+          node --require ./scripts/lib/stub-server-only.cjs --import tsx \
+            scripts/build-explore-players-first-page.ts
+
       - name: Build OpenNext bundle
         run: npx opennextjs-cloudflare build
 

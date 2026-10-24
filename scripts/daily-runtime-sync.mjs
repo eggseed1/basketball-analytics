@@ -49,13 +49,15 @@ const info = nbaSeasonPhaseInfo(now);
 const minGp = dailyGameLogMinGp(now);
 
 /**
- * In-season bakes are rebuilt every run but committed only on Mondays and
- * June 25-30, so git holds the finished season once offseason runs stop
- * rebuilding them. First scheduled run of the day (12:17 UTC) only.
+ * In-season bakes are rebuilt every run and committed on the first scheduled
+ * run of each day (and again Jun 25–30) so code-only deploys cannot roll the
+ * board back to last Monday. Offseason runs do not rebuild these files, so the
+ * last in-season commit stays the finished season.
  */
 const seasonCloseWindow = now.getUTCMonth() === 5 && now.getUTCDate() >= 25;
 const firstRunOfDay = now.getUTCHours() < 14;
-const commitSeasonSnapshots = firstRunOfDay && (now.getUTCDay() === 1 || seasonCloseWindow);
+const commitSeasonSnapshots =
+  firstRunOfDay && (info.shouldRefreshPlayerViz || seasonCloseWindow);
 const archiveSeasonToR2 = firstRunOfDay && seasonCloseWindow;
 
 function log(message) {

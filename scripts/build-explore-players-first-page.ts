@@ -1,7 +1,11 @@
 /**
  * Bake the default Explore Players first page for cold MISS.
  *
- *   DATA_PROVIDER=nba npx tsx scripts/build-explore-players-first-page.ts
+ * Must read the bundled season-tables peer board (same path as Cloudflare),
+ * not live ESPN — the site API often lags opening-night box scores and would
+ * freeze a stale first page into the Worker.
+ *
+ *   node --require ./scripts/lib/stub-server-only.cjs --import tsx scripts/build-explore-players-first-page.ts
  */
 import { mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
@@ -10,6 +14,7 @@ import {
   EXPLORE_PLAYERS_PAGE_SIZE,
   getExplorePlayersBoardView,
 } from "../src/data/queries/explore-players-board";
+import { getBundledBrefPeerBoard } from "../src/data/runtime/bref-advanced-snapshot";
 import { listCanonicalSeasons } from "../src/data/providers/historical/season-range";
 import { DEFAULT_PLAYER_BOARD_VIEWS } from "../src/lib/explore-players-display";
 import {
@@ -27,8 +32,8 @@ function seasonTablesPeerRowCount(season: string): number {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const fs = require("node:fs") as typeof import("node:fs");
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const path = require("node:path") as typeof import("node:path");
-    const file = path.join(
+    const pathMod = require("node:path") as typeof import("node:path");
+    const file = pathMod.join(
       process.cwd(),
       "src/data/runtime/season-tables-snapshot.json"
     );
@@ -51,7 +56,6 @@ function boardReadySeasons(): string[] {
 }
 
 async function main() {
-  // Rebuild must not short-circuit on the previous bake.
   process.env.SKIP_EXPLORE_FIRST_PAGE = "1";
 
   const available = listCanonicalSeasons();
@@ -61,8 +65,15 @@ async function main() {
   });
   const minimumMinutes = defaultExploreMinimumMinutes(season);
 
+  const bundled = getBundledBrefPeerBoard(season);
+  if (!isBundledPeerBoardReady(season, bundled.length)) {
+    throw new Error(
+      `season-tables peer board not ready for ${season} (n=${bundled.length}); refuse ESPN first-page bake`
+    );
+  }
+
   console.log(
-    `[explore-first-page] baking season=${season} minMinutes=${minimumMinutes} ready=${ready.slice(0, 5).join(",")}${ready.length > 5 ? "…" : ""}`
+    `[explore-first-page] baking season=${season} minMinutes=${minimumMinutes} bundled=${bundled.length} ready=${ready.slice(0, 5).join(",")}${ready.length > 5 ? "…" : ""}`
   );
 
   const view = await getExplorePlayersBoardView({
@@ -75,6 +86,14 @@ async function main() {
 
   if (!view.rows.length) {
     throw new Error(`empty first page for ${season}`);
+  }
+
+  const bakeMaxGp = Math.max(0, ...view.rows.map((r) => r.gamesPlayed ?? 0));
+  const tablesMaxGp = Math.max(0, ...bundled.map((r) => r.gamesPlayed ?? 0));
+  if (tablesMaxGp > 0 && bakeMaxGp < tablesMaxGp) {
+    throw new Error(
+      `first-page bake is behind season-tables (bake max GP ${bakeMaxGp} < tables ${tablesMaxGp}); refusing stale ESPN snapshot`
+    );
   }
 
   const out = {
@@ -105,7 +124,7 @@ async function main() {
   mkdirSync(path.dirname(publicDest), { recursive: true });
   writeFileSync(publicDest, body);
   console.log(
-    `[explore-first-page] wrote ${publicDest} rows=${view.rows.length} total=${view.totalCount} sort=${view.sortKey} (src mirror ${dest})`
+    `[explore-first-page] wrote ${publicDest} rows=${view.rows.length} total=${view.totalCount} sort=${view.sortKey} maxGp=${bakeMaxGp} (src mirror ${dest})`
   );
 }
 

@@ -10,7 +10,13 @@
  * teams in the order played, as the site's readers expect. ESPN ids come from
  * src/data/runtime/nba-espn-player-ids.json, which this script extends.
  */
-import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import {
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  writeFileSync,
+} from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
@@ -235,10 +241,17 @@ for (const data of seasonFiles) {
   seasons[data.season] = { advanced, perGame };
 }
 
+const generatedAt = new Date().toISOString();
 writeFileSync(
   OUT,
-  JSON.stringify({ version: 1, generatedAt: new Date().toISOString(), source: "stats.nba.com", seasons }),
+  JSON.stringify({ version: 1, generatedAt, source: "stats.nba.com", seasons }),
 );
+const metaOut = path.join(ROOT, "src/data/runtime/season-tables-meta.json");
+const metaPublic = path.join(ROOT, "public/runtime/season-tables-meta.json");
+const metaBody = `${JSON.stringify({ generatedAt, source: "stats.nba.com" })}\n`;
+writeFileSync(metaOut, metaBody);
+mkdirSync(path.dirname(metaPublic), { recursive: true });
+writeFileSync(metaPublic, metaBody);
 writeFileSync(
   IDS,
   `${JSON.stringify({ note: "NBA person id to ESPN athlete id", ids: Object.fromEntries(Object.entries(ids).sort(([a], [b]) => Number(a) - Number(b))) }, null, 0)}\n`,

@@ -21,7 +21,11 @@ FILES=(
   src/data/runtime/league-season-averages.json
   src/data/runtime/league-pace.json
   src/data/runtime/season-tables-snapshot.json
+  src/data/runtime/season-tables-meta.json
+  public/runtime/season-tables-meta.json
   src/data/runtime/nba-espn-player-ids.json
+  src/data/runtime/explore-players-first-page.json
+  public/runtime/explore-players-first-page.json
   src/data/runtime/historical-team-season-records.json
   data/ops/seasonal-upkeep.json
 )
@@ -57,6 +61,9 @@ if [ "$REFRESH" = "1" ] || [ "${FORCE:-0}" = "1" ]; then
   # Explore can serve a peer board without ESPN (same path every future year).
   if "$VENV/bin/python" scripts/build-nba-season-totals.py "$SEASON"; then
     npx --yes tsx@4 scripts/build-season-tables.ts || log "season tables failed; keeping the last bake"
+    # First-page must follow season-tables (bundled peer board), never live ESPN.
+    node --require ./scripts/lib/stub-server-only.cjs --import tsx scripts/build-explore-players-first-page.ts \
+      || log "explore first-page bake failed; keeping the last bake"
   else
     log "season totals failed; keeping the last bake"
   fi
@@ -91,6 +98,13 @@ git commit --quiet -m "Local stats.nba.com refresh ($SEASON) [skip ci]"
 for attempt in 1 2 3; do
   if git pull --quiet --rebase origin main && git push --quiet origin HEAD:main; then
     log "pushed $(git rev-parse --short HEAD)"
+    # Data commits skip CI; kick a code-less deploy so Explore is not stuck on
+    # yesterday's board until the next flaky scheduled refresh.
+    if command -v gh >/dev/null 2>&1; then
+      gh workflow run deploy-site.yml --ref main \
+        && log "triggered deploy-site on main" \
+        || log "could not trigger deploy-site (board is on main; next nightly will ship it)"
+    fi
     exit 0
   fi
   sleep $((attempt * 15))
