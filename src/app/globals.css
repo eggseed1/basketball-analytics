@@ -1550,21 +1550,24 @@ html:not([data-surface="glass"]) .color-scheme-switch {
 }
 
 .drbl-logo__glyph {
-  width: 78%;
-  height: 78%;
+  display: block;
+  width: 72%;
+  height: 72%;
+  /* Keep the mark sharp in the frost tile; avoid subpixel SVG blur. */
+  shape-rendering: geometricPrecision;
 }
 
 .drbl-logo__arc-outer {
-  stroke: color-mix(in oklab, var(--drbl-blue) 82%, white);
+  stroke: color-mix(in oklab, var(--drbl-blue) 78%, black);
 }
 
 .drbl-logo__arc-inner {
-  stroke: color-mix(in oklab, var(--drbl-blue) 52%, white);
-  opacity: 0.95;
+  stroke: color-mix(in oklab, var(--drbl-blue) 62%, black);
+  opacity: 0.9;
 }
 
 .drbl-logo__spine {
-  stroke: color-mix(in oklab, var(--foreground) 70%, transparent);
+  stroke: color-mix(in oklab, var(--foreground) 88%, transparent);
 }
 
 .drbl-logo__ball {
@@ -1572,19 +1575,19 @@ html:not([data-surface="glass"]) .color-scheme-switch {
 }
 
 .drbl-logo__ball-ring {
-  stroke: rgb(255 255 255 / 40%);
+  stroke: rgb(255 255 255 / 45%);
 }
 
 .dark .drbl-logo__arc-outer {
-  stroke: color-mix(in oklab, var(--drbl-blue) 55%, white);
+  stroke: color-mix(in oklab, var(--drbl-blue) 45%, white);
 }
 
 .dark .drbl-logo__arc-inner {
-  stroke: color-mix(in oklab, var(--drbl-blue) 40%, white);
+  stroke: color-mix(in oklab, var(--drbl-blue) 35%, white);
 }
 
 .dark .drbl-logo__spine {
-  stroke: color-mix(in oklab, var(--foreground) 85%, transparent);
+  stroke: color-mix(in oklab, var(--foreground) 92%, transparent);
 }
 
 .site-subnav-band {

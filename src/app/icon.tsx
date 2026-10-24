@@ -19,7 +19,7 @@ export default function Icon() {
           background: DRBL_ICON_BG,
         }}
       >
-        <DrblIconMarkSvg size={420} />
+        <DrblIconMarkSvg size={448} />
       </div>
     ),
     { ...size }

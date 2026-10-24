@@ -11,6 +11,7 @@ type DrblLogoProps = {
 /**
  * Site lockup — frost tile + court-arc mark (range / impact) with NBA
  * atmosphere accents. Adapts to light/dark via theme tokens.
+ * Glyph shares the favicon’s optically centered court-arc geometry.
  */
 export function DrblLogo({
   className,
@@ -32,33 +33,35 @@ export function DrblLogo({
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <path
-            className="drbl-logo__arc-outer"
-            d="M10 6.5c7.2 0 13 5.8 13 13"
-            strokeWidth="2.4"
-            strokeLinecap="round"
-          />
-          <path
-            className="drbl-logo__arc-inner"
-            d="M10 11c4.7 0 8.5 3.8 8.5 8.5"
-            strokeWidth="1.7"
-            strokeLinecap="round"
-          />
-          <path
-            className="drbl-logo__spine"
-            d="M10 6.5v13"
-            strokeWidth="2.4"
-            strokeLinecap="round"
-          />
-          <circle className="drbl-logo__ball" cx="22.5" cy="19.2" r="2.35" />
-          <circle
-            className="drbl-logo__ball-ring"
-            cx="22.5"
-            cy="19.2"
-            r="2.35"
-            fill="none"
-            strokeWidth="0.75"
-          />
+          <g transform="translate(1.4 1.8)">
+            <path
+              className="drbl-logo__arc-outer"
+              d="M8.5 6.25c8.35 0 15.1 6.75 15.1 15.1"
+              strokeWidth="2.6"
+              strokeLinecap="round"
+            />
+            <path
+              className="drbl-logo__arc-inner"
+              d="M8.5 10.5c5 0 9 4 9 9"
+              strokeWidth="1.6"
+              strokeLinecap="round"
+            />
+            <path
+              className="drbl-logo__spine"
+              d="M8.5 6.25v15.1"
+              strokeWidth="2.6"
+              strokeLinecap="round"
+            />
+            <circle className="drbl-logo__ball" cx="23.1" cy="20.85" r="2.7" />
+            <circle
+              className="drbl-logo__ball-ring"
+              cx="23.1"
+              cy="20.85"
+              r="2.7"
+              fill="none"
+              strokeWidth="0.85"
+            />
+          </g>
         </svg>
       </span>
       {withWordmark ? (

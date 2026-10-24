@@ -19,7 +19,7 @@ export default function AppleIcon() {
           background: DRBL_ICON_BG,
         }}
       >
-        <DrblIconMarkSvg size={148} />
+        <DrblIconMarkSvg size={156} />
       </div>
     ),
     { ...size }
