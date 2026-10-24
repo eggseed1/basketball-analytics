@@ -1492,6 +1492,14 @@ export function PlayerPercentilePanel({
               ? profileComps
               : cached?.profileComps ?? profileComps,
         });
+        // Same ids + length → keep prev so we don't churn renders on every
+        // SSR prop identity change (feeds React #185 with the career wipe).
+        if (
+          prev.length === best.length &&
+          prev.every((row, i) => row.id === best[i]?.id && row.percentile === best[i]?.percentile)
+        ) {
+          return prev;
+        }
         return best;
       });
       setViewTeamKey(teamKey);

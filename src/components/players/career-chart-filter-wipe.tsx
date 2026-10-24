@@ -148,20 +148,18 @@ export function CareerChartFilterWipe({
 }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const pendingRef = useRef(children);
+  const prevContentRef = useRef(children);
   const shownKeyRef = useRef(transitionKey);
   const latestKeyRef = useRef(transitionKey);
   const genRef = useRef(0);
   const [shownKey, setShownKey] = useState(transitionKey);
-  const [shown, setShown] = useState(children);
   pendingRef.current = children;
   latestKeyRef.current = transitionKey;
-
-  // Keep live children in sync when the key has not changed (no wipe).
-  useEffect(() => {
-    if (transitionKey === shownKeyRef.current) {
-      setShown(children);
-    }
-  }, [children, transitionKey]);
+  // Live when keys match — never copy `children` into state on every parent
+  // render (that setState loop hit React #185 on heavy player pages).
+  if (shownKey === transitionKey) {
+    prevContentRef.current = children;
+  }
 
   useEffect(() => {
     if (transitionKey === shownKeyRef.current) return;
@@ -171,8 +169,8 @@ export function CareerChartFilterWipe({
 
     const apply = (key: string) => {
       shownKeyRef.current = key;
+      prevContentRef.current = pendingRef.current;
       setShownKey(key);
-      setShown(pendingRef.current);
     };
 
     if (prefersReducedMotion() || !root) {
@@ -202,6 +200,9 @@ export function CareerChartFilterWipe({
     };
   }, [transitionKey]);
 
+  const content =
+    shownKey === transitionKey ? children : prevContentRef.current;
+
   return (
     <div
       ref={wrapRef}
@@ -214,7 +215,7 @@ export function CareerChartFilterWipe({
       <CareerChartRevealContext.Provider value="entry">
         {/* Remount on each filter key so draw state always starts empty. */}
         <div key={shownKey} className="w-full min-w-0">
-          {shown}
+          {content}
         </div>
       </CareerChartRevealContext.Provider>
     </div>
