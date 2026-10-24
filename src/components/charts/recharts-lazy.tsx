@@ -29,21 +29,23 @@ const pulseFutures = (
 
 /** Client-only chart shells — keep recharts out of the Cloudflare Worker SSR graph. */
 
-/** Shared import promises so overview/comparisons can start the chunk early. */
-const careerTeamTrendChartModule = () =>
-  import("@/components/players/career-team-trend-chart");
-const playerCompFuturesChartModule = () =>
-  import("@/components/players/player-comp-futures-chart");
-
-/** Kick hero/overview chart chunks as soon as any lazy chart shell loads. */
+/**
+ * Warm career/comps chart chunks after the lazy shell module has finished
+ * evaluating. Do not call import() while this module is still initializing —
+ * the futures chart chunk also pulls this shell, and a sync preload deadlocks
+ * React.lazy on a forever-pending promise (stuck loading skeletons).
+ */
 export function preloadPlayerPageCharts() {
   if (typeof window === "undefined") return;
-  void careerTeamTrendChartModule();
-  void playerCompFuturesChartModule();
-}
-
-if (typeof window !== "undefined") {
-  preloadPlayerPageCharts();
+  const warm = () => {
+    void import("@/components/players/career-team-trend-chart");
+    void import("@/components/players/player-comp-futures-chart");
+  };
+  if (typeof requestIdleCallback === "function") {
+    requestIdleCallback(warm, { timeout: 1500 });
+  } else {
+    window.setTimeout(warm, 0);
+  }
 }
 
 export const GameScoringScatterLazy = dynamic(
@@ -184,7 +186,7 @@ export const SentimentPerformanceScatterLazy = dynamic(
 
 export const PlayerCompFuturesChartLazy = dynamic(
   () =>
-    playerCompFuturesChartModule().then((m) => ({
+    import("@/components/players/player-comp-futures-chart").then((m) => ({
       default: m.PlayerCompFuturesChart,
     })),
   { ssr: false, loading: () => pulseFutures }
@@ -192,7 +194,7 @@ export const PlayerCompFuturesChartLazy = dynamic(
 
 export const CareerTeamTrendChartLazy = dynamic(
   () =>
-    careerTeamTrendChartModule().then((m) => ({
+    import("@/components/players/career-team-trend-chart").then((m) => ({
       default: m.CareerTeamTrendChart,
     })),
   { ssr: false, loading: () => pulseHero }
@@ -200,7 +202,7 @@ export const CareerTeamTrendChartLazy = dynamic(
 
 export const TalentYearChartLazy = dynamic(
   () =>
-    careerTeamTrendChartModule().then((m) => ({
+    import("@/components/players/career-team-trend-chart").then((m) => ({
       default: m.TalentYearChart,
     })),
   { ssr: false, loading: () => pulse }
