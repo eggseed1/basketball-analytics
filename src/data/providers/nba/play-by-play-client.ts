@@ -259,11 +259,7 @@ function readDiskCache(gameId: string): Promise<unknown | null> {
 async function fetchNbaIdPlayByPlay(
   nbaGameId: string
 ): Promise<RawPlayByPlayPayload | null> {
-  const disk = await readDiskCache(nbaGameId);
-  if (disk && hasActions(disk)) {
-    return { raw: disk, source: "disk", nbaGameId };
-  }
-
+  // Live CDN before disk archive — an early bake would pin an in-progress game.
   try {
     const raw = await fetchJson(cdnUrl(nbaGameId), HEADERS, 2);
     if (hasActions(raw)) {
@@ -282,6 +278,11 @@ async function fetchNbaIdPlayByPlay(
     } catch {
       // fall through
     }
+  }
+
+  const disk = await readDiskCache(nbaGameId);
+  if (disk && hasActions(disk)) {
+    return { raw: disk, source: "disk", nbaGameId };
   }
 
   return null;
@@ -322,34 +323,9 @@ async function fetchRawPlayByPlayUncached(
       });
       return live;
     }
-  }
 
-  const baked = await loadBakedPlayByPlay(routeId);
-  if (baked && hasActions(baked.raw)) {
-    memoryCache.set(routeId, {
-      value: baked.raw,
-      source: baked.source,
-      nbaGameId: baked.nbaGameId,
-      freshUntil: now + CACHE_TTL_MS.boxScore,
-    });
-    return baked;
-  }
-
-  if (looksLikeEspnEventId(routeId)) {
-    const fromSummary = async (
-      loader: () => Promise<unknown>
-    ): Promise<RawPlayByPlayPayload | null> => {
-      try {
-        const summary = await loader();
-        if (!summary) return null;
-        const raw = normalizeEspnSummary(summary);
-        if (!hasActions(raw)) return null;
-        return { raw, source: "espn" };
-      } catch {
-        return null;
-      }
-    };
-
+    // CDN next — never bake before this. A deploy-time bake freezes live games
+    // at whatever quarter was archived when the file was written.
     const cdn = await fromSummary(() =>
       fetchEspnCdnGameSummary(routeId, { preferPlays: true })
     );
@@ -357,22 +333,36 @@ async function fetchRawPlayByPlayUncached(
       memoryCache.set(routeId, {
         value: cdn.raw,
         source: "espn",
-        freshUntil: now + CACHE_TTL_MS.boxScore,
+        freshUntil: now + 8_000,
       });
       return cdn;
     }
 
     const resolved = await resolveNbaGameId(routeId).catch(() => null);
-    if (!resolved) return null;
-    const bridged = await fetchNbaIdPlayByPlay(resolved);
-    if (!bridged) return null;
-    memoryCache.set(routeId, {
-      value: bridged.raw,
-      source: bridged.source,
-      nbaGameId: bridged.nbaGameId,
-      freshUntil: now + CACHE_TTL_MS.boxScore,
-    });
-    return bridged;
+    if (resolved) {
+      const bridged = await fetchNbaIdPlayByPlay(resolved);
+      if (bridged) {
+        memoryCache.set(routeId, {
+          value: bridged.raw,
+          source: bridged.source,
+          nbaGameId: bridged.nbaGameId,
+          freshUntil: now + 8_000,
+        });
+        return bridged;
+      }
+    }
+
+    const baked = await loadBakedPlayByPlay(routeId);
+    if (baked && hasActions(baked.raw)) {
+      memoryCache.set(routeId, {
+        value: baked.raw,
+        source: baked.source,
+        nbaGameId: baked.nbaGameId,
+        freshUntil: now + CACHE_TTL_MS.boxScore,
+      });
+      return baked;
+    }
+    return null;
   }
 
   const hit = await fetchNbaIdPlayByPlay(routeId);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import type { GameAnalysisSummary } from "@/analytics/game-lab";
 import { MatchupWashCard } from "@/components/brand/team-wash-card";
@@ -13,57 +13,19 @@ import { GameRosterBoard } from "@/components/games/game-roster-board";
 import { GameShotChart, type ShotChartPlayer } from "@/components/games/game-shot-chart";
 import { GameStoryStrip, GameTeamComparison } from "@/components/games/game-story";
 import { GameTopPerformers } from "@/components/games/game-top-performers";
+import { useLiveGamePlayByPlay } from "@/components/games/use-live-game-play-by-play";
+import { useLiveGamePlayers } from "@/components/games/use-live-game-players";
 import { GamePlayByPlayPanel } from "@/components/game/game-play-by-play";
 import type { PlayByPlayEvent, PlayerGame } from "@/data/types";
 import { type } from "@/lib/design-system";
 import type { OfficialTeamStats } from "@/lib/games/official-team-stats";
 import { useChartTheme } from "@/lib/chart-theme";
-import {
-  elapsedFromDisplayClock,
-  elapsedGameSeconds,
-  isLiveLikeStatus,
-  type GameStatusKind,
-} from "@/lib/game-status";
+import { timelineFromPlayByPlayEvents } from "@/lib/game-flow/resolve-score-timeline";
 import { buildGameMatchupTheme } from "@/lib/game-matchup-theme";
 import { distinctTeamColors } from "@/lib/nba-brand";
 import { cn } from "@/lib/utils";
 
 type FlowTab = "margin" | "winprob";
-
-/** Live play-by-play this far behind the game clock gets called out. */
-const PBP_LAG_NOTE_SECONDS = 180;
-
-function periodLabel(period: number): string {
-  return period <= 4 ? `Q${period}` : `OT${period - 4}`;
-}
-
-function playByPlayLagNote(
-  analysis: GameAnalysisSummary,
-  events: PlayByPlayEvent[]
-): string | null {
-  if (!events.length || !isLiveLikeStatus(analysis.status as GameStatusKind)) return null;
-  const live = elapsedFromDisplayClock(analysis.period, analysis.displayClock);
-  if (live == null) return null;
-  let last = events[0]!;
-  for (const e of events) {
-    if (elapsedGameSeconds(e.period, e.clockSeconds) > elapsedGameSeconds(last.period, last.clockSeconds)) {
-      last = e;
-    }
-  }
-  if (live - elapsedGameSeconds(last.period, last.clockSeconds) < PBP_LAG_NOTE_SECONDS) return null;
-  const period = analysis.period!;
-  const atBreak =
-    analysis.status === "halftime" ||
-    analysis.status === "period_break" ||
-    elapsedFromDisplayClock(period, analysis.displayClock) === elapsedGameSeconds(period, 0);
-  // The summary clock trails the scoreboard in the header, so name the quarter only.
-  const gameAt = !atBreak
-    ? `in ${periodLabel(period)}`
-    : period === 2
-      ? "at halftime"
-      : `at the end of ${periodLabel(period)}`;
-  return `Play-by-play for this game stops at ${periodLabel(last.period)} ${last.clock} while the game is ${gameAt}. Leads, runs, possessions, game flow and shots below only cover plays up to that point.`;
-}
 
 function timelineGapNote(
   gaps: NonNullable<GameAnalysisSummary["flow"]["timelineGaps"]>,
@@ -111,13 +73,14 @@ function FlowTabChip({
 
 export function GameLabView({
   analysis,
-  players,
-  events = [],
+  players: initialPlayers,
+  events: initialEvents = [],
   pbpSource,
   officialTeamStats = null,
   pregameMargin,
   hidePeriodTable = false,
   rebuiltFromPlays = false,
+  enableLiveBoxPoll = false,
 }: {
   analysis: GameAnalysisSummary;
   players: PlayerGame[];
@@ -132,6 +95,11 @@ export function GameLabView({
   hidePeriodTable?: boolean;
   /** Player lines were counted from the plays up to the viewer's score delay. */
   rebuiltFromPlays?: boolean;
+  /**
+   * Poll box score and play-by-play so the lab stays with the live header.
+   * Off when the server cut stats to a score delay.
+   */
+  enableLiveBoxPoll?: boolean;
 }) {
   const chartTheme = useChartTheme();
   const { outcome, flow } = analysis;
@@ -145,6 +113,26 @@ export function GameLabView({
     palette.get(homeKey) || chartTheme.teamBarColor(homeKey) || matchup.homeWash;
   const [flowTab, setFlowTab] = useState<FlowTab>("margin");
   const final = analysis.status === "final";
+  const players = useLiveGamePlayers(
+    analysis.gameId,
+    initialPlayers,
+    analysis.status,
+    enableLiveBoxPoll && !rebuiltFromPlays
+  );
+  const events = useLiveGamePlayByPlay(
+    analysis.gameId,
+    initialEvents,
+    analysis.status,
+    enableLiveBoxPoll && !rebuiltFromPlays
+  );
+  const flowTimeline = useMemo(() => {
+    if (events.length <= initialEvents.length) return flow.timeline;
+    const next = timelineFromPlayByPlayEvents(events, {
+      homeTeamId: homeKey,
+      awayTeamId: awayKey,
+    });
+    return next.length >= flow.timeline.length ? next : flow.timeline;
+  }, [events, initialEvents.length, flow.timeline, homeKey, awayKey]);
 
   const homePlayers = players
     .filter((p) => p.teamId === homeKey || p.isHome)
@@ -173,7 +161,6 @@ export function GameLabView({
         !p.rebounds &&
         !p.assists
     );
-  const pbpLagNote = playByPlayLagNote(analysis, events);
   const shotChartPlayers: ShotChartPlayer[] = [
     ...awayPlayers.map((p) => ({ playerId: p.playerId, name: p.playerName ?? null, side: "away" as const })),
     ...rosterHome.map((p) => ({ playerId: p.playerId, name: p.playerName ?? null, side: "home" as const })),
@@ -181,14 +168,6 @@ export function GameLabView({
 
   return (
     <div className="flex flex-col gap-5">
-      {pbpLagNote ? (
-        <p
-          role="status"
-          className={cn(type.bodySm, "sports-card px-4 py-3 text-muted-foreground")}
-        >
-          {pbpLagNote}
-        </p>
-      ) : null}
       <GameStoryStrip analysis={analysis} colors={colors} />
       {statsPending ? (
         <MatchupWashCard
@@ -245,7 +224,7 @@ export function GameLabView({
           </p>
         </div>
 
-        {flow.timeline.length > 0 ? (
+        {flowTimeline.length > 0 ? (
           <div className="flex flex-col gap-4">
             <div
               role="tablist"
@@ -268,7 +247,7 @@ export function GameLabView({
 
             {flowTab === "margin" ? (
               <GameMarginFlowChart
-                timeline={flow.timeline}
+                timeline={flowTimeline}
                 homeLabel={outcome.homeLabel}
                 awayLabel={outcome.awayLabel}
                 homeTeamKey={homeKey}
@@ -280,7 +259,7 @@ export function GameLabView({
               />
             ) : (
               <GameWinProbabilityChart
-                timeline={flow.timeline}
+                timeline={flowTimeline}
                 homeLabel={outcome.homeLabel}
                 awayLabel={outcome.awayLabel}
                 homeTeamKey={homeKey}

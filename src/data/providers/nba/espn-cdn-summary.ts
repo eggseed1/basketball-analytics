@@ -18,10 +18,24 @@ const RECENT_TTL_MS = 30_000;
 const RECENT_LIVE_TTL_MS = 8_000;
 
 function isLiveSummary(summary: EspnSummaryResponse): boolean {
-  const state = (
-    summary as { header?: { competitions?: Array<{ status?: { type?: { state?: string } } }> } }
-  ).header?.competitions?.[0]?.status?.type?.state;
-  return state === "in";
+  const status = (
+    summary as {
+      header?: {
+        competitions?: Array<{
+          status?: { type?: { state?: string; name?: string } };
+        }>;
+      };
+    }
+  ).header?.competitions?.[0]?.status?.type;
+  const state = (status?.state ?? "").toLowerCase();
+  const name = (status?.name ?? "").toUpperCase();
+  // Halftime / end-of-period still need a short TTL so Q2 does not stick through the break.
+  return (
+    state === "in" ||
+    name.includes("HALFTIME") ||
+    name.includes("END_PERIOD") ||
+    name.includes("END_OF_PERIOD")
+  );
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
