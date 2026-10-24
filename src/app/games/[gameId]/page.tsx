@@ -23,6 +23,7 @@ import { parseSeasonEvidenceArrival } from "@/analytics/game-season-context";
 import { getGameAnalysis } from "@/data/queries";
 import { getHistoricalProductGame } from "@/data/history/product";
 import { loadRawArchiveShotEventsAsync } from "@/data/history/raw-archive-shots";
+import { looksLikeEspnEventId } from "@/data/identity/game-id";
 import { getGameShellCached } from "@/data/queries/request-cache";
 import { runtimePregameMargin } from "@/data/runtime/pregame-margin";
 import { withBudget } from "@/data/queries/budget";
@@ -70,12 +71,27 @@ async function GameLabDeepBody({ gameId, hidePeriodTable, asOfMs }: { gameId: st
   }
   const shell = await getGameShellCached(gameId);
   const pregameMargin = shell ? runtimePregameMargin(shell.game) : undefined;
-  const view = <GameLabView analysis={payload.analysis} players={payload.players} events={payload.events} pbpSource={payload.pbpSource} officialTeamStats={payload.officialTeamStats} pregameMargin={pregameMargin} omitHero hidePeriodTable={hidePeriodTable} rebuiltFromPlays={payload.asOf === "cut"} />;
+  const view = (
+    <GameLabView
+      analysis={payload.analysis}
+      players={payload.players}
+      events={payload.events}
+      pbpSource={payload.pbpSource}
+      officialTeamStats={payload.officialTeamStats}
+      pregameMargin={pregameMargin}
+      omitHero
+      hidePeriodTable={hidePeriodTable}
+      rebuiltFromPlays={payload.asOf === "cut"}
+      enableLiveBoxPoll={payload.asOf == null || payload.asOf === "unchanged"}
+    />
+  );
   return payload.asOf === "unavailable" ? <DelayedGameSection risky>{view}</DelayedGameSection> : view;
 }
 
 async function HistoricalDeepBody({ gameId, seasonHint, homeLabel, awayLabel }: { gameId: string; seasonHint?: string; homeLabel: string; awayLabel: string }) {
   const historyArtifact = getHistoricalProductGame(gameId, seasonHint);
+  // Live ESPN ids use the lab shot chart; skip the archive R2 round-trip on the critical stream.
+  if (!historyArtifact && looksLikeEspnEventId(gameId)) return null;
   const shots = await loadRawArchiveShotEventsAsync(gameId);
   if (historyArtifact) return <HistoricalGameExperience artifact={{ ...historyArtifact, teamGames: [] as Record<string, unknown>[] }} shots={shots} homeLabel={homeLabel} awayLabel={awayLabel} />;
   if (shots.length > 0) {
