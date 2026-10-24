@@ -51,6 +51,13 @@ jobs:
             src/data/runtime/current-roster-snapshot.json \
             src/data/runtime/recent-insights-snapshot.json \
             src/data/runtime/stat-detective-windows.json \
+            src/data/runtime/drbl-overlay-snapshot.json \
+            public/runtime/drbl-overlay-snapshot.json \
+            src/data/runtime/drbl-published-seasons.json \
+            src/data/runtime/drbl-guide-snapshot.json \
+            src/data/runtime/impact-overlay-snapshot.json \
+            src/data/runtime/percentile-pools-snapshot.json \
+            public/runtime/percentile-pools-snapshot.json \
             2>/dev/null || true
           if [ ! -f src/data/runtime/season-tables-meta.json ] && [ -f src/data/runtime/season-tables-snapshot.json ]; then
             node --input-type=module -e "
@@ -101,7 +108,7 @@ jobs:
         if: success()
         run: |
           set -euo pipefail
-          paths=("/" "/scores" "/explore/games" "/explore/players" "/explore/teams" "/ask")
+          paths=("/" "/standings" "/scores" "/explore/games" "/explore/players" "/explore/teams" "/ask")
           if games=$(curl -fsS --max-time 15 \
             "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard" \
             | node -e '
