@@ -3,20 +3,28 @@
 import { useCallback } from "react";
 import { useReportWebVitals } from "next/web-vitals";
 
+type VitalMetric = {
+  name: string;
+  value: number;
+  id: string;
+  rating?: string;
+  navigationType?: string;
+};
+
+function deviceCategory(): "phone" | "tablet" | "desktop" {
+  const w = window.innerWidth;
+  if (w < 768) return "phone";
+  if (w < 1024) return "tablet";
+  return "desktop";
+}
+
 /**
- * Permanent lab/field web-vitals bridge (P18PERF.0).
- * Stable callback — no large client work. Reports to console in development
- * and to `window.__DRBL_WEB_VITALS__` for local capture.
+ * Lab/field web-vitals bridge. Records route, viewport class, build, and
+ * navigation type. No page content or PII.
  */
-export function WebVitalsReporter() {
+export function WebVitalsReporter({ buildId }: { buildId?: string | null }) {
   const onReport = useCallback(
-    (metric: {
-      name: string;
-      value: number;
-      id: string;
-      rating?: string;
-      navigationType?: string;
-    }) => {
+    (metric: VitalMetric) => {
       if (typeof window === "undefined") return;
       const entry = {
         name: metric.name,
@@ -26,16 +34,23 @@ export function WebVitalsReporter() {
         navigationType: metric.navigationType,
         at: Date.now(),
         path: window.location.pathname,
+        viewport: `${window.innerWidth}x${window.innerHeight}`,
+        deviceCategory: deviceCategory(),
+        build: buildId ?? null,
       };
       const bag = ((window as unknown as { __DRBL_WEB_VITALS__?: unknown[] })
         .__DRBL_WEB_VITALS__ ??= []) as unknown[];
       bag.push(entry);
       if (process.env.NODE_ENV === "development") {
-        // Attribution-friendly: name + value only (no PII).
-        console.info("[web-vital]", metric.name, Math.round(metric.value), metric.rating);
+        console.info(
+          "[web-vital]",
+          metric.name,
+          Math.round(metric.value),
+          metric.rating
+        );
       }
     },
-    []
+    [buildId]
   );
 
   useReportWebVitals(onReport);

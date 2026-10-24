@@ -11,6 +11,7 @@ import { SmoothScroll } from "@/components/smooth-scroll";
 import { ChartHoverTip } from "@/components/charts/chart-hover-tip";
 import { ScrollHoverGuard } from "@/components/continuity/scroll-hover-guard";
 import { SortableTables } from "@/components/continuity/sortable-tables";
+import { WebVitalsReporter } from "@/components/system/web-vitals-reporter";
 import { pickClientMessages } from "@/i18n/client-messages";
 import { LocaleNavSync } from "@/components/i18n/locale-nav-sync";
 import { htmlLang } from "@/i18n/config";
@@ -148,6 +149,9 @@ export default async function RootLayout({
         <NextIntlClientProvider locale={locale} messages={clientMessages}>
           <OwnerThemeProvider>
             <LocaleNavSync />
+            <WebVitalsReporter
+              buildId={process.env.NEXT_PUBLIC_BUILD_ID ?? process.env.CF_VERSION_METADATA_ID ?? null}
+            />
             <SmoothScroll />
             <ChartHoverTip />
             <ScrollHoverGuard />
