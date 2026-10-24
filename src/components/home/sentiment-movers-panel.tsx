@@ -85,7 +85,7 @@ function MoverList({
 
 /** Home desk — fan sentiment risers & fallers from curated snapshot. */
 export async function SentimentMoversPanel() {
-  const board = getSentimentMoversBoard(4, 7);
+  const board = await getSentimentMoversBoard(4, 7);
   if (!board) return null;
   const sample = board.risers[0] ?? board.fallers[0];
 

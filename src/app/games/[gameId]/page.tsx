@@ -7,6 +7,7 @@ import { GamePreviewSection, GameTabs, type GameTab } from "@/components/games/g
 import { PossessionExplorerIsland } from "@/components/games/possession-explorer-island";
 import { DelayedGameSection } from "@/components/games/delayed-game-section";
 import { cookies } from "next/headers";
+import { isFinalStatus } from "@/lib/game-status";
 import { needsScoreMask, parseScoreDelay, SCORE_DELAY_COOKIE } from "@/lib/score-delay";
 import { RuntimeGameFallback } from "@/components/games/runtime-game-fallback";
 import { HistoricalGameExperience } from "@/components/history/historical-game-experience";
@@ -143,6 +144,10 @@ export default async function GamePage({ params, searchParams }: GamePageProps) 
   const awayName = shell.game.awayTeamName ?? shell.game.awayTeamAbbr ?? shell.game.awayTeamId;
   const homeName = shell.game.homeTeamName ?? shell.game.homeTeamAbbr ?? shell.game.homeTeamId;
   const body = <main data-motion-page className="site-shell flex flex-1 flex-col gap-5 py-5 sm:gap-6 sm:py-7">
+    {/* Delay-cut HTML stays private — never promote personalized cuts to EDGE. */}
+    {isFinalStatus(status) && asOfMs == null ? (
+      <span hidden data-html-cache="game-final" />
+    ) : null}
     <h1 className="sr-only">{gameDate ? t("srTitleDated", { away: awayName, home: homeName, date: gameDate }) : t("srTitle", { away: awayName, home: homeName })}</h1>
     <JsonLd data={{
       "@context": "https://schema.org",

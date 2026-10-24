@@ -14,7 +14,6 @@ import type {
   HomeRaptorLeader,
   HomePerformerSeason,
 } from "@/data/queries/home";
-import type { PlayerSeason } from "@/data/types";
 import { resolveCanonicalTeam } from "@/data/identity/team-map";
 import { formatNumber } from "@/lib/format";
 import { BoardPlayerName } from "@/lib/board-compact-name";
@@ -43,31 +42,23 @@ type OverviewRow = {
   usg: number | null;
 };
 
-function teamIdentityFromSeason(season?: PlayerSeason | null): {
+function teamIdentityFromPerformer(row?: HomePerformerSeason | null): {
   teamKey?: string;
   teamLabel?: string;
 } {
-  if (!season) return {};
-  const fromId = season.teamId
-    ? resolveCanonicalTeam(season.teamId)
-    : null;
-  if (fromId?.status === "resolved") {
-    return {
-      teamKey: fromId.team.canonicalTeamId,
-      teamLabel: season.teamAbbreviation ?? fromId.team.abbr,
-    };
+  if (!row) return {};
+  if (row.teamKey) {
+    return { teamKey: row.teamKey, teamLabel: row.teamAbbr };
   }
-  const fromAbbr = season.teamAbbreviation
-    ? resolveCanonicalTeam(season.teamAbbreviation)
-    : null;
-  if (fromAbbr?.status === "resolved") {
-    return {
-      teamKey: fromAbbr.team.canonicalTeamId,
-      teamLabel: fromAbbr.team.abbr,
-    };
-  }
-  if (season.teamAbbreviation) {
-    return { teamLabel: season.teamAbbreviation };
+  if (row.teamAbbr) {
+    const resolved = resolveCanonicalTeam(row.teamAbbr);
+    if (resolved.status === "resolved") {
+      return {
+        teamKey: resolved.team.canonicalTeamId,
+        teamLabel: resolved.team.abbr,
+      };
+    }
+    return { teamLabel: row.teamAbbr };
   }
   return {};
 }
@@ -107,8 +98,9 @@ export function TopPerformersPanel({
   drblLeaders?: HomeDrblLeader[];
   darkoLeaders: HomeDarkoLeader[];
   raptorLeaders?: HomeRaptorLeader[];
-  tsLeaders: PlayerSeason[];
-  usageStars: PlayerSeason[];
+  /** Compact TS%/USG rows — never full PlayerSeason (keeps homepage Flight small). */
+  tsLeaders: HomePerformerSeason[];
+  usageStars: HomePerformerSeason[];
   performerSeasons?: HomePerformerSeason[];
   drblOverlayOk?: boolean;
   drblFallbackNote?: string | null;
@@ -142,7 +134,7 @@ export function TopPerformersPanel({
     for (const row of [...tsLeaders, ...usageStars]) {
       const key = normalizePlayerName(row.playerName);
       if (map.has(key)) continue;
-      const team = teamIdentityFromSeason(row);
+      const team = teamIdentityFromPerformer(row);
       map.set(key, {
         playerId: row.playerId,
         teamKey: team.teamKey,
@@ -334,7 +326,7 @@ export function TopPerformersPanel({
     for (const p of tsLeaders) {
       const key = normalizePlayerName(p.playerName);
       const season = seasonByName.get(key);
-      const team = teamIdentityFromSeason(p);
+      const team = teamIdentityFromPerformer(p);
       upsert({
         key,
         id: p.playerId,
@@ -359,7 +351,7 @@ export function TopPerformersPanel({
     for (const p of usageStars) {
       const key = normalizePlayerName(p.playerName);
       const season = seasonByName.get(key);
-      const team = teamIdentityFromSeason(p);
+      const team = teamIdentityFromPerformer(p);
       upsert({
         key,
         id: p.playerId,

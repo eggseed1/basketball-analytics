@@ -1,9 +1,12 @@
+"use client";
+
 import Link from "next/link";
 
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { teamColor } from "@/components/home/insight-visuals";
 import { AppLink } from "@/components/ui/app-link";
+import { cssPct } from "@/lib/format";
 import type { RecentInsight } from "@/lib/recent-insights";
 import { surpriseRule } from "@/lib/recent-insights";
 
@@ -41,12 +44,12 @@ function Row({ insight }: { insight: RecentInsight }) {
         <span className="relative h-1.5 rounded-full bg-secondary" title={`${value} vs ${avg.toFixed(1)} a game`}>
           <span
             className="absolute inset-y-0 left-0 rounded-full"
-            style={{ width: `${(value / scale) * 100}%`, background: color }}
+            style={{ width: cssPct(value / scale), background: color }}
           />
           <span
             aria-hidden
             className="absolute -inset-y-px w-px rounded-full bg-foreground/70"
-            style={{ left: `${(avg / scale) * 100}%` }}
+            style={{ left: cssPct(avg / scale) }}
           />
         </span>
         <div className="type-caption flex items-center justify-between gap-2 text-muted-foreground">

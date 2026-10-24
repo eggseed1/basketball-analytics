@@ -1,13 +1,15 @@
 import type { CSSProperties } from "react";
 
-import type {
-  InsightMoment,
-  MomentMark,
-  RecentInsightFocus,
-  RecentInsightGame,
-  RecentInsightStatLine,
-  RecentInsightTrendPoint,
-  SurpriseStat,
+import { cssPct } from "@/lib/format";
+import {
+  downsampleInsightFlowPath,
+  type InsightMoment,
+  type MomentMark,
+  type RecentInsightFocus,
+  type RecentInsightGame,
+  type RecentInsightStatLine,
+  type RecentInsightTrendPoint,
+  type SurpriseStat,
 } from "@/lib/recent-insights";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { cn } from "@/lib/utils";
@@ -191,8 +193,8 @@ export function InsightLeadWorm({
   const x = (i: number) => padX + (i * (W - padX - padRight)) / (series.length - 1);
   const y = (m: number) => top + ((hi - m) / (hi - lo || 1)) * (bottom - top);
   const mid = y(0);
-  const line = series.map((m, i) => `${i ? "L" : "M"}${x(i).toFixed(1)},${y(m).toFixed(1)}`).join(" ");
-  const area = `${line} L${x(series.length - 1).toFixed(1)},${mid} L${x(0).toFixed(1)},${mid} Z`;
+  const line = series.map((m, i) => `${i ? "L" : "M"}${svgN(x(i))},${svgN(y(m))}`).join(" ");
+  const area = `${line} L${svgN(x(series.length - 1))},${svgN(mid)} L${svgN(x(0))},${svgN(mid)} Z`;
   const clipId = `lead-${game.away.abbr}-${game.home.abbr}-${game.home.score}-${game.away.score}`;
 
   const homeMax = Math.max(...margins);
@@ -358,7 +360,7 @@ function SplitBar({
       <span className="font-semibold text-muted-foreground">{label}</span>
       <div className="h-2 overflow-hidden rounded-full bg-secondary">
         {pct != null ? (
-          <div data-motion-bar="x" className="h-full rounded-full" style={{ width: `${pct * 100}%`, background: color }} />
+          <div data-motion-bar="x" className="h-full rounded-full" style={{ width: cssPct(pct), background: color }} />
         ) : null}
       </div>
       <span className="text-right tabular-nums">
@@ -486,7 +488,7 @@ export function InsightPointsMix({
           <div
             aria-hidden
             className="absolute inset-y-0 flex flex-col items-center"
-            style={{ left: `${(avg / scale) * 100}%`, transform: "translateX(-50%)" }}
+            style={{ left: cssPct(avg / scale), transform: "translateX(-50%)" }}
           >
             <span className="text-[10px] font-semibold whitespace-nowrap text-muted-foreground">
               Season {avg.toFixed(1)}
@@ -500,7 +502,7 @@ export function InsightPointsMix({
               <div
                 key={p.label}
                 className="flex items-center justify-center text-[12px] font-bold tabular-nums"
-                style={{ width: `${(p.pts / scale) * 100}%`, background: color, opacity: p.opacity, color: ink }}
+                style={{ width: cssPct(p.pts / scale), background: color, opacity: p.opacity, color: ink }}
               >
                 {p.opacity > 0.6 && p.pts / scale > 0.1 ? p.pts : ""}
               </div>
@@ -651,7 +653,7 @@ export function InsightTrendBars({
         <span
           aria-hidden
           className="absolute inset-x-0 border-t border-dashed border-foreground/40"
-          style={{ bottom: `${(avg / max) * 100}%` }}
+          style={{ bottom: cssPct(avg / max) }}
         />
         {points.map((p, i) => (
           <div key={p.gameDate} className="flex flex-1 flex-col items-center justify-end" style={{ height: "100%" }}>
@@ -659,7 +661,7 @@ export function InsightTrendBars({
             <div
               data-motion-bar="y"
               className="w-full rounded-t-sm"
-              style={{ "--i": i, height: `${(p.points / max) * 80}%`, background: color } as CSSProperties}
+              style={{ "--i": i, height: cssPct((p.points / max) * 0.8), background: color } as CSSProperties}
             />
           </div>
         ))}
@@ -709,12 +711,12 @@ export function InsightVsNorm({
               <span className="relative h-3.5 rounded-[4px] bg-secondary">
                 <span
                   className="absolute inset-y-0 left-0 rounded-[4px]"
-                  style={{ width: `${(row.v / scale) * 100}%`, background: color, opacity: on ? 1 : 0.3 }}
+                  style={{ width: cssPct(row.v / scale), background: color, opacity: on ? 1 : 0.3 }}
                 />
                 <span
                   aria-hidden
                   className="absolute -inset-y-1 w-0.5 rounded-full bg-foreground/75"
-                  style={{ left: `${(row.avg / scale) * 100}%` }}
+                  style={{ left: cssPct(row.avg / scale) }}
                 />
               </span>
               <span className="text-right text-[11px] tabular-nums text-muted-foreground">
@@ -748,7 +750,7 @@ export function InsightMomentChart({ moment, color }: { moment: InsightMoment; c
           data-tip-sub={`${pct}% of his team's points. The rest of the team scored ${team - points}.`}
           tabIndex={0}
         >
-          <div className="h-full rounded-full" style={{ width: `${pct}%`, background: color }} />
+          <div className="h-full rounded-full" style={{ width: cssPct(pct, { unit: "percent" }), background: color }} />
         </div>
         <figcaption className="flex justify-between text-[11px] text-muted-foreground">
           <span className="font-semibold tabular-nums text-foreground">{points} pts</span>
@@ -866,9 +868,9 @@ function MomentMeter({ mark: m, color }: { mark: MomentMark; color: string }) {
     >
       <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">{m.label}</span>
       <span className="relative h-2 rounded-full bg-foreground/10">
-        <span className="absolute inset-y-0 left-0 rounded-full" style={{ width: `${Math.min(100, fill * 100)}%`, background: color }} />
+        <span className="absolute inset-y-0 left-0 rounded-full" style={{ width: cssPct(Math.min(1, fill)), background: color }} />
         {tickAt != null ? (
-          <span aria-hidden className="absolute inset-y-[-3px] w-px bg-foreground" style={{ left: `${Math.min(100, tickAt * 100)}%` }} />
+          <span aria-hidden className="absolute inset-y-[-3px] w-px bg-foreground" style={{ left: cssPct(Math.min(1, tickAt)) }} />
         ) : null}
       </span>
       <span className="text-[12px] font-black tabular-nums">{m.of != null ? `${m.value}/${m.of}` : m.value}</span>
@@ -929,6 +931,12 @@ function flowPeriodStart(period: number): number {
   return period <= 4 ? (period - 1) * 720 : 2880 + (period - 5) * 300;
 }
 
+/** Integer SVG coords — subpixels don't read at chart size and cut path bytes. */
+function svgN(n: number): string {
+  return String(Math.round(n));
+}
+
+
 /**
  * Score margin after every scoring play, shaded in the leading team's color,
  * with the moment the card is about marked on it.
@@ -938,7 +946,15 @@ export function InsightFlowChart({ game }: { game: RecentInsightGame }) {
   if (!flow || flow.path.length < 2) return null;
   const colors = gameColors(game);
   const total = flowSeconds(flow.periods);
-  const margins = flow.path.map(([, m]) => m);
+  const keepTimes =
+    flow.mark?.kind === "span"
+      ? [flow.mark.t0, flow.mark.t1]
+      : flow.mark
+        ? [flow.mark.t]
+        : [];
+  // Snapshots may already be capped; still downsample in case of a live full path.
+  const path = downsampleInsightFlowPath(flow.path, 36, keepTimes);
+  const margins = path.map(([, m]) => m);
   const reach = Math.max(8, ...margins.map((m) => Math.abs(m)));
   const hi = Math.max(...margins, 0) > 0 ? reach : 4;
   const lo = Math.min(...margins, 0) < 0 ? -reach : -4;
@@ -952,10 +968,10 @@ export function InsightFlowChart({ game }: { game: RecentInsightGame }) {
   const x = (t: number) => padX + (Math.min(t, total) / total) * (W - padX - padRight);
   const y = (m: number) => top + ((hi - m) / (hi - lo || 1)) * (bottom - top);
   const mid = y(0);
-  let line = `M${x(0).toFixed(1)},${mid.toFixed(1)}`;
-  for (const [t, m] of flow.path.slice(1)) line += ` H${x(t).toFixed(1)} V${y(m).toFixed(1)}`;
-  line += ` H${x(total).toFixed(1)}`;
-  const area = `${line} V${mid.toFixed(1)} H${x(0).toFixed(1)} Z`;
+  let line = `M${svgN(x(0))},${svgN(mid)}`;
+  for (const [t, m] of path.slice(1)) line += ` H${svgN(x(t))} V${svgN(y(m))}`;
+  line += ` H${svgN(x(total))}`;
+  const area = `${line} V${svgN(mid)} H${svgN(x(0))} Z`;
   const clipId = `flow-${game.away.abbr}-${game.home.abbr}-${game.away.score}-${game.home.score}`;
   const final = margins.at(-1) ?? 0;
   const finalColor = final > 0 ? colors.home : final < 0 ? colors.away : "var(--muted-foreground)";
@@ -1128,7 +1144,7 @@ export function InsightContributorBars({
             <span
               data-motion-bar="x"
               className="block h-full rounded-full"
-              style={{ "--i": i, width: `${(item.value / max) * 100}%`, background: color } as CSSProperties}
+              style={{ "--i": i, width: cssPct(item.value / max), background: color } as CSSProperties}
             />
           </span>
           <span className="text-right font-bold tabular-nums">{item.value}</span>
