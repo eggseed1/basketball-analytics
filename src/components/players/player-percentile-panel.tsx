@@ -1417,12 +1417,28 @@ export function PlayerPercentilePanel({
         .catch(() => null)
         .then((full) => {
           window.clearTimeout(watchdog);
-          // Clear pending immediately — do not park it behind startTransition,
-          // or "Finding similar players…" can stick while the main thread is busy.
-          if (desiredSeason.current === target && full?.metrics.length) {
-            startTransition(() => {
-              applyCached(target, full);
-            });
+          if (desiredSeason.current !== target || !full?.metrics.length) {
+            clear();
+            return;
+          }
+          // Apply Impact first, then the rest on the next frame. Applying every
+          // category in one shot with the career sparkline armed hit React #185
+          // (max update depth) on multi-season players.
+          const impactOnly: SeasonMetricsCache = {
+            ...full,
+            metrics: full.metrics.filter((m) => m.category === "impact"),
+          };
+          const hasMore = impactOnly.metrics.length < full.metrics.length;
+          startTransition(() => {
+            applyCached(target, hasMore ? impactOnly : full);
+          });
+          if (hasMore) {
+            window.setTimeout(() => {
+              if (desiredSeason.current !== target) return;
+              startTransition(() => {
+                applyCached(target, full);
+              });
+            }, 0);
           }
           clear();
         });
