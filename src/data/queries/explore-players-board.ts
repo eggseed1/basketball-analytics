@@ -12,6 +12,8 @@ import { getPlayerSeasonBoardSnapshot } from "@/data/queries/player-data-health"
 import { hasValidDrblEstimate } from "@/data/queries/percentiles";
 import type { BasketballFilters } from "@/data/types";
 import {
+  DEFAULT_PLAYER_BOARD_VIEWS,
+  type PlayerBoardView,
   PLAYER_BOARD_VIEW_COLUMNS,
   type PlayerBoardRate,
 } from "@/lib/explore-players-display";
@@ -28,6 +30,7 @@ import {
 import {
   type ExplorePlayerBoardRow,
   sortExplorePlayerRows,
+  slimExplorePlayerBoardRow,
   toExplorePlayerBoardRow,
 } from "@/data/queries/explore-players-board-pure";
 
@@ -35,6 +38,7 @@ export type { ExplorePlayerBoardRow } from "@/data/queries/explore-players-board
 export {
   parseExplorePlayersSortDir,
   sortExplorePlayerRows,
+  slimExplorePlayerBoardRow,
   toExplorePlayerBoardRow,
 } from "@/data/queries/explore-players-board-pure";
 
@@ -124,6 +128,7 @@ export async function getExplorePlayersBoardView(options: {
   sortKey?: PlayerSeasonSortKey;
   sortDir?: "asc" | "desc";
   rate?: PlayerBoardRate;
+  boardViews?: PlayerBoardView[];
   page?: number;
   pageSize?: number;
   /** Skip percentile pools - used for infinite-scroll page fetches. */
@@ -183,7 +188,12 @@ export async function getExplorePlayersBoardView(options: {
     pageCount
   );
   const start = (page - 1) * pageSize;
-  const rows = sorted.slice(start, start + pageSize);
+  const boardViews = options.boardViews?.length
+    ? options.boardViews
+    : DEFAULT_PLAYER_BOARD_VIEWS;
+  const rows = sorted
+    .slice(start, start + pageSize)
+    .map((row) => slimExplorePlayerBoardRow(row, boardViews, sortKey));
 
   const includeContext = options.includeContext !== false;
   const contextIndex = includeContext

@@ -7,10 +7,11 @@ import { GamePreviewSection, GameTabs, type GameTab } from "@/components/games/g
 import { PossessionExplorerIsland } from "@/components/games/possession-explorer-island";
 import { DelayedGameSection } from "@/components/games/delayed-game-section";
 import { cookies } from "next/headers";
-import { isFinalStatus } from "@/lib/game-status";
+import { isFinalStatus, type GameStatusKind } from "@/lib/game-status";
+import { slimGameAnalysisForFlight } from "@/lib/slim-game-analysis-for-flight";
+import { isCurrentNbaSeason } from "@/lib/nba-season-status";
 import { needsScoreMask, parseScoreDelay, SCORE_DELAY_COOKIE } from "@/lib/score-delay";
 import { RuntimeGameFallback } from "@/components/games/runtime-game-fallback";
-import { HistoricalGameExperience } from "@/components/history/historical-game-experience";
 import { GameUnavailablePanel } from "@/components/games/game-unavailable";
 import { DestinationSectionSkeleton } from "@/components/continuity/destination-loading-frame";
 import { MotionReveal } from "@/components/continuity/motion-reveal";
@@ -23,7 +24,6 @@ import { gameSideBrandKey } from "@/lib/game-team-identity";
 import { parseSeasonEvidenceArrival } from "@/analytics/game-season-context";
 import { getGameAnalysis } from "@/data/queries";
 import { getHistoricalProductGame } from "@/data/history/product";
-import { loadRawArchiveShotEventsAsync } from "@/data/history/raw-archive-shots";
 import { looksLikeEspnEventId } from "@/data/identity/game-id";
 import { getGameShellCached } from "@/data/queries/request-cache";
 import { runtimePregameMargin } from "@/data/runtime/pregame-margin";
@@ -72,34 +72,56 @@ async function GameLabDeepBody({ gameId, hidePeriodTable, asOfMs }: { gameId: st
   }
   const shell = await getGameShellCached(gameId);
   const pregameMargin = shell ? runtimePregameMargin(shell.game) : undefined;
+  // Finals: omit PBP from Flight and hydrate client-side. Live keeps SSR events.
+  const status = payload.analysis.status as GameStatusKind | undefined;
+  const isFinal = isFinalStatus(status);
+  const embedEvents = !isFinal || payload.asOf === "cut";
+  const analysis = slimGameAnalysisForFlight(payload.analysis, {
+    downsampleTimeline: isFinal && payload.asOf !== "cut",
+  });
+  const missingBox =
+    isFinal &&
+    payload.asOf !== "cut" &&
+    !(payload.players?.length > 0);
   const view = (
-    <GameLabView
-      analysis={payload.analysis}
-      players={payload.players}
-      events={payload.events}
-      pbpSource={payload.pbpSource}
-      officialTeamStats={payload.officialTeamStats}
-      pregameMargin={pregameMargin}
-      omitHero
-      hidePeriodTable={hidePeriodTable}
-      rebuiltFromPlays={payload.asOf === "cut"}
-      enableLiveBoxPoll={payload.asOf == null || payload.asOf === "unchanged"}
-    />
+    <>
+      {missingBox ? <span hidden data-page-cache="skip" /> : null}
+      <GameLabView
+        analysis={analysis}
+        players={payload.players}
+        events={embedEvents ? payload.events : []}
+        pbpSource={payload.pbpSource}
+        officialTeamStats={payload.officialTeamStats}
+        pregameMargin={pregameMargin}
+        omitHero
+        hidePeriodTable={hidePeriodTable}
+        rebuiltFromPlays={payload.asOf === "cut"}
+        enableLiveBoxPoll={payload.asOf == null || payload.asOf === "unchanged"}
+      />
+    </>
   );
   return payload.asOf === "unavailable" ? <DelayedGameSection risky>{view}</DelayedGameSection> : view;
 }
 
 async function HistoricalDeepBody({ gameId, seasonHint, homeLabel, awayLabel }: { gameId: string; seasonHint?: string; homeLabel: string; awayLabel: string }) {
   const historyArtifact = getHistoricalProductGame(gameId, seasonHint);
-  // Live ESPN ids use the lab shot chart; skip the archive R2 round-trip on the critical stream.
+  // Live ESPN ids use the lab shot chart; skip archive on the critical stream.
   if (!historyArtifact && looksLikeEspnEventId(gameId)) return null;
-  const shots = await loadRawArchiveShotEventsAsync(gameId);
-  if (historyArtifact) return <HistoricalGameExperience artifact={{ ...historyArtifact, teamGames: [] as Record<string, unknown>[] }} shots={shots} homeLabel={homeLabel} awayLabel={awayLabel} />;
-  if (shots.length > 0) {
-    const t = await getTranslations("Games");
-    return <p className="text-[13px] text-muted-foreground">{t("historicalSummaryMissing")}</p>;
-  }
-  return null;
+  if (!historyArtifact) return null;
+  // Shots load client-side — keeps archive PBP shot arrays out of first HTML.
+  const { HistoricalGameExperienceLoader } = await import(
+    "@/components/history/historical-game-experience-loader"
+  );
+  const t = await getTranslations("Games");
+  return (
+    <HistoricalGameExperienceLoader
+      gameId={gameId}
+      artifact={{ ...historyArtifact, teamGames: [] as Record<string, unknown>[] }}
+      homeLabel={homeLabel}
+      awayLabel={awayLabel}
+      missingSummary={t("historicalSummaryMissing")}
+    />
+  );
 }
 
 export default async function GamePage({ params, searchParams }: GamePageProps) {
@@ -167,7 +189,17 @@ export default async function GamePage({ params, searchParams }: GamePageProps) 
     {showGame ? (
       <DelayedGameSection risky={risky && asOfMs == null} cutDelay={delaySeconds}>
       {preTip ? <GamePreTipBoard game={shell.game} /> : <>
-      {asOfMs == null ? <Suspense fallback={<DestinationSectionSkeleton label={t("loadingFlow")} />}><HistoricalDeepBody gameId={gameId} seasonHint={seasonHint} homeLabel={shell.game.homeTeamAbbr ?? t("homeFallback")} awayLabel={shell.game.awayTeamAbbr ?? t("awayFallback")} /></Suspense> : null}
+      {asOfMs == null &&
+      (fromHistory || !isCurrentNbaSeason(shell.game.season)) ? (
+        <Suspense fallback={<DestinationSectionSkeleton label={t("loadingFlow")} />}>
+          <HistoricalDeepBody
+            gameId={gameId}
+            seasonHint={seasonHint}
+            homeLabel={shell.game.homeTeamAbbr ?? t("homeFallback")}
+            awayLabel={shell.game.awayTeamAbbr ?? t("awayFallback")}
+          />
+        </Suspense>
+      ) : null}
       <Suspense fallback={<DestinationSectionSkeleton label={t("loadingLab")} />}><GameLabDeepBody gameId={gameId} arrival={arrival} hidePeriodTable={heroHasLineScore} asOfMs={asOfMs} /></Suspense>
       <details className="group sports-card overflow-hidden">
         <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3.5 sm:px-5 [&::-webkit-details-marker]:hidden">

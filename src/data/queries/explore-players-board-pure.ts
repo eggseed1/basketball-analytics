@@ -11,7 +11,11 @@ import {
   type PlayerSeasonSortKey,
 } from "@/lib/player-season-sort";
 import { boardStatValue } from "@/lib/player-board-stats";
-import type { PlayerBoardRate } from "@/lib/explore-players-display";
+import {
+  PLAYER_BOARD_VIEW_COLUMNS,
+  type PlayerBoardRate,
+  type PlayerBoardView,
+} from "@/lib/explore-players-display";
 import {
   estimatePossessions,
   getSheetStatValue,
@@ -112,6 +116,141 @@ export type ExplorePlayerBoardRow = {
   drblD?: number;
   portraitUrl?: string | null;
 };
+
+/** Always on the wire — identity, rate bases, and required pct fields. */
+const EXPLORE_ROW_CORE_KEYS = [
+  "playerId",
+  "playerName",
+  "teamId",
+  "teamName",
+  "teamAbbreviation",
+  "season",
+  "position",
+  "gamesPlayed",
+  "minutes",
+  "points",
+  "assists",
+  "rebounds",
+  "steals",
+  "blocks",
+  "turnovers",
+  "possessions",
+  "fieldGoalPct",
+  "threePointPct",
+  "freeThrowPct",
+  "portraitUrl",
+] as const satisfies ReadonlyArray<keyof ExplorePlayerBoardRow>;
+
+function addExploreColumnFields(
+  keep: Set<string>,
+  key: PlayerSeasonSortKey
+): void {
+  switch (key) {
+    case "playerName":
+    case "teamName":
+    case "position":
+    case "gamesPlayed":
+    case "mpg":
+    case "ppg":
+    case "rpg":
+    case "apg":
+    case "spg":
+    case "bpg":
+    case "tov":
+    case "assistToTurnover":
+      return;
+    case "twoPointersMade":
+      keep.add("fieldGoalsMade");
+      keep.add("threePointersMade");
+      return;
+    case "twoPointersAttempted":
+      keep.add("fieldGoalsAttempted");
+      keep.add("threePointersAttempted");
+      return;
+    case "relativeTrueShootingPct":
+      keep.add("trueShootingPct");
+      keep.add("relativeTrueShootingPct");
+      return;
+    default:
+      keep.add(key);
+  }
+}
+
+/**
+ * Drop unused board fields for the active view chips. "all" still uses the
+ * column keep-set so wire/RSC payloads omit non-column extras (age, r1Points…).
+ */
+export function slimExplorePlayerBoardRow(
+  row: ExplorePlayerBoardRow,
+  views: readonly PlayerBoardView[],
+  sortKey?: PlayerSeasonSortKey
+): ExplorePlayerBoardRow {
+  const keep = new Set<string>(EXPLORE_ROW_CORE_KEYS);
+  for (const view of views) {
+    for (const key of PLAYER_BOARD_VIEW_COLUMNS[view]) {
+      addExploreColumnFields(keep, key);
+    }
+  }
+  if (sortKey) addExploreColumnFields(keep, sortKey);
+
+  const roundWire = (value: unknown): unknown => {
+    if (typeof value !== "number" || !Number.isFinite(value)) return value;
+    // Percents / rates stay readable; avoid long floats in Flight/HTML.
+    if (Math.abs(value) <= 1) return Math.round(value * 1000) / 1000;
+    return Math.round(value * 100) / 100;
+  };
+
+  const out = {
+    playerId: row.playerId,
+    playerName: row.playerName,
+    teamId: row.teamId,
+    teamName: row.teamName,
+    season: row.season,
+    gamesPlayed: row.gamesPlayed,
+    minutes: roundWire(row.minutes) as number,
+    points: roundWire(row.points) as number,
+    assists: roundWire(row.assists) as number,
+    rebounds: roundWire(row.rebounds) as number,
+    steals: roundWire(row.steals) as number,
+    blocks: roundWire(row.blocks) as number,
+    turnovers: roundWire(row.turnovers) as number,
+    fieldGoalPct: roundWire(row.fieldGoalPct) as number,
+    threePointPct: roundWire(row.threePointPct) as number,
+    freeThrowPct: roundWire(row.freeThrowPct) as number,
+  } as ExplorePlayerBoardRow;
+  if (row.teamAbbreviation) out.teamAbbreviation = row.teamAbbreviation;
+
+  for (const key of keep) {
+    if (
+      key === "playerId" ||
+      key === "playerName" ||
+      key === "teamId" ||
+      key === "teamName" ||
+      key === "teamAbbreviation" ||
+      key === "season" ||
+      key === "gamesPlayed" ||
+      key === "minutes" ||
+      key === "points" ||
+      key === "assists" ||
+      key === "rebounds" ||
+      key === "steals" ||
+      key === "blocks" ||
+      key === "turnovers" ||
+      key === "fieldGoalPct" ||
+      key === "threePointPct" ||
+      key === "freeThrowPct"
+    ) {
+      continue;
+    }
+    const value = row[key as keyof ExplorePlayerBoardRow];
+    if (value !== undefined) {
+      (out as Record<string, unknown>)[key] = roundWire(value);
+    }
+  }
+  // Headshots resolve from playerId on the client — skip portrait URLs on the wire.
+  delete (out as { portraitUrl?: string }).portraitUrl;
+  return out;
+}
 
 /** Board fields filled straight from the sheet registry (totals mode). */
 const SHEET_BACKED_FIELDS = [
@@ -234,15 +373,21 @@ const TEXT_SORT_KEYS = new Set<PlayerSeasonSortKey>([
   "position",
 ]);
 
+type SortableBoardRow = {
+  playerName: string;
+  teamName?: string | null;
+  position?: string | null;
+} & Parameters<typeof boardStatValue>[0];
+
 /** Missing values sort last in both directions; they never count as 0. */
 function sortValue(
-  row: ExplorePlayerBoardRow,
+  row: SortableBoardRow,
   key: PlayerSeasonSortKey,
   sortDir: "asc" | "desc",
   rate: PlayerBoardRate
 ): string | number {
   if (TEXT_SORT_KEYS.has(key)) {
-    const v = row[key as keyof ExplorePlayerBoardRow];
+    const v = (row as Record<string, unknown>)[key];
     return typeof v === "string" ? v : "";
   }
   const v = boardStatValue(row, key, rate);
@@ -254,12 +399,12 @@ function sortValue(
   return v;
 }
 
-export function sortExplorePlayerRows(
-  rows: ExplorePlayerBoardRow[],
+export function sortExplorePlayerRows<T extends SortableBoardRow>(
+  rows: T[],
   sortKey: PlayerSeasonSortKey,
   sortDir: "asc" | "desc",
   rate: PlayerBoardRate = "perGame"
-): ExplorePlayerBoardRow[] {
+): T[] {
   return [...rows].sort((a, b) => {
     const av = sortValue(a, sortKey, sortDir, rate);
     const bv = sortValue(b, sortKey, sortDir, rate);
