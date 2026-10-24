@@ -23,7 +23,7 @@ const ROW =
 const GAP_LABEL: Record<ContractValueGap, string> = {
   waived: "waived",
   thin: "too few recent possessions",
-  "no-drbl": "no recent DRBL seasons",
+  "no-drbl": "no published DRBL seasons in the projection window",
 };
 
 function listJoin(items: string[]): string {

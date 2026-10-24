@@ -59,12 +59,14 @@ function windowLabel(model: ContractValueModel): string {
 }
 
 const GAP_TEXT: Record<ContractValueGap, (model: ContractValueModel) => string> = {
+  // Worth uses published DRBL history only (through lastSeason). Rookies with
+  // current-year box scores still land here until that season is baked.
   "no-drbl": (model) =>
-    `No value estimate. He has no DRBL seasons from ${windowLabel(model)}, so there is nothing to project from.`,
+    `Contract worth stays blank here. It is projected from published DRBL seasons (${windowLabel(model)}), and he has none in that window yet.`,
   thin: (model) =>
-    `No value estimate. He played fewer than 500 DRBL possessions from ${windowLabel(model)}.`,
+    `Contract worth stays blank here. He has fewer than 500 published DRBL possessions in ${windowLabel(model)}.`,
   waived: () =>
-    "No value estimate. He was waived, so this team pays the salary without getting him on the floor.",
+    "Contract worth stays blank here. He was waived, so this team pays the salary without him on the floor.",
 };
 
 function MissingNote({
