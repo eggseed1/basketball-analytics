@@ -1,0 +1,182 @@
+{
+  "measuredAt": "2026-10-24T01:37:56.366Z",
+  "base": "https://drbl.io",
+  "results": [
+    {
+      "route": "home",
+      "path": "/",
+      "environment": "workers.dev",
+      "browser": "Chromium desktop 1280x800, no CPU/network throttle",
+      "note": "Warm-ish navigations (no browser cache clear between runs). Worker EDGE/HIT may apply. Not field CWV. Not OpenNext preview.",
+      "runs": [
+        {
+          "fcp": 1328,
+          "lcp": 4964,
+          "lcpTag": "P",
+          "lcpText": "15 of his 20 points came in the fourth quarter, when ORL won the period 33-29.",
+          "lcpUrl": null,
+          "wall": 6802,
+          "status": 200,
+          "cache": "EDGE"
+        },
+        {
+          "fcp": 1104,
+          "lcp": 5352,
+          "lcpTag": "P",
+          "lcpText": "15 of his 20 points came in the fourth quarter, when ORL won the period 33-29.",
+          "lcpUrl": null,
+          "wall": 6580,
+          "status": 200,
+          "cache": "EDGE"
+        },
+        {
+          "fcp": 240,
+          "lcp": 3656,
+          "lcpTag": "P",
+          "lcpText": "15 of his 20 points came in the fourth quarter, when ORL won the period 33-29.",
+          "lcpUrl": null,
+          "wall": 5768,
+          "status": 200,
+          "cache": "EDGE"
+        }
+      ],
+      "median": {
+        "fcp": 1104,
+        "lcp": 4964,
+        "wall": 6580
+      }
+    },
+    {
+      "route": "explore",
+      "path": "/explore/players",
+      "environment": "workers.dev",
+      "browser": "Chromium desktop 1280x800, no CPU/network throttle",
+      "note": "Warm-ish navigations (no browser cache clear between runs). Worker EDGE/HIT may apply. Not field CWV. Not OpenNext preview.",
+      "runs": [
+        {
+          "fcp": 2280,
+          "lcp": 2880,
+          "lcpTag": "H1",
+          "lcpText": "Players",
+          "lcpUrl": null,
+          "wall": 7769,
+          "status": 200,
+          "cache": "EDGE"
+        },
+        {
+          "fcp": 1244,
+          "lcp": 1868,
+          "lcpTag": "H1",
+          "lcpText": "Players",
+          "lcpUrl": null,
+          "wall": 6794,
+          "status": 200,
+          "cache": "EDGE"
+        },
+        {
+          "fcp": 284,
+          "lcp": 904,
+          "lcpTag": "H1",
+          "lcpText": "Players",
+          "lcpUrl": null,
+          "wall": 5773,
+          "status": 200,
+          "cache": "EDGE"
+        }
+      ],
+      "median": {
+        "fcp": 1244,
+        "lcp": 1868,
+        "wall": 6794
+      }
+    },
+    {
+      "route": "standings",
+      "path": "/standings",
+      "environment": "workers.dev",
+      "browser": "Chromium desktop 1280x800, no CPU/network throttle",
+      "note": "Warm-ish navigations (no browser cache clear between runs). Worker EDGE/HIT may apply. Not field CWV. Not OpenNext preview.",
+      "runs": [
+        {
+          "fcp": 1348,
+          "lcp": 1968,
+          "lcpTag": "P",
+          "lcpText": "Conference standings, playoff bracket, and team efficiency. Click a team to open its profile.",
+          "lcpUrl": null,
+          "wall": 6790,
+          "status": 200,
+          "cache": "EDGE"
+        },
+        {
+          "fcp": 244,
+          "lcp": 856,
+          "lcpTag": "P",
+          "lcpText": "Conference standings, playoff bracket, and team efficiency. Click a team to open its profile.",
+          "lcpUrl": null,
+          "wall": 5686,
+          "status": 200,
+          "cache": "EDGE"
+        },
+        {
+          "fcp": 2716,
+          "lcp": 3248,
+          "lcpTag": "P",
+          "lcpText": "Conference standings, playoff bracket, and team efficiency. Click a team to open its profile.",
+          "lcpUrl": null,
+          "wall": 8206,
+          "status": 200,
+          "cache": "EDGE"
+        }
+      ],
+      "median": {
+        "fcp": 1348,
+        "lcp": 1968,
+        "wall": 6790
+      }
+    },
+    {
+      "route": "player",
+      "path": "/players/4065648",
+      "environment": "workers.dev",
+      "browser": "Chromium desktop 1280x800, no CPU/network throttle",
+      "note": "Warm-ish navigations (no browser cache clear between runs). Worker EDGE/HIT may apply. Not field CWV. Not OpenNext preview.",
+      "runs": [
+        {
+          "fcp": 1572,
+          "lcp": 1976,
+          "lcpTag": "P",
+          "lcpText": "Drafted by the Celtics with the 3rd pick in 2017. How they got him",
+          "lcpUrl": null,
+          "wall": 7082,
+          "status": 200,
+          "cache": "EDGE"
+        },
+        {
+          "fcp": 256,
+          "lcp": 4900,
+          "lcpTag": "P",
+          "lcpText": "No close matches in this season for this stat.",
+          "lcpUrl": null,
+          "wall": 5762,
+          "status": 200,
+          "cache": "EDGE"
+        },
+        {
+          "fcp": 956,
+          "lcp": 4848,
+          "lcpTag": "P",
+          "lcpText": "No close matches in this season for this stat.",
+          "lcpUrl": null,
+          "wall": 6394,
+          "status": 200,
+          "cache": "EDGE"
+        }
+      ],
+      "median": {
+        "fcp": 956,
+        "lcp": 4848,
+        "wall": 6394
+      }
+    }
+  ]
+}

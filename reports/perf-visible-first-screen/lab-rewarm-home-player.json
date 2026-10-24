@@ -1,0 +1,66 @@
+{
+  "home": {
+    "runs": [
+      {
+        "fcp": 1348,
+        "lcp": 1900,
+        "lcpTag": "P",
+        "lcpText": "POR scored 43 in the first quarter and won it by 31. POR won by 41.",
+        "cache": "EDGE",
+        "status": 200
+      },
+      {
+        "fcp": 1664,
+        "lcp": 1664,
+        "lcpTag": "P",
+        "lcpText": "POR scored 43 in the first quarter and won it by 31. POR won by 41.",
+        "cache": "EDGE",
+        "status": 200
+      },
+      {
+        "fcp": 1684,
+        "lcp": 1684,
+        "lcpTag": "P",
+        "lcpText": "POR scored 43 in the first quarter and won it by 31. POR won by 41.",
+        "cache": "EDGE",
+        "status": 200
+      }
+    ],
+    "median": {
+      "fcp": 1664,
+      "lcp": 1684
+    }
+  },
+  "player": {
+    "runs": [
+      {
+        "fcp": 244,
+        "lcp": 2668,
+        "lcpTag": null,
+        "lcpText": "",
+        "cache": "EDGE",
+        "status": 200
+      },
+      {
+        "fcp": 1212,
+        "lcp": 1212,
+        "lcpTag": null,
+        "lcpText": "",
+        "cache": "EDGE",
+        "status": 200
+      },
+      {
+        "fcp": 1168,
+        "lcp": 1168,
+        "lcpTag": null,
+        "lcpText": "",
+        "cache": "EDGE",
+        "status": 200
+      }
+    ],
+    "median": {
+      "fcp": 1168,
+      "lcp": 1212
+    }
+  }
+}

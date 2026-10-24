@@ -1,0 +1,43 @@
+{
+  "base": "http://localhost:3001",
+  "at": "2026-10-24T06:26:57.847Z",
+  "rows": [
+    {
+      "route": "home",
+      "runs": [
+        {
+          "ttfb": 338.7999999523163,
+          "fcp": 2456,
+          "lcp": 2456,
+          "lcpTag": "P",
+          "lcpText": "POR scored 43 in the first quarter and won it by 31. POR won by 41.",
+          "cache": null,
+          "ms": 7658
+        },
+        {
+          "ttfb": 70.29999995231628,
+          "fcp": 496,
+          "lcp": 872,
+          "lcpTag": "P",
+          "lcpText": "POR scored 43 in the first quarter and won it by 31. POR won by 41.",
+          "cache": null,
+          "ms": 4231
+        },
+        {
+          "ttfb": 64.89999997615814,
+          "fcp": 124,
+          "lcp": 436,
+          "lcpTag": "P",
+          "lcpText": "POR scored 43 in the first quarter and won it by 31. POR won by 41.",
+          "cache": null,
+          "ms": 3819
+        }
+      ],
+      "median": {
+        "fcp": 496,
+        "lcp": 872,
+        "ttfb": 70.29999995231628
+      }
+    }
+  ]
+}

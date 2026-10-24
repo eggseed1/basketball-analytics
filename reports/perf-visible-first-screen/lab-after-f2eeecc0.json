@@ -1,0 +1,182 @@
+{
+  "measuredAt": "2026-10-24T06:32:58.847Z",
+  "base": "https://drbl.io",
+  "results": [
+    {
+      "route": "home",
+      "path": "/",
+      "environment": "workers.dev",
+      "browser": "Chromium desktop 1280x800, no CPU/network throttle",
+      "note": "Warm-ish navigations (no browser cache clear between runs). Worker EDGE/HIT may apply. Not field CWV. Not OpenNext preview.",
+      "runs": [
+        {
+          "fcp": 1260,
+          "lcp": 1260,
+          "lcpTag": "P",
+          "lcpText": "POR scored 43 in the first quarter and won it by 31. POR won by 41.",
+          "lcpUrl": null,
+          "wall": 6759,
+          "status": 200,
+          "cache": "EDGE"
+        },
+        {
+          "fcp": 256,
+          "lcp": 256,
+          "lcpTag": "P",
+          "lcpText": "POR scored 43 in the first quarter and won it by 31. POR won by 41.",
+          "lcpUrl": null,
+          "wall": 5774,
+          "status": 200,
+          "cache": "EDGE"
+        },
+        {
+          "fcp": 204,
+          "lcp": 204,
+          "lcpTag": "P",
+          "lcpText": "POR scored 43 in the first quarter and won it by 31. POR won by 41.",
+          "lcpUrl": null,
+          "wall": 5690,
+          "status": 200,
+          "cache": "EDGE"
+        }
+      ],
+      "median": {
+        "fcp": 256,
+        "lcp": 256,
+        "wall": 5774
+      }
+    },
+    {
+      "route": "explore",
+      "path": "/explore/players",
+      "environment": "workers.dev",
+      "browser": "Chromium desktop 1280x800, no CPU/network throttle",
+      "note": "Warm-ish navigations (no browser cache clear between runs). Worker EDGE/HIT may apply. Not field CWV. Not OpenNext preview.",
+      "runs": [
+        {
+          "fcp": 1280,
+          "lcp": 1912,
+          "lcpTag": "H1",
+          "lcpText": "Players",
+          "lcpUrl": null,
+          "wall": 6875,
+          "status": 200,
+          "cache": "MISS"
+        },
+        {
+          "fcp": 872,
+          "lcp": 872,
+          "lcpTag": "H1",
+          "lcpText": "Players",
+          "lcpUrl": null,
+          "wall": 6332,
+          "status": 200,
+          "cache": "EDGE"
+        },
+        {
+          "fcp": 200,
+          "lcp": 800,
+          "lcpTag": "H1",
+          "lcpText": "Players",
+          "lcpUrl": null,
+          "wall": 5724,
+          "status": 200,
+          "cache": "EDGE"
+        }
+      ],
+      "median": {
+        "fcp": 872,
+        "lcp": 872,
+        "wall": 6332
+      }
+    },
+    {
+      "route": "standings",
+      "path": "/standings",
+      "environment": "workers.dev",
+      "browser": "Chromium desktop 1280x800, no CPU/network throttle",
+      "note": "Warm-ish navigations (no browser cache clear between runs). Worker EDGE/HIT may apply. Not field CWV. Not OpenNext preview.",
+      "runs": [
+        {
+          "fcp": 3068,
+          "lcp": 3980,
+          "lcpTag": "P",
+          "lcpText": "Conference standings, playoff bracket, and team efficiency. Click a team to open its profile.",
+          "lcpUrl": null,
+          "wall": 8709,
+          "status": 200,
+          "cache": "MISS"
+        },
+        {
+          "fcp": 196,
+          "lcp": 824,
+          "lcpTag": "P",
+          "lcpText": "Conference standings, playoff bracket, and team efficiency. Click a team to open its profile.",
+          "lcpUrl": null,
+          "wall": 5687,
+          "status": 200,
+          "cache": "EDGE"
+        },
+        {
+          "fcp": 228,
+          "lcp": 848,
+          "lcpTag": "P",
+          "lcpText": "Conference standings, playoff bracket, and team efficiency. Click a team to open its profile.",
+          "lcpUrl": null,
+          "wall": 5726,
+          "status": 200,
+          "cache": "EDGE"
+        }
+      ],
+      "median": {
+        "fcp": 228,
+        "lcp": 848,
+        "wall": 5726
+      }
+    },
+    {
+      "route": "player",
+      "path": "/players/4065648",
+      "environment": "workers.dev",
+      "browser": "Chromium desktop 1280x800, no CPU/network throttle",
+      "note": "Warm-ish navigations (no browser cache clear between runs). Worker EDGE/HIT may apply. Not field CWV. Not OpenNext preview.",
+      "runs": [
+        {
+          "fcp": 2524,
+          "lcp": 3732,
+          "lcpTag": "P",
+          "lcpText": "Drafted by the Celtics with the 3rd pick in 2017. How they got him",
+          "lcpUrl": null,
+          "wall": 9224,
+          "status": 200,
+          "cache": "MISS"
+        },
+        {
+          "fcp": 1724,
+          "lcp": 1724,
+          "lcpTag": null,
+          "lcpText": "",
+          "lcpUrl": null,
+          "wall": 7203,
+          "status": 200,
+          "cache": "EDGE"
+        },
+        {
+          "fcp": 1236,
+          "lcp": 1236,
+          "lcpTag": null,
+          "lcpText": "",
+          "lcpUrl": null,
+          "wall": 6710,
+          "status": 200,
+          "cache": "EDGE"
+        }
+      ],
+      "median": {
+        "fcp": 1724,
+        "lcp": 1724,
+        "wall": 7203
+      }
+    }
+  ]
+}

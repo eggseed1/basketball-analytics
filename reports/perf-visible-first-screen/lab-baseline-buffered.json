@@ -1,0 +1,119 @@
+{
+  "measuredAt": "2026-10-24T03:03:46.982Z",
+  "base": "https://drbl.io",
+  "commitNote": "pre SSR findings; production before perf/visible-first-screen",
+  "results": [
+    {
+      "route": "home",
+      "path": "/",
+      "browser": "Chromium desktop 1280x800, no CPU/network throttle",
+      "note": "Warm-ish; EDGE. Findings paragraph LCP via client fetch.",
+      "median": {
+        "fcp": 1224,
+        "lcp": 4992,
+        "wall": 6946
+      },
+      "runs": [
+        {
+          "fcp": 1224,
+          "lcp": 4784,
+          "lcpTag": "P",
+          "lcpText": "6 of 9 from the field and 6 of 8 from three, and 2 of 2 at the line, for 20 points.",
+          "cache": "EDGE"
+        },
+        {
+          "fcp": 252,
+          "lcp": 4992,
+          "lcpTag": "P",
+          "lcpText": "6 of 9 from the field and 6 of 8 from three, and 2 of 2 at the line, for 20 points.",
+          "cache": "EDGE"
+        },
+        {
+          "fcp": 2816,
+          "lcp": 6112,
+          "lcpTag": "P",
+          "lcpText": "6 of 9 from the field and 6 of 8 from three, and 2 of 2 at the line, for 20 points.",
+          "cache": "EDGE"
+        }
+      ]
+    },
+    {
+      "route": "explore",
+      "path": "/explore/players",
+      "median": {
+        "fcp": 244,
+        "lcp": 864
+      },
+      "runs": [
+        {
+          "fcp": 244,
+          "lcp": 864,
+          "lcpTag": "H1",
+          "cache": "EDGE"
+        },
+        {
+          "fcp": 208,
+          "lcp": 808,
+          "lcpTag": "H1",
+          "cache": "EDGE"
+        },
+        {
+          "fcp": 1316,
+          "lcp": 1916,
+          "lcpTag": "H1",
+          "cache": "EDGE"
+        }
+      ]
+    },
+    {
+      "route": "standings",
+      "path": "/standings",
+      "median": {
+        "fcp": 264,
+        "lcp": 884
+      },
+      "runs": [
+        {
+          "fcp": 264,
+          "lcp": 884,
+          "cache": "EDGE"
+        },
+        {
+          "fcp": 196,
+          "lcp": 824,
+          "cache": "EDGE"
+        },
+        {
+          "fcp": 228,
+          "lcp": 848,
+          "cache": "EDGE"
+        }
+      ]
+    },
+    {
+      "route": "player",
+      "path": "/players/4065648",
+      "median": {
+        "fcp": 260,
+        "lcp": 1244
+      },
+      "runs": [
+        {
+          "fcp": 260,
+          "lcp": 1244,
+          "cache": "EDGE"
+        },
+        {
+          "fcp": 208,
+          "lcp": 1080,
+          "cache": "EDGE"
+        },
+        {
+          "fcp": 284,
+          "lcp": 1316,
+          "cache": "EDGE"
+        }
+      ]
+    }
+  ]
+}
