@@ -127,7 +127,7 @@ function sameViews(
   a: readonly PlayerBoardView[] | undefined,
   b: readonly PlayerBoardView[]
 ): boolean {
-  const left = a?.length ? a : (["all"] as PlayerBoardView[]);
+  const left = a?.length ? a : (["impact"] as PlayerBoardView[]);
   if (left.length !== b.length) return false;
   return left.every((v, i) => v === b[i]);
 }

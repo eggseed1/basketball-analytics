@@ -43,7 +43,7 @@ export {
 } from "@/data/queries/explore-players-board-pure";
 
 /** First paint window; infinite scroll loads the rest. Budget ≤50 (p18perf). */
-export const EXPLORE_PLAYERS_PAGE_SIZE = 50;
+export const EXPLORE_PLAYERS_PAGE_SIZE = 25;
 
 export type ExplorePlayersBoardView = {
   rows: ExplorePlayerBoardRow[];
