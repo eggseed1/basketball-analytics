@@ -4,7 +4,7 @@ import { useState } from "react";
 
 import { StandingsConferenceTable } from "@/components/standings/standings-conference-table";
 import { ChoiceChip, ChoiceTrack } from "@/components/ui/choice-chip";
-import type { StandingRow } from "@/data/types";
+import type { HomeStandingSlim } from "@/lib/home-standings-slim";
 import { useTranslations } from "next-intl";
 
 export function HomeStandingsBoard({
@@ -14,8 +14,8 @@ export function HomeStandingsBoard({
   race = false,
 }: {
   season: string;
-  east: StandingRow[];
-  west: StandingRow[];
+  east: HomeStandingSlim[];
+  west: HomeStandingSlim[];
   /** Playoff race framing: seed cut lines and a play-in note. */
   race?: boolean;
 }) {

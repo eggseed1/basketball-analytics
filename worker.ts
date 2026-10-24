@@ -4,14 +4,30 @@
 import { default as handler } from "./.open-next/worker.js";
 
 import { localeCacheKeySegment } from "./src/i18n/locale-cache-key";
+import {
+  DAILY_HTML_POLICY,
+  edgeCacheStorageControlHeader,
+  edgeHtmlCacheEnabled,
+  htmlCacheControlHeader,
+  htmlCachePolicyForPath,
+  htmlHasGameFinalMarker,
+  isCdnHtmlPath,
+  isGameHtmlPath,
+  type PageHtmlCachePolicy,
+} from "./src/lib/page-html-cache-policy";
+import { decodePageHtmlKv, encodePageHtmlKv } from "./src/lib/page-html-kv-codec";
 
 type RateLimitBinding = {
   limit(options: { key: string }): Promise<{ success: boolean }>;
 };
 
 type PageCacheBinding = {
-  get(key: string, type: "text"): Promise<string | null>;
-  put(key: string, value: string, options: { expirationTtl: number }): Promise<void>;
+  get(key: string, type: "arrayBuffer"): Promise<ArrayBuffer | null>;
+  put(
+    key: string,
+    value: ArrayBuffer | string,
+    options: { expirationTtl: number }
+  ): Promise<void>;
 };
 
 type WorkerEnv = Record<string, unknown> & {
@@ -20,6 +36,11 @@ type WorkerEnv = Record<string, unknown> & {
   CF_VERSION_METADATA?: { id?: string };
   /** Optional deploy override: force English (or another implemented locale) for all HTML. */
   DRBL_FORCE_LOCALE?: string;
+  /**
+   * Kill switch for Cloudflare Cache API + public s-maxage on daily HTML.
+   * Unset/true = on; "0" / "false" / "off" = KV-only with private no-store.
+   */
+  DRBL_EDGE_HTML_CACHE?: string;
 };
 
 type WorkerContext = { waitUntil(promise: Promise<unknown>): void };
@@ -28,62 +49,95 @@ type OpenNextHandler = {
   fetch(request: Request, env: WorkerEnv, ctx: WorkerContext): Promise<Response>;
 };
 
-type CachePolicy = { fresh: number; stale: number };
+/** Cloudflare Workers expose caches.default; DOM CacheStorage typings omit it. */
+function edgeCache(): Cache {
+  return (caches as unknown as { default: Cache }).default;
+}
 
-// Seconds a cached page is served as-is, then how much longer it may be served
-// while a background render replaces it. HTML is locale-sensitive (cookie +
-// Accept-Language), so cache keys include the resolved locale segment.
-/** Scores / slate boards — longer fresh window so game-night traffic is not a MISS storm. */
-const LIVE_BOARD_POLICY: CachePolicy = { fresh: 180, stale: 10 * 60 };
-/**
- * Same cadence as live boards. Tip-off flip is handled by client route refresh
- * (RSC, uncached) plus prefer-live shell; a short HTML TTL forced cold ~14s
- * SSR every minute. KV still requires expirationTtl ≥ 60s.
- */
-const LIVE_GAME_POLICY: CachePolicy = { fresh: 60, stale: 10 * 60 };
-/** Homepage is the coldest path after deploy; fewer re-renders = fewer OOMs. */
-const HOME_POLICY: CachePolicy = { fresh: 5 * 60, stale: 30 * 60 };
-const DAILY_POLICY: CachePolicy = { fresh: 15 * 60, stale: 6 * 60 * 60 };
-/** Cloudflare KV minimum TTL; puts below this fail and leave the path uncached. */
-const PAGE_CACHE_MIN_TTL_SECONDS = 60;
+type CachePolicy = PageHtmlCachePolicy;
+
 const PAGE_CACHE_MAX_BYTES = 5 * 1024 * 1024;
 const UNCACHED_PATH = /^\/(?:api|internal|_next)(?:\/|$)|\.[a-z0-9]+$/i;
-const LIVE_BOARD_PATH = /^\/(?:scores|dashboard|explore\/games)$/;
-const LIVE_GAME_PATH = /^\/games\/[^/]+$/;
-const HOME_PATH = /^\/$/;
 // Query params pages read that are safe to key on. Any other param could change
 // the HTML in ways the key can't see, so those requests skip the cache.
 const CACHEABLE_PARAMS = new Set([
   "season", "view", "seasonType", "page", "stat", "filter", "mode",
   "tab", "rate", "arc", "gamesPage", "sort", "dir", "from", "theme",
+  // Scores day/week/month shells (list pagination `after`/`afterId` stay uncached).
+  "date", "month", "week",
+  // Explore board filters (pages read these; keep HTML cacheable).
+  "minimumMinutes", "minimumGames", "team", "position", "player",
+  // Compare deep-links.
+  "a", "b", "an", "bn", "teamA", "teamB", "teamId", "seasonA", "seasonB",
+  "seasons", "era", "basis",
 ]);
 const REPLAYED_HEADERS = [
   "content-type", "link", "vary", "content-security-policy", "permissions-policy",
   "referrer-policy", "x-content-type-options", "x-frame-options",
   "strict-transport-security",
 ];
-// Streamed server errors, notFound() and redirects inside a 200 stream.
+// Streamed server errors and redirects inside a 200 stream.
 // next/dynamic ssr:false also emits a digest, which is not an error.
+// Nested notFound() (404) is common on otherwise-good player HTML (slot digests);
+// only treat hard failures as uncacheable so PAGE_CACHE / Cache API can HIT.
 // Pages flag a degraded render (a known player whose career didn't load) with data-page-cache="skip".
 const UNCACHEABLE_MARKERS = [
   /data-dgst="(?!BAILOUT_TO_CLIENT_SIDE_RENDERING")/,
-  /NEXT_HTTP_ERROR_FALLBACK/,
+  /NEXT_HTTP_ERROR_FALLBACK;(?:500|403)/,
   /NEXT_REDIRECT/,
   /data-page-cache="skip"/,
 ];
 
-/** Truncated streams leave the loading shell up and poison PAGE_CACHE. */
-function isUncacheableHtml(html: string): boolean {
+/**
+ * Truncated streams leave the loading shell up and poison PAGE_CACHE.
+ * Also reject route loading.tsx documents that finished without deep content
+ * (seen as STALE ~100KB Game Lab pages stuck on "Loading Game Lab…").
+ */
+function isUncacheableHtml(html: string, pathname?: string): boolean {
   if (!/<\/html>/i.test(html)) return true;
-  return UNCACHEABLE_MARKERS.some((marker) => marker.test(html));
+  if (UNCACHEABLE_MARKERS.some((marker) => marker.test(html))) return true;
+
+  // Game Lab: DestinationLoadingFrame subtitle without finished lab headings.
+  if (pathname && /^\/games\/[^/]+$/.test(pathname)) {
+    const loadingShell =
+      /Matchup identity and score load first/i.test(html) &&
+      !/type-heading">(?:Game flow|Team comparison|Box score|Top performers)/i.test(
+        html
+      );
+    if (loadingShell) return true;
+    // Final with no roster / team totals — do not poison EDGE (CDN timeout).
+    if (
+      /Box score roster lines are not available for this game/i.test(html) ||
+      /Team box totals aren.?t available for this game/i.test(html)
+    ) {
+      return true;
+    }
+  }
+
+  // Player page: loading skeleton only (no identity heading in the document).
+  if (pathname && /^\/players\/[^/]+$/.test(pathname)) {
+    const loadingOnly =
+      /Loading player…/i.test(html) &&
+      !/data-motion-page/i.test(html) &&
+      html.length < 200_000;
+    if (loadingOnly) return true;
+  }
+
+  return false;
 }
 
-type PageCacheEntry = { key: string; policy: CachePolicy };
+type PageCacheEntry = {
+  key: string;
+  policy: CachePolicy;
+  pathname: string;
+  cdn: boolean;
+};
 
 function pageCacheEntry(request: Request, env: WorkerEnv): PageCacheEntry | null {
   if (request.method !== "GET" || !env.PAGE_CACHE) return null;
-  const version = env.CF_VERSION_METADATA?.id;
-  if (!version) return null;
+  // Version metadata should always be present with wrangler version_metadata;
+  // fall back so a missing id does not disable the whole HTML cache path.
+  const version = env.CF_VERSION_METADATA?.id?.trim() || "nov";
   if (request.headers.has("rsc") || request.headers.has("next-router-prefetch")) return null;
   const url = new URL(request.url);
   if (UNCACHED_PATH.test(url.pathname)) return null;
@@ -96,35 +150,54 @@ function pageCacheEntry(request: Request, env: WorkerEnv): PageCacheEntry | null
   });
   const key = `page:${version}:${locale}:${url.pathname}${query ? `?${query}` : ""}`;
   if (key.length > 480) return null;
-  const policy = HOME_PATH.test(url.pathname)
-    ? HOME_POLICY
-    : LIVE_GAME_PATH.test(url.pathname)
-      ? LIVE_GAME_POLICY
-      : LIVE_BOARD_PATH.test(url.pathname)
-        ? LIVE_BOARD_POLICY
-        : DAILY_POLICY;
-  return { key, policy };
+  const cdn =
+    edgeHtmlCacheEnabled(
+      typeof env.DRBL_EDGE_HTML_CACHE === "string" ? env.DRBL_EDGE_HTML_CACHE : undefined
+    ) && isCdnHtmlPath(url.pathname);
+  return {
+    key,
+    policy: htmlCachePolicyForPath(url.pathname),
+    pathname: url.pathname,
+    cdn,
+  };
 }
 
-function cachedResponse(raw: string, policy: CachePolicy): { response: Response; stale: boolean } | null {
-  const newline = raw.indexOf("\n");
-  if (newline < 0) return null;
-  try {
-    const meta = JSON.parse(raw.slice(0, newline)) as {
-      at: number;
-      headers: Record<string, string>;
-    };
-    const age = Math.max(0, Math.round((Date.now() - meta.at) / 1000));
-    if (age >= policy.fresh + policy.stale) return null;
-    const stale = age >= policy.fresh;
-    const headers = new Headers(meta.headers);
-    headers.set("cache-control", "private, no-cache, no-store, max-age=0, must-revalidate");
-    headers.set("age", String(age));
-    headers.set("x-page-cache", stale ? "STALE" : "HIT");
-    return { response: new Response(raw.slice(newline + 1), { status: 200, headers }), stale };
-  } catch {
-    return null;
-  }
+/** Synthetic request so Cache API keys match KV (locale + version + path), not raw Cookie. */
+function edgeCacheKeyRequest(entry: PageCacheEntry): Request {
+  return new Request(`https://drbl-page-cache.internal/${encodeURIComponent(entry.key)}`, {
+    method: "GET",
+    headers: { accept: "text/html" },
+  });
+}
+
+function applyHtmlCacheHeaders(
+  headers: Headers,
+  entry: PageCacheEntry,
+  state: "HIT" | "STALE" | "MISS" | "EDGE"
+): void {
+  headers.set(
+    "cache-control",
+    htmlCacheControlHeader(entry.pathname, entry.policy, { cdnEnabled: entry.cdn })
+  );
+  headers.set("x-page-cache", state);
+}
+
+async function cachedResponse(
+  raw: ArrayBuffer,
+  entry: PageCacheEntry
+): Promise<{ response: Response; stale: boolean } | null> {
+  const decoded = await decodePageHtmlKv(raw);
+  if (!decoded) return null;
+  const age = Math.max(0, Math.round((Date.now() - decoded.meta.at) / 1000));
+  if (age >= entry.policy.fresh + entry.policy.stale) return null;
+  const { html } = decoded;
+  // Drop poisoned loading shells so the next request re-renders.
+  if (isUncacheableHtml(html, entry.pathname)) return null;
+  const stale = age >= entry.policy.fresh;
+  const headers = new Headers(decoded.meta.headers);
+  headers.set("age", String(age));
+  applyHtmlCacheHeaders(headers, entry, stale ? "STALE" : "HIT");
+  return { response: new Response(html, { status: 200, headers }), stale };
 }
 
 function isCacheableResponse(response: Response): response is Response & { body: ReadableStream<Uint8Array> } {
@@ -137,27 +210,62 @@ function isCacheableResponse(response: Response): response is Response & { body:
   );
 }
 
+function edgeEligibleEntry(
+  entry: PageCacheEntry,
+  html: string
+): { eligible: boolean; policy: CachePolicy } {
+  if (entry.cdn) return { eligible: true, policy: entry.policy };
+  // Finished games: path stays off the path-based CDN allowlist (live HTML must
+  // stay private), but finals with the page marker may use Cache API + s-maxage.
+  if (isGameHtmlPath(entry.pathname) && htmlHasGameFinalMarker(html)) {
+    return { eligible: true, policy: DAILY_HTML_POLICY };
+  }
+  return { eligible: false, policy: entry.policy };
+}
+
+async function putEdgeHtml(
+  entry: PageCacheEntry,
+  html: string,
+  replayed: Record<string, string>,
+  policy: CachePolicy
+): Promise<void> {
+  const edgeHeaders = new Headers(replayed);
+  // Storage TTL for caches.default — not the browser-facing max-age=0 header.
+  edgeHeaders.set("cache-control", edgeCacheStorageControlHeader(policy));
+  edgeHeaders.set("x-page-cache", "EDGE");
+  // Reliable Age for SWR refresh (Cache API Age is not always present).
+  edgeHeaders.set("x-drbl-cached-at", String(Date.now()));
+  const edgeResponse = new Response(html, { status: 200, headers: edgeHeaders });
+  await edgeCache().put(edgeCacheKeyRequest(entry), edgeResponse);
+}
+
 async function storePage(
   env: WorkerEnv,
-  { key, policy }: PageCacheEntry,
+  entry: PageCacheEntry,
   headers: Headers,
   body: ReadableStream<Uint8Array>
 ): Promise<void> {
   const html = await new Response(body).text();
   if (html.length > PAGE_CACHE_MAX_BYTES) return;
-  if (isUncacheableHtml(html)) return;
+  if (isUncacheableHtml(html, entry.pathname)) return;
   const replayed: Record<string, string> = {};
   for (const name of REPLAYED_HEADERS) {
     const value = headers.get(name);
     if (value) replayed[name] = value;
   }
-  const meta = JSON.stringify({ at: Date.now(), headers: replayed });
-  await env.PAGE_CACHE!.put(key, `${meta}\n${html}`, {
-    expirationTtl: Math.max(
-      PAGE_CACHE_MIN_TTL_SECONDS,
-      policy.fresh + policy.stale
-    ),
+  const edge = edgeEligibleEntry(entry, html);
+  const kvPolicy = edge.eligible && isGameHtmlPath(entry.pathname) ? edge.policy : entry.policy;
+  const packed = await encodePageHtmlKv({ at: Date.now(), headers: replayed }, html);
+  await env.PAGE_CACHE!.put(entry.key, packed, {
+    expirationTtl: kvPolicy.fresh + kvPolicy.stale,
   });
+
+  if (!edge.eligible) return;
+  try {
+    await putEdgeHtml(entry, html, replayed, edge.policy);
+  } catch {
+    // Cache API can throw in some runtimes; KV alone is still enough.
+  }
 }
 
 // Keys this isolate is already re-rendering, so a burst of stale hits starts one render.
@@ -175,18 +283,110 @@ async function refreshPage(request: Request, env: WorkerEnv, ctx: WorkerContext,
   }
 }
 
+function edgeStoredAgeSeconds(headers: Headers): number {
+  const cachedAt = Number(headers.get("x-drbl-cached-at") ?? "");
+  if (Number.isFinite(cachedAt) && cachedAt > 0) {
+    return Math.max(0, Math.round((Date.now() - cachedAt) / 1000));
+  }
+  const age = Number(headers.get("age") ?? "");
+  return Number.isFinite(age) && age >= 0 ? age : 0;
+}
+
+/** Policy used when this path was put into Cache API (game finals use daily). */
+function edgeStoragePolicy(entry: PageCacheEntry): CachePolicy {
+  if (isGameHtmlPath(entry.pathname)) return DAILY_HTML_POLICY;
+  return entry.policy;
+}
+
+async function matchEdgeCache(
+  entry: PageCacheEntry
+): Promise<{ response: Response; stale: boolean } | null> {
+  // Path-based CDN pages always check Cache API. Game finals may also be there
+  // even though isCdnHtmlPath(games) is false (live games must stay private).
+  if (!entry.cdn && !isGameHtmlPath(entry.pathname)) return null;
+  try {
+    const matched = await edgeCache().match(edgeCacheKeyRequest(entry));
+    if (!matched) return null;
+
+    const storagePolicy = edgeStoragePolicy(entry);
+    const age = edgeStoredAgeSeconds(matched.headers);
+    if (age >= storagePolicy.fresh + storagePolicy.stale) return null;
+    const stale = age >= storagePolicy.fresh;
+
+    // Finished games: must verify the final marker before serving. Buffering is
+    // OK — finals are smaller after PBP left Flight. Daily CDN pages stream.
+    if (isGameHtmlPath(entry.pathname)) {
+      const html = await matched.text();
+      if (isUncacheableHtml(html, entry.pathname)) return null;
+      if (!htmlHasGameFinalMarker(html)) return null;
+      const headers = new Headers(matched.headers);
+      headers.set(
+        "cache-control",
+        htmlCacheControlHeader(entry.pathname, DAILY_HTML_POLICY, {
+          cdnEnabled: true,
+        })
+      );
+      headers.set("x-page-cache", stale ? "STALE" : "EDGE");
+      headers.set("age", String(age));
+      return {
+        response: new Response(html, { status: matched.status, headers }),
+        stale,
+      };
+    }
+
+    const headers = new Headers(matched.headers);
+    applyHtmlCacheHeaders(headers, entry, stale ? "STALE" : "EDGE");
+    headers.set("age", String(age));
+    return {
+      response: new Response(matched.body, { status: matched.status, headers }),
+      stale,
+    };
+  } catch {
+    return null;
+  }
+}
+
 async function servePage(
   request: Request,
   env: WorkerEnv,
   ctx: WorkerContext,
   entry: PageCacheEntry
 ): Promise<Response> {
-  const raw = await env.PAGE_CACHE!.get(entry.key, "text").catch(() => null);
-  const cached = raw ? cachedResponse(raw, entry.policy) : null;
+  const edgeHit = await matchEdgeCache(entry);
+  if (edgeHit) {
+    // Colo SWR: keep serving past fresh while one isolate re-renders.
+    if (edgeHit.stale) {
+      ctx.waitUntil(
+        refreshPage(new Request(request), env, ctx, entry).catch(() => undefined)
+      );
+    }
+    return edgeHit.response;
+  }
+
+  const raw = await env.PAGE_CACHE!.get(entry.key, "arrayBuffer").catch(() => null);
+  const cached = raw ? await cachedResponse(raw, entry) : null;
   if (cached) {
     if (cached.stale) {
       ctx.waitUntil(refreshPage(new Request(request), env, ctx, entry).catch(() => undefined));
     }
+    // Promote every KV HIT/STALE into colo Cache API so the next request skips
+    // the slow KV read (~1s for large HTML) and serves EDGE (~60ms).
+    ctx.waitUntil(
+      (async () => {
+        try {
+          const html = await cached.response.clone().text();
+          const edge = edgeEligibleEntry(entry, html);
+          if (!edge.eligible) return;
+          const replayed: Record<string, string> = {};
+          cached.response.headers.forEach((value, name) => {
+            if (REPLAYED_HEADERS.includes(name)) replayed[name] = value;
+          });
+          await putEdgeHtml(entry, html, replayed, edge.policy);
+        } catch {
+          /* ignore */
+        }
+      })()
+    );
     return cached.response;
   }
 
@@ -195,7 +395,7 @@ async function servePage(
   const [toClient, toCache] = response.body.tee();
   ctx.waitUntil(storePage(env, entry, response.headers, toCache).catch(() => undefined));
   const headers = new Headers(response.headers);
-  headers.set("x-page-cache", "MISS");
+  applyHtmlCacheHeaders(headers, entry, "MISS");
   return new Response(toClient, { status: response.status, headers });
 }
 
@@ -237,7 +437,27 @@ const worker = {
     }
     const cacheEntry = pageCacheEntry(request, env);
     if (cacheEntry) return servePage(request, env, ctx, cacheEntry);
-    return (handler as OpenNextHandler).fetch(request, env, ctx);
+    const response = await (handler as OpenNextHandler).fetch(request, env, ctx);
+    // Surface why HTML skipped Worker PAGE_CACHE / Cache API (no set-cookie path).
+    if (
+      request.method === "GET" &&
+      (response.headers.get("content-type") ?? "").startsWith("text/html")
+    ) {
+      const headers = new Headers(response.headers);
+      const reason = !env.PAGE_CACHE
+        ? "no-kv"
+        : !env.CF_VERSION_METADATA?.id
+          ? "no-version"
+          : request.headers.has("rsc") || request.headers.has("next-router-prefetch")
+            ? "rsc"
+            : UNCACHED_PATH.test(pathname)
+              ? "path"
+              : "params-or-key";
+      headers.set("x-page-cache", "SKIP");
+      headers.set("x-page-cache-skip", reason);
+      return new Response(response.body, { status: response.status, headers });
+    }
+    return response;
   },
 };
 

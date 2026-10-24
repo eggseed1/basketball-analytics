@@ -8,6 +8,7 @@ import {
 } from "@/data/providers/historical/season-range";
 import { getRuntimeSnapshotGames } from "@/data/runtime/game-snapshot";
 import { type } from "@/lib/design-system";
+import { cssPct } from "@/lib/format";
 import { SectionLink } from "@/components/ui/section-link";
 import { priorSeason } from "@/lib/season-glance";
 import {
@@ -191,10 +192,10 @@ function Dumbbell({ from, to }: { from: number; to: number }) {
       <span
         data-motion-bar="x"
         className={cn("absolute top-1/2 h-[3px] -translate-y-1/2 rounded-full", up ? UP_BG : DOWN_BG)}
-        style={{ left: `${lo * 100}%`, width: `${(hi - lo) * 100}%`, transformOrigin: up ? "left" : "right" }}
+        style={{ left: cssPct(lo), width: cssPct(hi - lo), transformOrigin: up ? "left" : "right" }}
       />
-      <span className="absolute top-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-background ring-[1.5px] ring-foreground/40" style={{ left: `${from * 100}%` }} />
-      <span className={cn("absolute top-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full", up ? UP_BG : DOWN_BG)} style={{ left: `${to * 100}%` }} />
+      <span className="absolute top-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-background ring-[1.5px] ring-foreground/40" style={{ left: cssPct(from) }} />
+      <span className={cn("absolute top-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full", up ? UP_BG : DOWN_BG)} style={{ left: cssPct(to) }} />
     </span>
   );
 }
@@ -401,7 +402,7 @@ export function SeasonPulsePanel() {
           aria-valuenow={pulse.gamesPlayed}
           className="h-1.5 overflow-hidden rounded-full bg-foreground/[0.07]"
         >
-          <div className="h-full rounded-full bg-[#2f64d6] dark:bg-[#8fb0ff]" style={{ width: `${share * 100}%` }} />
+          <div className="h-full rounded-full bg-[#2f64d6] dark:bg-[#8fb0ff]" style={{ width: cssPct(share) }} />
         </div>
       </div>
 
