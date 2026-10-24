@@ -66,7 +66,18 @@ export const APP_BOOT_SCRIPT = `(function(){
       if(boot) boot.classList.remove("is-hiding");
     },420);
   }
-  /* Keep splash until the load event so HTML/CSS/JS can finish behind it. */
-  if(document.readyState==="complete") hide();
-  else window.addEventListener("load",hide,{once:true});
+  /* Release once the first useful screen can paint. Do not wait for every
+     deferred image/script (window.load). Bounded fallback if interactive stalls. */
+  var released=false;
+  function release(){
+    if(released) return;
+    released=true;
+    hide();
+  }
+  if(document.readyState==="complete"||document.readyState==="interactive"){
+    release();
+  }else{
+    document.addEventListener("DOMContentLoaded",release,{once:true});
+  }
+  window.setTimeout(release,1800);
 })();`;

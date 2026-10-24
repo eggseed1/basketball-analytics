@@ -26,6 +26,10 @@ import { Badge } from "@/components/ui/badge";
 import { SectionLink } from "@/components/ui/section-link";
 import type { RecentInsight, RecentInsightGame } from "@/lib/recent-insights";
 import { findingHref, insightMorphName } from "@/lib/finding-href";
+import {
+  insightCategoryLabel,
+  insightTagColor,
+} from "@/lib/insight-category";
 import { surpriseRule } from "@/lib/recent-insights";
 import { formatGameCalendarDate } from "@/i18n/format-date";
 import { cn } from "@/lib/utils";
@@ -33,6 +37,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { getTranslations } from "next-intl/server";
 
 export { AnalyticsDesk } from "@/components/home/analytics-desk";
+export { insightCategoryLabel, insightTagColor } from "@/lib/insight-category";
 
 /** Game dates are Eastern calendar days, so "today" has to be too. */
 function todayIsoDate(): string {
@@ -271,69 +276,8 @@ function ScoreLink({ href, label }: { href: string | null; label: string }) {
   );
 }
 
-/**
- * Archived insights keep the English `category` string the generator wrote
- * ("PLAYER · BIG NIGHT"). Only the tail is shown, and only the display is
- * translated here, at render time, through `Findings.category.*`.
- */
-const CATEGORY_MESSAGE_KEYS: Record<string, string> = {
-  "above his norm": "category.aboveHisNorm",
-  "big night": "category.bigNight",
-  scoring: "category.scoring",
-  playmaking: "category.playmaking",
-  rebounding: "category.rebounding",
-  defense: "category.defense",
-  efficiency: "category.efficiency",
-  offense: "category.offense",
-  margin: "category.margin",
-  clutch: "category.clutch",
-  pace: "category.pace",
-  comeback: "category.comeback",
-  run: "category.run",
-  seesaw: "category.seesaw",
-  "late winner": "category.lateWinner",
-  "biggest lead": "category.biggestLead",
-  takeover: "category.takeover",
-  "big quarter": "category.bigQuarter",
-  shooting: "category.shooting",
-  "last 5": "category.last5",
-  streak: "category.streak",
-};
-
-/** Pass the `Findings` translator to localize; without it the English tail is returned. */
-export function insightCategoryLabel(category: string, t?: FindingsTranslator): string {
-  const tail = category.split("·")[1]?.trim() ?? category;
-  const messageKey = CATEGORY_MESSAGE_KEYS[tail.toLowerCase()];
-  if (t && messageKey && t.has(messageKey)) return t(messageKey);
-  return tail.charAt(0) + tail.slice(1).toLowerCase();
-}
-
 function categoryLabel(insight: RecentInsight, t: FindingsTranslator): string {
   return insightCategoryLabel(insight.category, t);
-}
-
-/** Tag ink follows the category, the same color for every team. */
-const TAG_INK: Record<string, string> = {
-  scoring: "light-dark(#9a3412, #fdba74)",
-  playmaking: "light-dark(#1d4ed8, #93c5fd)",
-  rebounding: "light-dark(#047857, #6ee7b7)",
-  defense: "light-dark(#4338ca, #a5b4fc)",
-  efficiency: "light-dark(#0f766e, #5eead4)",
-  "big night": "light-dark(#b45309, #fcd34d)",
-  "above his norm": "light-dark(#6d28d9, #c4b5fd)",
-  takeover: "light-dark(#c2410c, #fdba74)",
-  clutch: "light-dark(#be123c, #fda4af)",
-  pace: "light-dark(#0369a1, #7dd3fc)",
-  comeback: "light-dark(#15803d, #86efac)",
-  run: "light-dark(#1d4ed8, #93c5fd)",
-  seesaw: "light-dark(#7e22ce, #d8b4fe)",
-  "late winner": "light-dark(#a16207, #fde68a)",
-  "biggest lead": "light-dark(#334155, #cbd5e1)",
-};
-
-export function insightTagColor(category: string): string {
-  const tail = (category.split("·")[1]?.trim() ?? category).toLowerCase();
-  return TAG_INK[tail] ?? "light-dark(#3f3f46, #d4d4d8)";
 }
 
 function tagColor(category: string): string {

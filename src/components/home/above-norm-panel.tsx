@@ -82,7 +82,11 @@ export function AboveNormPanel({ nights }: { nights: RecentInsight[] }) {
   if (!rows.length) return null;
   const seasons = [...new Set(rows.map((r) => r.line!.baseline!.season))].join(" and ");
   return (
-    <section aria-labelledby="above-norm-title" className="sports-card flex flex-col gap-2 p-4">
+    <section
+      data-motion-static
+      aria-labelledby="above-norm-title"
+      className="sports-card flex flex-col gap-2 p-4"
+    >
       <h2 id="above-norm-title" className="type-heading">Above their norm</h2>
       <ul className="flex flex-col divide-y divide-border/40">
         {rows.map((r) => (

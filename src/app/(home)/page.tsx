@@ -103,17 +103,23 @@ async function HomeHotCold() {
 }
 
 async function HomeFindings() {
-  const { HomeFindingsClient } = await import(
-    "@/components/home/home-findings-client"
+  const [{ loadHomeInsightsDesk }, { HomeFindingsSection }] = await Promise.all([
+    import("@/lib/home-findings-load"),
+    import("@/components/home/home-findings-section"),
+  ]);
+  const desk = await loadHomeInsightsDesk();
+  return (
+    <HomeFindingsSection insights={desk.insights} empty={desk.empty} />
   );
-  return <HomeFindingsClient />;
 }
 
 async function HomeAboveNorm() {
-  const { HomeAboveNormClient } = await import(
-    "@/components/home/home-above-norm-client"
-  );
-  return <HomeAboveNormClient />;
+  const [{ loadHomeInsightsDesk }, { AboveNormPanel }] = await Promise.all([
+    import("@/lib/home-findings-load"),
+    import("@/components/home/above-norm-panel"),
+  ]);
+  const desk = await loadHomeInsightsDesk();
+  return <AboveNormPanel nights={desk.aboveNorm} />;
 }
 
 const SIDEBAR_FEED_BUDGET_MS = 4_500;
@@ -264,17 +270,11 @@ function renderModule(
         </Streamed>
       );
     case "findings":
-      return (
-        <Streamed key={id} id={id}>
-          <HomeFindings />
-        </Streamed>
-      );
+      // Snapshot load is cheap; keep findings in the first HTML flush so LCP
+      // text is not gated on a Suspense skeleton + client fetch.
+      return <HomeFindings key={id} />;
     case "above-norm":
-      return (
-        <Streamed key={id} id={id}>
-          <HomeAboveNorm />
-        </Streamed>
-      );
+      return <HomeAboveNorm key={id} />;
     case "injuries":
       return (
         <Streamed key={id} id={id}>
