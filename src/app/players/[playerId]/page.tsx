@@ -35,7 +35,6 @@ import {
 import {
   PlayerBoardSkeleton,
   PlayerIdentitySlotSkeleton,
-  PlayerOverviewCareerSkeleton,
   PlayerOverviewContractSkeleton,
   PlayerPercentileSkeleton,
 } from "@/components/players/player-page-skeletons";
@@ -689,21 +688,14 @@ export default async function PlayerPage({
         ) : null}
 
         {view === "overview" && !(slimWorker || notYetPlayed) ? (
-          <Suspense
-            fallback={
-              <PlayerOverviewCareerSkeleton label={t("loadingCareer")} />
-            }
-          >
-            <PlayerOverviewCareerSection
-              playerId={playerId}
-              season={season}
-              seasonType={seasonType}
-              career={career}
-              teamKey={teamKey}
-              fromHistory={fromHistory}
-              themeMode={themeMode}
-            />
-          </Suspense>
+          <PlayerOverviewCareerSection
+            playerId={playerId}
+            season={season}
+            seasonType={seasonType}
+            teamKey={teamKey}
+            fromHistory={fromHistory}
+            themeMode={themeMode}
+          />
         ) : null}
 
         {view === "career" ? (

@@ -59,7 +59,11 @@ export function useLiveGamePlayByPlay(
   useEffect(() => {
     if (!enabled) return;
     const kind = status as GameStatusKind;
-    if (!isLiveLikeStatus(kind) || isFinalStatus(kind)) return;
+    const live = isLiveLikeStatus(kind);
+    const final = isFinalStatus(kind);
+    // Finals: one-shot hydrate when SSR omitted PBP to keep Flight HTML slim.
+    // Live: keep polling.
+    if (!live && !(final && initialEvents.length === 0)) return;
 
     let cancelled = false;
     let timer: ReturnType<typeof setTimeout> | null = null;
@@ -85,6 +89,13 @@ export function useLiveGamePlayByPlay(
       }
     };
 
+    if (final) {
+      void poll();
+      return () => {
+        cancelled = true;
+      };
+    }
+
     const schedule = () => {
       if (cancelled) return;
       const hidden = document.visibilityState === "hidden";
@@ -104,7 +115,7 @@ export function useLiveGamePlayByPlay(
       cancelled = true;
       if (timer) clearTimeout(timer);
     };
-  }, [gameId, status, enabled]);
+  }, [gameId, status, enabled, initialEvents.length]);
 
   return events;
 }

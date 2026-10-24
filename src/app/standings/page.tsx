@@ -5,10 +5,10 @@ import { getTranslations } from "next-intl/server";
 import { HashAnchorScroll } from "@/components/continuity/hash-anchor-scroll";
 import { MotionReveal } from "@/components/continuity/motion-reveal";
 import { PlayoffBracket, PlayoffBracketSkeleton } from "@/components/explore/playoff-bracket";
-import { TeamSeasonTable } from "@/components/explore/team-season-table";
 import { TeamSeasonToolbar } from "@/components/explore/team-season-toolbar";
 import { PageHeader, SectionHeader } from "@/components/layout/page-header";
 import { StandingsConferenceTable } from "@/components/standings/standings-conference-table";
+import { TeamStatsClient } from "@/components/standings/team-stats-client";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StandingsBodySkeleton } from "@/components/standings/standings-body-skeleton";
 import { getAvailableSeasons, getLeagueStandings } from "@/data/queries";
@@ -18,9 +18,7 @@ import {
   defaultStandingsSeason,
   resolveStandingsSeason,
 } from "@/data/queries/standings-season";
-import { getTeamSeasonStats } from "@/data/queries/team-seasons";
 import { preferBundledProductDataOnEdge } from "@/data/providers/nba/runtime-policy";
-import type { TeamSeasonStats } from "@/data/types/team-season";
 import { type } from "@/lib/design-system";
 import { standingsVisualizationsHref } from "@/lib/standings-routes";
 import { cn } from "@/lib/utils";
@@ -142,15 +140,6 @@ async function BracketBody({ season }: { season: string }) {
   return <PlayoffBracket model={bracket} />;
 }
 
-async function TeamStatsBody({ season }: { season: string }) {
-  const result = await withBudget(
-    getTeamSeasonStats(season).catch(() => [] as TeamSeasonStats[]),
-    edgeBudgetMs(),
-    [] as TeamSeasonStats[]
-  );
-  return <TeamSeasonTable teams={result.value} />;
-}
-
 export default async function StandingsPage({ searchParams }: PageProps) {
   await yieldForStreaming();
   const sp = await searchParams;
@@ -192,11 +181,7 @@ export default async function StandingsPage({ searchParams }: PageProps) {
 
       <section id="team-stats" className="flex scroll-mt-48 flex-col gap-3 pb-8">
         <SectionHeader title={t("teamStats")} />
-        <Suspense
-          fallback={<div className="h-72 animate-pulse rounded-xl bg-secondary" aria-busy="true" />}
-        >
-          <TeamStatsBody season={season} />
-        </Suspense>
+        <TeamStatsClient season={season} />
       </section>
     </main>
   );

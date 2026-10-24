@@ -12,16 +12,12 @@ import {
   type PlayerSeasonSortKey,
 } from "@/lib/player-season-sort";
 import { PlayerSeasonTable } from "@/components/explore/player-season-table";
+import { teamsFromCanonicalIdentity } from "@/data/queries/teams-catalog";
+import { listCanonicalSeasons } from "@/data/providers/historical/season-range";
 import {
-  getAvailableSeasons,
-  getTeamsCatalog,
-  listExploreBoardReadySeasons,
-} from "@/data/queries";
-import {
-  getExplorePlayersBoardView,
-  parseExplorePlayersSortDir,
-} from "@/data/queries/explore-players-board";
-import { parsePlayerBoardRate } from "@/lib/explore-players-display";
+  parsePlayerBoardRate,
+  parsePlayerBoardViews,
+} from "@/lib/explore-players-display";
 import { boardColumnLabel } from "@/lib/player-board-stats";
 import {
   defaultExploreMinimumMinutes,
@@ -50,7 +46,11 @@ function TableSkeleton() {
 }
 
 type BoardLoad = {
-  view: Awaited<ReturnType<typeof getExplorePlayersBoardView>>;
+  view: Awaited<
+    ReturnType<
+      typeof import("@/data/queries/explore-players-board").getExplorePlayersBoardView
+    >
+  >;
   season: string;
 };
 
@@ -58,6 +58,15 @@ async function loadBoard(
   searchParams: Record<string, string | string[] | undefined>,
   defaultSeason: string
 ): Promise<BoardLoad> {
+  const {
+    ensureExplorePlayersFirstPage,
+    explorePlayersFirstPageMeta,
+    getExplorePlayersFirstPageSnapshot,
+    matchesExplorePlayersFirstPage,
+  } = await import("@/data/runtime/explore-players-first-page");
+  await ensureExplorePlayersFirstPage();
+  const bakeKey = explorePlayersFirstPageMeta().key;
+
   const seasonForMinutes = isAllSeasonsParam(searchParams.season)
     ? "ALL"
     : String(
@@ -65,19 +74,43 @@ async function loadBoard(
           ? searchParams.season[0]
           : searchParams.season) ?? defaultSeason
       );
+  const defaultMinutes =
+    bakeKey?.season === seasonForMinutes && bakeKey.minimumMinutes != null
+      ? bakeKey.minimumMinutes
+      : defaultExploreMinimumMinutes(seasonForMinutes);
   const filters = filtersFromSearchParams({
     ...searchParams,
     season: isAllSeasonsParam(searchParams.season)
       ? "ALL"
       : searchParams.season ?? defaultSeason,
     minimumMinutes:
-      searchParams.minimumMinutes ??
-      String(defaultExploreMinimumMinutes(seasonForMinutes)),
+      searchParams.minimumMinutes ?? String(defaultMinutes),
   });
   const season = isAllSeasonsParam(filters.season)
     ? "ALL"
     : filters.season ?? defaultSeason;
   const sortKey = parsePlayerSeasonSortKey(searchParams.sort);
+  const rate = parsePlayerBoardRate([searchParams.rate].flat()[0] ?? null);
+  const boardViews = parsePlayerBoardViews(
+    [searchParams.view].flat()[0] ?? null
+  );
+
+  // Hit the 35KB first-page bake before importing the board query module
+  // (pulls players.ts + season-tables). Cold default /explore/players stays thin.
+  const bakeOpts = {
+    filters,
+    sortKey,
+    rate,
+    boardViews,
+    page: 1 as const,
+  };
+  if (matchesExplorePlayersFirstPage(bakeOpts)) {
+    const baked = getExplorePlayersFirstPageSnapshot();
+    if (baked) return { view: baked.view as BoardLoad["view"], season };
+  }
+
+  const { getExplorePlayersBoardView, parseExplorePlayersSortDir } =
+    await import("@/data/queries/explore-players-board");
   const sortDir = sortKey
     ? parseExplorePlayersSortDir(searchParams.dir, sortKey)
     : undefined;
@@ -86,7 +119,8 @@ async function loadBoard(
     filters,
     sortKey,
     sortDir,
-    rate: parsePlayerBoardRate([searchParams.rate].flat()[0] ?? null),
+    rate,
+    boardViews,
     page: 1,
     // Context pools are unused on this page (no row-context panel wired).
     includeContext: false,
@@ -167,15 +201,17 @@ export default async function ExplorePlayersPage({
 }: ExplorePlayersPageProps) {
   const params = await searchParams;
   const t = await getTranslations("Players");
-  const [seasons, teamCatalog, boardReadySeasons] = await Promise.all([
-    getAvailableSeasons(),
-    getTeamsCatalog(),
-    listExploreBoardReadySeasons(),
-  ]);
-  const defaultSeason = defaultExplorePlayersSeason(seasons, new Date(), {
-    boardReadySeasons,
-  });
-  const { teams, source, warnings } = teamCatalog;
+  // Sync shell only — never touch season-tables / board-ready (pulls ~9MB JSON)
+  // before header + Suspense can flush. Prefer the baked first-page season so
+  // cold /explore/players hits the 35KB snapshot instead of a live board miss.
+  const seasons = [...listCanonicalSeasons()].reverse();
+  const teams = teamsFromCanonicalIdentity();
+  const { explorePlayersFirstPageMeta } = await import(
+    "@/data/runtime/explore-players-first-page"
+  );
+  const bakedSeason = explorePlayersFirstPageMeta().key?.season?.trim();
+  const defaultSeason =
+    bakedSeason || defaultExplorePlayersSeason(seasons, new Date());
   const subtitleSort = parsePlayerSeasonSortKey(params.sort);
   const load = loadBoard(params, defaultSeason);
 
@@ -197,30 +233,21 @@ export default async function ExplorePlayersPage({
         }
       />
 
-      <TeamCatalogFallbackNotice source={source} warnings={warnings} />
+      <TeamCatalogFallbackNotice source="canonical-fallback" warnings={[]} />
 
-      <Suspense
-        fallback={
-          <div className="flex flex-col gap-5">
-            <div className="h-20 animate-pulse rounded-md bg-secondary" />
-            <TableSkeleton />
-          </div>
-        }
+      <ExplorePlayersClientShell
+        seasons={seasons}
+        teams={teams}
+        defaultSeason={defaultSeason}
       >
-        <ExplorePlayersClientShell
-          seasons={seasons}
-          teams={teams}
-          defaultSeason={defaultSeason}
-        >
-          {/*
-            No remount key: during startTransition navigations React keeps the
-            already-revealed board visible instead of flashing the skeleton.
-          */}
-          <Suspense fallback={<TableSkeleton />}>
-            <ExplorePlayersBoard load={load} />
-          </Suspense>
-        </ExplorePlayersClientShell>
-      </Suspense>
+        {/*
+          No remount key: during startTransition navigations React keeps the
+          already-revealed board visible instead of flashing the skeleton.
+        */}
+        <Suspense fallback={<TableSkeleton />}>
+          <ExplorePlayersBoard load={load} />
+        </Suspense>
+      </ExplorePlayersClientShell>
     </main>
   );
 }
