@@ -1,7 +1,13 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import type { ComponentProps } from "react";
+import {
+  useEffect,
+  useState,
+  type ComponentProps,
+  type ComponentType,
+  type ReactNode,
+} from "react";
 
 const pulse = (
   <div
@@ -27,14 +33,35 @@ const pulseFutures = (
   />
 );
 
+/**
+ * Player-page charts: avoid next/dynamic + React.lazy here.
+ * On the streamed player route, ssr:false Loadable leaves Suspense Offscreen
+ * stuck in mode="hidden" after the import fulfills, so the loading shimmer
+ * never clears. A plain useEffect import mounts reliably on the client.
+ */
+function clientOnlyChart<P extends object>(
+  load: () => Promise<ComponentType<P>>,
+  fallback: ReactNode
+): ComponentType<P> {
+  return function ClientOnlyChart(props: P) {
+    const [Comp, setComp] = useState<ComponentType<P> | null>(null);
+    useEffect(() => {
+      let cancelled = false;
+      void load().then((C) => {
+        if (!cancelled) setComp(() => C);
+      });
+      return () => {
+        cancelled = true;
+      };
+    }, []);
+    if (!Comp) return fallback;
+    return <Comp {...props} />;
+  };
+}
+
 /** Client-only chart shells — keep recharts out of the Cloudflare Worker SSR graph. */
 
-/**
- * Warm career/comps chart chunks after the lazy shell module has finished
- * evaluating. Do not call import() while this module is still initializing —
- * the futures chart chunk also pulls this shell, and a sync preload deadlocks
- * React.lazy on a forever-pending promise (stuck loading skeletons).
- */
+/** Warm career/comps chart chunks once the shell has finished evaluating. */
 export function preloadPlayerPageCharts() {
   if (typeof window === "undefined") return;
   const warm = () => {
@@ -184,28 +211,28 @@ export const SentimentPerformanceScatterLazy = dynamic(
   { ssr: false, loading: () => pulse }
 );
 
-export const PlayerCompFuturesChartLazy = dynamic(
+export const PlayerCompFuturesChartLazy = clientOnlyChart(
   () =>
-    import("@/components/players/player-comp-futures-chart").then((m) => ({
-      default: m.PlayerCompFuturesChart,
-    })),
-  { ssr: false, loading: () => pulseFutures }
+    import("@/components/players/player-comp-futures-chart").then(
+      (m) => m.PlayerCompFuturesChart
+    ),
+  pulseFutures
 );
 
-export const CareerTeamTrendChartLazy = dynamic(
+export const CareerTeamTrendChartLazy = clientOnlyChart(
   () =>
-    import("@/components/players/career-team-trend-chart").then((m) => ({
-      default: m.CareerTeamTrendChart,
-    })),
-  { ssr: false, loading: () => pulseHero }
+    import("@/components/players/career-team-trend-chart").then(
+      (m) => m.CareerTeamTrendChart
+    ),
+  pulseHero
 );
 
-export const TalentYearChartLazy = dynamic(
+export const TalentYearChartLazy = clientOnlyChart(
   () =>
-    import("@/components/players/career-team-trend-chart").then((m) => ({
-      default: m.TalentYearChart,
-    })),
-  { ssr: false, loading: () => pulse }
+    import("@/components/players/career-team-trend-chart").then(
+      (m) => m.TalentYearChart
+    ),
+  pulse
 );
 
 export const PlayerCareerResumeLazy = dynamic(
