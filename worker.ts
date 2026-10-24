@@ -34,11 +34,17 @@ type CachePolicy = { fresh: number; stale: number };
 // while a background render replaces it. HTML is locale-sensitive (cookie +
 // Accept-Language), so cache keys include the resolved locale segment.
 const LIVE_BOARD_POLICY: CachePolicy = { fresh: 60, stale: 10 * 60 };
-/** Game detail flips preview → lab at tip; long stale HTML kept the pre-tip board up. */
-const LIVE_GAME_POLICY: CachePolicy = { fresh: 8, stale: 20 };
+/**
+ * Game detail flips preview → lab at tip, so keep `fresh` short. KV rejects
+ * expirationTtl under 60s, and a too-short total made every /games/* request a
+ * cold SSR (~10–15s) with x-page-cache always MISS.
+ */
+const LIVE_GAME_POLICY: CachePolicy = { fresh: 8, stale: 52 };
 /** Homepage is the coldest path after deploy; fewer re-renders = fewer OOMs. */
 const HOME_POLICY: CachePolicy = { fresh: 5 * 60, stale: 30 * 60 };
 const DAILY_POLICY: CachePolicy = { fresh: 15 * 60, stale: 6 * 60 * 60 };
+/** Cloudflare KV minimum TTL; puts below this fail and leave the path uncached. */
+const PAGE_CACHE_MIN_TTL_SECONDS = 60;
 const PAGE_CACHE_MAX_BYTES = 5 * 1024 * 1024;
 const UNCACHED_PATH = /^\/(?:api|internal|_next)(?:\/|$)|\.[a-z0-9]+$/i;
 const LIVE_BOARD_PATH = /^\/(?:scores|dashboard|explore\/games)$/;
@@ -146,7 +152,10 @@ async function storePage(
   }
   const meta = JSON.stringify({ at: Date.now(), headers: replayed });
   await env.PAGE_CACHE!.put(key, `${meta}\n${html}`, {
-    expirationTtl: policy.fresh + policy.stale,
+    expirationTtl: Math.max(
+      PAGE_CACHE_MIN_TTL_SECONDS,
+      policy.fresh + policy.stale
+    ),
   });
 }
 
