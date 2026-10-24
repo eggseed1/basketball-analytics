@@ -417,6 +417,38 @@ function gameOf(g: SlateGameInput, mark?: RecentInsightFlowMark): RecentInsightG
   };
 }
 
+
+/**
+ * Uniform sample of a scoring-margin path, always keeping endpoints and any
+ * mark times (go-ahead / span). Used at insight build and in SVG render.
+ */
+export function downsampleInsightFlowPath(
+  path: [number, number][],
+  maxPoints = 96,
+  keepTimes: number[] = []
+): [number, number][] {
+  if (path.length <= maxPoints) return path;
+  const keep = new Set<number>([0, path.length - 1]);
+  for (const t of keepTimes) {
+    let best = 0;
+    let bestDist = Infinity;
+    for (let i = 0; i < path.length; i++) {
+      const d = Math.abs(path[i]![0] - t);
+      if (d < bestDist) {
+        bestDist = d;
+        best = i;
+      }
+    }
+    keep.add(best);
+  }
+  const budget = Math.max(2, maxPoints - keep.size);
+  const step = (path.length - 1) / (budget + 1);
+  for (let i = 1; i <= budget; i++) keep.add(Math.round(i * step));
+  return [...keep]
+    .sort((a, b) => a - b)
+    .map((i) => path[i]!);
+}
+
 const QUARTER_WORDS = ["first", "second", "third", "fourth"];
 
 /** "third quarter", "overtime", "second overtime". */

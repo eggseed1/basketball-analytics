@@ -10,6 +10,20 @@ export function formatPct(value: number, digits = 1): string {
   return `${(value * 100).toFixed(digits)}%`;
 }
 
+/**
+ * CSS `width`/`left`/`height` percentage with one decimal.
+ * Full floats (`58.82352941176471%`) bloat RSC HTML on boards and strips.
+ * Pass a 0–1 fraction by default, or `{ unit: "percent" }` for 0–100 values.
+ */
+export function cssPct(
+  value: number,
+  options?: { unit?: "fraction" | "percent" }
+): string {
+  const pct = options?.unit === "percent" ? value : value * 100;
+  if (!Number.isFinite(pct)) return "0%";
+  return `${Math.round(pct * 10) / 10}%`;
+}
+
 // toLocaleString with options builds a fresh Intl.NumberFormat per call, which
 // dominated server CPU on stat-heavy pages.
 const numberFormats = new Map<number, Intl.NumberFormat>();

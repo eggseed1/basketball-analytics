@@ -22,6 +22,11 @@ import snapshot from "./salary-payoff-snapshot.json";
 
 const data = snapshot as unknown as PayoffSnapshotFile;
 
+/** Snapshot is bundled; always ready. Kept for callers shared with ASSETS-loaded builds. */
+export async function ensureSalaryPayoff(): Promise<boolean> {
+  return true;
+}
+
 export type PayoffSeasonMeta = Pick<
   PayoffSeasonFile,
   "kind" | "opener" | "end" | "cap" | "minimum" | "pricePerWin" | "leftOut"

@@ -62,6 +62,11 @@ type SnapshotFile = {
 
 const data = snapshot as unknown as SnapshotFile;
 
+/** Snapshot is bundled; always ready. Kept for callers shared with ASSETS-loaded builds. */
+export async function ensureContractValue(): Promise<boolean> {
+  return true;
+}
+
 export type ContractValueYear = {
   season: string;
   salary: number;
