@@ -4,7 +4,11 @@
  * Lives under public/runtime (ASSETS) so the ~35KB JSON stays off the Worker.
  */
 import type { BasketballFilters } from "@/data/types";
-import type { PlayerBoardRate, PlayerBoardView } from "@/lib/explore-players-display";
+import {
+  DEFAULT_PLAYER_BOARD_VIEWS,
+  type PlayerBoardRate,
+  type PlayerBoardView,
+} from "@/lib/explore-players-display";
 import type { PlayerSeasonSortKey } from "@/lib/player-season-sort";
 
 export type ExplorePlayersFirstPageKey = {
@@ -127,7 +131,7 @@ function sameViews(
   a: readonly PlayerBoardView[] | undefined,
   b: readonly PlayerBoardView[]
 ): boolean {
-  const left = a?.length ? a : (["impact"] as PlayerBoardView[]);
+  const left = a?.length ? a : [...DEFAULT_PLAYER_BOARD_VIEWS];
   if (left.length !== b.length) return false;
   return left.every((v, i) => v === b[i]);
 }
