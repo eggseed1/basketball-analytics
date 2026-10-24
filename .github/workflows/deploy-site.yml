@@ -32,6 +32,46 @@ jobs:
       - name: Install
         run: npm ci
 
+      # Feature-branch / code-only ships must not regress season progress.
+      # Nightly + the home stats runner land these on main with [skip ci].
+      # Without this sync, a branch deploy freezes opening-night W-L / GP while
+      # main has already moved on (same class of bug as the Explore board).
+      - name: Sync season-progress snapshots from main
+        run: |
+          set -euo pipefail
+          git fetch origin main --depth=1
+          git checkout origin/main -- \
+            src/data/runtime/season-tables-snapshot.json \
+            src/data/runtime/nba-espn-player-ids.json \
+            src/data/runtime/season-tables-meta.json \
+            public/runtime/season-tables-meta.json \
+            src/data/runtime/standings-snapshot.json \
+            src/data/runtime/team-board-snapshot.json \
+            src/data/runtime/game-snapshot.json \
+            src/data/runtime/current-roster-snapshot.json \
+            src/data/runtime/recent-insights-snapshot.json \
+            src/data/runtime/stat-detective-windows.json \
+            src/data/runtime/drbl-overlay-snapshot.json \
+            public/runtime/drbl-overlay-snapshot.json \
+            src/data/runtime/drbl-published-seasons.json \
+            src/data/runtime/drbl-guide-snapshot.json \
+            src/data/runtime/impact-overlay-snapshot.json \
+            src/data/runtime/percentile-pools-snapshot.json \
+            public/runtime/percentile-pools-snapshot.json \
+            2>/dev/null || true
+          if [ ! -f src/data/runtime/season-tables-meta.json ] && [ -f src/data/runtime/season-tables-snapshot.json ]; then
+            node --input-type=module -e "
+              import fs from 'node:fs';
+              const t = JSON.parse(fs.readFileSync('src/data/runtime/season-tables-snapshot.json','utf8'));
+              const body = JSON.stringify({ generatedAt: t.generatedAt ?? null, source: t.source ?? 'stats.nba.com' }) + '\n';
+              fs.writeFileSync('src/data/runtime/season-tables-meta.json', body);
+              fs.mkdirSync('public/runtime', { recursive: true });
+              fs.writeFileSync('public/runtime/season-tables-meta.json', body);
+            "
+          fi
+          node --require ./scripts/lib/stub-server-only.cjs --import tsx \
+            scripts/build-explore-players-first-page.ts
+
       - name: Build OpenNext bundle
         run: npx opennextjs-cloudflare build
 
@@ -68,7 +108,7 @@ jobs:
         if: success()
         run: |
           set -euo pipefail
-          paths=("/" "/scores" "/explore/games" "/explore/players" "/explore/teams" "/ask")
+          paths=("/" "/standings" "/scores" "/explore/games" "/explore/players" "/explore/teams" "/ask")
           if games=$(curl -fsS --max-time 15 \
             "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard" \
             | node -e '
