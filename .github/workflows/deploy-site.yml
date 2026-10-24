@@ -1,11 +1,7 @@
 name: Deploy site
 
-# Code ship to Cloudflare. No daily sync / DRBL refit / data commits.
-# Still rebakes gitignored current-season Static Assets (player game logs +
-# shot charts): OpenNext replaces the Worker asset tree on every deploy, so a
-# bare ship would wipe those until the next nightly refresh.
-# Play-by-play JSON is also gitignored but served from GAME_ARCHIVE R2 (and
-# live ESPN for in-progress games), so it is not rebaked here.
+# Code-only ship to Cloudflare. Bakes whatever is already on the branch —
+# no daily sync, DRBL refit, Playwright, or data commits.
 # Nightly data + deploy stays on daily-runtime-refresh.yml.
 
 on:
@@ -18,7 +14,7 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-24.04
-    timeout-minutes: 40
+    timeout-minutes: 25
     permissions:
       contents: read
     env:
@@ -35,9 +31,6 @@ jobs:
 
       - name: Install
         run: npm ci
-
-      - name: Bake current-season edge runtime assets
-        run: node scripts/bake-deploy-runtime-assets.mjs
 
       - name: Build OpenNext bundle
         run: npx opennextjs-cloudflare build
@@ -69,11 +62,45 @@ jobs:
             echo "::warning title=Worker bundle size::Upload is ${kib} KiB (soft ceiling 61440 KiB). Still under Cloudflare's 65536 KiB hard limit."
           fi
 
+      # PAGE_CACHE keys include CF_VERSION_METADATA.id, so every ship starts cold.
+      # Warm the routes users hit first; otherwise the whole site feels slow until traffic refills KV.
+      - name: Warm PAGE_CACHE
+        if: success()
+        run: |
+          set -euo pipefail
+          paths=("/" "/scores" "/explore/games" "/explore/players" "/explore/teams" "/ask")
+          if games=$(curl -fsS --max-time 15 \
+            "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard" \
+            | node -e '
+              let s=""; process.stdin.on("data",d=>s+=d); process.stdin.on("end",()=>{
+                try {
+                  const d=JSON.parse(s);
+                  for (const e of d.events||[]) {
+                    const st=e.competitions?.[0]?.status?.type?.state;
+                    if (st==="in"||st==="post") console.log("/games/"+e.id);
+                  }
+                } catch {}
+              });
+            '); then
+            while IFS= read -r g; do
+              [ -n "$g" ] && paths+=("$g")
+            done <<< "$games"
+          fi
+          echo "Warming ${#paths[@]} paths on https://drbl.io"
+          for path in "${paths[@]}"; do
+            code=$(curl -sS -o /dev/null -w "%{http_code} %{time_total}" \
+              --max-time 90 \
+              -H "Accept: text/html" \
+              -H "User-Agent: drbl-deploy-cache-warm" \
+              "https://drbl.io${path}" || echo "ERR 0")
+            echo "  ${path} → ${code}"
+          done
+
       - name: Summary
         if: always()
         run: |
-          echo "### Deploy site (code ship)" >> "$GITHUB_STEP_SUMMARY"
+          echo "### Deploy site (code only)" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "- ref: \`${{ github.sha }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- no daily sync / data refresh" >> "$GITHUB_STEP_SUMMARY"
-          echo "- rebakes current-season player game logs + shot charts into Worker assets" >> "$GITHUB_STEP_SUMMARY"
+          echo "- PAGE_CACHE warm after deploy" >> "$GITHUB_STEP_SUMMARY"

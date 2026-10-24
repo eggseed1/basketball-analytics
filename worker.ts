@@ -33,7 +33,8 @@ type CachePolicy = { fresh: number; stale: number };
 // Seconds a cached page is served as-is, then how much longer it may be served
 // while a background render replaces it. HTML is locale-sensitive (cookie +
 // Accept-Language), so cache keys include the resolved locale segment.
-const LIVE_BOARD_POLICY: CachePolicy = { fresh: 60, stale: 10 * 60 };
+/** Scores / slate boards — longer fresh window so game-night traffic is not a MISS storm. */
+const LIVE_BOARD_POLICY: CachePolicy = { fresh: 180, stale: 10 * 60 };
 /**
  * Same cadence as live boards. Tip-off flip is handled by client route refresh
  * (RSC, uncached) plus prefer-live shell; a short HTML TTL forced cold ~14s
