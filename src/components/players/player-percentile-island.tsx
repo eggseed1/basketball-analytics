@@ -31,7 +31,7 @@ export async function PlayerPercentileIsland({
   espnId?: string | null;
 }) {
   try {
-    const { metrics, teamKey, profileComps } = await loadPlayerPercentileMetrics(
+    const { metrics, teamKey } = await loadPlayerPercentileMetrics(
       playerId,
       season,
       career,
@@ -39,10 +39,11 @@ export async function PlayerPercentileIsland({
       { nbaId, espnId, mode: "fast" }
     );
     const statsCtx = resolvePlayerStatsSeason(career, season);
-    const stintsBySeason = Object.fromEntries(
-      seasonOptions.map((option) => [option, cardStintsForSeason(career, option)])
-    );
-    // Default sparkline stays; other series hydrate via idle full upgrade.
+    // Only the viewed season's stints on SSR — slider seasons hydrate with full upgrade.
+    const stintsBySeason = {
+      [statsCtx.statsSeason]: cardStintsForSeason(career, statsCtx.statsSeason),
+    };
+    // Impact bars + default sparkline only; full categories via immediate client upgrade.
     const ssrMetrics = slimPercentileMetricsForSsr(metrics);
 
     return (
@@ -56,7 +57,6 @@ export async function PlayerPercentileIsland({
           seasonTeams={seasonTeams}
           stintsBySeason={stintsBySeason}
           metrics={ssrMetrics}
-          profileComps={profileComps}
           honor={honor}
         />
       </div>

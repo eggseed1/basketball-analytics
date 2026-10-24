@@ -79,7 +79,9 @@ export function fetchSimilarModes(options: {
       if ((body.profileComps?.length ?? 0) > 0) return true;
       if ((body.profileHistoricalComps?.length ?? 0) > 0) return true;
       return (body.metrics ?? []).some(
-        (m) => m.leagueComps.length > 0 || m.historicalComps.length > 0
+        (m) =>
+          (m.leagueComps?.length ?? 0) > 0 ||
+          (m.historicalComps?.length ?? 0) > 0
       );
     };
 

@@ -39,12 +39,12 @@ function modesFromPayload(body: SimilarModesPayload): SimilarPlayerMode[] {
   for (const id of SIMILAR_MODE_ORDER) {
     const m = (body.metrics ?? []).find((row: PercentileMetric) => row.id === id);
     if (!m) continue;
-    if (!m.leagueComps.length && !m.historicalComps.length) continue;
+    if (!(m.leagueComps?.length || m.historicalComps?.length)) continue;
     modes.push({
       id: m.id,
       label: m.label,
-      leagueComps: m.leagueComps as StatComp[],
-      historicalComps: m.historicalComps as StatComp[],
+      leagueComps: (m.leagueComps ?? []) as StatComp[],
+      historicalComps: (m.historicalComps ?? []) as StatComp[],
     });
   }
   return modes;
