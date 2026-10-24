@@ -4,7 +4,7 @@ import { GameLabView } from "@/components/games/game-lab-view";
 import { GameIdentityShell } from "@/components/games/game-identity-shell";
 import { GamePreTipBoard } from "@/components/games/game-pre-tip-board";
 import { GamePreviewSection, GameTabs, type GameTab } from "@/components/games/game-preview-section";
-import { PossessionExplorerIsland } from "@/components/games/possession-explorer-island";
+import { PossessionExplorerSection } from "@/components/games/possession-explorer-section";
 import { DelayedGameSection } from "@/components/games/delayed-game-section";
 import { cookies } from "next/headers";
 import { isFinalStatus, type GameStatusKind } from "@/lib/game-status";
@@ -210,7 +210,15 @@ export default async function GamePage({ params, searchParams }: GamePageProps) 
           <span aria-hidden className="text-[18px] text-muted-foreground transition-transform group-open:rotate-180">⌄</span>
         </summary>
         <div className="border-t border-border/60 p-3 sm:p-4">
-          {holdIfCut(<Suspense fallback={<DestinationSectionSkeleton label={t("loadingPossession")} />}><PossessionExplorerIsland gameId={gameId} awayTeamKey={shell.game.awayTeamId} homeTeamKey={shell.game.homeTeamId} /></Suspense>)}
+          {holdIfCut(
+        <PossessionExplorerSection
+          gameId={gameId}
+          awayTeamKey={shell.game.awayTeamId}
+          homeTeamKey={shell.game.homeTeamId}
+          title={t("possessionTitle")}
+          blurb={t("possessionBlurb")}
+        />
+      )}
         </div>
       </details>
       </>}

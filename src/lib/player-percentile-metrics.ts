@@ -40,8 +40,9 @@ export type PercentileMetric = {
     teamAbbr: string;
     color: string;
   }>;
-  leagueComps: import("@/lib/player-stat-comps").StatComp[];
-  historicalComps: import("@/lib/player-stat-comps").StatComp[];
+  /** Omitted on SSR slim payloads so Flight does not serialize empty arrays. */
+  leagueComps?: import("@/lib/player-stat-comps").StatComp[];
+  historicalComps?: import("@/lib/player-stat-comps").StatComp[];
   interpretation: MetricInterpretation;
   showPercentile: boolean;
   showGrade: boolean;
@@ -135,23 +136,58 @@ function notQualifiedImpactMetric(
 }
 
 /**
- * SSR keeps every category chip populated (fast/cutoff ranks are cheap) but
- * drops comps and non-default sparklines. Idle `/percentiles?mode=full` fills
- * those in — stripping whole categories made Profile/Shooting/Defense/Advanced
- * flash "No rankings…" whenever the upgrade lagged or stayed on forced-fast.
+ * SSR ships Impact metrics only (plus the default sparkline). Other category
+ * rows were ~200 Savant bars in the HTML (~300KB+). The panel upgrades via
+ * `/percentiles?mode=full` immediately after paint so Profile/Shooting/etc.
+ * fill in before most users switch tabs.
+ *
+ * Empty comps / unused series / default flags are omitted (not `[]` /
+ * `undefined`) so they don't bloat the RSC payload — React flight serializes
+ * `undefined` as `$undefined`, which still costs a key per metric.
  */
+function roundSsrPct(n: number): number {
+  return Math.round(n * 10) / 10;
+}
+
+function roundSsrValue(n: number): number {
+  return Math.round(n * 1000) / 1000;
+}
+
 export function slimPercentileMetricsForSsr(
   metrics: PercentileMetric[],
 ): PercentileMetric[] {
   if (!metrics.length) return metrics;
   const keepId = defaultPercentileMetricId(metrics);
-  return metrics.map((metric) => ({
-    ...metric,
-    series:
-      metric.id === keepId && metric.series?.length ? metric.series : undefined,
-    leagueComps: [],
-    historicalComps: [],
-  }));
+  return metrics
+    .filter((metric) => metric.category === "impact" || metric.id === keepId)
+    .map((metric) => {
+      const {
+        leagueComps: _l,
+        historicalComps: _h,
+        series: _s,
+        profileHidden: _ph,
+        qualified: _q,
+        ...rest
+      } = metric;
+      const next: PercentileMetric = {
+        ...rest,
+        percentile: roundSsrPct(metric.percentile),
+        value: roundSsrValue(metric.value),
+      };
+      if (metric.id === keepId && metric.series?.length) {
+        next.series = metric.series.map((point) => ({
+          ...point,
+          value: roundSsrValue(point.value),
+          ...(point.percentile != null
+            ? { percentile: roundSsrPct(point.percentile) }
+            : {}),
+        }));
+      }
+      // Only emit flags when they change UI defaults (omit ≡ live / not hidden).
+      if (metric.profileHidden === true) next.profileHidden = true;
+      if (metric.qualified === false) next.qualified = false;
+      return next;
+    });
 }
 
 function percentileOf(value: number, pool: number[]): number {
