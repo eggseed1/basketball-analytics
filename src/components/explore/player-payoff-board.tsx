@@ -187,7 +187,7 @@ export async function PlayerPayoffBoard({
           <p>
             {leftOut ? `${leftOut} ` : ""}
             {unmatchedPins
-              ? `${unmatchedPins === 1 ? "One pinned player has" : `${unmatchedPins} pinned players have`} no line this season, so ${unmatchedPins === 1 ? "he isn't" : "they aren't"} shown.`
+              ? `${unmatchedPins === 1 ? "One pinned player has" : `${unmatchedPins} pinned players have`} no line this season, so ${unmatchedPins === 1 ? "that player isn't" : "they aren't"} shown.`
               : ""}
           </p>
         ) : null}

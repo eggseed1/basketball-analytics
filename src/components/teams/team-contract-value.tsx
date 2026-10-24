@@ -4,6 +4,7 @@ import type { CSSProperties } from "react";
 import { surplusTone } from "@/components/players/player-contract-transactions";
 import { exercisedOptionYears } from "@/contracts/value-model";
 import type { TeamContractsView } from "@/data/queries/team-contracts";
+import { contractValueGapShortLabel } from "@/lib/contract-value-gaps";
 import { PLAYER_SURPLUS_RANKING_PATH, teamSurplusRankingHref } from "@/lib/contract-surplus";
 import type { ContractValueGap, TeamContractValue, TeamContractValuePlayer } from "@/data/runtime/contract-value";
 import { type } from "@/lib/design-system";
@@ -21,9 +22,9 @@ const ROW =
   "grid grid-cols-[minmax(0,10.5rem)_minmax(0,1fr)_4.5rem] items-center gap-2 sm:grid-cols-[11rem_minmax(0,1fr)_4.5rem_4.5rem_5rem]";
 
 const GAP_LABEL: Record<ContractValueGap, string> = {
-  waived: "waived",
-  thin: "too few recent possessions",
-  "no-drbl": "no published DRBL seasons in the projection window",
+  waived: contractValueGapShortLabel("waived"),
+  thin: contractValueGapShortLabel("thin"),
+  "no-drbl": contractValueGapShortLabel("no-drbl"),
 };
 
 function listJoin(items: string[]): string {
@@ -182,7 +183,7 @@ export function TeamContractValueChart({
         </p>
         {missingByReason.length ? (
           <p>
-            Left out of the total, not counted as zero:{" "}
+            Left out of the total, blank not 0:{" "}
             {listJoin(missingByReason.map((g) => `${listJoin(g.names)} (${GAP_LABEL[g.reason]})`))}.
           </p>
         ) : null}

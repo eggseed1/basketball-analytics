@@ -160,7 +160,7 @@ function nextSeason(season: string): string {
 /** Where the lines come from for this season. */
 export function payoffSourceNote(meta: PayoffSeasonMeta): string {
   if (meta.kind === "paced") {
-    return `${meta.season} is over, so this is a preview: each player's full-season value is spread across his games by minutes played, which means hot and cold stretches don't show. Once ${nextSeason(meta.season)} starts, the lines follow a new DRBL reading after each night of games.`;
+    return `${meta.season} is over, so this is a preview: each player's full-season value is spread across their games by minutes played, which means hot and cold stretches don't show. Once ${nextSeason(meta.season)} starts, the lines follow a new DRBL reading after each night of games.`;
   }
   return `Updated after each night of games from DRBL's season-to-date numbers, through ${shortDate(meta.through)}. Early in the season a few games move these a lot.`;
 }
@@ -169,7 +169,7 @@ export function payoffSourceNote(meta: PayoffSeasonMeta): string {
 export function payoffMethodNote(meta: PayoffSeasonMeta): string {
   const price = `$${(meta.pricePerWin / 1e6).toFixed(1)}M`;
   const minimum = `$${(meta.minimum / 1e6).toFixed(1)}M`;
-  return `Worth is what his wins above replacement would cost on the open market, ${price} a win at the ${meta.season} cap, plus the ${minimum} league minimum that a replacement player costs, spread evenly over the season. Everyone starts at 0 on opening night, and 100% means his play has covered his whole salary for the year. These are the same prices the contract surplus estimates use.`;
+  return `Worth is what a player's wins above replacement would cost on the open market, ${price} a win at the ${meta.season} cap, plus the ${minimum} league minimum that a replacement player costs, spread evenly over the season. Everyone starts at 0 on opening night, and 100% means their play has covered their whole salary for the year. These are the same prices the contract surplus estimates use.`;
 }
 
 /** Who isn't on the board, so a missing player doesn't read as zero. */
@@ -183,7 +183,7 @@ export function payoffLeftOutNote(meta: PayoffSeasonMeta): string | null {
       ? `${noValue} salaried ${noValue === 1 ? "player" : "players"} we couldn't match to any DRBL minutes`
       : null,
   ].filter(Boolean);
-  return parts.length ? `Left out rather than counted as zero: ${parts.join(", and ")}.` : null;
+  return parts.length ? `Left out, blank not 0: ${parts.join(", and ")}.` : null;
 }
 
 export type PayoffLineData = {

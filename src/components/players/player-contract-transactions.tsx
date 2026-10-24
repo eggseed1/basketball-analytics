@@ -17,6 +17,7 @@ import type {
 import { capsForSeasons } from "@/data/queries/salary-learn";
 import { type } from "@/lib/design-system";
 import { formatOrdinal, formatPct } from "@/lib/format";
+import { contractValueGapNote } from "@/lib/contract-value-gaps";
 import { playerSurplusRankingHref } from "@/lib/contract-surplus";
 import { formatUsdCompact, formatUsdSignedCompact } from "@/lib/format-money";
 import { playerHref } from "@/lib/player-page-contract";
@@ -52,23 +53,6 @@ export function surplusTone(dollars: number): string {
   return dollars > 0 ? "text-[var(--chart-3)]" : "text-destructive";
 }
 
-function windowLabel(model: ContractValueModel): string {
-  const end = Number(model.lastSeason.slice(0, 4));
-  const start = end - 2;
-  return `${start}-${String((start + 1) % 100).padStart(2, "0")} to ${model.lastSeason}`;
-}
-
-const GAP_TEXT: Record<ContractValueGap, (model: ContractValueModel) => string> = {
-  // Worth uses published DRBL history only (through lastSeason). Rookies with
-  // current-year box scores still land here until that season is baked.
-  "no-drbl": (model) =>
-    `Contract worth stays blank here. It is projected from published DRBL seasons (${windowLabel(model)}), and he has none in that window yet.`,
-  thin: (model) =>
-    `Contract worth stays blank here. He has fewer than 500 published DRBL possessions in ${windowLabel(model)}.`,
-  waived: () =>
-    "Contract worth stays blank here. He was waived, so this team pays the salary without him on the floor.",
-};
-
 function MissingNote({
   reason,
   model,
@@ -76,7 +60,11 @@ function MissingNote({
   reason: ContractValueGap;
   model: ContractValueModel;
 }) {
-  return <p className={cn(type.bodySm, "text-muted-foreground")}>{GAP_TEXT[reason](model)}</p>;
+  return (
+    <p className={cn(type.bodySm, "text-muted-foreground")}>
+      {contractValueGapNote(reason, model)}
+    </p>
+  );
 }
 
 const NUMBER_WORDS = [

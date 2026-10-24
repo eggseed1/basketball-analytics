@@ -82,6 +82,7 @@ export type TeamSurplusRow = {
 
 export type ContractSurplusMeta = {
   capSeason: string;
+  lastSeason: string;
   contracts: number;
   leftOut: number;
 };

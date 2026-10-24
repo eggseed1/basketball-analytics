@@ -3,6 +3,7 @@ import { Fragment } from "react";
 
 import { TeamLogo } from "@/components/brand/team-logo";
 import { getContractSurplusMeta, getPlayerSurplusRows } from "@/data/queries/contract-surplus";
+import { contractValueLeftOutBlurb } from "@/lib/contract-value-gaps";
 import { contractSpan, type PlayerSurplusRow } from "@/lib/contract-surplus";
 import { type } from "@/lib/design-system";
 import { formatUsdCompact, formatUsdSignedCompact } from "@/lib/format-money";
@@ -123,12 +124,12 @@ export function PlayerSurplusBoard({
         </p>
         <p>
           {meta.leftOut
-            ? `${meta.leftOut} contracts aren't ranked because those players have too little recent NBA time to estimate. `
+            ? `${contractValueLeftOutBlurb({ leftOut: meta.leftOut, lastSeason: meta.lastSeason })} `
             : ""}
           {unmatchedPins
-            ? `${unmatchedPins === 1 ? "One pinned player has" : `${unmatchedPins} pinned players have`} no contract estimate, so ${unmatchedPins === 1 ? "he isn't" : "they aren't"} shown. `
+            ? `${unmatchedPins === 1 ? "One pinned player has" : `${unmatchedPins} pinned players have`} no contract estimate, so ${unmatchedPins === 1 ? "that player isn't" : "they aren't"} shown. `
             : ""}
-          Each player&apos;s Contract section breaks his estimate down by season.
+          Each player&apos;s Contract section breaks the estimate down by season.
         </p>
       </div>
     </section>

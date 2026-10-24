@@ -15,6 +15,7 @@ import {
   type TeamSurplusRow,
   type TeamSurplusSpan,
 } from "@/lib/contract-surplus";
+import { contractValueLeftOutBlurb } from "@/lib/contract-value-gaps";
 import { type } from "@/lib/design-system";
 import { formatUsdCompact, formatUsdSignedCompact } from "@/lib/format-money";
 import { teamSalaryHref } from "@/lib/team-destination";
@@ -185,7 +186,7 @@ export function TeamSurplusBoard({ rows, meta }: { rows: TeamSurplusRow[]; meta:
         </p>
         <p>
           {meta.leftOut
-            ? `${meta.leftOut} contracts are left out of the totals, not counted as zero, because those players have too little recent NBA time to estimate. Most are incoming rookies on cheap deals, so teams with several of them are probably better off than shown. Waived salary isn't counted either. `
+            ? `${contractValueLeftOutBlurb({ leftOut: meta.leftOut, lastSeason: meta.lastSeason })} Teams with several of those cheap deals are probably better off than shown. `
             : "Waived salary isn't counted. "}
           The same estimates appear in each team&apos;s Salary &amp; assets tab.
         </p>

@@ -151,6 +151,7 @@ export function getContractSurplusMeta(): ContractSurplusMeta {
   const model = contractValueModel();
   return {
     capSeason: model.capSeason,
+    lastSeason: model.lastSeason,
     contracts: model.contracts,
     leftOut: gaps["no-drbl"] + gaps.thin,
   };
