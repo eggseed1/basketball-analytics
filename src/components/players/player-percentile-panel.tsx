@@ -179,13 +179,19 @@ function formatDelta(delta: number, value: number) {
 
 /** Container breakpoint matching `@min-[44rem]` chart+list split. */
 const PERCENTILE_SPLIT_PX = 44 * 16;
+/** Keep layout from flapping when the career sparkline / scrollbar changes width. */
+const PERCENTILE_SPLIT_HYSTERESIS_PX = 24;
 
 function useCompactPercentileLayout(el: HTMLElement | null) {
   const [compact, setCompact] = useState(true);
   useEffect(() => {
     if (!el) return;
     const update = () => {
-      setCompact(el.clientWidth < PERCENTILE_SPLIT_PX);
+      const width = el.clientWidth;
+      setCompact((prev) => {
+        if (prev) return width < PERCENTILE_SPLIT_PX + PERCENTILE_SPLIT_HYSTERESIS_PX;
+        return width < PERCENTILE_SPLIT_PX - PERCENTILE_SPLIT_HYSTERESIS_PX;
+      });
     };
     update();
     if (typeof ResizeObserver === "undefined") return;
