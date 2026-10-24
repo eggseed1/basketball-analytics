@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 
 import { jsonError, jsonOk } from "@/app/api/_lib/http";
-import { stripInsightFlowsForHome } from "@/lib/home-insights-slim";
 
 export const dynamic = "force-dynamic";
 
@@ -14,7 +13,7 @@ export async function GET() {
     const live = await getLiveRecentInsights();
     if (live) {
       const response = jsonOk({
-        insights: stripInsightFlowsForHome(live.insights),
+        insights: live.insights,
         aboveNorm: live.aboveNorm,
         empty: live.insights.length === 0,
       });
@@ -36,7 +35,7 @@ export async function GET() {
       import("@/data/runtime/recent-insights-snapshot"),
       import("@/data/runtime/recent-insights-snapshot"),
     ]);
-    const insights = stripInsightFlowsForHome(getBundledRecentInsights());
+    const insights = getBundledRecentInsights();
     const response = jsonOk({
       insights,
       aboveNorm: getBundledAboveNorm(),

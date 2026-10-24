@@ -7,8 +7,6 @@ import {
   getBundledRecentInsights,
   recentInsightsSnapshotMeta,
 } from "@/data/runtime/recent-insights-snapshot";
-import { projectHomeFindings } from "@/lib/home-findings-project";
-import { stripInsightFlowsForHome } from "@/lib/home-insights-slim";
 import type { RecentInsight } from "@/lib/recent-insights";
 
 export type HomeInsightsDesk = {
@@ -21,16 +19,15 @@ export type HomeInsightsDesk = {
 
 /**
  * Recent Insights + above-norm for the homepage desk.
+ * Full card payloads (moments, period bars, lead worms, trends) stay intact so
+ * InsightCard can render the same charts as /findings.
  * Prepared snapshot only — never runs live analysis on the request path.
  * Cached per request so findings + above-norm share one load.
- * Live refresh stays on `/api/home/insights` and the nightly bake.
  */
 export const loadHomeInsightsDesk = cache(async (): Promise<HomeInsightsDesk> => {
   const meta = recentInsightsSnapshotMeta();
-  const insights = projectHomeFindings(
-    stripInsightFlowsForHome(getBundledRecentInsights())
-  );
-  const aboveNorm = projectHomeFindings(getBundledAboveNorm());
+  const insights = getBundledRecentInsights();
+  const aboveNorm = getBundledAboveNorm();
   return {
     insights,
     aboveNorm,

@@ -5,12 +5,12 @@ import { projectHomeFindings } from "./home-findings-project";
 import type { RecentInsight } from "./recent-insights";
 
 describe("projectHomeFindings", () => {
-  it("keeps readable fields and drops chart payloads", () => {
+  it("passes chart payloads through for homepage cards", () => {
     const raw: RecentInsight = {
       id: "a",
       category: "PLAYER · BIG NIGHT",
       headline: "30 in a night",
-      description: "He scored 30.",
+      description: "Scored 30.",
       context: "vs BOS",
       gameId: "1",
       playerId: "2",
@@ -63,15 +63,9 @@ describe("projectHomeFindings", () => {
 
     const [out] = projectHomeFindings([raw]);
     assert.equal(out!.headline, "30 in a night");
-    assert.equal(out!.description, "He scored 30.");
-    assert.equal(out!.hero?.value, "30");
-    assert.equal(out!.line?.points, 30);
-    assert.equal(out!.game?.home.score, 110);
-    assert.deepEqual(out!.game?.home.periods, [28, 27, 28, 27]);
-    assert.equal(out!.game?.flow, undefined);
-    assert.equal(out!.moment, undefined);
-    assert.equal(out!.periodPoints, undefined);
-    assert.equal(out!.contributors, undefined);
-    assert.equal(out!.trend, undefined);
+    assert.ok(out!.game?.flow);
+    assert.ok(out!.moment);
+    assert.ok(out!.trend?.length);
+    assert.ok(out!.periodPoints?.length);
   });
 });

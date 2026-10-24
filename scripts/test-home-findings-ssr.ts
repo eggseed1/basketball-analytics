@@ -1,30 +1,48 @@
 /**
- * Assert homepage findings use the prepared snapshot projection (no chart payloads).
- * Run: npx tsx scripts/test-home-findings-ssr.ts
+ * Assert homepage findings keep chart payloads from the bundled snapshot.
+ * Run: npx tsx --require ./scripts/lib/stub-server-only.cjs scripts/test-home-findings-ssr.ts
  */
 import assert from "node:assert/strict";
 
 import { getBundledRecentInsights } from "../src/data/runtime/recent-insights-snapshot";
-import { projectHomeFindings } from "../src/lib/home-findings-project";
-import { stripInsightFlowsForHome } from "../src/lib/home-insights-slim";
+import { loadHomeInsightsDesk } from "../src/lib/home-findings-load";
 
-const raw = getBundledRecentInsights();
-assert.ok(raw.length > 0, "bundled insights should be non-empty");
+async function main() {
+  const raw = getBundledRecentInsights();
+  assert.ok(raw.length > 0, "bundled insights should be non-empty");
 
-const projected = projectHomeFindings(stripInsightFlowsForHome(raw));
-assert.ok(projected.length > 0);
+  const desk = await loadHomeInsightsDesk();
+  assert.equal(desk.insights.length, raw.length);
+  assert.ok(desk.insights.length > 0);
 
-for (const insight of projected.slice(0, 12)) {
-  assert.ok(insight.headline?.length, "headline required");
-  assert.ok(insight.description?.length, "description required");
-  assert.equal(insight.game?.flow, undefined, "flow must stay off home projection");
-  assert.equal(insight.moment, undefined, "moment charts stay off home projection");
-  assert.equal(insight.trend, undefined, "trend charts stay off home projection");
+  let withVisual = 0;
+  for (const insight of desk.insights) {
+    assert.ok(insight.headline?.length, "headline required");
+    assert.ok(insight.description?.length, "description required");
+    if (
+      insight.moment ||
+      insight.trend?.length ||
+      insight.periodPoints?.length ||
+      insight.contributors?.length ||
+      insight.game?.flow ||
+      insight.game?.home.periods?.length
+    ) {
+      withVisual += 1;
+    }
+  }
+  assert.ok(withVisual > 0, "at least one card should carry chart material");
+
+  console.log(
+    "ok",
+    desk.insights.length,
+    "findings;",
+    withVisual,
+    "with chart material; sample:",
+    desk.insights[0]!.headline
+  );
 }
 
-console.log(
-  "ok",
-  projected.length,
-  "projected findings; sample:",
-  projected[0]!.headline
-);
+main().catch((error) => {
+  console.error(error);
+  process.exit(1);
+});

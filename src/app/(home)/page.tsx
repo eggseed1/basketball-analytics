@@ -103,13 +103,13 @@ async function HomeHotCold() {
 }
 
 async function HomeFindings() {
-  const [{ loadHomeInsightsDesk }, { HomeFindingsSection }] = await Promise.all([
+  const [{ loadHomeInsightsDesk }, { HomeFindingsFromDesk }] = await Promise.all([
     import("@/lib/home-findings-load"),
-    import("@/components/home/home-findings-section"),
+    import("@/components/home/home-findings-from-desk"),
   ]);
   const desk = await loadHomeInsightsDesk();
   return (
-    <HomeFindingsSection insights={desk.insights} empty={desk.empty} />
+    <HomeFindingsFromDesk insights={desk.insights} empty={desk.empty} />
   );
 }
 
