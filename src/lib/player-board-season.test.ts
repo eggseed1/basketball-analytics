@@ -41,6 +41,11 @@ test("explore minutes floor is 0 in the first three weeks after tip", () => {
   assert.equal(defaultExploreMinimumMinutes("2026-27", afterTip), 0);
 });
 
+test("explore All seasons uses the current year's early-week minutes floor", () => {
+  assert.equal(defaultExploreMinimumMinutes("ALL", afterTip), 0);
+  assert.equal(defaultExploreMinimumMinutes("ALL", beforeTip), 500);
+});
+
 test("explore minutes floor stays 500 for finished seasons", () => {
   assert.equal(defaultExploreMinimumMinutes("2025-26", afterTip), 500);
 });

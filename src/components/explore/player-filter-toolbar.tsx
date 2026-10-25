@@ -179,6 +179,11 @@ export function PlayerFilterToolbar({
     ) {
       normalized.page = null;
     }
+    // Season change: drop a stale minutes floor so the destination season's
+    // early-week default (0 for All / current opener) can apply.
+    if ("season" in patch && !("minimumMinutes" in patch)) {
+      normalized.minimumMinutes = null;
+    }
     if (!("season" in normalized) && !searchParams.get("season")) {
       normalized.season = defaultSeason;
     } else if (normalized.season === null) {
