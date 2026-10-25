@@ -9,6 +9,7 @@ import {
 } from "@/components/charts/recharts-lazy";
 import { CareerChartFilterWipe } from "@/components/players/career-chart-filter-wipe";
 import { useQueryNavOptional } from "@/components/continuity/query-nav";
+import { PlayerTabFilters } from "@/components/players/player-tab-filters";
 import { buildTalentSeries } from "@/lib/player-talent-trend";
 import type { CareerSeriesPoint } from "@/components/players/career-team-trend-chart";
 import type { CompactPlayerGameLogRow } from "@/data/history/player-game-log";
@@ -370,16 +371,25 @@ export function PlayerCareerBoard({
   useEffect(() => {
     setChartMode(chart);
   }, [chart]);
+  // Playoffs / player swaps often drop impact overlays. Don't keep a metric
+  // that has no points — that painted "DARKO is not published for these seasons."
+  useEffect(() => {
+    if (rows.some((row) => metricValue(row, metric) != null)) return;
+    const preferred =
+      initialMetric &&
+      rows.some((row) => metricValue(row, initialMetric) != null)
+        ? initialMetric
+        : defaultCareerMetric(rows);
+    if (preferred !== metric) setMetric(preferred);
+  }, [rows, initialMetric, metric]);
   const primary = useMemo(
     () =>
       PRIMARY.filter(
         (m) =>
-          m.id === "darko" ||
-          m.id === metric ||
           m.category !== "impact" ||
           rows.some((row) => metricValue(row, m.id) != null)
       ),
-    [metric, rows]
+    [rows]
   );
   const [tableCat, setTableCat] = useState<TableCategory | "all">("profile");
   const wash = brandAtmosphereColors(
@@ -465,12 +475,7 @@ export function PlayerCareerBoard({
       {hideTitle ? null : <h2 className={type.heading}>Career stats</h2>}
 
       {showFilters || rows.length > 0 ? (
-        <div
-          className={cn("flex flex-wrap items-center gap-x-3 gap-y-2")}
-          data-motion-static
-          role="group"
-          aria-label="Career chart filters"
-        >
+        <PlayerTabFilters label="Career chart filters">
           {showFilters ? (
             <>
               <SegmentedControl
@@ -494,12 +499,6 @@ export function PlayerCareerBoard({
                 />
               ) : null}
             </>
-          ) : null}
-          {showFilters && rows.length > 0 ? (
-            <span
-              className="hidden h-5 w-px shrink-0 bg-border/40 sm:block"
-              aria-hidden
-            />
           ) : null}
           {rows.length > 0 ? (
             <div
@@ -551,7 +550,7 @@ export function PlayerCareerBoard({
               </Select>
             </div>
           ) : null}
-        </div>
+        </PlayerTabFilters>
       ) : null}
 
       {rows.length === 0 ? (
