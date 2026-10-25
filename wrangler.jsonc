@@ -20,7 +20,8 @@
 		"enabled": true,
 		"logs": {
 			"invocation_logs": false,
-			"head_sampling_rate": 1
+			// 5% is enough to debug; 100% was writing a log event per request.
+			"head_sampling_rate": 0.05
 		}
 	},
 	"assets": {
