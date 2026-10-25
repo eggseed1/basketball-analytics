@@ -35,19 +35,14 @@ name: Daily player-viz runtime refresh
 
 on:
   schedule:
-    # Spaced so a dropped GitHub cron still leaves another shot the same morning.
+    # Two shots/day is enough when the guard works. Extra crons mostly burned
+    # GitHub minutes and, on success, re-deployed / re-mirrored R2 for free.
     # Times are UTC; comments are America/New_York during EDT (UTC-4).
     #
-    # After West Coast finals settle (~6:37am ET). Prefer this for overnight
-    # box scores so boards aren't stuck waiting on the mid-morning primary.
+    # After West Coast finals settle (~6:37am ET).
     - cron: "37 10 * * *"
-    # Primary mid-morning (~8:17am ET).
-    - cron: "17 12 * * *"
-    # Short-gap backup if GitHub dropped the primary (~9:47am ET).
-    - cron: "47 13 * * *"
-    # Midday / late backups (~12:17pm / 4:17pm ET).
+    # Midday backup if the morning run failed (~12:17pm ET).
     - cron: "17 16 * * *"
-    - cron: "17 20 * * *"
   workflow_dispatch:
     inputs:
       force:
@@ -237,7 +232,6 @@ jobs:
             public/runtime/sentiment-history \
             data/movement-center/v1/snapshot.json \
             src/data/runtime/movement-snapshot.json \
-            public/runtime/movement-snapshot.json \
             data/transactions/espn-site-v2/v1 \
             data/transactions/nba-player-movement/v1 \
             data/transactions/espn-draft/v1 \
@@ -250,24 +244,18 @@ jobs:
             src/data/runtime/salary-payoff-snapshot.json \
             data/front-office/v1 \
             src/data/runtime/front-office-snapshot.json \
-            public/runtime/front-office-snapshot.json \
             data/asset-ledger/v1 \
             src/data/runtime/asset-ledger-snapshot.json \
-            public/runtime/asset-ledger-snapshot.json \
             src/data/runtime/team-leadership.json \
             src/data/runtime/player-awards-snapshot.json \
             data/draft-picks/spotrac/v1 \
             src/data/runtime/future-picks-snapshot.json \
             src/data/runtime/player-bio-snapshot.json \
-            public/runtime/player-bio-snapshot.json \
             src/data/runtime/draft-year-snapshot.json \
             src/data/franchises/verified-records.json \
             data/impact/player-id-aliases.json \
             src/data/runtime/player-id-aliases-snapshot.json \
             src/data/media/portrait-lookup.json \
-            public/runtime/portrait-lookup.json \
-            public/runtime/portrait-fallbacks.json \
-            public/runtime/legend-portraits.json \
             data/salaries/player-salaries-bref-archive.csv \
             data/cba/league-cap-seasons.json \
             data/cba/salary-cap-by-year.json \
@@ -278,13 +266,9 @@ jobs:
             data/ops/step-health.json \
             data/ops/seasonal-upkeep.json \
             src/data/runtime/hustle-overlay-snapshot.json \
-            public/runtime/hustle-overlay-snapshot.json \
             src/data/runtime/play-type-snapshot.json \
-            public/runtime/play-type-snapshot.json \
             src/data/runtime/on-off-snapshot.json \
-            public/runtime/on-off-snapshot.json \
             src/data/runtime/team-game-box-snapshot.json \
-            public/runtime/team-game-box-snapshot.json \
             public/runtime/on-off
           # In-season bakes, Mondays and after the Finals by default, so
           # offseason deploys still ship the finished season. workflow_dispatch
@@ -293,20 +277,15 @@ jobs:
             git add -- \
               src/data/runtime/game-snapshot.json \
               src/data/runtime/season-tables-snapshot.json \
-              src/data/runtime/player-career-bref-snapshot.json \
               src/data/runtime/standings-snapshot.json \
               src/data/runtime/team-board-snapshot.json \
               src/data/runtime/current-roster-snapshot.json \
               src/data/runtime/drbl-overlay-snapshot.json \
-              public/runtime/drbl-overlay-snapshot.json \
               src/data/runtime/drbl-published-seasons.json \
               src/data/runtime/drbl-guide-snapshot.json \
               src/data/runtime/impact-overlay-snapshot.json \
-              src/data/runtime/explore-players-first-page.json \
               src/data/runtime/percentile-pools-snapshot.json \
-              public/runtime/percentile-pools-snapshot.json \
               src/data/runtime/player-search-snapshot.json \
-              public/runtime/player-search-snapshot.json \
               src/data/runtime/espn-name-index.json \
               src/data/runtime/stat-detective-windows.json \
               src/data/runtime/recent-insights-snapshot.json \
@@ -337,8 +316,14 @@ jobs:
       # Current season is mirrored to R2 every night so a code-only deploy-site
       # that somehow skips the asset bake still has a store fallback
       # (player-game-logs-store / player-shots-store read R2 when ASSETS miss).
+      # Current season already ships in Worker ASSETS on deploy. Nightly R2
+      # re-PUT of ~1.5k objects was Class A + rate-limit sleep with no product
+      # gain on a normal day. Keep a weekly safety mirror with season commits
+      # (Mondays / forced commit_season), plus the Finals archive step below.
       - name: Mirror current-season game logs to R2
-        if: steps.sync.outputs.should_deploy == 'true'
+        if: >-
+          steps.sync.outputs.should_deploy == 'true' &&
+          (steps.sync.outputs.commit_season == 'true' || github.event.inputs.commit_season == 'true')
         continue-on-error: true
         timeout-minutes: 25
         env:
@@ -348,7 +333,9 @@ jobs:
         run: node scripts/upload-player-game-logs-r2.mjs
 
       - name: Mirror current-season shot charts to R2
-        if: steps.sync.outputs.should_deploy == 'true'
+        if: >-
+          steps.sync.outputs.should_deploy == 'true' &&
+          (steps.sync.outputs.commit_season == 'true' || github.event.inputs.commit_season == 'true')
         continue-on-error: true
         timeout-minutes: 25
         env:
