@@ -54,18 +54,28 @@ async function HomeCalendar({ season }: { season: string }) {
 }
 
 async function HomeSeasonMomentLive() {
-  const { getHomeSeasonMoment } = await import(
-    "@/data/queries/home-season-moment"
-  );
-  const moment = await getHomeSeasonMoment();
+  const {
+    getHomeSeasonMoment,
+    getHomeSeasonMomentSync,
+    homeSeasonMomentNeedsLiveEnrichment,
+  } = await import("@/data/queries/home-season-moment");
+  const sync = getHomeSeasonMomentSync();
+  const moment = homeSeasonMomentNeedsLiveEnrichment(sync)
+    ? await getHomeSeasonMoment()
+    : sync;
   return <SeasonMomentCard moment={moment} />;
 }
 
 async function HomeSeasonPhaseBarLive() {
-  const { getHomeSeasonMoment } = await import(
-    "@/data/queries/home-season-moment"
-  );
-  const moment = await getHomeSeasonMoment();
+  const {
+    getHomeSeasonMoment,
+    getHomeSeasonMomentSync,
+    homeSeasonMomentNeedsLiveEnrichment,
+  } = await import("@/data/queries/home-season-moment");
+  const sync = getHomeSeasonMomentSync();
+  const moment = homeSeasonMomentNeedsLiveEnrichment(sync)
+    ? await getHomeSeasonMoment()
+    : sync;
   return <SeasonPhaseBar moment={moment} />;
 }
 
@@ -103,20 +113,29 @@ async function HomeHotCold() {
 }
 
 async function HomeFindings() {
-  const { HomeFindingsClient } = await import(
-    "@/components/home/home-findings-client"
+  const [{ HomeFindingsClient }, { getBundledRecentInsights }] =
+    await Promise.all([
+      import("@/components/home/home-findings-client"),
+      import("@/data/runtime/recent-insights-snapshot"),
+    ]);
+  const insights = getBundledRecentInsights();
+  return (
+    <HomeFindingsClient
+      initial={{ insights, empty: insights.length === 0 }}
+    />
   );
-  return <HomeFindingsClient />;
 }
 
 async function HomeAboveNorm() {
-  const { HomeAboveNormClient } = await import(
-    "@/components/home/home-above-norm-client"
-  );
-  return <HomeAboveNormClient />;
+  const [{ HomeAboveNormClient }, { getBundledAboveNorm }] = await Promise.all([
+    import("@/components/home/home-above-norm-client"),
+    import("@/data/runtime/recent-insights-snapshot"),
+  ]);
+  return <HomeAboveNormClient initial={getBundledAboveNorm()} />;
 }
 
-const SIDEBAR_FEED_BUDGET_MS = 4_500;
+/** Sidebar ESPN feeds — keep short so the home stream can close for PAGE_CACHE. */
+const SIDEBAR_FEED_BUDGET_MS = 800;
 
 async function HomeInjuries() {
   const [
@@ -148,7 +167,7 @@ async function HomeLeagueMoves() {
   return <LeagueMovesPanel moves={value} />;
 }
 
-const BRACKET_BUDGET_MS = 2_500;
+const BRACKET_BUDGET_MS = 800;
 
 async function HomeBracket({ season }: { season: string }) {
   const [
@@ -182,7 +201,12 @@ async function HomeTransactions({
     "@/components/home/offseason-pulse-panel"
   );
   return (
-    <OffseasonPulsePanel limit={limit} season={season} tippedOff={tippedOff} />
+    <OffseasonPulsePanel
+      limit={limit}
+      season={season}
+      tippedOff={tippedOff}
+      budgetMs={SIDEBAR_FEED_BUDGET_MS}
+    />
   );
 }
 
@@ -355,6 +379,7 @@ export default async function HomePage() {
   return (
     <main
       data-motion-page
+      data-motion-eager
       data-home-stack
       className="site-shell flex flex-col gap-5 py-5 sm:py-7"
       data-season-phase={phase}
