@@ -264,11 +264,8 @@ function renderModule(
         </Streamed>
       );
     case "calendar":
-      return (
-        <Streamed key={id} id={id}>
-          <HomeCalendar season={season} />
-        </Streamed>
-      );
+      // Client loader — no Suspense skeleton; loader paints its own pulse.
+      return <HomeCalendar key={id} season={season} />;
     case "bracket":
       return (
         <Streamed key={id} id={id}>
@@ -276,29 +273,14 @@ function renderModule(
         </Streamed>
       );
     case "standings":
-      return (
-        <Streamed key={id} id={id}>
-          <HomeStandings season={season} />
-        </Streamed>
-      );
+      return <HomeStandings key={id} season={season} />;
     case "standings-race":
-      return (
-        <Streamed key={id} id={id}>
-          <HomeStandings season={season} race />
-        </Streamed>
-      );
+      return <HomeStandings key={id} season={season} race />;
     case "findings":
-      return (
-        <Streamed key={id} id={id}>
-          <HomeFindings />
-        </Streamed>
-      );
+      // Bundled SSR seed + client soft-refresh — no Suspense skeleton.
+      return <HomeFindings key={id} />;
     case "above-norm":
-      return (
-        <Streamed key={id} id={id}>
-          <HomeAboveNorm />
-        </Streamed>
-      );
+      return <HomeAboveNorm key={id} />;
     case "injuries":
       return (
         <Streamed key={id} id={id}>
@@ -312,17 +294,9 @@ function renderModule(
         </Streamed>
       );
     case "top-performers":
-      return (
-        <Streamed key={id} id={id}>
-          <HomeTopPerformers />
-        </Streamed>
-      );
+      return <HomeTopPerformers key={id} />;
     case "hot-cold":
-      return (
-        <Streamed key={id} id={id}>
-          <HomeHotCold />
-        </Streamed>
-      );
+      return <HomeHotCold key={id} />;
     case "transactions":
       return (
         <Streamed key={id} id={id}>
