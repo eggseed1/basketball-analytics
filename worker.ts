@@ -270,11 +270,30 @@ async function storePage(
 
 // Keys this isolate is already re-rendering, so a burst of stale hits starts one render.
 const refreshing = new Set<string>();
+/** Cross-isolate coalesce: KV lock so every colo doesn't SSR the same STALE key. */
+const REFRESH_LOCK_TTL_SECONDS = 90;
+
+async function claimRefreshLock(env: WorkerEnv, pageKey: string): Promise<boolean> {
+  if (!env.PAGE_CACHE) return true;
+  const lockKey = `refresh:${pageKey}`;
+  try {
+    const existing = await env.PAGE_CACHE.get(lockKey, "arrayBuffer");
+    if (existing && existing.byteLength > 0) return false;
+    await env.PAGE_CACHE.put(lockKey, "1", {
+      expirationTtl: Math.max(60, REFRESH_LOCK_TTL_SECONDS),
+    });
+    return true;
+  } catch {
+    // Fail open — better a duplicate refresh than stuck STALE forever.
+    return true;
+  }
+}
 
 async function refreshPage(request: Request, env: WorkerEnv, ctx: WorkerContext, entry: PageCacheEntry) {
   if (refreshing.has(entry.key)) return;
   refreshing.add(entry.key);
   try {
+    if (!(await claimRefreshLock(env, entry.key))) return;
     const response = await (handler as OpenNextHandler).fetch(request, env, ctx);
     if (isCacheableResponse(response)) await storePage(env, entry, response.headers, response.body);
     else await response.body?.cancel();

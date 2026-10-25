@@ -96,8 +96,9 @@
 		// Workers Paid: restore full product (no free-tier UI/data stripping).
 		"FULL_EDGE_PRODUCT": "1"
 	},
-	// Paid plan default is 30s; raise so player islands / live enrich finish.
+	// Cap runaway SSR (invoice was ~$25 on Workers CPU ms). 25s still covers
+	// player/game islands; hung streams used to burn up to 120s each.
 	"limits": {
-		"cpu_ms": 120000
+		"cpu_ms": 25000
 	}
 }
