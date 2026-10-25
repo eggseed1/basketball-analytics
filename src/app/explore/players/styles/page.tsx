@@ -8,7 +8,7 @@ import {
   getAvailableSeasons,
   listExploreBoardReadySeasons,
 } from "@/data/queries";
-import { defaultExplorePlayersSeason } from "@/lib/player-board-season";
+import { defaultExploreConcretePlayersSeason } from "@/lib/player-board-season";
 import {
   isAssignedPlayerRoleId,
   PLAYER_ROLE_CATALOG,
@@ -41,7 +41,7 @@ export default async function PlayerStylesPage({
     getAvailableSeasons(),
     listExploreBoardReadySeasons(),
   ]);
-  const defaultSeason = defaultExplorePlayersSeason(seasons, new Date(), {
+  const defaultSeason = defaultExploreConcretePlayersSeason(seasons, new Date(), {
     boardReadySeasons,
   });
   const seasonParam = one(params.season)?.trim();

@@ -27,7 +27,7 @@ import {
 } from "@/data/providers/historical/season-range";
 import { leagueScatterDefaultRankEnd, leagueScatterMeta } from "@/lib/league-player-scatter";
 import {
-  defaultExplorePlayersSeason,
+  defaultExploreConcretePlayersSeason,
   priorSeasonForStats,
 } from "@/lib/player-board-season";
 import {
@@ -105,7 +105,7 @@ export default async function PlayerVisualizationsPage({
   const season =
     seasonParam && /^\d{4}-\d{2}$/.test(seasonParam)
       ? seasonParam
-      : defaultExplorePlayersSeason(
+      : defaultExploreConcretePlayersSeason(
           [currentSeason, priorSeasonForStats(currentSeason)],
           new Date(),
           { boardReadySeasons }

@@ -5,6 +5,7 @@ import assert from "node:assert/strict";
 
 import {
   BUNDLED_PEER_BOARD_FULL_MIN,
+  defaultExploreConcretePlayersSeason,
   defaultExplorePlayersSeason,
   isBundledPeerBoardReady,
   priorSeasonBoardCatchUpNotice,
@@ -19,18 +20,22 @@ assert.equal(isBundledPeerBoardReady("2026-27", 50, tipOpened), true);
 assert.equal(isBundledPeerBoardReady("2026-27", 0, tipOpened), false);
 assert.equal(isBundledPeerBoardReady("2026-27", 50, preTip), false);
 
+assert.equal(defaultExplorePlayersSeason(), "ALL");
+
 const seasons = ["2026-27", "2025-26", "2024-25"];
 assert.equal(
-  defaultExplorePlayersSeason(seasons, tipOpened, { boardReadySeasons: ["2025-26"] }),
+  defaultExploreConcretePlayersSeason(seasons, tipOpened, {
+    boardReadySeasons: ["2025-26"],
+  }),
   "2025-26"
 );
 assert.equal(
-  defaultExplorePlayersSeason(seasons, tipOpened, {
+  defaultExploreConcretePlayersSeason(seasons, tipOpened, {
     boardReadySeasons: ["2026-27", "2025-26"],
   }),
   "2026-27"
 );
-assert.equal(defaultExplorePlayersSeason(seasons, preTip), "2025-26");
+assert.equal(defaultExploreConcretePlayersSeason(seasons, preTip), "2025-26");
 assert.match(
   priorSeasonBoardCatchUpNotice("2027-28", "2026-27"),
   /2027-28 board is still catching up/
