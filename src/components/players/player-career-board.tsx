@@ -9,7 +9,6 @@ import {
 } from "@/components/charts/recharts-lazy";
 import { CareerChartFilterWipe } from "@/components/players/career-chart-filter-wipe";
 import { useQueryNavOptional } from "@/components/continuity/query-nav";
-import { PlayerTabFilters } from "@/components/players/player-tab-filters";
 import { buildTalentSeries } from "@/lib/player-talent-trend";
 import type { CareerSeriesPoint } from "@/components/players/career-team-trend-chart";
 import type { CompactPlayerGameLogRow } from "@/data/history/player-game-log";
@@ -475,7 +474,12 @@ export function PlayerCareerBoard({
       {hideTitle ? null : <h2 className={type.heading}>Career stats</h2>}
 
       {showFilters || rows.length > 0 ? (
-        <PlayerTabFilters label="Career chart filters">
+        <div
+          className={cn("flex flex-wrap items-center gap-x-3 gap-y-2")}
+          data-motion-static
+          role="group"
+          aria-label="Career chart filters"
+        >
           {showFilters ? (
             <>
               <SegmentedControl
@@ -499,6 +503,12 @@ export function PlayerCareerBoard({
                 />
               ) : null}
             </>
+          ) : null}
+          {showFilters && rows.length > 0 ? (
+            <span
+              className="hidden h-5 w-px shrink-0 bg-border/40 sm:block"
+              aria-hidden
+            />
           ) : null}
           {rows.length > 0 ? (
             <div
@@ -550,7 +560,7 @@ export function PlayerCareerBoard({
               </Select>
             </div>
           ) : null}
-        </PlayerTabFilters>
+        </div>
       ) : null}
 
       {rows.length === 0 ? (
