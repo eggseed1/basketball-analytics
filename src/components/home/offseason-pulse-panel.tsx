@@ -17,21 +17,37 @@ export async function OffseasonPulsePanel({
   limit = 5,
   season,
   tippedOff = false,
+  budgetMs,
 }: {
   limit?: number;
   /** League season label, e.g. 2026-27. */
   season?: string;
   /** True once the regular-season opener has arrived. */
   tippedOff?: boolean;
+  /** Soft cap for home SSR so a slow ESPN archive cannot hold the stream open. */
+  budgetMs?: number;
 } = {}) {
-  const page = await listTransactionEvents({}, { page: 1, pageSize: limit }).catch(
-    () => null
-  );
-  const events = page?.events ?? [];
-  if (!events.length) return null;
-  const resolutions = await resolvePlayersForTransactionEvents(events).catch(
-    () => new Map()
-  );
+  const load = async () => {
+    const page = await listTransactionEvents({}, { page: 1, pageSize: limit }).catch(
+      () => null
+    );
+    const events = page?.events ?? [];
+    if (!events.length) return null;
+    const resolutions = await resolvePlayersForTransactionEvents(events).catch(
+      () => new Map()
+    );
+    return { events, resolutions };
+  };
+  const loaded =
+    budgetMs != null
+      ? (
+          await (
+            await import("@/data/queries/budget")
+          ).withBudget(load(), budgetMs, null)
+        ).value
+      : await load();
+  if (!loaded) return null;
+  const { events, resolutions } = loaded;
 
   const labelYear = currentOffseasonLabelYear();
   const title =

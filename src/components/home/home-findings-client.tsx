@@ -26,12 +26,13 @@ function pairByHeight(items: RecentInsight[]): RecentInsight[] {
 }
 
 /**
- * Homepage Recent Insights — client fetch so card SVGs stay out of first HTML.
+ * Homepage Recent Insights — paint bundled cards in the first HTML, then soft-
+ * refresh from `/api/home/insights` without blanking the section.
  */
-export function HomeFindingsClient() {
+export function HomeFindingsClient({ initial }: { initial: Payload }) {
   const t = useTranslations("Home");
   const tCommon = useTranslations("Common");
-  const [data, setData] = useState<Payload | null>(null);
+  const [data, setData] = useState<Payload>(initial);
 
   useEffect(() => {
     let cancelled = false;
@@ -47,7 +48,7 @@ export function HomeFindingsClient() {
           setData({ insights: json.insights ?? [], empty: Boolean(json.empty) });
         }
       } catch {
-        if (!cancelled) setData({ insights: [], empty: true });
+        /* keep initial */
       }
     })();
     return () => {
@@ -55,16 +56,6 @@ export function HomeFindingsClient() {
       ac.abort();
     };
   }, []);
-
-  if (!data) {
-    return (
-      <div
-        className="sports-card h-80 animate-pulse p-4 sm:p-[21px]"
-        aria-busy="true"
-        aria-label="Loading recent insights"
-      />
-    );
-  }
 
   const stories = data.insights.filter((x) => x.focus !== "surprise");
   const even =
