@@ -3,11 +3,21 @@ import { Suspense, type ReactNode } from "react";
 import { WatchlistPanel } from "@/components/home/watchlist-panel";
 import { AnalyticsDesk } from "@/components/home/analytics-desk";
 import { MotionReveal } from "@/components/continuity/motion-reveal";
+import { HomeAboveNormClient } from "@/components/home/home-above-norm-client";
+import { HomeFindingsClient } from "@/components/home/home-findings-client";
+import { HomeHotColdClient } from "@/components/home/home-hot-cold-client";
 import { HomeLoadingWatchdog } from "@/components/home/home-loading-watchdog";
 import { HomeModuleFrame, HomeModuleSkeleton } from "@/components/home/home-module-skeleton";
+import { HomeStandingsPanel } from "@/components/home/home-standings-panel";
+import { HomeTopPerformersClient } from "@/components/home/home-top-performers-client";
 import { SeasonMomentCard, SeasonPhaseBar } from "@/components/home/season-moment";
+import { WeekGameCalendar } from "@/components/home/week-game-calendar";
 import { JsonLd } from "@/components/seo/json-ld";
 import { getHomeShellBootstrap } from "@/data/queries/home-season-moment-shell";
+import {
+  getBundledAboveNorm,
+  getBundledRecentInsights,
+} from "@/data/runtime/recent-insights-snapshot";
 import {
   homeLayoutForPhase,
   type HomeModuleId,
@@ -46,10 +56,8 @@ export const metadata = {
 // modules arrive one by one, and the worker page cache shares the result.
 export const dynamic = "force-dynamic";
 
-async function HomeCalendar({ season }: { season: string }) {
-  const { WeekGameCalendar } = await import(
-    "@/components/home/week-game-calendar"
-  );
+function HomeCalendar({ season }: { season: string }) {
+  // Sync client island — async import here suspended into loading.tsx.
   return <WeekGameCalendar season={season} />;
 }
 
@@ -84,40 +92,25 @@ function HomeNews() {
   return <AnalyticsDesk articles={[]} embedded />;
 }
 
-async function HomeStandings({
+function HomeStandings({
   season,
   race = false,
 }: {
   season: string;
   race?: boolean;
 }) {
-  const { HomeStandingsPanel } = await import(
-    "@/components/home/home-standings-panel"
-  );
   return <HomeStandingsPanel season={season} race={race} />;
 }
 
-async function HomeTopPerformers() {
-  // Client-fetched — leader arrays used to dominate home Flight.
-  const { HomeTopPerformersClient } = await import(
-    "@/components/home/home-top-performers-client"
-  );
+function HomeTopPerformers() {
   return <HomeTopPerformersClient />;
 }
 
-async function HomeHotCold() {
-  const { HomeHotColdClient } = await import(
-    "@/components/home/home-hot-cold-client"
-  );
+function HomeHotCold() {
   return <HomeHotColdClient />;
 }
 
-async function HomeFindings() {
-  const [{ HomeFindingsClient }, { getBundledRecentInsights }] =
-    await Promise.all([
-      import("@/components/home/home-findings-client"),
-      import("@/data/runtime/recent-insights-snapshot"),
-    ]);
+function HomeFindings() {
   const insights = getBundledRecentInsights();
   return (
     <HomeFindingsClient
@@ -126,11 +119,7 @@ async function HomeFindings() {
   );
 }
 
-async function HomeAboveNorm() {
-  const [{ HomeAboveNormClient }, { getBundledAboveNorm }] = await Promise.all([
-    import("@/components/home/home-above-norm-client"),
-    import("@/data/runtime/recent-insights-snapshot"),
-  ]);
+function HomeAboveNorm() {
   return <HomeAboveNormClient initial={getBundledAboveNorm()} />;
 }
 
