@@ -166,7 +166,9 @@ export function PlayerFilterToolbar({
           String(value ?? "").toUpperCase() === "ALL" &&
           defaultIsAll) ||
         (key === "minimumMinutes" && value === defaultMinMinutes) ||
-        (key === "view" && value === "all") ||
+        // view=all / view=impact: serializePlayerBoardViews already omits the
+        // default chip. Do not strip "all" here — that used to fight Impact
+        // as the default and made the All chip a no-op.
         (key === "rate" && value === "perGame")
       ) {
         normalized[key] = null;

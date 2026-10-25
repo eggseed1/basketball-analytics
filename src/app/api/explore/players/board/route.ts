@@ -4,7 +4,10 @@ import {
   parseExplorePlayersPage,
   parseExplorePlayersSortDir,
 } from "@/data/queries/explore-players-board";
-import { parsePlayerBoardRate } from "@/lib/explore-players-display";
+import {
+  parsePlayerBoardRate,
+  parsePlayerBoardViews,
+} from "@/lib/explore-players-display";
 import { defaultExploreMinimumMinutes } from "@/lib/player-board-season";
 import { parsePlayerSeasonSortKey } from "@/lib/player-season-sort";
 import { filtersFromSearchParams } from "@/lib/search-params";
@@ -34,12 +37,14 @@ export async function GET(request: Request) {
       ? parseExplorePlayersSortDir(params.dir, sortKey)
       : undefined;
     const page = parseExplorePlayersPage(params.page);
+    const boardViews = parsePlayerBoardViews(params.view ?? null);
 
     const view = await getExplorePlayersBoardView({
       filters,
       sortKey,
       sortDir,
       rate: parsePlayerBoardRate(params.rate ?? null),
+      boardViews,
       page,
       includeContext: false,
     });
