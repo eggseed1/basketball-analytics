@@ -185,20 +185,26 @@ export function defaultExplorePlayersSeason(
 /**
  * Qualifying minutes for Explore. The usual 500 floor hides every opener
  * line in week 1 — drop to 0 until the campaign has had time to accumulate.
+ *
+ * `ALL` is the current board plus career name-search extras, so it must use
+ * the current league year's early-week floor — otherwise opener lines vanish
+ * behind a 500-minute gate and the board looks empty.
  */
 export function defaultExploreMinimumMinutes(
   season: string,
   now = new Date()
 ): number {
-  if (
-    !season ||
-    season.toUpperCase() === "ALL" ||
-    !isCurrentNbaSeason(season, now) ||
-    !leagueRegularSeasonHasOpened(season, now)
-  ) {
+  const key = String(season ?? "").trim();
+  if (!key || key.toUpperCase() === "ALL") {
+    return defaultExploreMinimumMinutes(
+      canonicalSeasonFromStartYear(currentNbaStartYear(now)),
+      now
+    );
+  }
+  if (!isCurrentNbaSeason(key, now) || !leagueRegularSeasonHasOpened(key, now)) {
     return DEFAULT_PLAYER_MINIMUM_MINUTES;
   }
-  const opener = firstRegularSeasonTipDate(season);
+  const opener = firstRegularSeasonTipDate(key);
   if (!opener) return DEFAULT_PLAYER_MINIMUM_MINUTES;
   const today = nbaTodayIso(now);
   const tipMs = Date.parse(`${opener}T12:00:00.000Z`);
