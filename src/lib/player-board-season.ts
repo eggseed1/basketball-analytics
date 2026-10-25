@@ -151,13 +151,23 @@ export function priorSeasonBoardCatchUpNotice(
 }
 
 /**
- * Explore Players board default: keep the last completed season selected until
- * regular-season tip. After the opener, default to the current league year only
- * when a baked peer board is ready — otherwise every future tip-off would open
- * on an empty Cloudflare board until season-tables catch up.
- * Upcoming season remains pickable in the season control before tip.
+ * Explore Players board default: All seasons (current board + career search).
  */
 export function defaultExplorePlayersSeason(
+  _availableSeasons?: readonly string[],
+  _now?: Date,
+  _options?: {
+    boardReadySeasons?: readonly string[];
+  }
+): string {
+  return "ALL";
+}
+
+/**
+ * Concrete season for styles / visualizations (All is not a board year).
+ * Pre-tip and unbaked current years fall back to the last completed season.
+ */
+export function defaultExploreConcretePlayersSeason(
   availableSeasons: readonly string[],
   now = new Date(),
   options?: {

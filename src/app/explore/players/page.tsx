@@ -202,16 +202,11 @@ export default async function ExplorePlayersPage({
   const params = await searchParams;
   const t = await getTranslations("Players");
   // Sync shell only — never touch season-tables / board-ready (pulls ~9MB JSON)
-  // before header + Suspense can flush. Prefer the baked first-page season so
-  // cold /explore/players hits the 35KB snapshot instead of a live board miss.
+  // before header + Suspense can flush. Default is All seasons; the first-page
+  // bake still applies when the URL matches that concrete season key.
   const seasons = [...listCanonicalSeasons()].reverse();
   const teams = teamsFromCanonicalIdentity();
-  const { explorePlayersFirstPageMeta } = await import(
-    "@/data/runtime/explore-players-first-page"
-  );
-  const bakedSeason = explorePlayersFirstPageMeta().key?.season?.trim();
-  const defaultSeason =
-    bakedSeason || defaultExplorePlayersSeason(seasons, new Date());
+  const defaultSeason = defaultExplorePlayersSeason();
   const subtitleSort = parsePlayerSeasonSortKey(params.sort);
   const load = loadBoard(params, defaultSeason);
 

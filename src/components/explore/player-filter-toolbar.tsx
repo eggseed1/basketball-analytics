@@ -158,9 +158,13 @@ export function PlayerFilterToolbar({
 
   function updateParams(patch: Record<string, string | null>) {
     const normalized: Record<string, string | null> = { ...patch };
+    const defaultIsAll = defaultSeason.toUpperCase() === "ALL";
     for (const [key, value] of Object.entries(normalized)) {
       if (
         (value === "ALL" && key !== "season") ||
+        (key === "season" &&
+          String(value ?? "").toUpperCase() === "ALL" &&
+          defaultIsAll) ||
         (key === "minimumMinutes" && value === defaultMinMinutes) ||
         (key === "view" && value === "all") ||
         (key === "rate" && value === "perGame")
@@ -184,10 +188,14 @@ export function PlayerFilterToolbar({
     if ("season" in patch && !("minimumMinutes" in patch)) {
       normalized.minimumMinutes = null;
     }
-    if (!("season" in normalized) && !searchParams.get("season")) {
-      normalized.season = defaultSeason;
-    } else if (normalized.season === null) {
-      normalized.season = defaultSeason;
+    // Pin a concrete default season into the URL when missing. All is omitted
+    // so `/explore/players` stays the clean All default.
+    if (!defaultIsAll) {
+      if (!("season" in normalized) && !searchParams.get("season")) {
+        normalized.season = defaultSeason;
+      } else if (normalized.season === null) {
+        normalized.season = defaultSeason;
+      }
     }
     replaceParams(normalized);
   }
