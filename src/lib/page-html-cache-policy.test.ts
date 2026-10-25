@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
 import {
+  BOARD_HTML_POLICY,
   DAILY_HTML_POLICY,
   HOME_HTML_POLICY,
   LIVE_HTML_POLICY,
@@ -77,21 +78,25 @@ describe("page-html-cache-policy", () => {
   it("picks policies by path class", () => {
     assert.equal(htmlCachePolicyForPath("/").fresh, 15 * 60);
     assert.equal(htmlCachePolicyForPath("/scores").fresh, SCORES_HTML_POLICY.fresh);
-    assert.equal(htmlCachePolicyForPath("/players/1").fresh, DAILY_HTML_POLICY.fresh);
+    assert.equal(htmlCachePolicyForPath("/explore/games").fresh, LIVE_HTML_POLICY.fresh);
+    assert.equal(htmlCachePolicyForPath("/players/1").fresh, BOARD_HTML_POLICY.fresh);
+    assert.equal(htmlCachePolicyForPath("/standings").fresh, BOARD_HTML_POLICY.fresh);
+    assert.equal(htmlCachePolicyForPath("/explore/players").fresh, BOARD_HTML_POLICY.fresh);
+    assert.equal(htmlCachePolicyForPath("/history").fresh, DAILY_HTML_POLICY.fresh);
   });
 
   it("emits public s-maxage only for CDN paths when enabled", () => {
-    const daily = DAILY_HTML_POLICY;
+    const board = BOARD_HTML_POLICY;
     assert.match(
-      htmlCacheControlHeader("/players/1", daily),
-      /^public, max-age=0, s-maxage=900, stale-while-revalidate=/
+      htmlCacheControlHeader("/players/1", board),
+      /^public, max-age=0, s-maxage=2700, stale-while-revalidate=/
     );
     assert.equal(
-      htmlCacheControlHeader("/players/1", daily, { cdnEnabled: false }),
+      htmlCacheControlHeader("/players/1", board, { cdnEnabled: false }),
       "private, no-cache, no-store, max-age=0, must-revalidate"
     );
     assert.match(
-      htmlCacheControlHeader("/games/401909834", daily, { cdnEnabled: true }),
+      htmlCacheControlHeader("/games/401909834", DAILY_HTML_POLICY, { cdnEnabled: true }),
       /^public, max-age=0, s-maxage=900, stale-while-revalidate=/
     );
   });
