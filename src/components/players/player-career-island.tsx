@@ -162,6 +162,7 @@ export async function PlayerCareerIsland({
 
     return (
       <PlayerCareerBoard
+        key={`${playerId}:${seasonType}`}
         playerId={playerId}
         season={season}
         seasonType={seasonType}
@@ -181,6 +182,7 @@ export async function PlayerCareerIsland({
     const rows = toCareerBoardRows(career);
     return (
       <PlayerCareerBoard
+        key={`${playerId}:${seasonType}`}
         playerId={playerId}
         season={season}
         seasonType={seasonType}
