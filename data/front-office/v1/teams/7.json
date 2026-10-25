@@ -1,8 +1,8 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-23",
-    "retrievedAt": "2026-10-23T17:25:29.715Z",
+    "snapshotDate": "2026-10-25",
+    "retrievedAt": "2026-10-25T18:28:27.546Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
@@ -11,7 +11,7 @@
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "d2e877c678cfae7b7411fe896b71fba2753ab8d869bb976637b25f7b107e5d8f",
+    "sourceHash": "bcdb336f3605d66c729bd3187a73069d1fbae876b27332008bf75eb25108aa83",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -409,12 +409,12 @@
               "playerId": "1643813",
               "franchiseId": "7",
               "season": "2026-27",
-              "salary": null,
-              "capHit": null,
+              "salary": 1357763,
+              "capHit": 1357763,
               "guaranteedAmount": null,
               "guaranteeStatus": "UNKNOWN",
               "optionType": "UNKNOWN",
-              "source": "espn-roster-no-salary"
+              "source": "salary-index"
             }
           ],
           "guaranteedTotal": null,
@@ -447,13 +447,13 @@
       "futureCommitments": [
         {
           "season": "2026-27",
-          "totalSalaryDollars": 221753103,
-          "playersUnderContract": 15
+          "totalSalaryDollars": 223110866,
+          "playersUnderContract": 16
         }
       ],
-      "playerSalaryCommitments": 221753103,
-      "playersWithSalary": 15,
-      "playersWithoutSalary": 2
+      "playerSalaryCommitments": 223110866,
+      "playersWithSalary": 16,
+      "playersWithoutSalary": 1
     },
     "draftAssets": {
       "franchiseId": "7",

@@ -1,8 +1,8 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-23",
-    "retrievedAt": "2026-10-23T17:25:29.715Z",
+    "snapshotDate": "2026-10-25",
+    "retrievedAt": "2026-10-25T18:28:27.546Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
@@ -11,7 +11,7 @@
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "d2e877c678cfae7b7411fe896b71fba2753ab8d869bb976637b25f7b107e5d8f",
+    "sourceHash": "bcdb336f3605d66c729bd3187a73069d1fbae876b27332008bf75eb25108aa83",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -375,6 +375,29 @@
           "href": "/players/1642349"
         },
         {
+          "playerId": "1642877",
+          "playerName": "Micah Peavy",
+          "age": null,
+          "contractId": "cy-1642877-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1642877-2026",
+              "playerId": "1642877",
+              "franchiseId": "25",
+              "season": "2026-27",
+              "salary": 2150917,
+              "capHit": 2150917,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "salary-index"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1642877"
+        },
+        {
           "playerId": "1642964",
           "playerName": "Brooks Barnhizer",
           "age": null,
@@ -447,12 +470,12 @@
       "futureCommitments": [
         {
           "season": "2026-27",
-          "totalSalaryDollars": 216165306,
-          "playersUnderContract": 15
+          "totalSalaryDollars": 218316223,
+          "playersUnderContract": 16
         }
       ],
-      "playerSalaryCommitments": 216165306,
-      "playersWithSalary": 15,
+      "playerSalaryCommitments": 218316223,
+      "playersWithSalary": 16,
       "playersWithoutSalary": 2
     },
     "draftAssets": {

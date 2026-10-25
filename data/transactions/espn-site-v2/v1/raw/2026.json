@@ -2,9 +2,31 @@
   "source": "espn-site-v2-transactions",
   "datasetVersion": "1.0",
   "espnCalendarYear": 2026,
-  "fetchedAt": "2026-10-23T17:19:14.714Z",
-  "apiCount": 423,
+  "fetchedAt": "2026-10-25T18:17:19.486Z",
+  "apiCount": 425,
   "rows": [
+    {
+      "date": "2026-10-23T07:00Z",
+      "description": "Signed G Sean Pedulla to a two-way contract.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2026-10-23T07:00Z",
+      "description": "Waived G Kevin McCullar Jr..",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
     {
       "date": "2026-10-19T07:00Z",
       "description": "Signed G Brandon Miller to a multiyear contract extension.",

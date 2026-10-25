@@ -3,13 +3,13 @@
     "methodologyVersion": "movement-m1-0.2+movement-rules-v2",
     "status": "NEWS_INGEST_M1",
     "season": "2026-27",
-    "snapshotDate": "2026-10-23",
+    "snapshotDate": "2026-10-25",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-10-23T17:20:20.914Z",
-    "rosterPlayerCount": 480,
-    "headlinesScanned": 6069,
-    "latestHeadlineAt": "2026-10-23T17:09:15.000Z",
-    "latestTransactionDate": "2026-10-21",
+    "builtAt": "2026-10-25T18:18:25.344Z",
+    "rosterPlayerCount": 485,
+    "headlinesScanned": 6604,
+    "latestHeadlineAt": "2026-10-25T18:12:44.000Z",
+    "latestTransactionDate": "2026-10-24",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
       "Basketball News",
@@ -44,7 +44,7 @@
     },
     "outlet:cbs-sports": {
       "label": "CBS Sports",
-      "credibility": 12
+      "credibility": 16
     },
     "outlet:larry-brown-sports": {
       "label": "Larry Brown Sports",
@@ -201,6 +201,10 @@
     "reporter:keith-smith": {
       "label": "Keith Smith (Spotrac)",
       "credibility": 22
+    },
+    "reporter:andy-bailey": {
+      "label": "Andy Bailey (Bleacher Report)",
+      "credibility": 18
     },
     "ledger:nba-player-movement": {
       "label": "Player movement log",
@@ -694,7 +698,7 @@
     },
     {
       "id": "mv-contract-4701208-20261002",
-      "headline": "Moussa Cisse: contract future with the Mavericks",
+      "headline": "Moussa Cissé: contract future with the Mavericks",
       "primaryClaimId": "mv-7d49e32a38bf934a",
       "claimIds": [
         "mv-7d49e32a38bf934a",
@@ -882,7 +886,7 @@
     },
     {
       "id": "mv-contract-4683692-20261006",
-      "headline": "Cason Wallace, Karl-Anthony Towns and others: extension talks",
+      "headline": "Cason Wallace, Karl-Anthony Towns and others: contract talks",
       "primaryClaimId": "mv-abb18f46843d904e",
       "claimIds": [
         "mv-d46db2f4a349df07",
@@ -924,6 +928,7 @@
         "mv-a9dee44b9f7f0037",
         "mv-c4d2e8b2148c13ae",
         "mv-0043d78ec4ed4591",
+        "mv-84902237e652ecd4",
         "mv-espn-tx-34855363e48984d2"
       ],
       "evidenceClass": "reported",
@@ -1055,18 +1060,20 @@
       "claimIds": [
         "mv-2f428e5810081c14",
         "mv-ff2016272a3c9e6f",
-        "mv-db37464b00615528"
+        "mv-db37464b00615528",
+        "mv-584d2e2b13d2ed1e"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-09T23:11:42.000Z",
-      "lastMeaningfulAt": "2026-10-13T22:53:11.000Z",
+      "lastMeaningfulAt": "2026-10-23T14:53:56.000Z",
       "linkedPlayerIds": [
         "3945274",
         "4433136"
       ],
       "linkedTeamIds": [
-        "13"
+        "13",
+        "6"
       ]
     },
     {
@@ -1308,7 +1315,7 @@
     },
     {
       "id": "mv-trade-4701208-20261016",
-      "headline": "Moussa Cisse: trade talk",
+      "headline": "Moussa Cissé: trade talk",
       "primaryClaimId": "mv-b66a7dc6c9a8b9da",
       "claimIds": [
         "mv-b66a7dc6c9a8b9da"
@@ -1482,16 +1489,17 @@
     {
       "id": "mv-trade-3917376-20261021",
       "headline": "Jaylen Brown and Jayson Tatum: trade talk",
-      "primaryClaimId": "mv-309507bc3255656e",
+      "primaryClaimId": "mv-c4f0962abef9f0be",
       "claimIds": [
         "mv-2f0d84624ccb4107",
         "mv-bd26cacf446be7b2",
-        "mv-309507bc3255656e"
+        "mv-309507bc3255656e",
+        "mv-c4f0962abef9f0be"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-21T16:52:29.000Z",
-      "lastMeaningfulAt": "2026-10-23T11:30:00.000Z",
+      "lastMeaningfulAt": "2026-10-23T16:27:01.000Z",
       "linkedPlayerIds": [
         "3917376",
         "4065648"
@@ -1525,18 +1533,57 @@
       "primaryClaimId": "mv-1bf1c9ed9ead2db5",
       "claimIds": [
         "mv-3c01ac40c692884c",
-        "mv-1bf1c9ed9ead2db5"
+        "mv-1bf1c9ed9ead2db5",
+        "mv-nba-tx-9a9400588d2c1610"
       ],
       "evidenceClass": "reported",
-      "state": "unresolved",
+      "state": "completed",
       "firstSeenAt": "2026-10-22T23:15:00.000Z",
-      "lastMeaningfulAt": "2026-10-23T05:22:40.000Z",
+      "lastMeaningfulAt": "2026-10-23T12:00:00.000Z",
       "linkedPlayerIds": [
         "4897943"
       ],
       "linkedTeamIds": [
         "18",
         "16"
+      ]
+    },
+    {
+      "id": "mv-trade-4395628-20261023",
+      "headline": "Zion Williamson: trade talk",
+      "primaryClaimId": "mv-9c4f550ec534151f",
+      "claimIds": [
+        "mv-9c4f550ec534151f"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-10-23T17:58:10.000Z",
+      "lastMeaningfulAt": "2026-10-23T17:58:10.000Z",
+      "linkedPlayerIds": [
+        "4395628"
+      ],
+      "linkedTeamIds": [
+        "9",
+        "3"
+      ]
+    },
+    {
+      "id": "mv-trade-4431690-20261024",
+      "headline": "Zeke Nnaji: trade talk",
+      "primaryClaimId": "mv-535bdbbdc6f806ab",
+      "claimIds": [
+        "mv-535bdbbdc6f806ab"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-10-24T22:49:47.000Z",
+      "lastMeaningfulAt": "2026-10-24T22:49:47.000Z",
+      "linkedPlayerIds": [
+        "4431690"
+      ],
+      "linkedTeamIds": [
+        "7",
+        "15"
       ]
     },
     {
@@ -2803,6 +2850,7 @@
             "receives": [
               {
                 "label": "Micah Peavy",
+                "playerId": "4432185",
                 "fromTeamId": "3"
               },
               {
@@ -2820,7 +2868,7 @@
         ]
       },
       "id": "mv-tx-espn-tx-818f0e678249f2c3",
-      "headline": "Pelicans–Grizzlies trade: Jordan Hawkins and AJ Johnson",
+      "headline": "Pelicans–Grizzlies trade: Micah Peavy, Jordan Hawkins and 1 more",
       "primaryClaimId": "mv-espn-tx-818f0e678249f2c3",
       "claimIds": [
         "mv-espn-tx-818f0e678249f2c3",
@@ -2831,6 +2879,7 @@
       "firstSeenAt": "2026-09-08T12:00:00.000Z",
       "lastMeaningfulAt": "2026-09-08T12:00:00.000Z",
       "linkedPlayerIds": [
+        "4432185",
         "4683750",
         "5170947"
       ],
@@ -7920,6 +7969,111 @@
       "isOriginal": true
     },
     {
+      "id": "mv-584d2e2b13d2ed1e",
+      "clusterId": "mv-trade-3945274-20261009",
+      "summary": "Mavericks Allegedly Ran Behind-The-Scenes Smear Campaign Against Luka Doncic To Justify Lakers Trade",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-23T14:53:56.000Z",
+      "sourceId": "reporter:sam-amick",
+      "sourceLabel": "Fadeaway World, citing Sam Amick (The Athletic)",
+      "reporterLabel": "Sam Amick",
+      "sourceUrl": "https://fadeawayworld.net/nba/los-angeles-lakers/mavericks-allegedly-ran-behind-the-scenes-smear-campaign-against-luka-doncic-to-justify-lakers-trade",
+      "playerIds": [
+        "3945274"
+      ],
+      "teamIds": [
+        "6",
+        "13"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-c4f0962abef9f0be",
+      "clusterId": "mv-trade-3917376-20261021",
+      "summary": "Jaylen Brown calls 'cap' on Jayson Tatum's recollection of stunning Celtics-76ers trade",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-23T16:27:01.000Z",
+      "sourceId": "outlet:cbs-sports",
+      "sourceLabel": "CBS Sports",
+      "sourceUrl": "https://www.cbssports.com/nba/news/jaylen-brown-jayson-tatum-celtics-76ers-trade/",
+      "playerIds": [
+        "3917376",
+        "4065648"
+      ],
+      "teamIds": [
+        "2",
+        "20"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-9c4f550ec534151f",
+      "clusterId": "mv-trade-4395628-20261023",
+      "summary": "Blockbuster 2-For-1 Trade Proposal Lands Zion Williamson With Warriors",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-23T17:58:10.000Z",
+      "sourceId": "reporter:andy-bailey",
+      "sourceLabel": "Heavy, citing Andy Bailey (Bleacher Report)",
+      "reporterLabel": "Andy Bailey",
+      "sourceUrl": "https://heavy.com/sports/nba/golden-state-warriors/blockbuster-2-for-1-trade-proposal-lands-zion-williamson-with-warriors/",
+      "playerIds": [
+        "4395628"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-84902237e652ecd4",
+      "clusterId": "mv-contract-4683692-20261006",
+      "summary": "Karl-Anthony Towns’ desired contract number has been revealed",
+      "claimType": "contract_movement",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-23T23:43:24.000Z",
+      "sourceId": "reporter:brett-siegel",
+      "sourceLabel": "Larry Brown Sports, citing Brett Siegel (ClutchPoints)",
+      "reporterLabel": "Brett Siegel",
+      "sourceUrl": "https://larrybrownsports.com/basketball/karl-anthony-towns-desired-contract-number/775505",
+      "playerIds": [
+        "3136195"
+      ],
+      "teamIds": [],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-535bdbbdc6f806ab",
+      "clusterId": "mv-trade-4431690-20261024",
+      "summary": "Nuggets, Bucks Talked Trade Of Zeke Nnaji For Kevin Porter Jr",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-24T22:49:47.000Z",
+      "sourceId": "outlet:realgm",
+      "sourceLabel": "RealGM",
+      "sourceUrl": "https://basketball.realgm.com/wiretap/287877/Nuggets-Bucks-Talked-Trade-Of-Zeke-Nnaji-For-Kevin-Porter-Jr",
+      "playerIds": [
+        "4431690"
+      ],
+      "teamIds": [
+        "7",
+        "15"
+      ],
+      "isOriginal": false
+    },
+    {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",
       "clusterId": "mv-contract-3907387-20260904",
       "summary": "Signed guard Ben Simmons to a Contract.",
@@ -8265,6 +8419,26 @@
       ],
       "teamIds": [
         "16"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-nba-tx-9a9400588d2c1610",
+      "clusterId": "mv-contract-4897943-20261022",
+      "summary": "Signed forward Dalton Knecht to a Two-Way Contract.",
+      "claimType": "contract_movement",
+      "evidenceClass": "reported",
+      "state": "completed",
+      "provenanceKind": "completed_transaction",
+      "publishedAt": "2026-10-23T12:00:00.000Z",
+      "sourceId": "ledger:nba-player-movement",
+      "sourceLabel": "Player movement log",
+      "sourceUrl": "/offseason",
+      "playerIds": [
+        "4897943"
+      ],
+      "teamIds": [
+        "18"
       ],
       "isOriginal": true
     },
@@ -9091,6 +9265,7 @@
       "sourceLabel": "Transaction log",
       "sourceUrl": "/offseason",
       "playerIds": [
+        "4432185",
         "4683750",
         "5170947"
       ],
@@ -9112,6 +9287,7 @@
       "sourceLabel": "Transaction log",
       "sourceUrl": "/offseason",
       "playerIds": [
+        "4432185",
         "4683750",
         "5170947"
       ],
@@ -9316,6 +9492,16 @@
       "outcome": "materialized",
       "resolvedAt": "2026-10-19T12:00:00.000Z",
       "transactionRef": "nba-tx-98939218256f7b52",
+      "suppressTradeSpeculation": false
+    },
+    {
+      "clusterId": "mv-contract-4897943-20261022",
+      "playerIds": [
+        "4897943"
+      ],
+      "outcome": "materialized",
+      "resolvedAt": "2026-10-23T12:00:00.000Z",
+      "transactionRef": "nba-tx-9a9400588d2c1610",
       "suppressTradeSpeculation": false
     },
     {
@@ -9563,6 +9749,7 @@
     {
       "clusterId": "mv-tx-espn-tx-818f0e678249f2c3",
       "playerIds": [
+        "4432185",
         "4683750",
         "5170947"
       ],

@@ -1,8 +1,8 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-23",
-    "retrievedAt": "2026-10-23T17:25:29.715Z",
+    "snapshotDate": "2026-10-25",
+    "retrievedAt": "2026-10-25T18:28:27.546Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
@@ -11,7 +11,7 @@
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "d2e877c678cfae7b7411fe896b71fba2753ab8d869bb976637b25f7b107e5d8f",
+    "sourceHash": "bcdb336f3605d66c729bd3187a73069d1fbae876b27332008bf75eb25108aa83",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -3020,12 +3020,12 @@
                 "playerId": "1643813",
                 "franchiseId": "7",
                 "season": "2026-27",
-                "salary": null,
-                "capHit": null,
+                "salary": 1357763,
+                "capHit": 1357763,
                 "guaranteedAmount": null,
                 "guaranteeStatus": "UNKNOWN",
                 "optionType": "UNKNOWN",
-                "source": "espn-roster-no-salary"
+                "source": "salary-index"
               }
             ],
             "guaranteedTotal": null,
@@ -3058,13 +3058,13 @@
         "futureCommitments": [
           {
             "season": "2026-27",
-            "totalSalaryDollars": 221753103,
-            "playersUnderContract": 15
+            "totalSalaryDollars": 223110866,
+            "playersUnderContract": 16
           }
         ],
-        "playerSalaryCommitments": 221753103,
-        "playersWithSalary": 15,
-        "playersWithoutSalary": 2
+        "playerSalaryCommitments": 223110866,
+        "playersWithSalary": 16,
+        "playersWithoutSalary": 1
       },
       "draftAssets": {
         "franchiseId": "7",
@@ -7909,29 +7909,6 @@
             "href": "/players/1642885"
           },
           {
-            "playerId": "1641755",
-            "playerName": "Kevin McCullar Jr.",
-            "age": null,
-            "contractId": "cy-1641755-2026",
-            "contractType": "UNKNOWN",
-            "years": [
-              {
-                "contractId": "cy-1641755-2026",
-                "playerId": "1641755",
-                "franchiseId": "18",
-                "season": "2026-27",
-                "salary": 1366314,
-                "capHit": 1366314,
-                "guaranteedAmount": null,
-                "guaranteeStatus": "UNKNOWN",
-                "optionType": "UNKNOWN",
-                "source": "salary-index-carry-forward"
-              }
-            ],
-            "guaranteedTotal": null,
-            "href": "/players/1641755"
-          },
-          {
             "playerId": "1643022",
             "playerName": "Jaden Akins",
             "age": null,
@@ -7981,12 +7958,12 @@
         "futureCommitments": [
           {
             "season": "2026-27",
-            "totalSalaryDollars": 225965571,
-            "playersUnderContract": 16
+            "totalSalaryDollars": 224599257,
+            "playersUnderContract": 15
           }
         ],
-        "playerSalaryCommitments": 225965571,
-        "playersWithSalary": 16,
+        "playerSalaryCommitments": 224599257,
+        "playersWithSalary": 15,
         "playersWithoutSalary": 2
       },
       "draftAssets": {
@@ -10128,6 +10105,29 @@
             ],
             "guaranteedTotal": null,
             "href": "/players/1641778"
+          },
+          {
+            "playerId": "1642951",
+            "playerName": "Sean Pedulla",
+            "age": null,
+            "contractId": "cy-1642951-2026",
+            "contractType": "UNKNOWN",
+            "years": [
+              {
+                "contractId": "cy-1642951-2026",
+                "playerId": "1642951",
+                "franchiseId": "23",
+                "season": "2026-27",
+                "salary": null,
+                "capHit": null,
+                "guaranteedAmount": null,
+                "guaranteeStatus": "UNKNOWN",
+                "optionType": "UNKNOWN",
+                "source": "espn-roster-no-salary"
+              }
+            ],
+            "guaranteedTotal": null,
+            "href": "/players/1642951"
           }
         ],
         "futureCommitments": [
@@ -10139,7 +10139,7 @@
         ],
         "playerSalaryCommitments": 195117598,
         "playersWithSalary": 15,
-        "playersWithoutSalary": 1
+        "playersWithoutSalary": 2
       },
       "draftAssets": {
         "franchiseId": "23",
@@ -10931,6 +10931,29 @@
             "href": "/players/1642349"
           },
           {
+            "playerId": "1642877",
+            "playerName": "Micah Peavy",
+            "age": null,
+            "contractId": "cy-1642877-2026",
+            "contractType": "UNKNOWN",
+            "years": [
+              {
+                "contractId": "cy-1642877-2026",
+                "playerId": "1642877",
+                "franchiseId": "25",
+                "season": "2026-27",
+                "salary": 2150917,
+                "capHit": 2150917,
+                "guaranteedAmount": null,
+                "guaranteeStatus": "UNKNOWN",
+                "optionType": "UNKNOWN",
+                "source": "salary-index"
+              }
+            ],
+            "guaranteedTotal": null,
+            "href": "/players/1642877"
+          },
+          {
             "playerId": "1642964",
             "playerName": "Brooks Barnhizer",
             "age": null,
@@ -11003,12 +11026,12 @@
         "futureCommitments": [
           {
             "season": "2026-27",
-            "totalSalaryDollars": 216165306,
-            "playersUnderContract": 15
+            "totalSalaryDollars": 218316223,
+            "playersUnderContract": 16
           }
         ],
-        "playerSalaryCommitments": 216165306,
-        "playersWithSalary": 15,
+        "playerSalaryCommitments": 218316223,
+        "playersWithSalary": 16,
         "playersWithoutSalary": 2
       },
       "draftAssets": {
@@ -13261,8 +13284,8 @@
     "salaryNullAsZero": 0,
     "teamsWithPayroll": 30,
     "teamsWithContracts": 30,
-    "playersWithSalary": 469,
-    "unmatchedSalaryNames": 22,
+    "playersWithSalary": 470,
+    "unmatchedSalaryNames": 21,
     "draftAssetsStructured": 0
   }
 }
