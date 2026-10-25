@@ -21,6 +21,9 @@ export const SHELL_MESSAGE_NAMESPACES = [
 export const ROOT_CLIENT_MESSAGE_NAMESPACES = [
   ...SHELL_MESSAGE_NAMESPACES,
   "Home",
+  // InsightCard on `/` — without this, home SSR throws MISSING_MESSAGE and
+  // loading.tsx skeletons never swap.
+  "Findings",
   "Standings",
   "Players",
   "Ask",
@@ -35,7 +38,7 @@ export const ROOT_CLIENT_MESSAGE_NAMESPACES = [
   "Gm",
 ] as const;
 
-/** Full audit list including route-scoped packs (`/games/[gameId]`, `/findings`, arcade, GM). */
+/** Full audit list including route-scoped packs (`/games/[gameId]`, arcade, GM). */
 export const CLIENT_MESSAGE_NAMESPACES = [
   ...ROOT_CLIENT_MESSAGE_NAMESPACES,
   "GmUi",
@@ -46,7 +49,6 @@ export const CLIENT_MESSAGE_NAMESPACES = [
   "ArcadeChain",
   "ArcadeOneShot",
   "Games",
-  "Findings",
 ] as const;
 
 export type ClientMessageNamespace = (typeof CLIENT_MESSAGE_NAMESPACES)[number];
