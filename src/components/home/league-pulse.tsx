@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 
 import { StandingsConferenceTable } from "@/components/standings/standings-conference-table";
+import { AppLink } from "@/components/ui/app-link";
 import type { StandingRow } from "@/data/types";
 
 /** Compact East/West pulse for the player-first homepage. */
@@ -38,18 +38,18 @@ export function LeaguePulse({
           >
             {expanded ? "Show top 8" : "Expand all"}
           </button>
-          <Link
+          <AppLink
             href="/standings"
             className="sports-pill"
           >
             Full standings
-          </Link>
-          <Link
+          </AppLink>
+          <AppLink
             href="/standings#team-stats"
             className="sports-pill"
           >
             Team advanced
-          </Link>
+          </AppLink>
         </div>
       </div>
       <div className="grid gap-3 lg:grid-cols-2">

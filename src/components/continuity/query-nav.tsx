@@ -115,6 +115,7 @@ export function QueryNavProvider({
 
   const value = useMemo(
     () => ({
+      // Expose combined pending for link aria-busy / opacity.
       pending: Boolean(pending || routeTransition?.pending),
       replaceParams,
       pushHref,
@@ -137,7 +138,9 @@ export function QueryNavProvider({
     <QueryNavContext.Provider value={value}>
       <div
         className={cn("relative flex flex-col gap-5", className)}
-        data-updating={value.pending ? "true" : "false"}
+        // Only dim the prior board for same-path filter/sort updates.
+        // Cross-route soft nav must swap to loading.tsx, not freeze this page.
+        data-updating={pending ? "true" : "false"}
       >
         <QueryUpdatingChrome pending={pending} />
         {children}
