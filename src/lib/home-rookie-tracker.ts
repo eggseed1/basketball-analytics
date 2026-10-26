@@ -1,5 +1,5 @@
 /**
- * Home rookie tracker: current draft class + season counting lines.
+ * Home rookie race: current draft class + season counting / WAR1 lines.
  */
 
 import type { DraftNightPick } from "@/data/runtime/draft-night-snapshot";
@@ -7,7 +7,12 @@ import { normalizePlayerName } from "@/lib/player-name";
 
 export const ROOKIE_TRACKER_LIMIT = 8;
 
-export type RookieTrackerSort = "ppg" | "rpg" | "apg" | "pick";
+export type RookieTrackerSort =
+  | "war1"
+  | "points"
+  | "rebounds"
+  | "assists"
+  | "pick";
 
 export type RookieTrackerRow = {
   key: string;
@@ -20,6 +25,10 @@ export type RookieTrackerRow = {
   position: string | null;
   gp: number | null;
   mpg: number | null;
+  /** Season totals — blank until a counted game. */
+  points: number | null;
+  rebounds: number | null;
+  assists: number | null;
   ppg: number | null;
   rpg: number | null;
   apg: number | null;
@@ -52,21 +61,30 @@ export type RookieTrackerModel = {
   rows: RookieTrackerRow[];
   /** Explore board deep-link for the full class. */
   exploreHref: string;
+  /** Explore player race for the same season (WAR1 field). */
+  raceHref: string;
 };
 
-function rate(
-  total: number,
-  games: number
-): number | null {
+function rate(total: number, games: number): number | null {
   if (!Number.isFinite(games) || games <= 0) return null;
   if (!Number.isFinite(total)) return null;
   return Math.round((total / games) * 10) / 10;
 }
 
+function metricValue(
+  row: RookieTrackerRow,
+  sort: RookieTrackerSort
+): number | null {
+  if (sort === "pick") return row.overall;
+  if (sort === "war1") return row.war1;
+  if (sort === "points") return row.points;
+  if (sort === "rebounds") return row.rebounds;
+  return row.assists;
+}
+
 function pickSortValue(row: RookieTrackerRow, sort: RookieTrackerSort): number {
   if (sort === "pick") return row.overall;
-  const value =
-    sort === "ppg" ? row.ppg : sort === "rpg" ? row.rpg : row.apg;
+  const value = metricValue(row, sort);
   if (value == null || !Number.isFinite(value)) return Number.NEGATIVE_INFINITY;
   return value;
 }
@@ -80,12 +98,43 @@ export function sortRookieTrackerRows(
     const av = pickSortValue(a, sort);
     const bv = pickSortValue(b, sort);
     if (bv !== av) return bv - av;
-    // Prefer players who have actually played when rates tie or both blank.
     const ag = a.gp ?? 0;
     const bg = b.gp ?? 0;
     if (bg !== ag) return bg - ag;
     return a.overall - b.overall;
   });
+}
+
+/** Share of the race leader (0–1). Null when the row has no race value. */
+export function rookieRaceShare(
+  row: RookieTrackerRow,
+  sort: RookieTrackerSort,
+  leader: number | null
+): number | null {
+  if (sort === "pick") return null;
+  const value = metricValue(row, sort);
+  if (value == null || !Number.isFinite(value)) return null;
+  if (leader == null || !Number.isFinite(leader) || leader <= 0) {
+    return value > 0 ? 1 : value === 0 ? 0 : null;
+  }
+  // Negative WAR1: scale against the worst absolute magnitude in the field
+  // is handled by the caller; here leaders are non-negative race totals.
+  if (value < 0) return 0;
+  return Math.min(1, Math.max(0, value / leader));
+}
+
+export function rookieRaceLeaderValue(
+  rows: readonly RookieTrackerRow[],
+  sort: RookieTrackerSort
+): number | null {
+  if (sort === "pick") return null;
+  let best: number | null = null;
+  for (const row of rows) {
+    const value = metricValue(row, sort);
+    if (value == null || !Number.isFinite(value)) continue;
+    if (best == null || value > best) best = value;
+  }
+  return best;
 }
 
 /**
@@ -100,7 +149,7 @@ export function buildRookieTracker(opts: {
   drblLines?: readonly RookieTrackerDrblLine[];
   sort?: RookieTrackerSort;
 }): RookieTrackerModel {
-  const sort = opts.sort ?? "ppg";
+  const sort = opts.sort ?? "war1";
   const byId = new Map<string, RookieTrackerSeasonLine>();
   const byName = new Map<string, RookieTrackerSeasonLine>();
   for (const line of opts.seasonLines) {
@@ -125,9 +174,7 @@ export function buildRookieTracker(opts: {
       null;
     const gp = line && line.gamesPlayed > 0 ? line.gamesPlayed : null;
     const mpg =
-      line && gp
-        ? Math.round((line.minutes / gp) * 10) / 10
-        : null;
+      line && gp ? Math.round((line.minutes / gp) * 10) / 10 : null;
     const playerId = pick.playerId || line?.playerId || null;
     return {
       key: playerId ?? `${opts.draftYear}-${pick.overall}-${pick.name}`,
@@ -139,6 +186,9 @@ export function buildRookieTracker(opts: {
       position: pick.position,
       gp,
       mpg,
+      points: line && gp ? line.points : null,
+      rebounds: line && gp ? line.rebounds : null,
+      assists: line && gp ? line.assists : null,
       ppg: line && gp ? rate(line.points, gp) : null,
       rpg: line && gp ? rate(line.rebounds, gp) : null,
       apg: line && gp ? rate(line.assists, gp) : null,
@@ -148,8 +198,6 @@ export function buildRookieTracker(opts: {
   });
 
   const withGames = rows.filter((r) => (r.gp ?? 0) > 0).length;
-  // Full class so the client can re-rank by pick / PTS without dropping
-  // top selections that have not played yet. Boards slice for display.
   const ranked = sortRookieTrackerRows(rows, sort);
 
   return {
@@ -158,5 +206,6 @@ export function buildRookieTracker(opts: {
     withGames,
     rows: ranked,
     exploreHref: `/explore/players?draftClass=${opts.draftYear}`,
+    raceHref: `/explore/players/visualizations?view=race&metric=war1&season=${encodeURIComponent(opts.season)}`,
   };
 }
