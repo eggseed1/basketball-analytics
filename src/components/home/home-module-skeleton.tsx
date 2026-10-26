@@ -46,7 +46,7 @@ const HEIGHT: Record<HomeModuleId, string> = {
   "season-glance": "h-[2315px] lg:h-[1320px]",
   news: "h-[715px] lg:h-[596px]",
   "contract-showcase": "h-[420px] lg:h-[400px]",
-  "rookie-tracker": "h-[420px] lg:h-[400px]",
+  "rookie-tracker": "h-[560px] lg:h-[540px]",
 };
 
 function Bar({ className }: { className?: string }) {
