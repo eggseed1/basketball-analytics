@@ -103,38 +103,73 @@ jobs:
           fi
 
       # PAGE_CACHE keys include CF_VERSION_METADATA.id, so every ship starts cold.
-      # Warm the routes users hit first; otherwise the whole site feels slow until traffic refills KV.
+      # Warm via workers.dev — GitHub Actions IPs get 403 on drbl.io (bot/WAF).
+      # KV keys are host-agnostic; Cache API fills this colo for the next visitor.
       - name: Warm PAGE_CACHE
+        id: warm
         if: success()
         run: |
           set -euo pipefail
-          paths=("/" "/standings" "/scores" "/explore/games" "/explore/players" "/explore/teams" "/ask")
+          # Account workers.dev subdomain is drbl-analytics (wrangler account API).
+          BASE_URL="${DRBL_WARM_BASE_URL:-https://basketball-analytics.drbl-analytics.workers.dev}"
+          paths=(
+            "/"
+            "/standings"
+            "/scores"
+            "/explore/games"
+            "/explore/players"
+            "/explore/teams"
+            "/ask"
+            "/players/4065648"
+            "/api/home/insights"
+            "/api/home/hot-cold"
+            "/api/home/performers"
+            "/api/home/week-strip"
+          )
+          # Optional live/final game shells — never fail the warm if ESPN is down.
           if games=$(curl -fsS --max-time 15 \
-            "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard" \
+            "https://cdn.espn.com/core/nba/scoreboard?xhr=1" \
             | node -e '
               let s=""; process.stdin.on("data",d=>s+=d); process.stdin.on("end",()=>{
                 try {
                   const d=JSON.parse(s);
-                  for (const e of d.events||[]) {
+                  const events=d.content?.sbData?.events||d.events||[];
+                  for (const e of events) {
                     const st=e.competitions?.[0]?.status?.type?.state;
                     if (st==="in"||st==="post") console.log("/games/"+e.id);
                   }
                 } catch {}
               });
-            '); then
+            ' 2>/dev/null); then
             while IFS= read -r g; do
               [ -n "$g" ] && paths+=("$g")
             done <<< "$games"
           fi
-          echo "Warming ${#paths[@]} paths on https://drbl.io"
+          echo "Warming ${#paths[@]} paths on ${BASE_URL}"
+          failed=0
           for path in "${paths[@]}"; do
-            code=$(curl -sS -o /dev/null -w "%{http_code} %{time_total}" \
+            accept="text/html"
+            [[ "$path" == /api/* ]] && accept="application/json"
+            out=$(curl -sS -o /dev/null -w "%{http_code} %{time_total}" \
               --max-time 90 \
-              -H "Accept: text/html" \
+              -H "Accept: ${accept}" \
               -H "User-Agent: drbl-deploy-cache-warm" \
-              "https://drbl.io${path}" || echo "ERR 0")
-            echo "  ${path} → ${code}"
+              "${BASE_URL}${path}" || echo "000 0")
+            code="${out%% *}"
+            echo "  ${path} → ${out}"
+            case "$code" in
+              2??) ;;
+              *)
+                echo "::error title=PAGE_CACHE warm failed::${path} returned ${code} from ${BASE_URL}"
+                failed=1
+                ;;
+            esac
           done
+          if [ "$failed" -ne 0 ]; then
+            echo "Warm step failed — deploy already shipped; re-run this job or curl ${BASE_URL} manually."
+            exit 1
+          fi
+          echo "warm_ok=1" >> "$GITHUB_OUTPUT"
 
       - name: Summary
         if: always()
@@ -143,4 +178,8 @@ jobs:
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "- ref: \`${{ github.sha }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- no daily sync / data refresh" >> "$GITHUB_STEP_SUMMARY"
-          echo "- PAGE_CACHE warm after deploy" >> "$GITHUB_STEP_SUMMARY"
+          if [ "${{ steps.warm.outputs.warm_ok }}" = "1" ]; then
+            echo "- PAGE_CACHE warm via workers.dev succeeded" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "- PAGE_CACHE warm **failed or skipped** (check Warm PAGE_CACHE step)" >> "$GITHUB_STEP_SUMMARY"
+          fi

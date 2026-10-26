@@ -18,6 +18,7 @@ type AppLinkProps = {
   target?: ComponentProps<"a">["target"];
   rel?: ComponentProps<"a">["rel"];
   onClick?: MouseEventHandler<HTMLAnchorElement>;
+  onPointerEnter?: MouseEventHandler<HTMLAnchorElement>;
   /** Optional accessibility label. */
   "aria-label"?: string;
   title?: string;
@@ -42,6 +43,7 @@ export function AppLink({
   target,
   rel,
   onClick,
+  onPointerEnter,
   prefetch,
   scroll = true,
   ...rest
@@ -60,6 +62,7 @@ export function AppLink({
           (openNew || target === "_blank" ? "noopener noreferrer" : undefined)
         }
         onClick={onClick}
+        onPointerEnter={onPointerEnter}
         data-nav="external"
         {...rest}
       >
@@ -74,6 +77,7 @@ export function AppLink({
         href={href}
         className={cn(className)}
         onClick={onClick}
+        onPointerEnter={onPointerEnter}
         data-nav="hash"
         {...rest}
       >
@@ -88,6 +92,7 @@ export function AppLink({
       href={href}
       className={cn(className)}
       onClick={onClick}
+      onPointerEnter={onPointerEnter}
       prefetch={prefetch}
       scroll={scroll}
       data-nav="internal"
