@@ -49,13 +49,23 @@ const info = nbaSeasonPhaseInfo(now);
 const minGp = dailyGameLogMinGp(now);
 
 /**
- * In-season bakes are rebuilt every run but committed only on Mondays and
- * June 25-30, so git holds the finished season once offseason runs stop
- * rebuilding them. First scheduled run of the day (12:17 UTC) only.
+ * Heavy in-season bakes (season-tables, DRBL, impact, …) are rebuilt every run
+ * but committed only on Mondays and June 25-30, so git holds the finished
+ * season once offseason runs stop rebuilding them. First scheduled run of the
+ * day (before 14:00 UTC) only.
+ *
+ * Standings + game-snapshot are different: Cloudflare prefers the bundled
+ * board over live ESPN, so a Monday-only commit freezes W-L all week. Commit
+ * those lightweight boards on every first tip-window run (no extra Worker
+ * ESPN; one nightly deploy already pays for the ship).
  */
 const seasonCloseWindow = now.getUTCMonth() === 5 && now.getUTCDate() >= 25;
 const firstRunOfDay = now.getUTCHours() < 14;
-const commitSeasonSnapshots = firstRunOfDay && (now.getUTCDay() === 1 || seasonCloseWindow);
+const commitSeasonSnapshots =
+  firstRunOfDay && (now.getUTCDay() === 1 || seasonCloseWindow);
+// Both tip-window crons (morning + post-finals). Tiny JSON; deploy already runs.
+const commitBoardSnapshots =
+  info.shouldRefreshPlayerViz || FORCE || seasonCloseWindow;
 const archiveSeasonToR2 = firstRunOfDay && seasonCloseWindow;
 
 function log(message) {
@@ -330,6 +340,9 @@ async function main() {
       phase: info.phase,
       season: info.season,
       skipped: "false",
+      commit_season: "false",
+      commit_board: "false",
+      archive_season: "false",
     });
     log(`offseason transactions refresh → ${dest}`);
     return;
@@ -503,9 +516,12 @@ async function main() {
     season: info.season,
     skipped: "false",
     commit_season: String(commitSeasonSnapshots),
+    commit_board: String(commitBoardSnapshots),
     archive_season: String(archiveSeasonToR2),
   });
-  log(`ok → ${dest} (${report.durationMs}ms)`);
+  log(
+    `ok → ${dest} (${report.durationMs}ms) commit_board=${commitBoardSnapshots} commit_season=${commitSeasonSnapshots}`
+  );
 }
 
 main().catch(async (error) => {
