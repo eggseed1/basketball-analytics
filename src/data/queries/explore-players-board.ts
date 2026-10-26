@@ -14,10 +14,8 @@ import type { BasketballFilters } from "@/data/types";
 import {
   DEFAULT_PLAYER_BOARD_VIEWS,
   type PlayerBoardView,
-  PLAYER_BOARD_VIEW_COLUMNS,
   type PlayerBoardRate,
 } from "@/lib/explore-players-display";
-import { boardStatValue } from "@/lib/player-board-stats";
 import {
   defaultPlayerSeasonSortDir,
   type PlayerSeasonSortKey,
@@ -29,6 +27,7 @@ import {
 } from "@/lib/nba-season-status-schedule";
 import {
   type ExplorePlayerBoardRow,
+  emptyBoardColumns,
   sortExplorePlayerRows,
   slimExplorePlayerBoardRow,
   toExplorePlayerBoardRow,
@@ -36,6 +35,7 @@ import {
 
 export type { ExplorePlayerBoardRow } from "@/data/queries/explore-players-board-pure";
 export {
+  emptyBoardColumns,
   parseExplorePlayersSortDir,
   sortExplorePlayerRows,
   slimExplorePlayerBoardRow,
@@ -107,17 +107,6 @@ function serializeContextPools(
     out[metricId] = values;
   }
   return out;
-}
-
-/** All-zero counts are unpublished history (pre-1973 steals), not real zeros. */
-function emptyBoardColumns(rows: ExplorePlayerBoardRow[]): PlayerSeasonSortKey[] {
-  return PLAYER_BOARD_VIEW_COLUMNS.all.filter(
-    (key) =>
-      !rows.some((row) => {
-        const v = boardStatValue(row, key, "totals");
-        return v != null && v !== 0;
-      })
-  );
 }
 
 /**
