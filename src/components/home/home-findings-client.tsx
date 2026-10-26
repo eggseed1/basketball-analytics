@@ -8,6 +8,10 @@ import {
   orderByHeight,
 } from "@/components/home/findings-section";
 import { SectionLink } from "@/components/ui/section-link";
+import {
+  fetchHomeInsightsPayload,
+  type HomeInsightsPayload,
+} from "@/lib/home-insights-client";
 import type { RecentInsight } from "@/lib/recent-insights";
 
 type Payload = {
@@ -36,16 +40,11 @@ export function HomeFindingsClient({ initial }: { initial: Payload }) {
 
   useEffect(() => {
     let cancelled = false;
-    const ac = new AbortController();
     (async () => {
       try {
-        const res = await fetch("/api/home/insights", { signal: ac.signal });
-        if (!res.ok) throw new Error(`insights ${res.status}`);
-        const json = (await res.json()) as Payload & {
-          aboveNorm?: RecentInsight[];
-        };
+        const json: HomeInsightsPayload = await fetchHomeInsightsPayload();
         if (!cancelled) {
-          setData({ insights: json.insights ?? [], empty: Boolean(json.empty) });
+          setData({ insights: json.insights, empty: json.empty });
         }
       } catch {
         /* keep initial */
@@ -53,7 +52,6 @@ export function HomeFindingsClient({ initial }: { initial: Payload }) {
     })();
     return () => {
       cancelled = true;
-      ac.abort();
     };
   }, []);
 

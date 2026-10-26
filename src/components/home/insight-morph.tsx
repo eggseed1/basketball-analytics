@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useLayoutEffect, useRef, type MouseEvent, type ReactNode } from "react";
+import { useLayoutEffect, useRef, type MouseEvent, type ReactNode } from "react";
 
 import { AppLink } from "@/components/ui/app-link";
 
@@ -98,14 +98,15 @@ export function InsightCardLink({
   label: string;
 }) {
   const router = useRouter();
-  useEffect(() => {
-    void router.prefetch(href);
-  }, [href, router]);
   return (
     <AppLink
       href={href}
       aria-label={label}
+      prefetch={false}
       className="absolute inset-0 z-[1] rounded-[8px]"
+      onPointerEnter={() => {
+        void router.prefetch(href);
+      }}
       onClick={morphClick(name, href, (next) => router.push(next))}
     >
       {null}
@@ -125,11 +126,16 @@ export function InsightReturnLink({
   children: ReactNode;
 }) {
   const router = useRouter();
-  useEffect(() => {
-    void router.prefetch(href);
-  }, [href, router]);
   return (
-    <AppLink href={href} className={className} onClick={morphClick(name, href, (next) => router.push(next))}>
+    <AppLink
+      href={href}
+      className={className}
+      prefetch={false}
+      onPointerEnter={() => {
+        void router.prefetch(href);
+      }}
+      onClick={morphClick(name, href, (next) => router.push(next))}
+    >
       {children}
     </AppLink>
   );

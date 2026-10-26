@@ -3,10 +3,12 @@
 import { useEffect, useState } from "react";
 
 import { AboveNormPanel } from "@/components/home/above-norm-panel";
+import { fetchHomeInsightsPayload } from "@/lib/home-insights-client";
 import type { RecentInsight } from "@/lib/recent-insights";
 
 /**
  * Above-their-norm sidebar — paint bundled nights first, soft-refresh after.
+ * Shares the insights fetch with HomeFindingsClient.
  */
 export function HomeAboveNormClient({
   initial,
@@ -17,20 +19,16 @@ export function HomeAboveNormClient({
 
   useEffect(() => {
     let cancelled = false;
-    const ac = new AbortController();
     (async () => {
       try {
-        const res = await fetch("/api/home/insights", { signal: ac.signal });
-        if (!res.ok) throw new Error(`insights ${res.status}`);
-        const json = (await res.json()) as { aboveNorm?: RecentInsight[] };
-        if (!cancelled) setNights(json.aboveNorm ?? []);
+        const json = await fetchHomeInsightsPayload();
+        if (!cancelled) setNights(json.aboveNorm);
       } catch {
         /* keep initial */
       }
     })();
     return () => {
       cancelled = true;
-      ac.abort();
     };
   }, []);
 
