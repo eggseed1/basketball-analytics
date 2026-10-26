@@ -55,12 +55,14 @@ export const BOARD_HTML_POLICY: PageHtmlCachePolicy = {
 };
 
 /**
- * Standings shell — same short CDN window as scores. Records overlay the live
- * day scoreboard, so a 45-minute board TTL would hide finals after tip.
+ * Standings shell — longer than scores (tiles poll), shorter than other boards.
+ * #101's 2-minute fresh window forced a full SSR (+ ESPN day scoreboard) too
+ * often; cold MISSes were ~4s. 10 minutes keeps EDGE hits common while SWR
+ * still picks up finals after tip via the budgeted live overlay.
  */
 export const STANDINGS_HTML_POLICY: PageHtmlCachePolicy = {
-  fresh: 2 * 60,
-  stale: 10 * 60,
+  fresh: 10 * 60,
+  stale: 30 * 60,
 };
 
 /**
