@@ -1,88 +1,41 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	// Wraps the generated .open-next/worker.js to rate limit /api/* and cache
-	// player/team HTML before Next runs.
+	// Thin HTML/API edge — Cache API + KV only. Custom domains stay on this name.
+	// MISS / uncached paths forward to basketball-analytics-origin (OpenNext).
 	"main": "worker.ts",
 	"name": "basketball-analytics",
 	"compatibility_date": "2026-08-24",
 	"compatibility_flags": [
-		"nodejs_compat",
-		"global_fetch_strictly_public"
+		"nodejs_compat"
 	],
 	// drbl.io and www.drbl.io are Workers Custom Domains attached once through the API,
 	// not listed under "routes", so CI deploys never need DNS rights on the zone.
-	// worker.ts redirects www to the apex.
 	"workers_dev": true,
 	"preview_urls": false,
-	// Only console.* output (errors/warnings) is kept, 7 days. Per-request invocation
-	// logs stay off; the privacy page promises no request logging.
 	"observability": {
 		"enabled": true,
 		"logs": {
 			"invocation_logs": false,
-			// 5% is enough to debug; 100% was writing a log event per request.
 			"head_sampling_rate": 0.05
 		}
 	},
-	"assets": {
-		"directory": ".open-next/assets",
-		"binding": "ASSETS"
-	},
 	"services": [
 		{
-			// Self-reference service binding, the service name must match the worker name
-			// see https://opennext.js.org/cloudflare/caching
-			"binding": "WORKER_SELF_REFERENCE",
-			"service": "basketball-analytics"
+			"binding": "ORIGIN",
+			"service": "basketball-analytics-origin"
 		}
 	],
-	// Rendered player/team HTML, 15 minute TTL. See worker.ts.
 	"kv_namespaces": [
 		{
 			"binding": "PAGE_CACHE",
 			"id": "4267118315b64cb48a533e1543d22e21"
 		}
 	],
-	// Player-season shot charts, {season}/{nbaPlayerId}.json. CI can't bake them
-	// (stats.nba.com blocks runners), so scripts/upload-player-shots-r2.mjs
-	// uploads the local bake.
-	"r2_buckets": [
-		{
-			"binding": "PLAYER_SHOTS",
-			"bucket_name": "drbl-player-shots"
-		},
-		// Past-season player game logs, manifest.json + {season}/{nbaPlayerId}.json.
-		// CI only rebakes the current season, so scripts/upload-player-game-logs-r2.mjs
-		// uploads the local bake of older seasons.
-		{
-			"binding": "PLAYER_GAME_LOGS",
-			"bucket_name": "drbl-player-game-logs"
-		},
-		// Archived games: raw NBA box scores and play-by-play at
-		// games/{nbaGameId}/{boxscore,playbyplay}.json, plus the ESPN play-by-play
-		// bake at play-by-play/{espnGameId}.json. Both are gitignored local trees,
-		// uploaded by scripts/upload-game-archive-r2.mjs.
-		{
-			"binding": "GAME_ARCHIVE",
-			"bucket_name": "drbl-game-archive"
-		}
-	],
-	// Cache keys include the version id so a deploy never serves HTML that
-	// points at the previous build's chunks.
 	"version_metadata": {
 		"binding": "CF_VERSION_METADATA"
 	},
-	"images": {
-		// Enable image optimization
-		// see https://opennext.js.org/cloudflare/howtos/image
-		"binding": "IMAGES"
-	},
 	"ratelimits": [
 		{
-			// Per client IP, per Cloudflare location, and counted loosely across machines,
-			// so the real ceiling is a few times this. Live pages poll a few times a minute.
-			// Newly picked namespace IDs never denied in testing; 1001 does (workers-sdk#15417).
-			// Keys are prefixed "api:" because counters are shared account-wide per namespace.
 			"name": "API_RATE_LIMITER",
 			"namespace_id": "1001",
 			"simple": {
@@ -91,14 +44,8 @@
 			}
 		}
 	],
-	"vars": {
-		"DATA_PROVIDER": "nba",
-		// Workers Paid: restore full product (no free-tier UI/data stripping).
-		"FULL_EDGE_PRODUCT": "1"
-	},
-	// Cap runaway SSR (invoice was ~$25 on Workers CPU ms). 25s still covers
-	// player/game islands; hung streams used to burn up to 120s each.
 	"limits": {
-		"cpu_ms": 25000
+		// Cache hits are tiny; MISS just waits on the origin binding.
+		"cpu_ms": 10000
 	}
 }

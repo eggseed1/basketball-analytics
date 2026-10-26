@@ -471,7 +471,7 @@ jobs:
             exit 1
           fi
           set -o pipefail
-          npx opennextjs-cloudflare deploy 2>&1 | tee /tmp/deploy.log
+          bash scripts/deploy-cf-workers.sh
 
       # Cloudflare rejects Workers over 64 MiB uncompressed (wrangler's "Total Upload").
       # Soft warn past 60 MiB; only fail when we are within ~1 MiB of the hard cap so a
@@ -479,10 +479,12 @@ jobs:
       - name: Check Worker size
         if: always()
         run: |
-          [ -f /tmp/deploy.log ] || exit 0
-          kib=$(grep -oE 'Total Upload: [0-9.]+ KiB' /tmp/deploy.log | head -1 | grep -oE '[0-9.]+' || true)
+          log=/tmp/deploy-origin.log
+          [ -f "$log" ] || log=/tmp/deploy.log
+          [ -f "$log" ] || exit 0
+          kib=$(grep -oE 'Total Upload: [0-9.]+ KiB' "$log" | head -1 | grep -oE '[0-9.]+' || true)
           [ -n "$kib" ] || exit 0
-          echo "Worker upload: ${kib} KiB of 65536 KiB"
+          echo "Origin Worker upload: ${kib} KiB of 65536 KiB"
           if awk -v k="$kib" 'BEGIN { exit !(k > 64512) }'; then
             echo "::error title=Worker bundle near the 64 MiB limit::Upload is ${kib} KiB; Cloudflare rejects uploads above 65536 KiB. Move large bundled JSON to static assets or R2."
             exit 1
