@@ -452,6 +452,12 @@ jobs:
         continue-on-error: true
         run: npx tsx --require ./scripts/lib/stub-server-only.cjs scripts/build-share-images.ts
 
+      - name: Copy runtime JSON to Static Assets
+        if: >-
+          steps.sync.outputs.should_deploy == 'true' &&
+          (github.event_name != 'workflow_dispatch' || inputs.deploy)
+        run: node scripts/copy-runtime-json-assets.mjs
+
       - name: Build OpenNext bundle
         if: >-
           steps.sync.outputs.should_deploy == 'true' &&

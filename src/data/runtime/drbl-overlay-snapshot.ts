@@ -1,13 +1,17 @@
 /**
- * Bundled slim DRBL overlay for Cloudflare Workers (no node:fs).
+ * Bundled slim DRBL overlay.
  * Full precomputed artifacts stay on disk for local / provenance; product
  * surfaces read this compact snapshot on CF.
+ *
+ * JSON is copied to public/runtime for Workers Static Assets — do not
+ * static-import (inlines into the origin script).
  *
  * Row v2: [id, name, teamId, drbl100, raw, poss, O, D, P, Ln, B, r1, war1]
  * Row v1 (legacy): [id, drbl100, raw, poss, O, D, P, Ln, B, r1, war1]
  */
-import snapshot from "./drbl-overlay-snapshot.json";
 import type { DrblPlayerSeasonRow } from "../../../drbl/models/player-value";
+
+import { loadRuntimeJson } from "./load-runtime-json";
 
 type SlimRowV2 = [
   string, // playerId (NBA)
@@ -47,11 +51,31 @@ type OverlayFile = {
   seasons?: Record<string, SlimRow[]>;
 };
 
-const data = snapshot as unknown as OverlayFile;
-const seasons =
-  data?.seasons && typeof data.seasons === "object" ? data.seasons : {};
+type Loaded = {
+  data: OverlayFile;
+  seasons: Record<string, SlimRow[]>;
+};
+
+let loaded: Loaded | null = null;
+let loadPromise: Promise<Loaded> | null = null;
 
 const seasonCache = new Map<string, DrblPlayerSeasonRow[]>();
+
+async function ensureLoaded(): Promise<Loaded> {
+  if (loaded) return loaded;
+  if (!loadPromise) {
+    loadPromise = (async () => {
+      const data =
+        (await loadRuntimeJson<OverlayFile>("drbl-overlay-snapshot.json")) ??
+        {};
+      const seasons =
+        data?.seasons && typeof data.seasons === "object" ? data.seasons : {};
+      loaded = { data, seasons };
+      return loaded;
+    })();
+  }
+  return loadPromise;
+}
 
 function isV2(row: SlimRow): row is SlimRowV2 {
   return typeof row[1] === "string";
@@ -133,17 +157,23 @@ function toDrblRow(row: SlimRow): DrblPlayerSeasonRow {
   } as DrblPlayerSeasonRow;
 }
 
-export function getBundledDrblSeason(season: string): DrblPlayerSeasonRow[] {
+export async function getBundledDrblSeason(
+  season: string
+): Promise<DrblPlayerSeasonRow[]> {
   const key = String(season ?? "").trim();
   if (!key) return [];
   const cached = seasonCache.get(key);
   if (cached) return cached;
-  const rows = (seasons[key] ?? []).map(toDrblRow).filter((r) => Number.isFinite(r.drbl100));
+  const { seasons } = await ensureLoaded();
+  const rows = (seasons[key] ?? [])
+    .map(toDrblRow)
+    .filter((r) => Number.isFinite(r.drbl100));
   seasonCache.set(key, rows);
   return rows;
 }
 
-export function bundledDrblOverlayMeta() {
+export async function bundledDrblOverlayMeta() {
+  const { data, seasons } = await ensureLoaded();
   return {
     version: data.version ?? 0,
     generatedAt: data.generatedAt ?? null,

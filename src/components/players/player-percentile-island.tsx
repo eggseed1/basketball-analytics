@@ -38,7 +38,7 @@ export async function PlayerPercentileIsland({
       identityTeamKey,
       { nbaId, espnId, mode: "fast" }
     );
-    const statsCtx = resolvePlayerStatsSeason(career, season);
+    const statsCtx = await resolvePlayerStatsSeason(career, season);
     // Only the viewed season's stints on SSR — slider seasons hydrate with full upgrade.
     const stintsBySeason = {
       [statsCtx.statsSeason]: cardStintsForSeason(career, statsCtx.statsSeason),

@@ -71,7 +71,7 @@ async function GameLabDeepBody({ gameId, hidePeriodTable, asOfMs }: { gameId: st
     return <p className="text-[13px] text-muted-foreground">{t("labUnavailable")}</p>;
   }
   const shell = await getGameShellCached(gameId);
-  const pregameMargin = shell ? runtimePregameMargin(shell.game) : undefined;
+  const pregameMargin = shell ? await runtimePregameMargin(shell.game) : undefined;
   // Finals: omit PBP from Flight and hydrate client-side. Live keeps SSR events.
   const status = payload.analysis.status as GameStatusKind | undefined;
   const isFinal = isFinalStatus(status);

@@ -30,7 +30,7 @@ export async function PlayerRoleIsland({
   className?: string;
 }) {
   const t = await getTranslations("PlayerDetail");
-  const { statsSeason } = resolvePlayerStatsSeason(career, requestSeason);
+  const { statsSeason } = await resolvePlayerStatsSeason(career, requestSeason);
   const row =
     career.find(
       (r) => r.season === statsSeason && (r.gamesPlayed > 0 || r.usagePct != null)
@@ -45,7 +45,7 @@ export async function PlayerRoleIsland({
     const { getBundledBrefPeerBoard } = await import(
       "@/data/runtime/bref-advanced-snapshot"
     );
-    peerBoard = getBundledBrefPeerBoard(statsSeason);
+    peerBoard = await getBundledBrefPeerBoard(statsSeason);
     if (row.usagePct == null || !Number.isFinite(row.usagePct)) {
       const ids = new Set(
         [playerId, nbaId, espnId]

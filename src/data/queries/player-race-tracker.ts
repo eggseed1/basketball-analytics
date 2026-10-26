@@ -237,11 +237,11 @@ type BoardActivity = { minutes: number; gamesPlayed: number; teamAbbr: string };
  * BRef season minutes, GP and team keyed by nba id, espn id, and normalized
  * name. Traded players keep the team they logged the most minutes for.
  */
-function boardActivityIndex(season: string): {
+async function boardActivityIndex(season: string): Promise<{
   byNba: Map<string, BoardActivity>;
   byEspn: Map<string, BoardActivity>;
   byName: Map<string, BoardActivity>;
-} {
+}> {
   const byNba = new Map<string, BoardActivity>();
   const byEspn = new Map<string, BoardActivity>();
   const byName = new Map<string, BoardActivity>();
@@ -253,7 +253,7 @@ function boardActivityIndex(season: string): {
     const prev = map.get(key);
     if (!prev || next.minutes >= prev.minutes) map.set(key, next);
   };
-  const board = getBundledBrefPeerBoard(season);
+  const board = await getBundledBrefPeerBoard(season);
   for (const row of board) {
     const teamAbbr = String(
       row.teamAbbreviation ?? row.teamId ?? ""
@@ -280,10 +280,10 @@ function boardActivityIndex(season: string): {
   return { byNba, byEspn, byName };
 }
 
-function attachBoardActivity(
+async function attachBoardActivity(
   season: string,
   candidates: RaceCandidate[]
-): RaceCandidate[] {
+): Promise<RaceCandidate[]> {
   const needsLookup = candidates.some(
     (row) =>
       row.minutes == null ||
@@ -293,7 +293,7 @@ function attachBoardActivity(
       !row.teamAbbr
   );
   if (!needsLookup) return candidates;
-  const index = boardActivityIndex(season);
+  const index = await boardActivityIndex(season);
   return candidates.map((row) => {
     const fromNba = row.nbaId ? index.byNba.get(row.nbaId) : undefined;
     const fromEspn = row.espnId ? index.byEspn.get(row.espnId) : undefined;
@@ -372,17 +372,17 @@ async function mapInBatches<T, R>(
 /**
  * Rank season leaders for the selected metric (bundled sources only).
  */
-export function rankPlayerRaceCandidates(
+export async function rankPlayerRaceCandidates(
   season: string,
   metric: PlayerRaceMetric,
   limit = CANDIDATE_POOL
-): RaceCandidate[] {
+): Promise<RaceCandidate[]> {
   const def = getPlayerRaceMetricDef(metric);
   const aliases = getBundledPlayerIdAliasIndex();
   const byKey = new Map<string, RaceCandidate & { gamesPlayed: number }>();
 
   if (metric === "war1" || metric === "r1Points" || metric === "drbl100") {
-    const rows = getBundledDrblSeason(season);
+    const rows = await getBundledDrblSeason(season);
     for (const row of rows) {
       const nbaId = String(row.playerId ?? "").trim();
       if (!nbaId) continue;
@@ -412,14 +412,14 @@ export function rankPlayerRaceCandidates(
         false
       );
     }
-    return attachBoardActivity(
+    return await attachBoardActivity(
       season,
       finalizeCandidates(byKey, metric, limit)
     );
   }
 
   if (metric === "darkoDpm") {
-    const rows = getBundledDarkoSeason(season);
+    const rows = await getBundledDarkoSeason(season);
     for (const row of rows) {
       const nbaId = row.nbaPlayerId ? String(row.nbaPlayerId) : null;
       const name = String(row.playerName ?? "").trim();
@@ -445,13 +445,13 @@ export function rankPlayerRaceCandidates(
         false
       );
     }
-    return attachBoardActivity(
+    return await attachBoardActivity(
       season,
       finalizeCandidates(byKey, metric, limit)
     );
   }
 
-  const board = getBundledBrefPeerBoard(season);
+  const board = await getBundledBrefPeerBoard(season);
   if (!board.length) return [];
 
   for (const row of board) {
@@ -501,7 +501,7 @@ export const getPlayerRaceTrackerSeasonOptions = cache(
       minFiles: PLAYER_GAME_LOG_RACE_MIN_FILES,
     });
     if (fromLogs.length) return fromLogs;
-    const seasons = brefAdvancedSnapshotMeta().seasons;
+    const seasons = (await brefAdvancedSnapshotMeta()).seasons;
     if (Array.isArray(seasons) && seasons.length) {
       return [...seasons]
         .filter((season) => /^\d{4}-\d{2}$/.test(season))
@@ -512,11 +512,11 @@ export const getPlayerRaceTrackerSeasonOptions = cache(
   }
 );
 
-function lookupPinnedCandidate(
+async function lookupPinnedCandidate(
   season: string,
   metric: PlayerRaceMetric,
   pinId: string
-): RaceCandidate | null {
+): Promise<RaceCandidate | null> {
   const aliases = getBundledPlayerIdAliasIndex();
   const byNba = aliases.byNba.get(pinId);
   const byEspn = aliases.byEspn.get(pinId);
@@ -529,7 +529,7 @@ function lookupPinnedCandidate(
     byNba?.playerName ?? byEspn?.playerName ?? `Player ${pinId}`;
 
   // Scan a wide ranked pool so pins outside the default top-N still get totals.
-  const ranked = rankPlayerRaceCandidates(season, metric, FULL_LEAGUE_POOL);
+  const ranked = await rankPlayerRaceCandidates(season, metric, FULL_LEAGUE_POOL);
   const hit = ranked.find(
     (row) =>
       (nbaId && row.nbaId === nbaId) ||
@@ -592,7 +592,7 @@ export const getPlayerRaceTrackerPayload = cache(
       : (options[0] ?? season);
 
     // Always scan a wide board pool in memory — log IO is the expensive part.
-    const candidates = rankPlayerRaceCandidates(
+    const candidates = await rankPlayerRaceCandidates(
       resolvedSeason,
       metric,
       FULL_LEAGUE_POOL
@@ -656,7 +656,7 @@ export const getPlayerRaceTrackerPayload = cache(
     const loadList: RaceCandidate[] = [...fieldCandidates];
     const seenKeys = new Set(loadList.map(pinKey));
     for (const pinId of pinIds) {
-      const pinned = lookupPinnedCandidate(resolvedSeason, metric, pinId);
+      const pinned = await lookupPinnedCandidate(resolvedSeason, metric, pinId);
       if (!pinned) continue;
       const key = pinKey(pinned);
       if (seenKeys.has(key)) continue;

@@ -157,7 +157,7 @@ export async function getExplorePlayersBoardView(options: {
   const earlySeasonBoard =
     Boolean(options.filters.season) &&
     isCurrentNbaSeason(options.filters.season!) &&
-    leagueRegularSeasonHasOpened(options.filters.season!) &&
+    await leagueRegularSeasonHasOpened(options.filters.season!) &&
     !board.rows.some((row) => row.gamesPlayed >= 10);
   // Prefer WAR1 for registry seasons when present; else DARKO; else PPG.
   const sortKey =
@@ -204,7 +204,7 @@ export async function getExplorePlayersBoardView(options: {
   // Placeholders / "hasn't started" follow the calendar tip only. Prior-season
   // stats (pre-tip) use PriorSeasonStatsNotice via usingPriorSeasonStats; do not
   // blank real early-season GP after opening night.
-  const seasonAwaitingGames = isSeasonAwaitingFirstGame(season, board.rows);
+  const seasonAwaitingGames = await isSeasonAwaitingFirstGame(season, board.rows);
 
   return {
     rows,

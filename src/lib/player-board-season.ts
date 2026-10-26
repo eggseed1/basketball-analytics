@@ -28,15 +28,16 @@ export const BUNDLED_PEER_BOARD_FULL_MIN = 100;
  * live ESPN crawl. Opening week may only have dozens of rows; that still beats
  * a Cloudflare provider failure on every future tip-off.
  */
-export function isBundledPeerBoardReady(
+export async function isBundledPeerBoardReady(
   season: string,
   rowCount: number,
   now = new Date()
-): boolean {
+): Promise<boolean> {
   if (rowCount >= BUNDLED_PEER_BOARD_FULL_MIN) return true;
   if (rowCount <= 0) return false;
   return (
-    isCurrentNbaSeason(season, now) && leagueRegularSeasonHasOpened(season, now)
+    isCurrentNbaSeason(season, now) &&
+    (await leagueRegularSeasonHasOpened(season, now))
   );
 }
 
@@ -63,30 +64,30 @@ export function seasonHasPlayedGames(rows: readonly PlayerSeason[]): boolean {
  * After tip-off, never force prior-season stats — an empty live board means
  * upstream lag (stale ESPN / box-score crawl), not "season hasn't started."
  */
-export function shouldUsePriorSeasonBoardStats(
+export async function shouldUsePriorSeasonBoardStats(
   requestSeason: string,
   rows: readonly PlayerSeason[],
   now = new Date()
-): boolean {
+): Promise<boolean> {
   if (!requestSeason || requestSeason.toUpperCase() === "ALL") return false;
   if (
     !isCurrentNbaSeason(requestSeason, now) &&
-    !isPreseasonRosterSeason(requestSeason, now)
+    !(await isPreseasonRosterSeason(requestSeason, now))
   ) {
     return false;
   }
   // Calendar tip is the gate. Empty rows after opening night must not flip
   // Explore back to last year's board (that blanked real early-season GP).
-  if (!isSeasonAwaitingFirstGame(requestSeason, rows, now)) return false;
+  if (!(await isSeasonAwaitingFirstGame(requestSeason, rows, now))) return false;
   return !rows.length || !seasonHasPlayedGames(rows);
 }
 
 /** Player destination: which season row should power stat tabs. */
-export function resolvePlayerStatsSeason(
+export async function resolvePlayerStatsSeason(
   career: readonly PlayerSeason[],
   requestSeason: string,
   now = new Date()
-): PlayerStatsSeasonContext {
+): Promise<PlayerStatsSeasonContext> {
   const requestRows = career.filter((row) => row.season === requestSeason);
   if (seasonHasPlayedGames(requestRows)) {
     return {
@@ -99,7 +100,7 @@ export function resolvePlayerStatsSeason(
   // Only fall back to prior-season counting stats while the league is still
   // in the pre-tip roster window. After tip night, keep the request season
   // even when this player's GP row is still empty (injured / DNP / late call-up).
-  if (!isPreseasonRosterSeason(requestSeason, now)) {
+  if (!(await isPreseasonRosterSeason(requestSeason, now))) {
     return {
       requestSeason,
       statsSeason: requestSeason,
@@ -167,17 +168,17 @@ export function defaultExplorePlayersSeason(
  * Concrete season for styles / visualizations (All is not a board year).
  * Pre-tip and unbaked current years fall back to the last completed season.
  */
-export function defaultExploreConcretePlayersSeason(
+export async function defaultExploreConcretePlayersSeason(
   availableSeasons: readonly string[],
   now = new Date(),
   options?: {
     /** Seasons with a usable bundled peer board (from season-tables). */
     boardReadySeasons?: readonly string[];
   }
-): string {
+): Promise<string> {
   const leagueSeason = canonicalSeasonFromStartYear(currentNbaStartYear(now));
   const prior = priorSeasonForStats(leagueSeason);
-  if (isPreseasonRosterSeason(leagueSeason, now)) {
+  if (await isPreseasonRosterSeason(leagueSeason, now)) {
     if (availableSeasons.includes(prior)) return prior;
   }
   const ready = options?.boardReadySeasons;
@@ -200,10 +201,10 @@ export function defaultExploreConcretePlayersSeason(
  * the current league year's early-week floor — otherwise opener lines vanish
  * behind a 500-minute gate and the board looks empty.
  */
-export function defaultExploreMinimumMinutes(
+export async function defaultExploreMinimumMinutes(
   season: string,
   now = new Date()
-): number {
+): Promise<number> {
   const key = String(season ?? "").trim();
   if (!key || key.toUpperCase() === "ALL") {
     return defaultExploreMinimumMinutes(
@@ -211,13 +212,44 @@ export function defaultExploreMinimumMinutes(
       now
     );
   }
-  if (!isCurrentNbaSeason(key, now) || !leagueRegularSeasonHasOpened(key, now)) {
+  if (
+    !isCurrentNbaSeason(key, now) ||
+    !(await leagueRegularSeasonHasOpened(key, now))
+  ) {
     return DEFAULT_PLAYER_MINIMUM_MINUTES;
   }
-  const opener = firstRegularSeasonTipDate(key);
+  const opener = await firstRegularSeasonTipDate(key);
   if (!opener) return DEFAULT_PLAYER_MINIMUM_MINUTES;
   const today = nbaTodayIso(now);
   const tipMs = Date.parse(`${opener}T12:00:00.000Z`);
+  const todayMs = Date.parse(`${today}T12:00:00.000Z`);
+  if (!Number.isFinite(tipMs) || !Number.isFinite(todayMs)) {
+    return DEFAULT_PLAYER_MINIMUM_MINUTES;
+  }
+  const days = (todayMs - tipMs) / 86_400_000;
+  if (days >= 0 && days < EARLY_SEASON_MINUTES_WINDOW_DAYS) return 0;
+  return DEFAULT_PLAYER_MINIMUM_MINUTES;
+}
+
+/**
+ * Client-safe minutes default when the schedule snapshot is not available.
+ * Uses a mid-October tip approximation so chip defaults stay usable in the
+ * browser without pulling ASSETS JSON.
+ */
+export function defaultExploreMinimumMinutesSync(
+  season: string,
+  now = new Date()
+): number {
+  const key = String(season ?? "").trim();
+  const leagueSeason = canonicalSeasonFromStartYear(currentNbaStartYear(now));
+  const resolved =
+    !key || key.toUpperCase() === "ALL" ? leagueSeason : key;
+  if (!isCurrentNbaSeason(resolved, now)) return DEFAULT_PLAYER_MINIMUM_MINUTES;
+  const startYear = currentNbaStartYear(now);
+  const approxOpener = `${startYear}-10-21`;
+  const today = nbaTodayIso(now);
+  if (today < approxOpener) return DEFAULT_PLAYER_MINIMUM_MINUTES;
+  const tipMs = Date.parse(`${approxOpener}T12:00:00.000Z`);
   const todayMs = Date.parse(`${today}T12:00:00.000Z`);
   if (!Number.isFinite(tipMs) || !Number.isFinite(todayMs)) {
     return DEFAULT_PLAYER_MINIMUM_MINUTES;

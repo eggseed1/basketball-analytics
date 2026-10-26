@@ -2,7 +2,7 @@ import "server-only";
 
 import { cache } from "react";
 
-import bundledSentiment from "@/data/runtime/sentiment-snapshot.json";
+import { loadRuntimeJson } from "@/data/runtime/load-runtime-json";
 import type {
   LeagueSentimentFeed,
   PlayerSentimentProfile,
@@ -86,17 +86,21 @@ function hydrateSentimentDisplayNames(
   };
 }
 
-export const loadSentimentSnapshot = cache((): SentimentCuratedSnapshot | null => {
-  // Cloudflare Workers: static import only — node:fs is empty on CF.
-  const snapshot = bundledSentiment as unknown as SentimentCuratedSnapshot;
-  if (!snapshot?.meta || !Array.isArray(snapshot.players)) return null;
-  return hydrateSentimentDisplayNames(snapshot);
-});
+export const loadSentimentSnapshot = cache(
+  async (): Promise<SentimentCuratedSnapshot | null> => {
+    // Served from public/runtime via ASSETS — not inlined into the Worker script.
+    const snapshot = await loadRuntimeJson<SentimentCuratedSnapshot>(
+      "sentiment-snapshot.json"
+    );
+    if (!snapshot?.meta || !Array.isArray(snapshot.players)) return null;
+    return hydrateSentimentDisplayNames(snapshot);
+  }
+);
 
-export function getPlayerSentimentProfile(
+export async function getPlayerSentimentProfile(
   playerIds: Set<string>
-): (PlayerSentimentProfile & { disclaimer: string }) | null {
-  const snapshot = loadSentimentSnapshot();
+): Promise<(PlayerSentimentProfile & { disclaimer: string }) | null> {
+  const snapshot = await loadSentimentSnapshot();
   if (!snapshot || playerIds.size === 0) return null;
   const hit = snapshot.players.find((row) =>
     row.playerIds.some((id) => playerIds.has(id))
@@ -145,26 +149,30 @@ export function resolveLeagueMoodLanes(
   };
 }
 
-export const getLeagueSentimentFeed = cache((): LeagueSentimentFeed | null => {
-  const snapshot = loadSentimentSnapshot();
-  if (!snapshot?.league) return null;
-  return {
-    season: snapshot.meta.season,
-    disclaimer: snapshot.meta.disclaimer,
-    status: snapshot.meta.status,
-    snapshotDate: snapshot.meta.snapshotDate ?? null,
-    sources: snapshot.meta.sources ?? null,
-    league: snapshot.league,
-    moodSeriesByWindow: resolveLeagueMoodSeriesByWindow(snapshot.league),
-    moodLanes: resolveLeagueMoodLanes(snapshot.league),
-    divergences: snapshot.meta.divergences?.rows ?? [],
-    topicHeat: snapshot.meta.topicHeat ?? [],
-    topicHeatOrigin: snapshot.meta.topicHeatOrigin ?? "headlines",
-  };
-});
+export const getLeagueSentimentFeed = cache(
+  async (): Promise<LeagueSentimentFeed | null> => {
+    const snapshot = await loadSentimentSnapshot();
+    if (!snapshot?.league) return null;
+    return {
+      season: snapshot.meta.season,
+      disclaimer: snapshot.meta.disclaimer,
+      status: snapshot.meta.status,
+      snapshotDate: snapshot.meta.snapshotDate ?? null,
+      sources: snapshot.meta.sources ?? null,
+      league: snapshot.league,
+      moodSeriesByWindow: resolveLeagueMoodSeriesByWindow(snapshot.league),
+      moodLanes: resolveLeagueMoodLanes(snapshot.league),
+      divergences: snapshot.meta.divergences?.rows ?? [],
+      topicHeat: snapshot.meta.topicHeat ?? [],
+      topicHeatOrigin: snapshot.meta.topicHeatOrigin ?? "headlines",
+    };
+  }
+);
 
-export function listTrackedPlayerSentiment(): TrackedPlayerSentimentRow[] {
-  const snapshot = loadSentimentSnapshot();
+export async function listTrackedPlayerSentiment(): Promise<
+  TrackedPlayerSentimentRow[]
+> {
+  const snapshot = await loadSentimentSnapshot();
   if (!snapshot) return [];
   const rows: TrackedPlayerSentimentRow[] = [];
   for (const row of snapshot.players) {
@@ -189,20 +197,20 @@ export function listTrackedPlayerSentiment(): TrackedPlayerSentimentRow[] {
 }
 
 /** Players in the sentiment snapshot linked to a franchise (ESPN team id). */
-export function listTeamSentimentPlayers(
+export async function listTeamSentimentPlayers(
   teamId: string
-): TrackedPlayerSentimentRow[] {
+): Promise<TrackedPlayerSentimentRow[]> {
   const id = String(teamId ?? "").trim();
   if (!id) return [];
-  return listTrackedPlayerSentiment().filter(
+  return (await listTrackedPlayerSentiment()).filter(
     (row) => row.teamKey != null && String(row.teamKey) === id
   );
 }
 
-export function getTeamSentimentProfile(
+export async function getTeamSentimentProfile(
   teamId: string
-): (TeamSentimentProfile & { disclaimer: string }) | null {
-  const snapshot = loadSentimentSnapshot();
+): Promise<(TeamSentimentProfile & { disclaimer: string }) | null> {
+  const snapshot = await loadSentimentSnapshot();
   if (!snapshot?.teams?.length) return null;
   const id = String(teamId ?? "").trim();
   if (!id) return null;
@@ -215,12 +223,14 @@ export function getTeamSentimentProfile(
   return { ...hit, disclaimer: snapshot.meta.disclaimer };
 }
 
-export function listTeamSentimentProfiles(): TeamSentimentProfile[] {
-  const snapshot = loadSentimentSnapshot();
+export async function listTeamSentimentProfiles(): Promise<
+  TeamSentimentProfile[]
+> {
+  const snapshot = await loadSentimentSnapshot();
   return snapshot?.teams ?? [];
 }
 
-export function getSentimentSnapshotHealth(): {
+export async function getSentimentSnapshotHealth(): Promise<{
   available: boolean;
   season: string | null;
   status: string | null;
@@ -232,8 +242,8 @@ export function getSentimentSnapshotHealth(): {
   topics: number;
   byProvenance: Record<string, number>;
   teamSources: Record<string, number>;
-} {
-  const snapshot = loadSentimentSnapshot();
+}> {
+  const snapshot = await loadSentimentSnapshot();
   if (!snapshot) {
     return {
       available: false,

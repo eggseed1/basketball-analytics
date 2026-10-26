@@ -8,7 +8,7 @@ import {
   metricById,
 } from "./metrics";
 import type { AskMetricDef, AskMetricId, QueryOperation } from "./types";
-import { metricSeasonAvailability } from "./coverage";
+import { metricSeasonAvailabilitySync } from "./coverage";
 import {
   canonicalSeasonFromStartYear,
   currentNbaStartYear,
@@ -380,7 +380,7 @@ export function validateAskBuilderState(
     errors.push("Choose a metric.");
   }
   if (opt.needsMetric && state.metricId && state.season) {
-    const avail = metricSeasonAvailability(state.metricId, state.season);
+    const avail = metricSeasonAvailabilitySync(state.metricId, state.season);
     if (!avail.ok) errors.push(avail.message);
   }
   if (

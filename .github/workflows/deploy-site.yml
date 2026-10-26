@@ -72,6 +72,9 @@ jobs:
           node --require ./scripts/lib/stub-server-only.cjs --import tsx \
             scripts/build-explore-players-first-page.ts
 
+      - name: Copy runtime JSON to Static Assets
+        run: node scripts/copy-runtime-json-assets.mjs
+
       - name: Build OpenNext bundle
         run: npx opennextjs-cloudflare build
 

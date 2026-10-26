@@ -67,7 +67,7 @@ export default async function TeamMatchupPage({
   const page = parsePage(first(sp.gamesPage));
   const seasonType = parseSeasonType(first(sp.seasonType));
 
-  const result = getFranchiseMatchupPage({
+  const result = await getFranchiseMatchupPage({
     teamA: teamId,
     teamB: oppId,
     page,

@@ -98,14 +98,13 @@ const NO_SCORE_STATUSES = new Set<GameStatus>([
   "unknown",
 ]);
 
-export function buildTeamSchedule(
+export async function buildTeamSchedule(
   teamId: string,
   season: string,
   now: Date = new Date()
-): { rows: TeamScheduleRow[]; summary: TeamScheduleSummary } {
+): Promise<{ rows: TeamScheduleRow[]; summary: TeamScheduleSummary }> {
   const today = nbaTodayIso(now);
-  const games = teamSnapshotGames(teamId, season)
-    .map((game) => ({
+  const games = (await teamSnapshotGames(teamId, season)).map((game) => ({
       game,
       date: game.tipOffAt ? nbaCalendarDate(game.tipOffAt) : game.gameDate,
     }))

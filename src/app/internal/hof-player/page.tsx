@@ -74,7 +74,7 @@ export default async function HofPlayerExamplePage({ searchParams }: PageProps) 
   const seasonOptions = [...new Set(career.map((row) => row.season))].sort(
     (a, b) => b.localeCompare(a)
   );
-  const season = resolvePlayerSeason(career, seasonParam, seasonOptions, {
+  const season = await resolvePlayerSeason(career, seasonParam, seasonOptions, {
     preferPeakWhenHistorical: true,
   });
   const seasonTeams = buildSeasonTeamsMap(career);

@@ -1,7 +1,9 @@
 /**
- * Bundle asset ledger for Cloudflare Workers (no node:fs).
+ * Bundle asset ledger.
+ *
+ * JSON is copied to public/runtime for Workers Static Assets — do not
+ * static-import (inlines into the origin script).
  */
-import snapshot from "./asset-ledger-snapshot.json";
 import type { AssetLedgerBundle } from "@/data/types/asset-ledger";
 import type { TeamDraftPickAsset } from "@/data/types/team-assets";
 import type {
@@ -18,6 +20,8 @@ import {
   type DraftPickWire,
 } from "@/data/asset-ledger/load-asset-ledger";
 
+import { loadRuntimeJson } from "./load-runtime-json";
+
 type SnapshotFile = {
   version?: number;
   manifest?: AssetLedgerBundle["manifest"];
@@ -29,20 +33,44 @@ type SnapshotFile = {
   teamDraftPickAssets?: TeamDraftPickAsset[];
 };
 
-const file = snapshot as unknown as SnapshotFile;
+type Loaded = {
+  file: SnapshotFile;
+  bundle: AssetLedgerBundle | null;
+};
 
-export function getBundledAssetLedger(): AssetLedgerBundle | null {
-  if (!file?.manifest) return null;
-  const draftPicks = (file.draftPicks ?? []).map(normalizeDraftPick);
-  return {
-    manifest: file.manifest,
-    structuredTransactions: file.structuredTransactions ?? [],
-    ownershipEdges: file.ownershipEdges ?? [],
-    contracts: file.contracts ?? [],
-    contractYears: file.contractYears ?? [],
-    draftPicks,
-    tradeExceptions: [],
-    teamDraftPickAssets:
-      file.teamDraftPickAssets ?? toTeamDraftPickAssets(draftPicks),
-  };
+let loaded: Loaded | null = null;
+let loadPromise: Promise<Loaded> | null = null;
+
+async function ensureLoaded(): Promise<Loaded> {
+  if (loaded) return loaded;
+  if (!loadPromise) {
+    loadPromise = (async () => {
+      const file =
+        (await loadRuntimeJson<SnapshotFile>("asset-ledger-snapshot.json")) ??
+        {};
+      let bundle: AssetLedgerBundle | null = null;
+      if (file?.manifest) {
+        const draftPicks = (file.draftPicks ?? []).map(normalizeDraftPick);
+        bundle = {
+          manifest: file.manifest,
+          structuredTransactions: file.structuredTransactions ?? [],
+          ownershipEdges: file.ownershipEdges ?? [],
+          contracts: file.contracts ?? [],
+          contractYears: file.contractYears ?? [],
+          draftPicks,
+          tradeExceptions: [],
+          teamDraftPickAssets:
+            file.teamDraftPickAssets ?? toTeamDraftPickAssets(draftPicks),
+        };
+      }
+      loaded = { file, bundle };
+      return loaded;
+    })();
+  }
+  return loadPromise;
+}
+
+export async function getBundledAssetLedger(): Promise<AssetLedgerBundle | null> {
+  const { bundle } = await ensureLoaded();
+  return bundle;
 }

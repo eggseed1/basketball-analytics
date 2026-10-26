@@ -29,7 +29,7 @@ export async function GET(
     if (career.length === 0) {
       return jsonError(new Error("Player not found"), 404);
     }
-    const season = resolvePlayerSeason(career, seasonParam);
+    const season = await resolvePlayerSeason(career, seasonParam);
     const identityTeamKey = lastCardStint(
       cardStintsForSeason(career, season)
     )?.teamKey;

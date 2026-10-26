@@ -137,7 +137,7 @@ export async function getPlayerSeasonBoardSnapshot(
     season &&
     season.toUpperCase() !== "ALL" &&
     (provider.name !== "local" || Boolean(boardLoaderOverride)) &&
-    isPreseasonRosterSeason(season)
+    await isPreseasonRosterSeason(season)
   ) {
     statsSeason = priorSeasonForStats(season);
     usingPriorSeasonStats = true;
@@ -242,7 +242,7 @@ export async function getPlayerSeasonBoardSnapshot(
     !usingPriorSeasonStats &&
     season &&
     season.toUpperCase() !== "ALL" &&
-    shouldUsePriorSeasonBoardStats(season, unfilteredRows)
+    await shouldUsePriorSeasonBoardStats(season, unfilteredRows)
   ) {
     const priorSeason = priorSeasonForStats(season);
     const priorLoaded = await load({ season: priorSeason });
@@ -280,7 +280,7 @@ export async function getPlayerSeasonBoardSnapshot(
     } else if (
       !usingPriorSeasonStats &&
       season.toUpperCase() !== "ALL" &&
-      (isPreseasonRosterSeason(season) || isCurrentNbaSeason(season))
+      (await isPreseasonRosterSeason(season) || isCurrentNbaSeason(season))
     ) {
       // Current league year with no usable board: prefer last completed season
       // over a hard fail. Cloudflare cannot reach ESPN; until the home stats
@@ -298,7 +298,7 @@ export async function getPlayerSeasonBoardSnapshot(
         });
         source = "live-espn";
         warnings.push(
-          isPreseasonRosterSeason(season)
+          await isPreseasonRosterSeason(season)
             ? priorSeasonStatsNotice(season, priorSeason)
             : priorSeasonBoardCatchUpNotice(season, priorSeason)
         );

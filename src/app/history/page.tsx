@@ -138,7 +138,7 @@ export default async function HistoryPage({ searchParams }: HistoryPageProps) {
   const parsed = parseHistorySearchParams(params);
   const seasons = await getAvailableSeasons();
 
-  const landmarkGames = resolveLandmarkGames(getRuntimeSnapshotGames());
+  const landmarkGames = resolveLandmarkGames(await getRuntimeSnapshotGames());
 
   if (!parsed.season) {
     return (

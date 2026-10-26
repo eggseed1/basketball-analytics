@@ -105,7 +105,7 @@ export default async function PlayerVisualizationsPage({
   const season =
     seasonParam && /^\d{4}-\d{2}$/.test(seasonParam)
       ? seasonParam
-      : defaultExploreConcretePlayersSeason(
+      : await defaultExploreConcretePlayersSeason(
           [currentSeason, priorSeasonForStats(currentSeason)],
           new Date(),
           { boardReadySeasons }

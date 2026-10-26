@@ -22,7 +22,7 @@ import {
 import type { RankedMetric } from "@/lib/team-page-metrics";
 import { cn } from "@/lib/utils";
 
-export function TeamOverviewVisuals({
+export async function TeamOverviewVisuals({
   team,
   league,
   ranked,
@@ -44,10 +44,10 @@ export function TeamOverviewVisuals({
 }) {
   const teamId = team.teamId;
   const teamKey = team.abbreviation;
-  const trajectory = buildSeasonTrajectory(teamId, season);
-  const highlights = buildSeasonHighlights(teamId, season, trajectory);
-  const quarters = buildQuarterProfile(teamId, season);
-  const splits = buildSplitsBundle(teamId, season);
+  const trajectory = await buildSeasonTrajectory(teamId, season);
+  const highlights = await buildSeasonHighlights(teamId, season, trajectory);
+  const quarters = await buildQuarterProfile(teamId, season);
+  const splits = await buildSplitsBundle(teamId, season);
   const dna = buildTeamDna(ranked);
   const strips = buildLeagueStrips(team, league);
   const ladder = buildNetLadder(league);

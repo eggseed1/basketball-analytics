@@ -97,19 +97,19 @@ export default async function HistorySeasonPage({
   const date = first(sp.date);
   const gamesPage = parsePage(first(sp.gamesPage));
 
-  const seasons = listHistoryProductSeasons();
+  const seasons = await listHistoryProductSeasons();
   const available = seasons.includes(season);
   const caps = getSeasonCapabilities(season);
   const drblWithoutArchive =
     !available && caps?.fields.drbl === "SUPPORTED"
       ? await getHistoricalLeadersBundle(season, 10)
       : null;
-  const manifest = getHistorySeasonManifest(season);
+  const manifest = await getHistorySeasonManifest(season);
 
   const filtered = available
     ? teamId || playerId || date
-      ? searchHistoricalProductGames({ season, teamId, playerId, date })
-      : getHistoricalGameSummaries(season)
+      ? await searchHistoricalProductGames({ season, teamId, playerId, date })
+      : await getHistoricalGameSummaries(season)
     : [];
 
   const sorted = [...filtered].sort((a, b) =>

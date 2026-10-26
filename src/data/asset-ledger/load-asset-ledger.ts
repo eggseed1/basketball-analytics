@@ -117,7 +117,7 @@ export async function loadAssetLedger(
       const { getBundledAssetLedger } = await import(
         "@/data/runtime/asset-ledger-snapshot"
       );
-      const bundled = getBundledAssetLedger();
+      const bundled = await getBundledAssetLedger();
       if (bundled?.manifest) {
         if (!options.cwd) cached = bundled;
         return bundled;

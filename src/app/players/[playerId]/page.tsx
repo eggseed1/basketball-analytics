@@ -323,12 +323,12 @@ export default async function PlayerPage({
     ]),
   ];
   const nowSeason = canonicalSeasonFromStartYear(currentNbaStartYear());
-  const season = resolvePlayerSeason(career, seasonParam, historySeasonIds, {
+  const season = await resolvePlayerSeason(career, seasonParam, historySeasonIds, {
     preferPeakWhenHistorical: true,
     isActive: masterPlayer?.isActive,
     nowSeason,
   });
-  const statsCtx = resolvePlayerStatsSeason(career, season);
+  const statsCtx = await resolvePlayerStatsSeason(career, season);
   // Baked draft list says he hasn't played, and no career row disagrees. An
   // empty career alone could be an upstream outage, not a rookie.
   const notYetPlayed = career.some((row) => row.gamesPlayed > 0) || historyCareer
@@ -347,7 +347,7 @@ export default async function PlayerPage({
   // Keep the open league year (and the resolved selection) on the slider even
   // at 0 GP — otherwise seasonOnTrack snaps Explore deep links 2026-27→2025-26.
   const keepCurrentOnTrack =
-    !isPreseasonRosterSeason(nowSeason) ||
+    !await isPreseasonRosterSeason(nowSeason) ||
     career.some((row) => row.season === nowSeason);
   const seasonOptions = [
     ...new Set([

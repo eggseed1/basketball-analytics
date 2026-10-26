@@ -163,7 +163,7 @@ export async function fetchBrefAdvancedSeason(
     const { getBundledBrefAdvancedSeason } = await import(
       "@/data/runtime/bref-advanced-snapshot"
     );
-    const bundled = getBundledBrefAdvancedSeason(canonicalSeason);
+    const bundled = await getBundledBrefAdvancedSeason(canonicalSeason);
     if (bundled?.length) return bundled;
   } catch {
     // fall through to live scrape

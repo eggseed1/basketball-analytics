@@ -99,8 +99,8 @@ function boxCoverage(rows: TeamVizRow[]): { covered: number; total: number } {
   return { covered: Math.round(covered), total: Math.round(total) };
 }
 
-function GameBasedBody({ view, season }: { view: TeamVizView; season: string }) {
-  const rows = getTeamVizRows(season);
+async function GameBasedBody({ view, season }: { view: TeamVizView; season: string }) {
+  const rows = await getTeamVizRows(season);
   if (!rows.length) {
     return (
       <EmptyState
@@ -146,7 +146,7 @@ function GameBasedBody({ view, season }: { view: TeamVizView; season: string }) 
 export default async function TeamVisualizationsPage({ searchParams }: PageProps) {
   const sp = await searchParams;
   const seasonOptions = getStandingsTrackerSeasonOptions();
-  const season = resolveStandingsSeason(seasonOptions, sp.season);
+  const season = await resolveStandingsSeason(seasonOptions, sp.season);
   const view = parseTeamVizView(one(sp, "view"));
   const conference = parseTeamVizConference(one(sp, "conf"));
   const viewLabel = TEAM_VIZ_VIEWS.find((v) => v.id === view)?.label ?? "Race tracker";

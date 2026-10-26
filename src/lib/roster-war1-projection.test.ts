@@ -54,7 +54,7 @@ test("2020-21 possessions and WAR1 scale onto 82 games together", () => {
   assert.equal(full.drblWins, null);
 });
 
-test("Tatum's roster projection is a separate number from the baked contract card", () => {
+test("Tatum's roster projection is a separate number from the baked contract card", async () => {
   const alias = getBundledPlayerIdAliasIndex().byEspn.get("4065648");
   assert.equal(alias?.nbaPlayerId, "1628369");
   const contract = getContractValue("2", "tatumja01");
@@ -62,7 +62,7 @@ test("Tatum's roster projection is a separate number from the baked contract car
   if (contract?.kind !== "estimate") return;
   const year = contract.years.find((row) => row.season === "2026-27");
   assert.ok(year);
-  const projected = projectRosterPlayer(alias.nbaPlayerId, {
+  const projected = await projectRosterPlayer(alias.nbaPlayerId, {
     age: 28,
     capSeason: "2026-27",
     salary: year.salary,
@@ -73,7 +73,7 @@ test("Tatum's roster projection is a separate number from the baked contract car
   assert.ok(Number.isFinite(projected.winsAboveReplacement));
   assert.ok(Number.isFinite(year.wins));
   assert.ok(projected.war1 < projected.winsAboveReplacement);
-  const rows = projectedRosterWarRows(
+  const rows = await projectedRosterWarRows(
     [{ espnId: "4065648", name: "Jayson Tatum" }],
     getBundledPlayerIdAliasIndex()
   );
@@ -81,8 +81,8 @@ test("Tatum's roster projection is a separate number from the baked contract car
   assert.ok(rows[0] && Math.abs((rows[0].r1WinEquivalents ?? 0) - projected.war1) < 1e-9);
 });
 
-test("a roster projection leaves out a player with no contract", () => {
-  const rows = projectedRosterWarRows(
+test("a roster projection leaves out a player with no contract", async () => {
+  const rows = await projectedRosterWarRows(
     [
       { espnId: "no-such-player", name: "Nobody" },
     ],

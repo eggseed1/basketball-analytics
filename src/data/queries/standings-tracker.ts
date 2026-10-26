@@ -37,7 +37,7 @@ export function getStandingsTrackerSeasonOptions(): string[] {
  */
 export const getStandingsTrackerPayload = cache(
   async (season: string): Promise<StandingsTrackerPayload> => {
-    const games = getRuntimeSnapshotGames(season);
+    const games = await getRuntimeSnapshotGames(season);
     const standings =
       getRuntimeStandings(season) ??
       computeStandingsFromGameArchive(season, games);

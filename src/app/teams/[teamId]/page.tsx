@@ -155,7 +155,7 @@ export default async function TeamProfilePage({
   // so identity can paint without a second 2.5s budget race.
   const seasonBoard = await getTeamSeasonBoardCached(season);
   const league = seasonBoard.rows;
-  const seasonAwaitingGames = isSeasonAwaitingFirstGame(season, league);
+  const seasonAwaitingGames = await isSeasonAwaitingFirstGame(season, league);
 
   const [priorBoard, exploreSeasons] = await Promise.all([
     seasonAwaitingGames
@@ -404,7 +404,7 @@ export default async function TeamProfilePage({
           seasonAwaitingGames ? (
             <div data-motion-stack className="flex flex-col gap-4">
               <TeamOpeningNight
-                facts={buildScheduleFacts(resolvedTeamId, season, nbaTodayIso())}
+                facts={await buildScheduleFacts(resolvedTeamId, season, nbaTodayIso())}
                 season={season}
                 teamId={teamId}
                 teamName={displayName}

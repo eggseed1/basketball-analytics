@@ -277,7 +277,7 @@ function withProfileId<T extends { playerName: string; playerId: string; nbaPlay
 async function loadHomeAnalytics(): Promise<HomeAnalytics> {
   const calendarSeason = canonicalSeasonFromStartYear(currentNbaStartYear());
   const espn = new NBADataProvider();
-  const preTip = isPreseasonRosterSeason(calendarSeason);
+  const preTip = await isPreseasonRosterSeason(calendarSeason);
   const initialSeason = preTip
     ? priorSeasonForStats(calendarSeason)
     : calendarSeason;
@@ -294,13 +294,13 @@ async function loadHomeAnalytics(): Promise<HomeAnalytics> {
     const { getBundledBrefPeerBoard } = await import(
       "@/data/runtime/bref-advanced-snapshot"
     );
-    seasons = getBundledBrefPeerBoard(initialSeason);
+    seasons = await getBundledBrefPeerBoard(initialSeason);
     if (
       seasons.length === 0 ||
-      shouldUsePriorSeasonBoardStats(calendarSeason, seasons)
+      await shouldUsePriorSeasonBoardStats(calendarSeason, seasons)
     ) {
       const prior = priorSeasonForStats(calendarSeason);
-      const priorRows = getBundledBrefPeerBoard(prior);
+      const priorRows = await getBundledBrefPeerBoard(prior);
       if (priorRows.length > 0) {
         season = prior;
         seasons = priorRows;
@@ -361,7 +361,7 @@ async function loadHomeAnalytics(): Promise<HomeAnalytics> {
     // and avoid a 30-team roster crawl on every cold serverless instance.
     if (
       !preTip &&
-      shouldUsePriorSeasonBoardStats(calendarSeason, seasons)
+      await shouldUsePriorSeasonBoardStats(calendarSeason, seasons)
     ) {
       const prior = priorSeasonForStats(calendarSeason);
       const priorRows = await withTimeout(

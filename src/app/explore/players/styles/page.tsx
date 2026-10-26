@@ -41,7 +41,7 @@ export default async function PlayerStylesPage({
     getAvailableSeasons(),
     listExploreBoardReadySeasons(),
   ]);
-  const defaultSeason = defaultExploreConcretePlayersSeason(seasons, new Date(), {
+  const defaultSeason = await defaultExploreConcretePlayersSeason(seasons, new Date(), {
     boardReadySeasons,
   });
   const seasonParam = one(params.season)?.trim();

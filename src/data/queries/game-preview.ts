@@ -275,15 +275,15 @@ function buildPlayers(
     });
 }
 
-function meetingsBetween(
+async function meetingsBetween(
   game: Game,
   seasons: string[],
   sides: Record<string, string>
-): PreviewMeeting[] {
+): Promise<PreviewMeeting[]> {
   const seen = new Set<string>();
   const out: PreviewMeeting[] = [];
   for (const season of seasons) {
-    for (const g of getRuntimeSnapshotGames(season)) {
+    for (const g of await getRuntimeSnapshotGames(season)) {
       if (g.id === game.id || seen.has(g.id)) continue;
       if (g.status !== "final" || g.gameType === "preseason") continue;
       const a = sides[espnTeamKey(g, "away")];
@@ -424,7 +424,7 @@ export async function getGamePreview(game: Game): Promise<GamePreviewData | null
       home: buildPlayers(home.rows, homeAbbr, peerSorted),
     },
     noStats: { away: away.missing, home: home.missing },
-    meetings: meetingsBetween(
+    meetings: await meetingsBetween(
       game,
       usesPriorSeason ? [gameSeason, statsSeason] : [gameSeason, prior ?? gameSeason],
       { [awayEspn]: awayAbbr, [homeEspn]: homeAbbr }

@@ -15,9 +15,9 @@ export const metadata = {
  * Internal iteration surface for the S1 sentiment prototype.
  * Rebuild: `npm run sentiment:build` (dual-writes data/ + runtime bundle).
  */
-export default function InternalSentimentPage() {
-  const health = getSentimentBuildHealth();
-  const snapshot = loadSentimentSnapshot();
+export default async function InternalSentimentPage() {
+  const health = await getSentimentBuildHealth();
+  const snapshot = await loadSentimentSnapshot();
   const observationIds = snapshot?.meta.observationBatchIds ?? [];
 
   return (

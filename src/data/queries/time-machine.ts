@@ -729,7 +729,7 @@ async function lastGameDateForSeason(season: string): Promise<string | null> {
       "@/data/runtime/game-snapshot"
     );
     const fromSnap = maxDate(
-      getRuntimeSnapshotGames(season).map((g) => g.gameDate)
+      (await getRuntimeSnapshotGames(season)).map((g) => g.gameDate)
     );
     if (fromSnap) return fromSnap;
   } catch {

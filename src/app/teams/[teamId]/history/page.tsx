@@ -81,7 +81,7 @@ export default async function TeamHistoryPage({ params, searchParams }: TeamHist
   const team = await resolveHistoryTeam(teamId, season);
   if (!team) notFound();
 
-  const priorBoard = isSeasonAwaitingFirstGame(season, team.board)
+  const priorBoard = await isSeasonAwaitingFirstGame(season, team.board)
     ? []
     : (await getTeamSeasonBoardCached(priorSeason)).rows;
   const brand = resolveTeamBrand(team.abbreviation);

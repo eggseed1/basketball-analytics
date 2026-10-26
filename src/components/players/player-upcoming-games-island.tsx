@@ -22,7 +22,7 @@ async function upcomingGamesForTeam(
   const team = teamSeasonStub(scheduleTeamKey, season);
   const brand = resolveTeamBrand(scheduleTeamKey);
   if (!team) return [];
-  return getRuntimeSnapshotGames(season)
+  return (await getRuntimeSnapshotGames(season))
     .filter(
       (game) =>
         game.gameDate >= today &&

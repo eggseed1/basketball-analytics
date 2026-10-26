@@ -19,7 +19,7 @@ export async function GET(request: Request) {
     const defaultSeason = canonicalSeasonFromStartYear(currentNbaStartYear());
     const season = searchParams.get("season") ?? defaultSeason;
 
-    const initialSeason = isPreseasonRosterSeason(season)
+    const initialSeason = await isPreseasonRosterSeason(season)
       ? shiftCanonicalSeason(season, -1)
       : season;
     let data = await getLeagueStandings(initialSeason);
@@ -33,7 +33,7 @@ export async function GET(request: Request) {
       !east.length &&
       !west.length &&
       initialSeason === season &&
-      isPreseasonRosterSeason(season)
+      await isPreseasonRosterSeason(season)
     ) {
       const priorSeason = shiftCanonicalSeason(season, -1);
       data = await getLeagueStandings(priorSeason);

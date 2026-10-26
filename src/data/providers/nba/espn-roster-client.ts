@@ -42,7 +42,7 @@ type EspnRosterResponse = {
  * bundled schedule opener has arrived (stay on roster through October when
  * the tip date is still unknown).
  */
-export function isPreseasonRosterSeason(season: string, now = new Date()): boolean {
+export async function isPreseasonRosterSeason(season: string, now = new Date()): Promise<boolean> {
   const startYear = currentNbaStartYear(now);
   const leagueSeason = canonicalSeasonFromStartYear(startYear);
   if (season !== leagueSeason) {
@@ -57,7 +57,7 @@ export function isPreseasonRosterSeason(season: string, now = new Date()): boole
   if (month > 9) return false;
   // October: schedule opener wins. When tip is unknown, stay on the roster
   // path for the whole month instead of flipping on a fixed day.
-  if (leagueRegularSeasonHasOpened(leagueSeason, now)) return false;
+  if (await leagueRegularSeasonHasOpened(leagueSeason, now)) return false;
   return month === 9;
 }
 

@@ -18,16 +18,16 @@ type ScheduledGame = {
  * October 15 is only a soft handoff to league-dash. Opening night is later,
  * and that feed can keep returning the finished season until tip-off.
  */
-export function playerBoardAwaitingTip(
+export async function playerBoardAwaitingTip(
   season: string,
   rows: readonly { gamesPlayed: number }[],
   now = new Date(),
   games?: readonly ScheduledGame[]
-): boolean {
+): Promise<boolean> {
   if (season.trim().toUpperCase() === "ALL") return false;
   if (!isCurrentNbaSeason(season, now)) return false;
-  const slate = games ?? getRuntimeSnapshotGames(season);
-  const scheduled = regularGamesThrough(slate, season, nbaTodayIso(now));
+  const slate = games ?? (await getRuntimeSnapshotGames(season));
+  const scheduled = await regularGamesThrough(slate, season, nbaTodayIso(now));
   if (!scheduled) return false;
   let maxScheduled = 0;
   for (const count of scheduled.values()) {

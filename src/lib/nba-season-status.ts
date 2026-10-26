@@ -14,8 +14,10 @@ export function isCurrentNbaSeason(season: string, now = new Date()): boolean {
  * Used to flip "preseason roster" defaults the night the league opens —
  * not a fixed calendar day that drifts relative to the real opener.
  */
-export function firstRegularSeasonTipDate(season: string): string | null {
-  const dates = getRuntimeSnapshotGames(season)
+export async function firstRegularSeasonTipDate(
+  season: string
+): Promise<string | null> {
+  const dates = (await getRuntimeSnapshotGames(season))
     .filter((game) => (game.gameType ?? "regular") === "regular")
     .map((game) => game.gameDate)
     .filter(Boolean)
@@ -24,11 +26,11 @@ export function firstRegularSeasonTipDate(season: string): string | null {
 }
 
 /** True once today's league calendar day is on or after the RS opener. */
-export function leagueRegularSeasonHasOpened(
+export async function leagueRegularSeasonHasOpened(
   season: string,
   now = new Date()
-): boolean {
-  const opener = firstRegularSeasonTipDate(season);
+): Promise<boolean> {
+  const opener = await firstRegularSeasonTipDate(season);
   if (!opener) return false;
   return nbaTodayIso(now) >= opener;
 }
@@ -38,12 +40,12 @@ export function leagueRegularSeasonHasOpened(
  * Once opening night has passed, the season has started even if every board
  * row still shows 0 GP (late box scores / empty dash).
  */
-export function isSeasonAwaitingFirstGame(
+export async function isSeasonAwaitingFirstGame(
   season: string,
   _rows: readonly { gamesPlayed: number }[] = [],
   now = new Date()
-): boolean {
+): Promise<boolean> {
   if (season.trim().toUpperCase() === "ALL") return false;
   if (!isCurrentNbaSeason(season, now)) return false;
-  return !leagueRegularSeasonHasOpened(season, now);
+  return !(await leagueRegularSeasonHasOpened(season, now));
 }

@@ -60,7 +60,7 @@ export async function GET(request: Request) {
 
   return jsonOk({
     historyVersion: "drbl-history-v1",
-    seasons: listHistoryProductSeasons(),
+    seasons: await listHistoryProductSeasons(),
     note: "Pass season= or gameId=",
   });
 }

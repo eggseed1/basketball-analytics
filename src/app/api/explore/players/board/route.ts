@@ -30,7 +30,7 @@ export async function GET(request: Request) {
       ...params,
       season,
       minimumMinutes:
-        params.minimumMinutes ?? String(defaultExploreMinimumMinutes(season)),
+        params.minimumMinutes ?? String(await defaultExploreMinimumMinutes(season)),
     });
     const sortKey = parsePlayerSeasonSortKey(params.sort);
     const sortDir = sortKey

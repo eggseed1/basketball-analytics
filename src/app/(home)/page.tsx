@@ -67,7 +67,7 @@ async function HomeSeasonMomentLive() {
     getHomeSeasonMomentSync,
     homeSeasonMomentNeedsLiveEnrichment,
   } = await import("@/data/queries/home-season-moment");
-  const sync = getHomeSeasonMomentSync();
+  const sync = await getHomeSeasonMomentSync();
   const moment = homeSeasonMomentNeedsLiveEnrichment(sync)
     ? await getHomeSeasonMoment()
     : sync;
@@ -80,7 +80,7 @@ async function HomeSeasonPhaseBarLive() {
     getHomeSeasonMomentSync,
     homeSeasonMomentNeedsLiveEnrichment,
   } = await import("@/data/queries/home-season-moment");
-  const sync = getHomeSeasonMomentSync();
+  const sync = await getHomeSeasonMomentSync();
   const moment = homeSeasonMomentNeedsLiveEnrichment(sync)
     ? await getHomeSeasonMoment()
     : sync;

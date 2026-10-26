@@ -314,7 +314,7 @@ export class ResilientNBADataProvider extends StatsNbaDataProvider {
             const nbaRows = await super.getPlayerSeasons(target);
             if (
               nbaRows.length > 0 &&
-              !playerBoardAwaitingTip(target, nbaRows)
+              !await playerBoardAwaitingTip(target, nbaRows)
             ) {
               best = nbaRows;
             }
@@ -404,7 +404,7 @@ export class ResilientNBADataProvider extends StatsNbaDataProvider {
     );
 
     const today = nbaTodayIso();
-    const slate = getRuntimeSnapshotGames(season).filter(
+    const slate = (await getRuntimeSnapshotGames(season)).filter(
       (game) =>
         (game.gameType ?? "regular") === "regular" &&
         game.gameDate <= today &&
@@ -693,7 +693,7 @@ export class ResilientNBADataProvider extends StatsNbaDataProvider {
           // Opening week: reject leftover 60–80 GP boards before paging the rest.
           if (
             firstPageRows.length > 0 &&
-            playerBoardAwaitingTip(season, firstPageRows)
+            await playerBoardAwaitingTip(season, firstPageRows)
           ) {
             const maxGp = firstPageRows.reduce(
               (max, row) => Math.max(max, row.gamesPlayed || 0),
@@ -751,7 +751,7 @@ export class ResilientNBADataProvider extends StatsNbaDataProvider {
             );
           }
 
-          if (playerBoardAwaitingTip(season, rows)) {
+          if (await playerBoardAwaitingTip(season, rows)) {
             const maxGp = rows.reduce(
               (max, row) => Math.max(max, row.gamesPlayed || 0),
               0

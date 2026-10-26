@@ -90,7 +90,7 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
   const afterTip = one(sp, "after");
   const afterId = one(sp, "afterId");
 
-  const schedule = getRuntimeSnapshotGames(scheduleSeason);
+  const schedule = await getRuntimeSnapshotGames(scheduleSeason);
   const monthGames =
     view === "month"
       ? summaries(sorted(schedule.filter((game) => game.gameDate.startsWith(monthKey))))
@@ -171,12 +171,12 @@ async function gamesForDate(
   date: string,
   today: string
 ): Promise<{ games: GameSummary[]; stale: boolean }> {
-  const snapshot = getRuntimeSnapshotWindow({ fromDate: date, toDate: date });
+  const snapshot = await getRuntimeSnapshotWindow({ fromDate: date, toDate: date });
   if (Math.abs(daysBetween(date, today)) > LIVE_FETCH_WINDOW_DAYS) {
     return { games: summaries(snapshot), stale: false };
   }
   const { value: feed } = await withBudget(getScoreboardDateFeed({ date }), 3500, null);
-  const byId = new Map<string, GameSummary>(summaries(snapshot).map((g) => [g.id, g]));
+  const byId = new Map<string, GameSummary>(await summaries(snapshot).map((g) => [g.id, g]));
   for (const game of feed?.data ?? []) byId.set(game.id, game);
   return {
     games: [...byId.values()],
@@ -188,13 +188,13 @@ async function loadDayView(date: string, today: string): Promise<ScoreboardDayDa
   const stripStart = addDaysIso(date, -3);
   const stripEnd = addDaysIso(stripStart, 6);
   const counts = new Map<string, number>();
-  for (const game of getRuntimeSnapshotWindow({ fromDate: stripStart, toDate: stripEnd })) {
+  for (const game of await getRuntimeSnapshotWindow({ fromDate: stripStart, toDate: stripEnd })) {
     if (PLAYABLE.has(game.status)) counts.set(game.gameDate, (counts.get(game.gameDate) ?? 0) + 1);
   }
 
   let recentDate: string | null = null;
   let nextGameDate: string | null = null;
-  for (const game of getRuntimeSnapshotWindow({})) {
+  for (const game of await getRuntimeSnapshotWindow({})) {
     if (!PLAYABLE.has(game.status)) continue;
     if (game.gameDate < date && (!recentDate || game.gameDate > recentDate)) recentDate = game.gameDate;
     if (game.gameDate > date && (!nextGameDate || game.gameDate < nextGameDate)) nextGameDate = game.gameDate;

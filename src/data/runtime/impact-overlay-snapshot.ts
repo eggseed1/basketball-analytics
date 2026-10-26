@@ -1,12 +1,16 @@
 /**
- * Bundled DARKO + RAPTOR overlays for Cloudflare Workers (no live scrape / fs).
+ * Bundled DARKO + RAPTOR overlays.
+ *
+ * JSON is copied to public/runtime for Workers Static Assets — do not
+ * static-import (inlines into the origin script).
  *
  * DARKO row: [nbaId, name, dpm, oDpm, dDpm]
  * RAPTOR row: [playerId, name, raptor, oRaptor, dRaptor, war]
  */
-import snapshot from "./impact-overlay-snapshot.json";
 import type { DarkoRating, RaptorRating } from "@/data/types";
 import { normalizePlayerName } from "@/lib/player-name";
+
+import { loadRuntimeJson } from "./load-runtime-json";
 
 type DarkoSlimRow = [
   string,
@@ -35,15 +39,39 @@ type ImpactOverlayFile = {
   lebron?: Record<string, RaptorSlimRow[]>;
 };
 
-const data = snapshot as unknown as ImpactOverlayFile;
-const darkoSeasons =
-  data?.darko && typeof data.darko === "object" ? data.darko : {};
-const raptorSeasons =
-  (data?.raptor && typeof data.raptor === "object" ? data.raptor : null) ??
-  (data?.lebron && typeof data.lebron === "object" ? data.lebron : {});
+type Loaded = {
+  data: ImpactOverlayFile;
+  darkoSeasons: Record<string, DarkoSlimRow[]>;
+  raptorSeasons: Record<string, RaptorSlimRow[]>;
+};
+
+let loaded: Loaded | null = null;
+let loadPromise: Promise<Loaded> | null = null;
 
 const darkoCache = new Map<string, DarkoRating[]>();
 const raptorCache = new Map<string, RaptorRating[]>();
+
+async function ensureLoaded(): Promise<Loaded> {
+  if (loaded) return loaded;
+  if (!loadPromise) {
+    loadPromise = (async () => {
+      const data =
+        (await loadRuntimeJson<ImpactOverlayFile>(
+          "impact-overlay-snapshot.json"
+        )) ?? {};
+      const darkoSeasons =
+        data?.darko && typeof data.darko === "object" ? data.darko : {};
+      const raptorSeasons =
+        (data?.raptor && typeof data.raptor === "object"
+          ? data.raptor
+          : null) ??
+        (data?.lebron && typeof data.lebron === "object" ? data.lebron : {});
+      loaded = { data, darkoSeasons, raptorSeasons };
+      return loaded;
+    })();
+  }
+  return loadPromise;
+}
 
 function toDarkoRating(season: string, row: DarkoSlimRow): DarkoRating {
   const [nbaId, playerName, impact, offensive, defensive] = row;
@@ -74,19 +102,24 @@ function toRaptorRating(season: string, row: RaptorSlimRow): RaptorRating {
   };
 }
 
-export function bundledDarkoSeasonIds(): string[] {
+export async function bundledDarkoSeasonIds(): Promise<string[]> {
+  const { darkoSeasons } = await ensureLoaded();
   return Object.keys(darkoSeasons);
 }
 
-export function bundledRaptorSeasonIds(): string[] {
+export async function bundledRaptorSeasonIds(): Promise<string[]> {
+  const { raptorSeasons } = await ensureLoaded();
   return Object.keys(raptorSeasons);
 }
 
-export function getBundledDarkoSeason(season: string): DarkoRating[] {
+export async function getBundledDarkoSeason(
+  season: string
+): Promise<DarkoRating[]> {
   const key = String(season ?? "").trim();
   if (!key) return [];
   const cached = darkoCache.get(key);
   if (cached) return cached;
+  const { darkoSeasons } = await ensureLoaded();
   const rows = (darkoSeasons[key] ?? [])
     .filter((row) => row?.[0] && Number.isFinite(row[2] ?? Number.NaN))
     .map((row) => toDarkoRating(key, row));
@@ -94,11 +127,14 @@ export function getBundledDarkoSeason(season: string): DarkoRating[] {
   return rows;
 }
 
-export function getBundledRaptorSeason(season: string): RaptorRating[] {
+export async function getBundledRaptorSeason(
+  season: string
+): Promise<RaptorRating[]> {
   const key = String(season ?? "").trim();
   if (!key) return [];
   const cached = raptorCache.get(key);
   if (cached) return cached;
+  const { raptorSeasons } = await ensureLoaded();
   const rows = (raptorSeasons[key] ?? [])
     .filter((row) => row?.[0] && Number.isFinite(row[2] ?? Number.NaN))
     .map((row) => toRaptorRating(key, row));
@@ -110,16 +146,17 @@ export function getBundledRaptorSeason(season: string): RaptorRating[] {
  * Single-player DARKO lookup without materializing the full season array.
  * Career enrich on long careers used to index every season → CF 1102 risk.
  */
-export function findBundledDarkoPlayer(
+export async function findBundledDarkoPlayer(
   season: string,
   opts: {
     nbaId?: string | null;
     playerId?: string | null;
     playerName?: string | null;
   }
-): DarkoRating | null {
+): Promise<DarkoRating | null> {
   const key = String(season ?? "").trim();
   if (!key) return null;
+  const { darkoSeasons } = await ensureLoaded();
   const rows = darkoSeasons[key] ?? [];
   if (!rows.length) return null;
   const ids = new Set(
@@ -146,16 +183,17 @@ export function findBundledDarkoPlayer(
 }
 
 /** Single-player RAPTOR lookup without materializing the full season array. */
-export function findBundledRaptorPlayer(
+export async function findBundledRaptorPlayer(
   season: string,
   opts: {
     nbaId?: string | null;
     playerId?: string | null;
     playerName?: string | null;
   }
-): RaptorRating | null {
+): Promise<RaptorRating | null> {
   const key = String(season ?? "").trim();
   if (!key) return null;
+  const { raptorSeasons } = await ensureLoaded();
   const rows = raptorSeasons[key] ?? [];
   if (!rows.length) return null;
   const ids = new Set(
@@ -181,29 +219,36 @@ export function findBundledRaptorPlayer(
   return nameHit ? toRaptorRating(key, nameHit) : null;
 }
 
-export function listBundledDarkoSeasons(): string[] {
+export async function listBundledDarkoSeasons(): Promise<string[]> {
+  const { darkoSeasons } = await ensureLoaded();
   return Object.keys(darkoSeasons).sort((a, b) => a.localeCompare(b));
 }
 
-export function listBundledRaptorSeasons(): string[] {
+export async function listBundledRaptorSeasons(): Promise<string[]> {
+  const { raptorSeasons } = await ensureLoaded();
   return Object.keys(raptorSeasons).sort((a, b) => a.localeCompare(b));
 }
 
-export function isBundledDarkoSeason(season: string): boolean {
+export async function isBundledDarkoSeason(season: string): Promise<boolean> {
   const key = String(season ?? "").trim();
-  return Boolean(key && (darkoSeasons[key]?.length ?? 0) > 0);
+  if (!key) return false;
+  const { darkoSeasons } = await ensureLoaded();
+  return Boolean((darkoSeasons[key]?.length ?? 0) > 0);
 }
 
-export function isBundledRaptorSeason(season: string): boolean {
+export async function isBundledRaptorSeason(season: string): Promise<boolean> {
   const key = String(season ?? "").trim();
-  return Boolean(key && (raptorSeasons[key]?.length ?? 0) > 0);
+  if (!key) return false;
+  const { raptorSeasons } = await ensureLoaded();
+  return Boolean((raptorSeasons[key]?.length ?? 0) > 0);
 }
 
-export function bundledImpactOverlayMeta() {
+export async function bundledImpactOverlayMeta() {
+  const { data } = await ensureLoaded();
   return {
     version: data.version ?? 0,
     generatedAt: data.generatedAt ?? null,
-    darkoSeasons: listBundledDarkoSeasons(),
-    raptorSeasons: listBundledRaptorSeasons(),
+    darkoSeasons: await listBundledDarkoSeasons(),
+    raptorSeasons: await listBundledRaptorSeasons(),
   };
 }
