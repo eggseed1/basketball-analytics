@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
+import { TransitionLink } from "@/components/continuity/query-nav";
 import { FilterBar } from "@/components/explore/filter-bar";
 import { ChoiceTrack, choiceChipClassName } from "@/components/ui/choice-chip";
 import { currentNbaStartYear } from "@/data/providers/historical/season-range";
@@ -45,13 +45,14 @@ export function DecadeChips({
           currentStart <= decade.to;
         const href = `${hrefBase}?season=${encodeURIComponent(firstInDecade)}`;
         return (
-          <Link
+          <TransitionLink
             key={decade.id}
             href={href}
+            scroll={false}
             className={choiceChipClassName(active)}
           >
             {decade.label}
-          </Link>
+          </TransitionLink>
         );
       })}
       </ChoiceTrack>

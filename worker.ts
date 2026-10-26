@@ -558,6 +558,11 @@ const KEEP_WARM_PATHS = [
   "/scores",
   "/explore/players",
   "/explore/games",
+  // Popular franchise hubs (ESPN ids from nba-brand; no live ESPN call).
+  "/teams/2",
+  "/teams/13",
+  "/teams/9",
+  "/teams/18",
   "/compare",
   "/ask",
   "/arcade",

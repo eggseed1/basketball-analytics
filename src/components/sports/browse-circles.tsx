@@ -1,6 +1,5 @@
-import Link from "next/link";
-
 import { TeamLogo } from "@/components/brand/team-logo";
+import { AppLink } from "@/components/ui/app-link";
 import { ALL_TEAM_ABBRS, TEAM_BRANDS } from "@/lib/nba-brand";
 import { cn } from "@/lib/utils";
 
@@ -27,16 +26,17 @@ export function BrowseCircles({
         {ALL_TEAM_ABBRS.map((abbr) => {
           const brand = TEAM_BRANDS[abbr]!;
           return (
-            <Link
+            <AppLink
               key={abbr}
               href={`/teams/${brand.espnTeamId}`}
+              prefetch={false}
               className="flex flex-col items-center gap-2"
             >
               <span className="flex size-[4.5rem] items-center justify-center rounded-full bg-secondary shadow-inner">
                 <TeamLogo teamKey={abbr} size="lg" />
               </span>
               <span className="text-[14px] font-medium">{brand.abbr}</span>
-            </Link>
+            </AppLink>
           );
         })}
       </div>
@@ -46,7 +46,7 @@ export function BrowseCircles({
   return (
     <div className="grid grid-cols-3 gap-x-3 gap-y-5 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-10">
       {BROWSE.map((item) => (
-        <Link
+        <AppLink
           key={item.href}
           href={item.href}
           className="flex flex-col items-center gap-2"
@@ -61,7 +61,7 @@ export function BrowseCircles({
           <span className="text-center text-[14px] font-medium">
             {item.label}
           </span>
-        </Link>
+        </AppLink>
       ))}
     </div>
   );

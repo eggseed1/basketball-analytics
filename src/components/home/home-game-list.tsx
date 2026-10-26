@@ -1,6 +1,5 @@
-import Link from "next/link";
-
 import { PlayerHeadshot } from "@/components/player/player-headshot";
+import { AppLink } from "@/components/ui/app-link";
 import type { ScheduleGame } from "@/data/queries/home";
 import { nbaTeamAbbr } from "@/data/providers/nba/nba-team-meta";
 
@@ -63,7 +62,7 @@ function HomeGameRow({
   const homeStarters = leaders.filter((p) => p.teamId === game.homeTeamId);
 
   return (
-    <Link
+    <AppLink
       href={href}
       className="flex flex-col gap-3 px-4 py-3 transition-colors hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
     >
@@ -126,7 +125,7 @@ function HomeGameRow({
           />
         </div>
       ) : null}
-    </Link>
+    </AppLink>
   );
 }
 

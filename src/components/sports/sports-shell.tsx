@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   Suspense,
   useEffect,
@@ -178,6 +178,23 @@ function PrimaryLink({
   );
 }
 
+/** Prefetch the three highest-traffic destinations once the shell mounts. */
+const PRIMARY_DESTINATION_PREFETCH = [
+  "/scores",
+  "/explore/players",
+  "/standings",
+] as const;
+
+function PrefetchPrimaryDestinations() {
+  const router = useRouter();
+  useEffect(() => {
+    for (const href of PRIMARY_DESTINATION_PREFETCH) {
+      void router.prefetch(href);
+    }
+  }, [router]);
+  return null;
+}
+
 export function SportsShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const tNav = useTranslations("Nav");
@@ -227,6 +244,7 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
   return (
     <RouteTransitionProvider>
       <div className="app-shell flex min-h-full min-w-0 flex-1 flex-col overflow-x-clip">
+        <PrefetchPrimaryDestinations />
         {destinationWash ? null : (
           <PageAtmosphere
             colorA={NBA_ATMOSPHERE.colorA}

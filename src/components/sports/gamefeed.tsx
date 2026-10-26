@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import type { CSSProperties, ReactNode } from "react";
 
@@ -148,7 +147,7 @@ function MatchupChip({
       )}
       style={{ backdropFilter: "none", WebkitBackdropFilter: "none" }}
     >
-      <Link
+      <TransitionLink
         href={`/games/${game.id}`}
         className="absolute inset-0 z-0 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-ring"
         aria-label={title}
