@@ -1,0 +1,64 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	// Fat OpenNext origin — SSR, ASSETS, R2, Durable Objects.
+	// Not on the custom domain; reached only via service binding from the thin edge.
+	"main": "origin-worker.ts",
+	"name": "basketball-analytics-origin",
+	"compatibility_date": "2026-08-24",
+	"compatibility_flags": [
+		"nodejs_compat",
+		"global_fetch_strictly_public"
+	],
+	"workers_dev": true,
+	"preview_urls": false,
+	"observability": {
+		"enabled": true,
+		"logs": {
+			"invocation_logs": false,
+			"head_sampling_rate": 0.05
+		}
+	},
+	"assets": {
+		"directory": ".open-next/assets",
+		"binding": "ASSETS"
+	},
+	"services": [
+		{
+			"binding": "WORKER_SELF_REFERENCE",
+			"service": "basketball-analytics-origin"
+		}
+	],
+	"kv_namespaces": [
+		{
+			"binding": "PAGE_CACHE",
+			"id": "4267118315b64cb48a533e1543d22e21"
+		}
+	],
+	"r2_buckets": [
+		{
+			"binding": "PLAYER_SHOTS",
+			"bucket_name": "drbl-player-shots"
+		},
+		{
+			"binding": "PLAYER_GAME_LOGS",
+			"bucket_name": "drbl-player-game-logs"
+		},
+		{
+			"binding": "GAME_ARCHIVE",
+			"bucket_name": "drbl-game-archive"
+		}
+	],
+	"version_metadata": {
+		"binding": "CF_VERSION_METADATA"
+	},
+	"images": {
+		"binding": "IMAGES"
+	},
+	"vars": {
+		"DATA_PROVIDER": "nba",
+		"FULL_EDGE_PRODUCT": "1"
+	},
+	"limits": {
+		"cpu_ms": 25000
+	}
+}
