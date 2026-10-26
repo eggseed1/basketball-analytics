@@ -601,9 +601,15 @@ async function keepWarm(env: WorkerEnv, ctx: WorkerContext): Promise<void> {
   );
 }
 
+/** Cron controller — avoid relying on @cloudflare/workers-types in the Next build. */
+type DrblScheduledController = {
+  readonly cron: string;
+  readonly scheduledTime: number;
+};
+
 const worker = {
   async scheduled(
-    _controller: ScheduledController,
+    _controller: DrblScheduledController,
     env: WorkerEnv,
     ctx: WorkerContext
   ): Promise<void> {
