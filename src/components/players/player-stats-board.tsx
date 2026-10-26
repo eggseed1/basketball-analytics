@@ -17,7 +17,7 @@ import { resolveTeamBrand } from "@/lib/nba-brand";
 import {
   playerDepthHref,
   type PlayerSeasonKind,
-} from "@/lib/player-destination";
+} from "@/lib/player-destination-href";
 import {
   cardStintsForSeason,
   isMultiTeamSeasonRow,

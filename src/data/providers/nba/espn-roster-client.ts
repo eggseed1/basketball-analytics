@@ -16,7 +16,7 @@ import {
   bundledCurrentRosterMeta,
   listBundledEspnRosterEntries,
 } from "@/data/runtime/current-roster-snapshot";
-import { leagueRegularSeasonHasOpened } from "@/lib/nba-season-status-schedule";
+import { nbaTodayIso } from "@/lib/nba-calendar-date";
 
 const SITE_API = "https://site.api.espn.com";
 
@@ -55,10 +55,11 @@ export async function isPreseasonRosterSeason(season: string, now = new Date()):
   const month = now.getUTCMonth();
   if (month < 9) return true;
   if (month > 9) return false;
-  // October: schedule opener wins. When tip is unknown, stay on the roster
-  // path for the whole month instead of flipping on a fixed day.
-  if (await leagueRegularSeasonHasOpened(leagueSeason, now)) return false;
-  return month === 9;
+  // October: approximate tip so this helper stays importable from client
+  // graphs (career board → player-destination). Schedule-backed gates live in
+  // nba-season-status-schedule / player-board-season on the server.
+  const approxOpener = `${startYear}-10-21`;
+  return nbaTodayIso(now) < approxOpener;
 }
 
 export async function fetchEspnTeamRosterPlayers(

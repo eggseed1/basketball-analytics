@@ -29,7 +29,7 @@ import {
   type CompMetricId,
   type CompSlot,
 } from "@/lib/player-comp-futures-shared";
-import { playerSeasonChipHref } from "@/lib/player-destination";
+import { playerSeasonChipHref } from "@/lib/player-destination-href";
 import { cn } from "@/lib/utils";
 
 const HISTORY = "var(--accent-info)";

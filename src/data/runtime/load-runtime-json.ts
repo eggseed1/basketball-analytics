@@ -5,13 +5,10 @@
  * them into the script upload and blows past Cloudflare's size limit.
  * record-book proved node:fs alone fails on Workers; ASSETS.fetch works.
  *
- * server-only: node:fs must never enter a client webpack graph.
+ * node:fs is required dynamically so webpack client graphs that transitively
+ * import this module do not hit UnhandledSchemeError / server-only failures.
+ * Callers that need data must run on the server (ASSETS / disk); browsers get null.
  */
-import "server-only";
-
-import { existsSync, readFileSync } from "node:fs";
-import path from "node:path";
-
 type AssetsFetcher = {
   fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>;
 };
@@ -31,17 +28,25 @@ function cloudflareAssets(): AssetsFetcher | null {
 }
 
 function readLocalFile(fileName: string): unknown | null {
-  const roots = [
-    path.join(process.cwd(), "public", "runtime", fileName),
-    path.join(process.cwd(), "src", "data", "runtime", fileName),
-  ];
-  for (const file of roots) {
-    try {
-      if (!existsSync(file)) continue;
-      return JSON.parse(readFileSync(file, "utf8")) as unknown;
-    } catch {
-      /* try next root */
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { existsSync, readFileSync } = require("node:fs") as typeof import("node:fs");
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const path = require("node:path") as typeof import("node:path");
+    const roots = [
+      path.join(process.cwd(), "public", "runtime", fileName),
+      path.join(process.cwd(), "src", "data", "runtime", fileName),
+    ];
+    for (const file of roots) {
+      try {
+        if (!existsSync(file)) continue;
+        return JSON.parse(readFileSync(file, "utf8")) as unknown;
+      } catch {
+        /* try next root */
+      }
     }
+  } catch {
+    /* browser / edge without node:fs */
   }
   return null;
 }
