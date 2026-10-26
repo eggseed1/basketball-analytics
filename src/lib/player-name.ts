@@ -11,7 +11,8 @@ const NAME_SUFFIX =
   /^(jr\.?|sr\.?|ii|iii|iv|v|2nd|3rd|4th|5th)$/i;
 
 /**
- * Narrow-viewport masthead form: first initial + family name.
+ * Narrow-viewport form: first initial + family name.
+ * Used on the player masthead and Explore board frozen column.
  * "Giannis Antetokounmpo" → "G. Antetokounmpo"; "Michael Porter Jr." → "M. Porter Jr."
  * Single-token names are unchanged. Returns the original string when nothing shortens.
  */

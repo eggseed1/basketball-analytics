@@ -41,6 +41,7 @@ import {
   boardStatValue,
   formatBoardStat,
 } from "@/lib/player-board-stats";
+import { formatPlayerMastheadShortName } from "@/lib/player-name";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { cn } from "@/lib/utils";
 import {
@@ -513,6 +514,9 @@ const FrozenRow = memo(function FrozenRow({
 }) {
   const { isMultiTeam, label: teamLabel, teamKey } =
     boardTeamPresentation(player);
+  const shortName = formatPlayerMastheadShortName(player.playerName);
+  const useShortOnMobile =
+    Boolean(shortName) && shortName !== player.playerName;
   return (
     <div
       data-frozen-row
@@ -544,8 +548,16 @@ const FrozenRow = memo(function FrozenRow({
             boardType.name,
             textLinkClassName
           )}
+          title={player.playerName}
         >
-          {player.playerName}
+          {useShortOnMobile ? (
+            <>
+              <span className="sm:hidden">{shortName}</span>
+              <span className="hidden sm:inline">{player.playerName}</span>
+            </>
+          ) : (
+            player.playerName
+          )}
         </span>
       </PlayerIdentity>
     </div>

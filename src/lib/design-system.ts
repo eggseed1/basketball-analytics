@@ -32,8 +32,8 @@ export const boardType = {
   head: "text-[9.5px] leading-[1.1] tracking-[0.04em] sm:text-[12px] sm:leading-4 sm:tracking-[0.06em]",
   /** Numeric cells, Tm, Pos */
   cell: "text-[10.5px] leading-[1.15] sm:text-[12px] sm:leading-4",
-  /** Frozen player name column */
-  name: "text-[11px] leading-tight font-semibold sm:text-[16px] sm:leading-6",
+  /** Frozen player name column — mobile uses short form (G. Antetokounmpo). */
+  name: "text-[13px] leading-tight font-semibold sm:text-[16px] sm:leading-6",
 } as const;
 
 /** Clickable text: underlined + semibold. Pair with TextLink. */
