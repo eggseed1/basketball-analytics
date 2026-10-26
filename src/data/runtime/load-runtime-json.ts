@@ -4,7 +4,11 @@
  * Do not static-import these files into the Worker module graph — that inlines
  * them into the script upload and blows past Cloudflare's size limit.
  * record-book proved node:fs alone fails on Workers; ASSETS.fetch works.
+ *
+ * server-only: node:fs must never enter a client webpack graph.
  */
+import "server-only";
+
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 

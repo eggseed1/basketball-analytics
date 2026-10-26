@@ -7,6 +7,8 @@
  * DARKO row: [nbaId, name, dpm, oDpm, dDpm]
  * RAPTOR row: [playerId, name, raptor, oRaptor, dRaptor, war]
  */
+import "server-only";
+
 import type { DarkoRating, RaptorRating } from "@/data/types";
 import { normalizePlayerName } from "@/lib/player-name";
 
