@@ -3,12 +3,12 @@
     "methodologyVersion": "movement-m1-0.2+movement-rules-v2",
     "status": "NEWS_INGEST_M1",
     "season": "2026-27",
-    "snapshotDate": "2026-10-25",
+    "snapshotDate": "2026-10-26",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-10-25T18:18:25.344Z",
+    "builtAt": "2026-10-26T13:55:11.429Z",
     "rosterPlayerCount": 485,
-    "headlinesScanned": 6604,
-    "latestHeadlineAt": "2026-10-25T18:12:44.000Z",
+    "headlinesScanned": 6896,
+    "latestHeadlineAt": "2026-10-26T13:51:08.000Z",
     "latestTransactionDate": "2026-10-24",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -148,7 +148,7 @@
     },
     "outlet:fadeaway-world": {
       "label": "Fadeaway World",
-      "credibility": 16
+      "credibility": 12
     },
     "outlet:sporting-news": {
       "label": "Sporting News",
@@ -805,7 +805,7 @@
     },
     {
       "id": "mv-trade-6589-20261005",
-      "headline": "Draymond Green, Mark Williams and others: trade talk",
+      "headline": "Draymond Green, Mark Williams and others: reported trade agreement",
       "primaryClaimId": "mv-1078d8da46ce0418",
       "claimIds": [
         "mv-ac71e037974744a0",
@@ -822,12 +822,13 @@
         "mv-952e6db94b7fbfb6",
         "mv-212d63247eb469a4",
         "mv-9fe27d68f69b738c",
-        "mv-64710e24816191f1"
+        "mv-64710e24816191f1",
+        "mv-d3471754c7c14ff3"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-05T07:47:20.000Z",
-      "lastMeaningfulAt": "2026-10-22T22:45:01.000Z",
+      "lastMeaningfulAt": "2026-10-26T09:33:13.000Z",
       "linkedPlayerIds": [
         "6589",
         "4701232",
@@ -1584,6 +1585,24 @@
       "linkedTeamIds": [
         "7",
         "15"
+      ]
+    },
+    {
+      "id": "mv-trade-5060631-20261025",
+      "headline": "Adou Thiero: trade talk",
+      "primaryClaimId": "mv-18920474a8170e5d",
+      "claimIds": [
+        "mv-18920474a8170e5d"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-10-25T16:28:12.000Z",
+      "lastMeaningfulAt": "2026-10-25T16:28:12.000Z",
+      "linkedPlayerIds": [
+        "5060631"
+      ],
+      "linkedTeamIds": [
+        "13"
       ]
     },
     {
@@ -8072,6 +8091,49 @@
         "15"
       ],
       "isOriginal": false
+    },
+    {
+      "id": "mv-18920474a8170e5d",
+      "clusterId": "mv-trade-5060631-20261025",
+      "summary": "Lakers Insider Suggests Trading Cameron Carr And Adou Thiero For Immediate Help",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-25T16:28:12.000Z",
+      "sourceId": "reporter:jovan-buha",
+      "sourceLabel": "Fadeaway World, citing Jovan Buha (The Athletic)",
+      "reporterLabel": "Jovan Buha",
+      "sourceUrl": "https://fadeawayworld.net/nba-trade-rumors/los-angeles-lakers/lakers-insider-suggests-trading-cameron-carr-and-adou-thiero-for-immediate-help",
+      "playerIds": [
+        "5060631"
+      ],
+      "teamIds": [
+        "13"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-d3471754c7c14ff3",
+      "clusterId": "mv-trade-6589-20261005",
+      "summary": "Why Lakers, Bucks Couldn’t Agree On A Dalton Knecht Trade",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-26T09:33:13.000Z",
+      "sourceId": "outlet:fadeaway-world",
+      "sourceLabel": "Fadeaway World",
+      "sourceUrl": "https://fadeawayworld.net/nba-trade-rumors/los-angeles-lakers/why-lakers-bucks-couldnt-agree-on-dalton-knecht-trade",
+      "playerIds": [
+        "4897943"
+      ],
+      "teamIds": [
+        "13",
+        "15"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "offer"
     },
     {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",
