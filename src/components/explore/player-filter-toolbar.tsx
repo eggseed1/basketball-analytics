@@ -29,7 +29,7 @@ import {
 } from "@/lib/explore-players-display";
 import { espnYearFromCanonicalSeason } from "@/data/providers/nba/season";
 import { listDraftClassYears, groupDraftClassYearsByDecade } from "@/lib/draft-class";
-import { defaultExploreMinimumMinutesSync } from "@/lib/player-board-season";
+import { defaultExploreMinimumMinutesSync } from "@/lib/player-board-season-sync";
 import { cn } from "@/lib/utils";
 import { usePlayerBoardI18n } from "@/components/explore/use-player-board-i18n";
 

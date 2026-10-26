@@ -1,13 +1,11 @@
-import {
-  canonicalSeasonFromStartYear,
-  currentNbaStartYear,
-} from "@/data/providers/historical/season-range";
+/**
+ * Schedule-backed season gates. Loads game-snapshot JSON (ASSETS / disk).
+ * Do not import from client components — use approximations in
+ * player-board-season-sync instead.
+ */
 import { getRuntimeSnapshotGames } from "@/data/runtime/game-snapshot";
 import { nbaTodayIso } from "@/lib/nba-calendar-date";
-
-export function isCurrentNbaSeason(season: string, now = new Date()): boolean {
-  return season === canonicalSeasonFromStartYear(currentNbaStartYear(now));
-}
+import { isCurrentNbaSeason } from "@/lib/nba-season-status";
 
 /**
  * First regular-season tip date on the bundled schedule, or null when unknown.

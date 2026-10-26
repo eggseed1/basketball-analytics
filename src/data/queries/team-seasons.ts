@@ -7,7 +7,7 @@ import {
 } from "@/data/providers/historical/season-range";
 import { getAvailableSeasons } from "@/data/queries/players";
 import { runtimeTimeoutMs } from "@/data/providers/nba/runtime-policy";
-import { isSeasonAwaitingFirstGame } from "@/lib/nba-season-status";
+import { isSeasonAwaitingFirstGame } from "@/lib/nba-season-status-schedule";
 
 /**
  * ESPN by-team season boards are reliable from this floor onward

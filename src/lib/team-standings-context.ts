@@ -3,7 +3,7 @@ import { ESPN_TEAM_META } from "@/data/providers/nba/team-meta";
 import { getLeagueStandings } from "@/data/queries/standings";
 import type { TeamSeasonStats } from "@/data/types";
 import type { LeagueStandings, StandingRow } from "@/data/types/standings";
-import { isSeasonAwaitingFirstGame } from "@/lib/nba-season-status";
+import { isSeasonAwaitingFirstGame } from "@/lib/nba-season-status-schedule";
 import { shiftCanonicalSeason } from "@/lib/player-stat-comps";
 import type { TeamBrand } from "@/lib/nba-brand";
 import {

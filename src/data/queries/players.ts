@@ -1376,7 +1376,7 @@ export async function getFilteredPlayerSeasonsDetailed(
         "@/data/providers/nba/runtime-policy"
       );
       const { leagueRegularSeasonHasOpened } = await import(
-        "@/lib/nba-season-status"
+        "@/lib/nba-season-status-schedule"
       );
       // Opening week: ESPN may reject as stale, then box-score board needs
       // headroom beyond the slim edge budget.

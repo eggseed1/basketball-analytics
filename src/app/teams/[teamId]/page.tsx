@@ -41,7 +41,7 @@ import { getTeamExploreSeasons } from "@/data/queries";
 import { getFranchiseHistory } from "@/data/queries/franchises";
 import { getTeamSeasonBoardCached } from "@/data/queries/request-cache";
 import { formatOrdinal } from "@/lib/format";
-import { isSeasonAwaitingFirstGame } from "@/lib/nba-season-status";
+import { isSeasonAwaitingFirstGame } from "@/lib/nba-season-status-schedule";
 import { resolveHistoricalTeamBrand } from "@/lib/historical-team-brand";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { brandAtmosphereColors } from "@/lib/game-matchup-theme";
