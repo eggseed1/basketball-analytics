@@ -63,14 +63,40 @@ function edgeCache(): Cache {
 }
 
 /**
- * JSON APIs the homepage polls after first paint. `s-maxage` alone does nothing
- * on Workers — Cache API here makes the second desk hit cheap.
- * Skip personalized / live paths (scores, watchlist, analytics?fresh=1).
+ * JSON APIs coalesced on the thin edge via Cache API.
+ * `s-maxage` alone never hits on Workers — this is what keeps polling /
+ * explore / game-lab traffic off the fat OpenNext isolate.
+ *
+ * Skip: watchlist (personalized), force=1 / fresh=1 soft-refresh.
  */
-const EDGE_CACHED_API =
-  /^\/api\/(?:home\/(?:insights|hot-cold|performers|week-strip|standings)|news\/analytics)$/;
+type ApiEdgeRule = { re: RegExp; ttlSeconds: number };
 
-const API_EDGE_TTL_SECONDS = 120;
+const EDGE_CACHED_API_RULES: ApiEdgeRule[] = [
+  // Home desk — minutes-scale.
+  {
+    re: /^\/api\/home\/(?:insights|hot-cold|performers|week-strip|standings)$/,
+    ttlSeconds: 120,
+  },
+  { re: /^\/api\/news\/analytics$/, ttlSeconds: 120 },
+  { re: /^\/api\/standings\/team-stats$/, ttlSeconds: 120 },
+  // Scores tiles — short so live clocks move; still collapses N desks → 1 origin.
+  { re: /^\/api\/scores\/live$/, ttlSeconds: 5 },
+  { re: /^\/api\/scores\/(?:upcoming|timeline)$/, ttlSeconds: 15 },
+  // Explore board infinite scroll — season snapshot is stable for a minute.
+  { re: /^\/api\/explore\/players\/board$/, ttlSeconds: 60 },
+  // Game lab islands — live labs poll often; finals reuse the same JSON.
+  {
+    re: /^\/api\/games\/[^/]+\/(?:box-score|play-by-play|lineups|possessions|archive-shots)$/,
+    ttlSeconds: 10,
+  },
+];
+
+function apiEdgeRuleForPath(pathname: string): ApiEdgeRule | null {
+  for (const rule of EDGE_CACHED_API_RULES) {
+    if (rule.re.test(pathname)) return rule;
+  }
+  return null;
+}
 
 function apiCacheKeyRequest(version: string, url: URL): Request {
   return new Request(
@@ -86,9 +112,12 @@ async function serveCachedApi(
 ): Promise<Response | null> {
   if (request.method !== "GET") return null;
   const url = new URL(request.url);
-  if (!EDGE_CACHED_API.test(url.pathname)) return null;
-  // Soft-refresh with fresh=1 must bypass (analytics desk).
-  if (url.searchParams.has("fresh")) return null;
+  const rule = apiEdgeRuleForPath(url.pathname);
+  if (!rule) return null;
+  // Soft-refresh / forced live must bypass.
+  if (url.searchParams.has("fresh") || url.searchParams.get("force") === "1") {
+    return null;
+  }
 
   const version = env.CF_VERSION_METADATA?.id?.trim() || "nov";
   const cacheKey = apiCacheKeyRequest(version, url);
@@ -115,16 +144,14 @@ async function serveCachedApi(
     return response;
   }
 
+  const ttl = rule.ttlSeconds;
   const [toClient, toCache] = response.body.tee();
   ctx.waitUntil(
     (async () => {
       try {
         const headers = new Headers();
         headers.set("content-type", type);
-        headers.set(
-          "cache-control",
-          `public, max-age=${API_EDGE_TTL_SECONDS}`
-        );
+        headers.set("cache-control", `public, max-age=${ttl}`);
         headers.set("x-api-cache", "EDGE");
         await edgeCache().put(
           cacheKey,
@@ -520,7 +547,69 @@ function tooManyRequests(): Response {
 
 const CANONICAL_HOST = "drbl.io";
 
+/**
+ * Hot paths re-warmed on a cron so PAGE_CACHE / Cache API stay filled after
+ * deploys and idle periods. Hits this same Worker (workers.dev) so KV keys
+ * match visitor traffic; MISS still pays origin once per path per window.
+ */
+const KEEP_WARM_PATHS = [
+  "/",
+  "/standings",
+  "/scores",
+  "/explore/players",
+  "/explore/games",
+  "/compare",
+  "/ask",
+  "/arcade",
+  "/learn",
+  "/api/home/insights",
+  "/api/home/hot-cold",
+  "/api/home/performers",
+  "/api/home/week-strip",
+  "/api/home/standings",
+  "/api/standings/team-stats",
+] as const;
+
+const KEEP_WARM_BASE =
+  "https://basketball-analytics.drbl-analytics.workers.dev";
+
+async function keepWarm(env: WorkerEnv, ctx: WorkerContext): Promise<void> {
+  for (const path of KEEP_WARM_PATHS) {
+    const accept = path.startsWith("/api/") ? "application/json" : "text/html";
+    ctx.waitUntil(
+      fetch(`${KEEP_WARM_BASE}${path}`, {
+        method: "GET",
+        headers: {
+          accept,
+          "user-agent": "drbl-keep-warm-cron",
+        },
+      }).catch(() => undefined)
+    );
+  }
+  // Touch origin once so the fat isolate stays resident for the next MISS.
+  ctx.waitUntil(
+    originFetch(
+      new Request(`${KEEP_WARM_BASE}/api/runtime-policy`, {
+        method: "GET",
+        headers: {
+          accept: "application/json",
+          "user-agent": "drbl-keep-warm-cron",
+        },
+      }),
+      env
+    ).catch(() => undefined)
+  );
+}
+
 const worker = {
+  async scheduled(
+    _controller: ScheduledController,
+    env: WorkerEnv,
+    ctx: WorkerContext
+  ): Promise<void> {
+    await keepWarm(env, ctx);
+  },
+
   async fetch(request: Request, env: WorkerEnv, ctx: WorkerContext): Promise<Response> {
     const url = new URL(request.url);
     if (url.hostname === `www.${CANONICAL_HOST}`) {

@@ -126,12 +126,17 @@ jobs:
             "/explore/games"
             "/explore/players"
             "/explore/teams"
+            "/compare"
             "/ask"
+            "/arcade"
+            "/learn"
             "/players/4065648"
             "/api/home/insights"
             "/api/home/hot-cold"
             "/api/home/performers"
             "/api/home/week-strip"
+            "/api/home/standings"
+            "/api/standings/team-stats"
           )
           # Optional live/final game shells — never fail the warm if ESPN is down.
           if games=$(curl -fsS --max-time 15 \

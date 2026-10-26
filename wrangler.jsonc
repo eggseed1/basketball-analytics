@@ -44,6 +44,10 @@
 			}
 		}
 	],
+	"triggers": {
+		// Re-fill PAGE_CACHE / API Cache API so visitor MISSes stay rare.
+		"crons": ["*/5 * * * *"]
+	},
 	"limits": {
 		// Cache hits are tiny; MISS just waits on the origin binding.
 		"cpu_ms": 10000
