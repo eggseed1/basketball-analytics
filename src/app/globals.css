@@ -1822,22 +1822,23 @@ html.booting #app-boot {
   [data-home-stack] [data-home-module="league-moves"] {
     order: 7;
   }
-  [data-home-stack] [data-home-module="transactions"] {
+  [data-home-stack] [data-home-module="news"] {
     order: 8;
   }
-  [data-home-stack] [data-home-module="news"] {
+  [data-home-stack] [data-home-module="sentiment"] {
     order: 9;
   }
-  [data-home-stack] [data-home-module="sentiment"] {
-    order: 10;
-  }
   [data-home-stack] [data-home-module="season-glance"] {
-    order: 11;
+    order: 10;
   }
   [data-home-stack] [data-home-module="bracket"],
   [data-home-stack] [data-home-module="injuries"],
   [data-home-stack] [data-home-module="hot-cold"],
   [data-home-stack] [data-home-module="standings-race"] {
+    order: 11;
+  }
+  /* Keep transactions immediately above the rookie race on the mobile stack. */
+  [data-home-stack] [data-home-module="transactions"] {
     order: 12;
   }
   /* Missing order defaults to 0 and pins the block under the calendar. */
