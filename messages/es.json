@@ -546,7 +546,11 @@
     "nextGames": "Próximos partidos: {label}",
     "finalsMeta": "{total} · {finals} final",
     "latestResults": "Últimos resultados",
-    "staleNote": "Los marcadores en vivo no están disponibles; se muestra el calendario guardado."
+    "staleNote": "Los marcadores en vivo no están disponibles; se muestra el calendario guardado.",
+    "loadingSubtitle": "Partidos en vivo, resultados y horarios.",
+    "updatingBoard": "Cargando esta jornada…",
+    "loadingWeekStrip": "Cargando partidos de la semana…",
+    "loadingMoreGames": "Cargando más partidos…"
   },
   "Gm": {
     "nav_ariaLabel": "Oficina",

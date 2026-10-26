@@ -546,7 +546,11 @@
     "nextGames": "다음 경기: {label}",
     "finalsMeta": "{total} · {finals} 종료",
     "latestResults": "최근 결과",
-    "staleNote": "라이브 스코어를 사용할 수 없어 저장된 일정을 표시합니다."
+    "staleNote": "라이브 스코어를 사용할 수 없어 저장된 일정을 표시합니다.",
+    "loadingSubtitle": "라이브 경기, 결과, 팁오프 시간.",
+    "updatingBoard": "이 일정을 불러오는 중…",
+    "loadingWeekStrip": "주간 경기를 불러오는 중…",
+    "loadingMoreGames": "더 많은 경기를 불러오는 중…"
   },
   "Gm": {
     "nav_ariaLabel": "프론트 오피스",

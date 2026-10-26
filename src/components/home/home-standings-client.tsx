@@ -2,6 +2,10 @@
 
 import { useEffect, useState } from "react";
 
+import {
+  LoadingStatus,
+  SkeletonBlock,
+} from "@/components/continuity/destination-loading-frame";
 import { HomeStandingsBoard } from "@/components/home/home-standings-board";
 import type { HomeStandingSlim } from "@/lib/home-standings-slim";
 
@@ -48,12 +52,22 @@ export function HomeStandingsClient({
   }, [season]);
 
   if (!board) {
+    const label = race ? "Loading playoff race…" : "Loading standings…";
     return (
       <div
-        className="sports-card h-64 animate-pulse p-4"
+        className="sports-card flex flex-col gap-3 p-4"
         aria-busy="true"
-        aria-label={race ? "Loading playoff race" : "Loading standings"}
-      />
+        aria-live="polite"
+        aria-label={label}
+      >
+        <LoadingStatus>{label}</LoadingStatus>
+        <SkeletonBlock className="h-4 w-28 rounded-md" />
+        <div className="flex flex-col gap-2">
+          {Array.from({ length: 6 }, (_, i) => (
+            <SkeletonBlock key={i} className="h-8 w-full rounded-lg" />
+          ))}
+        </div>
+      </div>
     );
   }
 

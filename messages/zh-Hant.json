@@ -546,7 +546,11 @@
     "nextGames": "下一場比賽：{label}",
     "finalsMeta": "{total} · {finals} 已結束",
     "latestResults": "最新結果",
-    "staleNote": "即時比分暫不可用，顯示已儲存賽程。"
+    "staleNote": "即時比分暫不可用，顯示已儲存賽程。",
+    "loadingSubtitle": "直播比賽、賽果與開球時間。",
+    "updatingBoard": "正在載入本場次…",
+    "loadingWeekStrip": "正在載入本週比賽…",
+    "loadingMoreGames": "正在載入更多比賽…"
   },
   "Gm": {
     "nav_ariaLabel": "管理層",

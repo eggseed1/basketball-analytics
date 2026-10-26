@@ -546,7 +546,11 @@
     "nextGames": "次の試合: {label}",
     "finalsMeta": "{total} · {finals} 終了",
     "latestResults": "最新結果",
-    "staleNote": "ライブスコアは利用できません。保存済み日程を表示しています。"
+    "staleNote": "ライブスコアは利用できません。保存済み日程を表示しています。",
+    "loadingSubtitle": "ライブ試合、結果、ティップオフ時刻。",
+    "updatingBoard": "この日の試合を読み込み中…",
+    "loadingWeekStrip": "今週の試合を読み込み中…",
+    "loadingMoreGames": "さらに試合を読み込み中…"
   },
   "Gm": {
     "nav_ariaLabel": "フロントオフィス",
