@@ -8,7 +8,7 @@ import {
   metricById,
 } from "./metrics";
 import type { AskMetricDef, AskMetricId, QueryOperation } from "./types";
-import { metricSeasonAvailabilitySync } from "./coverage";
+import { metricSeasonAvailabilitySync } from "./coverage-sync";
 import {
   canonicalSeasonFromStartYear,
   currentNbaStartYear,
