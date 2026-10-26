@@ -201,9 +201,21 @@ function standingsFromGameArchive(season: string): LeagueStandings | null {
 
 const archiveStandingsCache = new Map<string, LeagueStandings | null>();
 
+/**
+ * Cap how long standings SSR waits on the day scoreboard. A cold ESPN fetch
+ * from Cloudflare egress often runs 2–4s; the nightly bake is already correct
+ * until tip, so timing out keeps /standings MISSes near EDGE speed.
+ */
+const LIVE_STANDINGS_SCOREBOARD_BUDGET_MS = 450;
+
 async function liveDayGames(season: string): Promise<Game[]> {
   try {
-    return await fetchScoreboardDay({ season });
+    return await Promise.race([
+      fetchScoreboardDay({ season }),
+      new Promise<Game[]>((resolve) => {
+        setTimeout(() => resolve([]), LIVE_STANDINGS_SCOREBOARD_BUDGET_MS);
+      }),
+    ]);
   } catch {
     return [];
   }
@@ -213,15 +225,22 @@ async function liveDayGames(season: string): Promise<Game[]> {
  * Current-season W-L from the bundled schedule plus yesterday/today scoreboard
  * finals. Reuses the same ESPN day feed scores already poll — no standings CDN
  * call — so records move after each final without a Worker redeploy.
+ * Scoreboard is budgeted; snapshot-only compute always returns immediately.
  */
 async function standingsFromSnapshotPlusLive(
   season: string
 ): Promise<LeagueStandings | null> {
   const snapshot = getRuntimeSnapshotGames(season);
+  const fromSnap = snapshot.length
+    ? computeStandingsFromGameArchive(season, snapshot)
+    : null;
   const live = await liveDayGames(season);
-  const games = mergeStandingsGames(snapshot, live);
-  if (!games.length) return null;
-  return computeStandingsFromGameArchive(season, games);
+  if (!live.length) return fromSnap;
+  const withLive = computeStandingsFromGameArchive(
+    season,
+    mergeStandingsGames(snapshot, live)
+  );
+  return preferFresherStandings(fromSnap, withLive);
 }
 
 function isCurrentNbaSeason(season: string): boolean {
@@ -239,6 +258,8 @@ export async function fetchLeagueStandings(
   if (!isCurrentNbaSeason(season)) return board;
   const scheduled = regularGamesThrough(getRuntimeSnapshotGames(season), season, nbaTodayIso());
   if (!scheduled || !standingsCountUnscheduledGames(board, scheduled)) return board;
+  // CF egress to site.api often stalls; never block standings SSR on it.
+  if (preferBundledProductDataOnEdge()) return withoutRecords(board);
   const fromSite = await fetchStandingsFromSiteApi(season);
   if (fromSite && rowCount(fromSite) > 0 && !standingsCountUnscheduledGames(fromSite, scheduled)) {
     return fromSite;
