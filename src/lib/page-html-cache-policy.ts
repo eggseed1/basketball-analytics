@@ -44,13 +44,23 @@ export const DAILY_HTML_POLICY: PageHtmlCachePolicy = {
 };
 
 /**
- * Standings / explore boards / player / team pages — snapshot-backed, not
- * live. Longer fresh window means fewer STALE background SSRs (Workers CPU).
+ * Explore boards / player / team pages — snapshot-backed, not live. Longer
+ * fresh window means fewer STALE background SSRs (Workers CPU).
  * Live explore/games stays on LIVE_HTML_POLICY via isLiveHtmlPath.
+ * `/standings` is separate: W-L overlays live day finals (see standings-client).
  */
 export const BOARD_HTML_POLICY: PageHtmlCachePolicy = {
   fresh: 45 * 60,
   stale: 6 * 60 * 60,
+};
+
+/**
+ * Standings shell — same short CDN window as scores. Records overlay the live
+ * day scoreboard, so a 45-minute board TTL would hide finals after tip.
+ */
+export const STANDINGS_HTML_POLICY: PageHtmlCachePolicy = {
+  fresh: 2 * 60,
+  stale: 10 * 60,
 };
 
 /**
@@ -63,6 +73,9 @@ export const LIVE_HTML_PATH =
 /** Scoreboard shell — EDGE with LIVE_HTML_POLICY (60s); tiles poll `/api/scores/live`. */
 export const SCORES_HTML_PATH = /^\/scores\/?$/;
 
+/** Conference standings — short public CDN; SSR overlays live finals. */
+export const STANDINGS_HTML_PATH = /^\/standings(?:\/|$)/;
+
 /** Single-game lab pages. Finals may EDGE-cache; live stays private (see worker). */
 export const GAME_HTML_PATH = /^\/games\/[^/]+$/;
 
@@ -73,7 +86,7 @@ export const HOME_HTML_PATH = /^\/$/;
 
 /** Snapshot boards — longer KV/EDGE fresh TTL than generic daily pages. */
 export const BOARD_HTML_PATH =
-  /^\/(?:standings|players|teams|explore)(?:\/|$)/;
+  /^\/(?:players|teams|explore)(?:\/|$)/;
 
 /**
  * Path prefixes safe for Cloudflare Cache API + public s-maxage.
@@ -125,9 +138,14 @@ export function isCdnHtmlPath(pathname: string): boolean {
   );
 }
 
+export function isStandingsHtmlPath(pathname: string): boolean {
+  return STANDINGS_HTML_PATH.test(pathname);
+}
+
 export function htmlCachePolicyForPath(pathname: string): PageHtmlCachePolicy {
   if (HOME_HTML_PATH.test(pathname)) return HOME_HTML_POLICY;
   if (isScoresHtmlPath(pathname)) return SCORES_HTML_POLICY;
+  if (isStandingsHtmlPath(pathname)) return STANDINGS_HTML_POLICY;
   if (isLiveHtmlPath(pathname)) return LIVE_HTML_POLICY;
   // After live: /explore/games already returned LIVE; other explore + boards.
   if (BOARD_HTML_PATH.test(pathname)) return BOARD_HTML_POLICY;
