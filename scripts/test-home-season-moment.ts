@@ -151,6 +151,12 @@ assert.equal(homeLayoutForPhase("preseason").top[0], "moment");
 assert.equal(homeLayoutForPhase("stretch-run").main[0], "standings-race");
 assert.ok(homeLayoutForPhase("playoffs").top.includes("bracket"));
 assert.ok(!homeLayoutForPhase("playoffs").side.includes("standings"));
+assert.ok(homeLayoutForPhase("regular-season").bottom.includes("rookie-tracker"));
+assert.ok(homeLayoutForPhase("opening-weeks").main.includes("contract-showcase"));
+assert.ok(
+  homeLayoutForPhase("opening-weeks").bottom.includes("rookie-tracker"),
+  "rookie tracker sits under the grid below contract surplus"
+);
 
 // The loading skeleton's calendar guess lands on the phase the real dates give.
 assert.equal(guessHomeSeasonPhase("2026-10-07"), "preseason");
