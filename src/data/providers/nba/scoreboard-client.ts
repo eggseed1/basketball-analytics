@@ -312,7 +312,7 @@ export async function fetchHomeWeekStrip(options: {
 }> {
   const limit = options.limit ?? 10;
   const now = options.now ?? new Date();
-  const snapshot = homeStripFromRuntimeSnapshot({ limit, now });
+  const snapshot = await homeStripFromRuntimeSnapshot({ limit, now });
   if (snapshot.games.length) return snapshot;
 
   // Snapshot miss (unexpected): last-ditch live ESPN months.
@@ -403,10 +403,10 @@ export async function fetchHomeWeekStrip(options: {
 }
 
 /** Bundled schedule snapshot — no upstream (Cloudflare-safe). */
-function homeStripFromRuntimeSnapshot(options: {
+async function homeStripFromRuntimeSnapshot(options: {
   limit: number;
   now: Date;
-}): { mode: "week" | "upcoming"; games: Game[] } {
+}): Promise<{ mode: "week" | "upcoming"; games: Game[] }> {
   const limit = options.limit;
   const now = options.now;
   const season = upcomingScheduleSeason(now);
@@ -414,7 +414,7 @@ function homeStripFromRuntimeSnapshot(options: {
   const weekStart = startOfWeekSunday(now);
   const weekStartIso = toIsoDate(weekStart);
   const weekEndIso = toIsoDate(addDays(weekStart, 6));
-  const pool = getRuntimeSnapshotGames(season);
+  const pool = await getRuntimeSnapshotGames(season);
 
   const weekGames = pool
     .filter((g) => g.gameDate >= weekStartIso && g.gameDate <= weekEndIso)

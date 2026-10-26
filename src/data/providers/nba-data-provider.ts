@@ -515,7 +515,7 @@ export class NBADataProvider implements BasketballDataProvider {
 
     const { isPreseasonRosterSeason, fetchEspnLeagueRosterPlayers } =
       await import("@/data/providers/nba/espn-roster-client");
-    if (isPreseasonRosterSeason(season)) {
+    if (await isPreseasonRosterSeason(season)) {
       return fetchEspnLeagueRosterPlayers(season);
     }
 

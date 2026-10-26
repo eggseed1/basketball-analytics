@@ -130,7 +130,7 @@ export async function TeamSplitsIsland({
 }) {
   const gamesHref = teamPageHref(teamId, { season, tab: "games" });
 
-  if (!hasTeamSnapshotGames(teamId, season)) {
+  if (!await hasTeamSnapshotGames(teamId, season)) {
     return (
       <section
         id="splits"
@@ -148,10 +148,10 @@ export async function TeamSplitsIsland({
     );
   }
 
-  const splits = computeTeamSplits(teamId, season);
-  const margins = computeTeamMarginSplits(teamId, season);
-  const months = computeTeamMonthSplits(teamId, season);
-  const form = computeTeamFormSummary(teamId, season);
+  const splits = await computeTeamSplits(teamId, season);
+  const margins = await computeTeamMarginSplits(teamId, season);
+  const months = await computeTeamMonthSplits(teamId, season);
+  const form = await computeTeamFormSummary(teamId, season);
   const overall = splits.find((row) => row.id === "overall");
 
   return (
@@ -216,7 +216,7 @@ export async function TeamSplitsIsland({
       </div>
 
       <SplitsMonthWaffle
-        rows={buildTeamSchedule(teamId, season).rows}
+        rows={(await buildTeamSchedule(teamId, season)).rows}
         months={months}
         season={season}
         teamKey={teamKey ?? teamId}

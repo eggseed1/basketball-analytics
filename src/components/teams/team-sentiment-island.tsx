@@ -39,7 +39,7 @@ function LaneStat({ label, lane }: { label: string; lane?: CuratedSentimentLane 
  * Team Sentiment tab: franchise lanes plus roster players in the sentiment snapshot.
  */
 export async function TeamSentimentIsland({ teamId }: { teamId: string }) {
-  const board = getTeamSentimentBoard(teamId);
+  const board = await getTeamSentimentBoard(teamId);
   if (!board) return null;
   const team = board.teamProfile;
   const sameKind =

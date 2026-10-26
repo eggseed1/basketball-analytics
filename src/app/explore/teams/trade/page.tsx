@@ -18,7 +18,7 @@ export default async function TradeSimulatorPage({
 }) {
   const t = await getTranslations("Explore");
   const params = await searchParams;
-  const board = loadTradeSimulatorBoard();
+  const board = await loadTradeSimulatorBoard();
   const one = (key: string) => {
     const value = params[key];
     return Array.isArray(value) ? value[0] : value;

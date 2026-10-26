@@ -37,7 +37,7 @@ async function loadPlayoffGames(season: string): Promise<Game[]> {
     const { getRuntimeSnapshotPlayoffGames } = await import(
       "@/data/runtime/game-snapshot"
     );
-    const fromSnap = getRuntimeSnapshotPlayoffGames(season);
+    const fromSnap = await getRuntimeSnapshotPlayoffGames(season);
     if (fromSnap.length) return fromSnap;
   } catch {
     /* optional on non-bundled runtimes */
@@ -84,7 +84,7 @@ async function loadBracketStandings(
     const { getRuntimeSnapshotGames } = await import(
       "@/data/runtime/game-snapshot"
     );
-    const seasonGames = getRuntimeSnapshotGames(season);
+    const seasonGames = await getRuntimeSnapshotGames(season);
     const fromArchive = computeStandingsFromGameArchive(season, seasonGames);
     if (fromArchive && standingsHaveResults(fromArchive)) {
       return withPlayoffSeeds(fromArchive);
@@ -112,7 +112,7 @@ export async function getPlayoffBracketModel(season: string): Promise<{
   const edge = preferBundledProductDataOnEdge();
 
   // Preseason upcoming year: still show completed prior playoffs when baked.
-  if (isPreseasonRosterSeason(season)) {
+  if (await isPreseasonRosterSeason(season)) {
     const games = await loadPlayoffGames(season);
     if (games.length) {
       const [standings, teams] = await Promise.all([

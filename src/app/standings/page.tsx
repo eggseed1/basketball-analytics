@@ -150,8 +150,8 @@ export default async function StandingsPage({ searchParams }: PageProps) {
   }
 
   const seasons = await getAvailableSeasons();
-  const defaultSeason = defaultStandingsSeason(seasons);
-  const season = resolveStandingsSeason(seasons, sp.season);
+  const defaultSeason = await defaultStandingsSeason(seasons);
+  const season = await resolveStandingsSeason(seasons, sp.season);
   const conference = parseConference(one(sp, "conference"));
 
   return (

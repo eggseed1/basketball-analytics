@@ -124,9 +124,10 @@ export function historicalSummaryFromGame(game: Game): HistoricalGameSummary {
   };
 }
 
-function summariesFromRuntimeSnapshot(season: string): HistoricalGameSummary[] {
-  return getRuntimeSnapshotGames(season)
-    .map(historicalSummaryFromGame)
+async function summariesFromRuntimeSnapshot(
+  season: string
+): Promise<HistoricalGameSummary[]> {
+  return (await getRuntimeSnapshotGames(season)).map(historicalSummaryFromGame)
     .sort((a, b) =>
       a.date === b.date
         ? b.gameId.localeCompare(a.gameId)
@@ -142,37 +143,37 @@ function diskHistorySeasons(): string[] {
     .sort();
 }
 
-export function listHistoryProductSeasons(): string[] {
+export async function listHistoryProductSeasons(): Promise<string[]> {
   const seasons = new Set<string>(diskHistorySeasons());
-  const meta = runtimeGameSnapshotMeta();
+  const meta = await runtimeGameSnapshotMeta();
   // Prefer explicit seasons list from the snapshot when present.
   if (meta.gameCount > 0) {
-    for (const game of getRuntimeSnapshotGames()) {
+    for (const game of await getRuntimeSnapshotGames()) {
       if (game.season) seasons.add(game.season);
     }
   }
   return [...seasons].sort();
 }
 
-export function getHistorySeasonManifest(season: string) {
+export async function getHistorySeasonManifest(season: string) {
   const disk = readJsonFile<Record<string, unknown>>(
     path.join(HISTORY_ROOT, season, "season-manifest.json")
   );
   if (disk) return disk;
-  const games = summariesFromRuntimeSnapshot(season);
+  const games = await summariesFromRuntimeSnapshot(season);
   if (!games.length) return null;
   return {
     season,
     historyVersion: HISTORY_VERSION,
     source: "runtime-game-snapshot",
     gameCount: games.length,
-    generatedAt: runtimeGameSnapshotMeta().generatedAt,
+    generatedAt: (await runtimeGameSnapshotMeta()).generatedAt,
   };
 }
 
-export function getHistoricalGameSummaries(
+export async function getHistoricalGameSummaries(
   season: string
-): HistoricalGameSummary[] {
+): Promise<HistoricalGameSummary[]> {
   const cached = summariesBySeason.get(season);
   if (cached) return cached;
 
@@ -185,7 +186,7 @@ export function getHistoricalGameSummaries(
     return diskGames;
   }
 
-  const snapGames = summariesFromRuntimeSnapshot(season);
+  const snapGames = await summariesFromRuntimeSnapshot(season);
   rememberSummary(season, snapGames);
   return snapGames;
 }
@@ -229,12 +230,12 @@ export function getHistoricalProductGame(
   return null;
 }
 
-export function searchHistoricalProductGames(params: {
+export async function searchHistoricalProductGames(params: {
   season: string;
   teamId?: string;
   playerId?: string;
   date?: string;
-}): HistoricalGameSummary[] {
+}): Promise<HistoricalGameSummary[]> {
   const { season, teamId, playerId, date } = params;
   let ids: string[] | null = null;
 
@@ -286,7 +287,7 @@ export function searchHistoricalProductGames(params: {
     }
   }
 
-  const all = getHistoricalGameSummaries(season);
+  const all = await getHistoricalGameSummaries(season);
 
   // When disk indexes are missing, filter the schedule snapshot in memory.
   if (ids == null && (teamId || date)) {

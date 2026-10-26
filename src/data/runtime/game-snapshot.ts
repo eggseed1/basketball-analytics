@@ -1,6 +1,13 @@
-import snapshot from "./game-snapshot.json";
-
+/**
+ * Build-time ESPN schedule snapshot.
+ *
+ * JSON lives under src/data/runtime for bake scripts and is copied to
+ * public/runtime before OpenNext so Workers serve it via ASSETS. Do not
+ * static-import the file — that inlined ~7 MiB into the origin Worker script.
+ */
 import type { Game } from "@/data/types";
+
+import { loadRuntimeJson } from "./load-runtime-json";
 
 export type RuntimeGameSnapshot = {
   generatedAt: string | null;
@@ -9,35 +16,65 @@ export type RuntimeGameSnapshot = {
   games: Game[];
 };
 
-/**
- * Build-time ESPN schedule snapshot.
- *
- * IMPORTANT (Cloudflare Workers / OpenNext): do NOT load this via `node:fs`.
- * Workers' virtual FS is ephemeral and does not mount OpenNext traced files, so
- * `readFileSync(process.cwd()/...)` silently returns empty and empties Scores /
- * Upcoming / player schedule surfaces. Keep the JSON on the module graph so it
- * is inlined into the Worker script (≈100 KiB gzip).
- */
-const data = snapshot as RuntimeGameSnapshot;
-const games = Array.isArray(data.games) ? data.games : [];
-const byId = new Map(games.map((game) => [String(game.id), game] as const));
-const bySeason = new Map<string, Game[]>();
-const playoffsBySeason = new Map<string, Game[]>();
+type Indexes = {
+  data: RuntimeGameSnapshot;
+  games: Game[];
+  byId: Map<string, Game>;
+  bySeason: Map<string, Game[]>;
+  playoffsBySeason: Map<string, Game[]>;
+};
 
-for (const game of games) {
-  const season = String(game.season ?? "");
-  if (!season) continue;
-  const list = bySeason.get(season);
-  if (list) list.push(game);
-  else bySeason.set(season, [game]);
-  if (game.gameType === "playoff" || game.gameType === "play-in") {
-    const po = playoffsBySeason.get(season);
-    if (po) po.push(game);
-    else playoffsBySeason.set(season, [game]);
+let indexes: Indexes | null = null;
+let loadPromise: Promise<Indexes> | null = null;
+
+function buildIndexes(data: RuntimeGameSnapshot): Indexes {
+  const games = Array.isArray(data.games) ? data.games : [];
+  const byId = new Map(games.map((game) => [String(game.id), game] as const));
+  const bySeason = new Map<string, Game[]>();
+  const playoffsBySeason = new Map<string, Game[]>();
+
+  for (const game of games) {
+    const season = String(game.season ?? "");
+    if (!season) continue;
+    const list = bySeason.get(season);
+    if (list) list.push(game);
+    else bySeason.set(season, [game]);
+    if (game.gameType === "playoff" || game.gameType === "play-in") {
+      const po = playoffsBySeason.get(season);
+      if (po) po.push(game);
+      else playoffsBySeason.set(season, [game]);
+    }
   }
+
+  return { data, games, byId, bySeason, playoffsBySeason };
 }
 
-export function runtimeGameSnapshotMeta() {
+const EMPTY: RuntimeGameSnapshot = {
+  generatedAt: null,
+  source: "missing",
+  games: [],
+};
+
+async function ensureIndexes(): Promise<Indexes> {
+  if (indexes) return indexes;
+  if (!loadPromise) {
+    loadPromise = (async () => {
+      const raw =
+        (await loadRuntimeJson<RuntimeGameSnapshot>("game-snapshot.json")) ??
+        EMPTY;
+      indexes = buildIndexes(raw);
+      return indexes;
+    })();
+  }
+  return loadPromise;
+}
+
+export async function ensureRuntimeGameSnapshot(): Promise<void> {
+  await ensureIndexes();
+}
+
+export async function runtimeGameSnapshotMeta() {
+  const { data, games } = await ensureIndexes();
   return {
     generatedAt: data.generatedAt,
     source: data.source,
@@ -45,26 +82,36 @@ export function runtimeGameSnapshotMeta() {
   };
 }
 
-export function getRuntimeSnapshotGame(gameId: string): Game | null {
+export async function getRuntimeSnapshotGame(
+  gameId: string
+): Promise<Game | null> {
+  const { byId } = await ensureIndexes();
   return byId.get(String(gameId ?? "").trim()) ?? null;
 }
 
-export function getRuntimeSnapshotGames(season?: string): Game[] {
+export async function getRuntimeSnapshotGames(
+  season?: string
+): Promise<Game[]> {
+  const { games, bySeason } = await ensureIndexes();
   if (!season) return games;
   return bySeason.get(season) ?? [];
 }
 
 /** Playoff + play-in only — avoids scanning the full season schedule on CF. */
-export function getRuntimeSnapshotPlayoffGames(season: string): Game[] {
+export async function getRuntimeSnapshotPlayoffGames(
+  season: string
+): Promise<Game[]> {
+  const { playoffsBySeason } = await ensureIndexes();
   return playoffsBySeason.get(season) ?? [];
 }
 
-export function getRuntimeSnapshotWindow(options: {
+export async function getRuntimeSnapshotWindow(options: {
   season?: string;
   fromDate?: string;
   toDate?: string;
   status?: Game["status"] | Game["status"][];
-} = {}): Game[] {
+} = {}): Promise<Game[]> {
+  const { games } = await ensureIndexes();
   const statuses = options.status
     ? new Set(Array.isArray(options.status) ? options.status : [options.status])
     : null;

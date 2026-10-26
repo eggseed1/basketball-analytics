@@ -73,8 +73,8 @@ function shift(season: string, years: number): string {
   return `${start}-${String((start + 1) % 100).padStart(2, "0")}`;
 }
 
-test("anchor season stays visible and the next calendar season feeds the range", () => {
-  const result = buildCompFutures({
+test("anchor season stays visible and the next calendar season feeds the range", async () => {
+  const result = await buildCompFutures({
     metricId: "bpm",
     focalPlayerId: "focal",
     focalName: "Focal",
@@ -126,13 +126,13 @@ test("anchor season stays visible and the next calendar season feeds the range",
   assert.equal(data.table[0]?.slots.length, 6);
 });
 
-test("a skipped calendar season stays a gap instead of sliding the next year forward", () => {
+test("a skipped calendar season stays a gap instead of sliding the next year forward", async () => {
   const pool = poolAroundFocal()
     .filter((item) => !(item.playerId === "p0" && item.season === shift("2000-01", 1)))
     .map((item) =>
       item.playerId === "p0" && item.age === 31 ? { ...item, bpm: 7.39 } : item
     );
-  const result = buildCompFutures({
+  const result = await buildCompFutures({
     metricId: "bpm",
     focalPlayerId: "focal",
     focalName: "Focal",
@@ -154,13 +154,13 @@ test("a skipped calendar season stays a gap instead of sliding the next year for
   assert.equal(line.slots[2]?.value, 5.6);
 });
 
-test("a short season counts as played-against and stays out of the rating range", () => {
+test("a short season counts as played-against and stays out of the rating range", async () => {
   const pool = poolAroundFocal().map((item) => {
     if (item.playerId === "p0" && item.age === 31) return { ...item, bpm: 7.39 };
     if (item.playerId === "p0" && item.age === 32) return { ...item, gamesPlayed: 5 };
     return item;
   });
-  const result = buildCompFutures({
+  const result = await buildCompFutures({
     metricId: "bpm",
     focalPlayerId: "focal",
     focalName: "Focal",
@@ -183,11 +183,11 @@ test("a short season counts as played-against and stays out of the rating range"
   assert.equal(at32.ratingCount, at32.playedCount);
 });
 
-test("a zero rating is a real anchor, and the nearest comp is not forced to 100", () => {
+test("a zero rating is a real anchor, and the nearest comp is not forced to 100", async () => {
   const pool = poolAroundFocal();
   pool.push(row("zero", "Zero", "2010-11", 31, 0, { heightInches: 80 }));
   pool.push(row("zero", "Zero", "2011-12", 32, 0.2, { heightInches: 80 }));
-  const result = buildCompFutures({
+  const result = await buildCompFutures({
     metricId: "bpm",
     focalPlayerId: "focal",
     focalName: "Focal",
@@ -219,7 +219,7 @@ test("a zero rating is a real anchor, and the nearest comp is not forced to 100"
   assert.ok(result.table[0]!.similarity > result.table[1]!.similarity);
 });
 
-test("weighted percentile follows cumulative weight, not an unweighted sort", () => {
+test("weighted percentile follows cumulative weight, not an unweighted sort", async () => {
   const median = weightedPercentile(
     [
       { value: 1, weight: 1 },
@@ -232,7 +232,7 @@ test("weighted percentile follows cumulative weight, not an unweighted sort", ()
   assert.ok(similarityIndex(1) < 100);
 });
 
-test("position labels land on one scale from point guard to center", () => {
+test("position labels land on one scale from point guard to center", async () => {
   assert.equal(compPositionCode("PG"), 0);
   assert.equal(compPositionCode("SG"), 0.5);
   assert.equal(compPositionCode("SF"), 1);
@@ -241,8 +241,8 @@ test("position labels land on one scale from point guard to center", () => {
   assert.equal(compPositionCode(""), null);
 });
 
-test("returns null when the age window is too small", () => {
-  const result = buildCompFutures({
+test("returns null when the age window is too small", async () => {
+  const result = await buildCompFutures({
     metricId: "bpm",
     focalPlayerId: "focal",
     focalName: "Focal",
@@ -259,14 +259,14 @@ test("returns null when the age window is too small", () => {
   assert.equal(result, null);
 });
 
-test("two seasons from one player keep only the closer anchor", () => {
+test("two seasons from one player keep only the closer anchor", async () => {
   const pool = [
     ...poolAroundFocal(),
     row("twin", "Twin", "2012-13", 30, 1),
     row("twin", "Twin", "2013-14", 31, 7.4),
     row("twin", "Twin", "2014-15", 32, 7),
   ];
-  const result = buildCompFutures({
+  const result = await buildCompFutures({
     metricId: "bpm",
     focalPlayerId: "focal",
     focalName: "Focal",

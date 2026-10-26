@@ -87,8 +87,8 @@ test("labels a Game 7 from the archive scoreboard", () => {
   assert.equal(hit.blurb, "Boston Celtics won Game 7, 100-96.");
 });
 
-test("current schedule snapshot resolves every landmark game spec", () => {
-  const cards = resolveLandmarkGames(getRuntimeSnapshotGames());
+test("current schedule snapshot resolves every landmark game spec", async () => {
+  const cards = resolveLandmarkGames(await getRuntimeSnapshotGames());
   assert.deepEqual(
     cards.map((card) => card.id),
     LANDMARK_GAME_SPECS.map((spec) => spec.id)

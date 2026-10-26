@@ -208,8 +208,8 @@ async function loadImpactOverlaysForSeason(
     getBundledRaptorSeason,
   } = await import("@/data/runtime/impact-overlay-snapshot");
 
-  let darko = getBundledDarkoSeason(boardSeason);
-  let raptor = getBundledRaptorSeason(boardSeason);
+  let darko = await getBundledDarkoSeason(boardSeason);
+  let raptor = await getBundledRaptorSeason(boardSeason);
 
   const { preferBundledProductDataOnEdge } = await import(
     "@/data/providers/nba/runtime-policy"
@@ -446,7 +446,7 @@ async function loadEspnTeamRoster(
       const { getBundledBrefPeerBoard } = await import(
         "@/data/runtime/bref-advanced-snapshot"
       );
-      const bundled = getBundledBrefPeerBoard(season);
+      const bundled = await getBundledBrefPeerBoard(season);
       if (bundled.length < 50) return null;
       let rows = await overlayImpactRatings(bundled, season);
       if (isDrblSeason(season)) {
@@ -638,7 +638,7 @@ export async function getPlayerSeason(
 
   if (
     statsSeason === season &&
-    isPreseasonRosterSeason(season) &&
+    await isPreseasonRosterSeason(season) &&
     !seasonHasPlayedGames(row ? [row] : [])
   ) {
     const prior = priorSeasonForStats(season);
@@ -993,16 +993,19 @@ export async function resolveExploreBoardSeason(
     const { getBundledBrefPeerBoard, brefAdvancedSnapshotMeta } = await import(
       "@/data/runtime/bref-advanced-snapshot"
     );
-    const ready = (season: string) =>
-      isBundledPeerBoardReady(season, getBundledBrefPeerBoard(season).length);
-    if (preferredKey && ready(preferredKey)) return preferredKey;
+    const ready = async (season: string) =>
+      await isBundledPeerBoardReady(
+        season,
+        (await getBundledBrefPeerBoard(season)).length
+      );
+    if (preferredKey && (await ready(preferredKey))) return preferredKey;
     const prior = shiftCanonicalSeason(preferredKey, -1);
-    if (ready(prior)) return prior;
-    const seasons = [...brefAdvancedSnapshotMeta().seasons].sort((a, b) =>
-      b.localeCompare(a)
+    if (await ready(prior)) return prior;
+    const seasons = [...(await brefAdvancedSnapshotMeta()).seasons].sort(
+      (a, b) => b.localeCompare(a)
     );
     for (const season of seasons) {
-      if (ready(season)) return season;
+      if (await ready(season)) return season;
     }
   } catch {
     /* keep preferred */
@@ -1019,9 +1022,19 @@ export async function listExploreBoardReadySeasons(): Promise<string[]> {
     const { listBundledBrefSeasons, getBundledBrefPeerBoard } = await import(
       "@/data/runtime/bref-advanced-snapshot"
     );
-    return listBundledBrefSeasons().filter((season) =>
-      isBundledPeerBoardReady(season, getBundledBrefPeerBoard(season).length)
-    );
+    const seasons = await listBundledBrefSeasons();
+    const out: string[] = [];
+    for (const season of seasons) {
+      if (
+        await isBundledPeerBoardReady(
+          season,
+          (await getBundledBrefPeerBoard(season)).length
+        )
+      ) {
+        out.push(season);
+      }
+    }
+    return out;
   } catch {
     return [];
   }
@@ -1084,7 +1097,7 @@ async function loadExploreAllSeasonsBoard(
 
       for (const hit of hits) {
         if (seen.has(hit.id) || seenNames.has(hit.nameLower)) continue;
-        const career = getBundledBrefCareerForPlayer({
+        const career = await getBundledBrefCareerForPlayer({
           playerId: hit.id,
           playerName: hit.name,
         });
@@ -1230,11 +1243,11 @@ export async function getFilteredPlayerSeasonsDetailed(
       const { getBundledBrefPeerBoard } = await import(
         "@/data/runtime/bref-advanced-snapshot"
       );
-      const bundled = getBundledBrefPeerBoard(filters.season);
+      const bundled = await getBundledBrefPeerBoard(filters.season);
       const { isBundledPeerBoardReady } = await import(
         "@/lib/player-board-season"
       );
-      if (isBundledPeerBoardReady(filters.season, bundled.length)) {
+      if (await isBundledPeerBoardReady(filters.season, bundled.length)) {
         let rows = await overlayImpactRatings(bundled, filters.season);
         if (isDrblSeason(filters.season)) {
           const drblRows = await fetchDrblSeason(filters.season).catch(() => []);
@@ -1342,7 +1355,7 @@ export async function getFilteredPlayerSeasonsDetailed(
       const { getBundledBrefPeerBoard } = await import(
         "@/data/runtime/bref-advanced-snapshot"
       );
-      const bundled = getBundledBrefPeerBoard(filters.season);
+      const bundled = await getBundledBrefPeerBoard(filters.season);
       if (bundled.length) {
         seasons = bundled;
       }
@@ -1369,7 +1382,7 @@ export async function getFilteredPlayerSeasonsDetailed(
       // headroom beyond the slim edge budget.
       const budgetMs =
         longUpstreamBudgetsEnabled() ||
-        leagueRegularSeasonHasOpened(filters.season)
+        (await leagueRegularSeasonHasOpened(filters.season))
           ? 25_000
           : 3_500;
       const live = await withBudget(
@@ -1395,7 +1408,7 @@ export async function getFilteredPlayerSeasonsDetailed(
       const { getBundledBrefPeerBoard } = await import(
         "@/data/runtime/bref-advanced-snapshot"
       );
-      const bundled = getBundledBrefPeerBoard(filters.season);
+      const bundled = await getBundledBrefPeerBoard(filters.season);
       if (bundled.length) {
         seasons = bundled;
         error = null;
@@ -1832,75 +1845,77 @@ export async function attachBundledBrefDarkoRaptor(
   } = await import("@/data/runtime/impact-overlay-snapshot");
   const nbaId = await resolveNbaIdForDrbl(playerId).catch(() => null);
 
-  return rows.map((row) => {
-    let next = row;
-    const present = (v: number | null | undefined) =>
-      typeof v === "number" && Number.isFinite(v) && v !== 0;
-    if (!(present(row.per) || present(row.winShares) || present(row.vorp))) {
-      const bref = findBundledBrefPlayer(
-        row.season,
-        row.playerName,
-        row.teamAbbreviation
-      );
-      if (bref) {
+  return Promise.all(
+    rows.map(async (row) => {
+      let next = row;
+      const present = (v: number | null | undefined) =>
+        typeof v === "number" && Number.isFinite(v) && v !== 0;
+      if (!(present(row.per) || present(row.winShares) || present(row.vorp))) {
+        const bref = await findBundledBrefPlayer(
+          row.season,
+          row.playerName,
+          row.teamAbbreviation
+        );
+        if (bref) {
+          next = {
+            ...next,
+            per: bref.per !== 0 ? bref.per : next.per,
+            ows: Number.isFinite(bref.ows) ? bref.ows : next.ows,
+            dws: Number.isFinite(bref.dws) ? bref.dws : next.dws,
+            winShares: bref.ws !== 0 ? bref.ws : next.winShares,
+            winSharesPer48: bref.ws48 !== 0 ? bref.ws48 : next.winSharesPer48,
+            obpm: Number.isFinite(bref.obpm) ? bref.obpm : next.obpm,
+            dbpm: Number.isFinite(bref.dbpm) ? bref.dbpm : next.dbpm,
+            bpm: Number.isFinite(bref.bpm) ? bref.bpm : next.bpm,
+            vorp: Number.isFinite(bref.vorp) ? bref.vorp : next.vorp,
+            usagePct:
+              next.usagePct ||
+              (bref.usg > 1 ? bref.usg / 100 : bref.usg) ||
+              undefined,
+            trueShootingPct:
+              next.trueShootingPct ||
+              (bref.ts > 1 ? bref.ts / 100 : bref.ts) ||
+              undefined,
+          };
+        }
+      }
+
+      const darko = await findBundledDarkoPlayer(row.season, {
+        nbaId,
+        playerId,
+        playerName: row.playerName,
+      });
+      if (darko && Number.isFinite(darko.impact)) {
+        const oDpm = darko.offensive;
+        const dDpm = darko.defensive;
         next = {
           ...next,
-          per: bref.per !== 0 ? bref.per : next.per,
-          ows: Number.isFinite(bref.ows) ? bref.ows : next.ows,
-          dws: Number.isFinite(bref.dws) ? bref.dws : next.dws,
-          winShares: bref.ws !== 0 ? bref.ws : next.winShares,
-          winSharesPer48: bref.ws48 !== 0 ? bref.ws48 : next.winSharesPer48,
-          obpm: Number.isFinite(bref.obpm) ? bref.obpm : next.obpm,
-          dbpm: Number.isFinite(bref.dbpm) ? bref.dbpm : next.dbpm,
-          bpm: Number.isFinite(bref.bpm) ? bref.bpm : next.bpm,
-          vorp: Number.isFinite(bref.vorp) ? bref.vorp : next.vorp,
-          usagePct:
-            next.usagePct ||
-            (bref.usg > 1 ? bref.usg / 100 : bref.usg) ||
-            undefined,
-          trueShootingPct:
-            next.trueShootingPct ||
-            (bref.ts > 1 ? bref.ts / 100 : bref.ts) ||
-            undefined,
+          dpm: darko.impact,
+          ...(typeof oDpm === "number" ? { oDpm } : {}),
+          ...(typeof dDpm === "number" ? { dDpm } : {}),
+          darkoDpm: darko.impact,
+          darkoOff: oDpm,
+          darkoDef: dDpm,
         };
       }
-    }
 
-    const darko = findBundledDarkoPlayer(row.season, {
-      nbaId,
-      playerId,
-      playerName: row.playerName,
-    });
-    if (darko && Number.isFinite(darko.impact)) {
-      const oDpm = darko.offensive;
-      const dDpm = darko.defensive;
-      next = {
-        ...next,
-        dpm: darko.impact,
-        ...(typeof oDpm === "number" ? { oDpm } : {}),
-        ...(typeof dDpm === "number" ? { dDpm } : {}),
-        darkoDpm: darko.impact,
-        darkoOff: oDpm,
-        darkoDef: dDpm,
-      };
-    }
-
-    const raptor = findBundledRaptorPlayer(row.season, {
-      nbaId,
-      playerId,
-      playerName: row.playerName,
-    });
-    if (raptor && Number.isFinite(raptor.impact)) {
-      next = {
-        ...next,
-        raptor: raptor.impact,
-        oRaptor: raptor.offensive,
-        dRaptor: raptor.defensive,
-        winsAdded: raptor.winsAdded ?? next.winsAdded,
-      };
-    }
-    return next;
-  });
+      const raptor = await findBundledRaptorPlayer(row.season, {
+        nbaId,
+        playerId,
+        playerName: row.playerName,
+      });
+      if (raptor && Number.isFinite(raptor.impact)) {
+        next = {
+          ...next,
+          raptor: raptor.impact,
+          oRaptor: raptor.offensive,
+          dRaptor: raptor.defensive,
+          winsAdded: raptor.winsAdded ?? next.winsAdded,
+        };
+      }
+      return next;
+    })
+  );
 }
 
 /**

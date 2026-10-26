@@ -415,11 +415,14 @@ function featureDistance(
   return byGroup.size ? Math.sqrt(sum) : Number.POSITIVE_INFINITY;
 }
 
-function coverageFor(metricId: CompMetricId, pool: BundledCompPoolRow[]): {
+async function coverageFor(
+  metricId: CompMetricId,
+  pool: BundledCompPoolRow[]
+): Promise<{
   start: string;
   end: string;
   versionNote: string;
-} {
+}> {
   const seasons = [
     ...new Set(
       pool
@@ -431,7 +434,7 @@ function coverageFor(metricId: CompMetricId, pool: BundledCompPoolRow[]): {
   const end = seasons[seasons.length - 1] ?? start;
   const metric = COMP_METRICS.find((item) => item.id === metricId)!;
   if (metricId === "drbl100" || metricId === "drblO" || metricId === "drblD" || metricId === "war1") {
-    const meta = bundledDrblOverlayMeta();
+    const meta = await bundledDrblOverlayMeta();
     return {
       start,
       end,
@@ -445,7 +448,7 @@ function coverageFor(metricId: CompMetricId, pool: BundledCompPoolRow[]): {
   };
 }
 
-export function buildCompFutures(options: {
+export async function buildCompFutures(options: {
   metricId: CompMetricId;
   focalPlayerId: string;
   focalName: string;
@@ -459,7 +462,7 @@ export function buildCompFutures(options: {
   profile?: Partial<CompFocalProfile>;
   career: Array<{ age: number; value: number }>;
   pool: BundledCompPoolRow[];
-}): CompFutures | null {
+}): Promise<CompFutures | null> {
   const metric = COMP_METRICS.find((item) => item.id === options.metricId);
   if (!metric) return null;
   const age = Math.round(options.focalAge);
@@ -664,7 +667,7 @@ export function buildCompFutures(options: {
   ].sort((a, b) => b.value - a.value || a.playerId.localeCompare(b.playerId));
   const rankKey = `${options.focalPlayerId}|${options.focalSeason}`;
   const rank = ranked.findIndex((row) => row.playerId === rankKey) + 1;
-  const coverage = coverageFor(options.metricId, options.pool);
+  const coverage = await coverageFor(options.metricId, options.pool);
   const closest = fan[0]!;
 
   return {
@@ -719,14 +722,14 @@ function profileFromPool(
   };
 }
 
-export function loadCompFutures(
+export async function loadCompFutures(
   focal: PlayerSeason | null | undefined,
   career: PlayerSeason[],
   espnId: string | null | undefined,
   metricId: CompMetricId
-): CompFutures | null {
+): Promise<CompFutures | null> {
   if (!focal) return null;
-  const pool = getBundledCompPool();
+  const pool = await getBundledCompPool();
   const ids = [espnId, focal.playerId].map((id) => String(id ?? "").trim()).filter(Boolean);
   const pooled =
     pool.find((row) => ids.includes(row.playerId) && row.season === focal.season) ??
@@ -750,7 +753,7 @@ export function loadCompFutures(
     return [{ age: Math.round(row.age), value: v }];
   });
   const careerPoints = fromPool.length >= 2 ? fromPool : fromCareer;
-  return buildCompFutures({
+  return await buildCompFutures({
     metricId,
     focalPlayerId: poolId,
     focalName: focal.playerName,
@@ -767,16 +770,16 @@ export function loadCompFutures(
   });
 }
 
-export function loadCompFuturesBundle(
+export async function loadCompFuturesBundle(
   focal: PlayerSeason | null | undefined,
   career: PlayerSeason[],
   espnId?: string | null,
   options?: { primaryOnly?: boolean }
-): CompFuturesBundle | null {
+): Promise<CompFuturesBundle | null> {
   if (options?.primaryOnly) {
     // One metric only — computing every COMP_METRICS entry used to spike Worker RAM.
     for (const metric of COMP_METRICS) {
-      const primary = loadCompFutures(focal, career, espnId, metric.id);
+      const primary = await loadCompFutures(focal, career, espnId, metric.id);
       if (!primary) continue;
       return {
         defaultId: primary.metricId,
@@ -791,7 +794,7 @@ export function loadCompFuturesBundle(
   }
   const available: CompFutures[] = [];
   for (const metric of COMP_METRICS) {
-    const data = loadCompFutures(focal, career, espnId, metric.id);
+    const data = await loadCompFutures(focal, career, espnId, metric.id);
     if (data) available.push(data);
   }
   if (!available.length) return null;

@@ -48,18 +48,18 @@ function seasonWindow(now: Date): {
   };
 }
 
-function resolveFromGames(
+async function resolveFromGames(
   today: string,
   season: string,
   previousSeason: string,
   currentGames: Game[]
-): HomeSeasonMoment {
+): Promise<HomeSeasonMoment> {
   return resolveHomeSeasonMoment({
     today,
     current: scheduleMarks(season, currentGames, today),
     previous: scheduleMarks(
       previousSeason,
-      getRuntimeSnapshotGames(previousSeason),
+      await getRuntimeSnapshotGames(previousSeason),
       today
     ),
   });
@@ -69,13 +69,13 @@ function resolveFromGames(
  * Snapshot-only moment. Sync, no ESPN. Use this for the home shell so the
  * module grid never waits on a live schedule fetch.
  */
-export function getHomeSeasonMomentSync(now = new Date()): HomeSeasonMoment {
+export async function getHomeSeasonMomentSync(now = new Date()): Promise<HomeSeasonMoment> {
   const { today, season, previousSeason } = seasonWindow(now);
   return resolveFromGames(
     today,
     season,
     previousSeason,
-    getRuntimeSnapshotGames(season)
+    await getRuntimeSnapshotGames(season)
   );
 }
 
@@ -94,7 +94,7 @@ export function homeSeasonMomentNeedsLiveEnrichment(
 
 async function loadHomeSeasonMoment(now: Date): Promise<HomeSeasonMoment> {
   const { today, startYear, season, previousSeason } = seasonWindow(now);
-  let currentGames = getRuntimeSnapshotGames(season);
+  let currentGames = await getRuntimeSnapshotGames(season);
   const hasRegular = currentGames.some((g) => g.gameType === "regular");
   if (!hasRegular && today >= `${startYear}-08-01`) {
     const live = await liveOctoberSlate(season, startYear).catch(() => [] as Game[]);

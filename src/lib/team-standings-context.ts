@@ -57,7 +57,7 @@ export async function resolveTeamStandingsDisplay(input: {
   boardRows: readonly TeamSeasonStats[];
 }): Promise<TeamStandingsDisplay> {
   const { season, currentSeason, team, brand, boardRows } = input;
-  const seasonAwaitingGames = isSeasonAwaitingFirstGame(season, boardRows);
+  const seasonAwaitingGames = await isSeasonAwaitingFirstGame(season, boardRows);
   const divisionMeta = resolveTeamDivisionMeta(brand, team.teamId);
 
   // getLeagueStandings serves the prior season's final table before tip-off;
@@ -71,7 +71,7 @@ export async function resolveTeamStandingsDisplay(input: {
   let priorSeasonStanding: StandingRow | null = null;
   let priorSeasonLabel: string | null = null;
 
-  if (standingsEmpty && isPreseasonRosterSeason(season)) {
+  if (standingsEmpty && await isPreseasonRosterSeason(season)) {
     const priorSeason = shiftCanonicalSeason(season, -1);
     const priorStandings =
       standings?.season === priorSeason

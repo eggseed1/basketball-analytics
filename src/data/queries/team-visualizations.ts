@@ -10,8 +10,12 @@ import {
 import { buildTeamVizRows, type TeamVizRow } from "@/lib/team-viz";
 
 /** Bundled game + team box snapshots only, so it runs on Workers without upstream calls. */
-export const getTeamVizRows = cache((season: string): TeamVizRow[] =>
-  buildTeamVizRows(getRuntimeSnapshotGames(season), (id) => teamGameBoxesByDate(id, season))
+export const getTeamVizRows = cache(
+  async (season: string): Promise<TeamVizRow[]> =>
+    buildTeamVizRows(
+      await getRuntimeSnapshotGames(season),
+      (id) => teamGameBoxesByDate(id, season)
+    )
 );
 
 export function teamVizBoxSeasons(): string[] {

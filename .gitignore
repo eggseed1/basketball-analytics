@@ -76,6 +76,18 @@ next-env.d.ts
 /public/runtime/player-game-logs/
 # Deploy-baked play-by-play for Cloudflare Static Assets
 /public/runtime/play-by-play/
+# Large runtime JSON copied from src/data/runtime at deploy (ASSETS, not script)
+/public/runtime/season-tables-snapshot.json
+/public/runtime/game-snapshot.json
+/public/runtime/transactions-snapshot.json
+/public/runtime/sentiment-snapshot.json
+/public/runtime/team-board-snapshot.json
+/public/runtime/impact-overlay-snapshot.json
+/public/runtime/asset-ledger-snapshot.json
+/public/runtime/team-game-box-snapshot.json
+/public/runtime/drbl-overlay-snapshot.json
+# percentile-pools may already live here for ASSETS; copy script refreshes it
+/public/runtime/percentile-pools-snapshot.json
 # Deploy-baked share images (scripts/build-share-images.ts)
 /public/og/
 

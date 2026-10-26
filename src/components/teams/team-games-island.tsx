@@ -43,9 +43,8 @@ function phaseFromLabel(label: string): TeamGameLogPhase {
   return "regular";
 }
 
-function scheduleScoreGames(teamId: string, season: string): ScoreGame[] {
-  return buildTeamSchedule(teamId, season)
-    .rows.filter(
+async function scheduleScoreGames(teamId: string, season: string): Promise<ScoreGame[]> {
+  return (await buildTeamSchedule(teamId, season)).rows.filter(
       (r) =>
         r.phase !== "preseason" &&
         r.result != null &&
@@ -66,7 +65,7 @@ function scheduleScoreGames(teamId: string, season: string): ScoreGame[] {
 }
 
 /** Final games with team and opponent box totals joined by Eastern date. */
-function scheduleLogRows(teamId: string, season: string): TeamGameLogRow[] {
+async function scheduleLogRows(teamId: string, season: string): Promise<TeamGameLogRow[]> {
   const teamBoxes = teamGameBoxesByDate(teamId, season);
   const oppBoxes = new Map<string, ReturnType<typeof teamGameBoxesByDate>>();
   const boxesFor = (id: string) => {
@@ -78,7 +77,7 @@ function scheduleLogRows(teamId: string, season: string): TeamGameLogRow[] {
     return hit;
   };
   const out: TeamGameLogRow[] = [];
-  for (const r of buildTeamSchedule(teamId, season).rows) {
+  for (const r of (await buildTeamSchedule(teamId, season)).rows) {
     if (r.phase === "preseason" || !r.result || r.teamScore == null || r.oppScore == null) continue;
     const team = teamBoxes.get(r.date) ?? null;
     const opp = boxesFor(r.oppId).get(r.date) ?? null;
@@ -204,12 +203,12 @@ function GameLogSection({ rows, season }: { rows: TeamGameLogRow[]; season: stri
   );
 }
 
-function snapshotPoolsForSeason(season: string): {
+async function snapshotPoolsForSeason(season: string): Promise<{
   recentPool: GameSummary[];
   upcomingPool: GameSummary[];
-} {
+}> {
   const today = nbaTodayIso();
-  const snapshot = getRuntimeSnapshotGames(season).map(toGameSummary);
+  const snapshot = (await getRuntimeSnapshotGames(season)).map(toGameSummary);
   return {
     upcomingPool: snapshot.filter(
       (game) =>
@@ -251,17 +250,17 @@ export async function TeamGamesIsland({
   schedule?: ReactNode;
 }) {
   const currentSeason = canonicalSeasonFromStartYear(currentNbaStartYear());
-  const useProductIndex = hasHistoryTeamGameIndex(season);
+  const useProductIndex = await hasHistoryTeamGameIndex(season);
 
-  if (hasTeamSnapshotGames(team.teamId, season)) {
-    const rows = scheduleLogRows(team.teamId, season);
+  if (await hasTeamSnapshotGames(team.teamId, season)) {
+    const rows = await scheduleLogRows(team.teamId, season);
     return (
       <section id="games" className="scroll-mt-16 flex flex-col gap-3" aria-label="Games">
         <GamesHeader>
           Every result on one chart, then the full schedule and a game-by-game box score log. Each game opens in Game Lab.
         </GamesHeader>
         <GamesScoreScatter
-          games={scheduleScoreGames(team.teamId, season)}
+          games={await scheduleScoreGames(team.teamId, season)}
           season={season}
           teamKey={team.abbreviation}
         />
@@ -273,11 +272,11 @@ export async function TeamGamesIsland({
 
   if (useProductIndex) {
     const { getCompactTeamSeasonGames } = await import("@/data/history/team-matchup-index");
-    const all = getCompactTeamSeasonGames(team.teamId, season);
+    const all = await getCompactTeamSeasonGames(team.teamId, season);
     const rows = compactLogRows(all);
     const snapshot =
       all.length === 0 && season >= currentSeason
-        ? snapshotPoolsForSeason(season)
+        ? await snapshotPoolsForSeason(season)
         : null;
 
     return (
@@ -313,7 +312,7 @@ export async function TeamGamesIsland({
   }
 
   if (season >= currentSeason) {
-    const snapshot = snapshotPoolsForSeason(season);
+    const snapshot = await snapshotPoolsForSeason(season);
     return (
       <section id="games" className="scroll-mt-16 flex flex-col gap-3" aria-label="Games">
         <GamesHeader>Recent and upcoming games from the schedule. Each game opens in Game Lab.</GamesHeader>

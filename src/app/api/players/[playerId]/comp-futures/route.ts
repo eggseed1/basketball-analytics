@@ -33,14 +33,14 @@ export async function GET(
     if (career.length === 0) {
       return jsonError(new Error("Player not found"), 404);
     }
-    const season = resolvePlayerSeason(career, seasonParam);
+    const season = await resolvePlayerSeason(career, seasonParam);
     const focal =
       career.find((row) => row.season === season) ??
       career[career.length - 1] ??
       null;
 
     if (primaryOnly) {
-      const bundle = loadCompFuturesBundle(focal, career, espnId, {
+      const bundle = await loadCompFuturesBundle(focal, career, espnId, {
         primaryOnly: true,
       });
       if (!bundle) {
@@ -55,7 +55,7 @@ export async function GET(
     if (!metricId) {
       return jsonError(new Error("Unknown metric"), 400);
     }
-    const item = loadCompFutures(focal, career, espnId, metricId);
+    const item = await loadCompFutures(focal, career, espnId, metricId);
     if (!item) {
       return jsonError(new Error("Metric unavailable"), 404);
     }

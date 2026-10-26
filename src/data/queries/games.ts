@@ -359,7 +359,7 @@ export async function getGameShell(gameId: string): Promise<GameShell | null> {
   if (!id) return null;
 
   const { getRuntimeSnapshotGame } = await import("@/data/runtime/game-snapshot");
-  const fromSnapshot = getRuntimeSnapshotGame(id);
+  const fromSnapshot = await getRuntimeSnapshotGame(id);
 
   // Local raw archive first for NBA GameIDs — complete teams/scores without inventing shells.
   if (looksLikeNbaStatsGameId(id)) {
@@ -531,7 +531,7 @@ export async function getFilteredGames(
       const { getRuntimeSnapshotGames } = await import(
         "@/data/runtime/game-snapshot"
       );
-      const snap = getRuntimeSnapshotGames(season);
+      const snap = await getRuntimeSnapshotGames(season);
       if (snap.length > 0) {
         const filtered = applyGameFilters(snap, filters);
         if (filtered.length > 0) return filtered;
@@ -607,7 +607,7 @@ export async function getSeasonGamesArchive(
       const { getRuntimeSnapshotGames } = await import(
         "@/data/runtime/game-snapshot"
       );
-      const snap = getRuntimeSnapshotGames(season);
+      const snap = await getRuntimeSnapshotGames(season);
       if (snap.length > 0) {
         return { games: snap, source: "espn" };
       }
@@ -621,7 +621,7 @@ export async function getSeasonGamesArchive(
     const { getRuntimeSnapshotGames } = await import(
       "@/data/runtime/game-snapshot"
     );
-    const snap = getRuntimeSnapshotGames(season);
+    const snap = await getRuntimeSnapshotGames(season);
     if (snap.length > 0 && isAdequateSeasonGamesCache(season, snap.length)) {
       return { games: snap, source: "espn" };
     }
@@ -653,7 +653,7 @@ export async function getSeasonGamesArchive(
       const { getRuntimeSnapshotGames } = await import(
         "@/data/runtime/game-snapshot"
       );
-      const snap = getRuntimeSnapshotGames(season);
+      const snap = await getRuntimeSnapshotGames(season);
       if (snap.length > 0) {
         return { games: snap, source: "espn" };
       }
@@ -698,8 +698,8 @@ export async function getTeamSeasonGames(
     compactRowsToGameSummaries,
   } = await import("@/data/history/team-matchup-index");
 
-  if (hasHistoryTeamGameIndex(options.season)) {
-    let compact = getCompactTeamSeasonGames(options.teamId, options.season);
+  if (await hasHistoryTeamGameIndex(options.season)) {
+    let compact = await getCompactTeamSeasonGames(options.teamId, options.season);
     if (options.limit != null) {
       compact = compact.slice(0, options.limit);
     }
@@ -988,8 +988,7 @@ export async function getUpcomingGameSummaries(
   const { nbaTodayIso } = await import("@/lib/nba-calendar-date");
   const today = options.fromDate ?? nbaTodayIso();
   const limit = options.limit ?? 40;
-  let pool = getRuntimeSnapshotGames(season)
-    .filter(
+  let pool = (await getRuntimeSnapshotGames(season)).filter(
       (game) =>
         game.gameDate >= today &&
         (isPreTipStatus(game.status) || game.status === "in_progress")

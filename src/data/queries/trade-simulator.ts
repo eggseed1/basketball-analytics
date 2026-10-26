@@ -50,18 +50,18 @@ function brefTeam(abbr: string): string {
  * Prefer the roster season when it has impact data; otherwise walk back.
  * Keeps current-team membership while scoring deals on completed seasons.
  */
-export function resolveTradeStatsSeason(rosterSeason: string): string {
+export async function resolveTradeStatsSeason(rosterSeason: string): Promise<string> {
   const candidates = [
     rosterSeason,
     shiftCanonicalSeason(rosterSeason, -1),
     shiftCanonicalSeason(rosterSeason, -2),
   ];
   for (const season of candidates) {
-    const drbl = getBundledDrblSeason(season);
+    const drbl = await getBundledDrblSeason(season);
     if (drbl.some((row) => row.drbl100 != null && Number.isFinite(row.drbl100))) {
       return season;
     }
-    if (isBundledPeerBoardReady(season, getBundledBrefPeerBoard(season).length)) {
+    if (await isBundledPeerBoardReady(season, (await getBundledBrefPeerBoard(season)).length)) {
       return season;
     }
   }
@@ -129,7 +129,7 @@ function currentFranchiseIdForPlayer(
   return direct?.canonicalTeamId ?? null;
 }
 
-export function loadTradeSimulatorBoard(): TradeSimulatorBoard | null {
+export async function loadTradeSimulatorBoard(): Promise<TradeSimulatorBoard | null> {
   const slices = listRuntimeFrontOfficeFranchiseIds()
     .map((id) => loadTeamFrontOfficeSlice(id))
     .filter((slice) => slice != null);
@@ -138,12 +138,12 @@ export function loadTradeSimulatorBoard(): TradeSimulatorBoard | null {
   const foSeason = slices[0].team.payroll.season || slices[0].meta.season;
   const rosterMeta = bundledCurrentRosterMeta();
   const season = rosterMeta.season || foSeason;
-  const statsSeason = resolveTradeStatsSeason(season);
+  const statsSeason = await resolveTradeStatsSeason(season);
 
   const drblByNba = new Map(
-    getBundledDrblSeason(statsSeason).map((row) => [row.playerId, row] as const)
+    (await getBundledDrblSeason(statsSeason)).map((row) => [row.playerId, row] as const)
   );
-  const board = getBundledBrefPeerBoard(statsSeason);
+  const board = await getBundledBrefPeerBoard(statsSeason);
   const boardByEspn = new Map(
     board
       .filter((row) => /^\d+$/.test(row.playerId))

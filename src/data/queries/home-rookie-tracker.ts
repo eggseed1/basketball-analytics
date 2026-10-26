@@ -29,7 +29,7 @@ export const getHomeRookieTracker = cache(async function getHomeRookieTracker(
     options.season ??
     canonicalSeasonFromStartYear(currentNbaStartYear());
   const draftYear = options.draftYear ?? currentRookieDraftYear();
-  const board = getBundledBrefPeerBoard(season);
+  const board = await getBundledBrefPeerBoard(season);
   const seasonLines = board.map((row) => ({
     playerId: row.playerId?.startsWith("bref:") ? null : row.playerId,
     playerName: row.playerName,
@@ -40,7 +40,7 @@ export const getHomeRookieTracker = cache(async function getHomeRookieTracker(
     rebounds: row.rebounds,
     assists: row.assists,
   }));
-  const drblLines = getBundledDrblSeason(season).map((row) => ({
+  const drblLines = (await getBundledDrblSeason(season)).map((row) => ({
     playerName: row.playerName,
     war1:
       row.r1WinEquivalents != null && Number.isFinite(row.r1WinEquivalents)

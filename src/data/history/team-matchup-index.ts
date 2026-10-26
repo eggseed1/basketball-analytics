@@ -158,22 +158,22 @@ function compactFromSummary(
 }
 
 /** True when season has product indexes or a runtime schedule snapshot. */
-export function hasHistoryTeamGameIndex(season: string): boolean {
+export async function hasHistoryTeamGameIndex(season: string): Promise<boolean> {
   if (existsSync(path.join(HISTORY_ROOT, season, "index-by-team.json"))) {
     return true;
   }
   // Cloudflare / no history tree: ESPN runtime schedule still powers Games tabs.
-  return getHistoricalGameSummaries(season).length > 0;
+  return (await getHistoricalGameSummaries(season)).length > 0;
 }
 
 /**
  * Compact team game log for one season via index-by-team + game-summaries.
  * Falls back to filtering schedule summaries by ESPN/NBA team ids.
  */
-export function getCompactTeamSeasonGames(
+export async function getCompactTeamSeasonGames(
   teamToken: string,
   season: string
-): CompactTeamGameRow[] {
+): Promise<CompactTeamGameRow[]> {
   const canonical = resolveCanonical(teamToken);
   if (!canonical) return [];
   const team = getCanonicalTeamById(canonical);
@@ -194,7 +194,7 @@ export function getCompactTeamSeasonGames(
         ? new Set(idx[espnId])
         : null;
 
-  const summaries = getHistoricalGameSummaries(season);
+  const summaries = await getHistoricalGameSummaries(season);
   const filtered = indexedIds
     ? summaries.filter((g) => indexedIds.has(g.gameId))
     : summaries.filter(
@@ -278,13 +278,13 @@ export type TeamSeasonGamesPage = {
   source: "history_product" | "unavailable";
 };
 
-export function getTeamSeasonGamesPage(options: {
+export async function getTeamSeasonGamesPage(options: {
   teamToken: string;
   season: string;
   page?: number;
   pageSize?: number;
-}): TeamSeasonGamesPage {
-  const all = getCompactTeamSeasonGames(options.teamToken, options.season);
+}): Promise<TeamSeasonGamesPage> {
+  const all = await getCompactTeamSeasonGames(options.teamToken, options.season);
   if (!all.length) {
     return {
       rows: [],
@@ -367,12 +367,12 @@ function summarizeFiltered(
  * Franchise-vs-franchise matchup page from precomputed pair artifact.
  * Falls back to building from season indexes only if artifact missing.
  */
-export function getFranchiseMatchupPage(options: {
+export async function getFranchiseMatchupPage(options: {
   teamA: string;
   teamB: string;
   page?: number;
   seasonType?: "ALL" | "Regular Season" | "Playoffs";
-}): MatchupPageResult | null {
+}): Promise<MatchupPageResult | null> {
   const a = resolveCanonical(options.teamA);
   const b = resolveCanonical(options.teamB);
   if (!a || !b || a === b) return null;
@@ -390,7 +390,7 @@ export function getFranchiseMatchupPage(options: {
   let scope: string = MATCHUP_SCOPE_LABEL;
   if (!games.length) {
     // Fallback: intersect season indexes (still no raw PBP). Prefer artifact.
-    const fallback = buildMatchupGamesFallback(a, b);
+    const fallback = await buildMatchupGamesFallback(a, b);
     games = fallback.games;
     if (fallback.coverageFrom) scope = `Since ${fallback.coverageFrom}`;
     franchiseA = a < b ? a : b;
@@ -415,15 +415,15 @@ export function getFranchiseMatchupPage(options: {
   };
 }
 
-function buildMatchupGamesFallback(
+async function buildMatchupGamesFallback(
   a: string,
   b: string
-): { games: CompactMatchupGame[]; coverageFrom: string | null } {
+): Promise<{ games: CompactMatchupGame[]; coverageFrom: string | null }> {
   const nbaA = nbaIdForCanonical(a);
   const nbaB = nbaIdForCanonical(b);
   if (!nbaA || !nbaB) return { games: [], coverageFrom: null };
   let coverageFrom: string | null = null;
-  const seasons = listHistoryProductSeasons().filter((s) => s >= "1996-97");
+  const seasons = (await listHistoryProductSeasons()).filter((s) => s >= "1996-97");
   const out: CompactMatchupGame[] = [];
   const seen = new Set<string>();
   const idsFor = (canonical: string, nba: string) =>
@@ -450,7 +450,7 @@ function buildMatchupGamesFallback(
         (idsA.has(g.homeTeamId) && idsB.has(g.awayTeamId)) ||
         (idsB.has(g.homeTeamId) && idsA.has(g.awayTeamId));
     }
-    const seasonGames = getHistoricalGameSummaries(season);
+    const seasonGames = await getHistoricalGameSummaries(season);
     if (seasonGames.length && (!coverageFrom || season < coverageFrom)) {
       coverageFrom = season;
     }

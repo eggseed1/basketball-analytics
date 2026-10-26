@@ -61,7 +61,7 @@ async function readPrecomputed(
     const { getBundledDrblSeason } = await import(
       "@/data/runtime/drbl-overlay-snapshot"
     );
-    const bundled = getBundledDrblSeason(season);
+    const bundled = await getBundledDrblSeason(season);
     if (bundled.length > 0) {
       const artifact = withAccentedNames({
         season,

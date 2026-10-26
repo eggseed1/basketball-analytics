@@ -194,8 +194,8 @@ function emptyResult(
   };
 }
 
-function sourceForPlayerMetric(metricId: AskMetricId, season: string): string {
-  const cov = coverageForMetric(metricId);
+async function sourceForPlayerMetric(metricId: AskMetricId, season: string): Promise<string> {
+  const cov = await coverageForMetric(metricId);
   if (metricId === "darko" || metricId === "raptor" || metricId === "bpm") {
     return cov?.sourceLabel ?? "Verified historical impact data";
   }
@@ -281,7 +281,7 @@ async function execSeasonStat(ast: BasketballQueryAst): Promise<AskDrblResult> {
     return emptyResult(ast, "invalid", ["Missing player, season, or metric."]);
   }
 
-  const availability = metricSeasonAvailability(metricId, season);
+  const availability = await metricSeasonAvailability(metricId, season);
   if (!availability.ok) {
     return {
       ...emptyResult(ast, "no_result", [availability.message]),
@@ -351,7 +351,7 @@ async function execSeasonStat(ast: BasketballQueryAst): Promise<AskDrblResult> {
 
   const value = readPlayerMetric(row, metricId);
   if (value == null || !Number.isFinite(value)) {
-    const cov = coverageForMetric(metricId);
+    const cov = await coverageForMetric(metricId);
     const drblMissing = DRBL_ASK_METRICS.has(metricId);
     return {
       ...emptyResult(ast, "insufficient_data", [
@@ -408,7 +408,7 @@ async function execSeasonStat(ast: BasketballQueryAst): Promise<AskDrblResult> {
     detailLines: contextLines,
     contextLines,
     methodology: [
-      `Metric: ${def.label} from ${sourceForPlayerMetric(metricId, season)}.`,
+      `Metric: ${def.label} from ${await sourceForPlayerMetric(metricId, season)}.`,
       ...(DRBL_ASK_METRICS.has(metricId)
         ? [
             glossaryForMetricId(metricId) ??
@@ -417,7 +417,7 @@ async function execSeasonStat(ast: BasketballQueryAst): Promise<AskDrblResult> {
         : ["Counting rates use season totals ÷ games played."]),
       ...(def.learnHref ? [`How is this calculated? See methodology.`] : []),
     ],
-    source: sourceForPlayerMetric(metricId, season),
+    source: await sourceForPlayerMetric(metricId, season),
     limitations: DRBL_ASK_METRICS.has(metricId)
       ? [
           "Player-specific DRBL answers require a valid overlay estimate. Zeros are never invented.",

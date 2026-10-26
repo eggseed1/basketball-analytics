@@ -314,8 +314,8 @@ async function loadPlayerSeasonBoard(canonical: string): Promise<PlayerSeason[]>
     const { isBundledPeerBoardReady } = await import(
       "@/lib/player-board-season"
     );
-    const bundled = getBundledBrefPeerBoard(canonical);
-    if (isBundledPeerBoardReady(canonical, bundled.length)) {
+    const bundled = await getBundledBrefPeerBoard(canonical);
+    if (await isBundledPeerBoardReady(canonical, bundled.length)) {
       return finalizeFranchiseBoard(bundled, canonical);
     }
   } catch {

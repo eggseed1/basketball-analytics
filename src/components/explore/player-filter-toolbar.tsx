@@ -29,7 +29,7 @@ import {
 } from "@/lib/explore-players-display";
 import { espnYearFromCanonicalSeason } from "@/data/providers/nba/season";
 import { listDraftClassYears, groupDraftClassYearsByDecade } from "@/lib/draft-class";
-import { defaultExploreMinimumMinutes } from "@/lib/player-board-season";
+import { defaultExploreMinimumMinutesSync } from "@/lib/player-board-season";
 import { cn } from "@/lib/utils";
 import { usePlayerBoardI18n } from "@/components/explore/use-player-board-i18n";
 
@@ -109,7 +109,7 @@ export function PlayerFilterToolbar({
   );
 
   const season = searchParams.get("season") ?? defaultSeason;
-  const defaultMinMinutes = String(defaultExploreMinimumMinutes(season));
+  const defaultMinMinutes = String(defaultExploreMinimumMinutesSync(season));
   const team = searchParams.get("team") ?? "ALL";
   const conferenceParam = searchParams.get("conference")?.toLowerCase();
   const conference =

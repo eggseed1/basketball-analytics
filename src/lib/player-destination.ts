@@ -14,7 +14,7 @@ import {
 } from "@/data/providers/historical/season-range";
 
 /** Resolve selected season from URL, or a smart default. */
-export function resolvePlayerSeason(
+export async function resolvePlayerSeason(
   career: PlayerSeason[],
   seasonParam?: string | null,
   historySeasons?: string[],
@@ -29,7 +29,7 @@ export function resolvePlayerSeason(
     /** Clock for tip / preseason gates (tests). */
     now?: Date;
   }
-): string {
+): Promise<string> {
   if (seasonParam) return seasonParam;
   const seasons = [
     ...new Set([
@@ -69,7 +69,7 @@ export function resolvePlayerSeason(
 
   // Pre-tip roster window: skip empty current-year stubs (0 GP) so percentiles
   // still land on last year's completed board — same gate as Explore.
-  if (isPreseasonRosterSeason(nowSeason, clock)) {
+  if (await isPreseasonRosterSeason(nowSeason, clock)) {
     return latestWithGames ?? latest ?? nowSeason;
   }
 

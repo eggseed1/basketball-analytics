@@ -275,17 +275,19 @@ function mergeCareerSeasonFields(
   return merged as unknown as PlayerSeason;
 }
 
-function bundledCareerRows(
+async function bundledCareerRows(
   routePlayerId: string,
   identity: { espnId?: string | null; displayName?: string | null } | null
-): PlayerSeason[] {
+): Promise<PlayerSeason[]> {
   // Name-shaped search ids (`bref:michael jordan`) must look up by name —
   // the BRef bundle is keyed by ESPN id or normalized player name, not bref:…
   const brefNameHint = displayNameFromBrefRouteId(routePlayerId);
-  return getBundledBrefCareerForPlayer({
-    playerId: identity?.espnId ?? routePlayerId,
-    playerName: identity?.displayName ?? brefNameHint,
-  }).map((row) => ({ ...row, playerId: routePlayerId }));
+  return (
+    await getBundledBrefCareerForPlayer({
+      playerId: identity?.espnId ?? routePlayerId,
+      playerName: identity?.displayName ?? brefNameHint,
+    })
+  ).map((row) => ({ ...row, playerId: routePlayerId }));
 }
 
 /**
@@ -293,13 +295,14 @@ function bundledCareerRows(
  * roster crawl. ESPN's athlete profile already carries the current team id;
  * synthesize only the explicit zero-GP preseason shell from that profile.
  */
-function overlayProfileTeamForPreseason(
+async function overlayProfileTeamForPreseason(
   routePlayerId: string,
   rows: PlayerSeason[],
   player: Player | null
-): PlayerSeason[] {
+): Promise<PlayerSeason[]> {
   const season = canonicalSeasonFromStartYear(currentNbaStartYear());
-  if (!isPreseasonRosterSeason(season) || !player?.currentTeamId) return rows;
+  if (!(await isPreseasonRosterSeason(season)) || !player?.currentTeamId)
+    return rows;
   // Profiles of long-retired players still carry their last team id.
   const lastPlayed = rows
     .filter((row) => Number.isFinite(row.gamesPlayed) && row.gamesPlayed > 0)
@@ -470,10 +473,10 @@ async function loadCriticalCareerSeasons(
     return { rows, player };
   };
 
-  const finalize = (
+  const finalize = async (
     rowsIn: PlayerSeason[],
     player: Player | null
-  ): PlayerSeason[] => {
+  ): Promise<PlayerSeason[]> => {
     // Bundled careers skip live ESPN profile — still apply current franchise
     // from the roster snapshot so offseason trades (e.g. Giannis → MIA) brand.
     const bundledTeamId = resolveBundledCurrentTeamId(
@@ -496,7 +499,7 @@ async function loadCriticalCareerSeasons(
               currentTeamId: bundledTeamId,
             } as Player)
           : player;
-    let rows = overlayProfileTeamForPreseason(playerId, rowsIn, profile);
+    let rows = await overlayProfileTeamForPreseason(playerId, rowsIn, profile);
     const resolvedName = firstUsablePlayerDisplayName(
       identity?.displayName,
       player?.fullName
@@ -568,9 +571,9 @@ async function loadCriticalCareerSeasons(
     // Slim edge: prefer bundled BRef career immediately — don't burn CPU on ESPN.
     if (slimEdgeProductEnabled()) {
       if (history.length > 0) {
-        return finalize(history, null);
+        return await finalize(history, null);
       }
-      const fromBundle = bundledCareerRows(playerId, identity);
+      const fromBundle = await bundledCareerRows(playerId, identity);
       if (fromBundle.length > 0) {
         let rows = fromBundle;
         try {
@@ -581,12 +584,12 @@ async function loadCriticalCareerSeasons(
         } catch {
           // keep BRef-only career
         }
-        return finalize(rows, null);
+        return await finalize(rows, null);
       }
       const fromBrefPage = await loadBrefSlugCareer();
-      if (fromBrefPage.length > 0) return finalize(fromBrefPage, null);
+      if (fromBrefPage.length > 0) return await finalize(fromBrefPage, null);
       // No bundle hit: soft-empty on slim edge (avoid uncancellable ESPN).
-      return finalize([], null);
+      return await finalize([], null);
     }
 
     // Paid Cloudflare / constrained: race live ESPN, then union with history +
@@ -596,7 +599,7 @@ async function loadCriticalCareerSeasons(
     // full careers. Racing ESPN anyway (even with a short budget) leaves the
     // uncancellable fetch burning isolate CPU and made season switches feel
     // multi-second — skip live when the bundle already covers the career.
-    const fromBundle = bundledCareerRows(playerId, identity);
+    const fromBundle = await bundledCareerRows(playerId, identity);
     const base = unionCareerBySeason(history, fromBundle);
     if (preferBundled && base.length > 0) {
       // Bundle window truncates pre-1997 legends — try full BRef page when
@@ -604,15 +607,15 @@ async function loadCriticalCareerSeasons(
       if (String(playerId).toLowerCase().startsWith("bref:")) {
         const fromBrefPage = await loadBrefSlugCareer();
         if (fromBrefPage.length > 0) {
-          return finalize(unionCareerBySeason(base, fromBrefPage), null);
+          return await finalize(unionCareerBySeason(base, fromBrefPage), null);
         }
       }
-      return finalize(base, null);
+      return await finalize(base, null);
     }
 
     if (preferBundled && base.length === 0) {
       const fromBrefPage = await loadBrefSlugCareer();
-      if (fromBrefPage.length > 0) return finalize(fromBrefPage, null);
+      if (fromBrefPage.length > 0) return await finalize(fromBrefPage, null);
     }
 
     const budgetMs = preferBundled
@@ -632,22 +635,22 @@ async function loadCriticalCareerSeasons(
 
     const merged = unionCareerBySeason(live?.rows ?? [], base);
     if (merged.length > 0) {
-      return finalize(merged, live?.player ?? null);
+      return await finalize(merged, live?.player ?? null);
     }
 
     const fromBrefPage = await loadBrefSlugCareer();
-    if (fromBrefPage.length > 0) return finalize(fromBrefPage, null);
+    if (fromBrefPage.length > 0) return await finalize(fromBrefPage, null);
   }
 
   const live = await loadLive();
-  const fromBundle = bundledCareerRows(playerId, identity);
+  const fromBundle = await bundledCareerRows(playerId, identity);
   const merged = unionCareerBySeason(
     live.rows,
     unionCareerBySeason(history, fromBundle)
   );
   if (merged.length > 0) {
-    return finalize(merged, live.player);
+    return await finalize(merged, live.player);
   }
   const fromBrefPage = await loadBrefSlugCareer();
-  return finalize(fromBrefPage, live.player);
+  return await finalize(fromBrefPage, live.player);
 }

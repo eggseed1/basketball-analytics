@@ -65,7 +65,7 @@ async function scheduleWindow(): Promise<Game[]> {
   for (const g of todayFeed) byId.set(g.id, { ...byId.get(g.id), ...g });
   if (byId.size === 0) {
     const { getRuntimeSnapshotWindow } = await import("@/data/runtime/game-snapshot");
-    for (const g of getRuntimeSnapshotWindow({ fromDate: today })) byId.set(g.id, g);
+    for (const g of await getRuntimeSnapshotWindow({ fromDate: today })) byId.set(g.id, g);
   }
   return [...byId.values()];
 }
@@ -109,16 +109,19 @@ async function standingsByTeamId(season: string): Promise<Map<string, WatchStand
   return map;
 }
 
-function drblFor(espnId: string, season: string): WatchDrbl | null {
+async function drblFor(
+  espnId: string,
+  season: string
+): Promise<WatchDrbl | null> {
   const nbaId = getBundledPlayerIdAliasIndex().byEspn.get(espnId)?.nbaPlayerId ?? espnId;
-  const pick = (s: string) => {
-    const row = getBundledDrblSeason(s).find((r) => r.playerId === nbaId);
+  const pick = async (s: string) => {
+    const row = (await getBundledDrblSeason(s)).find((r) => r.playerId === nbaId);
     if (!row || !(row.possessions > 0) || !Number.isFinite(row.rawAbilityRate)) return null;
     return { season: s, value: row.drbl100 };
   };
   const prior = priorSeasonForStats(season);
-  const current = pick(season);
-  const last = pick(prior);
+  const current = await pick(season);
+  const last = await pick(prior);
   if (current) return { ...current, prior: last };
   return last ? { ...last, prior: null } : null;
 }
@@ -195,6 +198,9 @@ export async function getWatchlistStatus(options: {
     standing: standings.get(id) ?? null,
   }));
 
+  const drbls = await Promise.all(
+    options.players.map((id) => drblFor(id, season))
+  );
   const players: WatchPlayerStatus[] = options.players.map((id, i) => {
     const teamId = playerTeams[i] ?? null;
     const window = windowFor(teamId);
@@ -206,7 +212,7 @@ export async function getWatchlistStatus(options: {
       ...window,
       line: playerLineFor(log, window.last?.gameId),
       trend: scoringTrend(log, season),
-      drbl: drblFor(id, season),
+      drbl: drbls[i] ?? null,
       injury: injuries.get(id) ?? null,
     };
   });

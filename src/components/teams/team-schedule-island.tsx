@@ -39,7 +39,7 @@ function SummaryTile({
   );
 }
 
-export function TeamScheduleIsland({
+export async function TeamScheduleIsland({
   teamId,
   season,
   teamKey,
@@ -48,7 +48,7 @@ export function TeamScheduleIsland({
   season: string;
   teamKey?: string;
 }) {
-  const { rows, summary } = buildTeamSchedule(teamId, season);
+  const { rows, summary } = await buildTeamSchedule(teamId, season);
 
   if (rows.length === 0) return null;
 

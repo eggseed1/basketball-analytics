@@ -121,11 +121,11 @@ type Deal = {
 let historyCache: Map<string, SeasonLine[]> | null = null;
 let dealCache: { byBref: Map<string, Deal>; byName: Map<string, Deal[]> } | null = null;
 
-function warHistories(): Map<string, SeasonLine[]> {
+async function warHistories(): Promise<Map<string, SeasonLine[]>> {
   if (historyCache) return historyCache;
   const histories = new Map<string, SeasonLine[]>();
-  for (const season of bundledDrblOverlayMeta().seasons) {
-    for (const row of getBundledDrblSeason(season)) {
+  for (const season of (await bundledDrblOverlayMeta()).seasons) {
+    for (const row of await getBundledDrblSeason(season)) {
       const war1 = row.r1WinEquivalents;
       if (war1 == null || !Number.isFinite(war1) || !Number.isFinite(row.possessions)) continue;
       const line = seasonLineOn82Games(season, row.possessions, war1, row.drbl100);
@@ -197,14 +197,14 @@ function dealFor(alias: { brefSlug?: string; playerName?: string }, name: string
 }
 
 /** Project one roster player. Null when salary, age, or a usable DRBL history is missing. */
-export function projectRosterPlayer(
+export async function projectRosterPlayer(
   nbaPlayerId: string,
   deal: { age: number; capSeason: string; salary: number } | null
-): ProjectedRosterWar1 | null {
+): Promise<ProjectedRosterWar1 | null> {
   const model = contractValueModel() as unknown as BakedModel;
   if (!deal || deal.salary <= 0 || model.capSeasonCap <= 0) return null;
   if (model.capSeason !== deal.capSeason) return null;
-  const history = warHistories().get(nbaPlayerId);
+  const history = (await warHistories()).get(nbaPlayerId);
   if (!history?.length) return null;
   const lastStart = seasonStartYear(model.lastSeason);
   const targetStart = seasonStartYear(model.capSeason);
@@ -224,10 +224,10 @@ export function projectRosterPlayer(
  * Published-shaped rows whose WAR1 is the coming season's projection.
  * Players with no projection are omitted so the roster builder can count them as missing.
  */
-export function projectedRosterWarRows(
+export async function projectedRosterWarRows(
   slots: readonly { espnId: string; name: string }[],
   aliases: PlayerIdAliasIndex
-): RosterWarSourceRow[] {
+): Promise<RosterWarSourceRow[]> {
   const rows: RosterWarSourceRow[] = [];
   const seen = new Set<string>();
   for (const slot of slots) {
@@ -237,9 +237,11 @@ export function projectedRosterWarRows(
     if (!alias || !isProductionApprovedPlayerAlias(alias)) continue;
     const deal = dealFor(alias, slot.name);
     const salary = deal?.salaryBySeason.get(contractValueModel().capSeason);
-    const projected = projectRosterPlayer(
+    const projected = await projectRosterPlayer(
       alias.nbaPlayerId,
-      deal && salary != null ? { age: deal.age, capSeason: deal.capSeason, salary } : null
+      deal && salary != null
+        ? { age: deal.age, capSeason: deal.capSeason, salary }
+        : null
     );
     if (!projected) continue;
     seen.add(espnId);

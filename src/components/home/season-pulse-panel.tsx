@@ -359,21 +359,38 @@ function StoryView({ story, pulse }: { story: Story; pulse: SeasonPulse }) {
 }
 
 /** The season's storylines, chosen by how far along it is. */
-export function SeasonPulsePanel() {
+export async function SeasonPulsePanel() {
   const current = canonicalSeasonFromStartYear(currentNbaStartYear());
   const previous = priorSeason(current);
+  const currentGames = await getRuntimeSnapshotGames(current);
+  const previousGames = previous
+    ? await getRuntimeSnapshotGames(previous)
+    : [];
+  const finishedBySeason = new Map<string, number>([
+    [current, finishedRegularGames(currentGames).length],
+    ...(previous
+      ? ([[previous, finishedRegularGames(previousGames).length]] as const)
+      : []),
+  ]);
   const season = pickPulseSeason(
     current,
     previous,
-    (s) => finishedRegularGames(getRuntimeSnapshotGames(s)).length
+    (s) => finishedBySeason.get(s) ?? 0
   );
   if (!season) return null;
   const before = priorSeason(season);
   const pulse = buildSeasonPulse({
     season,
-    games: getRuntimeSnapshotGames(season),
+    games: season === current ? currentGames : previousGames,
     priorSeason: before,
-    priorGames: before ? getRuntimeSnapshotGames(before) : [],
+    priorGames:
+      before == null
+        ? []
+        : before === current
+          ? currentGames
+          : before === previous
+            ? previousGames
+            : await getRuntimeSnapshotGames(before),
   });
   if (!pulse) return null;
 

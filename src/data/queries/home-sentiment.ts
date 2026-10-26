@@ -17,8 +17,8 @@ export type SentimentMoversBoard = {
 };
 
 export const getSentimentMoversBoard = cache(
-  (limit = 4, lookbackDays = 7): SentimentMoversBoard | null => {
-    const snapshot = loadSentimentSnapshot();
+  async (limit = 4, lookbackDays = 7): Promise<SentimentMoversBoard | null> => {
+    const snapshot = await loadSentimentSnapshot();
     if (!snapshot?.players.length) return null;
 
     const precomputed = snapshot.meta.movers;

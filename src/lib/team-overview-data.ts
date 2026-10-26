@@ -49,14 +49,27 @@ function phaseOf(game: GameSummary): TrajectoryPhase | null {
 }
 
 /** Finals in date order (regular season, play-in, playoffs). Preseason and the Cup final are left out, matching the standings. */
-export function seasonFinals(teamId: string, season: string): GameSummary[] {
-  return teamSnapshotGames(teamId, season)
-    .filter((g) => g.status === "final" && phaseOf(g) != null && g.homeScore !== g.awayScore)
-    .sort((a, b) => (a.tipOffAt ?? a.gameDate).localeCompare(b.tipOffAt ?? b.gameDate));
+export async function seasonFinals(
+  teamId: string,
+  season: string
+): Promise<GameSummary[]> {
+  return (await teamSnapshotGames(teamId, season))
+    .filter(
+      (g) =>
+        g.status === "final" &&
+        phaseOf(g) != null &&
+        g.homeScore !== g.awayScore
+    )
+    .sort((a, b) =>
+      (a.tipOffAt ?? a.gameDate).localeCompare(b.tipOffAt ?? b.gameDate)
+    );
 }
 
-export function buildSeasonTrajectory(teamId: string, season: string): TrajectoryGame[] {
-  const finals = seasonFinals(teamId, season);
+export async function buildSeasonTrajectory(
+  teamId: string,
+  season: string
+): Promise<TrajectoryGame[]> {
+  const finals = await seasonFinals(teamId, season);
   const out: TrajectoryGame[] = [];
   let wins = 0;
   let losses = 0;
@@ -103,7 +116,7 @@ function longestRun(games: TrajectoryGame[], win: boolean): number {
   return best;
 }
 
-export function buildSeasonHighlights(teamId: string, season: string, games: TrajectoryGame[]): SeasonHighlight[] {
+export async function buildSeasonHighlights(teamId: string, season: string, games: TrajectoryGame[]): Promise<SeasonHighlight[]> {
   const regular = games.filter((g) => g.phase === "regular");
   if (!regular.length) return [];
   const out: SeasonHighlight[] = [];
@@ -134,7 +147,7 @@ export function buildSeasonHighlights(teamId: string, season: string, games: Tra
     });
   }
 
-  const close = computeTeamMarginSplits(teamId, season).find((b) => b.id === "close");
+  const close = (await computeTeamMarginSplits(teamId, season)).find((b) => b.id === "close");
   if (close && close.games > 0) {
     out.push({ id: "close", label: "Within 5 points", value: `${close.wins}-${close.losses}`, detail: `${close.games} games` });
   }
@@ -154,8 +167,13 @@ export type QuarterRow = {
 };
 
 /** Average points for and against by quarter over regular-season finals that have linescores. */
-export function buildQuarterProfile(teamId: string, season: string): { rows: QuarterRow[]; games: number } {
-  const finals = seasonFinals(teamId, season).filter((g) => phaseOf(g) === "regular");
+export async function buildQuarterProfile(
+  teamId: string,
+  season: string
+): Promise<{ rows: QuarterRow[]; games: number }> {
+  const finals = (await seasonFinals(teamId, season)).filter(
+    (g) => phaseOf(g) === "regular"
+  );
   const sums = [0, 1, 2, 3].map(() => ({ pf: 0, pa: 0 }));
   let games = 0;
   for (const game of finals) {
@@ -189,9 +207,9 @@ export type SplitsBundle = {
   months: TeamSplitBucket[];
 };
 
-export function buildSplitsBundle(teamId: string, season: string): SplitsBundle {
-  const splits = computeTeamSplits(teamId, season);
-  const margins = computeTeamMarginSplits(teamId, season);
+export async function buildSplitsBundle(teamId: string, season: string): Promise<SplitsBundle> {
+  const splits = await computeTeamSplits(teamId, season);
+  const margins = await computeTeamMarginSplits(teamId, season);
   const pick = (rows: TeamSplitBucket[], id: string) => {
     const row = rows.find((r) => r.id === id);
     return row && row.games > 0 ? row : null;
@@ -201,7 +219,7 @@ export function buildSplitsBundle(teamId: string, season: string): SplitsBundle 
     away: pick(splits, "away"),
     close: pick(margins, "close"),
     blowout: pick(margins, "blowout"),
-    months: computeTeamMonthSplits(teamId, season)
+    months: (await computeTeamMonthSplits(teamId, season))
       .filter((m) => m.games > 0)
       .reverse(),
   };
@@ -231,10 +249,19 @@ function dayNumber(iso: string): number {
   return Math.round(Date.parse(`${iso}T00:00:00Z`) / 86_400_000);
 }
 
-export function buildScheduleFacts(teamId: string, season: string, todayIso: string, count = 5): ScheduleFacts {
-  const regular = teamSnapshotGames(teamId, season, { gameType: "regular" })
+export async function buildScheduleFacts(
+  teamId: string,
+  season: string,
+  todayIso: string,
+  count = 5
+): Promise<ScheduleFacts> {
+  const regular = (
+    await teamSnapshotGames(teamId, season, { gameType: "regular" })
+  )
     .filter((g) => !g.cupChampionship)
-    .sort((a, b) => (a.tipOffAt ?? a.gameDate).localeCompare(b.tipOffAt ?? b.gameDate));
+    .sort((a, b) =>
+      (a.tipOffAt ?? a.gameDate).localeCompare(b.tipOffAt ?? b.gameDate)
+    );
   const toUpcoming = (g: GameSummary): UpcomingGame => {
     const side = teamSide(g, teamId);
     return {

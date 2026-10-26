@@ -1,12 +1,15 @@
 /**
- * Bundled slim ESPN transaction archive for Cloudflare Workers (no node:fs).
- * Disk jsonl remains the provenance source locally; CF reads this snapshot.
+ * Slim ESPN transaction archive.
+ *
+ * JSON is copied to public/runtime for Workers Static Assets — do not
+ * static-import (≈3.7 MiB inlined into the origin script).
  *
  * Row: [id, date, season, teamId, teamAbbr, description, type, source, sourceUrl, espnYear]
  */
-import snapshot from "./transactions-snapshot.json";
 import type { CanonicalTransaction } from "@/data/types/transaction-lineage";
 import type { TransactionArchiveBundle } from "@/data/providers/transactions/transaction-archive-store";
+
+import { loadRuntimeJson } from "./load-runtime-json";
 
 type SlimRow = [
   string,
@@ -32,10 +35,16 @@ type SnapshotFile = {
   events?: SlimRow[];
 };
 
-const data = snapshot as unknown as SnapshotFile;
-const rows = Array.isArray(data.events) ? data.events : [];
+type Loaded = {
+  data: SnapshotFile;
+  rows: SlimRow[];
+  cached: CanonicalTransaction[] | null;
+};
 
-function toCanonical(row: SlimRow): CanonicalTransaction {
+let loaded: Loaded | null = null;
+let loadPromise: Promise<Loaded> | null = null;
+
+function toCanonical(row: SlimRow, data: SnapshotFile): CanonicalTransaction {
   const [
     id,
     date,
@@ -76,30 +85,47 @@ function toCanonical(row: SlimRow): CanonicalTransaction {
   };
 }
 
-let cached: CanonicalTransaction[] | null = null;
-
-export function getBundledTransactionRows(): CanonicalTransaction[] {
-  if (cached) return cached;
-  cached = rows.map(toCanonical);
-  return cached;
+async function ensureLoaded(): Promise<Loaded> {
+  if (loaded) return loaded;
+  if (!loadPromise) {
+    loadPromise = (async () => {
+      const data =
+        (await loadRuntimeJson<SnapshotFile>("transactions-snapshot.json")) ??
+        {};
+      const rows = Array.isArray(data.events) ? data.events : [];
+      loaded = { data, rows, cached: null };
+      return loaded;
+    })();
+  }
+  return loadPromise;
 }
 
-export function getBundledTransactionArchive(): TransactionArchiveBundle | null {
-  const transactions = getBundledTransactionRows();
+export async function getBundledTransactionRows(): Promise<
+  CanonicalTransaction[]
+> {
+  const state = await ensureLoaded();
+  if (state.cached) return state.cached;
+  state.cached = state.rows.map((row) => toCanonical(row, state.data));
+  return state.cached;
+}
+
+export async function getBundledTransactionArchive(): Promise<TransactionArchiveBundle | null> {
+  const state = await ensureLoaded();
+  const transactions = await getBundledTransactionRows();
   if (!transactions.length) return null;
   return {
     manifest: {
-      source: data.source ?? "espn-site-v2-transactions",
-      datasetVersion: data.datasetVersion ?? "bundled-v1",
+      source: state.data.source ?? "espn-site-v2-transactions",
+      datasetVersion: state.data.datasetVersion ?? "bundled-v1",
       methodologyNote:
         "Bundled ESPN free-text transaction archive for Cloudflare Workers.",
-      builtAt: data.generatedAt ?? new Date().toISOString(),
+      builtAt: state.data.generatedAt ?? new Date().toISOString(),
       espnCalendarYears: [],
       transactionCount: transactions.length,
       ownershipEdgeCount: 0,
-      earliestDate: data.earliestDate ?? null,
-      latestDate: data.latestDate ?? null,
-      contentHash: data.contentHash ?? "",
+      earliestDate: state.data.earliestDate ?? null,
+      latestDate: state.data.latestDate ?? null,
+      contentHash: state.data.contentHash ?? "",
       limitations: ["Bundled snapshot. No ownership edges on edge runtime."],
     },
     transactions,
@@ -108,12 +134,13 @@ export function getBundledTransactionArchive(): TransactionArchiveBundle | null 
   };
 }
 
-export function bundledTransactionsMeta() {
+export async function bundledTransactionsMeta() {
+  const state = await ensureLoaded();
   return {
-    version: data.version ?? 0,
-    generatedAt: data.generatedAt ?? null,
-    count: rows.length,
-    earliestDate: data.earliestDate ?? null,
-    latestDate: data.latestDate ?? null,
+    version: state.data.version ?? 0,
+    generatedAt: state.data.generatedAt ?? null,
+    count: state.rows.length,
+    earliestDate: state.data.earliestDate ?? null,
+    latestDate: state.data.latestDate ?? null,
   };
 }

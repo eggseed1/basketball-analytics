@@ -26,8 +26,8 @@ function findStandingSeed(
   return null;
 }
 
-function postseasonTotals(teamId: string, season: string) {
-  const games = teamSnapshotGames(teamId, season, {
+async function postseasonTotals(teamId: string, season: string) {
+  const games = await teamSnapshotGames(teamId, season, {
     gameType: ["playoff", "play-in"],
   });
   let wins = 0;
@@ -77,7 +77,7 @@ export async function TeamPlayoffsIsland({
 }) {
   const { model, standings } = await getPlayoffBracketModel(season);
   const seed = findStandingSeed(teamId, standings);
-  const totals = postseasonTotals(teamId, season);
+  const totals = await postseasonTotals(teamId, season);
   const compact = gameSummariesToCompactRows(teamId, totals.games);
   const page = paginateSnapshotTeamGames(compact, 1);
   const gamesHref = teamPageHref(teamId, { season, tab: "games" });

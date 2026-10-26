@@ -21,7 +21,7 @@ export const getLeagueStandings = cache(async function getLeagueStandings(
 
   // Offseason / preseason: ESPN often returns empty or remapped boards for the
   // upcoming year — load the completed season first.
-  if (isPreseasonRosterSeason(resolved)) {
+  if (await isPreseasonRosterSeason(resolved)) {
     const prior = shiftCanonicalSeason(resolved, -1);
     const priorBoard = await fetchLeagueStandings(prior).catch(() => null);
     if (priorBoard && standingsHaveResults(priorBoard)) {
@@ -34,7 +34,7 @@ export const getLeagueStandings = cache(async function getLeagueStandings(
   const current = canonicalSeasonFromStartYear(currentNbaStartYear());
   if (
     standingsHaveResults(board) ||
-    (!isPreseasonRosterSeason(resolved) && resolved !== current)
+    (!await isPreseasonRosterSeason(resolved) && resolved !== current)
   ) {
     return board;
   }

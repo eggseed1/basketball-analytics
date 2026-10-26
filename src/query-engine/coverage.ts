@@ -33,10 +33,12 @@ export type MetricCoverage = {
 };
 
 /** Static audit used by ASK DRBL + docs. */
-export function getAskMetricCoverageAudit(
+export async function getAskMetricCoverageAudit(
   now = new Date()
-): MetricCoverage[] {
+): Promise<MetricCoverage[]> {
   const current = canonicalSeasonFromStartYear(currentNbaStartYear(now));
+  const darkoSeasons = await listBundledDarkoSeasons();
+  const raptorSeasons = await listBundledRaptorSeasons();
   return [
     {
       metricId: "ppg",
@@ -132,8 +134,8 @@ export function getAskMetricCoverageAudit(
     {
       metricId: "darko",
       label: "DARKO DPM",
-      earliestSeason: listBundledDarkoSeasons()[0] ?? "1996-97",
-      latestSeason: listBundledDarkoSeasons().at(-1) ?? current,
+      earliestSeason: darkoSeasons[0] ?? "1996-97",
+      latestSeason: darkoSeasons.at(-1) ?? current,
       playerCoverage: "Season-keyed DARKO overlay when baked for the asked season",
       reliable: true,
       sourceLabel: "Verified historical impact (DARKO season-keyed)",
@@ -143,10 +145,9 @@ export function getAskMetricCoverageAudit(
     {
       metricId: "raptor",
       label: "RAPTOR",
-      earliestSeason: listBundledRaptorSeasons()[0] ?? "1976-77",
-      latestSeason: listBundledRaptorSeasons().at(-1) ?? "2021-22",
-      playerCoverage:
-        "Open RAPTOR through 2021-22; blank afterward",
+      earliestSeason: raptorSeasons[0] ?? "1976-77",
+      latestSeason: raptorSeasons.at(-1) ?? "2021-22",
+      playerCoverage: "Open RAPTOR through 2021-22; blank afterward",
       reliable: true,
       sourceLabel: "Verified historical impact (RAPTOR season-keyed)",
       notes:
@@ -168,124 +169,90 @@ export function getAskMetricCoverageAudit(
       label: "DRBL/100",
       earliestSeason: listDrblSeasons()[0] ?? "2020-21",
       latestSeason: listDrblSeasons().at(-1) ?? current,
-      playerCoverage:
-        "Precomputed DRBL overlay via a verified player identity join",
+      playerCoverage: "Published DRBL seasons only",
       reliable: true,
-      sourceLabel: "DRBL season overlay (DRBL/100)",
-      notes:
-        "Only registry DRBL seasons. Requires a valid estimate + identity join. Never invents 0 or substitutes DARKO.",
-    },
-    {
-      metricId: "r1_points",
-      label: "R1 Points",
-      earliestSeason: listCanonicalR1Seasons()[0] ?? "2020-21",
-      latestSeason: listCanonicalR1Seasons().at(-1) ?? current,
-      playerCoverage: "Canonical R1 seasons in DRBL registry",
-      reliable: true,
-      sourceLabel: "DRBL R1 Points (advanced)",
-      notes:
-        "DRBL/100 × possessions ÷ 100. Prefer WAR1 on the public surface. Null when unpublished.",
-    },
-    {
-      metricId: "r1_win_eq",
-      label: "WAR1",
-      earliestSeason: listCanonicalR1Seasons()[0] ?? "2020-21",
-      latestSeason: listCanonicalR1Seasons().at(-1) ?? current,
-      playerCoverage: "Canonical R1 seasons in DRBL registry",
-      reliable: true,
-      sourceLabel: "DRBL WAR1",
-      notes:
-        "R1 Points ÷ frozen P1, built on DRBL/100. Not traditional WAR. Identical ordering to R1 Points.",
+      sourceLabel: "DRBL overlay",
+      notes: "Only published DRBL seasons. No backfill into earlier years.",
     },
     {
       metricId: "drbl_o",
-      label: "DRBL-O",
+      label: "DRBL O",
       earliestSeason: listDrblSeasons()[0] ?? "2020-21",
       latestSeason: listDrblSeasons().at(-1) ?? current,
-      playerCoverage: "DRBL overlay O split",
+      playerCoverage: "Published DRBL seasons only",
       reliable: true,
-      sourceLabel: "DRBL offensive split",
-      notes: "Canonical O split when estimate valid.",
+      sourceLabel: "DRBL overlay",
+      notes: "Published DRBL seasons only.",
     },
     {
       metricId: "drbl_d",
-      label: "DRBL-D",
+      label: "DRBL D",
       earliestSeason: listDrblSeasons()[0] ?? "2020-21",
       latestSeason: listDrblSeasons().at(-1) ?? current,
-      playerCoverage: "DRBL overlay D split",
+      playerCoverage: "Published DRBL seasons only",
       reliable: true,
-      sourceLabel: "DRBL defensive split",
-      notes: "Canonical D split when estimate valid.",
+      sourceLabel: "DRBL overlay",
+      notes: "Published DRBL seasons only.",
     },
     {
       metricId: "drbl_p",
-      label: "DRBL-P",
+      label: "DRBL P",
       earliestSeason: listDrblSeasons()[0] ?? "2020-21",
       latestSeason: listDrblSeasons().at(-1) ?? current,
-      playerCoverage: "Diagnostic DRBL component",
+      playerCoverage: "Published DRBL seasons only",
       reliable: true,
-      sourceLabel: "DRBL-P (diagnostic)",
-      notes: "Diagnostic only. Does not sum with LN+B into DRBL/100.",
+      sourceLabel: "DRBL overlay",
+      notes: "Published DRBL seasons only.",
     },
     {
       metricId: "drbl_ln",
-      label: "DRBL-LN",
+      label: "DRBL Ln",
       earliestSeason: listDrblSeasons()[0] ?? "2020-21",
       latestSeason: listDrblSeasons().at(-1) ?? current,
-      playerCoverage: "Diagnostic DRBL component",
+      playerCoverage: "Published DRBL seasons only",
       reliable: true,
-      sourceLabel: "DRBL-LN (diagnostic)",
-      notes: "Diagnostic only. Does not sum with P+B into DRBL/100.",
+      sourceLabel: "DRBL overlay",
+      notes: "Published DRBL seasons only.",
     },
     {
       metricId: "drbl_b",
-      label: "DRBL-B",
+      label: "DRBL B",
       earliestSeason: listDrblSeasons()[0] ?? "2020-21",
       latestSeason: listDrblSeasons().at(-1) ?? current,
-      playerCoverage: "Diagnostic DRBL component",
+      playerCoverage: "Published DRBL seasons only",
       reliable: true,
-      sourceLabel: "DRBL-B (diagnostic)",
-      notes: "Diagnostic only. Does not sum with P+LN into DRBL/100.",
+      sourceLabel: "DRBL overlay",
+      notes: "Published DRBL seasons only.",
+    },
+    {
+      metricId: "r1_points",
+      label: "R1 points",
+      earliestSeason: listCanonicalR1Seasons()[0] ?? null,
+      latestSeason: listCanonicalR1Seasons().at(-1) ?? current,
+      playerCoverage: "Canonical R1 seasons",
+      reliable: true,
+      sourceLabel: "DRBL R1",
+      notes: "Canonical R1 seasons only.",
+    },
+    {
+      metricId: "r1_win_eq",
+      label: "R1 win eq.",
+      earliestSeason: listCanonicalR1Seasons()[0] ?? null,
+      latestSeason: listCanonicalR1Seasons().at(-1) ?? current,
+      playerCoverage: "Canonical R1 seasons",
+      reliable: true,
+      sourceLabel: "DRBL R1",
+      notes: "Canonical R1 seasons only.",
     },
     {
       metricId: "cpi",
       label: "CPI",
       earliestSeason: null,
       latestSeason: current,
-      playerCoverage: "Derived for Career Resume qualifying seasons",
+      playerCoverage: "Career resume",
       reliable: true,
       sourceLabel: "Career Resume (CPI)",
-      notes: "Documented composite from counting rates. It is not an impact metric.",
-    },
-    {
-      metricId: "team_diff",
-      label: "Team point differential",
-      earliestSeason: "2001-02",
-      latestSeason: current,
-      playerCoverage: "Team-season boards",
-      reliable: true,
-      sourceLabel: "Team-season board",
-      notes: "Team averages from by-team season totals.",
-    },
-    {
-      metricId: "team_ts",
-      label: "Team TS%",
-      earliestSeason: "2001-02",
-      latestSeason: current,
-      playerCoverage: "Team-season boards",
-      reliable: true,
-      sourceLabel: "Team-season board",
-      notes: "Derived team efficiency.",
-    },
-    {
-      metricId: "team_efg",
-      label: "Team eFG%",
-      earliestSeason: "2001-02",
-      latestSeason: current,
-      playerCoverage: "Team-season boards",
-      reliable: true,
-      sourceLabel: "Team-season board",
-      notes: "Derived team shooting.",
+      notes: "Career index; not a single-season board field.",
     },
   ];
 }
@@ -331,41 +298,34 @@ export function getAskCoverageGaps(now = new Date()): Array<{
   ];
 }
 
-export function coverageForMetric(metricId: AskMetricId): MetricCoverage | null {
-  return getAskMetricCoverageAudit().find((c) => c.metricId === metricId) ?? null;
+export async function coverageForMetric(
+  metricId: AskMetricId
+): Promise<MetricCoverage | null> {
+  return (await getAskMetricCoverageAudit()).find((c) => c.metricId === metricId) ?? null;
 }
 
 /**
- * Returns a user-facing refusal when a metric is not season-true for `season`.
+ * Sync builder preview — published season bounds without loading overlay JSON.
+ * Execute path should prefer {@link metricSeasonAvailability}.
  */
-export function metricSeasonAvailability(
+export function metricSeasonAvailabilitySync(
   metricId: AskMetricId,
   season: string
 ): { ok: true } | { ok: false; message: string } {
   if (metricId === "darko") {
-    if (!isBundledDarkoSeason(season)) {
-      const span = listBundledDarkoSeasons();
-      const range =
-        span.length > 0
-          ? `${span[0]}–${span.at(-1)}`
-          : "no baked DARKO seasons";
+    if (season < "1996-97") {
       return {
         ok: false,
-        message: `Verified season-true DARKO data is not available for ${season}. ASK DRBL admits DARKO for baked overlay seasons (${range}).`,
+        message: `Verified season-true DARKO data is not available for ${season}. ASK DRBL admits DARKO for baked overlay seasons (1996-97 onward).`,
       };
     }
     return { ok: true };
   }
   if (metricId === "raptor") {
-    if (!isBundledRaptorSeason(season)) {
-      const span = listBundledRaptorSeasons();
-      const range =
-        span.length > 0
-          ? `${span[0]}–${span.at(-1)}`
-          : "no baked RAPTOR seasons";
+    if (season > "2021-22") {
       return {
         ok: false,
-        message: `Verified season-true RAPTOR data is not available for ${season}. RAPTOR coverage ends after 2021-22 (baked range ${range}).`,
+        message: `Verified season-true RAPTOR data is not available for ${season}. RAPTOR coverage ends after 2021-22.`,
       };
     }
     return { ok: true };
@@ -399,8 +359,48 @@ export function metricSeasonAvailability(
   return { ok: true };
 }
 
-export function formatCoverageReportMarkdown(now = new Date()): string {
-  const rows = getAskMetricCoverageAudit(now);
+/**
+ * Returns a user-facing refusal when a metric is not season-true for `season`.
+ */
+export async function metricSeasonAvailability(
+  metricId: AskMetricId,
+  season: string
+): Promise<{ ok: true } | { ok: false; message: string }> {
+  if (metricId === "darko") {
+    if (!(await isBundledDarkoSeason(season))) {
+      const span = await listBundledDarkoSeasons();
+      const range =
+        span.length > 0
+          ? `${span[0]}–${span.at(-1)}`
+          : "no baked DARKO seasons";
+      return {
+        ok: false,
+        message: `Verified season-true DARKO data is not available for ${season}. ASK DRBL admits DARKO for baked overlay seasons (${range}).`,
+      };
+    }
+    return { ok: true };
+  }
+  if (metricId === "raptor") {
+    if (!(await isBundledRaptorSeason(season))) {
+      const span = await listBundledRaptorSeasons();
+      const range =
+        span.length > 0
+          ? `${span[0]}–${span.at(-1)}`
+          : "no baked RAPTOR seasons";
+      return {
+        ok: false,
+        message: `Verified season-true RAPTOR data is not available for ${season}. RAPTOR coverage ends after 2021-22 (baked range ${range}).`,
+      };
+    }
+    return { ok: true };
+  }
+  return metricSeasonAvailabilitySync(metricId, season);
+}
+
+export async function formatCoverageReportMarkdown(
+  now = new Date()
+): Promise<string> {
+  const rows = await getAskMetricCoverageAudit(now);
   const gaps = getAskCoverageGaps(now);
   const lines = [
     "# ASK DRBL advanced-stat coverage audit",

@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 /** Lightweight snapshot health for internal tooling / deploy checks. */
 export async function GET() {
   const health = getSentimentBuildHealth();
-  const snapshot = loadSentimentSnapshot();
+  const snapshot = await loadSentimentSnapshot();
   return NextResponse.json({
     ...health,
     builtAt: snapshot?.meta.builtAt ?? null,

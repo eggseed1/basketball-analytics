@@ -186,10 +186,10 @@ function standingsFromRuntimeBundle(season: string): LeagueStandings | null {
   return getRuntimeStandings(season);
 }
 
-function standingsFromGameArchive(season: string): LeagueStandings | null {
+async function standingsFromGameArchive(season: string): Promise<LeagueStandings | null> {
   const cached = archiveStandingsCache.get(season);
   if (cached !== undefined) return cached;
-  const games = getRuntimeSnapshotGames(season);
+  const games = await getRuntimeSnapshotGames(season);
   if (!games.length) {
     archiveStandingsCache.set(season, null);
     return null;
@@ -230,7 +230,7 @@ async function liveDayGames(season: string): Promise<Game[]> {
 async function standingsFromSnapshotPlusLive(
   season: string
 ): Promise<LeagueStandings | null> {
-  const snapshot = getRuntimeSnapshotGames(season);
+  const snapshot = await getRuntimeSnapshotGames(season);
   const fromSnap = snapshot.length
     ? computeStandingsFromGameArchive(season, snapshot)
     : null;
@@ -256,7 +256,7 @@ export async function fetchLeagueStandings(
 ): Promise<LeagueStandings> {
   const board = await fetchLeagueStandingsUnchecked(season);
   if (!isCurrentNbaSeason(season)) return board;
-  const scheduled = regularGamesThrough(getRuntimeSnapshotGames(season), season, nbaTodayIso());
+  const scheduled = regularGamesThrough(await getRuntimeSnapshotGames(season), season, nbaTodayIso());
   if (!scheduled || !standingsCountUnscheduledGames(board, scheduled)) return board;
   // CF egress to site.api often stalls; never block standings SSR on it.
   if (preferBundledProductDataOnEdge()) return withoutRecords(board);
@@ -280,12 +280,12 @@ async function fetchLeagueStandingsUnchecked(
       const bundled = standingsFromRuntimeBundle(season);
       const freshest = preferFresherStandings(bundled, liveComputed);
       if (freshest && rowCount(freshest) > 0) return freshest;
-      const fromArchive = standingsFromGameArchive(season);
+      const fromArchive = await standingsFromGameArchive(season);
       if (fromArchive && rowCount(fromArchive) > 0) return fromArchive;
     } else {
       const bundled = standingsFromRuntimeBundle(season);
       if (bundled && rowCount(bundled) > 0) return bundled;
-      const fromArchive = standingsFromGameArchive(season);
+      const fromArchive = await standingsFromGameArchive(season);
       if (fromArchive && rowCount(fromArchive) > 0) return fromArchive;
     }
   }
@@ -309,7 +309,7 @@ async function fetchLeagueStandingsUnchecked(
   const freshestBundle = preferFresherStandings(bundled, liveComputed);
   if (freshestBundle && rowCount(freshestBundle) > 0) return freshestBundle;
 
-  const fromArchive = standingsFromGameArchive(season);
+  const fromArchive = await standingsFromGameArchive(season);
   if (fromArchive && rowCount(fromArchive) > 0) return fromArchive;
 
   return (

@@ -190,8 +190,8 @@ export async function loadBundledPeerBoard(
     overlayHustleRatingsForPeers,
   } = await import("@/data/queries/players");
   const { isBundledPeerBoardReady } = await import("@/lib/player-board-season");
-  const bundled = getBundledBrefPeerBoard(peerSeason);
-  if (!isBundledPeerBoardReady(peerSeason, bundled.length)) return null;
+  const bundled = await getBundledBrefPeerBoard(peerSeason);
+  if (!await isBundledPeerBoardReady(peerSeason, bundled.length)) return null;
   const withImpact = await overlayImpactRatingsForPeers(bundled, peerSeason);
   const withDrbl = await overlayDrblRatingsForPeers(withImpact, peerSeason);
   if (opts?.archive) {
@@ -223,7 +223,7 @@ type PercentileLoadOptions = {
  * Request-deduped so Percentile + Similar Suspense islands share one peer board
  * instead of building it twice in the same Worker render.
  */
-export function loadPlayerPercentileMetrics(
+export async function loadPlayerPercentileMetrics(
   playerId: string,
   season: string,
   career: PlayerSeason[],
@@ -270,7 +270,7 @@ const loadPlayerPercentileMetricsCached = cache(async function loadPlayerPercent
     !constrained &&
     (mode === "full" || includeComps) &&
     includePriorBoardOpt !== false;
-  const statsCtx = resolvePlayerStatsSeason(career, season);
+  const statsCtx = await resolvePlayerStatsSeason(career, season);
   const statsSeason = statsCtx.statsSeason;
   const priorSeason = shiftCanonicalSeason(statsSeason, -1);
 
@@ -303,7 +303,7 @@ const loadPlayerPercentileMetricsCached = cache(async function loadPlayerPercent
         "@/data/runtime/bref-advanced-snapshot"
       );
       historicalCompSeasons = pickSpreadSeasons(
-        listBundledBrefSeasons(),
+        await listBundledBrefSeasons(),
         preferBundled
           ? EDGE_HISTORICAL_COMP_SEASONS
           : MAX_HISTORICAL_COMP_SEASONS,
@@ -354,19 +354,21 @@ const loadPlayerPercentileMetricsCached = cache(async function loadPlayerPercent
     );
   };
 
-  const bundledCutoffs = await import(
-    "@/data/runtime/percentile-pools-snapshot"
-  )
-    .then((m) => m.bundledSeasonCutoffs)
-    .catch(() => undefined);
+  const poolsMod = await import("@/data/runtime/percentile-pools-snapshot").catch(
+    () => null
+  );
   // Early in a new season the cutoff snapshot may not exist yet — rank against
   // the prior campaign's pool so Impact chips paint on the fast path.
   const priorCutoffSeason = shiftCanonicalSeason(statsSeason, -1);
-  const seasonCutoffs = bundledCutoffs
+  // Warm ASSETS cache once, then use sync lookups for the metrics builder.
+  if (poolsMod) {
+    await poolsMod.bundledSeasonCutoffs(statsSeason, "darko");
+  }
+  const seasonCutoffs = poolsMod
     ? (season: string, metricId: string) =>
-        bundledCutoffs(season, metricId) ??
+        poolsMod.bundledSeasonCutoffsSync(season, metricId) ??
         (season === statsSeason
-          ? bundledCutoffs(priorCutoffSeason, metricId)
+          ? poolsMod.bundledSeasonCutoffsSync(priorCutoffSeason, metricId)
           : undefined)
     : undefined;
 

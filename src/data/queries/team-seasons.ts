@@ -95,7 +95,7 @@ export async function getTeamSeasonBoard(
       ),
       budgetMs
     );
-    if (isSeasonAwaitingFirstGame(season, rows)) {
+    if (await isSeasonAwaitingFirstGame(season, rows)) {
       return {
         rows,
         status: "preseason",

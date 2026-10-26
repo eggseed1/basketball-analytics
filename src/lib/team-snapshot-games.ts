@@ -37,15 +37,16 @@ function gameTypes(
 }
 
 /** Completed + scheduled games for a team from the build-time schedule snapshot. */
-export function teamSnapshotGames(
+export async function teamSnapshotGames(
   teamId: string,
   season: string,
   options?: { gameType?: Game["gameType"] | Game["gameType"][] }
-): GameSummary[] {
+): Promise<GameSummary[]> {
   const tid = String(teamId ?? "").trim();
   if (!tid || !season) return [];
   const types = gameTypes(options?.gameType);
-  return getRuntimeSnapshotGames(season)
+  const games = await getRuntimeSnapshotGames(season);
+  return games
     .filter((game) => {
       if (game.homeTeamId !== tid && game.awayTeamId !== tid) return false;
       if (types && !types.has(game.gameType)) return false;
@@ -56,14 +57,14 @@ export function teamSnapshotGames(
 }
 
 /** Regular-season games that count in the standings (no NBA Cup Championship). */
-function standingsGames(teamId: string, season: string): GameSummary[] {
-  return teamSnapshotGames(teamId, season, { gameType: "regular" }).filter(
+async function standingsGames(teamId: string, season: string): Promise<GameSummary[]> {
+  return (await teamSnapshotGames(teamId, season, { gameType: "regular" })).filter(
     (game) => !game.cupChampionship
   );
 }
 
-export function hasTeamSnapshotGames(teamId: string, season: string): boolean {
-  return teamSnapshotGames(teamId, season).length > 0;
+export async function hasTeamSnapshotGames(teamId: string, season: string): Promise<boolean> {
+  return (await teamSnapshotGames(teamId, season)).length > 0;
 }
 
 function teamPoints(game: GameSummary, teamId: string): {
@@ -107,11 +108,11 @@ function aggregateSplit(
 }
 
 /** Home / away / last-10 / last-5 splits from bundled schedule (regular season). */
-export function computeTeamSplits(
+export async function computeTeamSplits(
   teamId: string,
   season: string
-): TeamSplitBucket[] {
-  const regular = standingsGames(teamId, season);
+): Promise<TeamSplitBucket[]> {
+  const regular = await standingsGames(teamId, season);
   const finalsDesc = regular.filter((game) => game.status === "final");
   const home = regular.filter((game) => game.homeTeamId === teamId);
   const away = regular.filter((game) => game.awayTeamId === teamId);
@@ -128,11 +129,11 @@ export function computeTeamSplits(
 }
 
 /** Close / medium / blowout records from final scores only. */
-export function computeTeamMarginSplits(
+export async function computeTeamMarginSplits(
   teamId: string,
   season: string
-): TeamMarginBucket[] {
-  const finals = standingsGames(teamId, season).filter(
+): Promise<TeamMarginBucket[]> {
+  const finals = (await standingsGames(teamId, season)).filter(
     (game) => game.status === "final"
   );
 
@@ -169,11 +170,11 @@ export function computeTeamMarginSplits(
 }
 
 /** Current streak + recent W/L strip from newest finals. */
-export function computeTeamFormSummary(
+export async function computeTeamFormSummary(
   teamId: string,
   season: string
-): TeamFormSummary {
-  const finalsDesc = standingsGames(teamId, season).filter(
+): Promise<TeamFormSummary> {
+  const finalsDesc = (await standingsGames(teamId, season)).filter(
     (game) => game.status === "final"
   );
 
@@ -203,11 +204,11 @@ export function computeTeamFormSummary(
 }
 
 /** Calendar-month buckets (YYYY-MM), newest first, only months with finals. */
-export function computeTeamMonthSplits(
+export async function computeTeamMonthSplits(
   teamId: string,
   season: string
-): TeamSplitBucket[] {
-  const finals = standingsGames(teamId, season).filter(
+): Promise<TeamSplitBucket[]> {
+  const finals = (await standingsGames(teamId, season)).filter(
     (game) => game.status === "final"
   );
 
