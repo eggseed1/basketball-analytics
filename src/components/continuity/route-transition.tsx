@@ -4,17 +4,23 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
-  useTransition,
+  useState,
   type ReactNode,
 } from "react";
+import { usePathname } from "next/navigation";
 
 import { ViewportLoadingBar } from "@/components/continuity/viewport-loading-bar";
 import { cn } from "@/lib/utils";
 
 type RouteTransitionContextValue = {
   pending: boolean;
-  /** Run a router navigation inside a React transition (keeps prior UI). */
+  /**
+   * Run a router navigation and light soft-nav chrome.
+   * Intentionally not wrapped in startTransition — that suppresses
+   * destination `loading.tsx` while RSC streams (~1–3s on cold origin).
+   */
   startRouteTransition: (fn: () => void) => void;
 };
 
@@ -39,18 +45,24 @@ function RouteUpdatingChrome({ pending }: { pending: boolean }) {
 }
 
 /**
- * Site-wide soft navigation chrome. Keeps SportsShell visible while the
- * destination RSC payload streams in (cross-route continuity).
+ * Site-wide soft navigation chrome. Keeps SportsShell (nav/chrome) visible
+ * while the destination segment swaps to its loading.tsx, then the page.
  */
 export function RouteTransitionProvider({
   children,
 }: {
   children: ReactNode;
 }) {
-  const [pending, startTransition] = useTransition();
+  const pathname = usePathname();
+  const [pending, setPending] = useState(false);
+
+  useEffect(() => {
+    setPending(false);
+  }, [pathname]);
 
   const startRouteTransition = useCallback((fn: () => void) => {
-    startTransition(fn);
+    setPending(true);
+    fn();
   }, []);
 
   const value = useMemo(

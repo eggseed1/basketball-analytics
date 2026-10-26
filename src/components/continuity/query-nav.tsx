@@ -10,7 +10,9 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
+  useState,
   useTransition,
   type ComponentProps,
   type ReactNode,
@@ -167,9 +169,9 @@ export function QueryUpdatingChrome({ pending }: { pending: boolean }) {
 }
 
 /**
- * Link that marks navigation as a React transition so Suspense keeps
- * already-revealed content instead of flashing fallbacks.
- * When inside QueryNavProvider / RouteTransitionProvider, shares pending chrome.
+ * Soft-nav link. Cross-route clicks light route chrome and let destination
+ * `loading.tsx` mount (no startTransition). In-place query changes still use
+ * QueryNavProvider transitions so filters keep prior UI.
  *
  * Cross-route: scroll=true (default). In-place query changes: scroll=false.
  */
@@ -181,12 +183,15 @@ export function TransitionLink({
   scroll = true,
   prefetch,
   onClick,
+  onPointerEnter,
+  onFocus,
   ...rest
 }: ComponentProps<typeof Link> & { replace?: boolean }) {
   const router = useRouter();
   const queryNav = useQueryNavOptional();
   const routeTransition = useRouteTransitionOptional();
-  const [localPending, startLocalTransition] = useTransition();
+  const [localPending, setLocalPending] = useState(false);
+  const pathname = usePathname();
   const target = typeof href === "string" ? href : href.pathname ?? "";
   const pending = Boolean(
     queryNav?.pending || routeTransition?.pending || localPending
@@ -197,6 +202,16 @@ export function TransitionLink({
   // player destinations to click/intent navigation rather than bulk prefetch.
   const resolvedPrefetch =
     prefetch ?? (target.startsWith("/players/") ? false : undefined);
+  const allowIntentPrefetch = resolvedPrefetch !== false;
+
+  useEffect(() => {
+    setLocalPending(false);
+  }, [pathname]);
+
+  const prefetchTarget = useCallback(() => {
+    if (!allowIntentPrefetch || !target) return;
+    void router.prefetch(target);
+  }, [allowIntentPrefetch, router, target]);
 
   return (
     <Link
@@ -205,6 +220,14 @@ export function TransitionLink({
       scroll={scroll}
       className={cn(className, pending && "opacity-80")}
       aria-busy={pending || undefined}
+      onPointerEnter={(event) => {
+        onPointerEnter?.(event);
+        prefetchTarget();
+      }}
+      onFocus={(event) => {
+        onFocus?.(event);
+        prefetchTarget();
+      }}
       onClick={(event) => {
         onClick?.(event);
         if (event.defaultPrevented) return;
@@ -231,7 +254,9 @@ export function TransitionLink({
           routeTransition.startRouteTransition(go);
           return;
         }
-        startLocalTransition(go);
+        // Same as RouteTransitionProvider: show loading.tsx, don't suppress it.
+        setLocalPending(true);
+        go();
       }}
       {...rest}
     >
