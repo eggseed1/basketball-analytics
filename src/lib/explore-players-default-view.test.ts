@@ -3,11 +3,15 @@ import { describe, it } from "node:test";
 
 import {
   DEFAULT_PLAYER_BOARD_VIEWS,
+  filterPlayerBoardViewColumns,
   parsePlayerBoardViews,
   serializePlayerBoardViews,
 } from "./explore-players-display";
-import { slimExplorePlayerBoardRow } from "@/data/queries/explore-players-board-pure";
-import type { ExplorePlayerBoardRow } from "@/data/queries/explore-players-board-pure";
+import {
+  emptyBoardColumns,
+  slimExplorePlayerBoardRow,
+  type ExplorePlayerBoardRow,
+} from "@/data/queries/explore-players-board-pure";
 
 function baseRow(): ExplorePlayerBoardRow {
   return {
@@ -59,5 +63,37 @@ describe("explore players default view", () => {
     assert.equal(all.hustleDeflections, 12);
     // Non-column extras stay off the All wire payload.
     assert.equal(all.age, undefined);
+  });
+
+  it("keeps early-season zero counting columns under All (does not collapse to Impact)", () => {
+    const early: ExplorePlayerBoardRow = {
+      ...baseRow(),
+      gamesPlayed: 0,
+      minutes: 0,
+      points: 0,
+      assists: 0,
+      rebounds: 0,
+      steals: 0,
+      blocks: 0,
+      turnovers: 0,
+      fieldGoalPct: 0,
+      threePointPct: 0,
+      freeThrowPct: 0,
+      darkoDpm: 4.19,
+      darkoOff: 4.31,
+      darkoDef: -0.13,
+      usagePct: undefined,
+      hustleDeflections: undefined,
+      fieldGoalsAttempted: 0,
+    };
+    const empty = new Set(emptyBoardColumns([early]));
+    assert.equal(empty.has("ppg"), false);
+    assert.equal(empty.has("gamesPlayed"), false);
+    assert.equal(empty.has("darkoDpm"), false);
+    // Truly missing overlays still hide.
+    assert.equal(empty.has("hustleDeflections"), true);
+    const profile = filterPlayerBoardViewColumns("profile", empty);
+    assert.ok(profile.includes("ppg"));
+    assert.ok(profile.includes("gamesPlayed"));
   });
 });

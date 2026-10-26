@@ -177,6 +177,23 @@ function addExploreColumnFields(
 }
 
 /**
+ * Hide a column only when every row is missing it (null).
+ *
+ * Do not treat 0 as empty — early-season roster shells and DNPs are real
+ * zeros (GP/PTS/…), and treating them as empty collapsed the All chip to an
+ * Impact-only band whenever DARKO was present and counting stats were still 0.
+ * Era-unpublished stats must arrive as null from the board mapper, not 0.
+ */
+export function emptyBoardColumns(
+  rows: ExplorePlayerBoardRow[]
+): PlayerSeasonSortKey[] {
+  return PLAYER_BOARD_VIEW_COLUMNS.all.filter(
+    (key) =>
+      !rows.some((row) => boardStatValue(row, key, "totals") != null)
+  );
+}
+
+/**
  * Drop unused board fields for the active view chips. "all" still uses the
  * column keep-set so wire/RSC payloads omit non-column extras (age, r1Points…).
  */

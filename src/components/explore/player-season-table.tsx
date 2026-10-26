@@ -133,7 +133,7 @@ export interface PlayerSeasonTableProps {
   pageCount: number;
   sortKey: PlayerSeasonSortKey;
   sortDir: "asc" | "desc";
-  /** Columns with no value anywhere on this board; hidden, not shown as 0. */
+  /** Columns missing on every row (null); zeros stay visible. */
   emptyColumns?: PlayerSeasonSortKey[];
   seasonAwaitingGames?: boolean;
 }
