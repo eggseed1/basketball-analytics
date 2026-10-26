@@ -546,7 +546,11 @@
     "nextGames": "Nächste Spiele: {label}",
     "finalsMeta": "{total} · {finals} final",
     "latestResults": "Neueste Ergebnisse",
-    "staleNote": "Live-Scores gerade nicht verfügbar; gespeicherter Spielplan wird gezeigt."
+    "staleNote": "Live-Scores gerade nicht verfügbar; gespeicherter Spielplan wird gezeigt.",
+    "loadingSubtitle": "Live-Spiele, Ergebnisse und Tip-offs.",
+    "updatingBoard": "Spieltag wird geladen…",
+    "loadingWeekStrip": "Wochenspiele werden geladen…",
+    "loadingMoreGames": "Weitere Spiele werden geladen…"
   },
   "Gm": {
     "nav_ariaLabel": "Front office",

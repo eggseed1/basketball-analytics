@@ -15,6 +15,7 @@ import {
   type ComponentProps,
   type ReactNode,
 } from "react";
+import { Loader2 } from "lucide-react";
 
 import { useRouteTransitionOptional } from "@/components/continuity/route-transition";
 import { LoadingBarSignal } from "@/components/continuity/viewport-loading-bar";
@@ -143,12 +144,21 @@ export function QueryNavProvider({
   );
 }
 
-/** Subtle top cue - never a full-page spinner. */
+/** Top progress + a visible “Updating…” chip (thin bar alone was too easy to miss). */
 export function QueryUpdatingChrome({ pending }: { pending: boolean }) {
   if (!pending) return null;
   return (
     <>
       <LoadingBarSignal />
+      <div
+        className="pointer-events-none sticky top-0 z-30 flex justify-center px-3 pt-2"
+        aria-hidden
+      >
+        <span className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-background/95 px-3 py-1.5 text-[13px] font-semibold text-foreground shadow-sm backdrop-blur-md">
+          <Loader2 className="size-3.5 animate-spin motion-reduce:animate-none" />
+          Updating…
+        </span>
+      </div>
       <p className="sr-only" aria-live="polite" aria-atomic="true">
         Updating results…
       </p>

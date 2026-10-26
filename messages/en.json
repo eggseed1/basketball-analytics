@@ -543,7 +543,11 @@
     "nextGames": "Next games: {label}",
     "finalsMeta": "{total} · {finals} final",
     "latestResults": "Latest results",
-    "staleNote": "Live scores are unavailable right now, so this shows the saved schedule."
+    "staleNote": "Live scores are unavailable right now, so this shows the saved schedule.",
+    "loadingSubtitle": "Live games, results, and tip-off times.",
+    "updatingBoard": "Loading this slate…",
+    "loadingWeekStrip": "Loading week games…",
+    "loadingMoreGames": "Loading more games…"
   },
   "Gm": {
     "nav_ariaLabel": "Front office",

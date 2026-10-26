@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocale } from "next-intl";
 
+import { LoadingStatus } from "@/components/continuity/destination-loading-frame";
 import { GameMatchupRow } from "@/components/sports/game-score-card";
 import { LiveScoreboardScope } from "@/components/sports/live-scoreboard-scope";
 import type { GameSummary } from "@/data/types";
@@ -212,9 +213,9 @@ export function UpcomingGameList({
           <ListBoard games={liveGames} source={source} />
           {hasMore ? <div ref={sentinelRef} aria-hidden className="h-1" /> : null}
           {loading ? (
-            <p className="text-center text-[12px] text-muted-foreground">
-              Loading more games…
-            </p>
+            <div className="flex justify-center py-2">
+              <LoadingStatus>Loading more games…</LoadingStatus>
+            </div>
           ) : null}
           {error ? (
             <button

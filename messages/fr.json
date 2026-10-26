@@ -546,7 +546,11 @@
     "nextGames": "Prochains matchs : {label}",
     "finalsMeta": "{total} · {finals} final",
     "latestResults": "Derniers résultats",
-    "staleNote": "Scores live indisponibles ; le calendrier enregistré s’affiche."
+    "staleNote": "Scores live indisponibles ; le calendrier enregistré s’affiche.",
+    "loadingSubtitle": "Matchs en direct, résultats et tip-offs.",
+    "updatingBoard": "Chargement de cette journée…",
+    "loadingWeekStrip": "Chargement des matchs de la semaine…",
+    "loadingMoreGames": "Chargement de plus de matchs…"
   },
   "Gm": {
     "nav_ariaLabel": "Front office",

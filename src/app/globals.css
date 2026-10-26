@@ -3649,8 +3649,9 @@ svg [data-motion-dot] {
 }
 
 [data-updating="true"] .query-updating-content {
-  opacity: 0.72;
-  transition: opacity 160ms ease;
+  opacity: 0.55;
+  filter: saturate(0.85);
+  transition: opacity 160ms ease, filter 160ms ease;
   pointer-events: none;
 }
 

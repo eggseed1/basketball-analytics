@@ -1,9 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 
+import { LoadingStatus } from "@/components/continuity/destination-loading-frame";
 import { WeekGameCalendarClient } from "@/components/home/week-game-calendar-client";
 import { ScoreboardFeedNotice } from "@/components/sports/scoreboard-feed-notice";
+import { ScoreTileSkeleton } from "@/components/sports/score-tile-skeleton";
 import type { GameSummary } from "@/data/types";
 
 type StripGame = GameSummary & {
@@ -23,6 +26,7 @@ type Payload = {
  * first HTML / Flight.
  */
 export function WeekGameCalendarLoader({ season }: { season: string }) {
+  const t = useTranslations("Scores");
   const [data, setData] = useState<Payload | null>(null);
   const [failed, setFailed] = useState(false);
 
@@ -63,10 +67,21 @@ export function WeekGameCalendarLoader({ season }: { season: string }) {
   if (!data) {
     return (
       <div
-        className="h-40 animate-pulse rounded-xl bg-secondary/50"
+        className="flex flex-col gap-3"
         aria-busy="true"
-        aria-label="Loading week games"
-      />
+        aria-live="polite"
+        aria-label={t("loadingWeekStrip")}
+      >
+        <LoadingStatus>{t("loadingWeekStrip")}</LoadingStatus>
+        <div className="flex gap-3 overflow-hidden">
+          {Array.from({ length: 4 }, (_, i) => (
+            <ScoreTileSkeleton
+              key={i}
+              className="min-w-[14rem] flex-1 basis-[14rem]"
+            />
+          ))}
+        </div>
+      </div>
     );
   }
 

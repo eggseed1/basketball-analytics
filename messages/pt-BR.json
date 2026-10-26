@@ -546,7 +546,11 @@
     "nextGames": "Próximos jogos: {label}",
     "finalsMeta": "{total} · {finals} final",
     "latestResults": "Últimos resultados",
-    "staleNote": "Placares ao vivo indisponíveis no momento; mostrando o calendário salvo."
+    "staleNote": "Placares ao vivo indisponíveis no momento; mostrando o calendário salvo.",
+    "loadingSubtitle": "Jogos ao vivo, resultados e tip-offs.",
+    "updatingBoard": "Carregando esta rodada…",
+    "loadingWeekStrip": "Carregando jogos da semana…",
+    "loadingMoreGames": "Carregando mais jogos…"
   },
   "Gm": {
     "nav_ariaLabel": "Front office",
