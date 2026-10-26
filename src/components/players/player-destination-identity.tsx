@@ -27,6 +27,7 @@ import {
   playerSeasonChipHref,
   type PlayerSeasonKind,
 } from "@/lib/player-destination";
+import { formatPlayerMastheadShortName } from "@/lib/player-name";
 import {
   type PlayerPageCapabilities,
   type PlayerPageView,
@@ -183,6 +184,10 @@ export async function PlayerDestinationIdentity({
     teamName ??
     modernBrand?.abbr;
 
+  const mastheadShortName = formatPlayerMastheadShortName(displayName);
+  const useMastheadShort =
+    Boolean(mastheadShortName) && mastheadShortName !== displayName;
+
   const useTwoColumnLayout = Boolean(hero);
 
   // The parent used to omit this island entirely when a bounded career fetch
@@ -255,8 +260,13 @@ export async function PlayerDestinationIdentity({
                       !useTwoColumnLayout && "sm:text-left"
                     )}
                   >
-                    <h1 className={cn(type.heading, "wrap-break-word")}>
-                      {displayName}
+                    <h1 className="wrap-break-word" title={displayName}>
+                      <span className={cn(type.title1, "sm:hidden")}>
+                        {useMastheadShort ? mastheadShortName : displayName}
+                      </span>
+                      <span className={cn(type.heading, "hidden sm:inline")}>
+                        {displayName}
+                      </span>
                     </h1>
                     {showCareerTeams && careerTeamStints.length > 0 ? (
                       <PlayerTeamPositionLine
