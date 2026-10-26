@@ -797,7 +797,7 @@ html:not([data-surface="glass"]) .board-scroll-frame {
 }
 
 .board-scroll-frame > .board-frozen-col {
-  max-width: min(72vw, 18rem);
+  max-width: min(58vw, 14rem);
 }
 
 @media (min-width: 640px) {
@@ -839,7 +839,8 @@ html:not([data-surface="glass"]) .board-scroll-frame > .board-scroll-host {
     --board-pad-x: 0.22rem;
     --board-pad-y: 0.14rem;
     --board-font: 10.5px;
-    --board-font-name: 11px;
+    /* Short names (G. Last) free width for a readable name size. */
+    --board-font-name: 13px;
     --board-head: 9.5px;
     /* Fit 24px headshots (h-6) beside names without clipping. */
     --board-row-h: 1.75rem;

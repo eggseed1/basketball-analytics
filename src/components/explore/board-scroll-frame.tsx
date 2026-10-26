@@ -6,12 +6,12 @@ import { useOwnerTheme } from "@/components/design-system/theme-provider";
 import { cn } from "@/lib/utils";
 
 const FROZEN_MAX_DESKTOP_PX = 24 * 16;
-/** Longest board names (e.g. Gilgeous-Alexander) need ~18rem at body size. */
-const FROZEN_MAX_MOBILE_PX = 18 * 16;
+/** Mobile names use initial+last; ~14rem covers G. Antetokounmpo at 13px. */
+const FROZEN_MAX_MOBILE_PX = 14 * 16;
 
 function frozenWidthCap(viewportW: number): number {
   if (viewportW < 640) {
-    return Math.min(FROZEN_MAX_MOBILE_PX, Math.floor(viewportW * 0.72));
+    return Math.min(FROZEN_MAX_MOBILE_PX, Math.floor(viewportW * 0.58));
   }
   return Math.min(FROZEN_MAX_DESKTOP_PX, Math.floor(viewportW * 0.55));
 }
