@@ -239,7 +239,8 @@ export type HomeModuleId =
   | "sentiment"
   | "season-glance"
   | "news"
-  | "contract-showcase";
+  | "contract-showcase"
+  | "rookie-tracker";
 
 export type HomeLayout = {
   /** Full width, in order, above the two-column grid. */
@@ -255,49 +256,49 @@ const LAYOUTS: Record<HomeSeasonPhase, HomeLayout> = {
     top: ["moment"],
     main: ["transactions", "news", "sentiment", "season-glance"],
     side: ["watchlist", "standings", "league-moves", "injuries", "top-performers"],
-    bottom: [],
+    bottom: ["rookie-tracker"],
   },
   offseason: {
     top: ["moment"],
     main: ["transactions", "news", "sentiment", "season-glance"],
     side: ["watchlist", "standings", "league-moves", "injuries", "top-performers"],
-    bottom: [],
+    bottom: ["rookie-tracker"],
   },
   preseason: {
     top: ["moment", "calendar"],
     main: ["findings", "transactions", "news", "sentiment", "hot-cold"],
     side: ["watchlist", "standings", "top-performers", "above-norm", "injuries", "league-moves"],
-    bottom: [],
+    bottom: ["rookie-tracker"],
   },
   "opening-weeks": {
     top: ["calendar"],
     main: ["findings", "sentiment", "hot-cold", "news", "contract-showcase"],
     side: ["watchlist", "standings", "above-norm", "injuries", "league-moves", "top-performers", "transactions"],
-    bottom: [],
+    bottom: ["rookie-tracker"],
   },
   "regular-season": {
     top: ["calendar"],
     main: ["findings", "sentiment", "hot-cold", "news", "contract-showcase"],
     side: ["watchlist", "standings", "above-norm", "injuries", "league-moves", "top-performers", "transactions"],
-    bottom: [],
+    bottom: ["rookie-tracker"],
   },
   "stretch-run": {
     top: ["phase-bar", "calendar"],
     main: ["standings-race", "findings", "news", "hot-cold", "contract-showcase"],
     side: ["watchlist", "above-norm", "injuries", "league-moves", "top-performers", "sentiment", "transactions"],
-    bottom: [],
+    bottom: ["rookie-tracker"],
   },
   "play-in": {
     top: ["phase-bar", "calendar", "bracket"],
     main: ["findings", "news", "sentiment", "hot-cold", "contract-showcase"],
     side: ["watchlist", "standings", "above-norm", "injuries", "league-moves", "top-performers", "transactions"],
-    bottom: [],
+    bottom: ["rookie-tracker"],
   },
   playoffs: {
     top: ["phase-bar", "calendar", "bracket"],
     main: ["findings", "news", "sentiment", "hot-cold", "contract-showcase"],
     side: ["watchlist", "above-norm", "injuries", "league-moves", "top-performers", "transactions"],
-    bottom: [],
+    bottom: ["rookie-tracker"],
   },
 };
 

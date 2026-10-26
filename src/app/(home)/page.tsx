@@ -213,6 +213,13 @@ async function HomeContractShowcase() {
   return <ContractShowcasePanel />;
 }
 
+async function HomeRookieTracker() {
+  const { RookieTrackerPanel } = await import(
+    "@/components/home/rookie-tracker-panel"
+  );
+  return <RookieTrackerPanel />;
+}
+
 async function HomeSeasonGlance() {
   const { SeasonPulsePanel } = await import(
     "@/components/home/season-pulse-panel"
@@ -322,6 +329,12 @@ function renderModule(
       return (
         <Streamed key={id} id={id}>
           <HomeContractShowcase />
+        </Streamed>
+      );
+    case "rookie-tracker":
+      return (
+        <Streamed key={id} id={id}>
+          <HomeRookieTracker />
         </Streamed>
       );
   }
