@@ -3,17 +3,23 @@ import type {
   LeagueStandings,
   StandingRow,
 } from "@/data/types/standings";
+import type { Game } from "@/data/types/game";
 import { getRuntimeSnapshotGames } from "@/data/runtime/game-snapshot";
 import { getRuntimeStandings } from "@/data/runtime/standings-snapshot";
 import { computeStandingsFromGameArchive } from "@/lib/standings-from-games";
 import { espnFetchJson } from "@/data/providers/nba/espn-client";
 import { preferBundledProductDataOnEdge } from "@/data/providers/nba/runtime-policy";
+import { fetchScoreboardDay } from "@/data/providers/nba/scoreboard-client";
 import { espnYearFromCanonicalSeason } from "@/data/providers/nba/season";
 import {
   canonicalSeasonFromStartYear,
   currentNbaStartYear,
 } from "@/data/providers/historical/season-range";
 import { nbaTodayIso } from "@/lib/nba-calendar-date";
+import {
+  mergeStandingsGames,
+  preferFresherStandings,
+} from "@/lib/standings-live-overlay";
 import {
   regularGamesThrough,
   standingsCountUnscheduledGames,
@@ -195,6 +201,33 @@ function standingsFromGameArchive(season: string): LeagueStandings | null {
 
 const archiveStandingsCache = new Map<string, LeagueStandings | null>();
 
+async function liveDayGames(season: string): Promise<Game[]> {
+  try {
+    return await fetchScoreboardDay({ season });
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Current-season W-L from the bundled schedule plus yesterday/today scoreboard
+ * finals. Reuses the same ESPN day feed scores already poll — no standings CDN
+ * call — so records move after each final without a Worker redeploy.
+ */
+async function standingsFromSnapshotPlusLive(
+  season: string
+): Promise<LeagueStandings | null> {
+  const snapshot = getRuntimeSnapshotGames(season);
+  const live = await liveDayGames(season);
+  const games = mergeStandingsGames(snapshot, live);
+  if (!games.length) return null;
+  return computeStandingsFromGameArchive(season, games);
+}
+
+function isCurrentNbaSeason(season: string): boolean {
+  return season === canonicalSeasonFromStartYear(currentNbaStartYear());
+}
+
 /**
  * Current-season records can't hold more games than the regular-season
  * schedule has reached; a board that does is counting preseason games.
@@ -203,7 +236,7 @@ export async function fetchLeagueStandings(
   season: string
 ): Promise<LeagueStandings> {
   const board = await fetchLeagueStandingsUnchecked(season);
-  if (season !== canonicalSeasonFromStartYear(currentNbaStartYear())) return board;
+  if (!isCurrentNbaSeason(season)) return board;
   const scheduled = regularGamesThrough(getRuntimeSnapshotGames(season), season, nbaTodayIso());
   if (!scheduled || !standingsCountUnscheduledGames(board, scheduled)) return board;
   const fromSite = await fetchStandingsFromSiteApi(season);
@@ -216,27 +249,55 @@ export async function fetchLeagueStandings(
 async function fetchLeagueStandingsUnchecked(
   season: string
 ): Promise<LeagueStandings> {
+  const current = isCurrentNbaSeason(season);
+  const liveComputed = current ? await standingsFromSnapshotPlusLive(season) : null;
+
+  // Current season on Workers: never freeze on the nightly ESPN bake while
+  // yesterday/today finals are already on the scoreboard feed.
   if (preferBundledProductDataOnEdge()) {
-    const bundled = standingsFromRuntimeBundle(season);
-    if (bundled && rowCount(bundled) > 0) return bundled;
-    const fromArchive = standingsFromGameArchive(season);
-    if (fromArchive && rowCount(fromArchive) > 0) return fromArchive;
+    if (current) {
+      const bundled = standingsFromRuntimeBundle(season);
+      const freshest = preferFresherStandings(bundled, liveComputed);
+      if (freshest && rowCount(freshest) > 0) return freshest;
+      const fromArchive = standingsFromGameArchive(season);
+      if (fromArchive && rowCount(fromArchive) > 0) return fromArchive;
+    } else {
+      const bundled = standingsFromRuntimeBundle(season);
+      if (bundled && rowCount(bundled) > 0) return bundled;
+      const fromArchive = standingsFromGameArchive(season);
+      if (fromArchive && rowCount(fromArchive) > 0) return fromArchive;
+    }
   }
 
   // Prefer CDN — site.api.espn.com is often 403 from Cloudflare egress.
   const fromCdn = await fetchStandingsFromCdn(season);
-  if (fromCdn && rowCount(fromCdn) > 0) return fromCdn;
+  if (fromCdn && rowCount(fromCdn) > 0) {
+    const freshest = preferFresherStandings(fromCdn, liveComputed);
+    if (freshest && rowCount(freshest) > 0) return freshest;
+    return fromCdn;
+  }
 
   const fromSite = await fetchStandingsFromSiteApi(season);
-  if (fromSite && rowCount(fromSite) > 0) return fromSite;
+  if (fromSite && rowCount(fromSite) > 0) {
+    const freshest = preferFresherStandings(fromSite, liveComputed);
+    if (freshest && rowCount(freshest) > 0) return freshest;
+    return fromSite;
+  }
 
   const bundled = standingsFromRuntimeBundle(season);
-  if (bundled && rowCount(bundled) > 0) return bundled;
+  const freshestBundle = preferFresherStandings(bundled, liveComputed);
+  if (freshestBundle && rowCount(freshestBundle) > 0) return freshestBundle;
 
   const fromArchive = standingsFromGameArchive(season);
   if (fromArchive && rowCount(fromArchive) > 0) return fromArchive;
 
-  return fromCdn ?? fromSite ?? bundled ?? fromArchive ?? { season, conferences: [] };
+  return (
+    liveComputed ??
+    fromCdn ??
+    fromSite ??
+    bundled ??
+    fromArchive ?? { season, conferences: [] }
+  );
 }
 
 /** True when the payload has conference rows with any W/L. */

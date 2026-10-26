@@ -7,6 +7,7 @@ import {
   HOME_HTML_POLICY,
   LIVE_HTML_POLICY,
   SCORES_HTML_POLICY,
+  STANDINGS_HTML_POLICY,
   edgeCacheStorageControlHeader,
   edgeHtmlCacheEnabled,
   htmlCacheControlHeader,
@@ -16,6 +17,7 @@ import {
   isGameHtmlPath,
   isLiveHtmlPath,
   isScoresHtmlPath,
+  isStandingsHtmlPath,
 } from "./page-html-cache-policy";
 
 describe("page-html-cache-policy", () => {
@@ -80,7 +82,13 @@ describe("page-html-cache-policy", () => {
     assert.equal(htmlCachePolicyForPath("/scores").fresh, SCORES_HTML_POLICY.fresh);
     assert.equal(htmlCachePolicyForPath("/explore/games").fresh, LIVE_HTML_POLICY.fresh);
     assert.equal(htmlCachePolicyForPath("/players/1").fresh, BOARD_HTML_POLICY.fresh);
-    assert.equal(htmlCachePolicyForPath("/standings").fresh, BOARD_HTML_POLICY.fresh);
+    assert.equal(isStandingsHtmlPath("/standings"), true);
+    assert.equal(isStandingsHtmlPath("/standings/visualizations"), true);
+    assert.equal(htmlCachePolicyForPath("/standings").fresh, STANDINGS_HTML_POLICY.fresh);
+    assert.equal(
+      htmlCachePolicyForPath("/standings/visualizations").fresh,
+      STANDINGS_HTML_POLICY.fresh
+    );
     assert.equal(htmlCachePolicyForPath("/explore/players").fresh, BOARD_HTML_POLICY.fresh);
     assert.equal(htmlCachePolicyForPath("/history").fresh, DAILY_HTML_POLICY.fresh);
   });
