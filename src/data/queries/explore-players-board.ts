@@ -57,7 +57,7 @@ export type ExplorePlayersBoardView = {
   hasRaptor: boolean;
   hasDrbl: boolean;
   hasHustle: boolean;
-  /** Board columns with no nonzero value on the full filtered board. */
+  /** Board columns missing on every row (null) — zeros stay visible. */
   emptyColumns: PlayerSeasonSortKey[];
   /** Full filtered board size used for Level-2 percentile pools. */
   boardSampleSize: number;

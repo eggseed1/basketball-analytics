@@ -188,8 +188,7 @@ export function emptyBoardColumns(
   rows: ExplorePlayerBoardRow[]
 ): PlayerSeasonSortKey[] {
   return PLAYER_BOARD_VIEW_COLUMNS.all.filter(
-    (key) =>
-      !rows.some((row) => boardStatValue(row, key, "totals") != null)
+    (key) => !rows.some((row) => boardStatValue(row, key, "totals") != null)
   );
 }
 
