@@ -1841,7 +1841,8 @@ html.booting #app-boot {
     order: 12;
   }
   /* Missing order defaults to 0 and pins the block under the calendar. */
-  [data-home-stack] [data-home-module="contract-showcase"] {
+  [data-home-stack] [data-home-module="contract-showcase"],
+  [data-home-stack] [data-home-module="rookie-tracker"] {
     order: 13;
   }
 }
