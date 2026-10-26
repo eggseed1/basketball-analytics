@@ -54,7 +54,7 @@ on:
         type: boolean
         default: true
       commit_season:
-        description: "Also commit in-season snapshot bakes (game/standings/DRBL/impact/etc.)"
+        description: "Also commit heavy in-season bakes (season-tables/DRBL/impact/etc.). Standings+game-snapshot already commit on tip-window mornings."
         type: boolean
         default: false
 
@@ -270,14 +270,19 @@ jobs:
             src/data/runtime/on-off-snapshot.json \
             src/data/runtime/team-game-box-snapshot.json \
             public/runtime/on-off
-          # In-season bakes, Mondays and after the Finals by default, so
-          # offseason deploys still ship the finished season. workflow_dispatch
-          # can force a mid-week season commit via commit_season=true.
-          if [ "${{ steps.sync.outputs.commit_season }}" = "true" ] || [ "${{ github.event.inputs.commit_season }}" = "true" ]; then
+          # Lightweight boards every tip-window morning (W-L after last night).
+          # Cloudflare serves bundled standings first — Monday-only commits froze
+          # records all week without any Worker ESPN savings left to reclaim.
+          if [ "${{ steps.sync.outputs.commit_board }}" = "true" ] || [ "${{ steps.sync.outputs.commit_season }}" = "true" ] || [ "${{ github.event.inputs.commit_season }}" = "true" ]; then
             git add -- \
               src/data/runtime/game-snapshot.json \
+              src/data/runtime/standings-snapshot.json
+          fi
+          # Heavy in-season bakes, Mondays and after the Finals by default.
+          # workflow_dispatch can force a mid-week season commit via commit_season=true.
+          if [ "${{ steps.sync.outputs.commit_season }}" = "true" ] || [ "${{ github.event.inputs.commit_season }}" = "true" ]; then
+            git add -- \
               src/data/runtime/season-tables-snapshot.json \
-              src/data/runtime/standings-snapshot.json \
               src/data/runtime/team-board-snapshot.json \
               src/data/runtime/current-roster-snapshot.json \
               src/data/runtime/drbl-overlay-snapshot.json \
