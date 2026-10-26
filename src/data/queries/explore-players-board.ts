@@ -22,11 +22,11 @@ import {
   defaultPlayerSeasonSortDir,
   type PlayerSeasonSortKey,
 } from "@/lib/player-season-sort";
+import { isCurrentNbaSeason } from "@/lib/nba-season-status";
 import {
-  isCurrentNbaSeason,
   isSeasonAwaitingFirstGame,
   leagueRegularSeasonHasOpened,
-} from "@/lib/nba-season-status";
+} from "@/lib/nba-season-status-schedule";
 import {
   type ExplorePlayerBoardRow,
   sortExplorePlayerRows,

@@ -16,7 +16,7 @@ import {
   bundledCurrentRosterMeta,
   listBundledEspnRosterEntries,
 } from "@/data/runtime/current-roster-snapshot";
-import { leagueRegularSeasonHasOpened } from "@/lib/nba-season-status";
+import { leagueRegularSeasonHasOpened } from "@/lib/nba-season-status-schedule";
 
 const SITE_API = "https://site.api.espn.com";
 

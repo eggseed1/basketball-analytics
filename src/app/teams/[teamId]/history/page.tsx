@@ -21,7 +21,7 @@ import { getTeamSeasonBoardCached } from "@/data/queries/request-cache";
 import { type } from "@/lib/design-system";
 import { brandAtmosphereColors } from "@/lib/game-matchup-theme";
 import { resolveTeamBrand } from "@/lib/nba-brand";
-import { isSeasonAwaitingFirstGame } from "@/lib/nba-season-status";
+import { isSeasonAwaitingFirstGame } from "@/lib/nba-season-status-schedule";
 import { shiftCanonicalSeason } from "@/lib/player-stat-comps";
 import { resolveTeamIdentityFallback } from "@/lib/team-destination";
 import { resolveTeamFromBoard } from "@/lib/team-explorer";

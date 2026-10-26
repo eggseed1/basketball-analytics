@@ -1,5 +1,5 @@
 import { type } from "@/lib/design-system";
-import { priorSeasonStatsNotice } from "@/lib/player-board-season";
+import { priorSeasonStatsNotice } from "@/lib/player-board-season-sync";
 import { cn } from "@/lib/utils";
 
 export function PriorSeasonStatsNotice({

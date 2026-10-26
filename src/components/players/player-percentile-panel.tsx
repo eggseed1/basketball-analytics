@@ -39,7 +39,7 @@ import { PlayerIdentity } from "@/components/players/player-identity";
 import { useSetPlayerViewSeason } from "@/components/players/player-view-season";
 import { StatTooltip } from "@/components/ui/stat-tooltip";
 import { type } from "@/lib/design-system";
-import { seasonOnTrack } from "@/lib/player-board-season";
+import { seasonOnTrack } from "@/lib/player-board-season-sync";
 import { BoardPlayerName } from "@/lib/board-compact-name";
 import { brandAtmosphereColors } from "@/lib/game-matchup-theme";
 import {
