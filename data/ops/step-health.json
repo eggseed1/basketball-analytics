@@ -1,4 +1,11 @@
 {
   "_comment": "Nightly steps that are soft-failing, and since when. Written by scripts/daily-runtime-sync.mjs; scripts/check-step-health.mjs alerts after 72h.",
-  "failing": {}
+  "failing": {
+    "contract-value": {
+      "since": "2026-10-27T16:15:35.846Z"
+    },
+    "percentile-pools": {
+      "since": "2026-10-27T16:15:35.846Z"
+    }
+  }
 }

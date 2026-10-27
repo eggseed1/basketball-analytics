@@ -3,12 +3,12 @@
     "methodologyVersion": "movement-m1-0.2+movement-rules-v2",
     "status": "NEWS_INGEST_M1",
     "season": "2026-27",
-    "snapshotDate": "2026-10-26",
+    "snapshotDate": "2026-10-27",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-10-26T13:55:11.429Z",
+    "builtAt": "2026-10-27T16:03:36.049Z",
     "rosterPlayerCount": 485,
-    "headlinesScanned": 6896,
-    "latestHeadlineAt": "2026-10-26T13:51:08.000Z",
+    "headlinesScanned": 7349,
+    "latestHeadlineAt": "2026-10-27T15:55:04.000Z",
     "latestTransactionDate": "2026-10-24",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -44,7 +44,7 @@
     },
     "outlet:cbs-sports": {
       "label": "CBS Sports",
-      "credibility": 16
+      "credibility": 12
     },
     "outlet:larry-brown-sports": {
       "label": "Larry Brown Sports",
@@ -76,7 +76,7 @@
     },
     "outlet:realgm": {
       "label": "RealGM",
-      "credibility": 8
+      "credibility": 16
     },
     "outlet:nbc-sports-bay-area": {
       "label": "NBC Sports Bay Area",
@@ -84,7 +84,7 @@
     },
     "outlet:yahoo-sports": {
       "label": "Yahoo Sports",
-      "credibility": 12
+      "credibility": 16
     },
     "outlet:espn": {
       "label": "ESPN",
@@ -116,7 +116,7 @@
     },
     "outlet:heavy": {
       "label": "Heavy",
-      "credibility": 16
+      "credibility": 12
     },
     "reporter:malika-andrews": {
       "label": "Malika Andrews (ESPN)",
@@ -136,7 +136,7 @@
     },
     "outlet:new-york-post": {
       "label": "New York Post",
-      "credibility": 16
+      "credibility": 12
     },
     "reporter:tim-mcmahon-the": {
       "label": "Tim McMahon. The (ESPN)",
@@ -148,7 +148,7 @@
     },
     "outlet:fadeaway-world": {
       "label": "Fadeaway World",
-      "credibility": 12
+      "credibility": 16
     },
     "outlet:sporting-news": {
       "label": "Sporting News",
@@ -204,6 +204,14 @@
     },
     "reporter:andy-bailey": {
       "label": "Andy Bailey (Bleacher Report)",
+      "credibility": 18
+    },
+    "outlet:nbc-sports-boston": {
+      "label": "NBC Sports Boston",
+      "credibility": 16
+    },
+    "reporter:kris-rhim": {
+      "label": "Kris Rhim (ESPN)",
       "credibility": 18
     },
     "ledger:nba-player-movement": {
@@ -787,12 +795,13 @@
         "mv-4cefb39799fec15d",
         "mv-b52ea4d65cdded7c",
         "mv-57d20a3caa662316",
-        "mv-5f9a351f84c20877"
+        "mv-5f9a351f84c20877",
+        "mv-af7dc5b81d2d9491"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-05T00:00:00.000Z",
-      "lastMeaningfulAt": "2026-10-18T19:43:02.000Z",
+      "lastMeaningfulAt": "2026-10-26T22:43:54.000Z",
       "linkedPlayerIds": [
         "3155942",
         "4683774"
@@ -1490,17 +1499,29 @@
     {
       "id": "mv-trade-3917376-20261021",
       "headline": "Jaylen Brown and Jayson Tatum: trade talk",
-      "primaryClaimId": "mv-c4f0962abef9f0be",
+      "primaryClaimId": "mv-e27c69861af25c89",
       "claimIds": [
         "mv-2f0d84624ccb4107",
         "mv-bd26cacf446be7b2",
         "mv-309507bc3255656e",
-        "mv-c4f0962abef9f0be"
+        "mv-c4f0962abef9f0be",
+        "mv-3eb8f10f84ab030f",
+        "mv-b3334488adaa4c00",
+        "mv-b885091685d5a44f",
+        "mv-45c2f172dfe4ca50",
+        "mv-c8b6ff5ff70d6ccd",
+        "mv-4a00c6b81e3d3cd9",
+        "mv-6accbe2e5f7eea1e",
+        "mv-ce009c898eb2ad8d",
+        "mv-eed8b74390b65fab",
+        "mv-a8a6ca9f5999243a",
+        "mv-54ef238efe48b877",
+        "mv-e27c69861af25c89"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-21T16:52:29.000Z",
-      "lastMeaningfulAt": "2026-10-23T16:27:01.000Z",
+      "lastMeaningfulAt": "2026-10-27T15:34:02.000Z",
       "linkedPlayerIds": [
         "3917376",
         "4065648"
@@ -1603,6 +1624,46 @@
       ],
       "linkedTeamIds": [
         "13"
+      ]
+    },
+    {
+      "id": "mv-trade-4593803-20261026",
+      "headline": "Jalen Williams and Cason Wallace: trade talk",
+      "primaryClaimId": "mv-05009fc1a8872a90",
+      "claimIds": [
+        "mv-952be21c7b2ffaf0",
+        "mv-5f1801d0c48f25da",
+        "mv-05009fc1a8872a90"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-10-26T16:32:38.000Z",
+      "lastMeaningfulAt": "2026-10-27T14:52:38.000Z",
+      "linkedPlayerIds": [
+        "4593803",
+        "4683692"
+      ],
+      "linkedTeamIds": [
+        "25"
+      ]
+    },
+    {
+      "id": "mv-trade-4065733-20261027",
+      "headline": "Ty Jerome: trade talk",
+      "primaryClaimId": "mv-64b41423754ee999",
+      "claimIds": [
+        "mv-64b41423754ee999"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-10-27T14:31:34.000Z",
+      "lastMeaningfulAt": "2026-10-27T14:31:34.000Z",
+      "linkedPlayerIds": [
+        "4065733"
+      ],
+      "linkedTeamIds": [
+        "25",
+        "29"
       ]
     },
     {
@@ -8134,6 +8195,345 @@
       ],
       "isOriginal": false,
       "negotiationSpecificity": "offer"
+    },
+    {
+      "id": "mv-952be21c7b2ffaf0",
+      "clusterId": "mv-trade-4593803-20261026",
+      "summary": "Thunder rumors: Brian Windhorst hints at ‘$14-ish million’ trade chip on way after Jalen Williams injury",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-26T16:32:38.000Z",
+      "sourceId": "reporter:brian-windhorst",
+      "sourceLabel": "ClutchPoints, citing Brian Windhorst (ESPN)",
+      "reporterLabel": "Brian Windhorst",
+      "sourceUrl": "https://clutchpoints.com/nba/oklahoma-city-thunder/thunder-rumors-brian-windhorst-hints-14-million-trade-chip-after-jalen-williams-injury",
+      "playerIds": [
+        "4593803"
+      ],
+      "teamIds": [
+        "25"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-3eb8f10f84ab030f",
+      "clusterId": "mv-trade-3917376-20261021",
+      "summary": "Did Jaylen Brown ‘demand' trade from C's? Scal clarifies comments",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-26T20:27:47.000Z",
+      "sourceId": "outlet:nbc-sports-boston",
+      "sourceLabel": "NBC Sports Boston",
+      "sourceUrl": "https://www.nbcsportsboston.com/nba/boston-celtics/did-jaylen-brown-demand-trade-from-cs-scal-clarifies-comments/809449/",
+      "playerIds": [
+        "3917376"
+      ],
+      "teamIds": [],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-b3334488adaa4c00",
+      "clusterId": "mv-trade-3917376-20261021",
+      "summary": "Insider Shoots Down Celtics’ Jaylen Brown Trade Request Rumor",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "denied",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-26T21:20:15.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/boston-celtics/insider-shoots-down-jaylen-brown-trade-request-rumor/",
+      "playerIds": [
+        "3917376"
+      ],
+      "teamIds": [
+        "2"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-af7dc5b81d2d9491",
+      "clusterId": "mv-trade-3155942-20261005",
+      "summary": "Lakers Bronny James Trade Rumors Validated After Dismal Season Start",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-26T22:43:54.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/los-angeles-lakers/lakers-bronny-james-trade-rumors-validated-after-dismal-season-start/",
+      "playerIds": [
+        "4683774"
+      ],
+      "teamIds": [
+        "13"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-b885091685d5a44f",
+      "clusterId": "mv-trade-3917376-20261021",
+      "summary": "76ers’ Jaylen Brown Trade Drama Takes Another Turn Following New Denial",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-27T02:08:58.000Z",
+      "sourceId": "reporter:kris-rhim",
+      "sourceLabel": "Heavy, citing Kris Rhim (ESPN)",
+      "reporterLabel": "Kris Rhim",
+      "sourceUrl": "https://heavy.com/sports/nba/philadelphia-76ers/76ers-jaylen-brown-trade-rumors-denial/",
+      "playerIds": [
+        "3917376"
+      ],
+      "teamIds": [
+        "20"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-45c2f172dfe4ca50",
+      "clusterId": "mv-trade-3917376-20261021",
+      "summary": "Jaylen Brown's camp shuts down report that he demanded a trade out of Boston: It's '10,000% a lie'",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-27T04:13:36.000Z",
+      "sourceId": "outlet:yahoo-sports",
+      "sourceLabel": "Yahoo Sports",
+      "sourceUrl": "https://sports.yahoo.com/nba/article/jaylen-browns-camp-shuts-down-report-that-he-demanded-a-trade-out-of-boston-its-10000-a-lie-041336170.html",
+      "playerIds": [
+        "3917376"
+      ],
+      "teamIds": [],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-c8b6ff5ff70d6ccd",
+      "clusterId": "mv-trade-3917376-20261021",
+      "summary": "Rep For Jaylen Brown Denies Claim He Demanded Trade From Celtics",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "denied",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-27T04:29:08.000Z",
+      "sourceId": "reporter:kris-rhim",
+      "sourceLabel": "Hoops Rumors, citing Kris Rhim (ESPN)",
+      "reporterLabel": "Kris Rhim",
+      "sourceUrl": "https://www.hoopsrumors.com/2026/10/rep-for-jaylen-brown-denies-claim-he-demanded-trade-from-celtics.html",
+      "playerIds": [
+        "3917376"
+      ],
+      "teamIds": [
+        "2"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-4a00c6b81e3d3cd9",
+      "clusterId": "mv-trade-3917376-20261021",
+      "summary": "Jaylen Brown Rep Denies He Demanded Trade From Celtics",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "denied",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-27T05:15:39.000Z",
+      "sourceId": "outlet:realgm",
+      "sourceLabel": "RealGM",
+      "sourceUrl": "https://basketball.realgm.com/wiretap/287907/Jaylen-Brown-Rep-Denies-He-Demanded-Trade-From-Celtics",
+      "playerIds": [
+        "3917376"
+      ],
+      "teamIds": [
+        "2"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-6accbe2e5f7eea1e",
+      "clusterId": "mv-trade-3917376-20261021",
+      "summary": "“That Crushed Him”: Ex-NBA Star Reveals Unknown Jayson Tatum Details Amid Reports of Jaylen Brown’s Trade Demand",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-27T09:10:29.000Z",
+      "sourceId": "outlet:basketball-news",
+      "sourceLabel": "Basketball News",
+      "sourceUrl": "https://www.basketballnews.com/news/basketballnews-nba-active-news-that-crushed-him-ex-nba-star-reveals-unknown-jayson-tatum-details-amid-reports-of-jaylen-browns-trade-demand/",
+      "playerIds": [
+        "3917376",
+        "4065648"
+      ],
+      "teamIds": [],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-ce009c898eb2ad8d",
+      "clusterId": "mv-trade-3917376-20261021",
+      "summary": "Jaylen Brown’s Camp Denies He Demanded A Trade From Celtics",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "denied",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-27T10:11:59.000Z",
+      "sourceId": "outlet:fadeaway-world",
+      "sourceLabel": "Fadeaway World",
+      "sourceUrl": "https://fadeawayworld.net/nba/philadelphia-76ers/jaylen-browns-camp-denies-demanded-trade-celtics",
+      "playerIds": [
+        "3917376"
+      ],
+      "teamIds": [
+        "2"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-eed8b74390b65fab",
+      "clusterId": "mv-trade-3917376-20261021",
+      "summary": "Report: Jaylen Brown's camp denies that he demanded trade from Celtics",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "denied",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-27T13:13:00.000Z",
+      "sourceId": "outlet:yahoo-sports",
+      "sourceLabel": "Yahoo Sports",
+      "sourceUrl": "https://sports.yahoo.com/articles/report-jaylen-browns-camp-denies-131300525.html",
+      "playerIds": [
+        "3917376"
+      ],
+      "teamIds": [
+        "2"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-5f1801d0c48f25da",
+      "clusterId": "mv-trade-4593803-20261026",
+      "summary": "MAJOR OKC Thunder Report Reveals When to Expect Trade & Types of Targets to Fill Jalen Williams, Cason Wallace Void",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-27T13:19:35.000Z",
+      "sourceId": "outlet:sportsnaut",
+      "sourceLabel": "Sportsnaut",
+      "sourceUrl": "https://sportsnaut.com/nba/oklahoma-city-thunder-trade-timeline-after-jalen-williams-cason-wallace-injuries",
+      "playerIds": [
+        "4593803",
+        "4683692"
+      ],
+      "teamIds": [
+        "25"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-a8a6ca9f5999243a",
+      "clusterId": "mv-trade-3917376-20261021",
+      "summary": "Jaylen Brown's rep says reported trade request from Celtics is '10,000% a lie'",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-27T13:19:49.000Z",
+      "sourceId": "outlet:cbs-sports",
+      "sourceLabel": "CBS Sports",
+      "sourceUrl": "https://www.cbssports.com/nba/news/jaylen-browns-trade-request-celtics-lie/",
+      "playerIds": [
+        "3917376"
+      ],
+      "teamIds": [
+        "2"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-64b41423754ee999",
+      "clusterId": "mv-trade-4065733-20261027",
+      "summary": "NBA rumors: The Stein Line speculates about Thunder’s Ty Jerome trade interest after brutal injury luck",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-27T14:31:34.000Z",
+      "sourceId": "reporter:marc-stein",
+      "sourceLabel": "ClutchPoints, citing Marc Stein (The Stein Line)",
+      "reporterLabel": "Marc Stein",
+      "sourceUrl": "https://clutchpoints.com/nba/nba-stories/nba-rumors-the-stein-line-speculates-about-thunders-ty-jerome-trade-interest-after-brutal-injury-luck",
+      "playerIds": [
+        "4065733"
+      ],
+      "teamIds": [
+        "25"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "contact"
+    },
+    {
+      "id": "mv-05009fc1a8872a90",
+      "clusterId": "mv-trade-4593803-20261026",
+      "summary": "Pair of Oklahoma City Thunder Reports SHUT DOWN Speculation of Big Trade to Replace Jalen Williams",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-27T14:52:38.000Z",
+      "sourceId": "outlet:sportsnaut",
+      "sourceLabel": "Sportsnaut",
+      "sourceUrl": "https://sportsnaut.com/nba/oklahoma-city-thunder-big-trade-speculation-shut-down",
+      "playerIds": [
+        "4593803"
+      ],
+      "teamIds": [
+        "25"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-54ef238efe48b877",
+      "clusterId": "mv-trade-3917376-20261021",
+      "summary": "Brian Scalabrine forced to walk back Jaylen Brown trade report in awkward live TV admission",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-27T15:26:27.000Z",
+      "sourceId": "outlet:new-york-post",
+      "sourceLabel": "New York Post",
+      "sourceUrl": "https://nypost.com/2026/10/27/sports/brian-scalabrine-forced-to-walk-back-jaylen-brown-trade-report/",
+      "playerIds": [
+        "3917376"
+      ],
+      "teamIds": [],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-e27c69861af25c89",
+      "clusterId": "mv-trade-3917376-20261021",
+      "summary": "Jaylen Brown rep calls Brian Scalabrine’s Celtics trade request claim ‘10000% a lie’",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-27T15:34:02.000Z",
+      "sourceId": "outlet:clutchpoints",
+      "sourceLabel": "ClutchPoints",
+      "sourceUrl": "https://clutchpoints.com/nba/philadelphia-76ers/76ers-news-jaylen-brown-rep-calls-brian-scalabrines-celtics-trade-request-claim-10000-a-lie",
+      "playerIds": [
+        "3917376"
+      ],
+      "teamIds": [
+        "2"
+      ],
+      "isOriginal": true
     },
     {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",
