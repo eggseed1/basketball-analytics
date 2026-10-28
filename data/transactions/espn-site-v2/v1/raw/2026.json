@@ -2,9 +2,20 @@
   "source": "espn-site-v2-transactions",
   "datasetVersion": "1.0",
   "espnCalendarYear": 2026,
-  "fetchedAt": "2026-10-27T16:02:18.058Z",
-  "apiCount": 425,
+  "fetchedAt": "2026-10-28T16:51:21.889Z",
+  "apiCount": 426,
   "rows": [
+    {
+      "date": "2026-10-27T07:00Z",
+      "description": "Signed F Enrique Freeman to a two-way contract.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
     {
       "date": "2026-10-23T07:00Z",
       "description": "Signed G Sean Pedulla to a two-way contract.",

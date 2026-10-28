@@ -3,13 +3,13 @@
     "methodologyVersion": "movement-m1-0.2+movement-rules-v2",
     "status": "NEWS_INGEST_M1",
     "season": "2026-27",
-    "snapshotDate": "2026-10-27",
+    "snapshotDate": "2026-10-28",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-10-27T16:03:36.049Z",
-    "rosterPlayerCount": 485,
-    "headlinesScanned": 7349,
-    "latestHeadlineAt": "2026-10-27T15:55:04.000Z",
-    "latestTransactionDate": "2026-10-24",
+    "builtAt": "2026-10-28T16:52:28.651Z",
+    "rosterPlayerCount": 486,
+    "headlinesScanned": 7791,
+    "latestHeadlineAt": "2026-10-28T16:48:11.000Z",
+    "latestTransactionDate": "2026-10-27",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
       "Basketball News",
@@ -152,7 +152,7 @@
     },
     "outlet:sporting-news": {
       "label": "Sporting News",
-      "credibility": 16
+      "credibility": 12
     },
     "reporter:bobby-marks-speaking": {
       "label": "Bobby Marks. Speaking (ESPN)",
@@ -513,12 +513,13 @@
         "mv-9da8e0a7f4dbd941",
         "mv-48acff7ee287be31",
         "mv-02067a54b54385f8",
-        "mv-cc10d92cf978bee0"
+        "mv-cc10d92cf978bee0",
+        "mv-2ea44a4bdf5240f9"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-09-26T13:03:20.000Z",
-      "lastMeaningfulAt": "2026-10-22T11:45:00.000Z",
+      "lastMeaningfulAt": "2026-10-28T09:42:11.000Z",
       "linkedPlayerIds": [
         "3062679",
         "3136195",
@@ -1499,7 +1500,7 @@
     {
       "id": "mv-trade-3917376-20261021",
       "headline": "Jaylen Brown and Jayson Tatum: trade talk",
-      "primaryClaimId": "mv-e27c69861af25c89",
+      "primaryClaimId": "mv-737e7bbb8eacdcc8",
       "claimIds": [
         "mv-2f0d84624ccb4107",
         "mv-bd26cacf446be7b2",
@@ -1516,12 +1517,15 @@
         "mv-eed8b74390b65fab",
         "mv-a8a6ca9f5999243a",
         "mv-54ef238efe48b877",
-        "mv-e27c69861af25c89"
+        "mv-e27c69861af25c89",
+        "mv-7a7463c22b282e86",
+        "mv-6082cd1da0f25db9",
+        "mv-737e7bbb8eacdcc8"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-21T16:52:29.000Z",
-      "lastMeaningfulAt": "2026-10-27T15:34:02.000Z",
+      "lastMeaningfulAt": "2026-10-28T16:31:15.000Z",
       "linkedPlayerIds": [
         "3917376",
         "4065648"
@@ -1650,20 +1654,58 @@
     {
       "id": "mv-trade-4065733-20261027",
       "headline": "Ty Jerome: trade talk",
-      "primaryClaimId": "mv-64b41423754ee999",
+      "primaryClaimId": "mv-cc929e62966a1f63",
       "claimIds": [
-        "mv-64b41423754ee999"
+        "mv-64b41423754ee999",
+        "mv-cc929e62966a1f63"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-27T14:31:34.000Z",
-      "lastMeaningfulAt": "2026-10-27T14:31:34.000Z",
+      "lastMeaningfulAt": "2026-10-27T17:58:47.000Z",
       "linkedPlayerIds": [
         "4065733"
       ],
       "linkedTeamIds": [
         "25",
         "29"
+      ]
+    },
+    {
+      "id": "mv-trade-4594268-20261028",
+      "headline": "Anthony Edwards: trade talk",
+      "primaryClaimId": "mv-e8f321236848299d",
+      "claimIds": [
+        "mv-e8f321236848299d"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-10-28T00:51:48.000Z",
+      "lastMeaningfulAt": "2026-10-28T00:51:48.000Z",
+      "linkedPlayerIds": [
+        "4594268"
+      ],
+      "linkedTeamIds": [
+        "16"
+      ]
+    },
+    {
+      "id": "mv-trade-3112335-20261028",
+      "headline": "Nikola Jokić and Jamal Murray: trade talk",
+      "primaryClaimId": "mv-81703f46baec2589",
+      "claimIds": [
+        "mv-81703f46baec2589"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-10-28T15:58:25.000Z",
+      "lastMeaningfulAt": "2026-10-28T15:58:25.000Z",
+      "linkedPlayerIds": [
+        "3112335",
+        "3936299"
+      ],
+      "linkedTeamIds": [
+        "7"
       ]
     },
     {
@@ -8527,6 +8569,151 @@
       "sourceId": "outlet:clutchpoints",
       "sourceLabel": "ClutchPoints",
       "sourceUrl": "https://clutchpoints.com/nba/philadelphia-76ers/76ers-news-jaylen-brown-rep-calls-brian-scalabrines-celtics-trade-request-claim-10000-a-lie",
+      "playerIds": [
+        "3917376"
+      ],
+      "teamIds": [
+        "2"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-7a7463c22b282e86",
+      "clusterId": "mv-trade-3917376-20261021",
+      "summary": "Jaylen Brown’s camp denies trade request, calls report a lie",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "denied",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-27T16:12:42.000Z",
+      "sourceId": "reporter:kris-rhim",
+      "sourceLabel": "TalkBasket, citing Kris Rhim (ESPN)",
+      "reporterLabel": "Kris Rhim",
+      "sourceUrl": "https://www.talkbasket.net/225556-jaylen-browns-camp-denies-trade-request-calls-report-a-lie",
+      "playerIds": [
+        "3917376"
+      ],
+      "teamIds": [],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-cc929e62966a1f63",
+      "clusterId": "mv-trade-4065733-20261027",
+      "summary": "Thunder Urged To Consider Trading For NBA’s Hottest Scorer Ty Jerome Amid Major Injury Crisis",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-27T17:58:47.000Z",
+      "sourceId": "reporter:marc-stein",
+      "sourceLabel": "Fadeaway World, citing Marc Stein (The Stein Line)",
+      "reporterLabel": "Marc Stein",
+      "sourceUrl": "https://fadeawayworld.net/nba-trade-rumors/oklahoma-city-thunder/thunder-urged-to-consider-trading-for-nbas-hottest-scorer-ty-jerome-amid-major-injury-crisis",
+      "playerIds": [
+        "4065733"
+      ],
+      "teamIds": [
+        "25"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-e8f321236848299d",
+      "clusterId": "mv-trade-4594268-20261028",
+      "summary": "2 trades Timberwolves must make with Anthony Edwards out for 2 months",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-28T00:51:48.000Z",
+      "sourceId": "reporter:shams-charania",
+      "sourceLabel": "ClutchPoints, citing Shams Charania (ESPN)",
+      "reporterLabel": "Shams Charania",
+      "sourceUrl": "https://clutchpoints.com/nba/minnesota-timberwolves/2-trades-timberwolves-anthony-edwards-2-months",
+      "playerIds": [
+        "4594268"
+      ],
+      "teamIds": [
+        "16"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-6082cd1da0f25db9",
+      "clusterId": "mv-trade-3917376-20261021",
+      "summary": "Celtics’ Jayson Tatum isn’t interested in becoming face of Achilles injury",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-28T05:01:33.000Z",
+      "sourceId": "outlet:clutchpoints",
+      "sourceLabel": "ClutchPoints",
+      "sourceUrl": "https://clutchpoints.com/nba/boston-celtics/celtics-news-jayson-tatum-not-interested-face-achilles-injury",
+      "playerIds": [
+        "4065648"
+      ],
+      "teamIds": [
+        "2"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "contact"
+    },
+    {
+      "id": "mv-2ea44a4bdf5240f9",
+      "clusterId": "mv-trade-3062679-20260926",
+      "summary": "Warriors reportedly willing to be patient with Kristaps Porziņģis trade market",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-28T09:42:11.000Z",
+      "sourceId": "reporter:anthony-slater",
+      "sourceLabel": "NBC Sports Bay Area, citing Anthony Slater (ESPN)",
+      "reporterLabel": "Anthony Slater",
+      "sourceUrl": "https://www.nbcsportsbayarea.com/nba/golden-state-warriors/kristaps-porzingis-trade-market-report/1975207/",
+      "playerIds": [
+        "3102531"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-81703f46baec2589",
+      "clusterId": "mv-trade-3112335-20261028",
+      "summary": "Nuggets reportedly interested in $10M streaky combo guard to pair with Nikola Jokic, Jamal Murray",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-28T15:58:25.000Z",
+      "sourceId": "outlet:sporting-news",
+      "sourceLabel": "Sporting News",
+      "sourceUrl": "https://www.sportingnews.com/us/nba/denver-nuggets/news/nuggets-reportedly-interested-10m-streaky-combo-guard-pair-nikola-jokic-jamal-murray/d7f6dae56661ccdd9ed12fa1%3E",
+      "playerIds": [
+        "3112335",
+        "3936299"
+      ],
+      "teamIds": [
+        "7"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "contact"
+    },
+    {
+      "id": "mv-737e7bbb8eacdcc8",
+      "clusterId": "mv-trade-3917376-20261021",
+      "summary": "DeMarcus Cousins calls out Brian Scalabrine’s ‘whack homer s**t’ over Jaylen Brown’s Celtics trade request drama",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-28T16:31:15.000Z",
+      "sourceId": "outlet:clutchpoints",
+      "sourceLabel": "ClutchPoints",
+      "sourceUrl": "https://clutchpoints.com/nba/boston-celtics/celtics-news-demarcus-cousins-brian-scalabrine-whack-homer-jaylen-brown-trade-request-drama",
       "playerIds": [
         "3917376"
       ],

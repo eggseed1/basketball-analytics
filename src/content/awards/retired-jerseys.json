@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-30T05:31:46.703Z",
+  "generatedAt": "2026-10-28T17:04:00.637Z",
   "source": "https://en.wikipedia.org/wiki/List_of_NBA_retired_numbers",
   "idSource": "nba_api static player list (stats.nba.com PERSON_ID)",
   "policy": "Player banners only; future retirements, owners, coaches, broadcasters and fan banners are excluded from jerseys. bannerCounts counts every numbered banner except future ones. Names match NFD-stripped, lowercased, without . ' \" and with hyphens as spaces.",
@@ -7,7 +7,7 @@
     "atl": 6,
     "bos": 23,
     "bkn": 7,
-    "cha": 2,
+    "cha": 3,
     "chi": 5,
     "cle": 7,
     "dal": 5,
@@ -271,6 +271,13 @@
       "number": "52",
       "playerName": "Buck Williams",
       "years": "1981–1989"
+    },
+    {
+      "nbaPlayerId": "177",
+      "teamKey": "cha",
+      "number": "1",
+      "playerName": "Muggsy Bogues",
+      "years": "1988–1997"
     },
     {
       "nbaPlayerId": "184",

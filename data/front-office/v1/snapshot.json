@@ -1,8 +1,8 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-27",
-    "retrievedAt": "2026-10-27T16:13:18.459Z",
+    "snapshotDate": "2026-10-28",
+    "retrievedAt": "2026-10-28T17:01:49.525Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
@@ -11,7 +11,7 @@
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "bcdb336f3605d66c729bd3187a73069d1fbae876b27332008bf75eb25108aa83",
+    "sourceHash": "635c941c8701517d4cfb075634c47cfcc6da9f8c0674d4ae2f4ad64545f560d7",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -6993,6 +6993,29 @@
             "href": "/players/1626168"
           },
           {
+            "playerId": "1642402",
+            "playerName": "Enrique Freeman",
+            "age": null,
+            "contractId": "cy-1642402-2026",
+            "contractType": "UNKNOWN",
+            "years": [
+              {
+                "contractId": "cy-1642402-2026",
+                "playerId": "1642402",
+                "franchiseId": "16",
+                "season": "2026-27",
+                "salary": 1366314,
+                "capHit": 1366314,
+                "guaranteedAmount": null,
+                "guaranteeStatus": "UNKNOWN",
+                "optionType": "UNKNOWN",
+                "source": "salary-index-carry-forward"
+              }
+            ],
+            "guaranteedTotal": null,
+            "href": "/players/1642402"
+          },
+          {
             "playerId": "1642911",
             "playerName": "Rocco Zikarsky",
             "age": null,
@@ -7065,12 +7088,12 @@
         "futureCommitments": [
           {
             "season": "2026-27",
-            "totalSalaryDollars": 214638731,
-            "playersUnderContract": 15
+            "totalSalaryDollars": 216005045,
+            "playersUnderContract": 16
           }
         ],
-        "playerSalaryCommitments": 214638731,
-        "playersWithSalary": 15,
+        "playerSalaryCommitments": 216005045,
+        "playersWithSalary": 16,
         "playersWithoutSalary": 1
       },
       "draftAssets": {
@@ -13284,7 +13307,7 @@
     "salaryNullAsZero": 0,
     "teamsWithPayroll": 30,
     "teamsWithContracts": 30,
-    "playersWithSalary": 470,
+    "playersWithSalary": 471,
     "unmatchedSalaryNames": 21,
     "draftAssetsStructured": 0
   }
