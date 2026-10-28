@@ -355,7 +355,6 @@ export default async function HomePage() {
   return (
     <main
       data-motion-page
-      data-motion-eager
       data-home-stack
       className="site-shell flex flex-col gap-5 py-5 sm:py-7"
       data-season-phase={phase}

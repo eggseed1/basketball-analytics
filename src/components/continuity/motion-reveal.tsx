@@ -302,18 +302,18 @@ export function MotionReveal() {
 
         // Own-entry shells (hero) — CSS entry on the shell. Nested layout
         // fades are finished; chart wipes keep running.
-        // Page-level eager (home) means "don't hold for scroll" only — finishing
-        // nested transitions here snapped cards to opacity 1 and killed the
-        // @starting-style fade, especially on soft-nav back to /.
+        // Page-level eager must fall through to the fold check below: finishing
+        // nested transitions killed first-paint fades, and always-continue
+        // skipped scroll holds so home modules never revealed on scroll.
         const own = el.closest(OWN_ENTRY);
         if (own) {
           const pageLevelEager = own.matches(
             "[data-motion-page][data-motion-eager]"
           );
-          if (own !== el && !chart && !pageLevelEager) {
-            settle.push(...entryTransitions(el));
+          if (!pageLevelEager) {
+            if (own !== el && !chart) settle.push(...entryTransitions(el));
+            continue;
           }
-          continue;
         }
 
         // Section frames fade as one block. Nested cards/rows finish so they
