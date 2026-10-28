@@ -31,12 +31,13 @@ export async function RookieTrackerPanel() {
 
   const description =
     model.withGames > 0
-      ? `${model.draftYear} class · ${model.season}. WAR1 leads by default; blank is missing, not 0.`
-      : `${model.draftYear} class · ${model.season}. Lines show up after they play.`;
+      ? `${model.draftYear} class · ${model.season}. Blank means missing, not 0.`
+      : `${model.draftYear} class · ${model.season}. Lines show up after tip.`;
 
   return (
     <section
       aria-label="Rookie race"
+      data-motion="card"
       className="sports-card flex flex-col gap-3 p-4"
     >
       <div className="flex flex-wrap items-baseline justify-between gap-2">
