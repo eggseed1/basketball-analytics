@@ -4,6 +4,7 @@ import { describe, it } from "node:test";
 import type { DraftNightPick } from "@/data/runtime/draft-night-snapshot";
 import {
   buildRookieTracker,
+  defaultRookieTrackerSort,
   rookieRaceLeaderValue,
   rookieRaceShare,
   sortRookieTrackerRows,
@@ -152,5 +153,23 @@ describe("home-rookie-tracker", () => {
     assert.equal(rookieRaceShare(rows[0]!, "points", leader), 1);
     assert.equal(rookieRaceShare(rows[1]!, "points", leader), 0.5);
     assert.equal(rookieRaceShare(rows[2]!, "points", leader), null);
+  });
+
+  it("defaults sort to points when WAR1 is still blank", () => {
+    const rows = [
+      row({ key: "a", name: "A", overall: 1, points: 12, gp: 2 }),
+      row({ key: "b", name: "B", overall: 2 }),
+    ];
+    assert.equal(defaultRookieTrackerSort(rows), "points");
+    assert.equal(
+      defaultRookieTrackerSort([
+        row({ key: "a", name: "A", overall: 1, war1: 0.2, gp: 2 }),
+      ]),
+      "war1"
+    );
+    assert.equal(
+      defaultRookieTrackerSort([row({ key: "a", name: "A", overall: 3 })]),
+      "pick"
+    );
   });
 });

@@ -137,6 +137,25 @@ export function rookieRaceLeaderValue(
   return best;
 }
 
+/** Prefer WAR1 when any rookie has it; else counting stats; else draft order. */
+export function defaultRookieTrackerSort(
+  rows: readonly RookieTrackerRow[]
+): RookieTrackerSort {
+  if (rows.some((row) => row.war1 != null && Number.isFinite(row.war1))) {
+    return "war1";
+  }
+  if (rows.some((row) => row.points != null && Number.isFinite(row.points))) {
+    return "points";
+  }
+  if (rows.some((row) => row.rebounds != null && Number.isFinite(row.rebounds))) {
+    return "rebounds";
+  }
+  if (rows.some((row) => row.assists != null && Number.isFinite(row.assists))) {
+    return "assists";
+  }
+  return "pick";
+}
+
 /**
  * Merge the draft-night class with bundled season lines. Missing stats stay
  * blank (not 0) so early-season boards do not look like 0-point rookies.
