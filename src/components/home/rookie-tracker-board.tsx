@@ -125,7 +125,11 @@ function RookieRaceField({
           const widthPct = Math.round(lane.share * 1000) / 10;
           const lead = index === 0;
           return (
-            <li key={lane.row.key} className="flex items-center gap-1.5">
+            <li
+              key={lane.row.key}
+              data-hover-item
+              className="flex items-center gap-1.5 rounded-md px-0.5 py-0.5"
+            >
               <span
                 className={cn(
                   "flex size-4 shrink-0 items-center justify-center rounded-full text-[9px] font-bold tabular-nums text-white",
@@ -191,8 +195,7 @@ function RookieRow({
 
   const inner = (
     <div
-      data-motion="row"
-      className="flex items-center gap-2 rounded-lg px-1.5 py-1 transition-colors hover:bg-secondary/70"
+      className="flex items-center gap-2 rounded-lg px-1.5 py-1"
       style={{
         boxShadow: `inset 2px 0 0 ${paint.primary}`,
       }}
@@ -229,9 +232,13 @@ function RookieRow({
     </div>
   );
 
-  if (!row.href) return <li>{inner}</li>;
+  if (!row.href) {
+    return (
+      <li data-motion="row">{inner}</li>
+    );
+  }
   return (
-    <li>
+    <li data-motion="row">
       <AppLink
         href={row.href}
         className="block min-w-0 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring"

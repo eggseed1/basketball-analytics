@@ -37,7 +37,6 @@ export async function RookieTrackerPanel() {
   return (
     <section
       aria-label="Rookie race"
-      data-motion="card"
       className="sports-card flex flex-col gap-2 p-3.5"
     >
       <div className="flex flex-wrap items-baseline justify-between gap-2">
