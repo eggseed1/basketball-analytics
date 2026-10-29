@@ -15,11 +15,11 @@ export async function RookieTrackerPanel() {
     return (
       <section
         aria-label="Rookie race"
-        className="sports-card flex flex-col gap-3 p-4"
+        className="sports-card flex flex-col gap-2 p-3.5"
       >
         <div className="flex flex-wrap items-baseline justify-between gap-2">
           <div className="flex min-w-0 flex-col gap-0.5">
-            <h2 className={type.heading}>Rookie race</h2>
+            <h2 className={type.title}>Rookie race</h2>
             <p className={cn(type.caption, "text-muted-foreground")}>
               The {model.draftYear} draft class is not in the bake yet.
             </p>
@@ -38,11 +38,11 @@ export async function RookieTrackerPanel() {
     <section
       aria-label="Rookie race"
       data-motion="card"
-      className="sports-card flex flex-col gap-3 p-4"
+      className="sports-card flex flex-col gap-2 p-3.5"
     >
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <div className="flex min-w-0 flex-col gap-0.5">
-          <h2 className={type.heading}>Rookie race</h2>
+          <h2 className={type.title}>Rookie race</h2>
           <p className={cn(type.caption, "text-muted-foreground")}>
             {description}
           </p>

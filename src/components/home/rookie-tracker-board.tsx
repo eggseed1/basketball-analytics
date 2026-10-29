@@ -28,7 +28,8 @@ const SORTS: { id: RookieTrackerSort; label: string }[] = [
   { id: "pick", label: "Pick" },
 ];
 
-const RACE_LANES = 6;
+/** Match the home board length — this chart is a glance, not a second leaderboard. */
+const RACE_LANES = ROOKIE_TRACKER_LIMIT;
 
 function fmt(n: number | null, digits = 1): string {
   if (n == null || !Number.isFinite(n)) return "—";
@@ -89,7 +90,7 @@ function buildRaceLanes(
     .slice(0, RACE_LANES);
 }
 
-/** Draft-class race lanes: team color bars with headshots riding the tip. */
+/** Compact race lanes — color + last name only; headshots live on the board. */
 function RookieRaceField({
   lanes,
   sort,
@@ -108,34 +109,34 @@ function RookieRaceField({
       role="img"
       aria-label={`Rookie race by ${metric}`}
       className={cn(
-        "relative flex flex-col gap-2 rounded-xl border border-border/50 bg-secondary/30 px-3 py-3 pr-4",
+        "relative flex flex-col gap-1.5 rounded-lg border border-border/50 bg-secondary/25 px-2.5 py-2 pr-3",
         className
       )}
     >
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-y-2 right-12 w-px bg-foreground/20"
+        className="pointer-events-none absolute inset-y-1.5 right-9 w-px bg-foreground/15"
       />
-      <p className={cn(type.caption, "font-semibold text-muted-foreground")}>
-        {metric} race · top {lanes.length}
+      <p className={cn(type.micro, "font-semibold uppercase tracking-wide text-muted-foreground")}>
+        {metric} · top {lanes.length}
       </p>
-      <ul data-motion-list className="flex flex-col gap-2.5">
+      <ul data-motion-list className="flex flex-col gap-1.5">
         {lanes.map((lane, index) => {
-          const widthPct = Math.round((lane.share ?? 0) * 1000) / 10;
+          const widthPct = Math.round(lane.share * 1000) / 10;
           const lead = index === 0;
           return (
-            <li key={lane.row.key} className="flex items-center gap-2">
+            <li key={lane.row.key} className="flex items-center gap-1.5">
               <span
                 className={cn(
-                  "flex size-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold tabular-nums text-white ring-1 ring-white/30",
-                  lead ? "shadow-sm" : "opacity-90"
+                  "flex size-4 shrink-0 items-center justify-center rounded-full text-[9px] font-bold tabular-nums text-white",
+                  lead ? "ring-1 ring-white/35" : "opacity-90"
                 )}
                 style={{ backgroundColor: lane.paint.primary }}
               >
                 {index + 1}
               </span>
-              <div className="relative h-8 min-w-0 flex-1">
-                <div className="absolute inset-y-1 left-0 right-3 overflow-hidden rounded-full bg-background/55">
+              <div className="relative h-5 min-w-0 flex-1">
+                <div className="absolute inset-y-0.5 left-0 right-2 overflow-hidden rounded-full bg-background/55">
                   <span
                     data-motion-bar="x"
                     className="absolute inset-y-0 left-0 origin-left rounded-full"
@@ -143,36 +144,21 @@ function RookieRaceField({
                       width: `${widthPct}%`,
                       background: `linear-gradient(90deg, ${lane.paint.primary}99, ${lane.paint.primary})`,
                       boxShadow: lead
-                        ? `0 0 0 1px ${lane.paint.secondary}66`
+                        ? `0 0 0 1px ${lane.paint.secondary}55`
                         : undefined,
                     }}
                   />
                 </div>
                 <span
                   className={cn(
-                    type.caption,
-                    "pointer-events-none absolute inset-y-0 left-2 z-[1] flex max-w-[70%] items-center truncate font-semibold text-foreground"
+                    type.micro,
+                    "pointer-events-none absolute inset-y-0 left-1.5 z-[1] flex max-w-[75%] items-center truncate font-semibold text-foreground"
                   )}
                 >
                   {shortLast(lane.row.name)}
                 </span>
-                <span
-                  className="absolute top-1/2 z-[2] -translate-x-1/2 -translate-y-1/2"
-                  style={{
-                    left: `clamp(0.75rem, ${widthPct}%, calc(100% - 0.75rem))`,
-                  }}
-                >
-                  <PlayerHeadshot
-                    playerId={lane.row.playerId}
-                    espnId={lane.row.playerId}
-                    name={lane.row.name}
-                    teamKey={lane.row.teamAbbr}
-                    size="xs"
-                    className="ring-2 ring-background shadow-sm"
-                  />
-                </span>
               </div>
-              <span className="w-10 shrink-0 text-right text-[12px] font-bold tabular-nums">
+              <span className="w-8 shrink-0 text-right text-[11px] font-bold tabular-nums">
                 {lane.value}
               </span>
             </li>
@@ -206,13 +192,13 @@ function RookieRow({
   const inner = (
     <div
       data-motion="row"
-      className="flex items-center gap-2.5 rounded-xl px-2 py-2 transition-colors hover:bg-secondary/70"
+      className="flex items-center gap-2 rounded-lg px-1.5 py-1 transition-colors hover:bg-secondary/70"
       style={{
-        boxShadow: `inset 3px 0 0 ${paint.primary}`,
+        boxShadow: `inset 2px 0 0 ${paint.primary}`,
       }}
     >
       <span
-        className="flex size-6 shrink-0 items-center justify-center rounded-full text-[11px] font-bold tabular-nums text-white"
+        className="flex size-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold tabular-nums text-white"
         style={{ backgroundColor: paint.primary }}
         aria-hidden
       >
@@ -223,19 +209,19 @@ function RookieRow({
         espnId={row.playerId}
         name={row.name}
         teamKey={row.teamAbbr}
-        size="sm"
+        size="xs"
         className="shrink-0"
       />
       <div className="min-w-0 flex-1">
         <div className="flex items-baseline justify-between gap-2">
-          <p className={cn(type.bodySm, "truncate font-semibold")}>{row.name}</p>
-          <p className={cn(type.bodySm, "shrink-0 font-bold tabular-nums")}>
+          <p className={cn(type.caption, "truncate font-semibold")}>{row.name}</p>
+          <p className={cn(type.caption, "shrink-0 font-bold tabular-nums")}>
             {primary}
           </p>
         </div>
-        <div className="mt-0.5 flex items-center gap-1.5">
+        <div className="mt-px flex items-center gap-1">
           <TeamLogo teamKey={row.teamAbbr} size="2xs" />
-          <span className={cn(type.caption, "truncate text-muted-foreground")}>
+          <span className={cn(type.micro, "truncate text-muted-foreground")}>
             {secondary}
           </span>
         </div>
@@ -248,7 +234,7 @@ function RookieRow({
     <li>
       <AppLink
         href={row.href}
-        className="block min-w-0 rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="block min-w-0 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
         {inner}
       </AppLink>
@@ -278,7 +264,7 @@ export function RookieTrackerBoard({ model }: { model: RookieTrackerModel }) {
   const showRace = lanes.length >= 2;
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-2">
       <ChoiceTrack aria-labelledby={labelId} className="flex-wrap">
         <span id={labelId} className="sr-only">
           Rookie race metric
@@ -295,28 +281,24 @@ export function RookieTrackerBoard({ model }: { model: RookieTrackerModel }) {
       </ChoiceTrack>
       {/*
         Mobile stacks race above the board. Desktop places the race beside the
-        list so the card fills the column instead of leaving empty air under the viz.
+        list so the card stays short and secondary.
       */}
       <div
         className={cn(
-          "grid min-w-0 gap-3",
+          "grid min-w-0 gap-2",
           showRace &&
-            "lg:grid-cols-[minmax(0,1fr)_minmax(15.5rem,20rem)] lg:items-stretch"
+            "lg:grid-cols-[minmax(0,1fr)_minmax(12.5rem,15.5rem)] lg:items-start"
         )}
       >
         {showRace ? (
           <div className="min-w-0 lg:col-start-2 lg:row-start-1">
-            <RookieRaceField
-              lanes={lanes}
-              sort={sort}
-              className="h-full min-h-0 justify-center"
-            />
+            <RookieRaceField lanes={lanes} sort={sort} />
           </div>
         ) : null}
         <ol
           data-motion-list
           className={cn(
-            "flex min-w-0 flex-col gap-0.5",
+            "flex min-w-0 flex-col",
             showRace && "lg:col-start-1 lg:row-start-1"
           )}
         >
