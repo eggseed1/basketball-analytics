@@ -223,10 +223,21 @@ const DRBL_BUDGET_MS = 2000;
 /** In-flight dedupe so concurrent Suspense islands share one load. */
 let homeInflight: Promise<HomeAnalytics> | null = null;
 
+/**
+ * Leaderboard floor. Full seasons keep the classic 15-GP cut; early boards
+ * scale it down so TS%/USG leaders are not empty after a handful of games.
+ */
 function qualify(rows: PlayerSeason[], minMpg = 18): PlayerSeason[] {
-  return rows.filter(
-    (p) => p.gamesPlayed >= 15 && p.minutes / p.gamesPlayed >= minMpg
-  );
+  let maxGp = 0;
+  for (const row of rows) {
+    if (row.gamesPlayed > maxGp) maxGp = row.gamesPlayed;
+  }
+  const minGp = maxGp >= 15 ? 15 : Math.max(1, Math.min(5, maxGp));
+  return rows.filter((p) => {
+    if (p.gamesPlayed < minGp) return false;
+    const mpg = p.minutes / Math.max(1, p.gamesPlayed);
+    return mpg >= minMpg;
+  });
 }
 
 function withTimeout<T>(
@@ -379,7 +390,7 @@ async function loadHomeAnalytics(): Promise<HomeAnalytics> {
   const drblSeasonOk = isDrblSeason(season);
 
   const [darko, raptor, drblRows, aliasIndex] = await Promise.all([
-    getDarkoRatings().catch(() => [] as DarkoRating[]),
+    getDarkoRatings(season).catch(() => [] as DarkoRating[]),
     getRaptorRatings(season).catch(() => [] as RaptorRating[]),
     drblSeasonOk
       ? withTimeout(
