@@ -131,7 +131,7 @@ export default async function TeamHistoryPage({ params, searchParams }: TeamHist
               franchiseToken={brand?.id}
             />
             <FranchiseTimeline canonicalTeamId={team.teamId} />
-            <Suspense fallback={<DestinationSectionSkeleton label={t("loadingTeamArc")} />}>
+            <Suspense fallback={<DestinationSectionSkeleton context="history" />}>
               <TeamArcIsland
                 teamRouteKey={teamId}
                 teamId={team.teamId}

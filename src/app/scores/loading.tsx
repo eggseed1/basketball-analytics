@@ -6,11 +6,8 @@ import { ScoreTileSkeletonGrid } from "@/components/sports/score-tile-skeleton";
 
 export default function Loading() {
   return (
-    <DestinationLoadingFrame
-      title="Scores"
-      subtitle="Live games, results, and tip-off times."
-    >
-      <div className="flex flex-col gap-4">
+    <DestinationLoadingFrame title="Scores" context="scores">
+      <div className="flex flex-col gap-4" aria-hidden>
         <div className="flex flex-wrap gap-2">
           <SkeletonBlock className="h-9 w-16 rounded-full" />
           <SkeletonBlock className="h-9 w-16 rounded-full" />

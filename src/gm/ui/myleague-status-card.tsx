@@ -15,7 +15,7 @@ export function MyLeagueStatusCard() {
   if (!hydrated) {
     return (
       <div className="sports-card px-4 py-3 text-sm text-muted-foreground">
-        Loading MyLeague shell…
+        Booting the front office
       </div>
     );
   }

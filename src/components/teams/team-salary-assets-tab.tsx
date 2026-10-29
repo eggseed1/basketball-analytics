@@ -78,12 +78,6 @@ export async function TeamSalaryAssetsTab({
     contracts: t("salaryContracts"),
     picks: t("salaryPicks"),
   };
-  const loadingLabels: Record<TeamSalaryView, string> = {
-    summary: t("loadingSalary"),
-    contracts: t("loadingContracts"),
-    picks: t("loadingPicks"),
-  };
-
   return (
     <div data-motion-stack className="flex flex-col gap-6">
       <TeamSalaryViewSwitch
@@ -93,7 +87,6 @@ export async function TeamSalaryAssetsTab({
           id: item.id,
           label: viewLabels[item.id],
           href: teamSalaryHref(routeTeamId, item.id, season),
-          loadingLabel: loadingLabels[item.id],
         }))}
         note={
           season !== frontOfficeSeason ? (
@@ -113,10 +106,6 @@ export async function TeamSalaryAssetsTab({
           abbreviation={abbreviation}
           season={season}
           view={view}
-          loadingSalary={t("loadingSalary")}
-          loadingContracts={t("loadingContracts")}
-          loadingPicks={t("loadingPicks")}
-          loadingCapAssets={t("loadingCapAssets")}
         />
       </TeamSalaryViewSwitch>
     </div>
@@ -130,10 +119,6 @@ function SalaryViewContent({
   abbreviation,
   season,
   view,
-  loadingSalary,
-  loadingContracts,
-  loadingPicks,
-  loadingCapAssets,
 }: {
   routeTeamId: string;
   teamId: string;
@@ -141,34 +126,50 @@ function SalaryViewContent({
   abbreviation: string;
   season: string;
   view: TeamSalaryView;
-  loadingSalary: string;
-  loadingContracts: string;
-  loadingPicks: string;
-  loadingCapAssets: string;
 }) {
   return (
     <>
       {view === "summary" ? (
         <>
-          <Suspense fallback={<DestinationSectionSkeleton label={loadingSalary} />}>
+          <Suspense
+            fallback={<DestinationSectionSkeleton context="section-salary" />}
+          >
             <TeamFrontOfficeIsland teamId={teamId} />
           </Suspense>
-          <Suspense fallback={<DestinationSectionSkeleton label={loadingCapAssets} />}>
-            <TeamAssetsIsland teamId={espnTeamId} abbreviation={abbreviation} view="summary" />
+          <Suspense
+            fallback={<DestinationSectionSkeleton context="section-salary" />}
+          >
+            <TeamAssetsIsland
+              teamId={espnTeamId}
+              abbreviation={abbreviation}
+              view="summary"
+            />
           </Suspense>
         </>
       ) : null}
 
       {view === "contracts" ? (
-        <Suspense fallback={<DestinationSectionSkeleton label={loadingContracts} />}>
-          <TeamContractsIsland routeTeamId={routeTeamId} teamId={teamId} season={season} />
+        <Suspense
+          fallback={<DestinationSectionSkeleton context="section-salary" />}
+        >
+          <TeamContractsIsland
+            routeTeamId={routeTeamId}
+            teamId={teamId}
+            season={season}
+          />
         </Suspense>
       ) : null}
 
       {view === "picks" ? (
         <>
-          <Suspense fallback={<DestinationSectionSkeleton label={loadingPicks} />}>
-            <TeamAssetsIsland teamId={espnTeamId} abbreviation={abbreviation} view="picks" />
+          <Suspense
+            fallback={<DestinationSectionSkeleton context="section-salary" />}
+          >
+            <TeamAssetsIsland
+              teamId={espnTeamId}
+              abbreviation={abbreviation}
+              view="picks"
+            />
           </Suspense>
           <TeamDraftHistorySection teamId={espnTeamId} />
         </>

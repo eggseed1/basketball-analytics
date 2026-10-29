@@ -5,11 +5,8 @@ import {
 
 export default function Loading() {
   return (
-    <DestinationLoadingFrame
-      title="Players"
-      subtitle="Season board and filters."
-    >
-      <div className="flex flex-col gap-4">
+    <DestinationLoadingFrame title="Players" context="explore-players">
+      <div className="flex flex-col gap-4" aria-hidden>
         <div className="flex flex-wrap gap-2">
           <SkeletonBlock className="h-9 w-20 rounded-full" />
           <SkeletonBlock className="h-9 w-24 rounded-full" />

@@ -6,7 +6,9 @@ import {
   LoadingStatus,
   SkeletonBlock,
 } from "@/components/continuity/destination-loading-frame";
+import { LoadingPhrase } from "@/components/continuity/loading-phrase";
 import { HomeStandingsBoard } from "@/components/home/home-standings-board";
+import { initialLoadingPhrase } from "@/lib/loading-phrases";
 import type { HomeStandingSlim } from "@/lib/home-standings-slim";
 
 type Payload = {
@@ -52,17 +54,19 @@ export function HomeStandingsClient({
   }, [season]);
 
   if (!board) {
-    const label = race ? "Loading playoff race…" : "Loading standings…";
+    const context = race ? "standings-viz" : "standings";
     return (
       <div
         className="sports-card flex flex-col gap-3 p-4"
         aria-busy="true"
         aria-live="polite"
-        aria-label={label}
+        aria-label={initialLoadingPhrase(context)}
       >
-        <LoadingStatus>{label}</LoadingStatus>
+        <LoadingStatus>
+          <LoadingPhrase context={context} />
+        </LoadingStatus>
         <SkeletonBlock className="h-4 w-28 rounded-md" />
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2" aria-hidden>
           {Array.from({ length: 6 }, (_, i) => (
             <SkeletonBlock key={i} className="h-8 w-full rounded-lg" />
           ))}

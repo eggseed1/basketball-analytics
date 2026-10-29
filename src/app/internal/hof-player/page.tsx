@@ -167,7 +167,7 @@ export default async function HofPlayerExamplePage({ searchParams }: PageProps) 
           hero={
             <Suspense
               fallback={
-                <DestinationSectionSkeleton label="Loading percentile ranking…" />
+                <DestinationSectionSkeleton context="player" />
               }
             >
               <PlayerPercentileIsland
@@ -185,7 +185,7 @@ export default async function HofPlayerExamplePage({ searchParams }: PageProps) 
         />
 
         <Suspense
-          fallback={<DestinationSectionSkeleton label="Loading statistics…" />}
+          fallback={<DestinationSectionSkeleton context="section-chart" />}
         >
           <PlayerStatsIsland
             playerId={playerId}

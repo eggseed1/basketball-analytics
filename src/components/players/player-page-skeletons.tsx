@@ -5,8 +5,16 @@
 
 import type { ComponentPropsWithoutRef } from "react";
 
-import { LoadingTopBar } from "@/components/continuity/destination-loading-frame";
+import {
+  LoadingStatus,
+  LoadingTopBar,
+} from "@/components/continuity/destination-loading-frame";
+import { LoadingPhrase } from "@/components/continuity/loading-phrase";
 import { LoadingBarSignal } from "@/components/continuity/viewport-loading-bar";
+import {
+  initialLoadingPhrase,
+  type LoadingContext,
+} from "@/lib/loading-phrases";
 import { cn } from "@/lib/utils";
 
 function Pulse({
@@ -31,28 +39,50 @@ export function PlayerPageLoadingFrame() {
       aria-live="polite"
     >
       <LoadingTopBar />
+      <LoadingStatus>
+        <LoadingPhrase context="player" />
+      </LoadingStatus>
       {/* The page's notice slot: empty most of the time, but its gap still offsets the grid. */}
       <div aria-hidden className="min-w-0" />
       <div className="grid items-start gap-4 min-[800px]:grid-cols-[minmax(16rem,20rem)_minmax(0,1fr)]">
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3" aria-hidden>
           <Pulse className="h-[235px] rounded-md" />
           <Pulse className="h-[230px] rounded-md" />
           <Pulse className="h-[298px] rounded-md" />
         </div>
-        <PlayerPercentileSkeleton label="Loading player…" showBar={false} />
+        <PlayerPercentileSkeleton label={initialLoadingPhrase("player")} showBar={false} />
       </div>
-      <Pulse className="min-h-[22rem] rounded-md" />
-      <p className="sr-only">Loading player…</p>
+      <Pulse className="min-h-[22rem] rounded-md" aria-hidden />
+      <p className="sr-only">{initialLoadingPhrase("player")}</p>
     </div>
+  );
+}
+
+function SkeletonPhrase({
+  context,
+  label,
+}: {
+  context: LoadingContext;
+  label?: string;
+}) {
+  return (
+    <>
+      <LoadingStatus>
+        <LoadingPhrase context={context} />
+      </LoadingStatus>
+      <p className="sr-only">{label ?? initialLoadingPhrase(context)}</p>
+    </>
   );
 }
 
 /** Percentile hero — tall enough to match the ranking panel. */
 export function PlayerPercentileSkeleton({
-  label = "Loading percentile ranking…",
+  label,
+  context = "player",
   showBar = true,
 }: {
   label?: string;
+  context?: LoadingContext;
   /** Off inside a full-page frame, which already shows a progress line. */
   showBar?: boolean;
 }) {
@@ -64,21 +94,20 @@ export function PlayerPercentileSkeleton({
       aria-live="polite"
     >
       {showBar ? <LoadingBarSignal /> : null}
-      <p className="text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
-        {label}
-      </p>
+      <SkeletonPhrase context={context} label={label} />
       <Pulse className="min-h-[26rem] flex-1 rounded-md" />
-      <p className="sr-only">{label}</p>
     </div>
   );
 }
 
 /** Statistics / Career / Games boards. */
 export function PlayerBoardSkeleton({
-  label = "Loading…",
+  label,
+  context = "section",
   minHeightClassName = "min-h-[22rem]",
 }: {
   label?: string;
+  context?: LoadingContext;
   /** Override when the live section is shorter (overview Style, etc.). */
   minHeightClassName?: string;
 }) {
@@ -90,21 +119,20 @@ export function PlayerBoardSkeleton({
       aria-live="polite"
     >
       <LoadingBarSignal />
-      <p className="text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
-        {label}
-      </p>
-      <Pulse className="h-10 rounded-md" />
-      <Pulse className="min-h-[12rem] flex-1 rounded-md" />
-      <p className="sr-only">{label}</p>
+      <SkeletonPhrase context={context} label={label} />
+      <Pulse className="h-10 rounded-md" aria-hidden />
+      <Pulse className="min-h-[12rem] flex-1 rounded-md" aria-hidden />
     </div>
   );
 }
 
 /** Overview Career stats board (chart + category table). */
 export function PlayerOverviewCareerSkeleton({
-  label = "Loading career…",
+  label,
+  context = "section-chart",
 }: {
   label?: string;
+  context?: LoadingContext;
 }) {
   return (
     <div
@@ -114,22 +142,26 @@ export function PlayerOverviewCareerSkeleton({
       aria-live="polite"
     >
       <LoadingBarSignal />
-      <Pulse className="h-7 w-36 rounded-md" />
-      <Pulse className="h-8 w-full max-w-sm rounded-md" />
-      <Pulse className="h-10 w-full max-w-md rounded-md" />
-      <Pulse className="h-[16rem] rounded-md" />
-      <Pulse className="h-8 w-full max-w-lg rounded-md" />
-      <Pulse className="h-48 w-full rounded-md" />
-      <p className="sr-only">{label}</p>
+      <SkeletonPhrase context={context} label={label} />
+      <div aria-hidden className="flex flex-col gap-3">
+        <Pulse className="h-7 w-36 rounded-md" />
+        <Pulse className="h-8 w-full max-w-sm rounded-md" />
+        <Pulse className="h-10 w-full max-w-md rounded-md" />
+        <Pulse className="h-[16rem] rounded-md" />
+        <Pulse className="h-8 w-full max-w-lg rounded-md" />
+        <Pulse className="h-48 w-full rounded-md" />
+      </div>
     </div>
   );
 }
 
 /** Overview Style (compact). */
 export function PlayerOverviewStyleSkeleton({
-  label = "Loading style…",
+  label,
+  context = "explore-styles",
 }: {
   label?: string;
+  context?: LoadingContext;
 }) {
   return (
     <div
@@ -138,25 +170,32 @@ export function PlayerOverviewStyleSkeleton({
       aria-busy="true"
       aria-live="polite"
     >
-      <Pulse className="h-7 w-24 rounded-md" />
-      <Pulse className="h-4 w-64 max-w-full rounded-md opacity-70" />
-      <Pulse className="h-8 w-48 rounded-md" />
-      <div className="grid gap-3 sm:grid-cols-2">
-        <Pulse className="h-20 rounded-md" />
-        <Pulse className="h-20 rounded-md" />
+      <SkeletonPhrase context={context} label={label} />
+      <div aria-hidden className="flex flex-col gap-3">
+        <Pulse className="h-7 w-24 rounded-md" />
+        <Pulse className="h-4 w-64 max-w-full rounded-md opacity-70" />
+        <Pulse className="h-8 w-48 rounded-md" />
+        <div className="grid gap-3 sm:grid-cols-2">
+          <Pulse className="h-20 rounded-md" />
+          <Pulse className="h-20 rounded-md" />
+        </div>
       </div>
-      <p className="sr-only">{label}</p>
     </div>
   );
 }
 
 /** Overview contract summary, or Salary tab body while streaming. */
 export function PlayerOverviewContractSkeleton({
-  label = "Loading contract…",
+  label,
+  context = "section-salary",
+  compact = false,
 }: {
   label?: string;
+  context?: LoadingContext;
+  /** Compact overview slot vs full Salary tab. */
+  compact?: boolean;
 }) {
-  const salaryTab = /salary/i.test(label);
+  const salaryTab = !compact && (label == null || /salary/i.test(label));
   return (
     <div
       data-skeleton
@@ -167,20 +206,24 @@ export function PlayerOverviewContractSkeleton({
       aria-busy="true"
       aria-live="polite"
     >
-      <Pulse className="h-7 w-36 rounded-md" />
-      <Pulse className="h-4 w-56 max-w-full rounded-md opacity-70" />
-      <Pulse className={cn("rounded-md", salaryTab ? "h-40" : "h-28")} />
-      {salaryTab ? <Pulse className="h-56 rounded-md" /> : null}
-      <p className="sr-only">{label}</p>
+      <SkeletonPhrase context={context} label={label} />
+      <div aria-hidden className="flex flex-col gap-3">
+        <Pulse className="h-7 w-36 rounded-md" />
+        <Pulse className="h-4 w-56 max-w-full rounded-md opacity-70" />
+        <Pulse className={cn("rounded-md", salaryTab ? "h-40" : "h-28")} />
+        {salaryTab ? <Pulse className="h-56 rounded-md" /> : null}
+      </div>
     </div>
   );
 }
 
 /** Single Comparisons block (Style / Impact / Trajectory). */
 export function PlayerOverviewSimilarSkeleton({
-  label = "Loading comparisons…",
+  label,
+  context = "compare",
 }: {
   label?: string;
+  context?: LoadingContext;
 }) {
   return (
     <div
@@ -189,11 +232,13 @@ export function PlayerOverviewSimilarSkeleton({
       aria-busy="true"
       aria-live="polite"
     >
-      <Pulse className="h-7 w-40 rounded-md" />
-      <Pulse className="h-4 w-80 max-w-full rounded-md opacity-70" />
-      <Pulse className="h-8 w-64 max-w-full rounded-md" />
-      <Pulse className="h-48 rounded-md" />
-      <p className="sr-only">{label}</p>
+      <SkeletonPhrase context={context} label={label} />
+      <div aria-hidden className="flex flex-col gap-3">
+        <Pulse className="h-7 w-40 rounded-md" />
+        <Pulse className="h-4 w-80 max-w-full rounded-md opacity-70" />
+        <Pulse className="h-8 w-64 max-w-full rounded-md" />
+        <Pulse className="h-48 rounded-md" />
+      </div>
     </div>
   );
 }

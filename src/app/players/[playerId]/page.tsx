@@ -648,7 +648,7 @@ export default async function PlayerPage({
 
         {view === "sentiment" ? (
           <Suspense
-            fallback={<PlayerBoardSkeleton label={t("loadingSentiment")} />}
+            fallback={<PlayerBoardSkeleton context="sentiment" />}
           >
             <PlayerSentimentTabIslandDeferred
               playerId={playerId}
@@ -662,7 +662,7 @@ export default async function PlayerPage({
 
         {view === "games" ? (
           <Suspense
-            fallback={<PlayerBoardSkeleton label={t("loadingGameLog")} />}
+            fallback={<PlayerBoardSkeleton context="section" />}
           >
             <PlayerGamesIslandDeferred
               playerId={playerId}
@@ -686,7 +686,7 @@ export default async function PlayerPage({
 
         {view === "career" ? (
           <Suspense
-            fallback={<PlayerBoardSkeleton label={t("loadingCareer")} />}
+            fallback={<PlayerBoardSkeleton context="section-chart" />}
           >
             <PlayerCareerIsland
               playerId={playerId}
@@ -704,7 +704,7 @@ export default async function PlayerPage({
         {view === "career" && !slimWorker ? (
           <Suspense
             fallback={
-              <PlayerBoardSkeleton label={t("loadingCareerAnalysis")} />
+              <PlayerBoardSkeleton context="section-chart" />
             }
           >
             <PlayerCareerAnalysisIslandDeferred
@@ -720,7 +720,7 @@ export default async function PlayerPage({
         {view === "overview" && !slimWorker ? (
           <Suspense
             fallback={
-              <PlayerOverviewContractSkeleton label={t("loadingContract")} />
+              <PlayerOverviewContractSkeleton compact />
             }
           >
             <PlayerContractSectionIsland
@@ -737,7 +737,7 @@ export default async function PlayerPage({
         {view === "salary" && !slimWorker ? (
           <Suspense
             fallback={
-              <PlayerOverviewContractSkeleton label={t("loadingSalary")} />
+              <PlayerOverviewContractSkeleton />
             }
           >
             <PlayerContractSectionIsland
@@ -803,7 +803,7 @@ export default async function PlayerPage({
 
         {view === "shooting" ? (
           <Suspense
-            fallback={<PlayerBoardSkeleton label={t("loadingShotChart")} />}
+            fallback={<PlayerBoardSkeleton context="section-chart" />}
           >
             <PlayerVisualizationsIslandDeferred
               playerId={playerId}
@@ -821,7 +821,7 @@ export default async function PlayerPage({
         ) : null}
 
         {view === "onoff" ? (
-          <Suspense fallback={<PlayerBoardSkeleton label={t("loadingOnOff")} />}>
+          <Suspense fallback={<PlayerBoardSkeleton context="section-chart" />}>
             <PlayerOnOffIsland
               playerId={playerId}
               nbaIds={[identity?.nbaId, /^\d+$/.test(playerId) ? playerId : null]}
@@ -833,7 +833,7 @@ export default async function PlayerPage({
 
         {view === "splits" || view === "advanced" || view === "highs" ? (
           <Suspense
-            fallback={<PlayerBoardSkeleton label={t("loadingDeepStats")} />}
+            fallback={<PlayerBoardSkeleton context="section-chart" />}
           >
             <PlayerStatDepthIslandDeferred
               playerId={playerId}

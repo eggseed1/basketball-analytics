@@ -5,9 +5,6 @@ import { DestinationLoadingFrame } from "@/components/continuity/destination-loa
 export default async function Loading() {
   const t = await getTranslations("Games");
   return (
-    <DestinationLoadingFrame
-      title={t("loadingTitle")}
-      subtitle={t("loadingSubtitle")}
-    />
+    <DestinationLoadingFrame title={t("loadingTitle")} context="game" />
   );
 }
