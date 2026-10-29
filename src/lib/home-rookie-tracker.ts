@@ -138,23 +138,56 @@ export function rookieRaceLeaderValue(
   return best;
 }
 
+/** True when at least one row has a real value for this sort. */
+export function rookieTrackerSortHasValues(
+  rows: readonly RookieTrackerRow[],
+  sort: RookieTrackerSort
+): boolean {
+  if (sort === "pick") return rows.length > 0;
+  return rows.some((row) => {
+    const value = metricValue(row, sort);
+    return value != null && Number.isFinite(value);
+  });
+}
+
+/** Sorts that have data for this class (pick always stays). */
+export function availableRookieTrackerSorts(
+  rows: readonly RookieTrackerRow[]
+): RookieTrackerSort[] {
+  const order: RookieTrackerSort[] = [
+    "war1",
+    "points",
+    "rebounds",
+    "assists",
+    "pick",
+  ];
+  return order.filter((sort) => rookieTrackerSortHasValues(rows, sort));
+}
+
 /** Prefer WAR1 when any rookie has it; else counting stats; else draft order. */
 export function defaultRookieTrackerSort(
   rows: readonly RookieTrackerRow[]
 ): RookieTrackerSort {
-  if (rows.some((row) => row.war1 != null && Number.isFinite(row.war1))) {
-    return "war1";
-  }
-  if (rows.some((row) => row.points != null && Number.isFinite(row.points))) {
-    return "points";
-  }
-  if (rows.some((row) => row.rebounds != null && Number.isFinite(row.rebounds))) {
-    return "rebounds";
-  }
-  if (rows.some((row) => row.assists != null && Number.isFinite(row.assists))) {
-    return "assists";
-  }
-  return "pick";
+  return availableRookieTrackerSorts(rows)[0] ?? "pick";
+}
+
+/**
+ * Ranked board for a sort. Metric sorts drop blank lines so the list never
+ * pads with "—" when WAR1 / counting is missing for a pick.
+ */
+export function boardRowsForRookieSort(
+  rows: readonly RookieTrackerRow[],
+  sort: RookieTrackerSort,
+  limit = ROOKIE_TRACKER_LIMIT
+): RookieTrackerRow[] {
+  const pool =
+    sort === "pick"
+      ? rows
+      : rows.filter((row) => {
+          const value = metricValue(row, sort);
+          return value != null && Number.isFinite(value);
+        });
+  return sortRookieTrackerRows(pool, sort).slice(0, limit);
 }
 
 /**
