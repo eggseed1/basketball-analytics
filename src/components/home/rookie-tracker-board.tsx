@@ -7,11 +7,11 @@ import { TeamLogo } from "@/components/brand/team-logo";
 import { AppLink } from "@/components/ui/app-link";
 import { ChoiceChip, ChoiceTrack } from "@/components/ui/choice-chip";
 import {
-  ROOKIE_TRACKER_LIMIT,
+  availableRookieTrackerSorts,
+  boardRowsForRookieSort,
   defaultRookieTrackerSort,
   rookieRaceLeaderValue,
   rookieRaceShare,
-  sortRookieTrackerRows,
   type RookieTrackerModel,
   type RookieTrackerRow,
   type RookieTrackerSort,
@@ -29,7 +29,7 @@ const SORTS: { id: RookieTrackerSort; label: string }[] = [
 ];
 
 /** Match the home board length — this chart is a glance, not a second leaderboard. */
-const RACE_LANES = ROOKIE_TRACKER_LIMIT;
+const RACE_LANES = 5;
 
 function fmt(n: number | null, digits = 1): string {
   if (n == null || !Number.isFinite(n)) return "—";
@@ -251,22 +251,27 @@ function RookieRow({
 
 export function RookieTrackerBoard({ model }: { model: RookieTrackerModel }) {
   const labelId = useId();
+  const sortOptions = useMemo(
+    () => availableRookieTrackerSorts(model.rows),
+    [model.rows]
+  );
   const initialSort = useMemo(
     () => defaultRookieTrackerSort(model.rows),
     [model.rows]
   );
   const [sort, setSort] = useState<RookieTrackerSort>(initialSort);
+  const activeSort = sortOptions.includes(sort) ? sort : initialSort;
   const rows = useMemo(
-    () => sortRookieTrackerRows(model.rows, sort).slice(0, ROOKIE_TRACKER_LIMIT),
-    [model.rows, sort]
+    () => boardRowsForRookieSort(model.rows, activeSort),
+    [model.rows, activeSort]
   );
   const leader = useMemo(
-    () => rookieRaceLeaderValue(rows, sort),
-    [rows, sort]
+    () => rookieRaceLeaderValue(rows, activeSort),
+    [rows, activeSort]
   );
   const lanes = useMemo(
-    () => buildRaceLanes(rows, sort, leader),
-    [rows, sort, leader]
+    () => buildRaceLanes(rows, activeSort, leader),
+    [rows, activeSort, leader]
   );
   const showRace = lanes.length >= 2;
 
@@ -276,15 +281,17 @@ export function RookieTrackerBoard({ model }: { model: RookieTrackerModel }) {
         <span id={labelId} className="sr-only">
           Rookie race metric
         </span>
-        {SORTS.map((option) => (
-          <ChoiceChip
-            key={option.id}
-            active={sort === option.id}
-            onClick={() => setSort(option.id)}
-          >
-            {option.label}
-          </ChoiceChip>
-        ))}
+        {SORTS.filter((option) => sortOptions.includes(option.id)).map(
+          (option) => (
+            <ChoiceChip
+              key={option.id}
+              active={activeSort === option.id}
+              onClick={() => setSort(option.id)}
+            >
+              {option.label}
+            </ChoiceChip>
+          )
+        )}
       </ChoiceTrack>
       {/*
         Mobile stacks race above the board. Desktop places the race beside the
@@ -313,7 +320,7 @@ export function RookieTrackerBoard({ model }: { model: RookieTrackerModel }) {
             <RookieRow
               key={row.key}
               row={row}
-              sort={sort}
+              sort={activeSort}
               rank={index + 1}
             />
           ))}

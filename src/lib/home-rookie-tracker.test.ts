@@ -3,6 +3,8 @@ import { describe, it } from "node:test";
 
 import type { DraftNightPick } from "@/data/runtime/draft-night-snapshot";
 import {
+  availableRookieTrackerSorts,
+  boardRowsForRookieSort,
   buildRookieTracker,
   defaultRookieTrackerSort,
   rookieRaceLeaderValue,
@@ -161,6 +163,10 @@ describe("home-rookie-tracker", () => {
       row({ key: "b", name: "B", overall: 2 }),
     ];
     assert.equal(defaultRookieTrackerSort(rows), "points");
+    assert.deepEqual(availableRookieTrackerSorts(rows), [
+      "points",
+      "pick",
+    ]);
     assert.equal(
       defaultRookieTrackerSort([
         row({ key: "a", name: "A", overall: 1, war1: 0.2, gp: 2 }),
@@ -170,6 +176,26 @@ describe("home-rookie-tracker", () => {
     assert.equal(
       defaultRookieTrackerSort([row({ key: "a", name: "A", overall: 3 })]),
       "pick"
+    );
+  });
+
+  it("drops blank metric rows from the home board", () => {
+    const rows = [
+      row({ key: "a", name: "A", overall: 1 }),
+      row({ key: "b", name: "B", overall: 2, points: 40, gp: 2 }),
+      row({ key: "c", name: "C", overall: 3, points: 20, gp: 2 }),
+    ];
+    assert.deepEqual(
+      boardRowsForRookieSort(rows, "points").map((r) => r.name),
+      ["B", "C"]
+    );
+    assert.deepEqual(
+      boardRowsForRookieSort(rows, "war1").map((r) => r.name),
+      []
+    );
+    assert.deepEqual(
+      boardRowsForRookieSort(rows, "pick").map((r) => r.overall),
+      [1, 2, 3]
     );
   });
 });
