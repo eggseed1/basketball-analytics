@@ -102,19 +102,6 @@ function LineupGrid({
   );
 }
 
-function EmptySlots() {
-  return (
-    <ul aria-hidden className="flex gap-1">
-      {Array.from({ length: LINEUP_SIZE }, (_, i) => (
-        <li key={i} className="flex w-[3.75rem] min-w-0 shrink flex-col items-center gap-0.5">
-          <span className="h-7 w-7 rounded-full border border-dashed border-border sm:h-8 sm:w-8" />
-          <span className="text-[11px] leading-tight text-muted-foreground/60">—</span>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
 function LineupSkeleton({
   heading,
   awayLabel,
@@ -310,9 +297,6 @@ export function GameLineupsPanel({
   if (!mode) return center ?? null;
 
   if (delayed.delayMs && mode !== "pregame" && !loaded) return center ?? null;
-  const reveal =
-    delayed.delayMs > 0 &&
-    "animate-in fade-in slide-in-from-top-2 fill-mode-both duration-700 ease-out motion-reduce:animate-none";
 
   const heading =
     mode === "pregame" ? "Starting lineups" : mode === "break" ? "Last on the floor" : "On the floor";
@@ -329,36 +313,17 @@ export function GameLineupsPanel({
   const away = pick("away");
   const home = pick("home");
 
+  // Pregame: stay off the page until at least one side posts starters, then expand in.
+  if (mode === "pregame" && !away && !home) {
+    return center ?? null;
+  }
+
   const missing =
     mode === "pregame"
-      ? "Not announced yet. Teams usually name starters about 30 minutes before tip."
+      ? "Starters not listed for this side yet."
       : "This lineup is not listed right now.";
 
-  if (mode === "pregame" && !away && !home) {
-    return (
-      <section aria-label={heading} className="flex flex-col gap-2 border-t border-border/50 pt-3">
-        <h2 className={cn(type.micro, "font-bold uppercase tracking-[0.1em] text-muted-foreground")}>
-          {heading}
-        </h2>
-        <LineupGrid
-          away={
-            <>
-              <p className={cn(type.micro, "font-semibold text-muted-foreground")}>{awayLabel}</p>
-              <EmptySlots />
-            </>
-          }
-          home={
-            <>
-              <p className={cn(type.micro, "font-semibold text-muted-foreground")}>{homeLabel}</p>
-              <EmptySlots />
-            </>
-          }
-          center={center}
-        />
-        <p className={cn(type.caption, "text-muted-foreground")}>{missing}</p>
-      </section>
-    );
-  }
+  const shouldExpand = mode === "pregame" || delayed.delayMs > 0;
 
   const renderSide = (
     side: "away" | "home",
@@ -385,8 +350,15 @@ export function GameLineupsPanel({
     </>
   );
 
-  return (
-    <section aria-label={heading} className={cn("flex flex-col gap-2 border-t border-border/50 pt-3", reveal)}>
+  const panel = (
+    <section
+      aria-label={heading}
+      className={cn(
+        "flex flex-col gap-2 border-t border-border/50 pt-3",
+        shouldExpand &&
+          "animate-in fade-in zoom-in-95 fill-mode-both duration-500 ease-out motion-reduce:animate-none"
+      )}
+    >
       <h2 className={cn(type.micro, "font-bold uppercase tracking-[0.1em] text-muted-foreground")}>
         {heading}
       </h2>
@@ -396,5 +368,32 @@ export function GameLineupsPanel({
         center={center}
       />
     </section>
+  );
+
+  return shouldExpand ? <LineupExpandIn>{panel}</LineupExpandIn> : panel;
+}
+
+/** Grows the lineup block open so it pushes into the page instead of popping in. */
+function LineupExpandIn({ children }: { children: ReactNode }) {
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) {
+      setOpen(true);
+      return;
+    }
+    const id = window.requestAnimationFrame(() => setOpen(true));
+    return () => window.cancelAnimationFrame(id);
+  }, []);
+
+  return (
+    <div
+      className={cn(
+        "grid transition-[grid-template-rows] duration-700 ease-out motion-reduce:transition-none",
+        open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+      )}
+    >
+      <div className="min-h-0 overflow-hidden">{children}</div>
+    </div>
   );
 }
