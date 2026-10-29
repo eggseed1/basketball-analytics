@@ -1,5 +1,10 @@
 import { PlayerOverviewCareerClient } from "@/components/players/player-overview-career-client";
 import { TextLink } from "@/components/ui/text-link";
+import type { PlayerSeason } from "@/data/types";
+import {
+  filterCareerBoardSource,
+  toCareerBoardRows,
+} from "@/lib/career-board-rows";
 import { type } from "@/lib/design-system";
 import { type PlayerSeasonKind } from "@/lib/player-destination";
 import { playerHref } from "@/lib/player-page-contract";
@@ -7,13 +12,15 @@ import { cn } from "@/lib/utils";
 import type { ThemeMode } from "@/themes/era-theme";
 
 /**
- * Overview Career stats: same board as the Career tab, loaded client-side so
- * season rows stay out of first HTML. Link to full career analysis below.
+ * Overview Career stats: same board as the Career tab. Prefer SSR career rows
+ * when the page already loaded them; otherwise the client retries the seasons
+ * API (cold edge hits can return an empty array).
  */
 export function PlayerOverviewCareerSection({
   playerId,
   season,
   seasonType,
+  career,
   teamKey,
   fromHistory = false,
   themeMode = "historical",
@@ -21,8 +28,7 @@ export function PlayerOverviewCareerSection({
   playerId: string;
   season: string;
   seasonType: PlayerSeasonKind;
-  /** @deprecated Unused — overview fetches `/api/players/.../seasons`. */
-  career?: unknown;
+  career?: PlayerSeason[];
   teamKey?: string | null;
   fromHistory?: boolean;
   themeMode?: ThemeMode;
@@ -35,6 +41,11 @@ export function PlayerOverviewCareerSection({
     themeMode: themeMode === "modern" ? "modern" : "historical",
   });
 
+  const initialRows =
+    career && career.length > 0
+      ? toCareerBoardRows(filterCareerBoardSource(career))
+      : null;
+
   return (
     <div className="flex flex-col gap-3">
       <PlayerOverviewCareerClient
@@ -44,6 +55,7 @@ export function PlayerOverviewCareerSection({
         teamKey={teamKey}
         fromHistory={fromHistory}
         themeMode={themeMode}
+        initialRows={initialRows && initialRows.length > 0 ? initialRows : null}
       />
       <TextLink
         href={careerHref}

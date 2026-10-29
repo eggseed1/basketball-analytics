@@ -208,8 +208,10 @@ export const getPlayerCareerSeasonsCached = cache(async (playerId: string) => {
   const { preferBundledProductDataOnEdge } = await import(
     "@/data/providers/nba/runtime-policy"
   );
+  // Cold ESPN career often lands ~1.5–2.5s; a 1.2s budget returned [] and the
+  // overview client treated that as "no career seasons".
   const budgetMs = preferBundledProductDataOnEdge()
-    ? 1_200
+    ? 4_000
     : runtimeTimeoutMs(7_000, 3_400);
   const result = await withBudget(
     getPlayerCriticalCareerSeasons(playerId),
