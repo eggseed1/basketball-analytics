@@ -1,8 +1,8 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-28",
-    "retrievedAt": "2026-10-28T17:01:49.525Z",
+    "snapshotDate": "2026-10-29",
+    "retrievedAt": "2026-10-29T17:16:22.373Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",

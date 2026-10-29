@@ -1,8 +1,8 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-28",
-    "retrievedAt": "2026-10-28T17:01:49.525Z",
+    "snapshotDate": "2026-10-29",
+    "retrievedAt": "2026-10-29T17:16:22.373Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
@@ -442,29 +442,6 @@
           ],
           "guaranteedTotal": null,
           "href": "/players/1643717"
-        },
-        {
-          "playerId": "1642923",
-          "playerName": "Otega Oweh",
-          "age": null,
-          "contractId": "cy-1642923-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1642923-2026",
-              "playerId": "1642923",
-              "franchiseId": "25",
-              "season": "2026-27",
-              "salary": null,
-              "capHit": null,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "espn-roster-no-salary"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1642923"
         }
       ],
       "futureCommitments": [
@@ -476,7 +453,7 @@
       ],
       "playerSalaryCommitments": 218316223,
       "playersWithSalary": 16,
-      "playersWithoutSalary": 2
+      "playersWithoutSalary": 1
     },
     "draftAssets": {
       "franchiseId": "25",

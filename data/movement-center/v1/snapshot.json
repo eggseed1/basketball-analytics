@@ -3,13 +3,13 @@
     "methodologyVersion": "movement-m1-0.2+movement-rules-v2",
     "status": "NEWS_INGEST_M1",
     "season": "2026-27",
-    "snapshotDate": "2026-10-28",
+    "snapshotDate": "2026-10-29",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-10-28T16:52:28.651Z",
-    "rosterPlayerCount": 486,
-    "headlinesScanned": 7791,
-    "latestHeadlineAt": "2026-10-28T16:48:11.000Z",
-    "latestTransactionDate": "2026-10-27",
+    "builtAt": "2026-10-29T17:07:21.386Z",
+    "rosterPlayerCount": 487,
+    "headlinesScanned": 8232,
+    "latestHeadlineAt": "2026-10-29T17:03:37.000Z",
+    "latestTransactionDate": "2026-10-28",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
       "Basketball News",
@@ -44,7 +44,7 @@
     },
     "outlet:cbs-sports": {
       "label": "CBS Sports",
-      "credibility": 12
+      "credibility": 16
     },
     "outlet:larry-brown-sports": {
       "label": "Larry Brown Sports",
@@ -68,7 +68,7 @@
     },
     "outlet:the-athletic": {
       "label": "The Athletic",
-      "credibility": 12
+      "credibility": 24
     },
     "outlet:sportsnaut": {
       "label": "Sportsnaut",
@@ -100,7 +100,7 @@
     },
     "outlet:talkbasket": {
       "label": "TalkBasket",
-      "credibility": 12
+      "credibility": 16
     },
     "outlet:clutchpoints": {
       "label": "ClutchPoints",
@@ -148,11 +148,11 @@
     },
     "outlet:fadeaway-world": {
       "label": "Fadeaway World",
-      "credibility": 16
+      "credibility": 12
     },
     "outlet:sporting-news": {
       "label": "Sporting News",
-      "credibility": 12
+      "credibility": 16
     },
     "reporter:bobby-marks-speaking": {
       "label": "Bobby Marks. Speaking (ESPN)",
@@ -180,7 +180,7 @@
     },
     "outlet:basketball-news": {
       "label": "Basketball News",
-      "credibility": 16
+      "credibility": 12
     },
     "outlet:marca": {
       "label": "Marca",
@@ -514,12 +514,14 @@
         "mv-48acff7ee287be31",
         "mv-02067a54b54385f8",
         "mv-cc10d92cf978bee0",
-        "mv-2ea44a4bdf5240f9"
+        "mv-2ea44a4bdf5240f9",
+        "mv-fd7ac36f13f1a52a",
+        "mv-595659e5c96be45a"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-09-26T13:03:20.000Z",
-      "lastMeaningfulAt": "2026-10-28T09:42:11.000Z",
+      "lastMeaningfulAt": "2026-10-29T03:36:46.000Z",
       "linkedPlayerIds": [
         "3062679",
         "3136195",
@@ -642,7 +644,7 @@
     {
       "id": "mv-trade-6442-20261001",
       "headline": "Kyrie Irving, Anthony Davis and others: trade talk",
-      "primaryClaimId": "mv-b2b47aacc4e994d9",
+      "primaryClaimId": "mv-15019bc3be412e54",
       "claimIds": [
         "mv-d510f782fadebd47",
         "mv-62fc808e224a7baa",
@@ -650,12 +652,15 @@
         "mv-7627c3b86b24a57c",
         "mv-6350e063859c6fae",
         "mv-ed86dc90a9f02908",
-        "mv-b2b47aacc4e994d9"
+        "mv-b2b47aacc4e994d9",
+        "mv-15019bc3be412e54",
+        "mv-c74c9aeaddb28069",
+        "mv-c99f53769ff551a0"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-01T01:04:56.000Z",
-      "lastMeaningfulAt": "2026-10-14T07:44:31.000Z",
+      "lastMeaningfulAt": "2026-10-29T16:32:54.000Z",
       "linkedPlayerIds": [
         "6442",
         "6583",
@@ -665,6 +670,7 @@
         "6",
         "18",
         "8",
+        "14",
         "27"
       ]
     },
@@ -1239,16 +1245,17 @@
     },
     {
       "id": "mv-contract-3032977-20261013",
-      "headline": "Giannis Antetokounmpo: contract future",
+      "headline": "Giannis Antetokounmpo: free agency",
       "primaryClaimId": "mv-a590cde37ba884d3",
       "claimIds": [
         "mv-d3b0498977a48f7e",
-        "mv-a590cde37ba884d3"
+        "mv-a590cde37ba884d3",
+        "mv-ff2844633366d1ff"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-13T16:02:16.000Z",
-      "lastMeaningfulAt": "2026-10-14T13:50:48.000Z",
+      "lastMeaningfulAt": "2026-10-29T00:50:42.000Z",
       "linkedPlayerIds": [
         "3032977"
       ],
@@ -1500,7 +1507,7 @@
     {
       "id": "mv-trade-3917376-20261021",
       "headline": "Jaylen Brown and Jayson Tatum: trade talk",
-      "primaryClaimId": "mv-737e7bbb8eacdcc8",
+      "primaryClaimId": "mv-e3ac87411d8d9d38",
       "claimIds": [
         "mv-2f0d84624ccb4107",
         "mv-bd26cacf446be7b2",
@@ -1520,12 +1527,18 @@
         "mv-e27c69861af25c89",
         "mv-7a7463c22b282e86",
         "mv-6082cd1da0f25db9",
-        "mv-737e7bbb8eacdcc8"
+        "mv-737e7bbb8eacdcc8",
+        "mv-be894ef1d24f2d51",
+        "mv-c72f052b18e453db",
+        "mv-97d2c16c92e4a54d",
+        "mv-f6d1cae2ed0c3389",
+        "mv-0808f2364afafa98",
+        "mv-e3ac87411d8d9d38"
       ],
       "evidenceClass": "reported",
-      "state": "unresolved",
+      "state": "denied",
       "firstSeenAt": "2026-10-21T16:52:29.000Z",
-      "lastMeaningfulAt": "2026-10-28T16:31:15.000Z",
+      "lastMeaningfulAt": "2026-10-29T16:05:08.000Z",
       "linkedPlayerIds": [
         "3917376",
         "4065648"
@@ -1654,15 +1667,16 @@
     {
       "id": "mv-trade-4065733-20261027",
       "headline": "Ty Jerome: trade talk",
-      "primaryClaimId": "mv-cc929e62966a1f63",
+      "primaryClaimId": "mv-9b917abbc662b8aa",
       "claimIds": [
         "mv-64b41423754ee999",
-        "mv-cc929e62966a1f63"
+        "mv-cc929e62966a1f63",
+        "mv-9b917abbc662b8aa"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-27T14:31:34.000Z",
-      "lastMeaningfulAt": "2026-10-27T17:58:47.000Z",
+      "lastMeaningfulAt": "2026-10-28T22:02:57.000Z",
       "linkedPlayerIds": [
         "4065733"
       ],
@@ -8721,6 +8735,272 @@
         "2"
       ],
       "isOriginal": true
+    },
+    {
+      "id": "mv-fd7ac36f13f1a52a",
+      "clusterId": "mv-trade-3062679-20260926",
+      "summary": "3 Kristaps Porzingis trades Warriors must seek out to bolster roster amid ongoing healthy mystery",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-28T19:36:47.000Z",
+      "sourceId": "reporter:shams-charania",
+      "sourceLabel": "ClutchPoints, citing Shams Charania (ESPN)",
+      "reporterLabel": "Shams Charania",
+      "sourceUrl": "https://clutchpoints.com/nba/golden-state-warriors/3-kristaps-porzingis-trades-warriors-must-seek-out-to-bolster-roster-amid-ongoing-healthy-mystery",
+      "playerIds": [
+        "3102531"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-9b917abbc662b8aa",
+      "clusterId": "mv-trade-4065733-20261027",
+      "summary": "Thunder rumors: Brian Windhorst gets cryptic with trade reunion tease, and it’s probably about Ty Jerome",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-28T22:02:57.000Z",
+      "sourceId": "reporter:brian-windhorst",
+      "sourceLabel": "ClutchPoints, citing Brian Windhorst (ESPN)",
+      "reporterLabel": "Brian Windhorst",
+      "sourceUrl": "https://clutchpoints.com/nba/oklahoma-city-thunder/thunder-rumors-brian-windhorst-cryptic-trade-reunion-tease-and-probably-ty-jerome",
+      "playerIds": [
+        "4065733"
+      ],
+      "teamIds": [
+        "25"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-ff2844633366d1ff",
+      "clusterId": "mv-contract-3032977-20261013",
+      "summary": "Giannis Antetokounmpo Linked to 4 Teams in Potential Free Agency After Heat’s 0-4 Start",
+      "claimType": "free_agent_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-29T00:50:42.000Z",
+      "sourceId": "outlet:basketball-news",
+      "sourceLabel": "Basketball News",
+      "sourceUrl": "https://www.basketballnews.com/news/basketballnews-nba-active-news-giannis-antetokounmpo-linked-to-four-teams-in-potential-free-agency-after-heats-zero-four-start/",
+      "playerIds": [
+        "3032977"
+      ],
+      "teamIds": [
+        "14"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-15019bc3be412e54",
+      "clusterId": "mv-trade-6442-20261001",
+      "summary": "Insider Reveals Miami Heat Fully Monitoring Kyrie Irving For Trade",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-29T01:01:33.000Z",
+      "sourceId": "reporter:shams-charania",
+      "sourceLabel": "Heavy, citing Shams Charania (ESPN)",
+      "reporterLabel": "Shams Charania",
+      "sourceUrl": "https://heavy.com/sports/nba/miami-heat/insider-miami-heat-kyrie-irving-trade/",
+      "playerIds": [
+        "6442"
+      ],
+      "teamIds": [
+        "14"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "contact"
+    },
+    {
+      "id": "mv-c74c9aeaddb28069",
+      "clusterId": "mv-trade-6442-20261001",
+      "summary": "Miami Heat Are Monitoring Kyrie Irving’s Availability As He Emerges As Top Trade Target",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-29T01:30:15.000Z",
+      "sourceId": "outlet:fadeaway-world",
+      "sourceLabel": "Fadeaway World",
+      "sourceUrl": "https://fadeawayworld.net/nba-trade-rumors/miami-heat/miami-heat-are-monitoring-kyrie-irvings-availability-as-he-emerges-as-top-trade-target",
+      "playerIds": [
+        "6442"
+      ],
+      "teamIds": [
+        "14"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "contact"
+    },
+    {
+      "id": "mv-595659e5c96be45a",
+      "clusterId": "mv-trade-3062679-20260926",
+      "summary": "Kristaps Porzingis Appears In Spain Amid Warriors Trade Rumors",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-29T03:36:46.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/golden-state-warriors/kristaps-porzingis-appears-in-spain/",
+      "playerIds": [
+        "3102531"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-be894ef1d24f2d51",
+      "clusterId": "mv-trade-3917376-20261021",
+      "summary": "Jaylen Brown denies claim he requested trade from Celtics during offseason",
+      "claimType": "trade_request",
+      "evidenceClass": "reported",
+      "state": "denied",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-29T05:45:45.000Z",
+      "sourceId": "outlet:the-athletic",
+      "sourceLabel": "The Athletic",
+      "sourceUrl": "https://www.nytimes.com/athletic/7734609/2026/10/29/jaylen-brown-trade-request-celtics-76ers-rumor-denial/",
+      "playerIds": [
+        "3917376"
+      ],
+      "teamIds": [
+        "2"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-c72f052b18e453db",
+      "clusterId": "mv-trade-3917376-20261021",
+      "summary": "Jaylen Brown denies demanding trade from Celtics",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "denied",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-29T09:42:07.000Z",
+      "sourceId": "outlet:talkbasket",
+      "sourceLabel": "TalkBasket",
+      "sourceUrl": "https://www.talkbasket.net/225724-jaylen-brown-denies-demanding-trade-from-celtics",
+      "playerIds": [
+        "3917376"
+      ],
+      "teamIds": [
+        "2"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-97d2c16c92e4a54d",
+      "clusterId": "mv-trade-3917376-20261021",
+      "summary": "Jaylen Brown Responds to “False Allegations” From Ex-Celtics Star Over Trade Demand",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-29T10:42:00.000Z",
+      "sourceId": "outlet:essentiallysports",
+      "sourceLabel": "EssentiallySports",
+      "sourceUrl": "https://www.essentiallysports.com/nba-active-basketball-news-jaylen-brown-responds-to-false-allegations-from-ex-celtics-star-over-trade-demand/",
+      "playerIds": [
+        "3917376"
+      ],
+      "teamIds": [
+        "2"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-f6d1cae2ed0c3389",
+      "clusterId": "mv-trade-3917376-20261021",
+      "summary": "Jaylen Brown insists he never demanded Celtics trade, pushes back on 'false allegations' from Brian Scalabrine",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-29T14:01:59.000Z",
+      "sourceId": "outlet:cbs-sports",
+      "sourceLabel": "CBS Sports",
+      "sourceUrl": "https://www.cbssports.com/nba/news/jaylen-brown-never-demanded-celtics-trade-false-allegations-brian-scalabrine/",
+      "playerIds": [
+        "3917376"
+      ],
+      "teamIds": [
+        "2"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-0808f2364afafa98",
+      "clusterId": "mv-trade-3917376-20261021",
+      "summary": "76ers’ Jaylen Brown Gives Scathing Response to Brian Scalabrine Over Trade Rumors",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-29T14:45:20.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/philadelphia-76ers/jaylen-brown-gives-scathing-response-brian-scalabrine/",
+      "playerIds": [
+        "3917376"
+      ],
+      "teamIds": [
+        "20"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-e3ac87411d8d9d38",
+      "clusterId": "mv-trade-3917376-20261021",
+      "summary": "Jaylen Brown shoots down Brian Scalabrine's 'false allegations' in Celtics trade saga",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "denied",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-10-29T16:05:08.000Z",
+      "sourceId": "outlet:sporting-news",
+      "sourceLabel": "Sporting News",
+      "sourceUrl": "https://www.sportingnews.com/us/nba/boston-celtics/news/jaylen-brown-brian-scalabrine-false-allegations/8207f9198add4249c28dca7b%3E",
+      "playerIds": [
+        "3917376"
+      ],
+      "teamIds": [
+        "2"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-c99f53769ff551a0",
+      "clusterId": "mv-trade-6442-20261001",
+      "summary": "Mavericks Get Major Kyrie Irving Trade Update As Miami Heat Rumors Grow",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-29T16:32:54.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/dallas-mavericks/major-kyrie-irving-trade-update-miami-heat-rumors/",
+      "playerIds": [
+        "6442"
+      ],
+      "teamIds": [
+        "6",
+        "14"
+      ],
+      "isOriginal": false
     },
     {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",
