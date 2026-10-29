@@ -1,8 +1,4 @@
-import {
-  LoadingStatus,
-  LoadingTopBar,
-} from "@/components/continuity/destination-loading-frame";
-import { LoadingPhrase } from "@/components/continuity/loading-phrase";
+import { LoadingTopBar } from "@/components/continuity/destination-loading-frame";
 import { HomeLayoutSkeleton } from "@/components/home/home-module-skeleton";
 import { HomeLoadingWatchdog } from "@/components/home/home-loading-watchdog";
 import { HomeWarmup } from "@/components/home/home-warmup";
@@ -20,9 +16,6 @@ export default function Loading() {
       aria-live="polite"
     >
       <LoadingTopBar />
-      <LoadingStatus>
-        <LoadingPhrase context="home" />
-      </LoadingStatus>
       <HomeLayoutSkeleton layout={homeLayoutForPhase(phase)} phase={phase} />
       <HomeWarmup />
       <HomeLoadingWatchdog />

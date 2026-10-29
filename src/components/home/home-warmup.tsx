@@ -1,14 +1,9 @@
 import type { CSSProperties } from "react";
 
 import { BouncingBasketball } from "@/components/brand/bouncing-basketball";
+import { loadingPhrasesFor } from "@/lib/loading-phrases";
 
-const STEPS = [
-  "Checking tonight's scores",
-  "Pulling the standings",
-  "Ranking the top performers",
-  "Reading the injury report",
-  "Sorting the trade talk",
-];
+const STEPS = loadingPhrasesFor("home");
 
 /**
  * Animated card over the home skeleton while the first render streams. CSS only,
@@ -22,7 +17,10 @@ export function HomeWarmup() {
         <BouncingBasketball size={52} />
         <div className="home-warmup__steps">
           {STEPS.map((step, i) => (
-            <span key={step} style={{ "--i": i, "--n": STEPS.length } as CSSProperties}>
+            <span
+              key={step}
+              style={{ "--i": i, "--n": STEPS.length } as CSSProperties}
+            >
               {step}
             </span>
           ))}

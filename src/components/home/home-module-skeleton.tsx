@@ -46,11 +46,12 @@ const HEIGHT: Record<HomeModuleId, string> = {
   "season-glance": "h-[2315px] lg:h-[1320px]",
   news: "h-[715px] lg:h-[596px]",
   "contract-showcase": "h-[420px] lg:h-[400px]",
-  "rookie-tracker": "h-[320px] lg:h-[260px]",
+  /* Matches the compact secondary Rookie Race card. */
+  "rookie-tracker": "h-[300px] lg:h-[248px]",
 };
 
 function Bar({ className }: { className?: string }) {
-  return <span className={cn("block animate-pulse rounded-full bg-foreground/[0.08]", className)} />;
+  return <span className={cn("loading-shimmer block rounded-full", className)} />;
 }
 
 /** Offseason phases lead with a full card instead of a one-line status. */
@@ -87,7 +88,7 @@ export function HomeModuleSkeleton({ id, phase }: { id: HomeModuleId; phase?: Ho
     >
       <Bar className="h-4 w-40" />
       <Bar className="h-3 w-64 max-w-full opacity-70" />
-      <span className="mt-1 block min-h-0 flex-1 animate-pulse rounded-[10px] bg-foreground/[0.05]" />
+      <span className="loading-shimmer mt-1 block min-h-0 flex-1 rounded-[10px]" />
     </div>
   );
 }
