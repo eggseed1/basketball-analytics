@@ -61,27 +61,44 @@ function teamPaint(teamAbbr: string): { primary: string; secondary: string } {
   };
 }
 
+type RaceLane = {
+  row: RookieTrackerRow;
+  share: number;
+  value: string;
+  paint: { primary: string; secondary: string };
+};
+
+function buildRaceLanes(
+  rows: RookieTrackerRow[],
+  sort: RookieTrackerSort,
+  leader: number | null
+): RaceLane[] {
+  if (sort === "pick") return [];
+  return rows
+    .map((row) => {
+      const share = rookieRaceShare(row, sort, leader);
+      if (share == null) return null;
+      return {
+        row,
+        share,
+        value: primaryValue(row, sort),
+        paint: teamPaint(row.teamAbbr),
+      };
+    })
+    .filter((lane): lane is RaceLane => lane != null)
+    .slice(0, RACE_LANES);
+}
+
 /** Draft-class race lanes: team color bars with headshots riding the tip. */
 function RookieRaceField({
-  rows,
+  lanes,
   sort,
-  leader,
+  className,
 }: {
-  rows: RookieTrackerRow[];
+  lanes: RaceLane[];
   sort: RookieTrackerSort;
-  leader: number | null;
+  className?: string;
 }) {
-  if (sort === "pick") return null;
-  const lanes = rows
-    .map((row) => ({
-      row,
-      share: rookieRaceShare(row, sort, leader),
-      value: primaryValue(row, sort),
-      paint: teamPaint(row.teamAbbr),
-    }))
-    .filter((lane) => lane.share != null)
-    .slice(0, RACE_LANES);
-
   if (lanes.length < 2) return null;
 
   const metric = SORTS.find((s) => s.id === sort)?.label ?? sort;
@@ -90,7 +107,10 @@ function RookieRaceField({
     <div
       role="img"
       aria-label={`Rookie race by ${metric}`}
-      className="relative flex flex-col gap-2 rounded-xl border border-border/50 bg-secondary/30 px-3 py-3 pr-4"
+      className={cn(
+        "relative flex flex-col gap-2 rounded-xl border border-border/50 bg-secondary/30 px-3 py-3 pr-4",
+        className
+      )}
     >
       <div
         aria-hidden
@@ -251,6 +271,11 @@ export function RookieTrackerBoard({ model }: { model: RookieTrackerModel }) {
     () => rookieRaceLeaderValue(rows, sort),
     [rows, sort]
   );
+  const lanes = useMemo(
+    () => buildRaceLanes(rows, sort, leader),
+    [rows, sort, leader]
+  );
+  const showRace = lanes.length >= 2;
 
   return (
     <div className="flex flex-col gap-3">
@@ -268,17 +293,43 @@ export function RookieTrackerBoard({ model }: { model: RookieTrackerModel }) {
           </ChoiceChip>
         ))}
       </ChoiceTrack>
-      <RookieRaceField rows={rows} sort={sort} leader={leader} />
-      <ol data-motion-list className="flex flex-col gap-0.5">
-        {rows.map((row, index) => (
-          <RookieRow
-            key={row.key}
-            row={row}
-            sort={sort}
-            rank={index + 1}
-          />
-        ))}
-      </ol>
+      {/*
+        Mobile stacks race above the board. Desktop places the race beside the
+        list so the card fills the column instead of leaving empty air under the viz.
+      */}
+      <div
+        className={cn(
+          "grid min-w-0 gap-3",
+          showRace &&
+            "lg:grid-cols-[minmax(0,1fr)_minmax(15.5rem,20rem)] lg:items-stretch"
+        )}
+      >
+        {showRace ? (
+          <div className="min-w-0 lg:col-start-2 lg:row-start-1">
+            <RookieRaceField
+              lanes={lanes}
+              sort={sort}
+              className="h-full min-h-0 justify-center"
+            />
+          </div>
+        ) : null}
+        <ol
+          data-motion-list
+          className={cn(
+            "flex min-w-0 flex-col gap-0.5",
+            showRace && "lg:col-start-1 lg:row-start-1"
+          )}
+        >
+          {rows.map((row, index) => (
+            <RookieRow
+              key={row.key}
+              row={row}
+              sort={sort}
+              rank={index + 1}
+            />
+          ))}
+        </ol>
+      </div>
     </div>
   );
 }
