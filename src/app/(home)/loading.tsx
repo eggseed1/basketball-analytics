@@ -1,7 +1,12 @@
-import { LoadingTopBar } from "@/components/continuity/destination-loading-frame";
+import {
+  LoadingStatus,
+  LoadingTopBar,
+} from "@/components/continuity/destination-loading-frame";
+import { LoadingPhrase } from "@/components/continuity/loading-phrase";
 import { HomeLayoutSkeleton } from "@/components/home/home-module-skeleton";
 import { HomeLoadingWatchdog } from "@/components/home/home-loading-watchdog";
 import { HomeWarmup } from "@/components/home/home-warmup";
+import { initialLoadingPhrase } from "@/lib/loading-phrases";
 import { guessHomeSeasonPhase, homeLayoutForPhase } from "@/lib/home-season-moment";
 import { nbaTodayIso } from "@/lib/nba-calendar-date";
 
@@ -9,12 +14,19 @@ import { nbaTodayIso } from "@/lib/nba-calendar-date";
 export default function Loading() {
   const phase = guessHomeSeasonPhase(nbaTodayIso());
   return (
-    <main className="site-shell relative flex flex-col gap-5 py-5 sm:py-7" aria-busy="true" aria-live="polite">
+    <main
+      className="site-shell relative flex flex-col gap-5 py-5 sm:py-7"
+      aria-busy="true"
+      aria-live="polite"
+    >
       <LoadingTopBar />
+      <LoadingStatus>
+        <LoadingPhrase context="home" />
+      </LoadingStatus>
       <HomeLayoutSkeleton layout={homeLayoutForPhase(phase)} phase={phase} />
       <HomeWarmup />
       <HomeLoadingWatchdog />
-      <p className="sr-only">Loading the home page…</p>
+      <p className="sr-only">{initialLoadingPhrase("home")}</p>
     </main>
   );
 }

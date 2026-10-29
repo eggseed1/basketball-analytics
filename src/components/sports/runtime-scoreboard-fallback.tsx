@@ -40,7 +40,14 @@ export function RuntimeScoreboardFallback(props: { view: GamefeedView; season: s
     return () => { cancelled = true; };
   }, [months, props.season]);
   if (failed) return <p className="sports-card p-6 text-[14px] text-muted-foreground">Schedule data is temporarily unavailable from both the server and browser feeds.</p>;
-  if (!games.length) return <p className="sports-card p-6 text-[14px] text-muted-foreground">Loading NBA schedule…</p>;
+  if (!games.length) {
+    return (
+      <p className="sports-card flex items-center gap-2 p-6 text-[14px] text-muted-foreground">
+        <span className="inline-block size-4 animate-spin rounded-full border-2 border-muted-foreground/30 border-t-muted-foreground motion-reduce:animate-none" />
+        Syncing the scoreboard crawl
+      </p>
+    );
+  }
   const today = nbaTodayIso();
   return <Gamefeed view={props.view} season={props.season} monthKey={props.monthKey} weekStart={props.weekStart} weekEnd={props.weekEnd} monthGames={games.filter(g => g.gameDate.startsWith(props.monthKey))} weekGames={games.filter(g => g.gameDate >= props.weekStart && g.gameDate <= props.weekEnd)} upcomingGames={games.filter(g => g.gameDate >= today)} upcomingHasMore={false} />;
 }

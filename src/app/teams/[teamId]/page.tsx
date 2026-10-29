@@ -410,12 +410,12 @@ export default async function TeamProfilePage({
                 teamName={displayName}
               />
               <Suspense
-                fallback={<DestinationSectionSkeleton label={t("loadingPriorReview", { season: priorSeason })} />}
+                fallback={<DestinationSectionSkeleton context="history" />}
               >
                 <TeamSeasonRecapIsland routeTeamId={teamId} season={priorSeason} />
               </Suspense>
               <Suspense
-                fallback={<DestinationSectionSkeleton label={t("loadingRosterWar1")} />}
+                fallback={<DestinationSectionSkeleton context="section-roster" />}
               >
                 <TeamRosterWar1Island
                   season={season}
@@ -457,7 +457,7 @@ export default async function TeamProfilePage({
 
         {tab === "players" ? (
           <Suspense
-            fallback={<DestinationSectionSkeleton label={t("loadingRoster")} />}
+            fallback={<DestinationSectionSkeleton context="section-roster" />}
           >
             <TeamRosterIsland
               teamId={resolvedTeamId}
@@ -470,7 +470,7 @@ export default async function TeamProfilePage({
 
         {tab === "players" ? (
           <Suspense
-            fallback={<DestinationSectionSkeleton label={t("loadingRotation")} />}
+            fallback={<DestinationSectionSkeleton context="section-roster" />}
           >
             <TeamLineupsIsland
               teamId={resolvedTeamId}
@@ -489,7 +489,7 @@ export default async function TeamProfilePage({
         {tab === "offense" ? (
           boardAvailable && !seasonAwaitingGames ? (
             <Suspense
-              fallback={<DestinationSectionSkeleton label={t("loadingOffense")} />}
+              fallback={<DestinationSectionSkeleton context="section-chart" />}
             >
               <TeamOffenseIsland
                 teamId={resolvedTeamId}
@@ -511,7 +511,7 @@ export default async function TeamProfilePage({
 
         {tab === "offense" ? (
           <Suspense
-            fallback={<DestinationSectionSkeleton label={t("loadingHustle")} />}
+            fallback={<DestinationSectionSkeleton context="section-chart" />}
           >
             <TeamHustleIsland
               teamId={resolvedTeamId}
@@ -525,7 +525,7 @@ export default async function TeamProfilePage({
 
         {tab === "onoff" ? (
           <Suspense
-            fallback={<DestinationSectionSkeleton label={t("loadingOnOff")} />}
+            fallback={<DestinationSectionSkeleton context="section-chart" />}
           >
             <TeamOnOffIsland
               teamId={resolvedTeamId}
@@ -537,7 +537,7 @@ export default async function TeamProfilePage({
 
         {tab === "games" ? (
           <Suspense
-            fallback={<DestinationSectionSkeleton label={t("loadingGames")} />}
+            fallback={<DestinationSectionSkeleton context="section" />}
           >
             <TeamGamesIsland
               team={identityTeam}
@@ -552,7 +552,7 @@ export default async function TeamProfilePage({
 
         {tab === "splits" ? (
           <Suspense
-            fallback={<DestinationSectionSkeleton label={t("loadingSplits")} />}
+            fallback={<DestinationSectionSkeleton context="section-chart" />}
           >
             <TeamSplitsIsland teamId={resolvedTeamId} season={season} teamKey={identityTeam.abbreviation} />
           </Suspense>
@@ -560,7 +560,7 @@ export default async function TeamProfilePage({
 
         {tab === "playoffs" ? (
           <Suspense
-            fallback={<DestinationSectionSkeleton label={t("loadingPlayoffs")} />}
+            fallback={<DestinationSectionSkeleton context="section" />}
           >
             <TeamPlayoffsIsland teamId={resolvedTeamId} season={season} teamKey={identityTeam.abbreviation} />
           </Suspense>
@@ -576,13 +576,13 @@ export default async function TeamProfilePage({
               currentSeason={currentSeason}
             />
             {season === currentSeason ? (
-              <Suspense fallback={<DestinationSectionSkeleton label={t("loadingRosterMoves")} />}>
+              <Suspense fallback={<DestinationSectionSkeleton context="movement" />}>
                 <TeamRosterSourcesSection teamId={askTeamId} teamKey={identityTeam.abbreviation} />
               </Suspense>
             ) : null}
             <Suspense
               fallback={
-                <DestinationSectionSkeleton label={t("loadingTransactions")} />
+                <DestinationSectionSkeleton context="movement" />
               }
             >
               <TeamTransactionsIsland teamFilterId={txTeamId} />
@@ -591,7 +591,7 @@ export default async function TeamProfilePage({
         ) : null}
 
         {tab === "sentiment" ? (
-          <Suspense fallback={<DestinationSectionSkeleton label={t("loadingSentiment")} />}>
+          <Suspense fallback={<DestinationSectionSkeleton context="sentiment" />}>
             <TeamSentimentTab teamId={resolvedTeamId} />
           </Suspense>
         ) : null}
@@ -658,7 +658,7 @@ export default async function TeamProfilePage({
             ) : null}
             <Suspense
               fallback={
-                <DestinationSectionSkeleton label={t("loadingSeasonEvidence")} />
+                <DestinationSectionSkeleton context="section-chart" />
               }
             >
               <TeamEvidenceIsland

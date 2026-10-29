@@ -13,7 +13,6 @@ export type TeamSalaryViewItem = {
   id: TeamSalaryView;
   label: string;
   href: string;
-  loadingLabel: string;
 };
 
 /**
@@ -37,7 +36,6 @@ export function TeamSalaryViewSwitch({
   const [pending, startTransition] = useTransition();
   const [shown, setShown] = useOptimistic(active);
   const switching = pending && shown !== active;
-  const loadingLabel = items.find((item) => item.id === shown)?.loadingLabel;
 
   return (
     <>
@@ -71,7 +69,11 @@ export function TeamSalaryViewSwitch({
         </nav>
         {note}
       </div>
-      {switching ? <DestinationSectionSkeleton label={loadingLabel} /> : children}
+      {switching ? (
+        <DestinationSectionSkeleton context="section-salary" />
+      ) : (
+        children
+      )}
     </>
   );
 }

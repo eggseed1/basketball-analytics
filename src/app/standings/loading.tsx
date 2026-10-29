@@ -3,10 +3,7 @@ import { StandingsBodySkeleton } from "@/components/standings/standings-body-ske
 
 export default function Loading() {
   return (
-    <DestinationLoadingFrame
-      title="Standings"
-      subtitle="Conference standings, playoff bracket, and team efficiency."
-    >
+    <DestinationLoadingFrame title="Standings" context="standings">
       <StandingsBodySkeleton />
     </DestinationLoadingFrame>
   );

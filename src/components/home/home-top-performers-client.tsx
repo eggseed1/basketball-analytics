@@ -2,9 +2,15 @@
 
 import { useEffect, useState } from "react";
 
+import {
+  LoadingStatus,
+  SkeletonBlock,
+} from "@/components/continuity/destination-loading-frame";
+import { LoadingPhrase } from "@/components/continuity/loading-phrase";
 import { TopPerformersPanel } from "@/components/home/top-performers-panel";
 import type { HomeDarkoLeader, HomeRaptorLeader } from "@/data/queries/home";
 import type { HomePerformersPayload } from "@/lib/home-performers-slim";
+import { initialLoadingPhrase } from "@/lib/loading-phrases";
 
 /**
  * Top Performers desk module — client fetch so leader rows stay out of first HTML.
@@ -34,10 +40,19 @@ export function HomeTopPerformersClient() {
   if (!data) {
     return (
       <div
-        className="sports-card h-72 animate-pulse p-4"
+        className="sports-card flex h-72 flex-col gap-3 p-4"
         aria-busy="true"
-        aria-label="Loading top performers"
-      />
+        aria-live="polite"
+        aria-label={initialLoadingPhrase("home")}
+      >
+        <LoadingStatus>
+          <LoadingPhrase context="home" />
+        </LoadingStatus>
+        <div aria-hidden className="flex flex-1 flex-col gap-2">
+          <SkeletonBlock className="h-8 w-40 rounded-md" />
+          <SkeletonBlock className="min-h-0 flex-1 rounded-lg" />
+        </div>
+      </div>
     );
   }
 

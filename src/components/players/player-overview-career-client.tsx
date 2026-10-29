@@ -61,7 +61,7 @@ export function PlayerOverviewCareerClient({
   }, [playerId]);
 
   if (rows == null) {
-    return <PlayerBoardSkeleton label="Loading career…" />;
+    return <PlayerBoardSkeleton context="section-chart" />;
   }
 
   if (!rows.length) {

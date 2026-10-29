@@ -3,6 +3,8 @@ import {
   LoadingTopBar,
   SkeletonBlock,
 } from "@/components/continuity/destination-loading-frame";
+import { LoadingPhrase } from "@/components/continuity/loading-phrase";
+import { initialLoadingPhrase } from "@/lib/loading-phrases";
 import { TEAM_PAGE_TABS } from "@/lib/team-destination";
 
 /** Full-route `loading.tsx` in the shape of the real page: identity card, tab row, then content. */
@@ -29,17 +31,22 @@ export function TeamPageLoadingFrame() {
             </div>
           </div>
           <div className="flex h-8 shrink-0 items-center">
-            <LoadingStatus>Loading team</LoadingStatus>
+            <LoadingStatus>
+              <LoadingPhrase context="team" />
+            </LoadingStatus>
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-2 sm:max-w-[24rem]">
+        <div className="grid grid-cols-2 gap-2 sm:max-w-[24rem]" aria-hidden>
           {Array.from({ length: 2 }, (_, i) => (
             <SkeletonBlock key={i} className="h-[82px] rounded-md" />
           ))}
         </div>
       </div>
 
-      <div className="flex flex-nowrap items-end gap-x-2 overflow-hidden border-b-[0.5px] border-foreground/20 px-1">
+      <div
+        className="flex flex-nowrap items-end gap-x-2 overflow-hidden border-b-[0.5px] border-foreground/20 px-1"
+        aria-hidden
+      >
         {TEAM_PAGE_TABS.map((tab) => (
           <span
             key={tab.id}
@@ -50,12 +57,15 @@ export function TeamPageLoadingFrame() {
         ))}
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+      <div
+        className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]"
+        aria-hidden
+      >
         <SkeletonBlock className="h-56" />
         <SkeletonBlock className="h-56" />
       </div>
       <SkeletonBlock className="h-72" />
-      <p className="sr-only">Loading team…</p>
+      <p className="sr-only">{initialLoadingPhrase("team")}</p>
     </main>
   );
 }

@@ -2,9 +2,15 @@
 
 import { useEffect, useState } from "react";
 
+import {
+  LoadingStatus,
+  SkeletonBlock,
+} from "@/components/continuity/destination-loading-frame";
+import { LoadingPhrase } from "@/components/continuity/loading-phrase";
 import { HotColdColumns } from "@/components/explore/hot-cold-board";
 import { SectionLink } from "@/components/ui/section-link";
 import type { StatDetectiveRow } from "@/data/runtime/stat-detective-windows";
+import { initialLoadingPhrase } from "@/lib/loading-phrases";
 
 type Payload = {
   season: string | null;
@@ -43,10 +49,19 @@ export function HomeHotColdClient() {
   if (!data) {
     return (
       <div
-        className="sports-card h-56 animate-pulse p-4"
+        className="sports-card flex h-56 flex-col gap-3 p-4"
         aria-busy="true"
-        aria-label="Loading hot and cold"
-      />
+        aria-live="polite"
+        aria-label={initialLoadingPhrase("explore-hot-cold")}
+      >
+        <LoadingStatus>
+          <LoadingPhrase context="explore-hot-cold" />
+        </LoadingStatus>
+        <div aria-hidden className="grid flex-1 gap-2 sm:grid-cols-2">
+          <SkeletonBlock className="rounded-lg" />
+          <SkeletonBlock className="rounded-lg" />
+        </div>
+      </div>
     );
   }
 

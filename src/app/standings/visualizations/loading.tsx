@@ -1,12 +1,19 @@
-import { DestinationLoadingFrame } from "@/components/continuity/destination-loading-frame";
+import {
+  DestinationLoadingFrame,
+  SkeletonBlock,
+} from "@/components/continuity/destination-loading-frame";
 
 export default function Loading() {
   return (
-    <DestinationLoadingFrame
-      title="Visualizations"
-      subtitle="Race tracker, ratings, luck, splits, and more for every team."
-    >
-      <div className="sports-card h-[480px] animate-pulse bg-secondary/40" />
+    <DestinationLoadingFrame title="Visualizations" context="standings-viz">
+      <div className="grid gap-3" aria-hidden>
+        <div className="flex flex-wrap gap-2">
+          <SkeletonBlock className="h-9 w-24 rounded-full" />
+          <SkeletonBlock className="h-9 w-20 rounded-full" />
+          <SkeletonBlock className="h-9 w-28 rounded-full" />
+        </div>
+        <SkeletonBlock className="h-[28rem]" />
+      </div>
     </DestinationLoadingFrame>
   );
 }

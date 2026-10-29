@@ -1,10 +1,5 @@
 import { DestinationLoadingFrame } from "@/components/continuity/destination-loading-frame";
 
 export default function Loading() {
-  return (
-    <DestinationLoadingFrame
-      title="Dashboard"
-      subtitle="Loading league boards and chart filters…"
-    />
-  );
+  return <DestinationLoadingFrame title="Dashboard" context="dashboard" />;
 }

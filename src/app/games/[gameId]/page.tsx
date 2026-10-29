@@ -184,14 +184,14 @@ export default async function GamePage({ params, searchParams }: GamePageProps) 
     <MotionReveal />
     <GameIdentityShell game={shell.game} brandPresentation={brandPresentation} arrivalLabel={arrival?.label} />
     {presentation.canRenderDeepFeatures ? <GameTabs gameId={gameId} active={tab} options={tabOptions} defaultTab={defaultTab} query={sp} /> : null}
-    {presentation.canRenderDeepFeatures && tab === "preview" ? <Suspense fallback={<DestinationSectionSkeleton label={t("loadingPreview")} />}><GamePreviewSection game={shell.game} /></Suspense> : null}
+    {presentation.canRenderDeepFeatures && tab === "preview" ? <Suspense fallback={<DestinationSectionSkeleton context="section-preview" />}><GamePreviewSection game={shell.game} /></Suspense> : null}
     {!presentation.canRenderDeepFeatures ? <GameUnavailablePanel gameId={gameId} backHref={backHref} /> : null}
     {showGame ? (
       <DelayedGameSection risky={risky && asOfMs == null} cutDelay={delaySeconds}>
       {preTip ? <GamePreTipBoard game={shell.game} /> : <>
       {asOfMs == null &&
       (fromHistory || !isCurrentNbaSeason(shell.game.season)) ? (
-        <Suspense fallback={<DestinationSectionSkeleton label={t("loadingFlow")} />}>
+        <Suspense fallback={<DestinationSectionSkeleton context="section-flow" />}>
           <HistoricalDeepBody
             gameId={gameId}
             seasonHint={seasonHint}
@@ -200,7 +200,7 @@ export default async function GamePage({ params, searchParams }: GamePageProps) 
           />
         </Suspense>
       ) : null}
-      <Suspense fallback={<DestinationSectionSkeleton label={t("loadingLab")} />}><GameLabDeepBody gameId={gameId} arrival={arrival} hidePeriodTable={heroHasLineScore} asOfMs={asOfMs} /></Suspense>
+      <Suspense fallback={<DestinationSectionSkeleton context="section-lab" />}><GameLabDeepBody gameId={gameId} arrival={arrival} hidePeriodTable={heroHasLineScore} asOfMs={asOfMs} /></Suspense>
       <details className="group sports-card overflow-hidden">
         <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3.5 sm:px-5 [&::-webkit-details-marker]:hidden">
           <span className="flex flex-col">
