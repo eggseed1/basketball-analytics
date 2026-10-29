@@ -91,7 +91,6 @@ export function TopPerformersPanel({
   tsLeaders,
   usageStars,
   performerSeasons = [],
-  drblOverlayOk = false,
   drblFallbackNote = null,
 }: {
   season?: string;
@@ -102,12 +101,48 @@ export function TopPerformersPanel({
   tsLeaders: HomePerformerSeason[];
   usageStars: HomePerformerSeason[];
   performerSeasons?: HomePerformerSeason[];
+  /** Kept for call-site compat; chip availability is derived from leader rows. */
   drblOverlayOk?: boolean;
   drblFallbackNote?: string | null;
 }) {
-  const [sort, setSort] = useState<SortKey>(
-    drblOverlayOk ? "war1" : darkoLeaders.length ? "darko" : "ts"
+  const hasWar1 = drblLeaders.some(
+    (row) => row.war1 != null && Number.isFinite(row.war1)
   );
+  const hasDrbl = drblLeaders.length > 0;
+  const hasTs =
+    tsLeaders.some(
+      (row) => row.trueShootingPct != null && row.trueShootingPct > 0
+    ) ||
+    performerSeasons.some(
+      (row) => row.trueShootingPct != null && row.trueShootingPct > 0
+    );
+  const hasUsg =
+    usageStars.some((row) => row.usagePct != null && row.usagePct > 0) ||
+    performerSeasons.some((row) => row.usagePct != null && row.usagePct > 0);
+
+  const sortChips = (
+    [
+      ...(hasWar1 ? ([["war1", "WAR1"]] as const) : []),
+      ...(hasDrbl ? ([["drbl", "DRBL"]] as const) : []),
+      ...(darkoLeaders.length ? ([["darko", "DARKO"]] as const) : []),
+      ...(raptorLeaders.length ? ([["raptor", "RAPTOR"]] as const) : []),
+      ...(hasTs ? ([["ts", "TS%"]] as const) : []),
+      ...(hasUsg ? ([["usage", "USG"]] as const) : []),
+    ] as const
+  );
+  const availableSorts = sortChips.map(([key]) => key as SortKey);
+  const preferredSort: SortKey = hasWar1
+    ? "war1"
+    : hasDrbl
+      ? "drbl"
+      : darkoLeaders.length
+        ? "darko"
+        : hasTs
+          ? "ts"
+          : (availableSorts[0] ?? "ts");
+
+  const [sort, setSort] = useState<SortKey>(preferredSort);
+  const activeSort = availableSorts.includes(sort) ? sort : preferredSort;
 
   const seasonByName = useMemo(() => {
     const map = new Map<
@@ -373,22 +408,24 @@ export function TopPerformersPanel({
       });
     }
 
-    const list = [...byKey.values()];
-    list.sort((a, b) => {
-      const pick = (row: OverviewRow) => {
-        if (sort === "ts") return row.ts;
-        if (sort === "usage") return row.usg;
-        if (sort === "war1") return row.war1;
-        if (sort === "drbl") return row.drbl;
-        if (sort === "raptor") return row.raptor;
-        return row.darko;
-      };
-      return (pick(b) ?? -Infinity) - (pick(a) ?? -Infinity);
+    const metricOf = (row: OverviewRow): number | null => {
+      if (activeSort === "ts") return row.ts;
+      if (activeSort === "usage") return row.usg;
+      if (activeSort === "war1") return row.war1;
+      if (activeSort === "drbl") return row.drbl;
+      if (activeSort === "raptor") return row.raptor;
+      return row.darko;
+    };
+
+    const list = [...byKey.values()].filter((row) => {
+      const value = metricOf(row);
+      return value != null && Number.isFinite(value);
     });
+    list.sort((a, b) => (metricOf(b) ?? -Infinity) - (metricOf(a) ?? -Infinity));
 
     return list.slice(0, 10).map((row, i) => ({ ...row, rank: i + 1 }));
   }, [
-    sort,
+    activeSort,
     drblLeaders,
     darkoLeaders,
     raptorLeaders,
@@ -403,51 +440,36 @@ export function TopPerformersPanel({
     war1ByNbaId,
   ]);
 
-  const sortChips = (
-    [
-      ...(drblOverlayOk || drblLeaders.length
-        ? ([
-            ["war1", "WAR1"],
-            ["drbl", "DRBL"],
-          ] as const)
-        : []),
-      ...(darkoLeaders.length ? ([["darko", "DARKO"]] as const) : []),
-      ...(raptorLeaders.length ? ([["raptor", "RAPTOR"]] as const) : []),
-      ["ts", "TS%"],
-      ["usage", "USG"],
-    ] as const
-  );
-
   const metricHelp =
-    sort === "ts" ? (
+    activeSort === "ts" ? (
       <MetricHelp
         conceptId="ts"
         labelClassName={cn(type.caption, "font-semibold uppercase tracking-wide")}
       >
         TS%
       </MetricHelp>
-    ) : sort === "usage" ? (
+    ) : activeSort === "usage" ? (
       <MetricHelp
         conceptId="usg"
         labelClassName={cn(type.caption, "font-semibold uppercase tracking-wide")}
       >
         USG
       </MetricHelp>
-    ) : sort === "war1" ? (
+    ) : activeSort === "war1" ? (
       <MetricHelp
         conceptId="r1_win_eq"
         labelClassName={cn(type.caption, "font-semibold uppercase tracking-wide")}
       >
         WAR1
       </MetricHelp>
-    ) : sort === "drbl" ? (
+    ) : activeSort === "drbl" ? (
       <MetricHelp
         conceptId="drbl"
         labelClassName={cn(type.caption, "font-semibold uppercase tracking-wide")}
       >
         DRBL
       </MetricHelp>
-    ) : sort === "raptor" ? (
+    ) : activeSort === "raptor" ? (
       <MetricHelp
         conceptId="raptor"
         labelClassName={cn(type.caption, "font-semibold uppercase tracking-wide")}
@@ -464,15 +486,15 @@ export function TopPerformersPanel({
     );
 
   const leaderboardHref =
-    sort === "ts"
+    activeSort === "ts"
       ? "/explore/players?sort=trueShootingPct"
-      : sort === "usage"
+      : activeSort === "usage"
         ? "/explore/players?sort=usagePct"
-        : sort === "war1"
+        : activeSort === "war1"
           ? "/explore/players?sort=r1WinEquivalents&dir=desc"
-          : sort === "drbl"
+          : activeSort === "drbl"
             ? "/explore/players?sort=drbl100&dir=desc"
-            : sort === "raptor"
+            : activeSort === "raptor"
               ? "/explore/players?season=2021-22&sort=raptor&dir=desc"
               : "/explore/players?sort=darkoDpm";
 
@@ -491,7 +513,7 @@ export function TopPerformersPanel({
           {sortChips.map(([key, label]) => (
             <ChoiceChip
               key={key}
-              active={sort === key}
+              active={activeSort === key}
               onClick={() => setSort(key)}
               className="shrink-0"
             >
@@ -529,29 +551,17 @@ export function TopPerformersPanel({
           <tbody>
             {rows.map((row) => {
               const value =
-                sort === "ts"
-                  ? row.ts != null
-                    ? formatPct(row.ts)
-                    : "—"
-                  : sort === "usage"
-                    ? row.usg != null
-                      ? formatPct(row.usg)
-                      : "—"
-                    : sort === "war1"
-                      ? row.war1 != null
-                        ? formatNumber(row.war1, 1)
-                        : "—"
-                      : sort === "drbl"
-                        ? row.drbl != null
-                          ? formatNumber(row.drbl, 2)
-                          : "—"
-                        : sort === "raptor"
-                          ? row.raptor != null
-                            ? formatImpact(row.raptor)
-                            : "—"
-                          : row.darko != null
-                            ? formatImpact(row.darko)
-                            : "—";
+                activeSort === "ts"
+                  ? formatPct(row.ts!)
+                  : activeSort === "usage"
+                    ? formatPct(row.usg!)
+                    : activeSort === "war1"
+                      ? formatNumber(row.war1!, 1)
+                      : activeSort === "drbl"
+                        ? formatNumber(row.drbl!, 2)
+                        : activeSort === "raptor"
+                          ? formatImpact(row.raptor!)
+                          : formatImpact(row.darko!);
               return (
                 <tr
                   key={row.key}
