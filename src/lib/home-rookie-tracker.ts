@@ -5,7 +5,8 @@
 import type { DraftNightPick } from "@/data/runtime/draft-night-snapshot";
 import { normalizePlayerName } from "@/lib/player-name";
 
-export const ROOKIE_TRACKER_LIMIT = 8;
+/** Home module only — keep it secondary to findings / scores. */
+export const ROOKIE_TRACKER_LIMIT = 5;
 
 export type RookieTrackerSort =
   | "war1"
