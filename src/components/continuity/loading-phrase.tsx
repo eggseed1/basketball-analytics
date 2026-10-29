@@ -4,16 +4,17 @@ import { useEffect, useState } from "react";
 
 import {
   initialLoadingPhrase,
+  LOADING_PHRASE_ROTATE_MS,
+  loadingPhraseStartIndex,
   loadingPhrasesFor,
   type LoadingContext,
 } from "@/lib/loading-phrases";
 import { cn } from "@/lib/utils";
 
-const ROTATE_MS = 2200;
-
 /**
  * Cycles short, destination-aware loading lines while a skeleton is up.
- * First paint uses the stable initial phrase (SSR-safe).
+ * SSR paints phrase[0]; after mount we jump to a rotating start so visits
+ * don't feel glued to the first one or two lines.
  */
 export function LoadingPhrase({
   context,
@@ -27,11 +28,12 @@ export function LoadingPhrase({
 
   useEffect(() => {
     if (phrases.length < 2) return;
+    setIndex(loadingPhraseStartIndex(context));
     const id = window.setInterval(() => {
       setIndex((i) => (i + 1) % phrases.length);
-    }, ROTATE_MS);
+    }, LOADING_PHRASE_ROTATE_MS);
     return () => window.clearInterval(id);
-  }, [phrases]);
+  }, [context, phrases]);
 
   const text = phrases[index] ?? initialLoadingPhrase(context);
 
