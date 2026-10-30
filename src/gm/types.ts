@@ -127,6 +127,7 @@ export interface GmDeadMoney {
 }
 
 export interface GmInjury {
+  recoveryProgress?: number;
   type: string;
   gamesRemaining: number;
   reinjuryRisk: number;

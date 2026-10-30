@@ -28,16 +28,20 @@ const INJURY_TYPES = [
 
 export function tickInjuries(
   players: GmPlayer[],
-  trainerLevel: number
+  trainerLevel: number,
+  context?: { teamIds: string[]; before: GmPlayer[]; trainerByTeam: Record<string, number> }
 ): GmPlayer[] {
+  const alreadyOut = context ? new Set(context.before.filter(p => p.injury).map(p => p.id)) : null;
   return players.map((p) => {
     if (!p.injury) return p;
-    const reduce = 1 + trainerLevel * 0.15;
-    const left = Math.max(0, p.injury.gamesRemaining - reduce);
+    if (context && (!context.teamIds.includes(p.teamId ?? "") || !alreadyOut?.has(p.id))) return p;
+    const level = p.teamId ? context?.trainerByTeam[p.teamId] ?? trainerLevel : trainerLevel;
+    const progress = (p.injury.recoveryProgress ?? 0) + Math.max(0, level) * 0.15;
+    const left = Math.max(0, p.injury.gamesRemaining - 1 - Math.floor(progress));
     if (left <= 0) return { ...p, injury: null };
     return {
       ...p,
-      injury: { ...p.injury, gamesRemaining: Math.ceil(left) },
+      injury: { ...p.injury, gamesRemaining: left, recoveryProgress: progress % 1 },
     };
   });
 }

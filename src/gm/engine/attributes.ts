@@ -883,7 +883,7 @@ export function progressSheet(
       );
     }
   }
-  const offenseShare = delta > 0 ? 0.62 : 0.45;
+  const offenseShare = player.developmentFocus === "shooting" || player.developmentFocus === "creation" ? 0.9 : player.developmentFocus === "defense" ? 0.15 : player.developmentFocus === "rebounding" ? 0.35 : delta > 0 ? 0.62 : 0.45;
   // Impact tracks development, but at a damped rate so long saves do not
   // turn every rotation guy into a +1.5 board name.
   const impactDelta = delta * (delta > 0 ? 0.45 : 0.7);

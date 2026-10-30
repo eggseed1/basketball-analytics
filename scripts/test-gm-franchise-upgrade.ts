@@ -1,12 +1,16 @@
 import assert from "node:assert/strict";
 import { createGeneratedLeague } from "../src/gm/seed/create-league";
 import { simulateGame } from "../src/gm/engine/simulate";
-import { boxToPlayByPlay } from "../src/gm/engine/play-by-play";
+import { boxToPlayByPlay, linesAtCutoff } from "../src/gm/engine/play-by-play";
 import { prepareFranchise, parseFranchise, exportFranchise, archiveSeason, importDraftClass } from "../src/gm/engine/franchise";
 import { createSimProfile, simulationRates } from "../src/gm/engine/player-profile";
+import { tickInjuries } from "../src/gm/engine/progression";
 import { progressSheet } from "../src/gm/engine/attributes";
 import { playerTradePoints } from "../src/gm/engine/value";
 import { evaluateTrade } from "../src/gm/engine/trades";
+import { rebalanceForInjuryChanges } from "../src/gm/engine/coaching";
+import { playerSeasonToGmPlayer } from "../src/gm/seed/create-real-league";
+import { withPlayerSeasonDefaults } from "../src/data/transformers/player-season-defaults";
 import { recordSimGame } from "../src/gm/lib/season-line";
 import type { GmPlayer, GmScheduleGame } from "../src/gm/types";
 
@@ -32,6 +36,8 @@ for (let seed = 0; seed < 32; seed++) {
   const pbp = boxToPlayByPlay(box);
   assert.equal(pbp.at(-1)!.scoreHome, box.homeScore);
   assert.equal(pbp.at(-1)!.scoreAway, box.awayScore);
+  const atTen = linesAtCutoff(box, pbp, 600);
+  assert.equal(atTen.filter(p => p.teamId === home.id).reduce((n, p) => n + p.minutes, 0), 50, "replay minutes follow actual shared stints");
   const counted = pbp.filter(e => e.isFieldGoal).length;
   assert.equal(counted, box.players.reduce((n, p) => n + p.fga, 0));
 }
@@ -79,4 +85,21 @@ for (let i = 0; i < 10; i++) {
 assert.equal(players.find(p => p.id === base.id)!.rolePromise!.status, "unmet", "healthy DNPs count against a minutes promise");
 const profile = createSimProfile({ ...base, nbaSeason: { season: "2025-26", gp: 5, min: 100, pts: 30, reb: 10, ast: 5, stl: 1, blk: 1, tov: 3, fgm: 10, fga: 30, tpm: 8, tpa: 10, ftm: 2, fta: 3 } });
 assert.ok(profile.rates.threePct < 0.45, "ten hot attempts do not establish elite shooting ability");
+const hurtPlayers = league.players.map(p => p.id === base.id ? { ...p, injury: { type: "Ankle sprain", gamesRemaining: 3, reinjuryRisk: 0.1 } } : p);
+const injuryLeague = rebalanceForInjuryChanges({ ...league, players: hurtPlayers }, league.players);
+assert.ok(injuryLeague.teams.find(t => t.id === home.id)!.injuryRotationBackup);
+const recovered = rebalanceForInjuryChanges({ ...injuryLeague, players: league.players }, hurtPlayers);
+assert.deepEqual(recovered.teams.find(t => t.id === home.id)!.coaching, home.coaching, "recovery restores the original coaching plan");
+const row = withPlayerSeasonDefaults({ playerId: "seed-zero", playerName: "Zero Impact", teamId: "bos", teamName: "Boston Celtics", season: "2025-26", position: "SG", age: 26, gamesPlayed: 40, minutes: 1000, darkoDpm: 0, darkoOff: 0, darkoDef: 0 });
+const seeded = playerSeasonToGmPlayer(row, "bos", 2026);
+assert.equal(seeded.ratings.impact, 0, "a valid zero overlay stays zero");
+assert.ok(Object.values(seeded.sheet!.attributes).every(Number.isFinite), "unpublished counting fields cannot generate NaN abilities");
+assert.ok(Object.values(seeded.sheet!.tendencies).every(Number.isFinite));
+assert.equal(seeded.ratings.offense + seeded.ratings.defense, seeded.ratings.impact);
+const injured = { ...base, injury: { type: "Ankle sprain", gamesRemaining: 3, reinjuryRisk: 0.1 } };
+const otherNight = tickInjuries([injured], 5, { teamIds: [away.id], before: [injured], trainerByTeam: { [home.id]: 5 } });
+assert.equal(otherNight[0]!.injury!.gamesRemaining, 3, "another team's game does not consume your injury recovery games");
+let weakTrainer = [injured], strongTrainer = [injured];
+for (let i = 0; i < 2; i++) { weakTrainer = tickInjuries(weakTrainer, 1) as typeof weakTrainer; strongTrainer = tickInjuries(strongTrainer, 5) as typeof strongTrainer; }
+assert.ok(weakTrainer[0]!.injury && !strongTrainer[0]!.injury, "trainer bonuses accumulate instead of being rounded away");
 console.log("Franchise upgrade: shared possessions, accounting, development, trade value, migration, exports, promises, archives and draft imports passed.");

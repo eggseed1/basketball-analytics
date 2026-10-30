@@ -12,6 +12,7 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit -p .",
     "test": "node scripts/run-tests.mjs",
+    "test:franchise-systems": "node scripts/test-franchise-systems.mjs",
     "test:franchise-lab": "tsx scripts/test-gm-franchise-upgrade.ts",
     "test:franchise-calibration": "tsx --require ./scripts/lib/stub-server-only.cjs scripts/test-gm-calibration.ts",
     "test:arcade": "tsx scripts/test-arcade.ts",

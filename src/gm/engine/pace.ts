@@ -89,7 +89,7 @@ export function stepDay(league: GmLeagueState): {
       break;
     }
   }
-  players = tickInjuries(players, trainer);
+  players = tickInjuries(players, trainer, { teamIds: due.filter(g => g.exhibition !== "allstar").flatMap(g => [g.homeTeamId, g.awayTeamId]), before: playersBeforeInjuries, trainerByTeam: Object.fromEntries(league.teams.map(t => [t.id, t.staff.trainerLevel])) });
   const cupNews = schedule
     .filter((game) => game.played && game.day === day)
     .flatMap((game) => {

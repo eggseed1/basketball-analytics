@@ -886,6 +886,7 @@ export const useGmStore = create<GmStore>()(
             .filter((game) => !game.played && game.day <= target.day)
             .sort((a, b) => a.day - b.day || a.id.localeCompare(b.id))[0];
           if (!g) break;
+          const beforeGameInjuries = players;
           const result = simulateGame(g, state.teams, players, undefined, schedule, state.settings);
           schedule = schedule.map((x) => (x.id === g.id ? result.game : x));
           if (gameCounts(g)) {
@@ -917,7 +918,8 @@ export const useGmStore = create<GmStore>()(
             1;
           players = tickInjuries(
             players,
-            Math.max(homeTrainer, awayTrainer)
+            Math.max(homeTrainer, awayTrainer),
+            { teamIds: [g.homeTeamId, g.awayTeamId], before: beforeGameInjuries, trainerByTeam: Object.fromEntries(state.teams.map(t => [t.id, t.staff.trainerLevel])) }
           );
           if (g.id === next.id) {
             if (plannedShifts) result.box.shiftPlan = plannedShifts;
@@ -1773,7 +1775,8 @@ export const useGmStore = create<GmStore>()(
         }
         players = tickInjuries(
           players,
-          league.teams.find((team) => team.id === league.userTeamId)?.staff.trainerLevel ?? 1
+          league.teams.find((team) => team.id === league.userTeamId)?.staff.trainerLevel ?? 1,
+          { teamIds: tonight.flatMap(s => [s.teamAId, s.teamBId]), before: playersBeforeInjuries, trainerByTeam: Object.fromEntries(league.teams.map(t => [t.id, t.staff.trainerLevel])) }
         );
 
         const roundDone = bracket

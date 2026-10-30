@@ -75,6 +75,8 @@ function mapPosition(raw?: string): GmPosition {
   if (!raw) return "SF";
   const p = raw.toUpperCase();
   if (POSITIONS.includes(p as GmPosition)) return p as GmPosition;
+  const first = p.split(/[-/]/)[0] as GmPosition;
+  if (POSITIONS.includes(first)) return first;
   if (p.includes("G") && p.includes("F")) return "SF";
   if (p.startsWith("G")) return "PG";
   if (p.startsWith("F")) return "PF";
@@ -119,6 +121,8 @@ function usableMetric(value: unknown): value is number {
   return finite(value);
 }
 
+function nonzeroMetric(value: unknown): boolean { return finite(value) && Math.abs(value) > 1e-6; }
+
 /**
  * Points per 100 above average. DARKO when we have it.
  * Otherwise BPM / RAPTOR / net. Thin samples without DARKO are shrunk toward
@@ -127,14 +131,14 @@ function usableMetric(value: unknown): value is number {
 function estimateImpact(row: PlayerSeason): number {
   const minutes = Number.isFinite(row.minutes) ? row.minutes : 0;
   const gp = Number.isFinite(row.gamesPlayed) ? row.gamesPlayed : 0;
-  const genericDarko = usableMetric(row.dpm) && (row.dpm !== 0 || row.oDpm !== 0 || row.dDpm !== 0);
+  const genericDarko = usableMetric(row.dpm) && (nonzeroMetric(row.dpm) || nonzeroMetric(row.oDpm) || nonzeroMetric(row.dDpm));
   const hasDarko = usableMetric(row.darkoDpm) || genericDarko;
 
   let raw: number | null = null;
   if (usableMetric(row.darkoDpm)) raw = row.darkoDpm;
   else if (genericDarko) raw = row.dpm;
   else if (usableMetric(row.raptor)) raw = row.raptor;
-  else if (usableMetric(row.bpm) && (row.bpm !== 0 || row.obpm !== 0 || row.dbpm !== 0)) raw = clamp(row.bpm, -8, 14);
+  else if (usableMetric(row.bpm) && (nonzeroMetric(row.bpm) || nonzeroMetric(row.obpm) || nonzeroMetric(row.dbpm))) raw = clamp(row.bpm, -8, 14);
   else {
     const net = row.netRating;
     if (finite(net) && gp > 0) {
@@ -192,7 +196,7 @@ function ratingsFromSeason(
   opts?: { age?: number; draftPick?: number | null }
 ): GmRatings {
   const impact = estimateImpact(row);
-  const genericDarko = usableMetric(row.dpm) && (row.dpm !== 0 || row.oDpm !== 0 || row.dDpm !== 0);
+  const genericDarko = usableMetric(row.dpm) && (nonzeroMetric(row.dpm) || nonzeroMetric(row.oDpm) || nonzeroMetric(row.dDpm));
   const pair = usableMetric(row.darkoDpm) ? [row.darkoOff, row.darkoDef]
     : genericDarko ? [row.oDpm, row.dDpm]
     : usableMetric(row.raptor) ? [row.oRaptor, row.dRaptor]
@@ -338,7 +342,8 @@ export function playerSeasonToGmPlayer(
   };
   const entryValue = entryValueForNbaId(row.playerId, row.season);
   const player: GmPlayer = {
-    listedPosition: POSITIONS.includes(row.position?.toUpperCase() as GmPosition) ? row.position!.toUpperCase() as GmPosition : undefined,
+    listedPosition: POSITIONS.includes(row.position?.toUpperCase().split(/[-/]/)[0] as GmPosition) ? position : undefined,
+    secondaryPosition: POSITIONS.includes(row.position?.toUpperCase().split(/[-/]/)[1] as GmPosition) ? row.position!.toUpperCase().split(/[-/]/)[1] as GmPosition : undefined,
     realRole: { season: seasonEndYear, teamId, starts: row.gamesStarted ?? 0, games: row.gamesPlayed, mpg: row.minutes / Math.max(1, row.gamesPlayed) },
     id: row.playerId,
     name: row.playerName,

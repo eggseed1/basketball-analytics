@@ -564,11 +564,20 @@ export function linesAtCutoff(
     fta: 0,
   });
   const byId = new Map<string, Acc>();
+  const plusMinus = new Map<string, number>();
   for (const line of box.players) byId.set(line.playerId, empty());
 
   for (const event of events) {
     const t = elapsedSeconds(event.period, event.clockSeconds);
     if (t > cutoff) continue;
+    if (box.stints && event.points > 0) {
+      const stint = box.stints.find(s => t >= s.start && t < s.end);
+      if (stint) {
+        const homeScored = (event.teamTricode ?? event.teamId ?? "").toLowerCase() === box.homeTeamId.toLowerCase();
+        for (const id of stint.home) plusMinus.set(id, (plusMinus.get(id) ?? 0) + (homeScored ? event.points : -event.points));
+        for (const id of stint.away) plusMinus.set(id, (plusMinus.get(id) ?? 0) + (homeScored ? -event.points : event.points));
+      }
+    }
     const id = event.playerId;
     if (!id) continue;
     const acc = byId.get(id) ?? empty();
@@ -621,7 +630,7 @@ export function linesAtCutoff(
     const den = 2 * (acc.fga + 0.44 * acc.fta);
     return {
       ...line,
-      minutes: Math.round(line.minutes * frac * 10) / 10,
+      minutes: box.stints ? Math.round(box.stints.reduce((n, stint) => n + (stint.home.includes(line.playerId) || stint.away.includes(line.playerId) ? Math.max(0, Math.min(cutoff, stint.end) - stint.start) / 60 : 0), 0) * 10) / 10 : Math.round(line.minutes * frac * 10) / 10,
       points: acc.points,
       assists: acc.assists,
       rebounds: acc.rebounds,
@@ -637,7 +646,7 @@ export function linesAtCutoff(
       trueShootingPct: den > 0 ? acc.points / den : 0,
       usagePct: 0,
       gameScore: 0,
-      plusMinus: 0,
+      plusMinus: plusMinus.get(line.playerId) ?? 0,
     };
   });
 }

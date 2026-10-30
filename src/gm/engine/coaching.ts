@@ -545,7 +545,9 @@ export function paceWish(coaching?: GmCoaching): number {
 export function validShiftPlan(shifts: GmCoaching["shifts"], available: string[]): ChartRow[] | null {
   if (!shifts) return null;
   const ids = new Set(available);
-  const rows = Object.entries(shifts).filter(([id]) => ids.has(id)).map(([id, on]) => ({ id, on, minutes: countOn(on) }));
+  const entries = Object.entries(shifts).filter(([id]) => ids.has(id));
+  if (entries.some(([, on]) => !Array.isArray(on))) return null;
+  const rows = entries.map(([id, on]) => ({ id, on, minutes: countOn(on) }));
   if (rows.some(row => row.on.length !== SHIFT_SLOTS || row.on.some(v => typeof v !== "boolean"))) return null;
   for (let slot = 0; slot < SHIFT_SLOTS; slot++) if (rows.filter(row => row.on[slot]).length !== 5) return null;
   return rows;

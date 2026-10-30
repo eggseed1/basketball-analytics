@@ -153,7 +153,12 @@ export function simulateGame(
       push(handler, "turnover", steal ? "steal" : "bad pass", `${handler.name} turnover${steal ? ` (${steal.name} steals)` : ""}`, 0, false, null, steal);
       return;
     }
-    const defense = def.reduce((n, p) => n + p.ratings.defense, 0);
+    const defense = def.reduce((n, p) => {
+      const a = p.sheet?.attributes, prior = p.simProfile!.baseline;
+      const movement = ((a?.perimeterDefense ?? 65) - (prior.perimeterDefense ?? a?.perimeterDefense ?? 65)) * 0.06;
+      const interior = ((a?.interiorDefense ?? 65) - (prior.interiorDefense ?? a?.interiorDefense ?? 65)) * 0.06;
+      return n + p.ratings.defense + movement + interior;
+    }, 0);
     // The impact estimate calibrates only a bounded residual around entry shot probabilities.
     // Future attribute changes move those probabilities directly.
     const baselineFga = off.reduce((n, p) => n + p.simProfile!.rates.fga, 0);
