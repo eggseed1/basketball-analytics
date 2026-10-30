@@ -4,39 +4,18 @@ import { useEffect, useState } from "react";
 
 import { PlayerCareerBoard } from "@/components/players/player-career-board";
 import { PlayerBoardSkeleton } from "@/components/players/player-page-skeletons";
-import type { PlayerSeason } from "@/data/types";
 import {
   filterCareerBoardSource,
   pickCareerCompareSeason,
   toCareerBoardRows,
 } from "@/lib/career-board-rows";
+import { fetchPlayerCareerSeasons } from "@/lib/fetch-player-career-seasons";
 import { type PlayerSeasonKind } from "@/lib/player-destination";
 import type { ThemeMode } from "@/themes/era-theme";
 
-const FETCH_ATTEMPTS = 3;
-const RETRY_MS = 600;
-
-function sleep(ms: number, signal: AbortSignal) {
-  return new Promise<void>((resolve, reject) => {
-    if (signal.aborted) {
-      reject(new DOMException("Aborted", "AbortError"));
-      return;
-    }
-    const id = window.setTimeout(() => resolve(), ms);
-    const onAbort = () => {
-      window.clearTimeout(id);
-      reject(new DOMException("Aborted", "AbortError"));
-    };
-    signal.addEventListener("abort", onAbort, { once: true });
-  });
-}
-
 /**
  * Overview career board — loads seasons on the client so first HTML does not
- * embed CareerBoardRow[] (same pattern as PlayerComparisonsBoard).
- *
- * Retries empty / failed responses: the edge career budget can return [] on a
- * cold ESPN hit even when the player has a full career.
+ * embed CareerBoardRow[] when SSR did not already supply them.
  */
 export function PlayerOverviewCareerClient({
   playerId,
@@ -70,37 +49,19 @@ export function PlayerOverviewCareerClient({
     const ac = new AbortController();
 
     (async () => {
-      let lastRows: ReturnType<typeof toCareerBoardRows> = [];
-      for (let attempt = 1; attempt <= FETCH_ATTEMPTS; attempt++) {
-        try {
-          const res = await fetch(
-            `/api/players/${encodeURIComponent(playerId)}/seasons`,
-            { signal: ac.signal }
-          );
-          if (!res.ok) throw new Error(`seasons ${res.status}`);
-          const json = (await res.json()) as { data?: PlayerSeason[] };
-          const career = Array.isArray(json.data) ? json.data : [];
-          lastRows = toCareerBoardRows(filterCareerBoardSource(career));
-          if (cancelled) return;
-          if (lastRows.length > 0) {
-            setRows(lastRows);
-            return;
-          }
-        } catch (error) {
-          if (cancelled) return;
-          if (error instanceof DOMException && error.name === "AbortError") {
-            return;
-          }
+      try {
+        const career = await fetchPlayerCareerSeasons(playerId, {
+          signal: ac.signal,
+        });
+        if (cancelled) return;
+        setRows(toCareerBoardRows(filterCareerBoardSource(career)));
+      } catch (error) {
+        if (cancelled) return;
+        if (error instanceof DOMException && error.name === "AbortError") {
+          return;
         }
-        if (attempt < FETCH_ATTEMPTS) {
-          try {
-            await sleep(RETRY_MS * attempt, ac.signal);
-          } catch {
-            return;
-          }
-        }
+        setRows([]);
       }
-      if (!cancelled) setRows(lastRows);
     })();
 
     return () => {
