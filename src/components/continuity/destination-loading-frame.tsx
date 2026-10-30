@@ -25,13 +25,13 @@ export function SkeletonBlock({ className }: { className?: string }) {
 /** Spinner plus label, so a skeleton reads as loading rather than empty. */
 export function LoadingStatus({ children }: { children: ReactNode }) {
   return (
-    <p className="inline-flex max-w-full items-center gap-2 text-[14px] font-semibold text-muted-foreground">
+    <span className="inline-flex max-w-full items-center gap-2 text-[14px] font-semibold text-muted-foreground">
       <Loader2
         aria-hidden
         className="size-4 shrink-0 animate-spin motion-reduce:animate-none"
       />
       <span className="min-w-0 truncate">{children}</span>
-    </p>
+    </span>
   );
 }
 
@@ -110,3 +110,4 @@ export function DestinationSectionSkeleton({
     </div>
   );
 }
+

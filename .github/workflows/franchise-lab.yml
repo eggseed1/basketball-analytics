@@ -33,6 +33,13 @@ jobs:
       - run: npm run test:franchise-lab
       - run: npm run test:franchise-systems
       - run: npm run test:franchise-calibration
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: franchise-lab-calibration
+          path: /tmp/franchise-calibration
+          if-no-files-found: ignore
+          retention-days: 7
   browser:
     runs-on: ubuntu-24.04
     timeout-minutes: 15

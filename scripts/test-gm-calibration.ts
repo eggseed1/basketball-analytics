@@ -1,9 +1,11 @@
 import assert from "node:assert/strict";
+import { mkdirSync, writeFileSync } from "node:fs";
 import { getBundledBrefPeerBoard } from "../src/data/runtime/bref-advanced-snapshot";
 import { buildLeagueFromPlayerSeasons } from "../src/gm/seed/create-real-league";
 import { simulateGame } from "../src/gm/engine/simulate";
 
-const rows = getBundledBrefPeerBoard("2025-26").filter(p => p.gamesPlayed >= 5 && p.minutes >= 40 && p.fieldGoalsAttempted > 0);
+async function main() {
+const rows = (await getBundledBrefPeerBoard("2025-26")).filter(p => p.gamesPlayed >= 5 && p.minutes >= 40 && p.fieldGoalsAttempted > 0);
 assert.ok(rows.length > 350, "the calibration requires the bundled real season, not generated players");
 const league = buildLeagueFromPlayerSeasons(rows, { userTeamId: "bos", seasonCanonical: "2025-26", seed: 71 });
 const real = { points: 0, min: 0, fga: 0, fgm: 0, tpa: 0, tpm: 0, fta: 0, ftm: 0, ast: 0, reb: 0, stl: 0, blk: 0, tov: 0 };
@@ -21,16 +23,23 @@ for (const [i, game] of games.entries()) {
     sim.fta += p.fta; sim.ftm += p.ftm; sim.ast += p.assists; sim.reb += p.rebounds; sim.stl += p.steals; sim.blk += p.blocks; sim.tov += p.turnovers;
   }
 }
+mkdirSync("/tmp/franchise-calibration", { recursive: true });
+writeFileSync("/tmp/franchise-calibration/report.json", JSON.stringify({ rows, real, sim, games: games.length }));
+const failures: string[] = [];
 const perGame = (n: number, minutes: number) => n / minutes * 240;
 for (const key of ["points", "ast", "reb", "stl", "blk", "tov"] as const) {
   const expected = perGame(real[key], real.min), actual = perGame(sim[key], sim.min);
   console.log(`${key}: real ${expected.toFixed(2)}, sim ${actual.toFixed(2)}`);
   const tolerance = key === "points" ? 0.13 : key === "reb" ? 0.2 : 0.35;
-  assert.ok(Math.abs(actual / expected - 1) < tolerance, `${key} outside the real-season calibration band`);
+  if (!(Math.abs(actual / expected - 1) < tolerance)) failures.push(`${key} outside the real-season calibration band`);
 }
 for (const [made, attempts, label, tolerance] of [["fgm", "fga", "FG%", 0.055], ["tpm", "tpa", "3P%", 0.045], ["ftm", "fta", "FT%", 0.045], ["tpa", "fga", "three-point attempt share", 0.09]] as const) {
   const expected = real[made] / real[attempts], actual = sim[made] / sim[attempts];
   console.log(`${label}: real ${expected.toFixed(3)}, sim ${actual.toFixed(3)}`);
-  assert.ok(Math.abs(actual - expected) < tolerance, `${label} outside the real-season calibration band`);
+  if (!(Math.abs(actual - expected) < tolerance)) failures.push(`${label} outside the real-season calibration band`);
 }
+assert.deepEqual(failures, [], "Real-season calibration must match every checked distribution");
 console.log(`Real-season calibration passed across ${games.length} games.`);
+
+}
+main().catch(error => { console.error(error); process.exitCode = 1; });
