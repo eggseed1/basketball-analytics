@@ -197,13 +197,38 @@ export function CareerBandsExplorer() {
   useEffect(() => {
     if (cache[playerId]) return;
     const ctrl = new AbortController();
-    fetch(`/api/players/${playerId}/career-bands`, { signal: ctrl.signal })
-      .then((r) => (r.ok ? (r.json() as Promise<CareerBands>) : Promise.reject(new Error(String(r.status)))))
-      .then((b) => setCache((c) => ({ ...c, [playerId]: b })))
-      .catch((e: unknown) => {
-        if ((e as Error).name !== "AbortError") setCache((c) => ({ ...c, [playerId]: "error" }));
-      });
-    return () => ctrl.abort();
+    let cancelled = false;
+    (async () => {
+      let lastError: unknown;
+      for (let attempt = 1; attempt <= 3; attempt++) {
+        try {
+          const res = await fetch(`/api/players/${playerId}/career-bands`, {
+            signal: ctrl.signal,
+          });
+          if (!res.ok) throw new Error(String(res.status));
+          const bands = (await res.json()) as CareerBands;
+          if (cancelled) return;
+          if (Array.isArray(bands.seasons) && bands.seasons.length > 0) {
+            setCache((c) => ({ ...c, [playerId]: bands }));
+            return;
+          }
+          lastError = new Error("empty career bands");
+        } catch (e: unknown) {
+          if ((e as Error).name === "AbortError") return;
+          lastError = e;
+        }
+        if (attempt < 3) {
+          await new Promise((r) => setTimeout(r, 600 * attempt));
+        }
+      }
+      if (!cancelled && lastError) {
+        setCache((c) => ({ ...c, [playerId]: "error" }));
+      }
+    })();
+    return () => {
+      cancelled = true;
+      ctrl.abort();
+    };
   }, [playerId, cache]);
 
   const loaded = bands && bands !== "error" ? bands : null;

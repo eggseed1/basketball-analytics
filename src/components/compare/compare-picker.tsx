@@ -25,6 +25,7 @@ import {
   isCareerCompareKey,
 } from "@/lib/career-average-row";
 import { type } from "@/lib/design-system";
+import { fetchPlayerCareerSeasons } from "@/lib/fetch-player-career-seasons";
 import { cn } from "@/lib/utils";
 
 type Hit = {
@@ -535,12 +536,9 @@ export function ComparePicker({
       return;
     }
     const ctrl = new AbortController();
-    void fetch(`/api/players/${encodeURIComponent(a.id)}/seasons`, {
-      signal: ctrl.signal,
-    })
-      .then((r) => (r.ok ? r.json() : null))
-      .then((body) => {
-        setASeasons(parseCareerSeasons(body));
+    void fetchPlayerCareerSeasons(a.id, { signal: ctrl.signal })
+      .then((career) => {
+        setASeasons(parseCareerSeasons({ data: career }));
       })
       .catch(() => {});
     return () => ctrl.abort();
@@ -552,12 +550,9 @@ export function ComparePicker({
       return;
     }
     const ctrl = new AbortController();
-    void fetch(`/api/players/${encodeURIComponent(b.id)}/seasons`, {
-      signal: ctrl.signal,
-    })
-      .then((r) => (r.ok ? r.json() : null))
-      .then((body) => {
-        setBSeasons(parseCareerSeasons(body));
+    void fetchPlayerCareerSeasons(b.id, { signal: ctrl.signal })
+      .then((career) => {
+        setBSeasons(parseCareerSeasons({ data: career }));
       })
       .catch(() => {});
     return () => ctrl.abort();

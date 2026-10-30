@@ -208,16 +208,18 @@ export const getPlayerCareerSeasonsCached = cache(async (playerId: string) => {
   const { preferBundledProductDataOnEdge } = await import(
     "@/data/providers/nba/runtime-policy"
   );
-  // Cold ESPN career often lands ~1.5–2.5s; a 1.2s budget returned [] and the
-  // overview client treated that as "no career seasons".
-  const budgetMs = preferBundledProductDataOnEdge()
-    ? 4_000
-    : runtimeTimeoutMs(7_000, 3_400);
-  const result = await withBudget(
-    getPlayerCriticalCareerSeasons(playerId),
-    budgetMs,
-    [] as PlayerSeason[]
-  );
+  // Cold ESPN career often lands ~1.5–2.5s. Soft budgets must not lock in []
+  // sitewide (overview, compare, percentiles, career-bands, rank/compare).
+  const onEdge = preferBundledProductDataOnEdge();
+  const budgetMs = onEdge ? 4_000 : runtimeTimeoutMs(7_000, 3_400);
+  const extendMs = onEdge ? 8_000 : runtimeTimeoutMs(12_000, 6_000);
+  // One inflight: withBudget does not cancel, so a soft timeout can still wait
+  // on the same ESPN work instead of starting a duplicate load.
+  const inflight = getPlayerCriticalCareerSeasons(playerId);
+  let result = await withBudget(inflight, budgetMs, [] as PlayerSeason[]);
+  if (result.value.length === 0 && result.timedOut) {
+    result = await withBudget(inflight, extendMs, [] as PlayerSeason[]);
+  }
   if (result.value.length > 0) return result.value;
   // Legend careers are static assets; a cold fetch can outlast the budget, so read them unbudgeted.
   const { loadCareerFromBrefSlug, parseBrefPlayerSlug } = await import(

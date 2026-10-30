@@ -9,11 +9,16 @@ export async function GET(
   try {
     const { playerId } = await context.params;
     const data = await getPlayerCareerSeasonsCached(playerId);
-    return jsonOk({
+    const response = jsonOk({
       playerId,
       count: data.length,
       data,
     });
+    // Never CDN-cache an empty cold miss — clients retry and need a real payload.
+    if (data.length === 0) {
+      response.headers.set("Cache-Control", "no-store");
+    }
+    return response;
   } catch (error) {
     return jsonError(error);
   }
