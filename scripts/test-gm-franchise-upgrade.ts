@@ -43,6 +43,11 @@ for (let seed = 0; seed < 32; seed++) {
   assert.equal(counted, box.players.reduce((n, p) => n + p.fga, 0));
 }
 
+const customIds = Object.values(home.starters).filter((id): id is string => Boolean(id));
+const customTeam = { ...home, coaching: { ...home.coaching, shifts: Object.fromEntries(customIds.map(id => [id, Array<boolean>(24).fill(true)])), closingLineup: customIds } };
+const customBox = simulateGame(game, league.teams.map(t => t.id === home.id ? customTeam : t), league.players, 21).box;
+assert.ok(customBox.stints!.every(stint => new Set(stint.home).size === 5 && stint.home.every(id => customIds.includes(id))), "saved shifts determine every shared stint");
+assert.ok(customBox.players.filter(p => p.teamId === home.id).every(p => p.minutes === 48 + 5 * (customBox.overtime ?? 0)), "saved shifts determine actual minutes");
 const base = league.players.find(p => p.teamId === home.id)!;
 const improved: GmPlayer = { ...base, sheet: { ...base.sheet!, attributes: { ...base.sheet!.attributes, threePoint: Math.min(99, base.sheet!.attributes.threePoint + 10), passAccuracy: Math.min(99, base.sheet!.attributes.passAccuracy + 10) } } };
 assert.ok(simulationRates(improved).threePct >= simulationRates(base).threePct, "shooting development changes shot probability");
@@ -60,6 +65,8 @@ assert.ok(Math.abs(next.sheet!.overall - 92) <= 2, "development does not discard
 const elite = { ...base, age: 27, sheet: { ...base.sheet!, overall: 97 } };
 const starter = { ...base, age: 27, sheet: { ...base.sheet!, overall: 82 } };
 assert.ok(playerTradePoints(elite, league) > playerTradePoints(starter, league) * 1.5, "elite talent is not flattened to the same five-star trade price");
+const young = { ...base, age: 20, draftPick: 6 };
+assert.equal(playerTradePoints(young, league), playerTradePoints({ ...young, sheet: { ...young.sheet!, potential: { ...young.sheet!.potential, ceiling: 99 } } }, league), "trade prices do not reveal a hidden potential ceiling");
 assert.equal(evaluateTrade(league, home.id, away.id, [{ type: "player", id: base.id }, { type: "player", id: base.id }], []).ok, false);
 assert.equal(evaluateTrade(league, away.id, home.id, [{ type: "player", id: base.id }], []).ok, false, "cannot trade another club's player");
 

@@ -20,6 +20,7 @@ try {
   assert.ok(ready, "Next.js did not become ready");
   browser = await chromium.launch({ headless: true });
   page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+  await page.emulateMedia({ reducedMotion: "reduce" });
   page.on("pageerror", error => errors.push(error.stack ?? error.message));
   await page.goto("http://127.0.0.1:3107/gm", { waitUntil: "domcontentloaded", timeout: 120000 });
   await page.getByLabel("Import a franchise save", { exact: true }).setInputFiles(`${dir}/franchise.json`, { timeout: 90000 });
@@ -43,9 +44,14 @@ try {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.getByRole("button", { name: "Team plan", exact: true }).click();
   assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 2), "franchise desk overflows the mobile viewport");
-  await page.screenshot({ path: `${dir}/mobile.png`, fullPage: true });
+  await page.getByRole("heading", { name: "Development and roles", exact: true }).scrollIntoViewIfNeeded();
+  await page.getByRole("heading", { name: "Trade conversations", exact: true }).scrollIntoViewIfNeeded();
+  await page.evaluate(() => scrollTo(0, 0));
+  await page.screenshot({ path: `${dir}/mobile.png`, fullPage: true, animations: "disabled" });
   await page.getByRole("button", { name: "Settings and saves", exact: true }).click();
-  await page.screenshot({ path: `${dir}/mobile-settings.png`, fullPage: true });
+  await page.getByLabel("Player to edit", { exact: true }).scrollIntoViewIfNeeded();
+  await page.evaluate(() => scrollTo(0, 0));
+  await page.screenshot({ path: `${dir}/mobile-settings.png`, fullPage: true, animations: "disabled" });
   assert.deepEqual(errors, [], "Franchise screens must not produce uncaught browser errors");
   console.log("Franchise browser checks passed: import, navigation, commissioner edit, export and mobile layout.");
 } catch (error) {

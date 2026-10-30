@@ -79,6 +79,10 @@ export function simulateGame(
   const byId = new Map(players.map(p => [p.id, p]));
   const lines = new Map([...homeBook.roster, ...awayBook.roster].map(p => [p.id, emptyLine(p)]));
   const rates = new Map(players.map(p => [p.id, simulationRates(p)]));
+  const entryTotals = players.filter(p => p.teamId && p.simProfile?.source === "nba" && p.nbaSeason).reduce((n, p) => ({ fga: n.fga + p.nbaSeason!.fga, tpa: n.tpa + p.nbaSeason!.tpa, blk: n.blk + p.nbaSeason!.blk }), { fga: 0, tpa: 0, blk: 0 });
+  const leagueBlockRate = entryTotals.fga > 0 ? entryTotals.blk / entryTotals.fga : 0.055;
+  const leagueThreeShare = entryTotals.fga > 0 ? entryTotals.tpa / entryTotals.fga : 0.38;
+  const averageBlockWeight = 0.95 * (1 - leagueThreeShare) + 0.3 * leagueThreeShare;
   const usedOnCourt = new Map<string, number>();
   const events: PlayByPlayEvent[] = [];
   const stints: NonNullable<GmBoxScore["stints"]> = [];
@@ -143,12 +147,14 @@ export function simulateGame(
     const volume = off.reduce((n, p) => n + rates.get(p.id)!.fga, 0);
     const turnovers = off.reduce((n, p) => n + rates.get(p.id)!.tov, 0);
     const freeThrows = off.reduce((n, p) => n + rates.get(p.id)!.fga * rates.get(p.id)!.ftPerFga, 0);
-    const turnoverChance = clamp(turnovers / Math.max(0.1, volume + 0.44 * freeThrows + turnovers) * mods.tov, 0.065, 0.24);
+    const offensiveRebounds = off.reduce((n, p) => n + rates.get(p.id)!.orb, 0);
+    const turnoverChance = clamp(turnovers / Math.max(0.1, volume + 0.44 * freeThrows + turnovers - offensiveRebounds) * mods.tov, 0.065, 0.24);
     const handler = weighted(off, p => rates.get(p.id)!.fga * usageBoost(p, own.coaching) + rates.get(p.id)!.ast, rng);
     for (const p of off) usedOnCourt.set(p.id, (usedOnCourt.get(p.id) ?? 0) + 1);
     if (rng() < turnoverChance) {
       lines.get(handler.id)!.turnovers++;
-      const steal = rng() < 0.56 ? weighted(def, p => rates.get(p.id)!.stl, rng) : undefined;
+      const stealShare = clamp(def.reduce((n, p) => n + rates.get(p.id)!.stl, 0) / Math.max(0.01, turnovers), 0.2, 0.9);
+      const steal = rng() < stealShare ? weighted(def, p => rates.get(p.id)!.stl, rng) : undefined;
       if (steal) lines.get(steal.id)!.steals++;
       push(handler, "turnover", steal ? "steal" : "bad pass", `${handler.name} turnover${steal ? ` (${steal.name} steals)` : ""}`, 0, false, null, steal);
       return;
@@ -177,7 +183,8 @@ export function simulateGame(
       const r = rates.get(shooter.id)!;
       const line = lines.get(shooter.id)!;
       const tired = secondNightScale(shooter.age, gap[side] ?? null) * minuteLoadMul(line.minutes, shooter.sheet?.attributes.stamina ?? 70);
-      const foulChance = clamp((freeThrows / Math.max(0.1, volume)) / 2.5 * mods.ft, 0.025, 0.2);
+      const foulRatio = freeThrows / Math.max(0.1, volume);
+      const foulChance = clamp(foulRatio / (2 + foulRatio) * mods.ft, 0.025, 0.2);
       if (rng() < foulChance) {
         let finalMade = false;
         for (let ft = 1; ft <= 2; ft++) {
@@ -189,11 +196,15 @@ export function simulateGame(
         continue;
       }
       const three = rng() < clamp(r.threeShare * mods.three, 0, 0.88);
-      const blocked = rng() < clamp(def.reduce((n, p) => n + rates.get(p.id)!.blk, 0) / Math.max(0.1, baselineFga) * (three ? 0.3 : 0.95), 0.005, 0.16);
+      const blockWeight = three ? 0.3 : 0.95;
+      const blocked = rng() < clamp(def.reduce((n, p) => n + rates.get(p.id)!.blk, 0) / Math.max(0.1, baselineFga) * blockWeight / averageBlockWeight, 0.005, 0.2);
       const blocker = blocked ? weighted(def, p => rates.get(p.id)!.blk, rng) : undefined;
       const homeAdvantage = side === 0 && !game.neutral ? 0.004 : 0;
       const pct = (three ? r.threePct : r.twoPct * mods.two) * tired + residual + fit - defense * 0.003 + homeAdvantage + (coach[side]!.offense - coach[1 - side]!.defense) * 0.002;
-      const made = !blocked && rng() < clamp(pct, 0.08, 0.87);
+      // Observed shooting percentages already include average blocked attempts.
+      // Convert to an unblocked attempt probability; opponent block skill can then vary.
+      const observedBlockShare = clamp(leagueBlockRate * blockWeight / averageBlockWeight, 0, 0.2);
+      const made = !blocked && rng() < clamp(pct / (1 - observedBlockShare), 0.08, 0.95);
       line.fga++; if (three) line.tpa++;
       const assisted = made && rng() < clamp(off.reduce((n, p) => n + rates.get(p.id)!.ast, 0) / Math.max(0.2, volume) / 0.47 * mods.ast, 0.18, 0.85);
       const passer = assisted ? weighted(off.filter(p => p.id !== shooter.id), p => rates.get(p.id)!.ast, rng) : undefined;

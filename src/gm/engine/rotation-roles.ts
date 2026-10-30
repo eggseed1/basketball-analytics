@@ -1,4 +1,5 @@
 import type { GmPlayer, GmPosition, GmTeam } from "@/gm/types";
+import { clamp } from "@/gm/engine/rng";
 import { playerRoles } from "@/gm/engine/player-profile";
 
 const SPOTS: GmPosition[] = ["PG", "SG", "SF", "PF", "C"];
@@ -6,8 +7,11 @@ const NEAR: Record<GmPosition, GmPosition[]> = { PG: ["SG"], SG: ["PG", "SF"], S
 
 export function roleFit(player: GmPlayer, spot: GmPosition): number {
   if (player.position === spot || player.listedPosition === spot) return 1;
-  if (player.secondaryPosition === spot) return 0.96;
   const roles = playerRoles(player);
+  // An inferred C/PF listing does not make a non-shooting center a natural four.
+  if (player.position === "C" && spot === "PF" && roles.spacing < 0.3) return 0.76;
+  if (player.secondaryPosition === spot) return 0.96;
+  if (player.position === "SG" && spot === "SF" && player.heightIn >= 77) return 0.94;
   if (spot === "PG" && roles.creation > 0.8 && player.heightIn < 84) return 0.94;
   if (spot === "C" && roles.interior > 0.78 && player.heightIn >= 78) return 0.91;
   return NEAR[player.position].includes(spot) ? 0.87 : 0.5;
@@ -52,7 +56,7 @@ export function bestStartingFive(team: GmTeam, roster: GmPlayer[], season?: numb
   const rolePrior = (p: GmPlayer) => {
     const role = p.realRole;
     return role && role.teamId === team.id && !p.priorLine && (!season || role.season === season)
-      ? 4 * role.starts / Math.max(1, role.games) : 0;
+      ? 12 * role.starts / Math.max(1, role.games) + clamp((role.mpg - 24) * 0.5, -6, 6) : 0;
   };
   const pool = [...roster].sort((a, b) => ovr(b) + rolePrior(b) - ovr(a) - rolePrior(a)).slice(0, 12);
   let top = -Infinity;

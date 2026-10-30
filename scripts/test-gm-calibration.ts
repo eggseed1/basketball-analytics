@@ -30,10 +30,10 @@ const perGame = (n: number, minutes: number) => n / minutes * 240;
 for (const key of ["points", "ast", "reb", "stl", "blk", "tov"] as const) {
   const expected = perGame(real[key], real.min), actual = perGame(sim[key], sim.min);
   console.log(`${key}: real ${expected.toFixed(2)}, sim ${actual.toFixed(2)}`);
-  const tolerance = key === "points" ? 0.13 : key === "reb" ? 0.2 : 0.35;
+  const tolerance = key === "points" ? 0.08 : key === "reb" ? 0.12 : 0.15;
   if (!(Math.abs(actual / expected - 1) < tolerance)) failures.push(`${key} outside the real-season calibration band`);
 }
-for (const [made, attempts, label, tolerance] of [["fgm", "fga", "FG%", 0.055], ["tpm", "tpa", "3P%", 0.045], ["ftm", "fta", "FT%", 0.045], ["tpa", "fga", "three-point attempt share", 0.09]] as const) {
+for (const [made, attempts, label, tolerance] of [["fgm", "fga", "FG%", 0.03], ["tpm", "tpa", "3P%", 0.025], ["ftm", "fta", "FT%", 0.025], ["tpa", "fga", "three-point attempt share", 0.05]] as const) {
   const expected = real[made] / real[attempts], actual = sim[made] / sim[attempts];
   console.log(`${label}: real ${expected.toFixed(3)}, sim ${actual.toFixed(3)}`);
   if (!(Math.abs(actual - expected) < tolerance)) failures.push(`${label} outside the real-season calibration band`);

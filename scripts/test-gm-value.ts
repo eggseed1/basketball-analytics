@@ -87,8 +87,9 @@ test("stars follow overall and age, and the contract is a separate surplus", () 
   const vet = player("vet", "bos", 78, 35, 40);
   const bench = player("end", "bos", 62, 28, 3);
   assert.equal(playerStars(star), 5);
-  assert.equal(playerStars(player("tatum", "bos", 82, 28, 58)), 5);
-  assert.ok(playerStars(player("towns", "nyk", 80, 30, 57)) >= 4.5);
+  assert.equal(playerStars(player("starter", "bos", 82, 28, 24)), 3.5);
+  assert.ok(playerStars(player("elite", "bos", 97, 28, 58)) > playerStars(player("starter", "bos", 82, 28, 24)));
+  assert.equal(playerStars(player("starter", "nyk", 80, 30, 24)), 3.5);
   assert.ok(playerStars(prospect) >= 3.5);
   assert.ok(playerStars(vet) < playerStars(prospect));
   assert.ok(playerStars(bench) <= 1.5);
@@ -224,3 +225,4 @@ test("a bad team's pick projects earlier than a good team's pick", () => {
   assert.equal(sold.ok, true, sold.reason);
   assert.equal(held.ok, false);
 });
+

@@ -5,7 +5,7 @@ import {
   SHEET_VERSION,
 } from "@/gm/engine/attributes";
 import { clamp } from "@/gm/engine/rng";
-import { bestStartingFive } from "@/gm/engine/rotation-roles";
+import { bestStartingFive, roleFit } from "@/gm/engine/rotation-roles";
 
 /**
  * Who can share a spot. NBA coaches still staff a handler and a big.
@@ -845,38 +845,18 @@ function rotationPool(
     const id = starters?.[slot];
     if (id) take(byId.get(id));
   }
-  // Guarantee a listed body at each spot before stacking wing depth.
-  for (const slot of FILL_ORDER) {
+  // Reserve genuine backups for the starting seats. A forward's inferred
+  // secondary listing cannot fill two different backup jobs at once.
+  const backupSeats = [...FILL_ORDER].sort((a, b) =>
+    pool.filter(p => roleFit(p, a) >= 0.94).length - pool.filter(p => roleFit(p, b) >= 0.94).length || FILL_ORDER.indexOf(a) - FILL_ORDER.indexOf(b)
+  );
+  for (const slot of backupSeats) {
     if (pool.length >= caps.pool) break;
-    if (pool.some((player) => player.position === slot)) continue;
-    const natural = roster
-      .filter((player) => !used.has(player.id) && player.position === slot)
-      .sort(byWish)[0];
-    take(natural ?? pickForSlot(slot, roster, used));
-  }
-  // Prefer one backup per spot so a shallow book does not always orphan PF.
-  // Fill the thinnest spots first instead of a fixed C→PF order.
-  const backupSeats = [...FILL_ORDER]
-    .map((slot) => ({
-      slot,
-      covering: pool.filter((player) => canCover(player, slot)).length,
-    }))
-    .filter((row) => row.covering < 2)
-    .sort((a, b) => a.covering - b.covering || FILL_ORDER.indexOf(a.slot) - FILL_ORDER.indexOf(b.slot));
-  for (const { slot } of backupSeats) {
-    if (pool.length >= caps.pool) break;
-    const natural = roster
-      .filter((player) => !used.has(player.id) && player.position === slot)
-      .sort(byWish)[0];
-    const secondary = roster
-      .filter(
-        (player) =>
-          !used.has(player.id) &&
-          player.secondaryPosition === slot &&
-          player.position !== slot
-      )
-      .sort(byWish)[0];
-    take(natural ?? secondary ?? pickForSlot(slot, roster, used));
+    const ranked = roster.filter(p => !used.has(p.id) && roleFit(p, slot) >= 0.84).sort((a, b) => {
+      const score = (p: GmPlayer) => rotationTarget(p) * 0.8 + overallOf(p) * 0.12 + roleFit(p, slot) * 12;
+      return score(b) - score(a);
+    });
+    take(ranked[0]);
   }
   for (const player of [...roster].sort(byWish)) {
     if (pool.length >= caps.pool) break;
