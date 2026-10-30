@@ -469,7 +469,8 @@ export function resolveCoverSlot(
 export function minutesPerPosition(
   players: GmPlayer[],
   minutes: Record<string, number>,
-  coverSlot?: Partial<Record<string, GmPosition>> | null
+  coverSlot?: Partial<Record<string, GmPosition>> | null,
+  positionMinutes?: Record<string, Partial<Record<GmPosition, number>>>
 ): PositionMinuteRow[] {
   const seats = resolveCoverSlot(players, minutes, coverSlot);
   return POSITIONS.map((position) => {
@@ -478,9 +479,12 @@ export function minutesPerPosition(
     for (const player of players) {
       const m = Math.max(0, minutes[player.id] ?? 0);
       if (m <= 0) continue;
-      if (seats[player.id] !== position) continue;
-      if (player.position === position) primary += m;
-      else secondary += m;
+      const split = positionMinutes?.[player.id];
+      const sum = split ? Object.values(split).reduce((n, value) => n + Math.max(0, value ?? 0), 0) : 0;
+      if (!sum && seats[player.id] !== position) continue;
+      const assigned = sum ? m * Math.max(0, split?.[position] ?? 0) / sum : m;
+      if (player.position === position) primary += assigned;
+      else secondary += assigned;
     }
     const total = primary + secondary;
     const under = POSITION_MINUTE_TARGET - total;
@@ -1232,6 +1236,8 @@ export function autoSetLineup(team: GmTeam, players: GmPlayer[]): GmTeam {
       tempo: team.coaching?.tempo ?? "normal",
       playThrough: team.coaching?.playThrough ?? [null, null],
       ...team.coaching,
+      shifts: undefined,
+      positionMinutes: undefined,
       minutes,
       coverSlot: plan.coverSlot,
       rotationDepth: depth,

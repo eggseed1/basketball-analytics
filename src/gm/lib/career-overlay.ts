@@ -87,6 +87,10 @@ export function overlaySimCareerSeasons(
   player: GmPlayer
 ): GmCareerSeasonRow[] {
   const overlays = new Map<number, GmCareerSeasonRow>();
+  for (const year of league.history ?? []) {
+    const archived = year.players.find(p => p.id === player.id);
+    if (archived?.line && archived.line.gp > 0) overlays.set(year.season, lineToCareerRow(archived.line, year.season, archived.teamId));
+  }
 
   const current = simCountingLine(league, player.id);
   if (current && current.gp > 0) {
@@ -135,3 +139,4 @@ export function entrySeasonIsCurrentSaveYear(
   if (!nbaSeason) return false;
   return seasonOverlapsEndYear(nbaSeason.season, leagueSeason);
 }
+

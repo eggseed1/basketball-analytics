@@ -89,7 +89,7 @@ function hashId(id: string): number {
 }
 
 function band(value: number): number {
-  return clamp(Math.round(value), 25, 99);
+  return clamp(Math.round(Number.isFinite(value) ? value : 60), 25, 99);
 }
 
 /** Fractions (0.239) and percent points (23.9) both become percent points. */

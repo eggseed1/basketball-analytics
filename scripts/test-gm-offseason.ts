@@ -13,6 +13,8 @@ import {
   signingAllowed,
   startNextSeason,
 } from "../src/gm/engine/offseason";
+import { playerSheet } from "../src/gm/engine/attributes";
+import { applyOptionDecision, resolveAutomatedOptions } from "../src/gm/engine/fa-options";
 import { evaluateSigning, tradeSalaryLegal } from "../src/gm/engine/cap";
 import { createGeneratedLeague } from "../src/gm/seed/create-league";
 import {
@@ -39,6 +41,7 @@ function withContract(
   return {
     ...player,
     ratings: { ...player.ratings, impact },
+    sheet: playerSheet({ ...player, sheet: undefined, ratings: { ...player.ratings, impact } }),
     contract: {
       yearsRemaining: years,
       annualSalaryM: 12,
@@ -70,7 +73,9 @@ const patched = {
   }),
 };
 
-const market = enterFreeAgency(patched);
+const opened = enterFreeAgency(patched);
+assert.equal(opened.players.find(p => p.id === teamOption.id)!.contract!.yearsRemaining, 0, "user options await a decision");
+const market = resolveAutomatedOptions(applyOptionDecision(opened, teamOption.id, "exercise"));
 assert.equal(market.phase, "free_agency");
 assert.equal(market.season, 2026);
 
@@ -221,3 +226,4 @@ assert.ok(culled.players.some((player) => player.id === starFa.id));
 assert.ok(culled.players.some((player) => player.id === bos[2]!.id));
 
 console.log("gm offseason: ok");
+

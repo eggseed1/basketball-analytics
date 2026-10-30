@@ -55,7 +55,7 @@ assert.equal(evaluateTrade(league, away.id, home.id, [{ type: "player", id: base
 const exported = exportFranchise(league);
 const imported = parseFranchise(exported);
 assert.equal(imported.userTeamId, league.userTeamId);
-assert.deepEqual(imported.teams.map(t => t.coaching), league.teams.map(t => t.coaching), "round trip preserves coaching");
+assert.deepEqual(imported.teams.map(t => t.coaching), JSON.parse(JSON.stringify(league.teams.map(t => t.coaching))), "round trip preserves coaching");
 assert.throws(() => parseFranchise('{"league":{"version":1}}'));
 assert.throws(() => parseFranchise('{"__proto__":{"polluted":true}}'));
 const archived = archiveSeason(league);

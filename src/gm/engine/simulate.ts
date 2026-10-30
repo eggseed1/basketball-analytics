@@ -121,6 +121,12 @@ export function simulateGame(
     const offense = off === homeFloor ? homeBook : awayBook;
     const defense = off === homeFloor ? awayBook : homeBook;
     const mods = modsForTeam(offense.coaching, defense.coaching);
+    if (rng() < 0.06) {
+      push(def[0]!, "rebound", "defensive", `${def[0]!.teamId!.toUpperCase()} team rebound`);
+      events[events.length - 1]!.playerId = null;
+      events[events.length - 1]!.playerName = null;
+      return false;
+    }
     const offensiveWeight = off.reduce((n, p) => n + rates.get(p.id)!.orb, 0) * mods.orb;
     const defensiveWeight = def.reduce((n, p) => n + rates.get(p.id)!.drb, 0);
     const offensive = rng() < clamp(offensiveWeight / Math.max(0.01, offensiveWeight + defensiveWeight), 0.08, 0.42);
@@ -156,7 +162,7 @@ export function simulateGame(
       return n + r.fga * (2 * (1 - r.threeShare) * r.twoPct + 3 * r.threeShare * r.threePct + r.ftPerFga * r.ftPct);
     }, 0);
     const baselineUses = off.reduce((n, p) => n + p.simProfile!.rates.fga * (1 + 0.44 * p.simProfile!.rates.ftPerFga) + p.simProfile!.rates.tov - p.simProfile!.rates.orb, 0);
-    const entryImpact = off.reduce((n, p) => n + p.simProfile!.impact * 0.65, 0);
+    const entryImpact = off.reduce((n, p) => n + (p.simProfile!.offense ?? p.simProfile!.impact * 0.65), 0);
     const environment = game.season < 2017 ? 1.06 : 1.135;
     const residual = clamp((environment + entryImpact * 0.008 - baselinePoints / Math.max(0.2, baselineUses)) / 2.2, -0.035, 0.035);
     const fit = lineupBalance(off) * 0.002 - off.reduce((n, p) => n + (1 - roleFit(p, own.coaching.coverSlot?.[p.id] ?? p.position)) * 0.015, 0);
@@ -184,7 +190,7 @@ export function simulateGame(
       const pct = (three ? r.threePct : r.twoPct * mods.two) * tired + residual + fit - defense * 0.003 + homeAdvantage + (coach[side]!.offense - coach[1 - side]!.defense) * 0.002;
       const made = !blocked && rng() < clamp(pct, 0.08, 0.87);
       line.fga++; if (three) line.tpa++;
-      const assisted = made && rng() < clamp(off.filter(p => p.id !== shooter.id).reduce((n, p) => n + rates.get(p.id)!.ast, 0) / Math.max(0.2, volume) / 0.47 * mods.ast, 0.18, 0.85);
+      const assisted = made && rng() < clamp(off.reduce((n, p) => n + rates.get(p.id)!.ast, 0) / Math.max(0.2, volume) / 0.47 * mods.ast, 0.18, 0.85);
       const passer = assisted ? weighted(off.filter(p => p.id !== shooter.id), p => rates.get(p.id)!.ast, rng) : undefined;
       if (made) { line.fgm++; if (three) line.tpm++; score(shooter, three ? 3 : 2); }
       if (passer) lines.get(passer.id)!.assists++;

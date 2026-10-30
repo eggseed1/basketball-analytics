@@ -249,6 +249,7 @@ export interface GmSheet {
 }
 
 export interface GmSimProfile {
+  offense?: number;
   version: 1;
   season?: string;
   confidence: number;
@@ -403,6 +404,7 @@ export interface GmStaff {
 }
 
 export interface GmTeam {
+  injuryRotationBackup?: { starters: GmTeam["starters"]; benchOrder: string[]; coaching?: GmCoaching };
   id: string;
   abbr: string;
   city: string;

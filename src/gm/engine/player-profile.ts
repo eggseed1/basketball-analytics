@@ -22,6 +22,7 @@ export function createSimProfile(player: GmPlayer): GmSimProfile {
     source: real ? "nba" : "estimated",
     baseline: { ...a },
     impact: player.ratings.impact,
+    offense: player.ratings.offense,
     rates: real && line ? {
       fga: line.fga / min,
       threeShare: line.tpa / Math.max(1, line.fga),

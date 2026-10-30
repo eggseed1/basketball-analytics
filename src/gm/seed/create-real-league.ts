@@ -112,8 +112,8 @@ function finite(value: unknown): value is number {
 
 /**
  * ESPN / thin feeds often fill missing advanced metrics with literal 0.
- * Treat near-zero the same as missing so we can fall through to netRating
- * or box-score proxies instead of stamping every star at impact 0.
+ * Optional overlays preserve legitimate zero values. Legacy required DPM/BPM
+ * fields need a nonblank family before they can be used as an impact source.
  */
 function usableMetric(value: unknown): value is number {
   return finite(value);
@@ -127,13 +127,14 @@ function usableMetric(value: unknown): value is number {
 function estimateImpact(row: PlayerSeason): number {
   const minutes = Number.isFinite(row.minutes) ? row.minutes : 0;
   const gp = Number.isFinite(row.gamesPlayed) ? row.gamesPlayed : 0;
-  const hasDarko = usableMetric(row.darkoDpm);
+  const genericDarko = usableMetric(row.dpm) && (row.dpm !== 0 || row.oDpm !== 0 || row.dDpm !== 0);
+  const hasDarko = usableMetric(row.darkoDpm) || genericDarko;
 
   let raw: number | null = null;
   if (usableMetric(row.darkoDpm)) raw = row.darkoDpm;
-  else if (usableMetric(row.dpm)) raw = row.dpm;
+  else if (genericDarko) raw = row.dpm;
   else if (usableMetric(row.raptor)) raw = row.raptor;
-  else if (usableMetric(row.bpm)) raw = clamp(row.bpm, -8, 14);
+  else if (usableMetric(row.bpm) && (row.bpm !== 0 || row.obpm !== 0 || row.dbpm !== 0)) raw = clamp(row.bpm, -8, 14);
   else {
     const net = row.netRating;
     if (finite(net) && gp > 0) {
@@ -191,24 +192,18 @@ function ratingsFromSeason(
   opts?: { age?: number; draftPick?: number | null }
 ): GmRatings {
   const impact = estimateImpact(row);
-  const offense = usableMetric(row.darkoOff)
-    ? row.darkoOff
-    : usableMetric(row.oDpm)
-      ? row.oDpm
-      : usableMetric(row.oRaptor)
-        ? row.oRaptor
-        : usableMetric(row.obpm)
-          ? row.obpm
-          : impact * 0.65;
-  const defense = usableMetric(row.darkoDef)
-    ? row.darkoDef
-    : usableMetric(row.dDpm)
-      ? row.dDpm
-      : usableMetric(row.dRaptor)
-        ? row.dRaptor
-        : usableMetric(row.dbpm)
-          ? row.dbpm
-          : impact * 0.35;
+  const genericDarko = usableMetric(row.dpm) && (row.dpm !== 0 || row.oDpm !== 0 || row.dDpm !== 0);
+  const pair = usableMetric(row.darkoDpm) ? [row.darkoOff, row.darkoDef]
+    : genericDarko ? [row.oDpm, row.dDpm]
+    : usableMetric(row.raptor) ? [row.oRaptor, row.dRaptor]
+    : [row.obpm, row.dbpm];
+  let offense = usableMetric(pair[0]) ? pair[0] : impact * 0.65;
+  let defense = usableMetric(pair[1]) ? pair[1] : impact - offense;
+  const total = offense + defense;
+  if (Math.abs(total) > 0.000001) { const scale = impact / total; offense *= scale; defense *= scale; }
+  else if (Math.abs(impact) > 0.000001) { offense = impact * 0.65; defense = impact * 0.35; }
+  offense = Math.round(clamp(offense, Math.max(-8, impact - 10), Math.min(14, impact + 6)) * 100) / 100;
+  defense = Math.round((impact - offense) * 100) / 100;
   const age =
     opts?.age && opts.age > 0
       ? opts.age
@@ -220,7 +215,7 @@ function ratingsFromSeason(
     offense: Math.round(clamp(offense, -8, 14) * 100) / 100,
     defense: Math.round(clamp(defense, -6, 10) * 100) / 100,
     shooting: clamp(Math.round(50 + ((row.threePointPct || 0.33) - 0.3) * 180), 25, 95),
-    finishing: clamp(Math.round(50 + (((row.fieldGoalsMade - row.threePointersMade) / Math.max(1, row.fieldGoalsAttempted - row.threePointersAttempted)) - 0.45) * 120), 25, 95),
+    finishing: row.fieldGoalsAttempted > row.threePointersAttempted ? clamp(Math.round(50 + (((row.fieldGoalsMade - row.threePointersMade) / (row.fieldGoalsAttempted - row.threePointersAttempted)) - 0.45) * 120), 25, 95) : 55,
     playmaking: clamp(
       Math.round(30 + (row.assists / Math.max(1, row.gamesPlayed)) * 8),
       15,
@@ -293,14 +288,16 @@ export function playerSeasonToGmPlayer(
     salaryByName?: Map<string, number>;
   }
 ): GmPlayer {
+  // Thin adapters can carry NaN for unpublished counting fields.
+  row = { ...row };
+  for (const key of ["gamesPlayed", "gamesStarted", "minutes", "points", "assists", "rebounds", "steals", "blocks", "turnovers", "fieldGoalsMade", "fieldGoalsAttempted", "threePointersMade", "threePointersAttempted", "freeThrowsMade", "freeThrowsAttempted", "offensiveRebounds", "defensiveRebounds"] as const) {
+    if (!Number.isFinite(row[key])) row[key] = 0;
+  }
   const position = mapPosition(row.position);
   const bio = getBundledPlayerBio(row.playerId);
-  const age =
-    typeof row.age === "number" && row.age > 0
-      ? Math.round(row.age)
-      : typeof bio?.age === "number" && bio.age > 0
-        ? bio.age
-        : 26;
+  const birth = bio?.birthDate ? new Date(bio.birthDate) : null;
+  const seasonalAge = birth && Number.isFinite(birth.getTime()) ? Math.floor((Date.UTC(seasonEndYear, 1, 1) - birth.getTime()) / (365.2425 * 86400000)) : null;
+  const age = typeof row.age === "number" && row.age > 0 ? Math.round(row.age) : seasonalAge != null && seasonalAge >= 17 && seasonalAge <= 48 ? seasonalAge : 26;
   const draft = parsePlayerDraftInfo(bio?.draftInfo);
   const ratings = ratingsFromSeason(row, {
     age,
@@ -319,11 +316,11 @@ export function playerSeasonToGmPlayer(
       }).contract
     : null;
   const hint: SheetStatHint = {
-    twoPct: (row.fieldGoalsMade - row.threePointersMade) / Math.max(1, row.fieldGoalsAttempted - row.threePointersAttempted),
+    twoPct: row.fieldGoalsAttempted > row.threePointersAttempted ? (row.fieldGoalsMade - row.threePointersMade) / (row.fieldGoalsAttempted - row.threePointersAttempted) : undefined,
     twoAttempts: Math.max(0, row.fieldGoalsAttempted - row.threePointersAttempted),
     threeAttempts: row.threePointersAttempted,
     freeThrowAttempts: row.freeThrowsAttempted,
-    threeRate: row.threePointAttemptRate,
+    threeRate: Number.isFinite(row.threePointAttemptRate) ? row.threePointAttemptRate : row.fieldGoalsAttempted > 0 ? row.threePointersAttempted / row.fieldGoalsAttempted : undefined,
     threePct: row.threePointPct,
     ftPct: row.freeThrowPct,
     fgPct: row.fieldGoalPct,

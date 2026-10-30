@@ -16,7 +16,7 @@ import {
   tradeStance,
 } from "@/gm/engine/value";
 import { autoSetLineup, overallOf } from "@/gm/engine/lineup";
-import { uid } from "@/gm/engine/rng";
+import { uid, clamp } from "@/gm/engine/rng";
 import {
   dealImprovesFit,
   fitDelta,
@@ -383,7 +383,7 @@ export function applyTrade(
   return {
     ...state,
     players,
-    teams,
+    teams: teams.map(team => [proposal.fromTeamId, proposal.toTeamId].includes(team.id) ? { ...autoSetLineup(team, players), injuryRotationBackup: undefined } : team),
     tradeLog: [log, ...state.tradeLog].slice(0, 100),
     news: [
       {

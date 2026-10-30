@@ -15,7 +15,6 @@ import {
   positionalMinuteTargets,
   rotationQuality,
   rotationTarget,
-  slotAccepts,
 } from "@/gm/engine/lineup";
 import type { GmPosition } from "@/gm/types";
 import { clamp } from "@/gm/engine/rng";
@@ -420,7 +419,17 @@ export function rebalanceForInjuryChanges<
     ...league,
     teams: league.teams.map((team) => {
       if (!teamIds.has(team.id)) return team;
-      return resetBalancedRotation(team, league.players).team;
+      const roster = league.players.filter(p => p.teamId === team.id);
+      const injured = roster.some(outFlag);
+      const backup = team.injuryRotationBackup;
+      if (!injured && backup) {
+        const rosterIds = new Set(roster.map(p => p.id));
+        if (Object.values(backup.starters).every(id => !id || rosterIds.has(id))) {
+          return { ...team, ...backup, injuryRotationBackup: undefined };
+        }
+      }
+      const rebuilt = resetBalancedRotation(team, league.players).team;
+      return { ...rebuilt, injuryRotationBackup: injured ? backup ?? { starters: team.starters, benchOrder: team.benchOrder, coaching: team.coaching } : undefined };
     }),
   };
 }

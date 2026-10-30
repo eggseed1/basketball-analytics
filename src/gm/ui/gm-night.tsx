@@ -13,6 +13,7 @@ import {
   rotationChart,
   schemeHeadline,
   toggleShift,
+  validShiftPlan,
   type ChartRow,
 } from "@/gm/engine/coaching";
 import { positionalMinuteTargets } from "@/gm/engine/lineup";
@@ -53,7 +54,7 @@ function paint(players: GmPlayer[], starters: Record<GmPosition, string | null>,
     starters
   );
   const cover = coaching.coverSlot;
-  return rotationChart(
+  return validShiftPlan(coaching.shifts, players.filter(p => !injured(p)).map(p => p.id)) ?? rotationChart(
     players.map((player) => ({
       id: player.id,
       minutes: injured(player) ? 0 : saved ? (saved[player.id] ?? 0) : (targets[player.id] ?? 0),

@@ -14,6 +14,7 @@ import {
   injured,
   minutesPerPosition,
   rotationChart,
+  validShiftPlan,
   rotationQuality,
   suggestedMinutePlan,
   suggestedMinutes,
@@ -101,7 +102,7 @@ export function GmCoaching() {
     ...book.coverSlot,
     ...(team.coaching?.coverSlot ?? {}),
   });
-  const painted = rotationChart(
+  const painted = validShiftPlan(plan.shifts, players.filter(p => !injured(p)).map(p => p.id)) ?? rotationChart(
     players.map((player) => ({
       id: player.id,
       minutes: minutes[player.id] ?? 0,
@@ -115,7 +116,7 @@ export function GmCoaching() {
   const remaining = 240 - total;
   const ordered = rosterOrder(players, team.starters, minutes);
   const chart = new Map(painted.map((row) => [row.id, row.on]));
-  const positionRows = minutesPerPosition(players, minutes, coverSlot);
+  const positionRows = minutesPerPosition(players, minutes, coverSlot, team.coaching?.positionMinutes);
   const quality = rotationQuality(players, minutes, coverSlot);
   const offense = OFFENSE_OPTIONS.find((option) => option.id === plan.offense);
   const defense = DEFENSE_OPTIONS.find((option) => option.id === plan.defense);
@@ -473,3 +474,4 @@ function PlayThrough({
     </label>
   );
 }
+
