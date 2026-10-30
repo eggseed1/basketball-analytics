@@ -1,5 +1,6 @@
 import { spawn } from "node:child_process";
 import { setTimeout as delay } from "node:timers/promises";
+import { requireHealthyPage } from "./lib/runtime-smoke-html.mjs";
 
 const host = "127.0.0.1";
 const port = 3221;
@@ -37,10 +38,7 @@ async function waitForServer() {
 }
 
 function requireHealthy(route, result) {
-  if (result.status !== 200) throw new Error(`${route} returned ${result.status}`);
-  for (const marker of ["Internal Server Error", "Application interrupted", "This page could not finish loading"]) {
-    if (result.body.includes(marker)) throw new Error(`${route} rendered ${marker}`);
-  }
+  requireHealthyPage(route, result);
 }
 
 async function main() {

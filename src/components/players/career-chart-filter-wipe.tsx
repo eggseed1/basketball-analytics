@@ -147,61 +147,49 @@ export function CareerChartFilterWipe({
   children: ReactNode;
 }) {
   const wrapRef = useRef<HTMLDivElement>(null);
-  const pendingRef = useRef(children);
-  const prevContentRef = useRef(children);
+  const pendingRef = useRef({ key: transitionKey, children });
   const shownKeyRef = useRef(transitionKey);
-  const latestKeyRef = useRef(transitionKey);
   const genRef = useRef(0);
-  const [shownKey, setShownKey] = useState(transitionKey);
-  pendingRef.current = children;
-  latestKeyRef.current = transitionKey;
-  // Live when keys match — never copy `children` into state on every parent
-  // render (that setState loop hit React #185 on heavy player pages).
-  if (shownKey === transitionKey) {
-    prevContentRef.current = children;
+  const [shown, setShown] = useState({ key: transitionKey, children });
+
+  // Keep the last committed plot available while a different filter wipes out.
+  if (shown.key === transitionKey && shown.children !== children) {
+    setShown({ key: transitionKey, children });
   }
+  useEffect(() => {
+    pendingRef.current = { key: transitionKey, children };
+  }, [transitionKey, children]);
 
   useEffect(() => {
     if (transitionKey === shownKeyRef.current) return;
-
     const root = wrapRef.current;
     const gen = ++genRef.current;
-
-    const apply = (key: string) => {
-      shownKeyRef.current = key;
-      prevContentRef.current = pendingRef.current;
-      setShownKey(key);
+    const apply = () => {
+      if (gen !== genRef.current) return;
+      const next = pendingRef.current;
+      shownKeyRef.current = next.key;
+      setShown(next);
     };
 
     if (prefersReducedMotion() || !root) {
-      apply(latestKeyRef.current);
-      return;
+      const frame = window.requestAnimationFrame(apply);
+      return () => {
+        genRef.current += 1;
+        window.cancelAnimationFrame(frame);
+      };
     }
 
-    const outNodes = plotNodes(root);
-    const outAnims = animateClipOut(outNodes, OUT_MS);
-
-    void (async () => {
-      await finishedAll(outAnims);
+    const outAnims = animateClipOut(plotNodes(root), OUT_MS);
+    void finishedAll(outAnims).then(() => {
       if (gen !== genRef.current) return;
-
-      // Swap under a closed clip and leave it closed. The remounted chart's
-      // draw-in opens it. clearClip() here used to flash a full plot between
-      // wipe-out and the next reveal.
       cancelKeepingAll(plotNodes(root), CLOSED);
-      apply(latestKeyRef.current);
-    })();
-
+      apply();
+    });
     return () => {
       genRef.current += 1;
-      // Freeze mid-wipe / mid-reveal in place. Snapping CLOSED here skipped the
-      // wipe-out; clearing the clip flashed a full plot before the next wipe.
-      if (wrapRef.current) commitAnimations(plotNodes(wrapRef.current));
+      commitAnimations(plotNodes(root));
     };
   }, [transitionKey]);
-
-  const content =
-    shownKey === transitionKey ? children : prevContentRef.current;
 
   return (
     <div
@@ -210,12 +198,11 @@ export function CareerChartFilterWipe({
       data-career-reveal="entry"
       data-motion-static
       className="relative w-full min-w-0"
-      data-career-key={shownKey}
+      data-career-key={shown.key}
     >
       <CareerChartRevealContext.Provider value="entry">
-        {/* Remount on each filter key so draw state always starts empty. */}
-        <div key={shownKey} className="w-full min-w-0">
-          {content}
+        <div key={shown.key} className="w-full min-w-0">
+          {shown.key === transitionKey ? children : shown.children}
         </div>
       </CareerChartRevealContext.Provider>
     </div>

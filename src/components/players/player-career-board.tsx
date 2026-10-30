@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 
 import { GlassSurface } from "@/components/brand/glass-surface";
 import {
@@ -329,7 +329,7 @@ const thBase =
   "py-2 font-semibold text-[12px] uppercase tracking-[0.08em] text-muted-foreground";
 const tdBase = "type-caption py-2 tabular-nums";
 
-export function PlayerCareerBoard({
+function PlayerCareerBoardBody({
   playerId,
   season,
   seasonType,
@@ -363,24 +363,14 @@ export function PlayerCareerBoard({
   showFilters?: boolean;
 }) {
   const queryNav = useQueryNavOptional();
-  const [metric, setMetric] = useState<MetricId>(
+  const [requestedMetric, setMetric] = useState<MetricId>(
     () => initialMetric ?? defaultCareerMetric(rows)
   );
   const [chartMode, setChartMode] = useState<"seasons" | "games">(chart);
-  useEffect(() => {
-    setChartMode(chart);
-  }, [chart]);
-  // Playoffs / player swaps often drop impact overlays. Don't keep a metric
-  // that has no points — that painted "DARKO is not published for these seasons."
-  useEffect(() => {
-    if (rows.some((row) => metricValue(row, metric) != null)) return;
-    const preferred =
-      initialMetric &&
-      rows.some((row) => metricValue(row, initialMetric) != null)
-        ? initialMetric
-        : defaultCareerMetric(rows);
-    if (preferred !== metric) setMetric(preferred);
-  }, [rows, initialMetric, metric]);
+  const metric = rows.some(row => metricValue(row, requestedMetric) != null)
+    ? requestedMetric
+    : initialMetric && rows.some(row => metricValue(row, initialMetric) != null)
+      ? initialMetric : defaultCareerMetric(rows);
   const primary = useMemo(
     () =>
       PRIMARY.filter(
@@ -723,4 +713,8 @@ export function PlayerCareerBoard({
       )}
     </Shell>
   );
+}
+
+export function PlayerCareerBoard(props: Parameters<typeof PlayerCareerBoardBody>[0]) {
+  return <PlayerCareerBoardBody key={`${props.playerId}:${props.chart ?? "games"}`} {...props} />;
 }

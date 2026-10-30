@@ -23,11 +23,9 @@ export function useLiveGamePlayers(
   status: string,
   enabled: boolean
 ): PlayerGame[] {
-  const [players, setPlayers] = useState(initialPlayers);
-
-  useEffect(() => {
-    setPlayers(initialPlayers);
-  }, [initialPlayers]);
+  const [snapshot, setSnapshot] = useState({ gameId, initialPlayers, players: initialPlayers });
+  const players = snapshot.gameId === gameId && snapshot.initialPlayers === initialPlayers
+    ? snapshot.players : initialPlayers;
 
   useEffect(() => {
     if (!enabled) return;
@@ -47,7 +45,7 @@ export function useLiveGamePlayers(
         if (!res.ok) return;
         const body = (await res.json()) as BoxScoreResponse;
         const next = body.data?.players;
-        if (!cancelled && next?.length) setPlayers(next);
+        if (!cancelled && next?.length) setSnapshot({ gameId, initialPlayers, players: next });
       } catch {
         /* keep last good lines */
       } finally {
@@ -61,7 +59,7 @@ export function useLiveGamePlayers(
       cancelled = true;
       window.clearInterval(id);
     };
-  }, [gameId, status, enabled]);
+  }, [gameId, status, enabled, initialPlayers]);
 
   return players;
 }

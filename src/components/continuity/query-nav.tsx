@@ -10,7 +10,6 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
   useState,
   useTransition,
@@ -193,8 +192,10 @@ export function TransitionLink({
   const router = useRouter();
   const queryNav = useQueryNavOptional();
   const routeTransition = useRouteTransitionOptional();
-  const [localPending, setLocalPending] = useState(false);
   const pathname = usePathname();
+  const [pendingPath, setPendingPath] = useState<string | null>(null);
+  const localPending = pendingPath !== null && pendingPath === pathname;
+  if (pendingPath !== null && pendingPath !== pathname) setPendingPath(null);
   const target = typeof href === "string" ? href : href.pathname ?? "";
   const pending = Boolean(
     queryNav?.pending || routeTransition?.pending || localPending
@@ -206,10 +207,6 @@ export function TransitionLink({
   const resolvedPrefetch =
     prefetch ?? (target.startsWith("/players/") ? false : undefined);
   const allowIntentPrefetch = resolvedPrefetch !== false;
-
-  useEffect(() => {
-    setLocalPending(false);
-  }, [pathname]);
 
   const prefetchTarget = useCallback(() => {
     if (!allowIntentPrefetch || !target) return;
@@ -258,7 +255,7 @@ export function TransitionLink({
           return;
         }
         // Same as RouteTransitionProvider: show loading.tsx, don't suppress it.
-        setLocalPending(true);
+        setPendingPath(pathname);
         go();
       }}
       {...rest}
