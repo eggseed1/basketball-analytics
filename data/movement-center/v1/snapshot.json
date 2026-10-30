@@ -3,13 +3,13 @@
     "methodologyVersion": "movement-m1-0.2+movement-rules-v2",
     "status": "NEWS_INGEST_M1",
     "season": "2026-27",
-    "snapshotDate": "2026-10-29",
+    "snapshotDate": "2026-10-30",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-10-29T17:07:21.386Z",
-    "rosterPlayerCount": 487,
-    "headlinesScanned": 8232,
-    "latestHeadlineAt": "2026-10-29T17:03:37.000Z",
-    "latestTransactionDate": "2026-10-28",
+    "builtAt": "2026-10-30T16:52:19.721Z",
+    "rosterPlayerCount": 488,
+    "headlinesScanned": 8574,
+    "latestHeadlineAt": "2026-10-30T16:45:04.000Z",
+    "latestTransactionDate": "2026-10-29",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
       "Basketball News",
@@ -76,7 +76,7 @@
     },
     "outlet:realgm": {
       "label": "RealGM",
-      "credibility": 16
+      "credibility": 8
     },
     "outlet:nbc-sports-bay-area": {
       "label": "NBC Sports Bay Area",
@@ -100,11 +100,11 @@
     },
     "outlet:talkbasket": {
       "label": "TalkBasket",
-      "credibility": 16
+      "credibility": 12
     },
     "outlet:clutchpoints": {
       "label": "ClutchPoints",
-      "credibility": 16
+      "credibility": 12
     },
     "reporter:fred-katz": {
       "label": "Fred Katz (The Athletic)",
@@ -152,7 +152,7 @@
     },
     "outlet:sporting-news": {
       "label": "Sporting News",
-      "credibility": 16
+      "credibility": 12
     },
     "reporter:bobby-marks-speaking": {
       "label": "Bobby Marks. Speaking (ESPN)",
@@ -644,7 +644,7 @@
     {
       "id": "mv-trade-6442-20261001",
       "headline": "Kyrie Irving, Anthony Davis and others: trade talk",
-      "primaryClaimId": "mv-15019bc3be412e54",
+      "primaryClaimId": "mv-69adc0afdee2ad66",
       "claimIds": [
         "mv-d510f782fadebd47",
         "mv-62fc808e224a7baa",
@@ -655,12 +655,19 @@
         "mv-b2b47aacc4e994d9",
         "mv-15019bc3be412e54",
         "mv-c74c9aeaddb28069",
-        "mv-c99f53769ff551a0"
+        "mv-c99f53769ff551a0",
+        "mv-bc9132bacaa3e33a",
+        "mv-69adc0afdee2ad66",
+        "mv-3b5c4fdaafa560bf",
+        "mv-782e9e94eaf2b6e8",
+        "mv-706e3cdaf4e089f6",
+        "mv-7248f87b80f9265a",
+        "mv-c57c58509587f900"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-01T01:04:56.000Z",
-      "lastMeaningfulAt": "2026-10-29T16:32:54.000Z",
+      "lastMeaningfulAt": "2026-10-30T15:58:28.000Z",
       "linkedPlayerIds": [
         "6442",
         "6583",
@@ -803,12 +810,14 @@
         "mv-b52ea4d65cdded7c",
         "mv-57d20a3caa662316",
         "mv-5f9a351f84c20877",
-        "mv-af7dc5b81d2d9491"
+        "mv-af7dc5b81d2d9491",
+        "mv-de8eebd6bae76b39",
+        "mv-eb8ee940c8d36723"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-05T00:00:00.000Z",
-      "lastMeaningfulAt": "2026-10-26T22:43:54.000Z",
+      "lastMeaningfulAt": "2026-10-30T15:32:10.000Z",
       "linkedPlayerIds": [
         "3155942",
         "4683774"
@@ -1671,17 +1680,19 @@
       "claimIds": [
         "mv-64b41423754ee999",
         "mv-cc929e62966a1f63",
-        "mv-9b917abbc662b8aa"
+        "mv-9b917abbc662b8aa",
+        "mv-a78ec4b73f687dad"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-27T14:31:34.000Z",
-      "lastMeaningfulAt": "2026-10-28T22:02:57.000Z",
+      "lastMeaningfulAt": "2026-10-30T00:07:43.000Z",
       "linkedPlayerIds": [
         "4065733"
       ],
       "linkedTeamIds": [
         "25",
+        "12",
         "29"
       ]
     },
@@ -1720,6 +1731,79 @@
       ],
       "linkedTeamIds": [
         "7"
+      ]
+    },
+    {
+      "id": "mv-contract-5211983-20261029",
+      "headline": "Pacôme Dadiet: contract future with the Knicks",
+      "primaryClaimId": "mv-33a651afb6bbf681",
+      "claimIds": [
+        "mv-33a651afb6bbf681"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-10-29T20:38:01.000Z",
+      "lastMeaningfulAt": "2026-10-29T20:38:01.000Z",
+      "linkedPlayerIds": [
+        "5211983"
+      ],
+      "linkedTeamIds": [
+        "18"
+      ]
+    },
+    {
+      "id": "mv-trade-4437244-20261029",
+      "headline": "Jalen Green: trade talk",
+      "primaryClaimId": "mv-3a757d2090bcce2b",
+      "claimIds": [
+        "mv-3a757d2090bcce2b"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-10-29T22:26:47.000Z",
+      "lastMeaningfulAt": "2026-10-29T22:26:47.000Z",
+      "linkedPlayerIds": [
+        "4437244"
+      ],
+      "linkedTeamIds": [
+        "21"
+      ]
+    },
+    {
+      "id": "mv-trade-3907387-20261030",
+      "headline": "Ben Simmons: trade talk",
+      "primaryClaimId": "mv-909bec937ec8a8ee",
+      "claimIds": [
+        "mv-909bec937ec8a8ee"
+      ],
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "firstSeenAt": "2026-10-30T01:24:09.000Z",
+      "lastMeaningfulAt": "2026-10-30T01:24:09.000Z",
+      "linkedPlayerIds": [
+        "3907387"
+      ],
+      "linkedTeamIds": [
+        "9",
+        "23"
+      ]
+    },
+    {
+      "id": "mv-trade-2991230-20261030",
+      "headline": "Fred VanVleet: trade talk",
+      "primaryClaimId": "mv-d6cae18b7fd839f0",
+      "claimIds": [
+        "mv-d6cae18b7fd839f0"
+      ],
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "firstSeenAt": "2026-10-30T15:52:45.000Z",
+      "lastMeaningfulAt": "2026-10-30T15:52:45.000Z",
+      "linkedPlayerIds": [
+        "2991230"
+      ],
+      "linkedTeamIds": [
+        "10"
       ]
     },
     {
@@ -8993,6 +9077,297 @@
       "sourceId": "outlet:heavy",
       "sourceLabel": "Heavy",
       "sourceUrl": "https://heavy.com/sports/nba/dallas-mavericks/major-kyrie-irving-trade-update-miami-heat-rumors/",
+      "playerIds": [
+        "6442"
+      ],
+      "teamIds": [
+        "6",
+        "14"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-de8eebd6bae76b39",
+      "clusterId": "mv-trade-3155942-20261005",
+      "summary": "Lakers Could Use Bronny James In Trade For Top PF Targets: Report",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-29T18:31:47.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/los-angeles-lakers/bronny-james-trade-targets-washington-jones/",
+      "playerIds": [
+        "4683774"
+      ],
+      "teamIds": [
+        "13"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-bc9132bacaa3e33a",
+      "clusterId": "mv-trade-6442-20261001",
+      "summary": "Kyrie Irving, Mavericks Aligned On Future Despite Strong Trade Interest",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-29T19:10:58.000Z",
+      "sourceId": "outlet:realgm",
+      "sourceLabel": "RealGM",
+      "sourceUrl": "https://basketball.realgm.com/wiretap/287964/Kyrie-Irving-Mavericks-Aligned-On-Future-Despite-Strong-Trade-Interest",
+      "playerIds": [
+        "6442"
+      ],
+      "teamIds": [
+        "6"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "contact"
+    },
+    {
+      "id": "mv-33a651afb6bbf681",
+      "clusterId": "mv-contract-5211983-20261029",
+      "summary": "Knicks planning on declining Pacome Dadiet’s $5.37 million contract option",
+      "claimType": "contract_movement",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-29T20:38:01.000Z",
+      "sourceId": "reporter:shams-charania",
+      "sourceLabel": "ClutchPoints, citing Shams Charania (ESPN)",
+      "reporterLabel": "Shams Charania",
+      "sourceUrl": "https://clutchpoints.com/nba/new-york-knicks/knicks-news-ny-plan-decline-pacome-dadiet-contract-option",
+      "playerIds": [
+        "5211983"
+      ],
+      "teamIds": [
+        "18"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-69adc0afdee2ad66",
+      "clusterId": "mv-trade-6442-20261001",
+      "summary": "NBA rumors: ClutchPoints insider slaps Heat with harsh Kyrie Irving trade reality",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "original_report",
+      "publishedAt": "2026-10-29T21:02:32.000Z",
+      "sourceId": "reporter:brett-siegel",
+      "sourceLabel": "Brett Siegel (ClutchPoints)",
+      "reporterLabel": "Brett Siegel",
+      "sourceUrl": "https://clutchpoints.com/nba/miami-heat/nba-rumors-clutchpoints-insider-slaps-heat-with-harsh-kyrie-irving-trade-reality",
+      "playerIds": [
+        "6442"
+      ],
+      "teamIds": [
+        "14"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-3b5c4fdaafa560bf",
+      "clusterId": "mv-trade-6442-20261001",
+      "summary": "Heat Monitoring Kyrie Irving Situation With Mavs as ESPN Insider Provides Potential Trade Scenario",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-29T21:21:13.000Z",
+      "sourceId": "reporter:shams-charania",
+      "sourceLabel": "Basketball News, citing Shams Charania (ESPN)",
+      "reporterLabel": "Shams Charania",
+      "sourceUrl": "https://www.basketballnews.com/news/basketballnews-nba-active-news-heat-monitoring-kyrie-irving-situation-with-mavs-as-espn-insider-provides-potential-trade-scenario/",
+      "playerIds": [
+        "6442"
+      ],
+      "teamIds": [
+        "6",
+        "14"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "contact"
+    },
+    {
+      "id": "mv-3a757d2090bcce2b",
+      "clusterId": "mv-trade-4437244-20261029",
+      "summary": "NBA rumors: Will Suns use Jalen Green as trade bait to acquire PG help amid early frustrations?",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "original_report",
+      "publishedAt": "2026-10-29T22:26:47.000Z",
+      "sourceId": "reporter:brett-siegel",
+      "sourceLabel": "Brett Siegel (ClutchPoints)",
+      "reporterLabel": "Brett Siegel",
+      "sourceUrl": "https://clutchpoints.com/nba/phoenix-suns/nba-rumors-jalen-green-trade-bait-pg-help-amid-early-frustrations",
+      "playerIds": [
+        "4437244"
+      ],
+      "teamIds": [
+        "21"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-a78ec4b73f687dad",
+      "clusterId": "mv-trade-4065733-20261027",
+      "summary": "NBA rumors: 2 Clippers named as Thunder trade targets in addition to Herb Jones, Ty Jerome",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-30T00:07:43.000Z",
+      "sourceId": "outlet:clutchpoints",
+      "sourceLabel": "ClutchPoints",
+      "sourceUrl": "https://clutchpoints.com/nba/nba-stories/nba-rumors-2-clippers-named-thunder-trade-targets-addition-herb-jones-ty-jerome",
+      "playerIds": [
+        "4065733"
+      ],
+      "teamIds": [
+        "12",
+        "25"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-909bec937ec8a8ee",
+      "clusterId": "mv-trade-3907387-20261030",
+      "summary": "Ben Simmons Reveals He Called Out Steve Kerr After Warriors’ Interest In Him This Summer",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-30T01:24:09.000Z",
+      "sourceId": "outlet:fadeaway-world",
+      "sourceLabel": "Fadeaway World",
+      "sourceUrl": "https://fadeawayworld.net/nba/sacramento-kings/ben-simmons-reveals-he-called-out-steve-kerr-after-warriors-showed-interest-in-him-this-summer",
+      "playerIds": [
+        "3907387"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "contact"
+    },
+    {
+      "id": "mv-782e9e94eaf2b6e8",
+      "clusterId": "mv-trade-6442-20261001",
+      "summary": "Kyrie Irving Reportedly Wants To Play For Miami Heat Amid Rampant Trade Rumors",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-30T06:26:22.000Z",
+      "sourceId": "outlet:fadeaway-world",
+      "sourceLabel": "Fadeaway World",
+      "sourceUrl": "https://fadeawayworld.net/nba-trade-rumors/miami-heat/kyrie-irving-reportedly-wants-to-play-for-miami-heat-amid-rampant-trade-rumors",
+      "playerIds": [
+        "6442"
+      ],
+      "teamIds": [
+        "14"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-706e3cdaf4e089f6",
+      "clusterId": "mv-trade-6442-20261001",
+      "summary": "Kyrie Irving interested in joining Heat, per report",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-30T07:57:34.000Z",
+      "sourceId": "outlet:talkbasket",
+      "sourceLabel": "TalkBasket",
+      "sourceUrl": "https://www.talkbasket.net/225781-kyrie-irving-interested-in-joining-heat-per-report",
+      "playerIds": [
+        "6442"
+      ],
+      "teamIds": [
+        "14"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "contact"
+    },
+    {
+      "id": "mv-7248f87b80f9265a",
+      "clusterId": "mv-trade-6442-20261001",
+      "summary": "Miami Heat Get Major Kyrie Irving Trade Update Amid Reports",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-30T12:56:59.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/miami-heat/kyrie-irving-trade-miami-heat/",
+      "playerIds": [
+        "6442"
+      ],
+      "teamIds": [
+        "14"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-eb8ee940c8d36723",
+      "clusterId": "mv-trade-3155942-20261005",
+      "summary": "Lakers Bronny James Dealt Brutal Blow As Trade Rumors, Roster Cut Buzz Grows",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-30T15:32:10.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/los-angeles-lakers/bronny-james-brutal-blow-trade-rumors-roster-cut/",
+      "playerIds": [
+        "4683774"
+      ],
+      "teamIds": [
+        "13"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-d6cae18b7fd839f0",
+      "clusterId": "mv-trade-2991230-20261030",
+      "summary": "Rockets rumors: What Fred VanVleet’s triumphant injury return means for blockbuster trade plans",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-30T15:52:45.000Z",
+      "sourceId": "outlet:clutchpoints",
+      "sourceLabel": "ClutchPoints",
+      "sourceUrl": "https://clutchpoints.com/nba/houston-rockets/rockets-rumors-what-fred-vanvleet-triumphant-injury-return-means-for-blockbuster-trade-plans",
+      "playerIds": [
+        "2991230"
+      ],
+      "teamIds": [
+        "10"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-c57c58509587f900",
+      "clusterId": "mv-trade-6442-20261001",
+      "summary": "NBA insider delivers Heat bad news on potential Mavericks’ Kyrie Irving trade despite recent rumors",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-30T15:58:28.000Z",
+      "sourceId": "outlet:sporting-news",
+      "sourceLabel": "Sporting News",
+      "sourceUrl": "https://www.sportingnews.com/us/nba/miami-heat/news/nba-insider-delivers-heat-bad-news-potential-mavericks-kyrie-irving-trade-despite-recent-rumors/9fdec80b3f37c4b7172d3f19%3E",
       "playerIds": [
         "6442"
       ],

@@ -1,8 +1,8 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-29",
-    "retrievedAt": "2026-10-29T17:16:22.373Z",
+    "snapshotDate": "2026-10-30",
+    "retrievedAt": "2026-10-30T17:01:51.965Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
@@ -11,7 +11,7 @@
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "635c941c8701517d4cfb075634c47cfcc6da9f8c0674d4ae2f4ad64545f560d7",
+    "sourceHash": "392020e707d4c7556b71d8df7bb7225799914f7e38b33ea29b1c717172e90f8d",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -2160,6 +2160,29 @@
             ],
             "guaranteedTotal": null,
             "href": "/players/1642400"
+          },
+          {
+            "playerId": "1643640",
+            "playerName": "Ernest Udeh Jr.",
+            "age": null,
+            "contractId": "cy-1643640-2026",
+            "contractType": "UNKNOWN",
+            "years": [
+              {
+                "contractId": "cy-1643640-2026",
+                "playerId": "1643640",
+                "franchiseId": "5",
+                "season": "2026-27",
+                "salary": null,
+                "capHit": null,
+                "guaranteedAmount": null,
+                "guaranteeStatus": "UNKNOWN",
+                "optionType": "UNKNOWN",
+                "source": "espn-roster-no-salary"
+              }
+            ],
+            "guaranteedTotal": null,
+            "href": "/players/1643640"
           }
         ],
         "futureCommitments": [
@@ -2171,7 +2194,7 @@
         ],
         "playerSalaryCommitments": 204323307,
         "playersWithSalary": 13,
-        "playersWithoutSalary": 1
+        "playersWithoutSalary": 2
       },
       "draftAssets": {
         "franchiseId": "5",
@@ -5138,6 +5161,29 @@
             "href": "/players/1627739"
           },
           {
+            "playerId": "1631104",
+            "playerName": "Blake Wesley",
+            "age": null,
+            "contractId": "cy-1631104-2026",
+            "contractType": "UNKNOWN",
+            "years": [
+              {
+                "contractId": "cy-1631104-2026",
+                "playerId": "1631104",
+                "franchiseId": "12",
+                "season": "2026-27",
+                "salary": 5643732,
+                "capHit": 5643732,
+                "guaranteedAmount": null,
+                "guaranteeStatus": "UNKNOWN",
+                "optionType": "UNKNOWN",
+                "source": "salary-index-carry-forward"
+              }
+            ],
+            "guaranteedTotal": null,
+            "href": "/players/1631104"
+          },
+          {
             "playerId": "1641757",
             "playerName": "Jordan Miller",
             "age": null,
@@ -5302,12 +5348,12 @@
         "futureCommitments": [
           {
             "season": "2026-27",
-            "totalSalaryDollars": 198050900,
-            "playersUnderContract": 17
+            "totalSalaryDollars": 203694632,
+            "playersUnderContract": 18
           }
         ],
-        "playerSalaryCommitments": 198050900,
-        "playersWithSalary": 17,
+        "playerSalaryCommitments": 203694632,
+        "playersWithSalary": 18,
         "playersWithoutSalary": 1
       },
       "draftAssets": {
@@ -13307,7 +13353,7 @@
     "salaryNullAsZero": 0,
     "teamsWithPayroll": 30,
     "teamsWithContracts": 30,
-    "playersWithSalary": 471,
+    "playersWithSalary": 472,
     "unmatchedSalaryNames": 21,
     "draftAssetsStructured": 0
   }
