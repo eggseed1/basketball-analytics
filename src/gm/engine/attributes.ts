@@ -16,11 +16,16 @@ import {
   traitGrowthMul,
 } from "@/gm/engine/dev-traits";
 import entrySkillRates from "@/gm/seed/entry-skill-rates.json";
+import { ensureSimProfile } from "@/gm/engine/player-profile";
 
 /** Rebuild stored sheets when this changes. */
-export const SHEET_VERSION = 7;
+export const SHEET_VERSION = 8;
 
 export type SheetStatHint = {
+  twoPct?: number;
+  twoAttempts?: number;
+  threeAttempts?: number;
+  freeThrowAttempts?: number;
   threeRate?: number;
   threePct?: number;
   ftPct?: number;
@@ -472,22 +477,23 @@ export function buildSheet(player: GmPlayer, hint?: SheetStatHint): GmSheet {
   const rng = createRng(hashId(player.id));
   const { ratings, position, age } = player;
   // Attribute floor tracks DARKO so shotmaking / defense cards match the OVR.
-  const anchor = clamp(74 + ratings.impact * 2.7, 48, 99);
+  const anchor = clamp(66 + ratings.offense * 1.3, 48, 84);
   const big = position === "C" || position === "PF";
   const guard = position === "PG" || position === "SG";
   const size = big ? 1 : guard ? -1 : 0;
   const jitter = () => (rng() - 0.5) * 3;
   const bump = (raw: number, limit = 12) => clamp(raw, -limit, limit);
 
-  const threePct = hint?.threePct;
-  const ftPct = hint?.ftPct;
+  const shrink = (value: number | undefined, attempts: number | undefined, mean: number, strength: number) => value == null ? undefined : attempts == null ? value : (value * attempts + mean * strength) / (attempts + strength);
+  const threePct = shrink(hint?.threePct, hint?.threeAttempts, 0.35, 100);
+  const ftPct = shrink(hint?.ftPct, hint?.freeThrowAttempts, big ? 0.73 : 0.8, 35);
   const fgPct = hint?.fgPct;
   const threeRate = hint?.threeRate;
   const threeNudge =
     threePct != null && threePct > 0 ? bump((threePct - 0.36) * 40, 14) : 0;
   const ftNudge = ftPct != null && ftPct > 0 ? bump((ftPct - 0.78) * 45, 22) : 0;
   const finishNudge =
-    fgPct != null && fgPct > 0 ? bump((fgPct - 0.46) * 24, 10) : bump(ratings.impact, 6);
+    hint?.twoPct != null ? bump((hint.twoPct - 0.52) * 65, 18) : bump((ratings.finishing - 55) * 0.4, 15);
   const ageTax = age >= 33 ? (age - 32) * 2 : 0;
   const noThree = threeRate != null && threeRate < 0.08;
   const orbPct = asPercentPoints(hint?.orbPct);
@@ -508,13 +514,13 @@ export function buildSheet(player: GmPlayer, hint?: SheetStatHint): GmSheet {
       anchor + (big ? 4 : 1) + finishNudge
     ),
     drivingLayup: band(anchor + (guard ? 3 : 0) + finishNudge + jitter()),
-    drivingDunk: band(anchor + (big ? -2 : 4) - ageTax + jitter()),
+    drivingDunk: band((guard ? 60 : 72) - ageTax + jitter()),
     standingDunk: rated(
       rimFinisher ? scale(fgPct!, [[0.6, 80], [0.7, 88], [0.8, 96]]) : undefined,
       anchor + size * 8
     ),
     postControl: band(anchor + (position === "C" ? 8 : position === "PG" ? -14 : size * 6) + jitter()),
-    midrange: band(anchor + (big ? -6 : 2) + threeNudge * 0.35 + jitter()),
+    midrange: band(58 + ratings.offense * 1.5 + (ftPct == null ? 0 : (ftPct - 0.75) * 45) + jitter()),
     threePoint: rated(
       noThree || threePct == null || threePct <= 0
         ? noThree
@@ -531,10 +537,10 @@ export function buildSheet(player: GmPlayer, hint?: SheetStatHint): GmSheet {
       astPct != null ? scale(astPct, AST_STOPS) : undefined,
       anchor + (position === "PG" ? 6 : position === "C" ? -10 : 0) + bump((hint?.apg ?? 3) - 3, 10)
     ),
-    ballHandle: band(anchor + (position === "PG" ? 8 : position === "C" ? -22 : guard ? 4 : -8) - ageTax * 0.4 + jitter()),
-    speedWithBall: band(anchor + (guard ? 4 : position === "C" ? -16 : -6) - ageTax + jitter()),
-    interiorDefense: band(anchor + size * 8 + bump(ratings.defense * 2, 8) + jitter()),
-    perimeterDefense: band(anchor + (guard ? 5 : big ? -10 : 0) + bump(ratings.defense * 2, 8) + jitter()),
+    ballHandle: band((position === "PG" ? 76 : position === "C" ? 42 : guard ? 69 : 61) + Math.min(14, (hint?.apg ?? 2) * 2) - ageTax * 0.4 + jitter()),
+    speedWithBall: band((guard ? 77 : position === "C" ? 49 : 67) - ageTax + jitter()),
+    interiorDefense: band(62 + size * 10 + bump(ratings.defense * 5, 22) + jitter()),
+    perimeterDefense: band(65 + (guard ? 5 : big ? -12 : 0) + bump(ratings.defense * 5, 22) + jitter()),
     steal: rated(
       stlPct != null ? scale(stlPct, STL_STOPS) : undefined,
       anchor + (guard ? 3 : -4) + bump(((hint?.spg ?? 0.8) - 0.9) * 10, 10)
@@ -551,11 +557,11 @@ export function buildSheet(player: GmPlayer, hint?: SheetStatHint): GmSheet {
       drbPct != null ? scale(drbPct, DRB_STOPS) : undefined,
       anchor + size * 8 + bump(((hint?.rpg ?? 4) - 5) * 1.5, 10)
     ),
-    speed: band(anchor + (big ? -10 : guard ? 4 : 1) - ageTax + jitter()),
-    agility: band(anchor + (big ? -8 : 2) - ageTax + jitter()),
-    strength: band(anchor + (big ? 8 : guard ? -6 : 0) + jitter()),
-    vertical: band(anchor + (big ? -2 : 2) - ageTax * 0.8 + jitter()),
-    stamina: band(anchor - 4 + bump(((hint?.mpg ?? 24) - 28) * 0.6, 8) - ageTax * 0.4),
+    speed: band((big ? 62 : guard ? 80 : 73) - ageTax + jitter()),
+    agility: band((big ? 59 : guard ? 79 : 73) - ageTax + jitter()),
+    strength: band(58 + (player.weightLbs - 190) * 0.32 + jitter()),
+    vertical: band((big ? 67 : 72) - ageTax * 0.8 + jitter()),
+    stamina: band(75 + bump(((hint?.mpg ?? 24) - 28) * 0.7, 10) - ageTax * 0.4),
   };
 
   const overall = overallFromAttributes(position, attributes, {
@@ -663,12 +669,17 @@ export function buildSheet(player: GmPlayer, hint?: SheetStatHint): GmSheet {
     peakEnd,
   };
 
-  return { version: SHEET_VERSION, overall, attributes, tendencies, potential };
+  const overallOffset = overall - overallFromAttributes(position, attributes, { impact: ratings.impact, drbl100: player.drbl100 });
+  return { version: SHEET_VERSION, overall, overallOffset, attributes, tendencies, potential };
 }
 
 export function hintFromCounting(line?: GmCountingLine): SheetStatHint | undefined {
   if (!line || line.gp < 1) return undefined;
   return {
+    twoPct: line.fga > line.tpa ? (line.fgm - line.tpm) / (line.fga - line.tpa) : undefined,
+    twoAttempts: Math.max(0, line.fga - line.tpa),
+    threeAttempts: line.tpa,
+    freeThrowAttempts: line.fta,
     threeRate: line.fga > 0 ? line.tpa / line.fga : 0,
     threePct: line.tpa > 0 ? line.tpm / line.tpa : undefined,
     ftPct: line.fta > 0 ? line.ftm / line.fta : undefined,
@@ -714,10 +725,12 @@ export function sheetHint(player: GmPlayer, hint?: SheetStatHint): SheetStatHint
 
 export function playerSheet(player: GmPlayer, hint?: SheetStatHint): GmSheet {
   const resolved = sheetHint(player, hint);
-  if (player.sheet?.version === SHEET_VERSION) {
+  if (player.sheet) {
     // Reconcile trait floors (production / discourse) without rebuilding ratings.
     return {
       ...player.sheet,
+      version: SHEET_VERSION,
+      overallOffset: player.sheet.overallOffset ?? player.sheet.overall - overallFromAttributes(player.position, player.sheet.attributes, { impact: player.ratings.impact, drbl100: player.drbl100 }),
       potential: ensurePotentialTrait(player.sheet.potential, player),
     };
   }
@@ -727,7 +740,7 @@ export function playerSheet(player: GmPlayer, hint?: SheetStatHint): GmSheet {
 /** Older saves have no sheet, or a sheet from an earlier formula. */
 export function ensurePlayerSheet(player: GmPlayer): GmPlayer {
   if (player.sheet?.version === SHEET_VERSION) return player;
-  return { ...player, sheet: buildSheet(player, sheetHint(player)) };
+  return { ...player, sheet: playerSheet(player) };
 }
 
 function addKeys(
@@ -772,8 +785,10 @@ export function progressSheet(
     playoffGames?: number;
     /** PD director growth multiplier (1 = neutral). */
     devStaff?: number;
+    speed?: number;
   }
 ): GmPlayer {
+  player = ensureSimProfile(ensurePlayerSheet(player));
   const sheet = player.sheet ?? buildSheet(player);
   const { potential } = sheet;
   const age = player.age;
@@ -828,7 +843,7 @@ export function progressSheet(
   delta += (rng() - 0.5) * 0.08;
   if (delta > 0 && sheet.overall >= potential.ceiling) delta = 0;
   if (delta > 0 && potential.path === "bust" && sheet.overall <= potential.floor + 1) delta = 0;
-  delta = clamp(delta, -0.7, 0.5);
+  delta = clamp(delta * clamp(opts?.speed ?? 1, 0.5, 2), -0.7, 0.65);
   if (opts?.pace === "season") {
     delta = delta > 0 ? delta * 0.32 : delta * 0.12;
     delta += clamp(opts?.form ?? 0, -0.04, 0.06);
@@ -856,7 +871,8 @@ export function progressSheet(
                 ? -1
                 : 0;
   let attributes = sheet.attributes;
-  if (ticks > 0) attributes = addKeys(attributes, GROW_KEYS[player.position], ticks);
+  const focusKeys: Record<string, Array<keyof GmAttributes>> = { shooting: ["threePoint", "midrange", "freeThrow"], creation: ["passAccuracy", "ballHandle", "drivingLayup"], defense: ["interiorDefense", "perimeterDefense", "steal", "block"], rebounding: ["offReb", "defReb", "strength"] };
+  if (ticks > 0) attributes = addKeys(attributes, focusKeys[player.developmentFocus ?? "balanced"] ?? GROW_KEYS[player.position], ticks);
   if (ticks < 0) {
     attributes = addKeys(attributes, DECLINE_KEYS, ticks);
     if (age >= 33) {
@@ -876,15 +892,17 @@ export function progressSheet(
     -4,
     10
   );
-  const overall = overallFromAttributes(player.position, attributes, {
+  const overallOffset = sheet.overallOffset ?? sheet.overall - overallFromAttributes(player.position, sheet.attributes, { impact: player.ratings.impact, drbl100: player.drbl100 });
+  const overall = clamp(overallOffset + overallFromAttributes(player.position, attributes, {
     impact: nextImpact,
     drbl100: player.drbl100,
-  });
+  }), 25, 99);
   return {
     ...player,
     sheet: {
       ...sheet,
       overall,
+      overallOffset,
       attributes,
       priorOverall: sheet.overall,
       priorSimple: simpleCategoryMeans(sheet.attributes),
@@ -905,3 +923,4 @@ export function progressSheet(
     },
   };
 }
+

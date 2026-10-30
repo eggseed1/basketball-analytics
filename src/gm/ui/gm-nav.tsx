@@ -30,6 +30,7 @@ export function GmNav() {
   const t = useTranslations("Gm");
   return (
     <nav aria-label={t("nav_ariaLabel")} className="gm-nav">
+      <Link href="/gm/franchise" className={cn("gm-nav__link", pathname.startsWith("/gm/franchise") && "is-active")}>Franchise</Link>
       {LINKS.map((link) => {
         const active =
           link.href === "/gm"
@@ -48,3 +49,4 @@ export function GmNav() {
     </nav>
   );
 }
+

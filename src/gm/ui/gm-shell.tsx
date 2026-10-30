@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { LogOut, Maximize2, Minimize2 } from "lucide-react";
 
 import { TeamLogo } from "@/components/brand/team-logo";
+import { GmSaveImport } from "@/gm/ui/gm-franchise-desk";
 import { useGmStore } from "@/gm/state/gm-store";
 import { useMyLeagueStore } from "@/gm/myleague/store";
 import { GmCheckpointBanner } from "@/gm/ui/gm-checkpoint-banner";
@@ -290,6 +291,7 @@ export function GmShell({
           </section>
         ) : null}
 
+        <GmSaveImport />
         <div className="flex flex-wrap items-center gap-2">
           <h2 className="mr-2 text-[15px] font-semibold tracking-tight">
             {t("newFranchise")}
@@ -493,3 +495,4 @@ export function GmShell({
     </main>
   );
 }
+

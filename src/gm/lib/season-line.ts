@@ -24,7 +24,7 @@ export function entryValue(player: GmPlayer): {
       war1: typeof storedWar === "number" && Number.isFinite(storedWar) ? storedWar : null,
     };
   }
-  const pair = player.nbaPlayerId ? entryByNbaId[player.nbaPlayerId] : undefined;
+  const pair = player.nbaPlayerId && player.nbaSeason?.season === "2025-26" ? entryByNbaId[player.nbaPlayerId] : undefined;
   if (!pair || !Number.isFinite(pair[0])) return { drbl100: null, war1: null };
   const r1 = pair[1];
   return {
@@ -34,11 +34,11 @@ export function entryValue(player: GmPlayer): {
 }
 
 /** Attach the published entry rating. Used when a real season row becomes a GM player. */
-export function entryValueForNbaId(nbaPlayerId: string | undefined): {
+export function entryValueForNbaId(nbaPlayerId: string | undefined, season = "2025-26"): {
   drbl100: number | null;
   war1: number | null;
 } {
-  if (!nbaPlayerId) return { drbl100: null, war1: null };
+  if (!nbaPlayerId || season !== "2025-26") return { drbl100: null, war1: null };
   const pair = entryByNbaId[nbaPlayerId];
   if (!pair || !Number.isFinite(pair[0])) return { drbl100: null, war1: null };
   const r1 = pair[1];
@@ -135,6 +135,13 @@ export function recordSimGame(
   if (playedIds.size === 0) return players;
   const seasonKey = String(box.season);
   return players.map((player) => {
+    const promise = player.rolePromise;
+    if (promise && promise.teamId === player.teamId && promise.lastGameId !== box.gameId && !player.injury && [box.homeTeamId, box.awayTeamId].includes(player.teamId ?? "")) {
+      const games = (promise.games ?? 0) + 1;
+      const totalMinutes = (promise.totalMinutes ?? 0) + (box.players.find(p => p.playerId === player.id)?.minutes ?? 0);
+      const status = games < 10 ? "pending" as const : totalMinutes / games >= promise.minutes - 2 ? "met" as const : "unmet" as const;
+      player = { ...player, rolePromise: { ...promise, games, totalMinutes, status, lastGameId: box.gameId } };
+    }
     if (!playedIds.has(player.id)) return player;
     let line = player.seasonLine;
     let possessions = player.seasonPossessions ?? 0;
@@ -211,3 +218,4 @@ export function valueForBoard(
   if (possessions == null) return { drbl100: entry.drbl100, war1: null };
   return { drbl100: entry.drbl100, war1: war1FromRate(entry.drbl100, possessions) };
 }
+

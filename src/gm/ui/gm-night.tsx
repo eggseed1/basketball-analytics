@@ -137,7 +137,7 @@ export function GmNight() {
 
   const tip = () => {
     if (dirty) {
-      setCoaching({ minutes });
+      setCoaching({ minutes, shifts: Object.fromEntries(rows.map(row => [row.id, row.on])) });
     }
     const boxId = simulateNextGame();
     if (boxId) router.push(`/gm/game/${boxId}`);
@@ -170,7 +170,7 @@ export function GmNight() {
             variant="outline"
             disabled={!next}
             onClick={() => {
-              if (dirty) setCoaching({ minutes });
+              if (dirty) setCoaching({ minutes, shifts: Object.fromEntries(rows.map(row => [row.id, row.on])) });
               const boxId = simulateNextGame();
               if (boxId) router.push(`/gm/game/${boxId}?watch=1`);
             }}
@@ -269,3 +269,4 @@ export function GmNight() {
     </div>
   );
 }
+

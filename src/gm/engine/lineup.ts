@@ -5,6 +5,7 @@ import {
   SHEET_VERSION,
 } from "@/gm/engine/attributes";
 import { clamp } from "@/gm/engine/rng";
+import { bestStartingFive } from "@/gm/engine/rotation-roles";
 
 /**
  * Who can share a spot. NBA coaches still staff a handler and a big.
@@ -295,6 +296,7 @@ export function classifyListedPosition(
 
 /** Apply five-spot listing + sibling secondary. Rebuilds overall when primary moves. */
 export function withListedPositions(player: GmPlayer): GmPlayer {
+  if (player.listedPosition) return { ...player, position: player.listedPosition, secondaryPosition: player.secondaryPosition ?? siblingPosition(player.listedPosition) };
   const listed = classifyListedPosition(player);
   if (
     player.position === listed.position &&
@@ -549,7 +551,7 @@ export function rotationQuality(
 }
 
 function realMpg(player: GmPlayer): number {
-  const line = player.nbaSeason;
+  const line = player.priorLine && player.priorLine.gp >= 15 ? player.priorLine : player.nbaSeason;
   if (line && line.gp > 0 && line.min > 0) return line.min / line.gp;
   return player.minutesPreference || 0;
 }
@@ -569,7 +571,8 @@ export function overallOf(player: GmPlayer): number {
  * stays a starter.
  */
 export function rotationTarget(player: GmPlayer): number {
-  const fromReal = realMpg(player);
+  const fromReal = player.seasonLine && player.seasonLine.gp >= 15
+    ? player.seasonLine.min / player.seasonLine.gp : realMpg(player);
   const bump = (overallOf(player) - 80) * 0.08;
   const base = fromReal > 0 ? fromReal : clamp(16 + bump, 0, 36);
   return clamp(base + bump, 0, 38);
@@ -588,7 +591,7 @@ export function starterSeatScore(player: GmPlayer): number {
 }
 
 /** Default per-night ceiling. Nobody plays all 48 in this engine. */
-export const MAX_PLAYER_MINUTES = 38;
+export const MAX_PLAYER_MINUTES = 44;
 
 /** Shallow books need a higher individual cap so 240 can still close. */
 export function maxMinutesForDepth(depth?: number | null): number {
@@ -739,7 +742,7 @@ export type MinutePlan = {
 };
 
 /** Typical NBA night: five starters and a deep bench (~11 bodies). */
-export const DEFAULT_ROTATION_DEPTH = 11 as const;
+export const DEFAULT_ROTATION_DEPTH = 10 as const;
 
 export type MinutePlanOptions = {
   starters?: Partial<Record<GmPosition, string | null>>;
@@ -782,10 +785,10 @@ function depthCaps(depth: number): {
     return { pool, starterMin: 28, starterMax: 36, backupMin: 12, backupMax: 22, thirdMax: 12 };
   }
   if (pool === 9) {
-    return { pool, starterMin: 26, starterMax: 34, backupMin: 10, backupMax: 20, thirdMax: 14 };
+    return { pool, starterMin: 27, starterMax: 38, backupMin: 8, backupMax: 24, thirdMax: 12 };
   }
   if (pool === 10) {
-    return { pool, starterMin: 24, starterMax: 34, backupMin: 10, backupMax: 18, thirdMax: 14 };
+    return { pool, starterMin: 25, starterMax: 38, backupMin: 6, backupMax: 22, thirdMax: 12 };
   }
   if (pool === 11) {
     return { pool, starterMin: 22, starterMax: 32, backupMin: 8, backupMax: 16, thirdMax: 12 };
@@ -1196,47 +1199,6 @@ function scaleMinutes(
   return next;
 }
 
-/** Swap unused players who clearly outclass a starter at a coverable seat. */
-function promoteBetterCovers(
-  roster: GmPlayer[],
-  starters: GmTeam["starters"],
-  used: Set<string>
-): void {
-  let guard = 0;
-  while (guard++ < 8) {
-    let swapped = false;
-    const bench = roster
-      .filter((player) => !used.has(player.id))
-      .sort((a, b) => starterSeatScore(b) - starterSeatScore(a));
-    for (const challenger of bench) {
-      let bestSlot: GmPosition | null = null;
-      let bestGain = 0;
-      for (const slot of FILL_ORDER) {
-        const starterId = starters[slot];
-        if (!starterId) continue;
-        const starter = roster.find((player) => player.id === starterId);
-        if (!starter) continue;
-        if (positionFit(challenger, slot) < 0.88) continue;
-        const gain = starterSeatScore(challenger) - starterSeatScore(starter);
-        // Need a clear edge; minute tilt already lives in the score.
-        if (gain < 2) continue;
-        if (gain > bestGain) {
-          bestGain = gain;
-          bestSlot = slot;
-        }
-      }
-      if (!bestSlot) continue;
-      const displaced = starters[bestSlot]!;
-      starters[bestSlot] = challenger.id;
-      used.delete(displaced);
-      used.add(challenger.id);
-      swapped = true;
-      break;
-    }
-    if (!swapped) break;
-  }
-}
-
 function isSidelined(player: GmPlayer): boolean {
   return Boolean(player.injury && player.injury.gamesRemaining > 0);
 }
@@ -1245,23 +1207,8 @@ export function autoSetLineup(team: GmTeam, players: GmPlayer[]): GmTeam {
   const all = players.filter((p) => p.teamId === team.id);
   // Injured bodies leave the depth chart so minutes redistribute tonight.
   const roster = all.filter((p) => !isSidelined(p)).sort(byWish);
-  const starters: GmTeam["starters"] = {
-    PG: null,
-    SG: null,
-    SF: null,
-    PF: null,
-    C: null,
-  };
-  const used = new Set<string>();
-  // One pass: best cover at each scarce spot. Stars who list the wing as
-  // secondary (Tatum at SF) beat thin primary bodies (Walsh).
-  for (const pos of FILL_ORDER) {
-    const fit = pickForSlot(pos, roster, used);
-    if (!fit) continue;
-    starters[pos] = fit.id;
-    used.add(fit.id);
-  }
-  promoteBetterCovers(roster, starters, used);
+  const starters = bestStartingFive(team, roster);
+  const used = new Set(Object.values(starters).filter((id): id is string => Boolean(id)));
   const depth = clampRotationDepth(team.coaching?.rotationDepth);
   const plan = positionalMinutePlan(roster, { starters, depth });
   const minutes: Record<string, number> = { ...plan.minutes };
@@ -1291,3 +1238,4 @@ export function autoSetLineup(team: GmTeam, players: GmPlayer[]): GmTeam {
     },
   };
 }
+

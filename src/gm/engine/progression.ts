@@ -60,7 +60,7 @@ export function rollGameInjuries(
         : p.minutesPreference);
     // Heavy nights load the risk; deep rotations keep guys healthier.
     const load = mpg <= 28 ? 0.85 : mpg <= 34 ? 1 : mpg <= 38 ? 1.25 : mpg <= 42 ? 1.55 : 1.9;
-    const risk =
+    const risk = clamp(state.settings.injuryFrequency ?? 1, 0, 2) *
       ((0.035 * (100 - p.ratings.durability)) / 100 / (0.7 + trainer * 0.15)) * load;
     if (rng() > risk) return p;
     const games = Math.max(
@@ -83,7 +83,8 @@ export function developPlayers(
   seasonAgeBump = true,
   coachByTeam?: Record<string, number>,
   playoffGames?: Record<string, number>,
-  developerByTeam?: Record<string, { knack: import("@/gm/seed/staff-knacks").DevKnackId; touch: number } | null>
+  developerByTeam?: Record<string, { knack: import("@/gm/seed/staff-knacks").DevKnackId; touch: number } | null>,
+  developmentSpeed = 1
 ): GmPlayer[] {
   return players.map((p) => {
     const age = seasonAgeBump ? p.age + 1 : p.age;
@@ -97,8 +98,9 @@ export function developPlayers(
       : 1;
     const grown = progressSheet(aged, {
       coach,
-      minutes: p.minutesPreference,
+      minutes: p.seasonLine && p.seasonLine.gp > 0 ? p.seasonLine.min / p.seasonLine.gp : p.minutesPreference,
       pace: "summer",
+      speed: developmentSpeed,
       playoffGames: playoffGames?.[p.id] ?? 0,
       devStaff: knackMul,
     });
@@ -180,6 +182,7 @@ function growOnce(league: GmLeagueState, pace: "season"): { players: GmPlayer[];
       : 1;
     return progressSheet(player, {
       pace,
+      speed: league.settings.developmentSpeed ?? 1,
       coach: coachByTeam[player.teamId] ?? 0,
       minutes,
       form: formBump(player),
@@ -415,3 +418,4 @@ export function runDraftPick(
     updatedAt: new Date().toISOString(),
   };
 }
+

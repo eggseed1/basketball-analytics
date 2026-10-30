@@ -165,6 +165,7 @@ function spot(three: boolean, rng: () => number): { x: number; y: number } {
 }
 
 export function boxToPlayByPlay(box: GmBoxScore): PlayByPlayEvent[] {
+  if (box.events) return box.events;
   const rng = createRng(hash(box.id));
   const home = box.homeTeamId.toUpperCase();
   const away = box.awayTeamId.toUpperCase();
@@ -640,3 +641,4 @@ export function linesAtCutoff(
     };
   });
 }
+

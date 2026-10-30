@@ -118,7 +118,7 @@ export const TEMPO_OPTIONS: Array<{ id: GmTempo; label: string }> = [
 
 /** 24 blocks of 2 minutes. A quarter is 6 blocks. */
 export const SHIFT_SLOTS = 24;
-const PER_QUARTER = 6;
+function countOn(on: boolean[]): number { return on.filter(Boolean).length * 2; }
 
 export type ChartRow = { id: string; on: boolean[]; minutes: number };
 
@@ -129,163 +129,65 @@ type ShiftPlayer = {
   position?: GmPlayer["position"];
 };
 
-/**
- * When the first change hits, from 539 NBA games.
- * The median team subs at 5 minutes, one or two players at a time.
- * The quickest groups go at 4. The slowest wait until 6 and a half.
- * The last starter to sit does it around the middle of the second quarter.
- */
-function shiftTiming(coaching?: GmCoaching): {
-  sitAt: number;
-  stagger: number;
-  anchorAt: number;
-} {
-  const fast =
-    coaching?.tempo === "fast" ||
-    coaching?.offense === "pace_space" ||
-    coaching?.defense === "pressure";
-  const slow =
-    coaching?.tempo === "slow" ||
-    coaching?.offense === "post" ||
-    coaching?.offense === "iso" ||
-    coaching?.defense === "drop";
-  const stagger =
-    fast || coaching?.offense === "motion" || coaching?.defense === "switch" ? 1 : 0;
-  if (fast) return { sitAt: 2, stagger, anchorAt: 8 };
-  if (slow) return { sitAt: 3, stagger: 0, anchorAt: 12 };
-  return { sitAt: 2, stagger, anchorAt: 9 };
-}
-
-function countOn(on: boolean[]): number {
-  return on.reduce((sum, slot) => sum + (slot ? 2 : 0), 0);
-}
-
-/**
- * Real shifts. Starters open a quarter. One or two sit a few minutes later
- * and come back to close it. The star plays through that first change and
- * takes one rest in the middle of the game. Five players are on every block.
- */
 export function paintShifts(input: {
   players: ShiftPlayer[];
   coaching?: GmCoaching;
 }): ChartRow[] {
-  const timing = shiftTiming(input.coaching);
-  const active = input.players
-    .filter((player) => player.minutes >= 2)
-    .sort((a, b) => b.minutes - a.minutes || Number(b.starter) - Number(a.starter));
-  const on = new Map<string, boolean[]>();
-  for (const player of input.players) on.set(player.id, Array(SHIFT_SLOTS).fill(false));
-  if (active.length < 5) {
-    return input.players.map((player) => ({
-      id: player.id,
-      on: on.get(player.id) ?? Array(SHIFT_SLOTS).fill(false),
-      minutes: 0,
-    }));
+  const active = input.players.filter(p => p.minutes > 0);
+  const rows = input.players.map(p => ({ id: p.id, on: Array<boolean>(SHIFT_SLOTS).fill(false), minutes: 0 }));
+  if (active.length < 5) return rows;
+  const sum = active.reduce((n, p) => n + p.minutes, 0);
+  const target = new Map(active.map(p => [p.id, Math.min(24, p.minutes / sum * 120)]));
+  const remaining = new Map(active.map(p => [p.id, Math.floor(target.get(p.id)!)]));
+  let left = 120 - [...remaining.values()].reduce((n, v) => n + v, 0);
+  while (left > 0) {
+    const candidate = [...active].filter(p => remaining.get(p.id)! < 24).sort((a, b) =>
+      (target.get(b.id)! - remaining.get(b.id)!) - (target.get(a.id)! - remaining.get(a.id)!) || a.id.localeCompare(b.id))[0];
+    if (!candidate) break;
+    remaining.set(candidate.id, remaining.get(candidate.id)! + 1); left--;
   }
-
-  const starterIds = new Set(active.filter((player) => player.starter).map((player) => player.id));
-  const starters = active.filter((player) => starterIds.has(player.id)).slice(0, 5);
-  for (const player of active) {
-    if (starters.length >= 5) break;
-    if (!starters.some((starter) => starter.id === player.id)) starters.push(player);
-  }
-  const anchorId =
-    (input.coaching?.playThrough?.[0] &&
-      active.some((player) => player.id === input.coaching?.playThrough?.[0]) &&
-      input.coaching.playThrough[0]) ||
-    starters[0]?.id ||
-    active[0]!.id;
-  const keepBig =
-    input.coaching?.offense === "post" || input.coaching?.defense === "drop"
-      ? active.find((player) => player.position === "C" && player.id !== anchorId)?.id
-      : undefined;
-  const roles = starters.filter((player) => player.id !== anchorId && player.id !== keepBig);
-  const bench = active.filter(
-    (player) => !starters.some((starter) => starter.id === player.id) && player.id !== keepBig
-  );
-
-  const mark = (id: string, slot: number, value: boolean) => {
-    const row = on.get(id);
-    if (row && slot >= 0 && slot < SHIFT_SLOTS) row[slot] = value;
-  };
-  const sitBlock = (id: string, start: number, length: number) => {
-    for (let slot = 0; slot < SHIFT_SLOTS; slot++) mark(id, slot, true);
-    const from = clamp(start, 0, SHIFT_SLOTS);
-    const to = clamp(start + length, from, SHIFT_SLOTS);
-    for (let slot = from; slot < to; slot++) mark(id, slot, false);
-  };
-
-  const anchorTarget = active.find((player) => player.id === anchorId)?.minutes ?? 36;
-  sitBlock(anchorId, timing.anchorAt, clamp(Math.round((48 - anchorTarget) / 2), 4, 10));
-  if (keepBig) {
-    const bigTarget = active.find((player) => player.id === keepBig)?.minutes ?? 28;
-    sitBlock(keepBig, Math.min(timing.anchorAt + 2, 14), clamp(Math.round((48 - bigTarget) / 2), 4, 8));
-  }
-
-  roles.forEach((role, index) => {
-    const off = clamp(Math.round((48 - role.minutes) / 2), 4, 14);
-    const perQuarter = Math.max(2, Math.min(3, Math.round(off / 4)));
-    for (let quarter = 0; quarter < 4; quarter++) {
-      const quarterStart = quarter * PER_QUARTER;
-      let start = quarterStart + timing.sitAt + index * timing.stagger;
-      if (start + perQuarter > quarterStart + PER_QUARTER) {
-        start = quarterStart + PER_QUARTER - perQuarter;
-      }
-      for (let slot = quarterStart; slot < quarterStart + PER_QUARTER; slot++) {
-        mark(role.id, slot, slot < start || slot >= start + perQuarter);
-      }
-    }
-  });
-
-  const floor = (slot: number) =>
-    active.filter((player) => on.get(player.id)?.[slot]).map((player) => player.id);
-
-  const replacement = (role: GmPosition | undefined, ids: string[]) => {
-    const waiting = bench.filter((player) => !ids.includes(player.id));
-    const pool = waiting.length ? waiting : active.filter((player) => !ids.includes(player.id) && !starterIds.has(player.id));
-    if (!role) return pool[0];
-    return (
-      pool.find((player) => player.position === role) ??
-      pool.find((player) => player.position && slotAccepts(role, player.position)) ??
-      pool[0]
-    );
-  };
-
-  const seatOrder: GmPosition[] = ["C", "PG", "PF", "SG", "SF"];
+  const byId = new Map(rows.map(row => [row.id, row]));
+  const consecutive = new Map<string, number>();
+  const creators = new Set((input.coaching?.playThrough ?? []).filter((id): id is string => Boolean(id)));
+  if (!creators.size) active.filter(p => p.position === "PG" || p.position === "SG").sort((a, b) => b.minutes - a.minutes).slice(0, 2).forEach(p => creators.add(p.id));
+  const closing = (input.coaching?.closingLineup ?? []).filter(id => active.some(p => p.id === id));
   for (let slot = 0; slot < SHIFT_SLOTS; slot++) {
-    let ids = floor(slot);
-    let guard = 0;
-    while (ids.length < 5 && guard < 12) {
-      guard += 1;
-      const sitting = starters
-        .filter((player) => !ids.includes(player.id))
-        .sort(
-          (a, b) =>
-            seatOrder.indexOf(a.position ?? "SF") - seatOrder.indexOf(b.position ?? "SF")
-        );
-      const next = replacement(sitting[0]?.position, ids);
-      if (next) {
-        mark(next.id, slot, true);
-        ids = floor(slot);
-        continue;
+    const slotsLeft = SHIFT_SLOTS - slot;
+    const mandatory = active.filter(p => remaining.get(p.id)! >= slotsLeft);
+    const selected = [...mandatory];
+    for (const position of ["C", "PG", "SG", "SF", "PF"] as const) {
+      const pool = active.filter(p => p.position === position && remaining.get(p.id)! > 0);
+      if (selected.length < 5 && !selected.some(p => p.position === position) && pool.reduce((n, p) => n + remaining.get(p.id)!, 0) >= slotsLeft) {
+        const next = pool.sort((a, b) => remaining.get(b.id)! - remaining.get(a.id)! || Number(b.starter) - Number(a.starter))[0];
+        if (next) selected.push(next);
       }
-      const back =
-        sitting.find((player) => player.id !== anchorId) ?? sitting[0];
-      if (!back) break;
-      mark(back.id, slot, true);
-      ids = floor(slot);
     }
-    while (ids.length > 5) {
-      const extra = [...ids].reverse().find((id) => id !== anchorId) ?? ids[ids.length - 1]!;
-      mark(extra, slot, false);
-      ids = floor(slot);
+    const score = (p: ShiftPlayer) => {
+      const rem = remaining.get(p.id)!;
+      const reserve = closing.includes(p.id) && slot < 22 ? Math.min(2, rem) : 0;
+      if (rem <= reserve) return -10000;
+      const run = consecutive.get(p.id) ?? 0;
+      const atPosition = active.filter(q => q.position === p.position).reduce((n, q) => n + remaining.get(q.id)!, 0);
+      const repeatsSeat = p.position && selected.some(q => q.position === p.position) && atPosition <= slotsLeft;
+      return rem / slotsLeft * 32 + (p.starter && (slot < 3 || slot >= 21) ? 4 : 0)
+        - (repeatsSeat ? 1000 : 0)
+        + (run > 0 && run < 4 ? 2 : -Math.max(0, run - 3) * 2)
+        + (slot >= 22 && closing.includes(p.id) ? 100 : 0)
+        + (creators.has(p.id) && !selected.some(q => creators.has(q.id)) ? 6 : 0);
+    };
+    while (selected.length < 5) {
+      const next = active.filter(p => remaining.get(p.id)! > 0 && !selected.some(q => q.id === p.id))
+        .sort((a, b) => score(b) - score(a) || a.id.localeCompare(b.id))[0];
+      if (!next) break;
+      selected.push(next);
+    }
+    for (const p of active) {
+      const plays = selected.some(q => q.id === p.id);
+      if (plays) { byId.get(p.id)!.on[slot] = true; remaining.set(p.id, remaining.get(p.id)! - 1); }
+      consecutive.set(p.id, plays ? (consecutive.get(p.id) ?? 0) + 1 : 0);
     }
   }
-
-  return input.players.map((player) => {
-    const row = on.get(player.id) ?? Array(SHIFT_SLOTS).fill(false);
-    return { id: player.id, on: row, minutes: countOn(row) };
-  });
+  return rows.map(row => ({ ...row, minutes: countOn(row.on) }));
 }
 
 /**
@@ -359,7 +261,7 @@ export function shiftSnapshot(
   );
   const targets = positionalMinuteTargets(roster, team.starters);
   const cover = team.coaching?.coverSlot;
-  const painted = rotationChart(
+  const painted = validShiftPlan(team.coaching?.shifts, roster.map(p => p.id)) ?? rotationChart(
     roster.map((player) => ({
       id: player.id,
       minutes: saved ? (saved[player.id] ?? 0) : (targets[player.id] ?? rotationTarget(player)),
@@ -627,4 +529,15 @@ export function paceWish(coaching?: GmCoaching): number {
   if (coaching.offense === "post" || coaching.offense === "iso") pace *= 0.97;
   if (coaching.defense === "pressure") pace *= 1.02;
   return pace;
+}
+
+
+/** Reject malformed or unavailable saved blocks instead of seating an injured player. */
+export function validShiftPlan(shifts: GmCoaching["shifts"], available: string[]): ChartRow[] | null {
+  if (!shifts) return null;
+  const ids = new Set(available);
+  const rows = Object.entries(shifts).filter(([id]) => ids.has(id)).map(([id, on]) => ({ id, on, minutes: countOn(on) }));
+  if (rows.some(row => row.on.length !== SHIFT_SLOTS || row.on.some(v => typeof v !== "boolean"))) return null;
+  for (let slot = 0; slot < SHIFT_SLOTS; slot++) if (rows.filter(row => row.on[slot]).length !== 5) return null;
+  return rows;
 }

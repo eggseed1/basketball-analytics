@@ -9,7 +9,7 @@ import type {
   GmTradeAsset,
 } from "@/gm/types";
 import { createGeneratedLeague } from "@/gm/seed/create-league";
-import { simulateGame } from "@/gm/engine/simulate";
+import { simulateGame, compactSimBox } from "@/gm/engine/simulate";
 import { recordSimGame } from "@/gm/lib/season-line";
 import { ensurePlayerSheet } from "@/gm/engine/attributes";
 import { applyRookieRatings } from "@/gm/engine/rookie-ratings";
@@ -36,7 +36,7 @@ import {
   tradeDeadlineDate,
   tradeDeadlineDay,
 } from "@/gm/engine/schedule";
-import { applyTrade, evaluateTrade } from "@/gm/engine/trades";
+import { applyTrade, evaluateTrade, suggestCounterOffer } from "@/gm/engine/trades";
 import {
   considerIncomingOffer,
   offerIsFair,
@@ -116,6 +116,8 @@ import {
   suggestedMinutes,
 } from "@/gm/engine/coaching";
 import type { GmCoaching } from "@/gm/types";
+import { prepareFranchise, franchisePlan, parseFranchise, importDraftClass as importDraftClassEngine } from "@/gm/engine/franchise";
+import { overallFromAttributes } from "@/gm/engine/attributes";
 import { uid, clamp } from "@/gm/engine/rng";
 import {
   applyGameToStandings,
@@ -150,10 +152,12 @@ import { startYearFromCanonicalSeason } from "@/data/providers/historical/season
 
 /** Incoming offer → team-building date → monthly scouting focus. */
 function afterDayGates(league: GmLeagueState): GmLeagueState {
-  let next = considerIncomingOffer(league);
+  const pauses = franchisePlan(league).pauses;
+  let next = pauses.offers ? considerIncomingOffer(league) : league;
   if (!next.incomingOffer) next = considerTeamBuildingCheckpoint(next);
   if (!next.incomingOffer && !next.teamBuildingCheckpoint) {
     next = considerScoutingFocus(next);
+    if (!pauses.scouting && next.scoutingFocusPrompt) next = autoScoutingFocusEngine(next);
   }
   return next;
 }
@@ -162,7 +166,7 @@ const idbStorage = createGmSlotStorage("a");
 
 /** Normalize a league blob after load (same pass as persist rehydrate). */
 export function normalizeLoadedLeague(league: GmLeagueState): GmLeagueState {
-  const next = adoptRealSchedule(ensureProspectIdentities(league));
+  const next = prepareFranchise(adoptRealSchedule(ensureProspectIdentities(league)));
   const needsPositions = next.positionBook !== POSITION_BOOK_VERSION;
   const sheeted = next.players.map((player) =>
     ensurePlayerSheet(applyRookieRatings(player))
@@ -217,6 +221,13 @@ interface GmStore {
   /** IndexedDB franchise slots (newest first). */
   saves: GmSaveMeta[];
   activeSaveId: string | null;
+  importSave: (text: string) => Promise<void>;
+  updateFranchise: (patch: Partial<import("@/gm/types").GmFranchisePlan>) => void;
+  updateSimulationSettings: (patch: Partial<Pick<import("@/gm/types").GmLeagueSettings, "injuryFrequency" | "developmentSpeed" | "tradeDifficulty" | "simPace">>) => void;
+  setDevelopmentFocus: (playerId: string, focus: NonNullable<import("@/gm/types").GmPlayer["developmentFocus"]>) => void;
+  promiseMinutes: (playerId: string, minutes: number) => void;
+  editAttribute: (playerId: string, attribute: keyof import("@/gm/types").GmAttributes, value: number) => void;
+  importDraftClass: (text: string) => void;
   setHydrated: (v: boolean) => void;
   refreshSaves: () => Promise<void>;
   /**
@@ -418,6 +429,50 @@ export const useGmStore = create<GmStore>()(
       saves: [],
       activeSaveId: null,
       setHydrated: (v) => set({ hydrated: v }),
+      importSave: async (text) => {
+        const league = parseFranchise(text);
+        clearSimTimer();
+        await allocateNewSave({ userTeamId: league.userTeamId, season: league.season });
+        set({ league, seeding: false, seedError: null, simRun: null });
+        useMyLeagueStore.getState().bootstrap(league);
+        await get().refreshSaves();
+      },
+      updateFranchise: (patch) => {
+        const league = get().league; if (!league) return;
+        const franchise = { ...franchisePlan(league), ...patch };
+        const teams = league.teams.map(team => team.id === league.userTeamId ? { ...team, ownerGoal: franchise.intent === "develop" ? "tank" as const : franchise.intent } : team);
+        set({ league: withUpdate({ ...league, teams, franchise }) });
+      },
+      updateSimulationSettings: (patch) => {
+        const league = get().league; if (!league) return;
+        const settings = { ...league.settings };
+        for (const key of ["injuryFrequency", "developmentSpeed", "tradeDifficulty", "simPace"] as const) {
+          const v = patch[key]; if (typeof v === "number" && Number.isFinite(v)) settings[key] = clamp(v, key === "injuryFrequency" ? 0 : 0.5, key === "simPace" ? 1.2 : 2);
+        }
+        set({ league: withUpdate({ ...league, settings }) });
+      },
+      setDevelopmentFocus: (playerId, focus) => {
+        const league = get().league; if (!league) return;
+        set({ league: withUpdate({ ...league, players: league.players.map(p => p.id === playerId && p.teamId === league.userTeamId ? { ...p, developmentFocus: focus } : p) }) });
+      },
+      promiseMinutes: (playerId, minutes) => {
+        const league = get().league; if (!league || !Number.isFinite(minutes)) return;
+        set({ league: withUpdate({ ...league, players: league.players.map(p => p.id === playerId && p.teamId === league.userTeamId ? { ...p, rolePromise: { teamId: league.userTeamId, minutes: clamp(Math.round(minutes), 0, 40), madeDay: league.day, status: "pending" as const } } : p) }) });
+      },
+      editAttribute: (playerId, attribute, value) => {
+        const league = get().league; if (!league || !franchisePlan(league).commissioner || !Number.isFinite(value)) return;
+        const players = league.players.map(p => {
+          if (p.id !== playerId || !p.sheet || !(attribute in p.sheet.attributes)) return p;
+          const attributes = { ...p.sheet.attributes, [attribute]: clamp(Math.round(value), 25, 99) };
+          const overall = clamp(overallFromAttributes(p.position, attributes, { impact: p.ratings.impact, drbl100: p.drbl100 }) + (p.sheet.overallOffset ?? 0), 25, 99);
+          return { ...p, sheet: { ...p.sheet, attributes, overall } };
+        });
+        set({ league: withUpdate({ ...league, players }) });
+      },
+      importDraftClass: (text) => {
+        const league = get().league; if (!league || !franchisePlan(league).commissioner) throw new Error("Enable commissioner tools to import a draft class.");
+        set({ league: withUpdate(importDraftClassEngine(league, text)) });
+      },
 
       refreshSaves: async () => {
         const index = await readSaveIndex();
@@ -448,6 +503,7 @@ export const useGmStore = create<GmStore>()(
           if (!res.ok || !payload.league) {
             throw new Error(payload.error ?? `Seed failed (${res.status})`);
           }
+          payload.league = prepareFranchise(payload.league);
           set({ league: payload.league, seeding: false, seedError: null });
           useMyLeagueStore.getState().bootstrap(
             payload.league,
@@ -466,7 +522,7 @@ export const useGmStore = create<GmStore>()(
             error instanceof Error ? error.message : "Failed to load real rosters";
           set({ seeding: false, seedError: message });
           // Fallback so the user can still play in the allocated slot.
-          const league = createGeneratedLeague({ userTeamId });
+          const league = prepareFranchise(createGeneratedLeague({ userTeamId }));
           set({ league });
           useMyLeagueStore.getState().bootstrap(league);
           await get().refreshSaves();
@@ -479,7 +535,7 @@ export const useGmStore = create<GmStore>()(
           if (!replace) {
             await allocateNewSave({ userTeamId });
           }
-          const league = createGeneratedLeague({ userTeamId });
+          const league = prepareFranchise(createGeneratedLeague({ userTeamId }));
           set({ league, seedError: null });
           useMyLeagueStore.getState().bootstrap(league);
           await get().refreshSaves();
@@ -684,6 +740,7 @@ export const useGmStore = create<GmStore>()(
             coaching: {
               ...current,
               ...patch,
+              shifts: patch.shifts ?? (patch.minutes ? undefined : current.shifts),
               playThrough: patch.playThrough ?? current.playThrough,
             },
           };
@@ -829,7 +886,7 @@ export const useGmStore = create<GmStore>()(
             .filter((game) => !game.played && game.day <= target.day)
             .sort((a, b) => a.day - b.day || a.id.localeCompare(b.id))[0];
           if (!g) break;
-          const result = simulateGame(g, state.teams, players, undefined, schedule);
+          const result = simulateGame(g, state.teams, players, undefined, schedule, state.settings);
           schedule = schedule.map((x) => (x.id === g.id ? result.game : x));
           if (gameCounts(g)) {
             players = recordSimGame(players, result.box, boxScores);
@@ -842,7 +899,7 @@ export const useGmStore = create<GmStore>()(
               result.game.awayScore!
             );
           }
-          boxScores = [result.box, ...boxScores].slice(0, 400);
+          boxScores = [compactSimBox(result.box, league.userTeamId), ...boxScores].slice(0, 400);
           const cupNote = cupChampionNews(state, result.game);
           const starNote = allStarChampionNews(state, result.game);
           if (cupNote || starNote) news = [starNote, cupNote, ...news].filter((item): item is NonNullable<typeof item> => Boolean(item)).slice(0, 50);
@@ -1093,7 +1150,8 @@ export const useGmStore = create<GmStore>()(
           if (
             next.phase !== "regular" ||
             next.incomingOffer ||
-            isCalendarPaused(next)
+            isCalendarPaused(next) ||
+            (franchisePlan(next).pauses.injuries && newInjuries(league.players, next.players, next.userTeamId).some(p => p.yours))
           ) {
             get().stopAutoSim();
           }
@@ -1276,7 +1334,11 @@ export const useGmStore = create<GmStore>()(
           fromAssets,
           toAssets
         );
-        if (!evaluation.ok) return evaluation;
+        if (!evaluation.ok) {
+          const talk = { id: uid("talk"), day: league.day, teamId: toTeamId, reason: evaluation.reason ?? "The other club declined.", youSend: fromAssets, youReceive: toAssets, counter: suggestCounterOffer(league, league.userTeamId, toTeamId, fromAssets, toAssets) };
+          set({ league: withUpdate({ ...league, tradeTalks: [talk, ...(league.tradeTalks ?? [])].slice(0, 30) }) });
+          return evaluation;
+        }
         const next = applyTrade(league, {
           fromTeamId: league.userTeamId,
           toTeamId,
@@ -1442,11 +1504,11 @@ export const useGmStore = create<GmStore>()(
             awayTeamId: game.awayId,
             played: false,
           };
-          const result = simulateGame(tip, league.teams, players);
+          const result = simulateGame(tip, league.teams, players, undefined, league.schedule, league.settings);
           result.game.postseason = "play_in";
           result.box.postseason = "play_in";
           schedule.push(result.game);
-          boxScores = [result.box, ...boxScores].slice(0, 400);
+          boxScores = [compactSimBox(result.box, league.userTeamId), ...boxScores].slice(0, 400);
           const homeWon = (result.game.homeScore ?? 0) > (result.game.awayScore ?? 0);
           board = applyPlayInResult(board, game, homeWon);
           if (result.game.homeScore != null && result.game.awayScore != null) {
@@ -1674,10 +1736,10 @@ export const useGmStore = create<GmStore>()(
             played: false,
             postseason: "playoffs" as const,
           };
-          const result = simulateGame(game, league.teams, players);
+          const result = simulateGame(game, league.teams, players, undefined, league.schedule, league.settings);
           result.box.postseason = "playoffs";
           schedule.push(result.game);
-          boxScores = [result.box, ...boxScores].slice(0, 400);
+          boxScores = [compactSimBox(result.box, league.userTeamId), ...boxScores].slice(0, 400);
           players = rollGameInjuries(
             { ...league, players },
             result.box.players.map((line) => line.playerId),
@@ -2446,3 +2508,4 @@ export const useGmStore = create<GmStore>()(
     }
   )
 );
+

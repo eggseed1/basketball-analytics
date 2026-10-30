@@ -12,6 +12,7 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit -p .",
     "test": "node scripts/run-tests.mjs",
+    "test:franchise-lab": "tsx scripts/test-gm-franchise-upgrade.ts",
     "test:arcade": "tsx scripts/test-arcade.ts",
     "test:one-shot": "tsx scripts/test-one-shot.ts",
     "arcade:build": "node scripts/build-arcade-data.mjs",
@@ -271,3 +272,4 @@
     "wrangler": "^4.125.0"
   }
 }
+

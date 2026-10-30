@@ -3,6 +3,7 @@
  * Impact prefers DARKO DPM, then RAPTOR, then a stats heuristic.
  */
 
+import { ensureSimProfile } from "@/gm/engine/player-profile";
 import type { PlayerSeason } from "@/data/types";
 import type {
   GmCountingLine,
@@ -115,7 +116,7 @@ function finite(value: unknown): value is number {
  * or box-score proxies instead of stamping every star at impact 0.
  */
 function usableMetric(value: unknown): value is number {
-  return finite(value) && Math.abs(value) > 1e-6;
+  return finite(value);
 }
 
 /**
@@ -208,7 +209,6 @@ function ratingsFromSeason(
         : usableMetric(row.dbpm)
           ? row.dbpm
           : impact * 0.35;
-  const ts = row.trueShootingPct || 0.55;
   const age =
     opts?.age && opts.age > 0
       ? opts.age
@@ -219,8 +219,8 @@ function ratingsFromSeason(
     impact: Math.round(impact * 100) / 100,
     offense: Math.round(clamp(offense, -8, 14) * 100) / 100,
     defense: Math.round(clamp(defense, -6, 10) * 100) / 100,
-    shooting: clamp(Math.round(ts * 100), 25, 95),
-    finishing: clamp(Math.round(50 + impact * 4), 25, 95),
+    shooting: clamp(Math.round(50 + ((row.threePointPct || 0.33) - 0.3) * 180), 25, 95),
+    finishing: clamp(Math.round(50 + (((row.fieldGoalsMade - row.threePointersMade) / Math.max(1, row.fieldGoalsAttempted - row.threePointersAttempted)) - 0.45) * 120), 25, 95),
     playmaking: clamp(
       Math.round(30 + (row.assists / Math.max(1, row.gamesPlayed)) * 8),
       15,
@@ -319,6 +319,10 @@ export function playerSeasonToGmPlayer(
       }).contract
     : null;
   const hint: SheetStatHint = {
+    twoPct: (row.fieldGoalsMade - row.threePointersMade) / Math.max(1, row.fieldGoalsAttempted - row.threePointersAttempted),
+    twoAttempts: Math.max(0, row.fieldGoalsAttempted - row.threePointersAttempted),
+    threeAttempts: row.threePointersAttempted,
+    freeThrowAttempts: row.freeThrowsAttempted,
     threeRate: row.threePointAttemptRate,
     threePct: row.threePointPct,
     ftPct: row.freeThrowPct,
@@ -335,8 +339,10 @@ export function playerSeasonToGmPlayer(
     stlPct: percentPoints(row.stealPct),
     astPct: percentPoints(row.assistPct),
   };
-  const entryValue = entryValueForNbaId(row.playerId);
+  const entryValue = entryValueForNbaId(row.playerId, row.season);
   const player: GmPlayer = {
+    listedPosition: POSITIONS.includes(row.position?.toUpperCase() as GmPosition) ? row.position!.toUpperCase() as GmPosition : undefined,
+    realRole: { season: seasonEndYear, teamId, starts: row.gamesStarted ?? 0, games: row.gamesPlayed, mpg: row.minutes / Math.max(1, row.gamesPlayed) },
     id: row.playerId,
     name: row.playerName,
     teamId,
@@ -371,7 +377,7 @@ export function playerSeasonToGmPlayer(
   };
   player.sheet = buildSheet(player, row.gamesPlayed > 0 ? hint : undefined);
   // ESPN only ships G/F/C → SG/SF/C. Split into five spots + secondary here.
-  return withListedPositions(applyRookieRatings(player));
+  return ensureSimProfile(withListedPositions(applyRookieRatings(player)));
 }
 
 export function buildLeagueFromPlayerSeasons(
@@ -593,3 +599,4 @@ export function buildLeagueFromPlayerSeasons(
 export function defaultGmCanonicalSeason(): string {
   return canonicalSeasonFromStartYear(currentNbaStartYear());
 }
+

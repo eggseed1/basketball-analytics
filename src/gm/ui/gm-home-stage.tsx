@@ -10,7 +10,7 @@ import { GmGamePlan } from "@/gm/ui/gm-game-plan";
 import { GmPlayInSchedule } from "@/gm/ui/gm-play-in";
 import { GmPlayoffBracket } from "@/gm/ui/gm-playoff-bracket";
 import { GmSeasonCalendar } from "@/gm/ui/gm-season-calendar";
-import { MyLeagueStatusCard } from "@/gm/ui/myleague-status-card";
+import { FranchiseSummary } from "@/gm/ui/gm-franchise-desk";
 import { OffseasonHub } from "@/gm/ui/offseason-hub";
 import { homeStageLabel, resolveHomeStage } from "@/gm/lib/home-stage";
 import { userCap, userRecord } from "@/gm/lib/selectors";
@@ -200,9 +200,10 @@ export function GmHomeStage({ league }: { league: GmLeagueState }) {
       <GmSeasonCalendar league={league} />
       <CapStrip league={league} />
       <GmGamePlan league={league} />
-      <MyLeagueStatusCard />
+      <FranchiseSummary league={league} />
       <QuickLinks />
       <Briefings league={league} />
     </div>
   );
 }
+

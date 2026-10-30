@@ -273,8 +273,19 @@ export function contractSurplusM(player: GmPlayer): number | null {
   return Math.round((expected - salary) * 10) / 10;
 }
 
-export function playerTradePoints(player: GmPlayer): number {
-  return starsToPoints(playerStars(player));
+export function playerTradePoints(player: GmPlayer, league?: GmLeagueState): number {
+  const overall = overallOf(player);
+  const talent = 1 + 0.15 * Math.pow(Math.max(0, overall - 50), 1.7);
+  const age = player.age <= 23 ? 1.22 : player.age <= 27 ? 1.1 : player.age >= 35 ? 0.63 : player.age >= 32 ? 0.82 : 1;
+  const potential = player.age <= 24 ? Math.max(0, (player.sheet?.potential.ceiling ?? overall) - overall) * 0.45 : 0;
+  const cap = league?.settings.salaryCapM ?? 140.588;
+  const salary = player.contract?.annualSalaryM;
+  const expectedShare = clamp((overall - 64) * 0.009, 0.008, 0.35);
+  const years = player.contract?.yearsRemaining ?? 0;
+  const surplus = salary == null ? 0 : clamp((expectedShare - salary / cap) * 60 * Math.min(3, years), -28, 25);
+  const control = years <= 1 ? 0.88 : 1 + Math.min(4, years - 1) * 0.025;
+  const availability = player.injury ? clamp(1 - player.injury.gamesRemaining / 100, 0.65, 1) : 1;
+  return Math.max(1, Math.round((talent * age * control + potential + surplus) * availability));
 }
 
 export function pickTradePoints(league: GmLeagueState, pick: GmDraftPick): number {
@@ -290,3 +301,4 @@ export function formatStars(stars: number): string {
 export function teamById(teams: GmTeam[], id: string): GmTeam | undefined {
   return teams.find((team) => team.id === id);
 }
+
