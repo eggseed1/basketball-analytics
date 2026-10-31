@@ -3,12 +3,12 @@
     "methodologyVersion": "movement-m1-0.2+movement-rules-v2",
     "status": "NEWS_INGEST_M1",
     "season": "2026-27",
-    "snapshotDate": "2026-10-30",
+    "snapshotDate": "2026-10-31",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-10-30T20:51:52.718Z",
+    "builtAt": "2026-10-31T15:54:18.913Z",
     "rosterPlayerCount": 489,
-    "headlinesScanned": 8684,
-    "latestHeadlineAt": "2026-10-30T20:51:15.000Z",
+    "headlinesScanned": 8953,
+    "latestHeadlineAt": "2026-10-31T15:54:00.000Z",
     "latestTransactionDate": "2026-10-29",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -1812,20 +1812,21 @@
     {
       "id": "mv-trade-4397688-20261030",
       "headline": "Trey Murphy III: trade talk",
-      "primaryClaimId": "mv-180e9ad564a42c01",
+      "primaryClaimId": "mv-a8db5e230a6eb5a1",
       "claimIds": [
+        "mv-a8db5e230a6eb5a1",
         "mv-180e9ad564a42c01"
       ],
-      "evidenceClass": "rumored",
+      "evidenceClass": "reported",
       "state": "unresolved",
-      "firstSeenAt": "2026-10-30T18:52:54.000Z",
+      "firstSeenAt": "2026-10-30T18:05:58.000Z",
       "lastMeaningfulAt": "2026-10-30T18:52:54.000Z",
       "linkedPlayerIds": [
         "4397688"
       ],
       "linkedTeamIds": [
-        "23",
         "25",
+        "23",
         "3"
       ]
     },
@@ -9417,6 +9418,27 @@
         "14"
       ],
       "isOriginal": false
+    },
+    {
+      "id": "mv-a8db5e230a6eb5a1",
+      "clusterId": "mv-trade-4397688-20261030",
+      "summary": "Thunder Reportedly Eyeing Herb Jones And Trey Murphy III As Potential Trade Targets To Solve Injury Crisis",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-30T18:05:58.000Z",
+      "sourceId": "outlet:fadeaway-world",
+      "sourceLabel": "Fadeaway World",
+      "sourceUrl": "https://fadeawayworld.net/nba-trade-rumors/oklahoma-city-thunder/thunder-reportedly-eyeing-herb-jones-and-trey-murphy-iii-as-potential-trade-targets-to-solve-injury-crisis",
+      "playerIds": [
+        "4397688"
+      ],
+      "teamIds": [
+        "25"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "contact"
     },
     {
       "id": "mv-180e9ad564a42c01",
