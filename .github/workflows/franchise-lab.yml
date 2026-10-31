@@ -56,9 +56,12 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - run: node scripts/smoke-react-state.mjs
       - run: node scripts/smoke-gm-browser.mjs
+      - run: node scripts/audit-gm-ux.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: franchise-lab-ui
-          path: /tmp/franchise-qa
+          path: |
+            /tmp/franchise-qa
+            /tmp/franchise-ux
           retention-days: 7
