@@ -1,10 +1,13 @@
 import { spawn } from "node:child_process";
 import { setTimeout as delay } from "node:timers/promises";
+import { mkdirSync, writeFileSync } from "node:fs";
 import { requireHealthyPage } from "./lib/runtime-smoke-html.mjs";
 
 const host = "127.0.0.1";
 const port = 3221;
 const origin = `http://${host}:${port}`;
+const diagnosticsDir = "/tmp/runtime-parity";
+mkdirSync(diagnosticsDir, { recursive: true });
 
 const server = spawn(
   process.execPath,
@@ -22,7 +25,9 @@ async function get(route, timeoutMs = 40_000) {
     signal: AbortSignal.timeout(timeoutMs),
     headers: { Accept: "text/html", "User-Agent": "drbl-runtime-parity/1.0" },
   });
-  return { status: response.status, body: await response.text() };
+  const body = await response.text();
+  writeFileSync(`${diagnosticsDir}/${route.replace(/[^a-z0-9.-]/gi, "_")}.html`, body);
+  return { status: response.status, body };
 }
 
 async function waitForServer() {
@@ -79,7 +84,7 @@ async function main() {
     if (gameText.includes(marker)) throw new Error(`Game Lab regressed to fallback: ${marker}`);
   }
   if (!gameText.includes("Game flow")) {
-    throw new Error("Game Lab flow is missing from completed game");
+    throw new Error(`Game Lab flow is missing from completed game. Page text: ${gameText.slice(-2200)}`);
   }
   if (!gameText.includes("Possession")) {
     throw new Error("Possession surface is missing from completed game");

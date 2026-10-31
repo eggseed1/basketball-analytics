@@ -159,11 +159,6 @@
       "count": 1
     }
   },
-  "src/components/home/home-standings-panel.tsx": {
-    "react-hooks/error-boundaries": {
-      "count": 1
-    }
-  },
   "src/components/home/league-pulse-section.tsx": {
     "react-hooks/error-boundaries": {
       "count": 1
@@ -220,11 +215,6 @@
   "src/components/players/player-percentile-island.tsx": {
     "react-hooks/error-boundaries": {
       "count": 2
-    }
-  },
-  "src/components/players/player-percentile-panel.tsx": {
-    "react-hooks/set-state-in-effect": {
-      "count": 4
     }
   },
   "src/components/players/player-sentiment-tab-island.tsx": {
