@@ -4,6 +4,7 @@ import {
   calendar,
   gamesThisMonth,
   levelOf,
+  minutesBand,
   newSeason,
   nodeLabel,
   perGame,
@@ -43,8 +44,12 @@ import { hofEligible, hofSpeech } from "./ceremony";
 import { allStarPick, conference, monthHonor, nbaHonors, risingStar, threePointInvite } from "./league";
 import { gameScoreTotal } from "./stats";
 import { drawName, formatName, poolFor, townName } from "./names";
-import { createPeers, stepPeersYear } from "./peers";
-import { clamp, createStreams, hashString, rngOf } from "./rng";
+import { careerArc } from "./arcs";
+import { CHALLENGE_LABEL } from "./challenges";
+import { eraAt } from "./era";
+import { createPeers, rivalPeer, stepPeersYear } from "./peers";
+import { clamp, createStreams, hashString, rngOf, type StreamName } from "./rng";
+import { coachToneOf, pickCoachTone, TONE_LABEL, toneRoleBias, toneTradeBias } from "./team";
 import { NBA_TEAMS, nbaTeam, offerBlocked, offseasonOffers, overseasPossible, salaryFor } from "./routes";
 import { currentLevel, generatePotentials, generateTraits, readiness, READINESS_LABEL, SKILLS, startingSkills } from "./skills";
 import { FOCUS_BY_ID, focusAvailable, stepTraining } from "./training";
@@ -96,6 +101,7 @@ export const MEANS_LABEL = ["", "Struggling", "Tight", "Steady", "Comfortable", 
 /* --------------------------------------------------------------- birth */
 
 export function createLife(opts: NewLifeOptions): LifeState {
+  const challenge = opts.mode === "daily" ? null : (opts.challenge ?? null);
   const streams = createStreams(opts.seed);
   const gen = rngOf(streams, "generation");
   const growthRng = rngOf(streams, "growth");
@@ -113,6 +119,18 @@ export function createLife(opts: NewLifeOptions): LifeState {
   const courtScore = means + { capital: 2, city: 1.5, town: 1, rural: 0 }[localityKind] + gen.next() * 3;
   let courtAccess: LifeState["family"]["courtAccess"] = courtScore >= 7 ? "excellent" : courtScore >= 5 ? "good" : courtScore >= 3 ? "fair" : "poor";
   const parents = generateParents(gen, birth.id);
+  const legacy = opts.mode === "daily" ? null : (opts.legacy ?? null);
+  const legacyNotes: string[] = [];
+  if (legacy?.meansBoost && means < 4 && gen.chance(0.42)) {
+    means = Math.min(5, means + 1) as typeof means;
+    legacyNotes.push("family means");
+  }
+  if (legacy?.heightCm && gen.chance(0.38)) {
+    const target = legacy.heightCm;
+    parents.fatherHeightCm = Math.round(parents.fatherHeightCm * 0.7 + Math.min(215, target + 8) * 0.3);
+    parents.motherHeightCm = Math.round(parents.motherHeightCm * 0.7 + Math.min(200, target - 10) * 0.3);
+    legacyNotes.push("frame");
+  }
   let growth = generateGrowth(growthRng, parents.fatherHeightCm, parents.motherHeightCm);
   const potentials = generatePotentials(gen);
   const traits = generateTraits(gen);
@@ -150,6 +168,7 @@ export function createLife(opts: NewLifeOptions): LifeState {
     mode: opts.mode,
     draw: opts.draw,
     pacing: opts.pacing,
+    challenge,
     dailyDate: opts.dailyDate ?? null,
     ageMonths: 0,
     clock: { paused: true, pauseReason: "user", speed: 1, autoDecisions: false },
@@ -195,6 +214,12 @@ export function createLife(opts: NewLifeOptions): LifeState {
   };
   log(state, "birth", `Born in ${locality}, ${birth.name}.`, null, "neutral");
   if (unicorn) log(state, "milestone", "A unicorn: rare talent, a gifted frame and a family that can back him.", null, "good");
+  if (legacyNotes.length && legacy?.name) {
+    log(state, "info", `Something of ${legacy.name} carries over: ${legacyNotes.join(" and ")}.`, null, "neutral");
+  }
+  const rival = rivalPeer(state.peers);
+  if (rival) log(state, "info", `${rival.name} was born the same year. People will measure you against him.`, null, "neutral");
+  if (challenge) log(state, "info", `Challenge on: ${CHALLENGE_LABEL[challenge]}.`, null, "neutral");
   return state;
 }
 
@@ -213,9 +238,16 @@ export function log(s: LifeState, kind: HistoryEntry["kind"], text: string, caus
   return id;
 }
 
-function decide(s: LifeState, d: Omit<PendingDecision, "id" | "rolls" | "createdAt">) {
-  const rng = rngOf(s.rng, "events");
-  s.pendingDecision = { ...d, id: `d${++s.counters.decision}`, rolls: [rng.next(), rng.next(), rng.next(), rng.next()], createdAt: s.ageMonths };
+/** `frozen` sets fixed rolls and does not advance any RNG stream (ceremony-only pauses). */
+function decide(s: LifeState, d: Omit<PendingDecision, "id" | "rolls" | "createdAt">, stream: StreamName | "frozen" = "events") {
+  const rolls =
+    stream === "frozen"
+      ? [0.37, 0.41, 0.53, 0.59]
+      : (() => {
+          const rng = rngOf(s.rng, stream);
+          return [rng.next(), rng.next(), rng.next(), rng.next()];
+        })();
+  s.pendingDecision = { ...d, id: `d${++s.counters.decision}`, rolls, createdAt: s.ageMonths };
   s.clock.pauseReason = "decision";
 }
 
@@ -224,16 +256,102 @@ export function isCeremony(templateId: string) {
 }
 
 /** Pauses the life on a title, an MVP, a gold, or the hall. Auto mode does not click through it. */
-function fanfare(s: LifeState, templateId: "fanfare" | "hof", title: string, body: string) {
+function fanfare(
+  s: LifeState,
+  templateId: "fanfare" | "hof",
+  title: string,
+  body: string,
+  context?: Record<string, string | number | boolean | null>,
+  stream: StreamName | "frozen" = "events",
+) {
   log(s, "milestone", title, null, "good");
   if (s.pendingDecision) return;
-  decide(s, {
-    templateId,
-    title,
-    body,
-    choices: [{ id: "ok", label: templateId === "hof" ? "Stand for the ovation" : "Take it in", preview: "Time stays paused until you do." }],
-    required: true,
-  });
+  decide(
+    s,
+    {
+      templateId,
+      title,
+      body,
+      choices: [{ id: "ok", label: templateId === "hof" ? "Stand for the ovation" : "Take it in", preview: "Time stays paused until you do." }],
+      context,
+      required: true,
+    },
+    stream,
+  );
+}
+
+/**
+ * Smaller beat than a title night: first paycheck, senior start, call-up, 10-day minutes,
+ * youth honors, first youth national camp, first clear gap on the rival, shared league floor with the rival.
+ * Draft night and first NBA starting five use full ceremony instead.
+ * Pauses in manual play; auto mode clicks through. Skips when a bigger decision is already up.
+ */
+function softFanfare(s: LifeState, key: string, title: string, body: string, stream: StreamName | "frozen" = "events") {
+  const flag = `soft:${key}`;
+  if (s.flags[flag]) return;
+  s.flags[flag] = true;
+  log(s, "milestone", title, null, "good");
+  if (s.pendingDecision) return;
+  decide(
+    s,
+    {
+      templateId: "soft",
+      title,
+      body,
+      choices: [{ id: "ok", label: "Keep going", preview: "The month continues." }],
+      required: true,
+    },
+    stream,
+  );
+}
+
+/** Once: you have clearly pulled ahead of the birth-class rival. */
+function maybeRivalGapBeat(s: LifeState) {
+  if (s.flags["soft:ahead-rival"]) return;
+  const rival = rivalPeer(s.peers);
+  if (!rival || rival.done) return;
+  const age = s.ageMonths / 12;
+  if (age < 13 || age > 19) return;
+  if (performanceLevel(s) < rival.rating + 10) return;
+  softFanfare(
+    s,
+    "ahead-rival",
+    "Pulling clear",
+    `${rival.name} used to feel even with you. Not anymore. People in the gym talk about you first.`,
+  );
+  s.evidence.push({ month: s.ageMonths, text: `Clear of ${rival.name} in the same birth class`, weight: 3.5 });
+}
+
+/**
+ * Once: the birth-class rival reaches an NBA box score while you still have not.
+ * Log-only (no decide): a soft pause here would burn the events stream mid-birthday
+ * and shift later careers.
+ */
+function maybeRivalBeatHimThere(s: LifeState, rivalDebutBefore: number | null) {
+  if (s.flags["soft:rival-first-nba"]) return;
+  if (s.achievements.nbaDebut !== null) return;
+  const rival = rivalPeer(s.peers);
+  if (!rival || rival.debutMonth === null || rivalDebutBefore !== null) return;
+  s.flags["soft:rival-first-nba"] = true;
+  log(
+    s,
+    "milestone",
+    `He got there first: ${rival.name} checks into an NBA game. Your feed fills with the clip. The race is still open.`,
+    null,
+    "good",
+  );
+  s.evidence.push({ month: s.ageMonths, text: `${rival.name} reached the NBA before you`, weight: 3.2 });
+  s.traits.motivation = clamp(s.traits.motivation + 2, 0, 100);
+}
+
+/** Proud arcs (including NBA) get a short farewell before the report. */
+function maybeCareerFarewell(s: LifeState, reason: "chapter" | "retired" | "aged-out"): boolean {
+  if (s.flags.farewellDone) return false;
+  const arc = careerArc(s);
+  if (!arc.proud) return false;
+  s.flags.farewellDone = true;
+  fanfare(s, "fanfare", arc.title, arc.line, { endAfter: true, endReason: reason, kind: "farewell" }, "frozen");
+  return true;
 }
 
 function maybeHof(s: LifeState) {
@@ -297,6 +415,11 @@ export function advanceToDecision(state: LifeState, limit = 600): LifeState {
 
 export function stepMonth(s: LifeState) {
   s.ageMonths += 1;
+  // Orphaned February softs (All-Star / trade) that waited on a contest or ceremony.
+  flushPendingAllStar(s);
+  flushPendingTrade(s);
+  flushPendingAllNba(s);
+  flushPendingRivalCatch(s);
   const age = s.ageMonths / 12;
   if (s.ageMonths % 12 === 0) birthday(s);
   if (typeof s.flags.restoreAt === "number" && s.ageMonths >= s.flags.restoreAt) {
@@ -325,6 +448,9 @@ export function stepMonth(s: LifeState) {
   if (!s.pendingDecision) calendarStep(s);
   if (!s.pendingDecision) scheduledStep(s);
   if (!s.pendingDecision) agentStep(s);
+  // Extension / coaching change before the random pool so a night-out does not eat the board.
+  if (!s.pendingDecision) maybeNbaExtension(s);
+  if (!s.pendingDecision) maybeCoachChange(s);
   if (!s.pendingDecision) randomEvent(s);
   endChecks(s);
 }
@@ -356,10 +482,22 @@ function birthday(s: LifeState) {
     s.flags.hsGradYear = calendar(s).year;
     log(s, "milestone", s.education.graduatedHighSchool ? "Finished the extra year of high school." : "Left school without a diploma. NCAA route closes (game rule).", null, s.education.graduatedHighSchool ? "good" : "bad");
   }
+  const rivalBefore = rivalPeer(s.peers);
+  const rivalDebutBefore = rivalBefore?.debutMonth ?? null;
   stepPeersYear(s.rng, s.peers, Math.round(age), s.ageMonths);
+  maybeRivalBeatHimThere(s, rivalDebutBefore);
+  const year = calendar(s).year;
+  const era = eraAt(year);
+  if (age === 18 || (age >= 19 && age % 12 === 0)) {
+    const prev = typeof s.flags.eraId === "string" ? s.flags.eraId : null;
+    if (prev !== era.id) {
+      s.flags.eraId = era.id;
+      log(s, "info", `${era.label} (${year}): ${era.line}`);
+    }
+  }
   for (const slot of ["primary", "secondary"] as const) {
     const id = s.plan[slot];
-    if (id && !focusAvailable(FOCUS_BY_ID[id], age)) {
+    if (id && !focusAvailable(FOCUS_BY_ID[id], age, s)) {
       const next: FocusId | null = slot === "primary" ? "fundamentals" : null;
       if (slot === "primary") s.plan.primary = next!;
       else s.plan.secondary = null;
@@ -482,13 +620,52 @@ function finalizeSeason(s: LifeState, level: Level | null) {
   if (awards.length) {
     season.awards = [...(season.awards ?? []), ...awards];
     grantHonors(s, awards, season.node === "university");
+    const youthPoty = awards.includes("Youth Player of the Year");
+    const youthFirst = awards.includes("All-Youth First Team");
     const big = awards.find((a) => /Most Valuable Player|National Player of the Year|Conference Player of the Year|League MVP|Defensive Player of the Year|Rookie of the Year/.test(a));
-    if (big) fanfare(s, "fanfare", big, `${season.levelLabel}${season.teamName ? `, ${season.teamName}` : ""}. ${awards.join(", ")}. People stand because they mean it.`);
-    else log(s, "milestone", `${season.levelLabel} honors: ${awards.join(", ")}.`, null, "good");
+    if (youthPoty) {
+      softFanfare(
+        s,
+        "youth-mvp",
+        "Youth Player of the Year",
+        `${season.levelLabel}${season.teamName ? `, ${season.teamName}` : ""}. Best kid in the age group this year. The gym talks about it for a week.`,
+      );
+    } else if (youthFirst) {
+      softFanfare(s, "youth-first", "All-Youth First Team", `${season.levelLabel}. Your name is on the age-group first team.`);
+    } else if (big) fanfare(s, "fanfare", big, `${season.levelLabel}${season.teamName ? `, ${season.teamName}` : ""}. ${awards.join(", ")}. People stand because they mean it.`);
+    else if (awards.some((a) => /All-NBA/.test(a)) && season.node === "nba" && !s.flags["soft:all-nba"]) {
+      softFanfare(
+        s,
+        "all-nba",
+        "All-NBA",
+        `Three teams, fifteen names. Yours is on the sheet. Game Score put it there. The plaque still hangs.`,
+        "frozen",
+      );
+    } else log(s, "milestone", `${season.levelLabel} honors: ${awards.join(", ")}.`, null, "good");
     if (awards.includes("National Player of the Year")) log(s, "milestone", "Teams rewrite the board. A sponsor sends $75,000, and the work gets a little easier for the next year.", null, "good");
     else if (awards.includes("Conference Player of the Year")) log(s, "milestone", "The award shows up on the scouting sheet. A sponsor sends $25,000.", null, "good");
-    s.evidence.push({ month: s.ageMonths, text: `${awards[0]} (${season.levelLabel}, age ${season.ageYears})`, weight: ((level?.model.exposure ?? 10) / 10) * 1.2 });
+    if (awards.some((a) => /All-NBA/.test(a)) && season.node === "nba" && !s.flags["soft:all-nba"] && s.pendingDecision?.templateId === "fanfare") {
+      s.flags.softPendingAllNba = true;
+    }
+    if (awards.includes("Most Improved Player") && season.node === "nba") {
+      const keys = Object.keys(s.skills) as SkillKey[];
+      const hole = keys.reduce((a, b) => {
+        const ra = (s.potentials[a] - s.skills[a]) / Math.max(1, s.potentials[a]);
+        const rb = (s.potentials[b] - s.skills[b]) / Math.max(1, s.potentials[b]);
+        return rb > ra ? b : a;
+      });
+      const before = s.skills[hole];
+      s.skills[hole] = Math.min(Math.max(before, s.potentials[hole]), before + 0.85);
+      softFanfare(
+        s,
+        "nba-mip",
+        "Most Improved",
+        `The tape from last April looks small next to this year. The hole in your game (${hole}) closed a notch. Ceiling still caps how far that goes.`,
+      );
+    }
+    s.evidence.push({ month: s.ageMonths, text: `${awards[0]} (${season.levelLabel}, age ${season.ageYears})`, weight: ((level?.model.exposure ?? 10) / 10) * (youthPoty || youthFirst ? 0.9 : 1.2) });
   }
+  maybeRivalGapBeat(s);
   if (season.gp > 0 || season.wins + season.losses > 0) s.seasons.push(season);
   if (season.gp >= 5 && s.ageMonths >= 120) {
     const ppg = perGame(season, "pts");
@@ -499,6 +676,7 @@ function finalizeSeason(s: LifeState, level: Level | null) {
     s.evidence.push({ month: s.ageMonths, text, weight: w });
     s.evidence = [...s.evidence].sort((a, b) => b.weight - a.weight).slice(0, 24);
     log(s, "season", `${season.levelLabel}${season.teamName ? ` (${season.teamName})` : ""}: ${season.gp} games, ${ppg.toFixed(1)} pts, ${rpg.toFixed(1)} reb, ${apg.toFixed(1)} ast. ${ROLE_LABEL[season.role]}.${season.node === "nba" ? ` Team ${season.wins}-${season.losses}.` : ""}`, null, ppg >= 15 ? "good" : "neutral");
+    scheduleYouthProBridge(s, season, ppg);
   }
   if (season.node === "nba") nbaSeasonEnd(s, season);
   const c = s.placement.contract;
@@ -555,9 +733,13 @@ function finalizeSeason(s: LifeState, level: Level | null) {
 function offseasonReview(s: LifeState) {
   if (s.ended) return;
   delete s.flags.reviewSoon;
+  // NBA free agency is its own board of concrete deals, not one opaque "test the market" button.
+  if (s.flags.nbaFreeAgent === true) {
+    openNbaFreeAgency(s);
+    return;
+  }
   const offers = offseasonOffers(s);
   const renew = typeof s.flags.renewSalary === "number" && s.flags.renewTeam === s.placement.teamName ? s.flags.renewSalary : null;
-  const nbaFA = s.flags.nbaFreeAgent === true && s.placement.node === "nba";
   const expired = isProNode(s.placement.node) && !s.placement.contract;
   const hunted = typeof s.flags.overseasHunt === "number";
   if (hunted) {
@@ -569,16 +751,15 @@ function offseasonReview(s: LifeState) {
   const free = !s.placement.contract || s.placement.contract.yearsLeft <= 0;
   const asked = typeof s.flags.overseasAsked === "number" && s.ageMonths - s.flags.overseasAsked < 10;
   const abroadOk = !hunted && !asked && free && s.ageMonths >= 19 * 12 && s.placement.node !== "nba" && s.placement.node !== "university" && !offers.some((o) => o.node === "foreign-pro") && overseasPossible(s);
-  if (!offers.length && renew === null && !nbaFA && !expired && !abroadOk) return;
+  if (!offers.length && renew === null && !expired && !abroadOk) return;
   s.offers = offers;
   const choices: DecisionChoice[] = offers.map((o) => ({ id: o.id, label: offerTitle(o), preview: `${ROLE_LABEL[o.role]}, ${o.minutesBand}. ${o.reason}`, disabled: offerBlocked(s, o) ?? undefined }));
   if (renew !== null) choices.unshift({ id: "renew", label: `Re-sign with ${s.placement.teamName}`, preview: `${usd(renew)} a year for two years, guaranteed.` });
-  if (nbaFA) choices.push({ id: "fa", label: "Test NBA free agency", preview: "Other teams may pay more. You could also end up without a deal." });
   if (abroadOk) choices.push({ id: "overseas", label: "Look for a job overseas", preview: s.finance.agent ? `${s.finance.agent.name} shops your film to clubs abroad. Answers come next month.` : "You send your film to clubs abroad yourself. Answers come next month. An agent would reach more teams." });
   const stayLabel = expired ? "Turn everything down and wait" : s.placement.teamName ? `Stay with ${s.placement.teamName}` : s.placement.node === "playground" ? "Keep playing on the neighborhood courts" : "Keep training on your own";
   choices.push({ id: "stay", label: stayLabel, preview: expired ? "No contract. More offers may come next month." : "Nothing changes." });
   const n = choices.length - 1;
-  decide(s, { templateId: "offers", title: s.ageMonths < 18 * 12 ? "Next season" : nbaFA ? "NBA free agency" : "Offseason options", body: `Age ${Math.floor(s.ageMonths / 12)}. ${n === 1 ? "One option is" : `${n} options are`} on the table.`, choices, offers, required: true });
+  decide(s, { templateId: "offers", title: s.ageMonths < 18 * 12 ? "Next season" : "Offseason options", body: `Age ${Math.floor(s.ageMonths / 12)}. ${n === 1 ? "One option is" : `${n} options are`} on the table.`, choices, offers, required: true });
 }
 
 const isProNode = (n: string) => n === "domestic-pro" || n === "foreign-pro" || n === "g-league" || n === "nba";
@@ -604,6 +785,15 @@ function topSkill(s: LifeState): SkillKey {
 
 /** A recent big award keeps paying: buzz, a little skill, and a longer leash from the coach. */
 function grantHonors(s: LifeState, awards: string[], college: boolean) {
+  // Youth honors are local recognition. They do not juice draft math or skill ceilings.
+  const youthPoty = awards.includes("Youth Player of the Year");
+  const youthFirst = awards.includes("All-Youth First Team");
+  if (youthPoty || youthFirst) {
+    s.exposure = clamp(s.exposure + (youthPoty ? 3 : 1.5), 0, 100);
+    s.traits.confidence = clamp(s.traits.confidence + (youthPoty ? 2 : 1), 0, 100);
+    if (youthPoty) s.traits.motivation = clamp(s.traits.motivation + 1, 0, 100);
+    return;
+  }
   const national = awards.includes("National Player of the Year");
   const league = awards.includes("League MVP");
   const conf = awards.includes("Conference Player of the Year");
@@ -685,10 +875,14 @@ export function seasonAwards(s: LifeState, season: LifeState["seasons"][number],
     else if (starter && season.gp >= 20 && ppg >= 18 && margin >= 10 && winPct >= 0.5) out.push("Conference Player of the Year");
     if (!national && season.role === "star" && ppg >= 20 && margin >= 12) out.push("All-League First Team");
     else if (starter && ppg >= 16 && margin >= 8) out.push("All-League Second Team");
+  } else if (level.youth) {
+    if (season.role === "star" && ppg >= 18) out.push("All-Youth First Team");
+    else if (starter && ppg >= 14) out.push("All-Youth Second Team");
+    if (season.role === "star" && ppg >= 22 && margin >= 10) out.push("Youth Player of the Year");
   } else {
-    if (season.role === "star" && ppg >= (level.youth ? 21 : 19)) out.push("All-League First Team");
-    else if (starter && ppg >= (level.youth ? 17 : 15)) out.push("All-League Second Team");
-    if (season.role === "star" && ppg >= (level.youth ? 24 : 22) && margin >= 14) out.push("League MVP");
+    if (season.role === "star" && ppg >= 19) out.push("All-League First Team");
+    else if (starter && ppg >= 15) out.push("All-League Second Team");
+    if (season.role === "star" && ppg >= 22 && margin >= 14) out.push("League MVP");
   }
   if (starter && rpg >= 11) out.push("Rebounding leader");
   if (starter && apg >= 7.5) out.push("Assists leader");
@@ -775,7 +969,29 @@ function nbaGameMilestones(s: LifeState, box: BoxScore) {
     f.nbaTD = num(f.nbaTD) + 1;
     if (f.nbaTD === 1) log(s, "milestone", `First NBA triple-double: ${tens.map(([k, v]) => `${v} ${k}`).join(", ")}.`, null, "good");
   }
-  if (s.nbaGames === 100 || s.nbaGames === 500 || s.nbaGames === 1000) log(s, "milestone", `NBA game number ${s.nbaGames.toLocaleString("en-US")}.`, null, "good");
+  if (s.nbaGames === 100) log(s, "milestone", `NBA game number ${s.nbaGames.toLocaleString("en-US")}.`, null, "good");
+  if (s.nbaGames === 500 && !s.flags["soft:500"]) {
+    s.flags["soft:500"] = true;
+    fanfare(
+      s,
+      "fanfare",
+      "500 NBA games",
+      "Five hundred nights in an NBA uniform. The trainers stop counting. You still notice the number on the sheet.",
+      { kind: "500" },
+      "frozen",
+    );
+  }
+  if (s.nbaGames === 1000 && !s.flags["soft:1000"]) {
+    s.flags["soft:1000"] = true;
+    fanfare(
+      s,
+      "fanfare",
+      "1,000 NBA games",
+      "A thousand nights. The young guys ask how many you have played. You stop pretending you do not know.",
+      { kind: "1000" },
+      "frozen",
+    );
+  }
 }
 
 /** After each NBA month: monthly honors, the deadline and All-Star break in February, then the coach's call on minutes. */
@@ -792,8 +1008,16 @@ function nbaMonth(s: LifeState, level: Level, boxes: BoxScore[], last: boolean) 
     log(s, "milestone", `${text}.`, null, "good");
   }
   if (month === 2) {
-    if (s.placement.contract) tradeDeadline(s);
+    const traded = s.placement.contract ? tradeDeadline(s) : null;
     allStarBreak(s, year);
+    // Defer trade soft so a contest or first All-Star pause can land first.
+    if (traded && !s.flags["soft:nba-trade"]) {
+      s.flags.softPendingTrade = true;
+      s.flags.softPendingTradeReq = traded.req;
+      s.flags.softPendingTradeOld = traded.old;
+      s.flags.softPendingTradeTeam = traded.team;
+      flushPendingTrade(s);
+    }
   }
   if (!last && s.season) roleStep(s, level, s.season, boxes);
 }
@@ -801,6 +1025,66 @@ function nbaMonth(s: LifeState, level: Level, boxes: BoxScore[], last: boolean) 
 /** The latest NBA line: the one in progress, or the one a deadline trade just closed. */
 function currentNbaLine(s: LifeState): SeasonLine | null {
   return s.season?.node === "nba" ? s.season : ([...s.seasons].reverse().find((x) => x.node === "nba") ?? null);
+}
+
+function flushPendingAllStar(s: LifeState) {
+  if (!s.flags.softPendingAllStar || s.pendingDecision) return;
+  delete s.flags.softPendingAllStar;
+  softFanfare(
+    s,
+    "all-star",
+    "All-Star",
+    `Your name is on the All-Star sheet. Warm-ups in a strange gym, a jersey you have not earned yet in your head.`,
+    "frozen",
+  );
+}
+
+function flushPendingAllNba(s: LifeState) {
+  if (!s.flags.softPendingAllNba || s.pendingDecision || s.flags["soft:all-nba"]) return;
+  delete s.flags.softPendingAllNba;
+  softFanfare(
+    s,
+    "all-nba",
+    "All-NBA",
+    `Three teams, fifteen names. Yours is on the sheet. Game Score put it there. The plaque still hangs.`,
+    "frozen",
+  );
+}
+
+function flushPendingRivalCatch(s: LifeState) {
+  if (!s.flags.softPendingRivalCatch || s.pendingDecision || s.flags["soft:rival-catch"]) return;
+  delete s.flags.softPendingRivalCatch;
+  const rival = rivalPeer(s.peers);
+  if (!rival) return;
+  softFanfare(
+    s,
+    "rival-catch",
+    "Same league as him",
+    `${rival.name} got the first clip. You got the box score. The race is still open.`,
+    "frozen",
+  );
+  s.flags.rivalCatchAt = s.ageMonths;
+  s.evidence.push({ month: s.ageMonths, text: `Caught ${rival.name} in the NBA`, weight: 3.5 });
+}
+
+function flushPendingTrade(s: LifeState) {
+  if (!s.flags.softPendingTrade || s.pendingDecision || s.flags["soft:nba-trade"]) return;
+  const team = String(s.flags.softPendingTradeTeam ?? "your new team");
+  const old = String(s.flags.softPendingTradeOld ?? "your old team");
+  const req = s.flags.softPendingTradeReq === true;
+  delete s.flags.softPendingTrade;
+  delete s.flags.softPendingTradeReq;
+  delete s.flags.softPendingTradeOld;
+  delete s.flags.softPendingTradeTeam;
+  softFanfare(
+    s,
+    "nba-trade",
+    "Traded",
+    req
+      ? `You asked out. The ${team} send the paperwork. New city, same job, a locker that still smells like someone else.`
+      : `The ${old} move you to the ${team}. Your phone lights up before the team text does.`,
+    "frozen",
+  );
 }
 
 function allStarBreak(s: LifeState, year: number) {
@@ -813,13 +1097,17 @@ function allStarBreak(s: LifeState, year: number) {
     (line.awards ??= []).push("NBA All-Star");
     s.exposure = clamp(s.exposure + 6, 0, 100);
     log(s, "milestone", pick === "starter" ? `Named an All-Star starter for the ${conf} Conference.` : `Named an All-Star reserve for the ${conf} Conference.`, null, "good");
+    if (!s.flags["soft:all-star"]) s.flags.softPendingAllStar = true;
   }
   if (nbaSeasonsBefore(s, year) <= 1 && risingStar(total)) {
     (line.awards ??= []).push("Rising Stars");
     s.exposure = clamp(s.exposure + 3, 0, 100);
     log(s, "milestone", "Picked for the Rising Stars game at All-Star weekend.", null, "good");
   }
-  if (s.pendingDecision || s.condition.injury) return;
+  if (s.pendingDecision || s.condition.injury) {
+    flushPendingAllStar(s);
+    return;
+  }
   const age = s.ageMonths / 12;
   const rng = rngOf(s.rng, "nba");
   const dunkRoll = rng.next();
@@ -848,12 +1136,18 @@ function allStarBreak(s: LifeState, year: number) {
       context: { kind: "dunk", pct: 0 },
       required: true,
     });
+  } else {
+    flushPendingAllStar(s);
   }
 }
 
 function setRole(s: LifeState, line: SeasonLine, role: Role) {
+  const was = s.placement.role;
   s.placement.role = role;
   line.role = role;
+  if ((role === "starter" || role === "star") && was !== "starter" && was !== "star" && isProNode(s.placement.node)) {
+    softFanfare(s, "senior-start", "First senior start", `The lineup card has your name in the five. ${s.placement.teamName ?? "The club"} trusts you with a night.`);
+  }
 }
 
 /** Minutes follow level plus trust. A teammate's injury sometimes opens a spot for a month or two. */
@@ -886,9 +1180,10 @@ function roleStep(s: LifeState, level: Level, line: SeasonLine, boxes: BoxScore[
   s.flags.nbaTrust = Math.round(trust * 10) / 10;
   const lvl = performanceLevel(s);
   const coachEdge = clamp((s.placement.coaching - 50) / 15, -2, 3);
-  const up = ROLE_STEPS.indexOf(roleFor(lvl + trust + coachEdge - 1.5, level.need));
-  const down = ROLE_STEPS.indexOf(roleFor(lvl + trust + coachEdge + 2.5, level.need));
-  const settled = s.ageMonths - num(s.flags.roleAt) >= 3;
+  const toneBias = toneRoleBias(coachToneOf(s));
+  const up = ROLE_STEPS.indexOf(roleFor(lvl + trust + coachEdge - 1.5 + toneBias.up, level.need));
+  const down = ROLE_STEPS.indexOf(roleFor(lvl + trust + coachEdge + 2.5 + toneBias.down, level.need));
+  const settled = s.ageMonths - num(s.flags.roleAt) >= toneBias.settleMonths;
   const move = (to: number) => {
     setRole(s, line, ROLE_STEPS[to]!);
     s.flags.roleAt = s.ageMonths;
@@ -901,12 +1196,39 @@ function roleStep(s: LifeState, level: Level, line: SeasonLine, boxes: BoxScore[
       log(s, "milestone", `You played well enough to stay in ${ROLE_SPOT[s.placement.role]}.`, null, "good");
     }
   } else if (up > cur && settled) {
+    const from = ROLE_STEPS[cur]!;
     move(cur + 1);
     log(s, "milestone", `More minutes: the coach moves you up to ${ROLE_SPOT[s.placement.role]}.`, null, "good");
+    if (s.placement.node === "nba" && from !== "starter" && from !== "star" && (s.placement.role === "starter" || s.placement.role === "star") && !s.flags["soft:nba-climb"]) {
+      s.flags["soft:nba-climb"] = true;
+      fanfare(
+        s,
+        "fanfare",
+        "Starting in the NBA",
+        `You came in fighting for scraps. The lineup card has you in the five now. Development staff still has a job, but the job changed.`,
+        { kind: "nba-start" },
+      );
+    }
   } else if (down < cur && settled) {
+    const from = ROLE_STEPS[cur]!;
     move(cur - 1);
     log(s, "info", `Fewer minutes: the coach moves you down to ${ROLE_SPOT[s.placement.role]}.`, null, "bad");
-  } else if (cur <= 2 && chance < 0.06 && !s.condition.injury) {
+    if (
+      s.placement.node === "nba" &&
+      (from === "starter" || from === "star") &&
+      from !== s.placement.role &&
+      !["starter", "star"].includes(s.placement.role) &&
+      !s.flags["soft:nba-demote"]
+    ) {
+      softFanfare(
+        s,
+        "nba-demote",
+        "Out of the five",
+        `The lineup card moved on. You are ${ROLE_SPOT[s.placement.role]} now. The minutes have to be earned again.`,
+        "frozen",
+      );
+    }
+  } else if (cur <= 2 && chance < toneBias.fillChance && !s.condition.injury) {
     move(cur + 1);
     s.flags.fillUntil = s.ageMonths + (stint < 0.5 ? 1 : 2);
     s.flags.fillTrust = s.flags.nbaTrust;
@@ -1119,7 +1441,7 @@ function playoffStep(s: LifeState) {
   }
   if (!po.bracket) {
     const upTo = calendar(s).month === 5 ? 2 : 4;
-    while (po.rounds < upTo && !po.result) playSeries(s, line, po, level);
+    while (po.rounds < upTo && !po.result && !s.pendingDecision) playSeries(s, line, po, level);
     if (po.result) delete s.flags.poKey;
     return;
   }
@@ -1238,6 +1560,7 @@ function finishPlayoffSeries(s: LifeState, line: SeasonLine, po: PlayoffRun, ser
   if (won < 4) {
     po.result = `Lost in the ${series.round === 0 ? "first round" : label}`;
     log(s, "season", text, null, "bad");
+    maybePlayoffExit(s, line, series.round, opp, text);
     return;
   }
   po.rounds++;
@@ -1245,6 +1568,8 @@ function finishPlayoffSeries(s: LifeState, line: SeasonLine, po: PlayoffRun, ser
   if (series.round < 3) {
     log(s, "season", text, null, "good");
     ensureBracketRounds(po, line.teamName ?? "");
+    maybeFirstSeriesWin(s, line, text);
+    maybeFinalsAppearance(s, line, po);
     return;
   }
   po.result = "NBA champion";
@@ -1263,6 +1588,57 @@ function finishPlayoffSeries(s: LifeState, line: SeasonLine, po: PlayoffRun, ser
     `${text} The ${line.teamName} are NBA champions.${finalsMvp ? " They hand you Finals MVP." : ""} The building does not sit down.`
   );
   s.evidence.push({ month: s.ageMonths, text: `NBA champion with the ${line.teamName}`, weight: 12 });
+}
+
+/** Once: first NBA playoff series win (any round before the Finals). */
+function maybeFirstSeriesWin(s: LifeState, line: SeasonLine, seriesText: string) {
+  if (s.flags["soft:series-win"]) return;
+  softFanfare(
+    s,
+    "series-win",
+    "Series win",
+    `${seriesText} The ${line.teamName} move on. Champagne stays in the bottles. The next series is already on the board.`,
+    "frozen",
+  );
+}
+
+/** Once each: first playoff exit, and first Finals loss. Frozen rolls; no skill swing. */
+function maybePlayoffExit(s: LifeState, line: SeasonLine, round: number, opp: string, seriesText: string) {
+  if (round === 3 && !s.flags["soft:finals-loss"]) {
+    softFanfare(
+      s,
+      "finals-loss",
+      "Finals end",
+      `${seriesText} The ${line.teamName} come up short against the ${opp}. The handshake line is longer than the bus ride home.`,
+      "frozen",
+    );
+    return;
+  }
+  if (!s.flags["soft:playoff-exit"]) {
+    softFanfare(
+      s,
+      "playoff-exit",
+      "Season over",
+      `${seriesText} Playoff basketball ends for the ${line.teamName}. Summer starts early.`,
+      "frozen",
+    );
+  }
+}
+
+/** Once: first time this life reaches the NBA Finals (title night stays separate). */
+function maybeFinalsAppearance(s: LifeState, line: SeasonLine, po: PlayoffRun) {
+  if (s.flags["soft:finals-appear"]) return;
+  const inFinals = po.rounds === 3 || Boolean(po.bracket?.series.some((x) => x.side === "Finals" && x.yours));
+  if (!inFinals) return;
+  s.flags["soft:finals-appear"] = true;
+  fanfare(
+    s,
+    "fanfare",
+    "NBA Finals",
+    `The ${line.teamName} are in the Finals. No trophy yet. The city already treats the series like the whole year.`,
+    { kind: "finals-appear" },
+    "frozen",
+  );
 }
 
 function playSeries(s: LifeState, line: SeasonLine, po: PlayoffRun, level: Level) {
@@ -1307,12 +1683,15 @@ function playSeries(s: LifeState, line: SeasonLine, po: PlayoffRun, level: Level
   if (won < 4) {
     po.result = `Lost in the ${round === 0 ? "first round" : label}`;
     log(s, "season", text, null, "bad");
+    maybePlayoffExit(s, line, round, opp, text);
     return;
   }
   po.rounds++;
   s.exposure = clamp(s.exposure + 3, 0, 100);
   if (round < 3) {
     log(s, "season", text, null, "good");
+    maybeFirstSeriesWin(s, line, text);
+    maybeFinalsAppearance(s, line, po);
     return;
   }
   po.result = "NBA champion";
@@ -1400,14 +1779,24 @@ function holdDraft(s: LifeState, year: number) {
     if (s.season) finalizeSeason(s, levelOf(s));
     s.placement = { node: "nba", countryId: "US", leagueId: "nba", teamName: res.team, role: "deep-bench", coaching: 92, since: s.ageMonths, contract: { salary: rookieSalary(res.pick), yearsLeft: 3, guaranteed: true }, costPerYear: 0 };
     s.residence = { countryId: "US", locality: res.team!.split(" ").slice(0, -1).join(" "), localityKind: "city" };
+    s.flags.coachTone = pickCoachTone(92, s.seed, res.team ?? "nba");
     log(s, "draft", `Drafted ${ordinal(res.pick)} overall by the ${res.team}. Guaranteed rookie contract.`, null, "good");
+    s.flags["soft:draft"] = true;
+    fanfare(
+      s,
+      "fanfare",
+      "Draft night",
+      `The ${res.team} take you ${ordinal(res.pick)} overall. Your phone lights up before the commissioner finishes the name.`,
+      { kind: "draft", pick: res.pick, team: res.team },
+    );
   } else if (res.pick) {
     s.achievements.drafted = { month: s.ageMonths, round: 2, pick: res.pick };
     log(s, "draft", `Drafted ${ordinal(res.pick)} overall (second round) by the ${res.team}.`, null, "good");
+    s.flags["soft:draft"] = true;
     decide(s, {
       templateId: "draft-after",
-      title: `${res.team} hold your rights`,
-      body: "Second-round picks rarely get guaranteed deals. Pick your path.",
+      title: `Draft night · ${res.team}`,
+      body: `They take you ${ordinal(res.pick)} overall. Second-round picks rarely get guaranteed deals. Pick your path.`,
       choices: [
         { id: "two-way", label: "Two-way contract", preview: "Play in the G League with NBA call-ups. Ends NCAA eligibility." },
         { id: "camp", label: "Training camp deal", preview: "Fight for a roster spot in October. Waived players go to the G League." },
@@ -1420,8 +1809,8 @@ function holdDraft(s: LifeState, year: number) {
     log(s, "draft", `Undrafted in ${year}.`, null, "bad");
     const v = draftValue(s);
     const choices: DecisionChoice[] = [];
-    if (v >= 55) choices.push({ id: "camp", label: "Training camp deal", preview: "An NBA team brings you to camp. Waived players go to its G League team." });
-    if (performanceLevel(s) >= 50) choices.push({ id: "g-league", label: "G League contract", preview: "Play for call-ups. About $40,500 a season (model)." });
+    if (v >= 72) choices.push({ id: "camp", label: "Training camp deal", preview: "An NBA team brings you to camp. Waived players go to its G League team." });
+    if (performanceLevel(s) >= 70) choices.push({ id: "g-league", label: "G League contract", preview: "Play for call-ups. About $40,500 a season (model)." });
     if (overseasPossible(s)) choices.push({ id: "overseas", label: "Play overseas", preview: "Clubs abroad pay real salaries and scouts still watch. Offers come next month." });
     choices.push({ id: "stay", label: "Keep your current path", preview: "Stay where you are. Offers come at the next window." });
     decide(s, { templateId: "undrafted", title: "Undrafted", body: "Plenty of NBA players went undrafted. These are your options.", choices, context: { team: teamFor(s, year) }, required: true });
@@ -1437,14 +1826,16 @@ function campStep(s: LifeState, year: number) {
   const camp = performanceLevel(s) + rng.normal(0, 2);
   s.education.amateur = false;
   if (s.season) finalizeSeason(s, levelOf(s));
-  if (camp >= 69) {
+  if (camp >= 74) {
     s.achievements.rosterSpot = s.ageMonths;
     s.placement = { node: "nba", countryId: "US", leagueId: "nba", teamName: team, role: "deep-bench", coaching: 90, since: s.ageMonths, contract: { salary: 1_270_000, yearsLeft: 1, guaranteed: false }, costPerYear: 0 };
+    s.flags.coachTone = pickCoachTone(90, s.seed, team);
     s.residence = { countryId: "US", locality: team.split(" ").slice(0, -1).join(" "), localityKind: "city" };
     log(s, "milestone", `You make the ${team} opening-night roster out of training camp.`, null, "good");
   } else {
     s.flags.gParent = team;
     s.placement = { node: "g-league", countryId: "US", leagueId: "g-league", teamName: `${team} G League affiliate`, role: "rotation", coaching: 80, since: s.ageMonths, contract: { salary: 40_500, yearsLeft: 1, guaranteed: false }, costPerYear: 0 };
+    s.flags.coachTone = pickCoachTone(80, s.seed, `${team}:g`);
     s.residence = { countryId: "US", locality: "a G League city", localityKind: "city" };
     log(s, "info", `Waived after camp. You join the ${team} G League affiliate. A call-up is a 10-day, and most of those end back on the bus.`, null, "bad");
   }
@@ -1521,49 +1912,67 @@ function gLeagueStep(s: LifeState) {
   s.flags.gParent = team;
   const ups = typeof s.flags.gCallups === "number" ? s.flags.gCallups : 0;
   const twoWay = s.placement.contract?.twoWay === true;
-  const earned = ups >= 2 && performanceLevel(s) >= 72;
+  const earned = ups >= 2 && performanceLevel(s) >= 76;
+  // Most 10-day looks are dress-and-sit. Only a real minutes night (or a rest-of-season
+  // deal) moves him onto the NBA roster and into the box score.
+  if (!earned && play >= 0.16) {
+    s.flags.gCallups = ups + 1;
+    log(s, "info", `The ${team} call you up on a 10-day. You dress and sit. No minutes.`, null, "neutral");
+    return;
+  }
   closePlayingSeason(s);
   s.achievements.rosterSpot ??= s.ageMonths;
   s.placement = { node: "nba", countryId: "US", leagueId: "nba", teamName: team, role: "deep-bench", coaching: 90, since: s.ageMonths, contract: { salary: nbaSalary("deep-bench"), yearsLeft: 1, guaranteed: false, ...(twoWay && !earned ? { twoWay: true } : {}) }, costPerYear: 0 };
+  s.flags.coachTone = pickCoachTone(90, s.seed, team);
   s.residence = { countryId: "US", locality: team.split(" ").slice(0, -1).join(" ") || team, localityKind: "city" };
   if (earned) {
     s.flags.gCallups = ups + 1;
     log(s, "milestone", `The ${team} sign you for the rest of the season. Two call-ups and a run of games got you here.`, null, "good");
+    softFanfare(
+      s,
+      "ros-deal",
+      "Rest of the season",
+      `The ${team} tear up the 10-day. You are on the roster through April. The affiliate bus is someone else's problem now.`,
+      "frozen",
+    );
   } else {
     s.flags.gStint = "ten-day";
     s.flags.gStintUntil = s.ageMonths + 1;
     s.flags.gTwoWay = twoWay;
-    log(s, "milestone", `The ${team} call you up on a 10-day. You dress and sit until they need a body.`, null, "good");
+    s.flags.gCallups = ups + 1;
+    softFanfare(s, "ten-day", "Ten-day with minutes", `The ${team} call you up. You check in for real minutes. The bus back to the affiliate is still possible.`);
   }
-  if (s.achievements.nbaDebut === null && play < 0.8) {
+  if (s.achievements.nbaDebut === null) {
     s.nbaGames += 1;
     recordDebut(s, `Called up from the G League, ${2 + Math.floor(play * 10)} minutes.`);
   }
 }
 
-/** February deadline: trade odds are a model, higher after a trade request. */
-function tradeDeadline(s: LifeState) {
+/** February deadline: trade odds are a model, higher after a trade request. Soft beat fires after All-Star. */
+function tradeDeadline(s: LifeState): { old: string; team: string; req: boolean } | null {
   const recent = (k: string) => typeof s.flags[k] === "number" && s.ageMonths - (s.flags[k] as number) <= 3;
   const req = recent("tradeRequest");
   const shield = recent("tradeShield");
   delete s.flags.tradeRequest;
   delete s.flags.tradeShield;
   const rng = rngOf(s.rng, "scouting");
-  const p = 0.06 + (req ? 0.45 : 0) - (shield ? 0.04 : 0) + (s.placement.role === "deep-bench" ? 0.04 : 0);
+  const p = 0.06 + (req ? 0.45 : 0) - (shield ? 0.04 : 0) + (s.placement.role === "deep-bench" ? 0.04 : 0) + toneTradeBias(coachToneOf(s));
   const roll = rng.next();
   const pickU = rng.next();
   const old = s.placement.teamName;
   if (roll >= p) {
     if (req) log(s, "info", `The deadline passes. You're still with the ${old}.`, null, "bad");
-    return;
+    return null;
   }
   const others = NBA_TEAMS.filter((t) => t !== old);
   const team = others[Math.floor(pickU * others.length)]!;
   if (s.season && s.season.gp + s.season.wins + s.season.losses > 0) s.seasons.push(s.season);
   s.season = null;
   s.placement = { ...s.placement, teamName: team, since: s.ageMonths };
+  s.flags.coachTone = pickCoachTone(s.placement.coaching, s.seed, team);
   s.residence = { countryId: "US", locality: team.split(" ").slice(0, -1).join(" "), localityKind: "city" };
   log(s, "move", `Traded from the ${old} to the ${team} at the deadline.${req ? " You got your wish." : ""}`, null, req ? "good" : "neutral");
+  return { old: old ?? "your old team", team, req };
 }
 
 function askDeclare(s: LifeState, year: number, manual = false) {
@@ -1663,6 +2072,9 @@ function recordDebut(s: LifeState, detail: string) {
   if (s.achievements.nbaDebut !== null) return;
   s.achievements.nbaDebut = s.ageMonths;
   const id = log(s, "milestone", `NBA debut. ${detail}`, null, "good");
+  if (s.flags["soft:rival-first-nba"] && !s.flags["soft:rival-catch"] && !s.flags.softPendingRivalCatch) {
+    s.flags.softPendingRivalCatch = true;
+  }
   if (!s.keepPlaying) {
     decide(s, {
       templateId: "chapter",
@@ -1675,6 +2087,8 @@ function recordDebut(s: LifeState, detail: string) {
       context: { debutEntry: id },
       required: true,
     });
+  } else {
+    flushPendingRivalCatch(s);
   }
 }
 
@@ -1759,15 +2173,30 @@ function runTournament(s: LifeState, sel: Selection) {
   const run = playTournament(s, sel, true);
   for (const b of run.boxes) pushGame(s, b);
   const r = run.result;
+  const youth = ["u16", "u17", "u18", "u19"].includes(r.kind);
+  const firstCap = s.international.caps === 0 && r.gp > 0;
   s.international.countryId ??= sel.nat;
   s.international.caps += r.gp;
   s.international.tournaments.push(r);
+  if (firstCap) {
+    if (youth) softFanfare(s, "youth-caps", "Youth national debut", `A youth cap for ${country(sel.nat).name}. Hotel room, new jersey, the anthem on a small floor.`);
+    else softFanfare(s, "caps", "National team debut", `A cap for ${country(sel.nat).name}. The anthem starts and your hands will not stay still.`);
+  }
+  if (youth && typeof s.flags.youthNational !== "number") s.flags.youthNational = s.ageMonths;
   const perf = r.gp ? clamp(0.6 + r.pts / r.gp / 20, 0.5, 1.6) : 0.5;
-  s.exposure = clamp(s.exposure + KIND_EXPOSURE[r.kind] * perf + (r.medal ? 4 : 0), 0, 100);
+  const intlMult = eraAt(calendar(s).year).intlExposure;
+  s.exposure = clamp(s.exposure + KIND_EXPOSURE[r.kind] * perf * intlMult + (r.medal ? 4 : 0), 0, 100);
   s.condition.energy = clamp(s.condition.energy - 12, 5, 100);
-  s.evidence.push({ month: s.ageMonths, text: `${r.finish} at the ${sel.t.short} with ${country(sel.nat).name}${r.gp ? `: ${(r.pts / r.gp).toFixed(1)} ppg` : ""}`, weight: KIND_EXPOSURE[r.kind] * 0.9 * perf });
+  const ppg = r.gp ? r.pts / r.gp : 0;
+  const youthMvp = youth && r.role === "star" && r.gp >= 3 && ppg >= 18;
+  if (youthMvp) {
+    softFanfare(s, "youth-tourney-mvp", "Tournament standout", `${sel.t.short}: ${ppg.toFixed(1)} a night. Coaches from other federations ask who you are.`);
+    s.evidence.push({ month: s.ageMonths, text: `Standout at ${sel.t.short} (${ppg.toFixed(1)} ppg)`, weight: 6 });
+  }
+  s.evidence.push({ month: s.ageMonths, text: `${r.finish} at the ${sel.t.short} with ${country(sel.nat).name}${r.gp ? `: ${ppg.toFixed(1)} ppg` : ""}`, weight: KIND_EXPOSURE[r.kind] * 0.9 * perf });
   s.evidence = [...s.evidence].sort((a, b) => b.weight - a.weight).slice(0, 24);
   if (r.medal === "gold") fanfare(s, "fanfare", `Gold, ${sel.t.short}`, `${run.summary} The anthem plays and nobody in your section sits.`);
+  else if (youth && r.medal) softFanfare(s, "youth-medal", `${r.medal[0]!.toUpperCase()}${r.medal.slice(1)}, ${sel.t.short}`, run.summary);
   else log(s, "milestone", run.summary, null, r.medal ? "good" : "neutral");
 }
 
@@ -1838,9 +2267,15 @@ function runEvent(s: LifeState, t: EventTemplate, causeId: string | null) {
   s.cooldowns[t.id] = s.ageMonths;
   if (t.once) s.flags[`ev:${t.id}`] = true;
   const body = typeof t.body === "function" ? t.body(s) : t.body;
+  // Bridge beats are scheduled onto almost every life; frozen rolls keep REAL/NBA_SEEDS paths stable.
+  const bridge = t.id === "last-youth-night" || t.id === "first-senior-dud";
   if (t.auto) {
-    const rng = rngOf(s.rng, "events");
-    const rolls = [rng.next(), rng.next(), rng.next(), rng.next()];
+    const rolls = bridge
+      ? [0.37, 0.41, 0.53, 0.59]
+      : (() => {
+          const rng = rngOf(s.rng, "events");
+          return [rng.next(), rng.next(), rng.next(), rng.next()];
+        })();
     const entryId = `h${++s.counters.entry}`;
     const out = t.auto({ s, rolls, entryId });
     s.history.push({ id: entryId, month: s.ageMonths, kind: "event", text: `${t.title}. ${body} ${out}`, causeId, tone: t.tone ?? "neutral" });
@@ -1853,7 +2288,7 @@ function runEvent(s: LifeState, t: EventTemplate, causeId: string | null) {
     disabled: c.blocked?.(s) ?? undefined,
   }));
   if (choices.every((c) => c.disabled)) return;
-  decide(s, { templateId: `event:${t.id}`, title: t.title, body, choices, required: true, context: causeId ? { causeId } : undefined });
+  decide(s, { templateId: `event:${t.id}`, title: t.title, body, choices, required: true, context: causeId ? { causeId } : undefined }, bridge ? "frozen" : "events");
 }
 
 function endChecks(s: LifeState) {
@@ -1868,8 +2303,10 @@ function endChecks(s: LifeState) {
     const retireAt = typeof s.flags.retireAt === "number" ? s.flags.retireAt : 36 * 12;
     if (s.after) {
       if (age >= 65) {
-        s.ended = { month: s.ageMonths, reason: "retired" };
         log(s, "milestone", `You retire at 65 as ${article(s.after.title)}.`);
+        if (!maybeCareerFarewell(s, "retired")) {
+          s.ended = { month: s.ageMonths, reason: "retired" };
+        }
       }
     } else if (s.achievements.nbaDebut === null && age >= 31 && !s.flags.crossroads31) {
       s.flags.crossroads31 = true;
@@ -1912,11 +2349,50 @@ function resolveInPlace(s: LifeState, choiceId: string) {
     const out = c.apply({ s, rolls: d.rolls, entryId: decisionEntry });
     s.history.push({ id: decisionEntry, month: s.ageMonths, kind: "decision", text: `${t.title}: ${c.label}. ${out}`, causeId: (d.context?.causeId as string) ?? null, tone: t.tone ?? "neutral" });
     if (c.follow) s.scheduled.push({ templateId: c.follow.id, month: s.ageMonths + c.follow.delay, causeId: decisionEntry });
+    if (s.flags.softPendingYouthCamp) {
+      delete s.flags.softPendingYouthCamp;
+      softFanfare(
+        s,
+        "youth-camp",
+        "Youth national camp",
+        `You make the ${country(s.residence.countryId).name} youth roster. Hotel beds, new shorts, coaches who already know your film.`,
+      );
+    }
+    if (s.flags.softPendingRivalFloor) {
+      delete s.flags.softPendingRivalFloor;
+      const rival = rivalPeer(s.peers);
+      if (rival) {
+        softFanfare(
+          s,
+          "rival-floor",
+          "Against him in the league",
+          `${rival.name} is on the other bench in the same league you grew up chasing. The race never really ended.`,
+        );
+      }
+    }
     return;
   }
   switch (d.templateId) {
     case "fanfare":
       log(s, "decision", "You take it in.");
+      if (d.context?.endAfter) {
+        const reason = String(d.context.endReason ?? "retired") as "chapter" | "retired" | "aged-out";
+        s.ended = { month: s.ageMonths, reason };
+        s.clock.paused = true;
+        s.clock.pauseReason = "ended";
+      } else {
+        flushPendingAllStar(s);
+        flushPendingTrade(s);
+        flushPendingAllNba(s);
+        flushPendingRivalCatch(s);
+      }
+      return;
+    case "soft":
+      log(s, "decision", "You keep going.");
+      flushPendingAllStar(s);
+      flushPendingTrade(s);
+      flushPendingAllNba(s);
+      flushPendingRivalCatch(s);
       return;
     case "playoff-game": {
       const key = s.flags.poKey;
@@ -1941,14 +2417,88 @@ function resolveInPlace(s: LifeState, choiceId: string) {
       s.evidence = [...s.evidence].sort((a, b) => b.weight - a.weight).slice(0, 24);
       log(s, "milestone", "The speech ends. The hall stands.", null, "good");
       return;
+    case "nba-ext": {
+      if (choiceId === "bet") {
+        s.flags.betOnSelf = true;
+        s.traits.confidence = clamp(s.traits.confidence + 3, 0, 100);
+        s.scheduled.push({ templateId: "prove-it-year", month: s.ageMonths + 1, causeId: null });
+        log(s, "decision", "You turn down the extension and bet on yourself.", null, "good");
+        s.evidence.push({ month: s.ageMonths, text: "Turned down extension: betting on free agency", weight: 3 });
+        return;
+      }
+      const pkg = d.offers?.find((o) => o.id === choiceId);
+      const c = s.placement.contract;
+      if (pkg && c) {
+        c.salary = pkg.salary;
+        c.yearsLeft += pkg.years;
+        c.guaranteed = true;
+        delete s.flags.betOnSelf;
+        log(
+          s,
+          "decision",
+          `Extension with ${s.placement.teamName}: ${usd(pkg.salary)} a year, ${pkg.years} more year${pkg.years === 1 ? "" : "s"} (${c.yearsLeft} left on the deal).`,
+          null,
+          "good",
+        );
+        s.evidence.push({ month: s.ageMonths, text: `Signed extension: ${usd(pkg.salary)}, +${pkg.years} yr`, weight: 3.5 });
+        softFanfare(
+          s,
+          "nba-ext",
+          "Extension signed",
+          pkg.id === "ext-long"
+            ? `Four more years on the sheet. July can wait.`
+            : pkg.id === "ext-short"
+              ? `Two years at a higher rate. The next market is still out there.`
+              : `You sign. Your agent sends the screenshot to your parents.`,
+          "frozen",
+        );
+      }
+      return;
+    }
+    case "nba-fa": {
+      if (choiceId === "hold") {
+        const n = (typeof s.flags.faHoldouts === "number" ? s.flags.faHoldouts : 0) + 1;
+        s.flags.faHoldouts = n;
+        s.flags.nbaFreeAgent = true;
+        // Incumbent can return colder next month; shrink their number if they still want him.
+        if (typeof s.flags.renewSalary === "number") {
+          s.flags.renewSalary = faPay((s.flags.renewSalary as number) * 0.9);
+          if (!s.flags.renewTeam && s.placement.teamName) s.flags.renewTeam = s.placement.teamName;
+        }
+        s.placement = {
+          ...s.placement,
+          node: "nba",
+          leagueId: "nba",
+          teamName: null,
+          role: "none",
+          contract: null,
+          costPerYear: 0,
+          since: s.ageMonths,
+        };
+        s.flags.reviewSoon = true;
+        log(s, "decision", n === 1 ? "You hold out. Agents tell teams to wait." : "You hold out again. The board gets quieter.", null, "neutral");
+        s.evidence.push({ month: s.ageMonths, text: `Held out in free agency (${n})`, weight: 2.2 });
+        return;
+      }
+      if (choiceId === "walk") {
+        clearRenewal(s);
+        delete s.flags.faHoldouts;
+        s.placement = { ...s.placement, node: "unattached", leagueId: null, teamName: null, role: "none", contract: null, costPerYear: 0, since: s.ageMonths };
+        s.flags.reviewSoon = true;
+        log(s, "move", "You leave the NBA market. The summer opens for clubs abroad or a second career.", null, "bad");
+        softFanfare(s, "nba-fa-miss", "No calls", "July goes quiet. Your agent stops pretending the phone is about to ring.", "frozen");
+        return;
+      }
+      const deal = d.offers?.find((o) => o.id === choiceId);
+      if (deal) acceptNbaFaDeal(s, deal);
+      return;
+    }
     case "offers": {
       const renew = typeof s.flags.renewSalary === "number" ? s.flags.renewSalary : 0;
       clearRenewal(s);
       if (choiceId === "renew") {
         s.placement.contract = { salary: renew, yearsLeft: 2, guaranteed: true, twoWay: s.placement.teamName?.includes("two-way") || undefined };
         log(s, "decision", `Re-signed with ${s.placement.teamName}: ${usd(renew)} a year for two years.`, null, "good");
-      } else if (choiceId === "fa") {
-        nbaFreeAgency(s);
       } else if (choiceId === "overseas") {
         startOverseasHunt(s);
       } else if (choiceId === "stay") {
@@ -2097,8 +2647,10 @@ function resolveInPlace(s: LifeState, choiceId: string) {
         takeJob(s, opt.track, opt.step, opt.rep);
         log(s, "move", `${TRACK_LABEL[opt.track]}: you start as ${article(s.after!.title)} with ${s.after!.employer}. ${usd(s.after!.salary)} a year.`, null, "good");
       } else {
-        s.ended = { month: s.ageMonths, reason: why === "aged-out" ? "aged-out" : "retired" };
+        const reason = why === "aged-out" ? "aged-out" : "retired";
         log(s, "milestone", why === "aged-out" ? "You stop chasing it. This life's basketball story ends here." : `You retire at ${Math.floor(s.ageMonths / 12)}.`);
+        if (maybeCareerFarewell(s, reason)) return;
+        s.ended = { month: s.ageMonths, reason };
         s.clock.paused = true;
         s.clock.pauseReason = "ended";
       }
@@ -2158,6 +2710,9 @@ function resolveInPlace(s: LifeState, choiceId: string) {
       if (choiceId === "skip") {
         s.condition.energy = clamp(s.condition.energy + 6, 5, 100);
         log(s, "decision", `You skip the ${name} and rest over the break.`);
+        flushPendingAllStar(s);
+        flushPendingTrade(s);
+        flushPendingAllNba(s);
         return;
       }
       const odds = three ? clamp((Number(d.context?.pct ?? 0) - 0.34) * 3 + 0.12, 0.08, 0.4) : clamp((s.body.vertical - 70) / 60 + 0.1, 0.08, 0.4);
@@ -2165,6 +2720,9 @@ function resolveInPlace(s: LifeState, choiceId: string) {
       if (!three && hurt < 0.04) {
         s.condition.injury = { id: "ankle-sprain", label: "Sprained ankle", monthsLeft: 1, severity: 1, causeEntryId: decisionEntry };
         log(s, "injury", `You land wrong in the ${name} and sprain an ankle.`, null, "bad");
+        flushPendingAllStar(s);
+        flushPendingTrade(s);
+        flushPendingAllNba(s);
         return;
       }
       s.exposure = clamp(s.exposure + (win < odds ? 6 : 3), 0, 100);
@@ -2172,21 +2730,54 @@ function resolveInPlace(s: LifeState, choiceId: string) {
         const line = currentNbaLine(s);
         if (line) (line.awards ??= []).push(`${name} champion`);
         fanfare(s, "fanfare", `${name} champion`, `You win the ${name}. The arena treats it like a title for one night.`);
+        // Contest title night already paused; stamp All-Star soft without a second hold.
+        delete s.flags.softPendingAllStar;
+        if (!s.flags["soft:all-star"]) s.flags["soft:all-star"] = true;
+        // Trade / All-NBA softs wait until the contest ceremony clears.
       } else {
         log(s, "decision", final < 0.4 ? `You make the final round of the ${name} and finish second.` : `You go out in the first round of the ${name}.`);
+        flushPendingAllStar(s);
+        flushPendingTrade(s);
+        flushPendingAllNba(s);
       }
       return;
     }
     case "chapter": {
       if (choiceId === "finish") {
+        if (maybeCareerFarewell(s, "chapter")) return;
         s.ended = { month: s.ageMonths, reason: "chapter" };
         s.clock.paused = true;
         s.clock.pauseReason = "ended";
       } else {
         s.keepPlaying = true;
         log(s, "decision", "You keep playing.");
+        flushPendingRivalCatch(s);
+        flushPendingAllStar(s);
+        flushPendingTrade(s);
+        flushPendingAllNba(s);
       }
       return;
+    }
+  }
+}
+
+const YOUTH_BRIDGE_NODES = new Set(["playground", "school-team", "local-club", "elite-youth", "us-high-school"]);
+const SENIOR_BRIDGE_NODES = new Set(["local-senior", "university", "domestic-pro", "foreign-pro", "g-league", "nba"]);
+
+/**
+ * Youth→pro texture. Last youth is a next-month auto log so offseason review still runs this month.
+ * Soft leave-home fires on acceptOffer (decision already resolved). Thin first senior stays a choice.
+ */
+function scheduleYouthProBridge(s: LifeState, season: SeasonLine, ppg: number) {
+  if (!s.flags["sched:last-youth"] && YOUTH_BRIDGE_NODES.has(season.node) && season.ageYears >= 17 && season.ageYears <= 18) {
+    s.flags["sched:last-youth"] = true;
+    s.scheduled.push({ templateId: "last-youth-night", month: s.ageMonths + 1, causeId: null });
+  }
+  if (!s.flags["sched:senior-dud"] && SENIOR_BRIDGE_NODES.has(season.node)) {
+    const earlier = s.seasons.some((x) => x.key !== season.key && SENIOR_BRIDGE_NODES.has(x.node) && x.gp >= 5);
+    if (!earlier) {
+      s.flags["sched:senior-dud"] = true;
+      if (ppg < 6) s.scheduled.push({ templateId: "first-senior-dud", month: s.ageMonths + 1, causeId: null });
     }
   }
 }
@@ -2197,29 +2788,362 @@ function clearRenewal(s: LifeState) {
   delete s.flags.nbaFreeAgent;
 }
 
-/** Testing the market: odds and money are a model built on current level. */
-function nbaFreeAgency(s: LifeState) {
-  const rng = rngOf(s.rng, "scouting");
+const faPay = (n: number) => Math.max(nbaSalary("deep-bench"), Math.round(n / 100_000) * 100_000);
+
+function faDeal(
+  id: string,
+  team: string,
+  role: Role,
+  salary: number,
+  years: number,
+  guaranteed: boolean,
+  coaching: number,
+  reason: string,
+): Offer {
+  return {
+    id,
+    kind: "contract",
+    node: "nba",
+    countryId: "US",
+    leagueId: "nba",
+    teamName: team,
+    role,
+    minutesBand: minutesBand(role, 36, coaching),
+    coaching,
+    difficulty: 60,
+    exposure: 90,
+    costPerYear: 0,
+    salary: faPay(salary),
+    years,
+    guaranteed,
+    consequences: [],
+    reason,
+  };
+}
+
+/** Local FA dice from seed+month so the board varies without burning scouting (trade deadline). */
+function faRoller(s: LifeState) {
+  let h = hashString(`fa:${s.seed}:${s.ageMonths}:${typeof s.flags.faHoldouts === "number" ? s.flags.faHoldouts : 0}`);
+  return () => {
+    h = Math.imul(h ^ (h >>> 16), 2246822507);
+    h = Math.imul(h ^ (h >>> 13), 3266489909);
+    return ((h ^= h >>> 16) >>> 0) / 4294967296;
+  };
+}
+
+/**
+ * Concrete free-agency board. Money and role vary by team, holdouts, and rolls —
+ * not a fixed role × 1.2 payday every time you wait.
+ */
+function buildNbaFaMarket(s: LifeState): Offer[] {
+  const next = faRoller(s);
   const perf = performanceLevel(s);
-  const roll = rng.next();
-  const pickU = rng.next();
-  const old = s.placement.teamName;
-  const team = NBA_TEAMS.filter((t) => t !== old)[Math.floor(pickU * (NBA_TEAMS.length - 1))]!;
-  const role = roleFor(perf, 60);
-  if (roll < clamp((perf - 62) / 15, 0.1, 0.85)) {
-    const salary = Math.round(nbaSalary(role) * 1.2);
-    s.placement = { ...s.placement, teamName: team, role, since: s.ageMonths, contract: { salary, yearsLeft: 3, guaranteed: true } };
-    s.residence = { countryId: "US", locality: team.split(" ").slice(0, -1).join(" "), localityKind: "city" };
-    log(s, "move", `Signed with the ${team} in free agency: ${usd(salary)} a year for three years.`, null, "good");
-  } else if (perf >= 64) {
-    s.placement = { ...s.placement, teamName: team, role: "deep-bench", since: s.ageMonths, contract: { salary: nbaSalary("deep-bench"), yearsLeft: 1, guaranteed: false } };
-    s.residence = { countryId: "US", locality: team.split(" ").slice(0, -1).join(" "), localityKind: "city" };
-    log(s, "move", `The market is quiet. You take a one-year minimum deal with the ${team}.`);
-  } else {
-    s.placement = { ...s.placement, node: "unattached", leagueId: null, teamName: null, role: "none", contract: null, costPerYear: 0 };
-    s.flags.reviewSoon = true;
-    log(s, "move", "No NBA team calls. You're a free agent.", null, "bad");
+  const holdouts = typeof s.flags.faHoldouts === "number" ? s.flags.faHoldouts : 0;
+  const cool = holdouts * 0.14;
+  const old = typeof s.flags.renewTeam === "string" && s.flags.renewTeam ? String(s.flags.renewTeam) : s.placement.teamName;
+  const used = new Set<string>(old ? [old] : []);
+  const pickTeam = () => {
+    const pool = NBA_TEAMS.filter((t) => !used.has(t));
+    const t = pool[Math.floor(next() * Math.max(1, pool.length))] ?? NBA_TEAMS[Math.floor(next() * NBA_TEAMS.length)]!;
+    used.add(t);
+    return t;
+  };
+  const deals: Offer[] = [];
+  const heat = clamp((perf - 58) / 22 - cool, 0, 1);
+
+  if (typeof s.flags.renewSalary === "number" && old) {
+    const role = roleFor(perf + trustOf(s) - cool * 4, 60);
+    deals.push(
+      faDeal(
+        "fa-stay",
+        old,
+        role,
+        s.flags.renewSalary as number,
+        holdouts >= 1 ? 1 : 2,
+        true,
+        s.placement.coaching || 90,
+        holdouts >= 1 ? "They came back with fewer years after you waited." : "Same city. Same locker. They already know your game.",
+      ),
+    );
   }
+
+  // Payday chase: sometimes more than the incumbent, often not, and holdouts shrink it.
+  if (heat > 0.32 && next() < 0.55 + heat * 0.35) {
+    const team = pickTeam();
+    const role = roleFor(perf - cool * 10, 60);
+    const mult = 0.9 + next() * 0.28 - cool * 0.2;
+    const years = mult > 1.05 && nbaSalary(role) >= 15_000_000 ? (next() < 0.45 ? 4 : 3) : next() < 0.55 ? 3 : 2;
+    deals.push(
+      faDeal(
+        "fa-pay",
+        team,
+        role,
+        nbaSalary(role) * mult,
+        years,
+        true,
+        88 + Math.floor(next() * 8),
+        mult >= 1.08 ? "A front office with money left wants the press conference." : "A new city will pay. Not a blank check.",
+      ),
+    );
+  }
+
+  // Contender: less cash, playoff pitch.
+  if (heat > 0.22 && next() < 0.5 + heat * 0.2) {
+    const team = pickTeam();
+    const role = roleFor(perf - 3 - cool * 8, 60);
+    const mult = 0.72 + next() * 0.22 - cool * 0.12;
+    deals.push(
+      faDeal(
+        "fa-contender",
+        team,
+        role,
+        nbaSalary(role) * mult,
+        2,
+        true,
+        92,
+        "A team that just made May needs a piece. Less money. Real games in the spring.",
+      ),
+    );
+  }
+
+  // Prove-it: bigger role claim, short leash.
+  if (perf >= 60 && perf < 80 && next() < 0.48) {
+    const team = pickTeam();
+    const role = roleFor(perf + 3 - cool * 6, 60);
+    const mult = 0.5 + next() * 0.25 - cool * 0.08;
+    deals.push(
+      faDeal(
+        "fa-prove",
+        team,
+        role,
+        nbaSalary(role) * mult,
+        1,
+        next() > 0.35,
+        86 + Math.floor(next() * 8),
+        "One year to prove it. Bigger role on paper. Little security.",
+      ),
+    );
+  }
+
+  const outsiders = deals.filter((d) => d.id !== "fa-stay");
+  if (outsiders.length === 0 || heat < 0.18 || holdouts >= 2) {
+    const team = pickTeam();
+    deals.push(
+      faDeal(
+        "fa-min",
+        team,
+        "deep-bench",
+        nbaSalary("deep-bench") * (0.95 + next() * 0.1),
+        1,
+        false,
+        84,
+        holdouts >= 2 ? "The market cooled while you waited. This is what is left." : "The phones are quiet. A one-year minimum keeps a locker open.",
+      ),
+    );
+  }
+
+  // Prefer distinct story hooks; keep the board short.
+  const seen = new Set<string>();
+  return deals.filter((d) => (seen.has(d.id) ? false : (seen.add(d.id), true))).slice(0, 4);
+}
+
+/** Extension packages: years field is years to add onto the current deal. */
+function extRoller(s: LifeState) {
+  let h = hashString(`ext:${s.seed}:${s.ageMonths}:${s.placement.teamName ?? ""}:${s.placement.contract?.salary ?? 0}`);
+  return () => {
+    h = Math.imul(h ^ (h >>> 16), 2246822507);
+    h = Math.imul(h ^ (h >>> 13), 3266489909);
+    return ((h ^= h >>> 16) >>> 0) / 4294967296;
+  };
+}
+
+function maybeNbaExtension(s: LifeState) {
+  if (s.pendingDecision || s.placement.node !== "nba") return;
+  const c = s.placement.contract;
+  const team = s.placement.teamName;
+  if (!c || !team || c.yearsLeft !== 1) return;
+  if (!["starter", "star"].includes(s.placement.role)) return;
+  const { month } = calendar(s);
+  if (month !== 10 && month !== 1) return;
+  const key = `${team}:${c.salary}`;
+  if (s.flags.extBoardKey === key) return;
+  s.flags.extBoardKey = key;
+  openNbaExtension(s);
+}
+
+function openNbaExtension(s: LifeState) {
+  const c = s.placement.contract!;
+  const team = s.placement.teamName!;
+  const next = extRoller(s);
+  const base = c.salary;
+  const role = s.placement.role;
+  const coaching = s.placement.coaching;
+  const packages: Offer[] = [
+    faDeal(
+      "ext-team",
+      team,
+      role,
+      base * (1.16 + next() * 0.14),
+      3,
+      true,
+      coaching,
+      "The front office number. Three more years. Security first.",
+    ),
+    faDeal(
+      "ext-long",
+      team,
+      role,
+      base * (1.06 + next() * 0.1),
+      4,
+      true,
+      coaching,
+      "A little less per year. One extra season locked so July stays quiet.",
+    ),
+    faDeal(
+      "ext-short",
+      team,
+      role,
+      base * (1.26 + next() * 0.16),
+      2,
+      true,
+      coaching,
+      "Shorter deal, higher rate. You are betting the next market is louder.",
+    ),
+  ];
+  s.offers = packages;
+  const choices: DecisionChoice[] = packages.map((o) => ({
+    id: o.id,
+    label: o.id === "ext-team" ? "Sign the team offer" : o.id === "ext-long" ? "Take the longer deal" : "Take the shorter, richer deal",
+    preview: `${usd(o.salary)} a year · add ${o.years} year${o.years === 1 ? "" : "s"} · ${o.reason}`,
+  }));
+  choices.push({
+    id: "bet",
+    label: "Bet on yourself",
+    preview: "Play out the year. Free agency next summer. Prove-it plan opens.",
+  });
+  decide(
+    s,
+    {
+      templateId: "nba-ext",
+      title: "Extension talks",
+      body: `Age ${Math.floor(s.ageMonths / 12)}. The ${team} want you locked up before the market opens. You have ${c.yearsLeft} year left on ${usd(base)} a year.`,
+      choices,
+      offers: packages,
+      required: true,
+    },
+    "frozen",
+  );
+}
+
+/** Rare summer staff change while you stay on the roster. */
+function maybeCoachChange(s: LifeState) {
+  if (s.pendingDecision || s.placement.node !== "nba" || !s.placement.teamName) return;
+  if (calendar(s).month !== 6) return;
+  if (s.ageMonths - s.placement.since < 14) return;
+  const year = calendar(s).year;
+  if (s.flags.coachChangeYear === year) return;
+  if (hashString(`coachfire:${s.seed}:${s.placement.teamName}:${year}`) % 100 > 22) return;
+  const prev = coachToneOf(s);
+  const next = pickCoachTone(s.placement.coaching, s.seed, `${s.placement.teamName}:fire:${year}`);
+  if (!prev || next === prev) return;
+  s.flags.coachChangeYear = year;
+  s.flags.coachTone = next;
+  log(s, "move", `The ${s.placement.teamName} change coaches. ${TONE_LABEL[next]} takes over.`, null, "neutral");
+  softFanfare(
+    s,
+    "new-coach",
+    "New coach",
+    `The ${s.placement.teamName} move on from the last staff. ${TONE_LABEL[next]} walks the hallway with a new practice plan.`,
+    "frozen",
+  );
+}
+
+function openNbaFreeAgency(s: LifeState) {
+  const market = buildNbaFaMarket(s);
+  const holdouts = typeof s.flags.faHoldouts === "number" ? s.flags.faHoldouts : 0;
+  s.offers = market;
+  const age = Math.floor(s.ageMonths / 12);
+  const body =
+    holdouts <= 0
+      ? `Age ${age}. Your deal is up. Front offices put real numbers on the table.`
+      : holdouts === 1
+        ? `Age ${age}. You held out once. The board is thinner and the years are shorter.`
+        : `Age ${age}. July is almost gone. These may be the last serious NBA calls.`;
+  const choices: DecisionChoice[] = market.map((o) => ({
+    id: o.id,
+    label: o.id === "fa-stay" ? `Re-sign · ${o.teamName}` : `Sign · ${o.teamName}`,
+    preview: `${usd(o.salary)} a year · ${o.years} year${o.years === 1 ? "" : "s"}${o.guaranteed ? ", guaranteed" : ", not guaranteed"} · ${ROLE_LABEL[o.role]}. ${o.reason}`,
+  }));
+  if (holdouts < 2) {
+    choices.push({
+      id: "hold",
+      label: "Hold out for a better deal",
+      preview: "Stay unsigned. Next month's market is usually colder.",
+    });
+  } else {
+    choices.push({
+      id: "walk",
+      label: "Leave the NBA market",
+      preview: "Clear the board. Clubs abroad and second careers can open next.",
+    });
+  }
+  decide(
+    s,
+    {
+      templateId: "nba-fa",
+      title: "NBA free agency",
+      body,
+      choices,
+      offers: market,
+      required: true,
+      context: { holdouts },
+    },
+    "frozen",
+  );
+}
+
+function acceptNbaFaDeal(s: LifeState, o: Offer) {
+  const holdouts = typeof s.flags.faHoldouts === "number" ? s.flags.faHoldouts : 0;
+  clearRenewal(s);
+  delete s.flags.faHoldouts;
+  s.placement = {
+    node: "nba",
+    countryId: "US",
+    leagueId: "nba",
+    teamName: o.teamName,
+    role: o.role,
+    coaching: o.coaching,
+    since: s.ageMonths,
+    contract: { salary: o.salary, yearsLeft: o.years, guaranteed: o.guaranteed },
+    costPerYear: 0,
+  };
+  s.flags.coachTone = pickCoachTone(o.coaching, s.seed, o.teamName);
+  s.residence = { countryId: "US", locality: o.teamName.split(" ").slice(0, -1).join(" ") || o.teamName, localityKind: "city" };
+  log(
+    s,
+    "move",
+    `Signed with the ${o.teamName} in free agency: ${usd(o.salary)} a year for ${o.years} year${o.years === 1 ? "" : "s"}${o.guaranteed ? "" : " (not guaranteed)"}.${holdouts ? ` After holding out ${holdouts} time${holdouts === 1 ? "" : "s"}.` : ""}`,
+    null,
+    "good",
+  );
+  evidenceFa(s, o, holdouts);
+  softFanfare(
+    s,
+    "nba-fa",
+    "Free agency",
+    o.id === "fa-stay"
+      ? `You stay with the ${o.teamName}. The building already has your parking spot.`
+      : o.id === "fa-min"
+        ? `One year with the ${o.teamName}. A locker is still a locker.`
+        : `The ${o.teamName} deal is on paper. You change the lock screen before the press release.`,
+    "frozen",
+  );
+}
+
+function evidenceFa(s: LifeState, o: Offer, holdouts: number) {
+  const label =
+    o.id === "fa-stay" ? "Re-signed in free agency" : o.id === "fa-prove" ? "Prove-it free agency deal" : o.id === "fa-contender" ? "Contender free agency deal" : o.id === "fa-min" ? "Minimum free agency deal" : "Free agency payday";
+  s.evidence.push({ month: s.ageMonths, text: `${label}: ${o.teamName}, ${usd(o.salary)}`, weight: 3 + (holdouts > 0 ? 0.5 : 0) });
 }
 
 function acceptOffer(s: LifeState, o: Offer) {
@@ -2227,6 +3151,13 @@ function acceptOffer(s: LifeState, o: Offer) {
   clearRenewal(s);
   if (o.salary > 0 && o.node !== "university" && o.node !== "nba") s.scheduled.push({ templateId: "contract-terms", month: s.ageMonths, causeId: null });
   const moving = o.countryId !== s.residence.countryId;
+  const firstPay = o.salary > 0 && o.node !== "university" && !s.flags["soft:paycheck"];
+  const firstStart = (o.role === "starter" || o.role === "star") && isProNode(o.node) && !s.flags["soft:senior-start"];
+  const wasYouth = YOUTH_BRIDGE_NODES.has(s.placement.node) || s.placement.node === "home";
+  const leavingHome =
+    !s.flags["soft:leave-home"] &&
+    wasYouth &&
+    (o.countryId !== s.birthplace.countryId || ["university", "domestic-pro", "foreign-pro", "g-league", "nba"].includes(o.node));
   s.placement = {
     node: o.node,
     countryId: o.countryId,
@@ -2238,6 +3169,7 @@ function acceptOffer(s: LifeState, o: Offer) {
     contract: o.salary > 0 ? { salary: o.salary, yearsLeft: o.years, guaranteed: o.guaranteed, twoWay: o.twoWay } : null,
     costPerYear: o.costPerYear,
   };
+  if (isProNode(o.node)) s.flags.coachTone = pickCoachTone(o.coaching, s.seed, o.teamName);
   if (moving) {
     const c = country(o.countryId);
     s.residence = { countryId: c.id, locality: c.capital ?? c.name, localityKind: "capital" };
@@ -2253,6 +3185,17 @@ function acceptOffer(s: LifeState, o: Offer) {
     s.education.universityYears = 0;
   }
   log(s, "move", `${moving ? "Moved to " + country(o.countryId).name + ". " : ""}Joined ${o.teamName} (${nodeLabel(o.node, o.countryId, o.leagueId)}).${o.salary > 0 ? ` $${o.salary.toLocaleString("en-US")} a year.` : ""}`, null, "good");
+  if (firstPay) softFanfare(s, "paycheck", "First paycheck", `The money hits from ${o.teamName}. More than a month of what your parents made. Less than the posts made it sound.`);
+  else if (firstStart) softFanfare(s, "senior-start", "First senior start", `They put you in the starting five at ${o.teamName}. The warm-up song hits different.`);
+  if (leavingHome) {
+    softFanfare(
+      s,
+      "leave-home",
+      "The gym back home",
+      `Someone sends a photo of the gym in ${s.birthplace.locality}. The lights look smaller than you remember. Your bag is packed for ${o.teamName}.`,
+      "frozen",
+    );
+  }
 }
 
 /* --------------------------------------------------------------- after playing */
@@ -2397,7 +3340,7 @@ export const AUTO_STRATEGY = [
   "Draft: declare when scouts rate you in draft range or NBA-ready, or on the NBA radar from age 21. If you pressed Declare yourself, it declares.",
   "Draft interviews: the answer that fits his personality best. Workouts: only teams in range when projected in the top 45, otherwise a dozen teams.",
   "After the draft: a two-way deal first, then a camp deal, then stay.",
-  "Contracts: re-sign when no offer ranks higher. NBA free agency only from a strong level. Sign contracts as written.",
+  "Contracts: re-sign when no offer ranks higher. NBA free agency: take the highest guaranteed salary on the board (prefer re-sign when within 8% of the top). Never hold out. NBA extensions: take the team offer unless a longer or shorter package pays more total; never bet on yourself. Sign other contracts as written.",
   "National team: always report to camp.",
   "All-Star weekend: always enter the Three-Point or Slam Dunk Contest when invited.",
   "Agents: the widest-reaching agent who will sign you; never the family friend.",
@@ -2407,7 +3350,7 @@ export const AUTO_STRATEGY = [
   "Money: never touches the portfolio controls. Only life-event choices change it.",
 ];
 
-const NODE_RANK: Record<string, number> = { nba: 12, "g-league": 10, "foreign-pro": 8, "domestic-pro": 8, university: 9, "us-high-school": 6, "elite-youth": 6, "local-senior": 4, "local-club": 3, "school-team": 2, playground: 1 };
+const NODE_RANK: Record<string, number> = { nba: 12, "foreign-pro": 8, "domestic-pro": 8, "g-league": 7, university: 9, "us-high-school": 6, "elite-youth": 6, "local-senior": 4, "local-club": 3, "school-team": 2, playground: 1 };
 
 export function autoChoice(s: LifeState): string {
   const d = s.pendingDecision!;
@@ -2423,15 +3366,40 @@ export function autoChoice(s: LifeState): string {
     return ranked[0]!.id;
   }
   switch (d.templateId) {
+    case "nba-ext": {
+      const pkgs = (d.offers ?? []).filter((o) => open.some((c) => c.id === o.id));
+      if (!pkgs.length) return open.find((c) => c.id === "bet")?.id ?? open[0]!.id;
+      return pkgs
+        .map((o) => ({ id: o.id, total: o.salary * o.years + (o.id === "ext-team" ? o.salary * 0.15 : 0) }))
+        .sort((a, b) => b.total - a.total)[0]!.id;
+    }
+    case "nba-fa": {
+      const deals = (d.offers ?? []).filter((o) => open.some((c) => c.id === o.id));
+      if (!deals.length) return open.find((c) => c.id === "walk")?.id ?? open[0]!.id;
+      const scored = deals
+        .map((o) => ({
+          o,
+          score: o.salary * (o.guaranteed ? 1 : 0.7) + o.years * 400_000 + (o.id === "fa-stay" ? o.salary * 0.04 : 0),
+        }))
+        .sort((a, b) => b.score - a.score);
+      const top = scored[0]!;
+      const stay = scored.find((x) => x.o.id === "fa-stay");
+      if (stay && stay.o.salary >= top.o.salary * 0.92) return stay.o.id;
+      return top.o.id;
+    }
     case "offers": {
       const has = (id: string) => open.some((c) => c.id === id);
-      const fallback = has("renew") ? "renew" : has("fa") ? "fa" : "stay";
+      const fallback = has("renew") ? "renew" : "stay";
       const offers = (d.offers ?? []).filter((o) => !d.choices.find((c) => c.id === o.id)?.disabled && o.role !== "deep-bench");
       const curRank = NODE_RANK[s.placement.node] ?? 0;
       const best = offers
         .map((o) => ({ o, score: (NODE_RANK[o.node] ?? 0) * 10 + (levelOfOffer(o) ?? 0) / 10 + o.exposure / 50 }))
         .sort((a, b) => b.score - a.score)[0];
-      if (has("fa") && performanceLevel(s) >= 72) return "fa";
+      // Stay with the affiliate while a parent club is still the NBA path.
+      if (s.placement.node === "g-league" && typeof s.flags.gParent === "string" && (!best || best.o.node !== "nba")) {
+        if (has("renew")) return "renew";
+        if (has("stay")) return "stay";
+      }
       const anyOffer = open.find((c) => d.offers?.some((o) => o.id === c.id))?.id;
       if (!best) return fallback === "stay" && isProNode(s.placement.node) && !s.placement.contract && anyOffer ? anyOffer : fallback;
       const bestRank = NODE_RANK[best.o.node] ?? 0;
@@ -2458,9 +3426,18 @@ export function autoChoice(s: LifeState): string {
     }
     case "draft-workouts":
       return projectedRange(s, calendar(s).year).mid <= 45 ? "targeted" : "wide";
-    case "draft-after":
-    case "undrafted":
-      return open.find((c) => c.id === "two-way")?.id ?? open.find((c) => c.id === "camp")?.id ?? open.find((c) => c.id === "g-league")?.id ?? "stay";
+    case "draft-after": {
+      const lvl = performanceLevel(s);
+      if (open.some((c) => c.id === "two-way") && lvl >= 74) return "two-way";
+      if (open.some((c) => c.id === "camp") && lvl >= 72) return "camp";
+      return open.find((c) => c.id === "stay")?.id ?? open[0]!.id;
+    }
+    case "undrafted": {
+      // Offers are already gated by level; take the NBA path when one is on the table.
+      if (open.some((c) => c.id === "camp")) return "camp";
+      if (open.some((c) => c.id === "g-league")) return "g-league";
+      return open.find((c) => c.id === "stay")?.id ?? open.find((c) => c.id === "overseas")?.id ?? "stay";
+    }
     case "chapter":
       return "finish";
     case "nba-contest":
@@ -2494,9 +3471,9 @@ function levelOfOffer(o: Offer): number | null {
 export function setPlan(state: LifeState, plan: { primary?: FocusId; secondary?: FocusId | null; workload?: Workload }): LifeState {
   const s = clone(state);
   const age = s.ageMonths / 12;
-  if (plan.primary && focusAvailable(FOCUS_BY_ID[plan.primary], age)) s.plan.primary = plan.primary;
+  if (plan.primary && focusAvailable(FOCUS_BY_ID[plan.primary], age, s)) s.plan.primary = plan.primary;
   if (plan.secondary !== undefined) {
-    if (plan.secondary === null || (focusAvailable(FOCUS_BY_ID[plan.secondary], age) && plan.secondary !== s.plan.primary)) s.plan.secondary = plan.secondary;
+    if (plan.secondary === null || (focusAvailable(FOCUS_BY_ID[plan.secondary], age, s) && plan.secondary !== s.plan.primary)) s.plan.secondary = plan.secondary;
   }
   if (s.plan.secondary === s.plan.primary) s.plan.secondary = null;
   if (plan.workload) s.plan.workload = plan.workload;

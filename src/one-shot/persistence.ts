@@ -9,6 +9,7 @@ export const SAVE_KEY = "drbl.oneShot.save";
 export const CAREERS_KEY = "drbl.oneShot.careers";
 export const BOARD_KEY = "drbl.oneShot.earnings";
 export const PREFS_KEY = "drbl.oneShot.prefs";
+export const LEGACY_KEY = "drbl.oneShot.legacy";
 export const MAX_CAREERS = 15;
 
 /**
@@ -100,6 +101,33 @@ const MIGRATIONS: Record<number, Migration> = {
     const rng = { ...(d.rng as Record<string, unknown>) };
     rng.nba ??= streamSeed(seed, "nba");
     return { ...d, schemaVersion: 5, rng };
+  },
+  5: (d) => {
+    const peers = ((d.peers as { rival?: boolean; potential?: number }[]) ?? []).map((p) => ({ ...p }));
+    if (peers.length && !peers.some((p) => p.rival)) {
+      let best = 0;
+      for (let i = 1; i < peers.length; i++) if ((peers[i]!.potential ?? 0) > (peers[best]!.potential ?? 0)) best = i;
+      peers[best]!.rival = true;
+    }
+    return { ...d, schemaVersion: 6, challenge: (d.challenge as string | null | undefined) ?? null, peers };
+  },
+  6: (d) => {
+    const finance = { ...((d.finance as Record<string, unknown>) ?? {}) };
+    const holdings = (finance.holdings as Record<string, number> | undefined) ?? {};
+    const basis: Record<string, number> = {};
+    for (const k of ASSETS) basis[k] = typeof holdings[k] === "number" ? holdings[k]! : 0;
+    const market = { ...((finance.market as Record<string, unknown>) ?? {}) };
+    market.regime ??= "neutral";
+    market.regimeMonths ??= 0;
+    market.headline ??= "Markets open quietly.";
+    const ytd = { ...((finance.ytd as Record<string, unknown>) ?? {}) };
+    ytd.dividends ??= 0;
+    const years = ((finance.years as Record<string, unknown>[]) ?? []).map((y) => ({ ...y, dividends: typeof y.dividends === "number" ? y.dividends : 0 }));
+    return {
+      ...d,
+      schemaVersion: 7,
+      finance: { ...finance, basis, reserveMonths: typeof finance.reserveMonths === "number" ? finance.reserveMonths : 6, market, ytd, years },
+    };
   },
 };
 

@@ -24,7 +24,93 @@ const played = (s: LifeState) => s.nbaGames > 0 || s.seasons.some((x) => x.gp >=
  * One-time lives after the playing years. A coach, a scout, and a
  * broadcaster should not walk through the same three rooms.
  */
+const earlyAfter = (s: LifeState) => Boolean(s.after && s.ageMonths - s.after.since < 36);
+
 export const AFTER_SCENES: EventTemplate[] = [
+  {
+    id: "after-first-desk",
+    ages: [28, 55],
+    cooldown: 0,
+    once: true,
+    phase: "after",
+    weight: (s) => (earlyAfter(s) ? 2.4 : 0),
+    title: "The first week without a practice",
+    body: "Nobody needs you at 6 a.m. The calendar has meetings instead of shootarounds. You still wake up early.",
+    choices: [
+      {
+        id: "routine",
+        label: "Build a new morning",
+        preview: "Discipline. The job starts to feel real.",
+        growth: 1,
+        risk: 0,
+        apply: ({ s }) => (scene(s, "classroom"), tr(s, "discipline", 3), rep(s, 1), "You walk before the emails. The day has edges again."),
+      },
+      {
+        id: "drift",
+        label: "Let the week happen",
+        preview: "Easier. Emptier.",
+        growth: 0,
+        risk: 0,
+        apply: ({ s }) => (tr(s, "motivation", -2), "You nap through a lunch you did not schedule. Friday feels the same as Tuesday."),
+      },
+    ],
+  },
+  {
+    id: "after-identity",
+    ages: [28, 58],
+    cooldown: 0,
+    once: true,
+    phase: "after",
+    weight: (s) => (earlyAfter(s) && played(s) ? 2.1 : 0),
+    title: "Someone asks what you do now",
+    body: "A stranger at a school event. Not who you played for. What you do. The answer sticks in your throat.",
+    choices: [
+      {
+        id: "job",
+        label: "Name the job",
+        preview: "Plain. Accurate.",
+        growth: 1,
+        risk: 0,
+        apply: ({ s }) => (tr(s, "composure", 2), rep(s, 1), `You say ${s.after?.title ?? "the work"}. It sounds smaller than the jersey and truer.`),
+      },
+      {
+        id: "played",
+        label: "Lead with the playing years",
+        preview: "Familiar. Thin.",
+        growth: 0,
+        risk: 0,
+        apply: ({ s }) => (tr(s, "confidence", 1), "You give the résumé. He nods like he already knew."),
+      },
+    ],
+  },
+  {
+    id: "after-first-cut",
+    ages: [30, 55],
+    cooldown: 0,
+    once: true,
+    phase: "after",
+    weight: (s) => (earlyAfter(s) && track(s, "coach") ? 2.2 : 0),
+    title: "You cut a kid you like",
+    body: "The list is one short. He stayed late every day. His mother already bought the travel bag.",
+    choices: [
+      {
+        id: "call",
+        label: "Call him yourself",
+        preview: "Hard. Right.",
+        growth: 2,
+        risk: 0,
+        apply: ({ s }) => (tr(s, "composure", 3), rep(s, 2), "You tell him what he still is. He hangs up before you finish. You call again in a week."),
+      },
+      {
+        id: "assistant",
+        label: "Let an assistant do it",
+        preview: "Cowardly. Common.",
+        growth: 0,
+        risk: 1,
+        apply: ({ s }) => (rep(s, -2), "The gym knows. You avoid the hallway for a day."),
+      },
+    ],
+  },
   { id: "after-knees", ages: [34, 70], cooldown: 0, once: true, phase: "after", weight: () => 1.2, title: "The knees vote", body: "Stairs are a negotiation. A surgeon you trust says a cleanup would help, and a month off would follow.", choices: [
     { id: "cut", label: "Have the surgery", preview: "A quiet month. Walking gets easier.", growth: 1, risk: 1, apply: ({ s }) => (scene(s, "clinic"), health(s, 6), energy(s, -10), rep(s, -1), "You take the month. The first walk without the hitch is worth it.") },
     { id: "tape", label: "Tape them and keep working", preview: "You stay on the job. The ache stays too.", growth: 0, risk: 1, apply: ({ s }) => (health(s, -2), tr(s, "discipline", 1), "You learn which chairs to avoid.") },

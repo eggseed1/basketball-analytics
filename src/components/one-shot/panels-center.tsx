@@ -102,8 +102,17 @@ export function FocusPanel({ life, onPlan }: { life: LifeState; onPlan: (p: { pr
             <legend className="mb-1.5 text-[12px] text-[var(--os-dim)]">Primary focus</legend>
             <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
               {FOCUSES.map((f) => {
-                const ok = focusAvailable(f, age);
+                const ok = focusAvailable(f, age, life);
                 const on = life.plan.primary === f.id;
+                const lockedWhy = !ok
+                  ? f.nbaOnly && life.placement.node !== "nba"
+                    ? "NBA roster only"
+                    : f.minAge > age
+                      ? `Opens at ${f.minAge}`
+                      : f.maxAge !== undefined && age > f.maxAge
+                        ? `Closed after ${f.maxAge}`
+                        : "Not available"
+                  : f.blurb;
                 return (
                   <button
                     key={f.id}
@@ -111,7 +120,7 @@ export function FocusPanel({ life, onPlan }: { life: LifeState; onPlan: (p: { pr
                     aria-pressed={on}
                     disabled={!ok}
                     onClick={() => onPlan({ primary: f.id })}
-                    title={ok ? f.blurb : f.minAge > age ? `Opens at ${f.minAge}` : `Closed after ${f.maxAge}`}
+                    title={lockedWhy}
                     className={`min-h-9 rounded-lg border px-2 py-1 text-left text-[12px] leading-tight transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--os-teal)] ${
                       on
                         ? "border-[var(--os-teal)] bg-[var(--os-teal)]/12 text-[var(--os-text)]"
@@ -121,7 +130,11 @@ export function FocusPanel({ life, onPlan }: { life: LifeState; onPlan: (p: { pr
                     }`}
                   >
                     {f.label}
-                    {!ok ? <span className="block font-mono text-[10px] text-[var(--os-dim)]">{f.minAge > age ? `from ${f.minAge}` : `until ${f.maxAge}`}</span> : null}
+                    {!ok ? (
+                      <span className="block font-mono text-[10px] text-[var(--os-dim)]">
+                        {f.nbaOnly && life.placement.node !== "nba" ? "NBA only" : f.minAge > age ? `from ${f.minAge}` : f.maxAge !== undefined ? `until ${f.maxAge}` : "locked"}
+                      </span>
+                    ) : null}
                   </button>
                 );
               })}
@@ -141,7 +154,7 @@ export function FocusPanel({ life, onPlan }: { life: LifeState; onPlan: (p: { pr
                 className="min-h-9 rounded-lg border border-[var(--os-border)] bg-[var(--os-page)] px-2 text-[13px] text-[var(--os-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--os-teal)]"
               >
                 <option value="">None</option>
-                {FOCUSES.filter((f) => focusAvailable(f, age) && f.id !== life.plan.primary).map((f) => (
+                {FOCUSES.filter((f) => focusAvailable(f, age, life) && f.id !== life.plan.primary).map((f) => (
                   <option key={f.id} value={f.id}>
                     {f.label}
                   </option>
@@ -215,13 +228,16 @@ export function DecisionPanel({
   headingRef: RefObject<HTMLHeadingElement | null>;
 }) {
   const d = life.pendingDecision!;
+  const soft = d.templateId === "soft";
   const offers = d.offers ?? [];
   const offerById = new Map(offers.map((o) => [o.id, o]));
   return (
-    <section id="os-decision" aria-labelledby="os-decision-title" className="rounded-[11px] border border-[var(--os-amber)]/70 bg-[var(--os-panel)] p-3.5">
+    <section id="os-decision" aria-labelledby="os-decision-title" className={`rounded-[11px] border bg-[var(--os-panel)] p-3.5 ${soft ? "border-[var(--os-teal)]/70" : "border-[var(--os-amber)]/70"}`}>
       <div className="mb-2 flex items-start justify-between gap-3">
         <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--os-amber)]">Decision · time is paused</p>
+          <p className={`text-[11px] font-semibold uppercase tracking-[0.06em] ${soft ? "text-[var(--os-teal)]" : "text-[var(--os-amber)]"}`}>
+            {soft ? "A moment · time is paused" : "Decision · time is paused"}
+          </p>
           <h2 id="os-decision-title" ref={headingRef} tabIndex={-1} className="mt-0.5 text-[16px] font-semibold focus:outline-none">
             {d.title}
           </h2>
@@ -333,24 +349,41 @@ function uniqueHistoryIds(history: HistoryEntry[]): HistoryEntry[] {
 
 /* ------------------------------------------------------------ record */
 
-type RecordFilter = "all" | "choices" | "seasons" | "health";
+type RecordFilter = "all" | "choices" | "seasons" | "health" | "scrapbook";
 
 export function LifeRecord({ life }: { life: LifeState }) {
   const [filter, setFilter] = useState<RecordFilter>("all");
   const history = useMemo(() => uniqueHistoryIds(life.history), [life.history]);
   const byId = useMemo(() => new Map(history.map((h) => [h.id, h])), [history]);
+  const scrapbook = useMemo(
+    () =>
+      [...life.evidence]
+        .sort((a, b) => a.month - b.month || b.weight - a.weight)
+        .slice(-24)
+        .reverse()
+        .map((e, i) => ({
+          id: `ev-${e.month}-${i}`,
+          month: e.month,
+          kind: "milestone" as const,
+          text: e.text,
+          causeId: null as string | null,
+          tone: "good" as const,
+        })),
+    [life.evidence],
+  );
   const entries = useMemo(() => {
+    if (filter === "scrapbook") return scrapbook;
     const keep = (h: HistoryEntry) =>
       filter === "all" ||
       (filter === "choices" && (h.kind === "decision" || h.kind === "move" || h.kind === "draft")) ||
       (filter === "seasons" && (h.kind === "season" || h.kind === "milestone")) ||
       (filter === "health" && h.kind === "injury");
     return history.filter(keep).slice(-80).reverse();
-  }, [history, filter]);
+  }, [history, filter, scrapbook]);
   return (
     <Panel id="os-record" title="Life record">
       <div className="mb-2 flex flex-wrap gap-1.5" role="group" aria-label="Filter life record">
-        {(["all", "choices", "seasons", "health"] as RecordFilter[]).map((f) => (
+        {(["all", "choices", "seasons", "health", "scrapbook"] as RecordFilter[]).map((f) => (
           <button
             key={f}
             type="button"

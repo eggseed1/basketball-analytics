@@ -1,6 +1,7 @@
 import { heightFraction } from "./body";
+import { eraAt } from "./era";
 import { clamp, rngOf, type Rng } from "./rng";
-import { currentLevel, position, playingLevel } from "./skills";
+import { currentLevel, position, playingLevel, trueCeiling } from "./skills";
 import type { BoxScore, LifeState, NodeKind, Placement, Role, SeasonLine, Stage } from "./types";
 import { country, domesticProLeagues, localSeniorModel, maybeLeague, type LeagueModel } from "./world";
 
@@ -24,9 +25,13 @@ export function calendar(state: LifeState, ageMonths = state.ageMonths) {
 
 export const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-/** Expected playing level of a decent player at this age (model). */
+/**
+ * Expected playing level of a typical kid at this age (model).
+ * Set below the mean future-pro path so talents look ahead of their age group
+ * before skills fully catch their ceiling. Adult cohort (~50) is unchanged.
+ */
 export function cohortLevel(ageYears: number): number {
-  const t: [number, number][] = [[5, 3], [6, 4], [8, 8], [10, 17], [12, 27], [14, 36], [16, 42], [18, 46], [20, 49], [22, 51], [24, 52]];
+  const t: [number, number][] = [[5, 3], [6, 4], [8, 7], [10, 15], [12, 25], [14, 33], [16, 39], [18, 45], [20, 49], [22, 51], [24, 52]];
   if (ageYears <= t[0]![0]) return t[0]![1];
   for (let i = 1; i < t.length; i++) {
     const [x1, y1] = t[i]!;
@@ -37,11 +42,11 @@ export function cohortLevel(ageYears: number): number {
 }
 
 const YOUTH_TIER: Partial<Record<NodeKind, number>> = {
-  playground: 0.7,
-  "school-team": 0.88,
-  "local-club": 0.95,
-  "elite-youth": 1.12,
-  "us-high-school": 1.0,
+  playground: 0.68,
+  "school-team": 0.86,
+  "local-club": 0.94,
+  "elite-youth": 1.1,
+  "us-high-school": 0.98,
 };
 
 const SOUTHERN = new Set(["AU", "NZ", "AR", "BR", "UY", "CL", "PY", "ZA", "NA", "BW"]);
@@ -161,13 +166,50 @@ export function minutesBand(role: Role, cap: number, coaching = 50): string {
   return role === "none" ? "0" : `${Math.max(1, m - 4)}-${m + 4} min`;
 }
 
+/** Age-group scouting lines from performance vs cohort. No randomness. */
+export function youthScoutNotes(state: LifeState): { strengths: string[]; concerns: string[] } {
+  const age = state.ageMonths / 12;
+  const strengths: string[] = [];
+  const concerns: string[] = [];
+  if (age < 12 || age >= 19) return { strengths, concerns };
+  const gap = performanceLevel(state) - cohortLevel(age);
+  if (gap >= 14) strengths.push("Dominating age-group competition");
+  else if (gap >= 8) strengths.push("Ahead of his birth year");
+  else if (gap >= 3) strengths.push("Holding his own against older kids");
+  else if (gap < -5) concerns.push("Behind typical kids his age");
+  if (typeof state.flags.youthNational === "number") strengths.push("Has been with the youth national program");
+  return { strengths, concerns };
+}
+
+/**
+ * How far ahead of his age group a high-ceiling kid already plays.
+ * Ordinary ceilings barely move the needle; future-pro paths do.
+ * Shrinks as skills catch the ceiling, so adult `currentLevel` is not inflated.
+ */
+export function youthForm(state: LifeState): number {
+  const age = state.ageMonths / 12;
+  if (age < 8 || age >= 19) return 0;
+  const eq = state.body.heightCm / heightFraction(state.ageMonths, 0);
+  const sizeW = clamp((age - 5) / 10, 0.45, 1);
+  const base = playingLevel(state.skills, state.body, eq, sizeW);
+  const ceil = trueCeiling(state);
+  const cohort = cohortLevel(age);
+  // ~55 is a ordinary peak; 70+ is the path that usually reaches pro ball.
+  const proPath = clamp((ceil - 55) / 2.8, 0, 9);
+  const ageGap = clamp((ceil - cohort - 14) / 5, 0, 4);
+  const unrealized = clamp((ceil - base) / 10, 0, 3);
+  const fade = clamp((19 - age) / 6, 0, 1);
+  return clamp(0.75 * proPath + ageGap + 0.55 * unrealized, 0, 10) * fade;
+}
+
 /** Level used for performance, normalising children's height by age. */
 export function performanceLevel(state: LifeState): number {
   const age = state.ageMonths / 12;
   if (age >= 19) return currentLevel(state);
   const eq = state.body.heightCm / heightFraction(state.ageMonths, 0);
   const injury = state.condition.injury ? 6 * state.condition.injury.severity : 0;
-  return Math.max(0, playingLevel(state.skills, state.body, eq, clamp((age - 6) / 12, 0.35, 1)) - injury);
+  const sizeW = clamp((age - 5) / 10, 0.45, 1);
+  return Math.max(0, playingLevel(state.skills, state.body, eq, sizeW) + youthForm(state) - injury);
 }
 
 function poisson(rng: Rng, lambda: number): number {
@@ -196,32 +238,44 @@ export function simulateGame(state: LifeState, level: Level, rng: Rng, minutesOv
   const lvl = performanceLevel(state);
   const role = roleOverride ?? (state.placement.role === "none" ? roleFor(lvl, level.need) : state.placement.role);
   const s = state.skills;
+  const t = state.traits;
+  const b = state.body;
   const fatigue = clamp(state.condition.energy / 100, 0.5, 1);
-  const baseMin = minutesOverride ?? (ROLE_MINUTES[role] * level.model.minutesCap) / 36 + coachMinuteBonus(state.placement.coaching, level.model.minutesCap);
+  const youthStar = level.youth && (role === "star" || role === "starter");
+  const roleMin = ROLE_MINUTES[role] + (youthStar ? (role === "star" ? 2.5 : 1.2) : 0);
+  const baseMin = minutesOverride ?? (roleMin * level.model.minutesCap) / 36 + coachMinuteBonus(state.placement.coaching, level.model.minutesCap);
   const min = Math.max(0, Math.round(clamp(rng.normal(baseMin * (0.85 + 0.15 * fatigue), 3), 0, level.model.minutesCap + 4)));
-  const diff = lvl - level.need;
-  const eff = clamp(0.5 + diff / 40, 0.15, 0.92);
+  const rawDiff = lvl - level.need;
+  // Youth: a real gap turns into usage and efficiency the way a future pro looks against kids.
+  const diff = level.youth ? (rawDiff > 0 ? rawDiff * 1.25 + 0.8 : rawDiff * 1.1) : rawDiff;
+  const eff = clamp(0.5 + diff / (level.youth ? 36 : 40), 0.15, 0.94);
   const pos = position(state.body.heightCm, s);
   const m = min / 36;
-  const fga36 = 7 + 9 * eff + (s.shooting + s.finishing + s.handle) / 70;
+  const era = eraAt(calendar(state).year);
+  const conf = (t.confidence - 50) / 100;
+  const comp = (t.composure - 50) / 100;
+  const iq = (s.iq + s.decisions) / 2;
+  const burst = (b.acceleration + b.lateral + b.vertical) / 3;
+  const fga36 = 7 + 9 * eff + (s.shooting + s.finishing + s.handle) / 70 + (level.youth ? clamp(diff / 18, 0, 4) : 0) + conf * 0.8;
   const fga = poisson(rng, fga36 * m);
-  const threeShare = clamp((s.shooting - 25) / 110 + (pos === "G" || pos === "W" ? 0.1 : -0.12), 0.02, 0.6);
+  const threeShare = clamp((s.shooting - 25) / 110 + (pos === "G" || pos === "W" ? 0.1 : -0.12) + era.threeShare + (level.youth ? s.offBall / 400 : 0), 0.02, 0.62);
   const tpa = binomial(rng, fga, threeShare);
-  const twoPct = clamp(0.4 + (s.finishing - 50) / 260 + diff / 110, 0.3, 0.7);
-  const threePct = clamp(0.28 + (s.shooting - 50) / 230 + diff / 220, 0.12, 0.46);
+  const twoPct = clamp(0.4 + (s.finishing - 50) / 260 + diff / 110 - era.threeShare * 0.15 + conf * 0.03 + (burst - 55) / 500, 0.28, 0.72);
+  const threePct = clamp(0.28 + (s.shooting - 50) / 230 + diff / 220 + era.threeShare * 0.2 + conf * 0.025 + comp * 0.02, 0.1, 0.5);
   const tpm = binomial(rng, tpa, threePct);
   const twoM = binomial(rng, fga - tpa, twoPct);
-  const fta = poisson(rng, (1.5 + (s.finishing / 30) * eff + (pos === "C" ? 1 : 0)) * m);
-  const ftm = binomial(rng, fta, clamp(0.5 + s.freeThrows / 260, 0.4, 0.93));
+  const fta = poisson(rng, (1.5 + (s.finishing / 30) * eff + (pos === "C" ? 1 : 0) + (level.youth && rawDiff > 6 ? 0.6 : 0)) * m);
+  const ftm = binomial(rng, fta, clamp(0.5 + s.freeThrows / 260 + comp * 0.04, 0.38, 0.94));
   const heightBoost = clamp((state.body.heightCm / heightFraction(state.ageMonths, 0) - 195) / 10, -1, 2);
-  const reb = poisson(rng, (2.5 + s.rebounding / 14 + heightBoost * 1.5) * m);
-  const ast = poisson(rng, (0.8 + s.passing / 17 + s.handle / 45) * m);
-  const stl = poisson(rng, (0.4 + s.perimeterD / 70) * m);
-  const blk = poisson(rng, (0.15 + (s.interiorD / 60) * clamp(1 + heightBoost * 0.5, 0.3, 2)) * m);
-  const tov = poisson(rng, (1 + (s.handle + s.passing) / 120 - s.decisions / 150 + 0.6) * m * (0.6 + 0.4 * (1 - eff)));
+  const big = era.id === "big-ball" ? 0.35 : 0;
+  const reb = poisson(rng, (2.5 + s.rebounding / 14 + heightBoost * 1.5 + big + (b.vertical - 50) / 80 + (level.youth ? clamp(diff / 25, 0, 1.2) : 0)) * m);
+  const ast = poisson(rng, (0.8 + s.passing / 17 + s.handle / 45 + (iq - 50) / 90 + (level.youth ? clamp(diff / 30, 0, 1) : 0)) * m);
+  const stl = poisson(rng, (0.4 + s.perimeterD / 70 + (b.lateral - 50) / 140 + (b.acceleration - 50) / 160) * m);
+  const blk = poisson(rng, (0.15 + (s.interiorD / 60) * clamp(1 + heightBoost * 0.5, 0.3, 2) + big * 0.2 + (b.vertical - 50) / 180) * m);
+  const tov = poisson(rng, (1 + (s.handle + s.passing) / 120 - s.decisions / 150 - iq / 200 - comp * 0.25 + 0.6) * m * (0.6 + 0.4 * (1 - eff)));
   const fgm = twoM + tpm;
   const pts = 2 * twoM + 3 * tpm + ftm;
-  const pace = level.youth ? clamp(25 + state.ageMonths / 12 * 3.2, 30, 75) : 82;
+  const pace = (level.youth ? clamp(28 + (state.ageMonths / 12) * 3.0, 32, 78) : 82) + (level.youth ? 0 : era.pace);
   // An NBA reserve doesn't drag the roster down; the other fourteen players set the record.
   const own = level.leagueId === "nba" ? Math.max(0, diff) : diff;
   const teamQuality = clamp(0.5 + (role === "star" ? 0.08 : role === "starter" ? 0.04 : 0) + own / 200 + teamEdge, 0.2, 0.8);

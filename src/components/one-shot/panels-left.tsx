@@ -4,8 +4,10 @@ import { useEffect, useRef } from "react";
 
 import { buildOutlook, FRAME_LABEL, fmtHeight, fmtLength, fmtWeight, heightEstimate, heightPercentile } from "@/one-shot/body";
 import { calendar, levelOf, MONTHS, nodeLabel, ROLE_LABEL, STAGE_LABEL, stageOf } from "@/one-shot/career";
+import { challengeStatusLine } from "@/one-shot/challenges";
 import { projectedRange } from "@/one-shot/draft";
 import { canDeclareNow, canRetireNow, MEANS_LABEL } from "@/one-shot/engine";
+import { plotCard } from "@/one-shot/plot";
 import { archetype, athleticismBar, position, POSITION_LABEL, READINESS_LABEL, readiness, skillBar } from "@/one-shot/skills";
 import type { LifeState } from "@/one-shot/types";
 import { country, countryFlag } from "@/one-shot/world";
@@ -89,6 +91,29 @@ function IdCell({ k, v, title }: { k: string; v: string; title?: string }) {
 }
 
 export function StatusPanel({ life, onDeclare, onRetire }: { life: LifeState; onDeclare?: () => void; onRetire?: () => void }) {
+/** Live strip of story threads and durable facts: prove-it year, All-Star chase, mentor, rival. */
+export function PlotCard({ life }: { life: LifeState }) {
+  const lines = plotCard(life);
+  if (!lines.length) return null;
+  return (
+    <Panel id="os-plot" title="This life">
+      <dl className="grid grid-cols-1 gap-px overflow-hidden rounded-lg border border-[var(--os-border)] bg-[var(--os-border)] sm:grid-cols-2">
+        {lines.map((line) => {
+          const thread = line.kind === "thread";
+          return (
+            <div key={line.id} className="min-w-0 bg-[var(--os-page)] px-2.5 py-1.5">
+              <dt className={`text-[9.5px] font-semibold uppercase tracking-[0.1em] ${thread ? "text-[var(--os-teal)]" : "text-[var(--os-dim)]"}`}>{line.label}</dt>
+              <dd className="truncate text-[12.5px] text-[var(--os-text)]" title={line.value}>
+                {line.value}
+              </dd>
+            </div>
+          );
+        })}
+      </dl>
+    </Panel>
+  );
+}
+
   const age = life.ageMonths / 12;
   const band = readiness(life);
   const declare = onDeclare && canDeclareNow(life);

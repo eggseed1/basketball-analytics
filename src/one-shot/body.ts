@@ -9,13 +9,14 @@ import { adultHeights } from "./world";
  *
  * Parents are drawn around their country's measured adult mean (NCD-RisC,
  * 1996 cohort) with within-country SDs of 7 cm (men) and 6.5 cm (women), plus a
- * family bias of +5 cm and +4 cm because every life here is a basketball life.
- * The son's adult target is a basketball build (guard, wing, forward, or big),
- * shifted by his parents. Food, sleep, and a few choices can still move that
- * target while the growth plates are open. Birthplace never touches skill talent.
+ * small family bias because every life here is a basketball life. The son's
+ * adult target is a basketball build (guard, wing, forward, or big), shifted by
+ * his parents; tall builds are rare by design. Food, sleep, and a few choices
+ * can still move that target while the growth plates are open. Birthplace never
+ * touches skill talent.
  */
 export const HEIGHT_SD = { male: 7, female: 6.5 } as const;
-export const FAMILY_BIAS = { male: 5, female: 4 } as const;
+export const FAMILY_BIAS = { male: 2, female: 1.5 } as const;
 export const TARGET_SD = 6;
 
 // Median male height fraction of adult height by age in years (from the shape

@@ -28,13 +28,14 @@ export const SKILL_KEYS = SKILLS.map((s) => s.key);
 
 /**
  * Hidden skill ceilings. One talent factor shared across skills plus per-skill
- * variation (model: 72 + 11T + N(0, 9)). The draw uses the generation stream
- * only and has no country input.
+ * variation (model: 62 + 12T + N(0, 9)). The draw uses the generation stream
+ * only and has no country input. Mean sits below a typical NBA draft class so
+ * only the upper tail projects in range.
  */
 export function generatePotentials(rng: Rng): Record<SkillKey, number> {
   const t = rng.normal(0, 1);
   const out = {} as Record<SkillKey, number>;
-  for (const k of SKILL_KEYS) out[k] = Math.round(clamp(72 + 11 * t + rng.normal(0, 9), 25, 99));
+  for (const k of SKILL_KEYS) out[k] = Math.round(clamp(62 + 12 * t + rng.normal(0, 9), 25, 99));
   return out;
 }
 
@@ -189,7 +190,10 @@ export interface ScoutingReport {
 export function scoutingReport(state: LifeState): ScoutingReport {
   const age = state.ageMonths / 12;
   const band = readiness(state);
-  const evidence = [...state.evidence].sort((a, b) => b.weight - a.weight).slice(0, 3).map((e) => e.text);
+  const evidence = [...state.evidence]
+    .sort((a, b) => b.weight - a.weight)
+    .slice(0, 4)
+    .map((e) => `At ${Math.floor(e.month / 12)}: ${e.text}`);
   if (age < 8) {
     return { strengths: [], concerns: [], roles: [], evidence, uncertainty: "No scouting at this age.", band };
   }
