@@ -11,7 +11,7 @@ import { country, domesticProLeagues, PLAYABLE_COUNTRIES } from "./world";
  */
 
 export function createPeers(streams: Streams): Peer[] {
-  const peers = streams.peers.map((_, i) => {
+  const peers: Peer[] = streams.peers.map((_, i) => {
     const rng = rngOf(streams, i);
     const c = rng.weighted(PLAYABLE_COUNTRIES, (x) => x.draw.weight);
     const potential = Math.round(clamp(rng.normal(64, 9), 35, 92));
@@ -30,7 +30,7 @@ export function createPeers(streams: Streams): Peer[] {
       done: false,
       rival: false,
       log: [],
-    } satisfies Peer;
+    };
   });
   // Highest ceiling becomes the named rival for collision events.
   let best = 0;
