@@ -400,8 +400,6 @@ export interface Agent {
 
 export type Asset = "savings" | "bonds" | "index" | "stocks" | "property" | "crypto";
 
-export interface Finance {
-  cash: number;
 export type MarketRegime = "bull" | "bear" | "neutral";
 
 export interface Finance {
@@ -430,6 +428,8 @@ export interface Finance {
     /** Short headline for the money panel; refreshes with the market. */
     headline: string;
   };
+}
+
 export type Track = "coach" | "scout" | "media" | "podcast" | "trainer";
 
 export interface AfterYear {
@@ -546,10 +546,6 @@ export interface LifeState {
   after: AfterCareer | null;
 }
 
-export interface NewLifeOptions {
-  seed: number;
-  mode: Mode;
-  draw: DrawMode;
 /** Soft nudge from the last finished life on this device. Never forces a birth. */
 export interface LegacyBias {
   meansBoost?: boolean;
@@ -566,3 +562,4 @@ export interface NewLifeOptions {
   runId?: string;
   challenge?: ChallengeId | null;
   legacy?: LegacyBias | null;
+}

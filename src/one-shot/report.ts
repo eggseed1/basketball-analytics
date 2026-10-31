@@ -152,10 +152,10 @@ export function summarize(s: LifeState, finishedAt: string): CareerSummary {
     highlights: highlightReel(s, 4),
     challenge: challengeStatusLine(s),
     badges: badgeLabels(s),
-  const honors = honorsLine(s);
-  if (honors) lines.push(`${honors}.`);
-  const challenge = challengeStatusLine(s);
-  if (challenge) lines.push(challenge);
+    ...(s.unicorn ? { unicorn: true } : {}),
+  };
+}
+
 /**
  * How this daily finish compares to other finishes of the same UTC day on this device.
  * Empty when the life is not daily.
@@ -206,3 +206,8 @@ export function shareText(s: LifeState, origin = "https://drbl.io"): string {
     .slice(0, 4)
     .map((b) => b.label);
   if (stamps.length) lines.push(`Badges: ${stamps.join(" · ")}`);
+  const route = [...new Set(s.seasons.filter((x) => x.ageYears >= 12).map((x) => x.levelLabel))].slice(-4).join(" → ");
+  if (route) lines.push(route);
+  lines.push(`${origin}/arcade/one-shot${s.mode === "daily" ? "?daily=1" : `?seed=${s.seed}&draw=${s.draw}`}`);
+  return lines.join("\n");
+}

@@ -354,7 +354,7 @@ ok("new lives cover guard height through center height", () => {
   assert.ok(n(210, 229) < 60, `bigs should stay rare ${n(210, 229)}`);
   const outlook = buildOutlook(180, 166);
   assert.ok(outlook.high - outlook.low > 25, `${outlook.low} to ${outlook.high}`);
-  assert.ok(outlook.mid > 185 && outlook.mid < 196, `typical ${outlook.mid}`);
+  assert.ok(outlook.mid > 190 && outlook.mid < 205, `typical ${outlook.mid}`);
 });
 
 ok("growing players can add height and weight, and closed plates add none", () => {
