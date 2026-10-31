@@ -1,5 +1,6 @@
 import type { GmLeagueState, GmPlayer, GmTeam } from "@/gm/types";
 import { capStatus } from "@/gm/engine/cap";
+import { cbaSeason } from "@/gm/engine/season-flow-state";
 import { overallOf } from "@/gm/engine/lineup";
 import { sortedStandings } from "@/gm/engine/standings";
 
@@ -26,7 +27,7 @@ export function userCap(league: GmLeagueState) {
     userTeam(league),
     league.players,
     league.settings,
-    league.season
+    cbaSeason(league)
   );
 }
 

@@ -16,6 +16,7 @@ import { overallOf, autoSetLineup } from "@/gm/engine/lineup";
 import { rosterNeeds } from "@/gm/engine/draft-room";
 import { getCbaRules } from "@/gm/myleague/cba-registry";
 import { createRng, uid } from "@/gm/engine/rng";
+import { cbaSeason, offseasonRosterLimit } from "@/gm/engine/season-flow-state";
 import type { CBARules } from "@/gm/myleague/types";
 import { askingSalary, askingYears } from "@/gm/engine/free-agency-ask";
 import {
@@ -34,6 +35,7 @@ import {
 } from "@/gm/engine/fa-options";
 import {
   resolveCpuQualifyingOffers,
+  acceptQualifyingOffer,
   tenderQualifyingOffer,
   declineQualifyingOffer,
   userQoBlocking,
@@ -54,7 +56,7 @@ export {
 };
 
 function autoFa(state: GmLeagueState): boolean {
-  return state.automation?.autoFreeAgency ?? true;
+  return state.automation?.autoFreeAgency ?? !state.seasonFlow;
 }
 
 function news(
@@ -96,8 +98,9 @@ export function applySign(
           contract: {
             yearsRemaining: years,
             annualSalaryM: annual,
-            birdRights: "none" as const,
-            signedSeason: state.season,
+            birdRights: (player.rightsTeamId === teamId && (player.rightsKind === "bird" || player.rightsKind === "restricted") ? "bird" : player.rightsTeamId === teamId && player.rightsKind === "early" ? "early" : "none") as "bird" | "early" | "none",
+            signedSeason: cbaSeason(state), originalYears: years,
+            years: Array.from({ length: years }, (_, index) => ({ season: cbaSeason(state) + index, salaryM: annual })),
             signedVia: via,
           },
         }
@@ -226,6 +229,7 @@ function placeCpuOffers(state: GmLeagueState, rules: CBARules): GmLeagueState {
   let next = state;
   const market0 = ensureFaMarket(next);
   if (
+    market0.stage !== "re_signing" &&
     market0.stage !== "moratorium" &&
     market0.stage !== "open" &&
     market0.stage !== "fill"
@@ -241,10 +245,11 @@ function placeCpuOffers(state: GmLeagueState, rules: CBARules): GmLeagueState {
   );
 
   for (const team of next.teams) {
-    if (team.id === next.userTeamId) continue;
+    if (team.id === next.userTeamId && !autoFa(next)) continue;
     const aggression =
       team.ownerGoal === "contend" ? 1.05 : team.ownerGoal === "tank" ? 0.72 : 0.9;
     for (const player of teamTargets(next, team, rules)) {
+      if (market0.stage === "re_signing" && player.rightsTeamId !== team.id) continue;
       if (rng() > (overallOf(player) >= 84 ? 0.92 : overallOf(player) >= 78 ? 0.72 : 0.5))
         continue;
       const key = `${team.id}:${player.id}`;
@@ -268,6 +273,7 @@ function placeCpuOffers(state: GmLeagueState, rules: CBARules): GmLeagueState {
           taken.add(key);
           continue;
         }
+        if (next.seasonFlow && market0.stage !== "open" && market0.stage !== "fill") continue;
         if (overallOf(player) >= 76 && rng() > 0.55) {
           const bid = bestLegalBid(next, team, player, rules, aggression);
           if (!bid) continue;
@@ -377,6 +383,7 @@ function resolvePlayers(
     const offers = byPlayer.get(playerId)!;
     const player = next.players.find((row) => row.id === playerId);
     if (!player || player.teamId != null) continue;
+    if (mode === "agree" && next.faMarket?.agreements.some(row => row.playerId === playerId)) continue;
     if (player.rightsKind === "restricted" && mode === "sign") {
       // RFA ordinary signings only with the rights holder; sheets use fa-rfa.
       const onlyIncumbent = offers.every((row) => row.teamId === player.rightsTeamId);
@@ -412,6 +419,7 @@ function resolvePlayers(
         winner.offer.salaryM + 0.05 >= ask * 0.9;
       if (!birdHome && ovr >= 78 && ranked.length < 2) continue;
 
+      if (!evaluateSigning(next, winner.team.id, player, winner.offer.salaryM, winner.offer.years).ok) continue;
       const reservation = {
         id: uid("res"),
         teamId: winner.team.id,
@@ -462,11 +470,9 @@ function resolvePlayers(
       continue;
     }
 
-    const via =
-      winner.offer.via ??
-      evaluateSigning(next, winner.team.id, player, winner.offer.salaryM, winner.offer.years);
-    if (typeof via === "object" && !via.ok) continue;
-    const path = typeof via === "string" ? via : via.via;
+    const via = evaluateSigning(next, winner.team.id, player, winner.offer.salaryM, winner.offer.years);
+    if (!via.ok) continue;
+    const path = via.via;
     next = applySign(
       next,
       playerId,
@@ -495,6 +501,7 @@ function fillMinimums(
   const min = Math.max(rules.minSalaryM || 1, state.settings.salaryCapM * (2.087 / 140.588));
   const teamIds = [...state.teams.map((t) => t.id)].sort();
   for (const teamId of teamIds) {
+    if (state.seasonFlow && teamId === state.userTeamId && !autoFa(state)) continue;
     const team = next.teams.find((t) => t.id === teamId)!;
     let guard = 0;
     const needs = rosterNeeds(team, next.players);
@@ -548,6 +555,7 @@ export function advanceFaDay(state: GmLeagueState): GmLeagueState {
 export function advanceFaDayDetailed(state: GmLeagueState): AdvanceFaResult {
   if (state.phase !== "free_agency") return { state };
   let market = ensureFaMarket(state);
+  if (market.done) return { state };
   let next: GmLeagueState = { ...state, faMarket: market };
   const auto = autoFa(next);
 
@@ -620,30 +628,15 @@ export function advanceFaDayDetailed(state: GmLeagueState): AdvanceFaResult {
     return { state: next };
   }
 
-  // ——— Rights review (one tick to acknowledge; then moratorium) ———
+  // Rights review and own-player negotiations each get a separate stop.
   if (market.stage === "rights") {
-    market = {
-      ...ensureFaMarket(next),
-      stage: "moratorium",
-      day: 0,
-      recap: [
-        "Rights review closed. The moratorium is open — pitch now, deals lock when signing opens.",
-        ...(ensureFaMarket(next).recap ?? []),
-      ].slice(0, 40),
-    };
-    next = {
-      ...next,
-      faMarket: market,
-      news: [
-        news(
-          next,
-          "The moratorium is open",
-          "Pitch deals now. Commitments reserve room. Signings finalize when the window opens."
-        ),
-        ...next.news,
-      ].slice(0, 50),
-    };
-    return { state: next };
+    const ownWindow = Boolean(next.seasonFlow);
+    return { state: { ...next, faMarket: { ...ensureFaMarket(next), stage: ownWindow ? "re_signing" : "moratorium", day: 0 }, news: [news(next, ownWindow ? "Own-player negotiations open" : "The moratorium is open", ownWindow ? "Negotiate with expiring players first. Agreements become contracts when signing opens." : "Pitch deals now. Commitments reserve room until signing opens."), ...next.news].slice(0, 50) } };
+  }
+  if (market.stage === "re_signing") {
+    const rules = getCbaRules(cbaSeason(next));
+    const resolved = resolvePlayers(placeCpuOffers(next, rules), rules, "agree");
+    return { state: { ...resolved.state, faMarket: { ...ensureFaMarket(resolved.state), stage: "moratorium", day: 0, recap: [...resolved.lines, "League-wide negotiations are open. Verbal agreements are still unsigned.", ...(resolved.state.faMarket?.recap ?? [])].slice(0, 40) } } };
   }
 
   // ——— RFA sheets blocking user ———
@@ -658,7 +651,7 @@ export function advanceFaDayDetailed(state: GmLeagueState): AdvanceFaResult {
     };
   }
 
-  const rules = getCbaRules(next.season);
+  const rules = getCbaRules(cbaSeason(next));
   next = resolveCpuOfferSheetMatches(next);
   next = placeCpuOffers(next, rules);
   market = ensureFaMarket(next);
@@ -715,6 +708,19 @@ export function advanceFaDayDetailed(state: GmLeagueState): AdvanceFaResult {
     ...next,
     faMarket: { ...ensureFaMarket(next), day },
   });
+  if (done && next.seasonFlow) {
+    for (const player of next.players) {
+      if (player.teamId != null || player.qoStatus !== "tendered" || !player.rightsTeamId) continue;
+      if (rosterCount(player.rightsTeamId, next.players) >= offseasonRosterLimit(next)) continue;
+      const accepted = acceptQualifyingOffer(next, player.id);
+      if (accepted.ok) { next = accepted.state; lines.push(player.name + " accepts his qualifying offer."); }
+    }
+    for (const agreement of next.faMarket?.agreements ?? []) {
+      const player = next.players.find(row => row.id === agreement.playerId);
+      if (player && player.teamId == null) lines.push("Agreement with " + player.name + " expired because the signing could not fit.");
+    }
+    next = { ...next, faMarket: { ...ensureFaMarket(next), agreements: [], reservations: [], pending: [] } };
+  }
   const scarce = scarcityLine(next);
   if (scarce) lines.push(scarce);
   const recap = [...lines.slice(0, 10), ...(next.faMarket?.recap ?? [])].slice(0, 40);
@@ -724,7 +730,7 @@ export function advanceFaDayDetailed(state: GmLeagueState): AdvanceFaResult {
       : nextStage === "fill" && stage === "open"
         ? "The big board is thin. Clubs fill with mins."
         : done
-          ? "Free agency is quiet. Training camp is next."
+          ? "Free agency is quiet. Review player progression next."
           : `Free agency day ${day}`;
 
   return {
@@ -755,6 +761,16 @@ export function advanceFaDayDetailed(state: GmLeagueState): AdvanceFaResult {
 }
 
 export function runFaPeriod(state: GmLeagueState, days = 40): GmLeagueState {
+  if (state.seasonFlow) {
+    let guided = state;
+    const openingStage = ensureFaMarket(state).stage;
+    for (let index = 0; index < days && !guided.faMarket?.done; index++) {
+      const result = advanceFaDayDetailed(guided);
+      guided = result.state;
+      if (result.blocked || (!autoFa(guided) && guided.faMarket?.stage !== openingStage)) break;
+    }
+    return guided;
+  }
   let next: GmLeagueState = {
     ...state,
     faMarket: ensureFaMarket(state),
@@ -811,6 +827,7 @@ export function userOfferFreeAgent(
     return { ok: false, reason: "Free agency is not open." };
   }
   const market = ensureFaMarket(state);
+  if (market.done) return { ok: false, reason: "This market is closed. Open roster fill from the season hub for another signing." };
   if (
     market.stage === "options" ||
     market.stage === "qualifying_offers" ||
@@ -825,13 +842,16 @@ export function userOfferFreeAgent(
   if (!player || player.teamId != null) {
     return { ok: false, reason: "That player is not on the market." };
   }
+  if (market.stage === "re_signing" && player.rightsTeamId !== state.userTeamId) return { ok: false, reason: "This window is for your own expiring players. Other free agents enter during the moratorium." };
+  if (market.agreements.some(row => row.playerId === playerId)) return { ok: false, reason: "He already has a verbal agreement. It will be checked again when signing opens." };
   if (player.rightsKind === "restricted" && player.rightsTeamId !== state.userTeamId) {
+    if (state.seasonFlow && market.stage !== "open" && market.stage !== "fill") return { ok: false, reason: "Restricted offer sheets open when contracts can be signed." };
     return submitOfferSheet(state, playerId, state.userTeamId, salaryM, years);
   }
   const verdict = evaluateSigning(state, state.userTeamId, player, salaryM, years);
   if (!verdict.ok) return verdict;
   const team = state.teams.find((row) => row.id === state.userTeamId)!;
-  const rules = getCbaRules(state.season);
+  const rules = getCbaRules(cbaSeason(state));
   const utility = evaluateOfferUtility(state, player, team, salaryM, years);
   const offer: GmFaOffer = {
     id: uid("fa"),
@@ -845,7 +865,7 @@ export function userOfferFreeAgent(
     utility,
   };
 
-  if (market.stage === "moratorium") {
+  if (market.stage === "moratorium" || market.stage === "re_signing") {
     const rivals = market.pending.filter((row) => row.playerId === playerId);
     const bestRival = rivals.reduce((best, row) => {
       const club = state.teams.find((t) => t.id === row.teamId);
@@ -967,9 +987,9 @@ export function resignOwnFreeAgent(
     return { ok: false, reason: "Not on the market." };
   }
   if (player.rightsTeamId !== state.userTeamId) {
-    return { ok: false, reason: "You do not hold his Bird rights." };
+    return { ok: false, reason: "This player did not finish his contract with your club." };
   }
-  const rules = getCbaRules(state.season);
+  const rules = getCbaRules(cbaSeason(state));
   const salaryM = askingSalary(player, rules);
   const years = askingYears(player, rules);
   return userOfferFreeAgent(state, playerId, salaryM, years);
@@ -987,6 +1007,7 @@ export function faStageLabel(market: GmFaMarket | undefined): string {
   if (market.stage === "options") return "Contract options";
   if (market.stage === "qualifying_offers") return "Qualifying offers";
   if (market.stage === "rights") return "Rights review";
+  if (market.stage === "re_signing") return "Own-player negotiations";
   if (market.stage === "moratorium") return `Moratorium · day ${market.day + 1}`;
   if (market.stage === "open") return `Open signing · day ${market.day + 1}`;
   return `Roster fill · day ${market.day + 1}`;

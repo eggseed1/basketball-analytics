@@ -1,3 +1,4 @@
+import { cbaSeason } from "@/gm/engine/season-flow-state";
 /**
  * Restricted free agency: outside offer sheets and incumbent match windows.
  * Match deadlines are compressed game ticks from market config, not a
@@ -40,7 +41,7 @@ function applySign(
             yearsRemaining: years,
             annualSalaryM: annual,
             birdRights: "none" as const,
-            signedSeason: state.season,
+            signedSeason: cbaSeason(state),
             signedVia: via,
           },
         }

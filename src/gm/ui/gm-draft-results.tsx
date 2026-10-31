@@ -37,7 +37,7 @@ function PickMeta({ row }: { row: DraftPickRow }) {
  */
 export function GmDraftResults({ league }: { league: GmLeagueState }) {
   const router = useRouter();
-  const openFreeAgency = useGmStore((s) => s.openFreeAgency);
+  const advanceJourney = useGmStore((s) => s.advanceSeasonJourney);
   const yours = userDraftPicks(league);
   const board = draftPickLog(league);
   const stillOnDraft = isDraftComplete(league);
@@ -57,12 +57,12 @@ export function GmDraftResults({ league }: { league: GmLeagueState }) {
           </h2>
           <p className="mt-1 text-[14px] text-muted-foreground">
             Overall and development traits are unlocked. Scroll the full order
-            below, then open free agency when you are ready.
+            below, then review rookie contracts at the season hub.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
           {stillOnDraft ? (
-            <Button onClick={() => openFreeAgency()}>Open free agency</Button>
+            <Button onClick={() => { advanceJourney(); router.push("/gm/offseason"); }}>Review rookie contracts</Button>
           ) : (
             <Button variant="outline" onClick={() => router.push("/gm/free-agency")}>
               Free agency

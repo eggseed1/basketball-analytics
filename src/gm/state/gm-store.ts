@@ -18,7 +18,6 @@ import {
   applyDraftNightTrade,
   draftNightOffers,
   ensureDraftOrder,
-  expandDraftOrder,
   moveBoard,
   orderedBoard,
   pickOwnerAt,
@@ -69,7 +68,6 @@ import {
   enterFreeAgency,
   noteTradeDeadline,
   runCpuFreeAgency,
-  startNextSeason,
 } from "@/gm/engine/offseason";
 import {
   advanceFaDayDetailed,
@@ -104,6 +102,11 @@ import {
   slotAccepts,
 } from "@/gm/engine/lineup";
 import { capStatus } from "@/gm/engine/cap";
+import { cbaSeason } from "@/gm/engine/season-flow-state";
+import { advanceSeasonJourney as advanceJourneyEngine, beginOffseason, decideRookieContract as decideRookieEngine, reopenRosterFill } from "@/gm/engine/season-flow";
+import { assignCamp, runSummerLeague } from "@/gm/engine/season-development";
+import { offerExtension } from "@/gm/engine/extensions";
+import { releasePlayer } from "@/gm/engine/roster-decisions";
 import { asAssociate, hireQuote, withAssociate, withHeadCoach } from "@/gm/engine/staff";
 import { installStaff, openCoachMarket, TRAINER_TIERS } from "@/gm/seed/coaches";
 import { claimOpeningRosters } from "@/gm/seed/opening-roster";
@@ -218,6 +221,13 @@ interface GmStore {
   seedError: string | null;
   /** Last FA desk note (offer result, advance block, etc.). */
   lastFaNote: string | null;
+  lastJourneyNote: string | null;
+  advanceSeasonJourney: () => void;
+  decideRookieContract: (playerId: string, sign: boolean) => void;
+  setCampAssignment: (playerId: string, focus: import("@/gm/types").GmCampFocus | null) => void;
+  playSummerLeague: (skip?: boolean) => void;
+  openRosterFill: () => void;
+  extendPlayer: (playerId: string, salaryM: number, years: number) => { ok: boolean; reason: string };
   /** IndexedDB franchise slots (newest first). */
   saves: GmSaveMeta[];
   activeSaveId: string | null;
@@ -327,10 +337,10 @@ interface GmStore {
   advanceToPlayoffs: () => void;
   /** Leave the awards night and open play-in / bracket on home. */
   ackAwardsShow: () => void;
-  /** Leave the champion splash and open the draft desk. */
+  /** Leave the champion splash and open season review. */
   ackChampionSplash: () => void;
   simPlayoffDay: () => void;
-  /** Draft still open: open free agency. Free agency: tip off the next year. */
+  /** Advance one guided summer step. Kept for existing callers. */
   runOffseason: () => void;
   openFreeAgency: () => void;
   runCpuSignings: () => void;
@@ -393,6 +403,7 @@ function afterDraftProgress(league: GmLeagueState): GmLeagueState {
   if (
     next.phase === "draft" &&
     next.draftPool.length === 0 &&
+    !next.seasonFlow &&
     automationOf(next).autoFreeAgency
   ) {
     next = enterFreeAgency(next);
@@ -422,6 +433,46 @@ export const useGmStore = create<GmStore>()(
     (set, get) => ({
       league: null,
       lastFaNote: null,
+      lastJourneyNote: null,
+      advanceSeasonJourney: () => {
+        const league = get().league; if (!league) return;
+        const result = advanceJourneyEngine(league);
+        const next = withUpdate(result.state);
+        set({ league: next, lastJourneyNote: result.reason });
+        if (next.season !== league.season) useMyLeagueStore.getState().bootstrap(next);
+        else syncMyLeague(next);
+      },
+      decideRookieContract: (playerId, sign) => {
+        const league = get().league; if (!league) return;
+        const result = decideRookieEngine(league, playerId, sign);
+        set({ league: withUpdate(result.state), lastJourneyNote: result.reason });
+        syncMyLeague(result.state);
+      },
+      setCampAssignment: (playerId, focus) => {
+        const league = get().league; if (!league) return;
+        const result = assignCamp(league, playerId, focus);
+        set({ league: withUpdate(result.state), lastJourneyNote: result.reason });
+        syncMyLeague(result.state);
+      },
+      playSummerLeague: (skip = false) => {
+        const league = get().league; if (!league) return;
+        const next = withUpdate(runSummerLeague(league, skip));
+        set({ league: next, lastJourneyNote: skip ? "Summer games skipped." : "Summer results are ready. Invitees have not signed NBA contracts." });
+        syncMyLeague(next);
+      },
+      openRosterFill: () => {
+        const league = get().league; if (!league) return;
+        const result = reopenRosterFill(league);
+        set({ league: withUpdate(result.state), lastJourneyNote: result.reason });
+        syncMyLeague(result.state);
+      },
+      extendPlayer: (playerId, salaryM, years) => {
+        const league = get().league; if (!league) return { ok: false, reason: "No franchise loaded." };
+        const result = offerExtension(league, playerId, salaryM, years);
+        set({ league: withUpdate(result.state), lastJourneyNote: result.reason });
+        syncMyLeague(result.state);
+        return { ok: result.ok, reason: result.reason };
+      },
       simRun: null,
       hydrated: false,
       seeding: false,
@@ -1683,32 +1734,9 @@ export const useGmStore = create<GmStore>()(
       ackChampionSplash: () => {
         const league = get().league;
         if (!league?.champion) return;
-        const lotteryOrder = league.lotteryOrder ?? computeLotteryOrder(league);
-        let drafted = withUpdate({
-          ...league,
-          phase: "draft" as const,
-          homeFlow: { ...league.homeFlow, awardsSeen: true, championSeen: true },
-          draftPickIndex: 0,
-          lotteryOrder,
-          draftOrder: expandDraftOrder(lotteryOrder),
-          news: [
-            {
-              id: uid("news"),
-              day: league.day,
-              season: league.season,
-              headline: "Draft is next",
-              body: "The Finals are over. Lottery order is locked. Watch the board, trade up, or take your swing.",
-              tone: "good" as const,
-            },
-            ...league.news,
-          ].slice(0, 50),
-        });
-        if (automationOf(drafted).autoDraft) {
-          drafted = advanceDraftPastAi(drafted);
-          drafted = afterDraftProgress(drafted);
-        }
-        set({ league: drafted });
-        syncMyLeague(drafted);
+        const next = withUpdate(beginOffseason(league));
+        set({ league: next, lastJourneyNote: "Season review is open. Summer advances one step at a time." });
+        syncMyLeague(next);
       },
 
       simPlayoffDay: () => {
@@ -1999,37 +2027,20 @@ export const useGmStore = create<GmStore>()(
         set({ league: withUpdate({ ...end, digest }) });
       },
 
-      runOffseason: () => {
-        const league = get().league;
-        if (!league) return;
-        if (league.phase === "free_agency") {
-          const next = withUpdate(startNextSeason(league));
-          set({ league: next });
-          useMyLeagueStore.getState().bootstrap(next);
-          return;
-        }
-        get().openFreeAgency();
-      },
-
+      runOffseason: () => get().advanceSeasonJourney(),
       openFreeAgency: () => {
         const league = get().league;
         if (!league || league.phase === "free_agency") return;
-        const drafted =
-          league.draftPool.length > 0 ? finishDraftWithAi(league) : league;
-        let next = enterFreeAgency(drafted);
-        if (automationOf(next).autoFreeAgency) {
-          next = runCpuFreeAgency(next, { includeUser: false });
-        } else {
-          next = considerTeamBuildingCheckpoint(next);
+        if (league.seasonFlow?.stage !== "rookie_signing") {
+          set({ lastJourneyNote: "Complete the current step in the season hub before free agency." });
+          return;
         }
-        next = withUpdate(next);
-        set({ league: next });
-        syncMyLeague(next);
+        get().advanceSeasonJourney();
       },
 
       runCpuSignings: () => {
         const league = get().league;
-        if (!league) return;
+        if (!league || league.phase !== "free_agency") return;
         if (isTeamBuildingPaused(league)) return;
         const next = withUpdate(runCpuFreeAgency(league, { includeUser: false }));
         set({ league: next });
@@ -2207,58 +2218,10 @@ export const useGmStore = create<GmStore>()(
       },
 
       waivePlayer: (playerId) => {
-        const league = get().league;
-        if (!league) return;
-        const target = league.players.find((p) => p.id === playerId);
-        const players = league.players.map((p) => {
-          if (p.id !== playerId) return p;
-          const rights =
-            p.contract?.birdRights === "bird" || p.contract?.birdRights === "early"
-              ? p.contract.birdRights
-              : null;
-          return {
-            ...p,
-            teamId: null,
-            rightsTeamId: rights ? league.userTeamId : null,
-            rightsKind: rights ?? undefined,
-            lastSalaryM: rights ? p.contract?.annualSalaryM : undefined,
-            contract: null,
-          };
-        });
-        const teams = league.teams.map((t) => {
-          if (t.id !== league.userTeamId) return t;
-          const starters = { ...t.starters };
-          for (const pos of Object.keys(starters) as GmPosition[]) {
-            if (starters[pos] === playerId) starters[pos] = null;
-          }
-          const dead =
-            target?.contract != null
-              ? [
-                  ...(t.deadMoney ?? []),
-                  {
-                    id: uid("dead"),
-                    playerId,
-                    label: target.name,
-                    annualM: target.contract.annualSalaryM,
-                    yearsLeft: Math.max(1, target.contract.yearsRemaining),
-                  },
-                ]
-              : t.deadMoney;
-          return {
-            ...t,
-            starters,
-            benchOrder: t.benchOrder.filter((id) => id !== playerId),
-            deadMoney: dead,
-          };
-        });
-        set({
-          league: withUpdate({
-            ...league,
-            players,
-            teams,
-            freeAgents: [...league.freeAgents, playerId],
-          }),
-        });
+        const league = get().league; if (!league) return;
+        const next = withUpdate(releasePlayer(league, playerId));
+        set({ league: next });
+        syncMyLeague(next);
       },
 
       hireCoach: (coachId, seat) => {
@@ -2269,7 +2232,7 @@ export const useGmStore = create<GmStore>()(
         const market = league.coachMarket ?? openCoachMarket();
         const hired = market.find((coach) => coach.id === coachId);
         if (!hired) return;
-        const overTax = capStatus(team, league.players, league.settings, league.season).overTax;
+        const overTax = capStatus(team, league.players, league.settings, cbaSeason(league)).overTax;
         const next = seat === "associate" ? asAssociate(hired) : hired;
         const quote = hireQuote(team, overTax, { salaryM: next.salaryM ?? 0 }, seat === "associate" ? "associate" : "head");
         if (!quote.ok) return;
@@ -2314,7 +2277,7 @@ export const useGmStore = create<GmStore>()(
         const tier = TRAINER_TIERS.find((row) => row.level === level);
         const team = league.teams.find((entry) => entry.id === league.userTeamId);
         if (!tier || !team) return;
-        const overTax = capStatus(team, league.players, league.settings, league.season).overTax;
+        const overTax = capStatus(team, league.players, league.settings, cbaSeason(league)).overTax;
         const quote = hireQuote(team, overTax, tier, "trainer");
         if (!quote.ok) return;
         const teams = league.teams.map((entry) => {
@@ -2381,7 +2344,7 @@ export const useGmStore = create<GmStore>()(
         const stamped = ensureScoutKnack(hired);
         const team = league.teams.find((entry) => entry.id === league.userTeamId);
         if (!team) return;
-        const overTax = capStatus(team, league.players, league.settings, league.season).overTax;
+        const overTax = capStatus(team, league.players, league.settings, cbaSeason(league)).overTax;
         if (!hireQuote(team, overTax, stamped, "scout").ok) return;
         const teams = league.teams.map((t) => {
           if (t.id !== league.userTeamId) return t;
@@ -2446,7 +2409,7 @@ export const useGmStore = create<GmStore>()(
         if (!hired) return;
         const team = league.teams.find((entry) => entry.id === league.userTeamId);
         if (!team) return;
-        const overTax = capStatus(team, league.players, league.settings, league.season).overTax;
+        const overTax = capStatus(team, league.players, league.settings, cbaSeason(league)).overTax;
         if (!hireQuote(team, overTax, hired, "developer").ok) return;
         const teams = league.teams.map((t) => {
           if (t.id !== league.userTeamId) return t;

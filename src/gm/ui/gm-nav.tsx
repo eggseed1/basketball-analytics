@@ -22,7 +22,6 @@ const LINKS = [
   { href: "/gm/draft", labelKey: "nav_draft" },
   { href: "/gm/medical", labelKey: "nav_medical" },
   { href: "/gm/staff", labelKey: "nav_staff" },
-  { href: "/gm/offseason", labelKey: "nav_offseason" },
 ] as const;
 
 export function GmNav() {
@@ -30,6 +29,8 @@ export function GmNav() {
   const t = useTranslations("Gm");
   return (
     <nav aria-label={t("nav_ariaLabel")} className="gm-nav">
+      <Link href="/gm/offseason" className={cn("gm-nav__link", pathname === "/gm/offseason" && "is-active")}>Season hub</Link>
+      <Link href="/gm/contracts" className={cn("gm-nav__link", pathname === "/gm/contracts" && "is-active")}>Contracts</Link>
       <Link href="/gm/franchise" className={cn("gm-nav__link", pathname.startsWith("/gm/franchise") && "is-active")}>Franchise</Link>
       {LINKS.map((link) => {
         const active =

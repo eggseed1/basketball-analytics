@@ -7,6 +7,7 @@ import type {
   GmTeam,
 } from "@/gm/types";
 import { clamp } from "@/gm/engine/rng";
+import { cbaSeason, offseasonRosterLimit } from "@/gm/engine/season-flow-state";
 
 /** 2024-25 cap, used to scale exception amounts with the year's cap. */
 const CAP_ANCHOR = 140.588;
@@ -223,22 +224,24 @@ export function evaluateSigning(
   salaryM: number,
   years: number
 ): { ok: true; via: GmSignVia } | { ok: false; reason: string } {
-  if (!(years >= 1)) {
+  if (!Number.isInteger(years) || !(years >= 1)) {
     return { ok: false, reason: "Deals run at least 1 year." };
   }
   if (years > 5) {
     return { ok: false, reason: "Deals run at most 5 years." };
   }
-  if (!(salaryM > 0)) {
+  if (!Number.isFinite(salaryM) || !(salaryM > 0)) {
     return { ok: false, reason: "Salary has to be above zero." };
   }
   const team = league.teams.find((row) => row.id === teamId);
   if (!team) return { ok: false, reason: "Team not found." };
-  const size = rosterCount(teamId, league.players);
-  if (size >= league.settings.maxRoster) {
+  if (player.pendingRookieContract || player.rightsKind === "exclusive_draft") return { ok: false, reason: "Resolve exclusive draft rights at the rookie contract desk." };
+  const reservations = (league.faMarket?.reservations ?? []).filter(row => row.teamId === teamId && row.playerId !== player.id && league.players.some(candidate => candidate.id === row.playerId && candidate.teamId == null));
+  const size = rosterCount(teamId, league.players) + new Set(reservations.map(row => row.playerId)).size;
+  if (size >= offseasonRosterLimit(league)) {
     return {
       ok: false,
-      reason: `Roster is full (${league.settings.maxRoster}).`,
+      reason: `Roster is full (${offseasonRosterLimit(league)}).`,
     };
   }
 
@@ -259,8 +262,16 @@ export function evaluateSigning(
 
   const dead = team.deadMoney ?? [];
   const hold = player.rightsTeamId === teamId ? capHoldM(player, dead) : 0;
-  const base = teamPayrollM(teamId, league.players, dead) - hold;
-  const sheet = capStatus(team, league.players, league.settings, league.season);
+  const reservedM = reservations.reduce((sum, row) => {
+    const reservedPlayer = league.players.find(candidate => candidate.id === row.playerId);
+    const releasedHold = reservedPlayer?.rightsTeamId === teamId ? capHoldM(reservedPlayer, dead) : 0;
+    return sum + row.salaryM - releasedHold;
+  }, 0);
+  const base = teamPayrollM(teamId, league.players, dead) - hold + reservedM;
+  const sheet = capStatus(team, league.players, league.settings, cbaSeason(league));
+  const mleRemainingM = Math.max(0, sheet.mleRemainingM - reservations.filter(row => row.via === "mle").reduce((sum, row) => sum + row.salaryM, 0));
+  const taxpayerMleRemainingM = Math.max(0, sheet.taxpayerMleRemainingM - reservations.filter(row => row.via === "taxpayer_mle").reduce((sum, row) => sum + row.salaryM, 0));
+  const baeAvailable = sheet.baeAvailable && !reservations.some(row => row.via === "bae");
   const cap = league.settings.salaryCapM;
   const tax = league.settings.luxuryTaxM;
   const first = league.settings.firstApronM;
@@ -289,20 +300,20 @@ export function evaluateSigning(
   }
   if (base < tax) {
     if (
-      salaryM <= sheet.mleRemainingM + 0.05 &&
+      salaryM <= mleRemainingM + 0.05 &&
       base + salaryM <= first + 0.05
     ) {
       return { ok: true, via: "mle" };
     }
     if (
-      sheet.baeAvailable &&
+      baeAvailable &&
       salaryM <= amounts.biAnnualM + 0.05 &&
       base + salaryM <= tax + 0.05
     ) {
       return { ok: true, via: "bae" };
     }
   } else if (
-    salaryM <= sheet.taxpayerMleRemainingM + 0.05 &&
+    salaryM <= taxpayerMleRemainingM + 0.05 &&
     base + salaryM <= second + 0.05
   ) {
     return { ok: true, via: "taxpayer_mle" };
@@ -333,7 +344,10 @@ export function advanceBirdRights(
 
 export function tickDeadMoney(team: GmTeam): GmTeam {
   const deadMoney = (team.deadMoney ?? [])
-    .map((row) => ({ ...row, yearsLeft: row.yearsLeft - 1 }))
+    .map((row) => {
+      const years = row.years?.slice(1);
+      return { ...row, years, yearsLeft: row.yearsLeft - 1, annualM: years?.[0]?.salaryM ?? row.annualM };
+    })
     .filter((row) => row.yearsLeft > 0);
   return { ...team, deadMoney };
 }

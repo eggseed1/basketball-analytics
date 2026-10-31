@@ -112,6 +112,8 @@ export interface GmContract {
   signedSeason: number;
   /** Which cap path was used when this deal was signed. */
   signedVia?: GmSignVia;
+  originalYears?: number;
+  extension?: { signedSeason: number; startsSeason: number; years: number; annualSalaryM: number };
   /** Published seasons still on the deal. The cap uses the current year's salary. */
   years?: GmContractYear[];
   /** Published note from the contract book. */
@@ -124,6 +126,7 @@ export interface GmDeadMoney {
   label: string;
   annualM: number;
   yearsLeft: number;
+  years?: GmContractYear[];
 }
 
 export interface GmInjury {
@@ -310,6 +313,7 @@ export interface GmPlayer {
   /** Pre-draft scouting dossier (grades, comps, notes). */
   scoutProfile?: ScoutProfile;
   contract: GmContract | null;
+  pendingRookieContract?: GmContract;
   injury: GmInjury | null;
   morale: number; // 0-100
   personality: number; // leadership -50..50
@@ -767,6 +771,7 @@ export type GmFaStage =
   | "options"
   | "qualifying_offers"
   | "rights"
+  | "re_signing"
   | "moratorium"
   | "open"
   | "fill";
@@ -923,7 +928,29 @@ export type GmQoStatus =
   | "declined"
   | "expired";
 
+export type GmOffseasonStage = "review" | "staff" | "lottery" | "scouting" | "draft" | "rookie_signing" | "free_agency" | "progression" | "summer_league" | "training_camp" | "roster_check";
+export type GmCampFocus = "shooting" | "creation" | "defense" | "rebounding" | "conditioning";
+export interface GmSeasonFlow {
+  version: 1;
+  season: number;
+  stage?: GmOffseasonStage;
+  completed: GmOffseasonStage[];
+  contractsRolled?: boolean;
+  progressionApplied?: boolean;
+  staffAged?: boolean;
+  readyForTip?: boolean;
+  returnFromMarket?: "roster_check";
+  progression?: Array<{ playerId: string; name: string; teamId: string | null; age: number; before: number; after: number }>;
+  campAssignments?: Record<string, GmCampFocus>;
+  campResults?: Array<{ playerId: string; name: string; before: number; after: number; focus: GmCampFocus; gains: string[] }>;
+  retiredPlayers?: Array<{ id: string; name: string; age: number; overall: number }>;
+  summerLeague?: { skipped?: boolean; inviteeIds: string[]; games: Array<{ opponentId: string; scored: number; allowed: number; players: Array<{ playerId: string; minutes: number; points: number; rebounds: number; assists: number }> }> };
+}
+
 export interface GmLeagueState {
+  seasonFlow?: GmSeasonFlow;
+  /** Summer's cap year, separate from the completed playing season. */
+  financialSeason?: number;
   tradeTalks?: Array<{ id: string; day: number; teamId: string; reason: string; youSend: GmTradeAsset[]; youReceive: GmTradeAsset[]; counter?: GmTradeAsset[] }>;
   franchise?: GmFranchisePlan;
   history?: GmSeasonArchive[];

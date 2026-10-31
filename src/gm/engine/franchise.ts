@@ -3,6 +3,7 @@ import { sealProspect, staffScoutContext } from "@/gm/engine/scouting";
 import { clamp, createRng } from "@/gm/engine/rng";
 import { ensurePlayerSheet } from "@/gm/engine/attributes";
 import { ensureSimProfile, playerRoles } from "@/gm/engine/player-profile";
+import { normalizeSeasonFlow } from "@/gm/engine/season-flow-state";
 
 export function franchisePlan(league: GmLeagueState): GmFranchisePlan {
   const team = league.teams.find(t => t.id === league.userTeamId)!;
@@ -21,7 +22,7 @@ export function franchisePlan(league: GmLeagueState): GmFranchisePlan {
 /** Additive migration. Existing identities, attributes, rotations and results remain authoritative. */
 export function prepareFranchise(league: GmLeagueState): GmLeagueState {
   const players = league.players.map(p => ensureSimProfile(ensurePlayerSheet(p)));
-  return { ...league, players, simulationBook: 1, franchise: franchisePlan({ ...league, players }), history: league.history ?? [] };
+  return normalizeSeasonFlow({ ...league, players, simulationBook: 1, franchise: franchisePlan({ ...league, players }), history: league.history ?? [] });
 }
 
 export function archiveSeason(league: GmLeagueState): GmLeagueState {

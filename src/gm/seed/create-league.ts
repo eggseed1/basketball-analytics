@@ -212,7 +212,7 @@ export function createGeneratedLeague(options?: {
     settings: { ...DEFAULT_SETTINGS },
     automation: {
       autoDraft: false,
-      autoFreeAgency: true,
+      autoFreeAgency: false,
       autoScout: false,
     },
     teams,

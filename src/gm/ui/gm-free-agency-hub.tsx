@@ -17,6 +17,7 @@ import { pendingOptions } from "@/gm/engine/fa-options";
 import { qualifyingOfferCandidates } from "@/gm/engine/fa-qualifying";
 import { userRfaSheetsBlocking } from "@/gm/engine/fa-rfa";
 import { evaluateSigning, capStatus } from "@/gm/engine/cap";
+import { cbaSeason, offseasonRosterLimit } from "@/gm/engine/season-flow-state";
 import { getCbaRules } from "@/gm/myleague/cba-registry";
 import {
   displayOverall,
@@ -42,7 +43,7 @@ const POSITIONS: GmPosition[] = ["PG", "SG", "SF", "PF", "C"];
 function stageTab(stage: GmFaStage | undefined): HubTab {
   if (stage === "options") return "options";
   if (stage === "qualifying_offers") return "qo";
-  if (stage === "rights") return "rights";
+  if (stage === "rights" || stage === "re_signing") return "rights";
   if (stage === "fill") return "recap";
   return "market";
 }
@@ -51,8 +52,6 @@ export function GmFreeAgencyHub() {
   const league = useGmStore((s) => s.league);
   const advanceFaDay = useGmStore((s) => s.advanceFaDay);
   const runCpuSignings = useGmStore((s) => s.runCpuSignings);
-  const runOffseason = useGmStore((s) => s.runOffseason);
-  const openFreeAgency = useGmStore((s) => s.openFreeAgency);
   const signFreeAgent = useGmStore((s) => s.signFreeAgent);
   const resignOwn = useGmStore((s) => s.resignOwnFreeAgent);
   const renounceRights = useGmStore((s) => s.renounceRights);
@@ -64,7 +63,7 @@ export function GmFreeAgencyHub() {
   const toggleWatch = useGmStore((s) => s.toggleFaWatchlist);
   const lastFaNote = useGmStore((s) => s.lastFaNote);
 
-  const [tab, setTab] = useState<HubTab | null>(null);
+  const [tabChoice, setTabChoice] = useState<{ stage: GmFaStage | undefined; tab: HubTab } | null>(null);
   const [salary, setSalary] = useState(8);
   const [years, setYears] = useState(2);
   const [query, setQuery] = useState("");
@@ -89,13 +88,14 @@ export function GmFreeAgencyHub() {
 
   const open = league.phase === "free_agency";
   const market = league.faMarket;
-  const activeTab = tab ?? (open ? stageTab(market?.stage) : "overview");
-  const rules = getCbaRules(league.season);
+  const activeTab = tabChoice?.stage === market?.stage && tabChoice ? tabChoice.tab : (open ? stageTab(market?.stage) : "overview");
+  const rules = getCbaRules(cbaSeason(league));
   const cap = userCap(league);
   const team = userTeam(league);
-  const sheet = capStatus(team, league.players, league.settings, league.season);
+  const sheet = capStatus(team, league.players, league.settings, cbaSeason(league));
 
   const filtered = agents.filter((p) => {
+    if (market?.stage === "re_signing" && p.rightsTeamId !== league.userTeamId) return false;
     if (pos !== "ALL" && p.position !== pos) return false;
     if (onlyMine && p.rightsTeamId !== league.userTeamId) return false;
     if (onlyWatch && !(market?.watchlist ?? []).includes(p.id)) return false;
@@ -148,14 +148,14 @@ export function GmFreeAgencyHub() {
             Cap room ${cap.capRoomM.toFixed(1)}M · tax{" "}
             {sheet.overTax ? "over" : "under"} · apron{" "}
             {sheet.overFirstApron ? "1st+" : "clear"} · roster {cap.rosterSize}/
-            {league.settings.maxRoster} · holds ${sheet.holdsM.toFixed(1)}M · MLE $
+            {offseasonRosterLimit(league)} summer ({league.settings.maxRoster} at tip) · holds ${sheet.holdsM.toFixed(1)}M · MLE $
             {sheet.mleRemainingM.toFixed(1)}M
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
           {!open ? (
             league.phase === "draft" || league.phase === "offseason" ? (
-              <Button onClick={() => openFreeAgency()}>Open free agency</Button>
+              <Button asChild><Link href="/gm/offseason">Continue at season hub</Link></Button>
             ) : (
               <p className="text-sm text-muted-foreground">
                 Finish the season and draft first.{" "}
@@ -167,18 +167,20 @@ export function GmFreeAgencyHub() {
           ) : (
             <>
               <Button onClick={() => advanceFaDay()} disabled={Boolean(market?.done)}>
-                Advance day
+                Advance window / day
               </Button>
               <Button variant="outline" onClick={() => runCpuSignings()}>
-                Sim to quiet
+                Sim through this window
               </Button>
               {market?.done ? (
-                <Button onClick={() => runOffseason()}>Start next season</Button>
+                <Button asChild><Link href="/gm/offseason">Continue summer</Link></Button>
               ) : null}
             </>
           )}
         </div>
       </header>
+
+      {open ? <p className="text-sm text-muted-foreground">{market?.stage === "re_signing" ? "Your own-player window is open. Other clubs' free agents enter when league-wide negotiations begin." : market?.stage === "moratorium" ? "Negotiations are open. Agreements are verbal and reserve room; contracts finalize after the moratorium." : market?.done ? "The market is quiet. Progression, summer league and camp follow at the season hub." : "Resolve required decisions before advancing. The next window opens only when you continue."} Reserved commitments: ${myAgreements.reduce((sum, row) => sum + row.salaryM, 0).toFixed(1)}M.</p> : null}
 
       {lastFaNote ? (
         <p className="rounded-lg border border-border bg-secondary/40 px-3 py-2 text-[13px]" role="status">
@@ -230,7 +232,7 @@ export function GmFreeAgencyHub() {
               "gm-nav__link",
               activeTab === row.id && "is-active"
             )}
-            onClick={() => setTab(row.id)}
+            onClick={() => setTabChoice({ stage: market?.stage, tab: row.id })}
           >
             {row.label}
           </button>
@@ -266,12 +268,11 @@ export function GmFreeAgencyHub() {
       {activeTab === "options" ? (
         <section className="overflow-hidden rounded-xl border border-border">
           <div className="border-b border-border px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-            Your team options
+            Contract options
           </div>
           {options.length === 0 ? (
             <p className="px-3 py-6 text-sm text-muted-foreground">
-              No team options waiting. Player options are decided by the player —
-              Advance day resolves them.
+              No options waiting. Player options are decided by the player when you advance.
             </p>
           ) : (
             <ul className="divide-y divide-border">
@@ -282,11 +283,12 @@ export function GmFreeAgencyHub() {
                 >
                   <span>
                     {displayPlayerName(row.player)} · {displayOverall(row.player)} OVR · $
-                    {row.salaryM.toFixed(1)}M team option
+                    {row.salaryM.toFixed(1)}M {row.control} option
                   </span>
-                  <span className="flex gap-1">
+                  {row.control === "team" ? <span className="flex gap-1">
                     <Button
                       size="xs"
+                      disabled={!open || market?.stage !== "options"}
                       onClick={() => decideTeamOption(row.player.id, "exercise")}
                     >
                       Exercise
@@ -294,11 +296,12 @@ export function GmFreeAgencyHub() {
                     <Button
                       size="xs"
                       variant="outline"
+                      disabled={!open || market?.stage !== "options"}
                       onClick={() => decideTeamOption(row.player.id, "decline")}
                     >
                       Decline
                     </Button>
-                  </span>
+                  </span> : <span className="text-xs text-muted-foreground">Player decides when you advance</span>}
                 </li>
               ))}
             </ul>
@@ -328,12 +331,13 @@ export function GmFreeAgencyHub() {
                   </span>
                   {row.status === "eligible" || !row.player.qoStatus ? (
                     <span className="flex gap-1">
-                      <Button size="xs" onClick={() => tenderQo(row.player.id)}>
+                      <Button size="xs" disabled={!open || market?.stage !== "qualifying_offers"} onClick={() => tenderQo(row.player.id)}>
                         Tender
                       </Button>
                       <Button
                         size="xs"
                         variant="outline"
+                        disabled={!open || market?.stage !== "qualifying_offers"}
                         onClick={() => declineQo(row.player.id)}
                       >
                         Decline
@@ -381,7 +385,7 @@ export function GmFreeAgencyHub() {
                       <Button
                         size="xs"
                         onClick={() => resignOwn(player.id)}
-                        disabled={!open || Boolean(market?.done)}
+                        disabled={!open || Boolean(market?.done) || !["re_signing", "moratorium", "open", "fill"].includes(market?.stage ?? "") || Boolean(market?.agreements.some(row => row.playerId === player.id))}
                       >
                         Re-sign at ask
                       </Button>
@@ -599,7 +603,7 @@ export function GmFreeAgencyHub() {
                               disabled={
                                 !open ||
                                 Boolean(market?.done) ||
-                                cap.rosterSize >= league.settings.maxRoster ||
+                                cap.rosterSize >= offseasonRosterLimit(league) ||
                                 Boolean(agreed && agreed.teamId !== league.userTeamId)
                               }
                               onClick={() => {

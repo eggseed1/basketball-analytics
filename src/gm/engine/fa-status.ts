@@ -116,6 +116,7 @@ export function faStageOrder(): GmFaStage[] {
     "options",
     "qualifying_offers",
     "rights",
+    "re_signing",
     "moratorium",
     "open",
     "fill",

@@ -11,6 +11,7 @@ import { useMyLeagueStore } from "@/gm/myleague/store";
 import { GmCheckpointBanner } from "@/gm/ui/gm-checkpoint-banner";
 import { GmIncomingOfferBanner } from "@/gm/ui/gm-incoming-offer-banner";
 import { GmScoutingFocusBanner } from "@/gm/ui/gm-scouting-focus-banner";
+import { GmSeasonJourney } from "@/gm/ui/gm-season-journey";
 import { GmNav } from "@/gm/ui/gm-nav";
 import { FRANCHISES } from "@/gm/seed/franchises";
 import { resolveTeamBrand } from "@/lib/nba-brand";
@@ -486,6 +487,7 @@ export function GmShell({
       )}
       {seedError ? <p className="text-sm text-red-300">{seedError}</p> : null}
       <GmNav />
+      <GmSeasonJourney />
       <GmCheckpointBanner />
       <GmScoutingFocusBanner />
       <GmIncomingOfferBanner />

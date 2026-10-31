@@ -88,7 +88,8 @@ export function developPlayers(
   coachByTeam?: Record<string, number>,
   playoffGames?: Record<string, number>,
   developerByTeam?: Record<string, { knack: import("@/gm/seed/staff-knacks").DevKnackId; touch: number } | null>,
-  developmentSpeed = 1
+  developmentSpeed = 1,
+  contractTick = true
 ): GmPlayer[] {
   return players.map((p) => {
     const age = seasonAgeBump ? p.age + 1 : p.age;
@@ -111,7 +112,7 @@ export function developPlayers(
     return {
       ...grown,
       age,
-      contract: p.contract ? advanceContractYear(p.contract) : null,
+      contract: p.contract && contractTick ? advanceContractYear(p.contract) : p.contract,
     };
   });
 }
@@ -359,7 +360,14 @@ export function runDraftPick(
     return {
       ...stamped,
       sheet,
-      contract: { ...p.contract, annualSalaryM: rookieSal },
+      contract: state.seasonFlow ? null : { ...p.contract, annualSalaryM: rookieSal },
+      pendingRookieContract: state.seasonFlow ? {
+        ...p.contract, originalYears: 4, annualSalaryM: Math.round(rookieSal * state.settings.salaryCapM / 140.588 * 100) / 100,
+        signedSeason: state.season + 1,
+        years: Array.from({ length: 4 }, (_, index) => ({ season: state.season + 1 + index,
+          salaryM: Math.round(rookieSal * state.settings.salaryCapM / 140.588 * 100) / 100 })),
+      } : undefined,
+      serviceYears: 0,
       draftPick: pickNum,
       draftYear: state.season,
     };

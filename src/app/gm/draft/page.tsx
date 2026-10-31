@@ -38,7 +38,6 @@ function DraftBody() {
   const t = useTranslations("GmUi");
   const league = useGmStore((s) => s.league);
   const draftPlayer = useGmStore((s) => s.draftPlayer);
-  const runOffseason = useGmStore((s) => s.runOffseason);
   const resetDraftBoard = useGmStore((s) => s.resetDraftBoard);
   const runCombine = useGmStore((s) => s.runCombine);
   const scoutLook = useGmStore((s) => s.scoutLook);
@@ -144,9 +143,7 @@ function DraftBody() {
           ) : null}
         </div>
         {league.phase === "offseason" ? (
-          <Button variant="outline" onClick={() => runOffseason()}>
-            Start next season
-          </Button>
+          <Button variant="outline" asChild><Link href="/gm/offseason">Continue at season hub</Link></Button>
         ) : null}
       </div>
 
