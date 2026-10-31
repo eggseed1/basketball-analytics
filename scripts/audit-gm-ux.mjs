@@ -8,7 +8,8 @@ mkdirSync(dir, { recursive: true });
 const fixture = spawnSync(process.execPath, ["--import", "tsx", "--require", "./scripts/lib/stub-server-only.cjs", "scripts/fixture-gm-ux.ts", dir], { encoding: "utf8" });
 assert.equal(fixture.status, 0, fixture.stderr);
 const source = JSON.parse(readFileSync(`${dir}/regular.json`, "utf8")).league;
-const report = { revision: process.env.GITHUB_SHA ?? "local", verify, source: "Bundled 2025-26 NBA rosters", defaults: source.automation, screens: [], observations: [] };
+const manifest = JSON.parse(readFileSync(`${dir}/manifest.json`, "utf8"));
+const report = { revision: process.env.GITHUB_SHA ?? "local", verify, source: "Bundled 2025-26 NBA rosters", defaults: source.automation, screens: [], observations: [], tasks: [] };
 const log = createWriteStream(`${dir}/next.log`);
 const server = spawn("npm", ["run", "dev", "--", "--hostname", "127.0.0.1"], { detached: true, stdio: ["ignore", "pipe", "pipe"], env: { ...process.env, PORT: "3108", NEXT_TELEMETRY_DISABLED: "1" } });
 server.stdout.pipe(log); server.stderr.pipe(log);
@@ -57,6 +58,18 @@ try {
     writeFileSync(`${dir}/${name}.html`, await page.content());
     return snapshot;
   }
+  async function exportedLeague() {
+    const previous = page.url();
+    await page.goto("http://127.0.0.1:3108/gm/franchise", { waitUntil: "domcontentloaded", timeout: 120000 });
+    await page.getByRole("button", { name: "Settings and saves", exact: true }).click();
+    const pending = page.waitForEvent("download");
+    await page.getByRole("button", { name: "Export this franchise", exact: true }).click();
+    const downloaded = await pending;
+    const league = JSON.parse(readFileSync(await downloaded.path(), "utf8")).league;
+    await page.goto(previous, { waitUntil: "domcontentloaded", timeout: 120000 });
+    await page.locator("main[data-gm]").waitFor();
+    return league;
+  }
   await load("regular", "/gm");
   await page.getByRole("link", { name: "Franchise desk", exact: true }).waitFor();
   const regular = await capture("mobile-opening-night");
@@ -66,16 +79,155 @@ try {
     assert.ok(regular.navigation.find(row => row.text === "Roster")?.inView, "Roster must be visible on mobile without horizontal searching");
     assert.ok(regular.navigation.find(row => row.text === "Coaching")?.inView, "Coaching must be visible on mobile");
     assert.ok(!regular.buttons.some(row => /Load 2026|Load current/.test(row.text)), "A historic franchise should not be prompted to replace its progress");
+    const more = page.getByLabel("All desks", { exact: true });
+    await more.focus();
+    await page.keyboard.press("Enter");
+    await page.getByRole("link", { name: "Contracts and extensions", exact: true }).waitFor();
+    await capture("mobile-all-desks");
+    await page.keyboard.press("Escape");
+    assert.equal(await page.locator(".gm-desk-nav details").getAttribute("open"), null);
+    assert.equal(await more.evaluate(node => node === document.activeElement), true);
+    await more.click();
+    await page.getByRole("link", { name: "Contracts and extensions", exact: true }).click();
+    await page.getByRole("heading", { name: "Contracts and extensions", exact: true }).waitFor();
+    assert.equal(await page.locator(".gm-desk-nav details").getAttribute("open"), null, "navigation closes the menu");
+    report.tasks.push("Mobile desks: visible roster/coaching, keyboard menu, Escape, navigation closure");
+
+    // The hub is safe to leave, and a new franchise creates another resumable slot.
+    await page.getByRole("button", { name: "My teams and saved franchises", exact: true }).click();
+    await page.getByRole("heading", { name: "My teams", exact: true }).waitFor();
+    const slots = await page.getByRole("button", { name: "Continue", exact: true }).count();
+    await page.getByRole("button", { name: "Continue", exact: true }).first().click();
+    assert.equal((await exportedLeague()).season, source.season, "leaving and resuming preserves the historic season");
+    await page.getByRole("button", { name: "My teams and saved franchises", exact: true }).click();
+    await page.getByRole("heading", { name: "My teams", exact: true }).waitFor();
+    await page.route("**/api/gm/league", route => route.fulfill({ json: { league: { ...source, seed: source.seed + 1, day: 1 } } }));
+    await page.getByRole("button", { name: "BOS", exact: true }).click();
+    await page.getByRole("button", { name: "My teams and saved franchises", exact: true }).waitFor();
+    assert.equal((await exportedLeague()).day, 1);
+    await page.getByRole("button", { name: "My teams and saved franchises", exact: true }).click();
+    await page.getByRole("heading", { name: "My teams", exact: true }).waitFor();
+    assert.equal(await page.getByRole("button", { name: "Continue", exact: true }).count(), slots + 1);
+    await page.getByRole("button", { name: "Continue", exact: true }).nth(1).click();
+    assert.equal((await exportedLeague()).day, source.day, "the original save was not overwritten");
+    await page.unroute("**/api/gm/league");
+    report.tasks.push("Save slots: leave, resume, start another franchise, resume the unchanged original");
   }
   for (const name of ["roster-under", "roster-over", "rookies", "camp"]) {
     await load(name);
     await page.getByTestId("season-hub").waitFor();
     const snap = await capture("mobile-" + name);
     report.observations.push({ task: name, disabledActions: snap.buttons.filter(row => row.disabled).map(row => row.text) });
+    if (!verify) continue;
+    if (name === "roster-under") {
+      await page.getByRole("button", { name: "Find free agents", exact: true }).click();
+      await page.waitForURL("**/gm/free-agency");
+      await page.getByRole("heading", { name: "Free agency", exact: true }).waitFor();
+      const opened = await exportedLeague();
+      assert.equal(opened.faMarket.stage, "fill");
+      assert.equal(opened.faMarket.done, false);
+      assert.equal(opened.seasonFlow.returnFromMarket, "roster_check");
+      report.tasks.push("Under roster: primary action opens late fill and routes directly to free agents");
+    }
+    if (name === "roster-over") {
+      const before = JSON.parse(readFileSync(`${dir}/roster-over.json`, "utf8")).league;
+      await page.getByRole("link", { name: "Make roster cuts", exact: true }).click();
+      await page.waitForURL("**/gm/roster");
+      await page.getByRole("button", { name: "Waive", exact: true }).click();
+      const dialog = page.getByRole("dialog");
+      await dialog.waitFor();
+      const title = await dialog.getByRole("heading").innerText();
+      const target = before.players.find(player => title === `Waive ${player.name}?`);
+      assert.ok(target);
+      assert.match(await dialog.innerText(), /remains on your salary sheet/);
+      await capture("mobile-waiver-confirmation");
+      await page.keyboard.press("Escape");
+      assert.equal((await exportedLeague()).players.find(player => player.id === target.id).teamId, "bos");
+      await page.getByRole("button", { name: "Waive", exact: true }).click();
+      await dialog.getByRole("button", { name: "Cancel", exact: true }).click();
+      await page.getByRole("button", { name: "Waive", exact: true }).click();
+      await dialog.getByRole("button", { name: "Waive player", exact: true }).click();
+      const after = await exportedLeague();
+      assert.equal(after.players.find(player => player.id === target.id).teamId, null);
+      assert.equal(after.players.filter(player => player.teamId === "bos").length, before.players.filter(player => player.teamId === "bos").length - 1);
+      assert.ok(after.teams.find(team => team.id === "bos").deadMoney.some(row => row.playerId === target.id));
+      report.tasks.push("Over roster: route to cuts, show retained salary, Escape/Cancel preserve roster, confirm cuts one player");
+    }
+    if (name === "rookies") {
+      await page.getByRole("link", { name: "Review rookie contracts", exact: true }).click();
+      assert.equal(await page.evaluate(() => location.hash), "#rookie-contracts");
+      const pendingBefore = await page.getByRole("button", { name: "Sign rookie", exact: true }).count();
+      await page.getByRole("button", { name: "Release rights", exact: true }).first().click();
+      await page.getByRole("dialog").getByRole("button", { name: "Cancel", exact: true }).click();
+      assert.equal(await page.getByRole("button", { name: "Sign rookie", exact: true }).count(), pendingBefore);
+      await page.getByRole("button", { name: "Release rights", exact: true }).first().click();
+      await page.getByRole("dialog").getByRole("button", { name: "Release rookie rights", exact: true }).click();
+      while (await page.getByRole("button", { name: "Sign rookie", exact: true }).count()) {
+        await page.getByRole("button", { name: "Sign rookie", exact: true }).first().click();
+      }
+      await page.getByRole("button", { name: "Continue to contracts and free agency", exact: true }).waitFor();
+      const resolved = await exportedLeague();
+      assert.equal(resolved.players.some(player => player.teamId === "bos" && player.pendingRookieContract), false);
+      assert.equal(resolved.players.find(player => player.id === manifest.rookieId).teamId, null);
+      report.tasks.push("Rookie contracts: primary anchor reaches decisions, canceled release keeps rights, release/sign resolves the step");
+    }
+    if (name === "camp") {
+      await page.getByRole("button", { name: "Continue without individual camps", exact: true }).waitFor();
+      const select = page.locator('select[id^="camp-"]:enabled').first();
+      const manualId = (await select.getAttribute("id")).slice(5);
+      await select.selectOption("conditioning");
+      await page.getByRole("button", { name: "Suggest remaining camps", exact: true }).click();
+      const planned = await exportedLeague();
+      assert.equal(planned.seasonFlow.campAssignments[manualId], "conditioning");
+      const count = Object.keys(planned.seasonFlow.campAssignments).length;
+      assert.ok(count >= 2 && count <= 4);
+      await capture("mobile-camp-preview");
+      await page.getByRole("button", { name: "Run training camp", exact: true }).click();
+      await page.getByRole("heading", { name: "Camp results", exact: true }).waitFor();
+      const completed = await exportedLeague();
+      assert.equal(completed.seasonFlow.campResults.filter(row => completed.players.some(player => player.id === row.playerId && player.teamId === "bos")).length, count);
+      await page.reload();
+      await page.getByRole("button", { name: "Check opening-night roster", exact: true }).waitFor();
+      assert.equal(await page.getByRole("button", { name: "Run training camp", exact: true }).count(), 0);
+      report.tasks.push("Camp: explicit zero-assignment action, suggestions retain manual choice, previews, results persist without repeat training");
+    }
   }
   await load("own-market", "/gm/free-agency");
   await page.getByRole("heading", { name: "Free agency", exact: true }).waitFor();
   await capture("mobile-own-negotiations");
+  if (verify) {
+    await page.getByRole("button", { name: `Review offer for ${manifest.ownPlayerName}`, exact: true }).click();
+    await page.getByRole("region", { name: `Offer terms for ${manifest.ownPlayerName}`, exact: true }).waitFor();
+    await page.getByText(/M total over \d+ season/).waitFor();
+    const before = await exportedLeague();
+    assert.equal(before.players.find(player => player.id === manifest.ownPlayerId).teamId, null);
+    assert.equal(before.faMarket.agreements.length, 0, "reviewing terms must not submit an offer");
+    // Reloading closes the local draft; reopen the same named offer before submission.
+    await page.getByRole("button", { name: `Review offer for ${manifest.ownPlayerName}`, exact: true }).click();
+    await capture("mobile-offer-terms");
+    await page.getByRole("button", { name: "Request verbal agreement", exact: true }).click();
+    await page.getByRole("status").filter({ hasText: "Verbal agreement with" }).waitFor();
+    const agreed = await exportedLeague();
+    assert.equal(agreed.players.find(player => player.id === manifest.ownPlayerId).teamId, null);
+    assert.equal(agreed.faMarket.agreements.some(row => row.playerId === manifest.ownPlayerId), true);
+    assert.ok(agreed.faMarket.reservations.length > 0);
+    report.tasks.push("Own-player negotiation: named terms and total precede submission; verbal agreement reserves space without signing");
+    await load("own-market", "/gm/free-agency");
+    await page.getByRole("button", { name: "Renounce", exact: true }).first().click();
+    const dialog = page.getByRole("dialog");
+    assert.match(await dialog.innerText(), /lose his Bird signing path/);
+    await dialog.getByRole("button", { name: "Cancel", exact: true }).click();
+    assert.equal((await exportedLeague()).players.find(player => player.id === manifest.ownPlayerId).rightsTeamId, "bos");
+    await page.emulateMedia({ colorScheme: "dark", reducedMotion: "reduce" });
+    await page.evaluate(() => document.documentElement.classList.add("dark"));
+    await page.getByRole("button", { name: "Renounce", exact: true }).first().click();
+    await capture("mobile-renounce-dark");
+    await dialog.getByRole("button", { name: "Renounce rights", exact: true }).click();
+    assert.equal((await exportedLeague()).players.find(player => player.id === manifest.ownPlayerId).rightsTeamId, null);
+    report.tasks.push("Rights: cap hold and lost signing path explained, cancel preserves rights, confirm renounces, dark-mode dialog");
+    await page.emulateMedia({ colorScheme: "light", reducedMotion: "reduce" });
+    await page.evaluate(() => document.documentElement.classList.remove("dark"));
+  }
   await page.setViewportSize({ width: 1440, height: 1000 });
   await load("roster-under");
   await page.getByTestId("season-hub").waitFor();
@@ -85,7 +237,7 @@ try {
   await capture("desktop-camp");
   for (const screen of report.screens) assert.ok(screen.contentWidth <= screen.viewportWidth + 2, screen.name + " overflows the page");
   assert.deepEqual(errors, [], "Uncaught errors during UX walkthrough");
-  console.log("UX walkthrough completed across " + report.screens.length + " NBA franchise screens.");
+  console.log("UX walkthrough completed across " + report.screens.length + " NBA franchise screens and " + report.tasks.length + " verified task groups.");
 } catch (error) {
   report.error = error.stack ?? String(error);
   if (page) await page.screenshot({ path: `${dir}/failure.png`, fullPage: true });

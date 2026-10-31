@@ -546,9 +546,10 @@ export function GmSeasonCalendar({
 
       <p className="text-[11px] text-muted-foreground">
         {userGames.filter((game) => game.cup !== "championship").length === 80
-          ? "Published NBA schedule. Cup nights are group play. The knockout and the last two games are added after Nov. 27."
+          ? "80 games scheduled. Cup group games count toward your record. The knockout adds the remaining regular-season games."
           : `${userGames.filter((game) => game.cup !== "championship").length} regular-season games. The NBA Cup championship is not one of them.`}
       </p>
     </section>
   );
 }
+

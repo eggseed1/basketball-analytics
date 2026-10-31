@@ -38,18 +38,24 @@ export function decideRookieContract(league: GmLeagueState, playerId: string, si
   return result({ ...league, players, freeAgents: sign ? league.freeAgents.filter(id => id !== playerId) : [...new Set([...league.freeAgents, playerId])], teams: league.teams.map(team => team.id === league.userTeamId ? autoSetLineup(team, players) : team) }, sign ? player.name + " signed at rookie scale." : "Released " + player.name + "'s draft rights.");
 }
 
-export function openingRosterIssues(league: GmLeagueState): string[] {
+export type OpeningRosterIssue = { kind: "minimum" | "maximum" | "healthy" | "rookies" | "market" | "matches" | "agreements"; message: string };
+
+export function openingRosterChecks(league: GmLeagueState): OpeningRosterIssue[] {
   const size = rosterCount(league.userTeamId, league.players);
   const healthy = league.players.filter(player => player.teamId === league.userTeamId && player.contract && !player.injury).length;
-  const issues: string[] = [];
-  if (size < league.settings.minRoster) issues.push("Sign " + (league.settings.minRoster - size) + " more standard player(s).");
-  if (size > league.settings.maxRoster) issues.push("Release " + (size - league.settings.maxRoster) + " player(s) to reach " + league.settings.maxRoster + ".");
-  if (healthy < 5) issues.push("At least five healthy contracted players are needed to tip off.");
-  if (pendingRookies(league).length) issues.push("Resolve unsigned rookie contracts.");
-  if (!league.faMarket?.done) issues.push("Finish the free-agency window.");
-  if (league.faMarket?.offerSheets?.some(sheet => sheet.status === "pending_match")) issues.push("Resolve pending restricted free-agent matches.");
-  if (league.faMarket?.agreements.length) issues.push("Finalize remaining verbal agreements.");
+  const issues: OpeningRosterIssue[] = [];
+  if (size < league.settings.minRoster) issues.push({ kind: "minimum", message: "Sign " + (league.settings.minRoster - size) + " more standard player(s)." });
+  if (size > league.settings.maxRoster) issues.push({ kind: "maximum", message: "Release " + (size - league.settings.maxRoster) + " player(s) to reach " + league.settings.maxRoster + "." });
+  if (healthy < 5) issues.push({ kind: "healthy", message: "At least five healthy contracted players are needed to tip off." });
+  if (pendingRookies(league).length) issues.push({ kind: "rookies", message: "Resolve unsigned rookie contracts." });
+  if (!league.faMarket?.done) issues.push({ kind: "market", message: "Finish the free-agency window." });
+  if (league.faMarket?.offerSheets?.some(sheet => sheet.status === "pending_match")) issues.push({ kind: "matches", message: "Resolve pending restricted free-agent matches." });
+  if (league.faMarket?.agreements.length) issues.push({ kind: "agreements", message: "Finalize remaining verbal agreements." });
   return issues;
+}
+
+export function openingRosterIssues(league: GmLeagueState): string[] {
+  return openingRosterChecks(league).map(issue => issue.message);
 }
 
 export function reopenRosterFill(league: GmLeagueState): JourneyResult {

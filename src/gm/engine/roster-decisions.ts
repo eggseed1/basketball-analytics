@@ -9,7 +9,7 @@ export function releasePlayer(league: GmLeagueState, playerId: string, teamId = 
   const teams = league.teams.map(team => {
     if (team.id !== teamId) return team;
     const contract = player.contract;
-    const deadMoney = contract ? [...(team.deadMoney ?? []), { id: "waive-" + league.season + "-" + player.id, playerId, label: player.name, annualM: contract.annualSalaryM, yearsLeft: Math.max(1, contract.yearsRemaining), years: contract.years }] : team.deadMoney;
+    const deadMoney = contract && contract.yearsRemaining > 0 ? [...(team.deadMoney ?? []), { id: "waive-" + league.season + "-" + player.id, playerId, label: player.name, annualM: contract.annualSalaryM, yearsLeft: Math.max(1, contract.yearsRemaining), years: contract.years }] : team.deadMoney;
     return autoSetLineup({ ...team, deadMoney }, players);
   });
   return { ...league, players, teams, freeAgents: [...new Set([...league.freeAgents, player.id])] };

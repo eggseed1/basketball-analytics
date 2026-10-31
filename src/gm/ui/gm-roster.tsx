@@ -6,6 +6,8 @@ import Link from "next/link";
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { Button } from "@/components/ui/button";
+import { GmConfirmAction } from "@/gm/ui/gm-confirm-action";
+import { remainingSalaryM } from "@/gm/lib/contract-terms";
 import {
   ATTRIBUTE_GROUPS,
   ATTRIBUTE_LABEL,
@@ -298,10 +300,7 @@ function SelectedHero({
   const archetype = archetypeLabel(detectArchetype(player.ratings, player.position));
   const scoutRead = scoutPotentialView(player, scout);
   const totalYears = player.contract?.yearsRemaining ?? 0;
-  const totalMoney =
-    player.contract != null
-      ? player.contract.annualSalaryM * player.contract.yearsRemaining
-      : null;
+  const totalMoney = remainingSalaryM(player.contract);
   const ovrDelta =
     sheet.priorOverall != null ? Math.round(sheet.overall - sheet.priorOverall) : null;
 
@@ -396,9 +395,7 @@ function SelectedHero({
               : "Free agent"
           }
         />
-        <Button size="xs" variant="outline" onClick={onWaive}>
-          Waive
-        </Button>
+        <GmConfirmAction label="Waive" title={"Waive " + player.name + "?"} confirmLabel="Waive player" onConfirm={onWaive} disabled={Boolean(player.pendingRookieContract)}><p>He will leave your roster and become available to other teams.</p><p>${formatNumber(totalMoney, 2)}M remains on your salary sheet over {totalYears} season(s). Waiving him frees a roster spot, not that salary.</p></GmConfirmAction>
       </div>
     </section>
   );
@@ -701,3 +698,4 @@ function StatsTable({
     </table>
   );
 }
+

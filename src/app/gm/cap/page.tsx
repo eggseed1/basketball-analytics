@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 
+import { GmConfirmAction } from "@/gm/ui/gm-confirm-action";
 import { GmBooks } from "@/gm/ui/gm-books";
 import { GmShell } from "@/gm/ui/gm-shell";
 import { useGmStore } from "@/gm/state/gm-store";
@@ -117,13 +118,7 @@ function CapBody() {
                     amount: formatNumber(player.lastSalaryM ?? 0, 1),
                   })}
                 </span>
-                <button
-                  type="button"
-                  className="text-[13px] font-semibold underline-offset-4 hover:underline"
-                  onClick={() => renounceRights(player.id)}
-                >
-                  {t("capRenounce")}
-                </button>
+                <GmConfirmAction label={t("capRenounce")} title={"Renounce " + player.name + "'s rights?"} confirmLabel="Renounce rights" onConfirm={() => renounceRights(player.id)}><p>Clear the ${formatNumber(player.lastSalaryM ?? 0, 2)}M cap hold. You lose his Bird signing path and any restricted matching rights.</p><p>You can still offer a legal deal with cap room or an available exception.</p></GmConfirmAction>
               </li>
             ))}
           </ul>
@@ -183,3 +178,4 @@ function Stat({ label, value }: { label: string; value: string }) {
     </div>
   );
 }
+

@@ -1,4 +1,4 @@
-import type { GmAttributes, GmCampFocus, GmLeagueState, GmSeasonFlow } from "@/gm/types";
+import type { GmAttributes, GmCampFocus, GmLeagueState, GmSeasonFlow, GmPlayer } from "@/gm/types";
 import { ensurePlayerSheet, overallFromAttributes } from "@/gm/engine/attributes";
 import { autoSetLineup, overallOf } from "@/gm/engine/lineup";
 import { developPlayers, playoffGamesByPlayer } from "@/gm/engine/progression";
@@ -45,6 +45,33 @@ export function assignCamp(league: GmLeagueState, playerId: string, focus: GmCam
   return { ok: true, reason: focus ? player.name + " assigned to " + focus + "." : "Camp assignment cleared.", state: { ...league, seasonFlow: { ...flow, campAssignments: assignments } } };
 }
 
+export function campSkillChanges(league: GmLeagueState, player: GmPlayer, focus: GmCampFocus) {
+  const camp = CAMP_FOCUSES.find(row => row.id === focus);
+  const attributes = ensurePlayerSheet(player).sheet!.attributes;
+  const trainer = league.teams.find(team => team.id === player.teamId)?.staff.trainerLevel ?? 1;
+  const gain = player.age <= 25 && trainer >= 3 ? 2 : 1;
+  return (camp?.keys ?? []).map(key => ({ key, before: attributes[key], after: clamp(attributes[key] + gain, 25, 99) }));
+}
+
+export function suggestCampAssignments(league: GmLeagueState): { state: GmLeagueState; ok: boolean; reason: string } {
+  const flow = flowOf(league);
+  if (flow.stage !== "training_camp" || flow.campResults) return { state: league, ok: false, reason: "Focused camps are not open." };
+  const eligible = league.players.filter(player => player.teamId === league.userTeamId && player.contract && !player.injury)
+    .sort((a,b) => a.age - b.age || overallOf(b) - overallOf(a));
+  const assignments = Object.fromEntries(Object.entries(flow.campAssignments ?? {}).filter(([id]) => eligible.some(player => player.id === id)));
+  let next = { ...league, seasonFlow: { ...flow, campAssignments: assignments } };
+  let added = 0;
+  for (const player of eligible) {
+    if (Object.keys(next.seasonFlow.campAssignments).length >= campSlots(league)) break;
+    if (next.seasonFlow.campAssignments[player.id]) continue;
+    const focus = player.developmentFocus && player.developmentFocus !== "balanced" ? player.developmentFocus :
+      player.position === "PF" || player.position === "C" ? "defense" : "shooting";
+    const result = assignCamp(next, player.id, focus);
+    if (result.ok) { next = { ...result.state, seasonFlow: { ...result.state.seasonFlow!, campAssignments: result.state.seasonFlow!.campAssignments! } }; added++; }
+  }
+  return { state: next, ok: true, reason: added ? "Added " + added + " camp suggestion(s). Your existing choices were kept. Review the skills before running camp." : "Your camp slots are already assigned, or no healthy players are available." };
+}
+
 export function applyTrainingCamp(league: GmLeagueState): GmLeagueState {
   const flow = flowOf(league);
   if (flow.campResults) return league;
@@ -68,13 +95,10 @@ export function applyTrainingCamp(league: GmLeagueState): GmLeagueState {
     if (!camp) return raw;
     const player = ensurePlayerSheet(raw), sheet = player.sheet!;
     const attributes = { ...sheet.attributes };
-    const trainer = league.teams.find(team => team.id === player.teamId)?.staff.trainerLevel ?? 1;
-    const gain = player.age <= 25 && trainer >= 3 ? 2 : 1;
     const gains: string[] = [];
-    for (const key of camp.keys) {
-      const next = clamp(attributes[key] + gain, 25, 99);
-      if (next > attributes[key]) gains.push(key + " +" + (next - attributes[key]));
-      attributes[key] = next;
+    for (const change of campSkillChanges(league, player, camp.id)) {
+      if (change.after > change.before) gains.push(change.key + " +" + (change.after - change.before));
+      attributes[change.key] = change.after;
     }
     const extras = { impact: player.ratings.impact, drbl100: player.drbl100 };
     const offset = sheet.overallOffset ?? sheet.overall - overallFromAttributes(player.position, sheet.attributes, extras);

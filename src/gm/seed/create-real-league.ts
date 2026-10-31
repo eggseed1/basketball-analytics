@@ -562,7 +562,7 @@ export function buildLeagueFromPlayerSeasons(
     settings,
     automation: {
       autoDraft: false,
-      autoFreeAgency: true,
+      autoFreeAgency: false,
       autoScout: false,
     },
     teams,

@@ -63,7 +63,8 @@ try {
     await page.getByText("Franchise opened in a new save slot.", { exact: true }).waitFor({ state: "visible", timeout: 90000 });
   }
   await importJourney("regular");
-  await page.getByRole("link", { name: "Contracts", exact: true }).click();
+  await page.getByLabel("All desks", { exact: true }).click();
+  await page.getByRole("link", { name: "Contracts and extensions", exact: true }).click();
   await page.getByRole("heading", { name: "Contracts and extensions", exact: true }).waitFor();
   await page.getByLabel(`Extension salary for ${manifest.playerName}`, { exact: true }).fill(String(manifest.ask));
   const row = page.getByRole("listitem").filter({ has: page.getByLabel(`Extension salary for ${manifest.playerName}`, { exact: true }) });

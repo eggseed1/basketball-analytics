@@ -104,7 +104,7 @@ import {
 import { capStatus } from "@/gm/engine/cap";
 import { cbaSeason } from "@/gm/engine/season-flow-state";
 import { advanceSeasonJourney as advanceJourneyEngine, beginOffseason, decideRookieContract as decideRookieEngine, reopenRosterFill } from "@/gm/engine/season-flow";
-import { assignCamp, runSummerLeague } from "@/gm/engine/season-development";
+import { assignCamp, runSummerLeague, suggestCampAssignments } from "@/gm/engine/season-development";
 import { offerExtension } from "@/gm/engine/extensions";
 import { releasePlayer } from "@/gm/engine/roster-decisions";
 import { asAssociate, hireQuote, withAssociate, withHeadCoach } from "@/gm/engine/staff";
@@ -226,6 +226,7 @@ interface GmStore {
   decideRookieContract: (playerId: string, sign: boolean) => void;
   setCampAssignment: (playerId: string, focus: import("@/gm/types").GmCampFocus | null) => void;
   playSummerLeague: (skip?: boolean) => void;
+  suggestCampPlan: () => void;
   openRosterFill: () => void;
   extendPlayer: (playerId: string, salaryM: number, years: number) => { ok: boolean; reason: string };
   /** IndexedDB franchise slots (newest first). */
@@ -454,6 +455,12 @@ export const useGmStore = create<GmStore>()(
         set({ league: withUpdate(result.state), lastJourneyNote: result.reason });
         syncMyLeague(result.state);
       },
+      suggestCampPlan: () => {
+        const league = get().league; if (!league) return;
+        const result = suggestCampAssignments(league);
+        set({ league: withUpdate(result.state), lastJourneyNote: result.reason });
+        syncMyLeague(result.state);
+      },
       playSummerLeague: (skip = false) => {
         const league = get().league; if (!league) return;
         const next = withUpdate(runSummerLeague(league, skip));
@@ -531,7 +538,7 @@ export const useGmStore = create<GmStore>()(
       },
 
       newLeague: async (userTeamId = "bos", season, opts) => {
-        const replace = opts?.replace ?? Boolean(get().league);
+        const replace = opts?.replace ?? false;
         set({ seeding: true, seedError: null });
         if (!replace) {
           const seasonEnd = season
@@ -555,7 +562,7 @@ export const useGmStore = create<GmStore>()(
             throw new Error(payload.error ?? `Seed failed (${res.status})`);
           }
           payload.league = prepareFranchise(payload.league);
-          set({ league: payload.league, seeding: false, seedError: null });
+          set({ league: payload.league, lastJourneyNote: null, lastFaNote: null, seeding: false, seedError: null });
           useMyLeagueStore.getState().bootstrap(
             payload.league,
             {
@@ -581,13 +588,14 @@ export const useGmStore = create<GmStore>()(
       },
 
       newGeneratedLeague: (userTeamId = "bos", opts) => {
-        const replace = opts?.replace ?? Boolean(get().league);
+        const replace = opts?.replace ?? false;
+        set({ seeding: true, seedError: null });
         void (async () => {
           if (!replace) {
             await allocateNewSave({ userTeamId });
           }
           const league = prepareFranchise(createGeneratedLeague({ userTeamId }));
-          set({ league, seedError: null });
+          set({ league, lastJourneyNote: null, lastFaNote: null, seeding: false, seedError: null });
           useMyLeagueStore.getState().bootstrap(league);
           await get().refreshSaves();
         })();
@@ -598,7 +606,7 @@ export const useGmStore = create<GmStore>()(
         set({ simRun: null });
         await parkActiveSave();
         useMyLeagueStore.getState().reset();
-        set({ league: null, seedError: null });
+        set({ league: null, lastJourneyNote: null, lastFaNote: null, seedError: null });
         await get().refreshSaves();
       },
 
@@ -615,7 +623,7 @@ export const useGmStore = create<GmStore>()(
           const loaded = parsed.state?.league;
           if (!loaded) throw new Error("Save has no league");
           const league = normalizeLoadedLeague(loaded);
-          set({ league, seeding: false });
+          set({ league, lastJourneyNote: null, lastFaNote: null, seeding: false });
 
           const rawB = await readLayerBRaw(id);
           if (rawB) {
@@ -2043,7 +2051,7 @@ export const useGmStore = create<GmStore>()(
         if (!league || league.phase !== "free_agency") return;
         if (isTeamBuildingPaused(league)) return;
         const next = withUpdate(runCpuFreeAgency(league, { includeUser: false }));
-        set({ league: next });
+        set({ league: next, lastFaNote: null });
         syncMyLeague(next);
       },
 
