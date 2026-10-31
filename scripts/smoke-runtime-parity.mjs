@@ -1,9 +1,13 @@
 import { spawn } from "node:child_process";
 import { setTimeout as delay } from "node:timers/promises";
+import { mkdirSync, writeFileSync } from "node:fs";
+import { requireHealthyPage } from "./lib/runtime-smoke-html.mjs";
 
 const host = "127.0.0.1";
 const port = 3221;
 const origin = `http://${host}:${port}`;
+const diagnosticsDir = "/tmp/runtime-parity";
+mkdirSync(diagnosticsDir, { recursive: true });
 
 const server = spawn(
   process.execPath,
@@ -21,7 +25,9 @@ async function get(route, timeoutMs = 40_000) {
     signal: AbortSignal.timeout(timeoutMs),
     headers: { Accept: "text/html", "User-Agent": "drbl-runtime-parity/1.0" },
   });
-  return { status: response.status, body: await response.text() };
+  const body = await response.text();
+  writeFileSync(`${diagnosticsDir}/${route.replace(/[^a-z0-9.-]/gi, "_")}.html`, body);
+  return { status: response.status, body };
 }
 
 async function waitForServer() {
@@ -37,10 +43,7 @@ async function waitForServer() {
 }
 
 function requireHealthy(route, result) {
-  if (result.status !== 200) throw new Error(`${route} returned ${result.status}`);
-  for (const marker of ["Internal Server Error", "Application interrupted", "This page could not finish loading"]) {
-    if (result.body.includes(marker)) throw new Error(`${route} rendered ${marker}`);
-  }
+  return requireHealthyPage(route, result);
 }
 
 async function main() {
@@ -48,33 +51,42 @@ async function main() {
 
   const teamRoute = "/teams/25?season=2025-26";
   const team = await get(teamRoute);
-  requireHealthy(teamRoute, team);
-  if (!team.body.includes("Oklahoma City Thunder")) {
+  const teamText = requireHealthy(teamRoute, team);
+  if (!teamText.includes("Oklahoma City Thunder")) {
     throw new Error("team identity did not render");
   }
-  if (team.body.includes("Season board unavailable for 2025-26")) {
+  if (teamText.includes("Season board unavailable for 2025-26")) {
     throw new Error("team season board is still unavailable in Vercel runtime");
   }
-  for (const marker of ["Strengths and weaknesses", "Offense profile", "Defense profile", "Four factors"]) {
-    if (!team.body.includes(marker)) {
+  for (const marker of ["Strengths and weaknesses", "Team profile", "Where they stand", "Against the league"]) {
+    if (!teamText.includes(marker)) {
       throw new Error(`team analytical overview is missing: ${marker}`);
+    }
+  }
+
+  const offenseRoute = `${teamRoute}&tab=offense`;
+  const offense = await get(offenseRoute);
+  const offenseText = requireHealthy(offenseRoute, offense);
+  for (const marker of ["Team offense ranks", "Team defense ranks", "Roster scoring board"]) {
+    if (!offenseText.includes(marker)) {
+      throw new Error(`team offense/defense tab is missing: ${marker}`);
     }
   }
 
   const gameRoute = "/games/401811018?season=2025-26";
   const game = await get(gameRoute);
-  requireHealthy(gameRoute, game);
+  const gameText = requireHealthy(gameRoute, game);
   for (const marker of [
     "Box score, Game Lab, and possession analysis will appear when detailed game data is available.",
     "Game unavailable",
     "Loading game from ESPN",
   ]) {
-    if (game.body.includes(marker)) throw new Error(`Game Lab regressed to fallback: ${marker}`);
+    if (gameText.includes(marker)) throw new Error(`Game Lab regressed to fallback: ${marker}`);
   }
-  if (!game.body.includes("Game flow")) {
-    throw new Error("Game Lab flow is missing from completed game");
+  if (!gameText.includes("Game flow")) {
+    throw new Error(`Game Lab flow is missing from completed game. Page text: ${gameText.slice(-2200)}`);
   }
-  if (!game.body.includes("Possession")) {
+  if (!gameText.includes("Possession")) {
     throw new Error("Possession surface is missing from completed game");
   }
 

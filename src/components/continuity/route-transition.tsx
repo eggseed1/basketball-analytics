@@ -4,7 +4,6 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
   useState,
   type ReactNode,
@@ -54,16 +53,14 @@ export function RouteTransitionProvider({
   children: ReactNode;
 }) {
   const pathname = usePathname();
-  const [pending, setPending] = useState(false);
-
-  useEffect(() => {
-    setPending(false);
-  }, [pathname]);
+  const [pendingPath, setPendingPath] = useState<string | null>(null);
+  const pending = pendingPath !== null && pendingPath === pathname;
+  if (pendingPath !== null && pendingPath !== pathname) setPendingPath(null);
 
   const startRouteTransition = useCallback((fn: () => void) => {
-    setPending(true);
+    setPendingPath(pathname);
     fn();
-  }, []);
+  }, [pathname]);
 
   const value = useMemo(
     () => ({ pending, startRouteTransition }),

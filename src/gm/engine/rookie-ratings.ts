@@ -116,6 +116,7 @@ function ratingsFor(overall: number, potential: number, current: GmRatings): GmR
  * capital still floors potential so a cold Darko prior cannot wipe upside.
  */
 export function applyRookieRatings(player: GmPlayer): GmPlayer {
+  if (player.simProfile || player.seasonLine?.gp || player.priorLine?.gp) return player;
   const real = Boolean(player.nbaPlayerId) || /^\d+$/.test(player.id);
   if (!real) return player;
 
@@ -174,3 +175,4 @@ export function applyRookieRatings(player: GmPlayer): GmPlayer {
   next.sheet = buildSheet(next, sheetHint(next));
   return next;
 }
+

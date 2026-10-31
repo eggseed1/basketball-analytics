@@ -377,11 +377,6 @@ export function GameLineupsPanel({
 function LineupExpandIn({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
   useEffect(() => {
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) {
-      setOpen(true);
-      return;
-    }
     const id = window.requestAnimationFrame(() => setOpen(true));
     return () => window.cancelAnimationFrame(id);
   }, []);
@@ -389,7 +384,7 @@ function LineupExpandIn({ children }: { children: ReactNode }) {
   return (
     <div
       className={cn(
-        "grid transition-[grid-template-rows] duration-700 ease-out motion-reduce:transition-none",
+        "grid transition-[grid-template-rows] duration-700 ease-out motion-reduce:grid-rows-[1fr] motion-reduce:transition-none",
         open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
       )}
     >

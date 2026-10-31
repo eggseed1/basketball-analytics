@@ -367,8 +367,13 @@ function checkSeason(root: string, season: string, phase: OnOffPhase, teams: str
     if (phase === "playoffs") {
       const ranked = teamPlayerRows(file, league, "all").some((r) => r.netDiffPercentile != null);
       assert.equal(ranked, false, "playoff splits carry no league rank");
-    } else {
-      assert.ok(file.team.clutch.o[K.poss]! > 0, `${label} has clutch possessions`);
+    }
+    if (file.team.clutch.o[K.poss] === 0 && file.team.clutch.d[K.poss] === 0) {
+      assert.deepEqual(teamPlayerRows(file, league, "clutch"), [], `${label}: no rows without clutch possessions`);
+      assert.deepEqual(lineupRows(file, league, "clutch"), [], `${label}: no lineups without clutch possessions`);
+      for (const player of file.players) {
+        assert.equal(playerDetail(file, league, player.id, "clutch"), null, `${label} ${player.name}: no fabricated clutch detail`);
+      }
     }
   }
 }

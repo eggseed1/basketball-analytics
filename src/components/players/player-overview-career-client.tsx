@@ -35,13 +35,12 @@ export function PlayerOverviewCareerClient({
   /** SSR rows when the page already paid for career; skips the first fetch. */
   initialRows?: ReturnType<typeof toCareerBoardRows> | null;
 }) {
-  const [rows, setRows] = useState<ReturnType<typeof toCareerBoardRows> | null>(
-    initialRows && initialRows.length > 0 ? initialRows : null
-  );
+  const [fetched, setFetched] = useState<{ playerId: string; rows: ReturnType<typeof toCareerBoardRows> } | null>(null);
+  const rows = initialRows && initialRows.length > 0 ? initialRows
+    : fetched?.playerId === playerId ? fetched.rows : null;
 
   useEffect(() => {
     if (initialRows && initialRows.length > 0) {
-      setRows(initialRows);
       return;
     }
 
@@ -54,13 +53,13 @@ export function PlayerOverviewCareerClient({
           signal: ac.signal,
         });
         if (cancelled) return;
-        setRows(toCareerBoardRows(filterCareerBoardSource(career)));
+        setFetched({ playerId, rows: toCareerBoardRows(filterCareerBoardSource(career)) });
       } catch (error) {
         if (cancelled) return;
         if (error instanceof DOMException && error.name === "AbortError") {
           return;
         }
-        setRows([]);
+        setFetched({ playerId, rows: [] });
       }
     })();
 

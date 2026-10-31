@@ -16,7 +16,7 @@ import {
   tradeStance,
 } from "@/gm/engine/value";
 import { autoSetLineup, overallOf } from "@/gm/engine/lineup";
-import { uid } from "@/gm/engine/rng";
+import { uid, clamp } from "@/gm/engine/rng";
 import {
   dealImprovesFit,
   fitDelta,
@@ -72,7 +72,7 @@ export function assetValue(
 ): number {
   if (asset.type === "player") {
     const p = players.find((x) => x.id === asset.id);
-    return p ? playerTradePoints(p) : 0;
+    return p ? playerTradePoints(p, league) : 0;
   }
   if (asset.type === "cash") return (asset.cashM ?? 0) * 0.6;
   const pick = picks.find((x) => x.id === asset.id);
@@ -133,6 +133,18 @@ export function evaluateTrade(
   toAssets: GmTradeAsset[]
 ): { ok: boolean; reason?: string; fromValue: number; toValue: number } {
   const allPicks = state.teams.flatMap((t) => t.draftPicks);
+  const invalid = (reason: string) => ({ ok: false, reason, fromValue: 0, toValue: 0 });
+  if (fromTeamId === toTeamId || !state.teams.some(t => t.id === fromTeamId) || !state.teams.some(t => t.id === toTeamId)) return invalid("Choose two different teams.");
+  const seenAssets = new Set<string>();
+  for (const [teamId, assets] of [[fromTeamId, fromAssets], [toTeamId, toAssets]] as const) {
+    for (const asset of assets) {
+      const key = asset.type === "cash" ? `${teamId}:cash` : `${asset.type}:${asset.id}`;
+      if (seenAssets.has(key)) return invalid("An asset can only appear once in a trade.");
+      seenAssets.add(key);
+      if (asset.type === "player" && !state.players.some(p => p.id === asset.id && p.teamId === teamId)) return invalid("A team can only trade players on its roster.");
+      if (asset.type === "pick" && !allPicks.some(p => p.id === asset.id && p.ownerTeamId === teamId)) return invalid("A team can only trade picks it owns.");
+    }
+  }
   const fromSal = fromAssets.reduce(
     (s, a) => s + assetSalary(a, state.players),
     0
@@ -267,7 +279,7 @@ export function evaluateTrade(
   }
 
   const fromValue = boardValue(state, toTeamId, fromAssets);
-  const toValue = boardValue(state, toTeamId, toAssets);
+  const toValue = boardValue(state, toTeamId, toAssets) * clamp(state.settings.tradeDifficulty ?? 1, 0.5, 2);
 
   // Both piles are priced on the partner's board. A buyer or a seller
   // will give a little, and a club that is staying put will not.
@@ -371,7 +383,7 @@ export function applyTrade(
   return {
     ...state,
     players,
-    teams,
+    teams: teams.map(team => [proposal.fromTeamId, proposal.toTeamId].includes(team.id) ? { ...autoSetLineup(team, players), injuryRotationBackup: undefined } : team),
     tradeLog: [log, ...state.tradeLog].slice(0, 100),
     news: [
       {
@@ -852,4 +864,23 @@ export function cpuDeadlineTrades(state: GmLeagueState): GmLeagueState {
     deals += 1;
   }
   return next;
+}
+
+
+/** A legal counter adds the least expensive available asset, never an untouchable. */
+export function suggestCounterOffer(state: GmLeagueState, fromTeamId: string, toTeamId: string, outgoing: GmTradeAsset[], incoming: GmTradeAsset[]): GmTradeAsset[] | undefined {
+  if (outgoing.length >= 9) return undefined;
+  const team = state.teams.find(t => t.id === fromTeamId);
+  if (!team) return undefined;
+  const used = new Set(outgoing.map(a => a.id));
+  const candidates: GmTradeAsset[] = [
+    ...team.draftPicks.filter(p => !used.has(p.id) && !p.frozen).map(p => ({ type: "pick" as const, id: p.id })),
+    ...state.players.filter(p => p.teamId === fromTeamId && !used.has(p.id) && !team.untouchables?.includes(p.id)).map(p => ({ type: "player" as const, id: p.id })),
+  ];
+  candidates.sort((a, b) => assetValue(a, state.players, team.draftPicks, state) - assetValue(b, state.players, team.draftPicks, state));
+  for (const asset of candidates) {
+    const next = [...outgoing, asset];
+    if (evaluateTrade(state, fromTeamId, toTeamId, next, incoming).ok) return next;
+  }
+  return undefined;
 }

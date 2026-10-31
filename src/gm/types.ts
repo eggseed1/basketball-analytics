@@ -127,6 +127,7 @@ export interface GmDeadMoney {
 }
 
 export interface GmInjury {
+  recoveryProgress?: number;
   type: string;
   gamesRemaining: number;
   reinjuryRisk: number;
@@ -231,6 +232,8 @@ export interface GmPotential {
 }
 
 export interface GmSheet {
+  /** Entry calibration retained through development and save migrations. */
+  overallOffset?: number;
   /** Bump when the attribute formula changes so old saves rebuild. */
   version?: number;
   overall: number;
@@ -246,7 +249,43 @@ export interface GmSheet {
   priorSimple?: number[];
 }
 
+export interface GmSimProfile {
+  offense?: number;
+  version: 1;
+  season?: string;
+  confidence: number;
+  source: "nba" | "estimated";
+  baseline: Partial<GmAttributes>;
+  impact: number;
+  rates: { fga: number; threeShare: number; twoPct: number; threePct: number; ftPct: number; ftPerFga: number; ast: number; orb: number; drb: number; stl: number; blk: number; tov: number };
+}
+
+export interface GmFranchisePlan {
+  intent: "contend" | "retool" | "develop";
+  priorities: string[];
+  targetWins: number;
+  ownerPressure: boolean;
+  commissioner: boolean;
+  pauses: { offers: boolean; scouting: boolean; injuries: boolean };
+}
+
+export interface GmSeasonArchive {
+  season: number;
+  champion?: GmLeagueState["champion"];
+  awards?: GmLeagueState["awards"];
+  standings: GmLeagueState["standings"];
+  trades: GmTradeProposal[];
+  players: Array<{ id: string; name: string; teamId: string | null; age: number; overall: number; line?: GmCountingLine }>;
+  userTeamId: string;
+}
+
 export interface GmPlayer {
+  /** The real role at the selected season, used as a prior while he stays on that club. */
+  realRole?: { season: number; teamId: string | null; starts: number; games: number; mpg: number };
+  listedPosition?: GmPosition;
+  simProfile?: GmSimProfile;
+  developmentFocus?: "balanced" | "shooting" | "creation" | "defense" | "rebounding";
+  rolePromise?: { teamId: string; minutes: number; madeDay: number; games?: number; totalMinutes?: number; lastGameId?: string; status: "pending" | "met" | "unmet" };
   id: string;
   /** True identity - hidden for undrafted prospects until pick night. */
   name: string;
@@ -366,6 +405,7 @@ export interface GmStaff {
 }
 
 export interface GmTeam {
+  injuryRotationBackup?: { starters: GmTeam["starters"]; benchOrder: string[]; coaching?: GmCoaching };
   id: string;
   abbr: string;
   city: string;
@@ -418,6 +458,11 @@ export type GmTempo = "slow" | "normal" | "fast";
 export type GmRotationDepth = 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13;
 
 export interface GmCoaching {
+  /** Explicit block-by-block plan. Each block is two regulation minutes. */
+  shifts?: Record<string, boolean[]>;
+  closingLineup?: string[];
+  /** Actual minutes at multiple positions, rather than one label for the entire night. */
+  positionMinutes?: Record<string, Partial<Record<GmPosition, number>>>;
   offense: GmOffense;
   defense: GmDefense;
   tempo: GmTempo;
@@ -496,6 +541,7 @@ export interface GmScheduleGame {
 }
 
 export interface GmBoxPlayerLine {
+  positionMinutes?: Partial<Record<GmPosition, number>>;
   playerId: string;
   playerName: string;
   teamId: string;
@@ -528,6 +574,10 @@ export interface GmShiftBlock {
 }
 
 export interface GmBoxScore {
+  /** The same events that produced this box. Older saves reconstruct their feed. */
+  events?: import("@/data/types/play-by-play").PlayByPlayEvent[];
+  stints?: Array<{ start: number; end: number; home: string[]; away: string[] }>;
+  overtime?: number;
   id: string;
   gameId: string;
   season: number;
@@ -684,6 +734,10 @@ export interface GmSeasonPhase {
 }
 
 export interface GmLeagueSettings {
+  injuryFrequency?: number;
+  developmentSpeed?: number;
+  tradeDifficulty?: number;
+  simPace?: number;
   salaryCapM: number;
   luxuryTaxM: number;
   firstApronM: number;
@@ -870,6 +924,10 @@ export type GmQoStatus =
   | "expired";
 
 export interface GmLeagueState {
+  tradeTalks?: Array<{ id: string; day: number; teamId: string; reason: string; youSend: GmTradeAsset[]; youReceive: GmTradeAsset[]; counter?: GmTradeAsset[] }>;
+  franchise?: GmFranchisePlan;
+  history?: GmSeasonArchive[];
+  simulationBook?: number;
   version: 1;
   season: number; // ending year e.g. 2026 for 2025-26
   day: number;
@@ -1045,3 +1103,4 @@ export const DEFAULT_SETTINGS: GmLeagueSettings = {
   minRoster: 14,
   seasonLength: 82,
 };
+

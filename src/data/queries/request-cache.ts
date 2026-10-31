@@ -10,6 +10,12 @@ import { runtimeTimeoutMs, slimEdgeProductEnabled } from "@/data/providers/nba/r
 import { fetchEspnCdnGameBoxScore } from "@/data/providers/nba/espn-cdn-game-client";
 import { findNbaCdnGame } from "@/data/providers/nba/nba-cdn-game-client";
 import { withBudget } from "@/data/queries/budget";
+import { loadGameShellWithFallback } from "@/lib/game-shell-loading";
+import { ensureGameTeamIdentity } from "@/lib/game-team-identity";
+import {
+  isMalformedEmptyFinalShell,
+  validateGamePresentation,
+} from "@/lib/game-presentation";
 import { getPlayerAccolades as getPlayerAccoladesUncached } from "@/data/queries/player-awards";
 import {
   enrichPlayerCareerAdvanced as enrichPlayerCareerAdvancedUncached,
@@ -330,35 +336,37 @@ async function fallbackGameShell(gameId: string): Promise<GameShell | null> {
   return null;
 }
 
-async function boundedPrimaryGameShell(gameId: string): Promise<GameShell | null> {
-  const primary = await withBudget(
-    getGameShellUncached(gameId).catch(() => null),
-    9_000,
-    null as GameShell | null
-  );
-  return primary.value;
-}
-
-async function boundedFallbackGameShell(gameId: string): Promise<GameShell | null> {
-  const fallback = await withBudget(
-    fallbackGameShell(gameId),
-    7_000,
-    null as GameShell | null
-  );
-  return fallback.value;
+async function snapshotGameShell(gameId: string): Promise<GameShell | null> {
+  const { getRuntimeSnapshotGame } = await import("@/data/runtime/game-snapshot");
+  const game = await getRuntimeSnapshotGame(gameId);
+  if (
+    !game ||
+    isMalformedEmptyFinalShell(game) ||
+    !validateGamePresentation(game).canRenderScoreHeader
+  ) {
+    return null;
+  }
+  return {
+    ...shellFromFallbackGame(
+      ensureGameTeamIdentity(game, game.teamIdProvider ?? "espn")
+    ),
+    source: "runtime-snapshot",
+  };
 }
 
 /**
  * Host-independent game loading contract: always give the complete provider the
- * first chance to resolve identity + box depth, then use CDN fallbacks. This is
- * the same ordering Cursor/local uses, so Vercel cannot silently downgrade a
- * completed game to a scoreboard-only shell before Game Lab mounts.
+ * first chance to resolve identity + box depth. If it stalls, use an independent
+ * snapshot before retrying CDN. CDN fallbacks can share the primary's in-flight
+ * request, so they must not keep a known game behind the loading screen.
  */
-export const getGameShellCached = cache(async (gameId: string) => {
-  const primary = await boundedPrimaryGameShell(gameId);
-  if (primary) return primary;
-  return boundedFallbackGameShell(gameId);
-});
+export const getGameShellCached = cache((gameId: string) =>
+  loadGameShellWithFallback({
+    primary: () => getGameShellUncached(gameId),
+    snapshot: () => snapshotGameShell(gameId),
+    fallback: () => fallbackGameShell(gameId),
+  })
+);
 
 export const getHomeAnalyticsCached = cache(() => getHomeAnalyticsUncached());
 

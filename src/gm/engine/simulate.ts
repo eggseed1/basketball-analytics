@@ -1,745 +1,278 @@
-import type {
-  GmBoxPlayerLine,
-  GmBoxScore,
-  GmPlayer,
-  GmScheduleGame,
-  GmTeam,
-} from "@/gm/types";
-import { createRng, clamp, uid } from "@/gm/engine/rng";
-import {
-  freeThrowMakeRateFromRating,
-  playerSheet,
-  threeMakeRateFromRating,
-  twoMakeRateFromRating,
-} from "@/gm/engine/attributes";
-import {
-  extraAst,
-  extraFt,
-  modsForTeam,
-  paceWish,
-  usageBoost,
-  type RateMods,
-} from "@/gm/engine/coaching";
-import {
-  clampAndRespread,
-  clampRotationDepth,
-  maxMinutesForDepth,
-  minuteLoadMul,
-  overallOf,
-  positionFit,
-  positionalMinuteTargets,
-  rotationTarget,
-} from "@/gm/engine/lineup";
+import type { PlayByPlayEvent } from "@/data/types/play-by-play";
+import type { GmBoxPlayerLine, GmBoxScore, GmLeagueSettings, GmPlayer, GmScheduleGame, GmTeam } from "@/gm/types";
+import { createRng, clamp } from "@/gm/engine/rng";
+import { coachingOf, modsForTeam, paceWish, paintShifts, usageBoost, validShiftPlan } from "@/gm/engine/coaching";
+import { positionalMinuteTargets, minuteLoadMul } from "@/gm/engine/lineup";
+import { ensureSimProfile, simulationRates } from "@/gm/engine/player-profile";
+import { lineupBalance, roleFit, assignFive } from "@/gm/engine/rotation-roles";
 import { allStarSquadTeam } from "@/gm/engine/allstar";
-import { coachEffect } from "@/gm/engine/staff";
 import { gapBefore } from "@/gm/engine/schedule";
+import { coachEffect } from "@/gm/engine/staff";
 
-
-function activeRoster(teamId: string, players: GmPlayer[]): GmPlayer[] {
-  return players.filter(
-    (p) =>
-      p.teamId === teamId &&
-      (!p.injury || p.injury.gamesRemaining <= 0)
-  );
+export function lineupPlayers(team: GmTeam, players: GmPlayer[], max = 10): GmPlayer[] {
+  const starters = new Set(Object.values(team.starters));
+  return players.filter(p => p.teamId === team.id && (!p.injury || p.injury.gamesRemaining <= 0))
+    .sort((a, b) => Number(starters.has(b.id)) - Number(starters.has(a.id)) ||
+      (team.coaching?.minutes?.[b.id] ?? b.minutesPreference) - (team.coaching?.minutes?.[a.id] ?? a.minutesPreference) || a.id.localeCompare(b.id)).slice(0, max);
 }
 
-export function lineupPlayers(
-  team: GmTeam,
-  players: GmPlayer[],
-  max = 10
-): GmPlayer[] {
-  const roster = activeRoster(team.id, players);
-  const byId = new Map(roster.map((p) => [p.id, p]));
-  const starters = (
-    Object.values(team.starters).map((id) =>
-      id ? byId.get(id) : undefined
-    ) as Array<GmPlayer | undefined>
-  ).filter(Boolean) as GmPlayer[];
-  const starterIds = new Set(starters.map((p) => p.id));
-  const bench = team.benchOrder
-    .map((id) => byId.get(id))
-    .filter((p): p is GmPlayer => !!p && !starterIds.has(p.id));
-  const rest = roster
-    .filter((p) => !starterIds.has(p.id) && !bench.some((b) => b.id === p.id))
-    .sort((a, b) => overallOf(b) - overallOf(a));
-  return [...starters, ...bench, ...rest].slice(0, max);
-}
-
-/**
- * Who dresses tonight. Healthy starters are in. Everyone else follows the
- * rotation target, overall first. A short real-season sample does not sit a star.
- * Only the end of the bench misses a night.
- */
-function dressTonight(team: GmTeam, players: GmPlayer[], rng: () => number): GmPlayer[] {
-  const roster = activeRoster(team.id, players);
-  const byId = new Map(roster.map((player) => [player.id, player]));
-  const targets = positionalMinuteTargets(roster, team.starters);
-  const depth = [...roster].sort(
-    (a, b) =>
-      (targets[b.id] ?? 0) - (targets[a.id] ?? 0) ||
-      rotationTarget(b) - rotationTarget(a) ||
-      overallOf(b) - overallOf(a)
-  );
-  const dressed: GmPlayer[] = [];
-  const used = new Set<string>();
-  const take = (player: GmPlayer) => {
-    if (used.has(player.id)) return;
-    dressed.push(player);
-    used.add(player.id);
-  };
-  for (const id of Object.values(team.starters)) {
-    if (!id) continue;
-    const starter = byId.get(id);
-    if (starter) take(starter);
-  }
-  for (const player of depth) {
-    if (dressed.length >= 10) break;
-    const booked = dressed.reduce((sum, entry) => sum + (targets[entry.id] ?? rotationTarget(entry)), 0);
-    if (booked >= 232 && dressed.length >= 8) break;
-    if (!used.has(player.id) && dressed.length >= 8 && (targets[player.id] ?? 0) < 12 && rng() > 0.62) {
-      continue;
-    }
-    take(player);
-  }
-  if (dressed.length < 8) {
-    for (const player of depth) {
-      if (dressed.length >= 8) break;
-      take(player);
-    }
-  }
-  return dressed;
-}
-
-/** The user's saved minute plan. Injuries still sit. Availability rolls do not. */
-function dressFromPlan(team: GmTeam, players: GmPlayer[]): GmPlayer[] {
-  const plan = team.coaching?.minutes;
-  if (!plan) return [];
-  const roster = activeRoster(team.id, players);
-  const dressed = roster
-    .filter((player) => (plan[player.id] ?? 0) >= 1)
-    .sort((a, b) => (plan[b.id] ?? 0) - (plan[a.id] ?? 0));
-  return dressed.length >= 5 ? dressed : [];
-}
-
-function finiteMean(values: number[], fallback: number): number {
-  const finite = values.filter((value) => Number.isFinite(value));
-  if (!finite.length) return fallback;
-  return finite.reduce((sum, value) => sum + value, 0) / finite.length;
-}
-
-function teamStrength(team: GmTeam, players: GmPlayer[]) {
-  const lu = lineupPlayers(team, players).slice(0, 8);
-  if (!lu.length) return { off: 110, def: 112, pace: 100 };
-  const coach = coachEffect(team);
-  // Build ORtg / DRtg-like numbers (league ~112). Higher off = better;
-  // higher def = worse (points allowed per 100).
-  const avgOff = finiteMean(lu.map((player) => player.ratings.offense), 0);
-  const avgDef = finiteMean(lu.map((player) => player.ratings.defense), 0);
-  const avgPlay = finiteMean(lu.map((player) => player.ratings.playmaking), 48);
-  // Cover seat vs natural listing. OOP depth charts cost a few points.
-  const cover = team.coaching?.coverSlot;
-  const fit = finiteMean(
-    lu.map((player) =>
-      positionFit(player, cover?.[player.id] ?? player.position)
-    ),
-    1
-  );
-  const fitTax = (1 - fit) * 4.5;
-  const off = clamp(112 + avgOff * 1.15 + coach.offense - fitTax, 95, 130);
-  const def = clamp(112 - avgDef * 1.15 - coach.defense + fitTax * 0.7, 95, 130);
-  const pace = clamp(99.2 + (avgPlay - 48) * 0.04, 96.5, 102.5);
-  return { off, def, pace };
-}
-
-/**
- * Lineup value in points per 100. Ratings are per player, so a starter's
- * number is weighted by the minutes he is about to play.
- */
-function possessionValue(players: GmPlayer[], key: "offense" | "defense"): number {
-  let sum = 0;
-  let minutes = 0;
-  const targets = positionalMinuteTargets(players);
-  for (const player of players) {
-    const rating = player.ratings[key];
-    const planned = Math.max(0, targets[player.id] ?? rotationTarget(player));
-    const stamina = playerSheet(player).attributes.stamina ?? 70;
-    const weight = planned * minuteLoadMul(planned, stamina);
-    if (!Number.isFinite(rating) || weight <= 0) continue;
-    sum += rating * weight;
-    minutes += weight;
-  }
-  if (minutes <= 0) return 0;
-  // Five players share the floor, so the lineup is the minute-weighted average times five.
-  return (sum / minutes) * 5;
-}
-
-/** Second night of a back-to-back. Older legs lose more makes. A night off is even. */
 export function secondNightScale(age: number, gapDays: number | null): number {
   if (gapDays !== 1) return 1;
-  if (age >= 34) return 0.974;
-  if (age >= 30) return 0.986;
-  return 0.994;
+  return age >= 34 ? 0.974 : age >= 30 ? 0.986 : 0.994;
 }
 
-/** Move the shot volume so the box adds up to the matchup, and keep each player's percentages. */
-function fitScore(lines: GmBoxPlayerLine[], target: number) {
-  if (!lines.length || !(target > 0)) return;
-  const raw = lines.reduce((sum, line) => sum + line.points, 0);
-  if (raw < 1) return;
-  // Short targets need a deeper cut than a full-game box.
-  const scale = clamp(target / raw, target < 60 ? 0.42 : 0.72, 1.28);
-  const top = Math.max(...lines.map((line) => line.points), 1);
-  const give = lines.map((line) => 1.45 - 0.75 * (line.points / top));
-  const weight = lines.reduce((sum, line, index) => sum + line.points * give[index]!, 0) / raw;
-  for (let index = 0; index < lines.length; index++) {
-    const line = lines[index]!;
-    const factor = clamp(1 + (scale - 1) * (give[index]! / weight), 0.6, 1.4);
-    line.fga = clamp(Math.round(line.fga * factor), 0, 40);
-    line.tpa = clamp(Math.round(line.tpa * factor), 0, line.fga);
-    line.fta = clamp(Math.round(line.fta * factor), 0, 25);
-    line.fgm = clamp(Math.round(line.fgm * factor), 0, line.fga);
-    line.tpm = clamp(Math.round(line.tpm * factor), 0, Math.min(line.tpa, line.fgm));
-    line.ftm = clamp(Math.round(line.ftm * factor), 0, line.fta);
-    line.points = 2 * line.fgm + line.tpm + line.ftm;
-    line.assists = clamp(Math.round(line.assists * factor), 0, 22);
-    line.turnovers = clamp(Math.round(line.turnovers * factor * 0.96), 0, 12);
-    line.rebounds = clamp(Math.round(line.rebounds * factor), 0, 28);
-    const shots = 2 * (line.fga + 0.44 * line.fta);
-    line.trueShootingPct = shots > 0 ? line.points / shots : 0;
-  }
-  const want = Math.round(target);
-  const sum = lines.reduce((total, line) => total + line.points, 0);
-  const leader = lines.reduce(
-    (best, line) => (line.points > best.points ? line : best),
-    lines[0]!
-  );
-  if (!leader || sum === want) return;
-  leader.points = Math.max(0, leader.points + clamp(want - sum, -3, 3));
+function hash(text: string): number {
+  let h = 2166136261;
+  for (const ch of text) h = Math.imul(h ^ ch.charCodeAt(0), 16777619);
+  return h >>> 0;
 }
 
+function weighted<T>(list: T[], weight: (item: T) => number, rng: () => number): T {
+  const weights = list.map(item => Math.max(0.0001, weight(item)));
+  let roll = rng() * weights.reduce((sum, n) => sum + n, 0);
+  for (let i = 0; i < list.length; i++) { roll -= weights[i]!; if (roll <= 0) return list[i]!; }
+  return list[list.length - 1]!;
+}
+
+function emptyLine(p: GmPlayer): GmBoxPlayerLine {
+  return { playerId: p.id, playerName: p.name, teamId: p.teamId!, minutes: 0, points: 0, assists: 0, rebounds: 0, steals: 0, blocks: 0, turnovers: 0, fgm: 0, fga: 0, tpm: 0, tpa: 0, ftm: 0, fta: 0, plusMinus: 0, trueShootingPct: 0, usagePct: 0, gameScore: 0 };
+}
+
+function book(team: GmTeam, players: GmPlayer[], playoff: boolean) {
+  const roster = players.filter(p => p.teamId === team.id && (!p.injury || p.injury.gamesRemaining <= 0));
+  if (roster.length < 5) throw new Error(`${team.abbr} needs five healthy players to simulate.`);
+  const coaching = coachingOf(team);
+  const saved = coaching.minutes;
+  const targets = saved && roster.filter(p => (saved[p.id] ?? 0) > 0).length >= 5 ? saved : positionalMinuteTargets(roster, team.starters, playoff ? 8 : coaching.rotationDepth);
+  const starters = new Set(Object.values(team.starters));
+  const rows = validShiftPlan(coaching.shifts, roster.map(p => p.id)) ?? paintShifts({
+    players: roster.map(p => ({ id: p.id, minutes: targets[p.id] ?? 0, starter: starters.has(p.id), position: coaching.coverSlot?.[p.id] ?? p.position })),
+    coaching,
+  });
+  if (!rows.some(row => row.minutes > 0)) throw new Error(`${team.abbr} needs a complete rotation.`);
+  return { roster, rows, coaching };
+}
+
+/** One source for minutes, score, stats, shared stints and the shot-chart feed. */
 export function simulateGame(
   game: GmScheduleGame,
   teams: GmTeam[],
   players: GmPlayer[],
   seed?: number,
-  schedule?: GmScheduleGame[]
+  schedule?: GmScheduleGame[],
+  settings?: GmLeagueSettings
 ): { game: GmScheduleGame; box: GmBoxScore } {
-  const rng = createRng(
-    seed ??
-      hashSeed(
-        game.id,
-        game.day,
-        game.homeTeamId,
-        game.awayTeamId,
-        game.season
-      )
-  );
-  let home = teams.find((t) => t.id === game.homeTeamId)!;
-  let away = teams.find((t) => t.id === game.awayTeamId)!;
+  const actualSeed = seed ?? hash(`${game.id}:${game.season}:${game.day}`);
+  const rng = createRng(actualSeed);
+  let home = teams.find(t => t.id === game.homeTeamId);
+  let away = teams.find(t => t.id === game.awayTeamId);
+  if (!home || !away) throw new Error("The game references a missing team.");
   if (game.exhibition === "allstar" && game.squad) {
     home = allStarSquadTeam(game.homeTeamId, game.squad[0], players);
     away = allStarSquadTeam(game.awayTeamId, game.squad[1], players);
-    const homeIds = new Set(game.squad[0]);
-    const awayIds = new Set(game.squad[1]);
-    players = players.map((player) => {
-      if (homeIds.has(player.id)) return { ...player, teamId: home.id, injury: null };
-      if (awayIds.has(player.id)) return { ...player, teamId: away.id, injury: null };
-      return player;
-    });
+    const h = new Set(game.squad[0]), a = new Set(game.squad[1]);
+    players = players.map(p => h.has(p.id) ? { ...p, teamId: home!.id, injury: null } : a.has(p.id) ? { ...p, teamId: away!.id, injury: null } : p);
   }
-  const hS = teamStrength(home, players);
-  const aS = teamStrength(away, players);
+  players = players.map(ensureSimProfile);
+  const homeBook = book(home, players, Boolean(game.postseason));
+  const awayBook = book(away, players, Boolean(game.postseason));
+  const byId = new Map(players.map(p => [p.id, p]));
+  const lines = new Map([...homeBook.roster, ...awayBook.roster].map(p => [p.id, emptyLine(p)]));
+  const rates = new Map(players.map(p => [p.id, simulationRates(p)]));
+  const entryTotals = players.filter(p => p.teamId && p.simProfile?.source === "nba" && p.nbaSeason).reduce((n, p) => ({ fga: n.fga + p.nbaSeason!.fga, tpa: n.tpa + p.nbaSeason!.tpa, blk: n.blk + p.nbaSeason!.blk }), { fga: 0, tpa: 0, blk: 0 });
+  const leagueBlockRate = entryTotals.fga > 0 ? entryTotals.blk / entryTotals.fga : 0.055;
+  const leagueThreeShare = entryTotals.fga > 0 ? entryTotals.tpa / entryTotals.fga : 0.38;
+  const averageBlockWeight = 0.95 * (1 - leagueThreeShare) + 0.3 * leagueThreeShare;
+  const usedOnCourt = new Map<string, number>();
+  const events: PlayByPlayEvent[] = [];
+  const stints: NonNullable<GmBoxScore["stints"]> = [];
+  let homeScore = 0, awayScore = 0;
+  let homeFloor: GmPlayer[] = [], awayFloor: GmPlayer[] = [];
+  const span = clamp(game.span ?? 1, 0.05, 1);
+  const regulation = Math.round(2880 * span);
+  const eraPace = game.season < 2010 ? 93 : game.season < 2017 ? 96 : 99.5;
+  const pace = eraPace * (paceWish(homeBook.coaching) + paceWish(awayBook.coaching)) / 2 * clamp(settings?.simPace ?? 1, 0.8, 1.2);
+  const possessionsPerSide = Math.max(1, Math.round(pace * span + (rng() - 0.5) * 6));
+  const gap = [schedule ? gapBefore(schedule, home.id, game.gameDate) : null, schedule ? gapBefore(schedule, away.id, game.gameDate) : null];
+  const coach = [coachEffect(home), coachEffect(away)];
+  let elapsed = 0;
+  let overtime = 0;
+  let totalPossessions = 0;
 
-  // Possessions roughly track NBA pace (one team’s possessions ≈ pace).
-  const paceScheme = clamp((paceWish(home.coaching) + paceWish(away.coaching)) / 2, 0.96, 1.06);
-  const span = game.span != null && game.span > 0 && game.span < 1 ? game.span : 1;
-  const rawPossessions = Math.round(((hS.pace + aS.pace) / 2) * paceScheme + (rng() - 0.5) * 6);
-  const possessions =
-    span === 1 ? clamp(rawPossessions, 92, 108) : clamp(Math.round(rawPossessions * span), 22, 34);
-
-  const homeDressed = dressFromPlan(home, players);
-  const awayDressed = dressFromPlan(away, players);
-  const homeGroup = homeDressed.length ? homeDressed : dressTonight(home, players, rng);
-  const awayGroup = awayDressed.length ? awayDressed : dressTonight(away, players, rng);
-  // Lineup ratings are points per 100. BPM and DARKO are one player's effect,
-  // so five men on the floor are the minute-weighted average times five.
-  // 0.55 keeps a great roster near +10 to +12 a night instead of a blowout every time.
-  const homeOff = possessionValue(homeGroup, "offense");
-  const homeDef = possessionValue(homeGroup, "defense");
-  const awayOff = possessionValue(awayGroup, "offense");
-  const awayDef = possessionValue(awayGroup, "defense");
-  const coverTax = (club: GmTeam, group: GmPlayer[]) => {
-    const cover = club.coaching?.coverSlot;
-    const fit = finiteMean(
-      group.map((player) =>
-        positionFit(player, cover?.[player.id] ?? player.position)
-      ),
-      1
-    );
-    return (1 - fit) * 7;
-  };
-  const homeOrt = 114.0 + (homeOff - awayDef) * 0.55 - coverTax(home, homeGroup);
-  const awayOrt = 114.0 + (awayOff - homeDef) * 0.55 - coverTax(away, awayGroup);
-  const scoreFloor = span === 1 ? 86 : 18;
-  const scoreCeil = span === 1 ? 148 : 48;
-  const homeTarget = clamp(
-    possessions * homeOrt / 100 + (game.neutral ? 0 : 1.4) + gaussian(rng) * 8.6 * span,
-    scoreFloor,
-    scoreCeil
-  );
-  const awayTarget = clamp(
-    possessions * awayOrt / 100 + gaussian(rng) * 8.6 * span,
-    scoreFloor,
-    scoreCeil
-  );
-  const paceScale = clamp(possessions / 99.5, 0.94, 1.06);
-  const homeGap = schedule ? gapBefore(schedule, game.homeTeamId, game.gameDate) : null;
-  const awayGap = schedule ? gapBefore(schedule, game.awayTeamId, game.gameDate) : null;
-  const homeLines = distributeStats(
-    home,
-    homeGroup,
-    paceScale,
-    1,
-    rng,
-    modsForTeam(home.coaching, away.coaching),
-    home.coaching,
-    homeDressed.length ? home.coaching?.minutes : undefined,
-    homeGap
-  );
-  const awayLines = distributeStats(
-    away,
-    awayGroup,
-    paceScale,
-    1,
-    rng,
-    modsForTeam(away.coaching, home.coaching),
-    away.coaching,
-    awayDressed.length ? away.coaching?.minutes : undefined,
-    awayGap
-  );
-  fitScore(homeLines, homeLines.length ? homeTarget : 0);
-  fitScore(awayLines, awayLines.length ? awayTarget : 0);
-
-  balanceRebounds(homeLines, awayLines);
-
-  let homeScore = homeLines.reduce((sum, line) => sum + line.points, 0);
-  let awayScore = awayLines.reduce((sum, line) => sum + line.points, 0);
-  if (!homeLines.length) homeScore = Math.round(homeTarget);
-  if (!awayLines.length) awayScore = Math.round(awayTarget);
-  if (!homeLines.length && span === 1) homeScore = clamp(homeScore, 78, 155);
-  if (!awayLines.length && span === 1) awayScore = clamp(awayScore, 78, 155);
-  // Short exhibitions (All-Star quarters) can overshoot after fitScore's
-  // 0.72 floor — clamp to the span band so boxes stay quarter-sized.
-  if (span < 1) {
-    homeScore = clamp(homeScore, scoreFloor, scoreCeil);
-    awayScore = clamp(awayScore, scoreFloor, scoreCeil);
+  function push(player: GmPlayer, actionType: string, subType: string, description: string, points = 0, fieldGoal = false, made: boolean | null = null, second?: GmPlayer, three = false) {
+    const period = elapsed < 2880 ? Math.floor(elapsed / 720) + 1 : 5 + Math.floor((elapsed - 2880) / 300);
+    const length = period <= 4 ? 720 : 300;
+    const start = period <= 4 ? (period - 1) * 720 : 2880 + (period - 5) * 300;
+    const seconds = clamp(length - Math.floor(elapsed - start), 0, length);
+    const n = events.length + 1;
+    const angle = rng() * Math.PI;
+    const radius = three ? 24.2 + rng() * 3 : subType === "layup" ? 1 + rng() * 4 : 5 + rng() * 16;
+    events.push({ id: `${game.id}:${actualSeed}:${n}`, gameId: game.id, actionNumber: n, orderNumber: n,
+      period, clockSeconds: seconds, clock: `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`,
+      actionType, subType, description, teamId: player.teamId!.toUpperCase(), teamTricode: player.teamId!.toUpperCase(),
+      playerId: player.id, playerName: player.name, secondPlayerId: second?.id ?? null,
+      scoreHome: homeScore, scoreAway: awayScore, shotResult: made == null ? null : made ? "Made" : "Missed",
+      isFieldGoal: fieldGoal, points, locX: fieldGoal ? Math.cos(angle) * radius : null, locY: fieldGoal ? Math.sin(angle) * radius : null, wallMs: null });
   }
-  if (homeScore === awayScore) {
-    const lines = rng() > 0.5 ? homeLines : awayLines;
-    const leader = lines.reduce(
-      (best, line) => (line.points > best.points ? line : best),
-      lines[0]
-    );
-    if (leader) {
-      leader.points += 1;
-      if (lines === homeLines) homeScore += 1;
-      else awayScore += 1;
-    } else if (rng() > 0.5) homeScore += 1;
-    else awayScore += 1;
+  function score(player: GmPlayer, points: number) {
+    lines.get(player.id)!.points += points;
+    const isHome = player.teamId === home!.id;
+    if (isHome) homeScore += points; else awayScore += points;
+    for (const p of homeFloor) lines.get(p.id)!.plusMinus += isHome ? points : -points;
+    for (const p of awayFloor) lines.get(p.id)!.plusMinus += isHome ? -points : points;
   }
-  stampPlusMinus(homeLines, homeScore - awayScore, rng);
-  stampPlusMinus(awayLines, awayScore - homeScore, rng);
-  const homeStarters = new Set(Object.values(home.starters).filter((id): id is string => !!id));
-  const awayStarters = new Set(Object.values(away.starters).filter((id): id is string => !!id));
-  for (const line of homeLines) {
-    if (line.minutes > 0 && homeStarters.has(line.playerId)) line.started = true;
+  function rebound(off: GmPlayer[], def: GmPlayer[], three: boolean): boolean {
+    const offense = off === homeFloor ? homeBook : awayBook;
+    const defense = off === homeFloor ? awayBook : homeBook;
+    const mods = modsForTeam(offense.coaching, defense.coaching);
+    if (rng() < 0.06) {
+      push(def[0]!, "rebound", "defensive", `${def[0]!.teamId!.toUpperCase()} team rebound`);
+      events[events.length - 1]!.playerId = null;
+      events[events.length - 1]!.playerName = null;
+      return false;
+    }
+    const offensiveWeight = off.reduce((n, p) => n + rates.get(p.id)!.orb, 0) * mods.orb;
+    const defensiveWeight = def.reduce((n, p) => n + rates.get(p.id)!.drb, 0);
+    const offensive = rng() < clamp(offensiveWeight / Math.max(0.01, offensiveWeight + defensiveWeight), 0.08, 0.42);
+    const pool = offensive ? off : def;
+    const p = weighted(pool, p => (offensive ? rates.get(p.id)!.orb : rates.get(p.id)!.drb) + (three && p.position !== "C" ? 0.015 : 0), rng);
+    lines.get(p.id)!.rebounds++;
+    push(p, "rebound", offensive ? "offensive" : "defensive", `${p.name} ${offensive ? "offensive" : "defensive"} rebound`);
+    return offensive;
   }
-  for (const line of awayLines) {
-    if (line.minutes > 0 && awayStarters.has(line.playerId)) line.started = true;
-  }
-  if (span < 1) {
-    for (const line of [...homeLines, ...awayLines]) {
-      line.minutes = Math.max(1, Math.round(line.minutes * span));
+  function possession(off: GmPlayer[], def: GmPlayer[], side: number) {
+    const own = side === 0 ? homeBook : awayBook;
+    const other = side === 0 ? awayBook : homeBook;
+    const mods = modsForTeam(own.coaching, other.coaching);
+    const volume = off.reduce((n, p) => n + rates.get(p.id)!.fga, 0);
+    const turnovers = off.reduce((n, p) => n + rates.get(p.id)!.tov, 0);
+    const freeThrows = off.reduce((n, p) => n + rates.get(p.id)!.fga * rates.get(p.id)!.ftPerFga, 0);
+    const offensiveRebounds = off.reduce((n, p) => n + rates.get(p.id)!.orb, 0);
+    const turnoverChance = clamp(turnovers / Math.max(0.1, volume + 0.44 * freeThrows + turnovers - offensiveRebounds) * mods.tov, 0.065, 0.24);
+    const handler = weighted(off, p => rates.get(p.id)!.fga * usageBoost(p, own.coaching) + rates.get(p.id)!.ast, rng);
+    for (const p of off) usedOnCourt.set(p.id, (usedOnCourt.get(p.id) ?? 0) + 1);
+    if (rng() < turnoverChance) {
+      lines.get(handler.id)!.turnovers++;
+      const stealShare = clamp(def.reduce((n, p) => n + rates.get(p.id)!.stl, 0) / Math.max(0.01, turnovers), 0.2, 0.9);
+      const steal = rng() < stealShare ? weighted(def, p => rates.get(p.id)!.stl, rng) : undefined;
+      if (steal) lines.get(steal.id)!.steals++;
+      push(handler, "turnover", steal ? "steal" : "bad pass", `${handler.name} turnover${steal ? ` (${steal.name} steals)` : ""}`, 0, false, null, steal);
+      return;
+    }
+    const defense = def.reduce((n, p) => {
+      const a = p.sheet?.attributes, prior = p.simProfile!.baseline;
+      const movement = ((a?.perimeterDefense ?? 65) - (prior.perimeterDefense ?? a?.perimeterDefense ?? 65)) * 0.06;
+      const interior = ((a?.interiorDefense ?? 65) - (prior.interiorDefense ?? a?.interiorDefense ?? 65)) * 0.06;
+      return n + p.ratings.defense + movement + interior;
+    }, 0);
+    // The impact estimate calibrates only a bounded residual around entry shot probabilities.
+    // Future attribute changes move those probabilities directly.
+    const baselineFga = off.reduce((n, p) => n + p.simProfile!.rates.fga, 0);
+    const baselinePoints = off.reduce((n, p) => {
+      const r = p.simProfile!.rates;
+      return n + r.fga * (2 * (1 - r.threeShare) * r.twoPct + 3 * r.threeShare * r.threePct + r.ftPerFga * r.ftPct);
+    }, 0);
+    const baselineUses = off.reduce((n, p) => n + p.simProfile!.rates.fga * (1 + 0.44 * p.simProfile!.rates.ftPerFga) + p.simProfile!.rates.tov - p.simProfile!.rates.orb, 0);
+    const entryImpact = off.reduce((n, p) => n + (p.simProfile!.offense ?? p.simProfile!.impact * 0.65), 0);
+    const environment = game.season < 2017 ? 1.06 : 1.135;
+    const residual = clamp((environment + entryImpact * 0.008 - baselinePoints / Math.max(0.2, baselineUses)) / 2.2, -0.035, 0.035);
+    const fit = lineupBalance(off) * 0.002 - off.reduce((n, p) => n + (1 - roleFit(p, own.coaching.coverSlot?.[p.id] ?? p.position)) * 0.015, 0);
+    for (let attempt = 0; attempt < 5; attempt++) {
+      if (attempt > 0) for (const p of off) usedOnCourt.set(p.id, (usedOnCourt.get(p.id) ?? 0) + 1);
+      const shooter = weighted(off, p => rates.get(p.id)!.fga * usageBoost(p, own.coaching), rng);
+      const r = rates.get(shooter.id)!;
+      const line = lines.get(shooter.id)!;
+      const tired = secondNightScale(shooter.age, gap[side] ?? null) * minuteLoadMul(line.minutes, shooter.sheet?.attributes.stamina ?? 70);
+      const foulRatio = freeThrows / Math.max(0.1, volume);
+      const foulChance = clamp(foulRatio / (2 + foulRatio) * mods.ft, 0.025, 0.2);
+      if (rng() < foulChance) {
+        let finalMade = false;
+        for (let ft = 1; ft <= 2; ft++) {
+          line.fta++; finalMade = rng() < r.ftPct;
+          if (finalMade) { line.ftm++; score(shooter, 1); }
+          push(shooter, "freethrow", finalMade ? "made" : "missed", `${shooter.name} ${finalMade ? "makes" : "misses"} free throw ${ft} of 2`, finalMade ? 1 : 0, false, finalMade);
+        }
+        if (finalMade || !rebound(off, def, false)) return;
+        continue;
+      }
+      const three = rng() < clamp(r.threeShare * mods.three, 0, 0.88);
+      const blockWeight = three ? 0.3 : 0.95;
+      const blocked = rng() < clamp(def.reduce((n, p) => n + rates.get(p.id)!.blk, 0) / Math.max(0.1, baselineFga) * blockWeight / averageBlockWeight, 0.005, 0.2);
+      const blocker = blocked ? weighted(def, p => rates.get(p.id)!.blk, rng) : undefined;
+      const homeAdvantage = side === 0 && !game.neutral ? 0.004 : 0;
+      const pct = (three ? r.threePct : r.twoPct * mods.two) * tired + residual + fit - defense * 0.003 + homeAdvantage + (coach[side]!.offense - coach[1 - side]!.defense) * 0.002;
+      // Observed shooting percentages already include average blocked attempts.
+      // Convert to an unblocked attempt probability; opponent block skill can then vary.
+      const observedBlockShare = clamp(leagueBlockRate * blockWeight / averageBlockWeight, 0, 0.2);
+      const made = !blocked && rng() < clamp(pct / (1 - observedBlockShare), 0.08, 0.95);
+      line.fga++; if (three) line.tpa++;
+      const assisted = made && rng() < clamp(off.reduce((n, p) => n + rates.get(p.id)!.ast, 0) / Math.max(0.2, volume) / 0.47 * mods.ast, 0.18, 0.85);
+      const passer = assisted ? weighted(off.filter(p => p.id !== shooter.id), p => rates.get(p.id)!.ast, rng) : undefined;
+      if (made) { line.fgm++; if (three) line.tpm++; score(shooter, three ? 3 : 2); }
+      if (passer) lines.get(passer.id)!.assists++;
+      if (blocker) lines.get(blocker.id)!.blocks++;
+      const layup = !three && rng() < clamp(r.twoPct - 0.1, 0.2, 0.7);
+      push(shooter, three ? "3pt" : "2pt", layup ? "layup" : "jump shot", `${shooter.name} ${made ? "makes" : "misses"} ${three ? "three pointer" : layup ? "layup" : "jump shot"}${passer ? ` (${passer.name} assists)` : blocker ? ` (${blocker.name} blocks)` : ""}`, made ? three ? 3 : 2 : 0, true, made, passer ?? blocker, three);
+      if (made || !rebound(off, def, three)) return;
     }
   }
-
-  const box: GmBoxScore = {
-    id: uid("box"),
-    gameId: game.id,
-    season: game.season,
-    day: game.day,
-    homeTeamId: home.id,
-    awayTeamId: away.id,
-    homeScore,
-    awayScore,
-    possessions,
-    players: [...awayLines, ...homeLines],
-  };
-
-  return {
-    game: {
-      ...game,
-      played: true,
-      homeScore,
-      awayScore,
-      boxScoreId: box.id,
-    },
-    box,
-  };
-}
-
-function hashSeed(
-  gameId: string,
-  day: number,
-  homeId: string,
-  awayId: string,
-  season: number
-): number {
-  const s = `${gameId}|${day}|${homeId}|${awayId}|${season}`;
-  let h = 2166136261;
-  for (let i = 0; i < s.length; i++) {
-    h ^= s.charCodeAt(i);
-    h = Math.imul(h, 16777619);
-  }
-  return h >>> 0;
-}
-
-/** Box-Muller-ish single sample, mean 0. */
-function gaussian(rng: () => number): number {
-  const u = Math.max(1e-9, rng());
-  const v = Math.max(1e-9, rng());
-  return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
-}
-
-type PerMinute = {
-  mpg: number;
-  fga: number;
-  threeShare: number;
-  ftPerFga: number;
-  twoPct: number;
-  threePct: number;
-  ftPct: number;
-  orb: number;
-  drb: number;
-  ast: number;
-  stl: number;
-  blk: number;
-  tov: number;
-};
-
-/**
- * Shot mix and per-minute counting from the season the player entered with.
- * Prospects and generated players fall back to the attribute sheet.
- */
-function perMinute(player: GmPlayer): PerMinute {
-  const line = player.nbaSeason;
-  const minutes = line && line.gp > 0 ? line.min : 0;
-  if (line && line.gp >= 5 && minutes >= 40 && line.fga > 0) {
-    const twoA = Math.max(1, line.fga - line.tpa);
-    const twoM = Math.max(0, line.fgm - line.tpm);
-    const orb =
-      line.orb ??
-      line.reb * (player.position === "C" || player.position === "PF" ? 0.32 : 0.16);
-    const drb = line.drb ?? Math.max(0, line.reb - orb);
-    return {
-      mpg: line.min / line.gp,
-      fga: line.fga / minutes,
-      threeShare: clamp((line.tpa / line.fga) * 1.035, 0, 0.9),
-      ftPerFga: clamp(line.fta / line.fga, 0, 1.2),
-      twoPct: clamp(twoM / twoA, 0.3, 0.85),
-      threePct: line.tpa > 0 ? clamp(line.tpm / line.tpa, 0.15, 0.55) : 0,
-      ftPct: line.fta > 0 ? clamp(line.ftm / line.fta, 0.35, 0.98) : 0.75,
-      orb: orb / minutes,
-      drb: drb / minutes,
-      ast: line.ast / minutes,
-      stl: line.stl / minutes,
-      blk: line.blk / minutes,
-      tov: line.tov / minutes,
-    };
-  }
-
-  const sheet = player.sheet;
-  const threeShare = sheet
-    ? clamp(sheet.tendencies.shootThree / 100, 0, 0.85)
-    : clamp(0.15 + player.ratings.shooting / 200, 0, 0.6);
-  const attrs = sheet?.attributes;
-  const twoPct = attrs
-    ? twoMakeRateFromRating(attrs.closeShot, attrs.midrange)
-    : clamp(0.42 + player.ratings.finishing / 400, 0.4, 0.7);
-  const threePct = attrs
-    ? threeMakeRateFromRating(attrs.threePoint)
-    : clamp(0.28 + player.ratings.shooting / 400, 0.25, 0.42);
-  const ftPct = attrs
-    ? freeThrowMakeRateFromRating(attrs.freeThrow)
-    : 0.75;
-  const usg = clamp(
-    0.14 + player.ratings.impact * 0.012 + (player.position === "PG" ? 0.03 : 0),
-    0.1,
-    0.34
-  );
-  const reb = player.ratings.rebounding;
-  const big = player.position === "C" || player.position === "PF";
-  return {
-    mpg: player.minutesPreference || 16,
-    fga: 1.83 * usg,
-    threeShare,
-    ftPerFga: big ? 0.32 : 0.22,
-    twoPct,
-    threePct,
-    ftPct,
-    orb: (big ? 0.09 : 0.025) + Math.max(0, reb - 40) / 900,
-    drb: (big ? 0.18 : 0.08) + Math.max(0, reb - 40) / 500,
-    ast: (player.position === "PG" ? 0.16 : 0.05) + player.ratings.playmaking / 800,
-    stl: 0.02 + player.ratings.defense / 2500,
-    blk: big ? 0.035 + player.ratings.defense / 1800 : 0.012,
-    tov: 0.04 + usg * 0.08,
-  };
-}
-
-/**
- * Shift chart minutes. A saved plan is the coach's own numbers, with a small wobble.
- */
-function assignMinutes(
-  team: GmTeam,
-  lineup: GmPlayer[],
-  rng: () => number,
-  plan?: Record<string, number>
-): number[] {
-  const cap = maxMinutesForDepth(
-    team.coaching?.rotationDepth ?? clampRotationDepth(lineup.length)
-  );
-  if (plan) {
-    const raw: Record<string, number> = {};
-    for (const player of lineup) {
-      raw[player.id] = clamp(
-        (plan[player.id] ?? 0) * (0.97 + rng() * 0.06),
-        0,
-        cap
-      );
+  function runFrame(start: number, duration: number, slot: number, possessions: number, extra = false) {
+    function floor(b: ReturnType<typeof book>): GmPlayer[] {
+      const ids = extra
+        ? (b.coaching.closingLineup?.length === 5 ? b.coaching.closingLineup : b.rows.filter(row => row.on[23]).map(row => row.id))
+        : b.rows.filter(row => row.on[slot]).map(row => row.id);
+      const available = ids.map(id => byId.get(id)).filter((p): p is GmPlayer => Boolean(p && p.teamId === b.roster[0]!.teamId && !p.injury));
+      for (const p of b.roster) if (available.length < 5 && !available.some(q => q.id === p.id)) available.push(p);
+      return available.slice(0, 5);
     }
-    const sum = Object.values(raw).reduce((total, minutes) => total + minutes, 0);
-    const scaled =
-      sum > 240
-        ? Object.fromEntries(
-            Object.entries(raw).map(([id, minutes]) => [id, minutes * (240 / sum)])
-          )
-        : raw;
-    const capped = clampAndRespread(scaled, cap);
-    return lineup.map((player) => capped[player.id] ?? 0);
-  }
-  // Box minutes come from the positional book. paintShifts is UI-only —
-  // using it here created true 48s when thin benches put starters back on.
-  const targets = positionalMinuteTargets(lineup, team.starters);
-  const raw: Record<string, number> = {};
-  for (const player of lineup) {
-    const base = targets[player.id] ?? rotationTarget(player);
-    raw[player.id] = clamp(base * (0.96 + rng() * 0.08), 0, cap);
-  }
-  const sum = Object.values(raw).reduce((total, minutes) => total + minutes, 0);
-  const scaled =
-    sum > 1
-      ? Object.fromEntries(
-          Object.entries(raw).map(([id, minutes]) => [id, minutes * (240 / sum)])
-        )
-      : raw;
-  const capped = clampAndRespread(scaled, cap);
-  return lineup.map((player) => capped[player.id] ?? 0);
-}
-
-/** Poisson draw. Rounding a normal up from zero was inflating steals, blocks, and free throws. */
-function varyCount(mean: number, rng: () => number, cap?: number): number {
-  if (mean <= 0) return 0;
-  if (mean < 12) {
-    const limit = Math.exp(-mean);
-    let k = 0;
-    let p = 1;
-    do {
-      k += 1;
-      p *= rng();
-    } while (p > limit && k < 40);
-    return clamp(k - 1, 0, cap ?? 40);
-  }
-  const next = Math.round(mean + gaussian(rng) * Math.sqrt(mean));
-  return clamp(next, 0, cap ?? 80);
-}
-
-function varyMakes(attempts: number, pct: number, rng: () => number): number {
-  if (attempts <= 0 || pct <= 0) return 0;
-  const rate = clamp(pct, 0, 0.95);
-  if (attempts <= 24) {
-    let made = 0;
-    for (let i = 0; i < attempts; i++) {
-      if (rng() < rate) made += 1;
+    homeFloor = floor(homeBook); awayFloor = floor(awayBook);
+    stints.push({ start, end: start + duration, home: homeFloor.map(p => p.id), away: awayFloor.map(p => p.id) });
+    for (const group of [homeFloor, awayFloor]) {
+      const coaching = group === homeFloor ? homeBook.coaching : awayBook.coaching;
+      const desired = Object.fromEntries(group.map(p => [p.id, Object.fromEntries(Object.entries(coaching.positionMinutes?.[p.id] ?? {}).map(([pos, min]) => [pos, Math.max(0, (min ?? 0) - (lines.get(p.id)!.positionMinutes?.[pos as GmPlayer["position"]] ?? 0))]))]));
+      const seats = assignFive(group, desired).starters;
+      for (const p of group) {
+        const line = lines.get(p.id)!;
+        line.minutes += duration / 60;
+        for (const [position, id] of Object.entries(seats)) if (id === p.id) {
+          const key = position as GmPlayer["position"];
+          line.positionMinutes = { ...line.positionMinutes, [key]: (line.positionMinutes?.[key] ?? 0) + duration / 60 };
+        }
+      }
     }
-    return made;
-  }
-  const mean = attempts * rate;
-  const std = Math.sqrt(attempts * rate * (1 - rate));
-  return clamp(Math.round(mean + gaussian(rng) * std), 0, attempts);
-}
-
-function distributeStats(
-  team: GmTeam,
-  lineup: GmPlayer[],
-  paceScale: number,
-  fgMult: number,
-  rng: () => number,
-  mods: RateMods = {
-    three: 1,
-    two: 1,
-    ft: 1,
-    ast: 1,
-    tov: 1,
-    stl: 1,
-    blk: 1,
-    orb: 1,
-  },
-  coaching?: GmTeam["coaching"],
-  minutePlan?: Record<string, number>,
-  gapDays: number | null = null
-): GmBoxPlayerLine[] {
-  if (!lineup.length) return [];
-  const minutes = assignMinutes(team, lineup, rng, minutePlan);
-  const profiles = lineup.map((player) => perMinute(player));
-  const usage = lineup.map((player) => usageBoost(player, coaching));
-  const baseFga = lineup.map((_, index) => {
-    const rate = profiles[index]!;
-    return rate.fga * (minutes[index] ?? 0) * paceScale;
-  });
-  const boosted = baseFga.map((fga, index) => fga * usage[index]!);
-  const baseSum = baseFga.reduce((total, fga) => total + fga, 0);
-  const boostSum = boosted.reduce((total, fga) => total + fga, 0) || 1;
-  const keep = boostSum > 0 ? baseSum / boostSum : 1;
-  const drafted = lineup.map((player, index) => {
-    const rate = profiles[index]!;
-    const min = minutes[index] ?? 0;
-    if (min < 1) return null;
-    const volume = min * paceScale;
-    const fga = varyCount((boosted[index] ?? 0) * keep, rng, 45);
-    const threeShare = clamp(
-      (rate.threeShare < 0.012 ? 0 : rate.threeShare) * mods.three,
-      0,
-      0.78
-    );
-    let tpa = 0;
-    for (let shot = 0; shot < fga; shot++) {
-      if (rng() < threeShare) tpa += 1;
+    for (let i = 0; i < possessions; i++) {
+      elapsed = start + (i + 0.25) * duration / Math.max(1, possessions);
+      possession(homeFloor, awayFloor, 0);
+      elapsed = start + (i + 0.75) * duration / Math.max(1, possessions);
+      possession(awayFloor, homeFloor, 1);
     }
-    const twoA = Math.max(0, fga - tpa);
-    const tired = secondNightScale(player.age, gapDays);
-    const tpm = varyMakes(tpa, clamp(rate.threePct, 0.12, 0.55) * fgMult * tired, rng);
-    const twoM = varyMakes(twoA, clamp(rate.twoPct * mods.two, 0.32, 0.78) * fgMult * tired, rng);
-    const fgm = twoM + tpm;
-    const fta = varyCount(fga * rate.ftPerFga * mods.ft * extraFt(player, coaching), rng, 30);
-    const ftm = varyMakes(fta, rate.ftPct, rng);
-    const points = Math.max(0, twoM * 2 + tpm * 3 + ftm);
-    const orb = varyCount(rate.orb * volume * mods.orb, rng, 20);
-    const drb = varyCount(rate.drb * volume, rng, 25);
-    const assists = varyCount(
-      rate.ast * volume * mods.ast * extraAst(player, coaching),
-      rng,
-      25
-    );
-    const steals = varyCount(rate.stl * volume * mods.stl, rng, 8);
-    const blocks = varyCount(rate.blk * volume * mods.blk, rng, 10);
-    const turnovers = varyCount(rate.tov * volume * mods.tov, rng, 12);
-    return {
-      player,
-      min,
-      fga,
-      fgm,
-      tpa,
-      tpm,
-      fta,
-      ftm,
-      points,
-      orb,
-      drb,
-      assists,
-      steals,
-      blocks,
-      turnovers,
-    };
-  });
-
-  const played = drafted.filter((row) => row != null);
-  const teamFgm = played.reduce((sum, row) => sum + row.fgm, 0) || 1;
-  const teamAst = played.reduce((sum, row) => sum + row.assists, 0);
-  const astScale = teamAst > teamFgm * 0.82 ? (teamFgm * 0.82) / teamAst : 1;
-
-  return played.map((row) => {
-    const fgm = row.fgm;
-    const fga = row.fga;
-    const points = row.points;
-    const assists = Math.round(row.assists * astScale);
-    const rebounds = row.orb + row.drb;
-    const tsDenom = 2 * (fga + 0.44 * row.fta);
-    const gameScore =
-      points +
-      0.4 * fgm -
-      0.7 * fga -
-      0.4 * (row.fta - row.ftm) +
-      rebounds * 0.5 +
-      row.steals +
-      0.7 * assists +
-      0.7 * row.blocks -
-      row.turnovers;
-    return {
-      playerId: row.player.id,
-      playerName: row.player.name,
-      teamId: row.player.teamId!,
-      minutes: Math.round(row.min * 10) / 10,
-      points,
-      assists,
-      rebounds,
-      steals: row.steals,
-      blocks: row.blocks,
-      turnovers: row.turnovers,
-      fgm,
-      fga,
-      tpm: row.tpm,
-      tpa: row.tpa,
-      ftm: row.ftm,
-      fta: row.fta,
-      plusMinus: 0,
-      trueShootingPct: tsDenom > 0 ? points / tsDenom : 0,
-      usagePct: fga / Math.max(1, played.reduce((sum, item) => sum + item.fga, 0)),
-      gameScore: Math.round(gameScore * 10) / 10,
-    };
-  });
+    totalPossessions += possessions;
+  }
+  for (let start = 0, slot = 0; start < regulation; start += 120, slot++) {
+    const duration = Math.min(120, regulation - start);
+    const n = Math.round(possessionsPerSide * (start + duration) / regulation) - Math.round(possessionsPerSide * start / regulation);
+    runFrame(start, duration, slot, n);
+  }
+  while (homeScore === awayScore) {
+    const start = regulation + overtime * 300;
+    overtime++;
+    for (let offset = 0; offset < 300; offset += 120) runFrame(start + offset, Math.min(120, 300 - offset), 23, Math.max(1, Math.round(pace * Math.min(120, 300 - offset) / 2880)), true);
+  }
+  const played = [...lines.values()].filter(line => line.minutes > 0);
+  for (const line of played) {
+    const team = line.teamId === home.id ? home : away;
+    line.started = Object.values(team.starters).includes(line.playerId);
+    line.trueShootingPct = line.points / Math.max(1, 2 * (line.fga + 0.44 * line.fta));
+    line.usagePct = (line.fga + 0.44 * line.fta + line.turnovers) / Math.max(1, usedOnCourt.get(line.playerId) ?? 1);
+    line.gameScore = Math.round((line.points + 0.4 * line.fgm - 0.7 * line.fga - 0.4 * (line.fta - line.ftm) + 0.5 * line.rebounds + line.steals + 0.7 * line.assists + 0.7 * line.blocks - line.turnovers) * 10) / 10;
+  }
+  const box: GmBoxScore = { id: `box_${game.id}_${actualSeed}`, gameId: game.id, season: game.season, day: game.day, homeTeamId: home.id, awayTeamId: away.id,
+    homeScore, awayScore, possessions: totalPossessions, players: played, events, stints, overtime, postseason: game.postseason,
+    shiftPlan: homeBook.rows.map(row => ({ playerId: row.id, playerName: byId.get(row.id)!.name, on: row.on })) };
+  return { game: { ...game, played: true, homeScore, awayScore, boxScoreId: box.id }, box };
 }
 
-/** Almost every missed shot becomes a rebound for somebody. */
-function balanceRebounds(home: GmBoxPlayerLine[], away: GmBoxPlayerLine[]) {
-  const misses = (lines: GmBoxPlayerLine[]) =>
-    lines.reduce((sum, line) => sum + Math.max(0, line.fga - line.fgm), 0);
-  const grabbed = (lines: GmBoxPlayerLine[]) =>
-    lines.reduce((sum, line) => sum + line.rebounds, 0);
-  const target = (misses(home) + misses(away)) * 0.925;
-  const have = grabbed(home) + grabbed(away);
-  if (have < 1 || target < 1) return;
-  const scale = clamp(target / have, 0.84, 1.18);
-  for (const line of [...home, ...away]) {
-    const next = Math.round(line.rebounds * scale);
-    line.gameScore = Math.round((line.gameScore + (next - line.rebounds) * 0.5) * 10) / 10;
-    line.rebounds = next;
-  }
-  const want = Math.round(target);
-  const got = grabbed(home) + grabbed(away);
-  const board = [...home, ...away];
-  const host = board.reduce(
-    (best, line) => (line.rebounds > (best?.rebounds ?? -1) ? line : best),
-    board[0]
-  );
-  if (host) host.rebounds = Math.max(0, host.rebounds + (want - got));
-}
-
-function stampPlusMinus(
-  lines: GmBoxPlayerLine[],
-  margin: number,
-  rng: () => number
-) {
-  for (const line of lines) {
-    line.plusMinus = Math.round((line.minutes / 48) * margin * 2.1 + gaussian(rng) * 5);
-  }
+/** Keep detailed feeds for the user's games without filling saves with CPU event logs. */
+export function compactSimBox(box: GmBoxScore, userTeamId: string): GmBoxScore {
+  return box.homeTeamId === userTeamId || box.awayTeamId === userTeamId ? box : { ...box, events: undefined, stints: undefined, shiftPlan: undefined };
 }

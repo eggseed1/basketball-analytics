@@ -174,7 +174,7 @@ function main() {
 
   // --- Nav ---
   assert.equal(primaryNavLabelForPath("/history"), "History");
-  assert.equal(primaryNavLabelForPath("/franchises"), "Teams");
+  assert.equal(primaryNavLabelForPath("/franchises"), "History");
   assert.ok(PRIMARY_NAV.some((n) => n.id === "history" && n.href === "/history"));
 
   // ASK context: season embedded in supported query strings (v1 contract)

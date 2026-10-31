@@ -3,6 +3,7 @@
  * Impact prefers DARKO DPM, then RAPTOR, then a stats heuristic.
  */
 
+import { ensureSimProfile } from "@/gm/engine/player-profile";
 import type { PlayerSeason } from "@/data/types";
 import type {
   GmCountingLine,
@@ -74,6 +75,8 @@ function mapPosition(raw?: string): GmPosition {
   if (!raw) return "SF";
   const p = raw.toUpperCase();
   if (POSITIONS.includes(p as GmPosition)) return p as GmPosition;
+  const first = p.split(/[-/]/)[0] as GmPosition;
+  if (POSITIONS.includes(first)) return first;
   if (p.includes("G") && p.includes("F")) return "SF";
   if (p.startsWith("G")) return "PG";
   if (p.startsWith("F")) return "PF";
@@ -111,12 +114,14 @@ function finite(value: unknown): value is number {
 
 /**
  * ESPN / thin feeds often fill missing advanced metrics with literal 0.
- * Treat near-zero the same as missing so we can fall through to netRating
- * or box-score proxies instead of stamping every star at impact 0.
+ * Optional overlays preserve legitimate zero values. Legacy required DPM/BPM
+ * fields need a nonblank family before they can be used as an impact source.
  */
 function usableMetric(value: unknown): value is number {
-  return finite(value) && Math.abs(value) > 1e-6;
+  return finite(value);
 }
+
+function nonzeroMetric(value: unknown): boolean { return finite(value) && Math.abs(value) > 1e-6; }
 
 /**
  * Points per 100 above average. DARKO when we have it.
@@ -126,13 +131,14 @@ function usableMetric(value: unknown): value is number {
 function estimateImpact(row: PlayerSeason): number {
   const minutes = Number.isFinite(row.minutes) ? row.minutes : 0;
   const gp = Number.isFinite(row.gamesPlayed) ? row.gamesPlayed : 0;
-  const hasDarko = usableMetric(row.darkoDpm);
+  const genericDarko = usableMetric(row.dpm) && (nonzeroMetric(row.dpm) || nonzeroMetric(row.oDpm) || nonzeroMetric(row.dDpm));
+  const hasDarko = usableMetric(row.darkoDpm) || genericDarko;
 
   let raw: number | null = null;
   if (usableMetric(row.darkoDpm)) raw = row.darkoDpm;
-  else if (usableMetric(row.dpm)) raw = row.dpm;
+  else if (genericDarko) raw = row.dpm;
   else if (usableMetric(row.raptor)) raw = row.raptor;
-  else if (usableMetric(row.bpm)) raw = clamp(row.bpm, -8, 14);
+  else if (usableMetric(row.bpm) && (nonzeroMetric(row.bpm) || nonzeroMetric(row.obpm) || nonzeroMetric(row.dbpm))) raw = clamp(row.bpm, -8, 14);
   else {
     const net = row.netRating;
     if (finite(net) && gp > 0) {
@@ -190,25 +196,18 @@ function ratingsFromSeason(
   opts?: { age?: number; draftPick?: number | null }
 ): GmRatings {
   const impact = estimateImpact(row);
-  const offense = usableMetric(row.darkoOff)
-    ? row.darkoOff
-    : usableMetric(row.oDpm)
-      ? row.oDpm
-      : usableMetric(row.oRaptor)
-        ? row.oRaptor
-        : usableMetric(row.obpm)
-          ? row.obpm
-          : impact * 0.65;
-  const defense = usableMetric(row.darkoDef)
-    ? row.darkoDef
-    : usableMetric(row.dDpm)
-      ? row.dDpm
-      : usableMetric(row.dRaptor)
-        ? row.dRaptor
-        : usableMetric(row.dbpm)
-          ? row.dbpm
-          : impact * 0.35;
-  const ts = row.trueShootingPct || 0.55;
+  const genericDarko = usableMetric(row.dpm) && (nonzeroMetric(row.dpm) || nonzeroMetric(row.oDpm) || nonzeroMetric(row.dDpm));
+  const pair = usableMetric(row.darkoDpm) ? [row.darkoOff, row.darkoDef]
+    : genericDarko ? [row.oDpm, row.dDpm]
+    : usableMetric(row.raptor) ? [row.oRaptor, row.dRaptor]
+    : [row.obpm, row.dbpm];
+  let offense = usableMetric(pair[0]) ? pair[0] : impact * 0.65;
+  let defense = usableMetric(pair[1]) ? pair[1] : impact - offense;
+  const total = offense + defense;
+  if (Math.abs(total) > 0.000001) { const scale = impact / total; offense *= scale; defense *= scale; }
+  else if (Math.abs(impact) > 0.000001) { offense = impact * 0.65; defense = impact * 0.35; }
+  offense = Math.round(clamp(offense, Math.max(-8, impact - 10), Math.min(14, impact + 6)) * 100) / 100;
+  defense = Math.round((impact - offense) * 100) / 100;
   const age =
     opts?.age && opts.age > 0
       ? opts.age
@@ -219,8 +218,8 @@ function ratingsFromSeason(
     impact: Math.round(impact * 100) / 100,
     offense: Math.round(clamp(offense, -8, 14) * 100) / 100,
     defense: Math.round(clamp(defense, -6, 10) * 100) / 100,
-    shooting: clamp(Math.round(ts * 100), 25, 95),
-    finishing: clamp(Math.round(50 + impact * 4), 25, 95),
+    shooting: clamp(Math.round(50 + ((row.threePointPct || 0.33) - 0.3) * 180), 25, 95),
+    finishing: row.fieldGoalsAttempted > row.threePointersAttempted ? clamp(Math.round(50 + (((row.fieldGoalsMade - row.threePointersMade) / (row.fieldGoalsAttempted - row.threePointersAttempted)) - 0.45) * 120), 25, 95) : 55,
     playmaking: clamp(
       Math.round(30 + (row.assists / Math.max(1, row.gamesPlayed)) * 8),
       15,
@@ -293,14 +292,16 @@ export function playerSeasonToGmPlayer(
     salaryByName?: Map<string, number>;
   }
 ): GmPlayer {
+  // Thin adapters can carry NaN for unpublished counting fields.
+  row = { ...row };
+  for (const key of ["gamesPlayed", "gamesStarted", "minutes", "points", "assists", "rebounds", "steals", "blocks", "turnovers", "fieldGoalsMade", "fieldGoalsAttempted", "threePointersMade", "threePointersAttempted", "freeThrowsMade", "freeThrowsAttempted", "offensiveRebounds", "defensiveRebounds"] as const) {
+    if (!Number.isFinite(row[key])) row[key] = 0;
+  }
   const position = mapPosition(row.position);
   const bio = getBundledPlayerBio(row.playerId);
-  const age =
-    typeof row.age === "number" && row.age > 0
-      ? Math.round(row.age)
-      : typeof bio?.age === "number" && bio.age > 0
-        ? bio.age
-        : 26;
+  const birth = bio?.birthDate ? new Date(bio.birthDate) : null;
+  const seasonalAge = birth && Number.isFinite(birth.getTime()) ? Math.floor((Date.UTC(seasonEndYear, 1, 1) - birth.getTime()) / (365.2425 * 86400000)) : null;
+  const age = typeof row.age === "number" && row.age > 0 ? Math.round(row.age) : seasonalAge != null && seasonalAge >= 17 && seasonalAge <= 48 ? seasonalAge : 26;
   const draft = parsePlayerDraftInfo(bio?.draftInfo);
   const ratings = ratingsFromSeason(row, {
     age,
@@ -319,7 +320,11 @@ export function playerSeasonToGmPlayer(
       }).contract
     : null;
   const hint: SheetStatHint = {
-    threeRate: row.threePointAttemptRate,
+    twoPct: row.fieldGoalsAttempted > row.threePointersAttempted ? (row.fieldGoalsMade - row.threePointersMade) / (row.fieldGoalsAttempted - row.threePointersAttempted) : undefined,
+    twoAttempts: Math.max(0, row.fieldGoalsAttempted - row.threePointersAttempted),
+    threeAttempts: row.threePointersAttempted,
+    freeThrowAttempts: row.freeThrowsAttempted,
+    threeRate: Number.isFinite(row.threePointAttemptRate) ? row.threePointAttemptRate : row.fieldGoalsAttempted > 0 ? row.threePointersAttempted / row.fieldGoalsAttempted : undefined,
     threePct: row.threePointPct,
     ftPct: row.freeThrowPct,
     fgPct: row.fieldGoalPct,
@@ -335,8 +340,11 @@ export function playerSeasonToGmPlayer(
     stlPct: percentPoints(row.stealPct),
     astPct: percentPoints(row.assistPct),
   };
-  const entryValue = entryValueForNbaId(row.playerId);
+  const entryValue = entryValueForNbaId(row.playerId, row.season);
   const player: GmPlayer = {
+    listedPosition: POSITIONS.includes(row.position?.toUpperCase().split(/[-/]/)[0] as GmPosition) ? position : undefined,
+    secondaryPosition: POSITIONS.includes(row.position?.toUpperCase().split(/[-/]/)[1] as GmPosition) ? row.position!.toUpperCase().split(/[-/]/)[1] as GmPosition : undefined,
+    realRole: { season: seasonEndYear, teamId, starts: row.gamesStarted ?? 0, games: row.gamesPlayed, mpg: row.minutes / Math.max(1, row.gamesPlayed) },
     id: row.playerId,
     name: row.playerName,
     teamId,
@@ -371,7 +379,7 @@ export function playerSeasonToGmPlayer(
   };
   player.sheet = buildSheet(player, row.gamesPlayed > 0 ? hint : undefined);
   // ESPN only ships G/F/C → SG/SF/C. Split into five spots + secondary here.
-  return withListedPositions(applyRookieRatings(player));
+  return ensureSimProfile(withListedPositions(applyRookieRatings(player)));
 }
 
 export function buildLeagueFromPlayerSeasons(
@@ -593,3 +601,4 @@ export function buildLeagueFromPlayerSeasons(
 export function defaultGmCanonicalSeason(): string {
   return canonicalSeasonFromStartYear(currentNbaStartYear());
 }
+

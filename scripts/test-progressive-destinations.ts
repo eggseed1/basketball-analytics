@@ -181,8 +181,8 @@ function main() {
     "History player links pass theme"
   );
   assert.ok(
-    /teamFromHistoryHref\([^)]*theme/.test(snap),
-    "History team links pass theme"
+    snap.includes("teamFranchiseHistoryHref(r.canonicalTeamId, season)"),
+    "History team links preserve the season on the franchise history page"
   );
 
   // ——— GAME STABLE HEADER ———

@@ -31,5 +31,20 @@ jobs:
         run: npx next typegen
       - run: npm run typecheck
       - name: Lint (new violations only; baseline in eslint-suppressions.json)
+        id: lint
         run: npx eslint . --quiet
+      - name: Collect lint diagnostics
+        if: failure() && steps.lint.outcome == 'failure'
+        run: |
+          mkdir -p /tmp/lint-diagnostics
+          npx eslint . --quiet --prune-suppressions --format json --output-file /tmp/lint-diagnostics/report.json || true
+          cp eslint-suppressions.json /tmp/lint-diagnostics/eslint-suppressions.json
+      - uses: actions/upload-artifact@v4
+        if: failure() && steps.lint.outcome == 'failure'
+        with:
+          name: lint-diagnostics
+          path: /tmp/lint-diagnostics
+          retention-days: 7
       - run: npm test
+        if: success() || (failure() && steps.lint.outcome == 'failure')
+

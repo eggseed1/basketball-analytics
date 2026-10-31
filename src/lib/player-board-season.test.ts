@@ -12,23 +12,23 @@ import {
 const beforeTip = new Date("2026-10-19T16:00:00.000Z");
 const afterTip = new Date("2026-10-21T04:00:00.000Z");
 
-test("empty board before tip still uses prior-season stats", () => {
+test("empty board before tip still uses prior-season stats", async () => {
   assert.equal(
-    shouldUsePriorSeasonBoardStats("2026-27", [], beforeTip),
+    await shouldUsePriorSeasonBoardStats("2026-27", [], beforeTip),
     true
   );
 });
 
-test("empty board after tip does not force prior-season stats", () => {
+test("empty board after tip does not force prior-season stats", async () => {
   assert.equal(
-    shouldUsePriorSeasonBoardStats("2026-27", [], afterTip),
+    await shouldUsePriorSeasonBoardStats("2026-27", [], afterTip),
     false
   );
 });
 
-test("non-current seasons never force prior-season stats", () => {
+test("non-current seasons never force prior-season stats", async () => {
   assert.equal(
-    shouldUsePriorSeasonBoardStats(
+    await shouldUsePriorSeasonBoardStats(
       "2024-25",
       [{ gamesPlayed: 0 } as never],
       afterTip
@@ -37,19 +37,19 @@ test("non-current seasons never force prior-season stats", () => {
   );
 });
 
-test("explore minutes floor is 0 in the first three weeks after tip", () => {
-  assert.equal(defaultExploreMinimumMinutes("2026-27", afterTip), 0);
+test("explore minutes floor is 0 in the first three weeks after tip", async () => {
+  assert.equal(await defaultExploreMinimumMinutes("2026-27", afterTip), 0);
 });
 
-test("explore All seasons uses the current year's early-week minutes floor", () => {
-  assert.equal(defaultExploreMinimumMinutes("ALL", afterTip), 0);
-  assert.equal(defaultExploreMinimumMinutes("ALL", beforeTip), 500);
+test("explore All seasons uses the current year's early-week minutes floor", async () => {
+  assert.equal(await defaultExploreMinimumMinutes("ALL", afterTip), 0);
+  assert.equal(await defaultExploreMinimumMinutes("ALL", beforeTip), 500);
 });
 
-test("explore minutes floor stays 500 for finished seasons", () => {
-  assert.equal(defaultExploreMinimumMinutes("2025-26", afterTip), 500);
+test("explore minutes floor stays 500 for finished seasons", async () => {
+  assert.equal(await defaultExploreMinimumMinutes("2025-26", afterTip), 500);
 });
 
-test("explore minutes floor stays 500 before tip", () => {
-  assert.equal(defaultExploreMinimumMinutes("2026-27", beforeTip), 500);
+test("explore minutes floor stays 500 before tip", async () => {
+  assert.equal(await defaultExploreMinimumMinutes("2026-27", beforeTip), 500);
 });

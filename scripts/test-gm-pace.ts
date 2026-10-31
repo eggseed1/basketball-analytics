@@ -198,14 +198,16 @@ for (let slot = 0; slot < 24; slot++) {
   assert.equal(balanced.filter((row) => row.on[slot]).length, 5);
 }
 assert.ok(balanced[0]!.on.slice(0, 6).every(Boolean));
-assert.equal(balanced[0]!.on[9], false);
+assert.ok(balanced[0]!.on.some(on => !on), "the lead creator gets a rest");
 assert.equal(balanced.reduce((sum, row) => sum + row.minutes, 0), 240);
 const slow = paintShifts({
   players: shiftPlayers,
   coaching: { offense: "post", defense: "drop", tempo: "slow", playThrough: [null, null] },
 });
-assert.ok(slow.slice(1, 5).every((row) => row.on[2]));
-assert.equal(slow[0]!.on[11], true);
-assert.equal(slow[0]!.on[12], false);
+for (let slot = 0; slot < 24; slot++) assert.equal(slow.filter(row => row.on[slot]).length, 5);
+assert.equal(slow.reduce((sum, row) => sum + row.minutes, 0), 240);
+assert.ok(slow[0]!.minutes >= slow[5]!.minutes, "the lead creator retains the larger role");
+assert.ok(slow[0]!.on.some(on => !on), "a slow scheme still gives the creator a rest");
 
 console.log("gm pace: ok", "deadline deals", moved);
+

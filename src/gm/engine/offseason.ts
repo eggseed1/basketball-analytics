@@ -4,6 +4,7 @@
  * season does not age the same roster again.
  */
 
+import { archiveSeason } from "@/gm/engine/franchise";
 import type { GmAutomation, GmLeagueState, GmPlayer, GmSignVia } from "@/gm/types";
 import {
   advanceBirdRights,
@@ -182,6 +183,7 @@ export function cullUnsignedFreeAgents(
 export function enterFreeAgency(state: GmLeagueState): GmLeagueState {
   if (state.phase === "free_agency") return state;
 
+  state = archiveSeason(state);
   const drafted =
     state.draftPool.length > 0 ? finishDraftWithAi(state) : state;
   const coachByTeam = Object.fromEntries(
@@ -200,7 +202,8 @@ export function enterFreeAgency(state: GmLeagueState): GmLeagueState {
     true,
     coachByTeam,
     playoffGamesByPlayer(drafted),
-    developerByTeam
+    developerByTeam,
+    drafted.settings.developmentSpeed ?? 1
   ).map((player) =>
     restoreRookieYear(releaseExpiredWithoutOption(player), drafted.season)
   );
@@ -313,6 +316,9 @@ export function startNextSeason(state: GmLeagueState): GmLeagueState {
       .map((player) => player.id),
     schedule: retieCupGroupGames(generateSchedule(teams, season, season * 997), cupGroups, season),
     priorWins,
+    champion: undefined,
+    awards: undefined,
+    homeFlow: undefined,
     cupGroups,
     allStar: undefined,
     standings: emptyStandings(teams),
@@ -379,3 +385,4 @@ export function signingAllowed(
   if (!player) return { ok: false, reason: "Player not found." };
   return evaluateSigning(league, league.userTeamId, player, salaryM, years);
 }
+

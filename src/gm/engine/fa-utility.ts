@@ -96,7 +96,8 @@ function roleUtility(team: GmTeam, player: GmPlayer, players: GmPlayer[]): numbe
 function continuityUtility(player: GmPlayer, teamId: string): number {
   if (player.rightsTeamId === teamId) {
     const ovr = overallOf(player);
-    return ovr >= 80 ? 78 : 62;
+    const promise = player.rolePromise?.teamId === teamId ? player.rolePromise.status : undefined;
+    return clamp((ovr >= 80 ? 78 : 62) + (promise === "met" ? 8 : promise === "unmet" ? -18 : 0), 0, 100);
   }
   return 28;
 }
@@ -177,3 +178,4 @@ export function agentFeedback(
   }
   return "He wants one more day to see how the market develops.";
 }
+

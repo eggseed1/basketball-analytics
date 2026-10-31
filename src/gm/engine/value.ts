@@ -6,18 +6,19 @@
 import type { GmDraftPick, GmLeagueState, GmPlayer, GmTeam } from "@/gm/types";
 import { overallOf } from "@/gm/engine/lineup";
 import { clamp } from "@/gm/engine/rng";
+import { parsePlayerDraftInfo } from "@/lib/player-draft";
 
-/** The live overalls sit in the 70s and low 80s. Five stars is that top, not a 92. */
+/** Display bands follow the same overall scale as player cards. */
 function starsFromOverall(overall: number): number {
-  if (overall >= 82) return 5;
-  if (overall >= 79) return 4.5;
-  if (overall >= 76) return 4;
-  if (overall >= 73) return 3.5;
-  if (overall >= 70) return 3;
-  if (overall >= 67) return 2.5;
-  if (overall >= 63) return 2;
-  if (overall >= 59) return 1.5;
-  if (overall >= 55) return 1;
+  if (overall >= 92) return 5;
+  if (overall >= 88) return 4.5;
+  if (overall >= 84) return 4;
+  if (overall >= 80) return 3.5;
+  if (overall >= 76) return 3;
+  if (overall >= 72) return 2.5;
+  if (overall >= 68) return 2;
+  if (overall >= 64) return 1.5;
+  if (overall >= 60) return 1;
   return 0.5;
 }
 
@@ -273,8 +274,22 @@ export function contractSurplusM(player: GmPlayer): number | null {
   return Math.round((expected - salary) * 10) / 10;
 }
 
-export function playerTradePoints(player: GmPlayer): number {
-  return starsToPoints(playerStars(player));
+export function playerTradePoints(player: GmPlayer, league?: GmLeagueState): number {
+  const overall = overallOf(player);
+  const talent = 1 + 0.15 * Math.pow(Math.max(0, overall - 50), 1.7);
+  const age = player.age <= 23 ? 1.22 : player.age <= 27 ? 1.1 : player.age >= 35 ? 0.63 : player.age >= 32 ? 0.82 : 1;
+  // Public pedigree and age price upside without exposing a hidden development roll.
+  const pick = player.draftPick ?? parsePlayerDraftInfo(player.draftLabel)?.pick;
+  const pedigree = pick == null ? 0 : clamp((31 - pick) / 30, 0, 1);
+  const potential = player.age <= 24 ? Math.max(0, 25 - player.age) * (0.8 + pedigree) : 0;
+  const cap = league?.settings.salaryCapM ?? 140.588;
+  const salary = player.contract?.annualSalaryM;
+  const expectedShare = clamp((overall - 64) * 0.009, 0.008, 0.35);
+  const years = player.contract?.yearsRemaining ?? 0;
+  const surplus = salary == null ? 0 : clamp((expectedShare - salary / cap) * 60 * Math.min(3, years), -28, 25);
+  const control = years <= 1 ? 0.88 : 1 + Math.min(4, years - 1) * 0.025;
+  const availability = player.injury ? clamp(1 - player.injury.gamesRemaining / 100, 0.65, 1) : 1;
+  return Math.max(1, Math.round((talent * age * control + potential + surplus) * availability));
 }
 
 export function pickTradePoints(league: GmLeagueState, pick: GmDraftPick): number {
@@ -290,3 +305,4 @@ export function formatStars(stars: number): string {
 export function teamById(teams: GmTeam[], id: string): GmTeam | undefined {
   return teams.find((team) => team.id === id);
 }
+

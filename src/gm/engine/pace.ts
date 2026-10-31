@@ -12,7 +12,7 @@ import type {
   GmStandingsRow,
   GmTeam,
 } from "@/gm/types";
-import { simulateGame } from "@/gm/engine/simulate";
+import { simulateGame, compactSimBox } from "@/gm/engine/simulate";
 import { cupChampionNews, ensureNbaCup, gameCounts } from "@/gm/engine/cup";
 import { allStarChampionNews, ensureAllStar } from "@/gm/engine/allstar";
 import { maybeGrowInSeason, rollGameInjuries, tickInjuries } from "@/gm/engine/progression";
@@ -61,7 +61,7 @@ export function stepDay(league: GmLeagueState): {
       .sort((a, b) => a.id.localeCompare(b.id));
     if (!slate.length) break;
     for (const g of slate) {
-    const result = simulateGame(g, league.teams, players, undefined, schedule);
+    const result = simulateGame(g, league.teams, players, undefined, schedule, league.settings);
     schedule = schedule.map((x) => (x.id === g.id ? result.game : x));
     if (gameCounts(g)) {
       players = recordSimGame(players, result.box, boxScores);
@@ -74,7 +74,7 @@ export function stepDay(league: GmLeagueState): {
         result.game.awayScore!
       );
     }
-    boxScores = [result.box, ...boxScores].slice(0, 400);
+    boxScores = [compactSimBox(result.box, league.userTeamId), ...boxScores].slice(0, 400);
     if (g.exhibition !== "allstar") {
       players = rollGameInjuries(
         { ...league, players },
@@ -89,7 +89,7 @@ export function stepDay(league: GmLeagueState): {
       break;
     }
   }
-  players = tickInjuries(players, trainer);
+  players = tickInjuries(players, trainer, { teamIds: due.filter(g => g.exhibition !== "allstar").flatMap(g => [g.homeTeamId, g.awayTeamId]), before: playersBeforeInjuries, trainerByTeam: Object.fromEntries(league.teams.map(t => [t.id, t.staff.trainerLevel])) });
   const cupNews = schedule
     .filter((game) => game.played && game.day === day)
     .flatMap((game) => {
@@ -294,3 +294,4 @@ export function newInjuries(
   }
   return found.slice(0, 3);
 }
+

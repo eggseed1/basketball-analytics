@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 import type { PlayByPlayEvent } from "@/data/types";
 import {
@@ -46,15 +46,9 @@ export function useLiveGamePlayByPlay(
   status: string,
   enabled: boolean
 ): PlayByPlayEvent[] {
-  const [events, setEvents] = useState(initialEvents);
-  const eventsRef = useRef(events);
-  eventsRef.current = events;
-
-  useEffect(() => {
-    setEvents((prev) =>
-      playByPlayIsFresher(initialEvents, prev) ? initialEvents : prev
-    );
-  }, [initialEvents]);
+  const [snapshot, setSnapshot] = useState({ gameId, events: initialEvents });
+  const events = snapshot.gameId !== gameId || playByPlayIsFresher(initialEvents, snapshot.events)
+    ? initialEvents : snapshot.events;
 
   useEffect(() => {
     if (!enabled) return;
@@ -81,9 +75,11 @@ export function useLiveGamePlayByPlay(
         };
         const next = body.data?.events;
         if (!next?.length || cancelled) return;
-        if (playByPlayIsFresher(next, eventsRef.current)) {
-          setEvents(next);
-        }
+        setSnapshot(previous => {
+          const current = previous.gameId !== gameId || playByPlayIsFresher(initialEvents, previous.events)
+            ? initialEvents : previous.events;
+          return playByPlayIsFresher(next, current) ? { gameId, events: next } : previous;
+        });
       } catch {
         /* keep last good set */
       }
@@ -115,7 +111,7 @@ export function useLiveGamePlayByPlay(
       cancelled = true;
       if (timer) clearTimeout(timer);
     };
-  }, [gameId, status, enabled, initialEvents.length]);
+  }, [gameId, status, enabled, initialEvents]);
 
   return events;
 }

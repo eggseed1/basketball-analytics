@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 
 /**
  * Cycles short, destination-aware loading lines while a skeleton is up.
- * SSR paints phrase[0]; after mount we jump to a rotating start so visits
+ * SSR paints phrase[0]; the first timer tick picks a rotating start so visits
  * don't feel glued to the first one or two lines.
  */
 export function LoadingPhrase({
@@ -28,9 +28,10 @@ export function LoadingPhrase({
 
   useEffect(() => {
     if (phrases.length < 2) return;
-    setIndex(loadingPhraseStartIndex(context));
+    let next = loadingPhraseStartIndex(context);
     const id = window.setInterval(() => {
-      setIndex((i) => (i + 1) % phrases.length);
+      setIndex(next);
+      next = (next + 1) % phrases.length;
     }, LOADING_PHRASE_ROTATE_MS);
     return () => window.clearInterval(id);
   }, [context, phrases]);

@@ -304,40 +304,41 @@ export async function PlayerVisualizationsIsland({
     </>
   );
 
-  try {
-    // Slim edge only (SLIM_EDGE_PRODUCT=1). Paid Workers load shot charts.
-    if (slimEdgeProductEnabled()) {
-      return (
-        <section
-          id="shooting"
-          className="scroll-mt-16 flex flex-col gap-4"
-          aria-label="Shooting"
+  // Slim edge only (SLIM_EDGE_PRODUCT=1). Paid Workers load shot charts.
+  if (slimEdgeProductEnabled()) {
+    return (
+      <section
+        id="shooting"
+        className="scroll-mt-16 flex flex-col gap-4"
+        aria-label="Shooting"
+      >
+        <h2 className={type.heading}>Shooting</h2>
+        <GlassSurface
+          variant="subtle"
+          effect="css"
+          className="px-3 py-2"
         >
-          <h2 className={type.heading}>Shooting</h2>
-          <GlassSurface
-            variant="subtle"
-            effect="css"
-            className="px-3 py-2"
-          >
-            <p className={cn(type.caption, "font-semibold text-foreground")}>
-              Season shot chart · {season}
-            </p>
-            <p className={cn(type.caption, "text-muted-foreground")}>
-              Shot chart detail is temporarily limited on this edge. Overview
-              and career stats remain available.
-            </p>
-          </GlassSurface>
-          <UsageEfficiencyBlock
-            playerId={playerId}
-            season={season}
-            seasons={seasons}
-            teamKey={teamKey}
-          />
-          {extras}
-        </section>
-      );
-    }
+          <p className={cn(type.caption, "font-semibold text-foreground")}>
+            Season shot chart · {season}
+          </p>
+          <p className={cn(type.caption, "text-muted-foreground")}>
+            Shot chart detail is temporarily limited on this edge. Overview
+            and career stats remain available.
+          </p>
+        </GlassSurface>
+        <UsageEfficiencyBlock
+          playerId={playerId}
+          season={season}
+          seasons={seasons}
+          teamKey={teamKey}
+        />
+        {extras}
+      </section>
+    );
+  }
 
+  let shotData: { map: PlayerShotMap; coverageLabel: string | null; leagueZones: ReturnType<typeof getLeagueShotZones> } | null;
+  try {
     const index = await resolvePlayerSeasonShotIndex({
       playerId,
       nbaId,
@@ -370,42 +371,11 @@ export async function PlayerVisualizationsIsland({
       });
     }
 
-    return (
-      <section
-        id="shooting"
-        className="scroll-mt-16 flex flex-col gap-4"
-        aria-label="Shooting"
-      >
-        <h2 className={type.heading}>Shooting</h2>
-        {coverageLabel ? (
-          <GlassSurface
-            variant="subtle"
-            effect="css"
-            className="px-3 py-2"
-          >
-            <p className={cn(type.caption, "font-semibold text-foreground")}>
-              Season shot chart · {season}
-            </p>
-            <p className={cn(type.caption, "text-muted-foreground")}>
-              {coverageLabel}
-            </p>
-          </GlassSurface>
-        ) : null}
-        <PlayerShotMapView
-          map={map}
-          seasons={seasons}
-          leagueZones={getLeagueShotZones(map.season)}
-        />
-        <UsageEfficiencyBlock
-          playerId={playerId}
-          season={season}
-          seasons={[]}
-          teamKey={teamKey}
-        />
-        {extras}
-      </section>
-    );
+    shotData = { map, coverageLabel, leagueZones: getLeagueShotZones(map.season) };
   } catch {
+    shotData = null;
+  }
+  if (!shotData) {
     return (
       <section
         id="shooting"
@@ -426,4 +396,40 @@ export async function PlayerVisualizationsIsland({
       </section>
     );
   }
+  const { map, coverageLabel, leagueZones } = shotData;
+  return (
+    <section
+      id="shooting"
+      className="scroll-mt-16 flex flex-col gap-4"
+      aria-label="Shooting"
+    >
+      <h2 className={type.heading}>Shooting</h2>
+      {coverageLabel ? (
+        <GlassSurface
+          variant="subtle"
+          effect="css"
+          className="px-3 py-2"
+        >
+          <p className={cn(type.caption, "font-semibold text-foreground")}>
+            Season shot chart · {season}
+          </p>
+          <p className={cn(type.caption, "text-muted-foreground")}>
+            {coverageLabel}
+          </p>
+        </GlassSurface>
+      ) : null}
+      <PlayerShotMapView
+        map={map}
+        seasons={seasons}
+        leagueZones={leagueZones}
+      />
+      <UsageEfficiencyBlock
+        playerId={playerId}
+        season={season}
+        seasons={[]}
+        teamKey={teamKey}
+      />
+      {extras}
+    </section>
+  );
 }

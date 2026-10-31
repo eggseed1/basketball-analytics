@@ -121,7 +121,7 @@ export function applySign(
     players,
     freeAgents,
     faMarket: market,
-    teams: state.teams.map((team) => autoSetLineup(team, players)),
+    teams: state.teams.map((team) => team.id === teamId ? autoSetLineup(team, players) : team),
   };
 }
 
@@ -1025,3 +1025,4 @@ export function renounceRightsPreview(
     roomAfterM: state.settings.salaryCapM - after,
   };
 }
+

@@ -142,3 +142,17 @@ test("a sub replaces the position that sat", () => {
   }
   assert.equal(chart.reduce((sum, row) => sum + row.minutes, 0), 240);
 });
+
+
+test("real starters retain their roles and natural backups receive minutes", () => {
+  const starters = [player("g", "PG", 33), player("s", "SG", 32), player("w", "SF", 31), player("f", "PF", 28), player("big", "C", 28)];
+  const bench = [player("combo", "SG", 24), player("wing", "SF", 22), player("four", "PF", 19), player("backup-big", "C", 20), player("guard", "PG", 18), player("deep-guard", "PG", 8)];
+  const all = [...starters, ...bench].map((p, i) => ({ ...p, secondaryPosition: p.position === "C" ? "PF" as const : p.position === "SG" ? "PG" as const : null, realRole: { season: 2026, teamId: "bos", games: 70, starts: i < 5 ? 65 : 5, mpg: p.minutesPreference } }));
+  const reserve = all.find(p => p.id === "backup-big")!;
+  reserve.ratings = { ...reserve.ratings, impact: 4.5, shooting: 25 };
+  const team = autoSetLineup({ id: "bos", starters: { PG: null, SG: null, SF: null, PF: null, C: null } } as GmTeam, all);
+  assert.equal(team.starters.PF, "f", "a backup center's inferred secondary does not displace the starting forward");
+  assert.equal(team.starters.C, "big", "observed starter role survives a higher backup rate metric");
+  assert.ok((team.coaching!.minutes!["backup-big"] ?? 0) >= 10, "the natural backup center stays in the rotation");
+  assert.equal(team.coaching!.minutes!["deep-guard"], 0, "a low-minute natural point guard does not take an established combo guard's bench seat");
+});

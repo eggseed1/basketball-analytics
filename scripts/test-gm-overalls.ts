@@ -11,7 +11,7 @@ import { createRealSeasonLeague } from "../src/gm/seed/create-real-season-league
 async function main() {
   const { league } = await createRealSeasonLeague({ userTeamId: "bos" });
 
-  assert.equal(SHEET_VERSION, 7);
+  assert.equal(SHEET_VERSION, 8);
 
   const ranked = league.players
     .filter((p) => p.teamId)
@@ -95,3 +95,4 @@ main().catch((err) => {
   console.error(err);
   process.exit(1);
 });
+
