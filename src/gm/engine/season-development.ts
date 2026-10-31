@@ -27,7 +27,7 @@ export function applySeasonProgression(league: GmLeagueState): GmLeagueState {
 
 export function campSlots(league: GmLeagueState, teamId = league.userTeamId): number {
   const trainer = league.teams.find(team => team.id === teamId)?.staff.trainerLevel ?? 1;
-  return clamp(2 + Math.floor(trainer / 3), 2, 4);
+  return clamp(2 + Math.floor((trainer - 1) / 2), 2, 4);
 }
 
 export function assignCamp(league: GmLeagueState, playerId: string, focus: GmCampFocus | null): { state: GmLeagueState; ok: boolean; reason: string } {
