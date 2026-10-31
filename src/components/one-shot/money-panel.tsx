@@ -254,6 +254,7 @@ export function MoneyPanel({ life, onMoney }: { life: LifeState; onMoney: (a: Mo
             value={tradeAmt}
             onChange={(e) => setTradeAmt(e.target.value.replace(/[^\d]/g, ""))}
             className="min-h-8 w-24 rounded-lg border border-[var(--os-border)] bg-[var(--os-page)] px-2 font-mono text-[12px] text-[var(--os-text)]"
+          />
           <Btn
             className="min-h-8 px-2.5 text-[12px]"
             disabled={amt < 100 || amt > f.cash}
@@ -272,7 +273,6 @@ export function MoneyPanel({ life, onMoney }: { life: LifeState; onMoney: (a: Mo
               setTradeAmt("");
             }}
           >
-          <Btn className="min-h-8 px-2.5 text-[12px]" disabled={amt < 100 || amt > f.holdings[tradeAsset]} onClick={() => onMoney({ type: "sell", asset: tradeAsset, amount: amt })}>
             Sell
           </Btn>
         </div>
