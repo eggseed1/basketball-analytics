@@ -281,7 +281,7 @@ export function evaluateSigning(
 
   const own = player.rightsTeamId === teamId;
   const last = player.lastSalaryM ?? 0;
-  if (own && player.rightsKind === "bird" && salaryM <= max + 0.05) {
+  if (own && (player.rightsKind === "bird" || player.rightsKind === "restricted") && salaryM <= max + 0.05) {
     return { ok: true, via: "bird" };
   }
   if (own && player.rightsKind === "early") {
@@ -333,7 +333,7 @@ export function advanceBirdRights(
   return players.map((player) => {
     const contract = player.contract;
     if (!contract || player.teamId == null) return player;
-    const seasons = season - contract.signedSeason;
+    const seasons = season - (contract.birdStartSeason ?? contract.signedSeason);
     let bird = contract.birdRights;
     if (seasons >= 3) bird = "bird";
     else if (seasons >= 2 && bird === "none") bird = "early";

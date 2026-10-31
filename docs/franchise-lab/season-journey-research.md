@@ -52,7 +52,7 @@ The hub uses the playable league state. Parallel historical/MyLeague scaffolding
 
 Manual bulk advancement stops at required decisions and at the next market window. Explicit free-agency delegation permits CPU decisions for the user's club. It never bypasses progression, summer evaluation, camp or final roster review.
 
-Extensions have a separate contracts desk. Added years follow the current contract's salary rows. An accepted extension changes future control and guarantees without changing the current cap charge. Waiving an extended player retains the future salary schedule as dead money.
+Extensions have a separate contracts desk. Added years follow the current contract's salary rows. An accepted extension changes future control and guarantees without changing the current cap charge. Short re-signings preserve the continuous Bird service clock. Waiving an extended player retains the future salary schedule as dead money.
 
 ## Simulation and save guarantees
 

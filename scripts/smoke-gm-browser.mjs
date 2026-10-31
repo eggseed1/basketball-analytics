@@ -57,10 +57,10 @@ try {
   // Contract actions and guided summer handoffs are exercised through the UI.
   const manifest = JSON.parse(readFileSync(`${dir}/journey-manifest.json`, "utf8"));
   async function importJourney(name) {
-    await page.goto("http://127.0.0.1:3107/gm", { waitUntil: "domcontentloaded", timeout: 120000 });
+    await page.goto("http://127.0.0.1:3107/gm/franchise", { waitUntil: "domcontentloaded", timeout: 120000 });
+    await page.getByRole("button", { name: "Settings and saves", exact: true }).click();
     await page.getByLabel("Import a franchise save", { exact: true }).setInputFiles(`${dir}/journey-${name}.json`);
-    if (name === "regular") await page.getByRole("link", { name: "Franchise desk", exact: true }).waitFor({ state: "visible", timeout: 90000 });
-    else await page.getByRole("heading", { name: name === "review" ? "Season review" : "Focused camps", exact: true }).waitFor({ state: "visible", timeout: 90000 });
+    await page.getByText("Franchise opened in a new save slot.", { exact: true }).waitFor({ state: "visible", timeout: 90000 });
   }
   await importJourney("regular");
   await page.getByRole("link", { name: "Contracts", exact: true }).click();

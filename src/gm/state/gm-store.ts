@@ -484,7 +484,7 @@ export const useGmStore = create<GmStore>()(
         const league = parseFranchise(text);
         clearSimTimer();
         await allocateNewSave({ userTeamId: league.userTeamId, season: league.season });
-        set({ league, seeding: false, seedError: null, simRun: null });
+        set({ league, lastFaNote: null, lastJourneyNote: null, seeding: false, seedError: null, simRun: null });
         useMyLeagueStore.getState().bootstrap(league);
         await get().refreshSaves();
       },
@@ -2204,6 +2204,7 @@ export const useGmStore = create<GmStore>()(
             ? {
                 ...p,
                 rightsTeamId: null,
+                rightsStartSeason: undefined,
                 rightsKind: undefined,
                 lastSalaryM: undefined,
                 qoStatus: p.qoStatus === "tendered" ? ("declined" as const) : p.qoStatus,

@@ -113,6 +113,8 @@ export interface GmContract {
   /** Which cap path was used when this deal was signed. */
   signedVia?: GmSignVia;
   originalYears?: number;
+  /** Continuous service on this club, carried through re-signings and trades. */
+  birdStartSeason?: number;
   extension?: { signedSeason: number; startsSeason: number; years: number; annualSalaryM: number };
   /** Published seasons still on the deal. The cap uses the current year's salary. */
   years?: GmContractYear[];
@@ -323,6 +325,7 @@ export interface GmPlayer {
   draftPick?: number;
   /** Team that still holds Bird / restricted / draft rights after the player hits the market. */
   rightsTeamId?: string | null;
+  rightsStartSeason?: number;
   rightsKind?: "early" | "bird" | "restricted" | "exclusive_draft";
   /** Previous salary, used as the cap hold and the early-Bird ceiling. */
   lastSalaryM?: number;
@@ -936,6 +939,7 @@ export interface GmSeasonFlow {
   stage?: GmOffseasonStage;
   completed: GmOffseasonStage[];
   contractsRolled?: boolean;
+  deadMoneyRolled?: boolean;
   progressionApplied?: boolean;
   staffAged?: boolean;
   readyForTip?: boolean;

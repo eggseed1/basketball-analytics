@@ -91,6 +91,7 @@ function releaseExpiredWithoutOption(player: GmPlayer): GmPlayer {
     teamId: null,
     contract: null,
     rightsTeamId: player.teamId,
+    rightsStartSeason: contract.birdStartSeason ?? contract.signedSeason,
     rightsKind: rights ?? undefined,
     lastSalaryM: contract.annualSalaryM,
   };
@@ -199,17 +200,17 @@ export function enterFreeAgency(state: GmLeagueState): GmLeagueState {
           originalYears: contract.extension.years, extension: undefined,
         };
       }
-      return releaseExpiredWithoutOption({ ...player, age: player.age + 1,
+      return { ...player, age: player.age + 1,
         serviceYears: player.teamId ? (player.serviceYears ?? Math.max(0, player.age - 19)) + 1 : player.serviceYears,
-        contract, qoStatus: undefined, qoAmountM: undefined });
-    }), season);
+        contract, qoStatus: undefined, qoAmountM: undefined };
+    }), season).map(releaseExpiredWithoutOption);
     const { players, retired } = cullUnsignedFreeAgents(rolled, { soft: true });
     return { ...state, phase: "free_agency", financialSeason: season,
       settings: financialSettings(season, state.settings), players, draftPool: [],
       teams: state.teams.map(team => autoSetLineup(tickDeadMoney(team), players)),
       freeAgents: players.filter(player => player.teamId == null && player.rightsKind !== "exclusive_draft").map(player => player.id),
       faMarket: emptyFaMarket(state.season * 7919 + state.day),
-      seasonFlow: { ...flow, contractsRolled: true, retiredPlayers: retired.map(player => ({
+      seasonFlow: { ...flow, contractsRolled: true, deadMoneyRolled: true, retiredPlayers: retired.map(player => ({
         id: player.id, name: player.name, age: player.age, overall: overallOf(player),
       })) },
       news: [news(state, "Contract decisions open", "The new cap year is " + season + ". Resolve options and qualifying offers, then negotiate with your own free agents."), ...state.news].slice(0, 50),
@@ -330,7 +331,7 @@ export function startNextSeason(state: GmLeagueState): GmLeagueState {
   }));
   const players = [...carried, ...prospects];
   const teams = filled.teams
-    .map((team) => filled.seasonFlow?.contractsRolled ? team : tickDeadMoney(team))
+    .map((team) => filled.seasonFlow?.deadMoneyRolled ? team : tickDeadMoney(team))
     .map((team) => autoSetLineup(team, players));
   const priorWins = Object.fromEntries(
     filled.teams.map((team) => [team.id, filled.standings[team.id]?.wins ?? 0])

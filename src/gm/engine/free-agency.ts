@@ -91,6 +91,7 @@ export function applySign(
           teamId,
           identityRevealed: true,
           rightsTeamId: null,
+          rightsStartSeason: undefined,
           rightsKind: undefined,
           lastSalaryM: undefined,
           qoStatus: undefined,
@@ -99,6 +100,7 @@ export function applySign(
             yearsRemaining: years,
             annualSalaryM: annual,
             birdRights: (player.rightsTeamId === teamId && (player.rightsKind === "bird" || player.rightsKind === "restricted") ? "bird" : player.rightsTeamId === teamId && player.rightsKind === "early" ? "early" : "none") as "bird" | "early" | "none",
+            birdStartSeason: player.rightsTeamId === teamId ? player.rightsStartSeason ?? cbaSeason(state) : cbaSeason(state),
             signedSeason: cbaSeason(state), originalYears: years,
             years: Array.from({ length: years }, (_, index) => ({ season: cbaSeason(state) + index, salaryM: annual })),
             signedVia: via,
@@ -464,7 +466,7 @@ function resolvePlayers(
       if (ovr >= 78) {
         const why = dealWhy(player, winner, ranked, ask, rules);
         lines.push(
-          `${player.name} agrees with ${winner.team.abbr}: ${winner.offer.years} yrs, $${winner.offer.salaryM.toFixed(1)}M (moratorium). ${why}`
+          `${player.name} agrees with ${winner.team.abbr}: ${winner.offer.years} yrs, $${winner.offer.salaryM.toFixed(1)}M (verbal agreement). ${why}`
         );
       }
       continue;
@@ -911,7 +913,7 @@ export function userOfferFreeAgent(
       ];
       return {
         ok: true,
-        note: `Agreement with ${player.name} during the moratorium. It locks when the window opens.`,
+        note: `Verbal agreement with ${player.name}. It becomes a contract when signing opens.`,
         state: {
           ...state,
           faMarket: {

@@ -5,7 +5,7 @@ import { rosterCount } from "@/gm/engine/cap";
 export function releasePlayer(league: GmLeagueState, playerId: string, teamId = league.userTeamId): GmLeagueState {
   const player = league.players.find(row => row.id === playerId && row.teamId === teamId);
   if (!player || player.pendingRookieContract) return league;
-  const players = league.players.map(row => row.id === playerId ? { ...row, teamId: null, contract: null, rightsTeamId: null, rightsKind: undefined, lastSalaryM: undefined } : row);
+  const players = league.players.map(row => row.id === playerId ? { ...row, teamId: null, contract: null, rightsTeamId: null, rightsStartSeason: undefined, rightsKind: undefined, lastSalaryM: undefined } : row);
   const teams = league.teams.map(team => {
     if (team.id !== teamId) return team;
     const contract = player.contract;

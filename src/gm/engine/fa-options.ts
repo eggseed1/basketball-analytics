@@ -38,6 +38,7 @@ function releaseToMarket(player: GmPlayer, fromTeamId: string): GmPlayer {
     teamId: null,
     contract: null,
     rightsTeamId: fromTeamId,
+    rightsStartSeason: contract.birdStartSeason ?? contract.signedSeason,
     rightsKind: rights ?? undefined,
     lastSalaryM: contract.annualSalaryM,
   };

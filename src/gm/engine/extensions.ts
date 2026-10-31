@@ -21,9 +21,11 @@ export function extensionQuote(league: GmLeagueState, player: GmPlayer): Extensi
   if (contract.yearsRemaining !== 1) return no("This desk handles the final year of a contract.");
   if (contract.option) return no("Resolve the contract option in summer before negotiating.");
   if (!["regular", "free_agency", "offseason"].includes(league.phase)) return no("Extensions reopen after the Finals.");
+  if (league.phase === "free_agency" && !["open", "fill"].includes(league.faMarket?.stage ?? "")) return no("Extensions can sign when the free-agency signing window opens.");
+  if (rookie && league.seasonFlow?.stage && !league.seasonFlow.contractsRolled) return no("The rookie extension deadline passed before last season. Resolve his expiring rights in free agency.");
   if (rookie && league.phase === "regular" && league.schedule.some(game => game.played && !game.postseason && !game.exhibition)) return no("The rookie extension window closed at opening night. Keep his rights for summer.");
   if (contract.originalYears != null && contract.originalYears < (rookie ? 4 : 3)) return no("This contract is too short for this extension window.");
-  if (contract.originalYears != null && season - contract.signedSeason < (rookie ? 3 : 2)) return no("The extension anniversary has not arrived.");
+  if (contract.originalYears != null && season - contract.signedSeason < (rookie || contract.originalYears >= 5 ? 3 : 2)) return no("The extension anniversary has not arrived.");
   if (player.morale < 30) return no("He prefers to test free agency. Improving his role may change his mind.");
   if (ask > ceiling + 0.05) return no("His asking price exceeds the extension ceiling. Retain his rights for free agency.");
   return quote;
@@ -41,7 +43,7 @@ export function offerExtension(league: GmLeagueState, playerId: string, salaryM:
   const contract = player.contract!;
   const existing = contract.years?.length ? [...contract.years] : Array.from({ length: contract.yearsRemaining }, (_, index) => ({ season: cbaSeason(league) + index, salaryM: contract.annualSalaryM }));
   const future = Array.from({ length: years }, (_, index) => ({ season: quote.startsSeason + index, salaryM: round(salaryM) }));
-  const players = league.players.map(row => row.id !== player.id ? row : { ...row, morale: Math.min(100, row.morale + 3), contract: { ...contract, years: [...existing, ...future], yearsRemaining: existing.length + future.length, extension: { signedSeason: cbaSeason(league), startsSeason: quote.startsSeason, years, annualSalaryM: round(salaryM) } } });
+  const players = league.players.map(row => row.id !== player.id ? row : { ...row, morale: Math.min(100, row.morale + 3), contract: { ...contract, birdStartSeason: contract.birdStartSeason ?? contract.signedSeason, years: [...existing, ...future], yearsRemaining: existing.length + future.length, extension: { signedSeason: cbaSeason(league), startsSeason: quote.startsSeason, years, annualSalaryM: round(salaryM) } } });
   const reason = player.name + " signed " + years + " added years at $" + salaryM.toFixed(1) + "M, starting in " + quote.startsSeason + ".";
   return { ok: true, reason, state: { ...league, players, news: [{ id: "extension-" + league.season + "-" + player.id, season: league.season, day: league.day, headline: player.name + " extends", body: reason, tone: "good" as const }, ...league.news].slice(0, 50) } };
 }

@@ -387,7 +387,7 @@ export function GmFreeAgencyHub() {
                         onClick={() => resignOwn(player.id)}
                         disabled={!open || Boolean(market?.done) || !["re_signing", "moratorium", "open", "fill"].includes(market?.stage ?? "") || Boolean(market?.agreements.some(row => row.playerId === player.id))}
                       >
-                        Re-sign at ask
+                        {market?.agreements.some(row => row.playerId === player.id) ? "Verbal agreement" : "Re-sign at ask"}
                       </Button>
                       <Button
                         size="xs"
@@ -657,7 +657,7 @@ export function GmFreeAgencyHub() {
           </section>
           <section className="overflow-hidden rounded-xl border border-border">
             <div className="border-b border-border px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-              Moratorium commitments
+              Verbal agreements (unsigned)
             </div>
             <ul className="divide-y divide-border">
               {myAgreements.map((row) => {
@@ -667,7 +667,7 @@ export function GmFreeAgencyHub() {
                   <li key={row.id} className="px-3 py-2.5 text-sm">
                     <p className="font-semibold">{displayPlayerName(player)}</p>
                     <p className="text-[12px] text-muted-foreground">
-                      ${row.salaryM.toFixed(1)}M / {row.years} yrs · reserves room until open
+                      ${row.salaryM.toFixed(1)}M / {row.years} yrs · unsigned; reserves room until signing opens
                     </p>
                   </li>
                 );

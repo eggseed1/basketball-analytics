@@ -5,6 +5,7 @@
 import type { GmLeagueState, GmPlayer } from "@/gm/types";
 import { overallOf } from "@/gm/engine/lineup";
 import { getCbaRules } from "@/gm/myleague/cba-registry";
+import { exceptionAmounts } from "@/gm/engine/cap";
 import { cbaSeason } from "@/gm/engine/season-flow-state";
 import { clamp } from "@/gm/engine/rng";
 import type { CBARules } from "@/gm/myleague/types";
@@ -17,8 +18,8 @@ export function askingSalary(
     "salaryCapM" in rulesOrLeague && "minSalaryM" in rulesOrLeague
       ? (rulesOrLeague as CBARules)
       : getCbaRules(cbaSeason(rulesOrLeague as GmLeagueState));
-  const max = rules.maxSalaryM || Math.max(5, rules.salaryCapM * 0.35);
-  const min = rules.minSalaryM || Math.max(0.5, rules.salaryCapM * 0.008);
+  const max = Math.min(rules.maxSalaryM || Math.max(5, rules.salaryCapM * 0.35), rules.salaryCapM * (player.age >= 30 ? 0.35 : player.age >= 25 ? 0.3 : 0.25));
+  const min = Math.min(max, Math.max(rules.minSalaryM || 0.5, exceptionAmounts({ salaryCapM: rules.salaryCapM }).minimumM));
   const like = (overallOf(player) - 76) / 2.35;
   const t = clamp((like + 1.5) / 8, 0, 1);
   return Math.round((min + (max - min) * t * t) * 100) / 100;

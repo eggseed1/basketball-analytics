@@ -6,7 +6,7 @@ import { applySeasonProgression, applyTrainingCamp, assignCamp, campSlots, runSu
 import { flowOf, cbaSeason } from "../src/gm/engine/season-flow-state";
 import { finishDraftWithAi } from "../src/gm/engine/progression";
 import { enterFreeAgency, startNextSeason } from "../src/gm/engine/offseason";
-import { advanceFaDayDetailed, emptyFaMarket, resignOwnFreeAgent, runFaPeriod, userOfferFreeAgent } from "../src/gm/engine/free-agency";
+import { applySign, advanceFaDayDetailed, emptyFaMarket, resignOwnFreeAgent, runFaPeriod, userOfferFreeAgent } from "../src/gm/engine/free-agency";
 import { applyOptionDecision } from "../src/gm/engine/fa-options";
 import { tenderQualifyingOffer } from "../src/gm/engine/fa-qualifying";
 import { extensionQuote, offerExtension } from "../src/gm/engine/extensions";
@@ -59,6 +59,15 @@ const summer = (league: GmLeagueState) => beginOffseason({ ...league, phase: "pl
   assert.equal(releasePlayer(league, league.players.find(player => player.teamId === "nyk")!.id), league, "cannot waive another club's player");
 }
 
+// The rookie extension deadline belongs to opening night, not the summer re-signing window.
+{
+  const league = fresh();
+  const target = { ...league.players.find(player => player.teamId === "bos")!, age: 22, serviceYears: 3, draftYear: 2024, draftPick: 8, morale: 80, contract: { annualSalaryM: 30, yearsRemaining: 1, birdRights: "bird" as const, signedSeason: 2024, originalYears: 4 } };
+  assert.equal(extensionQuote(league, target).eligible, true);
+  assert.equal(extensionQuote({ ...league, schedule: league.schedule.map((game, index) => index === 0 ? { ...game, played: true } : game) }, target).eligible, false);
+  assert.equal(extensionQuote(summer(league), target).eligible, false);
+}
+
 // Required option/QO decisions stop manual bulk simulation. Own negotiations are verbal.
 {
   let league = fresh();
@@ -84,7 +93,7 @@ const summer = (league: GmLeagueState) => beginOffseason({ ...league, phase: "pl
   const outsider = league.players.find(player => player.teamId == null && player.id !== own.id)!;
   assert.equal(userOfferFreeAgent(league, outsider.id, 5, 2).ok, false);
   const agreement = resignOwnFreeAgent(league, own.id);
-  assert.equal(agreement.ok, true);
+  assert.equal(agreement.ok, true, agreement.ok ? undefined : agreement.reason);
   if (agreement.ok) league = agreement.state;
   assert.equal(playerAt(league, own.id).teamId, null, "verbal agreement is not a signed player");
   assert.equal(league.faMarket?.agreements.some(row => row.playerId === own.id), true);
@@ -95,8 +104,27 @@ const summer = (league: GmLeagueState) => beginOffseason({ ...league, phase: "pl
   assert.equal(cbaSeason(league), 2028);
 }
 
+// Short re-signings preserve continuous Bird service instead of restarting the clock.
+{
+  let state = fresh();
+  const target = state.players.find(player => player.teamId === "bos")!;
+  state = { ...state, players: state.players.map(player => player.id === target.id ? { ...player, contract: { yearsRemaining: 1, annualSalaryM: 5, birdRights: "none", signedSeason: 2027, birdStartSeason: 2027 } } : player) };
+  for (let index = 0; index < 3; index++) {
+    const season = 2027 + index;
+    state = { ...state, season, phase: "offseason", financialSeason: undefined, seasonFlow: { version: 1, season, stage: "free_agency", completed: [] } };
+    state = enterFreeAgency(state);
+    const expired = playerAt(state, target.id);
+    assert.equal(expired.rightsStartSeason, 2027);
+    if (index === 1) assert.equal(expired.rightsKind, "early");
+    if (index === 2) assert.equal(expired.rightsKind, "bird");
+    state = applySign(state, target.id, "bos", 5, 1, index >= 2 ? "bird" : "minimum");
+    assert.equal(playerAt(state, target.id).contract?.birdStartSeason, 2027);
+  }
+}
+
 // Whole summer, reloads at every handoff, two consecutive seasons.
 let league = fresh();
+league = { ...league, teams: league.teams.map(team => team.id === "bos" ? { ...team, deadMoney: [{ id: "prior-guarantee", playerId: "prior-player", label: "Prior guarantee", annualM: 5, yearsLeft: 3 }] } : team) };
 for (let cycle = 0; cycle < 2; cycle++) {
   const season = league.season;
   league = summer(league);
@@ -142,6 +170,8 @@ for (let cycle = 0; cycle < 2; cycle++) {
     }
     if (stage === "training_camp" && !league.seasonFlow?.campResults) {
       const candidates = league.players.filter(player => player.teamId === "bos" && player.contract && !player.injury);
+      const injured = { ...league, players: league.players.map(player => player.id === candidates[0]!.id ? { ...player, injury: { type: "Ankle sprain", gamesRemaining: 4, reinjuryRisk: 0.1 } } : player) };
+      assert.equal(assignCamp(injured, candidates[0]!.id, "shooting").ok, false);
       for (const player of candidates.slice(0, campSlots(league))) league = assignCamp(league, player.id, "shooting").state;
       if (candidates.length > campSlots(league)) assert.equal(assignCamp(league, candidates[campSlots(league)]!.id, "defense").ok, false);
       const applied = applyTrainingCamp(league);
@@ -179,6 +209,7 @@ for (let cycle = 0; cycle < 2; cycle++) {
   assert.equal(flowOf(league).stage, undefined);
   assert.equal(visited.size, 11);
   assert.equal(league.history?.length, cycle + 1);
+  assert.equal(league.teams.find(team => team.id === "bos")?.deadMoney?.find(row => row.id === "prior-guarantee")?.yearsLeft, 2 - cycle, "dead money ticks once per summer");
   assert.ok(league.schedule.length > 100);
   assert.equal(seasonJourney(league).title, "Opening night");
 }
