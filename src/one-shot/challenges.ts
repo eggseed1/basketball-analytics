@@ -75,6 +75,8 @@ export function challengeResult(s: LifeState): ChallengeResult | null {
     }
     case "unicorn-only":
       return s.unicorn ? (ended ? "cleared" : "open") : "failed";
+    default:
+      return null;
   }
 }
 
