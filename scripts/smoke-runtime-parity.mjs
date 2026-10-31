@@ -38,7 +38,7 @@ async function waitForServer() {
 }
 
 function requireHealthy(route, result) {
-  requireHealthyPage(route, result);
+  return requireHealthyPage(route, result);
 }
 
 async function main() {
@@ -46,33 +46,42 @@ async function main() {
 
   const teamRoute = "/teams/25?season=2025-26";
   const team = await get(teamRoute);
-  requireHealthy(teamRoute, team);
-  if (!team.body.includes("Oklahoma City Thunder")) {
+  const teamText = requireHealthy(teamRoute, team);
+  if (!teamText.includes("Oklahoma City Thunder")) {
     throw new Error("team identity did not render");
   }
-  if (team.body.includes("Season board unavailable for 2025-26")) {
+  if (teamText.includes("Season board unavailable for 2025-26")) {
     throw new Error("team season board is still unavailable in Vercel runtime");
   }
-  for (const marker of ["Strengths and weaknesses", "Offense profile", "Defense profile", "Four factors"]) {
-    if (!team.body.includes(marker)) {
+  for (const marker of ["Strengths and weaknesses", "Team profile", "Where they stand", "Against the league"]) {
+    if (!teamText.includes(marker)) {
       throw new Error(`team analytical overview is missing: ${marker}`);
+    }
+  }
+
+  const offenseRoute = `${teamRoute}&tab=offense`;
+  const offense = await get(offenseRoute);
+  const offenseText = requireHealthy(offenseRoute, offense);
+  for (const marker of ["Team offense ranks", "Team defense ranks", "Roster scoring board"]) {
+    if (!offenseText.includes(marker)) {
+      throw new Error(`team offense/defense tab is missing: ${marker}`);
     }
   }
 
   const gameRoute = "/games/401811018?season=2025-26";
   const game = await get(gameRoute);
-  requireHealthy(gameRoute, game);
+  const gameText = requireHealthy(gameRoute, game);
   for (const marker of [
     "Box score, Game Lab, and possession analysis will appear when detailed game data is available.",
     "Game unavailable",
     "Loading game from ESPN",
   ]) {
-    if (game.body.includes(marker)) throw new Error(`Game Lab regressed to fallback: ${marker}`);
+    if (gameText.includes(marker)) throw new Error(`Game Lab regressed to fallback: ${marker}`);
   }
-  if (!game.body.includes("Game flow")) {
+  if (!gameText.includes("Game flow")) {
     throw new Error("Game Lab flow is missing from completed game");
   }
-  if (!game.body.includes("Possession")) {
+  if (!gameText.includes("Possession")) {
     throw new Error("Possession surface is missing from completed game");
   }
 
