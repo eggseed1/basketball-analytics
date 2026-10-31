@@ -13,6 +13,8 @@ import { extensionQuote, offerExtension } from "../src/gm/engine/extensions";
 import { evaluateSigning, rosterCount, teamPayrollM, tickDeadMoney } from "../src/gm/engine/cap";
 import { releasePlayer } from "../src/gm/engine/roster-decisions";
 import { overallOf } from "../src/gm/engine/lineup";
+import { askingSalary } from "../src/gm/engine/free-agency-ask";
+import { getCbaRules } from "../src/gm/myleague/cba-registry";
 import { seasonJourney } from "../src/gm/lib/season-journey";
 import type { GmLeagueState, GmOffseasonStage } from "../src/gm/types";
 
@@ -23,6 +25,7 @@ const summer = (league: GmLeagueState) => beginOffseason({ ...league, phase: "pl
 // No menu or old shortcut may silently finish the draft or open the market.
 {
   const league = fresh();
+  assert.ok(askingSalary(league.players[0]!, { ...getCbaRules(2027), salaryCapM: 0, maxSalaryM: 0 }) >= 1, "historical missing cap data keeps a usable asking price");
   assert.equal(league.automation?.autoFreeAgency, false);
   assert.equal(enterFreeAgency(league), league);
   assert.equal(startNextSeason(league), league);

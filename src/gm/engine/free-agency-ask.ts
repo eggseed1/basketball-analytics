@@ -18,7 +18,10 @@ export function askingSalary(
     "salaryCapM" in rulesOrLeague && "minSalaryM" in rulesOrLeague
       ? (rulesOrLeague as CBARules)
       : getCbaRules(cbaSeason(rulesOrLeague as GmLeagueState));
-  const max = Math.min(rules.maxSalaryM || Math.max(5, rules.salaryCapM * 0.35), rules.salaryCapM * (player.age >= 30 ? 0.35 : player.age >= 25 ? 0.3 : 0.25));
+  const ageLimit = rules.salaryCapM > 0
+    ? rules.salaryCapM * (player.age >= 30 ? 0.35 : player.age >= 25 ? 0.3 : 0.25)
+    : Infinity;
+  const max = Math.min(rules.maxSalaryM || Math.max(5, rules.salaryCapM * 0.35), ageLimit);
   const min = Math.min(max, Math.max(rules.minSalaryM || 0.5, exceptionAmounts({ salaryCapM: rules.salaryCapM }).minimumM));
   const like = (overallOf(player) - 76) / 2.35;
   const t = clamp((like + 1.5) / 8, 0, 1);
