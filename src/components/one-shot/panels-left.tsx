@@ -90,7 +90,6 @@ function IdCell({ k, v, title }: { k: string; v: string; title?: string }) {
   );
 }
 
-export function StatusPanel({ life, onDeclare, onRetire }: { life: LifeState; onDeclare?: () => void; onRetire?: () => void }) {
 /** Live strip of story threads and durable facts: prove-it year, All-Star chase, mentor, rival. */
 export function PlotCard({ life }: { life: LifeState }) {
   const lines = plotCard(life);
@@ -114,6 +113,7 @@ export function PlotCard({ life }: { life: LifeState }) {
   );
 }
 
+export function StatusPanel({ life, onDeclare, onRetire }: { life: LifeState; onDeclare?: () => void; onRetire?: () => void }) {
   const age = life.ageMonths / 12;
   const band = readiness(life);
   const declare = onDeclare && canDeclareNow(life);
