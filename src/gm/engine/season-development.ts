@@ -1,4 +1,4 @@
-import type { GmAttributes, GmCampFocus, GmLeagueState } from "@/gm/types";
+import type { GmAttributes, GmCampFocus, GmLeagueState, GmSeasonFlow } from "@/gm/types";
 import { ensurePlayerSheet, overallFromAttributes } from "@/gm/engine/attributes";
 import { autoSetLineup, overallOf } from "@/gm/engine/lineup";
 import { developPlayers, playoffGamesByPlayer } from "@/gm/engine/progression";
@@ -61,7 +61,7 @@ export function applyTrainingCamp(league: GmLeagueState): GmLeagueState {
       for (const player of selected) assignments[player.id] = player.developmentFocus && player.developmentFocus !== "balanced" ? player.developmentFocus : player.position === "C" || player.position === "PF" ? "defense" : "shooting";
     }
   }
-  const results: NonNullable<typeof flow.campResults> = [];
+  const results: NonNullable<GmSeasonFlow["campResults"]> = [];
   const players = league.players.map(raw => {
     const camp = CAMP_FOCUSES.find(row => row.id === assignments[raw.id]);
     if (!camp) return raw;
@@ -88,7 +88,7 @@ export function applyTrainingCamp(league: GmLeagueState): GmLeagueState {
 export function runSummerLeague(league: GmLeagueState, skip = false): GmLeagueState {
   const flow = flowOf(league);
   if (flow.stage !== "summer_league" || flow.summerLeague) return league;
-  const report: NonNullable<typeof flow.summerLeague> = { skipped: skip, inviteeIds: [], games: [] };
+  const report: NonNullable<GmSeasonFlow["summerLeague"]> = { skipped: skip, inviteeIds: [], games: [] };
   if (!skip) {
     const club = league.teams.find(team => team.id === league.userTeamId);
     if (club) {

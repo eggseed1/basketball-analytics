@@ -22,7 +22,7 @@ import {
 } from "@/gm/engine/draft-room";
 import { expertiseLabel } from "@/gm/seed/scouts";
 import type { GmPlayer } from "@/gm/types";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { GmScoutDossier, gradeTone } from "@/gm/ui/gm-scout-dossier";
 
@@ -143,7 +143,7 @@ function DraftBody() {
           ) : null}
         </div>
         {league.phase === "offseason" ? (
-          <Button variant="outline" asChild><Link href="/gm/offseason">Continue at season hub</Link></Button>
+          <Link className={buttonVariants({ variant: "outline" })} href="/gm/offseason">Continue at season hub</Link>
         ) : null}
       </div>
 

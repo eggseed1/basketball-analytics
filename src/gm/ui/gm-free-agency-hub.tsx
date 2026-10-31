@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
@@ -155,7 +155,7 @@ export function GmFreeAgencyHub() {
         <div className="flex flex-wrap gap-2">
           {!open ? (
             league.phase === "draft" || league.phase === "offseason" ? (
-              <Button asChild><Link href="/gm/offseason">Continue at season hub</Link></Button>
+              <Link className={buttonVariants()} href="/gm/offseason">Continue at season hub</Link>
             ) : (
               <p className="text-sm text-muted-foreground">
                 Finish the season and draft first.{" "}
@@ -173,7 +173,7 @@ export function GmFreeAgencyHub() {
                 Sim through this window
               </Button>
               {market?.done ? (
-                <Button asChild><Link href="/gm/offseason">Continue summer</Link></Button>
+                <Link className={buttonVariants()} href="/gm/offseason">Continue summer</Link>
               ) : null}
             </>
           )}

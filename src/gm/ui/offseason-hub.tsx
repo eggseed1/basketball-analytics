@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { SectionFrame } from "@/components/layout/section-frame";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { useGmStore } from "@/gm/state/gm-store";
 import { seasonJourney } from "@/gm/lib/season-journey";
 import { flowOf, OFFSEASON_STAGES, cbaSeason, offseasonRosterLimit } from "@/gm/engine/season-flow-state";
@@ -71,7 +71,7 @@ export function OffseasonHub({ embedded = false }: { embedded?: boolean }) {
     <SectionFrame title={journey.title} description={journey.description} bodySurface>
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div><p className="text-xs uppercase tracking-wider text-muted-foreground">Now · {journey.period}</p><p className="mt-1 text-sm">Next: <strong>{journey.next}</strong></p></div>
-        {journey.primaryHref ? <Button asChild><Link href={journey.primaryHref}>{journey.primaryLabel}</Link></Button> : <Button onClick={() => advance()} disabled={journey.blocked}>{journey.primaryLabel}</Button>}
+        {journey.primaryHref ? <Link className={buttonVariants()} href={journey.primaryHref}>{journey.primaryLabel}</Link> : <Button onClick={() => advance()} disabled={journey.blocked}>{journey.primaryLabel}</Button>}
       </div>
       {journey.tasks.length ? <ul className="mt-4 space-y-2 text-sm">{journey.tasks.map(task => <li key={task.label}><Link className={linkClass} href={task.href}>{task.label}</Link>{task.required ? <span className="ml-2 text-xs text-amber-600 dark:text-amber-400">Decision needed</span> : <span className="ml-2 text-xs text-muted-foreground">Review</span>}</li>)}</ul> : null}
       {note ? <p role="status" className="mt-3 text-sm">{note}</p> : null}
