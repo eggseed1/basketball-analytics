@@ -1,8 +1,9 @@
 "use client";
 
+import { CHALLENGES, challengeHint } from "@/one-shot/challenges";
 import type { EarningsRow } from "@/one-shot/leaderboard";
 import { TIER_LABEL, type CareerSummary } from "@/one-shot/report";
-import type { DrawMode, Mode, Pacing } from "@/one-shot/types";
+import type { ChallengeId, DrawMode, Mode, Pacing } from "@/one-shot/types";
 import { country, countryFlag, PLAYABLE_COUNTRIES } from "@/one-shot/world";
 
 import { EarningsPanel, type AllTimeStatus } from "./earnings-board";
@@ -12,6 +13,7 @@ export interface StartOptions {
   mode: Mode;
   draw: DrawMode;
   pacing: Pacing;
+  challenge: ChallengeId | null;
 }
 
 export function StartScreen({
@@ -128,6 +130,29 @@ export function StartScreen({
               ]}
             />
           </Field>
+          <Field
+            label="Challenge"
+            hint={
+              opts.mode === "daily"
+                ? "Daily lives stay free of challenges so everyone shares the same birth."
+                : (challengeHint(opts.challenge) ?? "Optional goal on top of a normal life. Clear it, or miss it.")
+            }
+          >
+            <select
+              aria-label="Challenge"
+              disabled={opts.mode === "daily"}
+              value={opts.mode === "daily" || !opts.challenge ? "" : opts.challenge}
+              onChange={(e) => onOpts({ ...opts, challenge: (e.target.value || null) as ChallengeId | null })}
+              className="min-h-9 w-full max-w-md rounded-[var(--radius-lg)] border border-[var(--os-border)] bg-[var(--os-page)] px-3 text-[13px] text-[var(--os-text)] disabled:opacity-40"
+            >
+              <option value="">None</option>
+              {CHALLENGES.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.label}
+                </option>
+              ))}
+            </select>
+          </Field>
         </div>
 
         {replaySeed !== null && opts.mode === "random" ? (
@@ -152,20 +177,22 @@ export function StartScreen({
             Sources and coverage
           </Btn>
         </div>
-        <p className="mt-4 text-[11.5px] text-[var(--os-dim)]">Fiction. Real leagues and federations appear as context; every player, offer and result is invented.</p>
+        <p className="mt-4 text-[11.5px] text-[var(--os-dim)]">
+          Fiction. Real leagues and federations appear as context; every player, offer and result is invented. A finished life on this device can tilt the next birth a little.
+        </p>
       </Panel>
 
       <div className="flex flex-col gap-5">
       <Panel title="Earnings">
         <EarningsPanel personal={board} allTime={allTime} allTimeStatus={allTimeStatus} units={units} onStamp={onStamp} />
       </Panel>
-      <Panel title="Recent careers">
+      <Panel title="Museum">
         {careers.length ? (
           <ol className="flex flex-col">
             {careers.map((c) => {
               const ct = country(c.birthCountry);
               return (
-                <li key={c.runId} className="border-b border-[var(--os-border)]/60 py-2 text-[12.5px] last:border-b-0">
+                <li key={c.runId} className="border-b border-[var(--os-border)]/60 py-2.5 text-[12.5px] last:border-b-0">
                   <p className="flex items-baseline justify-between gap-2">
                     <span className="truncate font-medium">
                       {countryFlag(ct.id)} {c.name}
@@ -174,18 +201,31 @@ export function StartScreen({
                     <span className="shrink-0 font-mono text-[11px] text-[var(--os-dim)]">{c.mode === "daily" ? `Daily ${c.dailyDate}` : `Seed ${c.seed}`}</span>
                   </p>
                   <p className="text-[var(--os-dim)]">
-                    {TIER_LABEL[c.tier]}
-                    {c.debutAge !== null ? ` at ${c.debutAge}` : ""} · {ct.name}
-                    {c.draft ? ` · ${c.draft}` : ""}
+                    {c.arc ?? TIER_LABEL[c.tier]}
+                    {c.debutAge !== null ? ` · NBA at ${c.debutAge}` : ""}
+                    {c.hometown ? ` · ${c.hometown}` : ` · ${ct.name}`}
                   </p>
-                  {c.peak ? <p className="text-[11.5px] text-[var(--os-dim)]">Best season: {c.peak}</p> : null}
-                  {c.after ? <p className="text-[11.5px] text-[var(--os-dim)]">After playing: {c.after}</p> : null}
+                  {c.highlights?.length ? (
+                    <ul className="mt-1 flex flex-col gap-0.5">
+                      {c.highlights.slice(0, 3).map((h) => (
+                        <li key={h} className="truncate text-[11.5px] text-[var(--os-dim)]">
+                          {h}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <>
+                      {c.peak ? <p className="text-[11.5px] text-[var(--os-dim)]">Best season: {c.peak}</p> : null}
+                      {c.after ? <p className="text-[11.5px] text-[var(--os-dim)]">After playing: {c.after}</p> : null}
+                    </>
+                  )}
+                  {c.challenge ? <p className="mt-0.5 text-[11px] text-[var(--os-amber)]">{c.challenge}</p> : null}
                 </li>
               );
             })}
           </ol>
         ) : (
-          <p className="text-[12.5px] text-[var(--os-dim)]">Finished lives show up here. The last 15 are kept on this device.</p>
+          <p className="text-[12.5px] text-[var(--os-dim)]">Finished lives hang here. The last 15 stay on this device.</p>
         )}
       </Panel>
       </div>

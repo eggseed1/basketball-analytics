@@ -45,12 +45,22 @@ export function advise(s: LifeState): Advice[] {
   } else if (s.condition.energy > 85 && s.plan.workload === "low" && age >= 8) {
     out.push({ id: "more", text: "You have room to train more.", why: `Energy is ${Math.round(s.condition.energy)} on a low workload.`, action: { workload: "balanced" } });
   }
+  const ambition = typeof s.flags.ambition === "string" ? s.flags.ambition : null;
+  if (ambition === "nba" && age >= 15 && age < 24 && s.achievements.nbaDebut === null) {
+    out.push({ id: "ambition-nba", text: "Keep getting seen by scouts.", why: "You said the NBA out loud. Exposure and draft readiness matter more than comfort.", action: age < 19 ? { secondary: "showcase" } : undefined });
+  } else if (ambition === "nation" && age >= 16 && s.international.caps < 5) {
+    out.push({ id: "ambition-nation", text: "Stay available for national team windows.", why: "You pointed at the federation crest. Caps and summer form count for that shirt." });
+  } else if (ambition === "money" && age >= 18 && s.finance.lifestyle !== "frugal" && (s.placement.contract?.salary ?? 0) > 0) {
+    out.push({ id: "ambition-money", text: "Protect what you earn.", why: "You said the family comes first. A frugal stretch builds the pile faster when the paycheck is real." });
+  } else if (ambition === "longevity" && age >= 22 && s.plan.workload === "high") {
+    out.push({ id: "ambition-long", text: "Ease the workload before the body asks.", why: "You talked about lasting. High workloads stack injuries over long seasons.", action: { workload: "balanced" } });
+  }
   if (age >= 7) {
     const pos = position(s.body.heightCm, s.skills);
     const ranked = [...SKILLS].sort((a, b) => s.skills[a.key] - s.skills[b.key]);
     const weak = ranked.find((k) => {
       const f = FOCUS_FOR_SKILL[k.key];
-      return f && focusAvailable(FOCUS_BY_ID[f], age) && s.plan.primary !== f;
+      return f && focusAvailable(FOCUS_BY_ID[f], age, s) && s.plan.primary !== f;
     });
     if (weak) {
       const f = FOCUS_FOR_SKILL[weak.key]!;
@@ -76,6 +86,25 @@ export function advise(s: LifeState): Advice[] {
   if (s.plan.primary === "free-play" && age >= 8) {
     out.push({ id: "structure", text: "Pick a structured focus.", why: "Free play builds coordination, but skill work pays off more from age 8.", action: { primary: "fundamentals" } });
   }
+  if (s.flags.betOnSelf === true && s.placement.contract) {
+    out.push({
+      id: "prove-it",
+      text: "Treat this as a prove-it year.",
+      why: "You turned down security. Front offices will grade the tape. The plot card is already tracking it.",
+      action: s.placement.node === "nba" ? { primary: "nba-pro-habits", workload: "balanced" } : { primary: "film-iq" },
+    });
+  }
+  if (s.placement.node === "nba" && age < 27 && ["deep-bench", "bench", "rotation"].includes(s.placement.role)) {
+    const nbaFocus = FOCUS_BY_ID["nba-pro-habits"];
+    if (nbaFocus && focusAvailable(nbaFocus, age, s) && s.plan.primary !== "nba-pro-habits" && s.plan.primary !== "nba-on-ball" && s.plan.primary !== "nba-three") {
+      out.push({
+        id: "nba-dev",
+        text: "Use an NBA development focus while minutes are scarce.",
+        why: "Low picks grow when they close the gap to their ceiling. Habits, threes, and on-ball work are built for this roster.",
+        action: { primary: "nba-pro-habits" },
+      });
+    }
+  }
   return dedupe(out).slice(0, 3);
 }
 
@@ -86,5 +115,5 @@ function dedupe(a: Advice[]) {
 
 export function availableFocuses(s: LifeState) {
   const age = s.ageMonths / 12;
-  return FOCUSES.map((f) => ({ ...f, available: focusAvailable(f, age) }));
+  return FOCUSES.map((f) => ({ ...f, available: focusAvailable(f, age, s) }));
 }

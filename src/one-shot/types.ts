@@ -1,11 +1,13 @@
 import type { Streams } from "./rng";
 
-export const SCHEMA_VERSION = 5;
-export const ENGINE_VERSION = "1.4.0";
+export const SCHEMA_VERSION = 7;
+export const ENGINE_VERSION = "1.6.0";
 
 export type Mode = "random" | "daily";
 export type DrawMode = "weighted" | "equal";
 export type Pacing = "short" | "standard" | "extended";
+/** Optional run goal. Null on daily and free runs. */
+export type ChallengeId = "equal-odds" | "no-us-hs" | "undrafted-nba" | "coach-by-40" | "unicorn-only";
 export type PauseReason = "user" | "decision" | "hidden" | "ended" | null;
 export type Speed = 1 | 2 | 4 | 8 | 16;
 export type Workload = "low" | "balanced" | "high";
@@ -40,7 +42,11 @@ export type FocusId =
   | "athleticism"
   | "film-iq"
   | "school"
-  | "showcase";
+  | "showcase"
+  | "nba-pro-habits"
+  | "nba-body"
+  | "nba-three"
+  | "nba-on-ball";
 
 export type NodeKind =
   | "home"
@@ -396,20 +402,34 @@ export type Asset = "savings" | "bonds" | "index" | "stocks" | "property" | "cry
 
 export interface Finance {
   cash: number;
+export type MarketRegime = "bull" | "bear" | "neutral";
+
+export interface Finance {
+  cash: number;
   holdings: Record<Asset, number>;
+  /** Cost basis of current holdings (what he paid, net of prior sells). */
+  basis: Record<Asset, number>;
   /** Target mix in percent; sums to 100. */
   target: Record<Asset, number>;
   autoInvest: boolean;
+  /** Months of lifestyle spend kept as cash before auto-invest buys. */
+  reserveMonths: number;
   advisor: AdvisorStyle | null;
   agent: Agent | null;
   lifestyle: Lifestyle;
   endorsements: { brand: string; perYear: number; yearsLeft: number }[];
   sendHomeShare: number;
-  ytd: { year: number; gross: number; tax: number; fees: number; spend: number; returns: number };
-  years: { year: number; gross: number; tax: number; fees: number; spend: number; returns: number; netWorth: number }[];
-  market: { ytd: Record<Asset, number>; recent: number[]; years: { year: number; r: Record<Asset, number> }[] };
-}
-
+  ytd: { year: number; gross: number; tax: number; fees: number; spend: number; returns: number; dividends: number };
+  years: { year: number; gross: number; tax: number; fees: number; spend: number; returns: number; dividends: number; netWorth: number }[];
+  market: {
+    ytd: Record<Asset, number>;
+    recent: number[];
+    years: { year: number; r: Record<Asset, number> }[];
+    regime: MarketRegime;
+    regimeMonths: number;
+    /** Short headline for the money panel; refreshes with the market. */
+    headline: string;
+  };
 export type Track = "coach" | "scout" | "media" | "podcast" | "trainer";
 
 export interface AfterYear {
@@ -530,7 +550,19 @@ export interface NewLifeOptions {
   seed: number;
   mode: Mode;
   draw: DrawMode;
+/** Soft nudge from the last finished life on this device. Never forces a birth. */
+export interface LegacyBias {
+  meansBoost?: boolean;
+  heightCm?: number;
+  name?: string;
+}
+
+export interface NewLifeOptions {
+  seed: number;
+  mode: Mode;
+  draw: DrawMode;
   pacing: Pacing;
   dailyDate?: string | null;
   runId?: string;
-}
+  challenge?: ChallengeId | null;
+  legacy?: LegacyBias | null;

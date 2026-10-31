@@ -22,6 +22,8 @@ export type EarningsRow = {
   netWorth?: number | null;
   after?: string | null;
   nbaGames?: number | null;
+  /** Short stamp labels. Absent on rows posted before badges existed. */
+  badges?: string[] | null;
 };
 
 export const MAX_ALL_TIME = 50;
@@ -90,6 +92,13 @@ export function parseEarningsRow(raw: unknown): EarningsRow | null {
     netWorth: optInt(r.netWorth, -2_000_000_000, EARNINGS_CAP),
     after: optText(r.after, 80),
     nbaGames: optInt(r.nbaGames, 0, 4000),
+    badges: Array.isArray(r.badges)
+      ? r.badges
+          .filter((x): x is string => typeof x === "string")
+          .map((x) => x.replace(/\s+/g, " ").trim())
+          .filter((x) => x.length > 0 && x.length <= 40)
+          .slice(0, 6)
+      : null,
   };
 }
 
@@ -125,6 +134,7 @@ export function rowFromSummary(c: CareerSummary): EarningsRow | null {
     netWorth: c.netWorth ?? null,
     after: c.after ?? null,
     nbaGames: c.nbaGames ?? null,
+    badges: c.badges?.length ? c.badges.slice(0, 6) : null,
   });
 }
 

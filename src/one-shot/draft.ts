@@ -42,6 +42,8 @@ export function accoladeDraftValue(state: LifeState): number {
   for (const season of state.seasons) {
     if (season.node === "nba" || season.gp < 8) continue;
     const awards = new Set(season.awards ?? []);
+    // Age-group plaques do not move the NBA board.
+    if (awards.has("Youth Player of the Year") || awards.has("All-Youth First Team") || awards.has("All-Youth Second Team")) continue;
     const college = season.node === "university" && season.leagueId === "ncaa";
     const scale = college ? 1 : clamp(season.strength / 72, 0.35, 1);
     if (awards.has("National Player of the Year")) {
@@ -66,7 +68,9 @@ export function draftValue(state: LifeState): number {
   const proj = projectedCeiling(state).mid;
   const lvl = currentLevel(state);
   const age = state.ageMonths / 12;
-  return 0.55 * proj + 0.35 * lvl + 0.07 * state.exposure + clamp(21 - age, -3, 3) * 0.8 + accoladeDraftValue(state);
+  // Offset keeps a typical developed life below the fictional class mean so
+  // lottery and first-round outcomes stay scarce without capping unicorns.
+  return 0.55 * proj + 0.35 * lvl + 0.07 * state.exposure + clamp(21 - age, -3, 3) * 0.8 + accoladeDraftValue(state) - 8;
 }
 
 export interface Prospect {
@@ -83,7 +87,8 @@ export function draftClass(seed: number, year: number): Prospect[] {
   const out: Prospect[] = [];
   for (let i = 0; i < 80; i++) {
     const c = rng.weighted(PLAYABLE_COUNTRIES, (x) => Math.sqrt(x.draw.weight));
-    out.push({ name: peerName(rng, c.id), countryId: c.id, value: rng.normal(66, 5) });
+    // Class mean sits above a typical life so lottery and top-60 are scarce.
+    out.push({ name: peerName(rng, c.id), countryId: c.id, value: rng.normal(80, 5.5) });
   }
   return out.sort((a, b) => b.value - a.value);
 }
@@ -291,12 +296,13 @@ export function rookieSalary(pick: number): number {
 /** Chance of an NBA call-up this month for a G League player (model). A look is a 10-day, not a roster spot. */
 export function callUpChance(state: LifeState): number {
   const lvl = performanceLevel(state);
-  const twoWay = state.placement.contract?.twoWay ? 1.5 : 1;
+  const twoWay = state.placement.contract?.twoWay ? 1.35 : 1;
   const { month } = calendar(state);
   if (![11, 12, 1, 2, 3, 4].includes(month)) return 0;
-  const scouted = typeof state.flags.gScouted === "number" && state.ageMonths - state.flags.gScouted < 5 ? 0.05 : 0;
-  const climbed = typeof state.flags.gCallups === "number" ? Math.min(2, state.flags.gCallups) * 0.03 : 0;
-  return clamp(((lvl - 60) / 32) * twoWay * (0.4 + state.exposure / 160) + scouted + climbed, 0, 0.28);
+  const scouted = typeof state.flags.gScouted === "number" && state.ageMonths - state.flags.gScouted < 5 ? 0.03 : 0;
+  const climbed = typeof state.flags.gCallups === "number" ? Math.min(2, state.flags.gCallups) * 0.02 : 0;
+  // Fringe G League levels rarely get looks; only the upper end of the affiliate keeps knocking.
+  return clamp(((lvl - 72) / 45) * twoWay * (0.18 + state.exposure / 240) + scouted + climbed, 0, 0.08);
 }
 
 export function nbaSeasonMonth(state: LifeState): boolean {

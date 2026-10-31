@@ -96,7 +96,9 @@ export function ageInYear(s: LifeState, year: number) {
 export function selectionBar(s: LifeState, t: Tournament, nat: string): number {
   if (!isYouth(t)) return seniorBar(s, nat);
   const snub = typeof s.flags.intlSnub === "number" && s.ageMonths - s.flags.intlSnub < 36 ? 2 : 0;
-  return cohortLevel(ageInYear(s, t.year)) * (1.04 + teamStrength(nat) / 500) + snub;
+  // Made a youth national camp or tournament before: coaches already know the name.
+  const known = typeof s.flags.youthNational === "number" ? -1.6 : 0;
+  return cohortLevel(ageInYear(s, t.year)) * (1.04 + teamStrength(nat) / 500) + snub + known;
 }
 
 export function seniorBar(s: LifeState, nat: string): number {

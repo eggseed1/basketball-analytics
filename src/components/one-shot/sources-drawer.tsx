@@ -183,9 +183,10 @@ export function SourcesDrawer({ life, onClose }: { life: LifeState | null; onClo
             and investment returns are game settings.
           </p>
           <p className="mt-1 text-[12px] text-[var(--os-dim)]">
-            Markets: savings, bonds, an index fund, single stocks, property and crypto each get a random monthly return around a fixed yearly average and spread (index about 8.5% a year with a 16%
-            spread, crypto about 30% with a 70% spread), plus a rare shared crash. These are not forecasts or advice, and the market moves the same way whatever he owns. Property and crypto cost a
-            fee to sell.
+            Markets: savings, bonds, an index fund, single stocks, property and crypto each get a random monthly price move around a fixed yearly average and spread (index price about 7% a year with a
+            16% spread, total return about 8.5% once dividends are counted; crypto about 30% with a 70% spread), plus a rare shared crash. Bull and bear stretches tilt prices for a few months; the
+            long-run averages stay the same. Dividends and rent go to cash. Cost basis tracks what he paid so the panel can show open gains and losses. These are not forecasts or advice, and the
+            market moves the same way whatever he owns. Property and crypto cost a fee to buy or sell.
           </p>
           <p className="mt-1 text-[12px] text-[var(--os-dim)]">
             After playing: coaching, scouting, broadcasting, podcasting and training are ladders of jobs. He can retire from playing at any point as an adult. Reputation starts from his playing
@@ -194,13 +195,26 @@ export function SourcesDrawer({ life, onClose }: { life: LifeState | null; onClo
             leagues he could make, or move on to a second career.
           </p>
           <p className="mt-1 text-[12px] text-[var(--os-dim)]">
-            Training: each skill grows toward a hidden ceiling set at birth, fastest in the teens. A skill he keeps as his focus still gains past that ceiling, slowly. Energy settles at a level
-            set by his workload and hours. Below 45 he learns less, and tired players get hurt more. Speed and strength work can lift athleticism up to 18 points above his natural curve, and the
-            extra fades slowly, faster after 28. These are game parameters, not measured rates. About 1 seed in {Math.round(1 / UNICORN_ODDS)} is a unicorn: talent, body, drive and
-            family are drawn from the top of the range, while the birthplace keeps its normal odds.
+            Training: each skill grows toward a hidden ceiling set at birth, fastest in the teens (a little faster still before 16). A skill he keeps as his focus still gains past that ceiling,
+            slowly. Kids with a high ceiling get a youth-form boost against age-group competition so future pros dominate school and club ball before their raw skills catch up; that boost fades by
+            19 and never changes adult or NBA calibration. Youth seasons can earn Youth Player of the Year and All-Youth teams; those plaques do not move the draft board. Soft beats mark the first
+            youth national camp, youth honors, and pulling clear of a birth-class rival. First-round draft night and the first time he locks an NBA starting five pause like a title night (auto waits). Reaching 500 NBA games
+            or the Finals for the first time (before a title) pauses the same way.             Soft beats also cover the first All-Star nod, the first All-NBA team, the first deadline trade, the first playoff series win, the first playoff exit, the first Finals loss, and the first free-agency landing or miss. Losing the starting five once is a soft beat too. Reaching 1,000 NBA games pauses like
+            500. Proud careers, NBA included, get a farewell ceremony before the end report. NBA free agency opens a board of concrete deals (re-sign, payday, contender, prove-it, minimum) with different money and years; holding out cools the next month&apos;s board instead of rolling the same max. Starters and stars in the last year of a deal get an extension board (team offer, longer deal, shorter richer deal, or bet on free agency). A rare summer coaching change and a rest-of-season call-up get soft beats. A log marks the last youth
+            night; leaving the home gym is a soft beat; a thin first senior season opens a short choice. The birth-class
+            rival stays in the story past youth: draft class, shared league floors, and adult check-ins. Soft beats still cover smaller firsts; if the rival reaches the NBA ahead of him, that lands in the log, and catching up after he got there first is a soft beat. The plot strip
+            shows live threads (prove-it year, contract year, MVP or All-NBA chase, All-Star or Sixth Man, fighting back into the five, rival heat, long injuries, money trouble) above the usual facts. Betting on yourself after an extension offer schedules a prove-it
+            plan; accepting a mentor schedules a check-in years later. A season-defining injury opens a rehab fork that can move draft stock or role; empty cash expands money trouble into selling investments or chasing
+            overseas pay. The first three years after playing fire denser scenes. End-of-life badges stamp unicorns, rival outcomes, starting five, lost the five, All-Star, All-NBA, Finals trips, trades, free agency, long injuries, and cleared challenges; daily ghosts compare those
+            stamps as well as tier and earnings. On an NBA roster, four more focuses open: habits, body, threes, and on-ball work. A summer development program can close
+            a hole if ceiling remains. G League assignments now cover bench players as well as the deep end, and a Most Improved season can nudge a skill still under its ceiling. Young NBA players with
+            real headroom convert focused work a little faster, so a late pick can still climb; a fringe ceiling still caps how far that goes. Box scores lean on traits and athleticism too. Energy settles
+            at a level set by his workload and hours. Below 45 he learns less, and tired players get hurt more. Speed and strength work can lift athleticism up to 18 points above his natural curve, and
+            the extra fades slowly, faster after 28. These are game parameters, not measured rates. About 1 seed in {Math.round(1 / UNICORN_ODDS)} is a unicorn: talent, body, drive and family are drawn
+            from the top of the range, while the birthplace keeps its normal odds.
           </p>
           <p className="mt-1 text-[12px] text-[var(--os-dim)]">
-            Call-ups: a G League call-up comes with a 10-day contract, and in this game the parent club then keeps him for the rest of the season. Early entry for the draft is open from January
+            Call-ups: most G League looks are 10-days (dress-and-sit or real minutes). A rest-of-season deal waits until you have been up twice and are playing well; that landing gets its own soft beat. Early entry for the draft is open from January
             through April to anyone eligible, whatever the scouts think (game rule).
           </p>
           <p className="mt-1 text-[12px] text-[var(--os-dim)]">

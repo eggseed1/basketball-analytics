@@ -1,4 +1,6 @@
 import { stepBody } from "./body";
+import { calendar } from "./career";
+import { eraAt } from "./era";
 import { charge, wallet } from "./finance";
 import { clamp, rngOf } from "./rng";
 import type { AthleticKey, FocusId, LifeState, SkillKey, TraitKey, Workload } from "./types";
@@ -15,6 +17,8 @@ export interface FocusDef {
   academics?: number;
   exposure?: number;
   monthlyCost?: number;
+  /** Only while on an NBA roster. */
+  nbaOnly?: boolean;
 }
 
 export const FOCUSES: FocusDef[] = [
@@ -30,14 +34,21 @@ export const FOCUSES: FocusDef[] = [
   { id: "film-iq", label: "Film and IQ", minAge: 12, blurb: "Watching tape, learning schemes.", skills: { iq: 1.3, decisions: 1.1, offBall: 0.7 }, athletic: {}, traits: { composure: 0.2 } },
   { id: "school", label: "School", minAge: 6, maxAge: 22, blurb: "Grades keep college options open.", skills: {}, athletic: {}, academics: 1.6, traits: { discipline: 0.25 } },
   { id: "showcase", label: "Showcase events", minAge: 13, maxAge: 23, blurb: "Tournaments and camps where scouts watch. Costs money.", skills: { decisions: 0.2 }, athletic: {}, exposure: 1.4, traits: { confidence: 0.2 }, monthlyCost: 120 },
+  { id: "nba-pro-habits", label: "NBA habits", minAge: 19, maxAge: 34, nbaOnly: true, blurb: "Scouting reports, second-unit reads, how this staff wants help defense.", skills: { iq: 1.45, decisions: 1.35, offBall: 0.9, perimeterD: 0.45 }, athletic: {}, traits: { discipline: 0.25, coachability: 0.2 } },
+  { id: "nba-body", label: "NBA body", minAge: 19, maxAge: 32, nbaOnly: true, blurb: "Strength staff plan: hold up through an 82-game year without getting bulked out of your game.", skills: {}, athletic: { strength: 1.15, stamina: 1.1, durability: 0.9, vertical: 0.25 }, traits: { discipline: 0.15 } },
+  { id: "nba-three", label: "NBA three", minAge: 19, maxAge: 33, nbaOnly: true, blurb: "Catch-and-shoot, relocation, and free-throw rhythm for spacing nights.", skills: { shooting: 1.5, freeThrows: 1.2, offBall: 0.85, decisions: 0.35 }, athletic: {} },
+  { id: "nba-on-ball", label: "On-ball bag", minAge: 19, maxAge: 30, nbaOnly: true, blurb: "Create off the bounce so a bench stretch can become a real role.", skills: { handle: 1.4, finishing: 1.2, passing: 0.9, decisions: 0.55 }, athletic: { acceleration: 0.35 } },
 ];
 
 export const FOCUS_BY_ID = Object.fromEntries(FOCUSES.map((f) => [f.id, f])) as Record<FocusId, FocusDef>;
 
 export const WORKLOAD_LABEL: Record<Workload, string> = { low: "Low", balanced: "Balanced", high: "High" };
 
-export function focusAvailable(f: FocusDef, ageYears: number) {
-  return ageYears >= f.minAge && (f.maxAge === undefined || ageYears <= f.maxAge);
+/** Age window plus NBA-only gates when a life is passed. */
+export function focusAvailable(f: FocusDef, ageYears: number, state?: LifeState) {
+  if (ageYears < f.minAge || (f.maxAge !== undefined && ageYears > f.maxAge)) return false;
+  if (f.nbaOnly && (!state || state.placement.node !== "nba")) return false;
+  return true;
 }
 
 /** Weekly hours of individual work by age and workload (model parameters). */
@@ -97,33 +108,43 @@ export function monthlyDevelopment(state: LifeState): MonthlyDevelopment {
   const motivation = clamp(state.traits.motivation / 70, 0.55, 1.3);
   const recovery = clamp(0.4 + (0.6 * Math.min(state.condition.energy, state.condition.health)) / 45, 0.4, 1);
   const alf = ageLearningFactor(age);
+  // Teens learn a touch faster; kept mild so draft/NBA arrival stays calibrated.
+  const youthBurst = age < 12 ? 1.03 : age < 16 ? 1.06 : age < 18 ? 1.02 : 1;
   const ownEff = effectivePractice(ownHours);
   const teamEff = effectivePractice(teamHours) * 0.8;
   const primary = FOCUS_BY_ID[state.plan.primary];
   const secondary = state.plan.secondary ? FOCUS_BY_ID[state.plan.secondary] : null;
   const share = (k: SkillKey) => {
-    const p = focusAvailable(primary, age) ? (primary.skills[k] ?? 0) : 0;
-    const s = secondary && focusAvailable(secondary, age) ? (secondary.skills[k] ?? 0) : 0;
+    const p = focusAvailable(primary, age, state) ? (primary.skills[k] ?? 0) : 0;
+    const s = secondary && focusAvailable(secondary, age, state) ? (secondary.skills[k] ?? 0) : 0;
     return 0.65 * p + 0.35 * s;
   };
+  // Young NBA players with real headroom convert practice a bit faster (late bloomers / low picks).
+  let meanRoom = 0;
+  const skillKeys = Object.keys(state.skills) as SkillKey[];
+  for (const k of skillKeys) meanRoom += headroom(state.skills[k], state.potentials[k]);
+  meanRoom /= skillKeys.length || 1;
+  const nbaBloom = state.placement.node === "nba" && age < 26 ? 1 + 0.14 * clamp(meanRoom, 0, 1) : 1;
   for (const k of Object.keys(state.skills) as SkillKey[]) {
     const room = headroom(state.skills[k], state.potentials[k]);
     // Focused work keeps paying past the hidden ceiling, slowly.
     const past = PAST_CEILING * Math.max(0, 99 - state.skills[k]) / 99;
-    const gain = BASE_GAIN * alf * coaching * motivation * recovery * (Math.max(room, past) * ownEff * share(k) + room * teamEff * 0.55);
+    const focused = Math.max(room, past) * ownEff * share(k);
+    // Bloom only multiplies focused work, not idle team practice for everyone.
+    const gain = BASE_GAIN * alf * youthBurst * coaching * motivation * recovery * (focused * nbaBloom + room * teamEff * 0.55);
     if (gain > 0) out.skillGains[k] = gain;
   }
   const athShare = (k: AthleticKey) => {
-    const p = focusAvailable(primary, age) ? (primary.athletic[k] ?? 0) : 0;
-    const s = secondary && focusAvailable(secondary, age) ? (secondary.athletic[k] ?? 0) : 0;
+    const p = focusAvailable(primary, age, state) ? (primary.athletic[k] ?? 0) : 0;
+    const s = secondary && focusAvailable(secondary, age, state) ? (secondary.athletic[k] ?? 0) : 0;
     return 0.65 * p + 0.35 * s;
   };
   for (const k of ["strength", "acceleration", "lateral", "vertical", "stamina", "coordination", "durability"] as AthleticKey[]) {
-    const g = 0.55 * alf * coaching * recovery * ownEff * athShare(k);
+    const g = 0.55 * alf * coaching * recovery * ownEff * athShare(k) * (state.placement.node === "nba" && age < 26 ? 1.06 : 1);
     if (g > 0) out.athleticGains[k] = g;
   }
   for (const f of [primary, secondary]) {
-    if (f && focusAvailable(f, age) && f.monthlyCost) out.cost += f.monthlyCost * (f === primary ? 1 : 0.5);
+    if (f && focusAvailable(f, age, state) && f.monthlyCost) out.cost += f.monthlyCost * (f === primary ? 1 : 0.5);
   }
   return out;
 }
@@ -142,7 +163,7 @@ export function stepTraining(state: LifeState) {
   const primary = FOCUS_BY_ID[state.plan.primary];
   const secondary = state.plan.secondary ? FOCUS_BY_ID[state.plan.secondary] : null;
   for (const [f, w] of [[primary, 1], [secondary, 0.5]] as const) {
-    if (!f || !focusAvailable(f, age)) continue;
+    if (!f || !focusAvailable(f, age, state)) continue;
     if (f.academics) state.education.academics = clamp(state.education.academics + f.academics * w * 0.6, 0, 100);
     if (f.exposure) state.exposure = clamp(state.exposure + f.exposure * w * 0.5, 0, 100);
     for (const [t, v] of Object.entries(f.traits ?? {}) as [TraitKey, number][]) state.traits[t] = clamp(state.traits[t] + v * w * 0.3, 0, 100);
@@ -154,7 +175,8 @@ export function stepTraining(state: LifeState) {
   }
   // Energy settles toward what the workload and hours allow; events knock it off for a few months.
   const load = dev.hours;
-  const target = 100 - ENERGY_COST[state.plan.workload] * clamp(load / 30, 0.3, 1.3) - (state.season ? 6 : 0);
+  const eraTax = state.plan.workload === "high" ? eraAt(calendar(state).year).loadTax : 0;
+  const target = 100 - ENERGY_COST[state.plan.workload] * clamp(load / 30, 0.3, 1.3) - (state.season ? 6 : 0) - eraTax;
   state.condition.energy = clamp(state.condition.energy + (target - state.condition.energy) * 0.4, 5, 100);
   state.condition.health = clamp(state.condition.health + (state.condition.injury ? 2 : 1.2), 0, 100);
   if (dev.cost > 0) chargeFamily(state, dev.cost);
@@ -228,6 +250,15 @@ export function inflictInjury(state: LifeState, id: string, label: string, month
     tone: "bad" as const,
   };
   state.history.push(entry);
+  // Season-defining injuries get a fork the same month (follow-up only; not in the random pool).
+  if (
+    (severity >= 3 || months >= 5) &&
+    !state.flags["soft:season-injury"] &&
+    !state.flags["ev:season-injury"] &&
+    !state.scheduled.some((x) => x.templateId === "season-injury")
+  ) {
+    state.scheduled.push({ templateId: "season-injury", month: state.ageMonths, causeId: entry.id });
+  }
 }
 
 /** The family pays for children; adults with their own money pay first. */
