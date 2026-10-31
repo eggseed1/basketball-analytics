@@ -2,7 +2,7 @@ import { ADVISOR, ASSETS, makeAgent, mix, newFinance } from "./finance";
 import { earningsOf, MAX_BOARD, placeOnBoard, rankByEarnings } from "./leaderboard";
 import { hashString, streamSeed } from "./rng";
 import type { CareerSummary } from "./report";
-import { SCHEMA_VERSION, type AdvisorStyle, type LifeState } from "./types";
+import { SCHEMA_VERSION, type AdvisorStyle, type LegacyBias, type LifeState } from "./types";
 import { WORLD_VERSION } from "./world";
 
 export const SAVE_KEY = "drbl.oneShot.save";
@@ -314,4 +314,39 @@ export function savePrefs(p: Prefs) {
   } catch {
     /* ignore */
   }
+}
+
+/** Soft family/height nudge for the next random birth. Daily lives ignore this. */
+export function loadLegacy(): LegacyBias | null {
+  try {
+    const raw = storage()?.getItem(LEGACY_KEY);
+    if (!raw) return null;
+    const b = JSON.parse(raw) as LegacyBias;
+    if (!b || typeof b !== "object") return null;
+    return {
+      meansBoost: b.meansBoost === true,
+      heightCm: typeof b.heightCm === "number" && b.heightCm > 150 && b.heightCm < 230 ? b.heightCm : undefined,
+      name: typeof b.name === "string" ? b.name : undefined,
+    };
+  } catch {
+    return null;
+  }
+}
+
+export function saveLegacy(bias: LegacyBias | null) {
+  try {
+    if (!bias) storage()?.removeItem(LEGACY_KEY);
+    else storage()?.setItem(LEGACY_KEY, JSON.stringify(bias));
+  } catch {
+    /* ignore */
+  }
+}
+
+/** Build a legacy hint from a finished life. NBA or comfortable means tilt the next birth. */
+export function legacyFromLife(s: LifeState): LegacyBias {
+  return {
+    meansBoost: s.family.means >= 4 || s.achievements.nbaDebut !== null || s.earnings >= 500_000,
+    heightCm: Math.round(s.body.heightCm),
+    name: s.identity.displayName,
+  };
 }

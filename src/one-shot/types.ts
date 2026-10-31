@@ -304,6 +304,8 @@ export interface Peer {
   drafted: { year: number; pick: number } | null;
   debutMonth: number | null;
   done: boolean;
+  /** Designated birth-class rival for collision events and the plot strip. */
+  rival?: boolean;
   log: { month: number; text: string }[];
 }
 
@@ -499,6 +501,8 @@ export interface LifeState {
   seed: number;
   /** Rare seed with talent, body and family from the top of the range. */
   unicorn?: true;
+  /** Optional birth challenge for this life. */
+  challenge?: ChallengeId | null;
   mode: Mode;
   draw: DrawMode;
   pacing: Pacing;
