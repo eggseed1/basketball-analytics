@@ -1744,7 +1744,9 @@ html [data-gm] .gm-desk-nav__menu {
   box-shadow: 0 12px 28px rgb(0 0 0 / 0.16);
 }
 html [data-gm] .gm-desk-nav__item {
-  display: block;
+  display: flex;
+  min-height: 44px;
+  align-items: center;
   padding: 10px 8px;
   border-radius: 6px;
   font-size: 14px;

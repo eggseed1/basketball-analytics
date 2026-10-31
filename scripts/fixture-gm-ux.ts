@@ -1,6 +1,7 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { getBundledBrefPeerBoard } from "../src/data/runtime/bref-advanced-snapshot";
 import { buildLeagueFromPlayerSeasons } from "../src/gm/seed/create-real-league";
+import { createGeneratedLeague } from "../src/gm/seed/create-league";
 import { prepareFranchise, exportFranchise } from "../src/gm/engine/franchise";
 import { rosterCount } from "../src/gm/engine/cap";
 import { releasePlayer } from "../src/gm/engine/roster-decisions";
@@ -18,6 +19,7 @@ async function main() {
   const write = (name: string, league: GmLeagueState) => writeFileSync(dir + "/" + name + ".json", exportFranchise(league));
   const stage = (id: GmOffseasonStage): GmLeagueState => ({ ...structuredClone(fresh), phase: "offseason", homeFlow: { awardsSeen: true, championSeen: true }, faMarket: { ...emptyFaMarket(71), stage: "fill", done: true }, seasonFlow: { version: 1, season: fresh.season, stage: id, completed: [], contractsRolled: true, deadMoneyRolled: true, progressionApplied: true, staffAged: true } });
   write("regular", fresh);
+  write("demo", prepareFranchise(createGeneratedLeague({ userTeamId: "bos", season: 2026, seed: 71 })));
   write("camp", stage("training_camp"));
   let under = stage("roster_check");
   while (rosterCount("bos", under.players) > under.settings.minRoster - 2) {

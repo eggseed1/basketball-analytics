@@ -95,23 +95,32 @@ try {
 
     // The hub is safe to leave, and a new franchise creates another resumable slot.
     await page.getByRole("button", { name: "My teams and saved franchises", exact: true }).click();
-    await page.getByRole("heading", { name: "My teams", exact: true }).waitFor();
+    await page.getByRole("heading", { name: "My Teams", exact: true }).waitFor();
     const slots = await page.getByRole("button", { name: "Continue", exact: true }).count();
     await page.getByRole("button", { name: "Continue", exact: true }).first().click();
     assert.equal((await exportedLeague()).season, source.season, "leaving and resuming preserves the historic season");
     await page.getByRole("button", { name: "My teams and saved franchises", exact: true }).click();
-    await page.getByRole("heading", { name: "My teams", exact: true }).waitFor();
+    await page.getByRole("heading", { name: "My Teams", exact: true }).waitFor();
     await page.route("**/api/gm/league", route => route.fulfill({ json: { league: { ...source, seed: source.seed + 1, day: 1 } } }));
     await page.getByRole("button", { name: "BOS", exact: true }).click();
     await page.getByRole("button", { name: "My teams and saved franchises", exact: true }).waitFor();
     assert.equal((await exportedLeague()).day, 1);
     await page.getByRole("button", { name: "My teams and saved franchises", exact: true }).click();
-    await page.getByRole("heading", { name: "My teams", exact: true }).waitFor();
+    await page.getByRole("heading", { name: "My Teams", exact: true }).waitFor();
     assert.equal(await page.getByRole("button", { name: "Continue", exact: true }).count(), slots + 1);
     await page.getByRole("button", { name: "Continue", exact: true }).nth(1).click();
     assert.equal((await exportedLeague()).day, source.day, "the original save was not overwritten");
+    await load("demo", "/gm");
+    await page.getByRole("button", { name: "Start a real NBA franchise", exact: true }).click();
+    await page.getByRole("button", { name: "My teams and saved franchises", exact: true }).waitFor();
+    assert.equal((await exportedLeague()).day, 1);
+    await page.getByRole("button", { name: "My teams and saved franchises", exact: true }).click();
+    await page.getByRole("heading", { name: "My Teams", exact: true }).waitFor();
+    await page.getByRole("button", { name: "Continue", exact: true }).nth(1).click();
+    await page.getByRole("button", { name: "Start a real NBA franchise", exact: true }).waitFor();
+    assert.equal((await exportedLeague()).day, 0, "starting real rosters preserves the demo save");
     await page.unroute("**/api/gm/league");
-    report.tasks.push("Save slots: leave, resume, start another franchise, resume the unchanged original");
+    report.tasks.push("Save slots: leave, resume, start another franchise, preserve original and demo-to-real saves");
   }
   for (const name of ["roster-under", "roster-over", "rookies", "camp"]) {
     await load(name);
@@ -189,7 +198,12 @@ try {
       await page.reload();
       await page.getByRole("button", { name: "Check opening-night roster", exact: true }).waitFor();
       assert.equal(await page.getByRole("button", { name: "Run training camp", exact: true }).count(), 0);
-      report.tasks.push("Camp: explicit zero-assignment action, suggestions retain manual choice, previews, results persist without repeat training");
+      await page.getByRole("button", { name: "Check opening-night roster", exact: true }).click();
+      await page.getByRole("button", { name: "Start next season", exact: true }).click();
+      await page.waitForURL("**/gm");
+      await page.getByText("Calendar", { exact: true }).waitFor();
+      assert.equal((await exportedLeague()).season, source.season + 1);
+      report.tasks.push("Camp: explicit zero-assignment action, suggestions retain manual choice, results persist, next season routes to its calendar");
     }
   }
   await load("own-market", "/gm/free-agency");
