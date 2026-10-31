@@ -34,30 +34,30 @@ const rows = [{ gamesPlayed: 65 }, { gamesPlayed: 64 }];
 const beforeTip = new Date("2026-10-19T16:00:00.000Z");
 const openingNight = new Date("2026-10-20T16:00:00.000Z");
 
-test("a full season of games played is still pre-tip the day before opening night", () => {
+test("a full season of games played is still pre-tip the day before opening night", async () => {
   assert.equal(
-    playerBoardAwaitingTip("2026-27", rows, beforeTip, schedule),
+    await playerBoardAwaitingTip("2026-27", rows, beforeTip, schedule),
     true
   );
 });
 
-test("opening night with only a couple of real games is not a leftover season", () => {
+test("opening night with only a couple of real games is not a leftover season", async () => {
   assert.equal(
-    playerBoardAwaitingTip("2026-27", [{ gamesPlayed: 1 }], openingNight, schedule),
+    await playerBoardAwaitingTip("2026-27", [{ gamesPlayed: 1 }], openingNight, schedule),
     false
   );
 });
 
-test("opening night still rejects last year's 65-game table", () => {
+test("opening night still rejects last year's 65-game table", async () => {
   assert.equal(
-    playerBoardAwaitingTip("2026-27", rows, openingNight, schedule),
+    await playerBoardAwaitingTip("2026-27", rows, openingNight, schedule),
     true
   );
 });
 
-test("a finished season is left alone", () => {
+test("a finished season is left alone", async () => {
   assert.equal(
-    playerBoardAwaitingTip("2025-26", rows, beforeTip, schedule),
+    await playerBoardAwaitingTip("2025-26", rows, beforeTip, schedule),
     false
   );
 });

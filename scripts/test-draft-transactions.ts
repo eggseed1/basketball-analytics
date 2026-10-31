@@ -165,15 +165,22 @@ function testFreeAgentProfileHasNoTeam() {
   assert.equal(profile("inactive")?.currentTeamId, "15");
 }
 
-function testEmptyCareerDefaultsToCurrentSeason() {
+async function testEmptyCareerDefaultsToCurrentSeason() {
   // A pick with no rows yet should read his age and stats for this season.
-  assert.equal(resolvePlayerSeason([], null, [], { nowSeason: "2026-27" }), "2026-27");
+  assert.equal(await resolvePlayerSeason([], null, [], { nowSeason: "2026-27" }), "2026-27");
 }
 
-testDates();
-testRows();
-testFreeAgentProfileHasNoTeam();
-testEmptyCareerDefaultsToCurrentSeason();
-testEngineUsesLoggedDraft();
-testSearchRows();
-console.log("draft transactions: ok");
+async function main() {
+  testDates();
+  testRows();
+  testFreeAgentProfileHasNoTeam();
+  await testEmptyCareerDefaultsToCurrentSeason();
+  testEngineUsesLoggedDraft();
+  testSearchRows();
+  console.log("draft transactions: ok");
+}
+
+main().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});

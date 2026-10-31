@@ -59,8 +59,7 @@ await Promise.all(Array.from({ length: CONCURRENCY }, worker));
 
 const failed = results.filter((r) => r.code !== 0);
 for (const f of failed) {
-  const tail = f.output.trimEnd().split("\n").slice(-40).join("\n");
-  console.log(`\n── ${f.name} (exit ${f.code}) ──\n${tail}`);
+  console.log(`\n── ${f.name} (exit ${f.code}) ──\n${f.output.trimEnd()}`);
 }
 console.log(`\n${results.length - failed.length}/${results.length} test scripts passed`);
 process.exit(failed.length ? 1 : 0);

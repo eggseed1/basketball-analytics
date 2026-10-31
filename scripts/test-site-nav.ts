@@ -34,8 +34,8 @@ const cases: Array<[string, string]> = [
   ["/offseason?year=2025", "Transactions"],
   ["/learn", "Learn"],
   ["/learn/true-shooting", "Learn"],
-  ["/franchises", "Teams"],
-  ["/franchises/bos", "Teams"],
+  ["/franchises", "History"],
+  ["/franchises/bos", "History"],
   ["/teams/13/history", "Teams"],
   ["/arcade", "Arcade"],
   ["/arcade/zero-82", "Arcade"],
@@ -82,7 +82,7 @@ const teamsSubnavFor = (p: string) =>
 for (const [path, expected] of [
   ["/standings", ["Standings"]],
   ["/teams/2", ["Standings"]],
-  ["/franchises/bos", ["Standings"]],
+  ["/franchises/bos", []],
   ["/teams/13/history", ["Standings"]],
   ["/standings/visualizations", ["Visualizations"]],
 ] as const) {
@@ -99,7 +99,7 @@ const players = PRIMARY_NAV.find((n) => n.id === "players");
 assert.ok(players?.subnav?.length);
 assert.deepEqual(
   players.subnav.map((s) => s.label),
-  ["Board", "Hot & Cold", "Visualizations"]
+  ["Board", "Hot & Cold", "Styles", "Visualizations"]
 );
 
 // Deep features must not be top-level.

@@ -14,10 +14,10 @@ function row(season: string, gamesPlayed: number): PlayerSeason {
   return { season, gamesPlayed } as PlayerSeason;
 }
 
-test("pre-tip defaults to latest season with games (skip empty stub)", () => {
+test("pre-tip defaults to latest season with games (skip empty stub)", async () => {
   const career = [row("2026-27", 0), row("2025-26", 70)];
   assert.equal(
-    resolvePlayerSeason(career, null, [], {
+    await resolvePlayerSeason(career, null, [], {
       nowSeason: "2026-27",
       isActive: true,
       preferPeakWhenHistorical: false,
@@ -27,10 +27,10 @@ test("pre-tip defaults to latest season with games (skip empty stub)", () => {
   );
 });
 
-test("post-tip defaults to current season even at 0 GP for active players", () => {
+test("post-tip defaults to current season even at 0 GP for active players", async () => {
   const career = [row("2026-27", 0), row("2025-26", 70)];
   assert.equal(
-    resolvePlayerSeason(career, null, [], {
+    await resolvePlayerSeason(career, null, [], {
       nowSeason: "2026-27",
       isActive: true,
       preferPeakWhenHistorical: false,
@@ -40,11 +40,11 @@ test("post-tip defaults to current season even at 0 GP for active players", () =
   );
 });
 
-test("post-tip defaults to current season when only prior-year GP exists", () => {
+test("post-tip defaults to current season when only prior-year GP exists", async () => {
   // Cade-shaped: played 2025-26, no 2026-27 career stub yet, tip already passed.
   const career = [row("2025-26", 70), row("2024-25", 70)];
   assert.equal(
-    resolvePlayerSeason(career, null, [], {
+    await resolvePlayerSeason(career, null, [], {
       nowSeason: "2026-27",
       preferPeakWhenHistorical: true,
       now: afterTip,
@@ -53,10 +53,10 @@ test("post-tip defaults to current season when only prior-year GP exists", () =>
   );
 });
 
-test("post-tip honors explicit season param", () => {
+test("post-tip honors explicit season param", async () => {
   const career = [row("2026-27", 0), row("2025-26", 70)];
   assert.equal(
-    resolvePlayerSeason(career, "2025-26", [], {
+    await resolvePlayerSeason(career, "2025-26", [], {
       nowSeason: "2026-27",
       isActive: true,
       preferPeakWhenHistorical: false,
@@ -66,9 +66,9 @@ test("post-tip honors explicit season param", () => {
   );
 });
 
-test("empty career still falls back to nowSeason", () => {
+test("empty career still falls back to nowSeason", async () => {
   assert.equal(
-    resolvePlayerSeason([], null, [], {
+    await resolvePlayerSeason([], null, [], {
       nowSeason: "2026-27",
       preferPeakWhenHistorical: false,
       now: afterTip,

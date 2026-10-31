@@ -102,7 +102,7 @@ async function main() {
     "../src/lib/standings-from-games"
   );
   for (const season of ["2021-22", "2022-23", "2023-24", "2024-25"] as const) {
-    const seasonGames = getRuntimeSnapshotGames(season);
+    const seasonGames = await getRuntimeSnapshotGames(season);
     const standingsArchive = computeStandingsFromGameArchive(
       season,
       seasonGames
