@@ -2,7 +2,7 @@
   "meta": {
     "methodologyVersion": "p18c2-1.0",
     "snapshotDate": "2026-10-31",
-    "retrievedAt": "2026-10-31T16:03:49.614Z",
+    "retrievedAt": "2026-10-31T20:08:10.823Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
@@ -11,7 +11,7 @@
       "src/data/runtime/bref-team-contracts-snapshot.json",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "d2b8f4565a154bcdc23bfffd2837c6d675766832c59ae3bd4df627b57af8aef0",
+    "sourceHash": "392020e707d4c7556b71d8df7bb7225799914f7e38b33ea29b1c717172e90f8d",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -212,29 +212,6 @@
           ],
           "guaranteedTotal": null,
           "href": "/players/1641717"
-        },
-        {
-          "playerId": "1630534",
-          "playerName": "Ochai Agbaji",
-          "age": null,
-          "contractId": "cy-1630534-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1630534-2026",
-              "playerId": "1630534",
-              "franchiseId": "25",
-              "season": "2026-27",
-              "salary": 6383525,
-              "capHit": 6383525,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "salary-index-carry-forward"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1630534"
         },
         {
           "playerId": "1643530",
@@ -470,12 +447,12 @@
       "futureCommitments": [
         {
           "season": "2026-27",
-          "totalSalaryDollars": 224699748,
-          "playersUnderContract": 17
+          "totalSalaryDollars": 218316223,
+          "playersUnderContract": 16
         }
       ],
-      "playerSalaryCommitments": 224699748,
-      "playersWithSalary": 17,
+      "playerSalaryCommitments": 218316223,
+      "playersWithSalary": 16,
       "playersWithoutSalary": 1
     },
     "draftAssets": {

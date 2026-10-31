@@ -5,10 +5,10 @@
     "season": "2026-27",
     "snapshotDate": "2026-10-31",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-10-31T15:54:18.913Z",
-    "rosterPlayerCount": 489,
-    "headlinesScanned": 8953,
-    "latestHeadlineAt": "2026-10-31T15:54:00.000Z",
+    "builtAt": "2026-10-31T20:02:51.178Z",
+    "rosterPlayerCount": 488,
+    "headlinesScanned": 9015,
+    "latestHeadlineAt": "2026-10-31T20:01:40.000Z",
     "latestTransactionDate": "2026-10-29",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -1815,12 +1815,13 @@
       "primaryClaimId": "mv-a8db5e230a6eb5a1",
       "claimIds": [
         "mv-a8db5e230a6eb5a1",
-        "mv-180e9ad564a42c01"
+        "mv-180e9ad564a42c01",
+        "mv-4c05d38662d67287"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-30T18:05:58.000Z",
-      "lastMeaningfulAt": "2026-10-30T18:52:54.000Z",
+      "lastMeaningfulAt": "2026-10-31T17:06:11.000Z",
       "linkedPlayerIds": [
         "4397688"
       ],
@@ -1828,24 +1829,6 @@
         "25",
         "23",
         "3"
-      ]
-    },
-    {
-      "id": "mv-contract-4397018-20261030",
-      "headline": "Ochai Agbaji: contract talks with the Thunder",
-      "primaryClaimId": "mv-1f7374b112f29c09",
-      "claimIds": [
-        "mv-1f7374b112f29c09"
-      ],
-      "evidenceClass": "reported",
-      "state": "unresolved",
-      "firstSeenAt": "2026-10-30T19:01:33.000Z",
-      "lastMeaningfulAt": "2026-10-30T19:01:33.000Z",
-      "linkedPlayerIds": [
-        "4397018"
-      ],
-      "linkedTeamIds": [
-        "25"
       ]
     },
     {
@@ -9462,27 +9445,6 @@
       "isOriginal": false
     },
     {
-      "id": "mv-1f7374b112f29c09",
-      "clusterId": "mv-contract-4397018-20261030",
-      "summary": "Ochai Agbaji, Thunder Agree To Contract",
-      "claimType": "contract_movement",
-      "evidenceClass": "reported",
-      "state": "unresolved",
-      "provenanceKind": "aggregation",
-      "publishedAt": "2026-10-30T19:01:33.000Z",
-      "sourceId": "outlet:realgm",
-      "sourceLabel": "RealGM",
-      "sourceUrl": "https://basketball.realgm.com/wiretap/287984/Ochai-Agbaji-Thunder-Agree-To-Contract",
-      "playerIds": [
-        "4397018"
-      ],
-      "teamIds": [
-        "25"
-      ],
-      "isOriginal": false,
-      "negotiationSpecificity": "offer"
-    },
-    {
       "id": "mv-034df1ee25a047d5",
       "clusterId": "mv-trade-4065733-20261027",
       "summary": "NBA Trade Rumors: Monitoring Suns Star, Lakers Tax Issue & Ty Jerome",
@@ -9503,6 +9465,26 @@
       ],
       "isOriginal": false,
       "negotiationSpecificity": "contact"
+    },
+    {
+      "id": "mv-4c05d38662d67287",
+      "clusterId": "mv-trade-4397688-20261030",
+      "summary": "OKC Thunder Linked to Trey Murphy Trade Amid Injury Woes",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-31T17:06:11.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/oklahoma-city-thunder/thunder-trey-murphy-trade/",
+      "playerIds": [
+        "4397688"
+      ],
+      "teamIds": [
+        "25"
+      ],
+      "isOriginal": false
     },
     {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",
