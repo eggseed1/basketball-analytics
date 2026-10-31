@@ -28,8 +28,9 @@ export function createPeers(streams: Streams): Peer[] {
       drafted: null,
       debutMonth: null,
       done: false,
+      rival: false,
       log: [],
-    };
+    } satisfies Peer;
   });
   // Highest ceiling becomes the named rival for collision events.
   let best = 0;
