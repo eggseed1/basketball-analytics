@@ -91,7 +91,8 @@ export function advanceSeasonJourney(input: GmLeagueState): JourneyResult {
     }
     case "rookie_signing": {
       if (pendingRookies(league).length) return result(league, "Sign or release each unsigned rookie before opening free agency.", false);
-      return result(enterFreeAgency({ ...moveStage(league, "free_agency"), phase: "offseason" }), "Options open first. Progression and camp follow free agency.");
+      const players = league.players.map(player => player.teamId !== league.userTeamId && player.pendingRookieContract ? { ...player, contract: player.pendingRookieContract, pendingRookieContract: undefined } : player);
+      return result(enterFreeAgency({ ...moveStage({ ...league, players }, "free_agency"), phase: "offseason" }), "Options open first. Progression and camp follow free agency.");
     }
     case "free_agency": {
       if (!league.faMarket?.done) {

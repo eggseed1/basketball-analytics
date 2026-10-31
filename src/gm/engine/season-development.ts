@@ -38,7 +38,8 @@ export function assignCamp(league: GmLeagueState, playerId: string, focus: GmCam
   if (!player) return fail("Choose a player under contract to your club.");
   if (focus && !CAMP_FOCUSES.some(row => row.id === focus)) return fail("Choose a camp focus.");
   if (focus && player.injury) return fail("Injured players need medical clearance before a focused camp.");
-  const assignments = { ...flow.campAssignments };
+  const eligibleIds = new Set(league.players.filter(row => row.teamId === league.userTeamId && row.contract && !row.injury).map(row => row.id));
+  const assignments = Object.fromEntries(Object.entries(flow.campAssignments ?? {}).filter(([id]) => eligibleIds.has(id)));
   if (focus) assignments[playerId] = focus; else delete assignments[playerId];
   if (Object.keys(assignments).length > campSlots(league)) return fail("All camp slots are assigned. Clear one to choose another player.");
   return { ok: true, reason: focus ? player.name + " assigned to " + focus + "." : "Camp assignment cleared.", state: { ...league, seasonFlow: { ...flow, campAssignments: assignments } } };

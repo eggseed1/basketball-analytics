@@ -352,6 +352,7 @@ export interface GmPlayer {
   priorLine?: GmCountingLine;
   /** Ending year of the draft that put him in the league. */
   draftYear?: number;
+  draftedByTeamId?: string;
   college?: string;
   draftLabel?: string;
   birthDate?: string;

@@ -215,14 +215,14 @@ export type DraftPickRow = {
 
 export function draftPickLog(state: GmLeagueState): DraftPickRow[] {
   return state.players
-    .filter((player) => player.draftYear === state.season && player.draftPick != null && player.teamId)
+    .filter((player) => player.draftYear === state.season && player.draftPick != null && (player.draftedByTeamId || player.teamId))
     .map((player) => {
       const pick = player.draftPick!;
       const mockRank = mockRankOf(state, player.id);
       const fall = pick - mockRank;
       return {
         pick,
-        teamId: player.teamId!,
+        teamId: player.draftedByTeamId ?? player.teamId!,
         player,
         mockRank,
         // Sleeper = board name who slid at least a half-dozen spots, or a
@@ -518,3 +518,4 @@ export function applyDraftNightTrade(
     updatedAt: new Date().toISOString(),
   };
 }
+

@@ -4,6 +4,7 @@ import { prepareFranchise, exportFranchise, parseFranchise } from "../src/gm/eng
 import { advanceSeasonJourney, beginOffseason, decideRookieContract, openingRosterIssues, pendingRookies, reopenRosterFill } from "../src/gm/engine/season-flow";
 import { applySeasonProgression, applyTrainingCamp, assignCamp, campSlots, runSummerLeague } from "../src/gm/engine/season-development";
 import { flowOf, cbaSeason } from "../src/gm/engine/season-flow-state";
+import { draftPickLog } from "../src/gm/engine/draft-room";
 import { finishDraftWithAi } from "../src/gm/engine/progression";
 import { enterFreeAgency, startNextSeason } from "../src/gm/engine/offseason";
 import { applySign, advanceFaDayDetailed, emptyFaMarket, resignOwnFreeAgent, runFaPeriod, userOfferFreeAgent } from "../src/gm/engine/free-agency";
@@ -145,6 +146,11 @@ for (let cycle = 0; cycle < 2; cycle++) {
       if (rookie) { assert.equal(rookie.contract, null); assert.equal(evaluateSigning(league, "nyk", rookie, 5, 2).ok, false); }
     }
     if (stage === "rookie_signing") {
+      const unsigned = pendingRookies(league)[0];
+      if (unsigned) {
+        const released = decideRookieContract(league, unsigned.id, false).state;
+        assert.equal(draftPickLog(released).find(row => row.player.id === unsigned.id)?.teamId, "bos", "releasing rights keeps the original draft pick in the recap");
+      }
       assert.equal(advanceSeasonJourney(league).ok, pendingRookies(league).length === 0);
       for (const rookie of pendingRookies(league)) {
         // Make summer room without bypassing the signing decision.
@@ -177,6 +183,12 @@ for (let cycle = 0; cycle < 2; cycle++) {
       assert.equal(assignCamp(injured, candidates[0]!.id, "shooting").ok, false);
       for (const player of candidates.slice(0, campSlots(league))) league = assignCamp(league, player.id, "shooting").state;
       if (candidates.length > campSlots(league)) assert.equal(assignCamp(league, candidates[campSlots(league)]!.id, "defense").ok, false);
+      if (candidates.length > campSlots(league)) {
+        const released = releasePlayer(league, candidates[0]!.id);
+        const reassigned = assignCamp(released, candidates[campSlots(league)]!.id, "defense");
+        assert.equal(reassigned.ok, true, "a waived player's camp slot becomes available");
+        assert.equal(reassigned.state.seasonFlow?.campAssignments?.[candidates[0]!.id], undefined);
+      }
       const applied = applyTrainingCamp(league);
       assert.equal(applyTrainingCamp(applied), applied);
       assert.equal(applied.seasonFlow?.campResults?.filter(row => candidates.some(player => player.id === row.playerId)).length, campSlots(league));
@@ -215,6 +227,20 @@ for (let cycle = 0; cycle < 2; cycle++) {
   assert.equal(league.teams.find(team => team.id === "bos")?.deadMoney?.find(row => row.id === "prior-guarantee")?.yearsLeft, 2 - cycle, "dead money ticks once per summer");
   assert.ok(league.schedule.length > 100);
   assert.equal(seasonJourney(league).title, "Opening night");
+}
+
+// Legacy draft saves still archive, and a traded unsigned rookie cannot strand the market.
+{
+  const old = prepareFranchise({ ...createGeneratedLeague({ userTeamId: "bos", season: 2027, seed: 42 }), phase: "draft", draftPool: [] });
+  const rookieDesk = advanceSeasonJourney(old).state;
+  const player = rookieDesk.players.find(row => row.teamId === "nyk")!;
+  const contract = player.contract!;
+  const withTradedRights = { ...rookieDesk, players: rookieDesk.players.map(row => row.id === player.id ? { ...row, draftYear: old.season, draftPick: 30, draftedByTeamId: "bos", contract: null, pendingRookieContract: { ...contract, signedSeason: old.season + 1, yearsRemaining: 4, years: undefined } } : row) };
+  const opened = advanceSeasonJourney(withTradedRights).state;
+  assert.equal(opened.phase, "free_agency");
+  assert.equal(opened.history?.length, 1);
+  assert.equal(playerAt(opened, player.id).pendingRookieContract, undefined);
+  assert.ok(playerAt(opened, player.id).contract, "CPU signs acquired rookie rights before opening the market");
 }
 
 // Old FA saves already applied progression. Migration must preserve them exactly.

@@ -368,6 +368,7 @@ export function runDraftPick(
           salaryM: Math.round(rookieSal * state.settings.salaryCapM / 140.588 * 100) / 100 })),
       } : undefined,
       serviceYears: 0,
+      draftedByTeamId: teamId,
       draftPick: pickNum,
       draftYear: state.season,
     };

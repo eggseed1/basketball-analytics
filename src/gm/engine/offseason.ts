@@ -188,6 +188,7 @@ export function enterFreeAgency(state: GmLeagueState): GmLeagueState {
   if (state.seasonFlow) {
     const flow = state.seasonFlow;
     if (flow.stage !== "free_agency" || state.players.some(player => player.pendingRookieContract)) return state;
+    state = archiveSeason(state);
     if (flow.contractsRolled) return { ...state, phase: "free_agency", faMarket: state.faMarket ?? emptyFaMarket(state.season * 7919) };
     const season = state.season + 1;
     const rolled = advanceBirdRights(state.players.map(player => {

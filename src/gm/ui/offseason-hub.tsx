@@ -55,7 +55,7 @@ export function OffseasonHub({ embedded = false }: { embedded?: boolean }) {
   const roster = userPlayers(league), cap = userCap(league), team = userTeam(league);
   const rookies = pendingRookies(league);
   const progression = flow.progression?.filter(row => row.teamId === league.userTeamId) ?? [];
-  const assigned = Object.keys(flow.campAssignments ?? {}).length;
+  const assigned = Object.keys(flow.campAssignments ?? {}).filter(id => roster.some(player => player.id === id && player.contract && !player.injury)).length;
   const stageIndex = OFFSEASON_STAGES.findIndex(row => row.id === stage);
   const Heading = embedded ? "h2" : "h1";
   return <div className="flex min-w-0 flex-col gap-8" data-testid="season-hub">
@@ -133,7 +133,7 @@ export function OffseasonHub({ embedded = false }: { embedded?: boolean }) {
     {flow.retiredPlayers?.length ? <SectionFrame title="Retirements" description="These unsigned players left the league this summer. Their completed seasons remain in franchise history."><details className="text-sm"><summary className="cursor-pointer">{flow.retiredPlayers.length} careers ended</summary><ul className="mt-3 space-y-1">{flow.retiredPlayers.map(player => <li key={player.id}>{player.name} · age {player.age} · {player.overall} OVR</li>)}</ul></details></SectionFrame> : null}
 
     <SectionFrame title="The annual cycle" description={stage ? "Completed steps stay checked when you leave and return." : "The regular season leads into awards and the postseason. These summer steps follow the Finals."}>
-      <ol className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">{OFFSEASON_STAGES.map((row, index) => <li key={row.id} aria-current={stage === row.id ? "step" : undefined} className={cn("min-w-0 rounded-lg border p-3 text-sm", stage === row.id ? "border-primary bg-primary/5" : "border-border", stageIndex >= 0 && index > stageIndex && "text-muted-foreground")}><p className="text-xs text-muted-foreground">{flow.completed.includes(row.id) ? "Complete" : row.id === stage ? "Current step" : "Upcoming"}</p><p className="mt-1 font-semibold">{index + 1}. {row.label}</p></li>)}</ol>
+      <ol className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">{OFFSEASON_STAGES.map((row, index) => <li key={row.id} aria-current={stage === row.id ? "step" : undefined} className={cn("min-w-0 rounded-lg border p-3 text-sm", stage === row.id ? "border-primary bg-primary/5" : "border-border", stageIndex >= 0 && index > stageIndex && "text-muted-foreground")}><p className="text-xs text-muted-foreground">{row.id === stage ? "Current step" : flow.completed.includes(row.id) ? "Complete" : "Upcoming"}</p><p className="mt-1 font-semibold">{index + 1}. {row.label}</p></li>)}</ol>
     </SectionFrame>
 
     <SectionFrame title="Delegation" description="The summer still pauses at each review. Free-agency delegation allows the CPU to decide options and offers for your club when you advance.">
