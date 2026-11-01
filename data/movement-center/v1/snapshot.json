@@ -3,12 +3,12 @@
     "methodologyVersion": "movement-m1-0.2+movement-rules-v2",
     "status": "NEWS_INGEST_M1",
     "season": "2026-27",
-    "snapshotDate": "2026-10-31",
+    "snapshotDate": "2026-11-01",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-10-31T20:02:51.178Z",
+    "builtAt": "2026-11-01T16:58:25.253Z",
     "rosterPlayerCount": 488,
-    "headlinesScanned": 9015,
-    "latestHeadlineAt": "2026-10-31T20:01:40.000Z",
+    "headlinesScanned": 9202,
+    "latestHeadlineAt": "2026-11-01T16:55:39.000Z",
     "latestTransactionDate": "2026-10-29",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -116,7 +116,7 @@
     },
     "outlet:heavy": {
       "label": "Heavy",
-      "credibility": 12
+      "credibility": 16
     },
     "reporter:malika-andrews": {
       "label": "Malika Andrews (ESPN)",
@@ -1829,6 +1829,28 @@
         "25",
         "23",
         "3"
+      ]
+    },
+    {
+      "id": "mv-trade-2595516-20261101",
+      "headline": "Norman Powell and Lauri Markkanen: trade talk",
+      "primaryClaimId": "mv-53c734b5259d58ad",
+      "claimIds": [
+        "mv-53c734b5259d58ad"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-11-01T13:58:47.000Z",
+      "lastMeaningfulAt": "2026-11-01T13:58:47.000Z",
+      "linkedPlayerIds": [
+        "2595516",
+        "4066336"
+      ],
+      "linkedTeamIds": [
+        "17",
+        "23",
+        "4",
+        "26"
       ]
     },
     {
@@ -9485,6 +9507,28 @@
         "25"
       ],
       "isOriginal": false
+    },
+    {
+      "id": "mv-53c734b5259d58ad",
+      "clusterId": "mv-trade-2595516-20261101",
+      "summary": "NBA Trade Rumors: ‘Fire Sales’ for Norman Powell, Lauri Markkanen, Kings, Nets & More",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-11-01T13:58:47.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/portland-trail-blazers/nba-trade-rumors-fire-sales-for-norman-powell-lauri-markkanen-kings-nets-more/",
+      "playerIds": [
+        "2595516",
+        "4066336"
+      ],
+      "teamIds": [
+        "17",
+        "23"
+      ],
+      "isOriginal": true
     },
     {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",
