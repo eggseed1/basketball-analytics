@@ -1,12 +1,15 @@
-import { DRAFT_ROLES, draftScoutingOf, studyProspect, toggleDraftWatch } from "@/gm/engine/draft-intel";
-import { executeDraftTrade, type DraftTradeProposal } from "@/gm/engine/draft-trades";
-import type { GmDraftRole, GmDraftTool, GmScoutStudy } from "@/gm/types";
 "use client";
 
+import { DRAFT_ROLES, draftScoutingOf, studyProspect, toggleDraftWatch } from "@/gm/engine/draft-intel";
+import { executeDraftTrade, type DraftTradeProposal } from "@/gm/engine/draft-trades";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import type {
   GmLeagueState,
+  GmPlayer,
+  GmDraftRole,
+  GmDraftTool,
+  GmScoutStudy,
   GmPosition,
   GmRotationDepth,
   GmTradeAsset,
@@ -1533,7 +1536,7 @@ export const useGmStore = create<GmStore>()(
                 day: league.day,
                 season: league.season,
                 headline: "Combine results are in",
-                body: "Height, wingspan, vertical, sprint, and the medical file are locked for this class.",
+                body: "Wingspan, vertical and sprint measurements now appear in prospect files. Compare the tests with game film and your roster needs.",
                 tone: "info" as const,
               },
               ...league.news,

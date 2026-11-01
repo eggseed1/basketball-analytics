@@ -41,6 +41,8 @@ function night():GmLeagueState{const league=fresh();const others=league.teams.fi
   const hidden={...league,players:league.players.map(player=>({...player,ratings:{...player.ratings,potential:10-player.ratings.potential},sheet:player.sheet?{...player.sheet,potential:{...player.sheet.potential,ceiling:99,trait:"xfactor" as const,path:"boom" as const}}:player.sheet}))};
   assert.deepEqual(draftRead(league,target),draftRead(hidden,hidden.players.find(player=>player.id===target.id)!));
   assert.equal(aiSelectProspect(league,"det"),aiSelectProspect(hidden,"det"));
+  const pinned=league.draftPool.at(-1)!;
+  assert.equal(aiSelectProspect({...league,userDraftBoard:[pinned]},league.userTeamId),pinned,"delegation follows the user's saved board");
   const stats=amateurSeason(target);assert.deepEqual(amateurSeason(target),stats);
   const shooter=[...league.draftPool].sort((a,b)=>draftRead(league,league.players.find(player=>player.id===b)!,"shooting").score-draftRead(league,league.players.find(player=>player.id===a)!,"shooting").score);
   const creator=[...league.draftPool].sort((a,b)=>draftRead(league,league.players.find(player=>player.id===b)!,"creation").score-draftRead(league,league.players.find(player=>player.id===a)!,"creation").score);

@@ -1,6 +1,7 @@
 import type { GmAmateurSeason, GmDraftRole, GmDraftScouting, GmDraftTool, GmLeagueState, GmPlayer, GmProspectReport, GmScoutStudy } from "@/gm/types";
 import { playerSheet } from "@/gm/engine/attributes";
 import { clamp, createRng } from "@/gm/engine/rng";
+import { scoutMatchBonus } from "@/gm/seed/scouts";
 
 export const DRAFT_ROLES: ReadonlyArray<{ id: GmDraftRole; label: string; description: string }> = [
   { id: "value", label: "Best value", description: "Balance readiness, room to grow and what the market expects." },
@@ -20,6 +21,7 @@ export const SCOUT_STUDIES: ReadonlyArray<{ id: GmScoutStudy; label: string; cos
   { id: "medical", label: "Medical review", cost: 1, description: "Investigate availability risk before investing a pick." },
 ];
 const TOOLS: GmDraftTool[] = ["shooting", "creation", "defense", "feel", "athleticism"];
+export const DRAFT_TOOL_LABELS:Record<GmDraftTool,string>={shooting:"Shooting",creation:"Creation",defense:"Defense",feel:"Decisions and passing",athleticism:"Athleticism"};
 export function draftHash(value: string): number {
   let result = 2166136261;
   for (const char of value) result = Math.imul(result ^ char.charCodeAt(0), 16777619);
@@ -137,12 +139,13 @@ export function studyProspect(league: GmLeagueState, playerId: string, method: G
   if (scouting.spent + study.cost > scoutingBudget(league)) return fail("No scouting days remain. Compare your existing reports and public production.");
   if (method === "workout" && league.seasonFlow?.stage !== "scouting" && !(league.phase === "offseason" && !league.seasonFlow)) return fail("Private workouts open after the lottery, during draft preparation.");
   if (method === "workout" && Object.values(scouting.reports).filter(row=>row.studies.workout).length >= 4) return fail("All four private workout visits are booked.");
-  const eye = league.teams.find(team=>team.id===league.userTeamId)?.staff.scout?.eye ?? 1;
+  const scout = league.teams.find(team=>team.id===league.userTeamId)?.staff.scout;
+  const precision = clamp((scout?.eye ?? 1) + scoutMatchBonus(scout,player.position,method === "medical" || method === "interview" ? "overall" : focus,player),1,6);
   const rng = createRng(draftHash(player.id + ":" + league.userTeamId + ":" + method));
   const a = playerSheet(player).attributes;
   const truth: Record<GmDraftTool,number> = { shooting: (a.threePoint * 2 + a.freeThrow)/3, creation: (a.ballHandle+a.passAccuracy)/2, defense: (["PF","C"].includes(player.position) ? a.interiorDefense+a.block : a.perimeterDefense+a.steal)/2, feel: (a.passAccuracy*2+a.ballHandle)/3, athleticism: (a.agility+a.speed+a.stamina)/3 };
   const tools = { ...report.tools };
-  const error = () => (rng()-0.5) * (18-eye*2);
+  const error = () => (rng()-0.5) * (18-precision*2);
   let note = "", readiness = report.readiness, habits = report.habits, medical = report.medical;
   if (method === "film" || method === "workout") {
     tools[focus] = round(clamp(truth[focus] + error(),25,95));

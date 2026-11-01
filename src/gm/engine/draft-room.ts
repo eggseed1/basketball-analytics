@@ -1,5 +1,5 @@
 import type { GmDraftPick, GmLeagueState, GmPlayer, GmPosition, GmTeam } from "@/gm/types";
-import { draftRead, marketBoard } from "@/gm/engine/draft-intel";
+import { draftRead, draftScoutingOf, marketBoard } from "@/gm/engine/draft-intel";
 import { resolveDraftOrder } from "@/gm/engine/draft-order";
 import { draftAssetCatalog, executeDraftTrade, suggestDraftTrade, type DraftTradeProposal } from "@/gm/engine/draft-trades";
 import { createRng } from "@/gm/engine/rng";
@@ -41,10 +41,14 @@ export function aiSelectProspect(state: GmLeagueState, teamId: string): string |
     .filter((player): player is GmPlayer => Boolean(player));
   if (!pool.length) return null;
   if (!team) return pool[0]!.id;
+  if (teamId === state.userTeamId) {
+    const pinned = state.userDraftBoard?.find(id => state.draftPool.includes(id));
+    if (pinned) return pinned;
+  }
 
   const needs = rosterNeeds(team, state.players);
   const rng = createRng(hash(`${teamId}:${state.season}:${state.draftPickIndex ?? 0}`));
-  const role = team.ownerGoal === "contend" ? "ready" : team.ownerGoal === "tank" ? "upside" : "value";
+  const role = teamId === state.userTeamId ? draftScoutingOf(state).strategy : team.ownerGoal === "contend" ? "ready" : team.ownerGoal === "tank" ? "upside" : "value";
   const ranked = pool.map(player => {
     const read = draftRead(state, player, role, teamId);
     const fit = player.position === needs[0] ? 1.8 : player.position === needs[1] ? 0.6 : 0;
