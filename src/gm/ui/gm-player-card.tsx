@@ -227,8 +227,8 @@ export function GmPlayerCard({
             {player.position} · {feet(player.heightIn)} · {player.weightLbs} lb · Age{" "}
             {player.age}
           </p>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {player.draftLabel || "Draft info blank"}
+          <p className="mt-1 text-sm text-muted-foreground" data-testid="player-draft-history">
+            {player.draftLabel || (player.draftYear!=null&&player.draftPick!=null?`${player.draftYear} draft · Pick #${player.draftPick}`:"Draft info blank")}
             {player.college ? ` · ${player.college}` : ""}
           </p>
           {awards.length > 0 ? (
