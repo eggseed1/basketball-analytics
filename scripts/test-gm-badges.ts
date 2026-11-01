@@ -44,7 +44,7 @@ const clutchEvent = (scoreHome: number) => ({ playerId: player.id, isFieldGoal:t
 const clutchPlayer = {...player,badgeFocus:"deep_range" as const};
 const clutchBox = {...box,events:[clutchEvent(112),clutchEvent(91),{...clutchEvent(105),clockSeconds:300}]};
 assert.equal(recordBadgeGame(clutchPlayer,clutchBox,[clutchPlayer]).badges!.xp.clutch_scorer,6,"clutch evidence uses the pre-shot score and the late-game window");
-let bronzeOnly = {...player,sheet:{...player.sheet!,attributes:{...attributes,threePoint:70}}};
+let bronzeOnly: GmPlayer = {...player,sheet:{...player.sheet!,attributes:{...attributes,threePoint:70}}};
 for(let i=0;i<60;i++) bronzeOnly=recordBadgeGame(bronzeOnly,{...box,gameId:`bronze-${i}`},[bronzeOnly]);
 assert.equal(bronzeOnly.badges!.xp.deep_range,120,"current eligibility limits stored XP");
 
