@@ -8,6 +8,7 @@ import { draftAssetCatalog, executeDraftTrade, quoteDraftTrade, suggestDraftTrad
 import { resolveDraftOrder, rookieContractForPick } from "../src/gm/engine/draft-order";
 import { advanceDraftPastAi, finishDraftWithAi, runDraftPick } from "../src/gm/engine/progression";
 import { progressSheet } from "../src/gm/engine/attributes";
+import { ensureProspectIdentities } from "../src/gm/engine/scouting";
 import type { GmLeagueState } from "../src/gm/types";
 
 const fresh=()=>prepareFranchise(createGeneratedLeague({userTeamId:"bos",season:2027,seed:71}));
@@ -27,6 +28,8 @@ function night():GmLeagueState{const league=fresh();const others=league.teams.fi
   assert.deepEqual(marketBoard(league).map(player=>player.id),market);
   const restored=parseFranchise(exportFranchise(league));
   assert.equal(JSON.stringify(draftScoutingOf(restored)),JSON.stringify(draftScoutingOf(league)));
+  const migrated=ensureProspectIdentities(restored);
+  assert.deepEqual(migrated.players.map(player=>[player.id,player.name,player.codename]),restored.players.map(player=>[player.id,player.name,player.codename]),"numbered style names are valid and cannot reroll prospect identities on reload");
   assert.equal(studyProspect({...restored,phase:"draft"},id,"analytics").ok,false);
   for(const candidate of league.draftPool) league=studyProspect(league,candidate,"analytics").state;
   assert.equal(draftScoutingOf(league).spent,scoutingBudget(league));
@@ -77,6 +80,14 @@ function night():GmLeagueState{const league=fresh();const others=league.teams.fi
   const expensive=league.players.find(player=>player.teamId==="bos"&&player.contract)!;
   const illegalSalary={...league,settings:{...league.settings,salaryCapM:1,firstApronM:2,secondApronM:3},players:league.players.map(player=>player.id===expensive.id?{...player,contract:{...player.contract!,annualSalaryM:50}}:player)};
   assert.equal(quoteDraftTrade(illegalSalary,{...proposal,send:[{kind:"player",id:expensive.id}]}).legal,false);
+  const early={...league,draftPickIndex:0};
+  const lotteryOwner=early.draftOrder![9]!;
+  const reserve={...expensive,age:22,contract:{...expensive.contract!,annualSalaryM:1,yearsRemaining:2},sheet:{...expensive.sheet!,overall:65}};
+  const reserveState={...early,players:early.players.map(player=>player.id===reserve.id?reserve:player)};
+  const reserveOffer={fromTeamId:"bos",toTeamId:lotteryOwner,clockIndex:0,send:[{kind:"player" as const,id:reserve.id}],receive:[{kind:"slot" as const,slot:9}]};
+  assert.equal(quoteDraftTrade(reserveState,reserveOffer).accepted,false,"a cheap reserve cannot buy a lottery pick through a value-scale mismatch");
+  const rights={...reserve,contract:null,pendingRookieContract:rookieContractForPick(early,45),draftYear:early.season,draftPick:45};
+  assert.equal(quoteDraftTrade({...early,players:early.players.map(player=>player.id===rights.id?rights:player)},reserveOffer).accepted,false,"selecting a second-rounder does not instantly turn his rights into a lottery asset");
 }
 
 // Book ownership drives the actual clock, and a selection consumes exactly one asset.

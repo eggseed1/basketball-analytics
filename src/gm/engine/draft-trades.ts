@@ -1,5 +1,6 @@
 import type { GmDraftPick, GmLeagueState, GmPlayer, GmTeam } from "@/gm/types";
 import { autoSetLineup } from "@/gm/engine/lineup";
+import { playerSheet } from "@/gm/engine/attributes";
 import { teamPayrollM, tradeSalaryLegal } from "@/gm/engine/cap";
 import { offseasonRosterLimit } from "@/gm/engine/season-flow-state";
 import { draftSlotTradePoints, pickTradePoints, playerTradePoints } from "@/gm/engine/value";
@@ -33,7 +34,12 @@ export function draftAssetCatalog(state: GmLeagueState, teamId: string): DraftAs
     if (!rights && (!player.contract || player.contract.yearsRemaining<=0)) continue;
     const asset: DraftAsset = {kind:"player",id:player.id};
     const reason = club.untouchables?.includes(player.id) ? "The club marked this player untouchable." : !rights && player.draftYear===state.season && player.contract?.signedSeason===state.season ? "A newly signed rookie cannot be traded on draft night. Unsigned draft rights can move." : undefined;
-    rows.push({asset,key:draftAssetKey(asset),label:player.name+(rights?" · unsigned draft rights":" · $"+player.contract!.annualSalaryM.toFixed(1)+"M"),points:Math.round(playerTradePoints(player,state.settings?state:undefined)*0.65),available:!reason,reason});
+    // The pick curve and regular trade values have different units. A cheap
+    // reserve cannot buy a lottery pick just by having a positive contract.
+    const readyValue=playerTradePoints(player,state.settings?state:undefined)*clamp((playerSheet(player).overall-60)/70,0.12,0.5);
+    // Until there is NBA evidence, unsigned rights retain the pick's pedigree.
+    const points=rights?draftSlotTradePoints(player.draftPick??60)*0.85+readyValue*0.15:readyValue;
+    rows.push({asset,key:draftAssetKey(asset),label:player.name+(rights?" · unsigned draft rights":" · $"+player.contract!.annualSalaryM.toFixed(1)+"M"),points:Math.max(0.5,Math.round(points*10)/10),available:!reason,reason});
   }
   return rows;
 }
@@ -84,7 +90,9 @@ export function quoteDraftTrade(state:GmLeagueState, proposal:DraftTradeProposal
     const rosterPlayers=state.players.filter(player=>player.teamId===club.id&&player.contract).length;
     if(rosterPlayers-give.filter(player=>player.contract).length+get.filter(player=>player.contract).length>offseasonRosterLimit(state)) return fail(club.abbr+" would exceed the summer roster limit.");
   }
-  const give=selected[0]!.reduce((sum,row)=>sum+row.points,0), get=selected[1]!.reduce((sum,row)=>sum+row.points,0);
+  // Extra small assets have diminishing value to the receiving club.
+  const packageValue=(rows:DraftAssetRow[])=>[...rows].sort((a,b)=>b.points-a.points).reduce((sum,row,index)=>sum+row.points*([1,0.9,0.72,0.5][index]??0.3),0);
+  const give=packageValue(selected[0]!),get=packageValue(selected[1]!);
   const earliest=Math.min(...proposal.receive.filter(asset=>asset.kind==="slot").map(asset=>asset.slot));
   const smallLeague=state.teams.length<10;
   const premium = smallLeague ? 0.97 : earliest<3 ? (to.ownerGoal==="tank"?1.32:1.18) : earliest<14 ? 1.06 : 0.98;
@@ -92,7 +100,10 @@ export function quoteDraftTrade(state:GmLeagueState, proposal:DraftTradeProposal
   const rationale = [earliest<3?"Top-of-draft selection rights command a substantial premium.":to.ownerGoal==="tank"?"A rebuilding club values additional future control.":"The partner weighs the players it can still select after moving."];
   const top=marketBoard(state).find(player=>state.draftPool.includes(player.id));
   if(top&&earliest<3) rationale.push("The leading consensus prospect is still on the board.");
-  const accepted=give+0.05>=asking;
+  const headliner=Math.max(...selected[0]!.map(row=>row.points));
+  const credibleHeadliner=smallLeague||earliest>=14||headliner>=asking*(earliest<3?0.5:0.45);
+  const accepted=give+0.05>=asking&&credibleHeadliner;
+  if(!credibleHeadliner)rationale.push("This lottery pick needs a stronger main asset; a stack of small assets does not replace it.");
   return {legal:true,accepted,reason:accepted?to.abbr+" is willing to make this deal.":to.abbr+" wants a stronger package. Add another useful asset or target a later pick.",give:Math.round(give*10)/10,get:Math.round(get*10)/10,asking:Math.round(asking*10)/10,rationale};
 }
 

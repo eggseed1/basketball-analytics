@@ -433,10 +433,14 @@ export function assignProspectIdentity(
 
 export function codenameDef(codename: string | undefined): CodenameDef | undefined {
   if (!codename) return undefined;
-  return (
-    STYLE_CODENAMES.find((c) => c.codename === codename) ||
-    ELITE_CODENAMES.find((c) => c.codename === codename)
-  );
+  const definitions=[...STYLE_CODENAMES,...ELITE_CODENAMES];
+  const exact=definitions.find(def=>def.codename===codename);
+  if(exact)return exact;
+  // Large classes reuse style names with a numeric suffix. They are valid
+  // identities, so loading a save must not regenerate their real names.
+  const base=codename.replace(/ \d+$/,"");
+  const definition=definitions.find(def=>def.codename===base);
+  return definition?{...definition,codename}:undefined;
 }
 
 const POSITIONS: GmPosition[] = ["PG", "SG", "SF", "PF", "C"];
