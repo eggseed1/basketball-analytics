@@ -30,14 +30,14 @@ const rng = new vm.SyntheticModule(["uid"], function () {
   this.setExport("uid", prefix => prefix + "-" + ++sequence);
 }, { context });
 const source = stripTypeScriptTypes(readFileSync(new URL("../src/gm/state/gm-saves.ts", import.meta.url), "utf8"), { mode: "strip" });
-const module = new vm.SourceTextModule(source, { context });
-await module.link(specifier => {
+const saveModule = new vm.SourceTextModule(source, { context });
+await saveModule.link(specifier => {
   if (specifier === "idb-keyval") return database;
   if (specifier === "@/gm/engine/rng") return rng;
   throw new Error("Unexpected save adapter dependency: " + specifier);
 });
-await module.evaluate();
-const saves = module.namespace;
+await saveModule.evaluate();
+const saves = saveModule.namespace;
 const a = saves.createGmSlotStorage("a"), b = saves.createGmSlotStorage("b");
 const league = (team, season) => ({ userTeamId: team, season, phase: "regular", updatedAt: "2026-11-01T00:00:00Z", teams: [{ id: team, city: team, name: "Team" }] });
 const encode = league => JSON.stringify({ state: { league }, version: 0 });
