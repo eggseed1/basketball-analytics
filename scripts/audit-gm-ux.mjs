@@ -315,6 +315,27 @@ try {
       await page.getByRole("heading", { name: "League settings", exact: true }).waitFor();
       await page.getByRole("button", { name: "Export this franchise", exact: true }).waitFor();
     }
+    await page.setViewportSize({ width: 390, height: 900 });
+    await load("camp", "/gm/development");
+    const campSave = JSON.parse(readFileSync(`${dir}/camp.json`, "utf8")).league;
+    const campers = campSave.players.filter(p => p.teamId === campSave.userTeamId && p.contract && !p.injury).slice(0, 2);
+    for (const camper of campers) await page.getByLabel(`Camp focus for ${camper.name}`, { exact: true }).selectOption("shooting");
+    await page.getByRole("button", { name: "Run individual camp", exact: true }).click();
+    const campDialog = page.getByRole("dialog", { name: "Confirm training camp", exact: true });
+    await campDialog.getByText(/fatigue/).waitFor();
+    await campDialog.getByRole("button", { name: "Cancel", exact: true }).click();
+    assert.equal((await exportedLeague()).seasonFlow.campResults, undefined, "canceling camp preserves the saved season");
+    await page.getByRole("button", { name: "Run individual camp", exact: true }).click();
+    await campDialog.getByRole("button", { name: "Run camp", exact: true }).click();
+    await page.getByText(/Camp fatigue:|Camp soreness:/).first().waitFor();
+    const afterCamp = await exportedLeague();
+    assert.equal(afterCamp.seasonFlow.campResults.filter(row => campers.some(p => p.id === row.playerId)).length, 2);
+    await page.reload({ waitUntil: "domcontentloaded" });
+    await page.getByText(/Camp fatigue:|Camp soreness:/).first().waitFor();
+    assert.deepEqual((await exportedLeague()).seasonFlow.campResults, afterCamp.seasonFlow.campResults, "reloading preserves camp results without rerolling risk");
+    assert.equal(await page.getByRole("button", { name: "Run individual camp", exact: true }).count(), 0);
+    await capture("development-camp-phone");
+    report.tasks.push("Development camp: two choices, risk confirmation, cancel, saved outcome and reload guard");
     await page.getByRole("button", { name: "My teams and saved franchises", exact: true }).click();
     await page.getByRole("button", { name: "League creation settings", exact: true }).click();
     await page.getByLabel("Development speed at creation", { exact: true }).press("End");
