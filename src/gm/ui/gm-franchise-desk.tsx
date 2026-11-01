@@ -14,8 +14,15 @@ const button = "gm-nav__link";
 
 function download(name: string, text: string) {
   const url = URL.createObjectURL(new Blob([text], { type: "application/json" }));
-  const a = document.createElement("a"); a.href = url; a.download = name; a.click();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = name;
+  a.hidden = true;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  // Keep the blob available while the browser starts saving a large franchise.
+  setTimeout(() => URL.revokeObjectURL(url), 30_000);
 }
 
 export function GmSaveImport() {
