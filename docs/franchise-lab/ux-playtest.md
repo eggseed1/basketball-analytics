@@ -22,6 +22,8 @@ This pass exercises a repository build in Chromium at 390×844 and 1440×1000 us
 
 `npm run test:franchise-ux` checks that roster guidance preserves engine guards, late fill retains development, camp suggestions preserve choices and avoid hidden potential, previews match actual gains, reloads cannot repeat camp, and waiver totals match retained salary books.
 
+`npm run test:franchise-saves` delays database writes while switching between two franchises. It checks that each save and its label stay in the correct slot, that the empty hub does not erase a saved league, and that the parallel simulation layer follows the same slot.
+
 ## Next priorities
 
 1. **Make a simulated game teach the GM something.** Connect results to rotation minutes, positional fit, injuries and the existing team plan. Present evidence from the game and a direct route to the relevant decision. This is the strongest next product hypothesis; this audit did not measure whether players understand why they won or lost.

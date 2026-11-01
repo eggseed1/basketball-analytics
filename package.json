@@ -15,6 +15,7 @@
     "test:franchise-systems": "node scripts/test-franchise-systems.mjs",
     "test:franchise-flow": "tsx scripts/test-gm-season-journey.ts",
     "test:franchise-ux": "tsx scripts/test-gm-ux-guidance.ts",
+    "test:franchise-saves": "node --experimental-vm-modules scripts/test-gm-save-slots.mjs",
     "test:franchise-lab": "tsx scripts/test-gm-franchise-upgrade.ts",
     "test:franchise-calibration": "tsx --require ./scripts/lib/stub-server-only.cjs scripts/test-gm-calibration.ts",
     "test:runtime-smoke-html": "node --test scripts/test-runtime-smoke-html.mjs",
