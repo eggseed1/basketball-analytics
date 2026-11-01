@@ -2,6 +2,7 @@ import { calendar, performanceLevel } from "./career";
 import type { EventTemplate } from "./events";
 import { clamp, hashString } from "./rng";
 import { NBA_TEAMS } from "./routes";
+import { tiltCeilings } from "./skills";
 import type { AthleticKey, LifeState, Role, SkillKey, TraitKey } from "./types";
 import { country, maybeLeague } from "./world";
 
@@ -794,16 +795,68 @@ export const STORY_EVENTS: EventTemplate[] = [
   },
   {
     id: "style-commit",
-    ages: [16, 28],
+    ages: [14, 26],
     cooldown: 0,
     once: true,
-    weight: (s) => (s.placement.node !== "home" && s.placement.node !== "playground" && !s.flags.style ? 1.2 : 0),
+    weight: (s) => (s.placement.node !== "home" && s.placement.node !== "playground" && !s.flags.style ? 2.2 : 0),
     title: "Pick what they call you",
-    body: "A coach asks what you are. Scorer, connector, or defender. The other two slow down, and leagues start asking for the one you name.",
+    body: "A coach asks what you are. Scorer, connector, or defender. The other two stop climbing the same way, and the label sticks on every sheet that follows.",
     choices: [
-      { id: "scorer", label: "Scorer", preview: "Shooting up. Passing and defense drop. Switching later costs a year of trust.", growth: 2, risk: 1, apply: ({ s }) => (s.flags.style = "scorer", (s.flags.styleAt = s.ageMonths), sk(s, "shooting", 2), drop(s, "passing", 1), drop(s, "perimeterD", 1), "You tell him scorer. The next offer asks for buckets.") },
-      { id: "connector", label: "Connector", preview: "Passing and handle up. Scoring drops. Switching later costs a year of trust.", growth: 2, risk: 1, apply: ({ s }) => (s.flags.style = "connector", (s.flags.styleAt = s.ageMonths), sk(s, "passing", 2), sk(s, "handle", 1), drop(s, "shooting", 1), drop(s, "finishing", 1), "You tell him connector. They put the ball in your hands to move it.") },
-      { id: "defender", label: "Defender", preview: "Defense up. Shot creation drops. Switching later costs a year of trust.", growth: 2, risk: 1, apply: ({ s }) => (s.flags.style = "defender", (s.flags.styleAt = s.ageMonths), sk(s, "perimeterD", 2), sk(s, "interiorD", 1), drop(s, "shooting", 1), drop(s, "handle", 1), "You tell him defender. They put you on the other team's best player.") },
+      {
+        id: "scorer",
+        label: "Scorer",
+        preview: "Shooting and finishing ceilings rise. Passing and defense ceilings fall. Practice and games lean your way. Switching later costs trust.",
+        growth: 2,
+        risk: 2,
+        apply: ({ s }) => {
+          s.flags.style = "scorer";
+          s.flags.styleAt = s.ageMonths;
+          tiltCeilings(s, { shooting: 5, finishing: 4, freeThrows: 3, handle: 2 }, { passing: 4, perimeterD: 4, interiorD: 2 });
+          sk(s, "shooting", 4);
+          sk(s, "finishing", 3);
+          drop(s, "passing", 3);
+          drop(s, "perimeterD", 3);
+          s.plan.primary = "shooting";
+          return "You tell him scorer. The next offer asks for buckets, and the other work starts to feel optional.";
+        },
+      },
+      {
+        id: "connector",
+        label: "Connector",
+        preview: "Passing and handle ceilings rise. Scoring ceilings fall. Practice and games lean your way. Switching later costs trust.",
+        growth: 2,
+        risk: 2,
+        apply: ({ s }) => {
+          s.flags.style = "connector";
+          s.flags.styleAt = s.ageMonths;
+          tiltCeilings(s, { passing: 5, handle: 4, decisions: 4, iq: 3 }, { shooting: 4, finishing: 3, rebounding: 2 });
+          sk(s, "passing", 4);
+          sk(s, "handle", 3);
+          sk(s, "decisions", 2);
+          drop(s, "shooting", 3);
+          drop(s, "finishing", 2);
+          s.plan.primary = "playmaking";
+          return "You tell him connector. They put the ball in your hands to move it, and hunting your own shot feels wrong.";
+        },
+      },
+      {
+        id: "defender",
+        label: "Defender",
+        preview: "Defense ceilings rise. Creation ceilings fall. Practice and games lean your way. Switching later costs trust.",
+        growth: 2,
+        risk: 2,
+        apply: ({ s }) => {
+          s.flags.style = "defender";
+          s.flags.styleAt = s.ageMonths;
+          tiltCeilings(s, { perimeterD: 5, interiorD: 4, rebounding: 3, iq: 2 }, { shooting: 4, handle: 4, finishing: 2 });
+          sk(s, "perimeterD", 4);
+          sk(s, "interiorD", 3);
+          drop(s, "shooting", 3);
+          drop(s, "handle", 3);
+          s.plan.primary = "defense";
+          return "You tell him defender. They put you on the other team's best player, and the offense starts without you.";
+        },
+      },
     ],
   },
   {
@@ -811,26 +864,41 @@ export const STORY_EVENTS: EventTemplate[] = [
     ages: [18, 34],
     cooldown: 0,
     once: true,
-    weight: (s) => ((s.flags.style === "scorer" || s.flags.style === "connector" || s.flags.style === "defender") && typeof s.flags.styleAt === "number" && s.ageMonths - s.flags.styleAt >= 8 ? 1.1 : 0),
+    weight: (s) => ((s.flags.style === "scorer" || s.flags.style === "connector" || s.flags.style === "defender") && typeof s.flags.styleAt === "number" && s.ageMonths - s.flags.styleAt >= 8 ? 1.4 : 0),
     title: "They want the other thing",
-    body: (s) => `A new coach does not need a ${s.flags.style}. He needs the work you let slow down.`,
+    body: (s) => `A new coach does not need a ${s.flags.style}. He needs the work you let slow down. Changing means rewiring months of habit.`,
     choices: [
-      { id: "stay", label: "Stay what you picked", preview: "You keep the label. This coach may play you less.", growth: 0, risk: 1, apply: ({ s }) => (tr(s, "confidence", 2), "You stay with it. He shortens the minutes until he needs that one thing.") },
+      { id: "stay", label: "Stay what you picked", preview: "You keep the label and the ceilings. This coach may play you less.", growth: 1, risk: 2, apply: ({ s }) => (tr(s, "confidence", 3), tr(s, "coachability", -2), "You stay with it. He shortens the minutes until he needs that one thing.") },
       {
         id: "switch",
-        label: "Switch",
-        preview: "You change the label. He will not trust it until next season.",
-        growth: 1,
-        risk: 1,
+        label: "Rewire the game",
+        preview: "New label, new ceilings. Old strengths sag. He will not trust it until next season.",
+        growth: 2,
+        risk: 3,
         apply: ({ s }) => {
           const order = ["scorer", "connector", "defender"] as const;
           const i = order.indexOf(s.flags.style as (typeof order)[number]);
           const next = order[(i + 1) % order.length] ?? "connector";
           s.flags.style = next;
-          tr(s, "coachability", -6);
-          if (next === "scorer") sk(s, "shooting", 1);
-          if (next === "connector") sk(s, "passing", 1);
-          if (next === "defender") sk(s, "perimeterD", 1);
+          s.flags.styleAt = s.ageMonths;
+          tr(s, "coachability", -8);
+          tr(s, "confidence", -2);
+          if (next === "scorer") {
+            tiltCeilings(s, { shooting: 4, finishing: 3 }, { passing: 3, perimeterD: 3 });
+            sk(s, "shooting", 2);
+            drop(s, "passing", 2);
+            s.plan.primary = "shooting";
+          } else if (next === "connector") {
+            tiltCeilings(s, { passing: 4, handle: 3 }, { shooting: 3, finishing: 2 });
+            sk(s, "passing", 2);
+            drop(s, "shooting", 2);
+            s.plan.primary = "playmaking";
+          } else {
+            tiltCeilings(s, { perimeterD: 4, interiorD: 3 }, { shooting: 3, handle: 3 });
+            sk(s, "perimeterD", 2);
+            drop(s, "handle", 2);
+            s.plan.primary = "defense";
+          }
           return `You switch to ${next}. He says he will see it next season, and he means it.`;
         },
       },

@@ -1,6 +1,7 @@
 "use client";
 
 import { fmtHeight } from "@/one-shot/body";
+import { youthScoutNotes } from "@/one-shot/career";
 import { routeView } from "@/one-shot/routes";
 import { READINESS_LABEL, READINESS_ORDER, scoutingReport } from "@/one-shot/skills";
 import type { LifeState, NodeKind } from "@/one-shot/types";
@@ -14,15 +15,18 @@ type Units = "metric" | "imperial";
 export function SameGeneration({ life, units }: { life: LifeState; units: Units }) {
   return (
     <Panel id="os-peers" title="Same generation">
-      <p className="-mt-1 mb-2 text-[11.5px] text-[var(--os-dim)]">Four fictional kids born the same year. Their lives run on their own dice.</p>
+      <p className="-mt-1 mb-2 text-[11.5px] text-[var(--os-dim)]">Four kids born the same year. One is marked as your rival. Their dice stay separate from yours.</p>
       <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
         {life.peers.map((p) => {
           const c = country(p.countryId);
           const last = p.log[p.log.length - 1];
           return (
             <li key={p.id} className="rounded-lg border border-[var(--os-border)] bg-[var(--os-page)] px-2.5 py-2">
-              <p className="truncate text-[13px] font-medium">
-                {countryFlag(c.id)} {p.name}
+              <p className="flex flex-wrap items-center gap-1.5 text-[13px] font-medium">
+                <span className="truncate">
+                  {countryFlag(c.id)} {p.name}
+                </span>
+                {p.rival ? <Chip tone="amber">Rival</Chip> : null}
               </p>
               <p className="truncate font-mono text-[11px] tabular-nums text-[var(--os-dim)]">
                 {c.name} · {life.ageMonths >= 216 ? fmtHeight(p.heightCm, units) : "—"}
@@ -169,8 +173,14 @@ export function ScoutingReportPanel({ life }: { life: LifeState }) {
       {r.roles.length ? <p className="mt-2 text-[12px] text-[var(--os-dim)]">Projects as: {r.roles.join(" · ")}</p> : null}
       {r.evidence.length ? (
         <div className="mt-2">
-          <h3 className="mb-0.5 text-[11px] uppercase tracking-[0.1em] text-[var(--os-dim)]">Evidence</h3>
-          <ul className="list-disc pl-4 text-[12px] text-[var(--os-text)]/85">{r.evidence.map((e) => <li key={e}>{e}</li>)}</ul>
+          <h3 className="mb-0.5 text-[11px] uppercase tracking-[0.1em] text-[var(--os-dim)]">Scrapbook</h3>
+          <ul className="flex flex-col gap-1 text-[12px] text-[var(--os-text)]/85">
+            {r.evidence.map((e) => (
+              <li key={e} className="border-b border-[var(--os-border)]/40 pb-1 last:border-b-0 last:pb-0">
+                {e}
+              </li>
+            ))}
+          </ul>
         </div>
       ) : null}
       <p className="mt-2 text-[11.5px] text-[var(--os-dim)]">Uncertainty: {r.uncertainty}</p>

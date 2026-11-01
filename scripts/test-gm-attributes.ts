@@ -14,6 +14,7 @@ import {
 import { scoutPotentialView } from "../src/gm/engine/scouting";
 import { makeScout } from "../src/gm/seed/scouts";
 import { createGeneratedLeague } from "../src/gm/seed/create-league";
+import { parsePlayerDraftInfo } from "../src/lib/player-draft";
 
 const league = createGeneratedLeague({
   userTeamId: "bos",
@@ -257,7 +258,7 @@ const rookie = applyRookieRatings({
 assert.ok(rookie.sheet!.overall >= 78, `dybantsa ${rookie.sheet!.overall}`);
 assert.ok(rookie.ratings.potential >= 8, `potential ${rookie.ratings.potential}`);
 assert.ok(rookie.sheet!.potential.ceiling >= 90, `ceiling ${rookie.sheet!.potential.ceiling}`);
-assert.equal(rookieOverall(1, 27) >= 68 && rookieOverall(1, 27) < rookieOverall(1, 1), true);
+assert.equal(rookieOverall(1, 28) >= 72 && rookieOverall(1, 28) < rookieOverall(1, 1), true);
 const veteran = applyRookieRatings({
   ...base,
   id: "1628369",
@@ -311,6 +312,36 @@ assert.ok(
   `hugo ceiling ${hugoLike.sheet!.potential.ceiling}`
 );
 assert.notEqual(hugoLike.sheet!.potential.trait, "bust");
+assert.ok(
+  hugoLike.sheet!.overall >= 70,
+  `hugo ovr ${hugoLike.sheet!.overall} should clear 70 with pick-28 draft floor`
+);
+assert.ok(
+  hugoLike.ratings.impact > -2.1,
+  `hugo impact ${hugoLike.ratings.impact} should rise off cold DARKO`
+);
+
+// Utah-style 4-letter draft tokens must parse or Keyonte-class kids never floor.
+assert.equal(parsePlayerDraftInfo("2023: Rd 1, Pk 16 (UTAH)")?.pick, 16);
+assert.equal(parsePlayerDraftInfo("2024: Rd 1, Pk 10 (UTAH)")?.pick, 10);
+
+// Veterans with no / thin sample must not inherit their original lottery open.
+const simmonsLike = applyRookieRatings({
+  ...base,
+  id: "1627732",
+  name: "Ben Simmons",
+  age: 30,
+  position: "PG",
+  draftLabel: "2016: Rd 1, Pk 1 (PHI)",
+  nbaPlayerId: "1627732",
+  nbaSeason: undefined,
+  ratings: { ...base.ratings, impact: -1.2, potential: 3, offense: -0.8, defense: -0.4 },
+  sheet: { ...sheet, version: 4, overall: 68 },
+});
+assert.ok(
+  (simmonsLike.sheet?.overall ?? 99) <= 75,
+  `simmons-like ovr ${simmonsLike.sheet?.overall} should not reopen at pick-1`
+);
 
 const seasonStep = progressSheet(
   {

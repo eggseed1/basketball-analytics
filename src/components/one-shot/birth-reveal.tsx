@@ -25,6 +25,7 @@ export function BirthReveal({
   onRename,
   onStart,
   onReroll,
+  rerollsLeft,
   onBack,
 }: {
   life: LifeState;
@@ -32,8 +33,10 @@ export function BirthReveal({
   reducedMotion: boolean;
   onRename: (given: string, family: string) => void;
   onStart: () => void;
-  /** Absent for the daily life, which everyone shares. */
+  /** Absent for the daily life, which everyone shares, or when rerolls are used up. */
   onReroll?: () => void;
+  /** Remaining free rerolls in random mode. */
+  rerollsLeft?: number;
   onBack: () => void;
 }) {
   const c = country(life.birthplace.countryId);
@@ -62,9 +65,15 @@ export function BirthReveal({
     <div className="flex items-center justify-between gap-3">
       <p className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--os-dim)]">{life.mode === "daily" ? `Daily life · ${life.dailyDate}` : `Seed ${life.seed}`}</p>
       {onReroll ? (
-        <Btn className="min-h-8 gap-1.5 px-2.5 text-[12px]" onClick={onReroll} title="Draw a new birth with a new seed (R)">
-          <Dices aria-hidden className="size-3.5" /> Reroll
+        <Btn
+          className="min-h-8 gap-1.5 px-2.5 text-[12px]"
+          onClick={onReroll}
+          title={rerollsLeft != null ? `Draw a new birth (${rerollsLeft} left, R)` : "Draw a new birth with a new seed (R)"}
+        >
+          <Dices aria-hidden className="size-3.5" /> Reroll{rerollsLeft != null ? ` · ${rerollsLeft}` : ""}
         </Btn>
+      ) : rerollsLeft === 0 && life.mode !== "daily" ? (
+        <p className="text-[11.5px] text-[var(--os-dim)]">No rerolls left</p>
       ) : null}
     </div>
   );

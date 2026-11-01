@@ -203,7 +203,7 @@ export function offseasonOffers(state: LifeState): Offer[] {
       offers.push(build(state, { kind: "join", node: "local-club", countryId: res.id, leagueId: null, teamName: clubName(nameRng, res.id, "club"), need: cohort * 0.95, coaching: clubCoaching * 0.8, exposure: 8, costPerYear: Math.round(400 * res.model.costIndex), reason: "A local club wants you for its age group." }));
     }
     if (top && node !== "elite-youth" && lvl >= cohort * 1.04 && E + r[0]! * 20 >= 12) {
-      offers.push(build(state, { kind: "join", node: "elite-youth", countryId: res.id, leagueId: top.id, teamName: clubName(nameRng, res.id, "club"), need: cohort * 1.12, coaching: clubCoaching + 8, exposure: 22, costPerYear: 0, reason: hasClubAcademies(res.id) ? `A ${top.name} club's youth coach saw you play and invited you to a tryout.` : "An elite youth program's coach saw you play and invited you to a tryout." }));
+      offers.push(build(state, { kind: "join", node: "elite-youth", countryId: res.id, leagueId: top.id, teamName: clubName(nameRng, res.id, "club"), need: cohort * 1.1, coaching: clubCoaching + 8, exposure: 22, costPerYear: 0, reason: hasClubAcademies(res.id) ? `A ${top.name} club's youth coach saw you play and invited you to a tryout.` : "An elite youth program's coach saw you play and invited you to a tryout." }));
     }
     // Canadian prospects commonly move to US prep schools; the bar is lower than a cold invitation.
     if (res.id === "CA" && age >= 14 && age < 17 && node !== "us-high-school" && lvl >= cohort * 1.05 && E + r[1]! * 15 >= 18 && state.education.academics >= 40) {
@@ -218,7 +218,7 @@ export function offseasonOffers(state: LifeState): Offer[] {
       const host = hostOptions[Math.floor(r[1]! * hostOptions.length)]!;
       const hostTop = domesticProLeagues(host)[0];
       if (hostTop) {
-        offers.push(build(state, { kind: "move", node: "elite-youth", countryId: host, leagueId: hostTop.id, teamName: clubName(nameRng, host, "club"), need: cohort * 1.15, coaching: 84, exposure: 34, costPerYear: 0, reason: `A ${hostTop.name} club scout followed up after ${how} and offered a youth contract with housing and school.`, extra: ["Youth contract covers housing and school (model)."] }));
+        offers.push(build(state, { kind: "move", node: "elite-youth", countryId: host, leagueId: hostTop.id, teamName: clubName(nameRng, host, "club"), need: cohort * 1.1, coaching: 84, exposure: 34, costPerYear: 0, reason: `A ${hostTop.name} club scout followed up after ${how} and offered a youth contract with housing and school.`, extra: ["Youth contract covers housing and school (model)."] }));
       }
       if (state.education.academics >= 40 && age < 16.5) {
         offers.push(build(state, { kind: "scholarship", node: "us-high-school", countryId: "US", leagueId: "nfhs", teamName: clubName(nameRng, "US", "school"), need: cohort * 1.05, coaching: 66, exposure: 40, costPerYear: 0, reason: `A US high school coach offered a scholarship after seeing ${how}.`, extra: ["Scholarship covers tuition and boarding (model).", "Puts you on the US high school and NCAA route."] }));
@@ -295,10 +295,14 @@ export function offseasonOffers(state: LifeState): Offer[] {
     }
     const gl = league("g-league");
     const abroad = res.id !== "US";
-    const gSeen = E + agentBoost(state) * 0.6 >= (abroad ? 52 : 40) + r[6]! * 15 || (thinMarket && lvl >= 64);
-    if (age >= 18 && node !== "g-league" && node !== "nba" && lvl >= (abroad ? 56 : 52) && gSeen) {
+    // G League is a narrow NBA corridor, not the default overseas exit.
+    const gSeen = E + agentBoost(state) * 0.6 >= (abroad ? 72 : 62) + r[6]! * 20 || (thinMarket && lvl >= 78);
+    if (age >= 19 && node !== "g-league" && node !== "nba" && lvl >= (abroad ? 77 : 75) && gSeen) {
       offers.push(build(state, { kind: "contract", node: "g-league", countryId: "US", leagueId: "g-league", teamName: `G League affiliate (${nbaTeam(r[7]!)})`, need: gl.model!.strength * 0.8, coaching: gl.model!.coaching, exposure: gl.model!.exposure, costPerYear: 0, salary: 40500, years: 1, reason: abroad ? "A G League affiliate saw your film. Camp is a tryout. A call-up, if it comes, starts as a 10-day." : "A G League affiliate invites you to its local tryout and keeps you. The parent NBA team is upstairs. Your name is on the affiliate list.", extra: ["Most call-ups are 10-days and end back with the affiliate.", "A rest-of-season deal comes after more than one look."] }));
     }
+  }
+  if (state.challenge === "no-us-hs") {
+    for (let i = offers.length - 1; i >= 0; i--) if (offers[i]!.node === "us-high-school") offers.splice(i, 1);
   }
   if (committed) return offers.filter((o) => o.node === "foreign-pro").slice(0, 4);
   return offers.slice(0, 4);

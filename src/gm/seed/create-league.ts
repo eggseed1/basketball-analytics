@@ -46,10 +46,13 @@ function makeRatings(rng: () => number, starChance: number): GmRatings {
     : rng() < 0.15
       ? 0.5 + rng() * 2
       : -1.5 + rng() * 2.5;
+  // OVR reads offense + defense, so the split must sum to impact.
+  const offenseShare = 0.58 + (rng() - 0.5) * 0.3;
+  const offense = impact * offenseShare + (rng() - 0.5) * 1.2;
   return {
     impact: Math.round(impact * 100) / 100,
-    offense: impact * 0.7 + (rng() - 0.5) * 2,
-    defense: impact * 0.5 + (rng() - 0.5) * 2,
+    offense,
+    defense: impact - offense,
     shooting: randInt(rng, 20, 90),
     finishing: randInt(rng, 25, 90),
     playmaking: randInt(rng, 15, 90),

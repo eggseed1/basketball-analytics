@@ -3,12 +3,12 @@
     "methodologyVersion": "movement-m1-0.2+movement-rules-v2",
     "status": "NEWS_INGEST_M1",
     "season": "2026-27",
-    "snapshotDate": "2026-10-30",
+    "snapshotDate": "2026-11-01",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-10-30T20:51:52.718Z",
-    "rosterPlayerCount": 489,
-    "headlinesScanned": 8684,
-    "latestHeadlineAt": "2026-10-30T20:51:15.000Z",
+    "builtAt": "2026-11-01T16:58:25.253Z",
+    "rosterPlayerCount": 488,
+    "headlinesScanned": 9202,
+    "latestHeadlineAt": "2026-11-01T16:55:39.000Z",
     "latestTransactionDate": "2026-10-29",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -116,7 +116,7 @@
     },
     "outlet:heavy": {
       "label": "Heavy",
-      "credibility": 12
+      "credibility": 16
     },
     "reporter:malika-andrews": {
       "label": "Malika Andrews (ESPN)",
@@ -1812,39 +1812,45 @@
     {
       "id": "mv-trade-4397688-20261030",
       "headline": "Trey Murphy III: trade talk",
-      "primaryClaimId": "mv-180e9ad564a42c01",
+      "primaryClaimId": "mv-a8db5e230a6eb5a1",
       "claimIds": [
-        "mv-180e9ad564a42c01"
+        "mv-a8db5e230a6eb5a1",
+        "mv-180e9ad564a42c01",
+        "mv-4c05d38662d67287"
       ],
-      "evidenceClass": "rumored",
+      "evidenceClass": "reported",
       "state": "unresolved",
-      "firstSeenAt": "2026-10-30T18:52:54.000Z",
-      "lastMeaningfulAt": "2026-10-30T18:52:54.000Z",
+      "firstSeenAt": "2026-10-30T18:05:58.000Z",
+      "lastMeaningfulAt": "2026-10-31T17:06:11.000Z",
       "linkedPlayerIds": [
         "4397688"
       ],
       "linkedTeamIds": [
-        "23",
         "25",
+        "23",
         "3"
       ]
     },
     {
-      "id": "mv-contract-4397018-20261030",
-      "headline": "Ochai Agbaji: contract talks with the Thunder",
-      "primaryClaimId": "mv-1f7374b112f29c09",
+      "id": "mv-trade-2595516-20261101",
+      "headline": "Norman Powell and Lauri Markkanen: trade talk",
+      "primaryClaimId": "mv-53c734b5259d58ad",
       "claimIds": [
-        "mv-1f7374b112f29c09"
+        "mv-53c734b5259d58ad"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
-      "firstSeenAt": "2026-10-30T19:01:33.000Z",
-      "lastMeaningfulAt": "2026-10-30T19:01:33.000Z",
+      "firstSeenAt": "2026-11-01T13:58:47.000Z",
+      "lastMeaningfulAt": "2026-11-01T13:58:47.000Z",
       "linkedPlayerIds": [
-        "4397018"
+        "2595516",
+        "4066336"
       ],
       "linkedTeamIds": [
-        "25"
+        "17",
+        "23",
+        "4",
+        "26"
       ]
     },
     {
@@ -9419,6 +9425,27 @@
       "isOriginal": false
     },
     {
+      "id": "mv-a8db5e230a6eb5a1",
+      "clusterId": "mv-trade-4397688-20261030",
+      "summary": "Thunder Reportedly Eyeing Herb Jones And Trey Murphy III As Potential Trade Targets To Solve Injury Crisis",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-30T18:05:58.000Z",
+      "sourceId": "outlet:fadeaway-world",
+      "sourceLabel": "Fadeaway World",
+      "sourceUrl": "https://fadeawayworld.net/nba-trade-rumors/oklahoma-city-thunder/thunder-reportedly-eyeing-herb-jones-and-trey-murphy-iii-as-potential-trade-targets-to-solve-injury-crisis",
+      "playerIds": [
+        "4397688"
+      ],
+      "teamIds": [
+        "25"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "contact"
+    },
+    {
       "id": "mv-180e9ad564a42c01",
       "clusterId": "mv-trade-4397688-20261030",
       "summary": "NBA rumors: Add Trey Murphy III, Kings youngster to Thunder trade target list",
@@ -9438,27 +9465,6 @@
         "25"
       ],
       "isOriginal": false
-    },
-    {
-      "id": "mv-1f7374b112f29c09",
-      "clusterId": "mv-contract-4397018-20261030",
-      "summary": "Ochai Agbaji, Thunder Agree To Contract",
-      "claimType": "contract_movement",
-      "evidenceClass": "reported",
-      "state": "unresolved",
-      "provenanceKind": "aggregation",
-      "publishedAt": "2026-10-30T19:01:33.000Z",
-      "sourceId": "outlet:realgm",
-      "sourceLabel": "RealGM",
-      "sourceUrl": "https://basketball.realgm.com/wiretap/287984/Ochai-Agbaji-Thunder-Agree-To-Contract",
-      "playerIds": [
-        "4397018"
-      ],
-      "teamIds": [
-        "25"
-      ],
-      "isOriginal": false,
-      "negotiationSpecificity": "offer"
     },
     {
       "id": "mv-034df1ee25a047d5",
@@ -9481,6 +9487,48 @@
       ],
       "isOriginal": false,
       "negotiationSpecificity": "contact"
+    },
+    {
+      "id": "mv-4c05d38662d67287",
+      "clusterId": "mv-trade-4397688-20261030",
+      "summary": "OKC Thunder Linked to Trey Murphy Trade Amid Injury Woes",
+      "claimType": "trade_interest",
+      "evidenceClass": "rumored",
+      "state": "unresolved",
+      "provenanceKind": "aggregation",
+      "publishedAt": "2026-10-31T17:06:11.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/oklahoma-city-thunder/thunder-trey-murphy-trade/",
+      "playerIds": [
+        "4397688"
+      ],
+      "teamIds": [
+        "25"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-53c734b5259d58ad",
+      "clusterId": "mv-trade-2595516-20261101",
+      "summary": "NBA Trade Rumors: ‘Fire Sales’ for Norman Powell, Lauri Markkanen, Kings, Nets & More",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-11-01T13:58:47.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/portland-trail-blazers/nba-trade-rumors-fire-sales-for-norman-powell-lauri-markkanen-kings-nets-more/",
+      "playerIds": [
+        "2595516",
+        "4066336"
+      ],
+      "teamIds": [
+        "17",
+        "23"
+      ],
+      "isOriginal": true
     },
     {
       "id": "mv-nba-tx-4e7ca40ab1c09a09",

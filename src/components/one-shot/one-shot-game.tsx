@@ -8,6 +8,7 @@ import { kitFor } from "@/components/one-shot/kit";
 import { cn } from "@/lib/utils";
 import { brandAtmosphereColors } from "@/lib/game-matchup-theme";
 import { tick, TICK_MS } from "@/one-shot/clock";
+import { applyChallengeOptions } from "@/one-shot/challenges";
 import { advance, advanceToDecision, createLife, declareNow, isCeremony, manageMoney, rename, resolveDecision, retireNow, setPlan } from "@/one-shot/engine";
 import type { MoneyAction } from "@/one-shot/finance";
 import {
@@ -15,12 +16,15 @@ import {
   clearSave,
   dailyDate,
   dailySeed,
+  legacyFromLife,
   loadBoard,
   loadCareers,
+  loadLegacy,
   loadPrefs,
   loadSave,
   randomSeed,
   recordEarnings,
+  saveLegacy,
   savePrefs,
   stampCareer,
   writeSave,
@@ -28,14 +32,14 @@ import {
 } from "@/one-shot/persistence";
 import { rowFromSummary, type EarningsRow } from "@/one-shot/leaderboard";
 import { summarize, type CareerSummary } from "@/one-shot/report";
-import type { DrawMode, FocusId, LifeState, Speed, Workload } from "@/one-shot/types";
+import type { ChallengeId, DrawMode, FocusId, LifeState, Speed, Workload } from "@/one-shot/types";
 
 import type { AllTimeStatus } from "./earnings-board";
 import { BirthReveal } from "./birth-reveal";
 import { CeremonyOverlay } from "./ceremony-overlay";
 import { EndReport } from "./end-report";
 import { DecisionPanel, DecisionWaiting, FocusPanel, LifeRecord, LifeScene } from "./panels-center";
-import { FamilyAndResources, IdentityCard, PhysiquePanel, StatusPanel } from "./panels-left";
+import { FamilyAndResources, IdentityCard, PhysiquePanel, PlotCard, StatusPanel } from "./panels-left";
 import { DraftPanel, draftPanelVisible } from "./draft-panel";
 import { JerseyWall } from "./jersey-wall";
 import { CareerMap, ScoutingReportPanel, SameGeneration, YourRoute } from "./panels-right";
@@ -160,6 +164,9 @@ function boot(): Boot {
   const seedParam = params.get("seed");
   const seed = seedParam && /^\d{1,10}$/.test(seedParam) && Number(seedParam) <= 0xffffffff ? Number(seedParam) : null;
   const drawParam = params.get("draw");
+  const challengeParam = params.get("challenge");
+  const challengeIds = new Set(["equal-odds", "no-us-hs", "undrafted-nba", "coach-by-40", "unicorn-only"]);
+  const challenge = challengeParam && challengeIds.has(challengeParam) ? (challengeParam as ChallengeId) : null;
   return {
     saved: save.ok && !save.state.ended ? save.state : null,
     recovery: !save.ok && save.reason !== "empty" ? { reason: save.reason, raw: save.raw } : null,
@@ -168,8 +175,9 @@ function boot(): Boot {
     prefs: loadPrefs(),
     opts: {
       mode: params.get("daily") === "1" ? "daily" : "random",
-      draw: (drawParam === "equal" ? "equal" : "weighted") as DrawMode,
+      draw: (drawParam === "equal" || challenge === "equal-odds" ? "equal" : "weighted") as DrawMode,
       pacing: "standard",
+      challenge,
     },
     replaySeed: seed,
   };
@@ -180,6 +188,7 @@ function Game({ expanded, onExpand }: { expanded: boolean; onExpand: () => void 
   const [screen, setScreen] = useState<Screen>("start");
   const [opts, setOpts] = useState<StartOptions>(init.opts);
   const [replaySeed, setReplaySeed] = useState<number | null>(init.replaySeed);
+  const [rerollsLeft, setRerollsLeft] = useState(3);
   const [saved, setSaved] = useState<LifeState | null>(init.saved);
   const [recovery, setRecovery] = useState(init.recovery);
   const [careers, setCareers] = useState<CareerSummary[]>(init.careers);
@@ -262,6 +271,7 @@ function Game({ expanded, onExpand }: { expanded: boolean; onExpand: () => void 
       setCareers(addCareer(summary));
       setBoard(recordEarnings(summary));
       setHighlightBoardId(summary.boardId ?? null);
+      saveLegacy(legacyFromLife(next));
       const row = rowFromSummary(summary);
       if (row) postAllTime(row);
       clearSave();
@@ -453,23 +463,31 @@ function Game({ expanded, onExpand }: { expanded: boolean; onExpand: () => void 
   }, [screen, sourcesOpen, toggle, nextDecision, choose, hiddenDecision]);
 
   const beBorn = useCallback(
-    (o: StartOptions = opts) => {
+    (o: StartOptions = opts, fromReroll = false) => {
+      if (fromReroll && rerollsLeft <= 0) return;
       const daily = o.mode === "daily";
       const seed = daily ? dailySeed(today) : (replaySeed ?? randomSeed());
-      const born = createLife({
+      const shaped = applyChallengeOptions({
         seed,
         mode: o.mode,
         draw: daily ? "weighted" : o.draw,
         pacing: daily ? "standard" : o.pacing,
         dailyDate: daily ? today : null,
-        runId: `r${seed.toString(36)}-${Date.now().toString(36)}`,
+        challenge: daily ? null : o.challenge,
+      });
+      const born = createLife({
+        ...shaped,
+        runId: `r${shaped.seed.toString(36)}-${Date.now().toString(36)}`,
+        legacy: shaped.mode === "daily" ? null : loadLegacy(),
       });
       lifeRef.current = born;
       setLife(born);
       setReplaySeed(null);
+      if (fromReroll) setRerollsLeft((n) => Math.max(0, n - 1));
+      else setRerollsLeft(3);
       setScreen("birth");
     },
-    [opts, replaySeed, today],
+    [opts, replaySeed, today, rerollsLeft],
   );
 
   const startLife = useCallback(() => {
@@ -561,7 +579,8 @@ function Game({ expanded, onExpand }: { expanded: boolean; onExpand: () => void 
             reducedMotion={reducedMotion}
             onRename={(g, f) => commit(rename(life, g, f))}
             onStart={startLife}
-            onReroll={life.mode === "daily" ? undefined : () => beBorn()}
+            onReroll={life.mode === "daily" || rerollsLeft <= 0 ? undefined : () => beBorn(opts, true)}
+            rerollsLeft={life.mode === "daily" ? undefined : rerollsLeft}
             onBack={() => setScreen("start")}
           />
         </div>
@@ -571,6 +590,7 @@ function Game({ expanded, onExpand }: { expanded: boolean; onExpand: () => void 
         <EndReport
           life={life}
           units={units}
+          careers={careers}
           board={board}
           allTime={allTime}
           allTimeStatus={allTimeStatus}
@@ -642,7 +662,7 @@ function Game({ expanded, onExpand }: { expanded: boolean; onExpand: () => void 
                 <div className="order-2 md:order-none">
                   <IdentityCard life={life} />
                 </div>
-                <div className="order-3 md:order-none">
+                <div className="order-3 empty:hidden md:order-none">
                   <StatusPanel life={life} onDeclare={onDeclare} onRetire={onRetire} />
                 </div>
                 <div className="order-11 md:order-none">

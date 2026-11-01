@@ -103,6 +103,19 @@ function pickCompare(seasons: string[], season: string, requested?: string) {
   return seasons.find((option) => option !== season) ?? season;
 }
 
+function hasDarko(rows: PlayerSeason[]) {
+  return rows.some(
+    (row) => row.darkoDpm != null && Number.isFinite(row.darkoDpm)
+  );
+}
+
+function hasWar1(rows: PlayerSeason[]) {
+  return rows.some(
+    (row) =>
+      row.r1WinEquivalents != null && Number.isFinite(row.r1WinEquivalents)
+  );
+}
+
 export async function PlayerCareerIsland({
   playerId,
   season,
@@ -130,90 +143,85 @@ export async function PlayerCareerIsland({
   initialMetric?: "darko" | "war1" | "ppg" | "apg" | "rpg" | "ts" | "usg";
   showFilters?: boolean;
 }) {
+  // Keep enrich off the outer try/catch. Prod was falling through to raw career
+  // (PTS only, no DARKO/WAR1 chips) when later game-log fan-out tripped CF limits.
+  let source = career;
   try {
-    const source =
+    source =
       seasonType === "playoffs"
         ? await getPlayerPlayoffCareerSeasons(playerId).catch(() => career)
         : await enrichPlayerCareerAdvancedCached(playerId, career).catch(
             () => career
           );
-    const filtered = source.filter((row) => {
-      if (row.gamesPlayed > 0) return true;
-      return Boolean(
-        row.per ||
-          row.vorp ||
-          row.winShares ||
-          row.points ||
-          row.offensiveRating
-      );
-    });
-    const rows = toCareerBoardRows(filtered);
-    const seasons = rows.map((row) => row.season);
-    const compare = pickCompare(seasons, season, compareSeason);
-    const recent = [...rows].sort((a, b) => b.season.localeCompare(a.season));
-    // Always load game logs so Overview/Career can flip Games ↔ Seasons.
-    const gameLogs = await loadCareerGameLogs(
-      playerId,
-      recent.map((row) => row.season)
-    ).catch(() => []);
-    const preferDarko =
-      initialMetric ??
-      (rows.some((row) => row.darko != null) ? "darko" : undefined);
-
-    return (
-      <PlayerCareerBoard
-        key={`${playerId}:${seasonType}`}
-        playerId={playerId}
-        season={season}
-        seasonType={seasonType}
-        rows={rows}
-        compareSeason={compare}
-        teamKey={teamKey}
-        fromHistory={fromHistory}
-        themeMode={themeMode}
-        gameLogs={gameLogs}
-        chart={chart}
-        hideTitle={hideTitle}
-        initialMetric={preferDarko}
-        showFilters={showFilters}
-      />
-    );
   } catch {
-    const rows = toCareerBoardRows(career);
-    return (
-      <PlayerCareerBoard
-        key={`${playerId}:${seasonType}`}
-        playerId={playerId}
-        season={season}
-        seasonType={seasonType}
-        rows={rows}
-        compareSeason={season}
-        teamKey={teamKey}
-        fromHistory={fromHistory}
-        themeMode={themeMode}
-        chart={chart}
-        hideTitle={hideTitle}
-        showFilters={showFilters}
-      />
-    );
+    source = career;
   }
-}
 
-async function loadCareerGameLogs(playerId: string, seasons: string[]) {
-  const [{ resolvePlayerSeasonGameLog }, { resolveNbaIdForDrbl }] =
-    await Promise.all([
-      import("@/data/runtime/player-game-logs-store"),
-      import("@/data/identity/player-identity"),
-    ]);
-  const nbaId = await resolveNbaIdForDrbl(playerId).catch(() => null);
-  const logs = await Promise.all(
-    seasons.map((season) =>
-      resolvePlayerSeasonGameLog({
-        season,
-        playerId,
-        nbaId,
-      }).catch(() => [])
-    )
+  // Full enrich can soft-fail on Workers and still return box scores. Patch
+  // impact from local bundles when DARKO/WAR1 never landed.
+  if (
+    seasonType !== "playoffs" &&
+    (!hasDarko(source) || !hasWar1(source))
+  ) {
+    try {
+      const { attachBundledBrefDarkoRaptor, attachDrblToPlayerSeasons } =
+        await import("@/data/queries/players");
+      if (!hasDarko(source)) {
+        source = await attachBundledBrefDarkoRaptor(playerId, source);
+      }
+      if (!hasWar1(source)) {
+        source = await attachDrblToPlayerSeasons(playerId, source).catch(
+          () => source
+        );
+      }
+    } catch {
+      /* keep source */
+    }
+  }
+
+  const filtered = source.filter((row) => {
+    if (row.gamesPlayed > 0) return true;
+    return Boolean(
+      row.per ||
+        row.vorp ||
+        row.winShares ||
+        row.points ||
+        row.offensiveRating
+    );
+  });
+  const rows = toCareerBoardRows(filtered);
+  const seasons = rows.map((row) => row.season);
+  const compare = pickCompare(seasons, season, compareSeason);
+  const recent = [...rows].sort((a, b) => b.season.localeCompare(a.season));
+  const { loadCareerGameLogs } = await import("@/lib/career-game-logs");
+  // Games is the default career view; seasons mode skips the bake lookup.
+  const gameLogs =
+    chart === "games"
+      ? await loadCareerGameLogs(
+          playerId,
+          recent.map((row) => row.season)
+        ).catch(() => [])
+      : [];
+  const preferDarko =
+    initialMetric ??
+    (rows.some((row) => row.darko != null) ? "darko" : undefined);
+
+  return (
+    <PlayerCareerBoard
+      key={`${playerId}:${seasonType}`}
+      playerId={playerId}
+      season={season}
+      seasonType={seasonType}
+      rows={rows}
+      compareSeason={compare}
+      teamKey={teamKey}
+      fromHistory={fromHistory}
+      themeMode={themeMode}
+      gameLogs={gameLogs}
+      chart={chart}
+      hideTitle={hideTitle}
+      initialMetric={preferDarko}
+      showFilters={showFilters}
+    />
   );
-  return logs.flat();
 }

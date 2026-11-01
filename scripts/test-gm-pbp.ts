@@ -3,7 +3,11 @@ import test from "node:test";
 
 import { boxToPlayByPlay, linesAtCutoff } from "../src/gm/engine/play-by-play";
 import { buildCourtEvents } from "../src/lib/games/court-events";
-import { tagPlayContexts } from "../src/lib/games/play-filters";
+import {
+  countCourtFilterMatches,
+  countTaggedPlays,
+  tagPlayContexts,
+} from "../src/lib/games/play-filters";
 import type { GmBoxScore } from "../src/gm/types";
 
 function line(
@@ -238,12 +242,21 @@ test("GM tape tags fast breaks and ticks box lines with the cutoff", () => {
     ],
   };
   const events = boxToPlayByPlay(box);
-  const running = events.filter((e) => /\brunning\b/i.test(e.description ?? ""));
-  assert.ok(running.length >= 1, `expected running FGs, got ${running.length}`);
+  const running = events.filter((e) =>
+    /\brunning\s+(?:layup|dunk)\b/i.test(e.description ?? "")
+  );
+  assert.ok(running.length >= 1, `expected running finishes, got ${running.length}`);
   const tags = tagPlayContexts(events, "BOS", "DET");
-  let fast = 0;
-  for (const set of tags.values()) if (set.has("fastBreak")) fast += 1;
+  const fast = countTaggedPlays(tags, "fastBreak");
+  const second = countTaggedPlays(tags, "secondChance");
+  const late = countTaggedPlays(tags, "lastSecond");
   assert.ok(fast >= 1, `fastBreak tags ${fast}`);
+  assert.ok(fast <= 12, `fastBreak too high for a short box: ${fast}`);
+  assert.ok(second >= 1, `secondChance tags ${second}`);
+  assert.ok(late >= 1, `lastSecond tags ${late}`);
+  const { court } = buildCourtEvents(events, "BOS", "DET");
+  const shots = court.filter((c) => c.kind === "make" || c.kind === "miss");
+  assert.equal(countCourtFilterMatches(shots, "fastBreak", tags), fast);
 
   const mid = linesAtCutoff(box, events, 720);
   const end = linesAtCutoff(box, events, null);
@@ -251,4 +264,194 @@ test("GM tape tags fast breaks and ticks box lines with the cutoff", () => {
   const endPts = end.reduce((s, p) => s + p.points, 0);
   assert.ok(midPts < endPts, `mid ${midPts} should trail final ${endPts}`);
   assert.equal(endPts, box.homeScore + box.awayScore);
+});
+
+test("full-length GM tape keeps shot-context chips in a realistic band", () => {
+  const box: GmBoxScore = {
+    id: "box_full_chip",
+    gameId: "g4",
+    season: 2027,
+    day: 4,
+    homeTeamId: "nyk",
+    awayTeamId: "bos",
+    homeScore: 98,
+    awayScore: 99,
+    players: [
+      line({
+        playerId: "brunson",
+        playerName: "Jalen Brunson",
+        teamId: "nyk",
+        points: 28,
+        fgm: 10,
+        fga: 22,
+        tpm: 3,
+        tpa: 9,
+        ftm: 5,
+        fta: 6,
+        assists: 6,
+        rebounds: 4,
+        steals: 2,
+        turnovers: 3,
+      }),
+      line({
+        playerId: "hart",
+        playerName: "Josh Hart",
+        teamId: "nyk",
+        points: 14,
+        fgm: 5,
+        fga: 11,
+        tpm: 2,
+        tpa: 5,
+        ftm: 2,
+        fta: 2,
+        assists: 4,
+        rebounds: 10,
+        steals: 1,
+        turnovers: 2,
+      }),
+      line({
+        playerId: "og",
+        playerName: "OG Anunoby",
+        teamId: "nyk",
+        points: 16,
+        fgm: 6,
+        fga: 14,
+        tpm: 2,
+        tpa: 7,
+        ftm: 2,
+        fta: 2,
+        assists: 2,
+        rebounds: 5,
+        steals: 2,
+        blocks: 1,
+        turnovers: 1,
+      }),
+      line({
+        playerId: "towns",
+        playerName: "Karl-Anthony Towns",
+        teamId: "nyk",
+        points: 22,
+        fgm: 8,
+        fga: 16,
+        tpm: 2,
+        tpa: 6,
+        ftm: 4,
+        fta: 5,
+        assists: 2,
+        rebounds: 11,
+        blocks: 1,
+        turnovers: 2,
+      }),
+      line({
+        playerId: "mikal",
+        playerName: "Mikal Bridges",
+        teamId: "nyk",
+        points: 18,
+        fgm: 7,
+        fga: 15,
+        tpm: 3,
+        tpa: 8,
+        ftm: 1,
+        fta: 1,
+        assists: 3,
+        rebounds: 4,
+        steals: 1,
+        turnovers: 1,
+      }),
+      line({
+        playerId: "tatum",
+        playerName: "Jayson Tatum",
+        teamId: "bos",
+        points: 27,
+        fgm: 9,
+        fga: 21,
+        tpm: 3,
+        tpa: 10,
+        ftm: 6,
+        fta: 7,
+        assists: 5,
+        rebounds: 8,
+        steals: 1,
+        blocks: 1,
+        turnovers: 3,
+      }),
+      line({
+        playerId: "brown",
+        playerName: "Jaylen Brown",
+        teamId: "bos",
+        points: 24,
+        fgm: 9,
+        fga: 19,
+        tpm: 2,
+        tpa: 8,
+        ftm: 4,
+        fta: 5,
+        assists: 4,
+        rebounds: 6,
+        steals: 2,
+        turnovers: 2,
+      }),
+      line({
+        playerId: "white",
+        playerName: "Derrick White",
+        teamId: "bos",
+        points: 18,
+        fgm: 6,
+        fga: 14,
+        tpm: 3,
+        tpa: 8,
+        ftm: 3,
+        fta: 3,
+        assists: 5,
+        rebounds: 4,
+        steals: 2,
+        turnovers: 2,
+      }),
+      line({
+        playerId: "holiday",
+        playerName: "Jrue Holiday",
+        teamId: "bos",
+        points: 14,
+        fgm: 5,
+        fga: 12,
+        tpm: 2,
+        tpa: 6,
+        ftm: 2,
+        fta: 2,
+        assists: 4,
+        rebounds: 5,
+        steals: 1,
+        turnovers: 2,
+      }),
+      line({
+        playerId: "horford",
+        playerName: "Al Horford",
+        teamId: "bos",
+        points: 16,
+        fgm: 6,
+        fga: 12,
+        tpm: 2,
+        tpa: 6,
+        ftm: 2,
+        fta: 2,
+        assists: 3,
+        rebounds: 9,
+        blocks: 1,
+        turnovers: 1,
+      }),
+    ],
+  };
+  const events = boxToPlayByPlay(box);
+  const tags = tagPlayContexts(events, "NYK", "BOS");
+  const { court } = buildCourtEvents(events, "NYK", "BOS");
+  const shots = court.filter((c) => c.kind === "make" || c.kind === "miss");
+  const fast = countCourtFilterMatches(shots, "fastBreak", tags);
+  const second = countCourtFilterMatches(shots, "secondChance", tags);
+  const late = countCourtFilterMatches(shots, "lastSecond", tags);
+  const offTo = countCourtFilterMatches(shots, "offTurnover", tags);
+  assert.ok(fast >= 4 && fast <= 28, `fastBreak ${fast}`);
+  assert.ok(second >= 4 && second <= 30, `secondChance ${second}`);
+  assert.ok(late >= 3 && late <= 16, `lastSecond ${late}`);
+  assert.ok(offTo >= 2 && offTo <= 24, `offTurnover ${offTo}`);
+  assert.ok(fast < shots.length * 0.35, `fastBreak share ${fast}/${shots.length}`);
 });

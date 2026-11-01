@@ -3,14 +3,18 @@ import { calendar, cohortLevel, levelOf, performanceLevel, roleFor, schoolLabel,
 import { G_LEAGUE_EVENTS } from "./g-league";
 import { STORY_EVENTS } from "./storylines";
 import { LIFE_EVENTS } from "./life-events";
+import { YOUTH_LIFE_EVENTS } from "./youth-life-events";
+import { STYLE_FORK_EVENTS } from "./style-forks";
 import { AFTER_SCENES } from "./after-scenes";
 import { ADVISOR, ASSET_INFO, canPay, charge, income, invested, LIFESTYLE, mix, netWorth, PRESETS, trailingIndex } from "./finance";
 import { nationalTeam, seniorBar } from "./international";
 import { clamp, hashString } from "./rng";
 import { clubNameFor, salaryFor } from "./routes";
-import { currentLevel } from "./skills";
+import { rivalPeer } from "./peers";
+import { currentLevel, tiltCeilings } from "./skills";
+import { pickCoachTone } from "./team";
 import { inflictInjury } from "./training";
-import type { AdvisorStyle, AthleticKey, LifeState, Lifestyle, SkillKey, Stage, TraitKey } from "./types";
+import type { AdvisorStyle, AthleticKey, FocusId, LifeState, Lifestyle, SkillKey, Stage, TraitKey } from "./types";
 import { country, domesticProLeagues, foreignProLeagues, maybeLeague, type LeagueProfile } from "./world";
 
 export interface EventCtx {
@@ -72,6 +76,12 @@ const age = (s: LifeState) => s.ageMonths / 12;
 const isPro = (s: LifeState) => ["domestic-pro", "foreign-pro", "g-league", "nba"].includes(s.placement.node);
 const onTeam = (s: LifeState) => !["home", "playground", "unattached"].includes(s.placement.node);
 const evidence = (s: LifeState, text: string, weight: number) => s.evidence.push({ month: s.ageMonths, text, weight });
+/** Draft-age or declared prospect: boards still care how you rehab. */
+const draftBoardWatching = (s: LifeState) => {
+  if (s.draft.declaredYear !== null) return true;
+  const a = age(s);
+  return s.achievements.drafted === null && a >= 18 && a < 23 && s.exposure >= 35;
+};
 const salary = (s: LifeState) => s.placement.contract?.salary ?? 0;
 const pay = (s: LifeState) => income(s);
 const cash = (s: LifeState) => s.finance.cash;
@@ -94,11 +104,18 @@ const hold = (s: LifeState, k: keyof LifeState["finance"]["holdings"]) => s.fina
 /** Moves cash (then savings) into one asset, paying its buy cost. */
 const putInto = (s: LifeState, k: keyof LifeState["finance"]["holdings"], amount: number) => {
   const f = s.finance;
+  if (!f.basis) f.basis = mix({});
   const fromCash = Math.min(amount, Math.max(0, f.cash));
   f.cash -= fromCash;
   const fromSav = Math.min(amount - fromCash, f.holdings.savings);
-  f.holdings.savings -= fromSav;
-  f.holdings[k] += (fromCash + fromSav) * (1 - ASSET_INFO[k].cost);
+  if (fromSav > 0) {
+    const held = f.holdings.savings;
+    f.basis.savings = held > 0 ? Math.max(0, (f.basis.savings ?? held) * (1 - fromSav / held)) : 0;
+    f.holdings.savings -= fromSav;
+  }
+  const net = (fromCash + fromSav) * (1 - ASSET_INFO[k].cost);
+  f.holdings[k] += net;
+  f.basis[k] = (f.basis[k] ?? 0) + net;
 };
 const liquid = (s: LifeState) => Math.max(0, cash(s)) + s.finance.holdings.savings;
 const job = (s: LifeState) => s.after;
@@ -228,7 +245,7 @@ export const EVENTS: EventTemplate[] = [
     ],
   },
   {
-    id: "milk-with-dinner", ages: [8, 17.5], cooldown: 0, once: true, weight: () => 2.2, title: "Milk with dinner",
+    id: "milk-with-dinner", ages: [8, 17.5], cooldown: 0, once: true, weight: () => 0.7, title: "Milk with dinner",
     body: "A glass of milk shows up next to the plate. The tall kids at school drink it.",
     choices: [
       { id: "drink", label: "Finish it every night", preview: "A little taller and a little heavier while you are still growing.", growth: 2, risk: 0, apply: ({ s }) => { const cm = raiseAdultHeight(s, 1.8); const kg = addMass(s, 0.025); return `${heightLine(cm)} ${massLine(kg)}`; } },
@@ -236,7 +253,7 @@ export const EVENTS: EventTemplate[] = [
     ],
   },
   {
-    id: "apple-juice", ages: [8, 17.5], cooldown: 0, once: true, weight: () => 2, title: "Apple juice in the fridge",
+    id: "apple-juice", ages: [8, 17.5], cooldown: 0, once: true, weight: () => 0.6, title: "Apple juice in the fridge",
     body: "There is a jug of apple juice. A cousin swears it is why he grew last summer.",
     choices: [
       { id: "drink", label: "Drink it with breakfast", preview: "A small height bump and a little weight. Mostly the sugar.", growth: 2, risk: 0, apply: ({ s }) => { const cm = raiseAdultHeight(s, 0.9); const kg = addMass(s, 0.02); return `${heightLine(cm)} ${massLine(kg)}`; } },
@@ -244,7 +261,7 @@ export const EVENTS: EventTemplate[] = [
     ],
   },
   {
-    id: "hang-from-rim", ages: [10, 18], cooldown: 0, once: true, weight: (s) => (onTeam(s) ? 2.1 : 1.2), title: "Hanging off the rim",
+    id: "hang-from-rim", ages: [10, 18], cooldown: 0, once: true, weight: (s) => (onTeam(s) ? 0.7 : 0.4), title: "Hanging off the rim",
     body: "After practice the older kids hang from the rim. They say it stretches you out.",
     choices: [
       { id: "hang", label: "Hang until it burns", preview: "Height and a little vertical, if you are still growing.", growth: 2, risk: 0, apply: ({ s }) => { const cm = raiseAdultHeight(s, 1.5); ath(s, "vertical", 1); energy(s, -4); return `${heightLine(cm)} Your shoulders ache on the way home.`; } },
@@ -252,7 +269,7 @@ export const EVENTS: EventTemplate[] = [
     ],
   },
   {
-    id: "lights-out", ages: [9, 16.5], cooldown: 0, once: true, weight: () => 2, title: "Lights out",
+    id: "lights-out", ages: [9, 16.5], cooldown: 0, once: true, weight: () => 0.7, title: "Lights out",
     body: "A coach says the growing happens while you sleep. He wants you in bed earlier.",
     choices: [
       { id: "early", label: "In bed by nine", preview: "Height, and easier mornings.", growth: 2, risk: 0, apply: ({ s }) => { const cm = raiseAdultHeight(s, 1.4); energy(s, 6); return `${heightLine(cm)} You stop falling asleep in class.`; } },
@@ -276,7 +293,7 @@ export const EVENTS: EventTemplate[] = [
     ],
   },
   {
-    id: "growth-checkup", ages: [11, 17], cooldown: 0, once: true, weight: () => 1.6, title: "A growth checkup",
+    id: "growth-checkup", ages: [11, 17], cooldown: 0, once: true, weight: () => 0.5, title: "A growth checkup",
     body: (s) => `A doctor in town measures kids who play and talks about how much growing is left. The visit is ${usd(cost(s, 350))}.`,
     choices: [
       { id: "go", label: "Go", preview: (s) => `A real measurement and a food plan. Costs ${usd(cost(s, 350))}.`, blocked: (s) => afford(cost(s, 350))(s), growth: 2, risk: 0, apply: ({ s }) => { spend(s, cost(s, 350)); const cm = raiseAdultHeight(s, 2.4); return `She measures your legs and writes down sleep, milk, and meals. ${heightLine(cm)}`; } },
@@ -284,7 +301,7 @@ export const EVENTS: EventTemplate[] = [
     ],
   },
   {
-    id: "gym-guy", ages: [14, 19], cooldown: 0, once: true, weight: () => 1.3, title: "A guy at the gym", tone: "bad",
+    id: "gym-guy", ages: [14, 19], cooldown: 0, once: true, weight: () => 0.4, title: "A guy at the gym", tone: "bad",
     body: "He says he has something that makes teenagers grow. He will not talk about it in the lobby. It costs cash, and he wants it kept quiet.",
     choices: [
       { id: "take", label: "Take it", preview: "The biggest height jump available. You can get sick, and people may talk.", growth: 2, risk: 3, blocked: (s) => afford(cost(s, 600))(s), apply: ({ s, rolls }) => { spend(s, cost(s, 600)); const cm = raiseAdultHeight(s, 5.5); addMass(s, 0.03); health(s, -12); ath(s, "durability", -3); s.flags.hormoneRumor = s.ageMonths; if (rolls[0]! < 0.28) { energy(s, -10); expo(s, -4); return `${heightLine(cm)} You spend a month feeling wrong, and a rumor gets around that you were on something.`; } return `${heightLine(cm)} You feel off for a while. You tell nobody.`; } },
@@ -348,12 +365,12 @@ export const EVENTS: EventTemplate[] = [
     ],
   },
   {
-    id: "favorite-style", ages: [6, 10], cooldown: 0, once: true, weight: () => 1.5, title: "A favorite player",
-    body: "You pick a player to copy in the driveway.",
+    id: "favorite-style", ages: [6, 10], cooldown: 0, once: true, weight: () => 1.8, title: "A favorite player",
+    body: "You pick a player to copy in the driveway. The other kids copy someone else.",
     choices: [
-      { id: "shooter", label: "The shooter", preview: "Shooting up.", growth: 1, apply: ({ s }) => (sk(s, "shooting", 3), "You copy his release.") },
-      { id: "passer", label: "The passer", preview: "Passing up.", growth: 1, apply: ({ s }) => (sk(s, "passing", 3), "No-look passes into the bushes.") },
-      { id: "big", label: "The big man", preview: "Rebounding up.", growth: 1, apply: ({ s }) => (sk(s, "rebounding", 3), "You box out your little cousin.") },
+      { id: "shooter", label: "The shooter", preview: "Shooting ceiling rises. Passing starts behind.", growth: 2, risk: 1, apply: ({ s }) => (tiltCeilings(s, { shooting: 4 }, { passing: 2 }), sk(s, "shooting", 3), (s.flags.earlyStyle = "scorer"), "You copy his release. Passing becomes an afterthought.") },
+      { id: "passer", label: "The passer", preview: "Passing ceiling rises. Scoring starts behind.", growth: 2, risk: 1, apply: ({ s }) => (tiltCeilings(s, { passing: 4 }, { shooting: 2 }), sk(s, "passing", 3), (s.flags.earlyStyle = "connector"), "No-look passes into the bushes. Empty shots feel wasteful.") },
+      { id: "big", label: "The big man", preview: "Rebounding ceiling rises. Handle starts behind.", growth: 2, risk: 1, apply: ({ s }) => (tiltCeilings(s, { rebounding: 4, interiorD: 2 }, { handle: 2 }), sk(s, "rebounding", 3), (s.flags.earlyStyle = "defender"), "You box out your little cousin. Guards keep the ball away.") },
     ],
   },
   {
@@ -396,16 +413,38 @@ export const EVENTS: EventTemplate[] = [
 
   // Youth 12-17
   {
-    id: "federation-camp", ages: [13, 16.5], cooldown: 12, weight: (s) => (country(s.residence.countryId).federation && performanceLevel(s) >= cohortLevel(age(s)) * 1.05 ? 1.8 : 0), title: "National youth camp",
-    body: (s) => `${country(s.residence.countryId).federation!.name} invites you to an under-16 selection camp.`,
+    id: "federation-camp",
+    ages: [13, 16.5],
+    cooldown: 12,
+    weight: (s) => {
+      if (!country(s.residence.countryId).federation) return 0;
+      const bar = cohortLevel(age(s));
+      if (performanceLevel(s) < bar * 1.02) return 0;
+      const returning = typeof s.flags.youthNational === "number" ? 0.6 : 0;
+      return 1.8 + returning;
+    },
+    title: "National youth camp",
+    body: (s) => {
+      const fed = country(s.residence.countryId).federation!.name;
+      return typeof s.flags.youthNational === "number"
+        ? `${fed} brings you back for another youth selection camp. They already have your film.`
+        : `${fed} invites you to an under-16 selection camp.`;
+    },
     choices: [
       { id: "go", label: "Go", preview: (s) => `Exposure up. Costs about ${usd(cost(s, 150))}.`, blocked: (s) => afford(cost(s, 150))(s), growth: 2, risk: 1, apply: ({ s, rolls }) => {
         spend(s, cost(s, 150));
         expo(s, 6);
-        if (rolls[0]! < 0.5 + (performanceLevel(s) - cohortLevel(age(s))) / 40) {
+        const known = typeof s.flags.youthNational === "number" ? 0.12 : 0;
+        if (rolls[0]! < 0.5 + known + (performanceLevel(s) - cohortLevel(age(s))) / 40) {
+          const first = typeof s.flags.youthNational !== "number";
           s.flags.youthNational = s.ageMonths;
           evidence(s, `Made the ${country(s.residence.countryId).name} youth national team at ${Math.floor(age(s))}`, 8);
-          return "You make the final roster.";
+          if (first) s.flags.softPendingYouthCamp = true;
+          return first ? "You make the final roster. A youth national jersey with your name on it." : "You make the final roster again. Coaches stop introducing themselves.";
+        }
+        if (typeof s.flags.youthNational === "number") {
+          s.flags.intlSnub = s.ageMonths;
+          return "You get cut this time. It stings more because you have been here before.";
         }
         return "You get cut on the last day, but coaches know your name now.";
       } },
@@ -573,9 +612,57 @@ export const EVENTS: EventTemplate[] = [
     id: "mentor", ages: [13, 18], cooldown: 0, once: true, weight: () => 1, title: "A mentor",
     body: "A retired pro who lives nearby offers to work with you.",
     choices: [
-      { id: "yes", label: "Accept", preview: "IQ and composure up.", growth: 2, risk: 0, apply: ({ s }) => (sk(s, "iq", 3), tr(s, "composure", 4), "He teaches you how to read a defense.") },
+      {
+        id: "yes",
+        label: "Accept",
+        preview: "IQ and composure up. He sticks on your plot card.",
+        growth: 2,
+        risk: 0,
+        follow: { id: "mentor-checkin", delay: 72 },
+        apply: ({ s }) => (sk(s, "iq", 3), tr(s, "composure", 4), (s.flags.mentor = true), (s.flags.mentorName = "the retired pro down the road"), "He teaches you how to read a defense."),
+      },
       { id: "no", label: "Politely decline", preview: "No change.", growth: 0, risk: 0, apply: () => "You thank him and keep doing your thing." },
     ],
+  },
+  {
+    id: "ambition", ages: [9, 13], cooldown: 0, once: true, weight: () => 1.4, title: "What are you chasing",
+    body: "A coach asks what you want out of basketball. You have to pick something.",
+    choices: [
+      { id: "nba", label: "Make the NBA", preview: "Motivation up. The bar is brutal.", growth: 1, risk: 0, apply: ({ s }) => (s.flags.ambition = "nba", tr(s, "motivation", 3), "You say it out loud. The room goes quiet.") },
+      { id: "nation", label: "Wear the national shirt", preview: "Composure. Caps matter more to you.", growth: 1, risk: 0, apply: ({ s }) => (s.flags.ambition = "nation", tr(s, "composure", 2), "You point at the federation crest on the wall.") },
+      { id: "money", label: "Provide for the family", preview: "Discipline. Money choices hit different.", growth: 1, risk: 0, apply: ({ s }) => (s.flags.ambition = "money", tr(s, "discipline", 3), "You think about the bills before the boxes.") },
+      { id: "longevity", label: "Play as long as you can", preview: "Durability focus. Less flash.", growth: 1, risk: 0, apply: ({ s }) => (s.flags.ambition = "longevity", ath(s, "durability", 2), "You talk about lasting, not peaking.") },
+    ],
+  },
+  {
+    id: "hometown-ask", ages: [16, 28], cooldown: 36, weight: (s) => (s.family.means <= 3 && pay(s) + s.family.savings >= cost(s, 400) ? 1.3 : s.family.means <= 2 ? 0.8 : 0.25), title: "A call from home",
+    body: (s) => `Someone from ${s.birthplace.locality} needs help covering ${usd(cost(s, 500))}.`,
+    choices: [
+      { id: "send", label: "Send the money", preview: (s) => `Costs about ${usd(cost(s, 500))}. Support stays warm.`, blocked: (s) => afford(cost(s, 500))(s), growth: 1, risk: 0, apply: ({ s }) => (spend(s, cost(s, 500)), s.family.savings += Math.round(cost(s, 500) * 0.2), tr(s, "discipline", 1), (s.flags.hometownHero = true), "You send it. Your phone fills with thank-yous.") },
+      { id: "half", label: "Send what you can", preview: (s) => `About ${usd(Math.round(cost(s, 500) / 2))}.`, blocked: (s) => afford(Math.round(cost(s, 500) / 2))(s), growth: 0, risk: 0, apply: ({ s }) => { const a = Math.round(cost(s, 500) / 2); spend(s, a); return "You send half. They say it helps."; } },
+      { id: "not-now", label: "Not this month", preview: "You keep the cash. It sits wrong.", growth: 0, risk: 1, apply: ({ s }) => (tr(s, "composure", -1), "You say you will try later.") },
+    ],
+  },
+  {
+    id: "sibling-court", ages: [12, 22], cooldown: 0, once: true, weight: (s) => (s.family.siblings >= 1 || s.family.means <= 3 ? 1.1 : 0.4), title: "A sibling on the next court",
+    body: "A younger sibling starts showing up to your gym. They want reps with you.",
+    choices: [
+      { id: "work", label: "Work them out", preview: "Passing and patience. Family support holds.", growth: 2, risk: 0, apply: ({ s }) => (sk(s, "passing", 1), tr(s, "coachability", 2), (s.flags.siblingBall = true), s.family.siblings = Math.max(1, s.family.siblings), "They get better. You get tired in a good way.") },
+      { id: "own", label: "Protect your session", preview: "You keep your edge. They notice.", growth: 1, risk: 1, apply: ({ s }) => (tr(s, "discipline", 2), tr(s, "composure", -1), "You finish alone. Dinner is quieter.") },
+    ],
+  },
+  {
+    id: "hometown-return", ages: [18, 32], cooldown: 48, weight: (s) => (s.residence.countryId !== s.birthplace.countryId || s.exposure >= 25 ? 1.1 : 0.35), title: "A week back home",
+    body: (s) => `${s.birthplace.locality} still has the same gym smell. People ask if you are coming through.`,
+    choices: [
+      { id: "go", label: "Go for a week", preview: "Energy up. A little rust, a lot of love.", growth: 1, risk: 0, apply: ({ s }) => (energy(s, 8), tr(s, "motivation", 2), (s.flags.hometownHero = true), expo(s, 1), "You play a pickup game that ends with kids asking for photos.") },
+      { id: "stay", label: "Stay with the team", preview: "No travel. You miss the street.", growth: 0, risk: 0, apply: ({ s }) => (tr(s, "discipline", 1), "You send money and a voice note instead.") },
+    ],
+  },
+  {
+    id: "hometown-parade", ages: [19, 36], cooldown: 0, once: true, weight: (s) => ((s.achievements.nbaDebut !== null || s.international.caps >= 15 || s.flags.hometownHero) && s.exposure >= 40 ? 1.5 : 0), tone: "good", title: "They throw a night for you",
+    body: (s) => `The old gym in ${s.birthplace.locality} fills up. Someone painted your number on a banner.`,
+    auto: ({ s }) => (tr(s, "confidence", 3), expo(s, 3), (s.flags.hometownHero = true), "You say a few words. Your voice cracks. Nobody minds."),
   },
   {
     id: "apparel-deal", ages: [16, 21], cooldown: 0, once: true, weight: (s) => (s.exposure >= 45 ? 1.5 : 0), title: "An apparel deal",
@@ -715,7 +802,7 @@ export const EVENTS: EventTemplate[] = [
     ],
   },
   {
-    id: "buyout", ages: [19, 27], cooldown: 0, once: true, weight: (s) => (s.placement.node === "foreign-pro" || s.placement.node === "domestic-pro" ? (["star", "starter"].includes(s.placement.role) && currentLevel(s) >= 64 ? 2 : 0) : 0), title: "NBA teams are calling",
+    id: "buyout", ages: [19, 27], cooldown: 0, once: true, weight: (s) => (s.placement.node === "foreign-pro" || s.placement.node === "domestic-pro" ? (["star", "starter"].includes(s.placement.role) && currentLevel(s) >= 75 ? 1.4 : 0) : 0), title: "NBA teams are calling",
     body: "Your club has a buyout clause. NBA scouts have been at your games.",
     choices: [
       { id: "buy", label: "Negotiate the buyout", preview: (s) => `Opens NBA camp offers. You pay about ${usd(Math.max(5000, salary(s) * 0.25))} of it.`, growth: 2, risk: 1, apply: ({ s }) => (spend(s, Math.max(5000, salary(s) * 0.25)), expo(s, 10), (s.flags.buyout = true), "You are free to sign with an NBA team this summer.") },
@@ -753,7 +840,7 @@ export const EVENTS: EventTemplate[] = [
     ],
   },
   {
-    id: "free-agent-camp", ages: [21, 29], cooldown: 12, weight: (s) => (s.achievements.nbaDebut === null && currentLevel(s) >= 62 && s.exposure >= 30 ? 1.2 : 0), title: "A free-agent camp",
+    id: "free-agent-camp", ages: [21, 29], cooldown: 12, weight: (s) => (s.achievements.nbaDebut === null && currentLevel(s) >= 73 && s.exposure >= 45 ? 0.9 : 0), title: "A free-agent camp",
     body: "A US free-agent camp invites you. Some players get G League and NBA camp looks.",
     choices: [
       { id: "go", label: "Go", preview: () => `Exposure up. Costs ${usd(600)}.`, blocked: afford(600), growth: 2, risk: 0, apply: ({ s }) => (spend(s, 600), expo(s, 8), (s.achievements.campInvite ??= s.ageMonths), "You play well in front of front-office scouts.") },
@@ -783,11 +870,201 @@ export const EVENTS: EventTemplate[] = [
     ],
   },
   {
-    id: "rival-peer", ages: [12, 18], cooldown: 0, once: true, weight: (s) => (s.peers.some((p) => p.rating > performanceLevel(s)) ? 1 : 0.3), title: "A rival your age",
-    body: (s) => `You read about ${s.peers[0]?.name ?? "a kid your age"}. People say he is ahead of you.`,
+    id: "rival-peer", ages: [12, 18], cooldown: 0, once: true, weight: (s) => (rivalPeer(s.peers) ? (rivalPeer(s.peers)!.rating > performanceLevel(s) ? 1.4 : 0.5) : 0), title: "A rival your age",
+    body: (s) => {
+      const r = rivalPeer(s.peers)!;
+      return `You keep seeing ${r.name}'s name (${country(r.countryId).name}). Scouts put him ahead of you right now.`;
+    },
     choices: [
-      { id: "fuel", label: "Use it as fuel", preview: "Motivation up.", growth: 1, risk: 0, apply: ({ s }) => (tr(s, "motivation", 5), "You print his stats and tape them up.") },
-      { id: "ignore", label: "Run your own race", preview: "Composure up.", growth: 1, risk: 0, apply: ({ s }) => (tr(s, "composure", 4), "Your path is your path.") },
+      { id: "fuel", label: "Use it as fuel", preview: "Motivation up.", growth: 1, risk: 0, apply: ({ s }) => (tr(s, "motivation", 5), s.flags.rivalHeat = (typeof s.flags.rivalHeat === "number" ? s.flags.rivalHeat : 0) + 1, `You print ${rivalPeer(s.peers)!.name}'s clips and watch them before bed.`) },
+      { id: "ignore", label: "Run your own race", preview: "Composure up.", growth: 1, risk: 0, apply: ({ s }) => (tr(s, "composure", 4), "You mute the comparisons.") },
+    ],
+  },
+  {
+    id: "peer-camp-clash", ages: [13, 17.5], cooldown: 18, weight: (s) => (rivalPeer(s.peers) && onTeam(s) && !s.condition.injury ? 1.2 : 0), title: "Same gym, same age",
+    body: (s) => `${rivalPeer(s.peers)!.name} shows up at a camp you're at. Coaches put you on opposite teams for the last scrimmage.`,
+    choices: [
+      { id: "hunt", label: "Hunt him all game", preview: "Big swing either way.", growth: 2, risk: 2, apply: ({ s, rolls }) => {
+        const r = rivalPeer(s.peers)!;
+        const ahead = performanceLevel(s) + (typeof s.flags.rivalHeat === "number" ? s.flags.rivalHeat : 0) >= r.rating - 2;
+        if (rolls[0]! < (ahead ? 0.55 : 0.32)) return (expo(s, 5), tr(s, "confidence", 4), s.flags.rivalHeat = (typeof s.flags.rivalHeat === "number" ? s.flags.rivalHeat : 0) + 1, evidence(s, `Beat ${r.name} in a camp scrimmage`, 4), `You cook ${r.name} on a switch. A coach writes both names down.`);
+        return (tr(s, "confidence", -2), tr(s, "motivation", 3), s.flags.rivalHeat = (typeof s.flags.rivalHeat === "number" ? s.flags.rivalHeat : 0) + 1, `${r.name} gets you twice. The gym notices.`);
+      } },
+      { id: "team", label: "Play your role", preview: "Safer. Some exposure.", growth: 1, risk: 0, apply: ({ s }) => (sk(s, "iq", 1), expo(s, 2), "You do the job. The duel never quite happens.") },
+    ],
+  },
+  {
+    id: "peer-draft-class", ages: [18.5, 23.5], cooldown: 0, once: true, weight: (s) => {
+      const r = rivalPeer(s.peers);
+      if (!r || r.done) return 0;
+      const year = calendar(s).year;
+      if (s.draft.declaredYear !== year && !s.achievements.drafted) return 0;
+      return r.rating >= 58 ? 1.6 : 0.4;
+    }, title: "Same draft class",
+    body: (s) => {
+      const r = rivalPeer(s.peers)!;
+      return `${r.name} is in this draft class with you. Boards have him ${r.rating >= performanceLevel(s) + 3 ? "ahead" : r.rating + 3 < performanceLevel(s) ? "behind" : "right next to you"}.`;
+    },
+    choices: [
+      { id: "work", label: "Outwork the class", preview: "Motivation and a little stock if you're already in.", growth: 2, risk: 1, apply: ({ s }) => (tr(s, "motivation", 4), s.draft.stock = Math.round((s.draft.stock + 0.4) * 10) / 10, s.flags.rivalHeat = (typeof s.flags.rivalHeat === "number" ? s.flags.rivalHeat : 0) + 1, "You show up early to every workout. Agents notice the hours.") },
+      { id: "calm", label: "Keep your routine", preview: "Composure up.", growth: 1, risk: 0, apply: ({ s }) => (tr(s, "composure", 3), "You treat him like one more name on the board.") },
+      { id: "tape", label: "Watch his workout tape", preview: "IQ nudge. Rival heat.", growth: 1, risk: 1, apply: ({ s }) => (sk(s, "iq", 1), s.flags.rivalHeat = (typeof s.flags.rivalHeat === "number" ? s.flags.rivalHeat : 0) + 1, `You study ${rivalPeer(s.peers)!.name}'s tape until the hotel TV goes dark.`) },
+    ],
+  },
+  {
+    id: "peer-crossed-paths", ages: [19, 30], cooldown: 30, weight: (s) => {
+      const r = rivalPeer(s.peers);
+      if (!r || r.done || !isPro(s)) return 0;
+      if (r.countryId === s.residence.countryId || r.node === s.placement.node) return 1.3;
+      return 0.35;
+    }, title: "You cross paths",
+    body: (s) => {
+      const r = rivalPeer(s.peers)!;
+      return `${r.name} is in town with ${r.levelLabel}. Someone books a shared workout or a film room.`;
+    },
+    choices: [
+      { id: "meet", label: "Train with him", preview: "Skills nudge. Rival heat.", growth: 2, risk: 0, apply: ({ s }) => (sk(s, "finishing", 1), sk(s, "shooting", 1), s.flags.rivalHeat = (typeof s.flags.rivalHeat === "number" ? s.flags.rivalHeat : 0) + 1, `You and ${rivalPeer(s.peers)!.name} go an hour. No cameras. Both of you leave tired.`) },
+      { id: "skip", label: "Skip it", preview: "Rest.", growth: 0, risk: 0, apply: ({ s }) => (energy(s, 6), "You stay with your own work.") },
+    ],
+  },
+  {
+    id: "rival-shared-floor",
+    ages: [20, 30],
+    cooldown: 36,
+    once: true,
+    weight: (s) => {
+      const r = rivalPeer(s.peers);
+      const heat = typeof s.flags.rivalHeat === "number" ? s.flags.rivalHeat : 0;
+      // Heat 2+ means the player chased the rivalry past a single youth beat, so auto NBA seeds stay stable.
+      if (!r || r.done || heat < 2) return 0;
+      const mine = s.placement.node;
+      if (mine !== "nba" && mine !== "g-league") return 0;
+      if (r.node !== mine) return 0;
+      return mine === "nba" ? 1.8 : 1.1;
+    },
+    title: "Same league, other bench",
+    body: (s) => {
+      const r = rivalPeer(s.peers)!;
+      return `${r.name} is on the other side tonight. ${s.placement.node === "nba" ? "NBA floor." : "G League floor."} The kid from the same birth year is wearing a different jersey.`;
+    },
+    choices: [
+      {
+        id: "hunt",
+        label: "Ask for the matchup",
+        preview: "Big swing. Rival heat.",
+        growth: 2,
+        risk: 2,
+        apply: ({ s, rolls }) => {
+          const r = rivalPeer(s.peers)!;
+          s.flags.rivalHeat = (typeof s.flags.rivalHeat === "number" ? s.flags.rivalHeat : 0) + 1;
+          s.flags.softPendingRivalFloor = true;
+          if (rolls[0]! < 0.5) {
+            tr(s, "confidence", 3);
+            evidence(s, `Matched up with ${r.name} in the league`, 4);
+            return `You get him on a switch and finish. The bench notices both names.`;
+          }
+          tr(s, "motivation", 3);
+          tr(s, "confidence", -1);
+          return `${r.name} gets the better of the possession. You remember the score.`;
+        },
+      },
+      {
+        id: "clean",
+        label: "Play your job",
+        preview: "Safer. IQ bump.",
+        growth: 1,
+        risk: 0,
+        apply: ({ s }) => {
+          sk(s, "iq", 1);
+          sk(s, "decisions", 1);
+          s.flags.softPendingRivalFloor = true;
+          return `You nod at ${rivalPeer(s.peers)!.name} in warmups. The duel stays in the group chat.`;
+        },
+      },
+      {
+        id: "fuel",
+        label: "Use it as fuel",
+        preview: "Motivation up.",
+        growth: 1,
+        risk: 0,
+        apply: ({ s }) => (tr(s, "motivation", 4), s.flags.rivalHeat = (typeof s.flags.rivalHeat === "number" ? s.flags.rivalHeat : 0) + 1, s.flags.softPendingRivalFloor = true, `You write ${rivalPeer(s.peers)!.name} on the tape on your wrist.`),
+      },
+    ],
+  },
+  {
+    id: "peer-where-now", ages: [22, 34], cooldown: 24, weight: (s) => (rivalPeer(s.peers) && !rivalPeer(s.peers)!.done ? 0.9 : 0), title: "Where is he now",
+    body: (s) => {
+      const r = rivalPeer(s.peers)!;
+      return `A write-up lands in your feed: ${r.name}, ${r.status}. ${r.levelLabel}.`;
+    },
+    auto: ({ s }) => {
+      const r = rivalPeer(s.peers)!;
+      evidence(s, `${r.name}: ${r.status}`, 2);
+      if (r.debutMonth !== null && s.achievements.nbaDebut === null) tr(s, "motivation", 2);
+      else if (s.achievements.nbaDebut !== null && r.debutMonth === null) tr(s, "confidence", 2);
+      return `${r.name} is still out there. You read it twice.`;
+    },
+  },
+  {
+    id: "peer-where-heat",
+    ages: [22, 34],
+    cooldown: 30,
+    weight: (s) => {
+      const r = rivalPeer(s.peers);
+      const heat = typeof s.flags.rivalHeat === "number" ? s.flags.rivalHeat : 0;
+      if (!r || r.done || heat < 2) return 0;
+      return 0.85;
+    },
+    title: "Still watching him",
+    body: (s) => {
+      const r = rivalPeer(s.peers)!;
+      return `Another clip of ${r.name} hits your phone. ${r.status}. The heat never really cooled.`;
+    },
+    choices: [
+      {
+        id: "fuel",
+        label: "Use it as fuel",
+        preview: "Motivation up. Rival heat.",
+        growth: 1,
+        risk: 0,
+        apply: ({ s }) => {
+          const r = rivalPeer(s.peers)!;
+          evidence(s, `${r.name}: ${r.status}`, 2);
+          tr(s, "motivation", 3);
+          s.flags.rivalHeat = (typeof s.flags.rivalHeat === "number" ? s.flags.rivalHeat : 0) + 1;
+          return `You read it twice. Then you lace up.`;
+        },
+      },
+      {
+        id: "reach",
+        label: "Send a message",
+        preview: "Composure. Softens the heat a little.",
+        growth: 1,
+        risk: 0,
+        apply: ({ s }) => {
+          const r = rivalPeer(s.peers)!;
+          evidence(s, `${r.name}: ${r.status}`, 2);
+          tr(s, "composure", 2);
+          const heat = typeof s.flags.rivalHeat === "number" ? s.flags.rivalHeat : 0;
+          if (heat > 0) s.flags.rivalHeat = Math.max(0, heat - 1);
+          return `He replies late. Short. You both keep it moving.`;
+        },
+      },
+      {
+        id: "move-on",
+        label: "Move on",
+        preview: "Clear the heat. Confidence if you are ahead.",
+        growth: 0,
+        risk: 0,
+        apply: ({ s }) => {
+          const r = rivalPeer(s.peers)!;
+          evidence(s, `${r.name}: ${r.status}`, 2);
+          s.flags.rivalHeat = 0;
+          if (s.achievements.nbaDebut !== null && r.debutMonth === null) tr(s, "confidence", 2);
+          else if (r.debutMonth !== null && s.achievements.nbaDebut === null) tr(s, "discipline", 2);
+          return `You archive the tab. His race is his.`;
+        },
+      },
     ],
   },
   {
@@ -805,10 +1082,10 @@ export const EVENTS: EventTemplate[] = [
     },
   },
   {
-    id: "summer-league-look", ages: [19, 27], cooldown: 12, weight: (s) => (s.achievements.nbaDebut === null && s.placement.node !== "nba" && currentLevel(s) >= 64 && (s.exposure >= 50 || (currentLevel(s) >= 68 && country(s.residence.countryId).model.exposureBase < 25)) ? 1.5 : 0), title: "Summer league invite",
+    id: "summer-league-look", ages: [19, 27], cooldown: 12, weight: (s) => (s.achievements.nbaDebut === null && s.placement.node !== "nba" && currentLevel(s) >= 74 && (s.exposure >= 60 || (currentLevel(s) >= 77 && country(s.residence.countryId).model.exposureBase < 25)) ? 1.1 : 0), title: "Summer league invite",
     body: "An NBA team invites you to its summer league roster.",
     choices: [
-      { id: "go", label: "Play summer league", preview: "Exposure up a lot. Camp chance.", growth: 2, risk: 1, apply: ({ s, rolls }) => (expo(s, 10), rolls[0]! < 0.35 ? ((s.flags.campOffer = true), "You play well enough to earn a training camp invite.") : "Solid week. They keep your number.") },
+      { id: "go", label: "Play summer league", preview: "Exposure up a lot. Camp chance.", growth: 2, risk: 1, apply: ({ s, rolls }) => (expo(s, 10), rolls[0]! < 0.12 ? ((s.flags.campOffer = true), "You play well enough to earn a training camp invite.") : "Solid week. They keep your number.") },
       { id: "skip", label: "Stay with your club", preview: "Rest.", growth: 0, risk: 0, apply: ({ s }) => (energy(s, 8), "You skip it.") },
     ],
   },
@@ -1002,7 +1279,8 @@ export const EVENTS: EventTemplate[] = [
     ],
   },
   {
-    id: "extension", ages: [19, 36], cooldown: 12, weight: (s) => (isPro(s) && s.placement.node !== "g-league" && s.placement.contract?.yearsLeft === 1 && ["starter", "star"].includes(s.placement.role) ? 2.2 : 0), title: "Extension offer",
+    // NBA extensions use the engine board (nba-ext). This stays for overseas / domestic clubs.
+    id: "extension", ages: [19, 36], cooldown: 12, weight: (s) => (isPro(s) && s.placement.node !== "nba" && s.placement.node !== "g-league" && s.placement.contract?.yearsLeft === 1 && ["starter", "star"].includes(s.placement.role) ? 2.2 : 0), title: "Extension offer",
     body: (s) => `${s.placement.teamName} offer ${usd(salary(s) * 1.25)} a year for three more seasons.`,
     choices: [
       { id: "sign", label: "Sign the extension", preview: "Security. No free agency for a while.", growth: 0, risk: 0, apply: ({ s }) => {
@@ -1012,7 +1290,194 @@ export const EVENTS: EventTemplate[] = [
         c.guaranteed = true;
         return "Three more years. You call your parents first.";
       } },
-      { id: "bet", label: "Bet on yourself", preview: "Play out the deal. A big year means a bigger contract.", growth: 1, risk: 2, apply: ({ s }) => ((s.flags.betOnSelf = true), tr(s, "confidence", 3), "You tell your agent to wait.") },
+      {
+        id: "bet",
+        label: "Bet on yourself",
+        preview: "Play out the deal. A big year means a bigger contract.",
+        growth: 1,
+        risk: 2,
+        follow: { id: "prove-it-year", delay: 1 },
+        apply: ({ s }) => ((s.flags.betOnSelf = true), tr(s, "confidence", 3), "You tell your agent to wait."),
+      },
+    ],
+  },
+  {
+    id: "prove-it-year",
+    ages: [19, 36],
+    cooldown: 0,
+    once: true,
+    followUpOnly: true,
+    weight: () => 1,
+    title: "Prove-it year",
+    body: (s) =>
+      `You turned down the extension. ${s.placement.teamName ?? "The club"} and every front office will grade this season. The plot card already says it.`,
+    choices: [
+      {
+        id: "film",
+        label: "Live in the film room",
+        preview: "IQ and decisions. Safer.",
+        growth: 2,
+        risk: 0,
+        apply: ({ s }) => {
+          sk(s, "iq", 2);
+          sk(s, "decisions", 1.5);
+          s.plan.primary = s.placement.node === "nba" ? "nba-pro-habits" : "film-iq";
+          evidence(s, "Prove-it year: film room plan", 3);
+          return "You cut sleep for scouting reports. The staff notices the notebook.";
+        },
+      },
+      {
+        id: "hunt",
+        label: "Hunt every minute",
+        preview: "Bigger swing. Energy risk.",
+        growth: 3,
+        risk: 2,
+        apply: ({ s }) => {
+          tr(s, "motivation", 4);
+          tr(s, "confidence", 2);
+          s.plan.workload = "high";
+          if (s.placement.node === "nba") s.plan.primary = "nba-on-ball";
+          energy(s, -10);
+          evidence(s, "Prove-it year: hunting minutes", 3.5);
+          return "You ask for the hard matchups. Legs will feel it by March.";
+        },
+      },
+      {
+        id: "steady",
+        label: "Stay the course",
+        preview: "Composure. No extra risk.",
+        growth: 1,
+        risk: 0,
+        apply: ({ s }) => {
+          tr(s, "composure", 3);
+          evidence(s, "Prove-it year: steady plan", 2);
+          return "You keep the same schedule. Agents can grade the tape.";
+        },
+      },
+    ],
+  },
+  {
+    id: "mentor-checkin",
+    ages: [16, 32],
+    cooldown: 0,
+    once: true,
+    followUpOnly: true,
+    weight: () => 1,
+    title: "Mentor checks in",
+    body: (s) => {
+      const name = typeof s.flags.mentorName === "string" ? String(s.flags.mentorName) : "Your mentor";
+      return `${name} calls. He has watched a few of your games and wants a real answer about where this is going.`;
+    },
+    choices: [
+      {
+        id: "honest",
+        label: "Tell him the truth",
+        preview: "Composure. He stays in your corner.",
+        growth: 1,
+        risk: 0,
+        apply: ({ s }) => {
+          tr(s, "composure", 3);
+          tr(s, "coachability", 2);
+          evidence(s, "Mentor check-in: honest talk", 2.5);
+          return "You say what the minutes feel like. He listens without fixing it.";
+        },
+      },
+      {
+        id: "plan",
+        label: "Ask for a plan",
+        preview: "IQ bump. He writes one.",
+        growth: 2,
+        risk: 0,
+        apply: ({ s }) => {
+          sk(s, "iq", 1.5);
+          s.plan.secondary = s.placement.node === "nba" ? "nba-pro-habits" : "film-iq";
+          evidence(s, "Mentor check-in: written plan", 3);
+          return "He texts a three-month focus list before midnight.";
+        },
+      },
+      {
+        id: "distance",
+        label: "Keep it light",
+        preview: "Clears the mentor flag.",
+        growth: 0,
+        risk: 0,
+        apply: ({ s }) => {
+          delete s.flags.mentor;
+          delete s.flags.mentorName;
+          return "You keep the call short. The plot card drops him.";
+        },
+      },
+    ],
+  },
+  {
+    id: "last-youth-night",
+    ages: [17, 19],
+    cooldown: 0,
+    once: true,
+    followUpOnly: true,
+    weight: () => 1,
+    title: "Last youth night",
+    tone: "good",
+    body: (s) =>
+      `Your last scheduled youth game for ${s.placement.teamName ?? "the age group"} is done. The next roster you chase will not call this an age group.`,
+    auto: ({ s }) => {
+      evidence(s, "Last youth night", 2);
+      return "The gym empties. Nobody calls it youth ball after this.";
+    },
+  },
+  {
+    id: "first-senior-dud",
+    ages: [16, 24],
+    cooldown: 0,
+    once: true,
+    followUpOnly: true,
+    weight: () => 1,
+    title: "A quiet senior start",
+    body: (s) =>
+      `The box scores from ${s.placement.teamName ?? "your senior side"} are thin. Senior minutes feel heavier than the youth ones did.`,
+    choices: [
+      {
+        id: "film",
+        label: "Live in the film",
+        preview: "IQ. Safer climb.",
+        growth: 2,
+        risk: 0,
+        apply: ({ s }) => {
+          sk(s, "iq", 2);
+          sk(s, "decisions", 1);
+          evidence(s, "First senior dud: film room", 3);
+          return "You mark every possession you wasted. The assistant notices the notebook.";
+        },
+      },
+      {
+        id: "lift",
+        label: "Add weight-room days",
+        preview: "Body. Energy cost.",
+        growth: 2,
+        risk: 1,
+        apply: ({ s }) => {
+          ath(s, "strength", 2);
+          energy(s, -8);
+          evidence(s, "First senior dud: weight room", 3);
+          return "Your legs burn on stairs. The scale moves a little.";
+        },
+      },
+      {
+        id: "coach",
+        label: "Ask the coach what he sees",
+        preview: "Coachability. Trust nudge.",
+        growth: 1,
+        risk: 0,
+        apply: ({ s }) => {
+          tr(s, "coachability", 3);
+          if (s.placement.node === "nba") {
+            const trust = typeof s.flags.nbaTrust === "number" ? s.flags.nbaTrust : 0;
+            s.flags.nbaTrust = Math.round((trust + 0.3) * 10) / 10;
+          }
+          evidence(s, "First senior dud: asked the coach", 2.8);
+          return "He talks about spacing and patience. You leave with a clear list.";
+        },
+      },
     ],
   },
   {
@@ -1062,17 +1527,129 @@ export const EVENTS: EventTemplate[] = [
     },
   },
   {
+    id: "season-injury",
+    ages: [14, 36],
+    cooldown: 0,
+    once: true,
+    followUpOnly: true,
+    weight: () => 1,
+    title: "The injury is the season",
+    body: (s) => {
+      const inj = s.condition.injury;
+      const label = inj?.label ?? "The injury";
+      if (draftBoardWatching(s)) {
+        return `${label}. Scouts are already rewriting boards. How you handle the next months will stick to your name.`;
+      }
+      if (s.placement.node === "nba") {
+        return `${label}. The ${s.placement.teamName} medical staff wants a plan. Minutes you lose now may not come back clean.`;
+      }
+      return `${label}. This is long enough that the season has a hole in it. Pick how hard you push.`;
+    },
+    choices: [
+      {
+        id: "patient",
+        label: "Rehab the long way",
+        preview: "Safer return. Draft stock or trust may dip while you sit.",
+        growth: 1,
+        risk: 0,
+        apply: ({ s }) => {
+          s.flags["soft:season-injury"] = true;
+          ath(s, "durability", 2);
+          if (draftBoardWatching(s)) s.draft.stock = Math.round((s.draft.stock - 1.2) * 10) / 10;
+          if (s.placement.node === "nba") {
+            const trust = typeof s.flags.nbaTrust === "number" ? s.flags.nbaTrust : 0;
+            s.flags.nbaTrust = Math.max(-2, Math.round((trust - 0.4) * 10) / 10);
+          }
+          evidence(s, "Season injury: patient rehab", 3);
+          return "You clear every checkpoint. The gym gets quieter without you.";
+        },
+      },
+      {
+        id: "rush",
+        label: "Push the return",
+        preview: "Back sooner. Re-injury risk. Less stock damage if you hold up.",
+        growth: 2,
+        risk: 3,
+        follow: { id: "reinjury", delay: 2 },
+        apply: ({ s }) => {
+          s.flags["soft:season-injury"] = true;
+          if (s.condition.injury) s.condition.injury.monthsLeft = Math.max(1, s.condition.injury.monthsLeft - 2);
+          if (draftBoardWatching(s)) s.draft.stock = Math.round((s.draft.stock - 0.4) * 10) / 10;
+          evidence(s, "Season injury: rushed return", 3.2);
+          return "You cut corners the trainers hate. The board sees you on the floor sooner.";
+        },
+      },
+      {
+        id: "shutdown",
+        label: "Shut the season down",
+        preview: "Full recovery focus. Bigger short-term stock hit; body comes first.",
+        growth: 0,
+        risk: 1,
+        apply: ({ s }) => {
+          s.flags["soft:season-injury"] = true;
+          s.plan.workload = "low";
+          ath(s, "durability", 3);
+          if (draftBoardWatching(s)) s.draft.stock = Math.round((s.draft.stock - 2.2) * 10) / 10;
+          if (s.placement.node === "nba" && ["starter", "star", "rotation"].includes(s.placement.role)) {
+            s.placement.role = "bench";
+          }
+          evidence(s, "Season injury: shut down", 3.5);
+          return "You tell them you are done until you are right. Agents rewrite the timeline. The staff parks your role while you heal.";
+        },
+      },
+    ],
+  },
+  {
     id: "money-trouble", ages: [18, 66], phase: "any", cooldown: 12, weight: (s) => (typeof s.flags.broke === "number" && s.ageMonths - s.flags.broke <= 3 ? 6 : 0), title: "Money trouble", tone: "bad",
     body: "Your account is empty and rent is due.",
     choices: [
-      { id: "cut", label: "Move somewhere cheaper", preview: "Lifestyle set to frugal.", growth: 0, risk: 0, apply: ({ s }) => (setLifestyle(s, "frugal"), tr(s, "discipline", 2), "You sell the car and get a roommate.") },
+      { id: "cut", label: "Move somewhere cheaper", preview: "Lifestyle set to frugal.", growth: 0, risk: 0, apply: ({ s }) => (setLifestyle(s, "frugal"), tr(s, "discipline", 2), evidence(s, "Money trouble: cut costs", 2), "You sell the car and get a roommate.") },
       { id: "family", label: "Ask your family", preview: "They'll help. Support may drop.", growth: 0, risk: 1, apply: ({ s, rolls }) => {
         const amt = Math.min(s.family.savings, cost(s, 1500));
         s.family.savings -= amt;
         s.finance.cash += amt;
         if (rolls[0]! < 0.4 && s.family.support !== "low") s.family.support = s.family.support === "high" ? "medium" : "low";
+        evidence(s, "Money trouble: family help", 2);
         return `They send ${usd(amt)}. It's a hard phone call.`;
       } },
+      {
+        id: "sell",
+        label: "Sell investments",
+        preview: "Cash now. You miss any rebound.",
+        growth: 0,
+        risk: 0,
+        blocked: (s) => (invested(s.finance) >= 2_000 ? null : "Nothing left in the portfolio to sell."),
+        apply: ({ s }) => {
+          const f = s.finance;
+          if (!f.basis) f.basis = mix({});
+          let moved = 0;
+          for (const k of ["index", "stocks", "crypto", "bonds"] as const) {
+            const v = f.holdings[k] * (1 - ASSET_INFO[k].cost);
+            moved += v;
+            f.cash += v;
+            f.holdings[k] = 0;
+            f.basis[k] = 0;
+          }
+          evidence(s, "Money trouble: sold investments", 2.5);
+          return moved > 0 ? `You liquidate. About ${usd(moved)} hits the account.` : "The account was already empty.";
+        },
+      },
+      {
+        id: "abroad",
+        label: "Take whatever overseas pays",
+        preview: "Foreign offers at the next window. Pride optional.",
+        growth: 1,
+        risk: 1,
+        blocked: (s) => (s.ageMonths < 18 * 12 || s.achievements.nbaDebut !== null ? "Not the right moment for a desperation overseas push." : null),
+        apply: ({ s }) => {
+          s.flags.overseasHunt = s.ageMonths;
+          s.flags.reviewSoon = true;
+          setLifestyle(s, "frugal");
+          tr(s, "motivation", 2);
+          evidence(s, "Money trouble: chase overseas pay", 3);
+          return "You tell your agent to take the first real check abroad.";
+        },
+      },
     ],
   },
   {
@@ -1093,12 +1670,15 @@ export const EVENTS: EventTemplate[] = [
       { id: "hold", label: "Hold and wait", preview: "In this market model, prices drift up over the long run. A recovery can take years.", growth: 1, risk: 1, apply: ({ s }) => (tr(s, "composure", 2), "You stop checking the app.") },
       { id: "sell", label: "Sell and move to savings", preview: "No more losses. You miss the rebound if there is one.", growth: 0, risk: 0, apply: ({ s }) => {
         const f = s.finance;
+        if (!f.basis) f.basis = mix({});
         let moved = 0;
         for (const k of ["index", "stocks", "crypto"] as const) {
           moved += f.holdings[k] * (1 - ASSET_INFO[k].cost);
           f.holdings[k] = 0;
+          f.basis[k] = 0;
         }
         f.holdings.savings += moved;
+        f.basis.savings = (f.basis.savings ?? 0) + moved;
         f.target = mix({ savings: 60, bonds: 40 });
         f.advisor = null;
         return `You sell ${usd(moved)} of stocks and crypto. Safe now, and the mix is set to savings and bonds.`;
@@ -1145,11 +1725,15 @@ export const EVENTS: EventTemplate[] = [
     choices: [
       { id: "pull", label: "Pull your money out", preview: "You get most of it back, maybe.", growth: 0, risk: 0, apply: ({ s, rolls }) => {
         const f = s.finance;
+        if (!f.basis) f.basis = mix({});
         const keep = rolls[0]! < 0.6 ? 0.85 : 0.5;
         const total = f.holdings.stocks + f.holdings.crypto;
         f.holdings.stocks = 0;
         f.holdings.crypto = 0;
+        f.basis.stocks = 0;
+        f.basis.crypto = 0;
         f.holdings.savings += total * keep;
+        f.basis.savings = (f.basis.savings ?? 0) + total * keep;
         f.advisor = null;
         f.target = { ...PRESETS[0]!.target };
         return `You get back ${usd(total * keep)} of ${usd(total)}.`;
@@ -1157,11 +1741,81 @@ export const EVENTS: EventTemplate[] = [
       { id: "trust", label: "Trust him", preview: "He's been a friend since school.", growth: 0, risk: 3, apply: ({ s, rolls }) => {
         if (rolls[0]! < 0.5) return "It was a rumor. The fund keeps going.";
         const f = s.finance;
+        if (!f.basis) f.basis = mix({});
         const lost = (f.holdings.stocks + f.holdings.crypto) * 0.7;
         f.holdings.stocks *= 0.3;
         f.holdings.crypto *= 0.3;
+        f.basis.stocks *= 0.3;
+        f.basis.crypto *= 0.3;
         f.advisor = null;
         return `The fund collapses. You lose about ${usd(lost)}.`;
+      } },
+    ],
+  },
+  {
+    id: "rate-hike", ages: [20, 66], cooldown: 40, phase: "any", weight: (s) => (invested(s.finance) >= 25_000 && s.finance.market.regime === "bull" ? 1.2 : invested(s.finance) >= 40_000 ? 0.55 : 0), title: "Rates are moving",
+    body: "Central banks talk about higher rates. Bond prices wobble. Mortgage chatter fills the group chat.",
+    choices: [
+      { id: "bonds", label: "Shift toward bonds", preview: "More bonds, less stock. Steadier coupons.", growth: 0, risk: 0, apply: ({ s }) => {
+        s.finance.target = mix({ bonds: 45, index: 35, savings: 10, property: 10 });
+        s.finance.advisor = null;
+        return "You rewrite the mix. Coupons over headlines.";
+      } },
+      { id: "hold", label: "Leave the mix alone", preview: "Composure. You already have a plan.", growth: 1, risk: 1, apply: ({ s }) => (tr(s, "composure", 2), "You mute the finance podcasts for a week.") },
+      { id: "buy-dip", label: "Buy the dip in the index", preview: (s) => `Move ${usd(liquid(s) * 0.35)} into the index.`, blocked: (s) => (liquid(s) >= 5000 ? null : "Not enough spare cash."), growth: 1, risk: 2, apply: ({ s }) => {
+        putInto(s, "index", liquid(s) * 0.35);
+        return "You buy while the talking heads argue.";
+      } },
+    ],
+  },
+  {
+    id: "bull-fomo", ages: [19, 55], cooldown: 36, phase: "any", weight: (s) => (s.finance.market.regime === "bull" && trailingIndex(s.finance) >= 0.14 && liquid(s) >= 20_000 ? 1.5 : 0), title: "Everyone is making money", tone: "good",
+    body: (s) => `The index is up about ${Math.round(trailingIndex(s.finance) * 100)}% over the past year. Teammates brag about stocks at dinner.`,
+    choices: [
+      { id: "chase", label: "Chase with more stocks", preview: (s) => `Put ${usd(liquid(s) * 0.4)} into individual stocks.`, growth: 0, risk: 3, apply: ({ s }) => {
+        putInto(s, "stocks", liquid(s) * 0.4);
+        return "You buy what they are talking about. It already ran.";
+      } },
+      { id: "dca", label: "Keep your monthly plan", preview: "Auto-invest stays on. Discipline up.", growth: 1, risk: 0, apply: ({ s }) => ((s.finance.autoInvest = true), tr(s, "discipline", 2), "You keep the same transfer. Boring on purpose.") },
+      { id: "trim", label: "Trim winners into savings", preview: "Take some chips off the table.", growth: 0, risk: 0, apply: ({ s }) => {
+        const f = s.finance;
+        if (!f.basis) f.basis = mix({});
+        let moved = 0;
+        for (const k of ["stocks", "crypto", "index"] as const) {
+          const sell = f.holdings[k] * 0.2;
+          if (sell <= 0) continue;
+          const held = f.holdings[k];
+          f.basis[k] = held > 0 ? Math.max(0, (f.basis[k] ?? held) * (1 - sell / held)) : 0;
+          f.holdings[k] -= sell;
+          moved += sell * (1 - ASSET_INFO[k].cost);
+        }
+        f.holdings.savings += moved;
+        f.basis.savings = (f.basis.savings ?? 0) + moved;
+        return `You move about ${usd(moved)} into savings.`;
+      } },
+    ],
+  },
+  {
+    id: "rent-check", ages: [22, 66], cooldown: 28, phase: "any", weight: (s) => (hold(s, "property") >= 40_000 ? 1.4 : 0), title: "The rental unit",
+    body: (s) => `Your building in ${s.residence.locality} needs a new roof, or you raise rent and hope the tenant stays.`,
+    choices: [
+      { id: "fix", label: "Pay for the roof", preview: (s) => `About ${usd(Math.min(hold(s, "property") * 0.08, liquid(s) * 0.5))}. Protects the asset.`, blocked: (s) => (liquid(s) >= 8000 ? null : "Not enough cash on hand."), growth: 1, risk: 0, apply: ({ s }) => {
+        const amt = Math.min(s.finance.holdings.property * 0.08, liquid(s) * 0.5);
+        spend(s, amt);
+        s.finance.holdings.property += amt * 0.5;
+        if (!s.finance.basis) s.finance.basis = mix({});
+        s.finance.basis.property = (s.finance.basis.property ?? 0) + amt * 0.5;
+        return `You write the check. The inspector passes it.`;
+      } },
+      { id: "raise", label: "Raise the rent", preview: "More income. Risk of a vacancy.", growth: 0, risk: 1, apply: ({ s, rolls }) => (rolls[0]! < 0.55 ? (s.finance.cash += Math.round(s.finance.holdings.property * 0.01), "They pay. You pocket a fatter month.") : (tr(s, "composure", -1), "They move out. Two months empty.")) },
+      { id: "sell", label: "List the building", preview: "Sell property into cash. Transaction costs apply.", growth: 0, risk: 0, apply: ({ s }) => {
+        const f = s.finance;
+        if (!f.basis) f.basis = mix({});
+        const v = f.holdings.property;
+        f.holdings.property = 0;
+        f.basis.property = 0;
+        f.cash += v * (1 - ASSET_INFO.property.cost);
+        return `You sell for about ${usd(v)}. The fee stings a little.`;
       } },
     ],
   },
@@ -1267,12 +1921,36 @@ export const EVENTS: EventTemplate[] = [
     ],
   },
   {
-    id: "trade-rumor", ages: [19, 36], cooldown: 12, weight: (s) => (s.placement.node === "nba" && [12, 1].includes(month(s)) ? 3 : 0), title: "Trade rumors",
+    id: "trade-rumor", ages: [19, 36], cooldown: 12, weight: (s) => (s.placement.node === "nba" && [12, 1].includes(month(s)) ? (s.flags.coachTone === "chaos" ? 4.2 : s.flags.coachTone === "patient" ? 2.2 : 3) : 0), title: "Trade rumors",
     body: (s) => `Reports say the ${s.placement.teamName} are shopping you before the February deadline.`,
     choices: [
       { id: "request", label: "Ask for a trade", preview: "More likely to move. The front office won't love it.", growth: 1, risk: 2, apply: ({ s }) => ((s.flags.tradeRequest = s.ageMonths), tr(s, "coachability", -3), "Your agent makes the call.") },
       { id: "stay", label: "Tell them you want to stay", preview: "Less likely to move.", growth: 0, risk: 0, apply: ({ s }) => ((s.flags.tradeShield = s.ageMonths), tr(s, "coachability", 2), "The coach says he wants you here.") },
       { id: "ignore", label: "Tune it out", preview: "Composure up.", growth: 0, risk: 0, apply: ({ s }) => (tr(s, "composure", 2), "You turn off your phone.") },
+    ],
+  },
+  {
+    id: "patient-bench", ages: [18, 34], cooldown: 20, weight: (s) => (isPro(s) && s.flags.coachTone === "patient" && ["deep-bench", "bench", "rotation"].includes(s.placement.role) ? 1.6 : 0), title: "He wants you to wait",
+    body: (s) => `Your coach at ${s.placement.teamName} says the minutes will come. He wants clean habits, not a stunt.`,
+    choices: [
+      { id: "trust", label: "Trust the plan", preview: "Coachability and IQ. Role stays for now.", growth: 2, risk: 0, apply: ({ s }) => (tr(s, "coachability", 3), sk(s, "iq", 1), "You stay after practice and run the same sets again.") },
+      { id: "push", label: "Ask for a clearer path", preview: "Composure. He might not like the question.", growth: 1, risk: 1, apply: ({ s, rolls }) => (rolls[0]! < 0.5 ? (tr(s, "composure", 2), "He lays out three things he wants to see.") : (tr(s, "coachability", -2), "He tells you to look at the film, not the minutes.")) },
+    ],
+  },
+  {
+    id: "demanding-film", ages: [18, 34], cooldown: 16, weight: (s) => (isPro(s) && s.flags.coachTone === "demanding" ? 1.7 : 0), title: "Film until late",
+    body: (s) => `The ${s.placement.teamName} staff keeps you after practice. Every cut is wrong until it is not.`,
+    choices: [
+      { id: "stay", label: "Stay and take the notes", preview: "IQ and discipline. Energy drops.", growth: 2, risk: 1, apply: ({ s }) => (sk(s, "iq", 2), sk(s, "decisions", 1), tr(s, "discipline", 2), energy(s, -8), "You leave with a page of marks and heavy legs.") },
+      { id: "out", label: "Cut it short", preview: "You keep your legs. The staff notices.", growth: 0, risk: 2, apply: ({ s }) => (tr(s, "coachability", -3), energy(s, 2), "Someone closes the laptop without looking at you.") },
+    ],
+  },
+  {
+    id: "chaos-lineup", ages: [18, 34], cooldown: 14, weight: (s) => (isPro(s) && s.flags.coachTone === "chaos" ? 1.8 : 0), title: "The lineup card changes again",
+    body: (s) => `At ${s.placement.teamName}, tonight's five looks nothing like yesterday's. Nobody explains it.`,
+    choices: [
+      { id: "ready", label: "Stay ready for anything", preview: "Composure. A small shot at more minutes.", growth: 1, risk: 0, apply: ({ s, rolls }) => (tr(s, "composure", 3), rolls[0]! < 0.35 ? (bumpRole(s, 1), "They throw you in for twelve messy minutes.") : "You sit. You are still ready.") },
+      { id: "ask", label: "Ask what the plan is", preview: "You might get an answer. You might get a blank look.", growth: 0, risk: 1, apply: ({ s, rolls }) => (rolls[0]! < 0.45 ? (tr(s, "confidence", 2), "A coach shrugs and says they are reading the room.") : (tr(s, "confidence", -2), "Nobody answers. Practice starts late.")) },
     ],
   },
   {
@@ -1286,6 +1964,7 @@ export const EVENTS: EventTemplate[] = [
         const role = roleFor(performanceLevel(s), l.model!.strength * 0.8);
         const team = clubNameFor(s, host);
         s.placement = { ...s.placement, node: s.citizenships.some((c) => l.countries.includes(c)) && host === s.residence.countryId ? "domestic-pro" : "foreign-pro", countryId: host, leagueId: l.id, teamName: team, role, coaching: l.model!.coaching, since: s.ageMonths, contract: { salary: salaryFor(l, role), yearsLeft: 2, guaranteed: true }, costPerYear: 0 };
+        s.flags.coachTone = pickCoachTone(l.model!.coaching, s.seed, team);
         if (host !== s.residence.countryId) s.residence = { countryId: host, locality: country(host).capital ?? country(host).name, localityKind: "capital" };
         if (s.season && s.season.gp + s.season.wins + s.season.losses > 0) s.seasons.push(s.season);
         s.season = null;
@@ -1305,10 +1984,19 @@ export const EVENTS: EventTemplate[] = [
     ],
   },
   {
-    id: "g-league-assign", ages: [19, 25], cooldown: 12, weight: (s) => (s.placement.node === "nba" && s.placement.role === "deep-bench" && s.flags.gStint !== "ten-day" ? 1.6 : 0), title: "G League assignment",
+    id: "g-league-assign",
+    ages: [19, 26],
+    cooldown: 10,
+    weight: (s) =>
+      s.placement.node === "nba" && ["deep-bench", "bench"].includes(s.placement.role) && s.flags.gStint !== "ten-day"
+        ? s.placement.role === "deep-bench"
+          ? 1.8
+          : 1.15
+        : 0,
+    title: "G League assignment",
     body: (s) => `The ${s.placement.teamName} want to send you to their affiliate for a month of minutes.`,
     choices: [
-      { id: "go", label: "Go play", preview: "A month of real minutes, then back to the bench.", growth: 2, risk: 0, apply: ({ s }) => {
+      { id: "go", label: "Go play", preview: "A month of real minutes, then back. Development that sticks.", growth: 2, risk: 0, apply: ({ s }) => {
         const team = s.placement.teamName ?? "the club";
         s.flags.gParent = team;
         s.flags.gStint = "assign";
@@ -1318,14 +2006,199 @@ export const EVENTS: EventTemplate[] = [
         s.residence = { countryId: "US", locality: "a G League city", localityKind: "city" };
         sk(s, "iq", 1);
         sk(s, "decisions", 1);
+        tr(s, "confidence", 1);
         return `You play thirty minutes a night for the affiliate. The ${team} want you back in a month.`;
       } },
       { id: "stay", label: "Ask to stay up", preview: "Practice with the NBA team. Coachability down.", growth: 0, risk: 0, apply: ({ s }) => (tr(s, "coachability", -2), sk(s, "iq", 1), "You watch from the end of the bench.") },
     ],
   },
+  {
+    id: "nba-summer-program",
+    ages: [19, 28],
+    cooldown: 12,
+    weight: (s) => {
+      if (s.placement.node !== "nba") return 0;
+      const m = calendar(s).month;
+      if (m < 6 || m > 8) return 0;
+      if (["deep-bench", "bench", "rotation"].includes(s.placement.role)) return s.ageMonths / 12 <= 24 ? 2.2 : 1.5;
+      return 0.55;
+    },
+    title: "Summer development program",
+    body: (s) => `The ${s.placement.teamName} player-development staff wants a summer plan. Minutes are scarce during the year. This is when low picks close the gap.`,
+    choices: [
+      {
+        id: "skill",
+        label: "Skill lab",
+        preview: "Work the hole in your game. Only pays if you still have room to grow.",
+        growth: 3,
+        risk: 0,
+        blocked: (s) => {
+          const keys = Object.keys(s.skills) as (keyof typeof s.skills)[];
+          const hole = keys.reduce((a, b) => (s.skills[b] / Math.max(1, s.potentials[b]) < s.skills[a] / Math.max(1, s.potentials[a]) ? b : a));
+          return s.skills[hole] >= s.potentials[hole] * 0.92 ? "Your skills sit too close to your ceiling for a summer lab." : null;
+        },
+        apply: ({ s }) => {
+          const keys = Object.keys(s.skills) as (keyof typeof s.skills)[];
+          const hole = keys.reduce((a, b) => (s.skills[b] / Math.max(1, s.potentials[b]) < s.skills[a] / Math.max(1, s.potentials[a]) ? b : a));
+          sk(s, hole, 2.2);
+          const next: FocusId =
+            hole === "shooting" || hole === "freeThrows"
+              ? "nba-three"
+              : hole === "handle" || hole === "passing" || hole === "finishing"
+                ? "nba-on-ball"
+                : hole === "perimeterD" || hole === "interiorD" || hole === "rebounding"
+                  ? "defense"
+                  : "nba-pro-habits";
+          s.plan.primary = next;
+          tr(s, "discipline", 2);
+          energy(s, -8);
+          return `You live in the gym on ${hole}. The staff writes a plan for next season.`;
+        },
+      },
+      {
+        id: "body",
+        label: "Strength camp",
+        preview: "Hold up through eighty-two. A little risk of getting dinged.",
+        growth: 2,
+        risk: 1,
+        apply: ({ s, rolls }) => {
+          ath(s, "strength", 2);
+          ath(s, "stamina", 1.5);
+          ath(s, "durability", 1);
+          s.plan.primary = "nba-body";
+          energy(s, -10);
+          if (rolls[0]! < 0.12) {
+            health(s, -6);
+            return "You add strength. You also tweak something in week three and sit a few days.";
+          }
+          return "The strength staff signs off. You feel harder to bump off your spot.";
+        },
+      },
+      {
+        id: "mentor",
+        label: "Veteran mentorship",
+        preview: "IQ and real trust with the staff. Best when you are still fighting for a role.",
+        growth: 2,
+        risk: 0,
+        apply: ({ s }) => {
+          sk(s, "iq", 1.5);
+          sk(s, "decisions", 1.2);
+          tr(s, "coachability", 2);
+          const trust = typeof s.flags.nbaTrust === "number" ? s.flags.nbaTrust : 0;
+          const bump = ["deep-bench", "bench"].includes(s.placement.role) ? 1.1 : 0.7;
+          s.flags.nbaTrust = Math.min(5, Math.round((trust + bump) * 10) / 10);
+          s.plan.primary = "nba-pro-habits";
+          return "A veteran walks you through help coverage for two weeks. The coaches notice you stayed.";
+        },
+      },
+      {
+        id: "rest",
+        label: "Rest the body",
+        preview: "Energy and health. No skill bump.",
+        growth: 0,
+        risk: 0,
+        apply: ({ s }) => (energy(s, 14), health(s, 6), "You take the summer quiet. Fresh legs in October."),
+      },
+    ],
+  },
+  {
+    id: "nba-fringe-night",
+    ages: [19, 30],
+    cooldown: 6,
+    weight: (s) =>
+      s.placement.node === "nba" && ["deep-bench", "bench"].includes(s.placement.role) && s.flags.gStint !== "ten-day"
+        ? s.nbaGames < 40
+          ? 1.7
+          : 0.9
+        : 0,
+    title: "A night with a short bench",
+    body: (s) => `Foul trouble empties the ${s.placement.teamName} rotation. The coach asks if you want the dirty minutes or the safe seat.`,
+    choices: [
+      {
+        id: "take",
+        label: "Take every dirty minute",
+        preview: "Trust and defense climb. You burn energy and risk a ding.",
+        growth: 2,
+        risk: 2,
+        apply: ({ s, rolls }) => {
+          sk(s, "perimeterD", 1);
+          sk(s, "iq", 1);
+          tr(s, "motivation", 2);
+          const trust = typeof s.flags.nbaTrust === "number" ? s.flags.nbaTrust : 0;
+          s.flags.nbaTrust = Math.min(5, Math.round((trust + 0.9) * 10) / 10);
+          energy(s, -10);
+          if (rolls[0]! < 0.14) {
+            health(s, -5);
+            return "You play eighteen hard minutes. Something in the knee complains afterward. The staff still thanks you.";
+          }
+          return "You play the dirty minutes. The next film session starts with your closeouts.";
+        },
+      },
+      {
+        id: "film",
+        label: "Stay ready on the bench",
+        preview: "IQ. Less trust than diving in.",
+        growth: 1,
+        risk: 0,
+        apply: ({ s }) => {
+          sk(s, "iq", 1);
+          sk(s, "decisions", 1);
+          const trust = typeof s.flags.nbaTrust === "number" ? s.flags.nbaTrust : 0;
+          s.flags.nbaTrust = Math.min(5, Math.round((trust + 0.2) * 10) / 10);
+          return "You chart help for a quarter. Clean notebook. Quiet night.";
+        },
+      },
+    ],
+  },
+  {
+    id: "nba-two-way-standard",
+    ages: [20, 27],
+    cooldown: 0,
+    once: true,
+    weight: (s) =>
+      s.placement.node === "nba" &&
+      s.placement.contract?.twoWay === true &&
+      s.nbaGames >= 12 &&
+      (typeof s.flags.gCallups === "number" ? s.flags.gCallups : 0) >= 2
+        ? 2.4
+        : 0,
+    title: "Standard contract talk",
+    body: (s) => `The ${s.placement.teamName} have called you up enough. They can convert the two-way into a standard deal, or keep the bus option.`,
+    choices: [
+      {
+        id: "convert",
+        label: "Take the standard deal",
+        preview: "You stay on the NBA roster. Guaranteed for the rest of the year.",
+        growth: 2,
+        risk: 0,
+        apply: ({ s }) => {
+          s.placement.contract = { salary: 1_300_000, yearsLeft: 1, guaranteed: true };
+          const trust = typeof s.flags.nbaTrust === "number" ? s.flags.nbaTrust : 0;
+          s.flags.nbaTrust = Math.min(5, Math.round((trust + 1.2) * 10) / 10);
+          tr(s, "confidence", 3);
+          return "The two-way dies. Your name is on the standard sheet.";
+        },
+      },
+      {
+        id: "wait",
+        label: "Wait for a bigger offer",
+        preview: "Maybe more money later. The two-way stays for now.",
+        growth: 0,
+        risk: 2,
+        apply: ({ s }) => {
+          tr(s, "confidence", 1);
+          const trust = typeof s.flags.nbaTrust === "number" ? s.flags.nbaTrust : 0;
+          s.flags.nbaTrust = Math.max(-2, Math.round((trust - 0.3) * 10) / 10);
+          return "You wait. The affiliate schedule is still on your phone.";
+        },
+      },
+    ],
+  },
   ...G_LEAGUE_EVENTS,
   ...STORY_EVENTS,
   ...LIFE_EVENTS,
+  ...YOUTH_LIFE_EVENTS,
+  ...STYLE_FORK_EVENTS,
   ...AFTER_SCENES,
 ];
 
@@ -1382,5 +2255,8 @@ export function eventRate(s: LifeState): number {
   const stage: Stage = stageOf(s.ageMonths);
   const base = { infancy: 0.06, childhood: 0.13, youth: 0.19, emerging: 0.21, adult: 0.19 }[stage];
   const pace = s.pacing === "short" ? 0.7 : s.pacing === "extended" ? 1.35 : 1;
-  return s.ageMonths < 6 ? 0 : base * pace;
+  let rate = s.ageMonths < 6 ? 0 : base * pace;
+  // First three years after playing: denser scenes before the decades thin out.
+  if (s.after && s.ageMonths - s.after.since < 36) rate *= 1.55;
+  return rate;
 }

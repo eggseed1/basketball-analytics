@@ -50,7 +50,23 @@ export function CeremonyOverlay({
         </div>
       )}
       <div className={`relative z-[1] max-h-[min(86vh,720px)] w-full max-w-lg overflow-y-auto rounded-[16px] border border-[var(--os-amber)] bg-[var(--os-panel)] px-5 py-5 shadow-2xl ${reducedMotion ? "" : "animate-in fade-in zoom-in-95 duration-300"}`}>
-        <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--os-amber)]">{hall ? "Hall of Fame" : "A night you keep"}</p>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--os-amber)]">
+          {hall
+            ? "Hall of Fame"
+            : d.context?.kind === "draft"
+              ? "Draft night"
+              : d.context?.kind === "nba-start"
+                ? "Starting five"
+                : d.context?.kind === "500"
+                  ? "500 games"
+                  : d.context?.kind === "1000"
+                    ? "1,000 games"
+                    : d.context?.kind === "finals-appear"
+                      ? "NBA Finals"
+                      : d.context?.kind === "farewell"
+                        ? "Farewell"
+                        : "A night you keep"}
+        </p>
         <h2 id="os-ceremony-title" className="mt-1 text-[22px] font-semibold leading-tight">
           {d.title}
         </h2>

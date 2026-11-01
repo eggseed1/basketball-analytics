@@ -2,15 +2,19 @@
 
 import { useEffect, useRef, useState } from "react";
 
+import { careerArc } from "@/one-shot/arcs";
 import { fmtHeight } from "@/one-shot/body";
 import { perGame } from "@/one-shot/career";
+import { challengeStatusLine } from "@/one-shot/challenges";
 import { invested, netWorth } from "@/one-shot/finance";
 import { earningsRank, MAX_ALL_TIME, MAX_BOARD, ordinal, rowRank, type EarningsRow } from "@/one-shot/leaderboard";
-import { awardCount, honorsLine, medalCount, nbaHonorList, outcomeTier, shareText, TIER_LABEL, type CareerSummary } from "@/one-shot/report";
+import { peerCompareLines } from "@/one-shot/peers";
+import { careerBadges } from "@/one-shot/badges";
+import { awardCount, dailyGhostLines, honorsLine, medalCount, nbaHonorList, outcomeTier, shareText, TIER_LABEL, type CareerSummary } from "@/one-shot/report";
 import type { LifeState } from "@/one-shot/types";
 import { country, countryFlag } from "@/one-shot/world";
 
-import { EarningsPanel, type AllTimeStatus } from "./earnings-board";
+import { EarningsPanel, LetterBoxes, type AllTimeStatus } from "./earnings-board";
 import { Portrait } from "./panels-left";
 import { SeasonTable } from "./stats-panel";
 import { shareCardPng, type SharePoster } from "./pixel";
@@ -19,6 +23,7 @@ import { Btn, Chip, Kv, money, Panel } from "./ui";
 export function EndReport({
   life,
   units,
+  careers,
   board,
   allTime,
   allTimeStatus,
@@ -29,6 +34,7 @@ export function EndReport({
 }: {
   life: LifeState;
   units: "metric" | "imperial";
+  careers: CareerSummary[];
   board: CareerSummary[];
   allTime: EarningsRow[];
   allTimeStatus: AllTimeStatus;
@@ -43,6 +49,14 @@ export function EndReport({
   const heading = useRef<HTMLHeadingElement>(null);
   useEffect(() => heading.current?.focus(), []);
   const tier = outcomeTier(life);
+  const arc = careerArc(life);
+  const challengeLine = challengeStatusLine(life);
+  const peerLines = peerCompareLines(
+    life.peers,
+    life.achievements.nbaDebut !== null,
+    Boolean(life.achievements.drafted),
+    life.achievements.drafted?.pick ?? null,
+  );
   const born = country(life.birthplace.countryId);
   const origin = typeof window === "undefined" ? "https://drbl.io" : window.location.origin;
   const text = shareText(life, origin);
@@ -70,9 +84,15 @@ export function EndReport({
         : shared
           ? `${ordinal(shared.rank)} of ${shared.of}`
           : `Outside the top ${MAX_ALL_TIME}`;
-  const moments = life.history.filter((h) => h.kind === "milestone" || h.kind === "draft" || h.kind === "move" || (h.kind === "injury" && h.tone === "bad")).slice(-10);
+  const ghosts = dailyGhostLines(careers, life);
+  const badges = careerBadges(life);
+  const moments = life.history
+    .filter((h) => h.kind === "milestone" || h.kind === "draft" || h.kind === "move" || (h.kind === "injury" && h.tone === "bad"))
+    .slice(-10);
+  const mine = board.find((c) => c.runId === life.runId) ?? careers.find((c) => c.runId === life.runId) ?? null;
+  const myTag = mine?.tag ?? null;
   const poster: SharePoster = {
-    tier: TIER_LABEL[tier],
+    tier: arc.title,
     born: `Born in ${life.birthplace.locality}, ${born.name}`,
     team: life.after?.employer ?? life.placement.teamName,
     route: route.slice(-6),
@@ -198,10 +218,21 @@ export function EndReport({
             <p className="mt-1 text-[13px] text-[var(--os-dim)]">
               {countryFlag(born.id)} Born in {life.birthplace.locality}, {born.name}
             </p>
-            <p className="mt-2">
-              <Chip tone={tier === "nba-debut" || tier === "nba-career" ? "green" : tier === "drafted" || tier === "top-pro" ? "teal" : "amber"}>{TIER_LABEL[tier]}</Chip>
+            <p className="mt-2 flex flex-wrap gap-1.5">
+              <Chip tone={arc.proud ? "green" : tier === "drafted" || tier === "top-pro" ? "teal" : "amber"}>{arc.title}</Chip>
+              {arc.title !== TIER_LABEL[tier] ? <Chip tone="dim">{TIER_LABEL[tier]}</Chip> : null}
             </p>
+            {arc.line ? <p className="mt-2 max-w-[46ch] text-[13px] text-[var(--os-dim)]">{arc.line}</p> : null}
           </div>
+            {badges.length ? (
+              <p className="mt-2 flex flex-wrap gap-1.5">
+                {badges.map((b) => (
+                  <Chip key={b.id} tone="teal">
+                    {b.label}
+                  </Chip>
+                ))}
+              </p>
+            ) : null}
         </div>
         <dl className="mt-4">
           <Kv k="NBA debut" v={life.achievements.nbaDebut !== null ? `Age ${Math.floor(life.achievements.nbaDebut / 12)}` : "No"} />
@@ -212,10 +243,18 @@ export function EndReport({
           {best ? <Kv k="Best season" v={`${best.levelLabel}, age ${best.ageYears}: ${perGame(best, "pts").toFixed(1)} pts`} /> : null}
           {life.international.caps > 0 ? <Kv k="National team" v={`${life.international.caps} caps${medalLabel ? ` · ${medalLabel}` : ""}`} mono /> : null}
           {nbaHonors ? <Kv k="NBA honors" v={nbaHonors} /> : null}
+            {ghosts.length ? (
+              <ul className="mt-2 max-w-[48ch] text-[12.5px] text-[var(--os-dim)]">
+                {ghosts.map((line) => (
+                  <li key={line}>{line}</li>
+                ))}
+              </ul>
+            ) : null}
           {awards ? <Kv k="Season honors" v={awards} mono /> : null}
           <Kv k="Career earnings, pre-tax" v={life.earnings > 0 ? money(life.earnings) : "None"} mono />
           <Kv k="On this device" v={onDevice} />
           <Kv k="All-time" v={allTimeLabel} />
+          {challengeLine ? <Kv k="Challenge" v={challengeLine} /> : null}
           {life.after ? <Kv k="After playing" v={`${life.after.title}, ${life.after.employer}`} /> : null}
           {coachW + coachL > 0 ? <Kv k="Coaching record" v={`${coachW}-${coachL}`} mono /> : null}
           {life.earnings > 0 || invested(life.finance) > 0 ? <Kv k="Net worth at the end" v={money(netWorth(life.finance))} mono /> : null}
@@ -231,6 +270,25 @@ export function EndReport({
           />
         </dl>
         {route.length ? <p className="mt-3 text-[12.5px] text-[var(--os-dim)]">Route: {route.join(" → ")}</p> : null}
+        {onStamp ? (
+          <div className="mt-5 border-t border-[var(--os-border)] pt-4">
+            {myTag ? (
+              <p className="text-[13px]">
+                On the all-time board as <span className="font-mono text-[15px] font-semibold tracking-[0.12em] text-[var(--os-amber)]">{myTag}</span>.
+              </p>
+            ) : (
+              <>
+                <p className="text-[13px] font-medium">Leave three initials on the all-time board</p>
+                <p className="mt-1 text-[12.5px] text-[var(--os-dim)]">Arcade-style. They sit next to this score wherever the board is shown.</p>
+                <LetterBoxes
+                  onEnter={(tag) =>
+                    onStamp({ runId: life.runId, boardId: highlightBoardId ?? mine?.boardId ?? undefined }, tag)
+                  }
+                />
+              </>
+            )}
+          </div>
+        ) : null}
         <div className="mt-5 flex flex-wrap gap-2 border-t border-[var(--os-border)] pt-4">
           <Btn variant="primary" onClick={onNew}>
             New life
@@ -250,6 +308,7 @@ export function EndReport({
             highlightBoardId={highlightBoardId}
             units={units}
             onStamp={onStamp}
+            defaultWhich="all"
           />
         </Panel>
         <Panel title="Key moments">
@@ -267,11 +326,21 @@ export function EndReport({
           <SeasonTable life={life} />
         </Panel>
         <Panel title="Same generation">
+          {peerLines.length ? (
+            <ul className="mb-2 flex flex-col gap-1">
+              {peerLines.map((line) => (
+                <li key={line} className="text-[12.5px] text-[var(--os-dim)]">
+                  {line}
+                </li>
+              ))}
+            </ul>
+          ) : null}
           <ul className="flex flex-col">
             {life.peers.map((p) => (
               <li key={p.id} className="flex justify-between gap-2 border-b border-[var(--os-border)]/50 py-1.5 text-[12.5px] last:border-b-0">
                 <span className="truncate">
                   {countryFlag(p.countryId)} {p.name}
+                  {p.rival ? " · rival" : ""}
                 </span>
                 <span className="shrink-0 text-[var(--os-dim)]">{p.status}</span>
               </li>

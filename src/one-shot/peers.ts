@@ -11,7 +11,7 @@ import { country, domesticProLeagues, PLAYABLE_COUNTRIES } from "./world";
  */
 
 export function createPeers(streams: Streams): Peer[] {
-  return streams.peers.map((_, i) => {
+  const peers: Peer[] = streams.peers.map((_, i) => {
     const rng = rngOf(streams, i);
     const c = rng.weighted(PLAYABLE_COUNTRIES, (x) => x.draw.weight);
     const potential = Math.round(clamp(rng.normal(64, 9), 35, 92));
@@ -28,9 +28,61 @@ export function createPeers(streams: Streams): Peer[] {
       drafted: null,
       debutMonth: null,
       done: false,
+      rival: false,
       log: [],
     };
   });
+  // Highest ceiling becomes the named rival for collision events.
+  let best = 0;
+  for (let i = 1; i < peers.length; i++) if (peers[i]!.potential > peers[best]!.potential) best = i;
+  if (peers[best]) peers[best]!.rival = true;
+  return peers;
+}
+
+/** The designated rival, if any. */
+export function rivalPeer(peers: Peer[]): Peer | null {
+  return peers.find((p) => p.rival) ?? peers[0] ?? null;
+}
+
+/** Short path string for the plot strip (name · path · optional heat). */
+export function rivalPlotValue(rival: Peer, rivalHeat = 0): string {
+  const path =
+    rival.debutMonth !== null
+      ? "NBA"
+      : rival.drafted
+        ? `pick ${rival.drafted.pick}`
+        : rival.node === "nba"
+          ? "NBA fringe"
+          : rival.done
+            ? rival.status
+            : rival.levelLabel;
+  const heat = rivalHeat >= 2 ? " · still chasing" : "";
+  return `${rival.name} · ${path}${heat}`;
+}
+
+/** Short compare lines for the end report. */
+export function peerCompareLines(peers: Peer[], playerNba: boolean, playerDrafted: boolean, playerPick: number | null = null): string[] {
+  const lines: string[] = [];
+  const rival = rivalPeer(peers);
+  if (rival) {
+    if (rival.debutMonth !== null && playerNba) lines.push(`You and ${rival.name} both reached an NBA box score.`);
+    else if (rival.debutMonth !== null && !playerNba) lines.push(`${rival.name} made the NBA. You did not.`);
+    else if (playerNba && rival.debutMonth === null) lines.push(`You made the NBA. ${rival.name} never did.`);
+    else if (rival.drafted && !playerDrafted) lines.push(`${rival.name} was drafted (pick ${rival.drafted.pick}). You went undrafted.`);
+    else if (!rival.drafted && playerDrafted) lines.push(`You were drafted. ${rival.name} was not.`);
+    else lines.push(`${rival.name} finished as: ${rival.status}.`);
+    if (rival.drafted && playerDrafted && playerPick !== null) {
+      if (playerPick < rival.drafted.pick) lines.push(`You went ${playerPick} overall; ${rival.name} went ${rival.drafted.pick}.`);
+      else if (playerPick > rival.drafted.pick) lines.push(`${rival.name} went ${rival.drafted.pick} overall; you went ${playerPick}.`);
+      else lines.push(`Same draft class as ${rival.name}.`);
+    } else if (rival.drafted && playerDrafted) {
+      lines.push(`Same draft class as ${rival.name} (his pick ${rival.drafted.pick}).`);
+    }
+  }
+  const nbaPeers = peers.filter((p) => p.debutMonth !== null).length;
+  if (nbaPeers > 1) lines.push(`${nbaPeers} of the four same-year peers reached the NBA.`);
+  else if (nbaPeers === 1 && !rival?.debutMonth) lines.push(`One same-year peer reached the NBA.`);
+  return lines;
 }
 
 /** Advance every peer by one year. `ageYears` is the shared birth-year age. */
