@@ -165,6 +165,7 @@ try {
     }
     if (name === "rookies") {
       await page.getByRole("link", { name: "Review rookie contracts", exact: true }).click();
+      await page.waitForURL(url => url.hash === "#rookie-contracts");
       assert.equal(await page.evaluate(() => location.hash), "#rookie-contracts");
       const pendingBefore = await page.getByRole("button", { name: "Sign rookie", exact: true }).count();
       await page.getByRole("button", { name: "Release rights", exact: true }).first().click();
