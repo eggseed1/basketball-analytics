@@ -34,6 +34,16 @@ Layer A only). Draft/awards/transaction feeds still stubbed on the provider.
 - Aging / development between seasons
 - Saves in IndexedDB (multiple slots via `franchise-lab-saves`; each save has Layer A/B keys)
 
+## Ratings ↔ simulation
+
+Player strength is one latent: `ratings.offense` / `ratings.defense` (pts/100), with
+`impact ≈ off + def`. The possession sim scores from that latent only.
+
+Display **OVR** is a monotone readout (`72 + 3.45 × net`, light attribute flavor).
+When entry DRBL or high-minute counting says DARKO undersold a star, seed-time
+`consensusCorrectLatent` raises the **latent**, then OVR is recomputed — so a 92
+plays like a 92.
+
 ## Play
 
 1. Open [http://localhost:3000/gm](http://localhost:3000/gm)

@@ -256,9 +256,15 @@ export function simulateGame(state: LifeState, level: Level, rng: Rng, minutesOv
   const comp = (t.composure - 50) / 100;
   const iq = (s.iq + s.decisions) / 2;
   const burst = (b.acceleration + b.lateral + b.vertical) / 3;
-  const fga36 = 7 + 9 * eff + (s.shooting + s.finishing + s.handle) / 70 + (level.youth ? clamp(diff / 18, 0, 4) : 0) + conf * 0.8;
+  const style = typeof state.flags.style === "string" ? state.flags.style : null;
+  const usage =
+    style === "scorer" ? 1.14 : style === "connector" ? 0.9 : style === "defender" ? 0.88 : 1;
+  const dish = style === "connector" ? 1.22 : style === "scorer" ? 0.88 : 1;
+  const stocks = style === "defender" ? 1.2 : style === "scorer" ? 0.9 : 1;
+  const space = style === "scorer" ? 0.04 : style === "defender" ? -0.02 : 0;
+  const fga36 = (7 + 9 * eff + (s.shooting + s.finishing + s.handle) / 70 + (level.youth ? clamp(diff / 18, 0, 4) : 0) + conf * 0.8) * usage;
   const fga = poisson(rng, fga36 * m);
-  const threeShare = clamp((s.shooting - 25) / 110 + (pos === "G" || pos === "W" ? 0.1 : -0.12) + era.threeShare + (level.youth ? s.offBall / 400 : 0), 0.02, 0.62);
+  const threeShare = clamp((s.shooting - 25) / 110 + (pos === "G" || pos === "W" ? 0.1 : -0.12) + era.threeShare + (level.youth ? s.offBall / 400 : 0) + space, 0.02, 0.62);
   const tpa = binomial(rng, fga, threeShare);
   const twoPct = clamp(0.4 + (s.finishing - 50) / 260 + diff / 110 - era.threeShare * 0.15 + conf * 0.03 + (burst - 55) / 500, 0.28, 0.72);
   const threePct = clamp(0.28 + (s.shooting - 50) / 230 + diff / 220 + era.threeShare * 0.2 + conf * 0.025 + comp * 0.02, 0.1, 0.5);
@@ -269,9 +275,9 @@ export function simulateGame(state: LifeState, level: Level, rng: Rng, minutesOv
   const heightBoost = clamp((state.body.heightCm / heightFraction(state.ageMonths, 0) - 195) / 10, -1, 2);
   const big = era.id === "big-ball" ? 0.35 : 0;
   const reb = poisson(rng, (2.5 + s.rebounding / 14 + heightBoost * 1.5 + big + (b.vertical - 50) / 80 + (level.youth ? clamp(diff / 25, 0, 1.2) : 0)) * m);
-  const ast = poisson(rng, (0.8 + s.passing / 17 + s.handle / 45 + (iq - 50) / 90 + (level.youth ? clamp(diff / 30, 0, 1) : 0)) * m);
-  const stl = poisson(rng, (0.4 + s.perimeterD / 70 + (b.lateral - 50) / 140 + (b.acceleration - 50) / 160) * m);
-  const blk = poisson(rng, (0.15 + (s.interiorD / 60) * clamp(1 + heightBoost * 0.5, 0.3, 2) + big * 0.2 + (b.vertical - 50) / 180) * m);
+  const ast = poisson(rng, (0.8 + s.passing / 17 + s.handle / 45 + (iq - 50) / 90 + (level.youth ? clamp(diff / 30, 0, 1) : 0)) * m * dish);
+  const stl = poisson(rng, (0.4 + s.perimeterD / 70 + (b.lateral - 50) / 140 + (b.acceleration - 50) / 160) * m * stocks);
+  const blk = poisson(rng, (0.15 + (s.interiorD / 60) * clamp(1 + heightBoost * 0.5, 0.3, 2) + big * 0.2 + (b.vertical - 50) / 180) * m * stocks);
   const tov = poisson(rng, (1 + (s.handle + s.passing) / 120 - s.decisions / 150 - iq / 200 - comp * 0.25 + 0.6) * m * (0.6 + 0.4 * (1 - eff)));
   const fgm = twoM + tpm;
   const pts = 2 * twoM + 3 * tpm + ftm;

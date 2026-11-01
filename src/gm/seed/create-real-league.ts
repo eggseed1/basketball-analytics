@@ -39,6 +39,7 @@ import { getBundledPlayerBio } from "@/data/runtime/player-bio-snapshot";
 import { createDraftClass } from "@/gm/seed/prospect-identities";
 import { sealProspect } from "@/gm/engine/scouting";
 import { buildSheet, type SheetStatHint } from "@/gm/engine/attributes";
+import { consensusCorrectLatent } from "@/gm/engine/true-strength";
 import {
   applyRookieRatings,
   estimateActivePotential,
@@ -303,10 +304,28 @@ export function playerSeasonToGmPlayer(
   const seasonalAge = birth && Number.isFinite(birth.getTime()) ? Math.floor((Date.UTC(seasonEndYear, 1, 1) - birth.getTime()) / (365.2425 * 86400000)) : null;
   const age = typeof row.age === "number" && row.age > 0 ? Math.round(row.age) : seasonalAge != null && seasonalAge >= 17 && seasonalAge <= 48 ? seasonalAge : 26;
   const draft = parsePlayerDraftInfo(bio?.draftInfo);
-  const ratings = ratingsFromSeason(row, {
+  const mpg = row.gamesPlayed > 0 ? row.minutes / row.gamesPlayed : undefined;
+  const ppg = row.gamesPlayed > 0 ? row.points / row.gamesPlayed : undefined;
+  const rpg = row.gamesPlayed > 0 ? row.rebounds / row.gamesPlayed : undefined;
+  const apg = row.gamesPlayed > 0 ? row.assists / row.gamesPlayed : undefined;
+  const entryValue = entryValueForNbaId(row.playerId, row.season);
+  const baseRatings = ratingsFromSeason(row, {
     age,
     draftPick: draft && !draft.undrafted ? draft.pick : null,
   });
+  const corrected = consensusCorrectLatent({
+    impact: baseRatings.impact,
+    offense: baseRatings.offense,
+    defense: baseRatings.defense,
+    drbl100: entryValue.drbl100,
+    mpg,
+    ppg,
+    apg,
+    rpg,
+    gp: row.gamesPlayed,
+    minutes: row.minutes,
+  });
+  const ratings: GmRatings = { ...baseRatings, ...corrected };
   const seasonStart = seasonEndYear - 1;
   const cap = opts?.cap ?? getCbaRules(seasonEndYear);
   const contract = teamId
@@ -328,10 +347,10 @@ export function playerSeasonToGmPlayer(
     threePct: row.threePointPct,
     ftPct: row.freeThrowPct,
     fgPct: row.fieldGoalPct,
-    mpg: row.gamesPlayed > 0 ? row.minutes / row.gamesPlayed : undefined,
-    ppg: row.gamesPlayed > 0 ? row.points / row.gamesPlayed : undefined,
-    rpg: row.gamesPlayed > 0 ? row.rebounds / row.gamesPlayed : undefined,
-    apg: row.gamesPlayed > 0 ? row.assists / row.gamesPlayed : undefined,
+    mpg,
+    ppg,
+    rpg,
+    apg,
     spg: row.gamesPlayed > 0 ? row.steals / row.gamesPlayed : undefined,
     bpg: row.gamesPlayed > 0 ? row.blocks / row.gamesPlayed : undefined,
     orbPct: percentPoints(row.offensiveReboundPct),
@@ -340,7 +359,6 @@ export function playerSeasonToGmPlayer(
     stlPct: percentPoints(row.stealPct),
     astPct: percentPoints(row.assistPct),
   };
-  const entryValue = entryValueForNbaId(row.playerId, row.season);
   const player: GmPlayer = {
     listedPosition: POSITIONS.includes(row.position?.toUpperCase().split(/[-/]/)[0] as GmPosition) ? position : undefined,
     secondaryPosition: POSITIONS.includes(row.position?.toUpperCase().split(/[-/]/)[1] as GmPosition) ? row.position!.toUpperCase().split(/[-/]/)[1] as GmPosition : undefined,

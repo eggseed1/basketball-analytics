@@ -9,8 +9,9 @@ export type ParsedPlayerDraft = {
   undrafted: boolean;
 };
 
+// Team token is 2–4 letters: BOS / UTA, and older labels like UTAH / WASH.
 const ESPN_DISPLAY =
-  /^(\d{4}):\s*Rd\s*(\d+),\s*Pk\s*(\d+)\s*(?:\(([A-Z]{2,3})\))?$/i;
+  /^(\d{4}):\s*Rd\s*(\d+),\s*Pk\s*(\d+)\s*(?:\(([A-Z]{2,4})\))?$/i;
 const CORE_DISPLAY =
   /^Year:\s*(\d{4})\s*Round:\s*(\d+)\s*Pick:\s*(\d+)$/i;
 

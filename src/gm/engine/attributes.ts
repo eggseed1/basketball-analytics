@@ -17,6 +17,9 @@ import {
 } from "@/gm/engine/dev-traits";
 import entrySkillRates from "@/gm/seed/entry-skill-rates.json";
 import { ensureSimProfile } from "@/gm/engine/player-profile";
+import { impactToOverall, netStrength } from "@/gm/engine/true-strength";
+
+export { productionOverallSpine } from "@/gm/engine/true-strength";
 
 /** Rebuild stored sheets when this changes. */
 export const SHEET_VERSION = 8;
@@ -323,11 +326,13 @@ export function letterRank(grade: LetterGrade): number {
 }
 
 export type OverallExtras = {
-  /** Points/100 prior (DARKO / BPM). Spine of the number. */
+  /** Points/100 prior. Prefer offense+defense when both are set. */
   impact?: number;
-  /** Site entry rate when we have it — lifts stars DARKO undersells. */
+  offense?: number;
+  defense?: number;
+  /** @deprecated Latent correction owns DRBL now; kept for call-site compat. */
   drbl100?: number | null;
-  /** Real counting — keeps 25+ ppg stars from sitting in the mid-70s. */
+  /** @deprecated Latent correction owns production now; kept for call-site compat. */
   mpg?: number | null;
   ppg?: number | null;
   apg?: number | null;
@@ -335,41 +340,9 @@ export type OverallExtras = {
 };
 
 /**
- * Box-score floor for high-minute producers. DARKO alone left Curry/LeBron in
- * the mid-70s while role bigs with better rates sat higher — bad for Franchise.
- */
-export function productionOverallSpine(extras: {
-  mpg?: number | null;
-  ppg?: number | null;
-  apg?: number | null;
-  rpg?: number | null;
-}): number | null {
-  const mpg = extras.mpg;
-  const ppg = extras.ppg;
-  if (
-    mpg == null ||
-    ppg == null ||
-    !Number.isFinite(mpg) ||
-    !Number.isFinite(ppg) ||
-    mpg < 24 ||
-    ppg < 12
-  ) {
-    return null;
-  }
-  const apg = Number.isFinite(extras.apg) ? (extras.apg as number) : 0;
-  const rpg = Number.isFinite(extras.rpg) ? (extras.rpg as number) : 0;
-  // ~27/34/6 → ~91; ~21/33/7 → ~86; ~15/28/3 → ~78.
-  return clamp(
-    55 + ppg * 1.05 + Math.max(0, mpg - 24) * 0.5 + apg * 0.9 + rpg * 0.4,
-    68,
-    96
-  );
-}
-
-/**
- * Overall is impact-first, attributes second.
- * The old category blend alone ranked role bigs and tiny-sample flukes over
- * consensus stars (Luka / Giannis / KD) whose sheets had one weak category.
+ * Overall is a readout of true strength (O+D / impact), attributes second.
+ * Star corrections belong in `consensusCorrectLatent` at seed — not here —
+ * so a high card and a strong sim stay the same player.
  */
 export function overallFromAttributes(
   position: GmPosition,
@@ -384,42 +357,21 @@ export function overallFromAttributes(
   );
   const opts: OverallExtras =
     typeof extras === "number" ? { impact: extras } : (extras ?? {});
-  const impact = Number.isFinite(opts.impact) ? (opts.impact as number) : null;
-  if (impact == null) {
+  const hasImpact = Number.isFinite(opts.impact);
+  const hasSplit =
+    Number.isFinite(opts.offense) && Number.isFinite(opts.defense);
+  if (!hasImpact && !hasSplit) {
     return clamp(Math.round(attrBlend), 25, 99);
   }
 
-  // ~72 + 3.45×impact → Jokic 7.3≈97, Tatum 5.1≈90, SGA 5.8≈92,
-  // solid starter 1.5≈77, fringe −1≈69. Tracks the public DARKO board.
-  let spine = clamp(72 + impact * 3.45, 42, 98);
-  const drbl = opts.drbl100;
-  // DRBL lifts stars DARKO undersells (and patches a bad season DARKO row).
-  // Role bigs with elite rate alone still need impact or production to climb.
-  if (typeof drbl === "number" && Number.isFinite(drbl) && drbl > 1.0) {
-    const drblSpine = clamp(69 + drbl * 6.0, 48, 98);
-    if (impact >= 2.5 || (impact >= 1.2 && drbl >= 2.8) || drbl >= 3.5) {
-      const lift = Math.min(4.5, Math.max(0, (drblSpine - spine) * 0.55));
-      spine += lift;
-    } else if (impact < 1.2 && drbl >= 1.4) {
-      // Soft floor when DARKO is near zero but entry DRBL says starter+.
-      spine = Math.max(spine, spine * 0.55 + drblSpine * 0.45);
-    }
-  }
-
-  const production = productionOverallSpine(opts);
-  let productionLift = false;
-  if (production != null && production > spine) {
-    // Box score lifts DARKO-undersold stars. Allow a bigger pull when impact
-    // is near replacement but the counting line is clearly a star (Cade '25).
-    const maxLift = impact < 1.0 ? 17 : impact < 2.2 ? 13 : 10;
-    const target = Math.min(production, spine + maxLift);
-    spine = spine * 0.3 + target * 0.7;
-    productionLift = true;
-  }
-
-  // Attributes only flavor the card (~±4). When box score already lifted the
-  // spine, weight them less so speed/reb decline cannot bury Curry/LeBron.
-  const attrWeight = productionLift ? 0.1 : 0.16;
+  const strength = netStrength({
+    impact: hasImpact ? (opts.impact as number) : 0,
+    offense: hasSplit ? (opts.offense as number) : undefined,
+    defense: hasSplit ? (opts.defense as number) : undefined,
+  });
+  const spine = impactToOverall(strength);
+  // Attributes only flavor the card (~±3). Never the primary ranker.
+  const attrWeight = 0.1;
   return clamp(
     Math.round(spine * (1 - attrWeight) + attrBlend * attrWeight),
     25,
@@ -566,11 +518,8 @@ export function buildSheet(player: GmPlayer, hint?: SheetStatHint): GmSheet {
 
   const overall = overallFromAttributes(position, attributes, {
     impact: ratings.impact,
-    drbl100: player.drbl100,
-    mpg: hint?.mpg,
-    ppg: hint?.ppg,
-    apg: hint?.apg,
-    rpg: hint?.rpg,
+    offense: ratings.offense,
+    defense: ratings.defense,
   });
   const tendencies: GmTendencies = {
     shootClose: tend(big ? 62 : 38 + (100 - attributes.threePoint) * 0.15),
@@ -669,7 +618,7 @@ export function buildSheet(player: GmPlayer, hint?: SheetStatHint): GmSheet {
     peakEnd,
   };
 
-  const overallOffset = overall - overallFromAttributes(position, attributes, { impact: ratings.impact, drbl100: player.drbl100 });
+  const overallOffset = overall - overallFromAttributes(position, attributes, { impact: ratings.impact, offense: ratings.offense, defense: ratings.defense });
   return { version: SHEET_VERSION, overall, overallOffset, attributes, tendencies, potential };
 }
 
@@ -730,7 +679,7 @@ export function playerSheet(player: GmPlayer, hint?: SheetStatHint): GmSheet {
     return {
       ...player.sheet,
       version: SHEET_VERSION,
-      overallOffset: player.sheet.overallOffset ?? player.sheet.overall - overallFromAttributes(player.position, player.sheet.attributes, { impact: player.ratings.impact, drbl100: player.drbl100 }),
+      overallOffset: player.sheet.overallOffset ?? player.sheet.overall - overallFromAttributes(player.position, player.sheet.attributes, { impact: player.ratings.impact, offense: player.ratings.offense, defense: player.ratings.defense }),
       potential: ensurePotentialTrait(player.sheet.potential, player),
     };
   }
@@ -892,10 +841,23 @@ export function progressSheet(
     -4,
     10
   );
-  const overallOffset = sheet.overallOffset ?? sheet.overall - overallFromAttributes(player.position, sheet.attributes, { impact: player.ratings.impact, drbl100: player.drbl100 });
+  const nextOffense = clamp(
+    Math.round((player.ratings.offense + impactDelta * offenseShare) * 100) / 100,
+    -5,
+    12
+  );
+  const nextDefense = clamp(
+    Math.round(
+      (player.ratings.defense + impactDelta * (1 - offenseShare)) * 100
+    ) / 100,
+    -5,
+    10
+  );
+  const overallOffset = sheet.overallOffset ?? sheet.overall - overallFromAttributes(player.position, sheet.attributes, { impact: player.ratings.impact, offense: player.ratings.offense, defense: player.ratings.defense });
   const overall = clamp(overallOffset + overallFromAttributes(player.position, attributes, {
     impact: nextImpact,
-    drbl100: player.drbl100,
+    offense: nextOffense,
+    defense: nextDefense,
   }), 25, 99);
   return {
     ...player,
@@ -910,16 +872,8 @@ export function progressSheet(
     ratings: {
       ...player.ratings,
       impact: nextImpact,
-      offense: clamp(
-        Math.round((player.ratings.offense + impactDelta * offenseShare) * 100) / 100,
-        -5,
-        12
-      ),
-      defense: clamp(
-        Math.round((player.ratings.defense + impactDelta * (1 - offenseShare)) * 100) / 100,
-        -5,
-        10
-      ),
+      offense: nextOffense,
+      defense: nextDefense,
     },
   };
 }

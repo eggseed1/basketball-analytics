@@ -38,10 +38,11 @@ function withContract(
   option: "player" | "team" | null,
   impact: number
 ): GmPlayer {
+  const ratings = { ...player.ratings, impact, offense: impact * 0.6, defense: impact * 0.4 };
   return {
     ...player,
-    ratings: { ...player.ratings, impact },
-    sheet: playerSheet({ ...player, sheet: undefined, ratings: { ...player.ratings, impact } }),
+    ratings,
+    sheet: playerSheet({ ...player, sheet: undefined, ratings }),
     contract: {
       yearsRemaining: years,
       annualSalaryM: 12,

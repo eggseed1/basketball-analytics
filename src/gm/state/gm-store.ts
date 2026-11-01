@@ -464,7 +464,7 @@ export const useGmStore = create<GmStore>()(
         const players = league.players.map(p => {
           if (p.id !== playerId || !p.sheet || !(attribute in p.sheet.attributes)) return p;
           const attributes = { ...p.sheet.attributes, [attribute]: clamp(Math.round(value), 25, 99) };
-          const overall = clamp(overallFromAttributes(p.position, attributes, { impact: p.ratings.impact, drbl100: p.drbl100 }) + (p.sheet.overallOffset ?? 0), 25, 99);
+          const overall = clamp(overallFromAttributes(p.position, attributes, { impact: p.ratings.impact, offense: p.ratings.offense, defense: p.ratings.defense }) + (p.sheet.overallOffset ?? 0), 25, 99);
           return { ...p, sheet: { ...p.sheet, attributes, overall } };
         });
         set({ league: withUpdate({ ...league, players }) });

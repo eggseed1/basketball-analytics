@@ -13,7 +13,7 @@ export type OutcomeTier = "nba-career" | "nba-debut" | "drafted" | "top-pro" | "
 export const TIER_LABEL: Record<OutcomeTier, string> = {
   "nba-career": "NBA career",
   "nba-debut": "Made the NBA",
-  drafted: "Drafted, never debuted",
+  drafted: "Drafted, no real NBA run",
   "top-pro": "Top-level pro",
   pro: "Professional",
   "semi-pro": "Senior club player",
@@ -34,11 +34,13 @@ export const TIER_RANK: Record<OutcomeTier, number> = {
 const PRO_NODES = new Set(["domestic-pro", "foreign-pro", "g-league", "nba"]);
 
 export function outcomeTier(s: LifeState): OutcomeTier {
-  if (s.achievements.nbaDebut !== null) return s.nbaGames >= 100 ? "nba-career" : "nba-debut";
+  // A one-game 10-day is not the same outcome as sticking long enough to matter.
+  if (s.nbaGames >= 100) return "nba-career";
+  if (s.nbaGames >= 10 || (s.achievements.nbaDebut !== null && s.achievements.rosterSpot !== null && s.nbaGames >= 3)) return "nba-debut";
   if (s.achievements.drafted) return "drafted";
   const pro = s.seasons.filter((x) => PRO_NODES.has(x.node));
   if (pro.some((x) => (maybeLeague(x.leagueId)?.model?.strength ?? 0) >= 68)) return "top-pro";
-  if (pro.length) return "pro";
+  if (pro.length || s.achievements.nbaDebut !== null) return "pro";
   if (s.seasons.some((x) => x.node === "local-senior" || x.node === "university")) return "semi-pro";
   return "youth";
 }

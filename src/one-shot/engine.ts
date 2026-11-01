@@ -29,6 +29,7 @@ import {
   interviewDelta,
   interviewPlan,
   nbaSeasonMonth,
+  nbaStickScore,
   projectedRange,
   projectedRank,
   rookieSalary,
@@ -439,7 +440,7 @@ export function stepMonth(s: LifeState) {
   stepTraining(s);
   honorMonth(s);
   money(s);
-  if (age >= 18 && s.achievements.nbaCaliber === null && currentLevel(s) >= 70) {
+  if (age >= 18 && s.achievements.nbaCaliber === null && currentLevel(s) >= 74) {
     s.achievements.nbaCaliber = s.ageMonths;
     log(s, "milestone", "Scouts would call this an NBA-level player now.", null, "good");
   }
@@ -690,7 +691,9 @@ function finalizeSeason(s: LifeState, level: Level | null) {
       delete s.flags.renewTeam;
       if (s.placement.node === "nba") {
         const role = roleFor(perf + trustOf(s), level?.need ?? 60);
-        if (perf >= 66) {
+        const stick = nbaStickScore(s);
+        // First deal is hard. Logged minutes and trust can keep a fringe body around.
+        if (stick >= 64 || (s.nbaGames >= 35 && perf >= 61) || (s.nbaGames >= 60 && perf >= 58)) {
           s.flags.renewSalary = Math.round(nbaSalary(role) * (bet && ["starter", "star"].includes(role) ? 1.25 : 1));
           s.flags.renewTeam = s.placement.teamName ?? "";
           log(s, "info", `Your NBA contract is up. The ${s.placement.teamName} want you back.`);
@@ -1161,9 +1164,14 @@ function roleStep(s: LifeState, level: Level, line: SeasonLine, boxes: BoxScore[
   const career = s.seasons.filter((x) => x.node === "nba");
   const baseMin = line.min >= 120 ? line.min : career.reduce((a, x) => a + x.min, 0);
   const baseScore = line.min >= 120 ? gameScoreTotal(line) : career.reduce((a, x) => a + gameScoreTotal(x), 0);
-  if (mins >= 30 && baseMin >= 120) {
+  if (mins >= 20) {
+    // Early fringe careers need trust to build before they have a long sample.
+    const baseline = baseMin >= 80 ? (baseScore / baseMin) * 36 : 8;
     const month36 = (played.reduce((a, b) => a + gameScoreTotal(b), 0) / mins) * 36;
-    trust = clamp(trust + clamp((month36 - (baseScore / baseMin) * 36) / 6, -0.75, 0.75), -4, 5);
+    const delta = clamp((month36 - baseline) / 6, -0.75, 0.85);
+    // Showing up and producing in scarce minutes still buys a little belief.
+    const show = mins >= 40 ? 0.15 : mins >= 28 ? 0.08 : 0;
+    trust = clamp(trust + delta + show, -4, 5);
   }
   const cur = ROLE_STEPS.indexOf(s.placement.role);
   if (cur < 0) return;
@@ -1236,12 +1244,19 @@ function roleStep(s: LifeState, level: Level, line: SeasonLine, boxes: BoxScore[
   }
 }
 
-/** End of an NBA regular season (April): playoff seeding, ten-season service, trust carried at half. */
+/** End of an NBA regular season (April): playoff seeding, ten-season service, trust carried forward by minutes. */
 function nbaSeasonEnd(s: LifeState, line: SeasonLine) {
   delete s.flags.fillUntil;
   delete s.flags.fillTrust;
   if (calendar(s).month !== 4) return;
-  s.flags.nbaTrust = Math.round(trustOf(s) * 5) / 10;
+  // Cup-of-coffee trust fades. A real season of minutes keeps most of the staff's memory.
+  const gp = line.gp;
+  const keep = gp >= 50 ? 0.88 : gp >= 30 ? 0.75 : gp >= 15 ? 0.6 : gp >= 5 ? 0.45 : 0.3;
+  let trust = trustOf(s) * keep;
+  if (gp >= 50) trust = Math.max(trust, 1.2);
+  else if (gp >= 30) trust = Math.max(trust, 0.6);
+  else if (gp >= 15) trust = Math.max(trust, 0.25);
+  s.flags.nbaTrust = Math.round(clamp(trust, -4, 5) * 10) / 10;
   const seasons = new Set(s.seasons.filter((x) => x.node === "nba" && x.gp > 0).map((x) => x.nbaYear ?? x.calendarYear)).size;
   if (seasons >= 10 && !s.flags.nbaTen) {
     s.flags.nbaTen = true;
@@ -1780,6 +1795,7 @@ function holdDraft(s: LifeState, year: number) {
     s.placement = { node: "nba", countryId: "US", leagueId: "nba", teamName: res.team, role: "deep-bench", coaching: 92, since: s.ageMonths, contract: { salary: rookieSalary(res.pick), yearsLeft: 3, guaranteed: true }, costPerYear: 0 };
     s.residence = { countryId: "US", locality: res.team!.split(" ").slice(0, -1).join(" "), localityKind: "city" };
     s.flags.coachTone = pickCoachTone(92, s.seed, res.team ?? "nba");
+    s.flags.nbaTrust = Math.max(trustOf(s), res.pick <= 14 ? 1.2 : 0.8);
     log(s, "draft", `Drafted ${ordinal(res.pick)} overall by the ${res.team}. Guaranteed rookie contract.`, null, "good");
     s.flags["soft:draft"] = true;
     fanfare(
@@ -1809,8 +1825,8 @@ function holdDraft(s: LifeState, year: number) {
     log(s, "draft", `Undrafted in ${year}.`, null, "bad");
     const v = draftValue(s);
     const choices: DecisionChoice[] = [];
-    if (v >= 72) choices.push({ id: "camp", label: "Training camp deal", preview: "An NBA team brings you to camp. Waived players go to its G League team." });
-    if (performanceLevel(s) >= 70) choices.push({ id: "g-league", label: "G League contract", preview: "Play for call-ups. About $40,500 a season (model)." });
+    if (v >= 76) choices.push({ id: "camp", label: "Training camp deal", preview: "An NBA team brings you to camp. Waived players go to its G League team." });
+    if (performanceLevel(s) >= 74) choices.push({ id: "g-league", label: "G League contract", preview: "Play for call-ups. About $40,500 a season (model)." });
     if (overseasPossible(s)) choices.push({ id: "overseas", label: "Play overseas", preview: "Clubs abroad pay real salaries and scouts still watch. Offers come next month." });
     choices.push({ id: "stay", label: "Keep your current path", preview: "Stay where you are. Offers come at the next window." });
     decide(s, { templateId: "undrafted", title: "Undrafted", body: "Plenty of NBA players went undrafted. These are your options.", choices, context: { team: teamFor(s, year) }, required: true });
@@ -1826,10 +1842,11 @@ function campStep(s: LifeState, year: number) {
   const camp = performanceLevel(s) + rng.normal(0, 2);
   s.education.amateur = false;
   if (s.season) finalizeSeason(s, levelOf(s));
-  if (camp >= 74) {
+  if (camp >= 77) {
     s.achievements.rosterSpot = s.ageMonths;
     s.placement = { node: "nba", countryId: "US", leagueId: "nba", teamName: team, role: "deep-bench", coaching: 90, since: s.ageMonths, contract: { salary: 1_270_000, yearsLeft: 1, guaranteed: false }, costPerYear: 0 };
     s.flags.coachTone = pickCoachTone(90, s.seed, team);
+    s.flags.nbaTrust = Math.max(trustOf(s), 0.6);
     s.residence = { countryId: "US", locality: team.split(" ").slice(0, -1).join(" "), localityKind: "city" };
     log(s, "milestone", `You make the ${team} opening-night roster out of training camp.`, null, "good");
   } else {
@@ -1877,8 +1894,15 @@ function endGLeagueStint(s: LifeState) {
   }
   delete s.flags.gStint;
   const perf = performanceLevel(s);
-  if (perf >= 74 && ups >= 1) {
+  const stick = nbaStickScore(s);
+  // First look is still hard. Prior minutes and trust turn a second/third look into a real deal.
+  const keep =
+    (stick >= 77 && ups >= 2) ||
+    (s.nbaGames >= 8 && stick >= 74 && ups >= 1) ||
+    (s.nbaGames >= 20 && stick >= 72);
+  if (keep) {
     s.flags.gCallups = ups + 1;
+    s.flags.nbaTrust = Math.max(trustOf(s), 0.8);
     s.placement.contract = { salary: nbaSalary("deep-bench"), yearsLeft: 1, guaranteed: false };
     log(s, "milestone", `The ${team} keep you. The 10-day becomes a deal for the rest of the season.`, null, "good");
     return;
@@ -1912,10 +1936,14 @@ function gLeagueStep(s: LifeState) {
   s.flags.gParent = team;
   const ups = typeof s.flags.gCallups === "number" ? s.flags.gCallups : 0;
   const twoWay = s.placement.contract?.twoWay === true;
-  const earned = ups >= 2 && performanceLevel(s) >= 76;
-  // Most 10-day looks are dress-and-sit. Only a real minutes night (or a rest-of-season
-  // deal) moves him onto the NBA roster and into the box score.
-  if (!earned && play >= 0.16) {
+  const stick = nbaStickScore(s);
+  const earned =
+    (ups >= 2 && stick >= 76) ||
+    (s.nbaGames >= 15 && ups >= 1 && stick >= 73) ||
+    (s.nbaGames >= 35 && stick >= 70);
+  // Most first looks are dress-and-sit. Returners with minutes get on the floor more often.
+  const sitBar = s.nbaGames >= 15 ? 0.28 : s.nbaGames >= 5 ? 0.18 : 0.11;
+  if (!earned && play >= sitBar) {
     s.flags.gCallups = ups + 1;
     log(s, "info", `The ${team} call you up on a 10-day. You dress and sit. No minutes.`, null, "neutral");
     return;
@@ -2849,7 +2877,10 @@ function buildNbaFaMarket(s: LifeState): Offer[] {
     return t;
   };
   const deals: Offer[] = [];
-  const heat = clamp((perf - 58) / 22 - cool, 0, 1);
+  const stick = nbaStickScore(s);
+  // Players who already carved out minutes keep a floor on the market.
+  const minutesFloor = s.nbaGames >= 50 ? 0.28 : s.nbaGames >= 25 ? 0.18 : s.nbaGames >= 10 ? 0.1 : 0;
+  const heat = clamp(Math.max((perf - 58) / 22, (stick - 62) / 24) - cool + minutesFloor, 0, 1);
 
   if (typeof s.flags.renewSalary === "number" && old) {
     const role = roleFor(perf + trustOf(s) - cool * 4, 60);
@@ -2928,16 +2959,21 @@ function buildNbaFaMarket(s: LifeState): Offer[] {
   const outsiders = deals.filter((d) => d.id !== "fa-stay");
   if (outsiders.length === 0 || heat < 0.18 || holdouts >= 2) {
     const team = pickTeam();
+    const earnedMin = s.nbaGames >= 25 && holdouts < 2;
     deals.push(
       faDeal(
         "fa-min",
         team,
         "deep-bench",
         nbaSalary("deep-bench") * (0.95 + next() * 0.1),
-        1,
-        false,
+        earnedMin && s.nbaGames >= 50 ? 2 : 1,
+        earnedMin,
         84,
-        holdouts >= 2 ? "The market cooled while you waited. This is what is left." : "The phones are quiet. A one-year minimum keeps a locker open.",
+        holdouts >= 2
+          ? "The market cooled while you waited. This is what is left."
+          : earnedMin
+            ? "You have enough NBA film that a team still opens a locker."
+            : "The phones are quiet. A one-year minimum keeps a locker open.",
       ),
     );
   }
@@ -3428,8 +3464,8 @@ export function autoChoice(s: LifeState): string {
       return projectedRange(s, calendar(s).year).mid <= 45 ? "targeted" : "wide";
     case "draft-after": {
       const lvl = performanceLevel(s);
-      if (open.some((c) => c.id === "two-way") && lvl >= 74) return "two-way";
-      if (open.some((c) => c.id === "camp") && lvl >= 72) return "camp";
+      if (open.some((c) => c.id === "two-way") && lvl >= 76) return "two-way";
+      if (open.some((c) => c.id === "camp") && lvl >= 74) return "camp";
       return open.find((c) => c.id === "stay")?.id ?? open[0]!.id;
     }
     case "undrafted": {

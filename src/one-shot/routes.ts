@@ -296,8 +296,8 @@ export function offseasonOffers(state: LifeState): Offer[] {
     const gl = league("g-league");
     const abroad = res.id !== "US";
     // G League is a narrow NBA corridor, not the default overseas exit.
-    const gSeen = E + agentBoost(state) * 0.6 >= (abroad ? 68 : 58) + r[6]! * 20 || (thinMarket && lvl >= 76);
-    if (age >= 19 && node !== "g-league" && node !== "nba" && lvl >= (abroad ? 74 : 72) && gSeen) {
+    const gSeen = E + agentBoost(state) * 0.6 >= (abroad ? 72 : 62) + r[6]! * 20 || (thinMarket && lvl >= 78);
+    if (age >= 19 && node !== "g-league" && node !== "nba" && lvl >= (abroad ? 77 : 75) && gSeen) {
       offers.push(build(state, { kind: "contract", node: "g-league", countryId: "US", leagueId: "g-league", teamName: `G League affiliate (${nbaTeam(r[7]!)})`, need: gl.model!.strength * 0.8, coaching: gl.model!.coaching, exposure: gl.model!.exposure, costPerYear: 0, salary: 40500, years: 1, reason: abroad ? "A G League affiliate saw your film. Camp is a tryout. A call-up, if it comes, starts as a 10-day." : "A G League affiliate invites you to its local tryout and keeps you. The parent NBA team is upstairs. Your name is on the affiliate list.", extra: ["Most call-ups are 10-days and end back with the affiliate.", "A rest-of-season deal comes after more than one look."] }));
     }
   }

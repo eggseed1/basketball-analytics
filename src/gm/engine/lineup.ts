@@ -363,21 +363,16 @@ export function assignLeaguePositions(players: GmPlayer[]): GmPlayer[] {
 }
 
 /**
- * Overall if listed at `position`. Attribute blend still leads, but a clear
+ * Overall if listed at `position`. Latent strength still leads, but a clear
  * physical mismatch (6'8" forward graded as a SG) is pulled back so "best at"
  * tracks natural position, not only scoring weights.
  */
 export function overallAtPosition(player: GmPlayer, position: GmPosition): number {
   const sheet = playerSheet(player);
-  const line = player.nbaSeason;
-  const gp = line && line.gp > 0 ? line.gp : 0;
   const raw = overallFromAttributes(position, sheet.attributes, {
     impact: player.ratings.impact,
-    drbl100: player.drbl100,
-    mpg: gp > 0 ? line!.min / gp : null,
-    ppg: gp > 0 ? line!.pts / gp : null,
-    apg: gp > 0 ? line!.ast / gp : null,
-    rpg: gp > 0 ? line!.reb / gp : null,
+    offense: player.ratings.offense,
+    defense: player.ratings.defense,
   });
   const home = classifyListedPosition(player).position;
   if (position === home) return raw;
@@ -397,16 +392,7 @@ export function overallAtPosition(player: GmPlayer, position: GmPosition): numbe
 export function reassignPosition(player: GmPlayer, position: GmPosition): GmPlayer {
   if (player.position === position) return player;
   const sheet = playerSheet(player);
-  const line = player.nbaSeason;
-  const gp = line && line.gp > 0 ? line.gp : 0;
-  const overall = overallFromAttributes(position, sheet.attributes, {
-    impact: player.ratings.impact,
-    drbl100: player.drbl100,
-    mpg: gp > 0 ? line!.min / gp : null,
-    ppg: gp > 0 ? line!.pts / gp : null,
-    apg: gp > 0 ? line!.ast / gp : null,
-    rpg: gp > 0 ? line!.reb / gp : null,
-  });
+  const overall = overallAtPosition(player, position);
   const secondary =
     player.secondaryPosition === position
       ? player.position
@@ -565,7 +551,12 @@ export function overallOf(player: GmPlayer): number {
   if (sheet && (sheet.version === SHEET_VERSION || sheet.version == null) && sheet.overall > 0) {
     return sheet.overall;
   }
-  return clamp(Math.round(68 + player.ratings.impact * 3.2), 45, 95);
+  // Same spine as sheets: 72 + 3.45×net (O+D when available).
+  const net =
+    Number.isFinite(player.ratings.offense) && Number.isFinite(player.ratings.defense)
+      ? player.ratings.offense + player.ratings.defense
+      : player.ratings.impact;
+  return clamp(Math.round(72 + net * 3.45), 45, 95);
 }
 
 /**

@@ -163,7 +163,7 @@ export interface GmCountingLine {
   astPct?: number;
 }
 
-/** 25–99 skills. Overall is a position-weighted blend of these, not a separate stat. */
+/** 25–99 skills. Flavor the card and prospect box rates; OVR reads from O/D latent. */
 export interface GmAttributes {
   closeShot: number;
   drivingLayup: number;
