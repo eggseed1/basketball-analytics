@@ -1,3 +1,4 @@
+import { activeMentor } from "@/gm/engine/development";
 import entryDrblTable from "@/gm/seed/entry-drbl.json";
 import type { GmBoxScore, GmCountingLine, GmLeagueState, GmPlayer } from "@/gm/types";
 import { P1_POINTS_PER_WIN } from "@/lib/drbl-public-labels";
@@ -143,6 +144,11 @@ export function recordSimGame(
       player = { ...player, rolePromise: { ...promise, games, totalMinutes, status, lastGameId: box.gameId } };
     }
     if (!playedIds.has(player.id)) return player;
+    if (player.developmentBaseline?.season !== box.season) player = { ...player, developmentBaseline: { season: box.season, overall: player.sheet?.overall ?? 70 } };
+    if (player.mentorship && activeMentor(player, players) && player.mentorship.lastGameId !== box.gameId) {
+      const previous = player.mentorship.season === box.season ? player.mentorship.sharedGames : 0;
+      player = { ...player, mentorship: { ...player.mentorship, season: box.season, sharedGames: previous + 1, lastGameId: box.gameId } };
+    }
     let line = player.seasonLine;
     let possessions = player.seasonPossessions ?? 0;
     if (!line || line.season !== seasonKey) {

@@ -28,7 +28,7 @@ const GROUPS = [
     { href: "/gm/awards", label: "Awards" },
   ] },
   { label: "Manage your franchise", links: [
-    { href: "/gm/franchise", label: "Franchise desk" },
+    { href: "/gm/franchise", label: "Team plan and history" },
     { href: "/gm/staff", label: "Staff" },
     { href: "/gm/medical", label: "Medical report" },
   ] },
@@ -60,6 +60,7 @@ export function GmNav() {
   }}>
     <div className="gm-desk-nav__primary">
       {PRIMARY.map(link => <Link key={link.href} href={link.href} aria-current={isCurrent(pathname, link.href) ? "page" : undefined} className={cn("gm-desk-nav__link", isCurrent(pathname, link.href) && "is-active")}>{t(link.key)}</Link>)}
+      <Link href="/gm/development" aria-current={pathname === "/gm/development" ? "page" : undefined} className={cn("gm-desk-nav__link", pathname === "/gm/development" && "is-active")}>Development</Link>
       <Link href="/gm/offseason" aria-current={pathname === "/gm/offseason" ? "page" : undefined} className={cn("gm-desk-nav__link", pathname === "/gm/offseason" && "is-active")}>Season hub</Link>
       <details key={pathname} className="gm-desk-nav__more" onKeyDown={event => {
         if (event.key !== "Escape") return;

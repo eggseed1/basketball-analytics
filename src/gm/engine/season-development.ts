@@ -1,10 +1,11 @@
+import { developmentSeed } from "@/gm/engine/development";
 import type { GmAttributes, GmCampFocus, GmLeagueState, GmSeasonFlow, GmPlayer } from "@/gm/types";
 import { ensurePlayerSheet, overallFromAttributes } from "@/gm/engine/attributes";
 import { autoSetLineup, overallOf } from "@/gm/engine/lineup";
 import { developPlayers, playoffGamesByPlayer } from "@/gm/engine/progression";
 import { coachEffect } from "@/gm/engine/staff";
 import { simulateGame } from "@/gm/engine/simulate";
-import { clamp } from "@/gm/engine/rng";
+import { createRng, clamp } from "@/gm/engine/rng";
 import { flowOf } from "@/gm/engine/season-flow-state";
 
 export const CAMP_FOCUSES: ReadonlyArray<{ id: GmCampFocus; label: string; keys: Array<keyof GmAttributes> }> = [
@@ -25,9 +26,13 @@ export function applySeasonProgression(league: GmLeagueState): GmLeagueState {
   return { ...league, players, seasonFlow: { ...flow, progressionApplied: true, progression: players.filter(player => player.teamId != null).map(player => ({ playerId: player.id, name: player.name, teamId: player.teamId, age: player.age, before: overallOf(previous.get(player.id)!), after: overallOf(player) })) } };
 }
 
+export function campSorenessRisk(league: GmLeagueState): number {
+  return 0.06 * clamp(league.settings.injuryFrequency ?? 1, 0, 2);
+}
+
 export function campSlots(league: GmLeagueState, teamId = league.userTeamId): number {
-  const trainer = league.teams.find(team => team.id === teamId)?.staff.trainerLevel ?? 1;
-  return clamp(2 + Math.floor((trainer - 1) / 2), 2, 4);
+  void league; void teamId;
+  return 2;
 }
 
 export function assignCamp(league: GmLeagueState, playerId: string, focus: GmCampFocus | null): { state: GmLeagueState; ok: boolean; reason: string } {
@@ -74,7 +79,7 @@ export function suggestCampAssignments(league: GmLeagueState): { state: GmLeague
 
 export function applyTrainingCamp(league: GmLeagueState): GmLeagueState {
   const flow = flowOf(league);
-  if (flow.campResults) return league;
+  if (flow.stage !== "training_camp" || flow.campResults) return league;
   const assignments: Record<string, GmCampFocus> = {};
   for (const team of league.teams) {
     const healthy = league.players.filter(player => player.teamId === team.id && player.contract && !player.injury);
@@ -90,6 +95,7 @@ export function applyTrainingCamp(league: GmLeagueState): GmLeagueState {
     }
   }
   const results: NonNullable<GmSeasonFlow["campResults"]> = [];
+  const strainedTeams = new Set<string>();
   const players = league.players.map(raw => {
     const camp = CAMP_FOCUSES.find(row => row.id === assignments[raw.id]);
     if (!camp) return raw;
@@ -103,8 +109,13 @@ export function applyTrainingCamp(league: GmLeagueState): GmLeagueState {
     const extras = { impact: player.ratings.impact, drbl100: player.drbl100 };
     const offset = sheet.overallOffset ?? sheet.overall - overallFromAttributes(player.position, sheet.attributes, extras);
     const overall = clamp(offset + overallFromAttributes(player.position, attributes, extras), 25, 99);
-    results.push({ playerId: player.id, name: player.name, before: sheet.overall, after: overall, focus: camp.id, gains });
-    return { ...player, sheet: { ...sheet, attributes, overallOffset: offset, overall, priorOverall: sheet.overall } };
+    const rng = createRng(developmentSeed(player.id + ":camp:" + league.season));
+    const healthy = league.players.filter(row => row.teamId === player.teamId && row.contract && !row.injury).length;
+    const soreness = rng() < campSorenessRisk(league) && healthy >= 6 && !strainedTeams.has(player.teamId!);
+    if (soreness) strainedTeams.add(player.teamId!);
+    const tradeoff = soreness ? "Camp soreness: out for one team game." : "Camp fatigue: 2% shooting penalty for the next two team games.";
+    results.push({ playerId: player.id, name: player.name, before: sheet.overall, after: overall, focus: camp.id, gains, tradeoff });
+    return { ...player, campFatigueGames: soreness ? 0 : 2, injury: soreness ? { type: "Camp soreness", gamesRemaining: 1, reinjuryRisk: 0 } : player.injury, sheet: { ...sheet, attributes, overallOffset: offset, overall, priorOverall: sheet.overall } };
   });
   return { ...league, players, seasonFlow: { ...flow, campResults: results } };
 }

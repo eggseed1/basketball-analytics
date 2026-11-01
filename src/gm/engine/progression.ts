@@ -1,3 +1,4 @@
+import { mentorshipBonus, reviewPlayerCeilings } from "@/gm/engine/development";
 import { draftScoutingOf } from "@/gm/engine/draft-intel";
 import { maybeCpuDraftTrade } from "@/gm/engine/draft-trades";
 import { rookieContractForPick } from "@/gm/engine/draft-order";
@@ -34,7 +35,9 @@ export function tickInjuries(
   context?: { teamIds: string[]; before: GmPlayer[]; trainerByTeam: Record<string, number> }
 ): GmPlayer[] {
   const alreadyOut = context ? new Set(context.before.filter(p => p.injury).map(p => p.id)) : null;
-  return players.map((p) => {
+  return players.map((raw) => {
+    const teamPlayed = !context || context.teamIds.includes(raw.teamId ?? "");
+    const p = teamPlayed && (raw.campFatigueGames ?? 0) > 0 ? { ...raw, campFatigueGames: Math.max(0, raw.campFatigueGames! - 1) } : raw;
     if (!p.injury) return p;
     if (context && (!context.teamIds.includes(p.teamId ?? "") || !alreadyOut?.has(p.id))) return p;
     const level = p.teamId ? context?.trainerByTeam[p.teamId] ?? trainerLevel : trainerLevel;
@@ -110,6 +113,7 @@ export function developPlayers(
       speed: developmentSpeed,
       playoffGames: playoffGames?.[p.id] ?? 0,
       devStaff: knackMul,
+      mentorBonus: mentorshipBonus(p, players),
     });
     return {
       ...grown,
@@ -194,6 +198,7 @@ function growOnce(league: GmLeagueState, pace: "season"): { players: GmPlayer[];
       minutes,
       form: formBump(player),
       devStaff: knackMul,
+      mentorBonus: mentorshipBonus(player, league.players),
     });
   });
   return {
@@ -228,7 +233,8 @@ export function maybeGrowInSeason(league: GmLeagueState): GmLeagueState {
     january = true;
   }
   if (!finale && regularSeasonComplete(league.schedule)) {
-    const grown = growOnce({ ...league, players }, "season");
+    const reviewed = reviewPlayerCeilings({ ...league, players });
+    const grown = growOnce(reviewed, "season");
     players = grown.players;
     if (grown.note) notes.push({ ...grown.note, headline: "End of the regular season" });
     finale = true;

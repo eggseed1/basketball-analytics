@@ -1,11 +1,14 @@
 "use client";
 
+import { assignMentor } from "@/gm/engine/development";
+
 import { DRAFT_ROLES, draftScoutingOf, studyProspect, toggleDraftWatch } from "@/gm/engine/draft-intel";
 import { executeDraftTrade, type DraftTradeProposal } from "@/gm/engine/draft-trades";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import type {
   GmLeagueState,
+  GmLeagueSettings,
   GmPlayer,
   GmDraftRole,
   GmDraftTool,
@@ -105,7 +108,7 @@ import {
 import { capStatus } from "@/gm/engine/cap";
 import { cbaSeason } from "@/gm/engine/season-flow-state";
 import { advanceSeasonJourney as advanceJourneyEngine, beginOffseason, decideRookieContract as decideRookieEngine, reopenRosterFill } from "@/gm/engine/season-flow";
-import { assignCamp, runSummerLeague, suggestCampAssignments } from "@/gm/engine/season-development";
+import { applyTrainingCamp, assignCamp, runSummerLeague, suggestCampAssignments } from "@/gm/engine/season-development";
 import { offerExtension } from "@/gm/engine/extensions";
 import { releasePlayer } from "@/gm/engine/roster-decisions";
 import { asAssociate, hireQuote, withAssociate, withHeadCoach } from "@/gm/engine/staff";
@@ -211,7 +214,12 @@ export function normalizeLoadedLeague(league: GmLeagueState): GmLeagueState {
   };
 }
 
+type CreationOptions = { replace?: boolean; settings?: Partial<GmLeagueSettings>; commissioner?: boolean };
+
 interface GmStore {
+  assignPlayerMentor: (playerId: string, mentorId: string | null) => void;
+  runTrainingCamp: () => void;
+  lastDevelopmentNote: string | null;
   league: GmLeagueState | null;
   hydrated: boolean;
   seeding: boolean;
@@ -251,10 +259,10 @@ interface GmStore {
   newLeague: (
     userTeamId?: string,
     season?: string,
-    opts?: { replace?: boolean }
+    opts?: CreationOptions
   ) => Promise<void>;
   /** Synthetic fallback (offline / demo). */
-  newGeneratedLeague: (userTeamId?: string, opts?: { replace?: boolean }) => void;
+  newGeneratedLeague: (userTeamId?: string, opts?: CreationOptions) => void;
   /** Park the active save and return to My Teams (does not delete). */
   leaveToHub: () => Promise<void>;
   /** Resume a parked save. */
@@ -386,6 +394,15 @@ interface GmStore {
   refreshDeveloperMarket: () => void;
 }
 
+function withCreationSettings(league: GmLeagueState, opts?: CreationOptions): GmLeagueState {
+  const settings = { ...league.settings };
+  for (const key of ["injuryFrequency", "developmentSpeed", "tradeDifficulty", "simPace"] as const) {
+    const value = opts?.settings?.[key];
+    if (typeof value === "number" && Number.isFinite(value)) settings[key] = clamp(value, key === "injuryFrequency" ? 0 : key === "simPace" ? 0.8 : 0.5, key === "simPace" ? 1.2 : 2);
+  }
+  return { ...league, settings, franchise: { ...franchisePlan(league), commissioner: opts?.commissioner ?? league.franchise?.commissioner ?? false } };
+}
+
 function withUpdate(league: GmLeagueState): GmLeagueState {
   return { ...league, updatedAt: new Date().toISOString() };
 }
@@ -441,6 +458,16 @@ function clearSimTimer() {
 export const useGmStore = create<GmStore>()(
   persist(
     (set, get) => ({
+      lastDevelopmentNote: null,
+      assignPlayerMentor: (playerId, mentorId) => {
+        const league = get().league; if (!league) return;
+        const result = assignMentor(league, playerId, mentorId);
+        set({ league: withUpdate(result.state), lastDevelopmentNote: result.reason });
+      },
+      runTrainingCamp: () => {
+        const league = get().league; if (!league) return;
+        set({ league: withUpdate(applyTrainingCamp(league)), lastJourneyNote: "Training camp results are saved. Continue from the season hub." });
+      },
       league: null,
       lastFaNote: null, lastDraftNote: null,
       lastJourneyNote: null,
@@ -571,7 +598,7 @@ export const useGmStore = create<GmStore>()(
           if (!res.ok || !payload.league) {
             throw new Error(payload.error ?? `Seed failed (${res.status})`);
           }
-          payload.league = prepareFranchise(payload.league);
+          payload.league = withCreationSettings(prepareFranchise(payload.league), opts);
           set({ league: payload.league, lastJourneyNote: null, lastFaNote: null, lastDraftNote: null, seeding: false, seedError: null });
           useMyLeagueStore.getState().bootstrap(
             payload.league,
@@ -590,7 +617,7 @@ export const useGmStore = create<GmStore>()(
             error instanceof Error ? error.message : "Failed to load real rosters";
           set({ seeding: false, seedError: message });
           // Fallback so the user can still play in the allocated slot.
-          const league = prepareFranchise(createGeneratedLeague({ userTeamId }));
+          const league = withCreationSettings(prepareFranchise(createGeneratedLeague({ userTeamId })), opts);
           set({ league });
           useMyLeagueStore.getState().bootstrap(league);
           await get().refreshSaves();
@@ -604,7 +631,7 @@ export const useGmStore = create<GmStore>()(
           if (!replace) {
             await allocateNewSave({ userTeamId });
           }
-          const league = prepareFranchise(createGeneratedLeague({ userTeamId }));
+          const league = withCreationSettings(prepareFranchise(createGeneratedLeague({ userTeamId })), opts);
           set({ league, lastJourneyNote: null, lastFaNote: null, lastDraftNote: null, seeding: false, seedError: null });
           useMyLeagueStore.getState().bootstrap(league);
           await get().refreshSaves();
