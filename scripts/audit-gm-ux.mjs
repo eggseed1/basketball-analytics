@@ -247,6 +247,39 @@ try {
     await page.evaluate(() => document.documentElement.classList.remove("dark"));
   }
   await page.setViewportSize({ width: 1440, height: 1000 });
+  if (verify) {
+    const saved = JSON.parse(readFileSync(`${dir}/regular.json`, "utf8"));
+    saved.league.franchise = { ...saved.league.franchise, pauses: { offers: false, scouting: false, injuries: false } };
+    writeFileSync(`${dir}/calendar.json`, JSON.stringify(saved));
+    for (const width of [390, 1440]) {
+      await page.setViewportSize({ width, height: 900 });
+      await load("calendar", "/gm");
+      const calendar = page.locator(".gm-cal").first();
+      async function calendarDate() {
+        const title = await calendar.locator(".gm-cal__title").innerText();
+        const day = await calendar.locator(".is-today .gm-cal__num").innerText();
+        const value = Date.parse(title + " " + day.trim().split(/\s/)[0]);
+        assert.ok(Number.isFinite(value));
+        return value;
+      }
+      let previous = await calendarDate();
+      for (let cycle = 0; cycle < 3; cycle++) {
+        await calendar.getByRole("button", { name: "Auto season", exact: true }).click();
+        assert.ok(await calendarDate() >= previous, "resuming cannot rewind the calendar");
+        await page.waitForTimeout(1100);
+        const runningDate = await calendarDate();
+        await calendar.getByRole("button", { name: "Stop", exact: true }).click();
+        previous = await calendarDate();
+        assert.ok(previous >= runningDate, "stopping cannot rewind the calendar");
+      }
+      await page.reload({ waitUntil: "domcontentloaded" });
+      await calendar.waitFor({ state: "visible", timeout: 90000 });
+      assert.equal(await calendarDate(), previous, "reload keeps the calendar date");
+      await capture(`calendar-${width}`);
+    }
+    await page.setViewportSize({ width: 390, height: 844 });
+    report.tasks.push("Calendar: phone/desktop start, stop, resume and reload preserve forward dates");
+  }
   await load("roster-under");
   await page.getByTestId("season-hub").waitFor();
   await capture("desktop-roster-under");
