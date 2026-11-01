@@ -347,6 +347,17 @@ export function GmPlayerCard({
                 January and the end of the season move the rating a step.
               </p>
             ) : null}
+            {player.sheet?.developmentReport ? (
+              <div className="mt-4 rounded-lg border border-border p-3">
+                <h4 className="text-sm font-semibold">Latest development check-in</h4>
+                <p className="mt-2 text-sm">Age {player.sheet.developmentReport.age} · {player.sheet.developmentReport.before} → {player.sheet.developmentReport.after} OVR</p>
+                <ul className="mt-2 list-disc space-y-1 pl-4 text-sm text-muted-foreground">
+                  {player.sheet.developmentReport.reasons.map(reason => <li key={reason}>{reason}</li>)}
+                </ul>
+                {player.sheet.developmentReport.gains.length ? <p className="mt-2 text-sm">{player.sheet.developmentReport.gains.join(" · ")}</p> : null}
+                {onRoster ? <Link href="/gm/franchise" className="mt-3 inline-block text-sm font-medium underline underline-offset-4">Adjust training and role</Link> : null}
+              </div>
+            ) : null}
           </>
         )}
         {!inDraft ? (
@@ -553,3 +564,4 @@ export function GmPlayerCard({
     </div>
   );
 }
+

@@ -3,6 +3,7 @@ import { getBundledBrefPeerBoard } from "../src/data/runtime/bref-advanced-snaps
 import { buildLeagueFromPlayerSeasons } from "../src/gm/seed/create-real-league";
 import { prepareFranchise,exportFranchise } from "../src/gm/engine/franchise";
 import { expandDraftOrder } from "../src/gm/engine/draft-room";
+import { progressSheet } from "../src/gm/engine/attributes";
 import { finishDraftWithAi } from "../src/gm/engine/progression";
 import type { GmLeagueState } from "../src/gm/types";
 
@@ -15,8 +16,12 @@ async function main(){
   const lotteryOrder=[...others.slice(0,19),"bos",...others.slice(19)],draftOrder=expandDraftOrder(lotteryOrder);
   const night:GmLeagueState={...prep,phase:"draft",lotteryOrder,draftOrder,draftSlotOrigins:draftOrder,draftPickIndex:12,seasonFlow:{...prep.seasonFlow!,stage:"draft"}};
   writeFileSync(dir+"/prep.json",exportFranchise(prep));writeFileSync(dir+"/night.json",exportFranchise(night));
-  writeFileSync(dir+"/results.json",exportFranchise(finishDraftWithAi({...night,draftPickIndex:0})));
+  const completed=finishDraftWithAi({...night,draftPickIndex:0});
+  writeFileSync(dir+"/results.json",exportFranchise(completed));
+  const rookie=completed.players.find(player=>player.teamId==="bos"&&player.draftYear===league.season&&player.draftPick)!;
+  const development:GmLeagueState={...completed,phase:"offseason",seasonFlow:{...completed.seasonFlow!,stage:"progression",progressionApplied:true},players:completed.players.map(player=>player.id===rookie.id?progressSheet({...player,age:player.age+1,developmentPlan:"practice"},{minutes:6,coach:0.4}):player)};
+  writeFileSync(dir+"/development.json",exportFranchise(development));
   const target=league.players.find(player=>player.id===league.draftPool[45])!;
-  writeFileSync(dir+"/manifest.json",JSON.stringify({targetId:target.id,targetName:target.name,tradeSlot:15,season:league.season}));
+  writeFileSync(dir+"/manifest.json",JSON.stringify({targetId:target.id,targetName:target.name,tradeSlot:15,season:league.season,developmentId:rookie.id}));
 }
 main().catch(error=>{console.error(error);process.exitCode=1;});

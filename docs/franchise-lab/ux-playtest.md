@@ -24,6 +24,24 @@ This pass exercises a repository build in Chromium at 390×844 and 1440×1000 us
 
 `npm run test:franchise-saves` delays database writes while switching between two franchises. It checks that each save and its label stay in the correct slot, that the empty hub does not erase a saved league, and that the parallel simulation layer follows the same slot.
 
+## Draft follow-up
+
+The draft pass uses the same viewport sizes and bundled NBA rosters, with generated prospects. Preparation, a live clock, the completed board and a development check-in are imported test setups. They isolate tasks without claiming that a full real-data season was played by hand.
+
+| Draft task | Problem found | Change |
+| --- | --- | --- |
+| Decide what to investigate | Repeated looks had no clear resource cost or research plan. A useful skill could disappear behind an overall rating. | Finite film, analytics, workout, interview and medical assignments; visible skill ranges, production samples, strengths and unresolved questions. Eight draft strategies, comparison cards, a saved board and a watchlist support different roster jobs. |
+| Trade up for a target | Slot offers were limited and could become stale. A package could hide selected futures below the asset list. | Target any remaining pick, suggest or customize a package, see every outgoing asset in the assessment, then review and confirm. Ownership, salary, future firsts, frozen picks and roster capacity are checked again. |
+| Price draft assets | Cheap reserves and newly selected second-round rights could become lottery currency because player and pick values used different units. | Convert player values to the pick scale, preserve draft-rights pedigree, discount bundles of small assets and require a credible main asset for lottery selections. |
+| Control the room | A selection could skip the next CPU decisions and trade opportunities. | Manual selections leave the next pick waiting. Bulk simulation pauses near watchlist decisions. Delegation follows the user's saved board and strategy. |
+| Research on a phone | A long report required scrolling back through the page to find the board or make a pick. | A return-to-board action and a selection review at the end of the report keep both actions nearby. The desktop board stays beside the report while scrolling. |
+| Keep a prospect's identity | Numeric suffixes on reused style nicknames were treated as invalid on load, regenerating real names. | Recognize numbered style names and preserve identity, reports, spending and watchlists across reloads. |
+| Develop the selected player | A future label could overshadow actual readiness, opportunity and progress. | Distinct practice and rotation plans, focused skills, finite headroom and explained development check-ins. The recap links the class to rookie contracts. |
+
+`scripts/smoke-gm-draft-overhaul.mjs` checks research, repeated-study blocking, spending, saved strategies and watchlists, comparison, a direct prospect page, trade cancellation and confirmation, traded pick ownership, a manual selection, development plans and the growth report. It records eight phone/desktop screenshots, overflow checks and page errors under `/tmp/franchise-draft-qa`.
+
+`npm run test:franchise-draft` covers hidden-information independence, watchlist stops, trade replays, salary and future-pick constraints, exact pick consumption, rights pricing and a complete 60-pick board. `scripts/test-gm-draft-class.ts` follows 6,000 developmental careers and a separate 40-class rolling talent stock. [Draft research and calibration](draft-research.md) records the methods and limits.
+
 ## Next priorities
 
 1. **Make a simulated game teach the GM something.** Connect results to rotation minutes, positional fit, injuries and the existing team plan. Present evidence from the game and a direct route to the relevant decision. This is the strongest next product hypothesis; this audit did not measure whether players understand why they won or lost.
