@@ -7,11 +7,9 @@ import { Button } from "@/components/ui/button";
 import {
   draftPickLog,
   isDraftComplete,
-  userDraftPicks,
   type DraftPickRow,
 } from "@/gm/engine/draft-room";
 import { playerSheet } from "@/gm/engine/attributes";
-import { playerDevTrait, traitLabel } from "@/gm/engine/dev-traits";
 import { displayPlayerName } from "@/gm/lib/selectors";
 import { useGmStore } from "@/gm/state/gm-store";
 import type { GmLeagueState } from "@/gm/types";
@@ -23,10 +21,9 @@ function teamAbbr(league: GmLeagueState, teamId: string): string {
 
 function PickMeta({ row }: { row: DraftPickRow }) {
   const ovr = playerSheet(row.player).overall;
-  const trait = playerDevTrait(row.player);
   return (
     <span className="text-[12px] text-muted-foreground">
-      OVR {ovr} · {traitLabel(trait)}
+      OVR {ovr} · consensus #{row.mockRank}
       {row.sleeper ? ` · fell ${row.fall} (mock #${row.mockRank})` : ""}
     </span>
   );
@@ -38,7 +35,8 @@ function PickMeta({ row }: { row: DraftPickRow }) {
 export function GmDraftResults({ league }: { league: GmLeagueState }) {
   const router = useRouter();
   const advanceJourney = useGmStore((s) => s.advanceSeasonJourney);
-  const yours = userDraftPicks(league);
+  const yours = draftPickLog(league).filter(row=>row.player.teamId===league.userTeamId);
+  const developmentPlan = useGmStore(s=>s.setDevelopmentPlan);
   const board = draftPickLog(league);
   const stillOnDraft = isDraftComplete(league);
   const seasonLabel = `${league.season - 1}-${String(league.season).slice(-2)}`;
@@ -56,8 +54,8 @@ export function GmDraftResults({ league }: { league: GmLeagueState }) {
               : "The board is set"}
           </h2>
           <p className="mt-1 text-[14px] text-muted-foreground">
-            Overall and development traits are unlocked. Scroll the full order
-            below, then review rookie contracts at the season hub.
+            Current readiness is known. Choose a development plan for your class,
+            then review rookie contracts at the season hub. Future growth is still uncertain.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -102,6 +100,7 @@ export function GmDraftResults({ league }: { league: GmLeagueState }) {
                     </span>
                   </span>
                 </Link>
+                <label className="flex flex-wrap items-center gap-3 px-3 pb-4 text-sm">Development plan<select aria-label={"Development plan for "+row.player.name} className="min-h-11 rounded-lg border border-border bg-background px-3 py-2" value={row.player.developmentPlan??"balanced"} onChange={event=>developmentPlan(row.player.id,event.target.value as NonNullable<typeof row.player.developmentPlan>)}><option value="balanced">Balanced reps</option><option value="practice">Skills work</option><option value="rotation">Rotation reps</option></select></label>
               </li>
             ))}
           </ul>

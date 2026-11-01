@@ -1,6 +1,26 @@
 /** In-depth Franchise Lab GM - canonical sim types (original; not ZenGM). */
 
 export type GmPosition = "PG" | "SG" | "SF" | "PF" | "C";
+export type GmDraftRole = "value" | "ready" | "upside" | "shooting" | "creation" | "defense" | "rim" | "connector";
+export type GmScoutStudy = "film" | "analytics" | "workout" | "interview" | "medical";
+export type GmDraftTool = "shooting" | "creation" | "defense" | "feel" | "athleticism";
+export interface GmAmateurSeason {
+  competition: string; games: number; minutes: number; points: number; rebounds: number; assists: number; turnovers: number;
+  steals: number; blocks: number; threeMade: number; threeAttempts: number; ftMade: number; ftAttempts: number;
+}
+export interface GmProspectReport {
+  studies: Partial<Record<GmScoutStudy, { day: number; focus?: GmDraftTool; note: string }>>;
+  tools: Partial<Record<GmDraftTool, number>>;
+  readiness?: number;
+  habits?: "strong" | "steady" | "uncertain";
+  medical?: "clear" | "monitor" | "concern";
+}
+export interface GmDraftScouting {
+  version: 1; season: number; spent: number; reports: Record<string, GmProspectReport>; watchlist: string[]; strategy: GmDraftRole;
+}
+export interface GmDraftDeal {
+  id: string; pickIndex: number; fromTeamId: string; toTeamId: string; sent: string[]; received: string[];
+}
 export type Conference = "East" | "West";
 
 export interface GmRatings {
@@ -237,6 +257,8 @@ export interface GmPotential {
 }
 
 export interface GmSheet {
+  developmentCarry?: number;
+  developmentReport?: { age: number; before: number; after: number; reasons: string[]; gains: string[] };
   /** Entry calibration retained through development and save migrations. */
   overallOffset?: number;
   /** Bump when the attribute formula changes so old saves rebuild. */
@@ -290,6 +312,11 @@ export interface GmPlayer {
   listedPosition?: GmPosition;
   simProfile?: GmSimProfile;
   developmentFocus?: "balanced" | "shooting" | "creation" | "defense" | "rebounding";
+  developmentPlan?: "balanced" | "practice" | "rotation";
+  /** Calibrated generated class; existing NBA player sheets remain authoritative. */
+  draftModel?: 2;
+  consensusRank?: number;
+  amateur?: GmAmateurSeason;
   rolePromise?: { teamId: string; minutes: number; madeDay: number; games?: number; totalMinutes?: number; lastGameId?: string; status: "pending" | "met" | "unmet" };
   id: string;
   /** True identity - hidden for undrafted prospects until pick night. */
@@ -1013,6 +1040,9 @@ export interface GmLeagueState {
    * selection so draft-night trades can swap a single slot without moving both rounds.
    */
   draftOrder?: string[];
+  draftSlotOrigins?: string[];
+  draftScouting?: GmDraftScouting;
+  draftDeals?: GmDraftDeal[];
   /** Index into draftOrder (or lotteryOrder) for the current pick. */
   draftPickIndex?: number;
   /** User's order for this class. Missing means the scout board. */

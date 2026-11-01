@@ -163,7 +163,7 @@ const traded = applyDraftNightTrade(state, up);
 assert.equal(traded.draftOrder?.[0], "bos");
 assert.equal(traded.draftOrder?.[1], "det");
 assert.ok(
-  traded.news[0]?.body.includes("Sweeteners:") || up.upSweetenerIds.length === 0,
+  up.youSend.filter(line=>!line.includes("tonight")).every(line=>traded.news[0]?.body.includes(line)),
   "news should list futures moved"
 );
 
@@ -216,3 +216,4 @@ assert.equal(shouldShowDraftResults(summer), true);
 assert.equal(isDraftComplete(summer), false);
 
 console.log("draft night ok", displayPlayerName(klass[0]!), draftPickLog(after)[0]?.pick);
+

@@ -1,3 +1,4 @@
+import { ensureDraftPickHorizon } from "@/gm/engine/draft-order";
 /**
  * Summer loop: contracts expire, the market opens, then a new year starts.
  * Aging happens once, on the way into free agency, so opening the next
@@ -331,9 +332,10 @@ export function startNextSeason(state: GmLeagueState): GmLeagueState {
     seasonPossessions: undefined,
   }));
   const players = [...carried, ...prospects];
-  const teams = filled.teams
+  const retainedTeams = filled.teams
     .map((team) => filled.seasonFlow?.deadMoneyRolled ? team : tickDeadMoney(team))
-    .map((team) => autoSetLineup(team, players));
+    .map((team) => autoSetLineup({...team,draftPicks:team.draftPicks.filter(pick=>pick.season>=season)}, players));
+  const teams=ensureDraftPickHorizon({...filled,season,teams:retainedTeams}).teams;
   const priorWins = Object.fromEntries(
     filled.teams.map((team) => [team.id, filled.standings[team.id]?.wins ?? 0])
   );
@@ -367,6 +369,9 @@ export function startNextSeason(state: GmLeagueState): GmLeagueState {
     lotteryOrder: undefined,
     draftPickIndex: 0,
     userDraftBoard: undefined,
+    draftSlotOrigins: undefined,
+    draftScouting: undefined,
+    draftDeals: undefined,
     combineDone: false,
     tradeDeadlinePassed: false,
     incomingOffer: undefined,

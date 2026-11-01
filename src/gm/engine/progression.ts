@@ -1,7 +1,9 @@
+import { draftScoutingOf } from "@/gm/engine/draft-intel";
+import { maybeCpuDraftTrade } from "@/gm/engine/draft-trades";
+import { rookieContractForPick } from "@/gm/engine/draft-order";
 import type { GmLeagueState, GmNewsItem, GmPlayer } from "@/gm/types";
 import { createRng, clamp, uid } from "@/gm/engine/rng";
 import { ensurePlayerSheet, playerSheet, progressSheet } from "@/gm/engine/attributes";
-import { ensurePotentialTrait, playerDevTrait, traitLabel } from "@/gm/engine/dev-traits";
 import {
   aiSelectProspect,
   draftSlotCount,
@@ -103,7 +105,7 @@ export function developPlayers(
       : 1;
     const grown = progressSheet(aged, {
       coach,
-      minutes: p.seasonLine && p.seasonLine.gp > 0 ? p.seasonLine.min / p.seasonLine.gp : p.minutesPreference,
+      minutes: p.seasonLine && p.seasonLine.gp > 0 ? p.seasonLine.min / p.seasonLine.gp : p.draftModel === 2 || p.developmentPlan ? 0 : p.minutesPreference,
       pace: "summer",
       speed: developmentSpeed,
       playoffGames: playoffGames?.[p.id] ?? 0,
@@ -178,7 +180,7 @@ function growOnce(league: GmLeagueState, pace: "season"): { players: GmPlayer[];
     const minutes =
       player.seasonLine && player.seasonLine.gp >= 8
         ? player.seasonLine.min / player.seasonLine.gp
-        : player.minutesPreference;
+        : player.draftModel === 2 || player.developmentPlan ? 0 : player.minutesPreference;
     const developer = league.teams.find((t) => t.id === player.teamId)?.staff.developer;
     const growing = true;
     const touch = developer ? 1 + (developer.touch - 3) * 0.02 : 1;
@@ -266,6 +268,10 @@ export function advanceDraftPastAi(state: GmLeagueState): GmLeagueState {
     if (idx >= draftSlotCount(next)) {
       return { ...next, phase: "draft" };
     }
+    const watched=draftScoutingOf(next).watchlist;
+    const nextUser=(next.draftOrder??[]).findIndex((owner,slot)=>owner===next.userTeamId&&slot>=idx);
+    if(nextUser>idx&&next.players.some(player=>watched.includes(player.id)&&next.draftPool.includes(player.id)&&(player.consensusRank??99)<=idx+4)) return next;
+    next = maybeCpuDraftTrade(next);
     const teamId = pickOwnerAt(next, idx);
     if (!teamId) break;
     if (teamId === next.userTeamId) {
@@ -283,11 +289,12 @@ export function advanceDraftPastAi(state: GmLeagueState): GmLeagueState {
 
 /** One CPU selection. No-op when the user is on the clock. */
 export function advanceOneDraftPick(state: GmLeagueState): GmLeagueState {
-  const next = ensureDraftOrder(state);
+  let next = ensureDraftOrder(state);
   const idx = next.draftPickIndex ?? 0;
   if (!next.draftPool.length || idx >= draftSlotCount(next)) {
     return { ...next, phase: "draft" };
   }
+  next = maybeCpuDraftTrade(next);
   const teamId = pickOwnerAt(next, idx);
   if (!teamId || teamId === next.userTeamId) {
     return { ...next, phase: "draft" };
@@ -305,6 +312,7 @@ export function finishDraftWithAi(state: GmLeagueState): GmLeagueState {
     guard += 1;
     const idx = next.draftPickIndex ?? 0;
     if (idx >= draftSlotCount(next)) break;
+    next = maybeCpuDraftTrade(next);
     const teamId = pickOwnerAt(next, idx);
     if (!teamId) break;
     const pickId = aiSelectProspect(next, teamId);
@@ -319,93 +327,32 @@ export function runDraftPick(
   teamId: string,
   playerId: string
 ): GmLeagueState {
-  const before = state.players.find((p) => p.id === playerId);
-  const codename = before?.codename;
-  const trueName = before?.name ?? "prospect";
-
-  const players = state.players.map((p) =>
-    p.id === playerId
-      ? {
-          ...p,
-          teamId,
-          identityRevealed: true,
-          contract: {
-            yearsRemaining: 4,
-            annualSalaryM: 4 + (p.draftPick ?? 30) * -0.05 + 8,
-            birdRights: "none" as const,
-            signedSeason: state.season,
-          },
-          // Full reveal on draft night.
-          scouted: {
-            impact: p.ratings.impact,
-            offense: p.ratings.offense,
-            defense: p.ratings.defense,
-            uncertainty: 0.05,
-          },
-        }
-      : p
-  );
-  const drafted = players.find((p) => p.id === playerId);
-  const pickNum = (state.draftPickIndex ?? 0) + 1;
-  const rookieSal = clamp(12 - pickNum * 0.25, 1.5, 12);
-  const fixed = players.map((p) => {
-    if (p.id !== playerId || !p.contract) return p;
-    const stamped = ensurePlayerSheet(p);
-    const sheet = stamped.sheet
-      ? {
-          ...stamped.sheet,
-          potential: ensurePotentialTrait(stamped.sheet.potential, stamped),
-        }
-      : stamped.sheet;
-    return {
-      ...stamped,
-      sheet,
-      contract: state.seasonFlow ? null : { ...p.contract, annualSalaryM: rookieSal },
-      pendingRookieContract: state.seasonFlow ? {
-        ...p.contract, originalYears: 4, annualSalaryM: Math.round(rookieSal * state.settings.salaryCapM / 140.588 * 100) / 100,
-        signedSeason: state.season + 1,
-        years: Array.from({ length: 4 }, (_, index) => ({ season: state.season + 1 + index,
-          salaryM: Math.round(rookieSal * state.settings.salaryCapM / 140.588 * 100) / 100 })),
-      } : undefined,
-      serviceYears: 0,
-      draftedByTeamId: teamId,
-      draftPick: pickNum,
-      draftYear: state.season,
-    };
+  const index=state.draftPickIndex??0;
+  const before=state.players.find(player=>player.id===playerId);
+  if(state.phase!=="draft" || !state.draftPool.includes(playerId) || !before || before.teamId!=null || pickOwnerAt(state,index)!==teamId || !state.teams.some(team=>team.id===teamId)) return state;
+  const codename=before.codename,trueName=before.name;
+  const pickNum=index+1,contract=rookieContractForPick(state,pickNum);
+  const fixed=state.players.map(player=>{
+    if(player.id!==playerId) return player;
+    const stamped=ensurePlayerSheet(player);
+    return {...stamped,teamId,identityRevealed:true,contract:state.seasonFlow?null:contract,pendingRookieContract:state.seasonFlow?contract:undefined,serviceYears:0,draftedByTeamId:teamId,draftPick:pickNum,draftYear:state.season,developmentPlan:"balanced" as const,scouted:{impact:player.ratings.impact,offense:player.ratings.offense,defense:player.ratings.defense,uncertainty:0.05}};
   });
-
+  const drafted=fixed.find(player=>player.id===playerId);
+  const round=index<state.teams.length?1:2;
+  const origin=state.draftSlotOrigins?.[index]??state.lotteryOrder?.[index%Math.max(1,state.teams.length)];
   const team = state.teams.find((t) => t.id === teamId)!;
-  const teams = state.teams.map((t) =>
-    t.id === teamId
-      ? {
-          ...t,
-          benchOrder: [...t.benchOrder, playerId],
-          draftPicks: t.draftPicks.filter(
-            (dp) =>
-              !(
-                dp.season === state.season &&
-                dp.round === 1 &&
-                dp.ownerTeamId === teamId
-              )
-          ),
-        }
-      : t
-  );
+  const teams = state.teams.map((t) => ({
+    ...t,
+    benchOrder: t.id === teamId ? [...t.benchOrder, playerId] : t.benchOrder,
+    // A retained protected pick can still be recorded in its former holder's
+    // book. Consume the resolved selection wherever the record lives.
+    draftPicks: t.draftPicks.filter(dp => !(dp.season === state.season && dp.round === round && (origin ? dp.originalTeamId === origin : dp.ownerTeamId === teamId))),
+  }));
 
   const sheet = drafted ? playerSheet(drafted) : null;
-  const trait = drafted ? playerDevTrait(drafted) : "normal";
-  const ovr = sheet?.overall;
-  const ovrBit = ovr != null ? ` Overall ${ovr}.` : "";
-  const traitBit = ` Dev trait: ${traitLabel(trait)}.`;
-  const revealHeadline =
-    trait === "xfactor"
-      ? `${team.abbr} hits on an X-Factor: ${trueName}`
-      : trait === "superstar"
-        ? `${team.abbr} lands a Superstar: ${trueName}`
-        : `${team.abbr} selects ${trueName}`;
-  const revealBody = codename
-    ? `Pick #${pickNum}. Scout mold ${codename}.${ovrBit}${traitBit}`
-    : `Pick #${pickNum}.${ovrBit}${traitBit}`;
+  const ovr=sheet?.overall;
+  const revealHeadline=`${team.abbr} selects ${trueName}`;
+  const revealBody=`Pick #${pickNum}. Overall ${ovr??"pending"}.${codename?" Style: "+codename+".":""} Development depends on the role, practice and opportunity you provide.`;
   const grade =
     teamId === state.userTeamId ? ` ${pickGrade(state, playerId)}` : "";
 

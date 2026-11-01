@@ -1,3 +1,6 @@
+import { DRAFT_ROLES, draftScoutingOf, studyProspect, toggleDraftWatch } from "@/gm/engine/draft-intel";
+import { executeDraftTrade, type DraftTradeProposal } from "@/gm/engine/draft-trades";
+import type { GmDraftRole, GmDraftTool, GmScoutStudy } from "@/gm/types";
 "use client";
 
 import { create } from "zustand";
@@ -87,7 +90,6 @@ import {
   ensureProspectIdentities,
   revealScouting,
   sealProspect,
-  spendScoutingLook,
   staffScoutContext,
 } from "@/gm/engine/scouting";
 import { generateDeveloperMarket } from "@/gm/seed/developers";
@@ -221,6 +223,12 @@ interface GmStore {
   seedError: string | null;
   /** Last FA desk note (offer result, advance block, etc.). */
   lastFaNote: string | null;
+  lastDraftNote: string | null;
+  scoutProspect: (playerId:string,method:GmScoutStudy,focus?:GmDraftTool)=>void;
+  setDraftStrategy: (strategy:GmDraftRole)=>void;
+  toggleDraftWatch: (playerId:string)=>void;
+  makeDraftTrade: (proposal:DraftTradeProposal)=>{ok:boolean;reason:string};
+  setDevelopmentPlan: (playerId:string,plan:NonNullable<GmPlayer["developmentPlan"]>)=>void;
   lastJourneyNote: string | null;
   advanceSeasonJourney: () => void;
   decideRookieContract: (playerId: string, sign: boolean) => void;
@@ -433,7 +441,7 @@ export const useGmStore = create<GmStore>()(
   persist(
     (set, get) => ({
       league: null,
-      lastFaNote: null,
+      lastFaNote: null, lastDraftNote: null,
       lastJourneyNote: null,
       advanceSeasonJourney: () => {
         const league = get().league; if (!league) return;
@@ -491,7 +499,7 @@ export const useGmStore = create<GmStore>()(
         const league = parseFranchise(text);
         clearSimTimer();
         await allocateNewSave({ userTeamId: league.userTeamId, season: league.season });
-        set({ league, lastFaNote: null, lastJourneyNote: null, seeding: false, seedError: null, simRun: null });
+        set({ league, lastFaNote: null, lastDraftNote: null, lastJourneyNote: null, seeding: false, seedError: null, simRun: null });
         useMyLeagueStore.getState().bootstrap(league);
         await get().refreshSaves();
       },
@@ -562,7 +570,7 @@ export const useGmStore = create<GmStore>()(
             throw new Error(payload.error ?? `Seed failed (${res.status})`);
           }
           payload.league = prepareFranchise(payload.league);
-          set({ league: payload.league, lastJourneyNote: null, lastFaNote: null, seeding: false, seedError: null });
+          set({ league: payload.league, lastJourneyNote: null, lastFaNote: null, lastDraftNote: null, seeding: false, seedError: null });
           useMyLeagueStore.getState().bootstrap(
             payload.league,
             {
@@ -595,7 +603,7 @@ export const useGmStore = create<GmStore>()(
             await allocateNewSave({ userTeamId });
           }
           const league = prepareFranchise(createGeneratedLeague({ userTeamId }));
-          set({ league, lastJourneyNote: null, lastFaNote: null, seeding: false, seedError: null });
+          set({ league, lastJourneyNote: null, lastFaNote: null, lastDraftNote: null, seeding: false, seedError: null });
           useMyLeagueStore.getState().bootstrap(league);
           await get().refreshSaves();
         })();
@@ -606,7 +614,7 @@ export const useGmStore = create<GmStore>()(
         set({ simRun: null });
         await parkActiveSave();
         useMyLeagueStore.getState().reset();
-        set({ league: null, lastJourneyNote: null, lastFaNote: null, seedError: null });
+        set({ league: null, lastJourneyNote: null, lastFaNote: null, lastDraftNote: null, seedError: null });
         await get().refreshSaves();
       },
 
@@ -623,7 +631,7 @@ export const useGmStore = create<GmStore>()(
           const loaded = parsed.state?.league;
           if (!loaded) throw new Error("Save has no league");
           const league = normalizeLoadedLeague(loaded);
-          set({ league, lastJourneyNote: null, lastFaNote: null, seeding: false });
+          set({ league, lastJourneyNote: null, lastFaNote: null, lastDraftNote: null, seeding: false });
 
           const rawB = await readLayerBRaw(id);
           if (rawB) {
@@ -1452,7 +1460,6 @@ export const useGmStore = create<GmStore>()(
         const onClock = pickOwnerAt(sealed);
         if (onClock && onClock !== sealed.userTeamId) return;
         let next = runDraftPick(sealed, sealed.userTeamId, playerId);
-        next = advanceDraftPastAi(next);
         next = afterDraftProgress(next);
         set({ league: withUpdate(next) });
       },
@@ -1510,7 +1517,7 @@ export const useGmStore = create<GmStore>()(
 
       runCombine: () => {
         const league = get().league;
-        if (!league || league.combineDone) return;
+        if (!league || league.combineDone || (league.seasonFlow?.stage !== "scouting" && !(league.phase === "offseason" && !league.seasonFlow))) return;
         const pool = new Set(league.draftPool);
         const players = league.players.map((player) =>
           pool.has(player.id) ? applyCombine(player) : player
@@ -1535,14 +1542,31 @@ export const useGmStore = create<GmStore>()(
         });
       },
 
-      scoutLook: (playerId) => {
-        const league = get().league;
-        if (!league?.draftPool.includes(playerId)) return;
-        const { scout } = staffScoutContext(league);
-        const players = league.players.map((player) =>
-          player.id === playerId ? spendScoutingLook(player, scout) : player
-        );
-        set({ league: withUpdate({ ...league, players }) });
+      scoutLook: (playerId) => get().scoutProspect(playerId,"film","shooting"),
+      scoutProspect: (playerId,method,focus) => {
+        const league=get().league;if(!league)return;
+        const result=studyProspect(league,playerId,method,focus);
+        set({...(result.ok?{league:withUpdate(result.state)}:{}),lastDraftNote:result.reason});
+      },
+      setDraftStrategy: strategy => {
+        const league=get().league;if(!league||!DRAFT_ROLES.some(row=>row.id===strategy))return;
+        set({league:withUpdate({...league,draftScouting:{...draftScoutingOf(league),strategy}})});
+      },
+      toggleDraftWatch: playerId => {
+        const league=get().league;if(!league)return;
+        set({league:withUpdate(toggleDraftWatch(league,playerId))});
+      },
+      makeDraftTrade: proposal => {
+        const league=get().league;if(!league)return {ok:false,reason:"No franchise loaded."};
+        if(proposal.fromTeamId!==league.userTeamId&&proposal.toTeamId!==league.userTeamId)return {ok:false,reason:"Choose a trade involving your club."};
+        const result=executeDraftTrade(league,proposal);
+        set({...(result.ok?{league:withUpdate(result.state)}:{}),lastDraftNote:result.reason});
+        if(result.ok)syncMyLeague(result.state);
+        return {ok:result.ok,reason:result.reason};
+      },
+      setDevelopmentPlan: (playerId,plan) => {
+        const league=get().league;if(!league||!["balanced","practice","rotation"].includes(plan))return;
+        set({league:withUpdate({...league,players:league.players.map(player=>player.id===playerId&&player.teamId===league.userTeamId?{...player,developmentPlan:plan}:player)})});
       },
 
       simPlayInNight: () => {

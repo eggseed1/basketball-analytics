@@ -1,3 +1,4 @@
+import { initialDraftPicks } from "@/gm/engine/draft-order";
 /**
  * Map real PlayerSeason rows → Franchise Lab GmPlayer / league.
  * Impact prefers DARKO DPM, then RAPTOR, then a stats heuristic.
@@ -444,29 +445,7 @@ export function buildLeagueFromPlayerSeasons(
       },
       starters: emptyStarters(),
       benchOrder: [],
-      draftPicks: [
-        {
-          id: uid("dp"),
-          season,
-          round: 1,
-          originalTeamId: f.id,
-          ownerTeamId: f.id,
-        },
-        {
-          id: uid("dp"),
-          season,
-          round: 2,
-          originalTeamId: f.id,
-          ownerTeamId: f.id,
-        },
-        {
-          id: uid("dp"),
-          season: season + 1,
-          round: 1,
-          originalTeamId: f.id,
-          ownerTeamId: f.id,
-        },
-      ],
+      draftPicks: initialDraftPicks(f.id,season),
       tradeExceptionsM: [],
     };
   });
