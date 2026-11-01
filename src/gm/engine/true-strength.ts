@@ -185,6 +185,26 @@ export function consensusCorrectLatent(
     }
   }
 
+  // Clearly negative DRBL on a real sample trims a DARKO-only rating.
+  // Smaller pull and tighter cap than the lift, and never against a production lift.
+  // Heavy minutes cap the trim: DRBL undersells defense-first starters coaches trust.
+  if (
+    !thin &&
+    targetImpact === impact &&
+    typeof drbl === "number" &&
+    Number.isFinite(drbl) &&
+    drbl <= -0.3
+  ) {
+    const drblImpact = overallToImpact(clamp(69 + drbl * 6.0, 48, 98));
+    const gap = impact - drblImpact;
+    if (gap > 1) {
+      const confidence = clamp(minutes / (minutes + 900), 0, 0.6);
+      const cap = mpg != null && mpg >= 26 ? 0.6 : mpg != null && mpg >= 22 ? 0.9 : 1.2;
+      const trim = Math.min(cap, gap * 0.5 * confidence * 2);
+      targetImpact = impact - trim;
+    }
+  }
+
   const delta = targetImpact - impact;
   if (Math.abs(delta) < 0.02) {
     return {

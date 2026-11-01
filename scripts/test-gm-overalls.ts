@@ -163,6 +163,12 @@ async function main() {
     );
   }
 
+  // DARKO-only role player with clearly negative DRBL gets trimmed.
+  const carter = byName.get("Devin Carter");
+  if (carter) {
+    assert.ok(carter.ovr <= 72, `Devin Carter ovr ${carter.ovr} should be trimmed by DRBL`);
+  }
+
   const teamRows = league.teams
     .map((team) => ({
       team,
