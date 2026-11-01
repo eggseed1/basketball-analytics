@@ -119,7 +119,7 @@ export function GmPlayerCard({
   const mine = userTeam(league);
   const onRoster = player.teamId === mine.id;
   const shownName = displayPlayerName(player);
-  const trait = inDraft ? null : playerDevTrait(player);
+  const trait = inDraft || player.draftModel===2 ? null : playerDevTrait(player);
   const profile = player.scoutProfile;
   const [careerApi, setCareerApi] = useState<CareerRow[] | null>(null);
   const [careerNote, setCareerNote] = useState<string | null>(null);
@@ -334,13 +334,12 @@ export function GmPlayerCard({
         ) : (
           <>
             <p className="mt-1 text-sm text-muted-foreground">
-              Overall is the rating used across the league. Development trait
-              drives how hard they grow.
+              {player.draftModel===2?"Growth depends on age, work habits, health and a realistic practice or rotation plan.":"Overall is the rating used across the league. Development trait drives how hard they grow."}
             </p>
-            <p className="mt-2 text-sm">
-              Scouted potential {scoutRead.low}-{scoutRead.high}. {scoutRead.comment}
+            <p className="mt-2 text-sm" data-testid="development-outlook">
+              {player.draftModel===2?"Development outlook":"Scouted potential"} {scoutRead.low}-{scoutRead.high}. {scoutRead.comment}
             </p>
-            {player.sheet?.potential ? (
+            {player.sheet?.potential && player.draftModel!==2 ? (
               <p className="mt-1 text-sm text-muted-foreground">
                 Peak years {player.sheet.potential.peakStart} to{" "}
                 {player.sheet.potential.peakEnd}. The summer is the big jump.

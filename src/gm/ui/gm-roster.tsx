@@ -343,7 +343,7 @@ function SelectedHero({
             </span>
           ) : null}
         </div>
-        {sheet.potential.trait ? (
+        {sheet.potential.trait && player.draftModel!==2 ? (
           <span
             className="gm-roster__trait"
             data-trait={sheet.potential.trait}

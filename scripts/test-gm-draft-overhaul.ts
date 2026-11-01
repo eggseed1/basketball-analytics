@@ -8,7 +8,7 @@ import { draftAssetCatalog, executeDraftTrade, quoteDraftTrade, suggestDraftTrad
 import { resolveDraftOrder, rookieContractForPick } from "../src/gm/engine/draft-order";
 import { advanceDraftPastAi, finishDraftWithAi, runDraftPick } from "../src/gm/engine/progression";
 import { progressSheet } from "../src/gm/engine/attributes";
-import { ensureProspectIdentities } from "../src/gm/engine/scouting";
+import { ensureProspectIdentities, scoutPotentialView, trajectoryRead } from "../src/gm/engine/scouting";
 import type { GmLeagueState } from "../src/gm/types";
 
 const fresh=()=>prepareFranchise(createGeneratedLeague({userTeamId:"bos",season:2027,seed:71}));
@@ -43,6 +43,9 @@ function night():GmLeagueState{const league=fresh();const others=league.teams.fi
   const league=night(),target=league.players.find(player=>player.id===league.draftPool[0])!;
   const hidden={...league,players:league.players.map(player=>({...player,ratings:{...player.ratings,potential:10-player.ratings.potential},sheet:player.sheet?{...player.sheet,potential:{...player.sheet.potential,ceiling:99,trait:"xfactor" as const,path:"boom" as const}}:player.sheet}))};
   assert.deepEqual(draftRead(league,target),draftRead(hidden,hidden.players.find(player=>player.id===target.id)!));
+  const scout=league.teams.find(team=>team.id===league.userTeamId)!.staff.scout;
+  assert.deepEqual(scoutPotentialView(target,scout),scoutPotentialView(hidden.players.find(player=>player.id===target.id)!,scout),"post-draft outlooks cannot expose the hidden career roll either");
+  assert.equal(trajectoryRead(target,scout),trajectoryRead(hidden.players.find(player=>player.id===target.id)!,scout));
   assert.equal(aiSelectProspect(league,"det"),aiSelectProspect(hidden,"det"));
   const pinned=league.draftPool.at(-1)!;
   assert.equal(aiSelectProspect({...league,userDraftBoard:[pinned]},league.userTeamId),pinned,"delegation follows the user's saved board");

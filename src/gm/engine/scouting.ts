@@ -505,6 +505,7 @@ export function trajectoryRead(
   player: GmPlayer,
   scout: GmScout | null | undefined
 ): string {
+  if(player.draftModel===2)return "Career outcomes remain uncertain. Evaluate the skills, role and development evidence.";
   const clarity = scoutClarity(player, scout);
   if (!scout || clarity < 4.6) return "Dev trait sealed until the pick.";
   const trait = playerDevTrait(player);
@@ -573,6 +574,16 @@ export function scoutPotentialView(
   scout: GmScout | null | undefined
 ): ScoutedPotential {
   const sheet = playerSheet(player);
+  if(player.draftModel===2){
+    // Forecast from evidence available to a front office, not the career roll.
+    const clarity=scoutClarity(player,scout);
+    const runway=clamp(27-player.age,0,8);
+    const observed=sheet.developmentReport?clamp(sheet.developmentReport.after-sheet.developmentReport.before,0,4):0;
+    const middle=clamp(sheet.overall+runway*0.9+observed*1.2,25,96);
+    const width=Math.max(4,Math.round(10-clarity));
+    const low=clamp(Math.round(middle-width),25,98),high=clamp(Math.round(middle+width),low+1,99);
+    return {low,high,comment:"Estimated from current readiness, age and observed development. Health, role and future growth can change the outcome."};
+  }
   const floor = sheet.potential.floor;
   const ceiling = sheet.potential.ceiling;
   const clarity = scoutClarity(player, scout);
@@ -871,3 +882,4 @@ export function ensureProspectIdentities(state: GmLeagueState): GmLeagueState {
   if (changed) next = { ...next, players };
   return changed ? next : state;
 }
+
