@@ -50,11 +50,11 @@ export function FranchiseSummary({ league }: { league: GmLeagueState }) {
   return <div className="flex flex-wrap items-center justify-between gap-3 border-y border-border py-4">
     <div><p className="text-sm font-semibold">{plan.intent === "develop" ? "Build the next core" : plan.intent === "contend" ? "Chase a championship" : "Improve with flexibility"}</p>
       <p className="text-sm text-muted-foreground">{wins} wins toward a {plan.targetWins}-win goal. {franchiseNeeds(league)[0]}.</p></div>
-    <Link href="/gm/franchise" className={button}>Franchise desk</Link>
+    <Link href="/gm/development" className={button}>Development</Link>
   </div>;
 }
 
-export function GmFranchiseDesk() {
+export function GmFranchiseDesk({ settingsOnly = false }: { settingsOnly?: boolean }) {
   const league = useGmStore(s => s.league);
   const updatePlan = useGmStore(s => s.updateFranchise);
   const updateSettings = useGmStore(s => s.updateSimulationSettings);
@@ -65,7 +65,7 @@ export function GmFranchiseDesk() {
   const editAttribute = useGmStore(s => s.editAttribute);
   const importClass = useGmStore(s => s.importDraftClass);
   const propose = useGmStore(s => s.proposeTrade);
-  const [tab, setTab] = useState<"plan" | "history" | "settings">("plan");
+  const [tab, setTab] = useState<"plan" | "history" | "settings">(settingsOnly ? "settings" : "plan");
   const [note, setNote] = useState("");
   const [careerId, setCareerId] = useState("");
   const [editId, setEditId] = useState("");
@@ -83,8 +83,8 @@ export function GmFranchiseDesk() {
   const career = careerId || people[0]?.id;
   const assetText = (assets: NonNullable<GmLeagueState["tradeTalks"]>[number]["youSend"]) => assets.map(a => a.type === "player" ? league.players.find(p => p.id === a.id)?.name ?? "Former player" : a.type === "cash" ? `$${a.cashM}M cash` : (() => { const pick = league.teams.flatMap(t => t.draftPicks).find(p => p.id === a.id); return pick ? `${pick.season} round ${pick.round} pick` : "Draft pick"; })()).join(", ");
   return <div className="flex flex-col gap-8">
-    <div><h2 className="text-2xl font-bold tracking-tight">Franchise desk</h2><p className="mt-1 text-sm text-muted-foreground">Set the direction, develop your roster, and keep the story of your franchise.</p></div>
-    <nav aria-label="Franchise desk" className="flex flex-wrap gap-2">{(["plan", "history", "settings"] as const).map(t => <button type="button" key={t} aria-pressed={tab === t} className={`${button} ${tab === t ? "is-active" : ""}`} onClick={() => setTab(t)}>{t === "plan" ? "Team plan" : t === "history" ? "History" : "Settings and saves"}</button>)}</nav>
+    <div><h2 className="text-2xl font-bold tracking-tight">{settingsOnly ? "League settings" : "Team plan and history"}</h2><p className="mt-1 text-sm text-muted-foreground">{settingsOnly ? "Manage simulation settings, saved franchises and commissioner tools." : "Set the direction, develop your roster, and keep the story of your franchise."}</p></div>
+    {!settingsOnly && <nav aria-label="Franchise desk" className="flex flex-wrap gap-2">{(["plan", "history", "settings"] as const).map(t => <button type="button" key={t} aria-pressed={tab === t} className={`${button} ${tab === t ? "is-active" : ""}`} onClick={() => setTab(t)}>{t === "plan" ? "Team plan" : t === "history" ? "History" : "Settings and saves"}</button>)}</nav>}
     {note && <p role="status" className="text-sm text-muted-foreground">{note}</p>}
     {tab === "plan" && <>
       <SectionFrame title="Direction" bodySurface>

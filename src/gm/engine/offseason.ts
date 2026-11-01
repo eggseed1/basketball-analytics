@@ -328,6 +328,7 @@ export function startNextSeason(state: GmLeagueState): GmLeagueState {
   ).map((player) => ({
     ...player,
     priorLine: player.seasonLine && player.seasonLine.gp > 0 ? player.seasonLine : player.priorLine,
+    developmentBaseline: { season: state.season + 1, overall: player.sheet?.overall ?? 70 },
     seasonLine: undefined,
     seasonPossessions: undefined,
   }));

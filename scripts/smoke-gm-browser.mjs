@@ -26,8 +26,8 @@ try {
   page.on("pageerror", error => errors.push(error.stack ?? error.message));
   await page.goto("http://127.0.0.1:3107/gm", { waitUntil: "domcontentloaded", timeout: 120000 });
   await page.getByLabel("Import a franchise save", { exact: true }).setInputFiles(`${dir}/franchise.json`, { timeout: 90000 });
-  await page.getByRole("link", { name: "Franchise desk", exact: true }).waitFor({ state: "visible", timeout: 90000 });
-  await page.getByRole("link", { name: "Franchise desk", exact: true }).click();
+  await page.getByRole("link", { name: "Development", exact: true }).first().waitFor({ state: "visible", timeout: 90000 });
+  await page.goto("http://127.0.0.1:3107/gm/franchise", { waitUntil: "domcontentloaded" });
   await page.getByRole("heading", { name: "Development and roles", exact: true }).waitFor();
   await page.screenshot({ path: `${dir}/desktop.png`, fullPage: true });
   await page.getByRole("button", { name: "Settings and saves", exact: true }).click();

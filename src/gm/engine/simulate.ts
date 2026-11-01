@@ -182,7 +182,7 @@ export function simulateGame(
       const shooter = weighted(off, p => rates.get(p.id)!.fga * usageBoost(p, own.coaching), rng);
       const r = rates.get(shooter.id)!;
       const line = lines.get(shooter.id)!;
-      const tired = secondNightScale(shooter.age, gap[side] ?? null) * minuteLoadMul(line.minutes, shooter.sheet?.attributes.stamina ?? 70);
+      const tired = ((shooter.campFatigueGames ?? 0) > 0 ? 0.98 : 1) * secondNightScale(shooter.age, gap[side] ?? null) * minuteLoadMul(line.minutes, shooter.sheet?.attributes.stamina ?? 70);
       const foulRatio = freeThrows / Math.max(0.1, volume);
       const foulChance = clamp(foulRatio / (2 + foulRatio) * mods.ft, 0.025, 0.2);
       if (rng() < foulChance) {

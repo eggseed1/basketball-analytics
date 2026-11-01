@@ -2,8 +2,9 @@
 
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
-import { FolderOpen, Maximize2, Minimize2 } from "lucide-react";
+import { FolderOpen, Maximize2, Minimize2, Settings2 } from "lucide-react";
 
+import Link from "next/link";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { GmSaveImport } from "@/gm/ui/gm-franchise-desk";
 import { useGmStore } from "@/gm/state/gm-store";
@@ -115,6 +116,9 @@ export function GmShell({
   const [season, setSeason] = useState(
     canonicalSeasonFromStartYear(currentNbaStartYear())
   );
+  const [creationOpen, setCreationOpen] = useState(false);
+  const [creationSettings, setCreationSettings] = useState({ injuryFrequency: 1, developmentSpeed: 1, tradeDifficulty: 1, simPace: 1 });
+  const [creationCommissioner, setCreationCommissioner] = useState(false);
   const [full, setFull] = useState(false);
   const deskRef = useRef<HTMLElement>(null);
 
@@ -316,8 +320,13 @@ export function GmShell({
               </option>
             ))}
           </select>
+          <button type="button" aria-label="League creation settings" aria-expanded={creationOpen} aria-controls="league-creation-settings" className="gm-nav__link ml-auto" onClick={() => setCreationOpen(value => !value)}><Settings2 aria-hidden className="size-4" /></button>
         </div>
 
+        {creationOpen ? <section id="league-creation-settings" className="grid gap-4 rounded-xl border border-border p-4 sm:grid-cols-2" aria-label="League creation settings">
+          {([['injuryFrequency','Injury frequency',0,2],['developmentSpeed','Development speed',0.5,2],['tradeDifficulty','Trade difficulty',0.5,2],['simPace','Game pace',0.8,1.2]] as const).map(([key,label,min,max]) => <label key={key} className="grid gap-2 text-sm">{label}: {creationSettings[key].toFixed(2)}x<input aria-label={label + " at creation"} type="range" min={min} max={max} step={0.05} value={creationSettings[key]} onChange={e => setCreationSettings(values => ({ ...values, [key]: Number(e.target.value) }))} /></label>)}
+          <label className="text-sm sm:col-span-2"><input type="checkbox" checked={creationCommissioner} onChange={e => setCreationCommissioner(e.target.checked)} /> Enable commissioner editing for the new league</label>
+        </section> : null}
         {seeding ? (
           <div className="sports-card px-4 py-6 text-center text-[15px] text-muted-foreground">
             {t("loadingPlayers", { season })}
@@ -338,7 +347,7 @@ export function GmShell({
                 key={f.id}
                 type="button"
                 disabled={seeding}
-                onClick={() => void newLeague(f.id, season)}
+                onClick={() => void newLeague(f.id, season, { settings: creationSettings, commissioner: creationCommissioner })}
                 className="group flex flex-col items-center gap-2 disabled:opacity-50"
               >
                 <span
@@ -362,7 +371,7 @@ export function GmShell({
         <button
           type="button"
           disabled={seeding}
-          onClick={() => newGeneratedLeague("bos")}
+          onClick={() => newGeneratedLeague("bos", { settings: creationSettings, commissioner: creationCommissioner })}
           className="self-start text-[13px] font-semibold text-muted-foreground underline-offset-4 hover:underline"
         >
           {t("generatedDemo")}
@@ -412,6 +421,7 @@ export function GmShell({
           {record?.wins ?? 0}-{record?.losses ?? 0}
         </p>
         <div className="gm-mast__tools">
+          <Link href="/gm/settings" className="gm-mast__tool" aria-label="League settings" title="League settings"><Settings2 aria-hidden /></Link>
           <button
             type="button"
             className="gm-mast__tool"

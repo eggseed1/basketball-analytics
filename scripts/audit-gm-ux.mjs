@@ -34,7 +34,7 @@ try {
     } else await page.goto("http://127.0.0.1:3108/gm", { waitUntil: "domcontentloaded", timeout: 120000 });
     await page.getByLabel("Import a franchise save", { exact: true }).setInputFiles(`${dir}/${name}.json`);
     if (imported) await page.getByText("Franchise opened in a new save slot.", { exact: true }).waitFor();
-    else await page.getByRole("link", { name: "Franchise desk", exact: true }).waitFor({ timeout: 90000 });
+    else await page.getByRole("link", { name: "Development", exact: true }).first().waitFor({ timeout: 90000 });
     imported = true;
     await page.goto("http://127.0.0.1:3108" + route, { waitUntil: "domcontentloaded", timeout: 120000 });
     await page.locator("main[data-gm]").waitFor();
@@ -72,7 +72,7 @@ try {
     return league;
   }
   await load("regular", "/gm");
-  await page.getByRole("link", { name: "Franchise desk", exact: true }).waitFor();
+  await page.getByRole("link", { name: "Development", exact: true }).first().waitFor();
   const regular = await capture("mobile-opening-night");
   report.observations.push({ task: "Find roster and coaching", visibleNavigation: regular.navigation.filter(row => row.inView).map(row => row.text) });
   if (verify) {
@@ -286,6 +286,72 @@ try {
   await load("camp");
   await page.getByTestId("season-hub").waitFor();
   await capture("desktop-camp");
+  if (verify) {
+    const snapshot = JSON.parse(readFileSync(`${dir}/regular.json`, "utf8"));
+    const club = snapshot.league.players.filter(p => p.teamId === snapshot.league.userTeamId && p.contract);
+    const pupil = club[0], veteran = club[1];
+    snapshot.league.players = snapshot.league.players.map(p => p.id === pupil.id ? { ...p, age: 21, position: "PG", mentorship: undefined } : p.id === veteran.id ? { ...p, age: 32, position: "PG", workEthic: 90 } : p);
+    writeFileSync(`${dir}/development-ui.json`, JSON.stringify(snapshot));
+    for (const width of [390, 1440]) {
+      await page.setViewportSize({ width, height: 900 });
+      await load("development-ui", "/gm/development");
+      await page.getByRole("heading", { name: "Development", exact: true }).waitFor();
+      const firstLink = page.locator(".gm-desk-nav__primary > a").first();
+      assert.equal(await firstLink.getAttribute("href"), "/gm", "Home is the leftmost navigation destination");
+      assert.equal((await page.getByRole("link", { name: "Franchise desk", exact: true }).count()), 0);
+      await page.getByLabel(`Development focus for ${pupil.name}`, { exact: true }).selectOption("defense");
+      await page.getByLabel(`Development plan for ${pupil.name}`, { exact: true }).selectOption("practice");
+      await page.getByLabel(`Mentor for ${pupil.name}`, { exact: true }).selectOption(veteran.id);
+      const persisted = await exportedLeague();
+      const learner = persisted.players.find(p => p.id === pupil.id);
+      assert.equal(learner.developmentFocus, "defense");
+      assert.equal(learner.developmentPlan, "practice");
+      assert.equal(learner.mentorship.mentorId, veteran.id);
+      await page.reload({ waitUntil: "domcontentloaded" });
+      await page.getByRole("heading", { name: "Development", exact: true }).waitFor();
+      assert.equal(await page.getByLabel(`Mentor for ${pupil.name}`, { exact: true }).inputValue(), veteran.id);
+      await capture(`development-${width}`);
+      await page.getByRole("link", { name: "League settings", exact: true }).click();
+      await page.getByRole("heading", { name: "League settings", exact: true }).waitFor();
+      await page.getByRole("button", { name: "Export this franchise", exact: true }).waitFor();
+    }
+    await page.setViewportSize({ width: 390, height: 900 });
+    await load("camp", "/gm/development");
+    const campSave = JSON.parse(readFileSync(`${dir}/camp.json`, "utf8")).league;
+    const campers = campSave.players.filter(p => p.teamId === campSave.userTeamId && p.contract && !p.injury).slice(0, 2);
+    for (const camper of campers) await page.getByLabel(`Camp focus for ${camper.name}`, { exact: true }).selectOption("shooting");
+    await page.getByRole("button", { name: "Run individual camp", exact: true }).click();
+    const campDialog = page.getByRole("dialog", { name: "Confirm training camp", exact: true });
+    await campDialog.getByText(/fatigue/).waitFor();
+    await campDialog.getByRole("button", { name: "Cancel", exact: true }).click();
+    assert.equal((await exportedLeague()).seasonFlow.campResults, undefined, "canceling camp preserves the saved season");
+    await page.getByRole("button", { name: "Run individual camp", exact: true }).click();
+    await campDialog.getByRole("button", { name: "Run camp", exact: true }).click();
+    await page.getByText(/Camp fatigue:|Camp soreness:/).first().waitFor();
+    const afterCamp = await exportedLeague();
+    assert.equal(afterCamp.seasonFlow.campResults.filter(row => campers.some(p => p.id === row.playerId)).length, 2);
+    await page.reload({ waitUntil: "domcontentloaded" });
+    await page.getByText(/Camp fatigue:|Camp soreness:/).first().waitFor();
+    assert.deepEqual((await exportedLeague()).seasonFlow.campResults, afterCamp.seasonFlow.campResults, "reloading preserves camp results without rerolling risk");
+    assert.equal(await page.getByRole("button", { name: "Run individual camp", exact: true }).count(), 0);
+    await capture("development-camp-phone");
+    report.tasks.push("Development camp: two choices, risk confirmation, cancel, saved outcome and reload guard");
+    await page.getByRole("button", { name: "My teams and saved franchises", exact: true }).click();
+    await page.getByRole("button", { name: "League creation settings", exact: true }).click();
+    await page.getByLabel("Development speed at creation", { exact: true }).press("End");
+    await page.getByLabel("Injury frequency at creation", { exact: true }).press("Home");
+    await page.getByLabel("Enable commissioner editing for the new league", { exact: true }).check();
+    await capture("creation-settings");
+    await page.route("**/api/gm/league", route => route.fulfill({ contentType: "application/json", body: JSON.stringify({ league: source }) }));
+    await page.getByRole("button", { name: /BOS/ }).first().click();
+    await page.getByRole("link", { name: "League settings", exact: true }).waitFor({ timeout: 90000 });
+    const created = await exportedLeague();
+    assert.equal(created.settings.developmentSpeed, 2);
+    assert.equal(created.settings.injuryFrequency, 0);
+    assert.equal(created.franchise.commissioner, true);
+    await page.unroute("**/api/gm/league");
+    report.tasks.push("Development: Home first, mentorship/focus reloads, settings gear, creation settings persist into the new league");
+  }
   for (const screen of report.screens) assert.ok(screen.contentWidth <= screen.viewportWidth + 2, screen.name + " overflows the page");
   assert.deepEqual(errors, [], "Uncaught errors during UX walkthrough");
   console.log("UX walkthrough completed across " + report.screens.length + " NBA franchise screens and " + report.tasks.length + " verified task groups.");

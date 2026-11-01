@@ -724,6 +724,7 @@ function agingBase(age: number): number {
 }
 
 type DevelopmentOptions = {
+  mentorBonus?: number;
   coach?: number; minutes?: number; pace?: "season" | "summer"; form?: number;
   playoffGames?: number; devStaff?: number; speed?: number;
 };
@@ -744,11 +745,12 @@ function progressDevelopmentPath(player:GmPlayer, sheet:GmSheet, opts:Developmen
   else if(player.developmentPlan==="rotation") {opportunity=0.5+Math.min(minutes,26)/26*0.7;reasons.push(minutes>=16?"Regular game reps support the role plan":"The rotation plan needs more game reps");}
   if(minutes>34) {opportunity*=0.94;reasons.push("Heavy minutes add workload, not extra development credit");}
   if(player.injury) {opportunity*=0.72;reasons.push("Injury limited development work");}
+  if ((opts.mentorBonus??0)>0) reasons.push("A veteran teammate supports focused development work");
   const staff=(1+coach*0.06)*clamp(opts.devStaff??1,0.85,1.25);
   const work=1+clamp(player.personality,-20,25)*0.004;
   const annual=clamp((0.9+gap*0.14)*ageFactor*path*trait*opportunity*staff*work*(0.85+rng()*0.3),0,5.5);
   const pace=opts.pace==="season"?0.15:0.7;
-  const budget=annual*pace*clamp(opts.speed??1,0.5,2)+(sheet.developmentCarry??0);
+  const budget=annual*pace*(1+clamp(opts.mentorBonus??0,0,0.18))*clamp(opts.speed??1,0.5,2)+(sheet.developmentCarry??0);
   const steps=Math.min(Math.max(0,potential.ceiling-sheet.overall),Math.floor(budget));
   const carry=gap>0?budget-Math.floor(budget):0;
   const focusKeys:Record<string,Array<keyof GmAttributes>>={shooting:["threePoint","midrange","freeThrow"],creation:["passAccuracy","ballHandle","speedWithBall","drivingLayup"],defense:["interiorDefense","perimeterDefense","steal","block"],rebounding:["offReb","defReb","strength"]};
@@ -798,7 +800,7 @@ export function progressSheet(
     const minuteMul = clamp(minutes / 26, 0.55, 1.15);
     const coachMul = 1 + clamp(coach, 0, 1.5) * 0.08;
     const work = player.personality > 15 ? 1.08 : player.personality < -15 ? 0.92 : 1;
-    delta *= pathMul * traitMul * minuteMul * coachMul * work * clamp(devStaff, 0.85, 1.25);
+    delta *= pathMul * traitMul * minuteMul * coachMul * work * clamp(devStaff, 0.85, 1.25) * (1 + clamp(opts?.mentorBonus ?? 0, 0, 0.18));
     if (potential.path === "bust") delta *= 0.5;
     // Slow down once a player has already grabbed most of their realistic peak.
     // Stops mid-tier books from all drifting into the 80s over a long save.

@@ -1700,7 +1700,7 @@ html [data-gm] .gm-desk-nav {
 }
 html [data-gm] .gm-desk-nav__primary {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   align-items: start;
   gap: 2px;
 }
@@ -1773,7 +1773,7 @@ html [data-gm] .gm-confirm {
 }
 html [data-gm] .gm-confirm::backdrop { background: rgb(0 0 0 / 0.45); }
 @media (min-width: 640px) {
-  html [data-gm] .gm-desk-nav__primary { grid-template-columns: repeat(5, minmax(0, 130px)); }
+  html [data-gm] .gm-desk-nav__primary { grid-template-columns: repeat(6, minmax(0, 130px)); }
   html [data-gm] .gm-desk-nav__link { font-size: 13px; }
   html [data-gm] .gm-desk-nav__menu { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }

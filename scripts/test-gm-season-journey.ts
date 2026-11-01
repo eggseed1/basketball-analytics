@@ -23,10 +23,10 @@ const fresh = () => prepareFranchise(createGeneratedLeague({ userTeamId: "bos", 
 const playerAt = (league: GmLeagueState, id: string) => league.players.find(player => player.id === id)!;
 const summer = (league: GmLeagueState) => beginOffseason({ ...league, phase: "playoffs", champion: { season: league.season, teamId: "bos", finalsMvpId: league.players[0]!.id, wins: 4, losses: 2 }, homeFlow: { awardsSeen: true, championSeen: false } });
 
-// The highest available trainer tier unlocks the fourth individual camp.
+// Every club has the same two individual camp slots. Staff improves the gains.
 {
   const league = fresh();
-  for (const [level, slots] of [[1, 2], [3, 3], [5, 4]]) {
+  for (const [level, slots] of [[1, 2], [3, 2], [5, 2]]) {
     const staffed = { ...league, teams: league.teams.map(team => team.id === "bos" ? { ...team, staff: { ...team.staff, trainerLevel: level! } } : team) };
     assert.equal(campSlots(staffed), slots);
   }
