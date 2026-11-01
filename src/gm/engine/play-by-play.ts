@@ -320,11 +320,28 @@ export function boxToPlayByPlay(box: GmBoxScore): PlayByPlayEvent[] {
     return list[Math.floor(rng() * list.length)] ?? null;
   };
 
-  /** Side that just won the ball in transition (steal / DREB). Next FG can be "running". */
+  /** Side that just won the ball in transition (steal / DREB). Next FG can be a break. */
   let breakFor: Side | null = null;
   let breakKind: "steal" | "dreb" | null = null;
 
-  for (const item of items) {
+  // Steal → break often; DREB → break sometimes. Prior rates (~0.4–0.7) flooded
+  // the chart with "fast break" chips on every night.
+  const breakChance = (kind: "steal" | "dreb" | null) =>
+    kind === "steal" ? 0.55 : kind === "dreb" ? 0.16 : 0;
+
+  /** Pull the next same-side shot forward so putbacks follow the OREB. */
+  const promoteNextShot = (queue: Item[], side: Side) => {
+    const idx = queue.findIndex(
+      (entry) => entry.kind === "shot" && entry.shot.player.side === side
+    );
+    if (idx <= 0) return;
+    const [next] = queue.splice(idx, 1);
+    if (next) queue.unshift(next);
+  };
+
+  const queue = [...items];
+  while (queue.length) {
+    const item = queue.shift()!;
     if (item.kind === "tov") {
       const stolen = item.steal;
       push({
@@ -347,6 +364,7 @@ export function boxToPlayByPlay(box: GmBoxScore): PlayByPlayEvent[] {
       if (stolen) {
         breakFor = stolen.side;
         breakKind = "steal";
+        promoteNextShot(queue, stolen.side);
       } else {
         breakFor = null;
         breakKind = null;
@@ -395,14 +413,15 @@ export function boxToPlayByPlay(box: GmBoxScore): PlayByPlayEvent[] {
     }
 
     const shot = item.shot;
-    const running =
-      breakFor === shot.player.side &&
-      rng() < (breakKind === "steal" ? 0.72 : breakKind === "dreb" ? 0.4 : 0);
+    const onBreak =
+      breakFor === shot.player.side && rng() < breakChance(breakKind);
     breakFor = null;
     breakKind = null;
-    // Transition looks live near the rim more often than a set jumper.
+    // Breaks finish at the rim with wording the chart filter recognizes.
+    // Threes in transition stay as normal threes (no fake "running jumper").
+    const running = onBreak && !shot.three;
     let where = spot(shot.three, rng);
-    if (running && !shot.three && rng() < 0.7) {
+    if (running) {
       where = {
         x: clamp(gauss(rng) * 2.2, -5, 5),
         y: clamp(1.2 + Math.abs(gauss(rng)) * 1.8, 0.5, 6),
@@ -412,9 +431,13 @@ export function boxToPlayByPlay(box: GmBoxScore): PlayByPlayEvent[] {
     const verb = shot.made ? "makes" : "misses";
     const look = shot.three
       ? `${dist}-foot three pointer`
-      : dist < 6
-        ? "layup"
-        : `${dist}-foot jumper`;
+      : running
+        ? rng() < 0.22
+          ? "dunk"
+          : "layup"
+        : dist < 6
+          ? "layup"
+          : `${dist}-foot jumper`;
     let description = `${shot.player.name} ${verb} a ${running ? "running " : ""}${look}`;
     if (shot.assist) description += ` (${shot.assist.name} assists)`;
     if (shot.block) description += ` (${shot.block.name} blocks)`;
@@ -455,16 +478,35 @@ export function boxToPlayByPlay(box: GmBoxScore): PlayByPlayEvent[] {
         if (offensive) {
           breakFor = null;
           breakKind = null;
+          promoteNextShot(queue, board.side);
         } else {
           breakFor = board.side;
           breakKind = "dreb";
+          promoteNextShot(queue, board.side);
         }
       }
     }
   }
 
   for (const side of ["home", "away"] as const) {
-    for (const player of [...orebs[side], ...drebs[side]]) {
+    for (const player of orebs[side]) {
+      push({
+        actionType: "rebound",
+        subType: "offensive",
+        description: `${player.name} offensive rebound`,
+        teamId: player.team,
+        teamTricode: player.team,
+        playerId: player.id,
+        playerName: player.name,
+        secondPlayerId: null,
+        shotResult: null,
+        isFieldGoal: false,
+        points: 0,
+        locX: null,
+        locY: null,
+      });
+    }
+    for (const player of drebs[side]) {
       push({
         actionType: "rebound",
         subType: "defensive",
@@ -491,6 +533,10 @@ export function boxToPlayByPlay(box: GmBoxScore): PlayByPlayEvent[] {
     event.clock = placed.clock;
   });
 
+  // Even spacing rarely lands in the last 5 seconds. Nudge a few FGs per
+  // period into that window so the "Last 5 sec" chip is not empty.
+  biasLateClockShots(events, rng);
+
   settle(events, home, box.homeScore);
   settle(events, away, box.awayScore);
   let homeScore = 0;
@@ -502,6 +548,30 @@ export function boxToPlayByPlay(box: GmBoxScore): PlayByPlayEvent[] {
     event.scoreAway = awayScore;
   }
   return events;
+}
+
+const LAST_SECOND_WINDOW = 5;
+
+/** Move a couple of field goals per period into the last 5 seconds of the clock. */
+function biasLateClockShots(events: PlayByPlayEvent[], rng: () => number) {
+  const byPeriod = new Map<number, number[]>();
+  events.forEach((event, index) => {
+    if (!event.isFieldGoal || !event.shotResult) return;
+    const list = byPeriod.get(event.period) ?? [];
+    list.push(index);
+    byPeriod.set(event.period, list);
+  });
+  for (const indices of byPeriod.values()) {
+    if (!indices.length) continue;
+    const want = Math.min(indices.length, 1 + (rng() < 0.55 ? 1 : 0));
+    const picks = shuffle(rng, [...indices]).slice(0, want);
+    for (const index of picks) {
+      const event = events[index]!;
+      const clockSeconds = Math.floor(rng() * (LAST_SECOND_WINDOW + 1));
+      event.clockSeconds = clockSeconds;
+      event.clock = `0:${String(clockSeconds).padStart(2, "0")}`;
+    }
+  }
 }
 
 /** The box score can differ from made shots by a point or two. Fold that into the last baskets. */

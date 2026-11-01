@@ -20,6 +20,7 @@ import {
   wantScore,
 } from "../src/gm/engine/roster-fit";
 import { overallOf } from "../src/gm/engine/lineup";
+import { overallToImpact } from "../src/gm/engine/true-strength";
 import { tradeStance } from "../src/gm/engine/value";
 import type { GmLeagueState, GmPlayer, GmTeam } from "../src/gm/types";
 
@@ -60,12 +61,15 @@ function withOverall(player: GmPlayer, overall: number): GmPlayer {
         potential: {} as never,
         version: 1,
       };
+  const impact = overallToImpact(overall);
   return {
     ...player,
     sheet,
     ratings: {
       ...player.ratings,
-      impact: (overall - 68) / 3.2,
+      impact,
+      offense: impact * 0.6,
+      defense: impact * 0.4,
     },
   };
 }

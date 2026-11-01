@@ -3,13 +3,15 @@ import { calendar, cohortLevel, levelOf, performanceLevel, roleFor, schoolLabel,
 import { G_LEAGUE_EVENTS } from "./g-league";
 import { STORY_EVENTS } from "./storylines";
 import { LIFE_EVENTS } from "./life-events";
+import { YOUTH_LIFE_EVENTS } from "./youth-life-events";
+import { STYLE_FORK_EVENTS } from "./style-forks";
 import { AFTER_SCENES } from "./after-scenes";
 import { ADVISOR, ASSET_INFO, canPay, charge, income, invested, LIFESTYLE, mix, netWorth, PRESETS, trailingIndex } from "./finance";
 import { nationalTeam, seniorBar } from "./international";
 import { clamp, hashString } from "./rng";
 import { clubNameFor, salaryFor } from "./routes";
 import { rivalPeer } from "./peers";
-import { currentLevel } from "./skills";
+import { currentLevel, tiltCeilings } from "./skills";
 import { pickCoachTone } from "./team";
 import { inflictInjury } from "./training";
 import type { AdvisorStyle, AthleticKey, FocusId, LifeState, Lifestyle, SkillKey, Stage, TraitKey } from "./types";
@@ -243,7 +245,7 @@ export const EVENTS: EventTemplate[] = [
     ],
   },
   {
-    id: "milk-with-dinner", ages: [8, 17.5], cooldown: 0, once: true, weight: () => 2.2, title: "Milk with dinner",
+    id: "milk-with-dinner", ages: [8, 17.5], cooldown: 0, once: true, weight: () => 0.7, title: "Milk with dinner",
     body: "A glass of milk shows up next to the plate. The tall kids at school drink it.",
     choices: [
       { id: "drink", label: "Finish it every night", preview: "A little taller and a little heavier while you are still growing.", growth: 2, risk: 0, apply: ({ s }) => { const cm = raiseAdultHeight(s, 1.8); const kg = addMass(s, 0.025); return `${heightLine(cm)} ${massLine(kg)}`; } },
@@ -251,7 +253,7 @@ export const EVENTS: EventTemplate[] = [
     ],
   },
   {
-    id: "apple-juice", ages: [8, 17.5], cooldown: 0, once: true, weight: () => 2, title: "Apple juice in the fridge",
+    id: "apple-juice", ages: [8, 17.5], cooldown: 0, once: true, weight: () => 0.6, title: "Apple juice in the fridge",
     body: "There is a jug of apple juice. A cousin swears it is why he grew last summer.",
     choices: [
       { id: "drink", label: "Drink it with breakfast", preview: "A small height bump and a little weight. Mostly the sugar.", growth: 2, risk: 0, apply: ({ s }) => { const cm = raiseAdultHeight(s, 0.9); const kg = addMass(s, 0.02); return `${heightLine(cm)} ${massLine(kg)}`; } },
@@ -259,7 +261,7 @@ export const EVENTS: EventTemplate[] = [
     ],
   },
   {
-    id: "hang-from-rim", ages: [10, 18], cooldown: 0, once: true, weight: (s) => (onTeam(s) ? 2.1 : 1.2), title: "Hanging off the rim",
+    id: "hang-from-rim", ages: [10, 18], cooldown: 0, once: true, weight: (s) => (onTeam(s) ? 0.7 : 0.4), title: "Hanging off the rim",
     body: "After practice the older kids hang from the rim. They say it stretches you out.",
     choices: [
       { id: "hang", label: "Hang until it burns", preview: "Height and a little vertical, if you are still growing.", growth: 2, risk: 0, apply: ({ s }) => { const cm = raiseAdultHeight(s, 1.5); ath(s, "vertical", 1); energy(s, -4); return `${heightLine(cm)} Your shoulders ache on the way home.`; } },
@@ -267,7 +269,7 @@ export const EVENTS: EventTemplate[] = [
     ],
   },
   {
-    id: "lights-out", ages: [9, 16.5], cooldown: 0, once: true, weight: () => 2, title: "Lights out",
+    id: "lights-out", ages: [9, 16.5], cooldown: 0, once: true, weight: () => 0.7, title: "Lights out",
     body: "A coach says the growing happens while you sleep. He wants you in bed earlier.",
     choices: [
       { id: "early", label: "In bed by nine", preview: "Height, and easier mornings.", growth: 2, risk: 0, apply: ({ s }) => { const cm = raiseAdultHeight(s, 1.4); energy(s, 6); return `${heightLine(cm)} You stop falling asleep in class.`; } },
@@ -291,7 +293,7 @@ export const EVENTS: EventTemplate[] = [
     ],
   },
   {
-    id: "growth-checkup", ages: [11, 17], cooldown: 0, once: true, weight: () => 1.6, title: "A growth checkup",
+    id: "growth-checkup", ages: [11, 17], cooldown: 0, once: true, weight: () => 0.5, title: "A growth checkup",
     body: (s) => `A doctor in town measures kids who play and talks about how much growing is left. The visit is ${usd(cost(s, 350))}.`,
     choices: [
       { id: "go", label: "Go", preview: (s) => `A real measurement and a food plan. Costs ${usd(cost(s, 350))}.`, blocked: (s) => afford(cost(s, 350))(s), growth: 2, risk: 0, apply: ({ s }) => { spend(s, cost(s, 350)); const cm = raiseAdultHeight(s, 2.4); return `She measures your legs and writes down sleep, milk, and meals. ${heightLine(cm)}`; } },
@@ -299,7 +301,7 @@ export const EVENTS: EventTemplate[] = [
     ],
   },
   {
-    id: "gym-guy", ages: [14, 19], cooldown: 0, once: true, weight: () => 1.3, title: "A guy at the gym", tone: "bad",
+    id: "gym-guy", ages: [14, 19], cooldown: 0, once: true, weight: () => 0.4, title: "A guy at the gym", tone: "bad",
     body: "He says he has something that makes teenagers grow. He will not talk about it in the lobby. It costs cash, and he wants it kept quiet.",
     choices: [
       { id: "take", label: "Take it", preview: "The biggest height jump available. You can get sick, and people may talk.", growth: 2, risk: 3, blocked: (s) => afford(cost(s, 600))(s), apply: ({ s, rolls }) => { spend(s, cost(s, 600)); const cm = raiseAdultHeight(s, 5.5); addMass(s, 0.03); health(s, -12); ath(s, "durability", -3); s.flags.hormoneRumor = s.ageMonths; if (rolls[0]! < 0.28) { energy(s, -10); expo(s, -4); return `${heightLine(cm)} You spend a month feeling wrong, and a rumor gets around that you were on something.`; } return `${heightLine(cm)} You feel off for a while. You tell nobody.`; } },
@@ -363,12 +365,12 @@ export const EVENTS: EventTemplate[] = [
     ],
   },
   {
-    id: "favorite-style", ages: [6, 10], cooldown: 0, once: true, weight: () => 1.5, title: "A favorite player",
-    body: "You pick a player to copy in the driveway.",
+    id: "favorite-style", ages: [6, 10], cooldown: 0, once: true, weight: () => 1.8, title: "A favorite player",
+    body: "You pick a player to copy in the driveway. The other kids copy someone else.",
     choices: [
-      { id: "shooter", label: "The shooter", preview: "Shooting up.", growth: 1, apply: ({ s }) => (sk(s, "shooting", 3), "You copy his release.") },
-      { id: "passer", label: "The passer", preview: "Passing up.", growth: 1, apply: ({ s }) => (sk(s, "passing", 3), "No-look passes into the bushes.") },
-      { id: "big", label: "The big man", preview: "Rebounding up.", growth: 1, apply: ({ s }) => (sk(s, "rebounding", 3), "You box out your little cousin.") },
+      { id: "shooter", label: "The shooter", preview: "Shooting ceiling rises. Passing starts behind.", growth: 2, risk: 1, apply: ({ s }) => (tiltCeilings(s, { shooting: 4 }, { passing: 2 }), sk(s, "shooting", 3), (s.flags.earlyStyle = "scorer"), "You copy his release. Passing becomes an afterthought.") },
+      { id: "passer", label: "The passer", preview: "Passing ceiling rises. Scoring starts behind.", growth: 2, risk: 1, apply: ({ s }) => (tiltCeilings(s, { passing: 4 }, { shooting: 2 }), sk(s, "passing", 3), (s.flags.earlyStyle = "connector"), "No-look passes into the bushes. Empty shots feel wasteful.") },
+      { id: "big", label: "The big man", preview: "Rebounding ceiling rises. Handle starts behind.", growth: 2, risk: 1, apply: ({ s }) => (tiltCeilings(s, { rebounding: 4, interiorD: 2 }, { handle: 2 }), sk(s, "rebounding", 3), (s.flags.earlyStyle = "defender"), "You box out your little cousin. Guards keep the ball away.") },
     ],
   },
   {
@@ -800,7 +802,7 @@ export const EVENTS: EventTemplate[] = [
     ],
   },
   {
-    id: "buyout", ages: [19, 27], cooldown: 0, once: true, weight: (s) => (s.placement.node === "foreign-pro" || s.placement.node === "domestic-pro" ? (["star", "starter"].includes(s.placement.role) && currentLevel(s) >= 72 ? 1.4 : 0) : 0), title: "NBA teams are calling",
+    id: "buyout", ages: [19, 27], cooldown: 0, once: true, weight: (s) => (s.placement.node === "foreign-pro" || s.placement.node === "domestic-pro" ? (["star", "starter"].includes(s.placement.role) && currentLevel(s) >= 75 ? 1.4 : 0) : 0), title: "NBA teams are calling",
     body: "Your club has a buyout clause. NBA scouts have been at your games.",
     choices: [
       { id: "buy", label: "Negotiate the buyout", preview: (s) => `Opens NBA camp offers. You pay about ${usd(Math.max(5000, salary(s) * 0.25))} of it.`, growth: 2, risk: 1, apply: ({ s }) => (spend(s, Math.max(5000, salary(s) * 0.25)), expo(s, 10), (s.flags.buyout = true), "You are free to sign with an NBA team this summer.") },
@@ -838,7 +840,7 @@ export const EVENTS: EventTemplate[] = [
     ],
   },
   {
-    id: "free-agent-camp", ages: [21, 29], cooldown: 12, weight: (s) => (s.achievements.nbaDebut === null && currentLevel(s) >= 68 && s.exposure >= 40 ? 0.9 : 0), title: "A free-agent camp",
+    id: "free-agent-camp", ages: [21, 29], cooldown: 12, weight: (s) => (s.achievements.nbaDebut === null && currentLevel(s) >= 73 && s.exposure >= 45 ? 0.9 : 0), title: "A free-agent camp",
     body: "A US free-agent camp invites you. Some players get G League and NBA camp looks.",
     choices: [
       { id: "go", label: "Go", preview: () => `Exposure up. Costs ${usd(600)}.`, blocked: afford(600), growth: 2, risk: 0, apply: ({ s }) => (spend(s, 600), expo(s, 8), (s.achievements.campInvite ??= s.ageMonths), "You play well in front of front-office scouts.") },
@@ -1080,10 +1082,10 @@ export const EVENTS: EventTemplate[] = [
     },
   },
   {
-    id: "summer-league-look", ages: [19, 27], cooldown: 12, weight: (s) => (s.achievements.nbaDebut === null && s.placement.node !== "nba" && currentLevel(s) >= 70 && (s.exposure >= 55 || (currentLevel(s) >= 74 && country(s.residence.countryId).model.exposureBase < 25)) ? 1.1 : 0), title: "Summer league invite",
+    id: "summer-league-look", ages: [19, 27], cooldown: 12, weight: (s) => (s.achievements.nbaDebut === null && s.placement.node !== "nba" && currentLevel(s) >= 74 && (s.exposure >= 60 || (currentLevel(s) >= 77 && country(s.residence.countryId).model.exposureBase < 25)) ? 1.1 : 0), title: "Summer league invite",
     body: "An NBA team invites you to its summer league roster.",
     choices: [
-      { id: "go", label: "Play summer league", preview: "Exposure up a lot. Camp chance.", growth: 2, risk: 1, apply: ({ s, rolls }) => (expo(s, 10), rolls[0]! < 0.18 ? ((s.flags.campOffer = true), "You play well enough to earn a training camp invite.") : "Solid week. They keep your number.") },
+      { id: "go", label: "Play summer league", preview: "Exposure up a lot. Camp chance.", growth: 2, risk: 1, apply: ({ s, rolls }) => (expo(s, 10), rolls[0]! < 0.12 ? ((s.flags.campOffer = true), "You play well enough to earn a training camp invite.") : "Solid week. They keep your number.") },
       { id: "skip", label: "Stay with your club", preview: "Rest.", growth: 0, risk: 0, apply: ({ s }) => (energy(s, 8), "You skip it.") },
     ],
   },
@@ -2075,7 +2077,7 @@ export const EVENTS: EventTemplate[] = [
       {
         id: "mentor",
         label: "Veteran mentorship",
-        preview: "IQ and a little trust with the staff. Best when you are still fighting for a role.",
+        preview: "IQ and real trust with the staff. Best when you are still fighting for a role.",
         growth: 2,
         risk: 0,
         apply: ({ s }) => {
@@ -2083,7 +2085,8 @@ export const EVENTS: EventTemplate[] = [
           sk(s, "decisions", 1.2);
           tr(s, "coachability", 2);
           const trust = typeof s.flags.nbaTrust === "number" ? s.flags.nbaTrust : 0;
-          s.flags.nbaTrust = Math.min(5, Math.round((trust + 0.6) * 10) / 10);
+          const bump = ["deep-bench", "bench"].includes(s.placement.role) ? 1.1 : 0.7;
+          s.flags.nbaTrust = Math.min(5, Math.round((trust + bump) * 10) / 10);
           s.plan.primary = "nba-pro-habits";
           return "A veteran walks you through help coverage for two weeks. The coaches notice you stayed.";
         },
@@ -2098,9 +2101,104 @@ export const EVENTS: EventTemplate[] = [
       },
     ],
   },
+  {
+    id: "nba-fringe-night",
+    ages: [19, 30],
+    cooldown: 6,
+    weight: (s) =>
+      s.placement.node === "nba" && ["deep-bench", "bench"].includes(s.placement.role) && s.flags.gStint !== "ten-day"
+        ? s.nbaGames < 40
+          ? 1.7
+          : 0.9
+        : 0,
+    title: "A night with a short bench",
+    body: (s) => `Foul trouble empties the ${s.placement.teamName} rotation. The coach asks if you want the dirty minutes or the safe seat.`,
+    choices: [
+      {
+        id: "take",
+        label: "Take every dirty minute",
+        preview: "Trust and defense climb. You burn energy and risk a ding.",
+        growth: 2,
+        risk: 2,
+        apply: ({ s, rolls }) => {
+          sk(s, "perimeterD", 1);
+          sk(s, "iq", 1);
+          tr(s, "motivation", 2);
+          const trust = typeof s.flags.nbaTrust === "number" ? s.flags.nbaTrust : 0;
+          s.flags.nbaTrust = Math.min(5, Math.round((trust + 0.9) * 10) / 10);
+          energy(s, -10);
+          if (rolls[0]! < 0.14) {
+            health(s, -5);
+            return "You play eighteen hard minutes. Something in the knee complains afterward. The staff still thanks you.";
+          }
+          return "You play the dirty minutes. The next film session starts with your closeouts.";
+        },
+      },
+      {
+        id: "film",
+        label: "Stay ready on the bench",
+        preview: "IQ. Less trust than diving in.",
+        growth: 1,
+        risk: 0,
+        apply: ({ s }) => {
+          sk(s, "iq", 1);
+          sk(s, "decisions", 1);
+          const trust = typeof s.flags.nbaTrust === "number" ? s.flags.nbaTrust : 0;
+          s.flags.nbaTrust = Math.min(5, Math.round((trust + 0.2) * 10) / 10);
+          return "You chart help for a quarter. Clean notebook. Quiet night.";
+        },
+      },
+    ],
+  },
+  {
+    id: "nba-two-way-standard",
+    ages: [20, 27],
+    cooldown: 0,
+    once: true,
+    weight: (s) =>
+      s.placement.node === "nba" &&
+      s.placement.contract?.twoWay === true &&
+      s.nbaGames >= 12 &&
+      (typeof s.flags.gCallups === "number" ? s.flags.gCallups : 0) >= 2
+        ? 2.4
+        : 0,
+    title: "Standard contract talk",
+    body: (s) => `The ${s.placement.teamName} have called you up enough. They can convert the two-way into a standard deal, or keep the bus option.`,
+    choices: [
+      {
+        id: "convert",
+        label: "Take the standard deal",
+        preview: "You stay on the NBA roster. Guaranteed for the rest of the year.",
+        growth: 2,
+        risk: 0,
+        apply: ({ s }) => {
+          s.placement.contract = { salary: 1_300_000, yearsLeft: 1, guaranteed: true };
+          const trust = typeof s.flags.nbaTrust === "number" ? s.flags.nbaTrust : 0;
+          s.flags.nbaTrust = Math.min(5, Math.round((trust + 1.2) * 10) / 10);
+          tr(s, "confidence", 3);
+          return "The two-way dies. Your name is on the standard sheet.";
+        },
+      },
+      {
+        id: "wait",
+        label: "Wait for a bigger offer",
+        preview: "Maybe more money later. The two-way stays for now.",
+        growth: 0,
+        risk: 2,
+        apply: ({ s }) => {
+          tr(s, "confidence", 1);
+          const trust = typeof s.flags.nbaTrust === "number" ? s.flags.nbaTrust : 0;
+          s.flags.nbaTrust = Math.max(-2, Math.round((trust - 0.3) * 10) / 10);
+          return "You wait. The affiliate schedule is still on your phone.";
+        },
+      },
+    ],
+  },
   ...G_LEAGUE_EVENTS,
   ...STORY_EVENTS,
   ...LIFE_EVENTS,
+  ...YOUTH_LIFE_EVENTS,
+  ...STYLE_FORK_EVENTS,
   ...AFTER_SCENES,
 ];
 

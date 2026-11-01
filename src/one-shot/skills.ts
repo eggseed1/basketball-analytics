@@ -138,11 +138,11 @@ export function readiness(state: LifeState): ReadinessBand {
   const age = state.ageMonths / 12;
   if (age < 12) return "too-early";
   const lvl = currentLevel(state);
-  if (age >= 18 && lvl >= 71) return "nba-ready";
+  if (age >= 18 && lvl >= 74) return "nba-ready";
   const { mid } = projectedCeiling(state);
-  if (mid >= 70) return "draft-range";
-  if (mid >= 65) return "radar";
-  if (mid >= 56) return "pro-prospect";
+  if (mid >= 73) return "draft-range";
+  if (mid >= 67) return "radar";
+  if (mid >= 58) return "pro-prospect";
   return "long-way";
 }
 
@@ -221,4 +221,35 @@ export function skillBar(state: LifeState): number {
 
 export function athleticismBar(state: LifeState): number {
   return athleticComposite(state.body);
+}
+
+/**
+ * Permanently reshape ceilings. Great players stay great in different shapes
+ * when decisions raise one lane and tax another.
+ */
+export function tiltCeilings(
+  state: LifeState,
+  raise: Partial<Record<SkillKey, number>>,
+  lower: Partial<Record<SkillKey, number>> = {},
+): void {
+  for (const [k, d] of Object.entries(raise) as [SkillKey, number][]) {
+    state.potentials[k] = Math.round(clamp(state.potentials[k] + d, 25, 99));
+  }
+  for (const [k, d] of Object.entries(lower) as [SkillKey, number][]) {
+    state.potentials[k] = Math.round(clamp(state.potentials[k] - d, 25, 99));
+    if (state.skills[k] > state.potentials[k]) state.skills[k] = state.potentials[k];
+  }
+}
+
+/** Monthly practice multiplier once a life has locked a style label. */
+export const STYLE_PRACTICE: Record<string, Partial<Record<SkillKey, number>>> = {
+  scorer: { shooting: 1.35, finishing: 1.25, freeThrows: 1.2, handle: 1.15, offBall: 1.1, passing: 0.72, perimeterD: 0.68, interiorD: 0.75, rebounding: 0.85 },
+  connector: { passing: 1.35, handle: 1.28, decisions: 1.25, iq: 1.2, offBall: 1.1, shooting: 0.78, finishing: 0.82, rebounding: 0.85, interiorD: 0.85 },
+  defender: { perimeterD: 1.35, interiorD: 1.28, rebounding: 1.18, iq: 1.12, decisions: 1.08, shooting: 0.72, handle: 0.78, finishing: 0.82, freeThrows: 0.9 },
+};
+
+export function stylePracticeMult(state: LifeState, skill: SkillKey): number {
+  const style = typeof state.flags.style === "string" ? state.flags.style : null;
+  if (!style) return 1;
+  return STYLE_PRACTICE[style]?.[skill] ?? 1;
 }

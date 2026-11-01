@@ -3,6 +3,7 @@ import { calendar } from "./career";
 import { eraAt } from "./era";
 import { charge, wallet } from "./finance";
 import { clamp, rngOf } from "./rng";
+import { stylePracticeMult } from "./skills";
 import type { AthleticKey, FocusId, LifeState, SkillKey, TraitKey, Workload } from "./types";
 
 export interface FocusDef {
@@ -131,7 +132,9 @@ export function monthlyDevelopment(state: LifeState): MonthlyDevelopment {
     const past = PAST_CEILING * Math.max(0, 99 - state.skills[k]) / 99;
     const focused = Math.max(room, past) * ownEff * share(k);
     // Bloom only multiplies focused work, not idle team practice for everyone.
-    const gain = BASE_GAIN * alf * youthBurst * coaching * motivation * recovery * (focused * nbaBloom + room * teamEff * 0.55);
+    // Locked style labels compound: scorers keep finding shots, connectors keep finding teammates.
+    const styleMult = stylePracticeMult(state, k);
+    const gain = BASE_GAIN * alf * youthBurst * coaching * motivation * recovery * (focused * nbaBloom + room * teamEff * 0.55) * styleMult;
     if (gain > 0) out.skillGains[k] = gain;
   }
   const athShare = (k: AthleticKey) => {
