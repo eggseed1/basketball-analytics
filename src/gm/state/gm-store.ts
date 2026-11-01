@@ -16,7 +16,6 @@ import type {
 } from "@/gm/types";
 import { createGeneratedLeague } from "@/gm/seed/create-league";
 import { simulateGame, compactSimBox } from "@/gm/engine/simulate";
-import { recordSimGame } from "@/gm/lib/season-line";
 import { ensurePlayerSheet } from "@/gm/engine/attributes";
 import { applyRookieRatings } from "@/gm/engine/rookie-ratings";
 import { applyRealBooks } from "@/gm/seed/real-books";
@@ -71,7 +70,6 @@ import {
 import {
   automationOf,
   enterFreeAgency,
-  noteTradeDeadline,
   runCpuFreeAgency,
 } from "@/gm/engine/offseason";
 import {
@@ -91,7 +89,6 @@ import {
   applyCombine,
   ensureProspectIdentities,
   revealScouting,
-  sealProspect,
   staffScoutContext,
 } from "@/gm/engine/scouting";
 import { generateDeveloperMarket } from "@/gm/seed/developers";
@@ -119,18 +116,15 @@ import {
   coachingOf,
   rebalanceForInjuryChanges,
   resetBalancedRotation,
-  suggestedMinutes,
 } from "@/gm/engine/coaching";
 import type { GmCoaching } from "@/gm/types";
 import { prepareFranchise, franchisePlan, parseFranchise, importDraftClass as importDraftClassEngine } from "@/gm/engine/franchise";
 import { overallFromAttributes } from "@/gm/engine/attributes";
 import { uid, clamp } from "@/gm/engine/rng";
 import {
-  applyGameToStandings,
   betterRecord,
   buildPlayoffBracket,
   computeLotteryOrder,
-  emptyStandings,
   seriesHosts,
 } from "@/gm/engine/standings";
 import {

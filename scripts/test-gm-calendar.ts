@@ -47,7 +47,7 @@ let day = 0;
 let paused = false;
 let running = true;
 let target = { id: "target", day: 3, played: false, homeTeamId: "bos", awayTeamId: "nyk", boxScoreId: "box" };
-let state = { league: { phase: "regular", userTeamId: "bos", day, schedule: [target] }, stopAutoSim: () => { running = false; }, simulateDay: () => { day++; paused = day === 2; target = { ...target, played: day >= 3 }; state.league = { ...state.league, day, schedule: [target] }; } };
+const state = { league: { phase: "regular", userTeamId: "bos", day, schedule: [target] }, stopAutoSim: () => { running = false; }, simulateDay: () => { day++; paused = day === 2; target = { ...target, played: day >= 3 }; state.league = { ...state.league, day, schedule: [target] }; } };
 const actions = vm.runInNewContext(js, { get: () => state, set: () => {}, myLeagueAllowsSim: () => true, isCalendarPaused: () => paused });
 assert.equal(actions.simulateNextGame(), null);
 assert.equal(day, 2, "next-game action stops at an intervening decision");
