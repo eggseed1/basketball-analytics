@@ -30,6 +30,7 @@ jobs:
       - run: npx next typegen
       - run: npm run typecheck
       - run: npx eslint src/gm src/app/gm scripts/test-gm-franchise-upgrade.ts scripts/test-gm-calibration.ts scripts/test-franchise-systems.mjs scripts/fixture-gm-franchise.ts scripts/smoke-gm-browser.mjs scripts/test-gm-draft-overhaul.ts scripts/test-gm-draft-class.ts scripts/fixture-gm-draft-overhaul.ts scripts/smoke-gm-draft-overhaul.mjs --quiet --pass-on-unpruned-suppressions
+      - run: npm run test:franchise-calendar
       - run: npm run test:franchise-flow
       - run: npm run test:franchise-ux
       - run: npm run test:franchise-saves
