@@ -95,7 +95,7 @@ export function PlayerOverviewCareerClient({
       teamKey={teamKey}
       fromHistory={fromHistory}
       themeMode={themeMode}
-      chart="seasons"
+      chart="games"
       initialMetric={preferDarko}
       showFilters
     />

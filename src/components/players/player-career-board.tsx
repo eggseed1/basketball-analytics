@@ -339,7 +339,7 @@ function PlayerCareerBoardBody({
   fromHistory = false,
   themeMode = "historical",
   gameLogs = [],
-  chart = "seasons",
+  chart = "games",
   hideTitle = false,
   initialMetric,
   showFilters = true,
@@ -716,5 +716,5 @@ function PlayerCareerBoardBody({
 }
 
 export function PlayerCareerBoard(props: Parameters<typeof PlayerCareerBoardBody>[0]) {
-  return <PlayerCareerBoardBody key={`${props.playerId}:${props.chart ?? "seasons"}`} {...props} />;
+  return <PlayerCareerBoardBody key={`${props.playerId}:${props.chart ?? "games"}`} {...props} />;
 }

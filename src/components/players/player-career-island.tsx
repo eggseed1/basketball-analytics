@@ -125,7 +125,7 @@ export async function PlayerCareerIsland({
   teamKey,
   fromHistory = false,
   themeMode = "historical",
-  chart = "seasons",
+  chart = "games",
   hideTitle = false,
   initialMetric,
   showFilters = true,
@@ -193,8 +193,8 @@ export async function PlayerCareerIsland({
   const seasons = rows.map((row) => row.season);
   const compare = pickCompare(seasons, season, compareSeason);
   const recent = [...rows].sort((a, b) => b.season.localeCompare(a.season));
-  // Game-dot mode needs the bake. Skip on seasons default so Workers do not
-  // fan out empty ASSETS/R2 lookups for every career season.
+  const { loadCareerGameLogs } = await import("@/lib/career-game-logs");
+  // Games is the default career view; seasons mode skips the bake lookup.
   const gameLogs =
     chart === "games"
       ? await loadCareerGameLogs(
@@ -224,23 +224,4 @@ export async function PlayerCareerIsland({
       showFilters={showFilters}
     />
   );
-}
-
-async function loadCareerGameLogs(playerId: string, seasons: string[]) {
-  const [{ resolvePlayerSeasonGameLog }, { resolveNbaIdForDrbl }] =
-    await Promise.all([
-      import("@/data/runtime/player-game-logs-store"),
-      import("@/data/identity/player-identity"),
-    ]);
-  const nbaId = await resolveNbaIdForDrbl(playerId).catch(() => null);
-  const logs = await Promise.all(
-    seasons.map((season) =>
-      resolvePlayerSeasonGameLog({
-        season,
-        playerId,
-        nbaId,
-      }).catch(() => [])
-    )
-  );
-  return logs.flat();
 }

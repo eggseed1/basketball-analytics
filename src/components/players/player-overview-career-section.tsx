@@ -1,3 +1,4 @@
+import { PlayerCareerIsland } from "@/components/players/player-career-island";
 import { PlayerOverviewCareerClient } from "@/components/players/player-overview-career-client";
 import { TextLink } from "@/components/ui/text-link";
 import { enrichPlayerCareerAdvancedCached } from "@/data/queries/request-cache";
@@ -56,9 +57,9 @@ async function enrichCareerImpact(
 }
 
 /**
- * Overview Career stats: same board as the Career tab. Prefer SSR career rows
- * when the page already loaded them; otherwise the client retries the seasons
- * API (cold edge hits can return an empty array).
+ * Overview Career stats: Games chart by default (game dots + season markers),
+ * same board as the Career tab. Cold empty SSR career falls back to the client
+ * seasons fetch.
  */
 export async function PlayerOverviewCareerSection({
   playerId,
@@ -89,22 +90,34 @@ export async function PlayerOverviewCareerSection({
     career && career.length > 0
       ? await enrichCareerImpact(playerId, career)
       : [];
-  const initialRows =
-    enriched.length > 0
-      ? toCareerBoardRows(filterCareerBoardSource(enriched))
-      : null;
+  const usable = filterCareerBoardSource(enriched);
 
   return (
     <div className="flex flex-col gap-3">
-      <PlayerOverviewCareerClient
-        playerId={playerId}
-        season={season}
-        seasonType={seasonType}
-        teamKey={teamKey}
-        fromHistory={fromHistory}
-        themeMode={themeMode}
-        initialRows={initialRows && initialRows.length > 0 ? initialRows : null}
-      />
+      {usable.length > 0 ? (
+        <PlayerCareerIsland
+          playerId={playerId}
+          season={season}
+          seasonType={seasonType}
+          career={enriched}
+          teamKey={teamKey}
+          fromHistory={fromHistory}
+          themeMode={themeMode}
+          chart="games"
+        />
+      ) : (
+        <PlayerOverviewCareerClient
+          playerId={playerId}
+          season={season}
+          seasonType={seasonType}
+          teamKey={teamKey}
+          fromHistory={fromHistory}
+          themeMode={themeMode}
+          initialRows={
+            usable.length > 0 ? toCareerBoardRows(usable) : null
+          }
+        />
+      )}
       <TextLink
         href={careerHref}
         scroll={false}
