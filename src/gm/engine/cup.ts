@@ -1,3 +1,4 @@
+import { remapScheduleDay } from "@/gm/engine/schedule";
 /**
  * Emirates NBA Cup, run the way the league runs it.
  * Group games are already on the slate. After those four games, the six
@@ -602,11 +603,7 @@ export function ensureNbaCup(league: GmLeagueState): GmLeagueState {
 
   if (!added.length && schedule === league.schedule) return league;
   const nextSchedule = reindex([...schedule, ...added]);
-  const laterPlayed = league.schedule.some(
-    (game) => game.played && (game.gameDate ?? "") > cupDate(season, 12, 11)
-  );
-  const openDay = nextSchedule.filter((game) => !game.played).reduce((min, game) => Math.min(min, game.day), 9999);
-  const day = laterPlayed || openDay === 9999 ? league.day : Math.min(league.day, openDay);
+  const day = remapScheduleDay(league, nextSchedule);
   const extraNews = notes.map((body) => newsItem({ ...league, day }, day, "NBA Cup field is set", body));
   return {
     ...league,
@@ -626,3 +623,4 @@ export function cupChampionNews(league: GmLeagueState, game: GmScheduleGame): Gm
     "The championship does not count in the standings or the season stats."
   );
 }
+

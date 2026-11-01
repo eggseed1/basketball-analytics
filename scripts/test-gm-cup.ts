@@ -66,7 +66,7 @@ test("the knockout and the two makeup games are scheduled from the group results
   const dec12 = scored.find((game) => game.gameDate === "2026-12-12");
   assert.ok(dec12);
   let state = ensureNbaCup(leagueFrom(scored, dec12.day));
-  assert.ok(state.day < dec12.day);
+  assert.equal(state.schedule.find(game => game.day === state.day)?.gameDate, "2026-12-12", "adding Cup games preserves the calendar date");
   assert.equal(state.schedule.filter((game) => game.cup === "quarterfinal").length, 4);
   const makeup = state.schedule.filter((game) => game.cup === "makeup");
   assert.equal(makeup.length, 22);
@@ -162,3 +162,4 @@ test("the next season redraws Cup groups from this save's wins", () => {
   }
   for (const count of counts.values()) assert.equal(count, 4);
 });
+

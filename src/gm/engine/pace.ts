@@ -20,7 +20,7 @@ import { maxScheduleDay, regularSeasonComplete } from "@/gm/engine/schedule";
 import { applyGameToStandings } from "@/gm/engine/standings";
 import { noteTradeDeadline } from "@/gm/engine/offseason";
 import { recordSimGame } from "@/gm/lib/season-line";
-import { rebalanceForInjuryChanges, schemeHeadline } from "@/gm/engine/coaching";
+import { rebalanceForInjuryChanges, schemeHeadline, shiftSnapshot } from "@/gm/engine/coaching";
 import { injuryReturnDate } from "@/gm/engine/injury-schedule";
 
 export function stepDay(league: GmLeagueState): {
@@ -30,7 +30,7 @@ export function stepDay(league: GmLeagueState): {
   if (league.phase !== "regular") return { league, seasonOver: false };
   league = ensureAllStar(ensureNbaCup(league));
   const day = league.day;
-  const due = league.schedule.filter((g) => !g.played && g.day === day);
+  const due = league.schedule.filter((g) => !g.played && g.day <= day);
   if (!due.length) {
     const nextDay = league.day + 1;
     const maxDay = maxScheduleDay(league.schedule);
@@ -57,11 +57,15 @@ export function stepDay(league: GmLeagueState): {
   while (guard < 6) {
     guard += 1;
     const slate = schedule
-      .filter((game) => !game.played && game.day === day && (dueIds.has(game.id) || game.exhibition === "allstar"))
+      .filter((game) => !game.played && game.day <= day && (dueIds.has(game.id) || game.exhibition === "allstar"))
       .sort((a, b) => a.id.localeCompare(b.id));
     if (!slate.length) break;
     for (const g of slate) {
     const result = simulateGame(g, league.teams, players, undefined, schedule, league.settings);
+    if (g.homeTeamId === league.userTeamId || g.awayTeamId === league.userTeamId) {
+      const team = league.teams.find(row => row.id === league.userTeamId);
+      if (team) result.box.shiftPlan = shiftSnapshot(team, players);
+    }
     schedule = schedule.map((x) => (x.id === g.id ? result.game : x));
     if (gameCounts(g)) {
       players = recordSimGame(players, result.box, boxScores);

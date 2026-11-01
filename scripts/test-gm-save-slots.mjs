@@ -80,3 +80,14 @@ index = await saves.readSaveIndex();
 assert.equal(index.activeId, null);
 assert.equal(index.saves.length, 2);
 console.log("Save slot checks passed: delayed autosaves, slot metadata, empty hub, resumption, and separate simulation layers.");
+
+// A slow earlier day cannot overwrite a later day in the same save slot.
+await saves.setActiveSaveId(first);
+held = hold(saves.layerAKey(first));
+const earlier = a.setItem("ignored", encode({ ...league("bos", 2028), day: 10 }));
+await started;
+const later = a.setItem("ignored", encode({ ...league("bos", 2028), day: 11 }));
+release();
+await Promise.all([earlier, later]);
+assert.equal(JSON.parse(await saves.readLayerARaw(first)).state.league.day, 11);
+console.log("Same-slot autosaves retain the latest simulation day.");

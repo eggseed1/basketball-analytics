@@ -199,6 +199,7 @@ type PersistStorage = {
 
 /** Zustand persist adapter: routes the fixed store name to the active slot. */
 export function createGmSlotStorage(layer: "a" | "b"): PersistStorage {
+  const pending = new Map<string, Promise<void>>();
   const slotKey = (id: string) => (layer === "a" ? layerAKey(id) : layerBKey(id));
 
   return {
@@ -214,9 +215,16 @@ export function createGmSlotStorage(layer: "a" | "b"): PersistStorage {
       const id = activeIdSync;
       const league = layer === "a" ? parsePersistedLeague(value) : null;
       if (!id || (layer === "a" && !league)) return;
-      await ensureSaveIndexMigrated();
-      await set(slotKey(id), value);
-      if (league) await touchSaveMeta(league, id);
+      const key = slotKey(id);
+      const previous = pending.get(key) ?? Promise.resolve();
+      const write = previous.catch(() => {}).then(async () => {
+        await ensureSaveIndexMigrated();
+        await set(key, value);
+        if (league) await touchSaveMeta(league, id);
+      });
+      pending.set(key, write);
+      try { await write; }
+      finally { if (pending.get(key) === write) pending.delete(key); }
     },
     removeItem: async () => {
       const id = activeIdSync;

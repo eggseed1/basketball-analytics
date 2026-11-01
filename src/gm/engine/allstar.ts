@@ -1,3 +1,4 @@
+import { remapScheduleDay } from "@/gm/engine/schedule";
 /**
  * All-Star Sunday, in the current U.S. vs World format.
  * Two American teams and one World team play three 12-minute games,
@@ -317,6 +318,13 @@ export function ensureAllStar(league: GmLeagueState): GmLeagueState {
     });
   }
 
+  // Generated and older saves may have no international biography data.
+  // Do not create an exhibition with fewer than five eligible players.
+  if ([allStar.stars, allStar.stripes, allStar.world].some(ids => ids.filter(id => league.players.some(p => p.id === id)).length < 5)) {
+    const schedule = league.schedule.filter(game => game.exhibition !== "allstar" || game.played);
+    return { ...league, allStar, schedule, news: [...notes, ...league.news].slice(0, 50) };
+  }
+
   const added: GmScheduleGame[] = [];
   const have = (id: string) => league.schedule.some((game) => game.id === id) || added.some((game) => game.id === id);
   if (!have(`as_${season}_rising`)) {
@@ -365,6 +373,7 @@ export function ensureAllStar(league: GmLeagueState): GmLeagueState {
     ...league,
     allStar,
     schedule,
+    day: remapScheduleDay(league, schedule),
     news: [...notes, ...league.news].slice(0, 50),
   };
 }
@@ -382,3 +391,4 @@ export function allStarChampionNews(league: GmLeagueState, game: GmScheduleGame)
     tone: "info",
   };
 }
+
