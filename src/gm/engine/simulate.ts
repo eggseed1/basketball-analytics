@@ -8,6 +8,7 @@ import { lineupBalance, roleFit, assignFive } from "@/gm/engine/rotation-roles";
 import { allStarSquadTeam } from "@/gm/engine/allstar";
 import { gapBefore } from "@/gm/engine/schedule";
 import { coachEffect } from "@/gm/engine/staff";
+import { badgeEffects, ensureBadges } from "@/gm/engine/badges";
 
 export function lineupPlayers(team: GmTeam, players: GmPlayer[], max = 10): GmPlayer[] {
   const starters = new Set(Object.values(team.starters));
@@ -73,12 +74,16 @@ export function simulateGame(
     players = players.map(p => h.has(p.id) ? { ...p, teamId: home!.id, injury: null } : a.has(p.id) ? { ...p, teamId: away!.id, injury: null } : p);
   }
   if (!home || !away) throw new Error("The game references a missing team.");
-  players = players.map(ensureSimProfile);
+  players = players.map(p => ensureBadges(ensureSimProfile(p)));
   const homeBook = book(home, players, Boolean(game.postseason));
   const awayBook = book(away, players, Boolean(game.postseason));
   const byId = new Map(players.map(p => [p.id, p]));
   const lines = new Map([...homeBook.roster, ...awayBook.roster].map(p => [p.id, emptyLine(p)]));
-  const rates = new Map(players.map(p => [p.id, simulationRates(p)]));
+  const badges = new Map(players.map(p => [p.id, badgeEffects(p)]));
+  const rates = new Map(players.map(p => {
+    const r = simulationRates(p), b = badges.get(p.id)!;
+    return [p.id, { ...r, twoPct: r.twoPct+b.two, threePct: r.threePct+b.three, ftPct: clamp(r.ftPct+b.ft,0,0.98), ast: r.ast*b.ast, stl: r.stl*b.stl, blk: r.blk*b.blk, orb: r.orb*b.reb, drb: r.drb*b.reb }];
+  }));
   const entryTotals = players.filter(p => p.teamId && p.simProfile?.source === "nba" && p.nbaSeason).reduce((n, p) => ({ fga: n.fga + p.nbaSeason!.fga, tpa: n.tpa + p.nbaSeason!.tpa, blk: n.blk + p.nbaSeason!.blk }), { fga: 0, tpa: 0, blk: 0 });
   const leagueBlockRate = entryTotals.fga > 0 ? entryTotals.blk / entryTotals.fga : 0.055;
   const leagueThreeShare = entryTotals.fga > 0 ? entryTotals.tpa / entryTotals.fga : 0.38;
@@ -151,7 +156,7 @@ export function simulateGame(
     const turnoverChance = clamp(turnovers / Math.max(0.1, volume + 0.44 * freeThrows + turnovers - offensiveRebounds) * mods.tov, 0.065, 0.24);
     const handler = weighted(off, p => rates.get(p.id)!.fga * usageBoost(p, own.coaching) + rates.get(p.id)!.ast, rng);
     for (const p of off) usedOnCourt.set(p.id, (usedOnCourt.get(p.id) ?? 0) + 1);
-    if (rng() < turnoverChance) {
+    if (rng() < turnoverChance * badges.get(handler.id)!.tov) {
       lines.get(handler.id)!.turnovers++;
       const stealShare = clamp(def.reduce((n, p) => n + rates.get(p.id)!.stl, 0) / Math.max(0.01, turnovers), 0.2, 0.9);
       const steal = rng() < stealShare ? weighted(def, p => rates.get(p.id)!.stl, rng) : undefined;
@@ -200,7 +205,10 @@ export function simulateGame(
       const blocked = rng() < clamp(def.reduce((n, p) => n + rates.get(p.id)!.blk, 0) / Math.max(0.1, baselineFga) * blockWeight / averageBlockWeight, 0.005, 0.2);
       const blocker = blocked ? weighted(def, p => rates.get(p.id)!.blk, rng) : undefined;
       const homeAdvantage = side === 0 && !game.neutral ? 0.004 : 0;
-      const pct = (three ? r.threePct : r.twoPct * mods.two) * tired + residual + fit - defense * 0.003 + homeAdvantage + (coach[side]!.offense - coach[1 - side]!.defense) * 0.002;
+      const passing = off.filter(p => p.id !== shooter.id).reduce((n,p) => n+badges.get(p.id)!.passing,0) / Math.max(1,off.length-1);
+      const badgeDefense = def.reduce((n,p) => n+badges.get(p.id)!.defense,0) / Math.max(1,def.length);
+      const closeLate = (elapsed >= 2640) && Math.abs(homeScore-awayScore) <= 10;
+      const pct = (three ? r.threePct : r.twoPct * mods.two) * tired + residual + fit - defense * 0.003 + homeAdvantage + (coach[side]!.offense - coach[1 - side]!.defense) * 0.002 + passing - badgeDefense + (closeLate ? badges.get(shooter.id)!.clutch : 0);
       // Observed shooting percentages already include average blocked attempts.
       // Convert to an unblocked attempt probability; opponent block skill can then vary.
       const observedBlockShare = clamp(leagueBlockRate * blockWeight / averageBlockWeight, 0, 0.2);

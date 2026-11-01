@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { GmBadges } from "@/gm/ui/gm-badges";
 import { SectionFrame } from "@/components/layout/section-frame";
 import { GmConfirmAction } from "@/gm/ui/gm-confirm-action";
 import { useGmStore } from "@/gm/state/gm-store";
@@ -27,7 +28,7 @@ export function GmDevelopment() {
   const awards = roster.flatMap(player => (player.ceilingGrowth?.awards ?? []).map(award => ({ ...award, player }))).sort((a,b) => b.season - a.season);
   return <div className="flex min-w-0 flex-col gap-8" data-testid="development-desk">
     <header><h1 className="text-2xl font-bold tracking-tight">Development</h1><p className="mt-2 max-w-2xl text-sm text-muted-foreground">Set individual work, pair young players with veterans, and review the progress they earn on the court.</p></header>
-    <nav aria-label="Development sections" className="flex flex-wrap gap-4 text-sm font-semibold"><a href="#development-focuses" className="underline underline-offset-4">Focuses and mentorship</a><a href="#development-camp" className="underline underline-offset-4">Training camp</a><a href="#development-history" className="underline underline-offset-4">Ceiling history</a></nav>
+    <nav aria-label="Development sections" className="flex flex-wrap gap-4 text-sm font-semibold"><a href="#development-focuses" className="underline underline-offset-4">Focuses and mentorship</a><a href="#development-badges" className="underline underline-offset-4">Skill badges</a><a href="#development-camp" className="underline underline-offset-4">Training camp</a><a href="#development-history" className="underline underline-offset-4">Ceiling history</a></nav>
     {note ? <p role="status" className="text-sm">{note}</p> : null}
     <div id="development-focuses" className="scroll-mt-32"><SectionFrame title="Focuses and mentorship" description="One veteran can mentor one teammate at the same position. Veterans must be at least 28 and five years older; learners must be 25 or younger. The growth bonus lasts while they remain teammates.">
       <div className="grid min-w-0 gap-4 lg:grid-cols-2">{roster.map(player => {
@@ -43,6 +44,7 @@ export function GmDevelopment() {
         </article>;
       })}</div>
     </SectionFrame></div>
+    <GmBadges roster={roster} />
     <div id="development-camp" className="scroll-mt-32"><SectionFrame title="Preseason training camp" description={`Choose one or two players and a focus at the training-camp step. Gains apply once. Each participant gets two games of fatigue (2% shooting penalty), or up to a ${Math.round(campSorenessRisk(league) * 100)}% chance of one-game soreness. Skipping individual camp remains available in the season hub.`} bodySurface>
       {flow.campResults ? <ul className="divide-y divide-border text-sm">{flow.campResults.filter(row => roster.some(p => p.id === row.playerId)).map(row => <li key={row.playerId} className="py-3"><strong>{row.name}</strong> · {row.focus}<p className="mt-1 text-muted-foreground">{row.gains.join(", ") || "Skills already at their limit."} {row.tradeoff}</p></li>)}</ul> : campOpen ? <>
         <p className="text-sm">{assignments.length}/{campSlots(league)} camp slots assigned</p>

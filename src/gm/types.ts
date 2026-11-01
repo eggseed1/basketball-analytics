@@ -306,7 +306,11 @@ export interface GmSeasonArchive {
   userTeamId: string;
 }
 
+export type GmBadgeId = "inside_touch" | "deep_range" | "free_throw" | "floor_general" | "secure_handle" | "passing_lanes" | "rim_guardian" | "glass_cleaner" | "defensive_anchor" | "clutch_scorer";
+
 export interface GmPlayer {
+  badges?: { version: 1; xp: Partial<Record<GmBadgeId, number>>; season?: number; gameIds?: string[] };
+  badgeFocus?: GmBadgeId;
   workEthic?: number;
   mentorship?: { mentorId: string; teamId: string; season: number; sharedGames: number; lastGameId?: string };
   developmentBaseline?: { season: number; overall: number };
