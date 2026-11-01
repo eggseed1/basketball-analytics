@@ -1527,7 +1527,7 @@ export const useGmStore = create<GmStore>()(
         if (games.length === 0) return;
         const schedule = [...league.schedule];
         let boxScores = [...league.boxScores];
-        const players = [...league.players];
+        let players = [...league.players];
         const notes: string[] = [];
         for (const game of games) {
           const tip = {

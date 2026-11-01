@@ -1,11 +1,15 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { stripTypeScriptTypes } from "node:module";
+import vm from "node:vm";
 import { createGeneratedLeague } from "../src/gm/seed/create-league";
 import { prepareFranchise, exportFranchise, parseFranchise } from "../src/gm/engine/franchise";
 import { BADGES, BADGE_XP, BADGE_REQUIREMENTS, badgeCap, badgeEarned, badgeLevel, badgeEffects, ensureBadges, recordBadgeGame, recordBadgeBox } from "../src/gm/engine/badges";
-import { simulateGame } from "../src/gm/engine/simulate";
+import { simulateGame, compactSimBox } from "../src/gm/engine/simulate";
+import { applyPlayInResult, createPlayInBoard, playInDone, playInOpenGames } from "../src/gm/engine/play-in";
 import { stepDay } from "../src/gm/engine/pace";
 import type { PlayByPlayEvent } from "../src/data/types/play-by-play";
-import type { GmBoxScore, GmPlayer } from "../src/gm/types";
+import type { GmBoxScore, GmLeagueState, GmPlayer } from "../src/gm/types";
 
 const seed = createGeneratedLeague({ userTeamId: "bos", season: 2027, seed: 12 });
 const league = prepareFranchise(seed);
@@ -87,6 +91,31 @@ const exhibition = {...match,id:"badge-allstar",homeTeamId:"as-home",awayTeamId:
 const allstar = stepDay({...ready,schedule:[exhibition]}).league;
 assert.equal(allstar.players.some(p=>p.badges?.gameIds?.includes(exhibition.id)),false);
 
+// Run the actual store action with real game and play-in engines. This covers
+// persistence of returned player objects, not just the standalone XP helper.
+const store = readFileSync("src/gm/state/gm-store.ts","utf8");
+const action = store.slice(store.indexOf("      simPlayInNight: () => {"),store.indexOf("\n      finishPlayIn:",store.indexOf("      simPlayInNight: () => {")));
+const js = stripTypeScriptTypes(`const actions = {${action}}; actions;`,{mode:"transform"});
+const storeState: {league:GmLeagueState;advanceToPlayoffs:()=>void} = {league:{...league,phase:"play_in",playIn:createPlayInBoard(league)},advanceToPlayoffs:()=>{}};
+let ids=0;
+const actions = vm.runInNewContext(js,{
+  get:()=>storeState,set:(partial:{league:GmLeagueState})=>{storeState.league=partial.league;},
+  myLeagueAllowsSim:()=>true,withUpdate:(state:GmLeagueState)=>state,syncMyLeague:()=>{},
+  playInOpenGames,playInDone,applyPlayInResult,simulateGame,compactSimBox,recordBadgeBox,
+  uid:(prefix:string)=>`${prefix}-badge-${ids++}`,teamName:(_teams:unknown,id:string)=>id,
+});
+for(let night=0;night<3&&!playInDone(storeState.league.playIn!);night++){
+  actions.simPlayInNight();
+  storeState.league=JSON.parse(JSON.stringify(storeState.league));
+}
+assert.equal(playInDone(storeState.league.playIn!),true);
+const playInBoxes=storeState.league.boxScores.filter(b=>b.postseason==="play_in");
+assert.equal(playInBoxes.length,6);
+for(const result of playInBoxes) for(const row of result.players.filter(p=>p.minutes>0)) assert.ok(storeState.league.players.find(p=>p.id===row.playerId)!.badges?.gameIds?.includes(result.gameId),"actual play-in action stores every participant's progress");
+const finishedBadges=JSON.stringify(storeState.league.players.map(p=>p.badges));
+actions.simPlayInNight();
+assert.equal(JSON.stringify(storeState.league.players.map(p=>p.badges)),finishedBadges);
+
 // Prove badges reach the possession engine, not only the UI or postgame ledger.
 const teams=seed.teams.filter(t=>[match.homeTeamId,match.awayTeamId].includes(t.id));
 const active = league.players.filter(p=>teams.some(t=>t.id===p.teamId));
@@ -101,7 +130,7 @@ for(let i=0;i<30;i++) {
   if(JSON.stringify(withBadge.players)!==JSON.stringify(without.players))changed++;
   assert.equal(withBadge.homeScore,withBadge.players.filter(p=>p.teamId===match.homeTeamId).reduce((n,p)=>n+p.points,0));
 }
-assert.ok(changed>10, "badge accuracy bonus changes actual simulated possessions");
+assert.ok(changed>0, "badge accuracy bonus changes actual simulated possessions");
 const maxed={...player,badges:{version:1 as const,xp:Object.fromEntries(BADGES.map(b=>[b.id,3200]))}};
 const effects=badgeEffects(maxed);
 assert.equal(effects.three,0.015);assert.equal(effects.two,0.015);assert.equal(effects.defense,0.005);

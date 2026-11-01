@@ -323,7 +323,9 @@ try {
       await page.getByLabel("Badge player", { exact: true }).selectOption(pupil.id);
       assert.equal(await page.getByLabel(`Badge emphasis for ${pupil.name}`, { exact: true }).inputValue(),available[0]);
       await page.getByRole("link", {name:`Open ${pupil.name}'s player card`,exact:true}).click();
+      await page.waitForURL(`**/gm/player/${pupil.id}`);
       await page.getByRole("heading", {name:"Skill badges",exact:true}).waitFor();
+      await page.getByLabel(`Skill badges for ${pupil.name}`,{exact:true}).waitFor();
       assert.equal(await page.getByLabel(`Skill badges for ${pupil.name}`,{exact:true}).count(),1);
       await page.goto("http://127.0.0.1:3108/gm/development",{waitUntil:"domcontentloaded"});
       await page.getByRole("heading", {name:"Development",exact:true}).waitFor();
