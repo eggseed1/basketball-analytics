@@ -26,7 +26,7 @@ import { createRng } from "../src/gm/engine/rng";
 import { sealProspect } from "../src/gm/engine/scouting";
 import { createDraftClass } from "../src/gm/seed/prospect-identities";
 import { displayPlayerName, displayPlayerSubtitle } from "../src/gm/lib/selectors";
-import type { GmLeagueState, GmPlayer, GmTeam } from "../src/gm/types";
+import { DEFAULT_SETTINGS, type GmLeagueState, type GmPlayer, type GmTeam } from "../src/gm/types";
 
 function club(id: string, abbr: string): GmTeam {
   return {
@@ -72,6 +72,7 @@ function leagueFromClass(klass: GmPlayer[]): GmLeagueState {
   const lotteryOrder = teams.map((team) => team.id);
   return {
     id: "test-draft",
+    settings: { ...DEFAULT_SETTINGS },
     season: 2027,
     day: 200,
     phase: "draft",
@@ -163,7 +164,7 @@ const traded = applyDraftNightTrade(state, up);
 assert.equal(traded.draftOrder?.[0], "bos");
 assert.equal(traded.draftOrder?.[1], "det");
 assert.ok(
-  traded.news[0]?.body.includes("Sweeteners:") || up.upSweetenerIds.length === 0,
+  up.youSend.filter(line=>!line.includes("tonight")).every(line=>traded.news[0]?.body.includes(line)),
   "news should list futures moved"
 );
 
@@ -216,3 +217,4 @@ assert.equal(shouldShowDraftResults(summer), true);
 assert.equal(isDraftComplete(summer), false);
 
 console.log("draft night ok", displayPlayerName(klass[0]!), draftPickLog(after)[0]?.pick);
+

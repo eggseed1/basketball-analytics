@@ -162,13 +162,14 @@ export async function setActiveSaveId(id: string | null): Promise<void> {
   await writeIndex({ ...index, activeId: id });
 }
 
-export async function touchActiveMeta(league: GmLeagueState): Promise<void> {
-  const index = await readSaveIndex();
-  if (!index.activeId) return;
-  const meta = metaFromLeague(league, index.activeId);
+async function touchSaveMeta(league: GmLeagueState, id: string): Promise<void> {
+  await ensureSaveIndexMigrated();
+  const index = indexCache!;
+  if (!index.saves.some(row => row.id === id)) return;
+  const meta = metaFromLeague(league, id);
   await writeIndex({
     ...index,
-    saves: index.saves.map((row) => (row.id === index.activeId ? meta : row)),
+    saves: index.saves.map((row) => (row.id === id ? meta : row)),
   });
 }
 
@@ -198,6 +199,7 @@ type PersistStorage = {
 
 /** Zustand persist adapter: routes the fixed store name to the active slot. */
 export function createGmSlotStorage(layer: "a" | "b"): PersistStorage {
+  const pending = new Map<string, Promise<void>>();
   const slotKey = (id: string) => (layer === "a" ? layerAKey(id) : layerBKey(id));
 
   return {
@@ -208,20 +210,28 @@ export function createGmSlotStorage(layer: "a" | "b"): PersistStorage {
       return (await get<string>(slotKey(index.activeId))) ?? null;
     },
     setItem: async (_name, value) => {
-      await ensureSaveIndexMigrated();
-      const index = await readSaveIndex();
-      if (!index.activeId) return;
-      await set(slotKey(index.activeId), value);
-      if (layer === "a") {
-        const league = parsePersistedLeague(value);
-        if (league) await touchActiveMeta(league);
-      }
+      // A write belongs to the slot that was active when it began. Switching
+      // slots while IndexedDB is pending must not move the write or its label.
+      const id = activeIdSync;
+      const league = layer === "a" ? parsePersistedLeague(value) : null;
+      if (!id || (layer === "a" && !league)) return;
+      const key = slotKey(id);
+      const previous = pending.get(key) ?? Promise.resolve();
+      const write = previous.catch(() => {}).then(async () => {
+        await ensureSaveIndexMigrated();
+        await set(key, value);
+        if (league) await touchSaveMeta(league, id);
+      });
+      pending.set(key, write);
+      try { await write; }
+      finally { if (pending.get(key) === write) pending.delete(key); }
     },
     removeItem: async () => {
+      const id = activeIdSync;
+      if (!id) return;
       await ensureSaveIndexMigrated();
-      const index = await readSaveIndex();
-      if (!index.activeId) return;
-      await del(slotKey(index.activeId));
+      await del(slotKey(id));
     },
   };
 }
+

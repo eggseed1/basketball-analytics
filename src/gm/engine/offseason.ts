@@ -1,3 +1,4 @@
+import { ensureDraftPickHorizon } from "@/gm/engine/draft-order";
 /**
  * Summer loop: contracts expire, the market opens, then a new year starts.
  * Aging happens once, on the way into free agency, so opening the next
@@ -5,6 +6,8 @@
  */
 
 import { archiveSeason } from "@/gm/engine/franchise";
+import { financialSettings } from "@/gm/engine/season-flow-state";
+import { advanceContractYear } from "@/gm/seed/real-books";
 import type { GmAutomation, GmLeagueState, GmPlayer, GmSignVia } from "@/gm/types";
 import {
   advanceBirdRights,
@@ -30,7 +33,7 @@ import { emptyFaMarket, runFaPeriod } from "@/gm/engine/free-agency";
 export function automationOf(league: GmLeagueState): GmAutomation {
   return {
     autoDraft: league.automation?.autoDraft ?? false,
-    autoFreeAgency: league.automation?.autoFreeAgency ?? true,
+    autoFreeAgency: league.automation?.autoFreeAgency ?? false,
     autoScout: league.automation?.autoScout ?? false,
   };
 }
@@ -88,9 +91,10 @@ function releaseExpiredWithoutOption(player: GmPlayer): GmPlayer {
     ...player,
     teamId: null,
     contract: null,
-    rightsTeamId: rights ? player.teamId : null,
+    rightsTeamId: player.teamId,
+    rightsStartSeason: contract.birdStartSeason ?? contract.signedSeason,
     rightsKind: rights ?? undefined,
-    lastSalaryM: rights ? contract.annualSalaryM : undefined,
+    lastSalaryM: contract.annualSalaryM,
   };
 }
 
@@ -182,6 +186,38 @@ export function cullUnsignedFreeAgents(
  */
 export function enterFreeAgency(state: GmLeagueState): GmLeagueState {
   if (state.phase === "free_agency") return state;
+  if (state.seasonFlow) {
+    const flow = state.seasonFlow;
+    if (flow.stage !== "free_agency" || state.players.some(player => player.pendingRookieContract)) return state;
+    state = archiveSeason(state);
+    if (flow.contractsRolled) return { ...state, phase: "free_agency", faMarket: state.faMarket ?? emptyFaMarket(state.season * 7919) };
+    const season = state.season + 1;
+    const rolled = advanceBirdRights(state.players.map(player => {
+      if (player.draftYear === state.season) return { ...player, identityRevealed: true };
+      let contract = player.contract;
+      if (contract) {
+        contract = advanceContractYear(contract);
+        if (contract.extension && season >= contract.extension.startsSeason) contract = {
+          ...contract, signedSeason: contract.extension.startsSeason,
+          originalYears: contract.extension.years, extension: undefined,
+        };
+      }
+      return { ...player, age: player.age + 1,
+        serviceYears: player.teamId ? (player.serviceYears ?? Math.max(0, player.age - 19)) + 1 : player.serviceYears,
+        contract, qoStatus: undefined, qoAmountM: undefined };
+    }), season).map(releaseExpiredWithoutOption);
+    const { players, retired } = cullUnsignedFreeAgents(rolled, { soft: true });
+    return { ...state, phase: "free_agency", financialSeason: season,
+      settings: financialSettings(season, state.settings), players, draftPool: [],
+      teams: state.teams.map(team => autoSetLineup(tickDeadMoney(team), players)),
+      freeAgents: players.filter(player => player.teamId == null && player.rightsKind !== "exclusive_draft").map(player => player.id),
+      faMarket: emptyFaMarket(state.season * 7919 + state.day),
+      seasonFlow: { ...flow, contractsRolled: true, deadMoneyRolled: true, retiredPlayers: retired.map(player => ({
+        id: player.id, name: player.name, age: player.age, overall: overallOf(player),
+      })) },
+      news: [news(state, "Contract decisions open", "The new cap year is " + season + ". Resolve options and qualifying offers, then negotiate with your own free agents."), ...state.news].slice(0, 50),
+    };
+  }
 
   state = archiveSeason(state);
   const drafted =
@@ -262,9 +298,10 @@ export function runCpuFreeAgency(
 
 /** New schedule, new cap, new draft class. Contracts were already ticked in free agency. */
 export function startNextSeason(state: GmLeagueState): GmLeagueState {
+  if (state.seasonFlow && !state.seasonFlow.readyForTip) return state;
   const summer =
     state.phase === "free_agency" ? state : enterFreeAgency(state);
-  const filled = runCpuFreeAgency(summer, { includeUser: false });
+  const filled = state.seasonFlow ? state : runCpuFreeAgency(summer, { includeUser: false });
   // Anyone still unsigned after the market closes gets one more retirement pass
   // so undrafted leftovers and ignored vets do not pile up year after year.
   const { players: thinned } = cullUnsignedFreeAgents(filled.players);
@@ -295,9 +332,10 @@ export function startNextSeason(state: GmLeagueState): GmLeagueState {
     seasonPossessions: undefined,
   }));
   const players = [...carried, ...prospects];
-  const teams = filled.teams
-    .map((team) => tickDeadMoney(team))
-    .map((team) => autoSetLineup(team, players));
+  const retainedTeams = filled.teams
+    .map((team) => filled.seasonFlow?.deadMoneyRolled ? team : tickDeadMoney(team))
+    .map((team) => autoSetLineup({...team,draftPicks:team.draftPicks.filter(pick=>pick.season>=season)}, players));
+  const teams=ensureDraftPickHorizon({...filled,season,teams:retainedTeams}).teams;
   const priorWins = Object.fromEntries(
     filled.teams.map((team) => [team.id, filled.standings[team.id]?.wins ?? 0])
   );
@@ -308,6 +346,8 @@ export function startNextSeason(state: GmLeagueState): GmLeagueState {
     season,
     day: 0,
     phase: "regular",
+    seasonFlow: state.seasonFlow ? { version: 1, season, completed: [] } : undefined,
+    financialSeason: undefined, playIn: undefined, devMarks: undefined, draftOrder: undefined,
     settings,
     players,
     teams,
@@ -329,6 +369,9 @@ export function startNextSeason(state: GmLeagueState): GmLeagueState {
     lotteryOrder: undefined,
     draftPickIndex: 0,
     userDraftBoard: undefined,
+    draftSlotOrigins: undefined,
+    draftScouting: undefined,
+    draftDeals: undefined,
     combineDone: false,
     tradeDeadlinePassed: false,
     incomingOffer: undefined,

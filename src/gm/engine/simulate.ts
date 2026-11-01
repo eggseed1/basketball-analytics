@@ -66,13 +66,13 @@ export function simulateGame(
   const rng = createRng(actualSeed);
   let home = teams.find(t => t.id === game.homeTeamId);
   let away = teams.find(t => t.id === game.awayTeamId);
-  if (!home || !away) throw new Error("The game references a missing team.");
   if (game.exhibition === "allstar" && game.squad) {
     home = allStarSquadTeam(game.homeTeamId, game.squad[0], players);
     away = allStarSquadTeam(game.awayTeamId, game.squad[1], players);
     const h = new Set(game.squad[0]), a = new Set(game.squad[1]);
     players = players.map(p => h.has(p.id) ? { ...p, teamId: home!.id, injury: null } : a.has(p.id) ? { ...p, teamId: away!.id, injury: null } : p);
   }
+  if (!home || !away) throw new Error("The game references a missing team.");
   players = players.map(ensureSimProfile);
   const homeBook = book(home, players, Boolean(game.postseason));
   const awayBook = book(away, players, Boolean(game.postseason));

@@ -1,3 +1,4 @@
+import { cbaSeason } from "@/gm/engine/season-flow-state";
 /**
  * Restricted free agency: outside offer sheets and incumbent match windows.
  * Match deadlines are compressed game ticks from market config, not a
@@ -32,6 +33,7 @@ function applySign(
           teamId,
           identityRevealed: true,
           rightsTeamId: null,
+          rightsStartSeason: undefined,
           rightsKind: undefined,
           lastSalaryM: undefined,
           qoStatus: undefined,
@@ -39,8 +41,11 @@ function applySign(
           contract: {
             yearsRemaining: years,
             annualSalaryM: annual,
-            birdRights: "none" as const,
-            signedSeason: state.season,
+            birdRights: (player.rightsTeamId === teamId ? "bird" : "none") as "bird" | "none",
+            originalYears: years,
+            years: Array.from({ length: years }, (_, index) => ({ season: cbaSeason(state) + index, salaryM: annual })),
+            birdStartSeason: player.rightsTeamId === teamId ? player.rightsStartSeason ?? cbaSeason(state) : cbaSeason(state),
+            signedSeason: cbaSeason(state),
             signedVia: via,
           },
         }

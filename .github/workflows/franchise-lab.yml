@@ -29,7 +29,11 @@ jobs:
       - run: npm ci
       - run: npx next typegen
       - run: npm run typecheck
-      - run: npx eslint src/gm src/app/gm scripts/test-gm-franchise-upgrade.ts scripts/test-gm-calibration.ts scripts/test-franchise-systems.mjs scripts/fixture-gm-franchise.ts scripts/smoke-gm-browser.mjs --quiet --pass-on-unpruned-suppressions
+      - run: npx eslint src/gm src/app/gm scripts/test-gm-franchise-upgrade.ts scripts/test-gm-calibration.ts scripts/test-franchise-systems.mjs scripts/fixture-gm-franchise.ts scripts/smoke-gm-browser.mjs scripts/test-gm-draft-overhaul.ts scripts/test-gm-draft-class.ts scripts/fixture-gm-draft-overhaul.ts scripts/smoke-gm-draft-overhaul.mjs --quiet --pass-on-unpruned-suppressions
+      - run: npm run test:franchise-flow
+      - run: npm run test:franchise-ux
+      - run: npm run test:franchise-saves
+      - run: npm run test:franchise-draft
       - run: npm run test:franchise-lab
       - run: npm run test:franchise-systems
       - run: npm run test:franchise-calibration
@@ -37,7 +41,9 @@ jobs:
         if: always()
         with:
           name: franchise-lab-calibration
-          path: /tmp/franchise-calibration
+          path: |
+            /tmp/franchise-calibration
+            /tmp/franchise-draft-calibration
           if-no-files-found: ignore
           retention-days: 7
   browser:
@@ -55,9 +61,14 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - run: node scripts/smoke-react-state.mjs
       - run: node scripts/smoke-gm-browser.mjs
+      - run: node scripts/audit-gm-ux.mjs --verify
+      - run: node scripts/smoke-gm-draft-overhaul.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: franchise-lab-ui
-          path: /tmp/franchise-qa
+          path: |
+            /tmp/franchise-qa
+            /tmp/franchise-ux
+            /tmp/franchise-draft-qa
           retention-days: 7

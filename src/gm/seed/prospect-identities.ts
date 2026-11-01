@@ -1,3 +1,5 @@
+import { ensurePlayerSheet, overallFromAttributes } from "@/gm/engine/attributes";
+import { amateurSeason } from "@/gm/engine/draft-intel";
 import type {
   GmPlayer,
   GmPosition,
@@ -317,8 +319,8 @@ export function rollProspectTier(count: number, rng: () => number): ProspectTier
   const tiers: ProspectTier[] = [];
   // Target mix for a ~60-player pool (2 rounds + extras)
   const quotas: { tier: ProspectTier; n: number }[] = [
-    { tier: "superstar", n: count >= 50 ? (rng() < 0.55 ? 2 : 1) : 1 },
-    { tier: "allstar", n: Math.max(2, Math.round(count * 0.07)) },
+    { tier: "superstar", n: rng() < 0.38 ? 1 : 0 },
+    { tier: "allstar", n: Math.max(1, Math.round(count * (0.035 + rng() * 0.025))) },
     { tier: "starter", n: Math.max(6, Math.round(count * 0.15)) },
     { tier: "rotation", n: Math.max(12, Math.round(count * 0.28)) },
     { tier: "fringe", n: Math.max(12, Math.round(count * 0.28)) },
@@ -345,12 +347,12 @@ export function ratingsForTier(
   // still clear the pack; depth stays in the 60s so long runs do not flood
   // the league with 78+ rookies.
   const base = {
-    superstar: { impact: [3.8, 6.2], pot: [8.5, 10], skill: [58, 80] },
-    allstar: { impact: [2.0, 3.8], pot: [7.0, 8.7], skill: [52, 74] },
-    starter: { impact: [0.6, 2.2], pot: [5.0, 7.1], skill: [46, 68] },
-    rotation: { impact: [-0.5, 1.1], pot: [3.0, 5.4], skill: [36, 60] },
-    fringe: { impact: [-1.8, 0.35], pot: [1.4, 3.8], skill: [28, 52] },
-    depth: { impact: [-2.8, -0.2], pot: [0.4, 2.8], skill: [20, 46] },
+    superstar: { impact: [1.8, 3.5], pot: [8.5, 10], skill: [58, 80] },
+    allstar: { impact: [0.3, 1.9], pot: [7.0, 8.7], skill: [52, 74] },
+    starter: { impact: [-0.6, 0.7], pot: [5.0, 7.1], skill: [46, 68] },
+    rotation: { impact: [-1.9, -0.4], pot: [3.0, 5.4], skill: [36, 60] },
+    fringe: { impact: [-2.5, -0.8], pot: [2.5, 4.8], skill: [28, 52] },
+    depth: { impact: [-3.8, -2.4], pot: [0.4, 2.8], skill: [20, 46] },
   }[tier];
 
   const impact =
@@ -425,18 +427,20 @@ export function assignProspectIdentity(
     name: generateTrueName(rng),
     codename: def.codename,
     identityRevealed: false,
-    position: def.positions.includes(player.position)
-      ? player.position
-      : pick(rng, def.positions),
+    position: player.position,
   };
 }
 
 export function codenameDef(codename: string | undefined): CodenameDef | undefined {
   if (!codename) return undefined;
-  return (
-    STYLE_CODENAMES.find((c) => c.codename === codename) ||
-    ELITE_CODENAMES.find((c) => c.codename === codename)
-  );
+  const definitions=[...STYLE_CODENAMES,...ELITE_CODENAMES];
+  const exact=definitions.find(def=>def.codename===codename);
+  if(exact)return exact;
+  // Large classes reuse style names with a numeric suffix. They are valid
+  // identities, so loading a save must not regenerate their real names.
+  const base=codename.replace(/ \d+$/,"");
+  const definition=definitions.find(def=>def.codename===base);
+  return definition?{...definition,codename}:undefined;
 }
 
 const POSITIONS: GmPosition[] = ["PG", "SG", "SF", "PF", "C"];
@@ -489,15 +493,15 @@ export function applyDraftAgeProfile(
   if (age <= 18) {
     // Prep-to-pro / young international: huge range.
     potential = potential + 1.15 + jitter();
-    impact = impact * 0.82 + jitter() * 0.4;
+    impact = impact - 0.5 + jitter() * 0.4;
     skillTilt = -6;
   } else if (age === 19) {
     potential = potential + 0.75 + jitter();
-    impact = impact * 0.88 + jitter() * 0.3;
+    impact = impact - 0.25 + jitter() * 0.3;
     skillTilt = -3;
   } else if (age === 20) {
     potential = potential + 0.35 + jitter();
-    impact = impact * 0.95 + jitter() * 0.25;
+    impact = impact - 0.1 + jitter() * 0.25;
     skillTilt = -1;
   } else if (age === 21) {
     potential = potential + jitter() * 0.5;
@@ -505,16 +509,16 @@ export function applyDraftAgeProfile(
   } else if (age === 22) {
     // Junior / older soph: more polished, less rocket fuel.
     potential = potential - 0.55 + jitter();
-    impact = impact * 1.08 + Math.abs(jitter()) * 0.2;
+    impact = impact + 0.25 + Math.abs(jitter()) * 0.2;
     skillTilt = 3;
   } else if (age === 23) {
     potential = potential - 1.05 + jitter();
-    impact = impact * 1.14 + Math.abs(jitter()) * 0.25;
+    impact = impact + 0.45 + Math.abs(jitter()) * 0.25;
     skillTilt = 5;
   } else {
     // 24+: senior / older euro — floor raiser, not a jackpot ticket.
     potential = potential - 1.55 + jitter();
-    impact = impact * 1.18 + Math.abs(jitter()) * 0.2;
+    impact = impact + 0.6 + Math.abs(jitter()) * 0.2;
     skillTilt = 7;
   }
 
@@ -572,6 +576,7 @@ export function createDraftClass(options: {
   const { rng, seasonEndYear, scoutLevel, seal } = options;
   const used = new Set<string>();
   const out: GmPlayer[] = [];
+  const usedNames=new Set<string>();
 
   // Pyramid first, then board chaos: stars can slide, and a sleeper can climb.
   const ranked = rollProspectTier(count, rng)
@@ -579,12 +584,12 @@ export function createDraftClass(options: {
       let bump = 0;
       const roll = rng();
       // Risers.
-      if (tier === "rotation" && roll < 0.1) bump = -2.2;
-      else if (tier === "fringe" && roll < 0.06) bump = -2.4;
-      else if (tier === "starter" && roll < 0.22) bump = -1.1;
+      if (tier === "rotation" && roll < 0.1) bump = -0.55;
+      else if (tier === "fringe" && roll < 0.06) bump = -1.0;
+      else if (tier === "starter" && roll < 0.22) bump = -0.55;
       // Fallers — keeps pick 1 from being automatic and feeds late steals.
-      else if (tier === "superstar" && roll < 0.42) bump = 1.1 + rng() * 1.4;
-      else if (tier === "allstar" && roll < 0.28) bump = 1.4 + rng() * 1.8;
+      else if (tier === "superstar" && roll < 0.16) bump = 1.1 + rng() * 1.4;
+      else if (tier === "allstar" && roll < 0.18) bump = 1.4 + rng() * 1.8;
       else if (tier === "starter" && roll < 0.2) bump = 1.8 + rng() * 1.5;
       return {
         tier,
@@ -634,6 +639,8 @@ export function createDraftClass(options: {
       weightLbs: randInt(rng, position === "C" ? 220 : 185, position === "C" ? 280 : 245),
       ratings,
       consensus,
+      consensusRank: board + 1,
+      draftModel: 2,
       scouted: {
         impact: null,
         offense: null,
@@ -652,17 +659,39 @@ export function createDraftClass(options: {
         pipeline === "international"
           ? pick(rng, ["EuroLeague", "NBL Australia", "Adriatic League", "Spain ACB"])
           : pipeline === "gleague"
-            ? "G League Ignite"
-            : undefined,
+            ? "G League"
+            : pick(rng, ["Duke", "Connecticut", "Gonzaga", "Houston", "Kansas", "Michigan State", "Kentucky", "Arizona", "Baylor", "Tennessee"]),
     };
-    raw = assignProspectIdentity(raw, rng, used, {
-      eliteEligible:
-        tier === "superstar" ||
-        tier === "allstar" ||
-        slot <= 5 ||
-        ratings.impact >= 3.4,
-    });
+    // The style nickname must not disclose the hidden career tier.
+    raw = assignProspectIdentity(raw, rng, used, { eliteEligible: false });
+    while(usedNames.has(raw.name)) raw={...raw,name:generateTrueName(rng)};
+    usedNames.add(raw.name);
+    raw = ensurePlayerSheet(raw);
+    const sheet=raw.sheet!,attributes={...sheet.attributes};
+    const style=rng();
+    if(style<0.28) {
+      attributes.threePoint=randInt(rng,74,87);attributes.freeThrow=randInt(rng,75,90);
+    } else if(style<0.5&&["PG","SG","SF"].includes(position)) {
+      attributes.passAccuracy=randInt(rng,75,88);attributes.ballHandle=randInt(rng,68,84);
+    } else if(style<0.73) {
+      if(position==="C"||position==="PF") {attributes.block=randInt(rng,74,87);attributes.interiorDefense=randInt(rng,71,85);}
+      else {attributes.perimeterDefense=randInt(rng,74,88);attributes.agility=randInt(rng,72,86);}
+    }
+    // Some overlooked prospects have an unusual translatable skill. Their path
+    // still can fail; no public nickname or badge identifies this latent upside.
+    const overlooked=board>=25&&rng()<0.06;
+    const potential={...sheet.potential};
+    if(overlooked) {
+      raw={...raw,personality:randInt(rng,12,25),ratings:{...raw.ratings,potential:randInt(rng,76,96)/10}};
+      attributes.passAccuracy=Math.max(attributes.passAccuracy,randInt(rng,76,89));
+      potential.ceiling=randInt(rng,86,96);potential.trait=rng()<0.3?"star":"normal";
+      const pathRoll=rng();potential.path=pathRoll<0.45?"boom":pathRoll>0.9?"bust":"average";
+    }
+    const target=clamp(sheet.overall,54,tier==="superstar"?83:tier==="allstar"?79:tier==="starter"?76:73);
+    raw={...raw,sheet:{...sheet,attributes,overall:target,overallOffset:target-overallFromAttributes(raw.position,attributes,{impact:raw.ratings.impact}),potential}};
+    raw={...raw,amateur:amateurSeason(raw)};
     out.push(seal(raw, scoutLevel, board, rng));
   }
   return out;
 }
+

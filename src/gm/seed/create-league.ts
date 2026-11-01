@@ -1,3 +1,4 @@
+import { initialDraftPicks } from "@/gm/engine/draft-order";
 import type {
   GmLeagueState,
   GmPlayer,
@@ -147,29 +148,7 @@ export function createGeneratedLeague(options?: {
       },
       starters: emptyStarters(),
       benchOrder: [],
-      draftPicks: [
-        {
-          id: uid("dp"),
-          season,
-          round: 1,
-          originalTeamId: f.id,
-          ownerTeamId: f.id,
-        },
-        {
-          id: uid("dp"),
-          season,
-          round: 2,
-          originalTeamId: f.id,
-          ownerTeamId: f.id,
-        },
-        {
-          id: uid("dp"),
-          season: season + 1,
-          round: 1,
-          originalTeamId: f.id,
-          ownerTeamId: f.id,
-        },
-      ],
+      draftPicks: initialDraftPicks(f.id,season),
       tradeExceptionsM: [],
     };
   });
@@ -215,7 +194,7 @@ export function createGeneratedLeague(options?: {
     settings: { ...DEFAULT_SETTINGS },
     automation: {
       autoDraft: false,
-      autoFreeAgency: true,
+      autoFreeAgency: false,
       autoScout: false,
     },
     teams,

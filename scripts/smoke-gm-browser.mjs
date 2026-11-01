@@ -6,6 +6,8 @@ const dir = "/tmp/franchise-qa";
 mkdirSync(dir, { recursive: true });
 const fixture = spawnSync(process.execPath, ["--import", "tsx", "scripts/fixture-gm-franchise.ts", `${dir}/franchise.json`], { encoding: "utf8" });
 assert.equal(fixture.status, 0, fixture.stderr);
+const journeyFixture = spawnSync(process.execPath, ["--import", "tsx", "scripts/fixture-gm-season-journey.ts", dir], { encoding: "utf8" });
+assert.equal(journeyFixture.status, 0, journeyFixture.stderr);
 const log = createWriteStream(`${dir}/next.log`);
 const server = spawn("npm", ["run", "dev", "--", "--hostname", "127.0.0.1"], { detached: true, stdio: ["ignore", "pipe", "pipe"], env: { ...process.env, PORT: "3107", NEXT_TELEMETRY_DISABLED: "1" } });
 server.stdout.pipe(log); server.stderr.pipe(log);
@@ -52,8 +54,56 @@ try {
   await page.getByLabel("Player to edit", { exact: true }).scrollIntoViewIfNeeded();
   await page.evaluate(() => scrollTo(0, 0));
   await page.screenshot({ path: `${dir}/mobile-settings.png`, fullPage: true, animations: "disabled" });
+  // Contract actions and guided summer handoffs are exercised through the UI.
+  const manifest = JSON.parse(readFileSync(`${dir}/journey-manifest.json`, "utf8"));
+  async function importJourney(name) {
+    await page.goto("http://127.0.0.1:3107/gm/franchise", { waitUntil: "domcontentloaded", timeout: 120000 });
+    await page.getByRole("button", { name: "Settings and saves", exact: true }).click();
+    await page.getByLabel("Import a franchise save", { exact: true }).setInputFiles(`${dir}/journey-${name}.json`);
+    await page.getByText("Franchise opened in a new save slot.", { exact: true }).waitFor({ state: "visible", timeout: 90000 });
+  }
+  await importJourney("regular");
+  await page.getByLabel("All desks", { exact: true }).click();
+  await page.getByRole("link", { name: "Contracts and extensions", exact: true }).click();
+  await page.getByRole("heading", { name: "Contracts and extensions", exact: true }).waitFor();
+  await page.getByLabel(`Extension salary for ${manifest.playerName}`, { exact: true }).fill(String(manifest.ask));
+  const row = page.getByRole("listitem").filter({ has: page.getByLabel(`Extension salary for ${manifest.playerName}`, { exact: true }) });
+  await row.getByRole("button", { name: "Offer extension", exact: true }).click();
+  await page.getByText(/Extension signed: 3 added years/).waitFor();
+  await page.reload();
+  await page.getByText(/Extension signed: 3 added years/).waitFor();
+  assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 2), "contracts desk overflows mobile");
+  await page.screenshot({ path: `${dir}/contracts-mobile.png`, fullPage: true, animations: "disabled" });
+  await importJourney("review");
+  await page.getByRole("link", { name: "Season hub", exact: true }).click();
+  await page.getByRole("heading", { name: "Season review", exact: true }).waitFor();
+  await page.getByRole("button", { name: "Continue to staff review", exact: true }).click();
+  await page.getByRole("heading", { name: "Staff review", exact: true }).waitFor();
+  await page.getByRole("button", { name: "Retain staff and reveal lottery", exact: true }).click();
+  await page.getByRole("heading", { name: "Draft lottery", exact: true }).waitFor();
+  await page.reload();
+  await page.getByRole("heading", { name: "Draft lottery", exact: true }).waitFor();
+  await page.getByRole("button", { name: "Continue to combine and workouts", exact: true }).click();
+  await page.getByRole("button", { name: "Run draft combine", exact: true }).click();
+  await page.getByRole("button", { name: "Combine complete", exact: true }).waitFor();
+  assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 2), "season hub overflows mobile");
+  await page.screenshot({ path: `${dir}/season-hub-mobile.png`, fullPage: true, animations: "disabled" });
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.screenshot({ path: `${dir}/season-hub-desktop.png`, fullPage: true, animations: "disabled" });
+  await importJourney("camp");
+  await page.getByRole("link", { name: "Season hub", exact: true }).click();
+  await page.getByRole("heading", { name: "Focused camps", exact: true }).waitFor();
+  const campSelect = page.locator('select[id^="camp-"]').first();
+  await campSelect.selectOption("shooting");
+  await page.getByRole("button", { name: "Run training camp", exact: true }).click();
+  await page.getByRole("heading", { name: "Camp results", exact: true }).waitFor();
+  await page.reload();
+  await page.getByRole("heading", { name: "Camp results", exact: true }).waitFor();
+  await page.getByRole("button", { name: "Check opening-night roster", exact: true }).click();
+  await page.getByRole("heading", { name: "Opening-night roster", exact: true }).waitFor();
+  await page.screenshot({ path: `${dir}/opening-roster-desktop.png`, fullPage: true, animations: "disabled" });
   assert.deepEqual(errors, [], "Franchise screens must not produce uncaught browser errors");
-  console.log("Franchise browser checks passed: import, navigation, commissioner edit, export and mobile layout.");
+  console.log("Franchise browser checks passed: import/export, commissioner edits, extensions, season handoffs, camp, reloads and mobile layout.");
 } catch (error) {
   if (page) {
     await page.screenshot({ path: `${dir}/failure.png`, fullPage: true });

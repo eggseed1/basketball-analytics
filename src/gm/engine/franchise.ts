@@ -1,8 +1,10 @@
+import { ensureDraftPickHorizon } from "@/gm/engine/draft-order";
 import type { GmFranchisePlan, GmLeagueState, GmPlayer, GmSeasonArchive } from "@/gm/types";
 import { sealProspect, staffScoutContext } from "@/gm/engine/scouting";
 import { clamp, createRng } from "@/gm/engine/rng";
 import { ensurePlayerSheet } from "@/gm/engine/attributes";
 import { ensureSimProfile, playerRoles } from "@/gm/engine/player-profile";
+import { normalizeSeasonFlow } from "@/gm/engine/season-flow-state";
 
 export function franchisePlan(league: GmLeagueState): GmFranchisePlan {
   const team = league.teams.find(t => t.id === league.userTeamId)!;
@@ -20,8 +22,8 @@ export function franchisePlan(league: GmLeagueState): GmFranchisePlan {
 
 /** Additive migration. Existing identities, attributes, rotations and results remain authoritative. */
 export function prepareFranchise(league: GmLeagueState): GmLeagueState {
-  const players = league.players.map(p => ensureSimProfile(ensurePlayerSheet(p)));
-  return { ...league, players, simulationBook: 1, franchise: franchisePlan({ ...league, players }), history: league.history ?? [] };
+  const players = league.players.map(p => { const player=ensureSimProfile(ensurePlayerSheet(p)); const index=league.draftPool.indexOf(p.id); return index>=0&&player.consensusRank==null?{...player,consensusRank:index+1}:player; });
+  return normalizeSeasonFlow(ensureDraftPickHorizon({ ...league, players, simulationBook: 1, franchise: franchisePlan({ ...league, players }), history: league.history ?? [] }));
 }
 
 export function archiveSeason(league: GmLeagueState): GmLeagueState {
@@ -112,5 +114,5 @@ export function importDraftClass(league: GmLeagueState, text: string): GmLeagueS
   const rng = createRng(league.season * 397);
   const imported = list.map((p, i) => sealProspect(ensureSimProfile(ensurePlayerSheet({ ...p, id: `custom_${league.season}_${i}_${p.id}`, teamId: null, contract: null, injury: null, draftYear: league.season, identityRevealed: false })), scout.level, i, rng, scout.scout));
   if (imported.some(p => existing.has(p.id))) throw new Error("This class conflicts with an existing player.");
-  return { ...league, players: [...league.players.filter(p => !league.draftPool.includes(p.id)), ...imported], draftPool: imported.map(p => p.id), userDraftBoard: undefined, scoutingFocus: undefined, scoutingFocusPrompt: undefined, combineDone: false };
+  return { ...league, players: [...league.players.filter(p => !league.draftPool.includes(p.id)), ...imported], draftPool: imported.map(p => p.id), userDraftBoard: undefined, draftScouting: undefined, draftDeals: undefined, draftSlotOrigins: undefined, scoutingFocus: undefined, scoutingFocusPrompt: undefined, combineDone: false };
 }

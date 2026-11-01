@@ -78,6 +78,8 @@ export function generateSchedule(
 /** The open 2026-27 save was built on a packed calendar. Swap in the NBA slate. */
 export function adoptRealSchedule(league: GmLeagueState): GmLeagueState {
   if (league.season !== OPENING_SEASON) return league;
+  // Never replace a started save's results or send its calendar back to opening night.
+  if (league.day > 0 || league.phase !== "regular" || league.schedule.some(game => game.played)) return league;
   const next: GmLeagueState =
     league.schedule.length > 0 && league.schedule.every((game) => game.id.startsWith("nba_"))
       ? league
@@ -183,4 +185,13 @@ export function maxScheduleDay(schedule: GmScheduleGame[]): number {
 
 export function regularSeasonComplete(schedule: GmScheduleGame[]): boolean {
   return schedule.every((g) => g.played);
+}
+
+
+/** Preserve the calendar date when special events insert new schedule dates. */
+export function remapScheduleDay(league: GmLeagueState, schedule: GmScheduleGame[]): number {
+  const cursor = league.schedule.filter(game => game.gameDate && game.day >= league.day)
+    .sort((a, b) => a.day - b.day)[0];
+  if (!cursor?.gameDate) return Math.max(league.day, maxScheduleDay(schedule) + 1);
+  return schedule.find(game => game.gameDate === cursor.gameDate)?.day ?? league.day;
 }

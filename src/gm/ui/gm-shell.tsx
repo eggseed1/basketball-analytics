@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
-import { LogOut, Maximize2, Minimize2 } from "lucide-react";
+import { FolderOpen, Maximize2, Minimize2 } from "lucide-react";
 
 import { TeamLogo } from "@/components/brand/team-logo";
 import { GmSaveImport } from "@/gm/ui/gm-franchise-desk";
@@ -11,6 +11,7 @@ import { useMyLeagueStore } from "@/gm/myleague/store";
 import { GmCheckpointBanner } from "@/gm/ui/gm-checkpoint-banner";
 import { GmIncomingOfferBanner } from "@/gm/ui/gm-incoming-offer-banner";
 import { GmScoutingFocusBanner } from "@/gm/ui/gm-scouting-focus-banner";
+import { GmSeasonJourney } from "@/gm/ui/gm-season-journey";
 import { GmNav } from "@/gm/ui/gm-nav";
 import { FRANCHISES } from "@/gm/seed/franchises";
 import { resolveTeamBrand } from "@/lib/nba-brand";
@@ -202,6 +203,10 @@ export function GmShell({
         <p className="text-muted-foreground">{t("loadingOffice")}</p>
       </main>
     );
+  }
+
+  if (seeding && league) {
+    return <main data-gm className="site-shell flex flex-1 flex-col gap-3 py-8"><p role="status" className="font-semibold">Opening franchise...</p><p className="text-sm text-muted-foreground">Your other franchises remain available in My teams.</p></main>;
   }
 
   if (!league) {
@@ -421,53 +426,18 @@ export function GmShell({
           <button
             type="button"
             className="gm-mast__tool"
-            aria-label={t("leaveLeague")}
-            title={t("leaveLeague")}
-            onClick={() => {
-              if (
-                typeof window !== "undefined" &&
-                window.confirm(t("leaveConfirm"))
-              ) {
-                void leaveToHub();
-              }
-            }}
+            aria-label="My teams and saved franchises"
+            title="My teams and saved franchises"
+            onClick={() => void leaveToHub()}
           >
-            <LogOut aria-hidden />
+            <FolderOpen aria-hidden />
           </button>
         </div>
       </header>
       <p className="gm-disclaimer">{t("fictionNote")}</p>
-      {league.season >= currentNbaStartYear() + 1 ? null : (
-        <div className="sports-card flex flex-wrap items-center justify-between gap-3 p-4">
-          <p className="text-sm">
-            {t("loadCurrentRosters", {
-              old: `${league.season - 1}-${String(league.season).slice(-2)}`,
-              season: canonicalSeasonFromStartYear(currentNbaStartYear()),
-            })}
-          </p>
-          <button
-            type="button"
-            className="gm-nav__link is-active"
-            disabled={seeding}
-            onClick={() =>
-              void newLeague(
-                league.userTeamId,
-                canonicalSeasonFromStartYear(currentNbaStartYear()),
-                { replace: true }
-              )
-            }
-          >
-            {seeding
-              ? t("loadingRosters")
-              : t("loadCurrentButton", {
-                  season: canonicalSeasonFromStartYear(currentNbaStartYear()),
-                })}
-          </button>
-        </div>
-      )}
       {leagueHasRealPlayers(league) ? null : (
         <div className="sports-card flex flex-wrap items-center justify-between gap-3 p-4">
-          <p className="text-sm">{t("loadRealNote")}</p>
+          <p className="text-sm">Demo league with generated players. You can keep this save and start a franchise with real NBA rosters.</p>
           <button
             type="button"
             className="gm-nav__link is-active"
@@ -476,16 +446,17 @@ export function GmShell({
               void newLeague(
                 league.userTeamId,
                 canonicalSeasonFromStartYear(currentNbaStartYear()),
-                { replace: true }
+                { replace: false }
               )
             }
           >
-            {seeding ? t("loadingRosters") : t("loadRealButton")}
+            {seeding ? t("loadingRosters") : "Start a real NBA franchise"}
           </button>
         </div>
       )}
       {seedError ? <p className="text-sm text-red-300">{seedError}</p> : null}
       <GmNav />
+      <GmSeasonJourney />
       <GmCheckpointBanner />
       <GmScoutingFocusBanner />
       <GmIncomingOfferBanner />

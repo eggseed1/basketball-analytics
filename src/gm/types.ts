@@ -1,6 +1,26 @@
 /** In-depth Franchise Lab GM - canonical sim types (original; not ZenGM). */
 
 export type GmPosition = "PG" | "SG" | "SF" | "PF" | "C";
+export type GmDraftRole = "value" | "ready" | "upside" | "shooting" | "creation" | "defense" | "rim" | "connector";
+export type GmScoutStudy = "film" | "analytics" | "workout" | "interview" | "medical";
+export type GmDraftTool = "shooting" | "creation" | "defense" | "feel" | "athleticism";
+export interface GmAmateurSeason {
+  competition: string; games: number; minutes: number; points: number; rebounds: number; assists: number; turnovers: number;
+  steals: number; blocks: number; threeMade: number; threeAttempts: number; ftMade: number; ftAttempts: number;
+}
+export interface GmProspectReport {
+  studies: Partial<Record<GmScoutStudy, { day: number; focus?: GmDraftTool; note: string }>>;
+  tools: Partial<Record<GmDraftTool, number>>;
+  readiness?: number;
+  habits?: "strong" | "steady" | "uncertain";
+  medical?: "clear" | "monitor" | "concern";
+}
+export interface GmDraftScouting {
+  version: 1; season: number; spent: number; reports: Record<string, GmProspectReport>; watchlist: string[]; strategy: GmDraftRole;
+}
+export interface GmDraftDeal {
+  id: string; pickIndex: number; fromTeamId: string; toTeamId: string; sent: string[]; received: string[];
+}
 export type Conference = "East" | "West";
 
 export interface GmRatings {
@@ -112,6 +132,10 @@ export interface GmContract {
   signedSeason: number;
   /** Which cap path was used when this deal was signed. */
   signedVia?: GmSignVia;
+  originalYears?: number;
+  /** Continuous service on this club, carried through re-signings and trades. */
+  birdStartSeason?: number;
+  extension?: { signedSeason: number; startsSeason: number; years: number; annualSalaryM: number };
   /** Published seasons still on the deal. The cap uses the current year's salary. */
   years?: GmContractYear[];
   /** Published note from the contract book. */
@@ -124,6 +148,7 @@ export interface GmDeadMoney {
   label: string;
   annualM: number;
   yearsLeft: number;
+  years?: GmContractYear[];
 }
 
 export interface GmInjury {
@@ -232,6 +257,8 @@ export interface GmPotential {
 }
 
 export interface GmSheet {
+  developmentCarry?: number;
+  developmentReport?: { age: number; before: number; after: number; reasons: string[]; gains: string[] };
   /** Entry calibration retained through development and save migrations. */
   overallOffset?: number;
   /** Bump when the attribute formula changes so old saves rebuild. */
@@ -285,6 +312,11 @@ export interface GmPlayer {
   listedPosition?: GmPosition;
   simProfile?: GmSimProfile;
   developmentFocus?: "balanced" | "shooting" | "creation" | "defense" | "rebounding";
+  developmentPlan?: "balanced" | "practice" | "rotation";
+  /** Calibrated generated class; existing NBA player sheets remain authoritative. */
+  draftModel?: 2;
+  consensusRank?: number;
+  amateur?: GmAmateurSeason;
   rolePromise?: { teamId: string; minutes: number; madeDay: number; games?: number; totalMinutes?: number; lastGameId?: string; status: "pending" | "met" | "unmet" };
   id: string;
   /** True identity - hidden for undrafted prospects until pick night. */
@@ -310,6 +342,7 @@ export interface GmPlayer {
   /** Pre-draft scouting dossier (grades, comps, notes). */
   scoutProfile?: ScoutProfile;
   contract: GmContract | null;
+  pendingRookieContract?: GmContract;
   injury: GmInjury | null;
   morale: number; // 0-100
   personality: number; // leadership -50..50
@@ -319,6 +352,7 @@ export interface GmPlayer {
   draftPick?: number;
   /** Team that still holds Bird / restricted / draft rights after the player hits the market. */
   rightsTeamId?: string | null;
+  rightsStartSeason?: number;
   rightsKind?: "early" | "bird" | "restricted" | "exclusive_draft";
   /** Previous salary, used as the cap hold and the early-Bird ceiling. */
   lastSalaryM?: number;
@@ -345,6 +379,7 @@ export interface GmPlayer {
   priorLine?: GmCountingLine;
   /** Ending year of the draft that put him in the league. */
   draftYear?: number;
+  draftedByTeamId?: string;
   college?: string;
   draftLabel?: string;
   birthDate?: string;
@@ -767,6 +802,7 @@ export type GmFaStage =
   | "options"
   | "qualifying_offers"
   | "rights"
+  | "re_signing"
   | "moratorium"
   | "open"
   | "fill";
@@ -923,7 +959,30 @@ export type GmQoStatus =
   | "declined"
   | "expired";
 
+export type GmOffseasonStage = "review" | "staff" | "lottery" | "scouting" | "draft" | "rookie_signing" | "free_agency" | "progression" | "summer_league" | "training_camp" | "roster_check";
+export type GmCampFocus = "shooting" | "creation" | "defense" | "rebounding" | "conditioning";
+export interface GmSeasonFlow {
+  version: 1;
+  season: number;
+  stage?: GmOffseasonStage;
+  completed: GmOffseasonStage[];
+  contractsRolled?: boolean;
+  deadMoneyRolled?: boolean;
+  progressionApplied?: boolean;
+  staffAged?: boolean;
+  readyForTip?: boolean;
+  returnFromMarket?: "roster_check";
+  progression?: Array<{ playerId: string; name: string; teamId: string | null; age: number; before: number; after: number }>;
+  campAssignments?: Record<string, GmCampFocus>;
+  campResults?: Array<{ playerId: string; name: string; before: number; after: number; focus: GmCampFocus; gains: string[] }>;
+  retiredPlayers?: Array<{ id: string; name: string; age: number; overall: number }>;
+  summerLeague?: { skipped?: boolean; inviteeIds: string[]; games: Array<{ opponentId: string; scored: number; allowed: number; players: Array<{ playerId: string; minutes: number; points: number; rebounds: number; assists: number }> }> };
+}
+
 export interface GmLeagueState {
+  seasonFlow?: GmSeasonFlow;
+  /** Summer's cap year, separate from the completed playing season. */
+  financialSeason?: number;
   tradeTalks?: Array<{ id: string; day: number; teamId: string; reason: string; youSend: GmTradeAsset[]; youReceive: GmTradeAsset[]; counter?: GmTradeAsset[] }>;
   franchise?: GmFranchisePlan;
   history?: GmSeasonArchive[];
@@ -981,6 +1040,9 @@ export interface GmLeagueState {
    * selection so draft-night trades can swap a single slot without moving both rounds.
    */
   draftOrder?: string[];
+  draftSlotOrigins?: string[];
+  draftScouting?: GmDraftScouting;
+  draftDeals?: GmDraftDeal[];
   /** Index into draftOrder (or lotteryOrder) for the current pick. */
   draftPickIndex?: number;
   /** User's order for this class. Missing means the scout board. */

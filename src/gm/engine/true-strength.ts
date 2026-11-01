@@ -134,8 +134,8 @@ export function consensusCorrectLatent(
   const thin = gp < 10 || minutes < 200;
 
   let impact = args.impact;
-  let offense = args.offense;
-  let defense = args.defense;
+  const offense = args.offense;
+  const defense = args.defense;
 
   // Keep impact aligned with the sim drivers when they diverge.
   const net = offense + defense;

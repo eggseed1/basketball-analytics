@@ -29,21 +29,9 @@ function isHome(game: GmScheduleGame, userTeamId: string) {
   return game.homeTeamId === userTeamId;
 }
 
-function currentTipDate(league: GmLeagueState): string | undefined {
-  const next = league.schedule.find(
-    (g) =>
-      !g.played &&
-      (g.homeTeamId === league.userTeamId ||
-        g.awayTeamId === league.userTeamId)
-  );
-  if (next?.gameDate) return next.gameDate;
-  const any = league.schedule.find((g) => g.day === league.day && g.gameDate);
-  return any?.gameDate ?? league.schedule.find((g) => g.gameDate)?.gameDate;
-}
-
 function slateDate(league: GmLeagueState): string | undefined {
-  const onDay = league.schedule.find((g) => g.day === league.day && g.gameDate);
-  return onDay?.gameDate ?? currentTipDate(league);
+  const dated = league.schedule.filter(game => game.gameDate).slice().sort((a, b) => a.day - b.day);
+  return dated.find(game => game.day >= league.day)?.gameDate ?? dated[dated.length - 1]?.gameDate;
 }
 
 function seasonSpan(dates: string[]): { start: string; end: string } | null {
@@ -85,13 +73,14 @@ export function GmSeasonCalendar({
 }) {
   const userTeamId = league.userTeamId;
   const record = userRecord(league);
-  const tip = currentTipDate(league);
+  const tip = slateDate(league);
+  const pauseReason = useGmStore(s => s.simPauseReason);
   const simRun = useGmStore((s) => s.simRun);
   const startAutoSim = useGmStore((s) => s.startAutoSim);
   const stopAutoSim = useGmStore((s) => s.stopAutoSim);
   const path = usePathname();
   const running = simRun != null && simRun.kind !== "day";
-  const cursor = running ? slateDate(league) ?? tip : tip;
+  const cursor = tip;
 
   const userGames = useMemo(
     () =>
@@ -267,7 +256,7 @@ export function GmSeasonCalendar({
             </p>
           ) : cursor ? (
             <p className="mt-1 text-[14px] text-muted-foreground">
-              Next tip · {formatTipDateLong(cursor)}
+              Calendar · {formatTipDateLong(cursor)}
             </p>
           ) : null}
           {monthMarks.length ? (
@@ -311,6 +300,8 @@ export function GmSeasonCalendar({
           </button>
         </div>
       </header>
+
+      {!running && pauseReason ? <p role="status" className="text-sm text-muted-foreground">{pauseReason}</p> : null}
 
       {span && cursor ? (
         <div className="gm-cal__rail" aria-hidden>
@@ -546,9 +537,10 @@ export function GmSeasonCalendar({
 
       <p className="text-[11px] text-muted-foreground">
         {userGames.filter((game) => game.cup !== "championship").length === 80
-          ? "Published NBA schedule. Cup nights are group play. The knockout and the last two games are added after Nov. 27."
+          ? "80 games scheduled. Cup group games count toward your record. The knockout adds the remaining regular-season games."
           : `${userGames.filter((game) => game.cup !== "championship").length} regular-season games. The NBA Cup championship is not one of them.`}
       </p>
     </section>
   );
 }
+

@@ -37,9 +37,10 @@ function releaseToMarket(player: GmPlayer, fromTeamId: string): GmPlayer {
     ...player,
     teamId: null,
     contract: null,
-    rightsTeamId: rights ? fromTeamId : null,
+    rightsTeamId: fromTeamId,
+    rightsStartSeason: contract.birdStartSeason ?? contract.signedSeason,
     rightsKind: rights ?? undefined,
-    lastSalaryM: rights ? contract.annualSalaryM : undefined,
+    lastSalaryM: contract.annualSalaryM,
   };
 }
 
@@ -70,6 +71,7 @@ export function applyOptionDecision(
   playerId: string,
   decision: "exercise" | "decline"
 ): GmLeagueState {
+  if (state.seasonFlow && (state.phase !== "free_agency" || state.faMarket?.stage !== "options")) return state;
   const player = state.players.find((row) => row.id === playerId);
   if (!player || !hasPendingOption(player)) return state;
   const teamId = player.teamId!;

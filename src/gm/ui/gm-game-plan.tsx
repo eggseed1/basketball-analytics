@@ -129,8 +129,6 @@ export function GmGamePlan({ league }: { league: GmLeagueState }) {
   const simRestOfPlayoffs = useGmStore((s) => s.simRestOfPlayoffs);
   const simPlayInNight = useGmStore((s) => s.simPlayInNight);
   const finishPlayIn = useGmStore((s) => s.finishPlayIn);
-  const openFreeAgency = useGmStore((s) => s.openFreeAgency);
-  const runOffseason = useGmStore((s) => s.runOffseason);
   const simulateNextGame = useGmStore((s) => s.simulateNextGame);
 
   const lineupReady = isLineupReady(league);
@@ -220,132 +218,12 @@ export function GmGamePlan({ league }: { league: GmLeagueState }) {
     );
   }
 
-  if (league.phase === "draft") {
-    const draftDone =
-      !league.draftPool.length ||
-      (league.draftPickIndex ?? 0) >= (league.draftOrder?.length ?? 60);
-    return (
-      <section className="sports-card flex flex-col gap-4 p-4">
-        <header>
-          <h2 className="text-[17px] font-bold tracking-tight">Your plan</h2>
-          <p className="text-[13px] text-muted-foreground">
-            {draftDone
-              ? "The draft is in the books. Review your class, then open free agency."
-              : "Draft night is live. Watch picks, catch sleepers, trade up, then take your swing."}
-          </p>
-        </header>
-        <ol className="flex flex-col gap-1">
-          <StepRow
-            n={1}
-            title={draftDone ? "Review the draft" : "Open the war room"}
-            detail={
-              draftDone
-                ? "Your picks and the full board, in order."
-                : "Names stay on the card. Molds and builds stay with them."
-            }
-            status="current"
-            action={
-              <Button onClick={() => router.push("/gm/draft")}>
-                {draftDone ? "Draft results" : "Open war room"}
-              </Button>
-            }
-          />
-          <StepRow
-            n={2}
-            title="Open free agency"
-            detail={
-              draftDone
-                ? "Expires deals and opens the market."
-                : "Finishes the rest of the board with CPU picks, then expires deals."
-            }
-            status="upcoming"
-            action={
-              <Button variant="outline" onClick={() => openFreeAgency()}>
-                Open free agency
-              </Button>
-            }
-          />
-        </ol>
-        <Digest digest={league.digest} />
-      </section>
-    );
-  }
-
-  if (league.phase === "free_agency") {
-    const stage = league.faMarket?.stage ?? "options";
-    const stageDetail =
-      stage === "options"
-        ? "Resolve team options. Player options resolve when you advance."
-        : stage === "qualifying_offers"
-          ? "Tender or decline qualifying offers on your RFAs."
-          : stage === "rights"
-            ? "Review Bird holds and renounce only what you mean to clear."
-            : stage === "moratorium"
-              ? "Pitch and lock commitments. Signings finalize when the window opens."
-              : `${league.freeAgents.length} players are unsigned. Room, Bird rights, and the mid-level are what let a deal through.`;
-    return (
-      <section className="sports-card flex flex-col gap-4 p-4">
-        <header>
-          <h2 className="text-[17px] font-bold tracking-tight">Your plan</h2>
-          <p className="text-[13px] text-muted-foreground">
-            Free agency desk. Options and QOs first, then the market, then tip
-            the next year.
-          </p>
-        </header>
-        <ol className="flex flex-col gap-1">
-          <StepRow
-            n={1}
-            title="Work the market"
-            detail={stageDetail}
-            status="current"
-            action={
-              <Button onClick={() => router.push("/gm/free-agency")}>
-                Free agency
-              </Button>
-            }
-          />
-          <StepRow
-            n={2}
-            title="Start next season"
-            detail="Other clubs finish their signings. A new schedule and the next cap year load."
-            status="upcoming"
-            action={
-              <Button variant="outline" onClick={() => runOffseason()}>
-                Start next season
-              </Button>
-            }
-          />
-        </ol>
-        <Digest digest={league.digest} />
-      </section>
-    );
-  }
-
-  if (league.phase === "offseason") {
-    return (
-      <section className="sports-card flex flex-col gap-4 p-4">
-        <header>
-          <h2 className="text-[17px] font-bold tracking-tight">Your plan</h2>
-          <p className="text-[13px] text-muted-foreground">Offseason break.</p>
-        </header>
-        <StepRow
-          n={1}
-          title="Open Offseason Hub"
-          detail="Roster, cap, and free agency desks."
-          status="current"
-          action={
-            <div className="flex flex-wrap gap-2">
-              <Button onClick={() => router.push("/gm/offseason")}>
-                Offseason Hub
-              </Button>
-              <Button variant="outline" onClick={() => openFreeAgency()}>
-                Open free agency
-              </Button>
-            </div>
-          }
-        />
-      </section>
-    );
+  if (league.phase === "draft" || league.phase === "free_agency" || league.phase === "offseason") {
+    return <section className="flex flex-col gap-3">
+      <h2 className="text-[17px] font-bold">Summer plan</h2>
+      <p className="text-sm text-muted-foreground">The season hub guides rookie contracts, free agency, progression and camp one step at a time.</p>
+      <Button onClick={() => router.push("/gm/offseason")}>Open season hub</Button>
+    </section>;
   }
 
   // Regular season - guided click-through of every user game

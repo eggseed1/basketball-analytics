@@ -1,3 +1,4 @@
+import { cbaSeason } from "@/gm/engine/season-flow-state";
 /**
  * Qualifying offers. Tendering preserves restricted matching rights.
  * Accepting the QO creates the one-year contract; tender alone does not.
@@ -21,7 +22,7 @@ export type QoRow = {
 };
 
 export function qualifyingOfferCandidates(state: GmLeagueState): QoRow[] {
-  const rules = getCbaRules(state.season);
+  const rules = getCbaRules(cbaSeason(state));
   if (!rules.restrictedFreeAgency) return [];
   return state.players
     .filter((player) => {
@@ -44,7 +45,8 @@ export function tenderQualifyingOffer(
   playerId: string,
   teamId: string
 ): { ok: true; state: GmLeagueState } | { ok: false; reason: string } {
-  const rules = getCbaRules(state.season);
+  if (state.seasonFlow && (state.phase !== "free_agency" || state.faMarket?.stage !== "qualifying_offers")) return { ok: false, reason: "Qualifying offers open after contract options." };
+  const rules = getCbaRules(cbaSeason(state));
   if (!rules.restrictedFreeAgency) {
     return { ok: false, reason: "Restricted free agency is off in this ruleset." };
   }
@@ -162,13 +164,16 @@ export function acceptQualifyingOffer(
           teamId,
           qoStatus: "accepted" as const,
           rightsTeamId: null,
+          rightsStartSeason: undefined,
           rightsKind: undefined,
           lastSalaryM: undefined,
           contract: {
-            yearsRemaining: 1,
+            yearsRemaining: 1, originalYears: 1,
+            years: [{ season: cbaSeason(state), salaryM: player.qoAmountM! }],
             annualSalaryM: player.qoAmountM!,
-            birdRights: "none" as const,
-            signedSeason: state.season,
+            birdRights: "bird" as const,
+            birdStartSeason: player.rightsStartSeason ?? cbaSeason(state),
+            signedSeason: cbaSeason(state),
             signedVia: "room" as const,
           },
         }

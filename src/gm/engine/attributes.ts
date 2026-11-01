@@ -723,22 +723,67 @@ function agingBase(age: number): number {
   return -0.48;
 }
 
+type DevelopmentOptions = {
+  coach?: number; minutes?: number; pace?: "season" | "summer"; form?: number;
+  playoffGames?: number; devStaff?: number; speed?: number;
+};
+
+/** Fractional development avoids a free whole attribute at every check-in. */
+function progressDevelopmentPath(player:GmPlayer, sheet:GmSheet, opts:DevelopmentOptions):GmPlayer {
+  const potential=sheet.potential,age=player.age,gap=Math.max(0,potential.ceiling-sheet.overall);
+  const minutes=Math.max(0,opts.minutes??0),coach=clamp(opts.coach??0,0,1.5);
+  const rng=createRng(hashId(player.id+":"+(opts.pace??"summer"))+age*997);
+  const reasons:string[]=[];
+  const ageFactor=age<=21?1.08:age<=23?0.95:age<=25?0.86:age<=27?0.58:0.25;
+  let path=potential.path==="boom"?1.45:potential.path==="bust"?0.2:1;
+  if(potential.path==="bust"&&age>=22&&age<=25&&rng()<0.08) {path=0.85;reasons.push("A better development stretch after a slow start");}
+  else if(potential.path==="average"&&age<=25&&player.personality>=10&&rng()<0.1) {path=1.45;reasons.push("A productive development stretch");}
+  const trait=potential.trait==="xfactor"?1.25:potential.trait==="superstar"?1.18:potential.trait==="star"?1.08:potential.trait==="bust"?0.65:1;
+  let opportunity=0.72+Math.min(minutes,24)/24*0.4;
+  if(player.developmentPlan==="practice") {opportunity=minutes<18?0.94+coach*0.05:0.91;reasons.push("Skills work preserves a path while rotation minutes are limited");}
+  else if(player.developmentPlan==="rotation") {opportunity=0.5+Math.min(minutes,26)/26*0.7;reasons.push(minutes>=16?"Regular game reps support the role plan":"The rotation plan needs more game reps");}
+  if(minutes>34) {opportunity*=0.94;reasons.push("Heavy minutes add workload, not extra development credit");}
+  if(player.injury) {opportunity*=0.72;reasons.push("Injury limited development work");}
+  const staff=(1+coach*0.06)*clamp(opts.devStaff??1,0.85,1.25);
+  const work=1+clamp(player.personality,-20,25)*0.004;
+  const annual=clamp((0.9+gap*0.14)*ageFactor*path*trait*opportunity*staff*work*(0.85+rng()*0.3),0,5.5);
+  const pace=opts.pace==="season"?0.15:0.7;
+  const budget=annual*pace*clamp(opts.speed??1,0.5,2)+(sheet.developmentCarry??0);
+  const steps=Math.min(Math.max(0,potential.ceiling-sheet.overall),Math.floor(budget));
+  const carry=gap>0?budget-Math.floor(budget):0;
+  const focusKeys:Record<string,Array<keyof GmAttributes>>={shooting:["threePoint","midrange","freeThrow"],creation:["passAccuracy","ballHandle","speedWithBall","drivingLayup"],defense:["interiorDefense","perimeterDefense","steal","block"],rebounding:["offReb","defReb","strength"]};
+  const keys=focusKeys[player.developmentFocus??"balanced"]??GROW_KEYS[player.position];
+  const attributes={...sheet.attributes},gains:string[]=[];
+  for(const key of keys) {
+    const before=attributes[key];attributes[key]=band(before+Math.ceil(steps*1.5));
+    if(attributes[key]>before) gains.push(ATTRIBUTE_LABEL[key]+" +"+(attributes[key]-before));
+  }
+  if(steps&&age<=21) for(const key of ["strength","stamina"] as const) attributes[key]=band(attributes[key]+1);
+  const offset=sheet.overallOffset??sheet.overall-overallFromAttributes(player.position,sheet.attributes,{impact:player.ratings.impact,drbl100:player.drbl100});
+  const target=Math.min(potential.ceiling,sheet.overall+steps);
+  let low=player.ratings.impact,high=Math.min(10,low+steps*0.7);
+  for(let pass=0;pass<18&&steps;pass++) {
+    const middle=(low+high)/2;
+    if(offset+overallFromAttributes(player.position,attributes,{impact:middle,drbl100:player.drbl100})<target) low=middle; else high=middle;
+  }
+  const impact=steps?Math.round(high*100)/100:player.ratings.impact;
+  const overall=clamp(offset+overallFromAttributes(player.position,attributes,{impact,drbl100:player.drbl100}),25,potential.ceiling);
+  const delta=impact-player.ratings.impact;
+  const offenseShare=player.developmentFocus==="defense"?0.15:player.developmentFocus==="rebounding"?0.35:0.75;
+  if(gap<=2) reasons.push("Limited headroom slows further gains");
+  else reasons.push(age<=23?"Young player with skills still to develop":"Growth slows as the player approaches his prime");
+  if(!steps&&gap>2) reasons.push("Small gains accumulate between reports");
+  return {...player,sheet:{...sheet,attributes,overall,overallOffset:offset,priorOverall:sheet.overall,priorSimple:simpleCategoryMeans(sheet.attributes),developmentCarry:carry,developmentReport:{age,before:sheet.overall,after:overall,reasons,gains}},ratings:{...player.ratings,impact,offense:Math.round((player.ratings.offense+delta*offenseShare)*100)/100,defense:Math.round((player.ratings.defense+delta*(1-offenseShare))*100)/100}};
+}
+
 /** One offseason. Age on the player is the age they just turned. */
 export function progressSheet(
   player: GmPlayer,
-  opts?: {
-    coach?: number;
-    minutes?: number;
-    pace?: "season" | "summer";
-    form?: number;
-    playoffGames?: number;
-    /** PD director growth multiplier (1 = neutral). */
-    devStaff?: number;
-    speed?: number;
-  }
+  opts?: DevelopmentOptions
 ): GmPlayer {
   player = ensureSimProfile(ensurePlayerSheet(player));
   const sheet = player.sheet ?? buildSheet(player);
+  if((player.draftModel===2||player.developmentPlan)&&player.age<=28) return progressDevelopmentPath(player,sheet,opts??{});
   const { potential } = sheet;
   const age = player.age;
   const big = player.position === "C" || player.position === "PF";
