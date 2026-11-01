@@ -5,7 +5,7 @@ import { assignMentor, activeMentor, mentorshipBonus, raiseCeiling, reviewPlayer
 import { recordSimGame } from "../src/gm/lib/season-line";
 import { progressSheet, overallFromAttributes } from "../src/gm/engine/attributes";
 import { applyTrainingCamp, assignCamp, campSlots } from "../src/gm/engine/season-development";
-import { tickInjuries } from "../src/gm/engine/progression";
+import { tickInjuries, maybeGrowInSeason } from "../src/gm/engine/progression";
 import type { GmBoxScore, GmLeagueState, GmPlayer } from "../src/gm/types";
 
 let league = prepareFranchise(createGeneratedLeague({ userTeamId: "bos", season: 2027, seed: 32 }));
@@ -48,6 +48,10 @@ assert.equal(breakoutEvidence(dominant, 2027).eligible, true);
 assert.equal(breakoutEvidence({ ...dominant, seasonLine: { ...dominant.seasonLine, gp: 8, min: 240 } }, 2027).eligible, false, "small samples cannot raise ceilings");
 assert.equal(breakoutEvidence({ ...dominant, age: 29 }, 2027).eligible, false);
 const full = { ...league, schedule: league.schedule.map(g => ({ ...g, played: true })), players: league.players.map(p => p.id === young.id ? dominant : p) };
+const seasonEnd = maybeGrowInSeason({ ...full, devMarks: { season: 2027, january: true, finale: false } });
+assert.equal(seasonEnd.players.find(p => p.id === young.id)?.ceilingGrowth?.total, 2, "a completed season triggers the review");
+assert.ok(seasonEnd.news.some(note => note.id === `ceiling-2027-${young.id}-breakout`));
+assert.equal(maybeGrowInSeason(seasonEnd), seasonEnd);
 const reviewed = reviewPlayerCeilings(full);
 const breakout = reviewed.players.find(p => p.id === young.id)!;
 assert.equal(breakout.ceilingGrowth?.total, 2);

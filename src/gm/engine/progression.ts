@@ -234,6 +234,7 @@ export function maybeGrowInSeason(league: GmLeagueState): GmLeagueState {
   }
   if (!finale && regularSeasonComplete(league.schedule)) {
     const reviewed = reviewPlayerCeilings({ ...league, players });
+    notes.push(...reviewed.news.filter(note => !league.news.some(previous => previous.id === note.id)));
     const grown = growOnce(reviewed, "season");
     players = grown.players;
     if (grown.note) notes.push({ ...grown.note, headline: "End of the regular season" });
