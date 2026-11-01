@@ -35,6 +35,10 @@ function summer(stage: GmOffseasonStage): GmLeagueState {
   assert.equal(openingRosterChecks(over)[0]?.kind, "maximum");
   assert.equal(seasonJourney(over).primaryHref, "/gm/roster");
   assert.equal(advanceSeasonJourney(over).ok, false);
+  const injured = summer("roster_check");
+  injured.players = injured.players.map(player => player.teamId === "bos" ? { ...player, injury: { type: "Ankle sprain", gamesRemaining: 4, reinjuryRisk: 0.1 } } : player);
+  assert.equal(seasonJourney(injured).primaryAction, "open_roster_fill", "an injury shortage needs a signing path, not only an informational medical report");
+  assert.equal(advanceSeasonJourney(injured).ok, false);
 }
 
 // Suggestions keep the GM's choice, avoid unavailable players, and fill only real slots.

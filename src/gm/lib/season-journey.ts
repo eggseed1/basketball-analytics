@@ -57,12 +57,13 @@ export function seasonJourney(league: GmLeagueState): SeasonJourney {
       view.primaryLabel = "Start next season";
       const issues = openingRosterChecks(league);
       view.blocked = issues.length > 0;
-      view.tasks = issues.map(issue => ({ label: issue.message, href: issue.kind === "healthy" ? "/gm/medical" : issue.kind === "maximum" ? "/gm/roster" : "/gm/free-agency", action: issue.kind !== "maximum" && issue.kind !== "healthy" ? "open_roster_fill" as const : undefined, required: true }));
+      view.tasks = issues.map(issue => ({ label: issue.message, href: issue.kind === "maximum" ? "/gm/roster" : "/gm/free-agency", action: issue.kind !== "maximum" ? "open_roster_fill" as const : undefined, required: true }));
       const first = issues[0];
       if (first?.kind === "maximum") { view.primaryHref = "/gm/roster"; view.primaryLabel = "Make roster cuts"; }
-      else if (first?.kind === "healthy") { view.primaryHref = "/gm/medical"; view.primaryLabel = "Review medical report"; }
+      else if (first?.kind === "healthy") { view.primaryAction = "open_roster_fill"; view.primaryLabel = "Find healthy free agents"; }
       else if (first) { view.primaryAction = "open_roster_fill"; view.primaryLabel = "Find free agents"; }
       view.hint = first ? first.message : "Start a new schedule. Your roster, contracts and development carry forward.";
+      if (issues.some(issue => issue.kind === "healthy")) view.tasks.push({ label: "Review injuries before changing your roster", href: "/gm/medical" });
       view.tasks.push({ label: "Review starters and balance 240 rotation minutes", href: "/gm/lineup" });
     }
     return view;

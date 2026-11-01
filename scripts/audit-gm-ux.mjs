@@ -59,6 +59,7 @@ try {
     return snapshot;
   }
   async function exportedLeague() {
+    await page.getByRole("button", { name: "My teams and saved franchises", exact: true }).waitFor({ timeout: 90000 });
     const previous = page.url();
     await page.goto("http://127.0.0.1:3108/gm/franchise", { waitUntil: "domcontentloaded", timeout: 120000 });
     await page.getByRole("button", { name: "Settings and saves", exact: true }).click();
@@ -101,7 +102,7 @@ try {
     assert.equal((await exportedLeague()).season, source.season, "leaving and resuming preserves the historic season");
     await page.getByRole("button", { name: "My teams and saved franchises", exact: true }).click();
     await page.getByRole("heading", { name: "My Teams", exact: true }).waitFor();
-    await page.route("**/api/gm/league", route => route.fulfill({ json: { league: { ...source, seed: source.seed + 1, day: 1 } } }));
+    await page.route("**/api/gm/league", route => route.fulfill({ json: { league: { ...source, day: 1 } } }));
     await page.getByRole("button", { name: "BOS", exact: true }).click();
     await page.getByRole("button", { name: "My teams and saved franchises", exact: true }).waitFor();
     assert.equal((await exportedLeague()).day, 1);
@@ -212,6 +213,8 @@ try {
   if (verify) {
     await page.getByRole("button", { name: `Review offer for ${manifest.ownPlayerName}`, exact: true }).click();
     await page.getByRole("region", { name: `Offer terms for ${manifest.ownPlayerName}`, exact: true }).waitFor();
+    const nameAction = page.getByRole("button", { name: `Review terms for ${manifest.ownPlayerName}`, exact: true });
+    assert.ok(await nameAction.evaluate(node => node.getBoundingClientRect().left < innerWidth), "the player-name offer action must be reachable without horizontal table searching");
     await page.getByText(/M total over \d+ season/).waitFor();
     const before = await exportedLeague();
     assert.equal(before.players.find(player => player.id === manifest.ownPlayerId).teamId, null);
@@ -254,7 +257,10 @@ try {
   console.log("UX walkthrough completed across " + report.screens.length + " NBA franchise screens and " + report.tasks.length + " verified task groups.");
 } catch (error) {
   report.error = error.stack ?? String(error);
-  if (page) await page.screenshot({ path: `${dir}/failure.png`, fullPage: true });
+  if (page) {
+    await page.screenshot({ path: `${dir}/failure.png`, fullPage: true });
+    writeFileSync(`${dir}/failure.html`, await page.content());
+  }
   throw error;
 } finally {
   writeFileSync(`${dir}/report.json`, JSON.stringify({ ...report, errors }, null, 2));

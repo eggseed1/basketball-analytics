@@ -537,7 +537,9 @@ export function GmFreeAgencyHub() {
                         className={cn(selectedId === p.id && "bg-secondary/50")}
                       >
                         <td className="px-3 py-2 font-medium">
-                          {displayPlayerName(p)}
+                          <button type="button" aria-label={"Review terms for " + p.name} disabled={!open || Boolean(agreed)} onClick={() => loadAsk(p)} className="min-h-11 text-left font-medium underline decoration-border underline-offset-4 hover:decoration-current disabled:no-underline disabled:opacity-60">
+                            {displayPlayerName(p)}<span className="block text-xs text-muted-foreground sm:hidden">Review offer</span>
+                          </button>
                           {p.rightsKind === "restricted" ? (
                             <span className="ml-1 text-xs text-muted-foreground">RFA</span>
                           ) : p.rightsTeamId === league.userTeamId ? (
