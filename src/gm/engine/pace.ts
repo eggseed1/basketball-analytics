@@ -101,19 +101,22 @@ export function stepDay(league: GmLeagueState): {
       const star = allStarChampionNews(league, game);
       return [cup, star].filter((item): item is NonNullable<typeof item> => Boolean(item));
     });
-  const maxDay = maxScheduleDay(schedule);
-  let next = noteTradeDeadline({
+  let next: GmLeagueState = {
     ...league,
     schedule,
     standings,
     players,
     boxScores,
     news: [...cupNews, ...league.news].slice(0, 50),
-    day: Math.min(day + 1, maxDay + 1),
-  });
+    day,
+  };
   next = rebalanceForInjuryChanges(next, playersBeforeInjuries);
+  // Insert event dates before advancing, so the next day can be a Cup or
+  // All-Star date that was absent from the original regular-season slate.
+  next = ensureAllStar(ensureNbaCup(next));
+  next = noteTradeDeadline({ ...next, day: Math.min(next.day + 1, maxScheduleDay(next.schedule) + 1) });
   return {
-    league: maybeGrowInSeason(ensureAllStar(ensureNbaCup(next))),
+    league: maybeGrowInSeason(next),
     seasonOver: regularSeasonComplete(schedule),
   };
 }

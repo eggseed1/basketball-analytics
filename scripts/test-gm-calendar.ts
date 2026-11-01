@@ -14,6 +14,7 @@ for (const season of [2027, 2028]) {
   let date = "";
   for (let turn = 0; turn < 260; turn++) {
     const cursor = league.schedule.filter(g => g.day >= league.day && g.gameDate).sort((a,b) => a.day-b.day)[0]?.gameDate;
+    if (cursor) assert.equal(league.schedule.some(g => !g.played && g.gameDate && g.gameDate < cursor), false, "new event dates must be visited before later regular games");
     if (cursor) { assert.ok(cursor >= date, `${season}: ${date} rewound to ${cursor}`); date = cursor; }
     const stepped = stepDay(league);
     league = stepped.league;
