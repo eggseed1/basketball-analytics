@@ -1,6 +1,6 @@
 # Draft room research and design
 
-Research date: November 1, 2026. These sources describe specific editions, not one shared system across all five series. The gameplay below is an NBA adaptation; football positions, baseball signing bonuses and hockey development leagues do not transfer directly.
+Research date: November 1, 2026. These sources describe specific editions, not one shared system across these games. The gameplay below is an NBA adaptation; football positions, baseball signing bonuses and hockey development leagues do not transfer directly.
 
 ## What is useful from each series
 
