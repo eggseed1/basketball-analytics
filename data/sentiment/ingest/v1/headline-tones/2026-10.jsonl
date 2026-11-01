@@ -8435,3 +8435,5 @@
 {"id":"news:5c4ac07da603ad88:4066457","store":"news","rowId":"5c4ac07da603ad88","playerId":"4066457","publishedAt":"2026-10-31T13:00:56.000Z","tone":-1,"modelVersion":"headline-llama33-70b-v1","ratedAt":"2026-11-01T17:04:19.855Z"}
 {"id":"news:5549dea4e76d1af0:3975","store":"news","rowId":"5549dea4e76d1af0","playerId":"3975","publishedAt":"2026-10-31T16:47:40.000Z","tone":0,"modelVersion":"headline-llama33-70b-v1","ratedAt":"2026-11-01T17:04:19.882Z"}
 {"id":"news:8f1c61927b4cf8e0:3975","store":"news","rowId":"8f1c61927b4cf8e0","playerId":"3975","publishedAt":"2026-10-31T14:43:08.000Z","tone":-1,"modelVersion":"headline-llama33-70b-v1","ratedAt":"2026-11-01T17:04:19.898Z"}
+{"id":"news:7d22d25fb9080b21:5175737","store":"news","rowId":"7d22d25fb9080b21","playerId":"5175737","publishedAt":"2026-10-31T23:35:08.000Z","tone":0,"modelVersion":"headline-llama33-70b-v1","ratedAt":"2026-11-01T20:38:46.173Z"}
+{"id":"news:d7e88e7428ffb0e2:5175737","store":"news","rowId":"d7e88e7428ffb0e2","playerId":"5175737","publishedAt":"2026-10-27T23:00:00.000Z","tone":1,"modelVersion":"headline-llama33-70b-v1","ratedAt":"2026-11-01T20:38:46.596Z"}

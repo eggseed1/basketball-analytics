@@ -2,9 +2,20 @@
   "source": "espn-site-v2-transactions",
   "datasetVersion": "1.0",
   "espnCalendarYear": 2026,
-  "fetchedAt": "2026-11-01T16:57:17.953Z",
-  "apiCount": 427,
+  "fetchedAt": "2026-11-01T20:32:55.086Z",
+  "apiCount": 428,
   "rows": [
+    {
+      "date": "2026-11-01T07:00Z",
+      "description": "Exercised the third-year team options on Fs Kon Knueppel and Liam McNeeley.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
     {
       "date": "2026-10-28T07:00Z",
       "description": "Waived F AK Okereke. Signed C Lawson Lovering to a two-way contract.",
@@ -1092,17 +1103,6 @@
         "displayName": "Denver Nuggets",
         "location": "Denver",
         "name": "Nuggets"
-      }
-    },
-    {
-      "date": "2026-09-22T07:00Z",
-      "description": "Waived F Solomon Washington.",
-      "team": {
-        "id": "3",
-        "abbreviation": "NO",
-        "displayName": "New Orleans Pelicans",
-        "location": "New Orleans",
-        "name": "Pelicans"
       }
     },
     {

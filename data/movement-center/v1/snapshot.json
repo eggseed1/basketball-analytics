@@ -5,11 +5,11 @@
     "season": "2026-27",
     "snapshotDate": "2026-11-01",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-11-01T16:58:25.253Z",
+    "builtAt": "2026-11-01T20:34:33.703Z",
     "rosterPlayerCount": 488,
-    "headlinesScanned": 9202,
-    "latestHeadlineAt": "2026-11-01T16:55:39.000Z",
-    "latestTransactionDate": "2026-10-29",
+    "headlinesScanned": 9237,
+    "latestHeadlineAt": "2026-11-01T20:28:45.000Z",
+    "latestTransactionDate": "2026-11-01",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
       "Basketball News",
@@ -104,7 +104,7 @@
     },
     "outlet:clutchpoints": {
       "label": "ClutchPoints",
-      "credibility": 12
+      "credibility": 16
     },
     "reporter:fred-katz": {
       "label": "Fred Katz (The Athletic)",
@@ -213,6 +213,10 @@
     "reporter:kris-rhim": {
       "label": "Kris Rhim (ESPN)",
       "credibility": 18
+    },
+    "reporter:chris-mannix": {
+      "label": "Chris Mannix (Sports Illustrated)",
+      "credibility": 22
     },
     "ledger:nba-player-movement": {
       "label": "Player movement log",
@@ -662,12 +666,16 @@
         "mv-782e9e94eaf2b6e8",
         "mv-706e3cdaf4e089f6",
         "mv-7248f87b80f9265a",
-        "mv-c57c58509587f900"
+        "mv-c57c58509587f900",
+        "mv-ea51cad762ca0b44",
+        "mv-4f75cdb692bd6484",
+        "mv-5b7af0fcb67de169",
+        "mv-8db2809ab941176b"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-01T01:04:56.000Z",
-      "lastMeaningfulAt": "2026-10-30T15:58:28.000Z",
+      "lastMeaningfulAt": "2026-11-01T18:08:49.000Z",
       "linkedPlayerIds": [
         "6442",
         "6583",
@@ -9527,6 +9535,90 @@
       "teamIds": [
         "17",
         "23"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-ea51cad762ca0b44",
+      "clusterId": "mv-trade-6442-20261001",
+      "summary": "Detroit Pistons ‘Salivating’ Over Kyrie Irving Amid Trade Rumors",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-11-01T17:04:19.000Z",
+      "sourceId": "outlet:heavy",
+      "sourceLabel": "Heavy",
+      "sourceUrl": "https://heavy.com/sports/nba/detroit-pistons/salivating-kyrie-irving-amid-trade-rumors/",
+      "playerIds": [
+        "6442"
+      ],
+      "teamIds": [
+        "8"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-4f75cdb692bd6484",
+      "clusterId": "mv-trade-6442-20261001",
+      "summary": "Kyrie Irving expected to headline NBA trade market",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-01T17:25:23.000Z",
+      "sourceId": "reporter:chris-mannix",
+      "sourceLabel": "TalkBasket, citing Chris Mannix (Sports Illustrated)",
+      "reporterLabel": "Chris Mannix",
+      "sourceUrl": "https://www.talkbasket.net/225932-kyrie-irving-expected-to-headline-nba-trade-market",
+      "playerIds": [
+        "6442"
+      ],
+      "teamIds": [],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-5b7af0fcb67de169",
+      "clusterId": "mv-trade-6442-20261001",
+      "summary": "Pistons Reportedly Interested in Kyrie Irving While Cooper Flagg’s Mavs Confession Resurfaces",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-11-01T17:42:11.000Z",
+      "sourceId": "reporter:chris-mannix",
+      "sourceLabel": "Basketball News, citing Chris Mannix (Sports Illustrated)",
+      "reporterLabel": "Chris Mannix",
+      "sourceUrl": "https://www.basketballnews.com/news/basketballnews-nba-active-news-pistons-reportedly-interested-in-kyrie-irving-while-cooper-flaggs-mavs-confession-resurfaces/",
+      "playerIds": [
+        "6442",
+        "5041939"
+      ],
+      "teamIds": [
+        "6",
+        "8"
+      ],
+      "isOriginal": false,
+      "negotiationSpecificity": "contact"
+    },
+    {
+      "id": "mv-8db2809ab941176b",
+      "clusterId": "mv-trade-6442-20261001",
+      "summary": "NBA rumors: Pistons will be ‘salivating’ over chance at Kyrie Irving trade if Mavericks play ball",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "official_statement",
+      "publishedAt": "2026-11-01T18:08:49.000Z",
+      "sourceId": "outlet:clutchpoints",
+      "sourceLabel": "ClutchPoints",
+      "sourceUrl": "https://clutchpoints.com/nba/detroit-pistons/nba-rumors-pistons-salivating-chance-kyrie-irving-trade-mavericks-play-ball",
+      "playerIds": [
+        "6442"
+      ],
+      "teamIds": [
+        "6",
+        "8"
       ],
       "isOriginal": true
     },
