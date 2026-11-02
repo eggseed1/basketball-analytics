@@ -238,7 +238,7 @@ export function GmDraftNight() {
         <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Your quick-pick shortlist</p>
         <p className="mt-1 text-sm text-muted-foreground">Choose a favorite to inspect, then confirm the pick in the report. Later picks can be worthwhile gambles.</p>
         <div className="mt-3 grid gap-2 sm:grid-cols-3">
-          {[...new Map([...board.slice(0, pickNum>=18?2:3), ...(pickNum>=18?sleeperRadar(league,1):[])].map(p=>[p.id,p])).values()].map(player=>{
+          {[...new Map<string,GmPlayer>([...board.slice(0, pickNum>=18?2:3), ...(pickNum>=18?sleeperRadar(league,1):[])].map(p=>[p.id,p] as const)).values()].map(player=>{
             const clue=draftSleeperSignals(player);
             return <button key={player.id} type="button" className={"rounded-lg border px-3 py-3 text-left hover:bg-secondary "+(selected?.id===player.id?"border-foreground/60 bg-secondary/60":"border-border")} onClick={()=>setSelectedId(player.id)}>
               <span className="block text-sm font-semibold">{displayPlayerName(player)}</span>
