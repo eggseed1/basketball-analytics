@@ -199,8 +199,34 @@ type PersistStorage = {
 
 /** Zustand persist adapter: routes the fixed store name to the active slot. */
 export function createGmSlotStorage(layer: "a" | "b"): PersistStorage {
-  const pending = new Map<string, Promise<void>>();
+  // Persist the latest snapshot for each slot. A fast multi-game simulation can
+  // generate dozens of multi-megabyte snapshots before IndexedDB finishes one
+  // write; serializing every intermediate frame leaves a stale save on reload.
+  // Coalesce only queued writes, never an in-flight write or a different slot.
+  type Waiter = { resolve: () => void; reject: (reason: unknown) => void };
+  type Queued = { value: string; league: GmLeagueState | null; waiters: Waiter[] };
+  type SlotQueue = { latest: Queued | null; running: boolean };
+  const pending = new Map<string, SlotQueue>();
   const slotKey = (id: string) => (layer === "a" ? layerAKey(id) : layerBKey(id));
+  const flush = async (key: string, id: string, queue: SlotQueue): Promise<void> => {
+    try {
+      while (queue.latest) {
+        const batch = queue.latest;
+        queue.latest = null;
+        try {
+          await ensureSaveIndexMigrated();
+          await set(key, batch.value);
+          if (batch.league) await touchSaveMeta(batch.league, id);
+          for (const waiter of batch.waiters) waiter.resolve();
+        } catch (error) {
+          for (const waiter of batch.waiters) waiter.reject(error);
+        }
+      }
+    } finally {
+      queue.running = false;
+      if (pending.get(key) === queue) pending.delete(key);
+    }
+  };
 
   return {
     getItem: async () => {
@@ -210,21 +236,26 @@ export function createGmSlotStorage(layer: "a" | "b"): PersistStorage {
       return (await get<string>(slotKey(index.activeId))) ?? null;
     },
     setItem: async (_name, value) => {
-      // A write belongs to the slot that was active when it began. Switching
-      // slots while IndexedDB is pending must not move the write or its label.
+      // Capture the slot before asynchronous I/O. A stale frame cannot migrate
+      // to another save even if the player switches slots while it is pending.
       const id = activeIdSync;
       const league = layer === "a" ? parsePersistedLeague(value) : null;
       if (!id || (layer === "a" && !league)) return;
       const key = slotKey(id);
-      const previous = pending.get(key) ?? Promise.resolve();
-      const write = previous.catch(() => {}).then(async () => {
-        await ensureSaveIndexMigrated();
-        await set(key, value);
-        if (league) await touchSaveMeta(league, id);
+      const queue = pending.get(key) ?? { latest: null, running: false };
+      pending.set(key, queue);
+      await new Promise<void>((resolve, reject) => {
+        if (queue.latest) {
+          const waiters = queue.latest.waiters;
+          queue.latest = { value, league, waiters: [...waiters, { resolve, reject }] };
+        } else {
+          queue.latest = { value, league, waiters: [{ resolve, reject }] };
+        }
+        if (!queue.running) {
+          queue.running = true;
+          void flush(key, id, queue);
+        }
       });
-      pending.set(key, write);
-      try { await write; }
-      finally { if (pending.get(key) === write) pending.delete(key); }
     },
     removeItem: async () => {
       const id = activeIdSync;
