@@ -28,6 +28,8 @@ import {
   userTeam,
 } from "@/gm/lib/selectors";
 import { GmPlayerPortrait } from "@/gm/ui/gm-player-portrait";
+import { GmContractNegotiation } from "@/gm/ui/gm-contract-negotiation";
+import { maxSalaryForAge } from "@/gm/engine/cap";
 import { ClubMark } from "@/gm/ui/club-mark";
 import { useGmStore } from "@/gm/state/gm-store";
 import type { GmFaStage, GmPlayer, GmPosition } from "@/gm/types";
@@ -190,6 +192,30 @@ export function GmFreeAgencyHub() {
         </div>
       </header>
 
+      <div className="overflow-x-auto rounded-xl border border-border bg-card px-3 py-3" aria-label="Free agency calendar">
+        <ol className="flex min-w-max gap-1 text-xs sm:gap-2">
+          {([
+            ["options", "Team options"], ["qualifying_offers", "Qualifying"], ["rights", "Bird rights"],
+            ["re_signing", "Re-sign"], ["moratorium", "Moratorium"], ["open", "Signing"], ["fill", "Roster fill"]
+          ] as const).map(([stage,label],index,all) => {
+            const position = all.findIndex(row => row[0] === market?.stage);
+            const current = market?.stage === stage;
+            const done = position > index || Boolean(market?.done);
+            return <li key={stage} aria-current={current ? "step" : undefined}
+              className={cn("flex items-center gap-2 rounded-lg px-3 py-2 font-semibold", current ? "bg-foreground text-background" : done ? "text-foreground" : "text-muted-foreground")}>
+              <span className={cn("flex size-5 shrink-0 items-center justify-center rounded-full border text-[10px]", current ? "border-background/50" : "border-border")}>{done ? "✓" : index + 1}</span>
+              <span>{label}</span>
+            </li>;
+          })}
+        </ol>
+      </div>
+      <div className="grid gap-2 sm:grid-cols-3">
+        <div className="rounded-xl border border-border bg-card p-3"><p className="text-xs text-muted-foreground">Available cap room</p><p className="text-xl font-bold tabular-nums">{cap.capRoomM.toFixed(1)}M</p></div>
+        <div className="rounded-xl border border-border bg-card p-3"><p className="text-xs text-muted-foreground">Market players</p><p className="text-xl font-bold tabular-nums">{agents.length}</p></div>
+        <div className="rounded-xl border border-border bg-card p-3"><p className="text-xs text-muted-foreground">Your active offers / agreements</p><p className="text-xl font-bold tabular-nums">{myOffers.length} / {myAgreements.length}</p></div>
+      </div>
+      <p className="text-xs text-muted-foreground"><Link className="font-semibold underline underline-offset-4" href="/gm/contracts">Review contract extensions</Link> · Competing offers resolve as the market advances. Verbal commitments reserve room until signing opens.</p>
+
       {open ? <p className="text-sm text-muted-foreground">{market?.stage === "re_signing" ? "Your own-player window is open. Other clubs' free agents enter when league-wide negotiations begin." : market?.stage === "moratorium" ? "Negotiations are open. Agreements are verbal and reserve room; contracts finalize after the moratorium." : market?.done ? "The market is quiet. Progression, summer league and camp follow at the season hub." : "Resolve required decisions before advancing. The next window opens only when you continue."} Reserved commitments: ${myAgreements.reduce((sum, row) => sum + row.salaryM, 0).toFixed(1)}M.</p> : null}
 
       {lastFaNote ? (
@@ -249,18 +275,25 @@ export function GmFreeAgencyHub() {
         ))}
       </nav>
 
-      {selected ? <section id="fa-offer-terms" tabIndex={-1} aria-label={"Offer terms for " + selected.name} className="scroll-mt-24 rounded-xl border border-border bg-secondary/30 p-4 outline-none">
-        <div className="flex flex-wrap items-center justify-between gap-3"><h3 className="inline-flex items-center gap-2 text-base font-semibold"><GmPlayerPortrait player={selected} size="sm" />Offer terms for {selected.name}</h3><Button size="sm" variant="ghost" onClick={() => setSelectedId(null)}>Close offer</Button></div>
-        <p className="mt-1 text-sm text-muted-foreground">Asking ${askingSalary(selected, rules).toFixed(2)}M per year for {askingYears(selected, rules)} years.</p>
-        <form className="mt-4 flex flex-wrap items-end gap-3" onSubmit={event => { event.preventDefault(); if (canOffer) signFreeAgent(selected.id, salary, years); }}>
-          <div className="flex flex-col gap-1"><Label htmlFor="fa-sal">Annual salary ($M)</Label><Input id="fa-sal" type="number" min="0.01" step="0.01" value={salary} onChange={event => setSalary(Number(event.target.value))} className="w-32" /></div>
-          <div className="flex flex-col gap-1"><Label htmlFor="fa-yrs">Years</Label><Input id="fa-yrs" type="number" min="1" max="5" step="1" value={years} onChange={event => setYears(Number(event.target.value))} className="w-20" /></div>
-          <Button type="submit" disabled={!canOffer}>{verbal ? "Request verbal agreement" : selected.rightsKind === "restricted" && selected.rightsTeamId !== league.userTeamId ? "Submit offer sheet" : "Offer contract"}</Button>
-        </form>
-        <p className="mt-3 text-sm font-semibold">{Number.isFinite(salary * years) ? "$" + (salary * years).toFixed(2) + "M total over " + years + " season(s)" : "Enter valid contract terms."}</p>
-        <p className="mt-2 text-sm text-muted-foreground">{selectedAgreement ? "A verbal agreement is already reserved for this player. Signing is checked again when contracts can finalize." : !negotiationsOpen ? "Negotiations are closed in the current contract window." : verdict && !verdict.ok ? verdict.reason : verbal ? "This requests a verbal agreement. He stays unsigned until the signing window opens." : "An accepted offer adds this contract to your salary sheet."}</p>
-        {verdict?.ok ? <p className="mt-1 text-xs text-muted-foreground">Signing path: {verdict.via.replaceAll("_", " ")}. First-year salary ${salary.toFixed(2)}M.</p> : null}
-      </section> : null}
+      {selected ? <div id="fa-offer-terms" tabIndex={-1} className="scroll-mt-24 outline-none">
+        <GmContractNegotiation
+          key={selected.id}
+          league={league}
+          player={selected}
+          mode="free-agency"
+          salaryM={salary}
+          years={years}
+          onSalaryChange={setSalary}
+          onYearsChange={setYears}
+          onSubmit={() => signFreeAgent(selected.id, salary, years)}
+          onClose={() => setSelectedId(null)}
+          canSubmit={Boolean(canOffer)}
+          maxSalaryM={maxSalaryForAge(selected.age, league.settings)}
+          maxYears={selected.rightsTeamId === league.userTeamId ? 5 : 4}
+          submitLabel={verbal ? "Request verbal commitment" : selected.rightsKind === "restricted" && selected.rightsTeamId !== league.userTeamId ? "File restricted offer sheet" : "Submit contract offer"}
+          legalMessage={selectedAgreement ? "This player already has a verbal commitment." : !negotiationsOpen ? "Negotiations are closed in this window." : verdict && !verdict.ok ? verdict.reason : undefined}
+        />
+      </div> : null}
 
       {activeTab === "overview" ? (
         <section className="grid gap-3 sm:grid-cols-2">
