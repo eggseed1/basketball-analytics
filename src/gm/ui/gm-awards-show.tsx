@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import { TeamLogo } from "@/components/brand/team-logo";
+import { GmPlayerPortrait } from "@/gm/ui/gm-player-portrait";
 import type { GmAwardRace, GmLeagueState } from "@/gm/types";
 import { cn } from "@/lib/utils";
 
@@ -107,6 +108,7 @@ export function GmAwardsShow({
           {winner ? (
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div className="min-w-0">
+                {!winner.id.startsWith("coach:") && league.players.find(p => p.id === winner.id) ? <div className="mb-3"><GmPlayerPortrait player={league.players.find(p => p.id === winner.id)!} size="lg" /></div> : null}
                 <p className="text-[13px] font-semibold text-muted-foreground">
                   {isTeam ? t("homeAwardsTeam") : t("homeAwardsWinner")}
                 </p>
