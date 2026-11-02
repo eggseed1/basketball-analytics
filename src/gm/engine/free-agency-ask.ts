@@ -21,11 +21,11 @@ const money = (value: number) => Math.round(value * 100) / 100;
 function interpolate(overall: number): number {
   if (overall <= BANDS[0][0]) return BANDS[0][1];
   for (let i = 1; i < BANDS.length; i++) {
-    const [top, pct] = BANDS[i];
-    const [low, prev] = BANDS[i - 1];
+    const [top, pct] = BANDS[i]!;
+    const [low, prev] = BANDS[i - 1]!;
     if (overall <= top) return prev + (pct - prev) * ((overall - low) / (top - low));
   }
-  return BANDS[BANDS.length - 1][1];
+  return BANDS[BANDS.length - 1]![1];
 }
 
 function cba(input: CBARules | GmLeagueState) {
