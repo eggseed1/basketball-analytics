@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { GmPlayerPortrait } from "@/gm/ui/gm-player-portrait";
+import { TeamLogo } from "@/components/brand/team-logo";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 
@@ -148,7 +150,7 @@ export function GmNight() {
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h2 className="text-xl font-bold tracking-tight">{t("pageNightTitle")}</h2>
+          <h2 className="flex items-center gap-2 text-xl font-bold tracking-tight"><TeamLogo teamKey={team.id} size="sm" />{t("pageNightTitle")}{opponent ? <><span className="text-muted-foreground">vs</span><TeamLogo teamKey={opponent} size="sm" /></> : null}</h2>
           <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
             {next
               ? `${t(
@@ -208,9 +210,10 @@ export function GmNight() {
             return (
               <li key={player.id} className="gm-rot gm-rot--night">
                 <div className="gm-rot__name">
-                  <Link href={`/gm/player/${encodeURIComponent(player.id)}`}>
-                    {displayPlayerName(player)}
-                  </Link>
+                  <div className="flex min-w-0 items-center gap-2">
+                    <GmPlayerPortrait player={player} />
+                    <Link href={`/gm/player/${encodeURIComponent(player.id)}`}>{displayPlayerName(player)}</Link>
+                  </div>
                   <span>
                     {player.position}
                     {out
