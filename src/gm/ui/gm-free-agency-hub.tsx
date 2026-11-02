@@ -157,13 +157,7 @@ export function GmFreeAgencyHub() {
             {open ? faStageLabel(market) : "Market closed"}
           </p>
           <h2 className="mt-1 text-[22px] font-bold tracking-tight">Free agency</h2>
-          <p className="mt-1 text-[14px] text-muted-foreground">
-            Cap room ${cap.capRoomM.toFixed(1)}M · tax{" "}
-            {sheet.overTax ? "over" : "under"} · apron{" "}
-            {sheet.overFirstApron ? "1st+" : "clear"} · roster {cap.rosterSize}/
-            {offseasonRosterLimit(league)} summer ({league.settings.maxRoster} at tip) · holds ${sheet.holdsM.toFixed(1)}M · MLE $
-            {sheet.mleRemainingM.toFixed(1)}M
-          </p>
+          <p className="mt-1 text-sm text-muted-foreground">Cap room ${cap.capRoomM.toFixed(1)}M · Roster {cap.rosterSize}/{offseasonRosterLimit(league)}</p>
         </div>
         <div className="flex flex-wrap gap-2">
           {!open ? (
@@ -180,17 +174,17 @@ export function GmFreeAgencyHub() {
           ) : market?.done ? <Link className={buttonVariants()} href="/gm/offseason">Continue summer</Link> : (
             <>
               <Button onClick={() => advanceFaDay()} disabled={Boolean(market?.done)}>
-                Advance window / day
+                Continue
               </Button>
               <Button variant="outline" onClick={() => runCpuSignings()}>
-                Sim through this window
+                Sim window
               </Button>
             </>
           )}
         </div>
       </header>
 
-      {open ? <p className="text-sm text-muted-foreground">{market?.stage === "re_signing" ? "Your own-player window is open. Other clubs' free agents enter when league-wide negotiations begin." : market?.stage === "moratorium" ? "Negotiations are open. Agreements are verbal and reserve room; contracts finalize after the moratorium." : market?.done ? "The market is quiet. Progression, summer league and camp follow at the season hub." : "Resolve required decisions before advancing. The next window opens only when you continue."} Reserved commitments: ${myAgreements.reduce((sum, row) => sum + row.salaryM, 0).toFixed(1)}M.</p> : null}
+      {open ? <details className="text-xs text-muted-foreground"><summary className="cursor-pointer">Market rules & cap details</summary><p className="mt-2">Reserved offers: $${myAgreements.reduce((sum, row) => sum + row.salaryM, 0).toFixed(1)}M · Cap holds $${sheet.holdsM.toFixed(1)}M · MLE $${sheet.mleRemainingM.toFixed(1)}M.</p><p className="mt-1">{market?.stage === "moratorium" ? "Verbal agreements finalize when the moratorium ends." : market?.stage === "re_signing" ? "Re-signing window: your own players first." : "Review required decisions before continuing."}</p></details>
 
       {lastFaNote ? (
         <p className="rounded-lg border border-border bg-secondary/40 px-3 py-2 text-[13px]" role="status">
@@ -258,8 +252,8 @@ export function GmFreeAgencyHub() {
           <Button type="submit" disabled={!canOffer}>{verbal ? "Request verbal agreement" : selected.rightsKind === "restricted" && selected.rightsTeamId !== league.userTeamId ? "Submit offer sheet" : "Offer contract"}</Button>
         </form>
         <p className="mt-3 text-sm font-semibold">{Number.isFinite(salary * years) ? "$" + (salary * years).toFixed(2) + "M total over " + years + " season(s)" : "Enter valid contract terms."}</p>
-        <p className="mt-2 text-sm text-muted-foreground">{selectedAgreement ? "A verbal agreement is already reserved for this player. Signing is checked again when contracts can finalize." : !negotiationsOpen ? "Negotiations are closed in the current contract window." : verdict && !verdict.ok ? verdict.reason : verbal ? "This requests a verbal agreement. He stays unsigned until the signing window opens." : "An accepted offer adds this contract to your salary sheet."}</p>
-        {verdict?.ok ? <p className="mt-1 text-xs text-muted-foreground">Signing path: {verdict.via.replaceAll("_", " ")}. First-year salary ${salary.toFixed(2)}M.</p> : null}
+        {(!canOffer || verbal) ? <p className="mt-2 text-sm text-muted-foreground">{!negotiationsOpen ? "Negotiations closed." : verdict && !verdict.ok ? verdict.reason : verbal ? "Verbal offer; contracts finalize later." : "Offer unavailable."}</p> : null}
+
       </section> : null}
 
       {activeTab === "overview" ? (
