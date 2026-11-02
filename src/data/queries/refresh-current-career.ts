@@ -63,7 +63,7 @@ export async function refreshCurrentCareerFromEspn(
       }
       const name = fallbackName || rows[0]?.playerName || espnId;
       const live = [...grouped.entries()]
-        .map(([teamId, group]) => {
+        .map(([teamId, group]): PlayerSeason | null => {
           const row = aggregatePlayerSeasonFromGames(group, name);
           const teamAbbreviation = baked.find(
             (game) => game.teamNbaId === teamId
