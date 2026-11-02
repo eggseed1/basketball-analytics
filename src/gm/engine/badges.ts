@@ -69,6 +69,7 @@ export function defaultBadgeFocus(player: GmPlayer): GmBadgeId | undefined {
 export function recordBadgeGame(player: GmPlayer, box: GmBoxScore, players: GmPlayer[]): GmPlayer {
   const line = box.players.find(p => p.playerId === player.id && p.minutes > 0);
   if (!line) return player;
+  if (player.badges?.season != null && (box.season < player.badges.season || (box.season === player.badges.season && player.badges.gameIds?.includes(box.gameId)))) return player;
   player = ensureBadges(player);
   const book = player.badges!;
   if (book.season != null && (box.season < book.season || (box.season === book.season && book.gameIds?.includes(box.gameId)))) return player;
