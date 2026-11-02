@@ -4,12 +4,13 @@ import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { CalendarDays, ChevronDown, ClipboardList, House, LayoutGrid, TrendingUp, UsersRound } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const PRIMARY = [
-  { href: "/gm", key: "nav_home" },
-  { href: "/gm/roster", key: "nav_roster" },
-  { href: "/gm/lineup", key: "nav_coaching" },
+const MAIN = [
+  { href: "/gm", key: "nav_home", icon: House },
+  { href: "/gm/roster", key: "nav_roster", icon: UsersRound },
+  { href: "/gm/lineup", key: "nav_coaching", icon: ClipboardList },
 ] as const;
 const GROUPS = [
   { label: "Build your team", links: [
@@ -27,7 +28,7 @@ const GROUPS = [
     { href: "/gm/transactions", label: "Transactions" },
     { href: "/gm/awards", label: "Awards" },
   ] },
-  { label: "Manage your franchise", links: [
+  { label: "Front office", links: [
     { href: "/gm/franchise", label: "Team plan and history" },
     { href: "/gm/staff", label: "Staff" },
     { href: "/gm/medical", label: "Medical report" },
@@ -58,23 +59,25 @@ export function GmNav() {
     const details = event.currentTarget.querySelector("details");
     if (details) details.open = false;
   }}>
-    <div className="gm-desk-nav__primary">
-      {PRIMARY.map(link => <Link key={link.href} href={link.href} aria-current={isCurrent(pathname, link.href) ? "page" : undefined} className={cn("gm-desk-nav__link", isCurrent(pathname, link.href) && "is-active")}>{t(link.key)}</Link>)}
-      <Link href="/gm/development" aria-current={pathname === "/gm/development" ? "page" : undefined} className={cn("gm-desk-nav__link", pathname === "/gm/development" && "is-active")}>Development</Link>
-      <Link href="/gm/offseason" aria-current={pathname === "/gm/offseason" ? "page" : undefined} className={cn("gm-desk-nav__link", pathname === "/gm/offseason" && "is-active")}>Season hub</Link>
-      <details key={pathname} className="gm-desk-nav__more" onKeyDown={event => {
-        if (event.key !== "Escape") return;
-        event.currentTarget.open = false;
-        event.currentTarget.querySelector("summary")?.focus();
-      }}>
-        <summary aria-label="All desks" className={cn("gm-desk-nav__link", moreActive && "is-active")}>More <span aria-hidden="true">▾</span></summary>
-        <div className="gm-desk-nav__menu">
-          {GROUPS.map(group => <section key={group.label} aria-label={group.label}>
-            <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{group.label}</h2>
-            <ul className="mt-2 grid gap-1">{group.links.map(link => <li key={link.href}><Link href={link.href} aria-current={isCurrent(pathname, link.href) ? "page" : undefined} className={cn("gm-desk-nav__item", isCurrent(pathname, link.href) && "is-active")}>{link.label}</Link></li>)}</ul>
-          </section>)}
-        </div>
-      </details>
+    <div className="gm-desk-nav__scroller">
+      <div className="gm-desk-nav__primary">
+        {MAIN.map(({ href, key, icon: Icon }) => <Link key={href} href={href} aria-current={isCurrent(pathname, href) ? "page" : undefined} className={cn("gm-desk-nav__link", isCurrent(pathname, href) && "is-active")}><Icon size={16} strokeWidth={1.8} aria-hidden="true" /><span>{t(key)}</span></Link>)}
+        <Link href="/gm/development" aria-current={isCurrent(pathname, "/gm/development") ? "page" : undefined} className={cn("gm-desk-nav__link", isCurrent(pathname, "/gm/development") && "is-active")}><TrendingUp size={16} strokeWidth={1.8} aria-hidden="true" /><span>Development</span></Link>
+        <Link href="/gm/offseason" aria-current={isCurrent(pathname, "/gm/offseason") ? "page" : undefined} className={cn("gm-desk-nav__link", isCurrent(pathname, "/gm/offseason") && "is-active")}><CalendarDays size={16} strokeWidth={1.8} aria-hidden="true" /><span>Season hub</span></Link>
+      </div>
     </div>
+    <details key={pathname} className="gm-desk-nav__more" onKeyDown={event => {
+      if (event.key !== "Escape") return;
+      event.currentTarget.open = false;
+      event.currentTarget.querySelector("summary")?.focus();
+    }}>
+      <summary aria-label="All desks" className={cn("gm-desk-nav__link gm-desk-nav__more-trigger", moreActive && "is-active")}><LayoutGrid size={16} strokeWidth={1.8} aria-hidden="true" /><span>More</span><ChevronDown size={12} aria-hidden="true" /></summary>
+      <div className="gm-desk-nav__menu">
+        {GROUPS.map(group => <section key={group.label} aria-label={group.label}>
+          <h2 className="gm-desk-nav__group-label">{group.label}</h2>
+          <ul className="mt-2 grid gap-1">{group.links.map(link => <li key={link.href}><Link href={link.href} aria-current={isCurrent(pathname, link.href) ? "page" : undefined} className={cn("gm-desk-nav__item", isCurrent(pathname, link.href) && "is-active")}>{link.label}</Link></li>)}</ul>
+        </section>)}
+      </div>
+    </details>
   </nav>;
 }
