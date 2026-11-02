@@ -113,7 +113,6 @@ function MatchupLine({
   return (
     <span className="inline-flex items-center gap-1.5 font-semibold text-foreground">
       {home ? "vs" : "@"}
-      <TeamLogo teamKey={opp} size="xs" />
       <ClubMark teamId={opp} label={opp.toUpperCase()} />
     </span>
   );
