@@ -340,6 +340,23 @@ export function simulateGame(
     const n = Math.round(possessionsPerSide * (start + duration) / regulation) - Math.round(possessionsPerSide * start / regulation);
     runFrame(start, duration, slot, n);
   }
+  // A made basket with time on the clock can leave a final inbound/timeout
+  // possession. The older engine ended the game at the last regular scheduled
+  // action, frequently denying the trailing team a realistic tying attempt.
+  // Offer one *actual* event-generating late possession, never a scripted tie.
+  const finalGap = Math.abs(homeScore - awayScore);
+  if (span >= 0.999 && finalGap >= 1 && finalGap <= 3 && regulation - elapsed >= 2.5) {
+    const trailing: 0 | 1 = homeScore < awayScore ? 0 : 1;
+    const trailingId = trailing === 0 ? home!.id.toUpperCase() : away!.id.toUpperCase();
+    const recent = [...events].reverse().find(e => e.isFieldGoal || e.actionType === "freethrow" || e.actionType === "turnover");
+    const probability = recent?.teamId === trailingId ? 0.28 : 0.78;
+    if (clockRng() < probability) {
+      elapsed += Math.min(6, (regulation - elapsed) * 0.64);
+      if (trailing === 0) possession(homeFloor, awayFloor, 0);
+      else possession(awayFloor, homeFloor, 1);
+      totalPossessions++;
+    }
+  }
   while (homeScore === awayScore) {
     const start = regulation + overtime * 300;
     overtime++;
