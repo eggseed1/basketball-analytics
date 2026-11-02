@@ -184,7 +184,7 @@ export function GmFreeAgencyHub() {
         </div>
       </header>
 
-      {open ? <details className="text-xs text-muted-foreground"><summary className="cursor-pointer">Market rules & cap details</summary><p className="mt-2">Reserved offers: $${myAgreements.reduce((sum, row) => sum + row.salaryM, 0).toFixed(1)}M · Cap holds $${sheet.holdsM.toFixed(1)}M · MLE $${sheet.mleRemainingM.toFixed(1)}M.</p><p className="mt-1">{market?.stage === "moratorium" ? "Verbal agreements finalize when the moratorium ends." : market?.stage === "re_signing" ? "Re-signing window: your own players first." : "Review required decisions before continuing."}</p></details>
+      {open ? <details className="text-xs text-muted-foreground"><summary className="cursor-pointer">Market rules & cap details</summary><p className="mt-2">Reserved offers: $${myAgreements.reduce((sum, row) => sum + row.salaryM, 0).toFixed(1)}M · Cap holds $${sheet.holdsM.toFixed(1)}M · MLE $${sheet.mleRemainingM.toFixed(1)}M.</p><p className="mt-1">{market?.stage === "moratorium" ? "Verbal agreements finalize when the moratorium ends." : market?.stage === "re_signing" ? "Re-signing window: your own players first." : "Review required decisions before continuing."}</p></details> : null}
 
       {lastFaNote ? (
         <p className="rounded-lg border border-border bg-secondary/40 px-3 py-2 text-[13px]" role="status">
