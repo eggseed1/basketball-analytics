@@ -24,7 +24,7 @@ function twoZoneWeights(player: GmPlayer) {
     0.34, 0.78
   );
   const paint = clamp((big ? 0.27 : 0.24)
-    + ((a?.postHook ?? 65) - 65) * 0.001, 0.15, 0.34);
+    + ((a?.postControl ?? 65) - 65) * 0.001, 0.15, 0.34);
   // Never claim every two-pointer is a layup.
   return { rim, paint: Math.min(paint, 0.92 - rim), mid: Math.max(0.08, 1 - rim - paint) };
 }
