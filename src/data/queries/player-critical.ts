@@ -395,7 +395,25 @@ export async function getPlayerCriticalCareerSeasons(
 ): Promise<PlayerSeason[]> {
   const identity = await resolvePlayerIdentityCached(playerId).catch(() => null);
   const rows = await loadCriticalCareerSeasons(playerId, identity);
-  return withAbaSeasons(playerId, identity?.nbaId ?? null, rows);
+  // Production prefers a baked full-history table, but its current season may
+  // be days behind the scoreboard. Refresh just that one season from ESPN.
+  // Do not run this extra upstream request for retired players / slim edge.
+  const currentSeason = canonicalSeasonFromStartYear(currentNbaStartYear());
+  let current = rows;
+  if (
+    preferBundledProductDataOnEdge() &&
+    !slimEdgeProductEnabled() &&
+    identity?.espnId &&
+    rows.some((row) => row.season === currentSeason && row.gamesPlayed > 0)
+  ) {
+    const { refreshCurrentCareerFromEspn } = await import(
+      "@/data/queries/refresh-current-career"
+    );
+    current = await refreshCurrentCareerFromEspn(
+      rows, identity.espnId, identity.displayName
+    );
+  }
+  return withAbaSeasons(playerId, identity?.nbaId ?? null, current);
 }
 
 /**
