@@ -106,6 +106,7 @@ const actions=vm.runInNewContext(js,{POSITIONS,get:()=>state,set:(partial:{leagu
 actions.setStarter("PG",team.starters.SG);
 let updated=state.league.teams.find(t=>t.id===team.id)!;
 assert.equal(new Set(Object.values(updated.starters)).size,5);
+assert.ok(updated.benchOrder.every(id=>!Object.values(updated.starters).includes(id)),"starter swaps keep the bench order distinct");
 assert.equal(updated.coaching!.shifts,undefined);
 actions.setStarter("SF",backup.id);
 updated=state.league.teams.find(t=>t.id===team.id)!;

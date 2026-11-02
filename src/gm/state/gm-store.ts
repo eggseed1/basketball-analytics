@@ -745,6 +745,7 @@ export const useGmStore = create<GmStore>()(
           // demote previous starter to bench
           const prev = t.starters[position];
           if (prev && prev !== playerId) benchOrder = [prev, ...benchOrder];
+          benchOrder = [...new Set(benchOrder)].filter(id=>!Object.values(starters).includes(id));
           const nextTeam = { ...t, starters, benchOrder };
           // Keep cover slots aligned with the new starter map.
           // Do not seed a minutes book here — persisting one turns on the
