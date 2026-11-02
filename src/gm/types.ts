@@ -599,6 +599,10 @@ export interface GmBoxPlayerLine {
   points: number;
   assists: number;
   rebounds: number;
+  /** Actual on-court rebound split, retained in the career stat line. */
+  offensiveRebounds?: number;
+  defensiveRebounds?: number;
+  personalFouls?: number;
   steals: number;
   blocks: number;
   turnovers: number;
