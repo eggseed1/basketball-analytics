@@ -164,13 +164,13 @@ function bestLegalBid(
 ): { salaryM: number; years: number; via: GmSignVia } | null {
   const ask = askingSalary(player, state);
   const years = askingYears(player, state);
-  const floor = minimumAcceptableSalary(player, state, state.faMarket?.stage === "fill");
+  const reserveMinimum = minimumAcceptableSalary(player, state, state.faMarket?.stage === "fill");
   const own = player.rightsTeamId === team.id;
   const tries = own
     ? [ask, ask * 0.95, ask * 0.88, ask * 0.8]
     : [ask * aggressiveness, ask * 0.9, ask * 0.75, ask * 0.6, rules.minSalaryM || 1];
   for (const raw of tries) {
-    if (raw + 0.05 < floor) continue;
+    if (raw + 0.05 < reserveMinimum) continue;
     const salaryM = Math.round(Math.max(rules.minSalaryM || 1, raw) * 100) / 100;
     const verdict = evaluateSigning(state, team.id, player, salaryM, years);
     if (verdict.ok) return { salaryM, years, via: verdict.via };
