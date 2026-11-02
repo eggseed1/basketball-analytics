@@ -19,7 +19,7 @@ export function GmSeasonJourney() {
     </div>
     <div className="flex flex-wrap items-center gap-3">
       <span className="gm-stage-rail__next">Next: {journey.next}</span>
-      <Link href="/gm/offseason" className="gm-stage-rail__action">Season hub <ArrowUpRight aria-hidden="true" size={15}/></Link>
+      <Link href="/gm/offseason" className="gm-stage-rail__action">Open season hub <ArrowUpRight aria-hidden="true" size={15}/></Link>
     </div>
   </aside>;
 }
