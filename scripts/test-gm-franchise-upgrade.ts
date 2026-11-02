@@ -46,8 +46,13 @@ for (let seed = 0; seed < 32; seed++) {
 const customIds = Object.values(home.starters).filter((id): id is string => Boolean(id));
 const customTeam = { ...home, coaching: { ...home.coaching, shifts: Object.fromEntries(customIds.map(id => [id, Array<boolean>(24).fill(true)])), closingLineup: customIds } };
 const customBox = simulateGame(game, league.teams.map(t => t.id === home.id ? customTeam : t), league.players, 21).box;
-assert.ok(customBox.stints!.every(stint => new Set(stint.home).size === 5 && stint.home.every(id => customIds.includes(id))), "saved shifts determine every shared stint");
-assert.ok(customBox.players.filter(p => p.teamId === home.id).every(p => p.minutes === 48 + 5 * (customBox.overtime ?? 0)), "saved shifts determine actual minutes");
+assert.ok(customBox.stints!.every(stint => new Set(stint.home).size === 5), "saved-shift game must field five unique players");
+const customPlayed=customBox.players.filter(p => p.teamId === home.id);
+assert.equal(customPlayed.reduce((n,p)=>n+p.minutes,0), 240 + 25 * (customBox.overtime ?? 0), "saved shifts preserve team minutes even through a foul-out");
+if (!customPlayed.some(p => (p.personalFouls ?? 0) >= 6)) {
+  assert.ok(customBox.stints!.every(stint => stint.home.every(id => customIds.includes(id))), "explicit saved shifts determine shared stints absent a six-foul disqualification");
+  assert.ok(customPlayed.every(p => p.minutes === 48 + 5 * (customBox.overtime ?? 0)), "explicit saved shifts determine minutes absent disqualification");
+}
 const base = league.players.find(p => p.teamId === home.id)!;
 const improved: GmPlayer = { ...base, sheet: { ...base.sheet!, attributes: { ...base.sheet!.attributes, threePoint: Math.min(99, base.sheet!.attributes.threePoint + 10), passAccuracy: Math.min(99, base.sheet!.attributes.passAccuracy + 10) } } };
 assert.ok(simulationRates(improved).threePct >= simulationRates(base).threePct, "shooting development changes shot probability");
