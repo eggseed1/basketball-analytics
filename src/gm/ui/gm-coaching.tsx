@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { SectionFrame } from "@/components/layout/section-frame";
 import { GmConfirmAction } from "@/gm/ui/gm-confirm-action";
+import { GmPlayerPortrait } from "@/gm/ui/gm-player-portrait";
+import { TeamLogo } from "@/components/brand/team-logo";
 import { listedPositionCorrections } from "@/gm/engine/position-listings";
 import { useTranslations } from "next-intl";
 
@@ -269,7 +271,7 @@ export function GmCoaching() {
 
       <section className="sports-card flex flex-col gap-3 p-4">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <h3 className="font-semibold">{t("coachRotations")}</h3>
+          <h3 className="inline-flex items-center gap-2 font-semibold"><TeamLogo teamKey={team.id} size="xs" />{t("coachRotations")}</h3>
           <p className="text-sm tabular-nums">
             {t("coachRemaining", { value: formatMinutes(remaining) })}
             {remaining < 0
@@ -321,9 +323,12 @@ export function GmCoaching() {
             return (
               <li key={player.id} className="gm-rot gm-rot--board">
                 <div className="gm-rot__name">
-                  <Link href={`/gm/player/${encodeURIComponent(player.id)}`}>
-                    {displayPlayerName(player)}
-                  </Link>
+                  <div className="flex min-w-0 items-center gap-2">
+                    <GmPlayerPortrait player={player} />
+                    <Link href={`/gm/player/${encodeURIComponent(player.id)}`}>
+                      {displayPlayerName(player)}
+                    </Link>
+                  </div>
                   <span>
                     {starterIds.has(player.id)
                       ? t("coachStarter")
