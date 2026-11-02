@@ -13,6 +13,7 @@ import type {
   GmSignVia,
 } from "@/gm/types";
 import { evaluateSigning } from "@/gm/engine/cap";
+import { minimumAcceptableSalary, askingSalary } from "@/gm/engine/free-agency-ask";
 import { autoSetLineup, overallOf } from "@/gm/engine/lineup";
 import { defaultFaConfig, ensureFaMarket } from "@/gm/engine/fa-market-config";
 import { uid } from "@/gm/engine/rng";
@@ -103,6 +104,8 @@ export function submitOfferSheet(
   ) {
     return { ok: false, reason: "An offer sheet is already pending on this player." };
   }
+  const reserve = minimumAcceptableSalary(player, state);
+  if (salaryM + 0.05 < reserve) return { ok: false, reason: "Player will not sign this offer sheet below his agent\u0027s competitive range ($" + reserve.toFixed(1) + "M)." };
   const verdict = evaluateSigning(state, offeringTeamId, player, salaryM, years);
   if (!verdict.ok) return verdict;
 
@@ -313,9 +316,12 @@ export function resolveCpuOfferSheetMatches(state: GmLeagueState): GmLeagueState
     if (sheet.rightsTeamId === next.userTeamId) continue;
     const player = next.players.find((row) => row.id === sheet.playerId);
     if (!player) continue;
+    const incumbent = next.teams.find(team => team.id === sheet.rightsTeamId);
+    const ask = askingSalary(player, next);
     const shouldMatch =
-      overallOf(player) >= 78 &&
-      sheet.salaryM <= (player.lastSalaryM ?? sheet.salaryM) * 1.4;
+      (overallOf(player) >= 80 || (player.age <= 25 && overallOf(player) >= 77)) &&
+      sheet.salaryM <= ask * (incumbent?.ownerGoal === "contend" ? 1.12 : 1.04) &&
+      evaluateSigning(next, sheet.rightsTeamId, player, sheet.salaryM, sheet.years).ok;
     const result = shouldMatch
       ? matchOfferSheet(next, sheet.id, sheet.rightsTeamId)
       : declineOfferSheet(next, sheet.id, sheet.rightsTeamId);
