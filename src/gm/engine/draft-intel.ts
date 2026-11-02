@@ -94,11 +94,18 @@ export function draftSleeperSignals(player: GmPlayer): { score: number; reasons:
 
 /** Suggest sleepers using evidence available to every club, not hidden growth rolls. */
 export function sleeperRadar(league: GmLeagueState, limit = 7): GmPlayer[] {
-  return marketBoard(league).filter(player => league.draftPool.includes(player.id)
+  const sorted = marketBoard(league).filter(player => league.draftPool.includes(player.id)
     && (player.consensusRank ?? 0) >= 22)
     .sort((a,b) => draftSleeperSignals(b).score - draftSleeperSignals(a).score
-      || (a.consensusRank ?? 99) - (b.consensusRank ?? 99))
-    .slice(0, limit);
+      || (a.consensusRank ?? 99) - (b.consensusRank ?? 99));
+  // A big early-board name can crowd out every second-round prospect even on
+  // a "find a sleeper" list. Reserve real later-slot *opportunities*, not
+  // guaranteed hidden talent, when there is room for a shortlist.
+  if (limit < 4) return sorted.slice(0, limit);
+  const second = sorted.filter(player => (player.consensusRank ?? 0) >= 31).slice(0, 2);
+  const ids = new Set(second.map(player => player.id));
+  return [...second, ...sorted.filter(player => !ids.has(player.id)).slice(0, Math.max(0, limit - second.length))]
+    .sort((a,b) => draftSleeperSignals(b).score - draftSleeperSignals(a).score);
 }
 
 export type DraftRead = {
