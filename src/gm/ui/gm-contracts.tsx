@@ -65,7 +65,7 @@ export function GmContracts() {
       <div>
         <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Front office · {cbaSeason(league)} cap year</p>
         <h1 className="mt-1 flex items-center gap-2 text-2xl font-bold"><TeamLogo teamKey={league.userTeamId} size="sm" />Contracts and extensions</h1>
-        <p className="mt-2 max-w-2xl text-sm text-muted-foreground">Review remaining deals, extension eligibility, CBA ceilings and the player's negotiating position. A signed extension begins after the current contract ends.</p>
+        <p className="mt-2 max-w-2xl text-sm text-muted-foreground">Review remaining deals, extension eligibility, CBA ceilings and the player&apos;s negotiating position. A signed extension begins after the current contract ends.</p>
       </div>
       <Link href="/gm/free-agency" className="rounded-lg border border-border px-4 py-2.5 text-sm font-semibold hover:bg-secondary">Free agency desk</Link>
     </header>
