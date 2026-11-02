@@ -52,7 +52,7 @@ function CapStrip({ league }: { league: GmLeagueState }) {
 
 function Briefings({ league }: { league: GmLeagueState }) {
   const t = useTranslations("GmUi");
-  const news = league.news.slice(0, 5);
+  const news = league.news.slice(0, 3);
   return (
     <section className="flex flex-col gap-2">
       <h2 className="text-[18px] font-bold tracking-tight">{t("homeBriefings")}</h2>
@@ -67,7 +67,7 @@ function Briefings({ league }: { league: GmLeagueState }) {
               style={{ borderLeftColor: "var(--team-primary)" }}
             >
               <p className="font-semibold">{item.headline}</p>
-              <p className="text-[14px] text-muted-foreground">{item.body}</p>
+              
             </li>
           ))
         )}
@@ -149,7 +149,6 @@ export function GmHomeStage({ league }: { league: GmLeagueState }) {
         </header>
         <GmPlayInSchedule league={league} />
         <GmGamePlan league={league} />
-        <Briefings league={league} />
       </div>
     );
   }
@@ -164,9 +163,8 @@ export function GmHomeStage({ league }: { league: GmLeagueState }) {
             <p className="text-[15px] text-muted-foreground">{t("homePlayoffsBlurb")}</p>
           </div>
         </header>
-        <GmPlayoffBracket league={league} controls />
         <GmGamePlan league={league} />
-        <Briefings league={league} />
+        <GmPlayoffBracket league={league} controls />
       </div>
     );
   }
@@ -175,10 +173,6 @@ export function GmHomeStage({ league }: { league: GmLeagueState }) {
     return (
       <div className="flex flex-col gap-4">
         <StageChip league={league} />
-        <header>
-          <h1 className="text-[28px] font-bold tracking-tight">{t("pageOffseasonTitle")}</h1>
-          <p className="text-[15px] text-muted-foreground">{t("homeSummerBlurb")}</p>
-        </header>
         <OffseasonHub embedded />
       </div>
     );
@@ -188,12 +182,17 @@ export function GmHomeStage({ league }: { league: GmLeagueState }) {
   return (
     <div className="flex flex-col gap-4">
       <StageChip league={league} />
-      <GmSeasonCalendar league={league} />
-      <CapStrip league={league} />
       <GmGamePlan league={league} />
-      <FranchiseSummary league={league} />
-      <QuickLinks />
-      <Briefings league={league} />
+      <GmSeasonCalendar league={league} />
+      <details className="rounded-xl border border-border p-4 text-sm" data-testid="gm-home-more">
+        <summary className="cursor-pointer font-semibold">Team overview & news</summary>
+        <div className="mt-4 flex flex-col gap-4">
+          <CapStrip league={league} />
+          <FranchiseSummary league={league} />
+          <QuickLinks />
+          <Briefings league={league} />
+        </div>
+      </details>
     </div>
   );
 }
