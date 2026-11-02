@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { createGeneratedLeague } from "../src/gm/seed/create-league";
 import { prepareFranchise, exportFranchise, parseFranchise } from "../src/gm/engine/franchise";
-import { assignMentor, activeMentor, mentorshipBonus, raiseCeiling, reviewPlayerCeilings, breakoutEvidence, workEthicOf } from "../src/gm/engine/development";
+import { assignMentor, activeMentor, activeTeamMentorships, MAX_TEAM_MENTORSHIPS, mentorshipBonus, raiseCeiling, reviewPlayerCeilings, breakoutEvidence, workEthicOf } from "../src/gm/engine/development";
 import { recordSimGame } from "../src/gm/lib/season-line";
 import { progressSheet, overallFromAttributes } from "../src/gm/engine/attributes";
 import { applyTrainingCamp, assignCamp, campSlots } from "../src/gm/engine/season-development";
@@ -23,6 +23,15 @@ league = paired.state;
 const student = () => league.players.find(p => p.id === young.id)!;
 assert.equal(assignMentor(league, other.id, veteran.id).ok, false, "one learner per mentor");
 assert.equal(assignMentor(league, young.id, veteran.id).state, league, "reselecting does not reset exposure");
+const extraVeterans = [0,1].map(i => ({ ...veteran, id: "veteran-extra-" + i }));
+const extraLearners = [0,1].map(i => ({ ...other, id: "learner-extra-" + i }));
+let limited = { ...league, players: [...league.players, ...extraVeterans, ...extraLearners] };
+limited = assignMentor(limited, extraLearners[0]!.id, extraVeterans[0]!.id).state;
+assert.equal(activeTeamMentorships("bos", limited.players), MAX_TEAM_MENTORSHIPS);
+assert.equal(assignMentor(limited, extraLearners[1]!.id, extraVeterans[1]!.id).ok, false, "third pairing blocked");
+limited = assignMentor(limited, young.id, null).state;
+assert.equal(assignMentor(limited, extraLearners[1]!.id, extraVeterans[1]!.id).ok, true, "clearing one slot allows another");
+
 const bonus = mentorshipBonus(student(), league.players);
 assert.ok(bonus > 0 && bonus <= 0.18);
 const weak = league.players.map(p => p.id === veteran.id ? { ...p, workEthic: 40, sheet: { ...p.sheet!, overall: 65 } } : p);
