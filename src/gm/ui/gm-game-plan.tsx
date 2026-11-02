@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
 
-import { TeamLogo } from "@/components/brand/team-logo";
 import { ClubMark } from "@/gm/ui/club-mark";
 import { Button } from "@/components/ui/button";
 import { useGmStore } from "@/gm/state/gm-store";
