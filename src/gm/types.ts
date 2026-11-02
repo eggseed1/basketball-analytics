@@ -280,7 +280,7 @@ export interface GmSheet {
 
 export interface GmSimProfile {
   offense?: number;
-  version: 1;
+  version: 1 | 2;
   season?: string;
   confidence: number;
   source: "nba" | "estimated";
