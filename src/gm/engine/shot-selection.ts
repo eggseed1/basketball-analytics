@@ -17,13 +17,13 @@ function twoZoneWeights(player: GmPlayer) {
   const a = player.sheet?.attributes;
   const big = player.position === "C" || player.position === "PF";
   const rim = clamp(
-    (big ? 0.58 : 0.49)
+    (big ? 0.54 : 0.45)
       + ((a?.drivingDunk ?? 65) - 65) * 0.002
       + ((a?.closeShot ?? 65) - 65) * 0.001
       - ((a?.midrange ?? 65) - 65) * 0.0024,
     0.34, 0.78
   );
-  const paint = clamp((big ? 0.27 : 0.24)
+  const paint = clamp((big ? 0.295 : 0.27)
     + ((a?.postControl ?? 65) - 65) * 0.001, 0.15, 0.34);
   // Never claim every two-pointer is a layup.
   return { rim, paint: Math.min(paint, 0.92 - rim), mid: Math.max(0.08, 1 - rim - paint) };
