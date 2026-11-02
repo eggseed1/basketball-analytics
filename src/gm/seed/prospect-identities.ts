@@ -679,13 +679,17 @@ export function createDraftClass(options: {
     }
     // Some overlooked prospects have an unusual translatable skill. Their path
     // still can fail; no public nickname or badge identifies this latent upside.
-    const overlooked=board>=25&&rng()<0.06;
+    const overlooked=board>=24&&rng()<(board>=30?0.095:0.065);
     const potential={...sheet.potential};
     if(overlooked) {
       raw={...raw,personality:randInt(rng,12,25),ratings:{...raw.ratings,potential:randInt(rng,76,96)/10}};
+      // Each sleeper has observable strengths and plenty of false positives.
+      // Strong passing/FT touch shows up on public amateur tape, rather than
+      // an opaque random sleeper badge that reveals the true hidden tier.
       attributes.passAccuracy=Math.max(attributes.passAccuracy,randInt(rng,76,89));
-      potential.ceiling=randInt(rng,86,96);potential.trait=rng()<0.3?"star":"normal";
-      const pathRoll=rng();potential.path=pathRoll<0.45?"boom":pathRoll>0.9?"bust":"average";
+      if(rng()<0.55) attributes.freeThrow=Math.max(attributes.freeThrow,randInt(rng,77,88));
+      potential.ceiling=randInt(rng,85,95);potential.trait=rng()<0.33?"star":"normal";
+      const pathRoll=rng();potential.path=pathRoll<0.49?"boom":pathRoll>0.89?"bust":"average";
     }
     const target=clamp(sheet.overall,54,tier==="superstar"?83:tier==="allstar"?79:tier==="starter"?76:73);
     raw={...raw,sheet:{...sheet,attributes,overall:target,overallOffset:target-overallFromAttributes(raw.position,attributes,{impact:raw.ratings.impact}),potential}};
