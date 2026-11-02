@@ -44,7 +44,7 @@ function choose<T>(rng: () => number, weighted: ReadonlyArray<[T, number]>): T {
  * Players retain their source 2PT rate; zone offsets are centered so making
  * more dunks does not automatically manufacture extra makes from a fixed prior.
  */
-export function chooseSimShot(player: GmPlayer, three: boolean, rng: () => number, secondChance = false): SimShot {
+export function chooseSimShot(player: GmPlayer, three: boolean, rng: () => number, secondChance = false, transition = false): SimShot {
   const a = player.sheet?.attributes;
   const big = player.position === "C" || player.position === "PF";
   const hands = (a?.drivingDunk ?? 60) + (a?.standingDunk ?? 60);
@@ -65,6 +65,11 @@ export function chooseSimShot(player: GmPlayer, three: boolean, rng: () => numbe
     return { zone: "arc3", subType: label, label, x: Math.cos(angle) * radius, y: Math.sin(angle) * radius, twoDelta: 0 };
   }
   const shares = twoZoneWeights(player);
+  if (transition) {
+    shares.rim = Math.min(.80, shares.rim + .13);
+    shares.paint = Math.max(.11, shares.paint - .05);
+    shares.mid = Math.max(.08, 1 - shares.rim - shares.paint);
+  }
   const zone = choose(rng, [["rim", shares.rim], ["paint", shares.paint], ["mid", shares.mid]] as const);
   // The weighted offsets sum to zero at this player's own zone frequencies.
   const offsets = { rim: .105, paint: -.100, mid: -.215 };
@@ -72,7 +77,8 @@ export function chooseSimShot(player: GmPlayer, three: boolean, rng: () => numbe
   const twoDelta = offsets[zone] - center;
   if (zone === "rim") {
     const dunkChance = clamp((hands - 120) / 260 + (big ? .17 : .045), .025, .49);
-    const label = secondChance && rng() < .18 ? "putback layup"
+    const label = transition ? (rng() < dunkChance ? "running dunk" : "running layup")
+      : secondChance && rng() < .18 ? "putback layup"
       : rng() < dunkChance ? (big ? "dunk" : "driving dunk")
         : rng() < .22 ? "running layup" : "driving layup";
     const radius = .25 + rng() * 3.35;
