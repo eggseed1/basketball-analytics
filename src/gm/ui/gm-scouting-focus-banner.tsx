@@ -82,13 +82,7 @@ export function GmScoutingFocusBanner() {
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="min-w-0 max-w-2xl">
             <p className="font-semibold">{prompt.title}</p>
-            <p className="mt-1 text-sm text-muted-foreground">{prompt.body}</p>
-            <p className="mt-1 text-sm text-muted-foreground">
-              {picked.length}/{slots} focuses
-              {needPos ? ` · roster hole: ${needPos}` : ""}
-              {scout ? ` · ${scout.name} on staff` : " · no scout hired"}
-              . Sim stays paused until you set focus, autoscout, or skip.
-            </p>
+            <p className="mt-1 text-sm text-muted-foreground">{scout ? `${scout.name} can scout this month.` : "Choose prospects or skip this month."}</p>
           </div>
           <label className="flex max-w-xs items-start gap-2 text-sm text-muted-foreground">
             <input
@@ -111,7 +105,14 @@ export function GmScoutingFocusBanner() {
           </label>
         </div>
 
-        <div className="grid items-start gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(260px,320px)]">
+        <div className="flex flex-wrap gap-2">
+          {scout ? <Button size="sm" onClick={() => autoScoutingFocus()}>Let scout handle it</Button> : null}
+          <Button size="sm" variant="outline" onClick={() => skipScoutingFocus()}>Skip</Button>
+          <Link href="/gm/draft" className="inline-flex h-8 items-center justify-center rounded-md border border-border bg-background px-3 text-sm font-semibold">Draft board</Link>
+        </div>
+        <details className="rounded-lg border border-border bg-card/50 p-3">
+          <summary className="cursor-pointer text-sm font-semibold">Choose my own focus ({picked.length}/{slots})</summary>
+          <div className="mt-3 grid items-start gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(260px,320px)]">
           <div className="overflow-hidden rounded-md border border-border bg-card">
             <div className="flex items-center justify-between gap-2 border-b border-border px-3 py-2 text-[12px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
               <span>Prospects</span>
@@ -284,34 +285,8 @@ export function GmScoutingFocusBanner() {
           ))}
         </div>
 
-        <div className="flex flex-wrap gap-2">
-          <Button
-            size="sm"
-            disabled={picked.length === 0 && positionFocus == null}
-            onClick={() => applyScoutingFocus(picked, positionFocus)}
-          >
-            Set my focuses
-          </Button>
-          <Button
-            size="sm"
-            variant="outline"
-            disabled={!scout}
-            onClick={() => autoScoutingFocus()}
-          >
-            {scout
-              ? "Use scout recommendations and continue"
-              : "Hire a scout first"}
-          </Button>
-          <Button size="sm" variant="outline" onClick={() => skipScoutingFocus()}>
-            Skip this month
-          </Button>
-          <Link
-            href="/gm/draft"
-            className="inline-flex h-8 items-center justify-center rounded-md border border-border bg-background px-3 text-sm font-semibold hover:bg-secondary"
-          >
-            Full draft board
-          </Link>
-        </div>
+        <Button size="sm" disabled={picked.length === 0 && positionFocus == null} onClick={() => applyScoutingFocus(picked, positionFocus)}>Set my focuses</Button>
+        </details>
       </div>
     </section>
   );
