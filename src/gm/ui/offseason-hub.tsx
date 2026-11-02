@@ -16,6 +16,7 @@ import { CAMP_FOCUSES, campSlots, campSkillChanges, campSorenessRisk } from "@/g
 import { isDraftComplete, draftSlotCount } from "@/gm/engine/draft-room";
 import { faStageLabel } from "@/gm/engine/free-agency";
 import { faStageOrder } from "@/gm/engine/fa-status";
+import { traitLabel } from "@/gm/engine/dev-traits";
 import { userCap, userPlayers, userTeam } from "@/gm/lib/selectors";
 import { cn } from "@/lib/utils";
 import type { GmCampFocus, GmLeagueState } from "@/gm/types";
@@ -136,8 +137,38 @@ export function OffseasonHub({ embedded = false }: { embedded?: boolean }) {
       <Link className={linkClass} href="/gm/free-agency">Open free-agency desk</Link>
     </SectionFrame> : null}
 
-    {stage === "progression" ? <SectionFrame title="Development report" description="Age, minutes, development focus and staff affect this annual pass. Reopening the screen does not apply it again.">
-      {progression.length ? <div className="overflow-x-auto rounded-lg border border-border"><table className="w-full text-left text-sm"><thead><tr className="border-b border-border bg-secondary/40"><th className="p-3">Player</th><th>Age</th><th>Before</th><th>Now</th><th className="pr-3">Change</th></tr></thead><tbody>{progression.sort((a, b) => (b.after - b.before) - (a.after - a.before)).map(row => <tr key={row.playerId} className="border-b border-border last:border-0"><td className="p-3"><span className="inline-flex items-center gap-2">{roster.find(p => p.id === row.playerId) ? <GmPlayerPortrait player={roster.find(p => p.id === row.playerId)!} /> : null}{row.name}</span></td><td>{row.age}</td><td>{row.before}</td><td>{row.after}</td><td className="pr-3 tabular-nums">{row.after > row.before ? "+" : ""}{row.after - row.before}</td></tr>)}</tbody></table></div> : <p className="text-sm text-muted-foreground">Progression was already applied in this saved season. It will not run twice.</p>}
+    {stage === "progression" ? <SectionFrame
+      title="Player progression and regression"
+      description="The offseason leap is larger than the in-season checkpoints. Age, potential, skill focus, production, developer traits, staff and awards shape growth. Review every change before advancing."
+    >
+      {progression.length ? <>
+        <div className="mb-4 grid gap-2 sm:grid-cols-4">
+          {([
+            ["Improved", progression.filter(row => row.after > row.before).length],
+            ["Declined", progression.filter(row => row.after < row.before).length],
+            ["Stable", progression.filter(row => row.after === row.before).length],
+            ["Trait changes", progression.filter(row => row.traitBefore !== row.traitAfter).length],
+          ] as const).map(([label,value]) => <div key={label} className="rounded-lg border border-border bg-secondary/30 p-3"><p className="text-xs text-muted-foreground">{label}</p><strong className="mt-1 block text-2xl tabular-nums">{value}</strong></div>)}
+        </div>
+        <div className="overflow-x-auto rounded-lg border border-border">
+          <table className="w-full min-w-[650px] text-left text-sm">
+            <thead><tr className="border-b border-border bg-secondary/40 text-xs uppercase tracking-wider text-muted-foreground"><th className="p-3">Player</th><th className="p-3">Age</th><th className="p-3">Previous</th><th className="p-3">New OVR</th><th className="p-3">Change</th><th className="p-3">Development trait</th></tr></thead>
+            <tbody>{[...progression].sort((a,b) => (b.after-b.before)-(a.after-a.before)).map(row => {
+              const diff = Math.round(row.after-row.before);
+              const changed = row.traitBefore && row.traitAfter && row.traitBefore !== row.traitAfter;
+              return <tr key={row.playerId} className="border-b border-border last:border-0">
+                <td className="p-3"><div className="flex min-w-0 items-center gap-2">{roster.find(p => p.id === row.playerId) ? <GmPlayerPortrait player={roster.find(p => p.id === row.playerId)!} /> : null}<div className="font-semibold">{row.name}{changed ? <p className="text-xs font-normal text-muted-foreground">{row.reason}</p> : null}</div></div></td>
+                <td className="p-3 tabular-nums">{row.age}</td>
+                <td className="p-3 tabular-nums text-muted-foreground">{Math.round(row.before)}</td>
+                <td className="p-3 font-bold tabular-nums">{Math.round(row.after)}</td>
+                <td className="p-3"><span className={cn("rounded-md px-2 py-1 font-bold tabular-nums",diff>0?"bg-emerald-500/10 text-emerald-700 dark:text-emerald-300":diff<0?"bg-rose-500/10 text-rose-700 dark:text-rose-300":"bg-secondary text-muted-foreground")}>{diff>0?"+":""}{diff}</span></td>
+                <td className="p-3"><span className={changed?"font-bold":"text-muted-foreground"}>{traitLabel(row.traitAfter)}{changed ? <span className="block text-xs font-normal text-muted-foreground">from {traitLabel(row.traitBefore)}</span> : null}</span></td>
+              </tr>;
+            })}</tbody>
+          </table>
+        </div>
+        <p className="mt-3 text-xs text-muted-foreground">The progression pass is applied once per offseason. Trait upgrades require sustained breakout performance or meaningful accolades and remain saved in your franchise history.</p>
+      </> : <p className="text-sm text-muted-foreground">Annual progression has already been applied in this save. It will not run twice.</p>}
     </SectionFrame> : null}
 
     {stage === "summer_league" ? <div id="summer-games" tabIndex={-1} className="scroll-mt-24 outline-none"><SectionFrame title="Prospect evaluation" description="Healthy young players and unsigned invitees play on temporary summer rosters. These games are optional.">
