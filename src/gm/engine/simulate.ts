@@ -105,6 +105,7 @@ export function simulateGame(
   let elapsed = 0;
   let overtime = 0;
   let totalPossessions = 0;
+  let transitionForSide: 0 | 1 | null = null;
 
   function push(player: GmPlayer, actionType: string, subType: string, description: string, points = 0, fieldGoal = false, made: boolean | null = null, second?: GmPlayer, location?: { x: number; y: number }) {
     const period = elapsed < 2880 ? Math.floor(elapsed / 720) + 1 : 5 + Math.floor((elapsed - 2880) / 300);
@@ -112,6 +113,10 @@ export function simulateGame(
     const start = period <= 4 ? (period - 1) * 720 : 2880 + (period - 5) * 300;
     const seconds = clamp(length - Math.floor(elapsed - start), 0, length);
     const n = events.length + 1;
+    if (actionType === "foul") {
+      const line = lines.get(player.id);
+      if (line) line.personalFouls = (line.personalFouls ?? 0) + 1;
+    }
     events.push({ id: `${game.id}:${actualSeed}:${n}`, gameId: game.id, actionNumber: n, orderNumber: n,
       period, clockSeconds: seconds, clock: `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`,
       actionType, subType, description, teamId: player.teamId!.toUpperCase(), teamTricode: player.teamId!.toUpperCase(),
@@ -142,6 +147,11 @@ export function simulateGame(
     const pool = offensive ? off : def;
     const p = weighted(pool, p => (offensive ? rates.get(p.id)!.orb : rates.get(p.id)!.drb) + (three && p.position !== "C" ? 0.015 : 0), rng);
     lines.get(p.id)!.rebounds++;
+    if (offensive) lines.get(p.id)!.offensiveRebounds = (lines.get(p.id)!.offensiveRebounds ?? 0) + 1;
+    else {
+      lines.get(p.id)!.defensiveRebounds = (lines.get(p.id)!.defensiveRebounds ?? 0) + 1;
+      if (rng() < .20) transitionForSide = def === homeFloor ? 0 : 1;
+    }
     push(p, "rebound", offensive ? "offensive" : "defensive", `${p.name} ${offensive ? "offensive" : "defensive"} rebound`);
     return offensive;
   }
@@ -149,6 +159,8 @@ export function simulateGame(
     const own = side === 0 ? homeBook : awayBook;
     const other = side === 0 ? awayBook : homeBook;
     const mods = modsForTeam(own.coaching, other.coaching);
+    const transition = transitionForSide === side;
+    transitionForSide = null;
     const defensiveMods = modsForTeam(other.coaching, own.coaching);
     const volume = off.reduce((n, p) => n + rates.get(p.id)!.fga, 0);
     const turnovers = off.reduce((n, p) => n + rates.get(p.id)!.tov, 0);
@@ -166,7 +178,10 @@ export function simulateGame(
       lines.get(handler.id)!.turnovers++;
       const stealShare = clamp(def.reduce((n, p) => n + rates.get(p.id)!.stl, 0) / Math.max(0.01, turnovers) * 1.01 * defensiveMods.stl, 0.2, 0.9);
       const steal = rng() < stealShare ? weighted(def, p => rates.get(p.id)!.stl, rng) : undefined;
-      if (steal) lines.get(steal.id)!.steals++;
+      if (steal) {
+        lines.get(steal.id)!.steals++;
+        transitionForSide = side === 0 ? 1 : 0;
+      }
       push(handler, "turnover", steal ? "steal" : "bad pass", `${handler.name} turnover${steal ? ` (${steal.name} steals)` : ""}`, 0, false, null, steal);
       return;
     }
@@ -209,7 +224,7 @@ export function simulateGame(
         continue;
       }
       const three = rng() < clamp(r.threeShare * mods.three * 1.04 * clamp(settings?.simThreeRate ?? 1, 0.75, 1.25), 0, 0.88);
-      const shot = chooseSimShot(shooter, three, rng, attempt > 0);
+      const shot = chooseSimShot(shooter, three, rng, attempt > 0, transition);
       const blockWeight = three ? 0.3 : 0.95;
       const blocked = rng() < clamp(def.reduce((n, p) => n + rates.get(p.id)!.blk, 0) / Math.max(0.1, baselineFga) * blockWeight / averageBlockWeight * 1.11 * defensiveMods.blk, 0.005, 0.2);
       const blocker = blocked ? weighted(def, p => rates.get(p.id)!.blk, rng) : undefined;
