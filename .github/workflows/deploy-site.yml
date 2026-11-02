@@ -6,11 +6,6 @@ name: Deploy site
 
 on:
   workflow_dispatch:
-  # Temporary one-shot main-only trigger for the requested deployment.
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/deploy-site.yml'
 
 concurrency:
   group: deploy-site
