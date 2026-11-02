@@ -16,7 +16,7 @@ const between=(v:number,lo:number,hi:number,key:string)=>assert.ok(v>=lo&&v<=hi,
 async function main(){
   const data=(await getBundledBrefPeerBoard("2025-26")).filter(p=>p.gamesPlayed>=5&&p.minutes>=40&&p.fieldGoalsAttempted>0);
   const league=buildLeagueFromPlayerSeasons(data,{userTeamId:"bos",seasonCanonical:"2025-26",seed:71});
-  const games=league.schedule.slice(0,190);
+  const games=league.schedule.slice(0,320);
   const margins:number[]=[], teamPoints:number[]=[], totals:number[]=[], gaps:number[]=[];
   let homeWins=0, close=0, blowouts=0, overtimes=0, periodShots=0, allFieldGoals=0;
   for(let index=0;index<games.length;index++){
@@ -41,6 +41,8 @@ async function main(){
         assert.ok(p.personalFouls==null||p.personalFouls<=7,"repeated fouls after disqualification");
         assert.equal((p.offensiveRebounds??0)+(p.defensiveRebounds??0),p.rebounds);
         assert.ok(p.fgm<=p.fga && p.tpm<=p.tpa && p.ftm<=p.fta);
+        const gs=p.points + 0.4*p.fgm - 0.7*p.fga - 0.4*(p.fta-p.ftm) + 0.7*(p.offensiveRebounds??0) + 0.3*(p.defensiveRebounds??0) + p.steals + 0.7*p.assists + 0.7*p.blocks - 0.4*(p.personalFouls??0) - p.turnovers;
+        assert.ok(Math.abs(p.gameScore - Math.round(gs*10)/10)<0.001,"Game Score must follow its standard box-score definition");
       }
     }
     let prevPeriod=1,prevClock=721;
@@ -71,11 +73,11 @@ async function main(){
     overtimeRate:overtimes/games.length,averageShotGap:mean(gaps),shotGapSd:sd(gaps)};
   // Conservative windows around recent NBA seasons, not a forced exact match.
   // 2024-25 NBA had ~54% home wins, 25% games <=5 points, 21% decided by >=20.
-  between(distribution.meanMargin,8,20,"mean absolute winning margin");
+  between(distribution.meanMargin,10,17,"mean absolute winning margin");
   between(distribution.scoreSd,9,22,"game-to-game team points variation");
   between(distribution.homeWinRate,.35,.73,"home win share");
-  between(distribution.closeRate,.11,.40,"close-game frequency");
-  between(distribution.blowoutRate,.07,.44,"20+ point blowout share");
+  between(distribution.closeRate,.16,.35,"close-game frequency");
+  between(distribution.blowoutRate,.11,.37,"20+ point blowout share");
   between(distribution.overtimeRate,0,.12,"overtime share");
   between(distribution.shotGapSd,3,19,"irregular shot time gaps");
   between(distribution.averageShotGap,8,24,"shot-to-shot clock gaps");
@@ -98,7 +100,7 @@ async function main(){
   between(volumeSd,1,8,"individual shot volume volatility");
   assert.ok(starters.some(([,v])=>new Set(v.minutes).size>=3),"rotation minutes must respond to game context");
   mkdirSync("/tmp/franchise-calibration",{recursive:true});
-  writeFileSync("/tmp/franchise-calibration/game-outcomes.json",JSON.stringify({distribution,playerSd,volumeSd,method:"190 historical-player games plus 64 repeated-seed fixture games; calibrated ranges not exact game prediction"},null,2));
+  writeFileSync("/tmp/franchise-calibration/game-outcomes.json",JSON.stringify({distribution,playerSd,volumeSd,method:"320 historical-player games plus 64 repeated-seed fixture games; calibrated ranges not exact game prediction"},null,2));
   console.log("Game outcome and player-night realism "+JSON.stringify({distribution,playerSd,volumeSd}));
   console.log("Variable game clocks, outcome spread, minutes, and player-night variance passed.");
 }
