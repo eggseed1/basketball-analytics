@@ -228,7 +228,9 @@ export function maybeGrowInSeason(league: GmLeagueState): GmLeagueState {
     marks = { ...marks, [step.id]: true };
   }
   if (steps.every(step => !marks[step.id] || Boolean(old[step.id])) && next === league) return league;
-  return { ...next, devMarks: marks, news: [...notes, ...next.news].slice(0, 50) };
+  const seen = new Set<string>();
+  const news = [...notes, ...next.news].filter(item => { if (seen.has(item.id)) return false; seen.add(item.id); return true; }).slice(0, 50);
+  return { ...next, devMarks: marks, news };
 }
 
 export function playoffGamesByPlayer(league: GmLeagueState): Record<string, number> {
