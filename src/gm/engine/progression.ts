@@ -211,7 +211,7 @@ export function maybeGrowInSeason(league: GmLeagueState): GmLeagueState {
   const notes: GmNewsItem[] = [];
   const steps: Array<{ id: "quarter1" | "january" | "quarter3" | "finale"; reached: boolean; title: string }> = [
     { id: "quarter1", reached: played >= Math.ceil(length * 0.25), title: "Early-season development" },
-    { id: "january", reached: played >= Math.ceil(length * 0.4) || Boolean(mostRecent && mostRecent >= `${league.season}-01-01` && played >= 10), title: "Midseason development" },
+    { id: "january", reached: played >= Math.ceil(length * 0.4) || Boolean(mostRecent && mostRecent >= `${league.season}-01-01`), title: "Midseason development" },
     { id: "quarter3", reached: played >= Math.ceil(length * 0.75), title: "Late-season development" },
     { id: "finale", reached: regularSeasonComplete(league.schedule), title: "End-of-season development" },
   ];
