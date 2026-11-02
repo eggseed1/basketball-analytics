@@ -218,7 +218,7 @@ export function simulateGame(
       const tired = ((shooter.campFatigueGames ?? 0) > 0 ? 0.98 : 1) * secondNightScale(shooter.age, gap[side] ?? null) * minuteLoadMul(line.minutes, shooter.sheet?.attributes.stamina ?? 70) * clamp(1-Math.max(0,(stintMinutes.get(shooter.id)??0)-8)*0.003,0.95,1);
       const foulRatio = freeThrows / Math.max(0.1, volume);
       const deficit = side === 0 ? homeScore - awayScore : awayScore - homeScore;
-      const deliberate = elapsed >= regulation - 35 && elapsed < regulation && deficit >= 3 && deficit <= 9;
+      const deliberate = elapsed < regulation && deficit >= 1 && deficit <= 9 && elapsed >= regulation - (deficit >= 3 ? 35 : 18);
       const foulChance = deliberate ? 0.67 : clamp(foulRatio / (2 + foulRatio) * mods.ft * 0.958 * clamp(settings?.simFoulRate ?? 1, 0.75, 1.25), 0.025, 0.2);
       const canFoul = def.filter(p => (lines.get(p.id)?.personalFouls ?? 0) < 6);
       if (canFoul.length && rng() < foulChance) {
@@ -235,7 +235,14 @@ export function simulateGame(
       }
       // Trailing clubs hunt threes rather than trading slow twos in the final minute.
       const lateDeficit = side === 0 ? awayScore - homeScore : homeScore - awayScore;
-      const lateThree = elapsed >= regulation - 45 && elapsed < regulation && lateDeficit >= 3 && lateDeficit <= 12 ? 1.30 : 1;
+      // A club down two generally looks for the tying rim attack; down three
+      // must actively hunt a three. Do not fake ties or adjust the final score.
+      const clutchOffense = elapsed >= regulation - 48 && elapsed < regulation;
+      const lateThree = !clutchOffense ? 1
+        : lateDeficit === 1 ? 0.72
+        : lateDeficit === 2 ? 0.58
+        : lateDeficit === 3 ? 1.62
+        : lateDeficit >= 4 && lateDeficit <= 12 ? 1.34 : 1;
       const three = rng() < clamp(r.threeShare * mods.three * 1.04 * lateThree * clamp(settings?.simThreeRate ?? 1, 0.75, 1.25), 0, 0.88);
       const shot = chooseSimShot(shooter, three, rng, attempt > 0, transition);
       const blockWeight = three ? 0.3 : 0.95;
