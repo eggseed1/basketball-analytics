@@ -1,7 +1,6 @@
 import type { GmLeagueState, GmPlayer } from "@/gm/types";
 import { exceptionAmounts, maxSalaryForAge } from "@/gm/engine/cap";
 import { askingSalary, askingYears, minimumAcceptableSalary } from "@/gm/engine/free-agency-ask";
-import { getCbaRules } from "@/gm/myleague/cba-registry";
 import { cbaSeason } from "@/gm/engine/season-flow-state";
 
 export type ExtensionQuote = { eligible: boolean; reason: string; kind: "rookie" | "veteran"; startsSeason: number; maxYears: number; maxSalaryM: number; askingSalaryM: number };
