@@ -75,7 +75,7 @@ async function main(){
   assert.ok(future.reb>33&&future.reb<61);
   for(const [metric,target,limit] of [
     ["points",115.6,10],["fga",89.1,8],["tpa",37,6],["fta",23.5,5],
-    ["ast",26.7,3],["stl",8.4,2],["blk",4.8,1.5],["tov",14.5,3],
+    ["ast",26.7,2.2],["stl",8.4,2],["blk",4.8,1.5],["tov",14.5,3],
     ["threePct",.36,.03],["ftPct",.783,.04],["threeShare",.415,.06],
   ] as const){within("Generated league "+metric,future[metric],target,limit);}
   console.log("Generated future-league audit "+JSON.stringify(future));
