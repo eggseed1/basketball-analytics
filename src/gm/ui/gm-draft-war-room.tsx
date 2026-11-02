@@ -13,7 +13,6 @@ import { useGmStore } from "@/gm/state/gm-store";
 import { playerSheet } from "@/gm/engine/attributes";
 import { DRAFT_ROLES, DRAFT_TOOL_LABELS, draftRead, draftScoutingOf, draftSleeperSignals, sleeperRadar, marketBoard, scoutingBudget } from "@/gm/engine/draft-intel";
 import { draftPickLog, orderedBoard, pickOwnerAt, rosterNeeds } from "@/gm/engine/draft-room";
-import { expertiseLabel } from "@/gm/seed/scouts";
 import { buildScoutDesk, type ScoutDeskCategory } from "@/gm/engine/scout-desk";
 import type { GmDraftRole, GmDraftTool, GmLeagueState, GmPosition } from "@/gm/types";
 
