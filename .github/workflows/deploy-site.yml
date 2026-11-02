@@ -5,6 +5,9 @@ name: Deploy site
 # Nightly data + deploy stays on daily-runtime-refresh.yml.
 
 on:
+  push:
+    branches:
+      - release/franchise-rotations-c09672a
   workflow_dispatch:
 
 concurrency:
