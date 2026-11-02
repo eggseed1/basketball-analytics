@@ -5,7 +5,7 @@ import Link from "next/link";
 import { SectionFrame } from "@/components/layout/section-frame";
 import { GmBadgeSummary } from "@/gm/ui/gm-badges";
 
-import { PlayerHeadshot } from "@/components/brand/player-headshot";
+import { GmPlayerPortrait } from "@/gm/ui/gm-player-portrait";
 import { TeamLogo } from "@/components/brand/team-logo";
 import {
   ATTRIBUTE_GROUPS,
@@ -207,13 +207,7 @@ export function GmPlayerCard({
         </Link>
       </p>
       <section className="gm-player">
-        <PlayerHeadshot
-          playerId={player.nbaPlayerId ?? player.id}
-          name={player.name}
-          teamKey={player.teamId}
-          size="xl"
-          priority
-        />
+        <GmPlayerPortrait player={player} size="xl" priority />
         <div className="min-w-0">
           <p className="gm-kicker inline-flex items-center gap-2">
             {team && !inDraft ? <TeamLogo teamKey={team.id} size="sm" /> : null}
