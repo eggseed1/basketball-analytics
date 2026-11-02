@@ -171,7 +171,12 @@ for (let game = 0; game < 20; game += 1) {
     80 + game
   );
   const line = result.box.players.find((player) => player.playerId === star.id);
-  assert.ok(line && line.minutes >= 24, `star sat or played ${line?.minutes ?? 0}`);
+  // A star can exit early with six fouls or sit late in an out-of-reach game.
+  // Still guard against ordinary rotation plans benching a healthy centerpiece.
+  const foulOut = (line?.personalFouls ?? 0) >= 6;
+  const blowout = Math.abs(result.box.homeScore - result.box.awayScore) >= 20;
+  assert.ok(line && (line.minutes >= 24 || foulOut || (blowout && line.minutes >= 20)),
+    `star played ${line?.minutes ?? 0} minutes, ${line?.personalFouls ?? 0} fouls, margin ${Math.abs(result.box.homeScore-result.box.awayScore)}`);
   for (const player of result.box.players) {
     if (player.teamId !== "bos") continue;
     totals.set(player.playerId, (totals.get(player.playerId) ?? 0) + player.minutes);

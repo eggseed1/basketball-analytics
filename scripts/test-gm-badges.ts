@@ -5,7 +5,7 @@ import { stripTypeScriptTypes } from "node:module";
 import vm from "node:vm";
 import { createGeneratedLeague } from "../src/gm/seed/create-league";
 import { prepareFranchise, exportFranchise, parseFranchise } from "../src/gm/engine/franchise";
-import { BADGES, BADGE_XP, BADGE_REQUIREMENTS, badgeCap, badgeEarned, badgeLevel, badgeEffects, ensureBadges, recordBadgeGame, recordBadgeBox } from "../src/gm/engine/badges";
+import { BADGES, BADGE_XP, BADGE_REQUIREMENTS, badgeCap, badgeEarned, badgeLevel, badgeEffects, ensureBadges, mentorBadgeTargets, recordBadgeGame, recordBadgeBox } from "../src/gm/engine/badges";
 import { simulateGame, compactSimBox } from "../src/gm/engine/simulate";
 import { applyPlayInResult, createPlayInBoard, playInDone, playInOpenGames } from "../src/gm/engine/play-in";
 import { stepDay } from "../src/gm/engine/pace";
@@ -16,18 +16,30 @@ const seed = createGeneratedLeague({ userTeamId: "bos", season: 2027, seed: 12 }
 const league = prepareFranchise(seed);
 const sample = league.players.find(p => p.teamId === "bos")!;
 const attributes = Object.fromEntries(Object.keys(sample.sheet!.attributes).map(k => [k,99])) as NonNullable<GmPlayer["sheet"]>["attributes"];
-const player: GmPlayer = { ...sample, age: 21, badges: { version: 1, xp: {} }, sheet: { ...sample.sheet!, attributes } };
+const player: GmPlayer = { ...sample, age: 21, badges: { version: 2, xp: {} }, sheet: { ...sample.sheet!, attributes } };
 const line = { playerId: player.id, playerName: player.name, teamId: "bos", minutes: 32, points: 32, fgm: 12, fga: 20, tpm: 5, tpa: 9, ftm: 3, fta: 4, assists: 8, rebounds: 10, steals: 3, blocks: 2, turnovers: 2, plusMinus: 5, trueShootingPct: 0.6, usagePct: 0.25, gameScore: 22 };
 const box: GmBoxScore = { id: "badge-box", gameId: "badge-game", season: 2027, day: 1, homeTeamId: "bos", awayTeamId: "nyk", homeScore: 108, awayScore: 101, possessions: 100, players: [line, { ...line, playerId: "opponent", teamId: "nyk", fgm: 8 }] };
 assert.deepEqual(prepareFranchise(league).players.map(p => p.badges), league.players.map(p => p.badges), "migration runs once");
 for (const p of seed.players.filter(p => p.sheet)) assert.deepEqual(league.players.find(q=>q.id===p.id)!.sheet!.attributes,p.sheet!.attributes);
-const rookie = ensureBadges({ ...player, badges: undefined });
+const rookie = ensureBadges({ ...player, badges: undefined, sheet: { ...player.sheet!, overall: 74 } });
 assert.ok(Object.values(rookie.badges!.xp).length <= 1);
 assert.ok(Object.values(rookie.badges!.xp).every(xp => xp <= 120));
-const veteran = ensureBadges({ ...player, age: 30, badges: undefined });
-assert.equal(Object.keys(veteran.badges!.xp).length, 3);
-assert.ok(Object.values(veteran.badges!.xp).every(xp => xp <= 900));
-const changedPotential = ensureBadges({ ...player, badges: undefined, sheet: { ...player.sheet!, potential: { ...player.sheet!.potential, ceiling: 50 } } });
+const prodigy = ensureBadges({ ...player, age: 21, badges: undefined, sheet: { ...player.sheet!, overall: 96 } });
+assert.ok(Object.keys(prodigy.badges!.xp).length >= 4, "exceptional young superstars already possess several matching badges");
+assert.ok(BADGES.filter(b => badgeLevel(prodigy,b.id) >= 4).length >= 3, "elite rookie strengths can earn high-level badges");
+
+const veteran = ensureBadges({ ...player, age: 30, badges: undefined, sheet: { ...player.sheet!, overall: 78 } });
+assert.ok(Object.keys(veteran.badges!.xp).length >= Object.keys(rookie.badges!.xp).length);
+const star = ensureBadges({ ...player, age: 33, badges: undefined, sheet: { ...player.sheet!, overall: 96 } });
+assert.ok(Object.keys(star.badges!.xp).length >= 8, "experienced 96 OVR star owns a broad badge portfolio");
+assert.ok(BADGES.filter(b => badgeLevel(star,b.id) >= 4).length >= 7, "star-level skills earn Hall of Fame or higher badges");
+assert.ok(Object.keys(star.badges!.xp).length > Object.keys(veteran.badges!.xp).length, "higher overall means more matching badges");
+const legacy = ensureBadges({ ...star, badges: { version: 1, xp: { deep_range: 3200 }, gameIds: ["old-game"], season: 2027 } });
+assert.equal(legacy.badges!.version,2);
+assert.equal(legacy.badges!.xp.deep_range,3200, "migration does not overwrite a Legend badge");
+assert.deepEqual(legacy.badges!.gameIds,["old-game"], "migration preserves official game ledger");
+assert.deepEqual(ensureBadges(legacy),legacy,"seed migration is idempotent");
+const changedPotential = ensureBadges({ ...player, badges: undefined, sheet: { ...player.sheet!, overall: 74, potential: { ...player.sheet!.potential, ceiling: 50 } } });
 assert.deepEqual(changedPotential.badges,rookie.badges, "badges do not reveal or depend on hidden potential");
 for (const b of BADGES) for (let rank = 1; rank <= 5; rank++) {
   const attrs = Object.fromEntries(Object.keys(attributes).map(k => [k,BADGE_REQUIREMENTS[rank]!])) as typeof attributes;
@@ -53,11 +65,22 @@ let bronzeOnly: GmPlayer = {...player,sheet:{...player.sheet!,attributes:{...att
 for(let i=0;i<60;i++) bronzeOnly=recordBadgeGame(bronzeOnly,{...box,gameId:`bronze-${i}`},[bronzeOnly]);
 assert.equal(bronzeOnly.badges!.xp.deep_range,120,"current eligibility limits stored XP");
 
-const vet = { ...veteran,id:"badge-mentor",position:player.position,age:32,badges:{version:1 as const,xp:{deep_range:900}} };
+const vet = { ...veteran,id:"badge-mentor",position:player.position,age:32,badges:{version:2 as const,xp:{deep_range:900}} };
 const student = {...player,badgeFocus:"deep_range" as const,mentorship:{mentorId:vet.id,teamId:player.teamId!,season:2027,sharedGames:0}};
-assert.equal(recordBadgeGame(student,box,[student,vet]).badges!.xp.deep_range,27);
-assert.equal(recordBadgeGame(student,box,[student,{...vet,teamId:"nyk"}]).badges!.xp.deep_range,25);
-const aged = { ...player,sheet:{...player.sheet!,attributes:{...attributes,threePoint:70}},badges:{version:1 as const,xp:{deep_range:3200}} };
+assert.equal(recordBadgeGame(student,box,[student,vet]).badges!.xp.deep_range,25, "bench-only mentors cannot teach badges");
+const shared = { ...box, players: [...box.players,{ ...line,playerId:vet.id,minutes:16 }] };
+const withMentor = recordBadgeGame(student,shared,[student,vet]);
+assert.ok((withMentor.badges!.xp.deep_range ?? 0) > 27, "shared games add direct teaching XP beyond action bonuses");
+assert.ok((withMentor.badges!.mentoredXp?.deep_range ?? 0) > 0);
+assert.deepEqual(mentorBadgeTargets(student,vet),["deep_range"]);
+assert.equal(recordBadgeGame(withMentor,shared,[withMentor,vet]),withMentor,"same game never reteaches a badge");
+assert.equal(recordBadgeGame(student,shared,[student,{...vet,teamId:"nyk"}]).badges!.xp.deep_range,25);
+const zeroAction = { ...shared, players: shared.players.map(row => row.playerId === student.id ? { ...row,fgm:0,fga:0,tpm:0,tpa:0,ftm:0,fta:0,assists:0,steals:0,blocks:0,rebounds:0 } : row) };
+let taughtStudent = { ...student,badgeFocus:undefined };
+for(let i=0;i<25;i++) taughtStudent = recordBadgeGame(taughtStudent,{...zeroAction,gameId:"mentor-learn-"+i},[taughtStudent,vet]);
+assert.ok(badgeLevel(taughtStudent,"deep_range")>=1,"regular shared games can teach a Bronze badge without made threes");
+assert.ok((taughtStudent.badges!.mentoredXp?.deep_range ?? 0)>=120);
+const aged = { ...player,sheet:{...player.sheet!,attributes:{...attributes,threePoint:70}},badges:{version:2 as const,xp:{deep_range:3200}} };
 assert.equal(badgeEarned(aged,"deep_range"),5);
 assert.equal(badgeLevel(aged,"deep_range"),1, "current attributes bound active effects while XP is kept");
 assert.equal(recordBadgeGame(aged,box,[aged]).badges!.xp.deep_range,3200);
@@ -120,8 +143,8 @@ assert.equal(JSON.stringify(storeState.league.players.map(p=>p.badges)),finished
 // Prove badges reach the possession engine, not only the UI or postgame ledger.
 const teams=seed.teams.filter(t=>[match.homeTeamId,match.awayTeamId].includes(t.id));
 const active = league.players.filter(p=>teams.some(t=>t.id===p.teamId));
-const empty = active.map(p=>({...p,badges:{version:1 as const,xp:{}}}));
-const boosted = empty.map(p=>p.teamId===match.homeTeamId ? {...p,sheet:{...p.sheet!,attributes:{...p.sheet!.attributes,threePoint:99}},badges:{version:1 as const,xp:{deep_range:3200}}}:p);
+const empty = active.map(p=>({...p,badges:{version:2 as const,xp:{}}}));
+const boosted = empty.map(p=>p.teamId===match.homeTeamId ? {...p,sheet:{...p.sheet!,attributes:{...p.sheet!.attributes,threePoint:99}},badges:{version:2 as const,xp:{deep_range:3200}}}:p);
 const control = boosted.map(p=>({...p,badges:{version:1 as const,xp:{}}}));
 let changed=0;
 for(let i=0;i<30;i++) {
@@ -132,9 +155,9 @@ for(let i=0;i<30;i++) {
   assert.equal(withBadge.homeScore,withBadge.players.filter(p=>p.teamId===match.homeTeamId).reduce((n,p)=>n+p.points,0));
 }
 assert.ok(changed>0, "badge accuracy bonus changes actual simulated possessions");
-const maxed={...player,badges:{version:1 as const,xp:Object.fromEntries(BADGES.map(b=>[b.id,3200]))}};
+const maxed={...player,badges:{version:2 as const,xp:Object.fromEntries(BADGES.map(b=>[b.id,3200]))}};
 const effects=badgeEffects(maxed);
 assert.equal(effects.three,0.015);assert.equal(effects.two,0.015);assert.equal(effects.defense,0.005);
 assert.equal(effects.tov,0.94);assert.equal(effects.reb,1.125);
 assert.deepEqual(recordBadgeBox([player],box)[0]!.badges,first.badges);
-console.log("Badges passed: five levels, skill gates, signature migration, focus/mentor XP, replay guards, three seasons, save/reload, CPU parity, exhibitions, and possession effects.");
+console.log("Badges passed: star and veteran portfolios, legacy migration, two transferable mentor badges, real shared-game teaching, replay guards, save/reload, CPU parity and possession effects.");

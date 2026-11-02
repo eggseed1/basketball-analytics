@@ -15,9 +15,32 @@ export function mentorEligible(young: GmPlayer, veteran: GmPlayer): boolean {
   return young.id !== veteran.id && young.age <= 25 && veteran.age >= 28 && veteran.age >= young.age + 5 &&
     Boolean(young.teamId && young.teamId === veteran.teamId && young.contract && veteran.contract) && young.position === veteran.position;
 }
+export const MAX_TEAM_MENTORSHIPS = 2;
+
+/** Deterministic active assignments. Legacy imports with extra pairs never receive extra bonuses. */
+export function activeMentorships(players: GmPlayer[], teamId: string): Array<{ learner: GmPlayer; mentor: GmPlayer }> {
+  const byId = new Map(players.map(player => [player.id, player]));
+  const candidates = players
+    .filter(learner => learner.teamId === teamId && learner.mentorship?.teamId === teamId)
+    .sort((a, b) => (a.mentorship!.season - b.mentorship!.season) || a.id.localeCompare(b.id));
+  const used = new Set<string>();
+  const pairs: Array<{ learner: GmPlayer; mentor: GmPlayer }> = [];
+  for (const learner of candidates) {
+    const mentor = byId.get(learner.mentorship!.mentorId);
+    if (!mentor || !mentorEligible(learner, mentor) || used.has(mentor.id)) continue;
+    pairs.push({ learner, mentor });
+    used.add(mentor.id);
+    if (pairs.length === MAX_TEAM_MENTORSHIPS) break;
+  }
+  return pairs;
+}
 export function activeMentor(player: GmPlayer, players: GmPlayer[]): GmPlayer | undefined {
-  const veteran = players.find(row => row.id === player.mentorship?.mentorId);
-  return veteran && player.mentorship?.teamId === player.teamId && mentorEligible(player, veteran) ? veteran : undefined;
+  if (!player.teamId || !player.mentorship) return undefined;
+  // Some progression calls pass an updated learner before it is written back to
+  // the full roster. The supplied learner is authoritative for eligibility.
+  const canonical = players.find(row => row.id === player.id);
+  const roster = canonical === player ? players : players.map(row => row.id === player.id ? player : row);
+  return activeMentorships(roster, player.teamId).find(pair => pair.learner.id === player.id)?.mentor;
 }
 export function mentorshipQuality(veteran: GmPlayer): number {
   return clamp(((veteran.sheet?.overall ?? 60) - 55) / 40, 0, 1) * workEthicOf(veteran) / 100;
@@ -32,8 +55,10 @@ export function assignMentor(league: GmLeagueState, playerId: string, mentorId: 
   if (!player) return fail("Choose a player on your roster.");
   const veteran = mentorId ? league.players.find(row => row.id === mentorId) : undefined;
   if (mentorId && (!veteran || !mentorEligible(player, veteran))) return fail("Choose a same-position teammate aged 28 or older, at least five years older than the young player.");
-  if (mentorId && league.players.some(row => row.id !== playerId && row.mentorship?.mentorId === mentorId && activeMentor(row, league.players))) return fail("That veteran already mentors a teammate.");
-  if (player.mentorship?.mentorId === mentorId && player.mentorship?.teamId === player.teamId) return { ok: true, state: league, reason: "This mentorship is already active." };
+  const active = activeMentorships(league.players, league.userTeamId);
+  if (mentorId && active.some(pair => pair.learner.id !== playerId && pair.mentor.id === mentorId)) return fail("That veteran already mentors a teammate.");
+  if (mentorId && active.some(pair => pair.learner.id === playerId && pair.mentor.id === mentorId)) return { ok: true, state: league, reason: "This mentorship is already active." };
+  if (mentorId && !active.some(pair => pair.learner.id === playerId) && active.length >= MAX_TEAM_MENTORSHIPS) return fail("Both mentorship slots are full. End a pairing before assigning another.");
   const mentorship = mentorId ? { mentorId, teamId: player.teamId!, season: league.season, sharedGames: 0 } : undefined;
   return { ok: true, reason: veteran ? `${veteran.name} will mentor ${player.name}.` : "Mentorship cleared.", state: { ...league, players: league.players.map(row => row.id === playerId ? { ...row, mentorship, developmentPlan: row.developmentPlan ?? "balanced" } : row) } };
 }
@@ -87,12 +112,18 @@ export function reviewPlayerCeilings(league: GmLeagueState): GmLeagueState {
 }
 
 export function pairCpuMentors(league: GmLeagueState): GmLeagueState {
-  const players = [...league.players];
+  // Repair extra or duplicate active pairings in old saves, including the user's club.
+  const valid = new Set(league.teams.flatMap(team => activeMentorships(league.players, team.id).map(pair => pair.learner.id)));
+  const players = league.players.map(player => player.mentorship && !valid.has(player.id)
+    ? { ...player, mentorship: undefined } : player);
   for (const team of league.teams.filter(row => row.id !== league.userTeamId)) {
     const roster = players.filter(row => row.teamId === team.id && row.contract);
     for (const young of roster.filter(row => row.age <= 25).sort((a,b) => a.age - b.age || a.id.localeCompare(b.id))) {
-      if (activeMentor(young, players)) continue;
-      const veteran = roster.filter(row => mentorEligible(young, row) && !players.some(other => other.mentorship?.mentorId === row.id && activeMentor(other, players)))
+      const active = activeMentorships(players, team.id);
+      if (active.length >= MAX_TEAM_MENTORSHIPS) break;
+      if (active.some(pair => pair.learner.id === young.id)) continue;
+      const used = new Set(active.map(pair => pair.mentor.id));
+      const veteran = roster.filter(row => mentorEligible(young, row) && !used.has(row.id))
         .sort((a,b) => mentorshipQuality(b) - mentorshipQuality(a) || a.id.localeCompare(b.id))[0];
       if (veteran) players[players.findIndex(row => row.id === young.id)] = { ...young, developmentPlan: young.developmentPlan ?? "balanced", mentorship: { mentorId: veteran.id, teamId: team.id, season: league.season, sharedGames: 0 } };
     }

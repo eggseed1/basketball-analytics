@@ -148,7 +148,9 @@ export function recordSimGame(
     }
     if (!playedIds.has(player.id)) return player;
     if (player.developmentBaseline?.season !== box.season) player = { ...player, developmentBaseline: { season: box.season, overall: player.sheet?.overall ?? 70 } };
-    if (player.mentorship && activeMentor(player, players) && player.mentorship.lastGameId !== box.gameId) {
+    const activeVeteran = activeMentor(player, players);
+    const sharedCourt = activeVeteran && box.players.some(row => row.playerId === activeVeteran.id && row.teamId === player.teamId && row.minutes > 0);
+    if (player.mentorship && sharedCourt && player.mentorship.lastGameId !== box.gameId) {
       const previous = player.mentorship.season === box.season ? player.mentorship.sharedGames : 0;
       player = { ...player, mentorship: { ...player.mentorship, season: box.season, sharedGames: previous + 1, lastGameId: box.gameId } };
     }
