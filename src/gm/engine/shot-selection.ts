@@ -59,8 +59,9 @@ export function chooseSimShot(player: GmPlayer, three: boolean, rng: () => numbe
       const x = (rng() < .5 ? -1 : 1) * (22.05 + rng() * 1.2);
       return { zone: "corner3", subType: label, label, x, y: .8 + rng() * 6.2, twoDelta: 0 };
     }
-    const angle = .35 + rng() * (Math.PI - .7);
     const radius = 24.0 + Math.pow(rng(), 2) * 3.8;
+    const lowerArc = Math.max(.35, Math.acos(Math.min(1, 24.1 / radius)));
+    const angle = lowerArc + rng() * (Math.PI - 2 * lowerArc);
     return { zone: "arc3", subType: label, label, x: Math.cos(angle) * radius, y: Math.sin(angle) * radius, twoDelta: 0 };
   }
   const shares = twoZoneWeights(player);
