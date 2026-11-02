@@ -204,7 +204,7 @@ export function maybeGrowInSeason(league: GmLeagueState): GmLeagueState {
   const played = completed.length;
   const mostRecent = completed.map(game => game.gameDate ?? "").sort().at(-1);
   const length = Math.max(12, league.settings.seasonLength ?? 82);
-  const old = league.devMarks?.season === league.season ? league.devMarks
+  const old: NonNullable<GmLeagueState["devMarks"]> = league.devMarks?.season === league.season ? league.devMarks
     : { season: league.season, january: false, finale: false };
   let marks = { ...old };
   let next = league;
