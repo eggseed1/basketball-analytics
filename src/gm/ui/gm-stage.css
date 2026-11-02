@@ -1652,6 +1652,14 @@ html [data-gm] .gm-roster__name-btn {
   text-align: left;
 }
 
+html [data-gm] .gm-roster__name-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+  white-space: nowrap;
+}
+
 html [data-gm] .gm-roster__rating,
 html [data-gm] .gm-roster__grade {
   font-variant-numeric: tabular-nums;
