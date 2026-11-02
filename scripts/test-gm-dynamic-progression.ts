@@ -10,7 +10,7 @@ import type { GmLeagueState, GmPlayer } from "../src/gm/types";
 const full = prepareFranchise(createGeneratedLeague({ userTeamId: "bos", season: 2027, seed: 133 }));
 const originals = full.players.filter(p => p.teamId === "bos" && p.contract).slice(0, 12);
 assert.ok(originals.length >= 9, "fixture needs a normal rotation");
-const ages = [20, 22, 23, 24, 25, 26, 27, 28, 31, 33, 35, 36];
+const ages = [19, 20, 21, 22, 23, 24, 26, 29, 33, 35, 37, 39];
 const tuned = originals.map((p,i) => ({
   ...p, age: ages[i]!,
   sheet: { ...p.sheet!, overall: 71, progressionCarry: 0, potential: { ...p.sheet!.potential, floor: 66, ceiling: 93, peakStart: 27, peakEnd: 31, trait: i < 2 ? "star" as const : "normal" as const, path: "average" as const } },
