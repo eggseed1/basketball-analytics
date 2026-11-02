@@ -66,12 +66,13 @@ try {
   await page.getByLabel("All desks", { exact: true }).click();
   await page.getByRole("link", { name: "Contracts and extensions", exact: true }).click();
   await page.getByRole("heading", { name: "Contracts and extensions", exact: true }).waitFor();
-  await page.getByLabel(`Extension salary for ${manifest.playerName}`, { exact: true }).fill(String(manifest.ask));
-  const row = page.getByRole("listitem").filter({ has: page.getByLabel(`Extension salary for ${manifest.playerName}`, { exact: true }) });
-  await row.getByRole("button", { name: "Offer extension", exact: true }).click();
-  await page.getByText(/Extension signed: 3 added years/).waitFor();
+  const row = page.getByRole("row").filter({ hasText: manifest.playerName });
+  await row.getByRole("button", { name: "Negotiate", exact: true }).click();
+  await page.getByLabel(`Annual salary offer for ${manifest.playerName}`, { exact: true }).fill(String(manifest.ask));
+  await page.getByRole("button", { name: "Submit extension proposal", exact: true }).click();
+  await page.getByRole("row").filter({ hasText: manifest.playerName }).getByText("Extended", { exact: true }).waitFor();
   await page.reload();
-  await page.getByText(/Extension signed: 3 added years/).waitFor();
+  await page.getByRole("row").filter({ hasText: manifest.playerName }).getByText("Extended", { exact: true }).waitFor();
   assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 2), "contracts desk overflows mobile");
   await page.screenshot({ path: `${dir}/contracts-mobile.png`, fullPage: true, animations: "disabled" });
   await importJourney("review");
