@@ -4,7 +4,7 @@ import {stripTypeScriptTypes} from "node:module";
 import vm from "node:vm";
 import {createGeneratedLeague} from "../src/gm/seed/create-league";
 import {prepareFranchise,exportFranchise,parseFranchise} from "../src/gm/engine/franchise";
-import {rotationForTeam,shiftSnapshot,validShiftPlan,autoBalanceRotation} from "../src/gm/engine/coaching";
+import {rotationForTeam,shiftSnapshot,validShiftPlan,autoBalanceRotation,rebalanceForInjuryChanges} from "../src/gm/engine/coaching";
 import {simulateGame} from "../src/gm/engine/simulate";
 import {POSITIONS} from "../src/gm/engine/lineup";
 import {listedPositionCorrections,splitPositionListing} from "../src/gm/engine/position-listings";
@@ -62,6 +62,10 @@ const repaired=rotationForTeam(team,hurt);
 assert.equal(repaired.rows.find(row=>row.id===hurtId),undefined);
 assert.ok(repaired.frames.every(frame=>new Set(Object.values(frame)).size===5));
 assert.ok(repaired.warnings.length>0);
+const hurtManual=rebalanceForInjuryChanges({...league,teams:league.teams.map(t=>t.id===team.id?manualTeam:t),players:hurt},league.players);
+assert.deepEqual(hurtManual.teams.find(t=>t.id===team.id)!.coaching,manualTeam.coaching,"injuries repair tonight without overwriting manual minute targets");
+const healedManual=rebalanceForInjuryChanges({...hurtManual,players:league.players},hurt);
+assert.deepEqual(healedManual.teams.find(t=>t.id===team.id)!.coaching,manualTeam.coaching,"recovery does not restore a stale rotation over manual edits");
 assert.ok(!result.box.players.some(p=>p.playerId===backup.id),"zero-minute reserves do not enter arbitrary fallback units");
 
 const manualRows=original.rows.map(row=>({...row,on:[...row.on]}));
@@ -75,6 +79,7 @@ const closing=original.rows.filter(row=>row.minutes>0).slice(-5).map(row=>row.id
 const closer={...manualTeam,coaching:{...manualTeam.coaching!,closingLineup:closing}};
 const closingPlan=rotationForTeam(closer,league.players);
 assert.deepEqual(new Set(Object.values(closingPlan.frames[23])),new Set(closing));
+for(let i=0;i<5;i++)assert.equal(closingPlan.frames[23]![POSITIONS[i]!],closing[i],"closing positions honor the selected slots");
 let overtime=false;
 for(let seed=1;seed<=120&&!overtime;seed++){
   const simulated=simulateGame({...game,span:0.05},league.teams.map(t=>t.id===team.id?closer:t),league.players,seed);

@@ -560,7 +560,7 @@ export const useGmStore = create<GmStore>()(
       },
       promiseMinutes: (playerId, minutes) => {
         const league = get().league; if (!league || !Number.isFinite(minutes)) return;
-        set({ league: withUpdate({ ...league, players: league.players.map(p => p.id === playerId && p.teamId === league.userTeamId ? { ...p, rolePromise: { teamId: league.userTeamId, minutes: clamp(Math.round(minutes), 0, 48), madeDay: league.day, status: "pending" as const } } : p) }) });
+        set({ league: withUpdate({ ...league, players: league.players.map(p => p.id === playerId && p.teamId === league.userTeamId ? { ...p, rolePromise: { teamId: league.userTeamId, minutes: clamp(Math.round(minutes), 0, 40), madeDay: league.day, status: "pending" as const } } : p) }) });
       },
       editAttribute: (playerId, attribute, value) => {
         const league = get().league; if (!league || !franchisePlan(league).commissioner || !Number.isFinite(value)) return;
@@ -725,11 +725,11 @@ export const useGmStore = create<GmStore>()(
       restoreListedPositions: () => {
         const league=get().league;if(!league)return;
         const changes=listedPositionCorrections(league.players.filter(p=>p.teamId===league.userTeamId));
-        const players=league.players.map(p=>{const change=changes.find(c=>c.playerId===p.id);return change?{...reassignPosition(p,change.to),listedPosition:change.to,secondaryPosition:change.secondary??p.position}:p;});
+        const players=league.players.map(p=>{const change=changes.find(c=>c.playerId===p.id);return change?{...p,position:change.to,listedPosition:change.to,secondaryPosition:change.secondary??p.position}:p;});
         const teams=league.teams.map(team=>{
           if(team.id!==league.userTeamId)return team;
           const unit=players.filter(p=>Object.values(team.starters).includes(p.id));
-          return {...team,starters:assignFive(unit).starters,coaching:{...coachingOf(team),shifts:undefined,positionMinutes:undefined,coverSlot:{...team.coaching?.coverSlot,...Object.fromEntries(changes.map(c=>[c.playerId,c.to]))}}};
+          return {...team,starters:assignFive(unit).starters,coaching:{...coachingOf(team),rotationMode:"manual" as const,shifts:undefined,positionMinutes:undefined,coverSlot:{...team.coaching?.coverSlot,...Object.fromEntries(changes.map(c=>[c.playerId,c.to]))}}};
         });
         set({league:withUpdate({...league,players,teams})});
       },
@@ -760,6 +760,7 @@ export const useGmStore = create<GmStore>()(
             ...nextTeam,
             coaching: {
               ...coachingOf(t),
+              rotationMode: "manual" as const,
               coverSlot,
               minutes: promotedMinutes,
               shifts: undefined,
@@ -806,6 +807,9 @@ export const useGmStore = create<GmStore>()(
             ...nextTeam,
             coaching: {
               ...coachingOf(t),
+              rotationMode: "manual" as const,
+              shifts: undefined,
+              positionMinutes: undefined,
               coverSlot: {
                 ...(t.coaching?.coverSlot ?? book.coverSlot),
                 [playerId]: position,
@@ -835,6 +839,9 @@ export const useGmStore = create<GmStore>()(
             ...t,
             coaching: {
               ...coachingOf(t),
+              rotationMode: "manual" as const,
+              shifts: undefined,
+              positionMinutes: undefined,
               coverSlot: book.coverSlot,
             },
           };
@@ -863,7 +870,7 @@ export const useGmStore = create<GmStore>()(
               ...current,
               ...patch,
               shifts: "shifts" in patch ? patch.shifts : patch.minutes || "closingLineup" in patch ? undefined : current.shifts,
-              rotationMode: patch.rotationMode ?? (patch.minutes || patch.shifts ? "manual" : current.rotationMode),
+              rotationMode: patch.rotationMode ?? (patch.minutes || patch.shifts || "closingLineup" in patch ? "manual" : current.rotationMode),
               playThrough: patch.playThrough ?? current.playThrough,
             },
           };
@@ -917,7 +924,7 @@ export const useGmStore = create<GmStore>()(
               rotationDepth: depth,
               minutes,
               coverSlot,
-              rotationMode: "manual",
+              rotationMode: "manual" as const,
               shifts: undefined,
               positionMinutes: undefined,
             },
@@ -938,7 +945,7 @@ export const useGmStore = create<GmStore>()(
               ...coachingOf(team),
               minutes,
               coverSlot,
-              rotationMode: "manual",
+              rotationMode: "manual" as const,
               shifts: undefined,
               positionMinutes: undefined,
             },

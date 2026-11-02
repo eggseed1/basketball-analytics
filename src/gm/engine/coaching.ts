@@ -332,6 +332,7 @@ export function rebalanceForInjuryChanges<
       const roster = league.players.filter(p => p.teamId === team.id);
       const injured = roster.some(outFlag);
       const backup = team.injuryRotationBackup;
+      if(team.coaching?.rotationMode==="manual" || (!team.coaching?.rotationMode && team.coaching?.minutes && !backup))return {...team,injuryRotationBackup:undefined};
       if (!injured && backup) {
         const rosterIds = new Set(roster.map(p => p.id));
         if (Object.values(backup.starters).every(id => !id || rosterIds.has(id))) {
@@ -500,7 +501,8 @@ export function rotationForTeam(team:GmTeam,players:GmPlayer[],playoff=false){
     const floor=rows.filter(row=>row.on[slot]).map(row=>byId.get(row.id)!);
     const desired=Object.fromEntries(floor.map(p=>[p.id,Object.fromEntries(spots.map(spot=>[spot,Math.max(0,(coaching.positionMinutes?.[p.id]?.[spot]??(coaching.coverSlot?.[p.id]===spot?requested[p.id]??0:0))-(positionMinutes[p.id]?.[spot]??0))]))]));
     const declaredStart=(slot===0||slot===12)&&floor.length===5&&floor.every(p=>used.has(p.id));
-    const seats=declaredStart?{...starters}:assignFive(floor,desired).starters;
+    const declaredClosing=validClose&&slot>=22&&floor.length===5&&floor.every(p=>close.includes(p.id));
+    const seats=declaredStart?{...starters}:declaredClosing?Object.fromEntries(spots.map((spot,index)=>[spot,close[index]!])) as GmTeam["starters"]:assignFive(floor,desired).starters;
     for(const spot of spots){const id=seats[spot];if(id)positionMinutes[id]={...positionMinutes[id],[spot]:(positionMinutes[id]?.[spot]??0)+2};}
     return seats;
   });
@@ -509,7 +511,7 @@ export function rotationForTeam(team:GmTeam,players:GmPlayer[],playoff=false){
   if(stretched)warnings.push(`${stretched} minutes need emergency position coverage. Add a handler, wing or big, or adjust the minute targets.`);
   if(manual)warnings.push("Saved shift blocks set the actual minutes and opening unit.");
   if(!manual&&roster.some(p=>Math.abs((requested[p.id]??0)-(minutes[p.id]??0))>1.01))warnings.push("Minute targets are fitted to five players per block and 240 total minutes. Tonight's minutes are shown below.");
-  const closingFrame=manual&&!validClose?frames[23]!:assignFive(roster.filter(p=>close.includes(p.id))).starters;
+  const closingFrame=validClose?Object.fromEntries(spots.map((spot,index)=>[spot,close[index]!])) as GmTeam["starters"]:manual?frames[23]!:assignFive(roster.filter(p=>close.includes(p.id))).starters;
   const fitScore=frames.reduce((n,frame)=>n+spots.reduce((sum,spot)=>{const p=byId.get(frame[spot]??" ");return sum+(p?roleFit(p,spot):0);},0),0)/120;
   return {roster,rows,frames,minutes,requested,positionMinutes,fitScore,starters:frames[0]!,openingIds:actualIds,closing:close,closingFrame,warnings,tightened:tighten};
 }

@@ -336,7 +336,7 @@ try {
     }
     for (const width of [390,1440]) {
       await page.setViewportSize({width,height:900});
-      await load("development-ui","/gm/coaching");
+      await load("development-ui","/gm/lineup");
       await page.getByRole("heading",{name:"Tonight's rotation",exact:true}).waitFor();
       assert.equal(await page.locator(".gm-rot__mins .gm-chart__cell.is-on").count(),120,"rotation chart contains 240 actual minutes");
       for (const row of await page.locator(".gm-pos-mins__row").all()) {
