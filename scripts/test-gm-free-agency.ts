@@ -202,7 +202,8 @@ function baseLeague(players: GmPlayer[]): GmLeagueState {
   league = tendered.state;
   assert.equal(league.players.find((p) => p.id === "rfa")!.rightsKind, "restricted");
 
-  const sheet = submitOfferSheet(league, "rfa", "nyk", 10, 3);
+  assert.equal(submitOfferSheet(league, "rfa", "nyk", 4, 3).ok, false, "RFA may refuse under-market offer sheets");
+  const sheet = submitOfferSheet(league, "rfa", "nyk", 11, 3);
   assert.equal(sheet.ok, true, sheet.ok ? "" : sheet.reason);
   league = sheet.state;
   assert.equal(league.faMarket?.offerSheets?.length, 1);
@@ -231,7 +232,7 @@ function baseLeague(players: GmPlayer[]): GmLeagueState {
     "rfa2",
     "bos"
   ).state;
-  const sheet2 = submitOfferSheet(league, "rfa2", "nyk", 9, 2);
+  const sheet2 = submitOfferSheet(league, "rfa2", "nyk", 11, 2);
   assert.equal(sheet2.ok, true);
   league = sheet2.state;
   const declined = declineOfferSheet(league, league.faMarket!.offerSheets![0]!.id);
