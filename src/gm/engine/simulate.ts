@@ -98,7 +98,7 @@ export function simulateGame(
   // NBA published pace excludes some action sequences. The FGA + 0.44*FTA
   // + TOV - OREB estimator is ~3.8% above published pace in 2025-26.
   // Use an action-sequence count for events but report true pace in the box.
-  const actionSequenceFactor = 1.038;
+  const actionSequenceFactor = 1.046;
   const possessionsPerSide = Math.max(1, Math.round(pace * span * actionSequenceFactor + (rng() - 0.5) * 6));
   const gap = [schedule ? gapBefore(schedule, home.id, game.gameDate) : null, schedule ? gapBefore(schedule, away.id, game.gameDate) : null];
   const coach = [coachEffect(home), coachEffect(away)];
@@ -135,7 +135,7 @@ export function simulateGame(
     const offense = off === homeFloor ? homeBook : awayBook;
     const defense = off === homeFloor ? awayBook : homeBook;
     const mods = modsForTeam(offense.coaching, defense.coaching);
-    if (rng() < 0.06) {
+    if (rng() < 0.125) {
       push(def[0]!, "rebound", "defensive", `${def[0]!.teamId!.toUpperCase()} team rebound`);
       events[events.length - 1]!.playerId = null;
       events[events.length - 1]!.playerName = null;
@@ -143,7 +143,7 @@ export function simulateGame(
     }
     const offensiveWeight = off.reduce((n, p) => n + rates.get(p.id)!.orb, 0) * mods.orb;
     const defensiveWeight = def.reduce((n, p) => n + rates.get(p.id)!.drb, 0);
-    const offensive = rng() < clamp(offensiveWeight / Math.max(0.01, offensiveWeight + defensiveWeight) * 1.07 * clamp(settings?.simReboundRate ?? 1, 0.75, 1.25), 0.08, 0.42);
+    const offensive = rng() < clamp(offensiveWeight / Math.max(0.01, offensiveWeight + defensiveWeight) * 0.99 * clamp(settings?.simReboundRate ?? 1, 0.75, 1.25), 0.08, 0.42);
     const pool = offensive ? off : def;
     const p = weighted(pool, p => (offensive ? rates.get(p.id)!.orb : rates.get(p.id)!.drb) + (three && p.position !== "C" ? 0.015 : 0), rng);
     lines.get(p.id)!.rebounds++;
@@ -166,17 +166,17 @@ export function simulateGame(
     const turnovers = off.reduce((n, p) => n + rates.get(p.id)!.tov, 0);
     const freeThrows = off.reduce((n, p) => n + rates.get(p.id)!.fga * rates.get(p.id)!.ftPerFga, 0);
     const offensiveRebounds = off.reduce((n, p) => n + rates.get(p.id)!.orb, 0);
-    const turnoverChance = clamp(turnovers / Math.max(0.1, volume + 0.44 * freeThrows + turnovers - offensiveRebounds) * mods.tov * 1.09 * clamp(settings?.simTurnoverRate ?? 1, 0.75, 1.25), 0.065, 0.24);
+    const turnoverChance = clamp(turnovers / Math.max(0.1, volume + 0.44 * freeThrows + turnovers - offensiveRebounds) * mods.tov * 1.055 * clamp(settings?.simTurnoverRate ?? 1, 0.75, 1.25), 0.065, 0.24);
     const handler = weighted(off, p => rates.get(p.id)!.fga * usageBoost(p, own.coaching) + rates.get(p.id)!.ast, rng);
     for (const p of off) usedOnCourt.set(p.id, (usedOnCourt.get(p.id) ?? 0) + 1);
     // Most NBA personal fouls do not result in immediate free throws.
-    if (rng() < 0.075 * clamp(settings?.simFoulRate ?? 1, 0.75, 1.25)) {
+    if (rng() < 0.079 * clamp(settings?.simFoulRate ?? 1, 0.75, 1.25)) {
       const fouler = weighted(def, p => p.sheet?.tendencies.foul ?? 55, rng);
       push(fouler, "foul", "personal", `${fouler.name} personal foul`);
     }
     if (rng() < turnoverChance * badges.get(handler.id)!.tov) {
       lines.get(handler.id)!.turnovers++;
-      const stealShare = clamp(def.reduce((n, p) => n + rates.get(p.id)!.stl, 0) / Math.max(0.01, turnovers) * 1.01 * defensiveMods.stl, 0.2, 0.9);
+      const stealShare = clamp(def.reduce((n, p) => n + rates.get(p.id)!.stl, 0) / Math.max(0.01, turnovers) * 0.96 * defensiveMods.stl, 0.2, 0.9);
       const steal = rng() < stealShare ? weighted(def, p => rates.get(p.id)!.stl, rng) : undefined;
       if (steal) {
         lines.get(steal.id)!.steals++;
@@ -210,7 +210,7 @@ export function simulateGame(
       const line = lines.get(shooter.id)!;
       const tired = ((shooter.campFatigueGames ?? 0) > 0 ? 0.98 : 1) * secondNightScale(shooter.age, gap[side] ?? null) * minuteLoadMul(line.minutes, shooter.sheet?.attributes.stamina ?? 70) * clamp(1-Math.max(0,(stintMinutes.get(shooter.id)??0)-8)*0.003,0.95,1);
       const foulRatio = freeThrows / Math.max(0.1, volume);
-      const foulChance = clamp(foulRatio / (2 + foulRatio) * mods.ft * 0.942 * clamp(settings?.simFoulRate ?? 1, 0.75, 1.25), 0.025, 0.2);
+      const foulChance = clamp(foulRatio / (2 + foulRatio) * mods.ft * 0.958 * clamp(settings?.simFoulRate ?? 1, 0.75, 1.25), 0.025, 0.2);
       if (rng() < foulChance) {
         const fouler = weighted(def, p => p.sheet?.tendencies.foul ?? 55, rng);
         push(fouler, "foul", "shooting", `${fouler.name} shooting foul on ${shooter.name}`);
@@ -226,19 +226,19 @@ export function simulateGame(
       const three = rng() < clamp(r.threeShare * mods.three * 1.04 * clamp(settings?.simThreeRate ?? 1, 0.75, 1.25), 0, 0.88);
       const shot = chooseSimShot(shooter, three, rng, attempt > 0, transition);
       const blockWeight = three ? 0.3 : 0.95;
-      const blocked = rng() < clamp(def.reduce((n, p) => n + rates.get(p.id)!.blk, 0) / Math.max(0.1, baselineFga) * blockWeight / averageBlockWeight * 1.11 * defensiveMods.blk, 0.005, 0.2);
+      const blocked = rng() < clamp(def.reduce((n, p) => n + rates.get(p.id)!.blk, 0) / Math.max(0.1, baselineFga) * blockWeight / averageBlockWeight * 0.98 * defensiveMods.blk, 0.005, 0.2);
       const blocker = blocked ? weighted(def, p => rates.get(p.id)!.blk, rng) : undefined;
       const homeAdvantage = side === 0 && !game.neutral ? 0.004 : 0;
       const passing = off.filter(p => p.id !== shooter.id).reduce((n,p) => n+badges.get(p.id)!.passing,0) / Math.max(1,off.length-1);
       const badgeDefense = def.reduce((n,p) => n+badges.get(p.id)!.defense,0) / Math.max(1,def.length);
       const closeLate = (elapsed >= 2640) && Math.abs(homeScore-awayScore) <= 10;
-      const pct = (three ? r.threePct - 0.014 : r.twoPct * mods.two + shot.twoDelta - 0.016) * tired + (clamp(settings?.simShotAccuracy ?? 1, 0.75, 1.25) - 1) * 0.11 + residual + fit - defense * 0.003 + homeAdvantage + (coach[side]!.offense - coach[1 - side]!.defense) * 0.002 + passing - badgeDefense + (closeLate ? badges.get(shooter.id)!.clutch : 0);
+      const pct = (three ? r.threePct - 0.005 : r.twoPct * mods.two + shot.twoDelta - 0.008) * tired + (clamp(settings?.simShotAccuracy ?? 1, 0.75, 1.25) - 1) * 0.11 + residual + fit - defense * 0.003 + homeAdvantage + (coach[side]!.offense - coach[1 - side]!.defense) * 0.002 + passing - badgeDefense + (closeLate ? badges.get(shooter.id)!.clutch : 0);
       // Observed shooting percentages already include average blocked attempts.
       // Convert to an unblocked attempt probability; opponent block skill can then vary.
       const observedBlockShare = clamp(leagueBlockRate * blockWeight / averageBlockWeight, 0, 0.2);
       const made = !blocked && rng() < clamp(pct / (1 - observedBlockShare), 0.08, 0.95);
       line.fga++; if (three) line.tpa++;
-      const assisted = made && rng() < clamp(off.reduce((n, p) => n + rates.get(p.id)!.ast, 0) / Math.max(0.2, volume) / 0.47 * mods.ast * 1.03 * clamp(settings?.simAssistRate ?? 1, 0.75, 1.25), 0.18, 0.85);
+      const assisted = made && rng() < clamp(off.reduce((n, p) => n + rates.get(p.id)!.ast, 0) / Math.max(0.2, volume) / 0.47 * mods.ast * 1.0 * clamp(settings?.simAssistRate ?? 1, 0.75, 1.25), 0.18, 0.85);
       const passer = assisted ? weighted(off.filter(p => p.id !== shooter.id), p => rates.get(p.id)!.ast, rng) : undefined;
       if (made) { line.fgm++; if (three) line.tpm++; score(shooter, three ? 3 : 2); }
       if (passer) lines.get(passer.id)!.assists++;
