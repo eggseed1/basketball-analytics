@@ -242,7 +242,7 @@ export function createGmSlotStorage(layer: "a" | "b"): PersistStorage {
       const league = layer === "a" ? parsePersistedLeague(value) : null;
       if (!id || (layer === "a" && !league)) return;
       const key = slotKey(id);
-      const queue = pending.get(key) ?? { latest: null, running: false };
+      const queue: SlotQueue = pending.get(key) ?? { latest: null, running: false };
       pending.set(key, queue);
       await new Promise<void>((resolve, reject) => {
         if (queue.latest) {
