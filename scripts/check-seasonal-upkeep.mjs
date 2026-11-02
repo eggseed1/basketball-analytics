@@ -96,6 +96,31 @@ async function main() {
         detail: `${info.season} is open (tip ${info.tipDate}) but season-tables has no rows; run scripts/local/stats-nba-refresh.sh on the home stats runner`,
       });
     }
+
+    // A newly stamped JSON bundle can still hold old game logs when the
+    // stats.nba.com home-runner reuse/fallback has not advanced. Compare the
+    // actual GP grain with independently refreshed ESPN standings.
+    if (advancedRows > 0) {
+      const standings = await readJson(
+        path.join(ROOT, "src/data/runtime/standings-snapshot.json"),
+        null
+      );
+      const conferences = standings?.seasons?.[info.season]?.conferences ?? [];
+      const teamGames = conferences.flatMap((c) => c.rows ?? [])
+        .map((r) => Number(r.wins ?? 0) + Number(r.losses ?? 0));
+      const maxTeamGp = teamGames.length ? Math.max(...teamGames) : 0;
+      const playerGames = [...(live.advanced ?? []), ...(live.perGame ?? [])]
+        .map((r) => Number(r.gp ?? 0))
+        .filter(Number.isFinite);
+      const maxPlayerGp = playerGames.length ? Math.max(...playerGames) : 0;
+      if (maxTeamGp >= 4 && maxPlayerGp + 2 < maxTeamGp) {
+        items.push({
+          id: "season-tables-stale-gp",
+          severity: "warn",
+          detail: `${info.season} cached player GP max ${maxPlayerGp} trails ESPN standings max ${maxTeamGp}; refresh NBA season totals on the home runner. The snapshot generatedAt alone is not a freshness check.`,
+        });
+      }
+    }
   }
 
   const report = {
