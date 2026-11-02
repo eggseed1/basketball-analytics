@@ -17,7 +17,7 @@ import { createRng, clamp } from "../src/gm/engine/rng";
 import type { GmLeagueState, GmPlayer, GmAwardRace } from "../src/gm/types";
 
 const START=2027, YEARS=10, SEEDS=[37, 133, 907], ROSTER=450, NEWCOMERS=45;
-type Report = { season: number; seed: number; count: number; mean: number; high80: number; elite90: number; elite95: number; youngMean: number; seniorMean: number; movingPct: number; ups: number; downs: number; flat: number; maxUp: number; maxDown: number; traits: Record<string,number>; promotions: number; demotions: number; retired: number };
+type Report = { season: number; seed: number; count: number; mean: number; high80: number; elite90: number; elite95: number; youngMean: number; seniorMean: number; movingPct: number; ups: number; downs: number; flat: number; maxUp: number; maxDown: number; traits: Record<string,number>; promotions: number; demotions: number; departed: number };
 const rows:Report[]=[];
 const hash=(id:string)=>Array.from(id).reduce((n,c)=>Math.imul(n^c.charCodeAt(0),16777619)>>>0,2166136261)>>>0;
 const mean=(a:number[])=>a.length?a.reduce((x,y)=>x+y,0)/a.length:0;
@@ -104,14 +104,22 @@ for(const seed of SEEDS) {
       high80:ratings.filter(x=>x>=85).length,elite90:ratings.filter(x=>x>=90).length,elite95:ratings.filter(x=>x>=95).length,
       youngMean:mean(youngDeltas),seniorMean:mean(seniorDeltas),movingPct:pct(deltas.filter(x=>x!==0).length,deltas.length),
       ups:deltas.filter(x=>x>0).length,downs:deltas.filter(x=>x<0).length,flat:deltas.filter(x=>x===0).length,
-      maxUp:Math.max(...deltas),maxDown:Math.min(...deltas),traits,promotions,demotions,retired:0};
+      maxUp:Math.max(...deltas),maxDown:Math.min(...deltas),traits,promotions,demotions,departed:0};
     rows.push(report);
+    // Retire aging players first, but allow contract/role churn and randomness.
+    // Cutting only the worst 45 OVR each summer gives the simulation a false
+    // positive rating drift, even with perfectly balanced development.
     const churn=[...league.players].sort((a,b)=>{
-      const rank=(p:GmPlayer)=>p.sheet!.overall-(p.age>35?(p.age-35)*5:0)-(p.age>29?3:0);
-      return rank(b)-rank(a);
+      const risk=(p:GmPlayer)=>{
+        const age=p.age>=40?100:p.age>=36?(p.age-35)*5:p.age>=33?(p.age-32)*1.8:0;
+        const fringe=Math.max(0,68-p.sheet!.overall)*0.3;
+        const turnover=(createRng(hash(p.id+":departure:"+season))()-.5)*14;
+        return age+fringe+turnover;
+      };
+      return risk(a)-risk(b);
     });
     const survivors=churn.slice(0,ROSTER-NEWCOMERS);
-    report.retired=churn.length-survivors.length;
+    report.departed=churn.length-survivors.length;
     if(offset===YEARS-1)break;
     const rookies=createGeneratedLeague({season:season+1,userTeamId:"bos",seed:seed*13007+season});
     const pool=new Set(rookies.draftPool);
@@ -124,7 +132,7 @@ for(const seed of SEEDS) {
   }
 }
 mkdirSync("/tmp/franchise-calibration",{recursive:true});
-writeFileSync("/tmp/franchise-calibration/multiseason.json",JSON.stringify({method:"10-year league cohort, seeded ratings-conditioned box-score scenarios, 45 rookies per season; no full GM economy",rows},null,2));
+writeFileSync("/tmp/franchise-calibration/multiseason.json",JSON.stringify({method:"10-year league cohort, seeded ratings-conditioned box-score scenarios, 45 rookies per season; stochastic age-weighted departures; no full GM economy",rows},null,2));
 const avg=(a:Report[],k:keyof Report)=>mean(a.map(x=>x[k] as number));
 for(let yr=0;yr<YEARS;yr++){
   const batch=rows.filter(x=>x.season===START+yr);
