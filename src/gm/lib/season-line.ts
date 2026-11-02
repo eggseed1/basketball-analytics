@@ -96,6 +96,7 @@ function addLine(base: GmCountingLine, box: GmBoxScore, playerId: string): GmCou
     stl: base.stl + line.steals,
     blk: base.blk + line.blocks,
     tov: base.tov + line.turnovers,
+    pf: (base.pf ?? 0) + (line.personalFouls ?? 0),
     fgm: base.fgm + line.fgm,
     fga: base.fga + line.fga,
     tpm: base.tpm + line.tpm,
