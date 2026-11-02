@@ -1,6 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { SectionFrame } from "@/components/layout/section-frame";
+import { GmConfirmAction } from "@/gm/ui/gm-confirm-action";
+import { listedPositionCorrections } from "@/gm/engine/position-listings";
 import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
@@ -13,9 +16,7 @@ import {
   coachingOf,
   injured,
   minutesPerPosition,
-  rotationChart,
-  validShiftPlan,
-  rotationQuality,
+  rotationForTeam,
   suggestedMinutePlan,
   suggestedMinutes,
 } from "@/gm/engine/coaching";
@@ -76,15 +77,13 @@ export function GmCoaching() {
   const autoBalanceRotation = useGmStore((s) => s.autoBalanceRotation);
   const setRotationDepth = useGmStore((s) => s.setRotationDepth);
   const resetRotation = useGmStore((s) => s.resetRotation);
+  const restoreListings = useGmStore(s=>s.restoreListedPositions);
   if (!league) return null;
 
   const team = userTeam(league);
   const players = userPlayers(league);
   const plan = coachingOf(team);
   const saved = team.coaching?.minutes;
-  const starterIds = new Set(
-    POSITIONS.map((pos) => team.starters[pos]).filter((id): id is string => !!id)
-  );
   const book = suggestedMinutePlan(team, players);
   const targets = book.minutes;
   // Minute totals come from the positional book (or the saved plan).
@@ -102,22 +101,17 @@ export function GmCoaching() {
     ...book.coverSlot,
     ...(team.coaching?.coverSlot ?? {}),
   });
-  const painted = validShiftPlan(plan.shifts, players.filter(p => !injured(p)).map(p => p.id)) ?? rotationChart(
-    players.map((player) => ({
-      id: player.id,
-      minutes: minutes[player.id] ?? 0,
-      starter: starterIds.has(player.id),
-      position: coverSlot[player.id] ?? player.position,
-    })),
-    plan
-  );
+  const tonight = rotationForTeam(team,players,["play_in","playoffs"].includes(league.phase));
+  const starterIds = tonight.openingIds;
+  const painted = tonight.rows;
+  const corrections = listedPositionCorrections(players);
   const suggested = suggestedMinutes(team, players);
   const total = Object.values(minutes).reduce((sum, value) => sum + value, 0);
   const remaining = 240 - total;
   const ordered = rosterOrder(players, team.starters, minutes);
   const chart = new Map(painted.map((row) => [row.id, row.on]));
-  const positionRows = minutesPerPosition(players, minutes, coverSlot, team.coaching?.positionMinutes);
-  const quality = rotationQuality(players, minutes, coverSlot);
+  const positionRows = minutesPerPosition(players, tonight.minutes, coverSlot, tonight.positionMinutes);
+  const quality = tonight.fitScore;
   const offense = OFFENSE_OPTIONS.find((option) => option.id === plan.offense);
   const defense = DEFENSE_OPTIONS.find((option) => option.id === plan.defense);
 
@@ -140,6 +134,13 @@ export function GmCoaching() {
         </div>
       </div>
 
+      <SectionFrame title="Tonight's rotation" description="The chart and simulation share this plan. Each block is two minutes; five players cover every block. Substitutions favor continuous stints, staggered creators, and a balanced unit." bodySurface>
+        <p className="text-sm">{tonight.tightened ? "Automatic playoff rotation: eight players. Explicit minute plans keep their selected depth." : "Minute targets are fitted to 240 regulation minutes. The planned minutes below are what the sim uses."}</p>
+        {tonight.warnings.length ? <ul className="mt-2 list-disc space-y-1 pl-4 text-sm" role="status">{tonight.warnings.map(note=><li key={note}>{note}</li>)}</ul> : null}
+        <div className="mt-3 grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-5">{POSITIONS.map((spot,index)=><label key={spot} className="grid min-w-0 gap-1 text-sm">Closing {spot}<select aria-label={`Closing ${spot}`} className="w-full min-w-0 rounded-md border border-border bg-background px-2 py-2" value={(plan.closingLineup??tonight.closing)[index]??""} onChange={event=>{const next=[...(plan.closingLineup??tonight.closing)];const other=next.findIndex((id,i)=>id===event.target.value&&i!==index);if(other>=0)next[other]=next[index]!;next[index]=event.target.value;setCoaching({closingLineup:next});}}>{players.map(player=><option key={player.id} value={player.id} disabled={injured(player)||!(tonight.minutes[player.id]!>0)}>{displayPlayerName(player)} · {player.position}</option>)}</select></label>)}</div>
+        <Button className="mt-3" variant="outline" size="sm" onClick={()=>setCoaching({closingLineup:undefined})}>Use automatic closing unit</Button>
+        {corrections.length ? <div className="mt-3"><GmConfirmAction label="Review NBA role positions" title="Review NBA role positions" confirmLabel="Apply listed positions" onConfirm={restoreListings}><p>These older entries use inferred positions. Detailed NBA listings take priority; guard and forward families are split using size and playstyle. Review the changes before fitting the current starting five. Minute targets stay saved.</p><ul className="mt-2 list-disc pl-4">{corrections.map(change=><li key={change.playerId}>{change.name}: {change.from} to {change.to}</li>)}</ul></GmConfirmAction></div> : null}
+      </SectionFrame>
       <section className="sports-card flex flex-col gap-3 p-4">
         <div className="flex flex-wrap items-end gap-3">
           <label className="flex flex-col gap-1 text-sm">
@@ -292,7 +293,7 @@ export function GmCoaching() {
               >
                 <option value="">{t("coachEmpty")}</option>
                 {players.map((player) => (
-                  <option key={player.id} value={player.id}>
+                  <option key={player.id} value={player.id} disabled={injured(player)}>
                     {displayPlayerName(player)} ({player.position})
                   </option>
                 ))}
@@ -398,7 +399,7 @@ export function GmCoaching() {
                     <input
                       type="range"
                       min={0}
-                      max={40}
+                      max={48}
                       step={1}
                       value={value}
                       disabled={out}
@@ -409,6 +410,7 @@ export function GmCoaching() {
                     />
                     <span className="tabular-nums">{formatMinutes(value)}</span>
                   </label>
+                  <p className="text-xs text-muted-foreground">Planned: {formatMinutes(tonight.minutes[player.id]??0)} min</p>
                   <div className="gm-chart" aria-hidden>
                     {QUARTERS.map((quarter) => (
                       <span key={quarter} className="gm-chart__slice">

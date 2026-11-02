@@ -1,10 +1,10 @@
 import type { PlayByPlayEvent } from "@/data/types/play-by-play";
 import type { GmBoxPlayerLine, GmBoxScore, GmLeagueSettings, GmPlayer, GmScheduleGame, GmTeam } from "@/gm/types";
 import { createRng, clamp } from "@/gm/engine/rng";
-import { coachingOf, modsForTeam, paceWish, paintShifts, usageBoost, validShiftPlan } from "@/gm/engine/coaching";
-import { positionalMinuteTargets, minuteLoadMul } from "@/gm/engine/lineup";
+import { coachingOf, modsForTeam, paceWish, rotationForTeam, usageBoost } from "@/gm/engine/coaching";
+import { minuteLoadMul } from "@/gm/engine/lineup";
 import { ensureSimProfile, simulationRates } from "@/gm/engine/player-profile";
-import { lineupBalance, roleFit, assignFive } from "@/gm/engine/rotation-roles";
+import { lineupBalance, roleFit } from "@/gm/engine/rotation-roles";
 import { allStarSquadTeam } from "@/gm/engine/allstar";
 import { gapBefore } from "@/gm/engine/schedule";
 import { coachEffect } from "@/gm/engine/staff";
@@ -43,15 +43,10 @@ function book(team: GmTeam, players: GmPlayer[], playoff: boolean) {
   const roster = players.filter(p => p.teamId === team.id && (!p.injury || p.injury.gamesRemaining <= 0));
   if (roster.length < 5) throw new Error(`${team.abbr} needs five healthy players to simulate.`);
   const coaching = coachingOf(team);
-  const saved = coaching.minutes;
-  const targets = saved && roster.filter(p => (saved[p.id] ?? 0) > 0).length >= 5 ? saved : positionalMinuteTargets(roster, team.starters, playoff ? 8 : coaching.rotationDepth);
-  const starters = new Set(Object.values(team.starters));
-  const rows = validShiftPlan(coaching.shifts, roster.map(p => p.id)) ?? paintShifts({
-    players: roster.map(p => ({ id: p.id, minutes: targets[p.id] ?? 0, starter: starters.has(p.id), position: coaching.coverSlot?.[p.id] ?? p.position })),
-    coaching,
-  });
-  if (!rows.some(row => row.minutes > 0)) throw new Error(`${team.abbr} needs a complete rotation.`);
-  return { roster, rows, coaching };
+  const compiled = rotationForTeam(team,players,playoff);
+  if(compiled.rows.some(row=>row.on.filter(Boolean).length!==row.minutes/2)||compiled.frames.some(frame=>new Set(Object.values(frame).filter(Boolean)).size!==5))throw new Error(`${team.abbr} needs a complete rotation.`);
+  return { ...compiled, coaching };
+
 }
 
 /** One source for minutes, score, stats, shared stints and the shot-chart feed. */
@@ -93,6 +88,8 @@ export function simulateGame(
   const stints: NonNullable<GmBoxScore["stints"]> = [];
   let homeScore = 0, awayScore = 0;
   let homeFloor: GmPlayer[] = [], awayFloor: GmPlayer[] = [];
+  const courtSpots = new Map<string,GmPlayer["position"]>();
+  const stintMinutes = new Map<string,number>();
   const span = clamp(game.span ?? 1, 0.05, 1);
   const regulation = Math.round(2880 * span);
   const eraPace = game.season < 2010 ? 93 : game.season < 2017 ? 96 : 99.5;
@@ -181,13 +178,13 @@ export function simulateGame(
     const entryImpact = off.reduce((n, p) => n + (p.simProfile!.offense ?? p.simProfile!.impact * 0.65), 0);
     const environment = game.season < 2017 ? 1.06 : 1.135;
     const residual = clamp((environment + entryImpact * 0.008 - baselinePoints / Math.max(0.2, baselineUses)) / 2.2, -0.035, 0.035);
-    const fit = lineupBalance(off) * 0.002 - off.reduce((n, p) => n + (1 - roleFit(p, own.coaching.coverSlot?.[p.id] ?? p.position)) * 0.015, 0);
+    const fit = lineupBalance(off) * 0.002 - off.reduce((n, p) => n + (1 - roleFit(p, courtSpots.get(p.id) ?? p.position)) * 0.015, 0);
     for (let attempt = 0; attempt < 5; attempt++) {
       if (attempt > 0) for (const p of off) usedOnCourt.set(p.id, (usedOnCourt.get(p.id) ?? 0) + 1);
       const shooter = weighted(off, p => rates.get(p.id)!.fga * usageBoost(p, own.coaching), rng);
       const r = rates.get(shooter.id)!;
       const line = lines.get(shooter.id)!;
-      const tired = ((shooter.campFatigueGames ?? 0) > 0 ? 0.98 : 1) * secondNightScale(shooter.age, gap[side] ?? null) * minuteLoadMul(line.minutes, shooter.sheet?.attributes.stamina ?? 70);
+      const tired = ((shooter.campFatigueGames ?? 0) > 0 ? 0.98 : 1) * secondNightScale(shooter.age, gap[side] ?? null) * minuteLoadMul(line.minutes, shooter.sheet?.attributes.stamina ?? 70) * clamp(1-Math.max(0,(stintMinutes.get(shooter.id)??0)-8)*0.003,0.95,1);
       const foulRatio = freeThrows / Math.max(0.1, volume);
       const foulChance = clamp(foulRatio / (2 + foulRatio) * mods.ft, 0.025, 0.2);
       if (rng() < foulChance) {
@@ -226,19 +223,20 @@ export function simulateGame(
   }
   function runFrame(start: number, duration: number, slot: number, possessions: number, extra = false) {
     function floor(b: ReturnType<typeof book>): GmPlayer[] {
-      const ids = extra
-        ? (b.coaching.closingLineup?.length === 5 ? b.coaching.closingLineup : b.rows.filter(row => row.on[23]).map(row => row.id))
-        : b.rows.filter(row => row.on[slot]).map(row => row.id);
-      const available = ids.map(id => byId.get(id)).filter((p): p is GmPlayer => Boolean(p && p.teamId === b.roster[0]!.teamId && !p.injury));
-      for (const p of b.roster) if (available.length < 5 && !available.some(q => q.id === p.id)) available.push(p);
-      return available.slice(0, 5);
+      const ids = Object.values(extra ? b.closingFrame : b.frames[slot]!);
+      return ids.map(id=>byId.get(id??"" )).filter((p):p is GmPlayer=>Boolean(p&&p.teamId===b.roster[0]!.teamId&&(!p.injury||p.injury.gamesRemaining<=0)));
+
     }
+    const previousFloor = [...homeFloor,...awayFloor];
     homeFloor = floor(homeBook); awayFloor = floor(awayBook);
+    for(const p of previousFloor)if(![...homeFloor,...awayFloor].some(q=>q.id===p.id))stintMinutes.set(p.id,0);
     stints.push({ start, end: start + duration, home: homeFloor.map(p => p.id), away: awayFloor.map(p => p.id) });
     for (const group of [homeFloor, awayFloor]) {
-      const coaching = group === homeFloor ? homeBook.coaching : awayBook.coaching;
-      const desired = Object.fromEntries(group.map(p => [p.id, Object.fromEntries(Object.entries(coaching.positionMinutes?.[p.id] ?? {}).map(([pos, min]) => [pos, Math.max(0, (min ?? 0) - (lines.get(p.id)!.positionMinutes?.[pos as GmPlayer["position"]] ?? 0))]))]));
-      const seats = assignFive(group, desired).starters;
+      const compiled = group === homeFloor ? homeBook : awayBook;
+      const seats = extra ? compiled.closingFrame : compiled.frames[slot]!;
+      for(const [spot,id] of Object.entries(seats))if(id)courtSpots.set(id,spot as GmPlayer["position"]);
+      for(const p of group)stintMinutes.set(p.id,(slot%6===0&&!extra?0:stintMinutes.get(p.id)??0)+duration/60);
+
       for (const p of group) {
         const line = lines.get(p.id)!;
         line.minutes += duration / 60;
@@ -269,7 +267,7 @@ export function simulateGame(
   const played = [...lines.values()].filter(line => line.minutes > 0);
   for (const line of played) {
     const team = line.teamId === home.id ? home : away;
-    line.started = Object.values(team.starters).includes(line.playerId);
+    line.started = (team.id === home.id ? homeBook : awayBook).openingIds.has(line.playerId);
     line.trueShootingPct = line.points / Math.max(1, 2 * (line.fga + 0.44 * line.fta));
     line.usagePct = (line.fga + 0.44 * line.fta + line.turnovers) / Math.max(1, usedOnCourt.get(line.playerId) ?? 1);
     line.gameScore = Math.round((line.points + 0.4 * line.fgm - 0.7 * line.fga - 0.4 * (line.fta - line.ftm) + 0.5 * line.rebounds + line.steals + 0.7 * line.assists + 0.7 * line.blocks - line.turnovers) * 10) / 10;
