@@ -27,6 +27,13 @@ try {
   await page.goto("http://127.0.0.1:3107/gm", { waitUntil: "domcontentloaded", timeout: 120000 });
   await page.getByLabel("Import a franchise save", { exact: true }).setInputFiles(`${dir}/franchise.json`, { timeout: 90000 });
   await page.getByRole("link", { name: "Development", exact: true }).first().waitFor({ state: "visible", timeout: 90000 });
+  await page.getByRole("region", { name: "Next game", exact: true }).waitFor();
+  assert.equal(await page.getByRole("button", { name: /Play game|Set lineup/, exact: true }).count(), 1, "one clear primary action");
+  const overview = page.getByTestId("gm-home-more");
+  assert.equal(await overview.evaluate(node => node.open), false, "secondary content starts closed");
+  await overview.locator("summary").click();
+  assert.equal(await overview.evaluate(node => node.open), true, "overview remains available");
+
   await page.goto("http://127.0.0.1:3107/gm/franchise", { waitUntil: "domcontentloaded" });
   await page.getByRole("heading", { name: "Development and roles", exact: true }).waitFor();
   await page.screenshot({ path: `${dir}/desktop.png`, fullPage: true });
@@ -93,6 +100,7 @@ try {
   await importJourney("camp");
   await page.getByRole("link", { name: "Season hub", exact: true }).click();
   await page.getByRole("heading", { name: "Focused camps", exact: true }).waitFor();
+  await page.locator("summary").filter({ hasText: "Choose players and skills" }).click();
   const campSelect = page.locator('select[id^="camp-"]').first();
   await campSelect.selectOption("shooting");
   await page.getByRole("button", { name: "Run training camp", exact: true }).click();
