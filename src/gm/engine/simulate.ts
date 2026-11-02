@@ -274,7 +274,9 @@ export function simulateGame(
       const spread = Math.abs(homeScore - awayScore);
       const blowout = !extra && start >= regulation - 360 && spread >= 22;
       const lateClose = !extra && start >= regulation - 240 && spread <= 8;
-      const manual = b.coaching.rotationMode === "manual";
+      // Saved shift charts are explicit instructions even in older saves
+      // without the manual-mode flag. Never override them for routine rest.
+      const manual = b.coaching.rotationMode === "manual" || Boolean(b.coaching.shifts && Object.keys(b.coaching.shifts).length);
       const frameRng = createRng((actualSeed ^ hash(b.roster[0]!.teamId! + ":" + slot)) >>> 0);
       for (const [pos, id] of Object.entries(seats)) {
         if (!id) continue;
