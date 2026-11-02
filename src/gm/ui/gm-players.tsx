@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 
-import { PlayerHeadshot } from "@/components/brand/player-headshot";
+import { GmPlayerPortrait } from "@/gm/ui/gm-player-portrait";
 import { playerSheet } from "@/gm/engine/attributes";
 import { scoutPotentialView } from "@/gm/engine/scouting";
 import { perGame } from "@/gm/lib/counting";
@@ -321,12 +321,7 @@ export function GmPlayersTable() {
                 <td className="px-3 py-2 tabular-nums">{index + 1}</td>
                 <td className="px-3 py-2">
                   <span className="inline-flex items-center gap-2 font-medium">
-                    <PlayerHeadshot
-                      playerId={row.player.nbaPlayerId ?? row.player.id}
-                      name={row.player.name}
-                      teamKey={row.player.teamId}
-                      size="xs"
-                    />
+                    <GmPlayerPortrait player={row.player} />
                     <Link href={`/gm/player/${encodeURIComponent(row.player.id)}`}>
                       {row.player.name}
                     </Link>
