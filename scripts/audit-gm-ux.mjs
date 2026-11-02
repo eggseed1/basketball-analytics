@@ -184,6 +184,7 @@ try {
     }
     if (name === "camp") {
       await page.getByRole("button", { name: "Continue without individual camps", exact: true }).waitFor();
+      await page.locator("summary").filter({ hasText: "Choose players and skills" }).click();
       const select = page.locator('select[id^="camp-"]:enabled').first();
       const manualId = (await select.getAttribute("id")).slice(5);
       await select.selectOption("conditioning");
