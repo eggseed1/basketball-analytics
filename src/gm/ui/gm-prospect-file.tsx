@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { GmPlayerPortrait } from "@/gm/ui/gm-player-portrait";
+import { buildScoutDesk } from "@/gm/engine/scout-desk";
 import { useGmStore } from "@/gm/state/gm-store";
 import { amateurSeason, draftRead, draftScoutingOf, draftSleeperSignals, scoutingBudget, SCOUT_STUDIES, DRAFT_TOOL_LABELS as tools } from "@/gm/engine/draft-intel";
 import type { GmDraftTool, GmLeagueState, GmPlayer } from "@/gm/types";
@@ -22,10 +23,14 @@ export function GmProspectFile({league,player}:{league:GmLeagueState;player:GmPl
   const workoutOpen=league.seasonFlow?.stage==="scouting"||(!league.seasonFlow&&league.phase==="offseason");
   const canScout=league.phase!=="draft";
   const next=!read.report.studies.film?"film":!read.report.studies.analytics?"analytics":null;
-  const summary=read.strengths[0]??signal.reasons[0]??"Needs more evaluation before committing a pick.";
+  const desk=buildScoutDesk(league,5);
+  const matches=desk.boards.flatMap(board=>board.picks.filter(entry=>entry.player.id===player.id).map(entry=>({board,entry})));
+  const highlight=matches.find(row=>row.board.id===desk.recommended)??matches[0];
+  const summary=highlight?.entry.note??read.strengths[0]??signal.reasons[0]??"Needs another look before investing a pick.";
+  const caution=highlight?.entry.caution??read.risks[0]??"NBA translation remains uncertain.";
   return <section aria-label={"Prospect file for "+player.name} className="flex min-w-0 flex-col gap-4 rounded-xl border border-border p-4">
     <header className="flex items-start gap-3"><GmPlayerPortrait player={player} size="md"/><div className="min-w-0"><p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Prospect report · market #{read.marketRank}</p><h3 className="mt-1 text-xl font-bold">{player.name}</h3><p className="mt-1 text-sm text-muted-foreground">{player.position} · {player.age} years · {player.college??stats.competition}</p></div></header>
-    <div className="rounded-lg bg-secondary/50 p-3"><p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Scout&apos;s take</p><p className="mt-1 text-sm font-medium">{summary}</p><p className="mt-1 text-xs text-muted-foreground">{steps?"Research completed: "+steps+" report"+(steps===1?"":"s")+". Still a projection, not a guaranteed ceiling.":"Early read only. One scout action can narrow the uncertainty."}</p></div>
+    <div className="rounded-lg bg-secondary/50 p-3"><p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{desk.scoutName}&apos;s take{highlight?" · "+highlight.board.title:""}</p><p className="mt-1 text-sm font-medium">{summary}</p><p className="mt-1 text-xs text-muted-foreground">Watch out: {caution}</p><p className="mt-1 text-xs text-muted-foreground">{steps?"Research completed: "+steps+" report"+(steps===1?"":"s")+". Still a projection, not a guaranteed ceiling.":"Early read only. One scout action can narrow the uncertainty."}</p></div>
     <dl className="grid grid-cols-2 gap-3"><Metric label="Ready now (OVR)" value={read.readyLow+"–"+read.readyHigh}/><Metric label="Possible upside" value={read.upsideLow+"–"+read.upsideHigh}/></dl>
     <p className="text-xs text-muted-foreground">{read.availability} · {Math.round(read.coverage*100)}% report coverage. Future development is uncertain.</p>
     {read.marketRank>=22?<div className="rounded-lg border border-border bg-background p-3"><p className="text-sm font-semibold">Late-value watch</p><p className="mt-1 text-xs text-muted-foreground">{signal.reasons.slice(0,2).join(" · ")||"Not enough convincing public indicators yet."} These are clues, not a hidden star label.</p></div>:null}

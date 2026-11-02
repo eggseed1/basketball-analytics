@@ -23,7 +23,13 @@ try{
   async function capture(name){
     await page.evaluate(()=>scrollTo(0,0));const width=await page.evaluate(()=>({viewport:innerWidth,content:document.documentElement.scrollWidth}));assert.ok(width.content<=width.viewport+2,name+" overflows");await page.screenshot({path:dir+"/"+name+".png",fullPage:true,animations:"disabled"});writeFileSync(dir+"/"+name+".html",await page.content());report.screens.push({name,...width});
   }
-  await load("prep");await page.getByTestId("draft-war-room").waitFor();await capture("mobile-draft-preparation");
+  await load("prep");await page.getByTestId("draft-war-room").waitFor();
+  await page.getByRole("heading",{name:"Your scouting department"}).waitFor();
+  await page.getByRole("button",{name:/Polished & playable/}).click();
+  await page.getByRole("button",{name:/Open scout recommendation for/}).first().click();
+  await page.getByRole("region",{name:/Prospect file for/}).waitFor();
+  await page.getByRole("button",{name:/Swing for the ceiling|International projects/}).click();
+  await capture("mobile-draft-preparation");
   await page.getByLabel("Draft strategy",{exact:true}).selectOption("shooting");
   await page.getByRole("button",{name:"Open report for "+manifest.targetName,exact:true}).click();
   await page.getByText("Advanced scouting tools (optional)",{exact:true}).click();
