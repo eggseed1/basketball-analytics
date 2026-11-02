@@ -1885,9 +1885,9 @@ html[data-surface] [data-gm] .sports-card {
   -webkit-backdrop-filter: saturate(150%) blur(var(--material-standard-blur, 24px));
 }
 html [data-gm] .bg-secondary,
-html [data-gm] .bg-secondary\\/80,
+html [data-gm] .bg-secondary\/80,
 html [data-gm] .bg-muted,
-html [data-gm] .bg-muted\\/40 { background: var(--secondary); color: var(--foreground); }
+html [data-gm] .bg-muted\/40 { background: var(--secondary); color: var(--foreground); }
 html [data-gm] thead { background: var(--secondary); color: var(--muted-foreground); }
 html [data-gm] .frost-surface,
 html [data-gm] .frost-surface-soft,
