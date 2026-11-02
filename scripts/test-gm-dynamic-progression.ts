@@ -62,5 +62,6 @@ assert.equal(progressing.devMarks?.quarter1, true);
 assert.equal(progressing.devMarks?.january, true);
 assert.equal(progressing.devMarks?.quarter3, true);
 const noSeason = advanceDynamicProgression({ ...young, teamId: null }, { league, checkpoint: "summer" });
-assert.equal(noSeason, noSeason, "unsigned players are not assigned unauthorized club development");
+assert.equal(noSeason.teamId, null, "unsigned players cannot acquire a club through progression");
+assert.equal(noSeason.sheet?.overall, young.sheet?.overall, "unsigned players are excluded from team training");
 console.log("GM dynamic progression: quarterly ticks, annual cohort changes, traits, awards, save and idempotence passed");
