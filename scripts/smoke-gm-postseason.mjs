@@ -106,7 +106,7 @@ try {
     const pending = page.waitForEvent("download");
     await page.getByRole("button", { name: "Export this franchise", exact: true }).click();
     const save = JSON.parse(readFileSync(await (await pending).path(), "utf8")).league;
-    assert.ok(save.champion);
+    assert.ok(save.champion, JSON.stringify({ phase: save.phase, day: save.day, final: save.playoffBracket?.find(s => s.conf === "Finals"), finalBoxes: save.boxScores?.filter(b => b.postseason === "playoffs").length, players: save.players?.length, winnerRoster: save.players?.filter(p => p.teamId === save.playoffBracket?.find(s => s.conf === "Finals")?.winnerId).length, homeFlow: save.homeFlow }));
     assert.equal(save.playoffBracket.length, 15);
     assert.ok(save.playoffBracket.every(series => series.done));
     assert.equal(save.boxScores.filter(box => box.postseason === "play_in").length, 6);
