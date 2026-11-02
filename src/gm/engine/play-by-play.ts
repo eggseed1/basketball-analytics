@@ -203,7 +203,7 @@ export function boxToPlayByPlay(box: GmBoxScore): PlayByPlayEvent[] {
       for (let i = 0; i < Math.max(0, line.tpa - line.tpm); i++) shots[side].push({ player, three: true, made: false, assist: null, block: null });
       for (let i = 0; i < line.ftm; i++) ftTokens[side].push({ player, made: true });
       for (let i = 0; i < Math.max(0, line.fta - line.ftm); i++) ftTokens[side].push({ player, made: false });
-      const offensive = Math.min(line.rebounds, Math.round(line.rebounds * 0.28));
+      const offensive = Math.min(line.rebounds, line.offensiveRebounds ?? Math.round(line.rebounds * 0.28));
       for (let i = 0; i < offensive; i++) orebs[side].push(player);
       for (let i = 0; i < line.rebounds - offensive; i++) drebs[side].push(player);
       for (let i = 0; i < line.assists; i++) assists[side].push(player);
