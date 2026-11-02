@@ -68,6 +68,18 @@ export function defaultBadgeFocus(player: GmPlayer): GmBadgeId | undefined {
     .sort((a,b) => Number(b.category === player.developmentFocus) - Number(a.category === player.developmentFocus) || badgeSkill(player,b.id) - badgeSkill(player,a.id) || a.id.localeCompare(b.id))[0]?.id;
 }
 
+/** Two transferable, skill-compatible signature badges per mentee, never hidden potential. */
+export function mentorBadgeTargets(student: GmPlayer, mentor: GmPlayer): GmBadgeId[] {
+  return BADGES.filter(b =>
+    badgeLevel(ensureBadges(mentor), b.id) > badgeLevel(ensureBadges(student), b.id)
+    && badgeCap(student, b.id) > 0
+  ).sort((a,b) =>
+    Number(b.category === student.developmentFocus) - Number(a.category === student.developmentFocus)
+    || badgeLevel(ensureBadges(mentor),b.id) - badgeLevel(ensureBadges(mentor),a.id)
+    || badgeSkill(student,b.id) - badgeSkill(student,a.id)
+    || a.id.localeCompare(b.id)).slice(0,2).map(b => b.id);
+}
+
 /** Receives only official games from the season ledger. Persistent IDs prevent replay farming. */
 export function recordBadgeGame(player: GmPlayer, box: GmBoxScore, players: GmPlayer[]): GmPlayer {
   const line = box.players.find(p => p.playerId === player.id && p.minutes > 0);
@@ -94,15 +106,7 @@ export function recordBadgeGame(player: GmPlayer, box: GmBoxScore, players: GmPl
   // Teaching requires both players on the official game sheet. Sitting on the bench
   // or assigning a mentor without shared games cannot farm badges.
   const together = mentor && box.players.some(row => row.playerId === mentor.id && row.teamId === line.teamId && row.minutes > 0);
-  const teachable = together ? BADGES.filter(b => {
-    const mentorLevel = badgeLevel(ensureBadges(mentor),b.id);
-    return mentorLevel > badgeLevel(player,b.id) && badgeCap(player,b.id) > 0;
-  }).sort((a,b) =>
-    Number(b.category === player.developmentFocus) - Number(a.category === player.developmentFocus)
-    || badgeLevel(ensureBadges(mentor),b.id) - badgeLevel(ensureBadges(mentor),a.id)
-    || badgeSkill(player,b.id) - badgeSkill(player,a.id)
-    || a.id.localeCompare(b.id)).slice(0,2) : [];
-  const taught = new Set(teachable.map(b => b.id));
+  const taught = new Set(together ? mentorBadgeTargets(player, mentor) : []);
   const mentoredXp = { ...book.mentoredXp };
   const xp = { ...book.xp };
   for (const b of BADGES) {
