@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 
-import { PlayerHeadshot } from "@/components/brand/player-headshot";
+import { GmPlayerPortrait } from "@/gm/ui/gm-player-portrait";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { Button } from "@/components/ui/button";
 import { GmConfirmAction } from "@/gm/ui/gm-confirm-action";
@@ -308,12 +308,7 @@ function SelectedHero({
     <section className="gm-roster__hero">
       <div className="gm-roster__hero-media">
         <TeamLogo teamKey={league.userTeamId} size="md" />
-        <PlayerHeadshot
-          playerId={player.nbaPlayerId ?? player.id}
-          name={displayPlayerName(player)}
-          teamKey={player.teamId}
-          size="xl"
-        />
+        <GmPlayerPortrait player={player} size="xl" />
       </div>
 
       <div className="gm-roster__rating">
@@ -452,7 +447,8 @@ function SimpleTable({
             >
               <td>
                 <button type="button" className="gm-roster__name-btn" onClick={() => onSelect(player.id)}>
-                  {shortName(displayPlayerName(player))}
+                  <GmPlayerPortrait player={player} size="xs" />
+                  <span>{shortName(displayPlayerName(player))}</span>
                 </button>
               </td>
               <td>{player.position}</td>
@@ -508,7 +504,8 @@ function DetailedTable({
             >
               <td>
                 <button type="button" className="gm-roster__name-btn" onClick={() => onSelect(player.id)}>
-                  {shortName(displayPlayerName(player))}
+                  <GmPlayerPortrait player={player} size="xs" />
+                  <span>{shortName(displayPlayerName(player))}</span>
                 </button>
               </td>
               <td>{player.position}</td>
@@ -568,7 +565,8 @@ function TendencyTable({
             >
               <td>
                 <button type="button" className="gm-roster__name-btn" onClick={() => onSelect(player.id)}>
-                  {shortName(displayPlayerName(player))}
+                  <GmPlayerPortrait player={player} size="xs" />
+                  <span>{shortName(displayPlayerName(player))}</span>
                 </button>
               </td>
               <td>{player.position}</td>
@@ -654,7 +652,8 @@ function StatsTable({
                   className="gm-roster__name-btn"
                   onClick={() => onSelect(player.id)}
                 >
-                  {shortName(displayPlayerName(player))}
+                  <GmPlayerPortrait player={player} size="xs" />
+                  <span>{shortName(displayPlayerName(player))}</span>
                 </button>
               </td>
               <td>{player.position}</td>
