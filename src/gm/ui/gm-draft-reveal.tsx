@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { ClubMark } from "@/gm/ui/club-mark";
+import { GmPlayerPortrait } from "@/gm/ui/gm-player-portrait";
 import { playerSheet } from "@/gm/engine/attributes";
 import { playerDevTrait, traitLabel } from "@/gm/engine/dev-traits";
 import type { GmDevTrait, GmPlayer } from "@/gm/types";
@@ -106,7 +108,7 @@ export function GmDraftReveal({
           {jackpot ? " · jackpot" : bust ? " · cold path" : ""}
         </p>
         <p className="gm-draft-reveal__slot">
-          #{reveal.pick} · {reveal.teamAbbr}
+          #{reveal.pick} · <ClubMark teamId={reveal.teamId} label={reveal.teamAbbr} />
         </p>
 
         <div className="gm-draft-reveal__name-block">
@@ -114,7 +116,7 @@ export function GmDraftReveal({
             <p className="gm-draft-reveal__codename">{reveal.codename}</p>
           ) : null}
           {showName ? (
-            <h2 className="gm-draft-reveal__name">{reveal.player.name}</h2>
+            <div className="flex items-center justify-center gap-3"><GmPlayerPortrait player={reveal.player} size="md" /><h2 className="gm-draft-reveal__name">{reveal.player.name}</h2></div>
           ) : (
             <h2 className="gm-draft-reveal__name is-pending">······</h2>
           )}
