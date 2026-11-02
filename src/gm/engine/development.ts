@@ -36,7 +36,11 @@ export function activeMentorships(players: GmPlayer[], teamId: string): Array<{ 
 }
 export function activeMentor(player: GmPlayer, players: GmPlayer[]): GmPlayer | undefined {
   if (!player.teamId || !player.mentorship) return undefined;
-  return activeMentorships(players, player.teamId).find(pair => pair.learner.id === player.id)?.mentor;
+  // Some progression calls pass an updated learner before it is written back to
+  // the full roster. The supplied learner is authoritative for eligibility.
+  const canonical = players.find(row => row.id === player.id);
+  const roster = canonical === player ? players : players.map(row => row.id === player.id ? player : row);
+  return activeMentorships(roster, player.teamId).find(pair => pair.learner.id === player.id)?.mentor;
 }
 export function mentorshipQuality(veteran: GmPlayer): number {
   return clamp(((veteran.sheet?.overall ?? 60) - 55) / 40, 0, 1) * workEthicOf(veteran) / 100;
