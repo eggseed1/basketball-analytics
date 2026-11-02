@@ -8,6 +8,7 @@ import { buildLeagueFromPlayerSeasons } from "../src/gm/seed/create-real-league"
 import { createGeneratedLeague } from "../src/gm/seed/create-league";
 import { prepareFranchise } from "../src/gm/engine/franchise";
 import { simulateGame } from "../src/gm/engine/simulate";
+import { ensureSimProfile, simulationRates } from "../src/gm/engine/player-profile";
 import type { GmLeagueSettings, GmLeagueState, GmScheduleGame } from "../src/gm/types";
 
 type Metric = "points" | "fga" | "fgm" | "tpa" | "tpm" | "fta" | "ftm" | "reb" | "orb" | "ast" | "stl" | "blk" | "tov" | "pf" | "possessions";
@@ -51,6 +52,22 @@ async function main(){
   console.log("2024-25 independent NBA holdout "+JSON.stringify({observed:holdout,expected}));
 
   const generated=prepareFranchise(createGeneratedLeague({userTeamId:"bos",season:2032,seed:830}));
+  const specimen=generated.players.find(p=>p.teamId && p.simProfile?.source==="estimated")!;
+  const current=ensureSimProfile(specimen);
+  const oldProfile={...current.simProfile!,version:1 as const,
+    rates:{...current.simProfile!.rates,
+      twoPct:current.simProfile!.rates.twoPct-.075,
+      threePct:current.simProfile!.rates.threePct-.06,
+      ftPct:current.simProfile!.rates.ftPct-.05}};
+  const oldSave={...current,simProfile:oldProfile};
+  const migrated=ensureSimProfile(oldSave);
+  assert.equal(migrated.simProfile?.version,2);
+  assert.deepEqual(migrated.simProfile?.baseline,oldProfile.baseline);
+  assert.deepEqual(simulationRates(migrated),simulationRates(current),"legacy profile retains progression after migration");
+  assert.equal(ensureSimProfile(migrated),migrated,"upgrade is idempotent");
+  const nbaSpecimen=league.players.find(p=>p.simProfile?.source==="nba")!;
+  const nbaOld={...nbaSpecimen,simProfile:{...nbaSpecimen.simProfile!,version:1 as const}};
+  assert.deepEqual(ensureSimProfile(nbaOld).simProfile?.rates,nbaOld.simProfile?.rates,"real NBA evidence survives migration");
   const future=sample(generated,generated.schedule.slice(0,55),94000);
   assert.ok(future.points>75&&future.points<155,"generated future league scoring must stay credible");
   assert.ok(future.fga>70&&future.fga<110,"generated future league shooting volume must stay credible");
