@@ -1,6 +1,8 @@
 "use client";
 
 import type { GmLeagueState } from "@/gm/types";
+import { GmPlayerPortrait } from "@/gm/ui/gm-player-portrait";
+import { ClubMark } from "@/gm/ui/club-mark";
 import { allStarBreak, allStarForm, allStarWatch, squadLabel } from "@/gm/engine/allstar";
 
 function nameOf(league: GmLeagueState, id: string): string {
@@ -36,7 +38,7 @@ function Squad({
       <ul className="divide-y divide-border text-sm">
         {ranked.map((id) => (
           <li key={id} className="flex items-center justify-between gap-2 px-3 py-1.5">
-            <span>{nameOf(league, id)}</span>
+            <span className="flex items-center gap-2">{league.players.find(p => p.id === id) ? <GmPlayerPortrait player={league.players.find(p => p.id === id)!} /> : null}<span>{nameOf(league, id)}{league.players.find(p => p.id === id)?.teamId ? <span className="ml-2"><ClubMark teamId={league.players.find(p => p.id === id)!.teamId} label="" /></span> : null}</span></span>
             <span className="tabular-nums text-muted-foreground">{lineOf(league, id)}</span>
           </li>
         ))}
