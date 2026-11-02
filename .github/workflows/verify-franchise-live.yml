@@ -1,0 +1,30 @@
+name: Verify live Franchise Lab
+on:
+  push:
+    branches:
+      - release/verify-franchise-badges-0805fef
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      DRBL_VERIFY_BASE_URL: https://basketball-analytics.drbl-analytics.workers.dev
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: node --require ./scripts/lib/stub-server-only.cjs --import tsx scripts/verify-franchise-release.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: franchise-live-production
+          path: /tmp/franchise-live
+          retention-days: 7
