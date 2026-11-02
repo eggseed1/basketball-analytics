@@ -10,6 +10,7 @@ import { activeMentor, breakoutEvidence, CAREER_CEILING_LIMIT, mentorEligible, m
 import { CAMP_FOCUSES, campSkillChanges, campSlots, campSorenessRisk } from "@/gm/engine/season-development";
 import { ATTRIBUTE_LABEL } from "@/gm/engine/attributes";
 import { flowOf } from "@/gm/engine/season-flow-state";
+import { traitLabel } from "@/gm/engine/dev-traits";
 import type { GmCampFocus, GmPlayer } from "@/gm/types";
 
 const control = "w-full rounded-lg border border-border bg-background px-3 py-2 text-sm";
@@ -25,13 +26,49 @@ export function GmDevelopment() {
   if (!league) return null;
   const roster = league.players.filter(p => p.teamId === league.userTeamId && p.contract).sort((a,b) => a.age - b.age || a.name.localeCompare(b.name));
   const flow = flowOf(league);
+  const currentChecks = league.devMarks?.season === league.season ? league.devMarks : undefined;
+  const checkpoints = [
+    { id: "quarter1" as const, label: "Opening stretch" },
+    { id: "january" as const, label: "Midseason" },
+    { id: "quarter3" as const, label: "Closing stretch" },
+    { id: "finale" as const, label: "Season finale" },
+  ];
+  const changedPlayers = roster.map(player => ({ player, before: player.developmentBaseline?.season === league.season ? player.developmentBaseline.overall : player.sheet?.priorOverall ?? player.sheet?.overall ?? 0, after: player.sheet?.overall ?? 0 })).sort((a,b) => b.after-b.before-(a.after-a.before));
   const campOpen = flow.stage === "training_camp" && !flow.campResults;
   const assignments = roster.filter(p => !p.injury && flow.campAssignments?.[p.id]);
   const awards = roster.flatMap(player => (player.ceilingGrowth?.awards ?? []).map(award => ({ ...award, player }))).sort((a,b) => b.season - a.season);
   return <div className="flex min-w-0 flex-col gap-8" data-testid="development-desk">
     <header><h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight"><TeamLogo teamKey={league.userTeamId} size="sm" />Development</h1><p className="mt-2 max-w-2xl text-sm text-muted-foreground">Set individual work, pair young players with veterans, and review the progress they earn on the court.</p></header>
-    <nav aria-label="Development sections" className="flex flex-wrap gap-4 text-sm font-semibold"><a href="#development-focuses" className="underline underline-offset-4">Focuses and mentorship</a><a href="#development-badges" className="underline underline-offset-4">Skill badges</a><a href="#development-camp" className="underline underline-offset-4">Training camp</a><a href="#development-history" className="underline underline-offset-4">Ceiling history</a></nav>
+    <nav aria-label="Development sections" className="flex flex-wrap gap-4 text-sm font-semibold"><a href="#development-progress" className="underline underline-offset-4">Season tracker</a><a href="#development-focuses" className="underline underline-offset-4">Focuses and mentorship</a><a href="#development-badges" className="underline underline-offset-4">Skill badges</a><a href="#development-camp" className="underline underline-offset-4">Training camp</a><a href="#development-history" className="underline underline-offset-4">Ceiling history</a></nav>
     {note ? <p role="status" className="text-sm">{note}</p> : null}
+    <div id="development-progress" className="scroll-mt-32">
+      <SectionFrame title="Season development tracker" description="Small progress accumulates through four calendar checkpoints. Most meaningful jumps and trait reviews take place at the offseason progression window.">
+        <ol className="grid gap-2 sm:grid-cols-4" aria-label="Season development checkpoints">{checkpoints.map((row,index) => {
+          const complete = Boolean(currentChecks?.[row.id]);
+          return <li key={row.id} className={"rounded-lg border p-3 " + (complete ? "border-primary/50 bg-primary/5" : "border-border bg-secondary/20")}>
+            <p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">Check {index + 1}</p>
+            <p className="mt-1 text-sm font-semibold">{row.label}</p>
+            <p className="mt-2 text-xs">{complete ? "Progress recorded" : "Upcoming"}</p>
+          </li>;
+        })}</ol>
+        <div className="mt-4 overflow-x-auto rounded-lg border border-border">
+          <table className="w-full min-w-[540px] text-left text-sm">
+            <thead className="bg-secondary/40 text-xs text-muted-foreground"><tr><th className="p-3">Player</th><th className="p-3">Current OVR</th><th className="p-3">Season change</th><th className="p-3">Development</th><th className="p-3">Potential ceiling</th></tr></thead>
+            <tbody className="divide-y divide-border">{changedPlayers.map(({player,before,after}) => {
+              const delta = Math.round(after-before);
+              return <tr key={player.id}>
+                <td className="p-3"><div className="flex items-center gap-2"><GmPlayerPortrait player={player} /><Link href={"/gm/player/"+player.id} className="font-semibold hover:underline">{player.name}</Link></div></td>
+                <td className="p-3 font-bold tabular-nums">{Math.round(after)}</td>
+                <td className={"p-3 font-bold tabular-nums " + (delta>0?"text-emerald-700 dark:text-emerald-300":delta<0?"text-rose-700 dark:text-rose-300":"text-muted-foreground")}>{delta>0?"+":""}{delta}</td>
+                <td className="p-3">{traitLabel(player.sheet?.potential.trait)}</td>
+                <td className="p-3 tabular-nums">{Math.round(player.sheet?.potential.ceiling ?? 0)}</td>
+              </tr>;
+            })}</tbody>
+          </table>
+        </div>
+        <p className="mt-3 text-xs text-muted-foreground">Development traits may change in the offseason following breakout seasons and major accolades. The +4 cap on mentorship and breakout potential increases remains separate from trait evolution.</p>
+      </SectionFrame>
+    </div>
     <div id="development-focuses" className="scroll-mt-32"><SectionFrame title="Focuses and mentorship" description="One veteran can mentor one teammate at the same position. Veterans must be at least 28 and five years older; learners must be 25 or younger. The growth bonus lasts while they remain teammates.">
       <div className="grid min-w-0 gap-4 lg:grid-cols-2">{roster.map(player => {
         const mentor = activeMentor(player, league.players);
