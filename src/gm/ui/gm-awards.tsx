@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 
 import { awardRaces, awardSeasonProgress } from "@/gm/engine/awards";
+import { GmPlayerPortrait } from "@/gm/ui/gm-player-portrait";
+import { ClubMark } from "@/gm/ui/club-mark";
 import type { GmAwardRace, GmLeagueState } from "@/gm/types";
 import { cn } from "@/lib/utils";
 
@@ -156,8 +158,11 @@ function Race({
           {race.candidates.slice(0, limit).map((candidate, index) => {
             const yours = candidate.teamId === league.userTeamId;
             const share = candidate.share ?? (index === 0 ? 1 : 0);
+            const candidatePlayer = league.players.find(p => p.id === candidate.id);
             const body = (
-              <span className="flex flex-col gap-1.5">
+              <span className="flex min-w-0 items-start gap-2">
+                {candidatePlayer ? <GmPlayerPortrait player={candidatePlayer} /> : candidate.id.startsWith("coach:") ? <ClubMark teamId={candidate.teamId} label="" /> : null}
+                <span className="flex min-w-0 flex-1 flex-col gap-1.5">
                 <span className="flex items-start justify-between gap-2">
                   <span>
                     <span className="font-semibold tracking-tight">
@@ -168,7 +173,7 @@ function Race({
                     </span>
                     <span className="text-muted-foreground">
                       {" "}
-                      {teamAbbr(league, candidate.teamId)}
+                      <ClubMark teamId={candidate.teamId} label={teamAbbr(league, candidate.teamId)} />
                       {yours ? " · you" : ""}
                     </span>
                   </span>
@@ -195,7 +200,7 @@ function Race({
                     />
                   </span>
                 ) : null}
-              </span>
+              </span></span>
             );
             return (
               <li
