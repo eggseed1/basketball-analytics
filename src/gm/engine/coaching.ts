@@ -502,7 +502,10 @@ export function rotationForTeam(team:GmTeam,players:GmPlayer[],playoff=false){
     const desired=Object.fromEntries(floor.map(p=>[p.id,Object.fromEntries(spots.map(spot=>[spot,Math.max(0,(coaching.positionMinutes?.[p.id]?.[spot]??(coaching.coverSlot?.[p.id]===spot?requested[p.id]??0:0))-(positionMinutes[p.id]?.[spot]??0))]))]));
     const declaredStart=(slot===0||slot===12)&&floor.length===5&&floor.every(p=>used.has(p.id));
     const declaredClosing=validClose&&slot>=22&&floor.length===5&&floor.every(p=>close.includes(p.id));
-    const seats=declaredStart?{...starters}:declaredClosing?Object.fromEntries(spots.map((spot,index)=>[spot,close[index]!])) as GmTeam["starters"]:assignFive(floor,desired).starters;
+    const cover=floor.map(p=>coaching.coverSlot?.[p.id]);
+    const declaredCover=floor.length===5&&cover.every(spot=>spot&&spots.includes(spot))&&new Set(cover).size===5;
+    const coverSeats=declaredCover?Object.fromEntries(floor.map((p,index)=>[cover[index]!,p.id])) as GmTeam["starters"]:null;
+    const seats=declaredStart?{...starters}:declaredClosing?Object.fromEntries(spots.map((spot,index)=>[spot,close[index]!])) as GmTeam["starters"]:coverSeats??assignFive(floor,desired).starters;
     for(const spot of spots){const id=seats[spot];if(id)positionMinutes[id]={...positionMinutes[id],[spot]:(positionMinutes[id]?.[spot]??0)+2};}
     return seats;
   });

@@ -29,7 +29,7 @@ Closing selectors retain five distinct players. The same healthy closing unit an
 
 ## Position handling
 
-An explicit season listing takes priority, followed by a detailed bundled bio listing. Broad guard/forward families use size and playstyle to estimate a five-slot listing. Such estimates are not presented as authoritative NBA depth-chart positions. Unit construction uses primary and secondary positions plus creation, spacing and interior roles. Each player's actual time at each seat drives box-score position totals and out-of-position penalties.
+An explicit season listing takes priority, followed by a detailed bundled bio listing. Broad guard/forward families use size and playstyle to estimate a five-slot listing. Such estimates are not presented as authoritative NBA depth-chart positions. Unit construction uses primary and secondary positions plus creation, spacing and interior roles. A distinct five-seat cover map is honored when the unit can fill it; otherwise role fit resolves the assignments. Each player's actual time at each seat drives box-score position totals and out-of-position penalties.
 
 Existing saves keep their ratings, potential, minute targets and valid manual blocks. Injury changes repair the nightly lineup without overwriting explicit minute targets or restoring a stale book over newer manual edits. Legacy inferred NBA positions have an opt-in review showing each proposed change. Detailed listings and saved manual primary choices stay protected. Applying corrections fits the existing starting five to their new roles and rebuilds timing, while retaining minute targets. Newly generated rosters have at least two players at each primary position and bodies appropriate to that position; existing generated saves are not rebuilt.
 

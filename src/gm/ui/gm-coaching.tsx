@@ -121,7 +121,7 @@ export function GmCoaching() {
         <div>
           <h2 className="text-xl font-bold tracking-tight">{t("pageLineupTitle")}</h2>
           <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-            {t("pageLineupBlurb")}
+            Choose a starting five, set minute targets, and review the actual planned stints and positions below.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
