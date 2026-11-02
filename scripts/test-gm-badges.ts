@@ -21,14 +21,14 @@ const line = { playerId: player.id, playerName: player.name, teamId: "bos", minu
 const box: GmBoxScore = { id: "badge-box", gameId: "badge-game", season: 2027, day: 1, homeTeamId: "bos", awayTeamId: "nyk", homeScore: 108, awayScore: 101, possessions: 100, players: [line, { ...line, playerId: "opponent", teamId: "nyk", fgm: 8 }] };
 assert.deepEqual(prepareFranchise(league).players.map(p => p.badges), league.players.map(p => p.badges), "migration runs once");
 for (const p of seed.players.filter(p => p.sheet)) assert.deepEqual(league.players.find(q=>q.id===p.id)!.sheet!.attributes,p.sheet!.attributes);
-const rookie = ensureBadges({ ...player, badges: undefined });
+const rookie = ensureBadges({ ...player, badges: undefined, sheet: { ...player.sheet!, overall: 74 } });
 assert.ok(Object.values(rookie.badges!.xp).length <= 1);
 assert.ok(Object.values(rookie.badges!.xp).every(xp => xp <= 120));
 const prodigy = ensureBadges({ ...player, age: 21, badges: undefined, sheet: { ...player.sheet!, overall: 96 } });
 assert.ok(Object.keys(prodigy.badges!.xp).length >= 4, "exceptional young superstars already possess several matching badges");
 assert.ok(BADGES.filter(b => badgeLevel(prodigy,b.id) >= 4).length >= 3, "elite rookie strengths can earn high-level badges");
 
-const veteran = ensureBadges({ ...player, age: 30, badges: undefined });
+const veteran = ensureBadges({ ...player, age: 30, badges: undefined, sheet: { ...player.sheet!, overall: 78 } });
 assert.ok(Object.keys(veteran.badges!.xp).length >= Object.keys(rookie.badges!.xp).length);
 const star = ensureBadges({ ...player, age: 33, badges: undefined, sheet: { ...player.sheet!, overall: 96 } });
 assert.ok(Object.keys(star.badges!.xp).length >= 8, "experienced 96 OVR star owns a broad badge portfolio");
@@ -39,7 +39,7 @@ assert.equal(legacy.badges!.version,2);
 assert.equal(legacy.badges!.xp.deep_range,3200, "migration does not overwrite a Legend badge");
 assert.deepEqual(legacy.badges!.gameIds,["old-game"], "migration preserves official game ledger");
 assert.deepEqual(ensureBadges(legacy),legacy,"seed migration is idempotent");
-const changedPotential = ensureBadges({ ...player, badges: undefined, sheet: { ...player.sheet!, potential: { ...player.sheet!.potential, ceiling: 50 } } });
+const changedPotential = ensureBadges({ ...player, badges: undefined, sheet: { ...player.sheet!, overall: 74, potential: { ...player.sheet!.potential, ceiling: 50 } } });
 assert.deepEqual(changedPotential.badges,rookie.badges, "badges do not reveal or depend on hidden potential");
 for (const b of BADGES) for (let rank = 1; rank <= 5; rank++) {
   const attrs = Object.fromEntries(Object.keys(attributes).map(k => [k,BADGE_REQUIREMENTS[rank]!])) as typeof attributes;
