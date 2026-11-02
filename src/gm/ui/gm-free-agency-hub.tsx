@@ -27,6 +27,8 @@ import {
   userCap,
   userTeam,
 } from "@/gm/lib/selectors";
+import { GmPlayerPortrait } from "@/gm/ui/gm-player-portrait";
+import { ClubMark } from "@/gm/ui/club-mark";
 import { useGmStore } from "@/gm/state/gm-store";
 import type { GmFaStage, GmPlayer, GmPosition } from "@/gm/types";
 
@@ -248,7 +250,7 @@ export function GmFreeAgencyHub() {
       </nav>
 
       {selected ? <section id="fa-offer-terms" tabIndex={-1} aria-label={"Offer terms for " + selected.name} className="scroll-mt-24 rounded-xl border border-border bg-secondary/30 p-4 outline-none">
-        <div className="flex flex-wrap items-center justify-between gap-3"><h3 className="text-base font-semibold">Offer terms for {selected.name}</h3><Button size="sm" variant="ghost" onClick={() => setSelectedId(null)}>Close offer</Button></div>
+        <div className="flex flex-wrap items-center justify-between gap-3"><h3 className="inline-flex items-center gap-2 text-base font-semibold"><GmPlayerPortrait player={selected} size="sm" />Offer terms for {selected.name}</h3><Button size="sm" variant="ghost" onClick={() => setSelectedId(null)}>Close offer</Button></div>
         <p className="mt-1 text-sm text-muted-foreground">Asking ${askingSalary(selected, rules).toFixed(2)}M per year for {askingYears(selected, rules)} years.</p>
         <form className="mt-4 flex flex-wrap items-end gap-3" onSubmit={event => { event.preventDefault(); if (canOffer) signFreeAgent(selected.id, salary, years); }}>
           <div className="flex flex-col gap-1"><Label htmlFor="fa-sal">Annual salary ($M)</Label><Input id="fa-sal" type="number" min="0.01" step="0.01" value={salary} onChange={event => setSalary(Number(event.target.value))} className="w-32" /></div>
@@ -346,8 +348,8 @@ export function GmFreeAgencyHub() {
                   key={row.player.id}
                   className="flex flex-wrap items-center justify-between gap-2 px-3 py-2.5 text-sm"
                 >
-                  <span>
-                    {displayPlayerName(row.player)} · ${row.amountM.toFixed(1)}M QO ·{" "}
+                  <span className="inline-flex items-center gap-2">
+                    <GmPlayerPortrait player={row.player} />{displayPlayerName(row.player)} · ${row.amountM.toFixed(1)}M QO ·{" "}
                     {row.status}
                   </span>
                   {row.status === "eligible" || !row.player.qoStatus ? (
@@ -392,8 +394,8 @@ export function GmFreeAgencyHub() {
                     key={player.id}
                     className="flex flex-wrap items-center justify-between gap-2 px-3 py-2.5 text-sm"
                   >
-                    <span>
-                      {displayPlayerName(player)} · {player.rightsKind ?? "UFA"} · hold $
+                    <span className="inline-flex items-center gap-2">
+                      <GmPlayerPortrait player={player} />{displayPlayerName(player)} · {player.rightsKind ?? "UFA"} · hold $
                       {(player.lastSalaryM ?? 0).toFixed(1)}M · ask $
                       {askingSalary(player, rules).toFixed(1)}M per year / {askingYears(player, rules)} years
                       {preview.ok ? (
@@ -484,7 +486,8 @@ export function GmFreeAgencyHub() {
                     </div>
                     <ul className="divide-y divide-border">
                       {list.map((p) => (
-                        <li key={p.id} className="px-3 py-2 text-[13px]">
+                        <li key={p.id} className="flex items-center gap-2 px-3 py-2 text-[13px]">
+                          <GmPlayerPortrait player={p} />
                           <button
                             type="button"
                             className="text-left font-semibold hover:underline"
@@ -537,9 +540,10 @@ export function GmFreeAgencyHub() {
                         className={cn(selectedId === p.id && "bg-secondary/50")}
                       >
                         <td className="px-3 py-2 font-medium">
+                          <div className="flex items-center gap-2"><GmPlayerPortrait player={p} />
                           <button type="button" aria-label={"Review terms for " + p.name} disabled={!open || Boolean(agreed)} onClick={() => loadAsk(p)} className="min-h-11 text-left font-medium underline decoration-border underline-offset-4 hover:decoration-current disabled:no-underline disabled:opacity-60">
                             {displayPlayerName(p)}<span className="block text-xs text-muted-foreground sm:hidden">Review offer</span>
-                          </button>
+                          </button></div>
                           {p.rightsKind === "restricted" ? (
                             <span className="ml-1 text-xs text-muted-foreground">RFA</span>
                           ) : p.rightsTeamId === league.userTeamId ? (
@@ -600,7 +604,7 @@ export function GmFreeAgencyHub() {
                 if (!player) return null;
                 return (
                   <li key={row.id} className="px-3 py-2.5 text-sm">
-                    <p className="font-semibold">{displayPlayerName(player)}</p>
+                    <p className="flex items-center gap-2 font-semibold"><GmPlayerPortrait player={player} />{displayPlayerName(player)}</p>
                     <p className="text-[12px] text-muted-foreground">
                       {row.kind} · ${row.salaryM.toFixed(1)}M / {row.years} yrs
                       {row.responseNote ? ` · ${row.responseNote}` : ""}
@@ -623,7 +627,7 @@ export function GmFreeAgencyHub() {
                 if (!player) return null;
                 return (
                   <li key={row.id} className="px-3 py-2.5 text-sm">
-                    <p className="font-semibold">{displayPlayerName(player)}</p>
+                    <p className="flex items-center gap-2 font-semibold"><GmPlayerPortrait player={player} />{displayPlayerName(player)}</p>
                     <p className="text-[12px] text-muted-foreground">
                       ${row.salaryM.toFixed(1)}M / {row.years} yrs · unsigned; reserves room until signing opens
                     </p>
