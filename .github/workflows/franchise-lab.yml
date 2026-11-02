@@ -36,7 +36,6 @@ jobs:
       - run: npm run test:franchise-badges
       - run: npm run test:franchise-development
       - run: npm run test:franchise-dynamic-progression
-      - run: npm run test:franchise-multiseason
       - run: npm run test:franchise-calendar
       - run: npm run test:franchise-flow
       - run: npm run test:franchise-ux
@@ -51,6 +50,24 @@ jobs:
           path: |
             /tmp/franchise-calibration
             /tmp/franchise-draft-calibration
+          if-no-files-found: ignore
+          retention-days: 7
+  balance:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run test:franchise-multiseason
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: franchise-long-horizon-balance
+          path: /tmp/franchise-calibration/multiseason.json
           if-no-files-found: ignore
           retention-days: 7
   browser:
