@@ -388,6 +388,8 @@ export function rollDevTrait(
 }
 
 export function ensurePotentialTrait(potential: GmPotential, player: GmPlayer): GmPotential {
+  const reviewed = player.traitHistory?.at(-1);
+  if (reviewed) return potential.trait === reviewed.after && potential.path === pathFromTrait(reviewed.after) ? potential : { ...potential, trait: reviewed.after, path: pathFromTrait(reviewed.after) };
   // Current overall only — never potential.ceiling. A 95 ceiling is upside,
   // not a reason to stamp X-Factor on every high-upside kid.
   const overall = Math.max(player.sheet?.overall ?? 0, overallOf(player));
@@ -426,6 +428,8 @@ export function ensurePotentialTrait(potential: GmPotential, player: GmPlayer): 
 }
 
 export function playerDevTrait(player: GmPlayer): GmDevTrait {
+  const reviewed = player.traitHistory?.at(-1);
+  if (reviewed) return reviewed.after;
   const overall = overallOf(player);
   if (!isDraftProspect(player)) {
     const floor = maxTrait(
