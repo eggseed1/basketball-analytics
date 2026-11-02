@@ -14,6 +14,7 @@ import { playerSheet } from "@/gm/engine/attributes";
 import { DRAFT_ROLES, DRAFT_TOOL_LABELS, draftRead, draftScoutingOf, draftSleeperSignals, sleeperRadar, marketBoard, scoutingBudget } from "@/gm/engine/draft-intel";
 import { draftPickLog, orderedBoard, pickOwnerAt, rosterNeeds } from "@/gm/engine/draft-room";
 import { expertiseLabel } from "@/gm/seed/scouts";
+import { buildScoutDesk, type ScoutDeskCategory } from "@/gm/engine/scout-desk";
 import type { GmDraftRole, GmDraftTool, GmLeagueState, GmPosition } from "@/gm/types";
 
 const link="font-medium underline underline-offset-4";
@@ -26,8 +27,10 @@ export function GmDraftWarRoom(){
   const strategy=useGmStore(state=>state.setDraftStrategy),watch=useGmStore(state=>state.toggleDraftWatch),move=useGmStore(state=>state.moveDraftBoard),combine=useGmStore(state=>state.runCombine);
   const note=useGmStore(state=>state.lastDraftNote);
   const [selectedId,setSelectedId]=useState<string|null>(null),[tab,setTab]=useState<"board"|"trades"|"activity">("board");
+  const [deskCategory,setDeskCategory]=useState<ScoutDeskCategory|null>(null);
   const [position,setPosition]=useState<GmPosition|"all">("all"),[onlyWatch,setOnlyWatch]=useState(false),[sort,setSort]=useState<"fit"|"market"|"personal"|"sleepers">("fit"),[compare,setCompare]=useState<string[]>([]);
   const scouting=league?draftScoutingOf(league):null,role=scouting?.strategy??"value";
+  const desk=useMemo(()=>league?buildScoutDesk(league,5):null,[league]);
   const ranked=useMemo(()=>{
     if(!league)return [];
     const players=orderedBoard(league,league.players),boardRole=draftScoutingOf(league).strategy;
@@ -45,6 +48,7 @@ export function GmDraftWarRoom(){
   const needs=rosterNeeds(team,league.players),picked=draftPickLog(league),last=picked[picked.length-1];
   const chosenRead=selected?draftRead(league,selected,role):null;
   const sleeperPicks=sleeperRadar(league,5);
+  const selectedBoard=desk?.boards.find(board=>board.id===(deskCategory??desk.recommended))??desk?.boards[0];
   const canCombine=!league.combineDone&&(league.seasonFlow?.stage==="scouting"||(!league.seasonFlow&&league.phase==="offseason"));
   return <div className="flex min-w-0 flex-col gap-7" data-testid="draft-war-room">
     <header className="flex flex-wrap items-start justify-between gap-4"><div className="max-w-2xl"><p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{league.season} draft class · {team.abbr}</p><h2 className="mt-1 text-2xl font-bold">{night?"Draft night":"Build your draft board"}</h2><p className="mt-2 text-sm text-muted-foreground">{night?"The room moves when you advance. Make a selection, move a pick, or wait for your target.":"Start with the scouts’ shortlist, investigate anyone who catches your eye, and draft your favorite. Hidden gems exist, but no prospect is guaranteed."}</p></div><Link href="/gm/offseason" className={link}>Season hub</Link></header>
@@ -58,7 +62,38 @@ export function GmDraftWarRoom(){
     {night?<nav aria-label="Draft desks" className="flex flex-wrap gap-2">{(["board","trades","activity"] as const).map(value=><Button key={value} variant={tab===value?"default":"outline"} className="min-h-11" aria-pressed={tab===value} onClick={()=>setTab(value)}>{value==="board"?"Prospects and reports":value==="trades"?"Trade picks":"Draft activity"}</Button>)}</nav>:null}
     {(!night||tab==="board")?<>
       <SectionFrame title="Pick your draft approach"><div className="flex flex-wrap items-end gap-4"><label className="flex flex-col gap-2 text-sm">Draft strategy<select aria-label="Draft strategy" className={draftControl} value={role} onChange={event=>strategy(event.target.value as GmDraftRole)}><optgroup label="Easy choices">{DRAFT_ROLES.filter(row=>["value","ready","upside"].includes(row.id)).map(row=><option key={row.id} value={row.id}>{row.label}</option>)}</optgroup><optgroup label="Specific team needs">{DRAFT_ROLES.filter(row=>!["value","ready","upside"].includes(row.id)).map(row=><option key={row.id} value={row.id}>{row.label}</option>)}</optgroup></select></label><p className="max-w-xl pb-2 text-sm text-muted-foreground">{DRAFT_ROLES.find(row=>row.id===role)?.description} Current roster needs: {needs.slice(0,2).join(", ")}.</p></div>{team.staff.scout?<p className="mt-2 text-xs text-muted-foreground">Lead scout: {team.staff.scout.name} · {expertiseLabel(team.staff.scout.expertise)} · eye {team.staff.scout.eye}/5. Relevant experience and specialties sharpen new research.</p>:null}<details className="mt-3 text-sm"><summary className="cursor-pointer font-medium">How to find value</summary><ul className="mt-3 list-disc space-y-2 pl-5"><li>Check volume before trusting a shooting percentage. Free-throw touch is another useful signal.</li><li>Compare assists with turnovers, then use film to investigate decisions and defensive responsibility.</li><li>Use a private visit to answer an unresolved question. Scouting changes your read, not the player&apos;s ability.</li><li>A specialist can fill a job that a higher consensus prospect cannot. Plan minutes or skills work after the draft.</li><li>Trading down adds assets and gives other clubs a chance to take your target.</li></ul></details></SectionFrame>
-      <SectionFrame title="Scout's late-value shortlist"><p className="mb-3 text-xs text-muted-foreground">Players outside the expected lottery whose public production suggests a reason to investigate. Some will be misses. Scouting makes your decision better, not certain.</p><div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">{sleeperPicks.slice(0,5).map(player=>{const intel=draftSleeperSignals(player);const current=selected?.id===player.id;return <button type="button" key={player.id} className={"rounded-lg border px-3 py-3 text-left transition-colors hover:bg-secondary/50 "+(current?"border-foreground/50 bg-secondary/50":"border-border")} onClick={()=>{setSelectedId(player.id);setSort("sleepers");focusFile();}}><span className="block text-sm font-semibold">{player.name}</span><span className="mt-1 block text-xs text-muted-foreground">{player.position} · consensus #{player.consensusRank??"?"} · {intel.reasons[0]??"Worth another look"}</span></button>;})}</div></SectionFrame>
+      {desk?<SectionFrame title="Your scouting department">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="max-w-2xl">
+            <p className="text-sm font-semibold">{desk.headline}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{desk.scoutLabel}</p>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{desk.briefing}</p>
+          </div>
+          <span className="rounded-full border border-border px-3 py-1 text-xs text-muted-foreground">Four scouting perspectives</span>
+        </div>
+        <nav aria-label="Scouting boards" className="mt-4 grid gap-2 sm:grid-cols-2 xl:grid-cols-4">{desk.boards.map(board=>
+          <button type="button" key={board.id} aria-pressed={selectedBoard?.id===board.id}
+            className={"min-h-16 rounded-lg border p-3 text-left transition-colors hover:bg-secondary/60 "+(selectedBoard?.id===board.id?"border-foreground/60 bg-secondary/70":"border-border bg-background")}
+            onClick={()=>setDeskCategory(board.id)}>
+            <span className="block text-sm font-semibold">{board.title}</span>
+            <span className="mt-1 block text-xs text-muted-foreground">{board.id===desk.recommended?"Recommended for your team · ":""}{board.picks.length} names</span>
+          </button>)}</nav>
+        {selectedBoard?<div className="mt-4">
+          <p className="text-sm leading-relaxed text-muted-foreground">{selectedBoard.summary}</p>
+          <div className="mt-3 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">{selectedBoard.picks.map(pick=>{
+            const player=pick.player,active=selected?.id===player.id;
+            return <button type="button" key={player.id} aria-label={"Open scout recommendation for "+player.name}
+              className={"rounded-xl border p-3 text-left hover:bg-secondary/60 "+(active?"border-foreground/60 bg-secondary/50":"border-border")}
+              onClick={()=>{setSelectedId(player.id);focusFile();}}>
+              <span className="flex items-center gap-2"><GmPlayerPortrait player={player} size="sm"/><span className="min-w-0"><strong className="block truncate text-sm">{player.name}</strong><span className="block text-xs text-muted-foreground">{player.position} · {player.age} years · consensus #{player.consensusRank??"?"}</span></span></span>
+              <span className="mt-2 block text-xs font-medium leading-relaxed">{pick.note}</span>
+              <span className="mt-2 block text-xs text-muted-foreground">Risk: {pick.caution}</span>
+              <span className="mt-2 block text-xs text-muted-foreground">Estimated readiness {pick.readyRange}</span>
+            </button>;
+          })}</div>
+          <p className="mt-3 text-xs text-muted-foreground">These are scouting opinions, not guaranteed steals or hidden future ratings. Open a prospect to do a deeper evaluation.</p>
+        </div>:null}
+      </SectionFrame>:null}
       <div className="flex flex-wrap items-end gap-3"><label className="flex flex-col gap-1 text-sm">Position<select aria-label="Prospect position" className={draftControl} value={position} onChange={event=>setPosition(event.target.value as typeof position)}>{["all","PG","SG","SF","PF","C"].map(value=><option key={value} value={value}>{value==="all"?"All positions":value}</option>)}</select></label><label className="flex flex-col gap-1 text-sm">Board order<select aria-label="Board order" className={draftControl} value={sort} onChange={event=>setSort(event.target.value as typeof sort)}><option value="fit">Strategy fit</option><option value="market">Consensus</option><option value="personal">Your saved board</option><option value="sleepers">Late-value radar</option></select></label><label className="flex min-h-11 items-center gap-2 text-sm"><input type="checkbox" checked={onlyWatch} onChange={event=>setOnlyWatch(event.target.checked)}/>Watchlist only</label></div>
       {compare.length===2?<Comparison league={league} ids={compare} role={role}/>:null}
       <div className="grid min-w-0 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(330px,0.85fr)]">
